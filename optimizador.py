@@ -57,7 +57,7 @@ MAPA_REQUISITO_A_NUTRIENTE = {
 }
 
 
-def cargar_requerimientos(path="/tmp/requerimientos_v2_final.json"):
+def cargar_requerimientos(path="requerimientos_v2_final.json"):
     with open(path, encoding="utf-8") as f:
         return json.load(f)
 

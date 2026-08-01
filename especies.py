@@ -17,7 +17,7 @@ def especie_de(nombre: str) -> str:
     return nombre.split(" ")[0]
 
 
-def cargar_alimentos(path="/tmp/alimentos_v3_final.json"):
+def cargar_alimentos(path="alimentos_v3_final.json"):
     with open(path, encoding="utf-8") as f:
         return json.load(f)
 

@@ -10,7 +10,7 @@ import sqlite3
 import json
 from datetime import date
 
-RUTA_DB = "/home/claude/backend/canislab.db"
+RUTA_DB = "canislab.db"
 
 
 def crear_tablas(ruta_db=RUTA_DB):

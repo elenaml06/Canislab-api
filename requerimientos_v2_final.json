@@ -1,0 +1,312 @@
+[
+ {
+  "nutriente": "Proteína_total",
+  "unidad": "g",
+  "minAdulto": "52.10",
+  "minCachorroJoven": "62.50",
+  "minCachorroCrecimiento": 50,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "EPA_DHA_total",
+  "unidad": "g",
+  "minAdulto": "-",
+  "minCachorroJoven": "0.13",
+  "minCachorroCrecimiento": "0.13",
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Linoleico",
+  "unidad": "g",
+  "minAdulto": "3.82",
+  "minCachorroJoven": "3.25",
+  "minCachorroCrecimiento": "3.25",
+  "maxCachorroJoven": "16.25",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Linolénico",
+  "unidad": "g",
+  "minAdulto": "-",
+  "minCachorroJoven": "0.20",
+  "minCachorroCrecimiento": "0.20",
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Araquidónico",
+  "unidad": "mg",
+  "minAdulto": "-",
+  "minCachorroJoven": 75,
+  "minCachorroCrecimiento": 75,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Vitamina_A",
+  "unidad": "µg",
+  "minAdulto": "526.20",
+  "minCachorroJoven": 375,
+  "minCachorroCrecimiento": 375,
+  "maxCachorroJoven": 30000,
+  "maxCachorroCrecimiento": 30000,
+  "maxAdulto": 30000
+ },
+ {
+  "nutriente": "Vitamina_D",
+  "unidad": "µg",
+  "minAdulto": 3.975,
+  "minCachorroJoven": 3.45,
+  "minCachorroCrecimiento": 3.125,
+  "maxCachorroJoven": 20,
+  "maxCachorroCrecimiento": 20,
+  "maxAdulto": 20
+ },
+ {
+  "nutriente": "Vitamina_E",
+  "unidad": "mg",
+  "minAdulto": 6.968,
+  "minCachorroJoven": 8.375,
+  "minCachorroCrecimiento": 8.375,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Folato",
+  "unidad": "µg",
+  "minAdulto": "74.70",
+  "minCachorroJoven": 54,
+  "minCachorroCrecimiento": 54,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Niacina",
+  "unidad": "mg",
+  "minAdulto": "4.74",
+  "minCachorroJoven": "3.40",
+  "minCachorroCrecimiento": "3.40",
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Riboflavina",
+  "unidad": "mg",
+  "minAdulto": "1.74",
+  "minCachorroJoven": "1.05",
+  "minCachorroCrecimiento": "1.05",
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Tiamina",
+  "unidad": "mg",
+  "minAdulto": "0.62",
+  "minCachorroJoven": "0.45",
+  "minCachorroCrecimiento": "0.45",
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Vitamina_B12",
+  "unidad": "µg",
+  "minAdulto": "9.68",
+  "minCachorroJoven": "7.00",
+  "minCachorroCrecimiento": "7.00",
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Vitamina_B6",
+  "unidad": "mg",
+  "minAdulto": "0.42",
+  "minCachorroJoven": "0.30",
+  "minCachorroCrecimiento": "0.30",
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Calcio",
+  "unidad": "mg",
+  "minAdulto": 1450,
+  "minCachorroJoven": 2500,
+  "minCachorroCrecimiento": 2000,
+  "maxCachorroJoven": 4000,
+  "maxCachorroCrecimiento": 4500,
+  "maxAdulto": 6250
+ },
+ {
+  "nutriente": "Hierro",
+  "unidad": "mg",
+  "minAdulto": "10.40",
+  "minCachorroJoven": "22.00",
+  "minCachorroCrecimiento": 22,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Potasio",
+  "unidad": "mg",
+  "minAdulto": 1450,
+  "minCachorroJoven": 1100,
+  "minCachorroCrecimiento": 1100,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Magnesio",
+  "unidad": "mg",
+  "minAdulto": 200,
+  "minCachorroJoven": 100,
+  "minCachorroCrecimiento": 100,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Sodio",
+  "unidad": "mg",
+  "minAdulto": 290,
+  "minCachorroJoven": 550,
+  "minCachorroCrecimiento": 550,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Fósforo",
+  "unidad": "mg",
+  "minAdulto": 1160,
+  "minCachorroJoven": 2250,
+  "minCachorroCrecimiento": 1750,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": 4000
+ },
+ {
+  "nutriente": "Yodo",
+  "unidad": "µg",
+  "minAdulto": 300,
+  "minCachorroJoven": 380,
+  "minCachorroCrecimiento": 380,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Selenio",
+  "unidad": "µg",
+  "minAdulto": 55,
+  "minCachorroJoven": 100,
+  "minCachorroCrecimiento": 100,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Zinc",
+  "unidad": "mg",
+  "minAdulto": "20.80",
+  "minCachorroJoven": 25,
+  "minCachorroCrecimiento": 25,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Cobre",
+  "unidad": "mg",
+  "minAdulto": "2.08",
+  "minCachorroJoven": "2.75",
+  "minCachorroCrecimiento": "2.75",
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Relacion_Ca_P",
+  "unidad": "ratio",
+  "minAdulto": 1,
+  "minCachorroJoven": 1,
+  "minCachorroCrecimiento": 1,
+  "maxCachorroJoven": 1.6,
+  "maxCachorroCrecimiento": 1.8,
+  "maxAdulto": 2
+ },
+ {
+  "nutriente": "Grasa_total",
+  "unidad": "g",
+  "minAdulto": 13.75,
+  "minCachorroJoven": 21.25,
+  "minCachorroCrecimiento": 21.25,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Manganeso",
+  "unidad": "mg",
+  "minAdulto": 1.67,
+  "minCachorroJoven": 1.4,
+  "minCachorroCrecimiento": 1.4,
+  "maxCachorroJoven": 42.5,
+  "maxCachorroCrecimiento": 42.5,
+  "maxAdulto": 42.5
+ },
+ {
+  "nutriente": "Acido_pantotenico",
+  "unidad": "mg",
+  "minAdulto": 4.11,
+  "minCachorroJoven": 3,
+  "minCachorroCrecimiento": 3,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Colina",
+  "unidad": "mg",
+  "minAdulto": 474,
+  "minCachorroJoven": 425,
+  "minCachorroCrecimiento": 425,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Cloruro",
+  "unidad": "mg",
+  "minAdulto": 430,
+  "minCachorroJoven": 830,
+  "minCachorroCrecimiento": 830,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": "-"
+ },
+ {
+  "nutriente": "Calcio_LateGrowth_RazaGrande",
+  "unidad": "mg",
+  "minAdulto": "-",
+  "minCachorroJoven": "-",
+  "minCachorroCrecimiento": 2500,
+  "maxCachorroJoven": "-",
+  "maxCachorroCrecimiento": "-",
+  "maxAdulto": 4500
+ }
+]
