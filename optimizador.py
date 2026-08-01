@@ -78,7 +78,7 @@ PESO_POR_CATEGORIA = {
     "Carne muscular": 1.0,
     "Hueso carnoso": 1.0,
     "Vísceras": 1.5,
-    "Hígado": 1.5,
+    "Hígado": 2.5,
     "Pescados y mariscos": 3.0,
     "Verduras y frutas": 6.0,
     "Extras": 5.0,
@@ -160,6 +160,17 @@ def optimizar_menu(alimentos_elegidos: list, der_objetivo: float, etapa_requisit
             fila[i] = -1.0
         A_ub.append(fila)
         b_ub.append(-0.3)  # minimo 30g de visceras (corazon/riñon/pulmon...) en total
+
+    # MISMA LOGICA para Carne muscular: sin esto, si otro alimento (ej. un
+    # hueso con mucho calcio) resuelve todo por si solo, la carne muscular
+    # se queda casi a cero -- razonable poner un minimo real de presencia
+    idx_carne = [i for i, a in enumerate(alimentos_elegidos) if a["categoria"] == "Carne muscular"]
+    if idx_carne:
+        fila = [0.0] * n
+        for i in idx_carne:
+            fila[i] = -1.0
+        A_ub.append(fila)
+        b_ub.append(-1.5)  # minimo 150g de carne muscular en total
 
     bounds = [(0, None) for _ in range(n)]  # gramos no pueden ser negativos
 
