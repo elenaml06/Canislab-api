@@ -25,7 +25,7 @@
    "hierro": 0,
    "potasio": 0,
    "magnesio": 0,
-   "sodio": 0.03,
+   "sodio": 30.0,
    "fosforo": 17700,
    "yodo": 0,
    "selenio": 0,
@@ -34,8 +34,28 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 0.05
-  }
+   "cloruro": 50.0
+  },
+  "dosis_tramos_kg": [
+   {
+    "hasta_kg": 10,
+    "gramos": 1.5
+   },
+   {
+    "hasta_kg": 25,
+    "gramos": 5
+   },
+   {
+    "hasta_kg": 40,
+    "gramos": 7.5
+   },
+   {
+    "hasta_kg": null,
+    "gramos": 10
+   }
+  ],
+  "dosis_fuente": "Etiqueta GRAU. Aviso del fabricante: producto muy concentrado, no sobredosificar",
+  "nota_datos": " Minerales convertidos de % a mg/100g (estaban en bruto)."
  },
  {
   "nombre": "LUPO NATURAL BARF Huesos en polvo",
@@ -63,7 +83,7 @@
    "hierro": 0,
    "potasio": 0,
    "magnesio": 0,
-   "sodio": 0.03,
+   "sodio": 30.0,
    "fosforo": 17500,
    "yodo": 0,
    "selenio": 0,
@@ -72,8 +92,28 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 0.05
-  }
+   "cloruro": 50.0
+  },
+  "dosis_fuente": "Mismo perfil que GRAU harina de hueso (producto equivalente, Ca 22%)",
+  "dosis_tramos_kg": [
+   {
+    "hasta_kg": 10,
+    "gramos": 1.5
+   },
+   {
+    "hasta_kg": 25,
+    "gramos": 5
+   },
+   {
+    "hasta_kg": 40,
+    "gramos": 7.5
+   },
+   {
+    "hasta_kg": null,
+    "gramos": 10
+   }
+  ],
+  "nota_datos": " Minerales convertidos de % a mg/100g (estaban en bruto)."
  },
  {
   "nombre": "Cáscara de huevo PAWS & PATCH",
@@ -111,7 +151,9 @@
    "acidoPantotenico": 0,
    "colina": 0,
    "cloruro": 0
-  }
+  },
+  "dosis_max_por_100g_comida": 0.8,
+  "dosis_fuente": "Etiqueta PAWS & PATCH: 1 cuchara dosificadora (~4 g) por cada 500 g de carne"
  },
  {
   "nombre": "NaturGreen Psyllium Bio",
@@ -148,8 +190,12 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 0
-  }
+   "cloruro": 0,
+   "fibra": 85.0
+  },
+  "dosis_max_por_100g_comida": 0.5,
+  "dosis_fuente": "Psyllium: dosis habitual baja (fibra muy expansiva). PENDIENTE etiqueta concreta de NaturGreen",
+  "nota_datos": "Fibra añadida (el psyllium es ~85% fibra soluble). Dosis pendiente de etiqueta concreta."
  },
  {
   "nombre": "AniForte Beef Blood Powder",
@@ -157,8 +203,8 @@
   "categoria": "Hierro",
   "energia": 0,
   "nutrientes": {
-   "proteina": 92,
-   "grasa": 0,
+   "proteina": 92.0,
+   "grasa": 0.4,
    "dha": 0,
    "epa": 0,
    "linoleico": 0,
@@ -173,21 +219,25 @@
    "tiamina": 0,
    "vitB12": 0,
    "vitB6": 0,
-   "calcio": 0.02,
-   "hierro": 28,
-   "potasio": 1,
-   "magnesio": 0.03,
-   "sodio": 0.7,
-   "fosforo": 0.3,
+   "calcio": 20.0,
+   "hierro": 280.0,
+   "potasio": 1000.0,
+   "magnesio": 30.0,
+   "sodio": 700.0,
+   "fosforo": 300.0,
    "yodo": 0,
    "selenio": 0,
-   "zinc": 0.25,
-   "cobre": 0,
+   "zinc": 250.0,
+   "cobre": 80.0,
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 1.08
-  }
+   "cloruro": 1080.0
+  },
+  "dosis_fuente": "Etiqueta AniForte: 1,5 g por cada 5 kg de peso. El fabricante recomienda NO pasar de 12 g/día",
+  "nota_datos": "Minerales corregidos: estaban metidos como porcentaje en bruto (0,28) en vez de mg/100g (280). Verificado contra etiqueta AniForte. Minerales convertidos de % a mg/100g (estaban en bruto).",
+  "dosis_g_por_kg_peso": 0.3,
+  "dosis_max_absoluta_g": 12.0
  },
  {
   "nombre": "Aceite de Salmón Natural Greatness",
@@ -225,7 +275,9 @@
    "acidoPantotenico": 0,
    "colina": 0,
    "cloruro": 0
-  }
+  },
+  "dosis_fuente": "5 ml por 10 kg de peso; 1 ml ≈ 0,92 g",
+  "dosis_g_por_kg_peso": 0.46
  },
  {
   "nombre": "Brit Care Aceite de Salmón",
@@ -263,7 +315,9 @@
    "acidoPantotenico": 0,
    "colina": 0,
    "cloruro": 0
-  }
+  },
+  "dosis_fuente": "5 ml por 10 kg de peso; 1 ml ≈ 0,92 g",
+  "dosis_g_por_kg_peso": 0.46
  },
  {
   "nombre": "Oleum Canis Aceite de Salmón",
@@ -301,7 +355,9 @@
    "acidoPantotenico": 0,
    "colina": 0,
    "cloruro": 0
-  }
+  },
+  "dosis_fuente": "5 ml por 10 kg de peso; 1 ml ≈ 0,92 g",
+  "dosis_g_por_kg_peso": 0.46
  },
  {
   "nombre": "AniForte Aceite de Salmón",
@@ -339,7 +395,9 @@
    "acidoPantotenico": 0,
    "colina": 0,
    "cloruro": 0
-  }
+  },
+  "dosis_fuente": "5 ml por 10 kg de peso; 1 ml ≈ 0,92 g",
+  "dosis_g_por_kg_peso": 0.46
  },
  {
   "nombre": "GRAU Levadura de cerveza",
@@ -357,27 +415,30 @@
    "vitA": 0,
    "vitD": 0,
    "vitE": 0,
-   "folato": 0,
-   "niacina": 0,
-   "riboflavina": 0,
-   "tiamina": 0,
+   "folato": 2340.0,
+   "niacina": 38.0,
+   "riboflavina": 4.4,
+   "tiamina": 11.0,
    "vitB12": 0,
-   "vitB6": 0,
-   "calcio": 0.2,
-   "hierro": 0,
-   "potasio": 0,
-   "magnesio": 0.2,
-   "sodio": 0.2,
-   "fosforo": 1.4,
+   "vitB6": 2.6,
+   "calcio": 200.0,
+   "hierro": 2.2,
+   "potasio": 1900.0,
+   "magnesio": 200.0,
+   "sodio": 200.0,
+   "fosforo": 1400.0,
    "yodo": 0,
-   "selenio": 0,
-   "zinc": 0,
+   "selenio": 100.0,
+   "zinc": 8.0,
    "cobre": 0.4,
    "manganeso": 0,
-   "acidoPantotenico": 0,
+   "acidoPantotenico": 11.0,
    "colina": 0,
-   "cloruro": 0.31
-  }
+   "cloruro": 310.0
+  },
+  "dosis_fuente": "≈3 g por 10 kg de peso (dosis habitual de levadura de cerveza)",
+  "dosis_g_por_kg_peso": 0.3,
+  "nota_datos": "Vitaminas del grupo B añadidas con valores típicos de levadura seca inactiva. NO lleva B12 (solo si está fortificada). Minerales convertidos de % a mg/100g (estaban en bruto)."
  },
  {
   "nombre": "PAWS & PATCH Levadura de cerveza",
@@ -395,27 +456,30 @@
    "vitA": 0,
    "vitD": 0,
    "vitE": 0,
-   "folato": 0,
-   "niacina": 0,
-   "riboflavina": 0,
-   "tiamina": 0,
+   "folato": 2340.0,
+   "niacina": 38.0,
+   "riboflavina": 4.4,
+   "tiamina": 11.0,
    "vitB12": 0,
-   "vitB6": 0,
+   "vitB6": 2.6,
    "calcio": 0,
-   "hierro": 0,
-   "potasio": 0,
+   "hierro": 2.2,
+   "potasio": 1900.0,
    "magnesio": 0,
    "sodio": 0,
    "fosforo": 0,
    "yodo": 0,
-   "selenio": 0,
-   "zinc": 0,
+   "selenio": 100.0,
+   "zinc": 8.0,
    "cobre": 0.4,
    "manganeso": 0,
-   "acidoPantotenico": 0,
+   "acidoPantotenico": 11.0,
    "colina": 0,
    "cloruro": 0
-  }
+  },
+  "dosis_fuente": "≈3 g por 10 kg de peso (dosis habitual de levadura de cerveza)",
+  "dosis_g_por_kg_peso": 0.3,
+  "nota_datos": "Vitaminas del grupo B añadidas con valores típicos de levadura seca inactiva. NO lleva B12 (solo si está fortificada)."
  },
  {
   "nombre": "AniForte Seaweed Meal",
@@ -439,11 +503,11 @@
    "tiamina": 0,
    "vitB12": 0,
    "vitB6": 0,
-   "calcio": 1.2,
+   "calcio": 1200.0,
    "hierro": 0,
    "potasio": 0,
-   "magnesio": 0.8,
-   "sodio": 3.6,
+   "magnesio": 800.0,
+   "sodio": 3600.0,
    "fosforo": 0,
    "yodo": 76000,
    "selenio": 0,
@@ -452,8 +516,11 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 5.54
-  }
+   "cloruro": 5540.0
+  },
+  "dosis_fuente": "½ cucharadita por 10 kg de peso (etiqueta Ascophyllum/Sanadog)",
+  "dosis_g_por_kg_peso": 0.1,
+  "nota_datos": " Minerales convertidos de % a mg/100g (estaban en bruto)."
  },
  {
   "nombre": "Sonrisa de Diez Kelp",
@@ -491,7 +558,9 @@
    "acidoPantotenico": 0,
    "colina": 0,
    "cloruro": 0
-  }
+  },
+  "dosis_max_por_100g_comida": 0.3,
+  "dosis_fuente": "Etiqueta Sonrisa de Diez: 1 cuchara medidora (2,4 g) por cada 800 g de comida casera"
  },
  {
   "nombre": "Mejillón",
@@ -5714,7 +5783,9 @@
    "acidoPantotenico": 0,
    "colina": 0,
    "cloruro": 0
-  }
+  },
+  "dosis_max_por_100g_comida": 0.8,
+  "dosis_fuente": "Misma dosificación que la cáscara comercial: ~4 g por cada 500 g de carne"
  },
  {
   "nombre": "Hígado de pollo",
@@ -5828,7 +5899,26 @@
    "acidoPantotenico": 20.5,
    "colina": 2875,
    "cloruro": 0
-  }
+  },
+  "dosis_tramos_kg": [
+   {
+    "hasta_kg": 10,
+    "gramos": 10.9
+   },
+   {
+    "hasta_kg": 20,
+    "gramos": 16.35
+   },
+   {
+    "hasta_kg": 30,
+    "gramos": 27.25
+   },
+   {
+    "hasta_kg": null,
+    "gramos": 32.7
+   }
+  ],
+  "dosis_fuente": "Etiqueta del fabricante (10,9 g por cucharada)"
  },
  {
   "nombre": "NEKTON Dog Easy-BARF (multivitamínico)",
@@ -5836,8 +5926,8 @@
   "categoria": "Multivitamínico",
   "energia": 0,
   "nutrientes": {
-   "proteina": 0,
-   "grasa": 0,
+   "proteina": 1.8,
+   "grasa": 3.6,
    "dha": 0,
    "epa": 0,
    "linoleico": 0,
@@ -5852,12 +5942,12 @@
    "tiamina": 8,
    "vitB12": 120,
    "vitB6": 32,
-   "calcio": 0,
+   "calcio": 16100,
    "hierro": 187.2,
    "potasio": 0,
    "magnesio": 0,
-   "sodio": 0,
-   "fosforo": 0,
+   "sodio": 7000,
+   "fosforo": 100,
    "yodo": 3100,
    "selenio": 0,
    "zinc": 120,
@@ -5866,6 +5956,10 @@
    "acidoPantotenico": 50,
    "colina": 1200,
    "cloruro": 0
-  }
+  },
+  "dosis_fuente": "Etiqueta NEKTON: 1 cucharadita (~4,5 g) por 10 kg de peso, máximo 6 cucharaditas/día. El fabricante limita además a un 10% de la ración diaria por su contenido en vitamina D y oligoelementos.",
+  "dosis_g_por_kg_peso": 0.45,
+  "dosis_max_absoluta_g": 27.0,
+  "nota_datos": "Vitaminas verificadas una a una contra la etiqueta (coinciden exactas). Minerales añadidos de la etiqueta (Ca 16.1%, P 0.1%, Na 7.0%)."
  }
 ]
