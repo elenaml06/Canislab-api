@@ -24,6 +24,49 @@ solo que no se multiplican entre si: la etapa decide QUE tabla se usa, y
 dentro de adulto/senior la actividad decide el valor.
 
 TODOS los multiplicadores se aplican sobre el RER (70 x peso^0.75).
+
+DE DONDE SALE CADA NUMERO  (auditado el 2 agosto 2026)
+------------------------------------------------------
+VERIFICADO en el PDF oficial de FEDIAF (ediciones 2020, 2021 y 2025):
+
+  · Seccion 3.2.1 "How to read the tables": el mantenimiento de un perro
+    adulto son "either 95 kcal/kg^0.75 or 110 kcal/kg^0.75". Sobre el RER
+    eso es 1.36 y 1.57.
+  · Capitulo 6 (protocolos de ensayo), dos veces: "the estimated daily
+    maintenance energy requirements (about 110 kcal ME per kg BW^0.75 for
+    dogs)" -> 1.57 x RER es el mantenimiento de referencia.
+    NUESTRO "normal" (1.6 = 112 kcal/kg^0.75) coincide practicamente con el.
+  · Seccion 7.2.3.3 "Age": FEDIAF separa a los adultos POR EDAD ("dogs of
+    one to two years old, the average adult dog (three to seven years old)
+    and dogs of more than seven years of age"), no por actividad. Ese es el
+    contenido de la Tabla VII-6. Nosotros usamos actividad en adulto y
+    tratamos la edad avanzada como etapa "senior" aparte: es equivalente en
+    la practica, porque en la app el usuario da la fecha de nacimiento.
+  · Seccion 7.2.3.2 "Activity", literal y muy relevante: "Recommendations
+    for MER may overestimate energy needs by 10 to 60%" y "To avoid
+    overfeeding and the risk of obesity, it may be better to start from a
+    LOWER calculated MER and add as needed to maintain optimal body weight".
+    Por eso nuestro "sedentario" (1.2 = 84 kcal/kg^0.75) queda por DEBAJO
+    del rango de FEDIAF a proposito: es el punto de partida prudente que
+    la propia guia recomienda.
+
+NO VERIFICADO CONTRA FEDIAF (pendiente honesto):
+  Los valores exactos de la Tabla VII-6 (pag. ~62, Anexo 7.2.4) no se han
+  podido leer: el PDF se trunca antes de esa pagina en las tres ediciones
+  probadas, y no aparece transcrita en ninguna fuente secundaria fiable.
+  Lo unico confirmado de esa tabla, via cita en la patente US12137705, es
+  que da 110 kcal/kg^0.75 para perros de 3 a 7 anos -- que es justo nuestro
+  "normal".
+  Por tanto: los factores de ACTIVIDAD (1.8 / 2.0 / 3.0), los de SENIOR y
+  los de GESTACION y LACTANCIA (2.2 y 3.2) vienen de NRC 2006 y de uso
+  clinico habitual, NO de una celda de FEDIAF leida directamente.
+  Gestacion y lactancia estan ademas expresadas por las fuentes como
+  multiplos del MANTENIMIENTO (gestacion ultimo tercio x1.25-1.5,
+  lactancia x2-4 segun camada), y aqui se han convertido a multiplos del
+  RER usando mantenimiento = 1.6 x RER.
+
+  ==> SI ALGUN DIA SE CONSIGUE LA TABLA VII-6, ES LO PRIMERO QUE HAY QUE
+      CONTRASTAR. Es el unico hueco que queda en los tres pilares.
 """
 
 # TODOS estos multiplicadores se aplican sobre el RER (70 x peso^0.75).
