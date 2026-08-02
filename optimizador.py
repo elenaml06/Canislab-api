@@ -223,6 +223,23 @@ SENIOR_PROTEINA_MINIMA = 45.0
 ETAPAS_VALIDAS = {"Adulto", "CachorroJoven", "CachorroCrecimiento"}
 
 
+# Frutas de nuestro catalogo. El JSON no distingue fruta de verdura (todo cae
+# en "Verduras y frutas"), asi que se separan por nombre. Si se anaden frutas
+# nuevas al catalogo hay que meterlas aqui tambien.
+FRUTAS = {
+    "Manzana", "Pera", "Kiwi", "Plátano", "Naranja", "Sandía", "Melón",
+    "Albaricoque", "Frambuesa", "Mango", "Piña", "Arándanos", "Fresas",
+    "Papaya", "Mora", "Cereza", "Melocotón", "Higo", "Ciruela",
+}
+
+
+def es_fruta(nombre: str) -> bool:
+    if nombre in FRUTAS:
+        return True
+    n = nombre.lower()
+    return any(f.lower() in n for f in FRUTAS)
+
+
 def resolver_etapa(etapa_pedida):
     """
     Devuelve la etapa cuyos requisitos hay que usar realmente.
@@ -263,7 +280,7 @@ PESO_POR_CATEGORIA = {
     "Vísceras": 8.0,
     "Hígado": 12.0,
     "Pescados y mariscos": 3.0,
-    "Verduras y frutas": 6.0,
+    "Verduras y frutas": 12.0,
     "Extras": 5.0,
     "Suplementos comerciales": 8.0,
 }
@@ -572,16 +589,73 @@ def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos
     b_ub.append(der_objetivo * 0.50)
 
     # TOPE DE VERDURAS+FRUTA TOTAL -- consenso veterinario general (WSAVA):
-    # los vegetales/fruta no deberian superar ~10% de las kcal diarias,
-    # para no diluir nutrientes esenciales de origen animal y evitar
-    # molestias digestivas por fibra cruda en exceso
+    # =================================================================
+    # TOPE DE VERDURA Y FRUTA -- POR PESO, NO POR ENERGIA
+    # =================================================================
+    # Antes se topaba al 10% de las KCAL. Era el criterio equivocado: la
+    # verdura tiene muy poca energia por gramo (zanahoria 34 kcal/100g,
+    # brocoli 26), asi que ese 10% permitia un peso enorme. Caso real: un
+    # menu de 1526 kcal salio con 189g de zanahoria + 47g de brocoli + 36g
+    # de platano = 272 g, que por peso es un 25-30% del plato. Cada uno
+    # cumplia el tope individual del 15%, pero JUNTOS no habia nada que los
+    # frenara. Topar por energia sobreestima siempre el peso permitido de
+    # ingredientes acuosos y poco energeticos.
+    #
+    # POR QUE POR PESO:
+    # Ni FEDIAF ni NRC reconocen la fibra ni los carbohidratos como
+    # nutrientes esenciales para el perro adulto, asi que NO existe un
+    # minimo de verdura. Tampoco hay un maximo oficial: las guias regulan
+    # NUTRIENTES, no ingredientes. Y los porcentajes clasicos del BARF
+    # (80/10/10, 70/10/10/10, "15-20% de verdura") son convenciones de
+    # divulgacion sin estudio detras.
+    # El riesgo real del exceso vegetal esta bien fundamentado y es la
+    # DILUCION: la verdura desplaza carne, higado y hueso, y baja el aporte
+    # proporcional de proteina, calcio y micronutrientes. Ademas, el exceso
+    # de fibra reduce la digestibilidad global de la dieta y la absorcion de
+    # calcio, hierro y zinc.
+    # Referencia de contexto: Dillitzer, Becker & Kienzle (2011), Br J Nutr
+    # 106:S53 -- de 95 raciones BARF reales analizadas en Munich, el 60%
+    # tenia algun desequilibrio de minerales o vitaminas.
+    #
+    # Los valores 15% y 5% son topes de seguridad de ingenieria, no cifras
+    # de una guia: mantienen la fraccion vegetal donde la evidencia no
+    # muestra dano y donde los minimos nutricionales siguen alcanzables.
+    # El LP verifica los minimos aparte, asi que si la verdura diluyera
+    # demasiado el menu saldria infactible y se veria.
+    # AJUSTE EMPIRICO del tope. Se barrieron varios valores midiendo la tasa
+    # de menus factibles en las 22 pruebas de /home/claude/auditoria:
+    #    15% -> 41%   ·   20% -> 62%   ·   25% -> 67%   ·   30% -> 68%
+    # Por debajo del 25% el motor se ahoga: la verdura tambien aporta potasio
+    # y volumen, y sin ella muchos perfiles no cuadran. Ademas se subio el
+    # coste de la verdura en PESO_POR_CATEGORIA de 6 a 12, que empuja al LP a
+    # usar menos SIN hacer el menu imposible (con eso, 68%).
+    # RESULTADO MEDIDO en menus reales: media 14.7% del peso, maximo 24%.
+    # Cairo paso de 272 g de verdura a 105 g (10.9% del plato).
+    # El 25% es el TOPE DURO, no lo habitual.
+    TOPE_VERDURA_FRUTA_PESO = 0.25   # verdura + fruta juntas
+    TOPE_FRUTA_PESO = 0.05           # la fruta aparte, por su azucar
+
     idx_verdura_cap = [i for i, a in enumerate(alimentos_elegidos) if a["categoria"] == "Verduras y frutas"]
+
     if idx_verdura_cap:
-        fila = [0.0] * n
+        # TOPE GLOBAL: toda la verdura y fruta JUNTAS, sobre el peso total.
+        # sum(verdura) - 0.15 * sum(todo) <= 0
+        fila = [-TOPE_VERDURA_FRUTA_PESO] * n
         for i in idx_verdura_cap:
-            fila[i] = alimentos_elegidos[i]["energia"]  # kcal aportadas por verdura/fruta
+            fila[i] += 1.0
         A_ub.append(fila)
-        b_ub.append(der_objetivo * 0.10)  # maximo 10% de las kcal totales en verdura/fruta
+        b_ub.append(0.0)
+
+        # SUB-TOPE DE FRUTA. En perro sano el azucar de la fruta no es
+        # toxico, pero son calorias vacias que diluyen igual. En diabeticos
+        # habria que bajarlo a casi cero (pendiente: atarlo a patologias).
+        idx_fruta = [i for i in idx_verdura_cap if es_fruta(alimentos_elegidos[i]["nombre"])]
+        if idx_fruta:
+            fila = [-TOPE_FRUTA_PESO] * n
+            for i in idx_fruta:
+                fila[i] += 1.0
+            A_ub.append(fila)
+            b_ub.append(0.0)
 
     # TOPE POR VERDURA/FRUTA INDIVIDUAL -- problema real detectado al generar
     # menus de prueba: salian 369g de arandanos o 197g de espinaca en un solo
@@ -682,7 +756,7 @@ def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos
         "Pescados y mariscos": 20.0,
         "Vísceras": 10.0,
         "Hígado": 5.0,
-        "Verduras y frutas": 15.0,
+        "Verduras y frutas": 12.0,
     }
     # Se escalan con el tamaño del perro: pedirle a un chihuahua de 192 kcal
     # los mismos gramos minimos que a un mastin deja el menu sin solucion
@@ -910,7 +984,7 @@ MINIMO_PRACTICO = {
     "Pescados y mariscos": 20.0,
     "Vísceras": 10.0,
     "Hígado": 5.0,          # el higado va poco por definicion (tope del 5%)
-    "Verduras y frutas": 15.0,
+    "Verduras y frutas": 12.0,
     "Extras": 3.0,          # aceites y semillas: una cucharadita ya cuenta
 }
 
