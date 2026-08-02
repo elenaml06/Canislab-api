@@ -43,8 +43,8 @@
   "nutriente": "Araquidónico",
   "unidad": "mg",
   "minAdulto": "-",
-  "minCachorroJoven": 75,
-  "minCachorroCrecimiento": 75,
+  "minCachorroJoven": "-",
+  "minCachorroCrecimiento": "-",
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-"
