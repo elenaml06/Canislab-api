@@ -308,5 +308,15 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": 4500
+ },
+ {
+  "nutriente": "Fibra",
+  "unidad": "g",
+  "minAdulto": 4.29,
+  "minCachorroJoven": 4.29,
+  "minCachorroCrecimiento": 4.29,
+  "maxCachorroJoven": 14.3,
+  "maxCachorroCrecimiento": 14.3,
+  "maxAdulto": 14.3
  }
 ]
