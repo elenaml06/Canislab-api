@@ -58,6 +58,8 @@ class PeticionDER(BaseModel):
 
 class PeticionMenu(BaseModel):
     peso_perro_kg: float = None
+    # peso ADULTO esperado: activa el tope de calcio de raza grande en cachorros
+    peso_adulto_esperado_kg: float = None
     nombres_excluidos: list = None
     patologias: list = None
     # Lo que el usuario ha elegido A MANO en Personalizar o Aprovechar. Sin
@@ -123,7 +125,8 @@ def endpoint_menu(datos: PeticionMenu):
     resultado = optimizar_menu(candidatos, datos.der_objetivo, datos.etapa_requisitos,
                                forzar_presencia=datos.forzar_presencia,
                                peso_perro_kg=datos.peso_perro_kg,
-                               patologias=datos.patologias)
+                               patologias=datos.patologias,
+                               peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg)
     # Si forzar lo que el usuario eligio deja el menu sin solucion, se
     # reintenta sin forzar: mejor darle un menu (avisando) que un error.
     if not resultado.get("factible") and datos.forzar_presencia:
