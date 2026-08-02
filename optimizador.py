@@ -79,6 +79,7 @@ MAPA_REQUISITO_A_NUTRIENTE = {
     "Acido_pantotenico": "acidoPantotenico",
     "Colina": "colina",
     "Cloruro": "cloruro",
+    "Fibra": "fibra",
 }
 
 
