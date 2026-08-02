@@ -22,7 +22,12 @@ QUÉ SE VERIFICÓ Y CONTRA QUÉ (2 agosto 2026):
     Resultado: 99/99 valores correctos.
   · ALIMENTOS -> BEDCA (fuente primaria del usuario) + Kober/Kienzle para
     huesos con hueso + CIQUAL para lo que falta. 153 alimentos, 0 duplicados.
-  · KCAL -> RER = 70 x peso^0.75, con UN multiplicador por situacion.
+  · KCAL -> METODO EUROPEO. DER = coeficiente en kcal/kg^0.75, con ajustes
+    que se SUMAN (no se multiplican). Crecimiento, gestacion y lactancia
+    segun FEDIAF; adultos segun el estudio de la Univ. de Munich sobre 586
+    perros europeos reales. La actividad NO se usa en cachorros, gestacion
+    ni lactancia (la fuente lo dice literal). Ver der.py y BASES.md.
+    ANTES (metodo americano, RER x factor):
     VERIFICADO contra FEDIAF: el mantenimiento adulto de referencia son
     95-110 kcal/kg^0.75 (secc. 3.2.1 y cap. 6), y nuestro "normal" (1.6 =
     112) coincide con el. FEDIAF ademas recomienda expresamente partir de
@@ -38,7 +43,7 @@ import hashlib, json, os, sys
 SELLOS = {
     "alimentos_v3_final.json":      "ded99a0da6999d16",
     "requerimientos_v2_final.json": "73ab445f9881f543",
-    "der.py":                       "f011ff7b59b3368d",
+    "der.py":                       "d0f3f1fc834f019b",
 }
 
 def huella(ruta):
