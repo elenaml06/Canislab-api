@@ -25,9 +25,10 @@
   "minAdulto": "3.82",
   "minCachorroJoven": "3.25",
   "minCachorroCrecimiento": "3.25",
-  "maxCachorroJoven": "16.25",
+  "maxCachorroJoven": 16.25,
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxAdulto": "-",
+  "nota_auditoria": "Tabla III-3b: el máximo 16.25 g es SOLO para crecimiento temprano ('Early Growth: 16.25 (N)'), no para adulto."
  },
  {
   "nutriente": "Linolénico",
@@ -43,21 +44,23 @@
   "nutriente": "Araquidónico",
   "unidad": "mg",
   "minAdulto": "-",
-  "minCachorroJoven": "-",
-  "minCachorroCrecimiento": "-",
+  "minCachorroJoven": 75.0,
+  "minCachorroCrecimiento": 75.0,
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxAdulto": "-",
+  "nota_auditoria": "Tabla III-3b: 75 mg/1000 kcal en crecimiento y reproducción; en adulto la tabla NO da mínimo. Tenemos el dato en 33 alimentos."
  },
  {
   "nutriente": "Vitamina_A",
   "unidad": "µg",
-  "minAdulto": "526.20",
+  "minAdulto": 526.2,
   "minCachorroJoven": 375,
   "minCachorroCrecimiento": 375,
-  "maxCachorroJoven": 30000,
-  "maxCachorroCrecimiento": 30000,
-  "maxAdulto": 30000
+  "maxCachorroJoven": 30000.0,
+  "maxCachorroCrecimiento": 30000.0,
+  "maxAdulto": 30000.0,
+  "nota_auditoria": "Tabla III-3b: min 1754 UI x 0.30 µg/UI = 526.2 · max nutricional 100.000 UI x 0.30 = 30.000 µg. AMBOS ERAN CORRECTOS."
  },
  {
   "nutriente": "Vitamina_D",
@@ -65,9 +68,10 @@
   "minAdulto": 3.975,
   "minCachorroJoven": 3.45,
   "minCachorroCrecimiento": 3.125,
-  "maxCachorroJoven": 20,
-  "maxCachorroCrecimiento": 20,
-  "maxAdulto": 20
+  "maxCachorroJoven": 20.0,
+  "maxCachorroCrecimiento": 20.0,
+  "maxAdulto": 20.0,
+  "nota_auditoria": "Tabla III-3b: min 159 UI x 0.025 µg/UI = 3.975 · max nutricional 800 UI x 0.025 = 20 µg. AMBOS ERAN CORRECTOS."
  },
  {
   "nutriente": "Vitamina_E",
@@ -77,7 +81,8 @@
   "minCachorroCrecimiento": 8.375,
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxAdulto": "-",
+  "nota_auditoria": "Tabla III-3b en UI: adulto 10.40 · crecimiento 12.50. x 0.67 mg/UI = 6.968 y 8.375 mg."
  },
  {
   "nutriente": "Folato",
@@ -152,12 +157,13 @@
  {
   "nutriente": "Hierro",
   "unidad": "mg",
-  "minAdulto": "10.40",
+  "minAdulto": 10.4,
   "minCachorroJoven": "22.00",
   "minCachorroCrecimiento": 22,
-  "maxCachorroJoven": "-",
-  "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxCachorroJoven": 170.45,
+  "maxCachorroCrecimiento": 170.45,
+  "maxAdulto": 170.45,
+  "nota_auditoria": "Tabla III-3b: min 10.40 mg. Máximo legal: Tabla III-3a 68.18 x 2.5 = 170.45 mg."
  },
  {
   "nutriente": "Potasio",
@@ -185,9 +191,10 @@
   "minAdulto": 290,
   "minCachorroJoven": 550,
   "minCachorroCrecimiento": 550,
-  "maxCachorroJoven": "-",
-  "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxCachorroJoven": 3750.0,
+  "maxCachorroCrecimiento": 3750.0,
+  "maxAdulto": 3750.0,
+  "nota_auditoria": "Nota c de la tabla: hasta 1.5% MS (3.75 g/1000 kcal) es seguro en perros sanos."
  },
  {
   "nutriente": "Fósforo",
@@ -202,42 +209,46 @@
  {
   "nutriente": "Yodo",
   "unidad": "µg",
-  "minAdulto": 300,
+  "minAdulto": 300.0,
   "minCachorroJoven": 380,
   "minCachorroCrecimiento": 380,
-  "maxCachorroJoven": "-",
-  "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxCachorroJoven": 2750.0,
+  "maxCachorroCrecimiento": 2750.0,
+  "maxAdulto": 2750.0,
+  "nota_auditoria": "Tabla III-3b: min 0.30 mg = 300 µg. Máximo legal: Tabla III-3a 1.10 mg/100g MS x 2.5 = 2.75 mg = 2750 µg."
  },
  {
   "nutriente": "Selenio",
   "unidad": "µg",
-  "minAdulto": 55,
-  "minCachorroJoven": 100,
-  "minCachorroCrecimiento": 100,
-  "maxCachorroJoven": "-",
-  "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "minAdulto": 67.5,
+  "minCachorroJoven": 100.0,
+  "minCachorroCrecimiento": 100.0,
+  "maxCachorroJoven": 142.0,
+  "maxCachorroCrecimiento": 142.0,
+  "maxAdulto": 142.0,
+  "nota_auditoria": "Tabla III-3b: adulto DIETAS HÚMEDAS 67.50 µg (col. 95 kcal; las secas 55 — el BARF es húmedo). Crecimiento y reproducción 100 µg. Máx legal: III-3a 56.80 µg/100g MS x2.5 = 142."
  },
  {
   "nutriente": "Zinc",
   "unidad": "mg",
-  "minAdulto": "20.80",
+  "minAdulto": 20.8,
   "minCachorroJoven": 25,
   "minCachorroCrecimiento": 25,
-  "maxCachorroJoven": "-",
-  "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxCachorroJoven": 56.75,
+  "maxCachorroCrecimiento": 56.75,
+  "maxAdulto": 56.75,
+  "nota_auditoria": "Tabla III-3b: min 20.80 mg. Máximo legal: Tabla III-3a 22.70 x 2.5 = 56.75 mg."
  },
  {
   "nutriente": "Cobre",
   "unidad": "mg",
-  "minAdulto": "2.08",
+  "minAdulto": 2.08,
   "minCachorroJoven": "2.75",
   "minCachorroCrecimiento": "2.75",
-  "maxCachorroJoven": "-",
-  "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxCachorroJoven": 7.0,
+  "maxCachorroCrecimiento": 7.0,
+  "maxAdulto": 7.0,
+  "nota_auditoria": "Tabla III-3b: min 2.08 mg. Máximo legal: Tabla III-3a 2.80 mg/100g MS x 2.5 = 7.0 mg."
  },
  {
   "nutriente": "Relacion_Ca_P",
@@ -267,7 +278,8 @@
   "minCachorroCrecimiento": 1.4,
   "maxCachorroJoven": 42.5,
   "maxCachorroCrecimiento": 42.5,
-  "maxAdulto": 42.5
+  "maxAdulto": 42.5,
+  "nota_auditoria": "Tabla III-3b: min 1.67 mg. Máximo legal: Tabla III-3a 17.00 x 2.5 = 42.50 mg."
  },
  {
   "nutriente": "Acido_pantotenico",
@@ -295,9 +307,10 @@
   "minAdulto": 430,
   "minCachorroJoven": 830,
   "minCachorroCrecimiento": 830,
-  "maxCachorroJoven": "-",
-  "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxCachorroJoven": 5870.0,
+  "maxCachorroCrecimiento": 5870.0,
+  "maxAdulto": 5870.0,
+  "nota_auditoria": "Nota c de la tabla: hasta 2.35% MS (5.87 g/1000 kcal) es seguro en perros sanos."
  },
  {
   "nutriente": "Calcio_LateGrowth_RazaGrande",
@@ -305,9 +318,10 @@
   "minAdulto": "-",
   "minCachorroJoven": "-",
   "minCachorroCrecimiento": 2500,
-  "maxCachorroJoven": "-",
-  "maxCachorroCrecimiento": "-",
-  "maxAdulto": 4500
+  "maxCachorroJoven": 4500,
+  "maxCachorroCrecimiento": 4500,
+  "maxAdulto": "-",
+  "nota_auditoria": "El tope estaba en la columna 'maxAdulto', que NO se consulta para un cachorro: era papel mojado. Movido a maxCachorroCrecimiento/Joven. Además el motor no tenía este nutriente en su MAPA, así que lo ignoraba por completo. En razas grandes el exceso de calcio durante el crecimiento causa osteocondrosis: no pueden regular su absorción como los adultos."
  },
  {
   "nutriente": "Fibra",
