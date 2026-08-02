@@ -142,7 +142,8 @@ PESO_POR_CATEGORIA = {
 
 
 def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos: str = "Adulto",
-                  forzar_presencia: list = None):
+                  forzar_presencia: list = None, peso_perro_kg: float = None,
+                  tope_por_alimento: float = 0.30):
     """
     alimentos_elegidos: lista de dicts (formato alimentos_v3_final.json), uno
                          por cada "ranura" del menu (ej: carne, hueso, viscera,
@@ -357,15 +358,41 @@ def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos
     # con el tamaño del perro), NO como dosis prescriptiva -- la app ya le
     # dice al usuario que siga la dosis del fabricante en el envase para
     # cada producto concreto
-    idx_suplementos = [i for i, a in enumerate(alimentos_elegidos) if a.get("tipo") == "Suplemento"]
-    if idx_suplementos:
-        fila = [0.0] * n
-        for i in range(n):
-            fila[i] = -0.02
-        for i in idx_suplementos:
+    # [RETIRADA] Antes habia un tope global de "suplementos <= 2% de la racion".
+    # Se puso cuando no teniamos las dosis reales de cada producto, como
+    # proteccion generica. Ahora cada suplemento lleva SU dosis de fabricante
+    # (ver mas abajo), que es una proteccion mucho mejor y especifica. El 2%
+    # generico ademas impedia las plantillas compactas, que precisamente se
+    # apoyan en los suplementos para reducir el numero de alimentos, que es
+    # como trabajan los formuladores profesionales.
+
+    # DOSIS MAXIMA DEL FABRICANTE (por suplemento concreto)
+    # [CIENCIA - etiqueta del producto] Un suplemento comercial NO es un
+    # alimento mas: viene dosificado por el fabricante segun el peso del
+    # perro, y pasarse no es "un poco mas de vitaminas", es salirse de lo
+    # que el producto tiene validado. Sin esto el motor usaba la cantidad
+    # que le cuadraba matematicamente (se detecto dando 23g de un producto
+    # cuya dosis para ese peso son 16.35g).
+    for i, a in enumerate(alimentos_elegidos):
+        # (1) dosis fija segun el PESO DEL PERRO (multivitaminicos, harina de hueso)
+        tope_g = dosis_maxima_fabricante(a, peso_perro_kg)
+        if tope_g is not None:
+            fila = [0.0] * n
+            fila[i] = 1.0
+            A_ub.append(fila)
+            # se resta un pelin para absorber el redondeo hacia arriba
+            b_ub.append(max(tope_g - 0.1, 0) / 100)
+
+        # (2) dosis proporcional a la RACION (kelp, algas: "x g por cada 100g
+        #     de comida"). Se expresa como: suplemento - pct*total <= 0
+        por_100 = a.get("dosis_max_por_100g_comida")
+        if por_100:
+            fila = [0.0] * n
+            for j in range(n):
+                fila[j] = -por_100 / 100.0
             fila[i] += 1.0
-        A_ub.append(fila)
-        b_ub.append(0.0)  # maximo 2% del total de la racion en suplementos
+            A_ub.append(fila)
+            b_ub.append(0.0)
 
     # TOPE ESPECIFICO DE YODO POR KELP/ALGAS -- investigado (Research): el
     # yodo del kelp varia hasta 100 VECES entre lotes/especies de alga
@@ -397,7 +424,12 @@ def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos
     for i in idx_grasa_todos:
         fila[i] = alimentos_elegidos[i]["nutrientes"].get("grasa", 0) * 9  # kcal de grasa aportadas
     A_ub.append(fila)
-    b_ub.append(der_objetivo * 0.35)  # maximo 35% de las kcal totales como grasa
+    # El 35% inicial era demasiado estricto: obligaba a tirar de carnes muy
+    # magras y la racion se disparaba en volumen (se vieron 968 g para un
+    # cachorro de 6 kg, un 16% de su peso). Una dieta BARF normal esta entre
+    # el 40 y el 50% de las kcal en grasa. Se sube a 50%, que sigue estando
+    # dentro de lo habitual y deja al motor elegir alimentos mas densos.
+    b_ub.append(der_objetivo * 0.50)
 
     # TOPE DE VERDURAS+FRUTA TOTAL -- consenso veterinario general (WSAVA):
     # los vegetales/fruta no deberian superar ~10% de las kcal diarias,
@@ -458,10 +490,13 @@ def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos
 
     # (a) Ningun alimento individual puede pasar del 30% del peso total --
     #     evita el "600g de un solo corte" y fuerza variedad real
+    # El tope por alimento se puede ajustar: las plantillas compactas usan
+    # 40% porque con solo 5 alimentos reales alguno tiene que pesar mas.
+    # Sigue evitando el "600 g de un solo corte" que motivo la regla.
     for i in range(n):
         fila = [0.0] * n
         for j in range(n):
-            fila[j] = -0.30
+            fila[j] = -tope_por_alimento
         fila[i] += 1.0
         A_ub.append(fila)
         b_ub.append(0.0)
@@ -479,18 +514,30 @@ def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos
         A_ub.append(fila)
         b_ub.append(0.0)  # hueso carnoso >= 8% del peso total
 
-    # (c) Minimo real de Pescado: es la fuente principal de omega-3 (EPA/DHA)
-    #     de la dieta. El motor lo descartaba entero por ser "ineficiente"
-    #     en gramos, aunque el usuario lo hubiera elegido expresamente
-    idx_pescado_min = [i for i, a in enumerate(alimentos_elegidos) if a["categoria"] == "Pescados y mariscos"]
-    if idx_pescado_min:
-        fila = [0.0] * n
-        for i in range(n):
-            fila[i] = 0.05
-        for i in idx_pescado_min:
-            fila[i] -= 1.0
-        A_ub.append(fila)
-        b_ub.append(0.0)  # pescado >= 5% del peso total, si hay pescado disponible
+    # (b2) ESTRUCTURA BARF OBLIGATORIA
+    # Una dieta BARF tiene cinco pilares y todos deben estar: hueso carnoso,
+    # carne o pescado, verduras/frutas, visceras e higado. Cada uno con su
+    # limite propio. Los suplementos comerciales estan para COMPENSAR lo que
+    # falte, no para sustituir a ninguna de estas categorias: no se puede
+    # cambiar el hueso carnoso por harina de hueso y quedarse tan anchos.
+    for categoria, mn_pct in (("Hígado", 0.01), ("Vísceras", 0.02)):
+        idx = [i for i, a in enumerate(alimentos_elegidos) if a["categoria"] == categoria]
+        if idx:
+            fila = [0.0] * n
+            for j in range(n):
+                fila[j] = mn_pct
+            for i in idx:
+                fila[i] -= 1.0
+            A_ub.append(fila)
+            b_ub.append(0.0)
+
+    # (c) [RETIRADA] Antes habia un minimo de 5% de pescado. Era redundante:
+    #     FEDIAF ya exige EPA/DHA como nutriente, y eso por si solo obliga al
+    #     motor a incluir una fuente de omega-3 cuando hace falta. Mantener
+    #     ademas un minimo por peso hacia que saliera MAS pescado del
+    #     necesario (se vieron 284g de trucha en un perro de 17kg) y ademas
+    #     imponia pescado a quien no quiere darlo. El nutriente manda; la
+    #     categoria no tiene por que ser obligatoria.
 
     # PRESENCIA FORZADA: cuando el usuario AÑADE un alimento a mano (ej. un
     # suplemento con el boton de la app), el motor a veces le asignaba 0,00g
@@ -553,7 +600,7 @@ def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos
     # solver reparta esa carga entre los que si se quedan.
     if descartados and len(alimentos_elegidos) - len(descartados) >= 4:
         restantes = [a for a in alimentos_elegidos if a["nombre"] not in descartados]
-        reintento = _resolver_lp(restantes, der_objetivo, etapa_requisitos, forzar_presencia)
+        reintento = _resolver_lp(restantes, der_objetivo, etapa_requisitos, forzar_presencia, peso_perro_kg, tope_por_alimento)
         if reintento["factible"]:
             return reintento
         # si sin ellos no hay solucion, es que de verdad hacian falta:
@@ -612,17 +659,42 @@ if __name__ == "__main__":
 # resto. Se repite hasta llegar al numero objetivo de alimentos, y si en
 # algun paso deja de haber solucion, se devuelve el ultimo menu valido.
 
+def dosis_maxima_fabricante(alimento: dict, peso_perro_kg: float):
+    """Gramos maximos al dia que el FABRICANTE recomienda de ese suplemento,
+    segun el peso del perro. None si el producto no trae tabla de dosis."""
+    # (a) dosis lineal: g por kg de peso corporal (aceites, algas, levadura)
+    por_kg = alimento.get("dosis_g_por_kg_peso")
+    if por_kg and peso_perro_kg is not None:
+        return por_kg * peso_perro_kg
+
+    # (a2) algunos productos ademas tienen un tope absoluto ("maximo N
+    #      cucharaditas al dia") que manda sobre el calculo por peso
+    tope_abs = alimento.get("dosis_max_absoluta_g")
+    if por_kg and peso_perro_kg is not None and tope_abs:
+        return min(por_kg * peso_perro_kg, tope_abs)
+
+    # (b) dosis por tramos de peso (multivitaminicos, harinas de hueso)
+    tramos = alimento.get("dosis_tramos_kg")
+    if not tramos or peso_perro_kg is None:
+        return None
+    for t in tramos:
+        if t["hasta_kg"] is None or peso_perro_kg <= t["hasta_kg"]:
+            return t["gramos"]
+    return tramos[-1]["gramos"]
+
+
 MAX_ALIMENTOS_MENU = 8   # objetivo practico (ver nota: el LP suele necesitar ~11)
 GRAMOS_INSIGNIFICANTES = 3.0  # por debajo de esto no merece la pena pesarlo
 
 
 def optimizar_menu(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos: str = "Adulto",
-                    forzar_presencia: list = None, max_alimentos: int = MAX_ALIMENTOS_MENU):
+                    forzar_presencia: list = None, max_alimentos: int = MAX_ALIMENTOS_MENU,
+                    peso_perro_kg: float = None, tope_por_alimento: float = 0.30):
     """
     Calcula el menu y ademas lo simplifica para que sea practico de usar:
     pocos alimentos y sin cantidades ridiculas de pesar.
     """
-    resultado = _resolver_lp(alimentos_elegidos, der_objetivo, etapa_requisitos, forzar_presencia)
+    resultado = _resolver_lp(alimentos_elegidos, der_objetivo, etapa_requisitos, forzar_presencia, peso_perro_kg, tope_por_alimento)
     if not resultado["factible"]:
         return resultado
 
@@ -635,15 +707,26 @@ def optimizar_menu(alimentos_elegidos: list, der_objetivo: float, etapa_requisit
         usados = {n: g for n, g in mejor["gramos"].items() if g > 0.01}
 
         # 1) quitar lo que sale en cantidad insignificante (no se puede ni pesar)
+        # Los 5 pilares BARF NO se podan nunca: si se quita el unico higado
+        # del menu, la regla de "higado >= 1%" deja de aplicarse (su indice
+        # queda vacio) y el menu se queda SIN higado sin que nadie avise.
+        CATEGORIAS_PILAR = {"Hueso carnoso", "Carne muscular", "Verduras y frutas",
+                            "Vísceras", "Hígado"}
+        catalogo_local = {a["nombre"]: a for a in candidatos}
         insignificantes = [n for n, g in usados.items()
-                           if g < GRAMOS_INSIGNIFICANTES and n not in protegidos]
+                           if g < GRAMOS_INSIGNIFICANTES and n not in protegidos
+                           and catalogo_local.get(n, {}).get("categoria") not in CATEGORIAS_PILAR]
         # 2) si ya no hay insignificantes pero siguen sobrando alimentos,
         #    quitar el mas pequeño de todos
         if insignificantes:
             a_quitar = insignificantes
         elif len(usados) > max_alimentos:
+            # tampoco aqui se puede tirar un pilar: el higado suele ser lo
+            # mas pequeño del menu y era justo lo que se estaba quitando
             candidato_menor = min(
-                ((n, g) for n, g in usados.items() if n not in protegidos),
+                ((n, g) for n, g in usados.items()
+                 if n not in protegidos
+                 and catalogo_local.get(n, {}).get("categoria") not in CATEGORIAS_PILAR),
                 key=lambda x: x[1], default=None)
             if candidato_menor is None:
                 break
@@ -656,7 +739,7 @@ def optimizar_menu(alimentos_elegidos: list, der_objetivo: float, etapa_requisit
         if len(nuevos_candidatos) < 4:
             break
 
-        intento = _resolver_lp(nuevos_candidatos, der_objetivo, etapa_requisitos, forzar_presencia)
+        intento = _resolver_lp(nuevos_candidatos, der_objetivo, etapa_requisitos, forzar_presencia, peso_perro_kg, tope_por_alimento)
         if not intento["factible"]:
             # quitar ese alimento rompe el menu -> nos quedamos con el ultimo bueno
             break
