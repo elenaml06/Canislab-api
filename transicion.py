@@ -25,7 +25,10 @@ def dias_desde_inicio(fecha_inicio: date, fecha_hoy: date = None) -> int:
 def calcular_tramo_transicion(fecha_inicio: date, fecha_hoy: date = None) -> dict:
     dias = dias_desde_inicio(fecha_inicio, fecha_hoy)
     if dias < 0:
-        raise ValueError("La fecha de hoy es anterior a la fecha de inicio")
+        # Puede pasar por algo tan tonto como el reloj del movil mal puesto o
+        # una transicion programada para empezar mañana. Reventar aqui deja al
+        # usuario sin pantalla; se trata como "aun no ha empezado" (dia 1).
+        dias = 0
 
     for tramo in TRAMOS:
         if tramo["dias_hasta"] is None or dias < tramo["dias_hasta"]:
