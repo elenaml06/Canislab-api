@@ -531,6 +531,21 @@ def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos
             A_ub.append(fila)
             b_ub.append(0.0)
 
+    # (b3) TOPE DE EXTRAS (aceites, semillas, huevo)
+    # Son muy densos en calorias y el motor tiraba de ellos para cuadrar
+    # grasa y acidos grasos: se vieron 67,8 g de aceite en un perro de 25 kg,
+    # casi cinco cucharadas soperas. La pauta habitual es ~1 cucharadita por
+    # cada 10 kg. Se limita la categoria al 5% del peso de la racion.
+    idx_extras = [i for i, a in enumerate(alimentos_elegidos) if a["categoria"] == "Extras"]
+    if idx_extras:
+        fila = [0.0] * n
+        for j in range(n):
+            fila[j] = -0.05
+        for i in idx_extras:
+            fila[i] += 1.0
+        A_ub.append(fila)
+        b_ub.append(0.0)
+
     # (c) [RETIRADA] Antes habia un minimo de 5% de pescado. Era redundante:
     #     FEDIAF ya exige EPA/DHA como nutriente, y eso por si solo obliga al
     #     motor a incluir una fuente de omega-3 cuando hace falta. Mantener
