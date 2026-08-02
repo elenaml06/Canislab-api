@@ -532,6 +532,35 @@ def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos
             A_ub.append(fila)
             b_ub.append(0.0)
 
+    # (b2b) MINIMO PRACTICO POR CATEGORIA, EN GRAMOS ABSOLUTOS
+    # Podar despues no basta: si el unico higado del menu sale a 0,6 g no se
+    # puede quitar (haria falta para cumplir la estructura BARF) y quedaba una
+    # cantidad que nadie puede pesar. Se le exige al LP desde el principio que
+    # si una categoria esta en el menu, este con una cantidad manejable.
+    MINIMOS_ABSOLUTOS_G = {
+        "Carne muscular": 25.0,
+        "Hueso carnoso": 20.0,
+        "Pescados y mariscos": 20.0,
+        "Vísceras": 10.0,
+        "Hígado": 5.0,
+        "Verduras y frutas": 15.0,
+    }
+    # Se escalan con el tamaño del perro: pedirle a un chihuahua de 192 kcal
+    # los mismos gramos minimos que a un mastin deja el menu sin solucion
+    # posible (las 6 categorias juntas se comerian media racion). El factor
+    # esta topado al alza para que un perro gigante no acabe con minimos
+    # desproporcionados.
+    factor_tamano = min(1.0, max(0.35, der_objetivo / 1200))
+    for categoria, minimo_g in MINIMOS_ABSOLUTOS_G.items():
+        idx = [i for i, a in enumerate(alimentos_elegidos) if a["categoria"] == categoria]
+        if not idx:
+            continue
+        fila = [0.0] * n
+        for i in idx:
+            fila[i] = -1.0
+        A_ub.append(fila)
+        b_ub.append(-(minimo_g * factor_tamano) / 100)   # variables en unidades de 100 g
+
     # (b3) TOPE DE EXTRAS (aceites, semillas, huevo)
     # Son muy densos en calorias y el motor tiraba de ellos para cuadrar
     # grasa y acidos grasos: se vieron 67,8 g de aceite en un perro de 25 kg,
@@ -702,6 +731,27 @@ def dosis_maxima_fabricante(alimento: dict, peso_perro_kg: float):
 MAX_ALIMENTOS_MENU = 8   # objetivo practico (ver nota: el LP suele necesitar ~11)
 GRAMOS_INSIGNIFICANTES = 3.0  # por debajo de esto no merece la pena pesarlo
 
+# Cuanto es "una cantidad ridicula" depende del alimento. 3 g de aceite es una
+# cucharadita normal, pero 5 g de muslo de pavo no tiene ningun sentido: nadie
+# compra ni pesa eso. Se pide un minimo razonable a la comida de verdad, y se
+# deja que los suplementos y aceites salgan en cantidades pequeñas.
+MINIMO_PRACTICO = {
+    "Carne muscular": 25.0,
+    "Hueso carnoso": 20.0,
+    "Pescados y mariscos": 20.0,
+    "Vísceras": 10.0,
+    "Hígado": 5.0,          # el higado va poco por definicion (tope del 5%)
+    "Verduras y frutas": 15.0,
+    "Extras": 3.0,          # aceites y semillas: una cucharadita ya cuenta
+}
+
+
+def minimo_practico(alimento):
+    """Gramos por debajo de los cuales ese alimento no merece estar en el menu."""
+    if alimento.get("tipo") == "Suplemento":
+        return 0.3          # los suplementos se dosifican en decimas de gramo
+    return MINIMO_PRACTICO.get(alimento.get("categoria"), GRAMOS_INSIGNIFICANTES)
+
 
 def optimizar_menu(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos: str = "Adulto",
                     forzar_presencia: list = None, max_alimentos: int = MAX_ALIMENTOS_MENU,
@@ -730,8 +780,24 @@ def optimizar_menu(alimentos_elegidos: list, der_objetivo: float, etapa_requisit
                             "Vísceras", "Hígado"}
         catalogo_local = {a["nombre"]: a for a in candidatos}
         insignificantes = [n for n, g in usados.items()
-                           if g < GRAMOS_INSIGNIFICANTES and n not in protegidos
+                           if n not in protegidos
+                           and g < minimo_practico(catalogo_local.get(n, {}))
                            and catalogo_local.get(n, {}).get("categoria") not in CATEGORIAS_PILAR]
+
+        # Los pilares tampoco pueden salir en cantidades ridiculas: si un
+        # pilar sale por debajo de su minimo practico se quita IGUAL, pero
+        # solo cuando queda otro alimento de su misma categoria que lo
+        # sustituya (asi el pilar sigue presente en el menu).
+        for n, g in usados.items():
+            a = catalogo_local.get(n, {})
+            cat = a.get("categoria")
+            if (cat in CATEGORIAS_PILAR and n not in protegidos
+                    and g < minimo_practico(a) and n not in insignificantes):
+                hermanos = [m for m, gm in usados.items()
+                            if m != n and catalogo_local.get(m, {}).get("categoria") == cat
+                            and gm >= minimo_practico(catalogo_local.get(m, {}))]
+                if hermanos:
+                    insignificantes.append(n)
         # 2) si ya no hay insignificantes pero siguen sobrando alimentos,
         #    quitar el mas pequeño de todos
         if insignificantes:
