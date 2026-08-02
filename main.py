@@ -257,6 +257,56 @@ def _etapa_ok(etapa):
                                  f"Usa una de: {sorted(ETAPAS_VALIDAS)}")
 
 
+# =====================================================================
+# COMPROBACION DE INTEGRIDAD — se abre en el navegador, sin terminal
+#   https://canislab-api.onrender.com/verificar
+# Dice si los tres pilares (alimentos, requisitos y DER) llegaron intactos
+# al servidor. Nace de que el usuario trabaja desde el movil y no puede
+# ejecutar verificar_pilares.py a mano.
+# =====================================================================
+@app.get("/verificar")
+def verificar():
+    import hashlib, os
+    SELLOS = {
+        "alimentos_v3_final.json":      "ded99a0da6999d16",
+        "requerimientos_v2_final.json": "73ab445f9881f543",
+        "der.py":                       "7caac8124796443f",
+    }
+    base = os.path.dirname(os.path.abspath(__file__))
+    detalle, todo_ok = [], True
+    for fichero, esperado in SELLOS.items():
+        ruta = os.path.join(base, fichero)
+        if not os.path.exists(ruta):
+            detalle.append({"archivo": fichero, "estado": "NO EXISTE"})
+            todo_ok = False
+            continue
+        actual = hashlib.sha256(open(ruta, "rb").read()).hexdigest()[:16]
+        ok = actual == esperado
+        todo_ok = todo_ok and ok
+        detalle.append({
+            "archivo": fichero,
+            "esperado": esperado,
+            "encontrado": actual,
+            "estado": "correcto" if ok else "NO COINCIDE — el archivo llego alterado",
+        })
+
+    # ademas, que los datos se puedan leer de verdad
+    try:
+        alimentos = cargar_alimentos()
+        n_alimentos = len(alimentos)
+    except Exception as e:
+        n_alimentos = f"ERROR: {e}"
+        todo_ok = False
+
+    return {
+        "ok": todo_ok,
+        "resumen": ("Los tres pilares estan intactos" if todo_ok
+                    else "ALGO NO CUADRA — revisa el detalle y vuelve a subir el archivo"),
+        "alimentos_cargados": n_alimentos,
+        "detalle": detalle,
+    }
+
+
 @app.post("/analizar")
 def analizar(req: AnalisisRequest):
     der = req.der_objetivo
