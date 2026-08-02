@@ -57,6 +57,7 @@ class PeticionDER(BaseModel):
 
 
 class PeticionMenu(BaseModel):
+    peso_perro_kg: float = None
     nombres_alimentos: list[str]
     der_objetivo: float
     etapa_requisitos: str
@@ -64,6 +65,7 @@ class PeticionMenu(BaseModel):
 
 
 class PeticionCambiarAlimento(BaseModel):
+    peso_perro_kg: float = None
     menu_actual: list[str]
     alimento_viejo: str
     alimento_nuevo: str
@@ -73,6 +75,7 @@ class PeticionCambiarAlimento(BaseModel):
 
 
 class PeticionAnadirQuitarAlimento(BaseModel):
+    peso_perro_kg: float = None
     menu_actual: list[str]
     alimento: str
     der_objetivo: float
@@ -105,7 +108,8 @@ def endpoint_menu(datos: PeticionMenu):
     candidatos = [por_nombre[n] for n in datos.nombres_alimentos if n in por_nombre]
     if not candidatos:
         raise HTTPException(400, "Ninguno de los alimentos indicados existe en la base de datos")
-    resultado = optimizar_menu(candidatos, datos.der_objetivo, datos.etapa_requisitos)
+    resultado = optimizar_menu(candidatos, datos.der_objetivo, datos.etapa_requisitos,
+                               peso_perro_kg=datos.peso_perro_kg)
     return resultado
 
 
@@ -125,6 +129,7 @@ def endpoint_cambiar_alimento(datos: PeticionCambiarAlimento):
     resultado = cambiar_alimento(
         datos.menu_actual, datos.alimento_viejo, datos.alimento_nuevo,
         datos.der_objetivo, datos.etapa_requisitos, set(datos.especies_excluidas),
+        peso_perro_kg=datos.peso_perro_kg,
     )
     return resultado
 
@@ -135,6 +140,7 @@ def endpoint_anadir_alimento(datos: PeticionAnadirQuitarAlimento):
     resultado = anadir_alimento(
         datos.menu_actual, datos.alimento,
         datos.der_objetivo, datos.etapa_requisitos, set(datos.especies_excluidas),
+        peso_perro_kg=datos.peso_perro_kg,
     )
     return resultado
 
@@ -145,6 +151,7 @@ def endpoint_quitar_alimento(datos: PeticionAnadirQuitarAlimento):
     resultado = quitar_alimento(
         datos.menu_actual, datos.alimento,
         datos.der_objetivo, datos.etapa_requisitos, set(datos.especies_excluidas),
+        peso_perro_kg=datos.peso_perro_kg,
     )
     return resultado
 
