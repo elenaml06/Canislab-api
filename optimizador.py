@@ -80,6 +80,12 @@ MAPA_REQUISITO_A_NUTRIENTE = {
     "Colina": "colina",
     "Cloruro": "cloruro",
     "Fibra": "fibra",
+    # Tope de calcio especifico para cachorros de raza GRANDE en crecimiento.
+    # Se mapea al mismo nutriente que "Calcio" a proposito: es una segunda
+    # restriccion, mas estricta, que solo se activa cuando toca (ver
+    # `es_raza_grande` en optimizar_menu). Antes estaba en el JSON pero no en
+    # este mapa, asi que el motor lo ignoraba por completo.
+    "Calcio_LateGrowth_RazaGrande": "calcio",
 }
 
 
@@ -243,7 +249,8 @@ PESO_POR_CATEGORIA = {
 
 def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos: str = "Adulto",
                   forzar_presencia: list = None, peso_perro_kg: float = None,
-                  tope_por_alimento: float = 0.30, patologias: list = None):
+                  tope_por_alimento: float = 0.30, patologias: list = None,
+                 peso_adulto_esperado_kg: float = None):
     """
     alimentos_elegidos: lista de dicts (formato alimentos_v3_final.json), uno
                          por cada "ranura" del menu (ej: carne, hueso, viscera,
@@ -666,6 +673,18 @@ def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos
     # mas: lo que importa en un chihuahua es que la estructura este, no que
     # cada categoria llegue a los gramos de un perro grande.
     factor_tamano = min(1.0, max(0.35, der_objetivo / 1200))
+    # --- CALCIO EN CACHORROS DE RAZA GRANDE ---
+    # Solo se aplica si el perro es de raza grande Y esta creciendo. Para el
+    # resto seria innecesariamente estricto.
+    if peso_adulto_esperado_kg and peso_adulto_esperado_kg >= 25 and "Cachorro" in etapa_requisitos:
+        for req in requerimientos:
+            if req["nutriente"] != "Calcio_LateGrowth_RazaGrande":
+                continue
+            tope = _valor_o_none(req.get(f"max{etapa_datos}"))
+            if tope:
+                A_ub.append([a["nutrientes"].get("calcio", 0) for a in alimentos_elegidos])
+                b_ub.append(tope * (der_objetivo / 1000))
+
     # --- PATOLOGIAS: topes mas estrictos que los de FEDIAF ---
     for p in (patologias or []):
         cfg = PATOLOGIAS.get(p, {})
@@ -773,7 +792,7 @@ def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos
     # solver reparta esa carga entre los que si se quedan.
     if descartados and len(alimentos_elegidos) - len(descartados) >= 4:
         restantes = [a for a in alimentos_elegidos if a["nombre"] not in descartados]
-        reintento = _resolver_lp(restantes, der_objetivo, etapa_requisitos, forzar_presencia, peso_perro_kg, tope_por_alimento, patologias)
+        reintento = _resolver_lp(restantes, der_objetivo, etapa_requisitos, forzar_presencia, peso_perro_kg, tope_por_alimento, patologias, peso_adulto_esperado_kg)
         if reintento["factible"]:
             return reintento
         # si sin ellos no hay solucion, es que de verdad hacian falta:
@@ -884,7 +903,7 @@ def minimo_practico(alimento):
 def optimizar_menu(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos: str = "Adulto",
                     forzar_presencia: list = None, max_alimentos: int = MAX_ALIMENTOS_MENU,
                     peso_perro_kg: float = None, tope_por_alimento: float = 0.30,
-                    patologias: list = None):
+                    patologias: list = None, peso_adulto_esperado_kg: float = None):
     """
     Calcula el menu y ademas lo simplifica para que sea practico de usar:
     pocos alimentos y sin cantidades ridiculas de pesar.
@@ -897,7 +916,7 @@ def optimizar_menu(alimentos_elegidos: list, der_objetivo: float, etapa_requisit
                 "requiere_veterinario": True,
                 "gramos": {}}
 
-    resultado = _resolver_lp(alimentos_elegidos, der_objetivo, etapa_requisitos, forzar_presencia, peso_perro_kg, tope_por_alimento, patologias)
+    resultado = _resolver_lp(alimentos_elegidos, der_objetivo, etapa_requisitos, forzar_presencia, peso_perro_kg, tope_por_alimento, patologias, peso_adulto_esperado_kg)
     if not resultado["factible"]:
         return resultado
 
@@ -958,7 +977,7 @@ def optimizar_menu(alimentos_elegidos: list, der_objetivo: float, etapa_requisit
         if len(nuevos_candidatos) < 4:
             break
 
-        intento = _resolver_lp(nuevos_candidatos, der_objetivo, etapa_requisitos, forzar_presencia, peso_perro_kg, tope_por_alimento, patologias)
+        intento = _resolver_lp(nuevos_candidatos, der_objetivo, etapa_requisitos, forzar_presencia, peso_perro_kg, tope_por_alimento, patologias, peso_adulto_esperado_kg)
         if not intento["factible"]:
             # quitar ese alimento rompe el menu -> nos quedamos con el ultimo bueno
             break
