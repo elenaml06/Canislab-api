@@ -83,6 +83,105 @@ MAPA_REQUISITO_A_NUTRIENTE = {
 }
 
 
+
+# =====================================================================
+# PATOLOGIAS — ajustes orientativos [CRITERIO, validar con veterinario]
+# =====================================================================
+# Acordado con el usuario el 1 de agosto: para las patologias que no
+# dependen de analiticas, la app aplica ajustes orientativos automaticos
+# y avisa; para las que SI dependen de analiticas (calculos de estruvita,
+# cistina o urato) NO se genera dieta automatica.
+#
+# IMPORTANTE: estos valores son de CRITERIO. Marcan una direccion
+# razonable y documentada, pero el veterinario tiene que validarlos y
+# ajustarlos al caso concreto. Un perro renal en estadio 2 y otro en
+# estadio 4 no necesitan lo mismo.
+#
+# Cada patologia puede:
+#   - "max_por_1000kcal": bajar el techo de un nutriente
+#   - "max_pct_kcal_grasa": limitar la grasa como % de las calorias
+#   - "sin_dieta_automatica": True -> no se genera, se deriva al veterinario
+PATOLOGIAS = {
+    "renal": {
+        "nombre": "Insuficiencia renal crónica",
+        # OJO, hallazgo importante: una dieta renal de verdad baja el fosforo
+        # a 500-750 mg/1000 kcal, y el MINIMO de FEDIAF para un perro sano es
+        # 1160. Es decir: una dieta renal terapeutica esta POR DEBAJO del
+        # minimo nutricional de un perro sano, a proposito. Eso no es algo
+        # que pueda decidir una app: es una dieta de prescripcion.
+        # Aqui solo se baja el fosforo TODO lo posible sin incumplir FEDIAF
+        # (se acerca al minimo en vez de al maximo), y se avisa claramente.
+        "max_por_1000kcal": {"Fósforo": 1400.0},
+        "aviso": ("Se ha bajado el fósforo todo lo posible sin bajar del mínimo "
+                  "nutricional de un perro sano. IMPORTANTE: una dieta renal "
+                  "terapéutica de verdad baja el fósforo POR DEBAJO de ese mínimo, "
+                  "y eso solo puede pautarlo tu veterinario. Esto es un apoyo, "
+                  "no sustituye una dieta renal prescrita."),
+    },
+    "pancreatitis": {
+        "nombre": "Pancreatitis",
+        # Dieta baja en grasa: por debajo del 30% de las kcal se considera baja
+        "max_pct_kcal_grasa": 0.25,
+        "aviso": ("Se ha bajado la grasa al 25% de las calorías. En pancreatitis "
+                  "la tolerancia a la grasa es muy individual: ajústalo con tu "
+                  "veterinario según cómo responda."),
+    },
+    "oxalato": {
+        "nombre": "Cálculos de oxalato cálcico",
+        # No se sube el calcio (bajarlo empeora: aumenta la absorcion de
+        # oxalato). Se limita la vitamina D, que favorece la absorcion.
+        "max_por_1000kcal": {"Vitamina_D": 20.0},
+        "aviso": ("Ojo: en oxalato NO hay que bajar el calcio (bajarlo aumenta la "
+                  "absorción de oxalato y empeora). Lo importante es el agua y "
+                  "evitar verduras muy ricas en oxalato como la espinaca o la acelga."),
+    },
+    "hepatopatia": {
+        "nombre": "Hepatopatía",
+        # El cobre es la clave en las hepatopatias por acumulo (Bedlington,
+        # Labrador, Dálmata...). Se limita.
+        "max_por_1000kcal": {"Cobre": 3.0},
+        "aviso": ("Se ha limitado el cobre, clave en las hepatopatías por acúmulo. "
+                  "Si hay encefalopatía hepática hace falta además ajustar la "
+                  "proteína, y eso lo tiene que pautar tu veterinario."),
+    },
+    "cardiopatia": {
+        "nombre": "Cardiopatía",
+        "max_por_1000kcal": {"Sodio": 900.0},
+        "aviso": ("Se ha bajado el sodio. En cardiopatía avanzada puede hacer falta "
+                  "bajarlo más y vigilar el potasio si toma diuréticos: consúltalo."),
+    },
+    "diabetes": {
+        "nombre": "Diabetes mellitus",
+        "max_pct_kcal_grasa": 0.35,
+        "aviso": ("Lo más importante en diabetes no es el menú sino la REGULARIDAD: "
+                  "misma cantidad, a la misma hora, coordinada con la insulina."),
+    },
+    "hipotiroidismo": {
+        "nombre": "Hipotiroidismo",
+        "aviso": ("No se cambia la composición. Pero evita darle cuello de rumiante "
+                  "grande de forma repetida: puede llevar restos de tejido tiroideo "
+                  "y alterar los valores de la analítica."),
+    },
+    "estruvita": {
+        "nombre": "Cálculos de estruvita / cistina / urato",
+        "sin_dieta_automatica": True,
+        "aviso": ("Estos cálculos dependen del pH de la orina y de analíticas que la "
+                  "app no puede ver. Una dieta mal ajustada aquí puede empeorarlos, "
+                  "así que no generamos menú automático: necesitas una dieta pautada "
+                  "por tu veterinario."),
+    },
+}
+
+
+def patologias_bloquean(patologias):
+    """Devuelve las patologias que impiden generar dieta automatica."""
+    return [p for p in (patologias or []) if PATOLOGIAS.get(p, {}).get("sin_dieta_automatica")]
+
+
+def avisos_de_patologias(patologias):
+    return [PATOLOGIAS[p]["aviso"] for p in (patologias or []) if p in PATOLOGIAS]
+
+
 def cargar_requerimientos(path="requerimientos_v2_final.json"):
     with open(path, encoding="utf-8") as f:
         return json.load(f)
@@ -144,7 +243,7 @@ PESO_POR_CATEGORIA = {
 
 def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos: str = "Adulto",
                   forzar_presencia: list = None, peso_perro_kg: float = None,
-                  tope_por_alimento: float = 0.30):
+                  tope_por_alimento: float = 0.30, patologias: list = None):
     """
     alimentos_elegidos: lista de dicts (formato alimentos_v3_final.json), uno
                          por cada "ranura" del menu (ej: carne, hueso, viscera,
@@ -550,7 +649,25 @@ def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos
     # posible (las 6 categorias juntas se comerian media racion). El factor
     # esta topado al alza para que un perro gigante no acabe con minimos
     # desproporcionados.
+    # Perros muy pequeños: con 190 kcal, exigir 25 g de carne + 20 de hueso +
+    # 20 de pescado + 15 de verdura... se come el plato entero y salen
+    # cantidades impesables. Por debajo de 400 kcal el minimo se relaja mucho
+    # mas: lo que importa en un chihuahua es que la estructura este, no que
+    # cada categoria llegue a los gramos de un perro grande.
     factor_tamano = min(1.0, max(0.35, der_objetivo / 1200))
+    # --- PATOLOGIAS: topes mas estrictos que los de FEDIAF ---
+    for p in (patologias or []):
+        cfg = PATOLOGIAS.get(p, {})
+        for nutriente, tope in (cfg.get("max_por_1000kcal") or {}).items():
+            k = MAPA_REQUISITO_A_NUTRIENTE.get(nutriente)
+            if not k: continue
+            A_ub.append([a["nutrientes"].get(k, 0) for a in alimentos_elegidos])
+            b_ub.append(tope * (der_objetivo / 1000))
+        pct = cfg.get("max_pct_kcal_grasa")
+        if pct:
+            A_ub.append([a["nutrientes"].get("grasa", 0) * 9 for a in alimentos_elegidos])
+            b_ub.append(der_objetivo * pct)
+
     for categoria, minimo_g in MINIMOS_ABSOLUTOS_G.items():
         idx = [i for i, a in enumerate(alimentos_elegidos) if a["categoria"] == categoria]
         if not idx:
@@ -645,7 +762,7 @@ def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos
     # solver reparta esa carga entre los que si se quedan.
     if descartados and len(alimentos_elegidos) - len(descartados) >= 4:
         restantes = [a for a in alimentos_elegidos if a["nombre"] not in descartados]
-        reintento = _resolver_lp(restantes, der_objetivo, etapa_requisitos, forzar_presencia, peso_perro_kg, tope_por_alimento)
+        reintento = _resolver_lp(restantes, der_objetivo, etapa_requisitos, forzar_presencia, peso_perro_kg, tope_por_alimento, patologias)
         if reintento["factible"]:
             return reintento
         # si sin ellos no hay solucion, es que de verdad hacian falta:
@@ -755,12 +872,21 @@ def minimo_practico(alimento):
 
 def optimizar_menu(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos: str = "Adulto",
                     forzar_presencia: list = None, max_alimentos: int = MAX_ALIMENTOS_MENU,
-                    peso_perro_kg: float = None, tope_por_alimento: float = 0.30):
+                    peso_perro_kg: float = None, tope_por_alimento: float = 0.30,
+                    patologias: list = None):
     """
     Calcula el menu y ademas lo simplifica para que sea practico de usar:
     pocos alimentos y sin cantidades ridiculas de pesar.
     """
-    resultado = _resolver_lp(alimentos_elegidos, der_objetivo, etapa_requisitos, forzar_presencia, peso_perro_kg, tope_por_alimento)
+    # Patologias que dependen de analiticas: no se genera dieta automatica
+    bloqueantes = patologias_bloquean(patologias)
+    if bloqueantes:
+        return {"factible": False,
+                "motivo": PATOLOGIAS[bloqueantes[0]]["aviso"],
+                "requiere_veterinario": True,
+                "gramos": {}}
+
+    resultado = _resolver_lp(alimentos_elegidos, der_objetivo, etapa_requisitos, forzar_presencia, peso_perro_kg, tope_por_alimento, patologias)
     if not resultado["factible"]:
         return resultado
 
@@ -821,7 +947,7 @@ def optimizar_menu(alimentos_elegidos: list, der_objetivo: float, etapa_requisit
         if len(nuevos_candidatos) < 4:
             break
 
-        intento = _resolver_lp(nuevos_candidatos, der_objetivo, etapa_requisitos, forzar_presencia, peso_perro_kg, tope_por_alimento)
+        intento = _resolver_lp(nuevos_candidatos, der_objetivo, etapa_requisitos, forzar_presencia, peso_perro_kg, tope_por_alimento, patologias)
         if not intento["factible"]:
             # quitar ese alimento rompe el menu -> nos quedamos con el ultimo bueno
             break
@@ -834,4 +960,6 @@ def optimizar_menu(alimentos_elegidos: list, der_objetivo: float, etapa_requisit
     # nutrientes que decimos que cumple (mismo error que ya se corrigio en
     # _resolver_lp). Si una cantidad es dificil de pesar, eso se resuelve
     # avisando en la app, no falseando el calculo.
+    if patologias:
+        mejor["avisos_patologia"] = avisos_de_patologias(patologias)
     return mejor
