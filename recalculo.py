@@ -22,7 +22,7 @@ def _candidatos_por_nombre(alimentos, nombres):
 REFUERZO_POR_CATEGORIA = 3
 
 
-def _ampliar_candidatos(candidatos, alimentos_disponibles):
+def _ampliar_candidatos(candidatos, alimentos_disponibles, nunca_reañadir=None):
     """Anade alternativas de las MISMAS categorias que ya tiene el menu.
 
     Al editar, el usuario nos manda solo los 8-10 alimentos que ve en
@@ -31,7 +31,7 @@ def _ampliar_candidatos(candidatos, alimentos_disponibles):
     "no encontramos combinacion" practicamente siempre. Dandole algunas
     alternativas mas de las mismas categorias tiene margen para recalcular.
     """
-    ya = {a["nombre"] for a in candidatos}
+    ya = {a["nombre"] for a in candidatos} | set(nunca_reañadir or ())
     categorias = {a["categoria"] for a in candidatos}
     ampliados = list(candidatos)
     for cat in categorias:
@@ -44,7 +44,8 @@ def _ampliar_candidatos(candidatos, alimentos_disponibles):
 def recalcular_menu(nombres_alimentos_actuales: list, der_objetivo: float,
                      etapa_requisitos: str, especies_excluidas: set = None,
                      forzar_presencia: list = None,
-                     peso_perro_kg: float = None) -> dict:
+                     peso_perro_kg: float = None,
+                     nunca_reañadir: list = None) -> dict:
     """
     Punto de entrada UNICO para cualquier cambio en un menu: anadir
     suplemento, quitar suplemento, cambiar un alimento con el lapiz.
@@ -66,7 +67,7 @@ def recalcular_menu(nombres_alimentos_actuales: list, der_objetivo: float,
     if r.get("factible"):
         return r
 
-    ampliados = _ampliar_candidatos(candidatos, alimentos)
+    ampliados = _ampliar_candidatos(candidatos, alimentos, nunca_reañadir)
     r2 = optimizar_menu(ampliados, der_objetivo, etapa_requisitos,
                         forzar_presencia, peso_perro_kg=peso_perro_kg)
     if r2.get("factible"):
@@ -90,8 +91,12 @@ def quitar_alimento(menu_actual: list, alimento_a_quitar: str, der_objetivo: flo
                      peso_perro_kg: float = None) -> dict:
     """Quita un alimento del menu y recalcula TODO de verdad."""
     nueva_lista = [a for a in menu_actual if a != alimento_a_quitar]
+    # Si el recalculo no encuentra solucion, amplia candidatos... y podia
+    # volver a meter justo lo que el usuario acababa de quitar. Se prohibe
+    # explicitamente: si lo has quitado, no vuelve.
     return recalcular_menu(nueva_lista, der_objetivo, etapa_requisitos, especies_excluidas,
-                            peso_perro_kg=peso_perro_kg)
+                            peso_perro_kg=peso_perro_kg,
+                            nunca_reañadir=[alimento_a_quitar])
 
 
 def cambiar_alimento(menu_actual: list, alimento_viejo: str, alimento_nuevo: str,
@@ -101,7 +106,8 @@ def cambiar_alimento(menu_actual: list, alimento_viejo: str, alimento_nuevo: str
     nueva_lista = [alimento_nuevo if a == alimento_viejo else a for a in menu_actual]
     # el alimento por el que se cambia debe aparecer de verdad en el menu
     return recalcular_menu(nueva_lista, der_objetivo, etapa_requisitos, especies_excluidas,
-                            forzar_presencia=[alimento_nuevo], peso_perro_kg=peso_perro_kg)
+                            forzar_presencia=[alimento_nuevo], peso_perro_kg=peso_perro_kg,
+                            nunca_reañadir=[alimento_viejo])
 
 
 if __name__ == "__main__":
