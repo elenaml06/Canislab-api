@@ -1,15 +1,55 @@
 """
 CANISLAB - Calculo de DER (Daily Energy Requirement)
-Implementa la tabla de multiplicadores acordada en esta sesion (un solo
-multiplicador combinado por situacion, NO etapa x actividad cruzados).
+
+POR QUE UN SOLO MULTIPLICADOR Y NO "ETAPA x ACTIVIDAD"
+------------------------------------------------------
+El Excel original cruzaba dos factores (uno de etapa y otro de actividad) y
+los multiplicaba. Se cambio a un unico factor por situacion porque asi es
+como lo presentan las fuentes: FEDIAF (Anexo 7.2.4, "Practical
+recommendations for daily energy intake by dogs and cats in different
+physiological states") y NRC dan UN factor sobre el RER para cada situacion,
+no dos que se multipliquen.
+
+La razon de fondo es que el factor de cada etapa YA INCLUYE la actividad
+tipica de esa etapa:
+  - Un cachorro de 5 meses no es "sedentario" ni "activo" en el sentido
+    adulto: el 2.0 ya contempla que juega y ademas esta creciendo. Cruzarlo
+    con 1.2 o 1.8 daria 2.4-3.6, sin respaldo en ninguna fuente.
+  - Lo mismo con gestacion y lactancia: el coste metabolico domina sobre la
+    actividad, que ademas baja en esas fases.
+
+Donde SI se usa la actividad es donde toca: en ADULTO y SENIOR, el
+multiplicador ES el de actividad. Asi que en la practica si hay dos ejes,
+solo que no se multiplican entre si: la etapa decide QUE tabla se usa, y
+dentro de adulto/senior la actividad decide el valor.
+
+TODOS los multiplicadores se aplican sobre el RER (70 x peso^0.75).
 """
 
+# TODOS estos multiplicadores se aplican sobre el RER (70 x peso^0.75).
+#
+# CORREGIDO en la auditoria nutricional del 2 de agosto: gestacion y
+# lactancia estaban MAL. Con los valores anteriores una perra en gestacion
+# tardia (1.5) recibia MENOS calorias que un adulto normal (1.6), y una
+# lactante (2.5) apenas mas. Es justo al reves: son las dos situaciones de
+# mayor demanda energetica de la vida del perro. Una lactante mal alimentada
+# pierde condicion corporal muy rapido y los cachorros crecen peor.
+#
+# Referencias: FEDIAF y NRC expresan gestacion y lactancia como multiplos
+# del MANTENIMIENTO, no del RER:
+#   - gestacion primeras 5-6 semanas ~ mantenimiento
+#   - gestacion ultimo tercio        ~ mantenimiento x 1.25-1.5
+#   - lactancia (pico)               ~ mantenimiento x 2-4 segun camada
+# Tomando mantenimiento = RER x 1.6, sobre RER quedan:
 MULTIPLICADOR_FIJO = {
-    "cachorro_joven": 3.0,       # <4 meses
-    "cachorro_crecimiento": 2.0,  # 4 meses en adelante, en crecimiento
-    "gestante_temprana": 1.0,
-    "gestante_tardia": 1.5,
-    "lactante": 2.5,
+    "cachorro_joven": 3.0,        # <4 meses (coincide con FEDIAF)
+    "cachorro_crecimiento": 2.0,  # 4 meses en adelante (coincide con FEDIAF)
+    "gestante_temprana": 1.6,     # = mantenimiento
+    "gestante_tardia": 2.2,       # = mantenimiento x 1.4
+    "lactante": 3.2,              # = mantenimiento x 2 (valor PRUDENTE:
+                                  # el pico real llega a x4 con camadas
+                                  # grandes -- pendiente ajustarlo por
+                                  # numero de cachorros y semana)
 }
 
 MULTIPLICADOR_ADULTO = {
