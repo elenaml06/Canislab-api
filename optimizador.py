@@ -218,9 +218,31 @@ EQUIVALENCIA_ETAPAS = {
 SENIOR_PROTEINA_MINIMA = 45.0
 
 
+# Las UNICAS etapas que existen en requerimientos_v2_final.json. Cualquier
+# otra cosa es un error de quien llama, y hay que gritarlo.
+ETAPAS_VALIDAS = {"Adulto", "CachorroJoven", "CachorroCrecimiento"}
+
+
 def resolver_etapa(etapa_pedida):
-    """Devuelve la etapa cuyos requisitos hay que usar realmente."""
-    return EQUIVALENCIA_ETAPAS.get(etapa_pedida, etapa_pedida)
+    """
+    Devuelve la etapa cuyos requisitos hay que usar realmente.
+
+    ⚠️ FALLA A PROPOSITO si la etapa no existe. Antes no lo hacia, y eso
+    causo un fallo real: el frontend mandaba "cachorro_crecimiento" (la clave
+    de der.py) en vez de "CachorroCrecimiento" (la de los requisitos). Como
+    los requisitos se buscan con f"min{etapa}", NINGUNA columna coincidia, no
+    se comprobaba NI UN nutriente, y el analizador respondia que la dieta
+    estaba perfecta cuando le faltaban 15 nutrientes.
+    Un fallo silencioso en la base es mucho peor que un error visible.
+    """
+    etapa = EQUIVALENCIA_ETAPAS.get(etapa_pedida, etapa_pedida)
+    if etapa not in ETAPAS_VALIDAS:
+        raise ValueError(
+            f"Etapa de requisitos '{etapa_pedida}' no reconocida. "
+            f"Las validas son: {sorted(ETAPAS_VALIDAS)}. "
+            f"Cuidado: las claves de der.py (adulto, cachorro_crecimiento...) "
+            f"NO son las mismas que las de los requisitos.")
+    return etapa
 
 
 def _valor_o_none(v):
