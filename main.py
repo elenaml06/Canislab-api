@@ -156,8 +156,6 @@ def endpoint_cambiar_alimento(datos: PeticionCambiarAlimento):
         datos.der_objetivo, datos.etapa_requisitos, set(datos.especies_excluidas),
         peso_perro_kg=datos.peso_perro_kg,
         nombres_excluidos=set(datos.nombres_excluidos or []),
-        nombres_excluidos=set(datos.nombres_excluidos or []),
-        nombres_excluidos=set(datos.nombres_excluidos or []),
     )
     return resultado
 
@@ -170,8 +168,6 @@ def endpoint_anadir_alimento(datos: PeticionAnadirQuitarAlimento):
         datos.der_objetivo, datos.etapa_requisitos, set(datos.especies_excluidas),
         peso_perro_kg=datos.peso_perro_kg,
         nombres_excluidos=set(datos.nombres_excluidos or []),
-        nombres_excluidos=set(datos.nombres_excluidos or []),
-        nombres_excluidos=set(datos.nombres_excluidos or []),
     )
     return resultado
 
@@ -183,8 +179,6 @@ def endpoint_quitar_alimento(datos: PeticionAnadirQuitarAlimento):
         datos.menu_actual, datos.alimento,
         datos.der_objetivo, datos.etapa_requisitos, set(datos.especies_excluidas),
         peso_perro_kg=datos.peso_perro_kg,
-        nombres_excluidos=set(datos.nombres_excluidos or []),
-        nombres_excluidos=set(datos.nombres_excluidos or []),
         nombres_excluidos=set(datos.nombres_excluidos or []),
     )
     return resultado
