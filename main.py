@@ -32,6 +32,7 @@ from optimizador_semanal import optimizar_semana
 from transicion import calcular_tramo_transicion, menu_activo_y_bloqueados, nivel_indicador_nutrientes
 from recalculo import anadir_alimento, quitar_alimento, cambiar_alimento
 from analizador import analizar_dieta
+from plantillas import PLANTILLAS, plantillas_compatibles
 import persistencia
 
 app = FastAPI(title="CANISLAB API")
@@ -198,3 +199,65 @@ def listar_alimentos():
     for v in por_cat.values():
         v.sort(key=lambda x: x["nombre"])
     return por_cat
+
+
+# =====================================================================
+# PLANTILLAS BASE VALIDADAS
+# =====================================================================
+class MenuPlantillaRequest(BaseModel):
+    der_objetivo: float
+    etapa_requisitos: str = "Adulto"
+    peso_perro_kg: float = None
+    especies_excluidas: list = []
+    plantilla_id: str = None   # si no viene, se elige rotando
+
+
+@app.get("/plantillas")
+def listar_plantillas(especies_excluidas: str = ""):
+    """Plantillas disponibles para este perro. especies_excluidas separadas
+    por comas, p.ej. ?especies_excluidas=Pollo,Pavo"""
+    excl = {e.strip() for e in especies_excluidas.split(",") if e.strip()}
+    catalogo = {a["nombre"]: a for a in cargar_alimentos()}
+    disponibles = plantillas_compatibles(excl, catalogo)
+    return [{"id": p["id"], "nombre": p["nombre"], "descripcion": p["descripcion"],
+             "n_alimentos": len(p["alimentos"])} for p in disponibles]
+
+
+@app.post("/menu/plantilla")
+def menu_desde_plantilla(req: MenuPlantillaRequest):
+    """Genera el menu a partir de una plantilla ya validada. Los gramos los
+    calcula el optimizador igual que siempre, con todas sus restricciones."""
+    excl = set(req.especies_excluidas or [])
+    catalogo = {a["nombre"]: a for a in cargar_alimentos()}
+    disponibles = plantillas_compatibles(excl, catalogo)
+    if not disponibles:
+        raise HTTPException(400, "No hay ninguna plantilla compatible con las "
+                                 "alergias de este perro. Prueba el modo personalizado.")
+
+    if req.plantilla_id:
+        elegida = next((p for p in disponibles if p["id"] == req.plantilla_id), None)
+        if elegida is None:
+            raise HTTPException(404, "Esa plantilla no existe o no es compatible.")
+        candidatas = [elegida]
+    else:
+        candidatas = disponibles
+
+    # Se prueban en orden: primero las compactas (menos alimentos, mas facil
+    # de preparar) y, si para este perro concreto no cuadran, las completas.
+    # No todas las compactas valen para todos los tamaños: las dosis de
+    # suplemento van por tramos de peso mientras que las necesidades escalan
+    # de forma continua, asi que a algunos perros les hace falta mas variedad
+    # de comida real. El usuario recibe siempre la mas sencilla que funcione.
+    ultimo_motivo = None
+    for p in sorted(candidatas, key=lambda x: (not x.get("compacta"), len(x["alimentos"]))):
+        alimentos = [catalogo[n] for n in p["alimentos"] if n in catalogo]
+        tope = 0.40 if p.get("compacta") else 0.30
+        r = optimizar_menu(alimentos, req.der_objetivo, req.etapa_requisitos,
+                           peso_perro_kg=req.peso_perro_kg, tope_por_alimento=tope)
+        if r["factible"]:
+            r["plantilla"] = {"id": p["id"], "nombre": p["nombre"],
+                              "descripcion": p["descripcion"],
+                              "compacta": bool(p.get("compacta"))}
+            return r
+        ultimo_motivo = r.get("motivo")
+    raise HTTPException(400, ultimo_motivo or "Ninguna plantilla cuadra para este perro.")
