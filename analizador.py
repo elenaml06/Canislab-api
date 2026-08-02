@@ -60,16 +60,36 @@ def analizar_dieta(gramos_por_alimento: dict, der_objetivo: float,
     etapa_requisitos: Adulto / CachorroJoven / CachorroCrecimiento /
                       Gestante / Lactante / Senior
     """
+    # Casos que reventaban: sin alimentos (respuesta incoherente) y con
+    # der_objetivo 0 (division por cero al calcular el % de energia).
+    if not gramos_por_alimento:
+        return {"factible": False,
+                "veredicto": "No has indicado ningún alimento todavía.",
+                "faltan": [], "se_pasa": [], "correctos": 0,
+                "reparto_categorias": {}, "peso_total_g": 0}
+    if not der_objetivo or der_objetivo <= 0:
+        return {"factible": False,
+                "veredicto": "Falta saber cuántas calorías necesita el perro para poder analizar la dieta.",
+                "faltan": [], "se_pasa": [], "correctos": 0,
+                "reparto_categorias": {}, "peso_total_g": 0}
+
     catalogo = {a["nombre"]: a for a in cargar_alimentos()}
 
     desconocidos = [n for n in gramos_por_alimento if n not in catalogo]
     if desconocidos:
-        return {
-            "ok": False,
-            "motivo": "No tenemos datos de: " + ", ".join(desconocidos),
-        }
+        # Misma forma de respuesta que el resto: si cambia segun el caso, el
+        # frontend no sabe leerla y se queda en blanco sin decir por que.
+        return {"factible": False, "ok": False,
+                "veredicto": "No tenemos datos de: " + ", ".join(desconocidos),
+                "motivo": "No tenemos datos de: " + ", ".join(desconocidos),
+                "faltan": [], "se_pasa": [], "correctos": 0,
+                "reparto_categorias": {}, "peso_total_g": 0}
     if not gramos_por_alimento:
-        return {"ok": False, "motivo": "No has añadido ningún alimento todavía."}
+        return {"factible": False, "ok": False,
+                "veredicto": "No has añadido ningún alimento todavía.",
+                "motivo": "No has añadido ningún alimento todavía.",
+                "faltan": [], "se_pasa": [], "correctos": 0,
+                "reparto_categorias": {}, "peso_total_g": 0}
 
     # --- sumar lo que aporta la dieta tal cual la da el usuario ---
     totales, kcal, peso_total = {}, 0.0, 0.0
@@ -93,9 +113,11 @@ def analizar_dieta(gramos_por_alimento: dict, der_objetivo: float,
               if MAPA_REQUISITO_A_NUTRIENTE.get(r["nutriente"])
               and _valor_o_none(r.get(f"min{etapa_datos}")) is not None)
     if hay == 0:
-        return {"ok": False,
-                "motivo": f"Todavía no tenemos los requisitos de la etapa "
-                          f"'{etapa_requisitos}', así que no podemos analizar."}
+        msg = (f"Todavía no tenemos los requisitos de la etapa "
+               f"'{etapa_requisitos}', así que no podemos analizar.")
+        return {"factible": False, "ok": False, "veredicto": msg, "motivo": msg,
+                "faltan": [], "se_pasa": [], "correctos": 0,
+                "reparto_categorias": {}, "peso_total_g": 0}
 
     escala = der_objetivo / 1000
     faltan, sobran, correctos = [], [], []
