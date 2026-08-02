@@ -274,7 +274,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 0
+   "cloruro": 0,
+   "fibra": 0.0
   },
   "dosis_fuente": "5 ml por 10 kg de peso; 1 ml ≈ 0,92 g",
   "dosis_g_por_kg_peso": 0.46
@@ -314,7 +315,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 0
+   "cloruro": 0,
+   "fibra": 0.0
   },
   "dosis_fuente": "5 ml por 10 kg de peso; 1 ml ≈ 0,92 g",
   "dosis_g_por_kg_peso": 0.46
@@ -354,7 +356,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 0
+   "cloruro": 0,
+   "fibra": 0.0
   },
   "dosis_fuente": "5 ml por 10 kg de peso; 1 ml ≈ 0,92 g",
   "dosis_g_por_kg_peso": 0.46
@@ -394,7 +397,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 0
+   "cloruro": 0,
+   "fibra": 0.0
   },
   "dosis_fuente": "5 ml por 10 kg de peso; 1 ml ≈ 0,92 g",
   "dosis_g_por_kg_peso": 0.46
@@ -597,7 +601,8 @@
    "manganeso": 3,
    "acidoPantotenico": 0.5,
    "colina": 65,
-   "cloruro": 323.4
+   "cloruro": 323.4,
+   "fibra": 0.0
   }
  },
  {
@@ -635,7 +640,8 @@
    "manganeso": 0.014,
    "acidoPantotenico": 0.6,
    "colina": 75,
-   "cloruro": 70.84
+   "cloruro": 70.84,
+   "fibra": 0.0
   }
  },
  {
@@ -711,7 +717,8 @@
    "manganeso": 0.015,
    "acidoPantotenico": 0.5,
    "colina": 85,
-   "cloruro": 103.18
+   "cloruro": 103.18,
+   "fibra": 0.0
   }
  },
  {
@@ -787,7 +794,8 @@
    "manganeso": 0.6,
    "acidoPantotenico": 0.6,
    "colina": 65,
-   "cloruro": 97.02
+   "cloruro": 97.02,
+   "fibra": 0.0
   }
  },
  {
@@ -825,7 +833,8 @@
    "manganeso": 0.6,
    "acidoPantotenico": 0.6,
    "colina": 65,
-   "cloruro": 109.34
+   "cloruro": 109.34,
+   "fibra": 0.0
   }
  },
  {
@@ -901,7 +910,8 @@
    "manganeso": 0.038,
    "acidoPantotenico": 1.33,
    "colina": 65,
-   "cloruro": 92.4
+   "cloruro": 92.4,
+   "fibra": 0.0
   }
  },
  {
@@ -939,7 +949,8 @@
    "manganeso": 0.011,
    "acidoPantotenico": 1.55,
    "colina": 78.5,
-   "cloruro": 150.92
+   "cloruro": 150.92,
+   "fibra": 0.0
   }
  },
  {
@@ -977,7 +988,8 @@
    "manganeso": 0.33,
    "acidoPantotenico": 0.81,
    "colina": 68,
-   "cloruro": 154.0
+   "cloruro": 154.0,
+   "fibra": 0.0
   }
  },
  {
@@ -1015,7 +1027,8 @@
    "manganeso": 0.02,
    "acidoPantotenico": 0.99,
    "colina": 65,
-   "cloruro": 129.36
+   "cloruro": 129.36,
+   "fibra": 0.0
   }
  },
  {
@@ -1053,7 +1066,8 @@
    "manganeso": 0.015,
    "acidoPantotenico": 1.054,
    "colina": 65,
-   "cloruro": 72.38
+   "cloruro": 72.38,
+   "fibra": 0.0
   }
  },
  {
@@ -1091,7 +1105,8 @@
    "manganeso": 0.035,
    "acidoPantotenico": 0.01,
    "colina": 65,
-   "cloruro": 155.54
+   "cloruro": 155.54,
+   "fibra": 0.0
   }
  },
  {
@@ -1129,7 +1144,8 @@
    "manganeso": 0.05,
    "acidoPantotenico": 0.14,
    "colina": 65,
-   "cloruro": 104.72
+   "cloruro": 104.72,
+   "fibra": 0.0
   }
  },
  {
@@ -1167,7 +1183,8 @@
    "manganeso": 0.17,
    "acidoPantotenico": 0.37,
    "colina": 65,
-   "cloruro": 469.7
+   "cloruro": 469.7,
+   "fibra": 0.0
   }
  },
  {
@@ -1205,7 +1222,8 @@
    "manganeso": 0.05,
    "acidoPantotenico": 1.51,
    "colina": 65,
-   "cloruro": 89.32
+   "cloruro": 89.32,
+   "fibra": 0.0
   }
  },
  {
@@ -1319,7 +1337,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 0
+   "cloruro": 0,
+   "fibra": 0.0
   }
  },
  {
@@ -1357,7 +1376,8 @@
    "manganeso": 0.01,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 0
+   "cloruro": 0,
+   "fibra": 0.0
   }
  },
  {
@@ -1395,7 +1415,8 @@
    "manganeso": 0.3,
    "acidoPantotenico": 7,
    "colina": 290,
-   "cloruro": 104.72
+   "cloruro": 104.72,
+   "fibra": 0.0
   }
  },
  {
@@ -1433,7 +1454,8 @@
    "manganeso": 0.31,
    "acidoPantotenico": 7,
    "colina": 333,
-   "cloruro": 147.84
+   "cloruro": 147.84,
+   "fibra": 0.0
   }
  },
  {
@@ -1471,7 +1493,8 @@
    "manganeso": 0.05,
    "acidoPantotenico": 1.06,
    "colina": 150,
-   "cloruro": 170.94
+   "cloruro": 170.94,
+   "fibra": 0.0
   }
  },
  {
@@ -1509,7 +1532,8 @@
    "manganeso": 0.03,
    "acidoPantotenico": 1,
    "colina": 65,
-   "cloruro": 304.92
+   "cloruro": 304.92,
+   "fibra": 0.0
   }
  },
  {
@@ -1585,7 +1609,8 @@
    "manganeso": 0.223,
    "acidoPantotenico": 0.501,
    "colina": 16,
-   "cloruro": 1.54
+   "cloruro": 1.54,
+   "fibra": 2.4
   }
  },
  {
@@ -1623,7 +1648,8 @@
    "manganeso": 0.177,
    "acidoPantotenico": 0.204,
    "colina": 10,
-   "cloruro": 4.62
+   "cloruro": 4.62,
+   "fibra": 1.0
   }
  },
  {
@@ -1661,7 +1687,8 @@
    "manganeso": 0.131,
    "acidoPantotenico": 0.278,
    "colina": 9,
-   "cloruro": 107.8
+   "cloruro": 107.8,
+   "fibra": 2.6
   }
  },
  {
@@ -1699,7 +1726,8 @@
    "manganeso": 0.215,
    "acidoPantotenico": 0.1,
    "colina": 15,
-   "cloruro": 6.16
+   "cloruro": 6.16,
+   "fibra": 2.8
   }
  },
  {
@@ -1775,7 +1803,8 @@
    "manganeso": 0.897,
    "acidoPantotenico": 0.065,
    "colina": 19,
-   "cloruro": 86.24
+   "cloruro": 86.24,
+   "fibra": 2.9
   }
  },
  {
@@ -1813,7 +1842,8 @@
    "manganeso": 0.12,
    "acidoPantotenico": 0.2,
    "colina": 6,
-   "cloruro": 9.24
+   "cloruro": 9.24,
+   "fibra": 1.8
   }
  },
  {
@@ -1851,7 +1881,8 @@
    "manganeso": 0.3,
    "acidoPantotenico": 0.09,
    "colina": 22,
-   "cloruro": 261.8
+   "cloruro": 261.8,
+   "fibra": 1.0
   }
  },
  {
@@ -1889,7 +1920,8 @@
    "manganeso": 0.036,
    "acidoPantotenico": 0.079,
    "colina": 3,
-   "cloruro": 3.08
+   "cloruro": 3.08,
+   "fibra": 2.0
   }
  },
  {
@@ -1927,7 +1959,8 @@
    "manganeso": 0.03,
    "acidoPantotenico": 0.06,
    "colina": 5,
-   "cloruro": 3.08
+   "cloruro": 3.08,
+   "fibra": 2.3
   }
  },
  {
@@ -1965,7 +1998,8 @@
    "manganeso": 0.34,
    "acidoPantotenico": 0.12,
    "colina": 6,
-   "cloruro": 1.54
+   "cloruro": 1.54,
+   "fibra": 4.9
   }
  },
  {
@@ -2003,7 +2037,8 @@
    "manganeso": 0.1,
    "acidoPantotenico": 0.18,
    "colina": 7,
-   "cloruro": 6.16
+   "cloruro": 6.16,
+   "fibra": 1.9
   }
  },
  {
@@ -2041,7 +2076,8 @@
    "manganeso": 0.27,
    "acidoPantotenico": 0.334,
    "colina": 9.8,
-   "cloruro": 1.54
+   "cloruro": 1.54,
+   "fibra": 3.4
   }
  },
  {
@@ -2079,7 +2115,8 @@
    "manganeso": 0.4,
    "acidoPantotenico": 0.1,
    "colina": 6,
-   "cloruro": 3.08
+   "cloruro": 3.08,
+   "fibra": 2.2
   }
  },
  {
@@ -2117,7 +2154,8 @@
    "manganeso": 0.03,
    "acidoPantotenico": 0.25,
    "colina": 8,
-   "cloruro": 4.62
+   "cloruro": 4.62,
+   "fibra": 2.0
   }
  },
  {
@@ -2155,7 +2193,8 @@
    "manganeso": 0.04,
    "acidoPantotenico": 0.22,
    "colina": 4,
-   "cloruro": 6.16
+   "cloruro": 6.16,
+   "fibra": 0.5
   }
  },
  {
@@ -2193,7 +2232,8 @@
    "manganeso": 0.04,
    "acidoPantotenico": 0.1,
    "colina": 7,
-   "cloruro": 21.56
+   "cloruro": 21.56,
+   "fibra": 1.0
   }
  },
  {
@@ -2231,7 +2271,8 @@
    "manganeso": 0.038,
    "acidoPantotenico": 1.33,
    "colina": 100,
-   "cloruro": 241.78
+   "cloruro": 241.78,
+   "fibra": 0.0
   }
  },
  {
@@ -2307,7 +2348,8 @@
    "manganeso": 0.05,
    "acidoPantotenico": 1.06,
    "colina": 150,
-   "cloruro": 141.68
+   "cloruro": 141.68,
+   "fibra": 0.0
   }
  },
  {
@@ -2423,7 +2465,8 @@
    "manganeso": 0.02,
    "acidoPantotenico": 1,
    "colina": 75,
-   "cloruro": 112.42
+   "cloruro": 112.42,
+   "fibra": 0.0
   },
   "pct_carne": 0.55
  },
@@ -2462,7 +2505,8 @@
    "manganeso": 0.6,
    "acidoPantotenico": 0.6,
    "colina": 65,
-   "cloruro": 109.34
+   "cloruro": 109.34,
+   "fibra": 0.0
   },
   "pct_carne": 0.4
  },
@@ -2501,7 +2545,8 @@
    "manganeso": 0.6,
    "acidoPantotenico": 0.6,
    "colina": 65,
-   "cloruro": 109.34
+   "cloruro": 109.34,
+   "fibra": 0.0
   },
   "pct_carne": 0.5
  },
@@ -2540,7 +2585,8 @@
    "manganeso": 0.6,
    "acidoPantotenico": 0.6,
    "colina": 65,
-   "cloruro": 109.34
+   "cloruro": 109.34,
+   "fibra": 0.0
   },
   "pct_carne": 0.25
  },
@@ -2852,7 +2898,8 @@
    "manganeso": 0.038,
    "acidoPantotenico": 1.33,
    "colina": 65,
-   "cloruro": 93.94
+   "cloruro": 93.94,
+   "fibra": 1.2
   },
   "pct_carne": 0.35
  },
@@ -2969,7 +3016,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 0
+   "cloruro": 0,
+   "fibra": 0.0
   }
  },
  {
@@ -3011,7 +3059,7 @@
   }
  },
  {
-  "nombre": "Pato entero",
+  "nombre": "Pato (carne sin hueso)",
   "tipo": "Alimento",
   "categoria": "Carne muscular",
   "energia": 138,
@@ -3045,8 +3093,10 @@
    "manganeso": 0.6,
    "acidoPantotenico": 0.6,
    "colina": 65,
-   "cloruro": 123.2
-  }
+   "cloruro": 123.2,
+   "fibra": 0.0
+  },
+  "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar."
  },
  {
   "nombre": "Corazón de cordero",
@@ -3083,11 +3133,12 @@
    "manganeso": 0.033,
    "acidoPantotenico": 1.06,
    "colina": 100,
-   "cloruro": 137.06
+   "cloruro": 137.06,
+   "fibra": 0.0
   }
  },
  {
-  "nombre": "Gallina entera",
+  "nombre": "Gallina (carne sin hueso)",
   "tipo": "Alimento",
   "categoria": "Carne muscular",
   "energia": 231,
@@ -3121,8 +3172,10 @@
    "manganeso": 0.05,
    "acidoPantotenico": 0.9,
    "colina": 65,
-   "cloruro": 93.94
-  }
+   "cloruro": 93.94,
+   "fibra": 0.0
+  },
+  "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar."
  },
  {
   "nombre": "Lengua de cordero",
@@ -3159,7 +3212,8 @@
    "manganeso": 0.044,
    "acidoPantotenico": 1.07,
    "colina": 100,
-   "cloruro": 120.12
+   "cloruro": 120.12,
+   "fibra": 0.0
   }
  },
  {
@@ -3197,7 +3251,8 @@
    "manganeso": 0.044,
    "acidoPantotenico": 1.07,
    "colina": 100,
-   "cloruro": 106.26
+   "cloruro": 106.26,
+   "fibra": 0.0
   }
  },
  {
@@ -3235,7 +3290,8 @@
    "manganeso": 0.044,
    "acidoPantotenico": 1.07,
    "colina": 100,
-   "cloruro": 123.2
+   "cloruro": 123.2,
+   "fibra": 0.0
   }
  },
  {
@@ -3273,11 +3329,12 @@
    "manganeso": 0.6,
    "acidoPantotenico": 0.6,
    "colina": 65,
-   "cloruro": 240.24
+   "cloruro": 240.24,
+   "fibra": 0.0
   }
  },
  {
-  "nombre": "Pollo ala con piel",
+  "nombre": "Pollo ala con piel (sin hueso)",
   "tipo": "Alimento",
   "categoria": "Carne muscular",
   "energia": 217,
@@ -3312,10 +3369,11 @@
    "acidoPantotenico": 0.9,
    "colina": 65,
    "cloruro": 112.42
-  }
+  },
+  "nota_datos": "Dato de carne deshuesada. Ojo: NO confundir con 'Ala de pollo' (categoría Hueso carnoso, 900 mg de calcio), que sí lleva el hueso."
  },
  {
-  "nombre": "Pollo entero con piel",
+  "nombre": "Pollo con piel (sin hueso)",
   "tipo": "Alimento",
   "categoria": "Carne muscular",
   "energia": 167,
@@ -3349,8 +3407,10 @@
    "manganeso": 0.05,
    "acidoPantotenico": 0.9,
    "colina": 65,
-   "cloruro": 97.02
-  }
+   "cloruro": 97.02,
+   "fibra": 0.0
+  },
+  "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar."
  },
  {
   "nombre": "Rabo de toro",
@@ -3387,7 +3447,8 @@
    "manganeso": 0.038,
    "acidoPantotenico": 1.33,
    "colina": 65,
-   "cloruro": 93.94
+   "cloruro": 93.94,
+   "fibra": 0.0
   },
   "pct_carne": 0.4
  },
@@ -3426,7 +3487,8 @@
    "manganeso": 0.038,
    "acidoPantotenico": 1.33,
    "colina": 65,
-   "cloruro": 92.4
+   "cloruro": 92.4,
+   "fibra": 0.0
   }
  },
  {
@@ -3464,7 +3526,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 15,
-   "cloruro": 109.34
+   "cloruro": 109.34,
+   "fibra": 0.0
   }
  },
  {
@@ -3502,7 +3565,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 263,
-   "cloruro": 217.14
+   "cloruro": 217.14,
+   "fibra": 0.0
   }
  },
  {
@@ -3578,7 +3642,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 263,
-   "cloruro": 184.8
+   "cloruro": 184.8,
+   "fibra": 0.0
   }
  },
  {
@@ -3616,7 +3681,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 263,
-   "cloruro": 232.54
+   "cloruro": 232.54,
+   "fibra": 0.0
   }
  },
  {
@@ -3654,7 +3720,8 @@
    "manganeso": 0.035,
    "acidoPantotenico": 0.1,
    "colina": 65,
-   "cloruro": 118.58
+   "cloruro": 118.58,
+   "fibra": 0.0
   }
  },
  {
@@ -3692,7 +3759,8 @@
    "manganeso": 0.035,
    "acidoPantotenico": 0.1,
    "colina": 65,
-   "cloruro": 30.8
+   "cloruro": 30.8,
+   "fibra": 0.0
   }
  },
  {
@@ -3730,7 +3798,8 @@
    "manganeso": 0.2,
    "acidoPantotenico": 0.7,
    "colina": 68,
-   "cloruro": 178.64
+   "cloruro": 178.64,
+   "fibra": 0.0
   }
  },
  {
@@ -3768,7 +3837,8 @@
    "manganeso": 0.17,
    "acidoPantotenico": 0.37,
    "colina": 65,
-   "cloruro": 210.21
+   "cloruro": 210.21,
+   "fibra": 0.0
   }
  },
  {
@@ -3806,7 +3876,8 @@
    "manganeso": 0.035,
    "acidoPantotenico": 0.1,
    "colina": 65,
-   "cloruro": 112.42
+   "cloruro": 112.42,
+   "fibra": 0.0
   }
  },
  {
@@ -3844,7 +3915,8 @@
    "manganeso": 0.17,
    "acidoPantotenico": 0.37,
    "colina": 65,
-   "cloruro": 469.7
+   "cloruro": 469.7,
+   "fibra": 0.0
   }
  },
  {
@@ -3882,7 +3954,8 @@
    "manganeso": 0.17,
    "acidoPantotenico": 0.37,
    "colina": 65,
-   "cloruro": 469.7
+   "cloruro": 469.7,
+   "fibra": 0.0
   }
  },
  {
@@ -3920,7 +3993,8 @@
    "manganeso": 0.035,
    "acidoPantotenico": 0.1,
    "colina": 65,
-   "cloruro": 154.0
+   "cloruro": 154.0,
+   "fibra": 0.0
   }
  },
  {
@@ -3958,7 +4032,8 @@
    "manganeso": 0.035,
    "acidoPantotenico": 0.1,
    "colina": 65,
-   "cloruro": 106.26
+   "cloruro": 106.26,
+   "fibra": 0.0
   }
  },
  {
@@ -3996,7 +4071,8 @@
    "manganeso": 0.035,
    "acidoPantotenico": 0.1,
    "colina": 65,
-   "cloruro": 72.38
+   "cloruro": 72.38,
+   "fibra": 0.0
   }
  },
  {
@@ -4034,7 +4110,8 @@
    "manganeso": 0.035,
    "acidoPantotenico": 0.1,
    "colina": 65,
-   "cloruro": 154.0
+   "cloruro": 154.0,
+   "fibra": 0.0
   }
  },
  {
@@ -4072,7 +4149,8 @@
    "manganeso": 0.17,
    "acidoPantotenico": 0.37,
    "colina": 65,
-   "cloruro": 559.02
+   "cloruro": 559.02,
+   "fibra": 0.0
   }
  },
  {
@@ -4110,7 +4188,8 @@
    "manganeso": 0.17,
    "acidoPantotenico": 0.37,
    "colina": 65,
-   "cloruro": 582.12
+   "cloruro": 582.12,
+   "fibra": 0.0
   }
  },
  {
@@ -4148,7 +4227,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 0
+   "cloruro": 0,
+   "fibra": 0.0
   }
  },
  {
@@ -4186,7 +4266,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 0
+   "cloruro": 0,
+   "fibra": 0.0
   }
  },
  {
@@ -4224,7 +4305,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 0
+   "cloruro": 0,
+   "fibra": 0.0
   }
  },
  {
@@ -4262,7 +4344,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 0
+   "cloruro": 0,
+   "fibra": 0.0
   }
  },
  {
@@ -4300,7 +4383,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 0
+   "cloruro": 0,
+   "fibra": 0.0
   }
  },
  {
@@ -4338,7 +4422,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 0,
-   "cloruro": 1.54
+   "cloruro": 1.54,
+   "fibra": 0.0
   }
  },
  {
@@ -4376,7 +4461,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 78,
-   "cloruro": 46.2
+   "cloruro": 46.2,
+   "fibra": 27.3
   }
  },
  {
@@ -4414,7 +4500,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 63,
-   "cloruro": 10.78
+   "cloruro": 10.78,
+   "fibra": 6.0
   }
  },
  {
@@ -4452,7 +4539,8 @@
    "manganeso": 0,
    "acidoPantotenico": 1.13,
    "colina": 55,
-   "cloruro": 4.62
+   "cloruro": 4.62,
+   "fibra": 2.7
   }
  },
  {
@@ -4490,7 +4578,8 @@
    "manganeso": 0,
    "acidoPantotenico": 0,
    "colina": 25,
-   "cloruro": 61.6
+   "cloruro": 61.6,
+   "fibra": 11.0
   }
  },
  {
@@ -4528,7 +4617,8 @@
    "manganeso": 0.9,
    "acidoPantotenico": 0.2,
    "colina": 11,
-   "cloruro": 52.36
+   "cloruro": 52.36,
+   "fibra": 40.5
   }
  },
  {
@@ -4566,7 +4656,8 @@
    "manganeso": 0.25,
    "acidoPantotenico": 0.3,
    "colina": 32,
-   "cloruro": 23.1
+   "cloruro": 23.1,
+   "fibra": 9.4
   }
  },
  {
@@ -4604,7 +4695,8 @@
    "manganeso": 0.1,
    "acidoPantotenico": 0.2,
    "colina": 6,
-   "cloruro": 169.4
+   "cloruro": 169.4,
+   "fibra": 2.0
   }
  },
  {
@@ -4642,7 +4734,8 @@
    "manganeso": 0.25,
    "acidoPantotenico": 0.25,
    "colina": 7,
-   "cloruro": 4.62
+   "cloruro": 4.62,
+   "fibra": 2.4
   }
  },
  {
@@ -4680,7 +4773,8 @@
    "manganeso": 0.6,
    "acidoPantotenico": 0.1,
    "colina": 17,
-   "cloruro": 92.4
+   "cloruro": 92.4,
+   "fibra": 2.6
   }
  },
  {
@@ -4718,7 +4812,8 @@
    "manganeso": 0.3,
    "acidoPantotenico": 0.8,
    "colina": 13,
-   "cloruro": 29.26
+   "cloruro": 29.26,
+   "fibra": 2.9
   }
  },
  {
@@ -4756,7 +4851,8 @@
    "manganeso": 0.3,
    "acidoPantotenico": 0.1,
    "colina": 13,
-   "cloruro": 123.2
+   "cloruro": 123.2,
+   "fibra": 0.0
   }
  },
  {
@@ -4794,7 +4890,8 @@
    "manganeso": 0.19,
    "acidoPantotenico": 0.6,
    "colina": 19,
-   "cloruro": 20.02
+   "cloruro": 20.02,
+   "fibra": 3.0
   }
  },
  {
@@ -4832,7 +4929,8 @@
    "manganeso": 0.6,
    "acidoPantotenico": 0.1,
    "colina": 16,
-   "cloruro": 6.16
+   "cloruro": 6.16,
+   "fibra": 1.5
   }
  },
  {
@@ -4870,7 +4968,8 @@
    "manganeso": 0.2,
    "acidoPantotenico": 0.15,
    "colina": 13,
-   "cloruro": 338.8
+   "cloruro": 338.8,
+   "fibra": 1.0
   }
  },
  {
@@ -4908,7 +5007,8 @@
    "manganeso": 0.05,
    "acidoPantotenico": 2,
    "colina": 17,
-   "cloruro": 7.7
+   "cloruro": 7.7,
+   "fibra": 2.5
   }
  },
  {
@@ -4984,7 +5084,8 @@
    "manganeso": 0.15,
    "acidoPantotenico": 0.2,
    "colina": 13,
-   "cloruro": 4.62
+   "cloruro": 4.62,
+   "fibra": 2.4
   }
  },
  {
@@ -5022,7 +5123,8 @@
    "manganeso": 0.55,
    "acidoPantotenico": 0.1,
    "colina": 44,
-   "cloruro": 7.7
+   "cloruro": 7.7,
+   "fibra": 3.3
   }
  },
  {
@@ -5060,7 +5162,8 @@
    "manganeso": 0.16,
    "acidoPantotenico": 0.7,
    "colina": 44,
-   "cloruro": 36.96
+   "cloruro": 36.96,
+   "fibra": 2.3
   }
  },
  {
@@ -5098,7 +5201,8 @@
    "manganeso": 0.4,
    "acidoPantotenico": 0.4,
    "colina": 7,
-   "cloruro": 6.16
+   "cloruro": 6.16,
+   "fibra": 1.9
   }
  },
  {
@@ -5136,7 +5240,8 @@
    "manganeso": 0.2,
    "acidoPantotenico": 0.3,
    "colina": 16,
-   "cloruro": 4.62
+   "cloruro": 4.62,
+   "fibra": 1.7
   }
  },
  {
@@ -5174,7 +5279,8 @@
    "manganeso": 0.3,
    "acidoPantotenico": 0.09,
    "colina": 13,
-   "cloruro": 10.78
+   "cloruro": 10.78,
+   "fibra": 3.9
   }
  },
  {
@@ -5212,7 +5318,8 @@
    "manganeso": 0.25,
    "acidoPantotenico": 0.1,
    "colina": 10,
-   "cloruro": 4.62
+   "cloruro": 4.62,
+   "fibra": 1.5
   }
  },
  {
@@ -5250,7 +5357,8 @@
    "manganeso": 0.15,
    "acidoPantotenico": 0.2,
    "colina": 13,
-   "cloruro": 12.32
+   "cloruro": 12.32,
+   "fibra": 2.5
   }
  },
  {
@@ -5288,7 +5396,8 @@
    "manganeso": 0.13,
    "acidoPantotenico": 0.2,
    "colina": 12,
-   "cloruro": 87.78
+   "cloruro": 87.78,
+   "fibra": 2.0
   }
  },
  {
@@ -5326,7 +5435,8 @@
    "manganeso": 0.08,
    "acidoPantotenico": 0.3,
    "colina": 6,
-   "cloruro": 4.62
+   "cloruro": 4.62,
+   "fibra": 0.8
   }
  },
  {
@@ -5364,7 +5474,8 @@
    "manganeso": 0.06,
    "acidoPantotenico": 0.2,
    "colina": 6,
-   "cloruro": 18.48
+   "cloruro": 18.48,
+   "fibra": 1.2
   }
  },
  {
@@ -5402,7 +5513,8 @@
    "manganeso": 0.16,
    "acidoPantotenico": 0.2,
    "colina": 13,
-   "cloruro": 24.64
+   "cloruro": 24.64,
+   "fibra": 3.1
   }
  },
  {
@@ -5440,7 +5552,8 @@
    "manganeso": 0.32,
    "acidoPantotenico": 0.4,
    "colina": 16,
-   "cloruro": 41.58
+   "cloruro": 41.58,
+   "fibra": 1.6
   }
  },
  {
@@ -5516,7 +5629,8 @@
    "manganeso": 0.08,
    "acidoPantotenico": 0.24,
    "colina": 2,
-   "cloruro": 1.54
+   "cloruro": 1.54,
+   "fibra": 2.1
   }
  },
  {
@@ -5554,7 +5668,8 @@
    "manganeso": 1.5,
    "acidoPantotenico": 0.3,
    "colina": 11,
-   "cloruro": 26.18
+   "cloruro": 26.18,
+   "fibra": 9.0
   }
  },
  {
@@ -5592,7 +5707,8 @@
    "manganeso": 0.3,
    "acidoPantotenico": 0.8,
    "colina": 6,
-   "cloruro": 4.62
+   "cloruro": 4.62,
+   "fibra": 7.1
   }
  },
  {
@@ -5630,7 +5746,8 @@
    "manganeso": 0.67,
    "acidoPantotenico": 0.24,
    "colina": 7,
-   "cloruro": 4.62
+   "cloruro": 4.62,
+   "fibra": 6.7
   }
  },
  {
@@ -5668,7 +5785,8 @@
    "manganeso": 0.04,
    "acidoPantotenico": 0.2,
    "colina": 8,
-   "cloruro": 3.08
+   "cloruro": 3.08,
+   "fibra": 1.9
   }
  },
  {
@@ -5706,7 +5824,8 @@
    "manganeso": 0.03,
    "acidoPantotenico": 0.16,
    "colina": 7,
-   "cloruro": 3.08
+   "cloruro": 3.08,
+   "fibra": 2.3
   }
  },
  {
@@ -5744,7 +5863,8 @@
    "manganeso": 0.93,
    "acidoPantotenico": 0.21,
    "colina": 6,
-   "cloruro": 3.08
+   "cloruro": 3.08,
+   "fibra": 1.2
   }
  },
  {
@@ -5822,7 +5942,8 @@
    "manganeso": 0.31,
    "acidoPantotenico": 6.4,
    "colina": 333,
-   "cloruro": 147.84
+   "cloruro": 147.84,
+   "fibra": 0.0
   }
  },
  {
