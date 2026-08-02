@@ -45,7 +45,8 @@ def recalcular_menu(nombres_alimentos_actuales: list, der_objetivo: float,
                      etapa_requisitos: str, especies_excluidas: set = None,
                      forzar_presencia: list = None,
                      peso_perro_kg: float = None,
-                     nunca_reañadir: list = None) -> dict:
+                     nunca_reañadir: list = None,
+                     nombres_excluidos: set = None) -> dict:
     """
     Punto de entrada UNICO para cualquier cambio en un menu: anadir
     suplemento, quitar suplemento, cambiar un alimento con el lapiz.
@@ -58,9 +59,43 @@ def recalcular_menu(nombres_alimentos_actuales: list, der_objetivo: float,
     puede" cada vez que toca algo.
     """
     alimentos = cargar_alimentos()
-    if especies_excluidas:
-        alimentos = filtrar_alimentos_disponibles(alimentos, especies_excluidas)
+    # Se filtra SIEMPRE: al ampliar candidatos se podia colar un alimento que
+    # el usuario habia marcado para evitar, y aparecia en el menu recalculado.
+    alimentos = filtrar_alimentos_disponibles(
+        alimentos, especies_excluidas or set(), nombres_excluidos or set())
     candidatos = _candidatos_por_nombre(alimentos, nombres_alimentos_actuales)
+
+    # Los 5 pilares BARF tienen que estar SIEMPRE entre los candidatos. Si el
+    # menu que llega no lleva ninguna viscera, la regla de "visceras >= 2%" no
+    # se activa (su indice queda vacio) y el menu recalculado se queda sin
+    # visceras sin que nadie avise. Se vio en produccion: cambiar un hueso
+    # dejaba un menu con carne, higado y fruta, pero ninguna viscera.
+    PILARES = ("Hueso carnoso", "Carne muscular", "Verduras y frutas",
+               "Vísceras", "Hígado")
+    presentes = {a["categoria"] for a in candidatos}
+    for pilar in PILARES:
+        if pilar in presentes:
+            continue
+        opciones = [a for a in alimentos if a["categoria"] == pilar
+                    and a["nombre"] not in (nunca_reañadir or ())]
+        if opciones:
+            # varias opciones, no las 2 primeras de la lista: con tan pocas
+            # el calculo se quedaba sin solucion posible
+            candidatos.extend(opciones[:6])
+
+    # Ademas de los pilares, hacen falta las fuentes de acidos grasos: sin
+    # aceite de girasol (linoleico y vitE) y sin una fuente de omega-3, no hay
+    # forma de cubrir esos nutrientes y el recalculo devolvia "no factible"
+    # aunque el usuario solo hubiera cambiado un hueso.
+    nombres_actuales = {a["nombre"] for a in candidatos}
+    por_nombre = {a["nombre"]: a for a in alimentos}
+    if "Aceite de girasol" in por_nombre and "Aceite de girasol" not in nombres_actuales:
+        candidatos.append(por_nombre["Aceite de girasol"])
+    hay_omega3 = any(a["categoria"] in ("Pescados y mariscos", "Omega-3") for a in candidatos)
+    if not hay_omega3:
+        omega = [a for a in alimentos if a["categoria"] in ("Pescados y mariscos", "Omega-3")
+                 and a["nombre"] not in (nunca_reañadir or ())]
+        candidatos.extend(omega[:4])
 
     r = optimizar_menu(candidatos, der_objetivo, etapa_requisitos,
                        forzar_presencia, peso_perro_kg=peso_perro_kg)
@@ -78,17 +113,18 @@ def recalcular_menu(nombres_alimentos_actuales: list, der_objetivo: float,
 
 def anadir_alimento(menu_actual: list, nuevo_alimento: str, der_objetivo: float,
                      etapa_requisitos: str, especies_excluidas: set = None,
-                     peso_perro_kg: float = None) -> dict:
+                     peso_perro_kg: float = None, nombres_excluidos: set = None) -> dict:
     """Añade un alimento (ej. un suplemento) al menu y recalcula TODO de verdad."""
     nueva_lista = menu_actual + [nuevo_alimento] if nuevo_alimento not in menu_actual else menu_actual
     # si el usuario lo anade a mano, debe salir con gramos reales, no a 0
     return recalcular_menu(nueva_lista, der_objetivo, etapa_requisitos, especies_excluidas,
-                            forzar_presencia=[nuevo_alimento], peso_perro_kg=peso_perro_kg)
+                            forzar_presencia=[nuevo_alimento], peso_perro_kg=peso_perro_kg,
+                            nombres_excluidos=nombres_excluidos)
 
 
 def quitar_alimento(menu_actual: list, alimento_a_quitar: str, der_objetivo: float,
                      etapa_requisitos: str, especies_excluidas: set = None,
-                     peso_perro_kg: float = None) -> dict:
+                     peso_perro_kg: float = None, nombres_excluidos: set = None) -> dict:
     """Quita un alimento del menu y recalcula TODO de verdad."""
     nueva_lista = [a for a in menu_actual if a != alimento_a_quitar]
     # Si el recalculo no encuentra solucion, amplia candidatos... y podia
@@ -96,18 +132,20 @@ def quitar_alimento(menu_actual: list, alimento_a_quitar: str, der_objetivo: flo
     # explicitamente: si lo has quitado, no vuelve.
     return recalcular_menu(nueva_lista, der_objetivo, etapa_requisitos, especies_excluidas,
                             peso_perro_kg=peso_perro_kg,
-                            nunca_reañadir=[alimento_a_quitar])
+                            nunca_reañadir=[alimento_a_quitar],
+                            nombres_excluidos=nombres_excluidos)
 
 
 def cambiar_alimento(menu_actual: list, alimento_viejo: str, alimento_nuevo: str,
                       der_objetivo: float, etapa_requisitos: str, especies_excluidas: set = None,
-                      peso_perro_kg: float = None) -> dict:
+                      peso_perro_kg: float = None, nombres_excluidos: set = None) -> dict:
     """Sustituye un alimento por otro (el lapiz de editar) y recalcula TODO de verdad."""
     nueva_lista = [alimento_nuevo if a == alimento_viejo else a for a in menu_actual]
     # el alimento por el que se cambia debe aparecer de verdad en el menu
     return recalcular_menu(nueva_lista, der_objetivo, etapa_requisitos, especies_excluidas,
                             forzar_presencia=[alimento_nuevo], peso_perro_kg=peso_perro_kg,
-                            nunca_reañadir=[alimento_viejo])
+                            nunca_reañadir=[alimento_viejo],
+                            nombres_excluidos=nombres_excluidos)
 
 
 if __name__ == "__main__":
