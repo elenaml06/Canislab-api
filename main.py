@@ -27,6 +27,7 @@ import sys
 sys.path.insert(0, ".")
 from especies import cargar_alimentos, filtrar_alimentos_disponibles
 from der import calcular_der
+from optimizador import ETAPAS_VALIDAS
 from optimizador import optimizar_menu
 from optimizador_semanal import optimizar_semana
 from transicion import calcular_tramo_transicion, menu_activo_y_bloqueados, nivel_indicador_nutrientes
@@ -50,6 +51,16 @@ persistencia.crear_tablas()
 
 # ---------- modelos de entrada ----------
 class PeticionDER(BaseModel):
+    # Datos del método europeo. Todos OPCIONALES: sin ellos el cálculo
+    # sigue funcionando con valores prudentes.
+    peso_adulto_esperado_kg: float = None
+    peso_ideal_kg: float = None
+    convivencia: str = "solo"
+    macho_entero: bool = False
+    raza: str = None
+    semana_gestacion: int = None
+    n_cachorros: int = None
+    semana_lactancia: int = 3
     peso_actual_kg: float
     etapa: str
     actividad_idx: int  # 0=sedentario .. 4=trabajo
@@ -107,7 +118,16 @@ class PeticionTransicion(BaseModel):
 def endpoint_der(datos: PeticionDER):
     ACTIVIDAD_KEY = ["sedentario", "normal", "activo", "muy_activo", "trabajo"]
     actividad = ACTIVIDAD_KEY[datos.actividad_idx] if datos.etapa in ("adulto", "senior") else None
-    resultado = calcular_der(datos.peso_actual_kg, datos.etapa, actividad, datos.esterilizado)
+    resultado = calcular_der(
+        datos.peso_actual_kg, datos.etapa, actividad, datos.esterilizado,
+        peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
+        peso_ideal_kg=datos.peso_ideal_kg,
+        convivencia=datos.convivencia,
+        macho_entero=datos.macho_entero,
+        raza=datos.raza,
+        semana_gestacion=datos.semana_gestacion,
+        n_cachorros=datos.n_cachorros,
+        semana_lactancia=datos.semana_lactancia)
     return resultado
 
 
@@ -206,6 +226,24 @@ class AnalisisRequest(BaseModel):
     etapa_der: str = None       # clave de der.py: adulto, cachorro_crecimiento...
     actividad: str = None
     esterilizado: bool = False
+    # Datos del metodo europeo. Sin ellos el DER sale con valores prudentes,
+    # pero para un CACHORRO el peso adulto esperado es lo que decide el tramo
+    # (hasta 50% / 50-80% / desde 80%), asi que conviene mandarlo siempre.
+    peso_adulto_esperado_kg: float = None
+    peso_ideal_kg: float = None
+    convivencia: str = "solo"
+    macho_entero: bool = False
+    raza: str = None
+    semana_gestacion: int = None
+    n_cachorros: int = None
+    semana_lactancia: int = 3
+
+
+def _etapa_ok(etapa):
+    """Traduce el ValueError de resolver_etapa en un 400 legible."""
+    if etapa not in ETAPAS_VALIDAS:
+        raise HTTPException(400, f"Etapa de requisitos '{etapa}' no valida. "
+                                 f"Usa una de: {sorted(ETAPAS_VALIDAS)}")
 
 
 @app.post("/analizar")
@@ -214,7 +252,16 @@ def analizar(req: AnalisisRequest):
     if der is None:
         if req.peso_kg is None or req.etapa_der is None:
             raise HTTPException(400, "Hacen falta el DER, o bien peso y etapa del perro.")
-        d = calcular_der(req.peso_kg, req.etapa_der, req.actividad, req.esterilizado)
+        d = calcular_der(
+            req.peso_kg, req.etapa_der, req.actividad, req.esterilizado,
+            peso_adulto_esperado_kg=req.peso_adulto_esperado_kg,
+            peso_ideal_kg=req.peso_ideal_kg,
+            convivencia=req.convivencia,
+            macho_entero=req.macho_entero,
+            raza=req.raza,
+            semana_gestacion=req.semana_gestacion,
+            n_cachorros=req.n_cachorros,
+            semana_lactancia=req.semana_lactancia)
         der = d["der"] if isinstance(d, dict) else d
     return analizar_dieta(req.gramos_por_alimento, der, req.etapa_requisitos)
 
