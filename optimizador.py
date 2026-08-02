@@ -159,8 +159,18 @@ PATOLOGIAS = {
     "diabetes": {
         "nombre": "Diabetes mellitus",
         "max_pct_kcal_grasa": 0.35,
+        # La fruta baja practicamente a cero. En un perro SANO el azucar de la
+        # fruta no es toxico -- son calorias vacias que diluyen la racion y ya.
+        # En un diabetico si importa: los azucares simples se absorben rapido y
+        # provocan un pico de glucosa que descuadra la pauta de insulina. La
+        # verdura fibrosa se mantiene (la fibra ayuda a amortiguar la glucemia);
+        # lo que se quita es la fruta.
+        "excluye_fruta": True,
         "aviso": ("Lo más importante en diabetes no es el menú sino la REGULARIDAD: "
-                  "misma cantidad, a la misma hora, coordinada con la insulina."),
+                  "misma cantidad, a la misma hora, coordinada con la insulina. "
+                  "Se ha quitado la fruta del menú: su azúcar se absorbe rápido y "
+                  "descuadra la pauta de insulina. La verdura fibrosa sí se "
+                  "mantiene, porque ayuda a amortiguar la subida de glucosa."),
     },
     "hipotiroidismo": {
         "nombre": "Hipotiroidismo",
@@ -635,6 +645,14 @@ def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos
     TOPE_VERDURA_FRUTA_PESO = 0.25   # verdura + fruta juntas
     TOPE_FRUTA_PESO = 0.05           # la fruta aparte, por su azucar
 
+    # Alguna patologia puede EXCLUIR la fruta por completo (diabetes).
+    # Se hizo asi y no con un tope del 1% porque un tope tan bajo choca con el
+    # minimo de gramos por alimento (20 g) y el menu salia "no factible" con un
+    # mensaje incomprensible. Excluirla es mas honesto: la fruta simplemente no
+    # aparece, y el aviso de la patologia explica por que.
+    fuera_la_fruta = any(PATOLOGIAS.get(p, {}).get("excluye_fruta")
+                         for p in (patologias or []))
+
     idx_verdura_cap = [i for i, a in enumerate(alimentos_elegidos) if a["categoria"] == "Verduras y frutas"]
 
     if idx_verdura_cap:
@@ -647,10 +665,17 @@ def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos
         b_ub.append(0.0)
 
         # SUB-TOPE DE FRUTA. En perro sano el azucar de la fruta no es
-        # toxico, pero son calorias vacias que diluyen igual. En diabeticos
-        # habria que bajarlo a casi cero (pendiente: atarlo a patologias).
+        # toxico, solo son calorias vacias que diluyen la racion.
         idx_fruta = [i for i in idx_verdura_cap if es_fruta(alimentos_elegidos[i]["nombre"])]
-        if idx_fruta:
+        if idx_fruta and fuera_la_fruta:
+            # Diabetes: fruta a cero. Como los gramos no pueden ser negativos,
+            # "suma de frutas <= 0" las deja todas en cero.
+            fila = [0.0] * n
+            for i in idx_fruta:
+                fila[i] = 1.0
+            A_ub.append(fila)
+            b_ub.append(0.0)
+        elif idx_fruta:
             fila = [-TOPE_FRUTA_PESO] * n
             for i in idx_fruta:
                 fila[i] += 1.0
