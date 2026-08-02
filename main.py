@@ -58,6 +58,11 @@ class PeticionDER(BaseModel):
 
 class PeticionMenu(BaseModel):
     peso_perro_kg: float = None
+    nombres_excluidos: list = None
+    # Lo que el usuario ha elegido A MANO en Personalizar o Aprovechar. Sin
+    # esto, el optimizador podia ponerlo a 0 gramos y el usuario veia que su
+    # eleccion desaparecia del menu sin explicacion.
+    forzar_presencia: list = None
     nombres_alimentos: list[str]
     der_objetivo: float
     etapa_requisitos: str
@@ -66,6 +71,7 @@ class PeticionMenu(BaseModel):
 
 class PeticionCambiarAlimento(BaseModel):
     peso_perro_kg: float = None
+    nombres_excluidos: list = None
     menu_actual: list[str]
     alimento_viejo: str
     alimento_nuevo: str
@@ -76,6 +82,7 @@ class PeticionCambiarAlimento(BaseModel):
 
 class PeticionAnadirQuitarAlimento(BaseModel):
     peso_perro_kg: float = None
+    nombres_excluidos: list = None
     menu_actual: list[str]
     alimento: str
     der_objetivo: float
@@ -102,14 +109,24 @@ def endpoint_der(datos: PeticionDER):
 @app.post("/menu")
 def endpoint_menu(datos: PeticionMenu):
     alimentos = cargar_alimentos()
-    if datos.especies_excluidas:
-        alimentos = filtrar_alimentos_disponibles(alimentos, set(datos.especies_excluidas))
+    # Se filtra SIEMPRE, aunque no haya especies excluidas: los alimentos
+    # concretos que el usuario marco para evitar tambien tienen que caer.
+    alimentos = filtrar_alimentos_disponibles(
+        alimentos, set(datos.especies_excluidas or []), set(datos.nombres_excluidos or []))
     por_nombre = {a["nombre"]: a for a in alimentos}
     candidatos = [por_nombre[n] for n in datos.nombres_alimentos if n in por_nombre]
     if not candidatos:
         raise HTTPException(400, "Ninguno de los alimentos indicados existe en la base de datos")
     resultado = optimizar_menu(candidatos, datos.der_objetivo, datos.etapa_requisitos,
+                               forzar_presencia=datos.forzar_presencia,
                                peso_perro_kg=datos.peso_perro_kg)
+    # Si forzar lo que el usuario eligio deja el menu sin solucion, se
+    # reintenta sin forzar: mejor darle un menu (avisando) que un error.
+    if not resultado.get("factible") and datos.forzar_presencia:
+        resultado = optimizar_menu(candidatos, datos.der_objetivo, datos.etapa_requisitos,
+                                   peso_perro_kg=datos.peso_perro_kg)
+        if resultado.get("factible"):
+            resultado["no_se_pudo_forzar"] = True
     return resultado
 
 
@@ -130,6 +147,9 @@ def endpoint_cambiar_alimento(datos: PeticionCambiarAlimento):
         datos.menu_actual, datos.alimento_viejo, datos.alimento_nuevo,
         datos.der_objetivo, datos.etapa_requisitos, set(datos.especies_excluidas),
         peso_perro_kg=datos.peso_perro_kg,
+        nombres_excluidos=set(datos.nombres_excluidos or []),
+        nombres_excluidos=set(datos.nombres_excluidos or []),
+        nombres_excluidos=set(datos.nombres_excluidos or []),
     )
     return resultado
 
@@ -141,6 +161,9 @@ def endpoint_anadir_alimento(datos: PeticionAnadirQuitarAlimento):
         datos.menu_actual, datos.alimento,
         datos.der_objetivo, datos.etapa_requisitos, set(datos.especies_excluidas),
         peso_perro_kg=datos.peso_perro_kg,
+        nombres_excluidos=set(datos.nombres_excluidos or []),
+        nombres_excluidos=set(datos.nombres_excluidos or []),
+        nombres_excluidos=set(datos.nombres_excluidos or []),
     )
     return resultado
 
@@ -152,6 +175,9 @@ def endpoint_quitar_alimento(datos: PeticionAnadirQuitarAlimento):
         datos.menu_actual, datos.alimento,
         datos.der_objetivo, datos.etapa_requisitos, set(datos.especies_excluidas),
         peso_perro_kg=datos.peso_perro_kg,
+        nombres_excluidos=set(datos.nombres_excluidos or []),
+        nombres_excluidos=set(datos.nombres_excluidos or []),
+        nombres_excluidos=set(datos.nombres_excluidos or []),
     )
     return resultado
 
