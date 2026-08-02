@@ -258,6 +258,17 @@ def _resolver_lp(alimentos_elegidos: list, der_objetivo: float, etapa_requisitos
       - "motivo" si NO es factible (para el aviso al usuario, punto 6)
     """
     requerimientos = cargar_requerimientos()
+    # Sin alimentos no hay nada que resolver: scipy revienta con un mensaje
+    # incomprensible si se le pasa una lista vacia.
+    if not alimentos_elegidos:
+        return {"factible": False,
+                "motivo": "No se ha indicado ningún alimento para calcular el menú.",
+                "gramos": {}}
+    if not der_objetivo or der_objetivo <= 0:
+        return {"factible": False,
+                "motivo": "No se ha podido calcular cuántas calorías necesita el perro.",
+                "gramos": {}}
+
     n = len(alimentos_elegidos)
 
     # energia por 100g de cada alimento (columna objetivo: minimizar gramos totales)
