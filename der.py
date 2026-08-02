@@ -1,163 +1,266 @@
+# -*- coding: utf-8 -*-
 """
-CANISLAB - Calculo de DER (Daily Energy Requirement)
+CANISLAB — Cálculo del DER (necesidad energética diaria) — MÉTODO EUROPEO
 
-POR QUE UN SOLO MULTIPLICADOR Y NO "ETAPA x ACTIVIDAD"
-------------------------------------------------------
-El Excel original cruzaba dos factores (uno de etapa y otro de actividad) y
-los multiplicaba. Se cambio a un unico factor por situacion porque asi es
-como lo presentan las fuentes: FEDIAF (Anexo 7.2.4, "Practical
-recommendations for daily energy intake by dogs and cats in different
-physiological states") y NRC dan UN factor sobre el RER para cada situacion,
-no dos que se multipliquen.
+=============================================================================
+FUENTES  (verificadas el 2 agosto 2026, no citadas de memoria)
+=============================================================================
+· CRECIMIENTO, GESTACIÓN y LACTANCIA -> FEDIAF.
+· ADULTOS -> tesis de la Universidad de Múnich (Thes_Cindy_Melanie,
+  edoc.ub.uni-muenchen.de/17585): estudio retrospectivo del consumo
+  energético REAL de 586 perros de compañía privados europeos.
+Ambas recogidas y aplicadas en la calculadora alemana "Hannes Sein
+Futterrechner" (dr.ueke.de), que declara sus fuentes explícitamente.
 
-La razon de fondo es que el factor de cada etapa YA INCLUYE la actividad
-tipica de esa etapa:
-  - Un cachorro de 5 meses no es "sedentario" ni "activo" en el sentido
-    adulto: el 2.0 ya contempla que juega y ademas esta creciendo. Cruzarlo
-    con 1.2 o 1.8 daria 2.4-3.6, sin respaldo en ninguna fuente.
-  - Lo mismo con gestacion y lactancia: el coste metabolico domina sobre la
-    actividad, que ademas baja en esas fases.
+=============================================================================
+CÓMO FUNCIONA — y en qué se diferencia del método americano
+=============================================================================
+El método AMERICANO hace:   DER = RER x UN factor multiplicativo.
+El método EUROPEO hace:     DER = (base + modificadores) x peso^0.75
+                            con los modificadores SUMÁNDOSE en kcal/kg^0.75.
 
-Donde SI se usa la actividad es donde toca: en ADULTO y SENIOR, el
-multiplicador ES el de actividad. Asi que en la practica si hay dos ejes,
-solo que no se multiplican entre si: la etapa decide QUE tabla se usa, y
-dentro de adulto/senior la actividad decide el valor.
+Por eso aquí no hay "multiplicadores" que se puedan apilar por error: hay
+un COEFICIENTE en kcal por kg de peso metabólico, y unos ajustes que se le
+suman o restan.
 
-TODOS los multiplicadores se aplican sobre el RER (70 x peso^0.75).
+=============================================================================
+¿SE USA LA ACTIVIDAD EN CACHORROS?  NO. Y la fuente lo dice literal:
+=============================================================================
+  "Für Hunde im Wachstum und Reproduktion ist dies unerheblich, denn sie
+   brauchen generell mehr Energie, um zusätzliche Körpermasse zu produzieren."
+  (Para perros en crecimiento y reproducción esto es IRRELEVANTE, porque
+   necesitan más energía en general para producir masa corporal.)
 
-DE DONDE SALE CADA NUMERO  (auditado el 2 agosto 2026)
-------------------------------------------------------
-VERIFICADO en el PDF oficial de FEDIAF (ediciones 2020, 2021 y 2025):
+Lo repite para la actividad, la convivencia, la edad Y la raza: los cuatro
+ajustes se apagan en cachorros, gestantes y lactantes. En esas etapas manda
+el crecimiento o la lactancia, no cuánto pasea.
 
-  · Seccion 3.2.1 "How to read the tables": el mantenimiento de un perro
-    adulto son "either 95 kcal/kg^0.75 or 110 kcal/kg^0.75". Sobre el RER
-    eso es 1.36 y 1.57.
-  · Capitulo 6 (protocolos de ensayo), dos veces: "the estimated daily
-    maintenance energy requirements (about 110 kcal ME per kg BW^0.75 for
-    dogs)" -> 1.57 x RER es el mantenimiento de referencia.
-    NUESTRO "normal" (1.6 = 112 kcal/kg^0.75) coincide practicamente con el.
-  · Seccion 7.2.3.3 "Age": FEDIAF separa a los adultos POR EDAD ("dogs of
-    one to two years old, the average adult dog (three to seven years old)
-    and dogs of more than seven years of age"), no por actividad. Ese es el
-    contenido de la Tabla VII-6. Nosotros usamos actividad en adulto y
-    tratamos la edad avanzada como etapa "senior" aparte: es equivalente en
-    la practica, porque en la app el usuario da la fecha de nacimiento.
-  · Seccion 7.2.3.2 "Activity", literal y muy relevante: "Recommendations
-    for MER may overestimate energy needs by 10 to 60%" y "To avoid
-    overfeeding and the risk of obesity, it may be better to start from a
-    LOWER calculated MER and add as needed to maintain optimal body weight".
-    Por eso nuestro "sedentario" (1.2 = 84 kcal/kg^0.75) queda por DEBAJO
-    del rango de FEDIAF a proposito: es el punto de partida prudente que
-    la propia guia recomienda.
+=============================================================================
+QUÉ CAMBIÓ RESPECTO A LA VERSIÓN ANTERIOR (y por qué)
+=============================================================================
+1. CRECIMIENTO: antes eran 2 tramos fijos por EDAD (3.0 y 2.0 x RER). Ahora
+   son 3 tramos por % DEL PESO ADULTO esperado, que es como lo hace FEDIAF.
+   El x2.0 fijo equivalía al tramo "desde el 80%" y se aplicaba desde los 4
+   meses: se quedaba MUY corto a mitad de crecimiento.
+2. GESTACIÓN: fórmula real de FEDIAF, aditiva. La anterior (x2.2) daba menos
+   de lo debido.
+3. LACTANCIA: depende del NÚMERO DE CACHORROS y de la SEMANA. El x3.2 fijo
+   solo valía para camadas de 1-2.
+4. ESTERILIZACIÓN: el dato europeo dice que NO cambia el gasto (la fuente lo
+   marca con un "(!)"). Se conserva el parámetro por compatibilidad pero ya
+   no reduce nada. Lo que sí sube el gasto es ser MACHO ENTERO (+10).
+5. SOBREPESO: si el perro está >=10% por encima de su peso ideal, el gasto
+   se baja al RER puro (70) y eso MANDA sobre todo lo demás.
 
-NO VERIFICADO CONTRA FEDIAF (pendiente honesto):
-  Los valores exactos de la Tabla VII-6 (pag. ~62, Anexo 7.2.4) no se han
-  podido leer: el PDF se trunca antes de esa pagina en las tres ediciones
-  probadas, y no aparece transcrita en ninguna fuente secundaria fiable.
-  Lo unico confirmado de esa tabla, via cita en la patente US12137705, es
-  que da 110 kcal/kg^0.75 para perros de 3 a 7 anos -- que es justo nuestro
-  "normal".
-  Por tanto: los factores de ACTIVIDAD (1.8 / 2.0 / 3.0), los de SENIOR y
-  los de GESTACION y LACTANCIA (2.2 y 3.2) vienen de NRC 2006 y de uso
-  clinico habitual, NO de una celda de FEDIAF leida directamente.
-  Gestacion y lactancia estan ademas expresadas por las fuentes como
-  multiplos del MANTENIMIENTO (gestacion ultimo tercio x1.25-1.5,
-  lactancia x2-4 segun camada), y aqui se han convertido a multiplos del
-  RER usando mantenimiento = 1.6 x RER.
-
-  ==> SI ALGUN DIA SE CONSIGUE LA TABLA VII-6, ES LO PRIMERO QUE HAY QUE
-      CONTRASTAR. Es el unico hueco que queda en los tres pilares.
+Todo se calcula sobre el PESO IDEAL cuando se conoce, no sobre el actual.
 """
 
-# TODOS estos multiplicadores se aplican sobre el RER (70 x peso^0.75).
-#
-# CORREGIDO en la auditoria nutricional del 2 de agosto: gestacion y
-# lactancia estaban MAL. Con los valores anteriores una perra en gestacion
-# tardia (1.5) recibia MENOS calorias que un adulto normal (1.6), y una
-# lactante (2.5) apenas mas. Es justo al reves: son las dos situaciones de
-# mayor demanda energetica de la vida del perro. Una lactante mal alimentada
-# pierde condicion corporal muy rapido y los cachorros crecen peor.
-#
-# Referencias: FEDIAF y NRC expresan gestacion y lactancia como multiplos
-# del MANTENIMIENTO, no del RER:
-#   - gestacion primeras 5-6 semanas ~ mantenimiento
-#   - gestacion ultimo tercio        ~ mantenimiento x 1.25-1.5
-#   - lactancia (pico)               ~ mantenimiento x 2-4 segun camada
-# Tomando mantenimiento = RER x 1.6, sobre RER quedan:
-MULTIPLICADOR_FIJO = {
-    "cachorro_joven": 3.0,        # <4 meses (coincide con FEDIAF)
-    "cachorro_crecimiento": 2.0,  # 4 meses en adelante (coincide con FEDIAF)
-    "gestante_temprana": 1.6,     # = mantenimiento
-    "gestante_tardia": 2.2,       # = mantenimiento x 1.4
-    "lactante": 3.2,              # = mantenimiento x 2 (valor PRUDENTE:
-                                  # el pico real llega a x4 con camadas
-                                  # grandes -- pendiente ajustarlo por
-                                  # numero de cachorros y semana)
+# =============================================================================
+# ADULTOS — base por actividad (kcal por kg de peso metabólico)
+# =============================================================================
+BASE_ACTIVIDAD = {
+    "sedentario":   88,    # hasta 1 h de actividad al día
+    "normal":       98,    # hasta 2,5 h
+    "activo":      110,    # interpolado entre 98 y 120
+    "muy_activo":  120,    # más de 2,5 h
+    "trabajo":     150,    # deporte de resistencia o trabajo real:
+                           # fuera del rango del estudio, se mantiene el
+                           # valor alto que ya usaba el proyecto (~2.1 x RER)
 }
 
-MULTIPLICADOR_ADULTO = {
-    "sedentario": 1.2,
-    "normal": 1.6,
-    "activo": 1.8,
-    "muy_activo": 2.0,
-    "trabajo": 3.0,
+# Ajustes ADITIVOS, en kcal/kg^0.75. Solo se aplican a adulto y senior.
+AJUSTE_EDAD = {
+    "joven":   +15,   # 1 a 2 años
+    "adulto":    0,   # 2 a 7 años
+    "senior":   -5,   # más de 7 años
 }
+AJUSTE_CONVIVENCIA = {"solo": 0, "con_otros_perros": +10}
+AJUSTE_MACHO_ENTERO = +10
 
-MULTIPLICADOR_SENIOR = {
-    "sedentario": 1.0,
-    "normal": 1.2,
-    "activo": 1.4,
+# Razas con gasto por encima / por debajo de la media (estudio de Múnich).
+# Los nombres están tal como aparecen en nuestra lista de 136 razas.
+RAZAS_MAS_GASTO = {
+    "Jack Russell Terrier", "Parson Russell Terrier", "Dálmata",
+    "Braco Húngaro (Vizsla)", "Bearded Collie", "Greyhound", "Whippet",
+    "Galgo Español", "Galgo Afgano", "Boxer", "Rhodesian Ridgeback",
+    "Flat Coated Retriever",
 }
+RAZAS_MENOS_GASTO = {
+    "Dachshund Estándar", "Dachshund Miniatura", "Bichón Maltés",
+    "Bichón Habanero", "Bichón Frisé", "West Highland White Terrier",
+    "Collie de Pelo Largo", "Shetland Sheepdog", "Airedale Terrier",
+    "American Staffordshire Terrier", "Golden Retriever",
+}
+AJUSTE_RAZA = 15
 
-FACTOR_ESTERILIZADO = 0.889
+# =============================================================================
+# CRECIMIENTO (FEDIAF) — por % del peso ADULTO esperado, no por edad
+# =============================================================================
+CRECIMIENTO = [
+    (0.50, 210),   # hasta el 50% del peso final   (= RER x 3.0)
+    (0.80, 175),   # del 50 al 80%                 (= RER x 2.5)
+    (None, 140),   # del 80% en adelante           (= RER x 2.0)
+]
+
+# =============================================================================
+# GESTACIÓN y LACTANCIA (FEDIAF)
+# =============================================================================
+GESTACION_BASE = 132              # kcal/kg^0.75, toda la gestación
+GESTACION_EXTRA_DESDE_SEM5 = 26   # + kcal por kg de PESO VIVO desde la sem. 5
+LACTANCIA_BASE = 145              # kcal/kg^0.75
+# El extra de lactancia se pondera por semana: sube hasta el pico y baja
+LACTANCIA_PESO_SEMANA = [0.75, 0.95, 1.10, 1.40]
+# TOPE DE SEGURIDAD. El termino extra de la lactancia escala con el PESO VIVO
+# (24 x n x peso), asi que en perros grandes se dispara muy por encima de lo
+# que da la tabla clinica (Small Animal Clinical Nutrition), cuyo maximo es
+# x6 del RER incluso con camadas de 9 o mas cachorros. Como la formula de
+# lactancia viene de una fuente SECUNDARIA y no se ha podido contrastar con
+# el texto original de FEDIAF, se limita al maximo de la tabla clinica.
+# Es la parte menos verificada de todo el DER: la lactancia SIEMPRE deberia
+# pautarla un veterinario, y ademas hay que recalcular cada semana.
+LACTANCIA_TOPE_RER = 6.0
+
+# =============================================================================
+# PESO CORPORAL — manda sobre todo lo demás
+# =============================================================================
+RER_COEF = 70                     # RER = 70 x peso^0.75
+SOBREPESO_UMBRAL = 1.10           # >=10% por encima del ideal
+INFRAPESO_UMBRAL = 0.90           # >=10% por debajo
+INFRAPESO_AUMENTO = 1.20          # +20%
 
 
-def calcular_rer(peso_actual_kg: float) -> float:
-    """RER = 70 * peso^0.75 (formula estandar, kcal/dia)."""
-    return 70 * (peso_actual_kg ** 0.75)
+def calcular_rer(peso_kg: float) -> float:
+    """Necesidad en reposo. Es la base de todo."""
+    return RER_COEF * peso_kg ** 0.75
 
 
-def calcular_der(peso_actual_kg: float, etapa: str, actividad: str = None, esterilizado: bool = False) -> dict:
+def _coef_crecimiento(peso_actual: float, peso_adulto: float) -> float:
+    if not peso_adulto or peso_adulto <= 0:
+        return CRECIMIENTO[-1][1]     # sin peso adulto, lo prudente
+    frac = peso_actual / peso_adulto
+    for limite, kcal in CRECIMIENTO:
+        if limite is None or frac <= limite:
+            return kcal
+    return CRECIMIENTO[-1][1]
+
+
+def _coef_adulto(actividad, edad_grupo, convivencia, macho_entero, raza):
+    if actividad not in BASE_ACTIVIDAD:
+        raise ValueError(f"Actividad '{actividad}' no reconocida")
+    k = BASE_ACTIVIDAD[actividad]
+    k += AJUSTE_EDAD.get(edad_grupo, 0)
+    k += AJUSTE_CONVIVENCIA.get(convivencia, 0)
+    if macho_entero:
+        k += AJUSTE_MACHO_ENTERO
+    if raza in RAZAS_MAS_GASTO:
+        k += AJUSTE_RAZA
+    elif raza in RAZAS_MENOS_GASTO:
+        k -= AJUSTE_RAZA
+    return k
+
+
+def calcular_der(peso_actual_kg: float, etapa: str, actividad: str = None,
+                 esterilizado: bool = False, peso_adulto_esperado_kg: float = None,
+                 peso_ideal_kg: float = None, convivencia: str = "solo",
+                 macho_entero: bool = False, raza: str = None,
+                 semana_gestacion: int = None, n_cachorros: int = None,
+                 semana_lactancia: int = 3) -> dict:
     """
     etapa: "cachorro_joven" | "cachorro_crecimiento" | "gestante_temprana"
            | "gestante_tardia" | "lactante" | "adulto" | "senior"
-    actividad: solo se usa si etapa es "adulto" o "senior"
-    """
-    rer = calcular_rer(peso_actual_kg)
 
-    if etapa in MULTIPLICADOR_FIJO:
-        multiplicador = MULTIPLICADOR_FIJO[etapa]
-    elif etapa == "adulto":
-        if actividad not in MULTIPLICADOR_ADULTO:
-            raise ValueError(f"Actividad '{actividad}' no valida para adulto")
-        multiplicador = MULTIPLICADOR_ADULTO[actividad]
-    elif etapa == "senior":
-        if actividad not in MULTIPLICADOR_SENIOR:
-            raise ValueError(f"Actividad '{actividad}' no valida para senior")
-        multiplicador = MULTIPLICADOR_SENIOR[actividad]
+    Los parámetros nuevos son TODOS opcionales: sin ellos el cálculo sigue
+    funcionando con valores prudentes, así que nada que ya llamaba a esta
+    función se rompe.
+    """
+    if not peso_actual_kg or peso_actual_kg <= 0:
+        raise ValueError("El peso tiene que ser mayor que cero")
+
+    # El cálculo se hace sobre el peso IDEAL si se conoce (en adultos).
+    en_crecimiento = etapa in ("cachorro_joven", "cachorro_crecimiento")
+    peso_calculo = peso_actual_kg
+    aviso_peso = None
+    if peso_ideal_kg and peso_ideal_kg > 0 and not en_crecimiento:
+        ratio = peso_actual_kg / peso_ideal_kg
+        if ratio >= SOBREPESO_UMBRAL:
+            # Sobrepeso: manda sobre todo. Se baja al RER del peso IDEAL.
+            der = RER_COEF * peso_ideal_kg ** 0.75
+            return {
+                "rer": round(calcular_rer(peso_ideal_kg), 1),
+                "coeficiente_kcal_kg075": RER_COEF,
+                "multiplicador_aplicado": 1.0,
+                "der": round(der, 1),
+                "metodo": "europeo",
+                "aviso": (f"Está un {(ratio-1)*100:.0f}% por encima de su peso ideal. "
+                          f"La ración se ha bajado a su necesidad en reposo y conviene "
+                          f"aumentar el ejercicio. Pésalo cada mes."),
+            }
+        peso_calculo = peso_ideal_kg
+        if ratio <= INFRAPESO_UMBRAL:
+            aviso_peso = (f"Está un {(1-ratio)*100:.0f}% por debajo de su peso ideal: "
+                          f"se ha subido la ración un 20%. Pésalo cada mes.")
+
+    rer = calcular_rer(peso_calculo)
+
+    # --- coeficiente según la etapa ---
+    if en_crecimiento:
+        coef = _coef_crecimiento(peso_actual_kg, peso_adulto_esperado_kg)
+        der = coef * peso_actual_kg ** 0.75
+    elif etapa in ("gestante_temprana", "gestante_tardia"):
+        coef = GESTACION_BASE
+        der = coef * peso_calculo ** 0.75
+        tardia = etapa == "gestante_tardia" or (semana_gestacion or 0) >= 5
+        if tardia:
+            der += GESTACION_EXTRA_DESDE_SEM5 * peso_calculo
+    elif etapa == "lactante":
+        coef = LACTANCIA_BASE
+        n = n_cachorros if n_cachorros and n_cachorros > 0 else 4
+        # OJO: la fuente alemana escribe "(96 + 12 x nº cachorros)", pero eso
+        # da un SALTO imposible entre 4 y 5 cachorros (de 96 a 156). La forma
+        # del NRC es 96 + 12x(n-4), que sí es continua: con 4 cachorros
+        # 24x4 = 96, y 96 + 12x0 = 96. Se usa la continua.
+        extra = (24 * n * peso_calculo) if n <= 4 else ((96 + 12 * (n - 4)) * peso_calculo)
+        sem = min(max(semana_lactancia or 3, 1), 4)
+        der = coef * peso_calculo ** 0.75 + extra * LACTANCIA_PESO_SEMANA[sem - 1]
+        tope = LACTANCIA_TOPE_RER * calcular_rer(peso_calculo)
+        topada = der > tope
+        if topada:
+            der = tope
+    elif etapa in ("adulto", "senior"):
+        grupo = "senior" if etapa == "senior" else "adulto"
+        coef = _coef_adulto(actividad or "normal", grupo, convivencia,
+                            macho_entero, raza)
+        der = coef * peso_calculo ** 0.75
     else:
         raise ValueError(f"Etapa '{etapa}' no reconocida")
 
-    if esterilizado:
-        multiplicador *= FACTOR_ESTERILIZADO
+    if aviso_peso:
+        der *= INFRAPESO_AUMENTO
 
-    der = rer * multiplicador
-    return {
+    resultado = {
         "rer": round(rer, 1),
-        "multiplicador_aplicado": round(multiplicador, 3),
+        "coeficiente_kcal_kg075": round(coef, 1),
+        "multiplicador_aplicado": round(der / rer, 3),   # informativo
         "der": round(der, 1),
+        "metodo": "europeo",
     }
+    if aviso_peso:
+        resultado["aviso"] = aviso_peso
+    if etapa == "lactante":
+        resultado["requiere_veterinario"] = True
+        resultado["aviso_lactancia"] = (
+            "La lactancia es la etapa de mayor demanda de toda la vida de una "
+            "perra y la que peor se estima con una fórmula. Este número es "
+            "solo un punto de partida: pésala cada semana, ajusta según su "
+            "condición corporal, y que lo supervise tu veterinario."
+            + (" (Se ha aplicado el tope de seguridad.)" if locals().get("topada") else ""))
+    return resultado
 
 
 if __name__ == "__main__":
-    # Caso real: Cairo, 16kg actual, cachorro en crecimiento
-    resultado = calcular_der(peso_actual_kg=16, etapa="cachorro_crecimiento")
-    print("=== CAIRO (16kg, cachorro en crecimiento) ===")
-    print(resultado)
-    assert abs(resultado["der"] - 1120) < 50, f"DER inesperado: {resultado['der']} (se esperaba ~1120)"
-    print("OK: coincide con el DER ya usado en el proyecto (~1120 kcal)\n")
-
-    # Caso adulto activo esterilizado, 30kg
-    resultado2 = calcular_der(peso_actual_kg=30, etapa="adulto", actividad="activo", esterilizado=True)
-    print("=== Adulto 30kg, activo, esterilizado ===")
-    print(resultado2)
+    print("=== CAIRO: 17 kg ahora, 32 kg de adulto, en crecimiento ===")
+    print(calcular_der(17, "cachorro_crecimiento", peso_adulto_esperado_kg=32))
+    print("\n=== Cairo de adulto, 32 kg, normal, Amstaff ===")
+    print(calcular_der(32, "adulto", "normal", raza="American Staffordshire Terrier"))
+    print("\n=== Lactante 25 kg con 6 cachorros, semana 3 ===")
+    print(calcular_der(25, "lactante", n_cachorros=6, semana_lactancia=3))
