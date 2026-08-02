@@ -18,7 +18,8 @@ def _candidatos_por_nombre(alimentos, nombres):
 
 
 def recalcular_menu(nombres_alimentos_actuales: list, der_objetivo: float,
-                     etapa_requisitos: str, especies_excluidas: set = None) -> dict:
+                     etapa_requisitos: str, especies_excluidas: set = None,
+                     forzar_presencia: list = None) -> dict:
     """
     Punto de entrada UNICO para cualquier cambio en un menu: anadir
     suplemento, quitar suplemento, cambiar un alimento con el lapiz.
@@ -29,14 +30,16 @@ def recalcular_menu(nombres_alimentos_actuales: list, der_objetivo: float,
     if especies_excluidas:
         alimentos = filtrar_alimentos_disponibles(alimentos, especies_excluidas)
     candidatos = _candidatos_por_nombre(alimentos, nombres_alimentos_actuales)
-    return optimizar_menu(candidatos, der_objetivo, etapa_requisitos)
+    return optimizar_menu(candidatos, der_objetivo, etapa_requisitos, forzar_presencia)
 
 
 def anadir_alimento(menu_actual: list, nuevo_alimento: str, der_objetivo: float,
                      etapa_requisitos: str, especies_excluidas: set = None) -> dict:
     """Añade un alimento (ej. un suplemento) al menu y recalcula TODO de verdad."""
     nueva_lista = menu_actual + [nuevo_alimento] if nuevo_alimento not in menu_actual else menu_actual
-    return recalcular_menu(nueva_lista, der_objetivo, etapa_requisitos, especies_excluidas)
+    # si el usuario lo anade a mano, debe salir con gramos reales, no a 0
+    return recalcular_menu(nueva_lista, der_objetivo, etapa_requisitos, especies_excluidas,
+                            forzar_presencia=[nuevo_alimento])
 
 
 def quitar_alimento(menu_actual: list, alimento_a_quitar: str, der_objetivo: float,
@@ -50,7 +53,9 @@ def cambiar_alimento(menu_actual: list, alimento_viejo: str, alimento_nuevo: str
                       der_objetivo: float, etapa_requisitos: str, especies_excluidas: set = None) -> dict:
     """Sustituye un alimento por otro (el lapiz de editar) y recalcula TODO de verdad."""
     nueva_lista = [alimento_nuevo if a == alimento_viejo else a for a in menu_actual]
-    return recalcular_menu(nueva_lista, der_objetivo, etapa_requisitos, especies_excluidas)
+    # el alimento por el que se cambia debe aparecer de verdad en el menu
+    return recalcular_menu(nueva_lista, der_objetivo, etapa_requisitos, especies_excluidas,
+                            forzar_presencia=[alimento_nuevo])
 
 
 if __name__ == "__main__":
