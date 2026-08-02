@@ -59,6 +59,7 @@ class PeticionDER(BaseModel):
 class PeticionMenu(BaseModel):
     peso_perro_kg: float = None
     nombres_excluidos: list = None
+    patologias: list = None
     # Lo que el usuario ha elegido A MANO en Personalizar o Aprovechar. Sin
     # esto, el optimizador podia ponerlo a 0 gramos y el usuario veia que su
     # eleccion desaparecia del menu sin explicacion.
@@ -72,6 +73,7 @@ class PeticionMenu(BaseModel):
 class PeticionCambiarAlimento(BaseModel):
     peso_perro_kg: float = None
     nombres_excluidos: list = None
+    patologias: list = None
     menu_actual: list[str]
     alimento_viejo: str
     alimento_nuevo: str
@@ -83,6 +85,7 @@ class PeticionCambiarAlimento(BaseModel):
 class PeticionAnadirQuitarAlimento(BaseModel):
     peso_perro_kg: float = None
     nombres_excluidos: list = None
+    patologias: list = None
     menu_actual: list[str]
     alimento: str
     der_objetivo: float
@@ -119,12 +122,14 @@ def endpoint_menu(datos: PeticionMenu):
         raise HTTPException(400, "Ninguno de los alimentos indicados existe en la base de datos")
     resultado = optimizar_menu(candidatos, datos.der_objetivo, datos.etapa_requisitos,
                                forzar_presencia=datos.forzar_presencia,
-                               peso_perro_kg=datos.peso_perro_kg)
+                               peso_perro_kg=datos.peso_perro_kg,
+                               patologias=datos.patologias)
     # Si forzar lo que el usuario eligio deja el menu sin solucion, se
     # reintenta sin forzar: mejor darle un menu (avisando) que un error.
     if not resultado.get("factible") and datos.forzar_presencia:
         resultado = optimizar_menu(candidatos, datos.der_objetivo, datos.etapa_requisitos,
-                                   peso_perro_kg=datos.peso_perro_kg)
+                                   peso_perro_kg=datos.peso_perro_kg,
+                                   patologias=datos.patologias)
         if resultado.get("factible"):
             resultado["no_se_pudo_forzar"] = True
     return resultado
