@@ -1,5 +1,13 @@
 # LAS BASES — CERRADAS. NO SE TOCAN.
 
+> ## 🛑 ANTES DE PROPONER CUALQUIER CAMBIO: LEE `YA-PROBADO.md`
+> Está en este mismo repo. Contiene lo que ya se intentó y NO funcionó,
+> extraído de las 14 sesiones de trabajo.
+> **Si propones algo que está ahí, estás haciendo perder el tiempo.**
+> Los transcritos completos están en `/mnt/transcripts/` — se pueden
+> buscar con grep antes de sugerir nada.
+
+
 Este documento es la ÚNICA fuente de verdad sobre los tres pilares.
 Si algo parece contradecir esto, **el equivocado es lo otro**, no este archivo.
 
