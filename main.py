@@ -2,9 +2,10 @@
 CANISLAB - API real del motor nutricional
 
 Envuelve todo el codigo Python YA VALIDADO (especies.py, der.py,
-optimizador.py, optimizador_semanal.py, transicion.py, recalculo.py,
-persistencia.py) como un servicio web de verdad, para que la app pueda
-consultarlo por internet en vez de simular nada.
+optimizador.py, transicion.py, persistencia.py, y desde el 5 de agosto
+motor/motor_completo.py como motor de generación real) como un servicio
+web de verdad, para que la app pueda consultarlo por internet en vez de
+simular nada.
 
 Para probarlo en local:
     pip install fastapi uvicorn --break-system-packages
@@ -193,6 +194,17 @@ def endpoint_menu_v2(datos: PeticionMenu):
     al, req = cargar_v2()
     excluidos = list(datos.especies_excluidas or []) + list(datos.nombres_excluidos or [])
 
+    # ⚠️ CONECTADO (5 agosto, noche): las patologías existían en el modelo
+    # y en el perfil que manda la app, pero el motor nunca las miraba.
+    # Las que dependen de analíticas (estruvita/cistina/urato) BLOQUEAN
+    # la generación automática — se deriva al veterinario en vez de dar
+    # un menú que podría empeorar el problema.
+    from motor_completo import patologias_bloquean, avisos_de_patologias
+    bloqueantes = patologias_bloquean(datos.patologias)
+    if bloqueantes:
+        return {"factible": False, "requiere_veterinario": True,
+                "motivo": " ".join(avisos_de_patologias(bloqueantes))}
+
     forzar, preferir = None, None
     if datos.modo == "personalizar":
         forzar = list(datos.forzar_presencia or datos.nombres_alimentos or [])
@@ -205,6 +217,7 @@ def endpoint_menu_v2(datos: PeticionMenu):
         excluidos=excluidos or None,
         margenes_categoria=MARGENES_V2, max_suplementos=2,
         forzar=forzar, preferir=preferir,
+        patologias=datos.patologias,
     )
     if not ok and datos.modo == "personalizar":
         # igual que hacía /menu (el viejo): si forzar lo elegido a mano
@@ -215,6 +228,7 @@ def endpoint_menu_v2(datos: PeticionMenu):
             datos.peso_perro_kg, dosis_maxima_fabricante,
             excluidos=excluidos or None,
             margenes_categoria=MARGENES_V2, max_suplementos=2,
+            patologias=datos.patologias,
         )
         no_se_pudo_forzar = ok
     else:
