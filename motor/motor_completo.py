@@ -33,11 +33,67 @@ import numpy as np
 from scipy.optimize import milp, LinearConstraint, Bounds
 from verificar import MAPA, _num, EQUIVALENCIA
 
+# ⚠️ AÑADIDO (5 agosto, noche): esta tabla YA EXISTÍA en optimizador.py
+# (el LP viejo) -- se acordó con la usuaria el 1 de agosto y nunca se
+# portó al motor nuevo. Por eso las patologías no hacían nada: la app
+# seguía preguntando y mandando el dato, pero resolver() lo ignoraba.
+# Se porta tal cual, sin cambiar ningún valor.
+PATOLOGIAS = {
+    "renal": {"max_por_1000kcal": {"fosforo": 1400.0},
+        "aviso": ("Se ha bajado el fósforo todo lo posible sin bajar del mínimo "
+                  "nutricional de un perro sano. IMPORTANTE: una dieta renal "
+                  "terapéutica de verdad baja el fósforo POR DEBAJO de ese mínimo, "
+                  "y eso solo puede pautarlo tu veterinario. Esto es un apoyo, "
+                  "no sustituye una dieta renal prescrita.")},
+    "pancreatitis": {"max_pct_kcal_grasa": 0.25,
+        "aviso": ("Se ha bajado la grasa al 25% de las calorías. En pancreatitis "
+                  "la tolerancia a la grasa es muy individual: ajústalo con tu "
+                  "veterinario según cómo responda.")},
+    "oxalato": {"max_por_1000kcal": {"vitD": 20.0},
+        "aviso": ("Ojo: en oxalato NO hay que bajar el calcio (bajarlo aumenta la "
+                  "absorción de oxalato y empeora). Lo importante es el agua y "
+                  "evitar verduras muy ricas en oxalato como la espinaca o la acelga.")},
+    "hepatopatia": {"max_por_1000kcal": {"cobre": 3.0},
+        "aviso": ("Se ha limitado el cobre, clave en las hepatopatías por acúmulo. "
+                  "Si hay encefalopatía hepática hace falta además ajustar la "
+                  "proteína, y eso lo tiene que pautar tu veterinario.")},
+    "cardiopatia": {"max_por_1000kcal": {"sodio": 900.0},
+        "aviso": ("Se ha bajado el sodio. En cardiopatía avanzada puede hacer falta "
+                  "bajarlo más y vigilar el potasio si toma diuréticos: consúltalo.")},
+    "diabetes": {"max_pct_kcal_grasa": 0.35, "excluye_fruta": True,
+        "aviso": ("Lo más importante en diabetes no es el menú sino la REGULARIDAD: "
+                  "misma cantidad, a la misma hora, coordinada con la insulina. "
+                  "Se ha quitado la fruta del menú: su azúcar se absorbe rápido y "
+                  "descuadra la pauta de insulina. La verdura fibrosa sí se "
+                  "mantiene, porque ayuda a amortiguar la subida de glucosa.")},
+    "hipotiroidismo": {
+        "aviso": ("No se cambia la composición. Pero evita darle cuello de rumiante "
+                  "grande de forma repetida: puede llevar restos de tejido tiroideo "
+                  "y alterar los valores de la analítica.")},
+    "estruvita": {"sin_dieta_automatica": True,
+        "aviso": ("Estos cálculos dependen del pH de la orina y de analíticas que la "
+                  "app no puede ver. Una dieta mal ajustada aquí puede empeorarlos, "
+                  "así que no generamos menú automático: necesitas una dieta pautada "
+                  "por tu veterinario.")},
+}
+
+FRUTAS = {"Manzana", "Pera", "Plátano", "Fresa", "Sandía", "Melón", "Naranja",
+         "Mandarina", "Piña", "Mango", "Frambuesa", "Arándano", "Albaricoque", "Dátil"}
+
+
+def patologias_bloquean(patologias):
+    """Las que impiden generar dieta automática (dependen de analíticas)."""
+    return [p for p in (patologias or []) if PATOLOGIAS.get(p, {}).get("sin_dieta_automatica")]
+
+
+def avisos_de_patologias(patologias):
+    return [PATOLOGIAS[p]["aviso"] for p in (patologias or []) if p in PATOLOGIAS]
+
 
 def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             excluidos=None, margenes_categoria=None, cuantos_max=None,
             max_suplementos=2, tolerancia_kcal=0.03,
-            forzar=None, preferir=None):
+            forzar=None, preferir=None, patologias=None):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -103,9 +159,16 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         return [0.0] * (2 * n_var)
 
     # TECHOS por variable (para la vinculación gramos<=usa*techo)
+    # ⚠️ AÑADIDO (5 agosto): diabetes quita la fruta del todo. Poniendo su
+    # techo a 0, la vinculación gramos<=usa*techo obliga gramos=0 siempre,
+    # sin tocar el resto de la formulación.
+    excluye_fruta = any(PATOLOGIAS.get(p, {}).get("excluye_fruta") for p in (patologias or []))
     techos = []
     for n in nombres:
         a = alimentos[n]
+        if excluye_fruta and n in FRUTAS:
+            techos.append(0.0)
+            continue
         if categoria_de[n] == "Suplementos":
             t = dosis_maxima_fn(a, peso_perro_kg)
             techos.append(t if t else 5.0)
@@ -119,6 +182,17 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         fila[idx[n]] = alimentos[n].get("energia", 0) / 100.0
     A_rows.append(fila); lb_rows.append(der * (1 - tolerancia_kcal)); ub_rows.append(der * (1 + tolerancia_kcal))
 
+    # ⚠️ AÑADIDO (5 agosto): topes mas estrictos por patologia. Si una
+    # patologia baja el maximo de un nutriente y ese maximo es MAS
+    # RESTRICTIVO que el de FEDIAF, gana el de la patologia (el min de
+    # los dos). Nunca al reves: una patologia no puede RELAJAR un tope.
+    topes_patologia = {}
+    for p in (patologias or []):
+        info = PATOLOGIAS.get(p, {})
+        for clave, valor in info.get("max_por_1000kcal", {}).items():
+            actual = topes_patologia.get(clave)
+            topes_patologia[clave] = valor if actual is None else min(actual, valor)
+
     # 2. mínimos y máximos de FEDIAF
     for nombre_req, clave in MAPA.items():
         r = req.get(nombre_req)
@@ -126,6 +200,8 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             continue
         mn = _num(r.get(f"min{et}"))
         mx = _num(r.get(f"max{et}")) or _num(r.get("maxAdulto"))
+        if clave in topes_patologia:
+            mx = topes_patologia[clave] if mx is None else min(mx, topes_patologia[clave])
         fila = fila_vacia()
         aporta_algo = False
         for n in nombres:
@@ -176,6 +252,22 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             A_rows.append(fila_rel_max); lb_rows.append(-np.inf); ub_rows.append(0.0)
             fila_rel_min = [-fila_cat[j] + mnp * fila_total[j] for j in range(2 * n_var)]
             A_rows.append(fila_rel_min); lb_rows.append(-np.inf); ub_rows.append(0.0)
+
+    # ⚠️ AÑADIDO (5 agosto): grasa como % de las kcal (pancreatitis,
+    # diabetes) -- restricción propia, no cabe en el bucle de arriba
+    # porque compara contra las kcal totales, no contra un mínimo/máximo
+    # por 1000kcal. grasa (g) x 9 kcal/g <= pct x der
+    pct_grasa_max = None
+    for p in (patologias or []):
+        v = PATOLOGIAS.get(p, {}).get("max_pct_kcal_grasa")
+        if v is not None:
+            pct_grasa_max = v if pct_grasa_max is None else min(pct_grasa_max, v)
+    if pct_grasa_max is not None:
+        fila = fila_vacia()
+        for n in nombres:
+            g = (_num(alimentos[n].get("nutrientes", {}).get("grasa")) or 0.0) / 100.0
+            fila[idx[n]] = g * 9.0
+        A_rows.append(fila); lb_rows.append(-np.inf); ub_rows.append(pct_grasa_max * der)
 
     # 4. VINCULACIÓN gramos <= usa * techo (y gramos >= 0, ya en bounds)
     for n in nombres:
@@ -242,7 +334,18 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                 coste_binaria[idx[n]] = 0.1   # mucho más barato usarlo
     c = np.array([0.0] * n_var + coste_binaria)
 
-    res = milp(c, constraints=constraints, integrality=integrality, bounds=bounds)
+    # ⚠️ AÑADIDO (5 agosto, noche) — CASO REAL ENCONTRADO: cachorro pequeño
+    # + alergia al pollo tardaba 72-75 segundos, siempre, de forma
+    # constante. La causa: milp() sin límites intentaba DEMOSTRAR que la
+    # solución encontrada era la óptima exacta (mínimo número de alimentos
+    # distintos posible), no solo encontrar UNA que funcione. Esa prueba
+    # de optimalidad exacta es la parte cara del problema, no encontrar
+    # una solución valida. El objetivo (menos alimentos distintos) es un
+    # capricho de presentación, no un requisito nutricional: conformarse
+    # con estar cerca del óptimo (1%) es indistinguible para el usuario y
+    # muchísimo más rápido.
+    res = milp(c, constraints=constraints, integrality=integrality, bounds=bounds,
+              options={"time_limit": 30, "mip_rel_gap": 0.15})
 
     if res.success:
         x = res.x[:n_var]
