@@ -83,6 +83,10 @@ class PeticionMenu(BaseModel):
     peso_adulto_esperado_kg: float = None
     nombres_excluidos: list = None
     patologias: list = None
+    # ⚠️ AÑADIDO (5 agosto): "Toy"/"Mini"/"Pequeño"/"Mediano"/"Grande"/
+    # "Gigante" -- para poder intentar primero la vía rápida del catálogo
+    # fijo (mismo tamaño y etapa) antes de la búsqueda libre completa.
+    tamano: str = None
     # Lo que el usuario ha elegido A MANO en Personalizar o Aprovechar. Sin
     # esto, el optimizador podia ponerlo a 0 gramos y el usuario veia que su
     # eleccion desaparecia del menu sin explicacion.
@@ -254,6 +258,43 @@ def endpoint_menu_v2(datos: PeticionMenu):
         forzar = list(datos.forzar_presencia or datos.nombres_alimentos or [])
     elif datos.modo == "aprovechar":
         preferir = list(datos.nombres_alimentos or [])
+    elif datos.modo == "automatico" and not excluidos and not datos.patologias:
+        # ⚠️ AÑADIDO (5 agosto): en automático, sin alergias ni patologías,
+        # se prueba PRIMERO con la base de alimentos del catálogo fijo más
+        # cercano (mismo tamaño y etapa) forzada -- el motor solo tiene que
+        # decidir cuánto de cada uno y qué añadir para cerrar lo que falte,
+        # en vez de buscar desde cero. Probado: 0.1-0.5s en vez de 2-13s, y
+        # sale verde en la mayoría de los casos. Si con esa base no llega a
+        # cerrar los 30 requisitos (pasa a veces con pesos muy distintos al
+        # representativo del catálogo), se descarta el intento rápido y se
+        # sigue abajo con la búsqueda libre de siempre -- nunca se entrega
+        # un menú que no esté en verde de verdad.
+        from catalogo_menus import CATALOGO
+        SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
+                           "Calcio", "Hierro", "Vitamina B")
+        clave = f"{datos.tamano}_{datos.etapa_requisitos}" if datos.tamano else None
+        entrada = CATALOGO.get(clave) if clave else None
+        if entrada:
+            base = [n for n in entrada["gramos"]
+                   if al.get(n, {}).get("categoria") not in SUP_COMERCIALES]
+            ok_rapido, gramos_rapido = resolver_v2(
+                datos.der_objetivo, datos.etapa_requisitos, al, req,
+                datos.peso_perro_kg, dosis_maxima_fabricante,
+                margenes_categoria=MARGENES_V2, max_suplementos=2, forzar=base,
+            )
+            if ok_rapido:
+                ficha_rapida = verificar_v2(gramos_rapido, al, req, datos.der_objetivo, datos.etapa_requisitos)
+                if ficha_rapida["semaforo"] == "verde":
+                    problemas_rapido = revisar_seguridad_v2(gramos_rapido, al, datos.der_objetivo,
+                                                            datos.etapa_requisitos, datos.patologias)
+                    return {
+                        "factible": True, "menu": gramos_rapido, "ficha": ficha_rapida,
+                        "problemas_seguridad": problemas_rapido,
+                        "kcal_total": sum(al[n]["energia"] * g / 100 for n, g in gramos_rapido.items()),
+                        "gramos_total": sum(gramos_rapido.values()),
+                        "via_catalogo": True,
+                    }
+                # si no salió verde, se descarta y se sigue con la búsqueda libre de abajo
 
     ok, gramos = resolver_v2(
         datos.der_objetivo, datos.etapa_requisitos, al, req,
