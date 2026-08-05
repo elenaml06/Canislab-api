@@ -177,6 +177,50 @@ def endpoint_menu(datos: PeticionMenu):
     return resultado
 
 
+@app.get("/catalogo/{tamano}/{etapa}")
+def endpoint_catalogo(tamano: str, etapa: str, der_objetivo: float = None, peso_perro_kg: float = None):
+    """
+    Devuelve al instante (sin resolver nada) el menú del catálogo fijo más
+    cercano a este tamaño y etapa — para enseñarlo como vista previa
+    aproximada mientras /menu/v2 calcula el menú exacto del perro real.
+    ⚠️ Esto NO es el menú del perro: usa un peso representativo del grupo,
+    no su peso exacto. El frontend tiene que dejarlo claro en pantalla.
+
+    ⚠️ CORREGIDO (5 agosto): si se dan der_objetivo y peso_perro_kg, el
+    reescalado a las kcal reales SE HACE AQUÍ, no en el frontend -- porque
+    los suplementos comerciales NO se pueden reescalar por kcal sin más.
+    Su dosis máxima la marca el fabricante por el PESO del perro, no por
+    sus calorías, y las dos proporciones no tienen por qué coincidir. Se
+    escala el resto de alimentos por kcal (ahí sí es correcto, porque los
+    requisitos de FEDIAF se miden por cada 1000 kcal), pero cada
+    suplemento se topa aparte en su dosis máxima real, calculada con el
+    peso de verdad del perro.
+    """
+    from catalogo_menus import CATALOGO
+    al, _ = cargar_v2()
+    clave = f"{tamano}_{etapa}"
+    entrada = CATALOGO.get(clave)
+    if not entrada:
+        return {"encontrado": False}
+
+    if der_objetivo and peso_perro_kg:
+        SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
+                           "Calcio", "Hierro", "Vitamina B")
+        factor = der_objetivo / entrada["der"]
+        gramos_escalados = {}
+        for n, g in entrada["gramos"].items():
+            a = al.get(n, {})
+            if a.get("categoria") in SUP_COMERCIALES:
+                techo = dosis_maxima_fabricante(a, peso_perro_kg)
+                gramos_escalados[n] = round(min(g * factor, techo), 2) if techo else round(g * factor, 2)
+            else:
+                gramos_escalados[n] = round(g * factor, 2)
+        return {"encontrado": True, **entrada, "gramos": gramos_escalados,
+                "der_escalado_a": der_objetivo}
+
+    return {"encontrado": True, **entrada}
+
+
 @app.post("/menu/v2")
 def endpoint_menu_v2(datos: PeticionMenu):
     """
