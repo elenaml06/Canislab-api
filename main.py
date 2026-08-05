@@ -32,7 +32,6 @@ from der import calcular_der
 from optimizador import ETAPAS_VALIDAS
 from optimizador import optimizar_menu, dosis_maxima_fabricante
 from transicion import calcular_tramo_transicion, menu_activo_y_bloqueados, nivel_indicador_nutrientes
-from recalculo import anadir_alimento, quitar_alimento, cambiar_alimento
 from analizador import analizar_dieta
 import persistencia
 
@@ -253,40 +252,56 @@ def endpoint_transicion(datos: PeticionTransicion):
     return {**tramo, **menus, "nivel_indicador_nutrientes": nivel}
 
 
+# ⚠️ REESCRITOS (5 agosto, noche) — estos tres endpoints seguian llamando a
+# recalculo.py, que usa el LP VIEJO abandonado. Por eso el lapiz de editar
+# rompia el menu (pulpo duplicado, 313 g totales, y el badge "27/27 OK" --
+# que ni siquiera es un dato real, es texto fijo en el frontend -- seguia
+# diciendo que todo iba bien). Ahora los tres pasan por motor_completo.py,
+# igual que /menu/v2: se FUERZA el alimento nuevo (o se excluye el
+# quitado) y se resuelve de cero con el MILP, así que el resultado SIEMPRE
+# esta comprobado de verdad contra los 30 requisitos, nunca puede quedar
+# a medias ni duplicado.
+def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None):
+    al, req = cargar_v2()
+    excluidos = list(datos.especies_excluidas or [])
+    nombres_excl = set(datos.nombres_excluidos or [])
+    if excluir_nombres:
+        nombres_excl |= set(excluir_nombres)
+    ok, gramos = resolver_v2(
+        datos.der_objetivo, datos.etapa_requisitos, al, req,
+        datos.peso_perro_kg, dosis_maxima_fabricante,
+        excluidos=(excluidos + list(nombres_excl)) or None,
+        margenes_categoria=MARGENES_V2, max_suplementos=2,
+        forzar=forzar,
+    )
+    if not ok:
+        return {"factible": False,
+                "motivo": "Con este cambio no existe ninguna combinación que cumpla "
+                          "los 30 requisitos. Prueba con otro alimento."}
+    ficha = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
+    return {"factible": True, "gramos": gramos, "ficha": ficha}
+
+
 @app.post("/menu/cambiar")
 def endpoint_cambiar_alimento(datos: PeticionCambiarAlimento):
-    """Sustituye un alimento por otro (el lapiz de editar) y recalcula TODO de verdad."""
-    resultado = cambiar_alimento(
-        datos.menu_actual, datos.alimento_viejo, datos.alimento_nuevo,
-        datos.der_objetivo, datos.etapa_requisitos, set(datos.especies_excluidas),
-        peso_perro_kg=datos.peso_perro_kg,
-        nombres_excluidos=set(datos.nombres_excluidos or []),
-    )
-    return resultado
+    """Sustituye un alimento por otro (el lapiz de editar), resolviendo TODO
+    de nuevo con el motor real -- el alimento nuevo se fuerza a entrar."""
+    return _recalcular_con_motor(datos, forzar=[datos.alimento_nuevo],
+                                  excluir_nombres=[datos.alimento_viejo])
 
 
 @app.post("/menu/anadir")
 def endpoint_anadir_alimento(datos: PeticionAnadirQuitarAlimento):
-    """Añade un alimento (ej. un suplemento) al menu y recalcula TODO de verdad."""
-    resultado = anadir_alimento(
-        datos.menu_actual, datos.alimento,
-        datos.der_objetivo, datos.etapa_requisitos, set(datos.especies_excluidas),
-        peso_perro_kg=datos.peso_perro_kg,
-        nombres_excluidos=set(datos.nombres_excluidos or []),
-    )
-    return resultado
+    """Añade un alimento (ej. un suplemento) forzándolo a entrar, y resuelve
+    TODO de nuevo con el motor real."""
+    return _recalcular_con_motor(datos, forzar=[datos.alimento])
 
 
 @app.post("/menu/quitar")
 def endpoint_quitar_alimento(datos: PeticionAnadirQuitarAlimento):
-    """Quita un alimento del menu y recalcula TODO de verdad."""
-    resultado = quitar_alimento(
-        datos.menu_actual, datos.alimento,
-        datos.der_objetivo, datos.etapa_requisitos, set(datos.especies_excluidas),
-        peso_perro_kg=datos.peso_perro_kg,
-        nombres_excluidos=set(datos.nombres_excluidos or []),
-    )
-    return resultado
+    """Quita un alimento (excluyéndolo) y resuelve TODO de nuevo con el
+    motor real."""
+    return _recalcular_con_motor(datos, excluir_nombres=[datos.alimento])
 
 
 @app.get("/perro/{perro_id}/menus")
