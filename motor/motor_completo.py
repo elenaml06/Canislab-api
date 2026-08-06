@@ -403,6 +403,19 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         rng = np.random.RandomState(semilla_aleatoria)  # None = aleatorio de verdad cada vez
         for i in range(n_var):
             coste_binaria[i] += rng.uniform(0.0, 0.4)
+        # ⚠️ AÑADIDO (5 agosto, mediodía) — CASO REAL: el pescado salía
+        # SIEMPRE en la práctica (8/8 en la prueba), no "casi siempre"
+        # como se pensaba. Su ventaja real en EPA/DHA es tan grande que
+        # el ruido pequeño de arriba nunca bastaba para que ganara otra
+        # cosa. La mitad de las veces (al azar), se penaliza un poco el
+        # pescado en el objetivo -- así, cuando SÍ hay una alternativa
+        # nutricionalmente válida sin pescado, el resolver la prefiere en
+        # esa mitad de los casos. Nunca afecta a si el menú es correcto:
+        # solo influye en qué alimento igual de válido se elige.
+        if rng.random() < 0.5:
+            for n in nombres:
+                if categoria_de[n] == "Pescados y mariscos":
+                    coste_binaria[idx[n]] += 1.5
     c = np.array([0.0] * n_var + coste_binaria)
 
     # ⚠️ AÑADIDO (5 agosto, noche) — CASO REAL ENCONTRADO: cachorro pequeño
@@ -416,7 +429,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # con estar cerca del óptimo (1%) es indistinguible para el usuario y
     # muchísimo más rápido.
     res = milp(c, constraints=constraints, integrality=integrality, bounds=bounds,
-              options={"time_limit": 30, "mip_rel_gap": 0.15})
+              options={"time_limit": 10, "mip_rel_gap": 0.15})
 
     if res.success:
         x = res.x[:n_var]
