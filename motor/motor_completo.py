@@ -140,6 +140,17 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     candidatos_por_cat["Suplementos"] = [a["nombre"] for a in alimentos.values()
                                         if a.get("categoria") in SUP_CATS]
 
+    # ⚠️ AÑADIDO (5 agosto, mañana): "V-INTEGRA Perro Adulto" es
+    # matemáticamente muy potente (por eso ganaba casi siempre, 8 de 10
+    # veces probado), pero su propio nombre dice "Perro Adulto" — no
+    # debería aparecer nunca en un cachorro, gestante o lactante, aunque
+    # la dosis calculada sea segura para su peso. Es una cuestión de
+    # confianza del producto, no solo de que los números cuadren.
+    if etapa not in ("Adulto", "Senior"):
+        candidatos_por_cat["Suplementos"] = [
+            n for n in candidatos_por_cat["Suplementos"] if n != "V-INTEGRA Perro Adulto"
+        ]
+
     nombres = []
     categoria_de = {}
     for cat, lista in candidatos_por_cat.items():
@@ -324,12 +335,32 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     bounds = Bounds(lb=[0.0] * n_var + [0] * n_var, ub=[np.inf] * n_var + [1] * n_var)
 
     # FORZAR: el alimento tiene que estar sí o sí (usa_i >= 1, o sea = 1)
+    # ⚠️ CORREGIDO (5 agosto, mañana) — CASO REAL: la usuaria forzó "Pollo
+    # muslo con piel" Y "Carcasa de pollo", y la carcasa desapareció del
+    # menú final aunque la restricción "forzar" se cumplía matemáticamente.
+    # La causa: forzar solo fijaba la variable BINARIA (usa=1), pero no
+    # exigía una cantidad de gramos mínima -- así que el resolver podía
+    # cumplir "se usa" con una cantidad ridícula (1-2 gramos), y entonces
+    # desaparecía del resultado aunque "estuviera forzado".
+    #
+    # ⚠️ SEGUNDO FALLO ENCONTRADO Y CORREGIDO EN EL MISMO MOMENTO: el
+    # primer intento de arreglo usaba "3% de las kcal del día" como
+    # mínimo -- pero para un alimento con MUY pocas kcal por 100g (una
+    # verdura, una hierba), eso se traduce en una cantidad de PESO
+    # enorme (207 g de albahaca, en este caso real), que rompía el
+    # margen máximo de peso de su categoría (Verduras y frutas: 10%).
+    # Mezclaba kcal y peso sin darse cuenta -- el mismo tipo de error que
+    # ya habíamos visto antes con el reescalado del catálogo. Ahora el
+    # mínimo es un peso pequeño y FIJO (10 g), sin relación con las kcal
+    # del alimento: suficiente para que sea una porción real y visible,
+    # nunca tan grande como para poder romper ningún margen.
     if forzar:
         for n in forzar:
             if n not in idx:
                 continue  # no es un candidato válido; se ignora sin romper
             i = idx[n]
             bounds.lb[n_var + i] = 1
+            bounds.lb[i] = min(10.0, techos[i])
 
     # objetivo: minimizar cuántos alimentos distintos se usan en total
     # (ración simple, no 20 ingredientes), PERO con coste menor para los
@@ -371,6 +402,15 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
 
     if res.success:
         x = res.x[:n_var]
-        gramos = {n: round(x[idx[n]], 2) for n in nombres if x[idx[n]] > 0.5}
+        # ⚠️ CORREGIDO (5 agosto, mañana): el umbral de 0.5g podía borrar
+        # del resultado un aporte PEQUEÑO PERO REAL y necesario -- por
+        # ejemplo, el yoduro potásico funciona en dosis de fracciones de
+        # gramo. Si el LP decidía que 0.3g de yoduro cerraban el yodo,
+        # ese 0.3g desaparecía del diccionario final por el filtro,
+        # dejando el yodo sin cerrar en el menú que de verdad se enseña,
+        # aunque el LP internamente SÍ lo había resuelto bien. Bajado a
+        # 0.02g -- bajo el umbral de lo que se puede pesar en casa, pero
+        # sin perder aportes reales de suplementos muy concentrados.
+        gramos = {n: round(x[idx[n]], 2) for n in nombres if x[idx[n]] > 0.02}
         return True, gramos
     return False, None
