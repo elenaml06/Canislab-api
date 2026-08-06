@@ -140,16 +140,34 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     candidatos_por_cat["Suplementos"] = [a["nombre"] for a in alimentos.values()
                                         if a.get("categoria") in SUP_CATS]
 
-    # ⚠️ AÑADIDO (5 agosto, mañana): "V-INTEGRA Perro Adulto" es
-    # matemáticamente muy potente (por eso ganaba casi siempre, 8 de 10
-    # veces probado), pero su propio nombre dice "Perro Adulto" — no
-    # debería aparecer nunca en un cachorro, gestante o lactante, aunque
-    # la dosis calculada sea segura para su peso. Es una cuestión de
-    # confianza del producto, no solo de que los números cuadren.
-    if etapa not in ("Adulto", "Senior"):
-        candidatos_por_cat["Suplementos"] = [
-            n for n in candidatos_por_cat["Suplementos"] if n != "V-INTEGRA Perro Adulto"
-        ]
+    # ⚠️ REESCRITO (5 agosto, mañana): antes solo se EXCLUÍA "V-INTEGRA
+    # Perro Adulto" fuera de esa etapa, sin ofrecer ninguna alternativa
+    # -- así que un cachorro se quedaba sin ningún V-INTEGRA disponible
+    # (el motor tenía que buscarse la vida con otra marca). Ahora que
+    # existen las 5 variantes reales del fabricante (Cachorro, Adulto,
+    # Senior, Epato, Renal, con datos de la ficha oficial), se filtra la
+    # lista para que SOLO esté disponible la variante correcta según la
+    # etapa y la patología del perro -- nunca las demás, aunque
+    # matemáticamente "cuadraran": cada una está formulada para una
+    # necesidad concreta (más calcio en cachorro, cobre restringido en
+    # hepatopatía, fósforo a cero en renal...), y mezclar no tiene sentido.
+    TODAS_LAS_VINTEGRA = {"V-INTEGRA Cachorro", "V-INTEGRA Perro Adulto",
+                          "V-INTEGRA Senior", "V-INTEGRA Epato", "V-INTEGRA Renal"}
+    if patologias and "hepatopatia" in patologias:
+        correcta = "V-INTEGRA Epato"
+    elif patologias and "renal" in patologias:
+        correcta = "V-INTEGRA Renal"
+    elif etapa in ("CachorroJoven", "CachorroCrecimiento", "Gestante",
+                   "GestanteTemprana", "GestanteTardia", "Lactante"):
+        correcta = "V-INTEGRA Cachorro"  # misma exigencia nutricional que un cachorro
+    elif etapa == "Senior":
+        correcta = "V-INTEGRA Senior"
+    else:
+        correcta = "V-INTEGRA Perro Adulto"
+    candidatos_por_cat["Suplementos"] = [
+        n for n in candidatos_por_cat["Suplementos"]
+        if n not in TODAS_LAS_VINTEGRA or n == correcta
+    ]
 
     nombres = []
     categoria_de = {}
