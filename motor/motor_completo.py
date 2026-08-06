@@ -93,7 +93,7 @@ def avisos_de_patologias(patologias):
 def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             excluidos=None, margenes_categoria=None, cuantos_max=None,
             max_suplementos=2, tolerancia_kcal=0.03,
-            forzar=None, preferir=None, patologias=None):
+            forzar=None, preferir=None, patologias=None, semilla_aleatoria=None):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -210,7 +210,15 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                 fila[idx[n]] = v; aporta_algo = True
         if not aporta_algo:
             continue
-        lo = mn * der / 1000.0 if mn is not None else -np.inf
+        # ⚠️ AÑADIDO (5 agosto): +0.8% de margen sobre el mínimo exacto.
+        # Encontrado probando la aleatoriedad de arriba: el programa podía
+        # resolver EXACTO al límite (matemáticamente correcto con toda su
+        # precisión), pero al redondear los gramos a 2 decimales para
+        # enseñarlos, ese redondeo empujaba el nutriente justo por debajo
+        # del mínimo -- pasando de "cumple" a "no cumple" solo por el
+        # redondeo, no por un fallo real de la solución. Con este margen,
+        # el redondeo ya no puede tirarlo por debajo.
+        lo = mn * der / 1000.0 * 1.008 if mn is not None else -np.inf
         hi = mx * der / 1000.0 if mx is not None else np.inf
         A_rows.append(fila); lb_rows.append(lo); ub_rows.append(hi)
 
@@ -327,11 +335,25 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # (ración simple, no 20 ingredientes), PERO con coste menor para los
     # que el usuario quiere aprovechar — así el resolver los prefiere
     # cuando dos soluciones son igual de válidas, sin obligarlos.
+    #
+    # ⚠️ AÑADIDO (5 agosto): el motor era determinista -- mismos datos,
+    # mismo menú, siempre. Bien para fiabilidad, mal para variedad: pedir
+    # el menú de un mismo perro dos veces daba idéntico resultado, y con
+    # varios menús a la vez, sin rotar, salía siempre el mismo. Se añade
+    # un ruido aleatorio PEQUEÑO al coste de cada alimento (no a las
+    # restricciones nutricionales, esas no se tocan) para que, cuando hay
+    # varias combinaciones igual de válidas, el motor no elija siempre la
+    # misma. Con una semilla, se puede repetir el mismo resultado a
+    # propósito (para depurar); sin ella, cada llamada es distinta.
     coste_binaria = [1.0] * n_var
     if preferir:
         for n in preferir:
             if n in idx:
                 coste_binaria[idx[n]] = 0.1   # mucho más barato usarlo
+    if semilla_aleatoria is not False:
+        rng = np.random.RandomState(semilla_aleatoria)  # None = aleatorio de verdad cada vez
+        for i in range(n_var):
+            coste_binaria[i] += rng.uniform(0.0, 0.4)
     c = np.array([0.0] * n_var + coste_binaria)
 
     # ⚠️ AÑADIDO (5 agosto, noche) — CASO REAL ENCONTRADO: cachorro pequeño
