@@ -329,9 +329,22 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # en el sentido de producto de marca, cuentan aparte en el peso)
     SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
                        "Calcio", "Hierro", "Vitamina B")
+    # ⚠️ CORREGIDO (5 agosto, tarde) — FALLO GRAVE ENCONTRADO por la
+    # batería de pruebas: esto comparaba categoria_de[n] (que vale
+    # literalmente el texto genérico "Suplementos" para CUALQUIER
+    # suplemento, es la clave del diccionario de candidatos, no la
+    # categoría real del alimento) contra SUP_COMERCIALES (que tiene
+    # categorías específicas como "Multivitamínico"). La condición NUNCA
+    # era cierta, así que esta fila de restricción se quedaba a CEROS —
+    # "0 ≤ 2" siempre, sin importar cuántos suplementos hubiera de
+    # verdad. El límite de 2 llevaba SIN aplicarse matemáticamente desde
+    # que se creó este archivo, no solo desde hoy: dependía por completo
+    # de que el objetivo (minimizar alimentos) tendiera a pocos por
+    # casualidad, sin ninguna garantía dura detrás. Ahora se consulta la
+    # categoría REAL del alimento en el catálogo, no la clave genérica.
     fila = fila_vacia()
     for n in nombres:
-        if categoria_de[n] in SUP_COMERCIALES:
+        if alimentos[n].get("categoria") in SUP_COMERCIALES:
             fila[n_var + idx[n]] = 1.0
     A_rows.append(fila); lb_rows.append(0); ub_rows.append(max_suplementos)
 
