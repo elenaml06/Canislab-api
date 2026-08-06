@@ -286,7 +286,7 @@ def endpoint_menu_v2(datos: PeticionMenu):
             # a verde en la primera o segunda vuelta, en fracciones de
             # segundo cada una -- mucho más barato que rendirse tan
             # pronto e ir al camino lento.
-            for _intento_rapido in range(3):
+            for _intento_rapido in range(2):
                 ok_rapido, gramos_rapido = resolver_v2(
                     datos.der_objetivo, datos.etapa_requisitos, al, req,
                     datos.peso_perro_kg, dosis_maxima_fabricante,
@@ -322,7 +322,7 @@ def endpoint_menu_v2(datos: PeticionMenu):
     # cada intento explora una combinación distinta. Hasta 3 intentos
     # antes de aceptar lo que haya; casi siempre hace falta 1.
     ficha_intento = None
-    for _reintento in range(3):
+    for _reintento in range(2):
         ficha_intento = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
         if ficha_intento["semaforo"] == "verde":
             break
@@ -398,18 +398,32 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None):
     nombres_excl = set(datos.nombres_excluidos or [])
     if excluir_nombres:
         nombres_excl |= set(excluir_nombres)
-    ok, gramos = resolver_v2(
-        datos.der_objetivo, datos.etapa_requisitos, al, req,
-        datos.peso_perro_kg, dosis_maxima_fabricante,
-        excluidos=(excluidos + list(nombres_excl)) or None,
-        margenes_categoria=MARGENES_V2, max_suplementos=2,
-        forzar=forzar,
-    )
-    if not ok:
+    # ⚠️ CORREGIDO (5 agosto, mañana): esto llamaba UNA vez y devolvía
+    # "factible: True" con lo que saliera, SIN comprobar si el resultado
+    # era verde de verdad -- solo si el programa encontraba algo que
+    # cumpliera matemáticamente el problema que se le planteó. Con la
+    # aleatoriedad puesta en el motor, eso podía devolver un menú
+    # incompleto o al límite como si fuera bueno. Ahora reintenta hasta 3
+    # veces hasta que sea verde de verdad, igual que ya hace la
+    # generación normal de /menu/v2.
+    ok, gramos, ficha = False, None, None
+    for _intento in range(3):
+        ok, gramos = resolver_v2(
+            datos.der_objetivo, datos.etapa_requisitos, al, req,
+            datos.peso_perro_kg, dosis_maxima_fabricante,
+            excluidos=(excluidos + list(nombres_excl)) or None,
+            margenes_categoria=MARGENES_V2, max_suplementos=2,
+            forzar=forzar,
+        )
+        if not ok:
+            break
+        ficha = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
+        if ficha["semaforo"] == "verde":
+            break
+    if not ok or ficha["semaforo"] != "verde":
         return {"factible": False,
                 "motivo": "Con este cambio no existe ninguna combinación que cumpla "
                           "los 30 requisitos. Prueba con otro alimento."}
-    ficha = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
     return {"factible": True, "gramos": gramos, "ficha": ficha}
 
 
@@ -498,7 +512,7 @@ def _etapa_ok(etapa):
 def verificar():
     import hashlib, os
     SELLOS = {
-        "alimentos_v3_final.json":      "804331b25cb9028c",
+        "alimentos_v3_final.json":      "e1f255a156186ebd",
         "requerimientos_v2_final.json": "73ab445f9881f543",
         "der.py":                       "1c5c8bb91ceac481",
     }
