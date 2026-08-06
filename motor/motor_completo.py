@@ -93,7 +93,8 @@ def avisos_de_patologias(patologias):
 def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             excluidos=None, margenes_categoria=None, cuantos_max=None,
             max_suplementos=2, tolerancia_kcal=0.03,
-            forzar=None, preferir=None, patologias=None, semilla_aleatoria=None):
+            forzar=None, preferir=None, patologias=None, semilla_aleatoria=None,
+            time_limit=15):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -442,7 +443,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # con estar cerca del óptimo (1%) es indistinguible para el usuario y
     # muchísimo más rápido.
     res = milp(c, constraints=constraints, integrality=integrality, bounds=bounds,
-              options={"time_limit": 10, "mip_rel_gap": 0.15})
+              options={"time_limit": time_limit, "mip_rel_gap": 0.15})
 
     if res.success:
         x = res.x[:n_var]
