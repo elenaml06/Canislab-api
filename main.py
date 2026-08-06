@@ -304,6 +304,26 @@ def endpoint_menu_v2(datos: PeticionMenu):
         forzar=forzar, preferir=preferir,
         patologias=datos.patologias,
     )
+    # ⚠️ AÑADIDO (5 agosto): con la aleatoriedad puesta en el motor, un
+    # intento puede salir "factible" (cumple matemáticamente) pero no del
+    # todo en verde -- reintentar tiene sentido de verdad ahora, porque
+    # cada intento explora una combinación distinta. Hasta 3 intentos
+    # antes de aceptar lo que haya; casi siempre hace falta 1.
+    ficha_intento = None
+    for _reintento in range(3):
+        ficha_intento = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
+        if ficha_intento["semaforo"] == "verde":
+            break
+        ok2, gramos2 = resolver_v2(
+            datos.der_objetivo, datos.etapa_requisitos, al, req,
+            datos.peso_perro_kg, dosis_maxima_fabricante,
+            excluidos=excluidos or None,
+            margenes_categoria=MARGENES_V2, max_suplementos=2,
+            forzar=forzar, preferir=preferir,
+            patologias=datos.patologias,
+        )
+        if ok2:
+            ok, gramos = ok2, gramos2
     if not ok and datos.modo == "personalizar":
         # igual que hacía /menu (el viejo): si forzar lo elegido a mano
         # deja sin solución, se reintenta libre — mejor un menú con aviso
