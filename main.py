@@ -277,12 +277,23 @@ def endpoint_menu_v2(datos: PeticionMenu):
         if entrada:
             base = [n for n in entrada["gramos"]
                    if al.get(n, {}).get("categoria") not in SUP_COMERCIALES]
-            ok_rapido, gramos_rapido = resolver_v2(
-                datos.der_objetivo, datos.etapa_requisitos, al, req,
-                datos.peso_perro_kg, dosis_maxima_fabricante,
-                margenes_categoria=MARGENES_V2, max_suplementos=2, forzar=base,
-            )
-            if ok_rapido:
+            # ⚠️ AÑADIDO (5 agosto, mañana) — CASO REAL ENCONTRADO: para
+            # Cairo, el atajo salía "ámbar" a la primera y se descartaba
+            # entero, cayendo a la búsqueda libre completa (13-19s con
+            # reintentos). Pero con la aleatoriedad que se le puso al
+            # motor, reintentar la MISMA base forzada unas pocas veces (el
+            # resto de ingredientes sí varía entre intentos) suele llegar
+            # a verde en la primera o segunda vuelta, en fracciones de
+            # segundo cada una -- mucho más barato que rendirse tan
+            # pronto e ir al camino lento.
+            for _intento_rapido in range(3):
+                ok_rapido, gramos_rapido = resolver_v2(
+                    datos.der_objetivo, datos.etapa_requisitos, al, req,
+                    datos.peso_perro_kg, dosis_maxima_fabricante,
+                    margenes_categoria=MARGENES_V2, max_suplementos=2, forzar=base,
+                )
+                if not ok_rapido:
+                    break
                 ficha_rapida = verificar_v2(gramos_rapido, al, req, datos.der_objetivo, datos.etapa_requisitos)
                 if ficha_rapida["semaforo"] == "verde":
                     problemas_rapido = revisar_seguridad_v2(gramos_rapido, al, datos.der_objetivo,
@@ -294,7 +305,8 @@ def endpoint_menu_v2(datos: PeticionMenu):
                         "gramos_total": sum(gramos_rapido.values()),
                         "via_catalogo": True,
                     }
-                # si no salió verde, se descarta y se sigue con la búsqueda libre de abajo
+                # si no salió verde, se prueba otra vez -- si se agotan los
+                # 3 intentos, se descarta y se sigue con la búsqueda libre
 
     ok, gramos = resolver_v2(
         datos.der_objetivo, datos.etapa_requisitos, al, req,
