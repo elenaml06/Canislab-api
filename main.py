@@ -26,6 +26,7 @@ from datetime import date
 from typing import Optional
 
 import sys
+import time
 sys.path.insert(0, ".")
 sys.path.insert(0, "./motor")
 from especies import cargar_alimentos, filtrar_alimentos_disponibles
@@ -228,6 +229,28 @@ def endpoint_catalogo(tamano: str, etapa: str, der_objetivo: float = None, peso_
 @app.post("/menu/v2")
 def endpoint_menu_v2(datos: PeticionMenu):
     """
+    ⚠️ AÑADIDO (5 agosto, tarde) -- BLINDAJE: toda la logica real vive en
+    _resolver_menu_v2_interno(). Aqui SOLO se la envuelve en un try/except
+    que atrapa CUALQUIER fallo no previsto y devuelve JSON valido siempre,
+    en vez de dejar que una excepcion sin capturar rompa la respuesta y
+    el frontend reciba algo que no es JSON ("Expecting value: line 1
+    column 1", que es literalmente lo que da json.parse con una respuesta
+    vacia o cortada). Esto no sustituye arreglar la causa real (timeouts,
+    etc.) -- es la red de seguridad para que, pase lo que pase, la app
+    reciba SIEMPRE algo que sepa interpretar.
+    """
+    try:
+        return _resolver_menu_v2_interno(datos)
+    except Exception as e:
+        import traceback
+        traceback.print_exc()  # queda en los logs de Render para poder investigarlo
+        return {"factible": False,
+                "motivo": f"Ha fallado algo inesperado en el servidor ({type(e).__name__}). "
+                          "Inténtalo de nuevo -- si se repite, dínoslo."}
+
+
+def _resolver_menu_v2_interno(datos: PeticionMenu):
+    """
     EL MOTOR NUEVO. Misma petición que /menu (mismo modelo PeticionMenu),
     pero resuelto con programación lineal entera mixta: decide qué
     alimentos usar y cuánto de cada uno A LA VEZ, de entre TODOS los
@@ -240,6 +263,27 @@ def endpoint_menu_v2(datos: PeticionMenu):
     ya tomadas, no parámetros que mande el frontend.
     """
     al, req = cargar_v2()
+    # ⚠️ AÑADIDO (5 agosto, tarde) — PRESUPUESTO DE TIEMPO TOTAL: Render
+    # (plan gratis) corta la conexión a los 30s si no hay respuesta.
+    # Antes esto se controlaba solo contando "número de intentos", y la
+    # suma se escapó dos veces (llegó a 96s, y luego a 50s) porque no se
+    # medía el tiempo real acumulado. Con esto se para de reintentar en
+    # cuanto se acerca al límite, en vez de solo contar cuántas veces.
+    t_inicio_total = time.time()
+    PRESUPUESTO_SEGUNDOS = 18.0
+
+    def tiempo_restante():
+        """
+        ⚠️ AÑADIDO (5 agosto, tarde): comprobar el presupuesto SOLO antes
+        de cada intento no basta -- una llamada individual puede seguir
+        corriendo su propio time_limit COMPLETO sin enterarse de que el
+        presupuesto global ya casi se había acabado. Esto calcula cuánto
+        queda de verdad y se lo pasa a CADA llamada del motor, para que
+        ninguna pueda, por sí sola, hacer que el total supere los 18s.
+        Nunca menos de 1s (para no mandar un time_limit inútil).
+        """
+        return max(1.0, PRESUPUESTO_SEGUNDOS - (time.time() - t_inicio_total))
+
     excluidos = list(datos.especies_excluidas or []) + list(datos.nombres_excluidos or [])
 
     # ⚠️ CONECTADO (5 agosto, noche): las patologías existían en el modelo
@@ -286,11 +330,11 @@ def endpoint_menu_v2(datos: PeticionMenu):
             # a verde en la primera o segunda vuelta, en fracciones de
             # segundo cada una -- mucho más barato que rendirse tan
             # pronto e ir al camino lento.
-            for _intento_rapido in range(2):
+            while time.time() - t_inicio_total < PRESUPUESTO_SEGUNDOS:
                 ok_rapido, gramos_rapido = resolver_v2(
                     datos.der_objetivo, datos.etapa_requisitos, al, req,
                     datos.peso_perro_kg, dosis_maxima_fabricante,
-                    margenes_categoria=MARGENES_V2, max_suplementos=2, forzar=base,
+                    margenes_categoria=MARGENES_V2, max_suplementos=2, forzar=base, time_limit=tiempo_restante(),
                 )
                 if not ok_rapido:
                     break
@@ -305,24 +349,33 @@ def endpoint_menu_v2(datos: PeticionMenu):
                         "gramos_total": sum(gramos_rapido.values()),
                         "via_catalogo": True,
                     }
-                # si no salió verde, se prueba otra vez -- si se agotan los
-                # 3 intentos, se descarta y se sigue con la búsqueda libre
+                # si no salió verde, se prueba otra vez -- si se agota el
+                # presupuesto de tiempo, se descarta y se sigue con la búsqueda libre
+
+    # ⚠️ AÑADIDO: si el presupuesto YA se agotó en la vía catálogo, no
+    # tiene sentido intentar la búsqueda libre (que tarda más por
+    # intento) -- se rinde ya, con una respuesta clara, en vez de gastar
+    # más tiempo del que Render permite.
+    if time.time() - t_inicio_total >= PRESUPUESTO_SEGUNDOS:
+        return {"factible": False,
+                "motivo": "El cálculo está tardando más de lo normal para este perro. "
+                          "Inténtalo de nuevo en un momento."}
 
     ok, gramos = resolver_v2(
         datos.der_objetivo, datos.etapa_requisitos, al, req,
         datos.peso_perro_kg, dosis_maxima_fabricante,
         excluidos=excluidos or None,
-        margenes_categoria=MARGENES_V2, max_suplementos=2,
+        margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=tiempo_restante(),
         forzar=forzar, preferir=preferir,
         patologias=datos.patologias,
     )
     # ⚠️ AÑADIDO (5 agosto): con la aleatoriedad puesta en el motor, un
     # intento puede salir "factible" (cumple matemáticamente) pero no del
     # todo en verde -- reintentar tiene sentido de verdad ahora, porque
-    # cada intento explora una combinación distinta. Hasta 3 intentos
-    # antes de aceptar lo que haya; casi siempre hace falta 1.
+    # cada intento explora una combinación distinta. Mientras quede
+    # presupuesto de tiempo, no un número fijo de intentos.
     ficha_intento = None
-    for _reintento in range(2):
+    while time.time() - t_inicio_total < PRESUPUESTO_SEGUNDOS:
         ficha_intento = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
         if ficha_intento["semaforo"] == "verde":
             break
@@ -330,7 +383,7 @@ def endpoint_menu_v2(datos: PeticionMenu):
             datos.der_objetivo, datos.etapa_requisitos, al, req,
             datos.peso_perro_kg, dosis_maxima_fabricante,
             excluidos=excluidos or None,
-            margenes_categoria=MARGENES_V2, max_suplementos=2,
+            margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=tiempo_restante(),
             forzar=forzar, preferir=preferir,
             patologias=datos.patologias,
         )
@@ -344,7 +397,7 @@ def endpoint_menu_v2(datos: PeticionMenu):
             datos.der_objetivo, datos.etapa_requisitos, al, req,
             datos.peso_perro_kg, dosis_maxima_fabricante,
             excluidos=excluidos or None,
-            margenes_categoria=MARGENES_V2, max_suplementos=2,
+            margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=tiempo_restante(),
             patologias=datos.patologias,
         )
         no_se_pudo_forzar = ok
