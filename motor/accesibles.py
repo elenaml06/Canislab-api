@@ -44,9 +44,16 @@ HUESO = [
 ]
 
 PESCADO = [
+    # ⚠️ CORREGIDO (5 agosto): se quitaron Sepia, Pulpo, Gamba roja,
+    # Langostinos y Calamar. La propia app ya avisaba de esto en
+    # INSTRUCCIONES_POR_CATEGORIA ("los mariscos, SIEMPRE cocinados"), pero
+    # el motor los seguía eligiendo igual, sin distinguir pescado
+    # (que sí puede darse crudo si se congela antes) de marisco/cefalópodo
+    # (que necesita cocinarse siempre). La usuaria no quiere ningún
+    # alimento en el menú que obligue a cocinar antes de dar.
     "Salmón", "Sardina", "Caballa", "Merluza", "Bacalao", "Lubina", "Dorada",
-    "Trucha", "Atún", "Sepia", "Pulpo", "Gamba roja", "Langostinos",
-    "Boquerón", "Calamar", "Lenguado", "Pescadilla", "Besugo", "Bacaladilla", "Perca",
+    "Trucha", "Atún", "Boquerón", "Lenguado", "Pescadilla", "Besugo",
+    "Bacaladilla", "Perca",
 ]
 
 VISCERAS = [
