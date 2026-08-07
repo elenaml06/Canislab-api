@@ -75,10 +75,32 @@ REPO = _detectar_repo()
 
 
 def cargar():
-    with open(os.path.join(REPO, "alimentos_v3_final.json"), encoding="utf-8") as f:
-        alimentos = {a["nombre"]: a for a in json.load(f)}
-    with open(os.path.join(REPO, "requerimientos_v2_final.json"), encoding="utf-8") as f:
-        req = {x["nutriente"]: x for x in json.load(f)}
+    # ⚠️ AÑADIDO (5 agosto, noche) — CASO REAL: un JSONDecodeError aquí
+    # solo decía "JSONDecodeError" a secas, sin decir CUÁL de los dos
+    # archivos fallaba ni dónde -- imposible de diagnosticar a ciegas.
+    # Ahora dice el archivo exacto, la línea, la columna y de qué se
+    # queja el parser, para que un fallo aquí se pueda arreglar en
+    # segundos la próxima vez, no adivinando.
+    ruta_alimentos = os.path.join(REPO, "alimentos_v3_final.json")
+    try:
+        with open(ruta_alimentos, encoding="utf-8") as f:
+            alimentos = {a["nombre"]: a for a in json.load(f)}
+    except json.JSONDecodeError as e:
+        raise RuntimeError(
+            f"alimentos_v3_final.json no es JSON válido: {e.msg} "
+            f"(línea {e.lineno}, columna {e.colno}). Revisa si el archivo "
+            f"subido está completo y no se cortó a medias."
+        ) from e
+    ruta_req = os.path.join(REPO, "requerimientos_v2_final.json")
+    try:
+        with open(ruta_req, encoding="utf-8") as f:
+            req = {x["nutriente"]: x for x in json.load(f)}
+    except json.JSONDecodeError as e:
+        raise RuntimeError(
+            f"requerimientos_v2_final.json no es JSON válido: {e.msg} "
+            f"(línea {e.lineno}, columna {e.colno}). Revisa si el archivo "
+            f"subido está completo y no se cortó a medias."
+        ) from e
     return alimentos, req
 
 
