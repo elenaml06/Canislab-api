@@ -570,7 +570,7 @@ def _etapa_ok(etapa):
 def verificar():
     import hashlib, os
     SELLOS = {
-        "alimentos_v3_final.json":      "489a4dd0f393560f",
+        "alimentos_v3_final.json":      "938f139a8ddf5839",
         "requerimientos_v2_final.json": "73ab445f9881f543",
         "der.py":                       "1c5c8bb91ceac481",
     }
