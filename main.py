@@ -96,6 +96,11 @@ class PeticionMenu(BaseModel):
     der_objetivo: float
     etapa_requisitos: str
     especies_excluidas: list[str] = []
+    # ⚠️ AÑADIDO (5 agosto, noche): "Todo el/la {especie}" en
+    # personalizar/aprovechar -- {categoria: especie}. Restringe esa
+    # categoría a solo esa especie, dejando que el motor elija
+    # libremente qué corte/pieza usar dentro de ella.
+    restringir_especie: dict = None
     # ⚠️ AÑADIDO para /menu/v2 (5 agosto): el frontend dice explícitamente
     # qué modo quiere, en vez de que el backend tenga que adivinarlo por
     # lo que manda en nombres_alimentos/forzar_presencia.
@@ -367,7 +372,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         excluidos=excluidos or None,
         margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=tiempo_restante(),
         forzar=forzar, preferir=preferir,
-        patologias=datos.patologias,
+        patologias=datos.patologias, restringir_especie=datos.restringir_especie,
     )
     # ⚠️ AÑADIDO (5 agosto): con la aleatoriedad puesta en el motor, un
     # intento puede salir "factible" (cumple matemáticamente) pero no del
@@ -385,7 +390,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             excluidos=excluidos or None,
             margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=tiempo_restante(),
             forzar=forzar, preferir=preferir,
-            patologias=datos.patologias,
+            patologias=datos.patologias, restringir_especie=datos.restringir_especie,
         )
         if ok2:
             ok, gramos = ok2, gramos2
@@ -639,5 +644,3 @@ def listar_alimentos():
     for v in por_cat.values():
         v.sort(key=lambda x: x["nombre"])
     return por_cat
-
-
