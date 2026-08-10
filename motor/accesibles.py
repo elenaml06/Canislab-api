@@ -46,6 +46,16 @@ HUESO = [
     # "Espinazo de conejo" ya tenía ficha completa pero nunca había
     # llegado a esta lista curada -- solo se podía usar a mano.
     "Espinazo de conejo", "Pecho de ternera con hueso",
+    # ⚠️ AÑADIDO (5 agosto, noche) — segunda pasada por la tabla completa
+    # del mismo estudio: "Cuello de ternera" y "Laringe de vacuno" son
+    # las dos filas que faltaban y SÍ son seguras (ratio Ca:P normal).
+    # "Escápula de vacuno" y "cartílago de vacuno" quedan fuera a
+    # propósito: el propio estudio dice que su ratio Ca:P está invertido
+    # y no son una buena fuente de calcio. "Pierna de cordero con hueso"
+    # también queda fuera: ya se había excluido antes por riesgo de
+    # fractura dental (hueso de carga), es una decisión de seguridad
+    # tomada antes, no una falta de datos.
+    "Cuello de ternera", "Laringe de vacuno",
 ]
 
 PESCADO = [
