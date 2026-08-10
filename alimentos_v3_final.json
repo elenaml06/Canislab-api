@@ -6432,5 +6432,54 @@
   "sin_dato": [
    "cloruro"
   ]
+ },
+ {
+  "nombre": "Pecho de ternera con hueso",
+  "tipo": "Alimento",
+  "categoria": "Hueso carnoso",
+  "energia": 346.1,
+  "nutrientes": {
+   "proteina": 18.8,
+   "grasa": 30.1,
+   "dha": 0,
+   "epa": 0,
+   "linoleico": 0,
+   "linolenico": 0,
+   "araquidonico": 0,
+   "vitA": 0,
+   "vitD": 0,
+   "vitE": 0.2,
+   "folato": 9.5,
+   "niacina": 7.6,
+   "riboflavina": 0.17,
+   "tiamina": 0.04,
+   "vitB12": 1,
+   "vitB6": 0.28,
+   "calcio": 427.0,
+   "hierro": 1.8,
+   "potasio": 350,
+   "magnesio": 12.9,
+   "sodio": 60,
+   "fosforo": 199.0,
+   "yodo": 5.6,
+   "selenio": 8.8,
+   "zinc": 3.5,
+   "cobre": 0.12,
+   "manganeso": 0.038,
+   "acidoPantotenico": 1.33,
+   "colina": 65,
+   "cloruro": 92.4,
+   "fibra": 0.0
+  },
+  "sin_dato": [
+   "araquidonico",
+   "dha",
+   "epa",
+   "linoleico",
+   "linolenico"
+  ],
+  "pct_carne": 0.35,
+  "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1, fila 'Calf breastbone'. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso).",
+  "nota_datos": "AÑADIDO 5 agosto (noche): reconstruido tras haberlo quitado por error del catálogo -- la usuaria ya había pasado este estudio antes, en una parte de la conversación que se perdió al resumir. Ca/P/proteina/grasa medidos por Köber 2017 en la pieza entera (ratio Ca:P real 2.15, coincide con el 2.1:1 que da el propio estudio). Energia calculada de sus macros. El resto de micronutrientes (vitaminas, minerales traza) son ESTIMADOS a partir de 'Ternera con grasa' -- Köber solo midió Ca, P, materia seca, proteína, grasa y cenizas, igual que con 'Espinazo de conejo'."
  }
 ]
