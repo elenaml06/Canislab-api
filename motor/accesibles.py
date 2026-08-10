@@ -60,6 +60,14 @@ VISCERAS = [
     "Riñón de ternera", "Riñón de cordero", "Pulmón de ternera",
     "Lengua de ternera", "Lengua de buey", "Lengua de cordero",
     "Pulmón de cordero", "Molleja de pollo", "Molleja de pavo",
+    # ⚠️ "Corazón de conejo" NO se añade aquí (5 agosto, noche): sus
+    # datos nutricionales están incompletos en el catálogo (hierro,
+    # cobre, zinc, selenio y vitB12 sin valor) -- no encontré una fuente
+    # fiable con la composición real de corazón de conejo específicamente
+    # (solo de carne de conejo en general, que es un tejido distinto).
+    # Sin esos datos, "Vísceras" restringido solo a Conejo NUNCA puede
+    # cerrar los 30 requisitos, así que añadirlo aquí solo generaría un
+    # fallo garantizado. Se deja fuera hasta tener datos reales.
 ]
 
 HIGADO = ["Hígado de vaca", "Hígado de pollo", "Hígado de conejo", "Hígado de cordero"]
