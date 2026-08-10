@@ -282,6 +282,23 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         for cat, (mnp, mxp) in margenes_categoria.items():
             miembros = [n for n in nombres if categoria_de[n] == cat]
             if not miembros:
+                # ⚠️ CORREGIDO (5 agosto, noche) — FALLO GRAVE ENCONTRADO
+                # por la usuaria: esto antes hacía "continue", saltándose
+                # la restricción ENTERA en silencio si esta categoría se
+                # quedaba sin ningún candidato disponible (por ejemplo,
+                # tras aplicar exclusiones). Eso significaba que si
+                # "Hueso carnoso" se quedaba sin candidatos, el mínimo del
+                # 20% dejaba de exigirse del todo -- y el motor podía
+                # devolver un menú SIN NINGÚN HUESO, marcado como
+                # "factible" y "verde" (los 30 nutrientes no dicen nada
+                # de los márgenes de categoría, así que verificar() no lo
+                # pillaba). Si el mínimo de esta categoría es mayor que
+                # cero y no hay NINGÚN candidato para cumplirlo, es
+                # matemáticamente imposible cumplirlo -- así que ahora se
+                # declara NO FACTIBLE de forma explícita y ruidosa, en
+                # vez de fingir que no pasa nada.
+                if mnp and mnp > 0:
+                    return False, None
                 continue
             fila_cat = fila_vacia()
             for n in miembros:
