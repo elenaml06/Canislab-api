@@ -79,6 +79,19 @@ class PeticionDER(BaseModel):
     etapa: str
     actividad_idx: int  # 0=sedentario .. 4=trabajo
     esterilizado: bool
+    # ⚠️ AÑADIDO (5 agosto, noche) — FALLO GRAVE ENCONTRADO: el endpoint
+    # nunca mandaba estos tres campos a calcular_der(), aunque la función
+    # SÍ los acepta y los necesita para deducir el peso adulto de la
+    # curva de crecimiento real del cachorro (edad + peso actual), no de
+    # la media de su raza. Sin "meses", la curva nunca se activaba --
+    # el DER de CUALQUIER cachorro de una raza con rango amplio de peso
+    # adulto (como el Am Staff, 18-34 kg) salía calculado con la media,
+    # nunca con su trayectoria real. Caso real: Cairo con 5 meses y 18kg
+    # apunta a 34kg de adulto, no a los 26kg de la media -- 192 kcal/día
+    # de diferencia, confirmado.
+    meses: Optional[float] = None
+    peso_min_raza: Optional[float] = None
+    peso_max_raza: Optional[float] = None
 
 
 class PeticionMenu(BaseModel):
@@ -172,7 +185,12 @@ def endpoint_der(datos: PeticionDER):
         raza=datos.raza,
         semana_gestacion=datos.semana_gestacion,
         n_cachorros=datos.n_cachorros,
-        semana_lactancia=datos.semana_lactancia)
+        semana_lactancia=datos.semana_lactancia,
+        # ⚠️ AÑADIDO (5 agosto, noche): sin esto, la curva de crecimiento
+        # real nunca se activaba -- ver nota en PeticionDER.
+        meses=datos.meses,
+        peso_min_raza=datos.peso_min_raza,
+        peso_max_raza=datos.peso_max_raza)
     return resultado
 
 
@@ -389,6 +407,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=tiempo_restante(),
         forzar=forzar, preferir=preferir,
         patologias=datos.patologias, restringir_especie=datos.restringir_especie,
+        peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
     )
     # ⚠️ AÑADIDO (5 agosto): con la aleatoriedad puesta en el motor, un
     # intento puede salir "factible" (cumple matemáticamente) pero no del
@@ -407,6 +426,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=tiempo_restante(),
             forzar=forzar, preferir=preferir,
             patologias=datos.patologias, restringir_especie=datos.restringir_especie,
+        peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
         )
         if ok2:
             ok, gramos = ok2, gramos2
@@ -537,24 +557,27 @@ def raiz():
 # MODO ANALIZADOR — el usuario mete lo que YA le da y le decimos que tal
 # =====================================================================
 class AnalisisRequest(BaseModel):
+    # ⚠️ CORREGIDO (5 agosto, noche): mismo fallo que en PeticionMenu --
+    # tipo estricto con default None en vez de Optional, rechazaba con
+    # 422 cualquier petición que mandara null explícito.
     gramos_por_alimento: dict   # {"Carcasa de pollo": 680, "Calabaza": 68, ...}
-    der_objetivo: float = None  # si no viene, se calcula con peso/etapa/actividad
+    der_objetivo: Optional[float] = None  # si no viene, se calcula con peso/etapa/actividad
     etapa_requisitos: str = "Adulto"
     # alternativa a mandar el DER ya calculado: mandar el perfil del perro
-    peso_kg: float = None
-    etapa_der: str = None       # clave de der.py: adulto, cachorro_crecimiento...
-    actividad: str = None
+    peso_kg: Optional[float] = None
+    etapa_der: Optional[str] = None       # clave de der.py: adulto, cachorro_crecimiento...
+    actividad: Optional[str] = None
     esterilizado: bool = False
     # Datos del metodo europeo. Sin ellos el DER sale con valores prudentes,
     # pero para un CACHORRO el peso adulto esperado es lo que decide el tramo
     # (hasta 50% / 50-80% / desde 80%), asi que conviene mandarlo siempre.
-    peso_adulto_esperado_kg: float = None
-    peso_ideal_kg: float = None
+    peso_adulto_esperado_kg: Optional[float] = None
+    peso_ideal_kg: Optional[float] = None
     convivencia: str = "solo"
     macho_entero: bool = False
-    raza: str = None
-    semana_gestacion: int = None
-    n_cachorros: int = None
+    raza: Optional[str] = None
+    semana_gestacion: Optional[int] = None
+    n_cachorros: Optional[int] = None
     semana_lactancia: int = 3
 
 
