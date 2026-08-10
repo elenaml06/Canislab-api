@@ -6137,8 +6137,10 @@
    "epa": 0,
    "linoleico": 0,
    "linolenico": 0,
-   "araquidonico": 0
-  }
+   "araquidonico": 0,
+   "cobre": 0.12
+  },
+  "nota_datos": "AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras."
  },
  {
   "nombre": "Molleja de pavo",
@@ -6161,8 +6163,10 @@
    "epa": 0,
    "linoleico": 0,
    "linolenico": 0,
-   "araquidonico": 0
-  }
+   "araquidonico": 0,
+   "selenio": 29
+  },
+  "nota_datos": "AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras."
  },
  {
   "nombre": "Pollo pechuga sin piel",
@@ -6182,8 +6186,13 @@
    "epa": 0,
    "linoleico": 0,
    "linolenico": 0,
-   "araquidonico": 0
-  }
+   "araquidonico": 0,
+   "hierro": 0.4,
+   "cobre": 0.0,
+   "zinc": 0.6,
+   "vitB12": 0.2
+  },
+  "nota_datos": "AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras."
  },
  {
   "nombre": "Pollo muslo sin piel",
@@ -6202,15 +6211,19 @@
    "epa": 0,
    "linoleico": 0,
    "linolenico": 0,
-   "araquidonico": 0
-  }
+   "araquidonico": 0,
+   "hierro": 0.68,
+   "cobre": 0.05,
+   "vitB12": 0.62
+  },
+  "nota_datos": "AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras."
  },
  {
   "nombre": "Hígado de cordero",
   "categoria": "Hígado",
   "energia": 139,
   "fuente": "USDA FDC 172531 'Lamb, liver, raw'.",
-  "nota_datos": "⚠️ Vitamina A muy alta (~7.400 ug/100g). Limitar igual que el resto de higados: tope de plato por cobre.",
+  "nota_datos": "⚠️ Vitamina A muy alta (~7.400 ug/100g). Limitar igual que el resto de higados: tope de plato por cobre. AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras.",
   "nutrientes": {
    "proteina": 20.7,
    "grasa": 5.0,
@@ -6223,7 +6236,10 @@
    "epa": 0,
    "linoleico": 0,
    "linolenico": 0,
-   "araquidonico": 0
+   "araquidonico": 0,
+   "cobre": 7.14,
+   "zinc": 4.64,
+   "selenio": 83.57
   }
  },
  {
