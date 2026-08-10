@@ -41,7 +41,7 @@ QUÉ SE VERIFICÓ Y CONTRA QUÉ (2 agosto 2026):
 import hashlib, json, os, sys
 
 SELLOS = {
-    "alimentos_v3_final.json":      "ea96bc6fb8bec613",
+    "alimentos_v3_final.json":      "489a4dd0f393560f",
     "requerimientos_v2_final.json": "73ab445f9881f543",
     "der.py":                       "1c5c8bb91ceac481",
 }
