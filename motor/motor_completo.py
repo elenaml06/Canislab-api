@@ -104,7 +104,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             excluidos=None, margenes_categoria=None, cuantos_max=None,
             max_suplementos=2, tolerancia_kcal=0.03,
             forzar=None, preferir=None, patologias=None, semilla_aleatoria=None,
-            time_limit=15, restringir_especie=None):
+            time_limit=15, restringir_especie=None, peso_adulto_esperado_kg=None):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -267,12 +267,35 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             actual = topes_patologia.get(clave)
             topes_patologia[clave] = valor if actual is None else min(actual, valor)
 
+    # ⚠️ AÑADIDO (5 agosto, noche) — CONECTADO: "Calcio_LateGrowth_RazaGrande"
+    # ya existía en los datos, con nota de auditoría explícita diciendo que
+    # el motor nunca lo usaba porque no estaba en su MAPA. Fuente: 4.5g/1000kcal
+    # como techo de calcio en cachorros de razas grandes/gigantes es la cifra
+    # que cita la literatura veterinaria (Vet Clinics: Small Animal Practice,
+    # citando FEDIAF) -- coincide con el techo genérico que YA aplicábamos a
+    # TODOS los cachorros. Lo que de verdad falta para raza grande/gigante es
+    # un MÍNIMO más alto (2500 en vez de 2000): necesitan una ingesta más
+    # consistente, no tienen margen para quedarse cortas. Solo se activa para
+    # razas grande/gigante (peso adulto esperado >= 25kg) Y en crecimiento --
+    # nunca para razas pequeñas, donde este mínimo más alto no aplica.
+    minimos_reforzados = {}
+    RAZA_GRANDE_O_GIGANTE_KG = 25
+    if (peso_adulto_esperado_kg and peso_adulto_esperado_kg >= RAZA_GRANDE_O_GIGANTE_KG
+            and etapa in ("CachorroJoven", "CachorroCrecimiento")):
+        r_grande = req.get("Calcio_LateGrowth_RazaGrande")
+        if r_grande:
+            mn_grande = _num(r_grande.get(f"min{et}"))
+            if mn_grande:
+                minimos_reforzados["calcio"] = mn_grande
+
     # 2. mínimos y máximos de FEDIAF
     for nombre_req, clave in MAPA.items():
         r = req.get(nombre_req)
         if not r:
             continue
         mn = _num(r.get(f"min{et}"))
+        if clave in minimos_reforzados:
+            mn = minimos_reforzados[clave] if mn is None else max(mn, minimos_reforzados[clave])
         mx = _num(r.get(f"max{et}")) or _num(r.get("maxAdulto"))
         if clave in topes_patologia:
             mx = topes_patologia[clave] if mx is None else min(mx, topes_patologia[clave])
@@ -518,5 +541,24 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # 0.02g -- bajo el umbral de lo que se puede pesar en casa, pero
         # sin perder aportes reales de suplementos muy concentrados.
         gramos = {n: round(x[idx[n]], 2) for n in nombres if x[idx[n]] > 0.02}
+
+        # ⚠️ AÑADIDO (5 agosto, madrugada) — RED DE SEGURIDAD FINAL: caso
+        # real de la usuaria, un menú de solo 4 alimentos (carne, víscera,
+        # hígado, suplemento) SIN hueso ni verdura, aceptado como válido.
+        # No se ha conseguido reproducir la causa exacta pese a más de 40
+        # intentos dirigidos -- puede ser una imprecisión numérica del
+        # propio solver en combinación con pesos muy desiguales entre
+        # alimentos. En vez de seguir cazando la causa exacta, esto
+        # comprueba el RESULTADO REAL (los gramos que se van a enseñar,
+        # no la restricción teórica) antes de devolverlo: si a una
+        # categoría con mínimo obligatorio le falta representación de
+        # verdad, se rechaza aquí, pase lo que pase por dentro del LP.
+        if margenes_categoria:
+            for cat, (mnp, _mxp) in margenes_categoria.items():
+                if not mnp or mnp <= 0:
+                    continue
+                if not any(alimentos[n].get("categoria") == cat for n in gramos):
+                    return False, None
+
         return True, gramos
     return False, None
