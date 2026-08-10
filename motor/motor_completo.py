@@ -142,25 +142,45 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
 
     # Candidatos: TODOS los accesibles de cada categoría de comida, y
     # TODOS los suplementos del catálogo (no solo unos pocos elegidos).
+    #
+    # ⚠️ REESCRITO (5 agosto, noche) — DECISIÓN DE DISEÑO IMPORTANTE,
+    # pedida expresamente por la usuaria: ACCESIBLES es la lista de "lo
+    # fácil/seguro de encontrar" que usa el AUTOMÁTICO para no sugerir
+    # cosas raras -- pero eso NUNCA debe impedir que el usuario, a mano,
+    # use CUALQUIER cosa del catálogo entero si la elige explícitamente
+    # (personalizar, o "todo el/la X"). Antes, si algo no estaba en
+    # ACCESIBLES, era imposible usarlo aunque el usuario lo pidiera
+    # expresamente -- fallaba siempre, sin explicación. Ahora, si el
+    # usuario fuerza un alimento concreto o pide "todo el/la X" y eso no
+    # está en la lista curada, se añade igualmente desde el catálogo
+    # completo, siempre que exista de verdad y sea de esa categoría.
     candidatos_por_cat = {}
     for cat, lista in ACCESIBLES.items():
         disp = [n for n in lista if n in alimentos]
         if excluidos:
             disp, _f, _a = filtrar(disp, excluidos)
-        # ⚠️ AÑADIDO (5 agosto, noche) — el botón "Todo el/la {especie}" en
-        # personalizar/aprovechar ("Todo: Pollo" en Hueso carnoso, por
-        # ejemplo) antes se descartaba sin más al mandarlo al servidor:
-        # no forzaba nada, no hacía nada. Ahora sí restringe de verdad
-        # esa categoría concreta a solo esa especie, dejando que el
-        # motor elija LIBREMENTE cuál corte/pieza usar dentro de ella --
-        # no un alimento fijo, sino "de esta categoría, solo esta
-        # especie". Es intencionadamente por CATEGORÍA, no global: pedir
-        # "todo el pollo" en Hueso carnoso no debería impedir que
-        # aparezca ternera en Carne muscular si esa categoría está en
-        # automático.
+
+        # elección explícita del usuario (personalizar): si forzó un
+        # alimento de ESTA categoría que no estaba en la lista curada,
+        # se añade igual, tomándolo del catálogo completo
+        if forzar:
+            for n in forzar:
+                if n in alimentos and alimentos[n].get("categoria") == cat and n not in disp:
+                    disp.append(n)
+
+        # "Todo el/la especie": si tras filtrar por la especie pedida no
+        # queda NINGÚN candidato curado, se busca en el catálogo entero
+        # cualquier alimento de esa categoría+especie, en vez de dejar
+        # la categoría vacía (que antes hacía fallar todo el menú).
         if restringir_especie and cat in restringir_especie:
             especie_pedida = restringir_especie[cat].strip().lower()
-            disp = [n for n in disp if especie_de(n).strip().lower() == especie_pedida]
+            disp_curados = [n for n in disp if especie_de(n).strip().lower() == especie_pedida]
+            if not disp_curados:
+                disp_curados = [n for n, a in alimentos.items()
+                                if a.get("categoria") == cat
+                                and especie_de(n).strip().lower() == especie_pedida]
+            disp = disp_curados
+
         candidatos_por_cat[cat] = disp
     candidatos_por_cat["Suplementos"] = [a["nombre"] for a in alimentos.values()
                                         if a.get("categoria") in SUP_CATS]
