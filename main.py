@@ -514,9 +514,9 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None):
             excluidos=(excluidos + list(nombres_excl)) or None,
             margenes_categoria=MARGENES_V2, max_suplementos=2,
             forzar=forzar,
-            # ⚠️ AÑADIDO (5 agosto, noche): sin esto, el tope de calcio de
-            # razas grandes/gigantes en crecimiento se perdía al editar un
-            # alimento, aunque sí se respetara al generar el menú entero.
+            # ⚠️ AÑADIDO (5 agosto, madrugada): sin esto, el tope de calcio
+            # de razas grandes/gigantes en crecimiento se perdía al editar
+            # un alimento, aunque sí se respetara al generar el menú entero.
             peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None),
         )
         if not ok:
