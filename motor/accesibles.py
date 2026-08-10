@@ -41,6 +41,11 @@ CARNE = [
 HUESO = [
     "Carcasa de pollo", "Cuello de pavo", "Cuello de pato", "Carcasa de pato",
     "Costillas de cordero", "Carcasa de conejo",
+    # ⚠️ AÑADIDO (5 agosto, noche): los dos con respaldo real del estudio
+    # de Köber et al. 2017 (ESVCN) que la usuaria ya había pasado antes.
+    # "Espinazo de conejo" ya tenía ficha completa pero nunca había
+    # llegado a esta lista curada -- solo se podía usar a mano.
+    "Espinazo de conejo", "Pecho de ternera con hueso",
 ]
 
 PESCADO = [
