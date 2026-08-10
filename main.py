@@ -64,13 +64,16 @@ persistencia.crear_tablas()
 class PeticionDER(BaseModel):
     # Datos del método europeo. Todos OPCIONALES: sin ellos el cálculo
     # sigue funcionando con valores prudentes.
-    peso_adulto_esperado_kg: float = None
-    peso_ideal_kg: float = None
+    # ⚠️ CORREGIDO (5 agosto, noche): mismo fallo que en PeticionMenu --
+    # tipo estricto con default None en vez de Optional, rechazaba con
+    # 422 cualquier petición que mandara null explícito para estos campos.
+    peso_adulto_esperado_kg: Optional[float] = None
+    peso_ideal_kg: Optional[float] = None
     convivencia: str = "solo"
     macho_entero: bool = False
-    raza: str = None
-    semana_gestacion: int = None
-    n_cachorros: int = None
+    raza: Optional[str] = None
+    semana_gestacion: Optional[int] = None
+    n_cachorros: Optional[int] = None
     semana_lactancia: int = 3
     peso_actual_kg: float
     etapa: str
@@ -79,19 +82,30 @@ class PeticionDER(BaseModel):
 
 
 class PeticionMenu(BaseModel):
-    peso_perro_kg: float = None
+    # ⚠️ CORREGIDO (5 agosto, noche) — FALLO GRAVE ENCONTRADO: todos estos
+    # campos declaraban un tipo estricto ("float", "str", "list"...) con
+    # valor por defecto None, en vez de "Optional[tipo]". Eso funciona
+    # bien cuando el campo NO viene en la petición -- pero si el cliente
+    # manda el campo con valor null EXPLÍCITO (que es justo lo que hace
+    # el frontend a partir del segundo menú para "tamano", una vez ya
+    # hay especies excluidas), Pydantic rechaza la petición entera con un
+    # 422, porque None no es un valor válido para el tipo declarado. Por
+    # eso el primer menú automático siempre salía bien y los siguientes
+    # fallaban siempre: "tamano" pasaba de un texto real a null a partir
+    # del segundo. Ahora cualquiera de estos campos admite null de verdad.
+    peso_perro_kg: Optional[float] = None
     # peso ADULTO esperado: activa el tope de calcio de raza grande en cachorros
-    peso_adulto_esperado_kg: float = None
-    nombres_excluidos: list = None
-    patologias: list = None
+    peso_adulto_esperado_kg: Optional[float] = None
+    nombres_excluidos: Optional[list] = None
+    patologias: Optional[list] = None
     # ⚠️ AÑADIDO (5 agosto): "Toy"/"Mini"/"Pequeño"/"Mediano"/"Grande"/
     # "Gigante" -- para poder intentar primero la vía rápida del catálogo
     # fijo (mismo tamaño y etapa) antes de la búsqueda libre completa.
-    tamano: str = None
+    tamano: Optional[str] = None
     # Lo que el usuario ha elegido A MANO en Personalizar o Aprovechar. Sin
     # esto, el optimizador podia ponerlo a 0 gramos y el usuario veia que su
     # eleccion desaparecia del menu sin explicacion.
-    forzar_presencia: list = None
+    forzar_presencia: Optional[list] = None
     nombres_alimentos: list[str]
     der_objetivo: float
     etapa_requisitos: str
@@ -100,7 +114,7 @@ class PeticionMenu(BaseModel):
     # personalizar/aprovechar -- {categoria: especie}. Restringe esa
     # categoría a solo esa especie, dejando que el motor elija
     # libremente qué corte/pieza usar dentro de ella.
-    restringir_especie: dict = None
+    restringir_especie: Optional[dict] = None
     # ⚠️ AÑADIDO para /menu/v2 (5 agosto): el frontend dice explícitamente
     # qué modo quiere, en vez de que el backend tenga que adivinarlo por
     # lo que manda en nombres_alimentos/forzar_presencia.
@@ -113,9 +127,10 @@ class PeticionMenu(BaseModel):
 
 
 class PeticionCambiarAlimento(BaseModel):
-    peso_perro_kg: float = None
-    nombres_excluidos: list = None
-    patologias: list = None
+    # ⚠️ CORREGIDO (5 agosto, noche): mismo fallo que en PeticionMenu.
+    peso_perro_kg: Optional[float] = None
+    nombres_excluidos: Optional[list] = None
+    patologias: Optional[list] = None
     menu_actual: list[str]
     alimento_viejo: str
     alimento_nuevo: str
@@ -125,9 +140,10 @@ class PeticionCambiarAlimento(BaseModel):
 
 
 class PeticionAnadirQuitarAlimento(BaseModel):
-    peso_perro_kg: float = None
-    nombres_excluidos: list = None
-    patologias: list = None
+    # ⚠️ CORREGIDO (5 agosto, noche): mismo fallo que en PeticionMenu.
+    peso_perro_kg: Optional[float] = None
+    nombres_excluidos: Optional[list] = None
+    patologias: Optional[list] = None
     menu_actual: list[str]
     alimento: str
     der_objetivo: float
