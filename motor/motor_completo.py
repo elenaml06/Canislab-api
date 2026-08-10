@@ -33,6 +33,16 @@ import numpy as np
 from scipy.optimize import milp, LinearConstraint, Bounds
 from verificar import MAPA, _num, EQUIVALENCIA
 
+# ⚠️ AÑADIDO (5 agosto, noche): copia local de especie_de() (la misma
+# lógica que ya usan especies.py y el frontend) -- se define aquí en
+# vez de importarla desde la carpeta raíz, para no depender de cómo
+# esté configurado el path de imports en el despliegue real.
+def especie_de(nombre: str) -> str:
+    if " de " in nombre:
+        resto = nombre.split(" de ", 1)[1]
+        return resto.split(" ")[0].capitalize()
+    return nombre.split(" ")[0]
+
 # ⚠️ AÑADIDO (5 agosto, noche): esta tabla YA EXISTÍA en optimizador.py
 # (el LP viejo) -- se acordó con la usuaria el 1 de agosto y nunca se
 # portó al motor nuevo. Por eso las patologías no hacían nada: la app
@@ -94,7 +104,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             excluidos=None, margenes_categoria=None, cuantos_max=None,
             max_suplementos=2, tolerancia_kcal=0.03,
             forzar=None, preferir=None, patologias=None, semilla_aleatoria=None,
-            time_limit=15):
+            time_limit=15, restringir_especie=None):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -137,6 +147,20 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         disp = [n for n in lista if n in alimentos]
         if excluidos:
             disp, _f, _a = filtrar(disp, excluidos)
+        # ⚠️ AÑADIDO (5 agosto, noche) — el botón "Todo el/la {especie}" en
+        # personalizar/aprovechar ("Todo: Pollo" en Hueso carnoso, por
+        # ejemplo) antes se descartaba sin más al mandarlo al servidor:
+        # no forzaba nada, no hacía nada. Ahora sí restringe de verdad
+        # esa categoría concreta a solo esa especie, dejando que el
+        # motor elija LIBREMENTE cuál corte/pieza usar dentro de ella --
+        # no un alimento fijo, sino "de esta categoría, solo esta
+        # especie". Es intencionadamente por CATEGORÍA, no global: pedir
+        # "todo el pollo" en Hueso carnoso no debería impedir que
+        # aparezca ternera en Carne muscular si esa categoría está en
+        # automático.
+        if restringir_especie and cat in restringir_especie:
+            especie_pedida = restringir_especie[cat].strip().lower()
+            disp = [n for n in disp if especie_de(n).strip().lower() == especie_pedida]
         candidatos_por_cat[cat] = disp
     candidatos_por_cat["Suplementos"] = [a["nombre"] for a in alimentos.values()
                                         if a.get("categoria") in SUP_CATS]
