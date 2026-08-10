@@ -150,6 +150,10 @@ class PeticionCambiarAlimento(BaseModel):
     der_objetivo: float
     etapa_requisitos: str
     especies_excluidas: list[str] = []
+    # ⚠️ AÑADIDO (5 agosto, noche): para que el tope de calcio de razas
+    # grandes/gigantes en crecimiento se respete también al editar un
+    # alimento, no solo al generar el menú por primera vez.
+    peso_adulto_esperado_kg: Optional[float] = None
 
 
 class PeticionAnadirQuitarAlimento(BaseModel):
@@ -162,6 +166,8 @@ class PeticionAnadirQuitarAlimento(BaseModel):
     der_objetivo: float
     etapa_requisitos: str
     especies_excluidas: list[str] = []
+    # ⚠️ AÑADIDO (5 agosto, noche): mismo motivo que en PeticionCambiarAlimento.
+    peso_adulto_esperado_kg: Optional[float] = None
 
 
 class PeticionTransicion(BaseModel):
@@ -426,7 +432,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=tiempo_restante(),
             forzar=forzar, preferir=preferir,
             patologias=datos.patologias, restringir_especie=datos.restringir_especie,
-        peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
+            peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
         )
         if ok2:
             ok, gramos = ok2, gramos2
@@ -508,6 +514,10 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None):
             excluidos=(excluidos + list(nombres_excl)) or None,
             margenes_categoria=MARGENES_V2, max_suplementos=2,
             forzar=forzar,
+            # ⚠️ AÑADIDO (5 agosto, noche): sin esto, el tope de calcio de
+            # razas grandes/gigantes en crecimiento se perdía al editar un
+            # alimento, aunque sí se respetara al generar el menú entero.
+            peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None),
         )
         if not ok:
             break
