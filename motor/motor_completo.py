@@ -529,7 +529,8 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     if evitar_especies:
         evitar_lower = {e.strip().lower() for e in evitar_especies}
         for n in nombres:
-            if categoria_de[n] in ("Carne muscular", "Pescados y mariscos", "Hueso carnoso"):
+            if categoria_de[n] in ("Carne muscular", "Pescados y mariscos", "Hueso carnoso",
+                                   "Vísceras", "Hígado"):
                 if especie_de(n).strip().lower() in evitar_lower:
                     coste_binaria[idx[n]] += 2.0
     c = np.array([0.0] * n_var + coste_binaria)
@@ -544,8 +545,21 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # capricho de presentación, no un requisito nutricional: conformarse
     # con estar cerca del óptimo (1%) es indistinguible para el usuario y
     # muchísimo más rápido.
+    #
+    # ⚠️ SUBIDO (5 agosto, madrugada) — CASO REAL: restringir a una sola
+    # especie (personalizar, "todo el/la X") es un problema genuinamente
+    # más difícil, y en el servidor real (más lento que este entorno de
+    # pruebas) cada intento individual puede tardar mucho más -- dejando
+    # sitio para MENOS reintentos dentro del mismo presupuesto de 18s.
+    # Subido de 0.15 a 0.30: acepta una solución un poco menos "óptima"
+    # en cuanto a minimizar cuántos alimentos distintos usa (un capricho
+    # de presentación, no nutricional), a cambio de que cada intento
+    # tarde bastante menos -- así caben más reintentos en el mismo
+    # tiempo, sin tocar en absoluto la corrección nutricional, que sigue
+    # siendo exacta (el gap no afecta a ninguna restricción, solo a la
+    # prueba de que el objetivo es el mínimo posible).
     res = milp(c, constraints=constraints, integrality=integrality, bounds=bounds,
-              options={"time_limit": time_limit, "mip_rel_gap": 0.15})
+              options={"time_limit": time_limit, "mip_rel_gap": 0.30})
 
     if res.success:
         x = res.x[:n_var]
