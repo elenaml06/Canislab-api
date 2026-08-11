@@ -32,6 +32,20 @@ CARNE = [
     "Ternera solomillo sin grasa", "Lomo de ternera con grasa", "Ternera con grasa",
     "Conejo", "Pato (carne sin hueso)", "Gallina (carne sin hueso)",
     "Corazón de pollo", "Corazón de vaca", "Corazón de cordero", "Corazón de conejo",
+    # ⚠️ AÑADIDO (5 agosto, madrugada): "Molleja de pollo" y "Molleja de
+    # pavo" estaban en Vísceras -- corregido a Carne muscular, igual que
+    # el corazón. En alimentación cruda, lo que separa víscera de carne
+    # no es "es tejido muscular o es un órgano" (por ahí caímos en el
+    # error), es si SEGREGA algo o no: la molleja tritura mecánicamente,
+    # no segrega, así que va con la carne muscular -- igual que el
+    # corazón, que bombea pero tampoco segrega.
+    "Molleja de pollo", "Molleja de pavo",
+    # ⚠️ AÑADIDO (5 agosto, madrugada) — segunda pasada, confirmado con
+    # varias guías de raw feeding: la lengua y el pulmón TAMPOCO
+    # segregan, así que también van con la carne muscular, no con las
+    # vísceras. Estaban mal puestos igual que la molleja y el corazón.
+    "Lengua de ternera", "Lengua de buey", "Lengua de cordero",
+    "Pulmón de ternera", "Pulmón de cordero",
 ]
 
 # Solo huesos que se piden sin problema en una carnicería normal.
@@ -72,17 +86,19 @@ PESCADO = [
 ]
 
 VISCERAS = [
-    "Riñón de ternera", "Riñón de cordero", "Pulmón de ternera",
-    "Lengua de ternera", "Lengua de buey", "Lengua de cordero",
-    "Pulmón de cordero", "Molleja de pollo", "Molleja de pavo",
-    # ⚠️ "Corazón de conejo" NO se añade aquí (5 agosto, noche): sus
-    # datos nutricionales están incompletos en el catálogo (hierro,
-    # cobre, zinc, selenio y vitB12 sin valor) -- no encontré una fuente
-    # fiable con la composición real de corazón de conejo específicamente
-    # (solo de carne de conejo en general, que es un tejido distinto).
-    # Sin esos datos, "Vísceras" restringido solo a Conejo NUNCA puede
-    # cerrar los 30 requisitos, así que añadirlo aquí solo generaría un
-    # fallo garantizado. Se deja fuera hasta tener datos reales.
+    "Riñón de ternera", "Riñón de cordero",
+    # ⚠️ AVISO IMPORTANTE (5 agosto, madrugada): tras mover lengua y
+    # pulmón a Carne muscular (misma razón que la molleja y el corazón:
+    # no segregan), esta categoría se queda SOLO con riñón -- no
+    # tenemos datos de bazo, páncreas, testículos ni cerebro (las
+    # otras vísceras secretoras reales) para ampliarla. Consecuencia
+    # real: si alguien excluye a la vez "Ternera" y "Cordero" (dos
+    # alergias comunes), Vísceras se queda sin ningún candidato, y la
+    # red de seguridad ya puesta hará que el sistema diga claramente
+    # que no puede (en vez de mentir con un menú sin víscera, que es
+    # lo que hacía antes de esa red). Es correcto, pero más frágil que
+    # antes. Si se consiguen datos fiables de bazo o páncreas, esto
+    # mejoraría mucho.
 ]
 
 HIGADO = ["Hígado de vaca", "Hígado de pollo", "Hígado de conejo", "Hígado de cordero"]
