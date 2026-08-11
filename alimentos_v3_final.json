@@ -1661,7 +1661,7 @@
  {
   "nombre": "Pulmón de ternera",
   "tipo": "Alimento",
-  "categoria": "Vísceras",
+  "categoria": "Carne muscular",
   "energia": 88,
   "nutrientes": {
    "proteina": 16.2,
@@ -1695,7 +1695,8 @@
    "colina": 65,
    "cloruro": 304.92,
    "fibra": 0.0
-  }
+  },
+  "nota_datos": "CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular, misma razón que el corazón y la molleja: no segrega, así que en alimentación cruda va con la carne, no con las vísceras secretoras (hígado, riñón, bazo...). Confirmado en varias guías de raw feeding."
  },
  {
   "nombre": "Riñón de ternera",
@@ -2386,7 +2387,7 @@
  {
   "nombre": "Pulmón de cordero",
   "tipo": "Alimento",
-  "categoria": "Vísceras",
+  "categoria": "Carne muscular",
   "energia": 91,
   "nutrientes": {
    "proteina": 16.7,
@@ -2420,7 +2421,8 @@
    "colina": 100,
    "cloruro": 241.78,
    "fibra": 0.0
-  }
+  },
+  "nota_datos": "CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular, misma razón que el corazón y la molleja: no segrega, así que en alimentación cruda va con la carne, no con las vísceras secretoras (hígado, riñón, bazo...). Confirmado en varias guías de raw feeding."
  },
  {
   "nombre": "Riñón de cordero",
@@ -2913,7 +2915,7 @@
  {
   "nombre": "Lengua de cordero",
   "tipo": "Alimento",
-  "categoria": "Vísceras",
+  "categoria": "Carne muscular",
   "energia": 192,
   "nutrientes": {
    "proteina": 15.3,
@@ -2947,12 +2949,13 @@
    "colina": 100,
    "cloruro": 120.12,
    "fibra": 0.0
-  }
+  },
+  "nota_datos": "CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular, misma razón que el corazón y la molleja: no segrega, así que en alimentación cruda va con la carne, no con las vísceras secretoras (hígado, riñón, bazo...). Confirmado en varias guías de raw feeding."
  },
  {
   "nombre": "Lengua de buey",
   "tipo": "Alimento",
-  "categoria": "Vísceras",
+  "categoria": "Carne muscular",
   "energia": 219,
   "nutrientes": {
    "proteina": 14.9,
@@ -2986,12 +2989,13 @@
    "colina": 100,
    "cloruro": 106.26,
    "fibra": 0.0
-  }
+  },
+  "nota_datos": "CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular, misma razón que el corazón y la molleja: no segrega, así que en alimentación cruda va con la carne, no con las vísceras secretoras (hígado, riñón, bazo...). Confirmado en varias guías de raw feeding."
  },
  {
   "nombre": "Lengua de ternera",
   "tipo": "Alimento",
-  "categoria": "Vísceras",
+  "categoria": "Carne muscular",
   "energia": 136,
   "nutrientes": {
    "proteina": 17.8,
@@ -3025,7 +3029,8 @@
    "colina": 100,
    "cloruro": 123.2,
    "fibra": 0.0
-  }
+  },
+  "nota_datos": "CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular, misma razón que el corazón y la molleja: no segrega, así que en alimentación cruda va con la carne, no con las vísceras secretoras (hígado, riñón, bazo...). Confirmado en varias guías de raw feeding."
  },
  {
   "nombre": "Pavo pechuga sin piel",
@@ -6119,7 +6124,7 @@
  },
  {
   "nombre": "Molleja de pollo",
-  "categoria": "Vísceras",
+  "categoria": "Carne muscular",
   "energia": 94,
   "fuente": "USDA FDC 171456 'Chicken, gizzard, all classes, raw'.",
   "nutrientes": {
@@ -6140,11 +6145,11 @@
    "araquidonico": 0,
    "cobre": 0.12
   },
-  "nota_datos": "AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras."
+  "nota_datos": "AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras. CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular. En alimentación BARF/cruda, lo que separa víscera de carne no es \"es tejido muscular o es un órgano\", es si SEGREGA algo o no. El corazón (pese a ser un órgano) se trata como carne muscular porque no segrega, solo bombea; la molleja tampoco segrega, solo tritura mecánicamente. Fuente: guías de alimentación cruda para perros (raw feeding), consistentes entre varias."
  },
  {
   "nombre": "Molleja de pavo",
-  "categoria": "Vísceras",
+  "categoria": "Carne muscular",
   "energia": 111,
   "fuente": "USDA FDC 171085 'Turkey, gizzard, all classes, raw'.",
   "nutrientes": {
@@ -6166,7 +6171,7 @@
    "araquidonico": 0,
    "selenio": 29
   },
-  "nota_datos": "AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras."
+  "nota_datos": "AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras. CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular. En alimentación BARF/cruda, lo que separa víscera de carne no es \"es tejido muscular o es un órgano\", es si SEGREGA algo o no. El corazón (pese a ser un órgano) se trata como carne muscular porque no segrega, solo bombea; la molleja tampoco segrega, solo tritura mecánicamente. Fuente: guías de alimentación cruda para perros (raw feeding), consistentes entre varias."
  },
  {
   "nombre": "Pollo pechuga sin piel",
@@ -6244,10 +6249,10 @@
  },
  {
   "nombre": "Corazón de conejo",
-  "categoria": "Vísceras",
+  "categoria": "Carne muscular",
   "energia": 120,
   "fuente": "⚠️ PROXY: sin dato USDA/CIQUAL de conejo. Estimado a partir de corazon de cordero (122/16,5/5,7) y de cerdo (~118/17,3/4,4).",
-  "nota_datos": "DATO PROXY, no medido directamente. Usar con margen de prudencia.",
+  "nota_datos": "DATO PROXY, no medido directamente. Usar con margen de prudencia. CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular. En alimentación BARF/cruda, lo que separa víscera de carne no es \"es tejido muscular o es un órgano\", es si SEGREGA algo o no. El corazón (pese a ser un órgano) se trata como carne muscular porque no segrega, solo bombea; la molleja tampoco segrega, solo tritura mecánicamente. Fuente: guías de alimentación cruda para perros (raw feeding), consistentes entre varias.",
   "dato_no_fiable": true,
   "nutrientes": {
    "proteina": 16.5,
