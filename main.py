@@ -356,6 +356,55 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     elif datos.modo == "aprovechar":
         preferir = list(datos.nombres_alimentos or [])
     elif datos.modo == "automatico" and not excluidos and not datos.patologias:
+        # ⚠️ AÑADIDO (5 agosto, madrugada) — VARIANTES PRE-RESUELTAS: caso
+        # real encontrado con datos exactos de producción -- resolver un
+        # menú en caliente con una proteína evitada tardó 19,4 segundos
+        # en el servidor real (confirmado con las herramientas de
+        # desarrollador del navegador), demasiado cerca del límite de
+        # 30s de Render. En vez de resolver nada, si hay variantes
+        # pre-calculadas para este tamaño y etapa, se sirve directamente
+        # la primera cuya proteína NO esté en evitar_especies -- al
+        # instante, sin resolver, igual que ya hacía el primer menú con
+        # la vía rápida, pero ahora para CUALQUIER menú de la sesión,
+        # no solo el primero. Solo se reescala por las kcal reales del
+        # perro (los suplementos comerciales se topan aparte por su
+        # dosis real, igual que ya hace /catalogo).
+        from catalogo_menus import CATALOGO_VARIANTES
+        clave_variantes = f"{datos.tamano}_{datos.etapa_requisitos}" if datos.tamano else None
+        variantes = CATALOGO_VARIANTES.get(clave_variantes) if clave_variantes else None
+        if variantes:
+            evitar_lower = {e.strip().lower() for e in (datos.evitar_especies or [])}
+            elegida = next((v for v in variantes if v["proteina"].strip().lower() not in evitar_lower), None)
+            if elegida is None:
+                elegida = variantes[0]  # si ya se evitaron todas, se repite alguna antes que fallar
+            SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
+                               "Calcio", "Hierro", "Vitamina B")
+            der_base = sum(al[n]["energia"] * g / 100 for n, g in elegida["gramos"].items())
+            factor = datos.der_objetivo / der_base if der_base else 1.0
+            gramos_reescalados = {}
+            for n, g in elegida["gramos"].items():
+                a = al.get(n, {})
+                if a.get("categoria") in SUP_COMERCIALES:
+                    techo = dosis_maxima_fabricante(a, datos.peso_perro_kg)
+                    gramos_reescalados[n] = round(min(g * factor, techo), 2) if techo else round(g * factor, 2)
+                else:
+                    gramos_reescalados[n] = round(g * factor, 2)
+            ficha_variante = verificar_v2(gramos_reescalados, al, req, datos.der_objetivo, datos.etapa_requisitos)
+            if ficha_variante["semaforo"] == "verde":
+                problemas_variante = revisar_seguridad_v2(gramos_reescalados, al, datos.der_objetivo,
+                                                          datos.etapa_requisitos, datos.patologias)
+                return {
+                    "factible": True, "menu": gramos_reescalados, "ficha": ficha_variante,
+                    "problemas_seguridad": problemas_variante,
+                    "kcal_total": sum(al[n]["energia"] * g / 100 for n, g in gramos_reescalados.items()),
+                    "gramos_total": sum(gramos_reescalados.values()),
+                    "via_catalogo": True,
+                }
+            # si al reescalar por las kcal del perro concreto (no el peso
+            # representativo del catálogo) se sale de verde, se sigue
+            # abajo con el camino normal -- nunca se entrega algo que no
+            # esté en verde de verdad.
+
         # ⚠️ AÑADIDO (5 agosto): en automático, sin alergias ni patologías,
         # se prueba PRIMERO con la base de alimentos del catálogo fijo más
         # cercano (mismo tamaño y etapa) forzada -- el motor solo tiene que
