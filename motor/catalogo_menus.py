@@ -1010,14 +1010,14 @@ CATALOGO_VARIANTES = {
     {
       "proteina": "Merluza",
       "gramos": {
-        "Ternera solomillo sin grasa": 176.16,
-        "Costillas de cordero": 61.17,
-        "Molleja de pollo": 21.03,
-        "Hígado de vaca": 5.87,
-        "Naranja": 29.36,
-        "Aceite de Salmón Natural Greatness": 1.11,
-        "Aceite de sésamo": 2.76,
-        "Homemadekun (multivitamínico completo)": 5.52
+        "Ternera solomillo sin grasa": 161.37,
+        "Costillas de cordero": 53.79,
+        "Lengua de buey": 24.35,
+        "Hígado de vaca": 7.33,
+        "Piña": 22.11,
+        "Brit Care Aceite de Salmón": 0.95,
+        "Pipa de calabaza": 5.0,
+        "Homemadekun (multivitamínico completo)": 4.4
       }
     }
   ],
@@ -1147,13 +1147,13 @@ CATALOGO_VARIANTES = {
     {
       "proteina": "Merluza",
       "gramos": {
-        "Pollo con piel (sin hueso)": 145.24,
-        "Costillas de cordero": 76.35,
-        "Molleja de pollo": 26.32,
-        "Hígado de vaca": 5.16,
-        "Albahaca": 5.16,
-        "Aceite de Salmón Natural Greatness": 1.15,
-        "Homemadekun (multivitamínico completo)": 5.53,
+        "Pollo con piel (sin hueso)": 122.92,
+        "Costillas de cordero": 69.55,
+        "Lengua de buey": 30.39,
+        "Hígado de vaca": 5.06,
+        "Fresa": 25.32,
+        "Aceite de Salmón Natural Greatness": 1.18,
+        "Homemadekun (multivitamínico completo)": 7.01,
         "Sal común (cloruro sódico)": 0.24
       }
     }
@@ -1540,14 +1540,14 @@ CATALOGO_VARIANTES = {
     {
       "proteina": "Merluza",
       "gramos": {
-        "Ternera solomillo sin grasa": 317.27,
-        "Costillas de cordero": 118.55,
-        "Molleja de pollo": 29.51,
-        "Hígado de vaca": 10.58,
-        "Lechuga": 52.88,
-        "Brit Care Aceite de Salmón": 1.72,
-        "Aceite de sésamo": 4.9,
-        "Homemadekun (multivitamínico completo)": 8.67
+        "Pollo con piel (sin hueso)": 98.39,
+        "Pavo pechuga sin piel": 129.27,
+        "Costillas de cordero": 117.79,
+        "Lengua de buey": 54.03,
+        "Hígado de vaca": 9.0,
+        "Coles de Bruselas": 41.74,
+        "Aceite de Salmón Natural Greatness": 1.93,
+        "Homemadekun (multivitamínico completo)": 9.09
       }
     }
   ],
@@ -2520,11 +2520,11 @@ CATALOGO_VARIANTES = {
       "proteina": "Merluza",
       "gramos": {
         "Pollo con piel (sin hueso)": 456.47,
-        "Costillas de cordero": 286.89,
-        "Molleja de pollo": 106.52,
-        "Hígado de vaca": 20.01,
-        "Champiñón": 17.75,
-        "V-INTEGRA Senior": 10.06
+        "Costillas de cordero": 314.02,
+        "Lengua de buey": 16.58,
+        "Hígado de vaca": 16.58,
+        "Albahaca": 25.18,
+        "NEKTON Dog Easy-BARF (multivitamínico)": 12.96
       }
     }
   ],
@@ -2792,14 +2792,13 @@ CATALOGO_VARIANTES = {
     {
       "proteina": "Merluza",
       "gramos": {
-        "Pavo pechuga sin piel": 191.87,
-        "Conejo": 997.06,
-        "Costillas de cordero": 396.31,
-        "Molleja de pollo": 130.77,
-        "Hígado de vaca": 67.39,
-        "Apio": 198.16,
-        "Oleum Canis Aceite de Salmón": 19.66,
-        "V-INTEGRA Cachorro": 25.73
+        "Conejo": 1072.92,
+        "Costillas de cordero": 488.33,
+        "Lengua de buey": 36.57,
+        "Hígado de vaca": 48.0,
+        "Acelga": 182.87,
+        "Oleum Canis Aceite de Salmón": 16.05,
+        "Homemadekun (multivitamínico completo)": 32.47
       }
     }
   ],
