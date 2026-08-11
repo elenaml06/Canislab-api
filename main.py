@@ -128,6 +128,14 @@ class PeticionMenu(BaseModel):
     # categoría a solo esa especie, dejando que el motor elija
     # libremente qué corte/pieza usar dentro de ella.
     restringir_especie: Optional[dict] = None
+    # ⚠️ AÑADIDO (5 agosto, madrugada): para la rotación de proteína entre
+    # varios menús automáticos -- antes iba mezclada con especies_excluidas
+    # (una exclusión DURA, pensada para alergias reales), así que si la
+    # especie del menú anterior era la única forma razonable de cerrar los
+    # 30 requisitos, la rotación podía volver el problema imposible sin
+    # que el usuario hubiera pedido nada de eso. Ahora es una preferencia
+    # SUAVE: el motor la evita si puede, nunca falla por su culpa.
+    evitar_especies: Optional[list] = None
     # ⚠️ AÑADIDO para /menu/v2 (5 agosto): el frontend dice explícitamente
     # qué modo quiere, en vez de que el backend tenga que adivinarlo por
     # lo que manda en nombres_alimentos/forzar_presencia.
@@ -414,6 +422,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         forzar=forzar, preferir=preferir,
         patologias=datos.patologias, restringir_especie=datos.restringir_especie,
         peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
+        evitar_especies=datos.evitar_especies,
     )
     # ⚠️ AÑADIDO (5 agosto): con la aleatoriedad puesta en el motor, un
     # intento puede salir "factible" (cumple matemáticamente) pero no del
@@ -433,6 +442,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             forzar=forzar, preferir=preferir,
             patologias=datos.patologias, restringir_especie=datos.restringir_especie,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
+            evitar_especies=datos.evitar_especies,
         )
         if ok2:
             ok, gramos = ok2, gramos2
