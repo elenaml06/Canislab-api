@@ -351,6 +351,52 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 "motivo": " ".join(avisos_de_patologias(bloqueantes))}
 
     forzar, preferir = None, None
+    # ⚠️ AÑADIDO (5 agosto, madrugada) — CONECTADO CON LAS VARIANTES
+    # PRE-RESUELTAS: si en Personalizar el usuario solo pidió "Todo
+    # el/la X" en Carne muscular o Pescados y mariscos (nada más forzado,
+    # sin alergias ni patologías), eso es EXACTAMENTE lo mismo que una
+    # de las variantes ya calculadas para este tamaño y etapa -- no
+    # tiene sentido resolverlo de nuevo en caliente. Se sirve al
+    # instante si hay una coincidencia exacta; si no la hay (más de una
+    # restricción, alimentos concretos forzados, alergias...), se sigue
+    # abajo con el camino normal de Personalizar, resolviendo en vivo.
+    if (datos.modo == "personalizar" and datos.tamano and not excluidos
+            and not datos.patologias and not (datos.forzar_presencia or datos.nombres_alimentos)
+            and datos.restringir_especie and len(datos.restringir_especie) == 1):
+        (cat_pedida, especie_pedida), = datos.restringir_especie.items()
+        if cat_pedida in ("Carne muscular", "Pescados y mariscos"):
+            from catalogo_menus import CATALOGO_VARIANTES
+            clave_v = f"{datos.tamano}_{datos.etapa_requisitos}"
+            variantes = CATALOGO_VARIANTES.get(clave_v, [])
+            coincide = next((v for v in variantes
+                             if v["proteina"].strip().lower() == especie_pedida.strip().lower()), None)
+            if coincide:
+                SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
+                                   "Calcio", "Hierro", "Vitamina B")
+                der_base = sum(al[n]["energia"] * g / 100 for n, g in coincide["gramos"].items())
+                factor = datos.der_objetivo / der_base if der_base else 1.0
+                gramos_r = {}
+                for n, g in coincide["gramos"].items():
+                    a = al.get(n, {})
+                    if a.get("categoria") in SUP_COMERCIALES:
+                        techo = dosis_maxima_fabricante(a, datos.peso_perro_kg)
+                        gramos_r[n] = round(min(g * factor, techo), 2) if techo else round(g * factor, 2)
+                    else:
+                        gramos_r[n] = round(g * factor, 2)
+                ficha_r = verificar_v2(gramos_r, al, req, datos.der_objetivo, datos.etapa_requisitos)
+                if ficha_r["semaforo"] == "verde":
+                    problemas_r = revisar_seguridad_v2(gramos_r, al, datos.der_objetivo,
+                                                       datos.etapa_requisitos, datos.patologias)
+                    return {
+                        "factible": True, "menu": gramos_r, "ficha": ficha_r,
+                        "problemas_seguridad": problemas_r,
+                        "kcal_total": sum(al[n]["energia"] * g / 100 for n, g in gramos_r.items()),
+                        "gramos_total": sum(gramos_r.values()),
+                        "via_catalogo": True,
+                    }
+                # si al reescalar por las kcal reales sale de verde, se
+                # sigue abajo con Personalizar normal, resolviendo en vivo.
+
     if datos.modo == "personalizar":
         forzar = list(datos.forzar_presencia or datos.nombres_alimentos or [])
     elif datos.modo == "aprovechar":
@@ -418,7 +464,19 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         from catalogo_menus import CATALOGO
         SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
                            "Calcio", "Hierro", "Vitamina B")
-        clave = f"{datos.tamano}_{datos.etapa_requisitos}" if datos.tamano else None
+        # ⚠️ CORREGIDO (5 agosto, madrugada) — FALLO GRAVE ENCONTRADO,
+        # confirmado con datos reales: esta vía fuerza SIEMPRE la MISMA
+        # base fija (la que se guardó una vez, hace días) -- no tiene en
+        # cuenta evitar_especies en absoluto. Si el atajo nuevo de
+        # variantes (arriba) no llegaba a verde al reescalar, caía AQUÍ
+        # como siguiente intento, y como esto es determinista, el menú 2
+        # y el 3 daban EXACTAMENTE el mismo resultado -- mismos
+        # alimentos, solo cambiaban los gramos totales por el reescalado.
+        # Caso real confirmado: perfil adulto, menú 2 y 3 idénticos.
+        # Ahora, si hay algo que evitar (no es el primer menú de la
+        # sesión), esta vía NO se usa -- se salta directa a la búsqueda
+        # libre de abajo, que sí respeta evitar_especies de verdad.
+        clave = f"{datos.tamano}_{datos.etapa_requisitos}" if (datos.tamano and not datos.evitar_especies) else None
         entrada = CATALOGO.get(clave) if clave else None
         if entrada:
             base = [n for n in entrada["gramos"]
