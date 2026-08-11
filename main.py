@@ -617,15 +617,53 @@ def _etapa_ok(etapa):
 # =====================================================================
 @app.get("/verificar")
 def verificar():
-    import hashlib, os
+    """
+    ⚠️ CORREGIDO (5 agosto, madrugada) — FALLO DE DISEÑO ENCONTRADO: los
+    JSON se comparaban por hash de los BYTES CRUDOS del archivo -- eso
+    hace que cualquier diferencia de FORMATO de texto (otro orden de
+    líneas al guardar, otro tipo de salto de línea, indentación
+    distinta) dé "NO COINCIDE" aunque los DATOS sean idénticos, porque
+    json.load() no le importa el formato, solo la estructura. Esto dio
+    una falsa alarma real: un archivo con los datos correctos pareció
+    "alterado" solo por cómo se había guardado el texto. Ahora, para los
+    JSON, se compara el CONTENIDO real (cargado y reordenado de forma
+    canónica antes de hashear) -- invariante al formato, sensible a
+    cualquier cambio real de datos. der.py sigue comparando bytes
+    crudos porque es código, donde eso sí puede importar.
+    """
+    import hashlib, os, json
     SELLOS = {
-        "alimentos_v3_final.json":      "938f139a8ddf5839",
-        "requerimientos_v2_final.json": "73ab445f9881f543",
-        "der.py":                       "1c5c8bb91ceac481",
+        "alimentos_v3_final.json":      "c90113642ffe5a5f",
+        "requerimientos_v2_final.json": "7b023fcdebdd4391",
+    }
+    SELLOS_CRUDOS = {
+        "der.py": "1c5c8bb91ceac481",
     }
     base = os.path.dirname(os.path.abspath(__file__))
     detalle, todo_ok = [], True
     for fichero, esperado in SELLOS.items():
+        ruta = os.path.join(base, fichero)
+        if not os.path.exists(ruta):
+            detalle.append({"archivo": fichero, "estado": "NO EXISTE"})
+            todo_ok = False
+            continue
+        try:
+            datos = json.load(open(ruta, encoding="utf-8"))
+            canonico = json.dumps(datos, sort_keys=True, ensure_ascii=True).encode("utf-8")
+            actual = hashlib.sha256(canonico).hexdigest()[:16]
+        except Exception as e:
+            detalle.append({"archivo": fichero, "estado": f"NO SE PUDO LEER COMO JSON: {e}"})
+            todo_ok = False
+            continue
+        ok = actual == esperado
+        todo_ok = todo_ok and ok
+        detalle.append({
+            "archivo": fichero,
+            "esperado": esperado,
+            "encontrado": actual,
+            "estado": "correcto (contenido real, no formato de texto)" if ok else "EL CONTENIDO NO COINCIDE — esto sí es un cambio de datos real",
+        })
+    for fichero, esperado in SELLOS_CRUDOS.items():
         ruta = os.path.join(base, fichero)
         if not os.path.exists(ruta):
             detalle.append({"archivo": fichero, "estado": "NO EXISTE"})
