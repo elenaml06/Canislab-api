@@ -104,7 +104,8 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             excluidos=None, margenes_categoria=None, cuantos_max=None,
             max_suplementos=2, tolerancia_kcal=0.03,
             forzar=None, preferir=None, patologias=None, semilla_aleatoria=None,
-            time_limit=15, restringir_especie=None, peso_adulto_esperado_kg=None):
+            time_limit=15, restringir_especie=None, peso_adulto_esperado_kg=None,
+            evitar_especies=None):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -514,6 +515,23 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             for n in nombres:
                 if categoria_de[n] == "Pescados y mariscos":
                     coste_binaria[idx[n]] += 1.5
+    # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL: la rotación de
+    # proteína entre varios menús automáticos EXCLUÍA por completo la
+    # especie del menú anterior (especies_excluidas). Eso es una
+    # restricción DURA e invisible para el usuario -- él nunca pidió
+    # evitar esa especie, es una decisión interna para dar variedad. Si
+    # esa especie resultaba ser la única forma razonable de cerrar los
+    # 30 requisitos con este perro concreto, la exclusión dura podía
+    # volver el problema mucho más difícil o directamente imposible, y
+    # el usuario veía "no existe combinación" sin haber pedido nada raro.
+    # Ahora, igual que con el pescado, solo se PENALIZA en el objetivo
+    # -- el motor la evita si puede, pero nunca puede fallar por esto.
+    if evitar_especies:
+        evitar_lower = {e.strip().lower() for e in evitar_especies}
+        for n in nombres:
+            if categoria_de[n] in ("Carne muscular", "Pescados y mariscos", "Hueso carnoso"):
+                if especie_de(n).strip().lower() in evitar_lower:
+                    coste_binaria[idx[n]] += 2.0
     c = np.array([0.0] * n_var + coste_binaria)
 
     # ⚠️ AÑADIDO (5 agosto, noche) — CASO REAL ENCONTRADO: cachorro pequeño
