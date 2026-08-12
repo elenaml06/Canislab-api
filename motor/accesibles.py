@@ -41,11 +41,16 @@ CARNE = [
     # corazón, que bombea pero tampoco segrega.
     "Molleja de pollo", "Molleja de pavo",
     # ⚠️ AÑADIDO (5 agosto, madrugada) — segunda pasada, confirmado con
-    # varias guías de raw feeding: la lengua y el pulmón TAMPOCO
-    # segregan, así que también van con la carne muscular, no con las
-    # vísceras. Estaban mal puestos igual que la molleja y el corazón.
+    # varias guías de raw feeding: la lengua TAMPOCO segrega, así que
+    # también va con la carne muscular, no con las vísceras. Estaba mal
+    # puesta igual que la molleja y el corazón.
+    #
+    # ⚠️ EL PULMÓN NO SE MUEVE (tercera pasada, mismo momento): a
+    # diferencia de corazón/molleja/lengua, donde todas las fuentes
+    # coinciden sin excepción, el pulmón es un caso genuinamente
+    # debatido en la comunidad de alimentación cruda -- se deja en
+    # Vísceras (abajo) por prudencia, sin consenso claro para moverlo.
     "Lengua de ternera", "Lengua de buey", "Lengua de cordero",
-    "Pulmón de ternera", "Pulmón de cordero",
 ]
 
 # Solo huesos que se piden sin problema en una carnicería normal.
@@ -61,15 +66,24 @@ HUESO = [
     # llegado a esta lista curada -- solo se podía usar a mano.
     "Espinazo de conejo", "Pecho de ternera con hueso",
     # ⚠️ AÑADIDO (5 agosto, noche) — segunda pasada por la tabla completa
-    # del mismo estudio: "Cuello de ternera" y "Laringe de vacuno" son
-    # las dos filas que faltaban y SÍ son seguras (ratio Ca:P normal).
+    # del mismo estudio: "Cuello de ternera" es la fila que faltaba y
+    # SÍ es segura (ratio Ca:P normal) Y fácil de conseguir.
     # "Escápula de vacuno" y "cartílago de vacuno" quedan fuera a
     # propósito: el propio estudio dice que su ratio Ca:P está invertido
     # y no son una buena fuente de calcio. "Pierna de cordero con hueso"
     # también queda fuera: ya se había excluido antes por riesgo de
     # fractura dental (hueso de carga), es una decisión de seguridad
     # tomada antes, no una falta de datos.
-    "Cuello de ternera", "Laringe de vacuno",
+    "Cuello de ternera",
+    # ⚠️ QUITADO (5 agosto, madrugada): "Laringe de vacuno" tenía datos
+    # científicos reales, pero NO es un alimento que se consiga en una
+    # carnicería normal -- es una pieza muy especializada, típicamente
+    # solo en mataderos, no a la venta al público. El criterio de esta
+    # lista es "fácil/seguro de encontrar", no solo "con buenos datos".
+    # Se queda en el catálogo completo por si alguien la busca a mano
+    # explícitamente (avisando de la dificultad), pero el automático ya
+    # no la sugiere. Además, ya sabíamos que su calcio es demasiado
+    # bajo (66mg/100g) para sostener Hueso carnoso ella sola.
 ]
 
 PESCADO = [
@@ -87,18 +101,17 @@ PESCADO = [
 
 VISCERAS = [
     "Riñón de ternera", "Riñón de cordero",
-    # ⚠️ AVISO IMPORTANTE (5 agosto, madrugada): tras mover lengua y
-    # pulmón a Carne muscular (misma razón que la molleja y el corazón:
-    # no segregan), esta categoría se queda SOLO con riñón -- no
-    # tenemos datos de bazo, páncreas, testículos ni cerebro (las
-    # otras vísceras secretoras reales) para ampliarla. Consecuencia
-    # real: si alguien excluye a la vez "Ternera" y "Cordero" (dos
-    # alergias comunes), Vísceras se queda sin ningún candidato, y la
-    # red de seguridad ya puesta hará que el sistema diga claramente
-    # que no puede (en vez de mentir con un menú sin víscera, que es
-    # lo que hacía antes de esa red). Es correcto, pero más frágil que
-    # antes. Si se consiguen datos fiables de bazo o páncreas, esto
-    # mejoraría mucho.
+    # ⚠️ CORREGIDO (5 agosto, madrugada) — el pulmón vuelve aquí: a
+    # diferencia de lengua/molleja/corazón (donde todas las fuentes
+    # coinciden sin excepción), el pulmón es un caso genuinamente
+    # debatido en la comunidad de alimentación cruda -- se deja por
+    # prudencia, sin consenso claro para moverlo a Carne muscular.
+    "Pulmón de ternera", "Pulmón de cordero",
+    # ⚠️ AVISO todavía vigente: aunque el pulmón amplía un poco esta
+    # categoría, sigue sin haber ninguna víscera SECRETORA real aparte
+    # del riñón -- no tenemos datos de bazo, páncreas, testículos ni
+    # cerebro. Si se consiguen datos fiables de alguna, esto mejoraría
+    # la robustez de la categoría de verdad.
 ]
 
 HIGADO = ["Hígado de vaca", "Hígado de pollo", "Hígado de conejo", "Hígado de cordero"]
