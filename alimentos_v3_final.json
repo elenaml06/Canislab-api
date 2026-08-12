@@ -1661,7 +1661,7 @@
  {
   "nombre": "Pulmón de ternera",
   "tipo": "Alimento",
-  "categoria": "Carne muscular",
+  "categoria": "Vísceras",
   "energia": 88,
   "nutrientes": {
    "proteina": 16.2,
@@ -1696,7 +1696,7 @@
    "cloruro": 304.92,
    "fibra": 0.0
   },
-  "nota_datos": "CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular, misma razón que el corazón y la molleja: no segrega, así que en alimentación cruda va con la carne, no con las vísceras secretoras (hígado, riñón, bazo...). Confirmado en varias guías de raw feeding."
+  "nota_datos": "DEVUELTO a Vísceras (5 agosto, madrugada): a diferencia del corazón/molleja/lengua/tripa, donde todas las fuentes coinciden, el pulmón es un caso genuinamente debatido en la comunidad de alimentación cruda -- unas fuentes lo tratan como carne, otras como víscera, sin consenso claro. Se deja como víscera por prudencia."
  },
  {
   "nombre": "Riñón de ternera",
@@ -2387,7 +2387,7 @@
  {
   "nombre": "Pulmón de cordero",
   "tipo": "Alimento",
-  "categoria": "Carne muscular",
+  "categoria": "Vísceras",
   "energia": 91,
   "nutrientes": {
    "proteina": 16.7,
@@ -2422,7 +2422,7 @@
    "cloruro": 241.78,
    "fibra": 0.0
   },
-  "nota_datos": "CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular, misma razón que el corazón y la molleja: no segrega, así que en alimentación cruda va con la carne, no con las vísceras secretoras (hígado, riñón, bazo...). Confirmado en varias guías de raw feeding."
+  "nota_datos": "DEVUELTO a Vísceras (5 agosto, madrugada): a diferencia del corazón/molleja/lengua/tripa, donde todas las fuentes coinciden, el pulmón es un caso genuinamente debatido en la comunidad de alimentación cruda -- unas fuentes lo tratan como carne, otras como víscera, sin consenso claro. Se deja como víscera por prudencia."
  },
  {
   "nombre": "Riñón de cordero",
