@@ -371,9 +371,23 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             fila_cat = fila_vacia()
             for n in miembros:
                 fila_cat[idx[n]] = 1.0
-            fila_rel_max = [fila_cat[j] - mxp * fila_total[j] for j in range(2 * n_var)]
+            # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL ENCONTRADO: el
+            # redondeo de cada alimento a 2 decimales al construir el
+            # resultado final (más abajo) puede desplazar el peso total
+            # de una categoría unas centésimas de gramo respecto a lo
+            # que el LP calculó internamente con precisión completa --
+            # normalmente inofensivo, pero si el LP resuelve JUSTO en el
+            # límite del margen (p.ej. exactamente 20.000% cuando el
+            # mínimo es 20%), ese redondeo posterior puede empujarlo a
+            # 19.98% y salir fuera de rango pese a que el LP lo resolvió
+            # bien. Mismo principio que el +0.8% que ya se aplica a los
+            # mínimos de nutrientes: se pide un pelín más del mínimo y
+            # un pelín menos del máximo, para que quede colchón real.
+            mnp_con_margen = mnp * 1.01 if mnp else mnp
+            mxp_con_margen = mxp * 0.99 if mxp else mxp
+            fila_rel_max = [fila_cat[j] - mxp_con_margen * fila_total[j] for j in range(2 * n_var)]
             A_rows.append(fila_rel_max); lb_rows.append(-np.inf); ub_rows.append(0.0)
-            fila_rel_min = [-fila_cat[j] + mnp * fila_total[j] for j in range(2 * n_var)]
+            fila_rel_min = [-fila_cat[j] + mnp_con_margen * fila_total[j] for j in range(2 * n_var)]
             A_rows.append(fila_rel_min); lb_rows.append(-np.inf); ub_rows.append(0.0)
 
     # ⚠️ AÑADIDO (5 agosto): grasa como % de las kcal (pancreatitis,
