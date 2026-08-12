@@ -609,39 +609,84 @@ def endpoint_transicion(datos: PeticionTransicion):
 # quitado) y se resuelve de cero con el MILP, así que el resultado SIEMPRE
 # esta comprobado de verdad contra los 30 requisitos, nunca puede quedar
 # a medias ni duplicado.
-def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None):
+def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_especie=None):
     al, req = cargar_v2()
     excluidos = list(datos.especies_excluidas or [])
     nombres_excl = set(datos.nombres_excluidos or [])
     if excluir_nombres:
         nombres_excl |= set(excluir_nombres)
-    # ⚠️ CORREGIDO (5 agosto, mañana): esto llamaba UNA vez y devolvía
-    # "factible: True" con lo que saliera, SIN comprobar si el resultado
-    # era verde de verdad -- solo si el programa encontraba algo que
-    # cumpliera matemáticamente el problema que se le planteó. Con la
-    # aleatoriedad puesta en el motor, eso podía devolver un menú
-    # incompleto o al límite como si fuera bueno. Ahora reintenta hasta 3
-    # veces hasta que sea verde de verdad, igual que ya hace la
-    # generación normal de /menu/v2.
-    ok, gramos, ficha = False, None, None
-    for _intento in range(3):
-        ok, gramos = resolver_v2(
-            datos.der_objetivo, datos.etapa_requisitos, al, req,
-            datos.peso_perro_kg, dosis_maxima_fabricante,
-            excluidos=(excluidos + list(nombres_excl)) or None,
-            margenes_categoria=MARGENES_V2, max_suplementos=2,
-            forzar=forzar,
-            # ⚠️ AÑADIDO (5 agosto, madrugada): sin esto, el tope de calcio
-            # de razas grandes/gigantes en crecimiento se perdía al editar
-            # un alimento, aunque sí se respetara al generar el menú entero.
-            peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None),
-        )
-        if not ok:
-            break
-        ficha = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
-        if ficha["semaforo"] == "verde":
-            break
-    if not ok or ficha["semaforo"] != "verde":
+
+    def _intentar(forzar_este, margen_intentos=3):
+        """Un intento completo: hasta 3 vueltas hasta que sea verde de
+        verdad, igual que ya hacía esto antes de separarlo en función."""
+        ok, gramos, ficha = False, None, None
+        for _intento in range(margen_intentos):
+            ok, gramos = resolver_v2(
+                datos.der_objetivo, datos.etapa_requisitos, al, req,
+                datos.peso_perro_kg, dosis_maxima_fabricante,
+                excluidos=(excluidos + list(nombres_excl)) or None,
+                margenes_categoria=MARGENES_V2, max_suplementos=2,
+                forzar=forzar_este,
+                restringir_especie=restringir_especie,
+                peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None),
+            )
+            if not ok:
+                break
+            ficha = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
+            if ficha["semaforo"] == "verde":
+                break
+        return (ok and ficha and ficha["semaforo"] == "verde"), gramos, ficha
+
+    # ⚠️ AÑADIDO (5 agosto, madrugada) — PEDIDO EXPRESO: antes, editar UN
+    # alimento dejaba que el motor reconstruyera el menú ENTERO desde
+    # cero, libre de usar lo que quisiera para el resto -- aunque el
+    # resultado fuera nutricionalmente correcto, podía cambiar TODO lo
+    # demás sin necesidad, cuando lo único que el usuario pedía era UN
+    # cambio puntual. Ahora se intenta PRIMERO mantener todos los demás
+    # alimentos que ya había (dejando que gramos, extras y suplementos
+    # se ajusten libres) -- solo si eso no da un menú viable, se cae al
+    # comportamiento de antes (el motor elige libremente), avisando de
+    # qué otros alimentos tuvo que cambiar además del pedido.
+    menu_actual = list(getattr(datos, "menu_actual", None) or [])
+    aviso_cambios_extra = None
+    # ⚠️ CORREGIDO en el mismo momento: esto solo se activaba si había
+    # "forzar" (cambiar/añadir un alimento) -- al QUITAR uno, forzar es
+    # None, así que "preservar el resto" nunca se activaba ahí, cuando
+    # es exactamente el mismo caso: quitar algo también debería intentar
+    # mantener todo lo demás, dejando que el motor rellene el hueco.
+    if menu_actual and (forzar or excluir_nombres):
+        SUP_CATS = ("Multivitamínico", "Omega-3", "Yodo", "Fibra", "Calcio",
+                   "Hierro", "Vitamina B", "Extras")
+        nombres_excl_actuales = nombres_excl | set(forzar or [])
+        a_preservar = [n for n in menu_actual
+                      if n not in nombres_excl_actuales
+                      and al.get(n, {}).get("categoria") not in SUP_CATS]
+        if a_preservar:
+            ok_pres, gramos_pres, ficha_pres = _intentar(list(forzar or []) + a_preservar)
+            if ok_pres:
+                resultado = {"factible": True, "gramos": gramos_pres, "ficha": ficha_pres}
+                return resultado
+            # no se pudo manteniendo todo -- se sigue abajo con el
+            # comportamiento libre, y se avisa de qué se perdió
+            ok_libre, gramos_libre, ficha_libre = _intentar(forzar)
+            if ok_libre:
+                perdidos = [n for n in a_preservar if n not in gramos_libre]
+                if perdidos:
+                    aviso_cambios_extra = (
+                        "Para que este cambio funcionara, también tuvimos que cambiar: "
+                        + ", ".join(perdidos) + "."
+                    )
+                resultado = {"factible": True, "gramos": gramos_libre, "ficha": ficha_libre}
+                if aviso_cambios_extra:
+                    resultado["aviso"] = aviso_cambios_extra
+                return resultado
+            ok, gramos, ficha = ok_libre, gramos_libre, ficha_libre
+        else:
+            ok, gramos, ficha = _intentar(forzar)
+    else:
+        ok, gramos, ficha = _intentar(forzar)
+
+    if not ok:
         return {"factible": False,
                 "motivo": "Con este cambio no existe ninguna combinación que cumpla "
                           "los 30 requisitos. Prueba con otro alimento."}
@@ -652,6 +697,17 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None):
 def endpoint_cambiar_alimento(datos: PeticionCambiarAlimento):
     """Sustituye un alimento por otro (el lapiz de editar), resolviendo TODO
     de nuevo con el motor real -- el alimento nuevo se fuerza a entrar."""
+    # ⚠️ AÑADIDO (5 agosto, madrugada): "Todo el/la {especie}" ahora
+    # también funciona aquí, no solo al elegir por primera vez -- antes
+    # solo se podía restringir a una especie completa en Personalizar,
+    # nunca al editar un alimento ya puesto en el menú.
+    if datos.alimento_nuevo.startswith("Todo: "):
+        especie = datos.alimento_nuevo[len("Todo: "):]
+        al, _ = cargar_v2()
+        categoria = al.get(datos.alimento_viejo, {}).get("categoria")
+        if categoria:
+            return _recalcular_con_motor(datos, excluir_nombres=[datos.alimento_viejo],
+                                         restringir_especie={categoria: especie})
     return _recalcular_con_motor(datos, forzar=[datos.alimento_nuevo],
                                   excluir_nombres=[datos.alimento_viejo])
 
@@ -750,7 +806,7 @@ def verificar():
     """
     import hashlib, os, json
     SELLOS = {
-        "alimentos_v3_final.json":      "deaf99b7e8f74169",
+        "alimentos_v3_final.json":      "c7e93e6938e1fc6d",
         "requerimientos_v2_final.json": "7b023fcdebdd4391",
     }
     SELLOS_CRUDOS = {
