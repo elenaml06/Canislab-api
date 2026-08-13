@@ -47,6 +47,18 @@ from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
 from verificar import verificar as verificar_v2
 from seguridad import revisar_seguridad as revisar_seguridad_v2
 
+# ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL: varias veces esta noche
+# el problema resultó ser que Render seguía sirviendo una versión VIEJA
+# de main.py, aunque el archivo correcto ya estuviera subido a GitHub --
+# /verificar comprobaba los DATOS (JSON, der.py) pero nunca el propio
+# main.py, así que no había forma de confirmar esto sin pegar el
+# archivo entero para compararlo a mano. Con esto, /verificar dice
+# desde CUÁNDO lleva corriendo este proceso -- si acabas de subir algo
+# nuevo y este número es de hace horas, esa es la prueba de que el
+# despliegue no se ha aplicado todavía.
+import datetime
+_ARRANCADO_EN = datetime.datetime.utcnow().isoformat() + "Z"
+
 app = FastAPI(title="CANISLAB API")
 
 # permite que la app (en el navegador) pueda llamar a esta API
@@ -869,12 +881,26 @@ def verificar():
         n_alimentos = f"ERROR: {e}"
         todo_ok = False
 
+    # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL: nunca había forma de
+    # confirmar que Render estuviera sirviendo la versión de main.py
+    # que se acababa de subir, sin pegar el archivo entero para
+    # comparar a mano. No se compara contra un "esperado" fijo (eso
+    # sería un archivo intentando conocerse a sí mismo antes de
+    # guardarse -- una paradoja) -- simplemente se MUESTRA el sello
+    # real de este main.py, tal como está corriendo ahora mismo, junto
+    # con desde cuándo lleva encendido el proceso. Si acabas de subir
+    # cambios y "arrancado_en" es de hace horas, el despliegue no se
+    # ha aplicado todavía -- fuérzalo a mano desde el panel de Render.
+    hash_main = hashlib.sha256(open(__file__, "rb").read()).hexdigest()[:16]
+
     return {
         "ok": todo_ok,
         "resumen": ("Los tres pilares estan intactos" if todo_ok
                     else "ALGO NO CUADRA — revisa el detalle y vuelve a subir el archivo"),
         "alimentos_cargados": n_alimentos,
         "detalle": detalle,
+        "arrancado_en": _ARRANCADO_EN,
+        "sello_main_py_actual": hash_main,
     }
 
 
