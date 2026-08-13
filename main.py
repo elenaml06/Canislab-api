@@ -847,7 +847,7 @@ def verificar():
     """
     import hashlib, os, json
     SELLOS = {
-        "alimentos_v3_final.json":      "c7e93e6938e1fc6d",
+        "alimentos_v3_final.json":      "e7d34cbacadc6e19",
         "requerimientos_v2_final.json": "7b023fcdebdd4391",
     }
     SELLOS_CRUDOS = {
