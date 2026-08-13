@@ -485,13 +485,32 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # mínimo es un peso pequeño y FIJO (10 g), sin relación con las kcal
     # del alimento: suficiente para que sea una porción real y visible,
     # nunca tan grande como para poder romper ningún margen.
+    #
+    # ⚠️ AMPLIADO (5 agosto, madrugada) — CASO REAL: con ese mínimo
+    # único de 10 g, cuando se fuerzan VARIOS alimentos de Carne
+    # muscular a la vez (el mecanismo de "preservar todo al editar"
+    # hace esto a menudo), el resolver podía repartir la carne entre
+    # todos ellos dándole a cada uno justo esos 10 g -- técnicamente
+    # "presentes", pero una cantidad ridícula que no representa una
+    # porción real. 10 g de sal o de un extra es razonable; 10 g de
+    # carne muscular no lo es. Ahora el mínimo depende de la categoría:
+    # más alto para las proteínas de verdad (carne, pescado, hueso),
+    # bajo para lo que sí suele darse en cantidades pequeñas (vísceras,
+    # hígado, por su propio límite de dosis) o en extras/suplementos.
+    MINIMO_POR_CATEGORIA = {
+        "Carne muscular": 40.0,
+        "Pescados y mariscos": 40.0,
+        "Hueso carnoso": 25.0,
+        "Verduras y frutas": 15.0,
+    }
     if forzar:
         for n in forzar:
             if n not in idx:
                 continue  # no es un candidato válido; se ignora sin romper
             i = idx[n]
+            minimo = MINIMO_POR_CATEGORIA.get(categoria_de.get(n), 10.0)
             bounds.lb[n_var + i] = 1
-            bounds.lb[i] = min(10.0, techos[i])
+            bounds.lb[i] = min(minimo, techos[i])
 
     # objetivo: minimizar cuántos alimentos distintos se usan en total
     # (ración simple, no 20 ingredientes), PERO con coste menor para los
