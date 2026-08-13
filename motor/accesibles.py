@@ -107,11 +107,14 @@ VISCERAS = [
     # debatido en la comunidad de alimentación cruda -- se deja por
     # prudencia, sin consenso claro para moverlo a Carne muscular.
     "Pulmón de ternera", "Pulmón de cordero",
-    # ⚠️ AVISO todavía vigente: aunque el pulmón amplía un poco esta
-    # categoría, sigue sin haber ninguna víscera SECRETORA real aparte
-    # del riñón -- no tenemos datos de bazo, páncreas, testículos ni
-    # cerebro. Si se consiguen datos fiables de alguna, esto mejoraría
-    # la robustez de la categoría de verdad.
+    # ⚠️ AÑADIDO (5 agosto, madrugada) — pedido expreso: "solo hay de
+    # cordero y de ternera, me parece poca opción". Encontrados datos
+    # nutricionales reales y cruzados de varias fuentes para bazo y
+    # páncreas de ternera (ver notas en el propio catálogo,
+    # alimentos_v3_final.json) -- amplían de verdad la categoría, no
+    # solo repiten la misma especie. Sigue sin haber datos fiables de
+    # testículos ni cerebro.
+    "Bazo de ternera", "Páncreas de ternera",
 ]
 
 HIGADO = ["Hígado de vaca", "Hígado de pollo", "Hígado de conejo", "Hígado de cordero"]
