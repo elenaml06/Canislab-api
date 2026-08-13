@@ -548,8 +548,20 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # todo en verde -- reintentar tiene sentido de verdad ahora, porque
     # cada intento explora una combinación distinta. Mientras quede
     # presupuesto de tiempo, no un número fijo de intentos.
+    #
+    # ⚠️ CORREGIDO (5 agosto, madrugada) — FALLO GRAVE ENCONTRADO: si el
+    # PRIMER intento de resolver_v2() ya fallaba (ok=False, gramos=None
+    # -- por ejemplo, al forzar varias cosas que ya no caben juntas con
+    # los mínimos por categoría más altos), este bucle igualmente
+    # llamaba a verificar_v2(None, ...) sin comprobar antes si había
+    # algo que verificar -- crash real (AttributeError: 'NoneType' object
+    # has no attribute 'items'), confirmado al forzar una combinación
+    # difícil para un perro pequeño. El manejo correcto para "ok=False"
+    # ya existía DESPUÉS de este bucle, pero nunca se llegaba a alcanzar
+    # porque el crash pasaba antes. Ahora el bucle comprueba "ok" antes
+    # de intentar verificar nada.
     ficha_intento = None
-    while time.time() - t_inicio_total < PRESUPUESTO_SEGUNDOS:
+    while ok and time.time() - t_inicio_total < PRESUPUESTO_SEGUNDOS:
         ficha_intento = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
         if ficha_intento["semaforo"] == "verde":
             break
@@ -565,6 +577,14 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         )
         if ok2:
             ok, gramos = ok2, gramos2
+        else:
+            # ⚠️ CORREGIDO en el mismo momento: si un REINTENTO (buscando
+            # mejorar de ámbar a verde) falla, eso no invalida el
+            # resultado del intento ANTERIOR, que sí había funcionado --
+            # simplemente se deja de intentar mejorar y se sale del
+            # bucle con lo último que sí fue válido, en vez de
+            # descartarlo y caer al camino de "no ok" de más abajo.
+            break
     if not ok and datos.modo == "personalizar":
         # igual que hacía /menu (el viejo): si forzar lo elegido a mano
         # deja sin solución, se reintenta libre — mejor un menú con aviso
