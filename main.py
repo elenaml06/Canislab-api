@@ -655,8 +655,17 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
     # es exactamente el mismo caso: quitar algo también debería intentar
     # mantener todo lo demás, dejando que el motor rellene el hueco.
     if menu_actual and (forzar or excluir_nombres):
+        # ⚠️ CORREGIDO (5 agosto, madrugada) — CASO REAL ENCONTRADO: "Sal
+        # común" desaparecía al editar OTRO alimento, sin ningún aviso.
+        # Motivo: "Extras" estaba en esta lista de categorías "libres de
+        # perderse sin avisar" -- pensada para los suplementos que el
+        # MOTOR elige solo (multivitamínico, omega-3...), no para
+        # ingredientes concretos que la usuaria puso a mano con su
+        # propio nombre, como la sal o un aceite específico. Esos
+        # merecen el mismo trato que la carne o la verdura: se intenta
+        # preservarlos, y si no se puede, se avisa de que se perdieron.
         SUP_CATS = ("Multivitamínico", "Omega-3", "Yodo", "Fibra", "Calcio",
-                   "Hierro", "Vitamina B", "Extras")
+                   "Hierro", "Vitamina B")
         nombres_excl_actuales = nombres_excl | set(forzar or [])
         a_preservar = [n for n in menu_actual
                       if n not in nombres_excl_actuales
@@ -904,5 +913,3 @@ def listar_alimentos():
     for v in por_cat.values():
         v.sort(key=lambda x: x["nombre"])
     return por_cat
-
-
