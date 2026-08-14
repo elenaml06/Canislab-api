@@ -107,14 +107,19 @@ VISCERAS = [
     # debatido en la comunidad de alimentación cruda -- se deja por
     # prudencia, sin consenso claro para moverlo a Carne muscular.
     "Pulmón de ternera", "Pulmón de cordero",
-    # ⚠️ AÑADIDO (5 agosto, madrugada) — pedido expreso: "solo hay de
-    # cordero y de ternera, me parece poca opción". Encontrados datos
-    # nutricionales reales y cruzados de varias fuentes para bazo y
-    # páncreas de ternera (ver notas en el propio catálogo,
-    # alimentos_v3_final.json) -- amplían de verdad la categoría, no
-    # solo repiten la misma especie. Sigue sin haber datos fiables de
-    # testículos ni cerebro.
-    "Bazo de ternera", "Páncreas de ternera",
+    # ⚠️ AMPLIADO (5 agosto, madrugada) — investigación verificada con
+    # múltiples fuentes cruzadas (USDA principalmente). "Bazo de
+    # ternera" y "Páncreas de ternera" se renombraron a "de vaca": sus
+    # datos originales eran de animal adulto (hierro muy alto, 44.5mg
+    # -- propio de vaca, no de ternera lechal), no de ternera joven.
+    # Confirmado que NO existen datos fiables de bazo/páncreas de
+    # pollo, pavo ni conejo -- no se han añadido esas especies. En su
+    # lugar, bazo/páncreas de cerdo y cordero, y timo/cerebro/
+    # testículos (con datos USDA reales, cruzados con más de una
+    # fuente cada uno) dan variedad real sin inventar ninguna cifra.
+    "Bazo de vaca", "Páncreas de vaca",
+    "Bazo de cerdo", "Bazo de cordero", "Páncreas de cerdo",
+    "Timo de ternera", "Cerebro de ternera", "Testículos de cordero",
 ]
 
 HIGADO = ["Hígado de vaca", "Hígado de pollo", "Hígado de conejo", "Hígado de cordero"]
