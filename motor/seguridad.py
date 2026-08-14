@@ -188,12 +188,10 @@ TOPE_HIGADO_PESO = 0.10
 VISCERAS_METABOLICAS = {"rinon", "higado"}
 TOPE_VISCERAS_METABOLICAS_PESO = 0.10
 
-# ⚠️ ATÚN — MERCURIO. AESAN clasifica el atun entre las 4 especies de alto
-# mercurio (junto a pez espada, tiburon y lucio, que no tenemos). No hay
-# dosis-umbral canina publicada: es una regla de FRECUENCIA/ROTACION, no un
-# gramaje por plato. Se avisa si el atun es la UNICA fuente de pescado del
-# menu (nunca la habitual), no si aparece puntualmente en la rotacion.
-MERCURIO_ALTO = {"atun"}
+# ⚠️ NOTA: MERCURIO_ALTO se define arriba (junto al mecanismo completo del
+# RfD de la EPA). AESAN clasifica también el atún entre las 4 especies de
+# alto mercurio (junto a pez espada, tiburón y lucio, que no tenemos en el
+# catálogo) -- dato adicional, misma variable, no se redefine dos veces.
 
 # ⚠️ CEFALOPODOS Y CRUSTACEOS — misma familia que el mejillón (que se
 # quito del catalogo). Concentran cadmio y cobre en la GLANDULA DIGESTIVA/
@@ -408,8 +406,19 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     # 3c. URATO — solo en perros con predisposicion (dalmata, shunt
     # hepatico). Mismo patron que el oxalato: en perro sano no se toca.
     # Restricción real, no "en exceso" -- se mantiene con tono serio.
+    #
+    # ⚠️ CORREGIDO (5 agosto, madrugada) — CASO REAL ENCONTRADO auditando:
+    # PURINAS_ALTAS busca "higado"/"rinon" por PALABRA en el nombre, sin
+    # comprobar categoría real -- así que "Aceite de hígado de bacalao"
+    # (categoría Extras, un aceite ya procesado) se colaba aquí como si
+    # fuera el órgano entero, diciendo que "no debería dársele" a un
+    # perro con predisposición a urato, cuando un aceite no tiene la
+    # misma carga de purinas que la víscera completa. Ahora se exige
+    # además que la categoría real sea una de las relevantes de verdad.
+    CATEGORIAS_PURINAS_REALES = {"Hígado", "Vísceras", "Pescados y mariscos"}
     if "urato" in patologias:
-        pur = [n for n in menu if _es(n, PURINAS_ALTAS)]
+        pur = [n for n in menu if _es(n, PURINAS_ALTAS)
+              and alimentos.get(n, {}).get("categoria") in CATEGORIAS_PURINAS_REALES]
         if pur:
             problemas.append(
                 "%s no deberían dárselas por la predisposición que tiene a "
@@ -475,32 +484,45 @@ def avisos_rotacion(menu, alimentos):
     recomendacion de no darlos a diario / de prepararlos bien.
     Se devuelven aparte de `revisar_seguridad()` porque no son "problemas
     de este menu", son notas que aplican siempre que aparece el alimento.
+
+    ⚠️ CORREGIDO (5 agosto, madrugada) — CASO REAL ENCONTRADO: estos
+    chequeos comparaban el NOMBRE del alimento contra listas de palabras
+    (_es), sin comprobar nunca la CATEGORÍA real -- así que cualquier
+    SUPLEMENTO cuyo nombre contuviera "salmón" (AniForte Aceite de
+    Salmón, Brit Care Aceite de Salmón, etc.) disparaba el aviso de
+    "congelar antes de dar" pensado para PESCADO CRUDO, aunque sea un
+    aceite ya procesado que nunca necesita congelarse. Ahora cada
+    chequeo solo se aplica a alimentos de la categoría real donde tiene
+    sentido, no a cualquier nombre que mencione la palabra.
     """
     avisos = []
     for n in menu:
-        if _es(n, MERCURIO_ALTO):
-            avisos.append(
-                "%s: alto en mercurio (AESAN). No debería ser la única "
-                "fuente de pescado ni algo diario — rotarlo con otros "
-                "pescados de bajo mercurio." % n)
-        if _es(n, CEFALOPODOS_CRUSTACEOS):
-            avisos.append(
-                "%s: acumula cadmio y cobre (misma familia que el "
-                "mejillón). Servir sin cabeza/vísceras y no a diario." % n)
-        if _es(n, PESCADO_CONGELAR_ANTES):
-            avisos.append(
-                "%s: si se da crudo, debe estar CONGELADO antes (varios "
-                "días a -20 °C o equivalente) para eliminar el riesgo "
-                "parasitario e infeccioso." % n)
-        if _es(n, HUESO_RIESGO_DENTAL):
-            avisos.append(
-                "%s: hueso de carga, de los más duros. Riesgo de fractura "
-                "dental (carnasial). No apto para perros que muerden con "
-                "fuerza; supervisar siempre." % n)
-        if _es(n, HUESO_RIESGO_ASTILLADO):
-            avisos.append(
-                "%s: hueso estrecho, riesgo de astillado o de quedar "
-                "encajado entre los molares. Supervisar." % n)
+        cat_real = alimentos.get(n, {}).get("categoria")
+        if cat_real == "Pescados y mariscos":
+            if _es(n, MERCURIO_ALTO):
+                avisos.append(
+                    "%s: alto en mercurio (AESAN). No debería ser la única "
+                    "fuente de pescado ni algo diario — rotarlo con otros "
+                    "pescados de bajo mercurio." % n)
+            if _es(n, CEFALOPODOS_CRUSTACEOS):
+                avisos.append(
+                    "%s: acumula cadmio y cobre (misma familia que el "
+                    "mejillón). Servir sin cabeza/vísceras y no a diario." % n)
+            if _es(n, PESCADO_CONGELAR_ANTES):
+                avisos.append(
+                    "%s: si se da crudo, debe estar CONGELADO antes (varios "
+                    "días a -20 °C o equivalente) para eliminar el riesgo "
+                    "parasitario e infeccioso." % n)
+        if cat_real == "Hueso carnoso":
+            if _es(n, HUESO_RIESGO_DENTAL):
+                avisos.append(
+                    "%s: hueso de carga, de los más duros. Riesgo de fractura "
+                    "dental (carnasial). No apto para perros que muerden con "
+                    "fuerza; supervisar siempre." % n)
+            if _es(n, HUESO_RIESGO_ASTILLADO):
+                avisos.append(
+                    "%s: hueso estrecho, riesgo de astillado o de quedar "
+                    "encajado entre los molares. Supervisar." % n)
     return avisos
 
 
