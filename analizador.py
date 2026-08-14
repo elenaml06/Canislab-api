@@ -16,6 +16,11 @@ from optimizador import (
 
 # Cuando un nutriente se queda corto, decir DE DONDE suele venir ayuda mas
 # que el nombre del nutriente a secas.
+#
+# ⚠️ AMPLIADO (5 agosto, madrugada) — pedido expreso: faltaban 14 de los
+# 30 nutrientes reales sin ninguna explicación de origen -- si a alguien
+# le salía "Fósforo, cubre el 60%" sin más, se quedaba sin saber qué
+# hacer con eso. Completado con los 30 nutrientes reales del sistema.
 DE_DONDE_VIENE = {
     "Yodo": "algas/kelp o un multivitamínico completo",
     "Vitamina_E": "aceites vegetales (girasol, oliva) o un multivitamínico",
@@ -33,9 +38,29 @@ DE_DONDE_VIENE = {
     "Colina": "huevo e hígado",
     "Folato": "hígado y verduras de hoja",
     "Vitamina_B12": "vísceras y carne",
+    "Acido_pantotenico": "carne y vísceras en general, sobre todo hígado",
+    "Araquidónico": "grasa animal, sobre todo de pollo y huevo — el perro, a diferencia de otros mamíferos, no lo fabrica bien por sí solo",
+    "Cloruro": "sal común, o carne y hueso en cantidad normal",
+    "Fibra": "verduras y fruta, o un suplemento específico de fibra",
+    "Fósforo": "hueso carnoso, carne y pescado — normalmente sube solo si sube la proteína",
+    "Grasa_total": "carne con piel o con grasa, y aceites",
+    "Magnesio": "pescado, vísceras y verduras de hoja",
+    "Niacina": "carne, pescado e hígado",
+    "Potasio": "carne, pescado y verduras",
+    "Proteína_total": "carne muscular, pescado y vísceras",
+    "Riboflavina": "hígado, carne y huevo",
+    "Sodio": "sal común, o carne y hueso en cantidad normal",
+    "Tiamina": "carne (sobre todo de cerdo) y vísceras",
+    "Vitamina_B6": "carne, pescado e hígado",
 }
 
 # Nutrientes cuyo exceso preocupa de verdad, con el motivo en cristiano.
+#
+# ⚠️ AMPLIADO (5 agosto, madrugada) — mismo motivo que DE_DONDE_VIENE:
+# faltaban 9 de los 14 nutrientes que sí tienen un máximo real en el
+# sistema, así que podían aparecer en "sobran" sin ninguna explicación
+# de por qué importa. Selenio usa los datos ya investigados a fondo en
+# otra ronda (Merck Veterinary Manual).
 POR_QUE_IMPORTA_PASARSE = {
     "Calcio": ("En un cachorro en crecimiento el exceso de calcio se asocia a "
                "problemas de desarrollo del esqueleto. El perro adulto lo excreta, "
@@ -47,6 +72,31 @@ POR_QUE_IMPORTA_PASARSE = {
     "Yodo": ("El exceso mantenido puede alterar la tiroides."),
     "Fósforo": ("Un exceso mantenido carga el riñón, sobre todo si el perro "
                 "ya tiene la función renal tocada."),
+    "Cloruro": ("Junto con el sodio, en exceso mantenido puede cargar la "
+                "presión arterial y el riñón."),
+    "Cobre": ("Se acumula en el hígado. Hay razas con predisposición genética "
+              "a la toxicidad por cobre (por ejemplo el Bedlington Terrier), "
+              "donde el margen de seguridad es mucho más estrecho."),
+    "Fibra": ("En exceso reduce la digestibilidad del resto de la dieta, y "
+              "suele notarse en heces blandas o gases."),
+    "Hierro": ("El cuerpo regula bien su absorción por dieta normal, así que "
+               "el exceso real es raro salvo por sobredosis de suplemento -- "
+               "en ese caso, sí puede dañar el hígado."),
+    "Linoleico": ("Un exceso de omega-6 respecto al omega-3 puede favorecer "
+                  "procesos inflamatorios en el cuerpo."),
+    "Manganeso": ("El exceso mantenido puede afectar al sistema nervioso, "
+                  "aunque es poco frecuente que llegue a ese nivel solo con "
+                  "dieta normal."),
+    "Selenio": ("El exceso mantenido en el tiempo (no solo una dosis puntual "
+                "alta) puede causar pérdida de pelo, deformidad de uñas y "
+                "letargia -- lo que se conoce como toxicosis crónica por "
+                "selenio."),
+    "Sodio": ("Junto con el cloruro, en exceso mantenido puede cargar la "
+              "presión arterial y el riñón."),
+    "Zinc": ("El zinc por dieta normal es de los minerales menos tóxicos que "
+             "hay -- el riesgo real de intoxicación por zinc en perros viene "
+             "casi siempre de ingerir objetos metálicos (monedas, juguetes), "
+             "no de la comida."),
 }
 
 ETAPAS_CRECIMIENTO = {"CachorroJoven", "CachorroCrecimiento", "Gestante", "Lactante"}
@@ -120,7 +170,24 @@ def analizar_dieta(gramos_por_alimento: dict, der_objetivo: float,
                 "reparto_categorias": {}, "peso_total_g": 0}
 
     escala = der_objetivo / 1000
-    faltan, sobran, correctos = [], [], []
+    # ⚠️ CORREGIDO (5 agosto, madrugada) — CASO REAL ENCONTRADO, pedido
+    # expreso: "siguen apareciendo repetidos algunos nutrientes cuando
+    # dice lo que falta". Causa real: "Calcio" y
+    # "Calcio_LateGrowth_RazaGrande" son DOS requisitos distintos en el
+    # JSON de requerimientos, pero AMBOS mapean al mismo nutriente real
+    # ("calcio") -- es intencional en el MOTOR de generación (una
+    # segunda restricción, más estricta, para razas grandes en
+    # crecimiento), pero en el analizador esto hacía que el mismo dato
+    # de calcio se comparara dos veces contra dos límites distintos,
+    # apareciendo como "Calcio" Y "Calcio LateGrowth RazaGrande" a la
+    # vez en el resultado -- el mismo nutriente, dos veces, con
+    # etiquetas distintas. Ahora se agrupan PRIMERO por el nutriente
+    # real al que mapean, consolidando en una sola entrada con la
+    # restricción más estricta de todas las que apliquen (el mínimo
+    # más alto, el máximo más bajo) -- que es, de hecho, lo que
+    # "Calcio_LateGrowth_RazaGrande" quiere decir conceptualmente: una
+    # restricción adicional que se SUMA, no un nutriente aparte.
+    por_nutriente = {}
     for req in requisitos:
         clave = MAPA_REQUISITO_A_NUTRIENTE.get(req["nutriente"])
         if not clave:
@@ -132,23 +199,51 @@ def analizar_dieta(gramos_por_alimento: dict, der_objetivo: float,
                 minimo = SENIOR_PROTEINA_MINIMA
         if minimo is None and maximo is None:
             continue
+        acumulado = por_nutriente.setdefault(clave, {
+            "nombre_mostrado": req["nutriente"], "unidad": req["unidad"],
+            "minimo": None, "maximo": None,
+        })
+        # el mínimo más ALTO manda (la restricción más exigente hacia abajo)
+        if minimo is not None and (acumulado["minimo"] is None or minimo > acumulado["minimo"]):
+            acumulado["minimo"] = minimo
+        # el máximo más BAJO manda (la restricción más exigente hacia arriba)
+        if maximo is not None and (acumulado["maximo"] is None or maximo < acumulado["maximo"]):
+            acumulado["maximo"] = maximo
+
+    faltan, sobran, correctos = [], [], []
+    for clave, datos in por_nutriente.items():
+        minimo, maximo = datos["minimo"], datos["maximo"]
         valor = totales.get(clave, 0)
         mn = minimo * escala if minimo is not None else None
         mx = maximo * escala if maximo is not None else None
+        nombre_para_buscar = datos["nombre_mostrado"]
+        # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL, pedido expreso:
+        # "linoleico me sale repetido" -- no era un dato duplicado (solo
+        # hay una entrada real de Linoleico en el sistema), era que
+        # "Linoleico" y "Linolénico" se parecen tanto en el nombre que
+        # se leían como si fueran el mismo nutriente dos veces. Son dos
+        # cosas genuinamente distintas (omega-6 y omega-3), así que se
+        # aclara directamente en el nombre que se muestra, no solo en
+        # el texto pequeño de abajo -- así se distingue de un vistazo.
+        nombre_mostrado_final = nombre_para_buscar.replace("_", " ")
+        if nombre_para_buscar == "Linoleico":
+            nombre_mostrado_final = "Linoleico (omega-6)"
+        elif nombre_para_buscar == "Linolénico":
+            nombre_mostrado_final = "Linolénico (omega-3)"
         base = {
-            "nutriente": req["nutriente"].replace("_", " "),
-            "unidad": req["unidad"],
+            "nutriente": nombre_mostrado_final,
+            "unidad": datos["unidad"],
             "tiene": round(valor, 2),
             "minimo": round(mn, 2) if mn is not None else None,
             "maximo": round(mx, 2) if mx is not None else None,
         }
         if mn is not None and valor < mn:
             base["cubre_pct"] = round(valor / mn * 100)
-            base["de_donde"] = DE_DONDE_VIENE.get(req["nutriente"])
+            base["de_donde"] = DE_DONDE_VIENE.get(nombre_para_buscar)
             faltan.append(base)
         elif mx is not None and valor > mx:
             base["del_maximo_pct"] = round(valor / mx * 100)
-            base["por_que_importa"] = POR_QUE_IMPORTA_PASARSE.get(req["nutriente"])
+            base["por_que_importa"] = POR_QUE_IMPORTA_PASARSE.get(nombre_para_buscar)
             sobran.append(base)
         else:
             correctos.append(base)
