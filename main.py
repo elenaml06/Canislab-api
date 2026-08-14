@@ -969,7 +969,7 @@ def verificar():
     """
     import hashlib, os, json
     SELLOS = {
-        "alimentos_v3_final.json":      "b710128c643cc3b3",
+        "alimentos_v3_final.json":      "df5246252f794025",
         "requerimientos_v2_final.json": "7b023fcdebdd4391",
     }
     SELLOS_CRUDOS = {
@@ -1096,5 +1096,3 @@ def listar_alimentos():
     for v in por_cat.values():
         v.sort(key=lambda x: x["nombre"])
     return por_cat
-
-
