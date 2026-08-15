@@ -50,7 +50,7 @@ DE_DONDE_VIENE = {
     "Proteína_total": "carne muscular, pescado y vísceras",
     "Riboflavina": "hígado, carne y huevo",
     "Sodio": "sal común, o carne y hueso en cantidad normal",
-    "Tiamina": "carne (sobre todo de cerdo) y vísceras",
+    "Tiamina": "carne y vísceras en general",
     "Vitamina_B6": "carne, pescado e hígado",
 }
 
