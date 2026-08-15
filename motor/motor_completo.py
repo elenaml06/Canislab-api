@@ -119,7 +119,8 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             max_suplementos=2, tolerancia_kcal=0.03,
             forzar=None, preferir=None, patologias=None, semilla_aleatoria=None,
             time_limit=15, restringir_especie=None, peso_adulto_esperado_kg=None,
-            evitar_especies=None, restringir_a_elegidos=None, categorias_excluidas=None):
+            evitar_especies=None, restringir_a_elegidos=None, categorias_excluidas=None,
+            presupuesto_semanal_restante=None):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -151,6 +152,23 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     restricción (igual que ya hace forzar cuando no hay solución) --
     aquí solo se aplica el filtro, la lógica de "inténtalo así primero,
     si no se puede afloja" vive en quien llama, no aquí dentro.
+
+    `presupuesto_semanal_restante`: {clave_nutriente: tope_diario_efectivo}
+    — ⚠️ AÑADIDO (5 agosto, madrugada), CAMBIO DE ARQUITECTURA PEDIDO
+    EXPRESAMENTE: los topes de seguridad crónica (tiaminasa, mercurio,
+    vitD, yodo, selenio) tienen un límite SEMANAL real, no solo por
+    ración -- pero cada menú de una rotación se genera en una llamada
+    aparte, sin memoria de lo que ya "gastaron" los menús anteriores de
+    esa misma semana. Quien orquesta la generación de varios menús
+    (main.py) calcula, ANTES de pedir este menú, cuánto presupuesto
+    semanal queda tras los menús ya generados, lo reparte entre los
+    días que faltan, y pasa aquí el tope diario EFECTIVO resultante --
+    más estricto que el tope normal por ración. Aquí dentro solo se usa
+    ese valor en vez del de por defecto si viene informado (nunca al
+    revés: nunca se afloja un tope, solo se puede endurecer). Así, por
+    diseño, es matemáticamente imposible que la suma de una semana
+    entera supere el límite seguro, sin depender de que nadie revise un
+    aviso después.
 
     Devuelve (factible: bool, gramos: {nombre: g} o None).
     """
@@ -344,6 +362,26 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                 minimos_reforzados["calcio"] = mn_grande
 
     # 2. mínimos y máximos de FEDIAF
+    #
+    # ⚠️ AÑADIDO (5 agosto, madrugada) — CAMBIO DE ARQUITECTURA PEDIDO
+    # EXPRESAMENTE: hasta ahora, los topes de seguridad crónica
+    # (mercurio, vitamina D, yodo, selenio) SOLO se comprobaban DESPUÉS
+    # de generar el menú, como un aviso de texto -- el usuario podía
+    # ignorarlo, y el sistema seguía dejando pasar la dieta igual. Se
+    # pidió explícitamente que estos límites nunca puedan superarse,
+    # ni con aviso ni sin él: la responsabilidad es del sistema, no del
+    # usuario. Para vitamina D y yodo, algunos de nuestros umbrales de
+    # seguridad crónica (NRC 2006) son MÁS ESTRICTOS que el máximo
+    # nutricional/legal de FEDIAF -- así que aquí se usa siempre el más
+    # estricto de los dos como techo REAL del solver, no solo el de
+    # FEDIAF. Ver seguridad.py para el porqué de cada cifra.
+    from seguridad import TOPE_VITD_KCAL, TOPE_YODO_KCAL, TOPE_SELENIO_G_DIETA
+    TOPE_CRONICO_KCAL = {"vitD": TOPE_VITD_KCAL, "yodo": TOPE_YODO_KCAL}
+    if presupuesto_semanal_restante:
+        for clave_nut, tope_efectivo in presupuesto_semanal_restante.items():
+            if clave_nut in TOPE_CRONICO_KCAL:
+                # nunca se afloja -- solo se usa si es MÁS estricto que el normal
+                TOPE_CRONICO_KCAL[clave_nut] = min(TOPE_CRONICO_KCAL[clave_nut], tope_efectivo)
     for nombre_req, clave in MAPA.items():
         r = req.get(nombre_req)
         if not r:
@@ -354,6 +392,9 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         mx = _num(r.get(f"max{et}")) or _num(r.get("maxAdulto"))
         if clave in topes_patologia:
             mx = topes_patologia[clave] if mx is None else min(mx, topes_patologia[clave])
+        if clave in TOPE_CRONICO_KCAL:
+            tope_cronico = TOPE_CRONICO_KCAL[clave]
+            mx = tope_cronico if mx is None else min(mx, tope_cronico)
         fila = fila_vacia()
         aporta_algo = False
         for n in nombres:
@@ -373,6 +414,58 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         lo = mn * der / 1000.0 * 1.008 if mn is not None else -np.inf
         hi = mx * der / 1000.0 if mx is not None else np.inf
         A_rows.append(fila); lb_rows.append(lo); ub_rows.append(hi)
+
+    # ⚠️ AÑADIDO (5 agosto, madrugada) — SELENIO POR GRAMO DE DIETA
+    # (Merck Veterinary Manual: 2 µg/g de dieta, límite tolerable
+    # máximo) -- esta cifra viene en una unidad DISTINTA a la de
+    # FEDIAF (µg por gramo de comida, no µg por 1000 kcal), así que no
+    # se puede simplemente comparar y quedarse con la más estricta como
+    # arriba. Pero SÍ se puede expresar como restricción lineal
+    # directa: suma(selenio_i * gramos_i) <= 2.0 * suma(gramos_i), que
+    # reordenado es suma((selenio_i/100 - 2.0) * gramos_i) <= 0 -- una
+    # fila más para el mismo sistema de restricciones del solver, con
+    # límite superior 0, sin cambiar cómo funciona el resto.
+    fila_selenio_g = fila_vacia()
+    aporta_selenio = False
+    tope_selenio_efectivo = TOPE_SELENIO_G_DIETA
+    if presupuesto_semanal_restante and "selenio_g_dieta" in presupuesto_semanal_restante:
+        tope_selenio_efectivo = min(tope_selenio_efectivo, presupuesto_semanal_restante["selenio_g_dieta"])
+    for n in nombres:
+        v_selenio = (_num(alimentos[n].get("nutrientes", {}).get("selenio")) or 0.0) / 100.0
+        if v_selenio:
+            fila_selenio_g[idx[n]] = v_selenio - tope_selenio_efectivo
+            aporta_selenio = True
+    if aporta_selenio:
+        A_rows.append(fila_selenio_g); lb_rows.append(-np.inf); ub_rows.append(0.0)
+
+    # ⚠️ AÑADIDO (5 agosto, madrugada) — TIAMINASA Y MERCURIO como
+    # restricciones duras. Estos dos no son nutrientes numéricos con
+    # dato por alimento -- son SETS de especies concretas (sardina/
+    # caballa/arenque/boquerón/carpa para tiaminasa; atún para
+    # mercurio), así que se restringe directamente la fracción de kcal
+    # del día que pueden aportar ENTRE TODOS los alimentos de cada set,
+    # igual que la restricción de kcal totales de arriba pero limitada
+    # a ese subconjunto. Antes esto se comprobaba DESPUÉS de generar el
+    # menú (revisar_seguridad) y solo avisaba -- ahora, si forzar algo
+    # llevaría a superar el tope, el solver directamente no encuentra
+    # solución, en vez de generarla y avisar después.
+    from seguridad import TIAMINASA, MERCURIO_ALTO, TOPE_TIAMINASA_KCAL, TOPE_MERCURIO_KCAL, _es
+    for clave_presupuesto, nombre_set, tope_frac in (
+        ("tiaminasa", TIAMINASA, TOPE_TIAMINASA_KCAL),
+        ("mercurio", MERCURIO_ALTO, TOPE_MERCURIO_KCAL),
+    ):
+        tope_frac_efectivo = tope_frac
+        if presupuesto_semanal_restante and clave_presupuesto in presupuesto_semanal_restante:
+            # aquí el presupuesto llega ya como fracción de kcal (0-1), igual que tope_frac
+            tope_frac_efectivo = min(tope_frac, presupuesto_semanal_restante[clave_presupuesto])
+        fila_set = fila_vacia()
+        aporta_set = False
+        for n in nombres:
+            if _es(n, nombre_set):
+                fila_set[idx[n]] = alimentos[n].get("energia", 0) / 100.0
+                aporta_set = True
+        if aporta_set:
+            A_rows.append(fila_set); lb_rows.append(-np.inf); ub_rows.append(tope_frac_efectivo * der)
 
     # 2b. RATIO Ca:P — se me olvidó la primera vez. Calcio y fósforo por
     # separado no bastan: la RELACIÓN entre ambos es su propio requisito,
