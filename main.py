@@ -42,7 +42,7 @@ import persistencia
 # 30 requisitos de FEDIAF de forma EXACTA (no heurística). Vive en
 # ./motor/ y NO sustituye a /menu todavía: se añade como /menu/v2 para
 # poder comparar los dos antes de decidir el cambio definitivo.
-from motor_completo import resolver as resolver_v2
+from motor_completo import resolver as resolver_v2, especie_de
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
 from verificar import verificar as verificar_v2
 from seguridad import revisar_seguridad as revisar_seguridad_v2
@@ -167,6 +167,14 @@ class PeticionMenu(BaseModel):
     # se cumplen matemáticamente y el calcio ya es un candidato
     # disponible sin necesidad de forzarlo aparte.
     categorias_excluidas: Optional[list] = None
+    # ⚠️ AÑADIDO (5 agosto, madrugada) — CAMBIO DE ARQUITECTURA PEDIDO
+    # EXPRESAMENTE: presupuesto semanal RESTANTE de seguridad crónica
+    # (tiaminasa/mercurio/vitD/yodo/selenio_g_dieta), calculado por
+    # quien orquesta la generación de varios menús -- se propaga hasta
+    # resolver() como una restricción DURA para este menú concreto, no
+    # como un aviso posterior. Ver docstring de resolver() en
+    # motor_completo.py para el mecanismo completo.
+    presupuesto_semanal_restante: Optional[dict] = None
     # ⚠️ AÑADIDO (5 agosto, madrugada): para la rotación de proteína entre
     # varios menús automáticos -- antes iba mezclada con especies_excluidas
     # (una exclusión DURA, pensada para alergias reales), así que si la
@@ -361,6 +369,170 @@ def endpoint_menu_v2(datos: PeticionMenu):
         traceback.print_exc()  # queda en los logs de Render para poder investigarlo
         return {"factible": False,
                 "motivo": f"Ha fallado algo inesperado en el servidor ({type(e).__name__}). "
+                          "Inténtalo de nuevo -- si se repite, dínoslo."}
+
+
+# ⚠️ AÑADIDO (5 agosto, madrugada) — CAMBIO DE ARQUITECTURA PEDIDO
+# EXPRESAMENTE: los límites de seguridad crónica (tiaminasa, mercurio,
+# vitamina D, yodo, selenio) tienen sentido SEMANAL, no solo por
+# ración -- pero hasta ahora cada menú de la rotación se generaba en
+# una llamada aparte del frontend, sin que el servidor supiera nada de
+# lo que ya llevaban los menús anteriores de esa misma semana. El
+# resultado era que solo se avisaba DESPUÉS de generar, cuando ya era
+# tarde -- y un aviso es algo que el usuario puede ignorar, cuando la
+# responsabilidad de que esto no pase nunca es del sistema, no suya.
+#
+# Este endpoint genera TODOS los menús de una semana en una sola
+# llamada al servidor, para que el propio servidor pueda ir calculando
+# cuánto presupuesto semanal queda tras cada menú y pasárselo a
+# resolver() como una restricción DURA para el siguiente -- así, por
+# diseño, es matemáticamente imposible que la SUMA de una semana
+# entera supere el límite seguro, sin depender de ningún aviso.
+from seguridad import (
+    TOPE_TIAMINASA_KCAL, TOPE_MERCURIO_KCAL, TOPE_VITD_KCAL, TOPE_YODO_KCAL,
+    TOPE_SELENIO_G_DIETA,
+)
+
+
+def _presupuesto_semanal_inicial(der_objetivo):
+    """Presupuesto SEGURO para la semana completa, para cada uno de los
+    5 puntos de riesgo crónico. tiaminasa/mercurio son fracción de kcal
+    (0-1); vitD/yodo son µg por 1000kcal; selenio_g_dieta es µg por
+    gramo de dieta -- cada uno se reparte en su propia unidad, ver
+    resolver() en motor_completo.py para cómo se usa cada una.
+
+    ⚠️ CORREGIDO en el mismo momento, ANTES de entregarlo -- AUTOCRÍTICA
+    real: la primera versión de esto multiplicaba el tope diario × 7
+    sin más margen. Probando el cálculo con datos reales, esto resultó
+    ser matemáticamente redundante con el tope diario ya endurecido en
+    la Fase 1 -- si CADA menú individual ya respeta su propio tope
+    diario, la suma de 7 días respetando cada uno NUNCA puede superar
+    7× el tope diario, así que el mecanismo semanal nunca podría
+    dispararse de forma distinta al diario. Mismo fallo que ya se
+    encontró y corrigió antes con el chequeo de tiaminasa en
+    seguridad.py. El valor real de un límite semanal es capturar que
+    el consumo SOSTENIDO es más peligroso que un pico puntual -- eso es
+    justo lo que dice la propia investigación de estos nutrientes
+    (vitD, yodo, mercurio, selenio son riesgos principalmente
+    crónicos). MARGEN_SEGURIDAD_CRONICA aplica ese margen real: el
+    presupuesto semanal total es más bajo que "tope diario × 7", no
+    igual -- así el mecanismo semanal SÍ añade protección genuina
+    sobre el diario, en vez de ser matemáticamente redundante con él.
+    """
+    MARGEN_SEGURIDAD_CRONICA = 0.75  # criterio de desarrollo, no de una fuente concreta
+    return {
+        "tiaminasa": TOPE_TIAMINASA_KCAL,       # fracción de kcal, igual cada día (no acumula)
+        "mercurio": TOPE_MERCURIO_KCAL,          # fracción de kcal, igual cada día (no acumula)
+        "vitD": TOPE_VITD_KCAL * der_objetivo / 1000.0 * 7 * MARGEN_SEGURIDAD_CRONICA,
+        "yodo": TOPE_YODO_KCAL * der_objetivo / 1000.0 * 7 * MARGEN_SEGURIDAD_CRONICA,
+        "selenio_g_dieta": TOPE_SELENIO_G_DIETA,  # µg/g de dieta, igual cada día (no depende del DER)
+    }
+
+
+def _consumo_real_menu(gramos, al, der_objetivo):
+    """Cuánto de cada uno de los 5 puntos de riesgo aportó REALMENTE un
+    menú ya generado, en las mismas unidades que _presupuesto_semanal_inicial
+    -- para poder restar del presupuesto según pasan los menús."""
+    from seguridad import TIAMINASA, MERCURIO_ALTO, _es
+    total_g = sum(gramos.values()) or 1.0
+    kcal_tia = sum(al.get(n, {}).get("energia", 0) * g / 100.0 for n, g in gramos.items() if _es(n, TIAMINASA))
+    kcal_merc = sum(al.get(n, {}).get("energia", 0) * g / 100.0 for n, g in gramos.items() if _es(n, MERCURIO_ALTO))
+    vitd_ug = sum(al.get(n, {}).get("nutrientes", {}).get("vitD", 0) * g / 100.0 for n, g in gramos.items())
+    yodo_ug = sum(al.get(n, {}).get("nutrientes", {}).get("yodo", 0) * g / 100.0 for n, g in gramos.items())
+    selenio_ug = sum(al.get(n, {}).get("nutrientes", {}).get("selenio", 0) * g / 100.0 for n, g in gramos.items())
+    return {
+        "tiaminasa": (kcal_tia / der_objetivo) if der_objetivo else 0,
+        "mercurio": (kcal_merc / der_objetivo) if der_objetivo else 0,
+        "vitD": vitd_ug,   # µg reales de ESTE menú (se multiplicará por sus días al acumular)
+        "yodo": yodo_ug,
+        "selenio_g_dieta": (selenio_ug / total_g) if total_g else 0,
+    }
+
+
+def _presupuesto_para_menu_actual(restante, dias_restantes_incluido_este):
+    """Reparte el presupuesto que queda entre los días que faltan
+    (incluido el menú que se va a generar ahora), para dar el tope
+    DIARIO efectivo de ESTE menú -- lo que resolver() usa como techo.
+    tiaminasa/mercurio/selenio_g_dieta ya son "por día" (no se dividen,
+    son una fracción/densidad, no un total acumulable); vitD/yodo SÍ
+    son totales acumulados, así que sí se dividen entre los días."""
+    dias = max(1, dias_restantes_incluido_este)
+    return {
+        "tiaminasa": max(0.0, restante["tiaminasa"]),
+        "mercurio": max(0.0, restante["mercurio"]),
+        "vitD": max(0.0, restante["vitD"]) / dias,
+        "yodo": max(0.0, restante["yodo"]) / dias,
+        "selenio_g_dieta": max(0.0, restante["selenio_g_dieta"]),
+    }
+
+
+@app.post("/menu/semana")
+def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
+    """Genera TODOS los menús de una rotación semanal en una sola
+    llamada, con el presupuesto semanal de seguridad crónica repartido
+    y endurecido en cada uno según lo que ya llevan los anteriores --
+    ver el bloque de comentarios justo arriba para el porqué completo."""
+    try:
+        al, req = cargar_v2()
+        n = max(1, min(8, numero_de_menus))
+        base_dias = 7 // n
+        resto_dias = 7 % n
+        dias_por_menu = [base_dias + (1 if i < resto_dias else 0) for i in range(n)]
+
+        presupuesto_restante = _presupuesto_semanal_inicial(datos.der_objetivo)
+        menus_generados = []
+        especies_usadas = []
+
+        for i in range(n):
+            dias_este = dias_por_menu[i]
+            dias_restantes_incluido_este = sum(dias_por_menu[i:])
+            presupuesto_para_este = _presupuesto_para_menu_actual(
+                presupuesto_restante, dias_restantes_incluido_este)
+
+            datos_este = datos.model_copy(update={
+                "presupuesto_semanal_restante": presupuesto_para_este,
+                "evitar_especies": list(datos.evitar_especies or []) + especies_usadas,
+            })
+            resultado = _resolver_menu_v2_interno(datos_este)
+
+            if not resultado.get("factible"):
+                # ⚠️ si YA se generó al menos un menú, se devuelven los que
+                # sí se consiguieron con aviso, en vez de tirar todo lo
+                # bueno por un fallo en el último -- mismo criterio que ya
+                # se usa en el resto de la app (mejor una respuesta parcial
+                # honesta que nada).
+                if menus_generados:
+                    return {"factible": True, "menus": menus_generados,
+                            "aviso": f"Se generaron {len(menus_generados)} de {n} menús pedidos -- "
+                                     f"el siguiente no encontró una combinación que respetara los "
+                                     f"límites de seguridad semanales que ya llevaban los anteriores."}
+                return resultado
+
+            gramos = resultado.get("menu") or resultado.get("gramos") or {}
+            menus_generados.append({**resultado, "dias": dias_este})
+
+            consumo = _consumo_real_menu(gramos, al, datos.der_objetivo)
+            presupuesto_restante = {
+                "tiaminasa": presupuesto_restante["tiaminasa"],  # fracción diaria, no se acumula
+                "mercurio": presupuesto_restante["mercurio"],
+                "vitD": presupuesto_restante["vitD"] - consumo["vitD"] * dias_este,
+                "yodo": presupuesto_restante["yodo"] - consumo["yodo"] * dias_este,
+                "selenio_g_dieta": presupuesto_restante["selenio_g_dieta"],  # densidad diaria, no se acumula
+            }
+
+            for cat in ("Carne muscular", "Pescados y mariscos", "Hueso carnoso", "Vísceras", "Hígado"):
+                principal = sorted(
+                    ((nom, g) for nom, g in gramos.items()
+                    if al.get(nom, {}).get("categoria") == cat), key=lambda x: -x[1])
+                if principal:
+                    especies_usadas.append(especie_de(principal[0][0]))
+
+        return {"factible": True, "menus": menus_generados}
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return {"factible": False,
+                "motivo": f"Ha fallado algo inesperado generando la semana ({type(e).__name__}). "
                           "Inténtalo de nuevo -- si se repite, dínoslo."}
 
 
@@ -580,6 +752,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                     datos.der_objetivo, datos.etapa_requisitos, al, req,
                     datos.peso_perro_kg, dosis_maxima_fabricante,
                     margenes_categoria=MARGENES_V2, max_suplementos=2, forzar=base, time_limit=tiempo_restante(),
+                    presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
                 )
                 if not ok_rapido:
                     break
@@ -629,6 +802,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             evitar_especies=datos.evitar_especies,
             restringir_a_elegidos=restringir_a_elegidos_este,
             categorias_excluidas=datos.categorias_excluidas,
+            presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
         )
         ficha_i = None
         while ok_i and time.time() - t_inicio_total < PRESUPUESTO_SEGUNDOS:
@@ -646,6 +820,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 evitar_especies=datos.evitar_especies,
                 restringir_a_elegidos=restringir_a_elegidos_este,
                 categorias_excluidas=datos.categorias_excluidas,
+                presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
             )
             if ok2:
                 ok_i, gramos_i = ok2, gramos2
@@ -693,6 +868,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             excluidos=excluidos or None,
             margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=tiempo_restante(),
             patologias=datos.patologias,
+            presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
         )
         no_se_pudo_forzar = ok
     else:
