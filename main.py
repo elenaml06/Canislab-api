@@ -622,6 +622,29 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     ya tomadas, no parámetros que mande el frontend.
     """
     al, req = cargar_v2()
+    # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL GRAVE ENCONTRADO,
+    # pedido expreso: "si generas UN SOLO menú en Personalizar y se le
+    # va a dar al perro toda la semana, los límites semanales (vitamina
+    # D, tiaminasa/pescado) tienen que protegerse YA en ese único menú,
+    # como restricción dura -- no como aviso". Hasta ahora, el sistema
+    # de presupuesto semanal (MARGEN_SEGURIDAD_CRONICA, ver
+    # _presupuesto_semanal_inicial más arriba) SOLO se activaba cuando
+    # se pedían varios menús a la vez vía /menu/semana -- un único menú
+    # generado aquí (el camino que usa Personalizar, o Automático con
+    # 1 solo menú) usaba solo el tope DIARIO, sin margen de repetición
+    # semanal, aunque ese único menú fuera literalmente lo único que el
+    # perro comería cada día de la semana. Por diseño, NO se puede saber
+    # de antemano si este menú es "uno de varios" o "el único, comido
+    # los 7 días" -- así que, salvo que quien llama (como /menu/semana)
+    # ya haya calculado su propio presupuesto más preciso y lo pase
+    # explícitamente, se asume aquí el caso más exigente por defecto:
+    # que este menú se coma TODOS los días de la semana. Mismo
+    # mecanismo, misma función, que ya usa /menu/semana -- solo que
+    # aquí se aplica siempre que nadie más lo haya calculado ya.
+    if datos.presupuesto_semanal_restante is None:
+        presupuesto_total_default = _presupuesto_semanal_inicial(datos.der_objetivo)
+        datos.presupuesto_semanal_restante = _presupuesto_para_menu_actual(
+            presupuesto_total_default, dias_restantes_incluido_este=7)
     # ⚠️ AÑADIDO (5 agosto, tarde) — PRESUPUESTO DE TIEMPO TOTAL: Render
     # (plan gratis) corta la conexión a los 30s si no hay respuesta.
     # Antes esto se controlaba solo contando "número de intentos", y la
