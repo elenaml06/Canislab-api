@@ -1079,6 +1079,29 @@ def endpoint_transicion(datos: PeticionTransicion):
 # a medias ni duplicado.
 def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_especie=None):
     al, req = cargar_v2()
+    # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL GRAVE ENCONTRADO,
+    # pedido expreso: "si cambio un alimento de un menú, pero hay más
+    # menús para esa semana, ¿sigue teniendo en cuenta los límites de
+    # seguridad semanales?" -- la respuesta era NO, en absoluto. Los
+    # modelos que usa editar (PeticionCambiarAlimento,
+    # PeticionAnadirQuitarAlimento) nunca tuvieron el campo
+    # presupuesto_semanal_restante -- así que _intentar(), más abajo,
+    # llamaba a resolver_v2() sin pasarlo nunca, ni con el valor real de
+    # la rotación ni con ningún default de seguridad. Confirmado con un
+    # caso real: forzar aceite de hígado de bacalao en GENERACIÓN da 0g
+    # (el límite lo bloquea), pero el MISMO forzado en una EDICIÓN daba
+    # 5g reales, sin ninguna barrera -- un menú podía generarse seguro y
+    # luego, con una sola edición, dejar de estarlo, sin que nada lo
+    # impidiera. Los modelos de edición no llevan información de cuántos
+    # menús más hay en la rotación ni cuánto consumen -- así que, igual
+    # que en la generación de un único menú, se asume aquí el caso más
+    # exigente: que este menú (el que se está editando) se coma todos
+    # los días de la semana. getattr con default None, porque estos
+    # modelos ni siquiera tienen el campo -- acceder directamente
+    # lanzaría AttributeError.
+    presupuesto_ya_definido = getattr(datos, "presupuesto_semanal_restante", None)
+    if presupuesto_ya_definido is None:
+        presupuesto_ya_definido = _presupuesto_menu_unico_semana_completa(datos.der_objetivo)
     excluidos = list(datos.especies_excluidas or [])
     nombres_excl = set(datos.nombres_excluidos or [])
     if excluir_nombres:
@@ -1098,6 +1121,7 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 restringir_especie=restringir_especie,
                 peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None),
                 categorias_excluidas=getattr(datos, "categorias_excluidas", None),
+                presupuesto_semanal_restante=presupuesto_ya_definido,
             )
             if not ok:
                 break
