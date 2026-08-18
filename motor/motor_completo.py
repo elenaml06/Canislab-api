@@ -466,7 +466,27 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # estricto de los dos como techo REAL del solver, no solo el de
     # FEDIAF. Ver seguridad.py para el porqué de cada cifra.
     from seguridad import TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL, TOPE_SELENIO_G_DIETA
-    tope_vitd_activo = TOPE_VITD_KCAL * der / 1000.0
+    # ⚠️ CORREGIDO (5 agosto, madrugada) — BUG REAL Y GRAVE ENCONTRADO,
+    # pedido expreso: "si edito un menú, ¿sigue teniendo en cuenta los
+    # límites semanales?" -- investigando eso se encontró un bug de
+    # unidades MUCHO más amplio, presente en TODO el sistema (no solo
+    # al editar). MAPA (usado más abajo para construir cada restricción
+    # con "hi = mx * der / 1000.0") espera que "mx" sea una TASA "por
+    # 1000kcal" -- pero "tope_vitd_activo" se calculaba AQUÍ ya
+    # convertido a un valor ABSOLUTO (TOPE_VITD_KCAL * der / 1000.0),
+    # y luego se mezclaba, vía min(), con el máximo FEDIAF (que SÍ es
+    # una tasa) y con presupuesto_semanal_restante (también absoluto) --
+    # tres magnitudes de unidades distintas comparadas como si fueran
+    # la misma cosa. El resultado ganador de esos min() volvía a pasar
+    # por "* der / 1000.0" en el bucle de más abajo, aplicando la
+    # conversión de tasa a absoluto una SEGUNDA vez cuando el valor ya
+    # era absoluto -- confirmado con un caso real: un tope real de 18µg
+    # se convertía en un tope efectivo de 21.6µg (18 * der/1000 = 18*1.2),
+    # una violación del 20% que solo aparecía cuando el solver se veía
+    # empujado cerca de ese límite (de ahí que fuera intermitente, no
+    # siempre). Ahora TODO se mantiene como tasa "por 1000kcal" hasta el
+    # final del bucle, y solo se convierte a absoluto una única vez, ahí.
+    tope_vitd_activo = TOPE_VITD_KCAL
     # ⚠️ CORREGIDO en el mismo momento, CASO REAL ENCONTRADO en producción
     # (segunda vez que se pedía este arreglo): la Fase 1 original solo
     # llevaba el tope por kcal de vitamina D como restricción dura --
@@ -499,11 +519,17 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     MARGEN_REDONDEO_SEGURIDAD = 0.99
     tope_vitd_activo *= MARGEN_REDONDEO_SEGURIDAD
     TOPE_CRONICO_KCAL = {"vitD": tope_vitd_activo, "yodo": TOPE_YODO_KCAL * MARGEN_REDONDEO_SEGURIDAD}
-    if presupuesto_semanal_restante:
-        for clave_nut, tope_efectivo in presupuesto_semanal_restante.items():
+    if presupuesto_semanal_restante and der:
+        # presupuesto_semanal_restante llega en valores ABSOLUTOS (µg
+        # totales para el día) desde main.py -- se convierte aquí a la
+        # misma tasa "por 1000kcal" que usa TOPE_CRONICO_KCAL, antes de
+        # comparar con min(). La conversión a absoluto real ocurre una
+        # única vez, más abajo en el bucle de MAPA (hi = mx * der / 1000).
+        for clave_nut, tope_efectivo_absoluto in presupuesto_semanal_restante.items():
             if clave_nut in TOPE_CRONICO_KCAL:
+                tope_efectivo_tasa = tope_efectivo_absoluto / der * 1000.0
                 # nunca se afloja -- solo se usa si es MÁS estricto que el normal
-                TOPE_CRONICO_KCAL[clave_nut] = min(TOPE_CRONICO_KCAL[clave_nut], tope_efectivo)
+                TOPE_CRONICO_KCAL[clave_nut] = min(TOPE_CRONICO_KCAL[clave_nut], tope_efectivo_tasa)
     for nombre_req, clave in MAPA.items():
         r = req.get(nombre_req)
         if not r:
