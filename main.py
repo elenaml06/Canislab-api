@@ -279,25 +279,6 @@ class PeticionAnadirQuitarAlimento(BaseModel):
     peso_adulto_esperado_kg: Optional[float] = None
 
 
-# ⚠️ AÑADIDO (5 agosto, madrugada) — pedido expreso: comprueba el
-# aporte de tiaminasa a lo largo de TODA la semana de rotación, no
-# solo dentro de un menú aislado (ver revisar_seguridad_semanal en
-# seguridad.py para el motivo completo).
-class MenuConDias(BaseModel):
-    gramos: dict[str, float]
-    dias: int
-
-
-class PeticionVerificarSemana(BaseModel):
-    menus: list[MenuConDias]
-    der_objetivo: float
-    # ⚠️ AÑADIDO (5 agosto, madrugada): mismo motivo que en PeticionMenu.
-    categorias_excluidas: Optional[list] = None
-    # ⚠️ AÑADIDO (5 agosto, madrugada): para el chequeo por peso^0.75 de
-    # vitamina D (ver revisar_seguridad_semanal / TOPE_VITD_KG075).
-    peso_perro_kg: Optional[float] = None
-
-
 class PeticionTransicion(BaseModel):
     fecha_inicio: str  # "2026-07-25"
     num_menus_elegidos: int
@@ -1398,21 +1379,6 @@ def verificar():
         "arrancado_en": _ARRANCADO_EN,
         "sello_main_py_actual": hash_main,
     }
-
-
-@app.post("/menu/verificar_semana")
-def endpoint_verificar_semana(datos: PeticionVerificarSemana):
-    """⚠️ AÑADIDO (5 agosto, madrugada) — pedido expreso: comprueba el
-    aporte de tiaminasa, mercurio, vitamina D, yodo y selenio a lo
-    largo de TODA la semana de rotación (todos los menús generados
-    juntos, ponderados por sus días), no solo dentro de un menú
-    aislado -- ver revisar_seguridad_semanal."""
-    from seguridad import revisar_seguridad_semanal
-    al, req = cargar_v2()
-    menus_con_dias = [(m.gramos, m.dias) for m in datos.menus]
-    avisos = revisar_seguridad_semanal(menus_con_dias, al, datos.der_objetivo,
-                                       peso_perro_kg=datos.peso_perro_kg)
-    return {"avisos_semana": avisos}
 
 
 @app.post("/analizar")
