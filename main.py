@@ -538,6 +538,41 @@ def _presupuesto_para_menu_actual(restante, dias_restantes_incluido_este):
     }
 
 
+# ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL GRAVE ENCONTRADO, pedido
+# expreso por segunda vez: seguía apareciendo el aviso de sardina/vitD
+# en un único menú de Personalizar, a pesar del arreglo anterior. Causa
+# real: aquel arreglo reutilizaba _presupuesto_semanal_inicial +
+# _presupuesto_para_menu_actual, que SOLO endurecen vitD/yodo (los que
+# de verdad se "dividen entre días" en el caso de rotación real con
+# varios menús) -- pero tiaminasa/mercurio, al ser una FRACCIÓN diaria
+# plana (no un total acumulable), nunca se tocaban: su tope diario
+# seguía siendo el mismo 10% de siempre, tanto si el menú es "uno de
+# varios en rotación variada" como si es "el único, repetido los 7
+# días" -- y estos dos casos son genuinamente distintos en riesgo real.
+# Esta función es la correcta para el caso de UN SOLO menú asumido para
+# toda la semana: aplica el mismo margen de seguridad crónica (0.75) a
+# los 5 límites de forma UNIFORME, incluidos tiaminasa y mercurio --
+# porque si este único menú se va a repetir todos los días, su propio
+# tope diario de "pescado con tiaminasa" debe ser más estricto que el
+# de un menú que solo aparece 2-3 días dentro de una rotación variada.
+MARGEN_SEGURIDAD_CRONICA_MENU_UNICO = 0.75  # mismo criterio que el de /menu/semana
+
+
+def _presupuesto_menu_unico_semana_completa(der_objetivo):
+    from seguridad import (
+        TOPE_TIAMINASA_KCAL, TOPE_MERCURIO_KCAL, TOPE_VITD_KCAL, TOPE_YODO_KCAL,
+        TOPE_SELENIO_G_DIETA,
+    )
+    return {
+        "tiaminasa": TOPE_TIAMINASA_KCAL * MARGEN_SEGURIDAD_CRONICA_MENU_UNICO,
+        "mercurio": TOPE_MERCURIO_KCAL * MARGEN_SEGURIDAD_CRONICA_MENU_UNICO,
+        "vitD": TOPE_VITD_KCAL * der_objetivo / 1000.0 * MARGEN_SEGURIDAD_CRONICA_MENU_UNICO,
+        "yodo": TOPE_YODO_KCAL * der_objetivo / 1000.0 * MARGEN_SEGURIDAD_CRONICA_MENU_UNICO,
+        "selenio_g_dieta": TOPE_SELENIO_G_DIETA * MARGEN_SEGURIDAD_CRONICA_MENU_UNICO,
+    }
+
+
+
 @app.post("/menu/semana")
 def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
     """Genera TODOS los menús de una rotación semanal en una sola
@@ -638,13 +673,20 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # los 7 días" -- así que, salvo que quien llama (como /menu/semana)
     # ya haya calculado su propio presupuesto más preciso y lo pase
     # explícitamente, se asume aquí el caso más exigente por defecto:
-    # que este menú se coma TODOS los días de la semana. Mismo
-    # mecanismo, misma función, que ya usa /menu/semana -- solo que
-    # aquí se aplica siempre que nadie más lo haya calculado ya.
+    # que este menú se coma TODOS los días de la semana.
+    #
+    # ⚠️ CORREGIDO (5 agosto, madrugada) — CASO REAL ENCONTRADO, pedido
+    # expreso por segunda vez: el aviso de sardina/vitD seguía
+    # apareciendo en un único menú de Personalizar a pesar del arreglo
+    # de arriba. Causa real: _presupuesto_semanal_inicial +
+    # _presupuesto_para_menu_actual (las funciones de /menu/semana)
+    # SOLO endurecen vitD/yodo -- tiaminasa/mercurio, al ser una
+    # fracción diaria plana en vez de un total acumulable, nunca se
+    # tocaban con ese mecanismo. Se usa ahora la función dedicada al
+    # caso de un único menú, que sí endurece los 5 límites por igual.
     if datos.presupuesto_semanal_restante is None:
-        presupuesto_total_default = _presupuesto_semanal_inicial(datos.der_objetivo)
-        datos.presupuesto_semanal_restante = _presupuesto_para_menu_actual(
-            presupuesto_total_default, dias_restantes_incluido_este=7)
+        datos.presupuesto_semanal_restante = _presupuesto_menu_unico_semana_completa(
+            datos.der_objetivo)
     # ⚠️ AÑADIDO (5 agosto, tarde) — PRESUPUESTO DE TIEMPO TOTAL: Render
     # (plan gratis) corta la conexión a los 30s si no hay respuesta.
     # Antes esto se controlaba solo contando "número de intentos", y la
