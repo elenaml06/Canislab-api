@@ -207,7 +207,27 @@ CEFALOPODOS_CRUSTACEOS = {"calamar", "pulpo", "sepia", "gamba", "langostino",
 # sin tratar (endémica del noroeste del Pacifico, pero el riesgo parasitario
 # general -anisakis- aplica igual al salmon europeo). Se mitiga CONGELANDO
 # antes de dar, no limitando la cantidad.
-PESCADO_CONGELAR_ANTES = {"salmon", "trucha"}
+# ⚠️ CORREGIDO (5 agosto, madrugada) — CASO REAL GRAVE ENCONTRADO,
+# pedido expreso: "verificar lo de la congelación previa". Este conjunto
+# solo cubría "salmon" y "trucha" -- 2 de los 15 peces reales del
+# catálogo -- así que Sardina, Caballa, Merluza, Bacalao, Lubina,
+# Dorada, Atún, Boquerón, Lenguado, Pescadilla, Besugo, Bacaladilla y
+# Perca nunca disparaban el aviso de "congelar antes de dar si se da
+# crudo", aunque todos ellos pueden darse crudos igual que salmón/
+# trucha. Confirmado con fuentes: EFSA y el Reglamento UE 1276/2011
+# consideran el riesgo de anisakis (y parásitos similares) un riesgo
+# GENÉRICO de todo pescado de mar y agua dulce crudo, no específico de
+# unas pocas especies -- la normativa exige congelación para prevenirlo
+# en prácticamente cualquier pescado destinado a consumo crudo, no solo
+# salmón/trucha. Los cefalópodos/crustáceos (calamar, gamba, langostino,
+# pulpo, sepia) se quedan fuera de este conjunto a propósito: la app ya
+# indica que esos SIEMPRE se dan cocinados, así que el riesgo se elimina
+# por cocción, no por congelación -- no necesitan este aviso concreto.
+PESCADO_CONGELAR_ANTES = {
+    "salmon", "trucha", "sardina", "caballa", "merluza", "bacalao",
+    "lubina", "dorada", "atun", "boqueron", "lenguado", "pescadilla",
+    "besugo", "bacaladilla", "perca",
+}
 
 # ⚠️ HUESOS DE CARGA (pierna de cordero, huesos de cuello de ternera) SE
 # QUITARON DEL CATÁLOGO (4 agosto): riesgo de fractura dental demasiado
@@ -510,9 +530,10 @@ def avisos_rotacion(menu, alimentos):
                     "mejillón). Servir sin cabeza/vísceras y no a diario." % n)
             if _es(n, PESCADO_CONGELAR_ANTES):
                 avisos.append(
-                    "%s: si se da crudo, debe estar CONGELADO antes (varios "
-                    "días a -20 °C o equivalente) para eliminar el riesgo "
-                    "parasitario e infeccioso." % n)
+                    "%s: si se da crudo, debe estar CONGELADO antes -- "
+                    "al menos 2 semanas a -18/-20 °C (ESCCAP, la referencia "
+                    "europea en parásitos de mascotas) -- para eliminar el "
+                    "riesgo parasitario e infeccioso." % n)
         if cat_real == "Hueso carnoso":
             if _es(n, HUESO_RIESGO_DENTAL):
                 avisos.append(
