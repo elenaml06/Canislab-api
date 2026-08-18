@@ -352,6 +352,22 @@ def endpoint_menu(datos: PeticionMenu):
                                    patologias=datos.patologias)
         if resultado.get("factible"):
             resultado["no_se_pudo_forzar"] = True
+    # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL GRAVE ENCONTRADO en
+    # auditoría exhaustiva: este endpoint (el motor VIEJO, "optimizar_menu",
+    # anterior al motor MILP de motor_completo.py) nunca pasa por
+    # resolver() en absoluto -- así que nunca ha visto ninguna de las
+    # restricciones duras de seguridad crónica de esta sesión. El
+    # frontend actual no lo llama (confirmado: cero referencias a "/menu"
+    # sin v2 en App.jsx), pero sigue expuesto públicamente, y "ningún
+    # límite se puede sobrepasar nunca" no puede depender de que nadie
+    # descubra y use este camino. Se valida el resultado igual que en
+    # el catálogo pre-calculado antes de devolverlo.
+    gramos_resultado = resultado.get("gramos") or resultado.get("menu")
+    if resultado.get("factible") and gramos_resultado and not _menu_precalculado_es_seguro(
+            gramos_resultado, {a["nombre"]: a for a in alimentos}, datos.der_objetivo, datos.peso_perro_kg):
+        return {"factible": False,
+                "motivo": "Este motor (antiguo) no puede garantizar los límites de seguridad "
+                          "crónica actuales -- usa /menu/v2 en su lugar."}
     return resultado
 
 
