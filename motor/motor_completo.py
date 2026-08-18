@@ -85,6 +85,31 @@ PATOLOGIAS = {
                   "app no puede ver. Una dieta mal ajustada aquí puede empeorarlos, "
                   "así que no generamos menú automático: necesitas una dieta pautada "
                   "por tu veterinario.")},
+    # ⚠️ CONECTADO (5 agosto, madrugada) — CASO REAL ENCONTRADO, pedido
+    # expreso: "urato" no tenía sin_dieta_automatica, así que el sistema
+    # intentaba generar un menú excluyendo hígado y las vísceras/pescado
+    # con purinas altas -- y con el catálogo actual, esa combinación es
+    # matemáticamente imposible de verdad (confirmado probándolo
+    # directamente con el solver, no es un bug de código): el hígado
+    # aporta la mayoría de la vitamina A disponible, y sin él ni sin
+    # riñón no queda margen real para cumplir el resto de los 30
+    # requisitos a la vez. Antes esto se traducía en "no hay ninguna
+    # combinación posible" sin explicación -- ahora se bloquea con el
+    # mismo mensaje claro que estruvita, en vez de fallar en silencio.
+    # "cistina" tiene el mismo mecanismo clínico (predisposición a
+    # urolitos que requiere analíticas y control veterinario) y nunca
+    # había llegado a añadirse a este diccionario en absoluto.
+    "urato": {"sin_dieta_automatica": True,
+        "aviso": ("La predisposición a urolitos de urato (dálmata, shunt hepático) "
+                  "necesita restringir tanto las purinas que, con alimentos frescos "
+                  "normales, no queda margen real para cubrir el resto de nutrientes "
+                  "a la vez -- por eso no generamos menú automático aquí: esto "
+                  "necesita una dieta pautada por tu veterinario, a menudo con "
+                  "pienso terapéutico específico.")},
+    "cistina": {"sin_dieta_automatica": True,
+        "aviso": ("Igual que con estruvita, esto depende del pH de la orina y de "
+                  "analíticas que la app no puede ver -- no generamos menú "
+                  "automático: necesitas una dieta pautada por tu veterinario.")},
     # ⚠️ AÑADIDO (5 agosto, madrugada) — pedido expreso: antes, si el
     # perro tenía una patología que no está en esta lista, no había
     # ninguna forma de decirlo -- la persona se quedaba con la duda de
@@ -254,6 +279,38 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         if categorias_excluidas and cat in categorias_excluidas:
             disp = []
 
+        # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL GRAVE ENCONTRADO,
+        # pedido expreso: con oxalato cálcico, el aviso decía "no
+        # debería dársele espinaca" pero la espinaca aparecía en el
+        # menú de todas formas -- toda una categoría de restricciones
+        # de patología (oxalato, urato, borraja, restricciones propias
+        # de cada alimento) solo vivían como aviso de texto, nunca como
+        # algo que el solver respetara al elegir. Se aplica AQUÍ, con
+        # la MISMA prioridad final que categorias_excluidas (después de
+        # forzar/restringir_a_elegidos, ganando sobre ellos) -- la
+        # seguridad nunca debe poder saltarse ni siquiera si alguien
+        # intenta forzar a mano un alimento prohibido por patología.
+        #
+        # ⚠️ CORREGIDO en el mismo momento -- CASO REAL ENCONTRADO
+        # probando "urato": la primera versión de esto ponía TECHO=0
+        # más abajo en vez de quitar el alimento de aquí -- pero dejarlo
+        # presente como variable del LP (aunque con techo 0) podía
+        # "gastar" el cupo de restricciones como "máximo 1 víscera"
+        # (cuantos_max) sin aportar nada real, dejando sin cupo a una
+        # víscera de verdad y volviendo el problema matemáticamente
+        # infactible sin motivo real. Quitarlos aquí, del catálogo de
+        # candidatos, evita que puedan "gastar" cupo de ninguna
+        # restricción, sea la que sea.
+        from seguridad import OXALATO_ALTO, PURINAS_ALTAS, BORRAJA_EXCLUIR, _es as _es_patologia
+        if "oxalato" in (patologias or []):
+            disp = [n for n in disp if not _es_patologia(n, OXALATO_ALTO)]
+        if "urato" in (patologias or []) and cat in ("Hígado", "Vísceras", "Pescados y mariscos"):
+            disp = [n for n in disp if not _es_patologia(n, PURINAS_ALTAS)]
+        disp = [n for n in disp if not _es_patologia(n, BORRAJA_EXCLUIR)]
+        disp = [n for n in disp
+               if not any(pat in (patologias or [])
+                         for pat in (alimentos.get(n, {}).get("restricciones_patologia") or {}))]
+
         candidatos_por_cat[cat] = disp
     candidatos_por_cat["Suplementos"] = [a["nombre"] for a in alimentos.values()
                                         if a.get("categoria") in SUP_CATS]
@@ -310,10 +367,43 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # techo a 0, la vinculación gramos<=usa*techo obliga gramos=0 siempre,
     # sin tocar el resto de la formulación.
     excluye_fruta = any(PATOLOGIAS.get(p, {}).get("excluye_fruta") for p in (patologias or []))
+    # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL GRAVE ENCONTRADO,
+    # pedido expreso: "con oxalato cálcico avisa que no debería dársele
+    # espinaca, y la mete en el menú de todas formas". Causa real: había
+    # TODA una categoría de restricciones de patología (oxalato, urato,
+    # borraja, y las restricciones propias de cada alimento como grelo/
+    # nabo en hipotiroidismo) que solo vivían como AVISO de texto en
+    # seguridad.py, sin ninguna exclusión real dentro del solver -- a
+    # diferencia de los topes numéricos (fósforo, sodio, grasa%) que sí
+    # eran restricciones duras. El solver podía meter espinaca sin nada
+    # que se lo impidiera, y el aviso posterior decía "esto no debería
+    # estar aquí" sobre un menú que él mismo ya había generado. Ahora se
+    # excluyen con el MISMO mecanismo que ya usaba la fruta en diabetes
+    # (techo a 0): oxalato con antecedente de urolitos, urato con
+    # predisposición, borraja siempre (toxicidad real, no depende de
+    # patología), y las restricciones propias de cada alimento en el
+    # catálogo (grelo/nabo, dátil/mango/plátano, coco...).
+    from seguridad import OXALATO_ALTO, PURINAS_ALTAS, BORRAJA_EXCLUIR, _es as _es_patologia
+    excluye_oxalato = "oxalato" in (patologias or [])
+    excluye_urato = "urato" in (patologias or [])
+    CATEGORIAS_PURINAS_REALES = {"Hígado", "Vísceras", "Pescados y mariscos"}
     techos = []
     for n in nombres:
         a = alimentos[n]
         if excluye_fruta and n in FRUTAS:
+            techos.append(0.0)
+            continue
+        if excluye_oxalato and _es_patologia(n, OXALATO_ALTO):
+            techos.append(0.0)
+            continue
+        if excluye_urato and _es_patologia(n, PURINAS_ALTAS) and a.get("categoria") in CATEGORIAS_PURINAS_REALES:
+            techos.append(0.0)
+            continue
+        if _es_patologia(n, BORRAJA_EXCLUIR):
+            techos.append(0.0)
+            continue
+        restr_propia = a.get("restricciones_patologia") or {}
+        if any(pat in (patologias or []) for pat in restr_propia):
             techos.append(0.0)
             continue
         if categoria_de[n] == "Suplementos":
@@ -522,6 +612,28 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
 
     # 3. margen por peso de cada categoría de COMIDA (no suplementos)
     if margenes_categoria:
+        # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL ENCONTRADO: las
+        # exclusiones de patología recién añadidas arriba (oxalato,
+        # urato, restricciones por alimento) pueden dejar una categoría
+        # ENTERA vacía como efecto secundario -- por ejemplo, "urato"
+        # excluye TODOS los alimentos de Hígado del catálogo (los 4/4
+        # tienen purinas altas), pero Hígado sigue teniendo su mínimo
+        # obligatorio del 3% del peso, matemáticamente imposible de
+        # cumplir si no queda ningún candidato. A diferencia de
+        # categorias_excluidas (donde el usuario pide excluir la
+        # categoría a propósito), aquí nadie pidió vaciar "Hígado" --
+        # es una consecuencia de excluir por seguridad los alimentos
+        # concretos. Se detecta automáticamente qué categorías han
+        # quedado sin ningún candidato disponible (techo>0 en ninguno
+        # de sus miembros) y se tratan con el MISMO mecanismo que una
+        # exclusión explícita: su mínimo se ignora, en vez de dejar el
+        # problema matemáticamente irresoluble.
+        categorias_con_candidato = {categoria_de[n] for n in nombres if techos[idx[n]] > 0}
+        categorias_vaciadas_efectivo = {
+            cat for cat in margenes_categoria
+            if any(categoria_de[n] == cat for n in nombres) and cat not in categorias_con_candidato
+        }
+        categorias_excluidas_efectivo = set(categorias_excluidas or []) | categorias_vaciadas_efectivo
         # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL ENCONTRADO
         # completando la exclusión de categoría entera: quitar "Hueso
         # carnoso" (mínimo 20%, máximo 60% del peso) deja un hueco que
@@ -536,7 +648,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # hueco -- es la categoría más natural para compensarlo, ya
         # que el hueso carnoso también aporta principalmente proteína
         # y grasa, no un nutriente exclusivo suyo.
-        if categorias_excluidas and "Hueso carnoso" in categorias_excluidas:
+        if "Hueso carnoso" in categorias_excluidas_efectivo:
             margenes_categoria = dict(margenes_categoria)
             mn_carne, mx_carne = margenes_categoria.get("Carne muscular", (0.10, 0.60))
             _mn_hueso, mx_hueso = margenes_categoria.get("Hueso carnoso", (0.20, 0.60))
@@ -581,7 +693,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                 # arriba que vacía "disp" para esta categoría) -- vaciarla
                 # es justo lo que se pidió, así que el mínimo debe
                 # ignorarse en ESTE caso concreto, no fallar.
-                if mnp and mnp > 0 and not (categorias_excluidas and cat in categorias_excluidas):
+                if mnp and mnp > 0 and not (categorias_excluidas_efectivo and cat in categorias_excluidas_efectivo):
                     return False, None
                 continue
             fila_cat = fila_vacia()
@@ -844,7 +956,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                 # exigirle representación aquí tampoco -- esta red de
                 # seguridad final debe respetar la misma excepción, o
                 # anula por su cuenta lo que ya se permitió arriba.
-                if categorias_excluidas and cat in categorias_excluidas:
+                if categorias_excluidas_efectivo and cat in categorias_excluidas_efectivo:
                     continue
                 if not any(alimentos[n].get("categoria") == cat for n in gramos):
                     return False, None
