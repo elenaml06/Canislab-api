@@ -528,12 +528,14 @@ def avisos_rotacion(menu, alimentos):
                 avisos.append(
                     "%s: acumula cadmio y cobre (misma familia que el "
                     "mejillón). Servir sin cabeza/vísceras y no a diario." % n)
-            if _es(n, PESCADO_CONGELAR_ANTES):
-                avisos.append(
-                    "%s: si se da crudo, debe estar CONGELADO antes -- "
-                    "al menos 2 semanas a -18/-20 °C (ESCCAP, la referencia "
-                    "europea en parásitos de mascotas) -- para eliminar el "
-                    "riesgo parasitario e infeccioso." % n)
+            # ⚠️ QUITADO (5 agosto, madrugada) — pedido expreso: este aviso
+            # ("congelar antes de dar") era redundante con la instrucción
+            # general de la categoría "Pescados y mariscos" en el
+            # frontend, que ya cubre la duración de congelación (2
+            # semanas) para cualquier pescado -- no hace falta repetirlo
+            # aquí, alimento por alimento, además. PESCADO_CONGELAR_ANTES
+            # se deja definido por si algún día hace falta en otro sitio,
+            # simplemente ya no dispara este aviso concreto.
         if cat_real == "Hueso carnoso":
             if _es(n, HUESO_RIESGO_DENTAL):
                 avisos.append(
@@ -544,156 +546,4 @@ def avisos_rotacion(menu, alimentos):
                 avisos.append(
                     "%s: hueso estrecho, riesgo de astillado o de quedar "
                     "encajado entre los molares. Supervisar." % n)
-    return avisos
-
-
-# ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL, muy buena pregunta
-# planteada directamente: la tiaminasa se comprobaba SOLO dentro de
-# CADA menú por separado (revisar_seguridad recibe un único menú). Si
-# se generan varios menús que rotan durante la semana, cada uno podía
-# quedarse justo por debajo del límite individual, pero si TODOS ellos
-# usan pescado crudo con tiaminasa como proteína principal, el perro
-# comería pescado crudo casi todos los días de la semana sin que
-# ningún aviso lo detectara -- el riesgo real es acumulativo a lo
-# largo de la semana, no solo dentro de un menú aislado.
-#
-# ⚠️ CORREGIDO en el mismo momento, ANTES de entregarlo — AUTOCRÍTICA:
-# la primera versión de esta función calculaba un PROMEDIO PONDERADO
-# de kcal de tiaminasa y lo comparaba contra el mismo límite de
-# exceso (10%). Pero eso es matemáticamente inútil: si TODOS los menús
-# individuales están por debajo del 10%, su promedio ponderado
-# TAMBIÉN está por debajo del 10% siempre -- así que ese aviso nunca
-# podría dispararse sin que YA se hubiera disparado antes al menos uno
-# de los avisos por menú individual. No añadía ningún valor real.
-#
-# El riesgo real no es "el promedio de exceso semanal", es la
-# FRECUENCIA: comer pescado crudo con tiaminasa de forma NO trivial
-# (aunque cada ración individual no sea excesiva) casi todos los días
-# de la semana, de forma repetida y crónica. Por eso este aviso mide
-# en cuántos DÍAS de la rotación (ponderados) el pescado con tiaminasa
-# aporta una proporción NO trivial de las kcal (un umbral más bajo que
-# el de exceso real) -- y avisa si eso pasa en la gran mayoría de los
-# días de la semana, incluso si ningún menú individual llega nunca al
-# límite de exceso por sí solo.
-UMBRAL_PRESENCIA_TIAMINASA = 0.05   # 5% de las kcal del menú -- "presencia no trivial"
-UMBRAL_FRECUENCIA_SEMANAL = 0.80    # si pasa en el 80%+ de los días de la semana, avisar
-
-
-def revisar_seguridad_semanal(menus_con_dias, alimentos, der, peso_perro_kg=None):
-    """
-    `menus_con_dias`: lista de (gramos: {nombre: g}, dias: int) -- un
-    elemento por cada menú de la rotación semanal, con cuántos días de
-    la semana se usa cada uno. Devuelve avisos que solo tienen sentido
-    mirando la semana completa, no un menú aislado.
-    """
-    total_dias = sum(d for _, d in menus_con_dias) or 1
-    dias_con_presencia = 0
-    fuentes = set()
-    for gramos, dias in menus_con_dias:
-        kcal_tia_menu = sum(alimentos.get(n, {}).get("energia", 0) * g / 100.0
-                            for n, g in gramos.items() if _es(n, TIAMINASA))
-        if der and (kcal_tia_menu / der) >= UMBRAL_PRESENCIA_TIAMINASA:
-            dias_con_presencia += dias
-            fuentes |= {n for n in gramos if _es(n, TIAMINASA)}
-    frecuencia = dias_con_presencia / total_dias
-    avisos = []
-    if frecuencia >= UMBRAL_FRECUENCIA_SEMANAL and fuentes:
-        avisos.append(
-            "%s aparece en cantidad no trivial en %d de los 7 días de la semana "
-            "(según la rotación de menús) — aunque ningún menú individual se pase "
-            "del límite de exceso por sí solo, comerlo de forma tan repetida y "
-            "crónica es justo el patrón que puede ir destruyendo la vitamina B1 "
-            "poco a poco. Conviene que al menos uno de los menús use otra "
-            "proteína, para no repetir pescado crudo prácticamente todos los días."
-            % (", ".join(sorted(fuentes)), dias_con_presencia))
-
-    # ⚠️ AÑADIDO (5 agosto, madrugada) — pedido expreso, tras investigar a
-    # fondo cuatro nutrientes más con este mismo tipo de riesgo crónico:
-    # mercurio, vitamina D, yodo y selenio. Mismo patrón que arriba con
-    # tiaminasa (frecuencia de presencia no trivial a lo largo de la
-    # semana, no un promedio simple contra el mismo límite de exceso --
-    # eso sería matemáticamente redundante con el chequeo por menú, tal
-    # como se corrigió antes para la tiaminasa). Umbral de "presencia no
-    # trivial" puesto en la mitad del límite de exceso por menú, criterio
-    # de desarrollo propio, no de ninguna fuente concreta.
-    UMBRAL_FRECUENCIA_CRONICOS = 0.80
-
-    def _frecuencia_generica(nombres_o_funcion, tope_kcal_frac, medir_por="kcal"):
-        dias_con_presencia_ = 0
-        fuentes_ = set()
-        for gramos, dias in menus_con_dias:
-            if medir_por == "kcal":
-                aporte = sum(alimentos.get(n, {}).get("energia", 0) * g / 100.0
-                            for n, g in gramos.items() if _es(n, nombres_o_funcion))
-                umbral_absoluto = der * tope_kcal_frac * 0.5  # mitad del tope de exceso
-                encontrados = {n for n in gramos if _es(n, nombres_o_funcion)}
-            else:  # medir_por == "nutriente" -- nombres_o_funcion es el nombre del campo
-                aportes_por_alimento = {n: alimentos.get(n, {}).get("nutrientes", {}).get(nombres_o_funcion, 0) * g / 100.0
-                                        for n, g in gramos.items()}
-                aporte = sum(aportes_por_alimento.values())
-                umbral_absoluto = tope_kcal_frac * 0.5  # aquí tope_kcal_frac ya es el valor absoluto del tope
-                # ⚠️ CORREGIDO en el mismo momento, probando con datos reales:
-                # antes esto marcaba como "fuente" a CUALQUIER alimento con el
-                # nutriente > 0, así que el mensaje acababa listando casi
-                # todos los ingredientes del menú en vez de señalar la fuente
-                # real del problema (el riñón, en el caso de selenio). Ahora
-                # solo cuentan los alimentos que aportan al menos un 10% del
-                # total de ESE menú -- el mensaje señala lo que de verdad
-                # importa, no todo lo que técnicamente contiene algo del
-                # nutriente en cantidad insignificante.
-                umbral_relevancia = aporte * 0.10 if aporte else 0
-                encontrados = {n for n, ap in aportes_por_alimento.items() if ap >= umbral_relevancia and ap > 0}
-            if aporte >= umbral_absoluto:
-                dias_con_presencia_ += dias
-                fuentes_ |= encontrados
-        return dias_con_presencia_, fuentes_
-
-    total_dias_ = sum(d for _, d in menus_con_dias) or 1
-
-    # mercurio
-    dp, fu = _frecuencia_generica(MERCURIO_ALTO, TOPE_MERCURIO_KCAL, "kcal")
-    if fu and (dp / total_dias_) >= UMBRAL_FRECUENCIA_CRONICOS:
-        avisos.append(
-            "%s aparece de forma no trivial en %d de los 7 días de la semana. "
-            "El mercurio se acumula en el cuerpo con exposiciones repetidas -- "
-            "aunque cada menú esté dentro del límite por sí solo, conviene que "
-            "no aparezca en la mayoría de los días de rotación."
-            % (", ".join(sorted(fu)), dp))
-
-    # vitamina D -- tope absoluto en µg (por 1000kcal del DER), usando el
-    # umbral más estricto entre kcal y peso si el peso está disponible --
-    # mismo criterio que en el chequeo por ración.
-    tope_vitd_abs = TOPE_VITD_KCAL * der / 1000.0
-    if peso_perro_kg and peso_perro_kg > 0:
-        tope_vitd_por_peso = TOPE_VITD_KG075 * (peso_perro_kg ** 0.75)
-        tope_vitd_abs = min(tope_vitd_abs, tope_vitd_por_peso)
-    dp, fu = _frecuencia_generica("vitD", tope_vitd_abs, "nutriente")
-    if fu and (dp / total_dias_) >= UMBRAL_FRECUENCIA_CRONICOS:
-        avisos.append(
-            "Hay una fuente relevante de vitamina D (%s) en %d de los 7 días de "
-            "la semana. Es una vitamina que se acumula en el cuerpo -- revisa "
-            "que no se estén sumando varias fuentes (pescado graso, aceite de "
-            "hígado de bacalao, suplementos) de forma repetida."
-            % (", ".join(sorted(fu)), dp))
-
-    # yodo
-    tope_yodo_abs = TOPE_YODO_KCAL * der / 1000.0
-    dp, fu = _frecuencia_generica("yodo", tope_yodo_abs, "nutriente")
-    if fu and (dp / total_dias_) >= UMBRAL_FRECUENCIA_CRONICOS:
-        avisos.append(
-            "Hay una fuente relevante de yodo (%s) en %d de los 7 días de la "
-            "semana. El exceso de yodo mantenido puede alterar la tiroides -- "
-            "si la fuente es kelp, su contenido real varía mucho de un "
-            "producto a otro." % (", ".join(sorted(fu)), dp))
-
-    # selenio
-    tope_selenio_abs = TOPE_SELENIO_KCAL * der / 1000.0
-    dp, fu = _frecuencia_generica("selenio", tope_selenio_abs, "nutriente")
-    if fu and (dp / total_dias_) >= UMBRAL_FRECUENCIA_CRONICOS:
-        avisos.append(
-            "Hay una fuente relevante de selenio (%s) en %d de los 7 días de "
-            "la semana -- suele ser vísceras (sobre todo riñón). El exceso "
-            "sostenido de selenio, no solo puntual, puede causar problemas "
-            "crónicos." % (", ".join(sorted(fu)), dp))
-
     return avisos
