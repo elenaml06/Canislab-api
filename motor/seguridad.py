@@ -35,7 +35,23 @@ from exclusiones import _norm, _palabras
 # ⚠️ EL 10% ES CRITERIO NUESTRO, NO DE LA FUENTE. La literatura dice que hay
 # riesgo si el pescado tiaminasico es "proporcion sustancial de la dieta",
 # sin dar cifra. El 10% es prudencia de desarrollo.
-TIAMINASA = {"sardina", "caballa", "arenque", "boqueron", "carpa"}
+TIAMINASA = {
+    "sardina", "caballa", "arenque", "boqueron", "carpa",
+    # ⚠️ AÑADIDO (5 agosto, madrugada) — investigación exhaustiva con
+    # fuentes primarias (NRC 1983 Tabla 22, Hilker & Peter 1966/1968,
+    # Tang & Hilker 1970): el atún (amarillo y listado) está confirmado
+    # tiaminasa-positivo según el NRC, la referencia nutricional de mayor
+    # rango. Las gambas/camarones y langostinos también contienen
+    # tiaminasa (Fujita 1954, múltiples fuentes de acuariofilia y
+    # nutrición animal). El "SIEMPRE cocinados" para mariscos es solo
+    # texto informativo en el frontend -- el motor no tiene concepto de
+    # "crudo vs cocinado", así que no puede garantizar que el usuario
+    # los cocine de verdad; lo más consistente es que activen la misma
+    # restricción del 10% que el pescado, cubriendo el caso de que
+    # alguien los dé crudos. Solo se añaden los que existen de verdad
+    # en el catálogo (confirmado antes de editar): atun, gamba, langostino.
+    "atun", "gamba", "langostino",
+}
 TOPE_TIAMINASA_KCAL = 0.10
 
 # ---------------------------------------------------------------------------
