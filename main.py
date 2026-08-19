@@ -1,5 +1,5 @@
 """
-CANISLAB - API real del motor nutricional
+Rawku - API del motor nutricional BARF
 
 Envuelve todo el codigo Python YA VALIDADO (especies.py, der.py,
 optimizador.py, transicion.py, persistencia.py, y desde el 5 de agosto
@@ -126,7 +126,7 @@ def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
 import datetime
 _ARRANCADO_EN = datetime.datetime.utcnow().isoformat() + "Z"
 
-app = FastAPI(title="CANISLAB API")
+app = FastAPI(title="Rawku API")
 
 # permite que la app (en el navegador) pueda llamar a esta API
 app.add_middleware(
@@ -1231,7 +1231,7 @@ def endpoint_obtener_menus(perro_id: int):
 
 @app.get("/")
 def raiz():
-    return {"estado": "CANISLAB API funcionando"}
+    return {"estado": "Rawku API funcionando"}
 
 
 # =====================================================================
