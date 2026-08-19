@@ -1235,7 +1235,131 @@ def raiz():
 
 
 # =====================================================================
-# MODO ANALIZADOR — el usuario mete lo que YA le da y le decimos que tal
+# STRIPE — pagos y suscripciones
+# =====================================================================
+import os
+import stripe
+
+stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
+
+PRICE_MENSUAL = "price_1U6G2EDnx1sWAUrF2v88kDWZ"
+PRICE_ANUAL   = "price_1U6G3DDnx1sWAUrF5DseuSG1"
+URL_BASE      = "https://rawku.app"
+
+
+class PeticionCheckout(BaseModel):
+    user_id: str
+    email: str
+    plan: str  # "mensual" o "anual"
+
+
+@app.post("/stripe/checkout")
+def crear_checkout(datos: PeticionCheckout):
+    """Crea una sesión de checkout de Stripe con 7 días de trial."""
+    price_id = PRICE_MENSUAL if datos.plan == "mensual" else PRICE_ANUAL
+    try:
+        session = stripe.checkout.Session.create(
+            mode="subscription",
+            payment_method_types=["card"],
+            customer_email=datos.email,
+            subscription_data={
+                "trial_period_days": 7,
+                "metadata": {"user_id": datos.user_id},
+            },
+            line_items=[{"price": price_id, "quantity": 1}],
+            success_url=f"{URL_BASE}/?pago=ok&session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url=f"{URL_BASE}/?pago=cancelado",
+            metadata={"user_id": datos.user_id},
+        )
+        return {"url": session.url}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+class PeticionPortal(BaseModel):
+    stripe_customer_id: str
+
+
+@app.post("/stripe/portal")
+def portal_cliente(datos: PeticionPortal):
+    """Abre el portal de Stripe para gestionar la suscripción."""
+    try:
+        session = stripe.billing_portal.Session.create(
+            customer=datos.stripe_customer_id,
+            return_url=URL_BASE,
+        )
+        return {"url": session.url}
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@app.post("/stripe/webhook")
+async def stripe_webhook(request: Request):
+    """Recibe eventos de Stripe y actualiza Supabase."""
+    import supabase as sb
+    payload = await request.body()
+    sig_header = request.headers.get("stripe-signature")
+    webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
+    try:
+        if webhook_secret:
+            event = stripe.Webhook.construct_event(payload, sig_header, webhook_secret)
+        else:
+            event = stripe.Event.construct_from(
+                {"type": "test", "data": {}}, stripe.api_key
+            )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    # Cuando se activa o renueva una suscripción
+    if event["type"] in ("customer.subscription.created",
+                          "customer.subscription.updated"):
+        sub = event["data"]["object"]
+        user_id = sub.get("metadata", {}).get("user_id")
+        if user_id:
+            activa_hasta = datetime.datetime.fromtimestamp(
+                sub["current_period_end"]
+            ).isoformat()
+            import httpx
+            supabase_url = os.environ.get("SUPABASE_URL", "")
+            supabase_key = os.environ.get("SUPABASE_SERVICE_KEY", "")
+            if supabase_url and supabase_key:
+                httpx.patch(
+                    f"{supabase_url}/rest/v1/profiles?id=eq.{user_id}",
+                    headers={
+                        "apikey": supabase_key,
+                        "Authorization": f"Bearer {supabase_key}",
+                        "Content-Type": "application/json",
+                    },
+                    json={
+                        "plan": "premium",
+                        "stripe_customer_id": sub["customer"],
+                        "stripe_subscription_id": sub["id"],
+                        "suscripcion_activa_hasta": activa_hasta,
+                    },
+                )
+
+    # Cuando se cancela o expira
+    if event["type"] == "customer.subscription.deleted":
+        sub = event["data"]["object"]
+        user_id = sub.get("metadata", {}).get("user_id")
+        if user_id:
+            import httpx
+            supabase_url = os.environ.get("SUPABASE_URL", "")
+            supabase_key = os.environ.get("SUPABASE_SERVICE_KEY", "")
+            if supabase_url and supabase_key:
+                httpx.patch(
+                    f"{supabase_url}/rest/v1/profiles?id=eq.{user_id}",
+                    headers={
+                        "apikey": supabase_key,
+                        "Authorization": f"Bearer {supabase_key}",
+                        "Content-Type": "application/json",
+                    },
+                    json={"plan": "free"},
+                )
+
+    return {"ok": True}
+
+
 # =====================================================================
 class AnalisisRequest(BaseModel):
     # ⚠️ CORREGIDO (5 agosto, noche): mismo fallo que en PeticionMenu --
