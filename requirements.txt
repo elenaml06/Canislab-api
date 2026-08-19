@@ -2,3 +2,7 @@ fastapi
 uvicorn
 scipy
 numpy
+stripe
+pydantic
+python-dotenv
+httpx
