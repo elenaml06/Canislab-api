@@ -551,7 +551,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                 fila[idx[n]] = v; aporta_algo = True
         if not aporta_algo:
             continue
-        # ⚠️ AÑADIDO (5 agosto): +0.8% de margen sobre el mínimo exacto.
+        # ⚠️ AÑADIDO (5 agosto): +1.5% de margen sobre el mínimo exacto.
         # Encontrado probando la aleatoriedad de arriba: el programa podía
         # resolver EXACTO al límite (matemáticamente correcto con toda su
         # precisión), pero al redondear los gramos a 2 decimales para
@@ -559,7 +559,15 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # del mínimo -- pasando de "cumple" a "no cumple" solo por el
         # redondeo, no por un fallo real de la solución. Con este margen,
         # el redondeo ya no puede tirarlo por debajo.
-        lo = mn * der / 1000.0 * 1.008 if mn is not None else -np.inf
+        # ⚠️ SUBIDO de 0.8% a 1.5% (5 agosto, madrugada) — CASO REAL: el
+        # cloruro en un Toy CachorroJoven de 1.5kg tenía 156.36mg vs el
+        # mínimo de 157.50mg -- diferencia de 1.14mg, equivalente a 0.002g
+        # de sal (60.700mg cloruro/100g). El solver resolvía pidiendo 158.76mg
+        # (0.8% sobre el mínimo) pero el redondeo a 2 decimales bajaba el
+        # resultado 2.40mg por debajo de lo que el solver exigió. Con 1.5%
+        # el solver pide 159.97mg, dejando un colchón real de 2.47mg por
+        # encima del mínimo FEDIAF incluso después del redondeo.
+        lo = mn * der / 1000.0 * 1.015 if mn is not None else -np.inf
         hi = mx * der / 1000.0 if mx is not None else np.inf
         A_rows.append(fila); lb_rows.append(lo); ub_rows.append(hi)
 
