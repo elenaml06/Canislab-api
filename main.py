@@ -1823,10 +1823,46 @@ stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 #                 STRIPE_SECRET_KEY con la clave sk_test_...
 #   modo real   : se quitan esas variables y vuelven los de siempre.
 #
-# Los valores por defecto son los de producción, así que si no se
-# configura nada se comporta exactamente igual que antes.
+# ⚠️ CORREGIDO (20 agosto) — CASO REAL: aquí ponía que los valores por
+# defecto eran "los de producción". NO LO SON. Comprobado en el panel de
+# Stripe: estos dos price id se crearon el 19 de agosto DENTRO DE UNA
+# SANDBOX, así que son precios de mentira. Con una clave sk_live_ no
+# existen, y el primer cobro real habría fallado con "No such price" --
+# justo en el peor momento posible, con una clienta delante intentando
+# pagar.
+#
+# Se dejan como están porque son los que hacen falta AHORA para probar
+# (con clave sk_test_ funcionan), pero marcados por lo que son, y con la
+# comprobación de _precio_de_sandbox() más abajo para que no puedan
+# llegar a producción por descuido.
+PRECIOS_DE_SANDBOX = {
+    "price_1U6G2EDnx1sWAUrF2v88kDWZ",   # 4,99 €/mes, creado en sandbox el 19 ago
+    "price_1U6G3DDnx1sWAUrF5DseuSG1",   # 39 €/año,   creado en sandbox el 19 ago
+}
 PRICE_MENSUAL = os.environ.get("STRIPE_PRICE_MENSUAL") or "price_1U6G2EDnx1sWAUrF2v88kDWZ"
 PRICE_ANUAL   = os.environ.get("STRIPE_PRICE_ANUAL") or "price_1U6G3DDnx1sWAUrF5DseuSG1"
+
+
+def _modo_stripe():
+    """
+    "real", "prueba" o "sin configurar", deducido del prefijo de la clave.
+    NUNCA devuelve la clave ni parte de ella.
+    """
+    clave = stripe.api_key or ""
+    if clave.startswith("sk_live_"):
+        return "real"
+    if clave.startswith("sk_test_") or clave.startswith("rk_test_"):
+        return "prueba"
+    return "sin configurar"
+
+
+def _precio_de_sandbox(price_id):
+    """
+    ¿Este precio es uno de los de mentira? Se comprueba ANTES de llamar a
+    Stripe para poder dar un motivo entendible en vez del "resource_missing"
+    del error de la librería, que no le dice nada a nadie.
+    """
+    return price_id in PRECIOS_DE_SANDBOX
 # También configurable: para probar contra un despliegue de vista previa
 # de Vercel en vez de contra el dominio real.
 URL_BASE      = os.environ.get("URL_BASE") or "https://rawku.app"
@@ -1855,6 +1891,23 @@ def crear_checkout(datos: PeticionCheckout):
     if not price_id:
         raise HTTPException(400, f"Plan '{datos.plan}' no válido. "
                                  f"Usa uno de: {sorted(PLANES)}")
+
+    # ⚠️ AÑADIDO (20 agosto) — LA RED: cobrar de verdad con un precio de
+    # sandbox no da un error entendible, da un "resource_missing" de la
+    # librería de Stripe con la clienta delante. Peor: es un fallo que
+    # solo aparece la PRIMERA vez que alguien paga en serio, que es
+    # exactamente cuando no puedes permitírtelo. Se corta antes.
+    if _modo_stripe() == "real" and _precio_de_sandbox(price_id):
+        observabilidad.capturar(
+            RuntimeError("Clave de Stripe REAL con un precio de SANDBOX: "
+                         "hay que crear los precios de verdad y ponerlos en "
+                         "STRIPE_PRICE_MENSUAL / STRIPE_PRICE_ANUAL"),
+            endpoint="/stripe/checkout", plan=datos.plan, modo="real",
+            price_id=price_id)
+        raise HTTPException(
+            status_code=500,
+            detail="El cobro no está bien configurado en el servidor (los precios "
+                   "son de prueba y la clave es real). No se te ha cobrado nada.")
     try:
         session = stripe.checkout.Session.create(
             mode="subscription",
@@ -2218,6 +2271,20 @@ def verificar():
         # terminal, si el despliegue tiene Sentry recogiendo errores o si
         # falta poner SENTRY_DSN en las variables de entorno de Render.
         "sentry_activo": observabilidad.activo(),
+        # ⚠️ AÑADIDO (20 agosto) — para poder ver de un vistazo, desde el
+        # móvil, si el cobro está bien montado. NUNCA sale la clave ni un
+        # trozo: solo si es la real o la de pruebas, deducido del prefijo.
+        # "coherente" es la comprobación que importa: clave real con
+        # precios de sandbox es la combinación que rompería el primer
+        # cobro de verdad.
+        "stripe": {
+            "modo": _modo_stripe(),
+            "precios": ("de sandbox" if _precio_de_sandbox(PRICE_MENSUAL)
+                        else "propios"),
+            "webhook_configurado": bool(os.environ.get("STRIPE_WEBHOOK_SECRET")),
+            "coherente": not (_modo_stripe() == "real"
+                              and _precio_de_sandbox(PRICE_MENSUAL)),
+        },
     }
 
 
