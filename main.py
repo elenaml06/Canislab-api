@@ -1379,6 +1379,45 @@ def endpoint_transicion(datos: PeticionTransicion):
 # quitado) y se resuelve de cero con el MILP, así que el resultado SIEMPRE
 # esta comprobado de verdad contra los 30 requisitos, nunca puede quedar
 # a medias ni duplicado.
+# ⚠️ AÑADIDO (20 agosto) — DECIR POR QUÉ, NO SOLO QUE NO.
+# CASO REAL ENCONTRADO AUDITANDO: añadir sardina a un perro de 3 kg
+# fallaba siempre, y el mensaje era "no existe ninguna combinación que
+# cumpla los 30 requisitos" -- que suena a que el perro es imposible de
+# alimentar. La verdad era mucho más concreta y mucho más útil: la
+# sardina lleva tiaminasa (destruye la vitamina B1), el límite es el 10%
+# de las calorías del día, y en un perro de 3 kg eso son 18 g escasos --
+# una ración mínima ya se pasa. Negarse es correcto; no explicarlo, no.
+def _por_que_no_cabe(nombre, al, der, peso_perro_kg=None):
+    """Si un alimento no cabe por un límite de seguridad concreto, decirlo
+    en cristiano y con la cantidad real que sí cabría. None si no es
+    ninguno de estos casos."""
+    from seguridad import (TIAMINASA, MERCURIO_ALTO, TOPE_TIAMINASA_KCAL,
+                           TOPE_MERCURIO_KCAL, TOPE_VITD_KCAL, TOPE_VITD_KG075, _es)
+    a = al.get(nombre) or {}
+    kcal_100 = a.get("energia") or 0
+    if kcal_100 and _es(nombre, TIAMINASA):
+        cabe = 100.0 * der * TOPE_TIAMINASA_KCAL / kcal_100
+        return (f"{nombre} lleva tiaminasa, que destruye la vitamina B1, así que no "
+                f"puede pasar del {int(TOPE_TIAMINASA_KCAL * 100)}% de las calorías del "
+                f"día: como mucho unos {cabe:.0f} g para este perro, y una ración "
+                f"normal ya se pasa. Puedes dárselo de vez en cuando, pero no a diario.")
+    if kcal_100 and _es(nombre, MERCURIO_ALTO):
+        cabe = 100.0 * der * TOPE_MERCURIO_KCAL / kcal_100
+        return (f"{nombre} acumula mercurio, así que no puede pasar del "
+                f"{int(TOPE_MERCURIO_KCAL * 100)}% de las calorías del día: como mucho "
+                f"unos {cabe:.0f} g para este perro.")
+    vitd_100 = (a.get("nutrientes") or {}).get("vitD") or 0
+    if vitd_100:
+        tope = TOPE_VITD_KCAL * der / 1000.0
+        if peso_perro_kg and peso_perro_kg > 0:
+            tope = min(tope, TOPE_VITD_KG075 * (peso_perro_kg ** 0.75))
+        cabe = 100.0 * tope / vitd_100
+        if cabe < 20:
+            return (f"{nombre} lleva mucha vitamina D, y en un perro de este tamaño el "
+                    f"tope diario se alcanza con unos {cabe:.0f} g.")
+    return None
+
+
 def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_especie=None,
                           preservar_siempre=False):
     """
@@ -1527,10 +1566,29 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 break
 
     if not ok:
-        return {"factible": False,
-                "motivo": "Con este cambio no existe ninguna combinación que cumpla "
-                          "los 30 requisitos, ni siquiera soltando las proporciones "
-                          "habituales del BARF. Prueba con otro alimento."}
+        # ¿es culpa del alimento que se ha pedido meter? Se comprueba en vez
+        # de suponerlo: si sin él sí hay menú, el problema es él, y muchas
+        # veces se puede decir exactamente por qué (ver _por_que_no_cabe).
+        motivo = ("Con este cambio no existe ninguna combinación que cumpla "
+                  "los 30 requisitos, ni siquiera soltando las proporciones "
+                  "habituales del BARF. Prueba con otro alimento.")
+        culpable = None
+        if forzar:
+            ok_sin, _, _ = _intentar(None, margen_intentos=1)
+            if ok_sin:
+                culpable = forzar[0] if len(forzar) == 1 else None
+                explicacion = (_por_que_no_cabe(culpable, al, datos.der_objetivo,
+                                                datos.peso_perro_kg) if culpable else None)
+                if explicacion:
+                    motivo = explicacion
+                elif culpable:
+                    motivo = (f"{culpable} no cabe en la ración de este perro sin "
+                              f"incumplir algún requisito. El resto del menú sí "
+                              f"funciona: prueba con otro alimento.")
+        respuesta = {"factible": False, "motivo": motivo}
+        if culpable:
+            respuesta["alimento_que_no_cabe"] = culpable
+        return respuesta
     resultado_final = {
         "factible": True, "gramos": gramos, "ficha": ficha,
         "problemas_seguridad": _seguridad_completa(
