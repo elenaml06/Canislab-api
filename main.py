@@ -766,6 +766,24 @@ def _presupuesto_para_menu_actual(restante, dias_restantes_incluido_este):
 # Cada peldaño que se usa se cuenta en la respuesta, para que la app
 # pueda decir por qué este menú no se parece a los demás.
 # =====================================================================
+# ⚠️ CORREGIDO (20 agosto) — FALLO REAL ENCONTRADO CRUZANDO CON LA WEB:
+# ETAPAS_VALIDAS viene de optimizador.py (el motor viejo) y solo tiene
+# Adulto/CachorroJoven/CachorroCrecimiento. Pero el motor v2 admite
+# además Senior, Gestante y Lactante -- verificar.py las mapea con
+# EQUIVALENCIA (Senior usa el perfil de Adulto; gestación y lactancia el
+# de crecimiento temprano; lo que cambia en esas etapas son las kcal, y
+# de eso se encarga der.py). /menu/v2 las acepta sin problema.
+#
+# El fallo: /menu/revalidar validaba con _etapa_ok(), que usa la lista
+# vieja, así que devolvía 400 para CUALQUIER perro senior. La web manda
+# "Senior" y se traga el error en silencio (el .catch deja la revisión
+# en reposo), así que la revalidación por cambio de etapa simplemente NO
+# ocurría para los perros senior, sin que nada lo dijera. Justo el tipo
+# de fallo invisible que llevamos todo el día cazando.
+from verificar import EQUIVALENCIA as EQUIVALENCIA_V2
+ETAPAS_MOTOR_V2 = set(ETAPAS_VALIDAS) | set(EQUIVALENCIA_V2)
+
+
 CATEGORIAS_SECUNDARIAS = ("Vísceras", "Hígado", "Verduras y frutas")
 
 
@@ -1679,7 +1697,9 @@ def endpoint_revalidar(datos: PeticionRevalidar):
         raise HTTPException(400, "Estos alimentos del menú no existen en la base de "
                                  "datos: " + ", ".join(desconocidos))
 
-    _etapa_ok(datos.etapa_requisitos)
+    if datos.etapa_requisitos not in ETAPAS_MOTOR_V2:
+        raise HTTPException(400, f"Etapa '{datos.etapa_requisitos}' no valida. "
+                                 f"Usa una de: {sorted(ETAPAS_MOTOR_V2)}")
 
     ficha = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
     seguro = _menu_precalculado_es_seguro(gramos, al, datos.der_objetivo, datos.peso_perro_kg)
