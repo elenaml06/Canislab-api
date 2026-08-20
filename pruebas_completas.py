@@ -569,6 +569,26 @@ try:
     if _LLAMADAS:
         fallos.append("BLOQUE10: un pago sin user_id escribió en Supabase igualmente")
 
+    # 4b. un plan mal escrito NO puede acabar cobrando el anual.
+    #     Antes: `PRICE_MENSUAL if plan == "mensual" else PRICE_ANUAL`, o sea
+    #     que cualquier cosa que no fuera exactamente "mensual" (un "Mensual"
+    #     con mayúscula, un campo vacío, un typo) cobraba un año por
+    #     adelantado. Ahora los planes válidos son explícitos.
+    if set(_api.PLANES) != {"mensual", "anual"}:
+        fallos.append(f"BLOQUE10: los planes válidos han cambiado: {sorted(_api.PLANES)}")
+    for _plan_malo in ("", "premium", "xyz", "anualidad"):
+        _r = _c.post("/stripe/checkout",
+                     json={"user_id": "u", "email": "a@b.com", "plan": _plan_malo})
+        if _r.status_code != 400 or "no válido" not in str(_r.json().get("detail", "")):
+            fallos.append(f"BLOQUE10: el plan inválido {_plan_malo!r} no se rechazó "
+                          f"(HTTP {_r.status_code}) -- podría estar cobrando el anual")
+    # y las variantes de mayúsculas/espacios SÍ tienen que valer como mensual
+    for _plan_ok in ("Mensual", "MENSUAL", " mensual "):
+        _r = _c.post("/stripe/checkout",
+                     json={"user_id": "u", "email": "a@b.com", "plan": _plan_ok})
+        if "no válido" in str(_r.json().get("detail", "")):
+            fallos.append(f"BLOQUE10: {_plan_ok!r} se rechazó, debería valer como mensual")
+
     # 5. firma inválida -> 400, y sin tocar nada
     _LLAMADAS.clear()
     _cuerpo = _json.dumps({"id": "evt", "type": "customer.subscription.created",

@@ -1810,9 +1810,36 @@ import stripe
 
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
 
-PRICE_MENSUAL = "price_1U6G2EDnx1sWAUrF2v88kDWZ"
-PRICE_ANUAL   = "price_1U6G3DDnx1sWAUrF5DseuSG1"
-URL_BASE      = "https://rawku.app"
+# ⚠️ CORREGIDO (20 agosto) — LOS PRICE ID SON DISTINTOS EN MODO PRUEBA Y
+# EN MODO REAL. En Stripe, un precio creado en modo real NO existe en modo
+# prueba, y al revés. Estando escritos en duro, no había forma de hacer un
+# pago de prueba con una tarjeta falsa sin tocar el código y volver a
+# desplegar -- que es justo lo que hay que hacer ANTES de cobrarle a
+# nadie de verdad. Ahora se pueden cambiar desde las variables de entorno
+# de Render, sin tocar nada:
+#
+#   modo prueba : STRIPE_PRICE_MENSUAL / STRIPE_PRICE_ANUAL con los price
+#                 id de prueba (empiezan igual, pero son otros), y
+#                 STRIPE_SECRET_KEY con la clave sk_test_...
+#   modo real   : se quitan esas variables y vuelven los de siempre.
+#
+# Los valores por defecto son los de producción, así que si no se
+# configura nada se comporta exactamente igual que antes.
+PRICE_MENSUAL = os.environ.get("STRIPE_PRICE_MENSUAL") or "price_1U6G2EDnx1sWAUrF2v88kDWZ"
+PRICE_ANUAL   = os.environ.get("STRIPE_PRICE_ANUAL") or "price_1U6G3DDnx1sWAUrF5DseuSG1"
+# También configurable: para probar contra un despliegue de vista previa
+# de Vercel en vez de contra el dominio real.
+URL_BASE      = os.environ.get("URL_BASE") or "https://rawku.app"
+
+# ⚠️ CORREGIDO (20 agosto) — CASO REAL DE COBRO INDEBIDO: el precio se
+# elegía con `PRICE_MENSUAL if plan == "mensual" else PRICE_ANUAL`. Es
+# decir: CUALQUIER cosa que no fuera exactamente la palabra "mensual"
+# --un "Mensual" con mayúscula, un typo, un campo vacío, un plan que
+# alguien añada mañana-- caía en el anual, que es el caro. Un fallo de
+# tecleo cobraba un año por adelantado sin que nada lo impidiera.
+# Ahora los planes válidos están explícitos y cualquier otra cosa se
+# rechaza con un 400 antes de crear nada en Stripe.
+PLANES = {"mensual": PRICE_MENSUAL, "anual": PRICE_ANUAL}
 
 
 class PeticionCheckout(BaseModel):
@@ -1824,7 +1851,10 @@ class PeticionCheckout(BaseModel):
 @app.post("/stripe/checkout")
 def crear_checkout(datos: PeticionCheckout):
     """Crea una sesión de checkout de Stripe con 7 días de trial."""
-    price_id = PRICE_MENSUAL if datos.plan == "mensual" else PRICE_ANUAL
+    price_id = PLANES.get((datos.plan or "").strip().lower())
+    if not price_id:
+        raise HTTPException(400, f"Plan '{datos.plan}' no válido. "
+                                 f"Usa uno de: {sorted(PLANES)}")
     try:
         session = stripe.checkout.Session.create(
             mode="subscription",
