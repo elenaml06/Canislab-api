@@ -1,0 +1,51 @@
+# ─────────────────────────────────────────────────────────────────────────
+# MANTENER LA API DESPIERTA
+#
+# El plan gratuito de Render apaga el servicio tras ~15 minutos sin
+# tráfico. Volver a arrancarlo tarda cerca de un minuto, y ese minuto lo
+# paga entero la primera persona que entre: se queda mirando "Calculando
+# el menú de Cairo..." sin saber si va o si se ha roto.
+#
+# Esto le hace una petición ligera cada 10 minutos para que no llegue a
+# dormirse. Se usa /  (la raíz) a propósito, no /verificar: la raíz solo
+# devuelve {"estado": "..."} sin leer los JSON ni calcular hashes, así
+# que despierta el servicio sin darle trabajo.
+#
+# Coste: 0 €. GitHub Actions es gratis en repos públicos.
+#
+# Para apagarlo: Actions → "Mantener la API despierta" → Disable workflow.
+# ─────────────────────────────────────────────────────────────────────────
+name: Mantener la API despierta
+
+on:
+  schedule:
+    # cada 10 minutos. GitHub no garantiza el minuto exacto cuando hay
+    # mucha carga, pero el margen de Render (15 min) absorbe el retraso.
+    - cron: "*/10 * * * *"
+  workflow_dispatch:        # para poder dispararlo a mano desde la web
+
+# Si un intento se queda colgado, que no se acumulen.
+concurrency:
+  group: mantener-despierta
+  cancel-in-progress: true
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Despertar la API
+        run: |
+          # --max-time 90: un arranque en frío de Render tarda cerca de un
+          # minuto. Si abortáramos antes, estaríamos matando justo la
+          # petición que la estaba despertando.
+          codigo=$(curl -s -o /dev/null -w "%{http_code}" --max-time 90 \
+                   https://canislab-api.onrender.com/)
+          echo "La API respondió $codigo"
+          # Solo se falla si la API contesta con un error suyo (5xx). Un
+          # fallo de red del runner no debe llenarte el correo de avisos
+          # por algo que no es tuyo.
+          if [ "$codigo" -ge 500 ] 2>/dev/null; then
+            echo "::error::La API respondió $codigo"
+            exit 1
+          fi
