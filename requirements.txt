@@ -6,3 +6,6 @@ stripe
 pydantic
 python-dotenv
 httpx
+# captura de errores en produccion (ver observabilidad.py). El extra
+# [fastapi] trae la integracion que instrumenta los endpoints sola.
+sentry-sdk[fastapi]>=2.20,<3

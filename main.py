@@ -126,6 +126,24 @@ def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
 import datetime
 _ARRANCADO_EN = datetime.datetime.utcnow().isoformat() + "Z"
 
+# ⚠️ AÑADIDO (20 agosto) — SENTRY. Hasta ahora, cuando un endpoint
+# fallaba en producción la única pista era el log de Render: hay que
+# entrar a buscarlo a mano, se pierde al reiniciar el servicio y no
+# avisa de nada. Con esto, cualquier error de /menu/v2, /analizar,
+# /menu/semana, etc. llega al panel de Sentry con la traza completa y
+# el cuerpo de la petición que lo provocó, así que se puede reproducir
+# sin depender de que el usuario recuerde qué estaba haciendo.
+#
+# Va AQUÍ, justo ANTES de crear el FastAPI(), y no más abajo, porque la
+# integración instrumenta Starlette/FastAPI en el momento del init: si
+# se llamara después, la app ya estaría construida sin instrumentar y
+# no se capturaría nada.
+#
+# Sin la variable de entorno SENTRY_DSN esto no hace absolutamente
+# nada y la API arranca igual que siempre (ver observabilidad.py).
+import observabilidad
+observabilidad.iniciar_sentry()
+
 app = FastAPI(title="Rawku API")
 
 # permite que la app (en el navegador) pueda llamar a esta API
@@ -415,11 +433,25 @@ def endpoint_menu_v2(datos: PeticionMenu):
     etc.) -- es la red de seguridad para que, pase lo que pase, la app
     reciba SIEMPRE algo que sepa interpretar.
     """
+    observabilidad.etiquetar(endpoint="/menu/v2", etapa=datos.etapa_requisitos)
     try:
         return _resolver_menu_v2_interno(datos)
     except Exception as e:
         import traceback
         traceback.print_exc()  # queda en los logs de Render para poder investigarlo
+        # ⚠️ AÑADIDO (20 agosto) — este try/except es a proposito (el
+        # frontend tiene que recibir JSON valido pase lo que pase), pero
+        # tiene un efecto secundario que hay que compensar a mano: al no
+        # dejar salir nunca la excepcion, Sentry NO la ve por su cuenta.
+        # Sin esta linea, justo el fallo mas importante -- que el motor
+        # reviente generando un menu -- seria el unico invisible.
+        observabilidad.capturar(e, endpoint="/menu/v2",
+                                etapa=datos.etapa_requisitos,
+                                der_objetivo=datos.der_objetivo,
+                                peso_perro_kg=datos.peso_perro_kg,
+                                tamano=datos.tamano,
+                                n_alimentos=len(datos.nombres_alimentos or []),
+                                patologias=datos.patologias)
         return {"factible": False,
                 "motivo": f"Ha fallado algo inesperado en el servidor ({type(e).__name__}). "
                           "Inténtalo de nuevo -- si se repite, dínoslo."}
@@ -560,6 +592,12 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
     llamada, con el presupuesto semanal de seguridad crónica repartido
     y endurecido en cada uno según lo que ya llevan los anteriores --
     ver el bloque de comentarios justo arriba para el porqué completo."""
+    observabilidad.etiquetar(endpoint="/menu/semana", etapa=datos.etapa_requisitos)
+    # se declara FUERA del try porque el except de abajo lo lee para
+    # contarle a Sentry cuántos menús se habían generado antes del fallo:
+    # si se inicializara dentro, un error en cargar_v2() dejaría la
+    # variable sin definir y el propio except reventaría.
+    menus_generados = []
     try:
         al, req = cargar_v2()
         n = max(1, min(8, numero_de_menus))
@@ -568,7 +606,6 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
         dias_por_menu = [base_dias + (1 if i < resto_dias else 0) for i in range(n)]
 
         presupuesto_restante = _presupuesto_semanal_inicial(datos.der_objetivo)
-        menus_generados = []
         especies_usadas = []
 
         for i in range(n):
@@ -619,6 +656,14 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
     except Exception as e:
         import traceback
         traceback.print_exc()
+        # mismo motivo que en /menu/v2: el except se traga la excepcion
+        # a proposito, asi que hay que avisar a Sentry explicitamente.
+        observabilidad.capturar(e, endpoint="/menu/semana",
+                                etapa=datos.etapa_requisitos,
+                                der_objetivo=datos.der_objetivo,
+                                peso_perro_kg=datos.peso_perro_kg,
+                                numero_de_menus=numero_de_menus,
+                                menus_ya_generados=len(menus_generados))
         return {"factible": False,
                 "motivo": f"Ha fallado algo inesperado generando la semana ({type(e).__name__}). "
                           "Inténtalo de nuevo -- si se repite, dínoslo."}
@@ -1273,6 +1318,14 @@ def crear_checkout(datos: PeticionCheckout):
         )
         return {"url": session.url}
     except Exception as e:
+        # ⚠️ AÑADIDO (20 agosto) — esto devuelve 400, no 500, así que
+        # Sentry tampoco lo vería solo: un 400 es "el cliente ha mandado
+        # algo mal" y no se reporta por defecto. Pero aquí el 400 tapa
+        # también los fallos NUESTROS (clave de Stripe mal puesta, price
+        # id que ya no existe, Stripe caído) -- y que nadie pueda pagar
+        # es el peor fallo posible de toda la API. Sin el email ni el
+        # user_id: eso lo borra observabilidad.py antes de enviarlo.
+        observabilidad.capturar(e, endpoint="/stripe/checkout", plan=datos.plan)
         raise HTTPException(status_code=400, detail=str(e))
 
 
@@ -1290,6 +1343,9 @@ def portal_cliente(datos: PeticionPortal):
         )
         return {"url": session.url}
     except Exception as e:
+        # mismo motivo que en /stripe/checkout: si esto falla, el usuario
+        # no puede gestionar ni cancelar su suscripción.
+        observabilidad.capturar(e, endpoint="/stripe/portal")
         raise HTTPException(status_code=400, detail=str(e))
 
 
@@ -1502,11 +1558,16 @@ def verificar():
         "detalle": detalle,
         "arrancado_en": _ARRANCADO_EN,
         "sello_main_py_actual": hash_main,
+        # ⚠️ AÑADIDO (20 agosto) — para poder confirmar desde el móvil, sin
+        # terminal, si el despliegue tiene Sentry recogiendo errores o si
+        # falta poner SENTRY_DSN en las variables de entorno de Render.
+        "sentry_activo": observabilidad.activo(),
     }
 
 
 @app.post("/analizar")
 def analizar(req: AnalisisRequest):
+    observabilidad.etiquetar(endpoint="/analizar", etapa=req.etapa_requisitos)
     der = req.der_objetivo
     if der is None:
         if req.peso_kg is None or req.etapa_der is None:
@@ -1540,3 +1601,22 @@ def listar_alimentos():
     for v in por_cat.values():
         v.sort(key=lambda x: x["nombre"])
     return por_cat
+
+
+# =====================================================================
+# COMPROBAR QUE SENTRY RECOGE DE VERDAD — se abre en el navegador
+#   https://canislab-api.onrender.com/sentry/prueba
+# Provoca un error a proposito para verificar que llega al panel de
+# Sentry. Va apagado salvo que se ponga SENTRY_PRUEBA=1 en Render, para
+# que no quede una URL publica que cualquiera pueda usar para llenar de
+# ruido el proyecto (el plan gratuito tiene un limite de eventos al mes).
+# Cuando ya se ha comprobado, se quita esa variable y listo.
+# =====================================================================
+@app.get("/sentry/prueba")
+def sentry_prueba():
+    if os.environ.get("SENTRY_PRUEBA") != "1":
+        raise HTTPException(404, "No encontrado")
+    if not observabilidad.activo():
+        raise HTTPException(
+            400, "Sentry no esta activo: falta la variable SENTRY_DSN en el entorno.")
+    raise RuntimeError("Error de prueba de Rawku: si ves esto en Sentry, funciona.")
