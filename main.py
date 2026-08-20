@@ -123,6 +123,96 @@ def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
 # desde CUÁNDO lleva corriendo este proceso -- si acabas de subir algo
 # nuevo y este número es de hace horas, esa es la prueba de que el
 # despliegue no se ha aplicado todavía.
+# =====================================================================
+# ⚠️ AÑADIDO (20 agosto) — EL ÚNICO PUNTO POR EL QUE SALE UN MENÚ
+#
+# CASO REAL ENCONTRADO AUDITANDO: hasta ahora, "el menú siempre está
+# verificado" dependía de que CADA camino se acordara de comprobarlo por
+# su cuenta. La mayoría lo hacía. Tres no:
+#
+#   1. /catalogo servía un menú pre-calculado y reescalado comprobando
+#      SOLO los 5 límites de seguridad crónica -- nunca los 30
+#      requisitos de FEDIAF ni el ratio Ca:P.
+#   2. /menu (el motor viejo) hacía exactamente lo mismo: pasaba por
+#      _menu_precalculado_es_seguro y se entregaba, sin verificar_v2.
+#   3. Dentro de /menu/v2, el reintento libre de "personalizar" (cuando
+#      forzar lo elegido a mano no da solución) llama a resolver_v2 y
+#      devuelve el resultado SIN mirar el semáforo, a diferencia de
+#      todos los demás caminos, que exigen verde. Que ese reintento
+#      exista, y que los otros reintenten hasta 3 veces "hasta que sea
+#      verde", demuestra que el solver por sí solo no siempre sale verde.
+#
+# El fallo de fondo es de diseño, no de despiste: una garantía que hay
+# que acordarse de aplicar en N sitios se rompe en cuanto aparece el
+# sitio N+1. Esta función es ese sitio único. Cualquier endpoint que
+# devuelva un menú lo pasa por aquí, y aquí se verifica de cero contra
+# los 30 requisitos + Ca:P + los límites de seguridad, venga de donde
+# venga. Si no está verde, NO se entrega: se devuelve "no factible".
+#
+# Preferimos no dar menú a dar uno que no cumple. Ese es el trato.
+# =====================================================================
+def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
+                           origen, al=None, req=None):
+    """
+    Último filtro antes de devolver cualquier menú. Devuelve la respuesta
+    tal cual (con la ficha recalculada) si el menú está verificado, o una
+    respuesta de rechazo si no.
+
+    al/req se pasan cuando quien llama ya los tiene cargados: cargar_v2()
+    lee y parsea los dos JSON enteros cada vez, y no tiene sentido
+    hacerlo dos veces en la misma petición.
+    """
+    if not isinstance(respuesta, dict) or not respuesta.get("factible"):
+        return respuesta
+    gramos = respuesta.get("menu") or respuesta.get("gramos")
+    if not gramos:
+        return respuesta
+    if al is None or req is None:
+        al, req = cargar_v2()
+
+    ficha = verificar_v2(gramos, al, req, der, etapa)
+    seguro = _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg)
+
+    if ficha["semaforo"] != "verde" or not seguro:
+        # Que esto salte significa que algún camino ha construido un menú
+        # que no cumple. Es justo el tipo de fallo que no puede quedarse
+        # en un log de Render: va a Sentry con el detalle.
+        fallos = [f["nutriente"] for f in ficha.get("rojos", [])]
+        observabilidad.capturar(
+            RuntimeError(f"Menu no verificado bloqueado en {origen}: "
+                         f"semaforo={ficha['semaforo']} seguridad_ok={seguro}"),
+            endpoint=origen, etapa=etapa, der_objetivo=der,
+            peso_perro_kg=peso_perro_kg, semaforo=ficha["semaforo"],
+            nutrientes_en_rojo=fallos, limites_seguridad_ok=seguro,
+            n_alimentos=len(gramos))
+        return {
+            "factible": False,
+            "motivo": ("El menú que salía para este perro no cumple todos los "
+                       "requisitos, así que no te lo damos. Prueba a cambiar "
+                       "algún alimento o a quitar alguna restricción."),
+            "verificacion": {
+                "semaforo": ficha["semaforo"],
+                "cumple": ficha["correctos"],
+                "de": ficha["total"],
+                "nutrientes_en_rojo": fallos,
+                "limites_de_seguridad_ok": seguro,
+            },
+        }
+
+    # La ficha que se entrega es SIEMPRE la de este filtro, calculada
+    # sobre los gramos que de verdad se devuelven -- no una arrastrada de
+    # un paso anterior que pueda haberse quedado vieja.
+    respuesta["ficha"] = ficha
+    respuesta["verificado"] = {
+        "contra": etapa,
+        "der_objetivo": der,
+        "cumple": ficha["correctos"],
+        "de": ficha["total"],
+        "ratio_ca_p": ficha.get("ratio_ca_p"),
+    }
+    return respuesta
+
+
 import datetime
 _ARRANCADO_EN = datetime.datetime.utcnow().isoformat() + "Z"
 
@@ -297,6 +387,28 @@ class PeticionAnadirQuitarAlimento(BaseModel):
     peso_adulto_esperado_kg: Optional[float] = None
 
 
+# ⚠️ AÑADIDO (20 agosto) — CASO 3: EL PERRO CAMBIA DE CATEGORÍA.
+# Ver el bloque de comentarios del endpoint /menu/revalidar para el caso
+# real completo. menu_actual aquí lleva GRAMOS, no solo nombres como en
+# los modelos de edición: para poder verificar el menú que el perro está
+# comiendo de verdad hace falta saber cuánto de cada cosa, no solo qué.
+class PeticionRevalidar(BaseModel):
+    menu_actual_gramos: dict          # {"Lengua de ternera": 485.3, ...}
+    der_objetivo: float               # el DER de AHORA, no el de cuando se generó
+    etapa_requisitos: str             # la etapa de AHORA
+    peso_perro_kg: Optional[float] = None
+    peso_adulto_esperado_kg: Optional[float] = None
+    nombres_excluidos: Optional[list] = None
+    patologias: Optional[list] = None
+    especies_excluidas: list[str] = []
+    categorias_excluidas: Optional[list] = None
+
+    @property
+    def menu_actual(self):
+        """_recalcular_con_motor() espera una lista de nombres."""
+        return list(self.menu_actual_gramos or {})
+
+
 class PeticionTransicion(BaseModel):
     fecha_inicio: str  # "2026-07-25"
     num_menus_elegidos: int
@@ -361,13 +473,15 @@ def endpoint_menu(datos: PeticionMenu):
     # límite se puede sobrepasar nunca" no puede depender de que nadie
     # descubra y use este camino. Se valida el resultado igual que en
     # el catálogo pre-calculado antes de devolverlo.
-    gramos_resultado = resultado.get("gramos") or resultado.get("menu")
-    if resultado.get("factible") and gramos_resultado and not _menu_precalculado_es_seguro(
-            gramos_resultado, {a["nombre"]: a for a in alimentos}, datos.der_objetivo, datos.peso_perro_kg):
-        return {"factible": False,
-                "motivo": "Este motor (antiguo) no puede garantizar los límites de seguridad "
-                          "crónica actuales -- usa /menu/v2 en su lugar."}
-    return resultado
+    # ⚠️ CORREGIDO (20 agosto) — CASO REAL ENCONTRADO AUDITANDO: aquí solo
+    # se comprobaban los 5 límites de seguridad crónica, nunca los 30
+    # requisitos de FEDIAF ni el ratio Ca:P. Es decir: este endpoint podía
+    # entregar un menú que no se pasaba de ningún tope tóxico pero que
+    # tampoco cubría los mínimos -- y salía como bueno. Ahora pasa por el
+    # mismo filtro único que todos los demás, que exige verde de verdad.
+    return _garantizar_verificado(resultado, datos.der_objetivo,
+                                  datos.etapa_requisitos, datos.peso_perro_kg,
+                                  origen="/menu (motor viejo)")
 
 
 @app.get("/catalogo/{tamano}/{etapa}")
@@ -390,7 +504,7 @@ def endpoint_catalogo(tamano: str, etapa: str, der_objetivo: float = None, peso_
     peso de verdad del perro.
     """
     from catalogo_menus import CATALOGO
-    al, _ = cargar_v2()
+    al, _req_cat = cargar_v2()
     clave = f"{tamano}_{etapa}"
     entrada = CATALOGO.get(clave)
     if not entrada:
@@ -408,14 +522,25 @@ def endpoint_catalogo(tamano: str, etapa: str, der_objetivo: float = None, peso_
                 gramos_escalados[n] = round(min(g * factor, techo), 2) if techo else round(g * factor, 2)
             else:
                 gramos_escalados[n] = round(g * factor, 2)
-        if not _menu_precalculado_es_seguro(gramos_escalados, al, der_objetivo, peso_perro_kg):
+        # ⚠️ CORREGIDO (20 agosto) — CASO REAL ENCONTRADO AUDITANDO: aquí
+        # solo se miraban los 5 límites de seguridad crónica. Un menú del
+        # catálogo, reescalado a otras kcal y con los suplementos topados
+        # por peso, puede quedarse CORTO en nutrientes sin superar ningún
+        # tope -- y se servía igual. Ahora se verifica de verdad contra
+        # los 30 requisitos por el mismo filtro que el resto.
+        verificado = _garantizar_verificado(
+            {"factible": True, "gramos": gramos_escalados},
+            der_objetivo, etapa, peso_perro_kg, origen="/catalogo", al=al, req=_req_cat)
+        if not verificado.get("factible"):
             return {"encontrado": False,
                     "motivo": "El menú de catálogo para este tamaño/etapa, reescalado a "
-                              "este peso y calorías, superaría un límite de seguridad -- "
+                              "este peso y calorías, ya no cumple todos los requisitos -- "
                               "pide el menú por /menu/v2 en su lugar, que resuelve en vivo "
-                              "respetando siempre esos límites."}
+                              "comprobándolos siempre.",
+                    "verificacion": verificado.get("verificacion")}
         return {"encontrado": True, **entrada, "gramos": gramos_escalados,
-                "der_escalado_a": der_objetivo}
+                "der_escalado_a": der_objetivo,
+                "ficha": verificado["ficha"], "verificado": verificado["verificado"]}
 
     return {"encontrado": True, **entrada}
 
@@ -435,7 +560,10 @@ def endpoint_menu_v2(datos: PeticionMenu):
     """
     observabilidad.etiquetar(endpoint="/menu/v2", etapa=datos.etapa_requisitos)
     try:
-        return _resolver_menu_v2_interno(datos)
+        return _garantizar_verificado(
+            _resolver_menu_v2_interno(datos),
+            datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
+            origen="/menu/v2")
     except Exception as e:
         import traceback
         traceback.print_exc()  # queda en los logs de Render para poder investigarlo
@@ -618,7 +746,10 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
                 "presupuesto_semanal_restante": presupuesto_para_este,
                 "evitar_especies": list(datos.evitar_especies or []) + especies_usadas,
             })
-            resultado = _resolver_menu_v2_interno(datos_este)
+            resultado = _garantizar_verificado(
+                _resolver_menu_v2_interno(datos_este),
+                datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
+                origen="/menu/semana", al=al, req=req)
 
             if not resultado.get("factible"):
                 # ⚠️ si YA se generó al menos un menú, se devuelven los que
@@ -1103,7 +1234,15 @@ def endpoint_transicion(datos: PeticionTransicion):
 # quitado) y se resuelve de cero con el MILP, así que el resultado SIEMPRE
 # esta comprobado de verdad contra los 30 requisitos, nunca puede quedar
 # a medias ni duplicado.
-def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_especie=None):
+def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_especie=None,
+                          preservar_siempre=False):
+    """
+    preservar_siempre (añadido 20 agosto): normalmente "intentar mantener
+    el resto del menú" solo se activa cuando hay una edición de por medio
+    (se fuerza o se excluye algo). /menu/revalidar necesita esa misma
+    mecánica SIN edición ninguna: el menú no cambia por lo que pida el
+    usuario, sino porque el perro ha cambiado de etapa.
+    """
     al, req = cargar_v2()
     # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL GRAVE ENCONTRADO,
     # pedido expreso: "si cambio un alimento de un menú, pero hay más
@@ -1173,7 +1312,7 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
     # None, así que "preservar el resto" nunca se activaba ahí, cuando
     # es exactamente el mismo caso: quitar algo también debería intentar
     # mantener todo lo demás, dejando que el motor rellene el hueco.
-    if menu_actual and (forzar or excluir_nombres):
+    if menu_actual and (forzar or excluir_nombres or preservar_siempre):
         # ⚠️ CORREGIDO (5 agosto, madrugada) — CASO REAL ENCONTRADO: "Sal
         # común" desaparecía al editar OTRO alimento, sin ningún aviso.
         # Motivo: "Extras" estaba en esta lista de categorías "libres de
@@ -1200,7 +1339,9 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 resultado["problemas_seguridad"] = _seguridad_completa(
                     gramos_pres, al, datos.der_objetivo, datos.etapa_requisitos, datos.patologias,
                     peso_perro_kg=datos.peso_perro_kg)
-                return resultado
+                return _garantizar_verificado(resultado, datos.der_objetivo,
+                                              datos.etapa_requisitos, datos.peso_perro_kg,
+                                              origen="edicion (preservando)", al=al, req=req)
             # no se pudo manteniendo todo -- se sigue abajo con el
             # comportamiento libre, y se avisa de qué se perdió
             ok_libre, gramos_libre, ficha_libre = _intentar(forzar)
@@ -1217,7 +1358,9 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 resultado["problemas_seguridad"] = _seguridad_completa(
                     gramos_libre, al, datos.der_objetivo, datos.etapa_requisitos, datos.patologias,
                     peso_perro_kg=datos.peso_perro_kg)
-                return resultado
+                return _garantizar_verificado(resultado, datos.der_objetivo,
+                                              datos.etapa_requisitos, datos.peso_perro_kg,
+                                              origen="edicion (libre)", al=al, req=req)
             ok, gramos, ficha = ok_libre, gramos_libre, ficha_libre
         else:
             ok, gramos, ficha = _intentar(forzar)
@@ -1228,12 +1371,13 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
         return {"factible": False,
                 "motivo": "Con este cambio no existe ninguna combinación que cumpla "
                           "los 30 requisitos. Prueba con otro alimento."}
-    return {
+    return _garantizar_verificado({
         "factible": True, "gramos": gramos, "ficha": ficha,
         "problemas_seguridad": _seguridad_completa(
             gramos, al, datos.der_objetivo, datos.etapa_requisitos, datos.patologias,
             peso_perro_kg=datos.peso_perro_kg),
-    }
+    }, datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
+        origen="edicion", al=al, req=req)
 
 
 @app.post("/menu/cambiar")
@@ -1269,9 +1413,118 @@ def endpoint_quitar_alimento(datos: PeticionAnadirQuitarAlimento):
     return _recalcular_con_motor(datos, excluir_nombres=[datos.alimento])
 
 
+# =====================================================================
+# ⚠️ AÑADIDO (20 agosto) — CASO 3: EL PERRO CAMBIA DE CATEGORÍA
+#
+# CASO REAL, REPRODUCIDO: se genera un menú para un cachorro de 15 kg en
+# CachorroCrecimiento con DER 1200. Sale VERDE, 30 de 30 requisitos.
+# Meses después el perro es adulto: 30 kg, DER 1500, etapa Adulto. Ese
+# MISMO menú, verificado contra la etapa nueva, sale ROJO -- 26 de 30,
+# con manganeso al 68% y linoleico al 75%. Y sigue llevando dentro
+# "V-INTEGRA Cachorro", un multivitamínico formulado para crecimiento.
+#
+# Hasta ahora no había NINGÚN camino en el backend para esto. Al editar
+# un alimento el menú se rehacía entero con el motor, pero al cambiar el
+# perro no se rehacía nada: el menú guardado se seguía sirviendo tal
+# cual, y lo único que cambiaba era el DER. Los requisitos de FEDIAF no
+# son los mismos para un cachorro que para un adulto -- no es solo
+# cuestión de escalar las calorías.
+#
+# Este endpoint es ese camino. Recibe el menú que el perro está comiendo
+# y los datos de AHORA, y:
+#   · si el menú sigue cumpliendo con la etapa nueva, lo dice y no toca
+#     nada -- no se cambia un menú que funciona solo porque el perro
+#     haya cumplido años;
+#   · si ya no cumple, lo REHACE con motor_completo.py, intentando
+#     conservar todos los alimentos que se puedan (los suplementos no:
+#     esos los vuelve a elegir el motor, que es justo lo que hace falta
+#     cuando el multivitamínico era el de cachorro), y dice qué falló y
+#     qué cambió.
+# En los dos casos la respuesta sale por _garantizar_verificado().
+# =====================================================================
+@app.post("/menu/revalidar")
+def endpoint_revalidar(datos: PeticionRevalidar):
+    al, req = cargar_v2()
+    gramos = datos.menu_actual_gramos or {}
+    if not gramos:
+        raise HTTPException(400, "Hace falta el menú actual con sus gramos para revalidarlo.")
+
+    desconocidos = [n for n in gramos if n not in al]
+    if desconocidos:
+        raise HTTPException(400, "Estos alimentos del menú no existen en la base de "
+                                 "datos: " + ", ".join(desconocidos))
+
+    _etapa_ok(datos.etapa_requisitos)
+
+    ficha = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
+    seguro = _menu_precalculado_es_seguro(gramos, al, datos.der_objetivo, datos.peso_perro_kg)
+
+    if ficha["semaforo"] == "verde" and seguro:
+        return _garantizar_verificado({
+            "factible": True,
+            "sigue_siendo_valido": True,
+            "menu": gramos,
+            "problemas_seguridad": _seguridad_completa(
+                gramos, al, datos.der_objetivo, datos.etapa_requisitos,
+                datos.patologias, peso_perro_kg=datos.peso_perro_kg),
+            "kcal_total": sum(al[n]["energia"] * g / 100 for n, g in gramos.items()),
+            "gramos_total": sum(gramos.values()),
+        }, datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
+            origen="/menu/revalidar (sin cambios)", al=al, req=req)
+
+    # Ya no cumple: se rehace con el motor, conservando lo que se pueda.
+    motivo = []
+    for f in ficha.get("rojos", []):
+        if f.get("cubre_pct") is not None:
+            motivo.append(f"{f['nutriente']} se queda en el {f['cubre_pct']}%")
+        else:
+            motivo.append(f"{f['nutriente']} se pasa del máximo")
+    if not seguro:
+        motivo.append("supera un límite de seguridad crónica con las calorías de ahora")
+
+    resultado = _recalcular_con_motor(datos, preservar_siempre=True)
+    if not resultado.get("factible"):
+        return {
+            "factible": False,
+            "sigue_siendo_valido": False,
+            "motivo": ("Este menú ya no cumple los requisitos de la etapa actual del perro "
+                       "y no hemos encontrado forma de arreglarlo conservando sus alimentos. "
+                       "Genera un menú nuevo."),
+            "por_que_ya_no_vale": motivo,
+        }
+
+    nuevos = resultado.get("gramos") or resultado.get("menu") or {}
+    resultado["sigue_siendo_valido"] = False
+    resultado["por_que_ya_no_vale"] = motivo
+    resultado["cambios"] = {
+        "quitados": sorted(n for n in gramos if n not in nuevos),
+        "anadidos": sorted(n for n in nuevos if n not in gramos),
+        "se_mantienen": sorted(n for n in nuevos if n in gramos),
+    }
+    return resultado
+
+
 @app.get("/perro/{perro_id}/menus")
 def endpoint_obtener_menus(perro_id: int):
-    return persistencia.obtener_menus(perro_id)
+    """
+    ⚠️ MATIZADO (20 agosto) — auditando los caminos por los que sale un
+    menú: esto devuelve lo que hay GUARDADO, y la tabla `menus` solo
+    almacena nombre, gramos y kcal -- no la etapa ni el DER contra los
+    que se verificó en su día. Es decir: un menú sacado de aquí no se
+    puede verificar, ni siquiera en principio, porque falta el dato de
+    contra qué habría que verificarlo. Y si el perro ha cambiado de
+    etapa desde que se guardó, puede haber dejado de cumplir sin que
+    nada lo detecte (ver /menu/revalidar).
+    Se marca explícitamente para que nadie lo confunda con un menú
+    verificado: quien lo use tiene que pasarlo por /menu/revalidar con
+    los datos actuales del perro antes de dárselo a nadie.
+    """
+    menus = persistencia.obtener_menus(perro_id)
+    for m in menus:
+        m["verificado"] = False
+        m["aviso"] = ("Menú guardado: no se ha comprobado contra la etapa actual del "
+                      "perro. Pásalo por /menu/revalidar antes de usarlo.")
+    return menus
 
 
 @app.get("/")

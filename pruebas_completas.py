@@ -258,6 +258,92 @@ if dt > 15:
     fallos.append(f"BLOQUE7: una sola llamada tardó {dt:.1f}s (demasiado, revisar time_limit)")
 
 # ============================================================
+# BLOQUE 8 — NINGÚN CAMINO PUEDE ENTREGAR UN MENÚ SIN VERIFICAR
+#
+# Añadido el 20 de agosto, después de encontrar tres caminos que sí
+# podían: /catalogo y /menu comprobaban solo los 5 límites de seguridad
+# crónica (nunca los 30 requisitos), y un menú generado para un cachorro
+# se seguía sirviendo tal cual cuando el perro pasaba a adulto, aunque
+# con la etapa nueva saliera en rojo.
+#
+# Este bloque recorre TODOS los endpoints que devuelven un menú y exige
+# que lo que sale esté en verde de verdad, verificándolo aparte por su
+# cuenta -- sin fiarse de la ficha que traiga la respuesta. Si mañana se
+# añade un camino nuevo que se salte el filtro, esto lo caza aquí.
+# ============================================================
+print("=== BLOQUE 8: ningún camino entrega un menú sin verificar ===")
+from fastapi.testclient import TestClient
+import main as _api
+
+_c = TestClient(_api.app, raise_server_exceptions=False)
+DER_B8, ETAPA_B8, PESO_B8 = 900.0, "Adulto", 20.0
+
+def _exigir_verde(caso, respuesta, der, etapa):
+    """Verifica por su cuenta lo que devuelve un endpoint."""
+    if not respuesta.get("factible", respuesta.get("encontrado")):
+        return None  # negarse a dar menú es una respuesta válida, no un fallo
+    g = respuesta.get("menu") or respuesta.get("gramos")
+    if not g:
+        return None
+    f = verificar(g, al, req, der, etapa)
+    if f["semaforo"] != "verde":
+        fallos.append(f"BLOQUE8 {caso}: entregó un menú en {f['semaforo']} "
+                      f"({f['correctos']}/{f['total']}, rojos: "
+                      f"{[x['nutriente'] for x in f['rojos']]})")
+    return g
+
+_base = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": DER_B8,
+    "etapa_requisitos": ETAPA_B8, "peso_perro_kg": PESO_B8, "modo": "automatico"}).json()
+_g = _exigir_verde("/menu/v2", _base, DER_B8, ETAPA_B8)
+
+if _g:
+    _viejo = max(_g, key=lambda n: _g[n])
+    _comun = {"der_objetivo": DER_B8, "etapa_requisitos": ETAPA_B8,
+              "peso_perro_kg": PESO_B8, "menu_actual": list(_g)}
+    _exigir_verde("/menu/cambiar", _c.post("/menu/cambiar", json={
+        **_comun, "alimento_viejo": _viejo, "alimento_nuevo": "Corazón de ternera"}).json(),
+        DER_B8, ETAPA_B8)
+    _exigir_verde("/menu/quitar", _c.post("/menu/quitar", json={
+        **_comun, "alimento": _viejo}).json(), DER_B8, ETAPA_B8)
+    _exigir_verde("/menu/anadir", _c.post("/menu/anadir", json={
+        **_comun, "alimento": "Sardina"}).json(), DER_B8, ETAPA_B8)
+    _exigir_verde("/menu (motor viejo)", _c.post("/menu", json={
+        "nombres_alimentos": list(_g), "der_objetivo": DER_B8,
+        "etapa_requisitos": ETAPA_B8, "peso_perro_kg": PESO_B8}).json(), DER_B8, ETAPA_B8)
+
+_exigir_verde("/catalogo", _c.get("/catalogo/Mediano/Adulto", params={
+    "der_objetivo": DER_B8, "peso_perro_kg": PESO_B8}).json(), DER_B8, ETAPA_B8)
+
+_sem = _c.post("/menu/semana", json={"nombres_alimentos": [], "der_objetivo": DER_B8,
+    "etapa_requisitos": ETAPA_B8, "peso_perro_kg": PESO_B8, "modo": "automatico"},
+    params={"numero_de_menus": 2}).json()
+for _i, _m in enumerate(_sem.get("menus") or []):
+    _exigir_verde(f"/menu/semana[{_i}]", _m, DER_B8, ETAPA_B8)
+
+# CAMBIO DE CATEGORÍA: el caso que estaba roto. Un menú de cachorro
+# revalidado como adulto no puede salir tal cual si ya no cumple.
+_cach = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1200.0,
+    "etapa_requisitos": "CachorroCrecimiento", "peso_perro_kg": 15.0,
+    "peso_adulto_esperado_kg": 30.0, "modo": "automatico"}).json()
+if _cach.get("factible"):
+    _gc = _cach["menu"]
+    _rev = _c.post("/menu/revalidar", json={"menu_actual_gramos": _gc,
+        "der_objetivo": 1500.0, "etapa_requisitos": "Adulto", "peso_perro_kg": 30.0}).json()
+    _exigir_verde("/menu/revalidar (cachorro->adulto)", _rev, 1500.0, "Adulto")
+    _ficha_vieja = verificar(_gc, al, req, 1500.0, "Adulto")
+    if _ficha_vieja["semaforo"] != "verde" and _rev.get("sigue_siendo_valido"):
+        fallos.append("BLOQUE8 /menu/revalidar: dijo que un menú en "
+                      f"{_ficha_vieja['semaforo']} seguía siendo válido")
+
+# el filtro tiene que rechazar un menú manifiestamente incompleto
+_res = _api._garantizar_verificado({"factible": True, "menu": {"Lengua de ternera": 300.0}},
+                                   DER_B8, ETAPA_B8, PESO_B8, origen="prueba", al=al, req=req)
+if _res.get("factible"):
+    fallos.append("BLOQUE8: el filtro dejó pasar un menú de un solo alimento")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")
