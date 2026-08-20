@@ -1847,10 +1847,117 @@ def portal_cliente(datos: PeticionPortal):
         raise HTTPException(status_code=400, detail=str(e))
 
 
+# =====================================================================
+# ⚠️ REESCRITO (20 agosto) — EL WEBHOOK NO HABÍA FUNCIONADO NUNCA
+#
+# Comprobado mandando un webhook FIRMADO de verdad contra el endpoint,
+# no leyendo el código: devolvía 500 siempre, con cualquier evento.
+# Cuatro fallos independientes, todos en el camino del dinero:
+#
+#   1. `import supabase as sb` en la primera línea. Ese paquete NO está
+#      en requirements.txt, así que en Render lanza ModuleNotFoundError
+#      antes de hacer nada. Y encima no se usaba para nada: la
+#      actualización se hace con httpx. Un import muerto tumbaba el
+#      webhook entero, siempre.
+#   2. sub["current_period_end"]. Stripe QUITÓ ese campo del objeto
+#      Subscription en la versión Basil (31 marzo 2025): ahora el
+#      periodo vive en items.data[].current_period_end. La librería
+#      instalada fija la versión 2026-07-29.dahlia, muy posterior, así
+#      que ese campo no existe y era un KeyError garantizado.
+#   3. La respuesta de Supabase no se miraba NUNCA. Si el PATCH fallaba
+#      (clave mal, RLS, columna que no existe), el webhook devolvía
+#      {"ok": true} igual: el usuario pagaba y se quedaba en "free" sin
+#      que nadie se enterara jamás.
+#   4. Un pago sin user_id en la metadata se ignoraba en silencio: dinero
+#      cobrado que no se puede asociar a ninguna cuenta.
+#
+# Los cuatro se cobran igual de caros: alguien paga y no recibe nada.
+# Ahora, cuando algo falla aquí, se devuelve 5xx a propósito -- Stripe
+# reintenta con espera creciente durante días, así que un fallo pasajero
+# de Supabase se recupera solo en vez de perderse -- y se manda a Sentry.
+# =====================================================================
+def _plano(obj):
+    """
+    Un StripeObject NO es un dict: no admite .get(), lanza AttributeError.
+    El código original hacía sub.get("metadata", {}) directamente, así que
+    aunque se arreglara el import muerto, el webhook habría seguido
+    reventando en la línea siguiente. Aquí se convierte una sola vez, en
+    profundidad, y a partir de ahí es un dict normal.
+    """
+    for metodo in ("to_dict_recursive", "to_dict"):
+        if hasattr(obj, metodo):
+            try:
+                return getattr(obj, metodo)()
+            except Exception:
+                pass
+    return obj if isinstance(obj, dict) else {}
+
+
+def _fin_de_periodo(sub):
+    """
+    Timestamp de fin del periodo, buscándolo donde Stripe lo pone HOY y
+    donde lo ponía antes. Devuelve None si no está en ninguno de los dos,
+    en vez de reventar: que no sepamos la fecha de renovación no es razón
+    para no darle el premium a quien ha pagado.
+    """
+    items = ((sub.get("items") or {}).get("data")) or []
+    fines = [i.get("current_period_end") for i in items if i.get("current_period_end")]
+    if fines:
+        return max(fines)
+    return sub.get("current_period_end")  # forma anterior a Basil
+
+
+def _actualizar_perfil(user_id, campos, evento):
+    """
+    Escribe en Supabase y COMPRUEBA que ha ido bien. Devuelve True/False.
+    """
+    import httpx
+    supabase_url = os.environ.get("SUPABASE_URL", "")
+    supabase_key = os.environ.get("SUPABASE_SERVICE_KEY", "")
+    if not (supabase_url and supabase_key):
+        observabilidad.capturar(
+            RuntimeError("Webhook de Stripe sin SUPABASE_URL/SUPABASE_SERVICE_KEY"),
+            endpoint="/stripe/webhook", evento=evento)
+        return False
+    try:
+        r = httpx.patch(
+            f"{supabase_url}/rest/v1/profiles?id=eq.{user_id}",
+            headers={
+                "apikey": supabase_key,
+                "Authorization": f"Bearer {supabase_key}",
+                "Content-Type": "application/json",
+                "Prefer": "return=representation",
+            },
+            json=campos,
+            timeout=20.0,
+        )
+    except Exception as e:
+        observabilidad.capturar(e, endpoint="/stripe/webhook", evento=evento,
+                                paso="llamada a Supabase")
+        return False
+    if r.status_code >= 400:
+        observabilidad.capturar(
+            RuntimeError(f"Supabase rechazó la actualización del plan: HTTP {r.status_code}"),
+            endpoint="/stripe/webhook", evento=evento,
+            respuesta_supabase=r.text[:300], campos=list(campos))
+        return False
+    # 200 con lista vacía = no existe ninguna fila con ese id. Alguien ha
+    # pagado y su perfil no está: hay que enterarse, no dar el ok.
+    try:
+        filas = r.json()
+        if isinstance(filas, list) and not filas:
+            observabilidad.capturar(
+                RuntimeError("Pago de Stripe sin perfil que actualizar en Supabase"),
+                endpoint="/stripe/webhook", evento=evento)
+            return False
+    except Exception:
+        pass  # sin cuerpo que leer: el status ya dijo que fue bien
+    return True
+
+
 @app.post("/stripe/webhook")
 async def stripe_webhook(request: Request):
     """Recibe eventos de Stripe y actualiza Supabase."""
-    import supabase as sb
     payload = await request.body()
     sig_header = request.headers.get("stripe-signature")
     webhook_secret = os.environ.get("STRIPE_WEBHOOK_SECRET", "")
@@ -1858,58 +1965,54 @@ async def stripe_webhook(request: Request):
         if webhook_secret:
             event = stripe.Webhook.construct_event(payload, sig_header, webhook_secret)
         else:
-            event = stripe.Event.construct_from(
-                {"type": "test", "data": {}}, stripe.api_key
-            )
+            # Sin secreto configurado no se puede verificar que el evento
+            # venga de Stripe de verdad, así que no se toca ningún plan.
+            observabilidad.capturar(
+                RuntimeError("Webhook de Stripe recibido sin STRIPE_WEBHOOK_SECRET configurado"),
+                endpoint="/stripe/webhook")
+            return {"ok": False, "motivo": "webhook sin secreto configurado"}
     except Exception as e:
+        # Firma inválida: puede ser un intento de suplantación. No se
+        # manda a Sentry para que nadie pueda gastarnos la cuota
+        # mandando basura firmada mal a propósito.
         raise HTTPException(status_code=400, detail=str(e))
 
-    # Cuando se activa o renueva una suscripción
-    if event["type"] in ("customer.subscription.created",
-                          "customer.subscription.updated"):
-        sub = event["data"]["object"]
-        user_id = sub.get("metadata", {}).get("user_id")
-        if user_id:
-            activa_hasta = datetime.datetime.fromtimestamp(
-                sub["current_period_end"]
-            ).isoformat()
-            import httpx
-            supabase_url = os.environ.get("SUPABASE_URL", "")
-            supabase_key = os.environ.get("SUPABASE_SERVICE_KEY", "")
-            if supabase_url and supabase_key:
-                httpx.patch(
-                    f"{supabase_url}/rest/v1/profiles?id=eq.{user_id}",
-                    headers={
-                        "apikey": supabase_key,
-                        "Authorization": f"Bearer {supabase_key}",
-                        "Content-Type": "application/json",
-                    },
-                    json={
-                        "plan": "premium",
-                        "stripe_customer_id": sub["customer"],
-                        "stripe_subscription_id": sub["id"],
-                        "suscripcion_activa_hasta": activa_hasta,
-                    },
-                )
+    tipo = event["type"]
 
-    # Cuando se cancela o expira
-    if event["type"] == "customer.subscription.deleted":
-        sub = event["data"]["object"]
-        user_id = sub.get("metadata", {}).get("user_id")
-        if user_id:
-            import httpx
-            supabase_url = os.environ.get("SUPABASE_URL", "")
-            supabase_key = os.environ.get("SUPABASE_SERVICE_KEY", "")
-            if supabase_url and supabase_key:
-                httpx.patch(
-                    f"{supabase_url}/rest/v1/profiles?id=eq.{user_id}",
-                    headers={
-                        "apikey": supabase_key,
-                        "Authorization": f"Bearer {supabase_key}",
-                        "Content-Type": "application/json",
-                    },
-                    json={"plan": "free"},
-                )
+    if tipo in ("customer.subscription.created", "customer.subscription.updated",
+                "customer.subscription.deleted"):
+        sub = _plano(event["data"]["object"])
+        user_id = (sub.get("metadata") or {}).get("user_id")
+        if not user_id:
+            # Alguien ha pagado y no sabemos de quién es. Hay que verlo.
+            observabilidad.capturar(
+                RuntimeError(f"Evento {tipo} de Stripe sin user_id en la metadata"),
+                endpoint="/stripe/webhook", evento=tipo,
+                suscripcion=sub.get("id"))
+            return {"ok": False, "motivo": "sin user_id en la metadata"}
+
+        if tipo == "customer.subscription.deleted":
+            campos = {"plan": "free"}
+        else:
+            campos = {"plan": "premium",
+                      "stripe_customer_id": sub.get("customer"),
+                      "stripe_subscription_id": sub.get("id")}
+            fin = _fin_de_periodo(sub)
+            if fin:
+                campos["suscripcion_activa_hasta"] = datetime.datetime.fromtimestamp(
+                    fin, datetime.timezone.utc).isoformat()
+            else:
+                # Sin fecha de renovación se le da el premium igual -- ha
+                # pagado -- pero queremos saber por qué no venía.
+                observabilidad.capturar(
+                    RuntimeError("Suscripción de Stripe sin fecha de fin de periodo"),
+                    endpoint="/stripe/webhook", evento=tipo, suscripcion=sub.get("id"))
+
+        if not _actualizar_perfil(user_id, campos, tipo):
+            # 500 a propósito: Stripe reintenta con espera creciente
+            # durante días, así que un fallo pasajero se recupera solo.
+            raise HTTPException(status_code=500,
+                                detail="No se pudo actualizar el plan; reintentadlo")
 
     return {"ok": True}
 
