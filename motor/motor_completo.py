@@ -865,12 +865,30 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         "Hueso carnoso": 25.0,
         "Verduras y frutas": 15.0,
     }
+    # ⚠️ CORREGIDO (20 agosto) — CASO REAL ENCONTRADO AUDITANDO: estos
+    # mínimos son FIJOS en gramos, y eso no puede ser: "una porción real
+    # y visible" depende del tamaño del perro. En un perro de 20 kg el
+    # menú entero son ~674 g y 40 g de pescado es una porción normal. En
+    # uno de 3 kg el menú entero son ~137 g, así que esos mismos 40 g son
+    # el 29% de la ración de golpe -- y en uno de 1,5 kg (73 g de menú)
+    # serían más de la mitad. Medido: añadir sardina a un perro de 3 kg
+    # fallaba SIEMPRE, con y sin alergias, y el mensaje decía "no existe
+    # ninguna combinación", cuando lo que no existía era una que metiera
+    # 40 g de sardina en un perro tan pequeño.
+    #
+    # El mínimo se topa ahora por el tamaño real de la ración. Los menús
+    # reales pesan ~0,6 g por kcal (medido sobre 21 combinaciones de peso
+    # y etapa), así que se limita a un 15% de esa ración estimada. Para
+    # un perro mediano o grande no cambia nada -- el tope queda muy por
+    # encima de los 40 g; solo actúa donde estaba el problema.
+    tope_porcion_del_perro = 0.15 * 0.6 * der
     if forzar:
         for n in forzar:
             if n not in idx:
                 continue  # no es un candidato válido; se ignora sin romper
             i = idx[n]
             minimo = MINIMO_POR_CATEGORIA.get(categoria_de.get(n), 10.0)
+            minimo = min(minimo, tope_porcion_del_perro)
             bounds.lb[n_var + i] = 1
             bounds.lb[i] = min(minimo, techos[i])
 

@@ -151,6 +151,25 @@ def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
 #
 # Preferimos no dar menú a dar uno que no cumple. Ese es el trato.
 # =====================================================================
+# ⚠️ AÑADIDO (20 agosto) — CUMPLIR NO ES LO MISMO QUE SER DABLE.
+# Encontrado midiendo la escalera de relajación: soltando el MÁXIMO de
+# verdura, el motor resolvía un cachorro de 10 kg con 3,1 kg de canónigos
+# más 1,2 kg de espinaca -- 4,7 kg de comida al día, el 47% del peso del
+# perro. Verde en los 30 requisitos, y físicamente imposible de dar.
+#
+# El truco es que las kcal SÍ están atadas al DER, pero la hoja verde
+# tiene tan poca energía que se puede apilar volumen sin pasarse de
+# calorías. Hasta ahora lo único que lo impedía era, de rebote, el tope
+# del 10% de verdura -- una protección accidental, no buscada.
+#
+# Medido sobre los menús reales de 21 combinaciones de peso y etapa: van
+# del 1,66% del peso del perro (senior de 60 kg) al 13% (cachorro de
+# 1,5 kg, que come mucho para su tamaño). El tope se pone al 25%: casi el
+# doble del peor caso legítimo, así que no puede saltar por un menú
+# normal, y corta en seco cualquier cosa como la de los canónigos.
+TOPE_GRAMOS_SOBRE_PESO = 0.25
+
+
 def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
                            origen, al=None, req=None):
     """
@@ -172,6 +191,29 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
 
     ficha = verificar_v2(gramos, al, req, der, etapa)
     seguro = _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg)
+
+    # ¿es dable? Ver TOPE_GRAMOS_SOBRE_PESO, arriba.
+    total_g = sum(gramos.values())
+    dable = True
+    if peso_perro_kg and peso_perro_kg > 0:
+        dable = total_g <= peso_perro_kg * 1000 * TOPE_GRAMOS_SOBRE_PESO
+    if not dable:
+        observabilidad.capturar(
+            RuntimeError(f"Menu imposible de dar bloqueado en {origen}: "
+                         f"{total_g:.0f} g para un perro de {peso_perro_kg} kg"),
+            endpoint=origen, etapa=etapa, der_objetivo=der,
+            peso_perro_kg=peso_perro_kg, gramos_totales=round(total_g),
+            pct_del_peso=round(100 * total_g / (peso_perro_kg * 1000), 1))
+        return {
+            "factible": False,
+            "motivo": ("El único menú que cumplía sería demasiado voluminoso para "
+                       "este perro. Quita alguna restricción y vuelve a probar."),
+            "verificacion": {
+                "gramos_totales": round(total_g),
+                "pct_del_peso_del_perro": round(100 * total_g / (peso_perro_kg * 1000), 1),
+                "tope_pct": round(100 * TOPE_GRAMOS_SOBRE_PESO),
+            },
+        }
 
     if ficha["semaforo"] != "verde" or not seguro:
         # Que esto salte significa que algún camino ha construido un menú
@@ -696,6 +738,78 @@ def _presupuesto_para_menu_actual(restante, dias_restantes_incluido_este):
 # porque si este único menú se va a repetir todos los días, su propio
 # tope diario de "pescado con tiaminasa" debe ser más estricto que el
 # de un menú que solo aparece 2-3 días dentro de una rotación variada.
+# =====================================================================
+# ⚠️ AÑADIDO (20 agosto) — LA ESCALERA: QUE NUNCA SE QUEDE SIN MENÚ
+#
+# CASO REAL MEDIDO: un adulto de 20 kg con tres alergias (pollo, ternera,
+# cordero) devolvía "no existe ninguna combinación". Medido de verdad, no
+# era cierto: SÍ existía, y salía verde 30/30. Lo que lo bloqueaba no era
+# la nutrición sino el mínimo de "Vísceras 2%" -- con esas tres especies
+# fuera solo quedaban bazo y páncreas de vaca, y no cabían sin chocar con
+# un límite de seguridad. El solver lo declaraba infactible en 0,0s.
+#
+# Y los márgenes de categoría (hueso 20-60%, carne 10-60%, vísceras
+# 2-12%...) son la FORMA del BARF -- criterio de producto, nuestro. No
+# son FEDIAF: verificar() ni los mira. Estábamos negándole el menú a un
+# perro alérgico para defender una proporción que ninguna guía exige.
+#
+# Esta escalera se recorre SOLO si el intento estricto ha fallado, y va
+# soltando esas proporciones peldaño a peldaño. Lo que NO se suelta
+# nunca, en ningún peldaño:
+#     · los 30 requisitos de FEDIAF y el ratio Ca:P
+#     · los límites de seguridad crónica (vitD, yodo, selenio, mercurio,
+#       tiaminasa) -- van dentro de resolver() como restricción dura
+#     · las alergias y las categorías que el usuario excluyó a mano
+#     · las patologías que bloquean la generación
+#     · los MÁXIMOS por categoría (que son los que evitan un menú de 90%
+#       hígado); solo se tocan los MÍNIMOS
+# Cada peldaño que se usa se cuenta en la respuesta, para que la app
+# pueda decir por qué este menú no se parece a los demás.
+# =====================================================================
+CATEGORIAS_SECUNDARIAS = ("Vísceras", "Hígado", "Verduras y frutas")
+
+
+def _escalera_de_relajacion():
+    """Peldaños (margenes, max_suplementos, qué se soltó), de más
+    estricto a menos. El primero es exactamente lo de siempre."""
+    sin_minimo_secundarias = {
+        c: ((0.0 if c in CATEGORIAS_SECUNDARIAS else mn), mx)
+        for c, (mn, mx) in MARGENES_V2.items()
+    }
+    sin_ningun_minimo = {c: (0.0, mx) for c, (mn, mx) in MARGENES_V2.items()}
+    return [
+        (MARGENES_V2, 2, None),
+        (sin_minimo_secundarias, 2, "proporcion_minima_visceras_higado_verdura"),
+        (sin_ningun_minimo, 2, "proporcion_minima_de_todas_las_categorias"),
+        (sin_ningun_minimo, 3, "proporcion_minima_y_un_suplemento_mas"),
+        (sin_ningun_minimo, 4, "proporcion_minima_y_dos_suplementos_mas"),
+    ]
+
+
+def _aviso_de_lo_que_falta(gramos, al):
+    """
+    Qué categorías del BARF se han quedado fuera del menú. Se dice en
+    cristiano y sin alarmar: el menú cumple los 30 requisitos igual, pero
+    la usuaria tiene derecho a saber por qué este no lleva vísceras
+    cuando todos los demás sí.
+    """
+    presentes = {al.get(n, {}).get("categoria") for n in gramos}
+    ausentes = [c for c in MARGENES_V2 if c not in presentes]
+    if not ausentes:
+        return None
+    nombres = {"Hueso carnoso": "hueso carnoso", "Carne muscular": "carne muscular",
+               "Verduras y frutas": "verdura o fruta", "Vísceras": "vísceras",
+               "Hígado": "hígado"}
+    lista = [nombres.get(c, c.lower()) for c in ausentes]
+    if len(lista) == 1:
+        que = lista[0]
+    else:
+        que = ", ".join(lista[:-1]) + " ni " + lista[-1]
+    return ("Con las restricciones de este perro no había forma de incluir " + que +
+            " sin incumplir algo. El menú cumple igualmente los 30 requisitos "
+            "y todos los límites de seguridad.")
+
+
 MARGEN_SEGURIDAD_CRONICA_MENU_UNICO = 0.75  # mismo criterio que el de /menu/semana
 
 
@@ -1098,7 +1212,8 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # tener que renunciar a la solidez de que, si de verdad no cabe, el
     # menú se siga generando igual (con aviso), en vez de fallar del
     # todo.
-    def _intentar_generacion(forzar_este, restringir_a_elegidos_este):
+    def _intentar_generacion(forzar_este, restringir_a_elegidos_este,
+                             margenes=None, max_supl=2):
         """Un intento completo: llamada + reintentos para mejorar a
         verde mientras quede presupuesto de tiempo -- misma lógica que
         ya existía, solo que reutilizable para los tres niveles."""
@@ -1106,7 +1221,8 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             datos.der_objetivo, datos.etapa_requisitos, al, req,
             datos.peso_perro_kg, dosis_maxima_fabricante,
             excluidos=excluidos or None,
-            margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=tiempo_restante(),
+            margenes_categoria=(margenes if margenes is not None else MARGENES_V2),
+            max_suplementos=max_supl, time_limit=tiempo_restante(),
             forzar=forzar_este, preferir=preferir,
             patologias=datos.patologias, restringir_especie=datos.restringir_especie,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -1124,7 +1240,8 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 datos.der_objetivo, datos.etapa_requisitos, al, req,
                 datos.peso_perro_kg, dosis_maxima_fabricante,
                 excluidos=excluidos or None,
-                margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=tiempo_restante(),
+                margenes_categoria=(margenes if margenes is not None else MARGENES_V2),
+                max_suplementos=max_supl, time_limit=tiempo_restante(),
                 forzar=forzar_este, preferir=preferir,
                 patologias=datos.patologias, restringir_especie=datos.restringir_especie,
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -1185,11 +1302,30 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     else:
         no_se_pudo_forzar = False
 
+    # ⚠️ AÑADIDO (20 agosto) — LA ESCALERA. Antes, llegar aquí sin menú
+    # era el final: "no existe ninguna combinación". Medido, casi nunca
+    # era verdad -- lo que no existía era una combinación que además
+    # respetara nuestras proporciones de BARF. Antes de rendirse se
+    # recorren los peldaños, soltando SOLO esas proporciones (ver
+    # _escalera_de_relajacion, arriba, para lo que no se suelta jamás).
+    relajaciones = []
+    if not ok:
+        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion()[1:]:
+            if tiempo_restante() <= 1.5:
+                break  # sin tiempo: mejor no factible que un timeout de Render
+            ok, gramos, ficha_intento = _intentar_generacion(
+                forzar, None, margenes=margenes_peldano, max_supl=supl_peldano)
+            if ok:
+                relajaciones.append(que_se_suelta)
+                break
+
     if not ok:
         return {"factible": False,
                 "motivo": "No existe ninguna combinación de alimentos accesibles "
-                          "que cumpla los 30 requisitos con máximo 2 suplementos "
-                          "para este perro."}
+                          "que cumpla los 30 requisitos para este perro, ni "
+                          "siquiera soltando las proporciones habituales del "
+                          "BARF. Quita alguna restricción y vuelve a probar.",
+                "se_intento_relajando": [p[2] for p in _escalera_de_relajacion()[1:]]}
     ficha = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
     problemas_seguridad = _seguridad_completa(gramos, al, datos.der_objetivo,
                                                datos.etapa_requisitos,
@@ -1212,6 +1348,15 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # todo se mantuvo, pero hizo falta una cosa más".
     if aviso_extra_carne:
         resultado["aviso"] = aviso_extra_carne
+    # ⚠️ AÑADIDO (20 agosto): si hubo que bajar por la escalera, se dice.
+    # Un menú sin vísceras es perfectamente válido -- cumple los 30
+    # requisitos igual -- pero no se parece a los demás, y la usuaria
+    # tiene derecho a saber por qué, sin tener que preguntarlo.
+    if relajaciones:
+        resultado["se_relajo"] = relajaciones
+        aviso_falta = _aviso_de_lo_que_falta(gramos, al)
+        if aviso_falta:
+            resultado["aviso_composicion"] = aviso_falta
     return resultado
 
 
@@ -1234,6 +1379,45 @@ def endpoint_transicion(datos: PeticionTransicion):
 # quitado) y se resuelve de cero con el MILP, así que el resultado SIEMPRE
 # esta comprobado de verdad contra los 30 requisitos, nunca puede quedar
 # a medias ni duplicado.
+# ⚠️ AÑADIDO (20 agosto) — DECIR POR QUÉ, NO SOLO QUE NO.
+# CASO REAL ENCONTRADO AUDITANDO: añadir sardina a un perro de 3 kg
+# fallaba siempre, y el mensaje era "no existe ninguna combinación que
+# cumpla los 30 requisitos" -- que suena a que el perro es imposible de
+# alimentar. La verdad era mucho más concreta y mucho más útil: la
+# sardina lleva tiaminasa (destruye la vitamina B1), el límite es el 10%
+# de las calorías del día, y en un perro de 3 kg eso son 18 g escasos --
+# una ración mínima ya se pasa. Negarse es correcto; no explicarlo, no.
+def _por_que_no_cabe(nombre, al, der, peso_perro_kg=None):
+    """Si un alimento no cabe por un límite de seguridad concreto, decirlo
+    en cristiano y con la cantidad real que sí cabría. None si no es
+    ninguno de estos casos."""
+    from seguridad import (TIAMINASA, MERCURIO_ALTO, TOPE_TIAMINASA_KCAL,
+                           TOPE_MERCURIO_KCAL, TOPE_VITD_KCAL, TOPE_VITD_KG075, _es)
+    a = al.get(nombre) or {}
+    kcal_100 = a.get("energia") or 0
+    if kcal_100 and _es(nombre, TIAMINASA):
+        cabe = 100.0 * der * TOPE_TIAMINASA_KCAL / kcal_100
+        return (f"{nombre} lleva tiaminasa, que destruye la vitamina B1, así que no "
+                f"puede pasar del {int(TOPE_TIAMINASA_KCAL * 100)}% de las calorías del "
+                f"día: como mucho unos {cabe:.0f} g para este perro, y una ración "
+                f"normal ya se pasa. Puedes dárselo de vez en cuando, pero no a diario.")
+    if kcal_100 and _es(nombre, MERCURIO_ALTO):
+        cabe = 100.0 * der * TOPE_MERCURIO_KCAL / kcal_100
+        return (f"{nombre} acumula mercurio, así que no puede pasar del "
+                f"{int(TOPE_MERCURIO_KCAL * 100)}% de las calorías del día: como mucho "
+                f"unos {cabe:.0f} g para este perro.")
+    vitd_100 = (a.get("nutrientes") or {}).get("vitD") or 0
+    if vitd_100:
+        tope = TOPE_VITD_KCAL * der / 1000.0
+        if peso_perro_kg and peso_perro_kg > 0:
+            tope = min(tope, TOPE_VITD_KG075 * (peso_perro_kg ** 0.75))
+        cabe = 100.0 * tope / vitd_100
+        if cabe < 20:
+            return (f"{nombre} lleva mucha vitamina D, y en un perro de este tamaño el "
+                    f"tope diario se alcanza con unos {cabe:.0f} g.")
+    return None
+
+
 def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_especie=None,
                           preservar_siempre=False):
     """
@@ -1272,7 +1456,7 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
     if excluir_nombres:
         nombres_excl |= set(excluir_nombres)
 
-    def _intentar(forzar_este, margen_intentos=3):
+    def _intentar(forzar_este, margen_intentos=3, margenes=None, max_supl=2):
         """Un intento completo: hasta 3 vueltas hasta que sea verde de
         verdad, igual que ya hacía esto antes de separarlo en función."""
         ok, gramos, ficha = False, None, None
@@ -1281,7 +1465,8 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 datos.der_objetivo, datos.etapa_requisitos, al, req,
                 datos.peso_perro_kg, dosis_maxima_fabricante,
                 excluidos=(excluidos + list(nombres_excl)) or None,
-                margenes_categoria=MARGENES_V2, max_suplementos=2,
+                margenes_categoria=(margenes if margenes is not None else MARGENES_V2),
+                max_suplementos=max_supl,
                 forzar=forzar_este,
                 restringir_especie=restringir_especie,
                 peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None),
@@ -1367,17 +1552,57 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
     else:
         ok, gramos, ficha = _intentar(forzar)
 
+    # ⚠️ AÑADIDO (20 agosto) — la misma escalera que en la generación:
+    # editar un alimento chocaba contra el mismo muro (las proporciones
+    # de BARF, no la nutrición), y ahí duele más todavía, porque la
+    # usuaria ya tiene un menú delante y solo quería cambiar una cosa.
+    relajaciones_edicion = []
     if not ok:
-        return {"factible": False,
-                "motivo": "Con este cambio no existe ninguna combinación que cumpla "
-                          "los 30 requisitos. Prueba con otro alimento."}
-    return _garantizar_verificado({
+        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion()[1:]:
+            ok, gramos, ficha = _intentar(forzar, margen_intentos=2,
+                                          margenes=margenes_peldano, max_supl=supl_peldano)
+            if ok:
+                relajaciones_edicion.append(que_se_suelta)
+                break
+
+    if not ok:
+        # ¿es culpa del alimento que se ha pedido meter? Se comprueba en vez
+        # de suponerlo: si sin él sí hay menú, el problema es él, y muchas
+        # veces se puede decir exactamente por qué (ver _por_que_no_cabe).
+        motivo = ("Con este cambio no existe ninguna combinación que cumpla "
+                  "los 30 requisitos, ni siquiera soltando las proporciones "
+                  "habituales del BARF. Prueba con otro alimento.")
+        culpable = None
+        if forzar:
+            ok_sin, _, _ = _intentar(None, margen_intentos=1)
+            if ok_sin:
+                culpable = forzar[0] if len(forzar) == 1 else None
+                explicacion = (_por_que_no_cabe(culpable, al, datos.der_objetivo,
+                                                datos.peso_perro_kg) if culpable else None)
+                if explicacion:
+                    motivo = explicacion
+                elif culpable:
+                    motivo = (f"{culpable} no cabe en la ración de este perro sin "
+                              f"incumplir algún requisito. El resto del menú sí "
+                              f"funciona: prueba con otro alimento.")
+        respuesta = {"factible": False, "motivo": motivo}
+        if culpable:
+            respuesta["alimento_que_no_cabe"] = culpable
+        return respuesta
+    resultado_final = {
         "factible": True, "gramos": gramos, "ficha": ficha,
         "problemas_seguridad": _seguridad_completa(
             gramos, al, datos.der_objetivo, datos.etapa_requisitos, datos.patologias,
             peso_perro_kg=datos.peso_perro_kg),
-    }, datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
-        origen="edicion", al=al, req=req)
+    }
+    if relajaciones_edicion:
+        resultado_final["se_relajo"] = relajaciones_edicion
+        aviso_falta = _aviso_de_lo_que_falta(gramos, al)
+        if aviso_falta:
+            resultado_final["aviso_composicion"] = aviso_falta
+    return _garantizar_verificado(resultado_final, datos.der_objetivo,
+                                  datos.etapa_requisitos, datos.peso_perro_kg,
+                                  origen="edicion", al=al, req=req)
 
 
 @app.post("/menu/cambiar")
