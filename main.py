@@ -1939,6 +1939,70 @@ class PeticionPortal(BaseModel):
     stripe_customer_id: str
 
 
+# =====================================================================
+# ⚠️ AÑADIDO (20 agosto) — PROBAR EL COBRO DESDE EL MÓVIL, SIN TOCAR LA WEB
+#
+# Para probar el pago de punta a punta hacía falta encender el muro de
+# pago en producción, y eso se lo pone delante a cualquiera que entre en
+# rawku.app mientras tanto. Esto abre el mismo checkout de Stripe que
+# abriría la app, pero desde una URL que se pega en el navegador.
+#
+# Tres cerrojos, porque una URL que crea cobros no puede quedarse abierta:
+#   1. Apagada salvo que STRIPE_PRUEBA=1 esté puesta en Render.
+#   2. NUNCA funciona con una clave real, aunque la variable esté puesta.
+#      Esto no es una comodidad, es la diferencia entre una prueba y
+#      cobrarle a alguien de verdad sin querer.
+#   3. Hace falta el user_id del perfil, así que no se puede usar a ciegas.
+#
+# Cuando termines de probar: se borra la variable y la URL vuelve a dar
+# 404, como /sentry/prueba.
+# =====================================================================
+@app.get("/stripe/prueba")
+def stripe_prueba(user_id: str = None, plan: str = "mensual"):
+    from fastapi.responses import RedirectResponse
+
+    if os.environ.get("STRIPE_PRUEBA") != "1":
+        raise HTTPException(404, "No encontrado")
+
+    modo = _modo_stripe()
+    if modo != "prueba":
+        # El cerrojo importante: con clave real esto crearía un cobro de
+        # verdad desde una URL sin autenticar. Jamás.
+        raise HTTPException(
+            403, f"Esta prueba solo funciona con una clave de Stripe de pruebas "
+                 f"(ahora mismo el modo es '{modo}'). Con la clave real está "
+                 f"bloqueada a propósito.")
+
+    if not user_id:
+        raise HTTPException(
+            400, "Falta el user_id del perfil. Añádelo a la dirección así: "
+                 "/stripe/prueba?user_id=EL-ID-DE-TU-PERFIL — lo encuentras en "
+                 "Supabase, tabla profiles, columna id.")
+
+    price_id = PLANES.get((plan or "").strip().lower())
+    if not price_id:
+        raise HTTPException(400, f"Plan '{plan}' no válido. Usa uno de: {sorted(PLANES)}")
+
+    try:
+        session = stripe.checkout.Session.create(
+            mode="subscription",
+            payment_method_types=["card"],
+            subscription_data={"trial_period_days": 7,
+                               "metadata": {"user_id": user_id}},
+            line_items=[{"price": price_id, "quantity": 1}],
+            success_url=f"{URL_BASE}/?pago=ok&session_id={{CHECKOUT_SESSION_ID}}",
+            cancel_url=f"{URL_BASE}/?pago=cancelado",
+            metadata={"user_id": user_id},
+        )
+    except Exception as e:
+        observabilidad.capturar(e, endpoint="/stripe/prueba", plan=plan)
+        raise HTTPException(400, f"Stripe no ha aceptado la petición: {e}")
+
+    # Se redirige directamente al checkout: así se abre desde el móvil
+    # pegando una sola dirección, sin herramientas raras.
+    return RedirectResponse(session.url, status_code=303)
+
+
 @app.post("/stripe/portal")
 def portal_cliente(datos: PeticionPortal):
     """Abre el portal de Stripe para gestionar la suscripción."""
