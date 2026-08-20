@@ -335,6 +335,28 @@ if _cach.get("factible"):
         fallos.append("BLOQUE8 /menu/revalidar: dijo que un menú en "
                       f"{_ficha_vieja['semaforo']} seguía siendo válido")
 
+# TODA etapa que /menu/v2 acepte, /menu/revalidar tiene que aceptarla
+# también. Encontrado cruzando con la web: /menu/revalidar validaba con la
+# lista del motor VIEJO, que no tiene Senior, así que devolvía 400 para
+# todos los perros senior -- y la web se tragaba el error en silencio.
+for _etapa, _der, _peso in (("Senior", 1638.0, 40.0), ("Adulto", 1040.0, 20.0),
+                            ("CachorroJoven", 1049.0, 10.0),
+                            ("CachorroCrecimiento", 1049.0, 10.0),
+                            ("Gestante", 1200.0, 20.0), ("Lactante", 1800.0, 20.0)):
+    _b = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": _der,
+        "etapa_requisitos": _etapa, "peso_perro_kg": _peso,
+        "peso_adulto_esperado_kg": _peso*2, "modo": "automatico"}).json()
+    if not _b.get("factible"):
+        fallos.append(f"BLOQUE8 /menu/v2 no da menú para la etapa {_etapa}")
+        continue
+    _rv = _c.post("/menu/revalidar", json={"menu_actual_gramos": _b["menu"],
+        "der_objetivo": _der, "etapa_requisitos": _etapa, "peso_perro_kg": _peso})
+    if _rv.status_code != 200:
+        fallos.append(f"BLOQUE8 /menu/revalidar rechaza la etapa {_etapa} "
+                      f"(HTTP {_rv.status_code}) pero /menu/v2 sí la acepta")
+    else:
+        _exigir_verde(f"/menu/revalidar ({_etapa})", _rv.json(), _der, _etapa)
+
 # el filtro tiene que rechazar un menú manifiestamente incompleto
 _res = _api._garantizar_verificado({"factible": True, "menu": {"Lengua de ternera": 300.0}},
                                    DER_B8, ETAPA_B8, PESO_B8, origen="prueba", al=al, req=req)
