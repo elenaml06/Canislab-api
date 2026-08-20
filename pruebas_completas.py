@@ -483,6 +483,117 @@ for _etq, _extra in _imposibles:
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
+# BLOQUE 10 — EL WEBHOOK DE STRIPE (el camino del dinero)
+#
+# Añadido el 20 de agosto después de comprobar, mandando un webhook
+# FIRMADO de verdad, que no había funcionado NUNCA: cinco fallos
+# independientes, cada uno suficiente para tumbarlo entero. Todos con la
+# misma consecuencia: alguien paga y no recibe nada.
+#
+# Estos tests mandan eventos firmados de verdad contra el endpoint, con
+# un Supabase de mentira, y comprueban los dos caminos: que un pago bueno
+# ponga "premium", y que un fallo NO devuelva un ok falso.
+# ============================================================
+print("=== BLOQUE 10: el webhook de Stripe ===")
+import os as _os, json as _json, time as _time, hmac as _hmac, hashlib as _hashlib
+import httpx as _httpx
+
+_SECRETO = "whsec_pruebas"
+_LLAMADAS = []
+_RESPUESTA = {"code": 200, "cuerpo": [{"id": "u1"}]}
+
+class _RespFalsa:
+    def __init__(self, code, cuerpo):
+        self.status_code = code; self._c = cuerpo; self.text = _json.dumps(cuerpo)
+    def json(self): return self._c
+
+def _patch_falso(url, **kw):
+    _LLAMADAS.append(kw.get("json"))
+    return _RespFalsa(_RESPUESTA["code"], _RESPUESTA["cuerpo"])
+
+_patch_real = _httpx.patch
+_httpx.patch = _patch_falso
+_os.environ["STRIPE_WEBHOOK_SECRET"] = _SECRETO
+_os.environ["SUPABASE_URL"] = "https://supabase.dementira"
+_os.environ["SUPABASE_SERVICE_KEY"] = "clave-de-mentira"
+
+def _firmar(cuerpo):
+    t = int(_time.time())
+    f = _hmac.new(_SECRETO.encode(), f"{t}.{cuerpo}".encode(), _hashlib.sha256).hexdigest()
+    return {"stripe-signature": f"t={t},v1={f}", "Content-Type": "application/json"}
+
+def _evento(tipo, sub):
+    cuerpo = _json.dumps({"id": "evt", "type": tipo, "data": {"object": sub}})
+    return _c.post("/stripe/webhook", content=cuerpo, headers=_firmar(cuerpo))
+
+_FIN = 1800000000
+_SUB_HOY = {"id": "sub_1", "customer": "cus_1", "metadata": {"user_id": "u1"},
+            "items": {"data": [{"id": "si_1", "current_period_end": _FIN}]}}
+_SUB_VIEJO = {"id": "sub_2", "customer": "cus_2", "metadata": {"user_id": "u2"},
+              "current_period_end": _FIN, "items": {"data": [{"id": "si_2"}]}}
+_SUB_SIN_ID = {"id": "sub_3", "customer": "cus_3", "metadata": {},
+               "items": {"data": [{"id": "si_3", "current_period_end": _FIN}]}}
+
+try:
+    # 1. un pago bueno tiene que dejar el plan en premium, con la forma
+    #    de HOY de Stripe (el periodo en items[], no arriba) y con la vieja
+    for _etq, _sub in (("forma actual", _SUB_HOY), ("forma pre-Basil", _SUB_VIEJO)):
+        _RESPUESTA.update(code=200, cuerpo=[{"id": "u1"}]); _LLAMADAS.clear()
+        _r = _evento("customer.subscription.created", _sub)
+        if _r.status_code != 200:
+            fallos.append(f"BLOQUE10 pago bueno ({_etq}): HTTP {_r.status_code}, esperaba 200")
+        elif not _LLAMADAS or _LLAMADAS[0].get("plan") != "premium":
+            fallos.append(f"BLOQUE10 pago bueno ({_etq}): no puso plan=premium ({_LLAMADAS})")
+        elif not _LLAMADAS[0].get("suscripcion_activa_hasta"):
+            fallos.append(f"BLOQUE10 pago bueno ({_etq}): sin fecha de renovación")
+
+    # 2. cancelar tiene que dejarlo en free
+    _RESPUESTA.update(code=200, cuerpo=[{"id": "u1"}]); _LLAMADAS.clear()
+    _r = _evento("customer.subscription.deleted", _SUB_HOY)
+    if _r.status_code != 200 or not _LLAMADAS or _LLAMADAS[0].get("plan") != "free":
+        fallos.append(f"BLOQUE10 cancelación: HTTP {_r.status_code}, {_LLAMADAS}")
+
+    # 3. si Supabase falla, NO se puede devolver un ok falso: 5xx para que
+    #    Stripe reintente. Es la diferencia entre recuperarse y perder el pago.
+    for _etq, _code, _cuerpo in (("Supabase rechaza", 401, {"message": "no"}),
+                                 ("perfil inexistente", 200, [])):
+        _RESPUESTA.update(code=_code, cuerpo=_cuerpo)
+        _r = _evento("customer.subscription.created", _SUB_HOY)
+        if _r.status_code < 500:
+            fallos.append(f"BLOQUE10 {_etq}: devolvió {_r.status_code} en vez de 5xx; "
+                          f"Stripe no reintentaría y el pago se perdería")
+
+    # 4. un pago sin user_id no puede tocar ningún perfil
+    _RESPUESTA.update(code=200, cuerpo=[{"id": "u1"}]); _LLAMADAS.clear()
+    _evento("customer.subscription.created", _SUB_SIN_ID)
+    if _LLAMADAS:
+        fallos.append("BLOQUE10: un pago sin user_id escribió en Supabase igualmente")
+
+    # 5. firma inválida -> 400, y sin tocar nada
+    _LLAMADAS.clear()
+    _cuerpo = _json.dumps({"id": "evt", "type": "customer.subscription.created",
+                           "data": {"object": _SUB_HOY}})
+    _r = _c.post("/stripe/webhook", content=_cuerpo,
+                 headers={"stripe-signature": "t=1,v1=falsa",
+                          "Content-Type": "application/json"})
+    if _r.status_code != 400 or _LLAMADAS:
+        fallos.append(f"BLOQUE10 firma inválida: HTTP {_r.status_code}, tocó={bool(_LLAMADAS)}")
+
+    # 6. sin secreto configurado no se fía de nadie
+    del _os.environ["STRIPE_WEBHOOK_SECRET"]
+    _LLAMADAS.clear()
+    _evento("customer.subscription.created", _SUB_HOY)
+    if _LLAMADAS:
+        fallos.append("BLOQUE10: sin STRIPE_WEBHOOK_SECRET cambió un plan igualmente")
+finally:
+    _httpx.patch = _patch_real
+    _os.environ.pop("STRIPE_WEBHOOK_SECRET", None)
+    _os.environ.pop("SUPABASE_URL", None)
+    _os.environ.pop("SUPABASE_SERVICE_KEY", None)
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")
