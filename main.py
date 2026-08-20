@@ -804,7 +804,7 @@ def _escalera_de_relajacion():
     ]
 
 
-def _aviso_de_lo_que_falta(gramos, al):
+def _aviso_de_lo_que_falta(gramos, al, categorias_excluidas=None):
     """
     Qué categorías del BARF se han quedado fuera del menú. Se dice en
     cristiano y sin alarmar: el menú cumple los 30 requisitos igual, pero
@@ -812,7 +812,11 @@ def _aviso_de_lo_que_falta(gramos, al):
     cuando todos los demás sí.
     """
     presentes = {al.get(n, {}).get("categoria") for n in gramos}
-    ausentes = [c for c in MARGENES_V2 if c not in presentes]
+    # Lo que el usuario quitó a propósito no es una sorpresa que haya que
+    # explicarle: ya sabe por qué no está. El aviso es solo para lo que
+    # falta SIN que nadie lo pidiera.
+    a_proposito = set(categorias_excluidas or [])
+    ausentes = [c for c in MARGENES_V2 if c not in presentes and c not in a_proposito]
     if not ausentes:
         return None
     nombres = {"Hueso carnoso": "hueso carnoso", "Carne muscular": "carne muscular",
@@ -1372,7 +1376,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # tiene derecho a saber por qué, sin tener que preguntarlo.
     if relajaciones:
         resultado["se_relajo"] = relajaciones
-        aviso_falta = _aviso_de_lo_que_falta(gramos, al)
+        aviso_falta = _aviso_de_lo_que_falta(gramos, al, datos.categorias_excluidas)
         if aviso_falta:
             resultado["aviso_composicion"] = aviso_falta
     return resultado
@@ -1434,6 +1438,25 @@ def _por_que_no_cabe(nombre, al, der, peso_perro_kg=None):
             return (f"{nombre} lleva mucha vitamina D, y en un perro de este tamaño el "
                     f"tope diario se alcanza con unos {cabe:.0f} g.")
     return None
+
+
+def _con_aviso_composicion(resultado, al, datos):
+    """
+    ⚠️ AÑADIDO (20 agosto): el aviso de "este menú no lleva vísceras" se
+    emitía solo cuando hacía falta bajar por la escalera, y NUNCA se
+    quitaba. Al editar un alimento eso da el caso contrario del que hace
+    falta: si al editar vuelven a entrar las vísceras, el aviso tiene que
+    DESAPARECER, y se quedaba puesto diciendo algo que ya no era verdad.
+
+    Aquí se recalcula sobre el menú que de verdad se devuelve, y se pone
+    la clave SIEMPRE -- también a None -- para que quien la pinte pueda
+    borrar el aviso viejo, no solo añadir uno nuevo.
+    """
+    gramos = resultado.get("gramos") or resultado.get("menu")
+    if resultado.get("factible") and gramos:
+        resultado["aviso_composicion"] = _aviso_de_lo_que_falta(
+            gramos, al, getattr(datos, "categorias_excluidas", None))
+    return resultado
 
 
 def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_especie=None,
@@ -1542,9 +1565,10 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 resultado["problemas_seguridad"] = _seguridad_completa(
                     gramos_pres, al, datos.der_objetivo, datos.etapa_requisitos, datos.patologias,
                     peso_perro_kg=datos.peso_perro_kg)
-                return _garantizar_verificado(resultado, datos.der_objetivo,
-                                              datos.etapa_requisitos, datos.peso_perro_kg,
-                                              origen="edicion (preservando)", al=al, req=req)
+                return _con_aviso_composicion(_garantizar_verificado(
+                    resultado, datos.der_objetivo, datos.etapa_requisitos,
+                    datos.peso_perro_kg, origen="edicion (preservando)",
+                    al=al, req=req), al, datos)
             # no se pudo manteniendo todo -- se sigue abajo con el
             # comportamiento libre, y se avisa de qué se perdió
             ok_libre, gramos_libre, ficha_libre = _intentar(forzar)
@@ -1561,9 +1585,10 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 resultado["problemas_seguridad"] = _seguridad_completa(
                     gramos_libre, al, datos.der_objetivo, datos.etapa_requisitos, datos.patologias,
                     peso_perro_kg=datos.peso_perro_kg)
-                return _garantizar_verificado(resultado, datos.der_objetivo,
-                                              datos.etapa_requisitos, datos.peso_perro_kg,
-                                              origen="edicion (libre)", al=al, req=req)
+                return _con_aviso_composicion(_garantizar_verificado(
+                    resultado, datos.der_objetivo, datos.etapa_requisitos,
+                    datos.peso_perro_kg, origen="edicion (libre)",
+                    al=al, req=req), al, datos)
             ok, gramos, ficha = ok_libre, gramos_libre, ficha_libre
         else:
             ok, gramos, ficha = _intentar(forzar)
@@ -1615,12 +1640,12 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
     }
     if relajaciones_edicion:
         resultado_final["se_relajo"] = relajaciones_edicion
-        aviso_falta = _aviso_de_lo_que_falta(gramos, al)
+        aviso_falta = _aviso_de_lo_que_falta(gramos, al, datos.categorias_excluidas)
         if aviso_falta:
             resultado_final["aviso_composicion"] = aviso_falta
-    return _garantizar_verificado(resultado_final, datos.der_objetivo,
-                                  datos.etapa_requisitos, datos.peso_perro_kg,
-                                  origen="edicion", al=al, req=req)
+    return _con_aviso_composicion(_garantizar_verificado(
+        resultado_final, datos.der_objetivo, datos.etapa_requisitos,
+        datos.peso_perro_kg, origen="edicion", al=al, req=req), al, datos)
 
 
 @app.post("/menu/cambiar")
