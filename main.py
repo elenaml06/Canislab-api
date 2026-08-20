@@ -2048,6 +2048,37 @@ def portal_cliente(datos: PeticionPortal):
 # reintenta con espera creciente durante días, así que un fallo pasajero
 # de Supabase se recupera solo en vez de perderse -- y se manda a Sentry.
 # =====================================================================
+def _cabeceras_supabase(clave):
+    """
+    ⚠️ CORREGIDO (20 agosto) — CASO REAL, y el fallo era NUESTRO: un pago
+    de prueba con la clave secreta CORRECTA puesta seguía dando 403 al
+    escribir el plan. Se perdieron dos rondas buscándolo en la
+    configuración de Supabase cuando estaba aquí.
+
+    Causa: esto mandaba la clave en DOS cabeceras, `apikey` y
+    `Authorization: Bearer`. Con las claves antiguas (JWT) eso es lo
+    correcto y funciona. Pero las claves del formato nuevo
+    (sb_secret_... / sb_publishable_...) NO son JWT: al llegar en
+    Authorization, Supabase intenta interpretarlas como tal, no puede, y
+    rechaza la petición entera con 403 -- aunque la clave sea la buena y
+    tenga todos los permisos.
+
+    Las nuevas van SOLO en `apikey`. Las antiguas siguen yendo en las dos,
+    que es como estaban documentadas, para no romper a quien no haya
+    migrado.
+    """
+    cabeceras = {
+        "apikey": clave,
+        "Content-Type": "application/json",
+        "Prefer": "return=representation",
+    }
+    # Un JWT son tres trozos separados por puntos. Si no lo es, es del
+    # formato nuevo y no puede viajar como Bearer.
+    if len(clave.split(".")) == 3:
+        cabeceras["Authorization"] = f"Bearer {clave}"
+    return cabeceras
+
+
 def _tipo_de_clave_supabase():
     """
     ⚠️ AÑADIDO (20 agosto) — CASO REAL: un 403 de Supabase al activar un
@@ -2136,12 +2167,7 @@ def _actualizar_perfil(user_id, campos, evento):
     try:
         r = httpx.patch(
             f"{supabase_url}/rest/v1/profiles?id=eq.{user_id}",
-            headers={
-                "apikey": supabase_key,
-                "Authorization": f"Bearer {supabase_key}",
-                "Content-Type": "application/json",
-                "Prefer": "return=representation",
-            },
+            headers=_cabeceras_supabase(supabase_key),
             json=campos,
             timeout=20.0,
         )

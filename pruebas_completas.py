@@ -611,6 +611,25 @@ finally:
     _os.environ.pop("SUPABASE_URL", None)
     _os.environ.pop("SUPABASE_SERVICE_KEY", None)
 
+# Las claves del formato nuevo de Supabase NO son JWT: si viajan en
+# Authorization: Bearer, Supabase intenta parsearlas como tal y devuelve
+# 403 aunque la clave sea la correcta. Caso real: dos rondas perdidas
+# buscando el fallo en la configuracion cuando estaba en estas cabeceras.
+import base64 as _b64
+def _jwt_falso(rol):
+    _b = lambda d: _b64.urlsafe_b64encode(_json.dumps(d).encode()).decode().rstrip("=")
+    return f"{_b({'alg':'HS256'})}.{_b({'role':rol})}.firma"
+
+_nuevas = _api._cabeceras_supabase("sb_secret_AbC123")
+if "Authorization" in _nuevas:
+    fallos.append("BLOQUE10: una clave sb_secret_ viaja en Authorization; Supabase "
+                  "la rechazaria con 403 aunque sea la correcta")
+if _nuevas.get("apikey") != "sb_secret_AbC123":
+    fallos.append("BLOQUE10: la clave nueva no viaja en apikey")
+_viejas = _api._cabeceras_supabase(_jwt_falso("service_role"))
+if "Authorization" not in _viejas:
+    fallos.append("BLOQUE10: una clave JWT antigua ya no manda Authorization")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
