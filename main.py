@@ -2048,6 +2048,48 @@ def portal_cliente(datos: PeticionPortal):
 # reintenta con espera creciente durante días, así que un fallo pasajero
 # de Supabase se recupera solo en vez de perderse -- y se manda a Sentry.
 # =====================================================================
+def _tipo_de_clave_supabase():
+    """
+    ⚠️ AÑADIDO (20 agosto) — CASO REAL: un 403 de Supabase al activar un
+    premium, y dos rondas de "prueba a cambiar la clave, a ver". Adivinar
+    a ciegas es lento y desesperante, y la respuesta estaba dentro de la
+    propia clave todo el rato.
+
+    Las claves de Supabase dicen lo que son:
+      · las nuevas, por el prefijo (sb_secret_ / sb_publishable_)
+      · las antiguas son JWT, y su parte central es un JSON en base64 con
+        el campo "role": "anon" o "service_role"
+    Leerlo NO expone nada: lo secreto de un JWT es la FIRMA, que aquí no
+    se toca, y el rol no es un secreto. Nunca se devuelve la clave, solo
+    de qué tipo es.
+
+    El webhook necesita service_role, porque escribe en el perfil de otra
+    persona -- y la clave pública no puede (ni debe) hacer eso.
+    """
+    clave = (os.environ.get("SUPABASE_SERVICE_KEY") or "").strip()
+    if not clave:
+        return "sin configurar"
+    if clave.startswith("sb_secret_"):
+        return "secreta (formato nuevo) — correcta"
+    if clave.startswith("sb_publishable_"):
+        return "PÚBLICA (formato nuevo) — no sirve, hace falta la secreta"
+    if clave.startswith("sk_") or clave.startswith("pk_") or clave.startswith("whsec_"):
+        return "¡es una clave de STRIPE, no de Supabase!"
+    partes = clave.split(".")
+    if len(partes) == 3:
+        import base64, json as _json
+        try:
+            relleno = partes[1] + "=" * (-len(partes[1]) % 4)
+            datos = _json.loads(base64.urlsafe_b64decode(relleno))
+        except Exception:
+            return "no reconocida"
+        rol = datos.get("role")
+        if rol == "service_role":
+            return "service_role — correcta"
+        return f"rol '{rol}' — no sirve, hace falta service_role"
+    return "no reconocida"
+
+
 def _plano(obj):
     """
     Un StripeObject NO es un dict: no admite .get(), lanza AttributeError.
@@ -2108,9 +2150,14 @@ def _actualizar_perfil(user_id, campos, evento):
                                 paso="llamada a Supabase")
         return False
     if r.status_code >= 400:
+        # ⚠️ Se dice QUÉ clave hay puesta: un 403 a secas obliga a adivinar,
+        # y "la clave configurada es la pública" se arregla en diez segundos.
+        tipo = _tipo_de_clave_supabase()
         observabilidad.capturar(
-            RuntimeError(f"Supabase rechazó la actualización del plan: HTTP {r.status_code}"),
+            RuntimeError(f"Supabase rechazó la actualización del plan: HTTP {r.status_code} "
+                         f"(la clave configurada es: {tipo})"),
             endpoint="/stripe/webhook", evento=evento,
+            tipo_de_clave_supabase=tipo,
             respuesta_supabase=r.text[:300], campos=list(campos))
         return False
     # 200 con lista vacía = no existe ninguna fila con ese id. Alguien ha
@@ -2348,6 +2395,13 @@ def verificar():
             "webhook_configurado": bool(os.environ.get("STRIPE_WEBHOOK_SECRET")),
             "coherente": not (_modo_stripe() == "real"
                               and _precio_de_sandbox(PRICE_MENSUAL)),
+        },
+        # ⚠️ AÑADIDO (20 agosto): para ver de un vistazo, sin pagar nada y
+        # sin enseñar la clave, si la que hay puesta puede escribir en los
+        # perfiles. Un 403 al activar un premium sale casi siempre de aquí.
+        "supabase": {
+            "url_configurada": bool(os.environ.get("SUPABASE_URL")),
+            "clave": _tipo_de_clave_supabase(),
         },
     }
 
