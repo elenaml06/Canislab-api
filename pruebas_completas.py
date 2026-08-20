@@ -344,6 +344,123 @@ if _res.get("factible"):
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
+# BLOQUE 9 — QUE NUNCA SE QUEDE SIN MENÚ POR UNA REGLA DE FORMA
+#
+# Añadido el 20 de agosto. Antes, un adulto con tres alergias recibía
+# "no existe ninguna combinación". Medido, era falso: existía y salía
+# verde 30/30. Lo que lo bloqueaba era el mínimo de "Vísceras 2%" -- una
+# proporción de BARF nuestra, que FEDIAF no exige y que verificar() ni
+# mira. La escalera suelta esas proporciones cuando hace falta, sin
+# tocar jamás los 30 requisitos ni los límites de seguridad.
+#
+# Este bloque comprueba las dos mitades del trato:
+#   · con restricciones duras pero razonables, SIEMPRE sale menú
+#   · lo que salga sigue estando verde (si no, el BLOQUE 8 lo cazaría,
+#     pero aquí se comprueba explícitamente el caso relajado)
+#   · y si de verdad no hay nada que hacer (sin carne, ni hueso, ni
+#     pescado), se sigue diciendo que no, sin inventarse un menú
+# ============================================================
+print("=== BLOQUE 9: nunca sin menú por una regla de forma ===")
+
+RESTRICCIONES_RAZONABLES = [
+    ("3 alergias",              {"especies_excluidas": ["Pollo", "Ternera", "Cordero"]}),
+    ("5 alergias",              {"especies_excluidas": ["Pollo", "Ternera", "Cordero",
+                                                        "Cerdo", "Pavo"]}),
+    ("sin hueso (senior)",      {"categorias_excluidas": ["Hueso carnoso"]}),
+    ("sin hueso + 3 alergias",  {"categorias_excluidas": ["Hueso carnoso"],
+                                 "especies_excluidas": ["Pollo", "Ternera", "Cordero"]}),
+    ("sin hígado ni vísceras",  {"categorias_excluidas": ["Hígado", "Vísceras"]}),
+]
+PERROS_B9 = [("adulto 20kg", 1040.0, "Adulto", 20.0, None),
+             ("cachorro 10kg", 1049.0, "CachorroCrecimiento", 10.0, 20.0),
+             ("toy adulto 3kg", 250.0, "Adulto", 3.0, None)]
+
+for _etq_p, _der, _etapa, _peso, _adulto in PERROS_B9:
+    for _etq_r, _extra in RESTRICCIONES_RAZONABLES:
+        _cuerpo = {"nombres_alimentos": [], "der_objetivo": _der,
+                   "etapa_requisitos": _etapa, "peso_perro_kg": _peso,
+                   "modo": "automatico"}
+        if _adulto:
+            _cuerpo["peso_adulto_esperado_kg"] = _adulto
+        _cuerpo.update(_extra)
+        _r = _c.post("/menu/v2", json=_cuerpo).json()
+        if not _r.get("factible"):
+            fallos.append(f"BLOQUE9 {_etq_p} / {_etq_r}: se quedó sin menú "
+                          f"({str(_r.get('motivo'))[:60]})")
+            continue
+        _g = _r["menu"]
+        _f = verificar(_g, al, req, _der, _etapa)
+        if _f["semaforo"] != "verde":
+            fallos.append(f"BLOQUE9 {_etq_p} / {_etq_r}: dio un menú en {_f['semaforo']}")
+        # si tuvo que relajar, debe decirlo -- un menú raro sin explicación
+        # es peor que no darlo
+        if _r.get("se_relajo") and not _r.get("aviso_composicion"):
+            _presentes = {al.get(n, {}).get("categoria") for n in _g}
+            if any(c not in _presentes for c in MARGENES):
+                fallos.append(f"BLOQUE9 {_etq_p} / {_etq_r}: relajó y dejó categorías "
+                              f"fuera sin avisar de ello")
+
+# LÍMITE CONOCIDO Y ACEPTADO: quitar las 8 especies más comunes deja el
+# catálogo con 2 carnes, 1 hueso, 0 vísceras y 0 hígado. Para un ADULTO
+# todavía sale menú (el pescado cubre casi todo). Para un CACHORRO en
+# crecimiento no, y está bien que no salga: la única forma de cuadrarlo
+# sería con kilos de hoja verde, que es exactamente lo que corta el tope
+# de volumen. Lo que se comprueba aquí no es que dé menú, sino que si no
+# lo da, lo diga en vez de inventarse algo imposible de dar.
+_ocho_fuera = {"especies_excluidas": ["Pollo", "Ternera", "Cordero", "Cerdo",
+                                      "Pavo", "Conejo", "Pato", "Vaca"]}
+_r = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1040.0,
+    "etapa_requisitos": "Adulto", "peso_perro_kg": 20.0, "modo": "automatico",
+    **_ocho_fuera}).json()
+if not _r.get("factible"):
+    fallos.append("BLOQUE9 adulto 20kg / 8 especies fuera: se quedó sin menú")
+
+_r = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1049.0,
+    "etapa_requisitos": "CachorroCrecimiento", "peso_perro_kg": 10.0,
+    "peso_adulto_esperado_kg": 20.0, "modo": "automatico", **_ocho_fuera}).json()
+if _r.get("factible"):
+    _g = _r["menu"]
+    _total = sum(_g.values())
+    if _total > 10.0 * 1000 * _api.TOPE_GRAMOS_SOBRE_PESO:
+        fallos.append(f"BLOQUE9 cachorro/8 especies: dio un menú de {_total:.0f} g "
+                      f"para un perro de 10 kg")
+
+# NINGÚN menú entregado puede pasarse del tope de volumen
+for _peso_v, _der_v, _etapa_v in ((10.0, 1049.0, "CachorroCrecimiento"), (20.0, 1040.0, "Adulto")):
+    for _etq_r, _extra in RESTRICCIONES_RAZONABLES:
+        _cuerpo = {"nombres_alimentos": [], "der_objetivo": _der_v, "etapa_requisitos": _etapa_v,
+                   "peso_perro_kg": _peso_v, "modo": "automatico"}
+        if "Cachorro" in _etapa_v:
+            _cuerpo["peso_adulto_esperado_kg"] = _peso_v * 2
+        _cuerpo.update(_extra)
+        _r = _c.post("/menu/v2", json=_cuerpo).json()
+        if _r.get("factible"):
+            _t = sum(_r["menu"].values())
+            _pct = 100 * _t / (_peso_v * 1000)
+            if _pct > 100 * _api.TOPE_GRAMOS_SOBRE_PESO:
+                fallos.append(f"BLOQUE9 volumen {_etapa_v} / {_etq_r}: {_t:.0f} g "
+                              f"= {_pct:.0f}% del peso del perro")
+
+# lo genuinamente imposible se sigue diciendo que no
+_imposibles = [
+    ("sin carne, hueso ni pescado", {"categorias_excluidas": ["Carne muscular", "Hueso carnoso",
+                                                              "Pescados y mariscos"]}),
+    ("todas las categorías fuera",  {"categorias_excluidas": ["Carne muscular", "Hueso carnoso",
+                                                              "Vísceras", "Hígado",
+                                                              "Pescados y mariscos",
+                                                              "Verduras y hortalizas"]}),
+]
+for _etq, _extra in _imposibles:
+    _cuerpo = {"nombres_alimentos": [], "der_objetivo": 1040.0, "etapa_requisitos": "Adulto",
+               "peso_perro_kg": 20.0, "modo": "automatico"}
+    _cuerpo.update(_extra)
+    _r = _c.post("/menu/v2", json=_cuerpo).json()
+    if _r.get("factible"):
+        fallos.append(f"BLOQUE9 {_etq}: se inventó un menú donde no hay comida posible")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")
