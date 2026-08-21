@@ -306,6 +306,42 @@ causa es la variedad de especies, no el número de alimentos:
 Los pescados (20) no se ven afectados por las alergias a mamíferos, y por
 eso la escalera de relajación funciona: casi siempre queda pescado.
 
+## 5-quater. Quién consigue los datos y quién los implementa
+
+**Regla, establecida el 21 de agosto después de saltármela.** El asistente
+rellenó el timo de ternera y los testículos de cordero con valores que
+había buscado él en espejos de USDA, sin poder abrir la ficha original.
+Luego los marcó como «sin verificar», lo cual no arregla nada: el motor
+los usa igual, así que un número dudoso pesa lo mismo que uno bueno. Solo
+hay dos estados honestos: **verificado, o hueco declarado**. Se revirtió.
+
+| Le toca al asistente | Le toca a una persona |
+|---|---|
+| Manipular y reestructurar lo que ya está en el JSON | **Conseguir valores de alimentos nuevos** |
+| Detectar incoherencias entre alimentos | Sacarlos de BEDCA, CIQUAL o USDA |
+| Comparar contra los rangos de FEDIAF | Valores de hueso: **solo Köber et al. 2017** |
+| Programar la lógica que usa esos valores | Requisitos por patología: guías clínicas |
+
+Lo que sí puede hacer el asistente con las tablas: la auditoría contra el
+PDF de FEDIAF (161/161) es leer la fuente primaria que se le dio, y la
+conversión de la vitamina E sale de la tabla de bioequivalencia de la
+página 63 de ese mismo PDF — **d-α-tocoferol 1 mg = 1,49 UI**, de donde
+1 UI = 0,671 mg. Eso es comparar contra FEDIAF, no inventar datos.
+
+### `DATOS_QUE_FALTAN.md`
+
+Generado por `auditar_catalogo.py`: **63 alimentos y 443 valores** por
+conseguir, cada uno con su unidad y una casilla vacía. Está pensado para
+llevarlo a BEDCA o CIQUAL y rellenarlo, y entonces sí pasárselo al
+asistente para que lo inserte con el formato correcto.
+
+Prioridad, por lo que desbloquea:
+1. Los seis pescados con EPA/DHA sin dato — el **boquerón** el primero,
+   que es pescado azul contado como si no tuviera omega-3.
+2. Las seis vísceras (timo, testículos, bazo de vaca, páncreas de vaca,
+   bazo de cordero, cerebro de ternera) — son la categoría que deja sin
+   menú a los perros con alergias.
+
 ## 6. Deuda técnica y detalles
 
 - [ ] **Cantidades no medibles.** Salen ingredientes de 0,15 g de sal y

@@ -2403,7 +2403,7 @@ def verificar():
     """
     import hashlib, os, json
     SELLOS = {
-        "alimentos_v3_final.json":      "8d1558db0b80d962",  # 21 ago: vitE, datos USDA, huecos y procedencia
+        "alimentos_v3_final.json":      "610ec349ceae5526",  # 21 ago: vitE (FEDIAF p.63) + huecos declarados
         "requerimientos_v2_final.json": "7b023fcdebdd4391",
     }
     SELLOS_CRUDOS = {
