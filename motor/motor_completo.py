@@ -265,6 +265,41 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             if pedidos:
                 disp = pedidos
 
+        # ⚠️ CORREGIDO (21 agosto) — FALLO GRAVE ENCONTRADO POR UNA PRUEBA
+        # NUEVA: LAS ALERGIAS SE PODÍAN SALTAR FORZANDO UN ALIMENTO.
+        #
+        # El filtro de exclusiones se aplicaba arriba del todo, ANTES que
+        # `forzar` y `restringir_a_elegidos` -- y los dos vuelven a meter
+        # alimentos en la lista sin volver a mirarlo: forzar hace
+        # `disp.append(n)` y restringir_a_elegidos hace `disp = pedidos`,
+        # que reemplaza la lista filtrada entera. Resultado: forzar un
+        # alimento al que el perro es alérgico lo colaba en la ración,
+        # anulando la alergia por completo. Va contra la regla del
+        # proyecto que dice que las alergias no se tocan jamás porque
+        # pueden ser médicas.
+        #
+        # No era teórico ni raro. Cualquier camino que fuerce alimentos lo
+        # dispara, y el más probable es EDITAR un menú ya hecho: al
+        # cambiar o añadir un alimento se fuerzan todos los demás para
+        # conservarlos, así que un menú generado ANTES de apuntar una
+        # alergia nueva se la saltaba entera al primer retoque. Lo
+        # encontró la prueba de dos perros en la misma casa (a uno se le
+        # fuerzan los alimentos del otro), pero el fallo estaba desde
+        # mucho antes y no tiene nada que ver con tener varios perros.
+        #
+        # El arreglo es de ORDEN, no de caso particular: las exclusiones
+        # se vuelven a aplicar AQUÍ, al final, igual que ya hacían las
+        # categorías excluidas y las restricciones por patología, que
+        # están justo debajo y por el mismo motivo. Así gana siempre la
+        # exclusión, venga de donde venga el alimento y aunque mañana se
+        # añada otra forma nueva de meterlo en la lista.
+        #
+        # Lo que el usuario elige a mano manda sobre ACCESIBLES -- la
+        # lista curada de "lo fácil de encontrar", que es comodidad
+        # nuestra -- pero nunca sobre una exclusión suya.
+        if excluidos:
+            disp, _quitados_final, _avisos_final = filtrar(disp, excluidos)
+
         # ⚠️ AÑADIDO (5 agosto, madrugada) — PEDIDO EXPRESO: perros que
         # no pueden masticar hueso carnoso con normalidad (senior,
         # dientes en mal estado, etc.) necesitan poder excluir esa

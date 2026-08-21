@@ -106,8 +106,19 @@ menús comparados no tienen sentido sin él.
 - [ ] **Cesta de la compra**, diferenciando de quién es cada cosa
       («para Cairo» / «para Nala» / «para los dos»). Solo aparece la
       distinción si hay más de un perro.
-- [ ] **Menús parecidos entre perros** de la misma casa, para no tener que
-      comprar y porcionar el doble de cosas.
+- [x] **Menús parecidos entre perros** de la misma casa. ✅ **Motor hecho el
+      21 de agosto**: `POST /menu/varios-perros`, con `modo_conjunto`
+      `"parecidos"` o `"distintos"`. Manda el perro con menos margen (más
+      restricciones y, a igualdad, ración más pequeña) y los demás se
+      amoldan a él: al revés no cabe, forzar los 7 alimentos de un pastor
+      alemán en un chihuahua de 3 kg no entra en 137 g de ración. Devuelve
+      por perro qué alimentos comparte, cuáles cambian y cuántos cambios
+      son. Medido: dos adultos de 24,5 y 8,2 kg salen con **0 cambios**
+      (misma compra, distintas cantidades) en 1,1 s. Falta enchufarlo en la
+      app.
+
+      Encontró de paso un fallo grave que llevaba meses: **las alergias se
+      podían saltar forzando el alimento** — ver sección 5.
 - [ ] **Ajustes de cuenta** (no del perro): cambiar contraseña, correo,
       método de pago, darse de baja.
 - [ ] **Entrar con Google.**
