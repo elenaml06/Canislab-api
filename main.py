@@ -1908,6 +1908,30 @@ def crear_checkout(datos: PeticionCheckout):
             status_code=500,
             detail="El cobro no está bien configurado en el servidor (los precios "
                    "son de prueba y la clave es real). No se te ha cobrado nada.")
+    # ⚠️ AÑADIDO (20 agosto): si ya tiene una suscripción viva, no se le
+    # crea otra -- se le manda a gestionar la que tiene. Ver
+    # _suscripciones_vivas() para el caso real que lo motivó.
+    vivas, se_pudo = _suscripciones_vivas(datos.user_id)
+    if vivas:
+        cliente = vivas[0].get("customer")
+        url_portal = None
+        try:
+            url_portal = stripe.billing_portal.Session.create(
+                customer=cliente, return_url=URL_BASE).url
+        except Exception as e:
+            observabilidad.capturar(e, endpoint="/stripe/checkout",
+                                    paso="portal para quien ya está suscrito")
+        return {"ya_suscrito": True, "url": url_portal,
+                "motivo": ("Ya tienes una suscripción activa. Desde aquí puedes "
+                           "cambiarla o cancelarla, pero no hace falta pagar otra vez.")}
+    if not se_pudo:
+        # Stripe no contesta: no sabemos si ya tiene una. Ante la duda, NO
+        # se cobra -- es reintentable, y un cobro duplicado no.
+        raise HTTPException(
+            status_code=503,
+            detail="No hemos podido comprobar si ya tienes una suscripción. "
+                   "Inténtalo en un minuto: no se te ha cobrado nada.")
+
     try:
         session = stripe.checkout.Session.create(
             mode="subscription",
@@ -2121,6 +2145,42 @@ def _tipo_de_clave_supabase():
     return "no reconocida"
 
 
+# Estados de Stripe en los que una suscripción todavía cuenta: la persona
+# tiene premium, o está a punto de perderlo pero aún no. "past_due" es
+# alguien cuyo cobro falló pero que sigue teniendo acceso mientras Stripe
+# reintenta -- crearle una segunda suscripción ahí sería lo peor posible.
+ESTADOS_VIVOS = ("active", "trialing", "past_due", "unpaid")
+
+
+def _suscripciones_vivas(user_id, excluir_id=None):
+    """
+    ⚠️ AÑADIDO (20 agosto) — CASO REAL ENCONTRADO PROBANDO: se crearon
+    SEIS suscripciones activas para el mismo user_id sin que nada lo
+    impidiera. En la sandbox da igual; en producción son seis cobros
+    mensuales a la misma persona, y el webhook las trataría como buenas
+    las seis.
+
+    Devuelve (lista, se_pudo_comprobar). Lo segundo importa: si Stripe no
+    contesta, NO se puede concluir "no tiene ninguna" -- eso es justo lo
+    que llevaría a cobrar dos veces. Quien llama decide qué hacer con la
+    duda, y aquí la duda nunca se resuelve a favor de cobrar.
+    """
+    try:
+        res = stripe.Subscription.search(
+            query=f"metadata['user_id']:'{user_id}'", limit=100)
+        datos = res["data"] if isinstance(res, dict) else list(res)
+    except Exception as e:
+        observabilidad.capturar(e, endpoint="_suscripciones_vivas",
+                                paso="buscar suscripciones en Stripe")
+        return [], False
+    vivas = []
+    for s in datos:
+        s = _plano(s)
+        if s.get("status") in ESTADOS_VIVOS and s.get("id") != excluir_id:
+            vivas.append(s)
+    return vivas, True
+
+
 def _plano(obj):
     """
     Un StripeObject NO es un dict: no admite .get(), lanza AttributeError.
@@ -2237,6 +2297,19 @@ async def stripe_webhook(request: Request):
             return {"ok": False, "motivo": "sin user_id en la metadata"}
 
         if tipo == "customer.subscription.deleted":
+            # ⚠️ AÑADIDO (20 agosto): antes se ponía "free" a ciegas. Con
+            # varias suscripciones (ver _suscripciones_vivas), cancelar una
+            # dejaba a la persona SIN premium teniendo otras pagadas.
+            otras, se_pudo = _suscripciones_vivas(user_id, excluir_id=sub.get("id"))
+            if otras:
+                return {"ok": True,
+                        "motivo": f"le quedan {len(otras)} suscripciones activas"}
+            if not se_pudo:
+                # Sin poder comprobarlo, quitar el premium puede dejar sin
+                # servicio a quien paga. 5xx para que Stripe reintente.
+                raise HTTPException(
+                    status_code=503,
+                    detail="No se pudo comprobar si quedan otras suscripciones")
             campos = {"plan": "free"}
         else:
             campos = {"plan": "premium",
