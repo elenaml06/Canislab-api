@@ -90,6 +90,20 @@ Los precios sí se ven antes de pagar, y qué vendes se entiende. Eso está.
 Ordenadas por dependencia: multi-perro va primero porque la cesta y los
 menús comparados no tienen sentido sin él.
 
+> ⚠️ **21 de agosto, encontrado probando en producción:** la ficha del
+> perro **no se guardaba entera**. `guardarPerro` leía siete campos que en
+> la app no existen con ese nombre (`perfil.fechaNacimiento`,
+> `perfil.castrado`, `perfil.actividad`…), así que la fecha de nacimiento,
+> la esterilización, la actividad y el tamaño se guardaban vacíos, en
+> silencio. Al releer, la fecha caía al valor por defecto — el mismo para
+> todos los perros de la cuenta, que parece «me ha copiado la del otro».
+> De la fecha sale la ETAPA y de la etapa los 30 requisitos: un perro de
+> diez años volvía como cachorro. Corregido (PR web #9).
+>
+> **Queda por hacer a mano:** las fichas ya guardadas siguen con la fecha
+> vacía. Hay que entrar en cada perro, poner su fecha de nacimiento y
+> guardar, una vez.
+
 - [x] **Varios perros por cuenta.** ✅ **Hecho el 21 de agosto** en
       `canislab-web`. Selector de perros en los dos paneles laterales,
       crear y borrar perro, y se recuerda con cuál estabas. Cambiar de
@@ -131,6 +145,25 @@ menús comparados no tienen sentido sin él.
 
       Encontró de paso un fallo grave que llevaba meses: **las alergias se
       podían saltar forzando el alimento** — ver sección 5.
+- [ ] **Menús de varios perros: el recorrido COMPLETO.** Lo que hay ahora
+      se queda corto y así no vale (dicho el 21 de agosto): para varios
+      perros solo hay automático de un menú, sin elegir cuántos, sin
+      Personalizar, sin poder editar alimentos después, y sin preguntar
+      qué come cada perro ahora ni si necesita transición. **Tiene que ser
+      lo mismo que para un perro, pero para N.**
+
+- [ ] **Sacar los perros del menú lateral.** Que cambiar de perro esté
+      metido en una pestaña del panel es esconderlo. Va como **burbuja de
+      perfil bien visible** en la app, y de ahí cuelga una **rueda de
+      engranaje** con la configuración de la cuenta y de las mascotas
+      (esto se junta con «Ajustes de cuenta», que es lo de abajo).
+
+- [ ] **Poder usar la app sin cuenta**, y pedir el registro solo cuando de
+      verdad haga falta (pagar, o guardar de un móvil a otro). Hoy no se
+      puede ni mirar sin registrarse. Implica guardar el perro y los menús
+      en el propio móvil mientras no hay cuenta, y pasarlos a Supabase al
+      registrarse sin perder nada.
+
 - [ ] **Ajustes de cuenta** (no del perro): cambiar contraseña, correo,
       método de pago, darse de baja.
 - [ ] **Entrar con Google.**
