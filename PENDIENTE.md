@@ -117,9 +117,20 @@ menús comparados no tienen sentido sin él.
 Guidelines 2025* (el PDF oficial, no de memoria). Script reproducible en
 `auditar_fediaf.py`.
 
-**84 de 84 comprobaciones cuadran exactas.** Se verificó, para los 30
-nutrientes del JSON y en las tres etapas: el valor, la unidad, y que todo
-esté por 1000 kcal de energía metabolizable.
+**161 de 161 comprobaciones cuadran exactas** — mínimos *y* máximos. Se
+verificó, para los 30 nutrientes del JSON y en las tres etapas: el valor,
+la unidad, y que todo esté por 1000 kcal de energía metabolizable.
+
+Los máximos son la cara de la toxicidad y vienen de dos sitios distintos,
+que es donde es fácil equivocarse: los nutricionales están en la III-3b ya
+por 1000 kcal, y los legales de la UE **solo** en la III-3a, por 100 g de
+materia seca — se pasan multiplicando por 2,5 (FEDIAF usa 4000 kcal/kg MS
+de referencia). Ese ×2,5 no es una suposición: cuadra en los dos sitios
+donde ambas tablas dan el mismo dato, vitamina A (40.000 × 2,5 = 100.000)
+y vitamina D (320 × 2,5 = 800).
+
+También se comprueba lo contrario: que el JSON **no se invente** máximos
+donde FEDIAF no da ninguno. La vitamina E es uno de esos casos.
 
 También quedó confirmado el mapeo de columnas, que no era obvio:
 - `Adulto` usa la columna **95 kcal/kg^0,75**, la más exigente de las dos
@@ -153,12 +164,18 @@ con fuentes animales variadas cubre los aminoácidos esenciales de sobra —
 por eso muchas guías prácticas se quedan en la proteína total. El caso
 donde importa de verdad es una dieta con poca proteína animal.
 
-- [ ] **Vitamina E de los suplementos: ¿UI o mg?** Los multivitamínicos
-      del catálogo llevan valores de 200 a 670, y los fabricantes suelen
-      declarar la vitamina E en UI. Si son UI contadas como mg naturales,
-      están sobrevaloradas un 49 %. Medido: aun en el peor caso los menús
-      aportan de 1,5 a 7 veces el mínimo, así que **hoy nadie se queda
-      corto** — pero conviene confirmarlo etiqueta en mano.
+### Vitamina E de los suplementos — resuelto el 21 de agosto
+
+No eran UI apuntadas como mg, era más sutil: **eran mg de la forma
+sintética**. En la UE los piensos declaran la vitamina E como acetato de
+all-rac-α-tocoferilo, mientras que los alimentos traen α-tocoferol natural
+y el requisito está en natural. Dos monedas en la misma columna, con los
+suplementos contando un 49 % de más.
+
+Confirmado con la etiqueta de NEKTON (160.000 UI de A, 20.000 UI de D3 y
+2.000 **mg** de E por kg — las tres cuadran con el catálogo) y con la
+equivalencia oficial de la EFSA. Convertidos los 9 multivitamínicos ×0,67.
+Comprobado que los menús siguen entre 1,5 y 9 veces el mínimo.
 
 ---
 
