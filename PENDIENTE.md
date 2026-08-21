@@ -179,6 +179,45 @@ Comprobado que los menús siguen entre 1,5 y 9 veces el mínimo.
 
 ---
 
+## 5-bis. Huecos de datos sin declarar (encontrado el 21 de agosto)
+
+Comprobando si los nutrientes se miden en la base correcta salió esto.
+Primero lo bueno: **la base está bien**. 68 de 69 alimentos cárnicos
+cuadran al contrastar su energía declarada contra sus macros por Atwater,
+y ninguna verdura da un ratio imposible. Nutrientes y calorías están en la
+misma base (peso fresco) en todo el catálogo, así que el cálculo «por 1000
+kcal» es correcto y el agua no lo distorsiona — que era la duda.
+
+Pero aparecieron tres alimentos con casi todo a cero **sin declararlo**:
+
+| Alimento | Nutrientes a cero | Declarados en `sin_dato` |
+|---|---|---|
+| Timo de ternera | 28 de 31 | **0** |
+| Testículos de cordero | 30 de 31 | **0** |
+| Grasa de pollo | 28 de 31 | 6 |
+
+Y el motor **usa el timo de ternera**: salió en 1 de 20 menús de prueba.
+
+El campo `sin_dato` existe justo para distinguir «no lo tiene» de «no lo
+sabemos», y la diferencia es asimétrica:
+- En los **mínimos**, contar un hueco como cero es conservador: como mucho
+  se añade un suplemento que no hacía falta.
+- En los **máximos** es peligroso: se puede uno pasar de cobre o de
+  vitamina A sin enterarse. Y el timo es una víscera, ricas justo en eso.
+
+**Esto no lo puede decidir el código:** que la grasa de pollo tenga casi
+todo a cero es verdad (es grasa pura), y que el timo lo tenga es un hueco.
+Distinguirlo hace falta mirar la fuente.
+
+- [ ] Revisar esos tres alimentos y, para cada nutriente a cero, decidir
+      si es un cero real o un hueco. Los huecos, a `sin_dato`.
+- [ ] Mientras tanto, decidir si el timo y los testículos se quedan en el
+      catálogo. Con el 90 % de su composición desconocida, cualquier menú
+      que los use tiene sus máximos sin comprobar de verdad.
+- [ ] Plantearse que el aviso de datos incompletos no dependa de una lista
+      mantenida a mano: un alimento con el 90 % de los valores a cero es
+      sospechoso por sí solo, lo declare o no.
+
 ## 6. Deuda técnica y detalles
 
 - [ ] **Cantidades no medibles.** Salen ingredientes de 0,15 g de sal y
