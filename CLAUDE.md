@@ -70,6 +70,49 @@ línea rara no se puede quitar.
 
 Mantén ese estilo. Y en español, como el resto.
 
+## Cómo se trabaja con git aquí
+
+Esto está escrito porque el 21 de agosto se lió: once ramas sueltas, una
+rama creada desde un `main` viejo (perdiendo un arreglo que ya estaba
+fusionado), y cuatro tandas de trabajo terminadas y sin desplegar sin
+avisar a nadie. Nada de eso fue un accidente inevitable.
+
+1. **Antes de empezar CUALQUIER cosa**, siempre:
+   `git fetch origin main && git checkout -B <rama> origin/main`.
+   Nunca ramificar de una rama vieja ni de lo que hubiera en el disco: si
+   la anterior ya se fusionó, esa copia local está caducada.
+2. **Una rama por cambio**, con nombre que diga qué es. Nada de reutilizar
+   una rama cuyo PR ya está fusionado — se empieza otra desde `main`.
+3. **Al terminar: PR y decirlo.** Trabajo en una rama no está entregado.
+   Vercel y Render despliegan de `main`; mientras no llegue ahí, no
+   existe para quien usa la app. Hay que decir explícitamente si algo se
+   queda sin fusionar y por qué.
+4. **Tras fusionar, borrar la rama.** En Ajustes del repo →
+   *Automatically delete head branches* lo hace GitHub solo.
+5. **Comprobar que llegó.** La API se comprueba en `/verificar`
+   (`sello_main_py_actual` = los primeros 16 hex del SHA-256 de
+   `main.py`). La app, con la marca de build del panel lateral.
+
+## Fallos que no puede encontrar la usuaria
+
+Hay una familia de fallos que no dan error, no se ven en pantalla y solo
+aparecen usando la app días después. El caso que los define: `guardarPerro`
+leía siete campos con nombres que en la app no existen
+(`perfil.fechaNacimiento` cuando se llama `dia`/`mesIdx`/`anio`…), así que
+la fecha de nacimiento, la esterilización, la actividad y el tamaño se
+guardaban vacíos **en silencio**. Y de la fecha sale la etapa, y de la
+etapa los 30 requisitos: un perro de diez años volvía como cachorro.
+
+Contra eso hay dos cosas, y las dos hay que mantenerlas:
+
+- `tests/ficha-ida-y-vuelta.spec.js` (en `canislab-web`) recorre los
+  campos de la ficha que afectan a la comida y exige que cada uno valga
+  lo mismo después de guardar y volver a cargar. **Si añades un campo a
+  la ficha, añádelo ahí.**
+- Comprobar siempre lo GUARDADO, no lo que enseña la pantalla. La ficha
+  se pinta del estado local: puede verse perfecta y estar guardada vacía.
+  Una prueba que mire la pantalla aprueba este fallo.
+
 ## Variables de entorno
 
 | Variable | Para qué |
