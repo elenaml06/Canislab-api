@@ -571,6 +571,36 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         hi = mx * der / 1000.0 if mx is not None else np.inf
         A_rows.append(fila); lb_rows.append(lo); ub_rows.append(hi)
 
+        # ⚠️ AÑADIDO (21 agosto) — CASO REAL MEDIDO: con el tope renal de
+        # fósforo en 1400, el motor devolvía menús con 1426. Se saltaba su
+        # propio límite en un ~2%.
+        #
+        # La causa no era el solver: era la unidad. El tope de arriba se
+        # convierte a absoluto con las kcal OBJETIVO (der), pero el menú
+        # que sale puede tener hasta un 3% menos de kcal (tolerancia_kcal).
+        # Menos kcal con el mismo total de nutriente = más concentración.
+        # Y los requisitos de FEDIAF, y los topes por patología, se miden
+        # POR 1000 KCAL DE LA DIETA REAL, no de las que se pidieron.
+        #
+        # Se añade el mismo tope expresado sobre las kcal de verdad, que
+        # también es lineal -- mismo truco que ya se usaba abajo para el
+        # selenio por gramo de dieta:
+        #     suma(nut_i * g_i)  <=  (mx/1000) * suma(kcal_i * g_i)
+        #   → suma((nut_i - (mx/1000) * kcal_i) * g_i)  <=  0
+        #
+        # Se deja TAMBIÉN la fila absoluta de arriba a propósito: cuando
+        # el menú sale con MÁS kcal de las pedidas, la absoluta es la
+        # estricta. Teniendo las dos, siempre manda la que más aprieta.
+        if mx is not None:
+            fila_rel = fila_vacia()
+            for n in nombres:
+                v_nut = (_num(alimentos[n].get("nutrientes", {}).get(clave)) or 0.0) / 100.0
+                kcal_n = (alimentos[n].get("energia", 0) or 0.0) / 100.0
+                coef = v_nut - (mx / 1000.0) * kcal_n
+                if coef:
+                    fila_rel[idx[n]] = coef
+            A_rows.append(fila_rel); lb_rows.append(-np.inf); ub_rows.append(0.0)
+
     # ⚠️ AÑADIDO (5 agosto, madrugada) — SELENIO POR GRAMO DE DIETA
     # (Merck Veterinary Manual: 2 µg/g de dieta, límite tolerable
     # máximo) -- esta cifra viene en una unidad DISTINTA a la de
