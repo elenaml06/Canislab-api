@@ -513,6 +513,32 @@ def _patch_falso(url, **kw):
 
 _patch_real = _httpx.patch
 _httpx.patch = _patch_falso
+
+# La cancelacion consulta a Stripe si le quedan otras suscripciones vivas
+# (ver _suscripciones_vivas). Se simula desde el principio, con la lista
+# vacia por defecto: sin esto, los tests de webhook reciben 503 porque no
+# pueden preguntarle a Stripe.
+import stripe as _stripe
+_SUBS, _CHECKOUTS = [], []
+_buscar_falla = {"si": False}
+def _buscar_falsa(query=None, limit=None):
+    if _buscar_falla["si"]:
+        raise RuntimeError("Stripe no contesta")
+    return {"data": list(_SUBS)}
+class _Url:
+    url = "https://x"
+_search_real = _stripe.Subscription.search
+_checkout_real = _stripe.checkout.Session.create
+_portal_real = _stripe.billing_portal.Session.create
+_clave_real = _stripe.api_key
+_stripe.Subscription.search = _buscar_falsa
+_stripe.checkout.Session.create = lambda **kw: (_CHECKOUTS.append(kw), _Url())[1]
+_stripe.billing_portal.Session.create = lambda **kw: _Url()
+_stripe.api_key = "sk_test_pruebas"
+
+def _pedir_checkout():
+    return _c.post("/stripe/checkout",
+                   json={"user_id": "u1", "email": "e@x.com", "plan": "mensual"})
 _os.environ["STRIPE_WEBHOOK_SECRET"] = _SECRETO
 _os.environ["SUPABASE_URL"] = "https://supabase.dementira"
 _os.environ["SUPABASE_SERVICE_KEY"] = "clave-de-mentira"
@@ -605,7 +631,57 @@ try:
     _evento("customer.subscription.created", _SUB_HOY)
     if _LLAMADAS:
         fallos.append("BLOQUE10: sin STRIPE_WEBHOOK_SECRET cambió un plan igualmente")
+    # ── Una persona, una suscripcion ────────────────────────
+    # Caso real: se crearon SEIS suscripciones activas para el mismo
+    # user_id sin que nada lo impidiera. En produccion, seis cobros a la
+    # misma persona. Y al reves: cancelar una no puede quitar el premium
+    # si le quedan otras pagadas.
+    _SUBS.clear(); _CHECKOUTS.clear(); _pedir_checkout()
+    if len(_CHECKOUTS) != 1:
+        fallos.append("BLOQUE10: no deja suscribirse a quien no tiene nada")
+
+    for _estado in ("trialing", "active", "past_due"):
+        _SUBS[:] = [{"id": "s1", "status": _estado, "customer": "c1",
+                     "metadata": {"user_id": "u1"}}]
+        _CHECKOUTS.clear()
+        _r = _pedir_checkout()
+        if _CHECKOUTS:
+            fallos.append(f"BLOQUE10: crea una SEGUNDA suscripcion teniendo una "
+                          f"en '{_estado}' -- serian dos cobros a la misma persona")
+        if not _r.json().get("ya_suscrito"):
+            fallos.append(f"BLOQUE10: no avisa de que ya esta suscrito ({_estado})")
+
+    _SUBS[:] = [{"id": "s1", "status": "canceled", "customer": "c1",
+                 "metadata": {"user_id": "u1"}}]
+    _CHECKOUTS.clear(); _pedir_checkout()
+    if not _CHECKOUTS:
+        fallos.append("BLOQUE10: no deja resuscribirse a quien cancelo hace tiempo")
+
+    _buscar_falla["si"] = True
+    _CHECKOUTS.clear()
+    _r = _pedir_checkout()
+    if _CHECKOUTS or _r.status_code < 500:
+        fallos.append("BLOQUE10: con Stripe caido crea el cobro a ciegas; podria "
+                      "duplicar una suscripcion que ya existe")
+    _buscar_falla["si"] = False
+
+    _SUBS[:] = [{"id": "s1", "status": "trialing", "customer": "c1", "metadata": {"user_id": "u1"}},
+                {"id": "s2", "status": "active", "customer": "c1", "metadata": {"user_id": "u1"}}]
+    _RESPUESTA.update(code=200, cuerpo=[{"id": "u1"}])
+    _LLAMADAS.clear()
+    _os.environ["STRIPE_WEBHOOK_SECRET"] = _SECRETO
+    _evento("customer.subscription.deleted",
+            {"id": "s1", "customer": "c1", "metadata": {"user_id": "u1"},
+             "items": {"data": []}})
+    if _LLAMADAS:
+        fallos.append("BLOQUE10: cancelar una de varias suscripciones quito el "
+                      "premium a alguien que sigue pagando otra")
+    _SUBS.clear()
 finally:
+    _stripe.Subscription.search = _search_real
+    _stripe.checkout.Session.create = _checkout_real
+    _stripe.billing_portal.Session.create = _portal_real
+    _stripe.api_key = _clave_real
     _httpx.patch = _patch_real
     _os.environ.pop("STRIPE_WEBHOOK_SECRET", None)
     _os.environ.pop("SUPABASE_URL", None)
