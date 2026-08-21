@@ -114,8 +114,11 @@ menús comparados no tienen sentido sin él.
       alemán en un chihuahua de 3 kg no entra en 137 g de ración. Devuelve
       por perro qué alimentos comparte, cuáles cambian y cuántos cambios
       son. Medido: dos adultos de 24,5 y 8,2 kg salen con **0 cambios**
-      (misma compra, distintas cantidades) en 1,1 s. Falta enchufarlo en la
-      app.
+      (misma compra, distintas cantidades) en 1,1 s. **Ya está en la app**:
+      en el generador, con más de un perro, sale «¿Para quién?» con las
+      tres opciones, y la pantalla de resultados enseña qué lleva cada uno
+      que los demás no y la compra de un día sumando a todos. De momento
+      solo en modo automático.
 
       Encontró de paso un fallo grave que llevaba meses: **las alergias se
       podían saltar forzando el alimento** — ver sección 5.
