@@ -218,6 +218,73 @@ for excl, pat in CASOS_EXCL:
             fallos.append(f"BLOQUE5 excl={excl}: se coló {colados}")
     problemas, _ = comprobar_menu(f"BLOQUE5 excl={excl} pat={pat}", g, der, etapa, peso)
     fallos.extend(problemas)
+
+# ⚠️ AÑADIDO (21 agosto) — UNA ALERGIA NO SE PUEDE SALTAR FORZANDO EL
+# ALIMENTO. Fallo real encontrado el 21 de agosto: el filtro de
+# exclusiones se aplicaba ANTES que `forzar` y `restringir_a_elegidos`, y
+# los dos volvían a meter alimentos en la lista de candidatos sin
+# comprobarlo -- así que forzar un alimento al que el perro es alérgico lo
+# metía en la ración, anulando la alergia entera.
+#
+# El camino más probable en la vida real no es forzarlo a mano: es EDITAR
+# un menú ya hecho. Al cambiar o añadir un alimento se fuerzan todos los
+# demás para conservarlos, así que un menú generado antes de apuntar una
+# alergia nueva se la saltaba al primer retoque.
+#
+# Se prueba con los DOS caminos que reintroducían el alimento, porque el
+# arreglo es de orden y tiene que valer para los dos:
+#   · forzar a secas
+#   · forzar + restringir esa categoría a lo elegido (lo que hace
+#     Personalizar cuando eliges carnes concretas)
+_ALERGENO_B5 = "Pollo con piel (sin hueso)"
+for _restringiendo in (None, {"Carne muscular": [_ALERGENO_B5]}):
+    _ok5, _g5 = resolver(der, etapa, al, req, peso, dosis_maxima_fabricante,
+                         margenes_categoria=MARGENES, max_suplementos=2,
+                         excluidos=["pollo"], forzar=[_ALERGENO_B5],
+                         restringir_a_elegidos=_restringiendo)
+    if _ok5:
+        _colados5 = [n for n in _g5 if "pollo" in n.lower()]
+        if _colados5:
+            fallos.append(f"BLOQUE5 alergia saltada: forzar un alimento excluido lo coló "
+                          f"en la ración ({_colados5}), restringir_a_elegidos="
+                          f"{bool(_restringiendo)}. Las alergias no se tocan jamás.")
+
+# ⚠️ AÑADIDO (21 agosto) — LA CATEGORÍA EXCLUIDA NO PUEDE VOLVER POR EL
+# CAMINO DE RESCATE. Fallo real encontrado en una prueba de esfuerzo: en
+# Personalizar, cuando forzar los alimentos elegidos no tenía solución, se
+# reintentaba libre -- y ese reintento se dejaba por el camino
+# `categorias_excluidas` y `peso_adulto_esperado_kg`. Un senior sin
+# dientes al que se le había quitado el hueso carnoso recibía costillas de
+# cordero, y un cachorro de raza grande se calculaba sin su tope de calcio.
+#
+# El filtro final NO lo cazaba, y no puede: un menú con hueso cumple los 30
+# requisitos perfectamente. "Este perro no puede masticar" no es un
+# nutriente. Por eso hace falta esta prueba y no basta con el BLOQUE 8.
+#
+# Para llegar al camino de rescate hay que hacer que el forzado falle de
+# verdad: se fuerzan 8 verduras a la vez, que entre todas se pasan del
+# máximo de peso de su categoría (10% de la ración). Se comprueba que se
+# ha pasado por ahí mirando `no_se_pudo_forzar`: si algún día deja de
+# pasar por ese camino, esta prueba avisa en vez de aprobar sin probar.
+_verduras_b5 = [n for n, a in al.items() if a.get("categoria") == "Verduras y frutas"][:8]
+_r5 = _c_b5 = None
+from fastapi.testclient import TestClient as _TC_b5
+import main as _api_b5
+_c_b5 = _TC_b5(_api_b5.app, raise_server_exceptions=False)
+_r5 = _c_b5.post("/menu/v2", json={
+    "nombres_alimentos": [], "der_objetivo": 1211.0, "etapa_requisitos": "Adulto",
+    "peso_perro_kg": 24.5, "modo": "personalizar",
+    "forzar_presencia": _verduras_b5, "categorias_excluidas": ["Hueso carnoso"]}).json()
+if not _r5.get("no_se_pudo_forzar"):
+    fallos.append("BLOQUE5 rescate: el forzado imposible NO cayó al camino de rescate, "
+                  "así que esta prueba no está probando lo que cree — buscar otra forma "
+                  "de que falle el forzado")
+elif _r5.get("factible"):
+    _huesos = [n for n in (_r5.get("menu") or {}) if al.get(n, {}).get("categoria") == "Hueso carnoso"]
+    if _huesos:
+        fallos.append(f"BLOQUE5 rescate: la categoría excluida a mano volvió al menú "
+                      f"por el camino de rescate ({_huesos}). No se tocan jamás.")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
@@ -705,6 +772,160 @@ if _nuevas.get("apikey") != "sb_secret_AbC123":
 _viejas = _api._cabeceras_supabase(_jwt_falso("service_role"))
 if "Authorization" not in _viejas:
     fallos.append("BLOQUE10: una clave JWT antigua ya no manda Authorization")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
+# BLOQUE 11 — VARIOS PERROS EN LA MISMA CASA
+#
+# /menu/varios-perros amolda los menús de todos los perros al del que
+# menos margen tiene, para que la compra sea una sola. Lo que se vigila
+# aquí NO es que se parezcan (eso es una comodidad), sino las tres cosas
+# que sí serían graves:
+#
+#   1. Parecerse no puede relajar la nutrición. Todos los menús que
+#      salgan de aquí tienen que estar VERDES, verificados aparte.
+#   2. Parecerse no puede colar un alérgeno. Si al segundo perro se le
+#      fuerzan los alimentos del primero y uno de ellos es justo al que
+#      es alérgico, ese alimento NO puede aparecer en su menú.
+#   3. Parecerse no puede dejar a nadie sin menú. Si un perro no se puede
+#      amoldar, se le hace el suyo propio -- nunca se le devuelve vacío.
+#
+# Y una cuarta, de tiempo: los N menús salen en UNA petición, y Render
+# corta a los 30s. Si el reparto del presupuesto se rompe, esto lo caza.
+# ============================================================
+print("=== BLOQUE 11: varios perros en la misma casa ===")
+
+def _perro_b11(der, etapa="Adulto", **extra):
+    return {"nombres_alimentos": [], "der_objetivo": der, "etapa_requisitos": etapa,
+            "modo": "automatico", **extra}
+
+_CASOS_B11 = [
+    ("dos adultos de tamaños muy distintos",
+     [_perro_b11(1211, peso_perro_kg=24.5), _perro_b11(560, peso_perro_kg=8.2)],
+     ["Nala", "Cairo"]),
+    ("cachorro y adulto (etapas distintas)",
+     [_perro_b11(900, "CachorroJoven", peso_perro_kg=12, peso_adulto_esperado_kg=25),
+      _perro_b11(1211, "Adulto", peso_perro_kg=24.5)],
+     ["Kira", "Nala"]),
+    ("uno sin hueso carnoso",
+     [_perro_b11(700, peso_perro_kg=14, categorias_excluidas=["Hueso carnoso"]),
+      _perro_b11(1211, peso_perro_kg=24.5)],
+     ["Toby", "Nala"]),
+    ("tres perros",
+     [_perro_b11(1211, peso_perro_kg=24.5), _perro_b11(560, peso_perro_kg=8.2),
+      _perro_b11(300, peso_perro_kg=4.5)],
+     ["Nala", "Cairo", "Pipo"]),
+]
+
+for _titulo, _perros, _noms in _CASOS_B11:
+    _t0 = time.time()
+    _r = _c.post("/menu/varios-perros", json={"perros": _perros, "nombres": _noms,
+                                              "modo_conjunto": "parecidos"}).json()
+    _dt = time.time() - _t0
+    if _dt > 28:
+        fallos.append(f"BLOQUE11 {_titulo}: tardó {_dt:.0f}s — Render corta a los 30s")
+    if not _r.get("factible"):
+        fallos.append(f"BLOQUE11 {_titulo}: no dio menús ({(_r.get('motivo') or '')[:90]})")
+        continue
+    if len(_r.get("menus") or []) != len(_perros):
+        fallos.append(f"BLOQUE11 {_titulo}: devolvió {len(_r.get('menus') or [])} menús "
+                      f"para {len(_perros)} perros")
+    for _i, _m in enumerate(_r.get("menus") or []):
+        # (1) verde de verdad, verificado aquí, con LA ETAPA DE ESE PERRO
+        _exigir_verde(f"/menu/varios-perros {_titulo} [{_m.get('nombre')}]", _m,
+                      _perros[_i]["der_objetivo"], _perros[_i]["etapa_requisitos"])
+        # el orden de salida tiene que ser el de entrada: el frontend los
+        # empareja por posición, y cruzarlos daría el menú de un perro a otro
+        if _m.get("nombre") != _noms[_i]:
+            fallos.append(f"BLOQUE11 {_titulo}: los menús vuelven desordenados "
+                          f"({_m.get('nombre')} en la posición de {_noms[_i]})")
+
+# (2) un alérgeno NO se cuela por parecerse.
+#
+# ⚠️ CUIDADO AL TOCAR ESTE CASO — la primera versión no probaba nada.
+# Ponía las alergias en el perro que MÁS restricciones tiene, y ése es
+# justo el que se elige como base: a la base nunca se le fuerza nada, así
+# que no había ningún alérgeno que colar. Se comprobó: quitándole las
+# alergias al amoldar (el fallo que esto debe cazar), la prueba seguía en
+# verde.
+#
+# Para que pruebe de verdad hacen falta tres cosas a la vez:
+#   · el perro alérgico tiene que tener MENOS restricciones que el otro,
+#     para que NO sea la base y se le fuercen los alimentos ajenos;
+#   · el menú de la base tiene que llevar el alérgeno sí o sí (por eso se
+#     fuerza el pollo a mano, en vez de esperar a que salga por azar);
+#   · y el alérgeno tiene que ser justo ése.
+_ALERGENO_B11 = "Pollo con piel (sin hueso)"
+_r = _c.post("/menu/varios-perros", json={"perros": [
+    # base: dos alimentos excluidos (2 restricciones) y pollo forzado
+    _perro_b11(560, peso_perro_kg=8.2, nombres_excluidos=["Rábano", "Albahaca"],
+               modo="personalizar", forzar_presencia=[_ALERGENO_B11]),
+    # se amolda: una sola restricción, y es la alergia al pollo
+    _perro_b11(1211, peso_perro_kg=24.5, especies_excluidas=["pollo"]),
+], "nombres": ["Cairo", "Nala"], "modo_conjunto": "parecidos"}).json()
+if _r.get("factible"):
+    _menu_base_b11 = next((m for m in _r["menus"] if m.get("es_la_base")), {})
+    if _menu_base_b11.get("nombre") != "Cairo":
+        fallos.append("BLOQUE11 alergias: la base no es la esperada, así que este caso "
+                      "no está probando lo que cree — revisar el criterio de qué perro manda")
+    elif _ALERGENO_B11 not in (_menu_base_b11.get("menu") or {}):
+        fallos.append("BLOQUE11 alergias: el menú de la base no lleva el alérgeno, así que "
+                      "no hay nada que colar — este caso no prueba nada")
+if _r.get("factible"):
+    _menu_nala = next((m for m in _r["menus"] if m["nombre"] == "Nala"), {}).get("menu") or {}
+    _colados = [n for n in _menu_nala if "pollo" in n.lower()]
+    if _colados:
+        fallos.append(f"BLOQUE11 alergias: parecerse coló un alérgeno en el menú "
+                      f"del perro alérgico: {_colados}")
+    if not _menu_nala:
+        fallos.append("BLOQUE11 alergias: el perro alérgico se quedó sin menú por "
+                      "no poder amoldarse")
+else:
+    fallos.append("BLOQUE11 alergias: no dio menús para dos perros con alergias distintas")
+
+# (3) modo "distintos": cada perro el suyo, y todos verdes igual
+_r = _c.post("/menu/varios-perros", json={"perros": [
+    _perro_b11(1211, peso_perro_kg=24.5), _perro_b11(560, peso_perro_kg=8.2),
+], "nombres": ["Nala", "Cairo"], "modo_conjunto": "distintos"}).json()
+if not _r.get("factible"):
+    fallos.append("BLOQUE11 distintos: no dio menús")
+else:
+    for _i, _m in enumerate(_r["menus"]):
+        _exigir_verde(f"/menu/varios-perros distintos [{_m.get('nombre')}]", _m,
+                      [1211, 560][_i], "Adulto")
+
+# (4) el recuento de cambios tiene que decir la verdad: si dice 0 cambios,
+# los dos menús llevan LOS MISMOS alimentos. Un recuento que miente es
+# peor que no tenerlo, porque la usuaria compra con él en la mano.
+_r = _c.post("/menu/varios-perros", json={"perros": [
+    _perro_b11(1211, peso_perro_kg=24.5), _perro_b11(560, peso_perro_kg=8.2),
+], "nombres": ["Nala", "Cairo"], "modo_conjunto": "parecidos"}).json()
+if _r.get("factible"):
+    _base_m = next((m for m in _r["menus"] if m.get("es_la_base")), None)
+    if not _base_m:
+        fallos.append("BLOQUE11 cuentas: ningún menú viene marcado como la base")
+    else:
+        _sb = set(_base_m.get("menu") or {})
+        for _m in _r["menus"]:
+            if _m.get("es_la_base"):
+                continue
+            _so = set(_m.get("menu") or {})
+            _cb = _m.get("cambios") or {}
+            if _cb.get("cuantos_cambios") != len(_sb ^ _so):
+                fallos.append(f"BLOQUE11 cuentas: dice {_cb.get('cuantos_cambios')} cambios "
+                              f"para {_m.get('nombre')} pero de verdad hay {len(_sb ^ _so)}")
+            if sorted(_cb.get("anadidos") or []) != sorted(_so - _sb):
+                fallos.append(f"BLOQUE11 cuentas: la lista de añadidos de {_m.get('nombre')} "
+                              f"no coincide con su menú")
+
+# (5) que no reviente con lo raro: sin perros, y con más de los permitidos
+if _c.post("/menu/varios-perros", json={"perros": []}).json().get("factible"):
+    fallos.append("BLOQUE11: dice que sí a una petición sin ningún perro")
+_muchos = _c.post("/menu/varios-perros",
+                  json={"perros": [_perro_b11(900, peso_perro_kg=20)] * 7}).json()
+if _muchos.get("factible"):
+    fallos.append("BLOQUE11: acepta 7 perros; el tope son 6 (por el tiempo de Render)")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

@@ -392,6 +392,17 @@ class PeticionMenu(BaseModel):
     #   "aprovechar"   -> los de nombres_alimentos se PRIORIZAN, pero el
     #                     motor puede añadir más si hace falta para cerrar
     modo: str = "automatico"
+    # ⚠️ AÑADIDO (21 agosto) — presupuesto de TIEMPO para este menú, en
+    # segundos. Lo pone quien orquesta varias generaciones seguidas, no
+    # el usuario. Nació con /menu/varios-perros: ahí hay que resolver N
+    # menús dentro de la MISMA petición, y el presupuesto de 24s por
+    # menú que hay fijado abajo es de un único menú -- con dos perros
+    # serían 48s y Render corta la conexión a los 30s. Quien orquesta
+    # reparte el presupuesto y lo pasa aquí.
+    #
+    # Nunca puede AFLOJARLO, solo apretarlo: se toma el mínimo con el de
+    # por defecto (mismo criterio que presupuesto_semanal_restante).
+    presupuesto_segundos: Optional[float] = None
 
 
 class PeticionCambiarAlimento(BaseModel):
@@ -1000,6 +1011,10 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # (sigue siendo un caso genuinamente difícil), pero lo mitiga de
     # forma medible sin arriesgar el límite de tiempo de Render.
     PRESUPUESTO_SEGUNDOS = 24.0
+    # Quien orquesta varias generaciones dentro de una misma petición
+    # (ver /menu/varios-perros) reparte el tiempo. Solo puede apretar.
+    if datos.presupuesto_segundos is not None:
+        PRESUPUESTO_SEGUNDOS = max(3.0, min(PRESUPUESTO_SEGUNDOS, float(datos.presupuesto_segundos)))
 
     def tiempo_restante():
         """
@@ -1312,12 +1327,41 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         # igual que hacía /menu (el viejo): si forzar lo elegido a mano
         # deja sin solución, se reintenta libre — mejor un menú con aviso
         # que un error sin más.
+        #
+        # ⚠️ CORREGIDO (21 agosto) — FALLO GRAVE ENCONTRADO EN UNA PRUEBA
+        # DE ESFUERZO: este reintento se dejaba por el camino DOS cosas
+        # que no son opinables.
+        #
+        #   · `categorias_excluidas`. Un perro al que se le ha quitado el
+        #     hueso carnoso (senior sin dientes, mandíbula operada) recibía
+        #     costillas de cordero en cuanto el forzado fallaba y se caía
+        #     aquí. La regla del proyecto es explícita: las categorías
+        #     excluidas a mano no se tocan jamás, pueden ser médicas. Y el
+        #     filtro final no lo cazaba, porque un menú CON hueso cumple
+        #     los 30 requisitos perfectamente -- "este perro no puede
+        #     masticar" no es un nutriente.
+        #
+        #   · `peso_adulto_esperado_kg`. Es lo que activa el tope de
+        #     calcio de cachorro de raza grande. Sin él, el menú de
+        #     rescate de un cachorro de raza grande se calculaba sin ese
+        #     tope: exactamente el problema (osteocondrosis) que ese
+        #     límite existe para evitar.
+        #
+        # Lo que SÍ se suelta aquí a propósito es la elección manual que
+        # acaba de fallar (`forzar` y `restringir_especie`): ése es el
+        # sentido de este rescate, y se avisa con `no_se_pudo_forzar`.
+        # `evitar_especies` se pasa porque es solo una preferencia (nunca
+        # puede hacer fallar nada) y sin ella la rotación de proteína de
+        # una semana se rompía justo en los menús que caían aquí.
         ok, gramos = resolver_v2(
             datos.der_objetivo, datos.etapa_requisitos, al, req,
             datos.peso_perro_kg, dosis_maxima_fabricante,
             excluidos=excluidos or None,
             margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=tiempo_restante(),
             patologias=datos.patologias,
+            categorias_excluidas=datos.categorias_excluidas,
+            peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
+            evitar_especies=datos.evitar_especies,
             presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
         )
         no_se_pudo_forzar = ok
@@ -1380,6 +1424,223 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         if aviso_falta:
             resultado["aviso_composicion"] = aviso_falta
     return resultado
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# VARIOS PERROS EN LA MISMA CASA
+#
+# PEDIDO EXPRESO: "que el usuario tenga la opción de hacer menús totalmente
+# diferentes para cada perro, o que pueda generar los menús para las
+# características de todos los perros lo más parecidos posibles. Si un menú
+# para dos perros cuadra y solo hay que cambiar las cantidades, perfecto. Si
+# hay que cambiar uno, dos, tres alimentos, los menos cambios posibles."
+#
+# POR QUÉ NO SE RESUELVE "TODO A LA VEZ"
+# La tentación era un único problema matemático con los dos perros dentro.
+# No hace falta: el modo PERSONALIZAR ya hace exactamente la escalera que
+# esto necesita, y está probado desde hace meses:
+#
+#   nivel 1 → solo los alimentos dados, nada más   → mismos alimentos, otras cantidades
+#   nivel 2 → esos sí o sí, el motor puede añadir  → mismos + los que hagan falta
+#   nivel 3 → libre                                → menú distinto
+#
+# Así que se resuelve UN perro y a los demás se les pide su menú "personalizado"
+# con los alimentos del primero. Cada menú sigue pasando por
+# _garantizar_verificado(): que se parezcan no es motivo para relajar nada.
+#
+# QUÉ PERRO VA PRIMERO — IMPORTA, Y MUCHO
+# El primero manda: los demás se amoldan a él. Va primero el MÁS RESTRINGIDO
+# (más alergias/categorías fuera/patologías y, a igualdad, el de ración más
+# pequeña). Al revés no funciona: forzar los 7 alimentos de un pastor alemán
+# en un chihuahua de 3 kg no cabe -- la ración entera del pequeño son ~137 g,
+# y cada alimento forzado tiene un mínimo de porción real. Al perro grande le
+# sobra sitio para amoldarse; al pequeño no.
+# ─────────────────────────────────────────────────────────────────────────────
+
+class PeticionVariosPerros(BaseModel):
+    # Un PeticionMenu completo por perro: cada uno con SUS kcal, SU etapa,
+    # SUS alergias. No se comparte nada entre ellos salvo, si se pide,
+    # la lista de alimentos.
+    perros: list[PeticionMenu]
+    # Solo para poder redactar los avisos ("el menú de Cairo lleva..."). Si
+    # no vienen, se dice "el segundo perro" y tan honesto.
+    nombres: Optional[list[str]] = None
+    # "parecidos" = amoldar los demás al primero. "distintos" = cada perro
+    # su mejor menú, sin mirar a los otros (que es lo que pasa hoy si los
+    # generas por separado).
+    modo_conjunto: str = "parecidos"
+
+
+PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = 24.0
+
+
+def _comparar_menus(base_gramos, otro_gramos):
+    """Qué cambia entre dos menús, en alimentos (no en cantidades).
+
+    Las cantidades SIEMPRE cambian -- son perros distintos con kcal
+    distintas -- así que cambiar de cantidad no cuenta como "un cambio".
+    Lo que la usuaria nota al comprar y al porcionar es tener que comprar
+    OTRA cosa, y eso es lo que se cuenta aquí.
+    """
+    base = set(base_gramos or {})
+    otro = set(otro_gramos or {})
+    return {
+        "iguales": sorted(base & otro),
+        "anadidos": sorted(otro - base),
+        "quitados": sorted(base - otro),
+        "cuantos_cambios": len(base ^ otro),
+    }
+
+
+def _resumen_de_parecido(cambios, nombre_perro, nombre_base):
+    """Lo mismo, en cristiano. Quien lee esto está mirando la lista de la
+    compra, no una tabla de diferencias."""
+    if cambios["cuantos_cambios"] == 0:
+        return (f"El menú de {nombre_perro} lleva exactamente los mismos alimentos "
+                f"que el de {nombre_base}: solo cambian las cantidades. "
+                f"Compras una vez y repartes.")
+    partes = []
+    if cambios["anadidos"]:
+        partes.append("lleva además " + ", ".join(cambios["anadidos"]))
+    if cambios["quitados"]:
+        partes.append("no lleva " + ", ".join(cambios["quitados"]))
+    cuantos = cambios["cuantos_cambios"]
+    return (f"El menú de {nombre_perro} comparte {len(cambios['iguales'])} alimentos "
+            f"con el de {nombre_base}, pero " + " y ".join(partes) + ". "
+            f"{'Es un cambio' if cuantos == 1 else f'Son {cuantos} cambios'} "
+            f"respecto a la compra de {nombre_base}.")
+
+
+@app.post("/menu/varios-perros")
+def endpoint_varios_perros(datos: PeticionVariosPerros):
+    """Un menú por perro, en una sola llamada.
+
+    En modo "parecidos", los menús se amoldan al del perro más
+    restringido para que la compra y el porcionado sean uno solo. Ver el
+    bloque de comentarios de arriba para el porqué de cada decisión.
+    """
+    observabilidad.etiquetar(endpoint="/menu/varios-perros",
+                             cuantos_perros=len(datos.perros or []),
+                             modo_conjunto=datos.modo_conjunto)
+    resultados = []
+    try:
+        if not datos.perros:
+            return {"factible": False,
+                    "motivo": "No has mandado ningún perro."}
+        if len(datos.perros) > 6:
+            return {"factible": False,
+                    "motivo": "Como mucho 6 perros a la vez."}
+
+        al, req = cargar_v2()
+        n = len(datos.perros)
+        nombres = list(datos.nombres or [])
+        # Sin nombre no se puede decir "el menú de Cairo", pero tampoco se
+        # va a inventar uno: se dice por su sitio en la lista.
+        while len(nombres) < n:
+            nombres.append(f"el perro {len(nombres) + 1}")
+
+        # El tiempo se reparte ANTES de empezar. Con dos perros son 12s
+        # cada uno: pasarse significa que Render corta la conexión y la
+        # usuaria no ve nada, ni siquiera el menú del primero.
+        por_perro = max(4.0, PRESUPUESTO_SEGUNDOS_VARIOS_PERROS / n)
+
+        def generar(datos_perro, i, forzar_estos=None):
+            peticion = datos_perro.model_copy(update={
+                "presupuesto_segundos": por_perro,
+                **({"modo": "personalizar", "forzar_presencia": list(forzar_estos)}
+                   if forzar_estos else {}),
+            })
+            return _garantizar_verificado(
+                _resolver_menu_v2_interno(peticion),
+                datos_perro.der_objetivo, datos_perro.etapa_requisitos,
+                datos_perro.peso_perro_kg,
+                origen="/menu/varios-perros", al=al, req=req)
+
+        # ── Modo "distintos": cada perro por su cuenta ────────────────────
+        if datos.modo_conjunto != "parecidos":
+            for i, perro in enumerate(datos.perros):
+                r = generar(perro, i)
+                resultados.append({"indice": i, "nombre": nombres[i], **r})
+            return {"factible": all(r.get("factible") for r in resultados),
+                    "modo_conjunto": "distintos",
+                    "menus": resultados}
+
+        # ── Modo "parecidos" ─────────────────────────────────────────────
+        # Cuánto margen tiene cada perro: más restricciones y menos ración
+        # = menos margen. El de menos margen manda.
+        def margen(par):
+            _, p = par
+            restricciones = (len(p.nombres_excluidos or []) + len(p.especies_excluidas or [])
+                             + len(p.categorias_excluidas or []) + len(p.patologias or []))
+            return (-restricciones, p.der_objetivo or 0.0)
+
+        orden = sorted(enumerate(datos.perros), key=margen)
+        i_base, perro_base = orden[0]
+
+        base = generar(perro_base, i_base)
+        if not base.get("factible"):
+            # Si el perro que menos margen tiene no sale, amoldar a los
+            # demás no tiene sentido: no hay a qué amoldarse. Se dice cuál
+            # es el que no sale, que es lo accionable.
+            return {"factible": False,
+                    "modo_conjunto": "parecidos",
+                    "motivo": f"No se ha podido hacer el menú de {nombres[i_base]}, "
+                              f"que es el que menos margen tiene. " + (base.get("motivo") or ""),
+                    "perro_que_falla": nombres[i_base],
+                    "menus": [{"indice": i_base, "nombre": nombres[i_base], **base}]}
+
+        gramos_base = base.get("menu") or base.get("gramos") or {}
+        alimentos_base = list(gramos_base)
+
+        por_indice = {i_base: {"indice": i_base, "nombre": nombres[i_base],
+                               "es_la_base": True,
+                               "cambios": _comparar_menus(gramos_base, gramos_base),
+                               "resumen_parecido": None, **base}}
+
+        for i, perro in orden[1:]:
+            r = generar(perro, i, forzar_estos=alimentos_base)
+            if not r.get("factible"):
+                # Amoldarse no puede costarle a nadie quedarse sin menú:
+                # antes de rendirse, se le hace el suyo libremente.
+                r = generar(perro, i)
+                if r.get("factible"):
+                    r["aviso"] = (f"No había forma de acercar el menú de {nombres[i]} al de "
+                                  f"{nombres[i_base]}, así que este es el suyo propio. "
+                                  + (r.get("aviso") or "")).strip()
+            gramos_i = r.get("menu") or r.get("gramos") or {}
+            cambios = _comparar_menus(gramos_base, gramos_i)
+            por_indice[i] = {
+                "indice": i, "nombre": nombres[i], "es_la_base": False,
+                "cambios": cambios,
+                "resumen_parecido": (_resumen_de_parecido(cambios, nombres[i], nombres[i_base])
+                                     if r.get("factible") else None),
+                **r,
+            }
+
+        # Se devuelven en el orden en que llegaron, no en el orden en que
+        # se resolvieron: el frontend los empareja por posición.
+        menus = [por_indice[i] for i in range(n)]
+        cambios_totales = sum(m["cambios"]["cuantos_cambios"] for m in menus)
+        return {
+            "factible": all(m.get("factible") for m in menus),
+            "modo_conjunto": "parecidos",
+            "perro_base": nombres[i_base],
+            "cambios_totales": cambios_totales,
+            "compra_unica": cambios_totales == 0,
+            "menus": menus,
+        }
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        # mismo motivo que en /menu/v2 y /menu/semana: el except se traga
+        # la excepción a propósito, así que hay que avisar a Sentry.
+        observabilidad.capturar(e, endpoint="/menu/varios-perros",
+                                cuantos_perros=len(datos.perros or []),
+                                modo_conjunto=datos.modo_conjunto,
+                                menus_ya_generados=len(resultados))
+        return {"factible": False,
+                "motivo": f"Ha fallado algo inesperado generando los menús "
+                          f"({type(e).__name__}). Inténtalo de nuevo -- si se repite, dínoslo."}
 
 
 @app.post("/transicion")

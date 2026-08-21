@@ -90,13 +90,47 @@ Los precios sí se ven antes de pagar, y qué vendes se entiende. Eso está.
 Ordenadas por dependencia: multi-perro va primero porque la cesta y los
 menús comparados no tienen sentido sin él.
 
-- [ ] **Varios perros por cuenta.** La base ya está preparada (los menús se
-      guardan con `perro_id`, no con `user_id`), pero la app solo maneja uno.
+- [x] **Varios perros por cuenta.** ✅ **Hecho el 21 de agosto** en
+      `canislab-web`. Selector de perros en los dos paneles laterales,
+      crear y borrar perro, y se recuerda con cuál estabas. Cambiar de
+      perro **remonta** la app entera a propósito: perfil, menús y kcal se
+      calculan una sola vez al montar, así que sin remontar se quedaban
+      mezclados los datos de los dos. Borrar un perro borra también sus
+      menús (la tabla `menus` no borra en cascada; si no, quedaban
+      huérfanos para siempre). 8 pruebas nuevas en
+      `tests/varios-perros.spec.js`.
+
+      De paso: pesar al perro desde *Evolución* decía «✅ Peso
+      actualizado» y **no lo guardaba nunca** — `usuario` no existía en
+      esa pantalla y reventaba justo antes del guardado. Corregido.
 - [ ] **Cesta de la compra**, diferenciando de quién es cada cosa
       («para Cairo» / «para Nala» / «para los dos»). Solo aparece la
       distinción si hay más de un perro.
-- [ ] **Menús parecidos entre perros** de la misma casa, para no tener que
-      comprar y porcionar el doble de cosas.
+- [x] **Menús parecidos entre perros** de la misma casa. ✅ **Motor hecho el
+      21 de agosto**: `POST /menu/varios-perros`, con `modo_conjunto`
+      `"parecidos"` o `"distintos"`. Manda el perro con menos margen (más
+      restricciones y, a igualdad, ración más pequeña) y los demás se
+      amoldan a él: al revés no cabe, forzar los 7 alimentos de un pastor
+      alemán en un chihuahua de 3 kg no entra en 137 g de ración. Devuelve
+      por perro qué alimentos comparte, cuáles cambian y cuántos cambios
+      son. Medido: dos adultos de 24,5 y 8,2 kg salen con **0 cambios**
+      (misma compra, distintas cantidades) en 1,1 s. **Ya está en la app**:
+      en el generador, con más de un perro, sale «¿Para quién?» con las
+      tres opciones, y la pantalla de resultados enseña qué lleva cada uno
+      que los demás no y la compra de un día sumando a todos. De momento
+      solo en modo automático.
+
+      **Prueba de esfuerzo (21 agosto)**: 40 hogares al azar (2-3 perros,
+      pesos de 2 a 45 kg, las 4 etapas, alergias y categorías excluidas),
+      **86 menús entregados y 86 verificados en verde** de cero contra los
+      30 requisitos de la etapa de cada perro. Ni uno en rojo ni en ámbar,
+      ningún hogar sin menú, ningún alérgeno ni categoría excluida colada.
+      Peor tiempo de un hogar: 4,2 s.
+
+      Encontró **dos** fallos graves que llevaban meses (ver sección 5).
+
+      Encontró de paso un fallo grave que llevaba meses: **las alergias se
+      podían saltar forzando el alimento** — ver sección 5.
 - [ ] **Ajustes de cuenta** (no del perro): cambiar contraseña, correo,
       método de pago, darse de baja.
 - [ ] **Entrar con Google.**
