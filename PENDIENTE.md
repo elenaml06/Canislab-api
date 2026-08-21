@@ -240,6 +240,108 @@ coherentes entre sí.
       mantenida a mano: un alimento con el 90 % de los valores a cero es
       sospechoso por sí solo, lo declare o no.
 
+## 5-ter. Revisión del catálogo entero (21 de agosto)
+
+Hecha con `auditar_catalogo.py`, que queda en el repo y se puede repetir.
+Comprueba cuatro cosas que ninguna prueba del motor puede detectar, porque
+el motor cumple perfectamente unos datos incompletos.
+
+**Lo que salió bien:** la energía cuadra con los macros en los 163
+alimentos. Cero incoherencias. Todo el catálogo está en la misma base
+(peso fresco), que es lo que hace válido el cálculo por 1000 kcal.
+
+**Huecos declarados** (ya aplicado): 10 alimentos tenían nutrientes a cero
+sin declarar. Seis pescados con EPA y DHA a cero —incluido el **boquerón**,
+que con 6,3 g de grasa es pescado azul y ese cero es falso— y cuatro
+vísceras (bazo de vaca, páncreas de vaca, bazo de cordero, cerebro de
+ternera). Pasan a `sin_dato` para que salte el aviso de datos incompletos.
+
+- [ ] **Conseguir cifras verificadas de EPA/DHA para esos seis pescados.**
+      No se rellenaron a ojo a propósito: los valores que devuelve el
+      buscador vienen redondeados y no coinciden entre sí, y un dato
+      inventado con cara de dato es peor que un hueco declarado. Contarlos
+      como cero solo los infravalora (el omega-3 no tiene máximo), así que
+      no es peligroso — pero desaprovecha el pescado y mete aceite que
+      quizá no hacía falta.
+- [ ] **Completar las cuatro vísceras** con la ficha de su fuente, igual
+      que se hizo con el timo y los testículos.
+
+### Decisión pendiente: `Laringe de vacuno`
+
+Está en la categoría **Hueso carnoso** con **66 mg de calcio**. Los huesos
+carnosos de verdad traen entre 1.250 y 1.810. No es un error de dato: la
+laringe es cartílago, no hueso.
+
+El problema es que cuenta para el 20-60 % de hueso de la ración sin
+aportar el calcio que esa proporción da por supuesto. No es peligroso —el
+calcio tiene mínimo duro, así que el menú lo cubre igual— pero permite
+menús que parecen BARF sin serlo.
+
+- [ ] Decidir: moverla a `Extras`, o quitarla del catálogo.
+
+### Qué alimentos faltan, con evidencia
+
+El cuello de botella medido, contando lo que queda al excluir especies:
+
+| Alergias | Carne | Hueso | **Vísceras** | **Hígado** |
+|---|---|---|---|---|
+| 0 | 25 | 10 | 10 | 4 |
+| 3 | 11 | 6 | **2** | **2** |
+| 5 | 6 | 5 | **2** | **2** |
+
+Las vísceras y el hígado son lo que deja a un perro alérgico sin menú — es
+exactamente lo que medimos que bloqueaba al adulto con tres alergias. Y la
+causa es la variedad de especies, no el número de alimentos:
+
+- **Vísceras**: solo cordero, ternera y vaca. Faltan pollo, pavo, conejo,
+  pato y cerdo.
+- **Hígado**: solo conejo, cordero, pollo y vaca. Faltan pavo, pato, cerdo.
+
+- [ ] Añadir vísceras e hígados de las especies que faltan. Lo más útil y
+      lo más fácil de encontrar en una carnicería: **corazón y molleja de
+      pollo y de pavo**, **hígado de pavo, de pato y de cerdo**, **riñón de
+      cerdo**. Cada especie nueva en esas dos categorías vale más que diez
+      cortes nuevos de carne muscular, que ya va sobrada.
+
+Los pescados (20) no se ven afectados por las alergias a mamíferos, y por
+eso la escalera de relajación funciona: casi siempre queda pescado.
+
+## 5-quater. Quién consigue los datos y quién los implementa
+
+**Regla, establecida el 21 de agosto después de saltármela.** El asistente
+rellenó el timo de ternera y los testículos de cordero con valores que
+había buscado él en espejos de USDA, sin poder abrir la ficha original.
+Luego los marcó como «sin verificar», lo cual no arregla nada: el motor
+los usa igual, así que un número dudoso pesa lo mismo que uno bueno. Solo
+hay dos estados honestos: **verificado, o hueco declarado**. Se revirtió.
+
+| Le toca al asistente | Le toca a una persona |
+|---|---|
+| Manipular y reestructurar lo que ya está en el JSON | **Conseguir valores de alimentos nuevos** |
+| Detectar incoherencias entre alimentos | Sacarlos de BEDCA, CIQUAL o USDA |
+| Comparar contra los rangos de FEDIAF | Valores de hueso: **solo Köber et al. 2017** |
+| Programar la lógica que usa esos valores | Requisitos por patología: guías clínicas |
+
+Lo que sí puede hacer el asistente con las tablas: la auditoría contra el
+PDF de FEDIAF (161/161) es leer la fuente primaria que se le dio, y la
+conversión de la vitamina E sale de la tabla de bioequivalencia de la
+página 63 de ese mismo PDF — **d-α-tocoferol 1 mg = 1,49 UI**, de donde
+1 UI = 0,671 mg. Eso es comparar contra FEDIAF, no inventar datos.
+
+### `DATOS_QUE_FALTAN.md`
+
+Generado por `auditar_catalogo.py`: **63 alimentos y 443 valores** por
+conseguir, cada uno con su unidad y una casilla vacía. Está pensado para
+llevarlo a BEDCA o CIQUAL y rellenarlo, y entonces sí pasárselo al
+asistente para que lo inserte con el formato correcto.
+
+Prioridad, por lo que desbloquea:
+1. Los seis pescados con EPA/DHA sin dato — el **boquerón** el primero,
+   que es pescado azul contado como si no tuviera omega-3.
+2. Las seis vísceras (timo, testículos, bazo de vaca, páncreas de vaca,
+   bazo de cordero, cerebro de ternera) — son la categoría que deja sin
+   menú a los perros con alergias.
+
 ## 6. Deuda técnica y detalles
 
 - [ ] **Cantidades no medibles.** Salen ingredientes de 0,15 g de sal y
