@@ -1327,12 +1327,41 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         # igual que hacía /menu (el viejo): si forzar lo elegido a mano
         # deja sin solución, se reintenta libre — mejor un menú con aviso
         # que un error sin más.
+        #
+        # ⚠️ CORREGIDO (21 agosto) — FALLO GRAVE ENCONTRADO EN UNA PRUEBA
+        # DE ESFUERZO: este reintento se dejaba por el camino DOS cosas
+        # que no son opinables.
+        #
+        #   · `categorias_excluidas`. Un perro al que se le ha quitado el
+        #     hueso carnoso (senior sin dientes, mandíbula operada) recibía
+        #     costillas de cordero en cuanto el forzado fallaba y se caía
+        #     aquí. La regla del proyecto es explícita: las categorías
+        #     excluidas a mano no se tocan jamás, pueden ser médicas. Y el
+        #     filtro final no lo cazaba, porque un menú CON hueso cumple
+        #     los 30 requisitos perfectamente -- "este perro no puede
+        #     masticar" no es un nutriente.
+        #
+        #   · `peso_adulto_esperado_kg`. Es lo que activa el tope de
+        #     calcio de cachorro de raza grande. Sin él, el menú de
+        #     rescate de un cachorro de raza grande se calculaba sin ese
+        #     tope: exactamente el problema (osteocondrosis) que ese
+        #     límite existe para evitar.
+        #
+        # Lo que SÍ se suelta aquí a propósito es la elección manual que
+        # acaba de fallar (`forzar` y `restringir_especie`): ése es el
+        # sentido de este rescate, y se avisa con `no_se_pudo_forzar`.
+        # `evitar_especies` se pasa porque es solo una preferencia (nunca
+        # puede hacer fallar nada) y sin ella la rotación de proteína de
+        # una semana se rompía justo en los menús que caían aquí.
         ok, gramos = resolver_v2(
             datos.der_objetivo, datos.etapa_requisitos, al, req,
             datos.peso_perro_kg, dosis_maxima_fabricante,
             excluidos=excluidos or None,
             margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=tiempo_restante(),
             patologias=datos.patologias,
+            categorias_excluidas=datos.categorias_excluidas,
+            peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
+            evitar_especies=datos.evitar_especies,
             presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
         )
         no_se_pudo_forzar = ok

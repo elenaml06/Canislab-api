@@ -120,6 +120,15 @@ menús comparados no tienen sentido sin él.
       que los demás no y la compra de un día sumando a todos. De momento
       solo en modo automático.
 
+      **Prueba de esfuerzo (21 agosto)**: 40 hogares al azar (2-3 perros,
+      pesos de 2 a 45 kg, las 4 etapas, alergias y categorías excluidas),
+      **86 menús entregados y 86 verificados en verde** de cero contra los
+      30 requisitos de la etapa de cada perro. Ni uno en rojo ni en ámbar,
+      ningún hogar sin menú, ningún alérgeno ni categoría excluida colada.
+      Peor tiempo de un hogar: 4,2 s.
+
+      Encontró **dos** fallos graves que llevaban meses (ver sección 5).
+
       Encontró de paso un fallo grave que llevaba meses: **las alergias se
       podían saltar forzando el alimento** — ver sección 5.
 - [ ] **Ajustes de cuenta** (no del perro): cambiar contraseña, correo,

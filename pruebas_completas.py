@@ -249,6 +249,42 @@ for _restringiendo in (None, {"Carne muscular": [_ALERGENO_B5]}):
                           f"en la ración ({_colados5}), restringir_a_elegidos="
                           f"{bool(_restringiendo)}. Las alergias no se tocan jamás.")
 
+# ⚠️ AÑADIDO (21 agosto) — LA CATEGORÍA EXCLUIDA NO PUEDE VOLVER POR EL
+# CAMINO DE RESCATE. Fallo real encontrado en una prueba de esfuerzo: en
+# Personalizar, cuando forzar los alimentos elegidos no tenía solución, se
+# reintentaba libre -- y ese reintento se dejaba por el camino
+# `categorias_excluidas` y `peso_adulto_esperado_kg`. Un senior sin
+# dientes al que se le había quitado el hueso carnoso recibía costillas de
+# cordero, y un cachorro de raza grande se calculaba sin su tope de calcio.
+#
+# El filtro final NO lo cazaba, y no puede: un menú con hueso cumple los 30
+# requisitos perfectamente. "Este perro no puede masticar" no es un
+# nutriente. Por eso hace falta esta prueba y no basta con el BLOQUE 8.
+#
+# Para llegar al camino de rescate hay que hacer que el forzado falle de
+# verdad: se fuerzan 8 verduras a la vez, que entre todas se pasan del
+# máximo de peso de su categoría (10% de la ración). Se comprueba que se
+# ha pasado por ahí mirando `no_se_pudo_forzar`: si algún día deja de
+# pasar por ese camino, esta prueba avisa en vez de aprobar sin probar.
+_verduras_b5 = [n for n, a in al.items() if a.get("categoria") == "Verduras y frutas"][:8]
+_r5 = _c_b5 = None
+from fastapi.testclient import TestClient as _TC_b5
+import main as _api_b5
+_c_b5 = _TC_b5(_api_b5.app, raise_server_exceptions=False)
+_r5 = _c_b5.post("/menu/v2", json={
+    "nombres_alimentos": [], "der_objetivo": 1211.0, "etapa_requisitos": "Adulto",
+    "peso_perro_kg": 24.5, "modo": "personalizar",
+    "forzar_presencia": _verduras_b5, "categorias_excluidas": ["Hueso carnoso"]}).json()
+if not _r5.get("no_se_pudo_forzar"):
+    fallos.append("BLOQUE5 rescate: el forzado imposible NO cayó al camino de rescate, "
+                  "así que esta prueba no está probando lo que cree — buscar otra forma "
+                  "de que falle el forzado")
+elif _r5.get("factible"):
+    _huesos = [n for n in (_r5.get("menu") or {}) if al.get(n, {}).get("categoria") == "Hueso carnoso"]
+    if _huesos:
+        fallos.append(f"BLOQUE5 rescate: la categoría excluida a mano volvió al menú "
+                      f"por el camino de rescate ({_huesos}). No se tocan jamás.")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tmp/ultimos_fallos.json","w"), ensure_ascii=False, indent=1)
 
 # ============================================================
