@@ -1336,7 +1336,12 @@
    "colina": 65,
    "cloruro": 104.72,
    "fibra": 0.0
-  }
+  },
+  "sin_dato": [
+   "dha",
+   "epa"
+  ],
+  "nota_datos": "⚠️ (21 ago) EPA y DHA figuraban como CERO sin declararlo. Un cero real es poco creible en un pescado -- en el boqueron, con 6.3 g de grasa, es directamente falso: es pescado azul. Pasan a sin_dato mientras no haya una cifra verificada. Contarlos como cero solo INFRAvalora el alimento (el omega-3 no tiene maximo), asi que no es peligroso, pero desaprovecha el pescado como fuente y mete aceite que quiza no hacia falta."
  },
  {
   "nombre": "Trucha",
@@ -3489,7 +3494,12 @@
    "colina": 68,
    "cloruro": 178.64,
    "fibra": 0.0
-  }
+  },
+  "sin_dato": [
+   "dha",
+   "epa"
+  ],
+  "nota_datos": "⚠️ (21 ago) EPA y DHA figuraban como CERO sin declararlo. Un cero real es poco creible en un pescado -- en el boqueron, con 6.3 g de grasa, es directamente falso: es pescado azul. Pasan a sin_dato mientras no haya una cifra verificada. Contarlos como cero solo INFRAvalora el alimento (el omega-3 no tiene maximo), asi que no es peligroso, pero desaprovecha el pescado como fuente y mete aceite que quiza no hacia falta."
  },
  {
   "nombre": "Calamar",
@@ -3607,7 +3617,12 @@
    "colina": 65,
    "cloruro": 469.7,
    "fibra": 0.0
-  }
+  },
+  "sin_dato": [
+   "dha",
+   "epa"
+  ],
+  "nota_datos": "⚠️ (21 ago) EPA y DHA figuraban como CERO sin declararlo. Un cero real es poco creible en un pescado -- en el boqueron, con 6.3 g de grasa, es directamente falso: es pescado azul. Pasan a sin_dato mientras no haya una cifra verificada. Contarlos como cero solo INFRAvalora el alimento (el omega-3 no tiene maximo), asi que no es peligroso, pero desaprovecha el pescado como fuente y mete aceite que quiza no hacia falta."
  },
  {
   "nombre": "Langostino",
@@ -3649,7 +3664,11 @@
   },
   "duplicado_de": "Langostinos",
   "dato_no_fiable": true,
-  "nota_datos": "Duplicado de 'Langostinos'. No usar."
+  "nota_datos": "Duplicado de 'Langostinos'. No usar. ⚠️ (21 ago) EPA y DHA figuraban como CERO sin declararlo. Un cero real es poco creible en un pescado -- en el boqueron, con 6.3 g de grasa, es directamente falso: es pescado azul. Pasan a sin_dato mientras no haya una cifra verificada. Contarlos como cero solo INFRAvalora el alimento (el omega-3 no tiene maximo), asi que no es peligroso, pero desaprovecha el pescado como fuente y mete aceite que quiza no hacia falta.",
+  "sin_dato": [
+   "dha",
+   "epa"
+  ]
  },
  {
   "nombre": "Lenguado",
@@ -3766,7 +3785,12 @@
    "colina": 65,
    "cloruro": 72.38,
    "fibra": 0.0
-  }
+  },
+  "sin_dato": [
+   "dha",
+   "epa"
+  ],
+  "nota_datos": "⚠️ (21 ago) EPA y DHA figuraban como CERO sin declararlo. Un cero real es poco creible en un pescado -- en el boqueron, con 6.3 g de grasa, es directamente falso: es pescado azul. Pasan a sin_dato mientras no haya una cifra verificada. Contarlos como cero solo INFRAvalora el alimento (el omega-3 no tiene maximo), asi que no es peligroso, pero desaprovecha el pescado como fuente y mete aceite que quiza no hacia falta."
  },
  {
   "nombre": "Pescadilla",
@@ -3805,7 +3829,12 @@
    "colina": 65,
    "cloruro": 154.0,
    "fibra": 0.0
-  }
+  },
+  "sin_dato": [
+   "dha",
+   "epa"
+  ],
+  "nota_datos": "⚠️ (21 ago) EPA y DHA figuraban como CERO sin declararlo. Un cero real es poco creible en un pescado -- en el boqueron, con 6.3 g de grasa, es directamente falso: es pescado azul. Pasan a sin_dato mientras no haya una cifra verificada. Contarlos como cero solo INFRAvalora el alimento (el omega-3 no tiene maximo), asi que no es peligroso, pero desaprovecha el pescado como fuente y mete aceite que quiza no hacia falta."
  },
  {
   "nombre": "Pulpo",
@@ -6639,7 +6668,22 @@
    "cloruro": 0,
    "fibra": 0.0
   },
-  "nota_datos": "Bazo -- órgano linfoide, no muscular, encaja en la categoría BARF de vísceras igual que riñón/pulmón. Datos cruzados entre varias fuentes derivadas de USDA, consistentes entre sí. Sin dato fiable para yodo, vitA/D/E, folato, colina, cloruro, linoleico/linolénico/araquidónico -- se dejan en 0. [Renombrado de \"Bazo de ternera\" a \"Bazo de vaca\" tras verificación: el hierro tan alto (44.5mg) es propio de animal adulto, no de ternera lechal -- la investigación encontró un dato distinto y genuino para ternera joven, añadido aparte.]"
+  "nota_datos": "Bazo -- órgano linfoide, no muscular, encaja en la categoría BARF de vísceras igual que riñón/pulmón. Datos cruzados entre varias fuentes derivadas de USDA, consistentes entre sí. Sin dato fiable para yodo, vitA/D/E, folato, colina, cloruro, linoleico/linolénico/araquidónico -- se dejan en 0. [Renombrado de \"Bazo de ternera\" a \"Bazo de vaca\" tras verificación: el hierro tan alto (44.5mg) es propio de animal adulto, no de ternera lechal -- la investigación encontró un dato distinto y genuino para ternera joven, añadido aparte.] ⚠️ (21 ago) Tenia nutrientes a CERO sin declararlo. En los minimos contarlos como cero es conservador, pero en los MAXIMOS deja pasar un exceso sin detectarlo, y las visceras son ricas justo en cobre, selenio y vitamina A. Se declaran como huecos para que salte el aviso de datos incompletos. Pendiente de completar con la ficha de la fuente original.",
+  "sin_dato": [
+   "araquidonico",
+   "cloruro",
+   "colina",
+   "dha",
+   "epa",
+   "fibra",
+   "folato",
+   "linoleico",
+   "linolenico",
+   "vitA",
+   "vitD",
+   "vitE",
+   "yodo"
+  ]
  },
  {
   "nombre": "Páncreas de vaca",
@@ -6679,7 +6723,24 @@
    "cloruro": 0,
    "fibra": 0.0
   },
-  "nota_datos": "Páncreas -- órgano glandular que segrega enzimas digestivas, encaja en vísceras. No confundir con la molleja de pollo/pavo del catálogo, que es un órgano completamente distinto (estómago muscular de ave, no glándula). Datos cruzados de varias fuentes USDA-derivadas. Bastante más graso que el resto de vísceras del catálogo (19g/100g) -- tenlo en cuenta si el perro tiene tendencia a la pancreatitis. Sin dato fiable para yodo, selenio, zinc, vitA/D/E, folato, colina, cloruro -- se dejan en 0."
+  "nota_datos": "Páncreas -- órgano glandular que segrega enzimas digestivas, encaja en vísceras. No confundir con la molleja de pollo/pavo del catálogo, que es un órgano completamente distinto (estómago muscular de ave, no glándula). Datos cruzados de varias fuentes USDA-derivadas. Bastante más graso que el resto de vísceras del catálogo (19g/100g) -- tenlo en cuenta si el perro tiene tendencia a la pancreatitis. Sin dato fiable para yodo, selenio, zinc, vitA/D/E, folato, colina, cloruro -- se dejan en 0. ⚠️ (21 ago) Tenia nutrientes a CERO sin declararlo. En los minimos contarlos como cero es conservador, pero en los MAXIMOS deja pasar un exceso sin detectarlo, y las visceras son ricas justo en cobre, selenio y vitamina A. Se declaran como huecos para que salte el aviso de datos incompletos. Pendiente de completar con la ficha de la fuente original.",
+  "sin_dato": [
+   "araquidonico",
+   "cloruro",
+   "colina",
+   "dha",
+   "epa",
+   "fibra",
+   "folato",
+   "linoleico",
+   "linolenico",
+   "selenio",
+   "vitA",
+   "vitD",
+   "vitE",
+   "yodo",
+   "zinc"
+  ]
  },
  {
   "nombre": "Bazo de cordero",
@@ -6719,7 +6780,29 @@
    "cloruro": 0,
    "fibra": 0.0
   },
-  "nota_datos": "Bazo de cordero -- USDA, cruzado con FatSecret y NutrientOptimiser (crudo). Confianza alta. Sin dato fiable de calcio, vitaminas del grupo B (salvo B12) ni vitA/D/E -- se dejan en 0."
+  "nota_datos": "Bazo de cordero -- USDA, cruzado con FatSecret y NutrientOptimiser (crudo). Confianza alta. Sin dato fiable de calcio, vitaminas del grupo B (salvo B12) ni vitA/D/E -- se dejan en 0. ⚠️ (21 ago) Tenia nutrientes a CERO sin declararlo. En los minimos contarlos como cero es conservador, pero en los MAXIMOS deja pasar un exceso sin detectarlo, y las visceras son ricas justo en cobre, selenio y vitamina A. Se declaran como huecos para que salte el aviso de datos incompletos. Pendiente de completar con la ficha de la fuente original.",
+  "sin_dato": [
+   "acidoPantotenico",
+   "araquidonico",
+   "calcio",
+   "cloruro",
+   "colina",
+   "dha",
+   "epa",
+   "fibra",
+   "folato",
+   "linoleico",
+   "linolenico",
+   "manganeso",
+   "niacina",
+   "riboflavina",
+   "tiamina",
+   "vitA",
+   "vitB6",
+   "vitD",
+   "vitE",
+   "yodo"
+  ]
  },
  {
   "nombre": "Timo de ternera",
@@ -6773,7 +6856,15 @@
    "vitD",
    "vitE",
    "yodo"
-  ]
+  ],
+  "procedencia": {
+   "nivel": "espejo",
+   "fuente_declarada": "USDA FoodData Central, FDC 170194 (Beef, thymus, raw)",
+   "como_se_obtuvo": "Resúmenes de buscador de sitios que replican esa ficha (prospre.io, nutritionvalue.org, nutrientoptimiser.com, calforlife.com). NO se pudo abrir fdc.nal.usda.gov: bloqueado por el proxy del entorno.",
+   "deducidos": [],
+   "verificado_contra_original": false,
+   "fecha": "2026-08-21"
+  }
  },
  {
   "nombre": "Cerebro de ternera",
@@ -6813,7 +6904,31 @@
    "cloruro": 0,
    "fibra": 0.0
   },
-  "nota_datos": "Cerebro -- tejido neuroendocrino, rico en DHA de forma natural. USDA, cruzado con Recipal/FatSecret/Prospre (crudo). OJO: colesterol muy elevado (~3010mg/100g) -- no es un problema nutricional de perro sano (el colesterol dietético apenas afecta al colesterol sanguíneo canino), pero se anota por si acaso. Sin dato fiable de magnesio, fósforo, cobre, ni la mayoría de vitaminas -- se dejan en 0."
+  "nota_datos": "Cerebro -- tejido neuroendocrino, rico en DHA de forma natural. USDA, cruzado con Recipal/FatSecret/Prospre (crudo). OJO: colesterol muy elevado (~3010mg/100g) -- no es un problema nutricional de perro sano (el colesterol dietético apenas afecta al colesterol sanguíneo canino), pero se anota por si acaso. Sin dato fiable de magnesio, fósforo, cobre, ni la mayoría de vitaminas -- se dejan en 0. ⚠️ (21 ago) Tenia nutrientes a CERO sin declararlo. En los minimos contarlos como cero es conservador, pero en los MAXIMOS deja pasar un exceso sin detectarlo, y las visceras son ricas justo en cobre, selenio y vitamina A. Se declaran como huecos para que salte el aviso de datos incompletos. Pendiente de completar con la ficha de la fuente original.",
+  "sin_dato": [
+   "acidoPantotenico",
+   "araquidonico",
+   "cloruro",
+   "cobre",
+   "colina",
+   "dha",
+   "epa",
+   "fibra",
+   "folato",
+   "fosforo",
+   "linoleico",
+   "linolenico",
+   "magnesio",
+   "manganeso",
+   "niacina",
+   "riboflavina",
+   "tiamina",
+   "vitA",
+   "vitB6",
+   "vitD",
+   "vitE",
+   "yodo"
+  ]
  },
  {
   "nombre": "Testículos de cordero",
@@ -6878,6 +6993,17 @@
    "vitD",
    "vitE",
    "yodo"
-  ]
+  ],
+  "procedencia": {
+   "nivel": "espejo",
+   "fuente_declarada": "USDA FoodData Central (Lamb, New Zealand, imported, testes, raw)",
+   "como_se_obtuvo": "Resúmenes de buscador. NO se pudo abrir fdc.nal.usda.gov: bloqueado por el proxy del entorno.",
+   "deducidos": [
+    "grasa: NO leida. Calculada del balance energetico: 68 kcal - 4x11.4 g de proteina = 22.4 kcal / 9 = 2.5 g",
+    "selenio: NO leido. Calculado del '48% del valor diario' que publica la fuente, sobre un VD humano de 55 ug = 26.4 ug"
+   ],
+   "verificado_contra_original": false,
+   "fecha": "2026-08-21"
+  }
  }
 ]
