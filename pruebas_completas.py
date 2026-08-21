@@ -23,7 +23,7 @@ import sys, time, json
 sys.path.insert(0, '.')
 sys.path.insert(0, './motor')
 
-from motor_completo import resolver, patologias_bloquean
+from motor_completo import resolver, patologias_bloquean, especie_de
 from constructor import cargar, MARGENES
 from verificar import verificar
 from optimizador import dosis_maxima_fabricante
@@ -800,6 +800,11 @@ def _perro_b11(der, etapa="Adulto", **extra):
     return {"nombres_alimentos": [], "der_objetivo": der, "etapa_requisitos": etapa,
             "modo": "automatico", **extra}
 
+def _pedir_casa(perros, noms, modo="parecidos", cuantos=1):
+    return _c.post("/menu/varios-perros", json={
+        "perros": perros, "nombres": noms,
+        "modo_conjunto": modo, "numero_de_menus": cuantos}).json()
+
 _CASOS_B11 = [
     ("dos adultos de tamaños muy distintos",
      [_perro_b11(1211, peso_perro_kg=24.5), _perro_b11(560, peso_perro_kg=8.2)],
@@ -818,30 +823,90 @@ _CASOS_B11 = [
      ["Nala", "Cairo", "Pipo"]),
 ]
 
-for _titulo, _perros, _noms in _CASOS_B11:
-    _t0 = time.time()
-    _r = _c.post("/menu/varios-perros", json={"perros": _perros, "nombres": _noms,
-                                              "modo_conjunto": "parecidos"}).json()
-    _dt = time.time() - _t0
-    if _dt > 28:
-        fallos.append(f"BLOQUE11 {_titulo}: tardó {_dt:.0f}s — Render corta a los 30s")
-    if not _r.get("factible"):
-        fallos.append(f"BLOQUE11 {_titulo}: no dio menús ({(_r.get('motivo') or '')[:90]})")
-        continue
-    if len(_r.get("menus") or []) != len(_perros):
-        fallos.append(f"BLOQUE11 {_titulo}: devolvió {len(_r.get('menus') or [])} menús "
-                      f"para {len(_perros)} perros")
-    for _i, _m in enumerate(_r.get("menus") or []):
-        # (1) verde de verdad, verificado aquí, con LA ETAPA DE ESE PERRO
-        _exigir_verde(f"/menu/varios-perros {_titulo} [{_m.get('nombre')}]", _m,
-                      _perros[_i]["der_objetivo"], _perros[_i]["etapa_requisitos"])
-        # el orden de salida tiene que ser el de entrada: el frontend los
-        # empareja por posición, y cruzarlos daría el menú de un perro a otro
-        if _m.get("nombre") != _noms[_i]:
-            fallos.append(f"BLOQUE11 {_titulo}: los menús vuelven desordenados "
-                          f"({_m.get('nombre')} en la posición de {_noms[_i]})")
+# ⚠️ Se prueba con UN menú y con VARIOS. Con varios entra en juego la
+# rotación de proteína y el reparto del presupuesto semanal de seguridad,
+# que es donde puede colarse de verdad un problema: un menú suelto puede
+# ser seguro y la SEMANA no serlo.
+for _cuantos in (1, 3):
+    for _titulo, _perros, _noms in _CASOS_B11:
+        _t0 = time.time()
+        _r = _pedir_casa(_perros, _noms, cuantos=_cuantos)
+        _dt = time.time() - _t0
+        _caso = f"{_titulo} x{_cuantos}"
+        if _dt > 28:
+            fallos.append(f"BLOQUE11 {_caso}: tardó {_dt:.0f}s — Render corta a los 30s")
+        if not _r.get("factible"):
+            fallos.append(f"BLOQUE11 {_caso}: no dio menús ({(_r.get('motivo') or '')[:90]})")
+            continue
+        if len(_r.get("perros") or []) != len(_perros):
+            fallos.append(f"BLOQUE11 {_caso}: devolvió {len(_r.get('perros') or [])} perros "
+                          f"para {len(_perros)} pedidos")
+        for _i, _p in enumerate(_r.get("perros") or []):
+            # el orden de salida tiene que ser el de entrada: el frontend los
+            # empareja por posición, y cruzarlos daría el menú de un perro a otro
+            if _p.get("nombre") != _noms[_i]:
+                fallos.append(f"BLOQUE11 {_caso}: los perros vuelven desordenados "
+                              f"({_p.get('nombre')} en la posición de {_noms[_i]})")
+            if len(_p.get("menus") or []) != _cuantos:
+                fallos.append(f"BLOQUE11 {_caso}: {_p.get('nombre')} recibió "
+                              f"{len(_p.get('menus') or [])} menús en vez de {_cuantos}")
+            # (1) CADA menú verde de verdad, verificado aquí, con LA ETAPA
+            # DE ESE PERRO -- no la del primero, que es un fallo fácil de
+            # cometer cuando se comparte la lista de alimentos.
+            for _k, _mm in enumerate(_p.get("menus") or []):
+                _exigir_verde(f"/menu/varios-perros {_caso} [{_p.get('nombre')} #{_k+1}]", _mm,
+                              _perros[_i]["der_objetivo"], _perros[_i]["etapa_requisitos"])
 
-# (2) un alérgeno NO se cuela por parecerse.
+            # (2) LA SEMANA ENTERA tiene que ser segura, no solo cada menú.
+            # El presupuesto de vitamina D y yodo es de los 7 días juntos y
+            # es POR PERRO (depende de sus kcal).
+            #
+            # ⚠️ HONESTIDAD SOBRE LO QUE ESTO PRUEBA Y LO QUE NO: medido el
+            # 21 de agosto, una semana real gasta el 32-49% de este tope, o
+            # sea que hay muchísimo margen. Esto es una RED DE SEGURIDAD
+            # contra una regresión gorda (compartir un presupuesto entre
+            # perros, multiplicar por los días mal), no una demostración de
+            # que el descuento menú a menú funciona: quitándolo entero, esto
+            # sigue en verde. Quien vigila el descuento de verdad es la
+            # comprobación (3), la de la rotación.
+            if _cuantos > 1 and (_p.get("menus")):
+                _der_i = _perros[_i]["der_objetivo"]
+                _tope = _api._presupuesto_semanal_inicial(_der_i)
+                for _nutri in ("vitD", "yodo"):
+                    _gastado = sum(
+                        _api._consumo_real_menu(_mm.get("menu") or {}, al, _der_i)[_nutri]
+                        * (_mm.get("dias") or 0)
+                        for _mm in _p["menus"])
+                    if _gastado > _tope[_nutri] * 1.001:   # margen para el redondeo
+                        fallos.append(
+                            f"BLOQUE11 {_caso}: la semana de {_p.get('nombre')} se pasa de "
+                            f"{_nutri} ({_gastado:.1f} sobre un tope de {_tope[_nutri]:.1f}). "
+                            f"El presupuesto semanal es POR PERRO y se descuenta menú a menú.")
+
+            # (3) con varios menús, la PROTEÍNA PRINCIPAL tiene que rotar.
+            #
+            # ⚠️ Se mira la proteína, no el conjunto de alimentos. La primera
+            # versión comparaba los menús enteros y NO servía: el motor lleva
+            # algo de azar, así que los menús salen distintos entre sí aunque
+            # la rotación esté apagada del todo (se comprobó: pasaba en verde
+            # con el mecanismo desactivado). Lo que la rotación controla de
+            # verdad es qué especie manda en cada menú.
+            #
+            # Medido con el mecanismo apagado: la proteína salía IDÉNTICA en
+            # los tres menús, 3 de 3 intentos. Con él, tres distintas.
+            if _cuantos > 1 and len(_p.get("menus") or []) > 1:
+                _proteinas = []
+                for _mm in _p["menus"]:
+                    _carnes = [(n, g) for n, g in (_mm.get("menu") or {}).items()
+                               if al.get(n, {}).get("categoria") == "Carne muscular"]
+                    if _carnes:
+                        _proteinas.append(especie_de(max(_carnes, key=lambda x: x[1])[0]))
+                if len(_proteinas) > 1 and len(set(_proteinas)) == 1:
+                    fallos.append(f"BLOQUE11 {_caso}: los {_cuantos} menús de "
+                                  f"{_p.get('nombre')} llevan la MISMA proteína "
+                                  f"({_proteinas[0]}) — la rotación no está haciendo nada")
+
+# (4) un alérgeno NO se cuela por parecerse.
 #
 # ⚠️ CUIDADO AL TOCAR ESTE CASO — la primera versión no probaba nada.
 # Ponía las alergias en el perro que MÁS restricciones tiene, y ése es
@@ -857,23 +922,23 @@ for _titulo, _perros, _noms in _CASOS_B11:
 #     fuerza el pollo a mano, en vez de esperar a que salga por azar);
 #   · y el alérgeno tiene que ser justo ése.
 _ALERGENO_B11 = "Pollo con piel (sin hueso)"
-_r = _c.post("/menu/varios-perros", json={"perros": [
+_r = _pedir_casa([
     # base: dos alimentos excluidos (2 restricciones) y pollo forzado
     _perro_b11(560, peso_perro_kg=8.2, nombres_excluidos=["Rábano", "Albahaca"],
                modo="personalizar", forzar_presencia=[_ALERGENO_B11]),
     # se amolda: una sola restricción, y es la alergia al pollo
     _perro_b11(1211, peso_perro_kg=24.5, especies_excluidas=["pollo"]),
-], "nombres": ["Cairo", "Nala"], "modo_conjunto": "parecidos"}).json()
+], ["Cairo", "Nala"])
 if _r.get("factible"):
-    _menu_base_b11 = next((m for m in _r["menus"] if m.get("es_la_base")), {})
-    if _menu_base_b11.get("nombre") != "Cairo":
+    _base_b11 = next((p for p in _r["perros"] if p.get("es_la_base")), {})
+    if _base_b11.get("nombre") != "Cairo":
         fallos.append("BLOQUE11 alergias: la base no es la esperada, así que este caso "
                       "no está probando lo que cree — revisar el criterio de qué perro manda")
-    elif _ALERGENO_B11 not in (_menu_base_b11.get("menu") or {}):
+    elif _ALERGENO_B11 not in ((_base_b11.get("menus") or [{}])[0].get("menu") or {}):
         fallos.append("BLOQUE11 alergias: el menú de la base no lleva el alérgeno, así que "
                       "no hay nada que colar — este caso no prueba nada")
-if _r.get("factible"):
-    _menu_nala = next((m for m in _r["menus"] if m["nombre"] == "Nala"), {}).get("menu") or {}
+    _nala = next((p for p in _r["perros"] if p["nombre"] == "Nala"), {})
+    _menu_nala = (_nala.get("menus") or [{}])[0].get("menu") or {}
     _colados = [n for n in _menu_nala if "pollo" in n.lower()]
     if _colados:
         fallos.append(f"BLOQUE11 alergias: parecerse coló un alérgeno en el menú "
@@ -884,42 +949,41 @@ if _r.get("factible"):
 else:
     fallos.append("BLOQUE11 alergias: no dio menús para dos perros con alergias distintas")
 
-# (3) modo "distintos": cada perro el suyo, y todos verdes igual
-_r = _c.post("/menu/varios-perros", json={"perros": [
-    _perro_b11(1211, peso_perro_kg=24.5), _perro_b11(560, peso_perro_kg=8.2),
-], "nombres": ["Nala", "Cairo"], "modo_conjunto": "distintos"}).json()
+# (5) modo "distintos": cada perro el suyo, y todos verdes igual
+_r = _pedir_casa([_perro_b11(1211, peso_perro_kg=24.5), _perro_b11(560, peso_perro_kg=8.2)],
+                 ["Nala", "Cairo"], modo="distintos", cuantos=2)
 if not _r.get("factible"):
     fallos.append("BLOQUE11 distintos: no dio menús")
 else:
-    for _i, _m in enumerate(_r["menus"]):
-        _exigir_verde(f"/menu/varios-perros distintos [{_m.get('nombre')}]", _m,
-                      [1211, 560][_i], "Adulto")
+    for _i, _p in enumerate(_r["perros"]):
+        for _k, _mm in enumerate(_p.get("menus") or []):
+            _exigir_verde(f"/menu/varios-perros distintos [{_p.get('nombre')} #{_k+1}]", _mm,
+                          [1211, 560][_i], "Adulto")
 
-# (4) el recuento de cambios tiene que decir la verdad: si dice 0 cambios,
+# (6) el recuento de cambios tiene que decir la verdad: si dice 0 cambios,
 # los dos menús llevan LOS MISMOS alimentos. Un recuento que miente es
 # peor que no tenerlo, porque la usuaria compra con él en la mano.
-_r = _c.post("/menu/varios-perros", json={"perros": [
-    _perro_b11(1211, peso_perro_kg=24.5), _perro_b11(560, peso_perro_kg=8.2),
-], "nombres": ["Nala", "Cairo"], "modo_conjunto": "parecidos"}).json()
+_r = _pedir_casa([_perro_b11(1211, peso_perro_kg=24.5), _perro_b11(560, peso_perro_kg=8.2)],
+                 ["Nala", "Cairo"])
 if _r.get("factible"):
-    _base_m = next((m for m in _r["menus"] if m.get("es_la_base")), None)
+    _base_m = next((p for p in _r["perros"] if p.get("es_la_base")), None)
     if not _base_m:
-        fallos.append("BLOQUE11 cuentas: ningún menú viene marcado como la base")
+        fallos.append("BLOQUE11 cuentas: ningún perro viene marcado como la base")
     else:
-        _sb = set(_base_m.get("menu") or {})
-        for _m in _r["menus"]:
-            if _m.get("es_la_base"):
+        _sb = set((_base_m.get("menus") or [{}])[0].get("menu") or {})
+        for _p in _r["perros"]:
+            if _p.get("es_la_base"):
                 continue
-            _so = set(_m.get("menu") or {})
-            _cb = _m.get("cambios") or {}
+            _so = set((_p.get("menus") or [{}])[0].get("menu") or {})
+            _cb = _p.get("cambios") or {}
             if _cb.get("cuantos_cambios") != len(_sb ^ _so):
                 fallos.append(f"BLOQUE11 cuentas: dice {_cb.get('cuantos_cambios')} cambios "
-                              f"para {_m.get('nombre')} pero de verdad hay {len(_sb ^ _so)}")
+                              f"para {_p.get('nombre')} pero de verdad hay {len(_sb ^ _so)}")
             if sorted(_cb.get("anadidos") or []) != sorted(_so - _sb):
-                fallos.append(f"BLOQUE11 cuentas: la lista de añadidos de {_m.get('nombre')} "
+                fallos.append(f"BLOQUE11 cuentas: la lista de añadidos de {_p.get('nombre')} "
                               f"no coincide con su menú")
 
-# (5) que no reviente con lo raro: sin perros, y con más de los permitidos
+# (7) que no reviente con lo raro: sin perros, y con más de los permitidos
 if _c.post("/menu/varios-perros", json={"perros": []}).json().get("factible"):
     fallos.append("BLOQUE11: dice que sí a una petición sin ningún perro")
 _muchos = _c.post("/menu/varios-perros",
