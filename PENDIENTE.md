@@ -145,12 +145,12 @@ menús comparados no tienen sentido sin él.
 
       Encontró de paso un fallo grave que llevaba meses: **las alergias se
       podían saltar forzando el alimento** — ver sección 5.
-- [ ] **Menús de varios perros: el recorrido COMPLETO.** Lo que hay ahora
-      se queda corto y así no vale (dicho el 21 de agosto): para varios
-      perros solo hay automático de un menú, sin elegir cuántos, sin
-      Personalizar, sin poder editar alimentos después, y sin preguntar
-      qué come cada perro ahora ni si necesita transición. **Tiene que ser
-      lo mismo que para un perro, pero para N.**
+- [x] **Menús de varios perros: el recorrido COMPLETO.** ✅ **Hecho el 21
+      de agosto** (API #23, web #11). Ya no hay camino aparte: para varios
+      perros se pasa por las mismas pantallas. Qué come cada perro por
+      separado, automático y personalizar, cuántos menús con su rotación,
+      aviso de transición por perro, y «Ver y editar el menú de X» que
+      abre el editor de siempre.
 
 - [ ] **Sacar los perros del menú lateral.** Que cambiar de perro esté
       metido en una pestaña del panel es esconderlo. Va como **burbuja de
@@ -165,7 +165,18 @@ menús comparados no tienen sentido sin él.
       registrarse sin perder nada.
 
 - [ ] **Ajustes de cuenta** (no del perro): cambiar contraseña, correo,
-      método de pago, darse de baja.
+      método de pago, darse de baja. Va dentro del engranaje de arriba.
+
+- [ ] **Rellenar a mano la fecha de nacimiento de los perros ya guardados.**
+      No es programación: las fichas creadas antes del 21 de agosto tienen
+      la fecha vacía por el fallo de guardado (ver arriba). Hay que entrar
+      en cada perro, ponerla y guardar. Una vez y ya.
+
+- [ ] **Personalizar perro por perro** cuando son varios. Hoy lo que se
+      elige se aplica a la casa entera (se le fuerza al perro que manda y
+      los demás se amoldan). Elegir alimentos distintos para cada perro es
+      otra pantalla, y además pelea con que los menús se parezcan — hay
+      que decidir antes qué gana cuando chocan.
 - [ ] **Entrar con Google.**
 - [ ] **Entrar con huella en el móvil.** Sí es posible: se hace con
       *passkeys* (WebAuthn), que Supabase Auth soporta. No es la huella en
