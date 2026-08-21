@@ -111,13 +111,54 @@ menús comparados no tienen sentido sin él.
 
 ---
 
-## 5. Preguntas abiertas de nutrición
+## 5. Nutrición — auditado contra el PDF oficial
 
-- [ ] **¿Usamos todos los nutrientes de FEDIAF o nos quedamos en los 30
-      actuales?** Hoy se verifican 30 y el motor los cumple todos. Antes de
-      ampliar hay que ver cuáles faltan, si el catálogo de alimentos tiene
-      ese dato (si no, se contarían como cero y saldrían falsos avisos), y
-      si añadirlos deja el problema sin solución en algún caso.
+**Hecho el 21 de agosto** contra la TABLA III-3b de la *FEDIAF Nutritional
+Guidelines 2025* (el PDF oficial, no de memoria). Script reproducible en
+`auditar_fediaf.py`.
+
+**84 de 84 comprobaciones cuadran exactas.** Se verificó, para los 30
+nutrientes del JSON y en las tres etapas: el valor, la unidad, y que todo
+esté por 1000 kcal de energía metabolizable.
+
+También quedó confirmado el mapeo de columnas, que no era obvio:
+- `Adulto` usa la columna **95 kcal/kg^0,75**, la más exigente de las dos
+  que da FEDIAF para adultos. Es la decisión conservadora, y es correcta.
+- `CachorroJoven` = *Early Growth* (< 14 semanas) y reproducción.
+- `CachorroCrecimiento` = *Late Growth* (≥ 14 semanas).
+
+La vitamina E parecía discrepar (6,968 mg frente a 10,40 UI) y **no es un
+error**: está convertida a 0,67 mg/UI, que es la equivalencia del
+α-tocoferol natural, la forma en que las tablas de composición declaran la
+vitamina E de los alimentos. Está documentado en el propio JSON.
+
+### Respuesta a «¿usamos todos los nutrientes de FEDIAF?»
+
+De los 44 de la tabla, el JSON cubre 30. Lo que falta:
+
+- **Los 12 aminoácidos esenciales** (arginina, histidina, isoleucina,
+  leucina, lisina, metionina, metionina+cistina, fenilalanina,
+  fenilalanina+tirosina, treonina, triptófano, valina).
+- Biotina (B7) y vitamina K: **FEDIAF no les pone mínimo** en esta tabla
+  (aparecen con «-»), así que aquí no falta nada.
+
+**No se pueden añadir hoy, y el motivo es el catálogo, no el motor:**
+ninguno de los 163 alimentos tiene dato de aminoácidos. Añadir el
+requisito sin el dato haría que todos contaran como cero y ningún menú
+saldría nunca. Para hacerlo haría falta primero conseguir el perfil de
+aminoácidos de los 163 alimentos.
+
+Contexto para decidir si merece la pena: una dieta que cubre la proteína
+con fuentes animales variadas cubre los aminoácidos esenciales de sobra —
+por eso muchas guías prácticas se quedan en la proteína total. El caso
+donde importa de verdad es una dieta con poca proteína animal.
+
+- [ ] **Vitamina E de los suplementos: ¿UI o mg?** Los multivitamínicos
+      del catálogo llevan valores de 200 a 670, y los fabricantes suelen
+      declarar la vitamina E en UI. Si son UI contadas como mg naturales,
+      están sobrevaloradas un 49 %. Medido: aun en el peor caso los menús
+      aportan de 1,5 a 7 veces el mínimo, así que **hoy nadie se queda
+      corto** — pero conviene confirmarlo etiqueta en mano.
 
 ---
 
