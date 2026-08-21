@@ -125,6 +125,69 @@ for nombre_json, (clave, factor) in EQUIV.items():
         else:
             ok_n += 1
 
+
+# ══════════════════════════════════════════════════════════════════════
+# MAXIMOS — la cara de la toxicidad
+#
+# Vienen de dos sitios distintos, y por eso es facil equivocarse:
+#   · Los "(N)" nutricionales estan en la III-3b, ya por 1000 kcal.
+#   · Los "(L)" legales de la UE SOLO se dan en la III-3a, por 100 g de
+#     materia seca. Se pasan a por-1000-kcal multiplicando por 2.5,
+#     porque FEDIAF usa 4000 kcal/kg MS como densidad de referencia
+#     (100 g MS = 400 kcal, y 1000/400 = 2.5).
+# El x2.5 no es una suposicion: cuadra en dos sitios donde las dos tablas
+# dan el mismo dato -- vitamina A (40 000 x 2.5 = 100 000) y vitamina D
+# (320 x 2.5 = 800), que es justo lo que pone la III-3b.
+# ══════════════════════════════════════════════════════════════════════
+MAXIMOS = {
+ "Calcio":     {"Adulto": 6250, "CachorroJoven": 4000, "CachorroCrecimiento": 4500},
+ "Fósforo":    {"Adulto": 4000},
+ "Cobre":      {"todas": 2.80 * 2.5},
+ "Yodo":       {"todas": 1.10 * 2.5 * 1000},
+ "Hierro":     {"todas": 68.18 * 2.5},
+ "Manganeso":  {"todas": 17.00 * 2.5},
+ "Selenio":    {"todas": 56.80 * 2.5},
+ "Zinc":       {"todas": 22.70 * 2.5},
+ "Vitamina_A": {"todas": 100000 * 0.3},
+ "Vitamina_D": {"todas": 800.0 * 0.025},
+ # OJO: la III-3b lo etiqueta "Early Growth:", asi que este maximo es
+ # SOLO de crecimiento temprano. No ponerlo tambien en el tardio.
+ "Linoleico":  {"CachorroJoven": 16.25},
+}
+# Nutrientes que NO tienen maximo en FEDIAF: que el JSON ponga "-" es lo
+# correcto, y ponerle un numero seria inventarselo. La vitamina E es uno.
+SIN_MAXIMO = ("Proteína_total", "Grasa_total", "Vitamina_E", "Tiamina",
+              "Riboflavina", "Acido_pantotenico", "Vitamina_B6", "Vitamina_B12",
+              "Niacina", "Folato", "Colina", "Potasio", "Magnesio",
+              "Linolénico", "EPA_DHA_total", "Araquidónico")
+
+for nut, topes in MAXIMOS.items():
+    r = req.get(nut)
+    if not r:
+        problemas.append(("FALTA", nut, "no está en el JSON")); continue
+    for etapa in ("Adulto", "CachorroJoven", "CachorroCrecimiento"):
+        esperado = topes.get(etapa, topes.get("todas"))
+        if esperado is None: continue
+        actual = num(r.get("max" + etapa))
+        if actual is None:
+            problemas.append(("SIN MÁXIMO", nut,
+                              f"{etapa}: el JSON no lo pone y FEDIAF da {esperado:g}"))
+        elif abs(actual - esperado) > max(esperado * 0.01, 1e-9):
+            problemas.append(("MÁXIMO NO COINCIDE", nut,
+                              f"{etapa}: JSON={actual:g} vs FEDIAF={esperado:g}"))
+        else:
+            ok_n += 1
+
+for nut in SIN_MAXIMO:
+    r = req.get(nut)
+    if not r: continue
+    for etapa in ("Adulto", "CachorroJoven", "CachorroCrecimiento"):
+        if num(r.get("max" + etapa)) is not None:
+            problemas.append(("MÁXIMO INVENTADO", nut,
+                              f"{etapa}: el JSON pone un máximo y FEDIAF no da ninguno"))
+        else:
+            ok_n += 1
+
 print()
 print("Comprobaciones que cuadran: %d" % ok_n)
 print("Discrepancias: %d" % len(problemas))
