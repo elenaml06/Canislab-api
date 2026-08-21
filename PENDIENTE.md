@@ -90,8 +90,19 @@ Los precios sí se ven antes de pagar, y qué vendes se entiende. Eso está.
 Ordenadas por dependencia: multi-perro va primero porque la cesta y los
 menús comparados no tienen sentido sin él.
 
-- [ ] **Varios perros por cuenta.** La base ya está preparada (los menús se
-      guardan con `perro_id`, no con `user_id`), pero la app solo maneja uno.
+- [x] **Varios perros por cuenta.** ✅ **Hecho el 21 de agosto** en
+      `canislab-web`. Selector de perros en los dos paneles laterales,
+      crear y borrar perro, y se recuerda con cuál estabas. Cambiar de
+      perro **remonta** la app entera a propósito: perfil, menús y kcal se
+      calculan una sola vez al montar, así que sin remontar se quedaban
+      mezclados los datos de los dos. Borrar un perro borra también sus
+      menús (la tabla `menus` no borra en cascada; si no, quedaban
+      huérfanos para siempre). 8 pruebas nuevas en
+      `tests/varios-perros.spec.js`.
+
+      De paso: pesar al perro desde *Evolución* decía «✅ Peso
+      actualizado» y **no lo guardaba nunca** — `usuario` no existía en
+      esa pantalla y reventaba justo antes del guardado. Corregido.
 - [ ] **Cesta de la compra**, diferenciando de quién es cada cosa
       («para Cairo» / «para Nala» / «para los dos»). Solo aparece la
       distinción si hay más de un perro.
