@@ -209,11 +209,33 @@ sabemos», y la diferencia es asimétrica:
 todo a cero es verdad (es grasa pura), y que el timo lo tenga es un hueco.
 Distinguirlo hace falta mirar la fuente.
 
-- [ ] Revisar esos tres alimentos y, para cada nutriente a cero, decidir
-      si es un cero real o un hueco. Los huecos, a `sin_dato`.
-- [ ] Mientras tanto, decidir si el timo y los testículos se quedan en el
-      catálogo. Con el 90 % de su composición desconocida, cualquier menú
-      que los use tiene sus máximos sin comprobar de verdad.
+**Hecho el 21 de agosto**, hasta donde se pudo:
+
+- **Timo de ternera**: 16 nutrientes rellenados con la ficha USDA FDC
+  170194 (la que la propia entrada ya citaba). La vitamina A sí es un cero
+  real según la fuente. Los 12 que USDA no publica quedan en `sin_dato`.
+- **Testículos de cordero**: 7 rellenados con la ficha USDA de *Lamb, New
+  Zealand, testes, raw*, incluidas proteína y grasa, que estaban a cero
+  con 68 kcal declaradas — el motor lo veía como calorías sin macros. Los
+  23 restantes, en `sin_dato`.
+- **Grasa de pollo**: revisado y **estaba bien**. Sus ceros son reales (la
+  grasa fundida no tiene proteína ni minerales) y los huecos que sí tiene
+  —ácidos grasos y vitamina E— ya estaban declarados.
+
+Validación: tras rellenarlos, la energía declarada cuadra con los macros
+por Atwater (ratio 1,01 y 1,00), lo que confirma que las cifras son
+coherentes entre sí.
+
+- [ ] **Contrastar esas cifras con la ficha original de USDA.** Se
+      recuperaron de espejos por buscador porque el entorno no tiene
+      acceso a `fdc.nal.usda.gov`. Dos valores de los testículos son
+      **deducidos, no leídos**, y van marcados como tal: la grasa (del
+      balance energético) y el selenio (del 48 % del valor diario que
+      publica la fuente, porque no da la cifra absoluta).
+- [ ] **El linoleico de la grasa de pollo sigue sin dato**, y esta vez no
+      por descuido: USDA no publica un valor diferenciado para ese
+      alimento. Importa porque el linoleico **tiene máximo** en cachorros,
+      y un hueco contado como cero no lo detectaría.
 - [ ] Plantearse que el aviso de datos incompletos no dependa de una lista
       mantenida a mano: un alimento con el 90 % de los valores a cero es
       sospechoso por sí solo, lo declare o no.
