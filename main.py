@@ -1469,6 +1469,17 @@ class PeticionVariosPerros(BaseModel):
     # su mejor menú, sin mirar a los otros (que es lo que pasa hoy si los
     # generas por separado).
     modo_conjunto: str = "parecidos"
+    # ⚠️ AÑADIDO (21 agosto) — PEDIDO EXPRESO: "cuando generas los menús
+    # para los dos perros no tienes ni el automático ni el personalizar,
+    # solo te crea un menú y punto. Tiene que ser todo igual que cuando lo
+    # generas para un perro, pero para dos".
+    #
+    # Cuántos menús distintos quiere cada perro para su semana. Con más de
+    # uno se rota la proteína y se reparte el presupuesto semanal de
+    # seguridad crónica entre ellos, exactamente igual que /menu/semana --
+    # por perro, porque cada uno tiene sus propias kcal y por tanto su
+    # propio presupuesto.
+    numero_de_menus: int = 1
 
 
 PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = 24.0
@@ -1511,6 +1522,33 @@ def _resumen_de_parecido(cambios, nombre_perro, nombre_base):
             f"respecto a la compra de {nombre_base}.")
 
 
+def _respuesta_varios_perros(perros_salida, modo_conjunto, nombre_base, numero_de_menus):
+    """La respuesta, con el resumen de parecido de toda la semana."""
+    cambios_totales = sum((p.get("cambios") or {}).get("cuantos_cambios", 0)
+                          for p in perros_salida)
+    salida = {
+        "factible": all(p.get("factible") for p in perros_salida),
+        "modo_conjunto": modo_conjunto,
+        "numero_de_menus": numero_de_menus,
+        "cambios_totales": cambios_totales,
+        "compra_unica": cambios_totales == 0,
+        "perros": perros_salida,
+    }
+    if nombre_base:
+        salida["perro_base"] = nombre_base
+    # ⚠️ TEMPORAL — compatibilidad con la versión de la app que había
+    # desplegada cuando esto cambió de forma (antes: un solo menú por perro
+    # en la clave "menus"). Render despliega antes que Vercel, así que
+    # durante unos minutos convive la API nueva con la app vieja, y sin
+    # esto la usuaria vería un error en ese hueco. Se puede quitar en
+    # cuanto la app esté desplegada: nada más lo usa.
+    if numero_de_menus == 1:
+        salida["menus"] = [{k: v for k, v in p.items() if k != "menus"}
+                           | (p["menus"][0] if p.get("menus") else {})
+                           for p in perros_salida]
+    return salida
+
+
 @app.post("/menu/varios-perros")
 def endpoint_varios_perros(datos: PeticionVariosPerros):
     """Un menú por perro, en una sola llamada.
@@ -1533,102 +1571,169 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
 
         al, req = cargar_v2()
         n = len(datos.perros)
+        m = max(1, min(8, datos.numero_de_menus or 1))
         nombres = list(datos.nombres or [])
         # Sin nombre no se puede decir "el menú de Cairo", pero tampoco se
         # va a inventar uno: se dice por su sitio en la lista.
         while len(nombres) < n:
             nombres.append(f"el perro {len(nombres) + 1}")
 
-        # El tiempo se reparte ANTES de empezar. Con dos perros son 12s
-        # cada uno: pasarse significa que Render corta la conexión y la
-        # usuaria no ve nada, ni siquiera el menú del primero.
-        por_perro = max(4.0, PRESUPUESTO_SEGUNDOS_VARIOS_PERROS / n)
+        # El tiempo se reparte ANTES de empezar, entre TODAS las llamadas
+        # que se van a hacer (perros x menús): pasarse significa que Render
+        # corta la conexión y la usuaria no ve nada, ni el primer menú.
+        por_llamada = max(3.0, PRESUPUESTO_SEGUNDOS_VARIOS_PERROS / (n * m))
 
-        def generar(datos_perro, i, forzar_estos=None):
-            peticion = datos_perro.model_copy(update={
-                "presupuesto_segundos": por_perro,
-                **({"modo": "personalizar", "forzar_presencia": list(forzar_estos)}
-                   if forzar_estos else {}),
-            })
+        # Días que cubre cada menú de la rotación, igual que /menu/semana:
+        # de ahí sale cuánto presupuesto semanal de seguridad gasta cada uno.
+        base_dias, resto_dias = divmod(7, m)
+        dias_por_menu = [base_dias + (1 if i < resto_dias else 0) for i in range(m)]
+
+        # ⚠️ El presupuesto semanal de seguridad crónica (vitamina D, yodo,
+        # tiaminasa, mercurio, selenio) es POR PERRO: depende de sus kcal.
+        # Compartir uno solo entre varios perros sería mezclar lo que come
+        # cada uno, que no tiene ningún sentido físico.
+        presupuesto = {i: _presupuesto_semanal_inicial(p.der_objetivo)
+                       for i, p in enumerate(datos.perros)}
+        # Proteína ya usada, para rotarla entre los menús de un mismo perro.
+        especies_usadas = {i: [] for i in range(n)}
+
+        def generar(i, j, forzar_estos=None):
+            """El menú j del perro i. `forzar_estos` es la lista de
+            alimentos a la que tiene que parecerse (modo "parecidos")."""
+            perro = datos.perros[i]
+            dias_restantes = sum(dias_por_menu[j:])
+            cambios_peticion = {
+                "presupuesto_segundos": por_llamada,
+                "presupuesto_semanal_restante": _presupuesto_para_menu_actual(
+                    presupuesto[i], dias_restantes),
+                "evitar_especies": list(perro.evitar_especies or []) + especies_usadas[i],
+            }
+            if forzar_estos:
+                # Parecerse se pide como Personalizar, que es el camino que
+                # ya sabe intentar "solo estos alimentos", luego "estos sí o
+                # sí pudiendo añadir", luego libre. Ver el bloque de arriba.
+                cambios_peticion["modo"] = "personalizar"
+                cambios_peticion["forzar_presencia"] = list(forzar_estos)
             return _garantizar_verificado(
-                _resolver_menu_v2_interno(peticion),
-                datos_perro.der_objetivo, datos_perro.etapa_requisitos,
-                datos_perro.peso_perro_kg,
+                _resolver_menu_v2_interno(perro.model_copy(update=cambios_peticion)),
+                perro.der_objetivo, perro.etapa_requisitos, perro.peso_perro_kg,
                 origen="/menu/varios-perros", al=al, req=req)
 
-        # ── Modo "distintos": cada perro por su cuenta ────────────────────
+        def anotar_consumo(i, j, gramos):
+            """Descuenta del presupuesto semanal del perro lo que gasta este
+            menú, y apunta su proteína para no repetirla en el siguiente."""
+            consumo = _consumo_real_menu(gramos, al, datos.perros[i].der_objetivo)
+            dias = dias_por_menu[j]
+            presupuesto[i] = {
+                "tiaminasa": presupuesto[i]["tiaminasa"],           # fracción diaria, no se acumula
+                "mercurio": presupuesto[i]["mercurio"],
+                "vitD": presupuesto[i]["vitD"] - consumo["vitD"] * dias,
+                "yodo": presupuesto[i]["yodo"] - consumo["yodo"] * dias,
+                "selenio_g_dieta": presupuesto[i]["selenio_g_dieta"],  # densidad diaria
+            }
+            for cat in ("Carne muscular", "Pescados y mariscos", "Hueso carnoso",
+                        "Vísceras", "Hígado"):
+                principal = sorted(((nom, g) for nom, g in gramos.items()
+                                    if al.get(nom, {}).get("categoria") == cat),
+                                   key=lambda x: -x[1])
+                if principal:
+                    especies_usadas[i].append(especie_de(principal[0][0]))
+
+        def gramos_de(r):
+            return r.get("menu") or r.get("gramos") or {}
+
+        por_perro = {i: {"indice": i, "nombre": nombres[i], "es_la_base": False,
+                         "menus": [], "cambios": None, "resumen_parecido": None}
+                     for i in range(n)}
+
+        # ── Modo "distintos": cada perro su semana, sin mirar a los otros ──
         if datos.modo_conjunto != "parecidos":
-            for i, perro in enumerate(datos.perros):
-                r = generar(perro, i)
-                resultados.append({"indice": i, "nombre": nombres[i], **r})
-            return {"factible": all(r.get("factible") for r in resultados),
-                    "modo_conjunto": "distintos",
-                    "menus": resultados}
+            for i in range(n):
+                for j in range(m):
+                    r = generar(i, j)
+                    if not r.get("factible"):
+                        if not por_perro[i]["menus"]:
+                            por_perro[i]["motivo"] = r.get("motivo")
+                        break
+                    por_perro[i]["menus"].append({**r, "dias": dias_por_menu[j]})
+                    anotar_consumo(i, j, gramos_de(r))
+                por_perro[i]["factible"] = bool(por_perro[i]["menus"])
+            perros_salida = [por_perro[i] for i in range(n)]
+            return _respuesta_varios_perros(perros_salida, "distintos", None, m)
 
         # ── Modo "parecidos" ─────────────────────────────────────────────
         # Cuánto margen tiene cada perro: más restricciones y menos ración
-        # = menos margen. El de menos margen manda.
+        # = menos margen. El de menos margen manda, y los demás se amoldan.
+        # Al revés no cabe: forzar los alimentos de un perro grande en uno
+        # de 3 kg no entra en su ración.
         def margen(par):
             _, p = par
             restricciones = (len(p.nombres_excluidos or []) + len(p.especies_excluidas or [])
                              + len(p.categorias_excluidas or []) + len(p.patologias or []))
             return (-restricciones, p.der_objetivo or 0.0)
 
-        orden = sorted(enumerate(datos.perros), key=margen)
-        i_base, perro_base = orden[0]
+        orden = [i for i, _ in sorted(enumerate(datos.perros), key=margen)]
+        i_base = orden[0]
+        por_perro[i_base]["es_la_base"] = True
 
-        base = generar(perro_base, i_base)
-        if not base.get("factible"):
-            # Si el perro que menos margen tiene no sale, amoldar a los
-            # demás no tiene sentido: no hay a qué amoldarse. Se dice cuál
-            # es el que no sale, que es lo accionable.
-            return {"factible": False,
-                    "modo_conjunto": "parecidos",
-                    "motivo": f"No se ha podido hacer el menú de {nombres[i_base]}, "
-                              f"que es el que menos margen tiene. " + (base.get("motivo") or ""),
-                    "perro_que_falla": nombres[i_base],
-                    "menus": [{"indice": i_base, "nombre": nombres[i_base], **base}]}
+        for j in range(m):
+            base = generar(i_base, j)
+            if not base.get("factible"):
+                if j == 0:
+                    # Si el perro que menos margen tiene no saca ni el
+                    # primero, no hay a qué amoldarse. Se dice cuál es, que
+                    # es lo accionable.
+                    return {"factible": False, "modo_conjunto": "parecidos",
+                            "numero_de_menus": m,
+                            "motivo": f"No se ha podido hacer el menú de {nombres[i_base]}, "
+                                      f"que es el que menos margen tiene. "
+                                      + (base.get("motivo") or ""),
+                            "perro_que_falla": nombres[i_base],
+                            "perros": [por_perro[i] for i in range(n)]}
+                break  # los menús que ya salieron valen; se devuelven esos
+            gramos_base = gramos_de(base)
+            por_perro[i_base]["menus"].append({**base, "dias": dias_por_menu[j]})
+            anotar_consumo(i_base, j, gramos_base)
 
-        gramos_base = base.get("menu") or base.get("gramos") or {}
-        alimentos_base = list(gramos_base)
+            for i in orden[1:]:
+                r = generar(i, j, forzar_estos=list(gramos_base))
+                if not r.get("factible"):
+                    # Amoldarse no puede costarle a nadie quedarse sin menú:
+                    # antes de rendirse, se le hace el suyo libremente.
+                    r = generar(i, j)
+                    if r.get("factible"):
+                        r["aviso"] = (f"No había forma de acercar este menú de {nombres[i]} "
+                                      f"al de {nombres[i_base]}, así que es el suyo propio. "
+                                      + (r.get("aviso") or "")).strip()
+                if not r.get("factible"):
+                    if not por_perro[i]["menus"]:
+                        por_perro[i]["motivo"] = r.get("motivo")
+                    continue
+                cambios = _comparar_menus(gramos_base, gramos_de(r))
+                por_perro[i]["menus"].append({**r, "dias": dias_por_menu[j], "cambios": cambios})
+                anotar_consumo(i, j, gramos_de(r))
 
-        por_indice = {i_base: {"indice": i_base, "nombre": nombres[i_base],
-                               "es_la_base": True,
-                               "cambios": _comparar_menus(gramos_base, gramos_base),
-                               "resumen_parecido": None, **base}}
+        for i in range(n):
+            por_perro[i]["factible"] = bool(por_perro[i]["menus"])
+            if i == i_base:
+                continue
+            # El parecido de la SEMANA entera: se suman los cambios de cada
+            # menú. Decir solo el del primero engañaría cuando el segundo se
+            # tuvo que separar más.
+            todos = [mm.get("cambios") for mm in por_perro[i]["menus"] if mm.get("cambios")]
+            if todos:
+                cambios_semana = {
+                    "iguales": sorted({x for c in todos for x in c["iguales"]}),
+                    "anadidos": sorted({x for c in todos for x in c["anadidos"]}),
+                    "quitados": sorted({x for c in todos for x in c["quitados"]}),
+                    "cuantos_cambios": sum(c["cuantos_cambios"] for c in todos),
+                }
+                por_perro[i]["cambios"] = cambios_semana
+                por_perro[i]["resumen_parecido"] = _resumen_de_parecido(
+                    cambios_semana, nombres[i], nombres[i_base])
 
-        for i, perro in orden[1:]:
-            r = generar(perro, i, forzar_estos=alimentos_base)
-            if not r.get("factible"):
-                # Amoldarse no puede costarle a nadie quedarse sin menú:
-                # antes de rendirse, se le hace el suyo libremente.
-                r = generar(perro, i)
-                if r.get("factible"):
-                    r["aviso"] = (f"No había forma de acercar el menú de {nombres[i]} al de "
-                                  f"{nombres[i_base]}, así que este es el suyo propio. "
-                                  + (r.get("aviso") or "")).strip()
-            gramos_i = r.get("menu") or r.get("gramos") or {}
-            cambios = _comparar_menus(gramos_base, gramos_i)
-            por_indice[i] = {
-                "indice": i, "nombre": nombres[i], "es_la_base": False,
-                "cambios": cambios,
-                "resumen_parecido": (_resumen_de_parecido(cambios, nombres[i], nombres[i_base])
-                                     if r.get("factible") else None),
-                **r,
-            }
-
-        # Se devuelven en el orden en que llegaron, no en el orden en que
-        # se resolvieron: el frontend los empareja por posición.
-        menus = [por_indice[i] for i in range(n)]
-        cambios_totales = sum(m["cambios"]["cuantos_cambios"] for m in menus)
-        return {
-            "factible": all(m.get("factible") for m in menus),
-            "modo_conjunto": "parecidos",
-            "perro_base": nombres[i_base],
-            "cambios_totales": cambios_totales,
-            "compra_unica": cambios_totales == 0,
-            "menus": menus,
-        }
+        return _respuesta_varios_perros([por_perro[i] for i in range(n)],
+                                        "parecidos", nombres[i_base], m)
     except Exception as e:
         import traceback
         traceback.print_exc()
