@@ -167,6 +167,20 @@ menús comparados no tienen sentido sin él.
 - [ ] **Ajustes de cuenta** (no del perro): cambiar contraseña, correo,
       método de pago, darse de baja. Va dentro del engranaje de arriba.
 
+- [ ] **Los 34 pesos de referencia que faltan** en «cómo preparar». Cada
+      alimento puede llevar una frase del tipo «una zanahoria mediana pesa
+      unos 60 g», para hacerse una idea de cuánto es sin báscula. La tienen
+      43 de los 77; les falta a **todas las verduras y frutas**: acelga,
+      albahaca, alcachofa, apio, arándano, berenjena, boniato, borraja,
+      brócoli, calabacín, calabaza, canónigos, cardo, champiñón, col
+      lombarda, col rizada, coles de Bruselas, coliflor, endibia, espinaca,
+      espárrago verde, frambuesa, fresa, grelo, judía verde, lechuga, nabo
+      pelado, pepino, plátano, repollo, rúcula, rábano, tomate y zanahoria.
+
+      Es un DATO, no código: cuando existan, se meten en `COMO_DAR_ALIMENTO`
+      (campo `pieza`) y la línea aparece sola. Mientras no estén, no se
+      pinta nada — antes se pintaba «undefined» (web #13).
+
 - [ ] **Rellenar a mano la fecha de nacimiento de los perros ya guardados.**
       No es programación: las fichas creadas antes del 21 de agosto tienen
       la fecha vacía por el fallo de guardado (ver arriba). Hay que entrar
