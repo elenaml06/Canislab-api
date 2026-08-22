@@ -31,7 +31,8 @@ CARNE = [
     "Pavo pechuga sin piel", "Pavo pechuga con piel", "Pavo muslo con piel", "Pavo",
     "Ternera solomillo sin grasa", "Lomo de ternera con grasa", "Ternera con grasa",
     "Conejo", "Pato (carne sin hueso)", "Gallina (carne sin hueso)",
-    "Corazón de pollo", "Corazón de vaca", "Corazón de cordero", "Corazón de conejo",
+    "Corazón de pollo", "Corazón de pavo", "Corazón de vaca", "Corazón de cordero",
+    "Corazón de conejo",
     # ⚠️ AÑADIDO (5 agosto, madrugada): "Molleja de pollo" y "Molleja de
     # pavo" estaban en Vísceras -- corregido a Carne muscular, igual que
     # el corazón. En alimentación cruda, lo que separa víscera de carne
@@ -118,11 +119,16 @@ VISCERAS = [
     # testículos (con datos USDA reales, cruzados con más de una
     # fuente cada uno) dan variedad real sin inventar ninguna cifra.
     "Bazo de vaca", "Páncreas de vaca",
-    "Bazo de cerdo", "Bazo de cordero", "Páncreas de cerdo",
+    "Bazo de cordero", 
     "Timo de ternera", "Cerebro de ternera", "Testículos de cordero",
 ]
 
-HIGADO = ["Hígado de vaca", "Hígado de pollo", "Hígado de conejo", "Hígado de cordero"]
+# ⚠️ AMPLIADO (21 agosto) — el hígado era el cuello de botella medido por
+# auditar_catalogo.py: con 3 alergias solo quedaban 2 hígados disponibles, y
+# el hígado es una categoría con mínimo obligatorio, así que quedarse sin
+# ninguno deja al perro sin menú. Con pavo y pato pasa de 2 a 4.
+HIGADO = ["Hígado de vaca", "Hígado de pollo", "Hígado de pavo", "Hígado de pato",
+          "Hígado de conejo", "Hígado de cordero"]
 
 # Berro se QUITÓ del catálogo (tóxico, clasificación ASPCA). Kiwi se quitó
 # (riesgo mecánico + oxalato en semilla). Cardo se quitó (difícil de

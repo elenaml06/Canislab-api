@@ -1484,6 +1484,33 @@ class PeticionVariosPerros(BaseModel):
 
 PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = 24.0
 
+# ⚠️ AÑADIDO (21 agosto) — SUELO DE TIEMPO POR MENÚ.
+#
+# Repartir el presupuesto a partes iguales entre perros x menús parecía
+# razonable y no lo era: con 3 perros y 3 menús salían 2,7s por llamada, y
+# medido, un cachorro con peso adulto esperado NO se resuelve en 3s (sí en
+# 8). El resultado era que la casa entera se quedaba sin menús -- no por
+# los datos, sino por asfixia de tiempo.
+#
+# Con un suelo, algunas combinaciones no caben enteras en el presupuesto.
+# Eso se resuelve dando MENOS menús, no menús peores: se paran las rondas
+# cuando se acaba el tiempo y se dice cuántos salieron, igual que ya hace
+# /menu/semana. Un menú de menos es una molestia; un menú calculado a
+# medias sería otra cosa.
+SEGUNDOS_MINIMOS_POR_MENU = 6.0
+
+# El PRIMER menú del perro que manda es el único que no puede fallar: sin
+# él no hay nada a lo que amoldar a los demás y la casa entera se queda sin
+# menús. Y es el más caro, porque es una búsqueda libre de verdad --
+# medido, un cachorro con peso adulto esperado tarda ~8s. A los demás
+# perros se les pasa la lista de alimentos ya decidida, así que su
+# resolución es mucho más barata (medido: décimas de segundo).
+#
+# Por eso el reparto NO es a partes iguales: holgura para ese primer menú,
+# y lo justo para los que solo tienen que encajar cantidades.
+SEGUNDOS_PRIMER_MENU_DE_LA_BASE = 12.0
+SEGUNDOS_AMOLDARSE = 4.0
+
 
 def _comparar_menus(base_gramos, otro_gramos):
     """Qué cambia entre dos menús, en alimentos (no en cantidades).
@@ -1522,7 +1549,8 @@ def _resumen_de_parecido(cambios, nombre_perro, nombre_base):
             f"respecto a la compra de {nombre_base}.")
 
 
-def _respuesta_varios_perros(perros_salida, modo_conjunto, nombre_base, numero_de_menus):
+def _respuesta_varios_perros(perros_salida, modo_conjunto, nombre_base, numero_de_menus,
+                             menus_no_dados=0):
     """La respuesta, con el resumen de parecido de toda la semana."""
     cambios_totales = sum((p.get("cambios") or {}).get("cuantos_cambios", 0)
                           for p in perros_salida)
@@ -1536,6 +1564,15 @@ def _respuesta_varios_perros(perros_salida, modo_conjunto, nombre_base, numero_d
     }
     if nombre_base:
         salida["perro_base"] = nombre_base
+    if menus_no_dados > 0:
+        # Se dice cuántos faltan y por qué. Callarlo dejaría a la usuaria
+        # pensando que pidió 3 y le dimos 1 sin motivo.
+        dados = numero_de_menus - menus_no_dados
+        salida["aviso"] = (
+            f"Has pedido {numero_de_menus} menús por perro y han salido {dados}: "
+            f"con {len(perros_salida)} perros no daba tiempo a calcularlos todos "
+            f"sin que se cortara la conexión. Puedes pedir el resto en otra tanda.")
+        salida["numero_de_menus"] = dados
     # ⚠️ TEMPORAL — compatibilidad con la versión de la app que había
     # desplegada cuando esto cambió de forma (antes: un solo menú por perro
     # en la clave "menus"). Render despliega antes que Vercel, así que
@@ -1581,7 +1618,21 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
         # El tiempo se reparte ANTES de empezar, entre TODAS las llamadas
         # que se van a hacer (perros x menús): pasarse significa que Render
         # corta la conexión y la usuaria no ve nada, ni el primer menú.
-        por_llamada = max(3.0, PRESUPUESTO_SEGUNDOS_VARIOS_PERROS / (n * m))
+        # Nunca por debajo del suelo -- ver SEGUNDOS_MINIMOS_POR_MENU.
+        t_inicio_casa = time.time()
+        por_llamada = max(SEGUNDOS_MINIMOS_POR_MENU,
+                          PRESUPUESTO_SEGUNDOS_VARIOS_PERROS / (n * m))
+
+        def queda():
+            return PRESUPUESTO_SEGUNDOS_VARIOS_PERROS - (time.time() - t_inicio_casa)
+
+        def hay_tiempo_para_otra_ronda():
+            """Una ronda es un menú para CADA perro. Si no cabe entera, se
+            para: media ronda dejaría a unos perros con más menús que a
+            otros, y entonces la semana de la casa no cuadra."""
+            return queda() >= por_llamada + SEGUNDOS_AMOLDARSE * (n - 1)
+
+        menus_pedidos_no_dados = 0
 
         # Días que cubre cada menú de la rotación, igual que /menu/semana:
         # de ahí sale cuánto presupuesto semanal de seguridad gasta cada uno.
@@ -1597,13 +1648,23 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
         # Proteína ya usada, para rotarla entre los menús de un mismo perro.
         especies_usadas = {i: [] for i in range(n)}
 
+        def segundos_para(i, j, amoldandose):
+            if amoldandose:
+                return SEGUNDOS_AMOLDARSE
+            if j == 0:
+                return SEGUNDOS_PRIMER_MENU_DE_LA_BASE
+            return por_llamada
+
         def generar(i, j, forzar_estos=None):
             """El menú j del perro i. `forzar_estos` es la lista de
             alimentos a la que tiene que parecerse (modo "parecidos")."""
             perro = datos.perros[i]
             dias_restantes = sum(dias_por_menu[j:])
             cambios_peticion = {
-                "presupuesto_segundos": por_llamada,
+                # nunca más de lo que queda: una sola llamada no puede, ella
+                # sola, hacer que se pase el presupuesto entero
+                "presupuesto_segundos": max(2.0, min(segundos_para(i, j, bool(forzar_estos)),
+                                                     queda())),
                 "presupuesto_semanal_restante": _presupuesto_para_menu_actual(
                     presupuesto[i], dias_restantes),
                 "evitar_especies": list(perro.evitar_especies or []) + especies_usadas[i],
@@ -1650,6 +1711,9 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
         if datos.modo_conjunto != "parecidos":
             for i in range(n):
                 for j in range(m):
+                    if j > 0 and queda() < por_llamada:
+                        menus_pedidos_no_dados = max(menus_pedidos_no_dados, m - j)
+                        break
                     r = generar(i, j)
                     if not r.get("factible"):
                         if not por_perro[i]["menus"]:
@@ -1659,7 +1723,8 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
                     anotar_consumo(i, j, gramos_de(r))
                 por_perro[i]["factible"] = bool(por_perro[i]["menus"])
             perros_salida = [por_perro[i] for i in range(n)]
-            return _respuesta_varios_perros(perros_salida, "distintos", None, m)
+            return _respuesta_varios_perros(perros_salida, "distintos", None, m,
+                                            menus_pedidos_no_dados)
 
         # ── Modo "parecidos" ─────────────────────────────────────────────
         # Cuánto margen tiene cada perro: más restricciones y menos ración
@@ -1677,6 +1742,9 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
         por_perro[i_base]["es_la_base"] = True
 
         for j in range(m):
+            if j > 0 and not hay_tiempo_para_otra_ronda():
+                menus_pedidos_no_dados = m - j
+                break
             base = generar(i_base, j)
             if not base.get("factible"):
                 if j == 0:
@@ -1733,7 +1801,8 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
                     cambios_semana, nombres[i], nombres[i_base])
 
         return _respuesta_varios_perros([por_perro[i] for i in range(n)],
-                                        "parecidos", nombres[i_base], m)
+                                        "parecidos", nombres[i_base], m,
+                                        menus_pedidos_no_dados)
     except Exception as e:
         import traceback
         traceback.print_exc()
@@ -2769,7 +2838,13 @@ def verificar():
     """
     import hashlib, os, json
     SELLOS = {
-        "alimentos_v3_final.json":      "230bb7378b9e97ec",
+        # ⚠️ ACTUALIZADO (21 agosto) al añadir 7 alimentos con fuente
+        # verificada (corazón y molleja de pavo, hígado de pavo y de pato,
+        # y completar corazón/molleja de pollo, molleja de pavo y timo de
+        # ternera). Este sello SOLO se toca cuando el cambio de datos es a
+        # propósito y está documentado: si no coincide sin haberlo tocado,
+        # es que alguien alteró el catálogo, y eso es lo que vigila.
+        "alimentos_v3_final.json":      "7e6269bc2db51a3b",
         "requerimientos_v2_final.json": "7b023fcdebdd4391",
     }
     SELLOS_CRUDOS = {
