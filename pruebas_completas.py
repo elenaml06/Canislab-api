@@ -994,6 +994,88 @@ if _muchos.get("factible"):
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
+# BLOQUE 12 — EL CATÁLOGO NO SE DEGRADA EN SILENCIO
+#
+# Añadido el 21 de agosto al meter 7 alimentos con fuente verificada. Lo
+# que vigila no es "que estén" (eso se vería enseguida), sino las tres
+# formas que tiene el catálogo de romperse sin que nadie se entere:
+#
+#   1. Que el sello de main.py y el fichero dejen de coincidir. El sello
+#      existe para detectar que alguien alteró los datos; si se cambian
+#      los datos y NO se actualiza el sello, /verificar dice "ALTERADO"
+#      en producción y parece un ataque cuando fue un despiste. Y al
+#      revés: tocar el sello sin mirar los datos anula la protección.
+#   2. Que la lista curada (ACCESIBLES) nombre alimentos que ya no
+#      existen. No da error -- se filtran en silencio -- así que una
+#      categoría puede ir quedándose sin opciones sin que se note. Había
+#      dos de cerdo así.
+#   3. Que el timo de ternera acabe en Carne muscular. "Molleja" en
+#      español nombra DOS órganos distintos: el estómago muscular del ave
+#      (carne) y el timo de ternera (glándula del sistema inmunológico,
+#      víscera secretora). Confundirlos mete una víscera en el 70% de
+#      carne de la ración.
+# ============================================================
+print("=== BLOQUE 12: el catálogo no se degrada en silencio ===")
+import json as _json_b12
+
+_ver = _c.get("/verificar").json()
+if not _ver.get("ok"):
+    _malos = [d for d in _ver.get("detalle", []) if "correcto" not in str(d.get("estado"))]
+    fallos.append(f"BLOQUE12 sello: /verificar dice que los datos no cuadran ({_malos}). "
+                  f"Si el cambio del catálogo es a propósito, hay que actualizar el sello "
+                  f"en main.py; si no lo es, alguien ha alterado los datos.")
+
+from accesibles import ACCESIBLES as _ACC_B12
+_en_catalogo = {a["nombre"] for a in _json_b12.load(open("alimentos_v3_final.json", encoding="utf-8"))}
+_fantasmas = sorted({n for lista in _ACC_B12.values() for n in lista} - _en_catalogo)
+if _fantasmas:
+    fallos.append(f"BLOQUE12 accesibles: la lista curada nombra alimentos que no están en el "
+                  f"catálogo, y se filtran sin avisar: {_fantasmas}")
+
+# Los 7 del 21 de agosto, cada uno donde le toca
+_ESPERADO_B12 = {
+    "Corazón de pollo": "Carne muscular",
+    "Corazón de pavo": "Carne muscular",
+    "Molleja de pollo": "Carne muscular",   # estómago muscular del ave
+    "Molleja de pavo": "Carne muscular",
+    "Timo de ternera": "Vísceras",          # glándula, NO es la molleja del ave
+    "Hígado de pavo": "Hígado",
+    "Hígado de pato": "Hígado",
+}
+_por_nombre_b12 = {a["nombre"]: a for a in
+                   _json_b12.load(open("alimentos_v3_final.json", encoding="utf-8"))}
+for _n, _cat in _ESPERADO_B12.items():
+    _a = _por_nombre_b12.get(_n)
+    if not _a:
+        fallos.append(f"BLOQUE12: falta '{_n}' del catálogo")
+        continue
+    if _a.get("categoria") != _cat:
+        fallos.append(f"BLOQUE12: '{_n}' está en '{_a.get('categoria')}' y le toca '{_cat}'"
+                      + (" — el timo es una glándula, no la molleja del ave"
+                         if _n == "Timo de ternera" else ""))
+    # un hígado sin vitamina A no es un hígado
+    if _cat == "Hígado" and not _a["nutrientes"].get("vitA"):
+        fallos.append(f"BLOQUE12: '{_n}' es hígado y tiene la vitamina A a cero")
+    # la energía tiene que cuadrar con sus macros: si no, la fuente mezcló
+    # peso fresco con materia seca y todo lo demás está mal escalado
+    _calc = _a["nutrientes"]["proteina"] * 4 + _a["nutrientes"]["grasa"] * 9
+    if _a["energia"] and abs(_calc - _a["energia"]) / _a["energia"] > 0.25:
+        fallos.append(f"BLOQUE12: '{_n}' declara {_a['energia']} kcal pero sus macros dan "
+                      f"{_calc:.0f} — ¿la fuente mezcló peso fresco y materia seca?")
+
+# Y que se puedan usar de verdad: un menú forzándolos tiene que salir verde
+for _n in ("Hígado de pato", "Corazón de pavo"):
+    _r = _c.post("/menu/v2", json={
+        "nombres_alimentos": [], "der_objetivo": 1211.0, "etapa_requisitos": "Adulto",
+        "peso_perro_kg": 24.5, "modo": "personalizar", "forzar_presencia": [_n]}).json()
+    _g = _exigir_verde(f"/menu/v2 forzando {_n}", _r, 1211.0, "Adulto")
+    if _g and _n not in _g:
+        fallos.append(f"BLOQUE12: se forzó '{_n}' y no aparece en el menú — "
+                      f"¿está en ACCESIBLES y bien escrito?")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")
