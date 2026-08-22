@@ -167,6 +167,22 @@ menús comparados no tienen sentido sin él.
 - [ ] **Ajustes de cuenta** (no del perro): cambiar contraseña, correo,
       método de pago, darse de baja. Va dentro del engranaje de arriba.
 
+- [ ] **Volver a encender el muro de pago cuando toque.** Está apagado
+      desde el 22 de agosto para poder probar la app entera sin candados
+      (web #14). No se tocó nada de Stripe: se enciende con la variable
+      **`VITE_PAYWALL`** en Vercel (`on` = el de verdad con Stripe,
+      `demo` = se ve y se activa sin pagar) y redesplegar. Sin tocar
+      código.
+
+      ⚠️ **Antes de encenderlo hay que reactivar dos pruebas que están
+      paradas a propósito** (el motivo está escrito dentro de cada una):
+      «el muro de pago nunca encierra» en `secciones-desde-perfil.spec.js`
+      y «con cuenta gratis, pedir más de un menú ofrece Premium» en
+      `varios-perros.spec.js`. Vigilan que el candado no deje a la usuaria
+      encerrada sin poder salir sin pagar, y que la pantalla de varios
+      perros no sea un agujero para saltárselo. Las dos son fallos reales
+      que ya pasaron.
+
 - [ ] **Los 34 pesos de referencia que faltan** en «cómo preparar». Cada
       alimento puede llevar una frase del tipo «una zanahoria mediana pesa
       unos 60 g», para hacerse una idea de cuánto es sin báscula. La tienen
