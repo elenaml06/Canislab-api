@@ -43,6 +43,9 @@ import persistencia
 # ./motor/ y NO sustituye a /menu todavía: se añade como /menu/v2 para
 # poder comparar los dos antes de decidir el cambio definitivo.
 from motor_completo import resolver as resolver_v2, especie_de
+# PATOLOGIAS: los topes por patología, para poder comprobarlos también
+# en la puerta de verificación (ver _tope_patologia_roto).
+from motor_completo import PATOLOGIAS
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
 from verificar import verificar as verificar_v2
 from seguridad import revisar_seguridad as revisar_seguridad_v2
@@ -170,8 +173,70 @@ def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
 TOPE_GRAMOS_SOBRE_PESO = 0.25
 
 
+def _valor_num(v):
+    """Un nutriente puede venir como número, como texto o como None (dato que
+    no tenemos). Solo cuenta si es un número de verdad."""
+    try:
+        return float(v)
+    except (TypeError, ValueError):
+        return None
+
+
+def _tope_patologia_roto(gramos, al, patologias):
+    """¿Este menú se pasa de algún tope por patología? Devuelve la lista de
+    los que se pasa, vacía si está bien.
+
+    ⚠️ AÑADIDO (24 agosto) — SEGUNDA CAPA, y hace falta.
+
+    El fallo que la motivó: editar el menú de un perro renal daba 3084 mg de
+    fósforo con el tope en 1400, y el menú SALÍA IGUAL. La causa era que el
+    camino de edición no le pasaba las patologías al motor (arreglado), pero
+    lo que dejó pasar el menú fue esto: `verificar_v2` comprueba los 30
+    requisitos de FEDIAF, que son los de un perro SANO. 3084 mg de fósforo
+    está dentro del máximo de FEDIAF, así que el semáforo salía VERDE.
+
+    Un perro renal no es un perro sano. Los topes por patología son duros
+    (regla 2 del CLAUDE.md), así que tienen que comprobarse aquí también:
+    si mañana otro camino se olvida de pasarlos, el menú no sale igualmente.
+
+    Se mide sobre las kcal REALES del menú, no sobre las pedidas: es como se
+    definen los topes y como se lo va a comer el perro.
+    """
+    if not patologias or not gramos:
+        return []
+    kcal = sum((al.get(n, {}).get("energia", 0) or 0) / 100.0 * g
+               for n, g in gramos.items())
+    if kcal <= 0:
+        return []
+
+    def por_1000(clave):
+        total = sum((_valor_num(al.get(n, {}).get("nutrientes", {}).get(clave)) or 0.0) / 100.0 * g
+                    for n, g in gramos.items())
+        return total / kcal * 1000.0
+
+    # Un pelo de margen (0,5%) por el redondeo de los gramos a 2 decimales:
+    # el motor ya aprieta un 0,1% al construir la restricción, así que lo que
+    # llegue por encima de esto no es redondeo, es un tope que no se aplicó.
+    MARGEN = 1.005
+    rotos = []
+    for p in (patologias or []):
+        info = PATOLOGIAS.get(p, {})
+        for clave, tope in (info.get("max_por_1000kcal") or {}).items():
+            v = por_1000(clave)
+            if v > tope * MARGEN:
+                rotos.append(f"{clave} {v:.1f} (tope {tope:.1f} por {p})")
+        pct = info.get("max_pct_kcal_grasa")
+        if pct is not None:
+            grasa_g = sum((_valor_num(al.get(n, {}).get("nutrientes", {}).get("grasa")) or 0.0) / 100.0 * g
+                          for n, g in gramos.items())
+            v = grasa_g * 9.0 / kcal
+            if v > pct * MARGEN:
+                rotos.append(f"grasa {v*100:.0f}% de las kcal (tope {pct*100:.0f}% por {p})")
+    return rotos
+
+
 def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
-                           origen, al=None, req=None):
+                           origen, al=None, req=None, patologias=None):
     """
     Último filtro antes de devolver cualquier menú. Devuelve la respuesta
     tal cual (con la ficha recalculada) si el menú está verificado, o una
@@ -191,6 +256,7 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
 
     ficha = verificar_v2(gramos, al, req, der, etapa)
     seguro = _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg)
+    topes_rotos = _tope_patologia_roto(gramos, al, patologias)
 
     # ¿es dable? Ver TOPE_GRAMOS_SOBRE_PESO, arriba.
     total_g = sum(gramos.values())
@@ -213,6 +279,24 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
                 "pct_del_peso_del_perro": round(100 * total_g / (peso_perro_kg * 1000), 1),
                 "tope_pct": round(100 * TOPE_GRAMOS_SOBRE_PESO),
             },
+        }
+
+    if topes_rotos:
+        # Que esto salte significa que algún camino ha construido un menú
+        # saltándose un tope por patología. No se entrega, y va a Sentry:
+        # es un fallo del motor, no de lo que haya pedido nadie.
+        observabilidad.capturar(
+            RuntimeError(f"Menu por encima del tope de patologia bloqueado en "
+                         f"{origen}: {'; '.join(topes_rotos)}"),
+            endpoint=origen, etapa=etapa, der_objetivo=der,
+            peso_perro_kg=peso_perro_kg, patologias=list(patologias or []),
+            topes_rotos=topes_rotos, n_alimentos=len(gramos))
+        return {
+            "factible": False,
+            "motivo": ("El menú que salía se pasa de los límites de la patología "
+                       "de este perro, así que no te lo damos. Prueba a cambiar "
+                       "algún alimento o a quitar alguna restricción."),
+            "verificacion": {"topes_de_patologia_rotos": topes_rotos},
         }
 
     if ficha["semaforo"] != "verde" or not seguro:
@@ -534,7 +618,8 @@ def endpoint_menu(datos: PeticionMenu):
     # mismo filtro único que todos los demás, que exige verde de verdad.
     return _garantizar_verificado(resultado, datos.der_objetivo,
                                   datos.etapa_requisitos, datos.peso_perro_kg,
-                                  origen="/menu (motor viejo)")
+                                  origen="/menu (motor viejo)",
+                                  patologias=datos.patologias)
 
 
 @app.get("/catalogo/{tamano}/{etapa}")
@@ -616,7 +701,7 @@ def endpoint_menu_v2(datos: PeticionMenu):
         return _garantizar_verificado(
             _resolver_menu_v2_interno(datos),
             datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
-            origen="/menu/v2")
+            origen="/menu/v2", patologias=datos.patologias)
     except Exception as e:
         import traceback
         traceback.print_exc()  # queda en los logs de Render para poder investigarlo
@@ -896,7 +981,8 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
             resultado = _garantizar_verificado(
                 _resolver_menu_v2_interno(datos_este),
                 datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
-                origen="/menu/semana", al=al, req=req)
+                origen="/menu/semana", al=al, req=req,
+                patologias=datos.patologias)
 
             if not resultado.get("factible"):
                 # ⚠️ si YA se generó al menos un menú, se devuelven los que
@@ -1731,7 +1817,8 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
             return _garantizar_verificado(
                 _resolver_menu_v2_interno(perro.model_copy(update=cambios_peticion)),
                 perro.der_objetivo, perro.etapa_requisitos, perro.peso_perro_kg,
-                origen="/menu/varios-perros", al=al, req=req)
+                origen="/menu/varios-perros", al=al, req=req,
+                patologias=perro.patologias)
 
         def anotar_consumo(i, j, gramos):
             """Descuenta del presupuesto semanal del perro lo que gasta este
@@ -2001,6 +2088,31 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None),
                 categorias_excluidas=getattr(datos, "categorias_excluidas", None),
                 presupuesto_semanal_restante=presupuesto_ya_definido,
+                # ⚠️ AÑADIDO (24 agosto) — FALLO GRAVE ENCONTRADO MIDIENDO:
+                # EDITAR UN MENÚ SE SALTABA LOS TOPES POR PATOLOGÍA.
+                #
+                # Medido, con el tope y lo que salía de verdad:
+                #     renal        fósforo  tope 1400  →  3084   (+120%)
+                #     hepatopatía  cobre    tope 3.0   →  4.05
+                #     pancreatitis grasa    tope 25%   →  47%
+                #
+                # Es EXACTAMENTE el mismo fallo que ya tuvo esta misma
+                # función con el presupuesto semanal (ver el comentario
+                # largo de arriba, 5 de agosto): resolver() recibe las
+                # patologías en todos los demás caminos, y aquí no se le
+                # pasaban nunca. El menú se generaba respetando el tope y
+                # una sola edición lo tiraba, sin que nada lo impidiera.
+                #
+                # Y no lo paraba la verificación: verificar_v2 comprueba
+                # los 30 requisitos de FEDIAF, que son los de un perro
+                # SANO -- 3084 mg de fósforo está dentro del máximo de
+                # FEDIAF, así que el menú salía en verde. Un perro renal
+                # no es un perro sano, y ese es justo el sentido del tope.
+                #
+                # getattr con default None: los modelos de edición sí
+                # tienen el campo, pero /menu/revalidar usa esta misma
+                # función con otro modelo.
+                patologias=getattr(datos, "patologias", None),
             )
             if not ok:
                 break
@@ -2056,6 +2168,7 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 return _con_aviso_composicion(_garantizar_verificado(
                     resultado, datos.der_objetivo, datos.etapa_requisitos,
                     datos.peso_perro_kg, origen="edicion (preservando)",
+                    patologias=getattr(datos, "patologias", None),
                     al=al, req=req), al, datos)
             # no se pudo manteniendo todo -- se sigue abajo con el
             # comportamiento libre, y se avisa de qué se perdió
@@ -2075,7 +2188,7 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                     peso_perro_kg=datos.peso_perro_kg)
                 return _con_aviso_composicion(_garantizar_verificado(
                     resultado, datos.der_objetivo, datos.etapa_requisitos,
-                    datos.peso_perro_kg, origen="edicion (libre)",
+                    datos.peso_perro_kg, origen="edicion (libre)", patologias=getattr(datos, "patologias", None),
                     al=al, req=req), al, datos)
             ok, gramos, ficha = ok_libre, gramos_libre, ficha_libre
         else:
@@ -2133,7 +2246,8 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
             resultado_final["aviso_composicion"] = aviso_falta
     return _con_aviso_composicion(_garantizar_verificado(
         resultado_final, datos.der_objetivo, datos.etapa_requisitos,
-        datos.peso_perro_kg, origen="edicion", al=al, req=req), al, datos)
+        datos.peso_perro_kg, origen="edicion", al=al, req=req,
+        patologias=getattr(datos, "patologias", None)), al, datos)
 
 
 @app.post("/menu/cambiar")
@@ -2228,7 +2342,8 @@ def endpoint_revalidar(datos: PeticionRevalidar):
             "kcal_total": sum(al[n]["energia"] * g / 100 for n, g in gramos.items()),
             "gramos_total": sum(gramos.values()),
         }, datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
-            origen="/menu/revalidar (sin cambios)", al=al, req=req)
+            origen="/menu/revalidar (sin cambios)", al=al, req=req,
+            patologias=getattr(datos, "patologias", None))
 
     # Ya no cumple: se rehace con el motor, conservando lo que se pueda.
     motivo = []

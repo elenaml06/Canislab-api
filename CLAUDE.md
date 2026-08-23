@@ -28,6 +28,16 @@ con alguna, casi siempre el error está en el cambio.
 2. **Los límites de seguridad crónica** (vitamina D, yodo, selenio,
    mercurio, tiaminasa) son restricciones duras dentro del solver, no
    avisos posteriores. Un aviso se puede ignorar; esto no.
+   Lo mismo vale para **los topes por patología** (fósforo en renal, cobre
+   en hepatopatía, grasa en pancreatitis…): son más estrictos que FEDIAF y
+   se miden sobre las **kcal reales** del menú, no sobre las pedidas — el
+   menú puede salir un 3 % por debajo, y menos kcal con el mismo nutriente
+   es más concentración. Se comprueban **también** en
+   `_garantizar_verificado`, porque el semáforo de FEDIAF no los ve: son
+   los requisitos de un perro SANO, y un renal con 3084 mg de fósforo
+   salía verde. Si un camino nuevo llama al motor, tiene que pasarle
+   `patologias` — se olvidó una vez en la edición y una sola edición
+   tiraba el tope.
 3. **Lo que se puede relajar es la FORMA, nunca la nutrición.** Cuando no
    existe menú, se sueltan las proporciones de BARF (hueso 20-60 %, etc.),
    que son criterio nuestro y no de FEDIAF. Nunca los requisitos ni la

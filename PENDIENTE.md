@@ -1,7 +1,7 @@
 # Rawku — lo que queda por hacer
 
 Lista viva. Se actualiza al terminar cada cosa, no al final.
-Última revisión: 20 de agosto de 2026.
+Última revisión: 24 de agosto de 2026.
 
 El orden **no** es por lo que parece más urgente, sino por lo que
 desbloquea al resto y por lo que cuesta más caro si sale mal. Cobrar dos
@@ -49,11 +49,48 @@ Hace falta, antes de abrir el cobro:
   alguna otra suscripción viva. Hoy una cancelación de cualquiera de las
   seis dejaría a la persona sin premium teniendo cinco pagadas.
 
-### 1.2 El tope de patología no se respeta
-Con el límite renal en 1400, el motor devuelve fósforo a **1426**. La
-restricción existe pero no se cumple: probablemente por la tolerancia del
-solver (`mip_rel_gap`) y el redondeo final. En un perro renal, pasarse del
-tope es justo lo que no puede pasar.
+### 1.2 El tope de patología no se respeta ✅ **Hecho el 24 de agosto**
+
+Lo que decía este punto (fósforo renal a 1426 con el tope en 1400) ya
+estaba arreglado el 21 de agosto. Pero al ir a comprobarlo se midieron
+**todos** los caminos que entregan un menú, no solo el de generar, y
+aparecieron dos cosas peores:
+
+**1. La grasa se pasaba SIEMPRE.** Pancreatitis: tope 25 % de las kcal,
+salía 26 %. Diabetes: tope 35 %, salía 36 %. En los cuatro pesos probados.
+Ese camino (`max_pct_kcal_grasa`) no había recibido el arreglo del 21:
+comparaba contra las kcal PEDIDAS, y el menú puede salir hasta un 3 % por
+debajo. Menos kcal con la misma grasa = más porcentaje.
+
+**2. Editar un menú se saltaba los topes DEL TODO**, que es mucho peor:
+
+| Patología | Tope | Salía |
+|---|---|---|
+| renal · fósforo | 1400 | **3084** (+120 %) |
+| hepatopatía · cobre | 3.0 | **4.05** |
+| pancreatitis · grasa | 25 % | **47 %** |
+
+`_recalcular_con_motor` no le pasaba las patologías al motor — el mismo
+fallo que ya tuvo esa misma función con el presupuesto semanal el 5 de
+agosto. El menú se generaba respetando el tope y una sola edición lo
+tiraba.
+
+**Y la verificación no lo paraba**, que es lo que lo hacía invisible:
+comprueba los 30 requisitos de FEDIAF, que son los de un perro SANO.
+3084 mg de fósforo entra dentro del máximo de FEDIAF, así que el semáforo
+salía VERDE.
+
+Arreglado en tres capas: la grasa contra las kcal reales, las patologías
+pasadas al editar, y **la puerta de verificación comprueba ahora también
+los topes por patología** (`_tope_patologia_roto`), para que si mañana
+otro camino se olvida de pasarlas, el menú no salga igualmente.
+
+Vigilado en el **BLOQUE 13** de `pruebas_completas.py`: generar, patologías
+combinadas, y editar. Medido después: 0 casos por encima del tope.
+
+> Ojo, esto es distinto del punto 0 (qué NÚMEROS poner). Aquellos siguen
+> pendientes de tu decisión; lo de aquí es que el tope, sea el que sea, se
+> cumpla.
 
 ### 1.3 Comprobar que la cancelación quita el premium
 Dar de alta está probado de punta a punta. Cancelar **no**. Si no funciona,
@@ -217,6 +254,38 @@ menús comparados no tienen sentido sin él.
       Es un DATO, no código: cuando existan, se meten en `COMO_DAR_ALIMENTO`
       (campo `pieza`) y la línea aparece sola. Mientras no estén, no se
       pinta nada — antes se pintaba «undefined» (web #13).
+
+- [ ] **Borrar las ramas viejas de los dos repos.** No es programación y
+      no corre prisa, pero cuanto más se acumulen peor: el 21 de agosto se
+      lió justo por esto (ver «Cómo se trabaja con git aquí» en
+      `CLAUDE.md`). Comprobado el 23 de agosto rama por rama, con
+      `git rev-list --count origin/main..origin/<rama>`:
+
+      **En `canislab-web`** — las cuatro primeras tienen **0 commits**
+      fuera de `main`, todo su trabajo está fusionado:
+      `claude/aviso-composicion-menu`, `claude/ficha-completa`,
+      `claude/multi-perro`, `claude/perfil-perro-no-se-guarda`.
+      Y `claude/rawku-sentry-login-nav-ro683v`, que **no comparte ni un
+      commit con `main`** (historia aparte, subida a mano, parada el 20 de
+      agosto): son 1.927 líneas MENOS en `App.jsx` y no tiene ni un
+      archivo que `main` no tenga. Nada que rescatar.
+
+      **En `Canislab-api`** — diez con 0 commits fuera de `main`:
+      `claude/auditoria-catalogo`, `claude/auditoria-fediaf`,
+      `claude/datos-visceras`, `claude/huecos-de-datos`,
+      `claude/orden-de-trabajo`, `claude/pendiente-nuevos`,
+      `claude/pendientes-y-contexto`, `claude/sentry-backend-integration-5qp2qa`,
+      `claude/topes-patologia-exactos`, `claude/una-suscripcion-por-persona`,
+      `claude/vitamina-e-coherente`.
+      Y `motor`, mismo caso que la de la web: historia separada, parada el
+      10 de agosto, 10.500 líneas menos, ningún endpoint ni valor
+      nutricional que `main` no tenga. Se revisó a fondo — el único valor
+      distinto es la energía del corazón de pollo (149 vs los **148**
+      verificados de `main`).
+
+      Se borran desde github.com/elenaml06/<repo>/branches, tocando la
+      papelera. Desde el contenedor no se puede: el proxy bloquea el
+      borrado de ramas.
 
 - [ ] **Rellenar a mano la fecha de nacimiento de los perros ya guardados.**
       No es programación: las fichas creadas antes del 21 de agosto tienen
