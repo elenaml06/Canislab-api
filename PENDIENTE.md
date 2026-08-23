@@ -152,17 +152,38 @@ menús comparados no tienen sentido sin él.
       aviso de transición por perro, y «Ver y editar el menú de X» que
       abre el editor de siempre.
 
+- [x] **La pantalla del menú, en dos pestañas.** ✅ **Hecho el 23 de
+      agosto** en la misma rama. Era un scroll larguísimo con el plan de
+      transición pegado a las tarjetas, la congelación perdida en medio de
+      la pila de avisos (y con una X que la escondía para siempre), y cómo
+      preparar cada alimento detrás del icono de cubiertos de su fila.
+      Ahora: **El menú** (qué le doy, con el lápiz de cada alimento) y
+      **Cómo darlo** (transición, congelación y preparación, todo junto).
+      No se quitó nada; el icono de cubiertos de cada fila sigue estando.
+      `tests/menu-dos-pestanas.spec.js`.
+
 - [ ] **Sacar los perros del menú lateral.** Que cambiar de perro esté
       metido en una pestaña del panel es esconderlo. Va como **burbuja de
       perfil bien visible** en la app, y de ahí cuelga una **rueda de
       engranaje** con la configuración de la cuenta y de las mascotas
       (esto se junta con «Ajustes de cuenta», que es lo de abajo).
 
-- [ ] **Poder usar la app sin cuenta**, y pedir el registro solo cuando de
-      verdad haga falta (pagar, o guardar de un móvil a otro). Hoy no se
-      puede ni mirar sin registrarse. Implica guardar el perro y los menús
-      en el propio móvil mientras no hay cuenta, y pasarlos a Supabase al
-      registrarse sin perder nada.
+- [x] **Poder usar la app sin cuenta.** ✅ **Hecho el 23 de agosto** en
+      `claude/menu-dos-pestanas-y-sin-cuenta`. La primera pantalla ofrece
+      «Probar sin crear cuenta»; a partir de ahí la app entera funciona
+      contra `localStorage` en vez de Supabase (`src/almacen.js`, que
+      decide por dónde van los datos y explica en su cabecera **cuándo se
+      da de alta el usuario** y por qué ahí).
+
+      La cuenta se ofrece cuando ya existe algo que perder — debajo del
+      primer menú, sin bloquear nada — y al crearla lo del navegador
+      **sube solo** (`migrarLocalACuenta`). Sin esa parte, registrarse
+      después de una semana de uso habría borrado esa semana en silencio.
+      Vigilado campo por campo en `tests/sin-cuenta.spec.js`.
+
+      Queda fuera a propósito: sin cuenta `esPremium` responde que **no**,
+      para que el día que el muro se encienda «sin cuenta» no sea un
+      agujero por el que colarse.
 
 - [ ] **Ajustes de cuenta** (no del perro): cambiar contraseña, correo,
       método de pago, darse de baja. Va dentro del engranaje de arriba.
