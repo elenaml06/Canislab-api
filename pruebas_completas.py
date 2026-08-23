@@ -1141,6 +1141,142 @@ for _n in ("Hígado de pato", "Corazón de pavo"):
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
+# BLOQUE 13 — LOS TOPES POR PATOLOGÍA SE CUMPLEN DE VERDAD
+#
+# Un perro renal, hepático o pancreático tiene topes MÁS ESTRICTOS que los
+# de FEDIAF. Que existan en el código no basta: hay que medir el menú que
+# se entrega y comprobar que no se pasa.
+#
+# Se mide sobre las KCAL REALES del menú, no sobre las pedidas. Los topes
+# se definen "por 1000 kcal de la dieta", y el menú puede salir hasta un 3%
+# por debajo de lo pedido (tolerancia_kcal): menos kcal con el mismo
+# nutriente = más concentración. Medir contra las kcal pedidas es
+# justamente el fallo que se arregló, así que la prueba no puede repetirlo.
+#
+# LO QUE ENCONTRÓ ESTE BLOQUE (24 de agosto), midiendo:
+#
+#   1. La GRASA se pasaba SIEMPRE. Pancreatitis: tope 25% de las kcal,
+#      salía 26%. Diabetes: tope 35%, salía 36%. En los cuatro pesos
+#      probados. A ese camino no le había llegado el arreglo del 21 de
+#      agosto (que sí arregló los topes por 1000 kcal).
+#
+#   2. EDITAR UN MENÚ SE SALTABA LOS TOPES DEL TODO, que es mucho peor:
+#         renal        fósforo  tope 1400  →  3084   (+120%)
+#         hepatopatía  cobre    tope 3.0   →  4.05
+#         pancreatitis grasa    tope 25%   →  47%
+#      `_recalcular_con_motor` no le pasaba las patologías al motor. El
+#      menú se generaba bien y una sola edición lo tiraba.
+#
+#      Y la verificación no lo paraba: comprueba los 30 requisitos de
+#      FEDIAF, que son los de un perro SANO, y 3084 mg de fósforo entra
+#      dentro del máximo de FEDIAF. Salía en VERDE.
+# ============================================================
+print("=== BLOQUE 13: los topes por patología se cumplen ===")
+
+_TOPES_B13 = {"renal": ("fosforo", 1400.0), "hepatopatia": ("cobre", 3.0),
+              "cardiopatia": ("sodio", 900.0), "oxalato": ("vitD", 20.0)}
+_GRASA_B13 = {"pancreatitis": 0.25, "diabetes": 0.35}
+# Un pelo de margen por el redondeo de los gramos a 2 decimales. El motor
+# ya aprieta un 0,1% al construir la restricción; lo que llegue por encima
+# de esto no es redondeo.
+_MARGEN_B13 = 1.005
+
+def _kcal_reales_b13(g):
+    return sum((_por_nombre_b12.get(n, {}).get("energia", 0) or 0) / 100.0 * v for n, v in g.items())
+
+def _por_1000_b13(g, clave):
+    k = _kcal_reales_b13(g)
+    if not k:
+        return 0.0
+    tot = sum((_por_nombre_b12.get(n, {}).get("nutrientes", {}).get(clave) or 0) / 100.0 * v
+              for n, v in g.items())
+    return tot / k * 1000.0
+
+def _pct_grasa_b13(g):
+    k = _kcal_reales_b13(g)
+    if not k:
+        return 0.0
+    gr = sum((_por_nombre_b12.get(n, {}).get("nutrientes", {}).get("grasa") or 0) / 100.0 * v
+             for n, v in g.items())
+    return gr * 9.0 / k
+
+def _revisar_b13(donde, gramos, patologias):
+    for _p in patologias:
+        if _p in _TOPES_B13:
+            _clave, _tope = _TOPES_B13[_p]
+            _v = _por_1000_b13(gramos, _clave)
+            if _v > _tope * _MARGEN_B13:
+                fallos.append(f"BLOQUE13 {donde}: {_clave} {_v:.1f} pasa del tope "
+                              f"{_tope:.1f} de '{_p}' (+{(_v/_tope-1)*100:.1f}%)")
+        if _p in _GRASA_B13:
+            _tope = _GRASA_B13[_p]
+            _v = _pct_grasa_b13(gramos)
+            if _v > _tope * _MARGEN_B13:
+                fallos.append(f"BLOQUE13 {donde}: grasa {_v*100:.1f}% de las kcal pasa "
+                              f"del tope {_tope*100:.0f}% de '{_p}'")
+
+def _base_b13(der, kg, pat):
+    return {"nombres_alimentos": [], "der_objetivo": der, "peso_perro_kg": kg,
+            "etapa_requisitos": "Adulto", "modo": "automatico", "patologias": pat}
+
+# (1) generar, cada patología por separado y a varios tamaños
+for _pat in list(_TOPES_B13) + list(_GRASA_B13):
+    for _der, _kg in [(450, 6), (1100, 25), (2100, 40)]:
+        _r = _c.post("/menu/v2", json=_base_b13(_der, _kg, [_pat])).json()
+        if _r.get("factible"):
+            _revisar_b13(f"generar {_pat} der={_der}", _r.get("menu") or {}, [_pat])
+
+# (2) combinadas: aquí se cruzan restricciones y es donde aparecen los bordes
+for _pat in (["renal", "hepatopatia"], ["pancreatitis", "renal"],
+             ["renal", "hepatopatia", "cardiopatia"], ["diabetes", "cardiopatia"]):
+    _r = _c.post("/menu/v2", json=_base_b13(1100, 25, _pat)).json()
+    if _r.get("factible"):
+        _revisar_b13("+".join(_pat), _r.get("menu") or {}, _pat)
+
+# (3) EDITAR — el camino donde se saltaban del todo.
+# Se mete a propósito el alimento MÁS cargado de lo que hay que limitar:
+# si el tope no se aplica, se dispara; si se aplica, o cuadra por debajo o
+# el menú se rechaza. Las dos cosas valen; entregarlo por encima, no.
+for _pat, _meter in [("renal", "Hígado de vaca"), ("hepatopatia", "Hígado de cordero"),
+                     ("pancreatitis", "Sardina"), ("cardiopatia", "Hígado de vaca")]:
+    _b = _base_b13(1100, 25, [_pat])
+    _r0 = _c.post("/menu/v2", json=_b).json()
+    _g0 = _r0.get("menu") or {}
+    if not _g0:
+        continue
+    _noms = list(_g0)
+    _ra = _c.post("/menu/anadir", json={**_b, "menu_actual": _noms, "alimento": _meter}).json()
+    if _ra.get("factible"):
+        _revisar_b13(f"añadir {_meter} a un {_pat}", _ra.get("gramos") or _ra.get("menu") or {}, [_pat])
+    _viejo = sorted(_g0.items(), key=lambda x: -x[1])[0][0]
+    _rc = _c.post("/menu/cambiar", json={**_b, "menu_actual": _noms,
+                                         "alimento_viejo": _viejo,
+                                         "alimento_nuevo": _meter}).json()
+    if _rc.get("factible"):
+        _revisar_b13(f"cambiar por {_meter} en un {_pat}", _rc.get("gramos") or _rc.get("menu") or {}, [_pat])
+
+# (4) LA SEGUNDA CAPA: la puerta de verificación tiene que rechazar un menú
+# que se pase, venga de donde venga. Se le da uno hecho a mano, muy por
+# encima del tope renal, y tiene que decir que no.
+#
+# Sin esto, la única defensa sería que cada camino se acuerde de pasar las
+# patologías -- y ya se olvidó una vez, en la edición.
+import main as _main_b13
+_menu_pasado = {"Hígado de vaca": 400.0, "Pollo con piel (sin hueso)": 300.0}
+_rotos = _main_b13._tope_patologia_roto(_menu_pasado, _por_nombre_b12, ["renal"])
+if not _rotos:
+    fallos.append("BLOQUE13: la puerta NO detecta un menú muy por encima del tope renal — "
+                  "la segunda capa no protege de nada")
+# Y al revés: un menú normal de un perro sano no puede dar falso positivo.
+_r_sano = _c.post("/menu/v2", json=_base_b13(1100, 25, [])).json()
+if _r_sano.get("factible"):
+    if _main_b13._tope_patologia_roto(_r_sano.get("menu") or {}, _por_nombre_b12, None):
+        fallos.append("BLOQUE13: la puerta dice que un perro SIN patologías se pasa de un tope")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")

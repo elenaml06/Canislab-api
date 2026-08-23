@@ -627,11 +627,31 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # el menú sale con MÁS kcal de las pedidas, la absoluta es la
         # estricta. Teniendo las dos, siempre manda la que más aprieta.
         if mx is not None:
+            # ⚠️ AÑADIDO (24 agosto) — MARGEN DE REDONDEO, solo en los topes
+            # que vienen de una PATOLOGÍA.
+            #
+            # CASO MEDIDO: un perro renal + hepático + cardiópata salía con
+            # 1400.01 mg de fósforo y el tope es 1400. Son 7 partes por
+            # millón -- clínicamente da igual --, pero el motor estaba
+            # entregando un menú por encima de su propio límite, y estos
+            # topes son duros, no avisos (regla 2 del CLAUDE.md).
+            #
+            # No es el solver: resuelve EXACTO en el límite, y luego los
+            # gramos se redondean a 2 decimales para enseñarlos. Ese
+            # redondeo es el que lo empuja por encima. Es el mismo problema
+            # que ya tenían los MÍNIMOS, resuelto allí con un +1.5%.
+            #
+            # Se aprieta un 0,1%, y SOLO en los de patología: los máximos
+            # de FEDIAF se quedan como están, porque tocarlos cambiaría el
+            # comportamiento de todos los menús para arreglar algo que allí
+            # no molesta -- pasarse una millonésima del máximo de un
+            # nutriente no tiene consecuencia, saltarse el tope renal sí.
+            mx_rel = mx * (1 - 0.001) if clave in topes_patologia else mx
             fila_rel = fila_vacia()
             for n in nombres:
                 v_nut = (_num(alimentos[n].get("nutrientes", {}).get(clave)) or 0.0) / 100.0
                 kcal_n = (alimentos[n].get("energia", 0) or 0.0) / 100.0
-                coef = v_nut - (mx / 1000.0) * kcal_n
+                coef = v_nut - (mx_rel / 1000.0) * kcal_n
                 if coef:
                     fila_rel[idx[n]] = coef
             A_rows.append(fila_rel); lb_rows.append(-np.inf); ub_rows.append(0.0)
@@ -832,6 +852,41 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             g = (_num(alimentos[n].get("nutrientes", {}).get("grasa")) or 0.0) / 100.0
             fila[idx[n]] = g * 9.0
         A_rows.append(fila); lb_rows.append(-np.inf); ub_rows.append(pct_grasa_max * der)
+
+        # ⚠️ AÑADIDO (24 agosto) — CASO REAL MEDIDO: en pancreatitis, con
+        # el tope de grasa en el 25% de las kcal, el menú salía al 26%. En
+        # diabetes, con el tope en 35%, salía al 36%. En LOS CUATRO pesos
+        # probados, siempre por encima.
+        #
+        # Es exactamente el mismo fallo que se arregló el 21 de agosto para
+        # los topes por 1000 kcal (fósforo renal: tope 1400, salía 1426), y
+        # a este camino no le llegó: la fila de arriba compara contra las
+        # kcal OBJETIVO (`der`), pero el menú entregado puede tener hasta
+        # un 3% menos (tolerancia_kcal). Menos kcal con la misma grasa =
+        # mayor porcentaje. Y el tope se mide sobre la dieta REAL, que es
+        # la que se come.
+        #
+        # Se añade el mismo tope sobre las kcal de verdad, que también es
+        # lineal:
+        #     suma(grasa_i * 9 * g_i)  <=  pct * suma(kcal_i * g_i)
+        #   → suma((grasa_i * 9 - pct * kcal_i) * g_i)  <=  0
+        #
+        # La fila absoluta de arriba se deja: cuando el menú sale con MÁS
+        # kcal de las pedidas, es ella la que aprieta. Con las dos, manda
+        # siempre la más estricta.
+        # Mismo margen de redondeo que en los topes por 1000 kcal: el
+        # solver resuelve exacto en el límite y el redondeo de los gramos a
+        # 2 decimales lo empuja por encima (medido: 0,2500x contra 0,25).
+        # Este tope siempre viene de una patología, así que siempre aplica.
+        pct_rel = pct_grasa_max * (1 - 0.001)
+        fila_rel = fila_vacia()
+        for n in nombres:
+            g = (_num(alimentos[n].get("nutrientes", {}).get("grasa")) or 0.0) / 100.0
+            kcal_n = (alimentos[n].get("energia", 0) or 0.0) / 100.0
+            coef = g * 9.0 - pct_rel * kcal_n
+            if coef:
+                fila_rel[idx[n]] = coef
+        A_rows.append(fila_rel); lb_rows.append(-np.inf); ub_rows.append(0.0)
 
     # 4. VINCULACIÓN gramos <= usa * techo (y gramos >= 0, ya en bounds)
     for n in nombres:
