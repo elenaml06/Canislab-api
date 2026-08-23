@@ -1480,6 +1480,29 @@ class PeticionVariosPerros(BaseModel):
     # por perro, porque cada uno tiene sus propias kcal y por tanto su
     # propio presupuesto.
     numero_de_menus: int = 1
+    # ⚠️ AÑADIDO (23 agosto) — CASO REAL ENCONTRADO POR LA USUARIA:
+    # "he puesto en el menú 1 carne, hueso e hígado de conejo, y en el 2
+    # todo de pollo, y me los ha dado los dos de pollo".
+    #
+    # Con UN perro la app manda una llamada por menú, cada una con lo suyo.
+    # Con varios se manda UNA sola llamada, y los campos de personalizar
+    # viven en cada perro -- o sea, uno solo para toda su semana. Lo
+    # elegido para el último menú acababa aplicándose a todos.
+    #
+    # POR QUÉ SE ARREGLA AQUÍ Y NO EN LA APP: partirlo en una llamada por
+    # menú desde la app habría dado a CADA menú el presupuesto semanal
+    # entero de vitamina D, yodo, selenio y mercurio, cubriendo cada uno
+    # solo 3 o 4 días. La semana sumada se pasaría de los límites de
+    # seguridad crónica sin que nada avisara. Ese reparto lo lleva este
+    # endpoint (`presupuesto`, `dias_por_menu`, `anotar_consumo`), así que
+    # la personalización tiene que entrar aquí dentro, no partirse fuera.
+    #
+    # Una entrada por menú, en orden. `None` en una posición = ese menú va
+    # como venga en el perro (compatibilidad: si no se manda nada, todo
+    # funciona como antes). Cada entrada:
+    #     {"forzar_presencia": [...], "restringir_especie": {cat: especie}}
+    # Con las dos vacías, ese menú se hace en automático.
+    personalizacion_por_menu: Optional[list[Optional[dict]]] = None
 
 
 PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = 24.0
@@ -1648,6 +1671,15 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
         # Proteína ya usada, para rotarla entre los menús de un mismo perro.
         especies_usadas = {i: [] for i in range(n)}
 
+        def personalizacion_de(j):
+            """Lo elegido a mano para el menú j, si se mandó. None = ese
+            menú va con lo que traiga el perro (como antes de existir
+            esto)."""
+            lista = datos.personalizacion_por_menu
+            if not lista or j >= len(lista):
+                return None
+            return lista[j]
+
         def segundos_para(i, j, amoldandose):
             if amoldandose:
                 return SEGUNDOS_AMOLDARSE
@@ -1675,6 +1707,27 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
                 # sí pudiendo añadir", luego libre. Ver el bloque de arriba.
                 cambios_peticion["modo"] = "personalizar"
                 cambios_peticion["forzar_presencia"] = list(forzar_estos)
+            elif personalizacion_de(j) is not None:
+                # ⚠️ Lo que se eligió PARA ESTE MENÚ, no para la semana.
+                # Va sólo cuando no hay `forzar_estos`: los perros que se
+                # amoldan reciben ya la lista del menú de la base, que sale
+                # de haber aplicado esto mismo. Aplicarlo dos veces sería
+                # pisar el amoldado.
+                pm = personalizacion_de(j)
+                elegidos = list(pm.get("forzar_presencia") or [])
+                especies = pm.get("restringir_especie") or None
+                if elegidos or especies:
+                    cambios_peticion["modo"] = "personalizar"
+                    cambios_peticion["forzar_presencia"] = elegidos
+                    cambios_peticion["nombres_alimentos"] = list(
+                        pm.get("nombres_alimentos") or elegidos)
+                    cambios_peticion["restringir_especie"] = especies
+                else:
+                    # Ese menú no se tocó: automático, aunque otros sí.
+                    cambios_peticion["modo"] = "automatico"
+                    cambios_peticion["forzar_presencia"] = []
+                    cambios_peticion["nombres_alimentos"] = []
+                    cambios_peticion["restringir_especie"] = None
             return _garantizar_verificado(
                 _resolver_menu_v2_interno(perro.model_copy(update=cambios_peticion)),
                 perro.der_objetivo, perro.etapa_requisitos, perro.peso_perro_kg,
