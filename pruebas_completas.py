@@ -991,6 +991,71 @@ _muchos = _c.post("/menu/varios-perros",
 if _muchos.get("factible"):
     fallos.append("BLOQUE11: acepta 7 perros; el tope son 6 (por el tiempo de Render)")
 
+# ── (8) PERSONALIZAR MENÚ A MENÚ, CON VARIOS PERROS ─────────────────
+#
+# ⚠️ CASO REAL ENCONTRADO POR LA USUARIA (23 agosto): "he puesto en el
+# menú 1 carne, hueso e hígado de conejo, y en el 2 todo de pollo, y me
+# los ha dado los dos de pollo".
+#
+# Con un perro la app manda una llamada por menú. Con varios manda UNA, y
+# los campos de personalizar viven en cada perro -- uno solo para toda su
+# semana --, así que lo elegido para el último menú se aplicaba a todos.
+#
+# Se arregla aquí y no partiéndolo en la app porque el reparto del
+# presupuesto semanal de seguridad crónica (vitamina D, yodo, selenio,
+# mercurio) lo lleva este endpoint: una llamada por menú daría a CADA
+# menú el presupuesto de la semana entera cubriendo solo 3 o 4 días.
+#
+# Se comprueban las dos cosas, y la segunda es la que no se puede perder:
+#   a) cada menú lleva lo que se eligió PARA ÉL;
+#   b) los menús siguen saliendo verificados, o sea que forzar cosas
+#      distintas en cada uno no se ha saltado ningún requisito.
+_r8 = _c.post("/menu/varios-perros", json={
+    "perros": [_perro_b11(1100, peso_perro_kg=25), _perro_b11(650, peso_perro_kg=12)],
+    "nombres": ["Cairo", "Lola"],
+    "modo_conjunto": "parecidos",
+    "numero_de_menus": 2,
+    "personalizacion_por_menu": [
+        {"forzar_presencia": ["Conejo"]},
+        {"forzar_presencia": ["Pollo muslo con piel"]},
+    ],
+}).json()
+
+if not _r8.get("factible"):
+    fallos.append(f"BLOQUE11 por-menú: no salió nada — {_r8.get('motivo')}")
+else:
+    _base8 = next((p for p in _r8["perros"] if p.get("es_la_base")), _r8["perros"][0])
+    _ms = _base8.get("menus") or []
+    if len(_ms) != 2:
+        fallos.append(f"BLOQUE11 por-menú: se pidieron 2 menús y volvieron {len(_ms)}")
+    else:
+        _m1 = set(_ms[0].get("menu") or {})
+        _m2 = set(_ms[1].get("menu") or {})
+        # a) cada uno con lo suyo
+        if "Conejo" not in _m1:
+            fallos.append(f"BLOQUE11 por-menú: el menú 1 pedía Conejo y no lo lleva: {sorted(_m1)}")
+        if "Pollo muslo con piel" not in _m2:
+            fallos.append("BLOQUE11 por-menú: el menú 2 pedía Pollo muslo con piel y no lo lleva: "
+                          f"{sorted(_m2)}")
+        # Y el fallo tal y como se vio: los dos iguales.
+        if _m1 == _m2:
+            fallos.append("BLOQUE11 por-menú: los dos menús salieron IDÉNTICOS — "
+                          "es exactamente el fallo que encontró la usuaria")
+    # b) la nutrición no se relaja por personalizar cada menú aparte
+    for _p8 in _r8["perros"]:
+        for _j8, _mm in enumerate(_p8.get("menus") or []):
+            _f8 = _mm.get("ficha") or {}
+            if _f8.get("semaforo") != "verde":
+                fallos.append(f"BLOQUE11 por-menú: el menú {_j8+1} de {_p8.get('nombre')} "
+                              f"sale en {_f8.get('semaforo')}, no verde")
+
+# Y que no mandar nada siga funcionando igual que siempre (compatibilidad).
+_r8b = _c.post("/menu/varios-perros", json={
+    "perros": [_perro_b11(1100, peso_perro_kg=25), _perro_b11(650, peso_perro_kg=12)],
+    "nombres": ["Cairo", "Lola"], "numero_de_menus": 2}).json()
+if not _r8b.get("factible"):
+    fallos.append("BLOQUE11 por-menú: sin personalizacion_por_menu ha dejado de funcionar")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
