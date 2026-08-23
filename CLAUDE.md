@@ -103,12 +103,17 @@ la fecha de nacimiento, la esterilización, la actividad y el tamaño se
 guardaban vacíos **en silencio**. Y de la fecha sale la etapa, y de la
 etapa los 30 requisitos: un perro de diez años volvía como cachorro.
 
-Contra eso hay dos cosas, y las dos hay que mantenerlas:
+Contra eso hay tres cosas, y las tres hay que mantenerlas:
 
 - `tests/ficha-ida-y-vuelta.spec.js` (en `canislab-web`) recorre los
   campos de la ficha que afectan a la comida y exige que cada uno valga
   lo mismo después de guardar y volver a cargar. **Si añades un campo a
   la ficha, añádelo ahí.**
+- `tests/sin-cuenta.spec.js` hace lo mismo en el otro sitio donde la
+  ficha cambia de manos: al pasar de usar la app sin cuenta a crear una,
+  cuando lo guardado en el navegador sube a Supabase. Misma lista de
+  campos, mismo motivo. **Si añades un campo a la ficha, va también
+  aquí** — si no, se pierde justo en ese salto y en silencio.
 - Comprobar siempre lo GUARDADO, no lo que enseña la pantalla. La ficha
   se pinta del estado local: puede verse perfecta y estar guardada vacía.
   Una prueba que mire la pantalla aprueba este fallo.
