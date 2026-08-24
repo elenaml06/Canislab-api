@@ -542,9 +542,35 @@ Prioridad, por lo que desbloquea:
 
 ## 6. Deuda técnica y detalles
 
-- [ ] **Cantidades no medibles.** Salen ingredientes de 0,15 g de sal y
-      hasta 0,04 g de kelp en casos con muchas restricciones. Nadie pesa
-      eso en casa. Decidir si se redondea o se muestra como «una pizca».
+- [x] **Cantidades no medibles.** ✅ **Hecho el 24 de agosto**, con un
+      matiz importante: medido sobre 51 menús (todos los tamaños, etapas,
+      patologías y exclusiones), el problema es **más pequeño de lo que
+      decía este punto y de dos tipos distintos**.
+
+      **A granel** — salía UNA cantidad por debajo de un gramo en ~300
+      alimentos medidos: 0,35 g de sal común. Arreglado en el motor con un
+      suelo de 1 g: si va a usar un alimento a granel, que use una
+      cantidad que quepa en una báscula, y si no le cuadra, que use otra
+      cosa. **No se redondea el resultado**: cambiar los gramos después de
+      resolver cambia los nutrientes, y toda la app se sostiene sobre que
+      las cifras cuadran de verdad.
+
+      El suelo va **solo en Extras**, y eso también se midió: carnes,
+      vísceras y verduras nunca bajaban de ~1,9 g, así que ponerles suelo
+      no arregla nada y sí cuesta — con el suelo en todo el catálogo,
+      `/menu/varios-perros` pasaba de ~7 s a ~11 s con el presupuesto en
+      24 s. En Render eso se puede llevar por delante un menú.
+
+      **En polvo** — 0,15 g de alga, 0,60 g de multivitamínico. A éstos
+      **no** se les puede poner suelo: sería obligar a dar de más de un
+      suplemento. Se arreglan con el peso del cacito de cada producto, que
+      es un DATO y está apuntado en `DATOS_QUE_FALTAN.md`.
+
+      Vigilado en el **BLOQUE 14**, con una advertencia escrita dentro: es
+      un canario, no una demostración. Quitando el suelo, el bloque sigue
+      saliendo en verde — comprobado — porque el fallo es demasiado raro
+      para reproducirlo a voluntad con semilla aleatoria. Lo que sostiene
+      la garantía es la restricción del motor, que es estructural.
 - [ ] **`aviso_composicion` en la web**: ya se pinta, pero conviene ver
       cómo queda en pantalla con un perro con tres alergias.
 - [ ] **El campo `tipo_de_clave_supabase` sale como `[Filtered]`** en

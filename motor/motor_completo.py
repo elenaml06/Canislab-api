@@ -896,6 +896,52 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         fila[n_var + i] = -techos[i]
         A_rows.append(fila); lb_rows.append(-np.inf); ub_rows.append(0.0)
 
+    # 4-bis. Y AL REVÉS: si un alimento se usa, que sea una cantidad que se
+    # pueda PESAR.
+    #
+    # ⚠️ AÑADIDO (24 agosto) — CASO REAL MEDIDO: salían 0,35 g de sal
+    # común. Una báscula de cocina normal mide de gramo en gramo, así que
+    # eso no lo pesa nadie en casa: o se pone de más o se pone de menos, y
+    # justo esa sal era la que cerraba el cloruro del menú.
+    #
+    # NO se arregla redondeando el resultado: cambiar los gramos después
+    # de resolver cambia los nutrientes, y toda la app se sostiene sobre
+    # que las cifras cuadran de verdad. Se arregla aquí: si el motor va a
+    # usar un alimento, que use una cantidad medible, y si no le cuadra,
+    # que use otra cosa.
+    #
+    # Solo en EXTRAS, y no por pereza: medido sobre 51 menús (todos los
+    # tamaños, etapas, patologías y exclusiones), las ÚNICAS cantidades por
+    # debajo de un gramo salían de ahí -- la sal. Las carnes, vísceras y
+    # verduras nunca bajaban de ~1,9 g, así que ponerles suelo no arregla
+    # nada y sí cuesta: cada fila de éstas ata una variable continua a una
+    # binaria y le da trabajo de más al solver. Medido con el suelo en TODO
+    # el catálogo, /menu/varios-perros pasaba de ~7s a ~11s con el
+    # presupuesto en 24s -- en Render, que va más lento que esto, eso se
+    # puede llevar por delante un menú de la semana. No compensa.
+    #
+    # Y NUNCA en los suplementos comerciales: no se pesan, se dosifican con
+    # el cacito o el comprimido que trae el bote (la app ya convierte los
+    # gramos a fracciones de comprimido, ver formatearComprimidos).
+    # Ponerles suelo sería obligar a dar de más de un suplemento, que es
+    # justo lo que no se puede hacer.
+    #
+    # Es la fila espejo de la de arriba: gramos_i >= minimo * usa_i.
+    SUELO_MEDIBLE_G = 1.0
+    for n in nombres:
+        if categoria_de.get(n) != "Extras":
+            continue
+        i = idx[n]
+        # Nunca por encima de su propio techo: si un alimento no puede
+        # llegar a 1 g, el suelo lo dejaría fuera del catálogo entero.
+        suelo = min(SUELO_MEDIBLE_G, techos[i])
+        if suelo <= 0:
+            continue
+        fila = fila_vacia()
+        fila[i] = 1.0
+        fila[n_var + i] = -suelo
+        A_rows.append(fila); lb_rows.append(0.0); ub_rows.append(np.inf)
+
     # 5. CUÁNTOS ALIMENTOS DISTINTOS por categoría (máx.)
     for cat, tope in cuantos_max.items():
         miembros = [n for n in nombres if categoria_de[n] == cat]
