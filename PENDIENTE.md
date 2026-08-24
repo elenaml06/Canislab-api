@@ -199,11 +199,33 @@ menús comparados no tienen sentido sin él.
       No se quitó nada; el icono de cubiertos de cada fila sigue estando.
       `tests/menu-dos-pestanas.spec.js`.
 
-- [ ] **Sacar los perros del menú lateral.** Que cambiar de perro esté
-      metido en una pestaña del panel es esconderlo. Va como **burbuja de
-      perfil bien visible** en la app, y de ahí cuelga una **rueda de
-      engranaje** con la configuración de la cuenta y de las mascotas
-      (esto se junta con «Ajustes de cuenta», que es lo de abajo).
+- [x] **Sacar los perros del menú lateral.** ✅ **Hecho el 24 de agosto**
+      en `claude/burbuja-de-perfil-y-engranaje`, junto con los ajustes de
+      cuenta, que iban en el mismo sitio.
+
+      **La burbuja** va en la cabecera de todas las pantallas: dice de qué
+      perro es lo que estás viendo, y al tocarla salen los perros de la
+      casa y «añadir otro». Antes había dos caminos y ninguno completo —
+      unas pastillas que solo aparecían en la ficha, y una fila plegada
+      dentro del panel. Desde «Mis menús», por ejemplo, no se podía
+      cambiar de perro sin abrir el panel; lo decía el comentario de una
+      de las pruebas, y ahora esa misma prueba comprueba lo contrario.
+
+      **El engranaje**, al lado, lleva a **Ajustes**, con las dos mitades:
+      los perros (editar ficha, ir a otro, añadir, borrar) y la cuenta
+      (correo, contraseña, cerrar sesión). Sin cuenta enseña «crear una
+      cuenta» en vez de «cerrar sesión».
+
+      El selector viejo del panel y las pastillas de la ficha se han
+      borrado: tener tres formas de hacer lo mismo era parte del lío.
+
+      Vigilado en `tests/ajustes.spec.js` y en `varios-perros.spec.js`,
+      con una prueba que falla si los perros vuelven al panel.
+
+      > Un rótulo por el camino: al meter la burbuja quité el «MENÚ
+      > SEMANAL» / «PERFIL» de la cabecera, y dos pruebas viejas lo
+      > cazaron. Tenían razón: ese rótulo dice en qué pantalla estás. Han
+      > vuelto, en su propia línea, y conviven con la burbuja.
 
 - [x] **Poder usar la app sin cuenta.** ✅ **Hecho el 23 de agosto** en
       `claude/menu-dos-pestanas-y-sin-cuenta`. La primera pantalla ofrece
@@ -222,8 +244,23 @@ menús comparados no tienen sentido sin él.
       para que el día que el muro se encienda «sin cuenta» no sea un
       agujero por el que colarse.
 
-- [ ] **Ajustes de cuenta** (no del perro): cambiar contraseña, correo,
-      método de pago, darse de baja. Va dentro del engranaje de arriba.
+- [~] **Ajustes de cuenta** (no del perro). **Hecho a medias el 24 de
+      agosto**, en el engranaje: **correo** y **contraseña** ya se pueden
+      cambiar desde dentro de la app. Antes no había ninguna forma: para
+      cambiar la contraseña había que cerrar sesión, pedir el enlace de
+      «olvidé mi contraseña» y abrir el correo.
+
+      Ojo con el correo: Supabase manda un enlace de confirmación al
+      correo NUEVO y hasta que se abre, la cuenta sigue con el viejo. La
+      pantalla lo dice, porque si no parece que no ha funcionado.
+
+      Quedan dos, y las dos por el mismo motivo:
+      - **Método de pago** — es el portal de cliente de Stripe, que está
+        apagado.
+      - **Darse de baja** — borrar la cuenta de verdad necesita la clave
+        de administrador de Supabase, o sea el backend, no la app. Y hay
+        que decidir antes qué pasa con sus menús y con una suscripción
+        viva.
 
 - [ ] **Volver a encender el muro de pago cuando toque.** Está apagado
       desde el 22 de agosto para poder probar la app entera sin candados
