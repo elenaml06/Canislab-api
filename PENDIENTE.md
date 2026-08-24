@@ -32,6 +32,19 @@ las tiene que tomar una persona, no yo.
 - [ ] **Revisar los textos legales** cuando estén redactados (ver 3.1).
       El borrador lo puedo escribir yo; el visto bueno no.
 
+      ⚠️ **SUBIÓ DE PRIORIDAD EL 24 DE AGOSTO: ahora bloquea DOS cosas.**
+      No solo Stripe. También **entrar con Google**: para publicar la app,
+      Google exige un enlace a la Política de Privacidad y otro a las
+      Condiciones del Servicio, y esas páginas no existen. Con eso hecho se
+      desbloquean las dos de golpe.
+
+      La parte difícil de una política de privacidad es saber qué datos
+      recoge la app de verdad y a dónde van, y eso **sí** se puede sacar
+      del código con exactitud: qué se guarda en Supabase, qué se manda a
+      la API, qué llega a Sentry cuando hay un error, qué toca Stripe. El
+      borrador puede salir de ahí — datos reales, no plantilla — pero es
+      un texto legal y necesita revisión de quien sepa antes de publicarse.
+
 ---
 
 ## 1. Urgente — dinero y salud
@@ -393,21 +406,84 @@ menús comparados no tienen sentido sin él.
       los demás se amoldan). Elegir alimentos distintos para cada perro es
       otra pantalla, y además pelea con que los menús se parezcan — hay
       que decidir antes qué gana cuando chocan.
-- [x] **Entrar con Google.** ✅ **Hecho el 24 de agosto** en
-      `canislab-web`. Botón en entrar y en crear cuenta (no en «olvidé mi
-      contraseña», que ahí no pega).
+- [ ] **Entrar con Google.** ⚠️ **HECHO Y DESHECHO el 24 de agosto.** El
+      código funcionaba y estaba probado (5 pruebas), pero se retiró porque
+      **no se puede activar todavía**, y media función en producción es
+      peor que ninguna: un botón que devuelve `Unsupported provider` es un
+      botón roto.
 
-      ⚠️ **FALTA UN PASO QUE NO ES CÓDIGO Y SIN ÉL NO FUNCIONA**: crear un
-      cliente OAuth en Google Cloud y pegar el ID y el secreto en el panel
-      de Supabase (*Authentication → Providers → Google*). Hasta que eso
-      esté, el botón devuelve a la app con `Unsupported provider` — y ese
-      motivo **se enseña tal cual en pantalla**, a propósito: un «algo ha
-      fallado» costaría media hora de buscar dónde.
+      **QUÉ FALTA, Y NO ES CÓDIGO.** Para publicar la app en Google —
+      dejarla en producción, o sea que pueda entrar cualquiera y no solo
+      unos correos apuntados a mano — Google **exige** tres cosas en
+      *Información de marca*:
 
-      Se lee el error tanto si vuelve en la query como en el hash (según el
-      flujo va en uno o en otro; mirar solo uno deja la mitad de los casos
-      en silencio) y se limpia la URL, para que recargar no lo repita para
-      siempre. 5 pruebas en `tests/entrar-con-google.spec.js`.
+      · Página principal de la aplicación
+      · Enlace a la **Política de Privacidad**
+      · Enlace a las **Condiciones del Servicio**
+
+      Y esas dos páginas **no existen**. Comprobado: no hay nada de eso en
+      `canislab-web/src`. Mientras falten, el botón «Publicar app» sale en
+      gris con el aviso *«La configuración de OAuth de tu app está
+      incompleta»*. No es un fallo: es que falta un dato real.
+
+      Así que esto **depende de los textos legales** (ver 3.1), igual que
+      Stripe — que también los pide para cobrar. Los tres van juntos.
+
+      **LO QUE YA ESTÁ HECHO EN GOOGLE CLOUD** (24 agosto), para no
+      repetirlo:
+      · Cuenta de Google Cloud: ya existía.
+      · Proyecto **Rawku** creado.
+      · *Información de marca*: nombre de la app y correo de contacto
+        puestos y guardados.
+      · Tipo de usuario: **Externo**.
+      · Estado: **En pruebas**. Falta publicar, por lo de arriba.
+
+      **LO QUE FALTARÍA CUANDO HAYA TEXTOS LEGALES**, en orden:
+      1. *Información de marca*: pegar los tres enlaces y añadir
+         `rawku.app` en **Dominios autorizados** (si pones la página
+         principal, Google obliga a registrar el dominio).
+      2. `console.cloud.google.com/auth/audience` → **Publicar app**. No
+         hace falta verificación de Google: solo se piden los permisos
+         básicos (nombre, correo, foto). La revisión larga es para apps
+         que piden Gmail o Drive.
+      3. `console.cloud.google.com/auth/clients` → crear cliente OAuth,
+         tipo **Aplicación web**. En *URI de redireccionamiento
+         autorizados*, EXACTAMENTE:
+         `https://kvtkdpgpmrvwmvymyqof.supabase.co/auth/v1/callback`
+         (sin barra final). *Orígenes de JavaScript*: vacío — Google no
+         habla con rawku.app, habla con Supabase.
+      4. Supabase → *Authentication → Providers → Google*: activar y pegar
+         el ID de cliente y el secreto.
+      5. Supabase → *Authentication → URL Configuration*:
+         **Site URL** `https://rawku.app` y en **Redirect URLs**
+         `https://rawku.app/**`. **Sin esto no vuelve a la app**: Supabase
+         solo obedece el `redirectTo` si la dirección está en esa lista.
+
+      **EL CÓDIGO QUE SE QUITÓ**, para rehacerlo sin pensarlo dos veces
+      (está en el historial: rama `claude/la-compra-solo-en-el-panel`, PR
+      web #25, deshecho en el siguiente):
+      · `supabase.js`: `entrarConGoogle()` con `signInWithOAuth`,
+        `redirectTo: window.location.origin + '/'` y
+        `queryParams: { prompt: 'select_account' }` — para que ofrezca
+        elegir cuenta en vez de entrar con la última usada, que en un móvil
+        compartido importa.
+      · `auth.jsx`: el botón (con el logo de Google en SVG inline, para no
+        depender de una imagen externa), y un `useEffect` que lee
+        `error_description` de la URL **y del hash** al volver. Ese
+        segundo detalle no es opcional: según el flujo el motivo llega en
+        uno o en otro, y mirar solo uno deja la mitad de los casos en
+        silencio. Además limpiaba la URL, para que recargar no repitiera
+        el error para siempre.
+      · `tests/entrar-con-google.spec.js`: 5 pruebas — el botón está donde
+        toca y no en «olvidé mi contraseña»; manda a `/auth/v1/authorize`
+        con `provider=google` y el `redirect_to` correcto (con esto mal la
+        sesión se pierde sin dar ningún error); y el error se lee, en la
+        query y en el hash, y no se queda pegado al recargar.
+
+      **MIENTRAS TANTO**, si se quiere probar el circuito entero sin
+      publicar: dejarlo en *Prueba* y añadirse como **usuario de prueba**
+      (admite hasta 100 correos). Entra quien esté en esa lista y nadie
+      más — sirve para comprobar que funciona, no para abrirlo.
 - [ ] **Entrar con huella en el móvil.** Se hace con *passkeys* (WebAuthn).
 
       ⚠️ **CORREGIDO EL 24 DE AGOSTO — antes ponía aquí «que Supabase Auth
