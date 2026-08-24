@@ -1297,23 +1297,33 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 # peso del cacito de cada producto -- un dato que no tenemos, no código
 # (ver DATOS_QUE_FALTAN.md).
 #
-# ⚠️ LO QUE ESTE BLOQUE **NO** GARANTIZA, y hay que saberlo:
+# ⚠️ CORREGIDO (24 agosto) — ESTE BLOQUE DECÍA UNA COSA QUE ERA FALSA.
 #
-# Quitando el suelo del motor, este bloque SIGUE SALIENDO EN VERDE.
-# Comprobado. No es que esté mal escrito: es que el fallo es raro. Medido
-# sin el suelo, 8 vueltas por cada uno de nueve escenarios (incluidos los
-# apretados): 0 de 8 en todos. La sal por debajo de un gramo salió UNA vez
-# en ~300 alimentos medidos, y el solver lleva semilla aleatoria, así que
-# ni repitiendo sale a voluntad.
+# Decía: "lo que de verdad sostiene la garantía es la restricción del
+# motor, que es estructural". No lo era: la fila del suelo NO SE AÑADÍA
+# NUNCA. Comparaba `categoria_de[n]` con "Extras", y `categoria_de` es la
+# clave del diccionario de candidatos, no la categoría del alimento -- los
+# aceites, la sal y las semillas entran bajo la clave genérica
+# "Suplementos", y ACCESIBLES ni siquiera tiene una clave "Extras". La
+# condición no se cumplía para nadie. Código muerto desde el primer día.
 #
-# O sea que esto es un CANARIO, no una demostración: caza que aparezca una
-# fuente NUEVA y frecuente de cantidades impesables, no que alguien quite
-# el suelo. Lo que de verdad sostiene la garantía es la restricción del
-# motor, que es estructural: si un alimento a granel se usa, es >= 1 g,
-# pase lo que pase con las semillas.
+# Cómo salió: este bloque falló 1 de cada 20 veces en el escenario más
+# apretado (200 kcal con cuatro especies fuera) -- 0,55 g de aceite de
+# girasol. Y la primera reacción fue pensar "esto es una casualidad de la
+# semilla aleatoria". No lo era.
 #
-# Se deja igualmente porque es barato y porque el día que se toquen los
-# techos, los mínimos por categoría o el catálogo, esto avisa.
+# LECCIÓN, porque es la SEGUNDA vez que pasa en el mismo archivo: el
+# límite de 2 suplementos cayó en esta misma trampa y estuvo inerte
+# semanas. Comparar la clave genérica del diccionario de candidatos contra
+# una categoría real NO da error, no da aviso, y la restricción
+# simplemente no existe. Para la categoría de un alimento:
+# `alimentos[n]["categoria"]`, NUNCA `categoria_de[n]`.
+#
+# Por eso ahora hay dos comprobaciones y no una:
+#   · el CANARIO de siempre (generar menús y medir), que es probabilístico
+#     -- caza fuentes nuevas y frecuentes de cantidades impesables;
+#   · y una que mira el CÓDIGO, abajo del todo. Un fallo de "la condición
+#     no se cumple nunca" no se ve ejecutando: se ve leyendo.
 # ============================================================
 print("=== BLOQUE 14: nada que no se pueda pesar ===")
 
@@ -1331,6 +1341,12 @@ _CASOS_B14 = [
     # fuera y con una categoría entera excluida.
     {"der_objetivo": 1100, "peso_perro_kg": 25, "etapa_requisitos": "Adulto",
      "patologias": ["renal"]},
+    # Éste es el que destapó el suelo muerto, y solo falla ~1 de cada 20:
+    # va repetido para que el canario tenga alguna posibilidad de cantar.
+    {"der_objetivo": 200, "peso_perro_kg": 1.5, "etapa_requisitos": "Adulto",
+     "especies_excluidas": ["pollo", "pavo", "vacuno", "cordero"]},
+    {"der_objetivo": 200, "peso_perro_kg": 1.5, "etapa_requisitos": "Adulto",
+     "especies_excluidas": ["pollo", "pavo", "vacuno", "cordero"]},
     {"der_objetivo": 200, "peso_perro_kg": 1.5, "etapa_requisitos": "Adulto",
      "especies_excluidas": ["pollo", "pavo", "vacuno", "cordero"]},
     {"der_objetivo": 450, "peso_perro_kg": 6, "etapa_requisitos": "Adulto",
@@ -1357,6 +1373,33 @@ for _cfg in _CASOS_B14:
 if _menus_b14 < len(_CASOS_B14):
     fallos.append(f"BLOQUE14: solo salieron {_menus_b14} menús de {len(_CASOS_B14)*2} — "
                   f"¿el suelo ha dejado casos sin solución?")
+
+# ─── Y AHORA LA QUE NO DEPENDE DE LA SUERTE ──────────────────────────────
+# El suelo estuvo muerto desde el primer día y los menús salían igual de
+# bien el 95% de las veces. Eso no se caza generando menús: se caza
+# leyendo la condición.
+_src_b14 = open("motor/motor_completo.py", encoding="utf-8").read()
+_i_b14 = _src_b14.find("SUELO_MEDIBLE_G = 1.0")
+if _i_b14 == -1:
+    fallos.append("BLOQUE14: ha desaparecido el suelo de 1 g del motor "
+                  "(SUELO_MEDIBLE_G). Sin él vuelven las cantidades que "
+                  "nadie puede pesar.")
+else:
+    # Solo el bucle del suelo, no el archivo entero.
+    _bloque_b14 = _src_b14[_i_b14:_i_b14 + 500]
+    if "categoria_de" in _bloque_b14:
+        fallos.append(
+            "BLOQUE14: el suelo vuelve a decidir con `categoria_de`, que es la CLAVE "
+            "del diccionario de candidatos y NO la categoría del alimento. Los "
+            "aceites, la sal y las semillas entran bajo la clave 'Suplementos' (ver "
+            "SUP_CATS), así que la condición no se cumple para nadie y la fila no se "
+            "añade nunca: el suelo deja de existir sin dar un solo error. Tiene que "
+            "mirar alimentos[n]['categoria'].")
+    if 'alimentos[n].get("categoria")' not in _bloque_b14:
+        fallos.append(
+            "BLOQUE14: el suelo ya no mira alimentos[n]['categoria']. Es la única "
+            "forma de saber de verdad si un alimento es a granel; cualquier otra "
+            "corre el riesgo de no cumplirse nunca en silencio.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
@@ -1465,6 +1508,134 @@ else:
             if _de_mas and not (_m.get("aviso") or _m.get("no_se_pudo_forzar")):
                 fallos.append(f"BLOQUE15: a {_p.get('nombre')} le metió {_de_mas} en el "
                               f"menú {_j+1} sin pedirlo y sin avisar")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 16 — CADA REGLA DEL MOTOR EXISTE DE VERDAD
+#
+# POR QUÉ EXISTE ESTE BLOQUE
+# Dos restricciones de motor_completo.py han estado INERTES sin que nadie
+# se enterara: el límite de 2 suplementos (semanas) y el suelo de 1 g
+# (desde el día que se escribió). Las dos por lo mismo -- comparar
+# `categoria_de[n]`, que es la CLAVE del diccionario de candidatos, contra
+# una categoría real. La condición no se cumple para nadie, la fila no se
+# añade, y no hay error, ni aviso, ni menú roto: los menús siguen saliendo
+# bien casi siempre, porque la mayoría no necesitaban esa regla.
+#
+# Los demás bloques generan menús y miran el resultado. Eso NO PUEDE cazar
+# esto: probado, con el suelo muerto el BLOQUE 14 salía verde 19 de cada
+# 20 veces. Las dos veces que se encontró el fallo fue por casualidad.
+#
+# Aquí no se mira ningún menú. Se le pide al solver la CUENTA DE FILAS que
+# ha puesto cada regla (parámetro `diagnostico`) y se exige que ninguna
+# valga cero donde debería aplicar. Una regla con 0 filas no es una regla:
+# es un comentario.
+#
+# CÓMO SE AMPLÍA: si añades una restricción a resolver(), pásala por
+# _fila("nombre", ...) y añade aquí lo que tenga que valer. Si no lo haces,
+# tu regla puede morir en silencio como murieron estas dos.
+# ============================================================
+print("=== BLOQUE 16: cada regla del motor existe de verdad ===")
+
+from motor.motor_completo import resolver as _resolver_b16
+
+_al_b16, _req_b16 = _api.cargar_v2()
+_EXTRAS_B16 = [a["nombre"] for a in _al_b16.values() if a.get("categoria") == "Extras"]
+
+# Un adulto normal, sin nada raro: aquí tienen que estar TODAS las reglas
+# que no dependen de una patología.
+_diag = {}
+_ok_b16, _g_b16 = _resolver_b16(
+    1187.0, "Adulto", _al_b16, _req_b16, 23.0, _api.dosis_maxima_fabricante,
+    margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=12,
+    diagnostico=_diag)
+
+if not _ok_b16:
+    fallos.append("BLOQUE16: el caso base ni siquiera da menú — no se puede "
+                  "comprobar nada más")
+else:
+    # (regla, cuántas filas COMO MÍNIMO, por qué importa)
+    _EXIGIDAS_B16 = [
+        ("kcal_total", 1, "sin esto el menú no tiene por qué dar las kcal del perro"),
+        ("fediaf_absoluto", 20, "son los 30 requisitos de FEDIAF: el corazón de todo"),
+        ("ratio_ca_p_min", 1, "el ratio calcio:fósforo, que no es opinable en un cachorro"),
+        ("ratio_ca_p_max", 1, "el ratio calcio:fósforo por arriba"),
+        ("seguridad_cronica_tiaminasa", 1, "el pescado crudo destruye la tiamina"),
+        ("seguridad_cronica_mercurio", 1, "mercurio: se acumula, no se nota hasta tarde"),
+        ("selenio_por_gramo", 1, "selenio: el margen entre lo necesario y lo tóxico es estrecho"),
+        ("vinculacion_usa_techo", 50, "sin esto un alimento puede entrar sin contar como usado"),
+        ("max_suplementos", 1, "ya estuvo muerta una vez: máximo 2 suplementos comerciales"),
+        ("extras_y_suplementos_5pc", 1, "extras+suplementos no pasan del 5% del peso"),
+        ("margen_categoria_max", 3, "las proporciones BARF por arriba (hueso, verdura...)"),
+        ("margen_categoria_min", 3, "las proporciones BARF por abajo"),
+        ("max_por_categoria", 1, "cuántos alimentos distintos caben por categoría"),
+    ]
+    for _regla, _minimo, _porque in _EXIGIDAS_B16:
+        _d = _diag.get(_regla) or {"filas": 0, "coeficientes": 0}
+        if _d["filas"] < _minimo:
+            fallos.append(
+                f"BLOQUE16: la regla '{_regla}' puso {_d['filas']} filas (mínimo {_minimo}). "
+                f"{'NO EXISTE: es un comentario, no una restricción. ' if _d['filas'] == 0 else ''}"
+                f"Importa porque {_porque}.")
+        # Y una fila VACÍA es tan inútil como una fila que falta: "0 <= 2" se
+        # cumple siempre. Así estuvo el límite de 2 suplementos.
+        elif _d["coeficientes"] == 0:
+            fallos.append(
+                f"BLOQUE16: la regla '{_regla}' pone {_d['filas']} fila(s) pero SIN UN SOLO "
+                f"COEFICIENTE: no restringe nada, se cumple siempre. Es el fallo histórico "
+                f"del límite de suplementos — el bucle que rellena la fila no acierta con "
+                f"ningún alimento (¿`categoria_de` otra vez?). Importa porque {_porque}.")
+
+    # ⚠️ EL SUELO DE 1 g, con número exacto y no "al menos una".
+    # Ésta es la que estuvo muerta: decía `categoria_de[n] != "Extras"` y los
+    # aceites, la sal y las semillas entran bajo la clave "Suplementos", así
+    # que la condición no se cumplía JAMÁS. Tiene que haber una fila por cada
+    # alimento a granel del catálogo, ni una menos.
+    _esperadas = len(_EXTRAS_B16)
+    _puestas = (_diag.get("suelo_medible") or {}).get("filas", 0)
+    if _puestas != _esperadas:
+        fallos.append(
+            f"BLOQUE16: el suelo de 1 g puso {_puestas} filas y el catálogo tiene "
+            f"{_esperadas} alimentos a granel (categoría 'Extras'). "
+            + ("NO SE APLICA A NADIE: es exactamente el fallo del 24 de agosto — "
+               "mirar `categoria_de[n]` en vez de `alimentos[n]['categoria']`. "
+               if _puestas == 0 else
+               "Alguno se queda fuera: revisa la condición y los techos. ")
+            + "Sin esta fila vuelven las cantidades que nadie puede pesar.")
+
+# Los topes de patología solo existen cuando hay patología, así que se
+# comprueban aparte -- exigirlos arriba daría un fallo falso.
+_diag_pan = {}
+_ok_pan, _g_pan = _resolver_b16(
+    1187.0, "Adulto", _al_b16, _req_b16, 23.0, _api.dosis_maxima_fabricante,
+    margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=12,
+    patologias=["pancreatitis"], diagnostico=_diag_pan)
+
+if _ok_pan:
+    for _regla, _porque in (
+        ("grasa_patologia_absoluto", "el tope de grasa de una pancreatitis, sobre las kcal pedidas"),
+        ("grasa_patologia_relativo", "el mismo tope sobre las kcal REALES del menú, que pueden "
+                                     "ser un 3% menos — y menos kcal con la misma grasa es más grasa"),
+    ):
+        if (_diag_pan.get(_regla) or {}).get("filas", 0) < 1:
+            fallos.append(f"BLOQUE16: con pancreatitis, la regla '{_regla}' no puso "
+                          f"ninguna fila. Es {_porque}.")
+
+# Y que pedir el diagnóstico no cambie NADA: si contar filas alterara el
+# resultado, esta comprobación valdría menos que nada.
+_sin, _con = {}, {}
+_ok_a, _ga = _resolver_b16(900.0, "Adulto", _al_b16, _req_b16, 20.0,
+                           _api.dosis_maxima_fabricante, margenes_categoria=_api.MARGENES_V2,
+                           max_suplementos=2, time_limit=12, semilla_aleatoria=7)
+_ok_b, _gb = _resolver_b16(900.0, "Adulto", _al_b16, _req_b16, 20.0,
+                           _api.dosis_maxima_fabricante, margenes_categoria=_api.MARGENES_V2,
+                           max_suplementos=2, time_limit=12, semilla_aleatoria=7,
+                           diagnostico=_con)
+if (_ok_a, _ga) != (_ok_b, _gb):
+    fallos.append("BLOQUE16: pedir el diagnóstico cambia el menú. Tiene que ser "
+                  "pura contabilidad; si toca el resultado, no sirve para comprobar nada.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
