@@ -627,11 +627,27 @@ Prioridad, por lo que desbloquea:
       suplemento. Se arreglan con el peso del cacito de cada producto, que
       es un DATO y está apuntado en `DATOS_QUE_FALTAN.md`.
 
-      Vigilado en el **BLOQUE 14**, con una advertencia escrita dentro: es
-      un canario, no una demostración. Quitando el suelo, el bloque sigue
-      saliendo en verde — comprobado — porque el fallo es demasiado raro
-      para reproducirlo a voluntad con semilla aleatoria. Lo que sostiene
-      la garantía es la restricción del motor, que es estructural.
+      ⚠️ **CORREGIDO EL 24 DE AGOSTO — esto de arriba era falso.** Decía
+      que «lo que sostiene la garantía es la restricción del motor, que es
+      estructural». No lo era: **la fila del suelo no se añadía nunca**.
+      Comparaba `categoria_de[n]` (la CLAVE del diccionario de candidatos)
+      con `"Extras"`, y los aceites, la sal y las semillas entran bajo la
+      clave `"Suplementos"`. Código muerto desde el primer día. Salió
+      porque el BLOQUE 14 falló 1 de cada 20 veces en el caso más apretado:
+      0,55 g de aceite de girasol.
+
+      Es la **segunda** vez en ese archivo: el límite de 2 suplementos cayó
+      en la misma trampa. Para la categoría de un alimento se usa
+      `alimentos[n]["categoria"]`, NUNCA `categoria_de[n]`.
+
+      Y de ahí sale el **BLOQUE 16**, que es lo que de verdad lo vigila:
+      `resolver()` apunta, por cada regla, cuántas filas puso y cuántos
+      coeficientes llevan, y el bloque exige que ninguna de las 16 reglas
+      duras valga cero. Contar filas no bastaba — el fallo del límite de
+      suplementos añade la fila **vacía**, y `0 <= 2` se cumple siempre.
+      Comprobado con tres sabotajes y los tres se cazan. Si añades una
+      restricción a `resolver()`, pásala por `_fila(...)` y apúntala en el
+      BLOQUE 16; si no, puede morir en silencio como murieron estas dos.
 - [ ] **`aviso_composicion` en la web**: ya se pinta, pero conviene ver
       cómo queda en pantalla con un perro con tres alergias.
 - [ ] **El campo `tipo_de_clave_supabase` sale como `[Filtered]`** en
