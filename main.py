@@ -1033,6 +1033,41 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
                           "Inténtalo de nuevo -- si se repite, dínoslo."}
 
 
+# ─────────────────────────────────────────────────────────────────────────────
+# LO QUE ELIGES A MANO ES LO QUE HAY
+#
+# ⚠️ CASO REAL ENCONTRADO POR LA USUARIA (24 agosto): "este menú de
+# personalizar me ha metido 3 verduras, no debería... yo puse zanahoria y ha
+# metido dos más". Cierto: Zanahoria, y además Espinaca y Canónigos.
+#
+# Esta lista existía desde el 5 de agosto con solo TRES categorías dentro
+# (carne, pescado, hueso), y el comentario decía "vísceras, hígado, verduras
+# y extras se quedan siempre libres, tal como se pidió". Lo que se pidió
+# entonces fue que no metiera una tercera CARNE; que las verduras siguieran
+# libres no se pidió, se dio por bueno de paso. Y es incoherente: la
+# pantalla de Personalizar ofrece SEIS categorías, así que elegir en las
+# otras tres no servía de nada y no había forma de saberlo mirando.
+#
+# La regla ahora es una sola, y se puede explicar en una frase: LA APP
+# RESPETA TODAS LAS CATEGORÍAS QUE TE DEJA ELEGIR. Si esta lista y la
+# pantalla dejan de coincidir, el fallo vuelve — por eso van con el mismo
+# nombre en los dos sitios (ver CATEGORIAS en App.jsx, canislab-web).
+#
+# Lo que NO entra aquí, a propósito: suplementos (Multivitamínico, Omega-3,
+# Calcio, Yodo, Hierro, Fibra, Vitamina B) y Extras (sal, aceites, semillas,
+# huevo). No se eligen a mano en ninguna pantalla, y son justo la
+# herramienta con la que el motor cierra los 30 requisitos. Cerrarlos sería
+# quitarle el destornillador.
+#
+# Y no es una restricción dura: si con SOLO lo elegido no hay menú posible,
+# se baja al nivel 2 (lo elegido sí o sí, el motor puede añadir) y se DICE
+# qué tuvo que añadir. Sin menú no se queda nadie.
+CATEGORIAS_QUE_ELIGE_EL_USUARIO = (
+    "Carne muscular", "Pescados y mariscos", "Hueso carnoso",
+    "Vísceras", "Hígado", "Verduras y frutas",
+)
+
+
 def _resolver_menu_v2_interno(datos: PeticionMenu):
     """
     EL MOTOR NUEVO. Misma petición que /menu (mismo modelo PeticionMenu),
@@ -1183,13 +1218,12 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # carnosos), antes el motor podía añadir OTRA especie de esa misma
     # categoría sin que hiciera falta, solo porque le convenía para
     # cuadrar algo -- el usuario nunca pidió esa tercera carne. Ahora se
-    # restringe cada una de estas tres categorías a SOLO lo elegido a
-    # mano (dejando los gramos libres, eso sí), y solo si con eso no hay
+    # restringe cada una de estas categorías a SOLO lo elegido a mano
+    # (dejando los gramos libres, eso sí), y solo si con eso no hay
     # solución viable se cae a dejar que el motor añada más -- avisando
     # de qué tuvo que añadir, con el mismo criterio que ya se usa en
-    # todos los demás avisos de esta app. Vísceras, hígado, verduras y
-    # extras se quedan siempre libres, tal como se pidió.
-    CATEGORIAS_A_RESTRINGIR = ("Carne muscular", "Pescados y mariscos", "Hueso carnoso")
+    # todos los demás avisos de esta app.
+    CATEGORIAS_A_RESTRINGIR = CATEGORIAS_QUE_ELIGE_EL_USUARIO
 
     def _restriccion_desde_elegidos(nombres):
         restringir = {}
@@ -1379,7 +1413,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 break
         return (ok_i and ficha_i and ficha_i["semaforo"] == "verde"), gramos_i, ficha_i
 
-    aviso_extra_carne = None
+    aviso_extra_alimentos = None
     if datos.modo == "personalizar" and forzar:
         restriccion = _restriccion_desde_elegidos(forzar)
     else:
@@ -1402,7 +1436,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                            if al.get(n, {}).get("categoria") in CATEGORIAS_A_RESTRINGIR
                            and n not in elegidos_restringidos]
                 if anadidos:
-                    aviso_extra_carne = (
+                    aviso_extra_alimentos = (
                         "Con solo lo que elegiste no había una combinación viable, así que "
                         "también se ha añadido: " + ", ".join(anadidos) + "."
                     )
@@ -1498,8 +1532,8 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # elegido a mano, se avisa aquí -- distinto de "no_se_pudo_forzar"
     # (que es cuando NADA de lo elegido se pudo mantener); esto es "casi
     # todo se mantuvo, pero hizo falta una cosa más".
-    if aviso_extra_carne:
-        resultado["aviso"] = aviso_extra_carne
+    if aviso_extra_alimentos:
+        resultado["aviso"] = aviso_extra_alimentos
     # ⚠️ AÑADIDO (20 agosto): si hubo que bajar por la escalera, se dice.
     # Un menú sin vísceras es perfectamente válido -- cumple los 30
     # requisitos igual -- pero no se parece a los demás, y la usuaria

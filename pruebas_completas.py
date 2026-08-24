@@ -1362,6 +1362,114 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 15 — PERSONALIZAR RESPETA LAS SEIS CATEGORÍAS
+#
+# ⚠️ CASO REAL ENCONTRADO POR LA USUARIA (24 agosto): "este menú de
+# personalizar me ha metido 3 verduras, no debería... yo puse zanahoria y ha
+# metido dos más". Eran Zanahoria + Espinaca + Canónigos.
+#
+# La pantalla de Personalizar ofrece SEIS categorías; el motor solo
+# respetaba tres (carne, pescado, hueso). En las otras tres — vísceras,
+# hígado y verduras — elegir no servía de nada, y no había forma de
+# enterarse: el menú salía verde, cumplía los 30 requisitos, y encima los
+# alimentos de más aparecían sin ningún aviso.
+#
+# Medido en el barrido de abajo, antes del arreglo: 15 menús de 36 metían
+# algo que nadie pidió, callando. Después: 0.
+#
+# Lo que esta prueba vigila NO es "que no añada nunca" — a veces hace falta,
+# y para eso está el nivel 2 de la escalera. Vigila que si añade, LO DIGA:
+# o `aviso` (nivel 2: lo tuyo se mantuvo, hizo falta algo más) o
+# `no_se_pudo_forzar` (nivel 3: con lo tuyo no había menú posible). Un
+# alimento de más SIN ninguna de las dos cosas es el fallo.
+# ============================================================
+print("=== BLOQUE 15: personalizar respeta las seis categorías ===")
+
+_CATS_B15 = _api.CATEGORIAS_QUE_ELIGE_EL_USUARIO
+
+_por_cat_b15 = {}
+for _n, _a in _por_nombre_b12.items():
+    _por_cat_b15.setdefault(_a.get("categoria"), []).append(_n)
+for _k in _por_cat_b15:
+    _por_cat_b15[_k].sort()
+
+if sorted(_CATS_B15) != sorted(c for c in _CATS_B15 if _por_cat_b15.get(c)):
+    fallos.append(f"BLOQUE15: alguna de las categorías de "
+                  f"CATEGORIAS_QUE_ELIGE_EL_USUARIO no existe en el catálogo: {_CATS_B15}")
+
+_PERROS_B15 = [(1187.0, "Adulto", 23.0, "mediano"),
+               (1639.0, "CachorroCrecimiento", 20.0, "cachorro")]
+
+for _k in range(4):
+    # Un alimento de cada categoría, barriendo el catálogo en abanico para
+    # no depender de una combinación concreta que resulte cómoda.
+    _els = [_por_cat_b15[_cat][_k % len(_por_cat_b15[_cat])] for _cat in _CATS_B15]
+    for _der, _etapa, _peso, _mote in _PERROS_B15:
+        _r = _c.post("/menu/v2", json={
+            "nombres_alimentos": _els, "forzar_presencia": _els,
+            "der_objetivo": _der, "etapa_requisitos": _etapa,
+            "peso_perro_kg": _peso, "modo": "personalizar"}).json()
+        if not _r.get("factible"):
+            fallos.append(f"BLOQUE15: sin menú en personalizar ({_mote}, k={_k}): "
+                          f"{_r.get('motivo')}")
+            continue
+        if _r.get("no_se_pudo_forzar"):
+            continue          # nivel 3: ya avisa por su cuenta
+        # Aquí sí valen las seis: _els lleva un alimento de CADA una.
+        _de_mas = [_n for _n in _r["menu"]
+                   if _por_nombre_b12.get(_n, {}).get("categoria") in _CATS_B15
+                   and _n not in _els]
+        if _de_mas and not _r.get("aviso"):
+            fallos.append(f"BLOQUE15: metió {_de_mas} sin que nadie los pidiera y SIN "
+                          f"avisar ({_mote}, k={_k}) — elegidos: {_els}")
+
+# El caso tal cual lo contó ella: dos perros, dos menús, conejo en el 1 y
+# pollo en el 2. El primer perro siempre salía bien; el fallo estaba en el
+# SEGUNDO, el que se amolda al primero — a ése el motor le colaba una
+# verdura de más. Con un solo perro no se reproduce.
+_M1_B15 = ["Conejo", "Espinazo de conejo", "Hígado de conejo", "Timo de ternera", "Zanahoria"]
+_M2_B15 = ["Pollo con piel (sin hueso)", "Carcasa de pollo", "Hígado de pollo",
+           "Bazo de vaca", "Calabacín"]
+_perro_b15 = lambda der, etapa, peso: {
+    "nombres_alimentos": [], "forzar_presencia": [], "der_objetivo": der,
+    "etapa_requisitos": etapa, "peso_perro_kg": peso, "modo": "personalizar"}
+
+_r15 = _c.post("/menu/varios-perros", json={
+    "perros": [_perro_b15(1187.0, "Adulto", 23.0),
+               _perro_b15(1639.0, "CachorroCrecimiento", 20.0)],
+    "nombres": ["Rufo", "Cairo"],
+    "modo_conjunto": "parecidos",
+    "numero_de_menus": 2,
+    "personalizacion_por_menu": [
+        {"forzar_presencia": _M1_B15, "nombres_alimentos": _M1_B15},
+        {"forzar_presencia": _M2_B15, "nombres_alimentos": _M2_B15},
+    ],
+}).json()
+
+if not _r15.get("factible"):
+    fallos.append(f"BLOQUE15: la casa de dos perros no dio menús: {_r15.get('motivo')}")
+else:
+    for _p in _r15.get("perros", []):
+        for _j, _m in enumerate(_p.get("menus", [])):
+            _pedidos = _M1_B15 if _j == 0 else _M2_B15
+            # ⚠️ Solo cuentan las categorías EN LAS QUE SE ELIGIÓ ALGO. Una
+            # categoría que no tocas se queda en automático, y tiene que
+            # ser así: aquí no se eligió ningún pescado, y exigir que
+            # entonces no haya pescado sería prohibirlo, que es otra cosa
+            # muy distinta de no haberlo elegido. (Esta prueba nació
+            # afirmando de más y se cayó por eso, no por el motor.)
+            _cats_pedidas = {_por_nombre_b12.get(_x, {}).get("categoria") for _x in _pedidos}
+            _de_mas = [_n for _n in (_m.get("menu") or {})
+                       if _por_nombre_b12.get(_n, {}).get("categoria") in _cats_pedidas
+                       and _n not in _pedidos]
+            if _de_mas and not (_m.get("aviso") or _m.get("no_se_pudo_forzar")):
+                fallos.append(f"BLOQUE15: a {_p.get('nombre')} le metió {_de_mas} en el "
+                              f"menú {_j+1} sin pedirlo y sin avisar")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")
