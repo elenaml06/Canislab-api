@@ -145,7 +145,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             forzar=None, preferir=None, patologias=None, semilla_aleatoria=None,
             time_limit=15, restringir_especie=None, peso_adulto_esperado_kg=None,
             evitar_especies=None, restringir_a_elegidos=None, categorias_excluidas=None,
-            presupuesto_semanal_restante=None):
+            presupuesto_semanal_restante=None, diagnostico=None):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -394,6 +394,34 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     et = EQUIVALENCIA.get(etapa, etapa)
     A_rows, lb_rows, ub_rows = [], [], []
 
+    # ⚠️ AÑADIDO (24 agosto) — PARA PODER DEMOSTRAR QUE UNA REGLA EXISTE.
+    #
+    # Dos veces ha pasado ya que una restricción de este archivo no se
+    # añadía NUNCA -- el límite de 2 suplementos y el suelo de 1 g -- las
+    # dos por comparar `categoria_de[n]` (la CLAVE del diccionario de
+    # candidatos) contra una categoría real. No da error, no da aviso: la
+    # regla deja de existir y los menús siguen saliendo bien casi siempre.
+    # Generar menús y mirarlos NO lo caza; por eso las dos veces las
+    # encontró la casualidad, no las pruebas.
+    #
+    # Con esto sí se caza: quien llame puede pasar un diccionario vacío en
+    # `diagnostico` y recibir cuántas filas puso cada regla. Si una regla
+    # dice 0, esa regla no existe. Es solo contabilidad: no toca ni una
+    # fila, ni un coeficiente, ni el resultado. Lo usa el BLOQUE 16.
+    def _fila(regla, fila, lo, hi):
+        A_rows.append(fila)
+        lb_rows.append(lo)
+        ub_rows.append(hi)
+        if diagnostico is not None:
+            # ⚠️ Se cuentan las filas Y sus coeficientes. Contar solo filas no
+            # basta: el límite de 2 suplementos estuvo inerte con su fila
+            # PUESTA -- lo que estaba vacío era la fila, porque el bucle que
+            # la rellena comparaba `categoria_de` y no acertaba con nadie.
+            # Una fila sin un solo coeficiente no restringe nada: es 0 <= 2.
+            d = diagnostico.setdefault(regla, {"filas": 0, "coeficientes": 0})
+            d["filas"] += 1
+            d["coeficientes"] += sum(1 for v in fila if v)
+
     def fila_vacia():
         return [0.0] * (2 * n_var)
 
@@ -452,7 +480,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     fila = fila_vacia()
     for n in nombres:
         fila[idx[n]] = alimentos[n].get("energia", 0) / 100.0
-    A_rows.append(fila); lb_rows.append(der * (1 - tolerancia_kcal)); ub_rows.append(der * (1 + tolerancia_kcal))
+    _fila("kcal_total", fila, der * (1 - tolerancia_kcal), der * (1 + tolerancia_kcal))
 
     # ⚠️ AÑADIDO (5 agosto): topes mas estrictos por patologia. Si una
     # patologia baja el maximo de un nutriente y ese maximo es MAS
@@ -604,7 +632,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # encima del mínimo FEDIAF incluso después del redondeo.
         lo = mn * der / 1000.0 * 1.015 if mn is not None else -np.inf
         hi = mx * der / 1000.0 if mx is not None else np.inf
-        A_rows.append(fila); lb_rows.append(lo); ub_rows.append(hi)
+        _fila("fediaf_absoluto", fila, lo, hi)
 
         # ⚠️ AÑADIDO (21 agosto) — CASO REAL MEDIDO: con el tope renal de
         # fósforo en 1400, el motor devolvía menús con 1426. Se saltaba su
@@ -654,7 +682,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                 coef = v_nut - (mx_rel / 1000.0) * kcal_n
                 if coef:
                     fila_rel[idx[n]] = coef
-            A_rows.append(fila_rel); lb_rows.append(-np.inf); ub_rows.append(0.0)
+            _fila("fediaf_relativo", fila_rel, -np.inf, 0.0)
 
     # ⚠️ AÑADIDO (5 agosto, madrugada) — SELENIO POR GRAMO DE DIETA
     # (Merck Veterinary Manual: 2 µg/g de dieta, límite tolerable
@@ -677,7 +705,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             fila_selenio_g[idx[n]] = v_selenio - tope_selenio_efectivo
             aporta_selenio = True
     if aporta_selenio:
-        A_rows.append(fila_selenio_g); lb_rows.append(-np.inf); ub_rows.append(0.0)
+        _fila("selenio_por_gramo", fila_selenio_g, -np.inf, 0.0)
 
     # ⚠️ AÑADIDO (5 agosto, madrugada) — TIAMINASA Y MERCURIO como
     # restricciones duras. Estos dos no son nutrientes numéricos con
@@ -706,7 +734,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                 fila_set[idx[n]] = alimentos[n].get("energia", 0) / 100.0
                 aporta_set = True
         if aporta_set:
-            A_rows.append(fila_set); lb_rows.append(-np.inf); ub_rows.append(tope_frac_efectivo * der)
+            _fila("seguridad_cronica_" + clave_presupuesto, fila_set, -np.inf, tope_frac_efectivo * der)
 
     # 2b. RATIO Ca:P — se me olvidó la primera vez. Calcio y fósforo por
     # separado no bastan: la RELACIÓN entre ambos es su propio requisito,
@@ -724,10 +752,10 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             fila_p[idx[n]] = p
         if rmin is not None:
             fila = [fila_ca[j] - rmin * fila_p[j] for j in range(2 * n_var)]
-            A_rows.append(fila); lb_rows.append(0.0); ub_rows.append(np.inf)
+            _fila("ratio_ca_p_min", fila, 0.0, np.inf)
         if rmax is not None:
             fila = [fila_ca[j] - rmax * fila_p[j] for j in range(2 * n_var)]
-            A_rows.append(fila); lb_rows.append(-np.inf); ub_rows.append(0.0)
+            _fila("ratio_ca_p_max", fila, -np.inf, 0.0)
 
     # 3. margen por peso de cada categoría de COMIDA (no suplementos)
     if margenes_categoria:
@@ -833,9 +861,9 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             mnp_con_margen = mnp * 1.01 if mnp else mnp
             mxp_con_margen = mxp * 0.99 if mxp else mxp
             fila_rel_max = [fila_cat[j] - mxp_con_margen * fila_total[j] for j in range(2 * n_var)]
-            A_rows.append(fila_rel_max); lb_rows.append(-np.inf); ub_rows.append(0.0)
+            _fila("margen_categoria_max", fila_rel_max, -np.inf, 0.0)
             fila_rel_min = [-fila_cat[j] + mnp_con_margen * fila_total[j] for j in range(2 * n_var)]
-            A_rows.append(fila_rel_min); lb_rows.append(-np.inf); ub_rows.append(0.0)
+            _fila("margen_categoria_min", fila_rel_min, -np.inf, 0.0)
 
     # ⚠️ AÑADIDO (5 agosto): grasa como % de las kcal (pancreatitis,
     # diabetes) -- restricción propia, no cabe en el bucle de arriba
@@ -851,7 +879,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         for n in nombres:
             g = (_num(alimentos[n].get("nutrientes", {}).get("grasa")) or 0.0) / 100.0
             fila[idx[n]] = g * 9.0
-        A_rows.append(fila); lb_rows.append(-np.inf); ub_rows.append(pct_grasa_max * der)
+        _fila("grasa_patologia_absoluto", fila, -np.inf, pct_grasa_max * der)
 
         # ⚠️ AÑADIDO (24 agosto) — CASO REAL MEDIDO: en pancreatitis, con
         # el tope de grasa en el 25% de las kcal, el menú salía al 26%. En
@@ -886,7 +914,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             coef = g * 9.0 - pct_rel * kcal_n
             if coef:
                 fila_rel[idx[n]] = coef
-        A_rows.append(fila_rel); lb_rows.append(-np.inf); ub_rows.append(0.0)
+        _fila("grasa_patologia_relativo", fila_rel, -np.inf, 0.0)
 
     # 4. VINCULACIÓN gramos <= usa * techo (y gramos >= 0, ya en bounds)
     for n in nombres:
@@ -894,7 +922,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         fila = fila_vacia()
         fila[i] = 1.0
         fila[n_var + i] = -techos[i]
-        A_rows.append(fila); lb_rows.append(-np.inf); ub_rows.append(0.0)
+        _fila("vinculacion_usa_techo", fila, -np.inf, 0.0)
 
     # 4-bis. Y AL REVÉS: si un alimento se usa, que sea una cantidad que se
     # pueda PESAR.
@@ -927,9 +955,28 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # justo lo que no se puede hacer.
     #
     # Es la fila espejo de la de arriba: gramos_i >= minimo * usa_i.
+    #
+    # ⚠️ CORREGIDO (24 agosto) — ESTA FILA ERA CÓDIGO MUERTO. Decía
+    # `categoria_de.get(n) != "Extras"`, y `categoria_de` NO es la categoría
+    # del alimento: es la CLAVE del diccionario de candidatos. Los aceites,
+    # la sal, las semillas y el huevo entran como candidatos bajo la clave
+    # genérica "Suplementos" (ver SUP_CATS, que mete "Extras" ahí dentro), y
+    # ACCESIBLES no tiene ninguna clave "Extras". O sea que la condición
+    # nunca se cumplía para NADIE y la fila no se añadía ni una vez: el
+    # suelo de 1 g llevaba sin existir desde que se escribió.
+    #
+    # Es LA MISMA trampa que ya cazó el límite de 2 suplementos unos cientos
+    # de líneas más abajo, y por lo mismo: comparar la clave genérica contra
+    # una categoría real. Se arregla igual, mirando la categoría REAL en el
+    # catálogo. Si alguien añade otra fila que dependa de la categoría de un
+    # alimento: `alimentos[n]["categoria"]`, nunca `categoria_de[n]`.
+    #
+    # Lo encontró BLOQUE 14 fallando 1 de cada 20 veces en el caso más
+    # apretado (200 kcal con cuatro especies fuera): 0,55 g de aceite de
+    # girasol. Se veía poco porque solo asoma cuando el menú va justo.
     SUELO_MEDIBLE_G = 1.0
     for n in nombres:
-        if categoria_de.get(n) != "Extras":
+        if alimentos[n].get("categoria") != "Extras":
             continue
         i = idx[n]
         # Nunca por encima de su propio techo: si un alimento no puede
@@ -940,7 +987,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         fila = fila_vacia()
         fila[i] = 1.0
         fila[n_var + i] = -suelo
-        A_rows.append(fila); lb_rows.append(0.0); ub_rows.append(np.inf)
+        _fila("suelo_medible", fila, 0.0, np.inf)
 
     # 5. CUÁNTOS ALIMENTOS DISTINTOS por categoría (máx.)
     for cat, tope in cuantos_max.items():
@@ -950,7 +997,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         fila = fila_vacia()
         for n in miembros:
             fila[n_var + idx[n]] = 1.0
-        A_rows.append(fila); lb_rows.append(0); ub_rows.append(tope)
+        _fila("max_por_categoria", fila, 0, tope)
 
     # 6. MÁXIMO DE SUPLEMENTOS (solo los COMERCIALES cuentan para el
     # límite de "2" — los aceites/huevos de Extras no son "un suplemento"
@@ -974,7 +1021,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     for n in nombres:
         if alimentos[n].get("categoria") in SUP_COMERCIALES:
             fila[n_var + idx[n]] = 1.0
-    A_rows.append(fila); lb_rows.append(0); ub_rows.append(max_suplementos)
+    _fila("max_suplementos", fila, 0, max_suplementos)
 
     # 6b. EXTRAS + SUPLEMENTOS JUNTOS, MÁXIMO 5% DEL PESO (decisión de la
     # usuaria 5 agosto: "los extras, suplementos también entrando dentro
@@ -987,7 +1034,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         if categoria_de[n] == "Suplementos":
             fila_extras[idx[n]] = 1.0
     fila_5pc = [fila_extras[j] - 0.05 * fila_total_con_sup[j] for j in range(2 * n_var)]
-    A_rows.append(fila_5pc); lb_rows.append(-np.inf); ub_rows.append(0.0)
+    _fila("extras_y_suplementos_5pc", fila_5pc, -np.inf, 0.0)
 
     constraints = LinearConstraint(np.array(A_rows), np.array(lb_rows), np.array(ub_rows))
     integrality = np.array([0] * n_var + [1] * n_var)   # 0=continua, 1=entera(binaria)
