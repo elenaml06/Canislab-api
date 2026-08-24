@@ -181,6 +181,41 @@ menús comparados no tienen sentido sin él.
       **No lleva precios** a propósito: no los tenemos, cambian por
       tienda y semana, y una cifra inventada en una lista de la compra es
       peor que ninguna cifra.
+
+      ⚠️ **MOVIDA EL 24 DE AGOSTO, pedido expreso**: «no quiero que la
+      compra aparezca en el menú, tiene que estar solo en el menú lateral».
+      Quitada del menú de un perro y de la pantalla de varios; vive solo en
+      el panel, en los **dos** paneles (el ligero y el de dentro del menú —
+      se puso solo en el primero y desde la pantalla del menú, que es donde
+      más falta hace, no salía).
+
+      Al sacarla del menú apareció un fallo que antes no existía: leyendo
+      solo lo GUARDADO, acabas de generar un menú, no le has dado a guardar
+      y el panel te enseña la compra del menú **anterior** — números
+      correctos, menú equivocado, nada en pantalla que lo delate. Ahora
+      manda lo que tienes en pantalla y la pantalla dice de dónde salen los
+      números. Y se puede elegir **para cuántos días** (3, 1 semana, 2
+      semanas, 1 mes): los menús cubren una semana, así que el resto se
+      escala en proporción y se avisa cuando no es una semana.
+- [x] **La burbuja de perro y el engranaje, en TODAS las pantallas.** ✅
+      **Hecho el 24 de agosto.** Caso real: «la burbuja de perfiles de
+      perro y configuración tiene que existir en todas las pantallas, y en
+      todas las pantallas del menú lateral no aparecen».
+
+      Cierto: las seis pantallas que abre el panel (Perfil, Evolución, Mis
+      menús, Analizar, Por qué Rawku) tienen su **propia cabecera**, seis
+      copias, y se quedaron sin ella. Entrabas en Evolución y ya no sabías
+      de qué perro estabas viendo la evolución ni podías cambiar sin volver
+      atrás. También faltaba en Evolución/Analizar abiertas desde el
+      perfil, que es otra llamada distinta a `VistaMenus`.
+
+      La prueba (`tests/burbuja-en-todas.spec.js`) **no mira que exista**:
+      la pantalla de debajo sigue en el DOM con la suya y Playwright la
+      encuentra igual — quitando la burbuja de las seis cabeceras, la
+      primera versión de la prueba seguía pasando. Mira que **funcione**:
+      la toca y exige que se abra la hoja de perros. Y una tercera prueba
+      exige que el panel no tenga ninguna entrada que la lista no cubra,
+      para que la séptima pantalla no se olvide.
 - [x] **Menús parecidos entre perros** de la misma casa. ✅ **Motor hecho el
       21 de agosto**: `POST /menu/varios-perros`, con `modo_conjunto`
       `"parecidos"` o `"distintos"`. Manda el perro con menos margen (más
@@ -358,11 +393,37 @@ menús comparados no tienen sentido sin él.
       los demás se amoldan). Elegir alimentos distintos para cada perro es
       otra pantalla, y además pelea con que los menús se parezcan — hay
       que decidir antes qué gana cuando chocan.
-- [ ] **Entrar con Google.**
-- [ ] **Entrar con huella en el móvil.** Sí es posible: se hace con
-      *passkeys* (WebAuthn), que Supabase Auth soporta. No es la huella en
-      sí lo que viaja, sino una llave que el móvil guarda y desbloquea con
-      ella. Depende de tener antes los ajustes de cuenta.
+- [x] **Entrar con Google.** ✅ **Hecho el 24 de agosto** en
+      `canislab-web`. Botón en entrar y en crear cuenta (no en «olvidé mi
+      contraseña», que ahí no pega).
+
+      ⚠️ **FALTA UN PASO QUE NO ES CÓDIGO Y SIN ÉL NO FUNCIONA**: crear un
+      cliente OAuth en Google Cloud y pegar el ID y el secreto en el panel
+      de Supabase (*Authentication → Providers → Google*). Hasta que eso
+      esté, el botón devuelve a la app con `Unsupported provider` — y ese
+      motivo **se enseña tal cual en pantalla**, a propósito: un «algo ha
+      fallado» costaría media hora de buscar dónde.
+
+      Se lee el error tanto si vuelve en la query como en el hash (según el
+      flujo va en uno o en otro; mirar solo uno deja la mitad de los casos
+      en silencio) y se limpia la URL, para que recargar no lo repita para
+      siempre. 5 pruebas en `tests/entrar-con-google.spec.js`.
+- [ ] **Entrar con huella en el móvil.** Se hace con *passkeys* (WebAuthn).
+
+      ⚠️ **CORREGIDO EL 24 DE AGOSTO — antes ponía aquí «que Supabase Auth
+      soporta», a secas, y es verdad a medias.** Comprobado en la librería
+      instalada (`@supabase/auth-js` 2.112.3): `signInWithPasskey` existe,
+      pero la propia librería lo frena — *«the passkey API is experimental
+      and disabled by default»* — y hay que activarlo a mano al crear el
+      cliente. Además, ENTRAR con la llave está, pero **registrarla** no
+      aparece entre los factores (`enroll` solo admite `totp` y `phone`),
+      así que crear la llave la primera vez no está claro que se pueda con
+      esta versión.
+
+      Por eso va después de Google: Google es API estable y ahorra el paso
+      donde más gente abandona; la huella es API experimental sobre una
+      cuenta que ya tiene que existir, o sea comodidad para quien ya se
+      registró — justo quien menos problema tiene.
 - [ ] **Apartado de sugerencias.**
 - [ ] **Apartado de incidencias** (problemas con el pago y demás).
 - [ ] **Límite de 2 cambios de alimento por menú en la versión gratis**,
