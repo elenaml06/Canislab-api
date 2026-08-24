@@ -154,9 +154,33 @@ menús comparados no tienen sentido sin él.
       De paso: pesar al perro desde *Evolución* decía «✅ Peso
       actualizado» y **no lo guardaba nunca** — `usuario` no existía en
       esa pantalla y reventaba justo antes del guardado. Corregido.
-- [ ] **Cesta de la compra**, diferenciando de quién es cada cosa
-      («para Cairo» / «para Nala» / «para los dos»). Solo aparece la
-      distinción si hay más de un perro.
+- [x] **Cesta de la compra**, diferenciando de quién es cada cosa. ✅
+      **Hecha el 24 de agosto** en `canislab-web`. Sale al final de la
+      pestaña «El menú» (no en una pestaña nueva: la decisión era «el
+      menú, cómo darlo y ya está») y en la pantalla de varios perros.
+
+      Suma **la semana entera**: cada menú por SUS días. Con un perro no
+      existía ninguna lista; con varios existía pero sumaba **solo el
+      primer menú de cada uno** — si el segundo menú llevaba un alimento
+      distinto, ese alimento no salía en la compra y te ibas a la tienda
+      sin él.
+
+      Va por zonas de tienda (carnicería / pescadería / frutería /
+      despensa), porque carne, hueso, víscera e hígado son cuatro
+      casillas del motor pero un solo mostrador. Y en cantidades de
+      comprar, no de báscula: «2,5 kg», no «2478 g».
+
+      El «de quién» solo aparece si hay más de un perro **y** el alimento
+      no es de todos: «solo Cairo» en catorce de quince líneas taparía
+      justo la que importa.
+
+      La lógica vive en `src/cesta.js`, fuera de App.jsx, porque la usan
+      dos pantallas y tener dos copias fue lo que dejó una a medias
+      mientras la otra ni existía. 21 pruebas en `tests/cesta.spec.js`.
+
+      **No lleva precios** a propósito: no los tenemos, cambian por
+      tienda y semana, y una cifra inventada en una lista de la compra es
+      peor que ninguna cifra.
 - [x] **Menús parecidos entre perros** de la misma casa. ✅ **Motor hecho el
       21 de agosto**: `POST /menu/varios-perros`, con `modo_conjunto`
       `"parecidos"` o `"distintos"`. Manda el perro con menos margen (más
@@ -603,11 +627,27 @@ Prioridad, por lo que desbloquea:
       suplemento. Se arreglan con el peso del cacito de cada producto, que
       es un DATO y está apuntado en `DATOS_QUE_FALTAN.md`.
 
-      Vigilado en el **BLOQUE 14**, con una advertencia escrita dentro: es
-      un canario, no una demostración. Quitando el suelo, el bloque sigue
-      saliendo en verde — comprobado — porque el fallo es demasiado raro
-      para reproducirlo a voluntad con semilla aleatoria. Lo que sostiene
-      la garantía es la restricción del motor, que es estructural.
+      ⚠️ **CORREGIDO EL 24 DE AGOSTO — esto de arriba era falso.** Decía
+      que «lo que sostiene la garantía es la restricción del motor, que es
+      estructural». No lo era: **la fila del suelo no se añadía nunca**.
+      Comparaba `categoria_de[n]` (la CLAVE del diccionario de candidatos)
+      con `"Extras"`, y los aceites, la sal y las semillas entran bajo la
+      clave `"Suplementos"`. Código muerto desde el primer día. Salió
+      porque el BLOQUE 14 falló 1 de cada 20 veces en el caso más apretado:
+      0,55 g de aceite de girasol.
+
+      Es la **segunda** vez en ese archivo: el límite de 2 suplementos cayó
+      en la misma trampa. Para la categoría de un alimento se usa
+      `alimentos[n]["categoria"]`, NUNCA `categoria_de[n]`.
+
+      Y de ahí sale el **BLOQUE 16**, que es lo que de verdad lo vigila:
+      `resolver()` apunta, por cada regla, cuántas filas puso y cuántos
+      coeficientes llevan, y el bloque exige que ninguna de las 16 reglas
+      duras valga cero. Contar filas no bastaba — el fallo del límite de
+      suplementos añade la fila **vacía**, y `0 <= 2` se cumple siempre.
+      Comprobado con tres sabotajes y los tres se cazan. Si añades una
+      restricción a `resolver()`, pásala por `_fila(...)` y apúntala en el
+      BLOQUE 16; si no, puede morir en silencio como murieron estas dos.
 - [ ] **`aviso_composicion` en la web**: ya se pinta, pero conviene ver
       cómo queda en pantalla con un perro con tres alergias.
 - [ ] **El campo `tipo_de_clave_supabase` sale como `[Filtered]`** en
