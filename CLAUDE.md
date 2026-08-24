@@ -44,6 +44,24 @@ con alguna, casi siempre el error está en el cambio.
    seguridad. Ver `_escalera_de_relajacion()`.
 4. **Las alergias y las categorías excluidas a mano no se tocan jamás.**
    Pueden ser médicas.
+5. **Lo que eliges a mano se respeta, con un perro o con cinco.** Si la
+   pantalla de Personalizar te deja elegir en una categoría, el motor no
+   mete nada más de esa categoría. La lista de las que se respetan es
+   `CATEGORIAS_QUE_ELIGE_EL_USUARIO` en `main.py`, y **tiene que coincidir
+   con `CATEGORIAS` de `App.jsx`** — el día que dejen de coincidir, elegir
+   en las que sobran no hará nada y nadie se enterará, porque el menú sale
+   verde igual. Ya pasó: durante tres semanas se respetaban tres de las
+   seis, y 15 de cada 36 menús personalizados metían algo que nadie pidió,
+   callando.
+   Dos matices que no son excepciones:
+   · Una categoría que **no tocas** se queda en automático. No elegir
+     pescado no es prohibir el pescado; para eso están las alergias.
+   · Suplementos y Extras (sal, aceites, semillas, huevo) van siempre
+     libres: no se eligen en ninguna pantalla y son la herramienta con la
+     que el motor cierra los 30 requisitos.
+   Y si con lo elegido no hay menú posible, se baja de peldaño y **se
+   dice** — nunca se cambia en silencio. Eso incluye la pantalla de varios
+   perros, que tenía esos avisos puestos a `null` a mano.
 
 ## Cómo se prueba
 
