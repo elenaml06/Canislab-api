@@ -1277,6 +1277,91 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 14 — NADA QUE NO SE PUEDA PESAR
+#
+# CASO MEDIDO (24 de agosto): salían 0,35 g de sal común. Una báscula de
+# cocina normal mide de gramo en gramo, así que eso no lo pesa nadie -- y
+# esa sal era justo la que cerraba el cloruro del menú, o sea que ponerla
+# "a ojo" descuadra el menú de verdad.
+#
+# NO se arregla redondeando el resultado: cambiar los gramos después de
+# resolver cambia los nutrientes, y toda la app se sostiene sobre que las
+# cifras cuadran. Se arregla dentro del solver -- si va a usar un alimento
+# a granel, que use una cantidad medible; y si no le cuadra, que use otra
+# cosa.
+#
+# LOS SUPLEMENTOS COMERCIALES QUEDAN FUERA, y no es un descuido: no se
+# pesan, se dosifican con el cacito o el comprimido del bote. Obligarles a
+# llegar a 1 g sería obligar a dar de más de un suplemento. Que 0,15 g de
+# alga sea difícil de dosificar es un problema REAL, pero se arregla con el
+# peso del cacito de cada producto -- un dato que no tenemos, no código
+# (ver DATOS_QUE_FALTAN.md).
+#
+# ⚠️ LO QUE ESTE BLOQUE **NO** GARANTIZA, y hay que saberlo:
+#
+# Quitando el suelo del motor, este bloque SIGUE SALIENDO EN VERDE.
+# Comprobado. No es que esté mal escrito: es que el fallo es raro. Medido
+# sin el suelo, 8 vueltas por cada uno de nueve escenarios (incluidos los
+# apretados): 0 de 8 en todos. La sal por debajo de un gramo salió UNA vez
+# en ~300 alimentos medidos, y el solver lleva semilla aleatoria, así que
+# ni repitiendo sale a voluntad.
+#
+# O sea que esto es un CANARIO, no una demostración: caza que aparezca una
+# fuente NUEVA y frecuente de cantidades impesables, no que alguien quite
+# el suelo. Lo que de verdad sostiene la garantía es la restricción del
+# motor, que es estructural: si un alimento a granel se usa, es >= 1 g,
+# pase lo que pase con las semillas.
+#
+# Se deja igualmente porque es barato y porque el día que se toquen los
+# techos, los mínimos por categoría o el catálogo, esto avisa.
+# ============================================================
+print("=== BLOQUE 14: nada que no se pueda pesar ===")
+
+_SE_DOSIFICAN_B14 = {"Multivitamínico", "Omega-3", "Yodo", "Fibra", "Calcio",
+                     "Hierro", "Vitamina B", "Suplementos comerciales"}
+_SUELO_B14 = 1.0
+
+_CASOS_B14 = [
+    {"der_objetivo": 200, "peso_perro_kg": 1.5, "etapa_requisitos": "Adulto"},
+    {"der_objetivo": 450, "peso_perro_kg": 6, "etapa_requisitos": "Adulto"},
+    {"der_objetivo": 1100, "peso_perro_kg": 25, "etapa_requisitos": "Adulto"},
+    {"der_objetivo": 2100, "peso_perro_kg": 40, "etapa_requisitos": "Adulto"},
+    {"der_objetivo": 900, "peso_perro_kg": 12, "etapa_requisitos": "CachorroJoven"},
+    # Y los apretados, que es donde aparecían: con patología, con especies
+    # fuera y con una categoría entera excluida.
+    {"der_objetivo": 1100, "peso_perro_kg": 25, "etapa_requisitos": "Adulto",
+     "patologias": ["renal"]},
+    {"der_objetivo": 200, "peso_perro_kg": 1.5, "etapa_requisitos": "Adulto",
+     "especies_excluidas": ["pollo", "pavo", "vacuno", "cordero"]},
+    {"der_objetivo": 450, "peso_perro_kg": 6, "etapa_requisitos": "Adulto",
+     "especies_excluidas": ["pollo", "pavo", "conejo"],
+     "categorias_excluidas": ["Hueso carnoso"]},
+]
+
+_menus_b14 = 0
+for _cfg in _CASOS_B14:
+    for _ in range(2):
+        _r = _c.post("/menu/v2", json={"nombres_alimentos": [], "modo": "automatico", **_cfg}).json()
+        _g = _r.get("menu") or {}
+        if not _g:
+            continue
+        _menus_b14 += 1
+        for _n, _v in _g.items():
+            _cat = _por_nombre_b12.get(_n, {}).get("categoria")
+            if _cat in _SE_DOSIFICAN_B14:
+                continue
+            if _v < _SUELO_B14:
+                fallos.append(f"BLOQUE14: {_v:.2f} g de '{_n}' [{_cat}] — nadie pesa eso "
+                              f"(der {_cfg['der_objetivo']}, {_cfg['etapa_requisitos']})")
+
+if _menus_b14 < len(_CASOS_B14):
+    fallos.append(f"BLOQUE14: solo salieron {_menus_b14} menús de {len(_CASOS_B14)*2} — "
+                  f"¿el suelo ha dejado casos sin solución?")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")

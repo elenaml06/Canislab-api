@@ -1,5 +1,31 @@
 # Datos que faltan en el catálogo
 
+
+## Peso del cacito de los suplementos en polvo
+
+**Añadido el 24 de agosto.** Midiendo las cantidades no medibles salieron
+dosis como **0,15 g de AniForte Seaweed Meal** o **0,60 g de V-INTEGRA**.
+Nadie pesa eso, y a estos NO se les puede poner un suelo en el motor:
+obligarles a llegar a un gramo sería obligar a dar de más de un
+suplemento, que es justo lo que no se puede hacer.
+
+Se arregla con un dato que no tenemos: **cuánto pesa el cacito (o el
+comprimido) de cada producto**. Con eso, la app puede decir «un cuarto de
+cacito» en vez de «0,15 g», igual que ya hace con los comprimidos
+(`formatearComprimidos` en `App.jsx`).
+
+Es un dato de cada fabricante: viene en la etiqueta del bote. No lo busca
+Code — se rellena cuando lo tengáis, y la línea aparece sola.
+
+| Producto | Peso del cacito |
+|---|---|
+| AniForte Seaweed Meal | |
+| V-INTEGRA Perro Adulto | |
+| Homemadekun (multivitamínico completo) | |
+| napfcheck Novomineral proLEBER | |
+| NEKTON Dog Easy-BARF (multivitamínico) | |
+| Cáscara de huevo PAWS & PATCH | |
+
 Generado por `auditar_catalogo.py`. **Esto no lo rellena el asistente.**
 
 Cada valor tiene que venir de una fuente verificada por una persona:
