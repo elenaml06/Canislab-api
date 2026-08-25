@@ -295,10 +295,19 @@ def avisos_de_patologias(patologias, etapa="Adulto"):
         info = PATOLOGIAS.get(p)
         if not info:
             continue
-        # En crecimiento, si la patología bloquea, el mensaje que hay que
-        # dar es el de crecimiento -- el otro habla de un ajuste que no se
-        # ha hecho.
-        if (info.get("en_crecimiento") == "bloquear" and _es_crecimiento(etapa)
+        # En crecimiento, NINGÚN tope `solo_en_adulto` se ha aplicado: ni el
+        # que bloquea (renal) ni el que se suelta (pancreatitis). El aviso de
+        # adulto dice "se ha bajado el fósforo" o "se ha bajado la grasa", y
+        # ahí eso es FALSO -- no se ha bajado nada. Hay que dar el de
+        # crecimiento, que cuenta lo que ha pasado de verdad.
+        #
+        # ⚠️ Antes esta condición miraba solo `en_crecimiento == "bloquear"`,
+        # así que a un cachorro con pancreatitis le habría tocado el `elif`
+        # de abajo: el texto de adulto, afirmando una restricción que no
+        # existía. No llegó a verse porque main.py solo llamaba aquí con las
+        # patologías que BLOQUEAN -- pero el fallo estaba puesto y esperando
+        # a la primera llamada que pasara una que no bloquea.
+        if (info.get("solo_en_adulto") and _es_crecimiento(etapa)
                 and info.get("aviso_crecimiento")):
             salida.append(info["aviso_crecimiento"])
         elif info.get("aviso"):

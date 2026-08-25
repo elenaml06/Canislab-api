@@ -65,6 +65,25 @@ def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=N
     problemas = list(revisar_seguridad_v2(gramos, al, der, etapa, patologias,
                                           peso_perro_kg=peso_perro_kg) or [])
     problemas += list(avisos_rotacion_v2(gramos, al) or [])
+    # ⚠️ AÑADIDO (25 agosto) — CASO REAL ENCONTRADO: un cachorro con
+    # pancreatitis recibía su menú con el tope de grasa QUITADO y sin que
+    # nadie se lo dijera. El tope de 20 g/1000 kcal no se puede aplicar en
+    # crecimiento (el mínimo que FEDIAF exige ahí, 21,25 g, es MAYOR que el
+    # tope), así que soltarlo es correcto -- pero callárselo no lo es.
+    #
+    # El aviso ya existía: `topes_de_patologias` lo devuelve como tercer
+    # valor. Solo que en el motor se recogía en `_avisos_pat` y se tiraba, y
+    # aquí no se pedía. O sea que la regla de "se baja de peldaño y SE DICE"
+    # se cumplía para las proporciones del BARF y se saltaba justo para un
+    # tope clínico, que es donde más importa.
+    #
+    # Va por `problemas_seguridad` a propósito: es el canal que la app ya
+    # pinta en TODOS los caminos (generar, semana, varios perros, editar,
+    # revalidar), así que con ponerlo en esta función sale en los ocho
+    # sitios sin tocar la app ni añadir una clave nueva que alguien tenga
+    # que acordarse de leer.
+    _topes, _pct, avisos_por_la_etapa = topes_de_patologias(patologias, etapa)
+    problemas += avisos_por_la_etapa
     return problemas
 
 

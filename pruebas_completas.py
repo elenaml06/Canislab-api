@@ -1332,6 +1332,76 @@ if _r_sano.get("factible"):
     if _main_b13._tope_patologia_roto(_r_sano.get("menu") or {}, _por_nombre_b12, None):
         fallos.append("BLOQUE13: la puerta dice que un perro SIN patologías se pasa de un tope")
 
+# (5) SOLTAR UN TOPE CLÍNICO SE DICE. NUNCA EN SILENCIO.
+#
+# ⚠️ CASO REAL ENCONTRADO (25 agosto): un cachorro con pancreatitis recibía
+# su menú con el tope de grasa QUITADO y sin una palabra. Soltarlo es
+# correcto — el mínimo de FEDIAF en crecimiento (21,25 g/1000 kcal) es MAYOR
+# que el tope terapéutico (20 g), así que aplicarlo sería no dar menú — pero
+# callárselo no lo es: quien lee la pantalla cree que su cachorro está
+# comiendo bajo en grasa, y no lo está.
+#
+# El aviso ya existía en el motor (`topes_de_patologias` lo devuelve como
+# tercer valor) y se tiraba en los dos extremos: el motor lo recogía en una
+# variable con guion bajo y main.py ni lo pedía. Es la regla de "se baja de
+# peldaño y SE DICE" saltada justo donde más importa: un tope clínico no es
+# una proporción de BARF.
+#
+# Se comprueba contra el ENDPOINT, no contra el motor, porque el fallo no
+# estaba en el motor: estaba en que nadie recogía lo que el motor daba.
+_b13_crec = {"nombres_alimentos": [], "der_objetivo": 900, "peso_perro_kg": 14,
+             "etapa_requisitos": "CachorroCrecimiento", "modo": "automatico",
+             "patologias": ["pancreatitis"]}
+_r_crec = _c.post("/menu/v2", json=_b13_crec).json()
+if not _r_crec.get("factible"):
+    fallos.append("BLOQUE13 aviso de etapa: un cachorro con pancreatitis tiene que "
+                  "recibir menú (el tope se suelta), y no ha salido ninguno")
+else:
+    _avisos = [str(x) for x in (_r_crec.get("problemas_seguridad") or [])]
+    if not any("pancreatitis" in a.lower() for a in _avisos):
+        fallos.append("BLOQUE13 aviso de etapa: al cachorro con pancreatitis se le ha "
+                      "soltado el tope de grasa EN SILENCIO — no hay ningún aviso que "
+                      "lo diga en problemas_seguridad")
+
+# Y el TEXTO tiene que ser el de crecimiento, no el de adulto. Esto se
+# comprueba directamente sobre `avisos_de_patologias` y no sobre la
+# respuesta del endpoint a propósito: hoy esa función solo se llama con las
+# patologías que BLOQUEAN, así que un fallo aquí no se vería desde fuera —
+# comprobarlo por el endpoint sería una prueba que aprueba siempre.
+#
+# Importa igual porque el texto de adulto dice "se ha bajado la grasa", y en
+# crecimiento eso es FALSO: no se ha bajado nada. El día que alguien llame a
+# esta función con una patología que no bloquea (que es lo natural al
+# enseñar los avisos de un menú que sí ha salido), estaría afirmándole a la
+# usuaria una restricción que no existe. Un aviso falso es peor que ninguno.
+from motor_completo import avisos_de_patologias as _avisos_pat_b13
+for _pat_t, _et_t, _debe_decir, _no_puede_decir in [
+    (["pancreatitis"], "CachorroJoven",       "no ha podido bajar la grasa", "se ha bajado la grasa"),
+    (["renal"],        "CachorroCrecimiento", "plan dietético individual",   "se ha bajado el fósforo"),
+    (["pancreatitis"], "Adulto",              "se ha bajado la grasa",       "no ha podido bajar"),
+    (["renal"],        "Adulto",              "se ha bajado el fósforo",     "plan dietético individual"),
+]:
+    _txt = " ".join(_avisos_pat_b13(_pat_t, _et_t)).lower()
+    if _debe_decir not in _txt:
+        fallos.append(f"BLOQUE13 texto de aviso: para {_pat_t} en {_et_t} el aviso "
+                      f"tendría que decir «{_debe_decir}» y dice: {_txt[:120]}")
+    if _no_puede_decir in _txt:
+        fallos.append(f"BLOQUE13 texto de aviso: para {_pat_t} en {_et_t} se le está "
+                      f"diciendo «{_no_puede_decir}», que ahí no es verdad")
+
+# Y al revés, dos veces: ni a un adulto con pancreatitis (el tope SÍ se le
+# aplica, así que no hay nada que avisar) ni a un cachorro sano se les puede
+# colar este aviso. Un aviso que sale siempre no informa de nada.
+for _et_no, _pat_no, _que in [("Adulto", ["pancreatitis"], "un adulto con pancreatitis"),
+                              ("CachorroCrecimiento", [], "un cachorro sano")]:
+    _r_no = _c.post("/menu/v2", json={**_b13_crec, "etapa_requisitos": _et_no,
+                                      "patologias": _pat_no}).json()
+    if _r_no.get("factible"):
+        _av_no = [str(x) for x in (_r_no.get("problemas_seguridad") or [])]
+        if any("no ha podido bajar la grasa" in a.lower() for a in _av_no):
+            fallos.append(f"BLOQUE13 aviso de etapa: a {_que} se le da el aviso de "
+                          f"que no se ha podido bajar la grasa, y ahí no toca")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
