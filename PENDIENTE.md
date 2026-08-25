@@ -401,28 +401,29 @@ menús comparados no tienen sentido sin él.
       la fecha vacía por el fallo de guardado (ver arriba). Hay que entrar
       en cada perro, ponerla y guardar. Una vez y ya.
 
-- [ ] **La compra: elegir el menú, los días bien, y marcar lo que ya
-      tienes.** Pedido el 24 de agosto, después de usarla:
+- [x] **La compra: elegir el menú, los días bien, y marcar lo que ya
+      tienes.** Pedido el 24 de agosto después de usarla; hecho el 25.
 
-      1. **Elegir qué menú ver.** Cada uno por separado o todos juntos, a
-         gusto de quien compra. Hoy solo se puede ver el conjunto.
+      1. **Elegir qué menú ver.** Selector arriba de la lista: "Todos
+         juntos" o "Menú N · X días".
 
-      2. **Los días están mal planteados, y es un fallo de concepto, no de
-         cuentas.** Hoy la cesta sale de UNA SEMANA y lo demás se escala en
-         proporción (dias/7). Pero los menús de una semana no duran lo
-         mismo: uno cubre 4 días y otro 3. Sus palabras: *«si cocinas para
-         1 semana uno de 3 días tienes para más de dos»*. O sea que "1
-         semana" aplicado a un menú suelto no significa una semana de ese
-         menú.
+      2. **Los días.** Era un fallo de concepto, no de cuentas: la cesta
+         salía de UNA SEMANA y todo se escalaba por dias/7, pero los menús
+         de una semana no duran lo mismo (uno cubre 4 días y otro 3). Sus
+         palabras: *«si cocinas para 1 semana uno de 3 días tienes para más
+         de dos»*. Ahora son dos preguntas distintas según lo que mires:
+         todos juntos → **semanas** (multiplicar una semana por 2 es
+         exacto); un menú solo → **tandas de ese menú**, y cada opción dice
+         los días de comida que da ("2 tandas · 6 días"). Encima de la
+         lista, en grande, los días que cubre lo que estás viendo.
 
-         Lo que hace falta: que la proporción sea **por menú** y que la
-         pantalla **diga a qué se refiere** — cuántos días cubre cada menú
-         y cuántas tandas estás comprando. Un número sin explicación en una
-         lista de la compra es peor que ningún número.
+      3. **Casillas para marcar lo comprado**, la línea entera pulsable
+         (un cuadradito de 12 px no se acierta de pie en una tienda), y un
+         botón de empezar de cero que solo sale si hay algo marcado. Se
+         guarda en el navegador a propósito, no en Supabase: es de este
+         móvil y de esta compra.
 
-      3. **Casillas para marcar lo que ya has comprado o tienes**, y un
-         botón para dejarlo todo a cero otra vez, como si no tuvieras nada.
-         Textual: *«esto tiene que ser user friendly»*.
+      PR #31 de canislab-web. 8 pruebas nuevas, comprobadas rompiéndolas.
 
 - [ ] **¿Una versión para dueños y otra para veterinarios/nutricionistas?**
       Pedido el 24 de agosto: investigar si tiene sentido separarlas, y qué
