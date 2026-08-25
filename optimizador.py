@@ -79,7 +79,15 @@ MAPA_REQUISITO_A_NUTRIENTE = {
     "Acido_pantotenico": "acidoPantotenico",
     "Colina": "colina",
     "Cloruro": "cloruro",
-    "Fibra": "fibra",
+    # ⚠️ QUITADO (25 agosto): "Fibra" NO es un requisito de FEDIAF -- la
+    # tabla no la trae. Esa fila estaba en requerimientos_v2_final.json
+    # desde el primer commit, sin fuente, y desde aquí llegaba al
+    # analizador: le dijo a una usuaria que a un menú hecho por la propia
+    # app le faltaba fibra (8 de 8 menús verdes salían cortos). La fila se
+    # ha quitado del JSON y esta clave con ella. Ver el comentario de
+    # analizador.py, el BLOQUE 18 de pruebas_completas.py y la
+    # comprobación nueva de auditar_fediaf.py, que ahora mira TAMBIÉN si
+    # sobra alguna fila -- que es lo que no miraba nadie.
     # Tope de calcio especifico para cachorros de raza GRANDE en crecimiento.
     # Se mapea al mismo nutriente que "Calcio" a proposito: es una segunda
     # restriccion, mas estricta, que solo se activa cuando toca (ver

@@ -19,6 +19,7 @@ Ejecutar tras cualquier cambio en requerimientos_v2_final.json:
     python3 auditar_fediaf.py
 """
 import json
+import os
 
 # Transcrito de la TABLA III-3b (FEDIAF 2025, pag. 16 del PDF).
 # Unidades POR 1000 kcal EM, tal cual las da la tabla.
@@ -95,7 +96,14 @@ CAMPOS = [("minAdulto", 0, "Adulto"),
           ("minCachorroJoven", 2, "CachorroJoven (Early Growth)"),
           ("minCachorroCrecimiento", 3, "CachorroCrecimiento (Late Growth)")]
 
-req = {r["nutriente"]: r for r in json.load(open("/home/user/Canislab-api/requerimientos_v2_final.json", encoding="utf-8"))}
+# ⚠️ Ruta relativa al PROPIO archivo (25 agosto): aquí había una ruta
+# absoluta a un ordenador concreto, así que esta auditoría solo se podía
+# ejecutar en esa máquina. En cualquier otra reventaba antes de comprobar
+# nada -- y una auditoría que no se puede ejecutar no auditó nunca.
+_AQUI = os.path.dirname(os.path.abspath(__file__))
+req = {r["nutriente"]: r
+       for r in json.load(open(os.path.join(_AQUI, "requerimientos_v2_final.json"),
+                               encoding="utf-8"))}
 def num(v):
     if v in (None, "", "-"): return None
     try: return float(str(v).replace(",", "."))
@@ -187,6 +195,42 @@ for nut in SIN_MAXIMO:
                               f"{etapa}: el JSON pone un máximo y FEDIAF no da ninguno"))
         else:
             ok_n += 1
+
+# ─── Y AL REVÉS: ¿SOBRA ALGUNA FILA EN EL JSON? ─────────────────────────────
+#
+# ⚠️ AÑADIDO (25 agosto) — CASO REAL ENCONTRADO. Esta auditoría comprobaba
+# que cada valor de FEDIAF estuviera bien puesto en el JSON. Nunca comprobó
+# lo contrario: que cada fila del JSON venga de FEDIAF. Con 161
+# comprobaciones cuadrando y 0 discrepancias, en el JSON había una fila
+# "Fibra" (4,29 g mínimo, 14,3 máximo) QUE NO ESTÁ EN LA TABLA DE FEDIAF, y
+# esta auditoría la daba por buena sin mirarla, porque solo recorría su
+# propia lista.
+#
+# El motor nunca la usó (no estaba en verificar.MAPA), pero el ANALIZADOR
+# sí: le dijo a una usuaria que a un menú hecho por la propia app le faltaba
+# fibra. 8 de 8 menús verdes salían cortos.
+#
+# Una fila que sobra es tan peligrosa como un valor mal puesto: en el
+# momento en que alguien la enchufa a un mapa, pasa a decidir menús. Y una
+# auditoría que solo mira en una dirección deja creer que está todo
+# comprobado.
+NO_SON_NUTRIENTES_DE_LA_TABLA = {
+    # Sí sale de FEDIAF, pero es una RELACIÓN, no una fila de nutriente.
+    "Relacion_Ca_P",
+    # Caso especial derivado: el calcio de cachorros de raza grande en
+    # crecimiento tardío. No es una fila propia de la tabla III-3b; el motor
+    # lo aplica aparte, solo si el peso adulto esperado es >= 25 kg.
+    "Calcio_LateGrowth_RazaGrande",
+}
+_cubiertos = set(EQUIV) | set(MAXIMOS) | set(SIN_MAXIMO) | NO_SON_NUTRIENTES_DE_LA_TABLA
+for _n in req:
+    if _n in _cubiertos:
+        continue
+    problemas.append(("NO ESTÁ EN FEDIAF", _n,
+                      "hay una fila en el JSON que esta auditoría no compara contra "
+                      "ninguna fila de la tabla III-3b. O falta añadirla aquí con su "
+                      "valor de FEDIAF, o no es un requisito y no puede acabar en "
+                      "ningún mapa de requisitos (es lo que pasó con 'Fibra')"))
 
 print()
 print("Comprobaciones que cuadran: %d" % ok_n)
