@@ -26,6 +26,24 @@ las tiene que tomar una persona, no yo.
       | Cobre (hepatopatía) | 3.0 | 2.08 | **2.3** |
       | Grasa (pancreatitis) | 25 % | — | **18 %** (con suelo en cachorros) |
       Decidir si se aplican esos tres, o si se prefiere otra cosa.
+- [ ] **Repasar la transcripción de la tabla de FEDIAF.** En
+      `auditar_fediaf.py` la tabla III-3b está escrita a mano. La auditoría
+      compara el JSON contra ESA transcripción: si un número se tecleó mal
+      en los dos sitios igual, cuadra y nadie lo ve. Es leer las columnas
+      contra el PDF una vez, y ya queda cerrado. Nació el 25 de agosto,
+      cuando apareció una fila (`Fibra`) que no era de FEDIAF y la
+      auditoría la daba por buena. Ver el recuadro del apartado 5.
+
+- [ ] **Auditar los valores de los ALIMENTOS.** `requerimientos_v2_final
+      .json` tiene auditoría contra el PDF; `alimentos_v3_final.json` no
+      tiene ninguna. Un valor mal en la composición de un alimento tuerce
+      todos los menús que lo lleven y ninguna prueba lo vería. Las fuentes
+      son BEDCA, CIQUAL y USDA, y el hueso solo Köber et al. 2017.
+
+- [ ] **Fibra de tres verduras**: borraja, coles de Bruselas y tomate en
+      puré no tienen el dato. Hoy no afecta a nada (la fibra no es un
+      requisito de FEDIAF), pero el hueco está por si algún día se usa.
+
 - [ ] **¿Hace falta estar dada de alta como autónoma para cobrar?**
       Pregunta para la gestoría, antes de rellenar el tipo de negocio en
       Stripe. Bloquea la verificación del negocio.
@@ -553,12 +571,54 @@ menús comparados no tienen sentido sin él.
 
 ## 5. Nutrición — auditado contra el PDF oficial
 
+> ### ⚠️ LO QUE ESTA AUDITORÍA **NO** COMPRUEBA (25 de agosto)
+>
+> Se escribe aquí porque el 25 de agosto apareció un fallo que esta
+> auditoría tenía delante y no vio, y la pregunta que hizo falta contestar
+> fue: *«¿cómo puedo fiarme de que está todo correcto?»*. Merece una
+> respuesta escrita, no de palabra.
+>
+> **Lo que pasó.** En `requerimientos_v2_final.json` había una fila
+> `Fibra` (mínimo 4,29 g/1000 kcal, máximo 14,3) **que no está en la tabla
+> de FEDIAF**. Lleva ahí desde el primer commit del repositorio (14 de
+> agosto), sin nota de fuente. El motor nunca la usó, pero el analizador
+> sí: por eso un menú hecho por la propia app salía «le falta fibra». 8 de
+> 8 menús verdes se quedaban cortos.
+>
+> **Por qué la auditoría dijo «161 cuadran, 0 discrepancias».** Porque
+> recorría la lista de FEDIAF y comprobaba que cada valor estuviera bien
+> puesto en el JSON. Nunca comprobaba lo contrario: que cada fila del JSON
+> venga de FEDIAF. Una fila que sobra era invisible. **Ya no**: desde el 25
+> de agosto mira los dos sentidos, y el BLOQUE 18 de `pruebas_completas.py`
+> la ejecuta y exige 0 discrepancias.
+>
+> **Lo que sigue sin comprobar nadie**, y hay que saberlo:
+>
+> 1. **La tabla de FEDIAF de `auditar_fediaf.py` está transcrita a mano**
+>    del PDF. Si un número se tecleó mal ahí Y está igual de mal en el
+>    JSON, los dos cuadran y nadie se entera. Lo único que lo cierra es
+>    que una persona lea las dos columnas contra el PDF una vez.
+> 2. **Los valores de los ALIMENTOS (`alimentos_v3_final.json`) no tienen
+>    ninguna auditoría.** Los requisitos sí; la composición de cada
+>    alimento, no. Un valor mal ahí tuerce todos los menús que lo usen y
+>    ninguna prueba lo vería: las pruebas comprueban que el motor cumple
+>    los requisitos *con los datos que tiene*.
+> 3. **Faltan datos de fibra en 3 verduras** (borraja, coles de Bruselas,
+>    tomate en puré). Hoy no afecta a nada porque la fibra no es un
+>    requisito, pero el hueco está.
+>
+> **Qué significa «TODO EN VERDE»**, para no volver a confundirlo: que el
+> motor cumple lo que dice el JSON, que ningún menú sale sin verificar, y
+> que las reglas del motor existen de verdad. **No** significa que el JSON
+> sea correcto. Eso lo dice la auditoría contra el PDF, y solo hasta donde
+> llega la transcripción del punto 1.
+
 **Hecho el 21 de agosto** contra la TABLA III-3b de la *FEDIAF Nutritional
 Guidelines 2025* (el PDF oficial, no de memoria). Script reproducible en
 `auditar_fediaf.py`.
 
 **161 de 161 comprobaciones cuadran exactas** — mínimos *y* máximos. Se
-verificó, para los 30 nutrientes del JSON y en las tres etapas: el valor,
+verificó, para los nutrientes del JSON y en las tres etapas: el valor,
 la unidad, y que todo esté por 1000 kcal de energía metabolizable.
 
 Los máximos son la cara de la toxicidad y vienen de dos sitios distintos,
