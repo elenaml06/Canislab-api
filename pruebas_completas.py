@@ -1641,6 +1641,75 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 17 — REGENERAR CONSERVA LOS ALIMENTOS, Y CADA MENÚ LOS SUYOS
+# ============================================================
+#
+# ⚠️ CASO REAL ENCONTRADO (25 agosto): "he lanzado el regenerar menús
+# cambiando el peso del perro desde evolución, pero me los ha cambiado
+# BASTANTE, el primero lo ha respetado un poco más pero el segundo...
+# prácticamente nada".
+#
+# El botón promete "regenera con los mismos ingredientes" y no había forma
+# de pedir eso: la app metía los alimentos en `nombres_alimentos`, que el
+# servidor SOLO mira en los modos "personalizar" y "aprovechar" -- y esa
+# pantalla manda "automatico", que los ignora los dos. La petición salía
+# perfecta y el servidor la tiraba entera. Encima la lista salía de
+# menus[0] y se mandaba igual para todos, así que el menú 2 recibía los
+# alimentos del 1: por eso "el segundo prácticamente nada".
+#
+# Medido antes del arreglo con dos menús de 6 alimentos: el 1 conservaba
+# 3 de 6 y el 2 solo 2 de 6.
+#
+# Esto NO se puede probar mirando que "se parezca": tiene que medir cuánto
+# se conserva, porque el fallo era justo que se conservaba a medias y a
+# medias no se distingue de bien a ojo.
+print("=== BLOQUE 17: regenerar conserva los alimentos de cada menú ===")
+
+def _alimentos_de(m):
+    g = m.get("menu") or m.get("gramos") or {}
+    return {n for n, v in g.items() if v > 0}
+
+_p_b17 = _api.PeticionMenu(nombres_alimentos=[], modo="automatico", der_objetivo=1100,
+                           etapa_requisitos="Adulto", peso_perro_kg=20, tamano="mediano")
+_orig_b17 = _api.endpoint_menu_semana(_p_b17, numero_de_menus=2)
+if not _orig_b17.get("factible"):
+    fallos.append("BLOQUE17: no se pudo generar la semana de partida.")
+else:
+    _previos_b17 = [sorted(_alimentos_de(m)) for m in _orig_b17["menus"]]
+
+    # Mismo perro, 2 kg más: es lo que hace el botón de Evolución.
+    _p2_b17 = _api.PeticionMenu(nombres_alimentos=[], modo="automatico", der_objetivo=1180,
+                                etapa_requisitos="Adulto", peso_perro_kg=22, tamano="mediano",
+                                preferir_por_menu=_previos_b17)
+    _nuevo_b17 = _api.endpoint_menu_semana(_p2_b17, numero_de_menus=2)
+    if not _nuevo_b17.get("factible"):
+        fallos.append("BLOQUE17: conservar los alimentos ha vuelto la semana imposible. "
+                      "Preferir NUNCA puede hacer eso: es una preferencia, no una imposición.")
+    else:
+        for _i, _m in enumerate(_nuevo_b17["menus"]):
+            _antes = set(_previos_b17[_i])
+            _pct = 100 * len(_antes & _alimentos_de(_m)) / max(1, len(_antes))
+            # 80% y no 100%: el motor puede tener que soltar algo para
+            # cuadrar los requisitos con las kcal nuevas, y eso es correcto
+            # -- lo que no puede es rehacer el menú entero. Antes del
+            # arreglo esto daba 50% y 33%.
+            if _pct < 80:
+                fallos.append(f"BLOQUE17: el menú {_i+1} solo conserva el {_pct:.0f}% de sus "
+                              f"alimentos al regenerar. Se pidió conservarlos.")
+
+    # Y sin pedir nada, se sigue pudiendo generar de cero: preferir es
+    # opcional y no puede haberse vuelto obligatorio por el camino.
+    _libre_b17 = _api.endpoint_menu_semana(
+        _api.PeticionMenu(nombres_alimentos=[], modo="automatico", der_objetivo=1180,
+                          etapa_requisitos="Adulto", peso_perro_kg=22, tamano="mediano"),
+        numero_de_menus=2)
+    if not _libre_b17.get("factible"):
+        fallos.append("BLOQUE17: sin preferir_por_menu ya no se genera la semana.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")

@@ -467,6 +467,28 @@ class PeticionMenu(BaseModel):
     # que el usuario hubiera pedido nada de eso. Ahora es una preferencia
     # SUAVE: el motor la evita si puede, nunca falla por su culpa.
     evitar_especies: Optional[list] = None
+    # ⚠️ AÑADIDO (25 agosto) — CASO REAL: "he lanzado el regenerar menús
+    # cambiando el peso del perro desde evolución, pero me los ha cambiado
+    # BASTANTE, el primero lo ha respetado un poco más pero el segundo...
+    # prácticamente nada".
+    #
+    # El botón promete "regenera con los mismos ingredientes", y no había
+    # forma de pedir eso: `nombres_alimentos` solo se mira en los modos
+    # "personalizar" y "aprovechar", y esa pantalla manda "automatico", que
+    # los IGNORA los dos. La petición salía correcta y el servidor la
+    # tiraba a la basura.
+    #
+    # Esto es una PREFERENCIA, no una imposición, y por eso va aparte de
+    # `nombres_alimentos`: sirve en cualquier modo (en Personalizar convive
+    # con lo que el usuario forzó) y nunca puede volver el menú imposible.
+    # Llega tal cual al `preferir` del motor: abarata usar esos alimentos,
+    # no obliga a nada.
+    preferir_alimentos: Optional[list] = None
+    # Lo mismo pero para /menu/semana, que genera N menús de una vez: una
+    # lista por menú, en el mismo orden. Tiene que ser por menú -- el fallo
+    # que ella vio era exactamente ése, que el segundo menú recibía los
+    # alimentos del PRIMERO.
+    preferir_por_menu: Optional[list] = None
     # ⚠️ AÑADIDO para /menu/v2 (5 agosto): el frontend dice explícitamente
     # qué modo quiere, en vez de que el backend tenga que adivinarlo por
     # lo que manda en nombres_alimentos/forzar_presencia.
@@ -974,9 +996,25 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
             presupuesto_para_este = _presupuesto_para_menu_actual(
                 presupuesto_restante, dias_restantes_incluido_este)
 
+            # ⚠️ AÑADIDO (25 agosto) — CADA MENÚ CONSERVA LO SUYO. El fallo
+            # que ella vio: "el primero lo ha respetado un poco más pero el
+            # segundo... prácticamente nada". El frontend recogía los
+            # alimentos de menus[0] y los mandaba para TODOS, así que el
+            # menú 2 recibía los del 1.
+            preferir_este = list((datos.preferir_por_menu or [])[i] or []) \
+                if i < len(datos.preferir_por_menu or []) else []
+
+            # ⚠️ Y SI SE CONSERVA, NO SE ROTA. `especies_usadas` está para
+            # que dos menús automáticos no salgan con la misma proteína --
+            # pero conservando, la variedad ya la da el menú original, y
+            # evitar la especie del menú 1 es justo empujar al menú 2 fuera
+            # de sus propios alimentos. Las dos cosas a la vez se anulan:
+            # se pide conservar y se obliga a cambiar.
             datos_este = datos.model_copy(update={
                 "presupuesto_semanal_restante": presupuesto_para_este,
-                "evitar_especies": list(datos.evitar_especies or []) + especies_usadas,
+                "evitar_especies": list(datos.evitar_especies or [])
+                                   + ([] if preferir_este else especies_usadas),
+                "preferir_alimentos": preferir_este or None,
             })
             resultado = _garantizar_verificado(
                 _resolver_menu_v2_interno(datos_este),
@@ -1172,8 +1210,15 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # instante si hay una coincidencia exacta; si no la hay (más de una
     # restricción, alimentos concretos forzados, alergias...), se sigue
     # abajo con el camino normal de Personalizar, resolviendo en vivo.
+    # ⚠️ `not datos.preferir_alimentos` (25 agosto): las vías rápidas sirven
+    # un menú YA CALCULADO, de catálogo. No miran ni pueden mirar qué
+    # alimentos se quieren conservar, así que si hay algo que preferir hay
+    # que resolver de verdad. Sin este guardia, "regenerar con los mismos
+    # ingredientes" devolvía un menú enlatado y la preferencia no se
+    # aplicaba nunca -- que es justo el fallo que esto viene a arreglar.
     if (datos.modo == "personalizar" and datos.tamano and not excluidos
             and not datos.patologias and not (datos.forzar_presencia or datos.nombres_alimentos)
+            and not datos.preferir_alimentos
             and datos.restringir_especie and len(datos.restringir_especie) == 1):
         (cat_pedida, especie_pedida), = datos.restringir_especie.items()
         if cat_pedida in ("Carne muscular", "Pescados y mariscos"):
@@ -1237,7 +1282,8 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         forzar = list(datos.forzar_presencia or datos.nombres_alimentos or [])
     elif datos.modo == "aprovechar":
         preferir = list(datos.nombres_alimentos or [])
-    elif datos.modo == "automatico" and not excluidos and not datos.patologias and not datos.categorias_excluidas:
+    elif (datos.modo == "automatico" and not excluidos and not datos.patologias
+          and not datos.categorias_excluidas and not datos.preferir_alimentos):
         # ⚠️ AÑADIDO (5 agosto, madrugada) — VARIANTES PRE-RESUELTAS: caso
         # real encontrado con datos exactos de producción -- resolver un
         # menú en caliente con una proteína evitada tardó 19,4 segundos
@@ -1352,6 +1398,12 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                     }
                 # si no salió verde, se prueba otra vez -- si se agota el
                 # presupuesto de tiempo, se descarta y se sigue con la búsqueda libre
+
+    # Vale en cualquier modo: en "aprovechar" se suma a lo que ya venía por
+    # `nombres_alimentos`, y en "personalizar" convive con lo forzado -- lo
+    # elegido a mano entra sí o sí, y del resto se prefiere lo que ya había.
+    if datos.preferir_alimentos:
+        preferir = list(dict.fromkeys([*(preferir or []), *datos.preferir_alimentos]))
 
     # ⚠️ AÑADIDO: si el presupuesto YA se agotó en la vía catálogo, no
     # tiene sentido intentar la búsqueda libre (que tarda más por
