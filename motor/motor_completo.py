@@ -32,6 +32,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 from scipy.optimize import milp, LinearConstraint, Bounds
 from verificar import MAPA, _num, EQUIVALENCIA
+from constructor import valor_nutriente
 
 # ⚠️ AÑADIDO (5 agosto, noche): copia local de especie_de() (la misma
 # lógica que ya usan especies.py y el frontend) -- se define aquí en
@@ -784,7 +785,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         fila = fila_vacia()
         aporta_algo = False
         for n in nombres:
-            v = (_num(alimentos[n].get("nutrientes", {}).get(clave)) or 0.0) / 100.0
+            v = valor_nutriente(alimentos[n].get("nutrientes", {}), clave) / 100.0
             if v:
                 fila[idx[n]] = v; aporta_algo = True
         if not aporta_algo:
@@ -852,7 +853,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             mx_rel = mx * (1 - 0.001) if clave in topes_patologia else mx
             fila_rel = fila_vacia()
             for n in nombres:
-                v_nut = (_num(alimentos[n].get("nutrientes", {}).get(clave)) or 0.0) / 100.0
+                v_nut = valor_nutriente(alimentos[n].get("nutrientes", {}), clave) / 100.0
                 kcal_n = (alimentos[n].get("energia", 0) or 0.0) / 100.0
                 coef = v_nut - (mx_rel / 1000.0) * kcal_n
                 if coef:

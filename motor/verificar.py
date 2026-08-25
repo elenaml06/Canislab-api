@@ -8,7 +8,7 @@ partida; lo que se puede defender ante un veterinario es ESTO: "cubre 26 de
 """
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from constructor import perfil_nutricional
+from constructor import perfil_nutricional, valor_nutriente
 
 # Nombre del requisito -> clave en los nutrientes de cada alimento
 MAPA = {
@@ -21,7 +21,12 @@ MAPA = {
     "Riboflavina": "riboflavina", "Acido_pantotenico": "acidoPantotenico",
     "Vitamina_B6": "vitB6", "Vitamina_B12": "vitB12", "Niacina": "niacina",
     "Folato": "folato", "Colina": "colina", "Linoleico": "linoleico",
-    "Linolénico": "linolenico", "EPA_DHA_total": "epa", "Araquidónico": "araquidonico",
+    "Linolénico": "linolenico", "Araquidónico": "araquidonico",
+    # ⚠️ "epa_dha" NO es una clave de los alimentos: es la SUMA de epa y dha,
+    # que calcula `valor_nutriente` (constructor.py). Estuvo mapeado a "epa"
+    # a secas hasta el 25 de agosto -- el requisito se llamaba EPA+DHA y
+    # comprobaba solo la mitad. Ver el comentario largo de allí.
+    "EPA_DHA_total": "epa_dha",
 }
 # Etapas que existen en requerimientos_v2_final.json. Senior, Gestante y
 # Lactante NO tienen columna propia: FEDIAF no da un perfil de nutrientes
@@ -295,7 +300,7 @@ def suplementar(menu, alimentos, req, der, etapa, catalogo_suplementos,
             if a.get("dato_no_fiable"):
                 continue
             nut = a.get("nutrientes", {})
-            aporte = _num(nut.get(clave)) or 0.0
+            aporte = valor_nutriente(nut, clave)
             if aporte <= 0:
                 continue
             # CUANTOS HUECOS PUEDE CERRAR DE VERDAD, no cuantos toca.
@@ -317,7 +322,7 @@ def suplementar(menu, alimentos, req, der, etapa, catalogo_suplementos,
             # sirve, por muchos huecos que toque.
             perfil_ahora = perfil_nutricional(menu, alimentos)
             for cl_mx, mx_val in topes_max.items():
-                aporta_mx = _num(nut.get(cl_mx))
+                aporta_mx = valor_nutriente(nut, cl_mx)
                 if not aporta_mx or not mx_val:
                     continue
                 margen_mx = mx_val - perfil_ahora.get(cl_mx, 0.0)
@@ -329,7 +334,7 @@ def suplementar(menu, alimentos, req, der, etapa, catalogo_suplementos,
                 continue
             puntos = 0
             for cl, falta_cl in huecos_ahora.items():
-                aporta_cl = _num(nut.get(cl)) or 0.0
+                aporta_cl = valor_nutriente(nut, cl)
                 if aporta_cl <= 0:
                     continue
                 # ¿le da para cerrar ese hueco sin pasarse de su propio techo?
@@ -388,7 +393,7 @@ def suplementar(menu, alimentos, req, der, etapa, catalogo_suplementos,
             if not r:
                 continue
             mx = _num(r.get(f"max{etapa}")) or _num(r.get("maxAdulto"))
-            aporta = _num(alimentos[mejor].get("nutrientes", {}).get(cl))
+            aporta = valor_nutriente(alimentos[mejor].get("nutrientes", {}), cl)
             if mx is None or not aporta:
                 continue
             actual = perfil_nutricional(menu, alimentos).get(cl, 0.0)
@@ -443,7 +448,7 @@ def ajustar_excesos(menu, alimentos, req, der, etapa, protegidos=None):
         # quien lo aporta mas, en valor absoluto
         culpable, aporte_max = None, 0.0
         for nombre, gramos in menu.items():
-            v = _num(alimentos.get(nombre, {}).get("nutrientes", {}).get(clave))
+            v = valor_nutriente(alimentos.get(nombre, {}).get("nutrientes", {}), clave)
             if v and v * gramos > aporte_max:
                 culpable, aporte_max = nombre, v * gramos
         if not culpable:

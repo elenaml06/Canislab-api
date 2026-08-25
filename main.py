@@ -3134,7 +3134,7 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "3169e729016f86e2",   # 25 ago: fibra de coles de Bruselas y tomate en puré (BEDCA)
+        "alimentos_v3_final.json":      "696f6b44071ae78e",   # 25 ago: EPA y DHA de los 6 pescados que estaban a cero (boquerón, bacalao, pescadilla, gamba roja, langostino, perca)
         "requerimientos_v2_final.json": "5aa24fa9553c727a",   # 25 ago: fuera "Fibra"; EPA+DHA en adulto (NRC 2006 / Lenox & Bauer)
     }
     SELLOS_CRUDOS = {

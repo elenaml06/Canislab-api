@@ -74,8 +74,29 @@ TOPE_TIAMINASA_KCAL = 0.10
 # aproximación prudente, NO un límite validado en perros, y así se dice en
 # el aviso al usuario.
 MERCURIO_ALTO = {"atun"}  # el único pescado grande de riesgo real en este catálogo
-TOPE_MERCURIO_KCAL = 0.10       # tope por ración, mismo criterio que tiaminasa
-TOPE_MERCURIO_DIAS_SEMANA = 1   # no más de 1 día/semana con presencia significativa
+# Tope por ración, mismo criterio que la tiaminasa. FUENTE: NRC 2006 fija un
+# nivel tolerable de ingesta de mercurio TOTAL; esto es la transposición
+# prudencial de ese nivel al porcentaje calórico del día. Es la única forma
+# de la restricción que tiene base aplicable en perros.
+#
+# ⚠️ QUITADO (25 agosto, revisión clínica): aquí había además un
+# `TOPE_MERCURIO_DIAS_SEMANA = 1`. Se quita por dos motivos, y los dos
+# importan:
+#
+#   1. NO LO USABA NADIE. Estaba declarado y ninguna línea del repositorio lo
+#      leía -- comprobado. O sea que la app decía tener una regla de "máximo
+#      un día a la semana" que no se aplicaba en ningún sitio. Peor que no
+#      tenerla: aparecía escrita en la documentación para la nutricionista
+#      como si fuera una restricción real.
+#   2. NO TIENE BASE EN PERROS. No existe estudio canino ni guía veterinaria
+#      que fije una frecuencia semanal de pescado con mercurio. Ese "≤1
+#      día/semana" es una transposición directa de las recomendaciones de
+#      FDA/EFSA para embarazadas y niños pequeños, que son grupos de especial
+#      sensibilidad al metilmercurio por su efecto neurotóxico sobre un
+#      sistema nervioso EN DESARROLLO. Un perro adulto no es ese caso.
+#
+# Lo que sí queda es el 10% de las kcal del día, que es lo que se sostiene.
+TOPE_MERCURIO_KCAL = 0.10
 
 # ---------------------------------------------------------------------------
 # 1c. VITAMINA D acumulada de varias fuentes

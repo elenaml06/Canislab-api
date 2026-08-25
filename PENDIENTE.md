@@ -927,7 +927,7 @@ página 63 de ese mismo PDF — **d-α-tocoferol 1 mg = 1,49 UI**, de donde
 
 ### `DATOS_QUE_FALTAN.md`
 
-Generado por `auditar_catalogo.py`: **63 alimentos y 443 valores** por
+Generado por `auditar_catalogo.py`: **57 alimentos y 431 valores** por
 conseguir, cada uno con su unidad y una casilla vacía. Está pensado para
 llevarlo a BEDCA o CIQUAL y rellenarlo, y entonces sí pasárselo al
 asistente para que lo inserte con el formato correcto.

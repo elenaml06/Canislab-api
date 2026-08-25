@@ -49,6 +49,7 @@ from optimizador import (
 # sí misma -- que es exactamente lo que pasó. Por eso ahora se usa LA MISMA,
 # importada, no copiada. El BLOQUE 18 de pruebas_completas.py lo vigila.
 from verificar import MAPA as MAPA_REQUISITO_A_NUTRIENTE
+from constructor import NUTRIENTES_COMPUESTOS
 
 # Cuando un nutriente se queda corto, decir DE DONDE suele venir ayuda mas
 # que el nombre del nutriente a secas.
@@ -190,6 +191,18 @@ def analizar_dieta(gramos_por_alimento: dict, der_objetivo: float,
         por_categoria[a["categoria"]] = por_categoria.get(a["categoria"], 0) + g
         for k, v in a["nutrientes"].items():
             totales[k] = totales.get(k, 0) + v * g / 100
+
+    # ⚠️ Los nutrientes COMPUESTOS (hoy solo EPA+DHA) no son una clave de los
+    # alimentos: se derivan sumando otras. Se calculan con la MISMA definición
+    # que usa el semáforo (`NUTRIENTES_COMPUESTOS`, en constructor.py) y NO con
+    # una suma escrita a mano aquí -- una copia es exactamente lo que separó al
+    # analizador del semáforo con la fibra, y le dijo a la usuaria que a un
+    # menú que le había dado la propia app le faltaba algo.
+    #
+    # Sin esto, el analizador buscaría la clave "epa_dha" en los alimentos, no
+    # la encontraría en ninguno, y diría que TODA dieta tiene 0 de EPA+DHA.
+    for _compuesto, _partes in NUTRIENTES_COMPUESTOS.items():
+        totales[_compuesto] = sum(totales.get(_p, 0.0) for _p in _partes)
 
     etapa_datos = resolver_etapa(etapa_requisitos)
     requisitos = cargar_requerimientos()
