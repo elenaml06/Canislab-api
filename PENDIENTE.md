@@ -26,6 +26,47 @@ las tiene que tomar una persona, no yo.
       | Cobre (hepatopatía) | 3.0 | 2.08 | **2.3** |
       | Grasa (pancreatitis) | 25 % | — | **18 %** (con suelo en cachorros) |
       Decidir si se aplican esos tres, o si se prefiere otra cosa.
+- [ ] **Cinco preguntas de la revisión clínica, para Michelle.** Salieron
+      del repaso del 25 de agosto y ninguna se puede programar sin criterio
+      veterinario:
+
+      1. **¿Qué mínimo de proteína para un senior?** Hoy la app usa la
+         columna de adulto de FEDIAF (52,10 g/1000 kcal). Shmalberg (DACVN)
+         sugiere ≥75 g. Es un cambio grande: afectaría a todos los seniors.
+      2. **¿Distinguir el estadio ACVIM en cardiopatía (B2/C/D)?** Hoy hay
+         un solo valor de sodio (900 mg/1000 kcal), que es el de B2 -- el
+         menos restrictivo. Para C harían falta 500-790 y para D menos de
+         500, pero la app no pregunta el estadio.
+      3. **Cachorro con pancreatitis: ¿solo aviso, o bloquear?** Hoy avisa
+         y genera el menú sin bajar la grasa, porque el mínimo de grasa que
+         necesita para crecer (21,25 g) es mayor que el tope terapéutico
+         (20 g).
+      4. **¿El umbral 1,10 para pasar de dieta de bajada a mantenimiento es
+         el correcto?** Es donde la ración pega el salto de 263 a 413 kcal.
+      5. **¿El 10 % de tiaminasa es adecuado?** Es criterio nuestro, no de
+         ninguna fuente.
+
+- [ ] **La app no distingue "hepatopatía por cobre" de otras hepatopatías.**
+      Desde el 25 de agosto, marcar hepatopatía BLOQUEA la generación,
+      porque la restricción de cobre que hace falta en la hepatopatía por
+      acúmulo (1,2 mg/1000 kcal) está por debajo del mínimo que FEDIAF
+      exige a cualquier perro (2,08). Eso es correcto para esa hepatopatía
+      -- pero la lista de la app tiene una sola opción, así que ahora
+      también bloquea a un perro con otra enfermedad hepática que quizá sí
+      podría comer un menú normal. Si Michelle dice que merece la pena,
+      hay que partir la opción en dos. El tope de 2,4 mg ya está puesto en
+      el código esperando ese día.
+
+- [ ] **`EPA_DHA_total` se comprueba solo contra el EPA, sin sumarle el
+      DHA.** Encontrado el 25 de agosto. El requisito se llama EPA+DHA y en
+      `verificar.MAPA` apunta a la clave `epa` a secas, así que el DHA no
+      cuenta. Va en la dirección segura (se exige más de lo que se pide) y
+      hoy los menús lo cumplen de sobra igual -- medido, 145 mg/1000 kcal
+      de EPA solo, contra un mínimo de 110 -- pero el nombre dice una cosa
+      y el código comprueba otra, y eso siempre acaba mal. Arreglarlo es
+      dejar que un requisito apunte a la SUMA de dos claves; hoy solo puede
+      apuntar a una.
+
 - [ ] **Repasar la transcripción de la tabla de FEDIAF.** En
       `auditar_fediaf.py` la tabla III-3b está escrita a mano. La auditoría
       compara el JSON contra ESA transcripción: si un número se tecleó mal

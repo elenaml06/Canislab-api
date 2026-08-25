@@ -45,7 +45,7 @@ import persistencia
 from motor_completo import resolver as resolver_v2, especie_de
 # PATOLOGIAS: los topes por patología, para poder comprobarlos también
 # en la puerta de verificación (ver _tope_patologia_roto).
-from motor_completo import PATOLOGIAS
+from motor_completo import PATOLOGIAS, topes_de_patologias
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
 from verificar import verificar as verificar_v2
 from seguridad import revisar_seguridad as revisar_seguridad_v2
@@ -182,7 +182,7 @@ def _valor_num(v):
         return None
 
 
-def _tope_patologia_roto(gramos, al, patologias):
+def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto"):
     """¿Este menú se pasa de algún tope por patología? Devuelve la lista de
     los que se pasa, vacía si está bien.
 
@@ -219,19 +219,21 @@ def _tope_patologia_roto(gramos, al, patologias):
     # llegue por encima de esto no es redondeo, es un tope que no se aplicó.
     MARGEN = 1.005
     rotos = []
-    for p in (patologias or []):
-        info = PATOLOGIAS.get(p, {})
-        for clave, tope in (info.get("max_por_1000kcal") or {}).items():
-            v = por_1000(clave)
-            if v > tope * MARGEN:
-                rotos.append(f"{clave} {v:.1f} (tope {tope:.1f} por {p})")
-        pct = info.get("max_pct_kcal_grasa")
-        if pct is not None:
-            grasa_g = sum((_valor_num(al.get(n, {}).get("nutrientes", {}).get("grasa")) or 0.0) / 100.0 * g
-                          for n, g in gramos.items())
-            v = grasa_g * 9.0 / kcal
-            if v > pct * MARGEN:
-                rotos.append(f"grasa {v*100:.0f}% de las kcal (tope {pct*100:.0f}% por {p})")
+    # ⚠️ LOS MISMOS TOPES QUE USÓ EL SOLVER, resueltos por la misma función
+    # (25 agosto). Si aquí se leyeran otra vez a mano de la tabla, esta
+    # comprobación y la restricción podrían decir cosas distintas -- que es
+    # exactamente lo que pasó entre el analizador y el semáforo con la fibra.
+    topes, pct, _ = topes_de_patologias(patologias, etapa)
+    for clave, tope in topes.items():
+        v = por_1000(clave)
+        if v > tope * MARGEN:
+            rotos.append(f"{clave} {v:.1f} (tope {tope:.1f} por patología)")
+    if pct is not None:
+        grasa_g = sum((_valor_num(al.get(n, {}).get("nutrientes", {}).get("grasa")) or 0.0) / 100.0 * g
+                      for n, g in gramos.items())
+        v = grasa_g * 9.0 / kcal
+        if v > pct * MARGEN:
+            rotos.append(f"grasa {v*100:.0f}% de las kcal (tope {pct*100:.0f}% por patología)")
     return rotos
 
 
@@ -256,7 +258,7 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
 
     ficha = verificar_v2(gramos, al, req, der, etapa)
     seguro = _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg)
-    topes_rotos = _tope_patologia_roto(gramos, al, patologias)
+    topes_rotos = _tope_patologia_roto(gramos, al, patologias, etapa)
 
     # ¿es dable? Ver TOPE_GRAMOS_SOBRE_PESO, arriba.
     total_g = sum(gramos.values())
@@ -544,6 +546,17 @@ class PeticionAnadirQuitarAlimento(BaseModel):
     especies_excluidas: list[str] = []
     # ⚠️ AÑADIDO (5 agosto, noche): mismo motivo que en PeticionCambiarAlimento.
     peso_adulto_esperado_kg: Optional[float] = None
+    # ⚠️ AÑADIDO (25 agosto) — CASO REAL: /menu/anadir y /menu/quitar
+    # devolvían HTTP 500. `_recalcular_con_motor` lee
+    # `datos.categorias_excluidas`, y este modelo era el único de los tres
+    # de edición que no lo tenía -- PeticionCambiarAlimento sí.
+    #
+    # No reventaba siempre, y por eso llevaba semanas ahí: solo se llega a
+    # esa línea cuando la edición ha tenido que RELAJAR alguna proporción
+    # de BARF. Con el catálogo de todos los días casi nunca pasa; con una
+    # patología que aprieta, constantemente. Afectaba a "Añadir suplemento"
+    # desde agosto y a la papelera de quitar un alimento desde hoy mismo.
+    categorias_excluidas: Optional[list] = None
 
 
 # ⚠️ AÑADIDO (20 agosto) — CASO 3: EL PERRO CAMBIA DE CATEGORÍA.
@@ -1195,10 +1208,14 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # la generación automática — se deriva al veterinario en vez de dar
     # un menú que podría empeorar el problema.
     from motor_completo import patologias_bloquean, avisos_de_patologias
-    bloqueantes = patologias_bloquean(datos.patologias)
+    # ⚠️ CON LA ETAPA (25 agosto): la insuficiencia renal se puede apoyar en
+    # un adulto bajando el fósforo, pero en un cachorro o una gestante el
+    # fósforo que hay que quitarle es MENOS del que necesita para crecer.
+    # Ahí no hay menú que dar, y decirlo es mejor que dar uno que no sirve.
+    bloqueantes = patologias_bloquean(datos.patologias, datos.etapa_requisitos)
     if bloqueantes:
         return {"factible": False, "requiere_veterinario": True,
-                "motivo": " ".join(avisos_de_patologias(bloqueantes))}
+                "motivo": " ".join(avisos_de_patologias(bloqueantes, datos.etapa_requisitos))}
 
     forzar, preferir = None, None
     # ⚠️ AÑADIDO (5 agosto, madrugada) — CONECTADO CON LAS VARIANTES
@@ -3099,7 +3116,7 @@ def verificar():
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
         "alimentos_v3_final.json":      "3169e729016f86e2",   # 25 ago: fibra de coles de Bruselas y tomate en puré (BEDCA)
-        "requerimientos_v2_final.json": "1d14c5a4b99636e3",   # 25 ago: fuera la fila "Fibra" -- no es un requisito de FEDIAF
+        "requerimientos_v2_final.json": "5aa24fa9553c727a",   # 25 ago: fuera "Fibra"; EPA+DHA en adulto (NRC 2006 / Lenox & Bauer)
     }
     SELLOS_CRUDOS = {
         "der.py": "1c5c8bb91ceac481",

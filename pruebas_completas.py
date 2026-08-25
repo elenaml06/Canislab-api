@@ -1173,9 +1173,70 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 # ============================================================
 print("=== BLOQUE 13: los topes por patología se cumplen ===")
 
-_TOPES_B13 = {"renal": ("fosforo", 1400.0), "hepatopatia": ("cobre", 3.0),
-              "cardiopatia": ("sodio", 900.0), "oxalato": ("vitD", 20.0)}
-_GRASA_B13 = {"pancreatitis": 0.25, "diabetes": 0.35}
+# ⚠️ REHECHO (25 agosto) — LOS TOPES SE LEEN DEL MOTOR, NO SE COPIAN.
+#
+# Aquí había una copia a mano de los números. El día que cambiaron (revisión
+# clínica del 25 de agosto: fósforo renal 1400->1200, grasa en pancreatitis
+# del 25% de las kcal a 20 g/1000 kcal, y la diabetes deja de restringir
+# grasa salvo con pancreatitis o hipertrigliceridemia) esta copia siguió
+# comprobando lo de antes. O sea que la prueba fallaba por estar
+# desactualizada, no porque el motor estuviera mal -- y una prueba así se
+# acaba "arreglando" bajándole el listón.
+#
+# Es exactamente el mismo fallo que el analizador y el semáforo con la
+# fibra: dos listas de lo mismo que se separan. Ahora se pide al motor.
+from motor_completo import topes_de_patologias as _topes_b13
+
+# Las patologías que se prueban una a una. Las que bloquean no llevan menú
+# que comprobar, así que no van aquí.
+_PATOLOGIAS_B13 = ["renal", "pancreatitis", "cardiopatia", "oxalato", "diabetes"]
+
+# ⚠️ EL ANCLA DE LOS NÚMEROS (25 agosto). Leer los topes del motor evita que
+# esta prueba y el motor se separen -- pero por eso mismo ya no puede cazar
+# que ALGUIEN CAMBIE UN NÚMERO: cambiaría en los dos sitios a la vez.
+#
+# Esta tabla es lo único que los sujeta. Son valores CLÍNICOS revisados con
+# fuente el 25 de agosto: si alguien los toca, esto se cae y le obliga a
+# traer la fuente nueva en vez de cambiarlos porque un menú no salía.
+#
+# NO se toca ninguno sin criterio veterinario. Las fuentes están escritas al
+# lado de cada tope en motor/motor_completo.py.
+_NUMEROS_REVISADOS_B13 = [
+    # (patologías, etapa, topes esperados, % de grasa esperado)
+    (["renal"],                  "Adulto",             {"fosforo": 1200.0}, None),
+    (["renal"],                  "CachorroCrecimiento", {},                 None),
+    (["pancreatitis"],           "Adulto",             {"grasa": 20.0},     None),
+    (["pancreatitis"],           "CachorroJoven",      {},                  None),
+    (["cardiopatia"],            "Adulto",             {"sodio": 900.0},    None),
+    (["oxalato"],                "Adulto",             {"vitD": 20.0},      None),
+    (["hepatopatia"],            "Adulto",             {"cobre": 2.4},      None),
+    # La diabetes SOLA ya no restringe la grasa (Purina Institute): el pilar
+    # es fibra alta e índice glucémico bajo. Solo con pancreatitis o
+    # hipertrigliceridemia concurrente se baja al 30%.
+    (["diabetes"],               "Adulto",             {},                  None),
+    (["diabetes", "pancreatitis"], "Adulto",           {"grasa": 20.0},     0.30),
+]
+for _pats, _et, _esperados, _esperado_pct in _NUMEROS_REVISADOS_B13:
+    _t, _p, _ = _topes_b13(_pats, _et)
+    if _t != _esperados or _p != _esperado_pct:
+        fallos.append(f"BLOQUE13 números revisados: para {_pats} en {_et} el motor da "
+                      f"{_t} / grasa {_p}, y lo revisado con fuente el 25 de agosto es "
+                      f"{_esperados} / grasa {_esperado_pct}. Si el cambio es a propósito, "
+                      f"trae la fuente y actualiza esta tabla.")
+
+# Y las que tienen que bloquear la generación, que también es un número
+# clínico aunque no lo parezca.
+for _pats, _et, _bloquean in [
+    (["hepatopatia"], "Adulto", ["hepatopatia"]),
+    (["renal"], "CachorroJoven", ["renal"]),
+    (["renal"], "Adulto", []),
+    (["pancreatitis"], "CachorroJoven", []),
+    (["estruvita"], "Adulto", ["estruvita"]),
+]:
+    _b = patologias_bloquean(_pats, _et)
+    if sorted(_b) != sorted(_bloquean):
+        fallos.append(f"BLOQUE13 bloqueos: {_pats} en {_et} bloquea {_b} y debería "
+                      f"bloquear {_bloquean}.")
 # Un pelo de margen por el redondeo de los gramos a 2 decimales. El motor
 # ya aprieta un 0,1% al construir la restricción; lo que llegue por encima
 # de esto no es redondeo.
@@ -1200,27 +1261,25 @@ def _pct_grasa_b13(g):
              for n, v in g.items())
     return gr * 9.0 / k
 
-def _revisar_b13(donde, gramos, patologias):
-    for _p in patologias:
-        if _p in _TOPES_B13:
-            _clave, _tope = _TOPES_B13[_p]
-            _v = _por_1000_b13(gramos, _clave)
-            if _v > _tope * _MARGEN_B13:
-                fallos.append(f"BLOQUE13 {donde}: {_clave} {_v:.1f} pasa del tope "
-                              f"{_tope:.1f} de '{_p}' (+{(_v/_tope-1)*100:.1f}%)")
-        if _p in _GRASA_B13:
-            _tope = _GRASA_B13[_p]
-            _v = _pct_grasa_b13(gramos)
-            if _v > _tope * _MARGEN_B13:
-                fallos.append(f"BLOQUE13 {donde}: grasa {_v*100:.1f}% de las kcal pasa "
-                              f"del tope {_tope*100:.0f}% de '{_p}'")
+def _revisar_b13(donde, gramos, patologias, etapa="Adulto"):
+    _topes, _pct, _ = _topes_b13(patologias, etapa)
+    for _clave, _tope in _topes.items():
+        _v = _por_1000_b13(gramos, _clave)
+        if _v > _tope * _MARGEN_B13:
+            fallos.append(f"BLOQUE13 {donde}: {_clave} {_v:.1f} pasa del tope "
+                          f"{_tope:.1f} (+{(_v/_tope-1)*100:.1f}%)")
+    if _pct is not None:
+        _v = _pct_grasa_b13(gramos)
+        if _v > _pct * _MARGEN_B13:
+            fallos.append(f"BLOQUE13 {donde}: grasa {_v*100:.1f}% de las kcal pasa "
+                          f"del tope {_pct*100:.0f}%")
 
 def _base_b13(der, kg, pat):
     return {"nombres_alimentos": [], "der_objetivo": der, "peso_perro_kg": kg,
             "etapa_requisitos": "Adulto", "modo": "automatico", "patologias": pat}
 
 # (1) generar, cada patología por separado y a varios tamaños
-for _pat in list(_TOPES_B13) + list(_GRASA_B13):
+for _pat in _PATOLOGIAS_B13:
     for _der, _kg in [(450, 6), (1100, 25), (2100, 40)]:
         _r = _c.post("/menu/v2", json=_base_b13(_der, _kg, [_pat])).json()
         if _r.get("factible"):
@@ -1862,6 +1921,54 @@ else:
         fallos.append(f"BLOQUE19: estos huecos YA NO aparecen -- alguien ha conseguido los "
                       f"datos: {sorted(_arreglados)}. Quítalos de _HUECOS_YA_CONOCIDOS_b19 "
                       f"y de DATOS_QUE_FALTAN.md, o dejan de proteger de una recaída.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 20 — LOS TRES CAMINOS DE EDICIÓN NO REVIENTAN
+# ============================================================
+#
+# ⚠️ CASO REAL ENCONTRADO (25 agosto): /menu/anadir y /menu/quitar devolvían
+# HTTP 500. `_recalcular_con_motor` lee `datos.categorias_excluidas`, y
+# PeticionAnadirQuitarAlimento era el único de los tres modelos de edición
+# que no tenía ese campo.
+#
+# LLEVABA SEMANAS AHÍ SIN QUE NADIE LO VIERA, y el motivo es lo
+# interesante: solo se llega a esa línea cuando la edición ha tenido que
+# RELAJAR alguna proporción de BARF. Con un perro sano casi nunca pasa; con
+# una patología que aprieta, constantemente. Afectaba a "Añadir suplemento"
+# desde agosto, y a la papelera de quitar un alimento desde el día que se
+# hizo.
+#
+# Por eso esto prueba los TRES caminos y CON PATOLOGÍAS: sin ellas el fallo
+# no aparece, y una prueba que no lo hace saltar no sirve de nada.
+print("=== BLOQUE 20: editar el menú no revienta ===")
+
+for _pat, _meter in [("renal", "Hígado de vaca"), ("pancreatitis", "Sardina"),
+                     ("cardiopatia", "Hígado de vaca"), (None, "Sardina")]:
+    _b20 = _base_b13(1100, 25, [_pat] if _pat else [])
+    _g20 = (_c.post("/menu/v2", json=_b20).json() or {}).get("menu") or {}
+    if not _g20:
+        continue
+    _quien = _pat or "sin patología"
+    for _ruta, _cuerpo in (
+        ("/menu/anadir",  {**_b20, "menu_actual": list(_g20), "alimento": _meter}),
+        ("/menu/quitar",  {**_b20, "menu_actual": list(_g20), "alimento": sorted(_g20)[0]}),
+        ("/menu/cambiar", {**_b20, "menu_actual": list(_g20),
+                           "alimento_viejo": sorted(_g20.items(), key=lambda x: -x[1])[0][0],
+                           "alimento_nuevo": _meter}),
+    ):
+        _r20 = _c.post(_ruta, json=_cuerpo)
+        if _r20.status_code != 200:
+            fallos.append(f"BLOQUE20: {_ruta} con {_quien} devuelve HTTP {_r20.status_code}. "
+                          f"Editar el menú tiene que contestar siempre, aunque sea para decir "
+                          f"que no se puede: un 500 deja la pantalla colgada sin explicación.")
+            continue
+        try:
+            _r20.json()
+        except Exception as _e:
+            fallos.append(f"BLOQUE20: {_ruta} con {_quien} no devuelve JSON: {_e}")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

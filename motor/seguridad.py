@@ -270,6 +270,49 @@ BORRAJA_EXCLUIR = {"borraja"}
 # patologia esta declarada. Los datos concretos viven en el propio
 # alimento (campo "restricciones_patologia" del catalogo).
 # Aqui solo se listan que categorias de patologia hay que comprobar.
+# ─── VALORES CONFIRMADOS EN LA REVISIÓN CLÍNICA DEL 25 DE AGOSTO ────────────
+#
+# Estos NO cambiaron de número. Se dejan escritos con su fuente porque
+# "revisado y correcto" y "nadie lo ha mirado nunca" se parecen demasiado
+# mirando el código, y la diferencia importa cuando alguien vuelva dentro de
+# seis meses a decidir si un tope se puede aflojar.
+#
+#   Tiaminasa, máx 10% de las kcal
+#       Correcto y conservador. NO hay umbral oficial: la literatura
+#       (Kritikos 2017) habla de riesgo cuando el pescado tiaminásico es
+#       "proporción sustancial de la dieta", sin dar cifra. El 10% es
+#       criterio nuestro -- ver el comentario de TIAMINASA más arriba.
+#
+#   Vitamina D crónica, ≤20 µg/1000 kcal
+#       Correcto y conservador. NRC 2006 / Lenox & Bauer 2013.
+#
+#   Yodo crónico, ≤1400 µg/1000 kcal
+#       Correcto y conservador A PROPÓSITO: el NRC da ~2750 µg. Se usa un
+#       umbral bastante más bajo por decisión nuestra.
+#
+#   Selenio crónico, ≤570 µg/1000 kcal
+#       Correcto. Es el valor de AAFCO. Merck da 2 µg/g de dieta, que sale
+#       ≈500 µg/1000 kcal -- las dos referencias no coinciden exactamente y
+#       se usa la de AAFCO. Queda anotada la discrepancia.
+#
+#   Mercurio (atún), máx 10% de las kcal y ≤1 día/semana
+#       Correcto y prudencial. NO existe estudio dosis-respuesta en perro:
+#       el criterio es la bioacumulación, no una cifra medida.
+#
+#   Calcio de cachorro de raza grande, 2500-4500 mg/1000 kcal
+#       Correcto. Hazewinkel; Dobenecker et al. 2006 (JAPN).
+#
+#   Corte de etapa cachorro a los 4 meses
+#       Correcto y conservador a propósito: FEDIAF usa 14 semanas. El margen
+#       extra es deliberado.
+#
+#   Ratio Ca:P — adulto 1,0-2,0 · crecimiento tardío 1,0-1,8
+#       Correctos. FEDIAF.
+#
+#   EPA+DHA en crecimiento, ≥130 mg/1000 kcal
+#       Correcto. FEDIAF 2025. (El de ADULTO no es de FEDIAF: ver la
+#       nota_auditoria de esa fila en requerimientos_v2_final.json.)
+
 PATOLOGIAS_CON_RESTRICCION_ALIMENTO = {"hipotiroidismo", "diabetes", "pancreatitis"}
 
 

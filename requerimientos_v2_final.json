@@ -12,12 +12,13 @@
  {
   "nutriente": "EPA_DHA_total",
   "unidad": "g",
-  "minAdulto": "-",
+  "minAdulto": 0.11,
   "minCachorroJoven": "0.13",
   "minCachorroCrecimiento": "0.13",
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxAdulto": 2.8,
+  "nota_auditoria": "OJO: el mínimo y el máximo de ADULTO no son de FEDIAF. FEDIAF 2025 solo exige EPA+DHA en crecimiento y reproducción (0,13 g), y para adulto no da ni mínimo ni máximo. El mínimo de adulto (0,11 g = 110 mg/1000 kcal) viene del NRC 2006 y se adopta a propósito por su relevancia clínica documentada (inflamación, articulaciones, corazón, piel). El máximo (2,8 g = 2800 mg/1000 kcal) viene de Lenox & Bauer, JVIM 2013 (27:217-226). Decidido el 25 de agosto con la revisión clínica. Se anota aquí, y en la lista FUERA_DE_FEDIAF de auditar_fediaf.py, para que nunca se confunda con un valor de la tabla -- que es exactamente lo que pasó con la fila 'Fibra'." 
  },
  {
   "nutriente": "Linoleico",

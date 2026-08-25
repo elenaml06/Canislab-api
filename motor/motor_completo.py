@@ -49,37 +49,125 @@ def especie_de(nombre: str) -> str:
 # seguía preguntando y mandando el dato, pero resolver() lo ignoraba.
 # Se porta tal cual, sin cambiar ningún valor.
 PATOLOGIAS = {
-    "renal": {"max_por_1000kcal": {"fosforo": 1400.0},
+    # ⚠️ REVISADO (25 agosto) con fuentes clínicas primarias. Tres de los
+    # topes CAMBIAN de número y dos pasan a depender de la ETAPA, que es lo
+    # importante: un tope terapéutico pensado para un adulto puede ser
+    # matemáticamente imposible en un cachorro, porque el mínimo que un
+    # cachorro necesita para crecer es MAYOR que ese tope. Aplicarlo igual
+    # a los dos no es ser prudente: es no dar menú, o darlo mal.
+    #
+    # `solo_en_adulto`: el tope vale para adulto y senior. En crecimiento,
+    # gestación y lactancia se hace lo que diga `en_crecimiento`:
+    #   "bloquear"  -> no se genera menú (el caso no se puede resolver bien)
+    #   "sin_tope"  -> se genera sin ese tope, CON un aviso que lo dice
+    "renal": {
+        # ⚠️ CAMBIADO: 1400 -> 1200 mg/1000 kcal. Las dietas renales
+        # comerciales aportan 480-1000 mg/1000 kcal (dvm360/Freeman 2009,
+        # WSAVA). 1200 es lo más restrictivo que el solver puede aplicar sin
+        # romper el mínimo FEDIAF de adulto (1160 mg). IRIS da objetivos en
+        # SANGRE, no en la dieta, así que no sirve para poner este número.
+        "max_por_1000kcal": {"fosforo": 1200.0},
+        "solo_en_adulto": True,
+        "en_crecimiento": "bloquear",
+        "aviso_crecimiento": ("Un perro en crecimiento o gestación con insuficiencia "
+                              "renal necesita un plan dietético individual hecho por "
+                              "un nutricionista veterinario: el fósforo que hay que "
+                              "quitarle choca con el que necesita para crecer."),
         "aviso": ("Se ha bajado el fósforo todo lo posible sin bajar del mínimo "
                   "nutricional de un perro sano. IMPORTANTE: una dieta renal "
                   "terapéutica de verdad baja el fósforo POR DEBAJO de ese mínimo, "
                   "y eso solo puede pautarlo tu veterinario. Esto es un apoyo, "
                   "no sustituye una dieta renal prescrita.")},
-    "pancreatitis": {"max_pct_kcal_grasa": 0.25,
-        "aviso": ("Se ha bajado la grasa al 25% de las calorías. En pancreatitis "
-                  "la tolerancia a la grasa es muy individual: ajústalo con tu "
-                  "veterinario según cómo responda.")},
+
+    "pancreatitis": {
+        # ⚠️ CAMBIADO: era el 25% de las kcal (~28 g/1000 kcal) y pasa a
+        # menos de 20 g/1000 kcal, que son ~18% de las kcal. Más estricto.
+        # Merck Veterinary Manual, "Pancreatitis in Dogs and Cats": "feeding
+        # a low-fat diet (ie, less than 20 g fat/1,000 kcal) is crucial for
+        # treatment success".
+        #
+        # Se expresa en GRAMOS por 1000 kcal y no en % de kcal a propósito:
+        # es como lo dice la fuente, y así entra por el mismo camino que los
+        # demás topes en vez de por uno propio.
+        "max_por_1000kcal": {"grasa": 20.0},
+        "solo_en_adulto": True,
+        "en_crecimiento": "sin_tope",
+        "aviso_crecimiento": ("Este menú NO ha podido bajar la grasa al nivel que se "
+                              "recomienda en pancreatitis (menos de 20 g por cada "
+                              "1000 kcal), porque en crecimiento, gestación o "
+                              "lactancia el mínimo que el perro necesita es mayor "
+                              "que ese tope. Consúltalo con tu veterinario."),
+        "aviso": ("Se ha bajado la grasa a menos de 20 g por cada 1000 kcal, que es "
+                  "lo que recomienda la literatura veterinaria en pancreatitis. La "
+                  "tolerancia es muy individual: ajústalo con tu veterinario según "
+                  "cómo responda.")},
+
     "oxalato": {"max_por_1000kcal": {"vitD": 20.0},
         "aviso": ("Ojo: en oxalato NO hay que bajar el calcio (bajarlo aumenta la "
                   "absorción de oxalato y empeora). Lo importante es el agua y "
                   "evitar verduras muy ricas en oxalato como la espinaca o la acelga.")},
-    "hepatopatia": {"max_por_1000kcal": {"cobre": 3.0},
-        "aviso": ("Se ha limitado el cobre, clave en las hepatopatías por acúmulo. "
-                  "Si hay encefalopatía hepática hace falta además ajustar la "
-                  "proteína, y eso lo tiene que pautar tu veterinario.")},
-    "cardiopatia": {"max_por_1000kcal": {"sodio": 900.0},
-        "aviso": ("Se ha bajado el sodio. En cardiopatía avanzada puede hacer falta "
-                  "bajarlo más y vigilar el potasio si toma diuréticos: consúltalo.")},
-    "diabetes": {"max_pct_kcal_grasa": 0.35, "excluye_fruta": True,
+
+    "hepatopatia": {
+        # ⚠️ CAMBIADO A BLOQUEO (25 agosto). El objetivo TERAPÉUTICO de cobre
+        # en hepatopatía por acúmulo es 1,2 mg/1000 kcal (Today's Veterinary
+        # Practice 2023, Lidbury) -- y el MÍNIMO que FEDIAF exige para
+        # cualquier perro es 2,08. O sea que la dieta que cura está por
+        # debajo de la que alimenta: no es un problema del catálogo ni del
+        # solver, es que no se puede hacer con comida sin suplementación
+        # dirigida. Fingir que se ha ajustado sería peor que no dar menú.
+        #
+        # El 2,4 se deja puesto igualmente (Center SA et al., JAVMA
+        # 264(2):171-180, 2026 -- límite tolerable 0,24 mg/100 kcal): si algún
+        # día se distingue "hepatopatía por cobre" de otras hepatopatías, el
+        # número ya está aquí y no habrá que volver a buscarlo.
+        "max_por_1000kcal": {"cobre": 2.4},
+        "sin_dieta_automatica": True,
+        "aviso": ("La restricción de cobre que hace falta en una hepatopatía por "
+                  "acúmulo está POR DEBAJO del mínimo de cobre que necesita "
+                  "cualquier perro para estar sano. No es algo que se pueda resolver "
+                  "eligiendo mejor los alimentos: hace falta supervisión veterinaria "
+                  "con suplementación dirigida, así que no generamos menú automático.")},
+
+    "cardiopatia": {
+        # Sin cambio de número, y ahora con la fuente escrita. ACVIM (Keene
+        # et al. 2019, JVIM 33:1127-1140) da el sodio por estadio:
+        #     B2: 80-99 mg/100 kcal   C: 50-79   D: <50
+        # 900 mg/1000 kcal = 90 mg/100 kcal, o sea dentro del rango de B2.
+        # La app no pregunta el estadio, así que se usa el menos restrictivo
+        # de los tres -- que es el correcto para el caso más común. Bajar a
+        # C o D sin saber el estadio sería quitarle sodio a un perro que no
+        # lo necesita.
+        "max_por_1000kcal": {"sodio": 900.0},
+        "aviso": ("Se ha bajado el sodio a lo que recomiendan las guías para "
+                  "cardiopatía en estadio B2. En cardiopatía avanzada puede hacer "
+                  "falta bajarlo más y vigilar el potasio si toma diuréticos: "
+                  "consúltalo con tu veterinario.")},
+
+    "diabetes": {
+        # ⚠️ CAMBIADO (25 agosto): antes se bajaba la grasa al 35% de las
+        # kcal SIEMPRE. Ya no. El pilar de la dieta en diabetes es fibra alta
+        # e índice glucémico bajo, no restringir grasa a todo el mundo.
+        # Purina Institute: "Dietary fat restriction (<30% ME) is recommended
+        # for diabetic dogs with concurrent chronic pancreatitis or persistent
+        # hypertriglyceridemia" -- o sea, SOLO si hay eso también.
+        #
+        # `max_pct_kcal_grasa_si_ademas` se aplica únicamente si el perro
+        # tiene además alguna de esas condiciones marcadas. Hoy la app deja
+        # marcar pancreatitis; la hipertrigliceridemia todavía no existe como
+        # opción (ver PENDIENTE).
+        "max_pct_kcal_grasa_si_ademas": (0.30, ("pancreatitis", "hipertrigliceridemia")),
+        "excluye_fruta": True,
         "aviso": ("Lo más importante en diabetes no es el menú sino la REGULARIDAD: "
                   "misma cantidad, a la misma hora, coordinada con la insulina. "
                   "Se ha quitado la fruta del menú: su azúcar se absorbe rápido y "
                   "descuadra la pauta de insulina. La verdura fibrosa sí se "
                   "mantiene, porque ayuda a amortiguar la subida de glucosa.")},
+
     "hipotiroidismo": {
         "aviso": ("No se cambia la composición. Pero evita darle cuello de rumiante "
                   "grande de forma repetida: puede llevar restos de tejido tiroideo "
                   "y alterar los valores de la analítica.")},
+
     "estruvita": {"sin_dieta_automatica": True,
         "aviso": ("Estos cálculos dependen del pH de la orina y de analíticas que la "
                   "app no puede ver. Una dieta mal ajustada aquí puede empeorarlos, "
@@ -126,17 +214,96 @@ PATOLOGIAS = {
                   "veterinario valore su caso en concreto y paute la dieta.")},
 }
 
+
+# ─── QUÉ TOPES APLICAN DE VERDAD, SEGÚN LA ETAPA ─────────────────────────────
+#
+# ⚠️ AÑADIDO (25 agosto). Antes los topes se leían directos de la tabla y se
+# aplicaban igual a un cachorro que a un adulto. Eso está mal en los dos
+# sentidos: el tope de fósforo renal (1200) es MENOR que el mínimo que
+# FEDIAF exige a un cachorro (1750-2250), y el de grasa en pancreatitis
+# (20 g) es MENOR que el mínimo de crecimiento (21,25 g). Aplicados a un
+# cachorro no dan un menú más seguro: no dan menú, o lo dan rompiendo el
+# mínimo. Por eso cada tope dice ahora en qué etapas vale.
+#
+# Se usa en DOS sitios -- al construir las restricciones y al verificar el
+# menú terminado -- y por eso vive aquí y no dentro de resolver().
+def _es_crecimiento(etapa):
+    e = EQUIVALENCIA.get(etapa, etapa)
+    return e in ("CachorroJoven", "CachorroCrecimiento")
+
+
+def topes_de_patologias(patologias, etapa="Adulto"):
+    """Devuelve (topes_por_1000kcal, pct_kcal_grasa, avisos_extra) ya
+    resueltos para esta etapa y esta combinación de patologías."""
+    lista = list(patologias or [])
+    crece = _es_crecimiento(etapa)
+    topes, pct_grasa, avisos = {}, None, []
+
+    for p in lista:
+        info = PATOLOGIAS.get(p, {})
+
+        if info.get("solo_en_adulto") and crece:
+            # En crecimiento este tope no se aplica. Si además hay que
+            # decirlo (no bloquea, solo se relaja), se dice: nunca en
+            # silencio.
+            if info.get("en_crecimiento") == "sin_tope" and info.get("aviso_crecimiento"):
+                avisos.append(info["aviso_crecimiento"])
+            continue
+
+        for clave, valor in (info.get("max_por_1000kcal") or {}).items():
+            actual = topes.get(clave)
+            topes[clave] = valor if actual is None else min(actual, valor)
+
+        v = info.get("max_pct_kcal_grasa")
+        if v is not None:
+            pct_grasa = v if pct_grasa is None else min(pct_grasa, v)
+
+        # Topes que solo aplican si además hay otra condición marcada.
+        condicional = info.get("max_pct_kcal_grasa_si_ademas")
+        if condicional:
+            valor, requiere = condicional
+            if any(otra in lista for otra in requiere):
+                pct_grasa = valor if pct_grasa is None else min(pct_grasa, valor)
+
+    return topes, pct_grasa, avisos
+
 FRUTAS = {"Manzana", "Pera", "Plátano", "Fresa", "Sandía", "Melón", "Naranja",
          "Mandarina", "Piña", "Mango", "Frambuesa", "Arándano", "Albaricoque", "Dátil"}
 
 
-def patologias_bloquean(patologias):
-    """Las que impiden generar dieta automática (dependen de analíticas)."""
-    return [p for p in (patologias or []) if PATOLOGIAS.get(p, {}).get("sin_dieta_automatica")]
+def patologias_bloquean(patologias, etapa="Adulto"):
+    """Las que impiden generar dieta automática.
+
+    ⚠️ AHORA DEPENDE DE LA ETAPA (25 agosto). La insuficiencia renal en un
+    perro ADULTO se puede apoyar bajando el fósforo; en un cachorro o una
+    perra gestante, no: el fósforo que hay que quitarle es menos del que
+    necesita para crecer. Ahí no hay menú que dar, y decirlo es mejor que
+    dar uno que no sirve."""
+    bloquean = []
+    for p in (patologias or []):
+        info = PATOLOGIAS.get(p, {})
+        if info.get("sin_dieta_automatica"):
+            bloquean.append(p)
+        elif info.get("en_crecimiento") == "bloquear" and _es_crecimiento(etapa):
+            bloquean.append(p)
+    return bloquean
 
 
-def avisos_de_patologias(patologias):
-    return [PATOLOGIAS[p]["aviso"] for p in (patologias or []) if p in PATOLOGIAS]
+def avisos_de_patologias(patologias, etapa="Adulto"):
+    salida = []
+    for p in (patologias or []):
+        info = PATOLOGIAS.get(p)
+        if not info:
+            continue
+        # En crecimiento, si la patología bloquea, el mensaje que hay que
+        # dar es el de crecimiento -- el otro habla de un ajuste que no se
+        # ha hecho.
+        if (info.get("en_crecimiento") == "bloquear" and _es_crecimiento(etapa)
+                and info.get("aviso_crecimiento")):
+            salida.append(info["aviso_crecimiento"])
+        elif info.get("aviso"):
+            salida.append(info["aviso"])
+    return salida
 
 
 def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
@@ -486,12 +653,11 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # patologia baja el maximo de un nutriente y ese maximo es MAS
     # RESTRICTIVO que el de FEDIAF, gana el de la patologia (el min de
     # los dos). Nunca al reves: una patologia no puede RELAJAR un tope.
-    topes_patologia = {}
-    for p in (patologias or []):
-        info = PATOLOGIAS.get(p, {})
-        for clave, valor in info.get("max_por_1000kcal", {}).items():
-            actual = topes_patologia.get(clave)
-            topes_patologia[clave] = valor if actual is None else min(actual, valor)
+    # ⚠️ Los topes salen de `topes_de_patologias`, que ya sabe qué aplica en
+    # esta etapa (25 agosto). Antes se leían crudos de la tabla y se
+    # aplicaban igual a un cachorro que a un adulto -- ver el comentario
+    # largo de esa función.
+    topes_patologia, pct_grasa_patologia, _avisos_pat = topes_de_patologias(patologias, etapa)
 
     # ⚠️ AÑADIDO (5 agosto, noche) — CONECTADO: "Calcio_LateGrowth_RazaGrande"
     # ya existía en los datos, con nota de auditoría explícita diciendo que
@@ -869,11 +1035,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # diabetes) -- restricción propia, no cabe en el bucle de arriba
     # porque compara contra las kcal totales, no contra un mínimo/máximo
     # por 1000kcal. grasa (g) x 9 kcal/g <= pct x der
-    pct_grasa_max = None
-    for p in (patologias or []):
-        v = PATOLOGIAS.get(p, {}).get("max_pct_kcal_grasa")
-        if v is not None:
-            pct_grasa_max = v if pct_grasa_max is None else min(pct_grasa_max, v)
+    pct_grasa_max = pct_grasa_patologia
     if pct_grasa_max is not None:
         fila = fila_vacia()
         for n in nombres:
