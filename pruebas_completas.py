@@ -1795,6 +1795,78 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 19 — LA AUDITORÍA DEL CATÁLOGO SE EJECUTA SOLA
+# ============================================================
+#
+# ⚠️ CASO REAL (25 agosto). Pregunta suya: "¿cómo podemos comprobar que
+# todos los datos sean correctos?".
+#
+# Resulta que auditar_catalogo.py YA existía, YA funcionaba y YA avisaba de
+# 18 cosas -- entre ellas un alimento con 30 nutrientes a cero (testículos
+# de cordero, sin proteína ni grasa) y seis pescados con el EPA y el DHA a
+# cero. Se ejecutó a mano el 21 de agosto, se anotó todo en PENDIENTE y en
+# DATOS_QUE_FALTAN.md... y desde entonces no la ha ejecutado nadie.
+#
+# Una auditoría que no se ejecuta no auditó nunca. Es lo mismo que pasó con
+# auditar_fediaf.py, que además tenía la ruta escrita a mano apuntando a un
+# ordenador concreto: en cualquier otra máquina reventaba antes de empezar.
+#
+# NO SE EXIGE QUE SALGA LIMPIA. Los 18 avisos de hoy son datos que hay que
+# CONSEGUIR de BEDCA o CIQUAL -- trabajo de fuentes, no de programación, y
+# están listados en DATOS_QUE_FALTAN.md. Exigir cero aquí dejaría la suite
+# roja hasta que alguien traiga 443 valores, y una suite que vive en rojo
+# no la mira nadie.
+#
+# Lo que sí se exige es que no aparezca NINGUNO NUEVO. Los conocidos están
+# aquí abajo con nombre y apellidos: si mañana un alimento nuevo entra con
+# huecos, o alguien vacía un valor sin querer, esto se cae en el acto.
+print("=== BLOQUE 19: la auditoría del catálogo, ejecutada ===")
+
+_HUECOS_YA_CONOCIDOS_b19 = {
+    # Faltan datos y están apuntados en DATOS_QUE_FALTAN.md (63 alimentos,
+    # 443 valores). No se rellenan a ojo: los valores salen de BEDCA/CIQUAL.
+    ("HUECOS", "Huevo clara"), ("HUECOS", "Huevo de pato entero"),
+    ("HUECOS", "Semilla de lino"), ("HUECOS", "Semilla de sésamo"),
+    ("HUECOS", "Borraja"), ("HUECOS", "Sal común (cloruro sódico)"),
+    ("HUECOS", "Bazo de vaca"), ("HUECOS", "Páncreas de vaca"),
+    ("HUECOS", "Bazo de cordero"), ("HUECOS", "Cerebro de ternera"),
+    ("HUECOS", "Testículos de cordero"),
+    # Los seis pescados con EPA/DHA a cero. El boquerón es el más urgente:
+    # con 6,3 g de grasa es pescado azul y ese cero es falso.
+    ("RARO", "Bacalao"), ("RARO", "Boquerón"), ("RARO", "Gamba roja"),
+    ("RARO", "Langostino"), ("RARO", "Perca"), ("RARO", "Pescadilla"),
+    ("RARO", "Laringe de vacuno"),
+}
+
+import re as _re_b19
+_cat = _sp_b18.run([sys.executable, "auditar_catalogo.py"], capture_output=True, text=True,
+                   cwd=_os_b18.path.dirname(_os_b18.path.abspath(__file__)))
+if _cat.returncode not in (0, 1):
+    fallos.append(f"BLOQUE19: auditar_catalogo.py ha reventado:\n{_cat.stderr[-500:]}")
+else:
+    _vistos = set()
+    for _linea in _cat.stdout.splitlines():
+        _m = _re_b19.match(r"\s*\[([A-Z ]+)\]\s+(.+?)\s\s+", _linea)
+        if _m:
+            _vistos.add((_m.group(1).strip(), _m.group(2).strip()))
+    _nuevos = _vistos - _HUECOS_YA_CONOCIDOS_b19
+    if _nuevos:
+        fallos.append(f"BLOQUE19: la auditoría del catálogo encuentra avisos NUEVOS que no "
+                      f"estaban: {sorted(_nuevos)}. O falta un dato en un alimento nuevo, o "
+                      f"alguien ha vaciado uno sin querer. Si es a propósito, apúntalo en "
+                      f"_HUECOS_YA_CONOCIDOS_b19 Y en DATOS_QUE_FALTAN.md.")
+    _arreglados = _HUECOS_YA_CONOCIDOS_b19 - _vistos
+    if _arreglados:
+        # No es un fallo: es que alguien ha traído datos. Pero hay que
+        # quitarlos de la lista, o deja de proteger de una recaída.
+        fallos.append(f"BLOQUE19: estos huecos YA NO aparecen -- alguien ha conseguido los "
+                      f"datos: {sorted(_arreglados)}. Quítalos de _HUECOS_YA_CONOCIDOS_b19 "
+                      f"y de DATOS_QUE_FALTAN.md, o dejan de proteger de una recaída.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")
