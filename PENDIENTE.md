@@ -401,6 +401,49 @@ menús comparados no tienen sentido sin él.
       la fecha vacía por el fallo de guardado (ver arriba). Hay que entrar
       en cada perro, ponerla y guardar. Una vez y ya.
 
+- [ ] **La compra: elegir el menú, los días bien, y marcar lo que ya
+      tienes.** Pedido el 24 de agosto, después de usarla:
+
+      1. **Elegir qué menú ver.** Cada uno por separado o todos juntos, a
+         gusto de quien compra. Hoy solo se puede ver el conjunto.
+
+      2. **Los días están mal planteados, y es un fallo de concepto, no de
+         cuentas.** Hoy la cesta sale de UNA SEMANA y lo demás se escala en
+         proporción (dias/7). Pero los menús de una semana no duran lo
+         mismo: uno cubre 4 días y otro 3. Sus palabras: *«si cocinas para
+         1 semana uno de 3 días tienes para más de dos»*. O sea que "1
+         semana" aplicado a un menú suelto no significa una semana de ese
+         menú.
+
+         Lo que hace falta: que la proporción sea **por menú** y que la
+         pantalla **diga a qué se refiere** — cuántos días cubre cada menú
+         y cuántas tandas estás comprando. Un número sin explicación en una
+         lista de la compra es peor que ningún número.
+
+      3. **Casillas para marcar lo que ya has comprado o tienes**, y un
+         botón para dejarlo todo a cero otra vez, como si no tuvieras nada.
+         Textual: *«esto tiene que ser user friendly»*.
+
+- [ ] **¿Una versión para dueños y otra para veterinarios/nutricionistas?**
+      Pedido el 24 de agosto: investigar si tiene sentido separarlas, y qué
+      cambiaría en las funcionalidades de cada una.
+
+      No es solo poner o quitar botones: cambia a quién se le habla. Todo
+      el proyecto está escrito para quien NO es veterinario — los mensajes
+      de error dicen qué pasa y qué hacer, no qué falló por dentro (ver
+      CLAUDE.md). Un profesional quiere lo contrario: los números, los
+      márgenes, por qué el solver eligió eso, poder saltarse criterios
+      nuestros que no son de FEDIAF.
+
+      Preguntas que hay que contestar ANTES de escribir código:
+      · ¿Es la misma app con más datos a la vista, o dos productos?
+      · ¿Un veterinario gestiona varios pacientes de varios dueños? Eso no
+        es "varios perros en una casa": es otra forma de organizar los
+        datos, y se nota en Supabase.
+      · ¿Se cobra distinto? ¿Quién paga, el profesional o el dueño?
+      · ¿Firma el profesional la pauta? Eso tiene consecuencias legales que
+        no son nuestras de decidir.
+
 - [ ] **Personalizar perro por perro** cuando son varios. Hoy lo que se
       elige se aplica a la casa entera (se le fuerza al perro que manda y
       los demás se amoldan). Elegir alimentos distintos para cada perro es
