@@ -186,10 +186,44 @@ for nut, topes in MAXIMOS.items():
         else:
             ok_n += 1
 
+# ─── VALORES PUESTOS A PROPÓSITO QUE **NO** SON DE FEDIAF ────────────────────
+#
+# ⚠️ AÑADIDO (25 agosto). FEDIAF no cubre todo, y a veces se adopta un valor
+# de otra fuente a conciencia. Eso es legítimo -- lo que no puede pasar es
+# que quede indistinguible de un valor de la tabla, porque entonces nadie
+# sabe de dónde salió. Es literalmente lo que pasó con la fila "Fibra":
+# estaba ahí desde el primer día, sin fuente, y acabó diciéndole a una
+# usuaria que a un menú hecho por la propia app le faltaba algo.
+#
+# Cada entrada lleva su fuente. Salen en el informe como "PUESTO A PROPÓSITO",
+# aparte de las discrepancias, para que se vean sin ensuciar el recuento.
+FUERA_DE_FEDIAF = {
+    ("EPA_DHA_total", "minAdulto"):
+        "NRC 2006. FEDIAF solo exige EPA+DHA en crecimiento y reproducción; "
+        "para adulto no da mínimo. Se adopta por relevancia clínica "
+        "(inflamación, articulaciones, corazón, piel). Decidido el 25/08/2026.",
+    ("EPA_DHA_total", "maxAdulto"):
+        "Lenox & Bauer, JVIM 2013 (27:217-226). FEDIAF no da máximo de "
+        "EPA+DHA para ninguna etapa. Decidido el 25/08/2026.",
+}
+
+a_proposito = []
+for (_nut, _campo), _razon in FUERA_DE_FEDIAF.items():
+    _fila = req.get(_nut)
+    _v = num(_fila.get(_campo)) if _fila else None
+    if _v is None:
+        problemas.append(("FALTA EL VALOR ADOPTADO", _nut,
+                          f"{_campo} está declarado en FUERA_DE_FEDIAF pero el JSON no lo trae. "
+                          f"O se puso y se ha borrado, o sobra esta entrada."))
+    else:
+        a_proposito.append((_nut, _campo, _v, _razon))
+
 for nut in SIN_MAXIMO:
     r = req.get(nut)
     if not r: continue
     for etapa in ("Adulto", "CachorroJoven", "CachorroCrecimiento"):
+        if (nut, "max" + etapa) in FUERA_DE_FEDIAF:
+            continue     # adoptado a propósito y con fuente, ver arriba
         if num(r.get("max" + etapa)) is not None:
             problemas.append(("MÁXIMO INVENTADO", nut,
                               f"{etapa}: el JSON pone un máximo y FEDIAF no da ninguno"))
@@ -231,6 +265,13 @@ for _n in req:
                       "ninguna fila de la tabla III-3b. O falta añadirla aquí con su "
                       "valor de FEDIAF, o no es un requisito y no puede acabar en "
                       "ningún mapa de requisitos (es lo que pasó con 'Fibra')"))
+
+if a_proposito:
+    print()
+    print("PUESTOS A PROPÓSITO (no son de la tabla de FEDIAF):")
+    for _nut, _campo, _v, _razon in a_proposito:
+        print("  %s · %s = %g" % (_nut, _campo, _v))
+        print("      %s" % _razon)
 
 print()
 print("Comprobaciones que cuadran: %d" % ok_n)
