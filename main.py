@@ -3098,7 +3098,7 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "7e6269bc2db51a3b",
+        "alimentos_v3_final.json":      "3169e729016f86e2",   # 25 ago: fibra de coles de Bruselas y tomate en puré (BEDCA)
         "requerimientos_v2_final.json": "1d14c5a4b99636e3",   # 25 ago: fuera la fila "Fibra" -- no es un requisito de FEDIAF
     }
     SELLOS_CRUDOS = {

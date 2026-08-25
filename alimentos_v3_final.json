@@ -4728,8 +4728,11 @@
    "manganeso": 0.3,
    "acidoPantotenico": 0.3,
    "colina": 40,
-   "cloruro": 13.86
-  }
+   "cloruro": 13.86,
+   "fibra": 4.3
+  },
+  "fuente": "BEDCA",
+  "nota_datos": "BEDCA, «Coles de Bruselas» — fibra dietética total 4,3 g/100 g (fuente 149). La energía (35 kcal), la proteína (4 g) y la grasa (0,5 g) que ya teníamos coinciden exactas con esa misma ficha, así que solo faltaba este campo."
  },
  {
   "nombre": "Col lombarda",
@@ -5243,8 +5246,11 @@
    "manganeso": 0.11,
    "acidoPantotenico": 0.09,
    "colina": 7,
-   "cloruro": 369.6
-  }
+   "cloruro": 369.6,
+   "fibra": 2.8
+  },
+  "fuente": "BEDCA",
+  "nota_datos": "BEDCA, «Tomate, maduro, puré» — fibra dietética total 2,8 g/100 g (fuente 29). Es el puré, no el tomate fresco, que en BEDCA es otra ficha distinta y trae 1,1 g. La energía (73 kcal), la proteína (4,5 g) y la grasa (0,2 g) que ya teníamos coinciden exactas con la ficha del puré, así que es la buena."
  },
  {
   "nombre": "Albaricoque",
