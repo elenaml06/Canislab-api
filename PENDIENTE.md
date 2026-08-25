@@ -40,9 +40,65 @@ las tiene que tomar una persona, no yo.
       todos los menús que lo lleven y ninguna prueba lo vería. Las fuentes
       son BEDCA, CIQUAL y USDA, y el hueso solo Köber et al. 2017.
 
-- [ ] **Fibra de tres verduras**: borraja, coles de Bruselas y tomate en
-      puré no tienen el dato. Hoy no afecta a nada (la fibra no es un
-      requisito de FEDIAF), pero el hueco está por si algún día se usa.
+- [ ] **Fibra de la borraja.** De las tres verduras a las que les faltaba
+      el dato, ella trajo dos de BEDCA el 25 de agosto y ya están puestas:
+      coles de Bruselas 4,3 g/100 g y tomate en puré 2,8 (el tomate fresco
+      es otra ficha distinta, 1,1 — el nuestro es el puré). Queda la
+      borraja, que además tiene un `0.0` explícito, que es peor que no
+      tener el dato: dice «no lleva fibra» y no es verdad.
+
+      El hueco no era inocuo: en la medición del 25 de agosto, uno de cada
+      ocho menús salió con «0,00 g de fibra» **porque le tocaron las coles
+      de Bruselas**. Una verdura de verdad leída como si no llevara nada.
+
+- [ ] **¿Rawku apunta a algún rango de fibra? — para hablar con Michelle.**
+      Ni FEDIAF, ni AAFCO, ni el NRC dan un mínimo: la fibra no es un
+      nutriente esencial y no tiene valor de referencia oficial. Así que
+      no se puede poner un mínimo duro sin dejar sin menú a perros con
+      patologías que limitan verduras o que necesitan fibra baja.
+
+      **Lo que sí sabemos, medido el 25 de agosto.** El mismo perro
+      (adulto, 1100 kcal), el mismo botón, ocho veces seguidas:
+
+      | verdura que le tocó | g fibra / 1000 kcal |
+      |---|---|
+      | Albahaca | 28,40 |
+      | Albahaca | 15,19 |
+      | Albahaca | 12,66 |
+      | Plátano | 2,28 |
+      | Acelga | 0,32 |
+      | Espárrago verde | 0,20 |
+      | Canónigos | 0,14 |
+      | Coles de Bruselas | 0,00 — faltaba el dato; ya puesto, 4,3 g/100 g |
+
+      De 0 a 28 al azar. No es que unos menús sean peores: al motor la
+      fibra le da igual, así que entre verduras que cumplen lo mismo elige
+      por el ruido que le da variedad. **Enseñar hoy esa cifra sería
+      enseñar una moneda al aire, y avisar cuando baje de un umbral sería
+      un aviso que salta más de la mitad de las veces, al azar.**
+
+      **Se probó a arreglarlo y no funciona.** Se le puso al motor una
+      preferencia por las verduras con fibra (una preferencia, no un
+      mínimo). Con un descuento suave: la mediana subió a 1,19 y seguía
+      yendo de 0,12 a 22,68. Con uno fuerte: la variedad se hundió de 8
+      verduras distintas a 3 (albahaca, frambuesa, arándano) y **seguía**
+      yendo de 0,61 a 29,47. El motivo es que la fibra del menú la decide
+      un solo ingrediente y cuántos gramos le toquen, y eso lo deciden los
+      requisitos, no la fibra. No hay palanca barata. El motor se quedó
+      como estaba.
+
+      **Lo que hace falta para poder hacer algo es una decisión de
+      nutrición**, no de programación: si Rawku quiere apuntar a un rango
+      (el consenso clínico que se citó habla de 10-20 g/1000 kcal como
+      «moderado», y de que BARF va por debajo de la comida comercial, ~2,7
+      % MS vs ~3,4 %), eso se implementa como un suelo BLANDO en el solver
+      -- se intenta llegar, y si no se llega el menú sale igual. Es media
+      tarde de trabajo. Pero la cifra tiene que venir de Michelle: aquí no
+      se inventan datos nutricionales.
+
+      Fuentes que trajo ella: Schmidt et al. (2018) PLOS ONE
+      13(8):e0201279; Torres-Henderson C. (2025), *The Role of Dietary
+      Fiber in Pet Nutrition*, Today's Veterinary Practice.
 
 - [ ] **¿Hace falta estar dada de alta como autónoma para cobrar?**
       Pregunta para la gestoría, antes de rellenar el tipo de negocio en
