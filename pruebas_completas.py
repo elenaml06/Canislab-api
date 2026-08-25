@@ -1710,6 +1710,91 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 18 — EL ANALIZADOR Y EL SEMÁFORO NO PUEDEN CONTRADECIRSE
+# ============================================================
+#
+# ⚠️ CASO REAL ENCONTRADO (25 agosto): analizó con la propia app un menú que
+# la propia app le había dado. "La dieta está bien encaminada, pero hay
+# cosas que ajustar. LE FALTA (1): Fibra 16%. 26 de 27 nutrientes están
+# correctos". Sus palabras: "¿cómo puede ser si es un menú que me ha dado
+# la app?????".
+#
+# Podía ser porque HABÍA DOS LISTAS DE REQUISITOS distintas:
+#   · verificar.MAPA (29): la que decide si un menú es verde.
+#   · optimizador.MAPA_REQUISITO_A_NUTRIENTE (30): la que usaba el
+#     analizador. Tenía Fibra y Calcio_LateGrowth_RazaGrande, y le faltaba
+#     EPA_DHA_total.
+#
+# Tres fallos mudos: menús verdes cortos de fibra (8 de 8, uno al 0%), un
+# cachorro corto de omega-3 que pasaba el análisis, y a un cachorro de raza
+# pequeña se le exigía el calcio reforzado de las razas grandes.
+#
+# Ninguno daba error. Los tres se ven solo comparando los dos lados con el
+# MISMO menú, que es lo que hace esto.
+print("=== BLOQUE 18: el analizador dice lo mismo que el semáforo ===")
+
+from analizador import analizar_dieta as _analizar_b18
+from verificar import MAPA as _MAPA_SEMAFORO_b18
+import analizador as _an_b18
+
+# 1) Una lista, no dos copias que se parecen.
+if _an_b18.MAPA_REQUISITO_A_NUTRIENTE is not _MAPA_SEMAFORO_b18:
+    fallos.append("BLOQUE18: el analizador ya no usa LA MISMA lista de requisitos que el "
+                  "semáforo, sino otra. Aunque hoy digan lo mismo, mañana no: es "
+                  "exactamente como el analizador acabó reclamando fibra en menús que "
+                  "la propia app daba por buenos.")
+
+# 2) Y sobre menús de verdad: lo que el semáforo da por verde, el analizador
+#    no puede decir que le falta.
+_CASOS_b18 = [(249, 5, "pequeño", "Adulto"), (1100, 20, "mediano", "Adulto"),
+              (900, 15, "mediano", "CachorroJoven"), (1600, 32, "grande", "Adulto")]
+for _der, _kg, _tam, _etapa in _CASOS_b18:
+    _r = _api._resolver_menu_v2_interno(_api.PeticionMenu(
+        nombres_alimentos=[], modo="automatico", der_objetivo=_der,
+        etapa_requisitos=_etapa, peso_perro_kg=_kg, tamano=_tam))
+    if not _r.get("factible"):
+        fallos.append(f"BLOQUE18: no se pudo generar el menú de {_der}kcal {_etapa}.")
+        continue
+    _g = _r.get("menu") or _r.get("gramos")
+    _al18, _req18 = _api.cargar_v2()
+    _ficha = verificar(_g, _al18, _req18, _der, _etapa)
+    if _ficha["semaforo"] != "verde":
+        fallos.append(f"BLOQUE18: el menú de {_der}kcal {_etapa} sale del motor sin estar "
+                      f"verde ({_ficha['semaforo']}).")
+        continue
+    _an = _analizar_b18(_g, _der, _etapa)
+    _faltan = [f.get("nutriente") for f in _an.get("faltan", [])]
+    _sobran = [f.get("nutriente") for f in _an.get("se_pasa", [])]
+    if _faltan or _sobran:
+        fallos.append(f"BLOQUE18: el semáforo da VERDE el menú de {_der}kcal {_etapa} y el "
+                      f"analizador, con el MISMO menú, dice que le falta {_faltan} y le "
+                      f"sobra {_sobran}. Los dos lados de la app, en desacuerdo sobre el "
+                      f"mismo plato.")
+
+# 3) Y que la fibra no haya vuelto a colarse por ningún lado: ni en la
+#    lista, ni en el JSON de requisitos. No está en la tabla de FEDIAF.
+if "Fibra" in _MAPA_SEMAFORO_b18:
+    fallos.append("BLOQUE18: 'Fibra' ha vuelto a la lista de requisitos. No está en la "
+                  "tabla de FEDIAF.")
+if any(_r["nutriente"] == "Fibra" for _r in _api.cargar_v2()[1].values()
+       if isinstance(_r, dict) and "nutriente" in _r):
+    fallos.append("BLOQUE18: ha vuelto la fila 'Fibra' a requerimientos_v2_final.json.")
+
+# 4) Y la auditoría contra FEDIAF tiene que salir limpia. Comprueba los dos
+#    sentidos: que cada valor de FEDIAF esté bien puesto, y que no sobre
+#    ninguna fila -- lo segundo se añadió el 25 de agosto porque era
+#    justo lo que nadie miraba, y por ahí entró la fibra.
+import subprocess as _sp_b18, os as _os_b18
+_aud = _sp_b18.run([sys.executable, "auditar_fediaf.py"], capture_output=True, text=True,
+                   cwd=_os_b18.path.dirname(_os_b18.path.abspath(__file__)))
+if "Discrepancias: 0" not in _aud.stdout:
+    _cola = "\n      ".join(_aud.stdout.strip().splitlines()[-6:])
+    fallos.append(f"BLOQUE18: auditar_fediaf.py encuentra discrepancias:\n      {_cola}")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")

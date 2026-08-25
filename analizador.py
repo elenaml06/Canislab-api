@@ -8,11 +8,47 @@ el humano propone y el software audita.
 
 NO calcula gramos: los recibe. Solo diagnostica.
 """
+import os, sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "motor"))
+
 from especies import cargar_alimentos
 from optimizador import (
-    cargar_requerimientos, MAPA_REQUISITO_A_NUTRIENTE, _valor_o_none,
+    cargar_requerimientos, _valor_o_none,
     resolver_etapa, SENIOR_PROTEINA_MINIMA,
 )
+# ⚠️ CASO REAL ENCONTRADO (25 agosto): analizó con la propia app un menú que
+# la propia app le había dado, y el analizador le dijo que le faltaba fibra.
+# "¿Cómo puede ser si es un menú que me ha dado la app?".
+#
+# Podía ser porque HABÍA DOS LISTAS DE REQUISITOS y no coincidían:
+#
+#   · verificar.MAPA (29) -- la que usa el motor para construir las
+#     restricciones Y la que usa el semáforo para dar por bueno un menú.
+#   · optimizador.MAPA_REQUISITO_A_NUTRIENTE (30) -- la que usaba esto.
+#
+# La segunda tenía "Fibra" y "Calcio_LateGrowth_RazaGrande"; la primera
+# tenía "EPA_DHA_total". Consecuencias, las tres reales y las tres mudas:
+#
+#   1. FIBRA: el motor ni la exigía ni la comprobaba, y esto la reclamaba.
+#      Medido: 8 de 8 menús automáticos VERDES salían cortos de fibra, uno
+#      al 0%. Y resulta que la fibra NO ESTÁ EN LA TABLA DE FEDIAF (dicho
+#      por ella): esa cifra se coló en requerimientos_v2_final.json desde
+#      otro sitio. O sea que el analizador llevaba desde siempre diciendo
+#      que faltaba algo que no es un requisito.
+#   2. EPA/DHA: esto NO lo miraba. Una dieta de cachorro corta de omega-3
+#      pasaba el análisis; el motor sí lo exige.
+#   3. CALCIO DE RAZA GRANDE: esto aplicaba el mínimo reforzado (2500 en
+#      vez de 2000) a TODOS los cachorros, también a los pequeños -- y el
+#      motor lo aplica solo si el peso adulto esperado es >= 25 kg, que es
+#      lo correcto. A un chihuahua se le decía que le faltaba calcio sin
+#      que le faltara. Aquí no se sabe el peso adulto, así que ese caso
+#      especial se queda donde puede resolverse bien: en el motor.
+#
+# Analizar un menú es contestar "¿esto cumple?", y quien decide si un menú
+# cumple es el semáforo. Si esto usara otra lista, la app se contradice a
+# sí misma -- que es exactamente lo que pasó. Por eso ahora se usa LA MISMA,
+# importada, no copiada. El BLOQUE 18 de pruebas_completas.py lo vigila.
+from verificar import MAPA as MAPA_REQUISITO_A_NUTRIENTE
 
 # Cuando un nutriente se queda corto, decir DE DONDE suele venir ayuda mas
 # que el nombre del nutriente a secas.

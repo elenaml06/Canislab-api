@@ -322,15 +322,5 @@
   "maxCachorroCrecimiento": 4500,
   "maxAdulto": "-",
   "nota_auditoria": "El tope estaba en la columna 'maxAdulto', que NO se consulta para un cachorro: era papel mojado. Movido a maxCachorroCrecimiento/Joven. Además el motor no tenía este nutriente en su MAPA, así que lo ignoraba por completo. En razas grandes el exceso de calcio durante el crecimiento causa osteocondrosis: no pueden regular su absorción como los adultos."
- },
- {
-  "nutriente": "Fibra",
-  "unidad": "g",
-  "minAdulto": 4.29,
-  "minCachorroJoven": 4.29,
-  "minCachorroCrecimiento": 4.29,
-  "maxCachorroJoven": 14.3,
-  "maxCachorroCrecimiento": 14.3,
-  "maxAdulto": 14.3
  }
 ]

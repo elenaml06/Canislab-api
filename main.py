@@ -3099,7 +3099,7 @@ def verificar():
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
         "alimentos_v3_final.json":      "7e6269bc2db51a3b",
-        "requerimientos_v2_final.json": "7b023fcdebdd4391",
+        "requerimientos_v2_final.json": "1d14c5a4b99636e3",   # 25 ago: fuera la fila "Fibra" -- no es un requisito de FEDIAF
     }
     SELLOS_CRUDOS = {
         "der.py": "1c5c8bb91ceac481",
