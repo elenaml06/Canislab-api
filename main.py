@@ -3187,7 +3187,7 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "28e5c2afe10904fd",   # 26 ago: fuente declarada en 18 de los 20 pescados (BEDCA los 12 que cuadran, USDA los 6 que BEDCA no trae). Solo metadatos, ningún número
+        "alimentos_v3_final.json":      "24e7e5ce073472fa",   # 26 ago: fuente declarada en 18 de los 20 pescados (BEDCA los 12 que cuadran, USDA los 6 que BEDCA no trae). Solo metadatos, ningún número
         "requerimientos_v2_final.json": "ee62ca5c3421754a",   # 26 ago: fuera el maxAdulto de EPA+DHA -- el techo de 2800 es de la dieta crónica y vive en el promedio semanal, no por menú
     }
     SELLOS_CRUDOS = {

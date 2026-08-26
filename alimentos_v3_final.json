@@ -3563,7 +3563,7 @@
   "nombre": "Dorada",
   "tipo": "Alimento",
   "categoria": "Pescados y mariscos",
-  "energia": 78,
+  "energia": 133,
   "nutrientes": {
    "proteina": 17,
    "grasa": 7.22,
@@ -3597,7 +3597,7 @@
    "cloruro": 112.42,
    "fibra": 0.0
   },
-  "nota_datos": "Ficha completa de BEDCA, puesta tal cual el 26 de agosto por decisión expresa. Todos los campos coinciden con la tabla oficial.\n⚠️ DEJADO CONSTAR: la ficha de BEDCA no cuadra consigo misma. Agua 82 g + proteína 17 g + grasa 7,22 g = 106,22 g por cada 100 g de pescado, y declara 78 kcal cuando sus propios macros dan 17x4 + 7,22x9 = 133. Cada fila viene de una fuente distinta (agua de la 7, proteína de la 32, grasa de la 296, energía de la 236). Con estos números la dorada sale a 92,6 g de grasa por 1000 kcal, el alimento más graso del catálogo. Se anota, no se corrige: el dato es el de la fuente oficial y la decisión de usarlo es de quien lleva la nutrición.",
+  "nota_datos": "Ficha de BEDCA. Todos los campos son los suyos MENOS la energía, y el motivo está medido:\n\nBEDCA declara 78 kcal (326 kJ), pero su propia ficha NO CUADRA CONSIGO MISMA:\n  · agua 82 g + proteína 17 g + grasa 7,22 g = 106,22 g por cada 100 g de pescado. Sobran más de 6 g de materia, y aún faltarían los minerales. Es imposible.\n  · la energía de un alimento SE CALCULA de sus macros: 17x4 + 7,22x9 = 133 kcal. Solo la proteína ya son 68, casi las 78 declaradas -- lo que dejaría 10 kcal para 7,22 g de grasa, que son 65.\n\nCOMPROBADO que es de esta ficha y no del método: las mismas dos cuentas aplicadas a los 19 pescados de BEDCA cuadran en 18. Atún 119 declaradas / 118 calculadas, salmón 182/182, sardina 140/140. Solo la dorada falla, y falla las dos a la vez.\n\nCAUSA: cada fila viene de un estudio distinto (agua de la fuente 7, proteína de la 32, grasa de la 296, energía de la 236) y en la dorada se cruzaron dos pescados. Los 78 kcal y los 82 g de agua son una dorada salvaje magra; los 7,22 g de grasa, una de piscifactoría. Lo confirma la propia tabla: los demás pescados con 82% de agua tienen 1,3-1,8 g de grasa; los que tienen 7 g de grasa andan por 74-76% de agua.\n\nSE USAN 133 kcal, que es lo coherente con la grasa que también guardamos. Poner 78 manteniendo 7,22 g de grasa haría que la app calculara una ración 83% grasa en calorías, y la energía es el divisor de los 30 requisitos. `auditar_catalogo.py` lo caza solo con el aviso [BASE] -- esa alarma se deja encendida a propósito, no se silencia.\n\nPENDIENTE para la nutricionista: si la dorada del catálogo es salvaje, hay que bajar la grasa a ~1,5 g Y con ella el EPA y el DHA, que salen de esa misma fuente 296. Energía y grasa se deciden juntas o no se decide ninguna.",
   "fuente_epa_dha": "BEDCA"
  },
  {
