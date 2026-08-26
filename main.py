@@ -31,8 +31,7 @@ sys.path.insert(0, ".")
 sys.path.insert(0, "./motor")
 from especies import cargar_alimentos, filtrar_alimentos_disponibles
 from der import calcular_der
-from optimizador import ETAPAS_VALIDAS
-from optimizador import optimizar_menu, dosis_maxima_fabricante
+from requisitos import ETAPAS_VALIDAS, dosis_maxima_fabricante
 from transicion import calcular_tramo_transicion, menu_activo_y_bloqueados, nivel_indicador_nutrientes
 from analizador import analizar_dieta
 import persistencia
@@ -635,51 +634,23 @@ def endpoint_der(datos: PeticionDER):
     return resultado
 
 
-@app.post("/menu")
-def endpoint_menu(datos: PeticionMenu):
-    alimentos = cargar_alimentos()
-    # Se filtra SIEMPRE, aunque no haya especies excluidas: los alimentos
-    # concretos que el usuario marco para evitar tambien tienen que caer.
-    alimentos = filtrar_alimentos_disponibles(
-        alimentos, set(datos.especies_excluidas or []), set(datos.nombres_excluidos or []))
-    por_nombre = {a["nombre"]: a for a in alimentos}
-    candidatos = [por_nombre[n] for n in datos.nombres_alimentos if n in por_nombre]
-    if not candidatos:
-        raise HTTPException(400, "Ninguno de los alimentos indicados existe en la base de datos")
-    resultado = optimizar_menu(candidatos, datos.der_objetivo, datos.etapa_requisitos,
-                               forzar_presencia=datos.forzar_presencia,
-                               peso_perro_kg=datos.peso_perro_kg,
-                               patologias=datos.patologias,
-                               peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg)
-    # Si forzar lo que el usuario eligio deja el menu sin solucion, se
-    # reintenta sin forzar: mejor darle un menu (avisando) que un error.
-    if not resultado.get("factible") and datos.forzar_presencia:
-        resultado = optimizar_menu(candidatos, datos.der_objetivo, datos.etapa_requisitos,
-                                   peso_perro_kg=datos.peso_perro_kg,
-                                   patologias=datos.patologias)
-        if resultado.get("factible"):
-            resultado["no_se_pudo_forzar"] = True
-    # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL GRAVE ENCONTRADO en
-    # auditoría exhaustiva: este endpoint (el motor VIEJO, "optimizar_menu",
-    # anterior al motor MILP de motor_completo.py) nunca pasa por
-    # resolver() en absoluto -- así que nunca ha visto ninguna de las
-    # restricciones duras de seguridad crónica de esta sesión. El
-    # frontend actual no lo llama (confirmado: cero referencias a "/menu"
-    # sin v2 en App.jsx), pero sigue expuesto públicamente, y "ningún
-    # límite se puede sobrepasar nunca" no puede depender de que nadie
-    # descubra y use este camino. Se valida el resultado igual que en
-    # el catálogo pre-calculado antes de devolverlo.
-    # ⚠️ CORREGIDO (20 agosto) — CASO REAL ENCONTRADO AUDITANDO: aquí solo
-    # se comprobaban los 5 límites de seguridad crónica, nunca los 30
-    # requisitos de FEDIAF ni el ratio Ca:P. Es decir: este endpoint podía
-    # entregar un menú que no se pasaba de ningún tope tóxico pero que
-    # tampoco cubría los mínimos -- y salía como bueno. Ahora pasa por el
-    # mismo filtro único que todos los demás, que exige verde de verdad.
-    return _garantizar_verificado(resultado, datos.der_objetivo,
-                                  datos.etapa_requisitos, datos.peso_perro_kg,
-                                  origen="/menu (motor viejo)",
-                                  patologias=datos.patologias)
-
+# ⚠️ QUITADO (26 agosto) — aquí estaba `POST /menu`, el endpoint del motor
+# ANTERIOR al MILP (`optimizar_menu()` en el viejo optimizador.py). El
+# frontend no lo llamaba (comprobado: cero referencias en todo canislab-web)
+# y arrastraba consigo 1.000 líneas con SU PROPIA tabla de patologías, que
+# llevaba semanas desincronizada de la de verdad -- fósforo renal a 1.400 en
+# vez de 1.200, cobre en hepatopatía a 3,0 sin bloquear, grasa en
+# pancreatitis al 25% de las kcal, y urato, cistinuria y "otra" sin existir.
+#
+# No llegó a dar menús malos porque `_garantizar_verificado()` los volvía a
+# comprobar contra las tablas buenas antes de entregarlos: los habría
+# rechazado. Pero eso significa que este camino, además de duplicado, estaba
+# construyendo menús que el filtro final iba a tirar.
+#
+# Lo que quedaba vivo de aquel archivo (cargar_requerimientos, resolver_etapa,
+# _valor_o_none, SENIOR_PROTEINA_MINIMA, ETAPAS_VALIDAS y
+# dosis_maxima_fabricante) vive ahora en `requisitos.py`, sin nada más
+# alrededor.
 
 @app.get("/catalogo/{tamano}/{etapa}")
 def endpoint_catalogo(tamano: str, etapa: str, der_objetivo: float = None, peso_perro_kg: float = None):

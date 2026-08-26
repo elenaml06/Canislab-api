@@ -12,7 +12,7 @@ import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "motor"))
 
 from especies import cargar_alimentos
-from optimizador import (
+from requisitos import (
     cargar_requerimientos, _valor_o_none,
     resolver_etapa, SENIOR_PROTEINA_MINIMA,
 )

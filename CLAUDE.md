@@ -87,7 +87,7 @@ jubilado — que desde fuera se parecen mucho.
 | Archivo | Qué hace |
 |---|---|
 | `main.py` | FastAPI: todos los endpoints, el presupuesto semanal de seguridad crónica y `_garantizar_verificado()`, por donde pasa **todo** menú antes de salir |
-| `optimizador.py` | ⚠️ **Dos cosas mezcladas.** `optimizar_menu()` es el motor VIEJO, anterior al MILP, y solo lo usa `/menu`, que el frontend no llama. Pero en el mismo archivo viven `dosis_maxima_fabricante`, `ETAPAS_VALIDAS`, `cargar_requerimientos` y `resolver_etapa`, que sí usan el motor vivo y el analizador. No se puede borrar entero |
+| `requisitos.py` | Cargar la tabla de FEDIAF, resolver la etapa y la dosis máxima que marca el fabricante de cada suplemento. Era `optimizador.py`, 1.124 líneas donde esto convivía con el motor anterior al MILP y con una copia desincronizada de la tabla de patologías. El motor viejo se borró el 26 de agosto; quedan 121 líneas |
 | `der.py` | Cálculo de las kcal. ⚠️ Ver «la duplicación que hay que vigilar», abajo |
 | `analizador.py` | `/analizar`: la dieta que ya le da el dueño. Comparte `MAPA` con el semáforo a propósito — discreparon una vez por la fibra |
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
@@ -102,11 +102,20 @@ Los que llama el frontend hoy: `/menu/v2`, `/menu/semana`,
 `/menu/varios-perros`, `/menu/anadir`, `/menu/cambiar`, `/menu/quitar`,
 `/menu/revalidar`, `/analizar`, `/alimentos`, y los de Stripe.
 
-**Los que nadie llama pero siguen expuestos**: `/menu` (motor viejo),
-`/catalogo/{tamano}/{etapa}`, `/der`, `/transicion`,
-`/perro/{perro_id}/menus`. No están rotos y `/menu` pasa por el mismo
-filtro final que los demás — pero son superficie pública que nadie prueba
-usando la app, así que si algo se rompe ahí no se entera nadie.
+**Los que nadie llama pero siguen expuestos**: `/catalogo/{tamano}/{etapa}`,
+`/der`, `/transicion` y `/perro/{perro_id}/menus`. Se dejan a propósito: no
+duplican nada, son funciones que existen y que la app puede volver a usar.
+Pero nadie los prueba usando la app, así que si algo se rompe ahí solo lo
+ve la batería.
+
+`POST /menu` **ya no existe** (26 de agosto). Era el motor anterior al MILP
+y arrastraba su propia tabla de patologías, desincronizada de la buena:
+fósforo renal a 1.400 en vez de 1.200, cobre en hepatopatía a 3,0 y sin
+bloquear, grasa en pancreatitis al 25 % de las kcal, diabetes bajando la
+grasa siempre, y urato, cistinuria y «otra» sin existir. No llegó a dar
+menús malos porque `_garantizar_verificado()` los habría rechazado — que es
+otra forma de decir que ese camino construía menús que el filtro final iba
+a tirar. El BLOQUE 24 vigila que no vuelva.
 
 ### La duplicación que hay que vigilar
 
@@ -127,8 +136,17 @@ la otra, el usuario verá unas kcal y el motor cumplirá los requisitos sobre
 otras, y no dará ningún error — que es exactamente la familia de fallos
 descrita en «Fallos que no puede encontrar la usuaria».
 
-Si tocas una, toca la otra. Y mejor todavía: escribe la prueba que las
-compare.
+**Cómo se vigila desde el 26 de agosto**: `der_casos.json`, 85 casos con
+sus kcal, **el mismo archivo en los dos repos**. Cada lado comprueba su
+implementación contra esos números sin necesitar al otro — el BLOQUE 23
+aquí, `tests/der-contrato.spec.js` allí. Si tocas la fórmula de un lado, la
+prueba de ese lado se cae en el acto.
+
+Si el cambio es a propósito: se regeneran los esperados y **se copia
+`der_casos.json` a los dos repos**. Los dos commits, o ninguno.
+
+En el frontend la fórmula ya no está enterrada en `App.jsx`: vive en
+`src/der.js`, que es lógica pura y no importa React.
 
 ### Los documentos
 

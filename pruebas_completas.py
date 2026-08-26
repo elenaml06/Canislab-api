@@ -26,7 +26,7 @@ sys.path.insert(0, './motor')
 from motor_completo import resolver, patologias_bloquean, especie_de
 from constructor import cargar, MARGENES
 from verificar import verificar
-from optimizador import dosis_maxima_fabricante
+from requisitos import dosis_maxima_fabricante
 from catalogo_menus import CATALOGO
 
 al, req = cargar()
@@ -374,9 +374,6 @@ if _g:
         **_comun, "alimento": _viejo}).json(), DER_B8, ETAPA_B8)
     _exigir_verde("/menu/anadir", _c.post("/menu/anadir", json={
         **_comun, "alimento": "Sardina"}).json(), DER_B8, ETAPA_B8)
-    _exigir_verde("/menu (motor viejo)", _c.post("/menu", json={
-        "nombres_alimentos": list(_g), "der_objetivo": DER_B8,
-        "etapa_requisitos": ETAPA_B8, "peso_perro_kg": PESO_B8}).json(), DER_B8, ETAPA_B8)
 
 _exigir_verde("/catalogo", _c.get("/catalogo/Mediano/Adulto", params={
     "der_objetivo": DER_B8, "peso_perro_kg": PESO_B8}).json(), DER_B8, ETAPA_B8)
@@ -2410,6 +2407,145 @@ elif abs(_pres_b22["selenio"] - 570.0) > 1e-6:
     fallos.append(f"BLOQUE22: para 1000 kcal el presupuesto de selenio es "
                   f"{_pres_b22['selenio']} y debería ser 570 µg. Si sale 2, ha vuelto la "
                   f"densidad por gramo de dieta.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 23 — EL DER NO PUEDE DIVERGIR ENTRE EL SERVIDOR Y LA APP
+# ============================================================
+#
+# ⚠️ ENCONTRADO (26 agosto) poniendo orden en el repo. Las kcal diarias de
+# un perro se calculan DOS VECES en este proyecto: aquí en der.py y en
+# calcularDER() de App.jsx, en el repo del frontend. Misma fórmula, mismos
+# coeficientes por actividad y edad, las mismas listas de razas de más y de
+# menos gasto, el mismo +10 por macho entero y por convivir con otros
+# perros. Escrito dos veces, en dos lenguajes, en dos repositorios.
+#
+# Y LA QUE MANDA ES LA DEL FRONTEND: la app calcula el DER y lo manda en
+# `der_objetivo`, así que der.py solo se ejecuta si alguien llama a /der --
+# que hoy no llama nadie. Si las dos divergen, el usuario ve unas kcal en
+# pantalla y el motor cumple los 30 requisitos sobre otras. Ninguna de las
+# dos da error, porque cada una por separado es coherente consigo misma.
+# Es exactamente la familia de fallos de "Fallos que no puede encontrar la
+# usuaria" en CLAUDE.md.
+#
+# CÓMO SE VIGILA. No comprobando un repo contra el otro -- eso obligaría a
+# tener los dos clonados y node instalado, y una prueba que se salta sola
+# cuando no encuentra al vecino no vigila nada. En vez de eso hay un
+# CONTRATO: der_casos.json, con 85 casos y sus kcal, el mismo archivo en
+# los dos repos. Cada lado comprueba SU implementación contra esos números.
+# Si alguien toca la fórmula de un lado, la prueba de ESE lado se cae en el
+# acto y le obliga a mirar el otro.
+#
+# Los 85 esperados salen de que las dos implementaciones DABAN LO MISMO el
+# 26 de agosto, no de una sola de las dos.
+print("=== BLOQUE 23: el DER del servidor cumple el contrato ===")
+
+import json as _json_b23
+from der import calcular_der as _der_b23
+
+try:
+    _contrato_b23 = _json_b23.load(open(
+        _os_b18.path.join(_os_b18.path.dirname(_os_b18.path.abspath(__file__)),
+                          "der_casos.json"), encoding="utf-8"))
+except FileNotFoundError:
+    _contrato_b23 = None
+    fallos.append("BLOQUE23: falta der_casos.json. Es el contrato que impide que el DER del "
+                  "servidor y el de la app se separen sin que nadie se entere.")
+
+if _contrato_b23:
+    _casos_b23 = _contrato_b23["casos"]
+    if len(_casos_b23) < 80:
+        fallos.append(f"BLOQUE23: el contrato del DER tiene solo {len(_casos_b23)} casos. Eran 85: "
+                      f"si se recortan, deja de cubrir etapas o regímenes de peso enteros.")
+    for _c23 in _casos_b23:
+        _op23 = _c23.get("opciones") or {}
+        try:
+            _r23 = _der_b23(
+                _c23["peso"], _c23["etapa"], _c23["actividad"], _c23["esterilizado"],
+                peso_adulto_esperado_kg=_op23.get("pesoAdultoKg"),
+                peso_ideal_kg=_op23.get("pesoIdealKg"),
+                raza=_op23.get("raza"),
+                convivencia="con_otros_perros" if _op23.get("conOtrosPerros") else "solo",
+                macho_entero=_op23.get("machoEntero", False),
+                n_cachorros=_op23.get("nCachorros"),
+                semana_lactancia=_op23.get("semanaLactancia"))
+            _obtenido23 = round(_r23["der"] if isinstance(_r23, dict) else _r23)
+        except Exception as _e23:
+            fallos.append(f"BLOQUE23: der.py revienta con {_c23['etapa']} de {_c23['peso']} kg "
+                          f"{_op23}: {type(_e23).__name__}: {_e23}")
+            continue
+        # 1 kcal de margen: las dos implementaciones redondean al final, y
+        # un decimal distinto en coma flotante no es una divergencia real.
+        if abs(_obtenido23 - _c23["kcal"]) > 1:
+            fallos.append(
+                f"BLOQUE23: {_c23['etapa']} de {_c23['peso']} kg, actividad "
+                f"{_c23['actividad']}{', ' + str(_op23) if _op23 else ''}: der.py da "
+                f"{_obtenido23} kcal y el contrato dice {_c23['kcal']}. O se ha tocado la "
+                f"fórmula del servidor sin tocar la de App.jsx, o al revés. Si el cambio es a "
+                f"propósito hay que regenerar der_casos.json y copiarlo A LOS DOS REPOS.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 24 — UNA SOLA TABLA DE PATOLOGÍAS, UN SOLO MAPA DE REQUISITOS
+# ============================================================
+#
+# ⚠️ CASO REAL ENCONTRADO (26 agosto) poniendo orden en el repo:
+# optimizador.py tenía SU PROPIA COPIA de la tabla de patologías, y llevaba
+# semanas desincronizada de la de verdad. Medido en el momento de quitarla:
+#
+#   renal          fósforo 1400  (la buena: 1200)
+#   hepatopatía    cobre 3.0 y SIN bloquear  (la buena: 2.4 y bloquea)
+#   pancreatitis   25% de las kcal  (la buena: 20 g/1000 kcal)
+#   diabetes       grasa al 35% SIEMPRE  (la buena: 30% solo con pancreatitis)
+#   urato, cistina y "otra"   NO EXISTÍAN, o sea que no bloqueaban nada
+#
+# Y encima con las claves de nutriente en mayúsculas ("Sodio", "Fósforo"),
+# que no casan con las del catálogo. No llegó a dar menús malos porque
+# `_garantizar_verificado()` los comprobaba otra vez contra las tablas
+# buenas -- pero es justo el mecanismo por el que el analizador y el
+# semáforo acabaron discrepando sobre la fibra: dos copias, se toca una.
+#
+# El motor viejo y sus copias se han borrado. Esto vigila que no vuelvan:
+# la tabla de patologías se define en UN sitio y el mapa de requisitos en
+# UN sitio, y todo lo demás los importa de ahí.
+print("=== BLOQUE 24: no hay tablas clínicas duplicadas ===")
+
+import pathlib as _pl_b24
+_raiz_b24 = _pl_b24.Path(__file__).parent
+_PY_B24 = sorted(list(_raiz_b24.glob("*.py")) + list((_raiz_b24 / "motor").glob("*.py")))
+
+# `PATOLOGIAS = {` solo puede aparecer en motor/motor_completo.py
+_definen_pat = [f.name for f in _PY_B24
+                if _re_b19.search(r"^PATOLOGIAS\s*=\s*\{", f.read_text(encoding="utf-8"),
+                                  _re_b19.M)]
+if _definen_pat != ["motor_completo.py"]:
+    fallos.append(f"BLOQUE24: la tabla de patologías se define en {_definen_pat} y solo puede "
+                  f"definirse en motor_completo.py. Dos copias de una tabla clínica es como el "
+                  f"fósforo renal se quedó en 1400 en una de ellas durante semanas.")
+
+# el mapa de requisito -> nutriente, igual: solo en motor/verificar.py
+_definen_mapa = [f.name for f in _PY_B24
+                 if _re_b19.search(r"^(MAPA|MAPA_REQUISITO_A_NUTRIENTE)\s*=\s*\{",
+                                   f.read_text(encoding="utf-8"), _re_b19.M)]
+if _definen_mapa != ["verificar.py"]:
+    fallos.append(f"BLOQUE24: el mapa de requisitos se define en {_definen_mapa} y solo puede "
+                  f"definirse en verificar.py. Ya hubo dos y no coincidían: por ahí se coló la "
+                  f"fibra como requisito inexistente.")
+
+# y el motor viejo no puede volver
+if (_raiz_b24 / "optimizador.py").exists():
+    fallos.append("BLOQUE24: ha vuelto optimizador.py. Era el motor anterior al MILP, con su "
+                  "propia tabla de patologías desincronizada. Lo que hacía falta de él está en "
+                  "requisitos.py.")
+for _f24 in _PY_B24:
+    if _re_b19.search(r"^def (optimizar_menu|_resolver_lp)\b", _f24.read_text(encoding="utf-8"),
+                      _re_b19.M):
+        fallos.append(f"BLOQUE24: ha vuelto el motor viejo ({_f24.name}). El único motor es "
+                      f"resolver() en motor_completo.py.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
