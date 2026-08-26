@@ -519,7 +519,7 @@ _r = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1040.0,
 if not _r.get("factible"):
     fallos.append("BLOQUE9 adulto 20kg / 8 especies fuera: se quedó sin menú. Si es por el "
                   "máximo de EPA+DHA, es que ha vuelto a ponerse como tope POR MENÚ -- y ahí "
-                  "no va: 19 de los 20 pescados lo pasan solos. Va en el promedio semanal.")
+                  "no va: 18 de los 20 pescados lo pasan solos. Va en el promedio semanal.")
 
 _r = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1049.0,
     "etapa_requisitos": "CachorroCrecimiento", "peso_perro_kg": 10.0,
