@@ -164,10 +164,41 @@ PATOLOGIAS = {
                   "descuadra la pauta de insulina. La verdura fibrosa sí se "
                   "mantiene, porque ayuda a amortiguar la subida de glucosa.")},
 
+    # ⚠️ AMPLIADO (26 agosto) tras la revisión de la nutricionista. El aviso
+    # solo hablaba del cuello de rumiante. Faltaban las dos cosas que de
+    # verdad condicionan el efecto goitrogénico:
+    #
+    #   · EL YODO. Los tiocianatos y la goitrina de las crucíferas compiten
+    #     con el yoduro por su captación en la tiroides -- o sea que el daño
+    #     depende de si el yodo va justo. Con yodo suficiente, un adulto
+    #     expuesto a goitrógenos "usually is not clinically important"
+    #     (Merck, "Goiter in Animals"). El menú ya cubre el mínimo FEDIAF de
+    #     yodo, pero conviene decirlo porque es lo que hace que el resto
+    #     importe poco.
+    #   · LA COCCIÓN. Hervir 30 minutos destruye ~90% de los glucosinolatos
+    #     (Song & Thornalley), la mayor parte por lixiviación al agua, y el
+    #     calor inactiva la mirosinasa, que es la enzima que libera la
+    #     goitrina. En BARF la verdura va cruda, así que es la única palanca
+    #     real que le queda a quien quiera seguir dándole crucíferas.
+    #
+    # ⚠️ Y NO HAY UMBRAL CANINO. No existe ningún estudio en perro que diga
+    # cuánta crucífera afecta a la tiroides: todo lo cuantitativo (cocción,
+    # contenido de progoitrina) viene de humanos y de plantas. Por eso el
+    # grelo y el nabo se excluyen y el brócoli y la coliflor no -- y eso SÍ
+    # tiene base: grelo y nabo son Brassica rapa, ricos en PROGOITRINA
+    # (precursor de la goitrina, el goitrógeno antitiroideo directo),
+    # mientras que brócoli y coliflor están dominados por glucorafanina, de
+    # mucho menor potencial goitrogénico. Es criterio cualitativo prudente,
+    # no un umbral validado, y así hay que contarlo.
     "hipotiroidismo": {
-        "aviso": ("No se cambia la composición. Pero evita darle cuello de rumiante "
-                  "grande de forma repetida: puede llevar restos de tejido tiroideo "
-                  "y alterar los valores de la analítica.")},
+        "aviso": ("No se cambia la composición, salvo que se quitan el grelo y el nabo: "
+                  "son las dos crucíferas del catálogo más ricas en los compuestos que "
+                  "interfieren con la tiroides. El brócoli, la coliflor y las coles se "
+                  "mantienen, porque los suyos son mucho menos activos. Si se los das, "
+                  "mejor cocidos: hervirlos destruye la mayor parte. Lo que más importa "
+                  "aquí es que no le falte yodo, y este menú ya lo cubre. Y evita darle "
+                  "cuello de rumiante grande de forma repetida: puede llevar restos de "
+                  "tejido tiroideo y alterar los valores de la analítica.")},
 
     "estruvita": {"sin_dieta_automatica": True,
         "aviso": ("Estos cálculos dependen del pH de la orina y de analíticas que la "

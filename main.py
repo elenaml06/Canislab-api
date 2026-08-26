@@ -3195,7 +3195,7 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "24e7e5ce073472fa",   # 26 ago: fuente declarada en 18 de los 20 pescados (BEDCA los 12 que cuadran, USDA los 6 que BEDCA no trae). Solo metadatos, ningún número
+        "alimentos_v3_final.json":      "fda1fd1f9ed5f2aa",   # 26 ago: fuente declarada en los pescados, y el araquidónico de las yemas y del hígado de cordero marcado como HUECO en vez de cero (un 0 ahí no puede ser real: la yema es la fuente más rica que hay). Solo metadatos, ningún número
         "requerimientos_v2_final.json": "1fd28648076cdc7e",   # 26 ago: fuera el maxAdulto de EPA+DHA -- el techo de 2800 es de la dieta crónica y vive en el promedio semanal, no por menú. Corregido el recuento de la nota: son 18 de 20 pescados, no 19
     }
     SELLOS_CRUDOS = {

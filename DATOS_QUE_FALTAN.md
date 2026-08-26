@@ -675,24 +675,28 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 | Nutriente | Unidad | Valor |
 |---|---|---|
 | cobre | mg | |
+| araquidonico | mg | |
 
 ## Huevo de gallina entero  ·  _Extras_
 
 | Nutriente | Unidad | Valor |
 |---|---|---|
 | cobre | mg | |
+| araquidonico | mg | |
 
 ## Huevo de pato  ·  _Extras_
 
 | Nutriente | Unidad | Valor |
 |---|---|---|
 | cobre | mg | |
+| araquidonico | mg | |
 
 ## Huevo de pato entero  ·  _Extras_
 
 | Nutriente | Unidad | Valor |
 |---|---|---|
 | cobre | mg | |
+| araquidonico | mg | |
 
 ## Semilla de lino  ·  _Extras_
 
@@ -759,3 +763,15 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 | Nutriente | Unidad | Valor |
 |---|---|---|
 | cloruro | mg | |
+
+## Huevo yema  ·  _Extras_
+
+| Nutriente | Unidad | Valor |
+|---|---|---|
+| araquidonico | mg | |
+
+## Hígado de cordero  ·  _Hígado_
+
+| Nutriente | Unidad | Valor |
+|---|---|---|
+| araquidonico | mg | |
