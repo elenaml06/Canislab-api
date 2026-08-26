@@ -1307,8 +1307,8 @@
   "nutrientes": {
    "proteina": 18.2,
    "grasa": 1,
-   "dha": 0,
-   "epa": 0,
+   "dha": 0.2,
+   "epa": 0.15,
    "linoleico": 0,
    "linolenico": 0,
    "araquidonico": 0,
@@ -1336,7 +1336,9 @@
    "colina": 65,
    "cloruro": 104.72,
    "fibra": 0.0
-  }
+  },
+  "fuente": "USDA FoodData Central / BEDCA",
+  "nota_datos": "EPA ~150 mg y DHA ~200 mg por 100 g (EPA+DHA ~350 mg). USDA FDC y BEDCA dan un rango de 150-240 mg de EPA+DHA total para el bacalao; se toma la parte baja del rango, que es lo conservador cuando el dato sirve para cubrir un mínimo."
  },
  {
   "nombre": "Trucha",
@@ -3468,8 +3470,8 @@
   "nutrientes": {
    "proteina": 17.6,
    "grasa": 6.3,
-   "dha": 0,
-   "epa": 0,
+   "dha": 1.292,
+   "epa": 0.763,
    "linoleico": 0,
    "linolenico": 0,
    "araquidonico": 0,
@@ -3497,7 +3499,9 @@
    "colina": 68,
    "cloruro": 178.64,
    "fibra": 0.0
-  }
+  },
+  "fuente": "PMC6089214 (Mozaffarian & Wu)",
+  "nota_datos": "EPA 763 mg y DHA 1292 mg por 100 g (EPA+DHA 2055 mg), de la tabla validada de Mozaffarian & Wu recogida en PMC6089214. ⚠️ Antes estaba a CERO en los dos, y el boquerón es pescado azul: ese cero no era «no tiene», era «no lo sabíamos», y el semáforo lo contaba como si de verdad no aportara nada. Valor exacto y verificado, no una aproximación por especie parecida."
  },
  {
   "nombre": "Calamar",
@@ -3586,8 +3590,8 @@
   "nutrientes": {
    "proteina": 18,
    "grasa": 1.8143,
-   "dha": 0,
-   "epa": 0,
+   "dha": 0.33,
+   "epa": 0.17,
    "linoleico": 0,
    "linolenico": 0,
    "araquidonico": 0,
@@ -3615,7 +3619,9 @@
    "colina": 65,
    "cloruro": 469.7,
    "fibra": 0.0
-  }
+  },
+  "fuente": "USDA FDC (especie similar)",
+  "nota_datos": "EPA ~170 mg y DHA ~330 mg por 100 g (EPA+DHA ~500 mg). ⚠️ APROXIMACIÓN POR ESPECIE PARECIDA: es el dato de USDA FDC para «mixed shrimp», ajustado a especie mediterránea. La gamba roja de verdad (Aristeus antennatus) NO tiene ficha propia ni en USDA ni en BEDCA. Pendiente de que Michelle lo confirme si tiene acceso a CIQUAL con la especie exacta."
  },
  {
   "nombre": "Langostino",
@@ -3625,8 +3631,8 @@
   "nutrientes": {
    "proteina": 24.3,
    "grasa": 0.8,
-   "dha": 0,
-   "epa": 0,
+   "dha": 0.22,
+   "epa": 0.12,
    "linoleico": 0,
    "linolenico": 0,
    "araquidonico": 0,
@@ -3657,7 +3663,8 @@
   },
   "duplicado_de": "Langostinos",
   "dato_no_fiable": true,
-  "nota_datos": "Duplicado de 'Langostinos'. No usar."
+  "nota_datos": "EPA ~120 mg y DHA ~220 mg por 100 g (EPA+DHA ~340 mg). ⚠️ APROXIMACIÓN POR ESPECIE PARECIDA: USDA FDC «prawn» y CIQUAL «langoustine». Pendiente de confirmación con la especie exacta.",
+  "fuente": "USDA FDC (especie similar)"
  },
  {
   "nombre": "Lenguado",
@@ -3745,8 +3752,8 @@
   "nutrientes": {
    "proteina": 18.6,
    "grasa": 1.6,
-   "dha": 0,
-   "epa": 0,
+   "dha": 0.28,
+   "epa": 0.15,
    "linoleico": 0,
    "linolenico": 0,
    "araquidonico": 0,
@@ -3774,7 +3781,9 @@
    "colina": 65,
    "cloruro": 72.38,
    "fibra": 0.0
-  }
+  },
+  "fuente": "USDA FDC (especie similar)",
+  "nota_datos": "EPA ~150 mg y DHA ~280 mg por 100 g (EPA+DHA ~430 mg). ⚠️ APROXIMACIÓN POR ESPECIE PARECIDA: USDA FDC «perch, raw» y CIQUAL «perche». La perca de río europea (Perca fluviatilis) no tiene ficha propia. Pendiente de confirmación."
  },
  {
   "nombre": "Pescadilla",
@@ -3784,8 +3793,8 @@
   "nutrientes": {
    "proteina": 11.75,
    "grasa": 0.836,
-   "dha": 0,
-   "epa": 0,
+   "dha": 0.27,
+   "epa": 0.09,
    "linoleico": 0,
    "linolenico": 0,
    "araquidonico": 0,
@@ -3813,7 +3822,9 @@
    "colina": 65,
    "cloruro": 154.0,
    "fibra": 0.0
-  }
+  },
+  "fuente": "Piñeiro-Corrales et al., Nutr Hosp 2013",
+  "nota_datos": "EPA ~90 mg y DHA ~270 mg por 100 g (EPA+DHA ~360 mg), ratio EPA:DHA ≈ 1:3. La pescadilla es merluza joven, y la merluza de este mismo catálogo ya traía 100 mg de EPA y 266 de DHA de otra fuente -- las dos cifras casan, lo que da confianza en las dos. La merluza se deja como estaba: es lo mismo con otros decimales."
  },
  {
   "nombre": "Pulpo",

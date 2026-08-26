@@ -490,19 +490,46 @@ for _etq_p, _der, _etapa, _peso, _adulto in PERROS_B9:
                               f"fuera sin avisar de ello")
 
 # LÍMITE CONOCIDO Y ACEPTADO: quitar las 8 especies más comunes deja el
-# catálogo con 2 carnes, 1 hueso, 0 vísceras y 0 hígado. Para un ADULTO
-# todavía sale menú (el pescado cubre casi todo). Para un CACHORRO en
-# crecimiento no, y está bien que no salga: la única forma de cuadrarlo
-# sería con kilos de hoja verde, que es exactamente lo que corta el tope
-# de volumen. Lo que se comprueba aquí no es que dé menú, sino que si no
-# lo da, lo diga en vez de inventarse algo imposible de dar.
+# catálogo con 2 carnes, 1 hueso, 0 vísceras, 0 hígado y 20 pescados. Ni un
+# adulto ni un cachorro sacan menú de ahí, y está bien que no salga. Lo que
+# se comprueba aquí no es que dé menú, sino que si no lo da, LO DIGA -- en
+# vez de inventarse algo imposible de dar, o de callarse.
+#
+# ⚠️ CAMBIADO (25 agosto). Hasta hoy el adulto SÍ sacaba menú de este
+# catálogo: el pescado cubría casi todo. Dejó de sacarlo al corregir
+# EPA_DHA_total para que sume EPA + DHA en vez de mirar solo el EPA, y no es
+# un fallo -- es el tope haciendo por fin su trabajo:
+#
+#   MEDIDO: los 20 pescados del catálogo, uno a uno, van de 2527 (pulpo) a
+#   16055 mg de EPA+DHA por 1000 kcal (boquerón). El máximo documentado es
+#   2800 (Lenox & Bauer, JVIM 2013;27:217-226). O sea que 19 de los 20 se
+#   pasan ellos solos, porque el pescado tiene muchísimo omega-3 y muy pocas
+#   calorías. Con 2 carnes y 1 hueso no queda con qué diluirlo.
+#
+#   Antes esto no se veía porque el semáforo comparaba los 2800 contra el
+#   EPA a secas, y el EPA solo es una fracción del total. Se servían menús
+#   con 3418 mg/1000 kcal en VERDE.
+#
+# Esto NO es soltar una regla de forma para dar menú igual: el máximo de
+# EPA+DHA es nutrición, y la nutrición no se relaja (regla 3 del CLAUDE.md).
+# Un perro comiendo solo pescado se pasaría de verdad, así que no dar menú y
+# explicarlo es la respuesta correcta.
+#
+# COMPROBADO que esto no rompe el uso normal: 30 de 30 menús generados sin
+# especies excluidas (de 250 a 2100 kcal, las cuatro etapas) siguen saliendo.
 _ocho_fuera = {"especies_excluidas": ["Pollo", "Ternera", "Cordero", "Cerdo",
                                       "Pavo", "Conejo", "Pato", "Vaca"]}
 _r = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1040.0,
     "etapa_requisitos": "Adulto", "peso_perro_kg": 20.0, "modo": "automatico",
     **_ocho_fuera}).json()
-if not _r.get("factible"):
-    fallos.append("BLOQUE9 adulto 20kg / 8 especies fuera: se quedó sin menú")
+if _r.get("factible"):
+    fallos.append("BLOQUE9 adulto 20kg / 8 especies fuera: ha dado menú. Con 2 carnes, "
+                  "1 hueso y solo pescado no debería poder cumplir el máximo de EPA+DHA "
+                  "(2800 mg/1000 kcal): 19 de los 20 pescados se pasan ellos solos. Si "
+                  "ahora sale, es que el máximo ha dejado de aplicarse.")
+elif not str(_r.get("motivo") or "").strip():
+    fallos.append("BLOQUE9 adulto 20kg / 8 especies fuera: no da menú y tampoco dice "
+                  "por qué. Quedarse sin menú es aceptable; quedarse sin explicación no.")
 
 _r = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1049.0,
     "etapa_requisitos": "CachorroCrecimiento", "peso_perro_kg": 10.0,
@@ -1332,6 +1359,76 @@ if _r_sano.get("factible"):
     if _main_b13._tope_patologia_roto(_r_sano.get("menu") or {}, _por_nombre_b12, None):
         fallos.append("BLOQUE13: la puerta dice que un perro SIN patologías se pasa de un tope")
 
+# (5) SOLTAR UN TOPE CLÍNICO SE DICE. NUNCA EN SILENCIO.
+#
+# ⚠️ CASO REAL ENCONTRADO (25 agosto): un cachorro con pancreatitis recibía
+# su menú con el tope de grasa QUITADO y sin una palabra. Soltarlo es
+# correcto — el mínimo de FEDIAF en crecimiento (21,25 g/1000 kcal) es MAYOR
+# que el tope terapéutico (20 g), así que aplicarlo sería no dar menú — pero
+# callárselo no lo es: quien lee la pantalla cree que su cachorro está
+# comiendo bajo en grasa, y no lo está.
+#
+# El aviso ya existía en el motor (`topes_de_patologias` lo devuelve como
+# tercer valor) y se tiraba en los dos extremos: el motor lo recogía en una
+# variable con guion bajo y main.py ni lo pedía. Es la regla de "se baja de
+# peldaño y SE DICE" saltada justo donde más importa: un tope clínico no es
+# una proporción de BARF.
+#
+# Se comprueba contra el ENDPOINT, no contra el motor, porque el fallo no
+# estaba en el motor: estaba en que nadie recogía lo que el motor daba.
+_b13_crec = {"nombres_alimentos": [], "der_objetivo": 900, "peso_perro_kg": 14,
+             "etapa_requisitos": "CachorroCrecimiento", "modo": "automatico",
+             "patologias": ["pancreatitis"]}
+_r_crec = _c.post("/menu/v2", json=_b13_crec).json()
+if not _r_crec.get("factible"):
+    fallos.append("BLOQUE13 aviso de etapa: un cachorro con pancreatitis tiene que "
+                  "recibir menú (el tope se suelta), y no ha salido ninguno")
+else:
+    _avisos = [str(x) for x in (_r_crec.get("problemas_seguridad") or [])]
+    if not any("pancreatitis" in a.lower() for a in _avisos):
+        fallos.append("BLOQUE13 aviso de etapa: al cachorro con pancreatitis se le ha "
+                      "soltado el tope de grasa EN SILENCIO — no hay ningún aviso que "
+                      "lo diga en problemas_seguridad")
+
+# Y el TEXTO tiene que ser el de crecimiento, no el de adulto. Esto se
+# comprueba directamente sobre `avisos_de_patologias` y no sobre la
+# respuesta del endpoint a propósito: hoy esa función solo se llama con las
+# patologías que BLOQUEAN, así que un fallo aquí no se vería desde fuera —
+# comprobarlo por el endpoint sería una prueba que aprueba siempre.
+#
+# Importa igual porque el texto de adulto dice "se ha bajado la grasa", y en
+# crecimiento eso es FALSO: no se ha bajado nada. El día que alguien llame a
+# esta función con una patología que no bloquea (que es lo natural al
+# enseñar los avisos de un menú que sí ha salido), estaría afirmándole a la
+# usuaria una restricción que no existe. Un aviso falso es peor que ninguno.
+from motor_completo import avisos_de_patologias as _avisos_pat_b13
+for _pat_t, _et_t, _debe_decir, _no_puede_decir in [
+    (["pancreatitis"], "CachorroJoven",       "no ha podido bajar la grasa", "se ha bajado la grasa"),
+    (["renal"],        "CachorroCrecimiento", "plan dietético individual",   "se ha bajado el fósforo"),
+    (["pancreatitis"], "Adulto",              "se ha bajado la grasa",       "no ha podido bajar"),
+    (["renal"],        "Adulto",              "se ha bajado el fósforo",     "plan dietético individual"),
+]:
+    _txt = " ".join(_avisos_pat_b13(_pat_t, _et_t)).lower()
+    if _debe_decir not in _txt:
+        fallos.append(f"BLOQUE13 texto de aviso: para {_pat_t} en {_et_t} el aviso "
+                      f"tendría que decir «{_debe_decir}» y dice: {_txt[:120]}")
+    if _no_puede_decir in _txt:
+        fallos.append(f"BLOQUE13 texto de aviso: para {_pat_t} en {_et_t} se le está "
+                      f"diciendo «{_no_puede_decir}», que ahí no es verdad")
+
+# Y al revés, dos veces: ni a un adulto con pancreatitis (el tope SÍ se le
+# aplica, así que no hay nada que avisar) ni a un cachorro sano se les puede
+# colar este aviso. Un aviso que sale siempre no informa de nada.
+for _et_no, _pat_no, _que in [("Adulto", ["pancreatitis"], "un adulto con pancreatitis"),
+                              ("CachorroCrecimiento", [], "un cachorro sano")]:
+    _r_no = _c.post("/menu/v2", json={**_b13_crec, "etapa_requisitos": _et_no,
+                                      "patologias": _pat_no}).json()
+    if _r_no.get("factible"):
+        _av_no = [str(x) for x in (_r_no.get("problemas_seguridad") or [])]
+        if any("no ha podido bajar la grasa" in a.lower() for a in _av_no):
+            fallos.append(f"BLOQUE13 aviso de etapa: a {_que} se le da el aviso de "
+                          f"que no se ha podido bajar la grasa, y ahí no toca")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
@@ -1873,7 +1970,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 # NO SE EXIGE QUE SALGA LIMPIA. Los 18 avisos de hoy son datos que hay que
 # CONSEGUIR de BEDCA o CIQUAL -- trabajo de fuentes, no de programación, y
 # están listados en DATOS_QUE_FALTAN.md. Exigir cero aquí dejaría la suite
-# roja hasta que alguien traiga 443 valores, y una suite que vive en rojo
+# roja hasta que alguien traiga 431 valores, y una suite que vive en rojo
 # no la mira nadie.
 #
 # Lo que sí se exige es que no aparezca NINGUNO NUEVO. Los conocidos están
@@ -1882,18 +1979,22 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 print("=== BLOQUE 19: la auditoría del catálogo, ejecutada ===")
 
 _HUECOS_YA_CONOCIDOS_b19 = {
-    # Faltan datos y están apuntados en DATOS_QUE_FALTAN.md (63 alimentos,
-    # 443 valores). No se rellenan a ojo: los valores salen de BEDCA/CIQUAL.
+    # Faltan datos y están apuntados en DATOS_QUE_FALTAN.md (57 alimentos,
+    # 431 valores, tras rellenar los seis pescados el 25 de agosto). No se
+    # rellenan a ojo: los valores salen de BEDCA/CIQUAL/USDA con su fuente.
     ("HUECOS", "Huevo clara"), ("HUECOS", "Huevo de pato entero"),
     ("HUECOS", "Semilla de lino"), ("HUECOS", "Semilla de sésamo"),
     ("HUECOS", "Borraja"), ("HUECOS", "Sal común (cloruro sódico)"),
     ("HUECOS", "Bazo de vaca"), ("HUECOS", "Páncreas de vaca"),
     ("HUECOS", "Bazo de cordero"), ("HUECOS", "Cerebro de ternera"),
     ("HUECOS", "Testículos de cordero"),
-    # Los seis pescados con EPA/DHA a cero. El boquerón es el más urgente:
-    # con 6,3 g de grasa es pescado azul y ese cero es falso.
-    ("RARO", "Bacalao"), ("RARO", "Boquerón"), ("RARO", "Gamba roja"),
-    ("RARO", "Langostino"), ("RARO", "Perca"), ("RARO", "Pescadilla"),
+    # ⚠️ RELLENADOS (25 agosto): los seis pescados que tenían EPA y DHA a
+    # cero -- bacalao, boquerón, gamba roja, langostino, perca y pescadilla
+    # -- ya no están en esta lista porque ya no son huecos. Las fuentes están
+    # en el campo `nota_datos` de cada uno en alimentos_v3_final.json, y los
+    # números anclados en el BLOQUE 21. El boquerón era el urgente: con 6,3 g
+    # de grasa es pescado azul, y aquel cero no era "no tiene" sino "no lo
+    # sabíamos" -- el semáforo lo contaba como si de verdad no aportara nada.
     ("RARO", "Laringe de vacuno"),
 }
 
@@ -1969,6 +2070,131 @@ for _pat, _meter in [("renal", "Hígado de vaca"), ("pancreatitis", "Sardina"),
             _r20.json()
         except Exception as _e:
             fallos.append(f"BLOQUE20: {_ruta} con {_quien} no devuelve JSON: {_e}")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 21 — EPA+DHA ES LA SUMA, Y EL MÁXIMO TIENE QUE MORDER
+# ============================================================
+# ⚠️ CASO REAL ENCONTRADO (25 agosto): el requisito se llama "EPA_DHA_total"
+# y estaba mapeado a la clave "epa" A SECAS. El nombre decía una cosa y el
+# código comprobaba otra.
+#
+# No era inocuo:
+#   · MEDIDO sobre 20 menús generados, 2 se pasaban del máximo de 2800
+#     mg/1000 kcal (uno a 3418) y salían VERDES, porque el semáforo solo
+#     miraba el EPA. Un tope de seguridad que no topaba nada.
+#   · Y seis pescados del catálogo tenían EPA y DHA a CERO -- entre ellos el
+#     boquerón, que es pescado azul. Ese cero no era "no tiene", era "no lo
+#     sabíamos", y contaba como si de verdad no aportara nada.
+#
+# Este bloque vigila las tres cosas a la vez: que se sume, que el máximo
+# muerda, y que los datos no vuelvan a cero.
+print("=== BLOQUE 21: EPA+DHA se suma y el máximo muerde ===")
+
+from constructor import valor_nutriente as _valor_b21, NUTRIENTES_COMPUESTOS as _COMP_b21
+from verificar import MAPA as _MAPA_b21, verificar as _verificar_b21
+
+# 1) El requisito tiene que apuntar al compuesto, no a una de sus mitades.
+if _MAPA_b21.get("EPA_DHA_total") != "epa_dha":
+    fallos.append(f"BLOQUE21: EPA_DHA_total está mapeado a "
+                  f"'{_MAPA_b21.get('EPA_DHA_total')}'. Tiene que ser 'epa_dha': el "
+                  f"mínimo (110 mg, NRC 2006) y el máximo (2800 mg, Lenox & Bauer 2013) "
+                  f"son los dos para la SUMA, no para el EPA suelto.")
+
+# 2) Y sumar de verdad. Se comprueba con un alimento donde las dos mitades
+#    son distintas y grandes, para que sumar y no sumar no puedan coincidir
+#    por casualidad.
+_al21, _req21 = _api.cargar_v2()
+_sardina = _al21.get("Sardina", {}).get("nutrientes", {})
+_esperado = (_sardina.get("epa") or 0) + (_sardina.get("dha") or 0)
+_dado = _valor_b21(_sardina, "epa_dha")
+if abs(_dado - _esperado) > 1e-9 or _dado <= (_sardina.get("epa") or 0):
+    fallos.append(f"BLOQUE21: para la sardina, epa_dha da {_dado} y la suma de sus dos "
+                  f"mitades es {_esperado} (epa {_sardina.get('epa')} + dha "
+                  f"{_sardina.get('dha')}). O no suma, o suma solo una.")
+
+# 3) EL MÁXIMO TIENE QUE MORDER. Se monta a mano un menú cargadísimo de
+#    pescado azul y el semáforo tiene que decir que se pasa. Con el mapeo
+#    viejo (solo epa) este mismo menú salía dentro de rango.
+_menu_azul = {"Sardina": 500.0, "Caballa": 200.0}
+_menu_azul = {n: g for n, g in _menu_azul.items() if n in _al21}
+if len(_menu_azul) < 2:
+    fallos.append("BLOQUE21: faltan sardina o caballa en el catálogo, no se puede "
+                  "probar el máximo de EPA+DHA.")
+else:
+    _kcal_azul = sum(_al21[n]["energia"] / 100.0 * g for n, g in _menu_azul.items())
+    _ficha_azul = _verificar_b21(_menu_azul, _al21, _req21, _kcal_azul, "Adulto")
+    _se_pasa = [x["nutriente"] for x in _ficha_azul["se_pasa"]]
+    if "EPA_DHA_total" not in _se_pasa:
+        _suma = sum(_valor_b21(_al21[n]["nutrientes"], "epa_dha") / 100.0 * g
+                    for n, g in _menu_azul.items()) / _kcal_azul * 1000.0
+        fallos.append(f"BLOQUE21: un menú de 500 g de sardina y 200 g de caballa lleva "
+                      f"{_suma*1000:.0f} mg de EPA+DHA por 1000 kcal, muy por encima del "
+                      f"máximo de 2800, y el semáforo NO lo marca. Se pasa de: {_se_pasa}")
+
+# 4) Y el mínimo se sigue exigiendo: una dieta de solo carne no puede pasar.
+_menu_seco = {n: 400.0 for n in ("Pechuga de pollo (sin piel)",) if n in _al21}
+if _menu_seco:
+    _kcal_seco = sum(_al21[n]["energia"] / 100.0 * g for n, g in _menu_seco.items())
+    _ficha_seco = _verificar_b21(_menu_seco, _al21, _req21, _kcal_seco, "Adulto")
+    if "EPA_DHA_total" not in [x["nutriente"] for x in _ficha_seco["faltan"]]:
+        fallos.append("BLOQUE21: una dieta de solo pechuga de pollo no da EPA+DHA y el "
+                      "semáforo no lo reclama. Sumar no puede haberse llevado por "
+                      "delante el mínimo.")
+
+# 5) LOS SEIS PESCADOS QUE ESTABAN A CERO. Un cero aquí no es un dato: es un
+#    hueco que el semáforo cuenta como "no aporta". Se anclan los valores con
+#    su fuente para que nadie los borre sin darse cuenta.
+_EPA_DHA_REVISADOS_b21 = {
+    # alimento        epa (g/100g)  dha (g/100g)   fuente
+    "Boquerón":      (0.763, 1.292, "PMC6089214 (Mozaffarian & Wu)"),
+    "Bacalao":       (0.150, 0.200, "USDA FoodData Central / BEDCA"),
+    "Pescadilla":    (0.090, 0.270, "Piñeiro-Corrales et al., Nutr Hosp 2013"),
+    "Gamba roja":    (0.170, 0.330, "USDA FDC (especie similar)"),
+    "Langostino":    (0.120, 0.220, "USDA FDC (especie similar)"),
+    "Perca":         (0.150, 0.280, "USDA FDC (especie similar)"),
+}
+for _nom21, (_epa21, _dha21, _fuente21) in _EPA_DHA_REVISADOS_b21.items():
+    _a21 = _al21.get(_nom21)
+    if not _a21:
+        fallos.append(f"BLOQUE21: '{_nom21}' ya no está en el catálogo.")
+        continue
+    _n21 = _a21.get("nutrientes", {})
+    if abs((_n21.get("epa") or 0) - _epa21) > 1e-9 or abs((_n21.get("dha") or 0) - _dha21) > 1e-9:
+        fallos.append(f"BLOQUE21: {_nom21} tiene epa={_n21.get('epa')} dha={_n21.get('dha')} "
+                      f"y lo verificado el 25 de agosto es {_epa21} / {_dha21} "
+                      f"({_fuente21}). Si el cambio es a propósito, trae la fuente nueva.")
+    if not _a21.get("fuente"):
+        fallos.append(f"BLOQUE21: {_nom21} tiene valores de EPA/DHA sin campo 'fuente'. "
+                      f"Un dato nutricional sin fuente no se puede defender.")
+
+# Y ninguno más puede quedarse a cero en los dos a la vez sin estar declarado
+# como hueco conocido: el boquerón enseñó que eso pasa calladamente.
+_a_cero_b21 = sorted(n for n, a in _al21.items()
+                     if a.get("categoria") == "Pescados y mariscos"
+                     and not (a.get("nutrientes", {}).get("epa") or 0)
+                     and not (a.get("nutrientes", {}).get("dha") or 0))
+if _a_cero_b21:
+    fallos.append(f"BLOQUE21: estos pescados tienen EPA y DHA a cero: {_a_cero_b21}. "
+                  f"En un pescado eso casi nunca es un dato real, es un hueco -- y el "
+                  f"semáforo lo cuenta como si de verdad no aportara nada.")
+
+# 6) EL MERCURIO. El tope del 10% de las kcal es lo único con base aplicable
+#    en perros y tiene que seguir ahí. El de "≤1 día/semana" se quitó el 25
+#    de agosto: no lo usaba nadie (código muerto) y venía de recomendaciones
+#    de FDA/EFSA para embarazadas y niños, no de ningún estudio canino.
+import motor.seguridad as _seg21
+if getattr(_seg21, "TOPE_MERCURIO_KCAL", None) != 0.10:
+    fallos.append(f"BLOQUE21: TOPE_MERCURIO_KCAL vale "
+                  f"{getattr(_seg21, 'TOPE_MERCURIO_KCAL', None)} y tiene que ser 0.10.")
+if hasattr(_seg21, "TOPE_MERCURIO_DIAS_SEMANA"):
+    fallos.append("BLOQUE21: ha vuelto TOPE_MERCURIO_DIAS_SEMANA. No tiene base en "
+                  "perros (es de FDA/EFSA para embarazadas) y antes estaba declarada "
+                  "sin que la usara ni una línea: la app decía tener una regla que no "
+                  "aplicaba. Si algún día se aplica de verdad, hará falta una fuente "
+                  "canina primero.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

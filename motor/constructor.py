@@ -326,6 +326,57 @@ def construir(plantilla: dict, elegidos: dict, der: float, alimentos: dict) -> d
     return {n: round(v * factor, 1) for n, v in crudo.items()}
 
 
+# ⚠️ NUTRIENTES QUE NO SON UNA CLAVE DEL ALIMENTO, SINO LA SUMA DE OTRAS.
+#
+# CASO REAL ENCONTRADO (25 agosto): el requisito se llama "EPA_DHA_total" y
+# estaba mapeado a la clave "epa" A SECAS. O sea que el nombre decía una cosa
+# y el código comprobaba otra: se exigían 110 mg de EPA él solo, y el DHA --
+# que en casi todos los pescados es el que MÁS pesa (en la sardina, EPA 254 mg
+# frente a DHA 676) -- no contaba para nada.
+#
+# El mínimo (110 mg, NRC 2006) y el máximo (2800 mg, Lenox & Bauer JVIM 2013)
+# son los dos para la SUMA, no para el EPA suelto. Medir una suma contra un
+# límite pensado para esa suma es lo correcto; medir solo la mitad no.
+#
+# Y no era inocuo en las dos direcciones:
+#   · El MÍNIMO salía más estricto de lo que toca, así que el motor metía
+#     pescado graso solo para llegar a 110 de EPA cuando el DHA ya cubría de
+#     sobra el requisito de verdad. Conservador, pero deformaba los menús.
+#   · El MÁXIMO no se aplicaba de verdad. MEDIDO sobre 20 menús generados: 2
+#     se pasaban de los 2800 (uno a 3418 mg/1000 kcal) y salían VERDES,
+#     porque el semáforo solo miraba el EPA. Ese sí era un tope de seguridad
+#     que no protegía de nada.
+#
+# Se resuelve con una clave DERIVADA en vez de metiendo un campo "epa_dha" a
+# los 300 alimentos del catálogo: un campo copiado se desincroniza el día que
+# alguien corrija el EPA de un pescado y se olvide de la suma. Aquí no puede.
+NUTRIENTES_COMPUESTOS = {"epa_dha": ("epa", "dha")}
+
+
+def valor_nutriente(nutrientes: dict, clave: str) -> float:
+    """Lo que aporta un alimento de un nutriente, por 100 g.
+
+    Se usa en TODOS los sitios que leen un nutriente por su clave del MAPA
+    (construir las restricciones del solver, elegir suplemento, bajar un
+    exceso), para que los compuestos se sumen igual en los tres. Si cada
+    sitio lo hiciera a mano, volveríamos a tener el mismo nutriente
+    calculado de dos formas -- que es el fallo de la fibra otra vez.
+    """
+    partes = NUTRIENTES_COMPUESTOS.get(clave)
+    if partes:
+        total = 0.0
+        for parte in partes:
+            try:
+                total += float(nutrientes.get(parte) or 0)
+            except (TypeError, ValueError):
+                continue
+        return total
+    try:
+        return float(nutrientes.get(clave) or 0)
+    except (TypeError, ValueError):
+        return 0.0
+
+
 def perfil_nutricional(menu: dict, alimentos: dict) -> dict:
     """Suma lo que aporta la racion. Simple aritmetica, sin sorpresas."""
     total = {}
@@ -338,6 +389,11 @@ def perfil_nutricional(menu: dict, alimentos: dict) -> dict:
                 total[nutriente] = total.get(nutriente, 0.0) + float(valor) * gramos / 100.0
             except (TypeError, ValueError):
                 continue
+    # Los compuestos se calculan al final, sobre los totales ya sumados. Da
+    # exactamente lo mismo que sumarlos alimento a alimento, y así hay un
+    # solo sitio donde se definen.
+    for compuesto, partes in NUTRIENTES_COMPUESTOS.items():
+        total[compuesto] = sum(total.get(p, 0.0) for p in partes)
     total["_kcal"] = sum(alimentos[n]["energia"] * g / 100.0
                          for n, g in menu.items() if n in alimentos)
     total["_gramos"] = sum(menu.values())

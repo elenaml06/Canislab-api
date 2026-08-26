@@ -32,6 +32,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 from scipy.optimize import milp, LinearConstraint, Bounds
 from verificar import MAPA, _num, EQUIVALENCIA
+from constructor import valor_nutriente
 
 # ⚠️ AÑADIDO (5 agosto, noche): copia local de especie_de() (la misma
 # lógica que ya usan especies.py y el frontend) -- se define aquí en
@@ -295,10 +296,19 @@ def avisos_de_patologias(patologias, etapa="Adulto"):
         info = PATOLOGIAS.get(p)
         if not info:
             continue
-        # En crecimiento, si la patología bloquea, el mensaje que hay que
-        # dar es el de crecimiento -- el otro habla de un ajuste que no se
-        # ha hecho.
-        if (info.get("en_crecimiento") == "bloquear" and _es_crecimiento(etapa)
+        # En crecimiento, NINGÚN tope `solo_en_adulto` se ha aplicado: ni el
+        # que bloquea (renal) ni el que se suelta (pancreatitis). El aviso de
+        # adulto dice "se ha bajado el fósforo" o "se ha bajado la grasa", y
+        # ahí eso es FALSO -- no se ha bajado nada. Hay que dar el de
+        # crecimiento, que cuenta lo que ha pasado de verdad.
+        #
+        # ⚠️ Antes esta condición miraba solo `en_crecimiento == "bloquear"`,
+        # así que a un cachorro con pancreatitis le habría tocado el `elif`
+        # de abajo: el texto de adulto, afirmando una restricción que no
+        # existía. No llegó a verse porque main.py solo llamaba aquí con las
+        # patologías que BLOQUEAN -- pero el fallo estaba puesto y esperando
+        # a la primera llamada que pasara una que no bloquea.
+        if (info.get("solo_en_adulto") and _es_crecimiento(etapa)
                 and info.get("aviso_crecimiento")):
             salida.append(info["aviso_crecimiento"])
         elif info.get("aviso"):
@@ -775,7 +785,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         fila = fila_vacia()
         aporta_algo = False
         for n in nombres:
-            v = (_num(alimentos[n].get("nutrientes", {}).get(clave)) or 0.0) / 100.0
+            v = valor_nutriente(alimentos[n].get("nutrientes", {}), clave) / 100.0
             if v:
                 fila[idx[n]] = v; aporta_algo = True
         if not aporta_algo:
@@ -843,7 +853,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             mx_rel = mx * (1 - 0.001) if clave in topes_patologia else mx
             fila_rel = fila_vacia()
             for n in nombres:
-                v_nut = (_num(alimentos[n].get("nutrientes", {}).get(clave)) or 0.0) / 100.0
+                v_nut = valor_nutriente(alimentos[n].get("nutrientes", {}), clave) / 100.0
                 kcal_n = (alimentos[n].get("energia", 0) or 0.0) / 100.0
                 coef = v_nut - (mx_rel / 1000.0) * kcal_n
                 if coef:

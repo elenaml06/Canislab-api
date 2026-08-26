@@ -65,6 +65,25 @@ def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=N
     problemas = list(revisar_seguridad_v2(gramos, al, der, etapa, patologias,
                                           peso_perro_kg=peso_perro_kg) or [])
     problemas += list(avisos_rotacion_v2(gramos, al) or [])
+    # ⚠️ AÑADIDO (25 agosto) — CASO REAL ENCONTRADO: un cachorro con
+    # pancreatitis recibía su menú con el tope de grasa QUITADO y sin que
+    # nadie se lo dijera. El tope de 20 g/1000 kcal no se puede aplicar en
+    # crecimiento (el mínimo que FEDIAF exige ahí, 21,25 g, es MAYOR que el
+    # tope), así que soltarlo es correcto -- pero callárselo no lo es.
+    #
+    # El aviso ya existía: `topes_de_patologias` lo devuelve como tercer
+    # valor. Solo que en el motor se recogía en `_avisos_pat` y se tiraba, y
+    # aquí no se pedía. O sea que la regla de "se baja de peldaño y SE DICE"
+    # se cumplía para las proporciones del BARF y se saltaba justo para un
+    # tope clínico, que es donde más importa.
+    #
+    # Va por `problemas_seguridad` a propósito: es el canal que la app ya
+    # pinta en TODOS los caminos (generar, semana, varios perros, editar,
+    # revalidar), así que con ponerlo en esta función sale en los ocho
+    # sitios sin tocar la app ni añadir una clave nueva que alguien tenga
+    # que acordarse de leer.
+    _topes, _pct, avisos_por_la_etapa = topes_de_patologias(patologias, etapa)
+    problemas += avisos_por_la_etapa
     return problemas
 
 
@@ -3115,7 +3134,7 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "3169e729016f86e2",   # 25 ago: fibra de coles de Bruselas y tomate en puré (BEDCA)
+        "alimentos_v3_final.json":      "696f6b44071ae78e",   # 25 ago: EPA y DHA de los 6 pescados que estaban a cero (boquerón, bacalao, pescadilla, gamba roja, langostino, perca)
         "requerimientos_v2_final.json": "5aa24fa9553c727a",   # 25 ago: fuera "Fibra"; EPA+DHA en adulto (NRC 2006 / Lenox & Bauer)
     }
     SELLOS_CRUDOS = {

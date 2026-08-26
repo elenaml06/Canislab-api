@@ -602,48 +602,6 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 | potasio | mg | |
 | selenio | µg | |
 
-## Bacalao  ·  _Pescados y mariscos_
-
-| Nutriente | Unidad | Valor |
-|---|---|---|
-| dha | g | |
-| epa | g | |
-
-## Boquerón  ·  _Pescados y mariscos_
-
-| Nutriente | Unidad | Valor |
-|---|---|---|
-| dha | g | |
-| epa | g | |
-
-## Gamba roja  ·  _Pescados y mariscos_
-
-| Nutriente | Unidad | Valor |
-|---|---|---|
-| dha | g | |
-| epa | g | |
-
-## Langostino  ·  _Pescados y mariscos_
-
-| Nutriente | Unidad | Valor |
-|---|---|---|
-| dha | g | |
-| epa | g | |
-
-## Perca  ·  _Pescados y mariscos_
-
-| Nutriente | Unidad | Valor |
-|---|---|---|
-| dha | g | |
-| epa | g | |
-
-## Pescadilla  ·  _Pescados y mariscos_
-
-| Nutriente | Unidad | Valor |
-|---|---|---|
-| dha | g | |
-| epa | g | |
-
 ## Homemadekun (multivitamínico completo)  ·  _Multivitamínico_
 
 | Nutriente | Unidad | Valor |
