@@ -705,7 +705,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # estricto de los dos como techo REAL del solver, no solo el de
     # FEDIAF. Ver seguridad.py para el porqué de cada cifra.
     from seguridad import (TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL,
-                           TOPE_SELENIO_G_DIETA, TOPE_SELENIO_KCAL)
+                           TOPE_SELENIO_KCAL)
     # ⚠️ CORREGIDO (5 agosto, madrugada) — BUG REAL Y GRAVE ENCONTRADO,
     # pedido expreso: "si edito un menú, ¿sigue teniendo en cuenta los
     # límites semanales?" -- investigando eso se encontró un bug de
@@ -760,29 +760,14 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     tope_vitd_activo *= MARGEN_REDONDEO_SEGURIDAD
     TOPE_CRONICO_KCAL = {"vitD": tope_vitd_activo,
                          "yodo": TOPE_YODO_KCAL * MARGEN_REDONDEO_SEGURIDAD,
-                         # ⚠️ AÑADIDO (26 agosto) — CASO REAL ENCONTRADO
-                         # auditando: TOPE_SELENIO_KCAL (los 570 µg/1000
-                         # kcal de AAFCO) llevaba semanas DEFINIDO Y SIN
-                         # USARSE. Estaba escrito en seguridad.py, con su
-                         # fuente al lado, y nadie lo leía: el único tope
-                         # de selenio que se aplicaba de verdad era el de
-                         # Merck, por gramo de dieta. Una constante que
-                         # parece un límite y no lo es es peor que no
-                         # tenerla, porque nadie vuelve a mirarla.
-                         #
-                         # No son el mismo límite dicho de dos formas:
-                         # Merck va por PESO de comida y AAFCO por
-                         # ENERGÍA, y en BARF (mucho menos denso que el
-                         # pienso) el de Merck es bastante más permisivo.
-                         # Se aplican LOS DOS y manda el que toque antes.
-                         #
-                         # MEDIDO antes de ponerlo, en 18 menús de seis
-                         # perfiles distintos (adulto de 5, 20 y 40 kg,
-                         # cachorro, renal y cardiopatía): el máximo fue
-                         # 142 µg/1000 kcal, cuatro veces por debajo de
-                         # los 570. Esto no deja a nadie sin menú hoy --
-                         # cierra un hueco por si algún día un alimento
-                         # nuevo o una combinación rara se acerca.
+                         # ⚠️ CORREGIDO (26 agosto). El selenio se topaba
+                         # con los 2 µg/g de Merck aplicados sobre el PESO
+                         # FRESCO, y esos 2 mg/kg son en base MATERIA
+                         # SECA: en BARF (70-75% de agua) eso dejaba pasar
+                         # entre tres y cuatro veces el límite real, sin
+                         # dar ningún error. Ahora va por energía, que no
+                         # depende del agua de la ración. Ver el bloque de
+                         # TOPE_SELENIO_KCAL en seguridad.py.
                          "selenio": TOPE_SELENIO_KCAL * MARGEN_REDONDEO_SEGURIDAD}
     # ⚠️ EPA+DHA SOLO SI VIENE PRESUPUESTO (26 agosto). No se siembra con un
     # valor por defecto a propósito: un menú suelto (/menu/v2) NO lleva techo
@@ -899,28 +884,15 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                     fila_rel[idx[n]] = coef
             _fila("fediaf_relativo", fila_rel, -np.inf, 0.0)
 
-    # ⚠️ AÑADIDO (5 agosto, madrugada) — SELENIO POR GRAMO DE DIETA
-    # (Merck Veterinary Manual: 2 µg/g de dieta, límite tolerable
-    # máximo) -- esta cifra viene en una unidad DISTINTA a la de
-    # FEDIAF (µg por gramo de comida, no µg por 1000 kcal), así que no
-    # se puede simplemente comparar y quedarse con la más estricta como
-    # arriba. Pero SÍ se puede expresar como restricción lineal
-    # directa: suma(selenio_i * gramos_i) <= 2.0 * suma(gramos_i), que
-    # reordenado es suma((selenio_i/100 - 2.0) * gramos_i) <= 0 -- una
-    # fila más para el mismo sistema de restricciones del solver, con
-    # límite superior 0, sin cambiar cómo funciona el resto.
-    fila_selenio_g = fila_vacia()
-    aporta_selenio = False
-    tope_selenio_efectivo = TOPE_SELENIO_G_DIETA * MARGEN_REDONDEO_SEGURIDAD
-    if presupuesto_semanal_restante and "selenio_g_dieta" in presupuesto_semanal_restante:
-        tope_selenio_efectivo = min(tope_selenio_efectivo, presupuesto_semanal_restante["selenio_g_dieta"] * MARGEN_REDONDEO_SEGURIDAD)
-    for n in nombres:
-        v_selenio = (_num(alimentos[n].get("nutrientes", {}).get("selenio")) or 0.0) / 100.0
-        if v_selenio:
-            fila_selenio_g[idx[n]] = v_selenio - tope_selenio_efectivo
-            aporta_selenio = True
-    if aporta_selenio:
-        _fila("selenio_por_gramo", fila_selenio_g, -np.inf, 0.0)
+    # ⚠️ QUITADO (26 agosto) — aquí había una fila más en el sistema,
+    # "selenio_por_gramo", que topaba el selenio a 2 µg por cada gramo de
+    # dieta. El número era el de Merck, pero Merck lo da EN BASE MATERIA
+    # SECA y aquí se multiplicaba por el peso fresco: con un 70-75% de
+    # agua, el tope efectivo quedaba entre tres y cuatro veces por encima
+    # del real. El selenio se topa ahora por energía, arriba, con
+    # TOPE_CRONICO_KCAL -- la unidad en la que el agua de la ración no
+    # puede falsear la cuenta.
+
 
     # ⚠️ AÑADIDO (5 agosto, madrugada) — TIAMINASA Y MERCURIO como
     # restricciones duras. Estos dos no son nutrientes numéricos con
