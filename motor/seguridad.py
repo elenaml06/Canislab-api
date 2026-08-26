@@ -96,7 +96,35 @@ MERCURIO_ALTO = {"atun"}  # el único pescado grande de riesgo real en este cat�
 #      sistema nervioso EN DESARROLLO. Un perro adulto no es ese caso.
 #
 # Lo que sí queda es el 10% de las kcal del día, que es lo que se sostiene.
+#
+# Restricción por CONCENTRACIÓN calórica diaria, no por frecuencia. El único
+# número de referencia que existe es el MTL de la FDA para mercurio en dieta
+# canina, 0,27 mg/kg de materia seca -- y viene extrapolado de Charbonneau et
+# al. 1976, que era en GATOS. Es un límite de concentración, no de cuántos
+# días a la semana.
 TOPE_MERCURIO_KCAL = 0.10
+
+# ⚠️ AÑADIDO (26 agosto) — EPA+DHA, EL LÍMITE CRÓNICO.
+#
+# 2800 mg/1000 kcal. FUENTE: NRC 2006, recogido en Lenox & Bauer, JVIM
+# 2013;27:217-226 (DOI 10.1111/jvim.12033). Es un SUL -- Safe Upper Limit --
+# o sea una concentración de la DIETA HABITUAL, no el tope de un plato.
+#
+# Está aquí y NO como máximo en requerimientos_v2_final.json a propósito, y
+# el motivo se midió: puesto como máximo por menú, 19 de los 20 pescados del
+# catálogo lo pasan ELLOS SOLOS (de 2527 mg/1000 kcal el pulpo a ~11.000 el
+# boquerón), porque el pescado tiene mucho omega-3 y muy pocas calorías. Un
+# día entero eliminó el pescado azul de la app: los menús con pescado bajaron
+# de 13 de cada 24 a 4.
+#
+# Se aplica sobre el PROMEDIO de la rotación semanal, por el mismo mecanismo
+# de presupuesto que vitD y yodo (ver _presupuesto_semanal_inicial en
+# main.py). Un día de pescado azul a la semana es exactamente lo que la
+# fuente permite; siete no.
+#
+# FEDIAF 2025 no establece máximo de EPA+DHA: la columna Maximum de la Tabla
+# III-3b está vacía.
+TOPE_EPA_DHA_SEMANAL_KCAL = 2.8   # g por 1000 kcal, promedio de la semana
 
 # ---------------------------------------------------------------------------
 # 1c. VITAMINA D acumulada de varias fuentes

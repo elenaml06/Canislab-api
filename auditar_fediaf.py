@@ -202,9 +202,23 @@ FUERA_DE_FEDIAF = {
         "NRC 2006. FEDIAF solo exige EPA+DHA en crecimiento y reproducción; "
         "para adulto no da mínimo. Se adopta por relevancia clínica "
         "(inflamación, articulaciones, corazón, piel). Decidido el 25/08/2026.",
-    ("EPA_DHA_total", "maxAdulto"):
-        "Lenox & Bauer, JVIM 2013 (27:217-226). FEDIAF no da máximo de "
-        "EPA+DHA para ninguna etapa. Decidido el 25/08/2026.",
+    # ⚠️ QUITADO EL 26/08/2026 — aquí estuvo un día ("EPA_DHA_total",
+    # "maxAdulto"): 2,8 g de Lenox & Bauer, JVIM 2013 (27:217-226).
+    #
+    # No es que la fuente sea mala: es que ese número NO ES UN MÁXIMO DE ESTA
+    # TABLA. Los requisitos de este JSON se aplican menú a menú, y los 2800
+    # mg son el SUL del NRC 2006 -- una concentración de la DIETA HABITUAL
+    # CRÓNICA. Puesto aquí se aplicaba a cada plato, y MEDIDO: 19 de los 20
+    # pescados del catálogo lo pasan ELLOS SOLOS (de 2527 el pulpo a ~11.000
+    # el boquerón), porque el pescado tiene mucho omega-3 y pocas calorías.
+    # El resultado fue borrar el pescado azul de la app: los menús con
+    # pescado cayeron de 13 de cada 24 a 4.
+    #
+    # Ahora vive donde dice la fuente: en el promedio de la rotación semanal
+    # (TOPE_EPA_DHA_SEMANAL_KCAL en motor/seguridad.py, repartido por el
+    # presupuesto de /menu/semana). Aquí no puede volver -- y si vuelve, esta
+    # auditoría lo cazará como "MÁXIMO INVENTADO", que es lo correcto:
+    # FEDIAF 2025 deja la columna Maximum de EPA+DHA vacía.
 }
 
 a_proposito = []

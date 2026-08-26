@@ -490,46 +490,36 @@ for _etq_p, _der, _etapa, _peso, _adulto in PERROS_B9:
                               f"fuera sin avisar de ello")
 
 # LÍMITE CONOCIDO Y ACEPTADO: quitar las 8 especies más comunes deja el
-# catálogo con 2 carnes, 1 hueso, 0 vísceras, 0 hígado y 20 pescados. Ni un
-# adulto ni un cachorro sacan menú de ahí, y está bien que no salga. Lo que
-# se comprueba aquí no es que dé menú, sino que si no lo da, LO DIGA -- en
-# vez de inventarse algo imposible de dar, o de callarse.
+# catálogo con 2 carnes, 1 hueso, 0 vísceras, 0 hígado y 20 pescados. Para un
+# ADULTO todavía sale menú (el pescado cubre casi todo). Para un CACHORRO en
+# crecimiento no, y está bien que no salga: la única forma de cuadrarlo sería
+# con kilos de hoja verde, que es exactamente lo que corta el tope de volumen.
+# Lo que se comprueba aquí no es que dé menú, sino que si no lo da, lo diga en
+# vez de inventarse algo imposible de dar.
 #
-# ⚠️ CAMBIADO (25 agosto). Hasta hoy el adulto SÍ sacaba menú de este
-# catálogo: el pescado cubría casi todo. Dejó de sacarlo al corregir
-# EPA_DHA_total para que sume EPA + DHA en vez de mirar solo el EPA, y no es
-# un fallo -- es el tope haciendo por fin su trabajo:
+# ⚠️ ESTA PRUEBA CAMBIÓ DOS VECES EN 24 HORAS, y conviene que quede escrito
+# para que nadie la "arregle" mañana en la dirección equivocada:
 #
-#   MEDIDO: los 20 pescados del catálogo, uno a uno, van de 2527 (pulpo) a
-#   16055 mg de EPA+DHA por 1000 kcal (boquerón). El máximo documentado es
-#   2800 (Lenox & Bauer, JVIM 2013;27:217-226). O sea que 19 de los 20 se
-#   pasan ellos solos, porque el pescado tiene muchísimo omega-3 y muy pocas
-#   calorías. Con 2 carnes y 1 hueso no queda con qué diluirlo.
+#   25 ago: dejó de dar menú al poner el máximo de EPA+DHA (2800 mg/1000
+#           kcal) como tope POR MENÚ. Se aceptó como correcto.
+#   26 ago: vuelve a darlo, porque ese tope por menú estaba MAL. FEDIAF 2025
+#           deja la columna Maximum vacía para EPA+DHA, y los 2800 son el SUL
+#           del NRC 2006 -- una concentración de la dieta CRÓNICA, no de un
+#           plato. MEDIDO: 19 de los 20 pescados del catálogo pasan de 2800
+#           ellos solos, así que el tope por menú borraba el pescado azul
+#           entero (los menús con pescado cayeron de 13 de cada 24 a 4).
 #
-#   Antes esto no se veía porque el semáforo comparaba los 2800 contra el
-#   EPA a secas, y el EPA solo es una fracción del total. Se servían menús
-#   con 3418 mg/1000 kcal en VERDE.
-#
-# Esto NO es soltar una regla de forma para dar menú igual: el máximo de
-# EPA+DHA es nutrición, y la nutrición no se relaja (regla 3 del CLAUDE.md).
-# Un perro comiendo solo pescado se pasaría de verdad, así que no dar menú y
-# explicarlo es la respuesta correcta.
-#
-# COMPROBADO que esto no rompe el uso normal: 30 de 30 menús generados sin
-# especies excluidas (de 250 a 2100 kcal, las cuatro etapas) siguen saliendo.
+# Ahora el límite vive donde dice la fuente: en el PROMEDIO de la rotación
+# semanal (ver BLOQUE 21). Un menú suelto no lleva techo de EPA+DHA.
 _ocho_fuera = {"especies_excluidas": ["Pollo", "Ternera", "Cordero", "Cerdo",
                                       "Pavo", "Conejo", "Pato", "Vaca"]}
 _r = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1040.0,
     "etapa_requisitos": "Adulto", "peso_perro_kg": 20.0, "modo": "automatico",
     **_ocho_fuera}).json()
-if _r.get("factible"):
-    fallos.append("BLOQUE9 adulto 20kg / 8 especies fuera: ha dado menú. Con 2 carnes, "
-                  "1 hueso y solo pescado no debería poder cumplir el máximo de EPA+DHA "
-                  "(2800 mg/1000 kcal): 19 de los 20 pescados se pasan ellos solos. Si "
-                  "ahora sale, es que el máximo ha dejado de aplicarse.")
-elif not str(_r.get("motivo") or "").strip():
-    fallos.append("BLOQUE9 adulto 20kg / 8 especies fuera: no da menú y tampoco dice "
-                  "por qué. Quedarse sin menú es aceptable; quedarse sin explicación no.")
+if not _r.get("factible"):
+    fallos.append("BLOQUE9 adulto 20kg / 8 especies fuera: se quedó sin menú. Si es por el "
+                  "máximo de EPA+DHA, es que ha vuelto a ponerse como tope POR MENÚ -- y ahí "
+                  "no va: 19 de los 20 pescados lo pasan solos. Va en el promedio semanal.")
 
 _r = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1049.0,
     "etapa_requisitos": "CachorroCrecimiento", "peso_perro_kg": 10.0,
@@ -2075,126 +2065,213 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
-# BLOQUE 21 — EPA+DHA ES LA SUMA, Y EL MÁXIMO TIENE QUE MORDER
+# BLOQUE 21 — EPA+DHA: SE SUMA, Y EL TECHO ES SEMANAL
 # ============================================================
-# ⚠️ CASO REAL ENCONTRADO (25 agosto): el requisito se llama "EPA_DHA_total"
-# y estaba mapeado a la clave "epa" A SECAS. El nombre decía una cosa y el
-# código comprobaba otra.
+# ⚠️ DOS FALLOS DISTINTOS, ENCONTRADOS CON UN DÍA DE DIFERENCIA. Los dos
+# están vigilados aquí porque son opuestos y arreglar uno invita a
+# reintroducir el otro.
 #
-# No era inocuo:
-#   · MEDIDO sobre 20 menús generados, 2 se pasaban del máximo de 2800
-#     mg/1000 kcal (uno a 3418) y salían VERDES, porque el semáforo solo
-#     miraba el EPA. Un tope de seguridad que no topaba nada.
-#   · Y seis pescados del catálogo tenían EPA y DHA a CERO -- entre ellos el
-#     boquerón, que es pescado azul. Ese cero no era "no tiene", era "no lo
-#     sabíamos", y contaba como si de verdad no aportara nada.
+#   25 ago — el requisito se llama "EPA_DHA_total" y comprobaba SOLO EL EPA.
+#     El DHA, que en casi todos los pescados es el que más pesa, no contaba.
+#     Medido: 2 de 20 menús se pasaban del máximo y salían VERDES.
 #
-# Este bloque vigila las tres cosas a la vez: que se sume, que el máximo
-# muerda, y que los datos no vuelvan a cero.
-print("=== BLOQUE 21: EPA+DHA se suma y el máximo muerde ===")
+#   26 ago — el arreglo del día anterior puso el máximo (2800 mg/1000 kcal)
+#     como tope POR MENÚ, y eso estaba mal. FEDIAF 2025 deja la columna
+#     Maximum VACÍA para EPA+DHA; los 2800 son el SUL del NRC 2006 (Lenox &
+#     Bauer, JVIM 2013;27:217-226), que es una concentración de la DIETA
+#     HABITUAL. Medido: 19 de los 20 pescados del catálogo pasan de 2800
+#     ellos solos (el boquerón ~11.000), porque el pescado tiene mucho
+#     omega-3 y pocas calorías -- así que el tope por menú borraba el pescado
+#     azul entero. Los menús con pescado cayeron de 13 de cada 24 a 4.
+#
+# Regla buena: se SUMA epa+dha, el mínimo se exige siempre, y el máximo se
+# aplica al PROMEDIO de la rotación semanal, no a cada plato.
+print("=== BLOQUE 21: EPA+DHA se suma y el techo es semanal ===")
 
-from constructor import valor_nutriente as _valor_b21, NUTRIENTES_COMPUESTOS as _COMP_b21
+from constructor import valor_nutriente as _valor_b21
 from verificar import MAPA as _MAPA_b21, verificar as _verificar_b21
+import motor.seguridad as _seg21
 
-# 1) El requisito tiene que apuntar al compuesto, no a una de sus mitades.
+_al21, _req21 = _api.cargar_v2()
+
+# 1) El requisito apunta al compuesto, no a una de sus mitades.
 if _MAPA_b21.get("EPA_DHA_total") != "epa_dha":
     fallos.append(f"BLOQUE21: EPA_DHA_total está mapeado a "
-                  f"'{_MAPA_b21.get('EPA_DHA_total')}'. Tiene que ser 'epa_dha': el "
-                  f"mínimo (110 mg, NRC 2006) y el máximo (2800 mg, Lenox & Bauer 2013) "
-                  f"son los dos para la SUMA, no para el EPA suelto.")
+                  f"'{_MAPA_b21.get('EPA_DHA_total')}' y tiene que ser 'epa_dha'.")
 
-# 2) Y sumar de verdad. Se comprueba con un alimento donde las dos mitades
-#    son distintas y grandes, para que sumar y no sumar no puedan coincidir
-#    por casualidad.
-_al21, _req21 = _api.cargar_v2()
+# 2) Y suma de verdad. Con un alimento cuyas dos mitades son distintas y
+#    grandes, para que sumar y no sumar no coincidan por casualidad.
 _sardina = _al21.get("Sardina", {}).get("nutrientes", {})
 _esperado = (_sardina.get("epa") or 0) + (_sardina.get("dha") or 0)
 _dado = _valor_b21(_sardina, "epa_dha")
 if abs(_dado - _esperado) > 1e-9 or _dado <= (_sardina.get("epa") or 0):
-    fallos.append(f"BLOQUE21: para la sardina, epa_dha da {_dado} y la suma de sus dos "
-                  f"mitades es {_esperado} (epa {_sardina.get('epa')} + dha "
-                  f"{_sardina.get('dha')}). O no suma, o suma solo una.")
+    fallos.append(f"BLOQUE21: para la sardina, epa_dha da {_dado} y la suma de sus mitades es "
+                  f"{_esperado} (epa {_sardina.get('epa')} + dha {_sardina.get('dha')}).")
 
-# 3) EL MÁXIMO TIENE QUE MORDER. Se monta a mano un menú cargadísimo de
-#    pescado azul y el semáforo tiene que decir que se pasa. Con el mapeo
-#    viejo (solo epa) este mismo menú salía dentro de rango.
-_menu_azul = {"Sardina": 500.0, "Caballa": 200.0}
-_menu_azul = {n: g for n, g in _menu_azul.items() if n in _al21}
-if len(_menu_azul) < 2:
-    fallos.append("BLOQUE21: faltan sardina o caballa en el catálogo, no se puede "
-                  "probar el máximo de EPA+DHA.")
-else:
-    _kcal_azul = sum(_al21[n]["energia"] / 100.0 * g for n, g in _menu_azul.items())
-    _ficha_azul = _verificar_b21(_menu_azul, _al21, _req21, _kcal_azul, "Adulto")
-    _se_pasa = [x["nutriente"] for x in _ficha_azul["se_pasa"]]
-    if "EPA_DHA_total" not in _se_pasa:
-        _suma = sum(_valor_b21(_al21[n]["nutrientes"], "epa_dha") / 100.0 * g
-                    for n, g in _menu_azul.items()) / _kcal_azul * 1000.0
-        fallos.append(f"BLOQUE21: un menú de 500 g de sardina y 200 g de caballa lleva "
-                      f"{_suma*1000:.0f} mg de EPA+DHA por 1000 kcal, muy por encima del "
-                      f"máximo de 2800, y el semáforo NO lo marca. Se pasa de: {_se_pasa}")
-
-# 4) Y el mínimo se sigue exigiendo: una dieta de solo carne no puede pasar.
+# 3) EL MÍNIMO SE SIGUE EXIGIENDO. Sumar no puede habérselo llevado por
+#    delante: una dieta de solo pechuga de pollo no da EPA+DHA.
 _menu_seco = {n: 400.0 for n in ("Pechuga de pollo (sin piel)",) if n in _al21}
 if _menu_seco:
     _kcal_seco = sum(_al21[n]["energia"] / 100.0 * g for n, g in _menu_seco.items())
     _ficha_seco = _verificar_b21(_menu_seco, _al21, _req21, _kcal_seco, "Adulto")
     if "EPA_DHA_total" not in [x["nutriente"] for x in _ficha_seco["faltan"]]:
-        fallos.append("BLOQUE21: una dieta de solo pechuga de pollo no da EPA+DHA y el "
-                      "semáforo no lo reclama. Sumar no puede haberse llevado por "
-                      "delante el mínimo.")
+        fallos.append("BLOQUE21: una dieta de solo pechuga de pollo no da EPA+DHA y el semáforo "
+                      "no lo reclama.")
 
-# 5) LOS SEIS PESCADOS QUE ESTABAN A CERO. Un cero aquí no es un dato: es un
-#    hueco que el semáforo cuenta como "no aporta". Se anclan los valores con
-#    su fuente para que nadie los borre sin darse cuenta.
+# 4) Y NO HAY TECHO POR MENÚ. Un plato cargado de pescado azul NO puede
+#    marcarse como pasado: los 2800 son de la dieta crónica.
+#    ⚠️ Esta comprobación es lo contrario de la que había el 25 de agosto.
+_menu_azul = {n: g for n, g in {"Sardina": 500.0, "Caballa": 200.0}.items() if n in _al21}
+if len(_menu_azul) == 2:
+    _kcal_azul = sum(_al21[n]["energia"] / 100.0 * g for n, g in _menu_azul.items())
+    _ficha_azul = _verificar_b21(_menu_azul, _al21, _req21, _kcal_azul, "Adulto")
+    if "EPA_DHA_total" in [x["nutriente"] for x in _ficha_azul["se_pasa"]]:
+        fallos.append("BLOQUE21: el semáforo marca que un menú de sardina y caballa se pasa de "
+                      "EPA+DHA. No hay máximo POR MENÚ: FEDIAF deja la columna Maximum vacía y "
+                      "los 2800 del NRC son de la dieta crónica. Puesto por plato, 19 de los 20 "
+                      "pescados del catálogo lo pasan solos y desaparece el pescado azul.")
+if _req21.get("EPA_DHA_total", {}).get("maxAdulto") not in (None, "", "-"):
+    fallos.append(f"BLOQUE21: ha vuelto un maxAdulto de EPA+DHA a requerimientos_v2_final.json "
+                  f"({_req21['EPA_DHA_total'].get('maxAdulto')}). Ahí se aplica POR MENÚ, que es "
+                  f"justo lo que no toca.")
+
+# 5) DONDE SÍ VIVE EL TECHO: el promedio de la rotación semanal.
+if getattr(_seg21, "TOPE_EPA_DHA_SEMANAL_KCAL", None) != 2.8:
+    fallos.append(f"BLOQUE21: TOPE_EPA_DHA_SEMANAL_KCAL vale "
+                  f"{getattr(_seg21, 'TOPE_EPA_DHA_SEMANAL_KCAL', None)} y debe ser 2.8 g/1000 "
+                  f"kcal (NRC 2006 SUL, vía Lenox & Bauer JVIM 2013).")
+
+def _tasa_epa_dha_b21(g):
+    k = sum((_por_nombre_b12.get(n, {}).get("energia", 0) or 0) / 100.0 * v for n, v in g.items())
+    if not k:
+        return 0.0
+    t = sum(((_por_nombre_b12.get(n, {}).get("nutrientes", {}).get("epa") or 0)
+             + (_por_nombre_b12.get(n, {}).get("nutrientes", {}).get("dha") or 0)) / 100.0 * v
+            for n, v in g.items())
+    return t / k * 1000.0 * 1000.0   # mg por 1000 kcal
+
+# ⚠️ LA ARITMÉTICA DEL PRESUPUESTO, PROBADA SOLA -- Y POR QUÉ NO BASTA CON
+# GENERAR SEMANAS.
+#
+# La primera versión de esto comprobaba el promedio de una semana generada y
+# exigía que fuera <= 2800. Pasaba en verde... y TAMBIÉN pasaba con el fallo
+# puesto. Medido: quitando el `* dias` de la resta, NINGÚN escenario que se
+# pueda pedir da un promedio distinto -- ni excluyendo especies hasta dejar
+# casi solo pescado, ni forzando boquerón y trucha con preferir_por_menu.
+#
+# El motivo es que el presupuesto de EPA+DHA HOY NUNCA LLEGA A MORDER: el
+# mínimo (110 mg) se cubre sin pescado desde que se suman EPA y DHA, así que
+# el motor no tiene ningún motivo para acercarse a los 2800. Es una red de
+# seguridad que existe y no se dispara. Está bien que exista -- el día que
+# alguien fuerce pescado de verdad, o cambie el catálogo, es lo único que
+# separa una rotación razonable de siete días de boquerón -- pero hay que
+# decir la verdad sobre lo que cubre cada prueba.
+#
+# Así que la aritmética se comprueba AQUÍ, donde sí puede fallar, y el
+# promedio de la semana se deja abajo como vigilancia de que no se dispare
+# por otro motivo. Lo que NO se hace es contar la segunda como si probara la
+# primera.
+_r_b21 = {"tiaminasa": 0.10, "mercurio": 0.10, "vitD": 100.0, "yodo": 500.0,
+          "selenio_g_dieta": 2.0, "epa_dha": 20.0}
+_c_b21 = {"tiaminasa": 0.05, "mercurio": 0.02, "vitD": 10.0, "yodo": 50.0,
+          "selenio_g_dieta": 1.5, "epa_dha": 2.0}
+_q_b21 = _api._restar_del_presupuesto(_r_b21, _c_b21, 4)
+
+# Lo que ACUMULA se descuenta multiplicado por los días que se come ese menú.
+for _clave, _esperado in (("epa_dha", 20.0 - 2.0 * 4),
+                          ("vitD", 100.0 - 10.0 * 4),
+                          ("yodo", 500.0 - 50.0 * 4)):
+    if abs(_q_b21[_clave] - _esperado) > 1e-9:
+        fallos.append(f"BLOQUE21 presupuesto: tras un menú de 4 días, {_clave} queda en "
+                      f"{_q_b21[_clave]} y debería quedar en {_esperado}. Si falta el factor de "
+                      f"los días, un menú que se repite 4 veces gasta como si se comiera una: el "
+                      f"límite crónico deja de proteger y no da ningún error.")
+
+# Y lo que NO acumula no se toca: tiaminasa y mercurio son una fracción de
+# las kcal del día, selenio una densidad por gramo. Restarlos sería tratarlos
+# como un depósito que se vacía, y no lo son.
+for _clave in ("tiaminasa", "mercurio", "selenio_g_dieta"):
+    if abs(_q_b21[_clave] - _r_b21[_clave]) > 1e-9:
+        fallos.append(f"BLOQUE21 presupuesto: {_clave} ha cambiado al restar ({_r_b21[_clave]} -> "
+                      f"{_q_b21[_clave]}). No es un total acumulable: es una fracción o una "
+                      f"densidad diaria, y descontarla la iría apretando día a día sin motivo.")
+
+# El total de la semana es el límite crónico por siete, sin margen extra:
+# 2800 YA es el límite de la dieta habitual, no un tope diario multiplicado.
+_ini_b21 = _api._presupuesto_semanal_inicial(1000.0)
+if abs(_ini_b21.get("epa_dha", 0) - 2.8 * 7) > 1e-9:
+    fallos.append(f"BLOQUE21 presupuesto: para 1000 kcal, el total semanal de EPA+DHA es "
+                  f"{_ini_b21.get('epa_dha')} y debería ser {2.8 * 7} g (2,8 g/1000 kcal x 7 "
+                  f"días, sin margen extra).")
+
+# Y la vigilancia de arriba: que una semana generada no se dispare. NO cubre
+# la aritmética de la resta -- ver el comentario largo.
+for _n21 in (2, 3, 4):
+    _r21 = _c.post(f"/menu/semana?numero_de_menus={_n21}", json={
+        "nombres_alimentos": [], "der_objetivo": 1100, "peso_perro_kg": 25,
+        "etapa_requisitos": "Adulto", "modo": "automatico"}).json()
+    _ms = _r21.get("menus") or []
+    if not _ms:
+        fallos.append(f"BLOQUE21: no salió la semana de {_n21} menús.")
+        continue
+    _pond, _dias = 0.0, 0
+    for _m in _ms:
+        _g = _m.get("menu") or _m.get("gramos") or {}
+        _d = _m.get("dias") or 1
+        _pond += _tasa_epa_dha_b21(_g) * _d
+        _dias += _d
+    _prom = _pond / max(1, _dias)
+    if _prom > 2800 * 1.01:
+        fallos.append(f"BLOQUE21: la semana de {_n21} menús da un promedio de {_prom:.0f} mg de "
+                      f"EPA+DHA por 1000 kcal, y el techo crónico es 2800.")
+
+# 6) LOS SEIS PESCADOS QUE ESTABAN A CERO, con la fuente de cada uno.
+#    ⚠️ Tres CAMBIARON el 26 de agosto respecto a lo puesto el 25: mandan las
+#    fichas concretas de USDA sobre las tablas agregadas y los rangos.
 _EPA_DHA_REVISADOS_b21 = {
-    # alimento        epa (g/100g)  dha (g/100g)   fuente
-    "Boquerón":      (0.763, 1.292, "PMC6089214 (Mozaffarian & Wu)"),
-    "Bacalao":       (0.150, 0.200, "USDA FoodData Central / BEDCA"),
-    "Pescadilla":    (0.090, 0.270, "Piñeiro-Corrales et al., Nutr Hosp 2013"),
-    "Gamba roja":    (0.170, 0.330, "USDA FDC (especie similar)"),
-    "Langostino":    (0.120, 0.220, "USDA FDC (especie similar)"),
-    "Perca":         (0.150, 0.280, "USDA FDC (especie similar)"),
+    # alimento        epa     dha     fuente_epa_dha
+    "Boquerón":      (0.538, 0.911, "USDA_FDC"),                    # FDC 174182
+    "Bacalao":       (0.072, 0.088, "USDA_FDC"),                    # FDC 171955
+    "Perca":         (0.150, 0.280, "USDA_FDC"),                    # FDC 173678
+    "Pescadilla":    (0.090, 0.270, "estimacion_especie_similar"),  # Piñeiro-Corrales 2013
+    "Gamba roja":    (0.100, 0.200, "estimacion_especie_similar"),
+    "Langostino":    (0.120, 0.220, "estimacion_especie_similar"),  # Turan et al.
 }
 for _nom21, (_epa21, _dha21, _fuente21) in _EPA_DHA_REVISADOS_b21.items():
     _a21 = _al21.get(_nom21)
     if not _a21:
         fallos.append(f"BLOQUE21: '{_nom21}' ya no está en el catálogo.")
         continue
-    _n21 = _a21.get("nutrientes", {})
-    if abs((_n21.get("epa") or 0) - _epa21) > 1e-9 or abs((_n21.get("dha") or 0) - _dha21) > 1e-9:
-        fallos.append(f"BLOQUE21: {_nom21} tiene epa={_n21.get('epa')} dha={_n21.get('dha')} "
-                      f"y lo verificado el 25 de agosto es {_epa21} / {_dha21} "
-                      f"({_fuente21}). Si el cambio es a propósito, trae la fuente nueva.")
-    if not _a21.get("fuente"):
-        fallos.append(f"BLOQUE21: {_nom21} tiene valores de EPA/DHA sin campo 'fuente'. "
-                      f"Un dato nutricional sin fuente no se puede defender.")
+    _n21d = _a21.get("nutrientes", {})
+    if abs((_n21d.get("epa") or 0) - _epa21) > 1e-9 or abs((_n21d.get("dha") or 0) - _dha21) > 1e-9:
+        fallos.append(f"BLOQUE21: {_nom21} tiene epa={_n21d.get('epa')} dha={_n21d.get('dha')} y "
+                      f"lo verificado el 26 de agosto es {_epa21}/{_dha21} ({_fuente21}). Si el "
+                      f"cambio es a propósito, trae la fuente nueva.")
+    if _a21.get("fuente_epa_dha") != _fuente21:
+        fallos.append(f"BLOQUE21: {_nom21} declara fuente_epa_dha="
+                      f"'{_a21.get('fuente_epa_dha')}' y debería ser '{_fuente21}'. Una "
+                      f"estimación por especie parecida tiene que ir marcada como tal.")
 
-# Y ninguno más puede quedarse a cero en los dos a la vez sin estar declarado
-# como hueco conocido: el boquerón enseñó que eso pasa calladamente.
+# Y ningún pescado puede quedarse a cero en los dos a la vez: en un pescado
+# eso casi nunca es un dato, es un hueco -- y el semáforo lo cuenta como si
+# de verdad no aportara nada. Lo enseñó el boquerón.
 _a_cero_b21 = sorted(n for n, a in _al21.items()
                      if a.get("categoria") == "Pescados y mariscos"
                      and not (a.get("nutrientes", {}).get("epa") or 0)
                      and not (a.get("nutrientes", {}).get("dha") or 0))
 if _a_cero_b21:
-    fallos.append(f"BLOQUE21: estos pescados tienen EPA y DHA a cero: {_a_cero_b21}. "
-                  f"En un pescado eso casi nunca es un dato real, es un hueco -- y el "
-                  f"semáforo lo cuenta como si de verdad no aportara nada.")
+    fallos.append(f"BLOQUE21: estos pescados tienen EPA y DHA a cero: {_a_cero_b21}.")
 
-# 6) EL MERCURIO. El tope del 10% de las kcal es lo único con base aplicable
-#    en perros y tiene que seguir ahí. El de "≤1 día/semana" se quitó el 25
-#    de agosto: no lo usaba nadie (código muerto) y venía de recomendaciones
-#    de FDA/EFSA para embarazadas y niños, no de ningún estudio canino.
-import motor.seguridad as _seg21
+# 7) EL MERCURIO. Queda el 10% de las kcal, que es lo único con base
+#    aplicable en perros. El "≤1 día/semana" se quitó el 25 de agosto: no lo
+#    usaba ni una línea y venía de FDA/EFSA para embarazadas y niños.
 if getattr(_seg21, "TOPE_MERCURIO_KCAL", None) != 0.10:
     fallos.append(f"BLOQUE21: TOPE_MERCURIO_KCAL vale "
                   f"{getattr(_seg21, 'TOPE_MERCURIO_KCAL', None)} y tiene que ser 0.10.")
 if hasattr(_seg21, "TOPE_MERCURIO_DIAS_SEMANA"):
-    fallos.append("BLOQUE21: ha vuelto TOPE_MERCURIO_DIAS_SEMANA. No tiene base en "
-                  "perros (es de FDA/EFSA para embarazadas) y antes estaba declarada "
-                  "sin que la usara ni una línea: la app decía tener una regla que no "
-                  "aplicaba. Si algún día se aplica de verdad, hará falta una fuente "
-                  "canina primero.")
+    fallos.append("BLOQUE21: ha vuelto TOPE_MERCURIO_DIAS_SEMANA. No tiene base canina y antes "
+                  "estaba declarada sin que la usara ni una línea: la app decía tener una regla "
+                  "que no aplicaba.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

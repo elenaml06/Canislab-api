@@ -758,6 +758,19 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     MARGEN_REDONDEO_SEGURIDAD = 0.99
     tope_vitd_activo *= MARGEN_REDONDEO_SEGURIDAD
     TOPE_CRONICO_KCAL = {"vitD": tope_vitd_activo, "yodo": TOPE_YODO_KCAL * MARGEN_REDONDEO_SEGURIDAD}
+    # ⚠️ EPA+DHA SOLO SI VIENE PRESUPUESTO (26 agosto). No se siembra con un
+    # valor por defecto a propósito: un menú suelto (/menu/v2) NO lleva techo
+    # de EPA+DHA, porque los 2800 mg son el límite de la dieta habitual y no
+    # el de un plato. Ponerlo por menú borraba el pescado azul del catálogo
+    # entero -- 19 de los 20 pescados lo pasan ellos solos. Ver el comentario
+    # largo de TOPE_EPA_DHA_SEMANAL_KCAL en seguridad.py.
+    #
+    # Cuando /menu/semana sí manda presupuesto, entra aquí y se convierte en
+    # el techo de ESTE menú: lo que queda de la semana repartido entre los
+    # días que faltan. El motor equilibra solo.
+    if presupuesto_semanal_restante and der and presupuesto_semanal_restante.get("epa_dha"):
+        TOPE_CRONICO_KCAL["epa_dha"] = (
+            presupuesto_semanal_restante["epa_dha"] / der * 1000.0)
     if presupuesto_semanal_restante and der:
         # presupuesto_semanal_restante llega en valores ABSOLUTOS (µg
         # totales para el día) desde main.py -- se convierte aquí a la

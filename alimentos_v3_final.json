@@ -1307,8 +1307,8 @@
   "nutrientes": {
    "proteina": 18.2,
    "grasa": 1,
-   "dha": 0.2,
-   "epa": 0.15,
+   "dha": 0.088,
+   "epa": 0.072,
    "linoleico": 0,
    "linolenico": 0,
    "araquidonico": 0,
@@ -1337,8 +1337,8 @@
    "cloruro": 104.72,
    "fibra": 0.0
   },
-  "fuente": "USDA FoodData Central / BEDCA",
-  "nota_datos": "EPA ~150 mg y DHA ~200 mg por 100 g (EPA+DHA ~350 mg). USDA FDC y BEDCA dan un rango de 150-240 mg de EPA+DHA total para el bacalao; se toma la parte baja del rango, que es lo conservador cuando el dato sirve para cubrir un mínimo."
+  "nota_datos": "USDA FoodData Central 171955 (Gadus morhua, raw): EPA 0,072 g y DHA 0,088 g por 100 g. ⚠️ CORREGIDO el 26 de agosto: el día anterior se puso 0,150/0,200 tomando la parte baja de un rango de BEDCA. La ficha concreta de USDA manda sobre un rango.",
+  "fuente_epa_dha": "USDA_FDC"
  },
  {
   "nombre": "Trucha",
@@ -3470,8 +3470,8 @@
   "nutrientes": {
    "proteina": 17.6,
    "grasa": 6.3,
-   "dha": 1.292,
-   "epa": 0.763,
+   "dha": 0.911,
+   "epa": 0.538,
    "linoleico": 0,
    "linolenico": 0,
    "araquidonico": 0,
@@ -3500,8 +3500,8 @@
    "cloruro": 178.64,
    "fibra": 0.0
   },
-  "fuente": "PMC6089214 (Mozaffarian & Wu)",
-  "nota_datos": "EPA 763 mg y DHA 1292 mg por 100 g (EPA+DHA 2055 mg), de la tabla validada de Mozaffarian & Wu recogida en PMC6089214. ⚠️ Antes estaba a CERO en los dos, y el boquerón es pescado azul: ese cero no era «no tiene», era «no lo sabíamos», y el semáforo lo contaba como si de verdad no aportara nada. Valor exacto y verificado, no una aproximación por especie parecida."
+  "nota_datos": "USDA FoodData Central 174182 (Engraulis encrasicolus, raw): EPA 0,538 g y DHA 0,911 g por 100 g. ⚠️ CORREGIDO el 26 de agosto: el día anterior se puso 0,763/1,292 de la tabla de Mozaffarian & Wu, y la revisión posterior fijó la ficha de USDA como fuente. Antes de las dos estaba a CERO en los dos campos, y el boquerón es pescado azul: aquel cero no era «no tiene», era «no lo sabíamos», y el semáforo lo contaba como si de verdad no aportara nada.",
+  "fuente_epa_dha": "USDA_FDC"
  },
  {
   "nombre": "Calamar",
@@ -3590,8 +3590,8 @@
   "nutrientes": {
    "proteina": 18,
    "grasa": 1.8143,
-   "dha": 0.33,
-   "epa": 0.17,
+   "dha": 0.2,
+   "epa": 0.1,
    "linoleico": 0,
    "linolenico": 0,
    "araquidonico": 0,
@@ -3620,8 +3620,8 @@
    "cloruro": 469.7,
    "fibra": 0.0
   },
-  "fuente": "USDA FDC (especie similar)",
-  "nota_datos": "EPA ~170 mg y DHA ~330 mg por 100 g (EPA+DHA ~500 mg). ⚠️ APROXIMACIÓN POR ESPECIE PARECIDA: es el dato de USDA FDC para «mixed shrimp», ajustado a especie mediterránea. La gamba roja de verdad (Aristeus antennatus) NO tiene ficha propia ni en USDA ni en BEDCA. Pendiente de que Michelle lo confirme si tiene acceso a CIQUAL con la especie exacta."
+  "nota_datos": "EPA 0,100 g y DHA 0,200 g por 100 g. ⚠️ ESTIMACIÓN POR ESPECIE PARECIDA: la gamba roja (Aristeus antennatus) no tiene ficha propia ni en BEDCA ni en USDA. ⚠️ CORREGIDO el 26 de agosto: el día anterior se puso 0,170/0,330 de «mixed shrimp» de USDA.",
+  "fuente_epa_dha": "estimacion_especie_similar"
  },
  {
   "nombre": "Langostino",
@@ -3663,8 +3663,8 @@
   },
   "duplicado_de": "Langostinos",
   "dato_no_fiable": true,
-  "nota_datos": "EPA ~120 mg y DHA ~220 mg por 100 g (EPA+DHA ~340 mg). ⚠️ APROXIMACIÓN POR ESPECIE PARECIDA: USDA FDC «prawn» y CIQUAL «langoustine». Pendiente de confirmación con la especie exacta.",
-  "fuente": "USDA FDC (especie similar)"
+  "nota_datos": "EPA 0,120 g y DHA 0,220 g por 100 g. ⚠️ ESTIMACIÓN POR ESPECIE PARECIDA: Turan et al., Melicertus kerathurus medido en verano.",
+  "fuente_epa_dha": "estimacion_especie_similar"
  },
  {
   "nombre": "Lenguado",
@@ -3782,8 +3782,8 @@
    "cloruro": 72.38,
    "fibra": 0.0
   },
-  "fuente": "USDA FDC (especie similar)",
-  "nota_datos": "EPA ~150 mg y DHA ~280 mg por 100 g (EPA+DHA ~430 mg). ⚠️ APROXIMACIÓN POR ESPECIE PARECIDA: USDA FDC «perch, raw» y CIQUAL «perche». La perca de río europea (Perca fluviatilis) no tiene ficha propia. Pendiente de confirmación."
+  "nota_datos": "USDA FoodData Central 173678 (Perca, mixed species, raw): EPA 0,150 g y DHA 0,280 g por 100 g. La perca de río europea (Perca fluviatilis) no tiene ficha propia; se usa la de especies mezcladas del mismo género.",
+  "fuente_epa_dha": "USDA_FDC"
  },
  {
   "nombre": "Pescadilla",
@@ -3823,8 +3823,8 @@
    "cloruro": 154.0,
    "fibra": 0.0
   },
-  "fuente": "Piñeiro-Corrales et al., Nutr Hosp 2013",
-  "nota_datos": "EPA ~90 mg y DHA ~270 mg por 100 g (EPA+DHA ~360 mg), ratio EPA:DHA ≈ 1:3. La pescadilla es merluza joven, y la merluza de este mismo catálogo ya traía 100 mg de EPA y 266 de DHA de otra fuente -- las dos cifras casan, lo que da confianza en las dos. La merluza se deja como estaba: es lo mismo con otros decimales."
+  "nota_datos": "EPA 0,090 g y DHA 0,270 g por 100 g, ratio EPA:DHA ≈ 1:3. Piñeiro-Corrales et al., Nutrición Hospitalaria 2013. La pescadilla es merluza joven, y la merluza de este mismo catálogo trae 100 mg de EPA y 266 de DHA de otra fuente: las dos cifras casan, lo que da confianza en las dos.",
+  "fuente_epa_dha": "estimacion_especie_similar"
  },
  {
   "nombre": "Pulpo",
