@@ -519,7 +519,7 @@ _r = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1040.0,
 if not _r.get("factible"):
     fallos.append("BLOQUE9 adulto 20kg / 8 especies fuera: se quedó sin menú. Si es por el "
                   "máximo de EPA+DHA, es que ha vuelto a ponerse como tope POR MENÚ -- y ahí "
-                  "no va: 19 de los 20 pescados lo pasan solos. Va en el promedio semanal.")
+                  "no va: 18 de los 20 pescados lo pasan solos. Va en el promedio semanal.")
 
 _r = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1049.0,
     "etapa_requisitos": "CachorroCrecimiento", "peso_perro_kg": 10.0,
@@ -1710,7 +1710,9 @@ else:
         ("ratio_ca_p_max", 1, "el ratio calcio:fósforo por arriba"),
         ("seguridad_cronica_tiaminasa", 1, "el pescado crudo destruye la tiamina"),
         ("seguridad_cronica_mercurio", 1, "mercurio: se acumula, no se nota hasta tarde"),
-        ("selenio_por_gramo", 1, "selenio: el margen entre lo necesario y lo tóxico es estrecho"),
+        # el selenio ya no tiene fila propia: va por energía, dentro de
+        # fediaf_absoluto, como el resto de topes por 1000 kcal. Que se
+        # aplique de verdad lo vigila el BLOQUE 22.
         ("vinculacion_usa_techo", 50, "sin esto un alimento puede entrar sin contar como usado"),
         ("max_suplementos", 1, "ya estuvo muerta una vez: máximo 2 suplementos comerciales"),
         ("extras_y_suplementos_5pc", 1, "extras+suplementos no pasan del 5% del peso"),
@@ -1851,6 +1853,42 @@ else:
         numero_de_menus=2)
     if not _libre_b17.get("factible"):
         fallos.append("BLOQUE17: sin preferir_por_menu ya no se genera la semana.")
+
+# EL PESCADO QUE SE PIDE CONSERVAR NO SE PENALIZA
+#
+# ⚠️ CASO REAL ENCONTRADO (26 agosto) midiendo por qué la comprobación de
+# arriba fallaba una de cada doce veces: el alimento que se caía era
+# SIEMPRE un pescado ("PERDIDOS: ['Boquerón']", "PERDIDOS: ['Bacalao']").
+#
+# El motor penaliza el pescado la mitad de las veces (+1.5 al coste) para
+# que no salga siempre el mismo -- pero lo hacía TAMBIÉN con el pescado
+# que el usuario había pedido conservar. La cuenta: un pescado preferido
+# cuesta 0.1 + ruido = 0.1-0.5, y con la penalización 1.6-2.0, o sea MÁS
+# que un alimento cualquiera que nadie pidió (1.0-1.4). Por eso el motor
+# cambiaba justo lo que se le había dicho que no cambiara.
+#
+# La de arriba no basta como vigilancia: depende del azar y solo saltaba
+# 1 de cada 12 veces. Esta va con SEMILLA FIJA, así que es determinista.
+# MEDIDO con el fallo puesto: 16 de 30 semillas tiraban el pescado
+# preferido; con el arreglo, ninguna de estas cinco. (La semilla 9 lo
+# tira de las dos formas: ahí es por otro motivo, y preferir es una
+# preferencia, no una imposición -- por eso no está en la lista.)
+_al_b17, _req_b17 = _api.cargar_v2()
+_PREFERIR_B17 = [n for n in ["Boquerón", "Carcasa de pollo", "Hígado de ternera",
+                             "Corazón de ternera", "Calabacín", "Aceite de girasol"]
+                 if n in _al_b17]
+if "Boquerón" not in _PREFERIR_B17:
+    fallos.append("BLOQUE17: el boquerón ya no está en el catálogo; hay que reanclar esta prueba.")
+else:
+    for _sem_b17 in (1, 3, 7, 15, 22):
+        _ok_b17, _g_b17 = _api.resolver_v2(
+            1040.0, "Adulto", _al_b17, _req_b17, 20.0, _api.dosis_maxima_fabricante,
+            margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=12,
+            preferir=_PREFERIR_B17, semilla_aleatoria=_sem_b17)
+        if _ok_b17 and "Boquerón" not in (_g_b17 or {}):
+            fallos.append(f"BLOQUE17 semilla {_sem_b17}: se pidió conservar el boquerón y el "
+                          f"motor lo ha quitado. Es la penalización de variedad del pescado "
+                          f"aplicándose a lo que el usuario pidió conservar.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
@@ -2172,9 +2210,9 @@ def _tasa_epa_dha_b21(g):
 # por otro motivo. Lo que NO se hace es contar la segunda como si probara la
 # primera.
 _r_b21 = {"tiaminasa": 0.10, "mercurio": 0.10, "vitD": 100.0, "yodo": 500.0,
-          "selenio_g_dieta": 2.0, "epa_dha": 20.0}
+          "selenio": 570.0, "epa_dha": 20.0}
 _c_b21 = {"tiaminasa": 0.05, "mercurio": 0.02, "vitD": 10.0, "yodo": 50.0,
-          "selenio_g_dieta": 1.5, "epa_dha": 2.0}
+          "selenio": 140.0, "epa_dha": 2.0}
 _q_b21 = _api._restar_del_presupuesto(_r_b21, _c_b21, 4)
 
 # Lo que ACUMULA se descuenta multiplicado por los días que se come ese menú.
@@ -2188,9 +2226,9 @@ for _clave, _esperado in (("epa_dha", 20.0 - 2.0 * 4),
                       f"límite crónico deja de proteger y no da ningún error.")
 
 # Y lo que NO acumula no se toca: tiaminasa y mercurio son una fracción de
-# las kcal del día, selenio una densidad por gramo. Restarlos sería tratarlos
+# las kcal del día, selenio una densidad por cada 1000 kcal. Restarlos sería tratarlos
 # como un depósito que se vacía, y no lo son.
-for _clave in ("tiaminasa", "mercurio", "selenio_g_dieta"):
+for _clave in ("tiaminasa", "mercurio", "selenio"):
     if abs(_q_b21[_clave] - _r_b21[_clave]) > 1e-9:
         fallos.append(f"BLOQUE21 presupuesto: {_clave} ha cambiado al restar ({_r_b21[_clave]} -> "
                       f"{_q_b21[_clave]}). No es un total acumulable: es una fracción o una "
@@ -2302,6 +2340,76 @@ if hasattr(_seg21, "TOPE_MERCURIO_DIAS_SEMANA"):
     fallos.append("BLOQUE21: ha vuelto TOPE_MERCURIO_DIAS_SEMANA. No tiene base canina y antes "
                   "estaba declarada sin que la usara ni una línea: la app decía tener una regla "
                   "que no aplicaba.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 22 — EL SELENIO SE TOPA POR ENERGÍA, NO POR PESO FRESCO
+# ============================================================
+#
+# ⚠️ CASO REAL ENCONTRADO (26 agosto), y de los que no dan ningún error:
+# el tope de selenio se aplicaba como 2 µg por cada gramo de dieta sobre
+# el PESO FRESCO. El número era el correcto -- son los 2 mg/kg de Merck --
+# pero Merck los da EN BASE MATERIA SECA, y una ración BARF lleva un
+# 70-75% de agua. Multiplicado por el peso tal cual se sirve, el tope
+# efectivo quedaba entre tres y cuatro veces por encima del real.
+#
+# No lo podía cazar nada: los menús salían verdes, la constante escrita
+# en el código era la de la fuente, y el fallo estaba en SOBRE QUÉ se
+# multiplicaba. Se pasa a los 570 µg/1000 kcal de AAFCO, que son ese
+# mismo límite ya convertido a base energética -- y la energía no depende
+# del agua de la ración, así que no hay base de cálculo que confundir.
+#
+# Esto vigila las dos mitades: que la constante siga siendo la de energía
+# (y que no vuelva la de peso fresco), y que un menú que se pasa se
+# rechace de verdad por los tres caminos.
+print("=== BLOQUE 22: el selenio se topa por energía ===")
+
+if getattr(_seg21, "TOPE_SELENIO_KCAL", None) != 570.0:
+    fallos.append(f"BLOQUE22: TOPE_SELENIO_KCAL vale "
+                  f"{getattr(_seg21, 'TOPE_SELENIO_KCAL', None)} y tiene que ser 570.0 "
+                  f"(AAFCO, = los 2 mg/kg de materia seca de Merck en base energética).")
+if hasattr(_seg21, "TOPE_SELENIO_G_DIETA"):
+    fallos.append("BLOQUE22: ha vuelto TOPE_SELENIO_G_DIETA. Ese tope se aplicaba sobre el peso "
+                  "FRESCO un número que la fuente da en materia seca, así que en BARF dejaba "
+                  "pasar 3-4 veces el límite real sin dar ningún error.")
+
+# Un menú que se pasa por energía tiene que rechazarse. 500 g de riñón de
+# ternera son 590 µg de selenio: por debajo de lo que dejaba pasar el tope
+# viejo (2 µg/g sobre fresco = 1000 µg para estos 500 g), y por encima de
+# los 570 que permite el correcto para 1000 kcal.
+_RINON_B22 = "Riñón de ternera"
+if _RINON_B22 not in _al21:
+    fallos.append(f"BLOQUE22: '{_RINON_B22}' ya no está en el catálogo; hay que reanclar esta prueba.")
+else:
+    _menu_b22 = {_RINON_B22: 500.0}
+    _se_b22 = (_al21[_RINON_B22]["nutrientes"].get("selenio") or 0) * 500.0 / 100.0
+    if _se_b22 <= 570.0:
+        fallos.append(f"BLOQUE22: el caso ya no discrimina — 500 g de riñón dan {_se_b22:.0f} µg "
+                      f"y ya no pasan de los 570. Hay que subir los gramos o cambiar el alimento.")
+    elif _se_b22 / 500.0 > 2.0:
+        fallos.append("BLOQUE22: el caso ya no discrimina — estos 500 g se pasarían también del "
+                      "tope viejo por peso fresco, así que no prueba que se use el de energía.")
+    else:
+        if _api._menu_precalculado_es_seguro(_menu_b22, _al21, 1000.0, 20.0):
+            fallos.append(f"BLOQUE22: un menú con {_se_b22:.0f} µg de selenio para 1000 kcal pasa "
+                          f"como seguro. El tope por energía (570 µg/1000 kcal) no se aplica en "
+                          f"_menu_precalculado_es_seguro, que es el último filtro antes de entregar.")
+        _probs_b22 = _seg21.revisar_seguridad(_menu_b22, _al21, 1000.0, "Adulto")
+        if not any("selenio" in _p.lower() for _p in _probs_b22):
+            fallos.append("BLOQUE22: revisar_seguridad no dice nada del selenio en un menú que se "
+                          "pasa del tope por energía.")
+
+# Y el presupuesto semanal tiene que llevarlo en la misma unidad: si se
+# quedara en µg/g de dieta, el solver compararía peras con manzanas.
+_pres_b22 = _api._presupuesto_semanal_inicial(1000.0)
+if "selenio" not in _pres_b22:
+    fallos.append("BLOQUE22: el presupuesto semanal ya no lleva el selenio.")
+elif abs(_pres_b22["selenio"] - 570.0) > 1e-6:
+    fallos.append(f"BLOQUE22: para 1000 kcal el presupuesto de selenio es "
+                  f"{_pres_b22['selenio']} y debería ser 570 µg. Si sale 2, ha vuelto la "
+                  f"densidad por gramo de dieta.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

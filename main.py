@@ -105,7 +105,7 @@ def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=N
 def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
     from seguridad import (
         TIAMINASA, MERCURIO_ALTO, TOPE_TIAMINASA_KCAL, TOPE_MERCURIO_KCAL,
-        TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL, TOPE_SELENIO_G_DIETA, _es,
+        TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL, TOPE_SELENIO_KCAL, _es,
     )
     if not der:
         return True  # sin DER no se puede evaluar nada -- no bloquear por falta de dato
@@ -130,8 +130,13 @@ def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
     if yodo_ug > TOPE_YODO_KCAL * der / 1000.0:
         return False
 
+    # ⚠️ El selenio se topa POR ENERGÍA y no por peso de comida. Antes iba
+    # a 2 µg por gramo de dieta, que es el número de Merck pero en base
+    # MATERIA SECA aplicado sobre el peso fresco: con un 70-75% de agua,
+    # eso dejaba pasar entre tres y cuatro veces el límite real. Ver
+    # TOPE_SELENIO_KCAL en seguridad.py.
     selenio_ug = sum(al.get(n, {}).get("nutrientes", {}).get("selenio", 0) * g / 100.0 for n, g in gramos.items())
-    if (selenio_ug / total_g) > TOPE_SELENIO_G_DIETA:
+    if selenio_ug > TOPE_SELENIO_KCAL * der / 1000.0:
         return False
 
     return True
@@ -474,7 +479,7 @@ class PeticionMenu(BaseModel):
     categorias_excluidas: Optional[list] = None
     # ⚠️ AÑADIDO (5 agosto, madrugada) — CAMBIO DE ARQUITECTURA PEDIDO
     # EXPRESAMENTE: presupuesto semanal RESTANTE de seguridad crónica
-    # (tiaminasa/mercurio/vitD/yodo/selenio_g_dieta), calculado por
+    # (tiaminasa/mercurio/vitD/yodo/selenio), calculado por
     # quien orquesta la generación de varios menús -- se propaga hasta
     # resolver() como una restricción DURA para este menú concreto, no
     # como un aviso posterior. Ver docstring de resolver() en
@@ -795,16 +800,16 @@ def endpoint_menu_v2(datos: PeticionMenu):
 # entera supere el límite seguro, sin depender de ningún aviso.
 from seguridad import (
     TOPE_TIAMINASA_KCAL, TOPE_MERCURIO_KCAL, TOPE_VITD_KCAL, TOPE_YODO_KCAL,
-    TOPE_SELENIO_G_DIETA, TOPE_EPA_DHA_SEMANAL_KCAL,
+    TOPE_SELENIO_KCAL, TOPE_EPA_DHA_SEMANAL_KCAL,
 )
 
 
 def _presupuesto_semanal_inicial(der_objetivo):
     """Presupuesto SEGURO para la semana completa, para cada uno de los
     5 puntos de riesgo crónico. tiaminasa/mercurio son fracción de kcal
-    (0-1); vitD/yodo son µg por 1000kcal; selenio_g_dieta es µg por
-    gramo de dieta -- cada uno se reparte en su propia unidad, ver
-    resolver() en motor_completo.py para cómo se usa cada una.
+    (0-1); vitD, yodo y selenio son µg -- cada uno se reparte en su
+    propia unidad, ver resolver() en motor_completo.py para cómo se usa
+    cada una.
 
     ⚠️ CORREGIDO en el mismo momento, ANTES de entregarlo -- AUTOCRÍTICA
     real: la primera versión de esto multiplicaba el tope diario × 7
@@ -830,7 +835,10 @@ def _presupuesto_semanal_inicial(der_objetivo):
         "mercurio": TOPE_MERCURIO_KCAL,          # fracción de kcal, igual cada día (no acumula)
         "vitD": TOPE_VITD_KCAL * der_objetivo / 1000.0 * 7 * MARGEN_SEGURIDAD_CRONICA,
         "yodo": TOPE_YODO_KCAL * der_objetivo / 1000.0 * 7 * MARGEN_SEGURIDAD_CRONICA,
-        "selenio_g_dieta": TOPE_SELENIO_G_DIETA,  # µg/g de dieta, igual cada día (no depende del DER)
+        # El selenio no acumula: es una densidad (µg por cada 1000 kcal),
+        # igual cada día. Va en µg absolutos del día como vitD y yodo, pero
+        # SIN el ×7 ni el reparto, porque no es un depósito que se vacíe.
+        "selenio": TOPE_SELENIO_KCAL * der_objetivo / 1000.0,
         # ⚠️ AÑADIDO (26 agosto) — EPA+DHA ES UN LÍMITE DE LA DIETA HABITUAL,
         # NO DE UN PLATO.
         #
@@ -877,7 +885,7 @@ def _consumo_real_menu(gramos, al, der_objetivo):
         "mercurio": (kcal_merc / der_objetivo) if der_objetivo else 0,
         "vitD": vitd_ug,   # µg reales de ESTE menú (se multiplicará por sus días al acumular)
         "yodo": yodo_ug,
-        "selenio_g_dieta": (selenio_ug / total_g) if total_g else 0,
+        "selenio": selenio_ug,   # µg reales de ESTE menú (no acumula: no se resta)
         "epa_dha": epa_dha_g,   # g reales de ESTE menú (se multiplica por sus días al acumular)
     }
 
@@ -900,7 +908,7 @@ def _restar_del_presupuesto(restante, consumo, dias_de_este_menu):
 
     QUÉ ACUMULA Y QUÉ NO:
       · tiaminasa y mercurio son una FRACCIÓN de las kcal del día, y selenio
-        una DENSIDAD por gramo de dieta. No son totales: no se acumulan y no
+        una DENSIDAD por cada 1000 kcal. No son totales: no se acumulan y no
         se restan.
       · vitD, yodo y epa_dha SÍ son totales de la semana. Y se descuentan
         MULTIPLICADOS POR LOS DÍAS que se come ese menú: uno que se repite 4
@@ -920,16 +928,16 @@ def _presupuesto_para_menu_actual(restante, dias_restantes_incluido_este):
     """Reparte el presupuesto que queda entre los días que faltan
     (incluido el menú que se va a generar ahora), para dar el tope
     DIARIO efectivo de ESTE menú -- lo que resolver() usa como techo.
-    tiaminasa/mercurio/selenio_g_dieta ya son "por día" (no se dividen,
-    son una fracción/densidad, no un total acumulable); vitD/yodo SÍ
-    son totales acumulados, así que sí se dividen entre los días."""
+    tiaminasa/mercurio/selenio ya son "por día" (no se dividen, son una
+    fracción/densidad, no un total acumulable); vitD/yodo SÍ son totales
+    acumulados, así que sí se dividen entre los días."""
     dias = max(1, dias_restantes_incluido_este)
     return {
         "tiaminasa": max(0.0, restante["tiaminasa"]),
         "mercurio": max(0.0, restante["mercurio"]),
         "vitD": max(0.0, restante["vitD"]) / dias,
         "yodo": max(0.0, restante["yodo"]) / dias,
-        "selenio_g_dieta": max(0.0, restante["selenio_g_dieta"]),
+        "selenio": max(0.0, restante["selenio"]),
         # EPA+DHA acumula igual que vitD y yodo: es un promedio de la semana.
         "epa_dha": max(0.0, restante.get("epa_dha", 0.0)) / dias,
     }
@@ -1052,14 +1060,14 @@ MARGEN_SEGURIDAD_CRONICA_MENU_UNICO = 0.75  # mismo criterio que el de /menu/sem
 def _presupuesto_menu_unico_semana_completa(der_objetivo):
     from seguridad import (
         TOPE_TIAMINASA_KCAL, TOPE_MERCURIO_KCAL, TOPE_VITD_KCAL, TOPE_YODO_KCAL,
-        TOPE_SELENIO_G_DIETA,
+        TOPE_SELENIO_KCAL,
     )
     return {
         "tiaminasa": TOPE_TIAMINASA_KCAL * MARGEN_SEGURIDAD_CRONICA_MENU_UNICO,
         "mercurio": TOPE_MERCURIO_KCAL * MARGEN_SEGURIDAD_CRONICA_MENU_UNICO,
         "vitD": TOPE_VITD_KCAL * der_objetivo / 1000.0 * MARGEN_SEGURIDAD_CRONICA_MENU_UNICO,
         "yodo": TOPE_YODO_KCAL * der_objetivo / 1000.0 * MARGEN_SEGURIDAD_CRONICA_MENU_UNICO,
-        "selenio_g_dieta": TOPE_SELENIO_G_DIETA * MARGEN_SEGURIDAD_CRONICA_MENU_UNICO,
+        "selenio": TOPE_SELENIO_KCAL * der_objetivo / 1000.0 * MARGEN_SEGURIDAD_CRONICA_MENU_UNICO,
     }
 
 
@@ -3187,8 +3195,8 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "24e7e5ce073472fa",   # 26 ago: fuente declarada en 18 de los 20 pescados (BEDCA los 12 que cuadran, USDA los 6 que BEDCA no trae). Solo metadatos, ningún número
-        "requerimientos_v2_final.json": "ee62ca5c3421754a",   # 26 ago: fuera el maxAdulto de EPA+DHA -- el techo de 2800 es de la dieta crónica y vive en el promedio semanal, no por menú
+        "alimentos_v3_final.json":      "fda1fd1f9ed5f2aa",   # 26 ago: fuente declarada en los pescados, y el araquidónico de las yemas y del hígado de cordero marcado como HUECO en vez de cero (un 0 ahí no puede ser real: la yema es la fuente más rica que hay). Solo metadatos, ningún número
+        "requerimientos_v2_final.json": "1fd28648076cdc7e",   # 26 ago: fuera el maxAdulto de EPA+DHA -- el techo de 2800 es de la dieta crónica y vive en el promedio semanal, no por menú. Corregido el recuento de la nota: son 18 de 20 pescados, no 19
     }
     SELLOS_CRUDOS = {
         "der.py": "1c5c8bb91ceac481",

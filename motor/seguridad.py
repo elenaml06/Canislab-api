@@ -176,10 +176,44 @@ MARGEN_EXTRA_YODO_KELP = 1.5  # +50% de margen si el yodo viene de kelp
 # dieta para perros, gatos y peces; confirma explícitamente que la
 # toxicosis crónica es real y "usually results from chronic intake of a
 # high-selenium diet". El NRC no fijó un límite superior formal para
-# perros (JAVMA 2013;243(5):658); se usa como referencia complementaria el
-# máximo de AAFCO de 0.57 mg por cada 1000 kcal.
-TOPE_SELENIO_G_DIETA = 2.0   # µg de selenio por gramo de dieta -- Merck
-TOPE_SELENIO_KCAL = 570.0    # µg por 1000 kcal -- AAFCO (referencia semanal)
+# perros (JAVMA 2013;243(5):658).
+#
+# ⚠️ CORREGIDO (26 agosto) — LA BASE DE CÁLCULO ESTABA MAL, y es el tipo
+# de error que no da ningún fallo: el tope se aplicaba como 2 µg por
+# gramo de dieta sobre el PESO FRESCO. Los 2 mg/kg de Merck son en BASE
+# MATERIA SECA. Una ración BARF lleva un 70-75% de agua, así que sobre
+# fresco ese mismo límite son ~0,5-0,6 µg/g: aplicándolo sobre el peso
+# tal cual se sirve, el tope real quedaba entre tres y cuatro veces más
+# alto de lo que dice la fuente. Ningún menú salía marcado, y el número
+# escrito en el código era el correcto -- lo que estaba mal era sobre qué
+# se multiplicaba.
+#
+# Se pasa a la cifra de AAFCO, 570 µg por cada 1000 kcal, que es ESE
+# MISMO límite de Merck ya convertido a base energética. La energía no
+# depende del agua que lleve la ración, así que no hay ambigüedad de base
+# de cálculo posible: es la forma correcta de expresarlo para una dieta
+# cruda. Un solo tope, y en la unidad que no se puede malinterpretar.
+#
+# Se quita TOPE_SELENIO_G_DIETA en vez de dejarlo desconectado: una
+# constante que parece un límite y no lo es es peor que no tenerla.
+#
+# FUENTES:
+#   · Merck Veterinary Manual, "Selenium Toxicosis in Animals": 2 mg/kg
+#     de dieta EN BASE MATERIA SECA.
+#   · AAFCO: 0,57 mg por cada 1000 kcal -- el equivalente energético.
+#   · Zentrichová V et al. (2021), Animals 11(2):418 (PMID 33562028):
+#     revisión sistemática del selenio en el perro. No hay casos de
+#     intoxicación natural documentados, pero las dietas CRUDAS tienen
+#     una biodisponibilidad de selenio mucho más alta (~91%) que las
+#     procesadas (47-79%) -- o sea que en BARF el mismo número de
+#     microgramos llega más entero, y aflojar la base de cálculo es
+#     justo lo contrario de lo que pide este alimento.
+#
+# MEDIDO en 18 menús de seis perfiles (adulto de 5, 20 y 40 kg, cachorro
+# en crecimiento, renal y cardiopatía): el máximo fue 142 µg/1000 kcal,
+# cuatro veces por debajo de los 570. El tope correcto no deja sin menú a
+# nadie.
+TOPE_SELENIO_KCAL = 570.0    # µg por 1000 kcal -- AAFCO (= 2 mg/kg MS de Merck)
 
 # ---------------------------------------------------------------------------
 # 2. CLARA DE HUEVO CRUDA SOLA
@@ -456,14 +490,14 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     # 1e. selenio (vísceras, pescado, suplementos)
     selenio_ug = sum(alimentos.get(n, {}).get("nutrientes", {}).get("selenio", 0) * g / 100.0
                      for n, g in menu.items())
-    selenio_por_g_dieta = (selenio_ug / total) if total else 0
-    if selenio_por_g_dieta > TOPE_SELENIO_G_DIETA:
+    tope_selenio = TOPE_SELENIO_KCAL * der / 1000.0
+    if der and selenio_ug > tope_selenio:
         problemas.append(
-            "El selenio de este menú llega a %.2f µg por gramo de dieta, por "
-            "encima del límite tolerable (%.2f µg/g). El riñón es la fuente más "
-            "concentrada -- revisa si hay mucha cantidad de vísceras o de "
-            "suplemento junto con pescado en el mismo menú."
-            % (selenio_por_g_dieta, TOPE_SELENIO_G_DIETA))
+            "El selenio de este menú llega a %.0f µg, por encima del límite "
+            "tolerable (%.0f µg). El riñón es la fuente más concentrada -- revisa "
+            "si hay mucha cantidad de vísceras o de suplemento junto con pescado "
+            "en el mismo menú."
+            % (selenio_ug, tope_selenio))
 
     # 2. clara de huevo sola
     claras = [n for n in menu if _es(n, CLARA_SOLA)]

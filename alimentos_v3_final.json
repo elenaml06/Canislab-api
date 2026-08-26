@@ -1465,7 +1465,10 @@
    "acidoPantotenico": 0,
    "colina": 682,
    "cloruro": 77.0
-  }
+  },
+  "sin_dato": [
+   "araquidonico"
+  ]
  },
  {
   "nombre": "Aceite de oliva",
@@ -3265,7 +3268,8 @@
    "fibra": 0.0
   },
   "sin_dato": [
-   "cobre"
+   "cobre",
+   "araquidonico"
   ]
  },
  {
@@ -3306,7 +3310,8 @@
    "cloruro": 77.0
   },
   "sin_dato": [
-   "cobre"
+   "cobre",
+   "araquidonico"
   ]
  },
  {
@@ -3348,7 +3353,8 @@
    "fibra": 0.0
   },
   "sin_dato": [
-   "cobre"
+   "cobre",
+   "araquidonico"
   ],
   "duplicado_de": "Huevo de pato entero",
   "dato_no_fiable": true,
@@ -3393,7 +3399,8 @@
    "fibra": 0.0
   },
   "sin_dato": [
-   "cobre"
+   "cobre",
+   "araquidonico"
   ]
  },
  {
@@ -6295,7 +6302,10 @@
    "cobre": 7.14,
    "zinc": 4.64,
    "selenio": 83.57
-  }
+  },
+  "sin_dato": [
+   "araquidonico"
+  ]
  },
  {
   "nombre": "Corazón de conejo",

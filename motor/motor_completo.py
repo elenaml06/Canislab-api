@@ -164,10 +164,41 @@ PATOLOGIAS = {
                   "descuadra la pauta de insulina. La verdura fibrosa sí se "
                   "mantiene, porque ayuda a amortiguar la subida de glucosa.")},
 
+    # ⚠️ AMPLIADO (26 agosto) tras la revisión de la nutricionista. El aviso
+    # solo hablaba del cuello de rumiante. Faltaban las dos cosas que de
+    # verdad condicionan el efecto goitrogénico:
+    #
+    #   · EL YODO. Los tiocianatos y la goitrina de las crucíferas compiten
+    #     con el yoduro por su captación en la tiroides -- o sea que el daño
+    #     depende de si el yodo va justo. Con yodo suficiente, un adulto
+    #     expuesto a goitrógenos "usually is not clinically important"
+    #     (Merck, "Goiter in Animals"). El menú ya cubre el mínimo FEDIAF de
+    #     yodo, pero conviene decirlo porque es lo que hace que el resto
+    #     importe poco.
+    #   · LA COCCIÓN. Hervir 30 minutos destruye ~90% de los glucosinolatos
+    #     (Song & Thornalley), la mayor parte por lixiviación al agua, y el
+    #     calor inactiva la mirosinasa, que es la enzima que libera la
+    #     goitrina. En BARF la verdura va cruda, así que es la única palanca
+    #     real que le queda a quien quiera seguir dándole crucíferas.
+    #
+    # ⚠️ Y NO HAY UMBRAL CANINO. No existe ningún estudio en perro que diga
+    # cuánta crucífera afecta a la tiroides: todo lo cuantitativo (cocción,
+    # contenido de progoitrina) viene de humanos y de plantas. Por eso el
+    # grelo y el nabo se excluyen y el brócoli y la coliflor no -- y eso SÍ
+    # tiene base: grelo y nabo son Brassica rapa, ricos en PROGOITRINA
+    # (precursor de la goitrina, el goitrógeno antitiroideo directo),
+    # mientras que brócoli y coliflor están dominados por glucorafanina, de
+    # mucho menor potencial goitrogénico. Es criterio cualitativo prudente,
+    # no un umbral validado, y así hay que contarlo.
     "hipotiroidismo": {
-        "aviso": ("No se cambia la composición. Pero evita darle cuello de rumiante "
-                  "grande de forma repetida: puede llevar restos de tejido tiroideo "
-                  "y alterar los valores de la analítica.")},
+        "aviso": ("No se cambia la composición, salvo que se quitan el grelo y el nabo: "
+                  "son las dos crucíferas del catálogo más ricas en los compuestos que "
+                  "interfieren con la tiroides. El brócoli, la coliflor y las coles se "
+                  "mantienen, porque los suyos son mucho menos activos. Si se los das, "
+                  "mejor cocidos: hervirlos destruye la mayor parte. Lo que más importa "
+                  "aquí es que no le falte yodo, y este menú ya lo cubre. Y evita darle "
+                  "cuello de rumiante grande de forma repetida: puede llevar restos de "
+                  "tejido tiroideo y alterar los valores de la analítica.")},
 
     "estruvita": {"sin_dieta_automatica": True,
         "aviso": ("Estos cálculos dependen del pH de la orina y de analíticas que la "
@@ -704,7 +735,8 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # nutricional/legal de FEDIAF -- así que aquí se usa siempre el más
     # estricto de los dos como techo REAL del solver, no solo el de
     # FEDIAF. Ver seguridad.py para el porqué de cada cifra.
-    from seguridad import TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL, TOPE_SELENIO_G_DIETA
+    from seguridad import (TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL,
+                           TOPE_SELENIO_KCAL)
     # ⚠️ CORREGIDO (5 agosto, madrugada) — BUG REAL Y GRAVE ENCONTRADO,
     # pedido expreso: "si edito un menú, ¿sigue teniendo en cuenta los
     # límites semanales?" -- investigando eso se encontró un bug de
@@ -757,7 +789,17 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # puntos concretos, no en el resto de los 30 requisitos de FEDIAF.
     MARGEN_REDONDEO_SEGURIDAD = 0.99
     tope_vitd_activo *= MARGEN_REDONDEO_SEGURIDAD
-    TOPE_CRONICO_KCAL = {"vitD": tope_vitd_activo, "yodo": TOPE_YODO_KCAL * MARGEN_REDONDEO_SEGURIDAD}
+    TOPE_CRONICO_KCAL = {"vitD": tope_vitd_activo,
+                         "yodo": TOPE_YODO_KCAL * MARGEN_REDONDEO_SEGURIDAD,
+                         # ⚠️ CORREGIDO (26 agosto). El selenio se topaba
+                         # con los 2 µg/g de Merck aplicados sobre el PESO
+                         # FRESCO, y esos 2 mg/kg son en base MATERIA
+                         # SECA: en BARF (70-75% de agua) eso dejaba pasar
+                         # entre tres y cuatro veces el límite real, sin
+                         # dar ningún error. Ahora va por energía, que no
+                         # depende del agua de la ración. Ver el bloque de
+                         # TOPE_SELENIO_KCAL en seguridad.py.
+                         "selenio": TOPE_SELENIO_KCAL * MARGEN_REDONDEO_SEGURIDAD}
     # ⚠️ EPA+DHA SOLO SI VIENE PRESUPUESTO (26 agosto). No se siembra con un
     # valor por defecto a propósito: un menú suelto (/menu/v2) NO lleva techo
     # de EPA+DHA, porque los 2800 mg son el límite de la dieta habitual y no
@@ -873,28 +915,15 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                     fila_rel[idx[n]] = coef
             _fila("fediaf_relativo", fila_rel, -np.inf, 0.0)
 
-    # ⚠️ AÑADIDO (5 agosto, madrugada) — SELENIO POR GRAMO DE DIETA
-    # (Merck Veterinary Manual: 2 µg/g de dieta, límite tolerable
-    # máximo) -- esta cifra viene en una unidad DISTINTA a la de
-    # FEDIAF (µg por gramo de comida, no µg por 1000 kcal), así que no
-    # se puede simplemente comparar y quedarse con la más estricta como
-    # arriba. Pero SÍ se puede expresar como restricción lineal
-    # directa: suma(selenio_i * gramos_i) <= 2.0 * suma(gramos_i), que
-    # reordenado es suma((selenio_i/100 - 2.0) * gramos_i) <= 0 -- una
-    # fila más para el mismo sistema de restricciones del solver, con
-    # límite superior 0, sin cambiar cómo funciona el resto.
-    fila_selenio_g = fila_vacia()
-    aporta_selenio = False
-    tope_selenio_efectivo = TOPE_SELENIO_G_DIETA * MARGEN_REDONDEO_SEGURIDAD
-    if presupuesto_semanal_restante and "selenio_g_dieta" in presupuesto_semanal_restante:
-        tope_selenio_efectivo = min(tope_selenio_efectivo, presupuesto_semanal_restante["selenio_g_dieta"] * MARGEN_REDONDEO_SEGURIDAD)
-    for n in nombres:
-        v_selenio = (_num(alimentos[n].get("nutrientes", {}).get("selenio")) or 0.0) / 100.0
-        if v_selenio:
-            fila_selenio_g[idx[n]] = v_selenio - tope_selenio_efectivo
-            aporta_selenio = True
-    if aporta_selenio:
-        _fila("selenio_por_gramo", fila_selenio_g, -np.inf, 0.0)
+    # ⚠️ QUITADO (26 agosto) — aquí había una fila más en el sistema,
+    # "selenio_por_gramo", que topaba el selenio a 2 µg por cada gramo de
+    # dieta. El número era el de Merck, pero Merck lo da EN BASE MATERIA
+    # SECA y aquí se multiplicaba por el peso fresco: con un 70-75% de
+    # agua, el tope efectivo quedaba entre tres y cuatro veces por encima
+    # del real. El selenio se topa ahora por energía, arriba, con
+    # TOPE_CRONICO_KCAL -- la unidad en la que el agua de la ración no
+    # puede falsear la cuenta.
+
 
     # ⚠️ AÑADIDO (5 agosto, madrugada) — TIAMINASA Y MERCURIO como
     # restricciones duras. Estos dos no son nutrientes numéricos con
@@ -1322,9 +1351,25 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # nutricionalmente válida sin pescado, el resolver la prefiere en
         # esa mitad de los casos. Nunca afecta a si el menú es correcto:
         # solo influye en qué alimento igual de válido se elige.
+        #
+        # ⚠️ CORREGIDO (26 agosto) — CASO REAL ENCONTRADO midiendo el
+        # BLOQUE 17: al regenerar pidiendo conservar los alimentos, el
+        # segundo menú perdía el suyo 1 de cada 12 veces, y el alimento
+        # que se caía era SIEMPRE un pescado ("PERDIDOS: ['Boquerón']",
+        # "PERDIDOS: ['Bacalao']"). La cuenta lo explica: un pescado
+        # preferido cuesta 0,1 + ruido = 0,1-0,5, pero con esta
+        # penalización pasa a 1,6-2,0 -- MÁS que un alimento cualquiera
+        # que no se pidió (1,0-1,4). O sea que la penalización de
+        # variedad se comía la preferencia del usuario y el motor
+        # cambiaba justo lo que se le había pedido no cambiar.
+        #
+        # La penalización está para dar variedad cuando el motor elige
+        # LIBREMENTE. Si el usuario ha dicho "quiero estos alimentos",
+        # ahí no hay nada que variar: se respeta lo que pidió.
         if rng.random() < 0.5:
+            preferidos = set(preferir or ())
             for n in nombres:
-                if categoria_de[n] == "Pescados y mariscos":
+                if categoria_de[n] == "Pescados y mariscos" and n not in preferidos:
                     coste_binaria[idx[n]] += 1.5
     # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL: la rotación de
     # proteína entre varios menús automáticos EXCLUÍA por completo la
