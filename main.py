@@ -882,6 +882,40 @@ def _consumo_real_menu(gramos, al, der_objetivo):
     }
 
 
+def _restar_del_presupuesto(restante, consumo, dias_de_este_menu):
+    """Descuenta del presupuesto semanal lo que se ha llevado un menú ya
+    generado, y devuelve lo que queda para los siguientes.
+
+    ⚠️ EXTRAÍDO (26 agosto). Esta resta estaba escrita DOS VECES, idéntica,
+    en /menu/semana y en /menu/varios-perros. Dos copias de la misma
+    aritmética es como el analizador y el semáforo acabaron discrepando sobre
+    la fibra: una se toca y la otra no.
+
+    Y hacía falta por un segundo motivo: escrita dentro de los endpoints, la
+    parte que de verdad importa -- el `* dias` -- no se podía comprobar sin
+    generar una semana entera, y generando semanas NO SE CAZA (medido: con el
+    `* dias` quitado, ningún escenario alcanzable da un promedio distinto,
+    porque el presupuesto de EPA+DHA hoy nunca llega a morder). Aquí sí se
+    puede probar la aritmética sola, que es donde vive el fallo.
+
+    QUÉ ACUMULA Y QUÉ NO:
+      · tiaminasa y mercurio son una FRACCIÓN de las kcal del día, y selenio
+        una DENSIDAD por gramo de dieta. No son totales: no se acumulan y no
+        se restan.
+      · vitD, yodo y epa_dha SÍ son totales de la semana. Y se descuentan
+        MULTIPLICADOS POR LOS DÍAS que se come ese menú: uno que se repite 4
+        días gasta cuatro veces lo suyo, no una. Sin ese factor, el
+        presupuesto saldría bien justo en el caso que más importa -- pocos
+        menús repetidos muchos días -- y dejaría de proteger sin dar ningún
+        error.
+    """
+    dias = max(1, dias_de_este_menu)
+    salida = dict(restante)
+    for clave in ("vitD", "yodo", "epa_dha"):
+        salida[clave] = restante.get(clave, 0.0) - consumo.get(clave, 0.0) * dias
+    return salida
+
+
 def _presupuesto_para_menu_actual(restante, dias_restantes_incluido_este):
     """Reparte el presupuesto que queda entre los días que faltan
     (incluido el menú que se va a generar ahora), para dar el tope
@@ -1101,18 +1135,8 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
             menus_generados.append({**resultado, "dias": dias_este})
 
             consumo = _consumo_real_menu(gramos, al, datos.der_objetivo)
-            presupuesto_restante = {
-                "tiaminasa": presupuesto_restante["tiaminasa"],  # fracción diaria, no se acumula
-                "mercurio": presupuesto_restante["mercurio"],
-                "vitD": presupuesto_restante["vitD"] - consumo["vitD"] * dias_este,
-                "yodo": presupuesto_restante["yodo"] - consumo["yodo"] * dias_este,
-                "selenio_g_dieta": presupuesto_restante["selenio_g_dieta"],  # densidad diaria, no se acumula
-                # ⚠️ POR SUS DÍAS. Un menú que se come 4 días de la semana
-                # gasta 4 veces su EPA+DHA del presupuesto, no una. Sin el
-                # `* dias_este` el promedio semanal saldría mal justo en el
-                # caso que más importa: pocos menús repetidos muchos días.
-                "epa_dha": presupuesto_restante.get("epa_dha", 0.0) - consumo.get("epa_dha", 0.0) * dias_este,
-            }
+            presupuesto_restante = _restar_del_presupuesto(
+                presupuesto_restante, consumo, dias_este)
 
             for cat in ("Carne muscular", "Pescados y mariscos", "Hueso carnoso", "Vísceras", "Hígado"):
                 principal = sorted(
@@ -1982,14 +2006,7 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
             menú, y apunta su proteína para no repetirla en el siguiente."""
             consumo = _consumo_real_menu(gramos, al, datos.perros[i].der_objetivo)
             dias = dias_por_menu[j]
-            presupuesto[i] = {
-                "tiaminasa": presupuesto[i]["tiaminasa"],           # fracción diaria, no se acumula
-                "mercurio": presupuesto[i]["mercurio"],
-                "vitD": presupuesto[i]["vitD"] - consumo["vitD"] * dias,
-                "yodo": presupuesto[i]["yodo"] - consumo["yodo"] * dias,
-                "selenio_g_dieta": presupuesto[i]["selenio_g_dieta"],  # densidad diaria
-                "epa_dha": presupuesto[i].get("epa_dha", 0.0) - consumo.get("epa_dha", 0.0) * dias,
-            }
+            presupuesto[i] = _restar_del_presupuesto(presupuesto[i], consumo, dias)
             for cat in ("Carne muscular", "Pescados y mariscos", "Hueso carnoso",
                         "Vísceras", "Hígado"):
                 principal = sorted(((nom, g) for nom, g in gramos.items()

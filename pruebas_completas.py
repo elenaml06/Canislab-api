@@ -2150,6 +2150,62 @@ def _tasa_epa_dha_b21(g):
             for n, v in g.items())
     return t / k * 1000.0 * 1000.0   # mg por 1000 kcal
 
+# ⚠️ LA ARITMÉTICA DEL PRESUPUESTO, PROBADA SOLA -- Y POR QUÉ NO BASTA CON
+# GENERAR SEMANAS.
+#
+# La primera versión de esto comprobaba el promedio de una semana generada y
+# exigía que fuera <= 2800. Pasaba en verde... y TAMBIÉN pasaba con el fallo
+# puesto. Medido: quitando el `* dias` de la resta, NINGÚN escenario que se
+# pueda pedir da un promedio distinto -- ni excluyendo especies hasta dejar
+# casi solo pescado, ni forzando boquerón y trucha con preferir_por_menu.
+#
+# El motivo es que el presupuesto de EPA+DHA HOY NUNCA LLEGA A MORDER: el
+# mínimo (110 mg) se cubre sin pescado desde que se suman EPA y DHA, así que
+# el motor no tiene ningún motivo para acercarse a los 2800. Es una red de
+# seguridad que existe y no se dispara. Está bien que exista -- el día que
+# alguien fuerce pescado de verdad, o cambie el catálogo, es lo único que
+# separa una rotación razonable de siete días de boquerón -- pero hay que
+# decir la verdad sobre lo que cubre cada prueba.
+#
+# Así que la aritmética se comprueba AQUÍ, donde sí puede fallar, y el
+# promedio de la semana se deja abajo como vigilancia de que no se dispare
+# por otro motivo. Lo que NO se hace es contar la segunda como si probara la
+# primera.
+_r_b21 = {"tiaminasa": 0.10, "mercurio": 0.10, "vitD": 100.0, "yodo": 500.0,
+          "selenio_g_dieta": 2.0, "epa_dha": 20.0}
+_c_b21 = {"tiaminasa": 0.05, "mercurio": 0.02, "vitD": 10.0, "yodo": 50.0,
+          "selenio_g_dieta": 1.5, "epa_dha": 2.0}
+_q_b21 = _api._restar_del_presupuesto(_r_b21, _c_b21, 4)
+
+# Lo que ACUMULA se descuenta multiplicado por los días que se come ese menú.
+for _clave, _esperado in (("epa_dha", 20.0 - 2.0 * 4),
+                          ("vitD", 100.0 - 10.0 * 4),
+                          ("yodo", 500.0 - 50.0 * 4)):
+    if abs(_q_b21[_clave] - _esperado) > 1e-9:
+        fallos.append(f"BLOQUE21 presupuesto: tras un menú de 4 días, {_clave} queda en "
+                      f"{_q_b21[_clave]} y debería quedar en {_esperado}. Si falta el factor de "
+                      f"los días, un menú que se repite 4 veces gasta como si se comiera una: el "
+                      f"límite crónico deja de proteger y no da ningún error.")
+
+# Y lo que NO acumula no se toca: tiaminasa y mercurio son una fracción de
+# las kcal del día, selenio una densidad por gramo. Restarlos sería tratarlos
+# como un depósito que se vacía, y no lo son.
+for _clave in ("tiaminasa", "mercurio", "selenio_g_dieta"):
+    if abs(_q_b21[_clave] - _r_b21[_clave]) > 1e-9:
+        fallos.append(f"BLOQUE21 presupuesto: {_clave} ha cambiado al restar ({_r_b21[_clave]} -> "
+                      f"{_q_b21[_clave]}). No es un total acumulable: es una fracción o una "
+                      f"densidad diaria, y descontarla la iría apretando día a día sin motivo.")
+
+# El total de la semana es el límite crónico por siete, sin margen extra:
+# 2800 YA es el límite de la dieta habitual, no un tope diario multiplicado.
+_ini_b21 = _api._presupuesto_semanal_inicial(1000.0)
+if abs(_ini_b21.get("epa_dha", 0) - 2.8 * 7) > 1e-9:
+    fallos.append(f"BLOQUE21 presupuesto: para 1000 kcal, el total semanal de EPA+DHA es "
+                  f"{_ini_b21.get('epa_dha')} y debería ser {2.8 * 7} g (2,8 g/1000 kcal x 7 "
+                  f"días, sin margen extra).")
+
+# Y la vigilancia de arriba: que una semana generada no se dispare. NO cubre
+# la aritmética de la resta -- ver el comentario largo.
 for _n21 in (2, 3, 4):
     _r21 = _c.post(f"/menu/semana?numero_de_menus={_n21}", json={
         "nombres_alimentos": [], "der_objetivo": 1100, "peso_perro_kg": 25,
@@ -2165,13 +2221,9 @@ for _n21 in (2, 3, 4):
         _pond += _tasa_epa_dha_b21(_g) * _d
         _dias += _d
     _prom = _pond / max(1, _dias)
-    # Ponderado POR DÍAS: un menú que se come 4 días pesa 4 veces. Sin eso, el
-    # promedio saldría bien justo en el caso que más importa -- pocos menús
-    # repetidos muchos días.
     if _prom > 2800 * 1.01:
         fallos.append(f"BLOQUE21: la semana de {_n21} menús da un promedio de {_prom:.0f} mg de "
-                      f"EPA+DHA por 1000 kcal, y el techo crónico es 2800. El presupuesto "
-                      f"semanal no está mordiendo.")
+                      f"EPA+DHA por 1000 kcal, y el techo crónico es 2800.")
 
 # 6) LOS SEIS PESCADOS QUE ESTABAN A CERO, con la fuente de cada uno.
 #    ⚠️ Tres CAMBIARON el 26 de agosto respecto a lo puesto el 25: mandan las
