@@ -795,7 +795,7 @@ def endpoint_menu_v2(datos: PeticionMenu):
 # entera supere el límite seguro, sin depender de ningún aviso.
 from seguridad import (
     TOPE_TIAMINASA_KCAL, TOPE_MERCURIO_KCAL, TOPE_VITD_KCAL, TOPE_YODO_KCAL,
-    TOPE_SELENIO_G_DIETA,
+    TOPE_SELENIO_G_DIETA, TOPE_EPA_DHA_SEMANAL_KCAL,
 )
 
 
@@ -831,6 +831,27 @@ def _presupuesto_semanal_inicial(der_objetivo):
         "vitD": TOPE_VITD_KCAL * der_objetivo / 1000.0 * 7 * MARGEN_SEGURIDAD_CRONICA,
         "yodo": TOPE_YODO_KCAL * der_objetivo / 1000.0 * 7 * MARGEN_SEGURIDAD_CRONICA,
         "selenio_g_dieta": TOPE_SELENIO_G_DIETA,  # µg/g de dieta, igual cada día (no depende del DER)
+        # ⚠️ AÑADIDO (26 agosto) — EPA+DHA ES UN LÍMITE DE LA DIETA HABITUAL,
+        # NO DE UN PLATO.
+        #
+        # Estuvo un día puesto como máximo por menú en requerimientos_v2_final
+        # y estaba mal, con una consecuencia medida: 19 de los 20 pescados del
+        # catálogo pasan de 2800 mg/1000 kcal ELLOS SOLOS (el boquerón llega a
+        # ~11.000), porque el pescado tiene mucho omega-3 y pocas calorías. El
+        # tope por menú no protegía de nada: borraba el pescado azul entero.
+        # Los menús con pescado cayeron de 13 de cada 24 a 4.
+        #
+        # FEDIAF 2025 deja la columna Maximum VACÍA para EPA+DHA. Los 2800 son
+        # el SUL del NRC 2006 (Lenox & Bauer, JVIM 2013;27:217-226), y un SUL
+        # es una concentración de la dieta CRÓNICA. Así que va aquí, con vitD
+        # y yodo: un total para la semana que se reparte entre los días que
+        # quedan. El motor equilibra solo -- unos días con pescado azul y
+        # otros sin él -- que es exactamente lo que hace una rotación.
+        #
+        # Sin margen extra (a diferencia de vitD y yodo): 2800 YA es el límite
+        # crónico, no un tope diario multiplicado por siete. Apretarlo más
+        # sería inventarse una cifra.
+        "epa_dha": TOPE_EPA_DHA_SEMANAL_KCAL * der_objetivo / 1000.0 * 7,
     }
 
 
@@ -845,12 +866,19 @@ def _consumo_real_menu(gramos, al, der_objetivo):
     vitd_ug = sum(al.get(n, {}).get("nutrientes", {}).get("vitD", 0) * g / 100.0 for n, g in gramos.items())
     yodo_ug = sum(al.get(n, {}).get("nutrientes", {}).get("yodo", 0) * g / 100.0 for n, g in gramos.items())
     selenio_ug = sum(al.get(n, {}).get("nutrientes", {}).get("selenio", 0) * g / 100.0 for n, g in gramos.items())
+    # EPA+DHA en GRAMOS reales de este menú, que es la unidad del catálogo y
+    # la del requisito (0,11 g = 110 mg). Se suman los dos: el requisito se
+    # llama EPA+DHA y comprobar solo una mitad fue el fallo del 25 de agosto.
+    epa_dha_g = sum(((al.get(n, {}).get("nutrientes", {}).get("epa") or 0)
+                     + (al.get(n, {}).get("nutrientes", {}).get("dha") or 0)) * g / 100.0
+                    for n, g in gramos.items())
     return {
         "tiaminasa": (kcal_tia / der_objetivo) if der_objetivo else 0,
         "mercurio": (kcal_merc / der_objetivo) if der_objetivo else 0,
         "vitD": vitd_ug,   # µg reales de ESTE menú (se multiplicará por sus días al acumular)
         "yodo": yodo_ug,
         "selenio_g_dieta": (selenio_ug / total_g) if total_g else 0,
+        "epa_dha": epa_dha_g,   # g reales de ESTE menú (se multiplica por sus días al acumular)
     }
 
 
@@ -868,6 +896,8 @@ def _presupuesto_para_menu_actual(restante, dias_restantes_incluido_este):
         "vitD": max(0.0, restante["vitD"]) / dias,
         "yodo": max(0.0, restante["yodo"]) / dias,
         "selenio_g_dieta": max(0.0, restante["selenio_g_dieta"]),
+        # EPA+DHA acumula igual que vitD y yodo: es un promedio de la semana.
+        "epa_dha": max(0.0, restante.get("epa_dha", 0.0)) / dias,
     }
 
 
@@ -1077,6 +1107,11 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
                 "vitD": presupuesto_restante["vitD"] - consumo["vitD"] * dias_este,
                 "yodo": presupuesto_restante["yodo"] - consumo["yodo"] * dias_este,
                 "selenio_g_dieta": presupuesto_restante["selenio_g_dieta"],  # densidad diaria, no se acumula
+                # ⚠️ POR SUS DÍAS. Un menú que se come 4 días de la semana
+                # gasta 4 veces su EPA+DHA del presupuesto, no una. Sin el
+                # `* dias_este` el promedio semanal saldría mal justo en el
+                # caso que más importa: pocos menús repetidos muchos días.
+                "epa_dha": presupuesto_restante.get("epa_dha", 0.0) - consumo.get("epa_dha", 0.0) * dias_este,
             }
 
             for cat in ("Carne muscular", "Pescados y mariscos", "Hueso carnoso", "Vísceras", "Hígado"):
@@ -1953,6 +1988,7 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
                 "vitD": presupuesto[i]["vitD"] - consumo["vitD"] * dias,
                 "yodo": presupuesto[i]["yodo"] - consumo["yodo"] * dias,
                 "selenio_g_dieta": presupuesto[i]["selenio_g_dieta"],  # densidad diaria
+                "epa_dha": presupuesto[i].get("epa_dha", 0.0) - consumo.get("epa_dha", 0.0) * dias,
             }
             for cat in ("Carne muscular", "Pescados y mariscos", "Hueso carnoso",
                         "Vísceras", "Hígado"):
@@ -3134,8 +3170,8 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "696f6b44071ae78e",   # 25 ago: EPA y DHA de los 6 pescados que estaban a cero (boquerón, bacalao, pescadilla, gamba roja, langostino, perca)
-        "requerimientos_v2_final.json": "5aa24fa9553c727a",   # 25 ago: fuera "Fibra"; EPA+DHA en adulto (NRC 2006 / Lenox & Bauer)
+        "alimentos_v3_final.json":      "279c94889991e317",   # 26 ago: EPA/DHA de los 6 pescados, con las fichas de USDA (boquerón y bacalao corregidos respecto al 25)
+        "requerimientos_v2_final.json": "ee62ca5c3421754a",   # 26 ago: fuera el maxAdulto de EPA+DHA -- el techo de 2800 es de la dieta crónica y vive en el promedio semanal, no por menú
     }
     SELLOS_CRUDOS = {
         "der.py": "1c5c8bb91ceac481",
