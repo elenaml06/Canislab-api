@@ -1141,7 +1141,9 @@
    "colina": 78.5,
    "cloruro": 150.92,
    "fibra": 0.0
-  }
+  },
+  "fuente_epa_dha": "BEDCA",
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3»."
  },
  {
   "nombre": "Sardina",
@@ -1180,7 +1182,9 @@
    "colina": 68,
    "cloruro": 154.0,
    "fibra": 0.0
-  }
+  },
+  "fuente_epa_dha": "BEDCA",
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3»."
  },
  {
   "nombre": "Caballa",
@@ -1219,7 +1223,9 @@
    "colina": 65,
    "cloruro": 129.36,
    "fibra": 0.0
-  }
+  },
+  "fuente_epa_dha": "BEDCA",
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3»."
  },
  {
   "nombre": "Atún",
@@ -1258,7 +1264,9 @@
    "colina": 65,
    "cloruro": 72.38,
    "fibra": 0.0
-  }
+  },
+  "fuente_epa_dha": "BEDCA",
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3»."
  },
  {
   "nombre": "Merluza",
@@ -1297,7 +1305,9 @@
    "colina": 65,
    "cloruro": 155.54,
    "fibra": 0.0
-  }
+  },
+  "fuente_epa_dha": "BEDCA",
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3»."
  },
  {
   "nombre": "Bacalao",
@@ -1377,7 +1387,9 @@
    "colina": 65,
    "cloruro": 89.32,
    "fibra": 0.0
-  }
+  },
+  "fuente_epa_dha": "BEDCA",
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3»."
  },
  {
   "nombre": "Huevo clara",
@@ -3421,7 +3433,9 @@
    "colina": 65,
    "cloruro": 118.58,
    "fibra": 0.0
-  }
+  },
+  "fuente_epa_dha": "BEDCA",
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3»."
  },
  {
   "nombre": "Besugo",
@@ -3460,7 +3474,9 @@
    "colina": 65,
    "cloruro": 30.8,
    "fibra": 0.0
-  }
+  },
+  "fuente_epa_dha": "BEDCA",
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3»."
  },
  {
   "nombre": "Boquerón",
@@ -3540,13 +3556,14 @@
    "colina": 65,
    "cloruro": 210.21,
    "fibra": 0.0
-  }
+  },
+  "nota_datos": "⚠️ SIN FUENTE DECLARADA: no se ha revisado su ficha de BEDCA todavía. Es el único pescado del catálogo cuyo origen sigue sin comprobar (26 agosto)."
  },
  {
   "nombre": "Dorada",
   "tipo": "Alimento",
   "categoria": "Pescados y mariscos",
-  "energia": 133,
+  "energia": 78,
   "nutrientes": {
    "proteina": 17,
    "grasa": 7.22,
@@ -3580,7 +3597,8 @@
    "cloruro": 112.42,
    "fibra": 0.0
   },
-  "nota_datos": "BEDCA da 78 kcal pero sus propios macros (17 g proteína + 7,22 g grasa) suman 133. La fuente se contradice. Se usa la energía calculada de los macros: infravalorarla haría que el motor recetara más dorada de la debida y se pasara de grasa."
+  "nota_datos": "Ficha completa de BEDCA, puesta tal cual el 26 de agosto por decisión expresa. Todos los campos coinciden con la tabla oficial.\n⚠️ DEJADO CONSTAR: la ficha de BEDCA no cuadra consigo misma. Agua 82 g + proteína 17 g + grasa 7,22 g = 106,22 g por cada 100 g de pescado, y declara 78 kcal cuando sus propios macros dan 17x4 + 7,22x9 = 133. Cada fila viene de una fuente distinta (agua de la 7, proteína de la 32, grasa de la 296, energía de la 236). Con estos números la dorada sale a 92,6 g de grasa por 1000 kcal, el alimento más graso del catálogo. Se anota, no se corrige: el dato es el de la fuente oficial y la decisión de usarlo es de quien lleva la nutrición.",
+  "fuente_epa_dha": "BEDCA"
  },
  {
   "nombre": "Gamba roja",
@@ -3703,7 +3721,9 @@
    "colina": 65,
    "cloruro": 154.0,
    "fibra": 0.0
-  }
+  },
+  "fuente_epa_dha": "BEDCA",
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3»."
  },
  {
   "nombre": "Lubina",
@@ -3742,7 +3762,9 @@
    "colina": 65,
    "cloruro": 106.26,
    "fibra": 0.0
-  }
+  },
+  "fuente_epa_dha": "BEDCA",
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3»."
  },
  {
   "nombre": "Perca",
@@ -3863,7 +3885,9 @@
    "colina": 65,
    "cloruro": 559.02,
    "fibra": 0.0
-  }
+  },
+  "fuente_epa_dha": "BEDCA",
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3»."
  },
  {
   "nombre": "Sepia",
@@ -3902,7 +3926,9 @@
    "colina": 65,
    "cloruro": 582.12,
    "fibra": 0.0
-  }
+  },
+  "fuente_epa_dha": "BEDCA",
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3»."
  },
  {
   "nombre": "Aceite de cacahuete",

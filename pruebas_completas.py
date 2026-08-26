@@ -2252,6 +2252,36 @@ for _nom21, (_epa21, _dha21, _fuente21) in _EPA_DHA_REVISADOS_b21.items():
                       f"'{_a21.get('fuente_epa_dha')}' y debería ser '{_fuente21}'. Una "
                       f"estimación por especie parecida tiene que ir marcada como tal.")
 
+# ⚠️ TODO PESCADO CON SU PROCEDENCIA (26 agosto). Los catorce pescados que ya
+# tenían EPA y DHA los llevaban desde antes SIN QUE CONSTARA DE DÓNDE SALÍAN.
+# Al comparar el catálogo campo a campo contra las fichas de BEDCA salió que
+# venían de ahí -- 464 campos comparados, uno solo discrepa -- así que ahora
+# se dice. Un dato nutricional sin fuente no se puede defender ante una
+# nutricionista, y tampoco se puede corregir: no se sabe qué se está
+# corrigiendo.
+#
+# Las dos excepciones van con nombre y motivo, no como un hueco silencioso.
+_SIN_FUENTE_A_PROPOSITO_b21 = {
+    # No se ha mirado su ficha todavía.
+    "Calamar",
+}
+_sin_fuente_b21 = sorted(n for n, a in _al21.items()
+                         if a.get("categoria") == "Pescados y mariscos"
+                         and not a.get("fuente_epa_dha")
+                         and n not in _SIN_FUENTE_A_PROPOSITO_b21)
+if _sin_fuente_b21:
+    fallos.append(f"BLOQUE21: estos pescados no declaran de dónde salen sus datos: "
+                  f"{_sin_fuente_b21}. Si es un hueco conocido, va en "
+                  f"_SIN_FUENTE_A_PROPOSITO_b21 con el motivo escrito; si no, hace falta la "
+                  f"fuente antes de que nadie pueda defender ese número.")
+# Y al revés: si alguien consigue la fuente de una de las dos excepciones,
+# esta lista deja de proteger y hay que quitarla de aquí.
+_ya_resueltos_b21 = sorted(n for n in _SIN_FUENTE_A_PROPOSITO_b21
+                           if _al21.get(n, {}).get("fuente_epa_dha"))
+if _ya_resueltos_b21:
+    fallos.append(f"BLOQUE21: {_ya_resueltos_b21} ya declaran fuente. Quítalos de "
+                  f"_SIN_FUENTE_A_PROPOSITO_b21 o esa lista tapará el siguiente hueco.")
+
 # Y ningún pescado puede quedarse a cero en los dos a la vez: en un pescado
 # eso casi nunca es un dato, es un hueco -- y el semáforo lo cuenta como si
 # de verdad no aportara nada. Lo enseñó el boquerón.
