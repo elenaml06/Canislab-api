@@ -1852,6 +1852,42 @@ else:
     if not _libre_b17.get("factible"):
         fallos.append("BLOQUE17: sin preferir_por_menu ya no se genera la semana.")
 
+# EL PESCADO QUE SE PIDE CONSERVAR NO SE PENALIZA
+#
+# ⚠️ CASO REAL ENCONTRADO (26 agosto) midiendo por qué la comprobación de
+# arriba fallaba una de cada doce veces: el alimento que se caía era
+# SIEMPRE un pescado ("PERDIDOS: ['Boquerón']", "PERDIDOS: ['Bacalao']").
+#
+# El motor penaliza el pescado la mitad de las veces (+1.5 al coste) para
+# que no salga siempre el mismo -- pero lo hacía TAMBIÉN con el pescado
+# que el usuario había pedido conservar. La cuenta: un pescado preferido
+# cuesta 0.1 + ruido = 0.1-0.5, y con la penalización 1.6-2.0, o sea MÁS
+# que un alimento cualquiera que nadie pidió (1.0-1.4). Por eso el motor
+# cambiaba justo lo que se le había dicho que no cambiara.
+#
+# La de arriba no basta como vigilancia: depende del azar y solo saltaba
+# 1 de cada 12 veces. Esta va con SEMILLA FIJA, así que es determinista.
+# MEDIDO con el fallo puesto: 16 de 30 semillas tiraban el pescado
+# preferido; con el arreglo, ninguna de estas cinco. (La semilla 9 lo
+# tira de las dos formas: ahí es por otro motivo, y preferir es una
+# preferencia, no una imposición -- por eso no está en la lista.)
+_al_b17, _req_b17 = _api.cargar_v2()
+_PREFERIR_B17 = [n for n in ["Boquerón", "Carcasa de pollo", "Hígado de ternera",
+                             "Corazón de ternera", "Calabacín", "Aceite de girasol"]
+                 if n in _al_b17]
+if "Boquerón" not in _PREFERIR_B17:
+    fallos.append("BLOQUE17: el boquerón ya no está en el catálogo; hay que reanclar esta prueba.")
+else:
+    for _sem_b17 in (1, 3, 7, 15, 22):
+        _ok_b17, _g_b17 = _api.resolver_v2(
+            1040.0, "Adulto", _al_b17, _req_b17, 20.0, _api.dosis_maxima_fabricante,
+            margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=12,
+            preferir=_PREFERIR_B17, semilla_aleatoria=_sem_b17)
+        if _ok_b17 and "Boquerón" not in (_g_b17 or {}):
+            fallos.append(f"BLOQUE17 semilla {_sem_b17}: se pidió conservar el boquerón y el "
+                          f"motor lo ha quitado. Es la penalización de variedad del pescado "
+                          f"aplicándose a lo que el usuario pidió conservar.")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
@@ -2302,6 +2338,61 @@ if hasattr(_seg21, "TOPE_MERCURIO_DIAS_SEMANA"):
     fallos.append("BLOQUE21: ha vuelto TOPE_MERCURIO_DIAS_SEMANA. No tiene base canina y antes "
                   "estaba declarada sin que la usara ni una línea: la app decía tener una regla "
                   "que no aplicaba.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 22 — LOS DOS TOPES DE SELENIO SE APLICAN DE VERDAD
+# ============================================================
+#
+# ⚠️ CASO REAL ENCONTRADO (26 agosto) auditando el código contra el
+# documento de la nutricionista: TOPE_SELENIO_KCAL (570 µg/1000 kcal,
+# AAFCO) llevaba semanas DEFINIDO Y SIN USARSE. Estaba escrito en
+# seguridad.py con su fuente al lado y no lo leía nadie -- ni el solver,
+# ni _menu_precalculado_es_seguro, ni revisar_seguridad. El único tope de
+# selenio real era el de Merck, por gramo de dieta.
+#
+# Y NO son el mismo límite dicho de dos formas: Merck va por PESO de
+# comida y AAFCO por ENERGÍA. En BARF, mucho menos denso en calorías que
+# el pienso, el de Merck es bastante más permisivo, así que había un
+# hueco de verdad entre los dos.
+#
+# La prueba usa un caso que SOLO topa por AAFCO: 500 g de riñón de
+# ternera son 590 µg de selenio (1,18 µg/g, por debajo de los 2,0 de
+# Merck) pero pasan de los 570 µg que permite AAFCO a 1000 kcal. Si
+# alguien quita el tope de energía, este menú vuelve a colar y esto salta.
+print("=== BLOQUE 22: los dos topes de selenio se aplican ===")
+
+if getattr(_seg21, "TOPE_SELENIO_KCAL", None) != 570.0:
+    fallos.append(f"BLOQUE22: TOPE_SELENIO_KCAL vale "
+                  f"{getattr(_seg21, 'TOPE_SELENIO_KCAL', None)} y tiene que ser 570.0 (AAFCO).")
+if getattr(_seg21, "TOPE_SELENIO_G_DIETA", None) != 2.0:
+    fallos.append(f"BLOQUE22: TOPE_SELENIO_G_DIETA vale "
+                  f"{getattr(_seg21, 'TOPE_SELENIO_G_DIETA', None)} y tiene que ser 2.0 (Merck).")
+
+_RINON_B22 = "Riñón de ternera"
+if _RINON_B22 not in _al21:
+    fallos.append(f"BLOQUE22: '{_RINON_B22}' ya no está en el catálogo; hay que reanclar esta prueba.")
+else:
+    _menu_b22 = {_RINON_B22: 500.0}
+    _se_b22 = (_al21[_RINON_B22]["nutrientes"].get("selenio") or 0) * 500.0 / 100.0
+    # el caso tiene que seguir siendo discriminante: por peso NO topa, por energía SÍ
+    if _se_b22 / 500.0 > 2.0:
+        fallos.append("BLOQUE22: el caso ya no discrimina — 500 g de riñón se pasan también del "
+                      "tope de Merck, así que no prueba nada sobre el de AAFCO.")
+    elif _se_b22 <= 570.0:
+        fallos.append("BLOQUE22: el caso ya no discrimina — 500 g de riñón ya no pasan de los "
+                      "570 µg de AAFCO. Hay que subir los gramos o cambiar el alimento.")
+    elif _api._menu_precalculado_es_seguro(_menu_b22, _al21, 1000.0, 20.0):
+        fallos.append(f"BLOQUE22: un menú con {_se_b22:.0f} µg de selenio para 1000 kcal pasa "
+                      f"como seguro. El tope por energía de AAFCO (570 µg/1000 kcal) no se está "
+                      f"aplicando -- es justo el que llevaba semanas definido sin usarse.")
+    # y revisar_seguridad tiene que decirlo, no callárselo
+    _probs_b22 = _seg21.revisar_seguridad(_menu_b22, _al21, 1000.0, "Adulto")
+    if not any("selenio" in p.lower() for p in _probs_b22):
+        fallos.append("BLOQUE22: revisar_seguridad no dice nada del selenio en un menú que se "
+                      "pasa del tope por energía.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

@@ -704,7 +704,8 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # nutricional/legal de FEDIAF -- así que aquí se usa siempre el más
     # estricto de los dos como techo REAL del solver, no solo el de
     # FEDIAF. Ver seguridad.py para el porqué de cada cifra.
-    from seguridad import TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL, TOPE_SELENIO_G_DIETA
+    from seguridad import (TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL,
+                           TOPE_SELENIO_G_DIETA, TOPE_SELENIO_KCAL)
     # ⚠️ CORREGIDO (5 agosto, madrugada) — BUG REAL Y GRAVE ENCONTRADO,
     # pedido expreso: "si edito un menú, ¿sigue teniendo en cuenta los
     # límites semanales?" -- investigando eso se encontró un bug de
@@ -757,7 +758,32 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # puntos concretos, no en el resto de los 30 requisitos de FEDIAF.
     MARGEN_REDONDEO_SEGURIDAD = 0.99
     tope_vitd_activo *= MARGEN_REDONDEO_SEGURIDAD
-    TOPE_CRONICO_KCAL = {"vitD": tope_vitd_activo, "yodo": TOPE_YODO_KCAL * MARGEN_REDONDEO_SEGURIDAD}
+    TOPE_CRONICO_KCAL = {"vitD": tope_vitd_activo,
+                         "yodo": TOPE_YODO_KCAL * MARGEN_REDONDEO_SEGURIDAD,
+                         # ⚠️ AÑADIDO (26 agosto) — CASO REAL ENCONTRADO
+                         # auditando: TOPE_SELENIO_KCAL (los 570 µg/1000
+                         # kcal de AAFCO) llevaba semanas DEFINIDO Y SIN
+                         # USARSE. Estaba escrito en seguridad.py, con su
+                         # fuente al lado, y nadie lo leía: el único tope
+                         # de selenio que se aplicaba de verdad era el de
+                         # Merck, por gramo de dieta. Una constante que
+                         # parece un límite y no lo es es peor que no
+                         # tenerla, porque nadie vuelve a mirarla.
+                         #
+                         # No son el mismo límite dicho de dos formas:
+                         # Merck va por PESO de comida y AAFCO por
+                         # ENERGÍA, y en BARF (mucho menos denso que el
+                         # pienso) el de Merck es bastante más permisivo.
+                         # Se aplican LOS DOS y manda el que toque antes.
+                         #
+                         # MEDIDO antes de ponerlo, en 18 menús de seis
+                         # perfiles distintos (adulto de 5, 20 y 40 kg,
+                         # cachorro, renal y cardiopatía): el máximo fue
+                         # 142 µg/1000 kcal, cuatro veces por debajo de
+                         # los 570. Esto no deja a nadie sin menú hoy --
+                         # cierra un hueco por si algún día un alimento
+                         # nuevo o una combinación rara se acerca.
+                         "selenio": TOPE_SELENIO_KCAL * MARGEN_REDONDEO_SEGURIDAD}
     # ⚠️ EPA+DHA SOLO SI VIENE PRESUPUESTO (26 agosto). No se siembra con un
     # valor por defecto a propósito: un menú suelto (/menu/v2) NO lleva techo
     # de EPA+DHA, porque los 2800 mg son el límite de la dieta habitual y no
@@ -1322,9 +1348,25 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # nutricionalmente válida sin pescado, el resolver la prefiere en
         # esa mitad de los casos. Nunca afecta a si el menú es correcto:
         # solo influye en qué alimento igual de válido se elige.
+        #
+        # ⚠️ CORREGIDO (26 agosto) — CASO REAL ENCONTRADO midiendo el
+        # BLOQUE 17: al regenerar pidiendo conservar los alimentos, el
+        # segundo menú perdía el suyo 1 de cada 12 veces, y el alimento
+        # que se caía era SIEMPRE un pescado ("PERDIDOS: ['Boquerón']",
+        # "PERDIDOS: ['Bacalao']"). La cuenta lo explica: un pescado
+        # preferido cuesta 0,1 + ruido = 0,1-0,5, pero con esta
+        # penalización pasa a 1,6-2,0 -- MÁS que un alimento cualquiera
+        # que no se pidió (1,0-1,4). O sea que la penalización de
+        # variedad se comía la preferencia del usuario y el motor
+        # cambiaba justo lo que se le había pedido no cambiar.
+        #
+        # La penalización está para dar variedad cuando el motor elige
+        # LIBREMENTE. Si el usuario ha dicho "quiero estos alimentos",
+        # ahí no hay nada que variar: se respeta lo que pidió.
         if rng.random() < 0.5:
+            preferidos = set(preferir or ())
             for n in nombres:
-                if categoria_de[n] == "Pescados y mariscos":
+                if categoria_de[n] == "Pescados y mariscos" and n not in preferidos:
                     coste_binaria[idx[n]] += 1.5
     # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL: la rotación de
     # proteína entre varios menús automáticos EXCLUÍA por completo la

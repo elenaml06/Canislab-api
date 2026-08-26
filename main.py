@@ -105,7 +105,8 @@ def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=N
 def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
     from seguridad import (
         TIAMINASA, MERCURIO_ALTO, TOPE_TIAMINASA_KCAL, TOPE_MERCURIO_KCAL,
-        TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL, TOPE_SELENIO_G_DIETA, _es,
+        TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL, TOPE_SELENIO_G_DIETA,
+        TOPE_SELENIO_KCAL, _es,
     )
     if not der:
         return True  # sin DER no se puede evaluar nada -- no bloquear por falta de dato
@@ -130,8 +131,15 @@ def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
     if yodo_ug > TOPE_YODO_KCAL * der / 1000.0:
         return False
 
+    # El selenio tiene DOS topes que no son el mismo dicho de dos formas:
+    # Merck va por peso de comida y AAFCO por energía. En BARF, mucho menos
+    # denso en calorías que el pienso, el de Merck es bastante más
+    # permisivo. Se comprueban los dos -- ver TOPE_SELENIO_KCAL en
+    # seguridad.py para el caso real (llevaba semanas definido sin usarse).
     selenio_ug = sum(al.get(n, {}).get("nutrientes", {}).get("selenio", 0) * g / 100.0 for n, g in gramos.items())
     if (selenio_ug / total_g) > TOPE_SELENIO_G_DIETA:
+        return False
+    if selenio_ug > TOPE_SELENIO_KCAL * der / 1000.0:
         return False
 
     return True

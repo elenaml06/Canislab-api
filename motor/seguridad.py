@@ -176,10 +176,28 @@ MARGEN_EXTRA_YODO_KELP = 1.5  # +50% de margen si el yodo viene de kelp
 # dieta para perros, gatos y peces; confirma explícitamente que la
 # toxicosis crónica es real y "usually results from chronic intake of a
 # high-selenium diet". El NRC no fijó un límite superior formal para
-# perros (JAVMA 2013;243(5):658); se usa como referencia complementaria el
-# máximo de AAFCO de 0.57 mg por cada 1000 kcal.
+# perros (JAVMA 2013;243(5):658); se completa con el máximo de AAFCO de
+# 0.57 mg por cada 1000 kcal.
+#
+# ⚠️ SE APLICAN LOS DOS (26 agosto). No son el mismo límite dicho de dos
+# formas: Merck va por PESO de comida y AAFCO por ENERGÍA, y en BARF --
+# mucho menos denso en calorías que el pienso -- el de Merck resulta
+# bastante más permisivo. Manda el que toque antes.
+#
+# ⚠️ CASO REAL ENCONTRADO auditando: TOPE_SELENIO_KCAL llevaba semanas
+# DEFINIDO Y SIN USARSE. Estaba aquí escrito, con su fuente al lado, y no
+# lo leía ni el solver, ni la verificación final, ni esta función: el
+# único tope de selenio que se aplicaba era el de Merck. Una constante
+# que parece un límite y no lo es es peor que no tenerla, porque quien la
+# lea dará por hecho que está puesta y no volverá a mirar.
+#
+# MEDIDO antes de aplicarlo, en 18 menús de seis perfiles (adulto de 5,
+# 20 y 40 kg, cachorro en crecimiento, renal y cardiopatía): el máximo
+# fue 142 µg/1000 kcal, cuatro veces por debajo de los 570. No deja sin
+# menú a nadie hoy; cierra el hueco por si mañana entra un alimento nuevo
+# o sale una combinación rara.
 TOPE_SELENIO_G_DIETA = 2.0   # µg de selenio por gramo de dieta -- Merck
-TOPE_SELENIO_KCAL = 570.0    # µg por 1000 kcal -- AAFCO (referencia semanal)
+TOPE_SELENIO_KCAL = 570.0    # µg por 1000 kcal -- AAFCO
 
 # ---------------------------------------------------------------------------
 # 2. CLARA DE HUEVO CRUDA SOLA
@@ -464,6 +482,14 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
             "concentrada -- revisa si hay mucha cantidad de vísceras o de "
             "suplemento junto con pescado en el mismo menú."
             % (selenio_por_g_dieta, TOPE_SELENIO_G_DIETA))
+    tope_selenio_por_kcal = TOPE_SELENIO_KCAL * der / 1000.0
+    if der and selenio_ug > tope_selenio_por_kcal:
+        problemas.append(
+            "El selenio de este menú llega a %.0f µg, por encima del máximo por "
+            "calorías (%.0f µg). El riñón es la fuente más concentrada -- revisa "
+            "si hay mucha cantidad de vísceras o de suplemento junto con pescado "
+            "en el mismo menú."
+            % (selenio_ug, tope_selenio_por_kcal))
 
     # 2. clara de huevo sola
     claras = [n for n in menu if _es(n, CLARA_SOLA)]
