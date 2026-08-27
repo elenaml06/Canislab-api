@@ -63,6 +63,101 @@ con alguna, casi siempre el error está en el cambio.
    dice** — nunca se cambia en silencio. Eso incluye la pantalla de varios
    perros, que tenía esos avisos puestos a `null` a mano.
 
+## El mapa: qué es cada archivo
+
+Escrito el 26 de agosto porque no existía y hacía falta. Con 10.000 líneas
+de Python repartidas en dos carpetas, «¿dónde toco esto?» se respondía
+leyendo hasta encontrarlo, y hay dos motores en el repo — uno vivo y uno
+jubilado — que desde fuera se parecen mucho.
+
+### El motor de verdad (`motor/`)
+
+| Archivo | Qué hace |
+|---|---|
+| `motor_completo.py` | **El corazón.** `resolver()` monta el problema MILP y lo resuelve: los 29 nutrientes, el ratio Ca:P y los topes de seguridad como restricciones simultáneas. Aquí viven también `PATOLOGIAS` y `topes_de_patologias()` |
+| `verificar.py` | El semáforo. `MAPA` es **la** lista de requisitos, la única, compartida con el solver y con el analizador. Y `suplementar()`, que cierra huecos |
+| `seguridad.py` | Los cinco topes crónicos y los avisos. Cada cifra con su fuente escrita al lado |
+| `constructor.py` | Proporciones BARF de partida y `valor_nutriente()` (las claves derivadas, como `epa_dha`) |
+| `exclusiones.py` | Alergias por palabras y familias de especie. Excluir «pollo» quita también «gallina» |
+| `accesibles.py`, `modos.py` | Qué alimentos entran según el modo (automático / personalizar / aprovechar) |
+| `catalogo_menus.py` | Menús precalculados para la vista previa. **3.081 líneas de datos**, no de lógica |
+
+### La API (raíz)
+
+| Archivo | Qué hace |
+|---|---|
+| `main.py` | FastAPI: todos los endpoints, el presupuesto semanal de seguridad crónica y `_garantizar_verificado()`, por donde pasa **todo** menú antes de salir |
+| `requisitos.py` | Cargar la tabla de FEDIAF, resolver la etapa y la dosis máxima que marca el fabricante de cada suplemento. Era `optimizador.py`, 1.124 líneas donde esto convivía con el motor anterior al MILP y con una copia desincronizada de la tabla de patologías. El motor viejo se borró el 26 de agosto; quedan 121 líneas |
+| `der.py` | Cálculo de las kcal. ⚠️ Ver «la duplicación que hay que vigilar», abajo |
+| `analizador.py` | `/analizar`: la dieta que ya le da el dueño. Comparte `MAPA` con el semáforo a propósito — discreparon una vez por la fibra |
+| `especies.py`, `accesibles.py` | Qué especie es cada alimento |
+| `transicion.py` | Plan de cambio gradual de dieta |
+| `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
+| `auditar_catalogo.py` | Huecos y datos raros del catálogo. Lo ejecuta el BLOQUE 19 |
+| `auditar_fediaf.py` | Cada valor del JSON contra la tabla de FEDIAF. Lo ejecuta el BLOQUE 18 |
+
+### Endpoints: cuáles usa la app y cuáles no
+
+Los que llama el frontend hoy: `/menu/v2`, `/menu/semana`,
+`/menu/varios-perros`, `/menu/anadir`, `/menu/cambiar`, `/menu/quitar`,
+`/menu/revalidar`, `/analizar`, `/alimentos`, y los de Stripe.
+
+**Los que nadie llama pero siguen expuestos**: `/catalogo/{tamano}/{etapa}`,
+`/der`, `/transicion` y `/perro/{perro_id}/menus`. Se dejan a propósito: no
+duplican nada, son funciones que existen y que la app puede volver a usar.
+Pero nadie los prueba usando la app, así que si algo se rompe ahí solo lo
+ve la batería.
+
+`POST /menu` **ya no existe** (26 de agosto). Era el motor anterior al MILP
+y arrastraba su propia tabla de patologías, desincronizada de la buena:
+fósforo renal a 1.400 en vez de 1.200, cobre en hepatopatía a 3,0 y sin
+bloquear, grasa en pancreatitis al 25 % de las kcal, diabetes bajando la
+grasa siempre, y urato, cistinuria y «otra» sin existir. No llegó a dar
+menús malos porque `_garantizar_verificado()` los habría rechazado — que es
+otra forma de decir que ese camino construía menús que el filtro final iba
+a tirar. El BLOQUE 24 vigila que no vuelva.
+
+### La duplicación que hay que vigilar
+
+**El DER está calculado dos veces**: en `der.py` (Python, este repo) y en
+`calcularDER()` de `App.jsx` (JavaScript, `canislab-web`). Las dos tienen
+la misma fórmula, los mismos coeficientes por actividad y edad, las mismas
+listas de razas de más y menos gasto, el mismo `+10` por macho entero y por
+convivir con otros perros.
+
+Y **la que manda es la del frontend**: la app calcula el DER y lo envía en
+`der_objetivo`, así que `der.py` solo se ejecuta si alguien llama a `/der`,
+que no llama nadie.
+
+Comprobado el 26 de agosto con 16 perfiles (adulto, senior, cachorro,
+gestante, lactante, bajada y subida de peso, razas de los dos grupos):
+**coinciden en los 16**. Pero nada lo vigila. El día que se toque una y no
+la otra, el usuario verá unas kcal y el motor cumplirá los requisitos sobre
+otras, y no dará ningún error — que es exactamente la familia de fallos
+descrita en «Fallos que no puede encontrar la usuaria».
+
+**Cómo se vigila desde el 26 de agosto**: `der_casos.json`, 85 casos con
+sus kcal, **el mismo archivo en los dos repos**. Cada lado comprueba su
+implementación contra esos números sin necesitar al otro — el BLOQUE 23
+aquí, `tests/der-contrato.spec.js` allí. Si tocas la fórmula de un lado, la
+prueba de ese lado se cae en el acto.
+
+Si el cambio es a propósito: se regeneran los esperados y **se copia
+`der_casos.json` a los dos repos**. Los dos commits, o ninguno.
+
+En el frontend la fórmula ya no está enterrada en `App.jsx`: vive en
+`src/der.js`, que es lógica pura y no importa React.
+
+### Los documentos
+
+`CLAUDE.md` (esto) es la entrada. `PENDIENTE.md` es lo que queda, ordenado
+por prioridad. `DATOS_QUE_FALTAN.md` son los valores del catálogo que hay
+que conseguir de BEDCA/CIQUAL/USDA, uno a uno — **no los rellena el
+asistente**. `Bases.md` y `Ya_probado.md` son de las primeras sesiones:
+decisiones cerradas y callejones sin salida ya recorridos, léelos antes de
+proponer un cambio grande. `CAMBIOS_DE_DATOS_REVERTIDOS.md` explica por qué
+se deshicieron unos cambios de datos del 21 de agosto.
+
 ## Cómo se prueba
 
 ```bash

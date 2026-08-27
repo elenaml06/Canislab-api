@@ -1,6 +1,6 @@
 # LAS BASES — CERRADAS. NO SE TOCAN.
 
-> ## 🛑 ANTES DE PROPONER CUALQUIER CAMBIO: LEE `YA-PROBADO.md`
+> ## 🛑 ANTES DE PROPONER CUALQUIER CAMBIO: LEE `Ya_probado.md`
 > Está en este mismo repo. Contiene lo que ya se intentó y NO funcionó,
 > extraído de las 14 sesiones de trabajo.
 > **Si propones algo que está ahí, estás haciendo perder el tiempo.**
