@@ -184,8 +184,28 @@ def verificar(menu, alimentos, req, der, etapa="Adulto"):
         for k in (alimentos.get(nombre, {}).get("sin_dato") or []):
             huecos.setdefault(k, []).append(nombre)
 
+    # AVISO DE DATOS DUDOSOS — la otra mitad del problema
+    # `sin_dato` protege los HUECOS. Pero un valor DECLARADO Y ERRÓNEO no
+    # dejaba rastro en ninguna parte, y es el que hace daño: pasa cualquier
+    # validación de formato porque tiene la forma de un dato bueno.
+    # ⚠️ CASO REAL ENCONTRADO (27 agosto), tres a la vez y los tres de
+    # etiquetas reales: el omega-3 TOTAL de cuatro aceites de salmón metido
+    # en la columna `linolenico` (que es solo el ALA, así que el EPA y el DHA
+    # se contaban dos veces); el fósforo de las dos harinas de hueso, que da
+    # un Ca:P de 1,28 cuando la hidroxiapatita da 2,15 por estequiometría; y
+    # el cobre del polvo de sangre, 150 veces por encima de lo que tiene la
+    # sangre desecada. Ninguno de los tres lo habría visto `sin_dato`.
+    # Los dos primeros se arreglaron. Los que NO se pueden arreglar —porque
+    # el valor es el de la etiqueta y el real no está publicado— se marcan
+    # aquí, en `dato_dudoso`, y salen junto al menú.
+    dudosos = {}
+    for nombre in menu:
+        for k, motivo in (alimentos.get(nombre, {}).get("dato_dudoso") or {}).items():
+            dudosos.setdefault(k, []).append(nombre)
+
     return {
         "datos_incompletos": huecos,
+        "datos_dudosos": dudosos,
         "semaforo": semaforo,
         "n_rojos": len(rojos), "n_ambar": len(ambar),
         "rojos": rojos, "ambar": ambar,

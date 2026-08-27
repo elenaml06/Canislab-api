@@ -194,6 +194,22 @@ valores plausibles, y el menú sale verde igual. Lo vigilan el BLOQUE 26,
 que ancla el aceite de girasol y el de linaza, y `auditar_catalogo.py`,
 que lista los nueve alimentos donde el omega-3 supera al omega-6.
 
+**Los dos campos que dicen qué NO nos creemos.** Un 0 en el catálogo puede
+ser «no lo tiene» o «no lo sabemos», y eso lo separa `sin_dato`. Pero falta
+la otra mitad: **un valor declarado y erróneo no dejaba rastro en ninguna
+parte**, y es el que hace daño, porque tiene la forma de un dato bueno y
+pasa cualquier validación de formato. El 27 de agosto salieron tres a la
+vez, los tres de etiquetas reales: el **omega-3 total** de cuatro aceites
+de salmón metido en `linolenico` —que es solo el ALA, así que el EPA y el
+DHA se contaban dos veces—, el **fósforo** de las dos harinas de hueso, con
+un Ca:P de 1,28 cuando la hidroxiapatita da 2,15 por estequiometría, y el
+**cobre** del polvo de sangre, 150 veces por encima de lo que tiene la
+sangre desecada. Los tres entraron por lo mismo: el nombre de la columna se
+parecía al de la etiqueta lo bastante como para que nadie mirara. Lo que se
+puede arreglar se arregla; lo que no —porque el valor es el de la etiqueta
+y el real no está publicado— va en **`dato_dudoso`**, que `verificar()`
+devuelve junto al menú igual que los huecos. Lo vigila el BLOQUE 28.
+
 En la raíz, los cuatro: `alimentos_v3_final.json` (el catálogo),
 `requerimientos_v2_final.json` (la tabla de FEDIAF), `catalogo_menus.json`
 (los 36 menús precalculados de la vista previa y sus 180 variantes) y

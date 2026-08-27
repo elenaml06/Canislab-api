@@ -3166,7 +3166,7 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "fda1fd1f9ed5f2aa",   # 26 ago: fuente declarada en los pescados, y el araquidónico de las yemas y del hígado de cordero marcado como HUECO en vez de cero (un 0 ahí no puede ser real: la yema es la fuente más rica que hay). Solo metadatos, ningún número
+        "alimentos_v3_final.json":      "fa8869425cf9e143",   # 27 ago: correcciones de suplementos. El omega-3 TOTAL de cuatro aceites de salmón salía de `linolenico` (contaba el EPA y el DHA dos veces); los cinco aceites tenían la grasa a cero siendo aceite puro; el folato de las dos levaduras era el de levadura de PANADERÍA; el psyllium pasa a dosificarse por peso; el selenio del alga se cierra con fuente; y el fósforo de las harinas de hueso y el cobre del polvo de sangre quedan marcados en el campo nuevo `dato_dudoso`
         "requerimientos_v2_final.json": "9eb5b660a3c725d0",   # 26 ago: los 12 aminoácidos esenciales de la Tabla III-3b, con sus mínimos y el máximo de lisina en crecimiento. Están en el JSON pero NO en verificar.MAPA todavía: ningún alimento del catálogo trae el dato, así que activarlos hoy dejaría al motor sin menús. Ver el BLOQUE 27
     }
     SELLOS_CRUDOS = {

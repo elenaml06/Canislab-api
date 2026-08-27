@@ -124,3 +124,33 @@ porque podríamos pasarnos de cobre o de selenio sin enterarnos.
 
 Déjalo vacío y que se declare en `sin_dato`, que es la lista de huecos
 conocidos. Los que faltan hoy están en `DATOS_QUE_FALTAN.md`, uno a uno.
+
+---
+
+## Si el valor está pero no te lo crees: `dato_dudoso`
+
+`sin_dato` resuelve la mitad del problema. Marca los huecos, y los huecos
+son peligrosos por el lado del máximo. Pero **un valor declarado y erróneo
+no dejaba rastro en ninguna parte**, y ese es el que hace daño: tiene la
+forma de un dato bueno, así que pasa cualquier validación de formato.
+
+El 27 de agosto aparecieron tres a la vez, los tres de etiquetas reales:
+
+- el **omega-3 total** de cuatro aceites de salmón guardado en
+  `linolenico`, que es solo el ALA — así que el EPA y el DHA se contaban
+  dos veces, una en su columna y otra dentro del ALA;
+- el **fósforo** de las dos harinas de hueso, que da un Ca:P de 1,28
+  cuando la hidroxiapatita da 2,15 por estequiometría;
+- el **cobre** del polvo de sangre, 150 veces por encima de lo que tiene
+  la sangre bovina desecada.
+
+Ninguno de los tres lo habría visto `sin_dato`, y los tres entraron por lo
+mismo: **el nombre de la columna se parecía al de la etiqueta lo bastante
+como para que nadie mirara**. Es el mismo error que el `linoleico` contra
+el `linolenico` de arriba.
+
+Los que se pueden arreglar, se arreglan. Los que no —porque el valor es el
+de la etiqueta y el real no está publicado en ninguna parte— van en
+`dato_dudoso`, un diccionario `{"nutriente": "por qué no nos lo creemos"}`.
+`verificar()` lo devuelve en `datos_dudosos` junto al menú, igual que hace
+con los huecos, y `auditar_catalogo.py` los lista. Lo vigila el BLOQUE 28.

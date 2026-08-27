@@ -55,7 +55,7 @@
    }
   ],
   "dosis_fuente": "Etiqueta GRAU. Aviso del fabricante: producto muy concentrado, no sobredosificar",
-  "nota_datos": " Minerales convertidos de % a mg/100g (estaban en bruto).",
+  "nota_datos": "Minerales convertidos de % a mg/100g (estaban en bruto). Cobre y selenio en blanco, y comprobado: el cobre del hueso es despreciable (0,12 mg/kg MS, Pakistan J Nutr 16(6):426-434, 2017 — harian falta ~10 kg para el cobre de un dia) y el selenio NO ESTA PUBLICADO en ninguna fuente (Feedipedia node 219 solo trae Ca P K Na Mg; INRA-CIRAD-AFZ no incluye la harina de hueso en sus tablas de Se). OJO al barrer fuentes: Mad Barn publica «Copper 0 ppm, Selenium 0 ppm» para bone meal steamed, y NO son ceros analiticos, es su marca de dato ausente. Y no confundir con MEAT AND BONE MEAL, que es otra materia prima y si tiene cobre relevante porque lleva tejido blando.",
   "sin_dato": [
    "acidoPantotenico",
    "cobre",
@@ -76,7 +76,10 @@
    "vitE",
    "yodo",
    "zinc"
-  ]
+  ],
+  "dato_dudoso": {
+   "fosforo": "El VALOR NO SE TOCA: es el de la etiqueta y esta bien convertido. Pero no puede ser cierto. Ca 22,6% / P 17,7% dan Ca:P = 1,28, y el mineral del hueso es hidroxiapatita, cuyo Ca:P es 2,15 POR ESTEQUIOMETRIA. Ademas no cabe dentro de la propia etiqueta: con 72,8% de cenizas haria falta un 24,3% de P dentro de la ceniza, y la apatita tiene 18,5% y el fosfato tricalcico puro 20%. Otra harina de hueso bovino (Diebold & Isberg: Ca 14,3 / P 6,8 / ceniza 38,4) da 2,10, que si cuadra. Las dos marcas alemanas declaran lo mismo, o sea que es error de sector, no de un fabricante. IMPORTA porque la harina de hueso esta en el catalogo justo para arreglar el Ca:P, que es restriccion dura: si el fosforo esta sobreestimado, el solver la usa menos de lo que deberia. El valor real no esta publicado en ninguna parte."
+  }
  },
  {
   "nombre": "LUPO NATURAL BARF Huesos en polvo",
@@ -134,7 +137,7 @@
     "gramos": 10
    }
   ],
-  "nota_datos": " Minerales convertidos de % a mg/100g (estaban en bruto).",
+  "nota_datos": "Minerales convertidos de % a mg/100g (estaban en bruto). Cobre y selenio en blanco, y comprobado: el cobre del hueso es despreciable (0,12 mg/kg MS, Pakistan J Nutr 16(6):426-434, 2017 — harian falta ~10 kg para el cobre de un dia) y el selenio NO ESTA PUBLICADO en ninguna fuente (Feedipedia node 219 solo trae Ca P K Na Mg; INRA-CIRAD-AFZ no incluye la harina de hueso en sus tablas de Se). OJO al barrer fuentes: Mad Barn publica «Copper 0 ppm, Selenium 0 ppm» para bone meal steamed, y NO son ceros analiticos, es su marca de dato ausente. Y no confundir con MEAT AND BONE MEAL, que es otra materia prima y si tiene cobre relevante porque lleva tejido blando. Procedencia corregida (27 agosto): Luposan publica sus PROPIOS valores en etiqueta (Ca 22% / P 17,5%), no son copiados de GRAU. Coinciden casi, pero son suyos.",
   "sin_dato": [
    "acidoPantotenico",
    "cobre",
@@ -155,7 +158,10 @@
    "vitE",
    "yodo",
    "zinc"
-  ]
+  ],
+  "dato_dudoso": {
+   "fosforo": "El VALOR NO SE TOCA: es el de la etiqueta y esta bien convertido. Pero no puede ser cierto. Ca 22% / P 17,5% dan Ca:P = 1,26, y el mineral del hueso es hidroxiapatita, cuyo Ca:P es 2,15 POR ESTEQUIOMETRIA. Ademas no cabe dentro de la propia etiqueta: con 72,8% de cenizas haria falta un 24,3% de P dentro de la ceniza, y la apatita tiene 18,5% y el fosfato tricalcico puro 20%. Otra harina de hueso bovino (Diebold & Isberg: Ca 14,3 / P 6,8 / ceniza 38,4) da 2,10, que si cuadra. Las dos marcas alemanas declaran lo mismo, o sea que es error de sector, no de un fabricante. IMPORTA porque la harina de hueso esta en el catalogo justo para arreglar el Ca:P, que es restriccion dura: si el fosforo esta sobreestimado, el solver la usa menos de lo que deberia. El valor real no esta publicado en ninguna parte."
+  }
  },
  {
   "nombre": "Cáscara de huevo PAWS & PATCH",
@@ -260,8 +266,8 @@
    "fibra": 85.0
   },
   "dosis_max_por_100g_comida": 0.5,
-  "dosis_fuente": "Psyllium: dosis habitual baja (fibra muy expansiva). PENDIENTE etiqueta concreta de NaturGreen",
-  "nota_datos": "Fibra añadida (el psyllium es ~85% fibra soluble). Dosis pendiente de etiqueta concreta.",
+  "dosis_fuente": "Sin dosis de etiqueta: NaturGreen no la publica (su ficha dice solo «una cucharadita en agua», sin gramos). Dosis de la literatura veterinaria, 0,2 g/kg/dia, por dos caminos independientes que coinciden: Vetas et al. 2022, Vet Sci (PMC9145803), n=15, «0.2 g/kg body weight»; y Fiberact 2024, J Nutr Food Sci, n=44 perros, «1 teaspoon (about 2 g) per 10 kg» = 0,2 g/kg. DOSIFICAR EN GRAMOS, nunca en cucharaditas: la cucharadita va de 2 g (cascara entera) a 5 g (molida), un factor 2,5 escondido en la palabra.",
+  "nota_datos": "Fibra añadida (el psyllium es ~85% fibra soluble). Dosis pendiente de etiqueta concreta. ⚠️ CASO REAL ENCONTRADO (27 agosto): sin dosis en campo, el motor le aplicaba su TECHO POR DEFECTO de 5 g. Y un techo plano no es neutro: son 1,0 g/kg en un perro de 5 kg, CINCO VECES la dosis estudiada, de una fibra soluble que multiplica su volumen en agua. El dano de un techo plano no lo sufre el perro grande (que se queda corto), lo sufre el pequeno.",
   "sin_dato": [
    "acidoPantotenico",
    "calcio",
@@ -286,7 +292,8 @@
    "vitE",
    "yodo",
    "zinc"
-  ]
+  ],
+  "dosis_g_por_kg_peso": 0.2
  },
  {
   "nombre": "AniForte Beef Blood Powder",
@@ -344,7 +351,11 @@
    "vitD",
    "vitE",
    "yodo"
-  ]
+  ],
+  "dato_dudoso": {
+   "cobre": "El VALOR NO SE TOCA: la etiqueta declara Kupfer 0,08% y la conversion a 80 mg/100 g es correcta. Pero la sangre bovina desecada ronda 0,3-0,6 mg/100 g: estamos unas 150 veces por encima. El hierro (280 mg/100 g) SI es coherente con sangre desecada, asi que el error no es de toda la fila. AniForte no publica tabla analitica. DIRECCION DEL ERROR: un cobre SOBREestimado es el lado seguro aqui, porque el maximo de cobre es restriccion dura del solver y se comprueba sobre esta misma cifra — el motor cree que aporta mas cobre del que aporta y lo usa MENOS. MEDIDO el 27 de agosto forzandolo: 2,88 mg de cobre en un perro de 12 kg, 6,00 en uno de 25 y 8,00 en uno de 45, siempre por debajo del tope FEDIAF del dia.",
+   "zinc": "Mismo caso y mismo orden de error: la sangre desecada ronda 2-5 mg/100 g y aqui hay 250. Ver `cobre`."
+  }
  },
  {
   "nombre": "Aceite de Salmón Natural Greatness",
@@ -353,11 +364,11 @@
   "energia": 900,
   "nutrientes": {
    "proteina": 0,
-   "grasa": 0,
+   "grasa": 99.5,
    "dha": 6,
    "epa": 4,
    "linoleico": 0,
-   "linolenico": 17,
+   "linolenico": 0,
    "araquidonico": 0,
    "vitA": 0,
    "vitD": 0,
@@ -388,12 +399,13 @@
   "dosis_g_por_kg_peso": 0.46,
   "sin_dato": [
    "araquidonico",
-   "grasa",
    "linoleico",
+   "linolenico",
    "vitA",
    "vitD",
    "vitE"
-  ]
+  ],
+  "nota_datos": "⚠️ CASO REAL ENCONTRADO (27 agosto): el 17 que habia en `linolenico` NO era ALA, era el OMEGA-3 TOTAL de la etiqueta. El omega-3 total INCLUYE el EPA y el DHA, que ya estan en sus columnas: se contaban dos veces. El ALA de un aceite de salmon ronda 1 g/100 g (USDA FDC 172343: ALA 1,06), no 17. Se vacia y se declara en sin_dato en vez de poner el valor del USDA, que es de OTRO aceite. Cota aritmetica defendible sobre la propia etiqueta: ALA <= n-3 total - (EPA+DHA+DPA) = 5.0 g. El `linoleico` NO se toca: en el n-6 de un aceite de salmon el linoleico si domina de verdad (el araquidonico es un 0,5-1%), asi que 'omega-6 total ~ LA' es una aproximacion razonable; en el n-3 no lo es, porque ahi mandan el EPA y el DHA. Vitamina D: en blanco A PROPOSITO y con motivo comprobado. USDA FDC 172343 no trae el campo (ausente, no cero), ninguna de las cinco marcas la declara, y en filete varia 8 veces segun salvaje o piscifactoria (2,3-18,5 ug/100 g; Jakobsen et al., Nutrients 2019, DOI 10.3390/nu11050982). No es pereza: el numero no es estable. ⚠️ CASO REAL ENCONTRADO (27 agosto): la grasa estaba a 0 y declarada en sin_dato, en un producto que es aceite puro. No era un hueco: la propia ficha dice 900 kcal por 100 g, y 900/9 = 100 g de grasa. El dato estaba forzado por la aritmetica de nuestra propia energia, no hacia falta ninguna tabla de fuera. Se pone 99,5 g, que es la composicion que declaran las cinco marcas (99,5% aceite + 0,5% tocoferoles). Comparalo con los ocho aceites de cocina del catalogo, que si traen 99,9-100 g. IMPORTA porque la grasa tiene minimo de FEDIAF y tope por patologia (20 g/1000 kcal en pancreatitis, Merck): un producto 100% grasa que declara 0 g mete kcal sin que cuenten como grasa, y ese es el lado que hace dano en cuanto se aplica un tope. MEDIDO: el motor mete hasta 9,2 g de aceite en un cachorro de 20 kg."
  },
  {
   "nombre": "Brit Care Aceite de Salmón",
@@ -402,11 +414,11 @@
   "energia": 900,
   "nutrientes": {
    "proteina": 0,
-   "grasa": 0,
+   "grasa": 99.5,
    "dha": 6,
    "epa": 4.7,
    "linoleico": 3.2,
-   "linolenico": 15,
+   "linolenico": 0,
    "araquidonico": 0,
    "vitA": 0,
    "vitD": 0,
@@ -437,11 +449,16 @@
   "dosis_g_por_kg_peso": 0.46,
   "sin_dato": [
    "araquidonico",
-   "grasa",
+   "linolenico",
    "vitA",
    "vitD",
    "vitE"
-  ]
+  ],
+  "nota_datos": "⚠️ CASO REAL ENCONTRADO (27 agosto): el 15 que habia en `linolenico` NO era ALA, era el OMEGA-3 TOTAL de la etiqueta. El omega-3 total INCLUYE el EPA y el DHA, que ya estan en sus columnas: se contaban dos veces. El ALA de un aceite de salmon ronda 1 g/100 g (USDA FDC 172343: ALA 1,06), no 15. Se vacia y se declara en sin_dato en vez de poner el valor del USDA, que es de OTRO aceite. Cota aritmetica defendible sobre la propia etiqueta: ALA <= n-3 total - (EPA+DHA+DPA) = 4.3 g. El `linoleico` NO se toca: en el n-6 de un aceite de salmon el linoleico si domina de verdad (el araquidonico es un 0,5-1%), asi que 'omega-6 total ~ LA' es una aproximacion razonable; en el n-3 no lo es, porque ahi mandan el EPA y el DHA. Vitamina D: en blanco A PROPOSITO y con motivo comprobado. USDA FDC 172343 no trae el campo (ausente, no cero), ninguna de las cinco marcas la declara, y en filete varia 8 veces segun salvaje o piscifactoria (2,3-18,5 ug/100 g; Jakobsen et al., Nutrients 2019, DOI 10.3390/nu11050982). No es pereza: el numero no es estable. ⚠️ CASO REAL ENCONTRADO (27 agosto): la grasa estaba a 0 y declarada en sin_dato, en un producto que es aceite puro. No era un hueco: la propia ficha dice 900 kcal por 100 g, y 900/9 = 100 g de grasa. El dato estaba forzado por la aritmetica de nuestra propia energia, no hacia falta ninguna tabla de fuera. Se pone 99,5 g, que es la composicion que declaran las cinco marcas (99,5% aceite + 0,5% tocoferoles). Comparalo con los ocho aceites de cocina del catalogo, que si traen 99,9-100 g. IMPORTA porque la grasa tiene minimo de FEDIAF y tope por patologia (20 g/1000 kcal en pancreatitis, Merck): un producto 100% grasa que declara 0 g mete kcal sin que cuenten como grasa, y ese es el lado que hace dano en cuanto se aplica un tope. MEDIDO: el motor mete hasta 9,2 g de aceite en un cachorro de 20 kg.",
+  "dato_dudoso": {
+   "dha": "Ver `epa`.",
+   "epa": "La ficha localizable de Brit Care declara EPA 2,5% y DHA 3,5%; aqui hay 4,7 y 6. Puede ser otro formato del producto. Sin nota_datos de origen, no se puede saber de donde salio la fila. Mientras tanto, un EPA/DHA sobreestimado es la direccion que HACE DANO: el motor cree cubierto el omega-3 y deja de buscarlo donde esta de verdad."
+  }
  },
  {
   "nombre": "Oleum Canis Aceite de Salmón",
@@ -450,11 +467,11 @@
   "energia": 900,
   "nutrientes": {
    "proteina": 0,
-   "grasa": 0,
+   "grasa": 99.5,
    "dha": 5,
    "epa": 2,
    "linoleico": 14,
-   "linolenico": 16,
+   "linolenico": 0,
    "araquidonico": 0,
    "vitA": 0,
    "vitD": 0,
@@ -485,11 +502,12 @@
   "dosis_g_por_kg_peso": 0.46,
   "sin_dato": [
    "araquidonico",
-   "grasa",
+   "linolenico",
    "vitA",
    "vitD",
    "vitE"
-  ]
+  ],
+  "nota_datos": "⚠️ CASO REAL ENCONTRADO (27 agosto): el 16 que habia en `linolenico` NO era ALA, era el OMEGA-3 TOTAL de la etiqueta. El omega-3 total INCLUYE el EPA y el DHA, que ya estan en sus columnas: se contaban dos veces. El ALA de un aceite de salmon ronda 1 g/100 g (USDA FDC 172343: ALA 1,06), no 16. Se vacia y se declara en sin_dato en vez de poner el valor del USDA, que es de OTRO aceite. Cota aritmetica defendible sobre la propia etiqueta: ALA <= n-3 total - (EPA+DHA+DPA) = 7.0 g. El `linoleico` NO se toca: en el n-6 de un aceite de salmon el linoleico si domina de verdad (el araquidonico es un 0,5-1%), asi que 'omega-6 total ~ LA' es una aproximacion razonable; en el n-3 no lo es, porque ahi mandan el EPA y el DHA. Vitamina D: en blanco A PROPOSITO y con motivo comprobado. USDA FDC 172343 no trae el campo (ausente, no cero), ninguna de las cinco marcas la declara, y en filete varia 8 veces segun salvaje o piscifactoria (2,3-18,5 ug/100 g; Jakobsen et al., Nutrients 2019, DOI 10.3390/nu11050982). No es pereza: el numero no es estable. ⚠️ CASO REAL ENCONTRADO (27 agosto): la grasa estaba a 0 y declarada en sin_dato, en un producto que es aceite puro. No era un hueco: la propia ficha dice 900 kcal por 100 g, y 900/9 = 100 g de grasa. El dato estaba forzado por la aritmetica de nuestra propia energia, no hacia falta ninguna tabla de fuera. Se pone 99,5 g, que es la composicion que declaran las cinco marcas (99,5% aceite + 0,5% tocoferoles). Comparalo con los ocho aceites de cocina del catalogo, que si traen 99,9-100 g. IMPORTA porque la grasa tiene minimo de FEDIAF y tope por patologia (20 g/1000 kcal en pancreatitis, Merck): un producto 100% grasa que declara 0 g mete kcal sin que cuenten como grasa, y ese es el lado que hace dano en cuanto se aplica un tope. MEDIDO: el motor mete hasta 9,2 g de aceite en un cachorro de 20 kg."
  },
  {
   "nombre": "AniForte Aceite de Salmón",
@@ -498,11 +516,11 @@
   "energia": 900,
   "nutrientes": {
    "proteina": 0,
-   "grasa": 0,
+   "grasa": 99.5,
    "dha": 4.74,
    "epa": 2.34,
    "linoleico": 16.1,
-   "linolenico": 17.14,
+   "linolenico": 0,
    "araquidonico": 0,
    "vitA": 0,
    "vitD": 0,
@@ -533,11 +551,12 @@
   "dosis_g_por_kg_peso": 0.46,
   "sin_dato": [
    "araquidonico",
-   "grasa",
+   "linolenico",
    "vitA",
    "vitD",
    "vitE"
-  ]
+  ],
+  "nota_datos": "⚠️ CASO REAL ENCONTRADO (27 agosto): el 17.14 que habia en `linolenico` NO era ALA, era el OMEGA-3 TOTAL de la etiqueta. El omega-3 total INCLUYE el EPA y el DHA, que ya estan en sus columnas: se contaban dos veces. El ALA de un aceite de salmon ronda 1 g/100 g (USDA FDC 172343: ALA 1,06), no 17.14. Se vacia y se declara en sin_dato en vez de poner el valor del USDA, que es de OTRO aceite. Cota aritmetica defendible sobre la propia etiqueta: ALA <= n-3 total - (EPA+DHA+DPA) = 10.06 g. El `linoleico` NO se toca: en el n-6 de un aceite de salmon el linoleico si domina de verdad (el araquidonico es un 0,5-1%), asi que 'omega-6 total ~ LA' es una aproximacion razonable; en el n-3 no lo es, porque ahi mandan el EPA y el DHA. Vitamina D: en blanco A PROPOSITO y con motivo comprobado. USDA FDC 172343 no trae el campo (ausente, no cero), ninguna de las cinco marcas la declara, y en filete varia 8 veces segun salvaje o piscifactoria (2,3-18,5 ug/100 g; Jakobsen et al., Nutrients 2019, DOI 10.3390/nu11050982). No es pereza: el numero no es estable. ⚠️ CASO REAL ENCONTRADO (27 agosto): la grasa estaba a 0 y declarada en sin_dato, en un producto que es aceite puro. No era un hueco: la propia ficha dice 900 kcal por 100 g, y 900/9 = 100 g de grasa. El dato estaba forzado por la aritmetica de nuestra propia energia, no hacia falta ninguna tabla de fuera. Se pone 99,5 g, que es la composicion que declaran las cinco marcas (99,5% aceite + 0,5% tocoferoles). Comparalo con los ocho aceites de cocina del catalogo, que si traen 99,9-100 g. IMPORTA porque la grasa tiene minimo de FEDIAF y tope por patologia (20 g/1000 kcal en pancreatitis, Merck): un producto 100% grasa que declara 0 g mete kcal sin que cuenten como grasa, y ese es el lado que hace dano en cuanto se aplica un tope. MEDIDO: el motor mete hasta 9,2 g de aceite en un cachorro de 20 kg."
  },
  {
   "nombre": "GRAU Levadura de cerveza",
@@ -555,12 +574,12 @@
    "vitA": 0,
    "vitD": 0,
    "vitE": 0,
-   "folato": 2340.0,
-   "niacina": 38.0,
-   "riboflavina": 4.4,
-   "tiamina": 11.0,
-   "vitB12": 0,
-   "vitB6": 2.6,
+   "folato": 697.0,
+   "niacina": 18.5,
+   "riboflavina": 1.0,
+   "tiamina": 11.6,
+   "vitB12": 0.34,
+   "vitB6": 0.88,
    "calcio": 200.0,
    "hierro": 2.2,
    "potasio": 1900.0,
@@ -572,21 +591,20 @@
    "zinc": 8.0,
    "cobre": 0.4,
    "manganeso": 0,
-   "acidoPantotenico": 11.0,
+   "acidoPantotenico": 5.14,
    "colina": 0,
    "cloruro": 310.0
   },
   "dosis_fuente": "≈3 g por 10 kg de peso (dosis habitual de levadura de cerveza)",
   "dosis_g_por_kg_peso": 0.3,
-  "nota_datos": "Vitaminas del grupo B añadidas con valores típicos de levadura seca inactiva. NO lleva B12 (solo si está fortificada). Minerales convertidos de % a mg/100g (estaban en bruto).",
+  "nota_datos": "Vitaminas del grupo B añadidas con valores típicos de levadura seca inactiva. NO lleva B12 (solo si está fortificada). Minerales convertidos de % a mg/100g (estaban en bruto). ⚠️ CASO REAL ENCONTRADO (27 agosto): el folato decia 2.340 ug, que es el valor del USDA FDC 175043 «yeast, BAKER'S, active dry» — levadura de PANADERIA, no de cerveza. Factor 3,4. El resto del grupo B venia de sitios distintos (la B1 coincidia con CIQUAL, la B6 no). Todo el bloque B se toma ahora de UNA sola procedencia, CIQUAL 11009 «Levure alimentaire»: folatos 697 · B1 11,6 · B3 18,5 · B5 5,14 · B2 1,0 · B6 0,88 · B12 0,34. Un folato sobreestimado es la direccion que hace dano: el motor lo da por cubierto y deja de buscarlo. Yodo 0: NO es un hueco, es una AUSENCIA MEDIDA. CIQUAL 11009 lo analizo y salio por debajo del limite de cuantificacion (< 20 ug/100 g). La levadura de cerveza no es fuente de yodo. Por eso sale de sin_dato: no es que nadie lo haya mirado, es que se miro y no hay.",
   "sin_dato": [
    "colina",
    "manganeso",
    "vitA",
    "vitB12",
    "vitD",
-   "vitE",
-   "yodo"
+   "vitE"
   ]
  },
  {
@@ -605,43 +623,38 @@
    "vitA": 0,
    "vitD": 0,
    "vitE": 0,
-   "folato": 2340.0,
-   "niacina": 38.0,
-   "riboflavina": 4.4,
-   "tiamina": 11.0,
-   "vitB12": 0,
-   "vitB6": 2.6,
-   "calcio": 0,
+   "folato": 697.0,
+   "niacina": 18.5,
+   "riboflavina": 1.0,
+   "tiamina": 11.6,
+   "vitB12": 0.34,
+   "vitB6": 0.88,
+   "calcio": 130.0,
    "hierro": 2.2,
-   "potasio": 1900.0,
-   "magnesio": 0,
-   "sodio": 0,
-   "fosforo": 0,
+   "potasio": 1700.0,
+   "magnesio": 150.0,
+   "sodio": 141.0,
+   "fosforo": 1100.0,
    "yodo": 0,
    "selenio": 100.0,
    "zinc": 8.0,
    "cobre": 0.4,
    "manganeso": 0,
-   "acidoPantotenico": 11.0,
+   "acidoPantotenico": 5.14,
    "colina": 0,
    "cloruro": 0
   },
   "dosis_fuente": "≈3 g por 10 kg de peso (dosis habitual de levadura de cerveza)",
   "dosis_g_por_kg_peso": 0.3,
-  "nota_datos": "Vitaminas del grupo B añadidas con valores típicos de levadura seca inactiva. NO lleva B12 (solo si está fortificada).",
+  "nota_datos": "Vitaminas del grupo B añadidas con valores típicos de levadura seca inactiva. NO lleva B12 (solo si está fortificada). ⚠️ CASO REAL ENCONTRADO (27 agosto): el folato decia 2.340 ug, que es el valor del USDA FDC 175043 «yeast, BAKER'S, active dry» — levadura de PANADERIA, no de cerveza. Factor 3,4. El resto del grupo B venia de sitios distintos (la B1 coincidia con CIQUAL, la B6 no). Todo el bloque B se toma ahora de UNA sola procedencia, CIQUAL 11009 «Levure alimentaire»: folatos 697 · B1 11,6 · B3 18,5 · B5 5,14 · B2 1,0 · B6 0,88 · B12 0,34. Un folato sobreestimado es la direccion que hace dano: el motor lo da por cubierto y deja de buscarlo. Yodo 0: NO es un hueco, es una AUSENCIA MEDIDA. CIQUAL 11009 lo analizo y salio por debajo del limite de cuantificacion (< 20 ug/100 g). La levadura de cerveza no es fuente de yodo. Por eso sale de sin_dato: no es que nadie lo haya mirado, es que se miro y no hay. Los cinco minerales (Ca 130 · P 1.100 · K 1.700 · Na 141 · Mg 150) se anaden desde CIQUAL 11009. Las dos filas de levadura se construyeron con «valores tipicos de levadura seca inactiva», pero solo GRAU los traia: o los llevan las dos o no los lleva ninguna.",
   "sin_dato": [
-   "calcio",
    "cloruro",
    "colina",
-   "fosforo",
-   "magnesio",
    "manganeso",
-   "sodio",
    "vitA",
    "vitB12",
    "vitD",
-   "vitE",
-   "yodo"
+   "vitE"
   ]
  },
  {
@@ -673,7 +686,7 @@
    "sodio": 3600.0,
    "fosforo": 0,
    "yodo": 76000,
-   "selenio": 0,
+   "selenio": 8.4,
    "zinc": 0,
    "cobre": 0,
    "manganeso": 0,
@@ -683,7 +696,7 @@
   },
   "dosis_fuente": "½ cucharadita por 10 kg de peso (etiqueta Ascophyllum/Sanadog)",
   "dosis_g_por_kg_peso": 0.1,
-  "nota_datos": " Minerales convertidos de % a mg/100g (estaban en bruto).",
+  "nota_datos": "Minerales convertidos de % a mg/100g (estaban en bruto). Selenio 8,4 ug/100 g: mediana de Ascophyllum nodosum, n=24, cuartiles 4,4-9,6 (Duinker et al. 2020, Rapport fra Havforskningen 2020-44, Instituto de Investigaciones Marinas de Noruega, Tabla 7). Nutricionalmente es ruido —0,34 ug/dia en un perro de 40 kg— pero cierra el hueco. El COBRE se queda en blanco a proposito: factor 30 entre fuentes (0,20 mg/100 g en Frontiers Vet Sci 2024 frente a 0,8-6,3 en Feedipedia), porque el Ascophyllum se usa como BIOMONITOR de contaminacion por metales: acumula cobre en proporcion a lo que hay en el agua. En el alga la variable de control es el yodo, no el cobre.",
   "sin_dato": [
    "acidoPantotenico",
    "cobre",
@@ -696,7 +709,6 @@
    "potasio",
    "proteina",
    "riboflavina",
-   "selenio",
    "tiamina",
    "vitA",
    "vitB12",
@@ -6652,7 +6664,7 @@
   "energia": 900,
   "nutrientes": {
    "proteina": 0,
-   "grasa": 0,
+   "grasa": 99.5,
    "dha": 11,
    "epa": 8,
    "linoleico": 0,
@@ -6687,14 +6699,13 @@
   "dosis_g_por_kg_peso": 0.37,
   "sin_dato": [
    "araquidonico",
-   "grasa",
    "linoleico",
    "linolenico",
    "vitA",
    "vitD",
    "vitE"
   ],
-  "nota_datos": "⚠️ VERIFICADO (parcialmente): la composición 99.5% aceite de salmón + 0.5% tocoferoles y la densidad de 900 kcal/100g están confirmadas de forma cruzada (fabricante + revendedores independientes + USDA \"Fish oil, salmon\"). PERO los porcentajes de Omega-3/DHA/EPA (24-26% / 10-12% / 7-9%) usados aquí para dha/epa SOLO aparecen en fichas de marketing del fabricante, replicadas por revendedores -- no hay ningún análisis de laboratorio independiente ni Certificado de Análisis público de este producto en concreto. Además, el salmón escocés de piscifactoría ha reducido su EPA+DHA a la mitad en la última década (Sprague et al. 2016, Nature Scientific Reports), así que el perfil real puede variar entre lotes. Tratar estas cifras con cautela -- no son un dato de laboratorio verificado, son lo declarado por el fabricante. Datos de seguridad adicionales confirmados (revisión cruzada de fuentes veterinarias, agosto 2026): NO apto para perras gestantes o lactantes (indicación directa del fabricante). Límite superior seguro combinado de EPA+DHA según NRC: ~370 mg/kg^0.75/día -- no superar. Dosis de mantenimiento habitual: 75-100 mg EPA+DHA/kg de peso/día (rango terapéutico hasta 220 mg/kg). Dosis altas pueden depletar vitamina E del animal y afectar la coagulación (Lenox & Bauer 2013, J Vet Intern Med). MEJOR PRÁCTICA: dosificar por mg de EPA+DHA real, no solo por volumen/peso corporal -- las reglas de \"X ml por Y kg\" varían mucho entre fabricantes porque dependen del volumen del pump Y de la concentración real del aceite, que aquí no está verificada por laboratorio independiente. No calentar nunca el aceite (favorece la rancidez/oxidación).",
+  "nota_datos": "⚠️ VERIFICADO (parcialmente): la composición 99.5% aceite de salmón + 0.5% tocoferoles y la densidad de 900 kcal/100g están confirmadas de forma cruzada (fabricante + revendedores independientes + USDA \"Fish oil, salmon\"). PERO los porcentajes de Omega-3/DHA/EPA (24-26% / 10-12% / 7-9%) usados aquí para dha/epa SOLO aparecen en fichas de marketing del fabricante, replicadas por revendedores -- no hay ningún análisis de laboratorio independiente ni Certificado de Análisis público de este producto en concreto. Además, el salmón escocés de piscifactoría ha reducido su EPA+DHA a la mitad en la última década (Sprague et al. 2016, Nature Scientific Reports), así que el perfil real puede variar entre lotes. Tratar estas cifras con cautela -- no son un dato de laboratorio verificado, son lo declarado por el fabricante. Datos de seguridad adicionales confirmados (revisión cruzada de fuentes veterinarias, agosto 2026): NO apto para perras gestantes o lactantes (indicación directa del fabricante). Límite superior seguro combinado de EPA+DHA según NRC: ~370 mg/kg^0.75/día -- no superar. Dosis de mantenimiento habitual: 75-100 mg EPA+DHA/kg de peso/día (rango terapéutico hasta 220 mg/kg). Dosis altas pueden depletar vitamina E del animal y afectar la coagulación (Lenox & Bauer 2013, J Vet Intern Med). MEJOR PRÁCTICA: dosificar por mg de EPA+DHA real, no solo por volumen/peso corporal -- las reglas de \"X ml por Y kg\" varían mucho entre fabricantes porque dependen del volumen del pump Y de la concentración real del aceite, que aquí no está verificada por laboratorio independiente. No calentar nunca el aceite (favorece la rancidez/oxidación). ⚠️ CASO REAL ENCONTRADO (27 agosto): la grasa estaba a 0 y declarada en sin_dato, en un producto que es aceite puro. No era un hueco: la propia ficha dice 900 kcal por 100 g, y 900/9 = 100 g de grasa. El dato estaba forzado por la aritmetica de nuestra propia energia, no hacia falta ninguna tabla de fuera. Se pone 99,5 g, que es la composicion que declaran las cinco marcas (99,5% aceite + 0,5% tocoferoles). Comparalo con los ocho aceites de cocina del catalogo, que si traen 99,9-100 g. IMPORTA porque la grasa tiene minimo de FEDIAF y tope por patologia (20 g/1000 kcal en pancreatitis, Merck): un producto 100% grasa que declara 0 g mete kcal sin que cuenten como grasa, y ese es el lado que hace dano en cuanto se aplica un tope. MEDIDO: el motor mete hasta 9,2 g de aceite en un cachorro de 20 kg.",
   "restricciones_patologia": {
    "pancreatitis": "Aceite de pescado prácticamente puro (99.5% grasa); dosis altas de EPA+DHA se han asociado a pancreatitis en perros predispuestos. Limitar o evitar en perros con antecedente de pancreatitis, y no combinar con otras fuentes grasas de golpe."
   }

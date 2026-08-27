@@ -2022,18 +2022,32 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # sabíamos" -- el semáforo lo contaba como si de verdad no aportara nada.
     ("RARO", "Laringe de vacuno"),
     # ⚠️ OMEGA-3 POR ENCIMA DEL OMEGA-6 (26 agosto). No es un error: son los
-    # alimentos donde eso pasa de verdad -- el lino, los cuatro aceites de
-    # salmón, y tres con cantidades minúsculas de los dos. La auditoría los
-    # lista a propósito, porque `linoleico` (omega-6) y `linolenico`
-    # (omega-3) se diferencian en una letra: si alguien invirtiera las
-    # columnas al cargar una tabla, esta lista se llenaría de golpe y sería
-    # lo único que lo delataría -- el menú saldría verde igual.
+    # alimentos donde eso pasa de verdad -- el lino y tres con cantidades
+    # minúsculas de los dos. La auditoría los lista a propósito, porque
+    # `linoleico` (omega-6) y `linolenico` (omega-3) se diferencian en una
+    # letra: si alguien invirtiera las columnas al cargar una tabla, esta
+    # lista se llenaría de golpe y sería lo único que lo delataría -- el
+    # menú saldría verde igual.
+    #
+    # ⚠️ ERAN NUEVE Y SON CINCO (27 agosto), y la diferencia enseña para qué
+    # sirve esta lista. Los CUATRO ACEITES DE SALMÓN estaban aquí desde que
+    # existe la prueba, dados por buenos, y NO eran columnas invertidas: era
+    # que `linolenico` llevaba el OMEGA-3 TOTAL de la etiqueta en vez del
+    # ALA, así que el EPA y el DHA se contaban dos veces. La auditoría los
+    # llevaba señalando un mes; lo que faltaba era preguntarse por qué. Al
+    # vaciarlo salieron los cuatro de golpe.
     ("OMEGA", "Aceite de linaza"), ("OMEGA", "Semilla de lino"),
-    ("OMEGA", "AniForte Aceite de Salmón"),
-    ("OMEGA", "Aceite de Salmón Natural Greatness"),
-    ("OMEGA", "Oleum Canis Aceite de Salmón"),
-    ("OMEGA", "Brit Care Aceite de Salmón"),
     ("OMEGA", "Yogur griego"), ("OMEGA", "Pulpo"), ("OMEGA", "Bacaladilla"),
+    # ⚠️ DATO DUDOSO (27 agosto). Valores DECLARADOS que no nos creemos, y
+    # que no se pueden corregir porque son los de la etiqueta y el real no
+    # está publicado en ninguna parte. Van marcados en `dato_dudoso` dentro
+    # del catálogo y la auditoría los lista para que nadie los olvide.
+    # Que aparezcan aquí es lo correcto; lo que NO puede pasar es que
+    # desaparezcan, y de eso se ocupa el BLOQUE 28.
+    ("DUDOSO", "GRAU Harina de Hueso"),
+    ("DUDOSO", "LUPO NATURAL BARF Huesos en polvo"),
+    ("DUDOSO", "AniForte Beef Blood Powder"),
+    ("DUDOSO", "Brit Care Aceite de Salmón"),
 }
 
 import re as _re_b19
@@ -2769,6 +2783,129 @@ if _con_dato_b27 > 0 and not _en_mapa_b27:
         f"requisitos siguen sin estar en verificar.MAPA. O se activan, o se dice aquí por qué "
         f"no -- lo que no puede quedarse es a medias y en silencio, que es como la fila de la "
         f"fibra estuvo meses diciendo que faltaba algo que nadie exigía.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 28 — los suplementos: lo que se arregló el 27 de agosto
+# ============================================================
+# Nace de una revisión de las 26 fichas de suplemento que encontró tres
+# errores que NINGUNA de las comprobaciones que ya teníamos veía. Los tres
+# venían de etiquetas reales y los tres entraron por lo mismo: el nombre de
+# la columna se parecía al de la etiqueta lo bastante como para que nadie
+# mirara.
+#
+# Este bloque vigila que no vuelvan, cada uno por su lado.
+print("\n=== BLOQUE 28: suplementos — omega-3 de los aceites, dosis y dato_dudoso ===")
+
+_al28 = {a["nombre"]: a for a in json.load(open("alimentos_v3_final.json", encoding="utf-8"))}
+
+# ── 28a. El omega-3 TOTAL no puede volver a la columna del ALA ────────
+# Las etiquetas de los aceites de salmón declaran "omega-3 15-17%", y ese
+# número estaba en `linolenico`, que es solo el ALA (18:3 n-3). El omega-3
+# total INCLUYE el EPA y el DHA, que ya están en sus columnas: se contaban
+# dos veces. El ALA real de un aceite de salmón ronda 1 g/100 g (USDA FDC
+# 172343), no 17.
+#
+# La forma de pillarlo sin depender de una tabla ajena es aritmética: si el
+# `linolenico` de un aceite es MAYOR que su EPA+DHA, casi seguro es el
+# total metido en la casilla del ALA -- en un aceite de pescado el ALA es
+# una fracción pequeña y el EPA y el DHA son la mayor parte del n-3.
+# La lista se saca SOLO por categoría, nunca filtrando por grasa: si se
+# filtrara por grasa, el día que alguien vuelva a poner la grasa a cero el
+# aceite se caería de la lista y la comprobación dejaría de aplicarse sola.
+_ACEITES_28 = [n for n, a in _al28.items() if a.get("categoria") == "Omega-3"]
+if len(_ACEITES_28) < 5:
+    fallos.append(f"BLOQUE28a: solo encuentro {len(_ACEITES_28)} aceites en la categoría Omega-3, "
+                  f"esperaba 5. ¿Se ha renombrado la categoría?")
+for _n28 in _ACEITES_28:
+    _nu28 = _al28[_n28].get("nutrientes") or {}
+    _ala = _nu28.get("linolenico") or 0
+    _epadha = (_nu28.get("epa") or 0) + (_nu28.get("dha") or 0)
+    if _ala > _epadha:
+        fallos.append(
+            f"BLOQUE28a: '{_n28}' tiene linolenico={_ala} y EPA+DHA={_epadha}. En un aceite de "
+            f"pescado el ALA es una fracción pequeña del omega-3 y el EPA+DHA son la mayor "
+            f"parte: un ALA mayor que EPA+DHA significa que se ha vuelto a meter el OMEGA-3 "
+            f"TOTAL de la etiqueta en la columna del ALA, contando el EPA y el DHA dos veces.")
+
+# ── 28a-bis. Un aceite no puede declarar 0 g de grasa ─────────────────
+# Los cinco aceites de salmón tenían `grasa` a 0 y declarada en sin_dato,
+# siendo aceite puro. No era un hueco: su propia energía (900 kcal/100 g)
+# fuerza el valor, 900/9 = 100 g. La grasa tiene mínimo de FEDIAF y tope
+# por patología (20 g/1000 kcal en pancreatitis), así que un producto 100%
+# grasa que declara 0 g mete kcal sin que cuenten como grasa -- el lado que
+# hace daño en cuanto se aplica un tope. MEDIDO: el motor llega a meter
+# 9,2 g de aceite en un cachorro de 20 kg.
+for _n28 in _ACEITES_28:
+    _g28 = (_al28[_n28].get("nutrientes") or {}).get("grasa") or 0
+    _e28 = _al28[_n28].get("energia") or 0
+    if _e28 and _g28 * 9 < _e28 * 0.8:
+        fallos.append(
+            f"BLOQUE28a: '{_n28}' declara {_e28} kcal/100 g y grasa={_g28} g. Un aceite es "
+            f"grasa: {_e28}/9 = {_e28/9:.0f} g. Con la grasa a cero, el motor mete calorías "
+            f"que no cuentan contra el tope de grasa de la pancreatitis.")
+
+# ── 28b. El psyllium tiene que dosificarse por peso ───────────────────
+# Sin dosis en campo, el motor le aplica su techo por defecto de 5 g. Y un
+# techo plano no es neutro: son 1,0 g/kg en un perro de 5 kg, CINCO VECES
+# la dosis estudiada (0,2 g/kg — Vetaș 2022 n=15; Fiberact 2024 n=44). El
+# daño de un techo plano no lo sufre el perro grande, lo sufre el pequeño.
+_psy28 = _al28.get("NaturGreen Psyllium Bio")
+if not _psy28:
+    fallos.append("BLOQUE28b: no está 'NaturGreen Psyllium Bio' en el catálogo.")
+else:
+    _dosis28 = dosis_maxima_fabricante(_psy28, 5.0)
+    if _dosis28 is None:
+        fallos.append("BLOQUE28b: el psyllium se ha quedado otra vez sin dosis en campo. El "
+                      "motor le pondrá su techo por defecto de 5 g, que en un perro de 5 kg "
+                      "son 1,0 g/kg: cinco veces la dosis de los estudios, de una fibra que "
+                      "multiplica su volumen en agua.")
+    elif _dosis28 > 5.0 * 0.2 * 1.01:
+        fallos.append(f"BLOQUE28b: el psyllium deja {_dosis28:.2f} g en un perro de 5 kg y la "
+                      f"dosis de la literatura son 0,2 g/kg = 1,0 g.")
+
+# ── 28c. `dato_dudoso` tiene que seguir existiendo y llegando al menú ──
+# `sin_dato` marca los HUECOS. Un valor DECLARADO Y ERRÓNEO no dejaba
+# rastro en ninguna parte, y es el que hace daño porque tiene la forma de
+# un dato bueno. Los tres que no se pueden arreglar -- el fósforo de las
+# harinas de hueso y el cobre y el zinc del polvo de sangre -- van marcados
+# ahí, y verificar() los saca junto al menú.
+_ESPERADOS_28 = {"GRAU Harina de Hueso": ["fosforo"],
+                 "LUPO NATURAL BARF Huesos en polvo": ["fosforo"],
+                 "AniForte Beef Blood Powder": ["cobre", "zinc"]}
+for _n28, _claves28 in _ESPERADOS_28.items():
+    _d28 = (_al28.get(_n28) or {}).get("dato_dudoso") or {}
+    for _k28 in _claves28:
+        if _k28 not in _d28:
+            fallos.append(
+                f"BLOQUE28c: '{_n28}' ha perdido la marca dato_dudoso en '{_k28}'. Ese valor es "
+                f"el de la etiqueta y no se puede corregir porque el real no está publicado, "
+                f"pero no puede ser cierto. Si se quita la marca, vuelve a no dejar rastro.")
+
+# y que verificar() lo devuelva de verdad, no solo que esté en el JSON
+_f28 = verificar({"GRAU Harina de Hueso": 5.0, "Pollo pechuga sin piel": 200.0},
+                 al, req, 500.0, "Adulto")
+if "datos_dudosos" not in _f28:
+    fallos.append("BLOQUE28c: verificar() ya no devuelve 'datos_dudosos'. La marca existiría en "
+                  "el JSON y no llegaría a ninguna pantalla, que es igual que no existir.")
+elif "fosforo" not in _f28.get("datos_dudosos", {}):
+    fallos.append(f"BLOQUE28c: un menú con harina de hueso no avisa del fósforo dudoso. "
+                  f"verificar() devuelve {_f28.get('datos_dudosos')}")
+
+# ── 28d. El folato de las levaduras es de levadura de CERVEZA ─────────
+# Decía 2.340 µg, que es el valor del USDA para levadura de PANADERÍA
+# (FDC 175043). La de cerveza son 697 (CIQUAL 11009). Factor 3,4. Y un
+# folato sobreestimado es la dirección que hace daño: el motor lo da por
+# cubierto y deja de buscarlo.
+for _n28 in ("GRAU Levadura de cerveza", "PAWS & PATCH Levadura de cerveza"):
+    _fol28 = ((_al28.get(_n28) or {}).get("nutrientes") or {}).get("folato")
+    if _fol28 is None or abs(_fol28 - 697.0) > 1.0:
+        fallos.append(
+            f"BLOQUE28d: '{_n28}' tiene folato={_fol28} y debe tener 697 µg (CIQUAL 11009, "
+            f"«Levure alimentaire»). Los 2.340 de antes son levadura de PANADERÍA seca activa "
+            f"(USDA FDC 175043): otro producto.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

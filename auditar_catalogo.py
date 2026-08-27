@@ -115,6 +115,31 @@ for a in al:
                        f"los acidos grasos suman {suma:.2f} g y la grasa total es {grasa} g. "
                        f"No caben. Lo mas probable: EPA/DHA cargados en mg en vez de g"))
 
+# ── 2d. DATO DUDOSO: el valor que SI esta y no nos lo creemos ─────────
+#
+# `sin_dato` marca los HUECOS, y los huecos son peligrosos por el lado del
+# maximo. Pero un valor DECLARADO Y ERRONEO no dejaba rastro en ninguna
+# parte, y es peor: tiene la forma de un dato bueno, asi que pasa cualquier
+# validacion de formato.
+#
+# ⚠️ CASO REAL (27 agosto): tres a la vez, los tres de etiquetas reales.
+# El omega-3 TOTAL de cuatro aceites de salmon guardado en `linolenico`
+# (que es solo el ALA: el EPA y el DHA se contaban dos veces); el fosforo
+# de las dos harinas de hueso, con un Ca:P de 1,28 cuando la hidroxiapatita
+# da 2,15 por estequiometria; y el cobre del polvo de sangre, 150 veces por
+# encima de lo que tiene la sangre desecada. Los tres pasaban las cuatro
+# comprobaciones de arriba. Entraron por columnas cuyo nombre se parece al
+# de la etiqueta lo bastante como para que nadie mire.
+#
+# Los que se pudieron arreglar, se arreglaron. Los que no —porque el valor
+# es el de la etiqueta y el real no esta publicado— llevan `dato_dudoso`,
+# y esto los lista para que nadie los olvide.
+for a in al:
+    for k, motivo in (a.get("dato_dudoso") or {}).items():
+        valor = (a.get("nutrientes") or {}).get(k)
+        avisos.append(("DUDOSO", a["nombre"],
+                       f"{k}={valor} declarado pero no creible. {motivo[:150]}"))
+
 # ── 3. plausibilidad por categoría ────────────────────────────────────
 for a in al:
     c, nombre = a.get("categoria"), a["nombre"]
