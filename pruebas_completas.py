@@ -2064,6 +2064,20 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     ("DUDOSO", "LUPO NATURAL BARF Huesos en polvo"),
     ("DUDOSO", "AniForte Beef Blood Powder"),
     ("DUDOSO", "Brit Care Aceite de Salmón"),
+    # El calcio del sésamo (27 agosto): 150 mg no son de NINGÚN sésamo real.
+    # Con cáscara son 975 (USDA 170150 y FINELI 385, dos analíticas
+    # independientes que coinciden) y pelado 60-66 (USDA 169412, FINELI
+    # 34245): casi todo el calcio está en la cáscara y quitarla lo divide
+    # por dieciséis. Nuestros 150 son fieles a BEDCA 1127, pero BEDCA no
+    # dice de cuál habla y caen en el hueco vacío entre los dos polos.
+    # El resto de la fila sí dice cuál es -- fósforo, potasio, magnesio y
+    # fibra son los del entero casi al decimal -- así que tenemos una ficha
+    # de sésamo entero con el calcio de ninguno.
+    # No se resuelve eligiendo uno: se resuelve partiendo la ficha en dos,
+    # y eso llega con la carga de alimentos. MEDIDO mientras tanto: el
+    # solver no lo usa en ninguno de los 21 menús automáticos con ninguno
+    # de los tres calcios, y forzando 5 g el Ca:P del menú se mueve 0,08.
+    ("DUDOSO", "Semilla de sésamo"),
 }
 
 import re as _re_b19
@@ -2956,6 +2970,28 @@ for _n28, _a28 in _PLAUSIBLES_28.items():
                     f"creemos ({_plaus28} en vez de {_a28['nutrientes'].get(_k28)}) el menú "
                     f"real tiene {_real28:.2f} y el mínimo del día es {_suelo28:.2f}. El motor "
                     f"estaría dando por cubierto un {_k28} que no está, y saldría verde.")
+
+# ── 28c-ter. El sésamo: el cobre puesto y el calcio marcado ───────────
+# El cobre y el manganeso estaban a cero declarado. Ya tienen fuente
+# (USDA FDC 170150, sésamo ENTERO), y se toma esa ficha y no la del pelado
+# porque es la que cuadra con el resto de la fila.
+# El calcio, en cambio, no es de ningún sésamo real: con cáscara son 975 mg
+# (USDA y FINELI por separado) y pelado 60-66; nuestros 150 vienen de BEDCA,
+# que no dice de cuál habla, y caen en el hueco vacío entre los dos polos.
+# No se arregla eligiendo uno: se arregla partiendo la ficha en dos.
+_ses28 = _al28.get("Semilla de sésamo")
+if _ses28:
+    for _k28, _esp28 in (("cobre", 4.082), ("manganeso", 2.46)):
+        _v28 = (_ses28.get("nutrientes") or {}).get(_k28)
+        if _v28 is None or abs(_v28 - _esp28) > 0.01:
+            fallos.append(f"BLOQUE28c-ter: el sésamo tiene {_k28}={_v28} y debe tener {_esp28} "
+                          f"(USDA FDC 170150). Estuvo a cero, y el cero venía de una tabla que "
+                          f"escribe cero cuando no analiza los metales traza.")
+    if "calcio" not in (_ses28.get("dato_dudoso") or {}):
+        fallos.append(
+            "BLOQUE28c-ter: el sésamo ha perdido la marca `dato_dudoso` en el calcio. Sus 150 mg "
+            "no son de ningún sésamo real: con cáscara son 975 y pelado 60-66, y el resto de la "
+            "fila es sésamo entero. Mientras la ficha no se parta en dos, la marca se queda.")
 
 # ── 28d. El folato de las levaduras es de levadura de CERVEZA ─────────
 # Decía 2.340 µg, que es el valor del USDA para levadura de PANADERÍA

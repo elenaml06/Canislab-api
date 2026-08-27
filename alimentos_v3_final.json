@@ -4422,17 +4422,21 @@
    "yodo": 0,
    "selenio": 49,
    "zinc": 5.3,
-   "cobre": 0,
-   "manganeso": 0,
+   "cobre": 4.082,
+   "manganeso": 2.46,
    "acidoPantotenico": 0,
    "colina": 25,
    "cloruro": 61.6,
    "fibra": 11.0
   },
-  "sin_dato": [
-   "cobre",
-   "manganeso"
-  ]
+  "sin_dato": [],
+  "dato_dudoso": {
+   "calcio": "El VALOR NO SE TOCA, pero no es de ningun sesamo real. El calcio del sesamo no es un rango: son DOS valores, porque casi todo esta en la cascara. Con cascara 975 mg (USDA 170150 y FINELI 385, dos analiticas independientes que coinciden); pelado 60 mg (USDA 169412) o 66 (FINELI 34245). Quitar la cascara lo divide por dieciseis. Nuestros 150 son fieles a BEDCA 1127, pero BEDCA no dice de cual habla y 150 cae en el hueco vacio entre los dos polos: es lo que sale cuando la tabla no distingue. Y el RESTO de esta fila si dice cual es: fosforo 620, potasio 450, magnesio 350 y fibra 11,0 son casi al decimal los del sesamo CON CASCARA del USDA (629 / 468 / 351 / 11,8). O sea que tenemos una ficha de sesamo entero con el calcio de ninguno. IMPORTA porque cambia lo que el alimento HACE: con 150 el Ca:P del sesamo es 0,24 y es una carga de fosforo; con 975 es 1,57 y ayuda a cuadrar la racion; con 60 es 0,10 y estorba mas. MEDIDO el 27 de agosto: el solver NO lo elige en ninguno de los 21 menus automaticos con ninguno de los tres calcios, y forzando 5 g el Ca:P del menu se mueve 0,08 (1,47-1,55) porque el hueso compensa. O sea que hoy no cambia ningun plato. NO SE ARREGLA ELIGIENDO UNO: se arregla partiendo la ficha en dos, `sesamo con cascara` y `sesamo pelado`, que es lo que trae la carga de alimentos. Hasta entonces queda marcado."
+  },
+  "valor_plausible": {
+   "calcio": 60
+  },
+  "nota_datos": "Cobre 4,082 mg y manganeso 2,46 mg de USDA FDC 170150 «Seeds, sesame seeds, whole, dried» (27 agosto). Se toma la ficha de sesamo ENTERO porque es la que cuadra con el resto de esta fila -- fosforo, potasio, magnesio y fibra coinciden casi al decimal con el entero. La unica casilla que no cuadra con nada es el calcio: ver `dato_dudoso`."
  },
  {
   "nombre": "Albahaca",

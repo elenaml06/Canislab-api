@@ -3166,7 +3166,7 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "1a30aa5aab6317a4",   # 27 ago (3): `valor_plausible` en el polvo de sangre. Un valor dudoso INFLADO protege contra el techo y desprotege contra el suelo, asi que ahora el minimo se comprueba sobre el valor plausible y el maximo sobre el declarado. Sin esto, forzando el polvo de sangre en un perro de 25 kg salia un menu con 2,34 mg de cobre real sobre un minimo de 2,60 -- deficitario y en VERDE
+        "alimentos_v3_final.json":      "8ed27aeca70851e7",   # 27 ago (4): el sesamo. Cobre 4,082 y manganeso 2,46 de USDA FDC 170150 (estaban a cero, y el cero venia de una tabla que escribe cero cuando no analiza los metales traza). Y su CALCIO marcado como dudoso: 150 mg no son de ningun sesamo real -- con cascara son 975 y pelado 60-66, y el resto de la fila es sesamo entero. Se resuelve partiendo la ficha en dos cuando entre la carga
         "requerimientos_v2_final.json": "9eb5b660a3c725d0",   # 26 ago: los 12 aminoácidos esenciales de la Tabla III-3b, con sus mínimos y el máximo de lisina en crecimiento. Están en el JSON pero NO en verificar.MAPA todavía: ningún alimento del catálogo trae el dato, así que activarlos hoy dejaría al motor sin menús. Ver el BLOQUE 27
     }
     SELLOS_CRUDOS = {
