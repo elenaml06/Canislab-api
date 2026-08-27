@@ -3166,7 +3166,7 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "853098e94ef279fe",   # 27 ago (5): las marcas dudosas llevan ahora `motivo`, `resolver` y `desde`, y los `valor_plausible` llevan su fuente y su banda. El cobre del polvo de sangre pasa de 0,5 a 0,85 y el cinc de 3,5 a 2,3 (Feedipedia node 221 / INRA-CIRAD-AFZ): el cinc iba un 50% alto, y un plausible alto ablanda justo la prueba del suelo, que es para lo unico que sirve
+        "alimentos_v3_final.json":      "eb05a8dd5f522368",   # 27 ago (6): fuera los cinco suplementos cuyo dato no se sostiene (las dos harinas de hueso por un fosforo quimicamente imposible, el kelp por un yodo que varia 100x, y Pets Purest y Brit Care por un EPA/DHA que solo esta en fichas de marketing). 165 -> 160 alimentos, 26 -> 21 suplementos, y ninguna categoria se queda sin cubrir. El polvo de sangre se queda -- su hierro si es coherente -- con el cobre y el cinc vaciados a sin_dato
         "requerimientos_v2_final.json": "9eb5b660a3c725d0",   # 26 ago: los 12 aminoácidos esenciales de la Tabla III-3b, con sus mínimos y el máximo de lisina en crecimiento. Están en el JSON pero NO en verificar.MAPA todavía: ningún alimento del catálogo trae el dato, así que activarlos hoy dejaría al motor sin menús. Ver el BLOQUE 27
     }
     SELLOS_CRUDOS = {

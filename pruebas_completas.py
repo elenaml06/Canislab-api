@@ -2061,10 +2061,18 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # del catálogo y la auditoría los lista para que nadie los olvide.
     # Que aparezcan aquí es lo correcto; lo que NO puede pasar es que
     # desaparezcan, y de eso se ocupa el BLOQUE 28.
-    ("DUDOSO", "GRAU Harina de Hueso"),
-    ("DUDOSO", "LUPO NATURAL BARF Huesos en polvo"),
-    ("DUDOSO", "AniForte Beef Blood Powder"),
-    ("DUDOSO", "Brit Care Aceite de Salmón"),
+    # ⚠️ SE FUERON CUATRO EL MISMO DÍA QUE SE PUSIERON (27 agosto), y no
+    # por un arreglo del dato sino por una regla de producto que está aguas
+    # arriba: **si el dato de un suplemento no se sostiene, el suplemento
+    # sale del catálogo**. No se construyen mecanismos para convivir con un
+    # dato malo cuando hay recambio. Las dos harinas de hueso y Brit Care
+    # se fueron enteros; el cobre y el cinc del polvo de sangre se vaciaron
+    # a `sin_dato` y el producto se queda, porque su motivo de existir es
+    # el hierro y ese sí es coherente. Lo vigila el BLOQUE 30.
+    #
+    # Queda uno solo, y es el que enseña para qué sirve de verdad
+    # `dato_dudoso`: el del sésamo NO se puede cerrar borrando nada, porque
+    # no sobra un producto -- falta partir una ficha en dos.
     # El calcio del sésamo (27 agosto): 150 mg no son de NINGÚN sésamo real.
     # Con cáscara son 975 (USDA 170150 y FINELI 385, dos analíticas
     # independientes que coinciden) y pelado 60-66 (USDA 169412, FINELI
@@ -2847,9 +2855,12 @@ _al28 = {a["nombre"]: a for a in json.load(open("alimentos_v3_final.json", encod
 # filtrara por grasa, el día que alguien vuelva a poner la grasa a cero el
 # aceite se caería de la lista y la comprobación dejaría de aplicarse sola.
 _ACEITES_28 = [n for n, a in _al28.items() if a.get("categoria") == "Omega-3"]
-if len(_ACEITES_28) < 5:
-    fallos.append(f"BLOQUE28a: solo encuentro {len(_ACEITES_28)} aceites en la categoría Omega-3, "
-                  f"esperaba 5. ¿Se ha renombrado la categoría?")
+if len(_ACEITES_28) != 3:
+    fallos.append(f"BLOQUE28a: hay {len(_ACEITES_28)} aceites en la categoría Omega-3 y tienen "
+                  f"que ser 3. Eran 5 hasta el 27 de agosto: se fueron Pets Purest (su EPA/DHA "
+                  f"solo aparece en fichas de marketing del fabricante, y es el más denso de "
+                  f"todos, así que el solver lo prefería) y Brit Care (su EPA/DHA no cuadra con "
+                  f"la única ficha localizable). Ver el BLOQUE 30.")
 for _n28 in _ACEITES_28:
     _nu28 = _al28[_n28].get("nutrientes") or {}
     _ala = _nu28.get("linolenico") or 0
@@ -2903,9 +2914,14 @@ else:
 # un dato bueno. Los tres que no se pueden arreglar -- el fósforo de las
 # harinas de hueso y el cobre y el zinc del polvo de sangre -- van marcados
 # ahí, y verificar() los saca junto al menú.
-_ESPERADOS_28 = {"GRAU Harina de Hueso": ["fosforo"],
-                 "LUPO NATURAL BARF Huesos en polvo": ["fosforo"],
-                 "AniForte Beef Blood Powder": ["cobre", "zinc"]}
+# ⚠️ SOLO QUEDA UNO (27 agosto). Los otros cuatro se cerraron por la vía
+# de arriba: si un suplemento no cuadra, sale del catálogo. Las dos harinas
+# de hueso y Brit Care se fueron enteros, y el cobre y el cinc del polvo de
+# sangre se vaciaron a sin_dato -- el producto se queda porque su motivo de
+# existir es el hierro, y ese sí es coherente.
+# El del sésamo NO se puede cerrar así, y por eso es el que queda: no hay
+# nada que borrar, hay una ficha que partir en dos.
+_ESPERADOS_28 = {"Semilla de sésamo": ["calcio"]}
 for _n28, _claves28 in _ESPERADOS_28.items():
     _d28 = (_al28.get(_n28) or {}).get("dato_dudoso") or {}
     for _k28 in _claves28:
@@ -2916,13 +2932,13 @@ for _n28, _claves28 in _ESPERADOS_28.items():
                 f"pero no puede ser cierto. Si se quita la marca, vuelve a no dejar rastro.")
 
 # y que verificar() lo devuelva de verdad, no solo que esté en el JSON
-_f28 = verificar({"GRAU Harina de Hueso": 5.0, "Pollo pechuga sin piel": 200.0},
+_f28 = verificar({"Semilla de sésamo": 5.0, "Pollo pechuga sin piel": 200.0},
                  al, req, 500.0, "Adulto")
 if "datos_dudosos" not in _f28:
     fallos.append("BLOQUE28c: verificar() ya no devuelve 'datos_dudosos'. La marca existiría en "
                   "el JSON y no llegaría a ninguna pantalla, que es igual que no existir.")
-elif "fosforo" not in _f28.get("datos_dudosos", {}):
-    fallos.append(f"BLOQUE28c: un menú con harina de hueso no avisa del fósforo dudoso. "
+elif "calcio" not in _f28.get("datos_dudosos", {}):
+    fallos.append(f"BLOQUE28c: un menú con sésamo no avisa del calcio dudoso. "
                   f"verificar() devuelve {_f28.get('datos_dudosos')}")
 
 # ── 28c-bis. Un dato dudoso con consecuencia: la prueba de esfuerzo ───
@@ -2946,7 +2962,7 @@ _PLAUSIBLES_28 = {n: a for n, a in _al28.items() if a.get("valor_plausible")}
 if not _PLAUSIBLES_28:
     fallos.append("BLOQUE28c-bis: ya no hay ningún alimento con `valor_plausible`. Era lo que "
                   "permitía comprobar un dato dudoso en vez de solo anotarlo.")
-_MINIMOS_28 = {"cobre": 2.08, "zinc": 20.8}     # mg/1000 kcal, FEDIAF adulto
+_MINIMOS_28 = {"cobre": 2.08, "zinc": 20.8, "calcio": 1450.0}   # por 1000 kcal, FEDIAF adulto
 # ⚠️ VARIAS SEMILLAS, NO UNA TIRADA, y esto es una lección de método que
 # costó cara: la PRIMERA tanda con la que se midió esto dio cuatro menús
 # con un margen del 8-11% y la conclusión habría sido «marcado y sin
@@ -3020,17 +3036,10 @@ for _n28, _a28 in _al28.items():
 # tener tabla detrás. Un plausible bajo hace la prueba más dura, que es el
 # error inofensivo de los dos.
 _ANCLAS_28 = {
-    ("AniForte Beef Blood Powder", "cobre"): (0.85,
-        "Feedipedia node 221 / INRA-CIRAD-AFZ, una sola base de AFZ. Banda ancha (0,2-5,5) "
-        "porque es el dato más débil: desviación 0 sobre 5 muestras en una y desviación mayor "
-        "que la media en la otra."),
-    ("AniForte Beef Blood Powder", "zinc"): (2.3,
-        "Feedipedia node 221 / INRA-CIRAD-AFZ, n=8 y n=11, CV del 15%. Estuvo en 3,5, que era "
-        "una estimación sin tabla y iba un 50% ALTO -- y un plausible alto ablanda la prueba "
-        "del suelo."),
     ("Semilla de sésamo", "calcio"): (60,
         "USDA FDC 169412 (sésamo pelado). Se coge el polo BAJO a propósito: es el lado "
-        "conservador para el mínimo de calcio."),
+        "conservador para el mínimo de calcio. Los del polvo de sangre se fueron el 27 de "
+        "agosto con el vaciado de sus dos celdas."),
 }
 for (_n28, _k28), (_esp28, _pq28) in _ANCLAS_28.items():
     _v28 = valor_plausible_de(_al28.get(_n28) or {}, _k28)
@@ -3188,6 +3197,84 @@ if any(_a29["nombre"] == "Testículos de cordero" for _a29 in _al29):
         "nutrientes a cero y 68 kcal sin proteína ni grasa, y el motor lo usaba en 2 de cada "
         "24 menús creyéndolo vacío de todo menos vitamina B12. Si vuelve con datos de "
         "verdad, quita esta comprobación; si vuelve sin ellos, no puede entrar.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 30 — los suplementos que salieron por no cuadrar
+# ============================================================
+# Regla de producto, del 27 de agosto: **si el dato de un suplemento no se
+# sostiene, el suplemento sale del catálogo**. No se construyen mecanismos
+# para convivir con un dato malo cuando hay recambio; habrá una segunda
+# tanda de suplementos con fichas buenas.
+#
+# Es más estricta que lo que teníamos, y mejor: `dato_dudoso` y
+# `valor_plausible` sirven para el alimento que NO se puede quitar porque
+# nada más hace su trabajo. Un suplemento comercial casi nunca es ese caso.
+#
+# Salieron cinco, de 26 a 21, y ninguna categoría se queda sin cubrir:
+print("\n=== BLOQUE 30: los cinco suplementos que salieron por no cuadrar ===")
+
+_FUERA_30 = {
+    "GRAU Harina de Hueso":
+        "fósforo químicamente imposible: Ca 22,6% / P 17,7% dan Ca:P 1,28 cuando la "
+        "hidroxiapatita da 2,15 por estequiometría, y no cabe dentro de su propio 72,8% de "
+        "cenizas. Y medido: con los números de su etiqueta NO PUEDE llevar una ración por "
+        "encima de Ca:P 1,28 por mucho que se eche, porque su propia relación es el techo. "
+        "La cáscara de huevo hace el mismo trabajo con 3-4 g y sin arrastrar fósforo.",
+    "LUPO NATURAL BARF Huesos en polvo":
+        "mismo caso, mismos números (Ca 22% / P 17,5%). Es error de sector, no de una marca.",
+    "Sonrisa de Diez Kelp":
+        "su yodo varía hasta 100 veces entre lotes (Aakre 2021) y no salía en ningún menú. "
+        "Quedan el yoduro potásico, donde el yodo es el 76,45% del peso por definición "
+        "química, y el Seaweed Meal.",
+    "Pets Purest Aceite de Salmón":
+        "sus porcentajes de EPA/DHA solo aparecen en fichas de marketing del fabricante, "
+        "replicadas por revendedores. Y es el más denso de los cinco aceites, así que era "
+        "justo el que el solver prefería.",
+    "Brit Care Aceite de Salmón":
+        "su EPA/DHA (4,7 y 6) no cuadra con la única ficha localizable (2,5 y 3,5).",
+}
+_nombres_30 = {a["nombre"] for a in json.load(open("alimentos_v3_final.json", encoding="utf-8"))}
+for _n30, _pq30 in _FUERA_30.items():
+    if _n30 in _nombres_30:
+        fallos.append(f"BLOQUE30: ha vuelto '{_n30}'. Salió del catálogo el 27 de agosto: "
+                      f"{_pq30} Si vuelve con una ficha que cuadre, quita esta comprobación; "
+                      f"si vuelve con la de antes, no puede entrar.")
+
+# Y que no queden referencias sueltas en los menús precalculados: si un
+# menú del catálogo nombra un alimento que ya no existe, `perfil_nutricional`
+# se lo salta EN SILENCIO y la vista previa sale corta sin decir nada.
+# Los 28 que los usaban se regeneraron con el solver y se verificaron uno a
+# uno; esto vigila que no vuelva a colarse ninguno.
+_cat30 = json.dumps(json.load(open("catalogo_menus.json", encoding="utf-8")), ensure_ascii=False)
+for _n30 in _FUERA_30:
+    if f'"{_n30}"' in _cat30:
+        fallos.append(f"BLOQUE30: el catálogo de menús precalculados todavía nombra '{_n30}', "
+                      f"que ya no está en el catálogo de alimentos. `perfil_nutricional` se "
+                      f"salta los alimentos que no existen SIN DECIR NADA, así que esa vista "
+                      f"previa saldría corta y en silencio.")
+
+# El polvo de sangre NO salió: su motivo de existir es el hierro y esos
+# 280 mg/100 g sí son coherentes con lo publicado. Lo que se fue son sus
+# dos celdas, a `sin_dato`.
+_sangre30 = next((a for a in json.load(open("alimentos_v3_final.json", encoding="utf-8"))
+                  if a["nombre"] == "AniForte Beef Blood Powder"), None)
+if _sangre30 is None:
+    fallos.append("BLOQUE30: se ha ido también 'AniForte Beef Blood Powder'. Ese se quedaba: "
+                  "su hierro es coherente y es lo que el producto es. Solo se vaciaron el "
+                  "cobre y el cinc.")
+else:
+    _sd30 = set(_sangre30.get("sin_dato") or [])
+    for _k30 in ("cobre", "zinc"):
+        if (_sangre30["nutrientes"].get(_k30) or 0) or _k30 not in _sd30:
+            fallos.append(
+                f"BLOQUE30: el '{_k30}' del polvo de sangre vuelve a tener valor. Los 80 mg de "
+                f"cobre y 250 de cinc de su etiqueta son unas 100 veces lo que tiene la sangre "
+                f"bovina desecada, y MEDIDO daban menús deficitarios en verde: forzándolo en un "
+                f"perro de 25 kg el menú declaraba 8,31 mg de cobre y el real eran 2,34 sobre "
+                f"un mínimo de 2,60.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
