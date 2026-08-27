@@ -2693,6 +2693,87 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 27 — LOS 12 AMINOÁCIDOS: PUESTOS, AUDITADOS Y SIN ACTIVAR
+# ============================================================
+#
+# ⚠️ ENCONTRADO (26 agosto) leyendo la Tabla III-3b entera del PDF de
+# FEDIAF 2025. La tabla pide 41 nutrientes para el perro y nosotros
+# verificábamos 29: faltaban los DOCE AMINOÁCIDOS ESENCIALES, que están
+# ahí desde siempre, entre "Protein" y "Fat". La transcripción que había
+# en auditar_fediaf.py se los había saltado, así que la auditoría decía
+# que cubríamos toda la tabla cuando cubríamos siete de cada diez filas.
+#
+# Ya están en requerimientos_v2_final.json con sus 48 valores, y
+# auditar_fediaf.py los comprueba contra el PDF (232 comprobaciones, 0
+# discrepancias, frente a las 161 de antes).
+#
+# PERO NO SE VERIFICAN TODAVÍA, Y ES A PROPÓSITO: ninguno de los 166
+# alimentos del catálogo trae dato de aminoácidos. Si se metieran hoy en
+# verificar.MAPA, cada alimento contaría como cero y no saldría ni un
+# menú -- o peor, saldría uno empujado hacia los pocos alimentos que
+# tuvieran el dato, que es un sesgo invisible.
+#
+# Este bloque vigila las DOS mitades del estado intermedio, porque las dos
+# se pueden estropear:
+#   · Que las filas sigan ahí y con sus valores. Si alguien las borra,
+#     volvemos a decir que cubrimos FEDIAF sin cubrirlo.
+#   · Que NO estén en MAPA mientras el catálogo no traiga el dato. Si
+#     alguien las activa antes de tiempo, la app deja de dar menús.
+# El día que el catálogo traiga aminoácidos, este bloque es el que hay que
+# tocar -- y lo dice el mensaje de fallo.
+print("=== BLOQUE 27: los 12 aminoácidos, puestos y sin activar ===")
+
+_AA_B27 = ["Arginina", "Histidina", "Isoleucina", "Leucina", "Lisina", "Metionina",
+           "Metionina_cistina", "Fenilalanina", "Fenilalanina_tirosina", "Treonina",
+           "Triptofano", "Valina"]
+_req_b27 = {r["nutriente"]: r for r in _api.cargar_v2()[1].values()}
+
+for _aa in _AA_B27:
+    _r27 = _req_b27.get(_aa)
+    if not _r27:
+        fallos.append(f"BLOQUE27: falta '{_aa}' en requerimientos_v2_final.json. Es una fila de "
+                      f"la Tabla III-3b de FEDIAF: sin ella volvemos a decir que cubrimos la "
+                      f"tabla entera cubriendo solo una parte.")
+        continue
+    for _campo in ("minAdulto", "minCachorroJoven", "minCachorroCrecimiento"):
+        if str(_r27.get(_campo, "-")) in ("-", "", "None"):
+            fallos.append(f"BLOQUE27: '{_aa}' no tiene {_campo}. FEDIAF da los tres mínimos "
+                          f"para los doce aminoácidos.")
+
+# el único aminoácido con máximo, y solo en crecimiento
+_lis_b27 = _req_b27.get("Lisina") or {}
+for _campo, _esp in (("maxCachorroJoven", 7.0), ("maxCachorroCrecimiento", 7.0)):
+    try:
+        _v27 = float(_lis_b27.get(_campo))
+    except (TypeError, ValueError):
+        _v27 = None
+    if _v27 is None or abs(_v27 - _esp) > 1e-9:
+        fallos.append(f"BLOQUE27: el máximo de lisina en {_campo} es {_lis_b27.get(_campo)} y "
+                      f"FEDIAF da {_esp} g/1000 kcal ('Growth: 7.00'). Es el único aminoácido "
+                      f"con máximo.")
+
+# Y AHORA LA OTRA MITAD: que no estén activados antes de tiempo.
+_con_dato_b27 = sum(1 for _a in _al21.values()
+                    if any((_a.get("nutrientes", {}).get(_k) or 0) > 0
+                           for _k in ("lisina", "triptofano", "metionina", "arginina")))
+_en_mapa_b27 = [a for a in _AA_B27 if a in _MAPA_SEMAFORO_b18]
+
+if _con_dato_b27 == 0 and _en_mapa_b27:
+    fallos.append(
+        f"BLOQUE27: los aminoácidos {_en_mapa_b27} están en verificar.MAPA pero NINGÚN alimento "
+        f"del catálogo trae el dato. Cada uno contaría como cero y la app se quedaría sin dar "
+        f"menús. Primero el dato, después el requisito.")
+if _con_dato_b27 > 0 and not _en_mapa_b27:
+    fallos.append(
+        f"BLOQUE27: {_con_dato_b27} alimentos del catálogo YA traen aminoácidos y los 12 "
+        f"requisitos siguen sin estar en verificar.MAPA. O se activan, o se dice aquí por qué "
+        f"no -- lo que no puede quedarse es a medias y en silencio, que es como la fila de la "
+        f"fibra estuvo meses diciendo que faltaba algo que nadie exigía.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")

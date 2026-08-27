@@ -87,6 +87,7 @@ jubilado — que desde fuera se parecen mucho.
 | Archivo | Qué hace |
 |---|---|
 | `main.py` | FastAPI: todos los endpoints, el presupuesto semanal de seguridad crónica y `_garantizar_verificado()`, por donde pasa **todo** menú antes de salir |
+| `requerimientos_v2_final.json` | Los requisitos de FEDIAF. **43 filas** desde el 26 de agosto: los 29 nutrientes que el motor verifica, el ratio Ca:P, el calcio de raza grande, y **los 12 aminoácidos esenciales, que están puestos y auditados pero TODAVÍA NO SE VERIFICAN** — ver abajo |
 | `requisitos.py` | Cargar la tabla de FEDIAF, resolver la etapa y la dosis máxima que marca el fabricante de cada suplemento. Era `optimizador.py`, 1.124 líneas donde esto convivía con el motor anterior al MILP y con una copia desincronizada de la tabla de patologías. El motor viejo se borró el 26 de agosto; quedan 121 líneas |
 | `der.py` | Cálculo de las kcal. ⚠️ Ver «la duplicación que hay que vigilar», abajo |
 | `analizador.py` | `/analizar`: la dieta que ya le da el dueño. Comparte `MAPA` con el semáforo a propósito — discreparon una vez por la fibra |
@@ -116,6 +117,29 @@ grasa siempre, y urato, cistinuria y «otra» sin existir. No llegó a dar
 menús malos porque `_garantizar_verificado()` los habría rechazado — que es
 otra forma de decir que ese camino construía menús que el filtro final iba
 a tirar. El BLOQUE 24 vigila que no vuelva.
+
+### Los 12 aminoácidos: puestos, auditados y sin activar
+
+La Tabla III-3b de FEDIAF pide **41 nutrientes** para el perro y el motor
+verifica **29**. Lo que falta son los doce aminoácidos esenciales, que
+están en la tabla desde siempre, entre `Protein` y `Fat`. La transcripción
+de `auditar_fediaf.py` se los había saltado, así que la auditoría decía que
+cubríamos la tabla entera cuando cubríamos siete de cada diez filas.
+
+Desde el 26 de agosto están en `requerimientos_v2_final.json` con sus 48
+valores, y la auditoría los comprueba contra el PDF: **232 comprobaciones,
+0 discrepancias**, frente a las 161 de antes.
+
+**Pero no están en `verificar.MAPA`, y eso es a propósito**: ninguno de los
+166 alimentos del catálogo trae dato de aminoácidos. Medido activando solo
+la lisina: **la app deja de dar menús**, porque cada alimento cuenta como
+cero y el mínimo se vuelve inalcanzable. Y si algunos sí tuvieran el dato,
+sería peor todavía — el motor se iría hacia ellos, y eso es un sesgo que no
+se ve.
+
+El día que el catálogo traiga aminoácidos hay que activarlos. Lo vigila el
+**BLOQUE 27**, que salta por los dos lados: si alguien borra las filas, y
+si alguien las activa antes de que haya datos.
 
 ### La duplicación que hay que vigilar
 

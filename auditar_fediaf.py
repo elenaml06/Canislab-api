@@ -26,6 +26,23 @@ import os
 # (adulto95, adulto110, crecimiento_temprano, crecimiento_tardio, unidad_fediaf)
 FEDIAF = {
  "Protein":            (52.10, 45.00, 62.50, 50.00, "g"),
+ # ⚠️ LOS 12 AMINOACIDOS ESENCIALES (26 agosto). Estaban en la tabla III-3b
+ # desde siempre, entre "Protein" y "Fat", y esta transcripcion se los habia
+ # saltado -- asi que el motor decia cubrir "todo FEDIAF" con 29 de los 41
+ # nutrientes que la tabla pide. Ahora estan, y esta auditoria comprueba sus
+ # 48 valores contra el PDF como los demas.
+ "Arginine":           ( 1.51,  1.30,  2.04,  1.84, "g"),
+ "Histidine":          ( 0.67,  0.58,  0.98,  0.63, "g"),
+ "Isoleucine":         ( 1.33,  1.15,  1.63,  1.25, "g"),
+ "Leucine":            ( 2.37,  2.05,  3.23,  2.00, "g"),
+ "Lysine":             ( 1.22,  1.05,  2.20,  1.75, "g"),
+ "Methionine":         ( 1.16,  1.00,  0.88,  0.65, "g"),
+ "Methionine_cystine": ( 2.21,  1.91,  1.75,  1.33, "g"),
+ "Phenylalanine":      ( 1.56,  1.35,  1.63,  1.25, "g"),
+ "Phenylalanine_tyr":  ( 2.58,  2.23,  3.25,  2.50, "g"),
+ "Threonine":          ( 1.51,  1.30,  2.03,  1.60, "g"),
+ "Tryptophan":         ( 0.49,  0.43,  0.58,  0.53, "g"),
+ "Valine":             ( 1.71,  1.48,  1.70,  1.40, "g"),
  "Fat":                (13.75, 13.75, 21.25, 21.25, "g"),
  "Linoleic":           ( 3.82,  3.27,  3.25,  3.25, "g"),
  "Arachidonic":        ( None,  None, 75.00, 75.00, "mg"),
@@ -59,6 +76,18 @@ FEDIAF = {
 # de FEDIAF a la del JSON.
 EQUIV = {
  "Proteína_total":     ("Protein",        1.0),      # g -> g
+ "Arginina":              ("Arginine",           1.0),
+ "Histidina":             ("Histidine",          1.0),
+ "Isoleucina":            ("Isoleucine",         1.0),
+ "Leucina":               ("Leucine",            1.0),
+ "Lisina":                ("Lysine",             1.0),
+ "Metionina":             ("Methionine",         1.0),
+ "Metionina_cistina":     ("Methionine_cystine", 1.0),
+ "Fenilalanina":          ("Phenylalanine",      1.0),
+ "Fenilalanina_tirosina": ("Phenylalanine_tyr",  1.0),
+ "Treonina":              ("Threonine",          1.0),
+ "Triptofano":            ("Tryptophan",         1.0),
+ "Valina":                ("Valine",             1.0),
  "Grasa_total":        ("Fat",            1.0),
  "Linoleico":          ("Linoleic",       1.0),
  "Araquidónico":       ("Arachidonic",    1.0),      # mg -> mg
@@ -161,13 +190,19 @@ MAXIMOS = {
  # OJO: la III-3b lo etiqueta "Early Growth:", asi que este maximo es
  # SOLO de crecimiento temprano. No ponerlo tambien en el tardio.
  "Linoleico":  {"CachorroJoven": 16.25},
+ # el UNICO aminoacido con maximo, y solo en crecimiento: la III-3b lo
+ # etiqueta "Growth: 7.00 (N)", asi que vale para temprano y tardio.
+ "Lisina":     {"CachorroJoven": 7.00, "CachorroCrecimiento": 7.00},
 }
 # Nutrientes que NO tienen maximo en FEDIAF: que el JSON ponga "-" es lo
 # correcto, y ponerle un numero seria inventarselo. La vitamina E es uno.
 SIN_MAXIMO = ("Proteína_total", "Grasa_total", "Vitamina_E", "Tiamina",
               "Riboflavina", "Acido_pantotenico", "Vitamina_B6", "Vitamina_B12",
               "Niacina", "Folato", "Colina", "Potasio", "Magnesio",
-              "Linolénico", "EPA_DHA_total", "Araquidónico")
+              "Linolénico", "EPA_DHA_total", "Araquidónico",
+              "Arginina", "Histidina", "Isoleucina", "Leucina", "Metionina",
+              "Metionina_cistina", "Fenilalanina", "Fenilalanina_tirosina",
+              "Treonina", "Triptofano", "Valina")
 
 for nut, topes in MAXIMOS.items():
     r = req.get(nut)

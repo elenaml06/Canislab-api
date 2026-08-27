@@ -3167,7 +3167,7 @@ def verificar():
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
         "alimentos_v3_final.json":      "fda1fd1f9ed5f2aa",   # 26 ago: fuente declarada en los pescados, y el araquidónico de las yemas y del hígado de cordero marcado como HUECO en vez de cero (un 0 ahí no puede ser real: la yema es la fuente más rica que hay). Solo metadatos, ningún número
-        "requerimientos_v2_final.json": "1fd28648076cdc7e",   # 26 ago: fuera el maxAdulto de EPA+DHA -- el techo de 2800 es de la dieta crónica y vive en el promedio semanal, no por menú. Corregido el recuento de la nota: son 18 de 20 pescados, no 19
+        "requerimientos_v2_final.json": "9eb5b660a3c725d0",   # 26 ago: los 12 aminoácidos esenciales de la Tabla III-3b, con sus mínimos y el máximo de lisina en crecimiento. Están en el JSON pero NO en verificar.MAPA todavía: ningún alimento del catálogo trae el dato, así que activarlos hoy dejaría al motor sin menús. Ver el BLOQUE 27
     }
     SELLOS_CRUDOS = {
         "der.py": "1c5c8bb91ceac481",
