@@ -3166,7 +3166,7 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "9938e50e4bfd2ff3",   # 27 ago (7): LA CARGA. 160 -> 477 alimentos: 119 actualizaciones (sin pisar las 289 celdas con fuente escrita) y 317 altas de BEDCA, CIQUAL, USDA y FINELI. Cada ficha lleva ahora `accesible_es`, `preferente` y `en_selector`, que es lo que decide donde acaba: 197 en el menu automatico, 378 en el selector, 99 solo como dato
+        "alimentos_v3_final.json":      "3865f4941627cf2c",   # 27 ago (7): LA CARGA. 160 -> 477 alimentos: 119 actualizaciones (sin pisar las 299 celdas con fuente escrita, ni la energia ni los pares epa/dha, calcio/fosforo y linoleico/linolenico cuando uno de los dos esta protegido) y 317 altas de BEDCA, CIQUAL, USDA y FINELI. Cada ficha lleva `accesible_es`, `preferente` y `en_selector`, que es lo que decide donde acaba
         "requerimientos_v2_final.json": "9eb5b660a3c725d0",   # 26 ago: los 12 aminoácidos esenciales de la Tabla III-3b, con sus mínimos y el máximo de lisina en crecimiento. Están en el JSON pero NO en verificar.MAPA todavía: ningún alimento del catálogo trae el dato, así que activarlos hoy dejaría al motor sin menús. Ver el BLOQUE 27
     }
     SELLOS_CRUDOS = {

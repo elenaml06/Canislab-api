@@ -93,7 +93,18 @@ for a in al:
 for a in al:
     n = a.get("nutrientes") or {}
     w6, w3 = n.get("linoleico") or 0, n.get("linolenico") or 0
-    if w3 > w6 and (w6 or w3):
+    # ⚠️ CON UN SUELO (27 agosto). Sin el, la carga de 477 alimentos dejo
+    # 66 avisos aqui y la lista se volvio inutil: la mayoria eran lechugas
+    # y melones con 0,008 g de omega-6 contra 0,015 de omega-3, donde el
+    # orden entre los dos es ruido analitico y no dice absolutamente nada.
+    # Una lista de 66 no se revisa, y ya sabemos como acaba eso -- los
+    # cuatro aceites de salmon estuvieron un mes dentro de una lista de
+    # nueve sin que nadie preguntara por que.
+    # El suelo tiene motivo: esta prueba existe para cazar COLUMNAS
+    # CAMBIADAS, y cambiarlas solo importa donde hay grasa de verdad. Con
+    # 0,2 g quedan 8 avisos y los 8 son informativos -- los cinco productos
+    # de lino, que de verdad son omega-3 dominantes, y tres hojas verdes.
+    if w3 > w6 and max(w6, w3) > 0.2:
         avisos.append(("OMEGA", a["nombre"],
                        f"omega-3 ({w3} g) por encima del omega-6 ({w6} g). Es posible, pero "
                        f"revisa que no esten cambiados: linoleico=omega-6, linolenico=omega-3"))

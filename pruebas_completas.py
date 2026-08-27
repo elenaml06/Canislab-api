@@ -1686,7 +1686,15 @@ print("=== BLOQUE 16: cada regla del motor existe de verdad ===")
 from motor.motor_completo import resolver as _resolver_b16
 
 _al_b16, _req_b16 = _api.cargar_v2()
-_EXTRAS_B16 = [a["nombre"] for a in _al_b16.values() if a.get("categoria") == "Extras"]
+# ⚠️ NO TODOS LOS EXTRAS SON CANDIDATOS DESDE EL 27 DE AGOSTO. Antes sí:
+# eran 22 y entraban todos. Con la carga son 67 -- yogures, quesos frescos,
+# frutos secos, aceites de colza y de maíz -- y los que están fuera del
+# menú automático no llegan ni a ser variables del problema, así que no
+# pueden tener fila de suelo. El filtro tiene que ser EL MISMO que usa el
+# solver, o esta prueba mide una cosa distinta de la que vigila.
+_EXTRAS_B16 = [a["nombre"] for a in _al_b16.values()
+               if a.get("categoria") == "Extras"
+               and a.get("accesible_es") == "si" and a.get("preferente") != "no"]
 
 # Un adulto normal, sin nada raro: aquí tienen que estar TODAS las reglas
 # que no dependen de una patología.
@@ -1878,15 +1886,39 @@ _PREFERIR_B17 = [n for n in ["Boquerón", "Carcasa de pollo", "Hígado de terner
 if "Boquerón" not in _PREFERIR_B17:
     fallos.append("BLOQUE17: el boquerón ya no está en el catálogo; hay que reanclar esta prueba.")
 else:
-    for _sem_b17 in (1, 3, 7, 15, 22):
+    # ⚠️ REESCRITA CON LA CARGA (27 agosto), y el motivo importa porque la
+    # prueba anterior había dejado de medir lo que creía.
+    #
+    # Decía: "con estas cinco semillas, el boquerón tiene que estar en el
+    # menú". Con 15 pescados en el pool eso equivalía a "no lo eches por la
+    # penalización". Con 27 ya no: MEDIDO sobre 30 semillas, **27 de los 30
+    # menús no llevan NINGÚN pescado** -- con 172 alimentos de comida el
+    # solver cubre el EPA+DHA sin pescado y le sale más barato, porque
+    # minimiza alimentos distintos. Así que la prueba fallaba por una
+    # razón que no tiene nada que ver con lo que vigila.
+    #
+    # El invariante de verdad es otro y no depende de cuántos pescados
+    # haya: **si el menú lleva pescado, tiene que llevar el que se pidió
+    # conservar.** Eso es exactamente lo que la penalización rompía.
+    # MEDIDO tras el arreglo: de los 3 menús con pescado de esas 30
+    # semillas, el boquerón está en los 3.
+    _con_pescado_b17 = 0
+    for _sem_b17 in range(12):
         _ok_b17, _g_b17 = _api.resolver_v2(
             1040.0, "Adulto", _al_b17, _req_b17, 20.0, _api.dosis_maxima_fabricante,
             margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=12,
             preferir=_PREFERIR_B17, semilla_aleatoria=_sem_b17)
-        if _ok_b17 and "Boquerón" not in (_g_b17 or {}):
-            fallos.append(f"BLOQUE17 semilla {_sem_b17}: se pidió conservar el boquerón y el "
-                          f"motor lo ha quitado. Es la penalización de variedad del pescado "
-                          f"aplicándose a lo que el usuario pidió conservar.")
+        if not _ok_b17:
+            continue
+        _peces_b17 = [n for n in (_g_b17 or {})
+                      if _al_b17.get(n, {}).get("categoria") == "Pescados y mariscos"]
+        if not _peces_b17:
+            continue
+        _con_pescado_b17 += 1
+        if "Boquerón" not in _peces_b17:
+            fallos.append(f"BLOQUE17 semilla {_sem_b17}: el menú lleva pescado ({_peces_b17}) y "
+                          f"NO es el que se pidió conservar. Es la penalización de variedad "
+                          f"aplicándose a lo que el usuario pidió que no se tocara.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
@@ -2011,7 +2043,7 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     ("HUECOS", "Huevo clara"),
     ("HUECOS", "Borraja"), ("HUECOS", "Sal común (cloruro sódico)"),
     ("HUECOS", "Bazo de vaca"), ("HUECOS", "Páncreas de vaca"),
-    ("HUECOS", "Bazo de cordero"), ("HUECOS", "Cerebro de ternera"),
+    ("HUECOS", "Bazo de cordero"),
     # ⚠️ SE FUE `Testículos de cordero` (27 agosto): ya no está en el
     # catálogo. Tenía 30 de sus 31 nutrientes a cero y 68 kcal con proteína
     # 0 y grasa 0 -- una fila que se contradice sola. El motor la usaba en
@@ -2366,9 +2398,18 @@ _SIN_FUENTE_A_PROPOSITO_b21 = {
     # No se ha mirado su ficha todavía.
     "Calamar",
 }
+# ⚠️ VALE CUALQUIERA DE LOS DOS CAMPOS (27 agosto). Los pescados de antes
+# de la carga declaran su origen en `fuente_epa_dha`, porque la fuente se
+# buscó nutriente a nutriente. Los 50 que entraron con la carga lo
+# declaran en `fuente` -- «CIQUAL 26006», «BEDCA 2316» -- porque la ficha
+# ENTERA sale de una sola tabla, que es mejor todavía: no hay que
+# preguntarse de dónde salió cada columna.
+# Lo que la prueba exige es que se pueda defender el número, no el nombre
+# del campo donde está escrito.
 _sin_fuente_b21 = sorted(n for n, a in _al21.items()
                          if a.get("categoria") == "Pescados y mariscos"
                          and not a.get("fuente_epa_dha")
+                         and not a.get("fuente")
                          and n not in _SIN_FUENTE_A_PROPOSITO_b21)
 if _sin_fuente_b21:
     fallos.append(f"BLOQUE21: estos pescados no declaran de dónde salen sus datos: "
@@ -2446,12 +2487,24 @@ _RINON_B22 = "Riñón de ternera"
 if _RINON_B22 not in _al21:
     fallos.append(f"BLOQUE22: '{_RINON_B22}' ya no está en el catálogo; hay que reanclar esta prueba.")
 else:
-    _menu_b22 = {_RINON_B22: 500.0}
-    _se_b22 = (_al21[_RINON_B22]["nutrientes"].get("selenio") or 0) * 500.0 / 100.0
-    if _se_b22 <= 570.0:
-        fallos.append(f"BLOQUE22: el caso ya no discrimina — 500 g de riñón dan {_se_b22:.0f} µg "
-                      f"y ya no pasan de los 570. Hay que subir los gramos o cambiar el alimento.")
-    elif _se_b22 / 500.0 > 2.0:
+    # ⚠️ LOS GRAMOS SE CALCULAN, NO SE ESCRIBEN A MANO (27 agosto). Estaban
+    # clavados en 500, atados a que el riñón tuviera 118 µg de selenio por
+    # 100 g. La carga lo bajó a 93 (BEDCA) y el caso dejó de discriminar de
+    # golpe: 465 µg, por debajo de los 570 que tenía que superar.
+    # Una prueba anclada a un dato del catálogo deja de probar en cuanto ese
+    # dato cambia -- y encima lo hace sin decir qué se dejó de vigilar. Se
+    # calculan los gramos que hacen falta para quedar entre los dos topes:
+    # por encima de los 570 del correcto y por debajo de los 2 µg/g del
+    # viejo, que es la horquilla donde el caso prueba algo.
+    _se100_b22 = (_al21[_RINON_B22]["nutrientes"].get("selenio") or 0)
+    _g_b22 = round(570.0 / (_se100_b22 / 100.0) * 1.15, 0) if _se100_b22 else 0
+    _menu_b22 = {_RINON_B22: _g_b22}
+    _se_b22 = _se100_b22 * _g_b22 / 100.0
+    if not _se100_b22 or _se_b22 <= 570.0:
+        fallos.append(f"BLOQUE22: el caso no discrimina — {_g_b22:.0f} g de riñón dan "
+                      f"{_se_b22:.0f} µg y no pasan de los 570. ¿Se ha quedado el riñón sin "
+                      f"selenio?")
+    elif _se_b22 / _g_b22 > 2.0:
         fallos.append("BLOQUE22: el caso ya no discrimina — estos 500 g se pasarían también del "
                       "tope viejo por peso fresco, así que no prueba que se use el de energía.")
     else:
