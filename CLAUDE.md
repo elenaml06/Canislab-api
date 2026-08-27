@@ -80,7 +80,7 @@ jubilado — que desde fuera se parecen mucho.
 | `constructor.py` | Proporciones BARF de partida y `valor_nutriente()` (las claves derivadas, como `epa_dha`) |
 | `exclusiones.py` | Alergias por palabras y familias de especie. Excluir «pollo» quita también «gallina» |
 | `accesibles.py`, `modos.py` | Qué alimentos entran según el modo (automático / personalizar / aprovechar) |
-| `catalogo_menus.py` | Menús precalculados para la vista previa. **3.081 líneas de datos**, no de lógica |
+| `catalogo_menus.py` | Carga los menús precalculados de la vista previa. Los datos están en `catalogo_menus.json`, en la raíz con los demás: aquí solo quedan 55 líneas de código |
 
 ### La API (raíz)
 
@@ -157,6 +157,19 @@ asistente**. `Bases.md` y `Ya_probado.md` son de las primeras sesiones:
 decisiones cerradas y callejones sin salida ya recorridos, léelos antes de
 proponer un cambio grande. `CAMBIOS_DE_DATOS_REVERTIDOS.md` explica por qué
 se deshicieron unos cambios de datos del 21 de agosto.
+
+### Los datos
+
+En la raíz, los cuatro: `alimentos_v3_final.json` (el catálogo),
+`requerimientos_v2_final.json` (la tabla de FEDIAF), `catalogo_menus.json`
+(los 36 menús precalculados de la vista previa y sus 180 variantes) y
+`der_casos.json` (el contrato del DER, ver arriba).
+
+Los dos primeros llevan **sello** en `/verificar`: si cambian sin que se
+actualice el hash en `main.py`, la API lo dice. Los otros dos no, y es a
+propósito — un menú del catálogo corrupto lo rechaza
+`_garantizar_verificado()` igual que cualquier otro, y el contrato del DER
+se comprueba entero en cada batería.
 
 ## Cómo se prueba
 

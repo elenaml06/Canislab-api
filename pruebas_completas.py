@@ -2551,6 +2551,60 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 25 — EL CATÁLOGO DE MENÚS ESTÁ ENTERO Y ES DATO, NO CÓDIGO
+# ============================================================
+#
+# ⚠️ MOVIDO (26 agosto). motor/catalogo_menus.py eran 3.081 líneas y 3.050
+# de ellas eran datos -- gramos de alimentos escritos como un diccionario de
+# Python dentro de motor/, que es la carpeta de la LÓGICA. Buscar una
+# función del motor obligaba a pasar por encima del listado entero, y
+# cualquier diff que los tocara enterraba el cambio real.
+#
+# Los datos están ahora en catalogo_menus.json, junto a los otros dos JSON,
+# y el módulo quedó en 55 líneas que solo los cargan. Ni un gramo cambió:
+# comprobado dato a dato contra el módulo anterior antes de sustituirlo.
+#
+# Esto vigila las dos mitades: que el catálogo siga completo (36 menús y sus
+# 180 variantes -- si el JSON se trunca o no se encuentra, el fallo tiene que
+# ser ruidoso y no un catálogo a medias), y que los datos no vuelvan a
+# colarse dentro del código.
+print("=== BLOQUE 25: el catálogo de menús, entero y como dato ===")
+
+from catalogo_menus import CATALOGO as _CAT_B25, CATALOGO_VARIANTES as _VAR_B25
+
+if len(_CAT_B25) != 36:
+    fallos.append(f"BLOQUE25: el catálogo tiene {len(_CAT_B25)} menús y son 36 (6 tamaños x 6 "
+                  f"etapas). Si se ha truncado el JSON, /catalogo devolvería vista previa solo "
+                  f"para algunos perros y para el resto no, sin decir por qué.")
+if len(_VAR_B25) != 36:
+    fallos.append(f"BLOQUE25: hay variantes para {len(_VAR_B25)} claves y tienen que ser 36.")
+_n_var_b25 = sum(len(_v) for _v in _VAR_B25.values())
+if _n_var_b25 != 180:
+    fallos.append(f"BLOQUE25: hay {_n_var_b25} variantes en total y eran 180.")
+
+# cada entrada tiene que traer lo que /catalogo necesita para reescalar
+for _k25, _e25 in _CAT_B25.items():
+    _faltan25 = [_c for _c in ("gramos", "der", "peso_kg", "tamano", "etapa") if _c not in _e25]
+    if _faltan25:
+        fallos.append(f"BLOQUE25: al menú '{_k25}' del catálogo le faltan los campos {_faltan25}.")
+        break
+    if not _e25["gramos"]:
+        fallos.append(f"BLOQUE25: el menú '{_k25}' del catálogo se ha quedado sin alimentos.")
+        break
+
+# y los datos no pueden volver al código
+_cat_py_b25 = (_raiz_b24 / "motor" / "catalogo_menus.py").read_text(encoding="utf-8")
+if len(_cat_py_b25.split("\n")) > 120:
+    fallos.append(f"BLOQUE25: motor/catalogo_menus.py tiene "
+                  f"{len(_cat_py_b25.split(chr(10)))} líneas. Es un cargador, no un almacén: los "
+                  f"gramos van en catalogo_menus.json, con los demás datos.")
+if not (_raiz_b24 / "catalogo_menus.json").exists():
+    fallos.append("BLOQUE25: falta catalogo_menus.json, que es donde viven los menús del catálogo.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")
