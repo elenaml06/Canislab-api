@@ -27,6 +27,7 @@ from motor_completo import resolver, patologias_bloquean, especie_de
 from constructor import cargar, MARGENES
 from verificar import verificar
 from requisitos import dosis_maxima_fabricante
+from constructor import valor_plausible_de
 from catalogo_menus import CATALOGO
 
 al, req = cargar()
@@ -2946,30 +2947,117 @@ if not _PLAUSIBLES_28:
     fallos.append("BLOQUE28c-bis: ya no hay ningún alimento con `valor_plausible`. Era lo que "
                   "permitía comprobar un dato dudoso en vez de solo anotarlo.")
 _MINIMOS_28 = {"cobre": 2.08, "zinc": 20.8}     # mg/1000 kcal, FEDIAF adulto
+# ⚠️ VARIAS SEMILLAS, NO UNA TIRADA, y esto es una lección de método que
+# costó cara: la PRIMERA tanda con la que se midió esto dio cuatro menús
+# con un margen del 8-11% y la conclusión habría sido «marcado y sin
+# prisa». Hizo falta otra semilla para ver el menú verde y deficitario.
+# El objetivo del solver lleva ruido aleatorio a propósito (para que dos
+# menús seguidos no salgan iguales), así que cuando el resultado depende
+# del dado, UNA tirada no es una medida: es una anécdota.
+_SEMILLAS_28 = (1, 7, 13, 29, 101)
 for _n28, _a28 in _PLAUSIBLES_28.items():
     for _peso28 in (5, 12, 25, 45):
         _der28 = 70 * _peso28 ** 0.75 * 1.6
-        _ok28, _g28 = resolver(_der28, "Adulto", al, req, _peso28, dosis_maxima_fabricante,
-                               margenes_categoria=MARGENES, max_suplementos=2, forzar=[_n28])
-        if not _ok28:
-            continue
-        _gr28 = _g28[_n28]
-        for _k28, _plaus28 in _a28["valor_plausible"].items():
-            _min28 = _MINIMOS_28.get(_k28)
-            if not _min28:
+        for _sem28 in _SEMILLAS_28:
+            _ok28, _g28 = resolver(_der28, "Adulto", al, req, _peso28, dosis_maxima_fabricante,
+                                   margenes_categoria=MARGENES, max_suplementos=2,
+                                   forzar=[_n28], semilla_aleatoria=_sem28)
+            if not _ok28:
                 continue
-            _menu28 = sum((al[_x]["nutrientes"].get(_k28) or 0) * _c / 100
-                          for _x, _c in _g28.items())
-            _declarado28 = (_a28["nutrientes"].get(_k28) or 0) * _gr28 / 100
-            _real28 = _menu28 - _declarado28 + _plaus28 * _gr28 / 100
-            _suelo28 = _min28 * _der28 / 1000
-            if _real28 < _suelo28:
+            _gr28 = _g28[_n28]
+            for _k28 in (_a28["valor_plausible"] or {}):
+                _plaus28 = valor_plausible_de(_a28, _k28)
+                _min28 = _MINIMOS_28.get(_k28)
+                if not _min28 or _plaus28 is None:
+                    continue
+                _menu28 = sum((al[_x]["nutrientes"].get(_k28) or 0) * _c / 100
+                              for _x, _c in _g28.items())
+                _declarado28 = (_a28["nutrientes"].get(_k28) or 0) * _gr28 / 100
+                _real28 = _menu28 - _declarado28 + _plaus28 * _gr28 / 100
+                _suelo28 = _min28 * _der28 / 1000
+                if _real28 < _suelo28:
+                    fallos.append(
+                        f"BLOQUE28c-bis: forzando '{_n28}' en un perro de {_peso28} kg "
+                        f"(semilla {_sem28}), el menú declara {_menu28:.2f} mg de {_k28} pero "
+                        f"si el valor dudoso es el que creemos ({_plaus28} en vez de "
+                        f"{_a28['nutrientes'].get(_k28)}) el menú real tiene {_real28:.2f} y el "
+                        f"mínimo del día es {_suelo28:.2f}. El motor estaría dando por cubierto "
+                        f"un {_k28} que no está, y saldría verde.")
+
+# ── 28c-quater. La forma de las marcas: procedencia y no promocionar ──
+# `valor_plausible` mete, por primera vez en el catálogo, un número que no
+# es una medida dentro de un cálculo que decide si un menú pasa. Todo esto
+# está construido sobre que cada número sabe de dónde viene, así que ese
+# no puede ser la excepción. Dos condiciones, y las dos se comprueban:
+for _n28, _a28 in _al28.items():
+    for _k28, _d28 in (_a28.get("valor_plausible") or {}).items():
+        if not isinstance(_d28, dict) or not (_d28.get("fuente") or "").strip():
+            fallos.append(
+                f"BLOQUE28c-quater: el `valor_plausible` de '{_n28}' en '{_k28}' no lleva "
+                f"`fuente`. Un número inventado que decide si un menú pasa tiene que decir de "
+                f"dónde sale: dentro de seis meses, quien lea un 0,85 a secas lo tratará como "
+                f"un dato medido.")
+            continue
+        # y NUNCA puede haber ascendido a la columna del valor
+        _v28 = (_a28.get("nutrientes") or {}).get(_k28)
+        if _v28 is not None and abs(float(_v28) - float(_d28["valor"])) < 1e-9:
+            fallos.append(
+                f"BLOQUE28c-quater: en '{_n28}', el valor declarado de '{_k28}' y su "
+                f"`valor_plausible` son el mismo número. O el fabricante ha contestado —y "
+                f"entonces el plausible SE BORRA, no se deja— o alguien ha promocionado la "
+                f"estimación a dato oficial, que es como una cuenta de servilleta acaba siendo "
+                f"el número del catálogo sin que nadie recuerde de dónde salió.")
+
+# ── 28c-quater-bis. Los plausibles, anclados a su cifra ───────────────
+# Las dos comprobaciones de arriba no pueden pillar que alguien cambie un
+# plausible por OTRO plausible con fuente: 3,5 de cinc también tenía una
+# fuente, solo que era una cuenta y no una tabla. Así que se anclan, igual
+# que el BLOQUE 26 ancla el aceite de girasol y el de linaza.
+#
+# Y la dirección importa, que es lo que hace que esto no sea burocracia:
+# un plausible DEMASIADO ALTO ablanda justo la prueba del suelo, que es
+# para lo único que sirve. El cinc estuvo en 3,5 —un 50% alto— antes de
+# tener tabla detrás. Un plausible bajo hace la prueba más dura, que es el
+# error inofensivo de los dos.
+_ANCLAS_28 = {
+    ("AniForte Beef Blood Powder", "cobre"): (0.85,
+        "Feedipedia node 221 / INRA-CIRAD-AFZ, una sola base de AFZ. Banda ancha (0,2-5,5) "
+        "porque es el dato más débil: desviación 0 sobre 5 muestras en una y desviación mayor "
+        "que la media en la otra."),
+    ("AniForte Beef Blood Powder", "zinc"): (2.3,
+        "Feedipedia node 221 / INRA-CIRAD-AFZ, n=8 y n=11, CV del 15%. Estuvo en 3,5, que era "
+        "una estimación sin tabla y iba un 50% ALTO -- y un plausible alto ablanda la prueba "
+        "del suelo."),
+    ("Semilla de sésamo", "calcio"): (60,
+        "USDA FDC 169412 (sésamo pelado). Se coge el polo BAJO a propósito: es el lado "
+        "conservador para el mínimo de calcio."),
+}
+for (_n28, _k28), (_esp28, _pq28) in _ANCLAS_28.items():
+    _v28 = valor_plausible_de(_al28.get(_n28) or {}, _k28)
+    if _v28 is None or abs(_v28 - _esp28) > 1e-9:
+        fallos.append(
+            f"BLOQUE28c-quater-bis: el `valor_plausible` de '{_n28}' en '{_k28}' es {_v28} y "
+            f"debe ser {_esp28}. {_pq28}")
+
+# ── 28c-quinquies. Toda marca dudosa dice desde cuándo y qué la cierra ──
+# La diferencia entre un aviso conocido y un `dato_dudoso` es de quién es
+# la pelota: el primero es un juicio cerrado, el segundo es un juicio
+# abierto con una acción de fuera pegada. Ninguna ejecución de esta
+# batería va a hacer que AniForte coja el teléfono, así que la marca tiene
+# que decir a quién hay que llamar y desde cuándo lleva esperando.
+for _n28, _a28 in _al28.items():
+    for _k28, _d28 in (_a28.get("dato_dudoso") or {}).items():
+        if not isinstance(_d28, dict):
+            fallos.append(f"BLOQUE28c-quinquies: la marca dudosa de '{_n28}' en '{_k28}' es "
+                          f"texto suelto. Tiene que llevar `motivo`, `resolver` y `desde`.")
+            continue
+        for _campo28 in ("motivo", "resolver", "desde"):
+            if not (_d28.get(_campo28) or "").strip():
                 fallos.append(
-                    f"BLOQUE28c-bis: forzando '{_n28}' en un perro de {_peso28} kg, el menú "
-                    f"declara {_menu28:.2f} mg de {_k28} pero si el valor dudoso es el que "
-                    f"creemos ({_plaus28} en vez de {_a28['nutrientes'].get(_k28)}) el menú "
-                    f"real tiene {_real28:.2f} y el mínimo del día es {_suelo28:.2f}. El motor "
-                    f"estaría dando por cubierto un {_k28} que no está, y saldría verde.")
+                    f"BLOQUE28c-quinquies: la marca dudosa de '{_n28}' en '{_k28}' no tiene "
+                    f"`{_campo28}`. Sin `resolver` nadie sabe qué la cerraría, y sin `desde` "
+                    f"no se ve cuánto lleva abierta -- que es lo único que la vuelve incómoda "
+                    f"de leer.")
 
 # ── 28c-ter. El sésamo: el cobre puesto y el calcio marcado ───────────
 # El cobre y el manganeso estaban a cero declarado. Ya tienen fuente

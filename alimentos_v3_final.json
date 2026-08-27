@@ -79,7 +79,11 @@
    "zinc"
   ],
   "dato_dudoso": {
-   "fosforo": "El VALOR NO SE TOCA: es el de la etiqueta y esta bien convertido. Pero no puede ser cierto. Ca 22,6% / P 17,7% dan Ca:P = 1,28, y el mineral del hueso es hidroxiapatita, cuyo Ca:P es 2,15 POR ESTEQUIOMETRIA. Ademas no cabe dentro de la propia etiqueta: con 72,8% de cenizas haria falta un 24,3% de P dentro de la ceniza, y la apatita tiene 18,5% y el fosfato tricalcico puro 20%. Otra harina de hueso bovino (Diebold & Isberg: Ca 14,3 / P 6,8 / ceniza 38,4) da 2,10, que si cuadra. Las dos marcas alemanas declaran lo mismo, o sea que es error de sector, no de un fabricante. IMPORTA porque la harina de hueso esta en el catalogo justo para arreglar el Ca:P, que es restriccion dura: si el fosforo esta sobreestimado, el solver la usa menos de lo que deberia. El valor real no esta publicado en ninguna parte."
+   "fosforo": {
+    "desde": "2026-08-27",
+    "resolver": "Preguntar a GRAU (kontakt@grau-tiernahrung.de) por el analisis del que sale el 17,7% de fosforo, o conseguir un analisis de laboratorio de harina de hueso bovino con su Ca:P. Es la unica palanca que existe para el Ca:P, asi que esta llamada hay que hacerla igual.",
+    "motivo": "El VALOR NO SE TOCA: es el de la etiqueta y esta bien convertido. Pero no puede ser cierto. Ca 22,6% / P 17,7% dan Ca:P = 1,28, y el mineral del hueso es hidroxiapatita, cuyo Ca:P es 2,15 POR ESTEQUIOMETRIA. Ademas no cabe dentro de la propia etiqueta: con 72,8% de cenizas haria falta un 24,3% de P dentro de la ceniza, y la apatita tiene 18,5% y el fosfato tricalcico puro 20%. Otra harina de hueso bovino (Diebold & Isberg: Ca 14,3 / P 6,8 / ceniza 38,4) da 2,10, que si cuadra. Las dos marcas alemanas declaran lo mismo, o sea que es error de sector, no de un fabricante. IMPORTA porque la harina de hueso esta en el catalogo justo para arreglar el Ca:P, que es restriccion dura: si el fosforo esta sobreestimado, el solver la usa menos de lo que deberia. El valor real no esta publicado en ninguna parte."
+   }
   }
  },
  {
@@ -162,7 +166,11 @@
    "zinc"
   ],
   "dato_dudoso": {
-   "fosforo": "El VALOR NO SE TOCA: es el de la etiqueta y esta bien convertido. Pero no puede ser cierto. Ca 22% / P 17,5% dan Ca:P = 1,26, y el mineral del hueso es hidroxiapatita, cuyo Ca:P es 2,15 POR ESTEQUIOMETRIA. Ademas no cabe dentro de la propia etiqueta: con 72,8% de cenizas haria falta un 24,3% de P dentro de la ceniza, y la apatita tiene 18,5% y el fosfato tricalcico puro 20%. Otra harina de hueso bovino (Diebold & Isberg: Ca 14,3 / P 6,8 / ceniza 38,4) da 2,10, que si cuadra. Las dos marcas alemanas declaran lo mismo, o sea que es error de sector, no de un fabricante. IMPORTA porque la harina de hueso esta en el catalogo justo para arreglar el Ca:P, que es restriccion dura: si el fosforo esta sobreestimado, el solver la usa menos de lo que deberia. El valor real no esta publicado en ninguna parte."
+   "fosforo": {
+    "desde": "2026-08-27",
+    "resolver": "Igual que GRAU: preguntar a Luposan por el analisis del 17,5%. Las dos marcas declaran lo mismo, asi que es error de sector y una sola respuesta puede valer para las dos.",
+    "motivo": "El VALOR NO SE TOCA: es el de la etiqueta y esta bien convertido. Pero no puede ser cierto. Ca 22% / P 17,5% dan Ca:P = 1,26, y el mineral del hueso es hidroxiapatita, cuyo Ca:P es 2,15 POR ESTEQUIOMETRIA. Ademas no cabe dentro de la propia etiqueta: con 72,8% de cenizas haria falta un 24,3% de P dentro de la ceniza, y la apatita tiene 18,5% y el fosfato tricalcico puro 20%. Otra harina de hueso bovino (Diebold & Isberg: Ca 14,3 / P 6,8 / ceniza 38,4) da 2,10, que si cuadra. Las dos marcas alemanas declaran lo mismo, o sea que es error de sector, no de un fabricante. IMPORTA porque la harina de hueso esta en el catalogo justo para arreglar el Ca:P, que es restriccion dura: si el fosforo esta sobreestimado, el solver la usa menos de lo que deberia. El valor real no esta publicado en ninguna parte."
+   }
   }
  },
  {
@@ -357,12 +365,34 @@
    "yodo"
   ],
   "dato_dudoso": {
-   "cobre": "El VALOR NO SE TOCA: la etiqueta declara Kupfer 0,08% y la conversion a 80 mg/100 g es correcta. Pero la sangre bovina desecada ronda 0,3-0,6 mg/100 g: estamos unas 150 veces por encima. El hierro (280 mg/100 g) SI es coherente con sangre desecada, asi que el error no es de toda la fila. AniForte no publica tabla analitica. ⚠️ CORREGIDO EL 27 DE AGOSTO: aqui habia escrito que un cobre sobreestimado era 'el lado seguro porque el motor lo usa menos'. ESO ERA FALSO, y falso justo por el lado que importa: el cobre no es solo un techo, tiene SUELO -- 2,08 mg/1000 kcal de FEDIAF. Contra el techo, inflarlo protege; contra el suelo, hace que el motor CREA CUBIERTO un cobre que no esta. Es el mismo argumento de las cotas: un valor no puede ser conservador en las dos direcciones a la vez, y yo lo habia medido solo contra una. MEDIDO despues de la correccion: el solver NO lo elige nunca por su cuenta (0 de 27 menus automaticos, y 0 de 18 con hasta cinco especies excluidas), porque el higado cubre el cobre mucho mas barato. Forzandolo a mano en Personalizar, el cobre REAL del menu sigue por encima del minimo en los cuatro pesos probados, pero el margen baja al 8-11% -- y sin la cifra inflada el solver habria metido otra fuente. O sea: no muerde hoy, pero se come el margen.",
-   "zinc": "Mismo caso y mismo orden de error: la sangre desecada ronda 2-5 mg/100 g y aqui hay 250. Ver `cobre` para la correccion del 27 de agosto. MEDIDO igual: forzandolo, el zinc real del menu se queda entre un 25% y un 44% por encima del minimo, asi que aqui el margen aguanta mejor que en el cobre."
+   "cobre": {
+    "desde": "2026-08-27",
+    "resolver": "Preguntar a AniForte (service@aniforte.de) por la columna de oligoelementos de la etiqueta. LA PREGUNTA CONCRETA, que se confirma o se desmiente en un minuto: los digitos se conservan y solo se mueve la coma dos sitios. El cobre publicado para harina de sangre es ~8 mg/kg, que en porcentaje son 0,0008%, y la etiqueta pone 0,08%. El cinc, ~25 mg/kg = 0,0025%, y pone 0,25%. El HIERRO, que esta en otro orden de magnitud, esta bien convertido (~2.800 mg/kg = 0,28% y pone 0,28%). O sea: parece que se dividio entre 100 en vez de entre 10.000, y el fallo solo toco la columna de oligoelementos. Y la etiqueta se contradice sola sin salir de ella: declara 4% de cenizas brutas = 40 g/kg, y sus propios macrominerales suman 20,5 g/kg; anadir los 3,3 g/kg de cinc y cobre que declara, mas el cloruro y el sulfato que la sangre lleva por fuerza, desborda su propio presupuesto de cenizas.",
+    "motivo": "El VALOR NO SE TOCA: la etiqueta declara Kupfer 0,08% y la conversion a 80 mg/100 g es correcta. Pero la sangre bovina desecada ronda 0,3-0,6 mg/100 g: estamos unas 150 veces por encima. El hierro (280 mg/100 g) SI es coherente con sangre desecada, asi que el error no es de toda la fila. AniForte no publica tabla analitica. ⚠️ CORREGIDO EL 27 DE AGOSTO: aqui habia escrito que un cobre sobreestimado era 'el lado seguro porque el motor lo usa menos'. ESO ERA FALSO, y falso justo por el lado que importa: el cobre no es solo un techo, tiene SUELO -- 2,08 mg/1000 kcal de FEDIAF. Contra el techo, inflarlo protege; contra el suelo, hace que el motor CREA CUBIERTO un cobre que no esta. Es el mismo argumento de las cotas: un valor no puede ser conservador en las dos direcciones a la vez, y yo lo habia medido solo contra una. MEDIDO despues de la correccion: el solver NO lo elige nunca por su cuenta (0 de 27 menus automaticos, y 0 de 18 con hasta cinco especies excluidas), porque el higado cubre el cobre mucho mas barato. Forzandolo a mano en Personalizar, el cobre REAL del menu sigue por encima del minimo en los cuatro pesos probados, pero el margen baja al 8-11% -- y sin la cifra inflada el solver habria metido otra fuente. O sea: no muerde hoy, pero se come el margen."
+   },
+   "zinc": {
+    "desde": "2026-08-27",
+    "resolver": "La misma llamada que el cobre: es el mismo error de conversion en la misma columna.",
+    "motivo": "Mismo caso y mismo orden de error: la sangre desecada ronda 2-5 mg/100 g y aqui hay 250. Ver `cobre` para la correccion del 27 de agosto. MEDIDO igual: forzandolo, el zinc real del menu se queda entre un 25% y un 44% por encima del minimo, asi que aqui el margen aguanta mejor que en el cobre."
+   }
   },
   "valor_plausible": {
-   "cobre": 0.5,
-   "zinc": 3.5
+   "cobre": {
+    "valor": 0.85,
+    "banda": [
+     0.2,
+     5.5
+    ],
+    "fuente": "Feedipedia «Blood meal» (node 221): media 6 mg/kg MS, rango 5-6, n=5. INRA-CIRAD-AFZ feedtables «Blood meal»: media 11 mg/kg bruto, rango 2-55, n=8. ⚠️ NO SON DOS FUENTES INDEPENDIENTES: las dos publican la misma base de AFZ, y Mad Barn la republica una tercera vez. Cuenta como UNA. ⚠️ Y es el dato mas debil de los dos: Feedipedia da desviacion 0 sobre 5 muestras (dispersion implausible, senal de analiticas del mismo origen) y feedtables da una desviacion de 19 sobre una media de 11, arrastrada por un valor suelto de 55. Por eso la banda es ancha. Comprobacion independiente por otro camino, fisiologico: cobre en sangre de vacuno, 0,651 mg/L (Biol Trace Elem Res 109:135) -- llevado a materia seca da un orden aun MAS BAJO. Confirma la magnitud, no el decimal."
+   },
+   "zinc": {
+    "valor": 2.3,
+    "banda": [
+     1.6,
+     3.2
+    ],
+    "fuente": "Feedipedia «Blood meal» (node 221): media 24 mg/kg MS, rango 21-27, n=8. INRA-CIRAD-AFZ feedtables: media 23 mg/kg bruto, rango 16-32, n=11. Misma salvedad que el cobre -- una sola base, la de AFZ -- pero aqui el dato es razonable: coeficiente de variacion del 15% y dos recuentos que coinciden, asi que la banda es estrecha. ⚠️ BAJADO DE 3,5 A 2,3 el 27 de agosto, y la direccion importa: 3,5 iba un 50% alto, y un plausible ALTO ablanda justo la prueba del suelo, que es para lo que sirve. Un plausible bajo hace la prueba mas dura, que es el error inofensivo."
+   }
   }
  },
  {
@@ -464,8 +494,16 @@
   ],
   "nota_datos": "⚠️ CASO REAL ENCONTRADO (27 agosto): el 15 que habia en `linolenico` NO era ALA, era el OMEGA-3 TOTAL de la etiqueta. El omega-3 total INCLUYE el EPA y el DHA, que ya estan en sus columnas: se contaban dos veces. El ALA de un aceite de salmon ronda 1 g/100 g (USDA FDC 172343: ALA 1,06), no 15. Se vacia y se declara en sin_dato en vez de poner el valor del USDA, que es de OTRO aceite. Cota aritmetica defendible sobre la propia etiqueta: ALA <= n-3 total - (EPA+DHA+DPA) = 4.3 g. El `linoleico` NO se toca: en el n-6 de un aceite de salmon el linoleico si domina de verdad (el araquidonico es un 0,5-1%), asi que 'omega-6 total ~ LA' es una aproximacion razonable; en el n-3 no lo es, porque ahi mandan el EPA y el DHA. Vitamina D: en blanco A PROPOSITO y con motivo comprobado. USDA FDC 172343 no trae el campo (ausente, no cero), ninguna de las cinco marcas la declara, y en filete varia 8 veces segun salvaje o piscifactoria (2,3-18,5 ug/100 g; Jakobsen et al., Nutrients 2019, DOI 10.3390/nu11050982). No es pereza: el numero no es estable. ⚠️ CASO REAL ENCONTRADO (27 agosto): la grasa estaba a 0 y declarada en sin_dato, en un producto que es aceite puro. No era un hueco: la propia ficha dice 900 kcal por 100 g, y 900/9 = 100 g de grasa. El dato estaba forzado por la aritmetica de nuestra propia energia, no hacia falta ninguna tabla de fuera. Se pone 99,5 g, que es la composicion que declaran las cinco marcas (99,5% aceite + 0,5% tocoferoles). Comparalo con los ocho aceites de cocina del catalogo, que si traen 99,9-100 g. IMPORTA porque la grasa tiene minimo de FEDIAF y tope por patologia (20 g/1000 kcal en pancreatitis, Merck): un producto 100% grasa que declara 0 g mete kcal sin que cuenten como grasa, y ese es el lado que hace dano en cuanto se aplica un tope. MEDIDO: el motor mete hasta 9,2 g de aceite en un cachorro de 20 kg.",
   "dato_dudoso": {
-   "dha": "Ver `epa`.",
-   "epa": "La ficha localizable de Brit Care declara EPA 2,5% y DHA 3,5%; aqui hay 4,7 y 6. Puede ser otro formato del producto. Sin nota_datos de origen, no se puede saber de donde salio la fila. Mientras tanto, un EPA/DHA sobreestimado es la direccion que HACE DANO: el motor cree cubierto el omega-3 y deja de buscarlo donde esta de verdad."
+   "dha": {
+    "desde": "2026-08-27",
+    "resolver": "Ver `epa`: es la misma ficha.",
+    "motivo": "Ver `epa`."
+   },
+   "epa": {
+    "desde": "2026-08-27",
+    "resolver": "Conseguir la ficha tecnica del formato exacto que tenemos. La unica localizable declara EPA 2,5% y DHA 3,5%, y aqui hay 4,7 y 6: puede ser otro formato del producto.",
+    "motivo": "La ficha localizable de Brit Care declara EPA 2,5% y DHA 3,5%; aqui hay 4,7 y 6. Puede ser otro formato del producto. Sin nota_datos de origen, no se puede saber de donde salio la fila. Mientras tanto, un EPA/DHA sobreestimado es la direccion que HACE DANO: el motor cree cubierto el omega-3 y deja de buscarlo donde esta de verdad."
+   }
   }
  },
  {
@@ -4431,10 +4469,21 @@
   },
   "sin_dato": [],
   "dato_dudoso": {
-   "calcio": "El VALOR NO SE TOCA, pero no es de ningun sesamo real. El calcio del sesamo no es un rango: son DOS valores, porque casi todo esta en la cascara. Con cascara 975 mg (USDA 170150 y FINELI 385, dos analiticas independientes que coinciden); pelado 60 mg (USDA 169412) o 66 (FINELI 34245). Quitar la cascara lo divide por dieciseis. Nuestros 150 son fieles a BEDCA 1127, pero BEDCA no dice de cual habla y 150 cae en el hueco vacio entre los dos polos: es lo que sale cuando la tabla no distingue. Y el RESTO de esta fila si dice cual es: fosforo 620, potasio 450, magnesio 350 y fibra 11,0 son casi al decimal los del sesamo CON CASCARA del USDA (629 / 468 / 351 / 11,8). O sea que tenemos una ficha de sesamo entero con el calcio de ninguno. IMPORTA porque cambia lo que el alimento HACE: con 150 el Ca:P del sesamo es 0,24 y es una carga de fosforo; con 975 es 1,57 y ayuda a cuadrar la racion; con 60 es 0,10 y estorba mas. MEDIDO el 27 de agosto: el solver NO lo elige en ninguno de los 21 menus automaticos con ninguno de los tres calcios, y forzando 5 g el Ca:P del menu se mueve 0,08 (1,47-1,55) porque el hueso compensa. O sea que hoy no cambia ningun plato. NO SE ARREGLA ELIGIENDO UNO: se arregla partiendo la ficha en dos, `sesamo con cascara` y `sesamo pelado`, que es lo que trae la carga de alimentos. Hasta entonces queda marcado."
+   "calcio": {
+    "desde": "2026-08-27",
+    "resolver": "NO se resuelve con una llamada ni eligiendo uno de los dos valores: se resuelve PARTIENDO la ficha en `sesamo con cascara` (Ca 975) y `sesamo pelado` (Ca 60-66), y retirando esta, que es la ambigua. Las dos fichas ya vienen en la carga de alimentos.",
+    "motivo": "El VALOR NO SE TOCA, pero no es de ningun sesamo real. El calcio del sesamo no es un rango: son DOS valores, porque casi todo esta en la cascara. Con cascara 975 mg (USDA 170150 y FINELI 385, dos analiticas independientes que coinciden); pelado 60 mg (USDA 169412) o 66 (FINELI 34245). Quitar la cascara lo divide por dieciseis. Nuestros 150 son fieles a BEDCA 1127, pero BEDCA no dice de cual habla y 150 cae en el hueco vacio entre los dos polos: es lo que sale cuando la tabla no distingue. Y el RESTO de esta fila si dice cual es: fosforo 620, potasio 450, magnesio 350 y fibra 11,0 son casi al decimal los del sesamo CON CASCARA del USDA (629 / 468 / 351 / 11,8). O sea que tenemos una ficha de sesamo entero con el calcio de ninguno. IMPORTA porque cambia lo que el alimento HACE: con 150 el Ca:P del sesamo es 0,24 y es una carga de fosforo; con 975 es 1,57 y ayuda a cuadrar la racion; con 60 es 0,10 y estorba mas. MEDIDO el 27 de agosto: el solver NO lo elige en ninguno de los 21 menus automaticos con ninguno de los tres calcios, y forzando 5 g el Ca:P del menu se mueve 0,08 (1,47-1,55) porque el hueso compensa. O sea que hoy no cambia ningun plato. NO SE ARREGLA ELIGIENDO UNO: se arregla partiendo la ficha en dos, `sesamo con cascara` y `sesamo pelado`, que es lo que trae la carga de alimentos. Hasta entonces queda marcado."
+   }
   },
   "valor_plausible": {
-   "calcio": 60
+   "calcio": {
+    "valor": 60,
+    "banda": [
+     60,
+     66
+    ],
+    "fuente": "USDA FDC 169412 «Seeds, sesame seeds, kernels» da 60 mg y FINELI 34245 da 66: es el sesamo PELADO, el mas bajo de los dos polos, y se coge ese a proposito porque es el lado conservador para el minimo de calcio. ⚠️ ESTO NO CIERRA EL PROBLEMA y no hay que leerlo como si lo cerrara: el `valor_plausible` protege el MINIMO, pero el ratio Ca:P se calcula sobre el valor declarado, y el Ca:P es justo donde vive el problema del sesamo. Un ratio no se puede blindar por un lado: si el calcio real es 975 el ratio del menu es mas alto de lo que creemos, y si es 60 mas bajo, y las dos direcciones tienen limite. Lo unico que lo resuelve es partir la ficha."
+   }
   },
   "nota_datos": "Cobre 4,082 mg y manganeso 2,46 mg de USDA FDC 170150 «Seeds, sesame seeds, whole, dried» (27 agosto). Se toma la ficha de sesamo ENTERO porque es la que cuadra con el resto de esta fila -- fosforo, potasio, magnesio y fibra coinciden casi al decimal con el entero. La unica casilla que no cuadra con nada es el calcio: ver `dato_dudoso`."
  },

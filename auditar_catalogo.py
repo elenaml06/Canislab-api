@@ -40,6 +40,19 @@ def nut(a, k): return (a.get("nutrientes") or {}).get(k, 0) or 0
 def es_grasa(a): return nut(a, "grasa") > 80          # aceites: sus ceros son reales
 SUPLEMENTOS = ("Multivitamínico", "Vitamina B", "Hierro", "Calcio", "Yodo", "Fibra", "Omega-3")
 
+def _envolver(texto, ancho):
+    """Parte un texto largo en lineas, para que la lista de marcas se pueda leer."""
+    palabras, lineas, actual = texto.split(), [], ""
+    for w in palabras:
+        if len(actual) + len(w) + 1 > ancho:
+            lineas.append(actual); actual = w
+        else:
+            actual = (actual + " " + w).strip()
+    if actual:
+        lineas.append(actual)
+    return lineas
+
+
 avisos = []
 
 # ── 1. coherencia energética ──────────────────────────────────────────
@@ -135,10 +148,10 @@ for a in al:
 # es el de la etiqueta y el real no esta publicado— llevan `dato_dudoso`,
 # y esto los lista para que nadie los olvide.
 for a in al:
-    for k, motivo in (a.get("dato_dudoso") or {}).items():
+    for k, d in (a.get("dato_dudoso") or {}).items():
         valor = (a.get("nutrientes") or {}).get(k)
         avisos.append(("DUDOSO", a["nombre"],
-                       f"{k}={valor} declarado pero no creible. {motivo[:150]}"))
+                       f"{k}={valor} declarado pero no creible. {d.get('motivo','')[:150]}"))
 
 # ── 2e. EL CERO BIOLOGICAMENTE IMPOSIBLE ──────────────────────────────
 #
@@ -262,4 +275,56 @@ print("AVISOS: %d" % len(avisos))
 # de 38, así que dos alimentos distintos podían leerse como el mismo.
 for tipo, nombre, det in avisos:
     print("  [%-6s] %-34s  %s" % (tipo, nombre, det))
+# =====================================================================
+# LAS MARCAS ABIERTAS, DE LA MAS VIEJA A LA MAS NUEVA
+# =====================================================================
+#
+# Esto NO es un aviso mas: es la unica parte de la auditoria que no
+# pregunta "¿esta el dato mal?" sino "¿sigue alguien intentando
+# arreglarlo?". Y son dos preguntas distintas.
+#
+# La diferencia entre un aviso conocido y un `dato_dudoso` es de quien es
+# la pelota. Un aviso conocido es un juicio CERRADO -- "lo miramos y esta
+# bien". Un `dato_dudoso` es un juicio ABIERTO con una accion externa
+# pegada: llamar a AniForte, llamar a GRAU, partir la ficha del sesamo.
+# Ninguna ejecucion de la bateria va a hacer que AniForte coja el
+# telefono.
+#
+# ⚠️ Y POR QUE NO ES UN TEST QUE SE PONGA ROJO A LOS 30 DIAS, que fue lo
+# primero que se penso: un rojo que salta por el calendario es un rojo que
+# nadie ha provocado, y lo que se aprende de el es a silenciarlo -- subir
+# la fecha sin mirar es el mismo gesto de no revisar, con un paso mas de
+# burocracia. Es exactamente el fallo del BLOQUE 19 otra vez: el aviso de
+# los cuatro aceites sono en CADA ejecucion durante un mes y nadie
+# pregunto por que. Un aviso que suena solo no arregla nada.
+# Asi que sin umbral, sin rojo y sin fecha que subir: solo la lista, con
+# los dias al lado y ordenada de mas vieja a mas nueva, para que se vuelva
+# incomoda de leer sola.
+import datetime as _dt
+_abiertas = []
+for a in al:
+    for k, d in (a.get("dato_dudoso") or {}).items():
+        desde = d.get("desde")
+        try:
+            dias = (_dt.date.today() - _dt.date.fromisoformat(desde)).days
+        except (TypeError, ValueError):
+            dias = None
+        _abiertas.append((dias if dias is not None else -1, a["nombre"], k, desde,
+                          d.get("resolver", "(sin decir que la resolveria)")))
+if _abiertas:
+    _abiertas.sort(reverse=True)
+    print()
+    print("MARCAS DE DATO DUDOSO ABIERTAS — de la mas vieja a la mas nueva")
+    print("(no son fallos: son datos que sabemos malos y que solo se cierran desde fuera)")
+    for dias, nombre, k, desde, resolver in _abiertas:
+        cuanto = f"{dias} dias" if dias >= 0 else "fecha sin poner"
+        print()
+        print(f"  [{cuanto:>14}]  {nombre} · {k}   (desde {desde})")
+        for linea in _envolver(resolver, 74):
+            print(f"                    {linea}")
+    print()
+    print(f"  {len(_abiertas)} marcas abiertas. Cada una necesita que alguien haga algo FUERA")
+    print("  de este repositorio: una llamada, una ficha tecnica, una carga de datos.")
+
+
 sys.exit(1 if any(t == "BASE" for t, _, _ in avisos) else 0)

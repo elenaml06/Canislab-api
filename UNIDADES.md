@@ -209,6 +209,70 @@ el `linolenico` de arriba.
 
 Los que se pueden arreglar, se arreglan. Los que no —porque el valor es el
 de la etiqueta y el real no está publicado en ninguna parte— van en
-`dato_dudoso`, un diccionario `{"nutriente": "por qué no nos lo creemos"}`.
+**`dato_dudoso`**, y la marca lleva tres cosas, no una:
+
+```json
+"dato_dudoso": {
+  "cobre": {
+    "motivo":   "por qué no nos lo creemos",
+    "resolver": "qué habría que hacer para cerrarlo, y a quién llamar",
+    "desde":    "2026-08-27"
+  }
+}
+```
+
 `verificar()` lo devuelve en `datos_dudosos` junto al menú, igual que hace
-con los huecos, y `auditar_catalogo.py` los lista. Lo vigila el BLOQUE 28.
+con los huecos, y `auditar_catalogo.py` los lista **de la marca más vieja a
+la más nueva, con los días al lado**.
+
+**Por qué `resolver` y `desde`, y por qué no una fecha de caducidad.** La
+diferencia entre un aviso conocido y un dato dudoso es de quién es la
+pelota: el primero es un juicio cerrado («lo miramos y está bien»), el
+segundo es un juicio abierto con una acción de fuera pegada —llamar a
+AniForte, llamar a GRAU, partir la ficha del sésamo—. Ninguna ejecución de
+la batería va a hacer que AniForte coja el teléfono, así que lo que hay que
+hacer visible no es «¿se ha vuelto a verificar?» sino «¿sigue alguien
+intentando cerrarlo?».
+
+Se pensó en que las marcas caducaran a los 30 días y se descartó: un rojo
+que salta por el calendario es un rojo que nadie ha provocado, y lo que se
+aprende de él es a silenciarlo — subir la fecha sin mirar es el mismo gesto
+de no revisar, con un paso más de burocracia. Es el fallo del BLOQUE 19
+otra vez: el aviso de los cuatro aceites sonó en **cada** ejecución durante
+un mes y nadie preguntó por qué. Un aviso que suena solo no arregla nada.
+Sin umbral, sin rojo y sin fecha que subir: solo la lista, que se vuelve
+incómoda de leer sola.
+
+### `valor_plausible`: cuando la marca además trabaja
+
+Una marca que solo anota no defiende de nada. Cuando de un valor dudoso
+conocemos un **valor plausible publicado**, se pone al lado y el motor
+**mide el mismo menú dos veces**: el **máximo** sobre el valor declarado y
+el **mínimo** sobre el plausible.
+
+El motivo es el de las cotas: *un valor no puede ser conservador en las dos
+direcciones a la vez*. Un cobre inflado protege contra el techo y
+desprotege contra el suelo, porque el motor cree cubierto lo que no está.
+
+```json
+"valor_plausible": {
+  "cobre": {"valor": 0.85, "banda": [0.2, 5.5], "fuente": "Feedipedia node 221 / AFZ…"}
+}
+```
+
+Dos reglas, y las dos las comprueba el BLOQUE 28:
+
+1. **La `fuente` es obligatoria.** Este es el primer número del catálogo
+   que no es una medida y que aun así decide si un menú pasa. Todo esto
+   está construido sobre que cada número sabe de dónde viene; este no puede
+   ser la excepción. Quien lea `0.85` a secas dentro de seis meses lo
+   tratará como un dato.
+2. **Nunca asciende a la columna del valor.** El día que el fabricante
+   conteste entra lo que diga el fabricante y el plausible se borra. Si
+   alguien lo «promociona» porque llevaba un año funcionando, una cuenta de
+   servilleta se habrá convertido en el dato oficial del catálogo.
+
+Y ojo con la dirección: un plausible **demasiado alto ablanda la prueba del
+suelo**, que es para lo único que sirve. Uno bajo la hace más dura, que es
+el error inofensivo. Por eso el cinc bajó de 3,5 a 2,3 en cuanto tuvo tabla
+detrás.

@@ -32,7 +32,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 from scipy.optimize import milp, LinearConstraint, Bounds
 from verificar import MAPA, _num, EQUIVALENCIA
-from constructor import valor_nutriente
+from constructor import valor_nutriente, valor_plausible_de
 
 # ⚠️ AÑADIDO (5 agosto, noche): copia local de especie_de() (la misma
 # lógica que ya usan especies.py y el frontend) -- se define aquí en
@@ -856,7 +856,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         for n in nombres:
             nut_n = alimentos[n].get("nutrientes", {})
             v = valor_nutriente(nut_n, clave) / 100.0
-            plausible = (alimentos[n].get("valor_plausible") or {}).get(clave)
+            plausible = valor_plausible_de(alimentos[n], clave)
             v_min = v if plausible is None else float(plausible) / 100.0
             if v:
                 fila[idx[n]] = v; aporta_algo = True

@@ -377,6 +377,37 @@ def valor_nutriente(nutrientes: dict, clave: str) -> float:
         return 0.0
 
 
+def valor_plausible_de(alimento: dict, clave: str):
+    """El valor PLAUSIBLE de un nutriente marcado como dudoso, o None.
+
+    Es el UNICO sitio que sabe como esta guardado `valor_plausible`, para
+    que no haya dos formas de leerlo -- que es como empiezan las cosas a
+    desincronizarse en este repo.
+
+    La forma es {clave: {"valor": x, "fuente": "...", "banda": [lo, hi]}},
+    y la `fuente` es OBLIGATORIA a proposito: `valor_plausible` mete, por
+    primera vez en el catalogo, un numero que no es una medida dentro de un
+    calculo que decide si un menu pasa. Todo el catalogo esta construido
+    sobre que cada numero sabe de donde viene; este no puede ser la
+    excepcion. Si dentro de seis meses alguien lee `0.85` sin saber que
+    sale de AFZ con n=8 y una desviacion mayor que la media, lo tratara
+    como un dato. Lo vigila el BLOQUE 28.
+
+    Y NUNCA se promociona a la columna del valor: el dia que el fabricante
+    conteste, entra lo que diga el fabricante y el plausible se borra. Si
+    alguien "asciende" el plausible porque llevaba un ano funcionando,
+    habremos convertido una cuenta de servilleta en el dato oficial y nadie
+    recordara de donde salio. Eso tambien lo vigila el BLOQUE 28.
+    """
+    entrada = (alimento.get("valor_plausible") or {}).get(clave)
+    if not isinstance(entrada, dict):
+        return None
+    try:
+        return float(entrada["valor"])
+    except (KeyError, TypeError, ValueError):
+        return None
+
+
 def perfil_nutricional(menu: dict, alimentos: dict, conservador: bool = False) -> dict:
     """Suma lo que aporta la racion. Simple aritmetica, sin sorpresas.
 
@@ -403,10 +434,11 @@ def perfil_nutricional(menu: dict, alimentos: dict, conservador: bool = False) -
         a = alimentos.get(nombre)
         if not a:
             continue
-        plausibles = (a.get("valor_plausible") or {}) if conservador else {}
         for nutriente, valor in a.get("nutrientes", {}).items():
-            if nutriente in plausibles:
-                valor = plausibles[nutriente]
+            if conservador:
+                p = valor_plausible_de(a, nutriente)
+                if p is not None:
+                    valor = p
             try:
                 total[nutriente] = total.get(nutriente, 0.0) + float(valor) * gramos / 100.0
             except (TypeError, ValueError):
