@@ -3166,7 +3166,7 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "fa8869425cf9e143",   # 27 ago: correcciones de suplementos. El omega-3 TOTAL de cuatro aceites de salmón salía de `linolenico` (contaba el EPA y el DHA dos veces); los cinco aceites tenían la grasa a cero siendo aceite puro; el folato de las dos levaduras era el de levadura de PANADERÍA; el psyllium pasa a dosificarse por peso; el selenio del alga se cierra con fuente; y el fósforo de las harinas de hueso y el cobre del polvo de sangre quedan marcados en el campo nuevo `dato_dudoso`
+        "alimentos_v3_final.json":      "5c5636db102be392",   # 27 ago (2): las tres formas de esconder un hueco. Se quitó `Testículos de cordero` (30 de 31 nutrientes a cero y 68 kcal sin proteína ni grasa: el motor lo usaba en 2 de cada 24 menús creyéndolo vacío), se declararon en sin_dato los ceros que un tejido animal no puede tener, y se pusieron las 31 claves en todas las fichas — faltaban 67 celdas que no eran ni cero ni hueco, sino ausencia total
         "requerimientos_v2_final.json": "9eb5b660a3c725d0",   # 26 ago: los 12 aminoácidos esenciales de la Tabla III-3b, con sus mínimos y el máximo de lisina en crecimiento. Están en el JSON pero NO en verificar.MAPA todavía: ningún alimento del catálogo trae el dato, así que activarlos hoy dejaría al motor sin menús. Ver el BLOQUE 27
     }
     SELLOS_CRUDOS = {

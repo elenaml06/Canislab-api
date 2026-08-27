@@ -140,6 +140,71 @@ for a in al:
         avisos.append(("DUDOSO", a["nombre"],
                        f"{k}={valor} declarado pero no creible. {motivo[:150]}"))
 
+# ── 2e. EL CERO BIOLOGICAMENTE IMPOSIBLE ──────────────────────────────
+#
+# La comprobacion 2 pilla los ceros SIN DECLARAR contandolos en bloque
+# (10 o mas). Se le escapaban los sueltos, y los sueltos son los que hacen
+# dano: un higado sin fosforo pasa desapercibido entre 30 valores buenos.
+#
+# ⚠️ CASO REAL ENCONTRADO (27 agosto): `Testículos de cordero` tenia 30 de
+# sus 31 nutrientes a cero, `sin_dato` VACIO y 68 kcal con proteina 0 y
+# grasa 0 -- la fila se contradecia sola, porque esa energia no puede salir
+# de ningun sitio. Para el solver era una fuente de vitamina B12 que no
+# costaba nada en ningun otro presupuesto, y MEDIDO la usaba en 2 de cada
+# 24 menus automaticos, uno con 90,5 gramos. Cada uno de esos gramos dejaba
+# la racion corta de todo lo demas, y el semaforo salia VERDE porque
+# verifica contra estos mismos datos. El alimento se quito del catalogo.
+#
+# El criterio, que no necesita ninguna fuente externa: un cero solo es
+# creible si algun alimento de esa familia puede tenerlo de verdad.
+CLAVES_TEJIDO = ("potasio", "fosforo", "magnesio", "sodio", "cloruro",
+                 "hierro", "zinc", "proteina")
+ANIMAL = ("Carne muscular", "Vísceras", "Hígado", "Pescados y mariscos", "Hueso carnoso")
+for a in al:
+    if a.get("categoria") not in ANIMAL:
+        continue
+    n = a.get("nutrientes") or {}
+    sd = set(a.get("sin_dato") or [])
+    malos = [k for k in CLAVES_TEJIDO + ("vitB12",) if not nut(a, k) and k not in sd]
+    if malos:
+        avisos.append(("CERO0", a["nombre"],
+                       f"tejido animal con {', '.join(malos)} a cero y sin declarar. "
+                       f"Un tejido no tiene NUNCA esos a cero; si no lo sabemos, va en sin_dato"))
+    # y la energia de un alimento animal solo puede venir de sus macros:
+    # no hay hidratos que la expliquen, como si pasa en la fruta
+    e = a.get("energia") or 0
+    calc = 4 * nut(a, "proteina") + 9 * nut(a, "grasa")
+    if e > 20 and calc < e * 0.35:
+        avisos.append(("CERO0", a["nombre"],
+                       f"declara {e} kcal pero sus macros solo dan {calc:.0f}. En un alimento "
+                       f"animal no hay hidratos que expliquen la diferencia: la fila se "
+                       f"contradice sola y el motor la usaria creyendola vacia"))
+
+# ── 2f. EL CLORURO NO ES UNA MEDIDA, ES EL SODIO x 1,542 ──────────────
+#
+# Encontrado el 27 de agosto revisando la carga: en la inmensa mayoria de
+# las filas con los dos valores, `cloruro` = `sodio` x 1,542 EXACTO, que es
+# la razon entre los pesos atomicos del cloro y del sodio. O sea que la
+# columna no es un analisis: es el sodio reescrito SUPONIENDO que todo el
+# sodio del alimento viene de sal comun.
+#
+# En tejido animal la suposicion se sostiene a medias. En VEGETALES es
+# sistematicamente falsa, porque el cloruro de la planta va sobre todo con
+# potasio y no con sodio -- CIQUAL, que si lo analiza, da 61 mg para el
+# champinon donde la derivacion da 7,7, y 45 para los canonigos donde da
+# 6,2. Factores de 6x a 8x.
+#
+# No se corrige aqui porque cambiar la columna entera es una decision, no
+# un arreglo. Esto solo impide que se olvide lo que es.
+_der = [a["nombre"] for a in al
+        if nut(a, "sodio") and nut(a, "cloruro")
+        and abs(nut(a, "cloruro") / nut(a, "sodio") - 1.542) < 0.005]
+if _der:
+    avisos.append(("CLORURO", "(columna entera)",
+                   f"{len(_der)} alimentos tienen cloruro = sodio x 1,542 exacto. La columna "
+                   f"es una DERIVACION del sodio, no una medida, y en vegetales es falsa "
+                   f"(CIQUAL mide 6-8 veces mas). Decidido dejarla asi por ahora"))
+
 # ── 3. plausibilidad por categoría ────────────────────────────────────
 for a in al:
     c, nombre = a.get("categoria"), a["nombre"]

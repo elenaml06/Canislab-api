@@ -125,6 +125,64 @@ porque podríamos pasarnos de cobre o de selenio sin enterarnos.
 Déjalo vacío y que se declare en `sin_dato`, que es la lista de huecos
 conocidos. Los que faltan hoy están en `DATOS_QUE_FALTAN.md`, uno a uno.
 
+**Y no lo dejes fuera del diccionario, que es peor.** Un hueco puede
+esconderse de tres maneras, y las tres acaban valiendo 0 para el motor:
+
+| Cómo está guardado | ¿Se ve? |
+|---|---|
+| 0 y declarado en `sin_dato` | **sí** — es lo que queremos |
+| 0 y sin declarar | a medias: la auditoría solo los cazaba en bloque |
+| **la clave ni siquiera está** | **no se ve de ninguna forma** |
+
+La tercera es la mala. `valor_nutriente()` devuelve 0 igual que en los
+otros dos casos, pero **no hay ningún cero que encontrar**, así que ni la
+auditoría ni `datos_incompletos` pueden decir nada. El 27 de agosto
+afectaba a cuatro alimentos y 67 celdas, y no eran alimentos raros:
+`Pollo pechuga sin piel` y `Pollo muslo sin piel` —de los más usados del
+catálogo— y un `Hígado de cordero` al que le faltaba el **fósforo**.
+`Corazón de conejo` tenía 21 de sus 31 nutrientes así.
+
+Lo vigila el BLOQUE 29, que exige que las 31 claves estén en todas las
+fichas.
+
+**El cero de un tejido animal casi nunca es un cero.** El criterio, que no
+necesita ninguna fuente: *un cero solo es creíble si algún alimento de esa
+familia puede tenerlo de verdad*. Un tejido no tiene nunca potasio,
+fósforo, magnesio, sodio, cloruro, hierro, cinc ni proteína a cero; un
+alimento animal no tiene la B12 a cero; y una fila animal con energía pero
+sin proteína ni grasa **se contradice a sí misma**, porque ahí no hay
+hidratos que expliquen las kcal (en la fruta sí, y por eso la regla es solo
+para lo animal).
+
+Eso último no es teórico. `Testículos de cordero` tenía 30 de sus 31
+nutrientes a cero, 68 kcal con proteína 0 y grasa 0, y una vitamina B12 de
+las más altas del catálogo. Para el solver era **B12 gratis**: no costaba
+nada en ningún otro presupuesto. Salía en 2 de cada 24 menús automáticos,
+uno con 90,5 g, y cada gramo dejaba la ración corta de todo lo demás **con
+el semáforo en verde**, porque el semáforo verifica contra esos mismos
+datos. Se quitó del catálogo el 27 de agosto.
+
+---
+
+## El cloruro no es una medida: es el sodio × 1,542
+
+Antes de tocar esa columna hay que saber qué es. En **114 de los alimentos
+que tienen los dos valores, `cloruro` = `sodio` × 1,542 exacto** — la razón
+entre los pesos atómicos del cloro y del sodio. La columna no es un
+análisis: es el sodio reescrito **suponiendo que todo el sodio del alimento
+viene de sal común**.
+
+En tejido animal la suposición se sostiene a medias. **En vegetales es
+sistemáticamente falsa**, porque el cloruro de la planta va sobre todo con
+potasio, no con sodio. CIQUAL, que sí lo analiza (nutriente `Chlorure`,
+código 10170), da 61 mg para el champiñón donde la derivación da 7,7, y
+45 para los canónigos donde da 6,2: factores de 6 a 8 veces.
+
+Se deja así por ahora, porque cambiar la columna entera es una decisión y
+no un arreglo. Pero **no rellenes un hueco de cloruro con sodio × 1,54**:
+sería cambiar un cero honesto por un número inventado con mejor cara.
+`auditar_catalogo.py` lo avisa en cada ejecución para que no se olvide.
+
 ---
 
 ## Si el valor está pero no te lo crees: `dato_dudoso`

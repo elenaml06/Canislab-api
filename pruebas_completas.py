@@ -2007,12 +2007,28 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # Faltan datos y están apuntados en DATOS_QUE_FALTAN.md (57 alimentos,
     # 431 valores, tras rellenar los seis pescados el 25 de agosto). No se
     # rellenan a ojo: los valores salen de BEDCA/CIQUAL/USDA con su fuente.
-    ("HUECOS", "Huevo clara"), ("HUECOS", "Huevo de pato entero"),
-    ("HUECOS", "Semilla de lino"), ("HUECOS", "Semilla de sésamo"),
+    ("HUECOS", "Huevo clara"),
     ("HUECOS", "Borraja"), ("HUECOS", "Sal común (cloruro sódico)"),
     ("HUECOS", "Bazo de vaca"), ("HUECOS", "Páncreas de vaca"),
     ("HUECOS", "Bazo de cordero"), ("HUECOS", "Cerebro de ternera"),
-    ("HUECOS", "Testículos de cordero"),
+    # ⚠️ SE FUE `Testículos de cordero` (27 agosto): ya no está en el
+    # catálogo. Tenía 30 de sus 31 nutrientes a cero y 68 kcal con proteína
+    # 0 y grasa 0 -- una fila que se contradice sola. El motor la usaba en
+    # 2 de cada 24 menús automáticos, uno con 90,5 g, creyéndola vacía de
+    # todo menos B12. Ver el BLOQUE 29.
+    # Y salen tres más -- huevo de pato, semilla de lino y de sésamo --
+    # porque sus huecos ya están DECLARADOS en sin_dato en vez de ser ceros
+    # mudos, así que bajan del umbral de 10 sin declarar.
+    #
+    # ⚠️ EL CLORURO ES UNA DERIVACIÓN, NO UNA MEDIDA (27 agosto). En 114 de
+    # los alimentos con los dos valores, `cloruro` = `sodio` x 1,542
+    # exacto: la razón entre los pesos atómicos del cloro y del sodio. La
+    # columna es el sodio reescrito suponiendo que todo el sodio viene de
+    # sal común. En tejido animal se sostiene a medias; en vegetales es
+    # falsa, y CIQUAL -- que sí lo analiza -- da 6 a 8 veces más. Se deja
+    # así de momento porque cambiar la columna entera es una decisión, no
+    # un arreglo; el aviso está para que no se olvide lo que es.
+    ("CLORURO", "(columna entera)"),
     # ⚠️ RELLENADOS (25 agosto): los seis pescados que tenían EPA y DHA a
     # cero -- bacalao, boquerón, gamba roja, langostino, perca y pescadilla
     # -- ya no están en esta lista porque ya no son huecos. Las fuentes están
@@ -2906,6 +2922,101 @@ for _n28 in ("GRAU Levadura de cerveza", "PAWS & PATCH Levadura de cerveza"):
             f"BLOQUE28d: '{_n28}' tiene folato={_fol28} y debe tener 697 µg (CIQUAL 11009, "
             f"«Levure alimentaire»). Los 2.340 de antes son levadura de PANADERÍA seca activa "
             f"(USDA FDC 175043): otro producto.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 29 — las tres formas que tiene un hueco de esconderse
+# ============================================================
+# Un nutriente que no sabemos puede estar guardado de tres maneras, y hasta
+# el 27 de agosto solo vigilábamos una:
+#
+#   1. cero DECLARADO en `sin_dato`  → visible. Es lo que queremos
+#   2. cero SIN declarar             → lo pillaba la auditoría, pero solo
+#                                      contándolos en bloque (10 o más).
+#                                      Los sueltos se colaban
+#   3. la clave NI SIQUIERA ESTÁ en el diccionario → invisible del todo.
+#      `valor_nutriente()` devuelve 0 igual que en los otros dos casos,
+#      pero no hay ningún cero que encontrar, así que ni la auditoría ni
+#      `datos_incompletos` lo veían
+#
+# La tercera afectaba a 4 alimentos y 67 celdas, y no eran alimentos raros:
+# `Pollo pechuga sin piel` y `Pollo muslo sin piel` -- de los más usados
+# del catálogo -- y un `Hígado de cordero` al que le faltaba el FÓSFORO.
+# `Corazón de conejo` tenía 21 de sus 31 nutrientes así.
+print("\n=== BLOQUE 29: ningún hueco sin declarar, de las tres formas ===")
+
+_al29 = json.load(open("alimentos_v3_final.json", encoding="utf-8"))
+_SUP29 = {"Multivitamínico", "Vitamina B", "Hierro", "Calcio", "Yodo", "Fibra", "Omega-3"}
+_ANIMAL29 = {"Carne muscular", "Vísceras", "Hígado", "Pescados y mariscos", "Hueso carnoso"}
+_CLAVES29 = ["proteina", "grasa", "fibra", "linoleico", "linolenico", "epa", "dha",
+             "araquidonico", "calcio", "fosforo", "potasio", "sodio", "cloruro", "magnesio",
+             "hierro", "cobre", "manganeso", "zinc", "yodo", "selenio", "vitA", "vitD",
+             "vitE", "tiamina", "riboflavina", "niacina", "acidoPantotenico", "vitB6",
+             "colina", "folato", "vitB12"]
+
+# ── 29a. Ninguna clave puede faltar del diccionario ───────────────────
+_ausentes29 = []
+for _a29 in _al29:
+    _n29 = _a29.get("nutrientes") or {}
+    _falta = [_k for _k in _CLAVES29 if _k not in _n29]
+    if _falta:
+        _ausentes29.append((_a29["nombre"], _falta))
+if _ausentes29:
+    fallos.append(
+        f"BLOQUE29a: {len(_ausentes29)} alimentos tienen claves que NO ESTÁN en su diccionario "
+        f"de nutrientes: {_ausentes29[:4]}. Es la peor forma de hueco, porque "
+        f"`valor_nutriente()` devuelve 0 igual que un cero de verdad pero no hay ningún cero "
+        f"que encontrar: ni la auditoría ni `datos_incompletos` lo ven. Ponla a 0 y, si no "
+        f"sabemos el valor, decláralo en sin_dato.")
+
+# ── 29b. Un tejido animal no tiene esos nutrientes a cero, nunca ──────
+# El criterio no necesita ninguna fuente externa: un cero solo es creíble
+# si algún alimento de esa familia puede tenerlo de verdad.
+_TEJIDO29 = ("potasio", "fosforo", "magnesio", "sodio", "cloruro", "hierro", "zinc",
+             "proteina", "vitB12")
+for _a29 in _al29:
+    if _a29.get("categoria") not in _ANIMAL29:
+        continue
+    _n29 = _a29.get("nutrientes") or {}
+    _sd29 = set(_a29.get("sin_dato") or [])
+    _malos29 = [_k for _k in _TEJIDO29 if not (_n29.get(_k) or 0) and _k not in _sd29]
+    if _malos29:
+        fallos.append(
+            f"BLOQUE29b: '{_a29['nombre']}' es tejido animal y tiene {_malos29} a cero sin "
+            f"declarar. Un tejido no tiene ninguno de esos a cero: o el dato es otro, o no lo "
+            f"sabemos y va en sin_dato. Un cero mudo el motor se lo cree.")
+
+# ── 29c. La energía de un alimento animal sale de sus macros ──────────
+# En la fruta no -- ahí la energía viene de los hidratos, que el catálogo
+# no guarda. En un tejido animal no hay hidratos que la expliquen, así que
+# energía sin macros es una fila que se contradice a sí misma.
+for _a29 in _al29:
+    if _a29.get("categoria") not in _ANIMAL29:
+        continue
+    _n29 = _a29.get("nutrientes") or {}
+    _e29 = _a29.get("energia") or 0
+    _calc29 = 4 * (_n29.get("proteina") or 0) + 9 * (_n29.get("grasa") or 0)
+    if _e29 > 20 and _calc29 < _e29 * 0.35:
+        fallos.append(
+            f"BLOQUE29c: '{_a29['nombre']}' declara {_e29} kcal y sus macros solo dan "
+            f"{_calc29:.0f}. En un alimento animal no hay hidratos que expliquen la "
+            f"diferencia. El motor lo usaría creyéndolo vacío, y cada gramo dejaría la ración "
+            f"corta de todo lo demás con el semáforo en verde.")
+
+# ── 29d. Y el que provocó todo esto, por su nombre ────────────────────
+# `Testículos de cordero`: 30 de 31 nutrientes a cero, `sin_dato` vacío,
+# 68 kcal con proteína 0 y grasa 0, y una vitamina B12 de las más altas del
+# catálogo. Para el solver era B12 gratis: MEDIDO, salía en 2 de cada 24
+# menús automáticos, uno con 90,5 gramos. Se quitó del catálogo el 27 de
+# agosto. Si algún día vuelve, que vuelva con datos.
+if any(_a29["nombre"] == "Testículos de cordero" for _a29 in _al29):
+    fallos.append(
+        "BLOQUE29d: ha vuelto 'Testículos de cordero'. Se quitó porque tenía 30 de sus 31 "
+        "nutrientes a cero y 68 kcal sin proteína ni grasa, y el motor lo usaba en 2 de cada "
+        "24 menús creyéndolo vacío de todo menos vitamina B12. Si vuelve con datos de "
+        "verdad, quita esta comprobación; si vuelve sin ellos, no puede entrar.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
