@@ -838,11 +838,32 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             tope_cronico = TOPE_CRONICO_KCAL[clave]
             mx = tope_cronico if mx is None else min(mx, tope_cronico)
         fila = fila_vacia()
+        # ⚠️ SEGUNDA FILA, LA CONSERVADORA (27 agosto). Cuando un alimento
+        # tiene un valor DUDOSO con un `valor_plausible` conocido, el mismo
+        # numero no puede servir para el minimo y para el maximo: inflado
+        # protege contra el techo y DESPROTEGE contra el suelo, porque el
+        # motor cree cubierto lo que no esta. Asi que el minimo se exige
+        # sobre el valor plausible y el maximo sobre el declarado.
+        # El caso: el polvo de sangre declara 80 mg de cobre/100 g y la
+        # sangre bovina desecada ronda 0,5. Antes de esto, forzandolo en un
+        # perro de 25 kg salia un menu con 2,34 mg de cobre real sobre un
+        # minimo de 2,60 -- deficitario y en VERDE.
+        # Si ningun alimento trae `valor_plausible`, las dos filas son
+        # identicas y se pone una sola, como siempre.
+        fila_min = fila_vacia()
         aporta_algo = False
+        hay_dudoso = False
         for n in nombres:
-            v = valor_nutriente(alimentos[n].get("nutrientes", {}), clave) / 100.0
+            nut_n = alimentos[n].get("nutrientes", {})
+            v = valor_nutriente(nut_n, clave) / 100.0
+            plausible = (alimentos[n].get("valor_plausible") or {}).get(clave)
+            v_min = v if plausible is None else float(plausible) / 100.0
             if v:
                 fila[idx[n]] = v; aporta_algo = True
+            if v_min:
+                fila_min[idx[n]] = v_min
+            if plausible is not None and v_min != v:
+                hay_dudoso = True
         if not aporta_algo:
             continue
         # ⚠️ AÑADIDO (5 agosto): +1.5% de margen sobre el mínimo exacto.
@@ -863,7 +884,13 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # encima del mínimo FEDIAF incluso después del redondeo.
         lo = mn * der / 1000.0 * 1.015 if mn is not None else -np.inf
         hi = mx * der / 1000.0 if mx is not None else np.inf
-        _fila("fediaf_absoluto", fila, lo, hi)
+        if hay_dudoso and lo != -np.inf:
+            # el suelo sobre el valor plausible, el techo sobre el declarado
+            _fila("fediaf_minimo_conservador", fila_min, lo, np.inf)
+            if hi != np.inf:
+                _fila("fediaf_maximo", fila, -np.inf, hi)
+        else:
+            _fila("fediaf_absoluto", fila, lo, hi)
 
         # ⚠️ AÑADIDO (21 agosto) — CASO REAL MEDIDO: con el tope renal de
         # fósforo en 1400, el motor devolvía menús con 1426. Se saltaba su

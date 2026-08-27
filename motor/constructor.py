@@ -377,14 +377,36 @@ def valor_nutriente(nutrientes: dict, clave: str) -> float:
         return 0.0
 
 
-def perfil_nutricional(menu: dict, alimentos: dict) -> dict:
-    """Suma lo que aporta la racion. Simple aritmetica, sin sorpresas."""
+def perfil_nutricional(menu: dict, alimentos: dict, conservador: bool = False) -> dict:
+    """Suma lo que aporta la racion. Simple aritmetica, sin sorpresas.
+
+    `conservador=True` sustituye los valores marcados como dudosos por el
+    VALOR PLAUSIBLE de la ficha (`valor_plausible`), cuando lo hay.
+
+    ⚠️ POR QUE EXISTE ESE MODO (27 agosto). El polvo de sangre declara en
+    etiqueta 80 mg de cobre por 100 g y la sangre bovina desecada ronda
+    0,5: unas 150 veces menos. Habiamos concluido que un valor inflado era
+    "el lado seguro, porque el motor lo usa menos", y ESO ERA FALSO -- solo
+    valia contra el TECHO. El cobre tiene SUELO tambien (2,08 mg/1000 kcal
+    de FEDIAF), y contra el suelo un valor inflado hace que el motor CREA
+    CUBIERTO lo que no esta.
+    Es el mismo argumento que ya habiamos aceptado para las cotas: un valor
+    no puede ser conservador en las dos direcciones a la vez. Asi que se
+    usan los dos: el PLAUSIBLE para comprobar los minimos y el DECLARADO
+    para comprobar los maximos.
+    MEDIDO antes de ponerlo: forzando el polvo de sangre en un perro de
+    25 kg, el menu declaraba 8,31 mg de cobre y con el valor plausible se
+    quedaba en 2,34 con un minimo de 2,60 -- por debajo, y en verde.
+    """
     total = {}
     for nombre, gramos in menu.items():
         a = alimentos.get(nombre)
         if not a:
             continue
+        plausibles = (a.get("valor_plausible") or {}) if conservador else {}
         for nutriente, valor in a.get("nutrientes", {}).items():
+            if nutriente in plausibles:
+                valor = plausibles[nutriente]
             try:
                 total[nutriente] = total.get(nutriente, 0.0) + float(valor) * gramos / 100.0
             except (TypeError, ValueError):

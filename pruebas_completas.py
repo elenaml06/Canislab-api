@@ -2910,6 +2910,53 @@ elif "fosforo" not in _f28.get("datos_dudosos", {}):
     fallos.append(f"BLOQUE28c: un menú con harina de hueso no avisa del fósforo dudoso. "
                   f"verificar() devuelve {_f28.get('datos_dudosos')}")
 
+# ── 28c-bis. Un dato dudoso con consecuencia: la prueba de esfuerzo ───
+#
+# ⚠️ CORRECCIÓN DEL 27 DE AGOSTO, y merece quedar escrita porque el error
+# era de razonamiento, no de medida. Sobre el cobre inflado del polvo de
+# sangre habíamos concluido que era «el lado seguro, porque el motor lo usa
+# menos». Falso: eso solo vale contra el TECHO. El cobre tiene SUELO
+# también -- 2,08 mg/1000 kcal -- y contra el suelo un valor inflado hace
+# que el motor CREA CUBIERTO lo que no está. Es el mismo argumento que ya
+# habíamos aceptado para las cotas: un valor no puede ser conservador en
+# las dos direcciones a la vez.
+#
+# De ahí sale este mecanismo, que es lo que convierte `dato_dudoso` de una
+# nota en una defensa: cuando de un valor dudoso conocemos un VALOR
+# PLAUSIBLE (campo `valor_plausible`), se rehace la cuenta con él y se
+# exige que el menú siga cumpliendo el mínimo. No se cambia el catálogo
+# --seguimos sin creernos ninguno de los dos números-- pero si la duda
+# fuera cierta, queremos saberlo antes que la usuaria.
+_PLAUSIBLES_28 = {n: a for n, a in _al28.items() if a.get("valor_plausible")}
+if not _PLAUSIBLES_28:
+    fallos.append("BLOQUE28c-bis: ya no hay ningún alimento con `valor_plausible`. Era lo que "
+                  "permitía comprobar un dato dudoso en vez de solo anotarlo.")
+_MINIMOS_28 = {"cobre": 2.08, "zinc": 20.8}     # mg/1000 kcal, FEDIAF adulto
+for _n28, _a28 in _PLAUSIBLES_28.items():
+    for _peso28 in (5, 12, 25, 45):
+        _der28 = 70 * _peso28 ** 0.75 * 1.6
+        _ok28, _g28 = resolver(_der28, "Adulto", al, req, _peso28, dosis_maxima_fabricante,
+                               margenes_categoria=MARGENES, max_suplementos=2, forzar=[_n28])
+        if not _ok28:
+            continue
+        _gr28 = _g28[_n28]
+        for _k28, _plaus28 in _a28["valor_plausible"].items():
+            _min28 = _MINIMOS_28.get(_k28)
+            if not _min28:
+                continue
+            _menu28 = sum((al[_x]["nutrientes"].get(_k28) or 0) * _c / 100
+                          for _x, _c in _g28.items())
+            _declarado28 = (_a28["nutrientes"].get(_k28) or 0) * _gr28 / 100
+            _real28 = _menu28 - _declarado28 + _plaus28 * _gr28 / 100
+            _suelo28 = _min28 * _der28 / 1000
+            if _real28 < _suelo28:
+                fallos.append(
+                    f"BLOQUE28c-bis: forzando '{_n28}' en un perro de {_peso28} kg, el menú "
+                    f"declara {_menu28:.2f} mg de {_k28} pero si el valor dudoso es el que "
+                    f"creemos ({_plaus28} en vez de {_a28['nutrientes'].get(_k28)}) el menú "
+                    f"real tiene {_real28:.2f} y el mínimo del día es {_suelo28:.2f}. El motor "
+                    f"estaría dando por cubierto un {_k28} que no está, y saldría verde.")
+
 # ── 28d. El folato de las levaduras es de levadura de CERVEZA ─────────
 # Decía 2.340 µg, que es el valor del USDA para levadura de PANADERÍA
 # (FDC 175043). La de cerveza son 697 (CIQUAL 11009). Factor 3,4. Y un

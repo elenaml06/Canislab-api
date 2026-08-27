@@ -64,6 +64,21 @@ def verificar(menu, alimentos, req, der, etapa="Adulto"):
             f"Cuidado: las claves de der.py (adulto, cachorro_crecimiento...) "
             f"NO son las mismas que las de los requisitos.")
     perfil = perfil_nutricional(menu, alimentos)
+    # ⚠️ EL MISMO MENU SE MIDE DOS VECES, Y A PROPOSITO (27 agosto).
+    # `perfil` usa los valores DECLARADOS y sirve para los MAXIMOS.
+    # `perfil_min` sustituye los valores marcados como dudosos por su
+    # `valor_plausible` y sirve para los MINIMOS.
+    # El motivo, en una linea: un valor inflado protege contra el techo y
+    # desprotege contra el suelo, asi que no se puede usar el mismo para
+    # las dos cosas. Es el argumento de las cotas aplicado a un valor que
+    # si esta pero no nos creemos. El caso que lo provoco: el polvo de
+    # sangre declara 80 mg de cobre/100 g y la sangre desecada ronda 0,5;
+    # forzandolo en un perro de 25 kg el menu declaraba 8,31 mg de cobre y
+    # con el valor plausible se quedaba en 2,34 sobre un minimo de 2,60 --
+    # por debajo, y el semaforo en verde.
+    # Si ningun alimento del menu trae `valor_plausible`, los dos perfiles
+    # son identicos y esto no cambia absolutamente nada.
+    perfil_min = perfil_nutricional(menu, alimentos, conservador=True)
     escala = der / 1000.0
 
     faltan, se_pasa, correctos = [], [], []
@@ -72,11 +87,13 @@ def verificar(menu, alimentos, req, der, etapa="Adulto"):
         if not r:
             continue
         tiene = perfil.get(clave, 0.0)
+        tiene_min = perfil_min.get(clave, 0.0)     # con los dudosos a su valor plausible
         minimo = _num(r.get(f"min{etapa}"))
         maximo = _num(r.get(f"max{etapa}")) or _num(r.get("maxAdulto"))
 
         if minimo is not None:
             objetivo = minimo * escala
+            tiene = tiene_min
             # tolerancia de redondeo: los gramos se redondean a 1 decimal, y
             # eso puede dejar un nutriente al 99.7%. Decirle al usuario que
             # "falta" algo que esta al 99.7% es ruido, no informacion.
@@ -86,6 +103,7 @@ def verificar(menu, alimentos, req, der, etapa="Adulto"):
                                "cubre_pct": round(tiene / objetivo * 100) if objetivo else 0,
                                "falta": round(objetivo - tiene, 2)})
                 continue
+            tiene = perfil.get(clave, 0.0)         # para el maximo, el declarado
         if maximo is not None and tiene > maximo * escala * 1.001:
             se_pasa.append({"nutriente": nombre, "clave": clave,
                             "tiene": round(tiene, 2), "maximo": round(maximo * escala, 2),

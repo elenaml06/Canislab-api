@@ -357,8 +357,12 @@
    "yodo"
   ],
   "dato_dudoso": {
-   "cobre": "El VALOR NO SE TOCA: la etiqueta declara Kupfer 0,08% y la conversion a 80 mg/100 g es correcta. Pero la sangre bovina desecada ronda 0,3-0,6 mg/100 g: estamos unas 150 veces por encima. El hierro (280 mg/100 g) SI es coherente con sangre desecada, asi que el error no es de toda la fila. AniForte no publica tabla analitica. DIRECCION DEL ERROR: un cobre SOBREestimado es el lado seguro aqui, porque el maximo de cobre es restriccion dura del solver y se comprueba sobre esta misma cifra — el motor cree que aporta mas cobre del que aporta y lo usa MENOS. MEDIDO el 27 de agosto forzandolo: 2,88 mg de cobre en un perro de 12 kg, 6,00 en uno de 25 y 8,00 en uno de 45, siempre por debajo del tope FEDIAF del dia.",
-   "zinc": "Mismo caso y mismo orden de error: la sangre desecada ronda 2-5 mg/100 g y aqui hay 250. Ver `cobre`."
+   "cobre": "El VALOR NO SE TOCA: la etiqueta declara Kupfer 0,08% y la conversion a 80 mg/100 g es correcta. Pero la sangre bovina desecada ronda 0,3-0,6 mg/100 g: estamos unas 150 veces por encima. El hierro (280 mg/100 g) SI es coherente con sangre desecada, asi que el error no es de toda la fila. AniForte no publica tabla analitica. ⚠️ CORREGIDO EL 27 DE AGOSTO: aqui habia escrito que un cobre sobreestimado era 'el lado seguro porque el motor lo usa menos'. ESO ERA FALSO, y falso justo por el lado que importa: el cobre no es solo un techo, tiene SUELO -- 2,08 mg/1000 kcal de FEDIAF. Contra el techo, inflarlo protege; contra el suelo, hace que el motor CREA CUBIERTO un cobre que no esta. Es el mismo argumento de las cotas: un valor no puede ser conservador en las dos direcciones a la vez, y yo lo habia medido solo contra una. MEDIDO despues de la correccion: el solver NO lo elige nunca por su cuenta (0 de 27 menus automaticos, y 0 de 18 con hasta cinco especies excluidas), porque el higado cubre el cobre mucho mas barato. Forzandolo a mano en Personalizar, el cobre REAL del menu sigue por encima del minimo en los cuatro pesos probados, pero el margen baja al 8-11% -- y sin la cifra inflada el solver habria metido otra fuente. O sea: no muerde hoy, pero se come el margen.",
+   "zinc": "Mismo caso y mismo orden de error: la sangre desecada ronda 2-5 mg/100 g y aqui hay 250. Ver `cobre` para la correccion del 27 de agosto. MEDIDO igual: forzandolo, el zinc real del menu se queda entre un 25% y un 44% por encima del minimo, asi que aqui el margen aguanta mejor que en el cobre."
+  },
+  "valor_plausible": {
+   "cobre": 0.5,
+   "zinc": 3.5
   }
  },
  {
