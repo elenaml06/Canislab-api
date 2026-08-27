@@ -405,7 +405,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
 
     Devuelve (factible: bool, gramos: {nombre: g} o None).
     """
-    from accesibles import ACCESIBLES
+    from accesibles import ACCESIBLES, es_accesible
     from exclusiones import filtrar
 
     if cuantos_max is None:
@@ -555,8 +555,25 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                          for pat in (alimentos.get(n, {}).get("restricciones_patologia") or {}))]
 
         candidatos_por_cat[cat] = disp
-    candidatos_por_cat["Suplementos"] = [a["nombre"] for a in alimentos.values()
-                                        if a.get("categoria") in SUP_CATS]
+    # ⚠️ CORREGIDO (27 agosto) — LOS EXTRAS ENTRABAN TODOS, SIN FILTRO.
+    # Esta linea metia como candidato TODO lo que fuera de una categoria de
+    # SUP_CATS, y SUP_CATS incluye "Extras". Con 22 Extras en el catalogo
+    # daba igual: eran aceites, huevos y semillas, y todos tenian sentido.
+    #
+    # Con la carga del 27 de agosto los Extras pasan a 150 -- yogures,
+    # quesos frescos, frutos secos, aceites de colza y de maiz -- y muchos
+    # estan a proposito FUERA del menu automatico: un lacteo o un fruto
+    # seco no son cosa de una racion BARF que se genera sola, aunque en
+    # Personalizar tengan todo el sentido. Sin este filtro se colarian
+    # solos, y nadie lo habria visto porque el menu sale verde igual.
+    #
+    # Los SUPLEMENTOS comerciales siguen entrando todos: van topados por la
+    # dosis de su fabricante y por `max_suplementos`, que es su freno.
+    candidatos_por_cat["Suplementos"] = [
+        a["nombre"] for a in alimentos.values()
+        if a.get("categoria") in SUP_CATS
+        and (a.get("categoria") != "Extras" or es_accesible(a))
+        and a.get("preferente") != "no"]
 
     # ⚠️ REESCRITO (5 agosto, mañana): antes solo se EXCLUÍA "V-INTEGRA
     # Perro Adulto" fuera de esa etapa, sin ofrecer ninguna alternativa

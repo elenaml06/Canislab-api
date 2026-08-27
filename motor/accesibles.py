@@ -165,14 +165,73 @@ VERDURA = [
     "Albaricoque",
 ]
 
-ACCESIBLES = {
-    "Carne muscular": CARNE,
-    "Hueso carnoso": HUESO,
-    "Pescados y mariscos": PESCADO,
-    "Vísceras": VISCERAS,
-    "Hígado": HIGADO,
-    "Verduras y frutas": VERDURA,
-}
+# =====================================================================
+# ⚠️ REESCRITO (27 agosto): ACCESIBLES YA NO ES UNA LISTA A MANO
+# =====================================================================
+# Todo lo de arriba son las listas historicas, y se quedan SOLO como
+# documentacion de por que cada alimento estaba donde estaba. Ya no las
+# lee nadie.
+#
+# El motivo del cambio esta escrito en la cabecera de este mismo archivo:
+# "esta lista se desactualizo una vez (5 agosto): llevaba doce nombres de
+# alimentos que ya se habian quitado del catalogo y nadie la habia
+# tocado". Mientras la lista de lo que el motor puede usar viva en un
+# sitio distinto del catalogo, va a volver a desincronizarse -- y la
+# proxima vez tampoco habra nadie mirando.
+#
+# Ahora la marca vive EN LA FICHA DEL ALIMENTO, en el campo
+# `accesible_es`, y ACCESIBLES se construye leyendo el catalogo. No hay
+# dos sitios que mantener al dia, y anadir un alimento no puede olvidarse
+# de nada: si la ficha no dice `accesible_es`, no es accesible.
+#
+# Lo vigila el BLOQUE 31.
+import json as _json
+import os as _os
+
+_RAIZ = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..")
+
+
+def _construir_accesibles():
+    ruta = _os.path.join(_RAIZ, "alimentos_v3_final.json")
+    with open(ruta, encoding="utf-8") as f:
+        catalogo = _json.load(f)
+    salida = {}
+    for a in catalogo:
+        if a.get("accesible_es") != "si":
+            continue
+        # ⚠️ Y ADEMAS `preferente`: una ficha por PRODUCTO REAL, no una por
+        # entrada de tabla. Las catorce fichas de carne picada de vacuno
+        # (5%, 7%, 9%, 10%, 13%, 15%, 17%, 25%, 30%...) son un producto,
+        # no catorce. Metiendolas todas al solver no se gana ni un
+        # nutriente: se gana que elija una al azar entre catorce casi
+        # iguales, y que el problema sea mas grande sin motivo.
+        # Las demas siguen en el catalogo y en Personalizar, para quien
+        # quiera justo la del 5%.
+        if a.get("preferente") == "no":
+            continue
+        cat = a.get("categoria")
+        # Las categorias de suplemento y los Extras NO van aqui: el solver
+        # los mete por su propio camino (ver SUP_CATS en motor_completo).
+        # Aqui solo van las categorias de COMIDA que forman la plantilla.
+        if cat in ("Carne muscular", "Hueso carnoso", "Pescados y mariscos",
+                   "Vísceras", "Hígado", "Verduras y frutas"):
+            salida.setdefault(cat, []).append(a["nombre"])
+    return salida
+
+
+ACCESIBLES = _construir_accesibles()
+
+
+def es_accesible(alimento):
+    """Si el motor puede usar este alimento en un menu AUTOMATICO.
+
+    Sirve para las categorias que no pasan por ACCESIBLES -- los Extras y
+    los suplementos -- que hasta el 27 de agosto entraban TODOS sin
+    filtro. Con 22 Extras daba igual; con 150 ya no: los lacteos y los
+    frutos secos que entraron con la carga estan a proposito fuera del
+    menu automatico, y sin esto se colarian solos.
+    """
+    return (alimento or {}).get("accesible_es") == "si"
 
 
 def disponibles(alimentos, excluidos=None):

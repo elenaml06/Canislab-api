@@ -3166,7 +3166,7 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "eb05a8dd5f522368",   # 27 ago (6): fuera los cinco suplementos cuyo dato no se sostiene (las dos harinas de hueso por un fosforo quimicamente imposible, el kelp por un yodo que varia 100x, y Pets Purest y Brit Care por un EPA/DHA que solo esta en fichas de marketing). 165 -> 160 alimentos, 26 -> 21 suplementos, y ninguna categoria se queda sin cubrir. El polvo de sangre se queda -- su hierro si es coherente -- con el cobre y el cinc vaciados a sin_dato
+        "alimentos_v3_final.json":      "9938e50e4bfd2ff3",   # 27 ago (7): LA CARGA. 160 -> 477 alimentos: 119 actualizaciones (sin pisar las 289 celdas con fuente escrita) y 317 altas de BEDCA, CIQUAL, USDA y FINELI. Cada ficha lleva ahora `accesible_es`, `preferente` y `en_selector`, que es lo que decide donde acaba: 197 en el menu automatico, 378 en el selector, 99 solo como dato
         "requerimientos_v2_final.json": "9eb5b660a3c725d0",   # 26 ago: los 12 aminoácidos esenciales de la Tabla III-3b, con sus mínimos y el máximo de lisina en crecimiento. Están en el JSON pero NO en verificar.MAPA todavía: ningún alimento del catálogo trae el dato, así que activarlos hoy dejaría al motor sin menús. Ver el BLOQUE 27
     }
     SELLOS_CRUDOS = {
@@ -3296,6 +3296,17 @@ def listar_alimentos():
     from especies import cargar_alimentos as _ca
     por_cat = {}
     for a in _ca():
+        # ⚠️ AÑADIDO (27 agosto): solo lo que va al selector. La carga metió
+        # 99 alimentos en el catálogo que están ahí por su DATO y no para
+        # que nadie los elija -- fichas que traen los 12 aminoácidos, la
+        # colina o el cloruro, que casi nadie mide, y que sirven de
+        # referencia. Enseñarlos convertiría la pantalla de Personalizar en
+        # una tabla de composición: 477 nombres con veinte cortes de ternera
+        # americanos y ocho quesos frescos franceses.
+        # Los 160 de antes de la carga llevan `en_selector` en True, así que
+        # esto no quita nada de lo que ya se veía.
+        if a.get("en_selector") is False:
+            continue
         por_cat.setdefault(a["categoria"], []).append({
             "nombre": a["nombre"],
             "kcal_100g": a["energia"],
