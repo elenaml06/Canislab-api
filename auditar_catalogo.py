@@ -40,6 +40,19 @@ def nut(a, k): return (a.get("nutrientes") or {}).get(k, 0) or 0
 def es_grasa(a): return nut(a, "grasa") > 80          # aceites: sus ceros son reales
 SUPLEMENTOS = ("Multivitamínico", "Vitamina B", "Hierro", "Calcio", "Yodo", "Fibra", "Omega-3")
 
+def _envolver(texto, ancho):
+    """Parte un texto largo en lineas, para que la lista de marcas se pueda leer."""
+    palabras, lineas, actual = texto.split(), [], ""
+    for w in palabras:
+        if len(actual) + len(w) + 1 > ancho:
+            lineas.append(actual); actual = w
+        else:
+            actual = (actual + " " + w).strip()
+    if actual:
+        lineas.append(actual)
+    return lineas
+
+
 avisos = []
 
 # ── 1. coherencia energética ──────────────────────────────────────────
@@ -62,6 +75,148 @@ for a in al:
         avisos.append(("HUECOS", a["nombre"],
                        f"{len(sin_declarar)} nutrientes a cero sin declarar en sin_dato: "
                        + ", ".join(sin_declarar[:8]) + ("…" if len(sin_declarar) > 8 else "")))
+
+# ── 2b. OMEGA-6 CONTRA OMEGA-3: los dos que se llaman casi igual ──────
+#
+# `linoleico` es omega-6 (C18:2) y `linolenico` es omega-3 (C18:3). Se
+# diferencian en una letra y son cosas opuestas. Si alguien los cambia al
+# cargar una tabla, NADA salta: los dos son nutrientes validos y los dos
+# valores son plausibles, asi que el menu sale verde igual y el motor cree
+# que equilibra el omega-3 con un aceite que no lo tiene.
+#
+# En la comida de verdad el omega-6 casi siempre gana, porque el omega-3
+# de cadena corta esta concentrado en muy pocos alimentos. Que el omega-3
+# supere al omega-6 no es un error -- pasa en el lino, en los aceites de
+# salmon y en algun pescado magro -- pero es raro, y una lista corta se
+# puede repasar a ojo. Si un dia esa lista se llena, es que se han
+# invertido las columnas.
+for a in al:
+    n = a.get("nutrientes") or {}
+    w6, w3 = n.get("linoleico") or 0, n.get("linolenico") or 0
+    if w3 > w6 and (w6 or w3):
+        avisos.append(("OMEGA", a["nombre"],
+                       f"omega-3 ({w3} g) por encima del omega-6 ({w6} g). Es posible, pero "
+                       f"revisa que no esten cambiados: linoleico=omega-6, linolenico=omega-3"))
+
+# ── 2c. LOS GRASOS TIENEN QUE CABER DENTRO DE LA GRASA ────────────────
+#
+# El linoleico, el linolenico, el EPA y el DHA son PARTES de la grasa
+# total, asi que sumados no pueden pasarse de ella. Es una ley fisica, no
+# un criterio: si se pasan, el dato esta mal.
+#
+# Esto existe por la trampa de las unidades, que es la que mas se cuela:
+# casi todas las tablas de composicion dan el EPA y el DHA en MILIGRAMOS y
+# nosotros los guardamos en GRAMOS. Cargar la sardina con epa=254 en vez
+# de 0.254 pondria 930 g de acidos grasos dentro de 7,5 g de grasa --
+# imposible, y hasta ahora nada lo miraba. El menu habria salido verde: el
+# EPA+DHA es un nutriente con minimo, y pasarse de largo no lo rompe.
+#
+# El araquidonico va en mg a proposito (asi lo da FEDIAF), por eso se
+# divide entre 1000 antes de sumarlo.
+#
+# Margen del 5%: los valores vienen de fuentes distintas y de analisis
+# distintos, asi que un pelo por encima no es un error de carga.
+for a in al:
+    n = a.get("nutrientes") or {}
+    grasa = n.get("grasa") or 0
+    if not grasa:
+        continue
+    suma = sum(n.get(k) or 0 for k in ("linoleico", "linolenico", "epa", "dha"))
+    suma += (n.get("araquidonico") or 0) / 1000.0
+    if suma > grasa * 1.05 and suma - grasa > 0.05:
+        avisos.append(("GRASOS", a["nombre"],
+                       f"los acidos grasos suman {suma:.2f} g y la grasa total es {grasa} g. "
+                       f"No caben. Lo mas probable: EPA/DHA cargados en mg en vez de g"))
+
+# ── 2d. DATO DUDOSO: el valor que SI esta y no nos lo creemos ─────────
+#
+# `sin_dato` marca los HUECOS, y los huecos son peligrosos por el lado del
+# maximo. Pero un valor DECLARADO Y ERRONEO no dejaba rastro en ninguna
+# parte, y es peor: tiene la forma de un dato bueno, asi que pasa cualquier
+# validacion de formato.
+#
+# ⚠️ CASO REAL (27 agosto): tres a la vez, los tres de etiquetas reales.
+# El omega-3 TOTAL de cuatro aceites de salmon guardado en `linolenico`
+# (que es solo el ALA: el EPA y el DHA se contaban dos veces); el fosforo
+# de las dos harinas de hueso, con un Ca:P de 1,28 cuando la hidroxiapatita
+# da 2,15 por estequiometria; y el cobre del polvo de sangre, 150 veces por
+# encima de lo que tiene la sangre desecada. Los tres pasaban las cuatro
+# comprobaciones de arriba. Entraron por columnas cuyo nombre se parece al
+# de la etiqueta lo bastante como para que nadie mire.
+#
+# Los que se pudieron arreglar, se arreglaron. Los que no —porque el valor
+# es el de la etiqueta y el real no esta publicado— llevan `dato_dudoso`,
+# y esto los lista para que nadie los olvide.
+for a in al:
+    for k, d in (a.get("dato_dudoso") or {}).items():
+        valor = (a.get("nutrientes") or {}).get(k)
+        avisos.append(("DUDOSO", a["nombre"],
+                       f"{k}={valor} declarado pero no creible. {d.get('motivo','')[:150]}"))
+
+# ── 2e. EL CERO BIOLOGICAMENTE IMPOSIBLE ──────────────────────────────
+#
+# La comprobacion 2 pilla los ceros SIN DECLARAR contandolos en bloque
+# (10 o mas). Se le escapaban los sueltos, y los sueltos son los que hacen
+# dano: un higado sin fosforo pasa desapercibido entre 30 valores buenos.
+#
+# ⚠️ CASO REAL ENCONTRADO (27 agosto): `Testículos de cordero` tenia 30 de
+# sus 31 nutrientes a cero, `sin_dato` VACIO y 68 kcal con proteina 0 y
+# grasa 0 -- la fila se contradecia sola, porque esa energia no puede salir
+# de ningun sitio. Para el solver era una fuente de vitamina B12 que no
+# costaba nada en ningun otro presupuesto, y MEDIDO la usaba en 2 de cada
+# 24 menus automaticos, uno con 90,5 gramos. Cada uno de esos gramos dejaba
+# la racion corta de todo lo demas, y el semaforo salia VERDE porque
+# verifica contra estos mismos datos. El alimento se quito del catalogo.
+#
+# El criterio, que no necesita ninguna fuente externa: un cero solo es
+# creible si algun alimento de esa familia puede tenerlo de verdad.
+CLAVES_TEJIDO = ("potasio", "fosforo", "magnesio", "sodio", "cloruro",
+                 "hierro", "zinc", "proteina")
+ANIMAL = ("Carne muscular", "Vísceras", "Hígado", "Pescados y mariscos", "Hueso carnoso")
+for a in al:
+    if a.get("categoria") not in ANIMAL:
+        continue
+    n = a.get("nutrientes") or {}
+    sd = set(a.get("sin_dato") or [])
+    malos = [k for k in CLAVES_TEJIDO + ("vitB12",) if not nut(a, k) and k not in sd]
+    if malos:
+        avisos.append(("CERO0", a["nombre"],
+                       f"tejido animal con {', '.join(malos)} a cero y sin declarar. "
+                       f"Un tejido no tiene NUNCA esos a cero; si no lo sabemos, va en sin_dato"))
+    # y la energia de un alimento animal solo puede venir de sus macros:
+    # no hay hidratos que la expliquen, como si pasa en la fruta
+    e = a.get("energia") or 0
+    calc = 4 * nut(a, "proteina") + 9 * nut(a, "grasa")
+    if e > 20 and calc < e * 0.35:
+        avisos.append(("CERO0", a["nombre"],
+                       f"declara {e} kcal pero sus macros solo dan {calc:.0f}. En un alimento "
+                       f"animal no hay hidratos que expliquen la diferencia: la fila se "
+                       f"contradice sola y el motor la usaria creyendola vacia"))
+
+# ── 2f. EL CLORURO NO ES UNA MEDIDA, ES EL SODIO x 1,542 ──────────────
+#
+# Encontrado el 27 de agosto revisando la carga: en la inmensa mayoria de
+# las filas con los dos valores, `cloruro` = `sodio` x 1,542 EXACTO, que es
+# la razon entre los pesos atomicos del cloro y del sodio. O sea que la
+# columna no es un analisis: es el sodio reescrito SUPONIENDO que todo el
+# sodio del alimento viene de sal comun.
+#
+# En tejido animal la suposicion se sostiene a medias. En VEGETALES es
+# sistematicamente falsa, porque el cloruro de la planta va sobre todo con
+# potasio y no con sodio -- CIQUAL, que si lo analiza, da 61 mg para el
+# champinon donde la derivacion da 7,7, y 45 para los canonigos donde da
+# 6,2. Factores de 6x a 8x.
+#
+# No se corrige aqui porque cambiar la columna entera es una decision, no
+# un arreglo. Esto solo impide que se olvide lo que es.
+_der = [a["nombre"] for a in al
+        if nut(a, "sodio") and nut(a, "cloruro")
+        and abs(nut(a, "cloruro") / nut(a, "sodio") - 1.542) < 0.005]
+if _der:
+    avisos.append(("CLORURO", "(columna entera)",
+                   f"{len(_der)} alimentos tienen cloruro = sodio x 1,542 exacto. La columna "
+                   f"es una DERIVACION del sodio, no una medida, y en vegetales es falsa "
+                   f"(CIQUAL mide 6-8 veces mas). Decidido dejarla asi por ahora"))
 
 # ── 3. plausibilidad por categoría ────────────────────────────────────
 for a in al:
@@ -109,6 +264,67 @@ if sin_verificar:
 print()
 print("═" * 74)
 print("AVISOS: %d" % len(avisos))
+# ⚠️ DOS ESPACIOS ENTRE EL NOMBRE Y EL DETALLE, Y EL NOMBRE SIN CORTAR.
+# CASO REAL (26 agosto): esto era "%-34s %s" con nombre[:34], y el BLOQUE
+# 19 lee cada línea con una expresión que separa el nombre del detalle por
+# DOS espacios seguidos. Con un nombre de 34 caracteres justos, el relleno
+# no añadía nada y solo quedaba el espacio del formato: el aviso de
+# "Aceite de Salmón Natural Greatness" se leía mal, y el BLOQUE 19 decía
+# que ese hueco había desaparecido cuando seguía ahí. Hay cinco alimentos
+# con nombres de 34 o más -- y el corte a 34 además perdía el final de los
+# de 38, así que dos alimentos distintos podían leerse como el mismo.
 for tipo, nombre, det in avisos:
-    print("  [%-6s] %-34s %s" % (tipo, nombre[:34], det))
+    print("  [%-6s] %-34s  %s" % (tipo, nombre, det))
+# =====================================================================
+# LAS MARCAS ABIERTAS, DE LA MAS VIEJA A LA MAS NUEVA
+# =====================================================================
+#
+# Esto NO es un aviso mas: es la unica parte de la auditoria que no
+# pregunta "¿esta el dato mal?" sino "¿sigue alguien intentando
+# arreglarlo?". Y son dos preguntas distintas.
+#
+# La diferencia entre un aviso conocido y un `dato_dudoso` es de quien es
+# la pelota. Un aviso conocido es un juicio CERRADO -- "lo miramos y esta
+# bien". Un `dato_dudoso` es un juicio ABIERTO con una accion externa
+# pegada: llamar a AniForte, llamar a GRAU, partir la ficha del sesamo.
+# Ninguna ejecucion de la bateria va a hacer que AniForte coja el
+# telefono.
+#
+# ⚠️ Y POR QUE NO ES UN TEST QUE SE PONGA ROJO A LOS 30 DIAS, que fue lo
+# primero que se penso: un rojo que salta por el calendario es un rojo que
+# nadie ha provocado, y lo que se aprende de el es a silenciarlo -- subir
+# la fecha sin mirar es el mismo gesto de no revisar, con un paso mas de
+# burocracia. Es exactamente el fallo del BLOQUE 19 otra vez: el aviso de
+# los cuatro aceites sono en CADA ejecucion durante un mes y nadie
+# pregunto por que. Un aviso que suena solo no arregla nada.
+# Asi que sin umbral, sin rojo y sin fecha que subir: solo la lista, con
+# los dias al lado y ordenada de mas vieja a mas nueva, para que se vuelva
+# incomoda de leer sola.
+import datetime as _dt
+_abiertas = []
+for a in al:
+    for k, d in (a.get("dato_dudoso") or {}).items():
+        desde = d.get("desde")
+        try:
+            dias = (_dt.date.today() - _dt.date.fromisoformat(desde)).days
+        except (TypeError, ValueError):
+            dias = None
+        _abiertas.append((dias if dias is not None else -1, a["nombre"], k, desde,
+                          d.get("resolver", "(sin decir que la resolveria)")))
+if _abiertas:
+    _abiertas.sort(reverse=True)
+    print()
+    print("MARCAS DE DATO DUDOSO ABIERTAS — de la mas vieja a la mas nueva")
+    print("(no son fallos: son datos que sabemos malos y que solo se cierran desde fuera)")
+    for dias, nombre, k, desde, resolver in _abiertas:
+        cuanto = f"{dias} dias" if dias >= 0 else "fecha sin poner"
+        print()
+        print(f"  [{cuanto:>14}]  {nombre} · {k}   (desde {desde})")
+        for linea in _envolver(resolver, 74):
+            print(f"                    {linea}")
+    print()
+    print(f"  {len(_abiertas)} marcas abiertas. Cada una necesita que alguien haga algo FUERA")
+    print("  de este repositorio: una llamada, una ficha tecnica, una carga de datos.")
+
+
 sys.exit(1 if any(t == "BASE" for t, _, _ in avisos) else 0)

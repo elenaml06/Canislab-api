@@ -3166,8 +3166,8 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "fda1fd1f9ed5f2aa",   # 26 ago: fuente declarada en los pescados, y el araquidónico de las yemas y del hígado de cordero marcado como HUECO en vez de cero (un 0 ahí no puede ser real: la yema es la fuente más rica que hay). Solo metadatos, ningún número
-        "requerimientos_v2_final.json": "1fd28648076cdc7e",   # 26 ago: fuera el maxAdulto de EPA+DHA -- el techo de 2800 es de la dieta crónica y vive en el promedio semanal, no por menú. Corregido el recuento de la nota: son 18 de 20 pescados, no 19
+        "alimentos_v3_final.json":      "853098e94ef279fe",   # 27 ago (5): las marcas dudosas llevan ahora `motivo`, `resolver` y `desde`, y los `valor_plausible` llevan su fuente y su banda. El cobre del polvo de sangre pasa de 0,5 a 0,85 y el cinc de 3,5 a 2,3 (Feedipedia node 221 / INRA-CIRAD-AFZ): el cinc iba un 50% alto, y un plausible alto ablanda justo la prueba del suelo, que es para lo unico que sirve
+        "requerimientos_v2_final.json": "9eb5b660a3c725d0",   # 26 ago: los 12 aminoácidos esenciales de la Tabla III-3b, con sus mínimos y el máximo de lisina en crecimiento. Están en el JSON pero NO en verificar.MAPA todavía: ningún alimento del catálogo trae el dato, así que activarlos hoy dejaría al motor sin menús. Ver el BLOQUE 27
     }
     SELLOS_CRUDOS = {
         "der.py": "1c5c8bb91ceac481",

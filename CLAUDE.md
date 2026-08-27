@@ -80,13 +80,14 @@ jubilado — que desde fuera se parecen mucho.
 | `constructor.py` | Proporciones BARF de partida y `valor_nutriente()` (las claves derivadas, como `epa_dha`) |
 | `exclusiones.py` | Alergias por palabras y familias de especie. Excluir «pollo» quita también «gallina» |
 | `accesibles.py`, `modos.py` | Qué alimentos entran según el modo (automático / personalizar / aprovechar) |
-| `catalogo_menus.py` | Menús precalculados para la vista previa. **3.081 líneas de datos**, no de lógica |
+| `catalogo_menus.py` | Carga los menús precalculados de la vista previa. Los datos están en `catalogo_menus.json`, en la raíz con los demás: aquí solo quedan 55 líneas de código |
 
 ### La API (raíz)
 
 | Archivo | Qué hace |
 |---|---|
 | `main.py` | FastAPI: todos los endpoints, el presupuesto semanal de seguridad crónica y `_garantizar_verificado()`, por donde pasa **todo** menú antes de salir |
+| `requerimientos_v2_final.json` | Los requisitos de FEDIAF. **43 filas** desde el 26 de agosto: los 29 nutrientes que el motor verifica, el ratio Ca:P, el calcio de raza grande, y **los 12 aminoácidos esenciales, que están puestos y auditados pero TODAVÍA NO SE VERIFICAN** — ver abajo |
 | `requisitos.py` | Cargar la tabla de FEDIAF, resolver la etapa y la dosis máxima que marca el fabricante de cada suplemento. Era `optimizador.py`, 1.124 líneas donde esto convivía con el motor anterior al MILP y con una copia desincronizada de la tabla de patologías. El motor viejo se borró el 26 de agosto; quedan 121 líneas |
 | `der.py` | Cálculo de las kcal. ⚠️ Ver «la duplicación que hay que vigilar», abajo |
 | `analizador.py` | `/analizar`: la dieta que ya le da el dueño. Comparte `MAPA` con el semáforo a propósito — discreparon una vez por la fibra |
@@ -116,6 +117,29 @@ grasa siempre, y urato, cistinuria y «otra» sin existir. No llegó a dar
 menús malos porque `_garantizar_verificado()` los habría rechazado — que es
 otra forma de decir que ese camino construía menús que el filtro final iba
 a tirar. El BLOQUE 24 vigila que no vuelva.
+
+### Los 12 aminoácidos: puestos, auditados y sin activar
+
+La Tabla III-3b de FEDIAF pide **41 nutrientes** para el perro y el motor
+verifica **29**. Lo que falta son los doce aminoácidos esenciales, que
+están en la tabla desde siempre, entre `Protein` y `Fat`. La transcripción
+de `auditar_fediaf.py` se los había saltado, así que la auditoría decía que
+cubríamos la tabla entera cuando cubríamos siete de cada diez filas.
+
+Desde el 26 de agosto están en `requerimientos_v2_final.json` con sus 48
+valores, y la auditoría los comprueba contra el PDF: **232 comprobaciones,
+0 discrepancias**, frente a las 161 de antes.
+
+**Pero no están en `verificar.MAPA`, y eso es a propósito**: ninguno de los
+166 alimentos del catálogo trae dato de aminoácidos. Medido activando solo
+la lisina: **la app deja de dar menús**, porque cada alimento cuenta como
+cero y el mínimo se vuelve inalcanzable. Y si algunos sí tuvieran el dato,
+sería peor todavía — el motor se iría hacia ellos, y eso es un sesgo que no
+se ve.
+
+El día que el catálogo traiga aminoácidos hay que activarlos. Lo vigila el
+**BLOQUE 27**, que salta por los dos lados: si alguien borra las filas, y
+si alguien las activa antes de que haya datos.
 
 ### La duplicación que hay que vigilar
 
@@ -157,6 +181,45 @@ asistente**. `Bases.md` y `Ya_probado.md` son de las primeras sesiones:
 decisiones cerradas y callejones sin salida ya recorridos, léelos antes de
 proponer un cambio grande. `CAMBIOS_DE_DATOS_REVERTIDOS.md` explica por qué
 se deshicieron unos cambios de datos del 21 de agosto.
+
+### Los datos
+
+**`UNIDADES.md` es lo primero que hay que leer antes de tocar el catálogo**:
+en qué unidad va cada uno de los 29 nutrientes, sobre qué base (100 g de
+alimento tal cual se da) y las cuatro trampas que se cuelan siempre. La
+peor, la primera del documento: `linoleico` es **omega-6** y `linolenico`
+es **omega-3**. Se diferencian en una letra, son cosas opuestas, y si se
+cargan cambiados no salta nada — los dos son nutrientes válidos con
+valores plausibles, y el menú sale verde igual. Lo vigilan el BLOQUE 26,
+que ancla el aceite de girasol y el de linaza, y `auditar_catalogo.py`,
+que lista los nueve alimentos donde el omega-3 supera al omega-6.
+
+**Los dos campos que dicen qué NO nos creemos.** Un 0 en el catálogo puede
+ser «no lo tiene» o «no lo sabemos», y eso lo separa `sin_dato`. Pero falta
+la otra mitad: **un valor declarado y erróneo no dejaba rastro en ninguna
+parte**, y es el que hace daño, porque tiene la forma de un dato bueno y
+pasa cualquier validación de formato. El 27 de agosto salieron tres a la
+vez, los tres de etiquetas reales: el **omega-3 total** de cuatro aceites
+de salmón metido en `linolenico` —que es solo el ALA, así que el EPA y el
+DHA se contaban dos veces—, el **fósforo** de las dos harinas de hueso, con
+un Ca:P de 1,28 cuando la hidroxiapatita da 2,15 por estequiometría, y el
+**cobre** del polvo de sangre, 150 veces por encima de lo que tiene la
+sangre desecada. Los tres entraron por lo mismo: el nombre de la columna se
+parecía al de la etiqueta lo bastante como para que nadie mirara. Lo que se
+puede arreglar se arregla; lo que no —porque el valor es el de la etiqueta
+y el real no está publicado— va en **`dato_dudoso`**, que `verificar()`
+devuelve junto al menú igual que los huecos. Lo vigila el BLOQUE 28.
+
+En la raíz, los cuatro: `alimentos_v3_final.json` (el catálogo),
+`requerimientos_v2_final.json` (la tabla de FEDIAF), `catalogo_menus.json`
+(los 36 menús precalculados de la vista previa y sus 180 variantes) y
+`der_casos.json` (el contrato del DER, ver arriba).
+
+Los dos primeros llevan **sello** en `/verificar`: si cambian sin que se
+actualice el hash en `main.py`, la API lo dice. Los otros dos no, y es a
+propósito — un menú del catálogo corrupto lo rechaza
+`_garantizar_verificado()` igual que cualquier otro, y el contrato del DER
+se comprueba entero en cada batería.
 
 ## Cómo se prueba
 

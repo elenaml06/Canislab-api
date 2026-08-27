@@ -1,7 +1,7 @@
 # Rawku — lo que queda por hacer
 
 Lista viva. Se actualiza al terminar cada cosa, no al final.
-Última revisión: 24 de agosto de 2026.
+Última revisión: 27 de agosto de 2026.
 
 El orden **no** es por lo que parece más urgente, sino por lo que
 desbloquea al resto y por lo que cuesta más caro si sale mal. Cobrar dos
@@ -163,6 +163,44 @@ las tiene que tomar una persona, no yo.
 ---
 
 ## 1. Urgente — dinero y salud
+
+### 1.0 `/menu/varios-perros` devuelve a veces 1 menú en vez de 3
+
+Encontrado el 27 de agosto **por la batería**, no por la app. La casa de
+dos perros (un cachorro joven de 12 kg y una adulta de 24,5 kg) pidiendo
+3 menús devolvió **1 menú para cada uno**, sin error y sin aviso.
+
+**Está sin arreglar a propósito**, y esto es lo medido para que quien lo
+retome no repita el camino:
+
+- **No es del cambio de `valor_plausible`**: 12 tandas con él y 12 sin él,
+  **0 fallos en las dos**, y la versión con él iba más rápida (9,3 s
+  contra 10,5).
+- **No es el tiempo global**: la petición que falló tardó **10,9 s de los
+  30** que tiene antes de que Render corte.
+- **NO es la rotación de proteína, y esto está medido, no supuesto.** Era
+  mi hipótesis: `especies_usadas` va acumulando las especies de los menús
+  anteriores, así que el segundo menú podría quedarse sin candidatos en
+  una categoría con mínimo obligatorio. Escribí el arreglo (reintentar sin
+  la rotación antes de rendirse, que además sería correcto por la regla 3
+  de CLAUDE.md: rotar proteína es forma, no nutrición). Luego lo medí:
+  **en 25 tiradas la rotación no deja infactible ni un solo menú 2**. El
+  arreglo se retiró.
+- **En aislado no reproduce**: 24 tandas más del caso exacto, 0 fallos, y
+  0 llamadas internas infactibles instrumentando `_resolver_menu_v2_interno`.
+
+Apareció **dos veces, las dos con la máquina cargada**: una dentro de la
+batería completa (después de diez bloques de solver) y otra en una tirada
+suelta al principio de todo. Eso apunta al presupuesto de segundos **por
+llamada** (`segundos_para`), no al global — y Render va más lento que la
+máquina de desarrollo, así que ahí se verá antes.
+
+**Por dónde seguir**: instrumentar `generar()` bajo carga artificial y
+mirar qué devuelve `_resolver_menu_v2_interno` cuando el menú 2 del perro
+base sale infactible. La pregunta concreta es si se está quedando sin su
+rodaja de tiempo o si es otra cosa. Y ojo con el corte: hoy, si el menú j
+del perro base falla **una vez**, se hace `break` y **toda la casa se
+queda con los menús que ya tenía** — no hay reintento de ningún tipo.
 
 ### 1.1 Nadie debería poder suscribirse dos veces
 Encontrado el 20 de agosto probando: se crearon **seis suscripciones

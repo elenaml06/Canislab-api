@@ -120,7 +120,22 @@ VISCERAS = [
     # fuente cada uno) dan variedad real sin inventar ninguna cifra.
     "Bazo de vaca", "Páncreas de vaca",
     "Bazo de cordero", 
-    "Timo de ternera", "Cerebro de ternera", "Testículos de cordero",
+    "Timo de ternera", "Cerebro de ternera",
+    # ⚠️ QUITADO "Testículos de cordero" (27 agosto). Estaba aqui desde el
+    # 21 de agosto "con datos USDA reales", y esa frase era la que fallaba:
+    # de sus 31 nutrientes, 30 estaban a CERO. Solo tenia la vitamina B12
+    # -- 9,89 ug, de las mas altas del catalogo -- y 68 kcal con proteina 0
+    # y grasa 0, o sea una fila que se contradice a si misma, porque esa
+    # energia no puede salir de ningun sitio.
+    # Para el solver era vitamina B12 GRATIS: no costaba nada en ningun
+    # otro presupuesto. MEDIDO antes de quitarlo: salia en 2 de cada 24
+    # menus automaticos, uno de ellos con 90,5 gramos, y cada uno de esos
+    # gramos dejaba la racion corta de todo lo demas con el semaforo en
+    # VERDE, porque el semaforo verifica contra estos mismos datos.
+    # Ninguna de las dos defensas lo veia: `sin_dato` estaba vacio, asi que
+    # no salia en `datos_incompletos`, y la ficha estaba "documentada", asi
+    # que la regla de no sobrescribir lo documentado la protegia.
+    # Si vuelve algun dia, que vuelva con datos. Lo vigila el BLOQUE 29.
 ]
 
 # ⚠️ AMPLIADO (21 agosto) — el hígado era el cuello de botella medido por

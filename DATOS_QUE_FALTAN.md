@@ -42,6 +42,12 @@ Todos los valores van **por 100 g de alimento tal cual se da** (fresco, no
 materia seca), en la unidad que indica cada columna. La energía tiene que
 cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 
+**Antes de rellenar nada, mira `UNIDADES.md`**: están las unidades de los
+29 nutrientes y las cuatro trampas que se cuelan siempre. En concreto, EPA
+y DHA van en gramos aunque las tablas los den en miligramos, y `linoleico`
+(omega-6) y `linolenico` (omega-3) se diferencian en una letra y son cosas
+opuestas.
+
 ---
 
 ## Testículos de cordero  ·  _Vísceras_
@@ -61,8 +67,8 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 | fosforo | mg | |
 | grasa | g | |
 | hierro | mg | |
-| linoleico | g | |
-| linolenico | g | |
+| linoleico (omega-6, C18:2) | g | |
+| linolenico (omega-3, C18:3) | g | |
 | magnesio | mg | |
 | manganeso | mg | |
 | niacina | mg | |
@@ -94,8 +100,8 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 | folato | µg | |
 | fosforo | mg | |
 | hierro | mg | |
-| linoleico | g | |
-| linolenico | g | |
+| linoleico (omega-6, C18:2) | g | |
+| linolenico (omega-3, C18:3) | g | |
 | magnesio | mg | |
 | manganeso | mg | |
 | niacina | mg | |
@@ -262,8 +268,8 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 | fibra | g | |
 | folato | µg | |
 | fosforo | mg | |
-| linoleico | g | |
-| linolenico | g | |
+| linoleico (omega-6, C18:2) | g | |
+| linolenico (omega-3, C18:3) | g | |
 | magnesio | mg | |
 | manganeso | mg | |
 | niacina | mg | |
@@ -288,8 +294,8 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 | epa | g | |
 | fibra | g | |
 | folato | µg | |
-| linoleico | g | |
-| linolenico | g | |
+| linoleico (omega-6, C18:2) | g | |
+| linolenico (omega-3, C18:3) | g | |
 | manganeso | mg | |
 | niacina | mg | |
 | riboflavina | mg | |
@@ -383,8 +389,8 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 | epa | g | |
 | fibra | g | |
 | folato | µg | |
-| linoleico | g | |
-| linolenico | g | |
+| linoleico (omega-6, C18:2) | g | |
+| linolenico (omega-3, C18:3) | g | |
 | selenio | µg | |
 | vitA | µg | |
 | vitD | µg | |
@@ -422,8 +428,8 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 | epa | g | |
 | fibra | g | |
 | folato | µg | |
-| linoleico | g | |
-| linolenico | g | |
+| linoleico (omega-6, C18:2) | g | |
+| linolenico (omega-3, C18:3) | g | |
 | vitA | µg | |
 | vitD | µg | |
 | vitE | mg | |
@@ -464,8 +470,8 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 |---|---|---|
 | araquidonico | mg | |
 | grasa | g | |
-| linoleico | g | |
-| linolenico | g | |
+| linoleico (omega-6, C18:2) | g | |
+| linolenico (omega-3, C18:3) | g | |
 | vitA | µg | |
 | vitD | µg | |
 | vitE | mg | |
@@ -476,7 +482,7 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 |---|---|---|
 | araquidonico | mg | |
 | grasa | g | |
-| linoleico | g | |
+| linoleico (omega-6, C18:2) | g | |
 | vitA | µg | |
 | vitD | µg | |
 | vitE | mg | |
@@ -540,8 +546,8 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 | araquidonico | mg | |
 | dha | g | |
 | epa | g | |
-| linoleico | g | |
-| linolenico | g | |
+| linoleico (omega-6, C18:2) | g | |
+| linolenico (omega-3, C18:3) | g | |
 
 ## Ternera con grasa  ·  _Carne muscular_
 
@@ -550,8 +556,8 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 | araquidonico | mg | |
 | dha | g | |
 | epa | g | |
-| linoleico | g | |
-| linolenico | g | |
+| linoleico (omega-6, C18:2) | g | |
+| linolenico (omega-3, C18:3) | g | |
 
 ## Lomo de ternera con grasa  ·  _Carne muscular_
 
@@ -560,8 +566,8 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 | araquidonico | mg | |
 | dha | g | |
 | epa | g | |
-| linoleico | g | |
-| linolenico | g | |
+| linoleico (omega-6, C18:2) | g | |
+| linolenico (omega-3, C18:3) | g | |
 
 ## Pecho de ternera con hueso  ·  _Hueso carnoso_
 
@@ -570,8 +576,8 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 | araquidonico | mg | |
 | dha | g | |
 | epa | g | |
-| linoleico | g | |
-| linolenico | g | |
+| linoleico (omega-6, C18:2) | g | |
+| linolenico (omega-3, C18:3) | g | |
 
 ## Cuello de ternera  ·  _Hueso carnoso_
 
@@ -580,8 +586,8 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 | araquidonico | mg | |
 | dha | g | |
 | epa | g | |
-| linoleico | g | |
-| linolenico | g | |
+| linoleico (omega-6, C18:2) | g | |
+| linolenico (omega-3, C18:3) | g | |
 
 ## Laringe de vacuno  ·  _Hueso carnoso_
 
@@ -590,8 +596,8 @@ cuadrar con los macros: si no, es que la fuente estaba en materia seca.
 | araquidonico | mg | |
 | dha | g | |
 | epa | g | |
-| linoleico | g | |
-| linolenico | g | |
+| linoleico (omega-6, C18:2) | g | |
+| linolenico (omega-3, C18:3) | g | |
 
 ## NEKTON Dog Easy-BARF (multivitamínico)  ·  _Multivitamínico_
 

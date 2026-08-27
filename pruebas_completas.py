@@ -27,6 +27,7 @@ from motor_completo import resolver, patologias_bloquean, especie_de
 from constructor import cargar, MARGENES
 from verificar import verificar
 from requisitos import dosis_maxima_fabricante
+from constructor import valor_plausible_de
 from catalogo_menus import CATALOGO
 
 al, req = cargar()
@@ -2007,12 +2008,28 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # Faltan datos y están apuntados en DATOS_QUE_FALTAN.md (57 alimentos,
     # 431 valores, tras rellenar los seis pescados el 25 de agosto). No se
     # rellenan a ojo: los valores salen de BEDCA/CIQUAL/USDA con su fuente.
-    ("HUECOS", "Huevo clara"), ("HUECOS", "Huevo de pato entero"),
-    ("HUECOS", "Semilla de lino"), ("HUECOS", "Semilla de sésamo"),
+    ("HUECOS", "Huevo clara"),
     ("HUECOS", "Borraja"), ("HUECOS", "Sal común (cloruro sódico)"),
     ("HUECOS", "Bazo de vaca"), ("HUECOS", "Páncreas de vaca"),
     ("HUECOS", "Bazo de cordero"), ("HUECOS", "Cerebro de ternera"),
-    ("HUECOS", "Testículos de cordero"),
+    # ⚠️ SE FUE `Testículos de cordero` (27 agosto): ya no está en el
+    # catálogo. Tenía 30 de sus 31 nutrientes a cero y 68 kcal con proteína
+    # 0 y grasa 0 -- una fila que se contradice sola. El motor la usaba en
+    # 2 de cada 24 menús automáticos, uno con 90,5 g, creyéndola vacía de
+    # todo menos B12. Ver el BLOQUE 29.
+    # Y salen tres más -- huevo de pato, semilla de lino y de sésamo --
+    # porque sus huecos ya están DECLARADOS en sin_dato en vez de ser ceros
+    # mudos, así que bajan del umbral de 10 sin declarar.
+    #
+    # ⚠️ EL CLORURO ES UNA DERIVACIÓN, NO UNA MEDIDA (27 agosto). En 114 de
+    # los alimentos con los dos valores, `cloruro` = `sodio` x 1,542
+    # exacto: la razón entre los pesos atómicos del cloro y del sodio. La
+    # columna es el sodio reescrito suponiendo que todo el sodio viene de
+    # sal común. En tejido animal se sostiene a medias; en vegetales es
+    # falsa, y CIQUAL -- que sí lo analiza -- da 6 a 8 veces más. Se deja
+    # así de momento porque cambiar la columna entera es una decisión, no
+    # un arreglo; el aviso está para que no se olvide lo que es.
+    ("CLORURO", "(columna entera)"),
     # ⚠️ RELLENADOS (25 agosto): los seis pescados que tenían EPA y DHA a
     # cero -- bacalao, boquerón, gamba roja, langostino, perca y pescadilla
     # -- ya no están en esta lista porque ya no son huecos. Las fuentes están
@@ -2021,6 +2038,47 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # de grasa es pescado azul, y aquel cero no era "no tiene" sino "no lo
     # sabíamos" -- el semáforo lo contaba como si de verdad no aportara nada.
     ("RARO", "Laringe de vacuno"),
+    # ⚠️ OMEGA-3 POR ENCIMA DEL OMEGA-6 (26 agosto). No es un error: son los
+    # alimentos donde eso pasa de verdad -- el lino y tres con cantidades
+    # minúsculas de los dos. La auditoría los lista a propósito, porque
+    # `linoleico` (omega-6) y `linolenico` (omega-3) se diferencian en una
+    # letra: si alguien invirtiera las columnas al cargar una tabla, esta
+    # lista se llenaría de golpe y sería lo único que lo delataría -- el
+    # menú saldría verde igual.
+    #
+    # ⚠️ ERAN NUEVE Y SON CINCO (27 agosto), y la diferencia enseña para qué
+    # sirve esta lista. Los CUATRO ACEITES DE SALMÓN estaban aquí desde que
+    # existe la prueba, dados por buenos, y NO eran columnas invertidas: era
+    # que `linolenico` llevaba el OMEGA-3 TOTAL de la etiqueta en vez del
+    # ALA, así que el EPA y el DHA se contaban dos veces. La auditoría los
+    # llevaba señalando un mes; lo que faltaba era preguntarse por qué. Al
+    # vaciarlo salieron los cuatro de golpe.
+    ("OMEGA", "Aceite de linaza"), ("OMEGA", "Semilla de lino"),
+    ("OMEGA", "Yogur griego"), ("OMEGA", "Pulpo"), ("OMEGA", "Bacaladilla"),
+    # ⚠️ DATO DUDOSO (27 agosto). Valores DECLARADOS que no nos creemos, y
+    # que no se pueden corregir porque son los de la etiqueta y el real no
+    # está publicado en ninguna parte. Van marcados en `dato_dudoso` dentro
+    # del catálogo y la auditoría los lista para que nadie los olvide.
+    # Que aparezcan aquí es lo correcto; lo que NO puede pasar es que
+    # desaparezcan, y de eso se ocupa el BLOQUE 28.
+    ("DUDOSO", "GRAU Harina de Hueso"),
+    ("DUDOSO", "LUPO NATURAL BARF Huesos en polvo"),
+    ("DUDOSO", "AniForte Beef Blood Powder"),
+    ("DUDOSO", "Brit Care Aceite de Salmón"),
+    # El calcio del sésamo (27 agosto): 150 mg no son de NINGÚN sésamo real.
+    # Con cáscara son 975 (USDA 170150 y FINELI 385, dos analíticas
+    # independientes que coinciden) y pelado 60-66 (USDA 169412, FINELI
+    # 34245): casi todo el calcio está en la cáscara y quitarla lo divide
+    # por dieciséis. Nuestros 150 son fieles a BEDCA 1127, pero BEDCA no
+    # dice de cuál habla y caen en el hueco vacío entre los dos polos.
+    # El resto de la fila sí dice cuál es -- fósforo, potasio, magnesio y
+    # fibra son los del entero casi al decimal -- así que tenemos una ficha
+    # de sésamo entero con el calcio de ninguno.
+    # No se resuelve eligiendo uno: se resuelve partiendo la ficha en dos,
+    # y eso llega con la carga de alimentos. MEDIDO mientras tanto: el
+    # solver no lo usa en ninguno de los 21 menús automáticos con ninguno
+    # de los tres calcios, y forzando 5 g el Ca:P del menú se mueve 0,08.
+    ("DUDOSO", "Semilla de sésamo"),
 }
 
 import re as _re_b19
@@ -2546,6 +2604,590 @@ for _f24 in _PY_B24:
                       _re_b19.M):
         fallos.append(f"BLOQUE24: ha vuelto el motor viejo ({_f24.name}). El único motor es "
                       f"resolver() en motor_completo.py.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 25 — EL CATÁLOGO DE MENÚS ESTÁ ENTERO Y ES DATO, NO CÓDIGO
+# ============================================================
+#
+# ⚠️ MOVIDO (26 agosto). motor/catalogo_menus.py eran 3.081 líneas y 3.050
+# de ellas eran datos -- gramos de alimentos escritos como un diccionario de
+# Python dentro de motor/, que es la carpeta de la LÓGICA. Buscar una
+# función del motor obligaba a pasar por encima del listado entero, y
+# cualquier diff que los tocara enterraba el cambio real.
+#
+# Los datos están ahora en catalogo_menus.json, junto a los otros dos JSON,
+# y el módulo quedó en 55 líneas que solo los cargan. Ni un gramo cambió:
+# comprobado dato a dato contra el módulo anterior antes de sustituirlo.
+#
+# Esto vigila las dos mitades: que el catálogo siga completo (36 menús y sus
+# 180 variantes -- si el JSON se trunca o no se encuentra, el fallo tiene que
+# ser ruidoso y no un catálogo a medias), y que los datos no vuelvan a
+# colarse dentro del código.
+print("=== BLOQUE 25: el catálogo de menús, entero y como dato ===")
+
+from catalogo_menus import CATALOGO as _CAT_B25, CATALOGO_VARIANTES as _VAR_B25
+
+if len(_CAT_B25) != 36:
+    fallos.append(f"BLOQUE25: el catálogo tiene {len(_CAT_B25)} menús y son 36 (6 tamaños x 6 "
+                  f"etapas). Si se ha truncado el JSON, /catalogo devolvería vista previa solo "
+                  f"para algunos perros y para el resto no, sin decir por qué.")
+if len(_VAR_B25) != 36:
+    fallos.append(f"BLOQUE25: hay variantes para {len(_VAR_B25)} claves y tienen que ser 36.")
+_n_var_b25 = sum(len(_v) for _v in _VAR_B25.values())
+if _n_var_b25 != 180:
+    fallos.append(f"BLOQUE25: hay {_n_var_b25} variantes en total y eran 180.")
+
+# cada entrada tiene que traer lo que /catalogo necesita para reescalar
+for _k25, _e25 in _CAT_B25.items():
+    _faltan25 = [_c for _c in ("gramos", "der", "peso_kg", "tamano", "etapa") if _c not in _e25]
+    if _faltan25:
+        fallos.append(f"BLOQUE25: al menú '{_k25}' del catálogo le faltan los campos {_faltan25}.")
+        break
+    if not _e25["gramos"]:
+        fallos.append(f"BLOQUE25: el menú '{_k25}' del catálogo se ha quedado sin alimentos.")
+        break
+
+# y los datos no pueden volver al código
+_cat_py_b25 = (_raiz_b24 / "motor" / "catalogo_menus.py").read_text(encoding="utf-8")
+if len(_cat_py_b25.split("\n")) > 120:
+    fallos.append(f"BLOQUE25: motor/catalogo_menus.py tiene "
+                  f"{len(_cat_py_b25.split(chr(10)))} líneas. Es un cargador, no un almacén: los "
+                  f"gramos van en catalogo_menus.json, con los demás datos.")
+if not (_raiz_b24 / "catalogo_menus.json").exists():
+    fallos.append("BLOQUE25: falta catalogo_menus.json, que es donde viven los menús del catálogo.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 26 — EL OMEGA-6 Y EL OMEGA-3 NO SE PUEDEN CONFUNDIR
+# ============================================================
+#
+# ⚠️ `linoleico` es OMEGA-6 (C18:2) y `linolenico` es OMEGA-3 (C18:3). Se
+# diferencian en una letra y son cosas opuestas. Si alguien los cambia al
+# cargar una tabla de composición, NO SALTA NADA: los dos son nutrientes
+# válidos de FEDIAF, los dos valores son plausibles, el semáforo sale verde
+# y el motor cree que está equilibrando el omega-3 con un aceite que no lo
+# tiene.
+#
+# Esto ancla dos alimentos cuya firma es inconfundible, así que un cambio
+# de columnas se ve en el acto:
+#
+#     Aceite de girasol   ω-6 57,53 g  frente a  ω-3 1,60 g   (36:1)
+#     Aceite de linaza    ω-6 15,69 g  frente a  ω-3 55,47 g  (al revés)
+#
+# Y comprueba que el motor los trata como dos requisitos distintos, no como
+# uno. La otra mitad de la vigilancia está en auditar_catalogo.py, que lista
+# los alimentos donde el omega-3 supera al omega-6: son nueve y conocidos
+# (lino, aceites de salmón y tres con cantidades minúsculas). Si esa lista
+# se llenara de golpe, sería que se han invertido las columnas.
+print("=== BLOQUE 26: omega-6 y omega-3 no se confunden ===")
+
+_ANCLAS_B26 = [
+    # alimento, clave, valor, la otra clave, valor de la otra
+    ("Aceite de girasol", "linoleico", 57.53, "linolenico", 1.6),
+    ("Aceite de linaza",  "linolenico", 55.47, "linoleico",  15.69),
+]
+for _nom26, _dom26, _v_dom26, _otro26, _v_otro26 in _ANCLAS_B26:
+    _a26 = _al21.get(_nom26)
+    if not _a26:
+        fallos.append(f"BLOQUE26: '{_nom26}' ya no está en el catálogo; hay que reanclar esta "
+                      f"prueba con otro alimento de firma inconfundible.")
+        continue
+    _n26 = _a26.get("nutrientes", {})
+    for _clave26, _esperado26 in ((_dom26, _v_dom26), (_otro26, _v_otro26)):
+        if abs((_n26.get(_clave26) or 0) - _esperado26) > 0.01:
+            fallos.append(
+                f"BLOQUE26: {_nom26} tiene {_clave26}={_n26.get(_clave26)} y debería ser "
+                f"{_esperado26} g/100 g. Si los dos valores están intercambiados, es que se han "
+                f"invertido las columnas de omega-6 y omega-3 -- y eso no lo caza nada más: los "
+                f"menús seguirían saliendo verdes.")
+    # y el que manda tiene que mandar de verdad, no por un decimal
+    if (_n26.get(_dom26) or 0) <= (_n26.get(_otro26) or 0):
+        fallos.append(f"BLOQUE26: en {_nom26} el {_dom26} ya no supera al {_otro26}. Esa relación "
+                      f"es la firma del alimento: el girasol es omega-6 y la linaza omega-3.")
+
+# los dos son requisitos DISTINTOS para el motor, no uno solo
+if _MAPA_SEMAFORO_b18.get("Linoleico") != "linoleico":
+    fallos.append("BLOQUE26: 'Linoleico' ya no apunta a la clave `linoleico` en el mapa del "
+                  "semáforo.")
+if _MAPA_SEMAFORO_b18.get("Linolénico") != "linolenico":
+    fallos.append("BLOQUE26: 'Linolénico' ya no apunta a la clave `linolenico` en el mapa del "
+                  "semáforo.")
+if _MAPA_SEMAFORO_b18.get("Linoleico") == _MAPA_SEMAFORO_b18.get("Linolénico"):
+    fallos.append("BLOQUE26: el omega-6 y el omega-3 apuntan a la MISMA clave. Son dos ácidos "
+                  "grasos distintos y opuestos, y FEDIAF los pide por separado.")
+
+# y el documento que los explica tiene que seguir ahí, que es lo que lee
+# quien prepara los datos
+_unidades_b26 = _raiz_b24 / "UNIDADES.md"
+if not _unidades_b26.exists():
+    fallos.append("BLOQUE26: falta UNIDADES.md, que es donde está escrito en qué unidad va cada "
+                  "nutriente y cuál de los dos linolé/eicos es el omega-3.")
+else:
+    _txt26 = _unidades_b26.read_text(encoding="utf-8")
+    for _debe26 in ("linoleico", "linolenico", "omega-6", "omega-3", "C18:2", "C18:3"):
+        if _debe26 not in _txt26:
+            fallos.append(f"BLOQUE26: UNIDADES.md ya no menciona '{_debe26}'. Es justo la "
+                          f"distinción que evita que se carguen cambiados.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 27 — LOS 12 AMINOÁCIDOS: PUESTOS, AUDITADOS Y SIN ACTIVAR
+# ============================================================
+#
+# ⚠️ ENCONTRADO (26 agosto) leyendo la Tabla III-3b entera del PDF de
+# FEDIAF 2025. La tabla pide 41 nutrientes para el perro y nosotros
+# verificábamos 29: faltaban los DOCE AMINOÁCIDOS ESENCIALES, que están
+# ahí desde siempre, entre "Protein" y "Fat". La transcripción que había
+# en auditar_fediaf.py se los había saltado, así que la auditoría decía
+# que cubríamos toda la tabla cuando cubríamos siete de cada diez filas.
+#
+# Ya están en requerimientos_v2_final.json con sus 48 valores, y
+# auditar_fediaf.py los comprueba contra el PDF (232 comprobaciones, 0
+# discrepancias, frente a las 161 de antes).
+#
+# PERO NO SE VERIFICAN TODAVÍA, Y ES A PROPÓSITO: ninguno de los 166
+# alimentos del catálogo trae dato de aminoácidos. Si se metieran hoy en
+# verificar.MAPA, cada alimento contaría como cero y no saldría ni un
+# menú -- o peor, saldría uno empujado hacia los pocos alimentos que
+# tuvieran el dato, que es un sesgo invisible.
+#
+# Este bloque vigila las DOS mitades del estado intermedio, porque las dos
+# se pueden estropear:
+#   · Que las filas sigan ahí y con sus valores. Si alguien las borra,
+#     volvemos a decir que cubrimos FEDIAF sin cubrirlo.
+#   · Que NO estén en MAPA mientras el catálogo no traiga el dato. Si
+#     alguien las activa antes de tiempo, la app deja de dar menús.
+# El día que el catálogo traiga aminoácidos, este bloque es el que hay que
+# tocar -- y lo dice el mensaje de fallo.
+print("=== BLOQUE 27: los 12 aminoácidos, puestos y sin activar ===")
+
+_AA_B27 = ["Arginina", "Histidina", "Isoleucina", "Leucina", "Lisina", "Metionina",
+           "Metionina_cistina", "Fenilalanina", "Fenilalanina_tirosina", "Treonina",
+           "Triptofano", "Valina"]
+_req_b27 = {r["nutriente"]: r for r in _api.cargar_v2()[1].values()}
+
+for _aa in _AA_B27:
+    _r27 = _req_b27.get(_aa)
+    if not _r27:
+        fallos.append(f"BLOQUE27: falta '{_aa}' en requerimientos_v2_final.json. Es una fila de "
+                      f"la Tabla III-3b de FEDIAF: sin ella volvemos a decir que cubrimos la "
+                      f"tabla entera cubriendo solo una parte.")
+        continue
+    for _campo in ("minAdulto", "minCachorroJoven", "minCachorroCrecimiento"):
+        if str(_r27.get(_campo, "-")) in ("-", "", "None"):
+            fallos.append(f"BLOQUE27: '{_aa}' no tiene {_campo}. FEDIAF da los tres mínimos "
+                          f"para los doce aminoácidos.")
+
+# el único aminoácido con máximo, y solo en crecimiento
+_lis_b27 = _req_b27.get("Lisina") or {}
+for _campo, _esp in (("maxCachorroJoven", 7.0), ("maxCachorroCrecimiento", 7.0)):
+    try:
+        _v27 = float(_lis_b27.get(_campo))
+    except (TypeError, ValueError):
+        _v27 = None
+    if _v27 is None or abs(_v27 - _esp) > 1e-9:
+        fallos.append(f"BLOQUE27: el máximo de lisina en {_campo} es {_lis_b27.get(_campo)} y "
+                      f"FEDIAF da {_esp} g/1000 kcal ('Growth: 7.00'). Es el único aminoácido "
+                      f"con máximo.")
+
+# Y AHORA LA OTRA MITAD: que no estén activados antes de tiempo.
+_con_dato_b27 = sum(1 for _a in _al21.values()
+                    if any((_a.get("nutrientes", {}).get(_k) or 0) > 0
+                           for _k in ("lisina", "triptofano", "metionina", "arginina")))
+_en_mapa_b27 = [a for a in _AA_B27 if a in _MAPA_SEMAFORO_b18]
+
+if _con_dato_b27 == 0 and _en_mapa_b27:
+    fallos.append(
+        f"BLOQUE27: los aminoácidos {_en_mapa_b27} están en verificar.MAPA pero NINGÚN alimento "
+        f"del catálogo trae el dato. Cada uno contaría como cero y la app se quedaría sin dar "
+        f"menús. Primero el dato, después el requisito.")
+if _con_dato_b27 > 0 and not _en_mapa_b27:
+    fallos.append(
+        f"BLOQUE27: {_con_dato_b27} alimentos del catálogo YA traen aminoácidos y los 12 "
+        f"requisitos siguen sin estar en verificar.MAPA. O se activan, o se dice aquí por qué "
+        f"no -- lo que no puede quedarse es a medias y en silencio, que es como la fila de la "
+        f"fibra estuvo meses diciendo que faltaba algo que nadie exigía.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 28 — los suplementos: lo que se arregló el 27 de agosto
+# ============================================================
+# Nace de una revisión de las 26 fichas de suplemento que encontró tres
+# errores que NINGUNA de las comprobaciones que ya teníamos veía. Los tres
+# venían de etiquetas reales y los tres entraron por lo mismo: el nombre de
+# la columna se parecía al de la etiqueta lo bastante como para que nadie
+# mirara.
+#
+# Este bloque vigila que no vuelvan, cada uno por su lado.
+print("\n=== BLOQUE 28: suplementos — omega-3 de los aceites, dosis y dato_dudoso ===")
+
+_al28 = {a["nombre"]: a for a in json.load(open("alimentos_v3_final.json", encoding="utf-8"))}
+
+# ── 28a. El omega-3 TOTAL no puede volver a la columna del ALA ────────
+# Las etiquetas de los aceites de salmón declaran "omega-3 15-17%", y ese
+# número estaba en `linolenico`, que es solo el ALA (18:3 n-3). El omega-3
+# total INCLUYE el EPA y el DHA, que ya están en sus columnas: se contaban
+# dos veces. El ALA real de un aceite de salmón ronda 1 g/100 g (USDA FDC
+# 172343), no 17.
+#
+# La forma de pillarlo sin depender de una tabla ajena es aritmética: si el
+# `linolenico` de un aceite es MAYOR que su EPA+DHA, casi seguro es el
+# total metido en la casilla del ALA -- en un aceite de pescado el ALA es
+# una fracción pequeña y el EPA y el DHA son la mayor parte del n-3.
+# La lista se saca SOLO por categoría, nunca filtrando por grasa: si se
+# filtrara por grasa, el día que alguien vuelva a poner la grasa a cero el
+# aceite se caería de la lista y la comprobación dejaría de aplicarse sola.
+_ACEITES_28 = [n for n, a in _al28.items() if a.get("categoria") == "Omega-3"]
+if len(_ACEITES_28) < 5:
+    fallos.append(f"BLOQUE28a: solo encuentro {len(_ACEITES_28)} aceites en la categoría Omega-3, "
+                  f"esperaba 5. ¿Se ha renombrado la categoría?")
+for _n28 in _ACEITES_28:
+    _nu28 = _al28[_n28].get("nutrientes") or {}
+    _ala = _nu28.get("linolenico") or 0
+    _epadha = (_nu28.get("epa") or 0) + (_nu28.get("dha") or 0)
+    if _ala > _epadha:
+        fallos.append(
+            f"BLOQUE28a: '{_n28}' tiene linolenico={_ala} y EPA+DHA={_epadha}. En un aceite de "
+            f"pescado el ALA es una fracción pequeña del omega-3 y el EPA+DHA son la mayor "
+            f"parte: un ALA mayor que EPA+DHA significa que se ha vuelto a meter el OMEGA-3 "
+            f"TOTAL de la etiqueta en la columna del ALA, contando el EPA y el DHA dos veces.")
+
+# ── 28a-bis. Un aceite no puede declarar 0 g de grasa ─────────────────
+# Los cinco aceites de salmón tenían `grasa` a 0 y declarada en sin_dato,
+# siendo aceite puro. No era un hueco: su propia energía (900 kcal/100 g)
+# fuerza el valor, 900/9 = 100 g. La grasa tiene mínimo de FEDIAF y tope
+# por patología (20 g/1000 kcal en pancreatitis), así que un producto 100%
+# grasa que declara 0 g mete kcal sin que cuenten como grasa -- el lado que
+# hace daño en cuanto se aplica un tope. MEDIDO: el motor llega a meter
+# 9,2 g de aceite en un cachorro de 20 kg.
+for _n28 in _ACEITES_28:
+    _g28 = (_al28[_n28].get("nutrientes") or {}).get("grasa") or 0
+    _e28 = _al28[_n28].get("energia") or 0
+    if _e28 and _g28 * 9 < _e28 * 0.8:
+        fallos.append(
+            f"BLOQUE28a: '{_n28}' declara {_e28} kcal/100 g y grasa={_g28} g. Un aceite es "
+            f"grasa: {_e28}/9 = {_e28/9:.0f} g. Con la grasa a cero, el motor mete calorías "
+            f"que no cuentan contra el tope de grasa de la pancreatitis.")
+
+# ── 28b. El psyllium tiene que dosificarse por peso ───────────────────
+# Sin dosis en campo, el motor le aplica su techo por defecto de 5 g. Y un
+# techo plano no es neutro: son 1,0 g/kg en un perro de 5 kg, CINCO VECES
+# la dosis estudiada (0,2 g/kg — Vetaș 2022 n=15; Fiberact 2024 n=44). El
+# daño de un techo plano no lo sufre el perro grande, lo sufre el pequeño.
+_psy28 = _al28.get("NaturGreen Psyllium Bio")
+if not _psy28:
+    fallos.append("BLOQUE28b: no está 'NaturGreen Psyllium Bio' en el catálogo.")
+else:
+    _dosis28 = dosis_maxima_fabricante(_psy28, 5.0)
+    if _dosis28 is None:
+        fallos.append("BLOQUE28b: el psyllium se ha quedado otra vez sin dosis en campo. El "
+                      "motor le pondrá su techo por defecto de 5 g, que en un perro de 5 kg "
+                      "son 1,0 g/kg: cinco veces la dosis de los estudios, de una fibra que "
+                      "multiplica su volumen en agua.")
+    elif _dosis28 > 5.0 * 0.2 * 1.01:
+        fallos.append(f"BLOQUE28b: el psyllium deja {_dosis28:.2f} g en un perro de 5 kg y la "
+                      f"dosis de la literatura son 0,2 g/kg = 1,0 g.")
+
+# ── 28c. `dato_dudoso` tiene que seguir existiendo y llegando al menú ──
+# `sin_dato` marca los HUECOS. Un valor DECLARADO Y ERRÓNEO no dejaba
+# rastro en ninguna parte, y es el que hace daño porque tiene la forma de
+# un dato bueno. Los tres que no se pueden arreglar -- el fósforo de las
+# harinas de hueso y el cobre y el zinc del polvo de sangre -- van marcados
+# ahí, y verificar() los saca junto al menú.
+_ESPERADOS_28 = {"GRAU Harina de Hueso": ["fosforo"],
+                 "LUPO NATURAL BARF Huesos en polvo": ["fosforo"],
+                 "AniForte Beef Blood Powder": ["cobre", "zinc"]}
+for _n28, _claves28 in _ESPERADOS_28.items():
+    _d28 = (_al28.get(_n28) or {}).get("dato_dudoso") or {}
+    for _k28 in _claves28:
+        if _k28 not in _d28:
+            fallos.append(
+                f"BLOQUE28c: '{_n28}' ha perdido la marca dato_dudoso en '{_k28}'. Ese valor es "
+                f"el de la etiqueta y no se puede corregir porque el real no está publicado, "
+                f"pero no puede ser cierto. Si se quita la marca, vuelve a no dejar rastro.")
+
+# y que verificar() lo devuelva de verdad, no solo que esté en el JSON
+_f28 = verificar({"GRAU Harina de Hueso": 5.0, "Pollo pechuga sin piel": 200.0},
+                 al, req, 500.0, "Adulto")
+if "datos_dudosos" not in _f28:
+    fallos.append("BLOQUE28c: verificar() ya no devuelve 'datos_dudosos'. La marca existiría en "
+                  "el JSON y no llegaría a ninguna pantalla, que es igual que no existir.")
+elif "fosforo" not in _f28.get("datos_dudosos", {}):
+    fallos.append(f"BLOQUE28c: un menú con harina de hueso no avisa del fósforo dudoso. "
+                  f"verificar() devuelve {_f28.get('datos_dudosos')}")
+
+# ── 28c-bis. Un dato dudoso con consecuencia: la prueba de esfuerzo ───
+#
+# ⚠️ CORRECCIÓN DEL 27 DE AGOSTO, y merece quedar escrita porque el error
+# era de razonamiento, no de medida. Sobre el cobre inflado del polvo de
+# sangre habíamos concluido que era «el lado seguro, porque el motor lo usa
+# menos». Falso: eso solo vale contra el TECHO. El cobre tiene SUELO
+# también -- 2,08 mg/1000 kcal -- y contra el suelo un valor inflado hace
+# que el motor CREA CUBIERTO lo que no está. Es el mismo argumento que ya
+# habíamos aceptado para las cotas: un valor no puede ser conservador en
+# las dos direcciones a la vez.
+#
+# De ahí sale este mecanismo, que es lo que convierte `dato_dudoso` de una
+# nota en una defensa: cuando de un valor dudoso conocemos un VALOR
+# PLAUSIBLE (campo `valor_plausible`), se rehace la cuenta con él y se
+# exige que el menú siga cumpliendo el mínimo. No se cambia el catálogo
+# --seguimos sin creernos ninguno de los dos números-- pero si la duda
+# fuera cierta, queremos saberlo antes que la usuaria.
+_PLAUSIBLES_28 = {n: a for n, a in _al28.items() if a.get("valor_plausible")}
+if not _PLAUSIBLES_28:
+    fallos.append("BLOQUE28c-bis: ya no hay ningún alimento con `valor_plausible`. Era lo que "
+                  "permitía comprobar un dato dudoso en vez de solo anotarlo.")
+_MINIMOS_28 = {"cobre": 2.08, "zinc": 20.8}     # mg/1000 kcal, FEDIAF adulto
+# ⚠️ VARIAS SEMILLAS, NO UNA TIRADA, y esto es una lección de método que
+# costó cara: la PRIMERA tanda con la que se midió esto dio cuatro menús
+# con un margen del 8-11% y la conclusión habría sido «marcado y sin
+# prisa». Hizo falta otra semilla para ver el menú verde y deficitario.
+# El objetivo del solver lleva ruido aleatorio a propósito (para que dos
+# menús seguidos no salgan iguales), así que cuando el resultado depende
+# del dado, UNA tirada no es una medida: es una anécdota.
+_SEMILLAS_28 = (1, 7, 13, 29, 101)
+for _n28, _a28 in _PLAUSIBLES_28.items():
+    for _peso28 in (5, 12, 25, 45):
+        _der28 = 70 * _peso28 ** 0.75 * 1.6
+        for _sem28 in _SEMILLAS_28:
+            _ok28, _g28 = resolver(_der28, "Adulto", al, req, _peso28, dosis_maxima_fabricante,
+                                   margenes_categoria=MARGENES, max_suplementos=2,
+                                   forzar=[_n28], semilla_aleatoria=_sem28)
+            if not _ok28:
+                continue
+            _gr28 = _g28[_n28]
+            for _k28 in (_a28["valor_plausible"] or {}):
+                _plaus28 = valor_plausible_de(_a28, _k28)
+                _min28 = _MINIMOS_28.get(_k28)
+                if not _min28 or _plaus28 is None:
+                    continue
+                _menu28 = sum((al[_x]["nutrientes"].get(_k28) or 0) * _c / 100
+                              for _x, _c in _g28.items())
+                _declarado28 = (_a28["nutrientes"].get(_k28) or 0) * _gr28 / 100
+                _real28 = _menu28 - _declarado28 + _plaus28 * _gr28 / 100
+                _suelo28 = _min28 * _der28 / 1000
+                if _real28 < _suelo28:
+                    fallos.append(
+                        f"BLOQUE28c-bis: forzando '{_n28}' en un perro de {_peso28} kg "
+                        f"(semilla {_sem28}), el menú declara {_menu28:.2f} mg de {_k28} pero "
+                        f"si el valor dudoso es el que creemos ({_plaus28} en vez de "
+                        f"{_a28['nutrientes'].get(_k28)}) el menú real tiene {_real28:.2f} y el "
+                        f"mínimo del día es {_suelo28:.2f}. El motor estaría dando por cubierto "
+                        f"un {_k28} que no está, y saldría verde.")
+
+# ── 28c-quater. La forma de las marcas: procedencia y no promocionar ──
+# `valor_plausible` mete, por primera vez en el catálogo, un número que no
+# es una medida dentro de un cálculo que decide si un menú pasa. Todo esto
+# está construido sobre que cada número sabe de dónde viene, así que ese
+# no puede ser la excepción. Dos condiciones, y las dos se comprueban:
+for _n28, _a28 in _al28.items():
+    for _k28, _d28 in (_a28.get("valor_plausible") or {}).items():
+        if not isinstance(_d28, dict) or not (_d28.get("fuente") or "").strip():
+            fallos.append(
+                f"BLOQUE28c-quater: el `valor_plausible` de '{_n28}' en '{_k28}' no lleva "
+                f"`fuente`. Un número inventado que decide si un menú pasa tiene que decir de "
+                f"dónde sale: dentro de seis meses, quien lea un 0,85 a secas lo tratará como "
+                f"un dato medido.")
+            continue
+        # y NUNCA puede haber ascendido a la columna del valor
+        _v28 = (_a28.get("nutrientes") or {}).get(_k28)
+        if _v28 is not None and abs(float(_v28) - float(_d28["valor"])) < 1e-9:
+            fallos.append(
+                f"BLOQUE28c-quater: en '{_n28}', el valor declarado de '{_k28}' y su "
+                f"`valor_plausible` son el mismo número. O el fabricante ha contestado —y "
+                f"entonces el plausible SE BORRA, no se deja— o alguien ha promocionado la "
+                f"estimación a dato oficial, que es como una cuenta de servilleta acaba siendo "
+                f"el número del catálogo sin que nadie recuerde de dónde salió.")
+
+# ── 28c-quater-bis. Los plausibles, anclados a su cifra ───────────────
+# Las dos comprobaciones de arriba no pueden pillar que alguien cambie un
+# plausible por OTRO plausible con fuente: 3,5 de cinc también tenía una
+# fuente, solo que era una cuenta y no una tabla. Así que se anclan, igual
+# que el BLOQUE 26 ancla el aceite de girasol y el de linaza.
+#
+# Y la dirección importa, que es lo que hace que esto no sea burocracia:
+# un plausible DEMASIADO ALTO ablanda justo la prueba del suelo, que es
+# para lo único que sirve. El cinc estuvo en 3,5 —un 50% alto— antes de
+# tener tabla detrás. Un plausible bajo hace la prueba más dura, que es el
+# error inofensivo de los dos.
+_ANCLAS_28 = {
+    ("AniForte Beef Blood Powder", "cobre"): (0.85,
+        "Feedipedia node 221 / INRA-CIRAD-AFZ, una sola base de AFZ. Banda ancha (0,2-5,5) "
+        "porque es el dato más débil: desviación 0 sobre 5 muestras en una y desviación mayor "
+        "que la media en la otra."),
+    ("AniForte Beef Blood Powder", "zinc"): (2.3,
+        "Feedipedia node 221 / INRA-CIRAD-AFZ, n=8 y n=11, CV del 15%. Estuvo en 3,5, que era "
+        "una estimación sin tabla y iba un 50% ALTO -- y un plausible alto ablanda la prueba "
+        "del suelo."),
+    ("Semilla de sésamo", "calcio"): (60,
+        "USDA FDC 169412 (sésamo pelado). Se coge el polo BAJO a propósito: es el lado "
+        "conservador para el mínimo de calcio."),
+}
+for (_n28, _k28), (_esp28, _pq28) in _ANCLAS_28.items():
+    _v28 = valor_plausible_de(_al28.get(_n28) or {}, _k28)
+    if _v28 is None or abs(_v28 - _esp28) > 1e-9:
+        fallos.append(
+            f"BLOQUE28c-quater-bis: el `valor_plausible` de '{_n28}' en '{_k28}' es {_v28} y "
+            f"debe ser {_esp28}. {_pq28}")
+
+# ── 28c-quinquies. Toda marca dudosa dice desde cuándo y qué la cierra ──
+# La diferencia entre un aviso conocido y un `dato_dudoso` es de quién es
+# la pelota: el primero es un juicio cerrado, el segundo es un juicio
+# abierto con una acción de fuera pegada. Ninguna ejecución de esta
+# batería va a hacer que AniForte coja el teléfono, así que la marca tiene
+# que decir a quién hay que llamar y desde cuándo lleva esperando.
+for _n28, _a28 in _al28.items():
+    for _k28, _d28 in (_a28.get("dato_dudoso") or {}).items():
+        if not isinstance(_d28, dict):
+            fallos.append(f"BLOQUE28c-quinquies: la marca dudosa de '{_n28}' en '{_k28}' es "
+                          f"texto suelto. Tiene que llevar `motivo`, `resolver` y `desde`.")
+            continue
+        for _campo28 in ("motivo", "resolver", "desde"):
+            if not (_d28.get(_campo28) or "").strip():
+                fallos.append(
+                    f"BLOQUE28c-quinquies: la marca dudosa de '{_n28}' en '{_k28}' no tiene "
+                    f"`{_campo28}`. Sin `resolver` nadie sabe qué la cerraría, y sin `desde` "
+                    f"no se ve cuánto lleva abierta -- que es lo único que la vuelve incómoda "
+                    f"de leer.")
+
+# ── 28c-ter. El sésamo: el cobre puesto y el calcio marcado ───────────
+# El cobre y el manganeso estaban a cero declarado. Ya tienen fuente
+# (USDA FDC 170150, sésamo ENTERO), y se toma esa ficha y no la del pelado
+# porque es la que cuadra con el resto de la fila.
+# El calcio, en cambio, no es de ningún sésamo real: con cáscara son 975 mg
+# (USDA y FINELI por separado) y pelado 60-66; nuestros 150 vienen de BEDCA,
+# que no dice de cuál habla, y caen en el hueco vacío entre los dos polos.
+# No se arregla eligiendo uno: se arregla partiendo la ficha en dos.
+_ses28 = _al28.get("Semilla de sésamo")
+if _ses28:
+    for _k28, _esp28 in (("cobre", 4.082), ("manganeso", 2.46)):
+        _v28 = (_ses28.get("nutrientes") or {}).get(_k28)
+        if _v28 is None or abs(_v28 - _esp28) > 0.01:
+            fallos.append(f"BLOQUE28c-ter: el sésamo tiene {_k28}={_v28} y debe tener {_esp28} "
+                          f"(USDA FDC 170150). Estuvo a cero, y el cero venía de una tabla que "
+                          f"escribe cero cuando no analiza los metales traza.")
+    if "calcio" not in (_ses28.get("dato_dudoso") or {}):
+        fallos.append(
+            "BLOQUE28c-ter: el sésamo ha perdido la marca `dato_dudoso` en el calcio. Sus 150 mg "
+            "no son de ningún sésamo real: con cáscara son 975 y pelado 60-66, y el resto de la "
+            "fila es sésamo entero. Mientras la ficha no se parta en dos, la marca se queda.")
+
+# ── 28d. El folato de las levaduras es de levadura de CERVEZA ─────────
+# Decía 2.340 µg, que es el valor del USDA para levadura de PANADERÍA
+# (FDC 175043). La de cerveza son 697 (CIQUAL 11009). Factor 3,4. Y un
+# folato sobreestimado es la dirección que hace daño: el motor lo da por
+# cubierto y deja de buscarlo.
+for _n28 in ("GRAU Levadura de cerveza", "PAWS & PATCH Levadura de cerveza"):
+    _fol28 = ((_al28.get(_n28) or {}).get("nutrientes") or {}).get("folato")
+    if _fol28 is None or abs(_fol28 - 697.0) > 1.0:
+        fallos.append(
+            f"BLOQUE28d: '{_n28}' tiene folato={_fol28} y debe tener 697 µg (CIQUAL 11009, "
+            f"«Levure alimentaire»). Los 2.340 de antes son levadura de PANADERÍA seca activa "
+            f"(USDA FDC 175043): otro producto.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 29 — las tres formas que tiene un hueco de esconderse
+# ============================================================
+# Un nutriente que no sabemos puede estar guardado de tres maneras, y hasta
+# el 27 de agosto solo vigilábamos una:
+#
+#   1. cero DECLARADO en `sin_dato`  → visible. Es lo que queremos
+#   2. cero SIN declarar             → lo pillaba la auditoría, pero solo
+#                                      contándolos en bloque (10 o más).
+#                                      Los sueltos se colaban
+#   3. la clave NI SIQUIERA ESTÁ en el diccionario → invisible del todo.
+#      `valor_nutriente()` devuelve 0 igual que en los otros dos casos,
+#      pero no hay ningún cero que encontrar, así que ni la auditoría ni
+#      `datos_incompletos` lo veían
+#
+# La tercera afectaba a 4 alimentos y 67 celdas, y no eran alimentos raros:
+# `Pollo pechuga sin piel` y `Pollo muslo sin piel` -- de los más usados
+# del catálogo -- y un `Hígado de cordero` al que le faltaba el FÓSFORO.
+# `Corazón de conejo` tenía 21 de sus 31 nutrientes así.
+print("\n=== BLOQUE 29: ningún hueco sin declarar, de las tres formas ===")
+
+_al29 = json.load(open("alimentos_v3_final.json", encoding="utf-8"))
+_SUP29 = {"Multivitamínico", "Vitamina B", "Hierro", "Calcio", "Yodo", "Fibra", "Omega-3"}
+_ANIMAL29 = {"Carne muscular", "Vísceras", "Hígado", "Pescados y mariscos", "Hueso carnoso"}
+_CLAVES29 = ["proteina", "grasa", "fibra", "linoleico", "linolenico", "epa", "dha",
+             "araquidonico", "calcio", "fosforo", "potasio", "sodio", "cloruro", "magnesio",
+             "hierro", "cobre", "manganeso", "zinc", "yodo", "selenio", "vitA", "vitD",
+             "vitE", "tiamina", "riboflavina", "niacina", "acidoPantotenico", "vitB6",
+             "colina", "folato", "vitB12"]
+
+# ── 29a. Ninguna clave puede faltar del diccionario ───────────────────
+_ausentes29 = []
+for _a29 in _al29:
+    _n29 = _a29.get("nutrientes") or {}
+    _falta = [_k for _k in _CLAVES29 if _k not in _n29]
+    if _falta:
+        _ausentes29.append((_a29["nombre"], _falta))
+if _ausentes29:
+    fallos.append(
+        f"BLOQUE29a: {len(_ausentes29)} alimentos tienen claves que NO ESTÁN en su diccionario "
+        f"de nutrientes: {_ausentes29[:4]}. Es la peor forma de hueco, porque "
+        f"`valor_nutriente()` devuelve 0 igual que un cero de verdad pero no hay ningún cero "
+        f"que encontrar: ni la auditoría ni `datos_incompletos` lo ven. Ponla a 0 y, si no "
+        f"sabemos el valor, decláralo en sin_dato.")
+
+# ── 29b. Un tejido animal no tiene esos nutrientes a cero, nunca ──────
+# El criterio no necesita ninguna fuente externa: un cero solo es creíble
+# si algún alimento de esa familia puede tenerlo de verdad.
+_TEJIDO29 = ("potasio", "fosforo", "magnesio", "sodio", "cloruro", "hierro", "zinc",
+             "proteina", "vitB12")
+for _a29 in _al29:
+    if _a29.get("categoria") not in _ANIMAL29:
+        continue
+    _n29 = _a29.get("nutrientes") or {}
+    _sd29 = set(_a29.get("sin_dato") or [])
+    _malos29 = [_k for _k in _TEJIDO29 if not (_n29.get(_k) or 0) and _k not in _sd29]
+    if _malos29:
+        fallos.append(
+            f"BLOQUE29b: '{_a29['nombre']}' es tejido animal y tiene {_malos29} a cero sin "
+            f"declarar. Un tejido no tiene ninguno de esos a cero: o el dato es otro, o no lo "
+            f"sabemos y va en sin_dato. Un cero mudo el motor se lo cree.")
+
+# ── 29c. La energía de un alimento animal sale de sus macros ──────────
+# En la fruta no -- ahí la energía viene de los hidratos, que el catálogo
+# no guarda. En un tejido animal no hay hidratos que la expliquen, así que
+# energía sin macros es una fila que se contradice a sí misma.
+for _a29 in _al29:
+    if _a29.get("categoria") not in _ANIMAL29:
+        continue
+    _n29 = _a29.get("nutrientes") or {}
+    _e29 = _a29.get("energia") or 0
+    _calc29 = 4 * (_n29.get("proteina") or 0) + 9 * (_n29.get("grasa") or 0)
+    if _e29 > 20 and _calc29 < _e29 * 0.35:
+        fallos.append(
+            f"BLOQUE29c: '{_a29['nombre']}' declara {_e29} kcal y sus macros solo dan "
+            f"{_calc29:.0f}. En un alimento animal no hay hidratos que expliquen la "
+            f"diferencia. El motor lo usaría creyéndolo vacío, y cada gramo dejaría la ración "
+            f"corta de todo lo demás con el semáforo en verde.")
+
+# ── 29d. Y el que provocó todo esto, por su nombre ────────────────────
+# `Testículos de cordero`: 30 de 31 nutrientes a cero, `sin_dato` vacío,
+# 68 kcal con proteína 0 y grasa 0, y una vitamina B12 de las más altas del
+# catálogo. Para el solver era B12 gratis: MEDIDO, salía en 2 de cada 24
+# menús automáticos, uno con 90,5 gramos. Se quitó del catálogo el 27 de
+# agosto. Si algún día vuelve, que vuelva con datos.
+if any(_a29["nombre"] == "Testículos de cordero" for _a29 in _al29):
+    fallos.append(
+        "BLOQUE29d: ha vuelto 'Testículos de cordero'. Se quitó porque tenía 30 de sus 31 "
+        "nutrientes a cero y 68 kcal sin proteína ni grasa, y el motor lo usaba en 2 de cada "
+        "24 menús creyéndolo vacío de todo menos vitamina B12. Si vuelve con datos de "
+        "verdad, quita esta comprobación; si vuelve sin ellos, no puede entrar.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
