@@ -187,7 +187,13 @@ for i in range(10):
                      margenes_categoria=MARGENES, max_suplementos=2)
     if not ok:
         continue
-    if any(n in PESCADOS for n in g):
+    # ⚠️ POR CATEGORÍA, NO POR LISTA (27 agosto). Antes miraba contra
+    # `PESCADOS`, quince nombres escritos a mano arriba del archivo. Con la
+    # carga hay 27 pescados en el pool y los nuevos no estaban en esa
+    # lista, así que un menú con abadejo de Alaska contaba como "sin
+    # pescado". Es el mismo fallo que tenía `accesibles.py`: una lista de
+    # nombres en un sitio distinto del catálogo, que se queda vieja sola.
+    if any(al.get(n, {}).get("categoria") == "Pescados y mariscos" for n in g):
         con_pescado += 1
     for n in g:
         if al.get(n, {}).get("categoria") in SUP_COMERCIALES:
@@ -2040,7 +2046,10 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # Faltan datos y están apuntados en DATOS_QUE_FALTAN.md (57 alimentos,
     # 431 valores, tras rellenar los seis pescados el 25 de agosto). No se
     # rellenan a ojo: los valores salen de BEDCA/CIQUAL/USDA con su fuente.
-    ("HUECOS", "Huevo clara"),
+    # ⚠️ SE FUE `Huevo clara` (27 agosto): las 119 actualizaciones le
+    # llenaron los huecos. Es la mitad buena de la carga -- los huecos por
+    # menú bajan de 8,33 a 4,29 solo con las actualizaciones, sin añadir
+    # un alimento.
     ("HUECOS", "Borraja"), ("HUECOS", "Sal común (cloruro sódico)"),
     ("HUECOS", "Bazo de vaca"), ("HUECOS", "Páncreas de vaca"),
     ("HUECOS", "Bazo de cordero"),
@@ -2085,8 +2094,21 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # ALA, así que el EPA y el DHA se contaban dos veces. La auditoría los
     # llevaba señalando un mes; lo que faltaba era preguntarse por qué. Al
     # vaciarlo salieron los cuatro de golpe.
+    # ⚠️ REHECHA CON LA CARGA (27 agosto). Siguen siendo ocho, pero no son
+    # las mismas: el aviso OMEGA pasa a exigir que el mayor de los dos
+    # ácidos supere 0,2 g, así que se caen el pulpo, la bacaladilla y el
+    # yogur griego -- tenían 0,01 contra 0,004, donde el orden entre los
+    # dos es ruido analítico y no dice nada -- y entran los productos de
+    # lino y las hojas verdes que llegaron con la carga, que sí son
+    # omega-3 dominantes de verdad.
+    # Sin ese suelo la lista se iba a 66 nombres. Y una lista de 66 no la
+    # revisa nadie: es exactamente como los cuatro aceites de salmón se
+    # pasaron un mes dentro de una lista de nueve.
     ("OMEGA", "Aceite de linaza"), ("OMEGA", "Semilla de lino"),
-    ("OMEGA", "Yogur griego"), ("OMEGA", "Pulpo"), ("OMEGA", "Bacaladilla"),
+    ("OMEGA", "Aceite de lino prensado en frío"),
+    ("OMEGA", "Semilla de lino marrón"), ("OMEGA", "Semillas de lino, enteras"),
+    ("OMEGA", "Albahaca"), ("OMEGA", "Col rizada (kale), cruda"),
+    ("OMEGA", "Kiwi verde, pelado, crudo"),
     # ⚠️ DATO DUDOSO (27 agosto). Valores DECLARADOS que no nos creemos, y
     # que no se pueden corregir porque son los de la etiqueta y el real no
     # está publicado en ninguna parte. Van marcados en `dato_dudoso` dentro
