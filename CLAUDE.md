@@ -160,6 +160,16 @@ se deshicieron unos cambios de datos del 21 de agosto.
 
 ### Los datos
 
+**`UNIDADES.md` es lo primero que hay que leer antes de tocar el catálogo**:
+en qué unidad va cada uno de los 29 nutrientes, sobre qué base (100 g de
+alimento tal cual se da) y las cuatro trampas que se cuelan siempre. La
+peor, la primera del documento: `linoleico` es **omega-6** y `linolenico`
+es **omega-3**. Se diferencian en una letra, son cosas opuestas, y si se
+cargan cambiados no salta nada — los dos son nutrientes válidos con
+valores plausibles, y el menú sale verde igual. Lo vigilan el BLOQUE 26,
+que ancla el aceite de girasol y el de linaza, y `auditar_catalogo.py`,
+que lista los nueve alimentos donde el omega-3 supera al omega-6.
+
 En la raíz, los cuatro: `alimentos_v3_final.json` (el catálogo),
 `requerimientos_v2_final.json` (la tabla de FEDIAF), `catalogo_menus.json`
 (los 36 menús precalculados de la vista previa y sus 180 variantes) y

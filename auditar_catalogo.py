@@ -63,6 +63,58 @@ for a in al:
                        f"{len(sin_declarar)} nutrientes a cero sin declarar en sin_dato: "
                        + ", ".join(sin_declarar[:8]) + ("…" if len(sin_declarar) > 8 else "")))
 
+# ── 2b. OMEGA-6 CONTRA OMEGA-3: los dos que se llaman casi igual ──────
+#
+# `linoleico` es omega-6 (C18:2) y `linolenico` es omega-3 (C18:3). Se
+# diferencian en una letra y son cosas opuestas. Si alguien los cambia al
+# cargar una tabla, NADA salta: los dos son nutrientes validos y los dos
+# valores son plausibles, asi que el menu sale verde igual y el motor cree
+# que equilibra el omega-3 con un aceite que no lo tiene.
+#
+# En la comida de verdad el omega-6 casi siempre gana, porque el omega-3
+# de cadena corta esta concentrado en muy pocos alimentos. Que el omega-3
+# supere al omega-6 no es un error -- pasa en el lino, en los aceites de
+# salmon y en algun pescado magro -- pero es raro, y una lista corta se
+# puede repasar a ojo. Si un dia esa lista se llena, es que se han
+# invertido las columnas.
+for a in al:
+    n = a.get("nutrientes") or {}
+    w6, w3 = n.get("linoleico") or 0, n.get("linolenico") or 0
+    if w3 > w6 and (w6 or w3):
+        avisos.append(("OMEGA", a["nombre"],
+                       f"omega-3 ({w3} g) por encima del omega-6 ({w6} g). Es posible, pero "
+                       f"revisa que no esten cambiados: linoleico=omega-6, linolenico=omega-3"))
+
+# ── 2c. LOS GRASOS TIENEN QUE CABER DENTRO DE LA GRASA ────────────────
+#
+# El linoleico, el linolenico, el EPA y el DHA son PARTES de la grasa
+# total, asi que sumados no pueden pasarse de ella. Es una ley fisica, no
+# un criterio: si se pasan, el dato esta mal.
+#
+# Esto existe por la trampa de las unidades, que es la que mas se cuela:
+# casi todas las tablas de composicion dan el EPA y el DHA en MILIGRAMOS y
+# nosotros los guardamos en GRAMOS. Cargar la sardina con epa=254 en vez
+# de 0.254 pondria 930 g de acidos grasos dentro de 7,5 g de grasa --
+# imposible, y hasta ahora nada lo miraba. El menu habria salido verde: el
+# EPA+DHA es un nutriente con minimo, y pasarse de largo no lo rompe.
+#
+# El araquidonico va en mg a proposito (asi lo da FEDIAF), por eso se
+# divide entre 1000 antes de sumarlo.
+#
+# Margen del 5%: los valores vienen de fuentes distintas y de analisis
+# distintos, asi que un pelo por encima no es un error de carga.
+for a in al:
+    n = a.get("nutrientes") or {}
+    grasa = n.get("grasa") or 0
+    if not grasa:
+        continue
+    suma = sum(n.get(k) or 0 for k in ("linoleico", "linolenico", "epa", "dha"))
+    suma += (n.get("araquidonico") or 0) / 1000.0
+    if suma > grasa * 1.05 and suma - grasa > 0.05:
+        avisos.append(("GRASOS", a["nombre"],
+                       f"los acidos grasos suman {suma:.2f} g y la grasa total es {grasa} g. "
+                       f"No caben. Lo mas probable: EPA/DHA cargados en mg en vez de g"))
+
 # ── 3. plausibilidad por categoría ────────────────────────────────────
 for a in al:
     c, nombre = a.get("categoria"), a["nombre"]
@@ -109,6 +161,15 @@ if sin_verificar:
 print()
 print("═" * 74)
 print("AVISOS: %d" % len(avisos))
+# ⚠️ DOS ESPACIOS ENTRE EL NOMBRE Y EL DETALLE, Y EL NOMBRE SIN CORTAR.
+# CASO REAL (26 agosto): esto era "%-34s %s" con nombre[:34], y el BLOQUE
+# 19 lee cada línea con una expresión que separa el nombre del detalle por
+# DOS espacios seguidos. Con un nombre de 34 caracteres justos, el relleno
+# no añadía nada y solo quedaba el espacio del formato: el aviso de
+# "Aceite de Salmón Natural Greatness" se leía mal, y el BLOQUE 19 decía
+# que ese hueco había desaparecido cuando seguía ahí. Hay cinco alimentos
+# con nombres de 34 o más -- y el corte a 34 además perdía el final de los
+# de 38, así que dos alimentos distintos podían leerse como el mismo.
 for tipo, nombre, det in avisos:
-    print("  [%-6s] %-34s %s" % (tipo, nombre[:34], det))
+    print("  [%-6s] %-34s  %s" % (tipo, nombre, det))
 sys.exit(1 if any(t == "BASE" for t, _, _ in avisos) else 0)

@@ -2021,6 +2021,19 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # de grasa es pescado azul, y aquel cero no era "no tiene" sino "no lo
     # sabíamos" -- el semáforo lo contaba como si de verdad no aportara nada.
     ("RARO", "Laringe de vacuno"),
+    # ⚠️ OMEGA-3 POR ENCIMA DEL OMEGA-6 (26 agosto). No es un error: son los
+    # alimentos donde eso pasa de verdad -- el lino, los cuatro aceites de
+    # salmón, y tres con cantidades minúsculas de los dos. La auditoría los
+    # lista a propósito, porque `linoleico` (omega-6) y `linolenico`
+    # (omega-3) se diferencian en una letra: si alguien invirtiera las
+    # columnas al cargar una tabla, esta lista se llenaría de golpe y sería
+    # lo único que lo delataría -- el menú saldría verde igual.
+    ("OMEGA", "Aceite de linaza"), ("OMEGA", "Semilla de lino"),
+    ("OMEGA", "AniForte Aceite de Salmón"),
+    ("OMEGA", "Aceite de Salmón Natural Greatness"),
+    ("OMEGA", "Oleum Canis Aceite de Salmón"),
+    ("OMEGA", "Brit Care Aceite de Salmón"),
+    ("OMEGA", "Yogur griego"), ("OMEGA", "Pulpo"), ("OMEGA", "Bacaladilla"),
 }
 
 import re as _re_b19
@@ -2600,6 +2613,81 @@ if len(_cat_py_b25.split("\n")) > 120:
                   f"gramos van en catalogo_menus.json, con los demás datos.")
 if not (_raiz_b24 / "catalogo_menus.json").exists():
     fallos.append("BLOQUE25: falta catalogo_menus.json, que es donde viven los menús del catálogo.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 26 — EL OMEGA-6 Y EL OMEGA-3 NO SE PUEDEN CONFUNDIR
+# ============================================================
+#
+# ⚠️ `linoleico` es OMEGA-6 (C18:2) y `linolenico` es OMEGA-3 (C18:3). Se
+# diferencian en una letra y son cosas opuestas. Si alguien los cambia al
+# cargar una tabla de composición, NO SALTA NADA: los dos son nutrientes
+# válidos de FEDIAF, los dos valores son plausibles, el semáforo sale verde
+# y el motor cree que está equilibrando el omega-3 con un aceite que no lo
+# tiene.
+#
+# Esto ancla dos alimentos cuya firma es inconfundible, así que un cambio
+# de columnas se ve en el acto:
+#
+#     Aceite de girasol   ω-6 57,53 g  frente a  ω-3 1,60 g   (36:1)
+#     Aceite de linaza    ω-6 15,69 g  frente a  ω-3 55,47 g  (al revés)
+#
+# Y comprueba que el motor los trata como dos requisitos distintos, no como
+# uno. La otra mitad de la vigilancia está en auditar_catalogo.py, que lista
+# los alimentos donde el omega-3 supera al omega-6: son nueve y conocidos
+# (lino, aceites de salmón y tres con cantidades minúsculas). Si esa lista
+# se llenara de golpe, sería que se han invertido las columnas.
+print("=== BLOQUE 26: omega-6 y omega-3 no se confunden ===")
+
+_ANCLAS_B26 = [
+    # alimento, clave, valor, la otra clave, valor de la otra
+    ("Aceite de girasol", "linoleico", 57.53, "linolenico", 1.6),
+    ("Aceite de linaza",  "linolenico", 55.47, "linoleico",  15.69),
+]
+for _nom26, _dom26, _v_dom26, _otro26, _v_otro26 in _ANCLAS_B26:
+    _a26 = _al21.get(_nom26)
+    if not _a26:
+        fallos.append(f"BLOQUE26: '{_nom26}' ya no está en el catálogo; hay que reanclar esta "
+                      f"prueba con otro alimento de firma inconfundible.")
+        continue
+    _n26 = _a26.get("nutrientes", {})
+    for _clave26, _esperado26 in ((_dom26, _v_dom26), (_otro26, _v_otro26)):
+        if abs((_n26.get(_clave26) or 0) - _esperado26) > 0.01:
+            fallos.append(
+                f"BLOQUE26: {_nom26} tiene {_clave26}={_n26.get(_clave26)} y debería ser "
+                f"{_esperado26} g/100 g. Si los dos valores están intercambiados, es que se han "
+                f"invertido las columnas de omega-6 y omega-3 -- y eso no lo caza nada más: los "
+                f"menús seguirían saliendo verdes.")
+    # y el que manda tiene que mandar de verdad, no por un decimal
+    if (_n26.get(_dom26) or 0) <= (_n26.get(_otro26) or 0):
+        fallos.append(f"BLOQUE26: en {_nom26} el {_dom26} ya no supera al {_otro26}. Esa relación "
+                      f"es la firma del alimento: el girasol es omega-6 y la linaza omega-3.")
+
+# los dos son requisitos DISTINTOS para el motor, no uno solo
+if _MAPA_SEMAFORO_b18.get("Linoleico") != "linoleico":
+    fallos.append("BLOQUE26: 'Linoleico' ya no apunta a la clave `linoleico` en el mapa del "
+                  "semáforo.")
+if _MAPA_SEMAFORO_b18.get("Linolénico") != "linolenico":
+    fallos.append("BLOQUE26: 'Linolénico' ya no apunta a la clave `linolenico` en el mapa del "
+                  "semáforo.")
+if _MAPA_SEMAFORO_b18.get("Linoleico") == _MAPA_SEMAFORO_b18.get("Linolénico"):
+    fallos.append("BLOQUE26: el omega-6 y el omega-3 apuntan a la MISMA clave. Son dos ácidos "
+                  "grasos distintos y opuestos, y FEDIAF los pide por separado.")
+
+# y el documento que los explica tiene que seguir ahí, que es lo que lee
+# quien prepara los datos
+_unidades_b26 = _raiz_b24 / "UNIDADES.md"
+if not _unidades_b26.exists():
+    fallos.append("BLOQUE26: falta UNIDADES.md, que es donde está escrito en qué unidad va cada "
+                  "nutriente y cuál de los dos linolé/eicos es el omega-3.")
+else:
+    _txt26 = _unidades_b26.read_text(encoding="utf-8")
+    for _debe26 in ("linoleico", "linolenico", "omega-6", "omega-3", "C18:2", "C18:3"):
+        if _debe26 not in _txt26:
+            fallos.append(f"BLOQUE26: UNIDADES.md ya no menciona '{_debe26}'. Es justo la "
+                          f"distinción que evita que se carguen cambiados.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
