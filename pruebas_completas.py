@@ -2009,7 +2009,7 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # 431 valores, tras rellenar los seis pescados el 25 de agosto). No se
     # rellenan a ojo: los valores salen de BEDCA/CIQUAL/USDA con su fuente.
     ("HUECOS", "Huevo clara"),
-    ("HUECOS", "Borraja"), ("HUECOS", "Sal común (cloruro sódico)"),
+    ("HUECOS", "Sal común (cloruro sódico)"),
     ("HUECOS", "Bazo de vaca"), ("HUECOS", "Páncreas de vaca"),
     ("HUECOS", "Bazo de cordero"), ("HUECOS", "Cerebro de ternera"),
     # ⚠️ SE FUE `Testículos de cordero` (27 agosto): ya no está en el
@@ -3275,6 +3275,62 @@ else:
                 f"bovina desecada, y MEDIDO daban menús deficitarios en verde: forzándolo en un "
                 f"perro de 25 kg el menú declaraba 8,31 mg de cobre y el real eran 2,34 sobre "
                 f"un mínimo de 2,60.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 31 — la borraja fuera del catálogo, no solo del automático
+# ============================================================
+# `seguridad.BORRAJA_EXCLUIR` la sacaba del menú automático desde agosto,
+# con los alcaloides pirrolizidínicos escritos al lado y la frase «se
+# EXCLUYE, no se topa». Y funcionaba: MEDIDO sobre 30 menús automáticos en
+# producción, no salía en ninguno.
+#
+# Pero seguía en `alimentos_v3_final.json`, o sea en `/alimentos`, o sea en
+# el selector de Personalizar. Excluir de lo automático y dejar en el
+# selector es MEDIA exclusión, y para un hepatotóxico acumulativo sin
+# dosis segura publicada media exclusión no vale.
+#
+# Y su ficha traía 13 µg de vitamina D, que es imposible -- ninguna planta
+# sintetiza colecalciferol. Era el único vegetal del catálogo con vitamina
+# D, y con más que cualquier pescado.
+print("\n=== BLOQUE 31: la borraja, fuera del catálogo entero ===")
+
+_al31 = json.load(open("alimentos_v3_final.json", encoding="utf-8"))
+if any(a["nombre"] == "Borraja" for a in _al31):
+    fallos.append(
+        "BLOQUE31: ha vuelto la borraja al catálogo. Lleva alcaloides pirrolizidínicos "
+        "(amabilina, licopsamina, intermedina), hepatotóxicos por obstrucción sinusoidal y de "
+        "efecto ACUMULATIVO, y no hay ninguna dosis segura publicada. Estar en el catálogo es "
+        "estar en el selector de Personalizar, aunque el automático la excluya.")
+
+# La exclusión de seguridad se queda igualmente: tiene que seguir
+# funcionando el día que alguien vuelva a meter el alimento.
+if "borraja" not in getattr(_seg21, "BORRAJA_EXCLUIR", set()):
+    fallos.append(
+        "BLOQUE31: se ha quitado la borraja de `seguridad.BORRAJA_EXCLUIR`. Eso es la red por "
+        "si el alimento vuelve al catálogo: quitar las dos cosas a la vez deja la puerta "
+        "abierta del todo.")
+
+# Y ninguna planta puede traer vitamina D. La borraja era el caso, pero la
+# regla es general y vale para lo que entre mañana: el colecalciferol es
+# de origen animal, y el ergocalciferol (D2) de las setas es otra molécula
+# que el perro aprovecha mucho peor.
+_PLANTAS_CON_D = [a["nombre"] for a in _al31
+                  if a.get("categoria") == "Verduras y frutas"
+                  and (a.get("nutrientes", {}).get("vitD") or 0) > 0
+                  and "seta" not in a["nombre"].lower()
+                  and "champiñón" not in a["nombre"].lower()
+                  and "portobello" not in a["nombre"].lower()
+                  and "boleto" not in a["nombre"].lower()]
+if _PLANTAS_CON_D:
+    fallos.append(
+        f"BLOQUE31: estas plantas declaran vitamina D: {_PLANTAS_CON_D}. Ninguna planta "
+        f"sintetiza colecalciferol -- las poquísimas que llevan glucósidos de vitamina D son "
+        f"Solanum glaucophyllum, Trisetum flavescens y Cestrum diurnum, y ninguna se come. "
+        f"Si es una seta, va en la lista de excepciones de arriba y hay que decidir aparte qué "
+        f"se hace con la D2, que el perro aprovecha mucho peor que la D3.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
