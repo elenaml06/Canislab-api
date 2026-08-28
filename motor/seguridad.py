@@ -346,6 +346,26 @@ HUESO_RIESGO_ASTILLADO = {"costillas de cordero"}
 # dar de forma habitual. A diferencia de la tiaminasa o el oxalato, aqui NO
 # hay una dosis segura publicada por debajo de la cual esta bien: se
 # EXCLUYE, no se topa.
+# ⚠️ Y DESDE EL 27 DE AGOSTO YA NO ESTA EN EL CATALOGO. Esta exclusion se
+# escribio en agosto y hacia la mitad del trabajo: sacaba la borraja del
+# menu AUTOMATICO, y por eso no salia en ninguno de los 30 menus que se
+# midieron. Pero el alimento seguia en `alimentos_v3_final.json`, o sea en
+# `/alimentos`, o sea en el selector de Personalizar -- donde cualquiera
+# podia elegirla a mano y el motor la aceptaba sin rechistar.
+# Excluir de lo automatico y dejar en el selector es media exclusion, y
+# para un hepatotoxico acumulativo sin dosis segura publicada media
+# exclusion no vale.
+#
+# Ademas su ficha traia 13 ug de vitamina D, que es IMPOSIBLE: ninguna
+# planta sintetiza colecalciferol. Era el unico vegetal del catalogo con
+# vitamina D, y con mas que cualquier pescado. Lo que eso significa se ve
+# mejor mirando lo que estuvo a punto de pasar: se estaba disenando un
+# suelo de vitamina D "que un 30% venga de la comida y no del suplemento",
+# y 13 g de borraja lo satisfacian ENTEROS. Una restriccion nueva habria
+# entrado en verde sin obligar a nada, desactivada por una sola fila.
+#
+# Este conjunto se queda por si alguien la vuelve a meter: la exclusion
+# tiene que seguir funcionando aunque el alimento reaparezca.
 BORRAJA_EXCLUIR = {"borraja"}
 
 # ⚠️ RESTRICCIONES POR PATOLOGIA — investigadas 4 agosto, mismo patron que
