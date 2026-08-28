@@ -53,9 +53,11 @@ las tiene que tomar una persona, no yo.
       | Cobre (hepatopatía) | 3.0 | 2.08 | **2.3** |
       | Grasa (pancreatitis) | 25 % | — | **18 %** (con suelo en cachorros) |
       Decidir si se aplican esos tres, o si se prefiere otra cosa.
-- [ ] **Cinco preguntas de la revisión clínica, para Michelle.** Salieron
-      del repaso del 25 de agosto y ninguna se puede programar sin criterio
-      veterinario:
+- [ ] **Cinco preguntas de la revisión clínica.** Salieron del repaso del
+      25 de agosto y ninguna se puede programar sin criterio veterinario.
+      ⚠️ La nutricionista ya no es Michelle: es Chris. Las cinco van en
+      `Rawku_para_Chris.pdf` (28 de agosto), repartidas entre las
+      preguntas 5, 8 y 9:
 
       1. **¿Qué mínimo de proteína para un senior?** Hoy la app usa la
          columna de adulto de FEDIAF (52,10 g/1000 kcal). Shmalberg (DACVN)
@@ -80,12 +82,19 @@ las tiene que tomar una persona, no yo.
       exige a cualquier perro (2,08). Eso es correcto para esa hepatopatía
       -- pero la lista de la app tiene una sola opción, así que ahora
       también bloquea a un perro con otra enfermedad hepática que quizá sí
-      podría comer un menú normal. Si Michelle dice que merece la pena,
+      podría comer un menú normal. Si Chris dice que merece la pena,
       hay que partir la opción en dos. El tope de 2,4 mg ya está puesto en
       el código esperando ese día.
 
-- [ ] **`EPA_DHA_total` se comprueba solo contra el EPA, sin sumarle el
-      DHA.** Encontrado el 25 de agosto. El requisito se llama EPA+DHA y en
+- [x] **HECHO (25 agosto). `EPA_DHA_total` ya suma las dos claves.** Se
+      resolvió con claves DERIVADAS en `valor_nutriente` — el mismo
+      mecanismo que el 28 de agosto sirvió para `metionina_cistina` y
+      `fenilalanina_tirosina`. Comprobado: epa 0,5 + dha 0,3 = 0,8. Se
+      deja escrito el apunte porque la nota decía «hoy solo puede apuntar
+      a una clave», y eso ya no es verdad.
+
+      <s>`EPA_DHA_total` se comprueba solo contra el EPA, sin sumarle el
+      DHA.</s> Encontrado el 25 de agosto. El requisito se llama EPA+DHA y en
       `verificar.MAPA` apunta a la clave `epa` a secas, así que el DHA no
       cuenta. Va en la dirección segura (se exige más de lo que se pide) y
       hoy los menús lo cumplen de sobra igual -- medido, 145 mg/1000 kcal
@@ -119,7 +128,7 @@ las tiene que tomar una persona, no yo.
       ocho menús salió con «0,00 g de fibra» **porque le tocaron las coles
       de Bruselas**. Una verdura de verdad leída como si no llevara nada.
 
-- [ ] **¿Rawku apunta a algún rango de fibra? — para hablar con Michelle.**
+- [ ] **¿Rawku apunta a algún rango de fibra? — pregunta 7 del PDF de Chris.**
       Ni FEDIAF, ni AAFCO, ni el NRC dan un mínimo: la fibra no es un
       nutriente esencial y no tiene valor de referencia oficial. Así que
       no se puede poner un mínimo duro sin dejar sin menú a perros con
@@ -161,7 +170,7 @@ las tiene que tomar una persona, no yo.
       «moderado», y de que BARF va por debajo de la comida comercial, ~2,7
       % MS vs ~3,4 %), eso se implementa como un suelo BLANDO en el solver
       -- se intenta llegar, y si no se llega el menú sale igual. Es media
-      tarde de trabajo. Pero la cifra tiene que venir de Michelle: aquí no
+      tarde de trabajo. Pero la cifra tiene que venir de Chris: aquí no
       se inventan datos nutricionales.
 
       Fuentes que trajo ella: Schmidt et al. (2018) PLOS ONE
