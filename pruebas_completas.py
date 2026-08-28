@@ -3378,6 +3378,42 @@ elif _cascara31 in _al31 and not _ficha31["no_verificable"]:
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
+# BLOQUE 32: los topes por patología cuadran (auditar_patologias.py)
+# ============================================================
+# Mismo patrón que el BLOQUE 18 con la tabla de FEDIAF: la auditoría existe
+# como script y aquí se ejecuta, porque una auditoría que hay que acordarse
+# de lanzar a mano no auditó nunca.
+#
+# Lo que vigila, y de dónde sale cada cosa:
+#   · Cada cifra con FUENTE y con POR QUÉ.
+#   · Ninguna patología FORMULABLE con un tope por debajo del mínimo de
+#     FEDIAF. Si lo tiene no es un tope: es una dieta de prescripción, y va
+#     con formulable=false. De las 47 patologías de la revisión clínica,
+#     SIETE cifras estaban ahí.
+#   · Que la clave del nutriente esté en el MAPA del verificador. Es el
+#     fallo de la 'Fibra': una restricción que el motor no mira nunca.
+#   · Que soltar un tope en crecimiento venga con su aviso (regla 5).
+print("\n=== BLOQUE 32: los topes por patología, auditados ===")
+
+from auditar_patologias import auditar as _auditar_patologias
+for _p32 in _auditar_patologias():
+    fallos.append("BLOQUE32: " + _p32)
+
+# Y que la tabla que ve el motor siga saliendo del JSON, no de un dict en el
+# código: si alguien la vuelve a escribir a mano, la auditoría deja de mirar
+# lo que se usa de verdad y no se entera nadie.
+import motor_completo as _mc32
+if "from patologias import" not in open("motor/motor_completo.py", encoding="utf-8").read():
+    fallos.append("BLOQUE32: motor_completo ya no carga los topes desde patologias.json. Si la "
+                  "tabla ha vuelto al código, auditar_patologias.py está auditando un fichero "
+                  "que ya no usa nadie.")
+if len(_mc32.PATOLOGIAS) != len(_mc32.PATOLOGIAS_CRUDO["patologias"]):
+    fallos.append("BLOQUE32: el JSON tiene %d patologías y el motor ve %d."
+                  % (len(_mc32.PATOLOGIAS_CRUDO["patologias"]), len(_mc32.PATOLOGIAS)))
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")
