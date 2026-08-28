@@ -144,6 +144,67 @@ Lo que se enseña de más:
 
 Y una cosa que no es «enseñar más» y que es la que más trabajo lleva:
 
+### Generar el menú: el modo manual es la puerta de entrada
+
+Escrito el 28 de agosto, después de mirar cómo trabajan de verdad los
+programas que ya usan los veterinarios (AnVet, MyVetDiet, Animal Diet
+Formulator, Pet Diet Designer, BalanceIT).
+
+**Cómo lo hacen todos, sin excepción**: el veterinario elige los alimentos
+y **teclea los gramos a mano**, viendo columnas de nutrientes con el % del
+requisito, y va corrigiendo por tanteo hasta que cuadran. Es una hoja de
+cálculo con buena cara. La propia literatura lo dice sin adornos: llegar a
+todos los niveles de todos los nutrientes es muy difícil, y hace falta
+saber de nutrición clínica **y de hojas de cálculo**.
+
+**Ninguno decide qué alimentos Y cuánto de cada uno a la vez.** Eso es lo
+que hace el MILP de este repo, y es la única ventaja que no se copia
+rápido.
+
+**Pero eso no significa quitarles el tanteo.** La gente prefiere lo malo
+conocido, y un profesional no va a confiar el primer día en una caja que
+le escupe una dieta hecha. Así que el modo profesional tiene los dos, y en
+este orden:
+
+**1. Modo manual — lo malo conocido.** El vet elige alimentos y pone
+gramos, y la ficha se recalcula delante de él. Es lo que ya sabe hacer, sin
+aprender nada.
+
+Y esto **ya está construido**: es `/analizar`, que recibe gramos por
+alimento y devuelve la ficha entera contra FEDIAF, compartiendo `MAPA` con
+el semáforo. Hoy se vende como «analiza la dieta que ya le das al perro»,
+pero mecánicamente es un formulador manual. Lo que falta no es cálculo, es
+pantalla: añadir y quitar alimentos y mover gramos viendo la ficha
+moverse, en vez de un formulario de una sola tirada.
+
+**2. El botón que convierte — «termínamelo».** El vet coloca lo que quiere
+para ese paciente, se atasca (siempre se atascan: es la parte difícil), y
+el motor **respeta lo que él puso y cierra el resto**. Ése es el momento en
+el que descubre que el automático no es una caja negra que le quita el
+criterio, sino que le ahorra el tanteo.
+
+Es la misma palanca de **anclar y recalcular**, y por eso las dos cosas no
+son dos productos: el manual es la puerta y el botón es la conversión.
+
+**3. El automático de siempre**, para cuando ya se fía.
+
+### El límite del modo manual, y por qué juega a favor
+
+Un menú montado a mano que no cumpla **se puede ver en rojo**: eso ya lo
+hace `/analizar` sin romper la regla 1, porque devuelve un análisis y no un
+menú. Lo que no se puede es **entregarlo ni firmarlo como pauta**.
+
+Su hoja de cálculo les deja imprimir con una columna en rojo. Ésta no. Para
+alguien que va a firmar con su número de colegiado, eso no es una
+limitación: es el motivo para usarla.
+
+### «Cómo darlo» es pautable
+
+Las instrucciones salen automáticas, como ahora, pero el veterinario puede
+**cambiarlas para ese paciente**: un caso concreto puede necesitar otra
+cosa. Se guarda con la pauta —y si está firmada, congelado con ella
+(apartado 9)—, no como un texto global.
+
 ### Los textos hablan a la persona equivocada
 
 Los avisos del motor están escritos para quien no es veterinario, a
@@ -184,9 +245,9 @@ Las pantallas son las que hay hoy en `App.jsx`, no unas inventadas.
 | Pantalla | Tutor | Veterinario | Qué cambia |
 |---|---|---|---|
 | **Onboarding**, 6 pasos (nombre y sexo · raza o tamaño · fecha de nacimiento · peso y condición · actividad y esterilización · alergias y patologías) | Sí | Sí, **pero es otro**: es dar de alta a un paciente, no a «tu perro». Mismos 6 datos, otro tono, y dos campos más: nombre y contacto del tutor | Ver abajo |
-| **Generar el menú** | Sí | Sí | Nada |
+| **Generar el menú** | Automático o personalizar | **Tres, y en este orden**: manual (elige alimentos y pone gramos, como en AnVet), «termínamelo» (ancla lo suyo y el motor cierra el resto) y el automático | El manual y el botón son nuevos — ver el apartado 5 |
 | Pestaña **«El menú»** | Sí | Sí | El vet ve además la tabla de los 29 nutrientes con margen, el Ca:P, los topes aplicados, los huecos y el peldaño de relajación usado |
-| Pestaña **«Cómo darlo»** | Sí | **Sí, pero no es para él**: es lo que imprime para el tutor | No desaparece: cambia de destinatario |
+| Pestaña **«Cómo darlo»** | Sí | Sí — es lo que le da al tutor, y **lo puede pautar**: cambiar el texto para ese paciente | Cambia de destinatario y se vuelve editable |
 | **Mis menús** | Sí | Sí, del paciente que tenga abierto | Nada |
 | **Perfil del perro** | Sí | Sí | Nada |
 | **Evolución y crecimiento** | Sí (premium) | Sí — es seguimiento clínico, justo lo suyo | Nada |
