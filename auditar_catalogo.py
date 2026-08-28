@@ -70,6 +70,15 @@ for a in al:
     n = a.get("nutrientes") or {}
     if not n or es_grasa(a) or a.get("categoria") in SUPLEMENTOS: continue
     sd = set(a.get("sin_dato") or [])
+    # ⚠️ UN CERO CON FUENTE ESCRITA NO ES UN HUECO (28 agosto). Las purinas
+    # de un huevo son CERO de verdad -- "Egg, chicken, raw" da 0,0 en las
+    # cuatro bases -- y las de un aceite tambien, porque no tiene celulas.
+    # Ese cero lleva su procedencia en `purinas_fuente`, asi que es un valor
+    # medido y no una celda vacia. Contarlo como hueco empujaba al huevo de
+    # pato de 9 ceros a 10 y disparaba este aviso por un dato que SI
+    # tenemos, que es justo lo contrario de lo que vigila.
+    if a.get("purinas_fuente"):
+        sd = sd | {"purinas"}
     sin_declarar = [k for k, v in n.items() if not v and k not in sd]
     if len(sin_declarar) >= 10:
         avisos.append(("HUECOS", a["nombre"],
@@ -260,6 +269,205 @@ if sin_verificar:
         print("   %-26s nivel=%-9s %s" % (a["nombre"][:26], p.get("nivel"), p.get("fuente_declarada","")))
         for x in p.get("deducidos", []):
             print("      DEDUCIDO, no leido: %s" % x)
+
+# =====================================================================
+# EL AMINOGRAMA: QUIEN LO TIENE Y QUIEN NO
+# =====================================================================
+#
+# ⚠️ AÑADIDO (28 agosto). Los doce aminoacidos esenciales estan en la
+# tabla de FEDIAF desde el 26 de agosto y NO se verifican, porque el
+# catalogo no traia el dato. Hoy 49 fichas si lo traen, y la pregunta ha
+# cambiado: ya no es "¿hay dato?", es "¿a QUIEN le falta?".
+#
+# Importa la respuesta por categoria y no el total, porque un alimento sin
+# aminograma no cuenta como "no lo se": cuenta como CERO. Si al activar
+# los requisitos el hueso carnoso entero cuenta como cero de lisina, el
+# motor lo evita para llegar al minimo -- y el menu sale verde, porque el
+# semaforo mide el mismo cero. El total no dice nada de eso; la lista por
+# categoria, si.
+#
+# Por debajo de 3 g de proteina por 100 g no se cuenta: la manzana tiene
+# 0,3 y la zanahoria 0,37, y su aminograma no mueve una racion carnica.
+AA_AUDIT = ["arginina", "histidina", "isoleucina", "leucina", "lisina", "metionina",
+            "cistina", "fenilalanina", "tirosina", "treonina", "triptofano", "valina"]
+PROTEINA_QUE_CUENTA = 3.0
+_falta_aa = {}
+for a_ in al:
+    if nut(a_, "proteina") < PROTEINA_QUE_CUENTA:
+        continue
+    huecos = set(a_.get("sin_dato") or [])
+    nutr = a_.get("nutrientes") or {}
+    if any(k in huecos or k not in nutr for k in AA_AUDIT):
+        _falta_aa.setdefault(a_.get("categoria", "?"), []).append(a_["nombre"])
+# =====================================================================
+# LO QUE UNA SEGUNDA MAGNITUD PREDICE DE LA PRIMERA
+# =====================================================================
+#
+# ⚠️ AÑADIDO (28 agosto). De los cuatro fallos de datos de hoy, NINGUNO
+# daba error y los cuatro pasaban cualquier validacion de formato: el
+# triptofano en miligramos, `Lenguado` cogiendo la ficha de la lengua de
+# vacuno, el higado de ternera cogiendo musculo generico, y el peso
+# objetivo que no llegaba al solver. Los cuatro «funcionaban».
+#
+# Lo unico que los cazo fue una comprobacion de COHERENCIA: una segunda
+# magnitud independiente que predice la primera. La suma de los doce
+# aminoacidos predice la proteina. La suma de las cuatro bases predice las
+# purinas totales. El calcio predice cuanto hueso lleva la pieza.
+#
+# Donde no exista esa segunda magnitud, hay que inventarla ANTES de
+# cargar, no despues.
+AA_COH = ["arginina", "histidina", "isoleucina", "leucina", "lisina", "metionina",
+          "cistina", "fenilalanina", "tirosina", "treonina", "triptofano", "valina"]
+
+for a_ in al:
+    n_ = a_.get("nutrientes") or {}
+    sd_ = set(a_.get("sin_dato") or [])
+    nom_ = a_["nombre"]
+    prot_ = nut(a_, "proteina")
+    cat_ = a_.get("categoria")
+
+    # ── El hueso carnoso tiene que tener hueso ──────────────────────────
+    # Las fichas de USDA de cuello de pollo NO llevan el hueso: 18 mg de
+    # calcio contra los 1.700 del cuello entero. Un factor de 94. Si
+    # alguna fila de hueso carnoso viniera de USDA, BEDCA, CIQUAL o
+    # FINELI -todas dan PORCION COMESTIBLE- estaria mal por dos ordenes
+    # de magnitud y el menu saldria verde igual, porque 18 mg es un
+    # numero perfectamente plausible para una carne.
+    # La LARINGE es la excepcion conocida y esta bien: es cartilago, no
+    # hueso, asi que no esta mineralizada y el calcio no la ve. Es la misma
+    # pieza que se deja sin aminograma a proposito.
+    if cat_ == "Hueso carnoso" and nom_ != "Laringe de vacuno":
+        ca_, fo_ = nut(a_, "calcio"), nut(a_, "fosforo")
+        if ca_ and ca_ < 400:
+            avisos.append(("HUESO", nom_,
+                           f"{ca_:.0f} mg de calcio/100 g y es hueso carnoso. Por debajo de 400 la "
+                           f"ficha es de porcion comestible SIN hueso (el cuello de pollo del USDA "
+                           f"da 18 contra 1.700 del cuello entero)"))
+        if ca_ and fo_:
+            r_ = ca_ / fo_
+            if not (1.3 <= r_ <= 2.2):
+                avisos.append(("HUESO", nom_,
+                               f"Ca:P = {r_:.2f}. La hidroxiapatita da 2,15 por estequiometria; por "
+                               f"debajo de 1,3 hay carne de mas o el dato esta mal"))
+
+    # ── El aminograma tiene que parecerse a una proteina ────────────────
+    tiene_aa = prot_ > 0 and not (set(AA_COH) & sd_) and all(k in n_ for k in AA_COH)
+    if tiene_aa:
+        suma_ = sum(n_.get(k) or 0 for k in AA_COH)
+        if prot_ >= 3 and not (0.25 <= suma_ / prot_ <= 0.85):
+            avisos.append(("AMINO", nom_,
+                           f"los 12 aminoacidos suman {suma_:.2f} g y la proteina son {prot_:.2f}: "
+                           f"{suma_/prot_*100:.0f}% de ella, fuera de la banda 25-85%. Es la "
+                           f"comprobacion que cazo el triptofano en miligramos"))
+        # La isoleucina separa la sangre de todo lo demas: 4,43 g/100 g de
+        # proteina en la carne, 1,1 en la harina de sangre y 0,50 en la
+        # hemoglobina pura -- NUEVE veces menos. Pegarle a la sangre un
+        # aminograma generico de proteina animal la sobreestimaria un 300%.
+        if prot_ >= 10:
+            ile_ = (n_.get("isoleucina") or 0) / prot_ * 100
+            # ⚠️ LAS SIETE FICHAS DE PAVO SALEN AQUI Y ES UN FALLO REAL,
+            # encontrado el 28 de agosto por esta misma comprobacion el dia
+            # que se puso. Su aminograma viene de «Turkey, ground, raw» del
+            # USDA y tiene la isoleucina y la valina un 40% bajas mientras
+            # la leucina, la lisina y la treonina salen normales:
+            #     Leu/Ile   pollo 1,47 · ternera 1,76 · salmon 1,76
+            #               PAVO 2,42
+            # Va en la direccion segura -infravalora, asi que el motor
+            # compensa- pero esta mal. Pendiente de resembrar desde otra
+            # ficha; hasta entonces se listan aqui para que el aviso no
+            # cante lo mismo cada vez y tape uno nuevo.
+            # ⚠️ EL HIGADO Y EL CORAZON SALIERON DE ESTA LISTA el 28 de
+            # agosto: se resembraron desde el pollo del USDA (Leu/Ile 1,86 y
+            # 1,63). Si vuelven a bajar del 3%, tienen que volver a cantar.
+            PAVO_PENDIENTE = {"Pavo", "Cuello de pavo", "Pavo muslo con piel",
+                              "Pavo pechuga con piel", "Pavo pechuga sin piel",
+                              "Molleja de pavo", "Molleja de pollo"}
+            if ile_ < 3.0 and "sangre" not in nom_.lower() and nom_ not in PAVO_PENDIENTE:
+                avisos.append(("AMINO", nom_,
+                               f"isoleucina al {ile_:.1f}% de la proteina. Por debajo del 3% solo "
+                               f"estan la sangre (1,1) y la hemoglobina (0,50); la carne va a 4,4"))
+        # ⚠️ NIVEL 2 — MIRAR LA COLUMNA, NO LA FILA (28 de agosto).
+        #
+        # Todo lo de arriba pregunta «¿este numero es posible?», y eso caza
+        # el valor IMPOSIBLE. No caza el valor INVENTADO, porque quien lo
+        # imputa lo hace con proporciones internamente coherentes: cuadra
+        # consigo mismo y solo falla contra el resto del mundo.
+        #
+        # Lo que lo destapa es un COCIENTE entre dos aminoacidos de la misma
+        # fila, y por un motivo estructural: un aminograma transferido se
+        # reescala por la proteina del destino, asi que cualquier umbral
+        # «por gramo de proteina» se mueve con ella -- pero un cociente entre
+        # dos aminoacidos de la misma fila no se mueve con nada.
+        #
+        # Los dos casos reales que lo justifican:
+        #   · El pavo del USDA: Leu/Ile = 2,419 en CUATRO tejidos distintos,
+        #     a tres decimales. Seis analiticas independientes no dan la
+        #     misma constante. Era un perfil unico mal calibrado.
+        #   · La resiembra que llego para arreglarlo: histidina = isoleucina
+        #     = valina, exactos, en cinco filas. En 91 fichas del catalogo
+        #     His/Ile tiene mediana 0,601 y NINGUNA vale 1,000. Tres
+        #     aminoacidos distintos con el mismo numero son una copia.
+        # Ninguno de los dos lo cazaba el umbral de isoleucina de arriba.
+        if prot_ >= 10 and (n_.get("isoleucina") or 0) > 0:
+            ile2_ = n_["isoleucina"]
+            leu_ile = (n_.get("leucina") or 0) / ile2_
+            # La banda sale del catalogo medido: 42 de 45 entre 1,16 y 1,98,
+            # con la col rizada (1,16) como borde bajo real.
+            if not (1.10 <= leu_ile <= 2.05) and nom_ not in PAVO_PENDIENTE:
+                avisos.append(("AMINO", nom_,
+                               f"Leu/Ile = {leu_ile:.3f}, fuera de 1,10-2,05. Ese cociente no "
+                               f"depende de la proteina, asi que sobrevive a un reescalado: "
+                               f"fuera de banda casi siempre significa aminograma de otra fuente"))
+            for otro in ("histidina", "valina"):
+                v_ = n_.get(otro) or 0
+                if v_ > 0 and abs(v_ / ile2_ - 1.0) < 0.005:
+                    avisos.append(("AMINO", nom_,
+                                   f"{otro} e isoleucina valen lo mismo ({v_:.3f}). Son dos "
+                                   f"aminoacidos distintos: en 91 fichas ninguna los tiene "
+                                   f"iguales. Es una copia, no una medida"))
+
+        # Y el triptofano por los dos lados: cero en colageno puro, y
+        # nunca por encima del 2% -- ahi es donde se ve un factor 1.000.
+        if prot_ >= 3:
+            tri_ = (n_.get("triptofano") or 0) / prot_ * 100
+            # El huevo (2,03%) y el sesamo (2,19%) son legitimamente
+            # ricos en triptofano; el techo se pone en 2,5 para que el
+            # aviso siga sirviendo para lo que existe -- cazar un factor
+            # 1.000, no discutir un decimal.
+            if not (0.3 <= tri_ <= 2.5):
+                avisos.append(("AMINO", nom_,
+                               f"triptofano al {tri_:.2f}% de la proteina, fuera de 0,3-2,0%. El "
+                               f"colageno tiene CERO y una tabla en miligramos da mil veces mas"))
+
+# ── Las purinas: que el linaje de la tabla sea el bueno ────────────────
+# El higado de vacuno es el patron: Souci da 231 y Kaneko 2014 mide 219,8
+# por HPLC. Un 5%. Hay compilaciones alemanas que dan 122 para esa misma
+# ficha -- y si el higado esta mal, las demas filas de esa tabla no valen
+# aunque parezcan razonables.
+_hig = next((a_ for a_ in al if a_["nombre"] == "Hígado de vaca"), None)
+if _hig:
+    _pv = nut(_hig, "purinas")
+    # Nuestra cifra viene del USDA («Beef liver, raw», 197) y no de Souci
+    # (231) ni de Kaneko (219,8 por HPLC). Un 10% entre metodos es normal;
+    # lo que este aviso busca es el linaje MALO -- hay compilaciones
+    # alemanas que dan 122 para esta misma ficha, y si el higado esta a la
+    # mitad, ninguna otra fila de esa tabla vale.
+    if _pv and not (190 <= _pv <= 240):
+        avisos.append(("PURINA", "Hígado de vaca",
+                       f"{_pv:.0f} mg de purinas. El patron son 200-240 (Souci 231, Kaneko 2014 "
+                       f"mide 219,8 por HPLC). Si el higado no cuadra, el linaje de la tabla de "
+                       f"donde salio no vale para ninguna otra fila"))
+
+print()
+print("═" * 74)
+print("SIN AMINOGRAMA, entre los que tienen proteina (>= %.0f g/100 g)" % PROTEINA_QUE_CUENTA)
+if not _falta_aa:
+    print("   ninguno -- se pueden activar los 12 requisitos de FEDIAF (ver BLOQUE 27)")
+else:
+    for cat_ in sorted(_falta_aa, key=lambda c: -len(_falta_aa[c])):
+        print("   %-26s %d" % (cat_, len(_falta_aa[cat_])))
+        for n_ in sorted(_falta_aa[cat_]):
+            print("        %s" % n_)
 
 print()
 print("═" * 74)

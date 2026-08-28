@@ -27,7 +27,78 @@ MAPA = {
     # a secas hasta el 25 de agosto -- el requisito se llamaba EPA+DHA y
     # comprobaba solo la mitad. Ver el comentario largo de allí.
     "EPA_DHA_total": "epa_dha",
+    # ⚠️ LOS DOCE AMINOÁCIDOS ESENCIALES — ACTIVADOS EL 28 DE AGOSTO.
+    #
+    # Estaban en requerimientos_v2_final.json desde el 26 de agosto y fuera
+    # de aquí a propósito: ninguna ficha del catálogo traía el dato, y un
+    # alimento sin aminograma no cuenta como "no lo sé", cuenta como CERO.
+    # Con los 159 a cero, el mínimo era inalcanzable y no salía ni un menú.
+    # Cargados los primeros 49, el fallo cambiaba de forma y dejaba de
+    # verse: ya no bloqueaba, DESPLAZABA -- el motor se iría hacia los que
+    # tuvieran dato, y el menú saldría verde porque el semáforo mide el
+    # mismo cero.
+    #
+    # Se encienden ahora porque las tres cosas que hacían falta están
+    # medidas, no supuestas:
+    #   · 94 de las 159 fichas traen aminograma, y de un menú REAL solo el
+    #     1,0 % de la proteína viene de alimentos sin él. Nueve de los diez
+    #     huesos carnosos lo tienen -- era el que más pesaba, el 20-60 % de
+    #     la ración.
+    #   · El aminoácido más justo se queda en x2,12 de su mínimo (la
+    #     metionina); el resto entre x2,26 y x5,02. Una ración de carne va
+    #     sobrada, así que estos doce mínimos casi nunca van a apretar.
+    #   · Con ellos puestos salen 20 de 20 menús, el hueso carnoso sigue en
+    #     los 20 y su mediana sube de 207 a 216 g.
+    #
+    # Que casi nunca aprieten no los hace inútiles: existen para el menú que
+    # NO es el de todos los días -- una dieta muy restringida por alergias,
+    # una patología que aprieta, un menú que el usuario edita a la baja.
+    # Ahí es donde un aminoácido se puede quedar corto, y hasta hoy nada lo
+    # habría visto.
+    #
+    # ⚠️ "metionina_cistina" y "fenilalanina_tirosina" NO son claves de los
+    # alimentos: son SUMAS que calcula `valor_nutriente` (constructor.py),
+    # igual que "epa_dha". FEDIAF pide los cuatro requisitos -- el
+    # aminoácido solo Y la suma con su pareja -- porque la cistina se
+    # fabrica a partir de la metionina y la tirosina a partir de la
+    # fenilalanina, así que la pareja ahorra al esencial.
+    "Arginina": "arginina", "Histidina": "histidina",
+    "Isoleucina": "isoleucina", "Leucina": "leucina", "Lisina": "lisina",
+    "Metionina": "metionina", "Metionina_cistina": "metionina_cistina",
+    "Fenilalanina": "fenilalanina",
+    "Fenilalanina_tirosina": "fenilalanina_tirosina",
+    "Treonina": "treonina", "Triptofano": "triptofano", "Valina": "valina",
 }
+# ⚠️ EL ÚNICO MÁXIMO DE FEDIAF QUE NO SE APLICA, Y AQUÍ ESTÁ POR QUÉ
+# (28 agosto). La Tabla III-3b pone un solo máximo a un aminoácido: lisina
+# 7,00 g/1000 kcal, y solo en crecimiento ("Growth: 7.00 (N)"). Está bien
+# transcrito -- lo comprueba auditar_fediaf.py contra el PDF.
+#
+# Al encender los doce aminoácidos se midió qué pasaba con él:
+# **0 de 15 menús de cachorro caben debajo.** Salen entre 8,79 y 12,12.
+# No es que el motor se pase por poco en algún caso raro: es que NINGUNA
+# ración BARF de cachorro cabe.
+#
+# Y el motivo se ve en la propia ración: esos menús llevan unos 134 g de
+# proteína por 1000 kcal, y el mínimo de FEDIAF para un cachorro son 50.
+# Una dieta de carne cruda tiene dos veces y media la proteína de
+# referencia, y la lisina va detrás de la proteína. El 7,00 está pensado
+# para un pienso al nivel de proteína de la tabla.
+#
+# Aplicarlo dejaría a TODOS los cachorros sin menú. No aplicarlo es dejar
+# de comprobar un máximo de FEDIAF. Las dos cosas son malas, así que no se
+# decide aquí a escondidas: se aplica lo segundo, se escribe, se prueba, y
+# la pregunta ("¿el 7,00 se mide sobre la proteína de la tabla o sobre la
+# del plato?") va a PENDIENTE.md para el nutricionista.
+#
+# Los once mínimos de lisina y los otros once aminoácidos SÍ se aplican.
+# Esto es solo el techo.
+#
+# Está aquí, junto a MAPA, porque el solver y el semáforo tienen que leer
+# la MISMA lista. Si cada uno tuviera la suya, el motor podría construir un
+# menú que el semáforo rechazara, o al revés -- que es el fallo de la fibra.
+MAXIMOS_NO_APLICADOS = {"Lisina"}
+
 # Etapas que existen en requerimientos_v2_final.json. Senior, Gestante y
 # Lactante NO tienen columna propia: FEDIAF no da un perfil de nutrientes
 # distinto para senior, y gestacion/lactancia usan la columna de crecimiento
@@ -49,7 +120,187 @@ def _num(v):
         return None
 
 
-def verificar(menu, alimentos, req, der, etapa="Adulto"):
+def maximo_de(r, nombre_req, etapa):
+    """El máximo de FEDIAF de un requisito, o None si no tiene.
+
+    ES EL ÚNICO SITIO que sabe cuáles no se aplican. El solver, el semáforo,
+    el analizador y `suplementar()` leen el máximo por aquí, para que no
+    puedan discrepar: si el motor construyera un menú con un techo que el
+    semáforo no aplica (o al revés), tendríamos otra vez lo de la fibra.
+    """
+    if nombre_req in MAXIMOS_NO_APLICADOS:
+        return None
+    return _num(r.get(f"max{etapa}")) or _num(r.get("maxAdulto"))
+
+
+# ⚠️ LOS MINIMOS SUBEN CUANDO SE COME MENOS (28 agosto). Es la ecuacion
+# de la propia FEDIAF, apartado 7.2.5, p. 60:
+#
+#     unidades/1000 kcal = requerimiento_por_kg^0,75 x 1000 / DER
+#
+# y su propio parrafo diciendo por que: «the energy needs may be satisfied
+# before the requirements of protein, minerals or vitamins are met [...]
+# hence a systematic adjustment applied to all essential nutrients is
+# needed WHEN FED BELOW the NRC standard assumption».
+#
+# En cristiano: el perro necesita los mismos MILIGRAMOS de zinc coma lo que
+# coma. Si come menos, esos miligramos tienen que caber en menos calorias,
+# asi que el minimo POR 1000 KCAL sube. Hasta hoy no subia, y eso significa
+# que un perro a dieta de adelgazamiento recibia la misma densidad de
+# nutrientes que uno normal justo cuando menos margen tiene. A DER 63 -que
+# es la media MEDIDA de una bajada de peso, AAHA 2021- la proteina minima
+# pasa de 52,1 a 78,6 g/1000 kcal: un 51% mas.
+#
+# LAS DOS COLUMNAS DE FEDIAF NO SON CONSISTENTES ENTRE SI, y eso decide la
+# forma de la regla. FEDIAF publica dos: la de DER 110 y la de DER 95.
+# Derivar una de la otra deberia dar la publicada y no lo da:
+#
+#     selenio seco    55,00 / 45,00 = 1,222      <- no es redondeo
+#     selenio humedo  67,50 / 57,50 = 1,174
+#     todo lo demas                   1,158  ( = 110/95 )
+#
+# 55 y 45 son numeros redondos: FEDIAF subio el selenio mas que el resto a
+# proposito. Asi que por debajo de 95, donde NO hay nada publicado, se coge
+# el MAYOR de los dos anclajes escalados. Ninguno domina: en magnesio y
+# cloruro gana el de 110, en selenio y calcio el de 95. Con el maximo, la
+# inconsistencia de FEDIAF se resuelve siempre hacia la suficiencia.
+#
+# Y en 95 y en 110 se devuelve el valor PUBLICADO, exacto. Donde FEDIAF
+# tiene un numero, no se inventa otro.
+#
+# ⚠️ SOLO EN ADULTO. Las dos columnas de la ecuacion son de mantenimiento;
+# para crecimiento, gestacion y lactancia FEDIAF publica otras columnas y
+# la ecuacion no esta verificada ahi. No se escala.
+#
+# ⚠️ LA GRASA ESTA EXENTA, y no es un olvido: FEDIAF publica 13,75 g/1000
+# kcal en las DOS columnas. Escalarla haria que las kcal dejaran de cerrar.
+DER_ANCLA_ALTA = 110.0
+DER_ANCLA_BAJA = 95.0
+NO_SE_ESCALAN = {"Grasa_total"}
+
+
+# ⚠️ EL PESO OBJETIVO DESDE EL BCS (28 agosto). Regla de AAHA 2014,
+# corroborada por Teixeira 2024: «Each BCS >= 5 (on a 9 point scale) ... is
+# equivalent to being 10 % overweight». Y su ejemplo trabajado, que es el
+# test: «a 45 kg Labrador retriever that has a BCS of 8 out of 9 is 30 %
+# overweight and its ideal weight is approximately 32 kg».
+#
+#     45 x (1 - 0,30) = 31,5      <- RESTA
+#     45 / (1 + 0,30) = 34,6      <- dividir. MAL. Tres kilos.
+#
+# Ninguna de las dos fuentes publicadas divide.
+#
+# SE ROMPE EN LOS DOS EXTREMOS, y uno falla hacia el lado peligroso:
+#
+# · POR ABAJO. Con BCS 3 la formula se da la vuelta y devuelve un objetivo
+#   MAYOR que el peso real: un perro de 15 kg saldria a 18. La regla de
+#   AAHA esta definida solo hacia arriba («BCS >= 5»). Y no es cosmetico:
+#   con 18 en vez de 15 la DER efectiva sale un 15% mas baja y los minimos
+#   escalarian un 15% de mas en un perro que ni esta a dieta. Sale por el
+#   lado conservador, pero es un numero que no ha decidido nadie.
+#
+# · POR ARRIBA es peor. En BCS 9 la formula da un 40% de exceso, pero la
+#   escala se satura: el 9/9 cubre desde un 40% hasta mas del 100%. La
+#   referencia publicada solo llega a 8 -- la Global Pet Obesity Initiative
+#   (2019, firmada por el ECVCN, la WSAVA y la ACVIM) define obesidad como
+#   30% sobre el ideal y dice que eso equivale a 8/9. Por encima nadie
+#   publica la equivalencia. Y ahi el error va hacia el lado MALO: si el
+#   perro esta un 60% por encima y la formula dice 40%, el objetivo sale
+#   demasiado alto y con el demasiadas kcal, justo en el perro que peor lo
+#   lleva. En BCS 9 no se estima: hace falta el peso declarado.
+#
+# Los medios puntos valen 5%: la regla es lineal y un 6,5 o un 7,5 no se
+# redondean.
+BCS_NEUTRO = 5.0
+BCS_MAXIMO_PUBLICADO = 8.0
+
+
+def peso_objetivo_desde_bcs(peso_actual_kg, bcs):
+    """El peso objetivo estimado desde el BCS, o None si no se puede.
+
+    Devuelve None -y hay que pedir el peso declarado- por debajo de BCS 5
+    (la regla no existe hacia abajo) y en BCS 9 (la escala se satura y la
+    estimacion se queda corta justo donde mas duele).
+    """
+    try:
+        p = float(peso_actual_kg)
+        b = float(bcs)
+    except (TypeError, ValueError):
+        return None
+    if p <= 0 or b <= BCS_NEUTRO or b > BCS_MAXIMO_PUBLICADO:
+        return None
+    exceso = 0.10 * (b - BCS_NEUTRO)
+    return round(p * (1.0 - exceso), 3)
+
+
+def minimo_de(r, nombre_req, etapa, der_efectiva=None):
+    """El mínimo de FEDIAF de un requisito, escalado por la DER efectiva.
+
+    ES EL ÚNICO SITIO que sabe escalar. El solver y el semáforo leen el
+    mínimo por aquí, igual que leen el máximo por `maximo_de()`: si cada
+    uno escalara por su cuenta, el motor podría construir un menú que el
+    semáforo rechazara.
+
+    `der_efectiva` son las kcal de la ración por kg de peso metabólico.
+    Sin ella (o fuera de adulto) se devuelve el mínimo publicado tal cual.
+    """
+    mn = _num(r.get(f"min{etapa}"))
+    if mn is None or der_efectiva is None or etapa != "Adulto":
+        return mn
+    if nombre_req in NO_SE_ESCALAN:
+        return mn
+    v110 = _num(r.get("minAdulto110"))
+    if v110 is None:
+        # Sin las dos anclas no se escala: son los tres que FEDIAF no da
+        # para adulto (EPA+DHA, linolénico, araquidónico) y el ratio Ca:P.
+        return mn
+    # ⚠️ SOLO SE ESCALA HACIA ARRIBA, Y ESTA ES LA DECISION QUE HAY QUE
+    # ENTENDER ANTES DE TOCARLA.
+    #
+    # La ecuacion de FEDIAF va en los dos sentidos: si el perro come MAS,
+    # el minimo por 1000 kcal BAJA. Aplicada tal cual, un adulto normal
+    # (DER 110) pasaria de 52,10 g de proteina a 45,00 -- un 14% menos --,
+    # y un perro de trabajo (DER 175) tambien, porque el suelo publicado es
+    # la columna de 110. Medido: de ocho perfiles reales, CINCO bajarian.
+    #
+    # Nuestra tabla es la columna de 95 de FEDIAF, o sea que hoy somos mas
+    # estrictos que la guia para el perro activo. Alinearse hacia abajo es
+    # RELAJAR NUTRICION, y la regla 3 del CLAUDE.md dice que lo que se
+    # relaja es la FORMA, nunca la nutricion. Ser mas estricto que FEDIAF
+    # esta siempre permitido; ser menos, no lo decide un refactor.
+    #
+    # Asi que el minimo publicado que ya usabamos es el SUELO y el escalado
+    # solo puede subir por encima. Con eso:
+    #   · el perro normal no cambia nada -- cero regresion
+    #   · el perro a dieta sube, que es el agujero que habia que tapar
+    # Si algun dia se decide adoptar la columna de 110 para el perro
+    # activo, es una decision de nutricion aparte y con su medicion.
+    d = float(der_efectiva)
+    if d >= DER_ANCLA_BAJA:
+        return mn                        # el publicado de siempre, sin tocar
+    # Por debajo de 95 no hay nada publicado: se coge el MAYOR de los dos
+    # anclajes escalados, porque las dos columnas de FEDIAF no son
+    # consistentes entre si y ninguna domina a la otra.
+    return max(mn, mn * DER_ANCLA_BAJA / d, v110 * DER_ANCLA_ALTA / d)
+
+
+def der_efectiva_de(der, peso_referencia_kg):
+    """Las kcal de la ración por kg de peso metabólico. Es lo que dispara
+    el escalado de los mínimos, y tiene que salir de las kcal que DE VERDAD
+    se sirven -- no de la etapa vital ni del ajuste teórico. Si saliera de
+    la etapa, una dieta de adelgazamiento no se enteraría y el escalado no
+    arreglaría nada, que es justo el caso para el que existe."""
+    try:
+        p = float(peso_referencia_kg)
+        d = float(der)
+    except (TypeError, ValueError):
+        return None
+    if p <= 0 or d <= 0:
+        return None
+    return d / (p ** 0.75)
+
+
+def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None):
     """
     Paso 4. Devuelve la ficha honesta de la racion.
 
@@ -90,6 +341,10 @@ def verificar(menu, alimentos, req, der, etapa="Adulto"):
                                     tabla_maximos=tabla_imputacion_maximos(alimentos))
     escala = der / 1000.0
 
+    # Si quien llama no manda el peso, no se escala nada y todo queda
+    # exactamente como estaba. El escalado es aditivo, nunca una sorpresa.
+    _der_ef = der_efectiva_de(der, peso_referencia_kg)
+
     faltan, se_pasa, correctos = [], [], []
     for nombre, clave in MAPA.items():
         r = req.get(nombre)
@@ -97,8 +352,8 @@ def verificar(menu, alimentos, req, der, etapa="Adulto"):
             continue
         tiene = perfil.get(clave, 0.0)
         tiene_min = perfil_min.get(clave, 0.0)     # con los dudosos a su valor plausible
-        minimo = _num(r.get(f"min{etapa}"))
-        maximo = _num(r.get(f"max{etapa}")) or _num(r.get("maxAdulto"))
+        minimo = minimo_de(r, nombre, etapa, _der_ef)
+        maximo = maximo_de(r, nombre, etapa)
 
         if minimo is not None:
             objetivo = minimo * escala
@@ -298,7 +553,7 @@ def suplementar(menu, alimentos, req, der, etapa, catalogo_suplementos,
         _r = req.get(_nom)
         if not _r:
             continue
-        _mx = _num(_r.get(f"max{_et}")) or _num(_r.get("maxAdulto"))
+        _mx = maximo_de(_r, _nom, _et)
         if _mx is not None:
             topes_max[_cl] = _mx * der / 1000.0
 
@@ -459,7 +714,7 @@ def suplementar(menu, alimentos, req, der, etapa, catalogo_suplementos,
             r = req.get(nom_req)
             if not r:
                 continue
-            mx = _num(r.get(f"max{etapa}")) or _num(r.get("maxAdulto"))
+            mx = maximo_de(r, nom_req, etapa)
             aporta = valor_nutriente(alimentos[mejor].get("nutrientes", {}), cl)
             if mx is None or not aporta:
                 continue
