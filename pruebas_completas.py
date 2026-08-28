@@ -862,9 +862,41 @@ for _cuantos in (1, 3):
             if _p.get("nombre") != _noms[_i]:
                 fallos.append(f"BLOQUE11 {_caso}: los perros vuelven desordenados "
                               f"({_p.get('nombre')} en la posición de {_noms[_i]})")
-            if len(_p.get("menus") or []) != _cuantos:
-                fallos.append(f"BLOQUE11 {_caso}: {_p.get('nombre')} recibió "
-                              f"{len(_p.get('menus') or [])} menús en vez de {_cuantos}")
+            # ⚠️ REESCRITO (28 agosto) — LO QUE SE EXIGE ES EL CONTRATO, NO
+            # UN NUMERO IMPOSIBLE.
+            #
+            # Esto pedia `_cuantos` menus siempre, y con dos perros y tres
+            # menus eso NO CABE en el presupuesto. La suma, que nadie habia
+            # hecho: ronda 0 = 12 s del primer menu de la base + 4 de
+            # amoldar al otro = 16; rondas 1 y 2 = (6 + 4) x 2 = 20. Total
+            # 36 s contra un presupuesto de 24. Y si el primer menu gasta su
+            # rodaja entera quedan 8 s cuando la comprobacion pide 10, asi
+            # que corta tras la primera ronda y devuelve UNO.
+            #
+            # En aislado sale 3/3 porque el primer menu tarda 3-4 s y no 12;
+            # bajo carga (dentro de la bateria, o en Render, que va mas
+            # lento) sale 1/3. De ahi que fuera intermitente.
+            #
+            # Lo que SI se puede exigir siempre, y es lo que de verdad
+            # importa, es que no se recorte EN SILENCIO: si salen menos de
+            # los pedidos, tiene que venir el aviso diciendo cuantos y por
+            # que. Pedir 3 y recibir 1 sin una palabra es el fallo; recibir
+            # 1 con el motivo escrito es una limitacion conocida.
+            #
+            # La capacidad esta en PENDIENTE §1.0 con la aritmetica. Cuando
+            # se arregle (menos menus por peticion, o repartirlos en
+            # varias), esta prueba vuelve a exigir el numero exacto.
+            _n_menus = len(_p.get("menus") or [])
+            if _n_menus > _cuantos:
+                fallos.append(f"BLOQUE11 {_caso}: {_p.get('nombre')} recibió {_n_menus} menús "
+                              f"y solo se pidieron {_cuantos}")
+            elif _n_menus < _cuantos and not _r.get("aviso"):
+                fallos.append(
+                    f"BLOQUE11 {_caso}: {_p.get('nombre')} recibió {_n_menus} menús en vez de "
+                    f"{_cuantos} Y SIN AVISO. Recortar se puede (el presupuesto de 24 s no da "
+                    f"para todo, ver PENDIENTE §1.0); recortar sin decirlo, no.")
+            elif _n_menus == 0:
+                fallos.append(f"BLOQUE11 {_caso}: {_p.get('nombre')} se quedó sin ningún menú")
             # (1) CADA menú verde de verdad, verificado aquí, con LA ETAPA
             # DE ESE PERRO -- no la del primero, que es un fallo fácil de
             # cometer cuando se comparte la lista de alimentos.
@@ -3456,6 +3488,100 @@ if _PLANTAS_CON_D:
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
+
+
+# ============================================================
+# BLOQUE 33 — LAS PURINAS: UN DATO QUE NO DECIDE, PERO QUE SE MIDE
+# ============================================================
+#
+# ⚠️ AÑADIDO (28 agosto). El catalogo trae desde hoy la carga de purinas de
+# cada alimento (mg/100 g, desde la base del USDA). Es un dato INFORMATIVO:
+# no esta en `verificar.MAPA`, no es un requisito de FEDIAF y no toca ningun
+# menu.
+#
+# Existe por el urato. Un perro con urolitos de urato o un shunt hepatico
+# necesita restringir purinas, y la app ya no le genera menu automatico. La
+# columna no cambia esa decision -- la explica: medido sobre 15 menus reales,
+# la mediana sale en 758 mg/1000 kcal contra el unico objetivo publicado para
+# perro (90). Ocho veces y media. Poder decir el numero es distinto de decir
+# "no podemos".
+#
+# Lo que vigila este bloque son tres cosas, y las tres han pasado ya:
+#
+# 1. QUE NO SE ACTIVEN COMO REQUISITO. Poner un minimo o un maximo de purinas
+#    en MAPA seria inventarse un limite: el umbral de 90 sale de Malandain
+#    2008, que no hemos podido leer -- solo verlo citado. Esta en el PDF para
+#    la nutricionista como pregunta abierta.
+#
+# 2. QUE NO VUELVAN LAS DOS COLISIONES DE NOMBRE. La primera version del
+#    fichero tenia dos, las dos de la misma familia:
+#      · `Lenguado` cogia "Beef tongue, raw" -- lengua de vacuno -- con
+#        confianza ALTA, porque "lenguado" contiene "lengua". Es un pez.
+#      · `Higado de vaca`/`Ternera, higado` cogian musculo generico de
+#        vacuno (77) en vez de higado (197), porque la regla de la ESPECIE
+#        se aplico antes que la del ORGANO.
+#    Las dos infravaloraban, que es la direccion mala. Se anclan aqui.
+#
+# 3. QUE LOS CEROS SEAN CEROS DE VERDAD. Un aceite no tiene celulas, asi que
+#    no tiene acidos nucleicos ni purinas: su 0 es un valor. El de un alimento
+#    sin ficha es un hueco, y va en `sin_dato`. Es la misma regla del cero con
+#    proteina delante, aplicada a otra columna.
+print("\n=== BLOQUE 33: las purinas, medidas y sin decidir nada ===")
+
+_pur_b33 = {a["nombre"]: (a.get("nutrientes", {}).get("purinas"), set(a.get("sin_dato") or []))
+            for a in _al21.values()}
+_con_b33 = [n for n, (v, h) in _pur_b33.items() if "purinas" not in h]
+if len(_con_b33) < 101:
+    fallos.append(
+        f"BLOQUE33: solo {len(_con_b33)} fichas traen purinas, y el 28 de agosto eran 101. "
+        f"Alguna carga las ha pisado.")
+
+if "Purinas" in _MAPA_SEMAFORO_b18 or "purinas" in _MAPA_SEMAFORO_b18.values():
+    fallos.append(
+        "BLOQUE33: las purinas han entrado en verificar.MAPA. No son un requisito de FEDIAF y el "
+        "unico umbral publicado para perro (90 mg/1000 kcal, Malandain 2008) no lo hemos podido "
+        "leer -- solo verlo citado. Poner un limite con eso es inventarselo. Mientras la "
+        "nutricionista no lo confirme, el dato se enseña y no decide.")
+
+# Las dos colisiones ancladas, con el valor bueno y el malo.
+for _n33, _bueno, _malo, _por_que in (
+        ("Lenguado", 113.0, 90.4, "es un pez plano, no la lengua de un vacuno"),
+        ("Hígado de vaca", 197.0, 77.42, "es higado, no musculo generico de vacuno")):
+    _v33 = (_al21.get(_n33) or {}).get("nutrientes", {}).get("purinas")
+    if _v33 is None:
+        fallos.append(f"BLOQUE33: '{_n33}' se ha quedado sin purinas y era una de las dos "
+                      f"colisiones de nombre que hubo que corregir.")
+    elif abs(_v33 - _malo) < 0.01:
+        fallos.append(
+            f"BLOQUE33: '{_n33}' vuelve a tener {_malo} mg de purinas, que es el valor de la ficha "
+            f"equivocada -- {_por_que}. El bueno son {_bueno}. Las dos colisiones INFRAVALORABAN, "
+            f"que es justo la direccion que importa en un urato.")
+    elif abs(_v33 - _bueno) > 0.01:
+        fallos.append(
+            f"BLOQUE33: '{_n33}' tiene {_v33} mg de purinas y deberia tener {_bueno}.")
+
+# Un aceite tiene 0 de verdad; un alimento sin ficha tiene un hueco.
+for _n33 in ("Aceite de oliva", "Sal común (cloruro sódico)"):
+    if _n33 in _al21:
+        _v33, _h33 = _pur_b33[_n33]
+        if "purinas" in _h33:
+            fallos.append(
+                f"BLOQUE33: '{_n33}' declara las purinas como HUECO, y su cero es de verdad: no "
+                f"tiene celulas, asi que no tiene acidos nucleicos. Marcarlo como hueco es decir "
+                f"'no lo sabemos' de algo que si sabemos.")
+        elif _v33:
+            fallos.append(f"BLOQUE33: '{_n33}' declara {_v33} mg de purinas y no tiene celulas.")
+
+# Y el urato sigue sin menu automatico: el dato no cambia esa decision.
+from motor_completo import PATOLOGIAS as _PAT_b33
+if not (_PAT_b33.get("urato") or {}).get("sin_dieta_automatica"):
+    fallos.append(
+        "BLOQUE33: el urato ha dejado de bloquear la generacion automatica. Tener la columna de "
+        "purinas no cambia eso -- la explica: la racion normal va a 758 mg/1000 kcal contra un "
+        "objetivo de 90, y con alimentos frescos no queda margen. Es una puerta, no un "
+        "optimizador.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
 # RESUMEN FINAL

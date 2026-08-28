@@ -70,6 +70,15 @@ for a in al:
     n = a.get("nutrientes") or {}
     if not n or es_grasa(a) or a.get("categoria") in SUPLEMENTOS: continue
     sd = set(a.get("sin_dato") or [])
+    # ⚠️ UN CERO CON FUENTE ESCRITA NO ES UN HUECO (28 agosto). Las purinas
+    # de un huevo son CERO de verdad -- "Egg, chicken, raw" da 0,0 en las
+    # cuatro bases -- y las de un aceite tambien, porque no tiene celulas.
+    # Ese cero lleva su procedencia en `purinas_fuente`, asi que es un valor
+    # medido y no una celda vacia. Contarlo como hueco empujaba al huevo de
+    # pato de 9 ceros a 10 y disparaba este aviso por un dato que SI
+    # tenemos, que es justo lo contrario de lo que vigila.
+    if a.get("purinas_fuente"):
+        sd = sd | {"purinas"}
     sin_declarar = [k for k, v in n.items() if not v and k not in sd]
     if len(sin_declarar) >= 10:
         avisos.append(("HUECOS", a["nombre"],

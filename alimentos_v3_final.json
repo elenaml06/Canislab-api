@@ -47,7 +47,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "dosis_max_por_100g_comida": 0.8,
   "dosis_fuente": "Etiqueta PAWS & PATCH: 1 cuchara dosificadora (~4 g) por cada 500 g de carne",
@@ -71,6 +72,7 @@
    "niacina",
    "potasio",
    "proteina",
+   "purinas",
    "riboflavina",
    "selenio",
    "sodio",
@@ -136,7 +138,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "dosis_max_por_100g_comida": 0.5,
   "dosis_fuente": "Sin dosis de etiqueta: NaturGreen no la publica (su ficha dice solo «una cucharadita en agua», sin gramos). Dosis de la literatura veterinaria, 0,2 g/kg/dia, por dos caminos independientes que coinciden: Vetas et al. 2022, Vet Sci (PMC9145803), n=15, «0.2 g/kg body weight»; y Fiberact 2024, J Nutr Food Sci, n=44 perros, «1 teaspoon (about 2 g) per 10 kg» = 0,2 g/kg. DOSIFICAR EN GRAMOS, nunca en cucharaditas: la cucharadita va de 2 g (cascara entera) a 5 g (molida), un factor 2,5 escondido en la palabra.",
@@ -162,6 +165,7 @@
    "metionina",
    "niacina",
    "potasio",
+   "purinas",
    "riboflavina",
    "selenio",
    "sodio",
@@ -228,7 +232,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "dosis_fuente": "Etiqueta AniForte: 1,5 g por cada 5 kg de peso. El fabricante recomienda NO pasar de 12 g/día",
   "nota_datos": "Minerales corregidos: estaban metidos como porcentaje en bruto (0,28) en vez de mg/100g (280). Verificado contra etiqueta AniForte. Minerales convertidos de % a mg/100g (estaban en bruto). ⚠️ COBRE Y CINC VACIADOS (27 agosto). La etiqueta declara Kupfer 0,08% y Zink 0,25%, y la conversion a 80 y 250 mg/100 g era correcta, pero la sangre bovina desecada ronda 0,85 y 2,3 (Feedipedia node 221 / INRA-CIRAD-AFZ): unas 100 veces menos. La etiqueta se contradice ademas sola, sin salir de ella -- declara 4% de cenizas = 40 g/kg, sus macrominerales suman 20,5, y anadir los 3,3 g/kg de cinc y cobre mas el cloruro y el sulfato que la sangre lleva por fuerza desborda su propio presupuesto de cenizas. Todo apunta a que se convirtio de mg/kg a porcentaje dividiendo entre 100 en vez de entre 10.000, y que solo toco la columna de oligoelementos: el HIERRO, que esta en otro orden de magnitud, si cuadra (~2.800 mg/kg = 0,28% y declara 0,28%). MEDIDO antes de vaciarlos: con los 80 mg puestos, forzando el producto en un perro de 25 kg, el menu declaraba 8,31 mg de cobre y el real eran 2,34 sobre un minimo de 2,60 -- deficitario y en VERDE. El producto se queda porque su motivo de existir es el hierro y ese si es coherente; lo que se va son las dos celdas que no se sostienen.",
@@ -249,6 +254,7 @@
    "manganeso",
    "metionina",
    "niacina",
+   "purinas",
    "riboflavina",
    "selenio",
    "tiamina",
@@ -313,7 +319,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "dosis_fuente": "5 ml por 10 kg de peso; 1 ml ≈ 0,92 g",
   "dosis_g_por_kg_peso": 0.46,
@@ -329,6 +336,7 @@
    "linolenico",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -387,7 +395,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "dosis_fuente": "5 ml por 10 kg de peso; 1 ml ≈ 0,92 g",
   "dosis_g_por_kg_peso": 0.46,
@@ -402,6 +411,7 @@
    "linolenico",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -460,7 +470,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "dosis_fuente": "5 ml por 10 kg de peso; 1 ml ≈ 0,92 g",
   "dosis_g_por_kg_peso": 0.46,
@@ -475,6 +486,7 @@
    "linolenico",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -533,7 +545,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "dosis_fuente": "≈3 g por 10 kg de peso (dosis habitual de levadura de cerveza)",
   "dosis_g_por_kg_peso": 0.3,
@@ -549,6 +562,7 @@
    "lisina",
    "manganeso",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -607,7 +621,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "dosis_fuente": "≈3 g por 10 kg de peso (dosis habitual de levadura de cerveza)",
   "dosis_g_por_kg_peso": 0.3,
@@ -624,6 +639,7 @@
    "lisina",
    "manganeso",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -682,7 +698,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "dosis_fuente": "½ cucharadita por 10 kg de peso (etiqueta Ascophyllum/Sanadog)",
   "dosis_g_por_kg_peso": 0.1,
@@ -706,6 +723,7 @@
    "niacina",
    "potasio",
    "proteina",
+   "purinas",
    "riboflavina",
    "tiamina",
    "tirosina",
@@ -768,10 +786,24 @@
    "tirosina": 0.832,
    "treonina": 0.957,
    "triptofano": 0.242,
-   "valina": 1.141
+   "valina": 1.141,
+   "purinas": 96.0
   },
   "nota_datos": "CORREGIDO 4 agosto. El valor anterior (107 kcal/0,99 g grasa) era menor que la version sin piel del mismo catalogo, fisicamente imposible.",
-  "fuente": "USDA FDC 171093 'Turkey, all classes, breast, meat and skin, raw'."
+  "fuente": "USDA FDC 171093 'Turkey, all classes, breast, meat and skin, raw'.",
+  "purinas_bases": {
+   "adenina": 13.1,
+   "guanina": 11.6,
+   "hipoxantina": 71.3,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Turkey, ground, raw",
+   "confianza": "alta",
+   "nota": "pavo; el USDA solo trae picado",
+   "pais": "Canada",
+   "anio": "1985"
+  }
  },
  {
   "nombre": "Pollo pechuga con piel",
@@ -821,13 +853,26 @@
    "tirosina": 0.684,
    "treonina": 0.869,
    "triptofano": 0.237,
-   "valina": 1.02
+   "valina": 1.02,
+   "purinas": 174.9
   },
   "sin_dato": [
    "selenio"
   ],
   "nota_datos": "CORREGIDO 4 agosto. El valor anterior (105 kcal/1,2 g grasa) era un error de imputacion de BEDCA: una pechuga con piel no puede tener menos grasa que sin piel. Verificado contra USDA.",
-  "fuente": "USDA FDC 171474 'Chicken, breast, meat and skin, raw'."
+  "fuente": "USDA FDC 171474 'Chicken, breast, meat and skin, raw'.",
+  "purinas_bases": {
+   "adenina": 20.5,
+   "guanina": 24.6,
+   "hipoxantina": 129.8
+  },
+  "purinas_fuente": {
+   "desde": "Chicken breast, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie y corte",
+   "pais": "USA",
+   "anio": "1983, 1982"
+  }
  },
  {
   "nombre": "Conejo",
@@ -877,7 +922,21 @@
    "tirosina": 0.714,
    "treonina": 0.897,
    "triptofano": 0.3,
-   "valina": 1.019
+   "valina": 1.019,
+   "purinas": 111.35
+  },
+  "purinas_bases": {
+   "adenina": 22.0,
+   "guanina": 19.3,
+   "hipoxantina": 66.7,
+   "xantina": 3.35
+  },
+  "purinas_fuente": {
+   "desde": "Chicken, light meat, raw",
+   "confianza": "media",
+   "nota": "carne magra de otra especie; no hay conejo en la base",
+   "pais": "Japan",
+   "anio": "2014"
   }
  },
  {
@@ -928,7 +987,8 @@
    "tirosina": 0.527,
    "treonina": 0.684,
    "triptofano": 0.183,
-   "valina": 0.804
+   "valina": 0.804,
+   "purinas": 141.7
   },
   "fuente": "USDA 'Chicken, thigh, meat and skin, raw'.",
   "nota_datos": "CORREGIDO 4 agosto. El valor anterior (110 kcal/3,4 g grasa) era menor que un muslo SIN piel real (3,9 g), imposible con piel incluida.",
@@ -940,6 +1000,19 @@
    "factor": "0.9",
    "confianza": "alta",
    "nota": "misma especie, con piel"
+  },
+  "purinas_bases": {
+   "adenina": 20.9,
+   "guanina": 25.4,
+   "hipoxantina": 90.9,
+   "xantina": 4.5
+  },
+  "purinas_fuente": {
+   "desde": "Chicken thigh, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie y corte",
+   "pais": "USA",
+   "anio": "1983, 1980, 1982"
   }
  },
  {
@@ -990,13 +1063,27 @@
    "tirosina": 0.57,
    "treonina": 0.701,
    "triptofano": 0.202,
-   "valina": 0.635
+   "valina": 0.635,
+   "purinas": 96.0
   },
   "aminograma_estimado": {
    "desde": "Pavo, carne oscura, carne y piel, cruda",
    "factor": "1.019",
    "confianza": "ALTA",
    "nota": "misma especie"
+  },
+  "purinas_bases": {
+   "adenina": 13.1,
+   "guanina": 11.6,
+   "hipoxantina": 71.3,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Turkey, ground, raw",
+   "confianza": "alta",
+   "nota": "pavo; el USDA solo trae picado",
+   "pais": "Canada",
+   "anio": "1985"
   }
  },
  {
@@ -1047,7 +1134,21 @@
    "tirosina": 0.757,
    "treonina": 0.861,
    "triptofano": 0.219,
-   "valina": 1.028
+   "valina": 1.028,
+   "purinas": 96.0
+  },
+  "purinas_bases": {
+   "adenina": 13.1,
+   "guanina": 11.6,
+   "hipoxantina": 71.3,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Turkey, ground, raw",
+   "confianza": "alta",
+   "nota": "pavo; el USDA solo trae picado",
+   "pais": "Canada",
+   "anio": "1985"
   }
  },
  {
@@ -1098,7 +1199,8 @@
    "tirosina": 0.61,
    "treonina": 0.793,
    "triptofano": 0.203,
-   "valina": 0.883
+   "valina": 0.883,
+   "purinas": 98.4
   },
   "sin_dato": [
    "araquidonico",
@@ -1106,7 +1208,20 @@
    "epa",
    "linoleico",
    "linolenico"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 16.2,
+   "guanina": 9.1,
+   "hipoxantina": 64.0,
+   "xantina": 9.1
+  },
+  "purinas_fuente": {
+   "desde": "Beef, tenderloin, raw",
+   "confianza": "ALTA",
+   "nota": "mismo corte",
+   "pais": "Japan",
+   "anio": "2014"
+  }
  },
  {
   "nombre": "Ternera con grasa",
@@ -1156,7 +1271,8 @@
    "tirosina": 0.561,
    "treonina": 0.729,
    "triptofano": 0.187,
-   "valina": 0.812
+   "valina": 0.812,
+   "purinas": 77.42
   },
   "sin_dato": [
    "araquidonico",
@@ -1170,6 +1286,19 @@
    "factor": "1.01",
    "confianza": "alta",
    "nota": "misma especie, corte graso"
+  },
+  "purinas_bases": {
+   "adenina": 17.0,
+   "guanina": 12.4,
+   "hipoxantina": 44.6,
+   "xantina": 3.42
+  },
+  "purinas_fuente": {
+   "desde": "Beef front, raw (unspecified)",
+   "confianza": "media",
+   "nota": "vacuno sin corte especificado",
+   "pais": "Czech Republic ",
+   "anio": "2010"
   }
  },
  {
@@ -1220,7 +1349,8 @@
    "tirosina": 0.621,
    "treonina": 0.807,
    "triptofano": 0.206,
-   "valina": 0.948
+   "valina": 0.948,
+   "purinas": 249.9
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
@@ -1229,6 +1359,19 @@
    "factor": "0.927",
    "confianza": "ALTA",
    "nota": "misma especie (salvaje contra cultivo)"
+  },
+  "purinas_bases": {
+   "adenina": 18.7,
+   "guanina": 18.0,
+   "hipoxantina": 211.1,
+   "xantina": 2.1
+  },
+  "purinas_fuente": {
+   "desde": "Salmon, Atlantic, farmed, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie",
+   "pais": "USA",
+   "anio": "2024"
   }
  },
  {
@@ -1279,7 +1422,8 @@
    "tirosina": 0.611,
    "treonina": 0.793,
    "triptofano": 0.203,
-   "valina": 0.932
+   "valina": 0.932,
+   "purinas": 345.0
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
@@ -1288,6 +1432,19 @@
    "factor": "0.889",
    "confianza": "media",
    "nota": "mismo orden Clupeiformes"
+  },
+  "purinas_bases": {
+   "adenina": 6.0,
+   "guanina": 118.0,
+   "hipoxantina": 6.0,
+   "xantina": 215.0
+  },
+  "purinas_fuente": {
+   "desde": "Sardine, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie",
+   "pais": "USA",
+   "anio": "1976"
   }
  },
  {
@@ -1338,7 +1495,8 @@
    "tirosina": 0.631,
    "treonina": 0.819,
    "triptofano": 0.209,
-   "valina": 0.962
+   "valina": 0.962,
+   "purinas": 194.0
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
@@ -1347,6 +1505,19 @@
    "factor": "1.004",
    "confianza": "ALTA",
    "nota": "misma especie"
+  },
+  "purinas_bases": {
+   "adenina": 11.0,
+   "guanina": 26.0,
+   "hipoxantina": 5.0,
+   "xantina": 152.0
+  },
+  "purinas_fuente": {
+   "desde": "Mackerel, raw (unspecified)",
+   "confianza": "ALTA",
+   "nota": "misma especie",
+   "pais": "USA",
+   "anio": "1976"
   }
  },
  {
@@ -1397,7 +1568,8 @@
    "tirosina": 0.743,
    "treonina": 0.964,
    "triptofano": 0.246,
-   "valina": 1.133
+   "valina": 1.133,
+   "purinas": 157.2
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
@@ -1406,6 +1578,19 @@
    "factor": "1.0",
    "confianza": "ALTA",
    "nota": "mismo género Thunnus/Katsuwonus"
+  },
+  "purinas_bases": {
+   "adenina": 17.6,
+   "guanina": 10.6,
+   "hipoxantina": 129.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Tuna, raw (unspecified)",
+   "confianza": "ALTA",
+   "nota": "mismo género",
+   "pais": "Japan",
+   "anio": "2014"
   }
  },
  {
@@ -1456,7 +1641,8 @@
    "tirosina": 0.403,
    "treonina": 0.523,
    "triptofano": 0.134,
-   "valina": 0.614
+   "valina": 0.614,
+   "purinas": 144.1
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
@@ -1465,6 +1651,18 @@
    "factor": "0.652",
    "confianza": "alta",
    "nota": "Merlucciidae vs Gadidae, muy próximas"
+  },
+  "purinas_bases": {
+   "adenina": 13.5,
+   "guanina": 10.6,
+   "hipoxantina": 120.0
+  },
+  "purinas_fuente": {
+   "desde": "Whiting (Sillaginidae), raw",
+   "confianza": "media",
+   "nota": "pescado blanco magro",
+   "pais": "Japan",
+   "anio": "2014"
   }
  },
  {
@@ -1515,7 +1713,8 @@
    "tirosina": 0.614,
    "treonina": 0.798,
    "triptofano": 0.203,
-   "valina": 0.937
+   "valina": 0.937,
+   "purinas": 110.3
   },
   "nota_datos": "USDA FoodData Central 171955 (Gadus morhua, raw): EPA 0,072 g y DHA 0,088 g por 100 g. ⚠️ CORREGIDO el 26 de agosto: el día anterior se puso 0,150/0,200 tomando la parte baja de un rango de BEDCA. La ficha concreta de USDA manda sobre un rango.",
   "fuente_epa_dha": "USDA_FDC",
@@ -1524,6 +1723,19 @@
    "factor": "1.022",
    "confianza": "ALTA",
    "nota": "misma especie"
+  },
+  "purinas_bases": {
+   "adenina": 10.8,
+   "guanina": 21.0,
+   "hipoxantina": 74.0,
+   "xantina": 4.5
+  },
+  "purinas_fuente": {
+   "desde": "Cod, Atlantic, wild, raw",
+   "confianza": "alta",
+   "nota": "familia Gadidae",
+   "pais": "USA",
+   "anio": "2024"
   }
  },
  {
@@ -1574,10 +1786,23 @@
    "tirosina": 0.701,
    "treonina": 0.911,
    "triptofano": 0.233,
-   "valina": 1.07
+   "valina": 1.07,
+   "purinas": 181.0
   },
   "fuente_epa_dha": "BEDCA",
-  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3»."
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
+  "purinas_bases": {
+   "adenina": 25.7,
+   "guanina": 55.9,
+   "hipoxantina": 99.4
+  },
+  "purinas_fuente": {
+   "desde": "Trout, rainbow, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie",
+   "pais": "Japan",
+   "anio": "2014"
+  }
  },
  {
   "nombre": "Huevo clara",
@@ -1627,7 +1852,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0.73
   },
   "sin_dato": [
    "arginina",
@@ -1644,7 +1870,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 0.2,
+   "guanina": 0.525,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Egg, white, boiled",
+   "confianza": "ALTA",
+   "nota": "mismo alimento",
+   "pais": "USA",
+   "anio": "2024"
+  }
  },
  {
   "nombre": "Huevo yema",
@@ -1694,7 +1933,8 @@
    "tirosina": 0.705,
    "treonina": 0.715,
    "triptofano": 0.184,
-   "valina": 0.987
+   "valina": 0.987,
+   "purinas": 0.0
   },
   "sin_dato": [
    "araquidonico",
@@ -1706,6 +1946,18 @@
    "factor": "1.04",
    "confianza": "ALTA",
    "nota": "mismo alimento"
+  },
+  "purinas_bases": {
+   "adenina": 0.0,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Egg, chicken, raw",
+   "confianza": "ALTA",
+   "nota": "mismo alimento. CERO purinas",
+   "pais": "Japan",
+   "anio": "2014"
   }
  },
  {
@@ -1756,13 +2008,27 @@
    "tirosina": 0.0,
    "treonina": 0.0,
    "triptofano": 0.0,
-   "valina": 0.0
+   "valina": 0.0,
+   "purinas": 0.0
   },
   "sin_dato": [
    "araquidonico",
    "dha",
    "epa"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 0.0,
+   "guanina": 0.0,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "—",
+   "confianza": "ALTA",
+   "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
+   "pais": "—",
+   "anio": "—"
+  }
  },
  {
   "nombre": "Aceite de oliva virgen extra",
@@ -1812,7 +2078,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0.0
   },
   "sin_dato": [
    "araquidonico",
@@ -1830,7 +2097,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 0.0,
+   "guanina": 0.0,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "—",
+   "confianza": "ALTA",
+   "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
+   "pais": "—",
+   "anio": "—"
+  }
  },
  {
   "nombre": "Hígado de vaca",
@@ -1880,13 +2160,27 @@
    "tirosina": 0.836,
    "treonina": 0.901,
    "triptofano": 0.273,
-   "valina": 1.306
+   "valina": 1.306,
+   "purinas": 197.0
   },
   "aminograma_estimado": {
    "desde": "Ternera, hígado, crudo",
    "factor": "1.036",
    "confianza": "ALTA",
    "nota": "misma especie y tejido"
+  },
+  "purinas_bases": {
+   "adenina": 62.0,
+   "guanina": 74.0,
+   "hipoxantina": 61.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Beef liver, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie y órgano",
+   "pais": "USA",
+   "anio": "1976"
   }
  },
  {
@@ -1937,7 +2231,8 @@
    "tirosina": 0.557,
    "treonina": 0.704,
    "triptofano": 0.199,
-   "valina": 0.88
+   "valina": 0.88,
+   "purinas": 125.4
   },
   "sin_dato": [
    "araquidonico",
@@ -1946,7 +2241,20 @@
    "linoleico",
    "linolenico"
   ],
-  "nota_datos": "Fuente: BEDCA v1.0 (2010); manganeso de Verdú 2009 p.246. Por 100 g crudo, peso fresco."
+  "nota_datos": "Fuente: BEDCA v1.0 (2010); manganeso de Verdú 2009 p.246. Por 100 g crudo, peso fresco.",
+  "purinas_bases": {
+   "adenina": 31.3,
+   "guanina": 36.1,
+   "hipoxantina": 52.6,
+   "xantina": 5.4
+  },
+  "purinas_fuente": {
+   "desde": "Chicken heart, raw",
+   "confianza": "ALTA",
+   "nota": "ave, mismo órgano",
+   "pais": "USA",
+   "anio": "1976"
+  }
  },
  {
   "nombre": "Pulmón de ternera",
@@ -1996,7 +2304,8 @@
    "tirosina": 0.365,
    "treonina": 0.604,
    "triptofano": 0.148,
-   "valina": 0.798
+   "valina": 0.798,
+   "purinas": 0
   },
   "nota_datos": "DEVUELTO a Vísceras (5 agosto, madrugada): a diferencia del corazón/molleja/lengua/tripa, donde todas las fuentes coinciden, el pulmón es un caso genuinamente debatido en la comunidad de alimentación cruda -- unas fuentes lo tratan como carne, otras como víscera, sin consenso claro. Se deja como víscera por prudencia.",
   "aminograma_estimado": {
@@ -2004,7 +2313,10 @@
    "factor": "1.0",
    "confianza": "ALTA",
    "nota": "misma especie y tejido. Proteína 16,2 contra 16,2"
-  }
+  },
+  "sin_dato": [
+   "purinas"
+  ]
  },
  {
   "nombre": "Riñón de ternera",
@@ -2054,7 +2366,21 @@
    "tirosina": 0.604,
    "treonina": 0.719,
    "triptofano": 0.202,
-   "valina": 0.833
+   "valina": 0.833,
+   "purinas": 213.0
+  },
+  "purinas_bases": {
+   "adenina": 42.0,
+   "guanina": 47.0,
+   "hipoxantina": 63.0,
+   "xantina": 61.0
+  },
+  "purinas_fuente": {
+   "desde": "Beef kidney, raw",
+   "confianza": "ALTA",
+   "nota": "mismo órgano",
+   "pais": "USA",
+   "anio": "1976"
   }
  },
  {
@@ -2105,7 +2431,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 56.7
   },
   "sin_dato": [
    "arginina",
@@ -2121,7 +2448,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 23.2,
+   "guanina": 29.1,
+   "hipoxantina": 1.9,
+   "xantina": 2.5
+  },
+  "purinas_fuente": {
+   "desde": "Pumpkin, raw",
+   "confianza": "alta",
+   "nota": "cucurbitácea",
+   "pais": "Japan",
+   "anio": "2014"
+  }
  },
  {
   "nombre": "Calabacín",
@@ -2171,7 +2511,21 @@
    "tirosina": 0.032,
    "treonina": 0.029,
    "triptofano": 0.01,
-   "valina": 0.054
+   "valina": 0.054,
+   "purinas": 56.7
+  },
+  "purinas_bases": {
+   "adenina": 23.2,
+   "guanina": 29.1,
+   "hipoxantina": 1.9,
+   "xantina": 2.5
+  },
+  "purinas_fuente": {
+   "desde": "Pumpkin, raw",
+   "confianza": "alta",
+   "nota": "cucurbitácea",
+   "pais": "Japan",
+   "anio": "2014"
   }
  },
  {
@@ -2222,7 +2576,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 2.1
   },
   "sin_dato": [
    "arginina",
@@ -2237,7 +2592,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 0.7,
+   "guanina": 1.4,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Carrots, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie",
+   "pais": "Japan",
+   "anio": "2014"
+  }
  },
  {
   "nombre": "Judía verde",
@@ -2287,7 +2655,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 7.5
   },
   "sin_dato": [
    "arginina",
@@ -2302,7 +2671,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 2.2,
+   "guanina": 4.6,
+   "hipoxantina": 0.1,
+   "xantina": 0.6
+  },
+  "purinas_fuente": {
+   "desde": "Green beans",
+   "confianza": "alta",
+   "nota": "legumbre fresca",
+   "pais": "Japan",
+   "anio": "2020"
+  }
  },
  {
   "nombre": "Brócoli",
@@ -2352,11 +2734,25 @@
    "tirosina": 0.05,
    "treonina": 0.088,
    "triptofano": 0.033,
-   "valina": 0.125
+   "valina": 0.125,
+   "purinas": 70.0
   },
   "duplicado_de": "Brecol",
   "dato_no_fiable": true,
-  "nota_datos": "Fusionado 4 agosto: 'Brócoli' y 'Brecol' eran el mismo vegetal duplicado. Promediados los dos valores."
+  "nota_datos": "Fusionado 4 agosto: 'Brócoli' y 'Brecol' eran el mismo vegetal duplicado. Promediados los dos valores.",
+  "purinas_bases": {
+   "adenina": 25.1,
+   "guanina": 33.9,
+   "hipoxantina": 5.7,
+   "xantina": 5.3
+  },
+  "purinas_fuente": {
+   "desde": "Broccoli, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie",
+   "pais": "Japan",
+   "anio": "2014"
+  }
  },
  {
   "nombre": "Espinaca",
@@ -2406,7 +2802,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 39.18
   },
   "sin_dato": [
    "arginina",
@@ -2421,7 +2818,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 18.7,
+   "guanina": 13.9,
+   "hipoxantina": 0.0,
+   "xantina": 6.58
+  },
+  "purinas_fuente": {
+   "desde": "Spinach, boiled",
+   "confianza": "alta",
+   "nota": "espinaca",
+   "pais": "Japan",
+   "anio": "2008"
+  }
  },
  {
   "nombre": "Pimiento rojo",
@@ -2471,7 +2881,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 5.1
   },
   "sin_dato": [
    "arginina",
@@ -2486,7 +2897,19 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 1.9,
+   "guanina": 3.0,
+   "hipoxantina": 0.2
+  },
+  "purinas_fuente": {
+   "desde": "Pepper, red (capsicum)",
+   "confianza": "ALTA",
+   "nota": "misma especie",
+   "pais": "Japan",
+   "anio": "2020"
+  }
  },
  {
   "nombre": "Acelga",
@@ -2536,7 +2959,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -2547,6 +2971,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -2601,9 +3026,11 @@
    "tirosina": 0.001,
    "treonina": 0.006,
    "triptofano": 0.0039,
-   "valina": 0.012
+   "valina": 0.012,
+   "purinas": 0
   },
   "sin_dato": [
+   "purinas",
    "selenio"
   ]
  },
@@ -2655,9 +3082,11 @@
    "tirosina": 0.002,
    "treonina": 0.011,
    "triptofano": 0.0026,
-   "valina": 0.017
+   "valina": 0.017,
+   "purinas": 0
   },
   "sin_dato": [
+   "purinas",
    "selenio"
   ]
  },
@@ -2709,7 +3138,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -2720,6 +3150,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -2774,11 +3205,15 @@
    "tirosina": 0.009,
    "treonina": 0.028,
    "triptofano": 0.013,
-   "valina": 0.047
+   "valina": 0.047,
+   "purinas": 0
   },
   "restricciones_patologia": {
    "diabetes": "Alto en azúcar/potasio; limitar en perros diabéticos u obesos."
-  }
+  },
+  "sin_dato": [
+   "purinas"
+  ]
  },
  {
   "nombre": "Fresa",
@@ -2828,7 +3263,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -2839,6 +3275,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "selenio",
    "tirosina",
    "treonina",
@@ -2894,7 +3331,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -2905,6 +3343,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -2959,7 +3398,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -2970,6 +3410,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "selenio",
    "tirosina",
    "treonina",
@@ -3025,7 +3466,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -3036,6 +3478,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "selenio",
    "tirosina",
    "treonina",
@@ -3091,9 +3534,13 @@
    "tirosina": 0.471,
    "treonina": 0.614,
    "triptofano": 0.171,
-   "valina": 0.92
+   "valina": 0.92,
+   "purinas": 0
   },
-  "nota_datos": "DEVUELTO a Vísceras (5 agosto, madrugada): a diferencia del corazón/molleja/lengua/tripa, donde todas las fuentes coinciden, el pulmón es un caso genuinamente debatido en la comunidad de alimentación cruda -- unas fuentes lo tratan como carne, otras como víscera, sin consenso claro. Se deja como víscera por prudencia."
+  "nota_datos": "DEVUELTO a Vísceras (5 agosto, madrugada): a diferencia del corazón/molleja/lengua/tripa, donde todas las fuentes coinciden, el pulmón es un caso genuinamente debatido en la comunidad de alimentación cruda -- unas fuentes lo tratan como carne, otras como víscera, sin consenso claro. Se deja como víscera por prudencia.",
+  "sin_dato": [
+   "purinas"
+  ]
  },
  {
   "nombre": "Riñón de cordero",
@@ -3143,7 +3590,21 @@
    "tirosina": 0.554,
    "treonina": 0.741,
    "triptofano": 0.212,
-   "valina": 0.923
+   "valina": 0.923,
+   "purinas": 213.0
+  },
+  "purinas_bases": {
+   "adenina": 42.0,
+   "guanina": 47.0,
+   "hipoxantina": 63.0,
+   "xantina": 61.0
+  },
+  "purinas_fuente": {
+   "desde": "Beef kidney, raw",
+   "confianza": "ALTA",
+   "nota": "mismo órgano",
+   "pais": "USA",
+   "anio": "1976"
   }
  },
  {
@@ -3194,13 +3655,27 @@
    "tirosina": 0.53,
    "treonina": 0.802,
    "triptofano": 0.184,
-   "valina": 0.845
+   "valina": 0.845,
+   "purinas": 171.0
   },
   "aminograma_estimado": {
    "desde": "Corazón de cordero, crudo",
    "factor": "1.032",
    "confianza": "media",
    "nota": "mismo tejido, especie distinta"
+  },
+  "purinas_bases": {
+   "adenina": 15.0,
+   "guanina": 16.0,
+   "hipoxantina": 38.0,
+   "xantina": 102.0
+  },
+  "purinas_fuente": {
+   "desde": "Beef heart, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie y órgano",
+   "pais": "USA",
+   "anio": "1976"
   }
  },
  {
@@ -3251,7 +3726,8 @@
    "tirosina": 0.521,
    "treonina": 0.676,
    "triptofano": 0.181,
-   "valina": 0.794
+   "valina": 0.794,
+   "purinas": 93.6
   },
   "pct_carne": 0.3,
   "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso+piel).",
@@ -3261,6 +3737,19 @@
    "factor": "0.889",
    "confianza": "media",
    "nota": "misma especie y pieza equivalente. ~16 % colágeno"
+  },
+  "purinas_bases": {
+   "adenina": 31.1,
+   "guanina": 33.3,
+   "hipoxantina": 22.2,
+   "xantina": 7.0
+  },
+  "purinas_fuente": {
+   "desde": "Poultry, mechanically deboned, from backs and necks with skin, raw",
+   "confianza": "media",
+   "nota": "carcasa de ave, el equivalente más cercano",
+   "pais": "USA",
+   "anio": "1980"
   }
  },
  {
@@ -3311,7 +3800,8 @@
    "tirosina": 0.582,
    "treonina": 0.712,
    "triptofano": 0.209,
-   "valina": 0.627
+   "valina": 0.627,
+   "purinas": 96.0
   },
   "pct_carne": 0.4,
   "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso+piel).",
@@ -3321,6 +3811,19 @@
    "factor": "1.187",
    "confianza": "ALTA",
    "nota": "MISMA PIEZA Y ESPECIE en el USDA"
+  },
+  "purinas_bases": {
+   "adenina": 13.1,
+   "guanina": 11.6,
+   "hipoxantina": 71.3,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Turkey, ground, raw",
+   "confianza": "alta",
+   "nota": "pavo; el USDA solo trae picado",
+   "pais": "Canada",
+   "anio": "1985"
   }
  },
  {
@@ -3371,7 +3874,8 @@
    "tirosina": 0.419,
    "treonina": 0.5,
    "triptofano": 0.153,
-   "valina": 0.608
+   "valina": 0.608,
+   "purinas": 0
   },
   "pct_carne": 0.45,
   "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso+piel).",
@@ -3381,7 +3885,10 @@
    "factor": "1.062",
    "confianza": "media",
    "nota": "misma especie, con piel. ~16 % colágeno"
-  }
+  },
+  "sin_dato": [
+   "purinas"
+  ]
  },
  {
   "nombre": "Carcasa de conejo",
@@ -3431,7 +3938,8 @@
    "tirosina": 0.666,
    "treonina": 0.837,
    "triptofano": 0.247,
-   "valina": 0.95
+   "valina": 0.95,
+   "purinas": 93.6
   },
   "pct_carne": 0.35,
   "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso+piel).",
@@ -3441,6 +3949,19 @@
    "factor": "0.933",
    "confianza": "media",
    "nota": "misma especie. Ojo: ~15 % de su proteína es colágeno del hueso"
+  },
+  "purinas_bases": {
+   "adenina": 31.1,
+   "guanina": 33.3,
+   "hipoxantina": 22.2,
+   "xantina": 7.0
+  },
+  "purinas_fuente": {
+   "desde": "Poultry, mechanically deboned, from backs and necks with skin, raw",
+   "confianza": "media",
+   "nota": "carcasa de ave, el equivalente más cercano",
+   "pais": "USA",
+   "anio": "1980"
   }
  },
  {
@@ -3491,7 +4012,8 @@
    "tirosina": 0.662,
    "treonina": 0.844,
    "triptofano": 0.23,
-   "valina": 1.063
+   "valina": 1.063,
+   "purinas": 127.5
   },
   "pct_carne": 0.6,
   "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso+piel).",
@@ -3501,6 +4023,19 @@
    "factor": "1.167",
    "confianza": "media",
    "nota": "misma especie. ~13 % colágeno"
+  },
+  "purinas_bases": {
+   "adenina": 19.4,
+   "guanina": 20.7,
+   "hipoxantina": 87.4,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Lamb chops and roast, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie",
+   "pais": "Canada",
+   "anio": "1988"
   }
  },
  {
@@ -3551,7 +4086,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0.0
   },
   "sin_dato": [
    "araquidonico",
@@ -3568,7 +4104,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 0.0,
+   "guanina": 0.0,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "—",
+   "confianza": "ALTA",
+   "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
+   "pais": "—",
+   "anio": "—"
+  }
  },
  {
   "nombre": "Aceite de linaza",
@@ -3618,7 +4167,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0.0
   },
   "sin_dato": [
    "araquidonico",
@@ -3636,7 +4186,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 0.0,
+   "guanina": 0.0,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "—",
+   "confianza": "ALTA",
+   "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
+   "pais": "—",
+   "anio": "—"
+  }
  },
  {
   "nombre": "Pato (carne sin hueso)",
@@ -3686,9 +4249,13 @@
    "tirosina": 0.696,
    "treonina": 0.781,
    "triptofano": 0.254,
-   "valina": 0.956
+   "valina": 0.956,
+   "purinas": 0
   },
-  "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar."
+  "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar.",
+  "sin_dato": [
+   "purinas"
+  ]
  },
  {
   "nombre": "Corazón de cordero",
@@ -3738,7 +4305,21 @@
    "tirosina": 0.513,
    "treonina": 0.777,
    "triptofano": 0.178,
-   "valina": 0.819
+   "valina": 0.819,
+   "purinas": 171.0
+  },
+  "purinas_bases": {
+   "adenina": 30.0,
+   "guanina": 23.0,
+   "hipoxantina": 20.0,
+   "xantina": 98.0
+  },
+  "purinas_fuente": {
+   "desde": "Lamb heart, raw",
+   "confianza": "alta",
+   "nota": "mismo órgano",
+   "pais": "USA",
+   "anio": "1976"
   }
  },
  {
@@ -3789,9 +4370,23 @@
    "tirosina": 0.718,
    "treonina": 0.898,
    "triptofano": 0.248,
-   "valina": 1.054
+   "valina": 1.054,
+   "purinas": 93.6
   },
-  "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar."
+  "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar.",
+  "purinas_bases": {
+   "adenina": 31.1,
+   "guanina": 33.3,
+   "hipoxantina": 22.2,
+   "xantina": 7.0
+  },
+  "purinas_fuente": {
+   "desde": "Poultry, mechanically deboned, from backs and necks with skin, raw",
+   "confianza": "media",
+   "nota": "carcasa de ave, el equivalente más cercano",
+   "pais": "USA",
+   "anio": "1980"
+  }
  },
  {
   "nombre": "Lengua de cordero",
@@ -3841,9 +4436,23 @@
    "tirosina": 0.465,
    "treonina": 0.71,
    "triptofano": 0.159,
-   "valina": 0.752
+   "valina": 0.752,
+   "purinas": 90.4
   },
-  "nota_datos": "CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular, misma razón que el corazón y la molleja: no segrega, así que en alimentación cruda va con la carne, no con las vísceras secretoras (hígado, riñón, bazo...). Confirmado en varias guías de raw feeding."
+  "nota_datos": "CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular, misma razón que el corazón y la molleja: no segrega, así que en alimentación cruda va con la carne, no con las vísceras secretoras (hígado, riñón, bazo...). Confirmado en varias guías de raw feeding.",
+  "purinas_bases": {
+   "adenina": 24.3,
+   "guanina": 12.1,
+   "hipoxantina": 44.9,
+   "xantina": 9.1
+  },
+  "purinas_fuente": {
+   "desde": "Beef tongue, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie y tejido",
+   "pais": "Japan",
+   "anio": "2014"
+  }
  },
  {
   "nombre": "Lengua de buey",
@@ -3893,7 +4502,8 @@
    "tirosina": 0.482,
    "treonina": 0.648,
    "triptofano": 0.114,
-   "valina": 0.713
+   "valina": 0.713,
+   "purinas": 90.4
   },
   "nota_datos": "CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular, misma razón que el corazón y la molleja: no segrega, así que en alimentación cruda va con la carne, no con las vísceras secretoras (hígado, riñón, bazo...). Confirmado en varias guías de raw feeding.",
   "aminograma_estimado": {
@@ -3901,6 +4511,19 @@
    "factor": "1.0",
    "confianza": "ALTA",
    "nota": "misma especie y mismo tejido. Proteína 14,9 contra 14,9"
+  },
+  "purinas_bases": {
+   "adenina": 24.3,
+   "guanina": 12.1,
+   "hipoxantina": 44.9,
+   "xantina": 9.1
+  },
+  "purinas_fuente": {
+   "desde": "Beef tongue, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie y tejido",
+   "pais": "Japan",
+   "anio": "2014"
   }
  },
  {
@@ -3951,9 +4574,23 @@
    "tirosina": 0.515,
    "treonina": 0.691,
    "triptofano": 0.185,
-   "valina": 0.788
+   "valina": 0.788,
+   "purinas": 90.4
   },
-  "nota_datos": "CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular, misma razón que el corazón y la molleja: no segrega, así que en alimentación cruda va con la carne, no con las vísceras secretoras (hígado, riñón, bazo...). Confirmado en varias guías de raw feeding."
+  "nota_datos": "CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular, misma razón que el corazón y la molleja: no segrega, así que en alimentación cruda va con la carne, no con las vísceras secretoras (hígado, riñón, bazo...). Confirmado en varias guías de raw feeding.",
+  "purinas_bases": {
+   "adenina": 24.3,
+   "guanina": 12.1,
+   "hipoxantina": 44.9,
+   "xantina": 9.1
+  },
+  "purinas_fuente": {
+   "desde": "Beef tongue, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie y tejido",
+   "pais": "Japan",
+   "anio": "2014"
+  }
  },
  {
   "nombre": "Pavo pechuga sin piel",
@@ -4003,10 +4640,24 @@
    "tirosina": 0.703,
    "treonina": 0.859,
    "triptofano": 0.237,
-   "valina": 0.756
+   "valina": 0.756,
+   "purinas": 96.0
   },
   "fuente": "USDA FDC 174515 'Turkey, retail parts, breast, meat only, raw'.",
-  "nota_datos": "CORREGIDO 4 agosto. El valor anterior (145 kcal/29,9 g proteina) era de pechuga COCINADA A LA PLANCHA, no cruda -- la coccion concentra el resto al perder agua. Sustituido por el crudo real."
+  "nota_datos": "CORREGIDO 4 agosto. El valor anterior (145 kcal/29,9 g proteina) era de pechuga COCINADA A LA PLANCHA, no cruda -- la coccion concentra el resto al perder agua. Sustituido por el crudo real.",
+  "purinas_bases": {
+   "adenina": 13.1,
+   "guanina": 11.6,
+   "hipoxantina": 71.3,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Turkey, ground, raw",
+   "confianza": "alta",
+   "nota": "pavo; el USDA solo trae picado",
+   "pais": "Canada",
+   "anio": "1985"
+  }
  },
  {
   "nombre": "Pollo ala con piel (sin hueso)",
@@ -4056,9 +4707,23 @@
    "tirosina": 0.631,
    "treonina": 0.786,
    "triptofano": 0.195,
-   "valina": 0.907
+   "valina": 0.907,
+   "purinas": 137.5
   },
-  "nota_datos": "Dato de carne deshuesada. Ojo: NO confundir con 'Ala de pollo' (categoría Hueso carnoso, 900 mg de calcio), que sí lleva el hueso."
+  "nota_datos": "Dato de carne deshuesada. Ojo: NO confundir con 'Ala de pollo' (categoría Hueso carnoso, 900 mg de calcio), que sí lleva el hueso.",
+  "purinas_bases": {
+   "adenina": 28.4,
+   "guanina": 16.6,
+   "hipoxantina": 92.5,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Chicken wing, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie y corte",
+   "pais": "Japan",
+   "anio": "2014"
+  }
  },
  {
   "nombre": "Pollo con piel (sin hueso)",
@@ -4108,12 +4773,26 @@
    "tirosina": 0.597,
    "treonina": 0.767,
    "triptofano": 0.207,
-   "valina": 0.902
+   "valina": 0.902,
+   "purinas": 111.35
   },
   "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar. CORREGIDO 4 agosto: calcio estaba en 0, imposible en tejido muscular; puesto a 10 mg.",
   "sin_dato": [
    "calcio"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 22.0,
+   "guanina": 19.3,
+   "hipoxantina": 66.7,
+   "xantina": 3.35
+  },
+  "purinas_fuente": {
+   "desde": "Chicken, light meat, raw",
+   "confianza": "media",
+   "nota": "pollo sin corte especificado",
+   "pais": "Japan",
+   "anio": "2014"
+  }
  },
  {
   "nombre": "Lomo de ternera con grasa",
@@ -4163,7 +4842,8 @@
    "tirosina": 0.644,
    "treonina": 0.807,
    "triptofano": 0.133,
-   "valina": 1.002
+   "valina": 1.002,
+   "purinas": 74.3
   },
   "sin_dato": [
    "araquidonico",
@@ -4177,6 +4857,19 @@
    "factor": "1.045",
    "confianza": "alta",
    "nota": "misma especie, corte graso"
+  },
+  "purinas_bases": {
+   "adenina": 13.5,
+   "guanina": 7.6,
+   "hipoxantina": 39.5,
+   "xantina": 13.7
+  },
+  "purinas_fuente": {
+   "desde": "Beef rib loin, raw",
+   "confianza": "ALTA",
+   "nota": "mismo corte",
+   "pais": "Japan",
+   "anio": "2014"
   }
  },
  {
@@ -4227,7 +4920,8 @@
    "tirosina": 0.317,
    "treonina": 0.255,
    "triptofano": 0.083,
-   "valina": 0.414
+   "valina": 0.414,
+   "purinas": 7.0
   },
   "sin_dato": [
    "cobre",
@@ -4238,6 +4932,19 @@
    "factor": "0.621",
    "confianza": "alta",
    "nota": "mismo producto, distinta grasa"
+  },
+  "purinas_bases": {
+   "adenina": 2.7,
+   "guanina": 3.9,
+   "hipoxantina": 0.0,
+   "xantina": 0.4
+  },
+  "purinas_fuente": {
+   "desde": "Yogurt, plain",
+   "confianza": "ALTA",
+   "nota": "lácteo fermentado",
+   "pais": "Canada",
+   "anio": "1988"
   }
  },
  {
@@ -4288,13 +4995,26 @@
    "tirosina": 0.543,
    "treonina": 0.641,
    "triptofano": 0.209,
-   "valina": 0.94
+   "valina": 0.94,
+   "purinas": 0.0
   },
   "sin_dato": [
    "araquidonico",
    "cobre",
    "manganeso"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 0.0,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Egg, chicken, raw",
+   "confianza": "ALTA",
+   "nota": "mismo alimento. CERO purinas",
+   "pais": "Japan",
+   "anio": "2014"
+  }
  },
  {
   "nombre": "Huevo de gallina entero",
@@ -4344,7 +5064,8 @@
    "tirosina": 0.497,
    "treonina": 0.553,
    "triptofano": 0.166,
-   "valina": 0.854
+   "valina": 0.854,
+   "purinas": 0.0
   },
   "sin_dato": [
    "araquidonico",
@@ -4357,6 +5078,18 @@
    "factor": "0.995",
    "confianza": "ALTA",
    "nota": "mismo alimento"
+  },
+  "purinas_bases": {
+   "adenina": 0.0,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Egg, chicken, raw",
+   "confianza": "ALTA",
+   "nota": "mismo alimento. CERO purinas",
+   "pais": "Japan",
+   "anio": "2014"
   }
  },
  {
@@ -4407,7 +5140,8 @@
    "tirosina": 0.684,
    "treonina": 0.822,
    "triptofano": 0.29,
-   "valina": 0.988
+   "valina": 0.988,
+   "purinas": 0.0
   },
   "sin_dato": [
    "araquidonico",
@@ -4422,6 +5156,18 @@
    "factor": "1.116",
    "confianza": "ALTA",
    "nota": "misma especie"
+  },
+  "purinas_bases": {
+   "adenina": 0.0,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Egg, chicken, raw",
+   "confianza": "ALTA",
+   "nota": "mismo alimento. CERO purinas",
+   "pais": "Japan",
+   "anio": "2014"
   }
  },
  {
@@ -4472,7 +5218,8 @@
    "tirosina": 0.656,
    "treonina": 0.787,
    "triptofano": 0.278,
-   "valina": 0.946
+   "valina": 0.946,
+   "purinas": 0.0
   },
   "sin_dato": [
    "araquidonico",
@@ -4484,6 +5231,18 @@
    "factor": "1.069",
    "confianza": "ALTA",
    "nota": "misma especie"
+  },
+  "purinas_bases": {
+   "adenina": 0.0,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Egg, chicken, raw",
+   "confianza": "ALTA",
+   "nota": "mismo alimento. CERO purinas",
+   "pais": "Japan",
+   "anio": "2014"
   }
  },
  {
@@ -4534,7 +5293,8 @@
    "tirosina": 0.587,
    "treonina": 0.763,
    "triptofano": 0.195,
-   "valina": 0.896
+   "valina": 0.896,
+   "purinas": 110.3
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
@@ -4543,6 +5303,19 @@
    "factor": "0.95",
    "confianza": "alta",
    "nota": "misma familia Gadidae"
+  },
+  "purinas_bases": {
+   "adenina": 10.8,
+   "guanina": 21.0,
+   "hipoxantina": 74.0,
+   "xantina": 4.5
+  },
+  "purinas_fuente": {
+   "desde": "Cod, Atlantic, wild, raw",
+   "confianza": "alta",
+   "nota": "familia Gadidae",
+   "pais": "USA",
+   "anio": "2024"
   }
  },
  {
@@ -4593,7 +5366,8 @@
    "tirosina": 0.611,
    "treonina": 0.794,
    "triptofano": 0.203,
-   "valina": 0.933
+   "valina": 0.933,
+   "purinas": 129.1
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
@@ -4602,6 +5376,19 @@
    "factor": "0.883",
    "confianza": "BAJA",
    "nota": "familia distinta (Sparidae vs Lutjanidae). Pescado blanco magro los dos"
+  },
+  "purinas_bases": {
+   "adenina": 13.5,
+   "guanina": 10.6,
+   "hipoxantina": 105.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Red seabream, raw",
+   "confianza": "ALTA",
+   "nota": "misma familia Sparidae",
+   "pais": "Japan",
+   "anio": "2014"
   }
  },
  {
@@ -4652,7 +5439,8 @@
    "tirosina": 0.594,
    "treonina": 0.771,
    "triptofano": 0.197,
-   "valina": 0.906
+   "valina": 0.906,
+   "purinas": 411.0
   },
   "nota_datos": "USDA FoodData Central 174182 (Engraulis encrasicolus, raw): EPA 0,538 g y DHA 0,911 g por 100 g. ⚠️ CORREGIDO el 26 de agosto: el día anterior se puso 0,763/1,292 de la tabla de Mozaffarian & Wu, y la revisión posterior fijó la ficha de USDA como fuente. Antes de las dos estaba a CERO en los dos campos, y el boquerón es pescado azul: aquel cero no era «no tiene», era «no lo sabíamos», y el semáforo lo contaba como si de verdad no aportara nada.",
   "fuente_epa_dha": "USDA_FDC",
@@ -4661,6 +5449,19 @@
    "factor": "0.865",
    "confianza": "ALTA",
    "nota": "misma especie"
+  },
+  "purinas_bases": {
+   "adenina": 8.0,
+   "guanina": 185.0,
+   "hipoxantina": 6.0,
+   "xantina": 212.0
+  },
+  "purinas_fuente": {
+   "desde": "Anchovy, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie",
+   "pais": "USA",
+   "anio": "1976"
   }
  },
  {
@@ -4711,9 +5512,23 @@
    "tirosina": 0.498,
    "treonina": 0.67,
    "triptofano": 0.22,
-   "valina": 0.68
+   "valina": 0.68,
+   "purinas": 135.0
   },
-  "nota_datos": "⚠️ SIN FUENTE DECLARADA: no se ha revisado su ficha de BEDCA todavía. Es el único pescado del catálogo cuyo origen sigue sin comprobar (26 agosto)."
+  "nota_datos": "⚠️ SIN FUENTE DECLARADA: no se ha revisado su ficha de BEDCA todavía. Es el único pescado del catálogo cuyo origen sigue sin comprobar (26 agosto).",
+  "purinas_bases": {
+   "adenina": 18.0,
+   "guanina": 15.0,
+   "hipoxantina": 24.0,
+   "xantina": 78.0
+  },
+  "purinas_fuente": {
+   "desde": "Squid, raw (unspecified)",
+   "confianza": "ALTA",
+   "nota": "mismo grupo",
+   "pais": "USA",
+   "anio": "1976"
+  }
  },
  {
   "nombre": "Dorada",
@@ -4763,7 +5578,8 @@
    "tirosina": 0.574,
    "treonina": 0.745,
    "triptofano": 0.191,
-   "valina": 0.875
+   "valina": 0.875,
+   "purinas": 129.1
   },
   "nota_datos": "Ficha de BEDCA. Todos los campos son los suyos MENOS la energía, y el motivo está medido:\n\nBEDCA declara 78 kcal (326 kJ), pero su propia ficha NO CUADRA CONSIGO MISMA:\n  · agua 82 g + proteína 17 g + grasa 7,22 g = 106,22 g por cada 100 g de pescado. Sobran más de 6 g de materia, y aún faltarían los minerales. Es imposible.\n  · la energía de un alimento SE CALCULA de sus macros: 17x4 + 7,22x9 = 133 kcal. Solo la proteína ya son 68, casi las 78 declaradas -- lo que dejaría 10 kcal para 7,22 g de grasa, que son 65.\n\nCOMPROBADO que es de esta ficha y no del método: las mismas dos cuentas aplicadas a los 19 pescados de BEDCA cuadran en 18. Atún 119 declaradas / 118 calculadas, salmón 182/182, sardina 140/140. Solo la dorada falla, y falla las dos a la vez.\n\nCAUSA: cada fila viene de un estudio distinto (agua de la fuente 7, proteína de la 32, grasa de la 296, energía de la 236) y en la dorada se cruzaron dos pescados. Los 78 kcal y los 82 g de agua son una dorada salvaje magra; los 7,22 g de grasa, una de piscifactoría. Lo confirma la propia tabla: los demás pescados con 82% de agua tienen 1,3-1,8 g de grasa; los que tienen 7 g de grasa andan por 74-76% de agua.\n\nSE USAN 133 kcal, que es lo coherente con la grasa que también guardamos. Poner 78 manteniendo 7,22 g de grasa haría que la app calculara una ración 83% grasa en calorías, y la energía es el divisor de los 30 requisitos. `auditar_catalogo.py` lo caza solo con el aviso [BASE] -- esa alarma se deja encendida a propósito, no se silencia.\n\nPENDIENTE para la nutricionista: si la dorada del catálogo es salvaje, hay que bajar la grasa a ~1,5 g Y con ella el EPA y el DHA, que salen de esa misma fuente 296. Energía y grasa se deciden juntas o no se decide ninguna.",
   "fuente_epa_dha": "BEDCA",
@@ -4772,6 +5588,19 @@
    "factor": "0.829",
    "confianza": "BAJA",
    "nota": "familia distinta. Mismo caso que el besugo"
+  },
+  "purinas_bases": {
+   "adenina": 13.5,
+   "guanina": 10.6,
+   "hipoxantina": 105.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Red seabream, raw",
+   "confianza": "ALTA",
+   "nota": "misma familia Sparidae",
+   "pais": "Japan",
+   "anio": "2014"
   }
  },
  {
@@ -4822,7 +5651,8 @@
    "tirosina": 0.681,
    "treonina": 0.714,
    "triptofano": 0.205,
-   "valina": 0.842
+   "valina": 0.842,
+   "purinas": 182.4
   },
   "nota_datos": "EPA 0,100 g y DHA 0,200 g por 100 g. ⚠️ ESTIMACIÓN POR ESPECIE PARECIDA: la gamba roja (Aristeus antennatus) no tiene ficha propia ni en BEDCA ni en USDA. ⚠️ CORREGIDO el 26 de agosto: el día anterior se puso 0,170/0,330 de «mixed shrimp» de USDA.",
   "fuente_epa_dha": "estimacion_especie_similar",
@@ -4831,6 +5661,19 @@
    "factor": "1.323",
    "confianza": "alta",
    "nota": "mismo grupo"
+  },
+  "purinas_bases": {
+   "adenina": 18.5,
+   "guanina": 11.3,
+   "hipoxantina": 149.9,
+   "xantina": 2.7
+  },
+  "purinas_fuente": {
+   "desde": "Shrimp, mixed species, farmed, raw",
+   "confianza": "ALTA",
+   "nota": "mismo grupo",
+   "pais": "USA",
+   "anio": "2024"
   }
  },
  {
@@ -4881,7 +5724,8 @@
    "tirosina": 0.92,
    "treonina": 0.964,
    "triptofano": 0.277,
-   "valina": 1.137
+   "valina": 1.137,
+   "purinas": 182.4
   },
   "duplicado_de": "Langostinos",
   "dato_no_fiable": true,
@@ -4892,6 +5736,19 @@
    "factor": "1.785",
    "confianza": "alta",
    "nota": "mismo grupo"
+  },
+  "purinas_bases": {
+   "adenina": 18.5,
+   "guanina": 11.3,
+   "hipoxantina": 149.9,
+   "xantina": 2.7
+  },
+  "purinas_fuente": {
+   "desde": "Shrimp, mixed species, farmed, raw",
+   "confianza": "ALTA",
+   "nota": "mismo grupo",
+   "pais": "USA",
+   "anio": "2024"
   }
  },
  {
@@ -4942,7 +5799,8 @@
    "tirosina": 0.637,
    "treonina": 0.778,
    "triptofano": 0.214,
-   "valina": 0.866
+   "valina": 0.866,
+   "purinas": 113.0
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
@@ -4951,6 +5809,19 @@
    "factor": "1.33",
    "confianza": "ALTA",
    "nota": "mismo grupo, lo dice el nombre"
+  },
+  "purinas_bases": {
+   "adenina": 14.9,
+   "guanina": 28.7,
+   "hipoxantina": 69.4,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Flounder, yellow striped, raw",
+   "confianza": "ALTA",
+   "nota": "pez plano. CORREGIDO: antes cogía \"Beef tongue\" por parecerse a \"lengua\"",
+   "pais": "Japan",
+   "anio": "2014"
   }
  },
  {
@@ -5001,7 +5872,8 @@
    "tirosina": 0.607,
    "treonina": 0.789,
    "triptofano": 0.201,
-   "valina": 0.928
+   "valina": 0.928,
+   "purinas": 107.3
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
@@ -5010,6 +5882,19 @@
    "factor": "0.977",
    "confianza": "ALTA",
    "nota": "misma especie"
+  },
+  "purinas_bases": {
+   "adenina": 12.8,
+   "guanina": 10.3,
+   "hipoxantina": 84.2,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Seabass, mixed species, raw",
+   "confianza": "ALTA",
+   "nota": "mismo grupo",
+   "pais": "Japan, China",
+   "anio": "2014, 2017"
   }
  },
  {
@@ -5060,10 +5945,24 @@
    "tirosina": 0.655,
    "treonina": 0.85,
    "triptofano": 0.23,
-   "valina": 0.999
+   "valina": 0.999,
+   "purinas": 107.3
   },
   "nota_datos": "USDA FoodData Central 173678 (Perca, mixed species, raw): EPA 0,150 g y DHA 0,280 g por 100 g. La perca de río europea (Perca fluviatilis) no tiene ficha propia; se usa la de especies mezcladas del mismo género.",
-  "fuente_epa_dha": "USDA_FDC"
+  "fuente_epa_dha": "USDA_FDC",
+  "purinas_bases": {
+   "adenina": 12.8,
+   "guanina": 10.3,
+   "hipoxantina": 84.2,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Seabass, mixed species, raw",
+   "confianza": "media",
+   "nota": "pez blanco de agua dulce",
+   "pais": "Japan, China",
+   "anio": "2014, 2017"
+  }
  },
  {
   "nombre": "Pescadilla",
@@ -5113,7 +6012,8 @@
    "tirosina": 0.397,
    "treonina": 0.515,
    "triptofano": 0.132,
-   "valina": 0.605
+   "valina": 0.605,
+   "purinas": 144.1
   },
   "nota_datos": "EPA 0,090 g y DHA 0,270 g por 100 g, ratio EPA:DHA ≈ 1:3. Piñeiro-Corrales et al., Nutrición Hospitalaria 2013. La pescadilla es merluza joven, y la merluza de este mismo catálogo trae 100 mg de EPA y 266 de DHA de otra fuente: las dos cifras casan, lo que da confianza en las dos.",
   "fuente_epa_dha": "estimacion_especie_similar",
@@ -5122,6 +6022,18 @@
    "factor": "0.642",
    "confianza": "ALTA",
    "nota": "misma especie"
+  },
+  "purinas_bases": {
+   "adenina": 13.5,
+   "guanina": 10.6,
+   "hipoxantina": 120.0
+  },
+  "purinas_fuente": {
+   "desde": "Whiting (Sillaginidae), raw",
+   "confianza": "media",
+   "nota": "pescado blanco magro",
+   "pais": "Japan",
+   "anio": "2014"
   }
  },
  {
@@ -5172,10 +6084,24 @@
    "tirosina": 0.477,
    "treonina": 0.642,
    "triptofano": 0.167,
-   "valina": 0.651
+   "valina": 0.651,
+   "purinas": 137.2
   },
   "fuente_epa_dha": "BEDCA",
-  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3»."
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
+  "purinas_bases": {
+   "adenina": 21.6,
+   "guanina": 18.1,
+   "hipoxantina": 36.7,
+   "xantina": 60.8
+  },
+  "purinas_fuente": {
+   "desde": "Octopus, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie",
+   "pais": "Japan",
+   "anio": "2014"
+  }
  },
  {
   "nombre": "Sepia",
@@ -5225,10 +6151,24 @@
    "tirosina": 0.52,
    "treonina": 0.699,
    "triptofano": 0.182,
-   "valina": 0.709
+   "valina": 0.709,
+   "purinas": 135.0
   },
   "fuente_epa_dha": "BEDCA",
-  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3»."
+  "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
+  "purinas_bases": {
+   "adenina": 18.0,
+   "guanina": 15.0,
+   "hipoxantina": 24.0,
+   "xantina": 78.0
+  },
+  "purinas_fuente": {
+   "desde": "Squid, raw (unspecified)",
+   "confianza": "ALTA",
+   "nota": "mismo grupo",
+   "pais": "USA",
+   "anio": "1976"
+  }
  },
  {
   "nombre": "Aceite de cacahuete",
@@ -5278,7 +6218,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0.0
   },
   "sin_dato": [
    "araquidonico",
@@ -5296,7 +6237,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 0.0,
+   "guanina": 0.0,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "—",
+   "confianza": "ALTA",
+   "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
+   "pais": "—",
+   "anio": "—"
+  }
  },
  {
   "nombre": "Aceite de coco",
@@ -5346,7 +6300,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0.0
   },
   "sin_dato": [
    "araquidonico",
@@ -5365,7 +6320,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 0.0,
+   "guanina": 0.0,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "—",
+   "confianza": "ALTA",
+   "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
+   "pais": "—",
+   "anio": "—"
+  }
  },
  {
   "nombre": "Aceite de hígado de bacalao",
@@ -5415,7 +6383,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0.0
   },
   "sin_dato": [
    "araquidonico",
@@ -5435,7 +6404,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 0.0,
+   "guanina": 0.0,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "—",
+   "confianza": "ALTA",
+   "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
+   "pais": "—",
+   "anio": "—"
+  }
  },
  {
   "nombre": "Aceite de sésamo",
@@ -5485,13 +6467,27 @@
    "tirosina": 0.0,
    "treonina": 0.0,
    "triptofano": 0.0,
-   "valina": 0.0
+   "valina": 0.0,
+   "purinas": 0.0
   },
   "sin_dato": [
    "araquidonico",
    "dha",
    "epa"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 0.0,
+   "guanina": 0.0,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "—",
+   "confianza": "ALTA",
+   "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
+   "pais": "—",
+   "anio": "—"
+  }
  },
  {
   "nombre": "Grasa de pollo",
@@ -5541,7 +6537,8 @@
    "tirosina": 0.0,
    "treonina": 0.0,
    "triptofano": 0.0,
-   "valina": 0.0
+   "valina": 0.0,
+   "purinas": 0.0
   },
   "sin_dato": [
    "araquidonico",
@@ -5550,7 +6547,20 @@
    "linoleico",
    "linolenico",
    "vitE"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 0.0,
+   "guanina": 0.0,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "—",
+   "confianza": "ALTA",
+   "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
+   "pais": "—",
+   "anio": "—"
+  }
  },
  {
   "nombre": "Manteca",
@@ -5600,7 +6610,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0.0
   },
   "sin_dato": [
    "araquidonico",
@@ -5620,7 +6631,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 0.0,
+   "guanina": 0.0,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "—",
+   "confianza": "ALTA",
+   "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
+   "pais": "—",
+   "anio": "—"
+  }
  },
  {
   "nombre": "Semilla de lino",
@@ -5670,11 +6694,13 @@
    "tirosina": 0.493,
    "treonina": 0.766,
    "triptofano": 0.297,
-   "valina": 1.072
+   "valina": 1.072,
+   "purinas": 0
   },
   "sin_dato": [
    "cobre",
-   "manganeso"
+   "manganeso",
+   "purinas"
   ],
   "aminograma_estimado": {
    "desde": "Semillas de lino",
@@ -5731,11 +6757,13 @@
    "tirosina": 1.093,
    "treonina": 0.998,
    "triptofano": 0.576,
-   "valina": 1.579
+   "valina": 1.579,
+   "purinas": 0
   },
   "sin_dato": [
    "cobre",
-   "manganeso"
+   "manganeso",
+   "purinas"
   ]
  },
  {
@@ -5786,11 +6814,13 @@
    "tirosina": 0.666,
    "treonina": 0.928,
    "triptofano": 0.348,
-   "valina": 1.315
+   "valina": 1.315,
+   "purinas": 0
   },
   "sin_dato": [
    "cobre",
-   "manganeso"
+   "manganeso",
+   "purinas"
   ]
  },
  {
@@ -5841,7 +6871,8 @@
    "tirosina": 0.796,
    "treonina": 0.789,
    "triptofano": 0.416,
-   "valina": 1.061
+   "valina": 1.061,
+   "purinas": 0
   },
   "dato_dudoso": {
    "calcio": {
@@ -5866,7 +6897,10 @@
    "factor": "1.072",
    "confianza": "ALTA",
    "nota": "mismo alimento"
-  }
+  },
+  "sin_dato": [
+   "purinas"
+  ]
  },
  {
   "nombre": "Albahaca",
@@ -5916,7 +6950,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 289.3
   },
   "fuente": "USDA FDC 172232 'Basil, fresh'.",
   "nota_datos": "CORREGIDO 4 agosto. El valor anterior (178 kcal) era de albahaca SECA (FDC 171317, 233 kcal), no fresca. Error de x7,7.",
@@ -5933,7 +6968,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 122.0,
+   "guanina": 135.0,
+   "hipoxantina": 32.3,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Parsley, fresh",
+   "confianza": "media",
+   "nota": "hierba fresca. OJO: 289 mg, de las más altas",
+   "pais": "Japan",
+   "anio": "2014"
+  }
  },
  {
   "nombre": "Alcachofa",
@@ -5983,7 +7031,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -5994,6 +7043,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -6048,7 +7098,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -6059,6 +7110,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -6113,7 +7165,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "preparacion": "cocido",
   "nota_datos": "⚠️ DAR SIEMPRE COCIDO, no crudo: crudo es indigesto/duro y da riesgo de obstrucción o malestar GI. Es la excepción al BARF crudo por defecto.",
@@ -6126,6 +7179,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -6180,7 +7234,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 17.0
   },
   "preparacion": "cocido",
   "nota_datos": "⚠️ DAR SIEMPRE COCIDO, no crudo: crudo es indigesto/duro y da riesgo de obstrucción o malestar GI. Es la excepción al BARF crudo por defecto.",
@@ -6197,7 +7252,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 6.7,
+   "guanina": 7.3,
+   "hipoxantina": 2.4,
+   "xantina": 0.6
+  },
+  "purinas_fuente": {
+   "desde": "Sweet potato, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie",
+   "pais": "Japan",
+   "anio": "2014"
+  }
  },
  {
   "nombre": "Canónigos",
@@ -6247,11 +7315,25 @@
    "tirosina": 0.036,
    "treonina": 0.075,
    "triptofano": 0.026,
-   "valina": 0.099
+   "valina": 0.099,
+   "purinas": 4.7
   },
   "sin_dato": [
    "selenio"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 1.2,
+   "guanina": 3.2,
+   "hipoxantina": 0.3,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Lettuce",
+   "confianza": "alta",
+   "nota": "hoja de ensalada",
+   "pais": "Japan",
+   "anio": "2020"
+  }
  },
  {
   "nombre": "Cardo",
@@ -6301,7 +7383,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -6312,6 +7395,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -6366,7 +7450,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 46.9
   },
   "sin_dato": [
    "arginina",
@@ -6381,7 +7466,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 18.8,
+   "guanina": 27.1,
+   "hipoxantina": 0.0,
+   "xantina": 1.0
+  },
+  "purinas_fuente": {
+   "desde": "Mushrooms (not further specified), raw",
+   "confianza": "alta",
+   "nota": "seta cultivada",
+   "pais": "Canada",
+   "anio": "1988"
+  }
  },
  {
   "nombre": "Coles de Bruselas",
@@ -6431,7 +7529,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 10.0
   },
   "fuente": "BEDCA",
   "nota_datos": "BEDCA, «Coles de Bruselas» — fibra dietética total 4,3 g/100 g (fuente 149). La energía (35 kcal), la proteína (4 g) y la grasa (0,5 g) que ya teníamos coinciden exactas con esa misma ficha, así que solo faltaba este campo.",
@@ -6448,7 +7547,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 4.8,
+   "guanina": 5.2,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Cabbage, bok choy, raw",
+   "confianza": "alta",
+   "nota": "brásica",
+   "pais": "USA",
+   "anio": "2024"
+  }
  },
  {
   "nombre": "Col lombarda",
@@ -6498,7 +7610,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 10.0
   },
   "nota_datos": "Fusionado 4 agosto: 'Col lombarda' y 'Lombarda' eran el mismo vegetal duplicado. Promediados los dos valores.",
   "sin_dato": [
@@ -6514,7 +7627,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 4.8,
+   "guanina": 5.2,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Cabbage, bok choy, raw",
+   "confianza": "alta",
+   "nota": "brásica",
+   "pais": "USA",
+   "anio": "2024"
+  }
  },
  {
   "nombre": "Col rizada",
@@ -6564,13 +7690,27 @@
    "tirosina": 0.12,
    "treonina": 0.151,
    "triptofano": 0.04,
-   "valina": 0.185
+   "valina": 0.185,
+   "purinas": 10.0
   },
   "aminograma_estimado": {
    "desde": "Col rizada (kale), cocida sin sal",
    "factor": "1.156",
    "confianza": "media",
    "nota": "misma especie, la nuestra cruda y la del USDA cocida"
+  },
+  "purinas_bases": {
+   "adenina": 4.8,
+   "guanina": 5.2,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Cabbage, bok choy, raw",
+   "confianza": "alta",
+   "nota": "brásica",
+   "pais": "USA",
+   "anio": "2024"
   }
  },
  {
@@ -6621,7 +7761,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 33.0
   },
   "sin_dato": [
    "arginina",
@@ -6636,7 +7777,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 15.2,
+   "guanina": 17.5,
+   "hipoxantina": 0.0,
+   "xantina": 0.3
+  },
+  "purinas_fuente": {
+   "desde": "Cauliflower, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie",
+   "pais": "USA",
+   "anio": "2024"
+  }
  },
  {
   "nombre": "Endibia",
@@ -6686,7 +7840,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -6697,6 +7852,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -6751,7 +7907,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 32.85
   },
   "preparacion": "cocido",
   "nota_datos": "⚠️ DAR SIEMPRE COCIDO, no crudo: crudo es indigesto/duro y da riesgo de obstrucción o malestar GI. Es la excepción al BARF crudo por defecto.",
@@ -6768,7 +7925,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 12.2,
+   "guanina": 17.7,
+   "hipoxantina": 2.75,
+   "xantina": 0.2
+  },
+  "purinas_fuente": {
+   "desde": "Asparagus, raw6",
+   "confianza": "ALTA",
+   "nota": "misma especie",
+   "pais": "Japan",
+   "anio": "2014"
+  }
  },
  {
   "nombre": "Grelo",
@@ -6818,11 +7988,15 @@
    "tirosina": 0.075,
    "treonina": 0.106,
    "triptofano": 0.043,
-   "valina": 0.153
+   "valina": 0.153,
+   "purinas": 0
   },
   "restricciones_patologia": {
    "hipotiroidismo": "Crucífera con goitrógenos; limitar en perros con hipotiroidismo o en tratamiento con levotiroxina."
-  }
+  },
+  "sin_dato": [
+   "purinas"
+  ]
  },
  {
   "nombre": "Lechuga",
@@ -6872,7 +8046,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 4.7
   },
   "sin_dato": [
    "arginina",
@@ -6887,7 +8062,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 1.2,
+   "guanina": 3.2,
+   "hipoxantina": 0.3,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Lettuce",
+   "confianza": "alta",
+   "nota": "hoja de ensalada",
+   "pais": "Japan",
+   "anio": "2020"
+  }
  },
  {
   "nombre": "Nabo pelado",
@@ -6937,7 +8125,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "restricciones_patologia": {
    "hipotiroidismo": "Crucífera con goitrógenos; limitar en perros con hipotiroidismo."
@@ -6951,6 +8140,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -7005,7 +8195,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 9.4
   },
   "sin_dato": [
    "arginina",
@@ -7020,7 +8211,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 4.2,
+   "guanina": 5.0,
+   "hipoxantina": 0.1,
+   "xantina": 0.1
+  },
+  "purinas_fuente": {
+   "desde": "Cucumber, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie",
+   "pais": "Japan",
+   "anio": "2014"
+  }
  },
  {
   "nombre": "Rábano",
@@ -7070,7 +8274,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -7081,6 +8286,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -7135,7 +8341,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 10.0
   },
   "sin_dato": [
    "arginina",
@@ -7150,7 +8357,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 4.8,
+   "guanina": 5.2,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Cabbage, bok choy, raw",
+   "confianza": "alta",
+   "nota": "brásica",
+   "pais": "USA",
+   "anio": "2024"
+  }
  },
  {
   "nombre": "Rucula",
@@ -7200,7 +8420,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 4.7
   },
   "sin_dato": [
    "arginina",
@@ -7215,7 +8436,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 1.2,
+   "guanina": 3.2,
+   "hipoxantina": 0.3,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "Lettuce",
+   "confianza": "alta",
+   "nota": "hoja de ensalada",
+   "pais": "Japan",
+   "anio": "2020"
+  }
  },
  {
   "nombre": "Tomate (puré)",
@@ -7265,7 +8499,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 6.6
   },
   "fuente": "BEDCA",
   "nota_datos": "BEDCA, «Tomate, maduro, puré» — fibra dietética total 2,8 g/100 g (fuente 29). Es el puré, no el tomate fresco, que en BEDCA es otra ficha distinta y trae 1,1 g. La energía (73 kcal), la proteína (4,5 g) y la grasa (0,2 g) que ya teníamos coinciden exactas con la ficha del puré, así que es la buena.",
@@ -7282,7 +8517,20 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 3.2,
+   "guanina": 1.2,
+   "hipoxantina": 2.1,
+   "xantina": 0.1
+  },
+  "purinas_fuente": {
+   "desde": "Tomatoes, no further specified",
+   "confianza": "ALTA",
+   "nota": "misma especie",
+   "pais": "Japan",
+   "anio": "2020"
+  }
  },
  {
   "nombre": "Albaricoque",
@@ -7332,8 +8580,12 @@
    "tirosina": 0.029,
    "treonina": 0.047,
    "triptofano": 0.006,
-   "valina": 0.047
-  }
+   "valina": 0.047,
+   "purinas": 0
+  },
+  "sin_dato": [
+   "purinas"
+  ]
  },
  {
   "nombre": "Coco fresco",
@@ -7383,11 +8635,15 @@
    "tirosina": 0.103,
    "treonina": 0.121,
    "triptofano": 0.039,
-   "valina": 0.202
+   "valina": 0.202,
+   "purinas": 0
   },
   "restricciones_patologia": {
    "pancreatitis": "Alto en grasa saturada; limitar en perros con antecedente de pancreatitis, hiperlipidemia u obesidad."
-  }
+  },
+  "sin_dato": [
+   "purinas"
+  ]
  },
  {
   "nombre": "Dátil",
@@ -7437,7 +8693,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "restricciones_patologia": {
    "diabetes": "Muy alto en azúcar (~60%+ en peso seco); evitar o limitar mucho en perros diabéticos u obesos."
@@ -7451,6 +8708,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -7505,7 +8763,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -7516,6 +8775,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -7570,7 +8830,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -7581,6 +8842,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "selenio",
    "tirosina",
    "treonina",
@@ -7636,7 +8898,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "restricciones_patologia": {
    "diabetes": "Alto en azúcar; limitar en perros diabéticos u obesos."
@@ -7650,6 +8913,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -7704,9 +8968,11 @@
    "tirosina": 0.019,
    "treonina": 0.019,
    "triptofano": 0.006,
-   "valina": 0.024
+   "valina": 0.024,
+   "purinas": 0
   },
   "sin_dato": [
+   "purinas",
    "selenio"
   ]
  },
@@ -7758,7 +9024,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "dosis_max_por_100g_comida": 0.8,
   "dosis_fuente": "Misma dosificación que la cáscara comercial: ~4 g por cada 500 g de carne",
@@ -7782,6 +9049,7 @@
    "niacina",
    "potasio",
    "proteina",
+   "purinas",
    "riboflavina",
    "selenio",
    "sodio",
@@ -7847,13 +9115,27 @@
    "tirosina": 0.669,
    "treonina": 0.845,
    "triptofano": 0.268,
-   "valina": 1.197
+   "valina": 1.197,
+   "purinas": 243.0
   },
   "aminograma_estimado": {
    "desde": "Pato, hígado, crudo",
    "factor": "1.014",
    "confianza": "media",
    "nota": "mismo tejido, especie distinta. El aminograma hepático está conservado"
+  },
+  "purinas_bases": {
+   "adenina": 72.0,
+   "guanina": 78.0,
+   "hipoxantina": 71.0,
+   "xantina": 22.0
+  },
+  "purinas_fuente": {
+   "desde": "Chicken liver, raw",
+   "confianza": "media",
+   "nota": "hígado de otra especie",
+   "pais": "USA",
+   "anio": "1976"
   }
  },
  {
@@ -7904,7 +9186,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "dosis_tramos_kg": [
    {
@@ -7936,6 +9219,7 @@
    "lisina",
    "magnesio",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -7990,7 +9274,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "dosis_fuente": "Etiqueta NEKTON: 1 cucharadita (~4,5 g) por 10 kg de peso, máximo 6 cucharaditas/día. El fabricante limita además a un 10% de la ración diaria por su contenido en vitamina D y oligoelementos.",
   "dosis_g_por_kg_peso": 0.45,
@@ -8008,6 +9293,7 @@
    "magnesio",
    "metionina",
    "potasio",
+   "purinas",
    "selenio",
    "tirosina",
    "treonina",
@@ -8063,10 +9349,24 @@
    "tirosina": 0.653,
    "treonina": 0.725,
    "triptofano": 0.23,
-   "valina": 0.998
+   "valina": 0.998,
+   "purinas": 243.0
   },
   "nota_datos": "AJUSTADO 4 agosto contra USDA (antes 137/22,12/4,7, dentro de rango pero se prefiere el valor USDA directo).",
-  "fuente": "USDA FDC 171060 'Chicken, liver, all classes, raw'."
+  "fuente": "USDA FDC 171060 'Chicken, liver, all classes, raw'.",
+  "purinas_bases": {
+   "adenina": 72.0,
+   "guanina": 78.0,
+   "hipoxantina": 71.0,
+   "xantina": 22.0
+  },
+  "purinas_fuente": {
+   "desde": "Chicken liver, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie y órgano",
+   "pais": "USA",
+   "anio": "1976"
+  }
  },
  {
   "nombre": "Carcasa de pato",
@@ -8116,7 +9416,8 @@
    "tirosina": 0.586,
    "treonina": 0.658,
    "triptofano": 0.214,
-   "valina": 0.805
+   "valina": 0.805,
+   "purinas": 93.6
   },
   "pct_carne": 0.45,
   "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso+piel).",
@@ -8126,6 +9427,19 @@
    "factor": "0.842",
    "confianza": "media",
    "nota": "misma especie. ~17 % de la proteína es colágeno"
+  },
+  "purinas_bases": {
+   "adenina": 31.1,
+   "guanina": 33.3,
+   "hipoxantina": 22.2,
+   "xantina": 7.0
+  },
+  "purinas_fuente": {
+   "desde": "Poultry, mechanically deboned, from backs and necks with skin, raw",
+   "confianza": "media",
+   "nota": "carcasa de ave, el equivalente más cercano",
+   "pais": "USA",
+   "anio": "1980"
   }
  },
  {
@@ -8176,7 +9490,8 @@
    "tirosina": 0.815,
    "treonina": 1.025,
    "triptofano": 0.303,
-   "valina": 1.164
+   "valina": 1.164,
+   "purinas": 93.6
   },
   "pct_carne": 0.35,
   "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso+piel).",
@@ -8186,6 +9501,19 @@
    "factor": "1.142",
    "confianza": "media",
    "nota": "misma especie. ~6 % colágeno"
+  },
+  "purinas_bases": {
+   "adenina": 31.1,
+   "guanina": 33.3,
+   "hipoxantina": 22.2,
+   "xantina": 7.0
+  },
+  "purinas_fuente": {
+   "desde": "Poultry, mechanically deboned, from backs and necks with skin, raw",
+   "confianza": "media",
+   "nota": "carcasa de ave, el equivalente más cercano",
+   "pais": "USA",
+   "anio": "1980"
   }
  },
  {
@@ -8238,7 +9566,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -8249,6 +9578,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -8305,7 +9635,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -8319,6 +9650,7 @@
    "lisina",
    "metionina",
    "niacina",
+   "purinas",
    "selenio",
    "tirosina",
    "treonina",
@@ -8379,7 +9711,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -8391,6 +9724,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -8447,7 +9781,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0.0
   },
   "sin_dato": [
    "arginina",
@@ -8468,7 +9803,20 @@
    "valina",
    "yodo",
    "zinc"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 0.0,
+   "guanina": 0.0,
+   "hipoxantina": 0.0,
+   "xantina": 0.0
+  },
+  "purinas_fuente": {
+   "desde": "—",
+   "confianza": "ALTA",
+   "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
+   "pais": "—",
+   "anio": "—"
+  }
  },
  {
   "nombre": "Yoduro potásico (comprimidos 200 µg)",
@@ -8520,7 +9868,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -8531,6 +9880,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -8587,7 +9937,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "acidoPantotenico",
@@ -8610,6 +9961,7 @@
    "metionina",
    "niacina",
    "potasio",
+   "purinas",
    "riboflavina",
    "selenio",
    "sodio",
@@ -8674,7 +10026,8 @@
    "tirosina": 0.568,
    "treonina": 0.65,
    "triptofano": 0.195,
-   "valina": 0.633
+   "valina": 0.633,
+   "purinas": 130.5
   },
   "nota_datos": "Fuente: USDA FDC 171456 (SR Legacy); yodo de CIQUAL/ANSES code 40700. Por 100 g crudo, peso fresco.",
   "sin_dato": [
@@ -8687,6 +10040,19 @@
    "factor": "0.939",
    "confianza": "alta",
    "nota": "mismo tejido, ave"
+  },
+  "purinas_bases": {
+   "adenina": 35.1,
+   "guanina": 47.6,
+   "hipoxantina": 45.5,
+   "xantina": 2.3
+  },
+  "purinas_fuente": {
+   "desde": "Chicken gizzard, raw",
+   "confianza": "ALTA",
+   "nota": "ave, mismo órgano",
+   "pais": "USA",
+   "anio": "1980"
   }
  },
  {
@@ -8737,13 +10103,27 @@
    "tirosina": 0.605,
    "treonina": 0.692,
    "triptofano": 0.208,
-   "valina": 0.674
+   "valina": 0.674,
+   "purinas": 130.5
   },
   "nota_datos": "Fuente: USDA FDC 171085 (SR Legacy). Por 100 g crudo, peso fresco.",
   "sin_dato": [
    "cloruro",
    "yodo"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 35.1,
+   "guanina": 47.6,
+   "hipoxantina": 45.5,
+   "xantina": 2.3
+  },
+  "purinas_fuente": {
+   "desde": "Chicken gizzard, raw",
+   "confianza": "ALTA",
+   "nota": "ave, mismo órgano",
+   "pais": "USA",
+   "anio": "1980"
+  }
  },
  {
   "nombre": "Pollo pechuga sin piel",
@@ -8793,7 +10173,8 @@
    "tirosina": 0.81,
    "treonina": 1.009,
    "triptofano": 0.237,
-   "valina": 1.165
+   "valina": 1.165,
+   "purinas": 174.9
   },
   "nota_datos": "AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras.",
   "sin_dato": [
@@ -8811,7 +10192,19 @@
    "vitD",
    "vitE",
    "yodo"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 20.5,
+   "guanina": 24.6,
+   "hipoxantina": 129.8
+  },
+  "purinas_fuente": {
+   "desde": "Chicken breast, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie y corte",
+   "pais": "USA",
+   "anio": "1983, 1982"
+  }
  },
  {
   "nombre": "Pollo muslo sin piel",
@@ -8861,7 +10254,8 @@
    "tirosina": 0.711,
    "treonina": 0.895,
    "triptofano": 0.217,
-   "valina": 0.933
+   "valina": 0.933,
+   "purinas": 141.7
   },
   "nota_datos": "AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras.",
   "sin_dato": [
@@ -8880,7 +10274,20 @@
    "vitD",
    "vitE",
    "yodo"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 20.9,
+   "guanina": 25.4,
+   "hipoxantina": 90.9,
+   "xantina": 4.5
+  },
+  "purinas_fuente": {
+   "desde": "Chicken thigh, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie y corte",
+   "pais": "USA",
+   "anio": "1983, 1980, 1982"
+  }
  },
  {
   "nombre": "Hígado de cordero",
@@ -8931,7 +10338,8 @@
    "tirosina": 0.727,
    "treonina": 0.882,
    "triptofano": 0.236,
-   "valina": 1.122
+   "valina": 1.122,
+   "purinas": 147.0
   },
   "sin_dato": [
    "acidoPantotenico",
@@ -8950,7 +10358,20 @@
    "vitD",
    "vitE",
    "yodo"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 32.0,
+   "guanina": 43.0,
+   "hipoxantina": 54.0,
+   "xantina": 18.0
+  },
+  "purinas_fuente": {
+   "desde": "Lamb liver, raw",
+   "confianza": "ALTA",
+   "nota": "misma especie y órgano",
+   "pais": "USA",
+   "anio": "1976"
+  }
  },
  {
   "nombre": "Corazón de conejo",
@@ -9002,7 +10423,8 @@
    "tirosina": 0.514,
    "treonina": 0.778,
    "triptofano": 0.178,
-   "valina": 0.82
+   "valina": 0.82,
+   "purinas": 171.0
   },
   "sin_dato": [
    "acidoPantotenico",
@@ -9032,6 +10454,19 @@
    "factor": "1.002",
    "confianza": "media",
    "nota": "MISMO TEJIDO, especie distinta. El aminograma del miocardio está muy conservado"
+  },
+  "purinas_bases": {
+   "adenina": 30.0,
+   "guanina": 23.0,
+   "hipoxantina": 20.0,
+   "xantina": 98.0
+  },
+  "purinas_fuente": {
+   "desde": "Lamb heart, raw",
+   "confianza": "alta",
+   "nota": "mismo órgano",
+   "pais": "USA",
+   "anio": "1976"
   }
  },
  {
@@ -9085,7 +10520,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -9097,6 +10533,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -9154,7 +10591,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -9166,6 +10604,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -9223,7 +10662,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -9236,6 +10676,7 @@
    "lisina",
    "metionina",
    "potasio",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -9293,7 +10734,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "arginina",
@@ -9305,6 +10747,7 @@
    "leucina",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -9359,7 +10802,8 @@
    "tirosina": 0.642,
    "treonina": 0.806,
    "triptofano": 0.133,
-   "valina": 1.001
+   "valina": 1.001,
+   "purinas": 79.2
   },
   "sin_dato": [
    "araquidonico",
@@ -9376,6 +10820,19 @@
    "factor": "1.048",
    "confianza": "media",
    "nota": "misma especie y misma pieza. ~4 % colágeno"
+  },
+  "purinas_bases": {
+   "adenina": 13.5,
+   "guanina": 7.6,
+   "hipoxantina": 49.0,
+   "xantina": 9.1
+  },
+  "purinas_fuente": {
+   "desde": "Beef brisket, raw",
+   "confianza": "ALTA",
+   "nota": "mismo corte",
+   "pais": "Japan",
+   "anio": "2014"
   }
  },
  {
@@ -9426,7 +10883,8 @@
    "tirosina": 0.7,
    "treonina": 0.893,
    "triptofano": 0.229,
-   "valina": 0.917
+   "valina": 0.917,
+   "purinas": 100.6
   },
   "sin_dato": [
    "araquidonico",
@@ -9443,6 +10901,19 @@
    "factor": "1.161",
    "confianza": "media",
    "nota": "misma especie, corte del cuarto delantero. ~6 % colágeno"
+  },
+  "purinas_bases": {
+   "adenina": 18.9,
+   "guanina": 13.6,
+   "hipoxantina": 54.4,
+   "xantina": 13.7
+  },
+  "purinas_fuente": {
+   "desde": "Beef neck, raw",
+   "confianza": "ALTA",
+   "nota": "mismo corte",
+   "pais": "Japan",
+   "anio": "2014"
   }
  },
  {
@@ -9493,7 +10964,8 @@
    "tirosina": 0,
    "treonina": 0,
    "triptofano": 0,
-   "valina": 0
+   "valina": 0,
+   "purinas": 0
   },
   "sin_dato": [
    "araquidonico",
@@ -9509,6 +10981,7 @@
    "linolenico",
    "lisina",
    "metionina",
+   "purinas",
    "tirosina",
    "treonina",
    "triptofano",
@@ -9566,11 +11039,13 @@
    "tirosina": 0.533,
    "treonina": 0.747,
    "triptofano": 0.202,
-   "valina": 1.195
+   "valina": 1.195,
+   "purinas": 0
   },
   "nota_datos": "Bazo -- órgano linfoide, no muscular, encaja en la categoría BARF de vísceras igual que riñón/pulmón. Datos cruzados entre varias fuentes derivadas de USDA, consistentes entre sí. Sin dato fiable para yodo, vitA/D/E, folato, colina, cloruro, linoleico/linolénico/araquidónico -- se dejan en 0. [Renombrado de \"Bazo de ternera\" a \"Bazo de vaca\" tras verificación: el hierro tan alto (44.5mg) es propio de animal adulto, no de ternera lechal -- la investigación encontró un dato distinto y genuino para ternera joven, añadido aparte.]",
   "sin_dato": [
-   "cloruro"
+   "cloruro",
+   "purinas"
   ],
   "aminograma_estimado": {
    "desde": "Bazo de cordero, crudo",
@@ -9627,11 +11102,13 @@
    "tirosina": 0.699,
    "treonina": 0.742,
    "triptofano": 0.207,
-   "valina": 0.858
+   "valina": 0.858,
+   "purinas": 0
   },
   "nota_datos": "Páncreas -- órgano glandular que segrega enzimas digestivas, encaja en vísceras. No confundir con la molleja de pollo/pavo del catálogo, que es un órgano completamente distinto (estómago muscular de ave, no glándula). Datos cruzados de varias fuentes USDA-derivadas. Bastante más graso que el resto de vísceras del catálogo (19g/100g) -- tenlo en cuenta si el perro tiene tendencia a la pancreatitis. Sin dato fiable para yodo, selenio, zinc, vitA/D/E, folato, colina, cloruro -- se dejan en 0.",
   "sin_dato": [
    "cloruro",
+   "purinas",
    "zinc"
   ],
   "aminograma_estimado": {
@@ -9689,12 +11166,14 @@
    "tirosina": 0.501,
    "treonina": 0.702,
    "triptofano": 0.19,
-   "valina": 1.123
+   "valina": 1.123,
+   "purinas": 0
   },
   "nota_datos": "Bazo de cordero -- USDA, cruzado con FatSecret y NutrientOptimiser (crudo). Confianza alta. Sin dato fiable de calcio, vitaminas del grupo B (salvo B12) ni vitA/D/E -- se dejan en 0.",
   "sin_dato": [
    "cloruro",
-   "manganeso"
+   "manganeso",
+   "purinas"
   ]
  },
  {
@@ -9745,12 +11224,14 @@
    "tirosina": 0.532,
    "treonina": 0.44,
    "triptofano": 0.094,
-   "valina": 0.528
+   "valina": 0.528,
+   "purinas": 0
   },
   "nota_datos": "Fuente: USDA FDC 170194 (SR Legacy). Por 100 g crudo, peso fresco.",
   "sin_dato": [
    "cloruro",
    "colina",
+   "purinas",
    "vitD",
    "vitE",
    "yodo"
@@ -9804,7 +11285,8 @@
    "tirosina": 0.4,
    "treonina": 0.511,
    "triptofano": 0.103,
-   "valina": 0.491
+   "valina": 0.491,
+   "purinas": 162.0
   },
   "nota_datos": "Cerebro -- tejido neuroendocrino, rico en DHA de forma natural. USDA, cruzado con Recipal/FatSecret/Prospre (crudo). OJO: colesterol muy elevado (~3010mg/100g) -- no es un problema nutricional de perro sano (el colesterol dietético apenas afecta al colesterol sanguíneo canino), pero se anota por si acaso. Sin dato fiable de magnesio, fósforo, cobre, ni la mayoría de vitaminas -- se dejan en 0.",
   "sin_dato": [
@@ -9813,7 +11295,20 @@
    "fosforo",
    "magnesio",
    "manganeso"
-  ]
+  ],
+  "purinas_bases": {
+   "adenina": 12.0,
+   "guanina": 12.0,
+   "hipoxantina": 26.0,
+   "xantina": 112.0
+  },
+  "purinas_fuente": {
+   "desde": "Beef brain, raw",
+   "confianza": "ALTA",
+   "nota": "mismo órgano",
+   "pais": "USA",
+   "anio": "1976"
+  }
  },
  {
   "nombre": "Corazón de pavo",
@@ -9862,7 +11357,8 @@
    "tirosina": 0.528,
    "treonina": 0.604,
    "triptofano": 0.182,
-   "valina": 0.588
+   "valina": 0.588,
+   "purinas": 125.4
   },
   "energia": 135,
   "sin_dato": [
@@ -9870,7 +11366,20 @@
    "folato",
    "yodo"
   ],
-  "nota_datos": "Fuente: USDA FoodData Central SR Legacy, FDC 171484. Por 100 g crudo, peso fresco."
+  "nota_datos": "Fuente: USDA FoodData Central SR Legacy, FDC 171484. Por 100 g crudo, peso fresco.",
+  "purinas_bases": {
+   "adenina": 31.3,
+   "guanina": 36.1,
+   "hipoxantina": 52.6,
+   "xantina": 5.4
+  },
+  "purinas_fuente": {
+   "desde": "Chicken heart, raw",
+   "confianza": "ALTA",
+   "nota": "ave, mismo órgano",
+   "pais": "USA",
+   "anio": "1976"
+  }
  },
  {
   "nombre": "Hígado de pavo",
@@ -9919,14 +11428,28 @@
    "tirosina": 0.578,
    "treonina": 0.66,
    "triptofano": 0.199,
-   "valina": 0.643
+   "valina": 0.643,
+   "purinas": 243.0
   },
   "energia": 128,
   "sin_dato": [
    "cloruro",
    "yodo"
   ],
-  "nota_datos": "Fuente: USDA FDC 171486 (SR Legacy). Por 100 g crudo, peso fresco."
+  "nota_datos": "Fuente: USDA FDC 171486 (SR Legacy). Por 100 g crudo, peso fresco.",
+  "purinas_bases": {
+   "adenina": 72.0,
+   "guanina": 78.0,
+   "hipoxantina": 71.0,
+   "xantina": 22.0
+  },
+  "purinas_fuente": {
+   "desde": "Chicken liver, raw",
+   "confianza": "media",
+   "nota": "hígado de otra especie",
+   "pais": "USA",
+   "anio": "1976"
+  }
  },
  {
   "nombre": "Hígado de pato",
@@ -9975,7 +11498,8 @@
    "tirosina": 0.66,
    "treonina": 0.833,
    "triptofano": 0.264,
-   "valina": 1.181
+   "valina": 1.181,
+   "purinas": 81.9
   },
   "energia": 136,
   "sin_dato": [
@@ -9985,6 +11509,19 @@
    "vitE",
    "yodo"
   ],
-  "nota_datos": "Fuente: USDA FDC 174467 (SR Legacy). Por 100 g crudo, peso fresco."
+  "nota_datos": "Fuente: USDA FDC 174467 (SR Legacy). Por 100 g crudo, peso fresco.",
+  "purinas_bases": {
+   "adenina": 20.9,
+   "guanina": 36.2,
+   "hipoxantina": 1.8,
+   "xantina": 23.0
+  },
+  "purinas_fuente": {
+   "desde": "Foie gras",
+   "confianza": "media",
+   "nota": "hígado de ave; el foie es hipergraso y probablemente infraestima",
+   "pais": "Japan",
+   "anio": "2020"
+  }
  }
 ]

@@ -1819,7 +1819,7 @@ def _resumen_de_parecido(cambios, nombre_perro, nombre_base):
 
 
 def _respuesta_varios_perros(perros_salida, modo_conjunto, nombre_base, numero_de_menus,
-                             menus_no_dados=0):
+                             menus_no_dados=0, por_que_faltan="tiempo"):
     """La respuesta, con el resumen de parecido de toda la semana."""
     cambios_totales = sum((p.get("cambios") or {}).get("cuantos_cambios", 0)
                           for p in perros_salida)
@@ -1837,10 +1837,22 @@ def _respuesta_varios_perros(perros_salida, modo_conjunto, nombre_base, numero_d
         # Se dice cuántos faltan y por qué. Callarlo dejaría a la usuaria
         # pensando que pidió 3 y le dimos 1 sin motivo.
         dados = numero_de_menus - menus_no_dados
+        # ⚠️ Y EL MOTIVO DE VERDAD (28 agosto). Este aviso decía SIEMPRE
+        # "no daba tiempo", y desde hoy hay un segundo camino que llega
+        # aquí: que el menú del perro base no salga ni reintentando. Decir
+        # "no daba tiempo" cuando lo que pasó es que no había combinación
+        # manda a la usuaria a esperar en vez de a soltar una restricción.
+        if por_que_faltan == "tiempo":
+            _por_que = (f"con {len(perros_salida)} perros no daba tiempo a calcularlos "
+                        f"todos sin que se cortara la conexión. Puedes pedir el resto "
+                        f"en otra tanda.")
+        else:
+            _por_que = (f"no hemos encontrado una combinación distinta que cumpla todos "
+                        f"los requisitos para {nombre_base or 'el perro con menos margen'}, "
+                        f"que es el que manda. Con los menús que sí han salido puedes ir "
+                        f"tirando; para tener más, prueba a quitarle alguna restricción.")
         salida["aviso"] = (
-            f"Has pedido {numero_de_menus} menús por perro y han salido {dados}: "
-            f"con {len(perros_salida)} perros no daba tiempo a calcularlos todos "
-            f"sin que se cortara la conexión. Puedes pedir el resto en otra tanda.")
+            f"Has pedido {numero_de_menus} menús por perro y han salido {dados}: {_por_que}")
         salida["numero_de_menus"] = dados
     # ⚠️ TEMPORAL — compatibilidad con la versión de la app que había
     # desplegada cuando esto cambió de forma (antes: un solo menú por perro
@@ -1902,6 +1914,7 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
             return queda() >= por_llamada + SEGUNDOS_AMOLDARSE * (n - 1)
 
         menus_pedidos_no_dados = 0
+        por_que_faltan = "tiempo"
 
         # Días que cubre cada menú de la rotación, igual que /menu/semana:
         # de ahí sale cuánto presupuesto semanal de seguridad gasta cada uno.
@@ -2040,6 +2053,26 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
                 menus_pedidos_no_dados = m - j
                 break
             base = generar(i_base, j)
+            # ⚠️ REINTENTO (28 agosto) — CASO REAL, el del PENDIENTE §1.0:
+            # la casa de un cachorro de 12 kg y una adulta de 24,5 pedía 3
+            # menús y devolvía 1 para cada uno, sin error y sin aviso.
+            #
+            # Medido hoy: 5 de 6 tiradas del MISMO caso salen 3/3 y una sale
+            # 1/1. O sea que no es que el menú 2 sea imposible -- es que el
+            # motor lleva aleatoriedad a propósito (para dar variedad) y de
+            # vez en cuando esa tirada concreta no cierra. Y hasta hoy, una
+            # sola vez que fallara cortaba la casa entera.
+            #
+            # Reintentar es la respuesta correcta y no relaja nada: cada
+            # intento vuelve a pasar por `_garantizar_verificado`, así que
+            # ningún menú sale sin cumplir. Lo único que cambia es que no se
+            # rinde a la primera. Se reintenta mientras quede tiempo para
+            # una ronda entera, que es el mismo criterio del bucle.
+            _intentos_base = 0
+            while (not base.get("factible") and _intentos_base < 2
+                   and hay_tiempo_para_otra_ronda()):
+                _intentos_base += 1
+                base = generar(i_base, j)
             if not base.get("factible"):
                 if j == 0:
                     # Si el perro que menos margen tiene no saca ni el
@@ -2052,6 +2085,14 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
                                       + (base.get("motivo") or ""),
                             "perro_que_falla": nombres[i_base],
                             "perros": [por_perro[i] for i in range(n)]}
+                # ⚠️ Y SI AUN ASI NO SALE, SE DICE (28 agosto). Antes esto
+                # era un `break` a secas: los menús que ya había se
+                # devolvían y nadie se enteraba de que faltaban. Pedir 3 y
+                # recibir 1 sin una palabra es exactamente el fallo que no
+                # se ve. `menus_pedidos_no_dados` ya lo cuenta la rama del
+                # tiempo, unas líneas más arriba; aquí faltaba.
+                menus_pedidos_no_dados = max(menus_pedidos_no_dados, m - j)
+                por_que_faltan = "sin_combinacion"
                 break  # los menús que ya salieron valen; se devuelven esos
             gramos_base = gramos_de(base)
             por_perro[i_base]["menus"].append({**base, "dias": dias_por_menu[j]})
@@ -2096,7 +2137,7 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
 
         return _respuesta_varios_perros([por_perro[i] for i in range(n)],
                                         "parecidos", nombres[i_base], m,
-                                        menus_pedidos_no_dados)
+                                        menus_pedidos_no_dados, por_que_faltan)
     except Exception as e:
         import traceback
         traceback.print_exc()
@@ -3166,7 +3207,7 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "f82b1857fe69e0f5",   # 28 ago: LOS AMINOGRAMAS, y con ellos los 12 requisitos ENCENDIDOS. 94 de las 159 fichas los traen; de un menu real solo el 1,0% de la proteina viene de alimentos sin aminograma, y el aminoacido mas justo se queda en x2,12 de su minimo. El triptofano del segundo envio venia en MILIGRAMOS y los otros once en gramos: cargado tal cual, su minimo no habria apretado nunca. Ver el BLOQUE 27
+        "alimentos_v3_final.json":      "cab384545c2e3702",   # 28 ago: LAS PURINAS, 101 de 159 fichas, y 58 con el hueco declarado. Dato INFORMATIVO: no esta en verificar.MAPA y no toca ningun menu -- el unico umbral publicado para perro (90 mg/1000 kcal) sale de Malandain 2008, que no hemos podido leer. Existe para el urato: medido, la racion normal va a 758 mg/1000 kcal, ocho veces y media por encima. Ver el BLOQUE 33
         "requerimientos_v2_final.json": "9eb5b660a3c725d0",   # 26 ago: los 12 aminoácidos esenciales de la Tabla III-3b, con sus mínimos y el máximo de lisina en crecimiento. Están en el JSON pero NO en verificar.MAPA todavía: ningún alimento del catálogo trae el dato, así que activarlos hoy dejaría al motor sin menús. Ver el BLOQUE 27
     }
     SELLOS_CRUDOS = {

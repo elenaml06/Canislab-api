@@ -231,12 +231,84 @@ suelta al principio de todo. Eso apunta al presupuesto de segundos **por
 llamada** (`segundos_para`), no al global — y Render va más lento que la
 máquina de desarrollo, así que ahí se verá antes.
 
-**Por dónde seguir**: instrumentar `generar()` bajo carga artificial y
-mirar qué devuelve `_resolver_menu_v2_interno` cuando el menú 2 del perro
-base sale infactible. La pregunta concreta es si se está quedando sin su
-rodaja de tiempo o si es otra cosa. Y ojo con el corte: hoy, si el menú j
-del perro base falla **una vez**, se hace `break` y **toda la casa se
-queda con los menús que ya tenía** — no hay reintento de ningún tipo.
+**Medido y hecho a medias el 28 de agosto.** Reproducido por fin: el
+mismo caso, ocho tiradas seguidas, **falla 1 de cada 6** y las demás dan
+3/3. O sea que el menú 2 no es imposible — es que a veces esa tirada no
+cierra.
+
+Lo que se ha arreglado, y ninguna de las dos cosas relaja nada:
+
+- **Reintentar antes de rendirse.** El motor lleva aleatoriedad a
+  propósito (es lo que da variedad), así que la misma petición sale casi
+  siempre a la segunda. Ahora reintenta hasta dos veces mientras quede
+  tiempo para una ronda entera. Cada intento vuelve a pasar por
+  `_garantizar_verificado`, así que no puede colar un menú que no cumpla.
+- **Decirlo.** El corte por infactibilidad **no ponía**
+  `menus_pedidos_no_dados`: pedías 3, recibías 1, y no había ni una
+  palabra. Ahora sí, y el aviso distingue los dos motivos — decir «no
+  daba tiempo» cuando lo que pasó es que no había combinación manda a la
+  usuaria a esperar en vez de a soltar una restricción. Comprobados los
+  dos forzando cada camino.
+
+**Lo que sigue sin arreglar es la causa de fondo, y es el reloj.** La
+petición tarda **9-15 s de los 24** que tiene, con seis solves dentro (2
+perros x 3 menús). El reintento ayuda cuando el fallo es de aleatoriedad;
+cuando se acaba el tiempo, lo único que cambia es que ahora se dice. Y
+Render va más lento que la máquina de desarrollo, así que ahí se verá
+antes.
+
+**LA ARITMÉTICA, que nadie había hecho, y que lo cierra** (28 de agosto):
+
+```
+ronda 0:  primer menú de la base 12 s  +  amoldar al otro perro 4 s  = 16 s
+ronda 1:  menú 6 s + amoldar 4 s                                     = 10 s
+ronda 2:  otros                                                      = 10 s
+                                                   TOTAL 36 s   presupuesto 24
+```
+
+Con dos perros y tres menús **no cabe, nunca**. Y hay algo peor: si el
+primer menú gasta su rodaja entera (12 s), quedan 8 s y
+`hay_tiempo_para_otra_ronda()` pide 10 — así que corta **después de la
+primera ronda** y devuelve UNO. Por eso en aislado sale 3/3 (el primer
+menú tarda 3-4 s, no 12) y dentro de la batería sale 1/3. Render va más
+lento que la máquina de desarrollo, así que allí cae antes.
+
+No es un fallo intermitente: es que el presupuesto y las rodajas no
+cuadran entre sí, y solo se nota cuando el primer menú se acerca a su
+tope.
+
+**Lo que se exige mientras tanto**: el BLOQUE 11 ya no pide el número
+exacto de menús —pedía algo imposible—, pide el contrato que sí existe:
+que si salen menos, **venga el aviso** diciendo cuántos y por qué.
+Recortar se puede; recortar en silencio, no. El día que se arregle la
+capacidad, esa prueba vuelve a exigir el número exacto.
+
+**Por dónde seguir**: no es «por qué falla ese menú» — es que seis solves
+no caben con holgura en 24 s. Las salidas razonables son bajar el número
+de menús que se piden de una vez, resolverlos en varias peticiones, o
+darle a cada solve una rodaja de tiempo explícita en vez de que se la
+coman los primeros.
+
+### 1.0-bis El canario del BLOQUE 14 cantó: 0,99 g de salmón
+
+28 de agosto. Un perro de 1,5 kg con 200 kcal y cuatro especies excluidas
+recibió **0,99 g de salmón**, contra el suelo de 1,00 g de «esto se puede
+pesar». Es un pelo por debajo, pero el canario está para eso.
+
+**Dónde está el hueco:** el mínimo por alimento
+(`MINIMO_POR_CATEGORIA`) solo se aplica a los alimentos **forzados**. Un
+alimento que elige el solver por su cuenta solo pasa el filtro de
+`> 0.02` g de la salida, así que puede salir en cualquier cantidad. Lo
+que normalmente lo evita es que al solver no le compensa usar un alimento
+más para poner medio gramo — pero con los doce aminoácidos activados hay
+más restricciones que cerrar, y aparecen más de estos rellenos mínimos.
+
+**Ojo con el arreglo fácil**: quitar el alimento de la salida cambia el
+perfil del menú, y `_garantizar_verificado()` lo rechazaría con razón.
+Redondearlo hacia arriba añade nutriente, que es seguro para un mínimo
+pero puede romper un máximo. Lo correcto es un mínimo por alimento en el
+solver (semicontinuo, ligado a la binaria que ya existe), no un parche en
+la salida.
 
 ### 1.1 Nadie debería poder suscribirse dos veces
 Encontrado el 20 de agosto probando: se crearon **seis suscripciones
