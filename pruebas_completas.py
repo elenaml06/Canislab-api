@@ -2598,14 +2598,33 @@ import pathlib as _pl_b24
 _raiz_b24 = _pl_b24.Path(__file__).parent
 _PY_B24 = sorted(list(_raiz_b24.glob("*.py")) + list((_raiz_b24 / "motor").glob("*.py")))
 
-# `PATOLOGIAS = {` solo puede aparecer en motor/motor_completo.py
+# ⚠️ ACTUALIZADO (28 agosto): la tabla ya no se define en NINGÚN .py. Es un
+# dato, `patologias.json`, igual que se hizo con el catálogo de menús en el
+# BLOQUE 25 -- y por el mismo motivo: un número que decide si un menú se
+# entrega tiene que poder auditarse, y no se audita lo que está enterrado
+# entre `if`s. Lo comprueba `auditar_patologias.py` en el BLOQUE 32.
+#
+# Así que esta vigilancia es ahora MÁS estricta que antes, no menos: antes
+# se permitía una definición en código, ahora ninguna. Lo que defiende sigue
+# siendo lo mismo, y el caso real de arriba no ha cambiado: dos copias de
+# una tabla clínica es como el fósforo renal se quedó en 1400 en una de
+# ellas durante semanas.
 _definen_pat = [f.name for f in _PY_B24
                 if _re_b19.search(r"^PATOLOGIAS\s*=\s*\{", f.read_text(encoding="utf-8"),
                                   _re_b19.M)]
-if _definen_pat != ["motor_completo.py"]:
-    fallos.append(f"BLOQUE24: la tabla de patologías se define en {_definen_pat} y solo puede "
-                  f"definirse en motor_completo.py. Dos copias de una tabla clínica es como el "
-                  f"fósforo renal se quedó en 1400 en una de ellas durante semanas.")
+if _definen_pat:
+    fallos.append(f"BLOQUE24: la tabla de patologías se define a mano en {_definen_pat}. Desde "
+                  f"el 28 de agosto es un dato (patologias.json) y el código solo la carga: si "
+                  f"vuelve a escribirse en Python, auditar_patologias.py pasa a auditar un "
+                  f"fichero que ya no usa nadie y nadie se entera.")
+if not (_raiz_b24 / "patologias.json").exists():
+    fallos.append("BLOQUE24: falta patologias.json, que es donde viven los topes por patología.")
+_pat_py_b24 = (_raiz_b24 / "motor" / "patologias.py")
+if not _pat_py_b24.exists():
+    fallos.append("BLOQUE24: falta motor/patologias.py, que es quien carga los topes.")
+elif len(_pat_py_b24.read_text(encoding="utf-8").split("\n")) > 120:
+    fallos.append("BLOQUE24: motor/patologias.py se está volviendo un almacén otra vez. Es un "
+                  "cargador: los números van en patologias.json.")
 
 # el mapa de requisito -> nutriente, igual: solo en motor/verificar.py
 _definen_mapa = [f.name for f in _PY_B24
