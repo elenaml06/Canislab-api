@@ -3583,6 +3583,203 @@ if not (_PAT_b33.get("urato") or {}).get("sin_dieta_automatica"):
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
+
+# ============================================================
+# BLOQUE 34 — LOS MINIMOS SUBEN CUANDO EL PERRO COME MENOS
+# ============================================================
+#
+# ⚠️ AÑADIDO (28 agosto). Es la ecuacion de la propia FEDIAF, apartado
+# 7.2.5, p. 60 del PDF de septiembre de 2025, leida directamente:
+#
+#     Units/1000 kcal = requerimiento por kg PV^0,75 x 1000 / DER
+#
+# con su propio parrafo justificandola, tambien literal: «the energy needs
+# may be satisfied before the requirements of protein, minerals or vitamins
+# are met [...] hence a systematic adjustment applied to all essential
+# nutrients is needed WHEN FED BELOW the NRC standard assumption».
+#
+# EL AGUJERO QUE TAPA: un perro necesita los mismos miligramos de zinc coma
+# lo que coma. Si esta a dieta y come menos, esos miligramos tienen que
+# caber en menos calorias, o sea que el minimo POR 1000 KCAL sube. Hasta
+# hoy no subia: un perro adelgazando recibia la misma densidad de
+# nutrientes que uno normal, justo cuando menos margen tiene. A DER 63 --la
+# media MEDIDA de una bajada de peso, AAHA 2021-- la proteina minima pasa
+# de 52,10 a 78,6 g/1000 kcal.
+#
+# SOLO HACIA ARRIBA, Y ESA ES LA DECISION QUE VIGILA ESTE BLOQUE. La
+# ecuacion va en los dos sentidos, y aplicada tal cual bajaria el minimo
+# del perro normal de 52,10 a 45,00 (la columna de 110). Medido: de ocho
+# perfiles reales, cinco bajarian. Pero FEDIAF solo habla de ajustar
+# «when fed below»: no hay una sola linea que autorice bajar un minimo
+# porque el perro coma mas. Y bajarlo seria relajar NUTRICION, que es lo
+# que la regla 3 del CLAUDE.md prohibe. Asi que el publicado es el suelo.
+#
+# Medido al activarlo: 8 de 8 perfiles de bajada siguen dando menu, hasta
+# DER 56 (el 80% del RER), y los nutrientes mas justos quedan entre x0,98
+# y x1,27 -- o sea que la restriccion APRIETA y no es decorativa.
+print("\n=== BLOQUE 34: los mínimos suben cuando se come menos ===")
+
+from verificar import minimo_de as _min_b34, der_efectiva_de as _deref_b34
+from verificar import maximo_de as _maximo_de_b34
+_req_b34 = {r["nutriente"]: r for r in json.load(open("requerimientos_v2_final.json"))}
+
+# 1. Los dos anclajes publicados, exactos. Si alguien los toca, la ecuacion
+#    empieza a devolver numeros que no estan en el PDF.
+for _n34, _v95, _v110 in (("Proteína_total", 52.10, 45.00), ("Calcio", 1450.0, 1250.0),
+                          ("Zinc", 20.80, 18.00), ("Colina", 474.0, 409.0),
+                          ("Magnesio", 200.0, 180.0), ("Cloruro", 430.0, 380.0),
+                          ("Selenio", 67.50, 57.50)):
+    _r34 = _req_b34.get(_n34) or {}
+    try:
+        _a95 = float(_r34.get("minAdulto"))
+        _a110 = float(_r34.get("minAdulto110"))
+    except (TypeError, ValueError):
+        fallos.append(f"BLOQUE34: a '{_n34}' le falta uno de los dos anclajes de FEDIAF "
+                      f"(minAdulto / minAdulto110). Sin los dos no se puede escalar.")
+        continue
+    if abs(_a95 - _v95) > 0.01 or abs(_a110 - _v110) > 0.01:
+        fallos.append(
+            f"BLOQUE34: '{_n34}' tiene anclajes {_a95}/{_a110} y la tabla III-3b publica "
+            f"{_v95}/{_v110} (p. 16, columnas de 95 y 110 kcal/kg PV^0,75). Verificado contra "
+            f"el PDF el 28 de agosto.")
+
+# 2. HACIA ARRIBA SI, HACIA ABAJO NUNCA. Es lo que separa aplicar la
+#    ecuacion de relajar la nutricion.
+for _n34 in ("Proteína_total", "Zinc", "Colina", "Calcio"):
+    _pub = float(_req_b34[_n34]["minAdulto"])
+    for _de in (175, 130, 110, 95):
+        _v = _min_b34(_req_b34[_n34], _n34, "Adulto", _de)
+        if _v < _pub - 0.01:
+            fallos.append(
+                f"BLOQUE34: a DER {_de} el mínimo de '{_n34}' baja de {_pub} a {_v:.2f}. La "
+                f"ecuación de FEDIAF va en los dos sentidos, pero su texto solo ajusta «when fed "
+                f"below»: bajar un mínimo porque el perro coma MÁS es relajar nutrición, y eso "
+                f"no se hace (regla 3 del CLAUDE.md). El publicado es el suelo.")
+    for _de, _esp in ((90, None), (70, None), (63, None)):
+        _v = _min_b34(_req_b34[_n34], _n34, "Adulto", _de)
+        if _v <= _pub:
+            fallos.append(
+                f"BLOQUE34: a DER {_de} el mínimo de '{_n34}' NO ha subido ({_v:.2f} contra "
+                f"{_pub}). Comer menos tiene que exigir más nutriente por caloría — si no, el "
+                f"escalado no está haciendo nada.")
+
+# 3. La proteina, contra la tabla reconstruida desde la ecuacion.
+for _de, _esp in ((90, 55.00), (80, 61.88), (70, 70.71), (63, 78.57), (56, 88.39)):
+    _v = _min_b34(_req_b34["Proteína_total"], "Proteína_total", "Adulto", _de)
+    if abs(_v - _esp) > 0.05:
+        fallos.append(f"BLOQUE34: a DER {_de} la proteína mínima sale {_v:.2f} y la ecuación de "
+                      f"FEDIAF da {_esp}.")
+
+# 4. LA GRASA ESTA EXENTA, y no es un olvido: FEDIAF publica 13,75 g/1000
+#    kcal en las DOS columnas (verificado en el PDF, p. 16). Escalarla haria
+#    que las kcal dejaran de cerrar.
+for _de in (95, 70, 56):
+    _v = _min_b34(_req_b34["Grasa_total"], "Grasa_total", "Adulto", _de)
+    if abs(_v - 13.75) > 0.001:
+        fallos.append(
+            f"BLOQUE34: la grasa se ha escalado (a DER {_de} sale {_v}). FEDIAF publica 13,75 en "
+            f"las dos columnas, 95 y 110: es deliberado. Si se escala, las kcal dejan de cerrar.")
+
+# 5. Fuera de adulto NO se escala: las dos columnas de la ecuación son de
+#    mantenimiento, y para crecimiento FEDIAF publica otras.
+for _et34 in ("CachorroJoven", "CachorroCrecimiento"):
+    _a = _min_b34(_req_b34["Proteína_total"], "Proteína_total", _et34, 63)
+    _b = _min_b34(_req_b34["Proteína_total"], "Proteína_total", _et34, None)
+    if _a != _b:
+        fallos.append(f"BLOQUE34: se está escalando en {_et34}. La ecuación está verificada con "
+                      f"las columnas de mantenimiento (95 y 110); para crecimiento FEDIAF publica "
+                      f"otras y no se ha comprobado que valga.")
+
+# 6. Y DE PUNTA A PUNTA: un perro a dieta sigue teniendo menú, y el perro
+#    normal no cambia. Lo primero es lo que arregla; lo segundo es la
+#    promesa de que no hay regresión.
+_r34n = _c.post("/menu/v2", json={"nombres_alimentos": [], "modo": "automatico",
+                                  "der_objetivo": 1040.0, "etapa_requisitos": "Adulto",
+                                  "peso_perro_kg": 20.0, "peso_objetivo_kg": 20.0}).json()
+if not _r34n.get("factible") or _r34n.get("ficha", {}).get("semaforo") != "verde":
+    fallos.append(f"BLOQUE34: el perro NORMAL de 20 kg ha dejado de tener menú verde "
+                  f"({_r34n.get('ficha', {}).get('semaforo')}). A DER 110 no se escala nada, así "
+                  f"que esto sería una regresión pura.")
+
+for _obj34, _f34 in ((5.0, 1.0), (12.0, 0.9), (20.0, 0.9), (20.0, 0.8), (35.0, 0.9)):
+    _kcal34 = round(70 * _obj34 ** 0.75 * _f34, 1)
+    _r34 = _c.post("/menu/v2", json={
+        "nombres_alimentos": [], "modo": "automatico", "der_objetivo": _kcal34,
+        "etapa_requisitos": "Adulto", "peso_perro_kg": round(_obj34 * 1.3, 1),
+        "peso_objetivo_kg": _obj34}).json()
+    if not _r34.get("factible"):
+        fallos.append(
+            f"BLOQUE34: un perro de {_obj34} kg objetivo a {_kcal34} kcal (DER efectiva "
+            f"{_deref_b34(_kcal34, _obj34):.0f}) se queda sin menú. El 28 de agosto salían 8 de 8 "
+            f"hasta DER 56. Si de verdad no hay combinación, lo correcto es decir que esa ración "
+            f"necesita suplementación — nunca relajar el mínimo.")
+
+# 7. LOS MAXIMOS NO SE ESCALAN, Y AHI HAY UN LIMITE DURO.
+#
+# Un maximo de FEDIAF es un limite de CONCENTRACION en el alimento: la tabla
+# III-3a los da en base materia seca y marca los de la UE con «(L)»
+# (verificado en el PDF, p. 15). Una concentracion no depende de cuanto coma
+# el perro, asi que el maximo NO escala. Pero el minimo si. **La ventana
+# entre los dos se cierra segun bajan las kcal.**
+#
+# El primero en cruzarse es el SELENIO en dieta humeda -que es la que aplica
+# a una racion BARF-: minimo 67,5 ug/1000 kcal a DER 95, maximo legal de la
+# UE 142,0. Se cruzan en DER 45,2. Medido de punta a punta: a DER 49 sale
+# menu y a DER 45 ya no, con 142,5 contra 142,0.
+#
+# Y a la racion de bajada de AAHA (80% del RER = DER 56) la ventana ya es de
+# solo x1,24. Eso explica por que una dieta terapeutica de adelgazamiento es
+# una FORMULACION y no «lo mismo pero menos».
+#
+# Es un modo de fallo DISTINTO del de los otros: el cloruro, el folato, el
+# magnesio y el linoleico -los que aprietan primero- no tienen maximo y se
+# arreglan anadiendo comida. El selenio si lo tiene y se vuelve imposible.
+# El consejo al usuario es el contrario, asi que el mensaje los distingue.
+_mx_ref_b34 = {n: _maximo_de_b34(r, n, "Adulto") for n, r in _req_b34.items()}
+_CRUCES_CONOCIDOS_B34 = {"Selenio"}
+for _de34 in (95, 70, 63, 56, 49):
+    for _n34, _r34m in _req_b34.items():
+        _mn34 = _min_b34(_r34m, _n34, "Adulto", _de34)
+        _mx34 = _mx_ref_b34[_n34]
+        if _mn34 and _mx34 and _mn34 > _mx34 and _n34 not in _CRUCES_CONOCIDOS_B34:
+            fallos.append(
+                f"BLOQUE34: a DER {_de34} el mínimo escalado de '{_n34}' ({_mn34:.1f}) supera su "
+                f"máximo ({_mx34:.1f}), y no es uno de los cruces conocidos. A partir de ahí el "
+                f"problema es infactible por aritmética: no hay comida que lo arregle. Si es "
+                f"correcto, apúntalo en _CRUCES_CONOCIDOS_B34 y dilo en PENDIENTE.")
+
+# Y el mensaje: por debajo del cruce, «imposible por aritmética», no «quita
+# alguna restricción» -- que manda a la usuaria a un callejón sin salida,
+# porque puede quitarlas todas y seguirá sin salir.
+_kcal45_b34 = round(45 * 20.0 ** 0.75, 1)
+_r45_b34 = _c.post("/menu/v2", json={
+    "nombres_alimentos": [], "modo": "automatico", "der_objetivo": _kcal45_b34,
+    "etapa_requisitos": "Adulto", "peso_perro_kg": 30.0, "peso_objetivo_kg": 20.0}).json()
+if _r45_b34.get("factible"):
+    fallos.append(
+        "BLOQUE34: a DER 45 sale menú, y por debajo del cruce del selenio (45,2) el mínimo "
+        "escalado supera el máximo legal. Si sale menú, o el escalado no se está aplicando o el "
+        "máximo sí se está escalando.")
+elif not _r45_b34.get("imposible_por_aritmetica"):
+    fallos.append(
+        f"BLOQUE34: a DER 45 no sale menú, pero no se dice que es imposible por aritmética "
+        f"({str(_r45_b34.get('motivo'))[:80]}). Decir «quita alguna restricción y vuelve a "
+        f"probar» ahí es mandar a la usuaria a un callejón sin salida: puede quitarlas todas y "
+        f"seguirá sin salir, porque el mínimo supera al máximo.")
+
+# Y justo por ENCIMA del cruce sí tiene que salir: si no, el escalado se ha
+# pasado de frenada y deja sin menú a perros que sí lo tienen.
+_kcal49_b34 = round(49 * 20.0 ** 0.75, 1)
+_r49_b34 = _c.post("/menu/v2", json={
+    "nombres_alimentos": [], "modo": "automatico", "der_objetivo": _kcal49_b34,
+    "etapa_requisitos": "Adulto", "peso_perro_kg": 30.0, "peso_objetivo_kg": 20.0}).json()
+if not _r49_b34.get("factible"):
+    fallos.append(
+        f"BLOQUE34: a DER 49, justo por ENCIMA del cruce del selenio, ya no sale menú "
+        f"({str(_r49_b34.get('motivo'))[:90]}). El 28 de agosto salía.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
 # ============================================================
 # RESUMEN FINAL
 # ============================================================

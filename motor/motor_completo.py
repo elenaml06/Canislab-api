@@ -31,7 +31,8 @@ import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 from scipy.optimize import milp, LinearConstraint, Bounds
-from verificar import MAPA, _num, EQUIVALENCIA, maximo_de
+from verificar import (MAPA, _num, EQUIVALENCIA, maximo_de, minimo_de,
+                       der_efectiva_de)
 from constructor import valor_nutriente, valor_plausible_de
 
 # ⚠️ AÑADIDO (5 agosto, noche): copia local de especie_de() (la misma
@@ -353,7 +354,8 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             forzar=None, preferir=None, patologias=None, semilla_aleatoria=None,
             time_limit=15, restringir_especie=None, peso_adulto_esperado_kg=None,
             evitar_especies=None, restringir_a_elegidos=None, categorias_excluidas=None,
-            presupuesto_semanal_restante=None, diagnostico=None):
+            presupuesto_semanal_restante=None, diagnostico=None,
+            peso_objetivo_kg=None):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -824,11 +826,52 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                 tope_efectivo_tasa = tope_efectivo_absoluto / der * 1000.0
                 # nunca se afloja -- solo se usa si es MÁS estricto que el normal
                 TOPE_CRONICO_KCAL[clave_nut] = min(TOPE_CRONICO_KCAL[clave_nut], tope_efectivo_tasa)
+    # ⚠️ LOS MINIMOS ESCALADOS POR LA DER EFECTIVA (28 agosto). Va AQUI,
+    # dentro del solver, y no como un aviso posterior: si un perro come
+    # menos, necesita mas nutriente por caloria, y eso es una restriccion
+    # del problema, no una nota al pie. Ver `minimo_de()` en verificar.py,
+    # que es el unico sitio que sabe escalar -- el semaforo lee por ahi
+    # tambien, para que no puedan discrepar.
+    #
+    # El peso de referencia es el OBJETIVO si se sabe: en un perro con
+    # sobrepeso las kcal ya se calculan sobre el peso ideal, asi que la DER
+    # efectiva tiene que salir del mismo peso o el numero no significa
+    # nada. Si no llega, se usa el real y se escala un poco de mas -- que
+    # es el lado seguro.
+    _peso_ref = peso_objetivo_kg or peso_perro_kg
+    _der_ef = der_efectiva_de(der, _peso_ref)
+
     for nombre_req, clave in MAPA.items():
         r = req.get(nombre_req)
         if not r:
             continue
-        mn = _num(r.get(f"min{et}"))
+        mn = minimo_de(r, nombre_req, et, _der_ef)
+        # ⚠️ CUANDO EL MINIMO SUPERA AL MAXIMO NO ES «NO HAY COMBINACION»
+        # (28 agosto). Los minimos suben al restringir calorias, pero los
+        # maximos NO: son limites de CONCENTRACION en el alimento (la tabla
+        # III-3a los da en base materia seca y marca los de la UE con «(L)»),
+        # y una concentracion no depende de cuanto coma el perro. Asi que la
+        # ventana entre los dos se cierra segun bajan las kcal.
+        #
+        # Medido sobre nuestra propia tabla: el primero en cruzarse es el
+        # SELENIO en dieta humeda -que es la que aplica a una racion BARF-
+        # a DER 45. Su minimo a DER 95 son 67,5 ug/1000 kcal y el maximo
+        # legal de la UE son 142,0; 67,5 x 95/45 = 142,5. A DER 56 (el 80%
+        # del RER, la bajada de AAHA) la ventana ya es de solo x1,24.
+        #
+        # Por debajo de ese cruce el problema es INFACTIBLE POR ARITMETICA:
+        # no hay ningun alimento, ni ninguna combinacion, ni quitar ninguna
+        # restriccion que lo arregle. Decir «quita alguna restriccion y
+        # vuelve a probar» manda a la usuaria a un callejon sin salida.
+        _mx_fediaf = maximo_de(r, nombre_req, et)
+        if mn is not None and _mx_fediaf is not None and mn > _mx_fediaf:
+            return False, {"_imposible": (
+                f"A estas calorías, el mínimo de {nombre_req.replace('_', ' ').lower()} "
+                f"({mn:.1f}) supera su máximo ({_mx_fediaf:.1f}). Cuando un perro come menos, "
+                f"cada nutriente tiene que ir más concentrado para llegar a lo que necesita al "
+                f"día — pero el máximo es un límite de concentración y no se mueve. Con esta "
+                f"ración no existe ninguna combinación de alimentos que cumpla las dos cosas a "
+                f"la vez, así que hace falta subir las calorías o una dieta formulada.")}
         if clave in minimos_reforzados:
             mn = minimos_reforzados[clave] if mn is None else max(mn, minimos_reforzados[clave])
         mx = maximo_de(r, nombre_req, et)

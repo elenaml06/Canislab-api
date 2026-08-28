@@ -133,7 +133,120 @@ def maximo_de(r, nombre_req, etapa):
     return _num(r.get(f"max{etapa}")) or _num(r.get("maxAdulto"))
 
 
-def verificar(menu, alimentos, req, der, etapa="Adulto"):
+# ⚠️ LOS MINIMOS SUBEN CUANDO SE COME MENOS (28 agosto). Es la ecuacion
+# de la propia FEDIAF, apartado 7.2.5, p. 60:
+#
+#     unidades/1000 kcal = requerimiento_por_kg^0,75 x 1000 / DER
+#
+# y su propio parrafo diciendo por que: «the energy needs may be satisfied
+# before the requirements of protein, minerals or vitamins are met [...]
+# hence a systematic adjustment applied to all essential nutrients is
+# needed WHEN FED BELOW the NRC standard assumption».
+#
+# En cristiano: el perro necesita los mismos MILIGRAMOS de zinc coma lo que
+# coma. Si come menos, esos miligramos tienen que caber en menos calorias,
+# asi que el minimo POR 1000 KCAL sube. Hasta hoy no subia, y eso significa
+# que un perro a dieta de adelgazamiento recibia la misma densidad de
+# nutrientes que uno normal justo cuando menos margen tiene. A DER 63 -que
+# es la media MEDIDA de una bajada de peso, AAHA 2021- la proteina minima
+# pasa de 52,1 a 78,6 g/1000 kcal: un 51% mas.
+#
+# LAS DOS COLUMNAS DE FEDIAF NO SON CONSISTENTES ENTRE SI, y eso decide la
+# forma de la regla. FEDIAF publica dos: la de DER 110 y la de DER 95.
+# Derivar una de la otra deberia dar la publicada y no lo da:
+#
+#     selenio seco    55,00 / 45,00 = 1,222      <- no es redondeo
+#     selenio humedo  67,50 / 57,50 = 1,174
+#     todo lo demas                   1,158  ( = 110/95 )
+#
+# 55 y 45 son numeros redondos: FEDIAF subio el selenio mas que el resto a
+# proposito. Asi que por debajo de 95, donde NO hay nada publicado, se coge
+# el MAYOR de los dos anclajes escalados. Ninguno domina: en magnesio y
+# cloruro gana el de 110, en selenio y calcio el de 95. Con el maximo, la
+# inconsistencia de FEDIAF se resuelve siempre hacia la suficiencia.
+#
+# Y en 95 y en 110 se devuelve el valor PUBLICADO, exacto. Donde FEDIAF
+# tiene un numero, no se inventa otro.
+#
+# ⚠️ SOLO EN ADULTO. Las dos columnas de la ecuacion son de mantenimiento;
+# para crecimiento, gestacion y lactancia FEDIAF publica otras columnas y
+# la ecuacion no esta verificada ahi. No se escala.
+#
+# ⚠️ LA GRASA ESTA EXENTA, y no es un olvido: FEDIAF publica 13,75 g/1000
+# kcal en las DOS columnas. Escalarla haria que las kcal dejaran de cerrar.
+DER_ANCLA_ALTA = 110.0
+DER_ANCLA_BAJA = 95.0
+NO_SE_ESCALAN = {"Grasa_total"}
+
+
+def minimo_de(r, nombre_req, etapa, der_efectiva=None):
+    """El mínimo de FEDIAF de un requisito, escalado por la DER efectiva.
+
+    ES EL ÚNICO SITIO que sabe escalar. El solver y el semáforo leen el
+    mínimo por aquí, igual que leen el máximo por `maximo_de()`: si cada
+    uno escalara por su cuenta, el motor podría construir un menú que el
+    semáforo rechazara.
+
+    `der_efectiva` son las kcal de la ración por kg de peso metabólico.
+    Sin ella (o fuera de adulto) se devuelve el mínimo publicado tal cual.
+    """
+    mn = _num(r.get(f"min{etapa}"))
+    if mn is None or der_efectiva is None or etapa != "Adulto":
+        return mn
+    if nombre_req in NO_SE_ESCALAN:
+        return mn
+    v110 = _num(r.get("minAdulto110"))
+    if v110 is None:
+        # Sin las dos anclas no se escala: son los tres que FEDIAF no da
+        # para adulto (EPA+DHA, linolénico, araquidónico) y el ratio Ca:P.
+        return mn
+    # ⚠️ SOLO SE ESCALA HACIA ARRIBA, Y ESTA ES LA DECISION QUE HAY QUE
+    # ENTENDER ANTES DE TOCARLA.
+    #
+    # La ecuacion de FEDIAF va en los dos sentidos: si el perro come MAS,
+    # el minimo por 1000 kcal BAJA. Aplicada tal cual, un adulto normal
+    # (DER 110) pasaria de 52,10 g de proteina a 45,00 -- un 14% menos --,
+    # y un perro de trabajo (DER 175) tambien, porque el suelo publicado es
+    # la columna de 110. Medido: de ocho perfiles reales, CINCO bajarian.
+    #
+    # Nuestra tabla es la columna de 95 de FEDIAF, o sea que hoy somos mas
+    # estrictos que la guia para el perro activo. Alinearse hacia abajo es
+    # RELAJAR NUTRICION, y la regla 3 del CLAUDE.md dice que lo que se
+    # relaja es la FORMA, nunca la nutricion. Ser mas estricto que FEDIAF
+    # esta siempre permitido; ser menos, no lo decide un refactor.
+    #
+    # Asi que el minimo publicado que ya usabamos es el SUELO y el escalado
+    # solo puede subir por encima. Con eso:
+    #   · el perro normal no cambia nada -- cero regresion
+    #   · el perro a dieta sube, que es el agujero que habia que tapar
+    # Si algun dia se decide adoptar la columna de 110 para el perro
+    # activo, es una decision de nutricion aparte y con su medicion.
+    d = float(der_efectiva)
+    if d >= DER_ANCLA_BAJA:
+        return mn                        # el publicado de siempre, sin tocar
+    # Por debajo de 95 no hay nada publicado: se coge el MAYOR de los dos
+    # anclajes escalados, porque las dos columnas de FEDIAF no son
+    # consistentes entre si y ninguna domina a la otra.
+    return max(mn, mn * DER_ANCLA_BAJA / d, v110 * DER_ANCLA_ALTA / d)
+
+
+def der_efectiva_de(der, peso_referencia_kg):
+    """Las kcal de la ración por kg de peso metabólico. Es lo que dispara
+    el escalado de los mínimos, y tiene que salir de las kcal que DE VERDAD
+    se sirven -- no de la etapa vital ni del ajuste teórico. Si saliera de
+    la etapa, una dieta de adelgazamiento no se enteraría y el escalado no
+    arreglaría nada, que es justo el caso para el que existe."""
+    try:
+        p = float(peso_referencia_kg)
+        d = float(der)
+    except (TypeError, ValueError):
+        return None
+    if p <= 0 or d <= 0:
+        return None
+    return d / (p ** 0.75)
+
+
+def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None):
     """
     Paso 4. Devuelve la ficha honesta de la racion.
 
@@ -165,6 +278,10 @@ def verificar(menu, alimentos, req, der, etapa="Adulto"):
     perfil_min = perfil_nutricional(menu, alimentos, conservador=True)
     escala = der / 1000.0
 
+    # Si quien llama no manda el peso, no se escala nada y todo queda
+    # exactamente como estaba. El escalado es aditivo, nunca una sorpresa.
+    _der_ef = der_efectiva_de(der, peso_referencia_kg)
+
     faltan, se_pasa, correctos = [], [], []
     for nombre, clave in MAPA.items():
         r = req.get(nombre)
@@ -172,7 +289,7 @@ def verificar(menu, alimentos, req, der, etapa="Adulto"):
             continue
         tiene = perfil.get(clave, 0.0)
         tiene_min = perfil_min.get(clave, 0.0)     # con los dudosos a su valor plausible
-        minimo = _num(r.get(f"min{etapa}"))
+        minimo = minimo_de(r, nombre, etapa, _der_ef)
         maximo = maximo_de(r, nombre, etapa)
 
         if minimo is not None:

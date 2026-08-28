@@ -210,6 +210,82 @@ son una **fracción de la proteína**, así que su suma tiene que caer entre el
 gramos, ninguna. **Esa comprobación se corre antes de cargar cualquier
 aminograma.**
 
+### Los mínimos suben cuando el perro come menos
+
+Es la ecuación de la propia FEDIAF, apartado 7.2.5, p. 60, leída del PDF:
+
+> *«a systematic adjustment applied to all essential nutrients is needed
+> **when fed below** the NRC standard assumption»*
+
+Un perro necesita los mismos miligramos de zinc coma lo que coma. Si está a
+dieta y esos miligramos tienen que caber en menos calorías, el mínimo **por
+1000 kcal** sube. Hasta el 28 de agosto no subía: un perro adelgazando
+recibía la misma densidad de nutrientes que uno normal, justo cuando menos
+margen tiene. A la ración de bajada media (DER 63, medida por AAHA 2021) la
+proteína mínima pasa de 52,10 a 78,6 g/1000 kcal.
+
+**Solo hacia arriba, y esa es la decisión que hay que entender.** La ecuación
+va en los dos sentidos, y aplicada tal cual bajaría el mínimo del perro
+normal de 52,10 a 45,00 (la columna de 110) — medido, cinco de ocho perfiles
+reales bajarían. Pero el «below» de FEDIAF es respecto a **130**, no a 110:
+las columnas de 110 y 95 ya son las dos un ajuste hacia arriba desde la base
+del NRC, no un techo y un suelo. **No hay una línea en las 98 páginas que
+autorice bajar un mínimo porque el perro coma más**, y bajarlo sería relajar
+nutrición. Así que el publicado es el suelo.
+
+`minimo_de()` en `verificar.py` es el **único** sitio que sabe escalar, igual
+que `maximo_de()` es el único que sabe de máximos. Lo leen el solver y el
+semáforo: si cada uno escalara por su cuenta, el motor podría construir un
+menú que el semáforo rechazara.
+
+Tres cosas que no se escalan, y ninguna por olvido:
+
+- **La grasa.** FEDIAF publica 13,75 g/1000 kcal en las dos columnas. Si se
+  escalara, las kcal dejarían de cerrar.
+- **El EPA+DHA, el linolénico y el araquidónico.** La ecuación presupone que
+  existe un requerimiento diario absoluto, y FEDIAF pone «-» en adulto porque
+  no lo hay: no se puede subir la densidad para cubrir algo que no existe. La
+  protección real ahí escala sola — la **vitamina E** sí tiene mínimo de
+  adulto y sube un 76 % de DER 110 a 56, mientras el aporte de PUFA por
+  caloría se queda igual.
+- **Crecimiento, gestación y lactancia.** Las dos columnas de la ecuación son
+  de mantenimiento; para esas etapas FEDIAF publica otras y no está
+  verificado que valga.
+
+#### La ventana se cierra: el cruce del selenio
+
+**Los máximos NO escalan.** Un máximo de FEDIAF es un límite de
+*concentración en el alimento* — la tabla III-3a los da en base materia seca
+y marca los de la UE con «(L)» — y una concentración no depende de cuánto
+coma el perro. Pero el mínimo sí sube. **La ventana entre los dos se cierra
+según bajan las kcal.**
+
+El primero en cruzarse es el **selenio en dieta húmeda**, que es la que
+aplica a una ración BARF: mínimo 67,5 µg/1000 kcal a DER 95 y máximo legal de
+la UE 142,0. Se cruzan en **DER 45,2**, y está medido de punta a punta — a
+DER 49 sale menú y a DER 45 ya no. A la ración de bajada de AAHA (80 % del
+RER, DER 56) la ventana es de solo **×1,24**.
+
+Por debajo del cruce el problema es **infactible por aritmética**: no hay
+comida, ni combinación, ni restricción que quitar que lo arregle. Por eso el
+motor devuelve `imposible_por_aritmetica` con el nutriente y los dos números,
+en vez del «quita alguna restricción y vuelve a probar» de siempre — que ahí
+manda a la usuaria a un callejón sin salida. Es un modo de fallo **distinto**
+del de los que aprietan primero (cloruro, folato, magnesio, linoleico), que
+no tienen máximo y se arreglan añadiendo comida.
+
+Lo vigila el **BLOQUE 34**: los dos anclajes contra el PDF, que nunca baje,
+que sí suba, la grasa exenta, que no se escale en cachorro, que los máximos
+no se muevan con el DER, que no aparezca un cruce nuevo sin avisar, y que a
+DER 45 el mensaje sea el bueno y a DER 49 siga saliendo menú.
+
+**El peso de referencia es el OBJETIVO**, no el real: en un perro con
+sobrepeso las kcal ya se calculan sobre el ideal, así que la densidad tiene
+que medirse sobre el mismo peso. Viaja en `peso_objetivo_kg` desde la app —
+si no llega, se usa el real y se escala un poco de más, que es el lado
+seguro. Sin ese campo el escalado queda **puesto y apagado**, así que lo
+vigila `tests/peso-objetivo-en-cada-peticion.spec.js` en `canislab-web`.
+
 ### La duplicación que hay que vigilar
 
 **El DER está calculado dos veces**: en `der.py` (Python, este repo) y en
