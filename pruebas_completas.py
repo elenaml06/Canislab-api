@@ -3335,6 +3335,129 @@ if _PLANTAS_CON_D:
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
+
+# ============================================================
+# BLOQUE 32 — EL REQUISITO 31: EL CALCIO DE LAS RAZAS GRANDES
+# ============================================================
+# De las 43 filas de `requerimientos_v2_final.json`, `verificar()` mide 30
+# (los 29 de MAPA y el ratio Ca:P). De las 13 restantes, doce son los
+# aminoacidos, que no se pueden activar porque ningun alimento trae el
+# dato (BLOQUE 27). La decimotercera SI se podia: es
+# `Calcio_LateGrowth_RazaGrande`, el minimo reforzado de calcio de un
+# cachorro de raza grande o gigante en crecimiento -- 2500 mg/1000 kcal en
+# vez de los 2000 del cachorro generico.
+#
+# Estaba puesto como restriccion dura dentro del solver desde el 5 de
+# agosto, y SOLO ahi. `verificar()` no sabe que raza es el perro, asi que
+# su semaforo mide contra el minimo generico y da VERDE con 2100 mg. Y
+# habia caminos que no pasaban por esa restriccion: la via rapida de
+# /menu/v2 llamaba a `resolver_v2` sin `peso_adulto_esperado_kg` -- el
+# mismo olvido que en su dia tiro el tope de fosforo del renal al editar.
+#
+# Medido antes de arreglarlo: 0 de 12 menus de cachorro de raza grande se
+# quedaban cortos (salian entre 2618 y 4500), porque una dieta con hueso
+# carnoso va sobrada de calcio por abajo. El agujero era real en el codigo
+# y no estaba dando menus malos. Se cierra igual: lo que lo tapaba es una
+# propiedad del catalogo de hoy, no una garantia.
+print("\n=== BLOQUE 32: el calcio de los cachorros de raza grande ===")
+import main as _main32
+
+_req32 = {r["nutriente"]: r for r in json.load(open("requerimientos_v2_final.json"))}
+_fila32 = _req32.get("Calcio_LateGrowth_RazaGrande")
+if not _fila32:
+    fallos.append(
+        "BLOQUE32: ha desaparecido la fila `Calcio_LateGrowth_RazaGrande` de "
+        "requerimientos_v2_final.json. Es el requisito 31 de FEDIAF y es lo unico "
+        "que separa el minimo de un cachorro de raza grande del de uno pequeno.")
+else:
+    _MIN32 = float(_fila32["minCachorroCrecimiento"])
+    if _MIN32 <= float(_req32["Calcio"]["minCachorroCrecimiento"]):
+        fallos.append(
+            f"BLOQUE32: el minimo de calcio de raza grande ({_MIN32}) ya no es mas alto "
+            f"que el generico. Si son iguales, este requisito no esta haciendo nada.")
+
+    # Un alimento inventado con el calcio justo para caer ENTRE los dos
+    # minimos: verde para el semaforo generico, corto para una raza grande.
+    # Se construye a mano a proposito -- con el catalogo de hoy no sale un
+    # menu asi, y la prueba tiene que seguir valiendo el dia que si salga.
+    _falso32 = {"Comida de prueba": {
+        "nombre": "Comida de prueba", "categoria": "Carne muscular",
+        "energia": 100.0, "nutrientes": {"calcio": 220.0}}}
+    _g32 = {"Comida de prueba": 1000.0}        # 1000 kcal, 2200 mg de calcio
+    _entre = _main32._minimo_calcio_raza_grande_roto(
+        _g32, _falso32, _req32, "CachorroCrecimiento", 35.0)
+    if not _entre:
+        fallos.append(
+            "BLOQUE32: 2200 mg/1000 kcal NO se marca como corto para un cachorro de raza "
+            "grande, y el minimo reforzado son 2500. Esto es justo el hueco que el semaforo "
+            "generico da por verde.")
+    # ...y las tres veces que NO tiene que decir nada
+    for _peso32, _etapa32, _que32 in ((8.0, "CachorroCrecimiento", "raza pequena"),
+                                      (35.0, "Adulto", "adulto"),
+                                      (None, "CachorroCrecimiento", "sin peso adulto")):
+        if _main32._minimo_calcio_raza_grande_roto(
+                _g32, _falso32, _req32, _etapa32, _peso32):
+            fallos.append(
+                f"BLOQUE32: 2200 mg/1000 kcal se marca como corto para un {_que32}, y no lo "
+                f"es -- el minimo reforzado es solo de las razas grandes en crecimiento. "
+                f"Aplicarlo de mas dejaria sin menu a perros que cumplen.")
+
+    # Y el filtro final tiene que RECHAZARLO, no solo detectarlo: es la
+    # unica garantia de que un camino que se olvide de pasarle el peso
+    # adulto al motor no entregue el menu igual.
+    _r32 = _main32._garantizar_verificado(
+        {"factible": True, "menu": dict(_g32)}, 1000.0, "CachorroCrecimiento", 22.0,
+        origen="prueba BLOQUE32", al=_falso32, req=_req32, peso_adulto_esperado_kg=35.0)
+    if _r32.get("factible"):
+        fallos.append(
+            "BLOQUE32: `_garantizar_verificado` ENTREGA un menu corto de calcio para un "
+            "cachorro de raza grande. Regla 1 del CLAUDE.md: ningun menu sale sin verificar, "
+            "y este requisito el semaforo de FEDIAF no lo ve.")
+    elif "minimo_calcio_raza_grande_roto" not in (_r32.get("verificacion") or {}):
+        fallos.append(
+            f"BLOQUE32: el menu se rechaza, pero no por el calcio de raza grande "
+            f"({_r32.get('verificacion')}). Si el motivo es otro, esta prueba no esta "
+            f"probando lo que dice.")
+
+# Ninguna via puede llamar al motor sin el peso adulto esperado. Se mira en
+# el texto de main.py a proposito: lo que se rompio no fue el calculo, fue
+# que una de las cuatro llamadas se quedo sin ese argumento y nadie lo vio.
+_src32 = open("main.py", encoding="utf-8").read()
+_i32 = _src32.find("ok_rapido, gramos_rapido = resolver_v2(")
+if _i32 >= 0:
+    _trozo32 = _src32[_i32:_i32 + 1600]
+    _fin32 = _trozo32.find("\n                )")
+    if _fin32 > 0 and "peso_adulto_esperado_kg" not in _trozo32[:_fin32]:
+        fallos.append(
+            "BLOQUE32: la via rapida de /menu/v2 vuelve a llamar a resolver_v2() sin "
+            "`peso_adulto_esperado_kg`. Sin el, el minimo reforzado de calcio de las razas "
+            "grandes no entra como restriccion en ese camino.")
+
+# Y de punta a punta: un cachorro de raza grande de verdad, por la app.
+_der32 = 1550.0
+_resp32 = _c.post("/menu/v2", json={
+    "nombres_alimentos": [], "der_objetivo": _der32,
+    "etapa_requisitos": "CachorroCrecimiento", "peso_perro_kg": 25.0,
+    "tamano": "grande", "peso_adulto_esperado_kg": 35.0}).json()
+if not _resp32.get("factible"):
+    fallos.append(
+        f"BLOQUE32: no sale menu para un cachorro de raza grande en crecimiento "
+        f"({_resp32.get('motivo')}). El minimo reforzado no puede dejar sin menu a "
+        f"un perro que antes lo tenia.")
+else:
+    _g32r = _resp32["menu"]
+    _kcal32 = sum(al[n]["energia"] * g / 100 for n, g in _g32r.items())
+    _ca32 = sum((al[n]["nutrientes"].get("calcio") or 0) / 100 * g for n, g in _g32r.items())
+    _tasa32 = _ca32 / _kcal32 * 1000 if _kcal32 else 0
+    if _tasa32 < float(_fila32["minCachorroCrecimiento"]) * 0.995:
+        fallos.append(
+            f"BLOQUE32: el menu de un cachorro de raza grande sale con {_tasa32:.0f} mg de "
+            f"calcio por 1000 kcal, por debajo del minimo reforzado de "
+            f"{_fila32['minCachorroCrecimiento']}. Y con semaforo "
+            f"'{_resp32['ficha']['semaforo']}', porque el semaforo generico no lo ve.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
 # ============================================================
 # RESUMEN FINAL
 # ============================================================
