@@ -350,7 +350,27 @@ def construir(plantilla: dict, elegidos: dict, der: float, alimentos: dict) -> d
 # Se resuelve con una clave DERIVADA en vez de metiendo un campo "epa_dha" a
 # los 300 alimentos del catálogo: un campo copiado se desincroniza el día que
 # alguien corrija el EPA de un pescado y se olvide de la suma. Aquí no puede.
-NUTRIENTES_COMPUESTOS = {"epa_dha": ("epa", "dha")}
+# ⚠️ LOS DOS AMINOÁCIDOS COMBINADOS (28 agosto). FEDIAF no pide solo
+# metionina y solo fenilalanina: pide TAMBIÉN la suma con su pareja, y son
+# requisitos distintos con mínimos distintos.
+#
+#   metionina + cistina        la cistina se fabrica A PARTIR de metionina,
+#                              así que comer cistina ahorra metionina. Por
+#                              eso el mínimo de la suma (2,21 en adulto) es
+#                              casi el doble del de la metionina sola
+#                              (1,16): la otra mitad la puede cubrir la
+#                              cistina.
+#   fenilalanina + tirosina    lo mismo -- la tirosina sale de la
+#                              fenilalanina.
+#
+# Van aquí y no sumados a mano en cada sitio por el motivo de siempre: el
+# solver, el semáforo y el analizador tienen que leer el mismo número. Es
+# el fallo de la fibra, que estuvo meses calculada de dos formas.
+NUTRIENTES_COMPUESTOS = {
+    "epa_dha": ("epa", "dha"),
+    "metionina_cistina": ("metionina", "cistina"),
+    "fenilalanina_tirosina": ("fenilalanina", "tirosina"),
+}
 
 
 def valor_nutriente(nutrientes: dict, clave: str) -> float:

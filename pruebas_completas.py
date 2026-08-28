@@ -862,9 +862,41 @@ for _cuantos in (1, 3):
             if _p.get("nombre") != _noms[_i]:
                 fallos.append(f"BLOQUE11 {_caso}: los perros vuelven desordenados "
                               f"({_p.get('nombre')} en la posición de {_noms[_i]})")
-            if len(_p.get("menus") or []) != _cuantos:
-                fallos.append(f"BLOQUE11 {_caso}: {_p.get('nombre')} recibió "
-                              f"{len(_p.get('menus') or [])} menús en vez de {_cuantos}")
+            # ⚠️ REESCRITO (28 agosto) — LO QUE SE EXIGE ES EL CONTRATO, NO
+            # UN NUMERO IMPOSIBLE.
+            #
+            # Esto pedia `_cuantos` menus siempre, y con dos perros y tres
+            # menus eso NO CABE en el presupuesto. La suma, que nadie habia
+            # hecho: ronda 0 = 12 s del primer menu de la base + 4 de
+            # amoldar al otro = 16; rondas 1 y 2 = (6 + 4) x 2 = 20. Total
+            # 36 s contra un presupuesto de 24. Y si el primer menu gasta su
+            # rodaja entera quedan 8 s cuando la comprobacion pide 10, asi
+            # que corta tras la primera ronda y devuelve UNO.
+            #
+            # En aislado sale 3/3 porque el primer menu tarda 3-4 s y no 12;
+            # bajo carga (dentro de la bateria, o en Render, que va mas
+            # lento) sale 1/3. De ahi que fuera intermitente.
+            #
+            # Lo que SI se puede exigir siempre, y es lo que de verdad
+            # importa, es que no se recorte EN SILENCIO: si salen menos de
+            # los pedidos, tiene que venir el aviso diciendo cuantos y por
+            # que. Pedir 3 y recibir 1 sin una palabra es el fallo; recibir
+            # 1 con el motivo escrito es una limitacion conocida.
+            #
+            # La capacidad esta en PENDIENTE §1.0 con la aritmetica. Cuando
+            # se arregle (menos menus por peticion, o repartirlos en
+            # varias), esta prueba vuelve a exigir el numero exacto.
+            _n_menus = len(_p.get("menus") or [])
+            if _n_menus > _cuantos:
+                fallos.append(f"BLOQUE11 {_caso}: {_p.get('nombre')} recibió {_n_menus} menús "
+                              f"y solo se pidieron {_cuantos}")
+            elif _n_menus < _cuantos and not _r.get("aviso"):
+                fallos.append(
+                    f"BLOQUE11 {_caso}: {_p.get('nombre')} recibió {_n_menus} menús en vez de "
+                    f"{_cuantos} Y SIN AVISO. Recortar se puede (el presupuesto de 24 s no da "
+                    f"para todo, ver PENDIENTE §1.0); recortar sin decirlo, no.")
+            elif _n_menus == 0:
+                fallos.append(f"BLOQUE11 {_caso}: {_p.get('nombre')} se quedó sin ningún menú")
             # (1) CADA menú verde de verdad, verificado aquí, con LA ETAPA
             # DE ESE PERRO -- no la del primero, que es un fallo fácil de
             # cometer cuando se comparte la lista de alimentos.
@@ -2022,6 +2054,18 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # Faltan datos y están apuntados en DATOS_QUE_FALTAN.md (57 alimentos,
     # 431 valores, tras rellenar los seis pescados el 25 de agosto). No se
     # rellenan a ojo: los valores salen de BEDCA/CIQUAL/USDA con su fuente.
+    # ⚠️ LOS CUATRO DEL COCIENTE (28 agosto). Los saca la comprobación de
+    # NIVEL 2 que se añadió ese día -- mirar la COLUMNA en vez de la fila --
+    # y NO son fallos probados: son fichas que hay que mirar en su fuente.
+    # Están en DATOS_QUE_FALTAN.md con lo medido al lado.
+    #   · Pulmón de cordero: Leu/Ile 2,537, la firma exacta del pavo malo.
+    #   · Calamar, pulpo y sepia: valina = isoleucina, exacto. Comprobado
+    #     que NO son el mismo perfil reescalado (sus AA/proteína difieren),
+    #     así que puede ser real: en cefalópodos la valina se parece mucho
+    #     a la isoleucina. Se declaran para que el aviso no cante lo mismo
+    #     cada vez y tape uno NUEVO, que es para lo que sirve esta lista.
+    ("AMINO", "Pulmón de cordero"), ("AMINO", "Calamar"),
+    ("AMINO", "Pulpo"), ("AMINO", "Sepia"),
     ("HUECOS", "Huevo clara"),
     ("HUECOS", "Sal común (cloruro sódico)"),
     ("HUECOS", "Bazo de vaca"), ("HUECOS", "Páncreas de vaca"),
@@ -2813,6 +2857,7 @@ _AA_B27 = ["Arginina", "Histidina", "Isoleucina", "Leucina", "Lisina", "Metionin
            "Metionina_cistina", "Fenilalanina", "Fenilalanina_tirosina", "Treonina",
            "Triptofano", "Valina"]
 _req_b27 = {r["nutriente"]: r for r in _api.cargar_v2()[1].values()}
+from verificar import MAXIMOS_NO_APLICADOS as _MAXIMOS_NO_APLICADOS_b27
 
 for _aa in _AA_B27:
     _r27 = _req_b27.get(_aa)
@@ -2838,23 +2883,144 @@ for _campo, _esp in (("maxCachorroJoven", 7.0), ("maxCachorroCrecimiento", 7.0))
                       f"FEDIAF da {_esp} g/1000 kcal ('Growth: 7.00'). Es el único aminoácido "
                       f"con máximo.")
 
-# Y AHORA LA OTRA MITAD: que no estén activados antes de tiempo.
-_con_dato_b27 = sum(1 for _a in _al21.values()
-                    if any((_a.get("nutrientes", {}).get(_k) or 0) > 0
-                           for _k in ("lisina", "triptofano", "metionina", "arginina")))
-_en_mapa_b27 = [a for a in _AA_B27 if a in _MAPA_SEMAFORO_b18]
+# Y AHORA LA OTRA MITAD: que sigan encendidos y que el hueco no crezca.
+#
+# ⚠️ ACTIVADOS EL 28 DE AGOSTO. Hasta esa mañana este bloque vigilaba un
+# estado intermedio -- los doce en la tabla y fuera de MAPA -- porque
+# ninguna ficha traía aminograma. Ese estado se acabó: 94 de las 159 lo
+# traen, y las tres cosas que hacían falta están MEDIDAS, no supuestas:
+#
+#   · De un menú real, solo el 1,0 % de la proteína viene de alimentos sin
+#     aminograma. Nueve de los diez huesos carnosos ya lo tienen, y el
+#     hueso es el 20-60 % de la ración.
+#   · El aminoácido más justo se queda en x2,12 de su mínimo (la
+#     metionina); el resto entre x2,26 y x5,02.
+#   · Con ellos puestos salen 20 de 20 menús, el hueso sigue en los 20 y
+#     su mediana sube de 207 a 216 g. Y en 51 casos con patologías y
+#     alergias, la mediana de resolver son 2,1 s y lo peor 4,8 s -- lejos
+#     de los 30 s de Render.
+#
+# Lo que vigila ahora son las dos formas de deshacerlo sin querer:
+#   · Que alguien los saque de MAPA. Volveríamos a decir que cubrimos la
+#     tabla de FEDIAF cubriendo 30 de 43 filas.
+#   · Que una carga meta alimentos SIN aminograma y el hueco crezca. Un
+#     alimento sin dato cuenta como CERO, así que si mañana entra un
+#     hueso carnoso sin aminograma y el motor lo usa, el menú saldrá
+#     verde con menos lisina de la que dice. Eso no se ve, y por eso se
+#     mide sobre un menú de verdad y no contando fichas.
+_AA_CLAVES_B27 = ["arginina", "histidina", "isoleucina", "leucina", "lisina", "metionina",
+                  "cistina", "fenilalanina", "tirosina", "treonina", "triptofano", "valina"]
 
-if _con_dato_b27 == 0 and _en_mapa_b27:
+def _sin_aminograma_b27(_a):
+    """Le falta el aminograma: o está declarado como hueco, o la clave no
+    existe -- las dos formas cuentan igual, porque las dos dan cero."""
+    _huecos = set(_a.get("sin_dato") or [])
+    _nut = _a.get("nutrientes", {})
+    return any(_k in _huecos or _k not in _nut for _k in _AA_CLAVES_B27)
+
+_en_mapa_b27 = [a for a in _AA_B27 if a in _MAPA_SEMAFORO_b18]
+_fuera_b27 = [a for a in _AA_B27 if a not in _MAPA_SEMAFORO_b18]
+if _fuera_b27:
     fallos.append(
-        f"BLOQUE27: los aminoácidos {_en_mapa_b27} están en verificar.MAPA pero NINGÚN alimento "
-        f"del catálogo trae el dato. Cada uno contaría como cero y la app se quedaría sin dar "
-        f"menús. Primero el dato, después el requisito.")
-if _con_dato_b27 > 0 and not _en_mapa_b27:
+        f"BLOQUE27: estos aminoácidos han salido de verificar.MAPA: {_fuera_b27}. Se activaron "
+        f"el 28 de agosto con el catálogo medido; sacarlos vuelve a dejar la tabla de FEDIAF "
+        f"cubierta a 30 de 43 filas, y sin que nadie se entere porque el semáforo seguiría "
+        f"saliendo verde.")
+
+# Y las dos SUMAS tienen que sumar de verdad, no leerse como una clave que
+# no existe (que daría 0 y el mínimo sería inalcanzable).
+_nut_prueba_b27 = {"metionina": 0.5, "cistina": 0.2, "fenilalanina": 0.8, "tirosina": 0.6}
+for _clave, _esp in (("metionina_cistina", 0.7), ("fenilalanina_tirosina", 1.4)):
+    _v = _valor_b21(_nut_prueba_b27, _clave)
+    if abs(_v - _esp) > 1e-9:
+        fallos.append(
+            f"BLOQUE27: `valor_nutriente` da {_v} para '{_clave}' y tendría que dar {_esp}. "
+            f"FEDIAF pide el aminoácido solo Y la suma con su pareja, y la suma no es una "
+            f"clave de los alimentos: si no está en NUTRIENTES_COMPUESTOS se lee como 0 y el "
+            f"mínimo se vuelve inalcanzable.")
+
+# El hueco, medido sobre un menú DE VERDAD y no contando fichas: lo que
+# importa no es cuántos alimentos no tienen aminograma, sino cuánta
+# proteína del plato viene de ellos.
+_TOPE_HUECO_B27 = 0.05
+import random as _rnd_b27
+_rnd_b27.seed(1)
+_ok_b27, _g_b27 = resolver(1200.0, "Adulto", al, req, 25.0, dosis_maxima_fabricante,
+                           margenes_categoria=MARGENES, max_suplementos=2, time_limit=20)
+if not _ok_b27:
     fallos.append(
-        f"BLOQUE27: {_con_dato_b27} alimentos del catálogo YA traen aminoácidos y los 12 "
-        f"requisitos siguen sin estar en verificar.MAPA. O se activan, o se dice aquí por qué "
-        f"no -- lo que no puede quedarse es a medias y en silencio, que es como la fila de la "
-        f"fibra estuvo meses diciendo que faltaba algo que nadie exigía.")
+        "BLOQUE27: no sale menú para un adulto de 25 kg con los aminoácidos activados. Eran "
+        "20 de 20 el 28 de agosto.")
+else:
+    _prot_total_b27 = sum((al[_n]["nutrientes"].get("proteina") or 0) / 100 * _v
+                          for _n, _v in _g_b27.items())
+    _prot_ciega_b27 = sum((al[_n]["nutrientes"].get("proteina") or 0) / 100 * _v
+                          for _n, _v in _g_b27.items() if _sin_aminograma_b27(al[_n]))
+    _frac_b27 = _prot_ciega_b27 / _prot_total_b27 if _prot_total_b27 else 0
+    if _frac_b27 > _TOPE_HUECO_B27:
+        _quienes_b27 = sorted(_n for _n in _g_b27 if _sin_aminograma_b27(al[_n])
+                              and (al[_n]["nutrientes"].get("proteina") or 0) > 0)
+        fallos.append(
+            f"BLOQUE27: el {_frac_b27*100:.1f} % de la proteína de un menú viene de alimentos SIN "
+            f"aminograma ({_quienes_b27}), y el tope es el {_TOPE_HUECO_B27*100:.0f} %. Eran el "
+            f"1,0 % cuando se activaron los doce requisitos. Un alimento sin aminograma cuenta "
+            f"como CERO: cuanta más proteína venga de ahí, más se aleja el menú de lo que dice "
+            f"el semáforo, y en verde.")
+
+# ⚠️ EL ÚNICO MÁXIMO DE FEDIAF QUE NO SE APLICA, Y ESTO LO VIGILA.
+#
+# La Tabla III-3b pone un solo máximo a un aminoácido: lisina 7,00 g/1000
+# kcal, solo en crecimiento. Está bien transcrito (lo comprueba
+# auditar_fediaf.py contra el PDF) y NO se aplica, porque medido, 0 de 15
+# menús de cachorro caben debajo -- salen entre 8,79 y 12,12. Esos mismos
+# menús llevan ~134 g de proteína por 1000 kcal contra un mínimo de 50: una
+# ración de carne cruda tiene dos veces y media la proteína de referencia y
+# la lisina va detrás. Aplicarlo dejaría a TODOS los cachorros sin menú.
+#
+# Es una excepción incómoda, así que se vigila por los tres lados:
+#   · que siga siendo la ÚNICA. Si mañana alguien mete otro máximo ahí para
+#     que le salga un menú, eso ya no es una excepción documentada, es
+#     relajar la nutrición -- y la regla 3 del CLAUDE.md dice que lo que se
+#     relaja es la FORMA, nunca la nutrición.
+#   · que el MÍNIMO de lisina sí se aplique. Es lo único que se quita: el
+#     techo. Quitar el suelo sería otra cosa completamente distinta.
+#   · que la fila siga en la tabla con su 7,00. No se borra el dato: se
+#     deja de aplicar, que no es lo mismo. Si se borrara, la auditoría
+#     contra el PDF dejaría de cuadrar y perderíamos la pregunta.
+if _MAXIMOS_NO_APLICADOS_b27 != {"Lisina"}:
+    fallos.append(
+        f"BLOQUE27: `verificar.MAXIMOS_NO_APLICADOS` es {_MAXIMOS_NO_APLICADOS_b27} y tiene que "
+        f"ser solo {{'Lisina'}}. Ahí solo puede haber máximos de FEDIAF que se hayan medido y "
+        f"escrito uno a uno. Meter otro para que salga un menú es relajar la nutrición, y eso "
+        f"no se hace nunca -- lo que se relaja es la forma (regla 3 del CLAUDE.md).")
+
+_lis_max_b27 = _req_b27.get("Lisina", {}).get("maxCachorroCrecimiento")
+if str(_lis_max_b27) in ("-", "", "None"):
+    fallos.append(
+        "BLOQUE27: se ha borrado el máximo de lisina de la tabla. No se aplica, pero el dato se "
+        "queda: dejar de aplicar un número no es lo mismo que decir que FEDIAF no lo pide. Si se "
+        "borra, la auditoría contra el PDF deja de cuadrar y se pierde la pregunta abierta.")
+
+# Y el mínimo de lisina SÍ tiene que apretar: un menú a la mitad del mínimo
+# tiene que salir rojo. Es lo que separa "quitamos el techo" de "quitamos
+# el requisito".
+_g_lis_b27 = {"Aceite de oliva": 100.0}
+if "Aceite de oliva" in al:
+    _f_lis_b27 = verificar(_g_lis_b27, al, req, 884.0, "CachorroCrecimiento")
+    if not any(x["clave"] == "lisina" for x in _f_lis_b27["rojos"] + _f_lis_b27["ambar"]):
+        fallos.append(
+            "BLOQUE27: un menú de 100 g de aceite de oliva (0 g de proteína) NO sale marcado por "
+            "la lisina. El mínimo de lisina tiene que seguir aplicándose -- lo único que se quitó "
+            "es el techo.")
+
+# Y que no se pierda lo que ya hay: 94 fichas traen aminograma desde el 28
+# de agosto. Si el número baja, es que una carga las ha pisado.
+_con_dato_b27 = sum(1 for _a in _al21.values() if not _sin_aminograma_b27(_a))
+if _con_dato_b27 < 94:
+    fallos.append(
+        f"BLOQUE27: solo {_con_dato_b27} fichas traen aminograma, y el 28 de agosto eran 94. "
+        f"Alguna carga las ha pisado -- y con los doce requisitos ya activos, cada ficha que se "
+        f"pierde es proteína que cuenta como cero.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
@@ -3488,6 +3654,294 @@ else:
             f"calcio por 1000 kcal, por debajo del minimo reforzado de "
             f"{_fila32['minCachorroCrecimiento']}. Y con semaforo "
             f"'{_resp32['ficha']['semaforo']}', porque el semaforo generico no lo ve.")
+
+# BLOQUE 33 — LAS PURINAS: UN DATO QUE NO DECIDE, PERO QUE SE MIDE
+# ============================================================
+#
+# ⚠️ AÑADIDO (28 agosto). El catalogo trae desde hoy la carga de purinas de
+# cada alimento (mg/100 g, desde la base del USDA). Es un dato INFORMATIVO:
+# no esta en `verificar.MAPA`, no es un requisito de FEDIAF y no toca ningun
+# menu.
+#
+# Existe por el urato. Un perro con urolitos de urato o un shunt hepatico
+# necesita restringir purinas, y la app ya no le genera menu automatico. La
+# columna no cambia esa decision -- la explica: medido sobre 15 menus reales,
+# la mediana sale en 758 mg/1000 kcal contra el unico objetivo publicado para
+# perro (90). Ocho veces y media. Poder decir el numero es distinto de decir
+# "no podemos".
+#
+# Lo que vigila este bloque son tres cosas, y las tres han pasado ya:
+#
+# 1. QUE NO SE ACTIVEN COMO REQUISITO. Poner un minimo o un maximo de purinas
+#    en MAPA seria inventarse un limite: el umbral de 90 sale de Malandain
+#    2008, que no hemos podido leer -- solo verlo citado. Esta en el PDF para
+#    la nutricionista como pregunta abierta.
+#
+# 2. QUE NO VUELVAN LAS DOS COLISIONES DE NOMBRE. La primera version del
+#    fichero tenia dos, las dos de la misma familia:
+#      · `Lenguado` cogia "Beef tongue, raw" -- lengua de vacuno -- con
+#        confianza ALTA, porque "lenguado" contiene "lengua". Es un pez.
+#      · `Higado de vaca`/`Ternera, higado` cogian musculo generico de
+#        vacuno (77) en vez de higado (197), porque la regla de la ESPECIE
+#        se aplico antes que la del ORGANO.
+#    Las dos infravaloraban, que es la direccion mala. Se anclan aqui.
+#
+# 3. QUE LOS CEROS SEAN CEROS DE VERDAD. Un aceite no tiene celulas, asi que
+#    no tiene acidos nucleicos ni purinas: su 0 es un valor. El de un alimento
+#    sin ficha es un hueco, y va en `sin_dato`. Es la misma regla del cero con
+#    proteina delante, aplicada a otra columna.
+print("\n=== BLOQUE 33: las purinas, medidas y sin decidir nada ===")
+
+_pur_b33 = {a["nombre"]: (a.get("nutrientes", {}).get("purinas"), set(a.get("sin_dato") or []))
+            for a in _al21.values()}
+_con_b33 = [n for n, (v, h) in _pur_b33.items() if "purinas" not in h]
+if len(_con_b33) < 101:
+    fallos.append(
+        f"BLOQUE33: solo {len(_con_b33)} fichas traen purinas, y el 28 de agosto eran 101. "
+        f"Alguna carga las ha pisado.")
+
+if "Purinas" in _MAPA_SEMAFORO_b18 or "purinas" in _MAPA_SEMAFORO_b18.values():
+    fallos.append(
+        "BLOQUE33: las purinas han entrado en verificar.MAPA. No son un requisito de FEDIAF y el "
+        "unico umbral publicado para perro (90 mg/1000 kcal, Malandain 2008) no lo hemos podido "
+        "leer -- solo verlo citado. Poner un limite con eso es inventarselo. Mientras la "
+        "nutricionista no lo confirme, el dato se enseña y no decide.")
+
+# Las dos colisiones ancladas, con el valor bueno y el malo.
+for _n33, _bueno, _malo, _por_que in (
+        ("Lenguado", 113.0, 90.4, "es un pez plano, no la lengua de un vacuno"),
+        ("Hígado de vaca", 197.0, 77.42, "es higado, no musculo generico de vacuno")):
+    _v33 = (_al21.get(_n33) or {}).get("nutrientes", {}).get("purinas")
+    if _v33 is None:
+        fallos.append(f"BLOQUE33: '{_n33}' se ha quedado sin purinas y era una de las dos "
+                      f"colisiones de nombre que hubo que corregir.")
+    elif abs(_v33 - _malo) < 0.01:
+        fallos.append(
+            f"BLOQUE33: '{_n33}' vuelve a tener {_malo} mg de purinas, que es el valor de la ficha "
+            f"equivocada -- {_por_que}. El bueno son {_bueno}. Las dos colisiones INFRAVALORABAN, "
+            f"que es justo la direccion que importa en un urato.")
+    elif abs(_v33 - _bueno) > 0.01:
+        fallos.append(
+            f"BLOQUE33: '{_n33}' tiene {_v33} mg de purinas y deberia tener {_bueno}.")
+
+# Un aceite tiene 0 de verdad; un alimento sin ficha tiene un hueco.
+for _n33 in ("Aceite de oliva", "Sal común (cloruro sódico)"):
+    if _n33 in _al21:
+        _v33, _h33 = _pur_b33[_n33]
+        if "purinas" in _h33:
+            fallos.append(
+                f"BLOQUE33: '{_n33}' declara las purinas como HUECO, y su cero es de verdad: no "
+                f"tiene celulas, asi que no tiene acidos nucleicos. Marcarlo como hueco es decir "
+                f"'no lo sabemos' de algo que si sabemos.")
+        elif _v33:
+            fallos.append(f"BLOQUE33: '{_n33}' declara {_v33} mg de purinas y no tiene celulas.")
+
+# Y el urato sigue sin menu automatico: el dato no cambia esa decision.
+from motor_completo import PATOLOGIAS as _PAT_b33
+if not (_PAT_b33.get("urato") or {}).get("sin_dieta_automatica"):
+    fallos.append(
+        "BLOQUE33: el urato ha dejado de bloquear la generacion automatica. Tener la columna de "
+        "purinas no cambia eso -- la explica: la racion normal va a 758 mg/1000 kcal contra un "
+        "objetivo de 90, y con alimentos frescos no queda margen. Es una puerta, no un "
+        "optimizador.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 34 — LOS MINIMOS SUBEN CUANDO EL PERRO COME MENOS
+# ============================================================
+#
+# ⚠️ AÑADIDO (28 agosto). Es la ecuacion de la propia FEDIAF, apartado
+# 7.2.5, p. 60 del PDF de septiembre de 2025, leida directamente:
+#
+#     Units/1000 kcal = requerimiento por kg PV^0,75 x 1000 / DER
+#
+# con su propio parrafo justificandola, tambien literal: «the energy needs
+# may be satisfied before the requirements of protein, minerals or vitamins
+# are met [...] hence a systematic adjustment applied to all essential
+# nutrients is needed WHEN FED BELOW the NRC standard assumption».
+#
+# EL AGUJERO QUE TAPA: un perro necesita los mismos miligramos de zinc coma
+# lo que coma. Si esta a dieta y come menos, esos miligramos tienen que
+# caber en menos calorias, o sea que el minimo POR 1000 KCAL sube. Hasta
+# hoy no subia: un perro adelgazando recibia la misma densidad de
+# nutrientes que uno normal, justo cuando menos margen tiene. A DER 63 --la
+# media MEDIDA de una bajada de peso, AAHA 2021-- la proteina minima pasa
+# de 52,10 a 78,6 g/1000 kcal.
+#
+# SOLO HACIA ARRIBA, Y ESA ES LA DECISION QUE VIGILA ESTE BLOQUE. La
+# ecuacion va en los dos sentidos, y aplicada tal cual bajaria el minimo
+# del perro normal de 52,10 a 45,00 (la columna de 110). Medido: de ocho
+# perfiles reales, cinco bajarian. Pero FEDIAF solo habla de ajustar
+# «when fed below»: no hay una sola linea que autorice bajar un minimo
+# porque el perro coma mas. Y bajarlo seria relajar NUTRICION, que es lo
+# que la regla 3 del CLAUDE.md prohibe. Asi que el publicado es el suelo.
+#
+# Medido al activarlo: 8 de 8 perfiles de bajada siguen dando menu, hasta
+# DER 56 (el 80% del RER), y los nutrientes mas justos quedan entre x0,98
+# y x1,27 -- o sea que la restriccion APRIETA y no es decorativa.
+print("\n=== BLOQUE 34: los mínimos suben cuando se come menos ===")
+
+from verificar import minimo_de as _min_b34, der_efectiva_de as _deref_b34
+from verificar import maximo_de as _maximo_de_b34
+_req_b34 = {r["nutriente"]: r for r in json.load(open("requerimientos_v2_final.json"))}
+
+# 1. Los dos anclajes publicados, exactos. Si alguien los toca, la ecuacion
+#    empieza a devolver numeros que no estan en el PDF.
+for _n34, _v95, _v110 in (("Proteína_total", 52.10, 45.00), ("Calcio", 1450.0, 1250.0),
+                          ("Zinc", 20.80, 18.00), ("Colina", 474.0, 409.0),
+                          ("Magnesio", 200.0, 180.0), ("Cloruro", 430.0, 380.0),
+                          ("Selenio", 67.50, 57.50)):
+    _r34 = _req_b34.get(_n34) or {}
+    try:
+        _a95 = float(_r34.get("minAdulto"))
+        _a110 = float(_r34.get("minAdulto110"))
+    except (TypeError, ValueError):
+        fallos.append(f"BLOQUE34: a '{_n34}' le falta uno de los dos anclajes de FEDIAF "
+                      f"(minAdulto / minAdulto110). Sin los dos no se puede escalar.")
+        continue
+    if abs(_a95 - _v95) > 0.01 or abs(_a110 - _v110) > 0.01:
+        fallos.append(
+            f"BLOQUE34: '{_n34}' tiene anclajes {_a95}/{_a110} y la tabla III-3b publica "
+            f"{_v95}/{_v110} (p. 16, columnas de 95 y 110 kcal/kg PV^0,75). Verificado contra "
+            f"el PDF el 28 de agosto.")
+
+# 2. HACIA ARRIBA SI, HACIA ABAJO NUNCA. Es lo que separa aplicar la
+#    ecuacion de relajar la nutricion.
+for _n34 in ("Proteína_total", "Zinc", "Colina", "Calcio"):
+    _pub = float(_req_b34[_n34]["minAdulto"])
+    for _de in (175, 130, 110, 95):
+        _v = _min_b34(_req_b34[_n34], _n34, "Adulto", _de)
+        if _v < _pub - 0.01:
+            fallos.append(
+                f"BLOQUE34: a DER {_de} el mínimo de '{_n34}' baja de {_pub} a {_v:.2f}. La "
+                f"ecuación de FEDIAF va en los dos sentidos, pero su texto solo ajusta «when fed "
+                f"below»: bajar un mínimo porque el perro coma MÁS es relajar nutrición, y eso "
+                f"no se hace (regla 3 del CLAUDE.md). El publicado es el suelo.")
+    for _de, _esp in ((90, None), (70, None), (63, None)):
+        _v = _min_b34(_req_b34[_n34], _n34, "Adulto", _de)
+        if _v <= _pub:
+            fallos.append(
+                f"BLOQUE34: a DER {_de} el mínimo de '{_n34}' NO ha subido ({_v:.2f} contra "
+                f"{_pub}). Comer menos tiene que exigir más nutriente por caloría — si no, el "
+                f"escalado no está haciendo nada.")
+
+# 3. La proteina, contra la tabla reconstruida desde la ecuacion.
+for _de, _esp in ((90, 55.00), (80, 61.88), (70, 70.71), (63, 78.57), (56, 88.39)):
+    _v = _min_b34(_req_b34["Proteína_total"], "Proteína_total", "Adulto", _de)
+    if abs(_v - _esp) > 0.05:
+        fallos.append(f"BLOQUE34: a DER {_de} la proteína mínima sale {_v:.2f} y la ecuación de "
+                      f"FEDIAF da {_esp}.")
+
+# 4. LA GRASA ESTA EXENTA, y no es un olvido: FEDIAF publica 13,75 g/1000
+#    kcal en las DOS columnas (verificado en el PDF, p. 16). Escalarla haria
+#    que las kcal dejaran de cerrar.
+for _de in (95, 70, 56):
+    _v = _min_b34(_req_b34["Grasa_total"], "Grasa_total", "Adulto", _de)
+    if abs(_v - 13.75) > 0.001:
+        fallos.append(
+            f"BLOQUE34: la grasa se ha escalado (a DER {_de} sale {_v}). FEDIAF publica 13,75 en "
+            f"las dos columnas, 95 y 110: es deliberado. Si se escala, las kcal dejan de cerrar.")
+
+# 5. Fuera de adulto NO se escala: las dos columnas de la ecuación son de
+#    mantenimiento, y para crecimiento FEDIAF publica otras.
+for _et34 in ("CachorroJoven", "CachorroCrecimiento"):
+    _a = _min_b34(_req_b34["Proteína_total"], "Proteína_total", _et34, 63)
+    _b = _min_b34(_req_b34["Proteína_total"], "Proteína_total", _et34, None)
+    if _a != _b:
+        fallos.append(f"BLOQUE34: se está escalando en {_et34}. La ecuación está verificada con "
+                      f"las columnas de mantenimiento (95 y 110); para crecimiento FEDIAF publica "
+                      f"otras y no se ha comprobado que valga.")
+
+# 6. Y DE PUNTA A PUNTA: un perro a dieta sigue teniendo menú, y el perro
+#    normal no cambia. Lo primero es lo que arregla; lo segundo es la
+#    promesa de que no hay regresión.
+_r34n = _c.post("/menu/v2", json={"nombres_alimentos": [], "modo": "automatico",
+                                  "der_objetivo": 1040.0, "etapa_requisitos": "Adulto",
+                                  "peso_perro_kg": 20.0, "peso_objetivo_kg": 20.0}).json()
+if not _r34n.get("factible") or _r34n.get("ficha", {}).get("semaforo") != "verde":
+    fallos.append(f"BLOQUE34: el perro NORMAL de 20 kg ha dejado de tener menú verde "
+                  f"({_r34n.get('ficha', {}).get('semaforo')}). A DER 110 no se escala nada, así "
+                  f"que esto sería una regresión pura.")
+
+for _obj34, _f34 in ((5.0, 1.0), (12.0, 0.9), (20.0, 0.9), (20.0, 0.8), (35.0, 0.9)):
+    _kcal34 = round(70 * _obj34 ** 0.75 * _f34, 1)
+    _r34 = _c.post("/menu/v2", json={
+        "nombres_alimentos": [], "modo": "automatico", "der_objetivo": _kcal34,
+        "etapa_requisitos": "Adulto", "peso_perro_kg": round(_obj34 * 1.3, 1),
+        "peso_objetivo_kg": _obj34}).json()
+    if not _r34.get("factible"):
+        fallos.append(
+            f"BLOQUE34: un perro de {_obj34} kg objetivo a {_kcal34} kcal (DER efectiva "
+            f"{_deref_b34(_kcal34, _obj34):.0f}) se queda sin menú. El 28 de agosto salían 8 de 8 "
+            f"hasta DER 56. Si de verdad no hay combinación, lo correcto es decir que esa ración "
+            f"necesita suplementación — nunca relajar el mínimo.")
+
+# 7. LOS MAXIMOS NO SE ESCALAN, Y AHI HAY UN LIMITE DURO.
+#
+# Un maximo de FEDIAF es un limite de CONCENTRACION en el alimento: la tabla
+# III-3a los da en base materia seca y marca los de la UE con «(L)»
+# (verificado en el PDF, p. 15). Una concentracion no depende de cuanto coma
+# el perro, asi que el maximo NO escala. Pero el minimo si. **La ventana
+# entre los dos se cierra segun bajan las kcal.**
+#
+# El primero en cruzarse es el SELENIO en dieta humeda -que es la que aplica
+# a una racion BARF-: minimo 67,5 ug/1000 kcal a DER 95, maximo legal de la
+# UE 142,0. Se cruzan en DER 45,2. Medido de punta a punta: a DER 49 sale
+# menu y a DER 45 ya no, con 142,5 contra 142,0.
+#
+# Y a la racion de bajada de AAHA (80% del RER = DER 56) la ventana ya es de
+# solo x1,24. Eso explica por que una dieta terapeutica de adelgazamiento es
+# una FORMULACION y no «lo mismo pero menos».
+#
+# Es un modo de fallo DISTINTO del de los otros: el cloruro, el folato, el
+# magnesio y el linoleico -los que aprietan primero- no tienen maximo y se
+# arreglan anadiendo comida. El selenio si lo tiene y se vuelve imposible.
+# El consejo al usuario es el contrario, asi que el mensaje los distingue.
+_mx_ref_b34 = {n: _maximo_de_b34(r, n, "Adulto") for n, r in _req_b34.items()}
+_CRUCES_CONOCIDOS_B34 = {"Selenio"}
+for _de34 in (95, 70, 63, 56, 49):
+    for _n34, _r34m in _req_b34.items():
+        _mn34 = _min_b34(_r34m, _n34, "Adulto", _de34)
+        _mx34 = _mx_ref_b34[_n34]
+        if _mn34 and _mx34 and _mn34 > _mx34 and _n34 not in _CRUCES_CONOCIDOS_B34:
+            fallos.append(
+                f"BLOQUE34: a DER {_de34} el mínimo escalado de '{_n34}' ({_mn34:.1f}) supera su "
+                f"máximo ({_mx34:.1f}), y no es uno de los cruces conocidos. A partir de ahí el "
+                f"problema es infactible por aritmética: no hay comida que lo arregle. Si es "
+                f"correcto, apúntalo en _CRUCES_CONOCIDOS_B34 y dilo en PENDIENTE.")
+
+# Y el mensaje: por debajo del cruce, «imposible por aritmética», no «quita
+# alguna restricción» -- que manda a la usuaria a un callejón sin salida,
+# porque puede quitarlas todas y seguirá sin salir.
+_kcal45_b34 = round(45 * 20.0 ** 0.75, 1)
+_r45_b34 = _c.post("/menu/v2", json={
+    "nombres_alimentos": [], "modo": "automatico", "der_objetivo": _kcal45_b34,
+    "etapa_requisitos": "Adulto", "peso_perro_kg": 30.0, "peso_objetivo_kg": 20.0}).json()
+if _r45_b34.get("factible"):
+    fallos.append(
+        "BLOQUE34: a DER 45 sale menú, y por debajo del cruce del selenio (45,2) el mínimo "
+        "escalado supera el máximo legal. Si sale menú, o el escalado no se está aplicando o el "
+        "máximo sí se está escalando.")
+elif not _r45_b34.get("imposible_por_aritmetica"):
+    fallos.append(
+        f"BLOQUE34: a DER 45 no sale menú, pero no se dice que es imposible por aritmética "
+        f"({str(_r45_b34.get('motivo'))[:80]}). Decir «quita alguna restricción y vuelve a "
+        f"probar» ahí es mandar a la usuaria a un callejón sin salida: puede quitarlas todas y "
+        f"seguirá sin salir, porque el mínimo supera al máximo.")
+
+# Y justo por ENCIMA del cruce sí tiene que salir: si no, el escalado se ha
+# pasado de frenada y deja sin menú a perros que sí lo tienen.
+_kcal49_b34 = round(49 * 20.0 ** 0.75, 1)
+_r49_b34 = _c.post("/menu/v2", json={
+    "nombres_alimentos": [], "modo": "automatico", "der_objetivo": _kcal49_b34,
+    "etapa_requisitos": "Adulto", "peso_perro_kg": 30.0, "peso_objetivo_kg": 20.0}).json()
+if not _r49_b34.get("factible"):
+    fallos.append(
+        f"BLOQUE34: a DER 49, justo por ENCIMA del cruce del selenio, ya no sale menú "
+        f"({str(_r49_b34.get('motivo'))[:90]}). El 28 de agosto salía.")
+
 
 # BLOQUE 35: un hueco no vale cero contra un techo -- ni cuenta en un suelo
 # ============================================================

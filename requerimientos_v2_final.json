@@ -7,7 +7,8 @@
   "minCachorroCrecimiento": 50,
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxAdulto": "-",
+  "minAdulto110": 45.0
  },
  {
   "nutriente": "EPA_DHA_total",
@@ -29,7 +30,8 @@
   "maxCachorroJoven": 16.25,
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Tabla III-3b: el máximo 16.25 g es SOLO para crecimiento temprano ('Early Growth: 16.25 (N)'), no para adulto."
+  "nota_auditoria": "Tabla III-3b: el máximo 16.25 g es SOLO para crecimiento temprano ('Early Growth: 16.25 (N)'), no para adulto.",
+  "minAdulto110": 3.27
  },
  {
   "nutriente": "Linolénico",
@@ -61,7 +63,8 @@
   "maxCachorroJoven": 30000.0,
   "maxCachorroCrecimiento": 30000.0,
   "maxAdulto": 30000.0,
-  "nota_auditoria": "Tabla III-3b: min 1754 UI x 0.30 µg/UI = 526.2 · max nutricional 100.000 UI x 0.30 = 30.000 µg. AMBOS ERAN CORRECTOS."
+  "nota_auditoria": "Tabla III-3b: min 1754 UI x 0.30 µg/UI = 526.2 · max nutricional 100.000 UI x 0.30 = 30.000 µg. AMBOS ERAN CORRECTOS.",
+  "minAdulto110": 454.5
  },
  {
   "nutriente": "Vitamina_D",
@@ -72,7 +75,8 @@
   "maxCachorroJoven": 20.0,
   "maxCachorroCrecimiento": 20.0,
   "maxAdulto": 20.0,
-  "nota_auditoria": "Tabla III-3b: min 159 UI x 0.025 µg/UI = 3.975 · max nutricional 800 UI x 0.025 = 20 µg. AMBOS ERAN CORRECTOS."
+  "nota_auditoria": "Tabla III-3b: min 159 UI x 0.025 µg/UI = 3.975 · max nutricional 800 UI x 0.025 = 20 µg. AMBOS ERAN CORRECTOS.",
+  "minAdulto110": 3.45
  },
  {
   "nutriente": "Vitamina_E",
@@ -83,7 +87,8 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Tabla III-3b en UI: adulto 10.40 · crecimiento 12.50. x 0.67 mg/UI = 6.968 y 8.375 mg."
+  "nota_auditoria": "Tabla III-3b en UI: adulto 10.40 · crecimiento 12.50. x 0.67 mg/UI = 6.968 y 8.375 mg.",
+  "minAdulto110": 6.03
  },
  {
   "nutriente": "Folato",
@@ -93,7 +98,8 @@
   "minCachorroCrecimiento": 54,
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxAdulto": "-",
+  "minAdulto110": 64.5
  },
  {
   "nutriente": "Niacina",
@@ -103,7 +109,8 @@
   "minCachorroCrecimiento": "3.40",
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxAdulto": "-",
+  "minAdulto110": 4.09
  },
  {
   "nutriente": "Riboflavina",
@@ -113,7 +120,8 @@
   "minCachorroCrecimiento": "1.05",
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxAdulto": "-",
+  "minAdulto110": 1.5
  },
  {
   "nutriente": "Tiamina",
@@ -123,7 +131,8 @@
   "minCachorroCrecimiento": "0.45",
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxAdulto": "-",
+  "minAdulto110": 0.54
  },
  {
   "nutriente": "Vitamina_B12",
@@ -133,7 +142,8 @@
   "minCachorroCrecimiento": "7.00",
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxAdulto": "-",
+  "minAdulto110": 8.36
  },
  {
   "nutriente": "Vitamina_B6",
@@ -143,7 +153,8 @@
   "minCachorroCrecimiento": "0.30",
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxAdulto": "-",
+  "minAdulto110": 0.36
  },
  {
   "nutriente": "Calcio",
@@ -153,7 +164,8 @@
   "minCachorroCrecimiento": 2000,
   "maxCachorroJoven": 4000,
   "maxCachorroCrecimiento": 4500,
-  "maxAdulto": 6250
+  "maxAdulto": 6250,
+  "minAdulto110": 1250.0
  },
  {
   "nutriente": "Hierro",
@@ -164,7 +176,8 @@
   "maxCachorroJoven": 170.45,
   "maxCachorroCrecimiento": 170.45,
   "maxAdulto": 170.45,
-  "nota_auditoria": "Tabla III-3b: min 10.40 mg. Máximo legal: Tabla III-3a 68.18 x 2.5 = 170.45 mg."
+  "nota_auditoria": "Tabla III-3b: min 10.40 mg. Máximo legal: Tabla III-3a 68.18 x 2.5 = 170.45 mg.",
+  "minAdulto110": 9.0
  },
  {
   "nutriente": "Potasio",
@@ -174,7 +187,8 @@
   "minCachorroCrecimiento": 1100,
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxAdulto": "-",
+  "minAdulto110": 1250.0
  },
  {
   "nutriente": "Magnesio",
@@ -184,7 +198,8 @@
   "minCachorroCrecimiento": 100,
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxAdulto": "-",
+  "minAdulto110": 180.0
  },
  {
   "nutriente": "Sodio",
@@ -195,7 +210,8 @@
   "maxCachorroJoven": 3750.0,
   "maxCachorroCrecimiento": 3750.0,
   "maxAdulto": 3750.0,
-  "nota_auditoria": "Nota c de la tabla: hasta 1.5% MS (3.75 g/1000 kcal) es seguro en perros sanos."
+  "nota_auditoria": "Nota c de la tabla: hasta 1.5% MS (3.75 g/1000 kcal) es seguro en perros sanos.",
+  "minAdulto110": 250.0
  },
  {
   "nutriente": "Fósforo",
@@ -205,7 +221,8 @@
   "minCachorroCrecimiento": 1750,
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": 4000
+  "maxAdulto": 4000,
+  "minAdulto110": 1000.0
  },
  {
   "nutriente": "Yodo",
@@ -216,7 +233,8 @@
   "maxCachorroJoven": 2750.0,
   "maxCachorroCrecimiento": 2750.0,
   "maxAdulto": 2750.0,
-  "nota_auditoria": "Tabla III-3b: min 0.30 mg = 300 µg. Máximo legal: Tabla III-3a 1.10 mg/100g MS x 2.5 = 2.75 mg = 2750 µg."
+  "nota_auditoria": "Tabla III-3b: min 0.30 mg = 300 µg. Máximo legal: Tabla III-3a 1.10 mg/100g MS x 2.5 = 2.75 mg = 2750 µg.",
+  "minAdulto110": 260.0
  },
  {
   "nutriente": "Selenio",
@@ -227,7 +245,8 @@
   "maxCachorroJoven": 142.0,
   "maxCachorroCrecimiento": 142.0,
   "maxAdulto": 142.0,
-  "nota_auditoria": "Tabla III-3b: adulto DIETAS HÚMEDAS 67.50 µg (col. 95 kcal; las secas 55 — el BARF es húmedo). Crecimiento y reproducción 100 µg. Máx legal: III-3a 56.80 µg/100g MS x2.5 = 142."
+  "nota_auditoria": "Tabla III-3b: adulto DIETAS HÚMEDAS 67.50 µg (col. 95 kcal; las secas 55 — el BARF es húmedo). Crecimiento y reproducción 100 µg. Máx legal: III-3a 56.80 µg/100g MS x2.5 = 142.",
+  "minAdulto110": 57.5
  },
  {
   "nutriente": "Zinc",
@@ -238,7 +257,8 @@
   "maxCachorroJoven": 56.75,
   "maxCachorroCrecimiento": 56.75,
   "maxAdulto": 56.75,
-  "nota_auditoria": "Tabla III-3b: min 20.80 mg. Máximo legal: Tabla III-3a 22.70 x 2.5 = 56.75 mg."
+  "nota_auditoria": "Tabla III-3b: min 20.80 mg. Máximo legal: Tabla III-3a 22.70 x 2.5 = 56.75 mg.",
+  "minAdulto110": 18.0
  },
  {
   "nutriente": "Cobre",
@@ -249,7 +269,8 @@
   "maxCachorroJoven": 7.0,
   "maxCachorroCrecimiento": 7.0,
   "maxAdulto": 7.0,
-  "nota_auditoria": "Tabla III-3b: min 2.08 mg. Máximo legal: Tabla III-3a 2.80 mg/100g MS x 2.5 = 7.0 mg."
+  "nota_auditoria": "Tabla III-3b: min 2.08 mg. Máximo legal: Tabla III-3a 2.80 mg/100g MS x 2.5 = 7.0 mg.",
+  "minAdulto110": 1.8
  },
  {
   "nutriente": "Relacion_Ca_P",
@@ -269,7 +290,8 @@
   "minCachorroCrecimiento": 21.25,
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxAdulto": "-",
+  "minAdulto110": 13.75
  },
  {
   "nutriente": "Manganeso",
@@ -280,7 +302,8 @@
   "maxCachorroJoven": 42.5,
   "maxCachorroCrecimiento": 42.5,
   "maxAdulto": 42.5,
-  "nota_auditoria": "Tabla III-3b: min 1.67 mg. Máximo legal: Tabla III-3a 17.00 x 2.5 = 42.50 mg."
+  "nota_auditoria": "Tabla III-3b: min 1.67 mg. Máximo legal: Tabla III-3a 17.00 x 2.5 = 42.50 mg.",
+  "minAdulto110": 1.44
  },
  {
   "nutriente": "Acido_pantotenico",
@@ -290,7 +313,8 @@
   "minCachorroCrecimiento": 3,
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxAdulto": "-",
+  "minAdulto110": 3.55
  },
  {
   "nutriente": "Colina",
@@ -300,7 +324,8 @@
   "minCachorroCrecimiento": 425,
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
-  "maxAdulto": "-"
+  "maxAdulto": "-",
+  "minAdulto110": 409.0
  },
  {
   "nutriente": "Cloruro",
@@ -311,7 +336,8 @@
   "maxCachorroJoven": 5870.0,
   "maxCachorroCrecimiento": 5870.0,
   "maxAdulto": 5870.0,
-  "nota_auditoria": "Nota c de la tabla: hasta 2.35% MS (5.87 g/1000 kcal) es seguro en perros sanos."
+  "nota_auditoria": "Nota c de la tabla: hasta 2.35% MS (5.87 g/1000 kcal) es seguro en perros sanos.",
+  "minAdulto110": 380.0
  },
  {
   "nutriente": "Calcio_LateGrowth_RazaGrande",
@@ -333,7 +359,8 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo."
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "minAdulto110": 1.3
  },
  {
   "nutriente": "Histidina",
@@ -344,7 +371,8 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo."
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "minAdulto110": 0.58
  },
  {
   "nutriente": "Isoleucina",
@@ -355,7 +383,8 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo."
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "minAdulto110": 1.15
  },
  {
   "nutriente": "Leucina",
@@ -366,7 +395,8 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo."
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "minAdulto110": 2.05
  },
  {
   "nutriente": "Lisina",
@@ -377,7 +407,8 @@
   "maxCachorroJoven": 7.0,
   "maxCachorroCrecimiento": 7.0,
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo. El máximo de 7,00 g es el único que FEDIAF pone a un aminoácido, y solo en crecimiento: la tabla lo etiqueta 'Growth: 7.00 (N)'."
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo. El máximo de 7,00 g es el único que FEDIAF pone a un aminoácido, y solo en crecimiento: la tabla lo etiqueta 'Growth: 7.00 (N)'.",
+  "minAdulto110": 1.05
  },
  {
   "nutriente": "Metionina",
@@ -388,7 +419,8 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo."
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "minAdulto110": 1.0
  },
  {
   "nutriente": "Metionina_cistina",
@@ -399,7 +431,8 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo."
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "minAdulto110": 1.91
  },
  {
   "nutriente": "Fenilalanina",
@@ -410,7 +443,8 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo."
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "minAdulto110": 1.35
  },
  {
   "nutriente": "Fenilalanina_tirosina",
@@ -421,7 +455,8 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo."
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "minAdulto110": 2.23
  },
  {
   "nutriente": "Treonina",
@@ -432,7 +467,8 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo."
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "minAdulto110": 1.3
  },
  {
   "nutriente": "Triptofano",
@@ -443,7 +479,8 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo."
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "minAdulto110": 0.43
  },
  {
   "nutriente": "Valina",
@@ -454,6 +491,7 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo."
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "minAdulto110": 1.48
  }
 ]

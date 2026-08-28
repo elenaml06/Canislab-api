@@ -43,6 +43,77 @@ las tiene que tomar una persona, no yo.
       Viene de otro sitio y hay que traerla aquí antes de construir nada de
       la fase 4.
 
+- [ ] **El peso ideal a partir del BCS está calculado de DOS formas, y no
+      dan lo mismo.** (28 de agosto, encontrado montando la prueba de punta
+      a punta.) La misma cuenta vive en dos sitios:
+
+      | | 30 kg, BCS 7 | 45 kg, BCS 8 |
+      |---|---|---|
+      | `der.py` y `src/der.js` — **dividen** por `1 + desvío` | 25,00 | 34,62 |
+      | `verificar.peso_objetivo_desde_bcs` — **restan** el exceso | 24,00 | **31,50** |
+
+      **AAHA publica su propio ejemplo y dice 31,5** para el labrador de
+      45 kg con BCS 8. Así que la resta es la buena y la división está mal:
+      es la misma familia que el DER duplicado — dos cuentas de lo mismo,
+      cada una coherente consigo misma, dando perros distintos.
+
+      **Hoy no hace daño**, y por un motivo que también conviene saber: la
+      app manda SIEMPRE `peso_objetivo_kg`, así que el servidor coge el
+      peldaño `declarado` y nunca deriva nada del BCS. El desacuerdo está
+      puesto y apagado. El día que alguien mande `bcs` sin objetivo, las dos
+      mitades hablarán de perros con un 4 % de diferencia.
+
+      **Por qué no lo arreglo yo solo:** arreglar `der.py` cambia las kcal,
+      y las kcal son el contrato de los 85 casos de `der_casos.json` en los
+      dos repos. Hay que regenerar los esperados y copiar el archivo a los
+      dos, los dos commits o ninguno. Y hay que decidir antes si el ideal
+      del perro DELGADO (BCS < 5) también pasa a restarse — hoy la división
+      le sube el objetivo un 22 % y la resta no cubre ese lado.
+      Lo vigila `tests/de-punta-a-punta.spec.js` en `canislab-web`.
+
+- [ ] **Cuatro fichas que ha señalado la comprobación nueva del cociente.**
+      (28 de agosto.) Al añadir el nivel 2 —mirar la columna en vez de la
+      fila— salieron cuatro que ninguna comprobación anterior veía. **No son
+      errores probados: son fichas que hay que mirar en su fuente.** Yo no
+      puedo inventar el valor bueno.
+
+      | ficha | qué sale | cómo de sospechoso |
+      |---|---|---|
+      | **Pulmón de cordero** | Leu/Ile **2,537**, isoleucina al 3,16 % | Es la firma exacta del pavo contaminado del USDA. El más sospechoso |
+      | **Calamar** | valina = isoleucina, 0,680 | Los tres cefalópodos tienen Val = Ile exacto |
+      | **Pulpo** | valina = isoleucina, 0,651 | pero **NO son el mismo perfil reescalado** — sus AA/proteína difieren |
+      | **Sepia** | valina = isoleucina, 0,709 | así que puede ser real: en cefalópodos Val ≈ Ile. Hay que ver la fuente |
+
+      Los tres cefalópodos pueden ser un redondeo legítimo. El pulmón no lo
+      parece.
+
+- [ ] **El máximo de lisina de FEDIAF: ¿sobre qué proteína se mide?**
+      (28 de agosto, para el nutricionista.) La Tabla III-3b pone un solo
+      máximo a un aminoácido: **lisina 7,00 g/1000 kcal, y solo en
+      crecimiento**. Está bien transcrito — `auditar_fediaf.py` lo
+      comprueba contra el PDF.
+
+      Al encender los doce aminoácidos se midió qué pasaba con él:
+      **0 de 15 menús de cachorro caben debajo**, salen entre 8,79 y
+      12,12. No es que se pase alguno raro: es que ninguna ración BARF de
+      cachorro cabe. Y el motivo se ve en la ración: esos menús llevan
+      unos **134 g de proteína por 1000 kcal, y el mínimo de FEDIAF para
+      un cachorro son 50**. Una dieta de carne cruda tiene dos veces y
+      media la proteína de referencia, y la lisina va detrás.
+
+      **Mientras tanto ese techo NO se aplica** — es el único máximo de
+      FEDIAF que no se aplica en todo el sistema. El mínimo de lisina sí.
+      El dato se queda en la tabla: dejar de aplicar un número no es lo
+      mismo que decir que FEDIAF no lo pide. Lo vigila el BLOQUE 27 por
+      tres lados.
+
+      La pregunta es una sola: **¿el 7,00 se mide sobre la proteína de
+      referencia de la tabla, o sobre la del plato?**
+      · Si es lo primero, no aplicarlo es correcto y esto se cierra.
+      · Si es lo segundo, una dieta BARF de cachorro se pasa de lisina
+        **por definición**, y eso es una conversación mucho más grande
+        que este apartado.
+
 - [ ] **Límites por patología: confirmar los números.** Medido el 20 de
       agosto: los topes actuales son demasiado permisivos (cobre sale
       clavado en 3.0 con el mínimo en 2.08), pero los valores terapéuticos
@@ -60,6 +131,12 @@ las tiene que tomar una persona, no yo.
       del 28 sobre la parte para veterinarios. Ninguna se puede programar sin criterio
       veterinario, y la sexta ni siquiera se puede preguntar sin ser
       colegiado:
+
+- [ ] **Cinco preguntas de la revisión clínica.** Salieron del repaso del
+      25 de agosto y ninguna se puede programar sin criterio veterinario.
+      ⚠️ La nutricionista ya no es Michelle: es Chris. Las cinco van en
+      `Rawku_para_Chris.pdf` (28 de agosto), repartidas entre las
+      preguntas 5, 8 y 9:
 
       1. **¿Qué mínimo de proteína para un senior?** Hoy la app usa la
          columna de adulto de FEDIAF (52,10 g/1000 kcal). Shmalberg (DACVN)
@@ -108,7 +185,7 @@ las tiene que tomar una persona, no yo.
       exige a cualquier perro (2,08). Eso es correcto para esa hepatopatía
       -- pero la lista de la app tiene una sola opción, así que ahora
       también bloquea a un perro con otra enfermedad hepática que quizá sí
-      podría comer un menú normal. Si Michelle dice que merece la pena,
+      podría comer un menú normal. Si Chris dice que merece la pena,
       hay que partir la opción en dos. El tope de 2,4 mg ya está puesto en
       el código esperando ese día.
 
@@ -122,6 +199,16 @@ las tiene que tomar una persona, no yo.
 
 - [ ] **`EPA_DHA_total` se comprueba solo contra el EPA, sin sumarle el
       DHA.** Encontrado el 25 de agosto. El requisito se llama EPA+DHA y en
+
+- [x] **HECHO (25 agosto). `EPA_DHA_total` ya suma las dos claves.** Se
+      resolvió con claves DERIVADAS en `valor_nutriente` — el mismo
+      mecanismo que el 28 de agosto sirvió para `metionina_cistina` y
+      `fenilalanina_tirosina`. Comprobado: epa 0,5 + dha 0,3 = 0,8. Se
+      deja escrito el apunte porque la nota decía «hoy solo puede apuntar
+      a una clave», y eso ya no es verdad.
+
+      <s>`EPA_DHA_total` se comprueba solo contra el EPA, sin sumarle el
+      DHA.</s> Encontrado el 25 de agosto. El requisito se llama EPA+DHA y en
       `verificar.MAPA` apunta a la clave `epa` a secas, así que el DHA no
       cuenta. Va en la dirección segura (se exige más de lo que se pide) y
       hoy los menús lo cumplen de sobra igual -- medido, 145 mg/1000 kcal
@@ -155,7 +242,7 @@ las tiene que tomar una persona, no yo.
       ocho menús salió con «0,00 g de fibra» **porque le tocaron las coles
       de Bruselas**. Una verdura de verdad leída como si no llevara nada.
 
-- [ ] **¿Rawku apunta a algún rango de fibra? — para hablar con Michelle.**
+- [ ] **¿Rawku apunta a algún rango de fibra? — pregunta 7 del PDF de Chris.**
       Ni FEDIAF, ni AAFCO, ni el NRC dan un mínimo: la fibra no es un
       nutriente esencial y no tiene valor de referencia oficial. Así que
       no se puede poner un mínimo duro sin dejar sin menú a perros con
@@ -197,7 +284,7 @@ las tiene que tomar una persona, no yo.
       «moderado», y de que BARF va por debajo de la comida comercial, ~2,7
       % MS vs ~3,4 %), eso se implementa como un suelo BLANDO en el solver
       -- se intenta llegar, y si no se llega el menú sale igual. Es media
-      tarde de trabajo. Pero la cifra tiene que venir de Michelle: aquí no
+      tarde de trabajo. Pero la cifra tiene que venir de Chris: aquí no
       se inventan datos nutricionales.
 
       Fuentes que trajo ella: Schmidt et al. (2018) PLOS ONE
@@ -267,12 +354,84 @@ suelta al principio de todo. Eso apunta al presupuesto de segundos **por
 llamada** (`segundos_para`), no al global — y Render va más lento que la
 máquina de desarrollo, así que ahí se verá antes.
 
-**Por dónde seguir**: instrumentar `generar()` bajo carga artificial y
-mirar qué devuelve `_resolver_menu_v2_interno` cuando el menú 2 del perro
-base sale infactible. La pregunta concreta es si se está quedando sin su
-rodaja de tiempo o si es otra cosa. Y ojo con el corte: hoy, si el menú j
-del perro base falla **una vez**, se hace `break` y **toda la casa se
-queda con los menús que ya tenía** — no hay reintento de ningún tipo.
+**Medido y hecho a medias el 28 de agosto.** Reproducido por fin: el
+mismo caso, ocho tiradas seguidas, **falla 1 de cada 6** y las demás dan
+3/3. O sea que el menú 2 no es imposible — es que a veces esa tirada no
+cierra.
+
+Lo que se ha arreglado, y ninguna de las dos cosas relaja nada:
+
+- **Reintentar antes de rendirse.** El motor lleva aleatoriedad a
+  propósito (es lo que da variedad), así que la misma petición sale casi
+  siempre a la segunda. Ahora reintenta hasta dos veces mientras quede
+  tiempo para una ronda entera. Cada intento vuelve a pasar por
+  `_garantizar_verificado`, así que no puede colar un menú que no cumpla.
+- **Decirlo.** El corte por infactibilidad **no ponía**
+  `menus_pedidos_no_dados`: pedías 3, recibías 1, y no había ni una
+  palabra. Ahora sí, y el aviso distingue los dos motivos — decir «no
+  daba tiempo» cuando lo que pasó es que no había combinación manda a la
+  usuaria a esperar en vez de a soltar una restricción. Comprobados los
+  dos forzando cada camino.
+
+**Lo que sigue sin arreglar es la causa de fondo, y es el reloj.** La
+petición tarda **9-15 s de los 24** que tiene, con seis solves dentro (2
+perros x 3 menús). El reintento ayuda cuando el fallo es de aleatoriedad;
+cuando se acaba el tiempo, lo único que cambia es que ahora se dice. Y
+Render va más lento que la máquina de desarrollo, así que ahí se verá
+antes.
+
+**LA ARITMÉTICA, que nadie había hecho, y que lo cierra** (28 de agosto):
+
+```
+ronda 0:  primer menú de la base 12 s  +  amoldar al otro perro 4 s  = 16 s
+ronda 1:  menú 6 s + amoldar 4 s                                     = 10 s
+ronda 2:  otros                                                      = 10 s
+                                                   TOTAL 36 s   presupuesto 24
+```
+
+Con dos perros y tres menús **no cabe, nunca**. Y hay algo peor: si el
+primer menú gasta su rodaja entera (12 s), quedan 8 s y
+`hay_tiempo_para_otra_ronda()` pide 10 — así que corta **después de la
+primera ronda** y devuelve UNO. Por eso en aislado sale 3/3 (el primer
+menú tarda 3-4 s, no 12) y dentro de la batería sale 1/3. Render va más
+lento que la máquina de desarrollo, así que allí cae antes.
+
+No es un fallo intermitente: es que el presupuesto y las rodajas no
+cuadran entre sí, y solo se nota cuando el primer menú se acerca a su
+tope.
+
+**Lo que se exige mientras tanto**: el BLOQUE 11 ya no pide el número
+exacto de menús —pedía algo imposible—, pide el contrato que sí existe:
+que si salen menos, **venga el aviso** diciendo cuántos y por qué.
+Recortar se puede; recortar en silencio, no. El día que se arregle la
+capacidad, esa prueba vuelve a exigir el número exacto.
+
+**Por dónde seguir**: no es «por qué falla ese menú» — es que seis solves
+no caben con holgura en 24 s. Las salidas razonables son bajar el número
+de menús que se piden de una vez, resolverlos en varias peticiones, o
+darle a cada solve una rodaja de tiempo explícita en vez de que se la
+coman los primeros.
+
+### 1.0-bis El canario del BLOQUE 14 cantó: 0,99 g de salmón
+
+28 de agosto. Un perro de 1,5 kg con 200 kcal y cuatro especies excluidas
+recibió **0,99 g de salmón**, contra el suelo de 1,00 g de «esto se puede
+pesar». Es un pelo por debajo, pero el canario está para eso.
+
+**Dónde está el hueco:** el mínimo por alimento
+(`MINIMO_POR_CATEGORIA`) solo se aplica a los alimentos **forzados**. Un
+alimento que elige el solver por su cuenta solo pasa el filtro de
+`> 0.02` g de la salida, así que puede salir en cualquier cantidad. Lo
+que normalmente lo evita es que al solver no le compensa usar un alimento
+más para poner medio gramo — pero con los doce aminoácidos activados hay
+más restricciones que cerrar, y aparecen más de estos rellenos mínimos.
+
+**Ojo con el arreglo fácil**: quitar el alimento de la salida cambia el
+perfil del menú, y `_garantizar_verificado()` lo rechazaría con razón.
+Redondearlo hacia arriba añade nutriente, que es seguro para un mínimo
+pero puede romper un máximo. Lo correcto es un mínimo por alimento en el
+solver (semicontinuo, ligado a la binaria que ya existe), no un parche en
+la salida.
 
 ### 1.1 Nadie debería poder suscribirse dos veces
 Encontrado el 20 de agosto probando: se crearon **seis suscripciones
