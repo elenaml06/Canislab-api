@@ -224,6 +224,39 @@ Hace falta, antes de abrir el cobro:
   alguna otra suscripción viva. Hoy una cancelación de cualquiera de las
   seis dejaría a la persona sin premium teniendo cinco pagadas.
 
+### 1.1-bis `profiles` es una frontera de autorización y no está en el repo
+
+Apuntado el 28 de agosto, antes de que exista el rol de veterinario, para
+no descubrirlo cuando ya esté puesto.
+
+El plan de la fase de cuentas es un campo `rol` (`tutor` | `veterinario`)
+en `profiles`, del que colgará el modo clínico — el que puede bajar de los
+mínimos de FEDIAF porque lo prescribe un veterinario. **Eso no es un campo
+de perfil: es un permiso.** Y el front habla con Supabase con la clave
+`anon` más el JWT del usuario, así que PostgREST expone `profiles` para
+UPDATE a menos que una política RLS lo impida. Que la pantalla no pinte el
+campo no protege nada: es la misma clase de fallo que `guardarPerro`
+guardando en silencio — la capa de datos, no la pantalla.
+
+**Y esto no es solo futuro: `plan` ya vive en esa tabla.** Si hoy no hay
+política que lo impida, cualquiera con su propia sesión puede ponerse
+`plan = 'premium'` sin pagar. Hoy el front solo hace `select` sobre
+`profiles`, pero eso es lo que hace el front, no lo que permite la base.
+
+**No se puede comprobar desde el repo, y ese es medio problema**: en
+`canislab-web/supabase/` solo hay dos migraciones de columnas
+(`migracion-menus-perro-id.sql`, `migracion-peso-objetivo.sql`). Las
+políticas RLS viven únicamente en el panel de Supabase, así que **ninguna
+prueba del repo las ve y ningún cambio en ellas pasa por revisión**.
+
+Qué hacer, y en este orden:
+1. **La prueba antes que la política**: un usuario con rol `tutor`
+   intentando `update({rol: 'veterinario'})` sobre su propia fila tiene que
+   recibir 403. Y lo mismo con `plan: 'premium'`.
+2. Bajar las políticas a un `.sql` versionado, para que se puedan revisar
+   y volver a aplicar.
+3. Solo entonces, añadir la columna `rol`.
+
 ### 1.2 El tope de patología no se respeta ✅ **Hecho el 24 de agosto**
 
 Lo que decía este punto (fósforo renal a 1426 con el tope en 1400) ya
