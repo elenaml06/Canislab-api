@@ -7,7 +7,7 @@ El frontend vive en `elenaml06/canislab-web` (Vercel, rawku.app).
 
 ## Qué es esto
 
-Calcula raciones BARF para perros que cumplen los 30 requisitos de FEDIAF
+Calcula raciones BARF para perros que cumplen los 43 requisitos de FEDIAF
 de forma exacta (no aproximada), con programación lineal entera mixta.
 Decide qué alimentos usar y cuánto de cada uno a la vez.
 
@@ -22,7 +22,8 @@ con alguna, casi siempre el error está en el cambio.
 
 1. **Ningún menú sale sin verificar.** Todo camino que devuelva un menú
    pasa por `_garantizar_verificado()`, que lo comprueba de cero contra
-   los 30 requisitos + el ratio Ca:P + los límites de seguridad crónica.
+   los 41 nutrientes + el ratio Ca:P + el calcio de raza grande + los
+   límites de seguridad crónica.
    Si no está verde, **no se entrega**. Preferimos no dar menú a dar uno
    que no cumple. El BLOQUE 8 de las pruebas lo vigila.
 2. **Los límites de seguridad crónica** (vitamina D, yodo, selenio,
@@ -58,7 +59,7 @@ con alguna, casi siempre el error está en el cambio.
      pescado no es prohibir el pescado; para eso están las alergias.
    · Suplementos y Extras (sal, aceites, semillas, huevo) van siempre
      libres: no se eligen en ninguna pantalla y son la herramienta con la
-     que el motor cierra los 30 requisitos.
+     que el motor cierra los 43 requisitos.
    Y si con lo elegido no hay menú posible, se baja de peldaño y **se
    dice** — nunca se cambia en silencio. Eso incluye la pantalla de varios
    perros, que tenía esos avisos puestos a `null` a mano.
@@ -74,7 +75,7 @@ jubilado — que desde fuera se parecen mucho.
 
 | Archivo | Qué hace |
 |---|---|
-| `motor_completo.py` | **El corazón.** `resolver()` monta el problema MILP y lo resuelve: los 29 nutrientes, el ratio Ca:P y los topes de seguridad como restricciones simultáneas. Aquí viven también `PATOLOGIAS` y `topes_de_patologias()` |
+| `motor_completo.py` | **El corazón.** `resolver()` monta el problema MILP y lo resuelve: los 41 nutrientes (los 12 aminoácidos entre ellos desde el 28 de agosto), el ratio Ca:P y los topes de seguridad como restricciones simultáneas. Aquí viven también `PATOLOGIAS` y `topes_de_patologias()` |
 | `verificar.py` | El semáforo. `MAPA` es **la** lista de requisitos, la única, compartida con el solver y con el analizador. Y `suplementar()`, que cierra huecos |
 | `seguridad.py` | Los cinco topes crónicos y los avisos. Cada cifra con su fuente escrita al lado |
 | `constructor.py` | Proporciones BARF de partida y `valor_nutriente()` (las claves derivadas, como `epa_dha`) |
@@ -87,7 +88,7 @@ jubilado — que desde fuera se parecen mucho.
 | Archivo | Qué hace |
 |---|---|
 | `main.py` | FastAPI: todos los endpoints, el presupuesto semanal de seguridad crónica y `_garantizar_verificado()`, por donde pasa **todo** menú antes de salir |
-| `requerimientos_v2_final.json` | Los requisitos de FEDIAF. **43 filas** desde el 26 de agosto: los 29 nutrientes que el motor verifica, el ratio Ca:P, el calcio de raza grande, y **los 12 aminoácidos esenciales, que están puestos y auditados pero TODAVÍA NO SE VERIFICAN** — ver abajo |
+| `requerimientos_v2_final.json` | Los requisitos de FEDIAF. **43 filas, y desde el 28 de agosto se verifican las 43**: los 41 nutrientes de la Tabla III-3b (los 12 aminoácidos incluidos), el ratio Ca:P y el calcio de raza grande. Con **una** excepción escrita y probada: el techo de lisina — ver abajo |
 | `requisitos.py` | Cargar la tabla de FEDIAF, resolver la etapa y la dosis máxima que marca el fabricante de cada suplemento. Era `optimizador.py`, 1.124 líneas donde esto convivía con el motor anterior al MILP y con una copia desincronizada de la tabla de patologías. El motor viejo se borró el 26 de agosto; quedan 121 líneas |
 | `der.py` | Cálculo de las kcal. ⚠️ Ver «la duplicación que hay que vigilar», abajo |
 | `analizador.py` | `/analizar`: la dieta que ya le da el dueño. Comparte `MAPA` con el semáforo a propósito — discreparon una vez por la fibra |
@@ -118,46 +119,96 @@ menús malos porque `_garantizar_verificado()` los habría rechazado — que es
 otra forma de decir que ese camino construía menús que el filtro final iba
 a tirar. El BLOQUE 24 vigila que no vuelva.
 
-### Los 12 aminoácidos: puestos, auditados y sin activar
+### Los 12 aminoácidos: encendidos el 28 de agosto, con una excepción
 
-La Tabla III-3b de FEDIAF pide **41 nutrientes** para el perro y el motor
-verifica **29**. Lo que falta son los doce aminoácidos esenciales, que
-están en la tabla desde siempre, entre `Protein` y `Fat`. La transcripción
-de `auditar_fediaf.py` se los había saltado, así que la auditoría decía que
-cubríamos la tabla entera cuando cubríamos siete de cada diez filas.
+La Tabla III-3b de FEDIAF pide **41 nutrientes** para el perro. Desde el 28
+de agosto el motor los verifica **los 41**, y con el ratio Ca:P y el calcio
+de raza grande son **las 43 filas de la tabla, completas**.
 
-Desde el 26 de agosto están en `requerimientos_v2_final.json` con sus 48
-valores, y la auditoría los comprueba contra el PDF: **232 comprobaciones,
-0 discrepancias**, frente a las 161 de antes.
+Los doce aminoácidos esenciales estuvieron dos días puestos en la tabla y
+apagados en el motor, y merece la pena saber por qué, porque el motivo
+cambió de forma por el camino:
 
-**Pero no están en `verificar.MAPA`, y eso es a propósito.** El motivo
-cambió el 28 de agosto, y el nuevo es peor de ver que el viejo.
-
-**Antes**: ninguna de las fichas traía aminoácidos — y no es que faltara el
+**Al principio**, ninguna ficha traía aminoácidos — y no es que faltara el
 dato, es que **las doce claves no existían en el diccionario**, la tercera
-forma que tiene un hueco de esconderse. Medido activando solo la lisina, la
-app dejaba de dar menús: cada alimento cuenta como cero y el mínimo se
-vuelve inalcanzable. Un fallo ruidoso.
+forma que tiene un hueco de esconderse. Activando solo la lisina, la app
+dejaba de dar menús: cada alimento cuenta como cero y el mínimo se vuelve
+inalcanzable. Un fallo ruidoso.
 
-**Desde el 28 de agosto**, 49 de las 159 fichas traen su aminograma y las
-otras 110 lo declaran como hueco en `sin_dato`. Y con eso el fallo deja de
-ser ruidoso. Un alimento sin aminograma no cuenta como «no lo sé»: cuenta
-como **cero**. Activarlos ahora ya no dejaría a nadie sin menú — empujaría
-al motor **lejos** de los alimentos sin dato, y el menú saldría **verde**,
-porque el semáforo mide el mismo cero. Medido, los que no lo tienen son los
-que no se pueden perder: **el hueso carnoso entero (10 de 10)**, que es el
-20-60 % de la ración y de donde sale el calcio, y **15 de los 20 pescados**.
+**Con 49 fichas cargadas** el fallo cambió de forma y dejó de verse. Un
+alimento sin aminograma no cuenta como «no lo sé»: cuenta como **cero**.
+Ya no bloqueaba: **desplazaba**. El motor se habría ido lejos del hueso
+carnoso (10 de 10 sin dato entonces) y el menú habría salido **verde**,
+porque el semáforo mide el mismo cero.
 
-Así que la condición para encenderlos ya no es un juicio, es una regla que
-se comprueba sola: **el día que ningún alimento con proteína de verdad
-(≥ 3 g/100 g) se quede sin aminograma, la batería pide que se activen.**
-Hasta entonces pide que no. Por debajo de 3 g el aminograma no mueve una
-ración cárnica — la manzana tiene 0,3 y la zanahoria 0,37.
+**Se encienden con 94 fichas** porque las tres cosas que hacían falta están
+medidas, no supuestas:
 
-Lo vigila el **BLOQUE 27**, que salta por los tres lados: si alguien borra
-las filas de la tabla, si alguien las activa faltando aminogramas, y si una
-carga pisa los 49 que ya hay. `auditar_catalogo.py` lista quién los tiene y
+- De un menú real, solo el **1,0 %** de la proteína viene de alimentos sin
+  aminograma. Nueve de los diez huesos carnosos ya lo tienen.
+- El aminoácido más justo se queda en **×2,12** de su mínimo (la metionina);
+  el resto entre ×2,26 y ×5,02. Una ración de carne va sobrada.
+- Con ellos puestos salen **20 de 20** menús, el hueso sigue en los 20 y su
+  mediana sube de 207 a 216 g. En 51 casos con patologías y alergias, la
+  mediana de resolver son **2,1 s** y lo peor 4,8 — lejos de los 30 de Render.
+
+Que casi nunca aprieten no los hace inútiles: existen para el menú que **no**
+es el de todos los días — una dieta muy restringida, una patología que
+aprieta, un menú editado a la baja. Ahí es donde un aminoácido se queda
+corto, y hasta el 28 de agosto nada lo habría visto.
+
+**`metionina_cistina` y `fenilalanina_tirosina` no son claves de los
+alimentos**: son sumas que calcula `valor_nutriente`, como `epa_dha`. FEDIAF
+pide los cuatro requisitos —el aminoácido solo y la suma con su pareja—
+porque la cistina se fabrica a partir de la metionina y la tirosina a partir
+de la fenilalanina, así que la pareja ahorra al esencial.
+
+#### La excepción: el techo de lisina no se aplica
+
+FEDIAF pone **un solo máximo a un aminoácido**: lisina 7,00 g/1000 kcal, y
+solo en crecimiento. Está bien transcrito. Y medido, **0 de 15 menús de
+cachorro caben debajo** — salen entre 8,79 y 12,12. No es que se pase alguno
+raro: es que ninguna ración BARF de cachorro cabe, porque lleva unos 134 g
+de proteína por 1000 kcal contra un mínimo de 50, y la lisina va detrás de
+la proteína.
+
+Aplicarlo dejaría a todos los cachorros sin menú. No aplicarlo es dejar de
+comprobar un máximo de FEDIAF. Las dos cosas son malas, así que **no se
+decide a escondidas**: la excepción vive en `verificar.MAXIMOS_NO_APLICADOS`
+—una sola lista, que leen el solver y el semáforo por `maximo_de()`, para que
+no puedan discrepar—, está escrita con la medición al lado, y la pregunta
+para el nutricionista está en `PENDIENTE.md` §0: **¿el 7,00 se mide sobre la
+proteína de la tabla o sobre la del plato?**
+
+El **mínimo** de lisina sí se aplica. Lo único que se quita es el techo, y
+el dato se queda en la tabla: dejar de aplicar un número no es lo mismo que
+decir que FEDIAF no lo pide.
+
+#### Lo que vigila el BLOQUE 27
+
+Que las filas sigan en la tabla con sus valores. Que los doce sigan en
+`MAPA` —sacarlos vuelve a dejar la tabla cubierta a 30 de 43 y en verde—.
+Que las dos sumas sumen de verdad. Que la proteína que viene de alimentos
+sin aminograma no pase del **5 %** de un menú real (era el 1,0 %) — medido
+sobre el plato y no contando fichas, porque lo que importa no es cuántos
+alimentos no lo tienen, sino cuánto pesan. Que no se pierdan los 94
+aminogramas. Y las tres del techo de lisina: que siga siendo el único
+máximo no aplicado, que el mínimo apriete, y que la fila no se borre.
+
+**Faltan 16 aminogramas**, y once son suplementos: solo los desbloquea una
+etiqueta. La laringe de vacuno se deja vacía **a propósito** — es cartílago,
+y el colágeno no tiene triptófano ni cistina; pasarle el aminograma del
+músculo lo inventaría entero. `auditar_catalogo.py` lista quién los tiene y
 quién no, por categoría — el total no dice nada, la categoría sí.
+
+**Y una trampa de unidades que casi entra**: el segundo envío de aminogramas
+traía el **triptófano en miligramos** y los otros once en gramos. Cargado tal
+cual, el triptófano habría salido mil veces más alto y su mínimo no habría
+apretado nunca, en silencio. Lo cazó la comprobación de coherencia: los doce
+son una **fracción de la proteína**, así que su suma tiene que caer entre el
+25 % y el 85 % de ella. Con el triptófano en mg se salían las 45 filas; en
+gramos, ninguna. **Esa comprobación se corre antes de cargar cualquier
+aminograma.**
 
 ### La duplicación que hay que vigilar
 
@@ -203,7 +254,7 @@ se deshicieron unos cambios de datos del 21 de agosto.
 ### Los datos
 
 **`UNIDADES.md` es lo primero que hay que leer antes de tocar el catálogo**:
-en qué unidad va cada uno de los 29 nutrientes, sobre qué base (100 g de
+en qué unidad va cada uno de los 41 nutrientes, sobre qué base (100 g de
 alimento tal cual se da) y las cuatro trampas que se cuelan siempre. La
 peor, la primera del documento: `linoleico` es **omega-6** y `linolenico`
 es **omega-3**. Se diferencian en una letra, son cosas opuestas, y si se
@@ -305,7 +356,7 @@ leía siete campos con nombres que en la app no existen
 (`perfil.fechaNacimiento` cuando se llama `dia`/`mesIdx`/`anio`…), así que
 la fecha de nacimiento, la esterilización, la actividad y el tamaño se
 guardaban vacíos **en silencio**. Y de la fecha sale la etapa, y de la
-etapa los 30 requisitos: un perro de diez años volvía como cachorro.
+etapa los 43 requisitos: un perro de diez años volvía como cachorro.
 
 Contra eso hay tres cosas, y las tres hay que mantenerlas:
 

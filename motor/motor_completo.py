@@ -31,7 +31,7 @@ import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 from scipy.optimize import milp, LinearConstraint, Bounds
-from verificar import MAPA, _num, EQUIVALENCIA
+from verificar import MAPA, _num, EQUIVALENCIA, maximo_de
 from constructor import valor_nutriente, valor_plausible_de
 
 # ⚠️ AÑADIDO (5 agosto, noche): copia local de especie_de() (la misma
@@ -831,7 +831,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         mn = _num(r.get(f"min{et}"))
         if clave in minimos_reforzados:
             mn = minimos_reforzados[clave] if mn is None else max(mn, minimos_reforzados[clave])
-        mx = _num(r.get(f"max{et}")) or _num(r.get("maxAdulto"))
+        mx = maximo_de(r, nombre_req, et)
         if clave in topes_patologia:
             mx = topes_patologia[clave] if mx is None else min(mx, topes_patologia[clave])
         if clave in TOPE_CRONICO_KCAL:

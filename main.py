@@ -3166,7 +3166,7 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "ff2a87aa4ef1081b",   # 28 ago: LOS AMINOGRAMAS. 49 de las 159 fichas traen ya los 12 aminoacidos esenciales, y las otras 110 los declaran como hueco en `sin_dato` -- antes la clave no existia siquiera, que es la tercera forma que tiene un hueco de esconderse (BLOQUE 29). Los 12 requisitos siguen SIN estar en verificar.MAPA: falta el aminograma de los 10 huesos carnosos y de 15 de los 20 pescados, y sin dato cuentan como CERO, o sea que el motor los evitaria. Ver el BLOQUE 27
+        "alimentos_v3_final.json":      "f82b1857fe69e0f5",   # 28 ago: LOS AMINOGRAMAS, y con ellos los 12 requisitos ENCENDIDOS. 94 de las 159 fichas los traen; de un menu real solo el 1,0% de la proteina viene de alimentos sin aminograma, y el aminoacido mas justo se queda en x2,12 de su minimo. El triptofano del segundo envio venia en MILIGRAMOS y los otros once en gramos: cargado tal cual, su minimo no habria apretado nunca. Ver el BLOQUE 27
         "requerimientos_v2_final.json": "9eb5b660a3c725d0",   # 26 ago: los 12 aminoácidos esenciales de la Tabla III-3b, con sus mínimos y el máximo de lisina en crecimiento. Están en el JSON pero NO en verificar.MAPA todavía: ningún alimento del catálogo trae el dato, así que activarlos hoy dejaría al motor sin menús. Ver el BLOQUE 27
     }
     SELLOS_CRUDOS = {

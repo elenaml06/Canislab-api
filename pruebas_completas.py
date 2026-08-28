@@ -2780,6 +2780,7 @@ _AA_B27 = ["Arginina", "Histidina", "Isoleucina", "Leucina", "Lisina", "Metionin
            "Metionina_cistina", "Fenilalanina", "Fenilalanina_tirosina", "Treonina",
            "Triptofano", "Valina"]
 _req_b27 = {r["nutriente"]: r for r in _api.cargar_v2()[1].values()}
+from verificar import MAXIMOS_NO_APLICADOS as _MAXIMOS_NO_APLICADOS_b27
 
 for _aa in _AA_B27:
     _r27 = _req_b27.get(_aa)
@@ -2805,42 +2806,33 @@ for _campo, _esp in (("maxCachorroJoven", 7.0), ("maxCachorroCrecimiento", 7.0))
                       f"FEDIAF da {_esp} g/1000 kcal ('Growth: 7.00'). Es el único aminoácido "
                       f"con máximo.")
 
-# Y AHORA LA OTRA MITAD: cuándo se pueden activar.
+# Y AHORA LA OTRA MITAD: que sigan encendidos y que el hueco no crezca.
 #
-# ⚠️ REESCRITO (28 agosto) — YA HAY DATO, Y AUN ASÍ NO SE ACTIVAN.
+# ⚠️ ACTIVADOS EL 28 DE AGOSTO. Hasta esa mañana este bloque vigilaba un
+# estado intermedio -- los doce en la tabla y fuera de MAPA -- porque
+# ninguna ficha traía aminograma. Ese estado se acabó: 94 de las 159 lo
+# traen, y las tres cosas que hacían falta están MEDIDAS, no supuestas:
 #
-# Hasta hoy la condición era "ningún alimento trae aminoácidos", y con eso
-# bastaba: activarlos dejaba a la app sin dar un solo menú, que es un fallo
-# ruidoso y se ve enseguida. Hoy 49 de las 159 fichas ya traen su
-# aminograma, y la condición se vuelve la otra, la que no se ve.
+#   · De un menú real, solo el 1,0 % de la proteína viene de alimentos sin
+#     aminograma. Nueve de los diez huesos carnosos ya lo tienen, y el
+#     hueso es el 20-60 % de la ración.
+#   · El aminoácido más justo se queda en x2,12 de su mínimo (la
+#     metionina); el resto entre x2,26 y x5,02.
+#   · Con ellos puestos salen 20 de 20 menús, el hueso sigue en los 20 y
+#     su mediana sube de 207 a 216 g. Y en 51 casos con patologías y
+#     alergias, la mediana de resolver son 2,1 s y lo peor 4,8 s -- lejos
+#     de los 30 s de Render.
 #
-# Un alimento sin aminograma no cuenta como "no lo sé": cuenta como CERO.
-# Así que activarlos ahora no dejaría a nadie sin menú -- empujaría al
-# motor LEJOS de los alimentos sin dato y hacia los que lo tienen, para
-# llegar al mínimo. Y medido, los que no lo tienen son justo los que no se
-# pueden perder:
-#
-#     hueso carnoso        10 de 10 sin aminograma
-#     pescados y mariscos  15 de 20
-#     carne muscular        8 de 26
-#     vísceras              3 de 9
-#     hígado                2 de 6
-#
-# El hueso carnoso es el 20-60% de la ración y es de donde sale el calcio.
-# Con los doce mínimos activos y los diez huesos contando como cero de
-# lisina, el motor los evitaría, y el menú saldría VERDE -- porque el
-# semáforo mediría el mismo cero. Un sesgo que no da error y que no se ve
-# desde la app.
-#
-# Así que la condición para encenderlos es esta, y se comprueba sola: que
-# NINGÚN alimento con proteína de verdad se quede sin aminograma. Por
-# debajo de 3 g de proteína por 100 g el aminograma no mueve una ración
-# cárnica (la manzana tiene 0,3 y la zanahoria 0,37), así que esos no
-# cuentan. El día que la lista de abajo se quede vacía, esta prueba pide
-# que se activen -- y hasta entonces, pide que NO se activen.
+# Lo que vigila ahora son las dos formas de deshacerlo sin querer:
+#   · Que alguien los saque de MAPA. Volveríamos a decir que cubrimos la
+#     tabla de FEDIAF cubriendo 30 de 43 filas.
+#   · Que una carga meta alimentos SIN aminograma y el hueco crezca. Un
+#     alimento sin dato cuenta como CERO, así que si mañana entra un
+#     hueso carnoso sin aminograma y el motor lo usa, el menú saldrá
+#     verde con menos lisina de la que dice. Eso no se ve, y por eso se
+#     mide sobre un menú de verdad y no contando fichas.
 _AA_CLAVES_B27 = ["arginina", "histidina", "isoleucina", "leucina", "lisina", "metionina",
                   "cistina", "fenilalanina", "tirosina", "treonina", "triptofano", "valina"]
-_PROTEINA_QUE_CUENTA_B27 = 3.0
 
 def _sin_aminograma_b27(_a):
     """Le falta el aminograma: o está declarado como hueco, o la clave no
@@ -2849,40 +2841,109 @@ def _sin_aminograma_b27(_a):
     _nut = _a.get("nutrientes", {})
     return any(_k in _huecos or _k not in _nut for _k in _AA_CLAVES_B27)
 
-_faltan_b27 = sorted(_a["nombre"] for _a in _al21.values()
-                     if (_a.get("nutrientes", {}).get("proteina") or 0) >= _PROTEINA_QUE_CUENTA_B27
-                     and _sin_aminograma_b27(_a))
-_con_dato_b27 = sum(1 for _a in _al21.values() if not _sin_aminograma_b27(_a))
 _en_mapa_b27 = [a for a in _AA_B27 if a in _MAPA_SEMAFORO_b18]
+_fuera_b27 = [a for a in _AA_B27 if a not in _MAPA_SEMAFORO_b18]
+if _fuera_b27:
+    fallos.append(
+        f"BLOQUE27: estos aminoácidos han salido de verificar.MAPA: {_fuera_b27}. Se activaron "
+        f"el 28 de agosto con el catálogo medido; sacarlos vuelve a dejar la tabla de FEDIAF "
+        f"cubierta a 30 de 43 filas, y sin que nadie se entere porque el semáforo seguiría "
+        f"saliendo verde.")
 
-if _faltan_b27 and _en_mapa_b27:
-    _por_cat_b27 = {}
-    for _n in _faltan_b27:
-        _c = _al21[_n].get("categoria", "?")
-        _por_cat_b27[_c] = _por_cat_b27.get(_c, 0) + 1
+# Y las dos SUMAS tienen que sumar de verdad, no leerse como una clave que
+# no existe (que daría 0 y el mínimo sería inalcanzable).
+_nut_prueba_b27 = {"metionina": 0.5, "cistina": 0.2, "fenilalanina": 0.8, "tirosina": 0.6}
+for _clave, _esp in (("metionina_cistina", 0.7), ("fenilalanina_tirosina", 1.4)):
+    _v = _valor_b21(_nut_prueba_b27, _clave)
+    if abs(_v - _esp) > 1e-9:
+        fallos.append(
+            f"BLOQUE27: `valor_nutriente` da {_v} para '{_clave}' y tendría que dar {_esp}. "
+            f"FEDIAF pide el aminoácido solo Y la suma con su pareja, y la suma no es una "
+            f"clave de los alimentos: si no está en NUTRIENTES_COMPUESTOS se lee como 0 y el "
+            f"mínimo se vuelve inalcanzable.")
+
+# El hueco, medido sobre un menú DE VERDAD y no contando fichas: lo que
+# importa no es cuántos alimentos no tienen aminograma, sino cuánta
+# proteína del plato viene de ellos.
+_TOPE_HUECO_B27 = 0.05
+import random as _rnd_b27
+_rnd_b27.seed(1)
+_ok_b27, _g_b27 = resolver(1200.0, "Adulto", al, req, 25.0, dosis_maxima_fabricante,
+                           margenes_categoria=MARGENES, max_suplementos=2, time_limit=20)
+if not _ok_b27:
     fallos.append(
-        f"BLOQUE27: los aminoácidos {_en_mapa_b27} están en verificar.MAPA, pero {len(_faltan_b27)} "
-        f"alimentos con proteína de verdad NO traen aminograma: {_por_cat_b27}. Cada uno cuenta "
-        f"como CERO, así que el motor los evitaría para llegar al mínimo -- y el menú saldría "
-        f"verde igual, porque el semáforo mide el mismo cero. Si el hueso carnoso está en esa "
-        f"lista, se está empujando fuera al 20-60% de la ración. Primero el dato, después el "
-        f"requisito.")
-if not _faltan_b27 and not _en_mapa_b27:
+        "BLOQUE27: no sale menú para un adulto de 25 kg con los aminoácidos activados. Eran "
+        "20 de 20 el 28 de agosto.")
+else:
+    _prot_total_b27 = sum((al[_n]["nutrientes"].get("proteina") or 0) / 100 * _v
+                          for _n, _v in _g_b27.items())
+    _prot_ciega_b27 = sum((al[_n]["nutrientes"].get("proteina") or 0) / 100 * _v
+                          for _n, _v in _g_b27.items() if _sin_aminograma_b27(al[_n]))
+    _frac_b27 = _prot_ciega_b27 / _prot_total_b27 if _prot_total_b27 else 0
+    if _frac_b27 > _TOPE_HUECO_B27:
+        _quienes_b27 = sorted(_n for _n in _g_b27 if _sin_aminograma_b27(al[_n])
+                              and (al[_n]["nutrientes"].get("proteina") or 0) > 0)
+        fallos.append(
+            f"BLOQUE27: el {_frac_b27*100:.1f} % de la proteína de un menú viene de alimentos SIN "
+            f"aminograma ({_quienes_b27}), y el tope es el {_TOPE_HUECO_B27*100:.0f} %. Eran el "
+            f"1,0 % cuando se activaron los doce requisitos. Un alimento sin aminograma cuenta "
+            f"como CERO: cuanta más proteína venga de ahí, más se aleja el menú de lo que dice "
+            f"el semáforo, y en verde.")
+
+# ⚠️ EL ÚNICO MÁXIMO DE FEDIAF QUE NO SE APLICA, Y ESTO LO VIGILA.
+#
+# La Tabla III-3b pone un solo máximo a un aminoácido: lisina 7,00 g/1000
+# kcal, solo en crecimiento. Está bien transcrito (lo comprueba
+# auditar_fediaf.py contra el PDF) y NO se aplica, porque medido, 0 de 15
+# menús de cachorro caben debajo -- salen entre 8,79 y 12,12. Esos mismos
+# menús llevan ~134 g de proteína por 1000 kcal contra un mínimo de 50: una
+# ración de carne cruda tiene dos veces y media la proteína de referencia y
+# la lisina va detrás. Aplicarlo dejaría a TODOS los cachorros sin menú.
+#
+# Es una excepción incómoda, así que se vigila por los tres lados:
+#   · que siga siendo la ÚNICA. Si mañana alguien mete otro máximo ahí para
+#     que le salga un menú, eso ya no es una excepción documentada, es
+#     relajar la nutrición -- y la regla 3 del CLAUDE.md dice que lo que se
+#     relaja es la FORMA, nunca la nutrición.
+#   · que el MÍNIMO de lisina sí se aplique. Es lo único que se quita: el
+#     techo. Quitar el suelo sería otra cosa completamente distinta.
+#   · que la fila siga en la tabla con su 7,00. No se borra el dato: se
+#     deja de aplicar, que no es lo mismo. Si se borrara, la auditoría
+#     contra el PDF dejaría de cuadrar y perderíamos la pregunta.
+if _MAXIMOS_NO_APLICADOS_b27 != {"Lisina"}:
     fallos.append(
-        f"BLOQUE27: ya NO falta el aminograma de ningún alimento con proteína (>= "
-        f"{_PROTEINA_QUE_CUENTA_B27} g/100 g), y los 12 requisitos siguen sin estar en "
-        f"verificar.MAPA. Era la condición para activarlos: toca meterlos, medir que siguen "
-        f"saliendo menús y actualizar este bloque. Lo que no puede quedarse es a medias y en "
-        f"silencio, que es como la fila de la fibra estuvo meses diciendo que faltaba algo que "
-        f"nadie exigía.")
-# Y que no se pierda lo que YA hay: 49 fichas traen aminograma desde el 28
-# de agosto, y son las que hacen falta para poder medir si activarlos es
-# viable. Si el número baja, es que una carga las ha pisado.
-if _con_dato_b27 < 49:
+        f"BLOQUE27: `verificar.MAXIMOS_NO_APLICADOS` es {_MAXIMOS_NO_APLICADOS_b27} y tiene que "
+        f"ser solo {{'Lisina'}}. Ahí solo puede haber máximos de FEDIAF que se hayan medido y "
+        f"escrito uno a uno. Meter otro para que salga un menú es relajar la nutrición, y eso "
+        f"no se hace nunca -- lo que se relaja es la forma (regla 3 del CLAUDE.md).")
+
+_lis_max_b27 = _req_b27.get("Lisina", {}).get("maxCachorroCrecimiento")
+if str(_lis_max_b27) in ("-", "", "None"):
     fallos.append(
-        f"BLOQUE27: solo {_con_dato_b27} fichas traen aminograma, y el 28 de agosto eran 49. "
-        f"Alguna carga las ha pisado -- sin ellas no se puede ni medir si los doce requisitos "
-        f"se pueden activar.")
+        "BLOQUE27: se ha borrado el máximo de lisina de la tabla. No se aplica, pero el dato se "
+        "queda: dejar de aplicar un número no es lo mismo que decir que FEDIAF no lo pide. Si se "
+        "borra, la auditoría contra el PDF deja de cuadrar y se pierde la pregunta abierta.")
+
+# Y el mínimo de lisina SÍ tiene que apretar: un menú a la mitad del mínimo
+# tiene que salir rojo. Es lo que separa "quitamos el techo" de "quitamos
+# el requisito".
+_g_lis_b27 = {"Aceite de oliva": 100.0}
+if "Aceite de oliva" in al:
+    _f_lis_b27 = verificar(_g_lis_b27, al, req, 884.0, "CachorroCrecimiento")
+    if not any(x["clave"] == "lisina" for x in _f_lis_b27["rojos"] + _f_lis_b27["ambar"]):
+        fallos.append(
+            "BLOQUE27: un menú de 100 g de aceite de oliva (0 g de proteína) NO sale marcado por "
+            "la lisina. El mínimo de lisina tiene que seguir aplicándose -- lo único que se quitó "
+            "es el techo.")
+
+# Y que no se pierda lo que ya hay: 94 fichas traen aminograma desde el 28
+# de agosto. Si el número baja, es que una carga las ha pisado.
+_con_dato_b27 = sum(1 for _a in _al21.values() if not _sin_aminograma_b27(_a))
+if _con_dato_b27 < 94:
+    fallos.append(
+        f"BLOQUE27: solo {_con_dato_b27} fichas traen aminograma, y el 28 de agosto eran 94. "
+        f"Alguna carga las ha pisado -- y con los doce requisitos ya activos, cada ficha que se "
+        f"pierde es proteína que cuenta como cero.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

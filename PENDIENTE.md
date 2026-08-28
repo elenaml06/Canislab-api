@@ -14,6 +14,33 @@ veces a alguien duele más que no tener login con Google.
 Estas bloquean cosas de abajo. Ninguna lleva más de unos minutos, pero
 las tiene que tomar una persona, no yo.
 
+- [ ] **El máximo de lisina de FEDIAF: ¿sobre qué proteína se mide?**
+      (28 de agosto, para el nutricionista.) La Tabla III-3b pone un solo
+      máximo a un aminoácido: **lisina 7,00 g/1000 kcal, y solo en
+      crecimiento**. Está bien transcrito — `auditar_fediaf.py` lo
+      comprueba contra el PDF.
+
+      Al encender los doce aminoácidos se midió qué pasaba con él:
+      **0 de 15 menús de cachorro caben debajo**, salen entre 8,79 y
+      12,12. No es que se pase alguno raro: es que ninguna ración BARF de
+      cachorro cabe. Y el motivo se ve en la ración: esos menús llevan
+      unos **134 g de proteína por 1000 kcal, y el mínimo de FEDIAF para
+      un cachorro son 50**. Una dieta de carne cruda tiene dos veces y
+      media la proteína de referencia, y la lisina va detrás.
+
+      **Mientras tanto ese techo NO se aplica** — es el único máximo de
+      FEDIAF que no se aplica en todo el sistema. El mínimo de lisina sí.
+      El dato se queda en la tabla: dejar de aplicar un número no es lo
+      mismo que decir que FEDIAF no lo pide. Lo vigila el BLOQUE 27 por
+      tres lados.
+
+      La pregunta es una sola: **¿el 7,00 se mide sobre la proteína de
+      referencia de la tabla, o sobre la del plato?**
+      · Si es lo primero, no aplicarlo es correcto y esto se cierra.
+      · Si es lo segundo, una dieta BARF de cachorro se pasa de lisina
+        **por definición**, y eso es una conversación mucho más grande
+        que este apartado.
+
 - [ ] **Límites por patología: confirmar los números.** Medido el 20 de
       agosto: los topes actuales son demasiado permisivos (cobre sale
       clavado en 3.0 con el mínimo en 2.08), pero los valores terapéuticos

@@ -27,7 +27,78 @@ MAPA = {
     # a secas hasta el 25 de agosto -- el requisito se llamaba EPA+DHA y
     # comprobaba solo la mitad. Ver el comentario largo de allí.
     "EPA_DHA_total": "epa_dha",
+    # ⚠️ LOS DOCE AMINOÁCIDOS ESENCIALES — ACTIVADOS EL 28 DE AGOSTO.
+    #
+    # Estaban en requerimientos_v2_final.json desde el 26 de agosto y fuera
+    # de aquí a propósito: ninguna ficha del catálogo traía el dato, y un
+    # alimento sin aminograma no cuenta como "no lo sé", cuenta como CERO.
+    # Con los 159 a cero, el mínimo era inalcanzable y no salía ni un menú.
+    # Cargados los primeros 49, el fallo cambiaba de forma y dejaba de
+    # verse: ya no bloqueaba, DESPLAZABA -- el motor se iría hacia los que
+    # tuvieran dato, y el menú saldría verde porque el semáforo mide el
+    # mismo cero.
+    #
+    # Se encienden ahora porque las tres cosas que hacían falta están
+    # medidas, no supuestas:
+    #   · 94 de las 159 fichas traen aminograma, y de un menú REAL solo el
+    #     1,0 % de la proteína viene de alimentos sin él. Nueve de los diez
+    #     huesos carnosos lo tienen -- era el que más pesaba, el 20-60 % de
+    #     la ración.
+    #   · El aminoácido más justo se queda en x2,12 de su mínimo (la
+    #     metionina); el resto entre x2,26 y x5,02. Una ración de carne va
+    #     sobrada, así que estos doce mínimos casi nunca van a apretar.
+    #   · Con ellos puestos salen 20 de 20 menús, el hueso carnoso sigue en
+    #     los 20 y su mediana sube de 207 a 216 g.
+    #
+    # Que casi nunca aprieten no los hace inútiles: existen para el menú que
+    # NO es el de todos los días -- una dieta muy restringida por alergias,
+    # una patología que aprieta, un menú que el usuario edita a la baja.
+    # Ahí es donde un aminoácido se puede quedar corto, y hasta hoy nada lo
+    # habría visto.
+    #
+    # ⚠️ "metionina_cistina" y "fenilalanina_tirosina" NO son claves de los
+    # alimentos: son SUMAS que calcula `valor_nutriente` (constructor.py),
+    # igual que "epa_dha". FEDIAF pide los cuatro requisitos -- el
+    # aminoácido solo Y la suma con su pareja -- porque la cistina se
+    # fabrica a partir de la metionina y la tirosina a partir de la
+    # fenilalanina, así que la pareja ahorra al esencial.
+    "Arginina": "arginina", "Histidina": "histidina",
+    "Isoleucina": "isoleucina", "Leucina": "leucina", "Lisina": "lisina",
+    "Metionina": "metionina", "Metionina_cistina": "metionina_cistina",
+    "Fenilalanina": "fenilalanina",
+    "Fenilalanina_tirosina": "fenilalanina_tirosina",
+    "Treonina": "treonina", "Triptofano": "triptofano", "Valina": "valina",
 }
+# ⚠️ EL ÚNICO MÁXIMO DE FEDIAF QUE NO SE APLICA, Y AQUÍ ESTÁ POR QUÉ
+# (28 agosto). La Tabla III-3b pone un solo máximo a un aminoácido: lisina
+# 7,00 g/1000 kcal, y solo en crecimiento ("Growth: 7.00 (N)"). Está bien
+# transcrito -- lo comprueba auditar_fediaf.py contra el PDF.
+#
+# Al encender los doce aminoácidos se midió qué pasaba con él:
+# **0 de 15 menús de cachorro caben debajo.** Salen entre 8,79 y 12,12.
+# No es que el motor se pase por poco en algún caso raro: es que NINGUNA
+# ración BARF de cachorro cabe.
+#
+# Y el motivo se ve en la propia ración: esos menús llevan unos 134 g de
+# proteína por 1000 kcal, y el mínimo de FEDIAF para un cachorro son 50.
+# Una dieta de carne cruda tiene dos veces y media la proteína de
+# referencia, y la lisina va detrás de la proteína. El 7,00 está pensado
+# para un pienso al nivel de proteína de la tabla.
+#
+# Aplicarlo dejaría a TODOS los cachorros sin menú. No aplicarlo es dejar
+# de comprobar un máximo de FEDIAF. Las dos cosas son malas, así que no se
+# decide aquí a escondidas: se aplica lo segundo, se escribe, se prueba, y
+# la pregunta ("¿el 7,00 se mide sobre la proteína de la tabla o sobre la
+# del plato?") va a PENDIENTE.md para el nutricionista.
+#
+# Los once mínimos de lisina y los otros once aminoácidos SÍ se aplican.
+# Esto es solo el techo.
+#
+# Está aquí, junto a MAPA, porque el solver y el semáforo tienen que leer
+# la MISMA lista. Si cada uno tuviera la suya, el motor podría construir un
+# menú que el semáforo rechazara, o al revés -- que es el fallo de la fibra.
+MAXIMOS_NO_APLICADOS = {"Lisina"}
+
 # Etapas que existen en requerimientos_v2_final.json. Senior, Gestante y
 # Lactante NO tienen columna propia: FEDIAF no da un perfil de nutrientes
 # distinto para senior, y gestacion/lactancia usan la columna de crecimiento
@@ -47,6 +118,19 @@ def _num(v):
         return float(v)
     except (TypeError, ValueError):
         return None
+
+
+def maximo_de(r, nombre_req, etapa):
+    """El máximo de FEDIAF de un requisito, o None si no tiene.
+
+    ES EL ÚNICO SITIO que sabe cuáles no se aplican. El solver, el semáforo,
+    el analizador y `suplementar()` leen el máximo por aquí, para que no
+    puedan discrepar: si el motor construyera un menú con un techo que el
+    semáforo no aplica (o al revés), tendríamos otra vez lo de la fibra.
+    """
+    if nombre_req in MAXIMOS_NO_APLICADOS:
+        return None
+    return _num(r.get(f"max{etapa}")) or _num(r.get("maxAdulto"))
 
 
 def verificar(menu, alimentos, req, der, etapa="Adulto"):
@@ -89,7 +173,7 @@ def verificar(menu, alimentos, req, der, etapa="Adulto"):
         tiene = perfil.get(clave, 0.0)
         tiene_min = perfil_min.get(clave, 0.0)     # con los dudosos a su valor plausible
         minimo = _num(r.get(f"min{etapa}"))
-        maximo = _num(r.get(f"max{etapa}")) or _num(r.get("maxAdulto"))
+        maximo = maximo_de(r, nombre, etapa)
 
         if minimo is not None:
             objetivo = minimo * escala
@@ -269,7 +353,7 @@ def suplementar(menu, alimentos, req, der, etapa, catalogo_suplementos,
         _r = req.get(_nom)
         if not _r:
             continue
-        _mx = _num(_r.get(f"max{_et}")) or _num(_r.get("maxAdulto"))
+        _mx = maximo_de(_r, _nom, _et)
         if _mx is not None:
             topes_max[_cl] = _mx * der / 1000.0
 
@@ -430,7 +514,7 @@ def suplementar(menu, alimentos, req, der, etapa, catalogo_suplementos,
             r = req.get(nom_req)
             if not r:
                 continue
-            mx = _num(r.get(f"max{etapa}")) or _num(r.get("maxAdulto"))
+            mx = maximo_de(r, nom_req, etapa)
             aporta = valor_nutriente(alimentos[mejor].get("nutrientes", {}), cl)
             if mx is None or not aporta:
                 continue
