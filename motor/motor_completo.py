@@ -32,7 +32,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 from scipy.optimize import milp, LinearConstraint, Bounds
 from verificar import MAPA, _num, EQUIVALENCIA
-from constructor import valor_nutriente, valor_plausible_de
+from constructor import (valor_nutriente, valor_plausible_de,
+                         tabla_imputacion_maximos, valor_para_maximo)
 
 # ⚠️ AÑADIDO (5 agosto, noche): copia local de especie_de() (la misma
 # lógica que ya usan especies.py y el frontend) -- se define aquí en
@@ -44,207 +45,19 @@ def especie_de(nombre: str) -> str:
         return resto.split(" ")[0].capitalize()
     return nombre.split(" ")[0]
 
-# ⚠️ AÑADIDO (5 agosto, noche): esta tabla YA EXISTÍA en optimizador.py
-# (el LP viejo) -- se acordó con la usuaria el 1 de agosto y nunca se
-# portó al motor nuevo. Por eso las patologías no hacían nada: la app
-# seguía preguntando y mandando el dato, pero resolver() lo ignoraba.
-# Se porta tal cual, sin cambiar ningún valor.
-PATOLOGIAS = {
-    # ⚠️ REVISADO (25 agosto) con fuentes clínicas primarias. Tres de los
-    # topes CAMBIAN de número y dos pasan a depender de la ETAPA, que es lo
-    # importante: un tope terapéutico pensado para un adulto puede ser
-    # matemáticamente imposible en un cachorro, porque el mínimo que un
-    # cachorro necesita para crecer es MAYOR que ese tope. Aplicarlo igual
-    # a los dos no es ser prudente: es no dar menú, o darlo mal.
-    #
-    # `solo_en_adulto`: el tope vale para adulto y senior. En crecimiento,
-    # gestación y lactancia se hace lo que diga `en_crecimiento`:
-    #   "bloquear"  -> no se genera menú (el caso no se puede resolver bien)
-    #   "sin_tope"  -> se genera sin ese tope, CON un aviso que lo dice
-    "renal": {
-        # ⚠️ CAMBIADO: 1400 -> 1200 mg/1000 kcal. Las dietas renales
-        # comerciales aportan 480-1000 mg/1000 kcal (dvm360/Freeman 2009,
-        # WSAVA). 1200 es lo más restrictivo que el solver puede aplicar sin
-        # romper el mínimo FEDIAF de adulto (1160 mg). IRIS da objetivos en
-        # SANGRE, no en la dieta, así que no sirve para poner este número.
-        "max_por_1000kcal": {"fosforo": 1200.0},
-        "solo_en_adulto": True,
-        "en_crecimiento": "bloquear",
-        "aviso_crecimiento": ("Un perro en crecimiento o gestación con insuficiencia "
-                              "renal necesita un plan dietético individual hecho por "
-                              "un nutricionista veterinario: el fósforo que hay que "
-                              "quitarle choca con el que necesita para crecer."),
-        "aviso": ("Se ha bajado el fósforo todo lo posible sin bajar del mínimo "
-                  "nutricional de un perro sano. IMPORTANTE: una dieta renal "
-                  "terapéutica de verdad baja el fósforo POR DEBAJO de ese mínimo, "
-                  "y eso solo puede pautarlo tu veterinario. Esto es un apoyo, "
-                  "no sustituye una dieta renal prescrita.")},
-
-    "pancreatitis": {
-        # ⚠️ CAMBIADO: era el 25% de las kcal (~28 g/1000 kcal) y pasa a
-        # menos de 20 g/1000 kcal, que son ~18% de las kcal. Más estricto.
-        # Merck Veterinary Manual, "Pancreatitis in Dogs and Cats": "feeding
-        # a low-fat diet (ie, less than 20 g fat/1,000 kcal) is crucial for
-        # treatment success".
-        #
-        # Se expresa en GRAMOS por 1000 kcal y no en % de kcal a propósito:
-        # es como lo dice la fuente, y así entra por el mismo camino que los
-        # demás topes en vez de por uno propio.
-        "max_por_1000kcal": {"grasa": 20.0},
-        "solo_en_adulto": True,
-        "en_crecimiento": "sin_tope",
-        "aviso_crecimiento": ("Este menú NO ha podido bajar la grasa al nivel que se "
-                              "recomienda en pancreatitis (menos de 20 g por cada "
-                              "1000 kcal), porque en crecimiento, gestación o "
-                              "lactancia el mínimo que el perro necesita es mayor "
-                              "que ese tope. Consúltalo con tu veterinario."),
-        "aviso": ("Se ha bajado la grasa a menos de 20 g por cada 1000 kcal, que es "
-                  "lo que recomienda la literatura veterinaria en pancreatitis. La "
-                  "tolerancia es muy individual: ajústalo con tu veterinario según "
-                  "cómo responda.")},
-
-    "oxalato": {"max_por_1000kcal": {"vitD": 20.0},
-        "aviso": ("Ojo: en oxalato NO hay que bajar el calcio (bajarlo aumenta la "
-                  "absorción de oxalato y empeora). Lo importante es el agua y "
-                  "evitar verduras muy ricas en oxalato como la espinaca o la acelga.")},
-
-    "hepatopatia": {
-        # ⚠️ CAMBIADO A BLOQUEO (25 agosto). El objetivo TERAPÉUTICO de cobre
-        # en hepatopatía por acúmulo es 1,2 mg/1000 kcal (Today's Veterinary
-        # Practice 2023, Lidbury) -- y el MÍNIMO que FEDIAF exige para
-        # cualquier perro es 2,08. O sea que la dieta que cura está por
-        # debajo de la que alimenta: no es un problema del catálogo ni del
-        # solver, es que no se puede hacer con comida sin suplementación
-        # dirigida. Fingir que se ha ajustado sería peor que no dar menú.
-        #
-        # El 2,4 se deja puesto igualmente (Center SA et al., JAVMA
-        # 264(2):171-180, 2026 -- límite tolerable 0,24 mg/100 kcal): si algún
-        # día se distingue "hepatopatía por cobre" de otras hepatopatías, el
-        # número ya está aquí y no habrá que volver a buscarlo.
-        "max_por_1000kcal": {"cobre": 2.4},
-        "sin_dieta_automatica": True,
-        "aviso": ("La restricción de cobre que hace falta en una hepatopatía por "
-                  "acúmulo está POR DEBAJO del mínimo de cobre que necesita "
-                  "cualquier perro para estar sano. No es algo que se pueda resolver "
-                  "eligiendo mejor los alimentos: hace falta supervisión veterinaria "
-                  "con suplementación dirigida, así que no generamos menú automático.")},
-
-    "cardiopatia": {
-        # Sin cambio de número, y ahora con la fuente escrita. ACVIM (Keene
-        # et al. 2019, JVIM 33:1127-1140) da el sodio por estadio:
-        #     B2: 80-99 mg/100 kcal   C: 50-79   D: <50
-        # 900 mg/1000 kcal = 90 mg/100 kcal, o sea dentro del rango de B2.
-        # La app no pregunta el estadio, así que se usa el menos restrictivo
-        # de los tres -- que es el correcto para el caso más común. Bajar a
-        # C o D sin saber el estadio sería quitarle sodio a un perro que no
-        # lo necesita.
-        "max_por_1000kcal": {"sodio": 900.0},
-        "aviso": ("Se ha bajado el sodio a lo que recomiendan las guías para "
-                  "cardiopatía en estadio B2. En cardiopatía avanzada puede hacer "
-                  "falta bajarlo más y vigilar el potasio si toma diuréticos: "
-                  "consúltalo con tu veterinario.")},
-
-    "diabetes": {
-        # ⚠️ CAMBIADO (25 agosto): antes se bajaba la grasa al 35% de las
-        # kcal SIEMPRE. Ya no. El pilar de la dieta en diabetes es fibra alta
-        # e índice glucémico bajo, no restringir grasa a todo el mundo.
-        # Purina Institute: "Dietary fat restriction (<30% ME) is recommended
-        # for diabetic dogs with concurrent chronic pancreatitis or persistent
-        # hypertriglyceridemia" -- o sea, SOLO si hay eso también.
-        #
-        # `max_pct_kcal_grasa_si_ademas` se aplica únicamente si el perro
-        # tiene además alguna de esas condiciones marcadas. Hoy la app deja
-        # marcar pancreatitis; la hipertrigliceridemia todavía no existe como
-        # opción (ver PENDIENTE).
-        "max_pct_kcal_grasa_si_ademas": (0.30, ("pancreatitis", "hipertrigliceridemia")),
-        "excluye_fruta": True,
-        "aviso": ("Lo más importante en diabetes no es el menú sino la REGULARIDAD: "
-                  "misma cantidad, a la misma hora, coordinada con la insulina. "
-                  "Se ha quitado la fruta del menú: su azúcar se absorbe rápido y "
-                  "descuadra la pauta de insulina. La verdura fibrosa sí se "
-                  "mantiene, porque ayuda a amortiguar la subida de glucosa.")},
-
-    # ⚠️ AMPLIADO (26 agosto) tras la revisión de la nutricionista. El aviso
-    # solo hablaba del cuello de rumiante. Faltaban las dos cosas que de
-    # verdad condicionan el efecto goitrogénico:
-    #
-    #   · EL YODO. Los tiocianatos y la goitrina de las crucíferas compiten
-    #     con el yoduro por su captación en la tiroides -- o sea que el daño
-    #     depende de si el yodo va justo. Con yodo suficiente, un adulto
-    #     expuesto a goitrógenos "usually is not clinically important"
-    #     (Merck, "Goiter in Animals"). El menú ya cubre el mínimo FEDIAF de
-    #     yodo, pero conviene decirlo porque es lo que hace que el resto
-    #     importe poco.
-    #   · LA COCCIÓN. Hervir 30 minutos destruye ~90% de los glucosinolatos
-    #     (Song & Thornalley), la mayor parte por lixiviación al agua, y el
-    #     calor inactiva la mirosinasa, que es la enzima que libera la
-    #     goitrina. En BARF la verdura va cruda, así que es la única palanca
-    #     real que le queda a quien quiera seguir dándole crucíferas.
-    #
-    # ⚠️ Y NO HAY UMBRAL CANINO. No existe ningún estudio en perro que diga
-    # cuánta crucífera afecta a la tiroides: todo lo cuantitativo (cocción,
-    # contenido de progoitrina) viene de humanos y de plantas. Por eso el
-    # grelo y el nabo se excluyen y el brócoli y la coliflor no -- y eso SÍ
-    # tiene base: grelo y nabo son Brassica rapa, ricos en PROGOITRINA
-    # (precursor de la goitrina, el goitrógeno antitiroideo directo),
-    # mientras que brócoli y coliflor están dominados por glucorafanina, de
-    # mucho menor potencial goitrogénico. Es criterio cualitativo prudente,
-    # no un umbral validado, y así hay que contarlo.
-    "hipotiroidismo": {
-        "aviso": ("No se cambia la composición, salvo que se quitan el grelo y el nabo: "
-                  "son las dos crucíferas del catálogo más ricas en los compuestos que "
-                  "interfieren con la tiroides. El brócoli, la coliflor y las coles se "
-                  "mantienen, porque los suyos son mucho menos activos. Si se los das, "
-                  "mejor cocidos: hervirlos destruye la mayor parte. Lo que más importa "
-                  "aquí es que no le falte yodo, y este menú ya lo cubre. Y evita darle "
-                  "cuello de rumiante grande de forma repetida: puede llevar restos de "
-                  "tejido tiroideo y alterar los valores de la analítica.")},
-
-    "estruvita": {"sin_dieta_automatica": True,
-        "aviso": ("Estos cálculos dependen del pH de la orina y de analíticas que la "
-                  "app no puede ver. Una dieta mal ajustada aquí puede empeorarlos, "
-                  "así que no generamos menú automático: necesitas una dieta pautada "
-                  "por tu veterinario.")},
-    # ⚠️ CONECTADO (5 agosto, madrugada) — CASO REAL ENCONTRADO, pedido
-    # expreso: "urato" no tenía sin_dieta_automatica, así que el sistema
-    # intentaba generar un menú excluyendo hígado y las vísceras/pescado
-    # con purinas altas -- y con el catálogo actual, esa combinación es
-    # matemáticamente imposible de verdad (confirmado probándolo
-    # directamente con el solver, no es un bug de código): el hígado
-    # aporta la mayoría de la vitamina A disponible, y sin él ni sin
-    # riñón no queda margen real para cumplir el resto de los 30
-    # requisitos a la vez. Antes esto se traducía en "no hay ninguna
-    # combinación posible" sin explicación -- ahora se bloquea con el
-    # mismo mensaje claro que estruvita, en vez de fallar en silencio.
-    # "cistina" tiene el mismo mecanismo clínico (predisposición a
-    # urolitos que requiere analíticas y control veterinario) y nunca
-    # había llegado a añadirse a este diccionario en absoluto.
-    "urato": {"sin_dieta_automatica": True,
-        "aviso": ("La predisposición a urolitos de urato (dálmata, shunt hepático) "
-                  "necesita restringir tanto las purinas que, con alimentos frescos "
-                  "normales, no queda margen real para cubrir el resto de nutrientes "
-                  "a la vez -- por eso no generamos menú automático aquí: esto "
-                  "necesita una dieta pautada por tu veterinario, a menudo con "
-                  "pienso terapéutico específico.")},
-    "cistina": {"sin_dieta_automatica": True,
-        "aviso": ("Igual que con estruvita, esto depende del pH de la orina y de "
-                  "analíticas que la app no puede ver -- no generamos menú "
-                  "automático: necesitas una dieta pautada por tu veterinario.")},
-    # ⚠️ AÑADIDO (5 agosto, madrugada) — pedido expreso: antes, si el
-    # perro tenía una patología que no está en esta lista, no había
-    # ninguna forma de decirlo -- la persona se quedaba con la duda de
-    # si su caso necesitaba también adaptar la dieta. Igual que
-    # estruvita, esto BLOQUEA de verdad la generación automática (no es
-    # solo un aviso visual en el frontend que se pudiera saltar) --
-    # porque no hay ninguna regla nutricional conocida en este sistema
-    # para una condición sin especificar, así que fingir haberla
-    # ajustado sería peor que no generar nada.
-    "otra": {"sin_dieta_automatica": True,
-        "aviso": ("Esta condición no está entre las que este sistema sabe ajustar "
-                  "automáticamente todavía, así que no generamos un menú que podría "
-                  "no estar realmente adaptado a lo que necesita: mejor que un "
-                  "veterinario valore su caso en concreto y paute la dieta.")},
-}
+# ⚠️ LOS TOPES POR PATOLOGÍA YA NO VIVEN AQUÍ (28 agosto). Eran 200 líneas
+# de `dict` con cuatro cosas mezcladas: los números, el motivo clínico de
+# cada número, los textos que lee el usuario y la lógica de qué pasa en
+# crecimiento. Ahora son datos en `patologias.json`, con fuente y motivo
+# por cifra, y los audita `auditar_patologias.py` (BLOQUE 32) igual que
+# `auditar_fediaf.py` audita la tabla de FEDIAF desde el 25 de agosto.
+#
+# La forma que ve el solver es EXACTAMENTE la misma: `motor/patologias.py`
+# la reconstruye al cargar, así que `topes_de_patologias()`,
+# `patologias_bloquean()` y `avisos_de_patologias()` siguen intactas.
+# Comprobado al hacer el cambio: la tabla reconstruida es idéntica a la que
+# había, patología por patología y clave por clave.
+from patologias import PATOLOGIAS, CRUDO as PATOLOGIAS_CRUDO
 
 
 # ─── QUÉ TOPES APLICAN DE VERDAD, SEGÚN LA ETAPA ─────────────────────────────
@@ -558,6 +371,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     candidatos_por_cat["Suplementos"] = [a["nombre"] for a in alimentos.values()
                                         if a.get("categoria") in SUP_CATS]
 
+
     # ⚠️ REESCRITO (5 agosto, mañana): antes solo se EXCLUÍA "V-INTEGRA
     # Perro Adulto" fuera de esa etapa, sin ofrecer ninguna alternativa
     # -- así que un cachorro se quedaba sin ningún V-INTEGRA disponible
@@ -824,6 +638,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                 tope_efectivo_tasa = tope_efectivo_absoluto / der * 1000.0
                 # nunca se afloja -- solo se usa si es MÁS estricto que el normal
                 TOPE_CRONICO_KCAL[clave_nut] = min(TOPE_CRONICO_KCAL[clave_nut], tope_efectivo_tasa)
+    tabla_max = tabla_imputacion_maximos(alimentos)
     for nombre_req, clave in MAPA.items():
         r = req.get(nombre_req)
         if not r:
@@ -851,19 +666,33 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # Si ningun alimento trae `valor_plausible`, las dos filas son
         # identicas y se pone una sola, como siempre.
         fila_min = fila_vacia()
+        # ⚠️ TERCERA FILA (28 agosto): la de los TECHOS con los huecos del
+        # catálogo imputados al percentil de su familia. Sin esto el solver
+        # cuenta un `sin_dato` como cero contra el máximo, construye un menú
+        # que se pasa, y es el verificador quien lo tira después -- o sea,
+        # trabajo tirado y un menos de menús. Mismo criterio en los dos
+        # sitios, calculado en `constructor.valor_para_maximo`.
+        fila_max = fila_vacia()
         aporta_algo = False
         hay_dudoso = False
+        hay_hueco = False
         for n in nombres:
             nut_n = alimentos[n].get("nutrientes", {})
             v = valor_nutriente(nut_n, clave) / 100.0
             plausible = valor_plausible_de(alimentos[n], clave)
             v_min = v if plausible is None else float(plausible) / 100.0
+            v_max, estado = valor_para_maximo(alimentos[n], clave, tabla_max)
+            v_max /= 100.0
             if v:
                 fila[idx[n]] = v; aporta_algo = True
             if v_min:
                 fila_min[idx[n]] = v_min
+            if v_max:
+                fila_max[idx[n]] = v_max
             if plausible is not None and v_min != v:
                 hay_dudoso = True
+            if estado == "imputado" and v_max != v:
+                hay_hueco = True
         if not aporta_algo:
             continue
         # ⚠️ AÑADIDO (5 agosto): +1.5% de margen sobre el mínimo exacto.
@@ -884,13 +713,27 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # encima del mínimo FEDIAF incluso después del redondeo.
         lo = mn * der / 1000.0 * 1.015 if mn is not None else -np.inf
         hi = mx * der / 1000.0 if mx is not None else np.inf
-        if hay_dudoso and lo != -np.inf:
-            # el suelo sobre el valor plausible, el techo sobre el declarado
-            _fila("fediaf_minimo_conservador", fila_min, lo, np.inf)
-            if hi != np.inf:
-                _fila("fediaf_maximo", fila, -np.inf, hi)
+        # ⚠️ CADA COTA CON SU VECTOR, Y NUNCA AL REVÉS (28 agosto).
+        #   suelo  -> el valor PLAUSIBLE del dato dudoso, y el hueco a CERO
+        #   techo  -> el valor DECLARADO, y el hueco IMPUTADO a su familia
+        # Es la misma regla de siempre ("un número que no nos creemos no puede
+        # ser prudente en las dos direcciones"), ahora con el hueco además del
+        # dato dudoso.
+        # ⚠️ CASO REAL, y me lo comí yo al escribir esto: al principio la fila
+        # imputada se usaba también cuando el nutriente NO tenía techo -- o
+        # sea, para el MÍNIMO. El solver daba por cubierto el linoleico con un
+        # valor que nadie ha medido, el verificador lo medía con el declarado,
+        # y salían menús ROJOS al 28% del mínimo. La batería cazó 11 casos.
+        fila_suelo = fila_min if hay_dudoso else fila
+        fila_techo = fila_max if hay_hueco else fila
+        tiene_suelo, tiene_techo = lo != -np.inf, hi != np.inf
+        if tiene_suelo and tiene_techo and fila_suelo is not fila_techo:
+            _fila("fediaf_minimo_conservador", fila_suelo, lo, np.inf)
+            _fila("fediaf_maximo", fila_techo, -np.inf, hi)
+        elif tiene_techo and not tiene_suelo:
+            _fila("fediaf_maximo", fila_techo, -np.inf, hi)
         else:
-            _fila("fediaf_absoluto", fila, lo, hi)
+            _fila("fediaf_absoluto", fila_suelo, lo, hi if not tiene_techo else hi)
 
         # ⚠️ AÑADIDO (21 agosto) — CASO REAL MEDIDO: con el tope renal de
         # fósforo en 1400, el motor devolvía menús con 1426. Se saltaba su

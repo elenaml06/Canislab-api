@@ -251,6 +251,15 @@ retome no repita el camino:
   arreglo se retiró.
 - **En aislado no reproduce**: 24 tandas más del caso exacto, 0 fallos, y
   0 llamadas internas infactibles instrumentando `_resolver_menu_v2_interno`.
+- **28 de agosto, medido otra vez** al preguntarse si lo empeoraba la
+  imputación de huecos contra los techos: **también pasa en `origin/main`
+  sin ese cambio**. 13 tandas del caso exacto en cada lado, en aislado:
+  `main` falló 1 (dio `[1, 1]`) y con el cambio fallaron 2 (`[1, 1]` las
+  dos). Los tiempos son iguales — media 11,9 s en `main` contra 11,8 s con
+  el cambio —, así que el cambio no lo ralentiza. Con 13 tandas por lado
+  no se puede distinguir 1 de 2: lo que sí queda claro es que **no es de
+  ese cambio**. Y el número de menús que faltan varía: en la batería
+  salieron `[2, 2]`, en aislado siempre `[1, 1]`.
 
 Apareció **dos veces, las dos con la máquina cargada**: una dentro de la
 batería completa (después de diez bloques de solver) y otra en una tirada
@@ -277,6 +286,73 @@ Hace falta, antes de abrir el cobro:
 - Al cancelar, no poner `plan = free` a ciegas: comprobar si le queda
   alguna otra suscripción viva. Hoy una cancelación de cualquiera de las
   seis dejaría a la persona sin premium teniendo cinco pagadas.
+
+### 1.0-bis El yodo de los perros muy pequeños vive al 101 % del mínimo
+
+Apuntado el 28 de agosto. Es el mismo mecanismo que el caso ya conocido del
+BLOQUE 1 (Toy CachorroJoven de 1,5 kg), pero **no está exento**: apareció en
+`Adulto 3 kg`, y aparecerá en cualquier perfil pequeño.
+
+**Medido**, 10 menús del caso exacto en cada árbol:
+
+| | mín | mediana | por debajo del 105 % |
+|---|---|---|---|
+| `origin/main` | 101 % | 102 % | 7 de 10 |
+| con la imputación de huecos | 101 % | 102 % | 7 de 10 |
+
+O sea que **no lo causa la imputación** —la sospecha razonable era que al
+imputar huecos el techo de yodo se alcanzara antes y el solver se pegara al
+suelo— y tampoco lo ralentiza. La distribución es la misma.
+
+**La causa es de diseño y está escrita en el propio motor**: el suelo se pide
+con un +1,5 % de margen (`lo = mn * der / 1000 * 1.015`), así que el solver
+apunta al 101,5 % y ahí se queda. Ese margen se subió de 0,8 a 1,5 % el 5 de
+agosto por este mismo motivo, con el cloruro de un Toy. En un perro de 3 kg
+las cantidades absolutas son tan pequeñas que el redondeo de los gramos a dos
+decimales se come el margen entero.
+
+**Por dónde seguir**: el margen no puede ser un porcentaje fijo, porque lo que
+tiene que cubrir es un error ABSOLUTO (el del redondeo), y ese no escala con
+el tamaño del perro. Debería ser `max(1,5 %, lo que mueve un paso de redondeo
+de la fuente más concentrada de ese nutriente)`. Es un cambio en el corazón
+del solver y toca los 30 requisitos a la vez, así que no se hace de pasada.
+
+Consecuencia real mientras tanto: no es un menú inseguro —el sistema nunca
+entrega nada que no esté verde— sino un «no disponible» ocasional para perros
+muy pequeños.
+
+### 1.1-bis `profiles` es una frontera de autorización y no está en el repo
+
+Apuntado el 28 de agosto, antes de que exista el rol de veterinario, para
+no descubrirlo cuando ya esté puesto.
+
+El plan de la fase de cuentas es un campo `rol` (`tutor` | `veterinario`)
+en `profiles`, del que colgará el modo clínico — el que puede bajar de los
+mínimos de FEDIAF porque lo prescribe un veterinario. **Eso no es un campo
+de perfil: es un permiso.** Y el front habla con Supabase con la clave
+`anon` más el JWT del usuario, así que PostgREST expone `profiles` para
+UPDATE a menos que una política RLS lo impida. Que la pantalla no pinte el
+campo no protege nada: es la misma clase de fallo que `guardarPerro`
+guardando en silencio — la capa de datos, no la pantalla.
+
+**Y esto no es solo futuro: `plan` ya vive en esa tabla.** Si hoy no hay
+política que lo impida, cualquiera con su propia sesión puede ponerse
+`plan = 'premium'` sin pagar. Hoy el front solo hace `select` sobre
+`profiles`, pero eso es lo que hace el front, no lo que permite la base.
+
+**No se puede comprobar desde el repo, y ese es medio problema**: en
+`canislab-web/supabase/` solo hay dos migraciones de columnas
+(`migracion-menus-perro-id.sql`, `migracion-peso-objetivo.sql`). Las
+políticas RLS viven únicamente en el panel de Supabase, así que **ninguna
+prueba del repo las ve y ningún cambio en ellas pasa por revisión**.
+
+Qué hacer, y en este orden:
+1. **La prueba antes que la política**: un usuario con rol `tutor`
+   intentando `update({rol: 'veterinario'})` sobre su propia fila tiene que
+   recibir 403. Y lo mismo con `plan: 'premium'`.
+2. Bajar las políticas a un `.sql` versionado, para que se puedan revisar
+   y volver a aplicar.
+3. Solo entonces, añadir la columna `rol`.
 
 ### 1.2 El tope de patología no se respeta ✅ **Hecho el 24 de agosto**
 

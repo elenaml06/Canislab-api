@@ -8,7 +8,7 @@ partida; lo que se puede defender ante un veterinario es ESTO: "cubre 26 de
 """
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from constructor import perfil_nutricional, valor_nutriente
+from constructor import perfil_nutricional, tabla_imputacion_maximos, valor_nutriente
 
 # Nombre del requisito -> clave en los nutrientes de cada alimento
 MAPA = {
@@ -79,6 +79,15 @@ def verificar(menu, alimentos, req, der, etapa="Adulto"):
     # Si ningun alimento del menu trae `valor_plausible`, los dos perfiles
     # son identicos y esto no cambia absolutamente nada.
     perfil_min = perfil_nutricional(menu, alimentos, conservador=True)
+    # ⚠️ Y UNA TERCERA MEDIDA, PARA LOS TECHOS (28 agosto). `perfil` cuenta
+    # los HUECOS del catálogo (`sin_dato`) como cero, y contra un máximo eso
+    # no protege de nada: el menú sale verde porque hemos contado como cero
+    # justo el nutriente que había que vigilar. Es el mismo argumento del
+    # valor dudoso, aplicado al dato que directamente no está.
+    # `perfil_max` sustituye cada hueco por el percentil 90 de su familia, y
+    # cuando no hay familia no inventa: lo apunta como NO VERIFICABLE.
+    perfil_max = perfil_nutricional(menu, alimentos,
+                                    tabla_maximos=tabla_imputacion_maximos(alimentos))
     escala = der / 1000.0
 
     faltan, se_pasa, correctos = [], [], []
@@ -103,12 +112,19 @@ def verificar(menu, alimentos, req, der, etapa="Adulto"):
                                "cubre_pct": round(tiene / objetivo * 100) if objetivo else 0,
                                "falta": round(objetivo - tiene, 2)})
                 continue
-            tiene = perfil.get(clave, 0.0)         # para el maximo, el declarado
-        if maximo is not None and tiene > maximo * escala * 1.001:
-            se_pasa.append({"nutriente": nombre, "clave": clave,
-                            "tiene": round(tiene, 2), "maximo": round(maximo * escala, 2),
-                            "veces": round(tiene / (maximo * escala), 2)})
-            continue
+            tiene = perfil.get(clave, 0.0)
+        if maximo is not None:
+            # contra el techo, el perfil que no regala huecos
+            tiene_max = perfil_max.get(clave, tiene)
+            if tiene_max > maximo * escala * 1.001:
+                se_pasa.append({"nutriente": nombre, "clave": clave,
+                                "tiene": round(tiene_max, 2),
+                                "declarado": round(perfil.get(clave, 0.0), 2),
+                                "maximo": round(maximo * escala, 2),
+                                "veces": round(tiene_max / (maximo * escala), 2),
+                                "con_huecos_imputados": bool(
+                                    perfil_max.get("_imputados", {}).get(clave))})
+                continue
         correctos.append(nombre)
 
     # ==================================================================
@@ -221,7 +237,20 @@ def verificar(menu, alimentos, req, der, etapa="Adulto"):
         for k, motivo in (alimentos.get(nombre, {}).get("dato_dudoso") or {}).items():
             dudosos.setdefault(k, []).append(nombre)
 
+    # Nutrientes CON TECHO en los que el menú lleva un alimento cuyo dato no
+    # está y cuya familia no da para imputarlo: no es que cumpla el máximo,
+    # es que no se puede saber. Sale junto al menú, igual que los huecos.
+    no_verificable = {}
+    for clave, quienes in (perfil_max.get("_no_verificables") or {}).items():
+        for nombre_req, cl in MAPA.items():
+            if cl != clave:
+                continue
+            r = req.get(nombre_req) or {}
+            if _num(r.get(f"max{etapa}")) or _num(r.get("maxAdulto")):
+                no_verificable[nombre_req] = sorted(set(quienes))
+
     return {
+        "no_verificable": no_verificable,
         "datos_incompletos": huecos,
         "datos_dudosos": dudosos,
         "semaforo": semaforo,
