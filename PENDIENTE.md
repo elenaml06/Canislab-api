@@ -42,6 +42,22 @@ las tiene que tomar una persona, no yo.
       le sube el objetivo un 22 % y la resta no cubre ese lado.
       Lo vigila `tests/de-punta-a-punta.spec.js` en `canislab-web`.
 
+- [ ] **Cuatro fichas que ha señalado la comprobación nueva del cociente.**
+      (28 de agosto.) Al añadir el nivel 2 —mirar la columna en vez de la
+      fila— salieron cuatro que ninguna comprobación anterior veía. **No son
+      errores probados: son fichas que hay que mirar en su fuente.** Yo no
+      puedo inventar el valor bueno.
+
+      | ficha | qué sale | cómo de sospechoso |
+      |---|---|---|
+      | **Pulmón de cordero** | Leu/Ile **2,537**, isoleucina al 3,16 % | Es la firma exacta del pavo contaminado del USDA. El más sospechoso |
+      | **Calamar** | valina = isoleucina, 0,680 | Los tres cefalópodos tienen Val = Ile exacto |
+      | **Pulpo** | valina = isoleucina, 0,651 | pero **NO son el mismo perfil reescalado** — sus AA/proteína difieren |
+      | **Sepia** | valina = isoleucina, 0,709 | así que puede ser real: en cefalópodos Val ≈ Ile. Hay que ver la fuente |
+
+      Los tres cefalópodos pueden ser un redondeo legítimo. El pulmón no lo
+      parece.
+
 - [ ] **El máximo de lisina de FEDIAF: ¿sobre qué proteína se mide?**
       (28 de agosto, para el nutricionista.) La Tabla III-3b pone un solo
       máximo a un aminoácido: **lisina 7,00 g/1000 kcal, y solo en

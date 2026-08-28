@@ -376,14 +376,56 @@ for a_ in al:
             # compensa- pero esta mal. Pendiente de resembrar desde otra
             # ficha; hasta entonces se listan aqui para que el aviso no
             # cante lo mismo cada vez y tape uno nuevo.
+            # ⚠️ EL HIGADO Y EL CORAZON SALIERON DE ESTA LISTA el 28 de
+            # agosto: se resembraron desde el pollo del USDA (Leu/Ile 1,86 y
+            # 1,63). Si vuelven a bajar del 3%, tienen que volver a cantar.
             PAVO_PENDIENTE = {"Pavo", "Cuello de pavo", "Pavo muslo con piel",
                               "Pavo pechuga con piel", "Pavo pechuga sin piel",
-                              "Corazón de pavo", "Hígado de pavo", "Molleja de pavo",
-                              "Molleja de pollo"}
+                              "Molleja de pavo", "Molleja de pollo"}
             if ile_ < 3.0 and "sangre" not in nom_.lower() and nom_ not in PAVO_PENDIENTE:
                 avisos.append(("AMINO", nom_,
                                f"isoleucina al {ile_:.1f}% de la proteina. Por debajo del 3% solo "
                                f"estan la sangre (1,1) y la hemoglobina (0,50); la carne va a 4,4"))
+        # ⚠️ NIVEL 2 — MIRAR LA COLUMNA, NO LA FILA (28 de agosto).
+        #
+        # Todo lo de arriba pregunta «¿este numero es posible?», y eso caza
+        # el valor IMPOSIBLE. No caza el valor INVENTADO, porque quien lo
+        # imputa lo hace con proporciones internamente coherentes: cuadra
+        # consigo mismo y solo falla contra el resto del mundo.
+        #
+        # Lo que lo destapa es un COCIENTE entre dos aminoacidos de la misma
+        # fila, y por un motivo estructural: un aminograma transferido se
+        # reescala por la proteina del destino, asi que cualquier umbral
+        # «por gramo de proteina» se mueve con ella -- pero un cociente entre
+        # dos aminoacidos de la misma fila no se mueve con nada.
+        #
+        # Los dos casos reales que lo justifican:
+        #   · El pavo del USDA: Leu/Ile = 2,419 en CUATRO tejidos distintos,
+        #     a tres decimales. Seis analiticas independientes no dan la
+        #     misma constante. Era un perfil unico mal calibrado.
+        #   · La resiembra que llego para arreglarlo: histidina = isoleucina
+        #     = valina, exactos, en cinco filas. En 91 fichas del catalogo
+        #     His/Ile tiene mediana 0,601 y NINGUNA vale 1,000. Tres
+        #     aminoacidos distintos con el mismo numero son una copia.
+        # Ninguno de los dos lo cazaba el umbral de isoleucina de arriba.
+        if prot_ >= 10 and (n_.get("isoleucina") or 0) > 0:
+            ile2_ = n_["isoleucina"]
+            leu_ile = (n_.get("leucina") or 0) / ile2_
+            # La banda sale del catalogo medido: 42 de 45 entre 1,16 y 1,98,
+            # con la col rizada (1,16) como borde bajo real.
+            if not (1.10 <= leu_ile <= 2.05) and nom_ not in PAVO_PENDIENTE:
+                avisos.append(("AMINO", nom_,
+                               f"Leu/Ile = {leu_ile:.3f}, fuera de 1,10-2,05. Ese cociente no "
+                               f"depende de la proteina, asi que sobrevive a un reescalado: "
+                               f"fuera de banda casi siempre significa aminograma de otra fuente"))
+            for otro in ("histidina", "valina"):
+                v_ = n_.get(otro) or 0
+                if v_ > 0 and abs(v_ / ile2_ - 1.0) < 0.005:
+                    avisos.append(("AMINO", nom_,
+                                   f"{otro} e isoleucina valen lo mismo ({v_:.3f}). Son dos "
+                                   f"aminoacidos distintos: en 91 fichas ninguna los tiene "
+                                   f"iguales. Es una copia, no una medida"))
+
         # Y el triptofano por los dos lados: cero en colageno puro, y
         # nunca por encima del 2% -- ahi es donde se ve un factor 1.000.
         if prot_ >= 3:
