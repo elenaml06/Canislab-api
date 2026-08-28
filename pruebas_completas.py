@@ -3294,6 +3294,90 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 31: un hueco no vale cero contra un techo -- ni cuenta en un suelo
+# ============================================================
+# Las dos direcciones, porque el fallo se puede reintroducir por las dos y
+# la segunda me la comí yo escribiéndolo (11 casos rojos en esta batería).
+#
+#   TECHO -> el hueco se imputa al percentil 90 de su familia. Contarlo como
+#            cero deja pasar de largo justo el nutriente que había que
+#            vigilar, y con un tope de patología encima eso es un menú que
+#            dice cumplir un límite que nadie ha medido.
+#   SUELO -> el hueco vale CERO. Si se imputara, el motor daría por cubierto
+#            un nutriente con un número que nadie ha medido, y el
+#            verificador lo mediría luego con el declarado: menú en rojo.
+print("\n=== BLOQUE 31: el hueco, contra el techo cuenta y contra el suelo no ===")
+
+from constructor import (tabla_imputacion_maximos, valor_para_maximo,
+                         perfil_nutricional as _perfil31)
+
+_al31, _req31 = _api.cargar_v2()
+_tabla31 = tabla_imputacion_maximos(_al31)
+
+# 1. La tabla imputa solo con familia: nunca con el catálogo entero.
+#    Medido el 28 de agosto: con percentil global, a la cáscara de huevo le
+#    tocaban 3,00 mg de cobre y 68,7 µg de selenio -- cifras de víscera
+#    dentro de una sal mineral.
+_cascara31 = "Cáscara de huevo casera (en polvo)"
+if _cascara31 in _al31:
+    _v31, _estado31 = valor_para_maximo(_al31[_cascara31], "cobre", _tabla31)
+    if _estado31 != "no_verificable":
+        fallos.append(
+            f"BLOQUE31: el cobre de '{_cascara31}' salió como '{_estado31}' con valor "
+            f"{_v31}. Es un hueco cuya familia (categoría Calcio) no tiene suficientes "
+            f"valores conocidos, así que la respuesta correcta es NO VERIFICABLE. Si "
+            f"alguien ha puesto una red global, la ha puesto: mide qué le toca a esta "
+            f"ficha antes de dejarla.")
+
+# 2. Contra el TECHO, un hueco con familia cuenta más que cero.
+_conhueco31 = [n for n, a in _al31.items()
+              if "cobre" in (a.get("sin_dato") or [])
+              and (a.get("categoria"), "cobre") in _tabla31]
+if not _conhueco31:
+    fallos.append("BLOQUE31: no hay ningún alimento con hueco de cobre y familia con "
+                  "percentil, así que esta prueba no está probando nada. Busca otro "
+                  "nutriente antes de borrarla.")
+else:
+    _n31 = _conhueco31[0]
+    _menu31 = {_n31: 100.0}
+    _declarado31 = _perfil31(_menu31, _al31).get("cobre", 0.0)
+    _techo31 = _perfil31(_menu31, _al31, tabla_maximos=_tabla31).get("cobre", 0.0)
+    if not _techo31 > _declarado31:
+        fallos.append(
+            f"BLOQUE31: '{_n31}' tiene el cobre en `sin_dato` y contra el techo sigue "
+            f"contando {_techo31} (declarado {_declarado31}). Un hueco contado como cero "
+            f"contra un máximo es un menú que sale verde por no haber mirado.")
+
+# 3. Contra el SUELO, el hueco NO se imputa: sigue valiendo cero.
+    #    Se compara contra el valor CRUDO leído del catálogo a mano, no
+    #    contra otra llamada al mismo perfil -- la primera versión de esta
+    #    comprobación llamaba dos veces a lo mismo y no podía fallar nunca.
+    _crudo31 = float((_al31[_n31].get("nutrientes") or {}).get("cobre") or 0.0)
+    _suelo31 = _perfil31(_menu31, _al31).get("cobre", 0.0)
+    if abs(_suelo31 - _crudo31) > 1e-9:
+        fallos.append(
+            f"BLOQUE31: el perfil normal (el que sirve para los MÍNIMOS) devuelve "
+            f"{_suelo31} para el cobre de '{_n31}' en vez del crudo {_crudo31}. "
+            f"Si el suelo se calcula con huecos imputados, el motor da por cubierto lo "
+            f"que nadie ha medido: pasó el 28 de agosto y salieron 11 menús rojos, uno "
+            f"al 28% del mínimo de linoleico.")
+
+# 4. Y el menú lo dice: la ficha trae `no_verificable` cuando toca.
+_menu_nv31 = {"Pollo pechuga sin piel": 300.0, "Zanahoria": 60.0}
+if _cascara31 in _al31:
+    _menu_nv31[_cascara31] = 4.0
+_ficha31 = verificar(_menu_nv31, _al31, _req31, 700.0, "Adulto")
+if "no_verificable" not in _ficha31:
+    fallos.append("BLOQUE31: la ficha ya no trae la clave `no_verificable`. Sin ella, un "
+                  "nutriente con techo que no se ha podido comprobar es indistinguible de "
+                  "uno que cumple.")
+elif _cascara31 in _al31 and not _ficha31["no_verificable"]:
+    fallos.append(f"BLOQUE31: el menú lleva '{_cascara31}', que tiene huecos en nutrientes "
+                  f"CON máximo y sin familia para imputar, y `no_verificable` vino vacío.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")
