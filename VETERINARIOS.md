@@ -446,10 +446,23 @@ y va **antes** que las dos.
 Un veterinario colegiado que firma una pauta calculada por un software
 responde de ella. Qué dice exactamente el documento sobre qué firma —si
 firma la pauta, si firma haberla revisado, qué papel tiene Rawku en
-medio— es una cuestión de responsabilidad profesional, y conviene
-consultarla con el colegio o con quien lleve estos temas **antes** de que
-salga la primera pauta firmada de verdad. Lo de arriba se puede construir
-igual: no cambia según lo que diga ese texto, solo cambia el texto.
+medio— es una cuestión de responsabilidad profesional, y hay que
+preguntarla **antes** de que salga la primera pauta firmada de verdad.
+
+**Dónde se pregunta**: en el **Colegio Oficial de Veterinarios** — el
+colegio profesional de la provincia. En España un veterinario tiene que
+estar colegiado, y el colegio es quien contesta de qué responde un
+colegiado al firmar una pauta calculada por un software, y qué tiene que
+decir el documento.
+
+**Quién pregunta**: un veterinario, no nosotros. No se puede consultar a
+un colegio sin ser colegiado. Aquí ese papel lo hace **Michelle**, que ya
+es el criterio clínico del proyecto (ver las preguntas que tiene
+pendientes en `PENDIENTE.md`) y que además será quien firme la primera
+pauta. Va como una pregunta más de esa lista.
+
+Lo de arriba se puede construir igual mientras tanto: no cambia según lo
+que diga ese texto, solo cambia el texto.
 
 ## 9. Cómo se prueba
 

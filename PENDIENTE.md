@@ -26,9 +26,11 @@ las tiene que tomar una persona, no yo.
       | Cobre (hepatopatía) | 3.0 | 2.08 | **2.3** |
       | Grasa (pancreatitis) | 25 % | — | **18 %** (con suelo en cachorros) |
       Decidir si se aplican esos tres, o si se prefiere otra cosa.
-- [ ] **Cinco preguntas de la revisión clínica, para Michelle.** Salieron
-      del repaso del 25 de agosto y ninguna se puede programar sin criterio
-      veterinario:
+- [ ] **Seis preguntas para Michelle.** Las cinco primeras salieron del
+      repaso clínico del 25 de agosto; la sexta, de la decisión del 28 de
+      firmar las pautas. Ninguna se puede programar sin criterio
+      veterinario, y la sexta ni siquiera se puede preguntar sin ser
+      colegiado:
 
       1. **¿Qué mínimo de proteína para un senior?** Hoy la app usa la
          columna de adulto de FEDIAF (52,10 g/1000 kcal). Shmalberg (DACVN)
@@ -45,6 +47,16 @@ las tiene que tomar una persona, no yo.
          el correcto?** Es donde la ración pega el salto de 263 a 413 kcal.
       5. **¿El 10 % de tiaminasa es adecuado?** Es criterio nuestro, no de
          ninguna fuente.
+      6. **¿Qué tiene que decir una pauta firmada, y de qué responde quien
+         la firma?** Añadida el 28 de agosto, al decidir que la pauta sale
+         con el nombre del veterinario y su número de colegiado (ver
+         `VETERINARIOS.md`). Si firma la pauta, si firma haberla revisado,
+         qué papel tiene Rawku en medio. **Esta se pregunta en el Colegio
+         Oficial de Veterinarios de su provincia**, y la tiene que
+         preguntar ella: a un colegio no se puede consultar sin ser
+         colegiado. No bloquea construir nada — solo cambia el texto del
+         documento —, pero sí bloquea que salga la primera pauta firmada
+         de verdad.
 
 - [ ] **La app no distingue "hepatopatía por cobre" de otras hepatopatías.**
       Desde el 25 de agosto, marcar hepatopatía BLOQUEA la generación,
