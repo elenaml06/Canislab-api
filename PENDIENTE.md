@@ -1,7 +1,7 @@
 # Rawku — lo que queda por hacer
 
 Lista viva. Se actualiza al terminar cada cosa, no al final.
-Última revisión: 27 de agosto de 2026.
+Última revisión: 28 de agosto de 2026.
 
 El orden **no** es por lo que parece más urgente, sino por lo que
 desbloquea al resto y por lo que cuesta más caro si sale mal. Cobrar dos
@@ -13,6 +13,35 @@ veces a alguien duele más que no tener login con Google.
 
 Estas bloquean cosas de abajo. Ninguna lleva más de unos minutos, pero
 las tiene que tomar una persona, no yo.
+
+- [ ] **EJECUTAR EL SQL DE LA FASE 0 EN SUPABASE.** Está fusionado y
+      desplegado desde el 28 de agosto, pero **el código no puede
+      ejecutarlo solo**: crear columnas y disparadores es DDL, y eso no
+      pasa por la API de Supabase — necesita el SQL Editor o la contraseña
+      de la base de datos. Hasta que se ejecute, nadie es profesional (que
+      es lo correcto) y **no se puede probar nada de la fase 1** contra
+      Supabase de verdad.
+
+      1. Supabase → SQL Editor → pegar `supabase/migracion-rol-profesional
+         .sql` (repo `canislab-web`) → Run. Es idempotente.
+      2. Acreditarse a una misma: `update public.profiles set rol =
+         'profesional', rol_verificado_en = now() where id = '<tu uuid>';`
+         El uuid está en Authentication → Users.
+      3. **Y la comprobación que de verdad importa**, que no se puede hacer
+         desde el SQL Editor porque allí eres `service_role` y el
+         disparador te deja pasar a propósito: entrar en rawku.app con una
+         cuenta normal, abrir la consola del navegador y probar a
+         ascenderse. **Tiene que dar error.** Si dice ok, el disparador no
+         protege nada y no se puede seguir con el resto del plan. El
+         comando exacto está al final del archivo .sql.
+
+- [ ] **La lista de las nueve `formulable: false`.** La necesita la fase 4:
+      es la que define qué diagnósticos exigen firma de un veterinario,
+      porque son los que piden bajar de los mínimos de FEDIAF. **No está en
+      ninguno de los dos repositorios** — comprobado el 28 de agosto, cero
+      apariciones de `formulable` en `Canislab-api` y en `canislab-web`.
+      Viene de otro sitio y hay que traerla aquí antes de construir nada de
+      la fase 4.
 
 - [ ] **Límites por patología: confirmar los números.** Medido el 20 de
       agosto: los topes actuales son demasiado permisivos (cobre sale
@@ -26,9 +55,11 @@ las tiene que tomar una persona, no yo.
       | Cobre (hepatopatía) | 3.0 | 2.08 | **2.3** |
       | Grasa (pancreatitis) | 25 % | — | **18 %** (con suelo en cachorros) |
       Decidir si se aplican esos tres, o si se prefiere otra cosa.
-- [ ] **Cinco preguntas de la revisión clínica, para Michelle.** Salieron
-      del repaso del 25 de agosto y ninguna se puede programar sin criterio
-      veterinario:
+- [ ] **Siete preguntas para Michelle.** Las cinco primeras salieron del
+      repaso clínico del 25 de agosto; la sexta y la séptima, del trabajo
+      del 28 sobre la parte para veterinarios. Ninguna se puede programar sin criterio
+      veterinario, y la sexta ni siquiera se puede preguntar sin ser
+      colegiado:
 
       1. **¿Qué mínimo de proteína para un senior?** Hoy la app usa la
          columna de adulto de FEDIAF (52,10 g/1000 kcal). Shmalberg (DACVN)
@@ -45,6 +76,30 @@ las tiene que tomar una persona, no yo.
          el correcto?** Es donde la ración pega el salto de 263 a 413 kcal.
       5. **¿El 10 % de tiaminasa es adecuado?** Es criterio nuestro, no de
          ninguna fuente.
+      6. **¿Qué tiene que decir una pauta firmada, y de qué responde quien
+         la firma?** Añadida el 28 de agosto, al decidir que la pauta sale
+         con el nombre del veterinario y su número de colegiado (ver
+         `VETERINARIOS.md`). Si firma la pauta, si firma haberla revisado,
+         qué papel tiene Rawku en medio. **Esta se pregunta en el Colegio
+         Oficial de Veterinarios de su provincia**, y la tiene que
+         preguntar ella: a un colegio no se puede consultar sin ser
+         colegiado. No bloquea construir nada — solo cambia el texto del
+         documento —, pero sí bloquea que salga la primera pauta firmada
+         de verdad.
+
+      7. **¿Qué hace exactamente AnVet, y cuánto cuesta?** Añadida el 28
+         de agosto. AnVet es el software con el que formulan los
+         veterinarios salidos del Máster de Alimentación Natural y
+         Nutrición Veterinaria Funcional de Biovet — o sea que no lo
+         eligieron comparando productos: **les vino con la formación**, que
+         es un enganche mucho más fuerte. Lo que hace falta saber, y ella
+         probablemente lo tiene o lo conoce del máster: **¿calcula las
+         cantidades de cada ingrediente o las teclea el veterinario a
+         mano?** (todos los demás que hemos mirado —MyVetDiet, Animal Diet
+         Formulator, Pet Diet Designer, BalanceIT— las teclea el usuario),
+         qué estándar usa (FEDIAF, NRC o AAFCO), y el precio. De esa
+         respuesta depende si el solver de Rawku es una ventaja enorme o
+         solo una ventaja.
 
 - [ ] **La app no distingue "hepatopatía por cobre" de otras hepatopatías.**
       Desde el 25 de agosto, marcar hepatopatía BLOQUEA la generación,
@@ -56,6 +111,14 @@ las tiene que tomar una persona, no yo.
       podría comer un menú normal. Si Michelle dice que merece la pena,
       hay que partir la opción en dos. El tope de 2,4 mg ya está puesto en
       el código esperando ese día.
+
+      ⚠️ **Y esto conecta con la parte para veterinarios** (28 de agosto):
+      uno de los tres poderes que solo tiene el profesional es justamente
+      **levantar un bloqueo asumiendo la responsabilidad** — «formula con
+      cobre ≤ 1,2, respondo yo». O sea que partir la opción en dos deja de
+      ser la única salida: la otra es que un veterinario acreditado pueda
+      desbloquearlo caso a caso. Las dos cosas son compatibles y no se
+      estorban.
 
 - [ ] **`EPA_DHA_total` se comprueba solo contra el EPA, sin sumarle el
       DHA.** Encontrado el 25 de agosto. El requisito se llama EPA+DHA y en
@@ -578,26 +641,117 @@ menús comparados no tienen sentido sin él.
 
       PR #31 de canislab-web. 8 pruebas nuevas, comprobadas rompiéndolas.
 
-- [ ] **¿Una versión para dueños y otra para veterinarios/nutricionistas?**
-      Pedido el 24 de agosto: investigar si tiene sentido separarlas, y qué
-      cambiaría en las funcionalidades de cada una.
+- [ ] **Una versión para dueños y otra para veterinarios.** ⚠️ **DECIDIDO
+      el 28 de agosto — el plan entero está en `VETERINARIOS.md`.** Aquí
+      queda solo lo que se decidió, para no tener que abrir el otro
+      documento para saber por dónde va.
 
-      No es solo poner o quitar botones: cambia a quién se le habla. Todo
-      el proyecto está escrito para quien NO es veterinario — los mensajes
-      de error dicen qué pasa y qué hacer, no qué falló por dentro (ver
-      CLAUDE.md). Un profesional quiere lo contrario: los números, los
-      márgenes, por qué el solver eligió eso, poder saltarse criterios
-      nuestros que no son de FEDIAF.
+      **EL PRINCIPIO DEL QUE SALE TODO** (28 de agosto): el modo veterinario
+      **no puede ser una degradación para el tutor**. La tentación es
+      bloquearlo todo hasta que alguien firme, y eso mata el producto — el
+      tutor paga y recibe menos que ayer. Es al revés: sin validación la
+      app hace todo lo que hace hoy, **más decirte qué haría con el
+      diagnóstico y qué dato exacto le falta**. «Con la creatinina y el UPC
+      podría formular para IRIS 2» convierte; un muro no.
 
-      Preguntas que hay que contestar ANTES de escribir código:
-      · ¿Es la misma app con más datos a la vista, o dos productos?
-      · ¿Un veterinario gestiona varios pacientes de varios dueños? Eso no
-        es "varios perros en una casa": es otra forma de organizar los
-        datos, y se nota en Supabase.
-      · ¿Se cobra distinto? ¿Quién paga, el profesional o el dueño?
-      · ¿Firma el profesional la pauta? Eso tiene consecuencias legales que
-        no son nuestras de decidir.
+      De ahí sale el reparto: el tutor siempre puede todo el producto de
+      perro sano, meter síntomas y seguimiento (los instrumentos validados
+      —CBPI, LOAD, CIBDAI, PVAS— son *owner-reported* por construcción, y
+      la frecuencia respiratoria en reposo es la mejor medición domiciliaria
+      que hay), ver los 30 requisitos sin nada escondido, pedir dieta para
+      un diagnóstico, exportar, y **retirarle el acceso al veterinario y
+      apagar el modo terapéutico**: es su perro y sus datos.
 
+      La frontera de lo que exige firma es limpia y no arbitraria: **bajar
+      de los mínimos de FEDIAF**, que es exactamente donde deja de ser una
+      dieta completa y equilibrada y pasa a ser una prescripción.
+
+      Y lo que más valor tiene de todo el proyecto no es un permiso: es
+      **el informe que el tutor imprime y le lleva a su veterinario**
+      (diagnóstico, objetivos y de dónde salen, los 30 requisitos, la lista
+      de la compra y la curva). Eso invierte la captación — no hay que
+      reclutar veterinarios, **los traen los tutores**, uno a uno y con un
+      caso delante. Y su miedo a la comida casera está justificado: Larsen
+      *et al.* (JAVMA 2012) evaluaron 39 recetas renales publicadas y
+      **ninguna** cumplía el NRC. No se le quita convenciéndole; se le quita
+      enseñándole los números.
+
+      Se preguntó el 24 de agosto y quedaron cuatro preguntas abiertas que
+      no podía contestar un programador. Contestadas:
+
+      · **Una sola app**, un repositorio y un motor, con un modo
+        profesional que se enciende según quién entra. No dos productos.
+      · **Los pacientes, en dos fases**: primero fichas que crea el propio
+        veterinario (el dueño puede no tener ni cuenta), después perros que
+        el dueño le comparte por invitación. La tabla `accesos` se hace
+        desde el día uno para que quepan las dos.
+      · **Sí puede bajar de los mínimos de FEDIAF** — que es lo que hace
+        falta en una dieta renal o hepática de verdad — pero declarándolo:
+        el menú se sigue verificando entero, contra un juego de requisitos
+        escrito que viaja con él, y el semáforo dice «verde con
+        excepciones», nunca verde a secas. Los cinco topes de seguridad
+        crónica no los levanta nadie.
+      · **Todavía no se cobra**: gratis para unos pocos veterinarios y el
+        precio se decide con lo que se vea.
+      · **Acreditación por número de colegiado y alta a mano.** El rol no
+        se enciende solo.
+      · **La pauta sale firmada**, con el nombre del veterinario y su
+        número de colegiado.
+
+      Y tres cosas que no se preguntaron porque no tienen dos respuestas
+      razonables: **el veterinario nunca entra en la cuenta del dueño**
+      (entra con la suya y ve al perro por un acceso concedido — si
+      suplantara, la base de datos no podría saber quién pautó qué),
+      **siempre tiene cuenta**, y **el dueño puede no tenerla**.
+
+      Dos cosas que salieron al mirar el código y que conviene saber antes
+      de empezar:
+
+      · **Las fases 1 a 3 casi no tocan esta API.** `verificar()` ya
+        devuelve todo lo que quiere un profesional — valor, mínimo, máximo
+        y margen de los 29 nutrientes, huecos, `dato_dudoso`, Ca:P, topes
+        aplicados. La versión de dueño es el frontend enseñando tres cifras
+        de treinta. Lo profesional no hay que calcularlo: hay que dejar de
+        taparlo. De aquí solo hace falta un `codigo` estable en cada aviso,
+        para que el frontend pueda contarlo de otra manera sin duplicar los
+        textos en Python.
+      · **La API no autentica nada** (CORS en `*`, ningún `Depends`,
+        ningún token; el premium lo tapa el frontend con un `blur`). Da
+        igual para las fases 1 a 3, porque los datos los protege la
+        seguridad por fila de Supabase. Pero «solo un veterinario
+        acreditado puede prescribir» comprobado en el frontend no es una
+        regla: cualquiera podría mandar una prescripción con el fósforo a
+        300 desde una terminal. **La fase 4 empieza por validar el JWT de
+        Supabase en la API**, o no se despliega.
+
+      **La firma es la decisión que más obliga**, y no por lo que hay que
+      pintar en el PDF. Un documento firmado tiene que seguir diciendo lo
+      mismo dentro de un año, y hoy la tabla `menus` guarda nombre, gramos
+      y kcal — ni la etapa, ni el DER, ni las patologías —, que es justo
+      por lo que `/perro/{perro_id}/menus` marca lo que devuelve como
+      `verificado: False`. Firmar eso no se puede: la ficha del perro
+      cambia (el peso objetivo de Lola, 7,0 → 6,2), el catálogo cambia
+      (fuera la borraja el 27, fuera cinco suplementos el 26) y el motor
+      cambia (el fósforo renal, de 1400 a 1200 el 25). **Firmar obliga a
+      congelar**: al firmar se guarda una copia inmutable del menú, de la
+      ficha verificada entera, del contexto, de los huecos y de los tres
+      sellos con los que se calculó. Y ese trabajo hace falta también para
+      la prescripción de la fase 4, así que se hace una vez y va antes que
+      las dos.
+
+      Dos consecuencias que conviene no olvidar: **el modo profesional
+      (fase 1) deja de ser una mejora y pasa a ser requisito** — quien
+      firma tiene que poder ver lo que firma —, y **el sello de lo firmado
+      lo calcula la API sobre lo que verificó**, no el frontend sobre lo
+      que pintó: si no, habría dos ideas de «lo firmado» y el sello
+      cuadraría consigo mismo sin decir nada, que es la misma familia de
+      fallo que la duplicación del DER.
+
+      Sigue abierto, y no lo decide un programador: **qué dice el
+      documento sobre qué se firma exactamente** — si el vet firma la
+      pauta, si firma haberla revisado, qué papel tiene Rawku en medio.
+      Conviene preguntarlo antes de que salga la primera pauta firmada de
+      verdad. No cambia nada de lo de arriba: solo cambia ese texto.
 - [ ] **Personalizar perro por perro** cuando son varios. Hoy lo que se
       elige se aplica a la casa entera (se le fuerza al perro que manda y
       los demás se amoldan). Elegir alimentos distintos para cada perro es
