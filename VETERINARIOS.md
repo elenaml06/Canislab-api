@@ -236,24 +236,53 @@ daño en este proyecto:
    formulario. Dos formularios contra la misma tabla se separan solos, y
    cuando se separen no dará error: el menú saldrá verde igual.
 
-### Lo que hace falta decidir aquí
+### Las tres que faltaban, decididas el 28 de agosto
 
-Tres cosas del cuadro son criterio, no técnica, y las he puesto con el
-valor que me parece razonable — pero son tuyas:
+**1. El veterinario no ve «La compra».** No hace la compra de un perro que
+no es suyo. Sale del menú lateral en modo profesional y ya está.
 
-- **¿El veterinario ve «La compra»?** Puesto que no. Si un vet quiere
-  darle la lista de la compra al tutor, entonces sí, y pasa a ser otra
-  cosa que imprime.
-- **¿El veterinario puede usar Rawku para su propio perro?** Hoy el cuadro
-  dice que en modo profesional no hay cesta ni suscripción, así que un vet
-  con perro se queda sin la mitad de la app. Lo más simple es un
-  interruptor para cambiar de modo, con su cuenta.
-- **¿Qué pasa si un tutor con premium le comparte el perro a su
-  veterinario (fase 3)?** ¿El vet ve las pantallas de pago de ese perro,
-  porque el tutor las tiene pagadas? Lo razonable es que sí, pero hay que
-  decirlo.
+**2. Hay un interruptor de modo, y el veterinario con perro tiene la app
+entera.** Una cuenta, un login, dos modos: en modo tutor es un usuario
+normal con su perro, su cesta y su suscripción; en modo profesional ve a
+sus pacientes. El interruptor cambia la VISTA, nunca la cuenta.
 
----
+Y esto destapa algo que no estaba previsto y que hay que resolver en la
+fase 2, no después: **el perro del veterinario no puede salir en su lista
+de pacientes**, ni un paciente en su lista de perros. Los dos tienen
+`perros.user_id` = él, así que la columna no los distingue.
+
+Lo distingue la tabla `accesos` del apartado 7, sin añadir nada:
+
+- **Un paciente tiene fila en `accesos`** (`origen` =
+  `'creado_por_el_profesional'`).
+- **Su perro no tiene ninguna.**
+
+O sea que la lista de pacientes son los perros CON fila y la de perros
+propios los que no la tienen. Ésta es la razón de más peso para crear
+`accesos` ya en la fase 2 aunque para los pacientes propios parezca
+redundante: sin ella, el interruptor de modo no tiene con qué separar las
+dos listas, y lo que sale es el perro del veterinario metido entre sus
+pacientes.
+
+**3. El premium viaja con el perro, no con la persona.** Si un tutor con
+premium le comparte su perro (fase 3), el veterinario ve las pantallas de
+pago **de ese perro** — las paga su tutor y es suyo. Y no se extiende: sus
+otros pacientes siguen como estén.
+
+Lo que eso cambia en el código es una pregunta. Hoy `esPremium(userId)`
+pregunta por la PERSONA, y la lista del menú lateral de `App.jsx` marca dos
+entradas con `isPremium: true` («Evolución y crecimiento» y «Analizar la
+dieta actual»). Pasa a preguntarse **por el perro**: ¿está cubierto este
+perro, por quien sea? Es un cambio pequeño y además es mejor así — hoy, un
+tutor premium que deja de pagar pierde el acceso a los perros de una casa
+que quizá pagaba otro.
+
+**Cuidado con el orden**: hasta que exista la fase 3 no hay ningún perro
+compartido, así que «cubierto por su tutor» y «cubierto por su dueño» son
+lo mismo. La pregunta hay que cambiarla igualmente **en la fase 3**, no
+antes ni después: antes es cambiar algo que funciona sin ningún caso que lo
+necesite, y después es descubrir que el vet ve borrosa la pantalla de un
+perro que está pagado.
 
 ## 7. Fases 2 y 3 — los pacientes
 
@@ -284,9 +313,13 @@ CREATE TABLE public.accesos (
 
 **En la fase 2** el vet crea la ficha y se le pone una fila con
 `origen = 'creado_por_el_profesional'`. Parece redundante —es su propio
-perro, `user_id` ya lo dice— y es justo lo que hace que la fase 3 sea
-añadir filas en vez de reescribir el acceso. **Un solo camino para
-«¿puede verlo?», desde el primer día.**
+perro, `user_id` ya lo dice— y hace dos cosas que no se ven a primera
+vista. Una: que la fase 3 sea añadir filas en vez de reescribir el acceso,
+**un solo camino para «¿puede verlo?» desde el primer día**. Y dos, que es
+la que obliga: **es lo único que separa a un paciente del perro del propio
+veterinario**. Los dos tienen `user_id` = él; lo que los distingue es que
+el paciente tiene fila aquí y su perro no. Sin eso, el interruptor de modo
+del apartado 6 le mete su perro entre los pacientes.
 
 **En la fase 3** el dueño invita por correo y, al aceptarse, entra una
 fila con `origen = 'invitado_por_el_tutor'`. Nada más cambia.
