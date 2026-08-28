@@ -181,6 +181,12 @@ asistente**. `Bases.md` y `Ya_probado.md` son de las primeras sesiones:
 decisiones cerradas y callejones sin salida ya recorridos, léelos antes de
 proponer un cambio grande. `CAMBIOS_DE_DATOS_REVERTIDOS.md` explica por qué
 se deshicieron unos cambios de datos del 21 de agosto.
+`VETERINARIOS.md` es el plan de la parte para veterinarios: qué se
+decidió el 28 de agosto, en qué orden se construye, y las dos cosas
+que si se hacen mal no se arreglan después — que el profesional entre
+con su cuenta y nunca con la del dueño, y que una prescripción por
+debajo de FEDIAF se verifica igual, contra un juego de requisitos
+escrito que viaja con el menú.
 
 ### Los datos
 

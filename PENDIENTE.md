@@ -578,25 +578,61 @@ menús comparados no tienen sentido sin él.
 
       PR #31 de canislab-web. 8 pruebas nuevas, comprobadas rompiéndolas.
 
-- [ ] **¿Una versión para dueños y otra para veterinarios/nutricionistas?**
-      Pedido el 24 de agosto: investigar si tiene sentido separarlas, y qué
-      cambiaría en las funcionalidades de cada una.
+- [ ] **Una versión para dueños y otra para veterinarios.** ⚠️ **DECIDIDO
+      el 28 de agosto — el plan entero está en `VETERINARIOS.md`.** Aquí
+      queda solo lo que se decidió, para no tener que abrir el otro
+      documento para saber por dónde va.
 
-      No es solo poner o quitar botones: cambia a quién se le habla. Todo
-      el proyecto está escrito para quien NO es veterinario — los mensajes
-      de error dicen qué pasa y qué hacer, no qué falló por dentro (ver
-      CLAUDE.md). Un profesional quiere lo contrario: los números, los
-      márgenes, por qué el solver eligió eso, poder saltarse criterios
-      nuestros que no son de FEDIAF.
+      Se preguntó el 24 de agosto y quedaron cuatro preguntas abiertas que
+      no podía contestar un programador. Contestadas:
 
-      Preguntas que hay que contestar ANTES de escribir código:
-      · ¿Es la misma app con más datos a la vista, o dos productos?
-      · ¿Un veterinario gestiona varios pacientes de varios dueños? Eso no
-        es "varios perros en una casa": es otra forma de organizar los
-        datos, y se nota en Supabase.
-      · ¿Se cobra distinto? ¿Quién paga, el profesional o el dueño?
-      · ¿Firma el profesional la pauta? Eso tiene consecuencias legales que
-        no son nuestras de decidir.
+      · **Una sola app**, un repositorio y un motor, con un modo
+        profesional que se enciende según quién entra. No dos productos.
+      · **Los pacientes, en dos fases**: primero fichas que crea el propio
+        veterinario (el dueño puede no tener ni cuenta), después perros que
+        el dueño le comparte por invitación. La tabla `accesos` se hace
+        desde el día uno para que quepan las dos.
+      · **Sí puede bajar de los mínimos de FEDIAF** — que es lo que hace
+        falta en una dieta renal o hepática de verdad — pero declarándolo:
+        el menú se sigue verificando entero, contra un juego de requisitos
+        escrito que viaja con él, y el semáforo dice «verde con
+        excepciones», nunca verde a secas. Los cinco topes de seguridad
+        crónica no los levanta nadie.
+      · **Todavía no se cobra**: gratis para unos pocos veterinarios y el
+        precio se decide con lo que se vea.
+      · **Acreditación por número de colegiado y alta a mano.** El rol no
+        se enciende solo.
+
+      Y tres cosas que no se preguntaron porque no tienen dos respuestas
+      razonables: **el veterinario nunca entra en la cuenta del dueño**
+      (entra con la suya y ve al perro por un acceso concedido — si
+      suplantara, la base de datos no podría saber quién pautó qué),
+      **siempre tiene cuenta**, y **el dueño puede no tenerla**.
+
+      Dos cosas que salieron al mirar el código y que conviene saber antes
+      de empezar:
+
+      · **Las fases 1 a 3 casi no tocan esta API.** `verificar()` ya
+        devuelve todo lo que quiere un profesional — valor, mínimo, máximo
+        y margen de los 29 nutrientes, huecos, `dato_dudoso`, Ca:P, topes
+        aplicados. La versión de dueño es el frontend enseñando tres cifras
+        de treinta. Lo profesional no hay que calcularlo: hay que dejar de
+        taparlo. De aquí solo hace falta un `codigo` estable en cada aviso,
+        para que el frontend pueda contarlo de otra manera sin duplicar los
+        textos en Python.
+      · **La API no autentica nada** (CORS en `*`, ningún `Depends`,
+        ningún token; el premium lo tapa el frontend con un `blur`). Da
+        igual para las fases 1 a 3, porque los datos los protege la
+        seguridad por fila de Supabase. Pero «solo un veterinario
+        acreditado puede prescribir» comprobado en el frontend no es una
+        regla: cualquiera podría mandar una prescripción con el fósforo a
+        300 desde una terminal. **La fase 4 empieza por validar el JWT de
+        Supabase en la API**, o no se despliega.
+
+      Sigue abierto, y no lo decide un programador: **si el veterinario
+      firma la pauta**. Si su nombre y su número de colegiado salen en el
+      PDF que se lleva el dueño, de hecho ya la está firmando, se haya
+      decidido o no.
 
 - [ ] **Personalizar perro por perro** cuando son varios. Hoy lo que se
       elige se aplica a la casa entera (se le fuerza al perro que manda y
