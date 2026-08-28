@@ -18,10 +18,10 @@ se arreglan después.
 |---|---|
 | ¿Una app o dos productos? | **Una app, un repositorio, un motor.** Con un modo profesional que se enciende según quién entra |
 | ¿Cómo llega el vet a un perro que no es suyo? | **Las dos formas, en dos fases**: primero pacientes que crea él, después perros que le comparte el dueño. El modelo de datos se hace desde el día uno para que quepan las dos |
-| ¿Puede bajar de los mínimos de FEDIAF? | **Sí, declarándolo.** Ver el apartado 8, que es el difícil |
+| ¿Puede bajar de los mínimos de FEDIAF? | **Sí, declarándolo.** Ver el apartado 9, que es el difícil |
 | ¿Quién paga? | **Nadie todavía.** Se abre gratis a unos pocos veterinarios y el precio se decide con lo que se vea |
 | ¿Cómo se acredita? | **Número de colegiado y alta a mano.** El modo profesional no se enciende solo |
-| ¿Firma el veterinario la pauta? | **Sí, con su nombre y su número de colegiado.** Ver el apartado 9, que es el que más cosas obliga |
+| ¿Firma el veterinario la pauta? | **Sí, con su nombre y su número de colegiado.** Ver el apartado 10, que es el que más cosas obliga |
 
 Y tres que no se preguntaron porque no tienen dos respuestas razonables:
 
@@ -45,7 +45,119 @@ función no se usa.
 
 ---
 
-## 2. Lo que no cambia, entre por donde entre
+## 2. El principio del que sale todo: el modo veterinario no puede ser una degradación para el tutor
+
+Añadido el 28 de agosto, y va antes que el reparto de permisos porque es de
+donde sale el reparto.
+
+**La tentación es bloquearlo todo hasta que alguien firme, y eso mata el
+producto**: el tutor paga y recibe menos que ayer. La regla es la contraria:
+**sin validación la app hace todo lo que hace hoy, más decirte qué haría con
+el diagnóstico y qué dato exacto le falta.**
+
+> «Con la creatinina y el UPC podría formular para IRIS 2.»
+
+Eso convierte. Un muro no. Y de paso es la frase que hace que el tutor vaya
+al veterinario, que es justo lo que queremos.
+
+### Lo que el tutor puede hacer siempre, haya veterinario o no
+
+- **Todo el producto de perro sano, sin recortes.**
+- **Meter síntomas y seguimiento.** Y esto no es una concesión que se le
+  hace: **los instrumentos validados están diseñados para que los rellene
+  el dueño**. El CBPI, el LOAD, el CIBDAI y el PVAS son *owner-reported*
+  por construcción, y la frecuencia respiratoria en reposo es la medición
+  domiciliaria con mejor evidencia que existe. Quitárselos al tutor sería
+  usarlos al revés de como fueron diseñados.
+- **Ver el menú entero y los 30 requisitos**, sin nada escondido detrás del
+  veterinario.
+- **Pedir una dieta para un diagnóstico.**
+- **Exportar el histórico.**
+- **Retirar el acceso del veterinario y desactivar el modo terapéutico.**
+  Ésta se olvida siempre y es la que más importa: **es su perro y sus
+  datos**. Un diagnóstico validado no puede dejar al tutor encerrado fuera
+  de su propia cuenta.
+
+### Lo que sí exige diagnóstico validado
+
+**Que el motor aplique restricciones por debajo de los mínimos de FEDIAF.**
+
+Ahí está la frontera, y es limpia y no arbitraria: **es exactamente donde
+deja de ser una dieta completa y equilibrada y pasa a ser una
+prescripción.** No hay que discutir caso por caso qué se bloquea y qué no
+— lo dice el propio estándar.
+
+Son las nueve marcadas `formulable: false`. ⚠️ **Esa lista no está en
+ninguno de los dos repositorios** (comprobado el 28 de agosto: cero
+apariciones de `formulable` en `Canislab-api` y en `canislab-web`). Viene de
+otro sitio y hay que traerla aquí antes de construir la fase 4, porque es
+la que define qué necesita firma.
+
+Y con ella, **todo lo que necesite un valor de laboratorio que el tutor no
+puede producir**: estadio IRIS, tipo de cálculo, calcemia, triglicéridos.
+
+### Lo que solo puede el veterinario
+
+- **Validar el diagnóstico.**
+- **Elegir dentro del rango clínico cuando lo hay.** Fósforo 0,8 o 1,2 en
+  IRIS 3 es **juicio clínico, no cálculo**, y por eso no lo puede decidir
+  el motor ni un valor por defecto.
+- **Levantar un bloqueo asumiendo la responsabilidad.** Hoy la hepatopatía
+  **bloquea la generación entera** (`patologias_bloquean()`), porque el
+  cobre que hace falta en la hepatopatía por acúmulo está por debajo del
+  mínimo de FEDIAF. Un veterinario tiene que poder decir «formula con cobre
+  ≤ 1,2, respondo yo».
+- **Tener una lista de pacientes.**
+
+### Lo que importa más que el reparto de permisos: el informe para la consulta
+
+**La acción más valiosa del tutor en modo veterinario no es usar la app: es
+llevarle a su veterinario un documento.**
+
+Una página imprimible con:
+
+- el diagnóstico,
+- **los objetivos usados y de dónde salen**,
+- los 30 requisitos verificados,
+- la lista de la compra,
+- y la curva de evolución.
+
+Eso es lo que hace que un veterinario diga que sí a una dieta casera —algo
+que por defecto le da pánico, **y con razón**: Larsen *et al.* (JAVMA,
+2012) evaluaron 39 recetas caseras publicadas para perros con enfermedad
+renal crónica y **ninguna** cumplía las recomendaciones del NRC
+([PubMed 22332622](https://pubmed.ncbi.nlm.nih.gov/22332622/)). El miedo
+del veterinario a la comida casera está justificado por los datos, así que
+no se le quita convenciéndole: se le quita enseñándole los números.
+
+**Y esto invierte el problema de captación.** No hay que reclutar
+veterinarios: **los traen los tutores**. Uno a uno, con un caso concreto
+delante, que es la única forma en que un veterinario prueba una
+herramienta de verdad. Si el tutor llega a la consulta con eso, el
+veterinario valida dentro de la app porque ya está el 90 % hecho.
+
+Comparado con el importador de pacientes del apartado 8, esto vale
+muchísimo más y cuesta menos.
+
+### La pantalla de validación: qué firma exactamente
+
+Va a doler si se hace mal, así que queda escrito:
+
+**La pantalla en la que el veterinario valida tiene que enseñarle las
+cifras concretas que está firmando.** Fósforo 800 mg/1000 kcal, proteína
+35 g/1000 kcal, **y que las dos están por debajo del mínimo de FEDIAF, y
+por qué**.
+
+**Nunca «modo renal activado».** Si firma a ciegas es una trampa para él y
+un problema para nosotros.
+
+Y de paso es lo que hace el producto defendible: **el veterinario ve
+exactamente lo mismo que el motor**. No un resumen, no una etiqueta: los
+mismos números contra los que se va a verificar el menú.
+
+---
+
+## 3. Lo que no cambia, entre por donde entre
 
 Las cinco reglas de `CLAUDE.md` siguen enteras, y una en concreto hay que
 leerla dos veces antes de tocar nada de la fase 4:
@@ -67,7 +179,7 @@ leerla dos veces antes de tocar nada de la fase 4:
 
 ---
 
-## 3. Por qué esto es un proyecto de app, y casi no de motor
+## 4. Por qué esto es un proyecto de app, y casi no de motor
 
 El motor ya es profesional. `verificar()` devuelve hoy, para cada uno de
 los 29 nutrientes: el valor del menú por 1000 kcal, el mínimo y el máximo
@@ -84,13 +196,13 @@ pintada entera.
 Eso cambia el tamaño del proyecto: las fases 0 a 3 son casi todas
 **Supabase y `canislab-web`**. De esta API hacen falta solo dos cosas
 pequeñas, las dos de la fase 1: un `codigo` estable en cada aviso
-(apartado 5) y que devuelva el sello de lo verificado (apartado 9).
+(apartado 6) y que devuelva el sello de lo verificado (apartado 10).
 Las que sí tocan el motor son **la congelación de lo firmado y la
-prescripción**, y en ese orden — ver el final del apartado 9.
+prescripción**, y en ese orden — ver el final del apartado 10.
 
 ---
 
-## 4. Fase 0 — el rol
+## 5. Fase 0 — el rol
 
 Lo más pequeño que ya sirve para algo.
 
@@ -120,14 +232,14 @@ escribe el webhook de Stripe con la clave secreta.
 
 ---
 
-## 5. Fase 1 — el modo profesional: ver más, no poder más
+## 6. Fase 1 — el modo profesional: ver más, no poder más
 
 Misma app, mismos límites, más números a la vista. Es la fase que más
 valor da por lo poco que cuesta, porque el dato ya viaja.
 
 Y desde que se decidió que la pauta sale firmada, **esta fase no es una
 mejora: es requisito**. Quien firma tiene que poder ver lo que firma
-(apartado 9).
+(apartado 10).
 
 Lo que se enseña de más:
 
@@ -203,7 +315,7 @@ limitación: es el motivo para usarla.
 Las instrucciones salen automáticas, como ahora, pero el veterinario puede
 **cambiarlas para ese paciente**: un caso concreto puede necesitar otra
 cosa. Se guarda con la pauta —y si está firmada, congelado con ella
-(apartado 9)—, no como un texto global.
+(apartado 10)—, no como un texto global.
 
 ### Los textos hablan a la persona equivocada
 
@@ -230,7 +342,7 @@ necesita de aquí.
 
 ---
 
-## 6. El mapa de pantallas: qué ve cada uno
+## 7. El mapa de pantallas: qué ve cada uno
 
 Escrito el 28 de agosto, al preguntarse en voz alta si «la app tendría que
 ser totalmente distinta por dentro». La respuesta corta es que no —mismo
@@ -245,7 +357,7 @@ Las pantallas son las que hay hoy en `App.jsx`, no unas inventadas.
 | Pantalla | Tutor | Veterinario | Qué cambia |
 |---|---|---|---|
 | **Onboarding**, 6 pasos (nombre y sexo · raza o tamaño · fecha de nacimiento · peso y condición · actividad y esterilización · alergias y patologías) | Sí | Sí, **pero es otro**: es dar de alta a un paciente, no a «tu perro». Mismos 6 datos, otro tono, y dos campos más: nombre y contacto del tutor | Ver abajo |
-| **Generar el menú** | Automático o personalizar | **Tres, y en este orden**: manual (elige alimentos y pone gramos, como en AnVet), «termínamelo» (ancla lo suyo y el motor cierra el resto) y el automático | El manual y el botón son nuevos — ver el apartado 5 |
+| **Generar el menú** | Automático o personalizar | **Tres, y en este orden**: manual (elige alimentos y pone gramos, como en AnVet), «termínamelo» (ancla lo suyo y el motor cierra el resto) y el automático | El manual y el botón son nuevos — ver el apartado 6 |
 | Pestaña **«El menú»** | Sí | Sí | El vet ve además la tabla de los 29 nutrientes con margen, el Ca:P, los topes aplicados, los huecos y el peldaño de relajación usado |
 | Pestaña **«Cómo darlo»** | Sí | Sí — es lo que le da al tutor, y **lo puede pautar**: cambiar el texto para ese paciente | Cambia de destinatario y se vuelve editable |
 | **Mis menús** | Sí | Sí, del paciente que tenga abierto | Nada |
@@ -270,11 +382,17 @@ Las pantallas son las que hay hoy en `App.jsx`, no unas inventadas.
 | **Prescripción** | Fijar un tope o un mínimo para ese paciente | 4 |
 | **Firmar la pauta** | El botón, la vista previa de lo que se firma, y el PDF | 4 |
 | **Pautas firmadas del paciente** | El historial. Documentos, no un menú que se pisa | 4 |
+| **Validación del diagnóstico** | Donde el vet ve **las cifras exactas** que va a firmar y las valida. Nunca «modo renal activado» (apartado 2) | 4 |
 
 ### Las que sólo existen en modo tutor
 
 **La compra** y **la suscripción**. Nada más: todo lo demás o vale para los
 dos, o cambia de destinatario sin desaparecer.
+
+Y una que hay que construir, la más valiosa de todas y no está en ninguna
+de las dos listas de arriba: **el informe para la consulta** (apartado 2).
+Lo genera el tutor, sin veterinario y sin validar nada, y es lo que lleva
+impreso a su cita. Es la pantalla que trae veterinarios.
 
 Que la lista sea tan corta es la prueba de que esto es un modo y no dos
 productos. Si hubiera doce pantallas exclusivas de cada lado, la decisión
@@ -312,7 +430,7 @@ fase 2, no después: **el perro del veterinario no puede salir en su lista
 de pacientes**, ni un paciente en su lista de perros. Los dos tienen
 `perros.user_id` = él, así que la columna no los distingue.
 
-Lo distingue la tabla `accesos` del apartado 7, sin añadir nada:
+Lo distingue la tabla `accesos` del apartado 8, sin añadir nada:
 
 - **Un paciente tiene fila en `accesos`** (`origen` =
   `'creado_por_el_profesional'`).
@@ -345,7 +463,7 @@ antes ni después: antes es cambiar algo que funciona sin ningún caso que lo
 necesite, y después es descubrir que el vet ve borrosa la pantalla de un
 perro que está pagado.
 
-## 7. Fases 2 y 3 — los pacientes
+## 8. Fases 2 y 3 — los pacientes
 
 Se decidió hacer las dos formas en dos fases. Que se pueda es cuestión de
 diseñar la tabla ahora, no después.
@@ -380,7 +498,7 @@ vista. Una: que la fase 3 sea añadir filas en vez de reescribir el acceso,
 la que obliga: **es lo único que separa a un paciente del perro del propio
 veterinario**. Los dos tienen `user_id` = él; lo que los distingue es que
 el paciente tiene fila aquí y su perro no. Sin eso, el interruptor de modo
-del apartado 6 le mete su perro entre los pacientes.
+del apartado 7 le mete su perro entre los pacientes.
 
 **En la fase 3** el dueño invita por correo y, al aceptarse, entra una
 fila con `origen = 'invitado_por_el_tutor'`. Nada más cambia.
@@ -415,7 +533,7 @@ facturación. El acceso es a un perro, nunca a una persona.
 
 ---
 
-## 8. Fase 4 — la prescripción, que es la difícil
+## 9. Fase 4 — la prescripción, que es la difícil
 
 Esta es la que justifica el proyecto entero, y la que puede romper lo que
 protege la regla 1.
@@ -505,7 +623,7 @@ fase 4 no se despliega.
 
 ---
 
-## 9. La firma
+## 10. La firma
 
 Decidido el 28 de agosto: **la pauta sale firmada, con el nombre del
 veterinario y su número de colegiado.**
@@ -644,7 +762,7 @@ pauta. Va como una pregunta más de esa lista.
 Lo de arriba se puede construir igual mientras tanto: no cambia según lo
 que diga ese texto, solo cambia el texto.
 
-## 10. Cómo se prueba
+## 11. Cómo se prueba
 
 `pruebas_completas.py` entero, como siempre. Y bloques nuevos, cada uno
 comprobado rompiéndolo:
@@ -673,6 +791,22 @@ comprobado rompiéndolo:
 - Firmar **guarda el nombre y el número de colegiado**, y cambiar después
   el perfil del veterinario no altera lo ya firmado.
 
+Y tres que vigilan el principio del apartado 2, que es el que más fácil se
+rompe sin querer, porque se rompe **quitando** cosas:
+
+- **Sin diagnóstico validado, la app hace todo lo que hace hoy.** Un tutor
+  sin veterinario genera su menú, ve los 30 requisitos, mete seguimiento y
+  exporta, igual que antes de que existiera nada de esto. Si esta prueba
+  cae, el modo veterinario se ha convertido en una degradación y no se
+  entrega.
+- **El tutor puede retirar el acceso del veterinario y apagar el modo
+  terapéutico**, y después sigue viendo su perro, su menú y su histórico.
+  Nadie se queda encerrado fuera de su propia cuenta.
+- **La pantalla de validación enseña las cifras**, no una etiqueta: el
+  valor, el mínimo de FEDIAF y la diferencia, para cada nutriente que la
+  prescripción baja. Se comprueba rompiéndola: si se sustituye por un
+  «modo renal activado», la prueba tiene que caer.
+
 En `canislab-web`, y esto no es opcional (ver «Fallos que no puede
 encontrar la usuaria» en `CLAUDE.md`): los campos nuevos de la ficha van
 **también** a `tests/ficha-ida-y-vuelta.spec.js` y a
@@ -681,16 +815,16 @@ sin cuenta a con cuenta, y en silencio.
 
 ---
 
-## 11. Lo que sigue abierto — y no lo decide un programador
+## 12. Lo que sigue abierto — y no lo decide un programador
 
 - **Qué dice el documento sobre qué se firma exactamente** — ver el final
-  del apartado 9. Es lo único que queda de la firma que no se resuelve
+  del apartado 10. Es lo único que queda de la firma que no se resuelve
   escribiendo código, y conviene preguntarlo antes de la primera pauta de
   verdad. Lo demás ya está decidido: se firma, con nombre y número de
   colegiado.
 - **El precio**, cuando haya vets usándolo.
 - **Los menús NO firmados, si el dueño revoca el acceso.** Los firmados ya
-  está decidido: quedan (apartado 9). Los borradores que el vet generó y
+  está decidido: quedan (apartado 10). Los borradores que el vet generó y
   no llegó a firmar, no — ¿desaparecen de su lista o los conserva?
 - **Cachorro renal, gestante con pancreatitis**: hoy se bloquean porque
   el mínimo para crecer choca con el tope terapéutico. Con prescripción
