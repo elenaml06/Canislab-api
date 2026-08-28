@@ -2040,6 +2040,18 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # Faltan datos y están apuntados en DATOS_QUE_FALTAN.md (57 alimentos,
     # 431 valores, tras rellenar los seis pescados el 25 de agosto). No se
     # rellenan a ojo: los valores salen de BEDCA/CIQUAL/USDA con su fuente.
+    # ⚠️ LOS CUATRO DEL COCIENTE (28 agosto). Los saca la comprobación de
+    # NIVEL 2 que se añadió ese día -- mirar la COLUMNA en vez de la fila --
+    # y NO son fallos probados: son fichas que hay que mirar en su fuente.
+    # Están en DATOS_QUE_FALTAN.md con lo medido al lado.
+    #   · Pulmón de cordero: Leu/Ile 2,537, la firma exacta del pavo malo.
+    #   · Calamar, pulpo y sepia: valina = isoleucina, exacto. Comprobado
+    #     que NO son el mismo perfil reescalado (sus AA/proteína difieren),
+    #     así que puede ser real: en cefalópodos la valina se parece mucho
+    #     a la isoleucina. Se declaran para que el aviso no cante lo mismo
+    #     cada vez y tape uno NUEVO, que es para lo que sirve esta lista.
+    ("AMINO", "Pulmón de cordero"), ("AMINO", "Calamar"),
+    ("AMINO", "Pulpo"), ("AMINO", "Sepia"),
     ("HUECOS", "Huevo clara"),
     ("HUECOS", "Sal común (cloruro sódico)"),
     ("HUECOS", "Bazo de vaca"), ("HUECOS", "Páncreas de vaca"),

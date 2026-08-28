@@ -781,3 +781,26 @@ opuestas.
 | Nutriente | Unidad | Valor |
 |---|---|---|
 | araquidonico | mg | |
+
+---
+
+## Los cuatro del cociente (28 de agosto)
+
+**No son huecos: son valores declarados que hay que comprobar en su fuente.**
+Los saca la comprobación de nivel 2 —mirar la columna en vez de la fila— que se
+añadió ese día a `auditar_catalogo.py`. Ninguna comprobación anterior los veía.
+
+| alimento | qué sale | qué habría que mirar |
+|---|---|---|
+| **Pulmón de cordero** | Leu/Ile **2,537**, isoleucina al 3,16 % de la proteína | Es la firma exacta del pavo contaminado del USDA (Leu/Ile 2,42-2,52 cuando el resto del catálogo va de 1,16 a 1,98). **El más sospechoso de los cuatro.** De dónde salió su aminograma |
+| **Calamar** | valina = isoleucina, 0,680 | Los tres cefalópodos tienen Val = Ile **exacto**. Comprobado que **NO** son el mismo perfil reescalado —sus AA/proteína difieren— así que puede ser real: en cefalópodos la valina se parece mucho a la isoleucina. Hace falta ver la fuente de cada uno |
+| **Pulpo** | valina = isoleucina, 0,651 | ídem |
+| **Sepia** | valina = isoleucina, 0,709 | ídem |
+
+**Por qué esta comprobación pilla lo que las otras no.** Todas las demás
+preguntan «¿este número es posible?» dentro de una fila, y eso caza el valor
+**imposible**. No caza el valor **imputado**, porque quien lo imputa lo hace con
+proporciones internamente coherentes: el pavo del USDA cuadraba consigo mismo
+perfectamente y solo fallaba contra el resto del mundo. Un cociente entre dos
+aminoácidos de la misma fila, en cambio, **no se mueve al reescalar por la
+proteína del destino**, así que sobrevive a la transferencia y la delata.
