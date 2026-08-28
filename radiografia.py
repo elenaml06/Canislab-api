@@ -31,7 +31,21 @@ sys.path.insert(0, './motor')
 
 from fastapi.testclient import TestClient
 import main as app_main
-from verificar import minimo_de, maximo_de, der_efectiva_de
+# Los imports son tolerantes A PROPÓSITO: este archivo tiene que poder correr
+# TAMBIÉN en `main`, que es contra lo que se compara. Si exigiera las funciones
+# nuevas, solo se podría correr en la rama -- y una radiografía de un solo lado
+# no compara nada.
+try:
+    from verificar import minimo_de, maximo_de
+except ImportError:                       # `main`: aún no existen
+    def minimo_de(fila, nombre, etapa, der_efectiva=None):
+        return fila.get(f"min{etapa}")
+    def maximo_de(fila, nombre, etapa):
+        # El `or maxAdulto` NO es invento: es lo que `main` ya hacía en los
+        # cinco sitios que leían un máximo. Sin él, la comparación inventaría
+        # diferencias donde no las hay -- y una radiografía que miente sobre
+        # lo que ha cambiado es peor que no tenerla.
+        return fila.get(f"max{etapa}") or fila.get("maxAdulto")
 from constructor import cargar
 
 cli = TestClient(app_main.app)
@@ -104,10 +118,16 @@ for (nombre, kcal, etapa, peso, peso_ad, peso_obj, bcs, pat) in PERROS:
         print(f"  ERROR de llamada: {e}\n")
         continue
 
-    pref = d.get("peso_de_referencia") or {}
-    linea("peso usado (kg)", pref.get("kg"))
-    linea("procedencia", pref.get("procedencia"))
-    linea("der_efectiva", pref.get("der_efectiva"))
+    pref = d.get("peso_de_referencia")
+    if pref is None:
+        linea("peso usado (kg)", "(la respuesta no lo dice)")
+        linea("procedencia", "(la respuesta no lo dice)")
+        linea("der_efectiva", "(la respuesta no lo dice)")
+        pref = {}
+    else:
+        linea("peso usado (kg)", pref.get("kg"))
+        linea("procedencia", pref.get("procedencia"))
+        linea("der_efectiva", pref.get("der_efectiva"))
 
     # los mínimos que ESE peso produce, que es lo que de verdad entra al solver
     de = pref.get("der_efectiva")
