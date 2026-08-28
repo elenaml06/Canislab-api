@@ -261,6 +261,46 @@ if sin_verificar:
         for x in p.get("deducidos", []):
             print("      DEDUCIDO, no leido: %s" % x)
 
+# =====================================================================
+# EL AMINOGRAMA: QUIEN LO TIENE Y QUIEN NO
+# =====================================================================
+#
+# ⚠️ AÑADIDO (28 agosto). Los doce aminoacidos esenciales estan en la
+# tabla de FEDIAF desde el 26 de agosto y NO se verifican, porque el
+# catalogo no traia el dato. Hoy 49 fichas si lo traen, y la pregunta ha
+# cambiado: ya no es "¿hay dato?", es "¿a QUIEN le falta?".
+#
+# Importa la respuesta por categoria y no el total, porque un alimento sin
+# aminograma no cuenta como "no lo se": cuenta como CERO. Si al activar
+# los requisitos el hueso carnoso entero cuenta como cero de lisina, el
+# motor lo evita para llegar al minimo -- y el menu sale verde, porque el
+# semaforo mide el mismo cero. El total no dice nada de eso; la lista por
+# categoria, si.
+#
+# Por debajo de 3 g de proteina por 100 g no se cuenta: la manzana tiene
+# 0,3 y la zanahoria 0,37, y su aminograma no mueve una racion carnica.
+AA_AUDIT = ["arginina", "histidina", "isoleucina", "leucina", "lisina", "metionina",
+            "cistina", "fenilalanina", "tirosina", "treonina", "triptofano", "valina"]
+PROTEINA_QUE_CUENTA = 3.0
+_falta_aa = {}
+for a_ in al:
+    if nut(a_, "proteina") < PROTEINA_QUE_CUENTA:
+        continue
+    huecos = set(a_.get("sin_dato") or [])
+    nutr = a_.get("nutrientes") or {}
+    if any(k in huecos or k not in nutr for k in AA_AUDIT):
+        _falta_aa.setdefault(a_.get("categoria", "?"), []).append(a_["nombre"])
+print()
+print("═" * 74)
+print("SIN AMINOGRAMA, entre los que tienen proteina (>= %.0f g/100 g)" % PROTEINA_QUE_CUENTA)
+if not _falta_aa:
+    print("   ninguno -- se pueden activar los 12 requisitos de FEDIAF (ver BLOQUE 27)")
+else:
+    for cat_ in sorted(_falta_aa, key=lambda c: -len(_falta_aa[c])):
+        print("   %-26s %d" % (cat_, len(_falta_aa[cat_])))
+        for n_ in sorted(_falta_aa[cat_]):
+            print("        %s" % n_)
+
 print()
 print("═" * 74)
 print("AVISOS: %d" % len(avisos))

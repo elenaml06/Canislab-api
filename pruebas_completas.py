@@ -2805,23 +2805,84 @@ for _campo, _esp in (("maxCachorroJoven", 7.0), ("maxCachorroCrecimiento", 7.0))
                       f"FEDIAF da {_esp} g/1000 kcal ('Growth: 7.00'). Es el único aminoácido "
                       f"con máximo.")
 
-# Y AHORA LA OTRA MITAD: que no estén activados antes de tiempo.
-_con_dato_b27 = sum(1 for _a in _al21.values()
-                    if any((_a.get("nutrientes", {}).get(_k) or 0) > 0
-                           for _k in ("lisina", "triptofano", "metionina", "arginina")))
+# Y AHORA LA OTRA MITAD: cuándo se pueden activar.
+#
+# ⚠️ REESCRITO (28 agosto) — YA HAY DATO, Y AUN ASÍ NO SE ACTIVAN.
+#
+# Hasta hoy la condición era "ningún alimento trae aminoácidos", y con eso
+# bastaba: activarlos dejaba a la app sin dar un solo menú, que es un fallo
+# ruidoso y se ve enseguida. Hoy 49 de las 159 fichas ya traen su
+# aminograma, y la condición se vuelve la otra, la que no se ve.
+#
+# Un alimento sin aminograma no cuenta como "no lo sé": cuenta como CERO.
+# Así que activarlos ahora no dejaría a nadie sin menú -- empujaría al
+# motor LEJOS de los alimentos sin dato y hacia los que lo tienen, para
+# llegar al mínimo. Y medido, los que no lo tienen son justo los que no se
+# pueden perder:
+#
+#     hueso carnoso        10 de 10 sin aminograma
+#     pescados y mariscos  15 de 20
+#     carne muscular        8 de 26
+#     vísceras              3 de 9
+#     hígado                2 de 6
+#
+# El hueso carnoso es el 20-60% de la ración y es de donde sale el calcio.
+# Con los doce mínimos activos y los diez huesos contando como cero de
+# lisina, el motor los evitaría, y el menú saldría VERDE -- porque el
+# semáforo mediría el mismo cero. Un sesgo que no da error y que no se ve
+# desde la app.
+#
+# Así que la condición para encenderlos es esta, y se comprueba sola: que
+# NINGÚN alimento con proteína de verdad se quede sin aminograma. Por
+# debajo de 3 g de proteína por 100 g el aminograma no mueve una ración
+# cárnica (la manzana tiene 0,3 y la zanahoria 0,37), así que esos no
+# cuentan. El día que la lista de abajo se quede vacía, esta prueba pide
+# que se activen -- y hasta entonces, pide que NO se activen.
+_AA_CLAVES_B27 = ["arginina", "histidina", "isoleucina", "leucina", "lisina", "metionina",
+                  "cistina", "fenilalanina", "tirosina", "treonina", "triptofano", "valina"]
+_PROTEINA_QUE_CUENTA_B27 = 3.0
+
+def _sin_aminograma_b27(_a):
+    """Le falta el aminograma: o está declarado como hueco, o la clave no
+    existe -- las dos formas cuentan igual, porque las dos dan cero."""
+    _huecos = set(_a.get("sin_dato") or [])
+    _nut = _a.get("nutrientes", {})
+    return any(_k in _huecos or _k not in _nut for _k in _AA_CLAVES_B27)
+
+_faltan_b27 = sorted(_a["nombre"] for _a in _al21.values()
+                     if (_a.get("nutrientes", {}).get("proteina") or 0) >= _PROTEINA_QUE_CUENTA_B27
+                     and _sin_aminograma_b27(_a))
+_con_dato_b27 = sum(1 for _a in _al21.values() if not _sin_aminograma_b27(_a))
 _en_mapa_b27 = [a for a in _AA_B27 if a in _MAPA_SEMAFORO_b18]
 
-if _con_dato_b27 == 0 and _en_mapa_b27:
+if _faltan_b27 and _en_mapa_b27:
+    _por_cat_b27 = {}
+    for _n in _faltan_b27:
+        _c = _al21[_n].get("categoria", "?")
+        _por_cat_b27[_c] = _por_cat_b27.get(_c, 0) + 1
     fallos.append(
-        f"BLOQUE27: los aminoácidos {_en_mapa_b27} están en verificar.MAPA pero NINGÚN alimento "
-        f"del catálogo trae el dato. Cada uno contaría como cero y la app se quedaría sin dar "
-        f"menús. Primero el dato, después el requisito.")
-if _con_dato_b27 > 0 and not _en_mapa_b27:
+        f"BLOQUE27: los aminoácidos {_en_mapa_b27} están en verificar.MAPA, pero {len(_faltan_b27)} "
+        f"alimentos con proteína de verdad NO traen aminograma: {_por_cat_b27}. Cada uno cuenta "
+        f"como CERO, así que el motor los evitaría para llegar al mínimo -- y el menú saldría "
+        f"verde igual, porque el semáforo mide el mismo cero. Si el hueso carnoso está en esa "
+        f"lista, se está empujando fuera al 20-60% de la ración. Primero el dato, después el "
+        f"requisito.")
+if not _faltan_b27 and not _en_mapa_b27:
     fallos.append(
-        f"BLOQUE27: {_con_dato_b27} alimentos del catálogo YA traen aminoácidos y los 12 "
-        f"requisitos siguen sin estar en verificar.MAPA. O se activan, o se dice aquí por qué "
-        f"no -- lo que no puede quedarse es a medias y en silencio, que es como la fila de la "
-        f"fibra estuvo meses diciendo que faltaba algo que nadie exigía.")
+        f"BLOQUE27: ya NO falta el aminograma de ningún alimento con proteína (>= "
+        f"{_PROTEINA_QUE_CUENTA_B27} g/100 g), y los 12 requisitos siguen sin estar en "
+        f"verificar.MAPA. Era la condición para activarlos: toca meterlos, medir que siguen "
+        f"saliendo menús y actualizar este bloque. Lo que no puede quedarse es a medias y en "
+        f"silencio, que es como la fila de la fibra estuvo meses diciendo que faltaba algo que "
+        f"nadie exigía.")
+# Y que no se pierda lo que YA hay: 49 fichas traen aminograma desde el 28
+# de agosto, y son las que hacen falta para poder medir si activarlos es
+# viable. Si el número baja, es que una carga las ha pisado.
+if _con_dato_b27 < 49:
+    fallos.append(
+        f"BLOQUE27: solo {_con_dato_b27} fichas traen aminograma, y el 28 de agosto eran 49. "
+        f"Alguna carga las ha pisado -- sin ellas no se puede ni medir si los doce requisitos "
+        f"se pueden activar.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

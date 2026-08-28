@@ -94,7 +94,7 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `auditar_catalogo.py` | Huecos y datos raros del catálogo. Lo ejecuta el BLOQUE 19 |
+| `auditar_catalogo.py` | Huecos y datos raros del catálogo, y quién se queda sin aminograma. Lo ejecuta el BLOQUE 19 |
 | `auditar_fediaf.py` | Cada valor del JSON contra la tabla de FEDIAF. Lo ejecuta el BLOQUE 18 |
 
 ### Endpoints: cuáles usa la app y cuáles no
@@ -130,16 +130,34 @@ Desde el 26 de agosto están en `requerimientos_v2_final.json` con sus 48
 valores, y la auditoría los comprueba contra el PDF: **232 comprobaciones,
 0 discrepancias**, frente a las 161 de antes.
 
-**Pero no están en `verificar.MAPA`, y eso es a propósito**: ninguno de los
-166 alimentos del catálogo trae dato de aminoácidos. Medido activando solo
-la lisina: **la app deja de dar menús**, porque cada alimento cuenta como
-cero y el mínimo se vuelve inalcanzable. Y si algunos sí tuvieran el dato,
-sería peor todavía — el motor se iría hacia ellos, y eso es un sesgo que no
-se ve.
+**Pero no están en `verificar.MAPA`, y eso es a propósito.** El motivo
+cambió el 28 de agosto, y el nuevo es peor de ver que el viejo.
 
-El día que el catálogo traiga aminoácidos hay que activarlos. Lo vigila el
-**BLOQUE 27**, que salta por los dos lados: si alguien borra las filas, y
-si alguien las activa antes de que haya datos.
+**Antes**: ninguna de las fichas traía aminoácidos — y no es que faltara el
+dato, es que **las doce claves no existían en el diccionario**, la tercera
+forma que tiene un hueco de esconderse. Medido activando solo la lisina, la
+app dejaba de dar menús: cada alimento cuenta como cero y el mínimo se
+vuelve inalcanzable. Un fallo ruidoso.
+
+**Desde el 28 de agosto**, 49 de las 159 fichas traen su aminograma y las
+otras 110 lo declaran como hueco en `sin_dato`. Y con eso el fallo deja de
+ser ruidoso. Un alimento sin aminograma no cuenta como «no lo sé»: cuenta
+como **cero**. Activarlos ahora ya no dejaría a nadie sin menú — empujaría
+al motor **lejos** de los alimentos sin dato, y el menú saldría **verde**,
+porque el semáforo mide el mismo cero. Medido, los que no lo tienen son los
+que no se pueden perder: **el hueso carnoso entero (10 de 10)**, que es el
+20-60 % de la ración y de donde sale el calcio, y **15 de los 20 pescados**.
+
+Así que la condición para encenderlos ya no es un juicio, es una regla que
+se comprueba sola: **el día que ningún alimento con proteína de verdad
+(≥ 3 g/100 g) se quede sin aminograma, la batería pide que se activen.**
+Hasta entonces pide que no. Por debajo de 3 g el aminograma no mueve una
+ración cárnica — la manzana tiene 0,3 y la zanahoria 0,37.
+
+Lo vigila el **BLOQUE 27**, que salta por los tres lados: si alguien borra
+las filas de la tabla, si alguien las activa faltando aminogramas, y si una
+carga pisa los 49 que ya hay. `auditar_catalogo.py` lista quién los tiene y
+quién no, por categoría — el total no dice nada, la categoría sí.
 
 ### La duplicación que hay que vigilar
 

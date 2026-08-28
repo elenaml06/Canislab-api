@@ -3166,7 +3166,7 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "5a8a0e8e334db488",   # 27 ago: FUERA LA BORRAJA. seguridad.py la excluia del menu automatico desde agosto por sus alcaloides pirrolizidinicos -- hepatotoxicos y acumulativos, sin dosis segura publicada -- pero seguia en el catalogo, o sea en el selector de Personalizar. Media exclusion no vale. Ademas declaraba 13 ug de vitamina D, imposible en una planta, y era el unico vegetal del catalogo con vitamina D
+        "alimentos_v3_final.json":      "ff2a87aa4ef1081b",   # 28 ago: LOS AMINOGRAMAS. 49 de las 159 fichas traen ya los 12 aminoacidos esenciales, y las otras 110 los declaran como hueco en `sin_dato` -- antes la clave no existia siquiera, que es la tercera forma que tiene un hueco de esconderse (BLOQUE 29). Los 12 requisitos siguen SIN estar en verificar.MAPA: falta el aminograma de los 10 huesos carnosos y de 15 de los 20 pescados, y sin dato cuentan como CERO, o sea que el motor los evitaria. Ver el BLOQUE 27
         "requerimientos_v2_final.json": "9eb5b660a3c725d0",   # 26 ago: los 12 aminoácidos esenciales de la Tabla III-3b, con sus mínimos y el máximo de lisina en crecimiento. Están en el JSON pero NO en verificar.MAPA todavía: ningún alimento del catálogo trae el dato, así que activarlos hoy dejaría al motor sin menús. Ver el BLOQUE 27
     }
     SELLOS_CRUDOS = {

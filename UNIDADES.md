@@ -276,3 +276,45 @@ Y ojo con la dirección: un plausible **demasiado alto ablanda la prueba del
 suelo**, que es para lo único que sirve. Uno bajo la hace más dura, que es
 el error inofensivo. Por eso el cinc bajó de 3,5 a 2,3 en cuanto tuvo tabla
 detrás.
+
+---
+
+## Los doce aminoácidos: g por 100 g, como la proteína
+
+| Clave | | Clave | |
+|---|---|---|---|
+| `arginina` | g | `cistina` | g |
+| `histidina` | g | `fenilalanina` | g |
+| `isoleucina` | g | `tirosina` | g |
+| `leucina` | g | `treonina` | g |
+| `lisina` | g | `triptofano` | g |
+| `metionina` | g | `valina` | g |
+
+Misma unidad y misma base que `proteina`, porque **son una fracción de
+ella**. Eso da la comprobación de coherencia más útil que tiene el
+catálogo: la suma de los doce cae entre el **25 % y el 85 %** de la
+proteína en cualquier alimento con proteína de verdad. Fuera de esa banda,
+o la unidad está mal o el aminograma viene de una ficha con otra proteína.
+
+FEDIAF los pide por 1000 kcal, no por 100 g — la conversión la hace el
+motor, igual que con los otros 28. En la tabla son trece filas y no doce:
+la metionina y la cistina van cada una por su lado **y además juntas**
+(`Metionina_cistina`), y lo mismo la fenilalanina y la tirosina. Son
+requisitos distintos, no una repetición.
+
+**Un aminograma no se copia de otra ficha: se transfiere por gramo de
+proteína.** Se coge el perfil de la ficha parecida, se divide por SU
+proteína y se multiplica por la NUESTRA. Copiarlo tal cual mete el error
+de las dos proteínas a la vez.
+
+**Y un cero con proteína delante no es un valor, es un hueco.** Un aceite
+con 0 g de proteína tiene 0 de lisina de verdad; una fresa con 0,7 g de
+proteína y once aminoácidos a cero, no — son celdas que la fuente no
+traía. Salió la fresa exactamente así, con solo el triptófano puesto. Los
+huecos van a `sin_dato`, como todos.
+
+Los doce están en la tabla de FEDIAF y **no se verifican todavía**: falta
+el aminograma del hueso carnoso entero y de la mayoría de los pescados, y
+sin dato cuentan como cero, o sea que el motor los evitaría. Ver la
+sección de CLAUDE.md y el BLOQUE 27, que dice la condición exacta para
+encenderlos.
