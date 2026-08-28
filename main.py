@@ -44,6 +44,7 @@ import persistencia
 from motor_completo import resolver as resolver_v2, especie_de
 # PATOLOGIAS: los topes por patología, para poder comprobarlos también
 # en la puerta de verificación (ver _tope_patologia_roto).
+from constructor import tabla_imputacion_maximos, valor_para_maximo
 from motor_completo import PATOLOGIAS, topes_de_patologias
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
 from verificar import verificar as verificar_v2
@@ -232,9 +233,17 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto"):
     if kcal <= 0:
         return []
 
+    # ⚠️ Los topes por patología son TECHOS, así que se miden con el mismo
+    # criterio que los máximos de FEDIAF (28 agosto): un hueco del catálogo
+    # no puede valer cero justo aquí. Un renal con el fósforo de un alimento
+    # sin dato saldría por debajo del tope sin que nadie lo haya medido.
+    _tabla_max = tabla_imputacion_maximos(al)
+
     def por_1000(clave):
-        total = sum((_valor_num(al.get(n, {}).get("nutrientes", {}).get(clave)) or 0.0) / 100.0 * g
-                    for n, g in gramos.items())
+        total = 0.0
+        for n, g in gramos.items():
+            v, _estado = valor_para_maximo(al.get(n, {}), clave, _tabla_max)
+            total += v / 100.0 * g
         return total / kcal * 1000.0
 
     # Un pelo de margen (0,5%) por el redondeo de los gramos a 2 decimales:

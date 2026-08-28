@@ -1700,10 +1700,24 @@ if not _ok_b16:
     fallos.append("BLOQUE16: el caso base ni siquiera da menú — no se puede "
                   "comprobar nada más")
 else:
+    # ⚠️ LOS 30 REQUISITOS SE CUENTAN COMO FAMILIA (28 agosto). Un requisito
+    # pone UNA fila cuando el suelo y el techo se miden con los mismos
+    # números ("fediaf_absoluto"), y DOS cuando no: el suelo sobre el valor
+    # plausible del dato dudoso y el techo sobre el declarado con los huecos
+    # imputados. Contar solo "fediaf_absoluto" hacía que partir una fila
+    # PARECIERA perderla. Lo que esta prueba defiende es que los 30
+    # requisitos sean restricciones de verdad, y eso es la suma de los tres
+    # nombres -- si alguien borra el bucle entero, los tres se van a cero a
+    # la vez y esto salta igual.
+    _FAMILIA_FEDIAF = ("fediaf_absoluto", "fediaf_minimo_conservador", "fediaf_maximo")
+    _diag["fediaf_los_30"] = {
+        k: sum((_diag.get(r) or {}).get(k, 0) for r in _FAMILIA_FEDIAF)
+        for k in ("filas", "coeficientes")}
+
     # (regla, cuántas filas COMO MÍNIMO, por qué importa)
     _EXIGIDAS_B16 = [
         ("kcal_total", 1, "sin esto el menú no tiene por qué dar las kcal del perro"),
-        ("fediaf_absoluto", 20, "son los 30 requisitos de FEDIAF: el corazón de todo"),
+        ("fediaf_los_30", 20, "son los 30 requisitos de FEDIAF: el corazón de todo"),
         ("ratio_ca_p_min", 1, "el ratio calcio:fósforo, que no es opinable en un cachorro"),
         ("ratio_ca_p_max", 1, "el ratio calcio:fósforo por arriba"),
         ("seguridad_cronica_tiaminasa", 1, "el pescado crudo destruye la tiamina"),
@@ -2584,14 +2598,33 @@ import pathlib as _pl_b24
 _raiz_b24 = _pl_b24.Path(__file__).parent
 _PY_B24 = sorted(list(_raiz_b24.glob("*.py")) + list((_raiz_b24 / "motor").glob("*.py")))
 
-# `PATOLOGIAS = {` solo puede aparecer en motor/motor_completo.py
+# ⚠️ ACTUALIZADO (28 agosto): la tabla ya no se define en NINGÚN .py. Es un
+# dato, `patologias.json`, igual que se hizo con el catálogo de menús en el
+# BLOQUE 25 -- y por el mismo motivo: un número que decide si un menú se
+# entrega tiene que poder auditarse, y no se audita lo que está enterrado
+# entre `if`s. Lo comprueba `auditar_patologias.py` en el BLOQUE 32.
+#
+# Así que esta vigilancia es ahora MÁS estricta que antes, no menos: antes
+# se permitía una definición en código, ahora ninguna. Lo que defiende sigue
+# siendo lo mismo, y el caso real de arriba no ha cambiado: dos copias de
+# una tabla clínica es como el fósforo renal se quedó en 1400 en una de
+# ellas durante semanas.
 _definen_pat = [f.name for f in _PY_B24
                 if _re_b19.search(r"^PATOLOGIAS\s*=\s*\{", f.read_text(encoding="utf-8"),
                                   _re_b19.M)]
-if _definen_pat != ["motor_completo.py"]:
-    fallos.append(f"BLOQUE24: la tabla de patologías se define en {_definen_pat} y solo puede "
-                  f"definirse en motor_completo.py. Dos copias de una tabla clínica es como el "
-                  f"fósforo renal se quedó en 1400 en una de ellas durante semanas.")
+if _definen_pat:
+    fallos.append(f"BLOQUE24: la tabla de patologías se define a mano en {_definen_pat}. Desde "
+                  f"el 28 de agosto es un dato (patologias.json) y el código solo la carga: si "
+                  f"vuelve a escribirse en Python, auditar_patologias.py pasa a auditar un "
+                  f"fichero que ya no usa nadie y nadie se entera.")
+if not (_raiz_b24 / "patologias.json").exists():
+    fallos.append("BLOQUE24: falta patologias.json, que es donde viven los topes por patología.")
+_pat_py_b24 = (_raiz_b24 / "motor" / "patologias.py")
+if not _pat_py_b24.exists():
+    fallos.append("BLOQUE24: falta motor/patologias.py, que es quien carga los topes.")
+elif len(_pat_py_b24.read_text(encoding="utf-8").split("\n")) > 120:
+    fallos.append("BLOQUE24: motor/patologias.py se está volviendo un almacén otra vez. Es un "
+                  "cargador: los números van en patologias.json.")
 
 # el mapa de requisito -> nutriente, igual: solo en motor/verificar.py
 _definen_mapa = [f.name for f in _PY_B24
@@ -3455,6 +3488,123 @@ else:
             f"calcio por 1000 kcal, por debajo del minimo reforzado de "
             f"{_fila32['minCachorroCrecimiento']}. Y con semaforo "
             f"'{_resp32['ficha']['semaforo']}', porque el semaforo generico no lo ve.")
+
+# BLOQUE 35: un hueco no vale cero contra un techo -- ni cuenta en un suelo
+# ============================================================
+# Las dos direcciones, porque el fallo se puede reintroducir por las dos y
+# la segunda me la comí yo escribiéndolo (11 casos rojos en esta batería).
+#
+#   TECHO -> el hueco se imputa al percentil 90 de su familia. Contarlo como
+#            cero deja pasar de largo justo el nutriente que había que
+#            vigilar, y con un tope de patología encima eso es un menú que
+#            dice cumplir un límite que nadie ha medido.
+#   SUELO -> el hueco vale CERO. Si se imputara, el motor daría por cubierto
+#            un nutriente con un número que nadie ha medido, y el
+#            verificador lo mediría luego con el declarado: menú en rojo.
+print("\n=== BLOQUE 35: el hueco, contra el techo cuenta y contra el suelo no ===")
+
+from constructor import (tabla_imputacion_maximos, valor_para_maximo,
+                         perfil_nutricional as _perfil35)
+
+_al35, _req35 = _api.cargar_v2()
+_tabla35 = tabla_imputacion_maximos(_al35)
+
+# 1. La tabla imputa solo con familia: nunca con el catálogo entero.
+#    Medido el 28 de agosto: con percentil global, a la cáscara de huevo le
+#    tocaban 3,00 mg de cobre y 68,7 µg de selenio -- cifras de víscera
+#    dentro de una sal mineral.
+_cascara35 = "Cáscara de huevo casera (en polvo)"
+if _cascara35 in _al35:
+    _v35, _estado35 = valor_para_maximo(_al35[_cascara35], "cobre", _tabla35)
+    if _estado35 != "no_verificable":
+        fallos.append(
+            f"BLOQUE35: el cobre de '{_cascara35}' salió como '{_estado35}' con valor "
+            f"{_v35}. Es un hueco cuya familia (categoría Calcio) no tiene suficientes "
+            f"valores conocidos, así que la respuesta correcta es NO VERIFICABLE. Si "
+            f"alguien ha puesto una red global, la ha puesto: mide qué le toca a esta "
+            f"ficha antes de dejarla.")
+
+# 2. Contra el TECHO, un hueco con familia cuenta más que cero.
+_conhueco35 = [n for n, a in _al35.items()
+              if "cobre" in (a.get("sin_dato") or [])
+              and (a.get("categoria"), "cobre") in _tabla35]
+if not _conhueco35:
+    fallos.append("BLOQUE35: no hay ningún alimento con hueco de cobre y familia con "
+                  "percentil, así que esta prueba no está probando nada. Busca otro "
+                  "nutriente antes de borrarla.")
+else:
+    _n35 = _conhueco35[0]
+    _menu35 = {_n35: 100.0}
+    _declarado35 = _perfil35(_menu35, _al35).get("cobre", 0.0)
+    _techo35 = _perfil35(_menu35, _al35, tabla_maximos=_tabla35).get("cobre", 0.0)
+    if not _techo35 > _declarado35:
+        fallos.append(
+            f"BLOQUE35: '{_n35}' tiene el cobre en `sin_dato` y contra el techo sigue "
+            f"contando {_techo35} (declarado {_declarado35}). Un hueco contado como cero "
+            f"contra un máximo es un menú que sale verde por no haber mirado.")
+
+# 3. Contra el SUELO, el hueco NO se imputa: sigue valiendo cero.
+    #    Se compara contra el valor CRUDO leído del catálogo a mano, no
+    #    contra otra llamada al mismo perfil -- la primera versión de esta
+    #    comprobación llamaba dos veces a lo mismo y no podía fallar nunca.
+    _crudo35 = float((_al35[_n35].get("nutrientes") or {}).get("cobre") or 0.0)
+    _suelo35 = _perfil35(_menu35, _al35).get("cobre", 0.0)
+    if abs(_suelo35 - _crudo35) > 1e-9:
+        fallos.append(
+            f"BLOQUE35: el perfil normal (el que sirve para los MÍNIMOS) devuelve "
+            f"{_suelo35} para el cobre de '{_n35}' en vez del crudo {_crudo35}. "
+            f"Si el suelo se calcula con huecos imputados, el motor da por cubierto lo "
+            f"que nadie ha medido: pasó el 28 de agosto y salieron 11 menús rojos, uno "
+            f"al 28% del mínimo de linoleico.")
+
+# 4. Y el menú lo dice: la ficha trae `no_verificable` cuando toca.
+_menu_nv35 = {"Pollo pechuga sin piel": 300.0, "Zanahoria": 60.0}
+if _cascara35 in _al35:
+    _menu_nv35[_cascara35] = 4.0
+_ficha35 = verificar(_menu_nv35, _al35, _req35, 700.0, "Adulto")
+if "no_verificable" not in _ficha35:
+    fallos.append("BLOQUE35: la ficha ya no trae la clave `no_verificable`. Sin ella, un "
+                  "nutriente con techo que no se ha podido comprobar es indistinguible de "
+                  "uno que cumple.")
+elif _cascara35 in _al35 and not _ficha35["no_verificable"]:
+    fallos.append(f"BLOQUE35: el menú lleva '{_cascara35}', que tiene huecos en nutrientes "
+                  f"CON máximo y sin familia para imputar, y `no_verificable` vino vacío.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
+# BLOQUE 36: los topes por patología cuadran (auditar_patologias.py)
+# ============================================================
+# Mismo patrón que el BLOQUE 18 con la tabla de FEDIAF: la auditoría existe
+# como script y aquí se ejecuta, porque una auditoría que hay que acordarse
+# de lanzar a mano no auditó nunca.
+#
+# Lo que vigila, y de dónde sale cada cosa:
+#   · Cada cifra con FUENTE y con POR QUÉ.
+#   · Ninguna patología FORMULABLE con un tope por debajo del mínimo de
+#     FEDIAF. Si lo tiene no es un tope: es una dieta de prescripción, y va
+#     con formulable=false. De las 47 patologías de la revisión clínica,
+#     SIETE cifras estaban ahí.
+#   · Que la clave del nutriente esté en el MAPA del verificador. Es el
+#     fallo de la 'Fibra': una restricción que el motor no mira nunca.
+#   · Que soltar un tope en crecimiento venga con su aviso (regla 5).
+print("\n=== BLOQUE 36: los topes por patología, auditados ===")
+
+from auditar_patologias import auditar as _auditar_patologias
+for _p36 in _auditar_patologias():
+    fallos.append("BLOQUE36: " + _p36)
+
+# Y que la tabla que ve el motor siga saliendo del JSON, no de un dict en el
+# código: si alguien la vuelve a escribir a mano, la auditoría deja de mirar
+# lo que se usa de verdad y no se entera nadie.
+import motor_completo as _mc36
+if "from patologias import" not in open("motor/motor_completo.py", encoding="utf-8").read():
+    fallos.append("BLOQUE36: motor_completo ya no carga los topes desde patologias.json. Si la "
+                  "tabla ha vuelto al código, auditar_patologias.py está auditando un fichero "
+                  "que ya no usa nadie.")
+if len(_mc36.PATOLOGIAS) != len(_mc36.PATOLOGIAS_CRUDO["patologias"]):
+    fallos.append("BLOQUE36: el JSON tiene %d patologías y el motor ve %d."
+                  % (len(_mc36.PATOLOGIAS_CRUDO["patologias"]), len(_mc36.PATOLOGIAS)))
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
