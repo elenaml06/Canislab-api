@@ -224,6 +224,40 @@ Hace falta, antes de abrir el cobro:
   alguna otra suscripción viva. Hoy una cancelación de cualquiera de las
   seis dejaría a la persona sin premium teniendo cinco pagadas.
 
+### 1.0-bis El yodo de los perros muy pequeños vive al 101 % del mínimo
+
+Apuntado el 28 de agosto. Es el mismo mecanismo que el caso ya conocido del
+BLOQUE 1 (Toy CachorroJoven de 1,5 kg), pero **no está exento**: apareció en
+`Adulto 3 kg`, y aparecerá en cualquier perfil pequeño.
+
+**Medido**, 10 menús del caso exacto en cada árbol:
+
+| | mín | mediana | por debajo del 105 % |
+|---|---|---|---|
+| `origin/main` | 101 % | 102 % | 7 de 10 |
+| con la imputación de huecos | 101 % | 102 % | 7 de 10 |
+
+O sea que **no lo causa la imputación** —la sospecha razonable era que al
+imputar huecos el techo de yodo se alcanzara antes y el solver se pegara al
+suelo— y tampoco lo ralentiza. La distribución es la misma.
+
+**La causa es de diseño y está escrita en el propio motor**: el suelo se pide
+con un +1,5 % de margen (`lo = mn * der / 1000 * 1.015`), así que el solver
+apunta al 101,5 % y ahí se queda. Ese margen se subió de 0,8 a 1,5 % el 5 de
+agosto por este mismo motivo, con el cloruro de un Toy. En un perro de 3 kg
+las cantidades absolutas son tan pequeñas que el redondeo de los gramos a dos
+decimales se come el margen entero.
+
+**Por dónde seguir**: el margen no puede ser un porcentaje fijo, porque lo que
+tiene que cubrir es un error ABSOLUTO (el del redondeo), y ese no escala con
+el tamaño del perro. Debería ser `max(1,5 %, lo que mueve un paso de redondeo
+de la fuente más concentrada de ese nutriente)`. Es un cambio en el corazón
+del solver y toca los 30 requisitos a la vez, así que no se hace de pasada.
+
+Consecuencia real mientras tanto: no es un menú inseguro —el sistema nunca
+entrega nada que no esté verde— sino un «no disponible» ocasional para perros
+muy pequeños.
+
 ### 1.1-bis `profiles` es una frontera de autorización y no está en el repo
 
 Apuntado el 28 de agosto, antes de que exista el rol de veterinario, para
