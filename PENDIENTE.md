@@ -188,6 +188,15 @@ retome no repita el camino:
   arreglo se retiró.
 - **En aislado no reproduce**: 24 tandas más del caso exacto, 0 fallos, y
   0 llamadas internas infactibles instrumentando `_resolver_menu_v2_interno`.
+- **28 de agosto, medido otra vez** al preguntarse si lo empeoraba la
+  imputación de huecos contra los techos: **también pasa en `origin/main`
+  sin ese cambio**. 13 tandas del caso exacto en cada lado, en aislado:
+  `main` falló 1 (dio `[1, 1]`) y con el cambio fallaron 2 (`[1, 1]` las
+  dos). Los tiempos son iguales — media 11,9 s en `main` contra 11,8 s con
+  el cambio —, así que el cambio no lo ralentiza. Con 13 tandas por lado
+  no se puede distinguir 1 de 2: lo que sí queda claro es que **no es de
+  ese cambio**. Y el número de menús que faltan varía: en la batería
+  salieron `[2, 2]`, en aislado siempre `[1, 1]`.
 
 Apareció **dos veces, las dos con la máquina cargada**: una dentro de la
 batería completa (después de diez bloques de solver) y otra en una tirada
