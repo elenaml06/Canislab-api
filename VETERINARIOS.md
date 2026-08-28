@@ -18,10 +18,10 @@ se arreglan después.
 |---|---|
 | ¿Una app o dos productos? | **Una app, un repositorio, un motor.** Con un modo profesional que se enciende según quién entra |
 | ¿Cómo llega el vet a un perro que no es suyo? | **Las dos formas, en dos fases**: primero pacientes que crea él, después perros que le comparte el dueño. El modelo de datos se hace desde el día uno para que quepan las dos |
-| ¿Puede bajar de los mínimos de FEDIAF? | **Sí, declarándolo.** Ver el apartado 7, que es el difícil |
+| ¿Puede bajar de los mínimos de FEDIAF? | **Sí, declarándolo.** Ver el apartado 8, que es el difícil |
 | ¿Quién paga? | **Nadie todavía.** Se abre gratis a unos pocos veterinarios y el precio se decide con lo que se vea |
 | ¿Cómo se acredita? | **Número de colegiado y alta a mano.** El modo profesional no se enciende solo |
-| ¿Firma el veterinario la pauta? | **Sí, con su nombre y su número de colegiado.** Ver el apartado 8, que es el que más cosas obliga |
+| ¿Firma el veterinario la pauta? | **Sí, con su nombre y su número de colegiado.** Ver el apartado 9, que es el que más cosas obliga |
 
 Y tres que no se preguntaron porque no tienen dos respuestas razonables:
 
@@ -84,9 +84,9 @@ pintada entera.
 Eso cambia el tamaño del proyecto: las fases 0 a 3 son casi todas
 **Supabase y `canislab-web`**. De esta API hacen falta solo dos cosas
 pequeñas, las dos de la fase 1: un `codigo` estable en cada aviso
-(apartado 5) y que devuelva el sello de lo verificado (apartado 8).
+(apartado 5) y que devuelva el sello de lo verificado (apartado 9).
 Las que sí tocan el motor son **la congelación de lo firmado y la
-prescripción**, y en ese orden — ver el final del apartado 8.
+prescripción**, y en ese orden — ver el final del apartado 9.
 
 ---
 
@@ -127,7 +127,7 @@ valor da por lo poco que cuesta, porque el dato ya viaja.
 
 Y desde que se decidió que la pauta sale firmada, **esta fase no es una
 mejora: es requisito**. Quien firma tiene que poder ver lo que firma
-(apartado 8).
+(apartado 9).
 
 Lo que se enseña de más:
 
@@ -169,7 +169,93 @@ necesita de aquí.
 
 ---
 
-## 6. Fases 2 y 3 — los pacientes
+## 6. El mapa de pantallas: qué ve cada uno
+
+Escrito el 28 de agosto, al preguntarse en voz alta si «la app tendría que
+ser totalmente distinta por dentro». La respuesta corta es que no —mismo
+motor, mismas pantallas, mismos datos—, pero la pregunta destapó un hueco
+de verdad: el plan decía «se ve más, no se puede más» y **no decía qué
+pantallas**. Sin esto no se puede empezar la fase 1.
+
+Las pantallas son las que hay hoy en `App.jsx`, no unas inventadas.
+
+### Las que existen hoy
+
+| Pantalla | Tutor | Veterinario | Qué cambia |
+|---|---|---|---|
+| **Onboarding**, 6 pasos (nombre y sexo · raza o tamaño · fecha de nacimiento · peso y condición · actividad y esterilización · alergias y patologías) | Sí | Sí, **pero es otro**: es dar de alta a un paciente, no a «tu perro». Mismos 6 datos, otro tono, y dos campos más: nombre y contacto del tutor | Ver abajo |
+| **Generar el menú** | Sí | Sí | Nada |
+| Pestaña **«El menú»** | Sí | Sí | El vet ve además la tabla de los 29 nutrientes con margen, el Ca:P, los topes aplicados, los huecos y el peldaño de relajación usado |
+| Pestaña **«Cómo darlo»** | Sí | **Sí, pero no es para él**: es lo que imprime para el tutor | No desaparece: cambia de destinatario |
+| **Mis menús** | Sí | Sí, del paciente que tenga abierto | Nada |
+| **Perfil del perro** | Sí | Sí | Nada |
+| **Evolución y crecimiento** | Sí (premium) | Sí — es seguimiento clínico, justo lo suyo | Nada |
+| **Analizar la dieta actual** | Sí (premium) | Sí, y es de lo más útil que hay para una consulta | Nada |
+| **La compra** (la cesta) | Sí | **No.** El vet no hace la compra de un perro que no es suyo | Se quita del menú lateral |
+| **Transición** | Sí | La **pauta**, no la sigue | Se queda, cambia de destinatario |
+| **Varios perros de una casa** | Sí | **No.** Un vet no tiene «una casa con cinco perros»: tiene pacientes, que es otra cosa | Lo sustituye la lista de pacientes |
+| **Suscripción / premium** | Sí | No, mientras no se cobre | — |
+
+### Las que sólo existen en modo veterinario
+
+Éstas hay que construirlas: hoy no hay nada parecido.
+
+| Pantalla | Para qué | Fase |
+|---|---|---|
+| **Lista de pacientes** | Su pantalla de entrada. Buscar, abrir, dar de alta. Es lo que en modo tutor es «la casa» | 2 |
+| **Alta de paciente** | El onboarding, con los datos del tutor y sin el tono de «tu perro» | 2 |
+| **Acreditación** | Donde pide el rol: su número de colegiado. En Ajustes | 0-1 |
+| **Ficha clínica del menú** | Los 29 nutrientes, el Ca:P, los topes, los huecos. Puede ser una pestaña más junto a «El menú» y «Cómo darlo» | 1 |
+| **Prescripción** | Fijar un tope o un mínimo para ese paciente | 4 |
+| **Firmar la pauta** | El botón, la vista previa de lo que se firma, y el PDF | 4 |
+| **Pautas firmadas del paciente** | El historial. Documentos, no un menú que se pisa | 4 |
+
+### Las que sólo existen en modo tutor
+
+**La compra** y **la suscripción**. Nada más: todo lo demás o vale para los
+dos, o cambia de destinatario sin desaparecer.
+
+Que la lista sea tan corta es la prueba de que esto es un modo y no dos
+productos. Si hubiera doce pantallas exclusivas de cada lado, la decisión
+del apartado 1 estaría mal tomada.
+
+### El onboarding es el que más cambia, y hay que tener cuidado
+
+Es la pantalla más delicada del cambio, por dos motivos que ya han hecho
+daño en este proyecto:
+
+1. **Son los datos de los que sale todo.** De la fecha de nacimiento sale
+   la etapa, y de la etapa los 30 requisitos. El fallo de `guardarPerro`
+   —siete campos leídos con nombres que no existían, guardados vacíos en
+   silencio, un perro de diez años volviendo como cachorro— salió de tocar
+   justo esto. Si el alta de paciente es un formulario nuevo, **es un
+   segundo camino hacia la misma tabla**, y hay que probarlo con la misma
+   vara: los campos van también a `ficha-ida-y-vuelta.spec.js` y a
+   `sin-cuenta.spec.js`, y se comprueba lo GUARDADO, nunca la pantalla.
+2. **Lo más barato es que sea el mismo formulario con otro tono**, no otro
+   formulario. Dos formularios contra la misma tabla se separan solos, y
+   cuando se separen no dará error: el menú saldrá verde igual.
+
+### Lo que hace falta decidir aquí
+
+Tres cosas del cuadro son criterio, no técnica, y las he puesto con el
+valor que me parece razonable — pero son tuyas:
+
+- **¿El veterinario ve «La compra»?** Puesto que no. Si un vet quiere
+  darle la lista de la compra al tutor, entonces sí, y pasa a ser otra
+  cosa que imprime.
+- **¿El veterinario puede usar Rawku para su propio perro?** Hoy el cuadro
+  dice que en modo profesional no hay cesta ni suscripción, así que un vet
+  con perro se queda sin la mitad de la app. Lo más simple es un
+  interruptor para cambiar de modo, con su cuenta.
+- **¿Qué pasa si un tutor con premium le comparte el perro a su
+  veterinario (fase 3)?** ¿El vet ve las pantallas de pago de ese perro,
+  porque el tutor las tiene pagadas? Lo razonable es que sí, pero hay que
+  decirlo.
+
+---
+
+## 7. Fases 2 y 3 — los pacientes
 
 Se decidió hacer las dos formas en dos fases. Que se pueda es cuestión de
 diseñar la tabla ahora, no después.
@@ -235,7 +321,7 @@ facturación. El acceso es a un perro, nunca a una persona.
 
 ---
 
-## 7. Fase 4 — la prescripción, que es la difícil
+## 8. Fase 4 — la prescripción, que es la difícil
 
 Esta es la que justifica el proyecto entero, y la que puede romper lo que
 protege la regla 1.
@@ -325,7 +411,7 @@ fase 4 no se despliega.
 
 ---
 
-## 8. La firma
+## 9. La firma
 
 Decidido el 28 de agosto: **la pauta sale firmada, con el nombre del
 veterinario y su número de colegiado.**
@@ -464,7 +550,7 @@ pauta. Va como una pregunta más de esa lista.
 Lo de arriba se puede construir igual mientras tanto: no cambia según lo
 que diga ese texto, solo cambia el texto.
 
-## 9. Cómo se prueba
+## 10. Cómo se prueba
 
 `pruebas_completas.py` entero, como siempre. Y bloques nuevos, cada uno
 comprobado rompiéndolo:
@@ -501,16 +587,16 @@ sin cuenta a con cuenta, y en silencio.
 
 ---
 
-## 10. Lo que sigue abierto — y no lo decide un programador
+## 11. Lo que sigue abierto — y no lo decide un programador
 
 - **Qué dice el documento sobre qué se firma exactamente** — ver el final
-  del apartado 8. Es lo único que queda de la firma que no se resuelve
+  del apartado 9. Es lo único que queda de la firma que no se resuelve
   escribiendo código, y conviene preguntarlo antes de la primera pauta de
   verdad. Lo demás ya está decidido: se firma, con nombre y número de
   colegiado.
 - **El precio**, cuando haya vets usándolo.
 - **Los menús NO firmados, si el dueño revoca el acceso.** Los firmados ya
-  está decidido: quedan (apartado 8). Los borradores que el vet generó y
+  está decidido: quedan (apartado 9). Los borradores que el vet generó y
   no llegó a firmar, no — ¿desaparecen de su lista o los conserva?
 - **Cachorro renal, gestante con pancreatitis**: hoy se bloquean porque
   el mínimo para crecer choca con el tope terapéutico. Con prescripción
