@@ -14,6 +14,34 @@ veces a alguien duele más que no tener login con Google.
 Estas bloquean cosas de abajo. Ninguna lleva más de unos minutos, pero
 las tiene que tomar una persona, no yo.
 
+- [ ] **El peso ideal a partir del BCS está calculado de DOS formas, y no
+      dan lo mismo.** (28 de agosto, encontrado montando la prueba de punta
+      a punta.) La misma cuenta vive en dos sitios:
+
+      | | 30 kg, BCS 7 | 45 kg, BCS 8 |
+      |---|---|---|
+      | `der.py` y `src/der.js` — **dividen** por `1 + desvío` | 25,00 | 34,62 |
+      | `verificar.peso_objetivo_desde_bcs` — **restan** el exceso | 24,00 | **31,50** |
+
+      **AAHA publica su propio ejemplo y dice 31,5** para el labrador de
+      45 kg con BCS 8. Así que la resta es la buena y la división está mal:
+      es la misma familia que el DER duplicado — dos cuentas de lo mismo,
+      cada una coherente consigo misma, dando perros distintos.
+
+      **Hoy no hace daño**, y por un motivo que también conviene saber: la
+      app manda SIEMPRE `peso_objetivo_kg`, así que el servidor coge el
+      peldaño `declarado` y nunca deriva nada del BCS. El desacuerdo está
+      puesto y apagado. El día que alguien mande `bcs` sin objetivo, las dos
+      mitades hablarán de perros con un 4 % de diferencia.
+
+      **Por qué no lo arreglo yo solo:** arreglar `der.py` cambia las kcal,
+      y las kcal son el contrato de los 85 casos de `der_casos.json` en los
+      dos repos. Hay que regenerar los esperados y copiar el archivo a los
+      dos, los dos commits o ninguno. Y hay que decidir antes si el ideal
+      del perro DELGADO (BCS < 5) también pasa a restarse — hoy la división
+      le sube el objetivo un 22 % y la resta no cubre ese lado.
+      Lo vigila `tests/de-punta-a-punta.spec.js` en `canislab-web`.
+
 - [ ] **El máximo de lisina de FEDIAF: ¿sobre qué proteína se mide?**
       (28 de agosto, para el nutricionista.) La Tabla III-3b pone un solo
       máximo a un aminoácido: **lisina 7,00 g/1000 kcal, y solo en
