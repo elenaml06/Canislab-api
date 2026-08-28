@@ -299,6 +299,123 @@ for a_ in al:
     nutr = a_.get("nutrientes") or {}
     if any(k in huecos or k not in nutr for k in AA_AUDIT):
         _falta_aa.setdefault(a_.get("categoria", "?"), []).append(a_["nombre"])
+# =====================================================================
+# LO QUE UNA SEGUNDA MAGNITUD PREDICE DE LA PRIMERA
+# =====================================================================
+#
+# ⚠️ AÑADIDO (28 agosto). De los cuatro fallos de datos de hoy, NINGUNO
+# daba error y los cuatro pasaban cualquier validacion de formato: el
+# triptofano en miligramos, `Lenguado` cogiendo la ficha de la lengua de
+# vacuno, el higado de ternera cogiendo musculo generico, y el peso
+# objetivo que no llegaba al solver. Los cuatro «funcionaban».
+#
+# Lo unico que los cazo fue una comprobacion de COHERENCIA: una segunda
+# magnitud independiente que predice la primera. La suma de los doce
+# aminoacidos predice la proteina. La suma de las cuatro bases predice las
+# purinas totales. El calcio predice cuanto hueso lleva la pieza.
+#
+# Donde no exista esa segunda magnitud, hay que inventarla ANTES de
+# cargar, no despues.
+AA_COH = ["arginina", "histidina", "isoleucina", "leucina", "lisina", "metionina",
+          "cistina", "fenilalanina", "tirosina", "treonina", "triptofano", "valina"]
+
+for a_ in al:
+    n_ = a_.get("nutrientes") or {}
+    sd_ = set(a_.get("sin_dato") or [])
+    nom_ = a_["nombre"]
+    prot_ = nut(a_, "proteina")
+    cat_ = a_.get("categoria")
+
+    # ── El hueso carnoso tiene que tener hueso ──────────────────────────
+    # Las fichas de USDA de cuello de pollo NO llevan el hueso: 18 mg de
+    # calcio contra los 1.700 del cuello entero. Un factor de 94. Si
+    # alguna fila de hueso carnoso viniera de USDA, BEDCA, CIQUAL o
+    # FINELI -todas dan PORCION COMESTIBLE- estaria mal por dos ordenes
+    # de magnitud y el menu saldria verde igual, porque 18 mg es un
+    # numero perfectamente plausible para una carne.
+    # La LARINGE es la excepcion conocida y esta bien: es cartilago, no
+    # hueso, asi que no esta mineralizada y el calcio no la ve. Es la misma
+    # pieza que se deja sin aminograma a proposito.
+    if cat_ == "Hueso carnoso" and nom_ != "Laringe de vacuno":
+        ca_, fo_ = nut(a_, "calcio"), nut(a_, "fosforo")
+        if ca_ and ca_ < 400:
+            avisos.append(("HUESO", nom_,
+                           f"{ca_:.0f} mg de calcio/100 g y es hueso carnoso. Por debajo de 400 la "
+                           f"ficha es de porcion comestible SIN hueso (el cuello de pollo del USDA "
+                           f"da 18 contra 1.700 del cuello entero)"))
+        if ca_ and fo_:
+            r_ = ca_ / fo_
+            if not (1.3 <= r_ <= 2.2):
+                avisos.append(("HUESO", nom_,
+                               f"Ca:P = {r_:.2f}. La hidroxiapatita da 2,15 por estequiometria; por "
+                               f"debajo de 1,3 hay carne de mas o el dato esta mal"))
+
+    # ── El aminograma tiene que parecerse a una proteina ────────────────
+    tiene_aa = prot_ > 0 and not (set(AA_COH) & sd_) and all(k in n_ for k in AA_COH)
+    if tiene_aa:
+        suma_ = sum(n_.get(k) or 0 for k in AA_COH)
+        if prot_ >= 3 and not (0.25 <= suma_ / prot_ <= 0.85):
+            avisos.append(("AMINO", nom_,
+                           f"los 12 aminoacidos suman {suma_:.2f} g y la proteina son {prot_:.2f}: "
+                           f"{suma_/prot_*100:.0f}% de ella, fuera de la banda 25-85%. Es la "
+                           f"comprobacion que cazo el triptofano en miligramos"))
+        # La isoleucina separa la sangre de todo lo demas: 4,43 g/100 g de
+        # proteina en la carne, 1,1 en la harina de sangre y 0,50 en la
+        # hemoglobina pura -- NUEVE veces menos. Pegarle a la sangre un
+        # aminograma generico de proteina animal la sobreestimaria un 300%.
+        if prot_ >= 10:
+            ile_ = (n_.get("isoleucina") or 0) / prot_ * 100
+            # ⚠️ LAS SIETE FICHAS DE PAVO SALEN AQUI Y ES UN FALLO REAL,
+            # encontrado el 28 de agosto por esta misma comprobacion el dia
+            # que se puso. Su aminograma viene de «Turkey, ground, raw» del
+            # USDA y tiene la isoleucina y la valina un 40% bajas mientras
+            # la leucina, la lisina y la treonina salen normales:
+            #     Leu/Ile   pollo 1,47 · ternera 1,76 · salmon 1,76
+            #               PAVO 2,42
+            # Va en la direccion segura -infravalora, asi que el motor
+            # compensa- pero esta mal. Pendiente de resembrar desde otra
+            # ficha; hasta entonces se listan aqui para que el aviso no
+            # cante lo mismo cada vez y tape uno nuevo.
+            PAVO_PENDIENTE = {"Pavo", "Cuello de pavo", "Pavo muslo con piel",
+                              "Pavo pechuga con piel", "Pavo pechuga sin piel",
+                              "Corazón de pavo", "Hígado de pavo", "Molleja de pavo",
+                              "Molleja de pollo"}
+            if ile_ < 3.0 and "sangre" not in nom_.lower() and nom_ not in PAVO_PENDIENTE:
+                avisos.append(("AMINO", nom_,
+                               f"isoleucina al {ile_:.1f}% de la proteina. Por debajo del 3% solo "
+                               f"estan la sangre (1,1) y la hemoglobina (0,50); la carne va a 4,4"))
+        # Y el triptofano por los dos lados: cero en colageno puro, y
+        # nunca por encima del 2% -- ahi es donde se ve un factor 1.000.
+        if prot_ >= 3:
+            tri_ = (n_.get("triptofano") or 0) / prot_ * 100
+            # El huevo (2,03%) y el sesamo (2,19%) son legitimamente
+            # ricos en triptofano; el techo se pone en 2,5 para que el
+            # aviso siga sirviendo para lo que existe -- cazar un factor
+            # 1.000, no discutir un decimal.
+            if not (0.3 <= tri_ <= 2.5):
+                avisos.append(("AMINO", nom_,
+                               f"triptofano al {tri_:.2f}% de la proteina, fuera de 0,3-2,0%. El "
+                               f"colageno tiene CERO y una tabla en miligramos da mil veces mas"))
+
+# ── Las purinas: que el linaje de la tabla sea el bueno ────────────────
+# El higado de vacuno es el patron: Souci da 231 y Kaneko 2014 mide 219,8
+# por HPLC. Un 5%. Hay compilaciones alemanas que dan 122 para esa misma
+# ficha -- y si el higado esta mal, las demas filas de esa tabla no valen
+# aunque parezcan razonables.
+_hig = next((a_ for a_ in al if a_["nombre"] == "Hígado de vaca"), None)
+if _hig:
+    _pv = nut(_hig, "purinas")
+    # Nuestra cifra viene del USDA («Beef liver, raw», 197) y no de Souci
+    # (231) ni de Kaneko (219,8 por HPLC). Un 10% entre metodos es normal;
+    # lo que este aviso busca es el linaje MALO -- hay compilaciones
+    # alemanas que dan 122 para esta misma ficha, y si el higado esta a la
+    # mitad, ninguna otra fila de esa tabla vale.
+    if _pv and not (190 <= _pv <= 240):
+        avisos.append(("PURINA", "Hígado de vaca",
+                       f"{_pv:.0f} mg de purinas. El patron son 200-240 (Souci 231, Kaneko 2014 "
+                       f"mide 219,8 por HPLC). Si el higado no cuadra, el linaje de la tabla de "
+                       f"donde salio no vale para ninguna otra fila"))
+
 print()
 print("═" * 74)
 print("SIN AMINOGRAMA, entre los que tienen proteina (>= %.0f g/100 g)" % PROTEINA_QUE_CUENTA)

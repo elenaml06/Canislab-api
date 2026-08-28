@@ -179,6 +179,60 @@ DER_ANCLA_BAJA = 95.0
 NO_SE_ESCALAN = {"Grasa_total"}
 
 
+# ⚠️ EL PESO OBJETIVO DESDE EL BCS (28 agosto). Regla de AAHA 2014,
+# corroborada por Teixeira 2024: «Each BCS >= 5 (on a 9 point scale) ... is
+# equivalent to being 10 % overweight». Y su ejemplo trabajado, que es el
+# test: «a 45 kg Labrador retriever that has a BCS of 8 out of 9 is 30 %
+# overweight and its ideal weight is approximately 32 kg».
+#
+#     45 x (1 - 0,30) = 31,5      <- RESTA
+#     45 / (1 + 0,30) = 34,6      <- dividir. MAL. Tres kilos.
+#
+# Ninguna de las dos fuentes publicadas divide.
+#
+# SE ROMPE EN LOS DOS EXTREMOS, y uno falla hacia el lado peligroso:
+#
+# · POR ABAJO. Con BCS 3 la formula se da la vuelta y devuelve un objetivo
+#   MAYOR que el peso real: un perro de 15 kg saldria a 18. La regla de
+#   AAHA esta definida solo hacia arriba («BCS >= 5»). Y no es cosmetico:
+#   con 18 en vez de 15 la DER efectiva sale un 15% mas baja y los minimos
+#   escalarian un 15% de mas en un perro que ni esta a dieta. Sale por el
+#   lado conservador, pero es un numero que no ha decidido nadie.
+#
+# · POR ARRIBA es peor. En BCS 9 la formula da un 40% de exceso, pero la
+#   escala se satura: el 9/9 cubre desde un 40% hasta mas del 100%. La
+#   referencia publicada solo llega a 8 -- la Global Pet Obesity Initiative
+#   (2019, firmada por el ECVCN, la WSAVA y la ACVIM) define obesidad como
+#   30% sobre el ideal y dice que eso equivale a 8/9. Por encima nadie
+#   publica la equivalencia. Y ahi el error va hacia el lado MALO: si el
+#   perro esta un 60% por encima y la formula dice 40%, el objetivo sale
+#   demasiado alto y con el demasiadas kcal, justo en el perro que peor lo
+#   lleva. En BCS 9 no se estima: hace falta el peso declarado.
+#
+# Los medios puntos valen 5%: la regla es lineal y un 6,5 o un 7,5 no se
+# redondean.
+BCS_NEUTRO = 5.0
+BCS_MAXIMO_PUBLICADO = 8.0
+
+
+def peso_objetivo_desde_bcs(peso_actual_kg, bcs):
+    """El peso objetivo estimado desde el BCS, o None si no se puede.
+
+    Devuelve None -y hay que pedir el peso declarado- por debajo de BCS 5
+    (la regla no existe hacia abajo) y en BCS 9 (la escala se satura y la
+    estimacion se queda corta justo donde mas duele).
+    """
+    try:
+        p = float(peso_actual_kg)
+        b = float(bcs)
+    except (TypeError, ValueError):
+        return None
+    if p <= 0 or b <= BCS_NEUTRO or b > BCS_MAXIMO_PUBLICADO:
+        return None
+    exceso = 0.10 * (b - BCS_NEUTRO)
+    return round(p * (1.0 - exceso), 3)
+
+
 def minimo_de(r, nombre_req, etapa, der_efectiva=None):
     """El mínimo de FEDIAF de un requisito, escalado por la DER efectiva.
 

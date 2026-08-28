@@ -47,6 +47,7 @@ from motor_completo import resolver as resolver_v2, especie_de
 from motor_completo import PATOLOGIAS, topes_de_patologias
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
 from verificar import verificar as verificar_v2
+from verificar import peso_objetivo_desde_bcs
 from seguridad import revisar_seguridad as revisar_seguridad_v2
 from seguridad import avisos_rotacion as avisos_rotacion_v2
 
@@ -260,6 +261,41 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto"):
     return rotos
 
 
+# ⚠️ LA ESCALERA DEL PESO DE REFERENCIA (28 agosto). UN SOLO SITIO.
+#
+# La DER efectiva -y con ella todos los mínimos escalados- se mide sobre un
+# peso, y ese peso tiene que ser el mismo con el que se calcularon las kcal.
+# Si una cuenta usa un peso y la otra usa otro, se reconstruye en pequeño el
+# fallo del 263 → 413: dos fórmulas sobre dos pesos distintos, pegadas.
+#
+# Por eso esto está aquí y no repartido: quien llama pide el peso UNA vez y
+# se lleva también de dónde salió, para poder decirlo.
+#
+# Los tres peldaños, en orden, y el motivo de que no se pare en el primero:
+# no escalar falla EN SILENCIO -devuelve los mínimos de mantenimiento para
+# una ración restringida, que es justo el defecto que esto arregla- y
+# escalar de más falla RUIDOSAMENTE -sale infactible, o sale un menú más
+# denso de lo necesario, y se ve-. Cuando un fallo es silencioso y el otro
+# visible, se elige el visible.
+def _peso_de_referencia(datos):
+    """(peso_kg, de_dónde_salió). Nunca devuelve None en el peso si hay
+    peso real: el último peldaño es usarlo tal cual, y decirlo."""
+    obj = getattr(datos, "peso_objetivo_kg", None)
+    if obj:
+        return float(obj), "declarado"
+    actual = getattr(datos, "peso_perro_kg", None)
+    bcs = getattr(datos, "bcs", None)
+    if actual and bcs is not None:
+        derivado = peso_objetivo_desde_bcs(actual, bcs)
+        if derivado:
+            return derivado, "derivado_del_bcs"
+        # BCS 9 o por debajo de 5: la regla de AAHA no cubre eso y estimar
+        # ahí falla hacia el lado malo. Se cae al peso real, marcado.
+    if actual:
+        return float(actual), "peso_real_sin_objetivo"
+    return None, "sin_peso"
+
+
 def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
                            origen, al=None, req=None, patologias=None,
                            peso_objetivo_kg=None):
@@ -420,6 +456,9 @@ class PeticionDER(BaseModel):
     # de lo que es y los mínimos subirían de más. Si no llega, se usa el
     # peso real, que escala un poco de más -- el lado seguro.
     peso_objetivo_kg: Optional[float] = None
+    # El BCS de 9 puntos, para derivar el objetivo cuando no viene
+    # declarado. Ver `_peso_de_referencia`.
+    bcs: Optional[float] = None
     peso_ideal_kg: Optional[float] = None
     convivencia: str = "solo"
     macho_entero: bool = False
@@ -468,6 +507,9 @@ class PeticionMenu(BaseModel):
     # de lo que es y los mínimos subirían de más. Si no llega, se usa el
     # peso real, que escala un poco de más -- el lado seguro.
     peso_objetivo_kg: Optional[float] = None
+    # El BCS de 9 puntos, para derivar el objetivo cuando no viene
+    # declarado. Ver `_peso_de_referencia`.
+    bcs: Optional[float] = None
     nombres_excluidos: Optional[list] = None
     patologias: Optional[list] = None
     # ⚠️ AÑADIDO (5 agosto): "Toy"/"Mini"/"Pequeño"/"Mediano"/"Grande"/
@@ -579,6 +621,9 @@ class PeticionCambiarAlimento(BaseModel):
     # de lo que es y los mínimos subirían de más. Si no llega, se usa el
     # peso real, que escala un poco de más -- el lado seguro.
     peso_objetivo_kg: Optional[float] = None
+    # El BCS de 9 puntos, para derivar el objetivo cuando no viene
+    # declarado. Ver `_peso_de_referencia`.
+    bcs: Optional[float] = None
     # ⚠️ AÑADIDO (5 agosto, madrugada): mismo motivo que en PeticionMenu
     # -- si el perro no puede masticar hueso carnoso, esa exclusión debe
     # respetarse también al editar, no solo al generar por primera vez.
@@ -604,6 +649,9 @@ class PeticionAnadirQuitarAlimento(BaseModel):
     # de lo que es y los mínimos subirían de más. Si no llega, se usa el
     # peso real, que escala un poco de más -- el lado seguro.
     peso_objetivo_kg: Optional[float] = None
+    # El BCS de 9 puntos, para derivar el objetivo cuando no viene
+    # declarado. Ver `_peso_de_referencia`.
+    bcs: Optional[float] = None
     # ⚠️ AÑADIDO (25 agosto) — CASO REAL: /menu/anadir y /menu/quitar
     # devolvían HTTP 500. `_recalcular_con_motor` lee
     # `datos.categorias_excluidas`, y este modelo era el único de los tres
@@ -635,6 +683,9 @@ class PeticionRevalidar(BaseModel):
     # de lo que es y los mínimos subirían de más. Si no llega, se usa el
     # peso real, que escala un poco de más -- el lado seguro.
     peso_objetivo_kg: Optional[float] = None
+    # El BCS de 9 puntos, para derivar el objetivo cuando no viene
+    # declarado. Ver `_peso_de_referencia`.
+    bcs: Optional[float] = None
     nombres_excluidos: Optional[list] = None
     patologias: Optional[list] = None
     especies_excluidas: list[str] = []
@@ -661,7 +712,7 @@ def endpoint_der(datos: PeticionDER):
     resultado = calcular_der(
         datos.peso_actual_kg, datos.etapa, actividad, datos.esterilizado,
         peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
-            peso_objetivo_kg=datos.peso_objetivo_kg,
+            peso_objetivo_kg=_peso_de_referencia(datos)[0],
         peso_ideal_kg=datos.peso_ideal_kg,
         convivencia=datos.convivencia,
         macho_entero=datos.macho_entero,
@@ -771,11 +822,24 @@ def endpoint_menu_v2(datos: PeticionMenu):
     """
     observabilidad.etiquetar(endpoint="/menu/v2", etapa=datos.etapa_requisitos)
     try:
-        return _garantizar_verificado(
+        _resp_v2 = _garantizar_verificado(
             _resolver_menu_v2_interno(datos),
             datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
             origen="/menu/v2", patologias=datos.patologias,
-            peso_objetivo_kg=datos.peso_objetivo_kg)
+            peso_objetivo_kg=_peso_de_referencia(datos)[0])
+        # ⚠️ SE DICE SOBRE QUÉ PESO SE HA MEDIDO, y de dónde salió. Los
+        # mínimos escalan con la DER efectiva, y la DER efectiva se calcula
+        # sobre un peso: si ese peso no es el mismo con el que se hicieron
+        # las kcal, las dos cuentas hablan de perros distintos. Que se vea
+        # es lo único que separa un desajuste de un desajuste EN SILENCIO.
+        if isinstance(_resp_v2, dict):
+            _p_ref, _p_de = _peso_de_referencia(datos)
+            _resp_v2["peso_de_referencia"] = {
+                "kg": _p_ref, "procedencia": _p_de,
+                "der_efectiva": (round(datos.der_objetivo / _p_ref ** 0.75, 1)
+                                 if _p_ref else None),
+            }
+        return _resp_v2
     except Exception as e:
         import traceback
         traceback.print_exc()  # queda en los logs de Render para poder investigarlo
@@ -1140,7 +1204,7 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
                 datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
                 origen="/menu/semana", al=al, req=req,
                 patologias=datos.patologias,
-                peso_objetivo_kg=datos.peso_objetivo_kg)
+                peso_objetivo_kg=_peso_de_referencia(datos)[0])
 
             if not resultado.get("factible"):
                 # ⚠️ si YA se generó al menos un menú, se devuelven los que
@@ -1504,7 +1568,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                     # de un perro con sobrepeso pediria mas nutriente del que
                     # toca, y si no escalara daria la densidad de un perro de
                     # mantenimiento a una racion de bajada. Las dos mal.
-                    peso_objetivo_kg=datos.peso_objetivo_kg,
+                    peso_objetivo_kg=_peso_de_referencia(datos)[0],
                 )
                 if not ok_rapido:
                     break
@@ -1559,7 +1623,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             forzar=forzar_este, preferir=preferir,
             patologias=datos.patologias, restringir_especie=datos.restringir_especie,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
-            peso_objetivo_kg=datos.peso_objetivo_kg,
+            peso_objetivo_kg=_peso_de_referencia(datos)[0],
             evitar_especies=datos.evitar_especies,
             restringir_a_elegidos=restringir_a_elegidos_este,
             categorias_excluidas=datos.categorias_excluidas,
@@ -1579,7 +1643,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 forzar=forzar_este, preferir=preferir,
                 patologias=datos.patologias, restringir_especie=datos.restringir_especie,
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
-            peso_objetivo_kg=datos.peso_objetivo_kg,
+            peso_objetivo_kg=_peso_de_referencia(datos)[0],
                 evitar_especies=datos.evitar_especies,
                 restringir_a_elegidos=restringir_a_elegidos_este,
                 categorias_excluidas=datos.categorias_excluidas,
@@ -1659,7 +1723,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             patologias=datos.patologias,
             categorias_excluidas=datos.categorias_excluidas,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
-            peso_objetivo_kg=datos.peso_objetivo_kg,
+            peso_objetivo_kg=_peso_de_referencia(datos)[0],
             evitar_especies=datos.evitar_especies,
             presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
         )
@@ -2054,7 +2118,7 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
                 perro.der_objetivo, perro.etapa_requisitos, perro.peso_perro_kg,
                 origen="/menu/varios-perros", al=al, req=req,
                 patologias=perro.patologias,
-                peso_objetivo_kg=getattr(perro, "peso_objetivo_kg", None))
+                peso_objetivo_kg=_peso_de_referencia(perro)[0])
 
         def anotar_consumo(i, j, gramos):
             """Descuenta del presupuesto semanal del perro lo que gasta este
@@ -2344,7 +2408,7 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 forzar=forzar_este,
                 restringir_especie=restringir_especie,
                 peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None),
-                peso_objetivo_kg=getattr(datos, "peso_objetivo_kg", None),
+                peso_objetivo_kg=_peso_de_referencia(datos)[0],
                 categorias_excluidas=getattr(datos, "categorias_excluidas", None),
                 presupuesto_semanal_restante=presupuesto_ya_definido,
                 # ⚠️ AÑADIDO (24 agosto) — FALLO GRAVE ENCONTRADO MIDIENDO:
@@ -3221,6 +3285,9 @@ class AnalisisRequest(BaseModel):
     # de lo que es y los mínimos subirían de más. Si no llega, se usa el
     # peso real, que escala un poco de más -- el lado seguro.
     peso_objetivo_kg: Optional[float] = None
+    # El BCS de 9 puntos, para derivar el objetivo cuando no viene
+    # declarado. Ver `_peso_de_referencia`.
+    bcs: Optional[float] = None
     peso_ideal_kg: Optional[float] = None
     convivencia: str = "solo"
     macho_entero: bool = False
@@ -3278,7 +3345,7 @@ def verificar():
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "cab384545c2e3702",   # 28 ago: LAS PURINAS, 101 de 159 fichas, y 58 con el hueco declarado. Dato INFORMATIVO: no esta en verificar.MAPA y no toca ningun menu -- el unico umbral publicado para perro (90 mg/1000 kcal) sale de Malandain 2008, que no hemos podido leer. Existe para el urato: medido, la racion normal va a 758 mg/1000 kcal, ocho veces y media por encima. Ver el BLOQUE 33
+        "alimentos_v3_final.json":      "2c408de753c4ae26",   # 28 ago: PURINAS DE CUATRO VISCERAS con cifra publicada (timo 525, bazo de cordero 322, bazo de vaca 185, pulmon de ternera 117). NO se uso la banda generica 84-243 que se habia propuesto: para el timo habria declarado ~160 cuando la cifra son 525, un factor de 3 a 4 POR ABAJO, y es el alimento solido con mas purinas de las tablas. Pancreas, testiculos y pulmon de cordero se quedan como hueco: no hay dato. Ver el BLOQUE 33
         "requerimientos_v2_final.json": "68f335c24a4ec898",   # 28 ago: EL ANCLA DE 110. Cada nutriente lleva ahora `minAdulto110`, la columna de DER 110 de la Tabla III-3b, sacada de NUESTRA transcripcion auditada del PDF y no de fuera. Con las dos anclas se puede aplicar la ecuacion del apartado 7.2.5: cuando el perro come menos, el minimo por 1000 kcal sube. Los 38 cuadraron con el minAdulto de siempre sin una discrepancia, o sea que nuestra columna ES la de 95. Ver el BLOQUE 34
     }
     SELLOS_CRUDOS = {

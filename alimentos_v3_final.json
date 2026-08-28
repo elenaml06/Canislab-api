@@ -2305,7 +2305,7 @@
    "treonina": 0.604,
    "triptofano": 0.148,
    "valina": 0.798,
-   "purinas": 0
+   "purinas": 117.0
   },
   "nota_datos": "DEVUELTO a Vísceras (5 agosto, madrugada): a diferencia del corazón/molleja/lengua/tripa, donde todas las fuentes coinciden, el pulmón es un caso genuinamente debatido en la comunidad de alimentación cruda -- unas fuentes lo tratan como carne, otras como víscera, sin consenso claro. Se deja como víscera por prudencia.",
   "aminograma_estimado": {
@@ -2314,9 +2314,13 @@
    "confianza": "ALTA",
    "nota": "misma especie y tejido. Proteína 16,2 contra 16,2"
   },
-  "sin_dato": [
-   "purinas"
-  ]
+  "purinas_fuente": {
+   "desde": "Souci-Fachmann-Kraut (vía compilaciones)",
+   "confianza": "media",
+   "nota": "Tres compilaciones coincidentes, pulmón de ternera. Compilación, no análisis primario: calidad de dato inferior al resto de la columna.",
+   "pais": "Alemania",
+   "anio": ""
+  }
  },
  {
   "nombre": "Riñón de ternera",
@@ -11040,18 +11044,24 @@
    "treonina": 0.747,
    "triptofano": 0.202,
    "valina": 1.195,
-   "purinas": 0
+   "purinas": 185.0
   },
   "nota_datos": "Bazo -- órgano linfoide, no muscular, encaja en la categoría BARF de vísceras igual que riñón/pulmón. Datos cruzados entre varias fuentes derivadas de USDA, consistentes entre sí. Sin dato fiable para yodo, vitA/D/E, folato, colina, cloruro, linoleico/linolénico/araquidónico -- se dejan en 0. [Renombrado de \"Bazo de ternera\" a \"Bazo de vaca\" tras verificación: el hierro tan alto (44.5mg) es propio de animal adulto, no de ternera lechal -- la investigación encontró un dato distinto y genuino para ternera joven, añadido aparte.]",
   "sin_dato": [
-   "cloruro",
-   "purinas"
+   "cloruro"
   ],
   "aminograma_estimado": {
    "desde": "Bazo de cordero, crudo",
    "factor": "1.064",
    "confianza": "media",
    "nota": "mismo tejido, especie distinta"
+  },
+  "purinas_fuente": {
+   "desde": "Souci-Fachmann-Kraut (vía compilaciones)",
+   "confianza": "media",
+   "nota": "Souci vía Eichhorn, bazo de vacuno adulto. Compilación, no análisis primario: calidad de dato inferior al resto de la columna.",
+   "pais": "Alemania",
+   "anio": ""
   }
  },
  {
@@ -11167,14 +11177,20 @@
    "treonina": 0.702,
    "triptofano": 0.19,
    "valina": 1.123,
-   "purinas": 0
+   "purinas": 322.0
   },
   "nota_datos": "Bazo de cordero -- USDA, cruzado con FatSecret y NutrientOptimiser (crudo). Confianza alta. Sin dato fiable de calcio, vitaminas del grupo B (salvo B12) ni vitA/D/E -- se dejan en 0.",
   "sin_dato": [
    "cloruro",
-   "manganeso",
-   "purinas"
-  ]
+   "manganeso"
+  ],
+  "purinas_fuente": {
+   "desde": "Souci-Fachmann-Kraut (vía compilaciones)",
+   "confianza": "media",
+   "nota": "Souci vía Eichhorn, bazo de cordero. Compilación, no análisis primario: calidad de dato inferior al resto de la columna.",
+   "pais": "Alemania",
+   "anio": ""
+  }
  },
  {
   "nombre": "Timo de ternera",
@@ -11225,17 +11241,23 @@
    "treonina": 0.44,
    "triptofano": 0.094,
    "valina": 0.528,
-   "purinas": 0
+   "purinas": 525.0
   },
   "nota_datos": "Fuente: USDA FDC 170194 (SR Legacy). Por 100 g crudo, peso fresco.",
   "sin_dato": [
    "cloruro",
    "colina",
-   "purinas",
    "vitD",
    "vitE",
    "yodo"
-  ]
+  ],
+  "purinas_fuente": {
+   "desde": "Souci-Fachmann-Kraut (vía compilaciones)",
+   "confianza": "media",
+   "nota": "Souci-Fachmann-Kraut vía compilaciones alemanas de dieta para la gota. «Kalbsbries (Thymusdrüse)» es inequívocamente el TIMO, no el páncreas: en inglés «sweetbread» cubre los dos y ahí está la confusión. Es el alimento sólido con más purinas de las tablas. Compilación, no análisis primario: calidad de dato inferior al resto de la columna.",
+   "pais": "Alemania",
+   "anio": ""
+  }
  },
  {
   "nombre": "Cerebro de ternera",
