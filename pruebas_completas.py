@@ -1700,10 +1700,24 @@ if not _ok_b16:
     fallos.append("BLOQUE16: el caso base ni siquiera da menú — no se puede "
                   "comprobar nada más")
 else:
+    # ⚠️ LOS 30 REQUISITOS SE CUENTAN COMO FAMILIA (28 agosto). Un requisito
+    # pone UNA fila cuando el suelo y el techo se miden con los mismos
+    # números ("fediaf_absoluto"), y DOS cuando no: el suelo sobre el valor
+    # plausible del dato dudoso y el techo sobre el declarado con los huecos
+    # imputados. Contar solo "fediaf_absoluto" hacía que partir una fila
+    # PARECIERA perderla. Lo que esta prueba defiende es que los 30
+    # requisitos sean restricciones de verdad, y eso es la suma de los tres
+    # nombres -- si alguien borra el bucle entero, los tres se van a cero a
+    # la vez y esto salta igual.
+    _FAMILIA_FEDIAF = ("fediaf_absoluto", "fediaf_minimo_conservador", "fediaf_maximo")
+    _diag["fediaf_los_30"] = {
+        k: sum((_diag.get(r) or {}).get(k, 0) for r in _FAMILIA_FEDIAF)
+        for k in ("filas", "coeficientes")}
+
     # (regla, cuántas filas COMO MÍNIMO, por qué importa)
     _EXIGIDAS_B16 = [
         ("kcal_total", 1, "sin esto el menú no tiene por qué dar las kcal del perro"),
-        ("fediaf_absoluto", 20, "son los 30 requisitos de FEDIAF: el corazón de todo"),
+        ("fediaf_los_30", 20, "son los 30 requisitos de FEDIAF: el corazón de todo"),
         ("ratio_ca_p_min", 1, "el ratio calcio:fósforo, que no es opinable en un cachorro"),
         ("ratio_ca_p_max", 1, "el ratio calcio:fósforo por arriba"),
         ("seguridad_cronica_tiaminasa", 1, "el pescado crudo destruye la tiamina"),

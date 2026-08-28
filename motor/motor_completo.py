@@ -32,7 +32,8 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import numpy as np
 from scipy.optimize import milp, LinearConstraint, Bounds
 from verificar import MAPA, _num, EQUIVALENCIA
-from constructor import valor_nutriente, valor_plausible_de
+from constructor import (valor_nutriente, valor_plausible_de,
+                         tabla_imputacion_maximos, valor_para_maximo)
 
 # ⚠️ AÑADIDO (5 agosto, noche): copia local de especie_de() (la misma
 # lógica que ya usan especies.py y el frontend) -- se define aquí en
@@ -558,6 +559,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     candidatos_por_cat["Suplementos"] = [a["nombre"] for a in alimentos.values()
                                         if a.get("categoria") in SUP_CATS]
 
+
     # ⚠️ REESCRITO (5 agosto, mañana): antes solo se EXCLUÍA "V-INTEGRA
     # Perro Adulto" fuera de esa etapa, sin ofrecer ninguna alternativa
     # -- así que un cachorro se quedaba sin ningún V-INTEGRA disponible
@@ -824,6 +826,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                 tope_efectivo_tasa = tope_efectivo_absoluto / der * 1000.0
                 # nunca se afloja -- solo se usa si es MÁS estricto que el normal
                 TOPE_CRONICO_KCAL[clave_nut] = min(TOPE_CRONICO_KCAL[clave_nut], tope_efectivo_tasa)
+    tabla_max = tabla_imputacion_maximos(alimentos)
     for nombre_req, clave in MAPA.items():
         r = req.get(nombre_req)
         if not r:
@@ -851,19 +854,33 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # Si ningun alimento trae `valor_plausible`, las dos filas son
         # identicas y se pone una sola, como siempre.
         fila_min = fila_vacia()
+        # ⚠️ TERCERA FILA (28 agosto): la de los TECHOS con los huecos del
+        # catálogo imputados al percentil de su familia. Sin esto el solver
+        # cuenta un `sin_dato` como cero contra el máximo, construye un menú
+        # que se pasa, y es el verificador quien lo tira después -- o sea,
+        # trabajo tirado y un menos de menús. Mismo criterio en los dos
+        # sitios, calculado en `constructor.valor_para_maximo`.
+        fila_max = fila_vacia()
         aporta_algo = False
         hay_dudoso = False
+        hay_hueco = False
         for n in nombres:
             nut_n = alimentos[n].get("nutrientes", {})
             v = valor_nutriente(nut_n, clave) / 100.0
             plausible = valor_plausible_de(alimentos[n], clave)
             v_min = v if plausible is None else float(plausible) / 100.0
+            v_max, estado = valor_para_maximo(alimentos[n], clave, tabla_max)
+            v_max /= 100.0
             if v:
                 fila[idx[n]] = v; aporta_algo = True
             if v_min:
                 fila_min[idx[n]] = v_min
+            if v_max:
+                fila_max[idx[n]] = v_max
             if plausible is not None and v_min != v:
                 hay_dudoso = True
+            if estado == "imputado" and v_max != v:
+                hay_hueco = True
         if not aporta_algo:
             continue
         # ⚠️ AÑADIDO (5 agosto): +1.5% de margen sobre el mínimo exacto.
@@ -884,13 +901,27 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # encima del mínimo FEDIAF incluso después del redondeo.
         lo = mn * der / 1000.0 * 1.015 if mn is not None else -np.inf
         hi = mx * der / 1000.0 if mx is not None else np.inf
-        if hay_dudoso and lo != -np.inf:
-            # el suelo sobre el valor plausible, el techo sobre el declarado
-            _fila("fediaf_minimo_conservador", fila_min, lo, np.inf)
-            if hi != np.inf:
-                _fila("fediaf_maximo", fila, -np.inf, hi)
+        # ⚠️ CADA COTA CON SU VECTOR, Y NUNCA AL REVÉS (28 agosto).
+        #   suelo  -> el valor PLAUSIBLE del dato dudoso, y el hueco a CERO
+        #   techo  -> el valor DECLARADO, y el hueco IMPUTADO a su familia
+        # Es la misma regla de siempre ("un número que no nos creemos no puede
+        # ser prudente en las dos direcciones"), ahora con el hueco además del
+        # dato dudoso.
+        # ⚠️ CASO REAL, y me lo comí yo al escribir esto: al principio la fila
+        # imputada se usaba también cuando el nutriente NO tenía techo -- o
+        # sea, para el MÍNIMO. El solver daba por cubierto el linoleico con un
+        # valor que nadie ha medido, el verificador lo medía con el declarado,
+        # y salían menús ROJOS al 28% del mínimo. La batería cazó 11 casos.
+        fila_suelo = fila_min if hay_dudoso else fila
+        fila_techo = fila_max if hay_hueco else fila
+        tiene_suelo, tiene_techo = lo != -np.inf, hi != np.inf
+        if tiene_suelo and tiene_techo and fila_suelo is not fila_techo:
+            _fila("fediaf_minimo_conservador", fila_suelo, lo, np.inf)
+            _fila("fediaf_maximo", fila_techo, -np.inf, hi)
+        elif tiene_techo and not tiene_suelo:
+            _fila("fediaf_maximo", fila_techo, -np.inf, hi)
         else:
-            _fila("fediaf_absoluto", fila, lo, hi)
+            _fila("fediaf_absoluto", fila_suelo, lo, hi if not tiene_techo else hi)
 
         # ⚠️ AÑADIDO (21 agosto) — CASO REAL MEDIDO: con el tope renal de
         # fósforo en 1400, el motor devolvía menús con 1426. Se saltaba su

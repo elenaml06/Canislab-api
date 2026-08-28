@@ -408,7 +408,87 @@ def valor_plausible_de(alimento: dict, clave: str):
         return None
 
 
-def perfil_nutricional(menu: dict, alimentos: dict, conservador: bool = False) -> dict:
+# ---------------------------------------------------------------------------
+# HUECOS Y MÁXIMOS: un cero que significa "no lo sé" no defiende de nada
+# ---------------------------------------------------------------------------
+# `sin_dato` marca lo que el catálogo NO SABE, y hasta ahora se sumaba como
+# cero en todas partes. Contra un MÍNIMO eso es conservador: como mucho se
+# pone un suplemento que no hacía falta. Contra un MÁXIMO es al revés, y es
+# el mismo argumento que ya aceptamos para `valor_plausible`: un número que
+# no nos creemos no puede ser prudente en las dos direcciones a la vez.
+#
+# Con un tope terapéutico encima (cobre en hepatopatía, fósforo en renal) la
+# diferencia deja de ser teórica: el menú sale VERDE porque hemos contado
+# como cero justo el nutriente que había que vigilar.
+#
+# Se imputa el PERCENTIL 90 DE SU PROPIA CATEGORÍA, que es lo que significa
+# "un alimento como este, en el extremo alto de lo que suelen tener". Y solo
+# si la categoría tiene al menos `MINIMO_FAMILIA` valores conocidos.
+#
+# ⚠️ NO HAY RED GLOBAL A PROPÓSITO. Se midió: usando el percentil 90 de TODO
+# el catálogo, a la cáscara de huevo le tocaban 3,00 mg de cobre y 68,7 µg de
+# selenio -- cifras de víscera metidas en una sal mineral. Serían 67 de las
+# 160 imputaciones. Inventar por analogía global es exactamente lo que este
+# catálogo no hace, así que cuando no hay familia no se inventa nada: el
+# nutriente sale marcado como NO VERIFICABLE en la ficha, que es la verdad.
+MINIMO_FAMILIA = 3
+
+
+def tabla_imputacion_maximos(alimentos: dict) -> dict:
+    """{(categoria, clave): valor} con el percentil 90 de cada familia.
+
+    Se calcula sobre los valores CONOCIDOS: un alimento que tiene el hueco
+    no vota en su propia imputación.
+    """
+    conocidos = {}
+    for a in alimentos.values():
+        cat = a.get("categoria")
+        huecos = set(a.get("sin_dato") or [])
+        for clave, valor in (a.get("nutrientes") or {}).items():
+            if clave in huecos:
+                continue
+            try:
+                conocidos.setdefault((cat, clave), []).append(float(valor))
+            except (TypeError, ValueError):
+                continue
+    tabla = {}
+    for llave, valores in conocidos.items():
+        if len(valores) < MINIMO_FAMILIA:
+            continue
+        valores.sort()
+        i = min(len(valores) - 1, int(round(0.9 * (len(valores) - 1))))
+        tabla[llave] = valores[i]
+    return tabla
+
+
+def valor_para_maximo(alimento: dict, clave: str, tabla: dict):
+    """Lo que hay que contar de este alimento al comprobar un TECHO.
+
+    Devuelve (valor, estado), con estado en:
+      "declarado"      el catálogo lo sabe, se usa tal cual
+      "imputado"       es un hueco y su familia tiene percentil: se usa ese
+      "no_verificable" es un hueco y su familia no da para imputar
+    """
+    huecos = set(alimento.get("sin_dato") or [])
+    partes = NUTRIENTES_COMPUESTOS.get(clave, (clave,))
+    total, estado = 0.0, "declarado"
+    for parte in partes:
+        if parte in huecos:
+            imputado = tabla.get((alimento.get("categoria"), parte))
+            if imputado is None:
+                return (total, "no_verificable")
+            total += imputado
+            estado = "imputado"
+        else:
+            try:
+                total += float((alimento.get("nutrientes") or {}).get(parte) or 0)
+            except (TypeError, ValueError):
+                pass
+    return (total, estado)
+
+
+def perfil_nutricional(menu: dict, alimentos: dict, conservador: bool = False,
+                       tabla_maximos: dict = None) -> dict:
     """Suma lo que aporta la racion. Simple aritmetica, sin sorpresas.
 
     `conservador=True` sustituye los valores marcados como dudosos por el
@@ -430,12 +510,22 @@ def perfil_nutricional(menu: dict, alimentos: dict, conservador: bool = False) -
     quedaba en 2,34 con un minimo de 2,60 -- por debajo, y en verde.
     """
     total = {}
+    # `tabla_maximos` activa el perfil PARA TECHOS: los huecos dejan de valer
+    # cero y pasan al percentil de su familia, o quedan marcados como no
+    # verificables. Ver `valor_para_maximo`, arriba.
+    imputados, no_verificables = {}, {}
     for nombre, gramos in menu.items():
         a = alimentos.get(nombre)
         if not a:
             continue
         for nutriente, valor in a.get("nutrientes", {}).items():
-            if conservador:
+            if tabla_maximos is not None:
+                valor, estado = valor_para_maximo(a, nutriente, tabla_maximos)
+                if estado == "imputado":
+                    imputados.setdefault(nutriente, []).append(nombre)
+                elif estado == "no_verificable":
+                    no_verificables.setdefault(nutriente, []).append(nombre)
+            elif conservador:
                 p = valor_plausible_de(a, nutriente)
                 if p is not None:
                     valor = p
@@ -451,6 +541,9 @@ def perfil_nutricional(menu: dict, alimentos: dict, conservador: bool = False) -
     total["_kcal"] = sum(alimentos[n]["energia"] * g / 100.0
                          for n, g in menu.items() if n in alimentos)
     total["_gramos"] = sum(menu.values())
+    if tabla_maximos is not None:
+        total["_imputados"] = imputados
+        total["_no_verificables"] = no_verificables
     return total
 
 
