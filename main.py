@@ -260,8 +260,71 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto"):
     return rotos
 
 
+# ⚠️ AÑADIDO (28 agosto) — TERCERA CAPA, misma familia que
+# `_tope_patologia_roto`, y encontrada contando cuántos de los 43
+# requisitos de la tabla se verifican de verdad.
+#
+# `Calcio_LateGrowth_RazaGrande` es el requisito 31: un cachorro de raza
+# grande o gigante en crecimiento necesita un MÍNIMO de calcio más alto
+# (2500 mg/1000 kcal en vez de los 2000 genéricos), porque no tiene margen
+# para quedarse corto en la fase en que forma el hueso. Estaba puesto como
+# restricción dura dentro del solver desde el 5 de agosto -- y SOLO ahí.
+#
+# El problema es el de siempre: `verificar()` no sabe qué raza es el perro,
+# así que su semáforo mide contra el mínimo del cachorro genérico y sale
+# VERDE con 2100 mg. Y hay al menos dos caminos que no pasan por esa
+# restricción del solver: el menú del catálogo precalculado reescalado
+# (que no resuelve nada) y la vía rápida de /menu/v2, que llamaba a
+# `resolver_v2` sin `peso_adulto_esperado_kg` -- exactamente el mismo
+# olvido que en su día tiró el tope de fósforo del renal en la edición.
+#
+# Medido antes de arreglarlo: 0 de 12 menús de cachorro de raza grande
+# se quedaban por debajo de 2500 (salían entre 2618 y 4500), porque una
+# dieta con hueso carnoso va sobrada de calcio por abajo -- el que aprieta
+# es el techo. O sea: el agujero era real en el código y no estaba dando
+# menús malos hoy. Se cierra igual, porque lo que lo mantenía tapado es
+# una propiedad del catálogo de hoy, no una garantía.
+def _minimo_calcio_raza_grande_roto(gramos, al, req, etapa, peso_adulto_esperado_kg):
+    """¿Este menú se queda por debajo del mínimo de calcio REFORZADO de las
+    razas grandes en crecimiento? Devuelve el texto del fallo, o None.
+
+    Solo aplica a raza grande/gigante (peso adulto esperado >= 25 kg) y en
+    crecimiento; para el resto, el mínimo bueno es el genérico y esta
+    función no dice nada. Es el mismo criterio y la misma fila de la tabla
+    que usa el solver -- si se leyera aquí de otra manera, la comprobación
+    y la restricción podrían discrepar.
+    """
+    RAZA_GRANDE_O_GIGANTE_KG = 25
+    if not gramos or not peso_adulto_esperado_kg:
+        return None
+    if peso_adulto_esperado_kg < RAZA_GRANDE_O_GIGANTE_KG:
+        return None
+    if etapa not in ("CachorroJoven", "CachorroCrecimiento"):
+        return None
+    fila = (req or {}).get("Calcio_LateGrowth_RazaGrande")
+    if not fila:
+        return None
+    minimo = _valor_num(fila.get(f"min{etapa}"))
+    if not minimo:
+        return None
+    kcal = sum((al.get(n, {}).get("energia", 0) or 0) / 100.0 * g
+               for n, g in gramos.items())
+    if kcal <= 0:
+        return None
+    ca = sum((_valor_num(al.get(n, {}).get("nutrientes", {}).get("calcio")) or 0.0) / 100.0 * g
+             for n, g in gramos.items())
+    tasa = ca / kcal * 1000.0
+    # El mismo 0,5% de margen por redondeo que en los topes de patología,
+    # aquí por abajo: el semáforo de FEDIAF ya usa 0,995 para lo mismo.
+    if tasa < minimo * 0.995:
+        return (f"calcio {tasa:.0f} mg/1000 kcal (mínimo {minimo:.0f} en raza "
+                f"grande en crecimiento)")
+    return None
+
+
 def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
-                           origen, al=None, req=None, patologias=None):
+                           origen, al=None, req=None, patologias=None,
+                           peso_adulto_esperado_kg=None):
     """
     Último filtro antes de devolver cualquier menú. Devuelve la respuesta
     tal cual (con la ficha recalculada) si el menú está verificado, o una
@@ -282,6 +345,8 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
     ficha = verificar_v2(gramos, al, req, der, etapa)
     seguro = _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg)
     topes_rotos = _tope_patologia_roto(gramos, al, patologias, etapa)
+    calcio_corto = _minimo_calcio_raza_grande_roto(gramos, al, req, etapa,
+                                                   peso_adulto_esperado_kg)
 
     # ¿es dable? Ver TOPE_GRAMOS_SOBRE_PESO, arriba.
     total_g = sum(gramos.values())
@@ -322,6 +387,26 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
                        "de este perro, así que no te lo damos. Prueba a cambiar "
                        "algún alimento o a quitar alguna restricción."),
             "verificacion": {"topes_de_patologia_rotos": topes_rotos},
+        }
+
+    if calcio_corto:
+        # Mismo trato que un tope de patología roto: es un fallo del motor
+        # (algún camino no aplicó el mínimo reforzado), no de lo que haya
+        # pedido nadie, así que no se entrega y va a Sentry.
+        observabilidad.capturar(
+            RuntimeError(f"Menu por debajo del minimo de calcio de raza grande "
+                         f"bloqueado en {origen}: {calcio_corto}"),
+            endpoint=origen, etapa=etapa, der_objetivo=der,
+            peso_perro_kg=peso_perro_kg,
+            peso_adulto_esperado_kg=peso_adulto_esperado_kg,
+            calcio_corto=calcio_corto, n_alimentos=len(gramos))
+        return {
+            "factible": False,
+            "motivo": ("El menú que salía se queda corto de calcio para un cachorro "
+                       "de raza grande, que necesita más que uno pequeño mientras "
+                       "crece. No te lo damos. Prueba a cambiar algún alimento o a "
+                       "quitar alguna restricción."),
+            "verificacion": {"minimo_calcio_raza_grande_roto": calcio_corto},
         }
 
     if ficha["semaforo"] != "verde" or not seguro:
@@ -731,7 +816,8 @@ def endpoint_menu_v2(datos: PeticionMenu):
         return _garantizar_verificado(
             _resolver_menu_v2_interno(datos),
             datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
-            origen="/menu/v2", patologias=datos.patologias)
+            origen="/menu/v2", patologias=datos.patologias,
+            peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg)
     except Exception as e:
         import traceback
         traceback.print_exc()  # queda en los logs de Render para poder investigarlo
@@ -1095,7 +1181,8 @@ def endpoint_menu_semana(datos: PeticionMenu, numero_de_menus: int = 1):
                 _resolver_menu_v2_interno(datos_este),
                 datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
                 origen="/menu/semana", al=al, req=req,
-                patologias=datos.patologias)
+                patologias=datos.patologias,
+                peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg)
 
             if not resultado.get("factible"):
                 # ⚠️ si YA se generó al menos un menú, se devuelven los que
@@ -1455,6 +1542,13 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                     datos.peso_perro_kg, dosis_maxima_fabricante,
                     margenes_categoria=MARGENES_V2, max_suplementos=2, forzar=base, time_limit=tiempo_restante(),
                     presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
+                    # ⚠️ AÑADIDO (28 agosto): esta vía era la única de las
+                    # cuatro que llaman al motor que NO le pasaba el peso
+                    # adulto esperado, así que el mínimo reforzado de calcio
+                    # de las razas grandes en crecimiento no entraba como
+                    # restricción -- el mismo olvido que en su día tiró el
+                    # tope de fósforo del renal al editar.
+                    peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
                 )
                 if not ok_rapido:
                     break
@@ -1978,7 +2072,8 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
                 _resolver_menu_v2_interno(perro.model_copy(update=cambios_peticion)),
                 perro.der_objetivo, perro.etapa_requisitos, perro.peso_perro_kg,
                 origen="/menu/varios-perros", al=al, req=req,
-                patologias=perro.patologias)
+                patologias=perro.patologias,
+                peso_adulto_esperado_kg=getattr(perro, "peso_adulto_esperado_kg", None))
 
         def anotar_consumo(i, j, gramos):
             """Descuenta del presupuesto semanal del perro lo que gasta este
@@ -2323,6 +2418,7 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                     resultado, datos.der_objetivo, datos.etapa_requisitos,
                     datos.peso_perro_kg, origen="edicion (preservando)",
                     patologias=getattr(datos, "patologias", None),
+                    peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None),
                     al=al, req=req), al, datos)
             # no se pudo manteniendo todo -- se sigue abajo con el
             # comportamiento libre, y se avisa de qué se perdió
@@ -2343,6 +2439,7 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 return _con_aviso_composicion(_garantizar_verificado(
                     resultado, datos.der_objetivo, datos.etapa_requisitos,
                     datos.peso_perro_kg, origen="edicion (libre)", patologias=getattr(datos, "patologias", None),
+                    peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None),
                     al=al, req=req), al, datos)
             ok, gramos, ficha = ok_libre, gramos_libre, ficha_libre
         else:
@@ -2401,7 +2498,8 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
     return _con_aviso_composicion(_garantizar_verificado(
         resultado_final, datos.der_objetivo, datos.etapa_requisitos,
         datos.peso_perro_kg, origen="edicion", al=al, req=req,
-        patologias=getattr(datos, "patologias", None)), al, datos)
+        patologias=getattr(datos, "patologias", None),
+        peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None)), al, datos)
 
 
 @app.post("/menu/cambiar")
@@ -2497,7 +2595,8 @@ def endpoint_revalidar(datos: PeticionRevalidar):
             "gramos_total": sum(gramos.values()),
         }, datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
             origen="/menu/revalidar (sin cambios)", al=al, req=req,
-            patologias=getattr(datos, "patologias", None))
+            patologias=getattr(datos, "patologias", None),
+            peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None))
 
     # Ya no cumple: se rehace con el motor, conservando lo que se pueda.
     motivo = []
