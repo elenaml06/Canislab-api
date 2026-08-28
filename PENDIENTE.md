@@ -602,6 +602,8 @@ menús comparados no tienen sentido sin él.
         precio se decide con lo que se vea.
       · **Acreditación por número de colegiado y alta a mano.** El rol no
         se enciende solo.
+      · **La pauta sale firmada**, con el nombre del veterinario y su
+        número de colegiado.
 
       Y tres cosas que no se preguntaron porque no tienen dos respuestas
       razonables: **el veterinario nunca entra en la cuenta del dueño**
@@ -629,10 +631,34 @@ menús comparados no tienen sentido sin él.
         300 desde una terminal. **La fase 4 empieza por validar el JWT de
         Supabase en la API**, o no se despliega.
 
-      Sigue abierto, y no lo decide un programador: **si el veterinario
-      firma la pauta**. Si su nombre y su número de colegiado salen en el
-      PDF que se lleva el dueño, de hecho ya la está firmando, se haya
-      decidido o no.
+      **La firma es la decisión que más obliga**, y no por lo que hay que
+      pintar en el PDF. Un documento firmado tiene que seguir diciendo lo
+      mismo dentro de un año, y hoy la tabla `menus` guarda nombre, gramos
+      y kcal — ni la etapa, ni el DER, ni las patologías —, que es justo
+      por lo que `/perro/{perro_id}/menus` marca lo que devuelve como
+      `verificado: False`. Firmar eso no se puede: la ficha del perro
+      cambia (el peso objetivo de Lola, 7,0 → 6,2), el catálogo cambia
+      (fuera la borraja el 27, fuera cinco suplementos el 26) y el motor
+      cambia (el fósforo renal, de 1400 a 1200 el 25). **Firmar obliga a
+      congelar**: al firmar se guarda una copia inmutable del menú, de la
+      ficha verificada entera, del contexto, de los huecos y de los tres
+      sellos con los que se calculó. Y ese trabajo hace falta también para
+      la prescripción de la fase 4, así que se hace una vez y va antes que
+      las dos.
+
+      Dos consecuencias que conviene no olvidar: **el modo profesional
+      (fase 1) deja de ser una mejora y pasa a ser requisito** — quien
+      firma tiene que poder ver lo que firma —, y **el sello de lo firmado
+      lo calcula la API sobre lo que verificó**, no el frontend sobre lo
+      que pintó: si no, habría dos ideas de «lo firmado» y el sello
+      cuadraría consigo mismo sin decir nada, que es la misma familia de
+      fallo que la duplicación del DER.
+
+      Sigue abierto, y no lo decide un programador: **qué dice el
+      documento sobre qué se firma exactamente** — si el vet firma la
+      pauta, si firma haberla revisado, qué papel tiene Rawku en medio.
+      Conviene preguntarlo antes de que salga la primera pauta firmada de
+      verdad. No cambia nada de lo de arriba: solo cambia ese texto.
 
 - [ ] **Personalizar perro por perro** cuando son varios. Hoy lo que se
       elige se aplica a la casa entera (se le fuerza al perro que manda y

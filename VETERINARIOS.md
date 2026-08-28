@@ -21,6 +21,7 @@ se arreglan después.
 | ¿Puede bajar de los mínimos de FEDIAF? | **Sí, declarándolo.** Ver el apartado 7, que es el difícil |
 | ¿Quién paga? | **Nadie todavía.** Se abre gratis a unos pocos veterinarios y el precio se decide con lo que se vea |
 | ¿Cómo se acredita? | **Número de colegiado y alta a mano.** El modo profesional no se enciende solo |
+| ¿Firma el veterinario la pauta? | **Sí, con su nombre y su número de colegiado.** Ver el apartado 8, que es el que más cosas obliga |
 
 Y tres que no se preguntaron porque no tienen dos respuestas razonables:
 
@@ -80,9 +81,12 @@ patología que se aplicaron.
 cifras de las treinta. La versión profesional es la misma respuesta,
 pintada entera.
 
-Eso cambia el tamaño del proyecto: las fases 0 a 3 son **Supabase y
-`canislab-web`**, y en esta API no tocan una línea. La única fase que
-toca el motor es la 4.
+Eso cambia el tamaño del proyecto: las fases 0 a 3 son casi todas
+**Supabase y `canislab-web`**. De esta API hacen falta solo dos cosas
+pequeñas, las dos de la fase 1: un `codigo` estable en cada aviso
+(apartado 5) y que devuelva el sello de lo verificado (apartado 8).
+Las que sí tocan el motor son **la congelación de lo firmado y la
+prescripción**, y en ese orden — ver el final del apartado 8.
 
 ---
 
@@ -120,6 +124,10 @@ escribe el webhook de Stripe con la clave secreta.
 
 Misma app, mismos límites, más números a la vista. Es la fase que más
 valor da por lo poco que cuesta, porque el dato ya viaja.
+
+Y desde que se decidió que la pauta sale firmada, **esta fase no es una
+mejora: es requisito**. Quien firma tiene que poder ver lo que firma
+(apartado 8).
 
 Lo que se enseña de más:
 
@@ -317,7 +325,133 @@ fase 4 no se despliega.
 
 ---
 
-## 8. Cómo se prueba
+## 8. La firma
+
+Decidido el 28 de agosto: **la pauta sale firmada, con el nombre del
+veterinario y su número de colegiado.**
+
+Es la decisión que más obliga de todas, y no por lo que hay que pintar en
+el PDF —eso son dos líneas—, sino por lo que un documento firmado tiene
+que poder hacer un año después. Todo lo de este apartado sale de ahí.
+
+### Lo que se firma es un documento, no «el menú»
+
+Hoy la tabla `menus` guarda nombre, gramos y kcal. Nada más. Eso ya está
+señalado en `/perro/{perro_id}/menus`, en `main.py`: **un menú guardado no
+se puede verificar, ni siquiera en principio, porque falta contra qué**
+—no está la etapa, ni el DER, ni las patologías con las que se calculó—.
+Por eso ese endpoint marca lo que devuelve como `verificado: False`.
+
+Firmar eso no se puede. Un documento firmado tiene que seguir diciendo lo
+mismo dentro de un año, y hoy nada de esto se queda quieto:
+
+- **La ficha del perro cambia.** Caso real de este repo, el del peso
+  objetivo: Lola pesaba 7,0 kg y luego 6,2. Si el vet firmó a 7,0, el
+  documento firmado dice 7,0 para siempre — aunque la ficha ya diga otra
+  cosa.
+- **El catálogo cambia.** También ha pasado, dos veces en una semana:
+  fuera la borraja el 27 de agosto, fuera cinco suplementos el 26. Un menú
+  firmado que llevara borraja no se puede regenerar hoy: saldría otro.
+- **El motor cambia.** El tope de fósforo en renal pasó de 1400 a 1200 el
+  25 de agosto. El mismo menú, verificado antes y después, no da lo mismo.
+
+Así que **firmar obliga a congelar**. Al firmar se guarda una copia
+completa e inmutable de lo que se firmó:
+
+```
+pautas_firmadas
+  id                 uuid
+  perro_id           uuid
+  profesional        uuid          -- quién firma
+  nombre_firmante    text          -- copiados AQUÍ, no leídos de profiles:
+  num_colegiado      text          -- si mañana cambia su ficha, lo firmado no cambia
+  firmada_en         timestamptz
+  menu               jsonb         -- los gramos
+  ficha_verificada   jsonb         -- la respuesta ENTERA de verificar(): los 29
+                                   -- nutrientes con su valor, mínimo, máximo y
+                                   -- margen, el Ca:P, el semáforo, los avisos
+  contexto           jsonb         -- etapa, DER, peso, patologías, prescripción,
+                                   -- peldaño de relajación usado, exclusiones
+  huecos             jsonb         -- sin_dato y dato_dudoso de este menú
+  sellos             jsonb         -- el del catálogo, el de la tabla FEDIAF y el
+                                   -- de main.py con los que se calculó
+  sello              text          -- ver abajo
+```
+
+Lo de copiar el nombre y el número en vez de apuntar a `profiles` no es
+redundancia: es que un documento firmado no puede cambiar porque su autor
+edite su perfil.
+
+Y los tres sellos son los que ya existen: `/verificar` sella hoy
+`alimentos_v3_final.json`, `requerimientos_v2_final.json` y `main.py`.
+Guardarlos con la pauta es lo que permite responder «¿con qué datos se
+calculó esto?» sin adivinar.
+
+### El sello lo calcula la API, no el frontend
+
+Un sello sobre lo firmado —SHA-256 de la copia canónica, truncado a 16
+hex, **igual que el de `/verificar`**— para poder comprobar que el PDF que
+alguien enseña es el que se firmó.
+
+**Lo calcula la API, sobre lo que acaba de verificar**, y lo devuelve con
+el menú. No el frontend sobre lo que pintó en pantalla. Si lo calculara el
+frontend, habría dos ideas de «lo firmado» —la del motor y la de la
+pantalla— y el día que se separen, el sello seguirá cuadrando consigo
+mismo y no dirá nada. Es la misma familia de fallo que la duplicación del
+DER que ya vigila `der_casos.json`.
+
+### Firmar es un acto: hay que pulsar
+
+El modo profesional **no firma solo**. Si firmara por el hecho de estar
+encendido, el vet acabaría con veinte pautas firmadas de las que hizo
+probando. Hasta que se pulsa «Firmar la pauta» es un borrador, y se ve que
+lo es.
+
+### No se firma a ciegas
+
+Dos cosas que dejan de ser opcionales en cuanto hay firma:
+
+- **La fase 1 pasa a ser requisito, no mejora.** Un profesional que firma
+  responde de lo que firma, así que tiene que poder ver los 29 nutrientes
+  con su margen antes de pulsar. Firmar una pantalla que dice «cumple 30
+  de 30» y nada más es firmar a ciegas.
+- **Los huecos van en el documento**, no solo en pantalla. Si el menú se
+  calculó con alimentos a los que les falta un dato (`sin_dato`) o con
+  alguno de los valores que no nos creemos (`dato_dudoso`), eso sale
+  impreso en la pauta firmada. Es incómodo y es exactamente por eso: lo
+  contrario es firmar sobre datos incompletos sin que conste en ninguna
+  parte.
+
+### Una pauta firmada no se edita
+
+Se firma otra. La anterior queda, con su fecha. El historial de pautas de
+un paciente es una lista de documentos, no un documento que se va
+pisando — que es, además, la única forma de poder mirar atrás y ver qué se
+le pautó y cuándo.
+
+Por lo mismo, **revocar el acceso no borra lo firmado**: si el dueño
+quita el acceso al veterinario, el vet deja de ver al perro, pero las
+pautas que firmó siguen existiendo para los dos. Un documento firmado no
+se puede hacer desaparecer retirando un permiso.
+
+### Esto reordena el plan
+
+Congelar el menú entero con su contexto hace falta **para la firma y para
+la prescripción de la fase 4** — una prescripción hay que guardarla con el
+menú o no se puede defender tampoco. Es el mismo trabajo, se hace una vez,
+y va **antes** que las dos.
+
+### Lo que sigue sin ser mío
+
+Un veterinario colegiado que firma una pauta calculada por un software
+responde de ella. Qué dice exactamente el documento sobre qué firma —si
+firma la pauta, si firma haberla revisado, qué papel tiene Rawku en
+medio— es una cuestión de responsabilidad profesional, y conviene
+consultarla con el colegio o con quien lleve estos temas **antes** de que
+salga la primera pauta firmada de verdad. Lo de arriba se puede construir
+igual: no cambia según lo que diga ese texto, solo cambia el texto.
+
+## 9. Cómo se prueba
 
 `pruebas_completas.py` entero, como siempre. Y bloques nuevos, cada uno
 comprobado rompiéndolo:
@@ -334,6 +468,17 @@ comprobado rompiéndolo:
 - Sin `rol = 'profesional'` verificado, una `prescripcion` se rechaza con
   401, no se ignora en silencio. **Ignorarla en silencio sería peor que
   aplicarla**: el vet vería un menú que cree prescrito y no lo es.
+- El sello de una pauta firmada **cambia** si se le toca un solo gramo, y
+  **no cambia** si se guarda el mismo contenido con otro formato. Es la
+  misma comprobación que ya hay para los sellos de los JSON en
+  `/verificar`, y por el mismo motivo: un sello que salta por el formato
+  se acaba ignorando, y entonces no vigila nada.
+- Una pauta firmada **sigue diciendo lo mismo** después de cambiar la
+  ficha del perro y después de tocar el catálogo. Es la prueba que
+  justifica la tabla entera: si se cae, es que algo se está leyendo en
+  vivo en vez de la copia congelada.
+- Firmar **guarda el nombre y el número de colegiado**, y cambiar después
+  el perfil del veterinario no altera lo ya firmado.
 
 En `canislab-web`, y esto no es opcional (ver «Fallos que no puede
 encontrar la usuaria» en `CLAUDE.md`): los campos nuevos de la ficha van
@@ -343,18 +488,17 @@ sin cuenta a con cuenta, y en silencio.
 
 ---
 
-## 9. Lo que sigue abierto — y no lo decide un programador
+## 10. Lo que sigue abierto — y no lo decide un programador
 
-- **¿Firma el veterinario la pauta?** Si su nombre y su número de
-  colegiado salen en el PDF que se lleva el dueño, **de hecho ya la está
-  firmando**, se haya decidido o no. Hay que decidirlo a propósito, y
-  probablemente hablarlo con alguien que sepa de responsabilidad
-  profesional. Es la única parte de este documento que no se resuelve
-  escribiendo código.
+- **Qué dice el documento sobre qué se firma exactamente** — ver el final
+  del apartado 8. Es lo único que queda de la firma que no se resuelve
+  escribiendo código, y conviene preguntarlo antes de la primera pauta de
+  verdad. Lo demás ya está decidido: se firma, con nombre y número de
+  colegiado.
 - **El precio**, cuando haya vets usándolo.
-- **Qué pasa con los menús ya generados si el dueño revoca el acceso.**
-  ¿El vet deja de verlos? ¿Los conserva porque son su historia clínica?
-  Son respuestas distintas y las dos son defendibles.
+- **Los menús NO firmados, si el dueño revoca el acceso.** Los firmados ya
+  está decidido: quedan (apartado 8). Los borradores que el vet generó y
+  no llegó a firmar, no — ¿desaparecen de su lista o los conserva?
 - **Cachorro renal, gestante con pancreatitis**: hoy se bloquean porque
   el mínimo para crecer choca con el tope terapéutico. Con prescripción
   eso deja de ser un muro, y hay que decidir si se abre — es exactamente
