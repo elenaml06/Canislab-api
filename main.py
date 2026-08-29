@@ -589,6 +589,12 @@ class PeticionDER(BaseModel):
 
 
 class PeticionMenu(BaseModel):
+    # ⚠️ EL TOKEN, NO UN BOOLEANO (29 agosto). Es la sesión de Supabase de
+    # quien pide el menú. Sirve para saber si es un veterinario acreditado,
+    # y con eso se le formulan las patologías que al dueño se le bloquean.
+    # No se acepta un `modo_profesional` porque eso lo manda cualquiera.
+    # Ver `_es_profesional_acreditado`.
+    token_usuario: Optional[str] = None
     # ⚠️ CORREGIDO (5 agosto, noche) — FALLO GRAVE ENCONTRADO: todos estos
     # campos declaraban un tipo estricto ("float", "str", "list"...) con
     # valor por defecto None, en vez de "Optional[tipo]". Eso funciona
@@ -703,6 +709,12 @@ class PeticionMenu(BaseModel):
 
 
 class PeticionCambiarAlimento(BaseModel):
+    # ⚠️ EL TOKEN, NO UN BOOLEANO (29 agosto). Es la sesión de Supabase de
+    # quien pide el menú. Sirve para saber si es un veterinario acreditado,
+    # y con eso se le formulan las patologías que al dueño se le bloquean.
+    # No se acepta un `modo_profesional` porque eso lo manda cualquiera.
+    # Ver `_es_profesional_acreditado`.
+    token_usuario: Optional[str] = None
     # ⚠️ CORREGIDO (5 agosto, noche): mismo fallo que en PeticionMenu.
     peso_perro_kg: Optional[float] = None
     nombres_excluidos: Optional[list] = None
@@ -734,6 +746,12 @@ class PeticionCambiarAlimento(BaseModel):
 
 
 class PeticionAnadirQuitarAlimento(BaseModel):
+    # ⚠️ EL TOKEN, NO UN BOOLEANO (29 agosto). Es la sesión de Supabase de
+    # quien pide el menú. Sirve para saber si es un veterinario acreditado,
+    # y con eso se le formulan las patologías que al dueño se le bloquean.
+    # No se acepta un `modo_profesional` porque eso lo manda cualquiera.
+    # Ver `_es_profesional_acreditado`.
+    token_usuario: Optional[str] = None
     # ⚠️ CORREGIDO (5 agosto, noche): mismo fallo que en PeticionMenu.
     peso_perro_kg: Optional[float] = None
     nombres_excluidos: Optional[list] = None
@@ -774,6 +792,12 @@ class PeticionAnadirQuitarAlimento(BaseModel):
 # los modelos de edición: para poder verificar el menú que el perro está
 # comiendo de verdad hace falta saber cuánto de cada cosa, no solo qué.
 class PeticionRevalidar(BaseModel):
+    # ⚠️ EL TOKEN, NO UN BOOLEANO (29 agosto). Es la sesión de Supabase de
+    # quien pide el menú. Sirve para saber si es un veterinario acreditado,
+    # y con eso se le formulan las patologías que al dueño se le bloquean.
+    # No se acepta un `modo_profesional` porque eso lo manda cualquiera.
+    # Ver `_es_profesional_acreditado`.
+    token_usuario: Optional[str] = None
     menu_actual_gramos: dict          # {"Lengua de ternera": 485.3, ...}
     der_objetivo: float               # el DER de AHORA, no el de cuando se generó
     etapa_requisitos: str             # la etapa de AHORA
@@ -938,6 +962,21 @@ def endpoint_menu_v2(datos: PeticionMenu):
         # es lo único que separa un desajuste de un desajuste EN SILENCIO.
         if isinstance(_resp_v2, dict):
             _p_ref, _p_de = _peso_de_referencia(datos)
+            # ⚠️ EL AVISO DE LA PATOLOGÍA VIAJA CON EL MENÚ (29 agosto).
+            # Antes no viajaba ninguno: la app tenía su propia copia del
+            # texto para las patologías que BLOQUEAN, y para las que sí se
+            # formulaban enseñaba un rojo genérico. Eso deja de valer en
+            # cuanto el veterinario formula las que al dueño se le bloquean:
+            # un menú de urato que NO restringe purinas y no lo dice es peor
+            # que no dar menú. Y el aviso no puede vivir en la app, porque
+            # lo que hay que contar es lo que hizo el MOTOR.
+            from motor_completo import avisos_de_patologias as _avfn
+            _prof_v2 = _es_profesional_acreditado(getattr(datos, "token_usuario", None))
+            _av = _avfn(getattr(datos, "patologias", None),
+                        datos.etapa_requisitos, es_profesional=_prof_v2)
+            if _av:
+                _resp_v2["avisos_patologia"] = _av
+                _resp_v2["formulado_como_profesional"] = _prof_v2
             _resp_v2["peso_de_referencia"] = {
                 "kg": _p_ref, "procedencia": _p_de,
                 "der_efectiva": (round(datos.der_objetivo / _p_ref ** 0.75, 1)
@@ -1483,7 +1522,15 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # un adulto bajando el fósforo, pero en un cachorro o una gestante el
     # fósforo que hay que quitarle es MENOS del que necesita para crecer.
     # Ahí no hay menú que dar, y decirlo es mejor que dar uno que no sirve.
-    bloqueantes = patologias_bloquean(datos.patologias, datos.etapa_requisitos)
+    # ⚠️ AL VETERINARIO ACREDITADO NO SE LE BLOQUEA (29 agosto). El motivo
+    # de bloquear era «esto lo tiene que pautar un veterinario»; cuando el
+    # que está delante ES el veterinario, el muro solo lo manda a hacerlo
+    # en una hoja de cálculo, donde nadie verifica nada. La frontera de
+    # verdad —la que sí exige firma— es pautar por DEBAJO de los mínimos de
+    # FEDIAF, y eso sigue sin hacerse. Ver VETERINARIOS.md.
+    _prof = _es_profesional_acreditado(getattr(datos, "token_usuario", None))
+    bloqueantes = patologias_bloquean(datos.patologias, datos.etapa_requisitos,
+                                      es_profesional=_prof)
     if bloqueantes:
         return {"factible": False, "requiere_veterinario": True,
                 "motivo": " ".join(avisos_de_patologias(bloqueantes, datos.etapa_requisitos))}
@@ -1942,6 +1989,12 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
 # ─────────────────────────────────────────────────────────────────────────────
 
 class PeticionVariosPerros(BaseModel):
+    # ⚠️ EL TOKEN, NO UN BOOLEANO (29 agosto). Es la sesión de Supabase de
+    # quien pide el menú. Sirve para saber si es un veterinario acreditado,
+    # y con eso se le formulan las patologías que al dueño se le bloquean.
+    # No se acepta un `modo_profesional` porque eso lo manda cualquiera.
+    # Ver `_es_profesional_acreditado`.
+    token_usuario: Optional[str] = None
     # Un PeticionMenu completo por perro: cada uno con SUS kcal, SU etapa,
     # SUS alergias. No se comparte nada entre ellos salvo, si se pide,
     # la lista de alimentos.
@@ -3119,6 +3172,73 @@ def portal_cliente(datos: PeticionPortal):
 # reintenta con espera creciente durante días, así que un fallo pasajero
 # de Supabase se recupera solo en vez de perderse -- y se manda a Sentry.
 # =====================================================================
+# =====================================================================
+# QUIEN ES UN VETERINARIO ACREDITADO -- Y POR QUE NO SE PREGUNTA AL CLIENTE
+# =====================================================================
+#
+# ⚠️ ESTO ES UNA FRONTERA DE AUTORIZACION (29 agosto). De este rol cuelga
+# formular para patologias que al dueño se le bloquean, y mañana pautar por
+# debajo de los minimos de FEDIAF con una firma detras.
+#
+# LO QUE NO SE PUEDE HACER, y es la tentacion obvia: aceptar un campo
+# `modo_profesional: true` en la peticion. Eso lo manda cualquiera con la
+# consola del navegador abierta, y entonces el rol no acredita nada.
+#
+# LO QUE TAMPOCO VALE: aceptar un `usuario_id`. Un UUID no es una
+# credencial -- es un identificador, y el de un veterinario se puede
+# copiar. Mandar el id de otro no puede darte sus permisos.
+#
+# LO QUE SI: la app manda su TOKEN de sesion de Supabase, que solo tiene
+# quien ha iniciado sesion de verdad. La API se lo da a Supabase, Supabase
+# dice de quien es, y solo entonces se mira `profiles` con la clave de
+# servicio. Dos viajes, y ninguno se cree nada del cliente.
+#
+# Y LA MISMA REGLA QUE `rol.js` EN LA APP, escrita igual: hacen falta LAS
+# DOS -- `rol == 'profesional'` (lo que la persona PIDE) y
+# `rol_verificado_en` con fecha (que alguien miro su numero de colegiado).
+# Un rol que se autoconcede no puede sostener una prescripcion.
+#
+# FALLA CERRADO. Sin Supabase configurado, con el token caducado, con la
+# red caida o con cualquier excepcion, devuelve False -- y False es el
+# comportamiento del dueño, que nunca es peligroso. Lo contrario seria que
+# una caida de red abriera la puerta.
+def _es_profesional_acreditado(token_usuario):
+    """True solo si el token es de una cuenta con el rol verificado."""
+    if not token_usuario:
+        return False
+    url = (os.environ.get("SUPABASE_URL") or "").rstrip("/")
+    clave = (os.environ.get("SUPABASE_SERVICE_KEY") or "").strip()
+    if not url or not clave:
+        return False
+    try:
+        import requests
+        # (1) ¿De quien es este token? Lo dice Supabase, no el cliente.
+        r = requests.get(f"{url}/auth/v1/user", timeout=6, headers={
+            "apikey": clave, "Authorization": f"Bearer {str(token_usuario).strip()}"})
+        if r.status_code != 200:
+            return False
+        uid = (r.json() or {}).get("id")
+        if not uid:
+            return False
+        # (2) Y ahora si, su fila de `profiles`, con la clave de servicio.
+        cab = _cabeceras_supabase(clave)
+        cab.pop("Prefer", None)
+        r2 = requests.get(f"{url}/rest/v1/profiles",
+                          params={"id": f"eq.{uid}", "select": "rol,rol_verificado_en"},
+                          headers=cab, timeout=6)
+        if r2.status_code != 200:
+            return False
+        filas = r2.json() or []
+        if not filas:
+            return False
+        fila = filas[0]
+        return fila.get("rol") == "profesional" and bool(fila.get("rol_verificado_en"))
+    except Exception:
+        # Ni un aviso a Sentry: esto se llama en cada menu y un Supabase
+        # caido llenaria el buzon. Lo que importa es que falle cerrado.
+        return False
+
+
 def _cabeceras_supabase(clave):
     """
     ⚠️ CORREGIDO (20 agosto) — CASO REAL, y el fallo era NUESTRO: un pago

@@ -64,7 +64,14 @@ def _a_forma_del_motor(crudo):
         if cond:
             e["max_pct_kcal_grasa_si_ademas"] = (cond["valor"], tuple(cond["requiere"]))
         for campo in ("solo_en_adulto", "en_crecimiento", "excluye_fruta",
-                      "sin_dieta_automatica"):
+                      "sin_dieta_automatica",
+                      # ⚠️ LO DEL VETERINARIO (29 agosto). `formulable_por_
+                      # profesional` dice si a un profesional acreditado se le
+                      # formula; `necesita_bajo_fediaf` dice si para TRATAR de
+                      # verdad haría falta bajar de un mínimo de FEDIAF, que es
+                      # la frontera que exige firma (ver VETERINARIOS.md).
+                      "formulable_por_profesional", "necesita_bajo_fediaf",
+                      "nutriente_frontera", "objetivo_terapeutico_por_1000kcal"):
             if campo in p:
                 e[campo] = p[campo]
         avisos = p.get("avisos") or {}
@@ -72,6 +79,10 @@ def _a_forma_del_motor(crudo):
             e["aviso"] = avisos["general"]
         if avisos.get("crecimiento"):
             e["aviso_crecimiento"] = avisos["crecimiento"]
+        if avisos.get("profesional"):
+            e["aviso_profesional"] = avisos["profesional"]
+        if avisos.get("profesional_crecimiento"):
+            e["aviso_profesional_crecimiento"] = avisos["profesional_crecimiento"]
         salida[clave] = e
     return salida
 

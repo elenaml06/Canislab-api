@@ -1,149 +1,179 @@
 {
- "_meta": {
-  "que_es": "Los topes por patología del motor. Antes vivían en un dict de motor_completo.py.",
-  "unidad": "por 1000 kcal de energía metabolizable, igual que requerimientos_v2_final.json",
-  "regla": "Ninguna patología formulable puede tener un tope por debajo del mínimo de FEDIAF: si lo tiene, es una dieta de prescripción y va con formulable=false. Lo comprueba auditar_patologias.py, que se ejecuta en el BLOQUE 32 de la batería.",
-  "cada_cifra_lleva_fuente": true
- },
- "patologias": {
-  "renal": {
-   "nombre": "Insuficiencia renal crónica",
-   "formulable": true,
-   "topes_por_1000kcal": {
-    "fosforo": {
-     "valor": 1200.0,
-     "fuente": "Freeman LM, dvm360 2009; WSAVA; IRIS",
-     "por_que": "Las dietas renales comerciales aportan 480-1000 mg/1000 kcal. 1200 es lo más restrictivo que el solver puede aplicar sin romper el mínimo FEDIAF de adulto (1160 mg). IRIS da objetivos en SANGRE, no en la dieta, así que no sirve para poner este número."
+  "_meta": {
+    "que_es": "Los topes por patología del motor. Antes vivían en un dict de motor_completo.py.",
+    "unidad": "por 1000 kcal de energía metabolizable, igual que requerimientos_v2_final.json",
+    "regla": "Ninguna patología formulable puede tener un tope por debajo del mínimo de FEDIAF: si lo tiene, es una dieta de prescripción y va con formulable=false. Lo comprueba auditar_patologias.py, que se ejecuta en el BLOQUE 32 de la batería.",
+    "cada_cifra_lleva_fuente": true
+  },
+  "patologias": {
+    "renal": {
+      "nombre": "Insuficiencia renal crónica",
+      "formulable": true,
+      "topes_por_1000kcal": {
+        "fosforo": {
+          "valor": 1200.0,
+          "fuente": "Freeman LM, dvm360 2009; WSAVA; IRIS",
+          "por_que": "Las dietas renales comerciales aportan 480-1000 mg/1000 kcal. 1200 es lo más restrictivo que el solver puede aplicar sin romper el mínimo FEDIAF de adulto (1160 mg). IRIS da objetivos en SANGRE, no en la dieta, así que no sirve para poner este número."
+        }
+      },
+      "solo_en_adulto": true,
+      "en_crecimiento": "bloquear",
+      "avisos": {
+        "general": "Se ha bajado el fósforo todo lo posible sin bajar del mínimo nutricional de un perro sano. IMPORTANTE: una dieta renal terapéutica de verdad baja el fósforo POR DEBAJO de ese mínimo, y eso solo puede pautarlo tu veterinario. Esto es un apoyo, no sustituye una dieta renal prescrita.",
+        "crecimiento": "Un perro en crecimiento o gestación con insuficiencia renal necesita un plan dietético individual hecho por un nutricionista veterinario: el fósforo que hay que quitarle choca con el que necesita para crecer.",
+        "profesional_crecimiento": "Se ha formulado SIN el tope de fósforo: en crecimiento o gestación el fósforo que necesita el perro para crecer es mayor que el tope renal, así que aplicarlo haría el problema infactible. El menú cumple FEDIAF de crecimiento y no está ajustado a la enfermedad renal. Ese ajuste es tuyo."
+      },
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "nutriente_frontera": "fosforo",
+      "objetivo_terapeutico_por_1000kcal": 1000
+    },
+    "pancreatitis": {
+      "nombre": "Pancreatitis",
+      "formulable": true,
+      "topes_por_1000kcal": {
+        "grasa": {
+          "valor": 20.0,
+          "fuente": "Merck Veterinary Manual, «Pancreatitis in Dogs and Cats»",
+          "por_que": "Literal de la fuente: «feeding a low-fat diet (ie, less than 20 g fat/1,000 kcal) is crucial for treatment success». Se expresa en gramos por 1000 kcal y no en % de kcal a propósito: es como lo dice la fuente."
+        }
+      },
+      "solo_en_adulto": true,
+      "en_crecimiento": "sin_tope",
+      "avisos": {
+        "general": "Se ha bajado la grasa a menos de 20 g por cada 1000 kcal, que es lo que recomienda la literatura veterinaria en pancreatitis. La tolerancia es muy individual: ajústalo con tu veterinario según cómo responda.",
+        "crecimiento": "Este menú NO ha podido bajar la grasa al nivel que se recomienda en pancreatitis (menos de 20 g por cada 1000 kcal), porque en crecimiento, gestación o lactancia el mínimo que el perro necesita es mayor que ese tope. Consúltalo con tu veterinario."
+      },
+      "formulable_por_profesional": true
+    },
+    "oxalato": {
+      "nombre": "Cálculos de oxalato cálcico",
+      "formulable": true,
+      "topes_por_1000kcal": {
+        "vitD": {
+          "valor": 20.0,
+          "fuente": "Máximo nutricional de FEDIAF 2025 (Tabla III-3b)",
+          "por_que": "No es un tope propio de la patología: es el máximo de FEDIAF, puesto aquí explícito porque en oxalato el exceso de vitamina D sí importa. En oxalato NO se baja el calcio: el calcio intestinal secuestra el oxalato y bajarlo empeora el problema (Today's Veterinary Practice 2025 citando a Carr 2020)."
+        }
+      },
+      "avisos": {
+        "general": "Ojo: en oxalato NO hay que bajar el calcio (bajarlo aumenta la absorción de oxalato y empeora). Lo importante es el agua y evitar verduras muy ricas en oxalato como la espinaca o la acelga."
+      },
+      "formulable_por_profesional": true
+    },
+    "hepatopatia": {
+      "nombre": "Hepatopatía por acúmulo de cobre",
+      "formulable": false,
+      "motivo_no_formulable": "El objetivo terapéutico de cobre (1,2 mg/1000 kcal) está POR DEBAJO del mínimo que FEDIAF exige a cualquier perro (2,08 mg). La dieta que trata está por debajo de la que alimenta: no se resuelve eligiendo mejor los alimentos.",
+      "topes_por_1000kcal": {
+        "cobre": {
+          "valor": 2.4,
+          "fuente": "Center SA et al., JAVMA 264(2):171-180, 2026 (límite tolerable 0,24 mg/100 kcal)",
+          "por_que": "Se deja puesto aunque hoy la patología bloquee: si algún día se distingue «hepatopatía por cobre» de otras hepatopatías, el número ya está aquí."
+        }
+      },
+      "sin_dieta_automatica": true,
+      "avisos": {
+        "general": "La restricción de cobre que hace falta en una hepatopatía por acúmulo está POR DEBAJO del mínimo de cobre que necesita cualquier perro para estar sano. No es algo que se pueda resolver eligiendo mejor los alimentos: hace falta supervisión veterinaria con suplementación dirigida, así que no generamos menú automático.",
+        "profesional": "Se ha formulado con el cobre en 2,4 mg/1000 kcal, que es lo más bajo que permite el mínimo de FEDIAF (2,08). NO es una dieta de restricción de cobre: una hepatopatía por acúmulo necesita bajar a ~1,2 mg/1000 kcal, por debajo del mínimo nutricional, y eso es una prescripción con suplementación dirigida que hoy la app no formula."
+      },
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "nutriente_frontera": "cobre",
+      "objetivo_terapeutico_por_1000kcal": 1.2
+    },
+    "cardiopatia": {
+      "nombre": "Cardiopatía",
+      "formulable": true,
+      "topes_por_1000kcal": {
+        "sodio": {
+          "valor": 900.0,
+          "fuente": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140",
+          "por_que": "ACVIM da el sodio por estadio: B2 80-99 mg/100 kcal, C 50-79, D <50. 900 mg/1000 kcal = 90 mg/100 kcal, dentro del rango de B2. La app no pregunta el estadio, así que se usa el MENOS restrictivo: bajar a C o D sin saberlo sería quitarle sodio a un perro que no lo necesita."
+        }
+      },
+      "avisos": {
+        "general": "Se ha bajado el sodio a lo que recomiendan las guías para cardiopatía en estadio B2. En cardiopatía avanzada puede hacer falta bajarlo más y vigilar el potasio si toma diuréticos: consúltalo con tu veterinario."
+      },
+      "formulable_por_profesional": true
+    },
+    "diabetes": {
+      "nombre": "Diabetes mellitus",
+      "formulable": true,
+      "max_pct_kcal_grasa_si_ademas": {
+        "valor": 0.3,
+        "requiere": [
+          "pancreatitis",
+          "hipertrigliceridemia"
+        ],
+        "fuente": "Purina Institute",
+        "por_que": "Literal: «Dietary fat restriction (<30% ME) is recommended for diabetic dogs with concurrent chronic pancreatitis or persistent hypertriglyceridemia» -- SOLO si hay eso también. Antes se bajaba la grasa al 35% SIEMPRE, y el pilar de la dieta en diabetes es fibra e índice glucémico, no restringir grasa a todo el mundo."
+      },
+      "excluye_fruta": true,
+      "avisos": {
+        "general": "Lo más importante en diabetes no es el menú sino la REGULARIDAD: misma cantidad, a la misma hora, coordinada con la insulina. Se ha quitado la fruta del menú: su azúcar se absorbe rápido y descuadra la pauta de insulina. La verdura fibrosa sí se mantiene, porque ayuda a amortiguar la subida de glucosa."
+      },
+      "formulable_por_profesional": true
+    },
+    "hipotiroidismo": {
+      "nombre": "Hipotiroidismo",
+      "formulable": true,
+      "avisos": {
+        "general": "No se cambia la composición, salvo que se quitan el grelo y el nabo: son las dos crucíferas del catálogo más ricas en los compuestos que interfieren con la tiroides. El brócoli, la coliflor y las coles se mantienen, porque los suyos son mucho menos activos. Si se los das, mejor cocidos: hervirlos destruye la mayor parte. Lo que más importa aquí es que no le falte yodo, y este menú ya lo cubre. Y evita darle cuello de rumiante grande de forma repetida: puede llevar restos de tejido tiroideo y alterar los valores de la analítica."
+      },
+      "nota": "No hay tope numérico: la restricción es por alimento (grelo y nabo, Brassica rapa, ricos en progoitrina). No existe umbral canino publicado de crucíferas.",
+      "formulable_por_profesional": true
+    },
+    "estruvita": {
+      "nombre": "Cálculos de estruvita",
+      "formulable": false,
+      "motivo_no_formulable": "Dependen del pH urinario y de analíticas que la app no puede ver.",
+      "sin_dieta_automatica": true,
+      "avisos": {
+        "general": "Estos cálculos dependen del pH de la orina y de analíticas que la app no puede ver. Una dieta mal ajustada aquí puede empeorarlos, así que no generamos menú automático: necesitas una dieta pautada por tu veterinario.",
+        "profesional": "Se ha formulado una ración completa y equilibrada. Lo que decide en estruvita es el pH urinario y el manejo de la infección, y eso la app no lo ve ni lo ajusta: la parte que importa es tuya."
+      },
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false
+    },
+    "urato": {
+      "nombre": "Urolitos de urato",
+      "formulable": false,
+      "motivo_no_formulable": "La carga de purinas de una ración cruda está muy por encima de cualquier objetivo, y no por las vísceras: la carne muscular es la mayor parte. Medido con nuestro catálogo y el USDA/ODS-NIH v2.0: 687-922 mg/1000 kcal.",
+      "sin_dieta_automatica": true,
+      "avisos": {
+        "general": "La predisposición a urolitos de urato (dálmata, shunt hepático) necesita restringir tanto las purinas que, con alimentos frescos normales, no queda margen real para cubrir el resto de nutrientes a la vez -- por eso no generamos menú automático aquí: esto necesita una dieta pautada por tu veterinario, a menudo con pienso terapéutico específico.",
+        "profesional": "Se ha formulado una ración normal: el motor NO restringe purinas. Medido sobre menús reales, una ración cruda va a unos 780 mg de purinas/1000 kcal y el objetivo citado para urato son 90 — ocho veces y media. Y no es cosa de las vísceras: quitando hígado y corazón queda casi cinco veces. Con alimentos frescos no hay margen; el número está aquí para que decidas tú, no para que lo decida el motor."
+      },
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "nutriente_frontera": "purinas",
+      "objetivo_terapeutico_por_1000kcal": 90
+    },
+    "cistina": {
+      "nombre": "Urolitos de cistina",
+      "formulable": false,
+      "motivo_no_formulable": "Depende del pH urinario y de analíticas. Además el catálogo no tiene metionina ni cistina en ninguna ficha.",
+      "sin_dieta_automatica": true,
+      "avisos": {
+        "general": "Igual que con estruvita, esto depende del pH de la orina y de analíticas que la app no puede ver -- no generamos menú automático: necesitas una dieta pautada por tu veterinario.",
+        "profesional": "Se ha formulado una ración completa y equilibrada. La restricción que trata la cistinuria es bajar metionina y cistina POR DEBAJO del mínimo de FEDIAF, y eso el motor no lo hace. Además depende del pH urinario. El aminograma de metionina y cistina sí está ya en el catálogo, así que el dato existe aunque la restricción no se aplique."
+      },
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "nutriente_frontera": "metionina_cistina"
+    },
+    "otra": {
+      "nombre": "Otra condición no especificada",
+      "formulable": false,
+      "motivo_no_formulable": "No hay ninguna regla nutricional conocida para una condición sin especificar: fingir que se ha ajustado sería peor que no generar nada.",
+      "sin_dieta_automatica": true,
+      "avisos": {
+        "general": "Esta condición no está entre las que este sistema sabe ajustar automáticamente todavía, así que no generamos un menú que podría no estar realmente adaptado a lo que necesita: mejor que un veterinario valore su caso en concreto y paute la dieta.",
+        "profesional": "Se ha formulado una ración completa y equilibrada para un perro SANO. No se ha aplicado ningún ajuste, porque no hay ninguna regla nutricional conocida para una condición sin especificar. Los ajustes, si hacen falta, los pones tú."
+      },
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false
     }
-   },
-   "solo_en_adulto": true,
-   "en_crecimiento": "bloquear",
-   "avisos": {
-    "general": "Se ha bajado el fósforo todo lo posible sin bajar del mínimo nutricional de un perro sano. IMPORTANTE: una dieta renal terapéutica de verdad baja el fósforo POR DEBAJO de ese mínimo, y eso solo puede pautarlo tu veterinario. Esto es un apoyo, no sustituye una dieta renal prescrita.",
-    "crecimiento": "Un perro en crecimiento o gestación con insuficiencia renal necesita un plan dietético individual hecho por un nutricionista veterinario: el fósforo que hay que quitarle choca con el que necesita para crecer."
-   }
-  },
-  "pancreatitis": {
-   "nombre": "Pancreatitis",
-   "formulable": true,
-   "topes_por_1000kcal": {
-    "grasa": {
-     "valor": 20.0,
-     "fuente": "Merck Veterinary Manual, «Pancreatitis in Dogs and Cats»",
-     "por_que": "Literal de la fuente: «feeding a low-fat diet (ie, less than 20 g fat/1,000 kcal) is crucial for treatment success». Se expresa en gramos por 1000 kcal y no en % de kcal a propósito: es como lo dice la fuente."
-    }
-   },
-   "solo_en_adulto": true,
-   "en_crecimiento": "sin_tope",
-   "avisos": {
-    "general": "Se ha bajado la grasa a menos de 20 g por cada 1000 kcal, que es lo que recomienda la literatura veterinaria en pancreatitis. La tolerancia es muy individual: ajústalo con tu veterinario según cómo responda.",
-    "crecimiento": "Este menú NO ha podido bajar la grasa al nivel que se recomienda en pancreatitis (menos de 20 g por cada 1000 kcal), porque en crecimiento, gestación o lactancia el mínimo que el perro necesita es mayor que ese tope. Consúltalo con tu veterinario."
-   }
-  },
-  "oxalato": {
-   "nombre": "Cálculos de oxalato cálcico",
-   "formulable": true,
-   "topes_por_1000kcal": {
-    "vitD": {
-     "valor": 20.0,
-     "fuente": "Máximo nutricional de FEDIAF 2025 (Tabla III-3b)",
-     "por_que": "No es un tope propio de la patología: es el máximo de FEDIAF, puesto aquí explícito porque en oxalato el exceso de vitamina D sí importa. En oxalato NO se baja el calcio: el calcio intestinal secuestra el oxalato y bajarlo empeora el problema (Today's Veterinary Practice 2025 citando a Carr 2020)."
-    }
-   },
-   "avisos": {
-    "general": "Ojo: en oxalato NO hay que bajar el calcio (bajarlo aumenta la absorción de oxalato y empeora). Lo importante es el agua y evitar verduras muy ricas en oxalato como la espinaca o la acelga."
-   }
-  },
-  "hepatopatia": {
-   "nombre": "Hepatopatía por acúmulo de cobre",
-   "formulable": false,
-   "motivo_no_formulable": "El objetivo terapéutico de cobre (1,2 mg/1000 kcal) está POR DEBAJO del mínimo que FEDIAF exige a cualquier perro (2,08 mg). La dieta que trata está por debajo de la que alimenta: no se resuelve eligiendo mejor los alimentos.",
-   "topes_por_1000kcal": {
-    "cobre": {
-     "valor": 2.4,
-     "fuente": "Center SA et al., JAVMA 264(2):171-180, 2026 (límite tolerable 0,24 mg/100 kcal)",
-     "por_que": "Se deja puesto aunque hoy la patología bloquee: si algún día se distingue «hepatopatía por cobre» de otras hepatopatías, el número ya está aquí."
-    }
-   },
-   "sin_dieta_automatica": true,
-   "avisos": {
-    "general": "La restricción de cobre que hace falta en una hepatopatía por acúmulo está POR DEBAJO del mínimo de cobre que necesita cualquier perro para estar sano. No es algo que se pueda resolver eligiendo mejor los alimentos: hace falta supervisión veterinaria con suplementación dirigida, así que no generamos menú automático."
-   }
-  },
-  "cardiopatia": {
-   "nombre": "Cardiopatía",
-   "formulable": true,
-   "topes_por_1000kcal": {
-    "sodio": {
-     "valor": 900.0,
-     "fuente": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140",
-     "por_que": "ACVIM da el sodio por estadio: B2 80-99 mg/100 kcal, C 50-79, D <50. 900 mg/1000 kcal = 90 mg/100 kcal, dentro del rango de B2. La app no pregunta el estadio, así que se usa el MENOS restrictivo: bajar a C o D sin saberlo sería quitarle sodio a un perro que no lo necesita."
-    }
-   },
-   "avisos": {
-    "general": "Se ha bajado el sodio a lo que recomiendan las guías para cardiopatía en estadio B2. En cardiopatía avanzada puede hacer falta bajarlo más y vigilar el potasio si toma diuréticos: consúltalo con tu veterinario."
-   }
-  },
-  "diabetes": {
-   "nombre": "Diabetes mellitus",
-   "formulable": true,
-   "max_pct_kcal_grasa_si_ademas": {
-    "valor": 0.3,
-    "requiere": [
-     "pancreatitis",
-     "hipertrigliceridemia"
-    ],
-    "fuente": "Purina Institute",
-    "por_que": "Literal: «Dietary fat restriction (<30% ME) is recommended for diabetic dogs with concurrent chronic pancreatitis or persistent hypertriglyceridemia» -- SOLO si hay eso también. Antes se bajaba la grasa al 35% SIEMPRE, y el pilar de la dieta en diabetes es fibra e índice glucémico, no restringir grasa a todo el mundo."
-   },
-   "excluye_fruta": true,
-   "avisos": {
-    "general": "Lo más importante en diabetes no es el menú sino la REGULARIDAD: misma cantidad, a la misma hora, coordinada con la insulina. Se ha quitado la fruta del menú: su azúcar se absorbe rápido y descuadra la pauta de insulina. La verdura fibrosa sí se mantiene, porque ayuda a amortiguar la subida de glucosa."
-   }
-  },
-  "hipotiroidismo": {
-   "nombre": "Hipotiroidismo",
-   "formulable": true,
-   "avisos": {
-    "general": "No se cambia la composición, salvo que se quitan el grelo y el nabo: son las dos crucíferas del catálogo más ricas en los compuestos que interfieren con la tiroides. El brócoli, la coliflor y las coles se mantienen, porque los suyos son mucho menos activos. Si se los das, mejor cocidos: hervirlos destruye la mayor parte. Lo que más importa aquí es que no le falte yodo, y este menú ya lo cubre. Y evita darle cuello de rumiante grande de forma repetida: puede llevar restos de tejido tiroideo y alterar los valores de la analítica."
-   },
-   "nota": "No hay tope numérico: la restricción es por alimento (grelo y nabo, Brassica rapa, ricos en progoitrina). No existe umbral canino publicado de crucíferas."
-  },
-  "estruvita": {
-   "nombre": "Cálculos de estruvita",
-   "formulable": false,
-   "motivo_no_formulable": "Dependen del pH urinario y de analíticas que la app no puede ver.",
-   "sin_dieta_automatica": true,
-   "avisos": {
-    "general": "Estos cálculos dependen del pH de la orina y de analíticas que la app no puede ver. Una dieta mal ajustada aquí puede empeorarlos, así que no generamos menú automático: necesitas una dieta pautada por tu veterinario."
-   }
-  },
-  "urato": {
-   "nombre": "Urolitos de urato",
-   "formulable": false,
-   "motivo_no_formulable": "La carga de purinas de una ración cruda está muy por encima de cualquier objetivo, y no por las vísceras: la carne muscular es la mayor parte. Medido con nuestro catálogo y el USDA/ODS-NIH v2.0: 687-922 mg/1000 kcal.",
-   "sin_dieta_automatica": true,
-   "avisos": {
-    "general": "La predisposición a urolitos de urato (dálmata, shunt hepático) necesita restringir tanto las purinas que, con alimentos frescos normales, no queda margen real para cubrir el resto de nutrientes a la vez -- por eso no generamos menú automático aquí: esto necesita una dieta pautada por tu veterinario, a menudo con pienso terapéutico específico."
-   }
-  },
-  "cistina": {
-   "nombre": "Urolitos de cistina",
-   "formulable": false,
-   "motivo_no_formulable": "Depende del pH urinario y de analíticas. Además el catálogo no tiene metionina ni cistina en ninguna ficha.",
-   "sin_dieta_automatica": true,
-   "avisos": {
-    "general": "Igual que con estruvita, esto depende del pH de la orina y de analíticas que la app no puede ver -- no generamos menú automático: necesitas una dieta pautada por tu veterinario."
-   }
-  },
-  "otra": {
-   "nombre": "Otra condición no especificada",
-   "formulable": false,
-   "motivo_no_formulable": "No hay ninguna regla nutricional conocida para una condición sin especificar: fingir que se ha ajustado sería peor que no generar nada.",
-   "sin_dieta_automatica": true,
-   "avisos": {
-    "general": "Esta condición no está entre las que este sistema sabe ajustar automáticamente todavía, así que no generamos un menú que podría no estar realmente adaptado a lo que necesita: mejor que un veterinario valore su caso en concreto y paute la dieta."
-   }
   }
- }
 }

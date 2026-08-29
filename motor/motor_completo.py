@@ -117,8 +117,22 @@ FRUTAS = {"Manzana", "Pera", "Plátano", "Fresa", "Sandía", "Melón", "Naranja"
          "Mandarina", "Piña", "Mango", "Frambuesa", "Arándano", "Albaricoque", "Dátil"}
 
 
-def patologias_bloquean(patologias, etapa="Adulto"):
+def patologias_bloquean(patologias, etapa="Adulto", es_profesional=False):
     """Las que impiden generar dieta automática.
+
+    ⚠️ EL VETERINARIO NO SE BLOQUEA (29 agosto). Hasta hoy un veterinario
+    acreditado veía exactamente las mismas patologías bloqueadas que el
+    dueño -- y el motivo de bloquear era, literalmente, «esto lo tiene que
+    pautar un veterinario». Cuando el que está delante ES el veterinario,
+    el muro deja de tener sentido: lo va a hacer igual, en una hoja de
+    cálculo y sin que nadie verifique nada.
+
+    La frontera de verdad ya estaba decidida y escrita en VETERINARIOS.md:
+    lo que exige diagnóstico validado es que el motor aplique restricciones
+    POR DEBAJO de los mínimos de FEDIAF. Todo lo que cabe DENTRO de FEDIAF
+    no necesita firma. Así que al profesional se le formula todo, con el
+    aviso de cada patología diciendo QUÉ SE HA HECHO y qué NO -- que en
+    cuatro de ellas es «esto no trata la enfermedad, solo alimenta bien».
 
     ⚠️ AHORA DEPENDE DE LA ETAPA (25 agosto). La insuficiencia renal en un
     perro ADULTO se puede apoyar bajando el fósforo; en un cachorro o una
@@ -128,6 +142,8 @@ def patologias_bloquean(patologias, etapa="Adulto"):
     bloquean = []
     for p in (patologias or []):
         info = PATOLOGIAS.get(p, {})
+        if es_profesional and info.get("formulable_por_profesional"):
+            continue
         if info.get("sin_dieta_automatica"):
             bloquean.append(p)
         elif info.get("en_crecimiento") == "bloquear" and _es_crecimiento(etapa):
@@ -135,12 +151,25 @@ def patologias_bloquean(patologias, etapa="Adulto"):
     return bloquean
 
 
-def avisos_de_patologias(patologias, etapa="Adulto"):
+def avisos_de_patologias(patologias, etapa="Adulto", es_profesional=False):
+    """⚠️ AL PROFESIONAL SE LE DICE OTRA COSA, Y ES LA IMPORTANTE.
+
+    Al dueño, de una patología bloqueada, se le dice «no generamos menú».
+    Al veterinario se le genera -- así que hay que decirle QUÉ SE HA HECHO
+    y, sobre todo, QUÉ NO. En cuatro de las once la respuesta honrada es
+    «esto no trata la enfermedad, solo alimenta bien», y decirlo importa
+    más que el propio menú: un menú de urato que no restringe purinas y no
+    lo dice es peor que no dar menú."""
     salida = []
     for p in (patologias or []):
         info = PATOLOGIAS.get(p)
         if not info:
             continue
+        if es_profesional:
+            if _es_crecimiento(etapa) and info.get("aviso_profesional_crecimiento"):
+                salida.append(info["aviso_profesional_crecimiento"]); continue
+            if info.get("aviso_profesional"):
+                salida.append(info["aviso_profesional"]); continue
         # En crecimiento, NINGÚN tope `solo_en_adulto` se ha aplicado: ni el
         # que bloquea (renal) ni el que se suelta (pancreatitis). El aviso de
         # adulto dice "se ha bajado el fósforo" o "se ha bajado la grasa", y
