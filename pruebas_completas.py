@@ -1772,7 +1772,6 @@ print("=== BLOQUE 16: cada regla del motor existe de verdad ===")
 from motor.motor_completo import resolver as _resolver_b16
 
 _al_b16, _req_b16 = _api.cargar_v2()
-_EXTRAS_B16 = [a["nombre"] for a in _al_b16.values() if a.get("categoria") == "Extras"]
 
 # Un adulto normal, sin nada raro: aquí tienen que estar TODAS las reglas
 # que no dependen de una patología.
@@ -1834,22 +1833,52 @@ else:
                 f"del límite de suplementos — el bucle que rellena la fila no acierta con "
                 f"ningún alimento (¿`categoria_de` otra vez?). Importa porque {_porque}.")
 
-    # ⚠️ EL SUELO DE 1 g, con número exacto y no "al menos una".
+    # ⚠️ EL SUELO DE 1 g, alimento por alimento y no "al menos una fila".
     # Ésta es la que estuvo muerta: decía `categoria_de[n] != "Extras"` y los
     # aceites, la sal y las semillas entran bajo la clave "Suplementos", así
-    # que la condición no se cumplía JAMÁS. Tiene que haber una fila por cada
-    # alimento a granel del catálogo, ni una menos.
-    _esperadas = len(_EXTRAS_B16)
-    _puestas = (_diag.get("suelo_medible") or {}).get("filas", 0)
-    if _puestas != _esperadas:
+    # que la condición no se cumplía JAMÁS.
+    #
+    # ⚠️ REESCRITA (29 agosto). Antes contaba filas y las comparaba con los
+    # alimentos de categoría "Extras" del catálogo. Eso solo cuadra mientras
+    # el suelo sea exactamente el de los extras, y el suelo se ha ampliado a
+    # toda la comida -- porque salieron 0,69 g de salmón. Con el número
+    # exacto, ampliar la protección hacía FALLAR la prueba que la vigila.
+    #
+    # Ahora se compara quién la tiene, no cuántas hay: todo candidato que se
+    # pese en una báscula de cocina necesita suelo, y solo se libran los
+    # suplementos que se dosifican con el cacito o el comprimido del bote.
+    # Los candidatos los dice el propio motor (una fila de vinculación por
+    # cada uno), así que la prueba no tiene que adivinarlos ni repetir la
+    # lógica de accesibilidad.
+    _DOSIFICADOS_B16 = ("Multivitamínico", "Omega-3", "Yodo", "Fibra", "Calcio",
+                        "Hierro", "Vitamina B")
+    _por_alimento_b16 = _diag.get("_alimentos") or {}
+    _candidatos_b16 = set(_por_alimento_b16.get("vinculacion_usa_techo") or [])
+    _con_suelo_b16 = set(_por_alimento_b16.get("suelo_medible") or [])
+    _deberian_b16 = {n for n in _candidatos_b16
+                     if _al_b16.get(n, {}).get("categoria") not in _DOSIFICADOS_B16}
+    if not _candidatos_b16:
+        fallos.append("BLOQUE16: el diagnóstico ya no dice qué alimento pone cada fila, "
+                      "así que no se puede comprobar quién se queda sin suelo de 1 g.")
+    elif not _con_suelo_b16:
         fallos.append(
-            f"BLOQUE16: el suelo de 1 g puso {_puestas} filas y el catálogo tiene "
-            f"{_esperadas} alimentos a granel (categoría 'Extras'). "
-            + ("NO SE APLICA A NADIE: es exactamente el fallo del 24 de agosto — "
-               "mirar `categoria_de[n]` en vez de `alimentos[n]['categoria']`. "
-               if _puestas == 0 else
-               "Alguno se queda fuera: revisa la condición y los techos. ")
-            + "Sin esta fila vuelven las cantidades que nadie puede pesar.")
+            "BLOQUE16: el suelo de 1 g NO SE APLICA A NADIE — es exactamente el fallo "
+            "del 24 de agosto: mirar `categoria_de[n]` en vez de "
+            "`alimentos[n]['categoria']`. Sin esta fila vuelven las cantidades que "
+            "nadie puede pesar.")
+    else:
+        _sin_suelo_b16 = sorted(_deberian_b16 - _con_suelo_b16)
+        _de_mas_b16 = sorted(_con_suelo_b16 - _deberian_b16)
+        if _sin_suelo_b16:
+            fallos.append(
+                f"BLOQUE16: {len(_sin_suelo_b16)} alimento(s) que se pesan se quedan sin "
+                f"suelo de 1 g, p. ej. {_sin_suelo_b16[:3]}. Ahí es donde salen los "
+                f"0,69 g de salmón que nadie puede pesar.")
+        if _de_mas_b16:
+            fallos.append(
+                f"BLOQUE16: el suelo de 1 g se le ha puesto a {_de_mas_b16[:3]}, que se "
+                f"dosifican con cacito o comprimido. Obligarles a llegar a 1 g es "
+                f"obligar a dar de más de un suplemento.")
 
 # Los topes de patología solo existen cuando hay patología, así que se
 # comprueban aparte -- exigirlos arriba daría un fallo falso.

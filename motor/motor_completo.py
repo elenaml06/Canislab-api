@@ -491,11 +491,22 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # `diagnostico` y recibir cuántas filas puso cada regla. Si una regla
     # dice 0, esa regla no existe. Es solo contabilidad: no toca ni una
     # fila, ni un coeficiente, ni el resultado. Lo usa el BLOQUE 16.
-    def _fila(regla, fila, lo, hi):
+    def _fila(regla, fila, lo, hi, alimento=None):
         A_rows.append(fila)
         lb_rows.append(lo)
         ub_rows.append(hi)
         if diagnostico is not None:
+            # ⚠️ AÑADIDO (29 agosto): las reglas que ponen UNA FILA POR
+            # ALIMENTO apuntan además de cuál. Contarlas no basta para
+            # saber si alguna se queda fuera: el BLOQUE 16 comparaba el
+            # número de filas del suelo de 1 g contra el número de
+            # "Extras" del catálogo, y eso solo cuadra mientras el suelo
+            # sea exactamente el de los extras. Con los nombres se puede
+            # comprobar lo que de verdad importa -- que ningún candidato
+            # que se pesa en una báscula se quede sin suelo -- sin que la
+            # prueba tenga que adivinar cuáles son candidatos.
+            if alimento is not None:
+                diagnostico.setdefault("_alimentos", {}).setdefault(regla, []).append(alimento)
             # ⚠️ Se cuentan las filas Y sus coeficientes. Contar solo filas no
             # basta: el límite de 2 suplementos estuvo inerte con su fila
             # PUESTA -- lo que estaba vacío era la fila, porque el bucle que
@@ -1109,7 +1120,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         fila = fila_vacia()
         fila[i] = 1.0
         fila[n_var + i] = -techos[i]
-        _fila("vinculacion_usa_techo", fila, -np.inf, 0.0)
+        _fila("vinculacion_usa_techo", fila, -np.inf, 0.0, alimento=n)
 
     # 4-bis. Y AL REVÉS: si un alimento se usa, que sea una cantidad que se
     # pueda PESAR.
@@ -1200,7 +1211,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         fila = fila_vacia()
         fila[i] = 1.0
         fila[n_var + i] = -suelo
-        _fila("suelo_medible", fila, 0.0, np.inf)
+        _fila("suelo_medible", fila, 0.0, np.inf, alimento=n)
 
     # 5. CUÁNTOS ALIMENTOS DISTINTOS por categoría (máx.)
     for cat, tope in cuantos_max.items():
