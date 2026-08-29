@@ -1239,12 +1239,48 @@ def _escalera_de_relajacion():
         for c, (mn, mx) in MARGENES_V2.items()
     }
     sin_ningun_minimo = {c: (0.0, mx) for c, (mn, mx) in MARGENES_V2.items()}
+    # ⚠️ AÑADIDO (29 agosto) — LA ESCALERA SOLTABA LOS MÍNIMOS Y NUNCA LOS
+    # MÁXIMOS, Y HAY CASOS DONDE EL QUE BLOQUEA ES UN MÁXIMO.
+    #
+    # CASO REAL MEDIDO, contra producción: un adulto de 25 kg con
+    # PANCREATITIS no obtenía menú NUNCA -- cinco de cinco intentos --, y la
+    # usuaria leía "no existe ninguna combinación de alimentos accesibles que
+    # cumpla todos los requisitos, ni siquiera soltando las proporciones
+    # habituales del BARF". Era mentira: sí existe.
+    #
+    # Aislado peldaño a peldaño:
+    #     proporciones tal cual ................................ no sale
+    #     último peldaño de la escalera (mínimos a 0) .......... no sale
+    #     mínimos intactos y MÁXIMOS sueltos ................... SALE, 0,4 s
+    #
+    # Y el culpable es UNO solo: el techo del 10 % de "Verduras y frutas".
+    # Soltando ese, sale. Tiene sentido: en pancreatitis la grasa se limita a
+    # menos de 20 g/1000 kcal, y para llegar ahí hay que diluir con algo que
+    # no engorde -- y lo único que hay es verdura, que está topada al 10 %.
+    #
+    # Soltar un máximo de categoría es EXACTAMENTE lo que la regla 3 del
+    # CLAUDE.md autoriza: "lo que se puede relajar es la FORMA, nunca la
+    # nutrición. Se sueltan las proporciones de BARF (hueso 20-60 %, etc.),
+    # que son criterio nuestro y no de FEDIAF". El 10 % de verdura es
+    # criterio nuestro. Los requisitos y los topes de seguridad no se tocan,
+    # y el menú sigue pasando por _garantizar_verificado() igual que todos.
+    #
+    # Van al FINAL de la escalera a propósito: solo se llega aquí cuando todo
+    # lo demás ha fallado, y se dice qué se soltó -- nunca en silencio.
+    sin_max_secundarias = {
+        c: ((0.0 if c in CATEGORIAS_SECUNDARIAS else mn),
+            (1.0 if c in CATEGORIAS_SECUNDARIAS else mx))
+        for c, (mn, mx) in MARGENES_V2.items()
+    }
+    sin_ninguna_proporcion = {c: (0.0, 1.0) for c, (mn, mx) in MARGENES_V2.items()}
     return [
         (MARGENES_V2, 2, None),
         (sin_minimo_secundarias, 2, "proporcion_minima_visceras_higado_verdura"),
         (sin_ningun_minimo, 2, "proporcion_minima_de_todas_las_categorias"),
         (sin_ningun_minimo, 3, "proporcion_minima_y_un_suplemento_mas"),
         (sin_ningun_minimo, 4, "proporcion_minima_y_dos_suplementos_mas"),
+        (sin_max_secundarias, 4, "tope_maximo_de_visceras_higado_y_verdura"),
+        (sin_ninguna_proporcion, 4, "todas_las_proporciones_del_barf"),
     ]
 
 
