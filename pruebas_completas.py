@@ -4187,10 +4187,22 @@ else:
     for _x38 in _d38:
         if _x38.get("tiene") is None:
             fallos.append(f"BLOQUE38: {_x38.get('nutriente')} viene sin `tiene`.")
-        if _x38.get("minimo") is None and _x38.get("maximo") is None:
-            fallos.append(f"BLOQUE38: {_x38.get('nutriente')} no trae ni mínimo ni máximo. Un "
-                          f"valor sin su referencia no se puede juzgar.")
+        _sinref38 = _x38.get("minimo") is None and _x38.get("maximo") is None
+        if _sinref38 and not _x38.get("sin_referencia"):
+            fallos.append(f"BLOQUE38: {_x38.get('nutriente')} no trae ni mínimo ni máximo y "
+                          f"tampoco está marcado `sin_referencia`. Un valor sin su referencia no "
+                          f"se puede juzgar, y si no se dice que NO la tiene parece un hueco "
+                          f"nuestro cuando es que FEDIAF pone «-» ahí.")
+        if _x38.get("sin_referencia") and not _sinref38:
+            fallos.append(f"BLOQUE38: {_x38.get('nutriente')} está marcado `sin_referencia` "
+                          f"pero sí trae mínimo o máximo.")
     # Y ordenado por lo que va MÁS JUSTO, que es por donde mira un profesional.
+    _sr38 = {x["nutriente"] for x in _d38 if x.get("sin_referencia")}
+    if _sr38 != {"Linolénico", "Araquidónico"}:
+        fallos.append(f"BLOQUE38: los nutrientes sin referencia en adulto son {_sr38} y tenían "
+                      f"que ser el linolénico y el araquidónico -- los dos a los que FEDIAF pone "
+                      f"«-» fuera de crecimiento y reproducción. Si aparece otro, o se ha perdido "
+                      f"un valor de la tabla o se ha dejado de escalar algo.")
     _pcts38 = [x["cubre_pct"] for x in _d38 if x.get("cubre_pct") is not None]
     if _pcts38 != sorted(_pcts38):
         fallos.append("BLOQUE38: `dentro_de_rango` no viene ordenado por lo que va más justo. "

@@ -436,6 +436,13 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
             # y cuanto le queda hasta el techo, que es la otra mitad de la
             # pregunta y de un menu verde no se ve en ninguna parte
             "del_maximo_pct": round(tiene / _mx * 100) if _mx else None,
+            # ⚠️ HAY DOS QUE NO TIENEN NI MINIMO NI MAXIMO EN ADULTO, y no es
+            # un hueco nuestro: FEDIAF pone «-» al linolenico y al
+            # araquidonico fuera de crecimiento y reproduccion. Se marcan en
+            # vez de esconderse -- que el veterinario vea «2,1 g/1000 kcal,
+            # FEDIAF no da referencia para adulto» es informacion; quitar la
+            # fila le haria contar 40 donde el semaforo dice 42.
+            "sin_referencia": _mn is None and _mx is None,
         })
 
     # ==================================================================
