@@ -399,8 +399,38 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                          for pat in (alimentos.get(n, {}).get("restricciones_patologia") or {}))]
 
         candidatos_por_cat[cat] = disp
-    candidatos_por_cat["Suplementos"] = [a["nombre"] for a in alimentos.values()
-                                        if a.get("categoria") in SUP_CATS]
+    # ⚠️ LAS EXCLUSIONES TAMBIÉN AQUÍ (29 agosto). CASO REAL: se excluye el
+    # aceite de cacahuete por nombre y el menú lo lleva igual, 2 de cada 3
+    # veces. Y lo mismo con la semilla de sésamo, el aceite de girasol y el
+    # de linaza -- comprobado uno a uno.
+    #
+    # El motivo es de ORDEN, y es el mismo fallo que ya se arregló arriba en
+    # el bucle de categorías: esta lista se construía del CATÁLOGO ENTERO, de
+    # una sola pasada, saltándose todos los filtros que el bucle de arriba
+    # aplica -- las exclusiones del usuario incluidas.
+    #
+    # Y no es una lista cualquiera. `SUP_CATS` mete dentro "Extras", que son
+    # los aceites, las semillas, los huevos y la sal: aceite de cacahuete,
+    # semilla de sésamo, huevo de gallina. Alérgenos de manual. La regla 4
+    # del CLAUDE.md dice que las alergias y lo que se excluye a mano no se
+    # tocan JAMÁS porque pueden ser médicas -- y por aquí se tocaban.
+    #
+    # Se pasa por los mismos filtros y en el mismo orden. Un extra es
+    # "libre" en el sentido de que el usuario no lo elige en ninguna
+    # pantalla; nunca en el de saltarse lo que ha prohibido.
+    _sup = [a["nombre"] for a in alimentos.values() if a.get("categoria") in SUP_CATS]
+    if excluidos:
+        _sup, _qs, _as = filtrar(_sup, excluidos)
+    if categorias_excluidas:
+        _sup = [n for n in _sup
+                if alimentos.get(n, {}).get("categoria") not in categorias_excluidas]
+    if "oxalato" in (patologias or []):
+        _sup = [n for n in _sup if not _es_patologia(n, OXALATO_ALTO)]
+    _sup = [n for n in _sup if not _es_patologia(n, BORRAJA_EXCLUIR)]
+    _sup = [n for n in _sup
+            if not any(pat in (patologias or [])
+                      for pat in (alimentos.get(n, {}).get("restricciones_patologia") or {}))]
+    candidatos_por_cat["Suplementos"] = _sup
 
 
     # ⚠️ REESCRITO (5 agosto, mañana): antes solo se EXCLUÍA "V-INTEGRA
