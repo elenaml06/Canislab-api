@@ -4790,6 +4790,39 @@ if _ok43b:
                   "tiene ninguna solución guardada ahí, así que esto significaría estar "
                   "aceptando un resultado que no es factible.")
 
+# ⚠️ Y EL ENDPOINT TAMPOCO PUEDE TIRARLO (29 agosto). El mismo fallo un piso
+# más arriba: `_intentar_generacion` comprobaba el presupuesto ANTES de
+# verificar, así que cuando el solver devolvía el menú justo al agotarse el
+# reloj -- lo normal en Render, que va 6-10 veces más lento que este equipo --
+# no llegaba a verificarlo ni una vez y lo descartaba. Verificar cuesta 1,6 ms:
+# el presupuesto existe para limitar lo caro, no lo que cuesta menos que
+# parpadear.
+#
+# Con el presupuesto apretado a mano (3 s, cuando el óptimo tarda 2-6) tiene
+# que salir menú, y VERDE.
+for _etq43c, _cuerpo43c in [
+    ("mestiza 20 kg", {"der_objetivo": 1513, "peso_perro_kg": 20, "etapa_requisitos": "Adulto"}),
+    ("cachorro 4 meses", {"der_objetivo": 549, "peso_perro_kg": 4,
+                          "etapa_requisitos": "CachorroCrecimiento",
+                          "peso_adulto_esperado_kg": 9}),
+    ("toy 1,5 kg", {"der_objetivo": 200, "peso_perro_kg": 1.5, "etapa_requisitos": "Adulto"}),
+]:
+    _sin_menu43, _no_verdes43 = 0, 0
+    for _ in range(3):
+        _r43c = _c.post("/menu/v2", json={"nombres_alimentos": [], "modo": "automatico",
+                                           "presupuesto_segundos": 3.0, **_cuerpo43c}).json()
+        if not _r43c.get("factible"):
+            _sin_menu43 += 1
+        elif (_r43c.get("ficha") or {}).get("semaforo") != "verde":
+            _no_verdes43 += 1
+    if _sin_menu43:
+        fallos.append(f"BLOQUE43 {_etq43c}: {_sin_menu43} de 3 veces no sale menú con 3 s de "
+                      f"presupuesto. El menú está calculado; lo que faltaba era verificarlo, "
+                      f"y eso cuesta 1,6 ms.")
+    if _no_verdes43:
+        fallos.append(f"BLOQUE43 {_etq43c}: ha salido un menú que no está verde. Con prisa se "
+                      f"acepta un menú con un alimento de más, nunca uno que no cumpla.")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
