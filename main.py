@@ -4137,7 +4137,35 @@ def _sello_de(documento):
     la misma familia de fallo que la duplicación del DER.
     """
     import hashlib, json as _json
-    copia = {k: v for k, v in documento.items() if k != "sello"}
+
+    # ⚠️ 5.0 Y 5 SON EL MISMO NÚMERO, Y EL SELLO TIENE QUE VERLO ASÍ.
+    #
+    # CASO REAL, cazado el 29 de agosto por el script que habla con la API de
+    # verdad: se firmaba una pauta, la app la guardaba, y al comprobarla el
+    # sello NO cuadraba -- sobre un documento que nadie había tocado.
+    #
+    # La causa es de las que no se ven leyendo Python: JavaScript no
+    # distingue enteros de decimales. `JSON.stringify(5.0)` escribe `5`, así
+    # que en cuanto el documento pasa por el navegador -- que es SIEMPRE, es
+    # el camino real -- los 300.0 gramos vuelven como 300, y la copia
+    # canónica de Python cambia de "300.0" a "300". Mismo número, otro sello.
+    #
+    # Se normaliza antes de hashear: un decimal cuyo valor es entero se
+    # escribe como entero. Es lo único que hacía falta -- para el resto de
+    # los números, Python y JavaScript escriben ya la misma representación
+    # más corta que redondea de vuelta al mismo valor.
+    def _numeros_comparables(v):
+        if isinstance(v, bool):
+            return v
+        if isinstance(v, float) and v.is_integer() and abs(v) < 1e15:
+            return int(v)
+        if isinstance(v, dict):
+            return {k: _numeros_comparables(x) for k, x in v.items()}
+        if isinstance(v, (list, tuple)):
+            return [_numeros_comparables(x) for x in v]
+        return v
+
+    copia = _numeros_comparables({k: v for k, v in documento.items() if k != "sello"})
     canonico = _json.dumps(copia, sort_keys=True, ensure_ascii=False,
                            separators=(",", ":"))
     return hashlib.sha256(canonico.encode("utf-8")).hexdigest()[:16]
