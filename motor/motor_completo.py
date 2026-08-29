@@ -197,7 +197,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             time_limit=15, restringir_especie=None, peso_adulto_esperado_kg=None,
             evitar_especies=None, restringir_a_elegidos=None, categorias_excluidas=None,
             presupuesto_semanal_restante=None, diagnostico=None,
-            peso_objetivo_kg=None):
+            peso_objetivo_kg=None, gramos_fijos=None):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -569,6 +569,64 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         else:
             kcal100 = a.get("energia", 0) or 1.0
             techos.append((der * 0.55) / kcal100 * 100.0)  # ningún alimento >55% del día
+
+    # ─── LOS GRAMOS QUE YA HA DECIDIDO EL VETERINARIO ────────────────────
+    #
+    # ⚠️ AÑADIDO (29 agosto) para el formulador del profesional, y el orden
+    # importa: esto tiene que estar AQUÍ, tocando los techos, y no más abajo
+    # tocando solo los `bounds`. La fila de vinculación (gramos <= usa *
+    # techo) se construye con estos techos, así que fijar una cantidad por
+    # encima del techo sin tocarlo daba un infactible imposible de explicar.
+    #
+    # Qué cede y qué no, que es la decisión de verdad:
+    #
+    #   · El "ningún alimento pasa del 55 % de las kcal del día" es criterio
+    #     NUESTRO, de la forma de una ración BARF. Ante una cantidad que ha
+    #     decidido un veterinario con el animal delante, cede -- igual que
+    #     ceden las proporciones de categoría en la escalera de relajación
+    #     (regla 3 del CLAUDE.md).
+    #   · La dosis máxima del FABRICANTE de un suplemento NO cede. No es
+    #     criterio nuestro: es la etiqueta del bote.
+    #   · Un techo a CERO tampoco cede nunca. Ahí no hay una cantidad
+    #     grande: hay un alimento excluido por una alergia o por la propia
+    #     patología del paciente (oxalato, urato, borraja...). Regla 4.
+    #
+    # Y lo que NO se toca en ningún caso: los 41 requisitos, el ratio Ca:P,
+    # los cinco topes de seguridad crónica y los topes por patología. Son
+    # filas aparte, siguen midiéndose sobre la ración completa, y por eso
+    # fijar una cantidad puede seguir saliendo infactible -- que es lo que
+    # tiene que pasar si lo que se ha fijado no cabe.
+    if gramos_fijos:
+        for n, g in (gramos_fijos or {}).items():
+            if n not in idx:
+                # ⚠️ AQUÍ NO SE PUEDE SEGUIR EN SILENCIO (29 agosto). Un
+                # alimento que no está entre los candidatos es uno al que se
+                # le ha quitado el sitio antes: una alergia, la patología del
+                # paciente (oxalato, urato, borraja...) o una categoría
+                # excluida entera. `forzar` sí se lo puede saltar callando --
+                # ahí la exclusión gana y ya está --, pero fijar una CANTIDAD
+                # es otra cosa: el veterinario ha escrito 50 g de espinaca y
+                # el menú salía verde, sin espinaca y sin una palabra. Lo
+                # cazó el BLOQUE 41 el día que se escribió.
+                return False, {"_imposible": (
+                    f"{n} no puede entrar en la ración de este paciente: está fuera por "
+                    f"una alergia, por su patología o por una categoría excluida.")}
+            try:
+                g = float(g)
+            except (TypeError, ValueError):
+                continue
+            if g <= 0:
+                continue
+            i = idx[n]
+            if techos[i] <= 0:
+                return False, {"_imposible": (
+                    f"{n} no puede entrar en la ración de este paciente: está excluido "
+                    f"por una alergia o por su patología.")}
+            if categoria_de[n] == "Suplementos" and g > techos[i] + 1e-9:
+                return False, {"_imposible": (
+                    f"{n}: {g:.0f} g pasan de la dosis máxima que marca el fabricante "
+                    f"para un perro de este peso ({techos[i]:.1f} g).")}
+            techos[i] = max(techos[i], g)
 
     # 1. kcal totales = DER (con tolerancia)
     fila = fila_vacia()
@@ -1328,6 +1386,41 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             minimo = min(minimo, tope_porcion_del_perro)
             bounds.lb[n_var + i] = 1
             bounds.lb[i] = min(minimo, techos[i])
+
+    # ─── GRAMOS FIJOS: LO QUE EL VETERINARIO YA HA DECIDIDO ──────────────
+    #
+    # ⚠️ AÑADIDO (29 agosto) para el formulador del profesional. `forzar`
+    # dice "que esté"; esto dice "que esté EXACTAMENTE en esta cantidad", y
+    # el motor completa el resto de la ración alrededor. Es la diferencia
+    # entre elegir ingredientes y formular: un veterinario pone 300 g de
+    # pechuga porque ha decidido 300, no "algo de pechuga".
+    #
+    # Se implementa como el límite superior E inferior de la variable, que es
+    # exactamente lo que significa. No toca ninguna restricción nutricional:
+    # los 41 requisitos, el ratio Ca:P, los topes de seguridad crónica y los
+    # de patología siguen siendo los mismos y se cumplen o no se entrega
+    # menú. O sea que fijar una cantidad puede hacer el problema INFACTIBLE,
+    # y tiene que poder hacerlo -- si alguien clava 400 g de hígado, lo que
+    # hay que decirle es que no cabe, no darle un menú tóxico.
+    #
+    # El caso que sí conviene distinguir es cuando la cantidad fijada se pasa
+    # ella sola de un tope de seguridad: ahí el infactible genérico ("no
+    # existe combinación") es verdad pero inútil, porque la combinación no
+    # existe POR ESE ALIMENTO. Se dice cuál y cuánto cabe.
+    if gramos_fijos:
+        for n, g in gramos_fijos.items():
+            if n not in idx:
+                continue
+            try:
+                g = float(g)
+            except (TypeError, ValueError):
+                continue
+            if g <= 0:
+                continue
+            i = idx[n]
+            bounds.lb[i] = g
+            bounds.ub[i] = g
+            bounds.lb[n_var + i] = 1     # y cuenta como usado
 
     # objetivo: minimizar cuántos alimentos distintos se usan en total
     # (ración simple, no 20 ingredientes), PERO con coste menor para los

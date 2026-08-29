@@ -4486,6 +4486,126 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 41 — EL FORMULADOR DEL VETERINARIO
+#
+# Un profesional no elige entre "automático" y "personalizar": formula. Pone
+# los alimentos y los gramos, ve lo que va saliendo, y le pide al motor que
+# le cierre lo que falta. Eso son dos promesas que hay que vigilar, porque
+# si se rompen no dan error:
+#
+#   1. SUS GRAMOS SON SUS GRAMOS. Autocompletar rellena alrededor; no le
+#      mueve una cifra que ha decidido él con el animal delante. Si no
+#      cuadran, se lo dice -- pero no se las cambia por la puerta de atrás.
+#   2. LO QUE VE ES LO QUE DECIDE SI EL MENÚ SALE. Incluidos los topes por
+#      patología, que el semáforo de FEDIAF NO ve: son los requisitos de un
+#      perro sano, y un renal con 3084 mg de fósforo salía verde (regla 2).
+#      Si la pantalla del formulador enseñara solo el semáforo, le estaría
+#      diciendo "verde" a un menú que el propio motor va a rechazar.
+#
+# Y una tercera, que es la de siempre: lo que cede es la FORMA y nunca la
+# nutrición. Una cantidad fijada puede saltarse nuestro "ningún alimento
+# pasa del 55 % de las kcal" -- criterio nuestro -- pero NO la dosis del
+# fabricante de un suplemento ni un alimento excluido por su patología.
+# ============================================================
+print("=== BLOQUE 41: el formulador del veterinario ===")
+_BASE_41 = {"der_objetivo": 1100.0, "etapa_requisitos": "Adulto", "peso_perro_kg": 25.0}
+
+# 1. El estado de una ración a medias dice lo que hay, sin fingir que está bien.
+_r41 = _c.post("/formular/estado", json={**_BASE_41, "gramos_por_alimento": {
+    "Pollo muslo con piel": 300, "Zanahoria": 60}}).json()
+if _r41.get("gramos_total") != 360.0:
+    fallos.append(f"BLOQUE41 estado: los gramos totales salen {_r41.get('gramos_total')} y son 360")
+if not (_r41.get("desvio_kcal_pct") or 0) < -20:
+    fallos.append("BLOQUE41 estado: 360 g para un perro de 1100 kcal se quedan MUY cortos y el "
+                  f"desvío tiene que decirlo (dice {_r41.get('desvio_kcal_pct')}%)")
+if (_r41.get("ficha") or {}).get("semaforo") == "verde":
+    fallos.append("BLOQUE41 estado: media ración no puede salir verde")
+
+# 2. LA PROMESA: autocompletar no toca los gramos que ya están puestos.
+_fijos_41 = {"Pollo muslo con piel": 300, "Zanahoria": 60}
+_r41b = _c.post("/formular/autocompletar", json={**_BASE_41,
+                                                 "gramos_por_alimento": dict(_fijos_41)}).json()
+if not _r41b.get("factible"):
+    fallos.append(f"BLOQUE41 autocompletar: no ha salido menú ({_r41b.get('motivo','')[:70]})")
+else:
+    for _n41, _g41 in _fijos_41.items():
+        _puesto = float((_r41b.get("menu") or {}).get(_n41, 0))
+        if abs(_puesto - _g41) > 0.5:
+            fallos.append(f"BLOQUE41 autocompletar: {_n41} se pidió con {_g41} g y ha vuelto con "
+                          f"{_puesto:.0f}. Los gramos del veterinario no se tocan.")
+    if _r41b.get("gramos_fijos_movidos"):
+        fallos.append(f"BLOQUE41 autocompletar: dice haber movido {_r41b['gramos_fijos_movidos']}")
+    # Y lo que devuelve pasa por el mismo filtro que todo lo demás.
+    if (_r41b.get("ficha") or {}).get("semaforo") != "verde":
+        fallos.append("BLOQUE41 autocompletar: ha entregado un menú que no está verde")
+
+# 3. Lo que cede es la FORMA. 300 g de pollo son más del 55 % de las kcal del
+#    día de este perro -- un tope nuestro, no de FEDIAF --, y ante una cifra
+#    decidida por un profesional, cede. Si esto se cayera, el formulador
+#    entero sería inútil: casi cualquier cantidad clínica real lo toca.
+_al41 = al
+_kcal100_41 = (_al41.get("Pollo muslo con piel") or {}).get("energia") or 0
+if _kcal100_41 and (300 * _kcal100_41 / 100.0) <= 1100 * 0.55:
+    fallos.append("BLOQUE41: el caso de prueba ya no prueba nada — 300 g de pollo han dejado de "
+                  "pasar del 55 % de las kcal. Sube la cantidad o baja el DER.")
+
+# 4. Pero la dosis del FABRICANTE no cede: no es criterio nuestro, es la
+#    etiqueta del bote.
+_sup41 = next((n for n, a in _al41.items()
+               if a.get("categoria") in ("Multivitamínico", "Calcio", "Yodo")), None)
+if _sup41:
+    _r41c = _c.post("/formular/autocompletar", json={**_BASE_41,
+                    "gramos_por_alimento": {_sup41: 500}}).json()
+    if _r41c.get("factible"):
+        fallos.append(f"BLOQUE41: 500 g de '{_sup41}' han pasado. La dosis máxima del fabricante "
+                      f"no es una proporción nuestra: no puede ceder ante una cifra a mano.")
+    elif "fabricante" not in (_r41c.get("motivo") or ""):
+        fallos.append(f"BLOQUE41: 500 g de '{_sup41}' se rechazan sin decir que es la dosis del "
+                      f"fabricante: «{(_r41c.get('motivo') or '')[:60]}»")
+
+# 5. Ni un alimento excluido por la patología del paciente (regla 4).
+_r41d = _c.post("/formular/autocompletar", json={**_BASE_41, "patologias": ["oxalato"],
+                "gramos_por_alimento": {"Espinaca": 50}}).json()
+if _r41d.get("factible"):
+    fallos.append("BLOQUE41: se ha formulado espinaca en un paciente con oxalatos. Un alimento "
+                  "excluido por la patología no entra ni escribiéndole los gramos a mano.")
+
+# 6. LO QUE VE ES LO QUE DECIDE. Un menú VERDE de FEDIAF que rompe el tope de
+#    fósforo de un renal tiene que verse roto en el formulador -- si no, el
+#    veterinario formularía en verde algo que el motor va a rechazar.
+_r41e = _c.post("/menu/v2", json={"nombres_alimentos": [], "modo": "automatico",
+                                  "der_objetivo": 1100.0, "peso_perro_kg": 25.0,
+                                  "etapa_requisitos": "Adulto"}).json()
+if _r41e.get("factible"):
+    _estado41 = _c.post("/formular/estado", json={**_BASE_41, "patologias": ["renal"],
+                        "gramos_por_alimento": _r41e["menu"]}).json()
+    _verde41 = (_estado41.get("ficha") or {}).get("semaforo") == "verde"
+    _roto41 = _estado41.get("topes_de_patologia_rotos")
+    if _verde41 and not _roto41:
+        # Puede pasar: un menú normal puede caber bajo el tope renal. No es
+        # un fallo, pero entonces este caso no prueba nada y hay que decirlo.
+        _estado41 = _c.post("/formular/estado", json={**_BASE_41, "patologias": ["renal"],
+                            "gramos_por_alimento": {"Hígado de vaca": 150, "Sardina": 300,
+                                                     "Pollo muslo con piel": 400}}).json()
+        _roto41 = _estado41.get("topes_de_patologia_rotos")
+    if not _roto41:
+        fallos.append("BLOQUE41: el formulador no enseña ningún tope de patología roto ni con una "
+                      "ración cargada de fósforo en un renal. Es la regla 2: el semáforo de "
+                      "FEDIAF son los requisitos de un perro SANO y no los ve.")
+
+# 7. Y cuando no sale, se dice si es por las cantidades o por los alimentos.
+_r41f = _c.post("/formular/autocompletar", json={**_BASE_41,
+                "gramos_por_alimento": {"Hígado de vaca": 400}}).json()
+if _r41f.get("factible"):
+    fallos.append("BLOQUE41: 400 g de hígado han pasado — eso es una intoxicación por vitamina A")
+elif "cifras" not in (_r41f.get("motivo") or "") and "combinación" not in (_r41f.get("motivo") or ""):
+    fallos.append(f"BLOQUE41: al no salir no se dice si es por las cantidades o por los "
+                  f"alimentos: «{(_r41f.get('motivo') or '')[:70]}»")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")
