@@ -3836,6 +3836,203 @@ def analizar(req: AnalisisRequest):
     return analizar_dieta(req.gramos_por_alimento, der, req.etapa_requisitos)
 
 
+# =====================================================================
+# EL FORMULADOR DEL VETERINARIO
+#
+# Dos endpoints, y los dos existen por la misma razón: un profesional no
+# elige entre "automático" y "personalizar" -- formula. Pone los alimentos
+# y los gramos, ve lo que va saliendo, y cuando quiere que el motor le
+# cierre lo que falta, se lo pide.
+#
+# ⚠️ POR QUÉ NO SE HACE EN EL NAVEGADOR. La tentación era llevarse la tabla
+# de composición y los requisitos de FEDIAF a la app y calcular ahí, que
+# sería instantáneo. Es exactamente el fallo que el CLAUDE.md describe con
+# el DER, calculado en dos sitios: el día que uno de los dos cambie, la
+# pantalla dirá una cosa y el motor comprobará otra, y no saltará ningún
+# error. Aquí se calcula donde vive `MAPA`, y punto.
+#
+# Y hay una segunda razón, más seria: lo que la pantalla enseña tiene que
+# ser lo MISMO que decide si un menú se entrega. Eso incluye los topes por
+# patología, que el semáforo de FEDIAF no ve -- son los requisitos de un
+# perro SANO, y un renal con 3084 mg de fósforo salía verde (regla 2).
+# =====================================================================
+class PeticionFormular(BaseModel):
+    """Lo que el veterinario tiene puesto en la mesa ahora mismo."""
+    gramos_por_alimento: dict = {}
+    der_objetivo: float
+    etapa_requisitos: str = "Adulto"
+    peso_perro_kg: Optional[float] = None
+    peso_adulto_esperado_kg: Optional[float] = None
+    peso_objetivo_kg: Optional[float] = None
+    bcs: Optional[float] = None
+    patologias: Optional[list] = None
+    # Solo para autocompletar: lo que NO puede entrar.
+    especies_excluidas: list[str] = []
+    nombres_excluidos: Optional[list] = None
+    categorias_excluidas: Optional[list] = None
+    # Solo para autocompletar: si el total de gramos lo fija él.
+    gramos_totales: Optional[float] = None
+
+
+def _estado_de_la_racion(datos):
+    """La foto completa de unos gramos: los 43 requisitos, el ratio, los
+    topes de seguridad crónica y los de patología, y las kcal de verdad.
+
+    Es lo que `_garantizar_verificado` mira antes de dejar salir un menú,
+    puesto donde el veterinario pueda verlo MIENTRAS formula en vez de
+    enterarse al final."""
+    al, req = cargar_v2()
+    gramos = {n: float(g) for n, g in (datos.gramos_por_alimento or {}).items()
+              if _num_positivo(g)}
+    desconocidos = [n for n in gramos if n not in al]
+    if desconocidos:
+        raise HTTPException(400, "No tenemos datos de: " + ", ".join(desconocidos))
+
+    kcal = sum((al[n].get("energia", 0) or 0) / 100.0 * g for n, g in gramos.items())
+    salida = {
+        "gramos_total": round(sum(gramos.values()), 1),
+        "kcal": round(kcal, 1),
+        "der_objetivo": datos.der_objetivo,
+        "desvio_kcal_pct": (round(100.0 * (kcal - datos.der_objetivo) / datos.der_objetivo, 1)
+                            if datos.der_objetivo else None),
+        "reparto_categorias": {},
+    }
+    for n, g in gramos.items():
+        cat = al[n].get("categoria") or "Sin categoría"
+        salida["reparto_categorias"][cat] = round(
+            salida["reparto_categorias"].get(cat, 0.0) + g, 1)
+
+    if not gramos:
+        salida.update({"ficha": None, "problemas_seguridad": [],
+                       "topes_de_patologia_rotos": []})
+        return salida
+
+    peso_ref, _ = _peso_de_referencia(datos)
+    salida["ficha"] = verificar_v2(gramos, al, req, datos.der_objetivo,
+                                   datos.etapa_requisitos,
+                                   peso_referencia_kg=peso_ref)
+    salida["problemas_seguridad"] = _seguridad_completa(
+        gramos, al, datos.der_objetivo, datos.etapa_requisitos, datos.patologias,
+        peso_perro_kg=datos.peso_perro_kg)
+    # ⚠️ Y LOS TOPES DE PATOLOGÍA, que el semáforo no ve. Sin esto, la
+    # pantalla del veterinario le enseñaría un renal en verde con el fósforo
+    # por las nubes -- verde de FEDIAF, que son los requisitos de un perro
+    # sano. Es la regla 2, y se comprueba aquí por lo mismo que se comprueba
+    # en `_garantizar_verificado`: porque el que se olvida no da error.
+    salida["topes_de_patologia_rotos"] = _tope_patologia_roto(
+        gramos, al, datos.patologias, datos.etapa_requisitos)
+    return salida
+
+
+def _num_positivo(v):
+    try:
+        return float(v) > 0
+    except (TypeError, ValueError):
+        return False
+
+
+@app.post("/formular/estado")
+def formular_estado(datos: PeticionFormular):
+    """Qué tiene esta ración ahora mismo. Se llama en cada cambio de gramos."""
+    observabilidad.etiquetar(endpoint="/formular/estado", etapa=datos.etapa_requisitos)
+    return _estado_de_la_racion(datos)
+
+
+@app.post("/formular/autocompletar")
+def formular_autocompletar(datos: PeticionFormular):
+    """Cierra lo que falta SIN tocar lo que el veterinario ya ha puesto.
+
+    Sus gramos son gramos fijos, no una sugerencia: el motor completa la
+    ración alrededor. Si con esas cantidades no existe una ración que cumpla
+    los requisitos, se dice -- no se cambian sus cifras por la puerta de
+    atrás. Lo que devuelve es editable: es un punto de partida, no un
+    resultado cerrado."""
+    observabilidad.etiquetar(endpoint="/formular/autocompletar", etapa=datos.etapa_requisitos)
+    al, req = cargar_v2()
+    fijos = {n: float(g) for n, g in (datos.gramos_por_alimento or {}).items()
+             if _num_positivo(g)}
+    desconocidos = [n for n in fijos if n not in al]
+    if desconocidos:
+        raise HTTPException(400, "No tenemos datos de: " + ", ".join(desconocidos))
+
+    excluidos = list(datos.especies_excluidas or []) + list(datos.nombres_excluidos or [])
+    ok, gramos = resolver_v2(
+        datos.der_objetivo, datos.etapa_requisitos, al, req,
+        datos.peso_perro_kg, dosis_maxima_fabricante,
+        excluidos=excluidos or None,
+        margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=20.0,
+        forzar=list(fijos) or None,
+        gramos_fijos=fijos or None,
+        patologias=datos.patologias,
+        peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
+        peso_objetivo_kg=_peso_de_referencia(datos)[0],
+        categorias_excluidas=datos.categorias_excluidas,
+    )
+    if not ok:
+        _imp = (gramos or {}).get("_imposible") if isinstance(gramos, dict) else None
+        respuesta_no = {"factible": False,
+                        "motivo": _imp or ("Con esas cantidades fijas no existe ninguna ración "
+                                           "que cumpla los requisitos de este paciente."),
+                        "imposible_por_aritmetica": bool(_imp)}
+        # ⚠️ "NO SE PUEDE" A SECAS NO LE SIRVE A NADIE (29 agosto). Cuando no
+        # sale, la pregunta del veterinario es "¿es POR LOS ALIMENTOS o por
+        # LAS CANTIDADES?", y eso se puede contestar midiéndolo en vez de
+        # suponerlo: se reintenta con los mismos alimentos y las cantidades
+        # libres. Si así sale, el problema son las cifras, y encima se le
+        # puede enseñar una ración que sí cuadra con SUS ingredientes -- para
+        # aceptarla o para ver de dónde se ha movido.
+        #
+        # No se entrega en silencio: va como `alternativa`, aparte del menú,
+        # y con `factible: false`. Cambiarle las cantidades por la puerta de
+        # atrás sería exactamente lo que este endpoint promete no hacer.
+        if not _imp and fijos:
+            ok2, gramos2 = resolver_v2(
+                datos.der_objetivo, datos.etapa_requisitos, al, req,
+                datos.peso_perro_kg, dosis_maxima_fabricante,
+                excluidos=excluidos or None,
+                margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=12.0,
+                forzar=list(fijos) or None,
+                patologias=datos.patologias,
+                peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
+                peso_objetivo_kg=_peso_de_referencia(datos)[0],
+                categorias_excluidas=datos.categorias_excluidas)
+            if ok2 and isinstance(gramos2, dict) and "_imposible" not in gramos2:
+                respuesta_no["motivo"] = (
+                    "Con esas cantidades no sale, pero con estos mismos alimentos sí. "
+                    "Lo que no cuadra son las cifras, no los ingredientes.")
+                respuesta_no["alternativa"] = gramos2
+                respuesta_no["cambios_de_la_alternativa"] = {
+                    n: {"tuyo": round(g, 1), "propuesto": round(float(gramos2.get(n, 0)), 1)}
+                    for n, g in fijos.items()
+                    if abs(float(gramos2.get(n, 0)) - g) > 0.5}
+            else:
+                respuesta_no["motivo"] += (" Tampoco existe con esos alimentos dejando las "
+                                           "cantidades libres, así que el problema no son las "
+                                           "cifras: es la combinación.")
+        return respuesta_no
+
+    # ⚠️ SUS GRAMOS SE COMPRUEBAN, NO SE PROMETEN. El motor los recibe como
+    # límites, así que deberían volver iguales; si alguna vez no volvieran,
+    # el veterinario tiene que enterarse -- callarlo sería cambiarle la
+    # formulación por dentro, que es justo lo que este endpoint promete no
+    # hacer.
+    movidos = [n for n, g in fijos.items()
+               if abs(float(gramos.get(n, 0)) - g) > 0.5]
+
+    respuesta = {"factible": True, "menu": gramos, "gramos_fijos_movidos": movidos}
+    respuesta = _garantizar_verificado(
+        respuesta, datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
+        origen="formulador del veterinario", patologias=datos.patologias,
+        peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
+        peso_objetivo_kg=_peso_de_referencia(datos)[0], al=al, req=req)
+    if respuesta.get("factible"):
+        # El estado completo, para no obligar a la app a pedirlo otra vez
+        # justo después: es la misma ración.
+        datos_estado = datos.model_copy(update={"gramos_por_alimento": gramos})
+        respuesta["estado"] = _estado_de_la_racion(datos_estado)
+    return respuesta
+
+
 @app.get("/alimentos")
 def listar_alimentos():
     """Catalogo agrupado por categoria, para que la app pinte los selectores
