@@ -170,8 +170,8 @@ las tiene que tomar una persona, no yo.
 
 - [ ] **Cinco preguntas de la revisión clínica.** Salieron del repaso del
       25 de agosto y ninguna se puede programar sin criterio veterinario.
-      ⚠️ La nutricionista ya no es Michelle: es Chris. Las cinco van en
-      `Rawku_para_Chris.pdf` (28 de agosto), repartidas entre las
+      ⚠️ La nutricionista ya no es Michelle: es Cris. Las cinco van en
+      `Rawku_para_Cris.pdf` (28 de agosto), repartidas entre las
       preguntas 5, 8 y 9:
 
       1. **¿Qué mínimo de proteína para un senior?** Hoy la app usa la
@@ -221,7 +221,7 @@ las tiene que tomar una persona, no yo.
       exige a cualquier perro (2,08). Eso es correcto para esa hepatopatía
       -- pero la lista de la app tiene una sola opción, así que ahora
       también bloquea a un perro con otra enfermedad hepática que quizá sí
-      podría comer un menú normal. Si Chris dice que merece la pena,
+      podría comer un menú normal. Si Cris dice que merece la pena,
       hay que partir la opción en dos. El tope de 2,4 mg ya está puesto en
       el código esperando ese día.
 
@@ -278,7 +278,7 @@ las tiene que tomar una persona, no yo.
       ocho menús salió con «0,00 g de fibra» **porque le tocaron las coles
       de Bruselas**. Una verdura de verdad leída como si no llevara nada.
 
-- [ ] **¿Rawku apunta a algún rango de fibra? — pregunta 7 del PDF de Chris.**
+- [ ] **¿Rawku apunta a algún rango de fibra? — pregunta 7 del PDF de Cris.**
       Ni FEDIAF, ni AAFCO, ni el NRC dan un mínimo: la fibra no es un
       nutriente esencial y no tiene valor de referencia oficial. Así que
       no se puede poner un mínimo duro sin dejar sin menú a perros con
@@ -320,7 +320,7 @@ las tiene que tomar una persona, no yo.
       «moderado», y de que BARF va por debajo de la comida comercial, ~2,7
       % MS vs ~3,4 %), eso se implementa como un suelo BLANDO en el solver
       -- se intenta llegar, y si no se llega el menú sale igual. Es media
-      tarde de trabajo. Pero la cifra tiene que venir de Chris: aquí no
+      tarde de trabajo. Pero la cifra tiene que venir de Cris: aquí no
       se inventan datos nutricionales.
 
       Fuentes que trajo ella: Schmidt et al. (2018) PLOS ONE
