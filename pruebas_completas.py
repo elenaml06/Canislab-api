@@ -4731,6 +4731,69 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 43 — CUANDO SE ACABA EL TIEMPO, LA SOLUCIÓN NO SE TIRA
+#
+# `res.success` del solver solo es cierto con status 0: "óptimo demostrado".
+# Cuando salta el time_limit el estado es 1 -- y HiGHS YA TIENE una solución
+# entera factible guardada. Hasta el 29 de agosto se tiraba.
+#
+# MEDIDO contra producción antes de arreglarlo: de nueve menús pedidos a
+# Render, CINCO contestaron "el cálculo está tardando más de lo normal". Y
+# midiendo el estado del solver con el límite apretado a mano, en todos los
+# casos había solución guardada. Eran menús que existían, ya calculados,
+# tirados por no haber terminado de demostrar que no había otro con un
+# alimento menos.
+#
+# Lo que se suelta es SOLO el objetivo: "usar los menos alimentos distintos
+# posible", que es comodidad de cocina. Las restricciones -- los 41
+# requisitos, el ratio, los topes de seguridad y de patología, las
+# proporciones -- las cumple cualquier solución factible. Por eso esta
+# prueba no comprueba que salga menú: comprueba que salga VERDE.
+# ============================================================
+print("=== BLOQUE 43: con el tiempo justo, sigue saliendo menú ===")
+from motor_completo import resolver as _resolver_43
+
+_CASOS_43 = [
+    ("mestiza 20 kg", 1513.0, "Adulto", 20.0, None),
+    ("cachorro 4 meses", 549.0, "CachorroCrecimiento", 4.0, 9.0),
+    ("toy 1,5 kg", 200.0, "Adulto", 1.5, None),
+]
+for _etq43, _der43, _etapa43, _peso43, _adulto43 in _CASOS_43:
+    # Un segundo es MENOS de lo que tarda este equipo en demostrar el óptimo
+    # (2-6 s), así que aquí siempre salta el límite: es imitar a Render sin
+    # depender de lo rápido que vaya la máquina donde corra esto.
+    _ok43, _g43 = _resolver_43(_der43, _etapa43, al, req, _peso43, dosis_maxima_fabricante,
+                               margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
+                               time_limit=1.0, peso_adulto_esperado_kg=_adulto43)
+    if not _ok43:
+        fallos.append(f"BLOQUE43 {_etq43}: con el tiempo justo no sale menú. La solución "
+                      f"factible ya está calculada dentro del solver: tirarla es decirle a la "
+                      f"usuaria que no existe un menú que sí existe.")
+        continue
+    _f43 = verificar(_g43, al, req, _der43, _etapa43)
+    if _f43["semaforo"] != "verde":
+        fallos.append(f"BLOQUE43 {_etq43}: el menú que sale con el tiempo justo está en "
+                      f"{_f43['semaforo']}. Aceptar una solución sin demostrar que es la que "
+                      f"usa menos alimentos NO puede relajar ni un requisito: lo que se suelta "
+                      f"es el objetivo, no las restricciones.")
+
+# Y lo que de verdad no tiene solución sigue sin tenerla: aceptar la
+# solución guardada no puede convertir un imposible en un menú.
+_ok43b, _g43b = _resolver_43(1040.0, "Adulto", al, req, 20.0, dosis_maxima_fabricante,
+                             margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
+                             time_limit=1.0,
+                             categorias_excluidas=["Carne muscular", "Hueso carnoso",
+                                                    "Pescados y mariscos", "Vísceras",
+                                                    "Hígado", "Verduras y frutas"])
+if _ok43b:
+    fallos.append("BLOQUE43: sin ninguna categoría de comida ha salido un menú. El solver no "
+                  "tiene ninguna solución guardada ahí, así que esto significaría estar "
+                  "aceptando un resultado que no es factible.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")

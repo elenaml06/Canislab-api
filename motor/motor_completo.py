@@ -1520,7 +1520,41 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     res = milp(c, constraints=constraints, integrality=integrality, bounds=bounds,
               options={"time_limit": time_limit, "mip_rel_gap": 0.30})
 
-    if res.success:
+    # ⚠️ SE ACEPTA LA SOLUCIÓN AUNQUE SE ACABE EL TIEMPO (29 agosto), Y ESTO
+    # ES LO QUE MÁS MENÚS DEVUELVE DE TODO LO QUE SE HA TOCADO HOY.
+    #
+    # `res.success` solo es cierto con status 0: "óptimo demostrado". Cuando
+    # salta el time_limit, el estado es 1 -- y HiGHS YA TIENE una solución
+    # entera factible guardada, que aquí se estaba tirando a la basura.
+    #
+    # MEDIDO, con el límite apretado a mano para imitar lo lento que va
+    # Render (este equipo resuelve en 2-6 s; allí, 12-24 s):
+    #
+    #     time_limit  caso            status  ¿había solución?  se devolvía
+    #     1 s         mestiza 20 kg     1           SÍ             nada
+    #     1 s         cachorro 4 meses  1           SÍ             nada
+    #     2 s         cachorro 4 meses  1           SÍ             nada
+    #     3 s         toy 1,5 kg        1           SÍ             nada
+    #
+    # O sea que parte de los "el cálculo está tardando más de lo normal" de
+    # producción eran menús QUE EXISTÍAN, ya calculados, tirados por no
+    # haber terminado de demostrar que no había otro con un alimento menos.
+    #
+    # Y eso es exactamente lo que se puede soltar: el objetivo del MILP es
+    # "usar los menos alimentos distintos posible", que es comodidad de
+    # cocina. Las restricciones -- los 41 requisitos, el ratio Ca:P, los
+    # cinco topes de seguridad crónica, los topes por patología, las
+    # proporciones -- las cumple CUALQUIER solución factible, óptima o no.
+    # Con el gap del 30 % que ya se aceptaba, la diferencia práctica es
+    # como mucho un alimento más en la lista.
+    #
+    # La red de seguridad de las categorías (aquí abajo) y
+    # `_garantizar_verificado` en main.py siguen mirando el resultado REAL,
+    # así que nada de esto puede entregar un menú que no cumpla.
+    hay_solucion = res.success or (getattr(res, "x", None) is not None
+                                   and res.status == 1)
+
+    if hay_solucion:
         x = res.x[:n_var]
         # ⚠️ CORREGIDO (5 agosto, mañana): el umbral de 0.5g podía borrar
         # del resultado un aporte PEQUEÑO PERO REAL y necesario -- por
