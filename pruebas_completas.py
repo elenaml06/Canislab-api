@@ -596,6 +596,35 @@ if _api._hay_comida_de_verdad(al, [], ["Carne muscular"]):
 if not _api._hay_comida_de_verdad(al, [], []):
     fallos.append("BLOQUE9 escalera: sin nada excluido sí queda comida de verdad")
 
+# ⚠️ AÑADIDO (29 agosto) — QUEDARSE SIN TIEMPO NO ES QUE NO EXISTA MENÚ.
+# Si el presupuesto se agotaba, la generación llegaba al mismo final que
+# si hubiera recorrido la escalera entera y contestaba "no existe ninguna
+# combinación... quita alguna restricción y vuelve a probar". Manda a la
+# usuaria a deshacer alergias o patologías para arreglar un reloj.
+#
+# Se aprieta el presupuesto a mano (que es lo que ya hace
+# /menu/varios-perros al repartir los 24 s entre los perros) para que la
+# prueba no dependa de lo rápido que vaya la máquina. El cachorro en
+# crecimiento es el caso más caro que hay, y con 24 s sale 8 de 8: si con
+# 3 s no sale, es el reloj y hay que decirlo.
+_sin_tiempo_b9 = {"menu": 0, "bien": 0, "mal": []}
+for _seg_b9 in (3.0, 3.5, 3.0, 3.5, 3.0, 3.5):
+    _r9 = _c.post("/menu/v2", json={
+        "nombres_alimentos": [], "modo": "automatico", "presupuesto_segundos": _seg_b9,
+        "der_objetivo": 1049, "peso_perro_kg": 10,
+        "etapa_requisitos": "CachorroCrecimiento", "peso_adulto_esperado_kg": 20}).json()
+    if _r9.get("factible"):
+        _sin_tiempo_b9["menu"] += 1
+    elif _r9.get("se_agoto_el_tiempo") or _r9.get("imposible_por_aritmetica"):
+        _sin_tiempo_b9["bien"] += 1
+    else:
+        _sin_tiempo_b9["mal"].append((_r9.get("motivo") or "")[:60])
+if _sin_tiempo_b9["mal"]:
+    fallos.append(
+        f"BLOQUE9 sin tiempo: {len(_sin_tiempo_b9['mal'])} respuesta(s) culpan al perro de "
+        f"lo que es del reloj — «{_sin_tiempo_b9['mal'][0]}…». Con 24 s ese mismo cachorro "
+        f"sí tiene menú, así que decirle que quite restricciones es mentira.")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
