@@ -1873,11 +1873,25 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             categorias_excluidas=datos.categorias_excluidas,
             presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
         )
-        ficha_i = None
-        while ok_i and time.time() - t_inicio_total < PRESUPUESTO_SEGUNDOS:
-            ficha_i = verificar_v2(gramos_i, al, req, datos.der_objetivo, datos.etapa_requisitos)
-            if ficha_i["semaforo"] == "verde":
-                break
+        # ⚠️ VERIFICAR CUESTA 1,6 ms: NO SE PUEDE QUEDAR SIN TIEMPO (29 agosto).
+        #
+        # Aquí la comprobación del presupuesto estaba en el `while` que
+        # envuelve al `verificar_v2`, así que cuando el solver devolvía el
+        # menú justo al agotarse el reloj -- que es lo normal en Render, que
+        # va 6-10 veces más lento que este equipo -- el bucle no llegaba a
+        # entrar NI UNA VEZ, `ficha_i` se quedaba en None y un menú perfecto
+        # se tiraba. Después salía "el cálculo está tardando más de lo
+        # normal", con el menú ya calculado en la mano.
+        #
+        # Es el mismo fallo que el de aceptar la solución del solver cuando
+        # salta su time_limit, un piso más arriba: teníamos la respuesta y la
+        # tirábamos por mirar el reloj. El presupuesto existe para limitar lo
+        # CARO -- resolver, que son segundos --, no lo que cuesta menos que
+        # parpadear.
+        ficha_i = (verificar_v2(gramos_i, al, req, datos.der_objetivo, datos.etapa_requisitos)
+                   if ok_i else None)
+        while (ok_i and ficha_i and ficha_i["semaforo"] != "verde"
+               and time.time() - t_inicio_total < PRESUPUESTO_SEGUNDOS):
             ok2, gramos2 = resolver_v2(
                 datos.der_objetivo, datos.etapa_requisitos, al, req,
                 datos.peso_perro_kg, dosis_maxima_fabricante,
@@ -1895,6 +1909,8 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             )
             if ok2:
                 ok_i, gramos_i = ok2, gramos2
+                ficha_i = verificar_v2(gramos_i, al, req, datos.der_objetivo,
+                                       datos.etapa_requisitos)
             else:
                 break
         return (ok_i and ficha_i and ficha_i["semaforo"] == "verde"), gramos_i, ficha_i
