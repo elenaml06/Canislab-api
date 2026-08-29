@@ -31,7 +31,19 @@ Las cuatro comprobaciones que hace, y por qué cada una:
 
     python3 auditar_catalogo.py
 """
-import json, collections, sys, os
+import json, collections, sys, os, re, unicodedata
+
+_re_org = re.compile(r"[a-z]+")
+
+
+def _sin_tildes(s):
+    return "".join(c for c in unicodedata.normalize("NFD", s)
+                   if unicodedata.category(c) != "Mn")
+
+
+def _sin_tildes(s):
+    s = unicodedata.normalize("NFD", s)
+    return "".join(c for c in s if unicodedata.category(c) != "Mn")
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "motor"))
 RUTA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "alimentos_v3_final.json")
@@ -469,6 +481,70 @@ else:
         for n_ in sorted(_falta_aa[cat_]):
             print("        %s" % n_)
 
+# ---------------------------------------------------------------------------
+# EL MISMO ÓRGANO, SIEMPRE EN LA MISMA CATEGORÍA
+# ---------------------------------------------------------------------------
+# ⚠️ POR QUÉ (29 agosto). La categoría no es una etiqueta: es lo que decide
+# qué topes se le aplican al alimento. Y con los órganos la convención BARF es
+# concreta:
+#
+#   · el CORAZÓN es músculo cardíaco y la MOLLEJA músculo liso: van como carne
+#     muscular y NO cuentan para la cuota de órgano secretor
+#   · el HÍGADO tiene categoría propia, porque su vitamina A no se parece a la
+#     de nada más
+#   · riñón, bazo, pulmón, timo, páncreas y sesos son las VÍSCERAS de verdad
+#
+# Y falla en las dos direcciones. Si el corazón contara como víscera, se
+# perdería carne muscular utilizable por un tope que no le toca. Si el hígado
+# contara como músculo, la vitamina A se dispararía.
+#
+# Es del mismo tipo que la comprobación de los aminogramas: no mira si un
+# valor es plausible, mira si DOS FILAS QUE DEBERÍAN DECIR LO MISMO lo dicen.
+#
+# ⚠️ LA FRONTERA DE PALABRA NO ES UN DETALLE: buscando la palabra suelta
+# dentro del nombre, «Lenguado» cuenta como lengua y el «Aceite de hígado de
+# bacalao» como hígado — dos falsos positivos de dos. Un detector que canta
+# donde no hay nada se ignora, y entonces no detecta nada.
+_ORGANOS = {
+    "corazon": "corazon", "corazones": "corazon",
+    "molleja": "molleja", "mollejas": "molleja",
+    "lengua": "lengua", "lenguas": "lengua",
+    "higado": "higado", "higados": "higado",
+    "rinon": "rinon", "rinones": "rinon",
+    "bazo": "bazo", "bazos": "bazo",
+    "pulmon": "pulmon", "pulmones": "pulmon",
+    "timo": "timo", "callos": "callos",
+    "seso": "sesos", "sesos": "sesos", "cerebro": "sesos",
+    "pancreas": "pancreas",
+}
+# Un derivado no es el órgano: el aceite de hígado de bacalao es un aceite.
+_NO_ES_EL_ORGANO = ("aceite", "harina", "polvo", "caldo", "extracto", "pasta")
+
+
+def _organo_de(nombre):
+    n = _sin_tildes(nombre.lower())
+    if any(x in n for x in _NO_ES_EL_ORGANO):
+        return None
+    for palabra in _re_org.findall(n):
+        if palabra in _ORGANOS:
+            return _ORGANOS[palabra]
+    return None
+
+
+_por_organo = {}
+for a in al:
+    _org = _organo_de(a.get("nombre", ""))
+    if _org:
+        _por_organo.setdefault(_org, {}).setdefault(a.get("categoria"), []).append(a["nombre"])
+for _org, _cats in sorted(_por_organo.items()):
+    if len(_cats) > 1:
+        _detalle = " | ".join(f"{c}: {', '.join(v)}" for c, v in _cats.items())
+        avisos.append(("ORGANO", _org,
+                       f"el mismo organo en {len(_cats)} categorias distintas -> {_detalle}. "
+                       f"La categoria decide que topes se aplican: corazon y molleja son MUSCULO "
+                       f"(no cuentan para la cuota de organo secretor), el higado va aparte por su "
+                       f"vitamina A, y rinon/bazo/pulmon/timo/pancreas/sesos son las visceras."))
+
 print()
 print("═" * 74)
 print("AVISOS: %d" % len(avisos))
@@ -533,6 +609,7 @@ if _abiertas:
     print()
     print(f"  {len(_abiertas)} marcas abiertas. Cada una necesita que alguien haga algo FUERA")
     print("  de este repositorio: una llamada, una ficha tecnica, una carga de datos.")
+
 
 
 sys.exit(1 if any(t == "BASE" for t, _, _ in avisos) else 0)
