@@ -179,48 +179,83 @@ DER_ANCLA_BAJA = 95.0
 NO_SE_ESCALAN = {"Grasa_total"}
 
 
-# ⚠️ EL PESO OBJETIVO DESDE EL BCS (28 agosto). Regla de AAHA 2014,
-# corroborada por Teixeira 2024: «Each BCS >= 5 (on a 9 point scale) ... is
-# equivalent to being 10 % overweight». Y su ejemplo trabajado, que es el
-# test: «a 45 kg Labrador retriever that has a BCS of 8 out of 9 is 30 %
-# overweight and its ideal weight is approximately 32 kg».
+# ⚠️ EL PESO OBJETIVO DESDE EL BCS. SE DIVIDE, NO SE RESTA (29 agosto).
 #
-#     45 x (1 - 0,30) = 31,5      <- RESTA
-#     45 / (1 + 0,30) = 34,6      <- dividir. MAL. Tres kilos.
+# ESTO ESTUVO MAL UN DIA Y CONVIENE SABER POR QUE, porque el error no fue
+# un numero mal copiado: fue leer UNA frase de un ejemplo sin abrir la
+# tabla que tiene al lado.
 #
-# Ninguna de las dos fuentes publicadas divide.
+# El 28 se escribio restando, apoyado en el ejemplo trabajado de AAHA 2014:
+# «a 45 kg Labrador retriever that has a BCS of 8 out of 9 is 30 % over-
+# weight and its ideal weight is approximately 32 kg». 45 x 0,70 = 31,5, y
+# 32 esta ahi. Parecia cerrado.
 #
-# SE ROMPE EN LOS DOS EXTREMOS, y uno falla hacia el lado peligroso:
+# Pero «30 % overweight» significa un 30 % POR ENCIMA DEL IDEAL, no un 30 %
+# del peso de hoy. Y eso se invierte dividiendo:
 #
-# · POR ABAJO. Con BCS 3 la formula se da la vuelta y devuelve un objetivo
-#   MAYOR que el peso real: un perro de 15 kg saldria a 18. La regla de
-#   AAHA esta definida solo hacia arriba («BCS >= 5»). Y no es cosmetico:
-#   con 18 en vez de 15 la DER efectiva sale un 15% mas baja y los minimos
-#   escalarian un 15% de mas en un perro que ni esta a dieta. Sale por el
-#   lado conservador, pero es un numero que no ha decidido nadie.
+#     actual = 1,30 x ideal        ->   ideal = actual / 1,30 = 34,6
+#     restar el 30 % del actual    ->   45 x 0,70            = 31,5   MAL
 #
-# · POR ARRIBA es peor. En BCS 9 la formula da un 40% de exceso, pero la
-#   escala se satura: el 9/9 cubre desde un 40% hasta mas del 100%. La
-#   referencia publicada solo llega a 8 -- la Global Pet Obesity Initiative
-#   (2019, firmada por el ECVCN, la WSAVA y la ACVIM) define obesidad como
-#   30% sobre el ideal y dice que eso equivale a 8/9. Por encima nadie
-#   publica la equivalencia. Y ahi el error va hacia el lado MALO: si el
-#   perro esta un 60% por encima y la formula dice 40%, el objetivo sale
-#   demasiado alto y con el demasiadas kcal, justo en el perro que peor lo
-#   lleva. En BCS 9 no se estima: hace falta el peso declarado.
+# Las tres comprobaciones que lo cierran, y ninguna es de interpretacion:
 #
-# Los medios puntos valen 5%: la regla es lineal y un 6,5 o un 7,5 no se
-# redondean.
+# 1. LA TABLA 1 DE LA PROPIA GUIA da el % de sobrepeso por punto (BCS 6 ->
+#    10 %, 7 -> 20 %, 8 -> 30 %, 9 -> 40 %) y el % de grasa. Su tercer
+#    metodo, [peso x (100 - %grasa)] / 0,8, no depende de como se lea
+#    «overweight» porque sale de la masa magra. Da x0,7875 en BCS 8.
+#    Dividiendo sale x0,7692 -- un 2 % de diferencia. Restando, x0,70: se
+#    sale del propio rango del metodo de la grasa desde BCS 7.
+#
+# 2. LA GLOBAL PET OBESITY INITIATIVE (2019, Ward, German y Churchill,
+#    respaldada por el ECVCN, la WSAVA y la ACVIM) define la obesidad como
+#    «30 % above ideal body weight» y dice que equivale a 8/9. «Above
+#    ideal» no admite dos lecturas.
+#
+# 3. EL EJEMPLO DE AAHA ES EL RARO DE SU PROPIO DOCUMENTO: dos de sus tres
+#    metodos dan 34-35 kg para ese labrador y el ejemplo escribe 32. Es una
+#    errata aritmetica en la guia.
+#
+# Asi que dividir es lo correcto -- y es lo que `der.py` y `App.jsx` hacian
+# ya desde antes. Lo que estaba mal era esto. Las kcal de los 85 casos del
+# contrato NO se mueven, porque el que cambia es este y no `der.py`.
+#
+# POR DEBAJO DE BCS 5 NO SE ESTIMA, y la ausencia de regla es deliberada:
+# la Tabla 1 empieza en BCS 4 -no hay filas 1, 2 ni 3, ni columna de
+# «% underweight»- y AAHA lo dice: «management of such cases can be complex
+# and is beyond the scope of this document». Ademas AAHA 2021 manda lo
+# contrario de estimar: «base feeding calculations on current weight if
+# ideal or underweight». En un perro delgado el peso de referencia es el
+# SUYO. Y BCS 4 es «Ideal» en esa tabla (15-19 % de grasa), no «delgado».
+#
+# EN BCS 9 SI HAY CIFRA -el 40 % de la Tabla 1- pero es un TECHO, no una
+# medida: Broome et al. (2023, Sci Rep 13:22958) observan perros que
+# «exceed the description for score 9» con DXA por encima del 40 %, y
+# Bjornvad 2011 no encuentra diferencia de grasa entre 8 y 9. Si el perro
+# esta un 60 % por encima y la escala lo topa en 40, el objetivo sale
+# DEMASIADO ALTO y con el demasiadas kcal, justo en el que peor lo lleva.
+# Se estima igualmente -- una cota inferior es mejor que nada -- pero
+# `_peso_de_referencia` lo devuelve con procedencia propia para que se vea.
+#
+# Los medios puntos valen 5 % de grasa / 10 % de peso: la regla es lineal y
+# un 6,5 o un 7,5 no se redondean. AAHA 2021: «Every incremental increase
+# in BCS is equivalent to a 5 % increase in BF% while each BCS > 5/9 is
+# equivalent to being 10 % overweight». (El «10-15 %» que circula es una
+# miscita: la revision que lo dice cita un articulo de genetica del MC4R.)
 BCS_NEUTRO = 5.0
-BCS_MAXIMO_PUBLICADO = 8.0
+BCS_MAXIMO_PUBLICADO = 9.0
+BCS_ESCALA_SATURADA = 9.0    # a partir de aqui la estimacion es una cota inferior
+PCT_POR_PUNTO_BCS = 0.10
 
 
 def peso_objetivo_desde_bcs(peso_actual_kg, bcs):
     """El peso objetivo estimado desde el BCS, o None si no se puede.
 
-    Devuelve None -y hay que pedir el peso declarado- por debajo de BCS 5
-    (la regla no existe hacia abajo) y en BCS 9 (la escala se satura y la
-    estimacion se queda corta justo donde mas duele).
+    Devuelve None -y hay que usar el peso real- por debajo o en BCS 5: la
+    regla no existe hacia abajo y AAHA 2021 dice expresamente que en un
+    perro delgado se alimenta sobre el peso ACTUAL.
+
+    En BCS 9 devuelve numero, pero es una COTA INFERIOR del exceso: la
+    escala se satura ahi. Quien llame tiene que decirlo (ver
+    `_peso_de_referencia` en main.py).
     """
     try:
         p = float(peso_actual_kg)
@@ -229,8 +264,9 @@ def peso_objetivo_desde_bcs(peso_actual_kg, bcs):
         return None
     if p <= 0 or b <= BCS_NEUTRO or b > BCS_MAXIMO_PUBLICADO:
         return None
-    exceso = 0.10 * (b - BCS_NEUTRO)
-    return round(p * (1.0 - exceso), 3)
+    exceso = PCT_POR_PUNTO_BCS * (b - BCS_NEUTRO)
+    # SE DIVIDE: el exceso esta medido SOBRE EL IDEAL, no sobre el actual.
+    return round(p / (1.0 + exceso), 3)
 
 
 def minimo_de(r, nombre_req, etapa, der_efectiva=None):

@@ -43,33 +43,69 @@ las tiene que tomar una persona, no yo.
       Viene de otro sitio y hay que traerla aquí antes de construir nada de
       la fase 4.
 
-- [ ] **El peso ideal a partir del BCS está calculado de DOS formas, y no
-      dan lo mismo.** (28 de agosto, encontrado montando la prueba de punta
-      a punta.) La misma cuenta vive en dos sitios:
+- [x] ~~**El peso ideal desde el BCS estaba calculado de dos formas.**~~
+      **RESUELTO el 29 de agosto, y al revés de como lo escribí el 28.**
 
-      | | 30 kg, BCS 7 | 45 kg, BCS 8 |
-      |---|---|---|
-      | `der.py` y `src/der.js` — **dividen** por `1 + desvío` | 25,00 | 34,62 |
-      | `verificar.peso_objetivo_desde_bcs` — **restan** el exceso | 24,00 | **31,50** |
+      El 28 puse que había que RESTAR el exceso, apoyado en el ejemplo
+      trabajado de AAHA («labrador de 45 kg con BCS 8 → aproximadamente
+      32 kg»). Estaba mal, y el error era mío por leer una frase sin abrir
+      la tabla que tiene al lado: **«30 % overweight» es un 30 % SOBRE EL
+      IDEAL**, así que se invierte dividiendo. Tres cosas lo cierran:
 
-      **AAHA publica su propio ejemplo y dice 31,5** para el labrador de
-      45 kg con BCS 8. Así que la resta es la buena y la división está mal:
-      es la misma familia que el DER duplicado — dos cuentas de lo mismo,
-      cada una coherente consigo misma, dando perros distintos.
+      1. La **Tabla 1 de la propia guía** da un tercer método que no
+         depende de cómo se lea «overweight» porque sale de la masa magra:
+         `[peso × (100 − %grasa)] / 0,8`. Da ×0,7875 en BCS 8. Dividiendo
+         sale ×0,7692 —un 2 % de diferencia—; restando, ×0,70, que se sale
+         del propio rango del método desde BCS 7.
+      2. La **Global Pet Obesity Initiative (2019)**, respaldada por ECVCN,
+         WSAVA y ACVIM, define obesidad como «30 % above ideal body
+         weight». *Above ideal* no admite dos lecturas.
+      3. **El ejemplo de AAHA es el raro de su propio documento**: dos de
+         sus tres métodos dan 34-35 kg para ese labrador. Es una errata.
 
-      **Hoy no hace daño**, y por un motivo que también conviene saber: la
-      app manda SIEMPRE `peso_objetivo_kg`, así que el servidor coge el
-      peldaño `declarado` y nunca deriva nada del BCS. El desacuerdo está
-      puesto y apagado. El día que alguien mande `bcs` sin objetivo, las dos
-      mitades hablarán de perros con un 4 % de diferencia.
+      Así que **`der.py` y `App.jsx` estaban bien desde el principio** y el
+      que estaba mal era `verificar.peso_objetivo_desde_bcs`, que ya
+      divide. Las kcal de los 85 casos del contrato **no se han movido**.
 
-      **Por qué no lo arreglo yo solo:** arreglar `der.py` cambia las kcal,
-      y las kcal son el contrato de los 85 casos de `der_casos.json` en los
-      dos repos. Hay que regenerar los esperados y copiar el archivo a los
-      dos, los dos commits o ninguno. Y hay que decidir antes si el ideal
-      del perro DELGADO (BCS < 5) también pasa a restarse — hoy la división
-      le sube el objetivo un 22 % y la resta no cubre ese lado.
-      Lo vigila `tests/de-punta-a-punta.spec.js` en `canislab-web`.
+      Y como no había ni una prueba que tocara esa función —por eso se
+      coló—, ahora está el **BLOQUE 37**, que ancla los cuatro puntos
+      contra el método de la grasa corporal y, sobre todo, **compara las
+      dos cuentas entre sí**: es lo que el contrato del DER no puede hacer.
+
+- [ ] **Tres cambios de producto que salen de lo anterior, y que sí mueven
+      las kcal de perros reales.** No los he hecho porque cambian lo que
+      come un perro que ya está usando la app, y eso se decide, no se
+      cuela en un merge.
+
+      1. **Por debajo de BCS 5 no habría que estimar.** Hoy `der.py` y
+         `App.jsx` sí estiman hacia arriba (con un tope del +20 %).
+         La Tabla 1 de AAHA **empieza en BCS 4 y no tiene columna de
+         «% underweight»**, y AAHA 2021 dice lo contrario de estimar:
+         *«base feeding calculations on current weight if ideal or
+         underweight»*. Un perro delgado dispara un diagnóstico, no un
+         plan de engorde. `verificar.py` ya se comporta así; los otros dos
+         no.
+      2. **BCS 4 es «Ideal» en esa tabla** (15-19 % de grasa), no
+         «delgado». Si la segunda opción de la app dice «un poco delgado»
+         y mapea a 4, marcamos como subóptimo un perro que las guías
+         consideran ideal.
+      3. **El mapeo de las cinco opciones.** Hoy es `{0:2, 1:4, 2:5, 3:7,
+         4:9}`: saltos de 2, 1, 2, 2 —no equidistantes, lo que rompe la
+         premisa del «10 % por punto»—. El estándar es **1, 3, 5, 7, 9**.
+
+      **Y el problema de fondo no es el mapeo, es quién puntúa.** Los
+      dueños subestiman de forma sistemática y el sesgo se concentra justo
+      en los perros con sobrepeso: Eastland-Jones 2014 (110 dueños) mide
+      un 64 % de errores **incluso con la carta delante**, con
+      subestimación en el 89-92 % de ellos y hasta el 85 % en perros con
+      sobrepeso. Blanchard 2023: **100 % de desacuerdo dueño-veterinario
+      en los perros obesos**. Söder 2023 mide 0,6 puntos de subestimación
+      media —pero tras una formación corta los dueños aciertan igual que
+      el personal veterinario (60 % → 77 %).
+
+      Los tres errores empujan en la misma dirección: **el dueño
+      subestima el BCS → el BCS bajo da un objetivo alto → el objetivo
+      alto da más kcal**, a un perro que ya está gordo.
 
 - [ ] **Cuatro fichas que ha señalado la comprobación nueva del cociente.**
       (28 de agosto.) Al añadir el nivel 2 —mirar la columna en vez de la
