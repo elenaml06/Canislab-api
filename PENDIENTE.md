@@ -482,7 +482,7 @@ Hace falta, antes de abrir el cobro:
   alguna otra suscripción viva. Hoy una cancelación de cualquiera de las
   seis dejaría a la persona sin premium teniendo cinco pagadas.
 
-### 1.0-bis El yodo de los perros muy pequeños vive al 101 % del mínimo
+### 1.0-ter El yodo de los perros muy pequeños vive al 101 % del mínimo
 
 Apuntado el 28 de agosto. Es el mismo mecanismo que el caso ya conocido del
 BLOQUE 1 (Toy CachorroJoven de 1,5 kg), pero **no está exento**: apareció en
