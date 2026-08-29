@@ -4310,6 +4310,69 @@ if not ((_r39c.json() or {}).get("avisos_patologia")):
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
+
+# ============================================================
+# BLOQUE 40 — LO QUE SE EXCLUYE NO ENTRA POR LA PUERTA DE ATRÁS
+# ============================================================
+#
+# ⚠️ CASO REAL ENCONTRADO (29 agosto) haciéndole el menú a un perro de
+# verdad: se excluye el ACEITE DE CACAHUETE por nombre y el menú lo lleva
+# igual, 2 de cada 3 veces. Y lo mismo la semilla de sésamo, el aceite de
+# girasol y el de linaza -- los cuatro comprobados uno a uno.
+#
+# El motivo era de ORDEN, no de lógica. `candidatos_por_cat["Suplementos"]`
+# se construía del CATÁLOGO ENTERO de una sola pasada, saltándose todos los
+# filtros que el bucle de categorías aplica justo encima: las exclusiones
+# del usuario, las categorías excluidas y las restricciones por patología.
+#
+# Y no es una lista cualquiera: `SUP_CATS` mete dentro "Extras", que son los
+# aceites, las semillas, los huevos y la sal. Aceite de CACAHUETE. Semilla
+# de SÉSAMO. Huevo. Alérgenos de manual, entrando en el plato de un perro
+# cuyo dueño los había prohibido.
+#
+# La regla 4 del CLAUDE.md: las alergias y lo que se excluye a mano NO SE
+# TOCAN JAMÁS, porque pueden ser médicas. Por aquí se tocaban.
+#
+# Un extra es "libre" en el sentido de que no se elige en ninguna pantalla.
+# Nunca en el de saltarse lo que alguien ha prohibido.
+print("\n=== BLOQUE 40: lo excluido no entra por la puerta de atrás ===")
+
+_EL40 = ["Pollo muslo con piel", "Corazón de pollo", "Carcasa de pollo",
+         "Hígado de pollo", "Zanahoria", "Sardina"]
+
+def _menu40(**extra):
+    _cuerpo = {"modo": "personalizar", "nombres_alimentos": _EL40,
+               "forzar_presencia": _EL40, "der_objetivo": 1632.5,
+               "etapa_requisitos": "CachorroCrecimiento",
+               "peso_perro_kg": 19.5, "peso_adulto_esperado_kg": 33.7}
+    _cuerpo.update(extra)
+    return (_c.post("/menu/v2", json=_cuerpo).json() or {}).get("menu") or {}
+
+# Los Extras que se colaban. TRES tiradas cada uno: el fallo salía 2 de
+# cada 3, así que una sola dejaría pasar el caso.
+for _obj40 in ("Semilla de sésamo", "Aceite de girasol", "Aceite de linaza",
+               "Aceite de cacahuete", "Sal común (cloruro sódico)"):
+    _cuela40 = sum(1 for _ in range(3)
+                   if _obj40 in _menu40(nombres_excluidos=[_obj40]))
+    if _cuela40:
+        fallos.append(f"BLOQUE40: se excluyó «{_obj40}» y sale en el menú {_cuela40} de 3 veces. "
+                      f"Es un Extra, y los Extras se montan aparte, del catálogo entero: si esa "
+                      f"lista no pasa por las exclusiones, un alérgeno entra en el plato de un "
+                      f"perro cuyo dueño lo había prohibido.")
+
+# Y una categoría entera excluida tampoco puede volver por ahí.
+_g40 = _menu40(categorias_excluidas=["Extras"])
+if _g40:
+    _ex40 = [n for n in _g40 if (al.get(n) or {}).get("categoria") == "Extras"]
+    if _ex40:
+        fallos.append(f"BLOQUE40: con la categoría «Extras» excluida entera, el menú trae {_ex40}. "
+                      f"La exclusión de categoría se aplica en el bucle de categorías, pero los "
+                      f"Extras se montan aparte y hay que aplicarla ahí también.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+
 # ============================================================
 # RESUMEN FINAL
 # ============================================================
