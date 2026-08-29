@@ -382,6 +382,15 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
     _der_ef = der_efectiva_de(der, peso_referencia_kg)
 
     faltan, se_pasa, correctos = [], [], []
+    # ⚠️ LOS QUE CUMPLEN TAMBIEN SE CUENTAN CON DETALLE (29 agosto). Hasta hoy
+    # `correctos` era una lista de NOMBRES y solo salia su longitud, asi que la
+    # ficha clinica del veterinario podia enseñar todo lo que falla -- y de un
+    # menu VERDE no podia enseñar nada, porque no falla ninguno. Un menu que
+    # cumple le salia como un numero: «42 dentro de rango». Lo que un
+    # profesional necesita ver es «calcio 1,8 con el minimo en 1,2», que es
+    # justo lo que no habia forma de pintar. `correctos` se queda como el
+    # RECUENTO para no romper a quien ya lo lee; el detalle va aparte.
+    dentro = []
     for nombre, clave in MAPA.items():
         r = req.get(nombre)
         if not r:
@@ -417,6 +426,24 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
                                     perfil_max.get("_imputados", {}).get(clave))})
                 continue
         correctos.append(nombre)
+        _mn = round(minimo * escala, 2) if minimo is not None else None
+        _mx = round(maximo * escala, 2) if maximo is not None else None
+        dentro.append({
+            "nutriente": nombre, "clave": clave, "tiene": round(tiene, 2),
+            "minimo": _mn, "maximo": _mx,
+            # a cuanto va del minimo: 100 es justo, 250 es que va sobrado
+            "cubre_pct": round(tiene / _mn * 100) if _mn else None,
+            # y cuanto le queda hasta el techo, que es la otra mitad de la
+            # pregunta y de un menu verde no se ve en ninguna parte
+            "del_maximo_pct": round(tiene / _mx * 100) if _mx else None,
+            # ⚠️ HAY DOS QUE NO TIENEN NI MINIMO NI MAXIMO EN ADULTO, y no es
+            # un hueco nuestro: FEDIAF pone «-» al linolenico y al
+            # araquidonico fuera de crecimiento y reproduccion. Se marcan en
+            # vez de esconderse -- que el veterinario vea «2,1 g/1000 kcal,
+            # FEDIAF no da referencia para adulto» es informacion; quitar la
+            # fila le haria contar 40 donde el semaforo dice 42.
+            "sin_referencia": _mn is None and _mx is None,
+        })
 
     # ==================================================================
     # RATIO CALCIO:FOSFORO -- se comprueba APARTE, no como un nutriente mas
@@ -466,6 +493,10 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
                                 f"MENOS HUESO CARNOSO.")})
         else:
             correctos.append("Relación Ca:P")
+            dentro.append({"nutriente": "Relación Ca:P", "clave": "ratio_ca_p",
+                           "tiene": round(ratio, 2), "minimo": mn, "maximo": mx,
+                           "cubre_pct": round(ratio / mn * 100) if mn else None,
+                           "del_maximo_pct": round(ratio / mx * 100) if mx else None})
 
     # ==================================================================
     # SEMAFORO -- no todos los huecos son iguales de graves
@@ -549,6 +580,9 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
         "rojos": rojos, "ambar": ambar,
         "ratio_ca_p": round(ratio, 2) if ratio else None,
         "correctos": len(correctos),
+        # el detalle de los que cumplen, ordenado por lo que va mas justo --
+        # que es por donde empieza a mirar un veterinario
+        "dentro_de_rango": sorted(dentro, key=lambda x: x["cubre_pct"] or 10**9),
         "total": len(correctos) + len(faltan) + len(se_pasa),
         "faltan": sorted(faltan, key=lambda x: x["cubre_pct"]),
         "se_pasa": se_pasa,
