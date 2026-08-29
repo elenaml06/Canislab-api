@@ -1611,6 +1611,26 @@ else:
             "forma de saber de verdad si un alimento es a granel; cualquier otra "
             "corre el riesgo de no cumplirse nunca en silencio.")
 
+    # ⚠️ AÑADIDO (29 agosto) — Y QUE LA EXENCIÓN SIGA SIENDO LA BUENA.
+    # El suelo se saltaba TODO lo que no fuera "Extras", así que las 116
+    # fichas de comida se quedaban fuera de la protección: salieron 0,69 g
+    # de salmón en un adulto de 200 kcal. Lo exento tiene que ser lo que
+    # de verdad se dosifica con cacito o comprimido, y nada más -- si un
+    # día vuelve a escribirse "todo menos Extras", esto lo dice.
+    for _cat_comida in ("Carne muscular", "Hueso carnoso", "Pescados y mariscos",
+                        "Vísceras", "Hígado", "Verduras y frutas", "Extras"):
+        if f'"{_cat_comida}"' in _bloque_b14:
+            fallos.append(
+                f"BLOQUE14: '{_cat_comida}' aparece en la exención del suelo de 1 g. "
+                f"Eso se pesa en una báscula de cocina, así que tiene que cumplir el "
+                f"suelo; lo único exento son los suplementos que se dosifican con el "
+                f"cacito o el comprimido del bote.")
+    if "CATEGORIAS_QUE_SE_DOSIFICAN" not in _bloque_b14:
+        fallos.append(
+            "BLOQUE14: la exención del suelo ya no nombra las categorías que se "
+            "dosifican. Escribirla al revés ('todo menos Extras') es lo que dejó "
+            "sin suelo a toda la comida durante semanas.")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
