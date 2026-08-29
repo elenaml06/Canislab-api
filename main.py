@@ -1917,9 +1917,16 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         _imp = (gramos or {}).get("_imposible") if isinstance(gramos, dict) else None
         if _imp:
             return {"factible": False, "motivo": _imp, "imposible_por_aritmetica": True}
+        # ⚠️ SIN EL NÚMERO ESCRITO (29 agosto). Aquí ponía "los 30
+        # requisitos" y el motor ya verifica 42 desde que se encendieron los
+        # aminoácidos: el mensaje que ve la usuaria decía una cifra y el
+        # motor comprobaba otra. Es el mismo fallo que describe el CLAUDE.md
+        # sobre el DER -- un número escrito en dos sitios se separa, y el
+        # que está en un texto no lo cubre ninguna prueba.
+        # Encontrado pidiendo un menú de hepatopatía contra producción.
         return {"factible": False,
                 "motivo": "No existe ninguna combinación de alimentos accesibles "
-                          "que cumpla los 30 requisitos para este perro, ni "
+                          "que cumpla todos los requisitos para este perro, ni "
                           "siquiera soltando las proporciones habituales del "
                           "BARF. Quita alguna restricción y vuelve a probar.",
                 "se_intento_relajando": [p[2] for p in _escalera_de_relajacion()[1:]]}
