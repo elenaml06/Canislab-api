@@ -1161,9 +1161,35 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # Lo encontró BLOQUE 14 fallando 1 de cada 20 veces en el caso más
     # apretado (200 kcal con cuatro especies fuera): 0,55 g de aceite de
     # girasol. Se veía poco porque solo asoma cuando el menú va justo.
+    # ⚠️ AMPLIADO (29 agosto) — EL SUELO SOLO CUBRÍA LOS EXTRAS, Y LA
+    # COMIDA TAMBIÉN SE PESA. Aquí ponía `!= "Extras"`, con esta razón
+    # escrita al lado: "medido sobre 51 menús, las ÚNICAS cantidades por
+    # debajo de un gramo salían de ahí -- la sal. Las carnes, vísceras y
+    # verduras nunca bajaban de ~1,9 g".
+    #
+    # No era verdad, solo era raro: el canario del BLOQUE 14 sacó **0,69 g
+    # de salmón** en un adulto de 200 kcal. Que en 51 menús no asomara no
+    # significa que no pueda pasar -- significa que hacen falta más de 51.
+    # Y una báscula de cocina normal mide de gramo en gramo, así que 0,69 g
+    # de salmón no lo pesa nadie, exactamente igual que los 0,35 g de sal
+    # que hicieron nacer esta restricción.
+    #
+    # LO QUE QUEDA FUERA SIGUEN SIENDO LOS SUPLEMENTOS COMERCIALES, y por
+    # el mismo motivo de siempre: no se pesan, se dosifican con el cacito o
+    # el comprimido del bote. Obligarles a llegar a 1 g sería obligar a dar
+    # de más de un suplemento. Antes esa exención se escribía "todo menos
+    # Extras", que dejaba fuera de la protección a las 116 fichas de
+    # comida; ahora se escribe al revés y se nombra lo que de verdad se
+    # dosifica.
+    #
+    # El coste medido (mediana de 6 generaciones por perfil, este mismo
+    # equipo) está en el PR: si alguien lo vuelve a tocar por tiempo, que
+    # mida en vez de suponer -- es lo que falló la primera vez.
     SUELO_MEDIBLE_G = 1.0
+    CATEGORIAS_QUE_SE_DOSIFICAN = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
+                                   "Calcio", "Hierro", "Vitamina B")
     for n in nombres:
-        if alimentos[n].get("categoria") != "Extras":
+        if alimentos[n].get("categoria") in CATEGORIAS_QUE_SE_DOSIFICAN:
             continue
         i = idx[n]
         # Nunca por encima de su propio techo: si un alimento no puede
