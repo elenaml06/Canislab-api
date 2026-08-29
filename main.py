@@ -3689,6 +3689,42 @@ def _etapa_ok(etapa):
 # al servidor. Nace de que el usuario trabaja desde el movil y no puede
 # ejecutar verificar_pilares.py a mano.
 # =====================================================================
+# ⚠️ LOS SELLOS DE LOS DATOS, A NIVEL DE MÓDULO (29 agosto). Vivían dentro
+# de /verificar, y en cuanto hicieron falta en un segundo sitio -- la pauta
+# firmada, que guarda con qué datos se calculó -- había que copiarlos. Un
+# número copiado se separa: es lo mismo que ya pasó con la tabla de
+# patologías del motor viejo, con el fósforo renal a 1400 en un lado y a
+# 1200 en el otro.
+def _fecha_utc_ahora():
+    """Ahora, en UTC y en ISO. Con import local: ver el comentario de quien
+    la usa -- este archivo tiene un `import datetime` de módulo que gana
+    sobre el `from datetime import datetime`, y confundirlos revienta en
+    tiempo de ejecución, no al arrancar."""
+    from datetime import datetime as _Fecha, timezone as _Zona
+    return _Fecha.now(_Zona.utc).isoformat()
+
+
+def _sello_de_main_py():
+    """El sello del código que está corriendo. Es el mismo número que enseña
+    /verificar en `sello_main_py_actual`, y va con cada pauta firmada para
+    poder responder "¿con qué versión del motor se calculó esto?" sin
+    adivinar."""
+    import hashlib
+    return hashlib.sha256(open(__file__, "rb").read()).hexdigest()[:16]
+
+
+SELLOS_DE_LOS_DATOS = {
+        # ⚠️ ACTUALIZADO (21 agosto) al añadir 7 alimentos con fuente
+        # verificada (corazón y molleja de pavo, hígado de pavo y de pato,
+        # y completar corazón/molleja de pollo, molleja de pavo y timo de
+        # ternera). Este sello SOLO se toca cuando el cambio de datos es a
+        # propósito y está documentado: si no coincide sin haberlo tocado,
+        # es que alguien alteró el catálogo, y eso es lo que vigila.
+        "alimentos_v3_final.json":      "4d634b9cf5f19fdc",   # 28 ago (2): EL HIGADO Y EL CORAZON DE PAVO, resembrados desde el pollo del USDA -- su aminograma venia del pavo del USDA, que tiene la isoleucina y la valina un 40% bajas (Leu/Ile 2,52 contra 1,47-1,98 del resto). Reescalados a NUESTRA proteina. Las otras cinco fichas de pavo NO se cargan: traian histidina = isoleucina = valina exactos, y eso es una copia, no una medida. Ver el BLOQUE 27. // 28 ago: PURINAS DE CUATRO VISCERAS con cifra publicada (timo 525, bazo de cordero 322, bazo de vaca 185, pulmon de ternera 117). NO se uso la banda generica 84-243 que se habia propuesto: para el timo habria declarado ~160 cuando la cifra son 525, un factor de 3 a 4 POR ABAJO, y es el alimento solido con mas purinas de las tablas. Pancreas, testiculos y pulmon de cordero se quedan como hueco: no hay dato. Ver el BLOQUE 33
+        "requerimientos_v2_final.json": "68f335c24a4ec898",   # 28 ago: EL ANCLA DE 110. Cada nutriente lleva ahora `minAdulto110`, la columna de DER 110 de la Tabla III-3b, sacada de NUESTRA transcripcion auditada del PDF y no de fuera. Con las dos anclas se puede aplicar la ecuacion del apartado 7.2.5: cuando el perro come menos, el minimo por 1000 kcal sube. Los 38 cuadraron con el minAdulto de siempre sin una discrepancia, o sea que nuestra columna ES la de 95. Ver el BLOQUE 34
+    }
+
+
 @app.get("/verificar")
 def verificar():
     """
@@ -3706,16 +3742,7 @@ def verificar():
     crudos porque es código, donde eso sí puede importar.
     """
     import hashlib, os, json
-    SELLOS = {
-        # ⚠️ ACTUALIZADO (21 agosto) al añadir 7 alimentos con fuente
-        # verificada (corazón y molleja de pavo, hígado de pavo y de pato,
-        # y completar corazón/molleja de pollo, molleja de pavo y timo de
-        # ternera). Este sello SOLO se toca cuando el cambio de datos es a
-        # propósito y está documentado: si no coincide sin haberlo tocado,
-        # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "4d634b9cf5f19fdc",   # 28 ago (2): EL HIGADO Y EL CORAZON DE PAVO, resembrados desde el pollo del USDA -- su aminograma venia del pavo del USDA, que tiene la isoleucina y la valina un 40% bajas (Leu/Ile 2,52 contra 1,47-1,98 del resto). Reescalados a NUESTRA proteina. Las otras cinco fichas de pavo NO se cargan: traian histidina = isoleucina = valina exactos, y eso es una copia, no una medida. Ver el BLOQUE 27. // 28 ago: PURINAS DE CUATRO VISCERAS con cifra publicada (timo 525, bazo de cordero 322, bazo de vaca 185, pulmon de ternera 117). NO se uso la banda generica 84-243 que se habia propuesto: para el timo habria declarado ~160 cuando la cifra son 525, un factor de 3 a 4 POR ABAJO, y es el alimento solido con mas purinas de las tablas. Pancreas, testiculos y pulmon de cordero se quedan como hueco: no hay dato. Ver el BLOQUE 33
-        "requerimientos_v2_final.json": "68f335c24a4ec898",   # 28 ago: EL ANCLA DE 110. Cada nutriente lleva ahora `minAdulto110`, la columna de DER 110 de la Tabla III-3b, sacada de NUESTRA transcripcion auditada del PDF y no de fuera. Con las dos anclas se puede aplicar la ecuacion del apartado 7.2.5: cuando el perro come menos, el minimo por 1000 kcal sube. Los 38 cuadraron con el minAdulto de siempre sin una discrepancia, o sea que nuestra columna ES la de 95. Ver el BLOQUE 34
-    }
+    SELLOS = SELLOS_DE_LOS_DATOS
     SELLOS_CRUDOS = {
         "der.py": "1c5c8bb91ceac481",
     }
@@ -4044,6 +4071,198 @@ def formular_autocompletar(datos: PeticionFormular):
         datos_estado = datos.model_copy(update={"gramos_por_alimento": gramos})
         respuesta["estado"] = _estado_de_la_racion(datos_estado)
     return respuesta
+
+
+# =====================================================================
+# LA PAUTA FIRMADA
+#
+# Lo que se firma es un DOCUMENTO, no "el menú". Y no es una distinción de
+# abogado: hoy la tabla `menus` guarda nombre, gramos y kcal, y con eso un
+# menú guardado no se puede verificar ni en principio -- falta contra qué:
+# no está la etapa, ni el DER, ni las patologías con las que se calculó.
+# Por eso `/perro/{id}/menus` marca lo que devuelve como `verificado: False`.
+#
+# Firmar eso no se puede, porque un documento firmado tiene que seguir
+# diciendo lo mismo dentro de un año, y aquí no se queda quieto NADA:
+#
+#   · La ficha del perro cambia. Caso real de este repo: Lola pesaba 7,0 kg
+#     y dos meses después 6,2. Si se firmó a 7,0, el documento dice 7,0.
+#   · El catálogo cambia. También real, dos veces en una semana: fuera la
+#     borraja el 27 de agosto, fuera cinco suplementos el 26. Un menú
+#     firmado que llevara borraja no se puede regenerar hoy.
+#   · El motor cambia. El tope de fósforo en renal pasó de 1400 a 1200 el
+#     25 de agosto. El mismo menú, verificado antes y después, no da lo
+#     mismo.
+#
+# Así que se congela entero: el menú, la ficha verificada con sus 42 filas,
+# el contexto con el que se calculó, los huecos del catálogo y los sellos de
+# los datos y del código. Y encima un sello propio, para poder comprobar un
+# año después que el papel que alguien enseña es el que se firmó.
+# =====================================================================
+class Firmante(BaseModel):
+    nombre: str
+    num_colegiado: str
+
+
+class PeticionFirmar(BaseModel):
+    gramos_por_alimento: dict
+    der_objetivo: float
+    etapa_requisitos: str = "Adulto"
+    peso_perro_kg: Optional[float] = None
+    peso_adulto_esperado_kg: Optional[float] = None
+    peso_objetivo_kg: Optional[float] = None
+    bcs: Optional[float] = None
+    patologias: Optional[list] = None
+    especies_excluidas: list[str] = []
+    nombres_excluidos: Optional[list] = None
+    categorias_excluidas: Optional[list] = None
+    firmante: Firmante
+    # Lo que identifica al paciente EN EL DOCUMENTO. Se copia, no se apunta:
+    # la ficha del perro cambia y lo firmado no puede cambiar con ella.
+    paciente: dict = {}
+
+
+def _sello_de(documento):
+    """El sello de lo firmado: SHA-256 de la copia canónica, 16 hex.
+
+    Mismo criterio que el sello de los datos en `/verificar`: se hashea el
+    CONTENIDO -- json ordenado, sin espacios -- y no el texto, para que
+    reordenar una clave o cambiar el formato no dé una falsa alarma y
+    cambiar un número sí.
+
+    ⚠️ LO CALCULA LA API, sobre lo que acaba de verificar, nunca el
+    frontend sobre lo que pintó. Si lo calculara la pantalla habría dos
+    ideas de "lo firmado" -- la del motor y la de la vista -- y el día que
+    se separen el sello seguiría cuadrando consigo mismo sin decir nada. Es
+    la misma familia de fallo que la duplicación del DER.
+    """
+    import hashlib, json as _json
+    copia = {k: v for k, v in documento.items() if k != "sello"}
+    canonico = _json.dumps(copia, sort_keys=True, ensure_ascii=False,
+                           separators=(",", ":"))
+    return hashlib.sha256(canonico.encode("utf-8")).hexdigest()[:16]
+
+
+@app.post("/pauta/firmar")
+def pauta_firmar(datos: PeticionFirmar):
+    """Congela y sella una ración para que se pueda firmar.
+
+    ⚠️ NO AUTENTICA, y hay que decirlo en voz alta: esta API no tiene
+    puerta todavía (ver VETERINARIOS.md §10). Que quien firma sea un
+    profesional acreditado lo garantiza la seguridad por fila de Supabase,
+    que es donde se guarda la pauta -- la política solo deja insertar a una
+    cuenta con `rol = 'profesional'` y `rol_verificado_en` puesto. Este
+    endpoint no da acceso a nada: calcula y sella. El día que una
+    prescripción pueda BAJAR un mínimo de FEDIAF (fase 4), eso deja de
+    bastar y hay que validar el JWT aquí.
+    """
+    observabilidad.etiquetar(endpoint="/pauta/firmar", etapa=datos.etapa_requisitos)
+    al, req = cargar_v2()
+    gramos = {n: float(g) for n, g in (datos.gramos_por_alimento or {}).items()
+              if _num_positivo(g)}
+    if not gramos:
+        raise HTTPException(400, "No hay ninguna ración que firmar.")
+    desconocidos = [n for n in gramos if n not in al]
+    if desconocidos:
+        raise HTTPException(400, "No tenemos datos de: " + ", ".join(desconocidos))
+
+    peso_ref, origen_peso = _peso_de_referencia(datos)
+    ficha = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos,
+                         peso_referencia_kg=peso_ref)
+    problemas = _seguridad_completa(gramos, al, datos.der_objetivo, datos.etapa_requisitos,
+                                    datos.patologias, peso_perro_kg=datos.peso_perro_kg)
+    topes_rotos = _tope_patologia_roto(gramos, al, datos.patologias, datos.etapa_requisitos)
+
+    # ⚠️ NO SE FIRMA LO QUE NO ESTÁ VERDE. Es la regla 1 leída donde más
+    # importa: "ningún menú sale sin verificar, y si no está verde no se
+    # entrega". Una pauta firmada es la forma más difícil de retirar que
+    # tiene un menú de salir de aquí.
+    #
+    # Un profesional colegiado SÍ puede pautar por debajo de FEDIAF -- una
+    # dieta renal de verdad baja el fósforo por debajo del mínimo de un
+    # perro sano --, y para eso está la fase 4: una prescripción declarada,
+    # que viaja con el menú y contra la que se verifica. Hasta que exista,
+    # decir que no es más honesto que firmar un rojo sin dejar constancia de
+    # contra qué se comprobó.
+    if ficha.get("semaforo") != "verde" or topes_rotos:
+        return {
+            "factible": False,
+            "motivo": ("Esta ración todavía no cumple todo lo que hay que cumplir, así que "
+                       "no se puede firmar. Lo que falta está en la ficha, nutriente a "
+                       "nutriente."),
+            "semaforo": ficha.get("semaforo"),
+            "faltan": ficha.get("faltan"),
+            "se_pasa": ficha.get("se_pasa"),
+            "topes_de_patologia_rotos": topes_rotos,
+        }
+
+    kcal = sum((al[n].get("energia", 0) or 0) / 100.0 * g for n, g in gramos.items())
+    documento = {
+        # La versión del documento, para poder leer mañana lo firmado hoy.
+        "version": 1,
+        "firmante": {"nombre": datos.firmante.nombre,
+                     "num_colegiado": datos.firmante.num_colegiado},
+        # ⚠️ Import local a propósito: en este archivo hay un `import
+        # datetime` de módulo (línea ~514) que gana sobre cualquier
+        # `from datetime import datetime` de arriba, y `datetime.now` no
+        # existe en el módulo. Se pide la clase con su nombre y no se toca
+        # el import de nadie.
+        "firmada_en": _fecha_utc_ahora(),
+        "paciente": datos.paciente or {},
+        "menu": {n: round(g, 1) for n, g in gramos.items()},
+        "ficha_verificada": ficha,
+        "contexto": {
+            "etapa_requisitos": datos.etapa_requisitos,
+            "der_objetivo": datos.der_objetivo,
+            "kcal_reales": round(kcal, 1),
+            "gramos_total": round(sum(gramos.values()), 1),
+            "peso_perro_kg": datos.peso_perro_kg,
+            "peso_objetivo_kg": datos.peso_objetivo_kg,
+            "peso_de_referencia_kg": peso_ref,
+            "de_donde_sale_el_peso": origen_peso,
+            "bcs": datos.bcs,
+            "patologias": list(datos.patologias or []),
+            "especies_excluidas": list(datos.especies_excluidas or []),
+            "nombres_excluidos": list(datos.nombres_excluidos or []),
+            "categorias_excluidas": list(datos.categorias_excluidas or []),
+        },
+        # ⚠️ LOS HUECOS VAN EN EL DOCUMENTO, no solo en pantalla. Si la
+        # ración se calculó con alimentos a los que les falta un dato, o con
+        # alguno de los valores que no nos creemos, eso sale impreso. Es
+        # incómodo y es exactamente por eso: lo contrario es firmar sobre
+        # datos incompletos sin que conste en ninguna parte.
+        "huecos": {
+            "sin_dato": ficha.get("datos_incompletos") or {},
+            "dato_dudoso": ficha.get("datos_dudosos") or {},
+            "no_verificable": ficha.get("no_verificable") or [],
+        },
+        "seguridad": problemas,
+        "sellos": {**SELLOS_DE_LOS_DATOS,
+                   "main.py": _sello_de_main_py()},
+    }
+    documento["sello"] = _sello_de(documento)
+    return {"factible": True, "documento": documento}
+
+
+@app.post("/pauta/comprobar")
+def pauta_comprobar(documento: dict):
+    """¿Este papel es el que se firmó?
+
+    Se recalcula el sello sobre lo que llega y se compara con el que trae.
+    Sirve un año después, con el catálogo y el motor ya cambiados, porque no
+    vuelve a calcular la ración: comprueba el documento consigo mismo."""
+    esperado = documento.get("sello")
+    if not esperado:
+        raise HTTPException(400, "Este documento no lleva sello.")
+    real = _sello_de(documento)
+    return {
+        "coincide": real == esperado,
+        "sello_del_documento": esperado,
+        "sello_recalculado": real,
+        "explicacion": ("El documento es exactamente el que se firmó."
+                        if real == esperado else
+                        "Este documento NO es el que se firmó: algo ha cambiado desde entonces."),
+    }
 
 
 @app.get("/alimentos")

@@ -4606,6 +4606,104 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 42 — LA PAUTA FIRMADA
+#
+# Lo que se firma es un DOCUMENTO, no "el menú". Hoy la tabla `menus` guarda
+# nombre, gramos y kcal, y con eso un menú guardado no se puede verificar ni
+# en principio: falta contra qué -- no está la etapa, ni el DER, ni las
+# patologías con las que se calculó. Por eso `/perro/{id}/menus` marca lo que
+# devuelve como `verificado: False`.
+#
+# Firmar eso no se puede, porque un documento firmado tiene que seguir
+# diciendo lo mismo dentro de un año y aquí no se queda quieto nada: la ficha
+# del perro cambia (Lola pasó de 7,0 kg a 6,2), el catálogo cambia (fuera la
+# borraja el 27 de agosto), y el motor cambia (el fósforo renal pasó de 1400
+# a 1200 el 25). Así que se congela entero y se sella.
+#
+# Lo que se vigila aquí:
+#   1. Que NO se firme lo que no está verde (regla 1, en el sitio donde más
+#      cuesta retirar un menú: un papel con un número de colegiado).
+#   2. Que el documento lleve todo lo que hace falta para defenderlo un año
+#      después -- la ficha entera, el contexto, los huecos y los sellos.
+#   3. Que el sello sirva: que cambie si cambia CUALQUIER cosa de lo
+#      firmado, incluidos los gramos y el número de colegiado.
+# ============================================================
+import json as _json_pauta
+print("=== BLOQUE 42: la pauta firmada ===")
+_FIRMANTE_42 = {"nombre": "Elena Martín", "num_colegiado": "COLVET-12345"}
+_BASE_42 = {"der_objetivo": 1100.0, "etapa_requisitos": "Adulto", "peso_perro_kg": 25.0,
+            "firmante": _FIRMANTE_42, "paciente": {"nombre": "Nala", "tutor": "María López"}}
+
+# 1. Media ración no se firma.
+_r42 = _c.post("/pauta/firmar", json={**_BASE_42,
+               "gramos_por_alimento": {"Pollo muslo con piel": 300}}).json()
+if _r42.get("factible"):
+    fallos.append("BLOQUE42: se ha firmado media ración. Una pauta firmada es la forma más "
+                  "difícil de retirar que tiene un menú de salir de aquí: la regla 1 vale "
+                  "aquí más que en ningún otro sitio.")
+
+# 2. Una ración completa sí, y con todo lo que hace falta para defenderla.
+_auto42 = _c.post("/formular/autocompletar", json={
+    "der_objetivo": 1100.0, "etapa_requisitos": "Adulto", "peso_perro_kg": 25.0,
+    "gramos_por_alimento": {"Pollo muslo con piel": 300, "Zanahoria": 60}}).json()
+if not _auto42.get("factible"):
+    fallos.append("BLOQUE42: no se ha podido montar la ración de prueba")
+else:
+    _r42b = _c.post("/pauta/firmar", json={**_BASE_42,
+                    "gramos_por_alimento": _auto42["menu"]}).json()
+    if not _r42b.get("factible"):
+        fallos.append(f"BLOQUE42: no se firma una ración verde ({_r42b.get('motivo','')[:60]})")
+    else:
+        _doc42 = _r42b["documento"]
+        for _clave42, _porque42 in [
+            ("menu", "sin los gramos no hay pauta"),
+            ("ficha_verificada", "sin la ficha no se puede saber contra qué se comprobó"),
+            ("contexto", "sin la etapa, el DER y las patologías el menú no se puede verificar"),
+            ("huecos", "firmar sobre datos incompletos sin que conste es lo que no puede pasar"),
+            ("sellos", "«¿con qué datos se calculó esto?» no se puede contestar adivinando"),
+            ("firmante", "una pauta sale firmada, con nombre y número de colegiado"),
+            ("firmada_en", "un documento sin fecha no se puede ordenar en un historial"),
+            ("sello", "sin sello no se puede comprobar que el papel es el que se firmó"),
+        ]:
+            if _clave42 not in _doc42:
+                fallos.append(f"BLOQUE42: al documento firmado le falta «{_clave42}»: {_porque42}")
+
+        # La ficha va ENTERA: las 42 filas, no un recuento. Firmar una
+        # pantalla que dice "cumple 42 de 42" y nada más es firmar a ciegas.
+        _f42 = _doc42.get("ficha_verificada") or {}
+        _filas42 = (len(_f42.get("dentro_de_rango") or []) + len(_f42.get("faltan") or [])
+                    + len(_f42.get("se_pasa") or []))
+        if _filas42 < 42:
+            fallos.append(f"BLOQUE42: la ficha firmada trae {_filas42} filas y son 42 (41 "
+                          f"nutrientes + el ratio Ca:P). Un profesional responde de lo que "
+                          f"firma: tiene que poder ver cada uno con su margen.")
+        # Y los tres sellos de los datos y del código.
+        for _sello42 in ("alimentos_v3_final.json", "requerimientos_v2_final.json", "main.py"):
+            if _sello42 not in (_doc42.get("sellos") or {}):
+                fallos.append(f"BLOQUE42: falta el sello de {_sello42} en la pauta firmada")
+
+        # 3. EL SELLO SIRVE. Cambiar cualquier cosa lo rompe.
+        _ok42 = _c.post("/pauta/comprobar", json=_doc42).json()
+        if not _ok42.get("coincide"):
+            fallos.append("BLOQUE42: el documento recién firmado no cuadra con su propio sello")
+        for _etq42, _tocar42 in [
+            ("los gramos", lambda d: d["menu"].__setitem__(list(d["menu"])[0],
+                                                            list(d["menu"].values())[0] + 10)),
+            ("el número de colegiado", lambda d: d["firmante"].__setitem__("num_colegiado", "OTRO")),
+            ("la ficha", lambda d: d["ficha_verificada"].__setitem__("semaforo", "verde  ")),
+            ("la fecha", lambda d: d.__setitem__("firmada_en", "2020-01-01T00:00:00+00:00")),
+        ]:
+            _copia42 = _json_pauta.loads(_json_pauta.dumps(_doc42))
+            _tocar42(_copia42)
+            if _c.post("/pauta/comprobar", json=_copia42).json().get("coincide"):
+                fallos.append(f"BLOQUE42: se ha cambiado {_etq42} de una pauta firmada y el "
+                              f"sello sigue cuadrando. Un sello que no cambia con lo firmado "
+                              f"no comprueba nada.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")
