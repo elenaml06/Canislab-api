@@ -48,7 +48,7 @@ from constructor import tabla_imputacion_maximos, valor_para_maximo
 from motor_completo import PATOLOGIAS, topes_de_patologias
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
 from verificar import verificar as verificar_v2
-from verificar import peso_objetivo_desde_bcs
+from verificar import peso_objetivo_desde_bcs, BCS_ESCALA_SATURADA
 from seguridad import revisar_seguridad as revisar_seguridad_v2
 from seguridad import avisos_rotacion as avisos_rotacion_v2
 
@@ -357,9 +357,20 @@ def _peso_de_referencia(datos):
     if actual and bcs is not None:
         derivado = peso_objetivo_desde_bcs(actual, bcs)
         if derivado:
+            # ⚠️ EL 9 SE MARCA APARTE (29 agosto). Hay cifra publicada -el
+            # 40 % de la Tabla 1 de AAHA- pero la escala se satura ahí:
+            # Broome et al. (2023) ven perros que «exceed the description
+            # for score 9» con más del 40 % por DXA. Si el perro está un
+            # 60 % por encima y la escala lo topa en 40, el objetivo sale
+            # DEMASIADO ALTO y con él demasiadas kcal, justo en el que peor
+            # lo lleva. Se estima igual -una cota inferior es mejor que
+            # nada- pero quien lea la respuesta tiene que poder verlo.
+            if float(bcs) >= BCS_ESCALA_SATURADA:
+                return derivado, "derivado_del_bcs_cota_inferior"
             return derivado, "derivado_del_bcs"
-        # BCS 9 o por debajo de 5: la regla de AAHA no cubre eso y estimar
-        # ahí falla hacia el lado malo. Se cae al peso real, marcado.
+        # Por debajo de BCS 5 no se estima: la regla no existe hacia abajo
+        # y AAHA 2021 dice lo contrario -«base feeding calculations on
+        # current weight if ideal or underweight»-. Se usa el peso real.
     if actual:
         return float(actual), "peso_real_sin_objetivo"
     return None, "sin_peso"

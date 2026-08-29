@@ -4062,6 +4062,97 @@ if len(_mc36.PATOLOGIAS) != len(_mc36.PATOLOGIAS_CRUDO["patologias"]):
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
+
+# ============================================================
+# BLOQUE 37 — EL PESO IDEAL DESDE EL BCS: SE DIVIDE, Y LAS DOS CUENTAS
+#             TIENEN QUE DAR LO MISMO
+# ============================================================
+#
+# ⚠️ ESTE BLOQUE NO EXISTÍA, Y POR ESO SE COLÓ UN FALLO (29 agosto).
+#
+# `peso_objetivo_desde_bcs` se escribió el 28 RESTANDO el exceso, y la
+# batería salió verde: no había ni una prueba que lo tocara. El fallo lo
+# encontró la prueba de punta a punta de la web, comparando por casualidad
+# los dos números.
+#
+# Y hay una segunda mitad, peor: la MISMA cuenta vive en `der.py` (que
+# divide) y en `App.jsx` (que divide). El contrato del DER no puede
+# cubrirla -- `der_casos.json` no lleva `condicionIdx` en ninguno de sus 85
+# casos y `src/der.js` ni siquiera lo acepta: pasa el peso ideal YA
+# CALCULADO. O sea que la conversión BCS -> ideal es, tal y como está
+# montado, estructuralmente incubrible por el contrato. Medido: cambiando
+# `der.py` de dividir a restar NO SE MOVIÓ NI UN CASO de los 85.
+#
+# Así que se cubre aquí, dentro del repo, comparando las dos cuentas.
+print("\n=== BLOQUE 37: el peso ideal desde el BCS ===")
+
+from verificar import (peso_objetivo_desde_bcs as _pobj37,
+                       BCS_ESCALA_SATURADA as _sat37)
+from der import peso_ideal_desde_condicion as _pideal37, BCS_DESDE_CONDICION as _map37
+
+# (a) LOS ANCLAJES, contra la Tabla 1 de AAHA 2014 y el método de la grasa
+# corporal, que es el que no depende de cómo se lea «% overweight»:
+#     ideal = [peso x (100 - %grasa)] / 0,8
+# Se exige quedar dentro del 3 % de esa cifra. Restando el exceso -que es
+# como estaba- BCS 8 daba 31,5 contra 35,4: un 11 % fuera.
+for _peso37, _bcs37, _grasa37 in [(45, 8, 37), (30, 7, 32), (20, 9, 42), (20, 6, 27)]:
+    _obt37 = _pobj37(_peso37, _bcs37)
+    _esp37 = _peso37 * (100 - _grasa37) / 100 / 0.8
+    if _obt37 is None:
+        fallos.append(f"BLOQUE37: BCS {_bcs37} devuelve None y sí hay cifra publicada "
+                      f"(Tabla 1 de AAHA llega hasta el 9).")
+    elif abs(_obt37 - _esp37) / _esp37 > 0.03:
+        fallos.append(f"BLOQUE37: {_peso37} kg con BCS {_bcs37} da {_obt37:.2f} kg y el método "
+                      f"de la grasa corporal de la propia AAHA da {_esp37:.2f}. Más de un 3 % "
+                      f"de diferencia: comprueba que se DIVIDE por (1+exceso) y no se resta — "
+                      f"«30 % overweight» es un 30 % SOBRE EL IDEAL, no del peso de hoy.")
+
+# (b) SE DIVIDE. La prueba directa, por si alguien vuelve a restar.
+if _pobj37(45, 8) is None or abs(_pobj37(45, 8) - 45 / 1.30) > 0.01:
+    fallos.append(f"BLOQUE37: el labrador de 45 kg con BCS 8 tiene que dar 34,62 (45/1,30). "
+                  f"Da {_pobj37(45, 8)}. Si da 31,5 se está restando: ese es el número del "
+                  f"ejemplo trabajado de AAHA, que es una errata de la propia guía — dos de "
+                  f"sus tres métodos dan 34-35.")
+
+# (c) POR DEBAJO DE BCS 5 NO SE ESTIMA. La Tabla 1 empieza en 4 y no tiene
+# columna de «% underweight»; AAHA 2021 manda alimentar sobre el peso ACTUAL
+# en un perro delgado o ideal. Y BCS 4 es «Ideal» en esa tabla, no «delgado».
+for _b37 in (1, 2, 3, 4, 5):
+    if _pobj37(20, _b37) is not None:
+        fallos.append(f"BLOQUE37: con BCS {_b37} se está estimando un peso objetivo "
+                      f"({_pobj37(20, _b37)}). Por debajo de 5 no hay regla publicada y AAHA "
+                      f"2021 dice lo contrario: «base feeding calculations on current weight "
+                      f"if ideal or underweight».")
+
+# (d) EL 9 SE ESTIMA, PERO ES UNA COTA INFERIOR. Tiene que salir con
+# procedencia propia, o la app no puede distinguirlo de una estimación normal.
+_pref37 = _api_b5._peso_de_referencia(type("D", (), {
+    "peso_objetivo_kg": None, "peso_perro_kg": 30.0, "bcs": 9})())
+if _pref37[1] != "derivado_del_bcs_cota_inferior":
+    fallos.append(f"BLOQUE37: con BCS 9 la procedencia sale «{_pref37[1]}» y tiene que ser "
+                  f"«derivado_del_bcs_cota_inferior». La escala se satura en el 9 (Broome 2023 "
+                  f"ve perros por encima del 40 % con DXA), así que el objetivo estimado sale "
+                  f"DEMASIADO ALTO y con él demasiadas kcal. Si no se marca, nadie lo sabe.")
+
+# (e) LAS DOS CUENTAS TIENEN QUE DAR LO MISMO. Esto es lo que no cubría
+# nadie: `verificar` decide la densidad de nutrientes y `der.py` decide las
+# kcal, cada uno con SU peso ideal. Si discrepan, las dos mitades cumplen
+# perfectamente sobre perros distintos y no salta nada.
+for _peso37 in (5, 20, 30, 45, 60):
+    for _idx37, _b37 in sorted(_map37.items()):
+        _a37 = _pideal37(_peso37, _idx37)
+        _b_37 = _pobj37(_peso37, _b37)
+        if _b_37 is None:
+            continue          # por debajo de 5 verificar no estima, y es a propósito
+        if abs(_a37 - _b_37) > 0.02:
+            fallos.append(f"BLOQUE37: para {_peso37} kg con BCS {_b37}, der.py dice {_a37} kg y "
+                          f"verificar.py dice {_b_37}. Son la MISMA cuenta escrita dos veces: si "
+                          f"discrepan, las kcal se calculan sobre un perro y la densidad de "
+                          f"nutrientes sobre otro, y el menú sale verde igual.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
 # ============================================================
 # RESUMEN FINAL
 # ============================================================
