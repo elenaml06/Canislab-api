@@ -4153,6 +4153,52 @@ for _peso37 in (5, 20, 30, 45, 60):
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
+
+# ============================================================
+# BLOQUE 38 — LOS QUE CUMPLEN TAMBIEN SE VEN
+# ============================================================
+#
+# ⚠️ POR QUÉ (29 agosto). La ficha clínica del veterinario, que ya existe en
+# la app, podía enseñar todo lo que FALLA de un menú -- y de un menú VERDE no
+# podía enseñar nada, porque no falla ninguno. `verificar()` devolvía los que
+# cumplen como un RECUENTO: «42 dentro de rango», y ya. Lo que un profesional
+# necesita ver es «calcio 1,8 con el mínimo en 1,2», y eso no había forma de
+# pintarlo: el dato no salía de la API.
+#
+# Un menú verde le enseñaba literalmente un número. No es que la pantalla
+# estuviera mal hecha: es que no tenía qué pintar.
+print("\n=== BLOQUE 38: los que cumplen también se ven ===")
+
+_r38 = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1630,
+    "etapa_requisitos": "Adulto", "peso_perro_kg": 22, "modo": "automatico"})
+_f38 = (_r38.json() or {}).get("ficha") or {}
+_d38 = _f38.get("dentro_de_rango")
+
+if not isinstance(_d38, list):
+    fallos.append("BLOQUE38: la ficha ya no trae `dentro_de_rango`. Sin esa lista, la ficha "
+                  "clínica de un menú VERDE no tiene nada que enseñar: solo el recuento.")
+else:
+    if len(_d38) != _f38.get("correctos"):
+        fallos.append(f"BLOQUE38: `correctos` dice {_f38.get('correctos')} y `dentro_de_rango` "
+                      f"trae {len(_d38)} filas. Si se separan, el veterinario ve una cifra y una "
+                      f"lista que no cuadran, y no hay forma de saber cuál miente.")
+    # Cada fila tiene que traer con qué se compara, no solo el valor: un
+    # numero suelto no le dice a nadie si va justo o sobrado.
+    for _x38 in _d38:
+        if _x38.get("tiene") is None:
+            fallos.append(f"BLOQUE38: {_x38.get('nutriente')} viene sin `tiene`.")
+        if _x38.get("minimo") is None and _x38.get("maximo") is None:
+            fallos.append(f"BLOQUE38: {_x38.get('nutriente')} no trae ni mínimo ni máximo. Un "
+                          f"valor sin su referencia no se puede juzgar.")
+    # Y ordenado por lo que va MÁS JUSTO, que es por donde mira un profesional.
+    _pcts38 = [x["cubre_pct"] for x in _d38 if x.get("cubre_pct") is not None]
+    if _pcts38 != sorted(_pcts38):
+        fallos.append("BLOQUE38: `dentro_de_rango` no viene ordenado por lo que va más justo. "
+                      "Con 42 filas, el orden es la diferencia entre ver el que aprieta y no verlo.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
 # ============================================================
 # RESUMEN FINAL
 # ============================================================
