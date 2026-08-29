@@ -46,6 +46,7 @@ from motor_completo import resolver as resolver_v2, especie_de
 # en la puerta de verificación (ver _tope_patologia_roto).
 from constructor import tabla_imputacion_maximos, valor_para_maximo
 from motor_completo import PATOLOGIAS, topes_de_patologias
+from exclusiones import filtrar as filtrar_exclusiones
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
 from verificar import verificar as verificar_v2
 from verificar import peso_objetivo_desde_bcs, BCS_ESCALA_SATURADA
@@ -1231,7 +1232,39 @@ ETAPAS_MOTOR_V2 = set(ETAPAS_VALIDAS) | set(EQUIVALENCIA_V2)
 CATEGORIAS_SECUNDARIAS = ("Vísceras", "Hígado", "Verduras y frutas")
 
 
-def _escalera_de_relajacion():
+CATEGORIAS_QUE_HACEN_RACION = ("Carne muscular", "Hueso carnoso")
+
+
+def _hay_comida_de_verdad(al, excluidos=None, categorias_excluidas=None):
+    """
+    ¿Le queda al motor carne muscular Y hueso carnoso de donde elegir?
+
+    No es una pregunta de estilo: es la que decide si el último peldaño de
+    la escalera se puede pisar. Ese peldaño suelta los TECHOS de vísceras,
+    hígado y verdura, y lo único que impide que el motor monte una ración
+    de hígado y calabaza con suplementos es que la carne y el hueso sigan
+    teniendo su SUELO. Si no hay ni carne ni hueso entre lo accesible, ese
+    suelo no restringe nada -- una restricción sobre una categoría vacía se
+    cumple sola -- y el peldaño deja de ser "soltar la forma" para pasar a
+    inventar comida.
+
+    Se mira lo que de verdad queda: la categoría excluida a mano, y también
+    la que se ha quedado sin nada por las alergias (excluir "pollo" puede
+    vaciar una categoría entera en un catálogo reducido).
+    """
+    fuera = set(categorias_excluidas or [])
+    prohibidos = set(excluidos or [])
+    for cat in CATEGORIAS_QUE_HACEN_RACION:
+        if cat in fuera:
+            return False
+        de_la_cat = [n for n, a in (al or {}).items() if a.get("categoria") == cat]
+        permitidos, _f, _av = filtrar_exclusiones(de_la_cat, prohibidos)
+        if not permitidos:
+            return False
+    return True
+
+
+def _escalera_de_relajacion(hay_comida_de_verdad=True):
     """Peldaños (margenes, max_suplementos, qué se soltó), de más
     estricto a menos. El primero es exactamente lo de siempre."""
     sin_minimo_secundarias = {
@@ -1265,23 +1298,39 @@ def _escalera_de_relajacion():
     # criterio nuestro. Los requisitos y los topes de seguridad no se tocan,
     # y el menú sigue pasando por _garantizar_verificado() igual que todos.
     #
-    # Van al FINAL de la escalera a propósito: solo se llega aquí cuando todo
+    # Va al FINAL de la escalera a propósito: solo se llega aquí cuando todo
     # lo demás ha fallado, y se dice qué se soltó -- nunca en silencio.
+    #
+    # ⚠️ Y SOLO LAS SECUNDARIAS. El primer intento de este arreglo añadía un
+    # peldaño más que soltaba TODAS las proporciones, mínimos y máximos. Lo
+    # tiró el BLOQUE 9 en el acto: "sin carne, hueso ni pescado: se inventó
+    # un menú donde no hay comida posible". Sin el techo de la carne y sin el
+    # suelo del hueso, el motor monta una ración de hígado, verdura y
+    # suplementos que cumple los 42 requisitos EN EL PAPEL -- y eso no es
+    # comida para un perro.
+    #
+    # Los mínimos de "Carne muscular" y "Hueso carnoso" se quedan intactos en
+    # este peldaño: son lo que hace que la ración siga siendo una ración. Lo
+    # que se suelta es el techo de lo accesorio, que es criterio nuestro.
     sin_max_secundarias = {
         c: ((0.0 if c in CATEGORIAS_SECUNDARIAS else mn),
             (1.0 if c in CATEGORIAS_SECUNDARIAS else mx))
         for c, (mn, mx) in MARGENES_V2.items()
     }
-    sin_ninguna_proporcion = {c: (0.0, 1.0) for c, (mn, mx) in MARGENES_V2.items()}
-    return [
+    peldanos = [
         (MARGENES_V2, 2, None),
         (sin_minimo_secundarias, 2, "proporcion_minima_visceras_higado_verdura"),
         (sin_ningun_minimo, 2, "proporcion_minima_de_todas_las_categorias"),
         (sin_ningun_minimo, 3, "proporcion_minima_y_un_suplemento_mas"),
         (sin_ningun_minimo, 4, "proporcion_minima_y_dos_suplementos_mas"),
-        (sin_max_secundarias, 4, "tope_maximo_de_visceras_higado_y_verdura"),
-        (sin_ninguna_proporcion, 4, "todas_las_proporciones_del_barf"),
     ]
+    # El último peldaño solo existe si la ración sigue teniendo carne y
+    # hueso de donde tirar -- ver _hay_comida_de_verdad(). Sin eso, soltar
+    # los techos de lo accesorio no relaja la forma: inventa comida.
+    if hay_comida_de_verdad:
+        peldanos.append(
+            (sin_max_secundarias, 4, "tope_maximo_de_visceras_higado_y_verdura"))
+    return peldanos
 
 
 def _aviso_de_lo_que_falta(gramos, al, categorias_excluidas=None):
@@ -1933,8 +1982,9 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # recorren los peldaños, soltando SOLO esas proporciones (ver
     # _escalera_de_relajacion, arriba, para lo que no se suelta jamás).
     relajaciones = []
+    hay_comida = _hay_comida_de_verdad(al, excluidos, datos.categorias_excluidas)
     if not ok:
-        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion()[1:]:
+        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion(hay_comida)[1:]:
             if tiempo_restante() <= 1.5:
                 break  # sin tiempo: mejor no factible que un timeout de Render
             ok, gramos, ficha_intento = _intentar_generacion(
@@ -1965,7 +2015,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                           "que cumpla todos los requisitos para este perro, ni "
                           "siquiera soltando las proporciones habituales del "
                           "BARF. Quita alguna restricción y vuelve a probar.",
-                "se_intento_relajando": [p[2] for p in _escalera_de_relajacion()[1:]]}
+                "se_intento_relajando": [p[2] for p in _escalera_de_relajacion(hay_comida)[1:]]}
     ficha = verificar_v2(gramos, al, req, datos.der_objetivo, datos.etapa_requisitos)
     problemas_seguridad = _seguridad_completa(gramos, al, datos.der_objetivo,
                                                datos.etapa_requisitos,
@@ -2737,8 +2787,10 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
     # de BARF, no la nutrición), y ahí duele más todavía, porque la
     # usuaria ya tiene un menú delante y solo quería cambiar una cosa.
     relajaciones_edicion = []
+    hay_comida = _hay_comida_de_verdad(al, excluidos + list(nombres_excl),
+                                       getattr(datos, "categorias_excluidas", None))
     if not ok:
-        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion()[1:]:
+        for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion(hay_comida)[1:]:
             ok, gramos, ficha = _intentar(forzar, margen_intentos=2,
                                           margenes=margenes_peldano, max_supl=supl_peldano)
             if ok:
