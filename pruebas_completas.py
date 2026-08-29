@@ -4212,6 +4212,105 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 39 — EL VETERINARIO FORMULA TODAS, Y NADIE MAS
+# ============================================================
+#
+# ⚠️ POR QUÉ (29 agosto). Un veterinario acreditado veía exactamente las
+# mismas patologías bloqueadas que el dueño -- y el motivo de bloquear era,
+# literalmente, «esto lo tiene que pautar un veterinario». Un muro delante de
+# la única persona que puede pasarlo no protege a nadie: lo manda a hacerlo
+# en una hoja de cálculo, donde nadie verifica nada.
+#
+# La frontera de verdad ya estaba decidida en VETERINARIOS.md: lo que exige
+# diagnóstico validado es que el motor aplique restricciones POR DEBAJO de los
+# mínimos de FEDIAF. Eso sigue sin hacerse. Lo que cabe dentro de FEDIAF, se
+# formula.
+#
+# LO MÁS IMPORTANTE DE ESTE BLOQUE ES LA PARTE DE SEGURIDAD. De este rol
+# cuelga formular lo que al dueño se le niega. Si se pudiera encender desde el
+# cliente, no acreditaría nada.
+print("\n=== BLOQUE 39: el veterinario formula todas, y nadie más ===")
+
+from motor_completo import (patologias_bloquean as _B39, avisos_de_patologias as _A39,
+                            PATOLOGIAS as _P39)
+
+_BLOQUEADAS39 = ["hepatopatia", "estruvita", "urato", "cistina", "otra"]
+
+# (a) Al dueño se le siguen bloqueando. Esto no cambia.
+_b39 = _B39(_BLOQUEADAS39, "Adulto")
+if sorted(_b39) != sorted(_BLOQUEADAS39):
+    fallos.append(f"BLOQUE39: al dueño se le tienen que bloquear las cinco y solo bloquean {_b39}. "
+                  f"Si una se ha soltado sin querer, un dueño está recibiendo un menú para una "
+                  f"patología que depende de analíticas que la app no ve.")
+
+# (b) Al profesional acreditado, ninguna.
+_b39p = _B39(_BLOQUEADAS39, "Adulto", es_profesional=True)
+if _b39p:
+    fallos.append(f"BLOQUE39: al veterinario acreditado le siguen bloqueando {_b39p}.")
+
+# (c) Y la renal en crecimiento, que bloquea por ETAPA y no por patología.
+if _B39(["renal"], "CachorroCrecimiento") != ["renal"]:
+    fallos.append("BLOQUE39: la renal en crecimiento tiene que bloquear al dueño.")
+if _B39(["renal"], "CachorroCrecimiento", es_profesional=True):
+    fallos.append("BLOQUE39: la renal en crecimiento le sigue bloqueando al veterinario.")
+
+# (d) CADA UNA TIENE QUE TRAER SU AVISO DE PROFESIONAL, y tiene que ser
+# DISTINTO del del dueño. Un menú de urato que no restringe purinas y no lo
+# dice es peor que no dar menú: el aviso es lo que hace honrado el menú.
+for _p39 in _BLOQUEADAS39:
+    _av = _A39([_p39], "Adulto", es_profesional=True)
+    if not _av or not _av[0].strip():
+        fallos.append(f"BLOQUE39: {_p39} no trae aviso para el profesional. Se le formula un menú "
+                      f"y no se le dice qué NO se ha hecho.")
+        continue
+    _duenyo = _A39([_p39], "Adulto")
+    if _duenyo and _av[0] == _duenyo[0]:
+        fallos.append(f"BLOQUE39: el aviso de {_p39} es el mismo para el dueño y para el "
+                      f"veterinario. Al dueño se le dice «no generamos menú» y al veterinario se "
+                      f"le genera: no pueden decir lo mismo.")
+
+# (e) Las cuatro que necesitarían bajar de FEDIAF siguen marcadas, porque son
+# las que definen qué necesita firma cuando llegue la prescripción.
+_bajo39 = {k for k, v in _P39.items() if v.get("necesita_bajo_fediaf")}
+if _bajo39 != {"hepatopatia", "urato", "cistina", "renal"}:
+    fallos.append(f"BLOQUE39: las marcadas `necesita_bajo_fediaf` son {_bajo39} y tenían que ser "
+                  f"hepatopatía, urato, cistina y renal. Esa lista es la que define qué necesita "
+                  f"firma el día que exista la prescripción.")
+
+# (f) SEGURIDAD: el rol NO puede venir del cliente. Se manda un booleano por
+# todos los nombres plausibles y la petición tiene que seguir bloqueada.
+for _campo39 in ("modo_profesional", "es_profesional", "profesional", "rol", "acreditado"):
+    _c39 = {"nombres_alimentos": [], "der_objetivo": 1630, "etapa_requisitos": "Adulto",
+            "peso_perro_kg": 22, "modo": "automatico", "patologias": ["hepatopatia"],
+            _campo39: True}
+    _r39 = _c.post("/menu/v2", json=_c39)
+    _d39 = _r39.json() if _r39.status_code == 200 else {}
+    if _d39.get("factible") is not False:
+        fallos.append(f"BLOQUE39: mandando `{_campo39}: true` desde el cliente se ha desbloqueado "
+                      f"la hepatopatía. El rol tiene que salir del token verificado contra "
+                      f"Supabase, nunca de un campo de la petición: eso lo manda cualquiera con "
+                      f"la consola del navegador abierta.")
+
+# (g) Y un token inventado tampoco. Falla cerrado.
+_r39b = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1630,
+    "etapa_requisitos": "Adulto", "peso_perro_kg": 22, "modo": "automatico",
+    "patologias": ["hepatopatia"], "token_usuario": "no-soy-un-token"})
+if (_r39b.json() or {}).get("factible") is not False:
+    fallos.append("BLOQUE39: un token inventado ha desbloqueado la hepatopatía. Sin Supabase, con "
+                  "el token caducado o con la red caída hay que fallar CERRADO -- el "
+                  "comportamiento del dueño, que nunca es peligroso.")
+
+# (h) El aviso viaja CON el menú, no solo en el bloqueo.
+_r39c = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1630,
+    "etapa_requisitos": "Adulto", "peso_perro_kg": 22, "modo": "automatico",
+    "patologias": ["renal"]})
+if not ((_r39c.json() or {}).get("avisos_patologia")):
+    fallos.append("BLOQUE39: un menú formulado con patología sale sin `avisos_patologia`. El aviso "
+                  "tiene que viajar con el menú: es lo que cuenta qué hizo el motor y qué no.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")
