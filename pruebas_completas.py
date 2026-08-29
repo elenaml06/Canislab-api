@@ -562,6 +562,40 @@ for _etq, _extra in _imposibles:
     if _r.get("factible"):
         fallos.append(f"BLOQUE9 {_etq}: se inventó un menú donde no hay comida posible")
 
+# ⚠️ AÑADIDO (29 agosto) — LO QUE SÍ EXISTE HAY QUE DARLO. La escalera
+# soltaba los mínimos de las categorías y NUNCA los máximos, y hay casos
+# donde el que bloquea es un máximo. Caso real medido contra producción:
+# un adulto de 25 kg con PANCREATITIS no obtenía menú nunca -- 5 de 5 --,
+# y la usuaria leía "no existe ninguna combinación". Era mentira: existe,
+# y sale en 0,4 s soltando el techo del 10 % de "Verduras y frutas".
+# (En pancreatitis la grasa se topa por debajo de 20 g/1000 kcal, y para
+# llegar ahí hay que diluir con lo único que no engorda: verdura.)
+_r_panc = _c.post("/menu/v2", json={
+    "nombres_alimentos": [], "der_objetivo": 1040.0, "etapa_requisitos": "Adulto",
+    "peso_perro_kg": 25.0, "modo": "automatico", "patologias": ["pancreatitis"]}).json()
+if not _r_panc.get("factible"):
+    fallos.append("BLOQUE9 pancreatitis 25 kg: se dijo que no existe menú y sí existe "
+                  f"({_r_panc.get('motivo', '')[:60]}…)")
+
+# Y EL PELDAÑO DE LOS MÁXIMOS NO PUEDE PISARSE SIN COMIDA DETRÁS. Es el
+# mismo peldaño que arriba, y el que casi cuela un menú de hígado y
+# verdura en el caso de "sin carne, hueso ni pescado": soltar los techos
+# de lo accesorio solo relaja la FORMA mientras la carne y el hueso
+# conserven su suelo. Si no hay ni carne ni hueso entre lo accesible, ese
+# suelo se cumple solo y el peldaño pasa a inventar comida.
+_TOPE_SUELTO = "tope_maximo_de_visceras_higado_y_verdura"
+if _TOPE_SUELTO not in [p[2] for p in _api._escalera_de_relajacion(True)]:
+    fallos.append("BLOQUE9 escalera: con carne y hueso disponibles el peldaño de los "
+                  "máximos tiene que existir (si no, la pancreatitis se queda sin menú)")
+if _TOPE_SUELTO in [p[2] for p in _api._escalera_de_relajacion(False)]:
+    fallos.append("BLOQUE9 escalera: sin carne ni hueso el peldaño de los máximos NO "
+                  "puede existir — es el que inventa menús sin comida")
+if _api._hay_comida_de_verdad(al, [], ["Carne muscular"]):
+    fallos.append("BLOQUE9 escalera: excluir la carne muscular tiene que contar como "
+                  "que no queda comida de verdad")
+if not _api._hay_comida_de_verdad(al, [], []):
+    fallos.append("BLOQUE9 escalera: sin nada excluido sí queda comida de verdad")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================

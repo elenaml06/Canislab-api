@@ -18,10 +18,10 @@ se arreglan después.
 |---|---|
 | ¿Una app o dos productos? | **Una app, un repositorio, un motor.** Con un modo profesional que se enciende según quién entra |
 | ¿Cómo llega el vet a un perro que no es suyo? | **Las dos formas, en dos fases**: primero pacientes que crea él, después perros que le comparte el dueño. El modelo de datos se hace desde el día uno para que quepan las dos |
-| ¿Puede bajar de los mínimos de FEDIAF? | **Sí, declarándolo.** Ver el apartado 9, que es el difícil |
+| ¿Puede bajar de los mínimos de FEDIAF? | **Sí, declarándolo.** Ver el apartado 10, que es el difícil |
 | ¿Quién paga? | **Nadie todavía.** Se abre gratis a unos pocos veterinarios y el precio se decide con lo que se vea |
 | ¿Cómo se acredita? | **Número de colegiado y alta a mano.** El modo profesional no se enciende solo |
-| ¿Firma el veterinario la pauta? | **Sí, con su nombre y su número de colegiado.** Ver el apartado 10, que es el que más cosas obliga |
+| ¿Firma el veterinario la pauta? | **Sí, con su nombre y su número de colegiado.** Ver el apartado 11, que es el que más cosas obliga |
 
 Y tres que no se preguntaron porque no tienen dos respuestas razonables:
 
@@ -136,7 +136,7 @@ delante, que es la única forma en que un veterinario prueba una
 herramienta de verdad. Si el tutor llega a la consulta con eso, el
 veterinario valida dentro de la app porque ya está el 90 % hecho.
 
-Comparado con el importador de pacientes del apartado 8, esto vale
+Comparado con el importador de pacientes del apartado 9, esto vale
 muchísimo más y cuesta menos.
 
 ### La pantalla de validación: qué firma exactamente
@@ -196,9 +196,9 @@ pintada entera.
 Eso cambia el tamaño del proyecto: las fases 0 a 3 son casi todas
 **Supabase y `canislab-web`**. De esta API hacen falta solo dos cosas
 pequeñas, las dos de la fase 1: un `codigo` estable en cada aviso
-(apartado 6) y que devuelva el sello de lo verificado (apartado 10).
+(apartado 6) y que devuelva el sello de lo verificado (apartado 11).
 Las que sí tocan el motor son **la congelación de lo firmado y la
-prescripción**, y en ese orden — ver el final del apartado 10.
+prescripción**, y en ese orden — ver el final del apartado 11.
 
 ---
 
@@ -239,7 +239,7 @@ valor da por lo poco que cuesta, porque el dato ya viaja.
 
 Y desde que se decidió que la pauta sale firmada, **esta fase no es una
 mejora: es requisito**. Quien firma tiene que poder ver lo que firma
-(apartado 10).
+(apartado 11).
 
 Lo que se enseña de más:
 
@@ -315,7 +315,7 @@ limitación: es el motivo para usarla.
 Las instrucciones salen automáticas, como ahora, pero el veterinario puede
 **cambiarlas para ese paciente**: un caso concreto puede necesitar otra
 cosa. Se guarda con la pauta —y si está firmada, congelado con ella
-(apartado 10)—, no como un texto global.
+(apartado 11)—, no como un texto global.
 
 ### Los textos hablan a la persona equivocada
 
@@ -342,7 +342,90 @@ necesita de aquí.
 
 ---
 
-## 7. El mapa de pantallas: qué ve cada uno
+## 7. El formulador del veterinario: su pantalla, no la nuestra con más botones
+
+Dictado el 29 de agosto, y corrige algo que el resto del plan daba por
+hecho. Hasta aquí decía «modo profesional = las mismas pantallas enseñando
+más». Para el MENÚ eso no vale:
+
+> «Ellos no tienen que tener automático / personalizar. Ellos tienen su
+> propio modo de crear el menú, que es esta manera en la que ellos van
+> poniendo alimentos, y según van seleccionando van viendo todos los
+> nutrientes por categorías —proteínas, aminoácidos, vitaminas— **en tiempo
+> real**, cuando vayan cambiando gramos.»
+
+Eso no es una variante de «Personalizar»: es **otra pantalla**. Y es
+exactamente cómo funcionan AnVet, MyVetDiet, Animal Diet Formulator y Pet
+Diet Designer (apartado 6). La diferencia de Rawku no es quitarles esa
+pantalla — es que **el botón de terminar existe**.
+
+### Cómo es
+
+Una tabla que se rellena a mano, con los nutrientes vivos al lado:
+
+| | |
+|---|---|
+| **Los gramos los pone el veterinario** | No el motor. Escribe «pechuga de pavo 300 g» y ve qué pasa |
+| **Los gramos TOTALES también** | Decide la ración completa, y el motor trabaja dentro de ella |
+| **Los nutrientes, en vivo** | Agrupados: energía y macros, minerales, vitaminas, aminoácidos, ácidos grasos. Cada uno con su valor, su mínimo, su máximo y el margen |
+| **Se recalcula a cada cambio** | Cambiar 300 por 280 mueve la tabla entera delante de sus ojos |
+| **Excluir una categoría entera** | Además de alimentos sueltos. «Este perro no come hueso» es una frase, no una lista |
+| **Autocompletar** | El botón. Ver abajo |
+
+### El botón de autocompletar, que es la conversión
+
+> «Que él tenga un botón que pueda pulsar y que se complete solo con lo que
+> falta, y que luego también pueda modificar cosas de lo que le ha rellenado
+> automáticamente.»
+
+Ése es el momento en el que un veterinario deja de usar su hoja de cálculo.
+Y lo que hace que funcione es que **lo autocompletado se pueda tocar
+después**: si al pulsar el botón queda un menú intocable, no es una
+herramienta, es una caja negra — y vuelve a AnVet.
+
+Mecánicamente **ya existe**: es `forzar` en `resolver()`. Lo que el
+veterinario ha escrito entra forzado y el motor cierra el resto. Lo que
+falta es la pantalla, y **que lo autocompletado se distinga de lo suyo**
+para poder editarlo sin miedo a deshacer su criterio.
+
+### Lo que hay que decidir antes de construirlo
+
+**¿Qué manda si los gramos totales que fija el veterinario no dan para
+cumplir?** Es la pregunta de verdad y no tiene respuesta obvia:
+
+- Cumplir los requisitos y **pasarse** de los gramos que pidió.
+- Respetar los gramos y **entregar un menú que no cumple** — choca de
+  frente con la regla 1: ningún menú sale sin verificar.
+- O **decirlo y que elija**: «con 450 g no llegas al calcio; hacen falta
+  520, o bajamos el objetivo de kcal».
+
+La tercera es la única que no rompe nada, pero hay que diseñarla.
+
+### La condición corporal: «rellenito» no es lenguaje de consulta
+
+> «Cuando te pone la condición física, la forma del perro, no debería ser
+> ideal / rellenito / muy gordito. Para un veterinario es mejor el BCS.»
+
+Hoy la ficha usa cinco caritas con nombres de andar por casa. Están bien
+para un dueño y **son ridículas en una consulta**. Un profesional trabaja
+con el **BCS de 9 puntos** (WSAVA), que además es lo que aparece en la
+historia clínica.
+
+Y esto no es solo el rótulo: **de la condición sale el peso objetivo, y del
+peso objetivo salen las kcal**. Si el vet marca «BCS 7/9» y el tutor ve
+«rellenito», los dos tienen que estar mirando **el mismo número por
+debajo**: la escala profesional y la de casa son la misma cosa con dos
+nombres, no dos cálculos.
+
+⚠️ Y ahí hay una trampa ya medida en este proyecto: el peso objetivo se
+fija al marcar la condición y **no se recalcula al pesar al perro** — si se
+recalculara, bajaría con él y la dieta no terminaría nunca (Lola: 7,0 kg →
+263 kcal, 6,2 → 240). Lo que cambie en modo profesional tiene que
+respetarlo.
+
+---
+
+## 8. El mapa de pantallas: qué ve cada uno
 
 Escrito el 28 de agosto, al preguntarse en voz alta si «la app tendría que
 ser totalmente distinta por dentro». La respuesta corta es que no —mismo
@@ -430,7 +513,7 @@ fase 2, no después: **el perro del veterinario no puede salir en su lista
 de pacientes**, ni un paciente en su lista de perros. Los dos tienen
 `perros.user_id` = él, así que la columna no los distingue.
 
-Lo distingue la tabla `accesos` del apartado 8, sin añadir nada:
+Lo distingue la tabla `accesos` del apartado 9, sin añadir nada:
 
 - **Un paciente tiene fila en `accesos`** (`origen` =
   `'creado_por_el_profesional'`).
@@ -463,7 +546,7 @@ antes ni después: antes es cambiar algo que funciona sin ningún caso que lo
 necesite, y después es descubrir que el vet ve borrosa la pantalla de un
 perro que está pagado.
 
-## 8. Fases 2 y 3 — los pacientes
+## 9. Fases 2 y 3 — los pacientes
 
 Se decidió hacer las dos formas en dos fases. Que se pueda es cuestión de
 diseñar la tabla ahora, no después.
@@ -498,7 +581,7 @@ vista. Una: que la fase 3 sea añadir filas en vez de reescribir el acceso,
 la que obliga: **es lo único que separa a un paciente del perro del propio
 veterinario**. Los dos tienen `user_id` = él; lo que los distingue es que
 el paciente tiene fila aquí y su perro no. Sin eso, el interruptor de modo
-del apartado 7 le mete su perro entre los pacientes.
+del apartado 8 le mete su perro entre los pacientes.
 
 **En la fase 3** el dueño invita por correo y, al aceptarse, entra una
 fila con `origen = 'invitado_por_el_tutor'`. Nada más cambia.
@@ -533,7 +616,7 @@ facturación. El acceso es a un perro, nunca a una persona.
 
 ---
 
-## 9. Fase 4 — la prescripción, que es la difícil
+## 10. Fase 4 — la prescripción, que es la difícil
 
 Esta es la que justifica el proyecto entero, y la que puede romper lo que
 protege la regla 1.
@@ -623,7 +706,7 @@ fase 4 no se despliega.
 
 ---
 
-## 10. La firma
+## 11. La firma
 
 Decidido el 28 de agosto: **la pauta sale firmada, con el nombre del
 veterinario y su número de colegiado.**
@@ -762,7 +845,7 @@ pauta. Va como una pregunta más de esa lista.
 Lo de arriba se puede construir igual mientras tanto: no cambia según lo
 que diga ese texto, solo cambia el texto.
 
-## 11. Cómo se prueba
+## 12. Cómo se prueba
 
 `pruebas_completas.py` entero, como siempre. Y bloques nuevos, cada uno
 comprobado rompiéndolo:
@@ -815,16 +898,16 @@ sin cuenta a con cuenta, y en silencio.
 
 ---
 
-## 12. Lo que sigue abierto — y no lo decide un programador
+## 13. Lo que sigue abierto — y no lo decide un programador
 
 - **Qué dice el documento sobre qué se firma exactamente** — ver el final
-  del apartado 10. Es lo único que queda de la firma que no se resuelve
+  del apartado 11. Es lo único que queda de la firma que no se resuelve
   escribiendo código, y conviene preguntarlo antes de la primera pauta de
   verdad. Lo demás ya está decidido: se firma, con nombre y número de
   colegiado.
 - **El precio**, cuando haya vets usándolo.
 - **Los menús NO firmados, si el dueño revoca el acceso.** Los firmados ya
-  está decidido: quedan (apartado 10). Los borradores que el vet generó y
+  está decidido: quedan (apartado 11). Los borradores que el vet generó y
   no llegó a firmar, no — ¿desaparecen de su lista o los conserva?
 - **Cachorro renal, gestante con pancreatitis**: hoy se bloquean porque
   el mínimo para crecer choca con el tope terapéutico. Con prescripción
