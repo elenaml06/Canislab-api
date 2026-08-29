@@ -599,7 +599,18 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     if gramos_fijos:
         for n, g in (gramos_fijos or {}).items():
             if n not in idx:
-                continue
+                # ⚠️ AQUÍ NO SE PUEDE SEGUIR EN SILENCIO (29 agosto). Un
+                # alimento que no está entre los candidatos es uno al que se
+                # le ha quitado el sitio antes: una alergia, la patología del
+                # paciente (oxalato, urato, borraja...) o una categoría
+                # excluida entera. `forzar` sí se lo puede saltar callando --
+                # ahí la exclusión gana y ya está --, pero fijar una CANTIDAD
+                # es otra cosa: el veterinario ha escrito 50 g de espinaca y
+                # el menú salía verde, sin espinaca y sin una palabra. Lo
+                # cazó el BLOQUE 41 el día que se escribió.
+                return False, {"_imposible": (
+                    f"{n} no puede entrar en la ración de este paciente: está fuera por "
+                    f"una alergia, por su patología o por una categoría excluida.")}
             try:
                 g = float(g)
             except (TypeError, ValueError):

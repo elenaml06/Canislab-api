@@ -4018,6 +4018,19 @@ def formular_autocompletar(datos: PeticionFormular):
     # hacer.
     movidos = [n for n, g in fijos.items()
                if abs(float(gramos.get(n, 0)) - g) > 0.5]
+    if movidos:
+        # ⚠️ Y SI SE HAN MOVIDO, NO ES UN SÍ (29 agosto). Esto se detectaba y
+        # se devolvía junto al menú, con `factible: true` -- o sea que la
+        # promesa de "tus gramos no se tocan" se rompía en una clave que
+        # nadie mira, mientras la pantalla enseñaba un menú verde. Es la
+        # familia de fallos que persigue este proyecto entero: sin error,
+        # sin aviso, y el veterinario creyendo que ha formulado lo que
+        # escribió.
+        return {"factible": False,
+                "motivo": ("No se ha podido formular respetando estas cantidades: " +
+                           ", ".join(movidos) + ". Cambia esas cifras o quita el alimento."),
+                "gramos_fijos_movidos": movidos,
+                "alternativa": gramos}
 
     respuesta = {"factible": True, "menu": gramos, "gramos_fijos_movidos": movidos}
     respuesta = _garantizar_verificado(
