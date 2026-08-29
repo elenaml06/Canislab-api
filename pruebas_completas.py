@@ -4686,6 +4686,33 @@ else:
         _ok42 = _c.post("/pauta/comprobar", json=_doc42).json()
         if not _ok42.get("coincide"):
             fallos.append("BLOQUE42: el documento recién firmado no cuadra con su propio sello")
+        # ⚠️ Y EL SELLO TIENE QUE SOBREVIVIR AL NAVEGADOR (29 agosto).
+        # CASO REAL, cazado por el script que habla con la API de verdad:
+        # se firmaba, la app guardaba el documento, y al comprobarlo el
+        # sello NO cuadraba -- sobre un documento que nadie había tocado.
+        # JavaScript no distingue enteros de decimales: `JSON.stringify(5.0)`
+        # escribe `5`, así que en cuanto el documento pasa por el navegador
+        # -- que es SIEMPRE, es el camino real -- los 300.0 gramos vuelven
+        # como 300 y la copia canónica cambia. Mismo número, otro sello.
+        #
+        # Esto emula ese viaje. Sin la normalización, falla.
+        def _como_javascript(v):
+            if isinstance(v, bool):
+                return v
+            if isinstance(v, float) and v.is_integer():
+                return int(v)
+            if isinstance(v, dict):
+                return {k: _como_javascript(x) for k, x in v.items()}
+            if isinstance(v, list):
+                return [_como_javascript(x) for x in v]
+            return v
+        _tras_el_navegador = _como_javascript(_json_pauta.loads(_json_pauta.dumps(_doc42)))
+        if not _c.post("/pauta/comprobar", json=_tras_el_navegador).json().get("coincide"):
+            fallos.append("BLOQUE42: el sello deja de cuadrar en cuanto el documento pasa por "
+                          "el navegador (5.0 se convierte en 5). Ese es el camino real: la app "
+                          "guarda el documento en JavaScript. Un sello que no sobrevive al "
+                          "viaje no comprueba nada.")
+
         for _etq42, _tocar42 in [
             ("los gramos", lambda d: d["menu"].__setitem__(list(d["menu"])[0],
                                                             list(d["menu"].values())[0] + 10)),
