@@ -2003,6 +2003,38 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         _imp = (gramos or {}).get("_imposible") if isinstance(gramos, dict) else None
         if _imp:
             return {"factible": False, "motivo": _imp, "imposible_por_aritmetica": True}
+        # ⚠️ QUEDARSE SIN TIEMPO NO ES QUE NO EXISTA (29 agosto).
+        #
+        # Si el presupuesto se ha agotado, aquí se llegaba igual que si se
+        # hubieran recorrido todos los peldaños, y se le contestaba a la
+        # usuaria "no existe ninguna combinación... quita alguna restricción
+        # y vuelve a probar". Es MENTIRA, y de la peor clase: la manda a
+        # deshacer alergias o patologías para arreglar algo que no tiene
+        # nada que ver, y el menú que sí existe se lo habría dado si le
+        # hubiera dado tiempo.
+        #
+        # CASO REAL REPRODUCIDO, con el presupuesto apretado a mano para
+        # que no dependa de lo rápido que vaya la máquina (`presupuesto_
+        # segundos`, que es lo que hace /menu/varios-perros al repartir):
+        #     cachorro en crecimiento de 10 kg, 24 s -> menú, 8 de 8
+        #     el mismo cachorro con  4 s -> "no existe ninguna combinación"
+        #     el mismo cachorro con  6 s -> "no existe ninguna combinación"
+        # y el tiempo de respuesta era exactamente el presupuesto (4,0 s y
+        # 6,0 s): se acabó el tiempo, no las combinaciones.
+        #
+        # Importa más de lo que parece porque el reparto de /menu/varios-
+        # perros y /menu/semana da a cada perro una fracción de los 24 s, y
+        # Render va más lento que cualquier portátil. El cachorro en
+        # crecimiento es el caso más caro que hay (yodo y calcio a la vez).
+        #
+        # El mensaje es el MISMO que ya se daba unas líneas más arriba
+        # cuando el presupuesto se agotaba en la vía del catálogo, a
+        # propósito: el mismo motivo tiene que decir lo mismo.
+        if time.time() - t_inicio_total >= PRESUPUESTO_SEGUNDOS - 1.5:
+            return {"factible": False,
+                    "motivo": "El cálculo está tardando más de lo normal para este "
+                              "perro. Inténtalo de nuevo en un momento.",
+                    "se_agoto_el_tiempo": True}
         # ⚠️ SIN EL NÚMERO ESCRITO (29 agosto). Aquí ponía "los 30
         # requisitos" y el motor ya verifica 42 desde que se encendieron los
         # aminoácidos: el mensaje que ve la usuaria decía una cifra y el
