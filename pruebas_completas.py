@@ -1624,8 +1624,13 @@ if _i_b14 == -1:
                   "(SUELO_MEDIBLE_G). Sin él vuelven las cantidades que "
                   "nadie puede pesar.")
 else:
-    # Solo el bucle del suelo, no el archivo entero.
-    _bloque_b14 = _src_b14[_i_b14:_i_b14 + 500]
+    # Solo el bloque del suelo, no el archivo entero. Se corta donde de
+    # verdad termina -- en la fila que lo añade -- y no a los 500 caracteres:
+    # con un corte fijo, escribir un comentario largo dentro del bloque
+    # empuja el código fuera de la ventana y la prueba canta un fallo que no
+    # existe. Pasó el 29 de agosto al ampliar el suelo a las porciones.
+    _fin_b14 = _src_b14.find('_fila("suelo_medible"', _i_b14)
+    _bloque_b14 = _src_b14[_i_b14:_fin_b14 if _fin_b14 > _i_b14 else _i_b14 + 500]
     if "categoria_de" in _bloque_b14:
         fallos.append(
             "BLOQUE14: el suelo vuelve a decidir con `categoria_de`, que es la CLAVE "
@@ -1646,15 +1651,28 @@ else:
     # de salmón en un adulto de 200 kcal. Lo exento tiene que ser lo que
     # de verdad se dosifica con cacito o comprimido, y nada más -- si un
     # día vuelve a escribirse "todo menos Extras", esto lo dice.
+    # ⚠️ SE MIRA LA LISTA DE EXENTOS, no el bloque entero (29 agosto). Desde
+    # que el suelo es la PORCIÓN de cada categoría, los nombres de categoría
+    # aparecen dentro del bloque por un motivo legítimo -- "Extras" tiene
+    # suelo de 1 g y el resto el mínimo de su categoría --, así que buscarlos
+    # a pelo daba un fallo donde no lo había. Lo que no puede pasar sigue
+    # siendo lo mismo: que una categoría que se PESA esté entre las exentas.
+    _i_exentos = _src_b14.find("CATEGORIAS_QUE_SE_DOSIFICAN = (", _i_b14)
+    _exentos_b14 = (_src_b14[_i_exentos:_src_b14.find(")", _i_exentos)]
+                    if _i_exentos > 0 else "")
+    if not _exentos_b14:
+        fallos.append("BLOQUE14: no se encuentra la lista de categorías exentas del suelo. "
+                      "Escribirla al revés ('todo menos Extras') es lo que dejó sin suelo a "
+                      "toda la comida durante semanas.")
     for _cat_comida in ("Carne muscular", "Hueso carnoso", "Pescados y mariscos",
                         "Vísceras", "Hígado", "Verduras y frutas", "Extras"):
-        if f'"{_cat_comida}"' in _bloque_b14:
+        if f'"{_cat_comida}"' in _exentos_b14:
             fallos.append(
                 f"BLOQUE14: '{_cat_comida}' aparece en la exención del suelo de 1 g. "
                 f"Eso se pesa en una báscula de cocina, así que tiene que cumplir el "
                 f"suelo; lo único exento son los suplementos que se dosifican con el "
                 f"cacito o el comprimido del bote.")
-    if "CATEGORIAS_QUE_SE_DOSIFICAN" not in _bloque_b14:
+    if "CATEGORIAS_QUE_SE_DOSIFICAN" not in _src_b14[_i_b14:_i_b14 + 400]:
         fallos.append(
             "BLOQUE14: la exención del suelo ya no nombra las categorías que se "
             "dosifican. Escribirla al revés ('todo menos Extras') es lo que dejó "
