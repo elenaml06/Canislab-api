@@ -3964,6 +3964,43 @@ def _estado_de_la_racion(datos):
     # en `_garantizar_verificado`: porque el que se olvida no da error.
     salida["topes_de_patologia_rotos"] = _tope_patologia_roto(
         gramos, al, datos.patologias, datos.etapa_requisitos)
+    salida["huecos"] = _huecos_en_cristiano(salida["ficha"])
+    return salida
+
+
+def _huecos_en_cristiano(ficha):
+    """Los huecos del catálogo de esta ración, con el nombre del nutriente y
+    los alimentos a los que les falta.
+
+    ⚠️ AÑADIDO (29 agosto) — CASO REAL DE LA USUARIA mirando la pantalla de
+    firmar: «esto que sale aquí asusta y no se entiende bien», y debajo una
+    lista de claves en crudo: `calcio, araquidonico, dha, epa, ..., vitA`.
+    Veinticuatro palabras sin frase, justo encima del botón de firmar.
+
+    El hueco NO es un fallo del menú y la pantalla tiene que poder decirlo:
+    es que de ALGÚN ALIMENTO de la ración no está publicado ese dato. Se
+    cuenta como cero, así que contra un mínimo es conservador -- como mucho
+    sobra un suplemento -- y contra un máximo se imputa por familia.
+
+    La traducción se hace AQUÍ y no en la app porque el nombre de cada clave
+    vive en `MAPA`, junto a la tabla de FEDIAF. Una segunda lista en el
+    frontend sería otra copia que se separa."""
+    from verificar import MAPA
+    nombre_de = {clave: nombre.replace("_", " ") for nombre, clave in MAPA.items()}
+    salida = []
+    for tipo, origen in (("sin_dato", ficha.get("datos_incompletos") or {}),
+                         ("dato_dudoso", ficha.get("datos_dudosos") or {})):
+        for clave, alimentos in origen.items():
+            salida.append({
+                "clave": clave,
+                # Si un día aparece una clave que no está en MAPA -- las hay,
+                # como `purinas`, que es de seguridad y no un requisito de
+                # FEDIAF -- se enseña la clave en vez de esconder la fila.
+                "nombre": nombre_de.get(clave, clave),
+                "tipo": tipo,
+                "alimentos": sorted(set(alimentos)),
+            })
+    salida.sort(key=lambda x: (x["tipo"] != "dato_dudoso", x["nombre"].lower()))
     return salida
 
 
@@ -4136,6 +4173,14 @@ class PeticionFirmar(BaseModel):
     # Lo que identifica al paciente EN EL DOCUMENTO. Se copia, no se apunta:
     # la ficha del perro cambia y lo firmado no puede cambiar con ella.
     paciente: dict = {}
+    # ⚠️ EL "CÓMO DARLO" VA DENTRO DE LO FIRMADO (29 agosto). Una pauta son
+    # los gramos Y qué hacer con ellos: cómo se prepara cada cosa, qué se
+    # congela, cómo se hace la transición desde lo que comía. Si eso viviera
+    # fuera del documento, el papel firmado diría cantidades y el tutor se
+    # quedaría sin las instrucciones -- o peor, con unas que cambiaron
+    # después. Lo propone Rawku y lo escribe el veterinario; aquí llega ya
+    # como texto suyo y se congela tal cual, sin tocarlo.
+    indicaciones: str = ""
 
 
 def _sello_de(documento):
@@ -4253,6 +4298,7 @@ def pauta_firmar(datos: PeticionFirmar):
         # el import de nadie.
         "firmada_en": _fecha_utc_ahora(),
         "paciente": datos.paciente or {},
+        "indicaciones": datos.indicaciones or "",
         "menu": {n: round(g, 1) for n, g in gramos.items()},
         "ficha_verificada": ficha,
         "contexto": {
@@ -4279,6 +4325,10 @@ def pauta_firmar(datos: PeticionFirmar):
             "sin_dato": ficha.get("datos_incompletos") or {},
             "dato_dudoso": ficha.get("datos_dudosos") or {},
             "no_verificable": ficha.get("no_verificable") or [],
+            # Con el nombre de cada nutriente y a qué alimento le falta: un
+            # documento firmado tiene que poder leerse dentro de un año sin
+            # tener delante el diccionario de claves del catálogo.
+            "en_cristiano": _huecos_en_cristiano(ficha),
         },
         "seguridad": problemas,
         "sellos": {**SELLOS_DE_LOS_DATOS,

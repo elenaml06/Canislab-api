@@ -190,6 +190,28 @@ def avisos_de_patologias(patologias, etapa="Adulto", es_profesional=False):
     return salida
 
 
+# ─── QUÉ ES UNA PORCIÓN DE VERDAD ───────────────────────────────────────────
+#
+# Un mínimo por categoría, en gramos, para cuando un alimento entra en la
+# ración. No es capricho: 10 g de sal es mucho y 10 g de carne muscular no es
+# nada -- una porción es una cosa distinta en cada categoría.
+#
+# Se escala con el perro donde hace falta (ver `tope_porcion_del_perro`): en
+# un perro de 1,5 kg, que come 73 g al día, 40 g de pescado serían el 55 % de
+# la ración de golpe.
+MINIMO_POR_CATEGORIA_PORCION = {
+    "Carne muscular": 40.0,
+    "Pescados y mariscos": 40.0,
+    "Hueso carnoso": 25.0,
+    "Verduras y frutas": 15.0,
+    # Vísceras e hígado van aparte y bajos a propósito: su propio límite de
+    # dosis los mantiene pequeños (el hígado ronda el 5 % de la ración), así
+    # que exigirles 25 g dejaría sin menú a los perros pequeños.
+    "Vísceras": 8.0,
+    "Hígado": 5.0,
+}
+
+
 def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             excluidos=None, margenes_categoria=None, cuantos_max=None,
             max_suplementos=2, tolerancia_kcal=0.03,
@@ -1257,13 +1279,46 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     SUELO_MEDIBLE_G = 1.0
     CATEGORIAS_QUE_SE_DOSIFICAN = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
                                    "Calcio", "Hierro", "Vitamina B")
+    # ⚠️ Y UN GRAMO DE COSTILLAS NO ES UNA RACIÓN (29 agosto).
+    #
+    # CASO REAL ENCONTRADO POR LA USUARIA: "me ha salido 1 gramo de costillas
+    # de cerdo cuando le doy a autocompletar... cómo me va a hacer añadir 1 g".
+    # Tiene razón, y el motor tenía dos varas de medir:
+    #
+    #   · un alimento FORZADO entraba con su mínimo de categoría (40 g de
+    #     carne, 25 de hueso...) porque "10 g de carne muscular no es una
+    #     porción real" -- eso ya estaba escrito aquí abajo, en el bloque de
+    #     `forzar`, desde el 5 de agosto;
+    #   · un alimento que ELEGÍA EL MOTOR solo tenía que llegar a 1 g.
+    #
+    # O sea que la regla existía y solo se aplicaba a la mitad de los
+    # alimentos, justo a la mitad que el usuario ya había pedido a mano. La
+    # otra mitad -- la que el motor añade solo, que es la que sorprende --
+    # podía entrar con una miga para cerrar un nutriente.
+    #
+    # El suelo pasa a ser el MISMO mínimo de porción de la categoría, con los
+    # dos frenos que ya tenía el otro camino: nunca por encima del techo del
+    # propio alimento, y nunca por encima de lo que cabe en la ración de este
+    # perro (`tope_porcion_del_perro`) -- 40 g de pescado en un perro de 1,5
+    # kg serían el 29 % de todo lo que come en un día.
+    #
+    # Los Extras (sal, aceites, semillas) se quedan en 1 g: ahí una cucharada
+    # pequeña SÍ es una porción real, y ese fue siempre el caso que motivó
+    # este suelo -- los 0,35 g de sal del 24 de agosto.
+    _tope_porcion = 0.15 * 0.6 * der
     for n in nombres:
-        if alimentos[n].get("categoria") in CATEGORIAS_QUE_SE_DOSIFICAN:
+        cat_n = alimentos[n].get("categoria")
+        if cat_n in CATEGORIAS_QUE_SE_DOSIFICAN:
             continue
         i = idx[n]
+        if cat_n == "Extras":
+            porcion = SUELO_MEDIBLE_G
+        else:
+            porcion = min(MINIMO_POR_CATEGORIA_PORCION.get(cat_n, 10.0), _tope_porcion)
+            porcion = max(porcion, SUELO_MEDIBLE_G)
         # Nunca por encima de su propio techo: si un alimento no puede
-        # llegar a 1 g, el suelo lo dejaría fuera del catálogo entero.
-        suelo = min(SUELO_MEDIBLE_G, techos[i])
+        # llegar a esa porción, el suelo lo dejaría fuera del catálogo entero.
+        suelo = min(porcion, techos[i])
         if suelo <= 0:
             continue
         fila = fila_vacia()
@@ -1354,12 +1409,9 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # más alto para las proteínas de verdad (carne, pescado, hueso),
     # bajo para lo que sí suele darse en cantidades pequeñas (vísceras,
     # hígado, por su propio límite de dosis) o en extras/suplementos.
-    MINIMO_POR_CATEGORIA = {
-        "Carne muscular": 40.0,
-        "Pescados y mariscos": 40.0,
-        "Hueso carnoso": 25.0,
-        "Verduras y frutas": 15.0,
-    }
+    # ⚠️ LA MISMA TABLA QUE EL SUELO DE ARRIBA (29 agosto). Era local de este
+    # bloque, así que "qué es una porción real" solo valía para lo forzado.
+    MINIMO_POR_CATEGORIA = MINIMO_POR_CATEGORIA_PORCION
     # ⚠️ CORREGIDO (20 agosto) — CASO REAL ENCONTRADO AUDITANDO: estos
     # mínimos son FIJOS en gramos, y eso no puede ser: "una porción real
     # y visible" depende del tamaño del perro. En un perro de 20 kg el
