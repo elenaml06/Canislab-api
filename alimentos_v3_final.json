@@ -760,16 +760,16 @@
       "tiamina": 0.047,
       "vitB12": 0.52,
       "vitB6": 0.46,
-      "calcio": 8,
-      "hierro": 1,
-      "potasio": 333,
-      "magnesio": 20,
-      "sodio": 46,
-      "fosforo": 210,
+      "calcio": 13,
+      "hierro": 1.2,
+      "potasio": 275,
+      "magnesio": 24.0,
+      "sodio": 59,
+      "fosforo": 186,
       "yodo": 2,
       "selenio": 22.4,
-      "zinc": 1.8,
-      "cobre": 0.05,
+      "zinc": 1.57,
+      "cobre": 0.074,
       "manganeso": 0.014,
       "acidoPantotenico": 0.6,
       "colina": 75,
@@ -789,7 +789,7 @@
       "valina": 1.141,
       "purinas": 96.0
     },
-    "nota_datos": "CORREGIDO 4 agosto. El valor anterior (107 kcal/0,99 g grasa) era menor que la version sin piel del mismo catalogo, fisicamente imposible.",
+    "nota_datos": "CORREGIDO 4 agosto. El valor anterior (107 kcal/0,99 g grasa) era menor que la version sin piel del mismo catalogo, fisicamente imposible.\n\nCORREGIDO 3 septiembre. La ficha ya declaraba su FDC del USDA y los números no eran los de ese FDC: se han traído los de la fuente que la propia ficha dice. Revisión externa de la consultoría nutricional (CORRECCIONES_CATALOGO.csv). Las 101 casillas se comprobaron una a una contra el valor que había antes de escribir nada: si una sola no hubiera coincidido, no se habría tocado el fichero.",
     "fuente": "USDA FDC 171093 'Turkey, all classes, breast, meat and skin, raw'.",
     "purinas_bases": {
       "adenina": 13.1,
@@ -809,17 +809,17 @@
     "nombre": "Pollo pechuga con piel",
     "tipo": "Alimento",
     "categoria": "Carne muscular",
-    "energia": 150,
+    "energia": 172,
     "nutrientes": {
-      "proteina": 18.1,
-      "grasa": 8.0,
+      "proteina": 20.8,
+      "grasa": 9.25,
       "dha": 0,
       "epa": 0,
       "linoleico": 0,
       "linolenico": 0,
       "araquidonico": 0,
-      "vitA": 0.34,
-      "vitD": 0,
+      "vitA": 24,
+      "vitD": 0.4,
       "vitE": 0.27,
       "folato": 4.8,
       "niacina": 8.7,
@@ -827,15 +827,15 @@
       "tiamina": 0.1,
       "vitB12": 0.35,
       "vitB6": 0.35,
-      "calcio": 9.6,
-      "hierro": 1.5,
-      "potasio": 255,
-      "magnesio": 22.4,
+      "calcio": 11,
+      "hierro": 0.74,
+      "potasio": 220,
+      "magnesio": 25.0,
       "sodio": 65,
-      "fosforo": 151,
+      "fosforo": 174,
       "yodo": 1.8,
-      "selenio": 0,
-      "zinc": 1.4,
+      "selenio": 16.6,
+      "zinc": 0.8,
       "cobre": 0.04,
       "manganeso": 0.02,
       "acidoPantotenico": 1.3,
@@ -856,10 +856,7 @@
       "valina": 1.02,
       "purinas": 174.9
     },
-    "sin_dato": [
-      "selenio"
-    ],
-    "nota_datos": "CORREGIDO 4 agosto. El valor anterior (105 kcal/1,2 g grasa) era un error de imputacion de BEDCA: una pechuga con piel no puede tener menos grasa que sin piel. Verificado contra USDA.",
+    "nota_datos": "CORREGIDO 4 agosto. El valor anterior (105 kcal/1,2 g grasa) era un error de imputacion de BEDCA: una pechuga con piel no puede tener menos grasa que sin piel. Verificado contra USDA.\n\nCORREGIDO 3 septiembre. La ficha ya declaraba su FDC del USDA y los números no eran los de ese FDC: se han traído los de la fuente que la propia ficha dice. Revisión externa de la consultoría nutricional (CORRECCIONES_CATALOGO.csv). Las 101 casillas se comprobaron una a una contra el valor que había antes de escribir nada: si una sola no hubiera coincidido, no se habría tocado el fichero.",
     "fuente": "USDA FDC 171474 'Chicken, breast, meat and skin, raw'.",
     "purinas_bases": {
       "adenina": 20.5,
@@ -1663,7 +1660,11 @@
       "nota": "pescado blanco magro",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "trazas": [
+      "vitA",
+      "vitD"
+    ]
   },
   {
     "nombre": "Bacalao",
@@ -1736,7 +1737,10 @@
       "nota": "familia Gadidae",
       "pais": "USA",
       "anio": "2024"
-    }
+    },
+    "trazas": [
+      "vitD"
+    ]
   },
   {
     "nombre": "Trucha",
@@ -4600,17 +4604,17 @@
     "nombre": "Pavo pechuga sin piel",
     "tipo": "Alimento",
     "categoria": "Carne muscular",
-    "energia": 97,
+    "energia": 114,
     "nutrientes": {
-      "proteina": 19.8,
-      "grasa": 2.0,
+      "proteina": 23.3,
+      "grasa": 2.33,
       "dha": 0,
       "epa": 0,
       "linoleico": 0,
       "linolenico": 0,
       "araquidonico": 0,
-      "vitA": 0.0017,
-      "vitD": 0,
+      "vitA": 5,
+      "vitD": 0.2,
       "vitE": 0.2,
       "folato": 8,
       "niacina": 6.8,
@@ -4618,16 +4622,16 @@
       "tiamina": 0.06,
       "vitB12": 0.37,
       "vitB6": 0.54,
-      "calcio": 11,
-      "hierro": 1.4,
+      "calcio": 9,
+      "hierro": 0.76,
       "potasio": 267,
-      "magnesio": 21,
-      "sodio": 156,
-      "fosforo": 170,
+      "magnesio": 27.0,
+      "sodio": 74,
+      "fosforo": 185,
       "yodo": 2,
-      "selenio": 22.4,
-      "zinc": 2.1,
-      "cobre": 0.3,
+      "selenio": 22.1,
+      "zinc": 1.16,
+      "cobre": 0.054,
       "manganeso": 0.6,
       "acidoPantotenico": 0.6,
       "colina": 65,
@@ -4648,7 +4652,7 @@
       "purinas": 96.0
     },
     "fuente": "USDA FDC 174515 'Turkey, retail parts, breast, meat only, raw'.",
-    "nota_datos": "CORREGIDO 4 agosto. El valor anterior (145 kcal/29,9 g proteina) era de pechuga COCINADA A LA PLANCHA, no cruda -- la coccion concentra el resto al perder agua. Sustituido por el crudo real.",
+    "nota_datos": "CORREGIDO 4 agosto. El valor anterior (145 kcal/29,9 g proteina) era de pechuga COCINADA A LA PLANCHA, no cruda -- la coccion concentra el resto al perder agua. Sustituido por el crudo real.\n\nCORREGIDO 3 septiembre. La ficha ya declaraba su FDC del USDA y los números no eran los de ese FDC: se han traído los de la fuente que la propia ficha dice. Revisión externa de la consultoría nutricional (CORRECCIONES_CATALOGO.csv). Las 101 casillas se comprobaron una a una contra el valor que había antes de escribir nada: si una sola no hubiera coincidido, no se habría tocado el fichero.",
     "purinas_bases": {
       "adenina": 13.1,
       "guanina": 11.6,
@@ -4780,7 +4784,7 @@
       "valina": 0.902,
       "purinas": 111.35
     },
-    "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar. CORREGIDO 4 agosto: calcio estaba en 0, imposible en tejido muscular; puesto a 10 mg.",
+    "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar. CORREGIDO 4 agosto: calcio estaba en 0, imposible en tejido muscular; puesto a 10 mg.\n\n3 septiembre: la vitamina D pasa de cero declarado a `trazas`. Ver abajo.",
     "sin_dato": [
       "calcio"
     ],
@@ -4796,7 +4800,10 @@
       "nota": "pollo sin corte especificado",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "trazas": [
+      "vitD"
+    ]
   },
   {
     "nombre": "Lomo de ternera con grasa",
@@ -5320,7 +5327,11 @@
       "nota": "familia Gadidae",
       "pais": "USA",
       "anio": "2024"
-    }
+    },
+    "trazas": [
+      "vitA",
+      "vitD"
+    ]
   },
   {
     "nombre": "Besugo",
@@ -5532,23 +5543,29 @@
       "nota": "mismo grupo",
       "pais": "USA",
       "anio": "1976"
-    }
+    },
+    "sin_dato": [
+      "yodo"
+    ],
+    "trazas": [
+      "vitD"
+    ]
   },
   {
     "nombre": "Dorada",
     "tipo": "Alimento",
     "categoria": "Pescados y mariscos",
-    "energia": 133,
+    "energia": 78,
     "nutrientes": {
       "proteina": 17,
-      "grasa": 7.22,
+      "grasa": 1,
       "dha": 0.527,
       "epa": 0.312,
       "linoleico": 0.966,
       "linolenico": 0.124,
       "araquidonico": 37,
       "vitA": 9,
-      "vitD": 14,
+      "vitD": 1.5,
       "vitE": 1.25,
       "folato": 6,
       "niacina": 5,
@@ -5585,8 +5602,8 @@
       "valina": 0.875,
       "purinas": 129.1
     },
-    "nota_datos": "Ficha de BEDCA. Todos los campos son los suyos MENOS la energía, y el motivo está medido:\n\nBEDCA declara 78 kcal (326 kJ), pero su propia ficha NO CUADRA CONSIGO MISMA:\n  · agua 82 g + proteína 17 g + grasa 7,22 g = 106,22 g por cada 100 g de pescado. Sobran más de 6 g de materia, y aún faltarían los minerales. Es imposible.\n  · la energía de un alimento SE CALCULA de sus macros: 17x4 + 7,22x9 = 133 kcal. Solo la proteína ya son 68, casi las 78 declaradas -- lo que dejaría 10 kcal para 7,22 g de grasa, que son 65.\n\nCOMPROBADO que es de esta ficha y no del método: las mismas dos cuentas aplicadas a los 19 pescados de BEDCA cuadran en 18. Atún 119 declaradas / 118 calculadas, salmón 182/182, sardina 140/140. Solo la dorada falla, y falla las dos a la vez.\n\nCAUSA: cada fila viene de un estudio distinto (agua de la fuente 7, proteína de la 32, grasa de la 296, energía de la 236) y en la dorada se cruzaron dos pescados. Los 78 kcal y los 82 g de agua son una dorada salvaje magra; los 7,22 g de grasa, una de piscifactoría. Lo confirma la propia tabla: los demás pescados con 82% de agua tienen 1,3-1,8 g de grasa; los que tienen 7 g de grasa andan por 74-76% de agua.\n\nSE USAN 133 kcal, que es lo coherente con la grasa que también guardamos. Poner 78 manteniendo 7,22 g de grasa haría que la app calculara una ración 83% grasa en calorías, y la energía es el divisor de los 30 requisitos. `auditar_catalogo.py` lo caza solo con el aviso [BASE] -- esa alarma se deja encendida a propósito, no se silencia.\n\nPENDIENTE para la nutricionista: si la dorada del catálogo es salvaje, hay que bajar la grasa a ~1,5 g Y con ella el EPA y el DHA, que salen de esa misma fuente 296. Energía y grasa se deciden juntas o no se decide ninguna.",
-    "fuente_epa_dha": "BEDCA",
+    "nota_datos": "RESUELTO 3 septiembre, y por el lado contrario al que habíamos elegido.\n\nLO QUE SE SABÍA (26 agosto): la ficha de BEDCA no cuadra consigo misma. Agua 82 g + proteína 17 g + grasa 7,22 g = 106,22 g por cada 100 g de pescado; sobran más de 6 g de materia y aún faltarían los minerales. Y la energía declarada, 78 kcal, no sale de esos macros: 17x4 + 7,22x9 = 133. Comprobado que era de esta ficha y no del método: las mismas dos cuentas aplicadas a los 19 pescados de BEDCA cuadran en 18 (atún 119/118, salmón 182/182, sardina 140/140). Solo la dorada falla, y falla las dos a la vez. La causa es que cada fila viene de un estudio distinto -- agua de la fuente 7, proteína de la 32, grasa de la 296, energía de la 236 -- y en la dorada se cruzaron dos pescados: los 78 kcal y los 82 g de agua son una dorada salvaje magra; los 7,22 g de grasa, una de piscifactoría.\n\nLO QUE SE HIZO ENTONCES: guardar 133 kcal, o sea salvar la GRASA y recalcular la energía. Estaba escrito aquí mismo que quedaba pendiente decidirlo con la nutricionista, y la revisión externa ha decidido lo contrario: **se salva la fila magra y se corrige la grasa**. FEN/Moreiras 2013 da para la dorada 77 kcal y ~1 g de grasa, que es una tercera fuente independiente coincidiendo con los 78 y los 82 g de agua de BEDCA. Dos fuentes contra una: el campo imposible era la grasa.\n\nCon la grasa se va la vitamina D: 14 ug/100 g eran de la de piscifactoría y sola arrastraba casi toda la vitamina D de la ración. FEN da 1,5.\n\nY CON LA GRASA TENÍAN QUE IRSE EL EPA Y EL DHA, que salen de esa misma fuente 296. No se han podido corregir porque no hay analítica publicada de ácidos grasos de dorada salvaje: EPA 0,312 + DHA 0,527 serían el 84 % de 1 g de grasa total, que no lo es ningún pescado. Quedan marcados en `dato_dudoso` con un `valor_plausible` reescalado por el cociente de grasas, que protege el mínimo; contra el techo crónico de EPA+DHA sigue contando el declarado. Es lo mismo que ya se hizo con el cobre del polvo de sangre: un número que no nos creemos no puede ser prudente en las dos direcciones a la vez.\n\nEl aviso [BASE] de `auditar_catalogo.py` que esta ficha encendía a propósito se apaga solo: 17x4 + 1x9 = 77, y la ficha declara 78.",
+    "fuente_epa_dha": "BEDCA (fuente 296) -- ver `dato_dudoso`: son los de la dorada de piscifactoria",
     "aminograma_estimado": {
       "desde": "Pargo, crudo",
       "factor": "0.829",
@@ -5605,7 +5622,77 @@
       "nota": "misma familia Sparidae",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "dato_dudoso": {
+      "epa": {
+        "desde": "2026-09-03",
+        "motivo": "Sale de la fuente 296 de BEDCA, que es la fila de la dorada de PISCIFACTORIA -- la misma de la que salian los 7,22 g de grasa que se han corregido a 1 g (FEN/Moreiras 2013). Todo el bloque de acidos grasos de esta ficha viene de ahi, asi que se marca entero: declarados suman 1,97 g y no caben en 1 g de grasa. No se toca el numero porque no hay analitica de acidos grasos de dorada SALVAJE publicada.",
+        "resolver": "Hace falta una analitica de acidos grasos de dorada salvaje, o decidir con la nutricionista si la dorada del catalogo es de piscifactoria -- en cuyo caso lo que hay que deshacer es la correccion de la grasa, no esta. Energia, grasa y acidos grasos se deciden juntos o no se decide ninguno."
+      },
+      "dha": {
+        "desde": "2026-09-03",
+        "motivo": "Sale de la fuente 296 de BEDCA, que es la fila de la dorada de PISCIFACTORIA -- la misma de la que salian los 7,22 g de grasa que se han corregido a 1 g (FEN/Moreiras 2013). Todo el bloque de acidos grasos de esta ficha viene de ahi, asi que se marca entero: declarados suman 1,97 g y no caben en 1 g de grasa. No se toca el numero porque no hay analitica de acidos grasos de dorada SALVAJE publicada.",
+        "resolver": "Hace falta una analitica de acidos grasos de dorada salvaje, o decidir con la nutricionista si la dorada del catalogo es de piscifactoria -- en cuyo caso lo que hay que deshacer es la correccion de la grasa, no esta. Energia, grasa y acidos grasos se deciden juntos o no se decide ninguno."
+      },
+      "linoleico": {
+        "desde": "2026-09-03",
+        "motivo": "Sale de la fuente 296 de BEDCA, que es la fila de la dorada de PISCIFACTORIA -- la misma de la que salian los 7,22 g de grasa que se han corregido a 1 g (FEN/Moreiras 2013). Todo el bloque de acidos grasos de esta ficha viene de ahi, asi que se marca entero: declarados suman 1,97 g y no caben en 1 g de grasa. No se toca el numero porque no hay analitica de acidos grasos de dorada SALVAJE publicada.",
+        "resolver": "Hace falta una analitica de acidos grasos de dorada salvaje, o decidir con la nutricionista si la dorada del catalogo es de piscifactoria -- en cuyo caso lo que hay que deshacer es la correccion de la grasa, no esta. Energia, grasa y acidos grasos se deciden juntos o no se decide ninguno."
+      },
+      "linolenico": {
+        "desde": "2026-09-03",
+        "motivo": "Sale de la fuente 296 de BEDCA, que es la fila de la dorada de PISCIFACTORIA -- la misma de la que salian los 7,22 g de grasa que se han corregido a 1 g (FEN/Moreiras 2013). Todo el bloque de acidos grasos de esta ficha viene de ahi, asi que se marca entero: declarados suman 1,97 g y no caben en 1 g de grasa. No se toca el numero porque no hay analitica de acidos grasos de dorada SALVAJE publicada.",
+        "resolver": "Hace falta una analitica de acidos grasos de dorada salvaje, o decidir con la nutricionista si la dorada del catalogo es de piscifactoria -- en cuyo caso lo que hay que deshacer es la correccion de la grasa, no esta. Energia, grasa y acidos grasos se deciden juntos o no se decide ninguno."
+      },
+      "araquidonico": {
+        "desde": "2026-09-03",
+        "motivo": "Sale de la fuente 296 de BEDCA, que es la fila de la dorada de PISCIFACTORIA -- la misma de la que salian los 7,22 g de grasa que se han corregido a 1 g (FEN/Moreiras 2013). Todo el bloque de acidos grasos de esta ficha viene de ahi, asi que se marca entero: declarados suman 1,97 g y no caben en 1 g de grasa. No se toca el numero porque no hay analitica de acidos grasos de dorada SALVAJE publicada.",
+        "resolver": "Hace falta una analitica de acidos grasos de dorada salvaje, o decidir con la nutricionista si la dorada del catalogo es de piscifactoria -- en cuyo caso lo que hay que deshacer es la correccion de la grasa, no esta. Energia, grasa y acidos grasos se deciden juntos o no se decide ninguno."
+      }
+    },
+    "valor_plausible": {
+      "epa": {
+        "valor": 0.0432,
+        "banda": [
+          0.0432,
+          0.312
+        ],
+        "fuente": "Reescalado del valor de BEDCA por el cociente de grasas (1 / 7,22 = 0,138). NO es una medida: es la unica cota inferior defendible mientras la grasa de la ficha sea 1 g, y con ella el bloque entero cabe dentro de la grasa. Se usa para los MINIMOS, que es donde un valor inflado hace creer cubierto lo que no esta; contra el TECHO cronico de EPA+DHA sigue contando el declarado, que es el lado seguro por ese otro lado."
+      },
+      "dha": {
+        "valor": 0.073,
+        "banda": [
+          0.073,
+          0.527
+        ],
+        "fuente": "Reescalado del valor de BEDCA por el cociente de grasas (1 / 7,22 = 0,138). NO es una medida: es la unica cota inferior defendible mientras la grasa de la ficha sea 1 g, y con ella el bloque entero cabe dentro de la grasa. Se usa para los MINIMOS, que es donde un valor inflado hace creer cubierto lo que no esta; contra el TECHO cronico de EPA+DHA sigue contando el declarado, que es el lado seguro por ese otro lado."
+      },
+      "linoleico": {
+        "valor": 0.1338,
+        "banda": [
+          0.1338,
+          0.966
+        ],
+        "fuente": "Reescalado del valor de BEDCA por el cociente de grasas (1 / 7,22 = 0,138). NO es una medida: es la unica cota inferior defendible mientras la grasa de la ficha sea 1 g, y con ella el bloque entero cabe dentro de la grasa. Se usa para los MINIMOS, que es donde un valor inflado hace creer cubierto lo que no esta; contra el TECHO cronico de EPA+DHA sigue contando el declarado, que es el lado seguro por ese otro lado."
+      },
+      "linolenico": {
+        "valor": 0.0172,
+        "banda": [
+          0.0172,
+          0.124
+        ],
+        "fuente": "Reescalado del valor de BEDCA por el cociente de grasas (1 / 7,22 = 0,138). NO es una medida: es la unica cota inferior defendible mientras la grasa de la ficha sea 1 g, y con ella el bloque entero cabe dentro de la grasa. Se usa para los MINIMOS, que es donde un valor inflado hace creer cubierto lo que no esta; contra el TECHO cronico de EPA+DHA sigue contando el declarado, que es el lado seguro por ese otro lado."
+      },
+      "araquidonico": {
+        "valor": 5.1247,
+        "banda": [
+          5.1247,
+          37
+        ],
+        "fuente": "Reescalado del valor de BEDCA por el cociente de grasas (1 / 7,22 = 0,138). NO es una medida: es la unica cota inferior defendible mientras la grasa de la ficha sea 1 g, y con ella el bloque entero cabe dentro de la grasa. Se usa para los MINIMOS, que es donde un valor inflado hace creer cubierto lo que no esta; contra el TECHO cronico de EPA+DHA sigue contando el declarado, que es el lado seguro por ese otro lado."
+      }
+    },
+    "fuente": "FEN/Moreiras 2013, ficha DORADA (energía, grasa y vitamina D). El resto, BEDCA."
   },
   {
     "nombre": "Gamba roja",
@@ -5678,7 +5765,10 @@
       "nota": "mismo grupo",
       "pais": "USA",
       "anio": "2024"
-    }
+    },
+    "trazas": [
+      "vitD"
+    ]
   },
   {
     "nombre": "Langostino",
@@ -5826,7 +5916,11 @@
       "nota": "pez plano. CORREGIDO: antes cogía \"Beef tongue\" por parecerse a \"lengua\"",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "trazas": [
+      "vitA",
+      "vitD"
+    ]
   },
   {
     "nombre": "Lubina",
@@ -5899,7 +5993,11 @@
       "nota": "mismo grupo",
       "pais": "Japan, China",
       "anio": "2014, 2017"
-    }
+    },
+    "trazas": [
+      "vitA",
+      "vitD"
+    ]
   },
   {
     "nombre": "Perca",
@@ -6105,7 +6203,10 @@
       "nota": "misma especie",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "trazas": [
+      "vitD"
+    ]
   },
   {
     "nombre": "Sepia",
@@ -6172,7 +6273,10 @@
       "nota": "mismo grupo",
       "pais": "USA",
       "anio": "1976"
-    }
+    },
+    "trazas": [
+      "vitD"
+    ]
   },
   {
     "nombre": "Aceite de cacahuete",
@@ -6831,16 +6935,16 @@
     "nombre": "Semilla de sésamo",
     "tipo": "Alimento",
     "categoria": "Extras",
-    "energia": 562,
+    "energia": 573,
     "nutrientes": {
-      "proteina": 19,
-      "grasa": 50,
+      "proteina": 17.7,
+      "grasa": 49.7,
       "dha": 0,
       "epa": 0,
       "linoleico": 0,
       "linolenico": 0,
       "araquidonico": 0,
-      "vitA": 6.6667,
+      "vitA": 0,
       "vitD": 0,
       "vitE": 2.3,
       "folato": 96,
@@ -6849,15 +6953,15 @@
       "tiamina": 0.7,
       "vitB12": 0,
       "vitB6": 0.15,
-      "calcio": 150,
-      "hierro": 9,
-      "potasio": 450,
-      "magnesio": 350,
-      "sodio": 40,
-      "fosforo": 620,
+      "calcio": 975,
+      "hierro": 14.6,
+      "potasio": 468,
+      "magnesio": 351,
+      "sodio": 11,
+      "fosforo": 629,
       "yodo": 0,
-      "selenio": 49,
-      "zinc": 5.3,
+      "selenio": 34.4,
+      "zinc": 7.75,
       "cobre": 4.082,
       "manganeso": 2.46,
       "acidoPantotenico": 0,
@@ -6878,24 +6982,7 @@
       "valina": 1.061,
       "purinas": 0
     },
-    "dato_dudoso": {
-      "calcio": {
-        "desde": "2026-08-27",
-        "resolver": "NO se resuelve con una llamada ni eligiendo uno de los dos valores: se resuelve PARTIENDO la ficha en `sesamo con cascara` (Ca 975) y `sesamo pelado` (Ca 60-66), y retirando esta, que es la ambigua. Las dos fichas ya vienen en la carga de alimentos.",
-        "motivo": "El VALOR NO SE TOCA, pero no es de ningun sesamo real. El calcio del sesamo no es un rango: son DOS valores, porque casi todo esta en la cascara. Con cascara 975 mg (USDA 170150 y FINELI 385, dos analiticas independientes que coinciden); pelado 60 mg (USDA 169412) o 66 (FINELI 34245). Quitar la cascara lo divide por dieciseis. Nuestros 150 son fieles a BEDCA 1127, pero BEDCA no dice de cual habla y 150 cae en el hueco vacio entre los dos polos: es lo que sale cuando la tabla no distingue. Y el RESTO de esta fila si dice cual es: fosforo 620, potasio 450, magnesio 350 y fibra 11,0 son casi al decimal los del sesamo CON CASCARA del USDA (629 / 468 / 351 / 11,8). O sea que tenemos una ficha de sesamo entero con el calcio de ninguno. IMPORTA porque cambia lo que el alimento HACE: con 150 el Ca:P del sesamo es 0,24 y es una carga de fosforo; con 975 es 1,57 y ayuda a cuadrar la racion; con 60 es 0,10 y estorba mas. MEDIDO el 27 de agosto: el solver NO lo elige en ninguno de los 21 menus automaticos con ninguno de los tres calcios, y forzando 5 g el Ca:P del menu se mueve 0,08 (1,47-1,55) porque el hueso compensa. O sea que hoy no cambia ningun plato. NO SE ARREGLA ELIGIENDO UNO: se arregla partiendo la ficha en dos, `sesamo con cascara` y `sesamo pelado`, que es lo que trae la carga de alimentos. Hasta entonces queda marcado."
-      }
-    },
-    "valor_plausible": {
-      "calcio": {
-        "valor": 60,
-        "banda": [
-          60,
-          66
-        ],
-        "fuente": "USDA FDC 169412 «Seeds, sesame seeds, kernels» da 60 mg y FINELI 34245 da 66: es el sesamo PELADO, el mas bajo de los dos polos, y se coge ese a proposito porque es el lado conservador para el minimo de calcio. ⚠️ ESTO NO CIERRA EL PROBLEMA y no hay que leerlo como si lo cerrara: el `valor_plausible` protege el MINIMO, pero el ratio Ca:P se calcula sobre el valor declarado, y el Ca:P es justo donde vive el problema del sesamo. Un ratio no se puede blindar por un lado: si el calcio real es 975 el ratio del menu es mas alto de lo que creemos, y si es 60 mas bajo, y las dos direcciones tienen limite. Lo unico que lo resuelve es partir la ficha."
-      }
-    },
-    "nota_datos": "Cobre 4,082 mg y manganeso 2,46 mg de USDA FDC 170150 «Seeds, sesame seeds, whole, dried» (27 agosto). Se toma la ficha de sesamo ENTERO porque es la que cuadra con el resto de esta fila -- fosforo, potasio, magnesio y fibra coinciden casi al decimal con el entero. La unica casilla que no cuadra con nada es el calcio: ver `dato_dudoso`.",
+    "nota_datos": "CERRADO 3 septiembre, y no eligiendo un valor: la fila entera pasa a ser la de USDA FDC 170150 «Seeds, sesame seeds, whole, dried», que es lo que ya era todo menos el calcio.\n\nEl problema estaba escrito aqui desde el 27 de agosto: el calcio del sesamo no es un rango sino DOS valores, porque casi todo esta en la cascara -- con cascara 975 mg (USDA 170150 y FINELI 385, dos analiticas independientes que coinciden), pelado 60-66 (USDA 169412, FINELI 34245). Quitar la cascara lo divide por dieciseis. Nuestros 150 eran fieles a BEDCA 1127, pero BEDCA no dice de cual habla y 150 cae en el hueco vacio entre los dos polos: era una ficha de sesamo entero con el calcio de ninguno.\n\nLo que cierra la duda no es preferir 975 a 60: es que la revision externa confirmo que el FDC declarado en la ficha (170150) es el del sesamo ENTERO, y con el vinieron a la vez las otras ocho casillas -- hierro 9 -> 14,6, cinc 5,3 -> 7,75, selenio 49 -> 34,4, sodio 40 -> 11, energia 562 -> 573, proteina 19 -> 17,7, y fosforo, potasio y magnesio al decimal. La fila ya no es ambigua: es sesamo con cascara de principio a fin, y el calcio dice lo mismo que el resto.\n\nSIGUE FALTANDO la ficha de `sesamo pelado`, que es otro alimento y no esta en el catalogo. Eso es una carga de datos, no una duda: mientras no exista, quien pele el sesamo esta dando algo que el motor no conoce. Apuntado en PENDIENTE.\n\nMEDIDO el 27 de agosto y sigue valiendo: el solver no elige el sesamo en ninguno de los 21 menus automaticos con ninguno de los tres calcios, y forzando 5 g el Ca:P del menu se mueve 0,08 (1,47-1,55) porque el hueso compensa.\n\nY AL CERRARLO SALIO OTRA COSA (3 septiembre): la ficha tenia NUEVE ceros que nadie habia buscado nunca -- EPA, DHA, linoleico, linolenico, araquidonico, vitamina D, B12, yodo y acido pantotenico -- y no saltaban porque la auditoria avisa a partir de diez. El decimo lo puso esta misma correccion, al pasar el vitA de 6,6667 a 0 (ese si es un cero con fuente: USDA 170150 da 0). El grave es el LINOLEICO: el sesamo es de los alimentos con mas omega-6 que hay -- del orden de 21 g/100 g -- y la ficha declaraba cero, o sea que el motor contaba el sesamo como si no aportara omega-6, que es un nutriente con minimo de FEDIAF. Los nueve pasan a `sin_dato`. No se rellenan de memoria, ni siquiera los que se saben: eso es exactamente lo que se hizo el 21 de agosto con el timo y los testiculos y hubo que revertirlo. Van a DATOS_QUE_FALTAN.md.",
     "aminograma_estimado": {
       "desde": "Semillas de sésamo enteras, secas",
       "factor": "1.072",
@@ -6903,8 +6990,18 @@
       "nota": "mismo alimento"
     },
     "sin_dato": [
-      "purinas"
-    ]
+      "acidoPantotenico",
+      "araquidonico",
+      "dha",
+      "epa",
+      "linoleico",
+      "linolenico",
+      "purinas",
+      "vitB12",
+      "vitD",
+      "yodo"
+    ],
+    "fuente": "USDA FDC 170150 'Seeds, sesame seeds, whole, dried'."
   },
   {
     "nombre": "Albahaca",
@@ -6928,15 +7025,15 @@
       "tiamina": 0.15,
       "vitB12": 0,
       "vitB6": 2.32,
-      "calcio": 154,
-      "hierro": 42,
-      "potasio": 3433,
-      "magnesio": 422,
-      "sodio": 34,
-      "fosforo": 490,
+      "calcio": 177,
+      "hierro": 3.17,
+      "potasio": 295,
+      "magnesio": 64.0,
+      "sodio": 4,
+      "fosforo": 56,
       "yodo": 0,
-      "selenio": 2.8,
-      "zinc": 5.82,
+      "selenio": 0.3,
+      "zinc": 0.81,
       "cobre": 0.4,
       "manganeso": 0.9,
       "acidoPantotenico": 0.2,
@@ -6958,7 +7055,7 @@
       "purinas": 289.3
     },
     "fuente": "USDA FDC 172232 'Basil, fresh'.",
-    "nota_datos": "CORREGIDO 4 agosto. El valor anterior (178 kcal) era de albahaca SECA (FDC 171317, 233 kcal), no fresca. Error de x7,7.",
+    "nota_datos": "CORREGIDO 4 agosto. El valor anterior (178 kcal) era de albahaca SECA (FDC 171317, 233 kcal), no fresca. Error de x7,7.\n\nCORREGIDO 3 septiembre, y es el mismo error de agosto a medias: en agosto se arregló la ENERGÍA (seca por fresca, x7,7) pero los minerales se quedaron los de la albahaca DESHIDRATADA. Fósforo 490 contra 56, potasio 3.433 contra 295, hierro 42 contra 3,17: el factor entre seca y fresca (~11x, el agua que se va) seguía puesto en toda la fila menos en la casilla que se miró. Ahora la fila entera es la de USDA FDC 172232 'Basil, fresh', que es la que la ficha decía.",
     "sin_dato": [
       "arginina",
       "cistina",
@@ -9318,8 +9415,8 @@
       "linoleico": 0.507,
       "linolenico": 0.019,
       "araquidonico": 289,
-      "vitA": 11078.0,
-      "vitD": 1.3,
+      "vitA": 3296,
+      "vitD": 0.0,
       "vitE": 0.4,
       "folato": 380,
       "niacina": 14.8,
@@ -9328,15 +9425,15 @@
       "vitB12": 25,
       "vitB6": 0.8,
       "calcio": 8,
-      "hierro": 7.4,
-      "potasio": 218,
-      "magnesio": 13,
-      "sodio": 68,
+      "hierro": 8.99,
+      "potasio": 230,
+      "magnesio": 19.0,
+      "sodio": 71,
       "fosforo": 297,
       "yodo": 3,
-      "selenio": 55,
-      "zinc": 3.2,
-      "cobre": 4.5,
+      "selenio": 54.6,
+      "zinc": 2.67,
+      "cobre": 0.492,
       "manganeso": 0.3,
       "acidoPantotenico": 7,
       "colina": 290,
@@ -9356,7 +9453,7 @@
       "valina": 0.998,
       "purinas": 243.0
     },
-    "nota_datos": "AJUSTADO 4 agosto contra USDA (antes 137/22,12/4,7, dentro de rango pero se prefiere el valor USDA directo).",
+    "nota_datos": "AJUSTADO 4 agosto contra USDA (antes 137/22,12/4,7, dentro de rango pero se prefiere el valor USDA directo).\n\nCORREGIDO 3 septiembre, y las dos casillas graves iban en la dirección peligrosa. La vitamina A declaraba 11.078 ug/100 g contra los 3.296 de USDA FDC 171060, que es el FDC que la propia ficha cita: un factor 3,4 en el nutriente que tiene tope de seguridad y que es la razón por la que el hígado lleva un tope de plato. Con el valor inflado el motor creía que 30 g de hígado cubrían lo que cubren 100, y el error se compensaba solo mientras el hígado fuera el único que la aportara. El cobre declaraba 4,5 mg contra 0,492: nueve veces, y el cobre es el tope de la hepatopatía. Y la vitamina D, 1,3 ug: el hígado de pollo no tiene vitamina D en USDA, es un cero real.",
     "fuente": "USDA FDC 171060 'Chicken, liver, all classes, raw'.",
     "purinas_bases": {
       "adenina": 72.0,
@@ -10132,32 +10229,32 @@
   {
     "nombre": "Pollo pechuga sin piel",
     "categoria": "Carne muscular",
-    "energia": 114,
+    "energia": 120,
     "fuente": "USDA FDC 171077 'Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw'.",
     "nutrientes": {
-      "proteina": 21.23,
+      "proteina": 22.5,
       "grasa": 2.59,
       "calcio": 5,
       "fosforo": 210,
-      "potasio": 256,
+      "potasio": 334,
       "sodio": 45,
       "magnesio": 27,
-      "selenio": 27,
+      "selenio": 22.8,
       "dha": 0,
       "epa": 0,
       "linoleico": 0,
       "linolenico": 0,
       "araquidonico": 0,
       "hierro": 0.4,
-      "cobre": 0.0,
+      "cobre": 0.037,
       "zinc": 0.6,
       "vitB12": 0.2,
       "fibra": 0,
       "cloruro": 0,
       "manganeso": 0,
       "yodo": 0,
-      "vitA": 0,
-      "vitD": 0,
+      "vitA": 9,
+      "vitD": 0.0,
       "vitE": 0,
       "tiamina": 0,
       "riboflavina": 0,
@@ -10180,20 +10277,17 @@
       "valina": 1.165,
       "purinas": 174.9
     },
-    "nota_datos": "AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras.",
+    "nota_datos": "AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras.\n\nCORREGIDO 3 septiembre. La ficha ya declaraba su FDC del USDA y los números no eran los de ese FDC: se han traído los de la fuente que la propia ficha dice. Revisión externa de la consultoría nutricional (CORRECCIONES_CATALOGO.csv). Las 101 casillas se comprobaron una a una contra el valor que había antes de escribir nada: si una sola no hubiera coincidido, no se habría tocado el fichero.",
     "sin_dato": [
       "acidoPantotenico",
       "cloruro",
-      "cobre",
       "colina",
       "folato",
       "manganeso",
       "niacina",
       "riboflavina",
       "tiamina",
-      "vitA",
       "vitB6",
-      "vitD",
       "vitE",
       "yodo"
     ],
@@ -10218,7 +10312,7 @@
     "nutrientes": {
       "proteina": 19.66,
       "grasa": 3.91,
-      "calcio": 10,
+      "calcio": 7,
       "fosforo": 180,
       "potasio": 230,
       "zinc": 1.7,
@@ -10228,17 +10322,17 @@
       "linoleico": 0,
       "linolenico": 0,
       "araquidonico": 0,
-      "hierro": 0.68,
-      "cobre": 0.05,
+      "hierro": 0.81,
+      "cobre": 0.062,
       "vitB12": 0.62,
       "fibra": 0,
-      "sodio": 0,
+      "sodio": 95,
       "cloruro": 0,
-      "magnesio": 0,
+      "magnesio": 23.0,
       "manganeso": 0,
       "yodo": 0,
-      "vitA": 0,
-      "vitD": 0,
+      "vitA": 7,
+      "vitD": 0.0,
       "vitE": 0,
       "tiamina": 0,
       "riboflavina": 0,
@@ -10261,21 +10355,17 @@
       "valina": 0.933,
       "purinas": 141.7
     },
-    "nota_datos": "AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras.",
+    "nota_datos": "AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras.\n\nCORREGIDO 3 septiembre. La ficha ya declaraba su FDC del USDA y los números no eran los de ese FDC: se han traído los de la fuente que la propia ficha dice. Revisión externa de la consultoría nutricional (CORRECCIONES_CATALOGO.csv). Las 101 casillas se comprobaron una a una contra el valor que había antes de escribir nada: si una sola no hubiera coincidido, no se habría tocado el fichero.",
     "sin_dato": [
       "acidoPantotenico",
       "cloruro",
       "colina",
       "folato",
-      "magnesio",
       "manganeso",
       "niacina",
       "riboflavina",
-      "sodio",
       "tiamina",
-      "vitA",
       "vitB6",
-      "vitD",
       "vitE",
       "yodo"
     ],
@@ -10298,7 +10388,7 @@
     "categoria": "Hígado",
     "energia": 139,
     "fuente": "USDA FDC 172531 'Lamb, liver, raw'.",
-    "nota_datos": "⚠️ Vitamina A muy alta (~7.400 ug/100g). Limitar igual que el resto de higados: tope de plato por cobre. AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras.",
+    "nota_datos": "⚠️ Vitamina A muy alta (~7.400 ug/100g). Limitar igual que el resto de higados: tope de plato por cobre. AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras.\n\nCORREGIDO 3 septiembre. La ficha ya declaraba su FDC del USDA y los números no eran los de ese FDC: se han traído los de la fuente que la propia ficha dice. Revisión externa de la consultoría nutricional (CORRECCIONES_CATALOGO.csv). Las 101 casillas se comprobaron una a una contra el valor que había antes de escribir nada: si una sola no hubiera coincidido, no se habría tocado el fichero.",
     "nutrientes": {
       "proteina": 20.7,
       "grasa": 5.0,
@@ -10316,11 +10406,11 @@
       "zinc": 4.64,
       "selenio": 83.57,
       "fibra": 0,
-      "fosforo": 0,
-      "potasio": 0,
-      "sodio": 0,
+      "fosforo": 364,
+      "potasio": 313,
+      "sodio": 70,
       "cloruro": 0,
-      "magnesio": 0,
+      "magnesio": 19.0,
       "manganeso": 0,
       "yodo": 0,
       "vitD": 0,
@@ -10351,12 +10441,8 @@
       "cloruro",
       "colina",
       "folato",
-      "fosforo",
-      "magnesio",
       "manganeso",
       "niacina",
-      "potasio",
-      "sodio",
       "tiamina",
       "vitB6",
       "vitD",
@@ -10921,81 +11007,6 @@
     }
   },
   {
-    "nombre": "Laringe de vacuno",
-    "tipo": "Alimento",
-    "categoria": "Hueso carnoso",
-    "energia": 243.7,
-    "nutrientes": {
-      "proteina": 21.1,
-      "grasa": 17.7,
-      "dha": 0,
-      "epa": 0,
-      "linoleico": 0,
-      "linolenico": 0,
-      "araquidonico": 0,
-      "vitA": 0,
-      "vitD": 0,
-      "vitE": 0.2,
-      "folato": 9.5,
-      "niacina": 7.6,
-      "riboflavina": 0.17,
-      "tiamina": 0.04,
-      "vitB12": 1,
-      "vitB6": 0.28,
-      "calcio": 66.0,
-      "hierro": 1.8,
-      "potasio": 350,
-      "magnesio": 12.9,
-      "sodio": 60,
-      "fosforo": 44.0,
-      "yodo": 5.6,
-      "selenio": 8.8,
-      "zinc": 3.5,
-      "cobre": 0.12,
-      "manganeso": 0.038,
-      "acidoPantotenico": 1.33,
-      "colina": 65,
-      "cloruro": 92.4,
-      "fibra": 0.0,
-      "arginina": 0,
-      "histidina": 0,
-      "isoleucina": 0,
-      "leucina": 0,
-      "lisina": 0,
-      "metionina": 0,
-      "cistina": 0,
-      "fenilalanina": 0,
-      "tirosina": 0,
-      "treonina": 0,
-      "triptofano": 0,
-      "valina": 0,
-      "purinas": 0
-    },
-    "sin_dato": [
-      "araquidonico",
-      "arginina",
-      "cistina",
-      "dha",
-      "epa",
-      "fenilalanina",
-      "histidina",
-      "isoleucina",
-      "leucina",
-      "linoleico",
-      "linolenico",
-      "lisina",
-      "metionina",
-      "purinas",
-      "tirosina",
-      "treonina",
-      "triptofano",
-      "valina"
-    ],
-    "pct_carne": 0.35,
-    "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1, fila 'Cattle larynges'. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda.",
-    "nota_datos": "AÑADIDO 5 agosto (noche): Ca/P/proteina/grasa medidos por Köber 2017 en la pieza entera. Materia seca 42.2%, cenizas 2.9%. El resto de micronutrientes son ESTIMADOS a partir de 'Ternera con grasa' -- Köber solo midió Ca, P, materia seca, proteína, grasa y cenizas, igual que con 'Espinazo de conejo' y 'Pecho de ternera con hueso'. AVISO: con solo 66mg de calcio/100g, mucho más bajo que otros huesos (Costillas de cordero, Carcasa de pollo rondan 800-1800mg), NO puede ser la unica fuente de Hueso carnoso -- confirmado que falla solo, en cachorro y en adulto. Funciona bien combinada con otro hueso (probado: 345g junto a otros). Nunca elegir \"Todo: Vaca\" en Hueso carnoso esperando que baste sola."
-  },
-  {
     "nombre": "Bazo de vaca",
     "tipo": "Alimento",
     "categoria": "Vísceras",
@@ -11223,7 +11234,7 @@
       "yodo": 0,
       "selenio": 18.1,
       "zinc": 2.05,
-      "cobre": 0.035,
+      "cobre": 0.048,
       "manganeso": 0.12,
       "acidoPantotenico": 3.03,
       "colina": 0,
@@ -11243,7 +11254,7 @@
       "valina": 0.528,
       "purinas": 525.0
     },
-    "nota_datos": "Fuente: USDA FDC 170194 (SR Legacy). Por 100 g crudo, peso fresco.",
+    "nota_datos": "Fuente: USDA FDC 170194 (SR Legacy). Por 100 g crudo, peso fresco.\n\nCORREGIDO 3 septiembre. La ficha ya declaraba su FDC del USDA y los números no eran los de ese FDC: se han traído los de la fuente que la propia ficha dice. Revisión externa de la consultoría nutricional (CORRECCIONES_CATALOGO.csv). Las 101 casillas se comprobaron una a una contra el valor que había antes de escribir nada: si una sola no hubiera coincidido, no se habría tocado el fichero.",
     "sin_dato": [
       "cloruro",
       "colina",
@@ -11353,7 +11364,7 @@
       "selenio": 35.4,
       "folato": 0,
       "vitB12": 13.3,
-      "vitA": 80,
+      "vitA": 82,
       "vitD": 0.4,
       "vitE": 0.31,
       "tiamina": 0.165,
@@ -11382,13 +11393,13 @@
       "valina": 0.949,
       "purinas": 125.4
     },
-    "energia": 135,
+    "energia": 140,
     "sin_dato": [
       "cloruro",
       "folato",
       "yodo"
     ],
-    "nota_datos": "Fuente: USDA FoodData Central SR Legacy, FDC 171484. Por 100 g crudo, peso fresco.",
+    "nota_datos": "Fuente: USDA FoodData Central SR Legacy, FDC 171484. Por 100 g crudo, peso fresco.\n\nCORREGIDO 3 septiembre. La ficha ya declaraba su FDC del USDA y los números no eran los de ese FDC: se han traído los de la fuente que la propia ficha dice. Revisión externa de la consultoría nutricional (CORRECCIONES_CATALOGO.csv). Las 101 casillas se comprobaron una a una contra el valor que había antes de escribir nada: si una sola no hubiera coincidido, no se habría tocado el fichero.",
     "purinas_bases": {
       "adenina": 31.3,
       "guanina": 36.1,

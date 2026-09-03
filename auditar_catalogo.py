@@ -137,17 +137,47 @@ for a in al:
 #
 # Margen del 5%: los valores vienen de fuentes distintas y de analisis
 # distintos, asi que un pelo por encima no es un error de carga.
+#
+# ⚠️ Y SE MIRA TAMBIEN LA FILA PLAUSIBLE (3 septiembre). La dorada trajo el
+# caso: al corregir su grasa de 7,22 g a 1 g, sus acidos grasos -- que salen
+# de la fila de la dorada de piscifactoria -- dejaron de caber. No se pueden
+# arreglar porque no hay analitica de dorada salvaje publicada, asi que
+# quedan marcados en `dato_dudoso` con su `valor_plausible`. Si esta
+# comprobacion mirara solo la columna declarada, gritaria para siempre por
+# algo que YA esta declarado y seguido en [DUDOSO], y un aviso permanente
+# que no se puede cerrar es justo el que deja de leerse.
+# Asi que la pregunta es la buena: ¿existe alguna lectura de esta ficha en
+# la que los grasos quepan? Si con los plausibles caben, la incoherencia
+# esta declarada y la lleva [DUDOSO]. Si no caben ni asi, es un error de
+# carga y se avisa.
+def _grasos_no_caben(a_, n_, plausible):
+    grasa_ = n_.get("grasa") or 0
+    if not grasa_:
+        return None
+    def _v(k):
+        if plausible:
+            p_ = (a_.get("valor_plausible") or {}).get(k)
+            if isinstance(p_, dict):
+                try:
+                    return float(p_["valor"])
+                except (KeyError, TypeError, ValueError):
+                    pass
+        return n_.get(k) or 0
+    suma_ = sum(_v(k) for k in ("linoleico", "linolenico", "epa", "dha"))
+    suma_ += _v("araquidonico") / 1000.0
+    if suma_ > grasa_ * 1.05 and suma_ - grasa_ > 0.05:
+        return suma_, grasa_
+    return None
+
 for a in al:
     n = a.get("nutrientes") or {}
-    grasa = n.get("grasa") or 0
-    if not grasa:
-        continue
-    suma = sum(n.get(k) or 0 for k in ("linoleico", "linolenico", "epa", "dha"))
-    suma += (n.get("araquidonico") or 0) / 1000.0
-    if suma > grasa * 1.05 and suma - grasa > 0.05:
+    roto = _grasos_no_caben(a, n, plausible=False)
+    if roto and _grasos_no_caben(a, n, plausible=True):
+        suma, grasa = roto
         avisos.append(("GRASOS", a["nombre"],
                        f"los acidos grasos suman {suma:.2f} g y la grasa total es {grasa} g. "
-                       f"No caben. Lo mas probable: EPA/DHA cargados en mg en vez de g"))
+                       f"No caben, ni con los valores plausibles de la ficha. Lo mas "
+                       f"probable: EPA/DHA cargados en mg en vez de g"))
 
 # ── 2d. DATO DUDOSO: el valor que SI esta y no nos lo creemos ─────────
 #
@@ -345,10 +375,12 @@ for a_ in al:
     # FINELI -todas dan PORCION COMESTIBLE- estaria mal por dos ordenes
     # de magnitud y el menu saldria verde igual, porque 18 mg es un
     # numero perfectamente plausible para una carne.
-    # La LARINGE es la excepcion conocida y esta bien: es cartilago, no
-    # hueso, asi que no esta mineralizada y el calcio no la ve. Es la misma
-    # pieza que se deja sin aminograma a proposito.
-    if cat_ == "Hueso carnoso" and nom_ != "Laringe de vacuno":
+    # La LARINGE era la excepcion de esta regla -- cartilago, no hueso, sin
+    # mineralizar -- y desde el 3 de septiembre no hace falta: se fue del
+    # catalogo entero. La excepcion se quita a proposito, porque una
+    # excepcion escrita por un alimento que ya no esta es la forma de que el
+    # dia que vuelva a entrar algo con ese nombre no lo mire nadie.
+    if cat_ == "Hueso carnoso":
         ca_, fo_ = nut(a_, "calcio"), nut(a_, "fosforo")
         if ca_ and ca_ < 400:
             avisos.append(("HUESO", nom_,

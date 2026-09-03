@@ -1326,18 +1326,31 @@ ternera). Pasan a `sin_dato` para que salte el aviso de datos incompletos.
 - [ ] **Completar las cuatro vísceras** con la ficha de su fuente, igual
       que se hizo con el timo y los testículos.
 
-### Decisión pendiente: `Laringe de vacuno`
+### ~~Decisión pendiente: `Laringe de vacuno`~~ — DECIDIDA el 3 de septiembre
 
-Está en la categoría **Hueso carnoso** con **66 mg de calcio**. Los huesos
-carnosos de verdad traen entre 1.250 y 1.810. No es un error de dato: la
-laringe es cartílago, no hueso.
+Estaba en **Hueso carnoso** con **66 mg de calcio** cuando los huesos
+carnosos de verdad traen entre 1.250 y 1.810. No era un error de dato: la
+laringe es cartílago, no hueso, y contaba para el 20-60 % de hueso de la
+ración sin aportar el calcio que esa proporción da por supuesto. Eso solo
+no bastaba para sacarla —el calcio tiene mínimo duro, así que el menú lo
+cubría igual— y por eso esta decisión llevaba abierta desde el 5 de agosto.
 
-El problema es que cuenta para el 20-60 % de hueso de la ración sin
-aportar el calcio que esa proporción da por supuesto. No es peligroso —el
-calcio tiene mínimo duro, así que el menú lo cubre igual— pero permite
-menús que parecen BARF sin serlo.
+**Lo que la decidió fue un segundo motivo, independiente, que trajo la
+revisión externa:** la glándula tiroides va pegada a la laringe en los
+mamíferos, y ésa es la pieza del **hipertiroidismo por alimentación** en
+perros. La hormona no se destruye congelando ni se diluye de forma
+controlable, así que no hay dosis segura que topar — se excluye, como la
+borraja.
 
-- [ ] Decidir: moverla a `Extras`, o quitarla del catálogo.
+Y estaba **medio excluida**, que es la parte que enseña algo: fuera del
+menú automático desde el 5 de agosto y dentro del catálogo, o sea dentro
+de `/alimentos`, o sea dentro del selector de Personalizar, donde
+cualquiera podía elegirla y el motor la aceptaba. Es palabra por palabra
+lo que había pasado con la borraja el 27 de agosto, con el comentario que
+lo explica escrito treinta líneas más arriba en el mismo archivo.
+
+- [x] Fuera del catálogo, y en `seguridad.LARINGE_EXCLUIR` por si vuelve.
+      Lo vigila el **BLOQUE 44**, por las dos vías.
 
 ### Qué alimentos faltan, con evidencia
 
@@ -1365,6 +1378,107 @@ causa es la variedad de especies, no el número de alimentos:
 
 Los pescados (20) no se ven afectados por las alergias a mamíferos, y por
 eso la escalera de relajación funciona: casi siempre queda pescado.
+
+## 5-quinquies. Revisión externa de la consultoría (3 de septiembre)
+
+`CORRECCIONES_CATALOGO.csv`, 138 filas. **Las 103 marcadas CORREGIR están
+aplicadas**; las 35 marcadas VERIFICAR no, y no son trabajo de
+programación: son preguntas abiertas sobre datos.
+
+**Lo que se aplicó, y por qué importa cada bloque:**
+
+Las 101 casillas numéricas se comprobaron una a una contra el valor que
+tenía el catálogo antes de escribir nada — **coincidían las 101**, cero
+discrepancias — así que el CSV está construido sobre este mismo árbol y no
+sobre uno viejo. El patrón se repite en casi todas: **la ficha ya declaraba
+el FDC del USDA correcto y los números no eran los de ese FDC.**
+
+- **Albahaca (8 casillas).** Es el error de agosto a medias: entonces se
+  arregló la energía (seca por fresca, ×7,7) y los minerales se quedaron
+  los de la deshidratada. Fósforo 490 contra 56, potasio 3.433 contra 295,
+  hierro 42 contra 3,17.
+- **Hígado de pollo.** Las dos graves iban en la dirección peligrosa.
+  Vitamina A 11.078 µg contra 3.296 — factor 3,4 en el nutriente que tiene
+  tope de seguridad y que es la razón de que el hígado lleve tope de plato.
+  Cobre 4,5 mg contra 0,492 — nueve veces, y el cobre es el tope de la
+  hepatopatía.
+- **Las cinco pechugas y muslos** (pavo y pollo, con y sin piel): errores
+  de escala en vitamina A, yodos sin respaldo, y once huecos rellenados
+  desde el FDC que ya citaban.
+- **Dorada**: ver abajo, tiene su propio párrafo.
+- **Sésamo**: la duda del calcio, cerrada. Ver abajo.
+- **Doce ceros falsos** que la fuente daba como «trazas» → nuevo campo
+  `trazas`, explicado en `UNIDADES.md` y en `CLAUDE.md`.
+- **Laringe de vacuno**: fuera. Ver la decisión, arriba.
+
+**La dorada, que se resolvió por el lado contrario al que habíamos
+elegido.** Sabíamos desde el 26 de agosto que su ficha de BEDCA no cuadra
+consigo misma, y habíamos decidido salvar la grasa (7,22 g) y recalcular
+la energía a 133 kcal. FEN/Moreiras 2013 es una tercera fuente que da 77
+kcal y ~1 g de grasa, coincidiendo con los 78 kcal y los 82 g de agua de
+BEDCA: dos contra una, el campo imposible era la grasa. Con ella se va la
+vitamina D (14 µg → 1,5), que sola arrastraba casi toda la de la ración.
+
+- [ ] **Analítica de ácidos grasos de dorada SALVAJE.** Su bloque entero
+      de ácidos grasos sale de la fila de la de piscifactoría, y con 1 g de
+      grasa total no cabe: sumaba 1,97 g. Van marcados en `dato_dudoso` con
+      un `valor_plausible` reescalado por el cociente de grasas, que
+      protege el mínimo mientras el declarado sigue contando contra el
+      techo crónico de EPA+DHA. **O se decide que la dorada del catálogo es
+      de piscifactoría, y entonces lo que hay que deshacer es la corrección
+      de la grasa, no ésta.** Energía, grasa y ácidos grasos se deciden
+      juntos o no se decide ninguno.
+
+**El sésamo, cerrado sin elegir un valor.** La duda era que 150 mg de
+calcio no eran de ningún sésamo real —con cáscara 975, pelado 60-66, y 150
+cae en el hueco vacío entre los dos polos—. Lo que la cierra no es preferir
+975: es que el FDC que la ficha ya declaraba (170150) es el del sésamo
+ENTERO, y con él vinieron a la vez las otras ocho casillas de la fila. Ya
+no es ambigua.
+
+- [ ] **La ficha de `sésamo pelado`** sigue faltando, y es otro alimento.
+      Mientras no exista, quien pele el sésamo está dando algo que el motor
+      no conoce.
+- [ ] **Nueve huecos del sésamo**, que salieron al cerrarlo: EPA, DHA,
+      linoleico, linolénico, araquidónico, vitamina D, B12, yodo y ácido
+      pantoténico. Llevaban ahí desde siempre y no saltaban porque la
+      auditoría avisa a partir de diez. **El grave es el linoleico**: el
+      sésamo es de los alimentos con más omega-6 que hay —del orden de 21
+      g/100 g— y la ficha declaraba cero, o sea que el motor lo contaba
+      como si no aportara omega-6, que tiene mínimo de FEDIAF. Declarados
+      en `sin_dato`, sin rellenar de memoria.
+
+**Lo que queda abierto de las 35 filas VERIFICAR**, por orden de lo que
+desbloquea:
+
+- [ ] **La columna de HUMEDAD, en las 159 fichas.** Marcada GRAVE, y es
+      un prerrequisito, no un dato más: sin ella no se puede calcular la
+      densidad energética en materia seca, y **sin eso no se pueden
+      corregir los seis techos legales de FEDIAF**, que están dados por
+      100 g de materia seca. La densidad sobre producto fresco (1,60-1,71
+      kcal/g medido en menús reales) no sirve para esto: es otra base.
+      ⛔ **Y no toca a los mínimos**, que ya están por 1000 kcal y que
+      `main` además escala por DER efectiva desde el PR #58 — aplicarles un
+      factor de densidad sería corregir dos veces la misma columna por dos
+      motivos distintos. Mientras tanto la instrucción es dejar los techos
+      como están y **declarar en la interfaz que asumen 4.000 kcal/kg MS**:
+      un techo conservador declarado es mejor que uno mal escalado en
+      silencio.
+- [ ] **Los cinco yodos sin respaldo** (hígado de pollo, molleja de pollo,
+      las tres pechugas): USDA no publica yodo y esos números no se sabe de
+      dónde salen. La fila dice VACIAR. No se han vaciado todavía porque el
+      yodo tiene tope crónico y mínimo, y vaciar cinco fichas a la vez
+      mueve las dos direcciones — hay que medirlo antes.
+- [ ] **Los 22 cobres de BEDCA** (0,05-0,72 mg): misma duda de procedencia.
+- [ ] **Las diez fichas de hueso carnoso**: el método con el que se calculó
+      su energía, y los micronutrientes idénticos entre fichas que no
+      deberían serlo (carcasa y espinazo de conejo; carcasa de pato y
+      cuello de pavo; cuello de ternera y laringe).
+- [ ] **Cinco sospechosos sueltos**: yodo del lenguado (30), potasio de la
+      sardina (24), fósforo de la lubina (410), y la vitamina D del salmón
+      y de la caballa, que dependen de si son de cultivo o salvajes.
+- [ ] **Dos fichas mal nombradas**: «Gallina (carne sin hueso)» y «Pato
+      (carne sin hueso)» son en realidad el ave entera CON PIEL.
 
 ## 5-quater. Quién consigue los datos y quién los implementa
 

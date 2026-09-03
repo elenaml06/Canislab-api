@@ -81,10 +81,15 @@ HUESO = [
     # carnicería normal -- es una pieza muy especializada, típicamente
     # solo en mataderos, no a la venta al público. El criterio de esta
     # lista es "fácil/seguro de encontrar", no solo "con buenos datos".
-    # Se queda en el catálogo completo por si alguien la busca a mano
-    # explícitamente (avisando de la dificultad), pero el automático ya
-    # no la sugiere. Además, ya sabíamos que su calcio es demasiado
-    # bajo (66mg/100g) para sostener Hueso carnoso ella sola.
+    # ⚠️ Y ESO ERA MEDIA EXCLUSIÓN (3 septiembre). Decía aquí mismo que
+    # "se queda en el catálogo completo por si alguien la busca a mano",
+    # o sea que seguía en `/alimentos` y en el selector de Personalizar,
+    # donde cualquiera podía elegirla y el motor la aceptaba. La revisión
+    # externa trajo el motivo que faltaba para decidirlo: la glándula
+    # tiroides va pegada a la laringe, que es la pieza del hipertiroidismo
+    # alimentario. Ya no está en el catálogo, y `seguridad.LARINGE_EXCLUIR`
+    # la deja fuera aunque vuelva a entrar. Su calcio de 66 mg/100 g, que
+    # es el otro motivo, ya lo decía este comentario desde agosto.
 ]
 
 PESCADO = [

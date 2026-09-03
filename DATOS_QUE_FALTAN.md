@@ -589,16 +589,6 @@ opuestas.
 | linoleico (omega-6, C18:2) | g | |
 | linolenico (omega-3, C18:3) | g | |
 
-## Laringe de vacuno  ·  _Hueso carnoso_
-
-| Nutriente | Unidad | Valor |
-|---|---|---|
-| araquidonico | mg | |
-| dha | g | |
-| epa | g | |
-| linoleico (omega-6, C18:2) | g | |
-| linolenico (omega-3, C18:3) | g | |
-
 ## NEKTON Dog Easy-BARF (multivitamínico)  ·  _Multivitamínico_
 
 | Nutriente | Unidad | Valor |
@@ -724,9 +714,31 @@ opuestas.
 
 ## Semilla de sésamo  ·  _Extras_
 
+**Nueve huecos que salieron el 3 de septiembre** al cerrar la duda del
+calcio. Llevaban ahí desde siempre y no saltaban porque la auditoría avisa
+a partir de diez ceros sin declarar; el décimo lo puso la propia
+corrección, al pasar el vitA de 6,6667 a 0 (ese sí es un cero con fuente:
+USDA 170150 da 0). **El urgente es el linoleico**: el sésamo es de los
+alimentos con más omega-6 que hay —del orden de 21 g/100 g— y la ficha
+declaraba cero, así que el motor lo contaba como si no aportara omega-6,
+que es un nutriente con mínimo de FEDIAF. Todos están en USDA FDC 170150,
+que es la fuente que la ficha ya declara.
+
 | Nutriente | Unidad | Valor |
 |---|---|---|
-| cobre | mg | |
+| linoleico (omega-6, C18:2) | g | |
+| linolenico (omega-3, C18:3) | g | |
+| epa | g | |
+| dha | g | |
+| araquidonico | mg | |
+| vitD | µg | |
+| vitB12 | µg | |
+| yodo | µg | |
+| acidoPantotenico | mg | |
+
+Y falta una ficha entera, que es otro alimento y no un hueco: **`sésamo
+pelado`** (calcio 60-66 mg contra los 975 del entero). Mientras no exista,
+quien pele el sésamo está dando algo que el motor no conoce.
 
 ## Canónigos  ·  _Verduras y frutas_
 
@@ -804,3 +816,27 @@ proporciones internamente coherentes: el pavo del USDA cuadraba consigo mismo
 perfectamente y solo fallaba contra el resto del mundo. Un cociente entre dos
 aminoácidos de la misma fila, en cambio, **no se mueve al reescalar por la
 proteína del destino**, así que sobrevive a la transferencia y la delata.
+
+## Ácidos grasos de la dorada SALVAJE
+
+**Añadido el 3 de septiembre.** No es un hueco: es un valor declarado que
+sabemos que no es de este pescado. Al corregir la grasa de la dorada de
+7,22 g a 1 g —BEDCA había cruzado una de piscifactoría con una salvaje
+magra, y FEN/Moreiras 2013 confirma la magra— su bloque entero de ácidos
+grasos, que sale de esa misma fila de BEDCA, dejó de caber dentro de la
+grasa: sumaba 1,97 g.
+
+Están marcados en `dato_dudoso` con un `valor_plausible` reescalado por el
+cociente de grasas, que protege el mínimo mientras el declarado sigue
+contando contra el techo crónico de EPA+DHA. Lo que hace falta para
+cerrarlo es una analítica de ácidos grasos de dorada salvaje — **o la
+decisión contraria**: si la dorada del catálogo es de piscifactoría, lo que
+hay que deshacer es la corrección de la grasa, no ésta.
+
+| Nutriente | Unidad | Valor |
+|---|---|---|
+| epa | g | |
+| dha | g | |
+| linoleico (omega-6, C18:2) | g | |
+| linolenico (omega-3, C18:3) | g | |
+| araquidonico | mg | |

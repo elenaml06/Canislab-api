@@ -2225,7 +2225,6 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # números anclados en el BLOQUE 21. El boquerón era el urgente: con 6,3 g
     # de grasa es pescado azul, y aquel cero no era "no tiene" sino "no lo
     # sabíamos" -- el semáforo lo contaba como si de verdad no aportara nada.
-    ("RARO", "Laringe de vacuno"),
     # ⚠️ OMEGA-3 POR ENCIMA DEL OMEGA-6 (26 agosto). No es un error: son los
     # alimentos donde eso pasa de verdad -- el lino y tres con cantidades
     # minúsculas de los dos. La auditoría los lista a propósito, porque
@@ -2258,23 +2257,28 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # a `sin_dato` y el producto se queda, porque su motivo de existir es
     # el hierro y ese sí es coherente. Lo vigila el BLOQUE 30.
     #
-    # Queda uno solo, y es el que enseña para qué sirve de verdad
-    # `dato_dudoso`: el del sésamo NO se puede cerrar borrando nada, porque
-    # no sobra un producto -- falta partir una ficha en dos.
-    # El calcio del sésamo (27 agosto): 150 mg no son de NINGÚN sésamo real.
-    # Con cáscara son 975 (USDA 170150 y FINELI 385, dos analíticas
-    # independientes que coinciden) y pelado 60-66 (USDA 169412, FINELI
-    # 34245): casi todo el calcio está en la cáscara y quitarla lo divide
-    # por dieciséis. Nuestros 150 son fieles a BEDCA 1127, pero BEDCA no
-    # dice de cuál habla y caen en el hueco vacío entre los dos polos.
-    # El resto de la fila sí dice cuál es -- fósforo, potasio, magnesio y
-    # fibra son los del entero casi al decimal -- así que tenemos una ficha
-    # de sésamo entero con el calcio de ninguno.
-    # No se resuelve eligiendo uno: se resuelve partiendo la ficha en dos,
-    # y eso llega con la carga de alimentos. MEDIDO mientras tanto: el
-    # solver no lo usa en ninguno de los 21 menús automáticos con ninguno
-    # de los tres calcios, y forzando 5 g el Ca:P del menú se mueve 0,08.
-    ("DUDOSO", "Semilla de sésamo"),
+    # ⚠️ EL DEL SÉSAMO SE CERRÓ (3 septiembre) y merece la pena leer cómo,
+    # porque no fue eligiendo un valor. La duda era que el calcio, 150 mg,
+    # no era de NINGÚN sésamo real: con cáscara son 975 (USDA 170150 y
+    # FINELI 385) y pelado 60-66 (USDA 169412, FINELI 34245), y 150 caía en
+    # el hueco vacío entre los dos polos. Lo que la cerró fue que la
+    # revisión externa confirmó que el FDC que la ficha ya declaraba,
+    # 170150, es el del sésamo ENTERO, y con él vinieron a la vez las otras
+    # ocho casillas de la fila. Ahora el calcio dice lo mismo que el fósforo,
+    # el potasio y el magnesio: la fila es sésamo con cáscara de principio a
+    # fin y ya no es ambigua. La ficha de `sésamo pelado` sigue faltando,
+    # pero eso es una carga de datos, no una duda.
+    #
+    # Y EN SU SITIO ENTRARON CINCO, TODOS DE LA DORADA (3 septiembre). Al
+    # corregir su grasa de 7,22 g a 1 g -- BEDCA había cruzado una dorada de
+    # piscifactoría con una salvaje, y FEN/Moreiras 2013 confirma la magra --
+    # el bloque entero de ácidos grasos, que sale de esa misma fila de BEDCA,
+    # dejó de caber dentro de la grasa: sumaban 1,97 g. No se pueden
+    # corregir porque no hay analítica de ácidos grasos de dorada salvaje
+    # publicada, así que van marcados con un `valor_plausible` reescalado por
+    # el cociente de grasas, que protege el mínimo; contra el techo crónico
+    # de EPA+DHA sigue contando el declarado.
+    ("DUDOSO", "Dorada"),
 }
 
 import re as _re_b19
@@ -4840,6 +4844,94 @@ for _etq43c, _cuerpo43c in [
     if _no_verdes43:
         fallos.append(f"BLOQUE43 {_etq43c}: ha salido un menú que no está verde. Con prisa se "
                       f"acepta un menú con un alimento de más, nunca uno que no cumpla.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 44 — LA LARINGE FUERA POR LAS DOS VÍAS, Y EL TERCER ESTADO
+#             DE UN CERO
+# ============================================================
+#
+# ⚠️ CASO REAL (3 septiembre, revisión externa de la consultoría). La
+# laringe de vacuno llevaba desde el 5 de agosto MEDIO excluida: fuera del
+# menú automático (`accesibles.py`) y dentro del catálogo, o sea dentro de
+# `/alimentos`, o sea dentro del selector de Personalizar, donde cualquiera
+# podía elegirla y el motor la aceptaba sin rechistar. Es palabra por
+# palabra lo que había pasado con la borraja el 27 de agosto, y el
+# comentario que lo explica estaba escrito treinta líneas más arriba en el
+# mismo archivo.
+#
+# Lo que faltaba para decidirlo era el segundo motivo, y no era el del
+# calcio: la glándula tiroides va pegada a la laringe en los mamíferos, y
+# ésa es la pieza del hipertiroidismo por alimentación en perros. La
+# hormona no se destruye congelando. No hay dosis segura publicada, así que
+# se excluye, no se topa.
+#
+# Se comprueban las DOS vías a propósito, porque cada una tapa el fallo de
+# la otra: si solo se comprobara el catálogo, mañana alguien vuelve a
+# cargarla y el motor la aceptaría; si solo se comprobara el conjunto, el
+# motor la rechazaría pero seguiría saliendo en el selector.
+print("\n=== BLOQUE 44: la laringe fuera, y `trazas` ===")
+
+import importlib as _il44
+_seg44 = _il44.import_module("seguridad")
+_al44 = json.load(open("alimentos_v3_final.json", encoding="utf-8"))
+
+if any("laringe" in a["nombre"].lower() for a in _al44):
+    fallos.append("BLOQUE44: ha vuelto una laringe al catálogo. Lleva pegada la glándula "
+                  "tiroides y es la pieza del hipertiroidismo alimentario; no hay dosis "
+                  "segura publicada. Si es a propósito, hay que discutirlo, no colarlo.")
+
+if "laringe" not in getattr(_seg44, "EXCLUIDOS_SIEMPRE", set()):
+    fallos.append("BLOQUE44: se ha quitado la laringe de `seguridad.EXCLUIDOS_SIEMPRE`. Eso "
+                  "es la red por si vuelve al catálogo: sin ella, el día que alguien la "
+                  "cargue otra vez el motor la aceptará y nadie se enterará.")
+if "borraja" not in getattr(_seg44, "EXCLUIDOS_SIEMPRE", set()):
+    fallos.append("BLOQUE44: la borraja ya no está en `seguridad.EXCLUIDOS_SIEMPRE`. El "
+                  "conjunto unificó los dos el 3 de septiembre; si alguien deshace la unión "
+                  "hay que comprobar los cuatro puntos del motor que preguntan por él.")
+
+# ── Y EL TERCER ESTADO DE UN CERO ──────────────────────────────────────
+# El catálogo sabía decir dos cosas de un número: `sin_dato` para "no lo
+# sabemos" y `dato_dudoso` para "lo sabemos y no nos lo creemos". Faltaba
+# la tercera, y BEDCA sí la distingue: TRAZAS. Once pescados y el pollo con
+# piel declaraban 0 de vitamina A o D donde su fuente dice "trazas", que no
+# es lo mismo que cero ni es un hueco.
+#
+# Numéricamente `trazas` vale cero en las dos direcciones, y eso es
+# correcto: contra un mínimo es el lado conservador, y contra un techo una
+# traza está por definición por debajo del límite de cuantificación, así
+# que no puede acercarse a nada. Lo que cambia es que deja de ser un cero
+# FALSO -- un "no tiene" que nadie comprobó.
+#
+# Por eso el peligro no es el número sino la confusión con `sin_dato`: si
+# alguien barre estas casillas a `sin_dato`, el motor las imputará al
+# percentil 90 de su familia contra los techos, que para la vitamina D de
+# un pescado es un disparate en la otra dirección. Las dos listas tienen
+# que ser disjuntas, y el valor tiene que seguir siendo cero.
+_TRAZAS_ESPERADAS_b44 = 14
+_n_trazas44, _rotos44 = 0, []
+for _a44 in _al44:
+    _tz = _a44.get("trazas") or []
+    _n_trazas44 += len(_tz)
+    _sd = set(_a44.get("sin_dato") or [])
+    for _k44 in _tz:
+        if _k44 in _sd:
+            _rotos44.append(f"{_a44['nombre']}·{_k44} está en `trazas` Y en `sin_dato`")
+        if _k44 not in (_a44.get("nutrientes") or {}):
+            _rotos44.append(f"{_a44['nombre']}·{_k44} está en `trazas` y no es un nutriente")
+        elif (_a44["nutrientes"].get(_k44) or 0) != 0:
+            _rotos44.append(f"{_a44['nombre']}·{_k44} está en `trazas` y vale "
+                            f"{_a44['nutrientes'][_k44]}, no cero")
+if _rotos44:
+    fallos.append("BLOQUE44: `trazas` incoherente: " + "; ".join(_rotos44))
+if _n_trazas44 < _TRAZAS_ESPERADAS_b44:
+    fallos.append(f"BLOQUE44: había {_TRAZAS_ESPERADAS_b44} casillas marcadas como `trazas` "
+                  f"y quedan {_n_trazas44}. Si alguien las ha pasado a cero declarado, ha "
+                  f"vuelto a poner un cero falso donde la fuente dice trazas; si las ha "
+                  f"pasado a `sin_dato`, el motor las imputará al percentil 90 de su "
+                  f"familia contra los techos, que es peor.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

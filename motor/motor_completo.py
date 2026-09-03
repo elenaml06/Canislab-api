@@ -410,12 +410,12 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # infactible sin motivo real. Quitarlos aquí, del catálogo de
         # candidatos, evita que puedan "gastar" cupo de ninguna
         # restricción, sea la que sea.
-        from seguridad import OXALATO_ALTO, PURINAS_ALTAS, BORRAJA_EXCLUIR, _es as _es_patologia
+        from seguridad import OXALATO_ALTO, PURINAS_ALTAS, EXCLUIDOS_SIEMPRE, _es as _es_patologia
         if "oxalato" in (patologias or []):
             disp = [n for n in disp if not _es_patologia(n, OXALATO_ALTO)]
         if "urato" in (patologias or []) and cat in ("Hígado", "Vísceras", "Pescados y mariscos"):
             disp = [n for n in disp if not _es_patologia(n, PURINAS_ALTAS)]
-        disp = [n for n in disp if not _es_patologia(n, BORRAJA_EXCLUIR)]
+        disp = [n for n in disp if not _es_patologia(n, EXCLUIDOS_SIEMPRE)]
         disp = [n for n in disp
                if not any(pat in (patologias or [])
                          for pat in (alimentos.get(n, {}).get("restricciones_patologia") or {}))]
@@ -448,7 +448,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                 if alimentos.get(n, {}).get("categoria") not in categorias_excluidas]
     if "oxalato" in (patologias or []):
         _sup = [n for n in _sup if not _es_patologia(n, OXALATO_ALTO)]
-    _sup = [n for n in _sup if not _es_patologia(n, BORRAJA_EXCLUIR)]
+    _sup = [n for n in _sup if not _es_patologia(n, EXCLUIDOS_SIEMPRE)]
     _sup = [n for n in _sup
             if not any(pat in (patologias or [])
                       for pat in (alimentos.get(n, {}).get("restricciones_patologia") or {}))]
@@ -559,10 +559,11 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # estar aquí" sobre un menú que él mismo ya había generado. Ahora se
     # excluyen con el MISMO mecanismo que ya usaba la fruta en diabetes
     # (techo a 0): oxalato con antecedente de urolitos, urato con
-    # predisposición, borraja siempre (toxicidad real, no depende de
-    # patología), y las restricciones propias de cada alimento en el
+    # predisposición, los excluidos siempre (borraja y laringe: toxicidad
+    # real, no depende de patología), y las restricciones propias de cada
+    # alimento en el
     # catálogo (grelo/nabo, dátil/mango/plátano, coco...).
-    from seguridad import OXALATO_ALTO, PURINAS_ALTAS, BORRAJA_EXCLUIR, _es as _es_patologia
+    from seguridad import OXALATO_ALTO, PURINAS_ALTAS, EXCLUIDOS_SIEMPRE, _es as _es_patologia
     excluye_oxalato = "oxalato" in (patologias or [])
     excluye_urato = "urato" in (patologias or [])
     CATEGORIAS_PURINAS_REALES = {"Hígado", "Vísceras", "Pescados y mariscos"}
@@ -578,7 +579,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         if excluye_urato and _es_patologia(n, PURINAS_ALTAS) and a.get("categoria") in CATEGORIAS_PURINAS_REALES:
             techos.append(0.0)
             continue
-        if _es_patologia(n, BORRAJA_EXCLUIR):
+        if _es_patologia(n, EXCLUIDOS_SIEMPRE):
             techos.append(0.0)
             continue
         restr_propia = a.get("restricciones_patologia") or {}

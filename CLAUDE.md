@@ -349,7 +349,7 @@ valores plausibles, y el menú sale verde igual. Lo vigilan el BLOQUE 26,
 que ancla el aceite de girasol y el de linaza, y `auditar_catalogo.py`,
 que lista los nueve alimentos donde el omega-3 supera al omega-6.
 
-**Los dos campos que dicen qué NO nos creemos.** Un 0 en el catálogo puede
+**Los TRES campos que dicen qué NO nos creemos.** Un 0 en el catálogo puede
 ser «no lo tiene» o «no lo sabemos», y eso lo separa `sin_dato`. Pero falta
 la otra mitad: **un valor declarado y erróneo no dejaba rastro en ninguna
 parte**, y es el que hace daño, porque tiene la forma de un dato bueno y
@@ -364,6 +364,21 @@ parecía al de la etiqueta lo bastante como para que nadie mirara. Lo que se
 puede arreglar se arregla; lo que no —porque el valor es el de la etiqueta
 y el real no está publicado— va en **`dato_dudoso`**, que `verificar()`
 devuelve junto al menú igual que los huecos. Lo vigila el BLOQUE 28.
+
+Y **el tercero es `trazas`** (3 de septiembre), que es el 0 que sí lo es
+pero no es un «no tiene». BEDCA distingue tres cosas —0, trazas y n.d.— y
+el catálogo solo sabía escribir dos, así que once pescados y el pollo con
+piel declaraban un cero redondo de vitamina A o D donde la fuente dice
+«trazas». Numéricamente no cambia nada, y eso es lo correcto: contra un
+mínimo el cero es el lado conservador, y contra un techo una traza está
+por definición por debajo del límite de cuantificación. Lo que cambia es
+que deja de ser un cero **falso** —un «no tiene» que nadie comprobó—, que
+es la familia entera de fallos contra la que van los otros dos campos.
+El peligro no es el número: es que alguien las barra a `sin_dato`, y
+entonces el motor las imputa al percentil 90 de su familia contra los
+techos, que para la vitamina D de un pescado es un disparate en la otra
+dirección. Por eso el **BLOQUE 44** exige que las dos listas sean
+disjuntas y que el valor siga siendo cero.
 
 En la raíz, los cuatro: `alimentos_v3_final.json` (el catálogo),
 `requerimientos_v2_final.json` (la tabla de FEDIAF), `catalogo_menus.json`

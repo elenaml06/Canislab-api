@@ -125,6 +125,27 @@ porque podríamos pasarnos de cobre o de selenio sin enterarnos.
 Déjalo vacío y que se declare en `sin_dato`, que es la lista de huecos
 conocidos. Los que faltan hoy están en `DATOS_QUE_FALTAN.md`, uno a uno.
 
+**Y si la fuente dice «trazas», tampoco es cero ni es un hueco.** BEDCA
+distingue tres cosas —0, trazas y n.d.— y hasta el 3 de septiembre el
+catálogo solo sabía escribir dos, así que las trazas se guardaban como un
+cero redondo. El número que va en `nutrientes` sigue siendo 0, y eso está
+bien —una traza está por debajo del límite de cuantificación, así que ni
+suma para un mínimo ni se acerca a un techo—, pero la clave va **además**
+en la lista `trazas` de la ficha. Sirve para que ese cero no se confunda
+nunca con un «no lo tiene» que nadie comprobó, y para que nadie lo barra a
+`sin_dato`: si acaba ahí, el motor lo imputa al percentil 90 de su familia
+contra los techos, que para la vitamina D de un pescado es pasarse por el
+otro lado. `trazas` y `sin_dato` tienen que ser **disjuntas**, y lo exige
+el BLOQUE 44.
+
+Resumiendo los tres estados de un número que no es una medida limpia:
+
+| Lo que sabes | Dónde va |
+|---|---|
+| No lo sabemos | 0, y la clave en `sin_dato` |
+| Lo sabemos y no nos lo creemos | el valor tal cual, y la clave en `dato_dudoso` (con su `valor_plausible` si hay una cota defendible) |
+| La fuente dice «trazas» | 0, y la clave en `trazas` |
+
 **Y no lo dejes fuera del diccionario, que es peor.** Un hueco puede
 esconderse de tres maneras, y las tres acaban valiendo 0 para el motor:
 

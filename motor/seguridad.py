@@ -368,6 +368,45 @@ HUESO_RIESGO_ASTILLADO = {"costillas de cordero"}
 # tiene que seguir funcionando aunque el alimento reaparezca.
 BORRAJA_EXCLUIR = {"borraja"}
 
+# ⚠️ LARINGE DE VACUNO — TEJIDO TIROIDEO. La glandula tiroides esta adherida
+# a la laringe en los mamiferos, y separarla limpiamente en el despiece no
+# esta garantizado. El hipertiroidismo alimentario del perro por carne de
+# cuello y garganta es la razon de que la regla del tejido tiroideo exista
+# en este motor; la laringe es exactamente esa pieza. Como con la borraja,
+# aqui NO hay una dosis segura publicada por debajo de la cual este bien: la
+# hormona tiroidea del tejido no se destruye congelando ni se diluye de
+# forma controlable, asi que se EXCLUYE, no se topa.
+#
+# Y HAY UN SEGUNDO MOTIVO, INDEPENDIENTE, que ya estaba medido aqui desde
+# agosto: la laringe es CARTILAGO, no hueso. Traia 66 mg de calcio/100 g
+# cuando un hueso carnoso de verdad trae entre 1.250 y 1.810, y estaba en la
+# categoria «Hueso carnoso». O sea que contaba para el 20-60 % de hueso de
+# la racion sin traer el calcio que esa proporcion da por supuesto: menus
+# que parecen BARF sin serlo. Eso solo no la sacaba del catalogo -- el
+# calcio tiene minimo duro y el menu lo cubria igual -- y por eso llevaba
+# desde el 5 de agosto como decision pendiente en PENDIENTE.md, entre
+# «moverla a Extras» y «quitarla». El motivo tiroideo la decide.
+#
+# MEDIA EXCLUSION NO VALE, y esta era media: `accesibles.py` la sacaba del
+# menu AUTOMATICO desde el 5 de agosto, pero seguia en el catalogo, o sea en
+# `/alimentos`, o sea en el selector de Personalizar, donde cualquiera podia
+# elegirla a mano y el motor la aceptaba. Es palabra por palabra lo que paso
+# con la borraja y por lo que se escribio el parrafo de arriba.
+#
+# Este conjunto se queda por si alguien la vuelve a meter: la exclusion
+# tiene que seguir funcionando aunque el alimento reaparezca. Se busca por
+# «laringe» a secas, no por el nombre completo, para que una ficha nueva
+# («Laringe de cerdo», «Laringe de cordero») entre tambien.
+LARINGE_EXCLUIR = {"laringe"}
+
+# Los alimentos que se excluyen SIEMPRE, sea cual sea el perro, el modo y la
+# patologia. No es una lista de «poco recomendables»: es la lista de los que
+# no tienen dosis segura publicada. Existe para que el motor pregunte una
+# sola cosa en cada sitio en vez de encadenar conjuntos -- cuando se anadio
+# la laringe habia CUATRO puntos del motor preguntando por la borraja, y
+# cuatro sitios que actualizar a mano es como se olvida uno.
+EXCLUIDOS_SIEMPRE = BORRAJA_EXCLUIR | LARINGE_EXCLUIR
+
 # ⚠️ RESTRICCIONES POR PATOLOGIA — investigadas 4 agosto, mismo patron que
 # el oxalato/urato: en perro SANO no se tocan, solo se activan si la
 # patologia esta declarada. Los datos concretos viven en el propio
@@ -573,6 +612,19 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
             "hígado, en la hoja — no se recomienda como verdura habitual, "
             "en ninguna cantidad (EFSA, agencia de seguridad alimentaria "
             "del Reino Unido)." % ", ".join(borr))
+
+    # 3b-ter. LARINGE — mismo tratamiento y por el mismo motivo: no hay
+    # cantidad segura, así que el aviso no habla de "en exceso". Va después
+    # de la exclusión del motor y no en su lugar: esta función también
+    # revisa lo que trae un menú de fuera (`/analizar`, una edición a mano),
+    # donde puede aparecer una laringe que el motor nunca habría puesto.
+    lar = [n for n in menu if _es(n, LARINGE_EXCLUIR)]
+    if lar:
+        problemas.append(
+            "%s lleva pegada la glándula tiroides — es la pieza del cuello "
+            "que causa el hipertiroidismo por alimentación en perros, y la "
+            "hormona no se destruye congelando. Mejor no darla, en ninguna "
+            "cantidad." % ", ".join(lar))
 
     # 3b-bis. RESTRICCIONES POR PATOLOGÍA GUARDADAS EN EL PROPIO ALIMENTO
     # (grelo/nabo en hipotiroidismo, dátil/mango/plátano en diabetes,
