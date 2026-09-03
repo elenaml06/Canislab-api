@@ -1466,6 +1466,121 @@ no es ambigua.
       como si no aportara omega-6, que tiene mínimo de FEDIAF. Declarados
       en `sin_dato`, sin rellenar de memoria.
 
+## 5-sexies. Los 89 cambios de `CAMBIOS_NUTRICIONALES.md`
+
+Estado real de cada uno contra este árbol, comprobado mirando el código y
+los datos, no supuesto.
+
+**Ya estaban hechos** (§1.2 los seis techos legales derivados · §2.2 cerdo
+crudo, no hay ninguna ficha · §2.4 fosfatos inorgánicos, tampoco · §3.6
+`der.py` sin factores de enfermedad sobre el RER · §4.1 peso ideal desde
+BCS · §6.1 la ratio omega sin semáforo · §7.1 calcio por peso adulto · §7.2
+ratio Ca:P verificado · §7.3 techo de calcio en crecimiento a 4,5 g/1000
+kcal · §10 `dato_no_fiable` y `duplicado_de` sacando fichas del solver).
+Y §3.1-3.4, el KAB, **no está implementado y eso es lo correcto**: faltan
+dos de sus siete iones.
+
+**Aplicados el 3 de septiembre:**
+
+- **§1.1 el techo LEGAL de la vitamina D**, 800 → 567,50 UI/1000 kcal. Es
+  el único nutriente del perfil canino donde el legal cae por debajo del
+  nutricional, así que era fácil incumplirlo sin enterarse. Va en
+  `maxLegalAdulto` y **no** sustituyendo a `maxAdulto`, que es la cifra que
+  FEDIAF imprime y la que `auditar_fediaf.py` compara contra el PDF.
+  Medido: seis perfiles reales van al 28-45 % de ese techo, no cuesta ni un
+  menú.
+- **§2.1 el tejido tiroideo**, con los tres cuellos fuera del catálogo.
+- **§10** las 103 filas CORREGIR del catálogo (ver 5-quinquies).
+- Y **un agujero que no venía en el documento**:
+  `_menu_precalculado_es_seguro()` comprobaba los cinco topes crónicos y no
+  miraba `EXCLUIDOS_SIEMPRE`, así que la vía rápida —la que sirve un menú
+  sin volver a pasar por el solver, en cuatro sitios de `main.py`— habría
+  servido un menú precalculado con borraja o con cuello. No rompía nada de
+  milagro, porque no había ninguno en `catalogo_menus.json`.
+
+### Lo que necesita una entrada nueva en la ficha del perro
+
+Ninguno de estos es difícil de programar: lo que falta es **preguntar el
+dato**, y eso toca la ficha en los dos repos y la tabla de Supabase. Van
+juntos porque es una sola pasada por la pantalla de la ficha.
+
+- [ ] **§5.2 UPC** — la restricción proteica renal se dispara hoy por
+      estadio IRIS y debe dispararse por UPC > 0,5 con independencia del
+      estadio (IRIS 2023). Un motor que solo pida el estadio no puede
+      aplicar la recomendación vigente.
+- [ ] **§3.7 número de cachorros** — la lactación va hoy con un rango
+      4-8 × RER, que en una hembra de 25 kg son 2.800-5.600 kcal/día. La
+      tabla por número de cachorros (1 → 3,0 · 2 → 3,5 · 3-4 → 4,0 ·
+      5-6 → 5,0 · 7-8 → 5,5 · ≥9 → ≥6,0) no se puede aplicar sin el dato.
+      **Y toca `der.py` y `der.js` a la vez**, con `der_casos.json` de por
+      medio: los dos commits, o ninguno.
+- [ ] **§5.7 grasa (% EM) de la dieta que comía al diagnóstico** — es el
+      método preferente en pancreatitis (la mitad de esa cifra). Sin el
+      dato solo se puede usar el punto de partida del ~20 % EM.
+- [ ] **§2.5 inmunosupresores** y **§2.6 tratamiento oncológico activo** —
+      los dos son bloqueo. El corticoide suele ser por dermatología, que es
+      una de las razones por las que la gente prueba el crudo.
+- [ ] **§8 ¿conviven personas inmunodeprimidas, ancianas, embarazadas o
+      niños pequeños?** — no cambia la ración: dispara un aviso de salud
+      pública. Es la única condición del documento europeo que no se
+      refiere al animal.
+- [ ] **§8 qué come y en qué cantidad REAL**, no la ofrecida.
+
+### Lo que necesita un alimento nuevo o una columna nueva
+
+- [ ] **§5.3 L-metionina en el catálogo.** Por debajo de ~30-40 g de
+      proteína/1000 kcal los azufrados dejan de salir de la propia
+      proteína: con el suelo renal de 20 g el perfil aporta 0,52 g de
+      metionina contra un RA de 0,83. **Sin esta ficha el perfil renal
+      avanzado es infactible siempre.** Y hacen falta dos comprobaciones
+      independientes, metionina sola y Met+Cys, porque la cisteína cubre
+      como máximo la mitad.
+- [ ] **§3.3 la columna de azufre** y **el cloruro real** — sin ellos el
+      KAB no se puede calcular. El cloruro es hoy sodio × 1,54 en 111 de
+      117 fichas, y las seis con cloruro medido dan ratios de 0,55 a 1,78:
+      la derivación no es ni buena media. El azufre sí se puede estimar
+      desde metionina y cistina, que ya están en 94 fichas, declarándolo
+      como cota inferior.
+- [ ] **§1.3 la columna de humedad** — ver más abajo, es el prerrequisito
+      de los techos legales.
+
+### Lo que es una decisión de producto, no de programación
+
+- [ ] **§5.1 y §5.7 los parámetros de nivel B** — que el veterinario pueda
+      mover la grasa de pancreatitis, y **que ese cambio sobreviva al
+      recálculo**. Si el motor vuelve a correr y restaura su valor en
+      silencio, el criterio del veterinario se pierde sin que nadie se
+      entere. Es la misma familia de fallos que los avisos puestos a `null`
+      a mano en la pantalla de varios perros.
+- [ ] **§9 las comorbilidades con intersección vacía** —
+      cardíaco+artrosis por el sodio, artrosis+renal por el omega-3,
+      cáncer+renal por la proteína. El MILP puede ser genuinamente
+      infactible y tiene que **decir qué dos restricciones chocan**, no
+      promediar hasta que salga un número. Hoy dice «no hay menú».
+- [ ] **§1.5 el tope del 10 % de la energía para premios y snacks**, y que
+      los premios se cuenten siempre en vez de quedarse fuera del cálculo.
+- [ ] **§3.8 redondear las kcal a la decena** y exigir pesaje cada dos
+      semanas. Devolver «1.247 kcal/día» finge una exactitud que el método
+      no tiene: el propio requerimiento puede diferir un 50 %.
+- [ ] **§4.2 a §4.6, todo el bloque de adelgazamiento** — reformular en vez
+      de servir menos, no corregir por densidad en esa etapa (es la única
+      excepción conocida), los objetivos de la ración, la ventana de tiempo
+      esperada y los 7.920 kcal/kg de tejido adiposo.
+- [ ] **§12 los claims** — sarro sí, periodontitis no; el hueso recreativo
+      intermitente y no diario; y que una analítica normal no valida una
+      ración.
+
+### Y el menú de ejemplo de la portada
+
+- [ ] En `canislab-web`, `MENUS_EJEMPLO` nombra tres alimentos que el motor
+      no tiene: «Alitas de pollo», «Costillas de ternera» y «Pechuga de
+      pavo sin piel» (la ficha se llama «Pavo pechuga sin piel»). No rompe
+      nada —es una imagen, no pasa por el motor— pero enseña una ración que
+      la app no puede generar. `catalogo-app-y-motor.spec.js` no lo caza
+      porque solo mira `CATEGORIAS_ALIMENTO`.
+
+---
+
 **Lo que queda abierto de las 35 filas VERIFICAR**, por orden de lo que
 desbloquea:
 

@@ -58,8 +58,22 @@ CARNE = [
 # Pierna de cordero con hueso y Huesos de cuello de ternera se QUITARON del
 # catálogo (riesgo de fractura dental, huesos de carga). Pecho de vacuno y
 # Pecho de ternera con hueso también se quitaron (difíciles de conseguir).
+# ⚠️ Y SE FUERON LOS TRES CUELLOS (3 septiembre) — TEJIDO TIROIDEO. Cuello
+# de pavo, de pato y de ternera. La glándula tiroides va pegada al cuello y
+# a la tráquea en los mamíferos, y separarla limpiamente en el despiece no
+# está garantizado: el hipertiroidismo ALIMENTARIO del perro por recortes de
+# cuello y garganta es una enfermedad descrita, y en la serie publicada la
+# mitad de los perros estaba asintomática con la T4 ya alta. No hay dosis
+# segura publicada, así que se excluye, no se topa.
+# Eran 3 de las 9 fichas de hueso carnoso, y por eso se midió antes de
+# hacerlo: cinco escenarios --adulto sin alergias, con 3, con 5, cachorro
+# con 3 y toy-- siguen los cinco en verde con el hueso en 6 fichas. Ver
+# `seguridad.TIROIDES_EXCLUIR`, el BLOQUE 45 y PENDIENTE 5-quinquies, donde
+# queda apuntada la pregunta de si el cuello de AVE aplica igual que el de
+# vacuno: los casos publicados son de vacuno y el documento dice «cuello»
+# sin distinguir especie.
 HUESO = [
-    "Carcasa de pollo", "Cuello de pavo", "Cuello de pato", "Carcasa de pato",
+    "Carcasa de pollo", "Carcasa de pato",
     "Costillas de cordero", "Carcasa de conejo",
     # ⚠️ AÑADIDO (5 agosto, noche): los dos con respaldo real del estudio
     # de Köber et al. 2017 (ESVCN) que la usuaria ya había pasado antes.
@@ -67,15 +81,15 @@ HUESO = [
     # llegado a esta lista curada -- solo se podía usar a mano.
     "Espinazo de conejo", "Pecho de ternera con hueso",
     # ⚠️ AÑADIDO (5 agosto, noche) — segunda pasada por la tabla completa
-    # del mismo estudio: "Cuello de ternera" es la fila que faltaba y
-    # SÍ es segura (ratio Ca:P normal) Y fácil de conseguir.
+    # del mismo estudio: "Cuello de ternera" era la fila que faltaba y
+    # SÍ era segura por Ca:P y fácil de conseguir -- pero se fue el 3 de
+    # septiembre por tejido tiroideo, que es otro eje distinto del Ca:P.
     # "Escápula de vacuno" y "cartílago de vacuno" quedan fuera a
     # propósito: el propio estudio dice que su ratio Ca:P está invertido
     # y no son una buena fuente de calcio. "Pierna de cordero con hueso"
     # también queda fuera: ya se había excluido antes por riesgo de
     # fractura dental (hueso de carga), es una decisión de seguridad
     # tomada antes, no una falta de datos.
-    "Cuello de ternera",
     # ⚠️ QUITADO (5 agosto, madrugada): "Laringe de vacuno" tenía datos
     # científicos reales, pero NO es un alimento que se consiga en una
     # carnicería normal -- es una pieza muy especializada, típicamente

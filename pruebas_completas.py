@@ -4938,6 +4938,112 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 45 — EL TEJIDO TIROIDEO, Y EL AGUJERO DE LA VÍA RÁPIDA
+# ============================================================
+#
+# ⚠️ CASO REAL (3 septiembre, revisión externa). El hipertiroidismo
+# ALIMENTARIO del perro viene de los recortes de cuello, garganta y esófago:
+# la glándula tiroides va pegada a la laringe y a la tráquea en los
+# mamíferos y separarla limpiamente en el despiece no está garantizado. En
+# la serie publicada LA MITAD de los perros estaba asintomática con la T4 ya
+# alta, y por eso el bloqueo es POR INGREDIENTE y no por síntoma. La hormona
+# no se destruye congelando ni secando -- los snacks de tráquea deshidratada
+# se venden mucho en España, y el jerky de vacuno o bisonte suele ser carne
+# de cabeza y carrillera.
+#
+# ⚠️ Y ANTES DE ESTO LA REGLA NO EXISTÍA, aunque un comentario de este mismo
+# repositorio llegó a decir que sí -- se dio por cierto porque un documento
+# de fuera hablaba de «la regla R-TIROIDES que ya tiene el motor». No la
+# tenía. Un comentario que afirma una protección que no está puesta es peor
+# que no tener el comentario: el siguiente que pase ya no la busca.
+#
+# SE MIDIÓ ANTES DE APLICARLO, porque se lleva 3 de las 9 fichas de hueso
+# carnoso y el hueso es el cuello de botella del perro con alergias que ya
+# estaba documentado en PENDIENTE. Cinco escenarios -- adulto sin alergias,
+# con 3, con 5, cachorro con 3 y toy -- siguen los cinco en VERDE con el
+# hueso en 6 fichas.
+print("\n=== BLOQUE 45: el tejido tiroideo, y la vía rápida ===")
+
+import importlib as _il45
+_seg45 = _il45.import_module("seguridad")
+_al45 = json.load(open("alimentos_v3_final.json", encoding="utf-8"))
+
+_PIEZAS_45 = ("laringe", "cuello", "traquea", "esofago", "garganta",
+              "carrillera", "jerky", "carne de cabeza")
+_faltan45 = [p for p in _PIEZAS_45 if p not in getattr(_seg45, "TIROIDES_EXCLUIR", set())]
+if _faltan45:
+    fallos.append(f"BLOQUE45: `seguridad.TIROIDES_EXCLUIR` ya no bloquea {_faltan45}. Son las "
+                  f"piezas donde puede quedar glándula tiroides, y no hay dosis segura "
+                  f"publicada por debajo de la cual esté bien.")
+if not (getattr(_seg45, "TIROIDES_EXCLUIR", set()) <= getattr(_seg45, "EXCLUIDOS_SIEMPRE", set())):
+    fallos.append("BLOQUE45: `TIROIDES_EXCLUIR` no está dentro de `EXCLUIDOS_SIEMPRE`, que es "
+                  "el conjunto por el que preguntan los cuatro puntos del motor. Bloquear en un "
+                  "conjunto que nadie consulta es no bloquear.")
+
+_dentro45 = [a["nombre"] for a in _al45 if _seg45._es(a["nombre"], _seg45.TIROIDES_EXCLUIR)]
+if _dentro45:
+    fallos.append(f"BLOQUE45: han vuelto al catálogo piezas de tejido tiroideo: {_dentro45}. "
+                  f"Estar en el catálogo es estar en el selector de Personalizar, aunque el "
+                  f"automático las excluya, y media exclusión no vale para esto.")
+
+# ── Y LA VÍA RÁPIDA, que es donde esto se cae solo ─────────────────────
+# `_menu_precalculado_es_seguro()` decide si un menú de `catalogo_menus.json`
+# se sirve SIN volver a pasar por el solver, en cuatro sitios de main.py.
+# Hasta el 3 de septiembre comprobaba los cinco topes crónicos y nada más, o
+# sea que un menú precalculado con un alimento de exclusión TOTAL se servía
+# tal cual: los cinco topes son de cantidad, y la borraja o el cuello no se
+# topan por cantidad. No rompía nada de milagro -- no había ninguno en el
+# fichero -- pero es literalmente el fallo que describe el comentario de
+# encima de esa función: un catálogo generado con una versión vieja del
+# motor no ve las reglas nuevas.
+_al45d = {a["nombre"]: a for a in _al45}
+_al45d["Cuello de ternera"] = {"nombre": "Cuello de ternera", "energia": 200,
+                               "categoria": "Hueso carnoso", "nutrientes": {}}
+if _api._menu_precalculado_es_seguro({"Cuello de ternera": 100.0}, _al45d, 1000.0):
+    fallos.append("BLOQUE45: la vía rápida da por bueno un menú precalculado con un alimento "
+                  "de `EXCLUIDOS_SIEMPRE`. Esa función sirve menús sin pasar por el solver, así "
+                  "que es el único sitio donde se puede comprobar.")
+if _api._menu_precalculado_es_seguro({"Cuello de ternera": 100.0}, _al45d, None):
+    fallos.append("BLOQUE45: sin DER, la vía rápida deja pasar un excluido. La exclusión no "
+                  "depende del DER, así que tiene que comprobarse ANTES del `if not der`.")
+
+# Y el catálogo de menús no puede llevar ninguno
+_cm45 = json.load(open("catalogo_menus.json", encoding="utf-8"))
+_sucios45 = sorted({n for v in _cm45["CATALOGO"].values() for n in v["gramos"]
+                    if _seg45._es(n, _seg45.EXCLUIDOS_SIEMPRE)}
+                   | {n for vs in _cm45["CATALOGO_VARIANTES"].values() for v in vs
+                      for n in v["gramos"] if _seg45._es(n, _seg45.EXCLUIDOS_SIEMPRE)})
+if _sucios45:
+    fallos.append(f"BLOQUE45: `catalogo_menus.json` lleva alimentos excluidos siempre: "
+                  f"{_sucios45}. La vía rápida los rechaza y cae al solver en vivo, así que no "
+                  f"es peligroso -- pero es la vista previa degradándose en silencio.")
+
+# ── EL TECHO LEGAL DE LA VITAMINA D ────────────────────────────────────
+# FEDIAF marca sus máximos con (L) legal y (N) nutricional. La vitamina D es
+# el ÚNICO nutriente del perfil canino donde el legal cae por DEBAJO del
+# nutricional: 227,00 contra 320,00 por 100 g de MS, o sea 567,50 contra 800
+# UI/1000 kcal. El motor aplicaba el nutricional, así que un menú podía
+# estar en verde y por encima del Reglamento (UE) 2017/1492.
+# `maxAdulto` se queda en 20 µg a propósito, porque es lo que FEDIAF imprime
+# y lo que `auditar_fediaf.py` compara contra el PDF: si se sustituyera, la
+# auditoría empezaría a marcar discrepancia contra su propia fuente.
+from verificar import maximo_de as _maximo_de_45
+_vd45 = req["Vitamina_D"]
+if abs((_maximo_de_45(_vd45, "Vitamina_D", "Adulto") or 0) - 14.1875) > 1e-6:
+    fallos.append(f"BLOQUE45: el techo de vitamina D que aplica el motor es "
+                  f"{_maximo_de_45(_vd45, 'Vitamina_D', 'Adulto')} y tiene que ser 14,1875 µg "
+                  f"(= 567,50 UI/1000 kcal), que es el LEGAL. Es el único nutriente del perfil "
+                  f"canino donde el legal está por debajo del nutricional.")
+if abs(float(_vd45.get("maxAdulto") or 0) - 20.0) > 1e-6:
+    fallos.append("BLOQUE45: `maxAdulto` de la vitamina D ya no es 20 µg. Ese campo es la cifra "
+                  "que FEDIAF IMPRIME y la que audita auditar_fediaf.py contra el PDF; el techo "
+                  "legal va aparte en `maxLegalAdulto`. Sustituir uno por otro rompe la "
+                  "auditoría contra la fuente primaria.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")

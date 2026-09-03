@@ -130,7 +130,29 @@ def maximo_de(r, nombre_req, etapa):
     """
     if nombre_req in MAXIMOS_NO_APLICADOS:
         return None
-    return _num(r.get(f"max{etapa}")) or _num(r.get("maxAdulto"))
+    nutricional = _num(r.get(f"max{etapa}")) or _num(r.get("maxAdulto"))
+    # ⚠️ EL TECHO LEGAL PUEDE SER MAS BAJO QUE EL NUTRICIONAL (3 septiembre).
+    # FEDIAF marca sus maximos con (L) legal y (N) nutricional, y son cosas
+    # distintas: el nutricional es "por encima de aqui hace dano", el legal
+    # es "por encima de aqui es ilegal venderlo". Casi siempre el legal es
+    # mas alto o no existe, y por eso nunca habia hecho falta distinguirlos.
+    #
+    # La VITAMINA D es la excepcion, y es la unica del perfil canino: legal
+    # 227,00 contra nutricional 320,00 por 100 g de MS, o sea 567,50 contra
+    # 800 UI/1000 kcal. El motor aplicaba el nutricional, asi que un menu
+    # podia estar en verde y por encima del limite del Reglamento (UE)
+    # 2017/1492. MEDIDO antes de ponerlo: seis perfiles reales van al 28-45 %
+    # de ese techo, asi que no cuesta ni un menu -- es una correccion de lo
+    # que el motor DECLARA cumplir, no un apreton.
+    #
+    # Se guardan los dos y se aplica el MENOR. El nutricional se queda en
+    # `maxAdulto` porque es la cifra que FEDIAF imprime en la III-3b y la que
+    # `auditar_fediaf.py` compara contra el PDF: si se sustituyera, la
+    # auditoria empezaria a marcar discrepancia contra su propia fuente.
+    legal = _num(r.get(f"maxLegal{etapa}")) or _num(r.get("maxLegalAdulto"))
+    if legal is not None:
+        return legal if nutricional is None else min(nutricional, legal)
+    return nutricional
 
 
 # ⚠️ LOS MINIMOS SUBEN CUANDO SE COME MENOS (28 agosto). Es la ecuacion

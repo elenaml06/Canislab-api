@@ -368,14 +368,26 @@ HUESO_RIESGO_ASTILLADO = {"costillas de cordero"}
 # tiene que seguir funcionando aunque el alimento reaparezca.
 BORRAJA_EXCLUIR = {"borraja"}
 
-# ⚠️ LARINGE DE VACUNO — TEJIDO TIROIDEO. La glandula tiroides esta adherida
-# a la laringe en los mamiferos, y separarla limpiamente en el despiece no
-# esta garantizado. El hipertiroidismo alimentario del perro por carne de
-# cuello y garganta es la razon de que la regla del tejido tiroideo exista
-# en este motor; la laringe es exactamente esa pieza. Como con la borraja,
-# aqui NO hay una dosis segura publicada por debajo de la cual este bien: la
-# hormona tiroidea del tejido no se destruye congelando ni se diluye de
-# forma controlable, asi que se EXCLUYE, no se topa.
+# ⚠️ TEJIDO TIROIDEO. La glandula tiroides esta adherida a la laringe y a la
+# traquea en los mamiferos, y separarla limpiamente en el despiece no esta
+# garantizado. El hipertiroidismo ALIMENTARIO del perro -- por recortes de
+# cuello, garganta y esofago -- es una enfermedad descrita, y en la serie
+# publicada la mitad de los perros estaba ASINTOMATICA con la T4 ya alta:
+# por eso el bloqueo es POR INGREDIENTE y no por sintoma, que es la
+# diferencia entre prevenirlo y encontrarlo. La hormona no se destruye
+# congelando ni se diluye de forma controlable, asi que aqui NO hay dosis
+# segura publicada por debajo de la cual este bien: se EXCLUYE, no se topa.
+#
+# ⚠️ Y HASTA EL 3 DE SEPTIEMBRE ESTA REGLA NO EXISTIA. Se llego a escribir
+# aqui que existia, al meter la laringe, y era falso: se dio por cierto
+# porque un documento de fuera mencionaba «la regla R-TIROIDES que ya tiene
+# el motor». No la tenia. Queda escrito porque es la forma de error que peor
+# se ve -- un comentario que afirma una proteccion que no esta puesta es
+# peor que no tener el comentario, porque el siguiente que pase no la busca.
+#
+# FRESCO Y DESHIDRATADO, que no es un detalle: los snacks de traquea
+# deshidratada se venden mucho en Espana, y el jerky de vacuno o bisonte
+# suele ser carne de cabeza y carrillera.
 #
 # Y HAY UN SEGUNDO MOTIVO, INDEPENDIENTE, que ya estaba medido aqui desde
 # agosto: la laringe es CARTILAGO, no hueso. Traia 66 mg de calcio/100 g
@@ -393,11 +405,40 @@ BORRAJA_EXCLUIR = {"borraja"}
 # elegirla a mano y el motor la aceptaba. Es palabra por palabra lo que paso
 # con la borraja y por lo que se escribio el parrafo de arriba.
 #
-# Este conjunto se queda por si alguien la vuelve a meter: la exclusion
-# tiene que seguir funcionando aunque el alimento reaparezca. Se busca por
-# «laringe» a secas, no por el nombre completo, para que una ficha nueva
-# («Laringe de cerdo», «Laringe de cordero») entre tambien.
-LARINGE_EXCLUIR = {"laringe"}
+# Se busca por PALABRA suelta y no por el nombre completo, para que una
+# ficha nueva («Laringe de cerdo», «Cuello de cordero», «Traquea de vacuno
+# deshidratada») entre tambien sin que nadie tenga que acordarse.
+#
+# ⚠️ LOS TRES CUELLOS SALIERON DEL CATALOGO CON ESTO (3 septiembre): cuello
+# de pavo, de pato y de ternera, que eran 3 de las 9 fichas de hueso
+# carnoso. MEDIDO antes de hacerlo, porque el hueso es el cuello de botella
+# que ya estaba documentado en PENDIENTE para el perro con alergias: cinco
+# escenarios -- adulto sin alergias, con 3, con 5, cachorro con 3, y toy --
+# siguen los cinco en VERDE con el hueso bajando de 9 fichas a 6. No cuesta
+# ningun menu.
+# Lo que si costo fue la vista previa: `catalogo_menus.json` llevaba cuello
+# en 2 de sus 36 menus base y en 54 de sus 180 variantes, y hubo que
+# regenerar esas 56 -- las otras 160 se copiaron tal cual, porque
+# regenerarlo entero cambiaria la vista previa de la app por un motivo que
+# solo afecta a una parte.
+#
+# QUEDA UNA PREGUNTA ABIERTA para la nutricionista, y esta apuntada en
+# PENDIENTE: el documento dice «cuello» sin distinguir especie, y el bloqueo
+# se ha aplicado asi -- pero los casos publicados de hipertiroidismo
+# alimentario son de recortes de VACUNO. Si resulta que el cuello de ave no
+# aplica, se recuperan las dos fichas de pavo y pato: la vuelta atras es
+# quitar dos palabras de aqui y restaurarlas del git.
+TIROIDES_EXCLUIR = {"laringe", "cuello", "traquea", "esofago", "garganta",
+                    "carrillera", "jerky"}
+
+# ⚠️ «cabeza» va aparte y como frase, no como palabra suelta: sola cazaria
+# cualquier ficha que la llevara por otro motivo. Lo que hay que bloquear es
+# la CARNE de cabeza, que es de donde sale el jerky.
+TIROIDES_EXCLUIR |= {"carne de cabeza"}
+
+# El nombre viejo se queda apuntando al nuevo: era de cuando la laringe era
+# el unico caso, y hay codigo y pruebas que lo nombran.
+LARINGE_EXCLUIR = TIROIDES_EXCLUIR
 
 # Los alimentos que se excluyen SIEMPRE, sea cual sea el perro, el modo y la
 # patologia. No es una lista de «poco recomendables»: es la lista de los que
@@ -405,7 +446,7 @@ LARINGE_EXCLUIR = {"laringe"}
 # sola cosa en cada sitio en vez de encadenar conjuntos -- cuando se anadio
 # la laringe habia CUATRO puntos del motor preguntando por la borraja, y
 # cuatro sitios que actualizar a mano es como se olvida uno.
-EXCLUIDOS_SIEMPRE = BORRAJA_EXCLUIR | LARINGE_EXCLUIR
+EXCLUIDOS_SIEMPRE = BORRAJA_EXCLUIR | TIROIDES_EXCLUIR
 
 # ⚠️ RESTRICCIONES POR PATOLOGIA — investigadas 4 agosto, mismo patron que
 # el oxalato/urato: en perro SANO no se tocan, solo se activan si la
@@ -618,13 +659,14 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     # de la exclusión del motor y no en su lugar: esta función también
     # revisa lo que trae un menú de fuera (`/analizar`, una edición a mano),
     # donde puede aparecer una laringe que el motor nunca habría puesto.
-    lar = [n for n in menu if _es(n, LARINGE_EXCLUIR)]
+    lar = [n for n in menu if _es(n, TIROIDES_EXCLUIR)]
     if lar:
         problemas.append(
-            "%s lleva pegada la glándula tiroides — es la pieza del cuello "
-            "que causa el hipertiroidismo por alimentación en perros, y la "
-            "hormona no se destruye congelando. Mejor no darla, en ninguna "
-            "cantidad." % ", ".join(lar))
+            "%s puede llevar restos de glándula tiroides — el cuello, la "
+            "tráquea, el esófago y la carne de cabeza son las piezas que "
+            "causan el hipertiroidismo por alimentación en perros, y la "
+            "hormona no se destruye congelando ni secando. Mejor no darlas, "
+            "en ninguna cantidad." % ", ".join(lar))
 
     # 3b-bis. RESTRICCIONES POR PATOLOGÍA GUARDADAS EN EL PROPIO ALIMENTO
     # (grelo/nabo en hipotiroidismo, dátil/mango/plátano en diabetes,

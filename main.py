@@ -107,8 +107,29 @@ def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=N
 def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
     from seguridad import (
         TIAMINASA, MERCURIO_ALTO, TOPE_TIAMINASA_KCAL, TOPE_MERCURIO_KCAL,
-        TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL, TOPE_SELENIO_KCAL, _es,
+        TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL, TOPE_SELENIO_KCAL,
+        EXCLUIDOS_SIEMPRE, _es,
     )
+    # ⚠️ LOS EXCLUIDOS SIEMPRE, LO PRIMERO (3 septiembre). Esta función
+    # comprobaba los cinco topes crónicos y NADA MÁS, así que un menú
+    # precalculado que llevara un alimento de exclusión total se servía tal
+    # cual: los cinco topes son de CANTIDAD y la borraja o el cuello no se
+    # topan por cantidad, se excluyen. Y esta es la vía que sirve un menú
+    # SIN volver a pasar por el solver, en cuatro sitios de este archivo.
+    #
+    # Hoy no rompía nada de milagro -- no había ninguno de esos alimentos en
+    # `catalogo_menus.json` --, pero es literalmente el fallo que describe el
+    # comentario de aquí arriba: un catálogo generado con una versión vieja
+    # del motor no ve las reglas nuevas. La borraja se excluyó el 27 de
+    # agosto y el tejido tiroideo el 3 de septiembre; si cualquiera de los
+    # dos hubiera estado en un menú precalculado, se habría servido.
+    #
+    # Va ANTES que los topes y no después: no depende del DER, así que tiene
+    # que valer también cuando no hay DER y la función devuelve True por no
+    # poder evaluar nada.
+    fuera = [n for n in gramos if _es(n, EXCLUIDOS_SIEMPRE)]
+    if fuera:
+        return False
     if not der:
         return True  # sin DER no se puede evaluar nada -- no bloquear por falta de dato
     total_g = sum(gramos.values()) or 1.0
@@ -3736,8 +3757,8 @@ SELLOS_DE_LOS_DATOS = {
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "3d4d9dae85af72cc",   # 3 sep: LAS 103 FILAS CORREGIR de la revision externa (CORRECCIONES_CATALOGO.csv). 101 casillas numericas comprobadas una a una contra el valor anterior antes de escribir -- coincidian las 101. El patron: la ficha ya declaraba el FDC del USDA bueno y los numeros no eran los de ese FDC. Lo gordo: la albahaca con los minerales de la DESHIDRATADA (fosforo 490 contra 56), la vitamina A del higado de pollo a 11.078 contra 3.296 -- factor 3,4 en el nutriente que tiene tope de seguridad -- y su cobre a 4,5 contra 0,492, que es el tope de la hepatopatia. La dorada resuelta por el lado contrario al que habiamos elegido (grasa 7,22 -> 1, y con ella la vitD 14 -> 1,5). El sesamo cerrado sin elegir un calcio: la fila entera pasa a ser la del USDA 170150. Nuevo campo `trazas` para los doce ceros que la fuente da como trazas. Y FUERA LA LARINGE DE VACUNO, por tejido tiroideo. Ver el BLOQUE 44 y PENDIENTE 5-quinquies. // 28 ago (2): EL HIGADO Y EL CORAZON DE PAVO, resembrados desde el pollo del USDA -- su aminograma venia del pavo del USDA, que tiene la isoleucina y la valina un 40% bajas (Leu/Ile 2,52 contra 1,47-1,98 del resto). Reescalados a NUESTRA proteina. Las otras cinco fichas de pavo NO se cargan: traian histidina = isoleucina = valina exactos, y eso es una copia, no una medida. Ver el BLOQUE 27. // 28 ago: PURINAS DE CUATRO VISCERAS con cifra publicada (timo 525, bazo de cordero 322, bazo de vaca 185, pulmon de ternera 117). NO se uso la banda generica 84-243 que se habia propuesto: para el timo habria declarado ~160 cuando la cifra son 525, un factor de 3 a 4 POR ABAJO, y es el alimento solido con mas purinas de las tablas. Pancreas, testiculos y pulmon de cordero se quedan como hueco: no hay dato. Ver el BLOQUE 33
-        "requerimientos_v2_final.json": "68f335c24a4ec898",   # 28 ago: EL ANCLA DE 110. Cada nutriente lleva ahora `minAdulto110`, la columna de DER 110 de la Tabla III-3b, sacada de NUESTRA transcripcion auditada del PDF y no de fuera. Con las dos anclas se puede aplicar la ecuacion del apartado 7.2.5: cuando el perro come menos, el minimo por 1000 kcal sube. Los 38 cuadraron con el minAdulto de siempre sin una discrepancia, o sea que nuestra columna ES la de 95. Ver el BLOQUE 34
+        "alimentos_v3_final.json":      "14b21c2a3eb8b349",   # 3 sep (2): FUERA LOS TRES CUELLOS -- pavo, pato y ternera -- por TEJIDO TIROIDEO. La glandula va pegada al cuello y la traquea en los mamiferos y el despiece no garantiza separarla; en la serie publicada la mitad de los perros estaba asintomatica con la T4 ya alta. Eran 3 de las 9 fichas de hueso carnoso, y se midio antes: cinco escenarios, incluido el de cinco alergias, siguen los cinco en verde con el hueso en 6. Ver el BLOQUE 45. // 3 sep: LAS 103 FILAS CORREGIR de la revision externa (CORRECCIONES_CATALOGO.csv). 101 casillas numericas comprobadas una a una contra el valor anterior antes de escribir -- coincidian las 101. El patron: la ficha ya declaraba el FDC del USDA bueno y los numeros no eran los de ese FDC. Lo gordo: la albahaca con los minerales de la DESHIDRATADA (fosforo 490 contra 56), la vitamina A del higado de pollo a 11.078 contra 3.296 -- factor 3,4 en el nutriente que tiene tope de seguridad -- y su cobre a 4,5 contra 0,492, que es el tope de la hepatopatia. La dorada resuelta por el lado contrario al que habiamos elegido (grasa 7,22 -> 1, y con ella la vitD 14 -> 1,5). El sesamo cerrado sin elegir un calcio: la fila entera pasa a ser la del USDA 170150. Nuevo campo `trazas` para los doce ceros que la fuente da como trazas. Y FUERA LA LARINGE DE VACUNO, por tejido tiroideo. Ver el BLOQUE 44 y PENDIENTE 5-quinquies. // 28 ago (2): EL HIGADO Y EL CORAZON DE PAVO, resembrados desde el pollo del USDA -- su aminograma venia del pavo del USDA, que tiene la isoleucina y la valina un 40% bajas (Leu/Ile 2,52 contra 1,47-1,98 del resto). Reescalados a NUESTRA proteina. Las otras cinco fichas de pavo NO se cargan: traian histidina = isoleucina = valina exactos, y eso es una copia, no una medida. Ver el BLOQUE 27. // 28 ago: PURINAS DE CUATRO VISCERAS con cifra publicada (timo 525, bazo de cordero 322, bazo de vaca 185, pulmon de ternera 117). NO se uso la banda generica 84-243 que se habia propuesto: para el timo habria declarado ~160 cuando la cifra son 525, un factor de 3 a 4 POR ABAJO, y es el alimento solido con mas purinas de las tablas. Pancreas, testiculos y pulmon de cordero se quedan como hueco: no hay dato. Ver el BLOQUE 33
+        "requerimientos_v2_final.json": "4c34e816b0c87c90",   # 3 sep: EL TECHO LEGAL DE LA VITAMINA D. FEDIAF marca (L) legal y (N) nutricional, y la vitamina D es el UNICO nutriente del perfil canino donde el legal cae POR DEBAJO: 227,00 contra 320,00 por 100 g de MS, o sea 567,50 contra 800 UI/1000 kcal. Es ley -- Reglamento (UE) 2017/1492 modificado por el 2019/849 -- y el motor aplicaba el nutricional, asi que un menu podia salir verde y por encima del limite legal. Va en `maxLegalAdulto` y NO sustituyendo a `maxAdulto`, que es la cifra que FEDIAF imprime y la que audita auditar_fediaf.py contra el PDF. Medido: seis perfiles reales van al 28-45% de ese techo, no cuesta ni un menu. // 28 ago: EL ANCLA DE 110. Cada nutriente lleva ahora `minAdulto110`, la columna de DER 110 de la Tabla III-3b, sacada de NUESTRA transcripcion auditada del PDF y no de fuera. Con las dos anclas se puede aplicar la ecuacion del apartado 7.2.5: cuando el perro come menos, el minimo por 1000 kcal sube. Los 38 cuadraron con el minAdulto de siempre sin una discrepancia, o sea que nuestra columna ES la de 95. Ver el BLOQUE 34
     }
 
 
