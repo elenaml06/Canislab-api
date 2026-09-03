@@ -91,6 +91,13 @@ for a in al:
     # tenemos, que es justo lo contrario de lo que vigila.
     if a.get("purinas_fuente"):
         sd = sd | {"purinas"}
+    # ⚠️ Y UNA TRAZA TAMPOCO ES UN HUECO (3 septiembre), por el mismo
+    # motivo y en la otra direccion. BEDCA distingue 0, trazas y n.d.; el
+    # cero de una traza es un cero MEDIDO -- esta por debajo del limite de
+    # cuantificacion -- y lleva su procedencia en la lista `trazas` de la
+    # ficha. Contarlo como hueco haria que doce fichas de pescado
+    # empujaran hacia el umbral de diez por datos que SI tenemos.
+    sd = sd | set(a.get("trazas") or [])
     sin_declarar = [k for k, v in n.items() if not v and k not in sd]
     if len(sin_declarar) >= 10:
         avisos.append(("HUECOS", a["nombre"],

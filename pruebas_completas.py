@@ -2257,19 +2257,19 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # a `sin_dato` y el producto se queda, porque su motivo de existir es
     # el hierro y ese sí es coherente. Lo vigila el BLOQUE 30.
     #
-    # ⚠️ EL DEL SÉSAMO SE CERRÓ (3 septiembre) y merece la pena leer cómo,
-    # porque no fue eligiendo un valor. La duda era que el calcio, 150 mg,
-    # no era de NINGÚN sésamo real: con cáscara son 975 (USDA 170150 y
-    # FINELI 385) y pelado 60-66 (USDA 169412, FINELI 34245), y 150 caía en
-    # el hueco vacío entre los dos polos. Lo que la cerró fue que la
-    # revisión externa confirmó que el FDC que la ficha ya declaraba,
-    # 170150, es el del sésamo ENTERO, y con él vinieron a la vez las otras
-    # ocho casillas de la fila. Ahora el calcio dice lo mismo que el fósforo,
-    # el potasio y el magnesio: la fila es sésamo con cáscara de principio a
-    # fin y ya no es ambigua. La ficha de `sésamo pelado` sigue faltando,
-    # pero eso es una carga de datos, no una duda.
+    # ⚠️ EL DEL SÉSAMO SE CORRIGIÓ PERO NO SE CERRÓ (3 septiembre), y la
+    # distinción es la lección. El calcio pasa de 150 a 975 porque el FDC
+    # que la ficha ya declaraba, USDA 170150, es el del sésamo ENTERO, y con
+    # él vinieron a la vez las otras ocho casillas: la FILA ya no es
+    # incoherente. Se intentó cerrar la marca con ese argumento y lo paró el
+    # BLOQUE 28c, que tenía razón: que la fila sea coherente no arregla que
+    # esta ficha sea UNA para DOS alimentos. Antes los 150 estaban mal para
+    # los dos pero en medio; ahora están exactos para uno y dieciséis veces
+    # altos para el otro, y quien compre sésamo pelado se lleva una ficha
+    # que dice Ca:P 1,55 cuando el suyo da 0,10. La marca se queda hasta que
+    # la ficha se parta en dos, que es lo que decía desde el 27 de agosto.
     #
-    # Y EN SU SITIO ENTRARON CINCO, TODOS DE LA DORADA (3 septiembre). Al
+    # Y SE LE SUMARON CINCO, TODOS DE LA DORADA (3 septiembre). Al
     # corregir su grasa de 7,22 g a 1 g -- BEDCA había cruzado una dorada de
     # piscifactoría con una salvaje, y FEN/Moreiras 2013 confirma la magra --
     # el bloque entero de ácidos grasos, que sale de esa misma fila de BEDCA,
@@ -2279,6 +2279,7 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # el cociente de grasas, que protege el mínimo; contra el techo crónico
     # de EPA+DHA sigue contando el declarado.
     ("DUDOSO", "Dorada"),
+    ("DUDOSO", "Semilla de sésamo"),
 }
 
 import re as _re_b19

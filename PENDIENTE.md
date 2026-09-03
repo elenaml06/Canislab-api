@@ -506,6 +506,24 @@ agosto por este mismo motivo, con el cloruro de un Toy. En un perro de 3 kg
 las cantidades absolutas son tan pequeñas que el redondeo de los gramos a dos
 decimales se come el margen entero.
 
+**Y ES EL QUE HACE PARPADEAR AL BLOQUE 43** (medido el 3 de septiembre). El
+caso «toy 1,5 kg» de ese bloque —con `time_limit=1,0`, o sea aceptando la
+solución que el solver tuviera guardada al saltar el reloj— sale en ámbar de
+vez en cuando, y siempre por lo mismo: **yodo, y solo yodo**, al 96-99 % del
+mínimo. Medido en los dos árboles con el mismo caso:
+
+| | ejecuciones | verde | ámbar | sin menú |
+|---|---|---|---|---|
+| `origin/main` | 15 | 13 | 1 (yodo 59,52 / 60,0 → 99 %) | 1 |
+| esta rama | 27 | 26 | 1 (yodo 57,84 / 60,0 → 96 %) | 0 |
+
+Mismo fallo, mismo nutriente, misma magnitud, en los dos. **No lo causa
+ningún cambio del catálogo**: es este margen, y con el reloj apretado el
+solver entrega la solución que tenga en ese momento, que a veces es la que
+todavía estaba al 99 % del yodo. Si el BLOQUE 43 se cae por «toy 1,5 kg» y
+el ámbar es de yodo, es esto y no una regresión — compruébese que el
+`ambar` trae `yodo` y nada más antes de darlo por bueno.
+
 **Por dónde seguir**: el margen no puede ser un porcentaje fijo, porque lo que
 tiene que cubrir es un error ABSOLUTO (el del redondeo), y ese no escala con
 el tamaño del perro. Debería ser `max(1,5 %, lo que mueve un paso de redondeo

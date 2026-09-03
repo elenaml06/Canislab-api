@@ -559,6 +559,28 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
         for k, motivo in (alimentos.get(nombre, {}).get("dato_dudoso") or {}).items():
             dudosos.setdefault(k, []).append(nombre)
 
+    # AVISO DE TRAZAS — el tercer estado de un cero (3 septiembre)
+    # `sin_dato` dice "no lo sabemos" y `dato_dudoso` dice "lo sabemos y no
+    # nos lo creemos". Faltaba el que la fuente SÍ distingue: BEDCA separa
+    # 0, trazas y n.d., y el catálogo solo sabía escribir dos, así que once
+    # pescados y el pollo con piel declaraban un cero redondo de vitamina A
+    # o D donde la fuente dice «trazas».
+    #
+    # El NÚMERO es cero y está bien que lo sea: contra un mínimo es el lado
+    # conservador y contra un techo una traza está por definición por debajo
+    # del límite de cuantificación. Lo que cambia es que deja de ser un cero
+    # FALSO -- un "no tiene" que nadie comprobó.
+    #
+    # Sale por SEPARADO de `datos_incompletos` a propósito, y no es una
+    # sutileza de nombres: la pantalla de huecos dice literalmente "no está
+    # publicado el valor de N nutrientes", y de estos SÍ está publicado.
+    # Meterlos ahí haría que la pantalla dijera algo falso, que es la
+    # familia de fallos contra la que va medio repositorio.
+    trazas = {}
+    for nombre in menu:
+        for k in (alimentos.get(nombre, {}).get("trazas") or []):
+            trazas.setdefault(k, []).append(nombre)
+
     # Nutrientes CON TECHO en los que el menú lleva un alimento cuyo dato no
     # está y cuya familia no da para imputarlo: no es que cumpla el máximo,
     # es que no se puede saber. Sale junto al menú, igual que los huecos.
@@ -575,6 +597,7 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
         "no_verificable": no_verificable,
         "datos_incompletos": huecos,
         "datos_dudosos": dudosos,
+        "datos_traza": trazas,
         "semaforo": semaforo,
         "n_rojos": len(rojos), "n_ambar": len(ambar),
         "rojos": rojos, "ambar": ambar,
