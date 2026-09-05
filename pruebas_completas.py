@@ -5084,6 +5084,14 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 # concentrados proteicos de guisante. Ante un hallazgo cardíaco las guías
 # recomiendan retirarlas.
 #
+# ⚠️ Y LA PATATA Y EL BONIATO TAMBIÉN (5 septiembre). El criterio publicado
+# no dice «legumbres» a secas: Fascetti 2ª ed. cap. 18, de Freeman y Rush
+# —los que lideraron la investigación de la CMD asociada a la dieta— dice
+# «pulses OR POTATOES». El boniato SÍ está en nuestro catálogo, y se midió
+# antes de excluirlo porque es de las pocas fuentes de hidrato que hay:
+# cinco perfiles con cardiopatía salen los cinco en verde con él y sin él,
+# y el solver no lo elige en ninguno.
+#
 # ⚠️ Y LA JUDÍA VERDE NO ENTRA, a propósito. Lo que se come de la judía
 # verde es la VAINA INMADURA, que nutricionalmente es una verdura (31 kcal
 # y 1,8 g de proteína por 100 g), no el grano seco, que es lo asociado a la
@@ -5094,7 +5102,8 @@ print("\n=== BLOQUE 46: las legumbres de grano en cardiopatía ===")
 import importlib as _il46
 _seg46 = _il46.import_module("seguridad")
 
-for _n46 in ("Guisante", "Lenteja", "Garbanzo", "Proteína de guisante", "Soja"):
+for _n46 in ("Guisante", "Lenteja", "Garbanzo", "Proteína de guisante", "Soja",
+             "Patata", "Boniato"):
     if not _seg46._es(_n46, getattr(_seg46, "LEGUMBRES_GRANO", set())):
         fallos.append(f"BLOQUE46: '{_n46}' ya no cuenta como legumbre de grano. El conjunto "
                       f"existe para que el día que entre esa ficha no entre callando: escrita "
@@ -5143,6 +5152,109 @@ _av46s = _av46s if isinstance(_av46s, list) else _av46s[0]
 if any("legumbre" in _x.lower() for _x in _av46s):
     fallos.append("BLOQUE46: se avisa de las legumbres en un perro SANO. En perro sano no se "
                   "tocan -- mismo patrón que el oxalato y las purinas.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 47 — LA VITAMINA E CONTRA LOS PUFA, Y LA COLUMNA DE HUMEDAD
+# ============================================================
+#
+# ⚠️ LO PRIMERO, PORQUE SI NO ESTE BLOQUE ENGAÑA: la regla del 0,6 es
+# CORRECTA y hoy es INERTE. No se ha conseguido construir ningún caso donde
+# muerda, y se intentó cuatro veces —aceite de pescado forzado, aceite
+# vegetal forzado, el catálogo entero sin vitamina E, y una semilla con 45 g
+# de linoleico—. La frena siempre otra cosa: el techo crónico de EPA+DHA, el
+# tope de dosis del suplemento, o directamente que el MÍNIMO de vitamina E
+# de FEDIAF ya implica un ratio muy por encima de 0,6 para cualquier PUFA
+# que quepa en una ración real.
+#
+# Así que esta prueba NO afirma que la regla impida una violación: afirma
+# lo que sí es comprobable —que la restricción existe en el solver y que los
+# menús reales la cumplen— y deja escrito que lo otro no se pudo reproducir.
+# Una prueba que afirmara más sería una prueba que pasa por casualidad.
+#
+# NRC 2006, sección del PERRO, literal: «To allow for the use of higher
+# levels of PUFAs in the diet, it is suggested that a ratio of α-tocopherol
+# (milligrams) to PUFAs (grams) of at least 0.6 be maintained.»
+# Es del perro. El 24 mg/kg, el 120 mg/kg, la esteatitis del atún y el
+# alargamiento del tiempo de coagulación son del GATO, y citarlos aquí sería
+# repetir el error que costó una corrección.
+print("\n=== BLOQUE 47: vitamina E contra PUFA, y la humedad ===")
+
+from constructor import perfil_nutricional as _perfil_b47
+_RATIO_VITE_B47 = 0.6
+
+def _pufa_b47(perfil):
+    # El araquidónico va en MILIGRAMOS en este catálogo (UNIDADES.md) y los
+    # otros cuatro en gramos. Sin dividir, un menú normal declararía 40 g de
+    # PUFA donde hay 0,04 y el suelo saldría roto siempre.
+    return (perfil.get("linoleico", 0) + perfil.get("linolenico", 0)
+            + perfil.get("epa", 0) + perfil.get("dha", 0)
+            + perfil.get("araquidonico", 0) / 1000.0)
+
+for _etq47, _der47, _et47, _peso47, _ad47 in [
+        ("mestiza 20 kg", 1513.0, "Adulto", 20.0, None),
+        ("toy 3 kg", 280.0, "Adulto", 3.0, None),
+        ("gigante 55 kg", 2900.0, "Adulto", 55.0, None),
+        ("cachorro 4 meses", 549.0, "CachorroCrecimiento", 4.0, 9.0)]:
+    _ok47, _g47 = _resolver_43(_der47, _et47, al, req, _peso47, dosis_maxima_fabricante,
+                               margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
+                               peso_adulto_esperado_kg=_ad47)
+    if not _ok47:
+        fallos.append(f"BLOQUE47 {_etq47}: no sale menú.")
+        continue
+    _p47 = _perfil_b47(_g47, al)
+    _pu47 = _pufa_b47(_p47)
+    if _pu47 and (_p47.get("vitE", 0) / _pu47) < _RATIO_VITE_B47:
+        fallos.append(f"BLOQUE47 {_etq47}: la vitamina E está en "
+                      f"{_p47.get('vitE', 0) / _pu47:.2f} mg por gramo de PUFA y el suelo del "
+                      f"NRC para el perro es {_RATIO_VITE_B47}. La vitamina E se gasta "
+                      f"protegiendo a los PUFA de oxidarse: su requerimiento no es una "
+                      f"constante, sube con ellos.")
+
+# Y que la restricción siga puesta en el solver. Como es inerte, quitarla no
+# rompería ningún menú y nadie se enteraría: esto es lo único que la protege.
+import inspect as _insp47
+if "ratio_vite_pufa" not in _insp47.getsource(_resolver_43):
+    fallos.append("BLOQUE47: la restricción `ratio_vite_pufa` ya no está en el solver. Es "
+                  "inerte con el catálogo de hoy, así que quitarla no rompe ningún menú y "
+                  "no se notaría por ningún otro sitio.")
+
+# ── LA COLUMNA DE HUMEDAD ──────────────────────────────────────────────
+# Es el PRERREQUISITO de los techos legales por materia seca, que todavía no
+# están implementados. Hoy la humedad es solo un dato, y lo que se vigila es
+# que no se degrade: que las que tienen valor lo tengan CON PROCEDENCIA, y
+# que ese valor sea físicamente posible.
+_con_h47 = [_a for _a in _al45 if "humedad_g_100g" in _a]
+_ESPERADAS_H47 = 65
+if len(_con_h47) < _ESPERADAS_H47:
+    fallos.append(f"BLOQUE47: había {_ESPERADAS_H47} fichas con humedad y quedan "
+                  f"{len(_con_h47)}. Sin humedad no hay materia seca, y la densidad sobre "
+                  f"producto fresco es otra base y no sirve para los techos legales.")
+_sin_fuente47 = [_a["nombre"] for _a in _con_h47 if not _a.get("humedad_fuente")]
+if _sin_fuente47:
+    fallos.append(f"BLOQUE47: estas fichas traen humedad SIN procedencia escrita: "
+                  f"{_sin_fuente47}. Todo número de este catálogo dice de dónde viene; una "
+                  f"humedad puesta a ojo es exactamente lo que rompió la ficha de la dorada.")
+# Y la ley física: el agua más la proteína más la grasa no caben en más de
+# 100 g por cada 100 g de alimento. Las tres que hoy no cuadran están
+# DECLARADAS en su ficha, así que se exige que sigan declaradas -- no que
+# desaparezcan, que sería taparlas.
+_DESCUADRE_CONOCIDO_B47 = {"Pavo", "Pollo ala con piel (sin hueso)", "Cerebro de ternera"}
+for _a47 in _con_h47:
+    _n47 = _a47["nutrientes"]
+    _suma47 = (_a47["humedad_g_100g"] + (_n47.get("proteina") or 0) + (_n47.get("grasa") or 0))
+    if _suma47 <= 100.5:
+        continue
+    if _a47["nombre"] not in _DESCUADRE_CONOCIDO_B47:
+        fallos.append(f"BLOQUE47: '{_a47['nombre']}' declara agua + proteína + grasa = "
+                      f"{_suma47:.1f} g por cada 100 g, y no caben. O la humedad es de otra "
+                      f"ficha, o lo son la proteína y la grasa.")
+    elif "NO CUADRA" not in (_a47.get("humedad_nota") or ""):
+        fallos.append(f"BLOQUE47: '{_a47['nombre']}' sigue sin cuadrar ({_suma47:.1f} g) y ha "
+                      f"perdido la nota que lo declaraba. Un descuadre conocido y escrito es "
+                      f"otra cosa que uno que nadie ve.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

@@ -806,7 +806,10 @@
     },
     "sin_dato": [
       "yodo"
-    ]
+    ],
+    "humedad_g_100g": 70.0,
+    "humedad_fuente": "USDA FoodData Central · Turkey, all classes, breast, meat and skin, raw",
+    "humedad_fdc": "171093"
   },
   {
     "nombre": "Pollo pechuga con piel",
@@ -875,7 +878,10 @@
     },
     "sin_dato": [
       "yodo"
-    ]
+    ],
+    "humedad_g_100g": 69.5,
+    "humedad_fuente": "USDA FoodData Central · Chicken, broilers or fryers, breast, meat and skin, raw",
+    "humedad_fdc": "171474"
   },
   {
     "nombre": "Conejo",
@@ -940,7 +946,10 @@
       "nota": "carne magra de otra especie; no hay conejo en la base",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "humedad_g_100g": 72.8,
+    "humedad_fuente": "USDA FoodData Central · Game meat, rabbit, domesticated, composite of cuts, raw",
+    "humedad_fdc": "172521"
   },
   {
     "nombre": "Pollo muslo con piel",
@@ -1016,7 +1025,10 @@
       "nota": "misma especie y corte",
       "pais": "USA",
       "anio": "1983, 1980, 1982"
-    }
+    },
+    "humedad_g_100g": 66.5,
+    "humedad_fuente": "USDA FoodData Central · Chicken, broilers or fryers, thigh, meat and skin, raw",
+    "humedad_fdc": "172385"
   },
   {
     "nombre": "Pavo",
@@ -1087,7 +1099,11 @@
       "nota": "pavo; el USDA solo trae picado",
       "pais": "Canada",
       "anio": "1985"
-    }
+    },
+    "humedad_g_100g": 72.7,
+    "humedad_fuente": "USDA FoodData Central · Turkey, whole, meat and skin, raw",
+    "humedad_fdc": "171081",
+    "humedad_nota": "⚠️ NO CUADRA CON NUESTROS MACROS: agua + proteina + grasa = 101.4 g por cada 100 g de alimento, y no puede pasar de 100. Nuestra proteina y grasa no declaran fuente. La fila del USDA de la que sale esta humedad SI cuadra consigo misma (su suma de proximales esta comprobada), asi que el que sobra es uno de NUESTROS numeros, no el agua. Se deja la humedad porque es el unico dato de esta fila con procedencia escrita; lo que hay que revisar es la proteina y la grasa contra ese mismo FDC. Anotado el 5-sep-2026."
   },
   {
     "nombre": "Pavo muslo con piel",
@@ -1152,7 +1168,10 @@
       "nota": "pavo; el USDA solo trae picado",
       "pais": "Canada",
       "anio": "1985"
-    }
+    },
+    "humedad_g_100g": 72.7,
+    "humedad_fuente": "USDA FoodData Central · Turkey, all classes, leg, meat and skin, raw",
+    "humedad_fdc": "171493"
   },
   {
     "nombre": "Ternera solomillo sin grasa",
@@ -1378,7 +1397,10 @@
     },
     "sin_dato": [
       "cobre"
-    ]
+    ],
+    "humedad_g_100g": 64.9,
+    "humedad_fuente": "USDA FoodData Central · Fish, salmon, Atlantic, farmed, raw",
+    "humedad_fdc": "175167"
   },
   {
     "nombre": "Sardina",
@@ -1524,7 +1546,11 @@
       "nota": "misma especie",
       "pais": "USA",
       "anio": "1976"
-    }
+    },
+    "humedad_g_100g": 63.6,
+    "humedad_fuente": "USDA FoodData Central · Fish, mackerel, Atlantic, raw",
+    "humedad_fdc": "175119",
+    "humedad_nota": "La fila de USDA suma 97,45 y no 100: es propio de los pescados grasos, donde el lipido se mide como acidos grasos. El agua es el valor analizado de la propia fuente. Declarado, no corregido."
   },
   {
     "nombre": "Atún",
@@ -1755,7 +1781,10 @@
     ],
     "sin_dato": [
       "cobre"
-    ]
+    ],
+    "humedad_g_100g": 81.2,
+    "humedad_fuente": "USDA FoodData Central · Fish, cod, Atlantic, raw",
+    "humedad_fdc": "171955"
   },
   {
     "nombre": "Trucha",
@@ -1905,7 +1934,10 @@
       "nota": "mismo alimento",
       "pais": "USA",
       "anio": "2024"
-    }
+    },
+    "humedad_g_100g": 87.6,
+    "humedad_fuente": "USDA FoodData Central · Egg, white, raw, fresh",
+    "humedad_fdc": "172183"
   },
   {
     "nombre": "Huevo yema",
@@ -1980,7 +2012,10 @@
       "nota": "mismo alimento. CERO purinas",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "humedad_g_100g": 52.3,
+    "humedad_fuente": "USDA FoodData Central · Egg, yolk, raw, fresh",
+    "humedad_fdc": "172184"
   },
   {
     "nombre": "Aceite de oliva",
@@ -2050,7 +2085,10 @@
       "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
       "pais": "—",
       "anio": "—"
-    }
+    },
+    "humedad_g_100g": 0.0,
+    "humedad_fuente": "USDA FoodData Central · Oil, olive, salad or cooking",
+    "humedad_fdc": "171413"
   },
   {
     "nombre": "Aceite de oliva virgen extra",
@@ -2203,7 +2241,10 @@
       "nota": "misma especie y órgano",
       "pais": "USA",
       "anio": "1976"
-    }
+    },
+    "humedad_g_100g": 70.8,
+    "humedad_fuente": "USDA FoodData Central · Beef, variety meats and by-products, liver, raw",
+    "humedad_fdc": "169451"
   },
   {
     "nombre": "Corazón de pollo",
@@ -2276,7 +2317,10 @@
       "nota": "ave, mismo órgano",
       "pais": "USA",
       "anio": "1976"
-    }
+    },
+    "humedad_g_100g": 73.6,
+    "humedad_fuente": "USDA FoodData Central · Chicken, heart, all classes, raw",
+    "humedad_fdc": "171458"
   },
   {
     "nombre": "Pulmón de ternera",
@@ -2342,7 +2386,10 @@
       "nota": "Tres compilaciones coincidentes, pulmón de ternera. Compilación, no análisis primario: calidad de dato inferior al resto de la columna.",
       "pais": "Alemania",
       "anio": ""
-    }
+    },
+    "humedad_g_100g": 80.5,
+    "humedad_fuente": "USDA FoodData Central · Veal, variety meats and by-products, lungs, raw",
+    "humedad_fdc": "174361"
   },
   {
     "nombre": "Riñón de ternera",
@@ -2407,7 +2454,10 @@
       "nota": "mismo órgano",
       "pais": "USA",
       "anio": "1976"
-    }
+    },
+    "humedad_g_100g": 79.1,
+    "humedad_fuente": "USDA FoodData Central · Veal, variety meats and by-products, kidneys, raw",
+    "humedad_fdc": "174356"
   },
   {
     "nombre": "Calabaza",
@@ -2487,7 +2537,10 @@
       "nota": "cucurbitácea",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "humedad_g_100g": 91.6,
+    "humedad_fuente": "USDA FoodData Central · Pumpkin, raw",
+    "humedad_fdc": "168448"
   },
   {
     "nombre": "Calabacín",
@@ -2631,7 +2684,10 @@
       "nota": "misma especie",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "humedad_g_100g": 88.3,
+    "humedad_fuente": "USDA FoodData Central · Carrots, raw",
+    "humedad_fdc": "170393"
   },
   {
     "nombre": "Judía verde",
@@ -2778,7 +2834,10 @@
       "nota": "misma especie",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "humedad_g_100g": 89.3,
+    "humedad_fuente": "USDA FoodData Central · Broccoli, raw",
+    "humedad_fdc": "170379"
   },
   {
     "nombre": "Espinaca",
@@ -2857,7 +2916,10 @@
       "nota": "espinaca",
       "pais": "Japan",
       "anio": "2008"
-    }
+    },
+    "humedad_g_100g": 91.4,
+    "humedad_fuente": "USDA FoodData Central · Spinach, raw",
+    "humedad_fdc": "168462"
   },
   {
     "nombre": "Pimiento rojo",
@@ -3002,7 +3064,10 @@
       "treonina",
       "triptofano",
       "valina"
-    ]
+    ],
+    "humedad_g_100g": 92.7,
+    "humedad_fuente": "USDA FoodData Central · Chard, swiss, raw",
+    "humedad_fdc": "169991"
   },
   {
     "nombre": "Manzana",
@@ -3058,7 +3123,10 @@
     "sin_dato": [
       "purinas",
       "selenio"
-    ]
+    ],
+    "humedad_g_100g": 85.6,
+    "humedad_fuente": "USDA FoodData Central · Apples, raw, with skin",
+    "humedad_fdc": "171688"
   },
   {
     "nombre": "Pera",
@@ -3181,7 +3249,10 @@
       "treonina",
       "triptofano",
       "valina"
-    ]
+    ],
+    "humedad_g_100g": 84.21,
+    "humedad_fuente": "USDA FoodData Central · Blueberries, raw (Foundation Foods, sin cenizas publicadas)",
+    "humedad_fdc": "2344769"
   },
   {
     "nombre": "Plátano",
@@ -3374,7 +3445,10 @@
       "treonina",
       "triptofano",
       "valina"
-    ]
+    ],
+    "humedad_g_100g": 86.8,
+    "humedad_fuente": "USDA FoodData Central · Oranges, raw, all commercial varieties",
+    "humedad_fdc": "169097"
   },
   {
     "nombre": "Sandía",
@@ -3566,7 +3640,10 @@
     "nota_datos": "DEVUELTO a Vísceras (5 agosto, madrugada): a diferencia del corazón/molleja/lengua/tripa, donde todas las fuentes coinciden, el pulmón es un caso genuinamente debatido en la comunidad de alimentación cruda -- unas fuentes lo tratan como carne, otras como víscera, sin consenso claro. Se deja como víscera por prudencia.",
     "sin_dato": [
       "purinas"
-    ]
+    ],
+    "humedad_g_100g": 79.7,
+    "humedad_fuente": "USDA FoodData Central · Lamb, variety meats and by-products, lungs, raw",
+    "humedad_fdc": "174359"
   },
   {
     "nombre": "Riñón de cordero",
@@ -3631,7 +3708,10 @@
       "nota": "mismo órgano",
       "pais": "USA",
       "anio": "1976"
-    }
+    },
+    "humedad_g_100g": 79.2,
+    "humedad_fuente": "USDA FoodData Central · Lamb, variety meats and by-products, kidneys, raw",
+    "humedad_fdc": "174354"
   },
   {
     "nombre": "Corazón de vaca",
@@ -3702,7 +3782,10 @@
       "nota": "misma especie y órgano",
       "pais": "USA",
       "anio": "1976"
-    }
+    },
+    "humedad_g_100g": 77.1,
+    "humedad_fuente": "USDA FoodData Central · Beef, variety meats and by-products, heart, raw",
+    "humedad_fdc": "168625"
   },
   {
     "nombre": "Carcasa de pollo",
@@ -4208,7 +4291,10 @@
     "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar.\n\nQUE ES ESTA FICHA (4 septiembre): el dato es del AVE ENTERA CON PIEL, no de carne magra deshuesada, aunque el nombre diga «carne sin hueso». Lo confirmo la revision externa de la consultoria.\n\nNO SE RENOMBRA A PROPOSITO. Cambiar el nombre romperia cuatro cosas a la vez -- la lista curada del motor, la copia del catalogo que tiene el frontend, los menus precalculados y los menus YA GUARDADOS de los usuarios en Supabase, que apuntan al nombre -- para una ganancia cosmetica. Si algun dia hace falta distinguir la carne magra del ave entera, se crean DOS FICHAS NUEVAS y esta se queda: asi lo guardado sigue apuntando a algo que existe.",
     "sin_dato": [
       "purinas"
-    ]
+    ],
+    "humedad_g_100g": 73.8,
+    "humedad_fuente": "USDA FoodData Central · Duck, domesticated, meat only, raw",
+    "humedad_fdc": "172410"
   },
   {
     "nombre": "Corazón de cordero",
@@ -4273,7 +4359,10 @@
       "nota": "mismo órgano",
       "pais": "USA",
       "anio": "1976"
-    }
+    },
+    "humedad_g_100g": 76.7,
+    "humedad_fuente": "USDA FoodData Central · Lamb, variety meats and by-products, heart, raw",
+    "humedad_fdc": "172527"
   },
   {
     "nombre": "Gallina (carne sin hueso)",
@@ -4339,7 +4428,11 @@
       "nota": "carcasa de ave, el equivalente más cercano",
       "pais": "USA",
       "anio": "1980"
-    }
+    },
+    "humedad_g_100g": 61.8,
+    "humedad_fuente": "USDA FoodData Central · Chicken, stewing, meat and skin, raw",
+    "humedad_fdc": "172400",
+    "humedad_nota": "La fila USDA es 'meat and skin'. Nuestra ficha dice CARNE DESHUESADA. Si la nuestra es carne sin piel, esta humedad (61,8) no vale: la de 'stewing, meat only, raw' es distinta. Verificar."
   },
   {
     "nombre": "Lengua de cordero",
@@ -4405,7 +4498,10 @@
       "nota": "misma especie y tejido",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "humedad_g_100g": 66.6,
+    "humedad_fuente": "USDA FoodData Central · Lamb, variety meats and by-products, tongue, raw",
+    "humedad_fdc": "174366"
   },
   {
     "nombre": "Lengua de buey",
@@ -4477,7 +4573,10 @@
       "nota": "misma especie y tejido",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "humedad_g_100g": 64.5,
+    "humedad_fuente": "USDA FoodData Central · Beef, variety meats and by-products, tongue, raw",
+    "humedad_fdc": "170196"
   },
   {
     "nombre": "Lengua de ternera",
@@ -4543,7 +4642,10 @@
       "nota": "misma especie y tejido",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "humedad_g_100g": 74.5,
+    "humedad_fuente": "USDA FoodData Central · Veal, variety meats and by-products, tongue, raw",
+    "humedad_fdc": "174368"
   },
   {
     "nombre": "Pavo pechuga sin piel",
@@ -4613,7 +4715,10 @@
     },
     "sin_dato": [
       "yodo"
-    ]
+    ],
+    "humedad_g_100g": 74.7,
+    "humedad_fuente": "USDA FoodData Central · Turkey, retail parts, breast, meat only, raw",
+    "humedad_fdc": "174515"
   },
   {
     "nombre": "Pollo ala con piel (sin hueso)",
@@ -4679,7 +4784,11 @@
       "nota": "misma especie y corte",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "humedad_g_100g": 69.2,
+    "humedad_fuente": "USDA FoodData Central · Chicken, broilers or fryers, wing, meat and skin, raw",
+    "humedad_fdc": "172390",
+    "humedad_nota": "⚠️ NO CUADRA CON NUESTROS MACROS: agua + proteina + grasa = 103.5 g por cada 100 g de alimento, y no puede pasar de 100. Nuestra proteina y grasa no declaran fuente. Es el mayor de los cuatro. La fila del USDA de la que sale esta humedad SI cuadra consigo misma (su suma de proximales esta comprobada), asi que el que sobra es uno de NUESTROS numeros, no el agua. Se deja la humedad porque es el unico dato de esta fila con procedencia escrita; lo que hay que revisar es la proteina y la grasa contra ese mismo FDC. Anotado el 5-sep-2026."
   },
   {
     "nombre": "Pollo con piel (sin hueso)",
@@ -5049,7 +5158,10 @@
       "nota": "mismo alimento. CERO purinas",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "humedad_g_100g": 76.2,
+    "humedad_fuente": "USDA FoodData Central · Egg, whole, raw, fresh",
+    "humedad_fdc": "171287"
   },
   {
     "nombre": "Huevo de pato",
@@ -5431,7 +5543,10 @@
       "nota": "misma especie",
       "pais": "USA",
       "anio": "1976"
-    }
+    },
+    "humedad_g_100g": 73.4,
+    "humedad_fuente": "USDA FoodData Central · Fish, anchovy, european, raw",
+    "humedad_fdc": "174182"
   },
   {
     "nombre": "Calamar",
@@ -5504,7 +5619,10 @@
     ],
     "trazas": [
       "vitD"
-    ]
+    ],
+    "humedad_g_100g": 78.6,
+    "humedad_fuente": "USDA FoodData Central · Mollusks, squid, mixed species, raw",
+    "humedad_fdc": "174223"
   },
   {
     "nombre": "Dorada",
@@ -5862,7 +5980,7 @@
       "purinas": 113.0
     },
     "fuente_epa_dha": "BEDCA",
-    "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
+    "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».\n\nHUMEDAD PENDIENTE (5 septiembre). Se llego a poner 84,6 g de la fila de USDA «Fish, flatfish (flounder and sole species), raw» (FDC 174196) y se retiro: con nuestra proteina y grasa, que son de BEDCA, suma 102,4 g de materia por cada 100 g. Es la regla que hay que respetar aqui -- meter el agua de otra tabla en una ficha de BEDCA rompe la coherencia de la base seca, y es el mismo modo de fallo que la dorada: dos peces en una fila. Ademas la fila de USDA es un COMPUESTO de varias especies («flounder and sole»), no el lenguado. Falta la columna de agua de BEDCA.",
     "aminograma_estimado": {
       "desde": "Pescado plano (platija y lenguado), crudo",
       "factor": "1.33",
@@ -6038,7 +6156,10 @@
     },
     "sin_dato": [
       "cobre"
-    ]
+    ],
+    "humedad_g_100g": 79.1,
+    "humedad_fuente": "USDA FoodData Central · Fish, perch, mixed species, raw",
+    "humedad_fdc": "173678"
   },
   {
     "nombre": "Pescadilla",
@@ -6186,7 +6307,10 @@
     ],
     "sin_dato": [
       "cobre"
-    ]
+    ],
+    "humedad_g_100g": 80.2,
+    "humedad_fuente": "USDA FoodData Central · Mollusks, octopus, common, raw",
+    "humedad_fdc": "174218"
   },
   {
     "nombre": "Sepia",
@@ -6341,7 +6465,10 @@
       "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
       "pais": "—",
       "anio": "—"
-    }
+    },
+    "humedad_g_100g": 0.0,
+    "humedad_fuente": "USDA FoodData Central · Oil, peanut, salad or cooking",
+    "humedad_fdc": "171410"
   },
   {
     "nombre": "Aceite de coco",
@@ -6424,7 +6551,10 @@
       "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
       "pais": "—",
       "anio": "—"
-    }
+    },
+    "humedad_g_100g": 0.03,
+    "humedad_fuente": "USDA FoodData Central · Oil, coconut",
+    "humedad_fdc": "171412"
   },
   {
     "nombre": "Aceite de hígado de bacalao",
@@ -6798,7 +6928,10 @@
       "factor": "1.0",
       "confianza": "ALTA",
       "nota": "mismo alimento. Proteína idéntica"
-    }
+    },
+    "humedad_g_100g": 6.96,
+    "humedad_fuente": "USDA FoodData Central · Seeds, flaxseed",
+    "humedad_fdc": "169414"
   },
   {
     "nombre": "Pipa de calabaza",
@@ -7001,7 +7134,10 @@
         ],
         "fuente": "USDA FDC 169412 «Seeds, sesame seeds, kernels» da 60 mg y FINELI 34245 da 66: es el sesamo PELADO, el mas bajo de los dos polos, y se coge ese a proposito porque es el lado conservador para el minimo de calcio. ⚠️ Y DESDE EL 3 DE SEPTIEMBRE PESA MAS, no menos: con el declarado en 975 en vez de 150, la distancia entre lo que la ficha dice y lo que puede haber en la bolsa del cliente es de dieciseis veces, asi que este suelo es lo unico que impide que el motor de por cubierto un calcio que quiza no esta. ⚠️ ESTO NO CIERRA EL PROBLEMA: el `valor_plausible` protege el MINIMO, pero el ratio Ca:P se calcula sobre el valor declarado, y el Ca:P es justo donde vive el problema del sesamo. Un ratio no se puede blindar por un lado. Lo unico que lo resuelve es partir la ficha."
       }
-    }
+    },
+    "humedad_g_100g": 4.69,
+    "humedad_fuente": "USDA FoodData Central · Seeds, sesame seeds, whole, dried",
+    "humedad_fdc": "170150"
   },
   {
     "nombre": "Albahaca",
@@ -7216,7 +7352,10 @@
       "treonina",
       "triptofano",
       "valina"
-    ]
+    ],
+    "humedad_g_100g": 95.2,
+    "humedad_fuente": "USDA FoodData Central · Celery, raw (Foundation Foods, sin cenizas publicadas)",
+    "humedad_fdc": "2709778"
   },
   {
     "nombre": "Berenjena",
@@ -7285,7 +7424,10 @@
       "treonina",
       "triptofano",
       "valina"
-    ]
+    ],
+    "humedad_g_100g": 92.3,
+    "humedad_fuente": "USDA FoodData Central · Eggplant, raw",
+    "humedad_fdc": "169228"
   },
   {
     "nombre": "Boniato",
@@ -7661,7 +7803,10 @@
       "nota": "brásica",
       "pais": "USA",
       "anio": "2024"
-    }
+    },
+    "humedad_g_100g": 86.0,
+    "humedad_fuente": "USDA FoodData Central · Brussels sprouts, raw",
+    "humedad_fdc": "170383"
   },
   {
     "nombre": "Col lombarda",
@@ -7958,7 +8103,10 @@
       "treonina",
       "triptofano",
       "valina"
-    ]
+    ],
+    "humedad_g_100g": 93.8,
+    "humedad_fuente": "USDA FoodData Central · Endive, raw",
+    "humedad_fdc": "168412"
   },
   {
     "nombre": "Espárrago verde",
@@ -8325,7 +8473,10 @@
       "nota": "misma especie",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "humedad_g_100g": 95.2,
+    "humedad_fuente": "USDA FoodData Central · Cucumber, with peel, raw",
+    "humedad_fdc": "168409"
   },
   {
     "nombre": "Rábano",
@@ -9019,7 +9170,10 @@
       "treonina",
       "triptofano",
       "valina"
-    ]
+    ],
+    "humedad_g_100g": 83.5,
+    "humedad_fuente": "USDA FoodData Central · Mangos, raw",
+    "humedad_fdc": "169910"
   },
   {
     "nombre": "Piña",
@@ -9470,7 +9624,10 @@
     },
     "sin_dato": [
       "yodo"
-    ]
+    ],
+    "humedad_g_100g": 76.5,
+    "humedad_fuente": "USDA FoodData Central · Chicken, liver, all classes, raw",
+    "humedad_fdc": "171060"
   },
   {
     "nombre": "Carcasa de pato",
@@ -9965,7 +10122,10 @@
       "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
       "pais": "—",
       "anio": "—"
-    }
+    },
+    "humedad_g_100g": 0.0,
+    "humedad_fuente": "composicion quimica · ",
+    "humedad_nota": "NaCl puro: 39,3 % sodio y 60,7 % cloruro por definicion. Sin agua de constitucion."
   },
   {
     "nombre": "Yoduro potásico (comprimidos 200 µg)",
@@ -10203,7 +10363,10 @@
       "nota": "ave, mismo órgano",
       "pais": "USA",
       "anio": "1980"
-    }
+    },
+    "humedad_g_100g": 79.3,
+    "humedad_fuente": "USDA FoodData Central · Chicken, gizzard, all classes, raw",
+    "humedad_fdc": "171456"
   },
   {
     "nombre": "Molleja de pavo",
@@ -10273,7 +10436,10 @@
       "nota": "ave, mismo órgano",
       "pais": "USA",
       "anio": "1980"
-    }
+    },
+    "humedad_g_100g": 77.5,
+    "humedad_fuente": "USDA FoodData Central · Turkey, gizzard, all classes, raw",
+    "humedad_fdc": "171085"
   },
   {
     "nombre": "Pollo pechuga sin piel",
@@ -10351,7 +10517,10 @@
       "nota": "misma especie y corte",
       "pais": "USA",
       "anio": "1983, 1982"
-    }
+    },
+    "humedad_g_100g": 73.9,
+    "humedad_fuente": "USDA FoodData Central · Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw",
+    "humedad_fdc": "171077"
   },
   {
     "nombre": "Pollo muslo sin piel",
@@ -10430,7 +10599,10 @@
       "nota": "misma especie y corte",
       "pais": "USA",
       "anio": "1983, 1980, 1982"
-    }
+    },
+    "humedad_g_100g": 76.2,
+    "humedad_fuente": "USDA FoodData Central · Chicken, broilers or fryers, dark meat, thigh, meat only, raw",
+    "humedad_fdc": "173627"
   },
   {
     "nombre": "Hígado de cordero",
@@ -10510,7 +10682,10 @@
       "nota": "misma especie y órgano",
       "pais": "USA",
       "anio": "1976"
-    }
+    },
+    "humedad_g_100g": 71.4,
+    "humedad_fuente": "USDA FoodData Central · Lamb, variety meats and by-products, liver, raw",
+    "humedad_fdc": "172531"
   },
   {
     "nombre": "Corazón de conejo",
@@ -11053,7 +11228,10 @@
       "nota": "Souci vía Eichhorn, bazo de vacuno adulto. Compilación, no análisis primario: calidad de dato inferior al resto de la columna.",
       "pais": "Alemania",
       "anio": ""
-    }
+    },
+    "humedad_g_100g": 77.2,
+    "humedad_fuente": "USDA FoodData Central · Beef, variety meats and by-products, spleen, raw",
+    "humedad_fdc": "169454"
   },
   {
     "nombre": "Páncreas de vaca",
@@ -11117,7 +11295,10 @@
       "factor": "1.019",
       "confianza": "ALTA",
       "nota": "misma especie y tejido"
-    }
+    },
+    "humedad_g_100g": 65.2,
+    "humedad_fuente": "USDA FoodData Central · Beef, variety meats and by-products, pancreas, raw",
+    "humedad_fdc": "169452"
   },
   {
     "nombre": "Bazo de cordero",
@@ -11181,7 +11362,10 @@
       "nota": "Souci vía Eichhorn, bazo de cordero. Compilación, no análisis primario: calidad de dato inferior al resto de la columna.",
       "pais": "Alemania",
       "anio": ""
-    }
+    },
+    "humedad_g_100g": 78.2,
+    "humedad_fuente": "USDA FoodData Central · Lamb, variety meats and by-products, spleen, raw",
+    "humedad_fdc": "174364"
   },
   {
     "nombre": "Timo de ternera",
@@ -11248,7 +11432,11 @@
       "nota": "Souci-Fachmann-Kraut vía compilaciones alemanas de dieta para la gota. «Kalbsbries (Thymusdrüse)» es inequívocamente el TIMO, no el páncreas: en inglés «sweetbread» cubre los dos y ahí está la confusión. Es el alimento sólido con más purinas de las tablas. Compilación, no análisis primario: calidad de dato inferior al resto de la columna.",
       "pais": "Alemania",
       "anio": ""
-    }
+    },
+    "humedad_g_100g": 67.8,
+    "humedad_fuente": "USDA FoodData Central · Beef, variety meats and by-products, thymus, raw",
+    "humedad_fdc": "170194",
+    "humedad_nota": "OJO CON EL NOMBRE: la ficha se llama 'de ternera' pero su fuente declarada (FDC 170194) es 'Beef ... thymus, raw', o sea VACUNO ADULTO, no ternera. La humedad 67,8 es la de esa fila. Verificar si el nombre o la fuente es lo que hay que cambiar."
   },
   {
     "nombre": "Cerebro de ternera",
@@ -11321,7 +11509,11 @@
       "nota": "mismo órgano",
       "pais": "USA",
       "anio": "1976"
-    }
+    },
+    "humedad_g_100g": 79.8,
+    "humedad_fuente": "USDA FoodData Central · Veal, variety meats and by-products, brain, raw",
+    "humedad_fdc": "174351",
+    "humedad_nota": "⚠️ NO CUADRA CON NUESTROS MACROS: agua + proteina + grasa = 101.0 g por cada 100 g de alimento, y no puede pasar de 100. Nuestra ficha declara ser un CRUCE de USDA con Recipal, FatSecret y Prospre: el agua es de la fila de USDA sola. La fila del USDA de la que sale esta humedad SI cuadra consigo misma (su suma de proximales esta comprobada), asi que el que sobra es uno de NUESTROS numeros, no el agua. Se deja la humedad porque es el unico dato de esta fila con procedencia escrita; lo que hay que revisar es la proteina y la grasa contra ese mismo FDC. Anotado el 5-sep-2026."
   },
   {
     "nombre": "Corazón de pavo",
@@ -11392,7 +11584,10 @@
       "nota": "ave, mismo órgano",
       "pais": "USA",
       "anio": "1976"
-    }
+    },
+    "humedad_g_100g": 74.5,
+    "humedad_fuente": "USDA FoodData Central · Turkey, all classes, heart, raw",
+    "humedad_fdc": "171484"
   },
   {
     "nombre": "Hígado de pavo",
@@ -11462,7 +11657,10 @@
       "nota": "hígado de otra especie",
       "pais": "USA",
       "anio": "1976"
-    }
+    },
+    "humedad_g_100g": 75.5,
+    "humedad_fuente": "USDA FoodData Central · Turkey, all classes, liver, raw",
+    "humedad_fdc": "171486"
   },
   {
     "nombre": "Hígado de pato",
@@ -11535,6 +11733,9 @@
       "nota": "hígado de ave; el foie es hipergraso y probablemente infraestima",
       "pais": "Japan",
       "anio": "2020"
-    }
+    },
+    "humedad_g_100g": 71.8,
+    "humedad_fuente": "USDA FoodData Central · Duck, domesticated, liver, raw",
+    "humedad_fdc": "174467"
   }
 ]

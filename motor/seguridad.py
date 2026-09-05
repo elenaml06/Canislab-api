@@ -268,9 +268,22 @@ OXALATO_ALTO = {"espinaca", "acelga", "ruibarbo", "remolacha"}
 # despues de cargar el guisante llega tarde -- el menu ya habra salido
 # verde, porque un guisante es un alimento perfectamente normal para el
 # semaforo. Escrita antes, no llega a pasar.
+# ⚠️ Y LA PATATA Y EL BONIATO TAMBIEN (5 septiembre), que es lo que se nos
+# habia escapado a los dos. El criterio publicado no dice «legumbres» a
+# secas: Fascetti 2a ed. cap. 18, que firman Freeman y Rush -- los que
+# lideraron la investigacion de la CMD asociada a la dieta -- dice que las
+# dietas implicadas son «grain-free OR grain-inclusive diets containing
+# PULSES OR POTATOES». La patata esta nombrada, en menor medida que el
+# guisante y la lenteja, pero nombrada. Y el BONIATO SI ESTA en nuestro
+# catalogo.
+# MEDIDO antes de meterlo, porque el boniato es de las pocas fuentes de
+# hidrato que tenemos: cinco perfiles con cardiopatia -- mediana, toy,
+# gigante, pequeno y senior -- salen los cinco en VERDE con boniato y sin
+# el, y el solver no lo elige en ninguno de los cinco. No cuesta ni un menu.
 LEGUMBRES_GRANO = {"guisante", "lenteja", "garbanzo", "soja", "alubia",
                    "judia blanca", "judia pinta", "haba", "altramuz",
-                   "frijol", "caupi", "proteina de guisante"}
+                   "frijol", "caupi", "proteina de guisante",
+                   "patata", "boniato", "batata"}
 
 # ⚠️ URATO — vísceras metabólicas y marisco/cefalópodos son altos en
 # purinas. En perro sano no hay problema (el hígado ya elimina el urato
@@ -671,10 +684,11 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
         leg = [n for n in menu if _es(n, LEGUMBRES_GRANO)]
         if leg:
             problemas.append(
-                "%s son legumbres de grano. Con un hallazgo cardíaco las guías "
-                "recomiendan retirarlas: la FDA las investigó por su asociación "
-                "con cardiomiopatía dilatada en perros. Consúltalo con tu "
-                "veterinario antes de darlas." % ", ".join(leg))
+                "%s son de los ingredientes que las guías recomiendan retirar "
+                "ante un hallazgo cardíaco: las dietas asociadas a cardiomiopatía "
+                "dilatada en perros son las que llevan legumbres de grano o "
+                "patata. Consúltalo con tu veterinario antes de darlas."
+                % ", ".join(leg))
 
     # 4. higado por peso (la via por la que se dispara la vitamina A)
     hig = [n for n in menu if alimentos.get(n, {}).get("categoria") == "Hígado"]

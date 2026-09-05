@@ -1584,7 +1584,35 @@ juntos porque es una sola pasada por la pantalla de la ficha.
 **Lo que queda abierto de las 35 filas VERIFICAR**, por orden de lo que
 desbloquea:
 
-- [ ] **La columna de HUMEDAD, en las 159 fichas.** Marcada GRAVE, y es
+- [x] ~~**La columna de HUMEDAD**~~ — **65 de 155 puestas el 5 de septiembre**,
+      cada una con su `fdcId` del USDA y la descripción exacta de la fila.
+      Cubren el grueso de la masa de la ración: casi toda la carne, las
+      vísceras, los hígados, los huevos y ocho pescados.
+      **Quedan 90, y no es pereza — es que cuatro grupos no se resuelven con
+      USDA:** 31 verduras a las que falta fijar el `fdcId` de la fila CRUDA
+      (trabajo mecánico, pero hay que rechazar activamente las filas `dried`,
+      `cooked`, `canned` y `frozen`, que es exactamente el error de la
+      albahaca) · **12 pescados de BEDCA**, que solo se consulta por un
+      formulario JavaScript y no expone endpoint · **10 huesos carnosos de
+      Köber 2017**, que publica Ca y P pero no materia seca, y ahí la humedad
+      de una carne deshuesada no vale porque el hueso cambia la MS por
+      completo · 18 suplementos, cuya humedad la declara el fabricante.
+      - [ ] **El lenguado, aparte.** Se llegó a poner 84,6 g de la fila
+            `flatfish (flounder and sole species)` del USDA y **se retiró**:
+            con nuestra proteína y grasa, que son de BEDCA, sumaba 102,4 g de
+            materia por cada 100. Es el mismo modo de fallo que la dorada.
+      - [ ] **Tres que no cuadran y se dejan declaradas**: pavo 101,4 · pollo
+            ala con piel 103,5 · cerebro de ternera 101,0. En las tres el
+            agua es el único dato de la fila con procedencia escrita, así que
+            lo que hay que revisar es **nuestra** proteína y grasa contra ese
+            mismo FDC, no el agua.
+      - [ ] Y cuando se monten §1.3 y §1.4: **si a un menú le falta la
+            humedad de cualquiera de sus ingredientes, la comprobación contra
+            el techo por MS tiene que declarar «no verificable», nunca pasar
+            en silencio.** Un techo que se salta callando porque falta un
+            divisor es peor que no tenerlo.
+
+- [ ] ~~La columna de HUMEDAD, en las 159 fichas.~~ Marcada GRAVE, y es
       un prerrequisito, no un dato más: sin ella no se puede calcular la
       densidad energética en materia seca, y **sin eso no se pueden
       corregir los seis techos legales de FEDIAF**, que están dados por

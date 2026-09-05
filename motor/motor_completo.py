@@ -1054,6 +1054,76 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             fila = [fila_ca[j] - rmax * fila_p[j] for j in range(2 * n_var)]
             _fila("ratio_ca_p_max", fila, -np.inf, 0.0)
 
+    # 2c. VITAMINA E CONTRA PUFA — el otro requisito que es un ratio y no una
+    # cifra (5 septiembre). La vitamina E se gasta protegiendo a los ácidos
+    # grasos poliinsaturados de oxidarse, así que su requerimiento NO es una
+    # constante: sube con los PUFA de la ración. En una ración BARF con
+    # aceite de pescado eso importa, porque el aceite sube los PUFA sin
+    # traer vitamina E que los cubra.
+    #
+    # NRC 2006, sección del PERRO, literal: «To allow for the use of higher
+    # levels of PUFAs in the diet, it is suggested that a ratio of
+    # α-tocopherol (milligrams) to PUFAs (grams) of at least 0.6 be
+    # maintained.»
+    #
+    # ⚠️ ES DEL PERRO, y hay que decirlo porque la primera vez se citó del
+    # párrafo del GATO. NRC 2006 trata las dos especies y sus números no son
+    # los mismos: el 24 mg/kg, el 120 mg/kg, la esteatitis del atún y el
+    # alargamiento del tiempo de coagulación son de gato. El 0,6 es canino.
+    #
+    # Y NO HAY TECHO. NRC dice «There is no information on vitamin E toxicity
+    # in dogs» y FEDIAF no publica máximo -- `auditar_fediaf.py` la lista
+    # explícitamente entre las que no lo tienen, así que ponerle uno rompería
+    # la auditoría contra su propia fuente. Lo único publicado es un
+    # «maximum tolerable level» de NRC 1987, un rango de 1.000-2.000 UI/kg de
+    # alimento, que es de hace casi cuarenta años y no es un techo de
+    # formulación. Aquí solo va el SUELO.
+    #
+    # Es lineal igual que el Ca:P: vitE - 0,6 * PUFA >= 0.
+    #
+    # ⚠️ Y HOY ESTA REGLA ES INERTE. Se dice aquí porque intentar que
+    # pareciera otra cosa sería peor que no tenerla.
+    #
+    # MEDIDO en cuatro perfiles reales: el ratio va de 2,56 a 21,17, entre
+    # cuatro y treinta y cinco veces por encima del 0,6. Y se intentó cuatro
+    # veces construir un caso donde mordiera, sin conseguirlo:
+    #   · forzando 25 g de un aceite de pescado con vitE 0 y EPA+DHA x4 → lo
+    #     frena antes el TECHO CRÓNICO de EPA+DHA, no esta regla;
+    #   · forzando 20 y 60 g de un aceite vegetal con 60 g de linoleico y
+    #     vitE 0 → lo frena el tope de dosis del suplemento (5 g);
+    #   · vaciando la vitamina E de TODO el catálogo menos los
+    #     multivitamínicos → el menú sale a ratio 2,26, sigue sobrado;
+    #   · forzando 120 g de una semilla con 45 g de linoleico y vitE 0 → el
+    #     árbol sin la regla da ratio 1,81, o sea que tampoco la cruza.
+    #
+    # El motivo es que el MÍNIMO de vitamina E de FEDIAF, por 1000 kcal, ya
+    # implica un ratio muy por encima de 0,6 para cualquier cantidad de PUFA
+    # que quepa en una ración real. La regla del 0,6 protege un catálogo con
+    # alimentos mucho más ricos en PUFA que los que tenemos.
+    #
+    # Se pone igualmente, y por el mismo motivo que las legumbres: escribirla
+    # DESPUÉS de que entre el alimento que la cruza llega tarde, porque el
+    # menú ya habrá salido verde. Lo que NO se puede hacer es escribir una
+    # prueba que afirme que impide una violación, porque esa violación no se
+    # ha podido reproducir. El BLOQUE 47 comprueba lo que sí es comprobable.
+    #
+    # El araquidónico va en MILIGRAMOS en este catálogo (ver UNIDADES.md) y
+    # los otros cuatro en gramos, así que se divide entre 1000 antes de
+    # sumarlo. Cargarlo sin dividir metería 37 g de PUFA donde hay 0,037 y
+    # el suelo de vitamina E se volvería inalcanzable.
+    RATIO_VITE_PUFA = 0.6
+    fila_vite = fila_vacia(); fila_pufa = fila_vacia()
+    for n in nombres:
+        nut = alimentos[n].get("nutrientes", {})
+        ve = (_num(nut.get("vitE")) or 0.0) / 100.0
+        pufa = sum(_num(nut.get(k)) or 0.0
+                   for k in ("linoleico", "linolenico", "epa", "dha")) / 100.0
+        pufa += (_num(nut.get("araquidonico")) or 0.0) / 1000.0 / 100.0
+        fila_vite[idx[n]] = ve
+        fila_pufa[idx[n]] = pufa
+    fila = [fila_vite[j] - RATIO_VITE_PUFA * fila_pufa[j] for j in range(2 * n_var)]
+    _fila("ratio_vite_pufa", fila, 0.0, np.inf)
+
     # 3. margen por peso de cada categoría de COMIDA (no suplementos)
     if margenes_categoria:
         # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL ENCONTRADO: las
