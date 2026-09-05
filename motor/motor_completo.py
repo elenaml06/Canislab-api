@@ -410,11 +410,20 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # infactible sin motivo real. Quitarlos aquí, del catálogo de
         # candidatos, evita que puedan "gastar" cupo de ninguna
         # restricción, sea la que sea.
-        from seguridad import OXALATO_ALTO, PURINAS_ALTAS, EXCLUIDOS_SIEMPRE, _es as _es_patologia
+        from seguridad import (OXALATO_ALTO, PURINAS_ALTAS, LEGUMBRES_GRANO,
+                           EXCLUIDOS_SIEMPRE, _es as _es_patologia)
         if "oxalato" in (patologias or []):
             disp = [n for n in disp if not _es_patologia(n, OXALATO_ALTO)]
         if "urato" in (patologias or []) and cat in ("Hígado", "Vísceras", "Pescados y mariscos"):
             disp = [n for n in disp if not _es_patologia(n, PURINAS_ALTAS)]
+        # Las legumbres de grano, solo con hallazgo cardíaco. Hoy el catálogo
+        # no tiene ninguna -- la judía verde NO cuenta, es la vaina inmadura y
+        # nutricionalmente una verdura --, así que esta línea no cambia ningún
+        # menú. Está para que el día que entre un guisante o una lenteja no
+        # entre callando: una regla escrita después de cargar el alimento
+        # llega tarde, porque el menú ya habrá salido verde.
+        if "cardiopatia" in (patologias or []):
+            disp = [n for n in disp if not _es_patologia(n, LEGUMBRES_GRANO)]
         disp = [n for n in disp if not _es_patologia(n, EXCLUIDOS_SIEMPRE)]
         disp = [n for n in disp
                if not any(pat in (patologias or [])
@@ -563,9 +572,11 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # real, no depende de patología), y las restricciones propias de cada
     # alimento en el
     # catálogo (grelo/nabo, dátil/mango/plátano, coco...).
-    from seguridad import OXALATO_ALTO, PURINAS_ALTAS, EXCLUIDOS_SIEMPRE, _es as _es_patologia
+    from seguridad import (OXALATO_ALTO, PURINAS_ALTAS, LEGUMBRES_GRANO,
+                           EXCLUIDOS_SIEMPRE, _es as _es_patologia)
     excluye_oxalato = "oxalato" in (patologias or [])
     excluye_urato = "urato" in (patologias or [])
+    excluye_legumbres = "cardiopatia" in (patologias or [])
     CATEGORIAS_PURINAS_REALES = {"Hígado", "Vísceras", "Pescados y mariscos"}
     techos = []
     for n in nombres:
@@ -577,6 +588,9 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             techos.append(0.0)
             continue
         if excluye_urato and _es_patologia(n, PURINAS_ALTAS) and a.get("categoria") in CATEGORIAS_PURINAS_REALES:
+            techos.append(0.0)
+            continue
+        if excluye_legumbres and _es_patologia(n, LEGUMBRES_GRANO):
             techos.append(0.0)
             continue
         if _es_patologia(n, EXCLUIDOS_SIEMPRE):

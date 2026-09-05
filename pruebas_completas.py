@@ -2280,6 +2280,20 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # de EPA+DHA sigue contando el declarado.
     ("DUDOSO", "Dorada"),
     ("DUDOSO", "Semilla de sésamo"),
+    # ⚠️ Y LAS SEIS DE HUESO CARNOSO (4 septiembre), todas por lo mismo: la
+    # ENERGÍA. Cumplen `kcal = 4·proteína + 9·grasa` AL DECIMAL, o sea que
+    # está calculada con los factores de Atwater HUMANOS y no medida. En una
+    # pieza CON HUESO eso sobreestima: el colágeno y la matriz mineral
+    # cuentan como proteína y como ceniza pero aportan energía metabolizable
+    # cerca de cero. Köber et al. 2017 midió materia seca, proteína, grasa,
+    # cenizas, Ca y P — la energía no.
+    # NO se corrige, y por eso queda marcada en vez de arreglada: no hay
+    # factor publicado de energía metabolizable para pieza con hueso que
+    # ponerle en su sitio, y la energía es el DIVISOR de los 43 requisitos.
+    # Tocarla a ojo movería la tabla entera.
+    ("DUDOSO", "Carcasa de pollo"), ("DUDOSO", "Carcasa de pato"),
+    ("DUDOSO", "Carcasa de conejo"), ("DUDOSO", "Espinazo de conejo"),
+    ("DUDOSO", "Costillas de cordero"), ("DUDOSO", "Pecho de ternera con hueso"),
 }
 
 import re as _re_b19
@@ -5051,6 +5065,84 @@ if abs(float(_vd45.get("maxAdulto") or 0) - 20.0) > 1e-6:
                   "que FEDIAF IMPRIME y la que audita auditar_fediaf.py contra el PDF; el techo "
                   "legal va aparte en `maxLegalAdulto`. Sustituir uno por otro rompe la "
                   "auditoría contra la fuente primaria.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 46 — LAS LEGUMBRES DE GRANO EN CARDIOPATÍA
+# ============================================================
+#
+# ⚠️ ESTA REGLA NO CAMBIA NINGÚN MENÚ HOY, y por eso hace falta la prueba
+# más que en las otras. El catálogo no tiene ninguna legumbre de grano, así
+# que la exclusión no se ejerce nunca y nadie se enteraría de que se ha
+# roto. Una regla que no se ejerce y no se prueba es una regla que no está.
+#
+# Existe porque la FDA investigó desde 2018 la cardiomiopatía dilatada en
+# perros alimentados con dietas «grain-free» cuyo primer ingrediente eran
+# legumbres de grano -- guisante, lenteja, garbanzo y sobre todo los
+# concentrados proteicos de guisante. Ante un hallazgo cardíaco las guías
+# recomiendan retirarlas.
+#
+# ⚠️ Y LA JUDÍA VERDE NO ENTRA, a propósito. Lo que se come de la judía
+# verde es la VAINA INMADURA, que nutricionalmente es una verdura (31 kcal
+# y 1,8 g de proteína por 100 g), no el grano seco, que es lo asociado a la
+# CMD. Meterla quitaría una verdura sin quitar ningún riesgo. Se comprueba
+# que sigue fuera, porque es el error fácil de esta regla.
+print("\n=== BLOQUE 46: las legumbres de grano en cardiopatía ===")
+
+import importlib as _il46
+_seg46 = _il46.import_module("seguridad")
+
+for _n46 in ("Guisante", "Lenteja", "Garbanzo", "Proteína de guisante", "Soja"):
+    if not _seg46._es(_n46, getattr(_seg46, "LEGUMBRES_GRANO", set())):
+        fallos.append(f"BLOQUE46: '{_n46}' ya no cuenta como legumbre de grano. El conjunto "
+                      f"existe para que el día que entre esa ficha no entre callando: escrita "
+                      f"después de cargarla, la regla llega tarde y el menú ya salió verde.")
+for _n46 in ("Judía verde", "Zanahoria", "Calabaza"):
+    if _seg46._es(_n46, getattr(_seg46, "LEGUMBRES_GRANO", set())):
+        fallos.append(f"BLOQUE46: '{_n46}' cuenta como legumbre de grano y no lo es. La judía "
+                      f"verde es la VAINA INMADURA, una verdura: lo asociado a la CMD es el "
+                      f"grano seco. Excluirla quita una verdura sin quitar ningún riesgo.")
+
+# Y que la exclusión MUERDA de verdad dentro del solver. Se comprueba
+# forzando el alimento, porque sin forzarlo el solver no lo elige de todas
+# formas y la prueba pasaría con la regla quitada -- que es exactamente la
+# prueba que no sirve.
+_al46 = dict(al)
+_g46 = _json_b12.loads(_json_b12.dumps(_al46["Judía verde"]))
+_g46["nombre"] = "Guisante"
+_al46["Guisante"] = _g46
+_ok46a, _m46a = _resolver_43(1513.0, "Adulto", _al46, req, 20.0, dosis_maxima_fabricante,
+                             margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
+                             forzar={"Guisante": 60.0})
+_ok46b, _m46b = _resolver_43(1513.0, "Adulto", _al46, req, 20.0, dosis_maxima_fabricante,
+                             margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
+                             patologias=["cardiopatia"], forzar={"Guisante": 60.0})
+if not (_ok46a and (_m46a or {}).get("Guisante")):
+    fallos.append("BLOQUE46: forzando un guisante en un perro SANO no entra en el menú. Esta "
+                  "mitad de la prueba es la que demuestra que la otra mide algo: si tampoco "
+                  "entra sin cardiopatía, el cero de abajo no prueba que la regla funcione.")
+if (_m46b or {}).get("Guisante"):
+    fallos.append(f"BLOQUE46: con cardiopatía declarada, el solver mete "
+                  f"{_m46b['Guisante']} g de guisante aunque se fuerce a cero. La exclusión "
+                  f"por legumbres no está mordiendo.")
+
+# Y el aviso, que es el otro camino: `revisar_seguridad` mira lo que llega de
+# FUERA -- /analizar, una edición a mano, un menú firmado viejo -- donde
+# puede aparecer una legumbre que el motor nunca habría puesto.
+_av46 = _seg46.revisar_seguridad({"Guisante": 100.0, "Costillas de cordero": 200.0},
+                                 _al46, 1000.0, patologias={"cardiopatia"})
+_av46 = _av46 if isinstance(_av46, list) else _av46[0]
+if not any("legumbre" in _x.lower() for _x in _av46):
+    fallos.append("BLOQUE46: un menú de FUERA con guisante y cardiopatía no dispara el aviso. "
+                  "El solver no puede filtrar lo que no ha construido él.")
+_av46s = _seg46.revisar_seguridad({"Guisante": 100.0, "Costillas de cordero": 200.0},
+                                  _al46, 1000.0)
+_av46s = _av46s if isinstance(_av46s, list) else _av46s[0]
+if any("legumbre" in _x.lower() for _x in _av46s):
+    fallos.append("BLOQUE46: se avisa de las legumbres en un perro SANO. En perro sano no se "
+                  "tocan -- mismo patrón que el oxalato y las purinas.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

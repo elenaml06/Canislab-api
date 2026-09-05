@@ -840,3 +840,46 @@ hay que deshacer es la corrección de la grasa, no ésta.
 | linoleico (omega-6, C18:2) | g | |
 | linolenico (omega-3, C18:3) | g | |
 | araquidonico | mg | |
+
+## La energía de las seis fichas de hueso carnoso
+
+**Añadido el 4 de septiembre.** No es un hueco: es un valor declarado que sabemos
+mal calculado. Las seis —carcasa de pollo, de pato y de conejo, espinazo de
+conejo, costillas de cordero y pecho de ternera con hueso— cumplen
+`kcal = 4·proteína + 9·grasa` **al decimal**, así que la energía sale de aplicar
+los factores de Atwater **humanos** a los macros, no de medirla.
+
+En una pieza **con hueso** eso sobreestima: el colágeno y la matriz mineral
+cuentan como proteína y como ceniza pero aportan energía metabolizable cerca de
+cero. Köber et al. 2017, que es la fuente de estas fichas, midió materia seca,
+proteína, grasa, cenizas, calcio y fósforo — **la energía no**.
+
+No se corrige a ojo, y el motivo es el tamaño del daño: **la energía es el
+divisor de los 43 requisitos**. Un factor inventado movería la tabla entera en
+todos los menús a la vez, y en la dirección que menos se ve — hacia arriba, o
+sea aflojando todos los mínimos.
+
+**Lo que hace falta:** un factor de energía metabolizable para pieza con hueso,
+o una medida directa por bomba calorimétrica con su digestibilidad.
+
+| Ficha | kcal declaradas | 4·prot + 9·grasa |
+|---|---|---|
+| Carcasa de pollo | 240,2 | 240,2 |
+| Carcasa de pato | 229,9 | 229,9 |
+| Carcasa de conejo | 158,5 | 158,5 |
+| Espinazo de conejo | 146,5 | 146,5 |
+| Costillas de cordero | 185,9 | 185,9 |
+| Pecho de ternera con hueso | 346,1 | 346,1 |
+
+### Y sus micronutrientes, que estaban clonados
+
+De las mismas seis fichas se vaciaron el 4 de septiembre los micronutrientes
+**repetidos entre especies distintas** — un valor que aparece idéntico en dos
+fichas de animales distintos no puede ser la medida individual de ninguna de las
+dos. Los más descarados: **vitamina A y vitamina D valían 0,01 en cinco de las
+seis**, que es un relleno y no una medida.
+
+Lo único defendible del lote es lo que declara la metodología de la fuente:
+*«Ca por fotometría de emisión de llama, P por espectrofotometría tras digestión
+por microondas»*. Todo lo demás hay que conseguirlo.
+

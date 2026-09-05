@@ -240,6 +240,38 @@ TOPE_CLARA_PESO = 0.05
 # Las hojas de ruibarbo son el mayor riesgo agudo (oxalato muy alto).
 OXALATO_ALTO = {"espinaca", "acelga", "ruibarbo", "remolacha"}
 
+# ---------------------------------------------------------------------------
+# 3-bis. LEGUMBRES — solo condicionado a cardiopatia
+# ---------------------------------------------------------------------------
+# ⚠️ AÑADIDO EL 4 DE SEPTIEMBRE, y hoy NO CAMBIA NINGUN MENU. Se pone
+# igualmente, y ese es el motivo de que este comentario exista.
+#
+# La FDA abrio en 2018 una investigacion sobre cardiomiopatia dilatada en
+# perros que comian dietas «grain-free» cuyo primer ingrediente eran
+# LEGUMBRES DE GRANO -- guisante, lenteja, garbanzo, y sobre todo los
+# concentrados proteicos de guisante. La recomendacion de las guias es
+# retirarlas ante un hallazgo cardiaco, y declararlas siempre, lleve cereal
+# la formula o no.
+#
+# EN EL CATALOGO DE HOY NO HAY NINGUNA. La unica ficha que podria sonar a
+# legumbre es la JUDIA VERDE, y NO entra: lo que se come de la judia verde
+# es la VAINA INMADURA, que nutricionalmente es una verdura -- 31 kcal y 1,8
+# g de proteina por 100 g -- y no el grano seco, que es lo asociado a la
+# CMD. Meterla aqui quitaria una verdura sin quitar ningun riesgo, y ademas
+# ensenaria al motor a llamar «legumbre» a algo que no lo es a estos
+# efectos.
+#
+# ASI QUE ESTE CONJUNTO NACE VACIO DE FICHAS Y LLENO DE PALABRAS, a
+# proposito y por el mismo motivo por el que `BORRAJA_EXCLUIR` sigue
+# existiendo despues de que la borraja saliera del catalogo: la exclusion
+# tiene que funcionar el dia que el alimento APAREZCA. Una regla escrita
+# despues de cargar el guisante llega tarde -- el menu ya habra salido
+# verde, porque un guisante es un alimento perfectamente normal para el
+# semaforo. Escrita antes, no llega a pasar.
+LEGUMBRES_GRANO = {"guisante", "lenteja", "garbanzo", "soja", "alubia",
+                   "judia blanca", "judia pinta", "haba", "altramuz",
+                   "frijol", "caupi", "proteina de guisante"}
+
 # ⚠️ URATO — vísceras metabólicas y marisco/cefalópodos son altos en
 # purinas. En perro sano no hay problema (el hígado ya elimina el urato
 # via uricasa). Pero en perros con predisposición a urolitos de urato
@@ -629,6 +661,20 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
                 "En cantidad, %s pueden favorecer los oxalatos. Ahora "
                 "mismo son el %.0f%% del plato (el límite es %.0f%%)."
                 % (", ".join(oxal), g_ox / total * 100, tope_ox * 100))
+
+    # 3c-bis. LEGUMBRES DE GRANO EN CARDIOPATIA. Mismo patron que el
+    # oxalato: en perro sano no se tocan. Va tambien aqui y no solo en el
+    # solver porque esta funcion revisa lo que llega de FUERA -- `/analizar`,
+    # una edicion a mano, un menu firmado viejo --, donde puede aparecer una
+    # legumbre que el motor nunca habria puesto.
+    if "cardiopatia" in patologias:
+        leg = [n for n in menu if _es(n, LEGUMBRES_GRANO)]
+        if leg:
+            problemas.append(
+                "%s son legumbres de grano. Con un hallazgo cardíaco las guías "
+                "recomiendan retirarlas: la FDA las investigó por su asociación "
+                "con cardiomiopatía dilatada en perros. Consúltalo con tu "
+                "veterinario antes de darlas." % ", ".join(leg))
 
     # 4. higado por peso (la via por la que se dispara la vitamina A)
     hig = [n for n in menu if alimentos.get(n, {}).get("categoria") == "Hígado"]
