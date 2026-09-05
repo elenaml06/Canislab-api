@@ -5260,6 +5260,74 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 48 — EL RIESGO DEL HUESO QUE DE VERDAD OCURRE
+# ============================================================
+#
+# ⚠️ AÑADIDO EL 5 DE SEPTIEMBRE. Los dos avisos que ya había sobre el hueso
+# eran por alimento —hueso de carga, hueso estrecho— y dejaban fuera el
+# riesgo que comparten TODOS: atascarse en el esófago.
+#
+# SACN5 cap. 50a, citando a Rousseau et al. 2007: «46 of 60 esophageal
+# foreign bodies removed from dogs were bones». Es canino, está publicado y
+# es un número: de cada diez cuerpos extraños que hubo que sacar del
+# esófago de un perro, ocho eran hueso. No topa nada ni excluye nada —el
+# hueso carnoso es el 20-60 % de una ración BARF—, pero quien lo da tiene
+# derecho a saber cuál es el accidente que de verdad ocurre, que no es el
+# que la gente teme.
+print("\n=== BLOQUE 48: el riesgo del hueso que de verdad ocurre ===")
+
+_seg48 = _il46.import_module("seguridad") if "_il46" in dir() else _il45.import_module("seguridad")
+_al48 = {_a["nombre"]: _a for _a in _al45}
+_huesos48 = [_n for _n, _a in _al48.items() if _a.get("categoria") == "Hueso carnoso"]
+if len(_huesos48) < 6:
+    fallos.append(f"BLOQUE48: quedan {len(_huesos48)} fichas de hueso carnoso. Eran 6 tras "
+                  f"sacar los tres cuellos por tejido tiroideo.")
+
+# Cada hueso del menú tiene que llevar su aviso, no solo los dos que ya
+# tenían uno propio.
+_menu48 = {_n: 120.0 for _n in _huesos48[:3]}
+_menu48["Pollo con piel (sin hueso)"] = 300.0
+_av48 = list(_seg48.avisos_rotacion(_menu48, _al48) or [])
+_sin_aviso48 = [_n for _n in _huesos48[:3]
+                if not any(_x.startswith(_n) and "esófago" in _x for _x in _av48)]
+if _sin_aviso48:
+    fallos.append(f"BLOQUE48: estos huesos del menú no llevan el aviso del esófago: "
+                  f"{_sin_aviso48}. Es el riesgo que comparten TODOS, no el de dos fichas "
+                  f"concretas, así que tiene que salir para cada uno.")
+# Y que no salga para lo que no es hueso: un aviso que sale siempre deja de
+# leerse, y ése es el modo de fallo de los avisos.
+if any("esófago" in _x and _x.startswith("Pollo con piel") for _x in _av48):
+    fallos.append("BLOQUE48: el aviso del esófago sale para la carne deshuesada. Un aviso que "
+                  "sale para todo deja de leerse, que es como se pierde el que importa.")
+
+# Y LA FRASE QUE NO SE PUEDE ESCRIBIR. Hoy la app no afirma nada sobre los
+# dientes, comprobado; esto vigila que siga sin afirmarlo. SACN5 cap. 47
+# nombra la comida «natural» entre las creencias sobre textura que NO
+# resistieron el estudio riguroso, así que Rawku no puede decir que el
+# hueso limpia los dientes ni que previene la enfermedad periodontal.
+import re as _re48
+_CLAIMS_PROHIBIDOS_48 = _re48.compile(
+    r"(limpia|limpian|limpieza|previene|previenen|evita|evitan|reduce|reducen)"
+    r"[^.]{0,60}"
+    r"(sarro|placa|dental|dentales|dientes|periodont)", _re48.I)
+for _f48 in ("main.py", "analizador.py", "motor/seguridad.py", "motor/verificar.py"):
+    try:
+        _t48 = open(_f48, encoding="utf-8").read()
+    except OSError:
+        continue
+    # solo el texto que ve la usuaria, no los comentarios que explican esto
+    _lineas48 = [_l for _l in _t48.splitlines()
+                 if not _l.lstrip().startswith("#") and _CLAIMS_PROHIBIDOS_48.search(_l)]
+    if _lineas48:
+        fallos.append(f"BLOQUE48: {_f48} afirma algo sobre los dientes: {_lineas48[:2]}. SACN5 "
+                      f"cap. 47 nombra la comida «natural» entre las creencias sobre textura "
+                      f"que NO resistieron el estudio riguroso. Ver «Lo que Rawku NO puede "
+                      f"afirmar» en CLAUDE.md.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")

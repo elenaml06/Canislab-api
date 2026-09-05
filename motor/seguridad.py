@@ -853,6 +853,28 @@ def avisos_rotacion(menu, alimentos):
             # se deja definido por si algún día hace falta en otro sitio,
             # simplemente ya no dispara este aviso concreto.
         if cat_real == "Hueso carnoso":
+            # ⚠️ EL AVISO QUE FALTABA, Y ES PARA TODOS LOS HUESOS (5
+            # septiembre). Los dos avisos de abajo son por alimento -- hueso
+            # de carga, hueso estrecho -- y dejaban fuera el riesgo que
+            # comparten TODOS: atascarse en el esofago.
+            #
+            # SACN5 cap. 50a, citando a Rousseau et al. 2007: «46 of 60
+            # esophageal foreign bodies removed from dogs were bones». Es
+            # canino, esta publicado y es un numero: de cada diez cuerpos
+            # extranos que hubo que sacar del esofago de un perro, ocho eran
+            # hueso. No es un riesgo teorico ni una precaucion generica.
+            #
+            # No topa nada ni excluye nada -- el hueso carnoso es el 20-60 %
+            # de una racion BARF y quitarlo no es una opcion. Lo que hace es
+            # que quien da hueso sepa cual es el accidente que de verdad
+            # ocurre, que no es el que la gente teme (la fractura dental) ni
+            # el que se cuenta en los foros.
+            avisos.append(
+                "%s: el hueso hay que darlo SIEMPRE con el perro delante y "
+                "sin prisa. De cada diez cuerpos extraños que hay que sacar "
+                "del esófago de un perro, ocho son hueso (Rousseau y otros, "
+                "2007: 46 de 60). Es el accidente más frecuente del hueso "
+                "carnoso, por encima de la fractura de diente." % n)
             if _es(n, HUESO_RIESGO_DENTAL):
                 avisos.append(
                     "%s: hueso de carga, de los más duros. Riesgo de fractura "

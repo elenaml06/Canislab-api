@@ -391,6 +391,34 @@ propósito — un menú del catálogo corrupto lo rechaza
 `_garantizar_verificado()` igual que cualquier otro, y el contrato del DER
 se comprueba entero en cada batería.
 
+## Lo que Rawku NO puede afirmar
+
+Escrito el 5 de septiembre, y va aquí y no en `PENDIENTE.md` porque no es
+una tarea: es una frase que no se puede escribir nunca, y el sitio donde
+alguien la buscaría es éste.
+
+**Que el hueso limpia los dientes o previene la enfermedad periodontal.**
+Es la creencia más extendida sobre la comida cruda y no se sostiene. SACN5
+cap. 47, literal:
+
+> *«Many of the recommendations made about the effect of food texture on
+> oral health are unsubstantiated and several have turned out to be untrue
+> when exposed to rigorous study, **including "natural foods"**.»*
+
+El libro nombra la comida «natural» entre las creencias sobre textura que
+**no resistieron** el estudio riguroso. Se puede decir que la comida blanda
+acumula más placa —eso sí está—, pero de ahí no se sigue lo contrario.
+
+Hoy **la app no lo afirma en ningún sitio**, comprobado. Esta sección existe
+para que siga sin afirmarlo: es exactamente el tipo de frase que se cuela
+sola cuando alguien escribe la pantalla de marketing.
+
+Y lo que sí se puede decir del hueso, porque es canino, publicado y es un
+número: **de cada diez cuerpos extraños que hay que sacar del esófago de un
+perro, ocho son hueso** (Rousseau et al. 2007, 46 de 60, citado en SACN5
+cap. 50a). Eso lo avisa `avisos_rotacion()` para cada hueso carnoso del
+menú, y lo vigila el BLOQUE 48.
+
 ## Cómo se prueba
 
 ```bash
