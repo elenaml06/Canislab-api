@@ -766,7 +766,7 @@
       "magnesio": 24.0,
       "sodio": 59,
       "fosforo": 186,
-      "yodo": 2,
+      "yodo": 0,
       "selenio": 22.4,
       "zinc": 1.57,
       "cobre": 0.074,
@@ -803,7 +803,10 @@
       "nota": "pavo; el USDA solo trae picado",
       "pais": "Canada",
       "anio": "1985"
-    }
+    },
+    "sin_dato": [
+      "yodo"
+    ]
   },
   {
     "nombre": "Pollo pechuga con piel",
@@ -833,7 +836,7 @@
       "magnesio": 25.0,
       "sodio": 65,
       "fosforo": 174,
-      "yodo": 1.8,
+      "yodo": 0,
       "selenio": 16.6,
       "zinc": 0.8,
       "cobre": 0.04,
@@ -869,7 +872,10 @@
       "nota": "misma especie y corte",
       "pais": "USA",
       "anio": "1983, 1982"
-    }
+    },
+    "sin_dato": [
+      "yodo"
+    ]
   },
   {
     "nombre": "Conejo",
@@ -1329,7 +1335,7 @@
       "yodo": 28.3,
       "selenio": 20,
       "zinc": 0.8,
-      "cobre": 0.1,
+      "cobre": 0,
       "manganeso": 0.011,
       "acidoPantotenico": 1.55,
       "colina": 78.5,
@@ -1369,7 +1375,10 @@
       "nota": "misma especie",
       "pais": "USA",
       "anio": "2024"
-    }
+    },
+    "sin_dato": [
+      "cobre"
+    ]
   },
   {
     "nombre": "Sardina",
@@ -1548,7 +1557,7 @@
       "yodo": 8,
       "selenio": 82,
       "zinc": 0.7,
-      "cobre": 0.1,
+      "cobre": 0,
       "manganeso": 0.015,
       "acidoPantotenico": 1.054,
       "colina": 65,
@@ -1588,7 +1597,10 @@
       "nota": "mismo género",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "sin_dato": [
+      "cobre"
+    ]
   },
   {
     "nombre": "Merluza",
@@ -1697,7 +1709,7 @@
       "yodo": 170,
       "selenio": 27,
       "zinc": 0.4,
-      "cobre": 0.05,
+      "cobre": 0,
       "manganeso": 0.05,
       "acidoPantotenico": 0.14,
       "colina": 65,
@@ -1740,6 +1752,9 @@
     },
     "trazas": [
       "vitD"
+    ],
+    "sin_dato": [
+      "cobre"
     ]
   },
   {
@@ -1773,7 +1788,7 @@
       "yodo": 3,
       "selenio": 25,
       "zinc": 0.8,
-      "cobre": 0.05,
+      "cobre": 0,
       "manganeso": 0.05,
       "acidoPantotenico": 1.51,
       "colina": 65,
@@ -1806,7 +1821,10 @@
       "nota": "misma especie",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "sin_dato": [
+      "cobre"
+    ]
   },
   {
     "nombre": "Huevo clara",
@@ -3694,15 +3712,15 @@
     "nutrientes": {
       "colina": 75.0,
       "manganeso": 0.02,
-      "hierro": 1.5,
-      "vitA": 0.01,
+      "hierro": 0,
+      "vitA": 0,
       "epa": 0.0,
       "calcio": 1645.0,
       "proteina": 16.3,
       "acidoPantotenico": 1.0,
       "sodio": 82.0,
       "vitB12": 0.01,
-      "vitB6": 0.42,
+      "vitB6": 0,
       "folato": 11.4,
       "vitE": 0.1,
       "grasa": 19.45,
@@ -3711,12 +3729,12 @@
       "linoleico": 0.0,
       "araquidonico": 0.0,
       "fosforo": 940.0,
-      "vitD": 0.01,
-      "tiamina": 0.1,
+      "vitD": 0,
+      "tiamina": 0,
       "yodo": 6.9,
       "dha": 0.0,
-      "riboflavina": 0.2,
-      "cobre": 0.07,
+      "riboflavina": 0,
+      "cobre": 0,
       "cloruro": 126.28,
       "linolenico": 0.0,
       "selenio": 13.5,
@@ -3758,6 +3776,22 @@
       "nota": "carcasa de ave, el equivalente más cercano",
       "pais": "USA",
       "anio": "1980"
+    },
+    "sin_dato": [
+      "cobre",
+      "hierro",
+      "riboflavina",
+      "tiamina",
+      "vitA",
+      "vitB6",
+      "vitD"
+    ],
+    "dato_dudoso": {
+      "energia": {
+        "desde": "2026-09-04",
+        "motivo": "CALCULADA, NO MEDIDA. Cumple kcal = 4*proteina + 9*grasa al decimal, o sea que sale de aplicar los factores de Atwater HUMANOS a los macros. En una pieza CON HUESO eso sobreestima la energia: el colageno y la matriz mineral cuentan como proteina y como ceniza pero aportan energia metabolizable cerca de cero. Kober et al. 2017 midio materia seca, proteina, grasa, cenizas, Ca y P -- la energia no.",
+        "resolver": "Hace falta un factor de energia metabolizable para pieza con hueso, o una medida directa. No se corrige a ojo: la energia es el DIVISOR de los 43 requisitos, asi que tocarla a ciegas mueve la tabla entera."
+      }
     }
   },
   {
@@ -3773,28 +3807,28 @@
       "linoleico": 0.504,
       "linolenico": 0.021,
       "araquidonico": 32,
-      "vitA": 0.01,
-      "vitD": 0.01,
-      "vitE": 0.54,
-      "folato": 5,
-      "niacina": 8.6,
-      "riboflavina": 0.14,
-      "tiamina": 0.1,
-      "vitB12": 10,
-      "vitB6": 0.42,
+      "vitA": 0,
+      "vitD": 0,
+      "vitE": 0,
+      "folato": 0,
+      "niacina": 0,
+      "riboflavina": 0,
+      "tiamina": 0,
+      "vitB12": 0,
+      "vitB6": 0,
       "calcio": 1810.0,
-      "hierro": 1,
-      "potasio": 360,
-      "magnesio": 25,
-      "sodio": 67,
+      "hierro": 0,
+      "potasio": 0,
+      "magnesio": 0,
+      "sodio": 0,
       "fosforo": 1010.0,
-      "yodo": 3,
-      "selenio": 17,
-      "zinc": 1.4,
-      "cobre": 0.1,
-      "manganeso": 0.03,
-      "acidoPantotenico": 0.5,
-      "colina": 85,
+      "yodo": 0,
+      "selenio": 0,
+      "zinc": 0,
+      "cobre": 0,
+      "manganeso": 0,
+      "acidoPantotenico": 0,
+      "colina": 0,
       "cloruro": 103.18,
       "fibra": 0,
       "arginina": 1.156,
@@ -3832,6 +3866,35 @@
       "nota": "carcasa de ave, el equivalente más cercano",
       "pais": "USA",
       "anio": "1980"
+    },
+    "sin_dato": [
+      "acidoPantotenico",
+      "cobre",
+      "colina",
+      "folato",
+      "hierro",
+      "magnesio",
+      "manganeso",
+      "niacina",
+      "potasio",
+      "riboflavina",
+      "selenio",
+      "sodio",
+      "tiamina",
+      "vitA",
+      "vitB12",
+      "vitB6",
+      "vitD",
+      "vitE",
+      "yodo",
+      "zinc"
+    ],
+    "dato_dudoso": {
+      "energia": {
+        "desde": "2026-09-04",
+        "motivo": "CALCULADA, NO MEDIDA. Cumple kcal = 4*proteina + 9*grasa al decimal, o sea que sale de aplicar los factores de Atwater HUMANOS a los macros. En una pieza CON HUESO eso sobreestima la energia: el colageno y la matriz mineral cuentan como proteina y como ceniza pero aportan energia metabolizable cerca de cero. Kober et al. 2017 midio materia seca, proteina, grasa, cenizas, Ca y P -- la energia no.",
+        "resolver": "Hace falta un factor de energia metabolizable para pieza con hueso, o una medida directa. No se corrige a ojo: la energia es el DIVISOR de los 43 requisitos, asi que tocarla a ciegas mueve la tabla entera."
+      }
     }
   },
   {
@@ -3847,28 +3910,28 @@
       "linoleico": 0.08,
       "linolenico": 0.02,
       "araquidonico": 49,
-      "vitA": 0.01,
-      "vitD": 0.01,
+      "vitA": 0,
+      "vitD": 0,
       "vitE": 0.19,
-      "folato": 10,
+      "folato": 0,
       "niacina": 7.2,
-      "riboflavina": 0.2,
+      "riboflavina": 0,
       "tiamina": 0.05,
-      "vitB12": 1,
+      "vitB12": 0,
       "vitB6": 0.25,
       "calcio": 1690.0,
       "hierro": 1.9,
-      "potasio": 350,
+      "potasio": 0,
       "magnesio": 17,
       "sodio": 61,
       "fosforo": 1010.0,
-      "yodo": 3,
+      "yodo": 0,
       "selenio": 3,
       "zinc": 3.3,
-      "cobre": 0.1,
-      "manganeso": 0.038,
-      "acidoPantotenico": 1.33,
-      "colina": 65,
+      "cobre": 0,
+      "manganeso": 0,
+      "acidoPantotenico": 0,
+      "colina": 0,
       "cloruro": 93.94,
       "fibra": 0,
       "arginina": 1.171,
@@ -3906,6 +3969,26 @@
       "nota": "misma especie",
       "pais": "Canada",
       "anio": "1988"
+    },
+    "sin_dato": [
+      "acidoPantotenico",
+      "cobre",
+      "colina",
+      "folato",
+      "manganeso",
+      "potasio",
+      "riboflavina",
+      "vitA",
+      "vitB12",
+      "vitD",
+      "yodo"
+    ],
+    "dato_dudoso": {
+      "energia": {
+        "desde": "2026-09-04",
+        "motivo": "CALCULADA, NO MEDIDA. Cumple kcal = 4*proteina + 9*grasa al decimal, o sea que sale de aplicar los factores de Atwater HUMANOS a los macros. En una pieza CON HUESO eso sobreestima la energia: el colageno y la matriz mineral cuentan como proteina y como ceniza pero aportan energia metabolizable cerca de cero. Kober et al. 2017 midio materia seca, proteina, grasa, cenizas, Ca y P -- la energia no.",
+        "resolver": "Hace falta un factor de energia metabolizable para pieza con hueso, o una medida directa. No se corrige a ojo: la energia es el DIVISOR de los 43 requisitos, asi que tocarla a ciegas mueve la tabla entera."
+      }
     }
   },
   {
@@ -4122,7 +4205,7 @@
       "valina": 0.956,
       "purinas": 0
     },
-    "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar.",
+    "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar.\n\nQUE ES ESTA FICHA (4 septiembre): el dato es del AVE ENTERA CON PIEL, no de carne magra deshuesada, aunque el nombre diga «carne sin hueso». Lo confirmo la revision externa de la consultoria.\n\nNO SE RENOMBRA A PROPOSITO. Cambiar el nombre romperia cuatro cosas a la vez -- la lista curada del motor, la copia del catalogo que tiene el frontend, los menus precalculados y los menus YA GUARDADOS de los usuarios en Supabase, que apuntan al nombre -- para una ganancia cosmetica. Si algun dia hace falta distinguir la carne magra del ave entera, se crean DOS FICHAS NUEVAS y esta se queda: asi lo guardado sigue apuntando a algo que existe.",
     "sin_dato": [
       "purinas"
     ]
@@ -4243,7 +4326,7 @@
       "valina": 1.054,
       "purinas": 93.6
     },
-    "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar.",
+    "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar.\n\nQUE ES ESTA FICHA (4 septiembre): el dato es del AVE ENTERA CON PIEL, no de carne magra deshuesada, aunque el nombre diga «carne sin hueso». Lo confirmo la revision externa de la consultoria.\n\nNO SE RENOMBRA A PROPOSITO. Cambiar el nombre romperia cuatro cosas a la vez -- la lista curada del motor, la copia del catalogo que tiene el frontend, los menus precalculados y los menus YA GUARDADOS de los usuarios en Supabase, que apuntan al nombre -- para una ganancia cosmetica. Si algun dia hace falta distinguir la carne magra del ave entera, se crean DOS FICHAS NUEVAS y esta se queda: asi lo guardado sigue apuntando a algo que existe.",
     "purinas_bases": {
       "adenina": 31.1,
       "guanina": 33.3,
@@ -4490,7 +4573,7 @@
       "magnesio": 27.0,
       "sodio": 74,
       "fosforo": 185,
-      "yodo": 2,
+      "yodo": 0,
       "selenio": 22.1,
       "zinc": 1.16,
       "cobre": 0.054,
@@ -4527,7 +4610,10 @@
       "nota": "pavo; el USDA solo trae picado",
       "pais": "Canada",
       "anio": "1985"
-    }
+    },
+    "sin_dato": [
+      "yodo"
+    ]
   },
   {
     "nombre": "Pollo ala con piel (sin hueso)",
@@ -5149,7 +5235,7 @@
       "yodo": 30,
       "selenio": 28,
       "zinc": 0.4,
-      "cobre": 0.08,
+      "cobre": 0,
       "manganeso": 0.035,
       "acidoPantotenico": 0.1,
       "colina": 65,
@@ -5193,6 +5279,9 @@
     "trazas": [
       "vitA",
       "vitD"
+    ],
+    "sin_dato": [
+      "cobre"
     ]
   },
   {
@@ -5226,7 +5315,7 @@
       "yodo": 7.07,
       "selenio": 45,
       "zinc": 0.44,
-      "cobre": 0.08,
+      "cobre": 0,
       "manganeso": 0.035,
       "acidoPantotenico": 0.1,
       "colina": 65,
@@ -5266,7 +5355,10 @@
       "nota": "misma familia Sparidae",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "sin_dato": [
+      "cobre"
+    ]
   },
   {
     "nombre": "Boquerón",
@@ -5372,7 +5464,7 @@
       "yodo": 0,
       "selenio": 44.8,
       "zinc": 2.1,
-      "cobre": 0.72,
+      "cobre": 0,
       "manganeso": 0.17,
       "acidoPantotenico": 0.37,
       "colina": 65,
@@ -5407,6 +5499,7 @@
       "anio": "1976"
     },
     "sin_dato": [
+      "cobre",
       "yodo"
     ],
     "trazas": [
@@ -5444,7 +5537,7 @@
       "yodo": 7,
       "selenio": 28,
       "zinc": 0.5,
-      "cobre": 0.08,
+      "cobre": 0,
       "manganeso": 0.035,
       "acidoPantotenico": 0.1,
       "colina": 65,
@@ -5554,7 +5647,11 @@
         "fuente": "Reescalado del valor de BEDCA por el cociente de grasas (1 / 7,22 = 0,138). NO es una medida: es la unica cota inferior defendible mientras la grasa de la ficha sea 1 g, y con ella el bloque entero cabe dentro de la grasa. Se usa para los MINIMOS, que es donde un valor inflado hace creer cubierto lo que no esta; contra el TECHO cronico de EPA+DHA sigue contando el declarado, que es el lado seguro por ese otro lado."
       }
     },
-    "fuente": "FEN/Moreiras 2013, ficha DORADA (energía, grasa y vitamina D). El resto, BEDCA."
+    "fuente": "FEN/Moreiras 2013, ficha DORADA (energía, grasa y vitamina D). El resto, BEDCA.",
+    "dato_no_fiable": "FICHA COMPUESTA: la fila de BEDCA mezcla dos doradas, casi seguro una salvaje magra y una de piscifactoria. El balance de masa no cierra -- agua 82 + proteina 17 + grasa 7,22 + ceniza ~1,2 = 107,4 g por cada 100 g -- y cuadra de DOS formas distintas: con la grasa a 1 g (FEN/Moreiras 2013) da 101,2, y con el agua a 74 da 99,4. Desde dentro de la fila no se puede saber cual de las dos casillas esta mal. Lo que inclina la balanza es que BEDCA y FEN, dos tablas independientes, coinciden en agua 82 y proteina 17 y solo discrepan en la grasa. Y los acidos grasos suman 1,97 g, que no caben en 1 g de grasa total pero si en 7,22: ese bloque pertenece al perfil graso. Fuera del solver hasta tener una analitica coherente de una sola dorada; entonces se reconstruye la ficha entera y se quita esta marca. Decidido el 4-sep-2026.",
+    "sin_dato": [
+      "cobre"
+    ]
   },
   {
     "nombre": "Gamba roja",
@@ -5587,7 +5684,7 @@
       "yodo": 210,
       "selenio": 21,
       "zinc": 1.1,
-      "cobre": 0.72,
+      "cobre": 0,
       "manganeso": 0.17,
       "acidoPantotenico": 0.37,
       "colina": 65,
@@ -5630,6 +5727,9 @@
     },
     "trazas": [
       "vitD"
+    ],
+    "sin_dato": [
+      "cobre"
     ]
   },
   {
@@ -5663,7 +5763,7 @@
       "yodo": 90,
       "selenio": 24.3,
       "zinc": 1.1,
-      "cobre": 0.72,
+      "cobre": 0,
       "manganeso": 0.17,
       "acidoPantotenico": 0.37,
       "colina": 65,
@@ -5705,7 +5805,10 @@
       "nota": "mismo grupo",
       "pais": "USA",
       "anio": "2024"
-    }
+    },
+    "sin_dato": [
+      "cobre"
+    ]
   },
   {
     "nombre": "Lenguado",
@@ -5738,7 +5841,7 @@
       "yodo": 30,
       "selenio": 44,
       "zinc": 0.4,
-      "cobre": 0.08,
+      "cobre": 0,
       "manganeso": 0.035,
       "acidoPantotenico": 0.1,
       "colina": 65,
@@ -5782,6 +5885,9 @@
     "trazas": [
       "vitA",
       "vitD"
+    ],
+    "sin_dato": [
+      "cobre"
     ]
   },
   {
@@ -5815,7 +5921,7 @@
       "yodo": 7,
       "selenio": 36.5,
       "zinc": 0.8,
-      "cobre": 0.08,
+      "cobre": 0,
       "manganeso": 0.035,
       "acidoPantotenico": 0.1,
       "colina": 65,
@@ -5859,6 +5965,9 @@
     "trazas": [
       "vitA",
       "vitD"
+    ],
+    "sin_dato": [
+      "cobre"
     ]
   },
   {
@@ -5892,7 +6001,7 @@
       "yodo": 18,
       "selenio": 43.3,
       "zinc": 0.48,
-      "cobre": 0.08,
+      "cobre": 0,
       "manganeso": 0.035,
       "acidoPantotenico": 0.1,
       "colina": 65,
@@ -5926,7 +6035,10 @@
       "nota": "pez blanco de agua dulce",
       "pais": "Japan, China",
       "anio": "2014, 2017"
-    }
+    },
+    "sin_dato": [
+      "cobre"
+    ]
   },
   {
     "nombre": "Pescadilla",
@@ -5959,7 +6071,7 @@
       "yodo": 10,
       "selenio": 15,
       "zinc": 0.97,
-      "cobre": 0.08,
+      "cobre": 0,
       "manganeso": 0.035,
       "acidoPantotenico": 0.1,
       "colina": 65,
@@ -5998,7 +6110,10 @@
       "nota": "pescado blanco magro",
       "pais": "Japan",
       "anio": "2014"
-    }
+    },
+    "sin_dato": [
+      "cobre"
+    ]
   },
   {
     "nombre": "Pulpo",
@@ -6031,7 +6146,7 @@
       "yodo": 64,
       "selenio": 44.8,
       "zinc": 1.7,
-      "cobre": 0.72,
+      "cobre": 0,
       "manganeso": 0.17,
       "acidoPantotenico": 0.37,
       "colina": 65,
@@ -6068,6 +6183,9 @@
     },
     "trazas": [
       "vitD"
+    ],
+    "sin_dato": [
+      "cobre"
     ]
   },
   {
@@ -6101,7 +6219,7 @@
       "yodo": 64,
       "selenio": 65,
       "zinc": 2.2,
-      "cobre": 0.72,
+      "cobre": 0,
       "manganeso": 0.17,
       "acidoPantotenico": 0.37,
       "colina": 65,
@@ -6138,6 +6256,9 @@
     },
     "trazas": [
       "vitD"
+    ],
+    "sin_dato": [
+      "cobre"
     ]
   },
   {
@@ -9309,7 +9430,7 @@
       "magnesio": 19.0,
       "sodio": 71,
       "fosforo": 297,
-      "yodo": 3,
+      "yodo": 0,
       "selenio": 54.6,
       "zinc": 2.67,
       "cobre": 0.492,
@@ -9346,7 +9467,10 @@
       "nota": "misma especie y órgano",
       "pais": "USA",
       "anio": "1976"
-    }
+    },
+    "sin_dato": [
+      "yodo"
+    ]
   },
   {
     "nombre": "Carcasa de pato",
@@ -9361,17 +9485,17 @@
       "linoleico": 0,
       "linolenico": 0,
       "araquidonico": 0,
-      "vitA": 0.01,
-      "vitD": 0.01,
+      "vitA": 0,
+      "vitD": 0,
       "vitE": 0.01,
-      "folato": 10,
+      "folato": 0,
       "niacina": 2.9,
-      "riboflavina": 0.2,
+      "riboflavina": 0,
       "tiamina": 0.07,
       "vitB12": 0.38,
       "vitB6": 0.32,
       "calcio": 1640.0,
-      "hierro": 1.5,
+      "hierro": 0,
       "potasio": 201,
       "magnesio": 27,
       "sodio": 71,
@@ -9379,10 +9503,10 @@
       "yodo": 2,
       "selenio": 26.5,
       "zinc": 1.6,
-      "cobre": 0.07,
+      "cobre": 0,
       "manganeso": 0.6,
       "acidoPantotenico": 0.6,
-      "colina": 65,
+      "colina": 0,
       "cloruro": 109.34,
       "fibra": 0,
       "arginina": 0.982,
@@ -9420,6 +9544,22 @@
       "nota": "carcasa de ave, el equivalente más cercano",
       "pais": "USA",
       "anio": "1980"
+    },
+    "sin_dato": [
+      "cobre",
+      "colina",
+      "folato",
+      "hierro",
+      "riboflavina",
+      "vitA",
+      "vitD"
+    ],
+    "dato_dudoso": {
+      "energia": {
+        "desde": "2026-09-04",
+        "motivo": "CALCULADA, NO MEDIDA. Cumple kcal = 4*proteina + 9*grasa al decimal, o sea que sale de aplicar los factores de Atwater HUMANOS a los macros. En una pieza CON HUESO eso sobreestima la energia: el colageno y la matriz mineral cuentan como proteina y como ceniza pero aportan energia metabolizable cerca de cero. Kober et al. 2017 midio materia seca, proteina, grasa, cenizas, Ca y P -- la energia no.",
+        "resolver": "Hace falta un factor de energia metabolizable para pieza con hueso, o una medida directa. No se corrige a ojo: la energia es el DIVISOR de los 43 requisitos, asi que tocarla a ciegas mueve la tabla entera."
+      }
     }
   },
   {
@@ -9435,28 +9575,28 @@
       "linoleico": 0.504,
       "linolenico": 0.021,
       "araquidonico": 32,
-      "vitA": 0.01,
-      "vitD": 0.01,
-      "vitE": 0.54,
-      "folato": 5,
-      "niacina": 8.6,
-      "riboflavina": 0.14,
-      "tiamina": 0.1,
-      "vitB12": 10,
-      "vitB6": 0.42,
+      "vitA": 0,
+      "vitD": 0,
+      "vitE": 0,
+      "folato": 0,
+      "niacina": 0,
+      "riboflavina": 0,
+      "tiamina": 0,
+      "vitB12": 0,
+      "vitB6": 0,
       "calcio": 860.0,
-      "hierro": 1,
-      "potasio": 360,
-      "magnesio": 25,
-      "sodio": 67,
+      "hierro": 0,
+      "potasio": 0,
+      "magnesio": 0,
+      "sodio": 0,
       "fosforo": 560.0,
-      "yodo": 3,
-      "selenio": 17,
-      "zinc": 1.4,
-      "cobre": 0.1,
-      "manganeso": 0.03,
-      "acidoPantotenico": 0.5,
-      "colina": 85,
+      "yodo": 0,
+      "selenio": 0,
+      "zinc": 0,
+      "cobre": 0,
+      "manganeso": 0,
+      "acidoPantotenico": 0,
+      "colina": 0,
       "cloruro": 103.18,
       "fibra": 0,
       "arginina": 1.415,
@@ -9494,6 +9634,35 @@
       "nota": "carcasa de ave, el equivalente más cercano",
       "pais": "USA",
       "anio": "1980"
+    },
+    "sin_dato": [
+      "acidoPantotenico",
+      "cobre",
+      "colina",
+      "folato",
+      "hierro",
+      "magnesio",
+      "manganeso",
+      "niacina",
+      "potasio",
+      "riboflavina",
+      "selenio",
+      "sodio",
+      "tiamina",
+      "vitA",
+      "vitB12",
+      "vitB6",
+      "vitD",
+      "vitE",
+      "yodo",
+      "zinc"
+    ],
+    "dato_dudoso": {
+      "energia": {
+        "desde": "2026-09-04",
+        "motivo": "CALCULADA, NO MEDIDA. Cumple kcal = 4*proteina + 9*grasa al decimal, o sea que sale de aplicar los factores de Atwater HUMANOS a los macros. En una pieza CON HUESO eso sobreestima la energia: el colageno y la matriz mineral cuentan como proteina y como ceniza pero aportan energia metabolizable cerca de cero. Kober et al. 2017 midio materia seca, proteina, grasa, cenizas, Ca y P -- la energia no.",
+        "resolver": "Hace falta un factor de energia metabolizable para pieza con hueso, o una medida directa. No se corrige a ojo: la energia es el DIVISOR de los 43 requisitos, asi que tocarla a ciegas mueve la tabla entera."
+      }
     }
   },
   {
@@ -9983,7 +10152,7 @@
       "magnesio": 15,
       "cloruro": 0,
       "manganeso": 0.055,
-      "yodo": 0.4,
+      "yodo": 0,
       "folato": 5,
       "vitA": 19,
       "vitD": 0,
@@ -10013,7 +10182,8 @@
     "sin_dato": [
       "cloruro",
       "colina",
-      "vitD"
+      "vitD",
+      "yodo"
     ],
     "aminograma_estimado": {
       "desde": "Molleja de pavo, cruda",
@@ -10743,11 +10913,11 @@
       "niacina": 7.6,
       "riboflavina": 0.17,
       "tiamina": 0.04,
-      "vitB12": 1,
+      "vitB12": 0,
       "vitB6": 0.28,
       "calcio": 427.0,
       "hierro": 1.8,
-      "potasio": 350,
+      "potasio": 0,
       "magnesio": 12.9,
       "sodio": 60,
       "fosforo": 199.0,
@@ -10755,9 +10925,9 @@
       "selenio": 8.8,
       "zinc": 3.5,
       "cobre": 0.12,
-      "manganeso": 0.038,
-      "acidoPantotenico": 1.33,
-      "colina": 65,
+      "manganeso": 0,
+      "acidoPantotenico": 0,
+      "colina": 0,
       "cloruro": 92.4,
       "fibra": 0.0,
       "arginina": 1.305,
@@ -10775,11 +10945,16 @@
       "purinas": 79.2
     },
     "sin_dato": [
+      "acidoPantotenico",
       "araquidonico",
+      "colina",
       "dha",
       "epa",
       "linoleico",
-      "linolenico"
+      "linolenico",
+      "manganeso",
+      "potasio",
+      "vitB12"
     ],
     "pct_carne": 0.35,
     "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1, fila 'Calf breastbone'. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso).",
@@ -10802,6 +10977,13 @@
       "nota": "mismo corte",
       "pais": "Japan",
       "anio": "2014"
+    },
+    "dato_dudoso": {
+      "energia": {
+        "desde": "2026-09-04",
+        "motivo": "CALCULADA, NO MEDIDA. Cumple kcal = 4*proteina + 9*grasa al decimal, o sea que sale de aplicar los factores de Atwater HUMANOS a los macros. En una pieza CON HUESO eso sobreestima la energia: el colageno y la matriz mineral cuentan como proteina y como ceniza pero aportan energia metabolizable cerca de cero. Kober et al. 2017 midio materia seca, proteina, grasa, cenizas, Ca y P -- la energia no.",
+        "resolver": "Hace falta un factor de energia metabolizable para pieza con hueso, o una medida directa. No se corrige a ojo: la energia es el DIVISOR de los 43 requisitos, asi que tocarla a ciegas mueve la tabla entera."
+      }
     }
   },
   {

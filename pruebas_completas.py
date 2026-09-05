@@ -3148,14 +3148,26 @@ if "Aceite de oliva" in al:
             "la lisina. El mínimo de lisina tiene que seguir aplicándose -- lo único que se quitó "
             "es el techo.")
 
-# Y que no se pierda lo que ya hay: 94 fichas traen aminograma desde el 28
-# de agosto. Si el número baja, es que una carga las ha pisado.
+# Y que no se pierda lo que ya hay. Eran 94 el 28 de agosto y son 91 desde
+# el 3 de septiembre: los tres que faltan son los CUELLOS de pavo, pato y
+# ternera, que se fueron del catálogo por tejido tiroideo (BLOQUE 45) y sí
+# traían aminograma. La cuenta baja porque bajó el catálogo, no porque una
+# carga los haya pisado, y por eso el número se ajusta en vez de tapar el
+# aviso: si el que sale ahora fuera 88, esta prueba tiene que caerse.
+#
+# ⚠️ Y CADA VEZ QUE ESTE NÚMERO BAJE, hay que comprobar cuál de las dos
+# cosas es, porque se parecen y no lo son: un alimento que SALE del catálogo
+# a propósito no deja proteína contando como cero (ya no está en ningún
+# menú), pero una carga que PISA un aminograma sí -- la ficha sigue ahí,
+# sigue eligiéndose, y sus doce aminoácidos pasan a valer cero en silencio.
+_ESPERADOS_AMINO_B27 = 91
 _con_dato_b27 = sum(1 for _a in _al21.values() if not _sin_aminograma_b27(_a))
-if _con_dato_b27 < 94:
+if _con_dato_b27 < _ESPERADOS_AMINO_B27:
     fallos.append(
-        f"BLOQUE27: solo {_con_dato_b27} fichas traen aminograma, y el 28 de agosto eran 94. "
-        f"Alguna carga las ha pisado -- y con los doce requisitos ya activos, cada ficha que se "
-        f"pierde es proteína que cuenta como cero.")
+        f"BLOQUE27: solo {_con_dato_b27} fichas traen aminograma, y tienen que ser "
+        f"{_ESPERADOS_AMINO_B27}. Si NO se ha quitado ningún alimento del catálogo, es que una "
+        f"carga las ha pisado -- y con los doce requisitos ya activos, cada ficha pisada es "
+        f"proteína que cuenta como cero, en un alimento que el motor sigue eligiendo.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
