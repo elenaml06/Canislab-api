@@ -3,7 +3,12 @@
 Backend FastAPI + motor MILP en scipy. Desplegado en Render.
 El frontend vive en `elenaml06/canislab-web` (Vercel, rawku.app).
 
-**Empieza por `PENDIENTE.md`**: ahí está lo que queda por hacer, priorizado.
+**Empieza por `PENDIENTE.md`**: es el índice de lo que queda por hacer,
+priorizado. Desde el 6 de septiembre es solo eso — un índice de una línea
+por punto — y cada punto vive en uno de cuatro archivos por tema
+(`PENDIENTE_DECISIONES.md`, `PENDIENTE_DINERO_Y_SALUD.md`,
+`PENDIENTE_PRODUCTO.md`, `PENDIENTE_NUTRICION.md`). Abre solo el que toque
+la tarea, no los cuatro de golpe.
 
 ## Qué es esto
 
@@ -90,7 +95,7 @@ jubilado — que desde fuera se parecen mucho.
 | `main.py` | FastAPI: todos los endpoints, el presupuesto semanal de seguridad crónica y `_garantizar_verificado()`, por donde pasa **todo** menú antes de salir |
 | `requerimientos_v2_final.json` | Los requisitos de FEDIAF. **43 filas, y desde el 28 de agosto se verifican las 43**: los 41 nutrientes de la Tabla III-3b (los 12 aminoácidos incluidos), el ratio Ca:P y el calcio de raza grande. Con **una** excepción escrita y probada: el techo de lisina — ver abajo |
 | `requisitos.py` | Cargar la tabla de FEDIAF, resolver la etapa y la dosis máxima que marca el fabricante de cada suplemento. Era `optimizador.py`, 1.124 líneas donde esto convivía con el motor anterior al MILP y con una copia desincronizada de la tabla de patologías. El motor viejo se borró el 26 de agosto; quedan 121 líneas |
-| `der.py` | Cálculo de las kcal. ⚠️ Ver «la duplicación que hay que vigilar», abajo |
+| `der.py` | Cálculo de las kcal. ⚠️ Ver «la duplicación que hay que vigilar (DER)», abajo |
 | `analizador.py` | `/analizar`: la dieta que ya le da el dueño. Comparte `MAPA` con el semáforo a propósito — discreparon una vez por la fibra |
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
@@ -119,209 +124,80 @@ menús malos porque `_garantizar_verificado()` los habría rechazado — que es
 otra forma de decir que ese camino construía menús que el filtro final iba
 a tirar. El BLOQUE 24 vigila que no vuelva.
 
-### Los 12 aminoácidos: encendidos el 28 de agosto, con una excepción
+### Los 12 aminoácidos y el techo de lisina
 
-La Tabla III-3b de FEDIAF pide **41 nutrientes** para el perro. Desde el 28
-de agosto el motor los verifica **los 41**, y con el ratio Ca:P y el calcio
-de raza grande son **las 43 filas de la tabla, completas**.
+Los 41 nutrientes de FEDIAF (Tabla III-3b) se verifican los 41 desde el 28
+de agosto, incluidos los 12 aminoácidos esenciales — con el Ca:P y el calcio
+de raza grande son las 43 filas completas. `metionina_cistina` y
+`fenilalanina_tirosina` no son claves de los alimentos: son sumas que
+calcula `valor_nutriente`, como `epa_dha`.
 
-Los doce aminoácidos esenciales estuvieron dos días puestos en la tabla y
-apagados en el motor, y merece la pena saber por qué, porque el motivo
-cambió de forma por el camino:
+**Una excepción escrita y probada**: el techo de lisina (7,00 g/1000 kcal,
+solo en crecimiento) no se aplica — 0 de 15 menús de cachorro caben debajo,
+porque la lisina va detrás de la proteína y una ración BARF de cachorro
+lleva ~134 g/1000kcal contra un mínimo de 50. Aplicarlo dejaría a todos los
+cachorros sin menú. La excepción vive en `verificar.MAXIMOS_NO_APLICADOS`
+—única lista, leída por solver y semáforo vía `maximo_de()`—, con la
+pregunta pendiente para el nutricionista en `PENDIENTE_DECISIONES.md`. El **mínimo**
+de lisina sí se aplica; solo se quita el techo.
 
-**Al principio**, ninguna ficha traía aminoácidos — y no es que faltara el
-dato, es que **las doce claves no existían en el diccionario**, la tercera
-forma que tiene un hueco de esconderse. Activando solo la lisina, la app
-dejaba de dar menús: cada alimento cuenta como cero y el mínimo se vuelve
-inalcanzable. Un fallo ruidoso.
+Lo vigila el BLOQUE 27: que los doce sigan en `MAPA`, que las dos sumas
+sumen de verdad, que la proteína sin aminograma no pase del 5 % de un menú
+real, y que el techo de lisina siga siendo el único máximo no aplicado.
+Faltan 16 aminogramas (once suplementos, y la laringe de vacuno vacía a
+propósito por ser cartílago). Detalle completo, las medidas y la trampa de
+unidades del triptófano: `HISTORIA_TECNICA.md`.
 
-**Con 49 fichas cargadas** el fallo cambió de forma y dejó de verse. Un
-alimento sin aminograma no cuenta como «no lo sé»: cuenta como **cero**.
-Ya no bloqueaba: **desplazaba**. El motor se habría ido lejos del hueso
-carnoso (10 de 10 sin dato entonces) y el menú habría salido **verde**,
-porque el semáforo mide el mismo cero.
+### Los mínimos escalan hacia arriba, nunca hacia abajo
 
-**Se encienden con 94 fichas** porque las tres cosas que hacían falta están
-medidas, no supuestas:
+`minimo_de()` en `verificar.py` es el único sitio que escala los mínimos
+cuando el perro come menos (ecuación de FEDIAF 7.2.5) — y `maximo_de()` el
+único que sabe de máximos. Solo hacia arriba: no hay base en FEDIAF para
+bajar el mínimo de un perro que come más. No escalan la grasa, el
+EPA+DHA/linolénico/araquidónico (no hay requerimiento absoluto en adulto), ni
+crecimiento/gestación/lactancia.
 
-- De un menú real, solo el **1,0 %** de la proteína viene de alimentos sin
-  aminograma. Nueve de los diez huesos carnosos ya lo tienen.
-- El aminoácido más justo se queda en **×2,12** de su mínimo (la metionina);
-  el resto entre ×2,26 y ×5,02. Una ración de carne va sobrada.
-- Con ellos puestos salen **20 de 20** menús, el hueso sigue en los 20 y su
-  mediana sube de 207 a 216 g. En 51 casos con patologías y alergias, la
-  mediana de resolver son **2,1 s** y lo peor 4,8 — lejos de los 30 de Render.
+**Los máximos no escalan nunca** —son concentración, no cantidad— así que la
+ventana entre mínimo y máximo se cierra según bajan las kcal. En dieta
+húmeda el selenio se cruza en DER 45,2: por debajo el motor devuelve
+`imposible_por_aritmetica` (nutriente + los dos números) en vez del «quita
+una restricción» de siempre, porque ahí no hay combinación que lo arregle.
+Lo vigila el BLOQUE 34.
 
-Que casi nunca aprieten no los hace inútiles: existen para el menú que **no**
-es el de todos los días — una dieta muy restringida, una patología que
-aprieta, un menú editado a la baja. Ahí es donde un aminoácido se queda
-corto, y hasta el 28 de agosto nada lo habría visto.
+El peso de referencia para escalar es `peso_objetivo_kg`, no el real — sin
+ese campo se usa el real y se escala de más (lado seguro); lo vigila
+`tests/peso-objetivo-en-cada-peticion.spec.js` en `canislab-web`. Detalle
+completo y las medidas: `HISTORIA_TECNICA.md`.
 
-**`metionina_cistina` y `fenilalanina_tirosina` no son claves de los
-alimentos**: son sumas que calcula `valor_nutriente`, como `epa_dha`. FEDIAF
-pide los cuatro requisitos —el aminoácido solo y la suma con su pareja—
-porque la cistina se fabrica a partir de la metionina y la tirosina a partir
-de la fenilalanina, así que la pareja ahorra al esencial.
+### La duplicación que hay que vigilar (DER)
 
-#### La excepción: el techo de lisina no se aplica
-
-FEDIAF pone **un solo máximo a un aminoácido**: lisina 7,00 g/1000 kcal, y
-solo en crecimiento. Está bien transcrito. Y medido, **0 de 15 menús de
-cachorro caben debajo** — salen entre 8,79 y 12,12. No es que se pase alguno
-raro: es que ninguna ración BARF de cachorro cabe, porque lleva unos 134 g
-de proteína por 1000 kcal contra un mínimo de 50, y la lisina va detrás de
-la proteína.
-
-Aplicarlo dejaría a todos los cachorros sin menú. No aplicarlo es dejar de
-comprobar un máximo de FEDIAF. Las dos cosas son malas, así que **no se
-decide a escondidas**: la excepción vive en `verificar.MAXIMOS_NO_APLICADOS`
-—una sola lista, que leen el solver y el semáforo por `maximo_de()`, para que
-no puedan discrepar—, está escrita con la medición al lado, y la pregunta
-para el nutricionista está en `PENDIENTE.md` §0: **¿el 7,00 se mide sobre la
-proteína de la tabla o sobre la del plato?**
-
-El **mínimo** de lisina sí se aplica. Lo único que se quita es el techo, y
-el dato se queda en la tabla: dejar de aplicar un número no es lo mismo que
-decir que FEDIAF no lo pide.
-
-#### Lo que vigila el BLOQUE 27
-
-Que las filas sigan en la tabla con sus valores. Que los doce sigan en
-`MAPA` —sacarlos vuelve a dejar la tabla cubierta a 30 de 43 y en verde—.
-Que las dos sumas sumen de verdad. Que la proteína que viene de alimentos
-sin aminograma no pase del **5 %** de un menú real (era el 1,0 %) — medido
-sobre el plato y no contando fichas, porque lo que importa no es cuántos
-alimentos no lo tienen, sino cuánto pesan. Que no se pierdan los 94
-aminogramas. Y las tres del techo de lisina: que siga siendo el único
-máximo no aplicado, que el mínimo apriete, y que la fila no se borre.
-
-**Faltan 16 aminogramas**, y once son suplementos: solo los desbloquea una
-etiqueta. La laringe de vacuno se deja vacía **a propósito** — es cartílago,
-y el colágeno no tiene triptófano ni cistina; pasarle el aminograma del
-músculo lo inventaría entero. `auditar_catalogo.py` lista quién los tiene y
-quién no, por categoría — el total no dice nada, la categoría sí.
-
-**Y una trampa de unidades que casi entra**: el segundo envío de aminogramas
-traía el **triptófano en miligramos** y los otros once en gramos. Cargado tal
-cual, el triptófano habría salido mil veces más alto y su mínimo no habría
-apretado nunca, en silencio. Lo cazó la comprobación de coherencia: los doce
-son una **fracción de la proteína**, así que su suma tiene que caer entre el
-25 % y el 85 % de ella. Con el triptófano en mg se salían las 45 filas; en
-gramos, ninguna. **Esa comprobación se corre antes de cargar cualquier
-aminograma.**
-
-### Los mínimos suben cuando el perro come menos
-
-Es la ecuación de la propia FEDIAF, apartado 7.2.5, p. 60, leída del PDF:
-
-> *«a systematic adjustment applied to all essential nutrients is needed
-> **when fed below** the NRC standard assumption»*
-
-Un perro necesita los mismos miligramos de zinc coma lo que coma. Si está a
-dieta y esos miligramos tienen que caber en menos calorías, el mínimo **por
-1000 kcal** sube. Hasta el 28 de agosto no subía: un perro adelgazando
-recibía la misma densidad de nutrientes que uno normal, justo cuando menos
-margen tiene. A la ración de bajada media (DER 63, medida por AAHA 2021) la
-proteína mínima pasa de 52,10 a 78,6 g/1000 kcal.
-
-**Solo hacia arriba, y esa es la decisión que hay que entender.** La ecuación
-va en los dos sentidos, y aplicada tal cual bajaría el mínimo del perro
-normal de 52,10 a 45,00 (la columna de 110) — medido, cinco de ocho perfiles
-reales bajarían. Pero el «below» de FEDIAF es respecto a **130**, no a 110:
-las columnas de 110 y 95 ya son las dos un ajuste hacia arriba desde la base
-del NRC, no un techo y un suelo. **No hay una línea en las 98 páginas que
-autorice bajar un mínimo porque el perro coma más**, y bajarlo sería relajar
-nutrición. Así que el publicado es el suelo.
-
-`minimo_de()` en `verificar.py` es el **único** sitio que sabe escalar, igual
-que `maximo_de()` es el único que sabe de máximos. Lo leen el solver y el
-semáforo: si cada uno escalara por su cuenta, el motor podría construir un
-menú que el semáforo rechazara.
-
-Tres cosas que no se escalan, y ninguna por olvido:
-
-- **La grasa.** FEDIAF publica 13,75 g/1000 kcal en las dos columnas. Si se
-  escalara, las kcal dejarían de cerrar.
-- **El EPA+DHA, el linolénico y el araquidónico.** La ecuación presupone que
-  existe un requerimiento diario absoluto, y FEDIAF pone «-» en adulto porque
-  no lo hay: no se puede subir la densidad para cubrir algo que no existe. La
-  protección real ahí escala sola — la **vitamina E** sí tiene mínimo de
-  adulto y sube un 76 % de DER 110 a 56, mientras el aporte de PUFA por
-  caloría se queda igual.
-- **Crecimiento, gestación y lactancia.** Las dos columnas de la ecuación son
-  de mantenimiento; para esas etapas FEDIAF publica otras y no está
-  verificado que valga.
-
-#### La ventana se cierra: el cruce del selenio
-
-**Los máximos NO escalan.** Un máximo de FEDIAF es un límite de
-*concentración en el alimento* — la tabla III-3a los da en base materia seca
-y marca los de la UE con «(L)» — y una concentración no depende de cuánto
-coma el perro. Pero el mínimo sí sube. **La ventana entre los dos se cierra
-según bajan las kcal.**
-
-El primero en cruzarse es el **selenio en dieta húmeda**, que es la que
-aplica a una ración BARF: mínimo 67,5 µg/1000 kcal a DER 95 y máximo legal de
-la UE 142,0. Se cruzan en **DER 45,2**, y está medido de punta a punta — a
-DER 49 sale menú y a DER 45 ya no. A la ración de bajada de AAHA (80 % del
-RER, DER 56) la ventana es de solo **×1,24**.
-
-Por debajo del cruce el problema es **infactible por aritmética**: no hay
-comida, ni combinación, ni restricción que quitar que lo arregle. Por eso el
-motor devuelve `imposible_por_aritmetica` con el nutriente y los dos números,
-en vez del «quita alguna restricción y vuelve a probar» de siempre — que ahí
-manda a la usuaria a un callejón sin salida. Es un modo de fallo **distinto**
-del de los que aprietan primero (cloruro, folato, magnesio, linoleico), que
-no tienen máximo y se arreglan añadiendo comida.
-
-Lo vigila el **BLOQUE 34**: los dos anclajes contra el PDF, que nunca baje,
-que sí suba, la grasa exenta, que no se escale en cachorro, que los máximos
-no se muevan con el DER, que no aparezca un cruce nuevo sin avisar, y que a
-DER 45 el mensaje sea el bueno y a DER 49 siga saliendo menú.
-
-**El peso de referencia es el OBJETIVO**, no el real: en un perro con
-sobrepeso las kcal ya se calculan sobre el ideal, así que la densidad tiene
-que medirse sobre el mismo peso. Viaja en `peso_objetivo_kg` desde la app —
-si no llega, se usa el real y se escala un poco de más, que es el lado
-seguro. Sin ese campo el escalado queda **puesto y apagado**, así que lo
-vigila `tests/peso-objetivo-en-cada-peticion.spec.js` en `canislab-web`.
-
-### La duplicación que hay que vigilar
-
-**El DER está calculado dos veces**: en `der.py` (Python, este repo) y en
-`calcularDER()` de `App.jsx` (JavaScript, `canislab-web`). Las dos tienen
-la misma fórmula, los mismos coeficientes por actividad y edad, las mismas
-listas de razas de más y menos gasto, el mismo `+10` por macho entero y por
-convivir con otros perros.
-
-Y **la que manda es la del frontend**: la app calcula el DER y lo envía en
-`der_objetivo`, así que `der.py` solo se ejecuta si alguien llama a `/der`,
-que no llama nadie.
-
-Comprobado el 26 de agosto con 16 perfiles (adulto, senior, cachorro,
-gestante, lactante, bajada y subida de peso, razas de los dos grupos):
-**coinciden en los 16**. Pero nada lo vigila. El día que se toque una y no
-la otra, el usuario verá unas kcal y el motor cumplirá los requisitos sobre
-otras, y no dará ningún error — que es exactamente la familia de fallos
-descrita en «Fallos que no puede encontrar la usuaria».
-
-**Cómo se vigila desde el 26 de agosto**: `der_casos.json`, 85 casos con
-sus kcal, **el mismo archivo en los dos repos**. Cada lado comprueba su
-implementación contra esos números sin necesitar al otro — el BLOQUE 23
-aquí, `tests/der-contrato.spec.js` allí. Si tocas la fórmula de un lado, la
-prueba de ese lado se cae en el acto.
-
-Si el cambio es a propósito: se regeneran los esperados y **se copia
-`der_casos.json` a los dos repos**. Los dos commits, o ninguno.
-
-En el frontend la fórmula ya no está enterrada en `App.jsx`: vive en
-`src/der.js`, que es lógica pura y no importa React.
+El DER se calcula dos veces: `der.py` aquí y `calcularDER()`/`src/der.js` en
+`canislab-web` — y **manda el del frontend**, que se envía en
+`der_objetivo`; `der.py` solo corre si alguien llama a `/der`, que no llama
+nadie. Se vigilan por separado contra `der_casos.json` (85 casos, **el
+mismo archivo en los dos repos**): BLOQUE 23 aquí, `der-contrato.spec.js`
+allí. Si tocas la fórmula de un lado, regenera esperados y copia
+`der_casos.json` a los dos repos — los dos commits, o ninguno. Detalle
+completo: `HISTORIA_TECNICA.md`.
 
 ### Los documentos
 
-`CLAUDE.md` (esto) es la entrada. `PENDIENTE.md` es lo que queda, ordenado
-por prioridad. `DATOS_QUE_FALTAN.md` son los valores del catálogo que hay
-que conseguir de BEDCA/CIQUAL/USDA, uno a uno — **no los rellena el
+`CLAUDE.md` (esto) es la entrada. `HISTORIA_TECNICA.md` tiene el detalle
+completo — medidas, cifras, el porqué — de los temas que aquí solo llevan
+un resumen de dos líneas: los aminoácidos, el escalado de mínimos y
+máximos, la duplicación del DER, los datos dudosos. Ábrelo solo cuando la
+tarea toque justo esa parte del motor. `PENDIENTE.md` es el índice de lo
+que queda, ordenado por prioridad — desde el 6 de septiembre, solo el
+índice: cada punto vive en `PENDIENTE_DECISIONES.md`,
+`PENDIENTE_DINERO_Y_SALUD.md`, `PENDIENTE_PRODUCTO.md` o
+`PENDIENTE_NUTRICION.md` según el tema, y se abre solo el que toque la
+tarea. Lo ya resuelto vive en `HECHO.md`, y la investigación o el código
+detrás de un pendiente que no hace falta releer cada vez, en
+`PENDIENTE_DETALLE.md` (el bloque de veterinarios señala directamente a
+`VETERINARIOS.md`, que ya lo tenía completo) — los dos con resumen de una
+línea y puntero en su sitio, para no recargar lo que se lee al empezar
+cualquier sesión. `DATOS_QUE_FALTAN.md` son los valores del catálogo
+que hay que conseguir de BEDCA/CIQUAL/USDA, uno a uno — **no los rellena el
 asistente**. `Bases.md` y `Ya_probado.md` son de las primeras sesiones:
 decisiones cerradas y callejones sin salida ya recorridos, léelos antes de
 proponer un cambio grande. `CAMBIOS_DE_DATOS_REVERTIDOS.md` explica por qué
@@ -342,28 +218,19 @@ dentro de un año.
 **`UNIDADES.md` es lo primero que hay que leer antes de tocar el catálogo**:
 en qué unidad va cada uno de los 41 nutrientes, sobre qué base (100 g de
 alimento tal cual se da) y las cuatro trampas que se cuelan siempre. La
-peor, la primera del documento: `linoleico` es **omega-6** y `linolenico`
-es **omega-3**. Se diferencian en una letra, son cosas opuestas, y si se
-cargan cambiados no salta nada — los dos son nutrientes válidos con
-valores plausibles, y el menú sale verde igual. Lo vigilan el BLOQUE 26,
-que ancla el aceite de girasol y el de linaza, y `auditar_catalogo.py`,
-que lista los nueve alimentos donde el omega-3 supera al omega-6.
+peor: `linoleico` es **omega-6** y `linolenico` es **omega-3** — se
+diferencian en una letra, son cosas opuestas, y si se cargan cambiados no
+salta nada, el menú sale verde igual. Lo vigilan el BLOQUE 26 y
+`auditar_catalogo.py` (los nueve alimentos donde el omega-3 supera al
+omega-6).
 
-**Los dos campos que dicen qué NO nos creemos.** Un 0 en el catálogo puede
-ser «no lo tiene» o «no lo sabemos», y eso lo separa `sin_dato`. Pero falta
-la otra mitad: **un valor declarado y erróneo no dejaba rastro en ninguna
-parte**, y es el que hace daño, porque tiene la forma de un dato bueno y
-pasa cualquier validación de formato. El 27 de agosto salieron tres a la
-vez, los tres de etiquetas reales: el **omega-3 total** de cuatro aceites
-de salmón metido en `linolenico` —que es solo el ALA, así que el EPA y el
-DHA se contaban dos veces—, el **fósforo** de las dos harinas de hueso, con
-un Ca:P de 1,28 cuando la hidroxiapatita da 2,15 por estequiometría, y el
-**cobre** del polvo de sangre, 150 veces por encima de lo que tiene la
-sangre desecada. Los tres entraron por lo mismo: el nombre de la columna se
-parecía al de la etiqueta lo bastante como para que nadie mirara. Lo que se
-puede arreglar se arregla; lo que no —porque el valor es el de la etiqueta
-y el real no está publicado— va en **`dato_dudoso`**, que `verificar()`
-devuelve junto al menú igual que los huecos. Lo vigila el BLOQUE 28.
+**Los dos campos que dicen qué NO nos creemos.** Un 0 puede ser «no lo
+tiene» o «no lo sabemos» — eso lo separa `sin_dato`. Un valor declarado y
+erróneo (tiene forma de dato bueno y pasa cualquier validación de formato)
+va en **`dato_dudoso`**, que `verificar()` devuelve junto al menú igual que
+los huecos. Lo vigila el BLOQUE 28. Los tres casos reales que lo motivaron
+(omega-3 de salmón, fósforo de harina de hueso, cobre de polvo de sangre):
+`HISTORIA_TECNICA.md`.
 
 En la raíz, los cuatro: `alimentos_v3_final.json` (el catálogo),
 `requerimientos_v2_final.json` (la tabla de FEDIAF), `catalogo_menus.json`
