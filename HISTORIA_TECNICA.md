@@ -69,7 +69,7 @@ comprobar un máximo de FEDIAF. Las dos cosas son malas, así que **no se
 decide a escondidas**: la excepción vive en `verificar.MAXIMOS_NO_APLICADOS`
 —una sola lista, que leen el solver y el semáforo por `maximo_de()`, para que
 no puedan discrepar—, está escrita con la medición al lado, y la pregunta
-para el nutricionista está en `PENDIENTE.md` §0: **¿el 7,00 se mide sobre la
+para el nutricionista está en `PENDIENTE_DECISIONES.md`: **¿el 7,00 se mide sobre la
 proteína de la tabla o sobre la del plato?**
 
 El **mínimo** de lisina sí se aplica. Lo único que se quita es el techo, y

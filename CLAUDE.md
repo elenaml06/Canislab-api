@@ -3,7 +3,12 @@
 Backend FastAPI + motor MILP en scipy. Desplegado en Render.
 El frontend vive en `elenaml06/canislab-web` (Vercel, rawku.app).
 
-**Empieza por `PENDIENTE.md`**: ahí está lo que queda por hacer, priorizado.
+**Empieza por `PENDIENTE.md`**: es el índice de lo que queda por hacer,
+priorizado. Desde el 6 de septiembre es solo eso — un índice de una línea
+por punto — y cada punto vive en uno de cuatro archivos por tema
+(`PENDIENTE_DECISIONES.md`, `PENDIENTE_DINERO_Y_SALUD.md`,
+`PENDIENTE_PRODUCTO.md`, `PENDIENTE_NUTRICION.md`). Abre solo el que toque
+la tarea, no los cuatro de golpe.
 
 ## Qué es esto
 
@@ -133,7 +138,7 @@ porque la lisina va detrás de la proteína y una ración BARF de cachorro
 lleva ~134 g/1000kcal contra un mínimo de 50. Aplicarlo dejaría a todos los
 cachorros sin menú. La excepción vive en `verificar.MAXIMOS_NO_APLICADOS`
 —única lista, leída por solver y semáforo vía `maximo_de()`—, con la
-pregunta pendiente para el nutricionista en `PENDIENTE.md` §0. El **mínimo**
+pregunta pendiente para el nutricionista en `PENDIENTE_DECISIONES.md`. El **mínimo**
 de lisina sí se aplica; solo se quita el techo.
 
 Lo vigila el BLOQUE 27: que los doce sigan en `MAPA`, que las dos sumas
@@ -181,10 +186,13 @@ completo: `HISTORIA_TECNICA.md`.
 completo — medidas, cifras, el porqué — de los temas que aquí solo llevan
 un resumen de dos líneas: los aminoácidos, el escalado de mínimos y
 máximos, la duplicación del DER, los datos dudosos. Ábrelo solo cuando la
-tarea toque justo esa parte del motor. `PENDIENTE.md` es lo que queda,
-ordenado por prioridad — y desde el 6 de septiembre solo lo que queda de
-verdad: lo ya resuelto se movió a `HECHO.md`, y la investigación o el
-código detrás de un pendiente que no hace falta releer cada vez se movió a
+tarea toque justo esa parte del motor. `PENDIENTE.md` es el índice de lo
+que queda, ordenado por prioridad — desde el 6 de septiembre, solo el
+índice: cada punto vive en `PENDIENTE_DECISIONES.md`,
+`PENDIENTE_DINERO_Y_SALUD.md`, `PENDIENTE_PRODUCTO.md` o
+`PENDIENTE_NUTRICION.md` según el tema, y se abre solo el que toque la
+tarea. Lo ya resuelto vive en `HECHO.md`, y la investigación o el código
+detrás de un pendiente que no hace falta releer cada vez, en
 `PENDIENTE_DETALLE.md` (el bloque de veterinarios señala directamente a
 `VETERINARIOS.md`, que ya lo tenía completo) — los dos con resumen de una
 línea y puntero en su sitio, para no recargar lo que se lee al empezar

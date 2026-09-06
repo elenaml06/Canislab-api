@@ -9,6 +9,17 @@ Este archivo no se lee solo: se abre cuando hace falta el detalle de algo
 que ya se resolvió — por qué se decidió así, qué se midió, qué PR lo trajo.
 Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 
+## Hecho el 20 de agosto
+
+- Sentry en el backend, con avisos por correo.
+- Los cinco fallos del webhook de Stripe, que **no había funcionado nunca**.
+- Verificación obligatoria contra los 30 requisitos en **todos** los
+  caminos, incluido el cambio de etapa (`/menu/revalidar`).
+- La escalera de relajación: del 23 % de fallos con alergias al 0 %, sin
+  ceder en ningún límite.
+- Tope de volumen y porciones que escalan con el tamaño del perro.
+- Cobro de prueba completado de punta a punta y premium activado de verdad.
+
 ## El peso ideal desde el BCS estaba calculado de dos formas — resuelto el 29 de agosto
 
 **RESUELTO el 29 de agosto, y al revés de como se escribió el 28.**
@@ -93,8 +104,8 @@ Vigilado en el **BLOQUE 13** de `pruebas_completas.py`: generar, patologías
 combinadas, y editar. Medido después: 0 casos por encima del tope.
 
 > Esto es distinto de la pregunta abierta de qué NÚMEROS poner (sigue en
-> `PENDIENTE.md` §0): aquella sigue pendiente de decisión; lo de aquí es
-> que el tope, sea el que sea, se cumpla.
+> `PENDIENTE_DECISIONES.md`): aquella sigue pendiente de decisión; lo de
+> aquí es que el tope, sea el que sea, se cumpla.
 
 ## Multi-perro: varios perros por cuenta, cesta, burbuja y sin cuenta — hechos entre el 21 y el 24 de agosto
 

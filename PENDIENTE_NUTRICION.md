@@ -1,0 +1,279 @@
+# Nutrición — auditado contra el PDF oficial
+
+Parte de `PENDIENTE.md` (secciones 5, 5-bis, 5-ter, 5-quater), separado
+el 6 de septiembre. Si esta sesión toca nutrición, patologías o el
+catálogo, mira también `canislab-fuentes/ESTADO_Y_PROXIMOS_PASOS.md`.
+
+## 5. Nutrición — auditado contra el PDF oficial
+
+> ### ⚠️ LO QUE ESTA AUDITORÍA **NO** COMPRUEBA (25 de agosto)
+>
+> Se escribe aquí porque el 25 de agosto apareció un fallo que esta
+> auditoría tenía delante y no vio, y la pregunta que hizo falta contestar
+> fue: *«¿cómo puedo fiarme de que está todo correcto?»*. Merece una
+> respuesta escrita, no de palabra.
+>
+> **Lo que pasó.** En `requerimientos_v2_final.json` había una fila
+> `Fibra` (mínimo 4,29 g/1000 kcal, máximo 14,3) **que no está en la tabla
+> de FEDIAF**. Lleva ahí desde el primer commit del repositorio (14 de
+> agosto), sin nota de fuente. El motor nunca la usó, pero el analizador
+> sí: por eso un menú hecho por la propia app salía «le falta fibra». 8 de
+> 8 menús verdes se quedaban cortos.
+>
+> **Por qué la auditoría dijo «161 cuadran, 0 discrepancias».** Porque
+> recorría la lista de FEDIAF y comprobaba que cada valor estuviera bien
+> puesto en el JSON. Nunca comprobaba lo contrario: que cada fila del JSON
+> venga de FEDIAF. Una fila que sobra era invisible. **Ya no**: desde el 25
+> de agosto mira los dos sentidos, y el BLOQUE 18 de `pruebas_completas.py`
+> la ejecuta y exige 0 discrepancias.
+>
+> **Lo que sigue sin comprobar nadie**, y hay que saberlo:
+>
+> 1. **La tabla de FEDIAF de `auditar_fediaf.py` está transcrita a mano**
+>    del PDF. Si un número se tecleó mal ahí Y está igual de mal en el
+>    JSON, los dos cuadran y nadie se entera. Lo único que lo cierra es
+>    que una persona lea las dos columnas contra el PDF una vez.
+> 2. **Los valores de los ALIMENTOS (`alimentos_v3_final.json`) no tienen
+>    ninguna auditoría.** Los requisitos sí; la composición de cada
+>    alimento, no. Un valor mal ahí tuerce todos los menús que lo usen y
+>    ninguna prueba lo vería: las pruebas comprueban que el motor cumple
+>    los requisitos *con los datos que tiene*.
+> 3. **Faltan datos de fibra en 3 verduras** (borraja, coles de Bruselas,
+>    tomate en puré). Hoy no afecta a nada porque la fibra no es un
+>    requisito, pero el hueco está.
+>
+> **Qué significa «TODO EN VERDE»**, para no volver a confundirlo: que el
+> motor cumple lo que dice el JSON, que ningún menú sale sin verificar, y
+> que las reglas del motor existen de verdad. **No** significa que el JSON
+> sea correcto. Eso lo dice la auditoría contra el PDF, y solo hasta donde
+> llega la transcripción del punto 1.
+
+**Hecho el 21 de agosto** contra la TABLA III-3b de la *FEDIAF Nutritional
+Guidelines 2025* (el PDF oficial, no de memoria). Script reproducible en
+`auditar_fediaf.py`.
+
+**161 de 161 comprobaciones cuadran exactas** — mínimos *y* máximos. Se
+verificó, para los nutrientes del JSON y en las tres etapas: el valor,
+la unidad, y que todo esté por 1000 kcal de energía metabolizable.
+
+Los máximos son la cara de la toxicidad y vienen de dos sitios distintos,
+que es donde es fácil equivocarse: los nutricionales están en la III-3b ya
+por 1000 kcal, y los legales de la UE **solo** en la III-3a, por 100 g de
+materia seca — se pasan multiplicando por 2,5 (FEDIAF usa 4000 kcal/kg MS
+de referencia). Ese ×2,5 no es una suposición: cuadra en los dos sitios
+donde ambas tablas dan el mismo dato, vitamina A (40.000 × 2,5 = 100.000)
+y vitamina D (320 × 2,5 = 800).
+
+También se comprueba lo contrario: que el JSON **no se invente** máximos
+donde FEDIAF no da ninguno. La vitamina E es uno de esos casos.
+
+También quedó confirmado el mapeo de columnas, que no era obvio:
+- `Adulto` usa la columna **95 kcal/kg^0,75**, la más exigente de las dos
+  que da FEDIAF para adultos. Es la decisión conservadora, y es correcta.
+- `CachorroJoven` = *Early Growth* (< 14 semanas) y reproducción.
+- `CachorroCrecimiento` = *Late Growth* (≥ 14 semanas).
+
+La vitamina E parecía discrepar (6,968 mg frente a 10,40 UI) y **no es un
+error**: está convertida a 0,67 mg/UI, que es la equivalencia del
+α-tocoferol natural, la forma en que las tablas de composición declaran la
+vitamina E de los alimentos. Está documentado en el propio JSON.
+
+### Respuesta a «¿usamos todos los nutrientes de FEDIAF?»
+
+De los 44 de la tabla, el JSON cubre 30. Lo que falta:
+
+- **Los 12 aminoácidos esenciales** (arginina, histidina, isoleucina,
+  leucina, lisina, metionina, metionina+cistina, fenilalanina,
+  fenilalanina+tirosina, treonina, triptófano, valina).
+- Biotina (B7) y vitamina K: **FEDIAF no les pone mínimo** en esta tabla
+  (aparecen con «-»), así que aquí no falta nada.
+
+**No se pueden añadir hoy, y el motivo es el catálogo, no el motor:**
+ninguno de los 163 alimentos tiene dato de aminoácidos. Añadir el
+requisito sin el dato haría que todos contaran como cero y ningún menú
+saldría nunca. Para hacerlo haría falta primero conseguir el perfil de
+aminoácidos de los 163 alimentos.
+
+Contexto para decidir si merece la pena: una dieta que cubre la proteína
+con fuentes animales variadas cubre los aminoácidos esenciales de sobra —
+por eso muchas guías prácticas se quedan en la proteína total. El caso
+donde importa de verdad es una dieta con poca proteína animal.
+
+### Vitamina E de los suplementos — resuelto el 21 de agosto
+
+No eran UI apuntadas como mg, era más sutil: **eran mg de la forma
+sintética**. En la UE los piensos declaran la vitamina E como acetato de
+all-rac-α-tocoferilo, mientras que los alimentos traen α-tocoferol natural
+y el requisito está en natural. Dos monedas en la misma columna, con los
+suplementos contando un 49 % de más.
+
+Confirmado con la etiqueta de NEKTON (160.000 UI de A, 20.000 UI de D3 y
+2.000 **mg** de E por kg — las tres cuadran con el catálogo) y con la
+equivalencia oficial de la EFSA. Convertidos los 9 multivitamínicos ×0,67.
+Comprobado que los menús siguen entre 1,5 y 9 veces el mínimo.
+
+---
+
+## 5-bis. Huecos de datos sin declarar (encontrado el 21 de agosto)
+
+Comprobando si los nutrientes se miden en la base correcta salió esto.
+Primero lo bueno: **la base está bien**. 68 de 69 alimentos cárnicos
+cuadran al contrastar su energía declarada contra sus macros por Atwater,
+y ninguna verdura da un ratio imposible. Nutrientes y calorías están en la
+misma base (peso fresco) en todo el catálogo, así que el cálculo «por 1000
+kcal» es correcto y el agua no lo distorsiona — que era la duda.
+
+Pero aparecieron tres alimentos con casi todo a cero **sin declararlo**:
+
+| Alimento | Nutrientes a cero | Declarados en `sin_dato` |
+|---|---|---|
+| Timo de ternera | 28 de 31 | **0** |
+| Testículos de cordero | 30 de 31 | **0** |
+| Grasa de pollo | 28 de 31 | 6 |
+
+Y el motor **usa el timo de ternera**: salió en 1 de 20 menús de prueba.
+
+El campo `sin_dato` existe justo para distinguir «no lo tiene» de «no lo
+sabemos», y la diferencia es asimétrica:
+- En los **mínimos**, contar un hueco como cero es conservador: como mucho
+  se añade un suplemento que no hacía falta.
+- En los **máximos** es peligroso: se puede uno pasar de cobre o de
+  vitamina A sin enterarse. Y el timo es una víscera, ricas justo en eso.
+
+**Esto no lo puede decidir el código:** que la grasa de pollo tenga casi
+todo a cero es verdad (es grasa pura), y que el timo lo tenga es un hueco.
+Distinguirlo hace falta mirar la fuente.
+
+**Hecho el 21 de agosto**, hasta donde se pudo:
+
+- **Timo de ternera**: 16 nutrientes rellenados con la ficha USDA FDC
+  170194 (la que la propia entrada ya citaba). La vitamina A sí es un cero
+  real según la fuente. Los 12 que USDA no publica quedan en `sin_dato`.
+- **Testículos de cordero**: 7 rellenados con la ficha USDA de *Lamb, New
+  Zealand, testes, raw*, incluidas proteína y grasa, que estaban a cero
+  con 68 kcal declaradas — el motor lo veía como calorías sin macros. Los
+  23 restantes, en `sin_dato`.
+- **Grasa de pollo**: revisado y **estaba bien**. Sus ceros son reales (la
+  grasa fundida no tiene proteína ni minerales) y los huecos que sí tiene
+  —ácidos grasos y vitamina E— ya estaban declarados.
+
+Validación: tras rellenarlos, la energía declarada cuadra con los macros
+por Atwater (ratio 1,01 y 1,00), lo que confirma que las cifras son
+coherentes entre sí.
+
+- [ ] **Contrastar esas cifras con la ficha original de USDA.** Se
+      recuperaron de espejos por buscador porque el entorno no tiene
+      acceso a `fdc.nal.usda.gov`. Dos valores de los testículos son
+      **deducidos, no leídos**, y van marcados como tal: la grasa (del
+      balance energético) y el selenio (del 48 % del valor diario que
+      publica la fuente, porque no da la cifra absoluta).
+- [ ] **El linoleico de la grasa de pollo sigue sin dato**, y esta vez no
+      por descuido: USDA no publica un valor diferenciado para ese
+      alimento. Importa porque el linoleico **tiene máximo** en cachorros,
+      y un hueco contado como cero no lo detectaría.
+- [ ] Plantearse que el aviso de datos incompletos no dependa de una lista
+      mantenida a mano: un alimento con el 90 % de los valores a cero es
+      sospechoso por sí solo, lo declare o no.
+
+## 5-ter. Revisión del catálogo entero (21 de agosto)
+
+Hecha con `auditar_catalogo.py`, que queda en el repo y se puede repetir.
+Comprueba cuatro cosas que ninguna prueba del motor puede detectar, porque
+el motor cumple perfectamente unos datos incompletos.
+
+**Lo que salió bien:** la energía cuadra con los macros en los 163
+alimentos. Cero incoherencias. Todo el catálogo está en la misma base
+(peso fresco), que es lo que hace válido el cálculo por 1000 kcal.
+
+**Huecos declarados** (ya aplicado): 10 alimentos tenían nutrientes a cero
+sin declarar. Seis pescados con EPA y DHA a cero —incluido el **boquerón**,
+que con 6,3 g de grasa es pescado azul y ese cero es falso— y cuatro
+vísceras (bazo de vaca, páncreas de vaca, bazo de cordero, cerebro de
+ternera). Pasan a `sin_dato` para que salte el aviso de datos incompletos.
+
+- [ ] **Conseguir cifras verificadas de EPA/DHA para esos seis pescados.**
+      No se rellenaron a ojo a propósito: los valores que devuelve el
+      buscador vienen redondeados y no coinciden entre sí, y un dato
+      inventado con cara de dato es peor que un hueco declarado. Contarlos
+      como cero solo los infravalora (el omega-3 no tiene máximo), así que
+      no es peligroso — pero desaprovecha el pescado y mete aceite que
+      quizá no hacía falta.
+- [ ] **Completar las cuatro vísceras** con la ficha de su fuente, igual
+      que se hizo con el timo y los testículos.
+
+### Decisión pendiente: `Laringe de vacuno`
+
+Está en la categoría **Hueso carnoso** con **66 mg de calcio**. Los huesos
+carnosos de verdad traen entre 1.250 y 1.810. No es un error de dato: la
+laringe es cartílago, no hueso.
+
+El problema es que cuenta para el 20-60 % de hueso de la ración sin
+aportar el calcio que esa proporción da por supuesto. No es peligroso —el
+calcio tiene mínimo duro, así que el menú lo cubre igual— pero permite
+menús que parecen BARF sin serlo.
+
+- [ ] Decidir: moverla a `Extras`, o quitarla del catálogo.
+
+### Qué alimentos faltan, con evidencia
+
+El cuello de botella medido, contando lo que queda al excluir especies:
+
+| Alergias | Carne | Hueso | **Vísceras** | **Hígado** |
+|---|---|---|---|---|
+| 0 | 25 | 10 | 10 | 4 |
+| 3 | 11 | 6 | **2** | **2** |
+| 5 | 6 | 5 | **2** | **2** |
+
+Las vísceras y el hígado son lo que deja a un perro alérgico sin menú — es
+exactamente lo que medimos que bloqueaba al adulto con tres alergias. Y la
+causa es la variedad de especies, no el número de alimentos:
+
+- **Vísceras**: solo cordero, ternera y vaca. Faltan pollo, pavo, conejo,
+  pato y cerdo.
+- **Hígado**: solo conejo, cordero, pollo y vaca. Faltan pavo, pato, cerdo.
+
+- [ ] Añadir vísceras e hígados de las especies que faltan. Lo más útil y
+      lo más fácil de encontrar en una carnicería: **corazón y molleja de
+      pollo y de pavo**, **hígado de pavo, de pato y de cerdo**, **riñón de
+      cerdo**. Cada especie nueva en esas dos categorías vale más que diez
+      cortes nuevos de carne muscular, que ya va sobrada.
+
+Los pescados (20) no se ven afectados por las alergias a mamíferos, y por
+eso la escalera de relajación funciona: casi siempre queda pescado.
+
+## 5-quater. Quién consigue los datos y quién los implementa
+
+**Regla, establecida el 21 de agosto después de saltármela.** El asistente
+rellenó el timo de ternera y los testículos de cordero con valores que
+había buscado él en espejos de USDA, sin poder abrir la ficha original.
+Luego los marcó como «sin verificar», lo cual no arregla nada: el motor
+los usa igual, así que un número dudoso pesa lo mismo que uno bueno. Solo
+hay dos estados honestos: **verificado, o hueco declarado**. Se revirtió.
+
+| Le toca al asistente | Le toca a una persona |
+|---|---|
+| Manipular y reestructurar lo que ya está en el JSON | **Conseguir valores de alimentos nuevos** |
+| Detectar incoherencias entre alimentos | Sacarlos de BEDCA, CIQUAL o USDA |
+| Comparar contra los rangos de FEDIAF | Valores de hueso: **solo Köber et al. 2017** |
+| Programar la lógica que usa esos valores | Requisitos por patología: guías clínicas |
+
+Lo que sí puede hacer el asistente con las tablas: la auditoría contra el
+PDF de FEDIAF (161/161) es leer la fuente primaria que se le dio, y la
+conversión de la vitamina E sale de la tabla de bioequivalencia de la
+página 63 de ese mismo PDF — **d-α-tocoferol 1 mg = 1,49 UI**, de donde
+1 UI = 0,671 mg. Eso es comparar contra FEDIAF, no inventar datos.
+
+### `DATOS_QUE_FALTAN.md`
+
+Generado por `auditar_catalogo.py`: **57 alimentos y 431 valores** por
+conseguir, cada uno con su unidad y una casilla vacía. Está pensado para
+llevarlo a BEDCA o CIQUAL y rellenarlo, y entonces sí pasárselo al
+asistente para que lo inserte con el formato correcto.
+
+Prioridad, por lo que desbloquea:
+1. Los seis pescados con EPA/DHA sin dato — el **boquerón** el primero,
+   que es pescado azul contado como si no tuviera omega-3.
+2. Las seis vísceras (timo, testículos, bazo de vaca, páncreas de vaca,
+   bazo de cordero, cerebro de ternera) — son la categoría que deja sin
+   menú a los perros con alergias.
+
