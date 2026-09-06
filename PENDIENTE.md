@@ -1641,6 +1641,65 @@ desbloquea:
 - [ ] **Dos fichas mal nombradas**: «Gallina (carne sin hueso)» y «Pato
       (carne sin hueso)» son en realidad el ave entera CON PIEL.
 
+## 5-septies. La procedencia del paquete, y lo que NO está verificado
+
+**Escrito el 6 de septiembre**, después de que la consultoría hiciera su
+propia auditoría de procedencia. Va aquí porque cambia lo que se puede
+*decir* de lo que ya está aplicado, aunque no cambie ni una línea de código.
+
+**El dato incómodo: de los 89 cambios de `CAMBIOS_NUTRICIONALES.md`, solo
+11 están comprobados contra el texto de su fuente.** Los otros 78 siguen
+sin comprobar, y ese documento es el que ya está aplicado. Nos lo dijeron
+ellos, sin que nadie se lo pidiera, después de que aquí saliesen dos
+errores suyos —la vitamina E citada del párrafo del gato y el §4.3 con la
+cita cortada—. Su conclusión, literal: *«la fuente estaba en el disco y no
+la abrí»*.
+
+**Lo que sí quedó comprobado y está aplicado:** §1.1 (el techo legal de la
+vitamina D, contra el PDF de FEDIAF y contra el Reglamento), §1.2 (los seis
+techos derivados, exactos los seis), §3.1, §4.2, §4.6, §5.11 y §2.6.
+
+**Lo que está aplicado y NO se puede enseñar:**
+
+- **El bloqueo de tejido tiroideo (§2.1)** descansa en el **TVT Merkblatt
+  181**, y de esa fuente no tienen ni una línea de texto. Es el cambio que
+  se llevó cuatro fichas del catálogo. La decisión sigue siendo la correcta
+  —el lado conservador de un bloqueo sin dosis segura publicada— pero **la
+  interfaz no puede citarlo como si estuviera verificado**.
+- **Las 103 correcciones del catálogo (§10)** están «sin verificar bajo ese
+  criterio». Aquí sí hay un contrapeso, y no es pequeño: las 101 numéricas
+  se comprobaron **una a una contra el valor que tenía el catálogo antes de
+  escribir**, coincidieron las 101, y casi todas citan un `fdcId` del USDA
+  que cualquiera puede abrir. No es lo mismo que leer la fuente, pero no es
+  fe ciega.
+
+**Tres cosas del paquete salieron mal, y ninguna nos toca — pero hay que
+apuntarlas para quien las implemente algún día:**
+
+- [ ] **§5.13, la dieta de eliminación, CAMBIA DE SENTIDO** al leer la frase
+      entera. Decía «caduca a las tres semanas»; la cita real es *«feeding a
+      food with **severe mineral imbalances** … Such foods should not be fed
+      for longer than three weeks»*. Lo que caduca es una dieta de
+      eliminación **nutricionalmente incompleta**, que es como se hacían
+      (conejo y arroz). **Si Rawku formula una de eliminación COMPLETA, ese
+      límite no le aplica por ese motivo.** No está implementado, así que no
+      hay nada que arreglar — pero implementarlo como estaba escrito
+      caducaría una ración correcta por una razón que no es la suya.
+- [ ] **§7.5, el calcio en cachorros**, dice «ración completa» donde la
+      fuente dice **«alimento comercial de crecimiento»**. Extenderlo a una
+      ración casera es razonable y **es extrapolación nuestra**: hay que
+      declararla como tal, porque en una casera el calcio no viene puesto de
+      fábrica. El dato bueno de la misma página: dos cucharaditas rasas de
+      carbonato cálcico **más que duplican** la ingesta diaria de calcio de
+      un rottweiler de 15 semanas y 15 kg.
+- [ ] **§3.6 y §3.8 citan un capítulo que nunca se leyó** (Fascetti cap. 3;
+      Wiley devuelve 403). El consejo de las dos sigue en pie —no fingir
+      precisión decimal, no usar factores de enfermedad no validados en el
+      perro— pero **hay que quitarles las comillas y la cita**. Ninguna de
+      las dos mete un número en el motor: §3.6 ya estaba bien (`der.py` no
+      lleva factores de enfermedad) y §3.8 no está implementado. El daño es
+      de procedencia, no de cálculo.
+
 ## 5-quater. Quién consigue los datos y quién los implementa
 
 **Regla, establecida el 21 de agosto después de saltármela.** El asistente
