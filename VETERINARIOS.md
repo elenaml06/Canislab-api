@@ -898,6 +898,96 @@ sin cuenta a con cuenta, y en silencio.
 
 ---
 
+## 12-bis. La matriz de autorización, tal como está HOY implementada (6 de septiembre)
+
+Escrito porque se preguntó directamente: de las patologías que ya existen
+en `patologias.json`, ¿con cuáles genera menú un tutor normal, con cuáles
+no, y qué puede hacer un veterinario que un tutor no puede? Esto es el
+estado REAL del código, no el plan de fases de arriba — se actualiza cada
+vez que se añade o se reconcilia una patología nueva.
+
+### Lo que no toca nadie, ni con firma de veterinario (recordatorio de §3)
+
+1. **Los cinco topes de seguridad crónica** — vitamina D, yodo, selenio,
+   mercurio, tiaminasa (`motor/seguridad.py`). Restricciones duras dentro
+   del solver, no avisos. Ningún camino los levanta.
+2. **Las alergias y exclusiones a mano.** Un veterinario puede AÑADIR una;
+   quitar una que el tutor puso, nunca.
+3. **La verificación final.** Todo menú pasa por `_garantizar_verificado()`,
+   también los del veterinario — lo que cambia es contra QUÉ se verifica
+   (un juego de requisitos con las excepciones declaradas), nunca que se
+   verifique.
+4. **La forma sí se relaja (proporciones BARF); la nutrición, nunca.**
+
+### Por qué una patología bloquea al tutor: las DOS razones que existen hoy
+
+No es una sola frontera, son dos, y `auditar_patologias.py` solo vigila
+la primera:
+
+**Razón A — el objetivo terapéutico cruza por debajo de un mínimo de
+FEDIAF** (`necesita_bajo_fediaf: true`). Es la frontera "limpia" del
+apartado 2: por debajo de ahí deja de ser una dieta completa y equilibrada
+y pasa a ser una prescripción. `hepatopatia` (cobre), `urato` (purinas) y
+`cistina` (metionina+cistina) bloquean por esto.
+
+**Razón B — depende de una analítica o un manejo continuo que la app no
+puede ver**, aunque el número en sí quepa dentro de FEDIAF.
+`estruvita` (pH urinario) y `cistina` (también, además de la razón A)
+bloquean por esto; `otra` bloquea porque no hay ninguna regla que aplicar,
+ni siquiera hace falta un número para verlo.
+
+**La distinción que importa, y que casi se pasa por alto**: *tener*
+diagnosticada una condición (que el veterinario le haya dicho al tutor
+"tu perro es renal" o "tu perro está en estadio B2") **no** es lo mismo
+que necesitar una analítica en curso para tratarla con seguridad. Lo
+primero lo puede introducir el tutor siempre —es solo contarle a la app lo
+que ya le contó su veterinario—, lo segundo es la Razón B. Por eso
+`cardiopatia_b1/_b2/_c/_d` son `formulable: true` pese a que el estadio
+ACVIM se diagnostica por ecocardiografía: una vez que el veterinario ha
+dado el estadio, es un dato estable que el tutor reporta, no una analítica
+que haya que seguir vigilando para que la ración siga siendo segura — a
+diferencia de estruvita, donde el pH hay que remedirlo. Si algún día se
+decide que el estadio ACVIM SÍ debe exigir confirmación profesional (por
+ejemplo, para que nadie pueda declarar "estadio D" sin habérselo dicho un
+veterinario y bajar el sodio más de lo que necesita), es un cambio de una
+línea (`sin_dieta_automatica: true` + `formulable_por_profesional: true`
++ `motivo_no_formulable`) — se deja anotado aquí para que sea una decisión
+explícita, no un descuido.
+
+### La tabla completa, generada del propio `patologias.json`
+
+| Patología | El tutor genera menú solo | Por qué bloquea (si bloquea) | Tope(s) |
+|---|---|---|---|
+| `renal` | ✅ Sí | — | fósforo 1200 |
+| `renal_proteinuria` | ✅ Sí (informativo, sin recorte automático) | — | — |
+| `pancreatitis` | ✅ Sí | — | grasa 20% kcal |
+| `oxalato` | ✅ Sí | — | vitD ≤ máx. FEDIAF (no baja el calcio) |
+| `cardiopatia` (sin estadio) | ✅ Sí | — | sodio 900 |
+| `cardiopatia_b1` | ✅ Sí | — | ninguno (ACVIM: sin tratamiento dietético) |
+| `cardiopatia_b2` | ✅ Sí | — | sodio 900 |
+| `cardiopatia_c` | ✅ Sí | — | sodio 790 |
+| `cardiopatia_d` | ✅ Sí | — | sodio 480 |
+| `diabetes` | ✅ Sí | — | grasa condicional |
+| `hipotiroidismo` | ✅ Sí | — | (solo exclusiones de alimento) |
+| `hepatopatia` | ❌ No | Razón A: cobre terapéutico (1,2) bajo el mínimo FEDIAF (2,08). Hoy usa 2,4 como intermedio no bloqueante — ver `PENDIENTE_PRODUCTO.md` sobre partir la opción en dos | cobre 2,4 (no terapéutico de verdad) |
+| `urato` | ❌ No | Razón A: purinas 90 objetivo vs. ~780 real de una ración cruda | — (solo aviso) |
+| `cistina` | ❌ No | Razón A + B: metionina+cistina bajo mínimo, y depende del pH urinario | — (solo aviso) |
+| `estruvita` | ❌ No | Razón B: depende del pH urinario, que la app no ve | — (solo aviso) |
+| `otra` | ❌ No | Ninguna regla nutricional conocida | — |
+
+Para las que bloquean, un veterinario acreditado (fase 1+) SÍ puede
+formular — es exactamente el punto de `formulable_por_profesional: true`,
+presente en las cinco. Lo que ve y firma en cada caso está en el campo
+`avisos.profesional` de `patologias.json`, no en un resumen.
+
+### Lo que falta para que esta tabla esté completa
+
+Las otras 41 patologías del borrador de 47 (§8 de `PENDIENTE_NUTRICION.md`)
+todavía no están en `patologias.json`, así que no aparecen aquí. Cuando se
+añadan, cada una entra en esta tabla con su Razón (A, B, ninguna, o las
+dos) explícita — no se añade una patología nueva sin decidir esto primero,
+porque es precisamente la decisión que hace que un menú se entregue o no.
+
 ## 13. Lo que sigue abierto — y no lo decide un programador
 
 - **Qué dice el documento sobre qué se firma exactamente** — ver el final
