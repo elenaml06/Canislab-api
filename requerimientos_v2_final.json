@@ -359,7 +359,7 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ NOTA CORREGIDA (6 sep 2026): esta fila decía que el motor todavía no lo verificaba «porque ninguno de los 166 alimentos del catálogo tiene dato de aminoácidos» -- eso era cierto antes del 28 de agosto y ya no lo es. Los 12 aminoácidos SÍ están en verificar.MAPA y SÍ se verifican desde el 28 de agosto (94 de las 159 fichas del catálogo ya traen aminograma). Ver CLAUDE.md, sección de los 12 aminoácidos, y el BLOQUE 27, que vigila que los doce sigan en MAPA y que la proteína sin aminograma no pase del 5% de un menú real.",
   "minAdulto110": 1.3
  },
  {
@@ -371,7 +371,7 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ NOTA CORREGIDA (6 sep 2026): esta fila decía que el motor todavía no lo verificaba «porque ninguno de los 166 alimentos del catálogo tiene dato de aminoácidos» -- eso era cierto antes del 28 de agosto y ya no lo es. Los 12 aminoácidos SÍ están en verificar.MAPA y SÍ se verifican desde el 28 de agosto (94 de las 159 fichas del catálogo ya traen aminograma). Ver CLAUDE.md, sección de los 12 aminoácidos, y el BLOQUE 27, que vigila que los doce sigan en MAPA y que la proteína sin aminograma no pase del 5% de un menú real.",
   "minAdulto110": 0.58
  },
  {
@@ -383,7 +383,7 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ NOTA CORREGIDA (6 sep 2026): esta fila decía que el motor todavía no lo verificaba «porque ninguno de los 166 alimentos del catálogo tiene dato de aminoácidos» -- eso era cierto antes del 28 de agosto y ya no lo es. Los 12 aminoácidos SÍ están en verificar.MAPA y SÍ se verifican desde el 28 de agosto (94 de las 159 fichas del catálogo ya traen aminograma). Ver CLAUDE.md, sección de los 12 aminoácidos, y el BLOQUE 27, que vigila que los doce sigan en MAPA y que la proteína sin aminograma no pase del 5% de un menú real.",
   "minAdulto110": 1.15
  },
  {
@@ -395,7 +395,7 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ NOTA CORREGIDA (6 sep 2026): esta fila decía que el motor todavía no lo verificaba «porque ninguno de los 166 alimentos del catálogo tiene dato de aminoácidos» -- eso era cierto antes del 28 de agosto y ya no lo es. Los 12 aminoácidos SÍ están en verificar.MAPA y SÍ se verifican desde el 28 de agosto (94 de las 159 fichas del catálogo ya traen aminograma). Ver CLAUDE.md, sección de los 12 aminoácidos, y el BLOQUE 27, que vigila que los doce sigan en MAPA y que la proteína sin aminograma no pase del 5% de un menú real.",
   "minAdulto110": 2.05
  },
  {
@@ -407,7 +407,7 @@
   "maxCachorroJoven": 7.0,
   "maxCachorroCrecimiento": 7.0,
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo. El máximo de 7,00 g es el único que FEDIAF pone a un aminoácido, y solo en crecimiento: la tabla lo etiqueta 'Growth: 7.00 (N)'.",
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ NOTA CORREGIDA (6 sep 2026): esta fila decía que el motor todavía no lo verificaba «porque ninguno de los 166 alimentos del catálogo tiene dato de aminoácidos» -- eso era cierto antes del 28 de agosto y ya no lo es. Los 12 aminoácidos SÍ están en verificar.MAPA y SÍ se verifican desde el 28 de agosto (94 de las 159 fichas del catálogo ya traen aminograma). Ver CLAUDE.md, sección de los 12 aminoácidos, y el BLOQUE 27, que vigila que los doce sigan en MAPA y que la proteína sin aminograma no pase del 5% de un menú real. El máximo de 7,00 g es el único que FEDIAF pone a un aminoácido, y solo en crecimiento: la tabla lo etiqueta 'Growth: 7.00 (N)'.",
   "minAdulto110": 1.05
  },
  {
@@ -419,7 +419,7 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ NOTA CORREGIDA (6 sep 2026): esta fila decía que el motor todavía no lo verificaba «porque ninguno de los 166 alimentos del catálogo tiene dato de aminoácidos» -- eso era cierto antes del 28 de agosto y ya no lo es. Los 12 aminoácidos SÍ están en verificar.MAPA y SÍ se verifican desde el 28 de agosto (94 de las 159 fichas del catálogo ya traen aminograma). Ver CLAUDE.md, sección de los 12 aminoácidos, y el BLOQUE 27, que vigila que los doce sigan en MAPA y que la proteína sin aminograma no pase del 5% de un menú real.",
   "minAdulto110": 1.0
  },
  {
@@ -431,7 +431,7 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ NOTA CORREGIDA (6 sep 2026): esta fila decía que el motor todavía no lo verificaba «porque ninguno de los 166 alimentos del catálogo tiene dato de aminoácidos» -- eso era cierto antes del 28 de agosto y ya no lo es. Los 12 aminoácidos SÍ están en verificar.MAPA y SÍ se verifican desde el 28 de agosto (94 de las 159 fichas del catálogo ya traen aminograma). Ver CLAUDE.md, sección de los 12 aminoácidos, y el BLOQUE 27, que vigila que los doce sigan en MAPA y que la proteína sin aminograma no pase del 5% de un menú real.",
   "minAdulto110": 1.91
  },
  {
@@ -443,7 +443,7 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ NOTA CORREGIDA (6 sep 2026): esta fila decía que el motor todavía no lo verificaba «porque ninguno de los 166 alimentos del catálogo tiene dato de aminoácidos» -- eso era cierto antes del 28 de agosto y ya no lo es. Los 12 aminoácidos SÍ están en verificar.MAPA y SÍ se verifican desde el 28 de agosto (94 de las 159 fichas del catálogo ya traen aminograma). Ver CLAUDE.md, sección de los 12 aminoácidos, y el BLOQUE 27, que vigila que los doce sigan en MAPA y que la proteína sin aminograma no pase del 5% de un menú real.",
   "minAdulto110": 1.35
  },
  {
@@ -455,7 +455,7 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ NOTA CORREGIDA (6 sep 2026): esta fila decía que el motor todavía no lo verificaba «porque ninguno de los 166 alimentos del catálogo tiene dato de aminoácidos» -- eso era cierto antes del 28 de agosto y ya no lo es. Los 12 aminoácidos SÍ están en verificar.MAPA y SÍ se verifican desde el 28 de agosto (94 de las 159 fichas del catálogo ya traen aminograma). Ver CLAUDE.md, sección de los 12 aminoácidos, y el BLOQUE 27, que vigila que los doce sigan en MAPA y que la proteína sin aminograma no pase del 5% de un menú real.",
   "minAdulto110": 2.23
  },
  {
@@ -467,7 +467,7 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ NOTA CORREGIDA (6 sep 2026): esta fila decía que el motor todavía no lo verificaba «porque ninguno de los 166 alimentos del catálogo tiene dato de aminoácidos» -- eso era cierto antes del 28 de agosto y ya no lo es. Los 12 aminoácidos SÍ están en verificar.MAPA y SÍ se verifican desde el 28 de agosto (94 de las 159 fichas del catálogo ya traen aminograma). Ver CLAUDE.md, sección de los 12 aminoácidos, y el BLOQUE 27, que vigila que los doce sigan en MAPA y que la proteína sin aminograma no pase del 5% de un menú real.",
   "minAdulto110": 1.3
  },
  {
@@ -479,7 +479,7 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ NOTA CORREGIDA (6 sep 2026): esta fila decía que el motor todavía no lo verificaba «porque ninguno de los 166 alimentos del catálogo tiene dato de aminoácidos» -- eso era cierto antes del 28 de agosto y ya no lo es. Los 12 aminoácidos SÍ están en verificar.MAPA y SÍ se verifican desde el 28 de agosto (94 de las 159 fichas del catálogo ya traen aminograma). Ver CLAUDE.md, sección de los 12 aminoácidos, y el BLOQUE 27, que vigila que los doce sigan en MAPA y que la proteína sin aminograma no pase del 5% de un menú real.",
   "minAdulto110": 0.43
  },
  {
@@ -491,7 +491,7 @@
   "maxCachorroJoven": "-",
   "maxCachorroCrecimiento": "-",
   "maxAdulto": "-",
-  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ ESTÁ EN EL JSON PERO EL MOTOR TODAVÍA NO LO VERIFICA, a propósito: no está en verificar.MAPA porque NINGUNO de los 166 alimentos del catálogo tiene dato de aminoácidos. Si se activara hoy, cada alimento contaría como cero y no saldría ni un menú. Se activa cuando el catálogo traiga el dato -- ver el BLOQUE 27, que vigila que esto no se quede olvidado ni se encienda antes de tiempo.",
+  "nota_auditoria": "Aminoácido esencial de la Tabla III-3b de FEDIAF 2025, columna de adulto a 95 kcal/kg^0.75. ⚠️ NOTA CORREGIDA (6 sep 2026): esta fila decía que el motor todavía no lo verificaba «porque ninguno de los 166 alimentos del catálogo tiene dato de aminoácidos» -- eso era cierto antes del 28 de agosto y ya no lo es. Los 12 aminoácidos SÍ están en verificar.MAPA y SÍ se verifican desde el 28 de agosto (94 de las 159 fichas del catálogo ya traen aminograma). Ver CLAUDE.md, sección de los 12 aminoácidos, y el BLOQUE 27, que vigila que los doce sigan en MAPA y que la proteína sin aminograma no pase del 5% de un menú real.",
   "minAdulto110": 1.48
  }
 ]

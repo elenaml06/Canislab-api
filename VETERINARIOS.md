@@ -988,6 +988,84 @@ añadan, cada una entra en esta tabla con su Razón (A, B, ninguna, o las
 dos) explícita — no se añade una patología nueva sin decidir esto primero,
 porque es precisamente la decisión que hace que un menú se entregue o no.
 
+### 12-ter. Dentro de "puede bajar un mínimo de FEDIAF": hasta dónde, de verdad
+
+La regla de §10 dice que un veterinario **«puede bajar un mínimo de
+FEDIAF»**. Eso deja abierta la pregunta que hay que contestar antes de
+construir la fase 4: ¿bajarlo *cuánto*? FEDIAF no es el único número que
+existe — por debajo de FEDIAF hay, para algunos nutrientes, un segundo
+suelo **medido en el estudio que lo define**, y por debajo de ESE, no hay
+datos de ningún perro real. Esto se ha comprobado el 6 de septiembre
+abriendo **el primario, NRC 2006 (`canislab-fuentes/NRC2006/nrc2006.txt`)
+literal, no las notas de lectura** — la regla del propio repo de fuentes
+es exactamente ésa, y aquí importaba cumplirla porque es justo lo que
+decide si un menú prescrito es seguro.
+
+**Proteína (renal, IRIS 2-4).** NRC cita un único estudio largo real,
+Sanderson et al. (2001), 42-48 meses en beagles: *"suggest 80 g of crude
+protein per kilogram of diet containing 4.0 kcal ME·g–1 as the MR"* — son
+**20 g/1000 kcal**, muy por debajo del mínimo de FEDIAF (52,1). Pero el
+propio NRC, en la misma frase, dice que uno de esos perros **desarrolló
+cardiomiopatía dilatada por deficiencia de taurina**, corregida solo con
+suplemento de taurina. Es decir: 20 g/1000 kcal no es un número tranquilo
+— es el punto exacto donde, en el único estudio que existe, ya pasó algo
+grave. Por debajo de eso, cero perros estudiados.
+
+**Metionina+cistina (cistina, y el déficit ya visto en renal).** Mismo
+estudio, mismo párrafo de NRC: **5,2 g de aminoácidos azufrados totales
+por 4.000 kcal (1,3 g/1000 kcal) sostenidos 4 años sin problema**, pero
+**4,8 g/4.000 kcal (1,2 g/1000 kcal) con más grasa dio el mismo perro con
+cardiomiopatía por taurina**. El mínimo de FEDIAF (2,21 g/1000 kcal) ya
+tiene margen sobre esto, pero la cistinuria pide bajar precisamente este
+número — y aquí SÍ hay un suelo medido, a apenas un peldaño de donde
+ocurrió el problema real: **por debajo de 1,3 g/1000 kcal se entra en la
+misma zona que causó la cardiomiopatía en el estudio que define el
+número**. Esto no es "criterio clínico discutible": es un evento adverso
+ya documentado, en el estudio que se está citando.
+
+**Fósforo (renal).** Aquí el margen es mayor de lo que parece. NRC, con
+muchos menos datos que para proteína (*"very few experimental data
+available"*), estima el AI de un adulto en **~0,75 g/1000 kcal** —
+**más bajo** que el objetivo terapéutico de 0,8 g/1000 kcal que propone el
+borrador de 47 para IRIS 3-4. O sea: bajar el fósforo hasta ahí no es
+territorio no estudiado, está aproximadamente donde NRC sitúa lo
+suficiente para un perro normal. El límite de verdad para el fósforo no
+está en la proteína ni en el fósforo mismo: está en que ambos bajan a la
+vez y hay que vigilar la relación Ca:P y la calcemia, que es justo lo que
+avisan las notas del borrador.
+
+**Cobre (hepatopatía).** El único de los cuatro donde NRC **no da
+respuesta**: *"there is no available information on a SUL of dietary Cu
+in normal dogs"*, y el propio NRC dice que hay *"very few data on the Cu
+requirements of adult dogs"* — el 1,5 mg/1000 kcal que da como RA para
+adultos es una extrapolación de datos de gestación/lactación, no una
+medición directa en el adulto, y no existe un MR (mínimo real medido) para
+el adulto en absoluto. Para la hepatopatía por acúmulo, además, el
+problema no es "cuánto cobre necesita un perro normal" sino cuánto puede
+tolerar UN PERRO QUE NO LO REGULA BIEN — una pregunta distinta que NRC no
+contesta y que necesita literatura clínica específica de hepatopatía por
+cobre (ninguna está todavía en `canislab-fuentes`). **Este es el que menos
+fundamento tiene de los cuatro para fijar un número por debajo de FEDIAF
+con confianza**, y hay que decirlo así de claro en vez de fingir que 1,2
+(el valor terapéutico citado en `PENDIENTE_PRODUCTO.md`) tiene el mismo
+respaldo que el de la proteína renal.
+
+**Purinas (urato).** No aplica la misma lógica: las purinas no son un
+nutriente esencial con un MR de FEDIAF o NRC — son un producto del
+catabolismo de las propias proteínas que el motor no puede evitar del todo
+(§urato ya lo dice: quitando hígado y corazón la ración sigue cerca de
+cinco veces el objetivo). No hay "suelo NRC" que mirar porque no es esa
+clase de número.
+
+**Lo que esto significa para la fase 4, en una frase**: «puede bajar un
+mínimo de FEDIAF» no puede ser una casilla libre en la pantalla de
+prescripción. Para proteína y para metionina+cistina hay un segundo suelo,
+medido y con un evento adverso real documentado justo debajo — ésos
+deberían avisar en rojo, no dejar escribir cualquier número. Para fósforo
+hay más margen del que parece. Para cobre no hay número de NRC en el que
+apoyarse, y eso también hay que decirlo en la pantalla, no rellenarlo con
+un valor que suena a autoridad y no la tiene.
+
 ## 13. Lo que sigue abierto — y no lo decide un programador
 
 - **Qué dice el documento sobre qué se firma exactamente** — ver el final
