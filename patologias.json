@@ -97,6 +97,70 @@
       },
       "formulable_por_profesional": true
     },
+    "cardiopatia_b1": {
+      "nombre": "Cardiopatía, estadio ACVIM B1 (soplo, sin remodelado cardíaco)",
+      "formulable": true,
+      "solo_en_adulto": true,
+      "en_crecimiento": "bloquear",
+      "avisos": {
+        "general": "En estadio B1 el consenso ACVIM no recomienda ningún tratamiento dietético (Keene BW et al., JVIM 2019;33:1127-1140: «no drug or dietary treatment is recommended»). No se ha bajado el sodio: bajarlo sin necesidad no ayuda y puede activar mecanismos hormonales que empeoran el pronóstico a largo plazo."
+      }
+    },
+    "cardiopatia_b2": {
+      "nombre": "Cardiopatía, estadio ACVIM B2 (remodelado, sin síntomas)",
+      "formulable": true,
+      "solo_en_adulto": true,
+      "en_crecimiento": "bloquear",
+      "topes_por_1000kcal": {
+        "sodio": {
+          "valor": 900.0,
+          "fuente": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio",
+          "por_que": "ACVIM 2019 pide «mild dietary sodium restriction» en B2 sin dar cifra; la escala moderna por estadio la sitúa en 80-99 mg/100 kcal (800-990 mg/1000 kcal). 900 es el mismo valor que ya usaba la entrada genérica 'cardiopatia', ahora explícito para quien sabe que su perro está en B2."
+        }
+      },
+      "avisos": {
+        "general": "Sodio bajado a una restricción moderada (estadio B2, 900 mg/1000 kcal). El potasio y el magnesio pueden necesitar vigilancia si toma diuréticos: consúltalo con tu veterinario."
+      }
+    },
+    "cardiopatia_c": {
+      "nombre": "Cardiopatía, estadio ACVIM C (insuficiencia cardíaca, actual o pasada)",
+      "formulable": true,
+      "solo_en_adulto": true,
+      "en_crecimiento": "bloquear",
+      "topes_por_1000kcal": {
+        "sodio": {
+          "valor": 790.0,
+          "fuente": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio",
+          "por_que": "La escala moderna por estadio sitúa el estadio C en 50-79 mg/100 kcal (500-790 mg/1000 kcal). Se usa el extremo MENOS restrictivo del rango (790): una restricción severa puede activar el sistema renina-angiotensina-aldosterona y empeorar el pronóstico, y la prioridad clínica en insuficiencia cardíaca es que el perro siga comiendo lo suficiente, no apretar el sodio al máximo."
+        }
+      },
+      "avisos": {
+        "general": "Sodio bajado a la restricción del estadio C (790 mg/1000 kcal). No se ha restringido la grasa ni las calorías: en insuficiencia cardíaca activa, mantener el apetito y el peso importa más que cualquier otra cosa. Vigila el potasio si toma diuréticos o espironolactona, y si deja de comer bien, dile a tu veterinario que es más urgente que el sodio."
+      }
+    },
+    "cardiopatia_d": {
+      "nombre": "Cardiopatía, estadio ACVIM D (insuficiencia cardíaca refractaria)",
+      "formulable": true,
+      "solo_en_adulto": true,
+      "en_crecimiento": "bloquear",
+      "topes_por_1000kcal": {
+        "sodio": {
+          "valor": 480.0,
+          "fuente": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio",
+          "por_que": "La escala moderna por estadio da el estadio D como <50 mg/100 kcal (<500 mg/1000 kcal). Se usa 480 (48 mg/100 kcal), con margen bajo ese umbral y por encima del mínimo de FEDIAF adulto (290 mg/1000 kcal a DER 95), para que el menú siga siendo formulable sin necesitar profesional."
+        }
+      },
+      "avisos": {
+        "general": "Sodio bajado a la restricción del estadio D (480 mg/1000 kcal), la más estricta que se aplica sin intervención de un veterinario. El consenso ACVIM insiste en que la prioridad absoluta en este estadio es la palatabilidad: si el perro come menos por esto, restringir el sodio deja de merecer la pena. Este estadio necesita seguimiento veterinario estrecho, con la medicación (diuréticos, espironolactona) y el potasio vigilados juntos."
+      }
+    },
+    "renal_proteinuria": {
+      "nombre": "Proteinuria renal (UPC > 0,5)",
+      "formulable": true,
+      "avisos": {
+        "general": "El consenso ACVIM 2013 sobre proteinuria recomienda bajar la proteína entre un 25 y un 50 % RESPECTO A LO QUE EL PERRO COMÍA ANTES cuando el cociente proteína:creatinina en orina (UPC) supera 0,5 -- no es una cifra fija, es relativa a la ingesta previa de este perro concreto, y Rawku no tiene ese dato de partida (necesitaría analizar su dieta anterior con /analizar antes de generar el menú nuevo). Por eso esta bandera no recorta la proteína de forma automática: es un aviso para que actúes con tu veterinario, que sí conoce el punto de partida real. Combínala con 'renal' para que además se aplique el tope de fósforo."
+      }
+    },
     "diabetes": {
       "nombre": "Diabetes mellitus",
       "formulable": true,

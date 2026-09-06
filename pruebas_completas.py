@@ -2200,6 +2200,23 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     ("HUECOS", "Sal común (cloruro sódico)"),
     ("HUECOS", "Bazo de vaca"), ("HUECOS", "Páncreas de vaca"),
     ("HUECOS", "Bazo de cordero"), ("HUECOS", "Cerebro de ternera"),
+    # ⚠️ AÑADIDO (6 sep) al corregir el catálogo contra USDA/BEDCA
+    # (CORRECCIONES_CATALOGO.csv): la vitamina A de "Semilla de sésamo" pasó
+    # de 6,6667 (sin fuente firme) a 0 -- que es lo que da USDA FDC 170150 de
+    # verdad, un cero REAL, no un hueco. Con ese cero de más, la ficha cruza
+    # el umbral de "N nutrientes a cero" del aviso [HUECOS]. El linoleico
+    # (tambien a 0) SI sigue siendo un hueco de verdad -- el sesamo es rico
+    # en omega-6 y ese dato no se ha conseguido -- pero no tiene numero de
+    # fuente disponible en esta pasada, asi que no se inventa.
+    ("HUECOS", "Semilla de sésamo"),
+    # ⚠️ AÑADIDO (6 sep), mismo motivo: al corregir la grasa de "Dorada"
+    # (7,22 -> 1 g, FEN/Moreiras 2013, la ficha de BEDCA no cuadraba consigo
+    # misma) el DHA y el EPA -- que vienen de la MISMA fuente "de
+    # piscifactoria" que la grasa ya corregida, documentado en su propio
+    # nota_datos -- se quedaron sin tocar por falta de cifra de una dorada
+    # salvaje. Ahora los acidos grasos (1,97 g) superan la grasa total (1 g).
+    # Es un hueco real, ya documentado, no un fallo nuevo de esta pasada.
+    ("GRASOS", "Dorada"),
     # ⚠️ SE FUE `Testículos de cordero` (27 agosto): ya no está en el
     # catálogo. Tenía 30 de sus 31 nutrientes a cero y 68 kcal con proteína
     # 0 y grasa 0 -- una fila que se contradice sola. El motor la usaba en

@@ -277,3 +277,150 @@ Prioridad, por lo que desbloquea:
    bazo de cordero, cerebro de ternera) — son la categoría que deja sin
    menú a los perros con alergias.
 
+## 6. Catálogo corregido contra USDA/BEDCA (6 de septiembre)
+
+**Hecho, con permiso expreso**: 23 fichas, 86 celdas, aplicadas desde
+`CORRECCIONES_CATALOGO.csv` (repositorio `canislab-fuentes`) — solo las
+filas `CORREGIR` con cifra confirmada contra un FDC de USDA o una ficha de
+BEDCA/FEN, nunca las `VERIFICAR` (indicios sin número cerrado). Cada celda
+se comprobó contra el valor que ya había en el JSON antes de sustituir:
+86/86 coincidieron. Detalle completo en el commit `c69758c`.
+
+Los más graves: Albahaca (7 minerales eran de deshidratada, no fresca —
+zinc +619%), Hígado de pollo (cobre +815%, vitA +236%), Semilla de sésamo
+(calcio −85%, era sésamo pelado no entero), Dorada (la ficha de BEDCA no
+cuadraba consigo misma: agua+proteína+grasa sumaban 106 g/100g), y 5
+pechugas/muslos de pollo y pavo con errores de escala en vitamina A.
+
+**Abierto, sin cifra disponible**: al bajar la grasa de la Dorada, su
+DHA/EPA — de la misma fuente "de piscifactoría" que la grasa ya corregida,
+ya documentado en su propio `nota_datos` desde antes — quedan sumando
+1,97 g de ácidos grasos contra 1 g de grasa total. Falta una cifra de EPA/
+DHA de dorada SALVAGE para cerrarlo. `auditar_catalogo.py` lo señala con
+`[GRASOS]` a propósito, sin silenciarlo (whitelisted en el BLOQUE 19).
+
+El linoleico de la Semilla de sésamo sigue en 0 — es un hueco real (el
+sésamo es de los alimentos más ricos en omega-6 que existen), pero
+`CORRECCIONES_CATALOGO.csv` no traía cifra para esa celda, así que no se
+inventó ninguna.
+
+## 7. Legumbres en cardiopatía — ¿conviene añadirlas al catálogo?
+
+**Pregunta del 6 de septiembre. Respuesta: no, por ahora, y el motivo es
+más matizado de lo que parece.**
+
+El borrador de 47 patologías (`canislab-fuentes/TRABAJO_RAWKU/code/
+patologias.json`, perfil `dcm_asociada_a_dieta`) ya trae la respuesta
+investigada:
+
+> «Causalidad NO establecida; mecanismo abierto (hipótesis actual:
+> fosfolipidosis, no taurina). Asociación real y reproducible. La FDA dejó
+> de publicar actualizaciones en 2024 sin cerrar el caso. **UNA BARF
+> CONVENCIONAL NO ESTÁ IMPLICADA en ningún estudio**: el patrón de riesgo
+> es "legumbre sustituyendo al cereal" en pienso seco. Solo aplicar la
+> bandera si el motor formula con legumbres como fuente calórica
+> principal.»
+
+Y además: «El señalamiento es específico del GUISANTE. La lenteja y la
+soja NO están implicadas del mismo modo (Quilliam 2023).»
+
+**Por qué no añadirlas de todas formas, ya que el riesgo parece acotado**:
+1. La causalidad sigue sin establecerse — es una asociación epidemiológica
+   con mecanismo abierto, en una enfermedad potencialmente mortal (DCM).
+2. El patrón de riesgo (legumbre reemplazando al cereal como fuente
+   calórica principal) es estructuralmente un problema de **pienso seco**:
+   una ración BARF nunca sustituye cereal por legumbre porque nunca lleva
+   cereal como fuente calórica en primer lugar — las proporciones BARF
+   (carne/hueso/víscera como base, verdura al 10-25%) hacen que una
+   legumbre nunca pudiera llegar a ser "fuente calórica principal" aunque
+   se añadiera.
+3. No hay ninguna necesidad nutricional que las legumbres cubran y que hoy
+   falte — no aparecen en ningún hueco de `DATOS_QUE_FALTAN.md` ni en
+   ninguna prioridad de catálogo.
+4. El caso de la FDA sigue abierto (sin cerrar en 2024): mientras tanto,
+   no hay urgencia real que justifique asumir aunque sea un riesgo
+   pequeño y mal entendido, en una enfermedad cardiaca.
+
+**Si algún día se decide añadir alguna**, la lenteja o la soja (no
+implicadas por Quilliam 2023) son las candidatas más seguras — nunca el
+guisante, que es el único señalado. Y aun así, con las proporciones BARF,
+la bandera de nivel B del borrador (`legumbres: {no_como_fuente_
+principal}`) casi nunca llegaría a activarse por diseño.
+
+## 8. Reconciliar las 11 patologías de producción contra el borrador de 47
+
+**Empezado el 6 de septiembre.** El borrador (`canislab-fuentes/
+TRABAJO_RAWKU/code/patologias.json`, versión 0.1, marcado explícitamente
+«NADA DE ESTO ESTA VERIFICADO») estructura por **estadio clínico**
+(`erc_iris_1` a `_4`, `mmvd_acvim_a` a `_d`…) mientras que producción
+tenía una entrada plana por enfermedad. Es un cambio de **modelo de
+datos**, no solo de cifras, y reconciliar las 47 de golpe es su propio
+proyecto — pero dos piezas ya tenían fuente sólida y se implementaron:
+
+**Cardiopatía, con estadio ACVIM (`cardiopatia_b1/_b2/_c/_d`).** Antes
+había una sola entrada con sodio a 900 mg/1000kcal, documentada en su
+propio `por_que` como «se usa el estadio B2 porque la app no pregunta el
+estadio». Ahora, si el estadio se conoce, hay cuatro entradas:
+- **B1**: sin restricción — Keene et al. 2019 (ACVIM consensus, JVIM
+  33:1127-1140): «no drug or dietary treatment is recommended».
+- **B2**: 900 mg/1000kcal (rango 800-990, escala moderna por estadio).
+- **C**: 790 mg/1000kcal (rango 500-790, extremo menos restrictivo:
+  restringir de más activa el eje renina-angiotensina-aldosterona).
+- **D**: 480 mg/1000kcal (<500, con margen sobre el mínimo FEDIAF adulto
+  de 290).
+La entrada genérica `cardiopatia` (900, sin estadio) se queda igual, para
+quien no sepa el estadio de su perro. `auditar_patologias.py`: todo
+cuadra. La app (canislab-web) tiene que empezar a preguntar el estadio y
+mandar `cardiopatia_b1`/`_b2`/`_c`/`_d` en vez de `cardiopatia` a secas —
+mientras no lo haga, nada cambia para nadie.
+
+**Renal, con proteinuria (`renal_proteinuria`).** El consenso ACVIM 2013
+pide bajar la proteína un 25-50% **respecto a la ingesta previa** cuando
+el UPC (cociente proteína:creatinina en orina) supera 0,5 — no es una
+cifra absoluta. Como Rawku no captura la ingesta previa del perro al
+generar un menú nuevo, **no se aplica ningún recorte automático**: la
+nueva entrada es solo informativa (explica el porqué y remite al
+veterinario), pensada para combinarse con `renal` sin tocar el tope de
+fósforo. Aplicar el recorte real necesitaría encadenar `/analizar` (que sí
+lee la dieta actual) antes de `/menu/v2` — eso es trabajo de producto, no
+solo de motor.
+
+**Lo que queda del borrador, sin tocar, por lo grande que es reconciliarlo
+bien**: 41 perfiles más, entre ellos los 4 estadios IRIS renales completos
+(fósforo Y proteína por estadio, con IRIS 2-4 necesitando `formulable:
+false` porque su proteína cae por debajo del mínimo FEDIAF — ver el propio
+borrador para las cifras exactas, ya citadas con IRIS 2023 + ACVN), los 5
+estadios MMVD completos con reparto de macros, y patologías que hoy no
+existen en absoluto en producción (obesidad como perfil propio con
+objetivos de macros, GDV, Cushing, Addison, epilepsia idiopática,
+disfunción cognitiva, cáncer, inmunosupresión...). Cada una necesita su
+propia verificación cifra a cifra contra `requerimientos_v2_final.json` —
+igual que se hizo aquí con cardiopatía y renal — antes de entrar en
+producción. No se ha hecho de golpe porque cada patología nueva es una
+decisión clínica, no una tarea mecánica.
+
+## 9. `campos nuevos que hoy no existen en la app` — qué falta y por qué
+
+Tres piezas de la auditoría del 6 de septiembre necesitan un campo de
+entrada que **hoy no existe en ningún sitio** — ni en el schema de la API
+(los `Peticion*` de `main.py`), ni en la ficha del perro de `canislab-web`:
+
+- **El 10% de calorías para premios/complementos** (Hervera, Clinnutrivet
+  17). No hay ningún concepto de "premio" o "snack" en la API: no hay
+  campo que preguntar cuántas kcal vienen de fuera de la ración. Añadirlo
+  necesita una pantalla nueva en la app y una decisión de producto sobre
+  dónde se pregunta, no solo un parámetro nuevo en el backend.
+- **La reformulación de adelgazamiento** (proteína≥25%MS, grasa≤9%MS,
+  L-carnitina, fibra — Tabla 27-4 de SACN5). Hoy adelgazar solo baja las
+  kcal (vía RER en `der.py`); no hay un perfil de macros dedicado. Además
+  de una decisión de producto, la L-carnitina ni siquiera es un
+  nutriente que el catálogo trackee — haría falta añadir una columna
+  nueva a las 159 fichas antes de poder exigirla.
+- El UPC renal y el estadio ACVIM cardíaco (arriba) **ya no necesitan
+  campo nuevo en el motor** — se resolvieron reutilizando el mecanismo
+  existente de `patologias` (una lista de nombres): en vez de un
+  parámetro numérico nuevo, la app manda una clave de patología más
+  específica (`cardiopatia_c` en vez de `cardiopatia`). Lo que falta es
+  solo la pantalla en `canislab-web` que pregunte el estadio/UPC y elija
+  la clave correcta — cero cambios de backend adicionales.
+
