@@ -58,11 +58,13 @@ Todo se calcula sobre el PESO IDEAL cuando se conoce, no sobre el actual.
 # =============================================================================
 # ADULTOS — base por actividad (kcal por kg de peso metabólico)
 # =============================================================================
-# TABLA VII-6 de FEDIAF (Anexo 7.2.4). Las bases 95 y 110 estan confirmadas
-# en el texto oficial (secc. 3.2.1); el resto de la tabla via reproduccion de
-# UK Pet Food ("Based on FEDIAF Nutritional Guidelines P62").
-# La media MEDIDA en 586 perros de compania (Thes et al. 2014) fue 98, o sea
-# justo entre "baja" (95) y "moderada bajo impacto" (110). Encaja.
+# ⚠️ CORREGIDO 6-sep-2026: es la TABLA VII-7 de FEDIAF ("Recommendations for
+# DER in relation to activity"), no la VII-6 (esa es solo por EDAD, sin
+# actividad -- confirmado literal en fediaf_2025.txt, los 5 valores de aqui
+# (95/110/125/150-175) cuadran exactos con esa tabla, no con la VII-6.
+# La media MEDIDA en 586 perros de compania (Thes et al. 2015 -- FEDIAF lo
+# cita como "Thes M et al. 2015" en su propia bibliografia, no 2014) fue 98,
+# o sea justo entre "baja" (95) y "moderada bajo impacto" (110). Encaja.
 BASE_ACTIVIDAD = {
     "sedentario":   95,    # baja: menos de 1 h/dia, casi siempre con correa
     "normal":      110,    # moderada 1-3 h/dia, bajo impacto
@@ -122,7 +124,12 @@ AJUSTE_RAZA = 15
 KLEIN_A = 1.063
 KLEIN_B = 0.565
 MJ_A_KCAL = 239.0
-# Escalones de FEDIAF, conservados solo como respaldo si no hay peso adulto
+# ⚠️ CORREGIDO 6-sep-2026: esto NO es una tabla de FEDIAF -- se comprobó
+# fediaf_2025.txt entero y la Tabla VII-8a/8b de crecimiento SOLO trae la
+# curva continua de Klein (arriba), sin ningún escalón 210/175/140. Es la
+# convención clínica genérica RER x3.0/2.5/2.0 (la que traía el motor
+# ANTES de adoptar Klein, ver CLAUDE.md); se conserva solo como respaldo
+# prudente si no hay peso adulto esperado, no como cifra de FEDIAF.
 CRECIMIENTO = [
     (0.50, 210),   # hasta el 50% del peso final   (= RER x 3.0)
     (0.80, 175),   # del 50 al 80%                 (= RER x 2.5)

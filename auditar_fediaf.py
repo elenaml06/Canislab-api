@@ -173,8 +173,13 @@ for nombre_json, (clave, factor) in EQUIV.items():
 #     porque FEDIAF usa 4000 kcal/kg MS como densidad de referencia
 #     (100 g MS = 400 kcal, y 1000/400 = 2.5).
 # El x2.5 no es una suposicion: cuadra en dos sitios donde las dos tablas
-# dan el mismo dato -- vitamina A (40 000 x 2.5 = 100 000) y vitamina D
-# (320 x 2.5 = 800), que es justo lo que pone la III-3b.
+# dan el mismo dato para el maximo NUTRICIONAL -- vitamina A
+# (40 000 x 2.5 = 100 000) y vitamina D (320 x 2.5 = 800), que es justo
+# lo que pone la III-3b para ese maximo (N).
+# ⚠️ La vitamina D es ademas el UNICO nutriente con un (L) legal propio
+# y mas estricto que su (N) nutricional (227.00 frente a 320.00 en la
+# III-3a) -- ahi el que aplica de verdad es el legal, 227 x 2.5 = 567.5.
+# Ver la entrada de "Vitamina_D" en MAXIMOS, mas abajo.
 # ══════════════════════════════════════════════════════════════════════
 MAXIMOS = {
  "Calcio":     {"Adulto": 6250, "CachorroJoven": 4000, "CachorroCrecimiento": 4500},
@@ -186,7 +191,12 @@ MAXIMOS = {
  "Selenio":    {"todas": 56.80 * 2.5},
  "Zinc":       {"todas": 22.70 * 2.5},
  "Vitamina_A": {"todas": 100000 * 0.3},
- "Vitamina_D": {"todas": 800.0 * 0.025},
+ # ⚠️ CORREGIDO 6-sep-2026: la vitamina D es el UNICO nutriente con dos
+ # maximos en la III-3a -- 227.00 (L) Y 320.00 (N), confirmado dos veces
+ # en fediaf_2025.txt (lineas 681/683 y 3864/3866). El de antes (800 =
+ # 320x2.5) era el NUTRICIONAL, no el legal, y el legal es el que manda
+ # por ser mas estricto (Reglamento UE 2017/1492 modif. 2019/849).
+ "Vitamina_D": {"todas": 227.00 * 2.5 * 0.025},
  # OJO: la III-3b lo etiqueta "Early Growth:", asi que este maximo es
  # SOLO de crecimiento temprano. No ponerlo tambien en el tardio.
  "Linoleico":  {"CachorroJoven": 16.25},
