@@ -368,6 +368,35 @@ HUESO_RIESGO_ASTILLADO = {"costillas de cordero"}
 # tiene que seguir funcionando aunque el alimento reaparezca.
 BORRAJA_EXCLUIR = {"borraja"}
 
+# ⚠️ TEJIDO TIROIDEO — HIPERTIROIDISMO EXOGENO (6 septiembre). El cuello y
+# la garganta de un animal de abasto suelen llevar la glandula tiroides
+# pegada si no se retira a proposito, y con uso REGULAR (no una vez) esa
+# hormona tiroidea puede darle al perro una tirotoxicosis exogena.
+# FUENTE, literal, confirmada en el PDF (no en el .txt extraido):
+# TVT Merkblatt 181 BARF, Mai 2025 (Tierarztliche Vereinigung fur
+# Tierschutz e.V.), pagina 5: "Verfutterung von Schlundfleisch und
+# Huhnerhalsen: daran befindet sich in der Regel noch die Schilddruse der
+# geschlachteten Tiere, was bei regelmassiger Verfutterung aufgrund des
+# Gehaltes an Schilddrusenhormonen zu einer Schilddrusenuberfunktion
+# (Hyperthyreose) bei Hunden fuhren kann." Identico en la edicion de Juli
+# 2017 -- comprobado linea a linea, no cambio nada entre las dos.
+# Cuatro fichas del catalogo caen en esta zona anatomica: Cuello de pavo,
+# Cuello de pato y Cuello de ternera (las tres en la lista automatica de
+# huesos -- HUESO en accesibles.py -- asi que hoy se ofrecen a CUALQUIER
+# perro sin que nadie las pida) y Laringe de vacuno (fuera del automatico
+# por otro motivo -dificil de encontrar, poco calcio- pero elegible a mano
+# en Personalizar). Es un bloqueo de nivel A: no lo levanta ni un
+# veterinario, igual que la borraja.
+# No se borran del catalogo en esta pasada porque `catalogo_menus.json`
+# (los menus precalculados de la vista previa) tiene 56 referencias a
+# estos cuatro nombres -- borrarlos de golpe dejaria huerfanas esas filas.
+# `_garantizar_verificado()` las rechazaria igual (esta exclusion tambien
+# se aplica ahi, ver mas abajo), asi que no es inseguro, pero regenerar
+# ese catalogo es su propio trabajo, no colarlo aqui. Igual que con la
+# borraja: la exclusion va primero, en codigo; el catalogo se limpia
+# despues, aparte.
+TIROIDES_EXCLUIR = {"cuello", "laringe", "traquea", "esofago", "garganta"}
+
 # ⚠️ RESTRICCIONES POR PATOLOGIA — investigadas 4 agosto, mismo patron que
 # el oxalato/urato: en perro SANO no se tocan, solo se activan si la
 # patologia esta declarada. Los datos concretos viven en el propio
@@ -573,6 +602,18 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
             "hígado, en la hoja — no se recomienda como verdura habitual, "
             "en ninguna cantidad (EFSA, agencia de seguridad alimentaria "
             "del Reino Unido)." % ", ".join(borr))
+
+    # 3b-ter. TEJIDO TIROIDEO — cuello, garganta y laringe pueden traer la
+    # tiroides del animal pegada. TVT Merkblatt 181 (mayo 2025): con uso
+    # regular, riesgo de hipertiroidismo exógeno. Bloqueo de nivel A, igual
+    # que la borraja: no se topa por cantidad, se excluye del todo.
+    tir = [n for n in menu if _es(n, TIROIDES_EXCLUIR)]
+    if tir:
+        problemas.append(
+            "%s puede llevar la glándula tiroides del animal pegada — con "
+            "uso regular puede causar hipertiroidismo exógeno en el perro. "
+            "No se recomienda en ninguna cantidad habitual (TVT Merkblatt "
+            "181, mayo 2025)." % ", ".join(tir))
 
     # 3b-bis. RESTRICCIONES POR PATOLOGÍA GUARDADAS EN EL PROPIO ALIMENTO
     # (grelo/nabo en hipotiroidismo, dátil/mango/plátano en diabetes,

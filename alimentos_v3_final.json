@@ -3809,7 +3809,7 @@
     },
     "pct_carne": 0.4,
     "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso+piel).",
-    "nota_datos": "Ca/P/proteina/grasa medidos por Köber 2017 en la pieza entera. Ratio Ca:P real 1.92 (antes teniamos 2.00 inventado). Energia calculada de sus macros. Materia seca 31.2%, cenizas 5.3%. ",
+    "nota_datos": "Ca/P/proteina/grasa medidos por Köber 2017 en la pieza entera. Ratio Ca:P real 1.92 (antes teniamos 2.00 inventado). Energia calculada de sus macros. Materia seca 31.2%, cenizas 5.3%. ⚠️ EXCLUIDA DEL SOLVER (6 sep 2026): el cuello suele traer la tiroides del animal pegada; con uso regular, riesgo de hipertiroidismo exógeno (TVT Merkblatt 181, mayo 2025). Bloqueo de nivel A en motor/seguridad.py::TIROIDES_EXCLUIR — no aparece en ningún menú generado, en ningún modo. El dato se conserva aquí porque `catalogo_menus.json` aún la referencia; pendiente de limpieza aparte.",
     "aminograma_estimado": {
       "desde": "Cuello de pavo, solo carne, crudo",
       "factor": "1.187",
@@ -3883,7 +3883,7 @@
     },
     "pct_carne": 0.45,
     "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso+piel).",
-    "nota_datos": "Ca/P/proteina/grasa medidos por Köber 2017 en la pieza entera. Ratio Ca:P real 1.84 (antes teniamos 2.00 inventado). Energia calculada de sus macros. Materia seca 46.2%, cenizas 3.5%. ",
+    "nota_datos": "Ca/P/proteina/grasa medidos por Köber 2017 en la pieza entera. Ratio Ca:P real 1.84 (antes teniamos 2.00 inventado). Energia calculada de sus macros. Materia seca 46.2%, cenizas 3.5%. ⚠️ EXCLUIDA DEL SOLVER (6 sep 2026): el cuello suele traer la tiroides del animal pegada; con uso regular, riesgo de hipertiroidismo exógeno (TVT Merkblatt 181, mayo 2025). Bloqueo de nivel A en motor/seguridad.py::TIROIDES_EXCLUIR — no aparece en ningún menú generado, en ningún modo. El dato se conserva aquí porque `catalogo_menus.json` aún la referencia; pendiente de limpieza aparte.",
     "aminograma_estimado": {
       "desde": "Pato, carne con piel, cruda",
       "factor": "1.062",
@@ -10899,7 +10899,7 @@
     ],
     "pct_carne": 0.35,
     "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1, fila 'Calf neck bones'. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda.",
-    "nota_datos": "AÑADIDO 5 agosto (noche): Ca/P/proteina/grasa medidos por Köber 2017 en la pieza entera. Materia seca 48.0%, cenizas 19.7%. El resto de micronutrientes son ESTIMADOS a partir de 'Ternera con grasa' -- Köber solo midió Ca, P, materia seca, proteína, grasa y cenizas, igual que con 'Espinazo de conejo' y 'Pecho de ternera con hueso'.",
+    "nota_datos": "AÑADIDO 5 agosto (noche): Ca/P/proteina/grasa medidos por Köber 2017 en la pieza entera. Materia seca 48.0%, cenizas 19.7%. El resto de micronutrientes son ESTIMADOS a partir de 'Ternera con grasa' -- Köber solo midió Ca, P, materia seca, proteína, grasa y cenizas, igual que con 'Espinazo de conejo' y 'Pecho de ternera con hueso'. ⚠️ EXCLUIDA DEL SOLVER (6 sep 2026): el cuello suele traer la tiroides del animal pegada; con uso regular, riesgo de hipertiroidismo exógeno (TVT Merkblatt 181, mayo 2025). Bloqueo de nivel A en motor/seguridad.py::TIROIDES_EXCLUIR — no aparece en ningún menú generado, en ningún modo. El dato se conserva aquí porque `catalogo_menus.json` aún la referencia; pendiente de limpieza aparte.",
     "aminograma_estimado": {
       "desde": "Ternera, costillar corto de aguja, deshuesado, crudo",
       "factor": "1.161",
@@ -10993,7 +10993,7 @@
     ],
     "pct_carne": 0.35,
     "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1, fila 'Cattle larynges'. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda.",
-    "nota_datos": "AÑADIDO 5 agosto (noche): Ca/P/proteina/grasa medidos por Köber 2017 en la pieza entera. Materia seca 42.2%, cenizas 2.9%. El resto de micronutrientes son ESTIMADOS a partir de 'Ternera con grasa' -- Köber solo midió Ca, P, materia seca, proteína, grasa y cenizas, igual que con 'Espinazo de conejo' y 'Pecho de ternera con hueso'. AVISO: con solo 66mg de calcio/100g, mucho más bajo que otros huesos (Costillas de cordero, Carcasa de pollo rondan 800-1800mg), NO puede ser la unica fuente de Hueso carnoso -- confirmado que falla solo, en cachorro y en adulto. Funciona bien combinada con otro hueso (probado: 345g junto a otros). Nunca elegir \"Todo: Vaca\" en Hueso carnoso esperando que baste sola."
+    "nota_datos": "AÑADIDO 5 agosto (noche): Ca/P/proteina/grasa medidos por Köber 2017 en la pieza entera. Materia seca 42.2%, cenizas 2.9%. El resto de micronutrientes son ESTIMADOS a partir de 'Ternera con grasa' -- Köber solo midió Ca, P, materia seca, proteína, grasa y cenizas, igual que con 'Espinazo de conejo' y 'Pecho de ternera con hueso'. AVISO: con solo 66mg de calcio/100g, mucho más bajo que otros huesos (Costillas de cordero, Carcasa de pollo rondan 800-1800mg), NO puede ser la unica fuente de Hueso carnoso -- confirmado que falla solo, en cachorro y en adulto. Funciona bien combinada con otro hueso (probado: 345g junto a otros). Nunca elegir \"Todo: Vaca\" en Hueso carnoso esperando que baste sola. ⚠️ EXCLUIDA DEL SOLVER (6 sep 2026), por un motivo distinto al del calcio: la laringe está justo pegada a la tiroides, y con uso regular hay riesgo de hipertiroidismo exógeno (TVT Merkblatt 181, mayo 2025). Bloqueo de nivel A en motor/seguridad.py::TIROIDES_EXCLUIR — no aparece en ningún menú generado, en ningún modo, ni siquiera eligiéndola a mano en Personalizar."
   },
   {
     "nombre": "Bazo de vaca",

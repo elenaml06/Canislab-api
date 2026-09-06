@@ -410,12 +410,17 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # infactible sin motivo real. Quitarlos aquí, del catálogo de
         # candidatos, evita que puedan "gastar" cupo de ninguna
         # restricción, sea la que sea.
-        from seguridad import OXALATO_ALTO, PURINAS_ALTAS, BORRAJA_EXCLUIR, _es as _es_patologia
+        from seguridad import OXALATO_ALTO, PURINAS_ALTAS, BORRAJA_EXCLUIR, TIROIDES_EXCLUIR, _es as _es_patologia
         if "oxalato" in (patologias or []):
             disp = [n for n in disp if not _es_patologia(n, OXALATO_ALTO)]
         if "urato" in (patologias or []) and cat in ("Hígado", "Vísceras", "Pescados y mariscos"):
             disp = [n for n in disp if not _es_patologia(n, PURINAS_ALTAS)]
         disp = [n for n in disp if not _es_patologia(n, BORRAJA_EXCLUIR)]
+        # ⚠️ TEJIDO TIROIDEO (6 sep): cuello/garganta/laringe pueden traer la
+        # tiroides pegada -- bloqueo de nivel A, se quita SIEMPRE, sea cual
+        # sea la patología, igual que la borraja. TVT Merkblatt 181 (mayo
+        # 2025). Ver seguridad.TIROIDES_EXCLUIR.
+        disp = [n for n in disp if not _es_patologia(n, TIROIDES_EXCLUIR)]
         disp = [n for n in disp
                if not any(pat in (patologias or [])
                          for pat in (alimentos.get(n, {}).get("restricciones_patologia") or {}))]
@@ -449,6 +454,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     if "oxalato" in (patologias or []):
         _sup = [n for n in _sup if not _es_patologia(n, OXALATO_ALTO)]
     _sup = [n for n in _sup if not _es_patologia(n, BORRAJA_EXCLUIR)]
+    _sup = [n for n in _sup if not _es_patologia(n, TIROIDES_EXCLUIR)]
     _sup = [n for n in _sup
             if not any(pat in (patologias or [])
                       for pat in (alimentos.get(n, {}).get("restricciones_patologia") or {}))]
