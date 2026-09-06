@@ -12,15 +12,16 @@
       "topes_por_1000kcal": {
         "fosforo": {
           "valor": 1200.0,
-          "fuente": "Freeman LM, dvm360 2009; WSAVA; IRIS",
-          "por_que": "Las dietas renales comerciales aportan 480-1000 mg/1000 kcal. 1200 es lo más restrictivo que el solver puede aplicar sin romper el mínimo FEDIAF de adulto (1160 mg). IRIS da objetivos en SANGRE, no en la dieta, así que no sirve para poner este número."
+          "fuente": "Freeman LM, dvm360 2009; WSAVA; IRIS. Confirmado 6-sep-2026 contra SACN5 5ª ed., cap.37 «Chronic Kidney Disease», Tabla 37-9",
+          "por_que": "Las dietas renales comerciales aportan 480-1000 mg/1000 kcal. 1200 es lo más restrictivo que el solver puede aplicar sin romper el mínimo FEDIAF de adulto (1160 mg). IRIS da objetivos en SANGRE, no en la dieta, así que no sirve para poner este número. SACN5 Tabla 37-9 da «Phosphorus 0.2 to 0.5% in foods for dogs» (materia seca) = 500-1250 mg/1000kcal a 4000kcal/kgMS: 1200 cae justo dentro, en el extremo menos restrictivo del rango de la fuente."
         }
       },
       "solo_en_adulto": true,
       "en_crecimiento": "bloquear",
       "avisos": {
-        "general": "Se ha bajado el fósforo todo lo posible sin bajar del mínimo nutricional de un perro sano. IMPORTANTE: una dieta renal terapéutica de verdad baja el fósforo POR DEBAJO de ese mínimo, y eso solo puede pautarlo tu veterinario. Esto es un apoyo, no sustituye una dieta renal prescrita.",
+        "general": "Se ha bajado el fósforo todo lo posible sin bajar del mínimo nutricional de un perro sano. IMPORTANTE: una dieta renal terapéutica de verdad baja también la PROTEÍNA por debajo de ese mínimo (SACN5 cita 14-20% de materia seca, unos 35-50 g/1000 kcal, frente a los ~130 de una ración BARF sin ajustar) y eso solo puede pautarlo tu veterinario. Esto es un apoyo, no sustituye una dieta renal prescrita.",
         "crecimiento": "Un perro en crecimiento o gestación con insuficiencia renal necesita un plan dietético individual hecho por un nutricionista veterinario: el fósforo que hay que quitarle choca con el que necesita para crecer.",
+        "profesional": "Objetivo de proteína para insuficiencia renal, SACN5 cap.37 Tabla 37-9: 14-20% de materia seca (unos 35-50 g/1000kcal a 4000kcal/kgMS), por debajo del mínimo FEDIAF (52,1). Ver también VETERINARIOS.md §12-ter: NRC no mide un suelo específico de proteína para renal, pero el suelo general de mantenimiento (Sanderson 2001, 20 g/1000kcal) tuvo un caso de cardiomiopatía por taurina en ese mismo estudio -- no bajar de 35 sin vigilar taurina.",
         "profesional_crecimiento": "Se ha formulado SIN el tope de fósforo: en crecimiento o gestación el fósforo que necesita el perro para crecer es mayor que el tope renal, así que aplicarlo haría el problema infactible. El menú cumple FEDIAF de crecimiento y no está ajustado a la enfermedad renal. Ese ajuste es tuyo."
       },
       "formulable_por_profesional": true,
@@ -32,10 +33,15 @@
       "nombre": "Pancreatitis",
       "formulable": true,
       "topes_por_1000kcal": {
+        "proteina": {
+          "valor": 75.0,
+          "fuente": "SACN5 5ª ed., cap. 67 «Pancreatitis», Tabla 67-3, verificado 6-sep-2026 contra el texto",
+          "por_que": "Tabla 67-3: «Protein 15 to 30% for dogs» (base materia seca). Al 4000kcal/kgMS de referencia son 37,5-75 g/1000kcal; se usa el extremo alto (75) porque es el mínimo restrictivo que ya sirve — BARF sin tocar va sobre ~130g/1000kcal, muy por encima. Motivo, del propio texto: los aminoácidos libres (fenilalanina, triptófano, valina) son un estímulo de secreción pancreática incluso mayor que la grasa, así que el exceso de proteína hay que evitarlo aunque no sea el nutriente que más se cita."
+        },
         "grasa": {
           "valor": 20.0,
           "fuente": "Merck Veterinary Manual, «Pancreatitis in Dogs and Cats»",
-          "por_que": "Literal de la fuente: «feeding a low-fat diet (ie, less than 20 g fat/1,000 kcal) is crucial for treatment success». Se expresa en gramos por 1000 kcal y no en % de kcal a propósito: es como lo dice la fuente."
+          "por_que": "Literal de la fuente: «feeding a low-fat diet (ie, less than 20 g fat/1,000 kcal) is crucial for treatment success». Se expresa en gramos por 1000 kcal y no en % de kcal a propósito: es como lo dice la fuente. Confirmado 6-sep-2026 contra SACN5 cap.67 Tabla 67-3: el rango general es ≤15% MS (≈37,5 g/1000kcal) y para el paciente obeso o hipertrigliceridémico baja a ≤10% MS (≈25 g/1000kcal) -- los 20 de Merck caen dentro de ambos rangos, así que se mantienen sin cambio, ya cubren el caso más estricto."
         }
       },
       "solo_en_adulto": true,
