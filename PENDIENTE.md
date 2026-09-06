@@ -1,7 +1,16 @@
 # Rawku — lo que queda por hacer
 
 Lista viva. Se actualiza al terminar cada cosa, no al final.
-Última revisión: 28 de agosto de 2026.
+Última revisión: 6 de septiembre de 2026.
+
+**Hay un repositorio nuevo, `elenaml06/canislab-fuentes`**, con las fuentes
+nutricionales (FEDIAF, NRC, y todo lo que Cowork ha escrito a partir de
+libros con copyright que no se guardan en ningún repo). Empieza por su
+`ESTADO_Y_PROXIMOS_PASOS.md` si esta sesión toca nutrición, patologías o
+el catálogo — ahí está qué se comprobó (el catálogo cuadra, 0
+discrepancias), dos avisos sin resolver (una fuente citada que puede ser
+de conejos y no de perros; un documento que puede tener edición más
+nueva), y el orden razonable de lo que queda.
 
 El orden **no** es por lo que parece más urgente, sino por lo que
 desbloquea al resto y por lo que cuesta más caro si sale mal. Cobrar dos
