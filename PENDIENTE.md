@@ -78,19 +78,11 @@ las tiene que tomar una persona, no yo.
          4:9}`: saltos de 2, 1, 2, 2 —no equidistantes, lo que rompe la
          premisa del «10 % por punto»—. El estándar es **1, 3, 5, 7, 9**.
 
-      **Y el problema de fondo no es el mapeo, es quién puntúa.** Los
-      dueños subestiman de forma sistemática y el sesgo se concentra justo
-      en los perros con sobrepeso: Eastland-Jones 2014 (110 dueños) mide
-      un 64 % de errores **incluso con la carta delante**, con
-      subestimación en el 89-92 % de ellos y hasta el 85 % en perros con
-      sobrepeso. Blanchard 2023: **100 % de desacuerdo dueño-veterinario
-      en los perros obesos**. Söder 2023 mide 0,6 puntos de subestimación
-      media —pero tras una formación corta los dueños aciertan igual que
-      el personal veterinario (60 % → 77 %).
-
-      Los tres errores empujan en la misma dirección: **el dueño
-      subestima el BCS → el BCS bajo da un objetivo alto → el objetivo
-      alto da más kcal**, a un perro que ya está gordo.
+      **Y el problema de fondo no es el mapeo, es quién puntúa**: el dueño
+      subestima el BCS de forma sistemática, más cuanto más gordo está el
+      perro, y eso empuja a más kcal justo al que ya está gordo. Las
+      cifras (Eastland-Jones 2014, Blanchard 2023, Söder 2023):
+      `PENDIENTE_DETALLE.md`.
 
 - [ ] **Cuatro fichas que ha señalado la comprobación nueva del cociente.**
       (28 de agosto.) Al añadir el nivel 2 —mirar la columna en vez de la
@@ -252,35 +244,14 @@ las tiene que tomar una persona, no yo.
       no se puede poner un mínimo duro sin dejar sin menú a perros con
       patologías que limitan verduras o que necesitan fibra baja.
 
-      **Lo que sí sabemos, medido el 25 de agosto.** El mismo perro
-      (adulto, 1100 kcal), el mismo botón, ocho veces seguidas:
-
-      | verdura que le tocó | g fibra / 1000 kcal |
-      |---|---|
-      | Albahaca | 28,40 |
-      | Albahaca | 15,19 |
-      | Albahaca | 12,66 |
-      | Plátano | 2,28 |
-      | Acelga | 0,32 |
-      | Espárrago verde | 0,20 |
-      | Canónigos | 0,14 |
-      | Coles de Bruselas | 0,00 — faltaba el dato; ya puesto, 4,3 g/100 g |
-
-      De 0 a 28 al azar. No es que unos menús sean peores: al motor la
+      **Medido el 25 de agosto**: el mismo perro, el mismo botón, ocho
+      veces seguidas, da de 0,00 a 28,40 g/1000 kcal al azar — al motor la
       fibra le da igual, así que entre verduras que cumplen lo mismo elige
       por el ruido que le da variedad. **Enseñar hoy esa cifra sería
-      enseñar una moneda al aire, y avisar cuando baje de un umbral sería
-      un aviso que salta más de la mitad de las veces, al azar.**
-
-      **Se probó a arreglarlo y no funciona.** Se le puso al motor una
-      preferencia por las verduras con fibra (una preferencia, no un
-      mínimo). Con un descuento suave: la mediana subió a 1,19 y seguía
-      yendo de 0,12 a 22,68. Con uno fuerte: la variedad se hundió de 8
-      verduras distintas a 3 (albahaca, frambuesa, arándano) y **seguía**
-      yendo de 0,61 a 29,47. El motivo es que la fibra del menú la decide
-      un solo ingrediente y cuántos gramos le toquen, y eso lo deciden los
-      requisitos, no la fibra. No hay palanca barata. El motor se quedó
-      como estaba.
+      enseñar una moneda al aire.** Se probó a corregirlo con una
+      preferencia en el motor y no funcionó: seguía yendo de 0,12 a 29,47
+      según la fuerza del ajuste. La tabla completa y la medición del
+      intento fallido: `PENDIENTE_DETALLE.md`.
 
       **Lo que hace falta para poder hacer algo es una decisión de
       nutrición**, no de programación: si Rawku quiere apuntar a un rango
@@ -639,31 +610,9 @@ menús comparados no tienen sentido sin él.
 - [ ] **Borrar las ramas viejas de los dos repos.** No es programación y
       no corre prisa, pero cuanto más se acumulen peor: el 21 de agosto se
       lió justo por esto (ver «Cómo se trabaja con git aquí» en
-      `CLAUDE.md`). Comprobado el 23 de agosto rama por rama, con
-      `git rev-list --count origin/main..origin/<rama>`:
-
-      **En `canislab-web`** — las cuatro primeras tienen **0 commits**
-      fuera de `main`, todo su trabajo está fusionado:
-      `claude/aviso-composicion-menu`, `claude/ficha-completa`,
-      `claude/multi-perro`, `claude/perfil-perro-no-se-guarda`.
-      Y `claude/rawku-sentry-login-nav-ro683v`, que **no comparte ni un
-      commit con `main`** (historia aparte, subida a mano, parada el 20 de
-      agosto): son 1.927 líneas MENOS en `App.jsx` y no tiene ni un
-      archivo que `main` no tenga. Nada que rescatar.
-
-      **En `Canislab-api`** — diez con 0 commits fuera de `main`:
-      `claude/auditoria-catalogo`, `claude/auditoria-fediaf`,
-      `claude/datos-visceras`, `claude/huecos-de-datos`,
-      `claude/orden-de-trabajo`, `claude/pendiente-nuevos`,
-      `claude/pendientes-y-contexto`, `claude/sentry-backend-integration-5qp2qa`,
-      `claude/topes-patologia-exactos`, `claude/una-suscripcion-por-persona`,
-      `claude/vitamina-e-coherente`.
-      Y `motor`, mismo caso que la de la web: historia separada, parada el
-      10 de agosto, 10.500 líneas menos, ningún endpoint ni valor
-      nutricional que `main` no tenga. Se revisó a fondo — el único valor
-      distinto es la energía del corazón de pollo (149 vs los **148**
-      verificados de `main`).
-
+      `CLAUDE.md`). Comprobado el 23 de agosto rama por rama —15 ramas
+      entre los dos repos, ninguna tiene nada que rescatar—; la lista
+      completa con los commits comprobados de cada una: `PENDIENTE_DETALLE.md`.
       Se borran desde github.com/elenaml06/<repo>/branches, tocando la
       papelera. Desde el contenedor no se puede: el proxy bloquea el
       borrado de ramas.
@@ -680,116 +629,15 @@ menús comparados no tienen sentido sin él.
       `HECHO.md`.
 
 - [ ] **Una versión para dueños y otra para veterinarios.** ⚠️ **DECIDIDO
-      el 28 de agosto — el plan entero está en `VETERINARIOS.md`.** Aquí
-      queda solo lo que se decidió, para no tener que abrir el otro
-      documento para saber por dónde va.
-
-      **EL PRINCIPIO DEL QUE SALE TODO** (28 de agosto): el modo veterinario
-      **no puede ser una degradación para el tutor**. La tentación es
-      bloquearlo todo hasta que alguien firme, y eso mata el producto — el
-      tutor paga y recibe menos que ayer. Es al revés: sin validación la
-      app hace todo lo que hace hoy, **más decirte qué haría con el
-      diagnóstico y qué dato exacto le falta**. «Con la creatinina y el UPC
-      podría formular para IRIS 2» convierte; un muro no.
-
-      De ahí sale el reparto: el tutor siempre puede todo el producto de
-      perro sano, meter síntomas y seguimiento (los instrumentos validados
-      —CBPI, LOAD, CIBDAI, PVAS— son *owner-reported* por construcción, y
-      la frecuencia respiratoria en reposo es la mejor medición domiciliaria
-      que hay), ver los 30 requisitos sin nada escondido, pedir dieta para
-      un diagnóstico, exportar, y **retirarle el acceso al veterinario y
-      apagar el modo terapéutico**: es su perro y sus datos.
-
-      La frontera de lo que exige firma es limpia y no arbitraria: **bajar
-      de los mínimos de FEDIAF**, que es exactamente donde deja de ser una
-      dieta completa y equilibrada y pasa a ser una prescripción.
-
-      Y lo que más valor tiene de todo el proyecto no es un permiso: es
-      **el informe que el tutor imprime y le lleva a su veterinario**
-      (diagnóstico, objetivos y de dónde salen, los 30 requisitos, la lista
-      de la compra y la curva). Eso invierte la captación — no hay que
-      reclutar veterinarios, **los traen los tutores**, uno a uno y con un
-      caso delante. Y su miedo a la comida casera está justificado: Larsen
-      *et al.* (JAVMA 2012) evaluaron 39 recetas renales publicadas y
-      **ninguna** cumplía el NRC. No se le quita convenciéndole; se le quita
-      enseñándole los números.
-
-      Se preguntó el 24 de agosto y quedaron cuatro preguntas abiertas que
-      no podía contestar un programador. Contestadas:
-
-      · **Una sola app**, un repositorio y un motor, con un modo
-        profesional que se enciende según quién entra. No dos productos.
-      · **Los pacientes, en dos fases**: primero fichas que crea el propio
-        veterinario (el dueño puede no tener ni cuenta), después perros que
-        el dueño le comparte por invitación. La tabla `accesos` se hace
-        desde el día uno para que quepan las dos.
-      · **Sí puede bajar de los mínimos de FEDIAF** — que es lo que hace
-        falta en una dieta renal o hepática de verdad — pero declarándolo:
-        el menú se sigue verificando entero, contra un juego de requisitos
-        escrito que viaja con él, y el semáforo dice «verde con
-        excepciones», nunca verde a secas. Los cinco topes de seguridad
-        crónica no los levanta nadie.
-      · **Todavía no se cobra**: gratis para unos pocos veterinarios y el
-        precio se decide con lo que se vea.
-      · **Acreditación por número de colegiado y alta a mano.** El rol no
-        se enciende solo.
-      · **La pauta sale firmada**, con el nombre del veterinario y su
-        número de colegiado.
-
-      Y tres cosas que no se preguntaron porque no tienen dos respuestas
-      razonables: **el veterinario nunca entra en la cuenta del dueño**
-      (entra con la suya y ve al perro por un acceso concedido — si
-      suplantara, la base de datos no podría saber quién pautó qué),
-      **siempre tiene cuenta**, y **el dueño puede no tenerla**.
-
-      Dos cosas que salieron al mirar el código y que conviene saber antes
-      de empezar:
-
-      · **Las fases 1 a 3 casi no tocan esta API.** `verificar()` ya
-        devuelve todo lo que quiere un profesional — valor, mínimo, máximo
-        y margen de los 29 nutrientes, huecos, `dato_dudoso`, Ca:P, topes
-        aplicados. La versión de dueño es el frontend enseñando tres cifras
-        de treinta. Lo profesional no hay que calcularlo: hay que dejar de
-        taparlo. De aquí solo hace falta un `codigo` estable en cada aviso,
-        para que el frontend pueda contarlo de otra manera sin duplicar los
-        textos en Python.
-      · **La API no autentica nada** (CORS en `*`, ningún `Depends`,
-        ningún token; el premium lo tapa el frontend con un `blur`). Da
-        igual para las fases 1 a 3, porque los datos los protege la
-        seguridad por fila de Supabase. Pero «solo un veterinario
-        acreditado puede prescribir» comprobado en el frontend no es una
-        regla: cualquiera podría mandar una prescripción con el fósforo a
-        300 desde una terminal. **La fase 4 empieza por validar el JWT de
-        Supabase en la API**, o no se despliega.
-
-      **La firma es la decisión que más obliga**, y no por lo que hay que
-      pintar en el PDF. Un documento firmado tiene que seguir diciendo lo
-      mismo dentro de un año, y hoy la tabla `menus` guarda nombre, gramos
-      y kcal — ni la etapa, ni el DER, ni las patologías —, que es justo
-      por lo que `/perro/{perro_id}/menus` marca lo que devuelve como
-      `verificado: False`. Firmar eso no se puede: la ficha del perro
-      cambia (el peso objetivo de Lola, 7,0 → 6,2), el catálogo cambia
-      (fuera la borraja el 27, fuera cinco suplementos el 26) y el motor
-      cambia (el fósforo renal, de 1400 a 1200 el 25). **Firmar obliga a
-      congelar**: al firmar se guarda una copia inmutable del menú, de la
-      ficha verificada entera, del contexto, de los huecos y de los tres
-      sellos con los que se calculó. Y ese trabajo hace falta también para
-      la prescripción de la fase 4, así que se hace una vez y va antes que
-      las dos.
-
-      Dos consecuencias que conviene no olvidar: **el modo profesional
-      (fase 1) deja de ser una mejora y pasa a ser requisito** — quien
-      firma tiene que poder ver lo que firma —, y **el sello de lo firmado
-      lo calcula la API sobre lo que verificó**, no el frontend sobre lo
-      que pintó: si no, habría dos ideas de «lo firmado» y el sello
-      cuadraría consigo mismo sin decir nada, que es la misma familia de
-      fallo que la duplicación del DER.
-
-      Sigue abierto, y no lo decide un programador: **qué dice el
-      documento sobre qué se firma exactamente** — si el vet firma la
-      pauta, si firma haberla revisado, qué papel tiene Rawku en medio.
-      Conviene preguntarlo antes de que salga la primera pauta firmada de
-      verdad. No cambia nada de lo de arriba: solo cambia ese texto.
+      el 28 de agosto — el plan entero, completo, está en `VETERINARIOS.md`**
+      (el principio de que no degrada al tutor: su §2; el reparto de
+      permisos: su §1 y §3; el formulador del veterinario: su §7; los
+      pacientes en dos fases: su §9; la prescripción de la fase 4: su §10;
+      la firma, que es la decisión que más obliga porque un documento
+      firmado tiene que seguir diciendo lo mismo dentro de un año: su §11).
+      Este punto en `PENDIENTE.md` es solo el marcador de que sigue por
+      construir — para el contenido, `VETERINARIOS.md` es lo que manda, no
+      esto.
 - [ ] **Personalizar perro por perro** cuando son varios. Hoy lo que se
       elige se aplica a la casa entera (se le fuerza al perro que manda y
       los demás se amoldan). Elegir alimentos distintos para cada perro es
@@ -801,78 +649,15 @@ menús comparados no tienen sentido sin él.
       peor que ninguna: un botón que devuelve `Unsupported provider` es un
       botón roto.
 
-      **QUÉ FALTA, Y NO ES CÓDIGO.** Para publicar la app en Google —
-      dejarla en producción, o sea que pueda entrar cualquiera y no solo
-      unos correos apuntados a mano — Google **exige** tres cosas en
-      *Información de marca*:
+      **QUÉ FALTA, Y NO ES CÓDIGO.** Google exige, para publicar la app,
+      un enlace a la Política de Privacidad y otro a las Condiciones del
+      Servicio en *Información de marca* — y esas páginas no existen
+      todavía. Así que esto **depende de los textos legales** (ver 3.1),
+      igual que Stripe. Los dos van juntos.
 
-      · Página principal de la aplicación
-      · Enlace a la **Política de Privacidad**
-      · Enlace a las **Condiciones del Servicio**
-
-      Y esas dos páginas **no existen**. Comprobado: no hay nada de eso en
-      `canislab-web/src`. Mientras falten, el botón «Publicar app» sale en
-      gris con el aviso *«La configuración de OAuth de tu app está
-      incompleta»*. No es un fallo: es que falta un dato real.
-
-      Así que esto **depende de los textos legales** (ver 3.1), igual que
-      Stripe — que también los pide para cobrar. Los tres van juntos.
-
-      **LO QUE YA ESTÁ HECHO EN GOOGLE CLOUD** (24 agosto), para no
-      repetirlo:
-      · Cuenta de Google Cloud: ya existía.
-      · Proyecto **Rawku** creado.
-      · *Información de marca*: nombre de la app y correo de contacto
-        puestos y guardados.
-      · Tipo de usuario: **Externo**.
-      · Estado: **En pruebas**. Falta publicar, por lo de arriba.
-
-      **LO QUE FALTARÍA CUANDO HAYA TEXTOS LEGALES**, en orden:
-      1. *Información de marca*: pegar los tres enlaces y añadir
-         `rawku.app` en **Dominios autorizados** (si pones la página
-         principal, Google obliga a registrar el dominio).
-      2. `console.cloud.google.com/auth/audience` → **Publicar app**. No
-         hace falta verificación de Google: solo se piden los permisos
-         básicos (nombre, correo, foto). La revisión larga es para apps
-         que piden Gmail o Drive.
-      3. `console.cloud.google.com/auth/clients` → crear cliente OAuth,
-         tipo **Aplicación web**. En *URI de redireccionamiento
-         autorizados*, EXACTAMENTE:
-         `https://kvtkdpgpmrvwmvymyqof.supabase.co/auth/v1/callback`
-         (sin barra final). *Orígenes de JavaScript*: vacío — Google no
-         habla con rawku.app, habla con Supabase.
-      4. Supabase → *Authentication → Providers → Google*: activar y pegar
-         el ID de cliente y el secreto.
-      5. Supabase → *Authentication → URL Configuration*:
-         **Site URL** `https://rawku.app` y en **Redirect URLs**
-         `https://rawku.app/**`. **Sin esto no vuelve a la app**: Supabase
-         solo obedece el `redirectTo` si la dirección está en esa lista.
-
-      **EL CÓDIGO QUE SE QUITÓ**, para rehacerlo sin pensarlo dos veces
-      (está en el historial: rama `claude/la-compra-solo-en-el-panel`, PR
-      web #25, deshecho en el siguiente):
-      · `supabase.js`: `entrarConGoogle()` con `signInWithOAuth`,
-        `redirectTo: window.location.origin + '/'` y
-        `queryParams: { prompt: 'select_account' }` — para que ofrezca
-        elegir cuenta en vez de entrar con la última usada, que en un móvil
-        compartido importa.
-      · `auth.jsx`: el botón (con el logo de Google en SVG inline, para no
-        depender de una imagen externa), y un `useEffect` que lee
-        `error_description` de la URL **y del hash** al volver. Ese
-        segundo detalle no es opcional: según el flujo el motivo llega en
-        uno o en otro, y mirar solo uno deja la mitad de los casos en
-        silencio. Además limpiaba la URL, para que recargar no repitiera
-        el error para siempre.
-      · `tests/entrar-con-google.spec.js`: 5 pruebas — el botón está donde
-        toca y no en «olvidé mi contraseña»; manda a `/auth/v1/authorize`
-        con `provider=google` y el `redirect_to` correcto (con esto mal la
-        sesión se pierde sin dar ningún error); y el error se lee, en la
-        query y en el hash, y no se queda pegado al recargar.
-
-      **MIENTRAS TANTO**, si se quiere probar el circuito entero sin
-      publicar: dejarlo en *Prueba* y añadirse como **usuario de prueba**
-      (admite hasta 100 correos). Entra quien esté en esa lista y nadie
-      más — sirve para comprobar que funciona, no para abrirlo.
+      Lo que ya está configurado en Google Cloud, los pasos exactos para
+      cuando existan los textos legales, y el código completo que se quitó
+      (para rehacerlo sin pensarlo dos veces): `PENDIENTE_DETALLE.md`.
 - [ ] **Entrar con huella en el móvil.** Se hace con *passkeys* (WebAuthn).
 
       ⚠️ **CORREGIDO EL 24 DE AGOSTO — antes ponía aquí «que Supabase Auth

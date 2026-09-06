@@ -183,9 +183,12 @@ un resumen de dos líneas: los aminoácidos, el escalado de mínimos y
 máximos, la duplicación del DER, los datos dudosos. Ábrelo solo cuando la
 tarea toque justo esa parte del motor. `PENDIENTE.md` es lo que queda,
 ordenado por prioridad — y desde el 6 de septiembre solo lo que queda de
-verdad: lo ya resuelto se movió a `HECHO.md`, con un resumen de una línea
-y puntero en su sitio, para no recargar lo que se lee al empezar cualquier
-sesión. `DATOS_QUE_FALTAN.md` son los valores del catálogo
+verdad: lo ya resuelto se movió a `HECHO.md`, y la investigación o el
+código detrás de un pendiente que no hace falta releer cada vez se movió a
+`PENDIENTE_DETALLE.md` (el bloque de veterinarios señala directamente a
+`VETERINARIOS.md`, que ya lo tenía completo) — los dos con resumen de una
+línea y puntero en su sitio, para no recargar lo que se lee al empezar
+cualquier sesión. `DATOS_QUE_FALTAN.md` son los valores del catálogo
 que hay que conseguir de BEDCA/CIQUAL/USDA, uno a uno — **no los rellena el
 asistente**. `Bases.md` y `Ya_probado.md` son de las primeras sesiones:
 decisiones cerradas y callejones sin salida ya recorridos, léelos antes de
