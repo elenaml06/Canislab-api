@@ -385,19 +385,27 @@ fósforo. Aplicar el recorte real necesitaría encadenar `/analizar` (que sí
 lee la dieta actual) antes de `/menu/v2` — eso es trabajo de producto, no
 solo de motor.
 
-**Lo que queda del borrador, sin tocar, por lo grande que es reconciliarlo
-bien**: 41 perfiles más, entre ellos los 4 estadios IRIS renales completos
-(fósforo Y proteína por estadio, con IRIS 2-4 necesitando `formulable:
-false` porque su proteína cae por debajo del mínimo FEDIAF — ver el propio
-borrador para las cifras exactas, ya citadas con IRIS 2023 + ACVN), los 5
-estadios MMVD completos con reparto de macros, y patologías que hoy no
-existen en absoluto en producción (obesidad como perfil propio con
-objetivos de macros, GDV, Cushing, Addison, epilepsia idiopática,
-disfunción cognitiva, cáncer, inmunosupresión...). Cada una necesita su
-propia verificación cifra a cifra contra `requerimientos_v2_final.json` —
-igual que se hizo aquí con cardiopatía y renal — antes de entrar en
-producción. No se ha hecho de golpe porque cada patología nueva es una
-decisión clínica, no una tarea mecánica.
+**Actualizado el 6-7 de septiembre, con SACN5 5ª ed. completo ya
+disponible**: se verificaron y añadieron 23 patologías más (de 16 a 39 en
+`patologias.json`), cada una cifra a cifra contra SACN5 + NRC 2006 +
+FEDIAF, nunca de memoria ni del borrador sin comprobar — ver el detalle
+completo, con las tablas y capítulos citados, en §10 más abajo.
+
+**Lo que sigue sin entrar, y por qué, tras esta ronda**: los 4 estadios
+IRIS renales completos como entradas separadas (`erc_iris_1` a `_4` con
+fósforo Y proteína por estadio) — hoy `renal` sigue siendo una sola
+entrada con el fósforo más restrictivo que cabe dentro de FEDIAF, sin
+diferenciar estadio; partirla en 4 es la pieza más grande que queda y
+necesita decidir primero cómo la app pregunta el estadio IRIS (ese sí es
+trabajo de producto, no solo de motor, igual que pasó con el estadio
+ACVIM de cardiopatía). Los 5 estadios MMVD completos con reparto de
+macros más allá del sodio tampoco se han hecho: hoy `cardiopatia_a` a
+`_d` solo tocan sodio, que es lo único con fuente sólida encontrada.
+`alergia_alimentaria`, `cachorro_raza_grande`,
+`gestacion_lactancia_con_patologia`, `mucocele_biliar` y la partición de
+`pancreatitis` en dos se dejaron fuera a propósito — el porqué de cada
+una está en `VETERINARIOS.md` §12-bis, en la sección «Lo que falta para
+que esta tabla esté completa».
 
 ## 9. `campos nuevos que hoy no existen en la app` — qué falta y por qué
 
@@ -423,4 +431,73 @@ entrada que **hoy no existe en ningún sitio** — ni en el schema de la API
   específica (`cardiopatia_c` en vez de `cardiopatia`). Lo que falta es
   solo la pantalla en `canislab-web` que pregunte el estadio/UPC y elija
   la clave correcta — cero cambios de backend adicionales.
+
+## 10. La ronda SACN5 (6-7 de septiembre): 23 patologías más, verificadas
+     capítulo a capítulo
+
+Con los 70 capítulos de SACN5 5ª ed. ya disponibles en
+`canislab-fuentes/sacn5/cap*.txt` (subidos en un PR aparte de ese repo),
+se hizo lo que pedía el punto anterior: cada patología nueva, verificada
+cifra a cifra contra el capítulo que le toca, **nunca contra el borrador
+sin comprobar ni de memoria**. `patologias.json` pasó de 16 a 39 entradas.
+`auditar_patologias.py` (BLOQUE 36) y la batería completa, en verde.
+
+**Refinamientos a las 16 que ya existían** (mismo número, fuente cruzada
+con SACN5 para confirmarlo o para documentar un conflicto):
+- `hepatopatia`: SACN5 cap.68 Tabla 68-8 da cobre ≤5 mg/kg de materia seca
+  = 1,25 mg/1000kcal — casi idéntico al objetivo terapéutico ya citado
+  (1,2, de Center 2026). Dos fuentes, veinte años de diferencia, mismo
+  número.
+- `cistina`: se corrigió un dato FALSO que llevaba desde antes de esta
+  ronda — `motivo_no_formulable` decía que el catálogo no tenía
+  aminograma de metionina/cistina, cuando SÍ lo tiene desde el 28 de
+  agosto (94 de 159 fichas). El motivo real de bloqueo (pH urinario +
+  objetivo por debajo del mínimo FEDIAF) seguía siendo correcto, solo el
+  dato de "no hay aminograma" era falso y quedó reescrito.
+- `estruvita` y `urato`: cruzados con SACN5 cap.43 y cap.39 — ambos
+  confirman, con una fuente distinta a la ya citada, que la restricción
+  real es también de proteína completa por debajo del mínimo FEDIAF, no
+  solo del nutriente específico (pH, purinas) que ya se citaba.
+- `oxalato`: SACN5 cap.40 (2010) todavía recomienda BAJAR el calcio
+  (0,4-0,7% MS) — lo contrario de lo que ya se seguía (Today's Veterinary
+  Practice 2025, que dice que bajar el calcio empeora el oxalato al
+  aumentar su absorción intestinal). Es un conflicto de fuentes real,
+  documentado en el propio JSON: se mantiene la posición más reciente
+  porque tiene el mecanismo mejor descrito.
+
+**23 patologías nuevas, con topes numéricos reales donde el número era
+alcanzable con el catálogo** (`hiperlipidemia` grasa≤30, `obesidad`
+grasa≤30 — SACN5 pide 22,5 pero NO es alcanzable con el catálogo real, se
+probó contra el solver: 27 falla 0/5 intentos, 28 resuelve 5/5, se dejó en
+30 con margen —, `ple_linfangiectasia` grasa≤37,5, `insuficiencia_
+pancreatica_exocrina` grasa≤37,5) o bloqueadas por Razón A cuando el
+objetivo terapéutico cae bajo el mínimo FEDIAF (`shunt_sin_encefalopatia`
+proteína 37,5-50, `encefalopatia_hepatica` proteína 25-37,5, ambas de
+SACN5 cap.68 Tabla 68-8). El resto (`cardiopatia_a`, `dcm_taurina_
+respondedora`, `dcm_asociada_a_dieta`, `fracaso_renal_agudo`,
+`enteropatia_cronica`, `artrosis`, `riesgo_gdv`, `disfuncion_cognitiva`,
+`raza_predispuesta_cobre`, `dermatosis_zinc`, `dermatitis_atopica`,
+`epilepsia_idiopatica`, `mielopatia_degenerativa`, `cushing`, `addison`,
+`cancer_soporte`, `inmunosupresion`) son informativas, sin tope numérico,
+porque en cada caso o (a) la fuente pide un SUELO más alto en vez de un
+techo — el motor solo sabe poner techos por patología, no suelos, así que
+subir el omega-3 en artrosis o el zinc en dermatosis_zinc por encima del
+mínimo de FEDIAF no es hoy mecánicamente posible —, o (b) el nutriente
+clave (taurina, L-carnitina, fibra, MCT) no está entre los 41 que mide el
+motor, o (c) el propio SACN5 dice que el tratamiento es farmacológico o de
+manejo, no dietético (Cushing, Addison, GDV, epilepsia). La tabla completa
+con la razón de cada una está en `VETERINARIOS.md` §12-bis.
+
+**Un hallazgo de honestidad de datos que merece quedar escrito**: el
+primer intento de `obesidad` usó literalmente el número de SACN5 (≤9% MS
+= 22,5 g/1000kcal) sin probarlo contra el solver. No resolvía —ni en 40
+segundos de reintentos—, porque una comida de verdad no puede bajar tanto
+la grasa y seguir llegando a los mínimos de EFA y micronutrientes con las
+kcal que quedan (un pienso sí puede, con premezcla vitamínica sintética
+que no lleva grasa). Se probó en escalón (25, 26, 27, 28...) hasta
+encontrar el punto real donde el catálogo empieza a resolver, y se dejó
+ahí con margen. La lección: un número de un libro de texto no es
+automáticamente un tope viable con comida de verdad, y hay que probarlo
+contra el solver antes de darlo por bueno — exactamente lo que dice la
+regla 1 del `CLAUDE.md`, aplicada a un tope nuevo, no solo al menú final.
 

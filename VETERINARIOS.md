@@ -927,8 +927,11 @@ la primera:
 **Razón A — el objetivo terapéutico cruza por debajo de un mínimo de
 FEDIAF** (`necesita_bajo_fediaf: true`). Es la frontera "limpia" del
 apartado 2: por debajo de ahí deja de ser una dieta completa y equilibrada
-y pasa a ser una prescripción. `hepatopatia` (cobre), `urato` (purinas) y
-`cistina` (metionina+cistina) bloquean por esto.
+y pasa a ser una prescripción. `hepatopatia` (cobre), `urato` (purinas),
+`cistina` (metionina+cistina), `shunt_sin_encefalopatia` (proteína,
+37,5-50 g/1000kcal, SACN5 Tabla 68-8) y `encefalopatia_hepatica` (proteína,
+25-37,5 g/1000kcal, más estricto por ser temporal mientras hay signos
+neurológicos) bloquean por esto.
 
 **Razón B — depende de una analítica o un manejo continuo que la app no
 puede ver**, aunque el número en sí quepa dentro de FEDIAF.
@@ -974,19 +977,60 @@ explícita, no un descuido.
 | `cistina` | ❌ No | Razón A + B: metionina+cistina bajo mínimo, y depende del pH urinario | — (solo aviso) |
 | `estruvita` | ❌ No | Razón B: depende del pH urinario, que la app no ve | — (solo aviso) |
 | `otra` | ❌ No | Ninguna regla nutricional conocida | — |
+| `hiperlipidemia` | ✅ Sí | — | grasa 30 (SACN5 cap.28) |
+| `obesidad` | ✅ Sí | — | grasa 30 (SACN5 pide 22,5, no alcanzable con catálogo real — ver el propio JSON) |
+| `cardiopatia_a` | ✅ Sí | — | ninguno (ACVIM estadio A: sin cambio de dieta) |
+| `dcm_taurina_respondedora` | ✅ Sí | — | ninguno (taurina no está en los 41 nutrientes medidos) |
+| `dcm_asociada_a_dieta` | ✅ Sí | — | ninguno (el mecanismo de riesgo no aplica a BARF) |
+| `ple_linfangiectasia` | ✅ Sí | — | grasa 37,5 (SACN5 cap.58) |
+| `insuficiencia_pancreatica_exocrina` | ✅ Sí | — | grasa 37,5 (SACN5 cap.66; el tratamiento real es enzimático, no dietético) |
+| `fracaso_renal_agudo` | ✅ Sí | — | ninguno (a propósito: no es la restricción de `renal`, que es para crónica) |
+| `enteropatia_cronica` | ✅ Sí | — | ninguno (proteína única vía Alergias, si hace falta) |
+| `artrosis` | ✅ Sí | — | ninguno (sube omega-3 con pescado azul; el motor no sabe poner suelos por patología) |
+| `riesgo_gdv` | ✅ Sí | — | ninguno (los factores de riesgo son de manejo, no de nutrientes) |
+| `disfuncion_cognitiva` | ✅ Sí | — | ninguno |
+| `shunt_sin_encefalopatia` | ❌ No | Razón A: proteína 37,5-50 bajo el mínimo FEDIAF (52,1) | — (solo aviso) |
+| `encefalopatia_hepatica` | ❌ No | Razón A: proteína 25-37,5, más estricto y temporal | — (solo aviso) |
+| `raza_predispuesta_cobre` | ✅ Sí | — | ninguno (sin diagnóstico confirmado no se baja del mínimo) |
+| `dermatosis_zinc` | ✅ Sí | — | ninguno (el defecto es de absorción, no de dieta) |
+| `dermatitis_atopica` | ✅ Sí | — | ninguno |
+| `epilepsia_idiopatica` | ✅ Sí | — | ninguno (sin evidencia de que la dieta cambie el curso) |
+| `mielopatia_degenerativa` | ✅ Sí | — | ninguno (peso ideal ya cubierto por el DER) |
+| `cushing` | ✅ Sí | — | ninguno (tratamiento farmacológico; combinar con diabetes/hiperlipidemia si hay comorbilidad) |
+| `addison` | ✅ Sí | — | ninguno (¡no restringir sodio: Addison lo pierde, no lo retiene!) |
+| `cancer_soporte` | ✅ Sí | — | ninguno (el perfil BARF ya encaja con lo que pide SACN5) |
+| `inmunosupresion` | ✅ Sí | — | ninguno (aviso sobre riesgo de patógenos de la comida cruda) |
 
 Para las que bloquean, un veterinario acreditado (fase 1+) SÍ puede
 formular — es exactamente el punto de `formulable_por_profesional: true`,
-presente en las cinco. Lo que ve y firma en cada caso está en el campo
+presente en todas. Lo que ve y firma en cada caso está en el campo
 `avisos.profesional` de `patologias.json`, no en un resumen.
 
 ### Lo que falta para que esta tabla esté completa
 
-Las otras 41 patologías del borrador de 47 (§8 de `PENDIENTE_NUTRICION.md`)
-todavía no están en `patologias.json`, así que no aparecen aquí. Cuando se
-añadan, cada una entra en esta tabla con su Razón (A, B, ninguna, o las
-dos) explícita — no se añade una patología nueva sin decidir esto primero,
-porque es precisamente la decisión que hace que un menú se entregue o no.
+Del borrador de 47 (§8 de `PENDIENTE_NUTRICION.md`), verificado contra
+SACN5 5ª ed. completo + NRC 2006 + FEDIAF el 6 de septiembre, quedan
+deliberadamente FUERA de `patologias.json` por no aportar nada que el
+motor no haga ya o por no tener fuente primaria verificable:
+
+- `alergia_alimentaria` — ya cubierta por el mecanismo de Alergias
+  existente (excluir una proteína y elegir otra en Personalizar), que es
+  independiente de la lista de patologías. Añadirla aquí sería un segundo
+  camino para lo mismo.
+- `cachorro_raza_grande` — ya cubierto por la lógica de calcio de raza
+  grande del motor (peso adulto esperado, tope de calcio, Ca:P ≥1:1), no
+  es una patología aparte.
+- `gestacion_lactancia_con_patologia` — no es una patología en sí: es la
+  combinación de una etapa (`Gestacion`/`Lactancia`) con cualquiera de las
+  de arriba, y ese cruce ya lo resuelve `solo_en_adulto`/`en_crecimiento`
+  patología por patología.
+- `mucocele_biliar` — sin tabla de factores nutricionales en SACN5 (tema
+  posterior a la 5ª edición, 2010) ni en NRC 2006. No se ha fabricado un
+  número sin fuente.
+- `pancreatitis_sin_hipertrigliceridemia` / `_con_hipertrigliceridemia` —
+  no se ha partido `pancreatitis` en dos: el matiz de la hipertrigliceridemia
+  ya lo resuelve `diabetes.max_pct_kcal_grasa_si_ademas`, que se activa
+  cuando las dos condiciones coinciden.
 
 ### 12-ter. Dentro de "puede bajar un mínimo de FEDIAF": hasta dónde, de verdad
 
