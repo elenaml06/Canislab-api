@@ -4979,6 +4979,129 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 44 — LO QUE UN VETERINARIO LEE ANTES DE FIRMAR
+#
+# `GET /patologias` existe desde el 7 de septiembre para contestar una
+# pregunta concreta de la usuaria: "cuando pones una patologia... que cambia,
+# que no, que puedes modificar y que no, de que margen puede salir".
+#
+# LO QUE VIGILA ESTE BLOQUE, y por que cada cosa:
+#
+#   1. Que los numeros que sirve sean los MISMOS que aplica el solver. Es la
+#      regla de siempre: una tabla copiada es una tabla que se separa, y ya
+#      paso -- el POST /menu borrado el 26 de agosto llevaba su propia copia
+#      con el fosforo renal a 1.400 en vez de 1.200, durante semanas, sin que
+#      saltara nada. Si alguien "arregla" este endpoint escribiendo cifras a
+#      mano, esto se pone rojo.
+#   2. Que el MARGEN se mida contra el minimo de FEDIAF de VERDAD, leido de
+#      requerimientos_v2_final.json por el mismo MAPA que usa el semaforo. Un
+#      margen calculado contra otro numero seria peor que no darlo: diria que
+#      hay sitio donde no lo hay.
+#   3. Que la fuente y el porque viajen. Sin ellos el numero es una cifra
+#      suelta, y quien firma no puede comprobarla.
+# ============================================================
+print("=== BLOQUE 44: la tabla de patologias que lee el veterinario ===")
+from motor.patologias import cargar_crudo as _crudo_44
+from motor.verificar import MAPA as _MAPA_44, maximo_de as _maximo_de_44
+
+
+def _num_44(v):
+    try:
+        n = float(v)
+        return n if n == n else None
+    except (TypeError, ValueError):
+        return None
+
+
+_r44 = _c.get("/patologias")
+if _r44.status_code != 200:
+    fallos.append(f"BLOQUE44: /patologias contesta {_r44.status_code}. Sin el, un veterinario "
+                  f"marca una patologia y no ve el tope que decide si sale menu.")
+else:
+    _d44 = _r44.json()
+    _servidas = _d44.get("patologias") or {}
+    _tabla44 = _crudo_44()["patologias"]
+
+    if set(_servidas) != set(_tabla44):
+        _faltan44 = sorted(set(_tabla44) - set(_servidas))
+        _sobran44 = sorted(set(_servidas) - set(_tabla44))
+        fallos.append(f"BLOQUE44: la lista servida no cuadra con patologias.json. "
+                      f"Faltan: {_faltan44}. Sobran: {_sobran44}.")
+
+    # Las cifras, una a una, contra el archivo que aplica el solver.
+    # ⚠️ La tabla se vuelve a cargar aquí y NO se usa el `req` de arriba: a
+    # estas alturas de la bateria ese nombre ya lo han reutilizado otros
+    # bloques con otra forma, y una prueba que depende de en que orden se
+    # ejecutan las de antes no prueba nada.
+    from requisitos import cargar_requerimientos as _cargar_req_44
+    _por_clave_44 = {}
+    for _fila44 in _cargar_req_44():
+        _cl44 = _MAPA_44.get(_fila44.get("nutriente"))
+        if _cl44:
+            _por_clave_44[_cl44] = _fila44
+
+    for _clave44, _p44 in _tabla44.items():
+        _servida44 = _servidas.get(_clave44)
+        if not _servida44:
+            continue
+        if _servida44.get("nombre") != _p44.get("nombre"):
+            fallos.append(f"BLOQUE44 {_clave44}: el nombre servido no es el de patologias.json.")
+        if bool(_servida44.get("formulable")) != bool(_p44.get("formulable")):
+            fallos.append(f"BLOQUE44 {_clave44}: `formulable` no coincide con patologias.json. "
+                          f"De ese campo depende que se bloquee o no la generacion.")
+
+        for _bloque44, _campo44, _es_tope44 in [("topes", "topes_por_1000kcal", True),
+                                                ("suelos", "suelos_por_1000kcal", False)]:
+            _reales44 = _p44.get(_campo44) or {}
+            _dichos44 = {l["nutriente"]: l for l in _servida44.get(_bloque44) or []}
+            if set(_dichos44) != set(_reales44):
+                fallos.append(f"BLOQUE44 {_clave44}: los {_bloque44} servidos "
+                              f"({sorted(_dichos44)}) no son los de patologias.json "
+                              f"({sorted(_reales44)}).")
+                continue
+            for _nut44, _t44 in _reales44.items():
+                _l44 = _dichos44[_nut44]
+                if abs(float(_l44["valor"]) - float(_t44["valor"])) > 1e-9:
+                    fallos.append(f"BLOQUE44 {_clave44}/{_nut44}: sirve {_l44['valor']} y el "
+                                  f"solver aplica {_t44['valor']}. Un numero copiado a mano es "
+                                  f"exactamente como se desincronizo la tabla del POST /menu.")
+                if not _l44.get("fuente") or not _l44.get("por_que"):
+                    fallos.append(f"BLOQUE44 {_clave44}/{_nut44}: sin fuente o sin motivo. "
+                                  f"Quien firma tiene que poder comprobar el numero.")
+
+                # El margen, contra el minimo de FEDIAF leido de la tabla.
+                _fila44 = _por_clave_44.get(_nut44)
+                _ref44 = None
+                if _fila44 is not None:
+                    _ref44 = (_num_44(_fila44.get("minAdulto")) if _es_tope44
+                              else _maximo_de_44(_fila44, _fila44.get("nutriente"), "Adulto"))
+                if _ref44:
+                    _esperado44 = round((float(_t44["valor"]) - _ref44) / _ref44 * 100, 1)
+                    if _l44.get("margen_pct") is None or abs(_l44["margen_pct"] - _esperado44) > 0.05:
+                        fallos.append(f"BLOQUE44 {_clave44}/{_nut44}: el margen dice "
+                                      f"{_l44.get('margen_pct')} % y contra el limite real de "
+                                      f"FEDIAF ({_ref44}) son {_esperado44} %. Un margen mal "
+                                      f"medido dice que hay sitio donde no lo hay.")
+                elif _l44.get("margen_pct") is not None:
+                    fallos.append(f"BLOQUE44 {_clave44}/{_nut44}: da un margen contra un limite "
+                                  f"de FEDIAF que no existe para ese nutriente.")
+
+    # Y el caso que motivo todo esto, escrito con sus numeros: renal aprieta
+    # el fosforo a 1200 con el minimo de FEDIAF en 1160. Un 3,4 % de sitio.
+    _renal44 = _servidas.get("renal") or {}
+    _fos44 = next((l for l in _renal44.get("topes") or [] if l["nutriente"] == "fosforo"), None)
+    if not _fos44:
+        fallos.append("BLOQUE44: renal no trae su tope de fosforo. Es el ejemplo de manual de "
+                      "por que existe este endpoint.")
+    elif not (0 < (_fos44.get("margen_pct") or 0) < 10):
+        fallos.append(f"BLOQUE44: el margen del fosforo en renal sale {_fos44.get('margen_pct')} %. "
+                      f"Tiene que ser positivo y estrecho: si fuera negativo, el tope estaria por "
+                      f"debajo del minimo de FEDIAF y entonces renal no podria ser `formulable`.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")

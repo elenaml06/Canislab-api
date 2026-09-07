@@ -503,3 +503,52 @@ TODO EN VERDE.
 De paso, la revisión completa de la tabla confirmó que **los otros 40
 nutrientes coinciden exactamente** con el PDF — esta fue la única
 discrepancia real en todo el documento.
+
+
+## Siete cosas del modo veterinario, usándolo de verdad — hecho el 7 de septiembre
+
+Encontradas por la usuaria entrando con la cuenta acreditada. Ninguna daba
+error, ninguna salía en un log: todas se ven usando la app. Lo que las une es
+que el modo veterinario se construyó encima de la app del tutor apagando
+trozos, y donde no se apagó ninguno, al veterinario le habla la app del dueño.
+
+1. **«Todavía no tienes ninguno» con treinta pacientes.** La puerta del
+   veterinario se pintaba con `!yaTienePerroGuardado`, que no significa «no
+   tiene pacientes» sino «ahora mismo no hay ningún perro montado» — y dar de
+   alta a uno desmonta el perro a propósito. Ahora cuenta los pacientes
+   guardados.
+2. **Los pacientes colgaban de la burbuja de perros.** La hoja desplegable
+   responde «¿de cuál de tus perros estás?», que con tres perros de una casa
+   se contesta de un vistazo y con cincuenta pacientes es un muro. Ahora la
+   burbuja es una miga de pan que lleva a una **pantalla de Pacientes** con
+   buscador por nombre, tutor y raza — que es como trabajan Nutrimenta,
+   VetMenu y MyVetDiet: la casa del profesional es el fichero, y un paciente
+   es un sitio en el que entras y del que sales.
+3. **«Mis menús» salía vacío.** Se pedía solo por `creado_por`, una columna
+   creada el 28 de agosto que no rellenaba nadie hasta el 29: todo lo
+   anterior valía NULL. Ahora se piden también por los perros que son sus
+   pacientes y se juntan las dos vías.
+4. **El menú de un paciente se leía como el de un tutor**, con el «Este menú
+   TIENE que aprobarlo tu veterinario» incluido — dicho a quien lo va a
+   firmar con su número de colegiado. Fuera, y en su sitio el tope que la
+   patología le ha impuesto al motor. El semáforo dice lo mismo en registro
+   clínico, y la cabecera lleva el caso entero (raza, peso objetivo, BCS,
+   etapa, kcal, patologías) sin salir a buscarlo.
+5. **Marcar una patología no decía nada.** Ahora `GET /patologias` sirve el
+   tope, la fuente, el motivo y **el margen contra el mínimo de FEDIAF**, y
+   dice también qué NO se puede levantar desde la app. Los números no se
+   copian a la app a propósito: sería la tercera copia de la tabla. BLOQUE 44.
+6. **«Analizar la dieta actual» fuera del panel profesional.** Es la
+   herramienta del dueño. «Evolución y crecimiento» se queda: la curva de
+   peso entre consultas es seguimiento del paciente.
+7. **Los avisos de seguridad bajan al final en modo profesional.** El aviso
+   está bien calculado; lo que estaba mal es dónde. A un tutor hay que
+   pararle antes de que dé de comer algo; un veterinario formula primero y
+   revisa las notas después, junto al menú que puede editar.
+
+Y uno que salió al arreglarlos: apagando el modo estando en la lista de
+Pacientes, `fase` se quedaba en una pantalla que en modo tutor ya no se
+pinta, y la app se quedaba en blanco sin error.
+
+Once pruebas nuevas en `tests/veterinario-pantallas.spec.js` (canislab-web) y
+el BLOQUE 44 en la API. Todas comprobadas reintroduciendo el fallo.

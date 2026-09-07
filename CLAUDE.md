@@ -107,7 +107,17 @@ jubilado — que desde fuera se parecen mucho.
 
 Los que llama el frontend hoy: `/menu/v2`, `/menu/semana`,
 `/menu/varios-perros`, `/menu/anadir`, `/menu/cambiar`, `/menu/quitar`,
-`/menu/revalidar`, `/analizar`, `/alimentos`, y los de Stripe.
+`/menu/revalidar`, `/analizar`, `/alimentos`, `/formular/*`, `/pauta/*`,
+`/patologias`, y los de Stripe.
+
+`GET /patologias` (7 de septiembre) sirve la tabla de `patologias.json` con
+los topes, su fuente, su motivo y **el margen contra el límite de FEDIAF del
+mismo nutriente** — renal aprieta el fósforo a 1200 con el mínimo en 1160:
+un 3,4 % de sitio. Existe para que quien firma una pauta pueda leer el
+número que decide si sale menú, y **para que ese número no se copie a la
+app**: sería la tercera copia de la misma tabla, que es exactamente cómo se
+desincronizó la del `POST /menu`. Lo vigila el BLOQUE 44, cifra a cifra
+contra el archivo que aplica el solver.
 
 **Los que nadie llama pero siguen expuestos**: `/catalogo/{tamano}/{etapa}`,
 `/der`, `/transicion` y `/perro/{perro_id}/menus`. Se dejan a propósito: no

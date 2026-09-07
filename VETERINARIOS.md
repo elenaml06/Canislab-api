@@ -180,6 +180,23 @@ necesita de aquí.
 
 ---
 
+### Lo que ya está hecho de esta fase (7 de septiembre)
+
+- La ficha clínica del menú (los nutrientes con su mínimo, su máximo y su
+  margen) y los huecos y datos dudosos, en su pestaña.
+- **Qué le impone al motor cada patología**: el tope, con su fuente, su
+  motivo y el margen que le queda contra el mínimo de FEDIAF del mismo
+  nutriente, al marcarla en la ficha Y dentro del menú. Sale de
+  `GET /patologias`, que lee `patologias.json` — el mismo archivo que aplica
+  el solver — para que no haya una tercera copia de esos números.
+- El caso a la vista mientras se formula (raza, peso objetivo, BCS, etapa,
+  kcal, patologías), como en Nutrimenta o VetMenu.
+- Los textos de tutor apagados en su modo, avisos de seguridad incluidos.
+
+Queda de la fase 1: **poder elegir el peldaño de la escalera de relajación**
+(hoy se baja solo y se avisa; un profesional quiere decidir si prefiere otro
+reparto antes que soltar la proporción de hueso).
+
 ## 7. El formulador del veterinario: su pantalla, no la nuestra con más botones
 
 Dictado el 29 de agosto, y corrige algo que el resto del plan daba por

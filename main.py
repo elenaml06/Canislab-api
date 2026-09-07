@@ -4436,6 +4436,139 @@ def pauta_comprobar(documento: dict):
     }
 
 
+# =====================================================================
+# QUE UN VETERINARIO PUEDA VER QUE CAMBIA CADA PATOLOGIA
+#
+# ⚠️ PEDIDO EXPRESO (7 septiembre): "cuando pones una patologia te deberia
+# dar una cuando estas como veterinario? Te deberia salir algo sobre esa
+# patologia? Que cambia que no, que puedes modificar y que no, de que
+# margen puede salir".
+#
+# Hoy el veterinario marca "Insuficiencia renal cronica" y lo unico que ve
+# es una casilla azul. El motor, por dentro, le pone un tope de 1200 mg de
+# fosforo por 1000 kcal, y ese numero -- con su fuente, su motivo y lo cerca
+# que queda del minimo de FEDIAF (1160) -- es exactamente lo que decide si
+# el menu sale o no sale. Quien FIRMA una pauta tiene derecho a leerlo antes
+# de firmarla; es la fase 1 de VETERINARIOS.md ("ver mas, no poder mas").
+#
+# POR QUE UN ENDPOINT Y NO UNA TABLA EN LA APP. Porque seria la tercera copia
+# de los mismos numeros (patologias.json, el solver, y la app), y de esas
+# copias ya sabemos como acaban: es la duplicacion del DER, y es la tabla de
+# patologias desincronizada que arrastraba el POST /menu que se borro el 26
+# de agosto -- fosforo renal a 1.400 en vez de 1.200 durante semanas, sin
+# que nadie lo viera. Aqui se sirve lo que el solver aplica de verdad, leido
+# del mismo archivo, y la app solo lo pinta.
+#
+# El MARGEN (que es lo que ella pregunta con "de que margen puede salir") no
+# se puede leer de ningun sitio de un vistazo: es la distancia entre el tope
+# de la patologia y el minimo de FEDIAF del mismo nutriente. Cuando esa
+# distancia es estrecha -- renal: 1200 contra 1160, un 3,4 % -- el menu casi
+# no tiene sitio donde moverse, y saberlo ANTES de formular es la diferencia
+# entre entender por que no sale menu y creer que la app esta rota.
+# =====================================================================
+@app.get("/patologias")
+def listar_patologias():
+    """Los topes por patologia con su fuente, su motivo y su margen.
+
+    Solo lectura y sin datos de nadie: es la tabla, no un paciente. No pide
+    acreditacion por eso mismo -- lo que exige acreditacion es FORMULAR por
+    debajo de FEDIAF (ver `_es_profesional_acreditado`), no leer el numero
+    que ya viaja dentro de cada menu.
+    """
+    from motor.patologias import cargar_crudo
+    from motor.verificar import MAPA, maximo_de
+    from requisitos import cargar_requerimientos
+
+    reqs = cargar_requerimientos()
+    # De la clave interna del nutriente ("fosforo") a su fila de FEDIAF.
+    # Se recorre MAPA y no los nombres a mano por lo de siempre: MAPA es LA
+    # lista de requisitos, y una copia se separa.
+    por_clave = {}
+    for fila in reqs:
+        clave = MAPA.get(fila.get("nutriente"))
+        if clave:
+            por_clave[clave] = fila
+
+    def _num(v):
+        try:
+            n = float(v)
+            return n if n == n else None
+        except (TypeError, ValueError):
+            return None
+
+    def _limites_fediaf(clave):
+        """Minimo y maximo de FEDIAF en adulto, para poder dar el margen.
+
+        Adulto y no la etapa del paciente a proposito: esto es la ficha de la
+        PATOLOGIA, no la de un perro. La etapa la aplica el solver cuando
+        formula, y las patologias con `solo_en_adulto` ni siquiera llegan a
+        crecimiento.
+        """
+        fila = por_clave.get(clave)
+        if not fila:
+            return None, None, None
+        return (_num(fila.get("minAdulto")),
+                maximo_de(fila, fila.get("nutriente"), "Adulto"),
+                fila.get("unidad"))
+
+    def _limites(bloque, es_tope):
+        salida = []
+        for clave, t in (bloque or {}).items():
+            valor = _num(t.get("valor"))
+            minimo, maximo, unidad = _limites_fediaf(clave)
+            margen = None
+            if valor is not None:
+                # Un tope aprieta desde arriba: el hueco es lo que queda por
+                # encima del minimo de FEDIAF. Un suelo aprieta desde abajo:
+                # el hueco es lo que queda por debajo del maximo.
+                referencia = minimo if es_tope else maximo
+                if referencia:
+                    margen = round((valor - referencia) / referencia * 100, 1)
+            salida.append({
+                "nutriente": clave,
+                "unidad": unidad,
+                "valor": valor,
+                "minimo_fediaf_adulto": minimo,
+                "maximo_fediaf_adulto": maximo,
+                # Porcentaje de holgura contra el limite de FEDIAF que le
+                # queda enfrente. Negativo = por debajo del minimo, o sea una
+                # dieta de prescripcion: eso solo lo firma un profesional.
+                "margen_pct": margen,
+                "fuente": t.get("fuente"),
+                "por_que": t.get("por_que"),
+            })
+        salida.sort(key=lambda x: x["nutriente"])
+        return salida
+
+    crudo = cargar_crudo()
+    salida = {}
+    for clave, p in crudo["patologias"].items():
+        avisos = p.get("avisos") or {}
+        salida[clave] = {
+            "nombre": p.get("nombre"),
+            "formulable": bool(p.get("formulable")),
+            "formulable_por_profesional": bool(p.get("formulable_por_profesional")),
+            "necesita_bajo_fediaf": bool(p.get("necesita_bajo_fediaf")),
+            "motivo_no_formulable": p.get("motivo_no_formulable"),
+            "solo_en_adulto": bool(p.get("solo_en_adulto")),
+            "en_crecimiento": p.get("en_crecimiento"),
+            "nutriente_frontera": p.get("nutriente_frontera"),
+            "objetivo_terapeutico_por_1000kcal": p.get("objetivo_terapeutico_por_1000kcal"),
+            "excluye_fruta": bool(p.get("excluye_fruta")),
+            "max_pct_kcal_grasa_si_ademas": p.get("max_pct_kcal_grasa_si_ademas"),
+            "nota": p.get("nota"),
+            "topes": _limites(p.get("topes_por_1000kcal"), es_tope=True),
+            "suelos": _limites(p.get("suelos_por_1000kcal"), es_tope=False),
+            # El aviso que ya le llega dentro del menu, aqui tambien: al
+            # ELEGIR la patologia, que es cuando decide, no despues de
+            # formular.
+            "aviso_profesional": avisos.get("profesional"),
+            "aviso_profesional_crecimiento": avisos.get("profesional_crecimiento"),
+            "aviso_general": avisos.get("general"),
+        }
+    return {"unidad": crudo["_meta"]["unidad"], "patologias": salida}
+
+
 @app.get("/alimentos")
 def listar_alimentos():
     """Catalogo agrupado por categoria, para que la app pinte los selectores
