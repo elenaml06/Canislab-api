@@ -38,9 +38,40 @@ catálogo, mira también `canislab-fuentes/ESTADO_Y_PROXIMOS_PASOS.md`.
 >    alimento, no. Un valor mal ahí tuerce todos los menús que lo usen y
 >    ninguna prueba lo vería: las pruebas comprueban que el motor cumple
 >    los requisitos *con los datos que tiene*.
-> 3. **Faltan datos de fibra en 3 verduras** (borraja, coles de Bruselas,
->    tomate en puré). Hoy no afecta a nada porque la fibra no es un
->    requisito, pero el hueco está.
+> 3. ~~Faltan datos de fibra en 3 verduras (borraja, coles de Bruselas,
+>    tomate en puré)~~ **cerrado (7 de septiembre)**: comprobado contra el
+>    catálogo actual, `Coles de Bruselas` (4,3 g/100g) y `Tomate (puré)`
+>    (2,8 g/100g) ya traen el dato; `Borraja` no existe como ficha en
+>    `alimentos_v3_final.json` (no es que le falte fibra, es que no está el
+>    alimento). De hecho las 159 fichas del catálogo traen ya la clave
+>    `fibra` — solo 3 (las tres formas de huevo) la marcan `sin_dato` en
+>    vez de cero confirmado, que es lo correcto para un alimento donde 0
+>    es razonable pero no está medido. **El dato del catálogo está
+>    completo**; lo que sigue abierto es solo lo de la sección 9/10: la
+>    fibra no es una de las 41 filas que mide el motor.
+>
+>    **Y no es un simple "añadirla al MAPA cuando haya un momento" (7 de
+>    septiembre).** `auditar_fediaf.py` tiene, desde el 25 de agosto, una
+>    comprobación explícita "¿SOBRA ALGUNA FILA EN EL JSON?" que rechaza
+>    cualquier fila de `requerimientos_v2_final.json` que no venga de la
+>    tabla III-3b de FEDIAF — y el ejemplo que cita en su propio comentario
+>    es literalmente este: *"o no es un requisito y no puede acabar en
+>    ningún mapa de requisitos (es lo que pasó con 'Fibra')"*. Y no es solo
+>    la auditoría: el bucle que de verdad construye las restricciones del
+>    solver (`motor_completo.py`, `for nombre_req, clave in MAPA.items():
+>    r = req.get(nombre_req); if not r: continue`) salta cualquier clave
+>    sin fila en ese JSON — así que un suelo por patología sobre fibra
+>    (para diabetes, hiperlipidemia, colitis) tampoco se aplicaría nunca
+>    sin una fila ahí, con el mismo riesgo de origen: convertiría una fila
+>    inventada en un requisito que decide menús, en silencio, otra vez.
+>    Para desbloquear eso de verdad hace falta una de dos cosas, ninguna de
+>    las cuales es "rellenar datos": (a) un objetivo clínico real (no
+>    inventado) de un nutricionista veterinario para al menos una de esas
+>    tres patologías, documentado como excepción explícita en
+>    `NO_SON_NUTRIENTES_DE_LA_TABLA` igual que ya se hace con
+>    `Relacion_Ca_P` y `Calcio_LateGrowth_RazaGrande`; o (b) un mecanismo de
+>    suelo/tope que no pase por `requerimientos_v2_final.json`, que hoy no
+>    existe. Verificado leyendo el código, no de memoria.
 >
 > **Qué significa «TODO EN VERDE»**, para no volver a confundirlo: que el
 > motor cumple lo que dice el JSON, que ningún menú sale sin verificar, y
