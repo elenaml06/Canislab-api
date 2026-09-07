@@ -413,14 +413,48 @@ También se cruzó `cardiopatia_b2/_c/_d` contra SACN5 cap.36 Tabla 36-4
 avanzada la enfermedad, pero no se cambiaron los números — SACN5 usa la
 clasificación ISACHC (I/II/III), no la ACVIM (A-D) de esta app, y el
 consenso ACVIM 2019 (Keene et al.) ya citado es la fuente más moderna y
-específica para MMVD. El resto de la Tabla 36-4 (fósforo, potasio,
-magnesio, taurina, L-carnitina) llegó con las columnas visiblemente
-descolocadas por el OCR del PDF — no se ha usado nada de eso: un dato que
-no se puede leer con confianza no es un dato, y forzar una lectura
-arriesgaría asignar un número al nutriente equivocado. Los 5 estadios
-MMVD completos con reparto de macros más allá del sodio siguen sin
-hacerse por este motivo — necesitaría releer esa tabla desde un PDF
-limpio antes de poder usarla.
+específica para MMVD.
+
+**Cerrado el 7 de septiembre — el resto de la Tabla 36-4, releída con la
+página del PDF renderizada en vez del texto plano** (que salía con las
+columnas descolocadas: `poppler-utils` no estaba instalado en esta sesión
+y se reinstaló para esto). Con la tabla limpia (página 746 del libro):
+fósforo 0,2-0,7%MS, potasio ≥0,4%MS, magnesio ≥0,06%MS, taurina ≥0,1%MS,
+L-carnitina ≥0,02%MS (todo en perro). Contrastado contra los mínimos de
+FEDIAF ya en vigor:
+
+- **Fósforo** (500-1750 mg/1000kcal a 4000kcal/kgMS): el mínimo FEDIAF
+  (1160) ya cae dentro del rango. Nada que restringir.
+- **Potasio** (≥1000): el mínimo FEDIAF (1450) ya lo supera. Nada que
+  añadir.
+- **Magnesio** (≥150): el mínimo FEDIAF (200) ya lo supera. Nada que
+  añadir.
+- **Cloruro** (1,5× el sodio, para las tres clases): no es un número
+  suelto, es una proporción sobre el sodio que ya se restringe — el
+  mínimo FEDIAF (430) queda por debajo de 1,5× cualquiera de los topes
+  de sodio ya aplicados (480 a 900), así que tampoco hace falta un tope
+  nuevo.
+- **Taurina y L-carnitina** (≥250 y ≥50 mg/1000kcal): estos SÍ son
+  huecos reales, pero no por falta de dato limpio — es que ninguno de
+  los dos está entre los 41 nutrientes que mide el motor, ni en ninguna
+  ficha del catálogo. Esto es exactamente lo que ya documenta el aviso
+  de `dcm_taurina_respondedora` (añadida en la misma ronda): «la taurina
+  no está entre los 41 nutrientes que este motor mide». Añadirlos de
+  verdad significaría (a) sacar el dato de taurina y L-carnitina de las
+  159 fichas del catálogo, cosa que ni BEDCA ni USDA dan de forma
+  sistemática para muchos alimentos frescos, y (b) el motor solo sabe
+  poner TECHOS por patología, no SUELOS — un mínimo de taurina necesita
+  el mismo mecanismo nuevo que ya le faltaba a `artrosis` (omega-3) y
+  `dermatosis_zinc` (zinc), ver §12-quinquies de `VETERINARIOS.md`.
+
+**Conclusión: los 5 estadios MMVD completos NO necesitan más números de
+los que ya tienen.** El reparto de macros "más allá del sodio" que
+proponía el borrador ya está cubierto en su totalidad por los mínimos de
+FEDIAF vigentes, excepto taurina y L-carnitina — y esos dos no son un
+hueco de verificación, son un hueco de arquitectura (falta el mecanismo
+de suelos por patología) y de catálogo (falta el dato). Se deja
+documentado aquí para que quede cerrado, no abierto esperando "una fuente
+más limpia" que ya se consiguió y no cambió la conclusión.
 
 `alergia_alimentaria`, `cachorro_raza_grande`,
 `gestacion_lactancia_con_patologia`, `mucocele_biliar` y la partición de
