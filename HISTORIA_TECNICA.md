@@ -233,3 +233,150 @@ parecía al de la etiqueta lo bastante como para que nadie mirara. Lo que se
 puede arreglar se arregla; lo que no —porque el valor es el de la etiqueta
 y el real no está publicado— va en **`dato_dudoso`**, que `verificar()`
 devuelve junto al menú igual que los huecos. Lo vigila el BLOQUE 28.
+
+## El porqué del plan de veterinarios (movido aquí el 7 de septiembre desde `VETERINARIOS.md`)
+
+`VETERINARIOS.md` empezaba con 185 líneas de razonamiento fundacional —ya
+decidido, estable, no algo que haga falta releer cada vez que se toca la
+fase 4 o la tabla de patologías— antes de llegar a nada operativo. Se
+movió aquí para que abrir ese documento no cargue el porqué cada vez,
+solo el qué. La tabla de decisiones (la parte que sí se consulta a
+menudo) se queda en `VETERINARIOS.md`.
+
+### 1. Lo que se decidió, y ya no se discute
+
+Y tres que no se preguntaron porque no tienen dos respuestas razonables:
+
+**El veterinario NUNCA entra en la cuenta del dueño.** Ni «entrar como»,
+ni suplantar, ni una contraseña compartida. Entra con **su** cuenta y ve
+al perro porque tiene un acceso concedido. La diferencia no es de estilo:
+suplantando, la base de datos no puede saber quién generó cada menú —
+todo queda a nombre del dueño. Y la primera vez que alguien pregunte
+«¿esta pauta la hice yo o la hizo la app?», no habrá forma de saberlo.
+Todo lo demás de este documento depende de esto.
+
+**El veterinario siempre tiene cuenta.** Sin cuenta no hay a quién
+atribuir una pauta, ni a quién cobrarle el día que se cobre, ni forma de
+que sus pacientes sigan ahí mañana. Y no cuesta trabajo: es el mismo
+registro que ya existe más un campo.
+
+**El dueño puede no tener cuenta.** En la fase 2, el vet crea la ficha de
+un paciente cuyo dueño no ha abierto la app en su vida. Ese es el caso
+real de una consulta, y si se exige que el dueño se registre primero, la
+función no se usa.
+
+### 2. El principio del que sale todo: el modo veterinario no puede ser una degradación para el tutor
+
+Añadido el 28 de agosto, y va antes que el reparto de permisos porque es de
+donde sale el reparto.
+
+**La tentación es bloquearlo todo hasta que alguien firme, y eso mata el
+producto**: el tutor paga y recibe menos que ayer. La regla es la contraria:
+**sin validación la app hace todo lo que hace hoy, más decirte qué haría con
+el diagnóstico y qué dato exacto le falta.**
+
+> «Con la creatinina y el UPC podría formular para IRIS 2.»
+
+Eso convierte. Un muro no. Y de paso es la frase que hace que el tutor vaya
+al veterinario, que es justo lo que queremos.
+
+**Lo que el tutor puede hacer siempre, haya veterinario o no:**
+
+- **Todo el producto de perro sano, sin recortes.**
+- **Meter síntomas y seguimiento.** Y esto no es una concesión que se le
+  hace: **los instrumentos validados están diseñados para que los rellene
+  el dueño**. El CBPI, el LOAD, el CIBDAI y el PVAS son *owner-reported*
+  por construcción, y la frecuencia respiratoria en reposo es la medición
+  domiciliaria con mejor evidencia que existe. Quitárselos al tutor sería
+  usarlos al revés de como fueron diseñados.
+- **Ver el menú entero y los 30 requisitos**, sin nada escondido detrás del
+  veterinario.
+- **Pedir una dieta para un diagnóstico.**
+- **Exportar el histórico.**
+- **Retirar el acceso del veterinario y desactivar el modo terapéutico.**
+  Ésta se olvida siempre y es la que más importa: **es su perro y sus
+  datos**. Un diagnóstico validado no puede dejar al tutor encerrado fuera
+  de su propia cuenta.
+
+**Lo que sí exige diagnóstico validado: que el motor aplique restricciones
+por debajo de los mínimos de FEDIAF.**
+
+Ahí está la frontera, y es limpia y no arbitraria: **es exactamente donde
+deja de ser una dieta completa y equilibrada y pasa a ser una
+prescripción.** No hay que discutir caso por caso qué se bloquea y qué no
+— lo dice el propio estándar. Son las nueve marcadas `formulable: false`.
+
+Y con ella, **todo lo que necesite un valor de laboratorio que el tutor no
+puede producir**: estadio IRIS, tipo de cálculo, calcemia, triglicéridos.
+
+**Lo que solo puede el veterinario:**
+
+- **Validar el diagnóstico.**
+- **Elegir dentro del rango clínico cuando lo hay.** Fósforo 0,8 o 1,2 en
+  IRIS 3 es **juicio clínico, no cálculo**, y por eso no lo puede decidir
+  el motor ni un valor por defecto.
+- **Levantar un bloqueo asumiendo la responsabilidad.** Hoy la hepatopatía
+  **bloquea la generación entera** (`patologias_bloquean()`), porque el
+  cobre que hace falta en la hepatopatía por acúmulo está por debajo del
+  mínimo de FEDIAF. Un veterinario tiene que poder decir «formula con cobre
+  ≤ 1,2, respondo yo».
+- **Tener una lista de pacientes.**
+
+**Lo que importa más que el reparto de permisos: el informe para la
+consulta.** La acción más valiosa del tutor en modo veterinario no es usar
+la app: es llevarle a su veterinario un documento, con el diagnóstico, los
+objetivos usados y de dónde salen, los 30 requisitos verificados, la lista
+de la compra, y la curva de evolución.
+
+Eso es lo que hace que un veterinario diga que sí a una dieta casera —algo
+que por defecto le da pánico, **y con razón**: Larsen *et al.* (JAVMA,
+2012) evaluaron 39 recetas caseras publicadas para perros con enfermedad
+renal crónica y **ninguna** cumplía las recomendaciones del NRC
+([PubMed 22332622](https://pubmed.ncbi.nlm.nih.gov/22332622/)). El miedo
+del veterinario a la comida casera está justificado por los datos, así que
+no se le quita convenciéndole: se le quita enseñándole los números.
+
+**Y esto invierte el problema de captación.** No hay que reclutar
+veterinarios: **los traen los tutores**. Uno a uno, con un caso concreto
+delante, que es la única forma en que un veterinario prueba una
+herramienta de verdad.
+
+**La pantalla de validación, qué firma exactamente:** tiene que enseñarle
+las cifras concretas que está firmando —fósforo 800 mg/1000 kcal, proteína
+35 g/1000 kcal, y que las dos están por debajo del mínimo de FEDIAF, y por
+qué—. **Nunca «modo renal activado».** Si firma a ciegas es una trampa
+para él y un problema para nosotros. El veterinario ve exactamente lo
+mismo que el motor: no un resumen, los mismos números contra los que se
+va a verificar el menú.
+
+### 3. Lo que no cambia, entre por donde entre
+
+Las cinco reglas de `CLAUDE.md` siguen enteras, y una en concreto hay que
+leerla dos veces antes de tocar nada de la fase 4:
+
+- **Ningún menú sale sin verificar.** Todo pasa por
+  `_garantizar_verificado()`, también los del veterinario. Un menú
+  prescrito no es un menú sin comprobar: es un menú comprobado contra
+  otra cosa, y esa otra cosa tiene que estar escrita.
+- **Los cinco topes de seguridad crónica** — vitamina D, yodo, selenio,
+  mercurio y tiaminasa — **no los levanta nadie**. Ni un veterinario, ni
+  con firma.
+- **Las alergias y las exclusiones a mano no se tocan jamás.** Un vet
+  puede añadirlas; quitarlas, no.
+- **Lo que se relaja es la forma, nunca la nutrición.**
+
+### 4. Por qué esto es un proyecto de app, y casi no de motor
+
+El motor ya es profesional. `verificar()` devuelve, para cada nutriente:
+el valor del menú por 1000 kcal, el mínimo y el máximo de FEDIAF para esa
+etapa, si cumple, los huecos de datos del catálogo (`sin_dato`) y los
+valores que no nos creemos (`dato_dudoso`). Devuelve el ratio Ca:P, el
+semáforo, los avisos de seguridad y los topes por patología que se
+aplicaron.
+
+**Nada de eso hay que calcularlo: hay que dejar de taparlo.** La versión
+«para dueños» no es un motor más pequeño, es el frontend enseñando tres
+cifras de las treinta. La versión profesional es la misma respuesta,
+pintada entera. Eso cambia el tamaño del proyecto: las fases 0 a 3 son
+casi todas Supabase y `canislab-web`. Las que sí tocan el motor son la
+congelación de lo firmado y la prescripción.
