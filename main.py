@@ -319,13 +319,18 @@ def _minimo_calcio_raza_grande_roto(gramos, al, req, etapa, peso_adulto_esperado
     """¿Este menú se queda por debajo del mínimo de calcio REFORZADO de las
     razas grandes en crecimiento? Devuelve el texto del fallo, o None.
 
-    Solo aplica a raza grande/gigante (peso adulto esperado >= 25 kg) y en
+    Solo aplica a raza grande/gigante (peso adulto esperado >= 15 kg) y en
     crecimiento; para el resto, el mínimo bueno es el genérico y esta
     función no dice nada. Es el mismo criterio y la misma fila de la tabla
     que usa el solver -- si se leyera aquí de otra manera, la comprobación
     y la restricción podrían discrepar.
+
+    ⚠️ CORREGIDO (7 septiembre): el umbral era 25 kg y tenía que ser 15,
+    igual que en motor_completo.py -- ver el comentario largo de allí, con
+    la cita literal de la footnote "b" de la Tabla III-3b de FEDIAF 2025
+    (página 21 del PDF, leída a mano, no de memoria).
     """
-    RAZA_GRANDE_O_GIGANTE_KG = 25
+    RAZA_GRANDE_O_GIGANTE_KG = 15
     if not gramos or not peso_adulto_esperado_kg:
         return None
     if peso_adulto_esperado_kg < RAZA_GRANDE_O_GIGANTE_KG:
@@ -1933,6 +1938,44 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                                        datos.etapa_requisitos)
             else:
                 break
+
+        # ⚠️ AÑADIDO (7 septiembre) — CASO REAL: al corregir el umbral de
+        # calcio de raza grande (25kg -> 15kg, ver motor_completo.py), un
+        # cachorro de 10kg con peso adulto esperado 20kg, sin hueso carnoso
+        # y con 3 alergias (Pollo/Ternera/Cordero excluidas) empezó a fallar
+        # de forma intermitente: "infactible" 2 de 6 veces con la misma
+        # petición exacta, probado en aislado. No es un caso imposible --es
+        # un caso AL LÍMITE, igual que el toy de 1,5kg del BLOQUE 43-- y el
+        # bucle de arriba no lo cubría: solo reintenta cuando YA hay una
+        # solución de la que partir (`ok_i` true) para mejorarla a verde,
+        # nunca cuando la primera llamada sale directamente infactible.
+        # Mismo argumento que ya se aplicó a /menu/varios-perros: "el motor
+        # lleva aleatoriedad a propósito... la misma petición sale casi
+        # siempre a la segunda". Tope de 2 intentos extra (no ilimitados
+        # como el bucle de arriba) porque aquí cada intento es una llamada
+        # entera al solver, no un ajuste rápido -- si el caso es de verdad
+        # irresoluble, más vueltas solo queman el presupuesto de Render.
+        _reintentos_infactible = 0
+        while (not ok_i and _reintentos_infactible < 2
+               and time.time() - t_inicio_total < PRESUPUESTO_SEGUNDOS):
+            _reintentos_infactible += 1
+            ok_i, gramos_i = resolver_v2(
+                datos.der_objetivo, datos.etapa_requisitos, al, req,
+                datos.peso_perro_kg, dosis_maxima_fabricante,
+                excluidos=excluidos or None,
+                margenes_categoria=(margenes if margenes is not None else MARGENES_V2),
+                max_suplementos=max_supl, time_limit=tiempo_restante(),
+                forzar=forzar_este, preferir=preferir,
+                patologias=datos.patologias, restringir_especie=datos.restringir_especie,
+                peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
+                peso_objetivo_kg=_peso_de_referencia(datos)[0],
+                evitar_especies=datos.evitar_especies,
+                restringir_a_elegidos=restringir_a_elegidos_este,
+                categorias_excluidas=datos.categorias_excluidas,
+                presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
+            )
+            ficha_i = (verificar_v2(gramos_i, al, req, datos.der_objetivo, datos.etapa_requisitos)
+                       if ok_i else None)
         return (ok_i and ficha_i and ficha_i["semaforo"] == "verde"), gramos_i, ficha_i
 
     aviso_extra_alimentos = None
@@ -3756,8 +3799,10 @@ SELLOS_DE_LOS_DATOS = {
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
+        # 7 sep (3): "Laringe de vacuno" pasa de categoria "Hueso carnoso" a "Extras" -- bloqueada por tejido tiroideo desde el 6 de septiembre, nunca puede aportar hueso a ningun menu, y su categoria antigua solo servia para disparar dos avisos ya conocidos en auditar_catalogo.py ("hueso con poco calcio, es cartilago"). 0 referencias en catalogo_menus.json (comprobado), asi que no afecta a los menus precalculados. Decision pendiente desde el 25 de agosto en PENDIENTE_NUTRICION.md, cerrada.
+        # 7 sep (2): linoleico de "Grasa de pollo" (19,5 g/100g) -- USDA FDC 173564 "Fat, chicken", cuya proteina (0) y grasa (99,8) ya coincidian exactas con esta ficha. Cierra el hueco que quedaba en PENDIENTE_NUTRICION.md desde el 25 de agosto.
         # 7 sep: 4 visceras (Bazo de vaca, Pancreas de vaca, Bazo de cordero, Cerebro de ternera) con `sin_dato` incompleto -- sus propias notas ya decian que faltaban ciertos minerales/vitaminas ("sin dato fiable... se dejan en 0"), pero el campo estructurado no los tenia, asi que contra un maximo contaban como cero MEDIDO en vez de hueco. Encontrado auditando alimentos_v3_final.json de verdad (comparando texto contra estructura), no solo comprobando formato. Ningun valor numerico cambia, solo que estas claves antes contadas como "0 real" pasan a "no lo sabemos".
-        "alimentos_v3_final.json":      "de81068487e7cebb",   # 6 sep (2): 23 fichas corregidas contra USDA/BEDCA (CORRECCIONES_CATALOGO.csv en canislab-fuentes, 86 celdas). Los mas graves: albahaca (7 minerales eran de deshidratada, zinc +619%), higado de pollo (cobre +815%, vitA +236%), semilla de sesamo (calcio -85%, era sesamo pelado), dorada (grasa/vitD/energia por una errata de BEDCA que sumaba 106g/100g), 5 pechugas/muslos de pollo y pavo (errores de escala en vitA y sesgos sistematicos del -13% al -23%). Ademas: yodo sin respaldo vaciado a sin_dato en 6 fichas, y "trazas" de BEDCA (que no es lo mismo que 0) vaciado a sin_dato en vitA/vitD de 11 fichas mas. auditar_catalogo.py y auditar_fediaf.py re-ejecutados, pruebas_completas.py entero.
+        "alimentos_v3_final.json":      "3a73cedc14a04437",   # 6 sep (2): 23 fichas corregidas contra USDA/BEDCA (CORRECCIONES_CATALOGO.csv en canislab-fuentes, 86 celdas). Los mas graves: albahaca (7 minerales eran de deshidratada, zinc +619%), higado de pollo (cobre +815%, vitA +236%), semilla de sesamo (calcio -85%, era sesamo pelado), dorada (grasa/vitD/energia por una errata de BEDCA que sumaba 106g/100g), 5 pechugas/muslos de pollo y pavo (errores de escala en vitA y sesgos sistematicos del -13% al -23%). Ademas: yodo sin respaldo vaciado a sin_dato en 6 fichas, y "trazas" de BEDCA (que no es lo mismo que 0) vaciado a sin_dato en vitA/vitD de 11 fichas mas. auditar_catalogo.py y auditar_fediaf.py re-ejecutados, pruebas_completas.py entero.
         # 6 sep: nota_datos de los 4 alimentos excluidos por tejido tiroideo (Cuello de pavo/pato/ternera, Laringe de vacuno) documenta el bloqueo -- ver seguridad.TIROIDES_EXCLUIR.
         # 28 ago (2): EL HIGADO Y EL CORAZON DE PAVO, resembrados desde el pollo del USDA -- su aminograma venia del pavo del USDA, que tiene la isoleucina y la valina un 40% bajas (Leu/Ile 2,52 contra 1,47-1,98 del resto). Reescalados a NUESTRA proteina. Las otras cinco fichas de pavo NO se cargan: traian histidina = isoleucina = valina exactos, y eso es una copia, no una medida. Ver el BLOQUE 27. // 28 ago: PURINAS DE CUATRO VISCERAS con cifra publicada (timo 525, bazo de cordero 322, bazo de vaca 185, pulmon de ternera 117). NO se uso la banda generica 84-243 que se habia propuesto: para el timo habria declarado ~160 cuando la cifra son 525, un factor de 3 a 4 POR ABAJO, y es el alimento solido con mas purinas de las tablas. Pancreas, testiculos y pulmon de cordero se quedan como hueco: no hay dato. Ver el BLOQUE 33
         # 7 sep (2): nueva fila "Fibra", con los seis campos (minAdulto..maxCachorroCrecimiento) a "-" -- FEDIAF no da minimo ni maximo de fibra en la Tabla III-3b, asi que esta fila NO es un requisito nuevo: no exige ni limita nada a un perro sano. Existe para que verificar.MAPA pueda leer la clave "fibra" y topes_de_patologias() pueda ponerle un suelo por patologia con fuente real (primer uso: hiperlipidemia, SACN5 cap.28). auditar_fediaf.py la lista en NO_SON_NUTRIENTES_DE_LA_TABLA y ademas comprueba que nunca lleve un numero, para que no repita el fallo del 25 de agosto (fila "Fibra" con minimo/maximo inventados que el analizador exigia). Ver PENDIENTE_NUTRICION.md.

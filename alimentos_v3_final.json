@@ -6542,7 +6542,7 @@
    "grasa": 99.8,
    "dha": 0,
    "epa": 0,
-   "linoleico": 0,
+   "linoleico": 19.5,
    "linolenico": 0,
    "araquidonico": 0,
    "vitA": 0,
@@ -6587,7 +6587,6 @@
    "araquidonico",
    "dha",
    "epa",
-   "linoleico",
    "linolenico",
    "vitE"
   ],
@@ -6603,7 +6602,8 @@
    "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
    "pais": "—",
    "anio": "—"
-  }
+  },
+  "nota_datos": "⚠️ AÑADIDO (7 sep 2026): linoleico. USDA FoodData Central FDC 173564 \"Fat, chicken\" (SR Legacy, NDB 4542) da PUFA 18:2 = 19,5 g/100g -- proteína (0) y grasa (99,8) coinciden exactos con esta misma ficha, así que es con altísima probabilidad la misma fuente que el resto de esta fila. El propio FDC 173564 no publica 18:3 (linolénico), 20:4 (araquidónico) ni vitamina E: siguen en sin_dato, no son un cero inventado."
  },
  {
   "nombre": "Manteca",
@@ -10955,7 +10955,7 @@
  {
   "nombre": "Laringe de vacuno",
   "tipo": "Alimento",
-  "categoria": "Hueso carnoso",
+  "categoria": "Extras",
   "energia": 243.7,
   "nutrientes": {
    "proteina": 21.1,
@@ -11025,7 +11025,7 @@
   ],
   "pct_carne": 0.35,
   "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1, fila 'Cattle larynges'. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda.",
-  "nota_datos": "AÑADIDO 5 agosto (noche): Ca/P/proteina/grasa medidos por Köber 2017 en la pieza entera. Materia seca 42.2%, cenizas 2.9%. El resto de micronutrientes son ESTIMADOS a partir de 'Ternera con grasa' -- Köber solo midió Ca, P, materia seca, proteína, grasa y cenizas, igual que con 'Espinazo de conejo' y 'Pecho de ternera con hueso'. AVISO: con solo 66mg de calcio/100g, mucho más bajo que otros huesos (Costillas de cordero, Carcasa de pollo rondan 800-1800mg), NO puede ser la unica fuente de Hueso carnoso -- confirmado que falla solo, en cachorro y en adulto. Funciona bien combinada con otro hueso (probado: 345g junto a otros). Nunca elegir \"Todo: Vaca\" en Hueso carnoso esperando que baste sola. ⚠️ EXCLUIDA DEL SOLVER (6 sep 2026), por un motivo distinto al del calcio: la laringe está justo pegada a la tiroides, y con uso regular hay riesgo de hipertiroidismo exógeno (TVT Merkblatt 181, mayo 2025). Bloqueo de nivel A en motor/seguridad.py::TIROIDES_EXCLUIR — no aparece en ningún menú generado, en ningún modo, ni siquiera eligiéndola a mano en Personalizar."
+  "nota_datos": "AÑADIDO 5 agosto (noche): Ca/P/proteina/grasa medidos por Köber 2017 en la pieza entera. Materia seca 42.2%, cenizas 2.9%. El resto de micronutrientes son ESTIMADOS a partir de 'Ternera con grasa' -- Köber solo midió Ca, P, materia seca, proteína, grasa y cenizas, igual que con 'Espinazo de conejo' y 'Pecho de ternera con hueso'. AVISO: con solo 66mg de calcio/100g, mucho más bajo que otros huesos (Costillas de cordero, Carcasa de pollo rondan 800-1800mg), NO puede ser la unica fuente de Hueso carnoso -- confirmado que falla solo, en cachorro y en adulto. Funciona bien combinada con otro hueso (probado: 345g junto a otros). Nunca elegir \"Todo: Vaca\" en Hueso carnoso esperando que baste sola. ⚠️ EXCLUIDA DEL SOLVER (6 sep 2026), por un motivo distinto al del calcio: la laringe está justo pegada a la tiroides, y con uso regular hay riesgo de hipertiroidismo exógeno (TVT Merkblatt 181, mayo 2025). Bloqueo de nivel A en motor/seguridad.py::TIROIDES_EXCLUIR — no aparece en ningún menú generado, en ningún modo, ni siquiera eligiéndola a mano en Personalizar. ⚠️ CATEGORÍA CAMBIADA A \"Extras\" (7 sep 2026): estaba en \"Hueso carnoso\" pero, bloqueada como está, nunca puede aportar hueso a ningún menú -- la categoría solo servía para que dos comprobaciones de auditar_catalogo.py la marcaran como \"hueso con poco calcio, ¿es cartílago?\" (es cartílago, no hueso: por eso tampoco tiene aminograma, igual que Espinazo de conejo). `catalogo_menus.json` no tiene ninguna referencia a esta ficha (comprobado: 0 de 56 referencias del bloqueo por tiroides son suyas, las 56 son de Cuello de pato y Cuello de ternera), así que el cambio no afecta a los menús precalculados de la vista previa. Decisión pendiente desde el 25 de agosto en PENDIENTE_NUTRICION.md, cerrada aquí."
  },
  {
   "nombre": "Bazo de vaca",

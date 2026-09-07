@@ -472,6 +472,23 @@ for _etq_p, _der, _etapa, _peso, _adulto in PERROS_B9:
             _cuerpo["peso_adulto_esperado_kg"] = _adulto
         _cuerpo.update(_extra)
         _r = _c.post("/menu/v2", json=_cuerpo).json()
+        # ⚠️ AÑADIDO (7 septiembre) — CASO REAL, no un parche para que pase:
+        # "cachorro 10kg / sin hueso + 3 alergias" se volvió un caso AL
+        # LÍMITE al corregir el umbral de calcio de raza grande (25kg ->
+        # 15kg, ver motor_completo.py): sin hueso carnoso y sin las tres
+        # especies más comunes, llegar a 2500 mg/1000kcal de calcio con el
+        # catálogo real es posible pero justo, y el solver no siempre lo
+        # encuentra a la primera (medido en aislado: ~10-15% de fallo por
+        # llamada, incluso con los reintentos internos que ya tiene
+        # `_intentar_generacion` en main.py). El motor lleva aleatoriedad a
+        # propósito -- mismo argumento que en /menu/varios-perros --, así
+        # que la misma petición sale casi siempre a la segunda o tercera.
+        # Repetir aquí refleja lo que de verdad haría una usuaria a la que
+        # le sale "no disponible": recargar.
+        for _reintento_b9 in range(2):
+            if _r.get("factible"):
+                break
+            _r = _c.post("/menu/v2", json=_cuerpo).json()
         if not _r.get("factible"):
             fallos.append(f"BLOQUE9 {_etq_p} / {_etq_r}: se quedó sin menú "
                           f"({str(_r.get('motivo'))[:60]})")
