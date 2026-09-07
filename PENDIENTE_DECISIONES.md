@@ -226,22 +226,51 @@ las tiene que tomar una persona, no yo.
       cuando apareció una fila (`Fibra`) que no era de FEDIAF y la
       auditoría la daba por buena. Ver el recuadro del apartado 5.
 
-- [ ] **Auditar los valores de los ALIMENTOS.** `requerimientos_v2_final
-      .json` tiene auditoría contra el PDF; `alimentos_v3_final.json` no
-      tiene ninguna. Un valor mal en la composición de un alimento tuerce
-      todos los menús que lo lleven y ninguna prueba lo vería. Las fuentes
-      son BEDCA, CIQUAL y USDA, y el hueso solo Köber et al. 2017.
+- [x] **Auditar los valores de los ALIMENTOS.** RESUELTO — parte ya
+      existía y no se sabía, parte se hizo el 7 de septiembre. Esta nota
+      llevaba desde el 25 de agosto diciendo que `alimentos_v3_final.json`
+      "no tiene ninguna auditoría", y era falso desde el 21 de agosto:
+      `auditar_catalogo.py` existe, es exhaustivo (coherencia
+      energía/macros, huecos sin declarar, omega-6 vs omega-3, ácidos
+      grasos que no caben en la grasa total, `dato_dudoso`, ceros
+      biológicamente imposibles por categoría, aminograma coherente —
+      Leu/Ile, His/Val=Ile, triptófano%—, linaje de las purinas,
+      consistencia órgano-categoría) y lo ejecuta el BLOQUE 19 de
+      `pruebas_completas.py`. Nadie había vuelto a tachar esta línea
+      después de construirla.
 
-- [ ] **Fibra de la borraja.** De las tres verduras a las que les faltaba
-      el dato, ella trajo dos de BEDCA el 25 de agosto y ya están puestas:
-      coles de Bruselas 4,3 g/100 g y tomate en puré 2,8 (el tomate fresco
-      es otra ficha distinta, 1,1 — el nuestro es el puré). Queda la
-      borraja, que además tiene un `0.0` explícito, que es peor que no
-      tener el dato: dice «no lleva fibra» y no es verdad.
+      Lo que sí se hizo el 7 de septiembre, ejecutando esa auditoría de
+      verdad e investigando cada aviso activo en vez de darla por hecha:
+      **2 falsos positivos corregidos** en el propio auditor, verificados
+      contra USDA (`WebSearch`, no de memoria) — el pulmón de cordero
+      (Leu/Ile 2,54) y calamar/pulpo/sepia (valina≈isoleucina) tienen esos
+      cocientes de verdad en la fuente primaria, no son una copia mal
+      calibrada como el caso del pavo; y **4 fichas de vísceras** (Bazo de
+      vaca, Páncreas de vaca, Bazo de cordero, Cerebro de ternera) con
+      `sin_dato` incompleto: su propia `nota_datos` ya decía qué minerales
+      o vitaminas "se dejan en 0" por no tener dato fiable, pero el campo
+      estructurado no los llevaba, así que contra un máximo contaban como
+      cero MEDIDO en vez de hueco. Ningún valor numérico cambia. Detalle
+      completo en el commit y en los comentarios de `auditar_catalogo.py`.
 
-      El hueco no era inocuo: en la medición del 25 de agosto, uno de cada
-      ocho menús salió con «0,00 g de fibra» **porque le tocaron las coles
-      de Bruselas**. Una verdura de verdad leída como si no llevara nada.
+      Lo que sigue sin auditoría automática, y hay que decirlo: los
+      valores en sí (que 78 kcal sea la cifra correcta de la dorada, y no
+      solo que sea *consistente*) siguen viniendo de comparar contra BEDCA/
+      CIQUAL/USDA a mano, caso a caso, cuando algo llama la atención. Una
+      auditoría no puede saber si un número está bien sin la fuente
+      primaria al lado — solo puede cazar cuándo un número no puede estar
+      bien pase lo que pase (imposible, incoherente consigo mismo, o
+      copiado de otra fila). Eso es justo lo que hace.
+
+- [x] **Fibra de la borraja.** CERRADO el 7 de septiembre, aunque no como
+      se pensaba el 25 de agosto: la borraja no está a medio rellenar, es
+      que **ya no está en el catálogo entero** — se retiró en algún punto
+      posterior (el BLOQUE 31 de `pruebas_completas.py` vigila justo eso:
+      "la borraja, fuera del catálogo entero"). No es un hueco de dato: es
+      un alimento que ya no existe, así que no hay nada que rellenar. Las
+      otras dos sí están confirmadas: coles de Bruselas 4,3 g/100 g y
+      tomate en puré 2,8 (159 de 159 fichas del catálogo traen ya la clave
+      `fibra` — ver `PENDIENTE_NUTRICION.md` §5).
 
 - [ ] **¿Rawku apunta a algún rango de fibra? — pregunta 7 del PDF de Cris.**
       Ni FEDIAF, ni AAFCO, ni el NRC dan un mínimo: la fibra no es un

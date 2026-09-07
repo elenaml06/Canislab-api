@@ -2240,22 +2240,42 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # Faltan datos y están apuntados en DATOS_QUE_FALTAN.md (57 alimentos,
     # 431 valores, tras rellenar los seis pescados el 25 de agosto). No se
     # rellenan a ojo: los valores salen de BEDCA/CIQUAL/USDA con su fuente.
-    # ⚠️ LOS CUATRO DEL COCIENTE (28 agosto). Los saca la comprobación de
-    # NIVEL 2 que se añadió ese día -- mirar la COLUMNA en vez de la fila --
-    # y NO son fallos probados: son fichas que hay que mirar en su fuente.
-    # Están en DATOS_QUE_FALTAN.md con lo medido al lado.
-    #   · Pulmón de cordero: Leu/Ile 2,537, la firma exacta del pavo malo.
-    #   · Calamar, pulpo y sepia: valina = isoleucina, exacto. Comprobado
-    #     que NO son el mismo perfil reescalado (sus AA/proteína difieren),
-    #     así que puede ser real: en cefalópodos la valina se parece mucho
-    #     a la isoleucina. Se declaran para que el aviso no cante lo mismo
-    #     cada vez y tape uno NUEVO, que es para lo que sirve esta lista.
-    ("AMINO", "Pulmón de cordero"), ("AMINO", "Calamar"),
-    ("AMINO", "Pulpo"), ("AMINO", "Sepia"),
-    ("HUECOS", "Huevo clara"),
-    ("HUECOS", "Sal común (cloruro sódico)"),
-    ("HUECOS", "Bazo de vaca"), ("HUECOS", "Páncreas de vaca"),
-    ("HUECOS", "Bazo de cordero"), ("HUECOS", "Cerebro de ternera"),
+    #
+    # ⚠️ CERRADOS EL 7 DE SEPTIEMBRE, Y ES POR ESO QUE YA NO ESTÁN AQUÍ
+    # (once en total). Auditando el catálogo de verdad -- ejecutando
+    # `auditar_catalogo.py` e investigando cada aviso, no dando la lista
+    # por buena -- se resolvieron dos tipos de caso distintos:
+    #
+    #   · LOS CUATRO DEL COCIENTE, verificados contra USDA con WebSearch
+    #     (no de memoria): pulmón de cordero (Leu/Ile 2,537 aquí; USDA da
+    #     leucina 1,35 g e isoleucina 0,53 g para pulmón de cordero real,
+    #     2,547 -- casi idéntico) y calamar/pulpo/sepia (valina≈isoleucina
+    #     en las tres; USDA lo confirma con tres FDC ID distintos: squid
+    #     174223 193/193 mg exactos, octopus 174249 3894/3909 mg, cuttlefish
+    #     174215 2121/2127 mg). Son datos REALES de la fuente primaria, no
+    #     una copia mal calibrada como el pavo -- así que se añadieron como
+    #     excepciones documentadas en `auditar_catalogo.py`, con las fuentes
+    #     al lado, en vez de quedarse sonando cada vez sin que nadie mirara.
+    #   · CUATRO VÍSCERAS CON `sin_dato` INCOMPLETO (Bazo de vaca, Páncreas
+    #     de vaca, Bazo de cordero, Cerebro de ternera): sus propias
+    #     `nota_datos` ya decían qué minerales o vitaminas "se dejan en 0"
+    #     por no tener dato fiable, pero el campo `sin_dato` no los traía
+    #     -- así que contra un máximo contaban como cero MEDIDO en vez de
+    #     hueco. Se completó `sin_dato` con exactamente lo que cada nota ya
+    #     declaraba. Ningún valor numérico cambia.
+    #   · "Huevo clara" y "Sal común (cloruro sódico)" pasaron a una
+    #     excepción explícita del aviso [HUECOS] en `auditar_catalogo.py`:
+    #     sus ceros no son incertidumbre, son composición conocida con
+    #     certeza (NaCl puro no lleva nada más; la clara de huevo no lleva
+    #     grasa ni liposolubles) -- meterlos en `sin_dato` habría sido
+    #     mentir en la otra dirección.
+    #   · "Laringe de vacuno" [RARO]: exactamente el mismo caso ya conocido
+    #     y excluido en la comprobación de "el hueso carnoso tiene que
+    #     tener hueso" (es cartílago, no hueso), pero la comprobación de
+    #     "plausibilidad por categoría" no tenía la misma excepción y
+    #     avisaba el mismo hueco dos veces con distinto texto. Añadida ahí
+    #     también.
+    #
     # ⚠️ AÑADIDO (6 sep) al corregir el catálogo contra USDA/BEDCA
     # (CORRECCIONES_CATALOGO.csv): la vitamina A de "Semilla de sésamo" pasó
     # de 6,6667 (sin fuente firme) a 0 -- que es lo que da USDA FDC 170150 de
@@ -2298,7 +2318,6 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # números anclados en el BLOQUE 21. El boquerón era el urgente: con 6,3 g
     # de grasa es pescado azul, y aquel cero no era "no tiene" sino "no lo
     # sabíamos" -- el semáforo lo contaba como si de verdad no aportara nada.
-    ("RARO", "Laringe de vacuno"),
     # ⚠️ OMEGA-3 POR ENCIMA DEL OMEGA-6 (26 agosto). No es un error: son los
     # alimentos donde eso pasa de verdad -- el lino y tres con cantidades
     # minúsculas de los dos. La auditoría los lista a propósito, porque
