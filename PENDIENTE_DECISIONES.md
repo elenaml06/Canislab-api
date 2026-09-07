@@ -126,22 +126,30 @@ las tiene que tomar una persona, no yo.
 
       **Fósforo renal: cerrado**, coincide con lo recomendado.
 
-      **Cobre hepatopatía sigue abierto, pero no por descuido**: el 2.4 no
-      es ni el "hoy" viejo (3.0) ni el "recomendado" de esta tabla (2.3) —
-      es el valor puente documentado en `PENDIENTE_PRODUCTO.md` ("La app no
-      distingue hepatopatía por cobre de otras hepatopatías"): el
-      verdaderamente terapéutico para acúmulo de cobre es 1.2, que está por
-      debajo del mínimo de FEDIAF y bloquearía a cualquier perro con
-      hepatopatía. Mientras no se parta esa opción en dos (o un veterinario
-      pueda levantar el bloqueo caso a caso), 2.4 se queda como el
-      intermedio menos malo. Sigue pendiente decidir si además se ajusta a
-      2.3.
+      **Cobre hepatopatía: la opción ya se partió en dos (7 de
+      septiembre).** `hepatopatia` (diagnóstico confirmado por biopsia o
+      analítica de cobre) sigue bloqueando -- el terapéutico real (1,2) está
+      bajo el mínimo FEDIAF y eso no cambia por mucho que se parta la
+      opción. Lo que sí cambió: se añadió `raza_predispuesta_cobre` (Bedlington,
+      Westie, Labrador, Dálmata... predispuestos SIN diagnóstico confirmado),
+      que SÍ formula un menú normal evitando los alimentos más cargados de
+      cobre, sin bajar del mínimo. La app (`canislab-web`) ya pregunta cuál
+      de las dos aplica -- ver `VETERINARIOS.md` §12-quinquies, familia
+      "hepatopatia". El 2,4 mg de la entrada `hepatopatia` se queda igual
+      (es correcto que sea el intermedio, no el terapéutico: la patología
+      bloquea de todas formas). Sigue sin resolverse si además se ajusta a
+      2,3 -- pero ya no urge, porque ahora hay una opción intermedia real
+      (raza_predispuesta_cobre) para el caso que antes forzaba a elegir
+      entre bloquear a todos o no bloquear a nadie.
 
-      **Pancreatitis grasa: a medio camino.** 20 % ya no es el 25 % de
-      partida, pero tampoco es el 18 % recomendado. Falta decidir si se
-      termina de bajar (con el suelo en cachorros que pedía la nota
-      original, porque el mínimo de grasa que necesita un cachorro para
-      crecer supera 18 %).
+      **Pancreatitis grasa: cerrado (6 de septiembre).** Cruzado contra
+      SACN5 5ª ed., cap.67, Tabla 67-3: el rango general es ≤15% de materia
+      seca (~37,5 g/1000kcal) y para el paciente obeso o hipertrigliceridémico
+      baja a ≤10% (~25 g/1000kcal) -- los 20 g/1000kcal ya puestos (Merck)
+      caen DENTRO de los dos rangos, incluido el más estricto. No hace falta
+      bajar más: 20 ya es más restrictivo que lo que pide la fuente para el
+      caso general, y casi tan restrictivo como el caso obeso/hipertrigli.
+      Detalle: `PENDIENTE_NUTRICION.md` §10.
 - [ ] **Siete preguntas para Michelle.** Las cinco primeras salieron del
       repaso clínico del 25 de agosto; la sexta y la séptima, del trabajo
       del 28 sobre la parte para veterinarios. Ninguna se puede programar sin criterio
@@ -157,10 +165,14 @@ las tiene que tomar una persona, no yo.
       1. **¿Qué mínimo de proteína para un senior?** Hoy la app usa la
          columna de adulto de FEDIAF (52,10 g/1000 kcal). Shmalberg (DACVN)
          sugiere ≥75 g. Es un cambio grande: afectaría a todos los seniors.
-      2. **¿Distinguir el estadio ACVIM en cardiopatía (B2/C/D)?** Hoy hay
-         un solo valor de sodio (900 mg/1000 kcal), que es el de B2 -- el
-         menos restrictivo. Para C harían falta 500-790 y para D menos de
-         500, pero la app no pregunta el estadio.
+      2. **¿Distinguir el estadio ACVIM en cardiopatía (B2/C/D)? RESUELTO
+         (6-7 de septiembre).** Se añadieron `cardiopatia_a/_b1/_b2/_c/_d`
+         (sodio 900/900/790/480 según estadio, ACVIM 2019 Keene et al.),
+         cruzadas además contra SACN5 cap.36 Tabla 36-4 (confirma el patrón,
+         no cambia los números -- framework ISACHC distinto del ACVIM). La
+         app ya pregunta el estadio (familia "cardiopatia" en
+         `VETERINARIOS.md` §12-quinquies). La genérica `cardiopatia` (900,
+         sin estadio) se queda para quien no lo sepa.
       3. **Cachorro con pancreatitis: ¿solo aviso, o bloquear?** Hoy avisa
          y genera el menú sin bajar la grasa, porque el mínimo de grasa que
          necesita para crecer (21,25 g) es mayor que el tope terapéutico
@@ -194,24 +206,14 @@ las tiene que tomar una persona, no yo.
          respuesta depende si el solver de Rawku es una ventaja enorme o
          solo una ventaja.
 
-- [ ] **La app no distingue "hepatopatía por cobre" de otras hepatopatías.**
-      Desde el 25 de agosto, marcar hepatopatía BLOQUEA la generación,
-      porque la restricción de cobre que hace falta en la hepatopatía por
-      acúmulo (1,2 mg/1000 kcal) está por debajo del mínimo que FEDIAF
-      exige a cualquier perro (2,08). Eso es correcto para esa hepatopatía
-      -- pero la lista de la app tiene una sola opción, así que ahora
-      también bloquea a un perro con otra enfermedad hepática que quizá sí
-      podría comer un menú normal. Si Cris dice que merece la pena,
-      hay que partir la opción en dos. El tope de 2,4 mg ya está puesto en
-      el código esperando ese día.
-
-      ⚠️ **Y esto conecta con la parte para veterinarios** (28 de agosto):
-      uno de los tres poderes que solo tiene el profesional es justamente
-      **levantar un bloqueo asumiendo la responsabilidad** — «formula con
-      cobre ≤ 1,2, respondo yo». O sea que partir la opción en dos deja de
-      ser la única salida: la otra es que un veterinario acreditado pueda
-      desbloquearlo caso a caso. Las dos cosas son compatibles y no se
-      estorban.
+- [x] **La app no distingue "hepatopatía por cobre" de otras hepatopatías.**
+      RESUELTO el 7 de septiembre: `raza_predispuesta_cobre` (formulable,
+      sin diagnóstico confirmado) se añadió junto a `hepatopatia` (bloqueada,
+      diagnóstico confirmado), con familia de subtipo en la app -- ver arriba
+      y `VETERINARIOS.md` §12-quinquies. El poder del veterinario de
+      "levantar un bloqueo asumiendo la responsabilidad" sigue existiendo
+      igual para `hepatopatia` (`formulable_por_profesional: true`); las
+      dos cosas siguen siendo compatibles, como ya se prevía aquí.
 
 - [x] **`EPA_DHA_total` ya suma las dos claves.** Hecho el 25 de agosto,
       con claves derivadas en `valor_nutriente`. Detalle completo: `HECHO.md`.
