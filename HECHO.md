@@ -463,3 +463,43 @@ proteína, es un no-effect-level de lisina CRISTALINA suplementada
 nutricionista es si eso generaliza a la lisina de una proteína entera.
 
 `pruebas_completas.py` entero, TODO EN VERDE.
+
+## Quitado un máximo de fósforo sin fuente que llevaba desde el primer PR del repo — hecho el 7 de septiembre
+
+Comprobando la Tabla III-3b de FEDIAF entera (los 41 nutrientes) contra
+la transcripción de `auditar_fediaf.py`, celda a celda, para cerrar de
+verdad el pendiente de "repasar la transcripción" (no solo lecturas
+puntuales de una nota concreta), apareció una fila que **no tenía nada
+que ver con FEDIAF**: `MAXIMOS["Fósforo"] = {"Adulto": 4000}`, con el
+mismo número en `requerimientos_v2_final.json`. Los dos coincidían entre
+sí, así que la auditoría nunca lo vería — exactamente el riesgo que se
+buscaba con esta revisión.
+
+Investigado a fondo antes de tocar nada, no solo "no lo encontré":
+- **FEDIAF** (Tabla III-3a y III-3b): ningún número. Solo la nota "h",
+  informativa sobre biodisponibilidad, sin cifra.
+- **NRC 2006**: *"There are insufficient data on which to base an SUL
+  for P in dogs"* (no hay datos para fijar un límite superior seguro).
+- **Dobenecker et al. 2021** (PLOS ONE, el estudio más específico sobre
+  toxicidad de fósforo en perros adultos sanos, en `canislab-fuentes`):
+  *"More work is needed... no-effect-levels can be defined"* — ni la
+  fuente más centrada en el tema da un número.
+- **AAFCO/SACN5 cap.6**: solo dan mínimo de fósforo, nunca máximo.
+
+El número llevaba ahí desde el primer PR de historia del repo
+(`ae7878b`), antes de que existiera la disciplina de "cada cifra lleva
+fuente". Y no era teórico: recortaba de verdad el menú automático
+estándar de un adulto de 20kg, que salía justo en el límite (4000,0)
+antes de quitarlo.
+
+Quitado: `maxAdulto` pasa a "-" en el JSON, "Fósforo" se mueve de
+`MAXIMOS` a `SIN_MAXIMO` en `auditar_fediaf.py`. Comprobado después que
+el fósforo real de un menú no se dispara al quitar el techo (sigue en
+~3970 mg/1000kcal, porque lo limita lo que dan los alimentos de verdad,
+no un número artificial). `auditar_fediaf.py`: 234 comprobaciones
+cuadran (subió de 232), 0 discrepancias. `pruebas_completas.py` entero,
+TODO EN VERDE.
+
+De paso, la revisión completa de la tabla confirmó que **los otros 40
+nutrientes coinciden exactamente** con el PDF — esta fue la única
+discrepancia real en todo el documento.
