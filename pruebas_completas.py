@@ -24,7 +24,8 @@ sys.path.insert(0, '.')
 sys.path.insert(0, './motor')
 
 from motor_completo import resolver, patologias_bloquean, especie_de
-from constructor import cargar, MARGENES
+from exclusiones import _palabras as _palabras_b11
+from constructor import cargar, MARGENES, valor_nutriente
 from verificar import verificar
 from requisitos import dosis_maxima_fabricante
 from constructor import valor_plausible_de
@@ -1049,7 +1050,14 @@ if _r.get("factible"):
                       "no hay nada que colar — este caso no prueba nada")
     _nala = next((p for p in _r["perros"] if p["nombre"] == "Nala"), {})
     _menu_nala = (_nala.get("menus") or [{}])[0].get("menu") or {}
-    _colados = [n for n in _menu_nala if "pollo" in n.lower()]
+    # ⚠️ ARREGLADO (7 septiembre) — FALSO POSITIVO ENCONTRADO: comparaba por
+    # SUBCADENA ("pollo" in n.lower()), y "Repollo" (una verdura, sin
+    # ninguna relación con el pollo) contiene "pollo" como subcadena. El
+    # motor real nunca tiene este fallo -- usa `_palabras()` de
+    # exclusiones.py, que compara por PALABRA completa, igual que aquí
+    # ahora. Confirmado: el menú de Nala nunca llevó pollo de verdad, era
+    # la prueba la que se equivocaba, no el motor.
+    _colados = [n for n in _menu_nala if "pollo" in _palabras_b11(n)]
     if _colados:
         fallos.append(f"BLOQUE11 alergias: parecerse coló un alérgeno en el menú "
                       f"del perro alérgico: {_colados}")
@@ -1299,7 +1307,8 @@ from motor_completo import topes_de_patologias as _topes_b13
 
 # Las patologías que se prueban una a una. Las que bloquean no llevan menú
 # que comprobar, así que no van aquí.
-_PATOLOGIAS_B13 = ["renal", "pancreatitis", "cardiopatia", "oxalato", "diabetes"]
+_PATOLOGIAS_B13 = ["renal", "pancreatitis", "cardiopatia", "oxalato", "diabetes",
+                   "artrosis", "dermatosis_zinc"]
 
 # ⚠️ EL ANCLA DE LOS NÚMEROS (25 agosto). Leer los topes del motor evita que
 # esta prueba y el motor se separen -- pero por eso mismo ya no puede cazar
@@ -1315,19 +1324,29 @@ _NUMEROS_REVISADOS_B13 = [
     # (patologías, etapa, topes esperados, % de grasa esperado)
     (["renal"],                  "Adulto",             {"fosforo": 1200.0}, None),
     (["renal"],                  "CachorroCrecimiento", {},                 None),
-    (["pancreatitis"],           "Adulto",             {"grasa": 20.0},     None),
+    # ⚠️ AÑADIDO (6-sep-2026) — SACN5 cap.67 Tabla 67-3 confirmó el tope de
+    # grasa y añadió uno de proteína (75 g/1000kcal) que no existía: los
+    # aminoácidos libres estimulan la secreción pancreática incluso más
+    # que la grasa. Ver patologias.json / PENDIENTE_NUTRICION.md §10.
+    (["pancreatitis"],           "Adulto",             {"grasa": 20.0, "proteina": 75.0}, None),
     (["pancreatitis"],           "CachorroJoven",      {},                  None),
     (["cardiopatia"],            "Adulto",             {"sodio": 900.0},    None),
-    (["oxalato"],                "Adulto",             {"vitD": 20.0},      None),
+    # ⚠️ ACTUALIZADO (7-sep-2026): 20.0 era el máximo NUTRICIONAL antiguo de
+    # vitamina D (800 UI). Desde la corrección del 6-sep-2026 el que manda
+    # es el LEGAL (14,1875 µg = 567,5 UI), más estricto. No cambia el menú
+    # (oxalato solo podía endurecer, nunca relajar, así que el de FEDIAF ya
+    # se aplicaba), pero el número que cita esta ancla tiene que ser el
+    # real para que valga como ancla de verdad.
+    (["oxalato"],                "Adulto",             {"vitD": 14.1875},   None),
     (["hepatopatia"],            "Adulto",             {"cobre": 2.4},      None),
     # La diabetes SOLA ya no restringe la grasa (Purina Institute): el pilar
     # es fibra alta e índice glucémico bajo. Solo con pancreatitis o
     # hipertrigliceridemia concurrente se baja al 30%.
     (["diabetes"],               "Adulto",             {},                  None),
-    (["diabetes", "pancreatitis"], "Adulto",           {"grasa": 20.0},     0.30),
+    (["diabetes", "pancreatitis"], "Adulto",           {"grasa": 20.0, "proteina": 75.0}, 0.30),
 ]
 for _pats, _et, _esperados, _esperado_pct in _NUMEROS_REVISADOS_B13:
-    _t, _p, _ = _topes_b13(_pats, _et)
+    _t, _p, _, _ = _topes_b13(_pats, _et)
     if _t != _esperados or _p != _esperado_pct:
         fallos.append(f"BLOQUE13 números revisados: para {_pats} en {_et} el motor da "
                       f"{_t} / grasa {_p}, y lo revisado con fuente el 25 de agosto es "
@@ -1356,10 +1375,19 @@ def _kcal_reales_b13(g):
     return sum((_por_nombre_b12.get(n, {}).get("energia", 0) or 0) / 100.0 * v for n, v in g.items())
 
 def _por_1000_b13(g, clave):
+    # ⚠️ ARREGLADO (7 septiembre) — FALLO REAL ENCONTRADO: leía `clave`
+    # directamente del diccionario crudo de nutrientes, pero "epa_dha"
+    # (como "metionina_cistina" o "fenilalanina_tirosina") es una clave
+    # COMPUESTA que `valor_nutriente()` calcula sumando "epa"+"dha" -- no
+    # existe como campo suelto en ninguna ficha. Nunca se había disparado
+    # porque hasta el suelo de artrosis (7 septiembre) ningún tope ni suelo
+    # de esta batería usaba una clave compuesta. Con el fallo puesto, esta
+    # función SIEMPRE devolvía 0 para epa_dha, así que el menú de artrosis
+    # parecía no llegar nunca al suelo aunque el menú real sí lo cumplía.
     k = _kcal_reales_b13(g)
     if not k:
         return 0.0
-    tot = sum((_por_nombre_b12.get(n, {}).get("nutrientes", {}).get(clave) or 0) / 100.0 * v
+    tot = sum(valor_nutriente(_por_nombre_b12.get(n, {}).get("nutrientes", {}), clave) / 100.0 * v
               for n, v in g.items())
     return tot / k * 1000.0
 
@@ -1372,12 +1400,21 @@ def _pct_grasa_b13(g):
     return gr * 9.0 / k
 
 def _revisar_b13(donde, gramos, patologias, etapa="Adulto"):
-    _topes, _pct, _ = _topes_b13(patologias, etapa)
+    _topes, _pct, _, _suelos = _topes_b13(patologias, etapa)
     for _clave, _tope in _topes.items():
         _v = _por_1000_b13(gramos, _clave)
         if _v > _tope * _MARGEN_B13:
             fallos.append(f"BLOQUE13 {donde}: {_clave} {_v:.1f} pasa del tope "
                           f"{_tope:.1f} (+{(_v/_tope-1)*100:.1f}%)")
+    # ⚠️ AÑADIDO (7 septiembre) — EL ESPEJO, PARA LOS SUELOS. Primer uso
+    # real: artrosis (más omega-3) y dermatosis_zinc (más zinc). Margen al
+    # revés que el de los topes: aquí preocupa quedarse CORTO, no pasarse.
+    _MARGEN_SUELO_B13 = 0.995
+    for _clave, _suelo in _suelos.items():
+        _v = _por_1000_b13(gramos, _clave)
+        if _v < _suelo * _MARGEN_SUELO_B13:
+            fallos.append(f"BLOQUE13 {donde}: {_clave} {_v:.2f} no llega al suelo "
+                          f"{_suelo:.2f} (-{(1-_v/_suelo)*100:.1f}%)")
     if _pct is not None:
         _v = _pct_grasa_b13(gramos)
         if _v > _pct * _MARGEN_B13:
@@ -2200,6 +2237,23 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     ("HUECOS", "Sal común (cloruro sódico)"),
     ("HUECOS", "Bazo de vaca"), ("HUECOS", "Páncreas de vaca"),
     ("HUECOS", "Bazo de cordero"), ("HUECOS", "Cerebro de ternera"),
+    # ⚠️ AÑADIDO (6 sep) al corregir el catálogo contra USDA/BEDCA
+    # (CORRECCIONES_CATALOGO.csv): la vitamina A de "Semilla de sésamo" pasó
+    # de 6,6667 (sin fuente firme) a 0 -- que es lo que da USDA FDC 170150 de
+    # verdad, un cero REAL, no un hueco. Con ese cero de más, la ficha cruza
+    # el umbral de "N nutrientes a cero" del aviso [HUECOS]. El linoleico
+    # (tambien a 0) SI sigue siendo un hueco de verdad -- el sesamo es rico
+    # en omega-6 y ese dato no se ha conseguido -- pero no tiene numero de
+    # fuente disponible en esta pasada, asi que no se inventa.
+    ("HUECOS", "Semilla de sésamo"),
+    # ⚠️ AÑADIDO (6 sep), mismo motivo: al corregir la grasa de "Dorada"
+    # (7,22 -> 1 g, FEN/Moreiras 2013, la ficha de BEDCA no cuadraba consigo
+    # misma) el DHA y el EPA -- que vienen de la MISMA fuente "de
+    # piscifactoria" que la grasa ya corregida, documentado en su propio
+    # nota_datos -- se quedaron sin tocar por falta de cifra de una dorada
+    # salvaje. Ahora los acidos grasos (1,97 g) superan la grasa total (1 g).
+    # Es un hueco real, ya documentado, no un fallo nuevo de esta pasada.
+    ("GRASOS", "Dorada"),
     # ⚠️ SE FUE `Testículos de cordero` (27 agosto): ya no está en el
     # catálogo. Tenía 30 de sus 31 nutrientes a cero y 68 kcal con proteína
     # 0 y grasa 0 -- una fila que se contradice sola. El motor la usaba en
@@ -4399,12 +4453,21 @@ for _p39 in _BLOQUEADAS39:
                       f"veterinario. Al dueño se le dice «no generamos menú» y al veterinario se "
                       f"le genera: no pueden decir lo mismo.")
 
-# (e) Las cuatro que necesitarían bajar de FEDIAF siguen marcadas, porque son
+# (e) Las que necesitarían bajar de FEDIAF siguen marcadas, porque son
 # las que definen qué necesita firma cuando llegue la prescripción.
+#
+# ⚠️ AÑADIDO (6-sep-2026): `shunt_sin_encefalopatia` y
+# `encefalopatia_hepatica` se sumaron con la ronda SACN5 cap.68 Tabla 68-8
+# (proteína 37,5-50 y 25-37,5 g/1000kcal, ambas bajo el mínimo FEDIAF de
+# 52,1) -- son las mismas DOS razones (cobre / proteína) que ya bloqueaban
+# `hepatopatia`, aplicadas a los otros dos cuadros clínicos hepáticos.
 _bajo39 = {k for k, v in _P39.items() if v.get("necesita_bajo_fediaf")}
-if _bajo39 != {"hepatopatia", "urato", "cistina", "renal"}:
+_bajo39_esperado = {"hepatopatia", "urato", "cistina", "renal",
+                    "shunt_sin_encefalopatia", "encefalopatia_hepatica",
+                    "renal_avanzada"}
+if _bajo39 != _bajo39_esperado:
     fallos.append(f"BLOQUE39: las marcadas `necesita_bajo_fediaf` son {_bajo39} y tenían que ser "
-                  f"hepatopatía, urato, cistina y renal. Esa lista es la que define qué necesita "
+                  f"{_bajo39_esperado}. Esa lista es la que define qué necesita "
                   f"firma el día que exista la prescripción.")
 
 # (f) SEGURIDAD: el rol NO puede venir del cliente. Se manda un booleano por

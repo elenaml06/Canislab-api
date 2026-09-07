@@ -114,18 +114,34 @@ las tiene que tomar una persona, no yo.
         **por definición**, y eso es una conversación mucho más grande
         que este apartado.
 
-- [ ] **Límites por patología: confirmar los números.** Medido el 20 de
-      agosto: los topes actuales son demasiado permisivos (cobre sale
-      clavado en 3.0 con el mínimo en 2.08), pero los valores terapéuticos
-      que buscabas (fósforo 1000, cobre 1.2) están **por debajo del mínimo
-      de FEDIAF** y harían imposible generar menú a ningún perro renal o
-      hepático. Lo más apretado que funciona de verdad:
-      | | Hoy | Mín. FEDIAF | Recomendado |
-      |---|---|---|---|
-      | Fósforo (renal) | 1400 | 1160 | **1200** |
-      | Cobre (hepatopatía) | 3.0 | 2.08 | **2.3** |
-      | Grasa (pancreatitis) | 25 % | — | **18 %** (con suelo en cachorros) |
-      Decidir si se aplican esos tres, o si se prefiere otra cosa.
+- [x] **Límites por patología: confirmar los números.** ⚠️ **ESTA TABLA ESTABA
+      DESACTUALIZADA (comprobado el 6 de septiembre contra
+      `motor_completo.PATOLOGIAS` en producción)** — decía "Hoy" con los
+      valores del 20 de agosto y el código ya se había movido:
+      | | Decía aquí | **En producción hoy** | Mín. FEDIAF | Recomendado (20 ago) |
+      |---|---|---|---|---|
+      | Fósforo (renal) | 1400 | **1200 — YA APLICADO** | 1160 | 1200 |
+      | Cobre (hepatopatía) | 3.0 | **2.4** — intermedio, a propósito: ver abajo | 2.08 | 2.3 |
+      | Grasa (pancreatitis) | 25 % | **20 %** — el punto de partida de las dietas comerciales bajas en grasa | — | 18 % |
+
+      **Fósforo renal: cerrado**, coincide con lo recomendado.
+
+      **Cobre hepatopatía sigue abierto, pero no por descuido**: el 2.4 no
+      es ni el "hoy" viejo (3.0) ni el "recomendado" de esta tabla (2.3) —
+      es el valor puente documentado en `PENDIENTE_PRODUCTO.md` ("La app no
+      distingue hepatopatía por cobre de otras hepatopatías"): el
+      verdaderamente terapéutico para acúmulo de cobre es 1.2, que está por
+      debajo del mínimo de FEDIAF y bloquearía a cualquier perro con
+      hepatopatía. Mientras no se parta esa opción en dos (o un veterinario
+      pueda levantar el bloqueo caso a caso), 2.4 se queda como el
+      intermedio menos malo. Sigue pendiente decidir si además se ajusta a
+      2.3.
+
+      **Pancreatitis grasa: a medio camino.** 20 % ya no es el 25 % de
+      partida, pero tampoco es el 18 % recomendado. Falta decidir si se
+      termina de bajar (con el suelo en cachorros que pedía la nota
+      original, porque el mínimo de grasa que necesita un cachorro para
+      crecer supera 18 %).
 - [ ] **Siete preguntas para Michelle.** Las cinco primeras salieron del
       repaso clínico del 25 de agosto; la sexta y la séptima, del trabajo
       del 28 sobre la parte para veterinarios. Ninguna se puede programar sin criterio

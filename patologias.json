@@ -12,15 +12,16 @@
       "topes_por_1000kcal": {
         "fosforo": {
           "valor": 1200.0,
-          "fuente": "Freeman LM, dvm360 2009; WSAVA; IRIS",
-          "por_que": "Las dietas renales comerciales aportan 480-1000 mg/1000 kcal. 1200 es lo más restrictivo que el solver puede aplicar sin romper el mínimo FEDIAF de adulto (1160 mg). IRIS da objetivos en SANGRE, no en la dieta, así que no sirve para poner este número."
+          "fuente": "Freeman LM, dvm360 2009; WSAVA; IRIS. Confirmado 6-sep-2026 contra SACN5 5ª ed., cap.37 «Chronic Kidney Disease», Tabla 37-9",
+          "por_que": "Las dietas renales comerciales aportan 480-1000 mg/1000 kcal. 1200 es lo más restrictivo que el solver puede aplicar sin romper el mínimo FEDIAF de adulto (1160 mg). IRIS da objetivos en SANGRE, no en la dieta, así que no sirve para poner este número. SACN5 Tabla 37-9 da «Phosphorus 0.2 to 0.5% in foods for dogs» (materia seca) = 500-1250 mg/1000kcal a 4000kcal/kgMS: 1200 cae justo dentro, en el extremo menos restrictivo del rango de la fuente."
         }
       },
       "solo_en_adulto": true,
       "en_crecimiento": "bloquear",
       "avisos": {
-        "general": "Se ha bajado el fósforo todo lo posible sin bajar del mínimo nutricional de un perro sano. IMPORTANTE: una dieta renal terapéutica de verdad baja el fósforo POR DEBAJO de ese mínimo, y eso solo puede pautarlo tu veterinario. Esto es un apoyo, no sustituye una dieta renal prescrita.",
+        "general": "Se ha bajado el fósforo todo lo posible sin bajar del mínimo nutricional de un perro sano. IMPORTANTE: una dieta renal terapéutica de verdad baja también la PROTEÍNA por debajo de ese mínimo (SACN5 cita 14-20% de materia seca, unos 35-50 g/1000 kcal, frente a los ~130 de una ración BARF sin ajustar) y eso solo puede pautarlo tu veterinario. Esto es un apoyo, no sustituye una dieta renal prescrita.",
         "crecimiento": "Un perro en crecimiento o gestación con insuficiencia renal necesita un plan dietético individual hecho por un nutricionista veterinario: el fósforo que hay que quitarle choca con el que necesita para crecer.",
+        "profesional": "Objetivo de proteína para insuficiencia renal, SACN5 cap.37 Tabla 37-9: 14-20% de materia seca (unos 35-50 g/1000kcal a 4000kcal/kgMS), por debajo del mínimo FEDIAF (52,1). Ver también VETERINARIOS.md §12-ter: NRC no mide un suelo específico de proteína para renal, pero el suelo general de mantenimiento (Sanderson 2001, 20 g/1000kcal) tuvo un caso de cardiomiopatía por taurina en ese mismo estudio -- no bajar de 35 sin vigilar taurina.",
         "profesional_crecimiento": "Se ha formulado SIN el tope de fósforo: en crecimiento o gestación el fósforo que necesita el perro para crecer es mayor que el tope renal, así que aplicarlo haría el problema infactible. El menú cumple FEDIAF de crecimiento y no está ajustado a la enfermedad renal. Ese ajuste es tuyo."
       },
       "formulable_por_profesional": true,
@@ -32,10 +33,15 @@
       "nombre": "Pancreatitis",
       "formulable": true,
       "topes_por_1000kcal": {
+        "proteina": {
+          "valor": 75.0,
+          "fuente": "SACN5 5ª ed., cap. 67 «Pancreatitis», Tabla 67-3, verificado 6-sep-2026 contra el texto",
+          "por_que": "Tabla 67-3: «Protein 15 to 30% for dogs» (base materia seca). Al 4000kcal/kgMS de referencia son 37,5-75 g/1000kcal; se usa el extremo alto (75) porque es el mínimo restrictivo que ya sirve — BARF sin tocar va sobre ~130g/1000kcal, muy por encima. Motivo, del propio texto: los aminoácidos libres (fenilalanina, triptófano, valina) son un estímulo de secreción pancreática incluso mayor que la grasa, así que el exceso de proteína hay que evitarlo aunque no sea el nutriente que más se cita."
+        },
         "grasa": {
           "valor": 20.0,
           "fuente": "Merck Veterinary Manual, «Pancreatitis in Dogs and Cats»",
-          "por_que": "Literal de la fuente: «feeding a low-fat diet (ie, less than 20 g fat/1,000 kcal) is crucial for treatment success». Se expresa en gramos por 1000 kcal y no en % de kcal a propósito: es como lo dice la fuente."
+          "por_que": "Literal de la fuente: «feeding a low-fat diet (ie, less than 20 g fat/1,000 kcal) is crucial for treatment success». Se expresa en gramos por 1000 kcal y no en % de kcal a propósito: es como lo dice la fuente. Confirmado 6-sep-2026 contra SACN5 cap.67 Tabla 67-3: el rango general es ≤15% MS (≈37,5 g/1000kcal) y para el paciente obeso o hipertrigliceridémico baja a ≤10% MS (≈25 g/1000kcal) -- los 20 de Merck caen dentro de ambos rangos, así que se mantienen sin cambio, ya cubren el caso más estricto."
         }
       },
       "solo_en_adulto": true,
@@ -51,9 +57,9 @@
       "formulable": true,
       "topes_por_1000kcal": {
         "vitD": {
-          "valor": 20.0,
-          "fuente": "Máximo nutricional de FEDIAF 2025 (Tabla III-3b)",
-          "por_que": "No es un tope propio de la patología: es el máximo de FEDIAF, puesto aquí explícito porque en oxalato el exceso de vitamina D sí importa. En oxalato NO se baja el calcio: el calcio intestinal secuestra el oxalato y bajarlo empeora el problema (Today's Veterinary Practice 2025 citando a Carr 2020)."
+          "valor": 14.1875,
+          "fuente": "Máximo LEGAL de FEDIAF 2025 (Tabla III-3a, Reglamento (UE) 2017/1492), no el nutricional",
+          "por_que": "No es un tope propio de la patología: es el máximo de FEDIAF ya vigente para cualquier perro, puesto aquí explícito porque en oxalato el exceso de vitamina D sí importa. Actualizado 7-sep-2026: el valor era 20,0 (el máximo NUTRICIONAL antiguo, 800 UI); desde la corrección del 6-sep-2026 el máximo que manda es el LEGAL (14,1875 µg = 567,5 UI, más estricto). No cambiaba el menú real (el máximo de FEDIAF ya se aplicaba de por sí, y esta patología solo podía ENDURECER, nunca relajar), pero el número aquí escrito estaba desactualizado. En oxalato NO se baja el calcio: el calcio intestinal secuestra el oxalato y bajarlo empeora el problema (Today's Veterinary Practice 2025 citando a Carr 2020). OJO -- conflicto de fuentes, resuelto a favor de la más reciente: SACN5 5ª ed. (2010), cap.40 «Canine Calcium Oxalate Urolithiasis», Tabla 40-5, todavía recomendaba «Restrict dietary calcium to 0.4 to 0.7% DM» (bajar el calcio). Today's Veterinary Practice 2025 (citando a Carr 2020), que es la fuente que aquí se sigue, invierte esa recomendación: el calcio intestinal bajo aumenta la absorción de oxalato libre y empeora el problema -- es el cambio de paradigma que siguió a estudios de la década de 2010 sobre unión intestinal calcio-oxalato. Se mantiene la posición de NO bajar el calcio por ser la más reciente y la que tiene el mecanismo mejor descrito. SACN5 Tabla 40-5 sí coincide con lo ya aplicado en fósforo (0,3-0,6%MS = 0,75-1,5 g/1000kcal, dentro de rango normal) y en sodio (<0,3%MS = <7,5 g/1000kcal, sin tope propio hoy)."
         }
       },
       "avisos": {
@@ -68,8 +74,8 @@
       "topes_por_1000kcal": {
         "cobre": {
           "valor": 2.4,
-          "fuente": "Center SA et al., JAVMA 264(2):171-180, 2026 (límite tolerable 0,24 mg/100 kcal)",
-          "por_que": "Se deja puesto aunque hoy la patología bloquee: si algún día se distingue «hepatopatía por cobre» de otras hepatopatías, el número ya está aquí."
+          "fuente": "Center SA et al., JAVMA 264(2):171-180, 2026 (límite tolerable 0,24 mg/100 kcal). Confirmado 6-sep-2026 contra SACN5 5ª ed., cap.68 «Hepatobiliary Disease», Tabla 68-8",
+          "por_que": "Se deja puesto aunque hoy la patología bloquee: si algún día se distingue «hepatopatía por cobre» de otras hepatopatías, el número ya está aquí. SACN5 Tabla 68-8 da «Copper ≤5 mg/kg» de materia seca para perros con hepatobiliopatía = 1,25 mg/1000kcal a 4000kcal/kgMS -- prácticamente idéntico al objetivo terapéutico de 1,2 ya citado (Center 2026): dos fuentes independientes, veinte años de diferencia, coinciden en el mismo número. La misma Tabla 68-8 da además proteína 15-20%MS para perro (37,5-50 g/1000kcal) -- también por debajo del mínimo FEDIAF (52,1) -- así que la hepatopatía real está por debajo del suelo nutricional en DOS ejes, no solo en cobre."
         }
       },
       "sin_dieta_automatica": true,
@@ -96,6 +102,70 @@
         "general": "Se ha bajado el sodio a lo que recomiendan las guías para cardiopatía en estadio B2. En cardiopatía avanzada puede hacer falta bajarlo más y vigilar el potasio si toma diuréticos: consúltalo con tu veterinario."
       },
       "formulable_por_profesional": true
+    },
+    "cardiopatia_b1": {
+      "nombre": "Cardiopatía, estadio ACVIM B1 (soplo, sin remodelado cardíaco)",
+      "formulable": true,
+      "solo_en_adulto": true,
+      "en_crecimiento": "bloquear",
+      "avisos": {
+        "general": "En estadio B1 el consenso ACVIM no recomienda ningún tratamiento dietético (Keene BW et al., JVIM 2019;33:1127-1140: «no drug or dietary treatment is recommended»). No se ha bajado el sodio: bajarlo sin necesidad no ayuda y puede activar mecanismos hormonales que empeoran el pronóstico a largo plazo."
+      }
+    },
+    "cardiopatia_b2": {
+      "nombre": "Cardiopatía, estadio ACVIM B2 (remodelado, sin síntomas)",
+      "formulable": true,
+      "solo_en_adulto": true,
+      "en_crecimiento": "bloquear",
+      "topes_por_1000kcal": {
+        "sodio": {
+          "valor": 900.0,
+          "fuente": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio",
+          "por_que": "ACVIM 2019 pide «mild dietary sodium restriction» en B2 sin dar cifra; la escala moderna por estadio la sitúa en 80-99 mg/100 kcal (800-990 mg/1000 kcal). 900 es el mismo valor que ya usaba la entrada genérica 'cardiopatia', ahora explícito para quien sabe que su perro está en B2. Confirmado 7-sep-2026 contra SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4: sodio «Class Ia = 0,15 a 0,25% (375-625 mg/1000kcal a 4000kcal/kgMS); Class Ib, II y III = 0,08 a 0,15% (200-375 mg/1000kcal)». Confirma el PATRÓN (restringir más cuanto más avanzada la enfermedad) pero no se sustituyen los números: SACN5 usa la clasificación ISACHC (I/II/III), no la ACVIM (A/B1/B2/C/D) que usa esta app, y las dos NO son intercambiables grado a grado -- además el consenso ACVIM 2019 (Keene et al.) es la fuente específica de miocardiopatía/insuficiencia mitral más moderna y más citada en cardiología veterinaria de pequeños animales que un capítulo general de un libro de texto de 2010. El extremo bajo de Class Ib/II/III (200 mg) cae POR DEBAJO del mínimo FEDIAF (290): confirma que un cardiópata en fase avanzada, si se sigue la restricción más agresiva de la literatura, puede necesitar bajar de FEDIAF -- que es justo por lo que «cardiopatia_d» (480, con margen sobre 290) se quedó formulable a propósito, sin llegar ahí."
+        }
+      },
+      "avisos": {
+        "general": "Sodio bajado a una restricción moderada (estadio B2, 900 mg/1000 kcal). El potasio y el magnesio pueden necesitar vigilancia si toma diuréticos: consúltalo con tu veterinario."
+      }
+    },
+    "cardiopatia_c": {
+      "nombre": "Cardiopatía, estadio ACVIM C (insuficiencia cardíaca, actual o pasada)",
+      "formulable": true,
+      "solo_en_adulto": true,
+      "en_crecimiento": "bloquear",
+      "topes_por_1000kcal": {
+        "sodio": {
+          "valor": 790.0,
+          "fuente": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio",
+          "por_que": "La escala moderna por estadio sitúa el estadio C en 50-79 mg/100 kcal (500-790 mg/1000 kcal). Se usa el extremo MENOS restrictivo del rango (790): una restricción severa puede activar el sistema renina-angiotensina-aldosterona y empeorar el pronóstico, y la prioridad clínica en insuficiencia cardíaca es que el perro siga comiendo lo suficiente, no apretar el sodio al máximo. Confirmado 7-sep-2026 contra SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4: sodio «Class Ia = 0,15 a 0,25% (375-625 mg/1000kcal a 4000kcal/kgMS); Class Ib, II y III = 0,08 a 0,15% (200-375 mg/1000kcal)». Confirma el PATRÓN (restringir más cuanto más avanzada la enfermedad) pero no se sustituyen los números: SACN5 usa la clasificación ISACHC (I/II/III), no la ACVIM (A/B1/B2/C/D) que usa esta app, y las dos NO son intercambiables grado a grado -- además el consenso ACVIM 2019 (Keene et al.) es la fuente específica de miocardiopatía/insuficiencia mitral más moderna y más citada en cardiología veterinaria de pequeños animales que un capítulo general de un libro de texto de 2010. El extremo bajo de Class Ib/II/III (200 mg) cae POR DEBAJO del mínimo FEDIAF (290): confirma que un cardiópata en fase avanzada, si se sigue la restricción más agresiva de la literatura, puede necesitar bajar de FEDIAF -- que es justo por lo que «cardiopatia_d» (480, con margen sobre 290) se quedó formulable a propósito, sin llegar ahí."
+        }
+      },
+      "avisos": {
+        "general": "Sodio bajado a la restricción del estadio C (790 mg/1000 kcal). No se ha restringido la grasa ni las calorías: en insuficiencia cardíaca activa, mantener el apetito y el peso importa más que cualquier otra cosa. Vigila el potasio si toma diuréticos o espironolactona, y si deja de comer bien, dile a tu veterinario que es más urgente que el sodio."
+      }
+    },
+    "cardiopatia_d": {
+      "nombre": "Cardiopatía, estadio ACVIM D (insuficiencia cardíaca refractaria)",
+      "formulable": true,
+      "solo_en_adulto": true,
+      "en_crecimiento": "bloquear",
+      "topes_por_1000kcal": {
+        "sodio": {
+          "valor": 480.0,
+          "fuente": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio",
+          "por_que": "La escala moderna por estadio da el estadio D como <50 mg/100 kcal (<500 mg/1000 kcal). Se usa 480 (48 mg/100 kcal), con margen bajo ese umbral y por encima del mínimo de FEDIAF adulto (290 mg/1000 kcal a DER 95), para que el menú siga siendo formulable sin necesitar profesional. Confirmado 7-sep-2026 contra SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4: sodio «Class Ia = 0,15 a 0,25% (375-625 mg/1000kcal a 4000kcal/kgMS); Class Ib, II y III = 0,08 a 0,15% (200-375 mg/1000kcal)». Confirma el PATRÓN (restringir más cuanto más avanzada la enfermedad) pero no se sustituyen los números: SACN5 usa la clasificación ISACHC (I/II/III), no la ACVIM (A/B1/B2/C/D) que usa esta app, y las dos NO son intercambiables grado a grado -- además el consenso ACVIM 2019 (Keene et al.) es la fuente específica de miocardiopatía/insuficiencia mitral más moderna y más citada en cardiología veterinaria de pequeños animales que un capítulo general de un libro de texto de 2010. El extremo bajo de Class Ib/II/III (200 mg) cae POR DEBAJO del mínimo FEDIAF (290): confirma que un cardiópata en fase avanzada, si se sigue la restricción más agresiva de la literatura, puede necesitar bajar de FEDIAF -- que es justo por lo que «cardiopatia_d» (480, con margen sobre 290) se quedó formulable a propósito, sin llegar ahí."
+        }
+      },
+      "avisos": {
+        "general": "Sodio bajado a la restricción del estadio D (480 mg/1000 kcal), la más estricta que se aplica sin intervención de un veterinario. El consenso ACVIM insiste en que la prioridad absoluta en este estadio es la palatabilidad: si el perro come menos por esto, restringir el sodio deja de merecer la pena. Este estadio necesita seguimiento veterinario estrecho, con la medicación (diuréticos, espironolactona) y el potasio vigilados juntos."
+      }
+    },
+    "renal_proteinuria": {
+      "nombre": "Proteinuria renal (UPC > 0,5)",
+      "formulable": true,
+      "avisos": {
+        "general": "El consenso ACVIM 2013 sobre proteinuria recomienda bajar la proteína entre un 25 y un 50 % RESPECTO A LO QUE EL PERRO COMÍA ANTES cuando el cociente proteína:creatinina en orina (UPC) supera 0,5 -- no es una cifra fija, es relativa a la ingesta previa de este perro concreto, y Rawku no tiene ese dato de partida (necesitaría analizar su dieta anterior con /analizar antes de generar el menú nuevo). Por eso esta bandera no recorta la proteína de forma automática: es un aviso para que actúes con tu veterinario, que sí conoce el punto de partida real. Combínala con 'renal' para que además se aplique el tope de fósforo."
+      }
     },
     "diabetes": {
       "nombre": "Diabetes mellitus",
@@ -131,7 +201,7 @@
       "sin_dieta_automatica": true,
       "avisos": {
         "general": "Estos cálculos dependen del pH de la orina y de analíticas que la app no puede ver. Una dieta mal ajustada aquí puede empeorarlos, así que no generamos menú automático: necesitas una dieta pautada por tu veterinario.",
-        "profesional": "Se ha formulado una ración completa y equilibrada. Lo que decide en estruvita es el pH urinario y el manejo de la infección, y eso la app no lo ve ni lo ajusta: la parte que importa es tuya."
+        "profesional": "Se ha formulado una ración completa y equilibrada. Lo que decide en estruvita es el pH urinario y el manejo de la infección, y eso la app no lo ve ni lo ajusta: la parte que importa es tuya. SACN5 5ª ed., cap.43 «Canine Struvite Urolithiasis», Tabla 43-3, para contexto: disolución pide fósforo ≤0,1%MS y proteína ≤8%MS (muy por debajo del mínimo FEDIAF), prevención pide fósforo <0,6%MS y proteína <25%MS (dentro de lo alcanzable) -- pero ninguno de los dos números arregla nada sin controlar el pH urinario (objetivo 6,2-6,4 en prevención), que es justo lo que esta app no puede vigilar."
       },
       "formulable_por_profesional": true,
       "necesita_bajo_fediaf": false
@@ -143,7 +213,7 @@
       "sin_dieta_automatica": true,
       "avisos": {
         "general": "La predisposición a urolitos de urato (dálmata, shunt hepático) necesita restringir tanto las purinas que, con alimentos frescos normales, no queda margen real para cubrir el resto de nutrientes a la vez -- por eso no generamos menú automático aquí: esto necesita una dieta pautada por tu veterinario, a menudo con pienso terapéutico específico.",
-        "profesional": "Se ha formulado una ración normal: el motor NO restringe purinas. Medido sobre menús reales, una ración cruda va a unos 780 mg de purinas/1000 kcal y el objetivo citado para urato son 90 — ocho veces y media. Y no es cosa de las vísceras: quitando hígado y corazón queda casi cinco veces. Con alimentos frescos no hay margen; el número está aquí para que decidas tú, no para que lo decida el motor."
+        "profesional": "Se ha formulado una ración normal: el motor NO restringe purinas. Medido sobre menús reales, una ración cruda va a unos 780 mg de purinas/1000 kcal y el objetivo citado para urato son 90 — ocho veces y media. Y no es cosa de las vísceras: quitando hígado y corazón queda casi cinco veces. Con alimentos frescos no hay margen; el número está aquí para que decidas tú, no para que lo decida el motor. SACN5 5ª ed., cap.39 «Canine Purine Urolithiasis», Tabla 39-4: «Restrict dietary protein to 10 to 18% dry matter» (25-45 g/1000kcal a 4000kcal/kgMS) -- confirma, con una fuente distinta a la que dio el número de purinas, que la restricción real de urato es también de proteína completa por debajo del mínimo FEDIAF (52,1), no solo de purinas: dos ejes independientes, la misma conclusión de fondo."
       },
       "formulable_por_profesional": true,
       "necesita_bajo_fediaf": true,
@@ -153,11 +223,11 @@
     "cistina": {
       "nombre": "Urolitos de cistina",
       "formulable": false,
-      "motivo_no_formulable": "Depende del pH urinario y de analíticas. Además el catálogo no tiene metionina ni cistina en ninguna ficha.",
+      "motivo_no_formulable": "Depende del pH urinario y de analíticas que la app no puede ver -- igual que estruvita. El objetivo terapéutico de metionina+cistina está además por debajo del mínimo de FEDIAF (ver nutriente_frontera).",
       "sin_dieta_automatica": true,
       "avisos": {
         "general": "Igual que con estruvita, esto depende del pH de la orina y de analíticas que la app no puede ver -- no generamos menú automático: necesitas una dieta pautada por tu veterinario.",
-        "profesional": "Se ha formulado una ración completa y equilibrada. La restricción que trata la cistinuria es bajar metionina y cistina POR DEBAJO del mínimo de FEDIAF, y eso el motor no lo hace. Además depende del pH urinario. El aminograma de metionina y cistina sí está ya en el catálogo, así que el dato existe aunque la restricción no se aplique."
+        "profesional": "Se ha formulado una ración completa y equilibrada. La restricción que trata la cistinuria es bajar metionina y cistina POR DEBAJO del mínimo de FEDIAF, y eso el motor no lo hace; además depende del pH urinario, que la app no ve. El aminograma de metionina y cistina SÍ está en el catálogo desde el 28 de agosto (94 de 159 fichas), así que el dato existe aunque la restricción no se aplique. SACN5 5ª ed., cap.42 «Canine Cystine Urolithiasis», Tabla 42-1: «Restrict high quality dietary protein to 10 to 18% dry matter» (25-45 g/1000kcal a 4000kcal/kgMS) confirma que la restricción real es de proteína completa, no solo de metionina+cistina, y confirma que cae por debajo del mínimo FEDIAF de proteína (52,1)."
       },
       "formulable_por_profesional": true,
       "necesita_bajo_fediaf": true,
@@ -174,6 +244,279 @@
       },
       "formulable_por_profesional": true,
       "necesita_bajo_fediaf": false
+    },
+    "hiperlipidemia": {
+      "nombre": "Hiperlipidemia (triglicéridos o colesterol altos)",
+      "formulable": true,
+      "topes_por_1000kcal": {
+        "grasa": {
+          "valor": 30.0,
+          "fuente": "SACN5 5ª ed., cap.28 «Disorders of Lipid Metabolism», Tabla 28-2, verificado 6-sep-2026",
+          "por_que": "Tabla 28-2: «Restrict dietary fat (<12% dry matter)» para bajar triglicéridos. A 4000kcal/kgMS de referencia son <30 g/1000kcal. Por encima del mínimo FEDIAF de grasa (13,75), así que es un tope normal, no una prescripción: se puede alcanzar eligiendo carnes magras."
+        }
+      },
+      "avisos": {
+        "general": "Se ha bajado la grasa para ayudar a controlar los triglicéridos o el colesterol. SACN5 también recomienda subir la fibra (≥10% de la materia seca) para ligar colesterol y ácidos biliares -- eso hoy no se puede aplicar: el catálogo no tiene la fibra como dato de ningún alimento. Si los triglicéridos no bajan solo con la dieta, tu veterinario puede añadir fibratos."
+      },
+      "formulable_por_profesional": true
+    },
+    "obesidad": {
+      "nombre": "Obesidad / sobrepeso, adelgazamiento dirigido",
+      "formulable": true,
+      "topes_por_1000kcal": {
+        "grasa": {
+          "valor": 30.0,
+          "fuente": "SACN5 5ª ed., cap.27 «Obesity», Tabla 27-4, verificado 6-sep-2026",
+          "por_que": "Tabla 27-4, perros, adelgazamiento: «Foods for weight loss should contain ≤9%» (materia seca) de grasa. A 4000kcal/kgMS son ≤22,5 g/1000kcal -- pero probado contra el solver con el catálogo real, 22,5 (y hasta 27) no dan menú ni en 40s de reintentos: una comida de verdad, sin premezcla vitamínica sintética como la de un pienso, no puede bajar tanto la grasa y seguir llegando a los mínimos de EFA y micronutrientes con las kcal que quedan. Probado en escalón: 28 sí resuelve, 5 de 5 intentos. Se deja en 30 (el mismo valor de hiperlipidemia, y el límite de «prevención de recuperación de peso» de la propia Tabla 27-4 es ≤14%MS = 35, así que 30 queda dentro de esa franja, no en la más agresiva de adelgazamiento puro). Sigue por encima del mínimo FEDIAF (13,75) y bastante por debajo de una ración BARF sin ajustar."
+        }
+      },
+      "avisos": {
+        "general": "El adelgazamiento en Rawku se hace principalmente bajando las kcal totales al peso objetivo, que es como FEDIAF dice que hay que hacerlo -- este menú además limita la grasa dentro de esas kcal (hasta donde el catálogo real lo permite sin dejar de cumplir el resto de nutrientes: el ≤9% de materia seca del SACN5 no es alcanzable con comida de verdad, así que se usa 30 g/1000kcal en vez de 22,5). SACN5 (Tabla 27-4) recomienda también subir la fibra (12-25% de la materia seca, para dar saciedad) y añadir L-carnitina (≥300 ppm), pero ninguno de los dos es un dato que el catálogo tenga hoy -- ver PENDIENTE_NUTRICION.md §9. Es un menú de mantenimiento con menos grasa y menos kcal, no una reformulación completa de adelgazamiento."
+      },
+      "formulable_por_profesional": true,
+      "aviso_si_ademas": {
+        "requiere": [
+          "fracaso_renal_agudo",
+          "encefalopatia_hepatica",
+          "cancer_soporte",
+          "inmunosupresion",
+          "pancreatitis"
+        ],
+        "fuente": "Fascetti & Delaney, Applied Veterinary Clinical Nutrition, 2ª ed. (Wiley-Blackwell, 2024), cap.3 «Determining Energy Requirements» (Ramsey), verificado 7-sep-2026 contra el texto",
+        "texto": "Se ha marcado también una enfermedad aguda o crítica junto con el adelgazamiento. La fuente es literal: «weight loss is never a goal during treatment and recovery from trauma and critical illness» -- y también: «it should rarely be necessary to feed injured or ill cats and dogs above the predicted energy requirement for a healthy animal at maintenance». En fase aguda, revisa con tu veterinario si de verdad toca bajar peso ahora, o si conviene esperar a que la enfermedad esté estable."
+      }
+    },
+    "cardiopatia_a": {
+      "nombre": "Cardiopatía, estadio ACVIM A (predispuesto, sin enfermedad todavía)",
+      "formulable": true,
+      "avisos": {
+        "general": "ACVIM Estadio A: raza predispuesta (p.ej. Cavalier King Charles Spaniel, Doberman) pero sin soplo, sin agrandamiento y sin ningún signo de enfermedad cardiaca todavía. El consenso ACVIM 2019 no recomienda ningún cambio de dieta en este estadio -- ni siquiera bajar el sodio, que sí importa en estadios más avanzados. Se sirve un menú normal; lo que hace falta aquí es vigilancia periódica (ecocardiografía), no dieta."
+      },
+      "nota": "Sin tope numérico a propósito: bajar el sodio en Estadio A no tiene respaldo y podría activar el sistema renina-angiotensina antes de que haga falta (mismo razonamiento que cardiopatia_b1, Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140).",
+      "formulable_por_profesional": true
+    },
+    "dcm_taurina_respondedora": {
+      "nombre": "Miocardiopatía dilatada respondedora a taurina",
+      "formulable": true,
+      "avisos": {
+        "general": "La taurina no está entre los 41 nutrientes que este motor mide (el catálogo no tiene analítica de taurina de ningún alimento), así que no hay un tope numérico que aplicar aquí. Lo que sí hace el motor: no excluye el corazón ni los músculos, que son las fuentes más ricas en taurina de una ración cruda. Si tu veterinario ha diagnosticado un déficit de taurina (analítica en sangre), la suplementación dirigida y el seguimiento de esa analítica son cosa suya, no de este menú.",
+        "profesional": "SACN5 5ª ed., cap.36 «Cardiovascular Disease» documenta la miocardiopatía dilatada por déficit de taurina (Pion et al, 1987) como reversible con suplementación. El motor no mide taurina: no puede garantizar un nivel mínimo, solo evitar excluir las fuentes obvias (corazón, músculo). La confirmación analítica y la dosis de suplementación son responsabilidad tuya."
+      },
+      "formulable_por_profesional": true
+    },
+    "dcm_asociada_a_dieta": {
+      "nombre": "Miocardiopatía dilatada asociada a dieta (\"grain-free/BEG\")",
+      "formulable": true,
+      "avisos": {
+        "general": "La alerta de la FDA (2018-2019) sobre miocardiopatía dilatada y piensos \"grain-free\" señala sobre todo dietas SECAS donde legumbres (guisante, sobre todo, no lenteja ni soja) sustituyen al cereal como fuente principal de kcal, y la relación causal no está establecida (Quilliam et al 2023). Rawku no usa ese patrón: no hay cereal que sustituir, y este menú no usa legumbres como fuente de kcal. No se ha añadido ninguna restricción porque el mecanismo de riesgo descrito no aplica a la estructura de una ración BARF."
+      },
+      "nota": "Ver PENDIENTE_NUTRICION.md §7: se investigó explícitamente si había que excluir legumbres del catálogo por este motivo, y la conclusión fue que no, precisamente por esto.",
+      "formulable_por_profesional": true
+    },
+    "ple_linfangiectasia": {
+      "nombre": "Enteropatía pierde-proteínas / linfangiectasia intestinal",
+      "formulable": true,
+      "topes_por_1000kcal": {
+        "grasa": {
+          "valor": 37.5,
+          "fuente": "SACN5 5ª ed., cap.58 «Protein-Losing Enteropathies», Tabla 58-1, verificado 6-sep-2026",
+          "por_que": "Tabla 58-1: «Fat <15% for dogs and cats» (materia seca), porque la grasa de cadena larga sobrecarga los linfáticos intestinales dañados. A 4000kcal/kgMS son <37,5 g/1000kcal. Por encima del mínimo FEDIAF (13,75), alcanzable con carnes magras."
+        }
+      },
+      "avisos": {
+        "general": "Se ha bajado la grasa: en esta enfermedad, la grasa de cadena larga sobrecarga los vasos linfáticos intestinales dañados y empeora la diarrea y la pérdida de proteína. SACN5 recomienda además usar aceite MCT (cadena media), que no pasa por la vía linfática -- eso no está entre los suplementos que hoy usa el motor. La proteína NO se ha bajado: SACN5 pide ≥25% de materia seca, muy por debajo de lo que ya da una ración BARF sin ajustar."
+      },
+      "formulable_por_profesional": true
+    },
+    "insuficiencia_pancreatica_exocrina": {
+      "nombre": "Insuficiencia pancreática exocrina (EPI)",
+      "formulable": true,
+      "topes_por_1000kcal": {
+        "grasa": {
+          "valor": 37.5,
+          "fuente": "SACN5 5ª ed., cap.66 «Exocrine Pancreatic Insufficiency», Tabla 66-1, verificado 6-sep-2026",
+          "por_que": "Tabla 66-1: «Fat 10 to 15% for dogs» (materia seca). A 4000kcal/kgMS son 25-37,5 g/1000kcal; se usa el extremo alto porque el propio texto (cap.66) dice que restringir la grasa NO es lo prioritario si hay reemplazo enzimático adecuado -- es un apoyo, no el tratamiento."
+        }
+      },
+      "avisos": {
+        "general": "El tratamiento de la EPI es la suplementación con enzimas pancreáticas en cada comida: eso lo pauta y lo ajusta tu veterinario, y este menú no lo sustituye. Se ha bajado algo la grasa como apoyo. También ayuda una digestibilidad alta (carnes magras, poco tejido conectivo) y evitar dar la ración en una sola toma grande."
+      },
+      "formulable_por_profesional": true
+    },
+    "fracaso_renal_agudo": {
+      "nombre": "Fracaso renal agudo (distinto de la insuficiencia crónica)",
+      "formulable": true,
+      "avisos": {
+        "general": "Esto es agudo, no crónico: NO se aplica la restricción de fósforo de la insuficiencia renal crónica (esa es para un riñón que ya no va a recuperarse, no para uno en fase de shock/recuperación). En fase aguda lo que importa es fluidoterapia y manejo hospitalario, cosa de tu veterinario. Este menú es de mantenimiento normal, para cuando ya esté comiendo por su cuenta y en recuperación -- si la función renal no se recupera del todo y queda una insuficiencia crónica, usa la patología «renal», no esta."
+      },
+      "formulable_por_profesional": true
+    },
+    "enteropatia_cronica": {
+      "nombre": "Enteropatía crónica / colitis (incluye enfermedad inflamatoria intestinal)",
+      "formulable": true,
+      "avisos": {
+        "general": "SACN5 5ª ed., cap.57 «Inflammatory Bowel Disease», Tabla 57-1, recomienda proteína ≥25% de materia seca -- una ración BARF sin ajustar ya va muy por encima -- y, si se necesita un enfoque de eliminación, usar una sola fuente de proteína que el perro no haya comido antes. Esto último ya lo hace Rawku con las alergias: si tu veterinario identifica una proteína nueva como la única a usar, selecciónala en Personalizar y excluye el resto de carnes en Alergias -- no hace falta una patología aparte para eso. La fibra que recomienda SACN5 para las formas con diarrea no está hoy en el catálogo como dato."
+      },
+      "formulable_por_profesional": true
+    },
+    "artrosis": {
+      "nombre": "Artrosis / osteoartritis",
+      "formulable": true,
+      "avisos": {
+        "general": "SACN5 5ª ed., cap.34 «Nutritional Management of Osteoarthritis», Tabla 34-2, recomienda subir el omega-3 (EPA+DHA) por encima del mínimo normal por su efecto antiinflamatorio -- el motor ya exige un mínimo de EPA+DHA (0,11 g/1000kcal, ver requerimientos_v2_final.json), pero no hay hoy un mecanismo para pedirle un mínimo MÁS ALTO solo en artrosis (a partir del 7 de septiembre el motor ya sabe pedir un mínimo reforzado: este menú exige al menos 1,0 g/1000kcal de EPA+DHA, casi diez veces el suelo general, eligiendo pescado azul con la frecuencia que haga falta. La glucosamina y el condroitín sulfato, que también se citan, no son datos que el catálogo tenga de ningún alimento. Mantener el peso ideal es lo que más impacto tiene, y eso ya lo cubre el cálculo de peso objetivo del DER."
+      },
+      "formulable_por_profesional": true,
+      "suelos_por_1000kcal": {
+        "epa_dha": {
+          "valor": 1.0,
+          "fuente": "SACN5 5ª ed., cap.34 «Nutritional Management of Osteoarthritis», Tabla 34-2, verificado 7-sep-2026",
+          "por_que": "Tabla 34-2: «Eicosapentaenoic acid 0.4 to 1.1%» (materia seca). A 4000kcal/kgMS son 1,0-2,75 g/1000kcal; se usa el extremo bajo (1,0) porque ya es varias veces el suelo general de EPA+DHA (0,11 g/1000kcal, NRC 2006) y es el que ya se ha probado que resuelve con el catalogo real. El mecanismo (min_por_1000kcal) se añadio el 7 de septiembre junto con este primer uso real: antes el motor solo sabia poner techos por patologia, nunca suelos."
+        }
+      }
+    },
+    "riesgo_gdv": {
+      "nombre": "Riesgo de dilatación-vólvulo gástrico (razas grandes/profundas de tórax)",
+      "formulable": true,
+      "avisos": {
+        "general": "SACN5 5ª ed., cap.53 «Gastric Dilatation and Gastric Dilatation-Volvulus», Tabla 53-1, no señala ningún nutriente concreto: los factores de riesgo son de MANEJO -- comer de un cuenco elevado, una sola toma grande al día, comer deprisa, hacer ejercicio justo después de comer, estrés. Nada de eso lo decide un menú. Sí ayuda repartir la ración en 2-3 tomas al día en vez de una."
+      },
+      "formulable_por_profesional": true
+    },
+    "disfuncion_cognitiva": {
+      "nombre": "Disfunción cognitiva canina",
+      "formulable": true,
+      "avisos": {
+        "general": "SACN5 5ª ed., cap.35 «Cognitive Dysfunction in Dogs», cita mejoras con antioxidantes (vitamina E, vitamina C, betacaroteno) y con aceite MCT como fuente de energía alternativa para el cerebro envejecido. No es un tope: es subir cosas que el catálogo ya cubre por el mínimo de FEDIAF (vitamina E, vitamina C no es un nutriente FEDIAF para perro) y el MCT no es un suplemento que use hoy el motor. No se ha aplicado ningún ajuste al menú."
+      },
+      "formulable_por_profesional": true
+    },
+    "shunt_sin_encefalopatia": {
+      "nombre": "Shunt portosistémico sin encefalopatía hepática activa",
+      "formulable": false,
+      "motivo_no_formulable": "El objetivo terapéutico de proteína (37,5-50 g/1000kcal, SACN5 Tabla 68-8) está POR DEBAJO del mínimo que FEDIAF exige a cualquier perro (52,1 g). El mecanismo no es el cobre (como en hepatopatia): es que el shunt hace que la sangre porta-hepática se salte el hígado, así que el amoniaco de catabolizar proteína no se depura y se acumula.",
+      "sin_dieta_automatica": true,
+      "avisos": {
+        "general": "Un perro con shunt portosistémico necesita proteína por debajo de lo que este motor puede bajar sin dejarlo por debajo del mínimo saludable de FEDIAF -- necesita una dieta pautada por tu veterinario, normalmente con fuentes de proteína de alta digestibilidad y baja carga de amoniaco (pollo, lácteos, soja, no vísceras).",
+        "profesional": "Se ha formulado una ración completa y equilibrada para un perro SANO. SACN5 5ª ed., cap.68 «Hepatobiliary Disease», Tabla 68-8: proteína 15-20% de materia seca (37,5-50 g/1000kcal a 4000kcal/kgMS) para perros con hepatobiliopatía sin signos de encefalopatía -- por debajo del mínimo FEDIAF (52,1). Cobre normal (no es un shunt por acúmulo de cobre); vigilar si hay signos de encefalopatía, que cambia el objetivo (ver «encefalopatia_hepatica»)."
+      },
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "nutriente_frontera": "proteina",
+      "objetivo_terapeutico_por_1000kcal": 43.75
+    },
+    "encefalopatia_hepatica": {
+      "nombre": "Encefalopatía hepática (con signos neurológicos activos)",
+      "formulable": false,
+      "motivo_no_formulable": "El objetivo terapéutico de proteína (25-37,5 g/1000kcal, SACN5 Tabla 68-8, nota **) está muy por debajo del mínimo de FEDIAF (52,1 g) -- es la restricción de proteína más estricta de todas las hepatopatías, y solo mientras duran los signos neurológicos.",
+      "sin_dieta_automatica": true,
+      "avisos": {
+        "general": "Con signos neurológicos activos por acumulación de amoniaco, la proteína hay que bajarla más que en cualquier otra hepatopatía de este sistema -- muy por debajo de lo saludable para un perro sin la enfermedad. Es una urgencia relativa: necesita manejo veterinario directo, no un menú ajustado desde una app.",
+        "profesional": "Se ha formulado una ración completa y equilibrada para un perro SANO. SACN5 5ª ed., cap.68 «Hepatobiliary Disease», Tabla 68-8, nota **: «For liver disease patients with signs of hepatic encephalopathy, dry matter dietary protein levels should be limited to 10 to 15% for dogs... until signs resolve» = 25-37,5 g/1000kcal a 4000kcal/kgMS. Muy por debajo del mínimo FEDIAF (52,1). Es temporal -- «until signs resolve» -- y por eso necesita reevaluación veterinaria frecuente, no una pauta fija."
+      },
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "nutriente_frontera": "proteina",
+      "objetivo_terapeutico_por_1000kcal": 31.25
+    },
+    "raza_predispuesta_cobre": {
+      "nombre": "Raza predispuesta a acumular cobre (sin diagnóstico confirmado de hepatopatía)",
+      "formulable": true,
+      "avisos": {
+        "general": "Bedlington terrier, West Highland White terrier, Labrador y Dálmata, entre otras, tienen predisposición genética a acumular cobre en el hígado -- pero tener la raza no es tener la enfermedad. Se sirve un menú normal, sin restringir el cobre por debajo del mínimo de FEDIAF (eso solo tiene sentido con diagnóstico confirmado: usa la patología «hepatopatia»). Se evitan a propósito los alimentos con más cobre por ración del catálogo (hígado, sobre todo el de cordero y pollo) sin necesidad de bajar del mínimo, como medida preventiva razonable mientras no haya diagnóstico."
+      },
+      "formulable_por_profesional": true
+    },
+    "dermatosis_zinc": {
+      "nombre": "Dermatosis zinc-sensible (razas nórdicas, defecto de absorción)",
+      "formulable": true,
+      "avisos": {
+        "general": "Este es un defecto de ABSORCIÓN intestinal de zinc (husky siberiano, malamute de Alaska, sobre todo), no una falta de zinc en la dieta -- SACN5 5ª ed., cap.32 «Skin and Hair Disorders», Tabla 32-1, pide 100-200 mg/kg de materia seca (25-50 mg/1000kcal a 4000kcal/kgMS), que ya cae DENTRO del rango normal de FEDIAF para cualquier perro (20,8-56,75 mg/1000kcal): no hace falta ni es posible tratarlo subiendo el zinc de la comida. Este menú sí sube el zinc de la dieta un poco por encima del mínimo general (25 en vez de 20,8 mg/1000kcal, SACN5 cap.32), pero eso es un apoyo, no el tratamiento: lo que trata de verdad esta condición es la suplementación oral de zinc a dosis terapéuticas, pautada y vigilada por tu veterinario."
+      },
+      "formulable_por_profesional": true,
+      "suelos_por_1000kcal": {
+        "zinc": {
+          "valor": 25.0,
+          "fuente": "SACN5 5ª ed., cap.32 «Skin and Hair Disorders», Tabla 32-1, verificado 7-sep-2026",
+          "por_que": "Tabla 32-1: «Zinc: Dogs: 100 to 200 mg/kg food DM». A 4000kcal/kgMS son 25-50 mg/1000kcal; se usa el extremo bajo (25) porque ya es un aumento real sobre el mínimo general de FEDIAF (20,8 mg/1000kcal), suficiente para probar que resuelve con el catálogo real."
+        }
+      }
+    },
+    "dermatitis_atopica": {
+      "nombre": "Dermatitis atópica",
+      "formulable": true,
+      "avisos": {
+        "general": "SACN5 5ª ed., cap.32, cita el omega-3 (EPA+DHA) como apoyo antiinflamatorio en dermatitis atópica -- el motor ya exige un mínimo de EPA+DHA (0,11 g/1000kcal) y usar pescado azul con frecuencia sube ese aporte por encima del mínimo de forma natural. No hay un tope numérico que aplicar aquí: la dermatitis atópica es una alergia ambiental (ácaros, polen), no alimentaria -- si además hay alergia alimentaria confirmada, decláralo en Alergias, que es el mecanismo que ya existe para eso."
+      },
+      "formulable_por_profesional": true
+    },
+    "epilepsia_idiopatica": {
+      "nombre": "Epilepsia idiopática",
+      "formulable": true,
+      "avisos": {
+        "general": "No hay en las fuentes disponibles evidencia sólida de que ajustar la composición de una ración BARF cambie el curso de la epilepsia idiopática -- el tratamiento es farmacológico (antiepilépticos). Se sirve un menú normal. Si tu veterinario neurólogo recomienda una dieta cetogénica o con aceite MCT para epilepsia refractaria, es una prescripción específica y supervisada que este sistema no formula."
+      },
+      "formulable_por_profesional": true
+    },
+    "mielopatia_degenerativa": {
+      "nombre": "Mielopatía degenerativa",
+      "formulable": true,
+      "avisos": {
+        "general": "No hay una dieta específica documentada en las fuentes disponibles para la mielopatía degenerativa: es una enfermedad neurodegenerativa progresiva sin tratamiento nutricional que cambie su curso. Lo único con respaldo real es mantener el peso ideal, porque el exceso de peso carga más el tren trasero, que es justo el que falla -- y eso ya lo cubre el cálculo de peso objetivo del DER, sin necesitar un ajuste propio de esta patología."
+      },
+      "formulable_por_profesional": true
+    },
+    "cushing": {
+      "nombre": "Hiperadrenocorticismo (Cushing)",
+      "formulable": true,
+      "avisos": {
+        "general": "SACN5 5ª ed., cap.29 «Endocrine Disorders», no da una tabla de factores nutricionales propia para Cushing -- lo menciona sobre todo como causa de diabetes secundaria o de hiperlipidemia, no como una enfermedad con dieta propia. Si tu perro tiene Cushing Y ADEMÁS diabetes o hiperlipidemia diagnosticadas, añade también esa patología para que se apliquen sus ajustes. Sin comorbilidad, se sirve un menú normal: el tratamiento de Cushing es farmacológico (trilostano, mitotano), no dietético."
+      },
+      "formulable_por_profesional": true
+    },
+    "addison": {
+      "nombre": "Hipoadrenocorticismo (Addison)",
+      "formulable": true,
+      "avisos": {
+        "general": "No hay en las fuentes disponibles una tabla de factores nutricionales propia para Addison: el problema es hormonal (falta de mineralocorticoides y glucocorticoides) y se trata con reposición hormonal, no con dieta. Un matiz importante en sentido CONTRARIO a la mayoría de patologías de esta lista: Addison hace perder sodio por la orina, así que NO tiene sentido restringir la sal en estos perros -- si alguna vez se combina con otra patología que sí baja el sodio (p.ej. cardiopatía), decíselo a tu veterinario antes de generar ese menú combinado."
+      },
+      "formulable_por_profesional": true
+    },
+    "cancer_soporte": {
+      "nombre": "Soporte nutricional oncológico (incluye caquexia/sarcopenia asociada)",
+      "formulable": true,
+      "avisos": {
+        "general": "SACN5 5ª ed., cap.30 «Cancer», Tabla 30-5, recomienda para el paciente oncológico: poco carbohidrato digestible (≤25% de materia seca -- una ración BARF ya va muy por debajo, casi no lleva), grasa alta (25-40% de materia seca) y proteína alta (30-45% de materia seca, perro) con arginina extra (>2% de materia seca). Es prácticamente el perfil natural de una ración BARF bien construida: alta en grasa y proteína, muy baja en carbohidrato -- no hace falta ningún ajuste porque el punto de partida ya encaja. Lo que sí importa más que la composición es que el perro coma lo suficiente: la caquexia oncológica es, sobre todo, un problema de apetito y de mantener peso, y eso se vigila con tu veterinario, sobre todo durante quimioterapia o radioterapia."
+      },
+      "formulable_por_profesional": true
+    },
+    "inmunosupresion": {
+      "nombre": "Inmunosupresión (quimioterapia, corticoides a dosis inmunosupresora, enfermedad inmunomediada)",
+      "formulable": true,
+      "avisos": {
+        "general": "No hay en las fuentes disponibles una restricción nutricional específica para perros inmunodeprimidos -- lo que sí es una preocupación clínica conocida y ampliamente documentada en medicina veterinaria es que CUALQUIER alimento crudo (carne, pescado, huevo) lleva un riesgo de patógenos (Salmonella, Listeria, Campylobacter) mayor que uno cocinado, y ese riesgo pesa más en un sistema inmune debilitado. Este motor no cocina ni pasteuriza nada: sigue siendo BARF. Coméntaselo a tu veterinario -- en inmunosupresión activa (quimioterapia, dosis altas de corticoides) muchos oncólogos veterinarios recomiendan pasar a alimento cocinado o comercial mientras dure, y eso es una decisión clínica que este sistema no puede tomar por ti."
+      },
+      "formulable_por_profesional": true
+    },
+    "renal_avanzada": {
+      "nombre": "Insuficiencia renal crónica, moderada-grave (equivalente a IRIS 3-4)",
+      "formulable": false,
+      "motivo_no_formulable": "El objetivo terapéutico de proteína (35-50 g/1000kcal, SACN5 Tabla 37-9) está por debajo del mínimo que FEDIAF exige a cualquier perro (52,1 g) -- es el mismo umbral que ya bloquea la 'renal' de base en su aviso.profesional, pero aquí SACN5 documenta que restringir también el fósforo tiene evidencia real (Grade III, Tabla 37-10) en estos estadios, no solo en teoría.",
+      "sin_dieta_automatica": true,
+      "avisos": {
+        "general": "En insuficiencia renal moderada-grave (tu veterinario te habrá hablado de 'estadio 3' o '4', o de creatinina/SDMA claramente altos), la restricción real de proteína va por debajo de lo que un perro sano necesita -- eso no se puede resolver eligiendo mejor los alimentos, hace falta una dieta renal terapéutica pautada por tu veterinario. Si tu perro está en fases más tempranas (o no sabes el estadio), usa la patología «renal» normal, que sí genera menú.",
+        "profesional": "Se ha formulado con el fósforo en 1200 mg/1000kcal (lo más bajo que permite el mínimo de FEDIAF, 1160), igual que la 'renal' de base. SACN5 5ª ed., cap.37 «Chronic Kidney Disease», Tabla 37-10: la restricción de fósforo tiene evidencia Grade III específicamente en IRIS 3-4 (en 1-2 la evidencia es más débil, Grade IV, y de progresión general, no de un número de fósforo distinto). La Tabla 37-9 da además proteína 14-20% de materia seca (35-50 g/1000kcal a 4000kcal/kgMS) -- por debajo del mínimo FEDIAF -- que es la restricción de verdad en estos estadios y que este menú NO aplica. Ver también VETERINARIOS.md §12-ter (suelo NRC de proteína, evento de taurina en Sanderson 2001) antes de bajar de 35."
+      },
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "nutriente_frontera": "proteina",
+      "objetivo_terapeutico_por_1000kcal": 42.5,
+      "topes_por_1000kcal": {
+        "fosforo": {
+          "valor": 1200.0,
+          "fuente": "Igual que renal (Freeman LM, dvm360 2009; WSAVA; IRIS; SACN5 cap.37 Tabla 37-9)",
+          "por_que": "Mismo tope que la renal de base: es lo mas restrictivo que el solver puede aplicar sin romper el minimo FEDIAF de adulto (1160 mg). La diferencia real de esta patologia esta en la proteina, no en el fosforo -- el fosforo ya estaba al limite posible en ambas."
+        }
+      }
     }
   }
 }

@@ -53,16 +53,51 @@ QUÉ CAMBIÓ RESPECTO A LA VERSIÓN ANTERIOR (y por qué)
    se baja al RER puro (70) y eso MANDA sobre todo lo demás.
 
 Todo se calcula sobre el PESO IDEAL cuando se conoce, no sobre el actual.
+
+=============================================================================
+POR QUÉ NO HAY UN FACTOR DE ENFERMEDAD (verificado 7-sep-2026, no de memoria)
+=============================================================================
+El método AMERICANO (arriba) multiplica el RER por un factor por
+enfermedad/lesión -- 1,1 a 2,3 según la tabla de Remillard & Thatcher 1989,
+la misma que cita literal Fascetti & Delaney, Applied Veterinary Clinical
+Nutrition 2ª ed. (Wiley-Blackwell, 2024), cap.3 "Determining Energy
+Requirements" (Ramsey), verificado contra el libro (no contra un resumen).
+Esta app NUNCA ha aplicado nada así, y no es un hueco: es la recomendación
+de la propia fuente. Tres citas literales del capítulo:
+
+  "These factors have not been extensively tested in dogs and cats, and use
+   of these equations assumes that dogs and cats will have similar
+   energetic responses to disease and injury to humans. [...] it seems
+   reasonable to target energy requirements for most sick or injured dogs
+   and cats initially at RER, followed by adjustments based on individual
+   progress."
+
+  "It should rarely be necessary to feed injured or ill cats and dogs above
+   the predicted energy requirement for a healthy animal at maintenance."
+
+  "Weight loss is never a goal during treatment and recovery from trauma
+   and critical illness."
+
+Ninguna patología de `patologias.json` toca esta fórmula ni recibe un
+multiplicador propio: el DER de un perro enfermo se calcula EXACTAMENTE
+igual que el de uno sano de su mismo peso/etapa/actividad, y eso es lo
+correcto según la fuente, no un descuido. La última cita sí motivó un
+cambio real: `main.py` avisa (vía `aviso_si_ademas` en `obesidad`) si se
+intenta combinar un objetivo de adelgazamiento con una patología aguda o
+crítica (`fracaso_renal_agudo`, `encefalopatia_hepatica`, `cancer_soporte`,
+`inmunosupresion`, `pancreatitis`) -- ver PENDIENTE_NUTRICION.md.
 """
 
 # =============================================================================
 # ADULTOS — base por actividad (kcal por kg de peso metabólico)
 # =============================================================================
-# TABLA VII-6 de FEDIAF (Anexo 7.2.4). Las bases 95 y 110 estan confirmadas
-# en el texto oficial (secc. 3.2.1); el resto de la tabla via reproduccion de
-# UK Pet Food ("Based on FEDIAF Nutritional Guidelines P62").
-# La media MEDIDA en 586 perros de compania (Thes et al. 2014) fue 98, o sea
-# justo entre "baja" (95) y "moderada bajo impacto" (110). Encaja.
+# ⚠️ CORREGIDO 6-sep-2026: es la TABLA VII-7 de FEDIAF ("Recommendations for
+# DER in relation to activity"), no la VII-6 (esa es solo por EDAD, sin
+# actividad -- confirmado literal en fediaf_2025.txt, los 5 valores de aqui
+# (95/110/125/150-175) cuadran exactos con esa tabla, no con la VII-6.
+# La media MEDIDA en 586 perros de compania (Thes et al. 2015 -- FEDIAF lo
+# cita como "Thes M et al. 2015" en su propia bibliografia, no 2014) fue 98,
+# o sea justo entre "baja" (95) y "moderada bajo impacto" (110). Encaja.
 BASE_ACTIVIDAD = {
     "sedentario":   95,    # baja: menos de 1 h/dia, casi siempre con correa
     "normal":      110,    # moderada 1-3 h/dia, bajo impacto
@@ -122,7 +157,12 @@ AJUSTE_RAZA = 15
 KLEIN_A = 1.063
 KLEIN_B = 0.565
 MJ_A_KCAL = 239.0
-# Escalones de FEDIAF, conservados solo como respaldo si no hay peso adulto
+# ⚠️ CORREGIDO 6-sep-2026: esto NO es una tabla de FEDIAF -- se comprobó
+# fediaf_2025.txt entero y la Tabla VII-8a/8b de crecimiento SOLO trae la
+# curva continua de Klein (arriba), sin ningún escalón 210/175/140. Es la
+# convención clínica genérica RER x3.0/2.5/2.0 (la que traía el motor
+# ANTES de adoptar Klein, ver CLAUDE.md); se conserva solo como respaldo
+# prudente si no hay peso adulto esperado, no como cifra de FEDIAF.
 CRECIMIENTO = [
     (0.50, 210),   # hasta el 50% del peso final   (= RER x 3.0)
     (0.80, 175),   # del 50 al 80%                 (= RER x 2.5)

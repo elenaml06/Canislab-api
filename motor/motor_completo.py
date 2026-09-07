@@ -79,11 +79,20 @@ def _es_crecimiento(etapa):
 
 
 def topes_de_patologias(patologias, etapa="Adulto"):
-    """Devuelve (topes_por_1000kcal, pct_kcal_grasa, avisos_extra) ya
-    resueltos para esta etapa y esta combinación de patologías."""
+    """Devuelve (topes_por_1000kcal, pct_kcal_grasa, avisos_extra,
+    suelos_por_1000kcal) ya resueltos para esta etapa y esta combinación de
+    patologías.
+
+    ⚠️ `suelos_por_1000kcal` AÑADIDO (7 septiembre) — el espejo de los
+    topes: un MÍNIMO reforzado en vez de un máximo rebajado (artrosis pide
+    más omega-3 del que exige FEDIAF a un perro sano; nada de esto existía
+    antes porque el mecanismo solo sabía apretar techos). Con varias
+    patologías activas, cada una solo puede EXIGIR MÁS, nunca menos: por
+    eso se combinan con `max()`, al revés que los topes (que se combinan
+    con `min()`, porque ahí cada una solo puede exigir MENOS)."""
     lista = list(patologias or [])
     crece = _es_crecimiento(etapa)
-    topes, pct_grasa, avisos = {}, None, []
+    topes, pct_grasa, avisos, suelos = {}, None, [], {}
 
     for p in lista:
         info = PATOLOGIAS.get(p, {})
@@ -100,6 +109,10 @@ def topes_de_patologias(patologias, etapa="Adulto"):
             actual = topes.get(clave)
             topes[clave] = valor if actual is None else min(actual, valor)
 
+        for clave, valor in (info.get("min_por_1000kcal") or {}).items():
+            actual = suelos.get(clave)
+            suelos[clave] = valor if actual is None else max(actual, valor)
+
         v = info.get("max_pct_kcal_grasa")
         if v is not None:
             pct_grasa = v if pct_grasa is None else min(pct_grasa, v)
@@ -111,7 +124,7 @@ def topes_de_patologias(patologias, etapa="Adulto"):
             if any(otra in lista for otra in requiere):
                 pct_grasa = valor if pct_grasa is None else min(pct_grasa, valor)
 
-    return topes, pct_grasa, avisos
+    return topes, pct_grasa, avisos, suelos
 
 FRUTAS = {"Manzana", "Pera", "Plátano", "Fresa", "Sandía", "Melón", "Naranja",
          "Mandarina", "Piña", "Mango", "Frambuesa", "Arándano", "Albaricoque", "Dátil"}
@@ -187,6 +200,16 @@ def avisos_de_patologias(patologias, etapa="Adulto", es_profesional=False):
             salida.append(info["aviso_crecimiento"])
         elif info.get("aviso"):
             salida.append(info["aviso"])
+
+        # ⚠️ AÑADIDO (7 septiembre) — el aviso que solo sale por la
+        # COMBINACIÓN de dos patologías, no por cada una sola (ver
+        # `aviso_si_ademas` en patologias.py). Mismo patrón que
+        # `max_pct_kcal_grasa_si_ademas`, con texto en vez de un número.
+        condicional = info.get("aviso_si_ademas")
+        if condicional:
+            texto, requiere = condicional
+            if any(otra in (patologias or []) for otra in requiere):
+                salida.append(texto)
     return salida
 
 
@@ -410,12 +433,17 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # infactible sin motivo real. Quitarlos aquí, del catálogo de
         # candidatos, evita que puedan "gastar" cupo de ninguna
         # restricción, sea la que sea.
-        from seguridad import OXALATO_ALTO, PURINAS_ALTAS, BORRAJA_EXCLUIR, _es as _es_patologia
+        from seguridad import OXALATO_ALTO, PURINAS_ALTAS, BORRAJA_EXCLUIR, TIROIDES_EXCLUIR, _es as _es_patologia
         if "oxalato" in (patologias or []):
             disp = [n for n in disp if not _es_patologia(n, OXALATO_ALTO)]
         if "urato" in (patologias or []) and cat in ("Hígado", "Vísceras", "Pescados y mariscos"):
             disp = [n for n in disp if not _es_patologia(n, PURINAS_ALTAS)]
         disp = [n for n in disp if not _es_patologia(n, BORRAJA_EXCLUIR)]
+        # ⚠️ TEJIDO TIROIDEO (6 sep): cuello/garganta/laringe pueden traer la
+        # tiroides pegada -- bloqueo de nivel A, se quita SIEMPRE, sea cual
+        # sea la patología, igual que la borraja. TVT Merkblatt 181 (mayo
+        # 2025). Ver seguridad.TIROIDES_EXCLUIR.
+        disp = [n for n in disp if not _es_patologia(n, TIROIDES_EXCLUIR)]
         disp = [n for n in disp
                if not any(pat in (patologias or [])
                          for pat in (alimentos.get(n, {}).get("restricciones_patologia") or {}))]
@@ -449,6 +477,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     if "oxalato" in (patologias or []):
         _sup = [n for n in _sup if not _es_patologia(n, OXALATO_ALTO)]
     _sup = [n for n in _sup if not _es_patologia(n, BORRAJA_EXCLUIR)]
+    _sup = [n for n in _sup if not _es_patologia(n, TIROIDES_EXCLUIR)]
     _sup = [n for n in _sup
             if not any(pat in (patologias or [])
                       for pat in (alimentos.get(n, {}).get("restricciones_patologia") or {}))]
@@ -664,7 +693,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # esta etapa (25 agosto). Antes se leían crudos de la tabla y se
     # aplicaban igual a un cachorro que a un adulto -- ver el comentario
     # largo de esa función.
-    topes_patologia, pct_grasa_patologia, _avisos_pat = topes_de_patologias(patologias, etapa)
+    topes_patologia, pct_grasa_patologia, _avisos_pat, suelos_patologia = topes_de_patologias(patologias, etapa)
 
     # ⚠️ AÑADIDO (5 agosto, noche) — CONECTADO: "Calcio_LateGrowth_RazaGrande"
     # ya existía en los datos, con nota de auditoría explícita diciendo que
@@ -686,6 +715,18 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             mn_grande = _num(r_grande.get(f"min{et}"))
             if mn_grande:
                 minimos_reforzados["calcio"] = mn_grande
+
+    # ⚠️ AÑADIDO (7 septiembre) — LOS SUELOS POR PATOLOGÍA SE SUMAN AQUÍ,
+    # al mismo cajón que el calcio de raza grande: es exactamente el mismo
+    # mecanismo (subir un mínimo por encima del de FEDIAF), solo que la
+    # razón de subirlo es una patología en vez del tamaño de la raza. Se
+    # combinan con `max()` porque un mínimo reforzado de raza grande Y de
+    # patología a la vez tienen que sumar el más exigente de los dos, nunca
+    # perder el uno al aplicar el otro.
+    for _clave_suelo, _valor_suelo in suelos_patologia.items():
+        _actual = minimos_reforzados.get(_clave_suelo)
+        minimos_reforzados[_clave_suelo] = (_valor_suelo if _actual is None
+                                            else max(_actual, _valor_suelo))
 
     # 2. mínimos y máximos de FEDIAF
     #

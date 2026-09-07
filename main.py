@@ -44,7 +44,7 @@ import persistencia
 from motor_completo import resolver as resolver_v2, especie_de
 # PATOLOGIAS: los topes por patología, para poder comprobarlos también
 # en la puerta de verificación (ver _tope_patologia_roto).
-from constructor import tabla_imputacion_maximos, valor_para_maximo
+from constructor import tabla_imputacion_maximos, valor_para_maximo, valor_nutriente
 from motor_completo import PATOLOGIAS, topes_de_patologias
 from exclusiones import filtrar as filtrar_exclusiones
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
@@ -84,7 +84,7 @@ def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=N
     # revalidar), así que con ponerlo en esta función sale en los ocho
     # sitios sin tocar la app ni añadir una clave nueva que alguien tenga
     # que acordarse de leer.
-    _topes, _pct, avisos_por_la_etapa = topes_de_patologias(patologias, etapa)
+    _topes, _pct, avisos_por_la_etapa, _suelos = topes_de_patologias(patologias, etapa)
     problemas += avisos_por_la_etapa
     return problemas
 
@@ -257,11 +257,31 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto"):
     # (25 agosto). Si aquí se leyeran otra vez a mano de la tabla, esta
     # comprobación y la restricción podrían decir cosas distintas -- que es
     # exactamente lo que pasó entre el analizador y el semáforo con la fibra.
-    topes, pct, _ = topes_de_patologias(patologias, etapa)
+    topes, pct, _, suelos = topes_de_patologias(patologias, etapa)
     for clave, tope in topes.items():
         v = por_1000(clave)
         if v > tope * MARGEN:
             rotos.append(f"{clave} {v:.1f} (tope {tope:.1f} por patología)")
+
+    # ⚠️ AÑADIDO (7 septiembre) — EL ESPEJO DEL CHEQUEO DE ARRIBA, PARA LOS
+    # SUELOS. Sin margen de redondeo A FAVOR (al revés que el tope: aquí lo
+    # que preocupa es quedarse CORTO, así que no se resta margen). Se usa
+    # `valor_nutriente` sin imputar huecos -- lo contrario que el tope de
+    # arriba, que imputa al percentil alto de la familia porque ahí el
+    # hueco preocuparía si se contara de menos. En un suelo, un hueco
+    # contado como algo que no se ha medido sería INFLAR el mínimo real;
+    # contarlo como 0 es el lado seguro.
+    def _por_1000_min(clave):
+        total = 0.0
+        for n, g in gramos.items():
+            total += valor_nutriente(al.get(n, {}).get("nutrientes", {}), clave) / 100.0 * g
+        return total / kcal * 1000.0
+
+    MARGEN_SUELO = 0.995
+    for clave, suelo in suelos.items():
+        v = _por_1000_min(clave)
+        if v < suelo * MARGEN_SUELO:
+            rotos.append(f"{clave} {v:.1f} (suelo {suelo:.1f} por patología)")
     if pct is not None:
         grasa_g = sum((_valor_num(al.get(n, {}).get("nutrientes", {}).get("grasa")) or 0.0) / 100.0 * g
                       for n, g in gramos.items())
@@ -3736,8 +3756,13 @@ SELLOS_DE_LOS_DATOS = {
         # ternera). Este sello SOLO se toca cuando el cambio de datos es a
         # propósito y está documentado: si no coincide sin haberlo tocado,
         # es que alguien alteró el catálogo, y eso es lo que vigila.
-        "alimentos_v3_final.json":      "4d634b9cf5f19fdc",   # 28 ago (2): EL HIGADO Y EL CORAZON DE PAVO, resembrados desde el pollo del USDA -- su aminograma venia del pavo del USDA, que tiene la isoleucina y la valina un 40% bajas (Leu/Ile 2,52 contra 1,47-1,98 del resto). Reescalados a NUESTRA proteina. Las otras cinco fichas de pavo NO se cargan: traian histidina = isoleucina = valina exactos, y eso es una copia, no una medida. Ver el BLOQUE 27. // 28 ago: PURINAS DE CUATRO VISCERAS con cifra publicada (timo 525, bazo de cordero 322, bazo de vaca 185, pulmon de ternera 117). NO se uso la banda generica 84-243 que se habia propuesto: para el timo habria declarado ~160 cuando la cifra son 525, un factor de 3 a 4 POR ABAJO, y es el alimento solido con mas purinas de las tablas. Pancreas, testiculos y pulmon de cordero se quedan como hueco: no hay dato. Ver el BLOQUE 33
-        "requerimientos_v2_final.json": "68f335c24a4ec898",   # 28 ago: EL ANCLA DE 110. Cada nutriente lleva ahora `minAdulto110`, la columna de DER 110 de la Tabla III-3b, sacada de NUESTRA transcripcion auditada del PDF y no de fuera. Con las dos anclas se puede aplicar la ecuacion del apartado 7.2.5: cuando el perro come menos, el minimo por 1000 kcal sube. Los 38 cuadraron con el minAdulto de siempre sin una discrepancia, o sea que nuestra columna ES la de 95. Ver el BLOQUE 34
+        "alimentos_v3_final.json":      "2e57b5f658b8c6c0",   # 6 sep (2): 23 fichas corregidas contra USDA/BEDCA (CORRECCIONES_CATALOGO.csv en canislab-fuentes, 86 celdas). Los mas graves: albahaca (7 minerales eran de deshidratada, zinc +619%), higado de pollo (cobre +815%, vitA +236%), semilla de sesamo (calcio -85%, era sesamo pelado), dorada (grasa/vitD/energia por una errata de BEDCA que sumaba 106g/100g), 5 pechugas/muslos de pollo y pavo (errores de escala en vitA y sesgos sistematicos del -13% al -23%). Ademas: yodo sin respaldo vaciado a sin_dato en 6 fichas, y "trazas" de BEDCA (que no es lo mismo que 0) vaciado a sin_dato en vitA/vitD de 11 fichas mas. auditar_catalogo.py y auditar_fediaf.py re-ejecutados, pruebas_completas.py entero.
+        # 6 sep: nota_datos de los 4 alimentos excluidos por tejido tiroideo (Cuello de pavo/pato/ternera, Laringe de vacuno) documenta el bloqueo -- ver seguridad.TIROIDES_EXCLUIR.
+        # 28 ago (2): EL HIGADO Y EL CORAZON DE PAVO, resembrados desde el pollo del USDA -- su aminograma venia del pavo del USDA, que tiene la isoleucina y la valina un 40% bajas (Leu/Ile 2,52 contra 1,47-1,98 del resto). Reescalados a NUESTRA proteina. Las otras cinco fichas de pavo NO se cargan: traian histidina = isoleucina = valina exactos, y eso es una copia, no una medida. Ver el BLOQUE 27. // 28 ago: PURINAS DE CUATRO VISCERAS con cifra publicada (timo 525, bazo de cordero 322, bazo de vaca 185, pulmon de ternera 117). NO se uso la banda generica 84-243 que se habia propuesto: para el timo habria declarado ~160 cuando la cifra son 525, un factor de 3 a 4 POR ABAJO, y es el alimento solido con mas purinas de las tablas. Pancreas, testiculos y pulmon de cordero se quedan como hueco: no hay dato. Ver el BLOQUE 33
+        "requerimientos_v2_final.json": "e7f1142337912f5e",   # 7 sep: nota_auditoria de Vitamina_E ampliada con la cita exacta de FEDIAF (Tabla VII-14, "Conversion factors - Vitamin source to activity") tras la pregunta que dejo abierta Fascetti & Delaney 2a ed. -- CONFIRMA el x0.67 ya usado (tocoferol NATURAL de alimentos frescos, no el acetato SINTETICO de suplemento que cita Fascetti, que da un numero distinto). Ningun numero cambia, solo el texto de una fila.
+        # 6 sep (2): nota_auditoria de los 12 aminoacidos corregida -- decia "el motor todavia no lo verifica porque ningun alimento tiene aminograma", que era cierto ANTES del 28 de agosto y llevaba mas de una semana desactualizado (los 12 SI estan en verificar.MAPA desde entonces, 94/159 fichas con aminograma). Ningun numero cambia, solo el texto de 12 filas.
+        # 6 sep: VITAMINA D AL TECHO LEGAL. Es el UNICO nutriente del perfil canino con techo legal (UE) por debajo del nutricional -- 227.00 UI (L) frente a 320.00 UI (N) en la Tabla III-3a, confirmado dos veces en el PDF de FEDIAF. El max de antes (20 ug = 800 UI) era el nutricional; el que manda por ser mas estricto es el legal, 227 x 2.5 = 567.5 UI = 14.1875 ug/1000kcal. auditar_fediaf.py actualizado a la vez para no comparar contra el numero equivocado. Ver PENDIENTE_NUTRICION.md.
+        # 28 ago: EL ANCLA DE 110. Cada nutriente lleva ahora `minAdulto110`, la columna de DER 110 de la Tabla III-3b, sacada de NUESTRA transcripcion auditada del PDF y no de fuera. Con las dos anclas se puede aplicar la ecuacion del apartado 7.2.5: cuando el perro come menos, el minimo por 1000 kcal sube. Los 38 cuadraron con el minAdulto de siempre sin una discrepancia, o sea que nuestra columna ES la de 95. Ver el BLOQUE 34
     }
 
 
@@ -3760,7 +3785,8 @@ def verificar():
     import hashlib, os, json
     SELLOS = SELLOS_DE_LOS_DATOS
     SELLOS_CRUDOS = {
-        "der.py": "1c5c8bb91ceac481",
+        "der.py": "4dbd7f93d9296bd9",   # 7 sep: documentado por que NO hay factor de enfermedad sobre el RER, verificado contra Fascetti & Delaney 2a ed. cap.3 (Ramsey) -- la fuente dice literal "target energy requirements... initially at RER" y "weight loss is never a goal during treatment and recovery from trauma and critical illness". Ningun numero ni comportamiento cambia, es documentacion de una decision que ya estaba tomada.
+        # 6 sep: 3 correcciones de cita en comentarios (VII-7 no VII-6, Thes 2015 no 2014, y el escalon 210/175/140 no es tabla de FEDIAF) -- ningun numero ni comportamiento cambia.
     }
     base = os.path.dirname(os.path.abspath(__file__))
     detalle, todo_ok = [], True

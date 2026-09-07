@@ -898,6 +898,332 @@ sin cuenta a con cuenta, y en silencio.
 
 ---
 
+## 12-bis. La matriz de autorización, tal como está HOY implementada (6 de septiembre)
+
+Escrito porque se preguntó directamente: de las patologías que ya existen
+en `patologias.json`, ¿con cuáles genera menú un tutor normal, con cuáles
+no, y qué puede hacer un veterinario que un tutor no puede? Esto es el
+estado REAL del código, no el plan de fases de arriba — se actualiza cada
+vez que se añade o se reconcilia una patología nueva.
+
+### Lo que no toca nadie, ni con firma de veterinario (recordatorio de §3)
+
+1. **Los cinco topes de seguridad crónica** — vitamina D, yodo, selenio,
+   mercurio, tiaminasa (`motor/seguridad.py`). Restricciones duras dentro
+   del solver, no avisos. Ningún camino los levanta.
+2. **Las alergias y exclusiones a mano.** Un veterinario puede AÑADIR una;
+   quitar una que el tutor puso, nunca.
+3. **La verificación final.** Todo menú pasa por `_garantizar_verificado()`,
+   también los del veterinario — lo que cambia es contra QUÉ se verifica
+   (un juego de requisitos con las excepciones declaradas), nunca que se
+   verifique.
+4. **La forma sí se relaja (proporciones BARF); la nutrición, nunca.**
+
+### Por qué una patología bloquea al tutor: las DOS razones que existen hoy
+
+No es una sola frontera, son dos, y `auditar_patologias.py` solo vigila
+la primera:
+
+**Razón A — el objetivo terapéutico cruza por debajo de un mínimo de
+FEDIAF** (`necesita_bajo_fediaf: true`). Es la frontera "limpia" del
+apartado 2: por debajo de ahí deja de ser una dieta completa y equilibrada
+y pasa a ser una prescripción. `hepatopatia` (cobre), `urato` (purinas),
+`cistina` (metionina+cistina), `shunt_sin_encefalopatia` (proteína,
+37,5-50 g/1000kcal, SACN5 Tabla 68-8) y `encefalopatia_hepatica` (proteína,
+25-37,5 g/1000kcal, más estricto por ser temporal mientras hay signos
+neurológicos) bloquean por esto.
+
+**Razón B — depende de una analítica o un manejo continuo que la app no
+puede ver**, aunque el número en sí quepa dentro de FEDIAF.
+`estruvita` (pH urinario) y `cistina` (también, además de la razón A)
+bloquean por esto; `otra` bloquea porque no hay ninguna regla que aplicar,
+ni siquiera hace falta un número para verlo.
+
+**La distinción que importa, y que casi se pasa por alto**: *tener*
+diagnosticada una condición (que el veterinario le haya dicho al tutor
+"tu perro es renal" o "tu perro está en estadio B2") **no** es lo mismo
+que necesitar una analítica en curso para tratarla con seguridad. Lo
+primero lo puede introducir el tutor siempre —es solo contarle a la app lo
+que ya le contó su veterinario—, lo segundo es la Razón B. Por eso
+`cardiopatia_b1/_b2/_c/_d` son `formulable: true` pese a que el estadio
+ACVIM se diagnostica por ecocardiografía: una vez que el veterinario ha
+dado el estadio, es un dato estable que el tutor reporta, no una analítica
+que haya que seguir vigilando para que la ración siga siendo segura — a
+diferencia de estruvita, donde el pH hay que remedirlo. Si algún día se
+decide que el estadio ACVIM SÍ debe exigir confirmación profesional (por
+ejemplo, para que nadie pueda declarar "estadio D" sin habérselo dicho un
+veterinario y bajar el sodio más de lo que necesita), es un cambio de una
+línea (`sin_dieta_automatica: true` + `formulable_por_profesional: true`
++ `motivo_no_formulable`) — se deja anotado aquí para que sea una decisión
+explícita, no un descuido.
+
+### Los suelos por patología (7 de septiembre): el espejo de los topes
+
+Hasta hoy el motor solo sabía ENDURECER un máximo por patología (`renal`
+bajando el fósforo). Cuando una fuente pedía lo contrario — un MÍNIMO más
+alto que el de FEDIAF, como el omega-3 de artrosis o el zinc de
+dermatosis_zinc — no había mecanismo que lo aplicara, y esas patologías se
+quedaban en "solo aviso" aunque el número existiera.
+
+Se añadió `suelos_por_1000kcal` en `patologias.json`, espejo exacto de
+`topes_por_1000kcal`: mismas reglas de auditoría (fuente y porqué
+obligatorios, la clave tiene que estar en el MAPA, y una `formulable:
+true` no puede pedir un suelo por encima del máximo de FEDIAF — el espejo
+de "no puede pedir un tope por debajo del mínimo"). En el solver, el suelo
+se combina con `max()` entre patologías activas (el más exigente gana,
+nunca se pierde al combinar dos), justo al revés que un tope (`min()`, el
+más restrictivo gana). Usa el mismo cajón que ya existía para el mínimo de
+calcio de raza grande (`minimos_reforzados`): es exactamente el mismo
+mecanismo, con una patología en vez de un tamaño de raza como motivo.
+
+**Primeros dos usos reales, cada uno probado contra el solver antes de
+darlo por bueno**: `artrosis` (EPA+DHA ≥1,0 g/1000kcal, SACN5 cap.34) y
+`dermatosis_zinc` (zinc ≥25 mg/1000kcal, SACN5 cap.32). No sirve para
+`dcm_taurina_respondedora`: taurina y L-carnitina no están entre los 41
+nutrientes del MAPA ni en el catálogo, así que no hay nada que sumar
+aunque el mecanismo ya exista.
+
+### La tabla completa, generada del propio `patologias.json`
+
+| Patología | El tutor genera menú solo | Por qué bloquea (si bloquea) | Tope(s) |
+|---|---|---|---|
+| `renal` | ✅ Sí | — | fósforo 1200 |
+| `renal_proteinuria` | ✅ Sí (informativo, sin recorte automático) | — | — |
+| `pancreatitis` | ✅ Sí | — | grasa 20% kcal |
+| `oxalato` | ✅ Sí | — | vitD ≤ máx. FEDIAF (no baja el calcio) |
+| `cardiopatia` (sin estadio) | ✅ Sí | — | sodio 900 |
+| `cardiopatia_b1` | ✅ Sí | — | ninguno (ACVIM: sin tratamiento dietético) |
+| `cardiopatia_b2` | ✅ Sí | — | sodio 900 |
+| `cardiopatia_c` | ✅ Sí | — | sodio 790 |
+| `cardiopatia_d` | ✅ Sí | — | sodio 480 |
+| `diabetes` | ✅ Sí | — | grasa condicional |
+| `hipotiroidismo` | ✅ Sí | — | (solo exclusiones de alimento) |
+| `hepatopatia` | ❌ No | Razón A: cobre terapéutico (1,2) bajo el mínimo FEDIAF (2,08). Hoy usa 2,4 como intermedio no bloqueante — ver `PENDIENTE_PRODUCTO.md` sobre partir la opción en dos | cobre 2,4 (no terapéutico de verdad) |
+| `urato` | ❌ No | Razón A: purinas 90 objetivo vs. ~780 real de una ración cruda | — (solo aviso) |
+| `cistina` | ❌ No | Razón A + B: metionina+cistina bajo mínimo, y depende del pH urinario | — (solo aviso) |
+| `estruvita` | ❌ No | Razón B: depende del pH urinario, que la app no ve | — (solo aviso) |
+| `otra` | ❌ No | Ninguna regla nutricional conocida | — |
+| `hiperlipidemia` | ✅ Sí | — | grasa 30 (SACN5 cap.28) |
+| `obesidad` | ✅ Sí | — | grasa 30 (SACN5 pide 22,5, no alcanzable con catálogo real — ver el propio JSON) |
+| `cardiopatia_a` | ✅ Sí | — | ninguno (ACVIM estadio A: sin cambio de dieta) |
+| `dcm_taurina_respondedora` | ✅ Sí | — | ninguno (taurina no está en los 41 nutrientes medidos) |
+| `dcm_asociada_a_dieta` | ✅ Sí | — | ninguno (el mecanismo de riesgo no aplica a BARF) |
+| `ple_linfangiectasia` | ✅ Sí | — | grasa 37,5 (SACN5 cap.58) |
+| `insuficiencia_pancreatica_exocrina` | ✅ Sí | — | grasa 37,5 (SACN5 cap.66; el tratamiento real es enzimático, no dietético) |
+| `fracaso_renal_agudo` | ✅ Sí | — | ninguno (a propósito: no es la restricción de `renal`, que es para crónica) |
+| `enteropatia_cronica` | ✅ Sí | — | ninguno (proteína única vía Alergias, si hace falta) |
+| `artrosis` | ✅ Sí | — | suelo EPA+DHA ≥1,0 g/1000kcal (SACN5 cap.34; desde el 7-sep, el motor ya sabe poner suelos por patología, ver §12-bis abajo) |
+| `riesgo_gdv` | ✅ Sí | — | ninguno (los factores de riesgo son de manejo, no de nutrientes) |
+| `disfuncion_cognitiva` | ✅ Sí | — | ninguno |
+| `shunt_sin_encefalopatia` | ❌ No | Razón A: proteína 37,5-50 bajo el mínimo FEDIAF (52,1) | — (solo aviso) |
+| `encefalopatia_hepatica` | ❌ No | Razón A: proteína 25-37,5, más estricto y temporal | — (solo aviso) |
+| `raza_predispuesta_cobre` | ✅ Sí | — | ninguno (sin diagnóstico confirmado no se baja del mínimo) |
+| `dermatosis_zinc` | ✅ Sí | — | suelo zinc ≥25 mg/1000kcal (SACN5 cap.32; el defecto real es de absorción, no de dieta, así que esto es un apoyo, no el tratamiento) |
+| `dermatitis_atopica` | ✅ Sí | — | ninguno |
+| `epilepsia_idiopatica` | ✅ Sí | — | ninguno (sin evidencia de que la dieta cambie el curso) |
+| `mielopatia_degenerativa` | ✅ Sí | — | ninguno (peso ideal ya cubierto por el DER) |
+| `cushing` | ✅ Sí | — | ninguno (tratamiento farmacológico; combinar con diabetes/hiperlipidemia si hay comorbilidad) |
+| `addison` | ✅ Sí | — | ninguno (¡no restringir sodio: Addison lo pierde, no lo retiene!) |
+| `cancer_soporte` | ✅ Sí | — | ninguno (el perfil BARF ya encaja con lo que pide SACN5) |
+| `inmunosupresion` | ✅ Sí | — | ninguno (aviso sobre riesgo de patógenos de la comida cruda) |
+| `renal_avanzada` | ❌ No | Razón A: proteína 35-50 bajo el mínimo FEDIAF (52,1); SACN5 confirma evidencia Grade III de la restricción de fósforo específicamente aquí | fósforo 1200 (igual que `renal`) |
+
+Para las que bloquean, un veterinario acreditado (fase 1+) SÍ puede
+formular — es exactamente el punto de `formulable_por_profesional: true`,
+presente en todas. Lo que ve y firma en cada caso está en el campo
+`avisos.profesional` de `patologias.json`, no en un resumen.
+
+### Lo que falta para que esta tabla esté completa
+
+Del borrador de 47 (§8 de `PENDIENTE_NUTRICION.md`), verificado contra
+SACN5 5ª ed. completo + NRC 2006 + FEDIAF el 6 de septiembre, quedan
+deliberadamente FUERA de `patologias.json` por no aportar nada que el
+motor no haga ya o por no tener fuente primaria verificable:
+
+- `alergia_alimentaria` — ya cubierta por el mecanismo de Alergias
+  existente (excluir una proteína y elegir otra en Personalizar), que es
+  independiente de la lista de patologías. Añadirla aquí sería un segundo
+  camino para lo mismo.
+- `cachorro_raza_grande` — ya cubierto por la lógica de calcio de raza
+  grande del motor (peso adulto esperado, tope de calcio, Ca:P ≥1:1), no
+  es una patología aparte.
+- `gestacion_lactancia_con_patologia` — no es una patología en sí: es la
+  combinación de una etapa (`Gestacion`/`Lactancia`) con cualquiera de las
+  de arriba, y ese cruce ya lo resuelve `solo_en_adulto`/`en_crecimiento`
+  patología por patología.
+- `mucocele_biliar` — sin tabla de factores nutricionales en SACN5 (tema
+  posterior a la 5ª edición, 2010) ni en NRC 2006. No se ha fabricado un
+  número sin fuente.
+- `pancreatitis_sin_hipertrigliceridemia` / `_con_hipertrigliceridemia` —
+  no se ha partido `pancreatitis` en dos: el matiz de la hipertrigliceridemia
+  ya lo resuelve `diabetes.max_pct_kcal_grasa_si_ademas`, que se activa
+  cuando las dos condiciones coinciden.
+
+### 12-ter. Dentro de "puede bajar un mínimo de FEDIAF": hasta dónde, de verdad
+
+La regla de §10 dice que un veterinario **«puede bajar un mínimo de
+FEDIAF»**. Eso deja abierta la pregunta que hay que contestar antes de
+construir la fase 4: ¿bajarlo *cuánto*? FEDIAF no es el único número que
+existe — por debajo de FEDIAF hay, para algunos nutrientes, un segundo
+suelo **medido en el estudio que lo define**, y por debajo de ESE, no hay
+datos de ningún perro real. Esto se ha comprobado el 6 de septiembre
+abriendo **el primario, NRC 2006 (`canislab-fuentes/NRC2006/nrc2006.txt`)
+literal, no las notas de lectura** — la regla del propio repo de fuentes
+es exactamente ésa, y aquí importaba cumplirla porque es justo lo que
+decide si un menú prescrito es seguro.
+
+**Proteína (renal, IRIS 2-4).** NRC cita un único estudio largo real,
+Sanderson et al. (2001), 42-48 meses en beagles: *"suggest 80 g of crude
+protein per kilogram of diet containing 4.0 kcal ME·g–1 as the MR"* — son
+**20 g/1000 kcal**, muy por debajo del mínimo de FEDIAF (52,1). Pero el
+propio NRC, en la misma frase, dice que uno de esos perros **desarrolló
+cardiomiopatía dilatada por deficiencia de taurina**, corregida solo con
+suplemento de taurina. Es decir: 20 g/1000 kcal no es un número tranquilo
+— es el punto exacto donde, en el único estudio que existe, ya pasó algo
+grave. Por debajo de eso, cero perros estudiados.
+
+**Metionina+cistina (cistina, y el déficit ya visto en renal).** Mismo
+estudio, mismo párrafo de NRC: **5,2 g de aminoácidos azufrados totales
+por 4.000 kcal (1,3 g/1000 kcal) sostenidos 4 años sin problema**, pero
+**4,8 g/4.000 kcal (1,2 g/1000 kcal) con más grasa dio el mismo perro con
+cardiomiopatía por taurina**. El mínimo de FEDIAF (2,21 g/1000 kcal) ya
+tiene margen sobre esto, pero la cistinuria pide bajar precisamente este
+número — y aquí SÍ hay un suelo medido, a apenas un peldaño de donde
+ocurrió el problema real: **por debajo de 1,3 g/1000 kcal se entra en la
+misma zona que causó la cardiomiopatía en el estudio que define el
+número**. Esto no es "criterio clínico discutible": es un evento adverso
+ya documentado, en el estudio que se está citando.
+
+**Fósforo (renal).** Aquí el margen es mayor de lo que parece. NRC, con
+muchos menos datos que para proteína (*"very few experimental data
+available"*), estima el AI de un adulto en **~0,75 g/1000 kcal** —
+**más bajo** que el objetivo terapéutico de 0,8 g/1000 kcal que propone el
+borrador de 47 para IRIS 3-4. O sea: bajar el fósforo hasta ahí no es
+territorio no estudiado, está aproximadamente donde NRC sitúa lo
+suficiente para un perro normal. El límite de verdad para el fósforo no
+está en la proteína ni en el fósforo mismo: está en que ambos bajan a la
+vez y hay que vigilar la relación Ca:P y la calcemia, que es justo lo que
+avisan las notas del borrador.
+
+**Cobre (hepatopatía).** El único de los cuatro donde NRC **no da
+respuesta**: *"there is no available information on a SUL of dietary Cu
+in normal dogs"*, y el propio NRC dice que hay *"very few data on the Cu
+requirements of adult dogs"* — el 1,5 mg/1000 kcal que da como RA para
+adultos es una extrapolación de datos de gestación/lactación, no una
+medición directa en el adulto, y no existe un MR (mínimo real medido) para
+el adulto en absoluto. Para la hepatopatía por acúmulo, además, el
+problema no es "cuánto cobre necesita un perro normal" sino cuánto puede
+tolerar UN PERRO QUE NO LO REGULA BIEN — una pregunta distinta que NRC no
+contesta y que necesita literatura clínica específica de hepatopatía por
+cobre (ninguna está todavía en `canislab-fuentes`). **Este es el que menos
+fundamento tiene de los cuatro para fijar un número por debajo de FEDIAF
+con confianza**, y hay que decirlo así de claro en vez de fingir que 1,2
+(el valor terapéutico citado en `PENDIENTE_PRODUCTO.md`) tiene el mismo
+respaldo que el de la proteína renal.
+
+**Purinas (urato).** No aplica la misma lógica: las purinas no son un
+nutriente esencial con un MR de FEDIAF o NRC — son un producto del
+catabolismo de las propias proteínas que el motor no puede evitar del todo
+(§urato ya lo dice: quitando hígado y corazón la ración sigue cerca de
+cinco veces el objetivo). No hay "suelo NRC" que mirar porque no es esa
+clase de número.
+
+**Lo que esto significa para la fase 4, en una frase**: «puede bajar un
+mínimo de FEDIAF» no puede ser una casilla libre en la pantalla de
+prescripción. Para proteína y para metionina+cistina hay un segundo suelo,
+medido y con un evento adverso real documentado justo debajo — ésos
+deberían avisar en rojo, no dejar escribir cualquier número. Para fósforo
+hay más margen del que parece. Para cobre no hay número de NRC en el que
+apoyarse, y eso también hay que decirlo en la pantalla, no rellenarlo con
+un valor que suena a autoridad y no la tiene.
+
+### 12-quater. El mismo análisis, para las patologías que se bloquearon en la ronda SACN5
+
+`shunt_sin_encefalopatia`, `encefalopatia_hepatica` y `renal_avanzada`
+(añadidas el 6-7 de septiembre) bloquean por la misma Razón A que
+`hepatopatia` y `renal`, pero por PROTEÍNA, no por cobre ni fósforo — así
+que el suelo real de NRC que aplica es exactamente el mismo que ya se citó
+arriba para la proteína renal: **el suelo NRC de proteína no es específico
+de cada enfermedad, es un único número (Sanderson et al. 2001, 20 g/1000
+kcal) que aplica a cualquier restricción de proteína, venga de donde venga
+la enfermedad** — riñón, hígado o cualquier otra. Eso cambia la lectura de
+las tres:
+
+- **`shunt_sin_encefalopatia`** (objetivo SACN5: 37,5-50 g/1000 kcal).
+  Margen amplio sobre el suelo NRC (20): casi el doble en el extremo bajo.
+  Es la más segura de bajar de las cuatro que ya bloquean por proteína.
+- **`encefalopatia_hepatica`** (objetivo SACN5: 25-37,5 g/1000 kcal,
+  **temporal, "hasta que los signos resuelvan"**). El extremo bajo (25)
+  sigue con margen sobre 20, pero menos que shunt — y aquí SACN5 mismo
+  avisa de que es una restricción de urgencia, no de mantenimiento. Un
+  veterinario que la mantenga más de lo necesario, o que la aprieta hacia
+  20 sin vigilar taurina, entra en la misma zona documentada con el evento
+  adverso de Sanderson 2001.
+- **`renal_avanzada`** (objetivo SACN5: 35-50 g/1000 kcal, mismo rango que
+  la `renal` de base — la diferencia entre las dos no está en el número,
+  sino en que aquí SACN5 documenta evidencia real (Grade III, Tabla 37-10)
+  de que restringir también el fósforo ayuda a frenar la progresión,
+  mientras que en estadios más tempranos esa evidencia es más débil
+  (Grade IV). Mismo margen sobre el suelo de Sanderson que shunt.
+
+**Para la pantalla de prescripción (fase 4), esto quiere decir**: un
+campo de proteína objetivo con avisos en dos escalones, no uno — uno al
+cruzar el mínimo FEDIAF (52,1, ya lo hay) y un segundo, más serio, al
+cruzar por debajo de ~20-25 g/1000 kcal cerca del suelo de Sanderson,
+recordando el evento de taurina documentado y sugiriendo vigilar taurina
+en sangre si se sostiene ahí.
+
+### 12-quinquies. Qué preguntar en la pantalla del veterinario, patología por patología
+
+Escrito porque se preguntó directamente y no existía en ningún sitio: la
+Fase 4 (§10) describe el principio general de la prescripción, pero no
+qué campo concreto hay que desplegar para cada patología. Aquí sí, una
+por una — es una tabla de DISEÑO (para cuando se construya la pantalla),
+no código que exista hoy.
+
+**Grupo 1 — patologías bloqueadas al tutor: la pantalla necesita un
+campo numérico o un dato clínico que hoy no se pregunta a nadie.**
+
+| Patología | Qué preguntar | Por qué ese dato y no otro |
+|---|---|---|
+| `hepatopatia` | Objetivo de cobre (mg/1000kcal); ¿confirmado por biopsia hepática o ceruloplasmina, o solo predisposición racial? | Si no hay diagnóstico confirmado, la patología correcta es `raza_predispuesta_cobre` (formulable sin bajar de FEDIAF), no ésta |
+| `urato` | ¿Hay alopurinol pautado? ¿Qué alimentos concretos, más allá de vísceras, quiere excluir el veterinario? | Las purinas no tienen un suelo NRC — la decisión es de qué alimentos evitar, no de un número |
+| `cistina` | pH urinario actual (analítica); objetivo de metionina+cistina (g/1000kcal) | Con pH >7,1 la cistina es soluble aunque la dieta no baje del todo — el pH manda sobre el número |
+| `estruvita` | pH urinario actual y objetivo; ¿fase disolución o prevención? | Los rangos de SACN5 cap.43 son distintos para cada fase (proteína ≤8% disolución vs <25% prevención) |
+| `shunt_sin_encefalopatia` | Objetivo de proteína (g/1000kcal); ¿hay signos neurológicos AHORA? | Si los hay, la patología correcta es `encefalopatia_hepatica` (más estricta), no ésta |
+| `encefalopatia_hepatica` | Objetivo de proteína (g/1000kcal); fecha de reevaluación | Es temporal por diseño (SACN5: "until signs resolve") — sin fecha de reevaluación, una restricción de urgencia se queda fija para siempre |
+| `renal_avanzada` | Creatinina/SDMA más recientes (para IRIS 3 vs 4, aunque hoy el motor no distingue entre ellos); objetivo de proteína (g/1000kcal) | Sin ese dato no se sabe si corresponde `renal` (formulable) o `renal_avanzada` (bloqueada) — ver fila de `renal` abajo |
+| `otra` | Campo de texto libre + contacto del veterinario | No hay regla nutricional que aplicar: la pantalla solo puede registrar que un profesional se hizo cargo fuera del motor |
+
+**Grupo 2 — patologías formulables para el tutor, pero que hoy usan una
+entrada genérica porque la app no pregunta el matiz clínico.** Aquí no
+hace falta acreditación de veterinario para preguntarlo — es información
+que el tutor ya tiene porque se la dijo su veterinario — pero sin la
+pregunta, la app no sabe qué entrada específica usar:
+
+| Patología genérica hoy | Qué preguntar | Qué activa cada respuesta |
+|---|---|---|
+| `cardiopatia` | Estadio ACVIM, si se conoce (A/B1/B2/C/D) | `cardiopatia_a/_b1/_b2/_c/_d` en vez de la genérica (900 mg de sodio); ver §12-bis |
+| `renal` | Creatinina/SDMA (o el estadio IRIS si el veterinario ya lo dio) | Decide entre `renal` (IRIS 1-2, o sin dato — sigue formulable) y `renal_avanzada` (IRIS 3-4 — bloquea, Razón A). No hay una entrada por cada uno de los 4 estadios IRIS: verificado el 7 de septiembre contra la fuente primaria (`IRIS_CKD_Staging_Modified_2026.pdf`, en canislab-fuentes) y esa guía SOLO estadía por creatinina/SDMA, no da ni un número de dieta — los números por estadio que proponía el borrador citaban un documento ("IRIS 2023 + ACVN") que no está en canislab-fuentes y no se pueden verificar, así que no se usan |
+| junto con `renal` | UPC (cociente proteína:creatinina urinaria), si hay proteinuria | Añade `renal_proteinuria` a la lista de patologías (hoy solo informativo, sin recorte automático) |
+| `hepatopatia` vs `raza_predispuesta_cobre` | ¿Diagnóstico confirmado (biopsia/cobre hepático) o solo raza predispuesta? | Decide cuál de las dos entradas usar — ver Grupo 1 |
+| `shunt_sin_encefalopatia` vs `encefalopatia_hepatica` | ¿Hay signos neurológicos activos ahora? | Decide cuál de las dos usar — ver Grupo 1 |
+| `diabetes` | ¿Hay pancreatitis o hipertrigliceridemia diagnosticada además? | Activa `max_pct_kcal_grasa_si_ademas` (baja la grasa al 30% de las kcal) — hoy se consigue añadiendo también `pancreatitis` a la lista, no hace falta un campo nuevo |
+| `cushing` / `addison` | ¿Hay diabetes o hiperlipidemia diagnosticada además? | Igual que el caso anterior: añadir también esa patología a la lista activa sus ajustes |
+| `insuficiencia_pancreatica_exocrina` | ¿Dosis de enzima pancreática pautada? | No cambia el motor (la app no dosifica enzimas), pero sin esta pregunta el aviso "esto es un apoyo, no el tratamiento" queda descontextualizado — vale para que la pantalla muestre al veterinario qué SÍ está ajustando el menú y qué no |
+
+**Grupo 3 — el resto (`renal_proteinuria` en solitario, `pancreatitis`,
+`oxalato`, `dcm_taurina_respondedora`, `dcm_asociada_a_dieta`,
+`hiperlipidemia`, `obesidad`, `ple_linfangiectasia`, `fracaso_renal_agudo`,
+`enteropatia_cronica`, `artrosis`, `riesgo_gdv`, `disfuncion_cognitiva`,
+`dermatosis_zinc`, `dermatitis_atopica`, `epilepsia_idiopatica`,
+`mielopatia_degenerativa`, `cancer_soporte`, `inmunosupresion`,
+`hipotiroidismo`)**: ninguna pregunta adicional. Se activan con el
+checkbox estándar de "mi perro tiene esto", igual que cualquier patología
+de la lista, y el ajuste (o el aviso de por qué no hay ajuste) es siempre
+el mismo una vez marcada. Añadir una pregunta aquí sería preguntar por
+preguntar: no hay ninguna decisión que dependa de la respuesta.
+
 ## 13. Lo que sigue abierto — y no lo decide un programador
 
 - **Qué dice el documento sobre qué se firma exactamente** — ver el final

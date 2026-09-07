@@ -277,3 +277,349 @@ Prioridad, por lo que desbloquea:
    bazo de cordero, cerebro de ternera) — son la categoría que deja sin
    menú a los perros con alergias.
 
+## 6. Catálogo corregido contra USDA/BEDCA (6 de septiembre)
+
+**Hecho, con permiso expreso**: 23 fichas, 86 celdas, aplicadas desde
+`CORRECCIONES_CATALOGO.csv` (repositorio `canislab-fuentes`) — solo las
+filas `CORREGIR` con cifra confirmada contra un FDC de USDA o una ficha de
+BEDCA/FEN, nunca las `VERIFICAR` (indicios sin número cerrado). Cada celda
+se comprobó contra el valor que ya había en el JSON antes de sustituir:
+86/86 coincidieron. Detalle completo en el commit `c69758c`.
+
+Los más graves: Albahaca (7 minerales eran de deshidratada, no fresca —
+zinc +619%), Hígado de pollo (cobre +815%, vitA +236%), Semilla de sésamo
+(calcio −85%, era sésamo pelado no entero), Dorada (la ficha de BEDCA no
+cuadraba consigo misma: agua+proteína+grasa sumaban 106 g/100g), y 5
+pechugas/muslos de pollo y pavo con errores de escala en vitamina A.
+
+**Abierto, sin cifra disponible**: al bajar la grasa de la Dorada, su
+DHA/EPA — de la misma fuente "de piscifactoría" que la grasa ya corregida,
+ya documentado en su propio `nota_datos` desde antes — quedan sumando
+1,97 g de ácidos grasos contra 1 g de grasa total. Falta una cifra de EPA/
+DHA de dorada SALVAGE para cerrarlo. `auditar_catalogo.py` lo señala con
+`[GRASOS]` a propósito, sin silenciarlo (whitelisted en el BLOQUE 19).
+
+El linoleico de la Semilla de sésamo sigue en 0 — es un hueco real (el
+sésamo es de los alimentos más ricos en omega-6 que existen), pero
+`CORRECCIONES_CATALOGO.csv` no traía cifra para esa celda, así que no se
+inventó ninguna.
+
+## 7. Legumbres en cardiopatía — ¿conviene añadirlas al catálogo?
+
+**Pregunta del 6 de septiembre. Respuesta: no, por ahora, y el motivo es
+más matizado de lo que parece.**
+
+El borrador de 47 patologías (`canislab-fuentes/TRABAJO_RAWKU/code/
+patologias.json`, perfil `dcm_asociada_a_dieta`) ya trae la respuesta
+investigada:
+
+> «Causalidad NO establecida; mecanismo abierto (hipótesis actual:
+> fosfolipidosis, no taurina). Asociación real y reproducible. La FDA dejó
+> de publicar actualizaciones en 2024 sin cerrar el caso. **UNA BARF
+> CONVENCIONAL NO ESTÁ IMPLICADA en ningún estudio**: el patrón de riesgo
+> es "legumbre sustituyendo al cereal" en pienso seco. Solo aplicar la
+> bandera si el motor formula con legumbres como fuente calórica
+> principal.»
+
+Y además: «El señalamiento es específico del GUISANTE. La lenteja y la
+soja NO están implicadas del mismo modo (Quilliam 2023).»
+
+**Por qué no añadirlas de todas formas, ya que el riesgo parece acotado**:
+1. La causalidad sigue sin establecerse — es una asociación epidemiológica
+   con mecanismo abierto, en una enfermedad potencialmente mortal (DCM).
+2. El patrón de riesgo (legumbre reemplazando al cereal como fuente
+   calórica principal) es estructuralmente un problema de **pienso seco**:
+   una ración BARF nunca sustituye cereal por legumbre porque nunca lleva
+   cereal como fuente calórica en primer lugar — las proporciones BARF
+   (carne/hueso/víscera como base, verdura al 10-25%) hacen que una
+   legumbre nunca pudiera llegar a ser "fuente calórica principal" aunque
+   se añadiera.
+3. No hay ninguna necesidad nutricional que las legumbres cubran y que hoy
+   falte — no aparecen en ningún hueco de `DATOS_QUE_FALTAN.md` ni en
+   ninguna prioridad de catálogo.
+4. El caso de la FDA sigue abierto (sin cerrar en 2024): mientras tanto,
+   no hay urgencia real que justifique asumir aunque sea un riesgo
+   pequeño y mal entendido, en una enfermedad cardiaca.
+
+**Si algún día se decide añadir alguna**, la lenteja o la soja (no
+implicadas por Quilliam 2023) son las candidatas más seguras — nunca el
+guisante, que es el único señalado. Y aun así, con las proporciones BARF,
+la bandera de nivel B del borrador (`legumbres: {no_como_fuente_
+principal}`) casi nunca llegaría a activarse por diseño.
+
+## 8. Reconciliar las 11 patologías de producción contra el borrador de 47
+
+**Empezado el 6 de septiembre.** El borrador (`canislab-fuentes/
+TRABAJO_RAWKU/code/patologias.json`, versión 0.1, marcado explícitamente
+«NADA DE ESTO ESTA VERIFICADO») estructura por **estadio clínico**
+(`erc_iris_1` a `_4`, `mmvd_acvim_a` a `_d`…) mientras que producción
+tenía una entrada plana por enfermedad. Es un cambio de **modelo de
+datos**, no solo de cifras, y reconciliar las 47 de golpe es su propio
+proyecto — pero dos piezas ya tenían fuente sólida y se implementaron:
+
+**Cardiopatía, con estadio ACVIM (`cardiopatia_b1/_b2/_c/_d`).** Antes
+había una sola entrada con sodio a 900 mg/1000kcal, documentada en su
+propio `por_que` como «se usa el estadio B2 porque la app no pregunta el
+estadio». Ahora, si el estadio se conoce, hay cuatro entradas:
+- **B1**: sin restricción — Keene et al. 2019 (ACVIM consensus, JVIM
+  33:1127-1140): «no drug or dietary treatment is recommended».
+- **B2**: 900 mg/1000kcal (rango 800-990, escala moderna por estadio).
+- **C**: 790 mg/1000kcal (rango 500-790, extremo menos restrictivo:
+  restringir de más activa el eje renina-angiotensina-aldosterona).
+- **D**: 480 mg/1000kcal (<500, con margen sobre el mínimo FEDIAF adulto
+  de 290).
+La entrada genérica `cardiopatia` (900, sin estadio) se queda igual, para
+quien no sepa el estadio de su perro. `auditar_patologias.py`: todo
+cuadra. La app (canislab-web) tiene que empezar a preguntar el estadio y
+mandar `cardiopatia_b1`/`_b2`/`_c`/`_d` en vez de `cardiopatia` a secas —
+mientras no lo haga, nada cambia para nadie.
+
+**Renal, con proteinuria (`renal_proteinuria`).** El consenso ACVIM 2013
+pide bajar la proteína un 25-50% **respecto a la ingesta previa** cuando
+el UPC (cociente proteína:creatinina en orina) supera 0,5 — no es una
+cifra absoluta. Como Rawku no captura la ingesta previa del perro al
+generar un menú nuevo, **no se aplica ningún recorte automático**: la
+nueva entrada es solo informativa (explica el porqué y remite al
+veterinario), pensada para combinarse con `renal` sin tocar el tope de
+fósforo. Aplicar el recorte real necesitaría encadenar `/analizar` (que sí
+lee la dieta actual) antes de `/menu/v2` — eso es trabajo de producto, no
+solo de motor.
+
+**Actualizado el 6-7 de septiembre, con SACN5 5ª ed. completo ya
+disponible**: se verificaron y añadieron 23 patologías más (de 16 a 39 en
+`patologias.json`), cada una cifra a cifra contra SACN5 + NRC 2006 +
+FEDIAF, nunca de memoria ni del borrador sin comprobar — ver el detalle
+completo, con las tablas y capítulos citados, en §10 más abajo.
+
+**Actualizado el 7 de septiembre — la renal SÍ se partió, pero en DOS, no
+en 4**: se buscó la fuente primaria que citaba el borrador para los 4
+estadios IRIS ("IRIS 2023 + ACVN") y no existe en `canislab-fuentes` —
+solo hay `IRIS_Guidelines/IRIS_CKD_Staging_Modified_2026.pdf`, que es
+la guía de ESTADIAJE de verdad (creatinina/SDMA, sustadiaje por
+proteinuria y presión) y no contiene ni un solo número de dieta. Con lo
+que SÍ hay (SACN5 cap.37, Tabla 37-9 y 37-10), la única distinción
+verificable es de DOS grupos, no cuatro: la restricción de fósforo tiene
+evidencia real (Grade III) específicamente en IRIS 3-4, donde además la
+proteína (35-50 g/1000kcal) ya cae bajo el mínimo FEDIAF; en IRIS 1-2 la
+evidencia es más débil (Grade IV) y no hay un número de fósforo propio.
+Se añadió `renal_avanzada` (bloqueada, mismo fósforo que `renal` pero con
+la proteína documentada por debajo del mínimo) y se dejó `renal` tal cual
+para 1-2 o cuando no se conoce el estadio. Partir en los 4 estadios
+exactos del borrador significaría inventar tres números sin fuente —
+exactamente lo que la regla de este proyecto prohíbe.
+
+También se cruzó `cardiopatia_b2/_c/_d` contra SACN5 cap.36 Tabla 36-4
+(sodio por clase ISACHC): confirma el PATRÓN de restringir más cuanto más
+avanzada la enfermedad, pero no se cambiaron los números — SACN5 usa la
+clasificación ISACHC (I/II/III), no la ACVIM (A-D) de esta app, y el
+consenso ACVIM 2019 (Keene et al.) ya citado es la fuente más moderna y
+específica para MMVD.
+
+**Cerrado el 7 de septiembre — el resto de la Tabla 36-4, releída con la
+página del PDF renderizada en vez del texto plano** (que salía con las
+columnas descolocadas: `poppler-utils` no estaba instalado en esta sesión
+y se reinstaló para esto). Con la tabla limpia (página 746 del libro):
+fósforo 0,2-0,7%MS, potasio ≥0,4%MS, magnesio ≥0,06%MS, taurina ≥0,1%MS,
+L-carnitina ≥0,02%MS (todo en perro). Contrastado contra los mínimos de
+FEDIAF ya en vigor:
+
+- **Fósforo** (500-1750 mg/1000kcal a 4000kcal/kgMS): el mínimo FEDIAF
+  (1160) ya cae dentro del rango. Nada que restringir.
+- **Potasio** (≥1000): el mínimo FEDIAF (1450) ya lo supera. Nada que
+  añadir.
+- **Magnesio** (≥150): el mínimo FEDIAF (200) ya lo supera. Nada que
+  añadir.
+- **Cloruro** (1,5× el sodio, para las tres clases): no es un número
+  suelto, es una proporción sobre el sodio que ya se restringe — el
+  mínimo FEDIAF (430) queda por debajo de 1,5× cualquiera de los topes
+  de sodio ya aplicados (480 a 900), así que tampoco hace falta un tope
+  nuevo.
+- **Taurina y L-carnitina** (≥250 y ≥50 mg/1000kcal): estos SÍ son
+  huecos reales, pero no por falta de dato limpio — es que ninguno de
+  los dos está entre los 41 nutrientes que mide el motor, ni en ninguna
+  ficha del catálogo. Esto es exactamente lo que ya documenta el aviso
+  de `dcm_taurina_respondedora` (añadida en la misma ronda): «la taurina
+  no está entre los 41 nutrientes que este motor mide». Añadirlos de
+  verdad significaría (a) sacar el dato de taurina y L-carnitina de las
+  159 fichas del catálogo, cosa que ni BEDCA ni USDA dan de forma
+  sistemática para muchos alimentos frescos, y (b) el motor solo sabe
+  poner TECHOS por patología, no SUELOS — un mínimo de taurina necesita
+  el mismo mecanismo nuevo que ya le faltaba a `artrosis` (omega-3) y
+  `dermatosis_zinc` (zinc), ver §12-quinquies de `VETERINARIOS.md`.
+
+**Conclusión: los 5 estadios MMVD completos NO necesitan más números de
+los que ya tienen.** El reparto de macros "más allá del sodio" que
+proponía el borrador ya está cubierto en su totalidad por los mínimos de
+FEDIAF vigentes, excepto taurina y L-carnitina — y esos dos no son un
+hueco de verificación, son un hueco de arquitectura (falta el mecanismo
+de suelos por patología) y de catálogo (falta el dato). Se deja
+documentado aquí para que quede cerrado, no abierto esperando "una fuente
+más limpia" que ya se consiguió y no cambió la conclusión.
+
+`alergia_alimentaria`, `cachorro_raza_grande`,
+`gestacion_lactancia_con_patologia`, `mucocele_biliar` y la partición de
+`pancreatitis` en dos se dejaron fuera a propósito — el porqué de cada
+una está en `VETERINARIOS.md` §12-bis, en la sección «Lo que falta para
+que esta tabla esté completa».
+
+## 9. `campos nuevos que hoy no existen en la app` — qué falta y por qué
+
+Tres piezas de la auditoría del 6 de septiembre necesitan un campo de
+entrada que **hoy no existe en ningún sitio** — ni en el schema de la API
+(los `Peticion*` de `main.py`), ni en la ficha del perro de `canislab-web`:
+
+- **El 10% de calorías para premios/complementos** (Hervera, Clinnutrivet
+  17). No hay ningún concepto de "premio" o "snack" en la API: no hay
+  campo que preguntar cuántas kcal vienen de fuera de la ración. Añadirlo
+  necesita una pantalla nueva en la app y una decisión de producto sobre
+  dónde se pregunta, no solo un parámetro nuevo en el backend.
+- **La reformulación de adelgazamiento** (proteína≥25%MS, grasa≤9%MS,
+  L-carnitina, fibra — Tabla 27-4 de SACN5). Hoy adelgazar solo baja las
+  kcal (vía RER en `der.py`); no hay un perfil de macros dedicado. Además
+  de una decisión de producto, la L-carnitina ni siquiera es un
+  nutriente que el catálogo trackee — haría falta añadir una columna
+  nueva a las 159 fichas antes de poder exigirla.
+- El UPC renal y el estadio ACVIM cardíaco (arriba) **ya no necesitan
+  campo nuevo en el motor** — se resolvieron reutilizando el mecanismo
+  existente de `patologias` (una lista de nombres): en vez de un
+  parámetro numérico nuevo, la app manda una clave de patología más
+  específica (`cardiopatia_c` en vez de `cardiopatia`). Lo que falta es
+  solo la pantalla en `canislab-web` que pregunte el estadio/UPC y elija
+  la clave correcta — cero cambios de backend adicionales.
+
+## 10. La ronda SACN5 (6-7 de septiembre): 23 patologías más, verificadas
+     capítulo a capítulo
+
+Con los 70 capítulos de SACN5 5ª ed. ya disponibles en
+`canislab-fuentes/sacn5/cap*.txt` (subidos en un PR aparte de ese repo),
+se hizo lo que pedía el punto anterior: cada patología nueva, verificada
+cifra a cifra contra el capítulo que le toca, **nunca contra el borrador
+sin comprobar ni de memoria**. `patologias.json` pasó de 16 a 39 entradas.
+`auditar_patologias.py` (BLOQUE 36) y la batería completa, en verde.
+
+**Refinamientos a las 16 que ya existían** (mismo número, fuente cruzada
+con SACN5 para confirmarlo o para documentar un conflicto):
+- `hepatopatia`: SACN5 cap.68 Tabla 68-8 da cobre ≤5 mg/kg de materia seca
+  = 1,25 mg/1000kcal — casi idéntico al objetivo terapéutico ya citado
+  (1,2, de Center 2026). Dos fuentes, veinte años de diferencia, mismo
+  número.
+- `cistina`: se corrigió un dato FALSO que llevaba desde antes de esta
+  ronda — `motivo_no_formulable` decía que el catálogo no tenía
+  aminograma de metionina/cistina, cuando SÍ lo tiene desde el 28 de
+  agosto (94 de 159 fichas). El motivo real de bloqueo (pH urinario +
+  objetivo por debajo del mínimo FEDIAF) seguía siendo correcto, solo el
+  dato de "no hay aminograma" era falso y quedó reescrito.
+- `estruvita` y `urato`: cruzados con SACN5 cap.43 y cap.39 — ambos
+  confirman, con una fuente distinta a la ya citada, que la restricción
+  real es también de proteína completa por debajo del mínimo FEDIAF, no
+  solo del nutriente específico (pH, purinas) que ya se citaba.
+- `oxalato`: SACN5 cap.40 (2010) todavía recomienda BAJAR el calcio
+  (0,4-0,7% MS) — lo contrario de lo que ya se seguía (Today's Veterinary
+  Practice 2025, que dice que bajar el calcio empeora el oxalato al
+  aumentar su absorción intestinal). Es un conflicto de fuentes real,
+  documentado en el propio JSON: se mantiene la posición más reciente
+  porque tiene el mecanismo mejor descrito.
+
+**23 patologías nuevas, con topes numéricos reales donde el número era
+alcanzable con el catálogo** (`hiperlipidemia` grasa≤30, `obesidad`
+grasa≤30 — SACN5 pide 22,5 pero NO es alcanzable con el catálogo real, se
+probó contra el solver: 27 falla 0/5 intentos, 28 resuelve 5/5, se dejó en
+30 con margen —, `ple_linfangiectasia` grasa≤37,5, `insuficiencia_
+pancreatica_exocrina` grasa≤37,5) o bloqueadas por Razón A cuando el
+objetivo terapéutico cae bajo el mínimo FEDIAF (`shunt_sin_encefalopatia`
+proteína 37,5-50, `encefalopatia_hepatica` proteína 25-37,5, ambas de
+SACN5 cap.68 Tabla 68-8). El resto (`cardiopatia_a`, `dcm_taurina_
+respondedora`, `dcm_asociada_a_dieta`, `fracaso_renal_agudo`,
+`enteropatia_cronica`, `riesgo_gdv`, `disfuncion_cognitiva`,
+`raza_predispuesta_cobre`, `dermatitis_atopica`,
+`epilepsia_idiopatica`, `mielopatia_degenerativa`, `cushing`, `addison`,
+`cancer_soporte`, `inmunosupresion`) son informativas, sin tope numérico,
+porque en cada caso o (a) el nutriente clave (taurina, L-carnitina, fibra,
+MCT) no está entre los 41 que mide el motor, o (b) el propio SACN5 dice
+que el tratamiento es farmacológico o de manejo, no dietético (Cushing,
+Addison, GDV, epilepsia). La tabla completa con la razón de cada una está
+en `VETERINARIOS.md` §12-bis.
+
+**Actualizado el 7 de septiembre — `artrosis` y `dermatosis_zinc` ya NO
+son informativas sin tope.** El motor solo sabía poner TECHOS por
+patología (el `min()` de todas las activas); artrosis y dermatosis_zinc
+necesitaban lo contrario, un SUELO más alto que el de FEDIAF, y eso no
+existía. Se añadió `min_por_1000kcal` en `motor/motor_completo.py`
+(espejo exacto de `max_por_1000kcal`, combinando con `max()` en vez de
+`min()` porque un suelo reforzado solo puede EXIGIR más, nunca menos), un
+campo nuevo `suelos_por_1000kcal` en `patologias.json`, y la comprobación
+espejo en `auditar_patologias.py` (una formulable no puede pedir un suelo
+por ENCIMA del máximo FEDIAF, igual que un tope no puede pedir MENOS del
+mínimo). Con esto:
+- `artrosis`: EPA+DHA ≥1,0 g/1000kcal (SACN5 cap.34 Tabla 34-2: EPA
+  0,4-1,1% MS: se usa el extremo bajo, ya varias veces el suelo general
+  de 0,11).
+- `dermatosis_zinc`: zinc ≥25 mg/1000kcal (SACN5 cap.32 Tabla 32-1: zinc
+  100-200 mg/kgMS; el extremo bajo, sobre el mínimo general de FEDIAF de
+  20,8).
+
+Los dos probados contra el solver real (varios pesos/etapas) antes de
+darlos por buenos — mismo criterio que ya se aplicó a `obesidad`. Sigue
+sin ser posible para `dcm_taurina_respondedora` (taurina y L-carnitina no
+están en el catálogo ni en el MAPA de 41 nutrientes: el mecanismo nuevo no
+sirve de nada si no hay dato que sumar), documentado también en la
+sección de MMVD, arriba.
+
+**Un hallazgo de honestidad de datos que merece quedar escrito**: el
+primer intento de `obesidad` usó literalmente el número de SACN5 (≤9% MS
+= 22,5 g/1000kcal) sin probarlo contra el solver. No resolvía —ni en 40
+segundos de reintentos—, porque una comida de verdad no puede bajar tanto
+la grasa y seguir llegando a los mínimos de EFA y micronutrientes con las
+kcal que quedan (un pienso sí puede, con premezcla vitamínica sintética
+que no lleva grasa). Se probó en escalón (25, 26, 27, 28...) hasta
+encontrar el punto real donde el catálogo empieza a resolver, y se dejó
+ahí con margen. La lección: un número de un libro de texto no es
+automáticamente un tope viable con comida de verdad, y hay que probarlo
+contra el solver antes de darlo por bueno — exactamente lo que dice la
+regla 1 del `CLAUDE.md`, aplicada a un tope nuevo, no solo al menú final.
+
+## 11. Fascetti & Delaney, 2ª ed. completo (7 de septiembre): tres verificaciones
+
+Llegaron los 21 capítulos que faltaban (`canislab-fuentes` PR#1, extraídos
+por Cowork desde Perlego). Verificado punto por punto, contra el libro y
+no contra el resumen previo:
+
+**RER y factor de enfermedad — confirmado que NO hace falta tocar nada.**
+El método americano multiplica el RER por un factor de 1,1 a 2,3 según
+gravedad (Remillard & Thatcher 1989, citada íntegra en Fascetti cap.3).
+Esta app nunca ha aplicado ninguno — `der.py` usa el método europeo
+(Thes 2015) para adultos y FEDIAF para crecimiento/gestación/lactancia,
+sin ningún parámetro de enfermedad en absoluto. Comprobado que NO es un
+hueco: es lo que la propia fuente recomienda — *"it seems reasonable to
+target energy requirements for most sick or injured dogs and cats
+initially at RER"* y *"it should rarely be necessary to feed injured or
+ill cats and dogs above the predicted energy requirement for a healthy
+animal at maintenance"*. Documentado ahora explícitamente en `der.py`
+(antes no decía nada, que se podía leer como "no se pensó" en vez de "se
+decidió no hacerlo").
+
+**El hallazgo que sí requería un cambio.** La misma fuente, literal:
+*"weight loss is never a goal during treatment and recovery from trauma
+and critical illness"*. Comprobado: `obesidad` se podía combinar con una
+patología aguda o crítica (`fracaso_renal_agudo`, `encefalopatia_
+hepatica`, `cancer_soporte`, `inmunosupresion`, `pancreatitis`) sin
+ningún aviso — el mecanismo `aviso_si_ademas` (nuevo, ver arriba junto a
+los suelos) lo cubre ahora, sourced a este mismo capítulo.
+
+**La pregunta de la vitamina E, ya cerrada.** El informe de Fascetti
+dejaba pendiente confirmar la unidad de la columna de vitamina E del
+catálogo. Verificado contra la Tabla VII-14 de FEDIAF (la fuente
+primaria, no de memoria): nuestro ×0,67 (UI→mg) es la equivalencia de
+tocoferol NATURAL (d-α-tocoferol, 1mg = 1,49 UI), correcta para
+alimentos frescos. El 1 IU = 1 mg que cita Fascetti es la del acetato
+SINTÉTICO (dl-α-tocoferil acetato), la forma de los premezclados de
+suplemento — no la que llevan las fichas de carne, pescado o víscera del
+catálogo. Confirmación, no bug; ya se aplicaba bien en
+`auditar_fediaf.py`.
+
+Las dos correcciones de cita que trae el mismo informe (§3.6: el rango
+real es 1,1-2,3 y no 1,1-1,5, y la fuente no dice que los factores estén
+"deprecados") son sobre la documentación interna de `canislab-fuentes`,
+no sobre nada implementado aquí — no había ningún factor de enfermedad
+en el código al que esa cita pudiera aplicar.
+
