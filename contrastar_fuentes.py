@@ -29,8 +29,8 @@ persona que va a mirar una ficha.
 
 CÓMO SE USA
 -----------
-    python3 contrastar_fuentes.py "Cerebro de ternera"
-    python3 contrastar_fuentes.py "Cerebro de ternera" --bedca 1047 --ciqual 40006 --usda 174351
+    python3 contrastar_fuentes.py "Cerebro de vaca"
+    python3 contrastar_fuentes.py "Cerebro de vaca" --bedca 1047 --ciqual 40006 --usda 174351
     python3 contrastar_fuentes.py --buscar "sesos"
 
 Sin identificadores solo busca por nombre y te dice los candidatos; el
@@ -282,7 +282,22 @@ MAPA_FUENTES = {
  "araquidonico":    (["ácido graso 20:4 n-6  (ácido araquidónico)",
                       "ácido graso 20:4 n-6 (ácido araquidónico)", "ácido graso 20:4"],
                      ["AG 20:4 5c,8c,11c,14c (n-6), arachidonique (g/100 g)"],
-                     ["PUFA 20:4 n-6", "PUFA 20:4"], 1000),
+                     # ⚠️ `PUFA 20:4` PRIMERO, Y NO `PUFA 20:4 n-6`. USDA
+                     # publica las dos filas y NO son coherentes entre sí en
+                     # las fichas de ave: el corazón de pavo (FDC 171484) da
+                     # 20:4 = 0,205 g y 20:4 n-6 = 0,009 g, veintitrés veces
+                     # menos. En tejido animal casi todo el 20:4 ES el n-6,
+                     # así que la fila pequeña es la anómala -- y el resto
+                     # del catálogo lo confirma: hígado de vaca 289 mg,
+                     # hígado de pollo 326, molleja de pollo 86 (donde USDA
+                     # ni siquiera trae la fila n-6). El catálogo usa `20:4`
+                     # en todas sus fichas, así que la comparación tiene que
+                     # usar la misma.
+                     # Se descubrió al revés: con `20:4 n-6` primero, esta
+                     # herramienta señaló tres fichas de pavo como "20 veces
+                     # el valor de USDA" y llegaron a apuntarse como error de
+                     # dato. No lo eran. La herramienta lo era.
+                     ["PUFA 20:4", "PUFA 20:4 n-6"], 1000),
  "epa":             (["ácido graso 20:5 n-3 (ácido eicosapentaenóico)",
                       "ácido graso 20:5 (ácido eicosapentaenóico)", "ácido graso 20:5"],
                      ["AG 20:5 5c,8c,11c,14c,17c (n-3) EPA (g/100 g)"],

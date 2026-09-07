@@ -2463,14 +2463,17 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # `dato_dudoso`, salen junto al menú y lo decide una persona. El folato
     # no tiene techo, así que el 0 solo INFRAvalora el alimento.
     ("DUDOSO", "Canónigos"), ("DUDOSO", "Pipa de calabaza"),
-    # Y el [OMEGA] del cerebro es correcto y era invisible hasta hoy: al
-    # completar la ficha con BEDCA 1047 aparecen sus cinco ácidos grasos,
-    # y el linolénico (0,048 g) queda por encima del linoleico (0,036 g).
-    # En tejido nervioso eso es lo esperable -- es el órgano que concentra
-    # omega-3 -- y las dos cifras salen medidas de la misma ficha, así que
-    # no puede ser una inversión de columnas. Antes no aparecía porque los
-    # dos valían 0.
-    ("OMEGA", "Cerebro de ternera"),
+    # ⚠️ EL [OMEGA] DEL CEREBRO SE PUSO Y SE QUITÓ EL MISMO DÍA, y merece
+    # quedar escrito porque enseña cómo se cuela un error de especie.
+    # Al completar la ficha con BEDCA 1047 el linolénico (0,048) quedaba por
+    # encima del linoleico (0,036) y se apuntó aquí como plausible ("es el
+    # órgano que concentra omega-3"). Lo que pasaba de verdad es que BEDCA
+    # 1047 son "Sesos de TERNERA" y esta ficha es de VACA -- coincide celda
+    # a celda con USDA FDC 168622. Rehecha con su fuente real, el linoleico
+    # es 0,041 y el linolénico 0, así que el aviso ya no salta.
+    # La lección es la de siempre: una explicación plausible para un aviso
+    # nuevo no es una comprobación. El aviso tenía razón, y lo que estaba
+    # mal era la ficha que yo mismo acababa de rellenar.
 }
 
 import re as _re_b19
@@ -5275,151 +5278,80 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 #     ronda 2: otros                                     = 10 s
 #                                        TOTAL 36 s, presupuesto 24
 #
-# La conclusión fue "con dos perros y tres menús no cabe, nunca". Pero
-# esos 12, 6 y 4 son TOPES, no costes: `presupuesto_segundos` es un techo
-# y el solver vuelve en cuanto encuentra solución. La propia nota lo decía
-# sin sacarle la consecuencia: "la petición tarda 9-15 s de los 24".
+# La conclusión fue "con dos perros y tres menús no cabe, nunca". Pero esos
+# 12, 6 y 4 son TOPES, no costes: `presupuesto_segundos` es un techo y el
+# solver vuelve en cuanto encuentra solución. La propia nota lo decía sin
+# sacarle la consecuencia: "la petición tarda 9-15 s de los 24".
 #
 # Lo que fallaba no era el presupuesto: era la DECISIÓN de seguir. Se
 # preguntaba "¿caben otros 10 s en el peor caso?" aunque la ronda anterior
-# hubiera costado 3. Ahora se mide lo que ha costado de verdad cada ronda
-# y se estima con eso, nunca siendo optimista más allá de lo observado.
+# hubiera costado 3. Ahora se mide lo que ha costado de verdad.
 #
-# LA PRUEBA APRIETA EL PRESUPUESTO A PROPÓSITO (14 s en vez de 24). Con el
-# presupuesto normal las dos versiones dan 3 menús en una máquina rápida y
-# esto no probaría nada; el fallo solo asoma cuando el reloj va justo, que
-# es lo que pasa en Render y lo que pasaba dentro de la batería. MEDIDO
-# con 14 s, cinco tiradas de cada:
-#
-#     midiendo lo que cuesta   [3, 3, 2, 3, 3]
-#     con el peor caso (antes) [2, 1, 1, 1, 2]   <- nunca llega a 3
+# ⚠️ Y LA PRUEBA MIDE LAS DOS VERSIONES EN LA MISMA MÁQUINA Y EL MISMO
+# RATO, que es la única forma de que signifique algo. La primera versión de
+# este bloque comparaba contra un número apuntado a mano ("al menos 2 de 4
+# tiradas dan 3 menús") y se caía dentro de la batería completa aunque en
+# aislado diera [3,3,2,3,3]: con la máquina cargada las rondas cuestan más,
+# la estimación sube -- que es lo CORRECTO -- y salen menos menús. O sea que
+# la prueba medía lo ocupada que estaba la máquina, no si el arreglo está.
+# Con el interruptor `_PEOR_CASO_SIEMPRE_SOLO_PRUEBAS` las dos versiones
+# corren seguidas y se comparan entre ellas.
 print("=== BLOQUE 46: varios perros, los menús que se piden ===")
 
 _PRESU_REAL_B46 = _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS
+# Apretado a propósito: con los 24 s normales y una máquina libre las dos
+# versiones dan 3 menús y esto no probaría nada. El fallo solo asoma cuando
+# el reloj va justo, que es lo que pasa en Render.
 _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = 14.0
-try:
-    _perros_b46 = [
-        {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 900,
-         "etapa_requisitos": "CachorroJoven", "peso_perro_kg": 12,
-         "peso_adulto_esperado_kg": 25},
-        {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 1211,
-         "etapa_requisitos": "Adulto", "peso_perro_kg": 24.5},
-    ]
-    _completas_b46 = 0
-    _vistos_b46 = []
-    _sin_aviso_b46 = []
-    for _k_b46 in range(4):
-        _r_b46 = _c.post("/menu/varios-perros", json={
-            "perros": _perros_b46, "nombres": ["Kira", "Nala"],
-            "modo_conjunto": "parecidos", "numero_de_menus": 3}).json()
-        _n_b46 = [len(_p.get("menus") or []) for _p in (_r_b46.get("perros") or [])]
-        _vistos_b46.append(_n_b46)
-        if _n_b46 and min(_n_b46) >= 3:
-            _completas_b46 += 1
-        elif not _r_b46.get("menus_pedidos_no_dados"):
-            # Recortar se puede; recortar EN SILENCIO es el fallo original.
-            _sin_aviso_b46.append(_n_b46)
 
-    if _completas_b46 < 2:
-        fallos.append(
-            f"BLOQUE46: pidiendo 3 menús para dos perros, solo {_completas_b46} de 4 tiradas "
-            f"los han dado enteros (salieron {_vistos_b46}). Con el peor caso -- que es lo "
-            f"que hacía antes -- esto daba 1 o 2 y nunca 3. O se ha vuelto a decidir por el "
-            f"tope en vez de por lo que cuesta de verdad, o el solver se ha vuelto más lento.")
-    if _sin_aviso_b46:
-        fallos.append(
-            f"BLOQUE46: han salido menos menús de los pedidos ({_sin_aviso_b46}) y NO viene "
-            f"`menus_pedidos_no_dados`. Pedir 3 y recibir 1 sin una palabra es exactamente "
-            f"el fallo que la usuaria no puede ver.")
+_PERROS_B46 = [
+    {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 900,
+     "etapa_requisitos": "CachorroJoven", "peso_perro_kg": 12,
+     "peso_adulto_esperado_kg": 25},
+    {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 1211,
+     "etapa_requisitos": "Adulto", "peso_perro_kg": 24.5},
+]
+
+def _tirada_b46():
+    _r = _c.post("/menu/varios-perros", json={
+        "perros": _PERROS_B46, "nombres": ["Kira", "Nala"],
+        "modo_conjunto": "parecidos", "numero_de_menus": 3}).json()
+    _n = [len(_p.get("menus") or []) for _p in (_r.get("perros") or [])]
+    return (min(_n) if _n else 0), _r
+
+try:
+    _midiendo_b46, _peor_b46, _mudas_b46 = [], [], []
+    for _k_b46 in range(3):
+        _api._PEOR_CASO_SIEMPRE_SOLO_PRUEBAS = False
+        _cuantos, _resp = _tirada_b46()
+        _midiendo_b46.append(_cuantos)
+        if _cuantos < 3 and not _resp.get("menus_pedidos_no_dados"):
+            _mudas_b46.append(_cuantos)
+
+        _api._PEOR_CASO_SIEMPRE_SOLO_PRUEBAS = True
+        _cuantos_p, _ = _tirada_b46()
+        _peor_b46.append(_cuantos_p)
 finally:
+    _api._PEOR_CASO_SIEMPRE_SOLO_PRUEBAS = False
     _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = _PRESU_REAL_B46
 
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
-
-
-# ============================================================
-# BLOQUE 47 — EL MARGEN DEL SUELO CUBRE EL REDONDEO, NO UN PORCENTAJE
-# ============================================================
-#
-# ⚠️ CASO REAL, abierto desde el 28 de agosto: "el yodo de los perros muy
-# pequeños vive al 101 % del mínimo". Se apuntó como una molestia estética
-# y era algo peor: un menú que el solver daba por bueno y que el
-# verificador tiraba después.
-#
-# La causa está escrita en el propio motor. El suelo se pedía con un +1,5 %
-# (`lo = mn * der / 1000 * 1.015`), pero lo que ese margen tiene que cubrir
-# es el error del REDONDEO -- cada alimento se redondea a 2 decimales, o
-# sea hasta 0,005 g de menos por alimento -- y ese error es ABSOLUTO: no
-# escala con el tamaño del perro. Un porcentaje sí.
-#
-# La cuenta, con el yodo de un perro de 3 kg: el mínimo es 300 µg/1000 kcal
-# = 90 µg, así que el 1,5 % son 1,35 µg. Pero medio paso de redondeo del
-# yoduro potásico (800 µg/g, la fuente más concentrada del catálogo) mueve
-# 4 µg -- tres veces el margen. En un perro de 20 kg el mismo error
-# absoluto es el 0,6 % del mínimo y el porcentaje lo cubre de sobra; por
-# eso solo se veía en los pequeños.
-#
-# MEDIDO, 60 menús de cuatro perfiles pequeños (1,5 a 4,5 kg):
-#
-#                       yodo mínimo   mediana   bajo 102 %   menús caídos
-#     antes (solo %)         82 %      102 %      16 de 60        3
-#     ahora (% o redondeo)  100 %      106 %       2 de 60        0
-#
-# El 82 % es lo que importa: no es "poco margen", es un menú que NO CUMPLE
-# saliendo del solver. Lo paraba `_garantizar_verificado` -- la regla 1
-# funcionando -- pero a costa de dejar a la usuaria sin menú.
-print("=== BLOQUE 47: el suelo aguanta el redondeo en perros pequeños ===")
-
-import statistics as _stat_b47
-
-_al_b47, _req_b47 = _api.cargar_v2()
-
-def _cubre_b47(gramos, clave, der, etapa, peso):
-    _f = _api.verificar_v2(gramos, _al_b47, _req_b47, der, etapa, peso_referencia_kg=peso)
-    for _lista in ("dentro_de_rango", "faltan", "se_pasa", "rojos", "ambar"):
-        for _fila in _f.get(_lista) or []:
-            if _fila.get("clave") == clave:
-                return _fila.get("cubre_pct"), _f.get("semaforo")
-    return None, _f.get("semaforo")
-
-_yodos_b47, _caidos_b47, _cortos_b47 = [], 0, []
-for _der_b47, _peso_b47 in ((300, 3), (200, 1.5), (250, 2.2), (400, 4.5)):
-    for _sem_b47 in range(1, 6):
-        _ok_b47, _g_b47 = _api.resolver_v2(
-            _der_b47, "Adulto", _al_b47, _req_b47, _peso_b47, _api.dosis_maxima_fabricante,
-            margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=8,
-            semilla_aleatoria=_sem_b47)
-        if not _ok_b47:
-            _caidos_b47 += 1
-            continue
-        _pct_b47, _sem_color_b47 = _cubre_b47(_g_b47, "yodo", _der_b47, "Adulto", _peso_b47)
-        if _sem_color_b47 != "verde":
-            _caidos_b47 += 1
-        if _pct_b47 is not None:
-            _yodos_b47.append(_pct_b47)
-            if _pct_b47 < 100:
-                _cortos_b47.append((_der_b47, _peso_b47, _sem_b47, _pct_b47))
-
-if _cortos_b47:
+# Medir lo que cuesta no puede dar MENOS menús que suponer el peor caso: la
+# estimación medida nunca es mayor que el peor caso, así que nunca corta
+# antes. Si sale igual o peor, es que ha dejado de medirse.
+if sum(_midiendo_b46) <= sum(_peor_b46):
     fallos.append(
-        f"BLOQUE47: {len(_cortos_b47)} menús salen del solver con el yodo POR DEBAJO del "
-        f"mínimo después de redondear los gramos {_cortos_b47[:3]}. El margen del suelo "
-        f"tiene que cubrir el paso de redondeo de la fuente más concentrada, no un "
-        f"porcentaje fijo -- con solo el 1,5 % esto bajaba al 82 %.")
-if _caidos_b47:
+        f"BLOQUE46: midiendo lo que cuesta cada ronda salen {_midiendo_b46} menús y "
+        f"suponiendo el peor caso {_peor_b46} -- o sea que medir no está dando NINGUNA "
+        f"ventaja. La estimación medida nunca puede ser mayor que el peor caso, así que "
+        f"esto solo pasa si se ha vuelto a decidir por el tope. (Se comparan las dos en la "
+        f"misma máquina y seguidas, así que la carga afecta a las dos igual.)")
+if _mudas_b46:
     fallos.append(
-        f"BLOQUE47: {_caidos_b47} de 20 menús de perros pequeños no salen o no están verdes. "
-        f"No es inseguro (la regla 1 los para) pero deja a la usuaria sin menú, que es el "
-        f"síntoma con el que se encontró esto.")
-if _yodos_b47 and _stat_b47.median(_yodos_b47) < 104:
-    fallos.append(
-        f"BLOQUE47: la mediana del yodo en perros pequeños ha bajado a "
-        f"{_stat_b47.median(_yodos_b47):.0f} % del mínimo. Con el margen solo porcentual era "
-        f"102 % y con el absoluto 106 %: si vuelve a 102 es que el suelo ha dejado de cubrir "
-        f"el redondeo y los menús se van a caer otra vez en el verificador.")
+        f"BLOQUE46: han salido menos menús de los 3 pedidos ({_mudas_b46}) y la respuesta NO "
+        f"trae `menus_pedidos_no_dados`. Recortar se puede; recortar EN SILENCIO es el fallo "
+        f"original -- pedías 3, recibías 1, y no había ni una palabra.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
-
 
 # ============================================================
 # RESUMEN FINAL

@@ -236,7 +236,7 @@ quedan estos 5, que la propia ficha marca `sin_dato`:
 | folato | µg | |
 | colina | mg | |
 
-## Cerebro de ternera  ·  _Vísceras_
+## Cerebro de vaca  ·  _Vísceras_
 
 | Nutriente | Unidad | Valor |
 |---|---|---|

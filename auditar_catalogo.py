@@ -166,7 +166,7 @@ for a in al:
 #   · "Aceite de hígado de bacalao" entraba en el motor con EPA=0 y DHA=0.
 #     La fuente de omega-3 más densa del catálogo era invisible para el
 #     solver, y no saltaba nada porque sus otros ceros están declarados.
-#   · "Cerebro de ternera" tenía DHA=0 mientras su propia `nota_datos`
+#   · "Cerebro de vaca" tenía DHA=0 mientras su propia `nota_datos`
 #     decía, escrito, "rico en DHA de forma natural". BEDCA da 0,36 g.
 #   · "Canónigos" tiene folato=0 siendo una de las hojas más ricas en
 #     folato que se comen.

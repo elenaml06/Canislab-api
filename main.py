@@ -2275,6 +2275,10 @@ SEGUNDOS_MINIMOS_POR_MENU = 6.0
 SEGUNDOS_PRIMER_MENU_DE_LA_BASE = 12.0
 SEGUNDOS_AMOLDARSE = 4.0
 
+# Solo lo toca el BLOQUE 46, para comparar la versión de antes con la de
+# ahora en la misma máquina. En producción vale siempre False.
+_PEOR_CASO_SIEMPRE_SOLO_PRUEBAS = False
+
 
 def _comparar_menus(base_gramos, otro_gramos):
     """Qué cambia entre dos menús, en alimentos (no en cantidades).
@@ -2331,6 +2335,15 @@ def _respuesta_varios_perros(perros_salida, modo_conjunto, nombre_base, numero_d
     if menus_no_dados > 0:
         # Se dice cuántos faltan y por qué. Callarlo dejaría a la usuaria
         # pensando que pidió 3 y le dimos 1 sin motivo.
+        #
+        # ⚠️ Y SE DICE TAMBIÉN EN UN CAMPO, NO SOLO EN LA FRASE (7
+        # septiembre). Hasta hoy esto solo ponía `aviso`, un texto en
+        # español: la pantalla puede enseñarlo, pero no puede DECIDIR con él
+        # -- para saber si faltan menús habría que leer la prosa. El número
+        # va aparte, que es lo que permite que la app reaccione (y que una
+        # prueba lo compruebe sin buscar palabras dentro de una frase).
+        salida["menus_pedidos_no_dados"] = menus_no_dados
+        salida["por_que_faltan"] = por_que_faltan
         dados = numero_de_menus - menus_no_dados
         # ⚠️ Y EL MOTIVO DE VERDAD (28 agosto). Este aviso decía SIEMPRE
         # "no daba tiempo", y desde hoy hay un segundo camino que llega
@@ -2431,6 +2444,15 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
 
         def coste_estimado_de_la_proxima_ronda():
             peor_caso = por_llamada + SEGUNDOS_AMOLDARSE * (n - 1)
+            # ⚠️ INTERRUPTOR SOLO PARA LA BATERÍA, mismo criterio que el
+            # `CANISLAB_CATALOGO` de `auditar_catalogo.py`: sirve para que
+            # el BLOQUE 46 pueda medir las DOS versiones en la misma máquina
+            # y en el mismo momento. Comparar contra un número apuntado otro
+            # día no vale, porque cuánto rinde depende de lo cargada que
+            # esté la máquina -- y la batería entera la carga mucho. Nunca
+            # se pone a True en producción.
+            if globals().get("_PEOR_CASO_SIEMPRE_SOLO_PRUEBAS"):
+                return peor_caso
             if len(duraciones_ronda) > 1:
                 # Ya hay rondas de las BARATAS medidas (la 0 no cuenta: es la
                 # única con búsqueda libre del primer menú).
@@ -3894,7 +3916,7 @@ SELLOS_DE_LOS_DATOS = {
         # 7 sep (3): "Laringe de vacuno" pasa de categoria "Hueso carnoso" a "Extras" -- bloqueada por tejido tiroideo desde el 6 de septiembre, nunca puede aportar hueso a ningun menu, y su categoria antigua solo servia para disparar dos avisos ya conocidos en auditar_catalogo.py ("hueso con poco calcio, es cartilago"). 0 referencias en catalogo_menus.json (comprobado), asi que no afecta a los menus precalculados. Decision pendiente desde el 25 de agosto en PENDIENTE_NUTRICION.md, cerrada.
         # 7 sep (2): linoleico de "Grasa de pollo" (19,5 g/100g) -- USDA FDC 173564 "Fat, chicken", cuya proteina (0) y grasa (99,8) ya coincidian exactas con esta ficha. Cierra el hueco que quedaba en PENDIENTE_NUTRICION.md desde el 25 de agosto.
         # 7 sep: 4 visceras (Bazo de vaca, Pancreas de vaca, Bazo de cordero, Cerebro de ternera) con `sin_dato` incompleto -- sus propias notas ya decian que faltaban ciertos minerales/vitaminas ("sin dato fiable... se dejan en 0"), pero el campo estructurado no los tenia, asi que contra un maximo contaban como cero MEDIDO en vez de hueco. Encontrado auditando alimentos_v3_final.json de verdad (comparando texto contra estructura), no solo comprobando formato. Ningun valor numerico cambia, solo que estas claves antes contadas como "0 real" pasan a "no lo sabemos".
-        "alimentos_v3_final.json":      "0ee6670f384f096e",   # 7 sep (2): 52 celdas cerradas contra las tres fuentes EN EL ORDEN DE Bases.md (BEDCA primaria -> CIQUAL -> USDA). Ninguna era un numero mal copiado: las 52 eran CEROS, y 20 de ellos ni siquiera estaban declarados en `sin_dato`. El grave: "Aceite de higado de bacalao" entraba en el solver con EPA=0 y DHA=0 -- la fuente de omega-3 mas densa del catalogo era invisible (BEDCA no publica acidos grasos individuales de ese aceite; CIQUAL 17630 da 8,39 y 11,4) -- y su yodo, que es uno de los cinco topes duros de seguridad, valia 0 sin declararse (CIQUAL mide 400 ug). Ademas: cerebro de ternera completado con BEDCA 1047 (17 celdas, entre ellas el DHA 0,36 que su propia nota ya describia como abundante), las tres visceras que faltaban completadas con la MISMA ficha de USDA de la que ya salian, y seis huecos de verdura y huevo que solo encontro el detector automatico nuevo de ceros sospechosos. auditar_catalogo.py y auditar_fediaf.py re-ejecutados, pruebas_completas.py entero.
+        "alimentos_v3_final.json":      "251c2d117056e4fb",   # 7 sep (3): igual que el (2) -- 52 celdas cerradas contra BEDCA/CIQUAL/USDA en el orden de Bases.md, ninguna era un numero mal copiado sino un CERO -- MAS la correccion de "Cerebro de ternera", que ni se llamaba bien ni se relleno bien. Sus datos son de VACA (coinciden celda a celda con USDA FDC 168622, no con los de ternera de USDA 174351 / BEDCA 1047 / CIQUAL 40006), igual que ya paso con el bazo y el pancreas "de ternera" en agosto. Renombrado a "Cerebro de vaca" y REHECHO ENTERO desde USDA 168622: las 17 celdas que se le habian puesto ese mismo dia venian de la ficha de TERNERA, y el DHA quedaba en 0,36 g cuando el de vaca es 0,851. Lo que 168622 no publica (vitD, yodo, colina) vuelve a sin_dato en vez de llevar cifras de otra especie. Se retira tambien la sospecha sobre el araquidonico del pavo: USDA publica DOS filas de 20:4 y el catalogo usa la buena. auditar_catalogo.py y auditar_fediaf.py re-ejecutados, pruebas_completas.py entero.
         # 6 sep: nota_datos de los 4 alimentos excluidos por tejido tiroideo (Cuello de pavo/pato/ternera, Laringe de vacuno) documenta el bloqueo -- ver seguridad.TIROIDES_EXCLUIR.
         # 28 ago (2): EL HIGADO Y EL CORAZON DE PAVO, resembrados desde el pollo del USDA -- su aminograma venia del pavo del USDA, que tiene la isoleucina y la valina un 40% bajas (Leu/Ile 2,52 contra 1,47-1,98 del resto). Reescalados a NUESTRA proteina. Las otras cinco fichas de pavo NO se cargan: traian histidina = isoleucina = valina exactos, y eso es una copia, no una medida. Ver el BLOQUE 27. // 28 ago: PURINAS DE CUATRO VISCERAS con cifra publicada (timo 525, bazo de cordero 322, bazo de vaca 185, pulmon de ternera 117). NO se uso la banda generica 84-243 que se habia propuesto: para el timo habria declarado ~160 cuando la cifra son 525, un factor de 3 a 4 POR ABAJO, y es el alimento solido con mas purinas de las tablas. Pancreas, testiculos y pulmon de cordero se quedan como hueco: no hay dato. Ver el BLOQUE 33
         # 7 sep (2): nueva fila "Fibra", con los seis campos (minAdulto..maxCachorroCrecimiento) a "-" -- FEDIAF no da minimo ni maximo de fibra en la Tabla III-3b, asi que esta fila NO es un requisito nuevo: no exige ni limita nada a un perro sano. Existe para que verificar.MAPA pueda leer la clave "fibra" y topes_de_patologias() pueda ponerle un suelo por patologia con fuente real (primer uso: hiperlipidemia, SACN5 cap.28). auditar_fediaf.py la lista en NO_SON_NUTRIENTES_DE_LA_TABLA y ademas comprueba que nunca lleve un numero, para que no repita el fallo del 25 de agosto (fila "Fibra" con minimo/maximo inventados que el analizador exigia). Ver PENDIENTE_NUTRICION.md.

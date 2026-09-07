@@ -121,7 +121,7 @@ VISCERAS = [
     "Bazo de vaca", "Páncreas de vaca",
     "Bazo de cordero", 
     "Timo de ternera",
-    # ⚠️ QUITADO "Cerebro de ternera" (7 septiembre), mismo criterio que la
+    # ⚠️ QUITADO "Cerebro de vaca" (7 septiembre), mismo criterio que la
     # laringe de vacuno: se queda en el catálogo para quien lo elija A MANO,
     # pero el automático ya no lo propone. Y esta vez el motivo se midió.
     #

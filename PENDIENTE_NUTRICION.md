@@ -274,15 +274,31 @@ ternera). Pasan a `sin_dato` para que salte el aviso de datos incompletos.
       Siguen sin dato yodo, vitD, vitE, colina y cloruro de los tres de
       USDA: esa base no los publica, y BEDCA y CIQUAL no tienen bazo ni
       páncreas de ninguna especie.
-- [ ] **Dos discrepancias del cerebro de ternera que NO son huecos y por eso
-      no se han tocado**: calcio 43 mg frente a 10-12 en las tres fuentes, y
-      selenio 21,3 µg frente a 10-11,6. Cambiarlas no es rellenar, es
-      corregir, y eso lo decide una persona. El selenio va del lado seguro
-      (sobrestimarlo hace que el motor use MENOS cerebro, porque tiene
-      techo); el calcio no es de seguridad pero mueve el Ca:P.
-      Lo mismo con el araquidónico de tres fichas de pavo (corazón 205,
-      hígado 378, molleja 96 mg) frente a USDA (9, 21 y 7): unas 20 veces,
-      y merece que alguien mire de dónde salió esa columna.
+- [x] **Las dos «discrepancias» del cerebro NO lo eran, y detrás había algo
+      peor — RESUELTO el 7 de septiembre.** El calcio (43 mg frente a 10-12)
+      y el selenio (21,3 µg frente a 10-11,6) se apuntaron aquí como posibles
+      errores de dato. No lo son: **son exactos de USDA FDC 168622, que es
+      cerebro de VACA**, y se estaban comparando contra cerebro de TERNERA
+      (USDA 174351, BEDCA 1047, CIQUAL 40006), que es otro animal.
+      La ficha se llamaba «Cerebro de ternera» y sus datos eran de vaca:
+      coincide celda a celda con la ficha de vaca en las nueve que tenían
+      valor (proteína 10,86, grasa 10,3, calcio 43, selenio 21,3, hierro
+      2,55, potasio 274, zinc 1,02, vitB12 9,51). **Es exactamente lo que ya
+      pasó con «Bazo de ternera» y «Páncreas de ternera»**, renombrados a
+      «de vaca» el 21 de agosto por la misma razón — al cerebro se le pasó.
+      Renombrado a **`Cerebro de vaca`** (0 referencias en
+      `catalogo_menus.json`, comprobado).
+      **Y la ficha se rehízo entera**, porque ese mismo día yo le había
+      rellenado 17 celdas desde BEDCA 1047, que es la ficha de ternera: el
+      DHA quedó en 0,36 g cuando el de vaca es **0,851**, y la vitamina A en
+      0 cuando son 7 µg. Ahora toda la ficha sale de USDA 168622, una sola
+      fuente, y lo que esa ficha no publica (vitD, yodo, colina) vuelve a
+      `sin_dato` en vez de llevar cifras de la otra especie.
+      **La lección, y es la de este proyecto entera**: una explicación
+      plausible para un aviso nuevo no es una comprobación. El aviso `[OMEGA]`
+      saltó al rellenar y se le buscó una razón razonable («el cerebro
+      concentra omega-3»); lo que decía de verdad es que la ficha que yo
+      acababa de rellenar tenía datos de otro animal.
 
 ### `Laringe de vacuno` — RESUELTO el 7 de septiembre
 
@@ -349,6 +365,44 @@ causa es la variedad de especies, no el número de alimentos:
       fuera y además el TVT Merkblatt 181 bloquea el cerdo crudo—, o (b)
       aceptar que con esas dos alergias el menú va sin víscera y decirlo
       claro. Es una decisión, no un dato que falte.
+- [ ] ⚠️ **DECISIÓN TUYA: el timo y el pulmón «de ternera» tampoco son de
+      ternera, y aquí NO es cosmético.** Encontrado el 7 de septiembre al
+      barrer todas las fichas «de ternera» contra las dos fichas de USDA
+      (vaca y ternera) después de descubrir lo del cerebro:
+
+      | ficha | coincide con VACA | con TERNERA |
+      |---|---|---|
+      | `Timo de ternera` | **11 de 11** | 0 de 11 |
+      | `Pulmón de ternera` | **10 de 11** | 2 de 11 |
+      | `Riñón de ternera` | 1 de 11 | 2 de 11 → se queda como está |
+      | `Lengua de ternera` | 0 | 0 → viene de otra fuente, no de USDA |
+
+      **Y la diferencia es enorme, no un decimal.** El timo:
+
+      | | catálogo | vaca (FDC 170194) | ternera (FDC 172542) |
+      |---|---|---|---|
+      | energía | 236 | **236** | 101 |
+      | grasa | 20,35 | **20,35** | 3,07 |
+      | proteína | 12,17 | **12,18** | 17,21 |
+
+      Si alguien lee «timo de ternera» y compra mollejas de ternera —que es
+      lo que se vende en España— está dando un alimento con **la séptima
+      parte de la grasa y menos de la mitad de las calorías** que el menú
+      creía. Eso descuadra la ración de verdad, no es una etiqueta.
+
+      **Las dos salidas son válidas y la decisión no es de datos:**
+      1. **Renombrar a `Timo de vaca` y `Pulmón de vaca`**, como ya se hizo
+         con el bazo y el páncreas en agosto. Los datos se quedan como
+         están, que son correctos. Cuesta: 27 + 72 referencias en
+         `catalogo_menus.json` (renombrado consistente, los menús siguen
+         siendo válidos y `_garantizar_verificado` los revisa igual).
+      2. **Dejar el nombre y cambiar los datos** a los de ternera (FDC
+         172542 y 174361), porque las mollejas de ternera son lo que la
+         gente encuentra en la carnicería. Cuesta: dos fichas rehechas, y
+         los menús precalculados que las lleven cambian de perfil.
+
+      La 1 es más fiel al dato; la 2 es más fiel a lo que se compra. No la
+      tomo yo.
 - [ ] **Hígado de cerdo**: única pieza que falta en esa categoría. Fuera de
       esta ronda a propósito — el 7 de septiembre se decidió no meter nada
       de cerdo.
