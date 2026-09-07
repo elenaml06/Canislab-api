@@ -44,10 +44,10 @@ que tomar una persona, no yo.
 
 ## `PENDIENTE_DINERO_Y_SALUD.md` — lo urgente, antes de cobrar, lo que mira Stripe
 
-- [ ] `/menu/varios-perros` devuelve a veces 1 menú en vez de 3 (presupuesto de tiempo, no cabe con 2 perros y 3 menús)
-- [ ] El canario del BLOQUE 14 cantó: 0,99 g de salmón (falta un mínimo por alimento semicontinuo en el solver)
+- [x] `/menu/varios-perros` devolvía 1 menú en vez de 3 — ARREGLADO 7 sep: decidía si seguir con el TOPE de cada rodaja (peor caso 10 s) en vez de con lo que había costado de verdad la ronda anterior. Ahora se mide. Con el presupuesto apretado a 14 s: antes [2,1,1,1,2], ahora [3,3,2,3,3]. BLOQUE 46
+- [x] Los 0,99 g de salmón — CERRADO 7 sep: el suelo de «esto se puede pesar» se recortaba contra el techo del propio alimento (`min(porcion, techos[i])`) y podía quedarse por debajo del gramo. Ahora nunca baja de 1 g y el MILP deja fuera solo al alimento del que no cabe ni un gramo
 - [ ] Nadie debería poder suscribirse dos veces
-- [ ] El yodo de los perros muy pequeños vive al 101 % del mínimo (el margen de redondeo no escala)
+- [x] El yodo de los perros pequeños — ARREGLADO 7 sep, y era peor de lo apuntado: el margen del suelo era un 1,5 % fijo cuando lo que tiene que cubrir es el error ABSOLUTO del redondeo. Medido en 60 menús de perros de 1,5-4,5 kg: antes el yodo bajaba al 82 % y 3 menús se caían; ahora mínimo 100 % y ninguno. BLOQUE 47
 - [ ] `profiles` es una frontera de autorización y no está en el repo (RLS sin versionar)
 - [ ] Comprobar que la cancelación quita el premium
 - [ ] Verificar el negocio en Stripe, crear productos/precios/webhook reales, quitar `STRIPE_PRUEBA`, primer cobro real
@@ -70,7 +70,7 @@ que tomar una persona, no yo.
 - [ ] `aviso_composicion` en la web: ver cómo queda con tres alergias
 - [ ] `tipo_de_clave_supabase` sale como `[Filtered]` en Sentry (renombrar)
 - [ ] La `HTTPException` genérica del webhook sobra en Sentry
-- [ ] `/perro/{id}/menus` devuelve menús sin verificar
+- [x] `/perro/{id}/menus` — ARREGLADO 7 sep, era el único agujero en la regla 1: la tabla no guardaba la etapa ni el DER, así que el menú no se podía verificar NI EN PRINCIPIO. Ahora se guarda el contexto con el menú y se verifica al leerlo. BLOQUE 45
 
 ## `PENDIENTE_NUTRICION.md` — auditado contra el PDF oficial
 

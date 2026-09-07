@@ -4,6 +4,25 @@ Parte de `PENDIENTE.md` (secciones 1, 2 y 3), separado el 6 de septiembre.
 
 ## 1. Urgente — dinero y salud
 
+### 1.0 `/menu/varios-perros` devolvía 1 menú en vez de 3 — ARREGLADO el 7 de septiembre
+
+> **CERRADO.** La aritmética de abajo es correcta y sigue siéndolo, pero le
+> faltaba una consecuencia: **esos 12, 6 y 4 segundos son TOPES, no costes.**
+> `presupuesto_segundos` es un techo y el solver vuelve en cuanto encuentra
+> solución — la propia nota lo dice sin usarlo: «la petición tarda 9-15 s de
+> los 24». Lo que fallaba no era el presupuesto, era la DECISIÓN de seguir:
+> `hay_tiempo_para_otra_ronda()` preguntaba «¿caben otros 10 s en el peor
+> caso?» aunque la ronda anterior hubiera costado 3.
+>
+> Ahora se mide lo que ha costado de verdad cada ronda y se estima con eso,
+> nunca siendo optimista más allá de lo observado (si la máquina va lenta,
+> las rondas cuestan más, la estimación sube sola y se corta antes).
+> Con el presupuesto apretado a 14 s a propósito, cinco tiradas de cada:
+> **antes [2, 1, 1, 1, 2] — nunca llegaba a 3; ahora [3, 3, 2, 3, 3]**. Con
+> el presupuesto normal de 24 s, 8 de 8 tiradas dan 3/3 en 7-13 s.
+> Lo vigila el BLOQUE 46, que aprieta el presupuesto porque con 24 s en una
+> máquina rápida las dos versiones aciertan y no probaría nada.
+
 ### 1.0 `/menu/varios-perros` devuelve a veces 1 menú en vez de 3
 
 Encontrado el 27 de agosto **por la batería**, no por la app. La casa de
@@ -102,6 +121,24 @@ de menús que se piden de una vez, resolverlos en varias peticiones, o
 darle a cada solve una rodaja de tiempo explícita en vez de que se la
 coman los primeros.
 
+### 1.0-bis Los 0,99 g de salmón — CERRADO el 7 de septiembre
+
+> **CERRADO.** El diagnóstico de abajo («el mínimo por alimento solo se
+> aplica a los forzados») dejó de ser cierto el 29 de agosto, cuando el
+> suelo se extendió a toda la comida. Lo que quedaba abierto era otra cosa:
+> el suelo se recortaba contra el techo del propio alimento
+> (`suelo = min(porcion, techos[i])`), y el techo de un Extra sale de la
+> **dosis del fabricante** — que en un perro diminuto puede ser de medio
+> gramo. Ahí el suelo se quedaba por debajo del gramo, que es exactamente
+> lo que esta restricción existe para impedir.
+>
+> Ahora el suelo nunca baja de 1 g, y no hace falta excluir nada a mano: con
+> `gramos_i >= 1 * usa_i` y un techo menor que 1, la única solución posible
+> es `usa_i = 0`, o sea que el MILP deja fuera solo al alimento del que no
+> cabe ni un gramo. Comprobado que no cuesta menús: 10 de 10 en cinco
+> perfiles, incluidos perros de 1 kg. El canario del BLOQUE 14 cubre ahora
+> también los perros de 1 y 3 kg, que es donde asomaría.
+
 ### 1.0-bis El canario del BLOQUE 14 cantó: 0,99 g de salmón
 
 28 de agosto. Un perro de 1,5 kg con 200 kcal y cuatro especies excluidas
@@ -135,6 +172,32 @@ Hace falta, antes de abrir el cobro:
 - Al cancelar, no poner `plan = free` a ciegas: comprobar si le queda
   alguna otra suscripción viva. Hoy una cancelación de cualquiera de las
   seis dejaría a la persona sin premium teniendo cinco pagadas.
+
+### 1.0-ter El yodo de los perros pequeños — ARREGLADO el 7 de septiembre
+
+> **CERRADO, y era peor de lo que decía esta nota.** El «por dónde seguir»
+> de abajo acertaba de pleno: el margen no puede ser un porcentaje porque lo
+> que cubre es un error ABSOLUTO. Se hizo tal cual — el suelo se pide ahora
+> con el mayor de los dos, el 1,5 % de siempre o medio paso de redondeo
+> (0,005 g) de la fuente más concentrada de ese nutriente.
+>
+> La cuenta con el yodo de un perro de 3 kg: mínimo 300 µg/1000 kcal = 90 µg,
+> el 1,5 % son 1,35 µg, pero medio paso del yoduro potásico (800 µg/g) mueve
+> 4 µg — tres veces el margen. En un perro de 20 kg ese mismo error es el
+> 0,6 % del mínimo y el porcentaje lo cubre de sobra; por eso solo se veía
+> en los pequeños. Se coge la fuente más concentrada y no la suma de todas
+> porque los redondeos no van todos en la misma dirección.
+>
+> **Y no era estético.** Medido en 60 menús de perros de 1,5 a 4,5 kg:
+>
+> | | yodo mínimo | mediana | bajo 102 % | menús caídos |
+> |---|---|---|---|---|
+> | antes (solo %) | **82 %** | 102 % | 16 de 60 | 3 |
+> | ahora | 100 % | 106 % | 2 de 60 | 0 |
+>
+> El 82 % es un menú que NO CUMPLE saliendo del solver. Lo paraba
+> `_garantizar_verificado` —la regla 1 haciendo su trabajo— a costa de dejar
+> a la usuaria sin menú. Lo vigila el BLOQUE 47.
 
 ### 1.0-ter El yodo de los perros muy pequeños vive al 101 % del mínimo
 

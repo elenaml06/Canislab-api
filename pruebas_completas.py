@@ -1022,17 +1022,47 @@ for _cuantos in (1, 3):
             #
             # Medido con el mecanismo apagado: la proteína salía IDÉNTICA en
             # los tres menús, 3 de 3 intentos. Con él, tres distintas.
-            if _cuantos > 1 and len(_p.get("menus") or []) > 1:
-                _proteinas = []
-                for _mm in _p["menus"]:
+            #
+            # ⚠️ SI COINCIDEN, SE VUELVE A PEDIR UNA VEZ, y esto no es aflojar
+            # la prueba (7 septiembre). La rotación NO es una exclusión dura:
+            # `motor_completo.py` solo PENALIZA la especie del menú anterior
+            # en el objetivo, a propósito -- una exclusión dura e invisible
+            # podía dejar sin menú a un perro que nunca pidió evitar nada. Al
+            # ser blanda, que los tres menús caigan en la misma especie es
+            # RARO pero posible, y esta prueba lo daba por fallo: saltó una
+            # vez con los tres menús de Nala en Pavo, y al repetir el mismo
+            # caso cuatro veces seguidas salieron doce proteínas distintas y
+            # ninguna repetición. Una prueba que falla sola de vez en cuando
+            # se acaba ignorando, y entonces tampoco avisa cuando importa.
+            #
+            # Lo que NO cambia es su fuerza: con el mecanismo apagado la
+            # proteína sale idéntica SIEMPRE (3 de 3 medido), así que dos
+            # intentos independientes coincidiendo los dos siguen delatándolo.
+            # Lo que se elimina es el falso positivo de una coincidencia
+            # aislada, que no prueba nada.
+            def _proteinas_de_b11(perro):
+                out = []
+                for _mm in perro.get("menus") or []:
                     _carnes = [(n, g) for n, g in (_mm.get("menu") or {}).items()
                                if al.get(n, {}).get("categoria") == "Carne muscular"]
                     if _carnes:
-                        _proteinas.append(especie_de(max(_carnes, key=lambda x: x[1])[0]))
+                        out.append(especie_de(max(_carnes, key=lambda x: x[1])[0]))
+                return out
+
+            if _cuantos > 1 and len(_p.get("menus") or []) > 1:
+                _proteinas = _proteinas_de_b11(_p)
                 if len(_proteinas) > 1 and len(set(_proteinas)) == 1:
-                    fallos.append(f"BLOQUE11 {_caso}: los {_cuantos} menús de "
-                                  f"{_p.get('nombre')} llevan la MISMA proteína "
-                                  f"({_proteinas[0]}) — la rotación no está haciendo nada")
+                    _otra_b11 = _pedir_casa(_perros, _noms, cuantos=_cuantos)
+                    _mismo_b11 = next((x for x in (_otra_b11.get("perros") or [])
+                                       if x.get("nombre") == _p.get("nombre")), None)
+                    _seg_b11 = _proteinas_de_b11(_mismo_b11) if _mismo_b11 else []
+                    if len(_seg_b11) > 1 and len(set(_seg_b11)) == 1:
+                        fallos.append(
+                            f"BLOQUE11 {_caso}: los {_cuantos} menús de {_p.get('nombre')} "
+                            f"llevan la MISMA proteína DOS VECES SEGUIDAS ({_proteinas[0]} y "
+                            f"luego {_seg_b11[0]}) — la rotación no está haciendo nada. Una "
+                            f"coincidencia suelta es posible (la penalización es blanda); dos "
+                            f"seguidas es el mecanismo apagado.")
 
 # (4) un alérgeno NO se cuela por parecerse.
 #
@@ -1645,6 +1675,19 @@ _CASOS_B14 = [
     {"der_objetivo": 450, "peso_perro_kg": 6, "etapa_requisitos": "Adulto",
      "especies_excluidas": ["pollo", "pavo", "conejo"],
      "categorias_excluidas": ["Hueso carnoso"]},
+    # ⚠️ AÑADIDOS EL 7 DE SEPTIEMBRE, los perros MÁS pequeños del catálogo.
+    # El suelo de "esto se puede pesar" se recortaba contra el techo del
+    # propio alimento (`min(porcion, techos[i])`), y el techo de un Extra
+    # sale de la dosis del FABRICANTE: en un perro diminuto esa dosis puede
+    # ser de medio gramo, y entonces el suelo se quedaba por debajo del
+    # gramo -- que es exactamente lo que esta restricción existe para
+    # impedir. Ahora el suelo nunca baja de 1 g y el propio MILP deja fuera
+    # al alimento del que no cabe ni un gramo. Aquí es donde asomaría.
+    {"der_objetivo": 140, "peso_perro_kg": 1.0, "etapa_requisitos": "Adulto"},
+    {"der_objetivo": 140, "peso_perro_kg": 1.0, "etapa_requisitos": "Adulto",
+     "especies_excluidas": ["pollo", "pavo", "vacuno"]},
+    {"der_objetivo": 300, "peso_perro_kg": 3, "etapa_requisitos": "Adulto",
+     "especies_excluidas": ["pollo", "pavo"]},
 ]
 
 _menus_b14 = 0
@@ -2097,10 +2140,28 @@ else:
 #
 # La de arriba no basta como vigilancia: depende del azar y solo saltaba
 # 1 de cada 12 veces. Esta va con SEMILLA FIJA, así que es determinista.
-# MEDIDO con el fallo puesto: 16 de 30 semillas tiraban el pescado
-# preferido; con el arreglo, ninguna de estas cinco. (La semilla 9 lo
-# tira de las dos formas: ahí es por otro motivo, y preferir es una
-# preferencia, no una imposición -- por eso no está en la lista.)
+#
+# ⚠️ REANCLADA EL 7 DE SEPTIEMBRE, y al medirla se vio que casi no
+# vigilaba. Las semillas eran (1, 3, 7, 15, 22) y se volvieron a medir las
+# 30, con el arreglo y con el fallo reintroducido a mano:
+#
+#     con el arreglo puesto      28 de 30 conservan el boquerón
+#     con el fallo reintroducido 20 de 30
+#
+# O sea que las semillas que DISTINGUEN una cosa de la otra son ocho:
+# 2, 3, 4, 5, 12, 17, 20 y 26. De las cinco que había, sólo la 3 estaba en
+# esa lista; las otras cuatro conservaban el pescado con el fallo puesto y
+# sin él, así que no habrían cazado nada. Y la 7 lo tira de las dos formas
+# --como la 9, que ya estaba documentada así-- porque ahí se caen DOS
+# preferidos a la vez (el boquerón y la carcasa de pollo) y el motivo no es
+# la penalización: preferir es una preferencia, no una imposición.
+#
+# Ahora van las cinco primeras de las que sí distinguen. Si alguien vuelve
+# a romper la línea `and n not in preferidos`, las cinco se caen a la vez.
+# (Se remidió porque el catálogo cambió ese día: al darle su DHA real al
+# cerebro de ternera, el motor encontraba menús sin pescado y sólo 2 de 30
+# semillas conservaban el boquerón. El cerebro salió del automático y esto
+# volvió a su sitio -- ver `accesibles.py`.)
 _al_b17, _req_b17 = _api.cargar_v2()
 _PREFERIR_B17 = [n for n in ["Boquerón", "Carcasa de pollo", "Hígado de ternera",
                              "Corazón de ternera", "Calabacín", "Aceite de girasol"]
@@ -2108,7 +2169,7 @@ _PREFERIR_B17 = [n for n in ["Boquerón", "Carcasa de pollo", "Hígado de terner
 if "Boquerón" not in _PREFERIR_B17:
     fallos.append("BLOQUE17: el boquerón ya no está en el catálogo; hay que reanclar esta prueba.")
 else:
-    for _sem_b17 in (1, 3, 7, 15, 22):
+    for _sem_b17 in (2, 3, 4, 5, 12):
         _ok_b17, _g_b17 = _api.resolver_v2(
             1040.0, "Adulto", _al_b17, _req_b17, 20.0, _api.dosis_maxima_fabricante,
             margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=12,
@@ -5055,31 +5116,307 @@ elif _vivos_b44:
         + "\n    ".join(l.strip()[:110] for l in _vivos_b44[:6]))
 
 # ── mitad 2: con el fallo plantado TIENE que sonar ────────────────────
-# Se vacía la tiamina del hígado de vaca, que es justo el perfil del fallo
-# real: una ficha por lo demás completa, con UN cero mudo, en una categoría
-# donde el resto sí tiene el dato.
+# Se vacía UN nutriente de UN alimento: el perfil exacto del fallo real, una
+# ficha por lo demás completa con un solo cero mudo.
+#
+# ⚠️ LA VÍCTIMA SE ELIGE SOLA, y no es comodidad. La primera versión de esta
+# prueba escogió a dedo la tiamina del hígado de vaca y NO saltaba: el
+# hígado de cordero también tiene la tiamina a cero, así que al vaciar la de
+# otro quedaban 4 de 5 = 80 % y no se llegaba al 90 % del umbral. O sea que
+# la prueba no fallaba porque el detector estuviera roto, sino porque la
+# víctima elegida a mano no servía -- y eso mismo puede volver a pasar cada
+# vez que cambie el catálogo. Buscándola aquí, se coge una que de verdad
+# cumpla la condición HOY, y la prueba no caduca.
 _cat_b44 = _json_b44.load(open(_os_b44.path.join(_dir_b44, "alimentos_v3_final.json"),
                                encoding="utf-8"))
-_victima_b44 = next(a for a in _cat_b44 if a["nombre"] == "Hígado de vaca")
-assert _victima_b44["nutrientes"].get("tiamina"), \
-    "BLOQUE44 mal escrito: la víctima ya tenía la tiamina a cero"
-_victima_b44["nutrientes"]["tiamina"] = 0
-_victima_b44["sin_dato"] = [k for k in (_victima_b44.get("sin_dato") or []) if k != "tiamina"]
+_SUPL_B44 = ("Multivitamínico", "Vitamina B", "Hierro", "Calcio", "Yodo", "Fibra", "Omega-3")
+_grupos_b44 = {}
+for _a_b44 in _cat_b44:
+    if (_a_b44.get("categoria") not in _SUPL_B44
+            and (_a_b44.get("nutrientes") or {}).get("grasa", 0) <= 80):
+        _grupos_b44.setdefault(_a_b44["categoria"], []).append(_a_b44)
 
-with _tmp_b44.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as _f_b44:
-    _json_b44.dump(_cat_b44, _f_b44, ensure_ascii=False)
-    _roto_b44 = _f_b44.name
-try:
-    _con_fallo_b44, _err2_b44 = _auditar_b44(_roto_b44)
-    if _err2_b44:
-        fallos.append(f"BLOQUE44: la auditoría revienta con el catálogo plantado:\n{_err2_b44}")
-    elif not any("Hígado de vaca" in l and "tiamina" in l for l in (_con_fallo_b44 or [])):
+_victima_b44 = _clave_b44 = None
+for _cat_n_b44, _g_b44 in sorted(_grupos_b44.items()):
+    if len(_g_b44) < 5:
+        continue
+    for _k_b44 in sorted((_g_b44[0].get("nutrientes") or {})):
+        # todos los de la categoría lo tienen: quitárselo a uno lo deja como
+        # la única excepción, que es justo lo que el detector busca
+        if all((_x.get("nutrientes") or {}).get(_k_b44) for _x in _g_b44):
+            _victima_b44, _clave_b44 = _g_b44[0], _k_b44
+            break
+    if _victima_b44:
+        break
+
+if not _victima_b44:
+    fallos.append("BLOQUE44: no se ha encontrado ningún nutriente que TODOS los alimentos "
+                  "de alguna categoría tengan, así que no se puede plantar el fallo. O el "
+                  "catálogo ha cambiado mucho, o esta prueba hay que reescribirla.")
+else:
+    _victima_b44["nutrientes"][_clave_b44] = 0
+    _victima_b44["sin_dato"] = [k for k in (_victima_b44.get("sin_dato") or [])
+                                if k != _clave_b44]
+
+    with _tmp_b44.NamedTemporaryFile("w", suffix=".json", delete=False,
+                                     encoding="utf-8") as _f_b44:
+        _json_b44.dump(_cat_b44, _f_b44, ensure_ascii=False)
+        _roto_b44 = _f_b44.name
+    try:
+        _con_fallo_b44, _err2_b44 = _auditar_b44(_roto_b44)
+        if _err2_b44:
+            fallos.append(f"BLOQUE44: la auditoría revienta con el catálogo "
+                          f"plantado:\n{_err2_b44}")
+        elif not any(_victima_b44["nombre"] in l and _clave_b44 in l
+                     for l in (_con_fallo_b44 or [])):
+            fallos.append(
+                f"BLOQUE44: se ha vaciado «{_clave_b44}» de «{_victima_b44['nombre']}» SIN "
+                f"declararlo -- y lo tienen TODOS los demás de su categoría -- y el detector "
+                f"de ceros mudos no ha dicho nada. Está roto o desactivado, y con él la única "
+                f"red que queda cuando alguien se olvida de rellenar `sin_dato`.")
+    finally:
+        _os_b44.unlink(_roto_b44)
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 45 — EL ÚLTIMO CAMINO QUE ENTREGABA MENÚS SIN VERIFICAR
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (7 septiembre). La regla 1 del CLAUDE.md dice que TODO
+# camino que devuelva un menú pasa por `_garantizar_verificado()`. Había
+# una excepción, y llevaba abierta desde el 20 de agosto: los menús
+# guardados. La tabla `menus` almacenaba nombre, gramos y kcal, y nada
+# más -- sin la etapa ni el DER contra los que se verificó, ese menú no se
+# podía verificar NI SIQUIERA EN PRINCIPIO. No faltaba código: faltaba el
+# dato. Se devolvía con `verificado: false` y un aviso, que era honesto
+# pero dejaba en manos de quien llamara el acordarse. Y un aviso se puede
+# ignorar; es la misma razón por la que los topes de seguridad crónica son
+# restricciones duras y no avisos.
+#
+# Ahora el contexto se guarda CON el menú y aquí se verifica de cero. Se
+# comprueban los tres desenlaces, porque el que importa es el del medio:
+# un menú que se guardó bueno puede haber dejado de cumplir si el catálogo
+# cambió debajo, y eso solo se ve verificándolo otra vez.
+print("=== BLOQUE 45: los menús guardados se verifican al leerlos ===")
+
+import tempfile as _tmp_b45, os as _os_b45
+import persistencia as _pers_b45
+
+_db_b45 = _os_b45.path.join(_tmp_b45.mkdtemp(), "b45.db")
+_pers_b45.crear_tablas(_db_b45)
+_pid_b45 = _pers_b45.guardar_perro({"nombre": "B45", "tamano": "mediano"}, ruta_db=_db_b45)
+
+_r_b45 = _c.post("/menu/v2", json={"nombres_alimentos": [], "modo": "automatico",
+                                   "der_objetivo": 1100, "peso_perro_kg": 20,
+                                   "etapa_requisitos": "Adulto"}).json()
+if not _r_b45.get("factible"):
+    fallos.append("BLOQUE45: no se pudo generar el menú de partida.")
+else:
+    _ctx_b45 = {"etapa_requisitos": "Adulto", "der_objetivo": 1100, "peso_perro_kg": 20}
+    _pers_b45.guardar_menu(_pid_b45, "bueno", {"gramos": _r_b45["menu"], "kcal_total": 1100},
+                           contexto=_ctx_b45, ruta_db=_db_b45)
+    # sin contexto: es como se guardaban antes del 7 de septiembre
+    _pers_b45.guardar_menu(_pid_b45, "viejo", {"gramos": _r_b45["menu"], "kcal_total": 1100},
+                           ruta_db=_db_b45)
+    # ⚠️ EL FALLO PLANTADO: medio kilo de pollo a secas. Tiene contexto, así
+    # que se verifica -- y no cumple ni de lejos (sin hueso no hay calcio).
+    # Si esto sale `verificado: true`, es que no se está verificando nada.
+    _pers_b45.guardar_menu(_pid_b45, "roto",
+                           {"gramos": {"Pollo con piel (sin hueso)": 500}, "kcal_total": 1100},
+                           contexto=_ctx_b45, ruta_db=_db_b45)
+
+    _real_b45 = _pers_b45.obtener_menus
+    _pers_b45.obtener_menus = lambda _p, ruta_db=_db_b45: _real_b45(_p, ruta_db=_db_b45)
+    try:
+        _por_nombre_b45 = {m["nombre"]: m for m in _api.endpoint_obtener_menus(_pid_b45)}
+    finally:
+        _pers_b45.obtener_menus = _real_b45
+
+    _bueno_b45 = _por_nombre_b45.get("bueno") or {}
+    if _bueno_b45.get("verificado") is not True or not _bueno_b45.get("ficha"):
+        fallos.append(f"BLOQUE45: un menú guardado que SÍ cumple vuelve como "
+                      f"verificado={_bueno_b45.get('verificado')!r} y "
+                      f"{'con' if _bueno_b45.get('ficha') else 'SIN'} ficha. Tenía que "
+                      f"volver verificado y con su ficha recalculada.")
+
+    _viejo_b45 = _por_nombre_b45.get("viejo") or {}
+    if _viejo_b45.get("verificado") is not None or not _viejo_b45.get("aviso"):
+        fallos.append("BLOQUE45: un menú SIN contexto (guardado antes del 7 de septiembre) "
+                      "tiene que volver con verificado=None y su aviso. No se puede "
+                      "verificar contra nada, y fingir que sí es peor que decirlo.")
+
+    _roto_b45 = _por_nombre_b45.get("roto") or {}
+    if _roto_b45.get("verificado") is not False:
         fallos.append(
-            "BLOQUE44: se ha vaciado la tiamina del hígado de vaca SIN declararla y el "
-            "detector de ceros mudos no ha dicho nada. El detector está roto o desactivado, "
-            "y con él la única red que queda cuando alguien se olvida de rellenar `sin_dato`.")
+            f"BLOQUE45: medio kilo de pollo sin hueso ha vuelto como "
+            f"verificado={_roto_b45.get('verificado')!r}. Ese menú no cumple ni el calcio "
+            f"ni el Ca:P, así que o no se está verificando o el filtro lo deja pasar. Es "
+            f"la regla 1: preferimos no dar menú a dar uno que no cumple.")
+    elif _roto_b45.get("alimentos"):
+        fallos.append("BLOQUE45: el menú que NO cumple ha vuelto con sus gramos dentro. "
+                      "Un menú rechazado no se entrega: se dice por qué y se regenera.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 46 — LA CASA DE VARIOS PERROS DA LOS MENÚS QUE SE PIDEN
+# ============================================================
+#
+# ⚠️ CASO REAL, abierto desde el 27 de agosto: la casa de dos perros
+# pidiendo 3 menús devolvía 1 para cada uno, sin error y sin aviso.
+#
+# El análisis de entonces llegó hasta la aritmética y era correcto:
+#
+#     ronda 0: primer menú de la base 12 s + amoldar 4 s = 16 s
+#     ronda 1: menú 6 s + amoldar 4 s                    = 10 s
+#     ronda 2: otros                                     = 10 s
+#                                        TOTAL 36 s, presupuesto 24
+#
+# La conclusión fue "con dos perros y tres menús no cabe, nunca". Pero
+# esos 12, 6 y 4 son TOPES, no costes: `presupuesto_segundos` es un techo
+# y el solver vuelve en cuanto encuentra solución. La propia nota lo decía
+# sin sacarle la consecuencia: "la petición tarda 9-15 s de los 24".
+#
+# Lo que fallaba no era el presupuesto: era la DECISIÓN de seguir. Se
+# preguntaba "¿caben otros 10 s en el peor caso?" aunque la ronda anterior
+# hubiera costado 3. Ahora se mide lo que ha costado de verdad cada ronda
+# y se estima con eso, nunca siendo optimista más allá de lo observado.
+#
+# LA PRUEBA APRIETA EL PRESUPUESTO A PROPÓSITO (14 s en vez de 24). Con el
+# presupuesto normal las dos versiones dan 3 menús en una máquina rápida y
+# esto no probaría nada; el fallo solo asoma cuando el reloj va justo, que
+# es lo que pasa en Render y lo que pasaba dentro de la batería. MEDIDO
+# con 14 s, cinco tiradas de cada:
+#
+#     midiendo lo que cuesta   [3, 3, 2, 3, 3]
+#     con el peor caso (antes) [2, 1, 1, 1, 2]   <- nunca llega a 3
+print("=== BLOQUE 46: varios perros, los menús que se piden ===")
+
+_PRESU_REAL_B46 = _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS
+_api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = 14.0
+try:
+    _perros_b46 = [
+        {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 900,
+         "etapa_requisitos": "CachorroJoven", "peso_perro_kg": 12,
+         "peso_adulto_esperado_kg": 25},
+        {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 1211,
+         "etapa_requisitos": "Adulto", "peso_perro_kg": 24.5},
+    ]
+    _completas_b46 = 0
+    _vistos_b46 = []
+    _sin_aviso_b46 = []
+    for _k_b46 in range(4):
+        _r_b46 = _c.post("/menu/varios-perros", json={
+            "perros": _perros_b46, "nombres": ["Kira", "Nala"],
+            "modo_conjunto": "parecidos", "numero_de_menus": 3}).json()
+        _n_b46 = [len(_p.get("menus") or []) for _p in (_r_b46.get("perros") or [])]
+        _vistos_b46.append(_n_b46)
+        if _n_b46 and min(_n_b46) >= 3:
+            _completas_b46 += 1
+        elif not _r_b46.get("menus_pedidos_no_dados"):
+            # Recortar se puede; recortar EN SILENCIO es el fallo original.
+            _sin_aviso_b46.append(_n_b46)
+
+    if _completas_b46 < 2:
+        fallos.append(
+            f"BLOQUE46: pidiendo 3 menús para dos perros, solo {_completas_b46} de 4 tiradas "
+            f"los han dado enteros (salieron {_vistos_b46}). Con el peor caso -- que es lo "
+            f"que hacía antes -- esto daba 1 o 2 y nunca 3. O se ha vuelto a decidir por el "
+            f"tope en vez de por lo que cuesta de verdad, o el solver se ha vuelto más lento.")
+    if _sin_aviso_b46:
+        fallos.append(
+            f"BLOQUE46: han salido menos menús de los pedidos ({_sin_aviso_b46}) y NO viene "
+            f"`menus_pedidos_no_dados`. Pedir 3 y recibir 1 sin una palabra es exactamente "
+            f"el fallo que la usuaria no puede ver.")
 finally:
-    _os_b44.unlink(_roto_b44)
+    _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = _PRESU_REAL_B46
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 47 — EL MARGEN DEL SUELO CUBRE EL REDONDEO, NO UN PORCENTAJE
+# ============================================================
+#
+# ⚠️ CASO REAL, abierto desde el 28 de agosto: "el yodo de los perros muy
+# pequeños vive al 101 % del mínimo". Se apuntó como una molestia estética
+# y era algo peor: un menú que el solver daba por bueno y que el
+# verificador tiraba después.
+#
+# La causa está escrita en el propio motor. El suelo se pedía con un +1,5 %
+# (`lo = mn * der / 1000 * 1.015`), pero lo que ese margen tiene que cubrir
+# es el error del REDONDEO -- cada alimento se redondea a 2 decimales, o
+# sea hasta 0,005 g de menos por alimento -- y ese error es ABSOLUTO: no
+# escala con el tamaño del perro. Un porcentaje sí.
+#
+# La cuenta, con el yodo de un perro de 3 kg: el mínimo es 300 µg/1000 kcal
+# = 90 µg, así que el 1,5 % son 1,35 µg. Pero medio paso de redondeo del
+# yoduro potásico (800 µg/g, la fuente más concentrada del catálogo) mueve
+# 4 µg -- tres veces el margen. En un perro de 20 kg el mismo error
+# absoluto es el 0,6 % del mínimo y el porcentaje lo cubre de sobra; por
+# eso solo se veía en los pequeños.
+#
+# MEDIDO, 60 menús de cuatro perfiles pequeños (1,5 a 4,5 kg):
+#
+#                       yodo mínimo   mediana   bajo 102 %   menús caídos
+#     antes (solo %)         82 %      102 %      16 de 60        3
+#     ahora (% o redondeo)  100 %      106 %       2 de 60        0
+#
+# El 82 % es lo que importa: no es "poco margen", es un menú que NO CUMPLE
+# saliendo del solver. Lo paraba `_garantizar_verificado` -- la regla 1
+# funcionando -- pero a costa de dejar a la usuaria sin menú.
+print("=== BLOQUE 47: el suelo aguanta el redondeo en perros pequeños ===")
+
+import statistics as _stat_b47
+
+_al_b47, _req_b47 = _api.cargar_v2()
+
+def _cubre_b47(gramos, clave, der, etapa, peso):
+    _f = _api.verificar_v2(gramos, _al_b47, _req_b47, der, etapa, peso_referencia_kg=peso)
+    for _lista in ("dentro_de_rango", "faltan", "se_pasa", "rojos", "ambar"):
+        for _fila in _f.get(_lista) or []:
+            if _fila.get("clave") == clave:
+                return _fila.get("cubre_pct"), _f.get("semaforo")
+    return None, _f.get("semaforo")
+
+_yodos_b47, _caidos_b47, _cortos_b47 = [], 0, []
+for _der_b47, _peso_b47 in ((300, 3), (200, 1.5), (250, 2.2), (400, 4.5)):
+    for _sem_b47 in range(1, 6):
+        _ok_b47, _g_b47 = _api.resolver_v2(
+            _der_b47, "Adulto", _al_b47, _req_b47, _peso_b47, _api.dosis_maxima_fabricante,
+            margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=8,
+            semilla_aleatoria=_sem_b47)
+        if not _ok_b47:
+            _caidos_b47 += 1
+            continue
+        _pct_b47, _sem_color_b47 = _cubre_b47(_g_b47, "yodo", _der_b47, "Adulto", _peso_b47)
+        if _sem_color_b47 != "verde":
+            _caidos_b47 += 1
+        if _pct_b47 is not None:
+            _yodos_b47.append(_pct_b47)
+            if _pct_b47 < 100:
+                _cortos_b47.append((_der_b47, _peso_b47, _sem_b47, _pct_b47))
+
+if _cortos_b47:
+    fallos.append(
+        f"BLOQUE47: {len(_cortos_b47)} menús salen del solver con el yodo POR DEBAJO del "
+        f"mínimo después de redondear los gramos {_cortos_b47[:3]}. El margen del suelo "
+        f"tiene que cubrir el paso de redondeo de la fuente más concentrada, no un "
+        f"porcentaje fijo -- con solo el 1,5 % esto bajaba al 82 %.")
+if _caidos_b47:
+    fallos.append(
+        f"BLOQUE47: {_caidos_b47} de 20 menús de perros pequeños no salen o no están verdes. "
+        f"No es inseguro (la regla 1 los para) pero deja a la usuaria sin menú, que es el "
+        f"síntoma con el que se encontró esto.")
+if _yodos_b47 and _stat_b47.median(_yodos_b47) < 104:
+    fallos.append(
+        f"BLOQUE47: la mediana del yodo en perros pequeños ha bajado a "
+        f"{_stat_b47.median(_yodos_b47):.0f} % del mínimo. Con el margen solo porcentual era "
+        f"102 % y con el absoluto 106 %: si vuelve a 102 es que el suelo ha dejado de cubrir "
+        f"el redondeo y los menús se van a caer otra vez en el verificador.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

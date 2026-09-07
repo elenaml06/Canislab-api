@@ -47,6 +47,15 @@ def crear_tablas(ruta_db=RUTA_DB):
         alimentos_gramos TEXT NOT NULL,  -- JSON: {"Cuello de ternera": 559, ...}
         kcal_total REAL,
         creado_en TEXT NOT NULL,
+        -- ⚠️ AÑADIDA EL 7 DE SEPTIEMBRE. Sin esto, un menú guardado NO SE
+        -- PODÍA VERIFICAR NI EN PRINCIPIO: la tabla solo tenía nombre,
+        -- gramos y kcal, y para pasar el semáforo hacen falta la etapa, el
+        -- DER y el peso contra los que se verificó. `/perro/{id}/menus` lo
+        -- devolvía con `verificado: false` y un aviso, que era honesto pero
+        -- dejaba fuera de la regla 1 del CLAUDE.md al único camino que
+        -- entrega menús. Ahora se guarda el contexto CON el menú y se
+        -- verifica al leerlo, contra los mismos requisitos de aquel día.
+        contexto TEXT,              -- JSON: etapa, der, pesos, patologías
         FOREIGN KEY (perro_id) REFERENCES perros(id)
     );
 
@@ -59,6 +68,13 @@ def crear_tablas(ruta_db=RUTA_DB):
         FOREIGN KEY (perro_id) REFERENCES perros(id)
     );
     """)
+    # ⚠️ MIGRACIÓN, no un CREATE. `CREATE TABLE IF NOT EXISTS` no toca una
+    # tabla que ya existe, así que en cualquier base creada antes del 7 de
+    # septiembre la columna `contexto` no aparecería nunca y los menús
+    # seguirían sin poder verificarse, en silencio. Se añade a mano si falta.
+    cur.execute("PRAGMA table_info(menus)")
+    if "contexto" not in {fila[1] for fila in cur.fetchall()}:
+        cur.execute("ALTER TABLE menus ADD COLUMN contexto TEXT")
     con.commit()
     con.close()
 
@@ -109,16 +125,33 @@ def obtener_historial_peso(perro_id: int, ruta_db=RUTA_DB) -> list:
     return [{"fecha": f, "peso_kg": p, "condicion_corporal": c} for f, p, c in filas]
 
 
-def guardar_menu(perro_id: int, nombre_menu: str, resultado_optimizador: dict, ruta_db=RUTA_DB) -> int:
-    """resultado_optimizador es lo que devuelve optimizar_menu() (con 'gramos' y 'kcal_total')."""
+# Lo que hace falta para volver a verificar un menú meses después. Se
+# guarda TAL CUAL se pidió: si el perro cambia de etapa o de peso, el menú
+# guardado sigue teniendo que verificarse contra lo de ENTONCES para saber
+# si cumplía; contra lo de hoy es otra pregunta, y para eso está
+# /menu/revalidar.
+CLAVES_CONTEXTO = ("etapa_requisitos", "der_objetivo", "peso_perro_kg",
+                   "peso_objetivo_kg", "peso_adulto_esperado_kg",
+                   "tamano", "patologias")
+
+
+def guardar_menu(perro_id: int, nombre_menu: str, resultado_optimizador: dict,
+                 contexto: dict = None, ruta_db=RUTA_DB) -> int:
+    """resultado_optimizador es lo que devuelve optimizar_menu() (con 'gramos' y 'kcal_total').
+
+    `contexto` son la etapa, el DER y los pesos contra los que se verificó
+    este menú. Sin ellos el menú no se puede volver a verificar nunca --
+    ver el comentario de la columna en `crear_tablas`."""
+    ctx = {k: (contexto or {}).get(k) for k in CLAVES_CONTEXTO}
     con = sqlite3.connect(ruta_db)
     cur = con.cursor()
     cur.execute("""
-        INSERT INTO menus (perro_id, nombre, alimentos_gramos, kcal_total, creado_en)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO menus (perro_id, nombre, alimentos_gramos, kcal_total, creado_en, contexto)
+        VALUES (?, ?, ?, ?, ?, ?)
     """, (
         perro_id, nombre_menu, json.dumps(resultado_optimizador["gramos"], ensure_ascii=False),
         resultado_optimizador["kcal_total"], date.today().isoformat(),
+        json.dumps(ctx, ensure_ascii=False) if contexto else None,
     ))
     menu_id = cur.lastrowid
     con.commit()
@@ -130,14 +163,18 @@ def obtener_menus(perro_id: int, ruta_db=RUTA_DB) -> list:
     con = sqlite3.connect(ruta_db)
     cur = con.cursor()
     cur.execute(
-        "SELECT id, nombre, alimentos_gramos, kcal_total, creado_en FROM menus WHERE perro_id=? ORDER BY creado_en",
+        "SELECT id, nombre, alimentos_gramos, kcal_total, creado_en, contexto "
+        "FROM menus WHERE perro_id=? ORDER BY creado_en",
         (perro_id,),
     )
     filas = cur.fetchall()
     con.close()
     return [
-        {"id": i, "nombre": n, "alimentos": json.loads(ag), "kcal_total": k, "creado_en": c}
-        for i, n, ag, k, c in filas
+        {"id": i, "nombre": n, "alimentos": json.loads(ag), "kcal_total": k, "creado_en": c,
+         # None en las filas guardadas antes del 7 de septiembre: esas no se
+         # pueden verificar y hay que decirlo, no fingir que sí.
+         "contexto": json.loads(ctx) if ctx else None}
+        for i, n, ag, k, c, ctx in filas
     ]
 
 

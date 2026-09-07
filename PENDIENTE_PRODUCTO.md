@@ -167,7 +167,20 @@ menús comparados no tienen sentido sin él.
       para que el diagnóstico se vea.
 - [ ] **La `HTTPException` genérica del webhook sobra en Sentry**: tapa a
       la que sí explica el motivo. Mandar solo la informativa.
-- [ ] **`/perro/{id}/menus` devuelve menús sin verificar** (la tabla no
-      guarda etapa ni DER). Hoy no lo usa nadie, pero si se usa, hay que
-      pasarlo por `/menu/revalidar` antes de enseñarlo.
+- [x] **`/perro/{id}/menus` devolvía menús sin verificar — ARREGLADO el 7
+      de septiembre.** Era el único agujero en la regla 1 del `CLAUDE.md`
+      («ningún menú sale sin verificar»), y el paréntesis de esta nota decía
+      por qué no se había tapado antes: *la tabla no guarda etapa ni DER*.
+      No faltaba código, faltaba el DATO — sin saber contra qué verificar, un
+      menú guardado no se podía comprobar ni en principio.
+      Ahora `guardar_menu` escribe el contexto JUNTO al menú (etapa, DER,
+      pesos, patologías, en una columna `contexto` nueva, con migración para
+      las bases que ya existían) y el endpoint lo pasa por
+      `_garantizar_verificado()` al leerlo. Tres desenlaces y los tres se
+      dicen: `verificado: true` con su ficha; `verificado: false` con el
+      motivo **y sin los gramos** (un menú rechazado no se entrega); y
+      `verificado: null` para las filas anteriores a este cambio, que no se
+      pueden verificar contra nada y siguen necesitando `/menu/revalidar`.
+      Lo vigila el BLOQUE 45, que planta medio kilo de pollo sin hueso y
+      exige que vuelva rechazado.
 

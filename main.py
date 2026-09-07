@@ -2402,11 +2402,50 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
         def queda():
             return PRESUPUESTO_SEGUNDOS_VARIOS_PERROS - (time.time() - t_inicio_casa)
 
+        # ⚠️ LO QUE CUESTA UNA RONDA SE MIDE, NO SE SUPONE (7 septiembre).
+        #
+        # CASO REAL, el del PENDIENTE §1.0: la casa de dos perros pidiendo 3
+        # menús devolvía 1 para cada uno, sin error. La aritmética de aquel
+        # análisis es correcta y sigue siéndolo:
+        #
+        #     ronda 0: primer menú de la base 12 s + amoldar 4 s = 16 s
+        #     ronda 1: menú 6 s + amoldar 4 s                    = 10 s
+        #     ronda 2: otros                                     = 10 s
+        #                                        TOTAL 36 s, presupuesto 24
+        #
+        # Pero esos 12, 6 y 4 son TOPES, no costes: `presupuesto_segundos`
+        # es un techo y el solver vuelve en cuanto encuentra solución. La
+        # petición real tarda 9-15 s de los 24. Lo que fallaba era la
+        # DECISIÓN de seguir: preguntaba "¿caben otros 10 s en el peor
+        # caso?" incluso cuando la ronda anterior había costado 3. Con el
+        # peor caso, dos perros y tres menús no caben NUNCA y siempre se
+        # devuelve uno; con lo que costó de verdad, casi siempre caben.
+        #
+        # Así que se mide. Nunca se es optimista más allá de lo observado:
+        # la estimación es el máximo de lo que han costado las rondas
+        # anteriores, con un 25 % de margen, y mientras no haya nada medido
+        # se usa el peor caso de siempre. Si la máquina va lenta (Render, o
+        # la batería entera corriendo), las rondas cuestan más, la
+        # estimación sube sola y se corta antes -- que es lo correcto.
+        duraciones_ronda = []
+
+        def coste_estimado_de_la_proxima_ronda():
+            peor_caso = por_llamada + SEGUNDOS_AMOLDARSE * (n - 1)
+            if len(duraciones_ronda) > 1:
+                # Ya hay rondas de las BARATAS medidas (la 0 no cuenta: es la
+                # única con búsqueda libre del primer menú).
+                return min(peor_caso, max(duraciones_ronda[1:]) * 1.25)
+            if duraciones_ronda:
+                # Solo se ha hecho la ronda 0, que es la cara. Las siguientes
+                # no pueden costar más que ella, así que sirve de techo.
+                return min(peor_caso, duraciones_ronda[0])
+            return peor_caso
+
         def hay_tiempo_para_otra_ronda():
             """Una ronda es un menú para CADA perro. Si no cabe entera, se
             para: media ronda dejaría a unos perros con más menús que a
             otros, y entonces la semana de la casa no cuadra."""
-            return queda() >= por_llamada + SEGUNDOS_AMOLDARSE * (n - 1)
+            return queda() >= coste_estimado_de_la_proxima_ronda()
 
         menus_pedidos_no_dados = 0
         por_que_faltan = "tiempo"
@@ -2549,6 +2588,7 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
             if j > 0 and not hay_tiempo_para_otra_ronda():
                 menus_pedidos_no_dados = m - j
                 break
+            _t_ronda = time.time()
             base = generar(i_base, j)
             # ⚠️ REINTENTO (28 agosto) — CASO REAL, el del PENDIENTE §1.0:
             # la casa de un cachorro de 12 kg y una adulta de 24,5 pedía 3
@@ -2612,6 +2652,10 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
                 cambios = _comparar_menus(gramos_base, gramos_de(r))
                 por_perro[i]["menus"].append({**r, "dias": dias_por_menu[j], "cambios": cambios})
                 anotar_consumo(i, j, gramos_de(r))
+
+            # Lo que ha costado ESTA ronda entera, para decidir si cabe la
+            # siguiente. Ver `coste_estimado_de_la_proxima_ronda`.
+            duraciones_ronda.append(time.time() - _t_ronda)
 
         for i in range(n):
             por_perro[i]["factible"] = bool(por_perro[i]["menus"])
@@ -3083,23 +3127,70 @@ def endpoint_revalidar(datos: PeticionRevalidar):
 @app.get("/perro/{perro_id}/menus")
 def endpoint_obtener_menus(perro_id: int):
     """
-    ⚠️ MATIZADO (20 agosto) — auditando los caminos por los que sale un
-    menú: esto devuelve lo que hay GUARDADO, y la tabla `menus` solo
-    almacena nombre, gramos y kcal -- no la etapa ni el DER contra los
-    que se verificó en su día. Es decir: un menú sacado de aquí no se
-    puede verificar, ni siquiera en principio, porque falta el dato de
-    contra qué habría que verificarlo. Y si el perro ha cambiado de
-    etapa desde que se guardó, puede haber dejado de cumplir sin que
-    nada lo detecte (ver /menu/revalidar).
-    Se marca explícitamente para que nadie lo confunda con un menú
-    verificado: quien lo use tiene que pasarlo por /menu/revalidar con
-    los datos actuales del perro antes de dárselo a nadie.
+    ⚠️ ARREGLADO EL 7 DE SEPTIEMBRE — ERA EL ÚNICO CAMINO QUE ENTREGABA
+    MENÚS SIN PASAR POR `_garantizar_verificado()`, o sea el único agujero
+    en la regla 1 del CLAUDE.md.
+
+    Lo que decía la nota de antes (20 de agosto) era cierto y por eso el
+    agujero no se podía tapar entonces: la tabla `menus` guardaba nombre,
+    gramos y kcal, y NADA MÁS. Sin la etapa ni el DER contra los que se
+    verificó, un menú sacado de aquí no se podía verificar **ni siquiera
+    en principio** -- no faltaba código, faltaba el dato. Se marcaba
+    `verificado: false` con un aviso, que era honesto pero dejaba en manos
+    de quien llamara el acordarse de pasarlo por /menu/revalidar. Y un
+    aviso se puede ignorar; por eso este proyecto no los usa para lo que
+    importa.
+
+    Ahora `guardar_menu` escribe el contexto JUNTO al menú (etapa, DER,
+    pesos, patologías) y aquí se verifica de cero, con el mismo filtro que
+    todos los demás caminos. Tres resultados posibles, y los tres se dicen:
+
+      · `verificado: true`   — pasó el filtro. Lleva su `ficha` completa.
+      · `verificado: false` con `motivo` — se verificó y NO cumple. Es lo
+        que hace falta saber: un menú guardado hace meses puede haber
+        dejado de cumplir porque cambió el catálogo debajo.
+      · `verificado: null`   — es una fila anterior al 7 de septiembre, sin
+        contexto. No se puede verificar y no se finge que sí; esas siguen
+        necesitando /menu/revalidar con los datos de hoy.
+
+    Lo que sigue SIN cambiar, y hay que tenerlo claro: esto verifica contra
+    la etapa de ENTONCES, que es la pregunta "¿este menú cumplía cuando se
+    guardó, y sigue cumpliendo con el catálogo de hoy?". Si el perro ha
+    crecido o ha cambiado de etapa, la pregunta es otra y la contesta
+    /menu/revalidar.
     """
     menus = persistencia.obtener_menus(perro_id)
+    if not menus:
+        return menus
+    al, req = cargar_v2()
     for m in menus:
-        m["verificado"] = False
-        m["aviso"] = ("Menú guardado: no se ha comprobado contra la etapa actual del "
-                      "perro. Pásalo por /menu/revalidar antes de usarlo.")
+        ctx = m.get("contexto") or {}
+        if not ctx.get("etapa_requisitos") or not ctx.get("der_objetivo"):
+            m["verificado"] = None
+            m["aviso"] = ("Menú guardado antes de que se guardara el contexto de "
+                          "verificación: no se puede comprobar contra nada. Pásalo por "
+                          "/menu/revalidar con los datos actuales del perro.")
+            continue
+        comprobado = _garantizar_verificado(
+            {"factible": True, "menu": m["alimentos"]},
+            ctx["der_objetivo"], ctx["etapa_requisitos"], ctx.get("peso_perro_kg"),
+            origen=f"/perro/{perro_id}/menus", al=al, req=req,
+            patologias=ctx.get("patologias"),
+            peso_adulto_esperado_kg=ctx.get("peso_adulto_esperado_kg"),
+            peso_objetivo_kg=ctx.get("peso_objetivo_kg"))
+        if comprobado.get("factible"):
+            m["verificado"] = True
+            m["ficha"] = comprobado.get("ficha")
+        else:
+            # ⚠️ NO SE DEVUELVEN LOS GRAMOS DE UN MENÚ QUE NO CUMPLE. Es la
+            # regla 1: preferimos no dar menú a dar uno que no cumple. Se
+            # dice qué pasó y con qué se guardó, para que se pueda regenerar.
+            m.pop("alimentos", None)
+            m["verificado"] = False
+            m["motivo"] = comprobado.get("motivo") or "no pasa la verificación"
+        m["verificado_contra"] = {"etapa": ctx["etapa_requisitos"],
+                                  "der": ctx["der_objetivo"],
+                                  "cuando_se_guardo": m.get("creado_en")}
     return menus
 
 
@@ -3803,7 +3894,7 @@ SELLOS_DE_LOS_DATOS = {
         # 7 sep (3): "Laringe de vacuno" pasa de categoria "Hueso carnoso" a "Extras" -- bloqueada por tejido tiroideo desde el 6 de septiembre, nunca puede aportar hueso a ningun menu, y su categoria antigua solo servia para disparar dos avisos ya conocidos en auditar_catalogo.py ("hueso con poco calcio, es cartilago"). 0 referencias en catalogo_menus.json (comprobado), asi que no afecta a los menus precalculados. Decision pendiente desde el 25 de agosto en PENDIENTE_NUTRICION.md, cerrada.
         # 7 sep (2): linoleico de "Grasa de pollo" (19,5 g/100g) -- USDA FDC 173564 "Fat, chicken", cuya proteina (0) y grasa (99,8) ya coincidian exactas con esta ficha. Cierra el hueco que quedaba en PENDIENTE_NUTRICION.md desde el 25 de agosto.
         # 7 sep: 4 visceras (Bazo de vaca, Pancreas de vaca, Bazo de cordero, Cerebro de ternera) con `sin_dato` incompleto -- sus propias notas ya decian que faltaban ciertos minerales/vitaminas ("sin dato fiable... se dejan en 0"), pero el campo estructurado no los tenia, asi que contra un maximo contaban como cero MEDIDO en vez de hueco. Encontrado auditando alimentos_v3_final.json de verdad (comparando texto contra estructura), no solo comprobando formato. Ningun valor numerico cambia, solo que estas claves antes contadas como "0 real" pasan a "no lo sabemos".
-        "alimentos_v3_final.json":      "48f74cd1658bed13",   # 7 sep (2): 52 celdas cerradas contra las tres fuentes EN EL ORDEN DE Bases.md (BEDCA primaria -> CIQUAL -> USDA). Ninguna era un numero mal copiado: las 52 eran CEROS, y 20 de ellos ni siquiera estaban declarados en `sin_dato`. El grave: "Aceite de higado de bacalao" entraba en el solver con EPA=0 y DHA=0 -- la fuente de omega-3 mas densa del catalogo era invisible (BEDCA no publica acidos grasos individuales de ese aceite; CIQUAL 17630 da 8,39 y 11,4) -- y su yodo, que es uno de los cinco topes duros de seguridad, valia 0 sin declararse (CIQUAL mide 400 ug). Ademas: cerebro de ternera completado con BEDCA 1047 (17 celdas, entre ellas el DHA 0,36 que su propia nota ya describia como abundante), las tres visceras que faltaban completadas con la MISMA ficha de USDA de la que ya salian, y seis huecos de verdura y huevo que solo encontro el detector automatico nuevo de ceros sospechosos. auditar_catalogo.py y auditar_fediaf.py re-ejecutados, pruebas_completas.py entero.
+        "alimentos_v3_final.json":      "0ee6670f384f096e",   # 7 sep (2): 52 celdas cerradas contra las tres fuentes EN EL ORDEN DE Bases.md (BEDCA primaria -> CIQUAL -> USDA). Ninguna era un numero mal copiado: las 52 eran CEROS, y 20 de ellos ni siquiera estaban declarados en `sin_dato`. El grave: "Aceite de higado de bacalao" entraba en el solver con EPA=0 y DHA=0 -- la fuente de omega-3 mas densa del catalogo era invisible (BEDCA no publica acidos grasos individuales de ese aceite; CIQUAL 17630 da 8,39 y 11,4) -- y su yodo, que es uno de los cinco topes duros de seguridad, valia 0 sin declararse (CIQUAL mide 400 ug). Ademas: cerebro de ternera completado con BEDCA 1047 (17 celdas, entre ellas el DHA 0,36 que su propia nota ya describia como abundante), las tres visceras que faltaban completadas con la MISMA ficha de USDA de la que ya salian, y seis huecos de verdura y huevo que solo encontro el detector automatico nuevo de ceros sospechosos. auditar_catalogo.py y auditar_fediaf.py re-ejecutados, pruebas_completas.py entero.
         # 6 sep: nota_datos de los 4 alimentos excluidos por tejido tiroideo (Cuello de pavo/pato/ternera, Laringe de vacuno) documenta el bloqueo -- ver seguridad.TIROIDES_EXCLUIR.
         # 28 ago (2): EL HIGADO Y EL CORAZON DE PAVO, resembrados desde el pollo del USDA -- su aminograma venia del pavo del USDA, que tiene la isoleucina y la valina un 40% bajas (Leu/Ile 2,52 contra 1,47-1,98 del resto). Reescalados a NUESTRA proteina. Las otras cinco fichas de pavo NO se cargan: traian histidina = isoleucina = valina exactos, y eso es una copia, no una medida. Ver el BLOQUE 27. // 28 ago: PURINAS DE CUATRO VISCERAS con cifra publicada (timo 525, bazo de cordero 322, bazo de vaca 185, pulmon de ternera 117). NO se uso la banda generica 84-243 que se habia propuesto: para el timo habria declarado ~160 cuando la cifra son 525, un factor de 3 a 4 POR ABAJO, y es el alimento solido con mas purinas de las tablas. Pancreas, testiculos y pulmon de cordero se quedan como hueco: no hay dato. Ver el BLOQUE 33
         # 7 sep (2): nueva fila "Fibra", con los seis campos (minAdulto..maxCachorroCrecimiento) a "-" -- FEDIAF no da minimo ni maximo de fibra en la Tabla III-3b, asi que esta fila NO es un requisito nuevo: no exige ni limita nada a un perro sano. Existe para que verificar.MAPA pueda leer la clave "fibra" y topes_de_patologias() pueda ponerle un suelo por patologia con fuente real (primer uso: hiperlipidemia, SACN5 cap.28). auditar_fediaf.py la lista en NO_SON_NUTRIENTES_DE_LA_TABLA y ademas comprueba que nunca lleve un numero, para que no repita el fallo del 25 de agosto (fila "Fibra" con minimo/maximo inventados que el analizador exigia). Ver PENDIENTE_NUTRICION.md.

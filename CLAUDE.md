@@ -115,6 +115,12 @@ Los que llama el frontend hoy: `/menu/v2`, `/menu/semana`,
 duplican nada, son funciones que existen y que la app puede volver a usar.
 Pero nadie los prueba usando la app, así que si algo se rompe ahí solo lo
 ve la batería.
+`/perro/{perro_id}/menus` **era el único agujero de la regla 1** hasta el 7
+de septiembre, y no por descuido: la tabla `menus` guardaba nombre, gramos
+y kcal, así que un menú guardado no se podía verificar ni en principio.
+Ahora `guardar_menu` escribe el contexto (etapa, DER, pesos, patologías)
+junto al menú y el endpoint lo verifica al leerlo — o dice que no puede,
+si es una fila anterior a ese cambio. Lo vigila el BLOQUE 45.
 
 `POST /menu` **ya no existe** (26 de agosto). Era el motor anterior al MILP
 y arrastraba su propia tabla de patologías, desincronizada de la buena:

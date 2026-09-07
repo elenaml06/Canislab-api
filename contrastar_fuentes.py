@@ -254,13 +254,22 @@ def usda_ficha(fdc_id):
 
 
 # =============================================================================
-# EL MAPA — una sola tabla para las tres, en las unidades de UNIDADES.md
+# EL MAPA DE FUENTES — una sola tabla para las tres, en las unidades de
+# UNIDADES.md.
+#
+# ⚠️ SE LLAMA `MAPA_FUENTES` Y NO `MAPA` A PROPÓSITO. `MAPA` es el nombre de
+# LA lista de requisitos de FEDIAF, que vive solo en `verificar.py` y la
+# comparten el solver, el semáforo y el analizador. El BLOQUE 24 vigila que
+# no haya dos, porque ya hubo dos y no coincidían -- por ahí se coló la fibra
+# como requisito inexistente y ocho de ocho menús verdes salían "le falta
+# fibra". Esto de aquí es otra cosa (nombres de nutrientes en tres bases de
+# datos externas) y no puede llamarse igual ni de lejos.
 # =============================================================================
 # clave del catálogo -> (nombres en BEDCA, en CIQUAL, en USDA, factor)
 # El factor convierte de la unidad de la fuente a la del catálogo. Solo hace
 # falta en el araquidónico (las tres lo dan en g, el catálogo lo guarda en mg)
 # y en la energía de BEDCA (kJ).
-MAPA = {
+MAPA_FUENTES = {
  "proteina":        (["proteina, total"], ["Protéines, N x 6.25 (g/100 g)"], ["Protein"], 1),
  "grasa":           (["grasa, total (lipidos totales)"], ["Lipides (g/100 g)"], ["Total lipid (fat)"], 1),
  "fibra":           (["fibra, dietetica total"], ["Fibres alimentaires (g/100 g)"], ["Fiber, total dietary"], 1),
@@ -374,11 +383,11 @@ def contrastar(nombre, b_id=None, c_id=None, u_id=None):
     print(f"{'nutriente':18s}{'catálogo':>11s}{'BEDCA':>13s}{'CIQUAL':>11s}{'USDA':>11s}   estado")
     print("-" * 96)
 
-    for k in MAPA:
+    for k in MAPA_FUENTES:
         if k not in nut:
             continue
         cv = nut[k]
-        nb_, nc_, nu_, fac = MAPA[k]
+        nb_, nc_, nu_, fac = MAPA_FUENTES[k]
         b, tipo = _sacar(vb, nb_, fac, con_tipo=True)
         c, _ = _sacar(vc, nc_, fac)
         u, _ = _sacar(vu, nu_, fac)

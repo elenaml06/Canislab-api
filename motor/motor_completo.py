@@ -972,7 +972,43 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # resultado 2.40mg por debajo de lo que el solver exigió. Con 1.5%
         # el solver pide 159.97mg, dejando un colchón real de 2.47mg por
         # encima del mínimo FEDIAF incluso después del redondeo.
-        lo = mn * der / 1000.0 * 1.015 if mn is not None else -np.inf
+        # ⚠️ Y EL MARGEN NO PUEDE SER SOLO UN PORCENTAJE (7 septiembre).
+        #
+        # CASO REAL MEDIDO (28 agosto): el yodo de un adulto de 3 kg vivía
+        # al 101 % del mínimo, 7 de cada 10 menús por debajo del 105 %. No
+        # era inseguro -- `_garantizar_verificado` nunca entrega algo que no
+        # esté verde -- pero era un "no disponible" de vez en cuando, y en
+        # perros pequeños siempre.
+        #
+        # Lo que este margen tiene que cubrir es el error del REDONDEO, y ese
+        # error es ABSOLUTO: cada alimento se redondea a 2 decimales (ver
+        # `round(x, 2)` al recoger la solución), o sea hasta 0,005 g de menos
+        # por alimento. Cuánto nutriente se pierde con esos 0,005 g depende
+        # de lo concentrada que sea la fuente, NO de lo grande que sea el
+        # perro. Un porcentaje fijo escala con el perro; el error no.
+        #
+        # La cuenta, con el yodo de un perro de 3 kg: el mínimo son ~8,9 µg,
+        # así que el 1,5 % son 0,13 µg. Pero medio paso de redondeo del alga
+        # (la fuente de yodo más concentrada del catálogo) mueve 1,5 µg --
+        # once veces el margen. Por eso el margen se comía entero.
+        #
+        # Ahora el suelo se pide con el MAYOR de los dos: el 1,5 % de
+        # siempre, o medio paso de redondeo de la fuente más concentrada de
+        # ESE nutriente. En un perro grande manda el porcentaje y no cambia
+        # nada; en uno pequeño manda el absoluto, que es donde estaba el
+        # problema. Se coge la fuente más concentrada y no la suma de todas
+        # porque los redondeos de varios alimentos no van todos en la misma
+        # dirección: sumarlos sería pedir un colchón que nunca hace falta y
+        # cerraría la ventana entre mínimo y máximo en los perros pequeños.
+        PASO_DE_REDONDEO_G = 0.005          # round(x, 2) -> medio paso
+        if mn is not None:
+            lo_exacto = mn * der / 1000.0
+            # el vector del SUELO, que es el mismo que se usa unas líneas
+            # más abajo: el valor plausible cuando el dato es dudoso.
+            mas_concentrada = max(fila_min if hay_dudoso else fila)
+            lo = max(lo_exacto * 1.015, lo_exacto + PASO_DE_REDONDEO_G * mas_concentrada)
+        else:
+            lo = -np.inf
         hi = mx * der / 1000.0 if mx is not None else np.inf
         # ⚠️ CADA COTA CON SU VECTOR, Y NUNCA AL REVÉS (28 agosto).
         #   suelo  -> el valor PLAUSIBLE del dato dudoso, y el hueco a CERO
@@ -1388,6 +1424,22 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         suelo = min(porcion, techos[i])
         if suelo <= 0:
             continue
+        # ⚠️ PERO EL GRAMO NO SE NEGOCIA (7 septiembre). Recortar el suelo
+        # contra el techo es correcto para la PORCIÓN (si de un alimento
+        # solo caben 20 g, pedirle 40 lo echaría del catálogo sin motivo),
+        # pero con ese `min` el suelo podía quedarse POR DEBAJO DE UN GRAMO
+        # cuando el techo del propio alimento era diminuto -- y entonces el
+        # motor podía meter 0,99 g de salmón, que es justo lo que esta
+        # restricción existe para impedir. El canario del BLOQUE 14 lo cazó
+        # el 28 de agosto en un perro de 1,5 kg con cuatro especies fuera.
+        #
+        # Un alimento del que no cabe ni un gramo no es un alimento que se
+        # pueda dar: no hay báscula de cocina que lo pese. Así que el suelo
+        # se queda en 1 g y el propio MILP lo deja fuera solo -- la fila de
+        # arriba ya dice gramos_i <= techo_i * usa_i, así que con
+        # gramos_i >= 1 * usa_i y un techo menor que 1 la única solución
+        # posible es usa_i = 0. No hace falta excluirlo a mano.
+        suelo = max(suelo, SUELO_MEDIBLE_G)
         fila = fila_vacia()
         fila[i] = 1.0
         fila[n_var + i] = -suelo
