@@ -503,3 +503,56 @@ TODO EN VERDE.
 De paso, la revisión completa de la tabla confirmó que **los otros 40
 nutrientes coinciden exactamente** con el PDF — esta fue la única
 discrepancia real en todo el documento.
+
+## Vuelve Pets Purest, con una ficha que sí cuadra — hecho el 7 de septiembre
+
+Pets Purest Aceite de Salmón había salido del catálogo el 27 de agosto
+(BLOQUE30 de `pruebas_completas.py`) porque su EPA/DHA solo aparecía en
+fichas de marketing del fabricante, replicadas por revendedores, sin
+ningún análisis propio — y era el más denso de los cinco aceites, así que
+el solver lo prefería por delante de opciones mejor documentadas.
+
+La usuaria mandó la foto de la etiqueta física del bote que tiene en casa
+("Pets Purest 100% Natural Pure Scottish Salmon Oil", 300ml), con
+"Analytical Constituents" y "Nutritional Content" propios — no una ficha
+de marketing de un revendedor, sino el dato real del producto. Con eso el
+motivo original de la salida deja de aplicar, y por instrucción explícita
+se añadió como dato real, no como `dato_dudoso`.
+
+Ficha nueva, "Pets Purest Aceite de Salmón Escocés" (160ª del catálogo),
+mismo patrón que los otros dos aceites de salmón: grasa/proteína/fibra de
+la propia etiqueta (99 g grasa, no 99,5 — es lo que declara ESTA etiqueta),
+EPA y DHA en el extremo bajo de los rangos declarados (7% y 10%, sobre
+7-9% y 10-12%) para no sobreestimar, linoleico = omega-6 total (6,6%, ya
+que en el omega-6 de un aceite de pescado el ácido linoleico sí domina de
+verdad), linolénico en `sin_dato` en vez de estimado por resta (mismo
+criterio que sus dos hermanos), vitamina E en `sin_dato` pese a que la
+etiqueta menciona "0,5% tocoferoles" — en la lista de INGREDIENTES, no en
+el análisis nutricional, mismo criterio ya aplicado a las otras dos
+marcas. Sin dosis de fabricante: ni la etiqueta ni la web dan el volumen
+de una pulsación en ml.
+
+Actualizado con esto:
+- `pruebas_completas.py` BLOQUE28a: la cuenta de aceites en categoría
+  Omega-3 pasa de 3 a 4, con el mensaje de fallo explicando por qué.
+- `pruebas_completas.py` BLOQUE30: quitada la entrada de Pets Purest del
+  diccionario `_FUERA_30` (el propio bloque dice qué hacer en este caso:
+  "si vuelve con una ficha que cuadre, quita esta comprobación"), con un
+  comentario fechado explicando el porqué en su lugar.
+- `main.py`: sello de `alimentos_v3_final.json` actualizado (160 fichas).
+
+De paso, dos correcciones de texto en `patologias.json` que no cambian
+ningún número: `raza_predispuesta_cobre` decía que el motor excluye el
+hígado (u otros alimentos ricos en cobre) como prevención — comprobado en
+el código que ese mecanismo no existe, así que el aviso mentía sobre lo
+que hace la app. Corregido para decir la verdad (el menú es normal, sin
+exclusión de hígado, y sugerir excluirlo a mano en Personalizar si el
+veterinario lo quiere). Y `dcm_asociada_a_dieta`: el aviso no mencionaba
+explícitamente el boniato/patata, que la propia fuente FDA cita "en menor
+medida" junto a las legumbres — ampliado con el mismo argumento estructural
+(nunca son la fuente calórica principal en una ración BARF).
+
+`pruebas_completas.py` entero, TODO EN VERDE (aparte del hueco de tiempo ya
+conocido del BLOQUE43 con un perro de juguete de 1,5 kg y 3 s de
+presupuesto, que no es de esta ficha: el menú se calcula bien, lo que
+falta a veces es el margen para verificarlo, y verificar cuesta 1,6 ms).
