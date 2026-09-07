@@ -976,12 +976,22 @@ más restrictivo gana). Usa el mismo cajón que ya existía para el mínimo de
 calcio de raza grande (`minimos_reforzados`): es exactamente el mismo
 mecanismo, con una patología en vez de un tamaño de raza como motivo.
 
-**Primeros dos usos reales, cada uno probado contra el solver antes de
-darlo por bueno**: `artrosis` (EPA+DHA ≥1,0 g/1000kcal, SACN5 cap.34) y
-`dermatosis_zinc` (zinc ≥25 mg/1000kcal, SACN5 cap.32). No sirve para
+**Primeros tres usos reales, cada uno probado contra el solver antes de
+darlo por bueno**: `artrosis` (EPA+DHA ≥1,0 g/1000kcal, SACN5 cap.34),
+`dermatosis_zinc` (zinc ≥25 mg/1000kcal, SACN5 cap.32) y, desde que la
+fila `Fibra` existe en `verificar.MAPA` (7 de septiembre, segunda mitad
+del día), `hiperlipidemia` (fibra ≥25 g/1000kcal, SACN5 cap.28: «fiber
+levels of at least 10% DM are recommended for dogs»). No sirve para
 `dcm_taurina_respondedora`: taurina y L-carnitina no están entre los 41
 nutrientes del MAPA ni en el catálogo, así que no hay nada que sumar
-aunque el mecanismo ya exista.
+aunque el mecanismo ya exista. Y se comprobó, capítulo a capítulo, que
+NO sirve para las otras dos patologías que también pedían fibra:
+`diabetes` (SACN5 cap.29 dice literalmente que «an ideal fiber content
+has not been established», así que no hay número que poner sin
+inventarlo) ni `enteropatia_cronica`/colitis (SACN5 cap.57 da dos
+enfoques opuestos según el caso, ≤5% o 7-15% MS — un suelo único
+acertaría para un perro y fallaría para el otro). Detalle completo:
+`PENDIENTE_NUTRICION.md` §10.
 
 ### La tabla completa, generada del propio `patologias.json`
 
@@ -1003,7 +1013,7 @@ aunque el mecanismo ya exista.
 | `cistina` | ❌ No | Razón A + B: metionina+cistina bajo mínimo, y depende del pH urinario | — (solo aviso) |
 | `estruvita` | ❌ No | Razón B: depende del pH urinario, que la app no ve | — (solo aviso) |
 | `otra` | ❌ No | Ninguna regla nutricional conocida | — |
-| `hiperlipidemia` | ✅ Sí | — | grasa 30 (SACN5 cap.28) |
+| `hiperlipidemia` | ✅ Sí | — | grasa 30 (SACN5 cap.28); suelo fibra ≥25 g/1000kcal (SACN5 cap.28, desde el 7-sep) |
 | `obesidad` | ✅ Sí | — | grasa 30 (SACN5 pide 22,5, no alcanzable con catálogo real — ver el propio JSON) |
 | `cardiopatia_a` | ✅ Sí | — | ninguno (ACVIM estadio A: sin cambio de dieta) |
 | `dcm_taurina_respondedora` | ✅ Sí | — | ninguno (taurina no está en los 41 nutrientes medidos) |

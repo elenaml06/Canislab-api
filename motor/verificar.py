@@ -68,6 +68,28 @@ MAPA = {
     "Fenilalanina": "fenilalanina",
     "Fenilalanina_tirosina": "fenilalanina_tirosina",
     "Treonina": "treonina", "Triptofano": "triptofano", "Valina": "valina",
+    # ⚠️ "Fibra": "fibra" -- AÑADIDO (7 septiembre), Y NO ES UN REQUISITO DE
+    # FEDIAF. La Tabla III-3b no da mínimo ni máximo de fibra para el
+    # perro, así que la fila de requerimientos_v2_final.json trae "-" en
+    # los seis campos: nunca exige ni limita nada a un perro sano, solo
+    # deja que el motor SEPA leer la clave.
+    #
+    # Esto ya se hizo mal una vez: hasta el 25 de agosto había una fila
+    # "Fibra" con un mínimo y un máximo inventados (4,29 / 14,3), sin
+    # fuente, que el ANALIZADOR sí usaba -- 8 de 8 menús verdes salían
+    # "cortos de fibra". Ver auditar_fediaf.py, sección "¿SOBRA ALGUNA FILA
+    # EN EL JSON?", que cita este mismo caso. La diferencia esta vez: los
+    # "-" hacen que `minimo_de`/`maximo_de` devuelvan None SIEMPRE para un
+    # perro sano, así que no puede volver a pasar -- se puede comprobar
+    # corriendo pruebas_completas.py con cualquier menú automático.
+    #
+    # Para qué sirve entonces: `topes_de_patologias()` (motor_completo.py)
+    # SÍ puede ponerle un suelo por patología cuando hay una fuente real
+    # (SACN5, NRC...) que lo pida -- primer uso: hiperlipidemia. Sin esta
+    # entrada en MAPA, ese suelo nunca se aplicaría (mismo bucle, mismo
+    # "if not r: continue"), aunque estuviera bien escrito en
+    # patologias.json. Detalle completo: PENDIENTE_NUTRICION.md §5.
+    "Fibra": "fibra",
 }
 # ⚠️ EL ÚNICO MÁXIMO DE FEDIAF QUE NO SE APLICA, Y AQUÍ ESTÁ POR QUÉ
 # (28 agosto). La Tabla III-3b pone un solo máximo a un aminoácido: lisina

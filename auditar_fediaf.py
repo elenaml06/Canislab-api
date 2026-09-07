@@ -314,6 +314,17 @@ NO_SON_NUTRIENTES_DE_LA_TABLA = {
     # crecimiento tardío. No es una fila propia de la tabla III-3b; el motor
     # lo aplica aparte, solo si el peso adulto esperado es >= 25 kg.
     "Calcio_LateGrowth_RazaGrande",
+    # ⚠️ AÑADIDO (7 septiembre) — LA MISMA "FIBRA" DEL CASO REAL DE ARRIBA,
+    # de vuelta a propósito y con la lección aprendida. FEDIAF no le da
+    # mínimo ni máximo, así que NO es una fila de la III-3b y no se compara
+    # contra el PDF -- por eso está aquí y no en EQUIV. Existe para que
+    # verificar.MAPA pueda leer la clave y `topes_de_patologias()` pueda
+    # ponerle un suelo por patología con fuente real (hiperlipidemia,
+    # SACN5 cap.28). La comprobación de más abajo (línea ~330) es la que
+    # garantiza que esta vez no pueda volver a colarse un número inventado
+    # en minAdulto/maxAdulto: si algún día lo lleva, deja de ser esta
+    # excepción documentada.
+    "Fibra",
 }
 _cubiertos = set(EQUIV) | set(MAXIMOS) | set(SIN_MAXIMO) | NO_SON_NUTRIENTES_DE_LA_TABLA
 for _n in req:
@@ -324,6 +335,29 @@ for _n in req:
                       "ninguna fila de la tabla III-3b. O falta añadirla aquí con su "
                       "valor de FEDIAF, o no es un requisito y no puede acabar en "
                       "ningún mapa de requisitos (es lo que pasó con 'Fibra')"))
+
+# ⚠️ AÑADIDO (7 septiembre) — QUE "FIBRA" NUNCA VUELVA A LLEVAR UN NÚMERO.
+# Es la mitad que de verdad importa de la excepción de arriba: estar en
+# NO_SON_NUTRIENTES_DE_LA_TABLA solo la libra de compararse contra el PDF,
+# no le impide llevar un mínimo o máximo inventado -- que es EXACTAMENTE
+# el fallo del 25 de agosto (4,29 / 14,3, sin fuente). Como no viene de
+# FEDIAF, aquí no hay PDF contra el que comprobar un número: la única
+# regla posible es que no lleve ninguno. El día que haga falta un suelo
+# real por patología, ese número vive en patologias.json (con fuente),
+# nunca aquí.
+_fibra_b = req.get("Fibra")
+if _fibra_b:
+    for _campo_fibra in ("minAdulto", "minCachorroJoven", "minCachorroCrecimiento",
+                         "maxAdulto", "maxCachorroJoven", "maxCachorroCrecimiento"):
+        _v_fibra = str(_fibra_b.get(_campo_fibra, "-"))
+        if _v_fibra not in ("-", "", "None"):
+            problemas.append(("FIBRA CON NÚMERO", _campo_fibra,
+                              f"'Fibra' tiene {_v_fibra} en {_campo_fibra}, y FEDIAF no da "
+                              f"ningún valor de fibra en la Tabla III-3b. Es exactamente el "
+                              f"fallo del 25 de agosto (un mínimo/máximo inventado, sin "
+                              f"fuente, que el analizador acababa exigiendo). Si hace falta "
+                              f"un objetivo de fibra, va en patologias.json con su fuente, "
+                              f"nunca aquí."))
 
 if a_proposito:
     print()

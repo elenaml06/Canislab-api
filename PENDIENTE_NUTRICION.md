@@ -609,6 +609,38 @@ automáticamente un tope viable con comida de verdad, y hay que probarlo
 contra el solver antes de darlo por bueno — exactamente lo que dice la
 regla 1 del `CLAUDE.md`, aplicada a un tope nuevo, no solo al menú final.
 
+**Actualizado el 7 de septiembre (2) — `hiperlipidemia` ya tiene suelo de
+fibra, y era el único de los tres candidatos que lo admitía.** Al cerrar
+el hueco de datos de fibra en el catálogo (159/159 fichas, ver más arriba)
+se comprobó si de verdad se podía enganchar a alguna de las tres
+patologías que la pedían -- diabetes, hiperlipidemia, colitis
+(`enteropatia_cronica`) -- y la respuesta fue distinta para cada una,
+leyendo SACN5 capítulo a capítulo y no de memoria:
+
+- **`hiperlipidemia`: SÍ.** Cap.28 «Disorders of Lipid Metabolism» da un
+  número único y accionable: «fiber levels of at least 10% DM are
+  recommended for dogs» → 25 g/1000kcal a 4000kcal/kgMS. Se añadió como
+  `suelos_por_1000kcal.fibra`, probado contra el solver real junto con el
+  tope de grasa ya existente (30 g/1000kcal) en el BLOQUE 13 de
+  `pruebas_completas.py`, tres tamaños de perro.
+- **`diabetes`: NO.** Cap.29 «Endocrine Disorders», Tabla 29-3, da un
+  rango de comida comercial (7-18% MS) pero el propio texto dice
+  literalmente «although an ideal fiber content has not been
+  established» -- la fuente se niega a dar un objetivo, así que poner uno
+  sería inventarlo. Queda como aviso informativo, igual que antes.
+- **`enteropatia_cronica` (colitis): NO, y por un motivo distinto.**
+  Cap.57 «Inflammatory Bowel Disease», Tabla 57-1, da DOS enfoques
+  válidos y opuestos: ≤5% MS ("highly digestible") o 7-15% MS
+  ("increased-fiber", para normalizar motilidad) según el caso. Un suelo
+  único aquí acertaría para un perro y se equivocaría para el otro -- no
+  es un hueco de dato, es que la propia guía dice "depende".
+
+Esto solo fue posible porque `verificar.MAPA` y `requerimientos_v2_final.json`
+ya tienen la fila `Fibra` (seis campos a "-", ningún requisito nuevo para
+un perro sano) -- ver el párrafo de arriba (5, punto 3) para el porqué de
+esa fila y las dos comprobaciones que `auditar_fediaf.py` le añadió para
+que no repita el fallo del 25 de agosto.
+
 ## 11. Fascetti & Delaney, 2ª ed. completo (7 de septiembre): tres verificaciones
 
 Llegaron los 21 capítulos que faltaban (`canislab-fuentes` PR#1, extraídos

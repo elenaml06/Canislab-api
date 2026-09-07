@@ -256,9 +256,16 @@
         }
       },
       "avisos": {
-        "general": "Se ha bajado la grasa para ayudar a controlar los triglicéridos o el colesterol. SACN5 también recomienda subir la fibra (≥10% de la materia seca) para ligar colesterol y ácidos biliares -- eso hoy no se puede aplicar: el catálogo no tiene la fibra como dato de ningún alimento. Si los triglicéridos no bajan solo con la dieta, tu veterinario puede añadir fibratos."
+        "general": "Se ha bajado la grasa para ayudar a controlar los triglicéridos o el colesterol, y se ha subido la fibra (al menos 10% de la materia seca) para ayudar a ligar colesterol y ácidos biliares -- este menú elige más verdura fibrosa para llegar a ese nivel. Si los triglicéridos no bajan solo con la dieta, tu veterinario puede añadir fibratos."
       },
-      "formulable_por_profesional": true
+      "formulable_por_profesional": true,
+      "suelos_por_1000kcal": {
+        "fibra": {
+          "valor": 25.0,
+          "fuente": "SACN5 5ª ed., cap.28 «Disorders of Lipid Metabolism», sección «Key Nutritional Factors · Fiber», verificado 7-sep-2026",
+          "por_que": "Literal: «fiber levels of at least 10% DM are recommended for dogs». A 4000kcal/kgMS de referencia son 25 g/1000kcal. El propio texto matiza que ningún estudio en animales ha medido el efecto de la fibra sobre triglicéridos (\"no studies have been done in animals to evaluate the effects of dietary fiber type or amount on reducing serum triglyceride levels\") y que el mecanismo es más claro para colesterol que para triglicéridos -- el 10% es una recomendación práctica basada en las dietas terapéuticas comerciales que sí han funcionado clínicamente, no un valor con dosis-respuesta demostrada. Se aplica igual porque es la única cifra que da la fuente, y es alcanzable con el catálogo real (verdura fibrosa: col rizada, alcachofa, dátil...)."
+        }
+      }
     },
     "obesidad": {
       "nombre": "Obesidad / sobrepeso, adelgazamiento dirigido",
@@ -355,7 +362,7 @@
       "nombre": "Enteropatía crónica / colitis (incluye enfermedad inflamatoria intestinal)",
       "formulable": true,
       "avisos": {
-        "general": "SACN5 5ª ed., cap.57 «Inflammatory Bowel Disease», Tabla 57-1, recomienda proteína ≥25% de materia seca -- una ración BARF sin ajustar ya va muy por encima -- y, si se necesita un enfoque de eliminación, usar una sola fuente de proteína que el perro no haya comido antes. Esto último ya lo hace Rawku con las alergias: si tu veterinario identifica una proteína nueva como la única a usar, selecciónala en Personalizar y excluye el resto de carnes en Alergias -- no hace falta una patología aparte para eso. La fibra que recomienda SACN5 para las formas con diarrea no está hoy en el catálogo como dato."
+        "general": "SACN5 5ª ed., cap.57 «Inflammatory Bowel Disease», Tabla 57-1, recomienda proteína ≥25% de materia seca -- una ración BARF sin ajustar ya va muy por encima -- y, si se necesita un enfoque de eliminación, usar una sola fuente de proteína que el perro no haya comido antes. Esto último ya lo hace Rawku con las alergias: si tu veterinario identifica una proteína nueva como la única a usar, selecciónala en Personalizar y excluye el resto de carnes en Alergias -- no hace falta una patología aparte para eso. No se aplica un tope ni un mínimo de fibra: la propia Tabla 57-1 da DOS enfoques válidos y opuestos según el caso -- ≤5% de materia seca (\"highly digestible\") o 7-15% (\"increased-fiber\", para normalizar la motilidad) -- así que un número único aquí acertaría para un perro y se equivocaría para el otro. Es tu veterinario quien decide cuál de los dos encaja con tu perro."
       },
       "formulable_por_profesional": true
     },

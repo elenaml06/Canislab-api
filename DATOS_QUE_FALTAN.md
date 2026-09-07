@@ -87,36 +87,18 @@ opuestas.
 
 ## Timo de ternera  ·  _Vísceras_
 
+**Recortado el 7 de septiembre**: comprobado contra `alimentos_v3_final.json`,
+esta ficha ya trae 23 de los 28 nutrientes de esta lista (incluida la
+fibra, en 0 — un timo no tiene fibra de verdad, no es un hueco). Solo
+quedan estos 5, que la propia ficha marca `sin_dato`:
+
 | Nutriente | Unidad | Valor |
 |---|---|---|
-| araquidonico | mg | |
-| calcio | mg | |
 | cloruro | mg | |
-| cobre | mg | |
 | colina | mg | |
-| dha | g | |
-| epa | g | |
-| fibra | g | |
-| folato | µg | |
-| fosforo | mg | |
-| hierro | mg | |
-| linoleico (omega-6, C18:2) | g | |
-| linolenico (omega-3, C18:3) | g | |
-| magnesio | mg | |
-| manganeso | mg | |
-| niacina | mg | |
-| potasio | mg | |
-| riboflavina | mg | |
-| selenio | µg | |
-| sodio | mg | |
-| tiamina | mg | |
-| vitA | µg | |
-| vitB12 | µg | |
-| vitB6 | mg | |
 | vitD | µg | |
 | vitE | mg | |
 | yodo | µg | |
-| zinc | mg | |
 
 ## NaturGreen Psyllium Bio  ·  _Fibra_
 
