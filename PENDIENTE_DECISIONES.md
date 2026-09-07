@@ -71,26 +71,27 @@ las tiene que tomar una persona, no yo.
       cifras (Eastland-Jones 2014, Blanchard 2023, Söder 2023):
       `PENDIENTE_DETALLE.md`.
 
-- [ ] **Cuatro fichas que ha señalado la comprobación nueva del cociente.**
-      (28 de agosto.) Al añadir el nivel 2 —mirar la columna en vez de la
-      fila— salieron cuatro que ninguna comprobación anterior veía. **No son
-      errores probados: son fichas que hay que mirar en su fuente.** Yo no
-      puedo inventar el valor bueno.
+- [x] **Cuatro fichas que había señalado la comprobación nueva del cociente.**
+      RESUELTO — investigadas contra USDA el 7 de septiembre (ver más abajo,
+      «Auditar los valores de los ALIMENTOS»): el pulmón de cordero (Leu/Ile
+      2,54) y los tres cefalópodos (valina≈isoleucina) tienen esos cocientes
+      de verdad en la fuente primaria USDA, confirmado con `WebSearch`, no
+      de memoria. No son una copia mal calibrada como el caso del pavo
+      contaminado que motivó la comprobación: son cocientes reales de esas
+      especies. Esta entrada se quedó sin marcar después de investigarse;
+      corregido aquí el 7 de septiembre al revisar el documento entero
+      contra el estado real del código, no contra lo que decía de memoria.
 
-      | ficha | qué sale | cómo de sospechoso |
+      | ficha | qué salía | resultado |
       |---|---|---|
-      | **Pulmón de cordero** | Leu/Ile **2,537**, isoleucina al 3,16 % | Es la firma exacta del pavo contaminado del USDA. El más sospechoso |
-      | **Calamar** | valina = isoleucina, 0,680 | Los tres cefalópodos tienen Val = Ile exacto |
-      | **Pulpo** | valina = isoleucina, 0,651 | pero **NO son el mismo perfil reescalado** — sus AA/proteína difieren |
-      | **Sepia** | valina = isoleucina, 0,709 | así que puede ser real: en cefalópodos Val ≈ Ile. Hay que ver la fuente |
+      | Pulmón de cordero | Leu/Ile 2,537, isoleucina 3,16% | Real, confirmado contra USDA |
+      | Calamar / Pulpo / Sepia | valina = isoleucina | Real: en cefalópodos Val≈Ile de verdad |
 
-      Los tres cefalópodos pueden ser un redondeo legítimo. El pulmón no lo
-      parece.
-
-- [ ] **El máximo de lisina de FEDIAF: ¿sobre qué proteína se mide?**
-      (28 de agosto, para el nutricionista.) La Tabla III-3b pone un solo
-      máximo a un aminoácido: **lisina 7,00 g/1000 kcal, y solo en
-      crecimiento**. Está bien transcrito — `auditar_fediaf.py` lo
+- [ ] **El máximo de lisina de FEDIAF, reformulada tras leer la fuente
+      primaria (7 de septiembre) — la pregunta original estaba mal
+      planteada.** (28 de agosto, para el nutricionista.) La Tabla III-3b
+      pone un solo máximo a un aminoácido: **lisina 7,00 g/1000 kcal, y
+      solo en crecimiento**. Está bien transcrito — `auditar_fediaf.py` lo
       comprueba contra el PDF.
 
       Al encender los doce aminoácidos se midió qué pasaba con él:
@@ -107,12 +108,33 @@ las tiene que tomar una persona, no yo.
       mismo que decir que FEDIAF no lo pide. Lo vigila el BLOQUE 27 por
       tres lados.
 
-      La pregunta es una sola: **¿el 7,00 se mide sobre la proteína de
-      referencia de la tabla, o sobre la del plato?**
-      · Si es lo primero, no aplicarlo es correcto y esto se cierra.
-      · Si es lo segundo, una dieta BARF de cachorro se pasa de lisina
-        **por definición**, y eso es una conversación mucho más grande
-        que este apartado.
+      **La pregunta original preguntaba mal.** Se planteaba como «¿se mide
+      sobre la proteína de la tabla o sobre la del plato?», dando por hecho
+      que el 7,00 sale de un ratio lisina/proteína. Leído el propio texto de
+      FEDIAF (p.22 del PDF, sección «Lysine»), **no es así**: el número no
+      viene de ningún ratio con la proteína. Viene de un único estudio de
+      dosis-respuesta con lisina SUPLEMENTADA (Czarnecki et al. 1985): a
+      cachorros se les dio una dieta basal (0,91% DM) más lisina cristalina
+      añadida hasta 4,91% DM, y el peso bajó; con 2,91% DM (2 puntos de
+      suplemento en vez de 4) no bajó. FEDIAF tomó ese 2,91% DM como el
+      "no-effect-level" y lo convirtió a energía (a 4156 kcal/kg): **7,0
+      g/1000 kcal**. Es un umbral de seguridad absoluto (mg de lisina por
+      kcal ingerida), no una proporción con la proteína del plato.
+
+      Esto cambia la pregunta real, y la deja más concreta para el
+      nutricionista: el estudio de origen usó lisina **cristalina
+      suplementada** (absorción rápida, sin el resto de aminoácidos que la
+      acompañan en una proteína entera) — la toxicología de aminoácidos
+      libres suplementados suele ser distinta de la del mismo aminoácido
+      ligado a proteína intacta, de absorción más lenta y equilibrada.
+      **¿Generaliza ese no-effect-level de lisina cristalina a la lisina
+      que llega ligada a la carne y el hueso de una ración BARF?** Si no
+      generaliza, no aplicar el techo sigue siendo correcto (y por un
+      motivo más sólido que el de antes). Si sí generaliza, hay que
+      reconsiderar si una ración BARF de cachorro es viable tal cual bajo
+      este criterio — pero eso ya no es una duda sobre qué proteína usa la
+      fórmula, es una pregunta farmacológica sobre aminoácidos libres vs.
+      proteína intacta, y la tiene que responder ella.
 
 - [x] **Límites por patología: confirmar los números.** ⚠️ **ESTA TABLA ESTABA
       DESACTUALIZADA (comprobado el 6 de septiembre contra

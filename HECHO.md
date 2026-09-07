@@ -355,3 +355,111 @@ Comprobado con tres sabotajes y los tres se cazan. Si se añade una
 restricción a `resolver()`, hay que pasarla por `_fila(...)` y
 apuntarla en el BLOQUE 16; si no, puede morir en silencio como
 murieron estas dos.
+
+## El umbral de calcio en cachorros de raza grande estaba en 25kg, FEDIAF dice 15kg — hecho el 7 de septiembre
+
+`RAZA_GRANDE_O_GIGANTE_KG` valía 25 en `motor/motor_completo.py` (la
+restricción del solver) y en `main.py`
+(`_minimo_calcio_raza_grande_roto()`, el semáforo de verificación final).
+La nota "b" de la Tabla III-3b de FEDIAF —leída directamente del PDF
+oficial, no de una fuente secundaria— fija el umbral en **15 kg de peso
+adulto esperado**, no 25. Cachorros de razas de 15-25 kg en crecimiento
+tardío no estaban recibiendo el calcio reforzado que exige FEDIAF. La
+cifra de calcio en sí (2500 mg) ya era correcta — solo el peso del corte
+estaba mal, copiado de una fuente secundaria (un artículo de Vet Clinics
+que cita FEDIAF) nunca contrastada contra el PDF.
+
+Corregido en los dos sitios, que tienen que coincidir siempre por
+definición (mismo criterio, misma fila de la tabla).
+
+La corrección hace aflorar un caso límite real que antes no existía
+(cachorro de raza grande sin hueso + 3 alergias, ~33% de fallo aislado):
+se añadió un reintento por infactibilidad en `_resolver_menu_v2_interno`
+(máx. 2 intentos extra), mismo criterio que ya usa `/menu/varios-perros`
+("el motor lleva aleatoriedad a propósito, la misma petición sale casi
+siempre a la segunda"). Reduce el fallo aislado a ~10-15%.
+
+PR #82. `pruebas_completas.py` entero, TODO EN VERDE.
+
+## Linoleico de "Grasa de pollo" y categoría de "Laringe de vacuno" — hecho el 7 de septiembre
+
+Dos huecos que llevaban desde el 25 de agosto en `PENDIENTE_NUTRICION.md`:
+
+- **Linoleico**: 0 → 19,5 g/100g. USDA FoodData Central FDC 173564 "Fat,
+  chicken" (SR Legacy, NDB 4542) — su proteína (0) y grasa (99,8) ya
+  coincidían exactas con esta ficha, así que es con altísima probabilidad
+  la misma fuente que el resto de la fila. Importaba porque el linoleico
+  tiene máximo en cachorros, y un hueco contado como cero no lo detectaría.
+- **Laringe de vacuno**: categoría "Hueso carnoso" → "Extras". Bloqueada
+  por tejido tiroideo desde el 6 de septiembre (`TIROIDES_EXCLUIR`), nunca
+  puede aportar hueso a ningún menú, así que su categoría antigua solo
+  servía para disparar dos avisos ya conocidos en `auditar_catalogo.py`
+  ("hueso con poco calcio, ¿es cartílago?"). 0 referencias en
+  `catalogo_menus.json` (comprobado), no afecta a los menús precalculados.
+
+PR #82 (junto con lo del calcio). `auditar_catalogo.py` limpio de estos
+dos avisos.
+
+## Taurina y L-carnitina: dato en las 159 fichas, y suelo activado en `dcm_taurina_respondedora` — hecho el 7 de septiembre
+
+**Parte 1 — el dato (PR #83).** Ninguna ficha del catálogo tenía taurina
+ni L-carnitina. Se añadieron las dos claves (mg/100g) a las 159 fichas:
+valor real donde hay fuente citable, `sin_dato` donde no — nunca un
+número inventado. Fuente principal: Spitze, Wong, Rogers y Fascetti
+(2003), *J. Anim. Physiol. Anim. Nutr.* 87:251-262, el estudio más
+completo de taurina en ingredientes de dieta animal (carnes, vísceras,
+pescados y vegetales, directo o por familia/tejido cercano según
+confianza). L-carnitina tiene cobertura más limitada (agregados por
+especie de la literatura general). Estadística: taurina 130/159 con
+valor real, 29 `sin_dato`; L-carnitina 101/159, 58 `sin_dato`.
+
+Mapeo por nombre revisado ficha a ficha con cuidado explícito de no
+confundir familias por coincidencia de texto — comprobado que "Repollo"
+no hereda nada de "Pollo": Spitze confirma taurina=0 en todos los
+vegetales, y así queda su ficha.
+
+Se corrigió de paso un falso positivo de "HUECOS" en `auditar_catalogo.py`
+que las dos claves nuevas introducían en 27 verduras y frutas, mismo
+criterio que ya existía para `purinas_fuente`: un cero con fuente escrita
+no es un hueco.
+
+**Parte 2 — la activación (mismo día).** La patología
+`dcm_taurina_respondedora` ya existía desde la ronda SACN5 del 6-7 de
+septiembre, pero solo como aviso: "la taurina no está entre los 41
+nutrientes que este motor mide". Y el mecanismo de "suelos por patología"
+(el espejo de los topes, para cuando una fuente pide un MÍNIMO más alto
+que el de FEDIAF) también existía ya, usado por primera vez en `artrosis`
+y `dermatosis_zinc`. Con el dato de la Parte 1 puesto, solo faltaba
+conectar las dos piezas:
+
+- `Taurina` y `L_carnitina`, dos filas nuevas en
+  `requerimientos_v2_final.json`, mismo patrón que `Fibra`: las seis
+  columnas a "-", no exigen ni limitan nada a un perro sano.
+- Las dos claves añadidas a `verificar.MAPA`.
+- `suelos_por_1000kcal` en `dcm_taurina_respondedora`: taurina ≥250,
+  L-carnitina ≥50 mg/1000kcal, SACN5 5ª ed. cap.36 «Cardiovascular
+  Disease», Tabla 36-4 (0,1% y 0,02% de materia seca a 4000kcal/kgMS).
+
+Probado contra el solver (adulto 20kg): el menú que sale de verdad lleva
+414 mg de taurina y 138 mg de L-carnitina por 1000kcal, muy por encima
+del suelo, porque ya incluye corazón e hígado. Verificado también en
+`_garantizar_verificado()` (regla 2 del `CLAUDE.md`: los topes/suelos por
+patología no son solo del solver), no se quedó en aviso.
+
+De paso, revisando `PENDIENTE_DECISIONES.md` y `PENDIENTE_NUTRICION.md`
+contra el estado real del código (no de memoria) para esta sesión,
+salieron cuatro cosas que ya estaban resueltas y seguían marcadas como
+pendientes: las 4 fichas de aminoácidos sospechosas (pulmón de cordero,
+calamar, pulpo, sepia — ya confirmadas reales contra USDA el 7 de
+septiembre), el contraste de timo/testículos con USDA (testículos de
+cordero ya no existe, timo ya cita FDC 170194 directo, y el acceso a la
+API de USDA con `DEMO_KEY` sí funciona — la nota decía lo contrario), y
+la lista de hígados que faltan por especie (pavo y pato ya existían,
+solo faltaba corregir la lista). Se reformuló también con más precisión
+la pregunta pendiente del máximo de lisina, tras leer la metodología
+exacta de FEDIAF en el PDF (p.22, sección Lysine): no es un ratio con la
+proteína, es un no-effect-level de lisina CRISTALINA suplementada
+(Czarnecki et al. 1985) convertido a energía — la pregunta real para el
+nutricionista es si eso generaliza a la lisina de una proteína entera.
+
+`pruebas_completas.py` entero, TODO EN VERDE.

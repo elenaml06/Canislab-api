@@ -90,6 +90,20 @@ MAPA = {
     # "if not r: continue"), aunque estuviera bien escrito en
     # patologias.json. Detalle completo: PENDIENTE_NUTRICION.md §5.
     "Fibra": "fibra",
+    # ⚠️ "Taurina" y "L_carnitina" -- AÑADIDAS (7 septiembre), MISMO PATRÓN
+    # QUE "Fibra" DE ARRIBA. No son requisitos de FEDIAF para perro (la
+    # Tabla III-3b no las menciona; la taurina sí es de gato, Tabla
+    # III-4c), así que sus filas en requerimientos_v2_final.json traen
+    # "-" en los seis campos: no exigen ni limitan nada a un perro sano.
+    # Existen para que `topes_de_patologias()` (motor_completo.py) pueda
+    # ponerles un suelo por patología con fuente real -- primer uso:
+    # `dcm_taurina_respondedora` (taurina 250, L-carnitina 50 mg/1000kcal,
+    # SACN5 5ª ed. cap.36 Tabla 36-4). Las 159 fichas del catálogo ya
+    # traían el dato (taurina/lcarnitina, mg/100g) desde el mismo día,
+    # sin activar nada hasta ahora -- esta es la activación. Detalle:
+    # PENDIENTE_NUTRICION.md §8 y VETERINARIOS.md "Los suelos por
+    # patología".
+    "Taurina": "taurina", "L_carnitina": "lcarnitina",
 }
 # ⚠️ EL ÚNICO MÁXIMO DE FEDIAF QUE NO SE APLICA, Y AQUÍ ESTÁ POR QUÉ
 # (28 agosto). La Tabla III-3b pone un solo máximo a un aminoácido: lisina

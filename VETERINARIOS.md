@@ -976,15 +976,17 @@ más restrictivo gana). Usa el mismo cajón que ya existía para el mínimo de
 calcio de raza grande (`minimos_reforzados`): es exactamente el mismo
 mecanismo, con una patología en vez de un tamaño de raza como motivo.
 
-**Primeros tres usos reales, cada uno probado contra el solver antes de
-darlo por bueno**: `artrosis` (EPA+DHA ≥1,0 g/1000kcal, SACN5 cap.34),
-`dermatosis_zinc` (zinc ≥25 mg/1000kcal, SACN5 cap.32) y, desde que la
-fila `Fibra` existe en `verificar.MAPA` (7 de septiembre, segunda mitad
-del día), `hiperlipidemia` (fibra ≥25 g/1000kcal, SACN5 cap.28: «fiber
-levels of at least 10% DM are recommended for dogs»). No sirve para
-`dcm_taurina_respondedora`: taurina y L-carnitina no están entre los 41
-nutrientes del MAPA ni en el catálogo, así que no hay nada que sumar
-aunque el mecanismo ya exista. Y se comprobó, capítulo a capítulo, que
+**Cuatro usos reales, cada uno probado contra el solver antes de darlo
+por bueno**: `artrosis` (EPA+DHA ≥1,0 g/1000kcal, SACN5 cap.34),
+`dermatosis_zinc` (zinc ≥25 mg/1000kcal, SACN5 cap.32), `hiperlipidemia`
+(fibra ≥25 g/1000kcal, SACN5 cap.28: «fiber levels of at least 10% DM are
+recommended for dogs», desde que la fila `Fibra` existe en
+`verificar.MAPA`, 7 de septiembre) y, desde que `Taurina`/`L_carnitina`
+existen también en el MAPA (mismo día, segunda mitad), `dcm_taurina_
+respondedora` (taurina ≥250, L-carnitina ≥50 mg/1000kcal, SACN5 cap.36
+Tabla 36-4) — las 159 fichas del catálogo ya traían el dato desde antes
+en el mismo día, así que activarlo fue solo sumar la fila al MAPA y el
+suelo a `patologias.json`. Y se comprobó, capítulo a capítulo, que
 NO sirve para las otras dos patologías que también pedían fibra:
 `diabetes` (SACN5 cap.29 dice literalmente que «an ideal fiber content
 has not been established», así que no hay número que poner sin
@@ -1016,7 +1018,7 @@ acertaría para un perro y fallaría para el otro). Detalle completo:
 | `hiperlipidemia` | ✅ Sí | — | grasa 30 (SACN5 cap.28); suelo fibra ≥25 g/1000kcal (SACN5 cap.28, desde el 7-sep) |
 | `obesidad` | ✅ Sí | — | grasa 30 (SACN5 pide 22,5, no alcanzable con catálogo real — ver el propio JSON) |
 | `cardiopatia_a` | ✅ Sí | — | ninguno (ACVIM estadio A: sin cambio de dieta) |
-| `dcm_taurina_respondedora` | ✅ Sí | — | ninguno (taurina no está en los 41 nutrientes medidos) |
+| `dcm_taurina_respondedora` | ✅ Sí | — | suelo taurina ≥250, L-carnitina ≥50 mg/1000kcal (SACN5 cap.36 Tabla 36-4; desde el 7-sep, ver "Los suelos por patología" arriba) |
 | `dcm_asociada_a_dieta` | ✅ Sí | — | ninguno (el mecanismo de riesgo no aplica a BARF) |
 | `ple_linfangiectasia` | ✅ Sí | — | grasa 37,5 (SACN5 cap.58) |
 | `insuficiencia_pancreatica_exocrina` | ✅ Sí | — | grasa 37,5 (SACN5 cap.66; el tratamiento real es enzimático, no dietético) |
