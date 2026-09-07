@@ -11078,9 +11078,18 @@
    "valina": 1.195,
    "purinas": 185.0
   },
-  "nota_datos": "Bazo -- órgano linfoide, no muscular, encaja en la categoría BARF de vísceras igual que riñón/pulmón. Datos cruzados entre varias fuentes derivadas de USDA, consistentes entre sí. Sin dato fiable para yodo, vitA/D/E, folato, colina, cloruro, linoleico/linolénico/araquidónico -- se dejan en 0. [Renombrado de \"Bazo de ternera\" a \"Bazo de vaca\" tras verificación: el hierro tan alto (44.5mg) es propio de animal adulto, no de ternera lechal -- la investigación encontró un dato distinto y genuino para ternera joven, añadido aparte.]",
+  "nota_datos": "Bazo -- órgano linfoide, no muscular, encaja en la categoría BARF de vísceras igual que riñón/pulmón. Datos cruzados entre varias fuentes derivadas de USDA, consistentes entre sí. Sin dato fiable para yodo, vitA/D/E, folato, colina, cloruro, linoleico/linolénico/araquidónico -- se dejan en 0. [Renombrado de \"Bazo de ternera\" a \"Bazo de vaca\" tras verificación: el hierro tan alto (44.5mg) es propio de animal adulto, no de ternera lechal -- la investigación encontró un dato distinto y genuino para ternera joven, añadido aparte.] ⚠️ CORREGIDO 7 sep 2026: `sin_dato` solo traía \"cloruro\" -- el resto de huecos que esta misma nota ya declaraba (yodo, vitA/D/E, folato, colina, linoleico/linolénico/araquidónico) no estaban marcados, así que contra un máximo contaban como cero medido en vez de hueco. Encontrado por auditar_catalogo.py comparando la nota contra el campo estructurado.",
   "sin_dato": [
-   "cloruro"
+   "cloruro",
+   "yodo",
+   "vitA",
+   "vitD",
+   "vitE",
+   "folato",
+   "colina",
+   "linoleico",
+   "linolenico",
+   "araquidonico"
   ],
   "aminograma_estimado": {
    "desde": "Bazo de cordero, crudo",
@@ -11147,11 +11156,18 @@
    "valina": 0.858,
    "purinas": 0
   },
-  "nota_datos": "Páncreas -- órgano glandular que segrega enzimas digestivas, encaja en vísceras. No confundir con la molleja de pollo/pavo del catálogo, que es un órgano completamente distinto (estómago muscular de ave, no glándula). Datos cruzados de varias fuentes USDA-derivadas. Bastante más graso que el resto de vísceras del catálogo (19g/100g) -- tenlo en cuenta si el perro tiene tendencia a la pancreatitis. Sin dato fiable para yodo, selenio, zinc, vitA/D/E, folato, colina, cloruro -- se dejan en 0.",
+  "nota_datos": "Páncreas -- órgano glandular que segrega enzimas digestivas, encaja en vísceras. No confundir con la molleja de pollo/pavo del catálogo, que es un órgano completamente distinto (estómago muscular de ave, no glándula). Datos cruzados de varias fuentes USDA-derivadas. Bastante más graso que el resto de vísceras del catálogo (19g/100g) -- tenlo en cuenta si el perro tiene tendencia a la pancreatitis. Sin dato fiable para yodo, selenio, zinc, vitA/D/E, folato, colina, cloruro -- se dejan en 0. ⚠️ CORREGIDO 7 sep 2026: `sin_dato` solo traía cloruro, purinas y zinc -- faltaban yodo, selenio, vitA/D/E, folato y colina, que esta misma nota ya declaraba como sin dato fiable. Encontrado por auditar_catalogo.py comparando la nota contra el campo estructurado.",
   "sin_dato": [
    "cloruro",
    "purinas",
-   "zinc"
+   "zinc",
+   "yodo",
+   "selenio",
+   "vitA",
+   "vitD",
+   "vitE",
+   "folato",
+   "colina"
   ],
   "aminograma_estimado": {
    "desde": "Ternera, páncreas, crudo",
@@ -11211,10 +11227,21 @@
    "valina": 1.123,
    "purinas": 322.0
   },
-  "nota_datos": "Bazo de cordero -- USDA, cruzado con FatSecret y NutrientOptimiser (crudo). Confianza alta. Sin dato fiable de calcio, vitaminas del grupo B (salvo B12) ni vitA/D/E -- se dejan en 0.",
+  "nota_datos": "Bazo de cordero -- USDA, cruzado con FatSecret y NutrientOptimiser (crudo). Confianza alta. Sin dato fiable de calcio, vitaminas del grupo B (salvo B12) ni vitA/D/E -- se dejan en 0. ⚠️ CORREGIDO 7 sep 2026: `sin_dato` solo traía cloruro y manganeso -- faltaban calcio, vitA/D/E y las vitaminas del grupo B (niacina, riboflavina, tiamina, vitB6, ácido pantoténico, folato, colina) que esta misma nota ya declaraba sin dato fiable. La colina se incluye por ser tratada como parte del grupo B en las demás vísceras de este catálogo (Bazo de vaca, Páncreas de vaca, Cerebro de ternera), aunque la nota original no la nombrase suelta. Encontrado por auditar_catalogo.py comparando la nota contra el campo estructurado.",
   "sin_dato": [
    "cloruro",
-   "manganeso"
+   "manganeso",
+   "calcio",
+   "vitA",
+   "vitD",
+   "vitE",
+   "niacina",
+   "riboflavina",
+   "tiamina",
+   "vitB6",
+   "acidoPantotenico",
+   "folato",
+   "colina"
   ],
   "purinas_fuente": {
    "desde": "Souci-Fachmann-Kraut (vía compilaciones)",
@@ -11342,13 +11369,21 @@
    "valina": 0.491,
    "purinas": 162.0
   },
-  "nota_datos": "Cerebro -- tejido neuroendocrino, rico en DHA de forma natural. USDA, cruzado con Recipal/FatSecret/Prospre (crudo). OJO: colesterol muy elevado (~3010mg/100g) -- no es un problema nutricional de perro sano (el colesterol dietético apenas afecta al colesterol sanguíneo canino), pero se anota por si acaso. Sin dato fiable de magnesio, fósforo, cobre, ni la mayoría de vitaminas -- se dejan en 0.",
+  "nota_datos": "Cerebro -- tejido neuroendocrino, rico en DHA de forma natural. USDA, cruzado con Recipal/FatSecret/Prospre (crudo). OJO: colesterol muy elevado (~3010mg/100g) -- no es un problema nutricional de perro sano (el colesterol dietético apenas afecta al colesterol sanguíneo canino), pero se anota por si acaso. Sin dato fiable de magnesio, fósforo, cobre, ni la mayoría de vitaminas -- se dejan en 0. ⚠️ CORREGIDO 7 sep 2026: `sin_dato` no incluía ninguna vitamina, y la nota ya decía que faltaba \"la mayoría\" -- vitA/D/E, folato, niacina, riboflavina, tiamina y vitB6 (todas menos la B12, que sí trae dato: 9,51 µg). Encontrado por auditar_catalogo.py comparando la nota contra el campo estructurado.",
   "sin_dato": [
    "cloruro",
    "cobre",
    "fosforo",
    "magnesio",
-   "manganeso"
+   "manganeso",
+   "vitA",
+   "vitD",
+   "vitE",
+   "folato",
+   "niacina",
+   "riboflavina",
+   "tiamina",
+   "vitB6"
   ],
   "purinas_bases": {
    "adenina": 12.0,

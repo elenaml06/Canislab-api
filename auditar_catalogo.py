@@ -78,9 +78,24 @@ for a in al:
                        f"(ratio {calc/e:.2f}) — ¿nutrientes en seco y kcal en fresco?"))
 
 # ── 2. huecos sin declarar ────────────────────────────────────────────
+#
+# ⚠️ DOS EXCEPCIONES MÁS, VERIFICADAS EL 7 DE SEPTIEMBRE: "Sal común
+# (cloruro sódico)" es NaCl puro -- por definición química no lleva
+# proteína, grasa, vitaminas ni minerales que no sean sodio y cloruro, así
+# que sus ~24 ceros son tan reales como los de un aceite (que ya se
+# excluye por `es_grasa`). "Huevo clara" es la parte del huevo sin yema,
+# y la composición de la clara está descrita hasta el punto de ser de
+# libro de texto: sin grasa, sin vitaminas liposolubles (vitA/D/E) ni los
+# ácidos grasos que van con ellas. Ninguno de los dos es incertidumbre --
+# es composición conocida con certeza -- así que meterlos en `sin_dato`
+# sería mentir en la otra dirección (haría que un máximo los tratara como
+# "no lo sabemos" e imputara un valor donde el valor real y cierto es 0).
+SIN_INCERTIDUMBRE = ("Sal común (cloruro sódico)", "Huevo clara")
 for a in al:
     n = a.get("nutrientes") or {}
-    if not n or es_grasa(a) or a.get("categoria") in SUPLEMENTOS: continue
+    if (not n or es_grasa(a) or a.get("categoria") in SUPLEMENTOS
+            or a["nombre"] in SIN_INCERTIDUMBRE):
+        continue
     sd = set(a.get("sin_dato") or [])
     # ⚠️ UN CERO CON FUENTE ESCRITA NO ES UN HUECO (28 agosto). Las purinas
     # de un huevo son CERO de verdad -- "Egg, chicken, raw" da 0,0 en las
@@ -245,7 +260,13 @@ for a in al:
     sd = set(a.get("sin_dato") or [])
     if c == "Hígado" and nut(a, "vitA") < 1000 and "vitA" not in sd:
         avisos.append(("RARO", nombre, f"hígado con vitA={nut(a,'vitA')} (rondan 5.000-20.000 µg)"))
-    if c == "Hueso carnoso" and nut(a, "calcio") < 400:
+    # Laringe de vacuno es la excepción conocida (ver la sección de "el
+    # hueso carnoso tiene que tener hueso", más abajo): es cartílago, no
+    # hueso, así que no está mineralizada y el calcio no la ve. Sin esta
+    # exclusión, este aviso y el de más abajo decían lo mismo dos veces --
+    # y con umbrales distintos (aquí 400, allá también 400, pero solo uno
+    # de los dos la excluía).
+    if c == "Hueso carnoso" and nut(a, "calcio") < 400 and nombre != "Laringe de vacuno":
         avisos.append(("RARO", nombre, f"en 'Hueso carnoso' con calcio={nut(a,'calcio'):.0f} mg — "
                                        f"los huesos de verdad traen 1.250-1.810. ¿Es hueso o cartílago?"))
     if c == "Carne muscular" and nut(a, "calcio") > 300:
@@ -420,19 +441,44 @@ for a_ in al:
         #     His/Ile tiene mediana 0,601 y NINGUNA vale 1,000. Tres
         #     aminoacidos distintos con el mismo numero son una copia.
         # Ninguno de los dos lo cazaba el umbral de isoleucina de arriba.
+        # ⚠️ DOS EXCEPCIONES VERIFICADAS CONTRA USDA (7 septiembre) — el
+        # cociente sobrevive al reescalado, pero no es universal: depende
+        # del TEJIDO, y dos casos de este catálogo caen fuera de la banda
+        # calibrada sobre carne muscular sin que el dato esté mal.
+        #
+        #   · PULMON DE CORDERO: Leu/Ile = 2,537 aqui. USDA da para pulmon
+        #     de cordero crudo leucina 1,35 g e isoleucina 0,53 g -> Leu/Ile
+        #     2,547 -- casi identico a nuestra ficha (1,337 / 0,527). El
+        #     pulmon bovino de USDA, para comparar, da 1,19/0,77 = 1,545,
+        #     DENTRO de la banda: no es que "todo pulmon" se salga, es que
+        #     el de cordero especificamente tiene un perfil distinto al de
+        #     vaca. Dato real, no copiado.
+        #   · CALAMAR, PULPO, SEPIA: valina e isoleucina casi iguales en
+        #     los tres. USDA lo confirma para las tres especies -- squid
+        #     crudo (FDC 174223): isoleucina 193 mg, valina 193 mg,
+        #     EXACTOS; octopus (FDC 174249): 3894 / 3909 mg; cuttlefish
+        #     (FDC 174215): 2121 / 2127 mg. Los cefalopodos tienen Val≈Ile
+        #     de verdad -- es lo contrario del caso del pavo (alli SEIS
+        #     analiticas independientes no daban la misma constante; aqui
+        #     TRES fuentes primarias distintas del USDA coinciden en el
+        #     patron). No se toca ningun valor: se documenta la excepcion.
+        CEFALOPODOS_VAL_ILE = {"Calamar", "Pulpo", "Sepia"}
+        LEU_ILE_POR_TEJIDO = {"Pulmón de cordero"}
         if prot_ >= 10 and (n_.get("isoleucina") or 0) > 0:
             ile2_ = n_["isoleucina"]
             leu_ile = (n_.get("leucina") or 0) / ile2_
             # La banda sale del catalogo medido: 42 de 45 entre 1,16 y 1,98,
             # con la col rizada (1,16) como borde bajo real.
-            if not (1.10 <= leu_ile <= 2.05) and nom_ not in PAVO_PENDIENTE:
+            if (not (1.10 <= leu_ile <= 2.05) and nom_ not in PAVO_PENDIENTE
+                    and nom_ not in LEU_ILE_POR_TEJIDO):
                 avisos.append(("AMINO", nom_,
                                f"Leu/Ile = {leu_ile:.3f}, fuera de 1,10-2,05. Ese cociente no "
                                f"depende de la proteina, asi que sobrevive a un reescalado: "
                                f"fuera de banda casi siempre significa aminograma de otra fuente"))
             for otro in ("histidina", "valina"):
                 v_ = n_.get(otro) or 0
-                if v_ > 0 and abs(v_ / ile2_ - 1.0) < 0.005:
+                if (v_ > 0 and abs(v_ / ile2_ - 1.0) < 0.005
+                        and not (otro == "valina" and nom_ in CEFALOPODOS_VAL_ILE)):
                     avisos.append(("AMINO", nom_,
                                    f"{otro} e isoleucina valen lo mismo ({v_:.3f}). Son dos "
                                    f"aminoacidos distintos: en 91 fichas ninguna los tiene "
