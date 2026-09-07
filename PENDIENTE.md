@@ -34,11 +34,11 @@ que tomar una persona, no yo.
 - [ ] El máximo de lisina de FEDIAF: ¿sobre qué proteína se mide? (para el nutricionista)
 - [ ] Límites por patología: confirmar los números (fósforo, cobre, grasa)
 - [ ] Siete preguntas para Cris (proteína senior, estadio ACVIM, pancreatitis en cachorro, umbral 1,10, tiaminasa, qué firma un veterinario, qué hace AnVet)
-- [ ] La app no distingue hepatopatía por cobre de otras hepatopatías
+- [x] La app no distingue hepatopatía por cobre de otras hepatopatías — RESUELTO 7 sep (`raza_predispuesta_cobre`)
 - [ ] Repasar la transcripción de la tabla de FEDIAF en `auditar_fediaf.py`
-- [ ] Auditar los valores de los ALIMENTOS (`alimentos_v3_final.json` no tiene auditoría, a diferencia de los requisitos)
-- [ ] Fibra de la borraja (falta el dato, hoy tiene un `0.0` que no es real)
-- [ ] ¿Rawku apunta a algún rango de fibra? — decisión de nutrición, no de código
+- [x] Auditar los valores de los ALIMENTOS — RESUELTO 7 sep: la auditoría ya existía (`auditar_catalogo.py`), se ejecutó de verdad y se investigaron sus 20 avisos. Ver `PENDIENTE_DECISIONES.md`
+- [x] Fibra de la borraja — CERRADO 7 sep: el alimento ya no existe en el catálogo, no es un hueco de dato
+- [ ] ¿Rawku apunta a algún rango de fibra? — decisión de nutrición, no de código (nota: hiperlipidemia ya tiene suelo real, 7 sep — ver `PENDIENTE_NUTRICION.md` §10)
 - [ ] ¿Hace falta estar dada de alta como autónoma para cobrar? (pregunta a la gestoría)
 - [ ] Revisar los textos legales cuando estén redactados — bloquea Stripe y Google
 
@@ -78,6 +78,6 @@ que tomar una persona, no yo.
 - [ ] El linoleico de la grasa de pollo sigue sin dato (y tiene máximo en cachorros)
 - [ ] Plantearse que el aviso de datos incompletos no dependa de una lista mantenida a mano
 - [ ] Conseguir cifras verificadas de EPA/DHA para seis pescados (incluido el boquerón)
-- [ ] Completar las cuatro vísceras sin dato (bazo de vaca, páncreas de vaca, bazo de cordero, cerebro de ternera)
+- [ ] Completar las cuatro vísceras sin dato (bazo de vaca, páncreas de vaca, bazo de cordero, cerebro de ternera) — el 7 sep se corrigió que `sin_dato` ya diga la verdad (antes esos huecos contaban como cero medido); conseguir el dato real sigue pendiente
 - [ ] Decisión pendiente: `Laringe de vacuno` — ¿mover a Extras o quitar del catálogo?
 - [ ] Añadir vísceras e hígados de las especies que faltan (pollo, pavo, pato, cerdo)
