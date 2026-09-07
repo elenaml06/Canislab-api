@@ -48,7 +48,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "dosis_max_por_100g_comida": 0.8,
   "dosis_fuente": "Etiqueta PAWS & PATCH: 1 cuchara dosificadora (~4 g) por cada 500 g de carne",
@@ -88,7 +90,9 @@
    "vitE",
    "yodo",
    "zinc"
-  ]
+  ],
+  "taurina_fuente": "Taurina/L-carnitina = 0: carbonato calcico (cascara de huevo molida), compuesto mineral sin materia organica soluble relevante.",
+  "lcarnitina_fuente": "Taurina/L-carnitina = 0: carbonato calcico (cascara de huevo molida), compuesto mineral sin materia organica soluble relevante."
  },
  {
   "nombre": "NaturGreen Psyllium Bio",
@@ -139,7 +143,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "dosis_max_por_100g_comida": 0.5,
   "dosis_fuente": "Sin dosis de etiqueta: NaturGreen no la publica (su ficha dice solo «una cucharadita en agua», sin gramos). Dosis de la literatura veterinaria, 0,2 g/kg/dia, por dos caminos independientes que coinciden: Vetas et al. 2022, Vet Sci (PMC9145803), n=15, «0.2 g/kg body weight»; y Fiberact 2024, J Nutr Food Sci, n=44 perros, «1 teaspoon (about 2 g) per 10 kg» = 0,2 g/kg. DOSIFICAR EN GRAMOS, nunca en cucharaditas: la cucharadita va de 2 g (cascara entera) a 5 g (molida), un factor 2,5 escondido en la palabra.",
@@ -182,7 +188,9 @@
    "yodo",
    "zinc"
   ],
-  "dosis_g_por_kg_peso": 0.2
+  "dosis_g_por_kg_peso": 0.2,
+  "taurina_fuente": "Taurina = 0: cascara de semilla vegetal (Plantago ovata) -- Spitze et al. 2003 no detecta taurina en ninguna semilla ni fruto seco analizado.",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento vegetal que el resto del catalogo."
  },
  {
   "nombre": "AniForte Beef Blood Powder",
@@ -268,7 +276,9 @@
    "vitD",
    "vitE",
    "yodo",
-   "zinc"
+   "zinc",
+   "taurina",
+   "lcarnitina"
   ]
  },
  {
@@ -320,7 +330,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "dosis_fuente": "5 ml por 10 kg de peso; 1 ml ≈ 0,92 g",
   "dosis_g_por_kg_peso": 0.46,
@@ -345,7 +357,9 @@
    "vitD",
    "vitE"
   ],
-  "nota_datos": "⚠️ CASO REAL ENCONTRADO (27 agosto): el 17 que habia en `linolenico` NO era ALA, era el OMEGA-3 TOTAL de la etiqueta. El omega-3 total INCLUYE el EPA y el DHA, que ya estan en sus columnas: se contaban dos veces. El ALA de un aceite de salmon ronda 1 g/100 g (USDA FDC 172343: ALA 1,06), no 17. Se vacia y se declara en sin_dato en vez de poner el valor del USDA, que es de OTRO aceite. Cota aritmetica defendible sobre la propia etiqueta: ALA <= n-3 total - (EPA+DHA+DPA) = 5.0 g. El `linoleico` NO se toca: en el n-6 de un aceite de salmon el linoleico si domina de verdad (el araquidonico es un 0,5-1%), asi que 'omega-6 total ~ LA' es una aproximacion razonable; en el n-3 no lo es, porque ahi mandan el EPA y el DHA. Vitamina D: en blanco A PROPOSITO y con motivo comprobado. USDA FDC 172343 no trae el campo (ausente, no cero), ninguna de las cinco marcas la declara, y en filete varia 8 veces segun salvaje o piscifactoria (2,3-18,5 ug/100 g; Jakobsen et al., Nutrients 2019, DOI 10.3390/nu11050982). No es pereza: el numero no es estable. ⚠️ CASO REAL ENCONTRADO (27 agosto): la grasa estaba a 0 y declarada en sin_dato, en un producto que es aceite puro. No era un hueco: la propia ficha dice 900 kcal por 100 g, y 900/9 = 100 g de grasa. El dato estaba forzado por la aritmetica de nuestra propia energia, no hacia falta ninguna tabla de fuera. Se pone 99,5 g, que es la composicion que declaran las cinco marcas (99,5% aceite + 0,5% tocoferoles). Comparalo con los ocho aceites de cocina del catalogo, que si traen 99,9-100 g. IMPORTA porque la grasa tiene minimo de FEDIAF y tope por patologia (20 g/1000 kcal en pancreatitis, Merck): un producto 100% grasa que declara 0 g mete kcal sin que cuenten como grasa, y ese es el lado que hace dano en cuanto se aplica un tope. MEDIDO: el motor mete hasta 9,2 g de aceite en un cachorro de 20 kg."
+  "nota_datos": "⚠️ CASO REAL ENCONTRADO (27 agosto): el 17 que habia en `linolenico` NO era ALA, era el OMEGA-3 TOTAL de la etiqueta. El omega-3 total INCLUYE el EPA y el DHA, que ya estan en sus columnas: se contaban dos veces. El ALA de un aceite de salmon ronda 1 g/100 g (USDA FDC 172343: ALA 1,06), no 17. Se vacia y se declara en sin_dato en vez de poner el valor del USDA, que es de OTRO aceite. Cota aritmetica defendible sobre la propia etiqueta: ALA <= n-3 total - (EPA+DHA+DPA) = 5.0 g. El `linoleico` NO se toca: en el n-6 de un aceite de salmon el linoleico si domina de verdad (el araquidonico es un 0,5-1%), asi que 'omega-6 total ~ LA' es una aproximacion razonable; en el n-3 no lo es, porque ahi mandan el EPA y el DHA. Vitamina D: en blanco A PROPOSITO y con motivo comprobado. USDA FDC 172343 no trae el campo (ausente, no cero), ninguna de las cinco marcas la declara, y en filete varia 8 veces segun salvaje o piscifactoria (2,3-18,5 ug/100 g; Jakobsen et al., Nutrients 2019, DOI 10.3390/nu11050982). No es pereza: el numero no es estable. ⚠️ CASO REAL ENCONTRADO (27 agosto): la grasa estaba a 0 y declarada en sin_dato, en un producto que es aceite puro. No era un hueco: la propia ficha dice 900 kcal por 100 g, y 900/9 = 100 g de grasa. El dato estaba forzado por la aritmetica de nuestra propia energia, no hacia falta ninguna tabla de fuera. Se pone 99,5 g, que es la composicion que declaran las cinco marcas (99,5% aceite + 0,5% tocoferoles). Comparalo con los ocho aceites de cocina del catalogo, que si traen 99,9-100 g. IMPORTA porque la grasa tiene minimo de FEDIAF y tope por patologia (20 g/1000 kcal en pancreatitis, Merck): un producto 100% grasa que declara 0 g mete kcal sin que cuenten como grasa, y ese es el lado que hace dano en cuanto se aplica un tope. MEDIDO: el motor mete hasta 9,2 g de aceite en un cachorro de 20 kg.",
+  "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida."
  },
  {
   "nombre": "Oleum Canis Aceite de Salmón",
@@ -396,7 +410,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "dosis_fuente": "5 ml por 10 kg de peso; 1 ml ≈ 0,92 g",
   "dosis_g_por_kg_peso": 0.46,
@@ -420,7 +436,9 @@
    "vitD",
    "vitE"
   ],
-  "nota_datos": "⚠️ CASO REAL ENCONTRADO (27 agosto): el 16 que habia en `linolenico` NO era ALA, era el OMEGA-3 TOTAL de la etiqueta. El omega-3 total INCLUYE el EPA y el DHA, que ya estan en sus columnas: se contaban dos veces. El ALA de un aceite de salmon ronda 1 g/100 g (USDA FDC 172343: ALA 1,06), no 16. Se vacia y se declara en sin_dato en vez de poner el valor del USDA, que es de OTRO aceite. Cota aritmetica defendible sobre la propia etiqueta: ALA <= n-3 total - (EPA+DHA+DPA) = 7.0 g. El `linoleico` NO se toca: en el n-6 de un aceite de salmon el linoleico si domina de verdad (el araquidonico es un 0,5-1%), asi que 'omega-6 total ~ LA' es una aproximacion razonable; en el n-3 no lo es, porque ahi mandan el EPA y el DHA. Vitamina D: en blanco A PROPOSITO y con motivo comprobado. USDA FDC 172343 no trae el campo (ausente, no cero), ninguna de las cinco marcas la declara, y en filete varia 8 veces segun salvaje o piscifactoria (2,3-18,5 ug/100 g; Jakobsen et al., Nutrients 2019, DOI 10.3390/nu11050982). No es pereza: el numero no es estable. ⚠️ CASO REAL ENCONTRADO (27 agosto): la grasa estaba a 0 y declarada en sin_dato, en un producto que es aceite puro. No era un hueco: la propia ficha dice 900 kcal por 100 g, y 900/9 = 100 g de grasa. El dato estaba forzado por la aritmetica de nuestra propia energia, no hacia falta ninguna tabla de fuera. Se pone 99,5 g, que es la composicion que declaran las cinco marcas (99,5% aceite + 0,5% tocoferoles). Comparalo con los ocho aceites de cocina del catalogo, que si traen 99,9-100 g. IMPORTA porque la grasa tiene minimo de FEDIAF y tope por patologia (20 g/1000 kcal en pancreatitis, Merck): un producto 100% grasa que declara 0 g mete kcal sin que cuenten como grasa, y ese es el lado que hace dano en cuanto se aplica un tope. MEDIDO: el motor mete hasta 9,2 g de aceite en un cachorro de 20 kg."
+  "nota_datos": "⚠️ CASO REAL ENCONTRADO (27 agosto): el 16 que habia en `linolenico` NO era ALA, era el OMEGA-3 TOTAL de la etiqueta. El omega-3 total INCLUYE el EPA y el DHA, que ya estan en sus columnas: se contaban dos veces. El ALA de un aceite de salmon ronda 1 g/100 g (USDA FDC 172343: ALA 1,06), no 16. Se vacia y se declara en sin_dato en vez de poner el valor del USDA, que es de OTRO aceite. Cota aritmetica defendible sobre la propia etiqueta: ALA <= n-3 total - (EPA+DHA+DPA) = 7.0 g. El `linoleico` NO se toca: en el n-6 de un aceite de salmon el linoleico si domina de verdad (el araquidonico es un 0,5-1%), asi que 'omega-6 total ~ LA' es una aproximacion razonable; en el n-3 no lo es, porque ahi mandan el EPA y el DHA. Vitamina D: en blanco A PROPOSITO y con motivo comprobado. USDA FDC 172343 no trae el campo (ausente, no cero), ninguna de las cinco marcas la declara, y en filete varia 8 veces segun salvaje o piscifactoria (2,3-18,5 ug/100 g; Jakobsen et al., Nutrients 2019, DOI 10.3390/nu11050982). No es pereza: el numero no es estable. ⚠️ CASO REAL ENCONTRADO (27 agosto): la grasa estaba a 0 y declarada en sin_dato, en un producto que es aceite puro. No era un hueco: la propia ficha dice 900 kcal por 100 g, y 900/9 = 100 g de grasa. El dato estaba forzado por la aritmetica de nuestra propia energia, no hacia falta ninguna tabla de fuera. Se pone 99,5 g, que es la composicion que declaran las cinco marcas (99,5% aceite + 0,5% tocoferoles). Comparalo con los ocho aceites de cocina del catalogo, que si traen 99,9-100 g. IMPORTA porque la grasa tiene minimo de FEDIAF y tope por patologia (20 g/1000 kcal en pancreatitis, Merck): un producto 100% grasa que declara 0 g mete kcal sin que cuenten como grasa, y ese es el lado que hace dano en cuanto se aplica un tope. MEDIDO: el motor mete hasta 9,2 g de aceite en un cachorro de 20 kg.",
+  "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida."
  },
  {
   "nombre": "AniForte Aceite de Salmón",
@@ -471,7 +489,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "dosis_fuente": "5 ml por 10 kg de peso; 1 ml ≈ 0,92 g",
   "dosis_g_por_kg_peso": 0.46,
@@ -495,7 +515,9 @@
    "vitD",
    "vitE"
   ],
-  "nota_datos": "⚠️ CASO REAL ENCONTRADO (27 agosto): el 17.14 que habia en `linolenico` NO era ALA, era el OMEGA-3 TOTAL de la etiqueta. El omega-3 total INCLUYE el EPA y el DHA, que ya estan en sus columnas: se contaban dos veces. El ALA de un aceite de salmon ronda 1 g/100 g (USDA FDC 172343: ALA 1,06), no 17.14. Se vacia y se declara en sin_dato en vez de poner el valor del USDA, que es de OTRO aceite. Cota aritmetica defendible sobre la propia etiqueta: ALA <= n-3 total - (EPA+DHA+DPA) = 10.06 g. El `linoleico` NO se toca: en el n-6 de un aceite de salmon el linoleico si domina de verdad (el araquidonico es un 0,5-1%), asi que 'omega-6 total ~ LA' es una aproximacion razonable; en el n-3 no lo es, porque ahi mandan el EPA y el DHA. Vitamina D: en blanco A PROPOSITO y con motivo comprobado. USDA FDC 172343 no trae el campo (ausente, no cero), ninguna de las cinco marcas la declara, y en filete varia 8 veces segun salvaje o piscifactoria (2,3-18,5 ug/100 g; Jakobsen et al., Nutrients 2019, DOI 10.3390/nu11050982). No es pereza: el numero no es estable. ⚠️ CASO REAL ENCONTRADO (27 agosto): la grasa estaba a 0 y declarada en sin_dato, en un producto que es aceite puro. No era un hueco: la propia ficha dice 900 kcal por 100 g, y 900/9 = 100 g de grasa. El dato estaba forzado por la aritmetica de nuestra propia energia, no hacia falta ninguna tabla de fuera. Se pone 99,5 g, que es la composicion que declaran las cinco marcas (99,5% aceite + 0,5% tocoferoles). Comparalo con los ocho aceites de cocina del catalogo, que si traen 99,9-100 g. IMPORTA porque la grasa tiene minimo de FEDIAF y tope por patologia (20 g/1000 kcal en pancreatitis, Merck): un producto 100% grasa que declara 0 g mete kcal sin que cuenten como grasa, y ese es el lado que hace dano en cuanto se aplica un tope. MEDIDO: el motor mete hasta 9,2 g de aceite en un cachorro de 20 kg."
+  "nota_datos": "⚠️ CASO REAL ENCONTRADO (27 agosto): el 17.14 que habia en `linolenico` NO era ALA, era el OMEGA-3 TOTAL de la etiqueta. El omega-3 total INCLUYE el EPA y el DHA, que ya estan en sus columnas: se contaban dos veces. El ALA de un aceite de salmon ronda 1 g/100 g (USDA FDC 172343: ALA 1,06), no 17.14. Se vacia y se declara en sin_dato en vez de poner el valor del USDA, que es de OTRO aceite. Cota aritmetica defendible sobre la propia etiqueta: ALA <= n-3 total - (EPA+DHA+DPA) = 10.06 g. El `linoleico` NO se toca: en el n-6 de un aceite de salmon el linoleico si domina de verdad (el araquidonico es un 0,5-1%), asi que 'omega-6 total ~ LA' es una aproximacion razonable; en el n-3 no lo es, porque ahi mandan el EPA y el DHA. Vitamina D: en blanco A PROPOSITO y con motivo comprobado. USDA FDC 172343 no trae el campo (ausente, no cero), ninguna de las cinco marcas la declara, y en filete varia 8 veces segun salvaje o piscifactoria (2,3-18,5 ug/100 g; Jakobsen et al., Nutrients 2019, DOI 10.3390/nu11050982). No es pereza: el numero no es estable. ⚠️ CASO REAL ENCONTRADO (27 agosto): la grasa estaba a 0 y declarada en sin_dato, en un producto que es aceite puro. No era un hueco: la propia ficha dice 900 kcal por 100 g, y 900/9 = 100 g de grasa. El dato estaba forzado por la aritmetica de nuestra propia energia, no hacia falta ninguna tabla de fuera. Se pone 99,5 g, que es la composicion que declaran las cinco marcas (99,5% aceite + 0,5% tocoferoles). Comparalo con los ocho aceites de cocina del catalogo, que si traen 99,9-100 g. IMPORTA porque la grasa tiene minimo de FEDIAF y tope por patologia (20 g/1000 kcal en pancreatitis, Merck): un producto 100% grasa que declara 0 g mete kcal sin que cuenten como grasa, y ese es el lado que hace dano en cuanto se aplica un tope. MEDIDO: el motor mete hasta 9,2 g de aceite en un cachorro de 20 kg.",
+  "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida."
  },
  {
   "nombre": "GRAU Levadura de cerveza",
@@ -546,7 +568,8 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 11.2
   },
   "dosis_fuente": "≈3 g por 10 kg de peso (dosis habitual de levadura de cerveza)",
   "dosis_g_por_kg_peso": 0.3,
@@ -570,8 +593,10 @@
    "vitA",
    "vitB12",
    "vitD",
-   "vitE"
-  ]
+   "vitE",
+   "lcarnitina"
+  ],
+  "taurina_fuente": "Taurina = 11,2 mg/100g: Spitze et al. 2003, tabla 1, seccion de hongos/plantas, \"Yeast\" = 112 (0-337) mg/kg -> 11,2 mg/100g."
  },
  {
   "nombre": "PAWS & PATCH Levadura de cerveza",
@@ -622,7 +647,8 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 11.2
   },
   "dosis_fuente": "≈3 g por 10 kg de peso (dosis habitual de levadura de cerveza)",
   "dosis_g_por_kg_peso": 0.3,
@@ -647,8 +673,10 @@
    "vitA",
    "vitB12",
    "vitD",
-   "vitE"
-  ]
+   "vitE",
+   "lcarnitina"
+  ],
+  "taurina_fuente": "Taurina = 11,2 mg/100g: Spitze et al. 2003, tabla 1, seccion de hongos/plantas, \"Yeast\" = 112 (0-337) mg/kg -> 11,2 mg/100g."
  },
  {
   "nombre": "AniForte Seaweed Meal",
@@ -735,7 +763,9 @@
    "vitB6",
    "vitD",
    "vitE",
-   "zinc"
+   "zinc",
+   "taurina",
+   "lcarnitina"
   ]
  },
  {
@@ -787,7 +817,9 @@
    "treonina": 0.957,
    "triptofano": 0.242,
    "valina": 1.141,
-   "purinas": 96.0
+   "purinas": 96.0,
+   "taurina": 18.0,
+   "lcarnitina": 21.0
   },
   "nota_datos": "CORREGIDO 4 agosto. El valor anterior (107 kcal/0,99 g grasa) era menor que la version sin piel del mismo catalogo, fisicamente imposible. ⚠️ CORREGIDO 6 sep 2026 contra FDC 171093: calcio, cobre, potasio, sodio, fósforo, magnesio, hierro y zinc ajustados a la ficha real -- ninguno por encima del 40%. El yodo (2 µg) no tiene respaldo en USDA -- pasa a sin_dato.",
   "fuente": "USDA FDC 171093 'Turkey, all classes, breast, meat and skin, raw'.",
@@ -806,7 +838,9 @@
   },
   "sin_dato": [
    "yodo"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 18 mg/100g: Spitze et al. 2003, tabla 1, \"Chicken, light meat\" (crudo) = 180 +/- 30 mg/kg peso humedo -> 18 mg/100g. Aplicado tambien a pechuga de pavo por familia (ave domestica, mismo tipo de fibra muscular): no hay dato de pavo separado por corte.",
+  "lcarnitina_fuente": "L-carnitina = 21 mg/100g: valor agregado tipico de pavo (no separa corte), literatura general sobre contenido de carnitina en carne."
  },
  {
   "nombre": "Pollo pechuga con piel",
@@ -857,7 +891,9 @@
    "treonina": 0.869,
    "triptofano": 0.237,
    "valina": 1.02,
-   "purinas": 174.9
+   "purinas": 174.9,
+   "taurina": 18.0,
+   "lcarnitina": 10.0
   },
   "nota_datos": "CORREGIDO 4 agosto. El valor anterior (105 kcal/1,2 g grasa) era un error de imputacion de BEDCA: una pechuga con piel no puede tener menos grasa que sin piel. Verificado contra USDA. ⚠️ CORREGIDO 6 sep 2026 contra FDC 171474: vitamina A (0,34→24 µg, error de escala) y vitD (0→0,40) eran los errores graves. Energía, proteína y grasa venían con un sesgo sistemático del -13% en toda la ficha (150→172 kcal), y con ellas fósforo. Hierro, zinc, potasio, calcio, magnesio también ajustados. El selenio, que estaba en sin_dato, se rellena con 16,6 µg de la misma ficha. El yodo (1,8 µg) no tiene respaldo -- pasa a sin_dato.",
   "fuente": "USDA FDC 171474 'Chicken, breast, meat and skin, raw'.",
@@ -875,7 +911,9 @@
   },
   "sin_dato": [
    "yodo"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 18 mg/100g: Spitze et al. 2003, tabla 1, \"Chicken, light meat\" (crudo) = 180 +/- 30 mg/kg peso humedo -> 18 mg/100g. Aplicado tambien a pechuga de pavo por familia (ave domestica, mismo tipo de fibra muscular): no hay dato de pavo separado por corte.",
+  "lcarnitina_fuente": "L-carnitina = 10 mg/100g: valor agregado tipico de pollo (no separa corte), literatura general sobre contenido de carnitina en carne."
  },
  {
   "nombre": "Conejo",
@@ -940,7 +978,11 @@
    "nota": "carne magra de otra especie; no hay conejo en la base",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "sin_dato": [
+   "taurina",
+   "lcarnitina"
+  ]
  },
  {
   "nombre": "Pollo muslo con piel",
@@ -991,7 +1033,9 @@
    "treonina": 0.684,
    "triptofano": 0.183,
    "valina": 0.804,
-   "purinas": 141.7
+   "purinas": 141.7,
+   "taurina": 33.7,
+   "lcarnitina": 10.0
   },
   "fuente": "USDA 'Chicken, thigh, meat and skin, raw'.",
   "nota_datos": "CORREGIDO 4 agosto. El valor anterior (110 kcal/3,4 g grasa) era menor que un muslo SIN piel real (3,9 g), imposible con piel incluida.",
@@ -1016,7 +1060,9 @@
    "nota": "misma especie y corte",
    "pais": "USA",
    "anio": "1983, 1980, 1982"
-  }
+  },
+  "taurina_fuente": "Taurina = 33,7 mg/100g: Spitze et al. 2003, tabla 1, \"Chicken, leg\" (crudo, n=12) = 337 (300-380) mg/kg -> 33,7 mg/100g. HAY DISCREPANCIA REAL: la misma tabla da \"Chicken, dark meat\" (n=6, otro origen) = 1690 +/- 370 mg/kg -> 169 mg/100g, cinco veces mas. Se usa el valor de mas muestras (n=12); el otro queda citado aqui para que no se pierda. Aplicado tambien a muslo de pavo por familia.",
+  "lcarnitina_fuente": "L-carnitina = 10 mg/100g: valor agregado tipico de pollo (no separa corte), literatura general sobre contenido de carnitina en carne."
  },
  {
   "nombre": "Pavo",
@@ -1067,7 +1113,9 @@
    "treonina": 0.701,
    "triptofano": 0.202,
    "valina": 0.635,
-   "purinas": 96.0
+   "purinas": 96.0,
+   "taurina": 93.2,
+   "lcarnitina": 21.0
   },
   "aminograma_estimado": {
    "desde": "Pavo, carne oscura, carne y piel, cruda",
@@ -1087,7 +1135,9 @@
    "nota": "pavo; el USDA solo trae picado",
    "pais": "Canada",
    "anio": "1985"
-  }
+  },
+  "taurina_fuente": "Taurina = 93,2 mg/100g: Spitze et al. 2003, tabla 1, \"Turkey\" (sin especificar corte) = 932 (781-1150) mg/kg -> 93,2 mg/100g.",
+  "lcarnitina_fuente": "L-carnitina = 21 mg/100g: valor agregado tipico de pavo (no separa corte), literatura general sobre contenido de carnitina en carne."
  },
  {
   "nombre": "Pavo muslo con piel",
@@ -1138,7 +1188,9 @@
    "treonina": 0.861,
    "triptofano": 0.219,
    "valina": 1.028,
-   "purinas": 96.0
+   "purinas": 96.0,
+   "taurina": 33.7,
+   "lcarnitina": 21.0
   },
   "purinas_bases": {
    "adenina": 13.1,
@@ -1152,7 +1204,9 @@
    "nota": "pavo; el USDA solo trae picado",
    "pais": "Canada",
    "anio": "1985"
-  }
+  },
+  "taurina_fuente": "Taurina = 33,7 mg/100g: Spitze et al. 2003, tabla 1, \"Chicken, leg\" (crudo, n=12) = 337 (300-380) mg/kg -> 33,7 mg/100g. HAY DISCREPANCIA REAL: la misma tabla da \"Chicken, dark meat\" (n=6, otro origen) = 1690 +/- 370 mg/kg -> 169 mg/100g, cinco veces mas. Se usa el valor de mas muestras (n=12); el otro queda citado aqui para que no se pierda. Aplicado tambien a muslo de pavo por familia.",
+  "lcarnitina_fuente": "L-carnitina = 21 mg/100g: valor agregado tipico de pavo (no separa corte), literatura general sobre contenido de carnitina en carne."
  },
  {
   "nombre": "Ternera solomillo sin grasa",
@@ -1203,7 +1257,9 @@
    "treonina": 0.793,
    "triptofano": 0.203,
    "valina": 0.883,
-   "purinas": 98.4
+   "purinas": 98.4,
+   "taurina": 31.3,
+   "lcarnitina": 80.0
   },
   "sin_dato": [
    "araquidonico",
@@ -1224,7 +1280,9 @@
    "nota": "mismo corte",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 31,3 mg/100g: Spitze et al. 2003, tabla 1, \"Beef, lean\" (crudo) = 313 (277-348) mg/kg -> 31,3 mg/100g.",
+  "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g)."
  },
  {
   "nombre": "Ternera con grasa",
@@ -1275,7 +1333,9 @@
    "treonina": 0.729,
    "triptofano": 0.187,
    "valina": 0.812,
-   "purinas": 77.42
+   "purinas": 77.42,
+   "taurina": 31.3,
+   "lcarnitina": 80.0
   },
   "sin_dato": [
    "araquidonico",
@@ -1302,7 +1362,9 @@
    "nota": "vacuno sin corte especificado",
    "pais": "Czech Republic ",
    "anio": "2010"
-  }
+  },
+  "taurina_fuente": "Taurina = 31,3 mg/100g: Spitze et al. 2003, tabla 1, \"Beef, lean\" (crudo) = 313 (277-348) mg/kg -> 31,3 mg/100g.",
+  "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g)."
  },
  {
   "nombre": "Salmón",
@@ -1353,7 +1415,8 @@
    "treonina": 0.807,
    "triptofano": 0.206,
    "valina": 0.948,
-   "purinas": 249.9
+   "purinas": 249.9,
+   "taurina": 130.0
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
@@ -1375,7 +1438,11 @@
    "nota": "misma especie",
    "pais": "USA",
    "anio": "2024"
-  }
+  },
+  "taurina_fuente": "Taurina = 130 mg/100g: Spitze et al. 2003, tabla 1, \"Salmon, fillet, Atlantic fresh\" = 1300 (743-1857) mg/kg -> 130 mg/100g.",
+  "sin_dato": [
+   "lcarnitina"
+  ]
  },
  {
   "nombre": "Sardina",
@@ -1426,7 +1493,8 @@
    "treonina": 0.793,
    "triptofano": 0.203,
    "valina": 0.932,
-   "purinas": 345.0
+   "purinas": 345.0,
+   "taurina": 154.4
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
@@ -1448,7 +1516,11 @@
    "nota": "misma especie",
    "pais": "USA",
    "anio": "1976"
-  }
+  },
+  "taurina_fuente": "Taurina = 154,4 mg/100g: no hay dato propio de sardina -- se usa \"Herring, whole\" (Spitze et al. 2003) = 1544 mg/kg -> 154,4 mg/100g por familia (pescado azul pequeño), confianza MEDIA.",
+  "sin_dato": [
+   "lcarnitina"
+  ]
  },
  {
   "nombre": "Caballa",
@@ -1499,7 +1571,8 @@
    "treonina": 0.819,
    "triptofano": 0.209,
    "valina": 0.962,
-   "purinas": 194.0
+   "purinas": 194.0,
+   "taurina": 207.0
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
@@ -1521,7 +1594,11 @@
    "nota": "misma especie",
    "pais": "USA",
    "anio": "1976"
-  }
+  },
+  "taurina_fuente": "Taurina = 207 mg/100g: Spitze et al. 2003, tabla 1, \"Mackerel, whole\" = 2070 (1463-3524) mg/kg -> 207 mg/100g.",
+  "sin_dato": [
+   "lcarnitina"
+  ]
  },
  {
   "nombre": "Atún",
@@ -1572,7 +1649,8 @@
    "treonina": 0.964,
    "triptofano": 0.246,
    "valina": 1.133,
-   "purinas": 157.2
+   "purinas": 157.2,
+   "taurina": 284.0
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
@@ -1594,7 +1672,11 @@
    "nota": "mismo género",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 284 mg/100g: Spitze et al. 2003, tabla 1, \"Tuna, whole\" = 2840 mg/kg -> 284 mg/100g.",
+  "sin_dato": [
+   "lcarnitina"
+  ]
  },
  {
   "nombre": "Merluza",
@@ -1645,7 +1727,8 @@
    "treonina": 0.523,
    "triptofano": 0.134,
    "valina": 0.614,
-   "purinas": 144.1
+   "purinas": 144.1,
+   "taurina": 36.7
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3». ⚠️ CORREGIDO 6 sep 2026: vitamina A y vitD (ambas a 0) no son ceros reales -- BEDCA distingue 0 de trazas de n.d., y aquí es trazas. Sin cifra publicada, pasan a sin_dato en vez de mantenerse como ceros con forma de dato bueno.",
@@ -1669,8 +1752,10 @@
   },
   "sin_dato": [
    "vitA",
-   "vitD"
-  ]
+   "vitD",
+   "lcarnitina"
+  ],
+  "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente."
  },
  {
   "nombre": "Bacalao",
@@ -1721,7 +1806,8 @@
    "treonina": 0.798,
    "triptofano": 0.203,
    "valina": 0.937,
-   "purinas": 110.3
+   "purinas": 110.3,
+   "taurina": 31.4
   },
   "nota_datos": "USDA FoodData Central 171955 (Gadus morhua, raw): EPA 0,072 g y DHA 0,088 g por 100 g. ⚠️ CORREGIDO el 26 de agosto: el día anterior se puso 0,150/0,200 tomando la parte baja de un rango de BEDCA. La ficha concreta de USDA manda sobre un rango. ⚠️ CORREGIDO 6 sep 2026: la vitD (0) no es un cero real -- BEDCA distingue 0 de trazas de n.d., y aquí es trazas. Sin cifra publicada, pasa a sin_dato en vez de mantenerse como cero con forma de dato bueno.",
   "fuente_epa_dha": "USDA_FDC",
@@ -1745,8 +1831,10 @@
    "anio": "2024"
   },
   "sin_dato": [
-   "vitD"
-  ]
+   "vitD",
+   "lcarnitina"
+  ],
+  "taurina_fuente": "Taurina = 31,4 mg/100g: Spitze et al. 2003, tabla 1, \"Cod\" = 314 mg/kg -> 31,4 mg/100g."
  },
  {
   "nombre": "Trucha",
@@ -1797,7 +1885,8 @@
    "treonina": 0.911,
    "triptofano": 0.233,
    "valina": 1.07,
-   "purinas": 181.0
+   "purinas": 181.0,
+   "taurina": 130.0
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
@@ -1812,7 +1901,11 @@
    "nota": "misma especie",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 130 mg/100g: no hay dato propio de trucha -- se usa \"Salmon, fillet\" (Spitze et al. 2003) por familia (ambos salmonidos), confianza MEDIA.",
+  "sin_dato": [
+   "lcarnitina"
+  ]
  },
  {
   "nombre": "Huevo clara",
@@ -1863,7 +1956,8 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0.73
+   "purinas": 0.73,
+   "taurina": 0
   },
   "sin_dato": [
    "arginina",
@@ -1879,7 +1973,8 @@
    "tirosina",
    "treonina",
    "triptofano",
-   "valina"
+   "valina",
+   "lcarnitina"
   ],
   "purinas_bases": {
    "adenina": 0.2,
@@ -1893,7 +1988,8 @@
    "nota": "mismo alimento",
    "pais": "USA",
    "anio": "2024"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003, tabla 1, \"Eggs (large AA)\" (huevo entero) y \"Eggs (large AA), egg whites\" (solo clara) dan los dos 0 mg/kg -- la yema SI tiene un poco (ver Huevo yema), pero diluida en el huevo entero queda por debajo de deteccion."
  },
  {
   "nombre": "Huevo yema",
@@ -1944,12 +2040,14 @@
    "treonina": 0.715,
    "triptofano": 0.184,
    "valina": 0.987,
-   "purinas": 0.0
+   "purinas": 0.0,
+   "taurina": 1.214
   },
   "sin_dato": [
    "araquidonico",
    "fibra",
-   "manganeso"
+   "manganeso",
+   "lcarnitina"
   ],
   "aminograma_estimado": {
    "desde": "Yema de huevo, fresca, cruda",
@@ -1968,7 +2066,8 @@
    "nota": "mismo alimento. CERO purinas",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 1,21 mg/100g: Spitze et al. 2003, tabla 1, \"Eggs (large AA), egg yolks\" = 12,14 mg/kg peso humedo (12,14-12,14, n=2) -> 1,214 mg/100g."
  },
  {
   "nombre": "Aceite de oliva",
@@ -2019,7 +2118,9 @@
    "treonina": 0.0,
    "triptofano": 0.0,
    "valina": 0.0,
-   "purinas": 0.0
+   "purinas": 0.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "araquidonico",
@@ -2038,7 +2139,9 @@
    "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
    "pais": "—",
    "anio": "—"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida."
  },
  {
   "nombre": "Aceite de oliva virgen extra",
@@ -2089,7 +2192,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0.0
+   "purinas": 0.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "araquidonico",
@@ -2120,7 +2225,9 @@
    "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
    "pais": "—",
    "anio": "—"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida."
  },
  {
   "nombre": "Hígado de vaca",
@@ -2171,7 +2278,9 @@
    "treonina": 0.901,
    "triptofano": 0.273,
    "valina": 1.306,
-   "purinas": 197.0
+   "purinas": 197.0,
+   "taurina": 68.8,
+   "lcarnitina": 80.0
   },
   "aminograma_estimado": {
    "desde": "Ternera, hígado, crudo",
@@ -2191,7 +2300,9 @@
    "nota": "misma especie y órgano",
    "pais": "USA",
    "anio": "1976"
-  }
+  },
+  "taurina_fuente": "Taurina = 68,8 mg/100g: Spitze et al. 2003, tabla 1, \"Beef, Liver\" = 688 (401-1023) mg/kg -> 68,8 mg/100g (otro estudio de la misma tabla, distinto metodo, da 192 mg/kg = 19,2 mg/100g; se usa el de mas rango muestral, n=8).",
+  "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g)."
  },
  {
   "nombre": "Corazón de pollo",
@@ -2249,7 +2360,9 @@
    "dha",
    "epa",
    "linoleico",
-   "linolenico"
+   "linolenico",
+   "taurina",
+   "lcarnitina"
   ],
   "nota_datos": "Fuente: BEDCA v1.0 (2010); manganeso de Verdú 2009 p.246. Por 100 g crudo, peso fresco.",
   "purinas_bases": {
@@ -2315,7 +2428,9 @@
    "treonina": 0.604,
    "triptofano": 0.148,
    "valina": 0.798,
-   "purinas": 117.0
+   "purinas": 117.0,
+   "taurina": 95.6,
+   "lcarnitina": 80.0
   },
   "nota_datos": "DEVUELTO a Vísceras (5 agosto, madrugada): a diferencia del corazón/molleja/lengua/tripa, donde todas las fuentes coinciden, el pulmón es un caso genuinamente debatido en la comunidad de alimentación cruda -- unas fuentes lo tratan como carne, otras como víscera, sin consenso claro. Se deja como víscera por prudencia.",
   "aminograma_estimado": {
@@ -2330,7 +2445,9 @@
    "nota": "Tres compilaciones coincidentes, pulmón de ternera. Compilación, no análisis primario: calidad de dato inferior al resto de la columna.",
    "pais": "Alemania",
    "anio": ""
-  }
+  },
+  "taurina_fuente": "Taurina = 95,6 mg/100g: Spitze et al. 2003, tabla 1, \"Beef, Lung\" = 956 (781-1033) mg/kg -> 95,6 mg/100g.",
+  "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g)."
  },
  {
   "nombre": "Riñón de ternera",
@@ -2381,7 +2498,9 @@
    "treonina": 0.719,
    "triptofano": 0.202,
    "valina": 0.833,
-   "purinas": 213.0
+   "purinas": 213.0,
+   "taurina": 22.5,
+   "lcarnitina": 80.0
   },
   "purinas_bases": {
    "adenina": 42.0,
@@ -2395,7 +2514,9 @@
    "nota": "mismo órgano",
    "pais": "USA",
    "anio": "1976"
-  }
+  },
+  "taurina_fuente": "Taurina = 22,5 mg/100g: Spitze et al. 2003, tabla 1, \"Beef, Kidney\" = 225 (180-247) mg/kg -> 22,5 mg/100g.",
+  "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g)."
  },
  {
   "nombre": "Calabaza",
@@ -2446,7 +2567,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 56.7
+   "purinas": 56.7,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -2475,7 +2598,9 @@
    "nota": "cucurbitácea",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Calabacín",
@@ -2526,7 +2651,9 @@
    "treonina": 0.029,
    "triptofano": 0.01,
    "valina": 0.054,
-   "purinas": 56.7
+   "purinas": 56.7,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "purinas_bases": {
    "adenina": 23.2,
@@ -2540,7 +2667,9 @@
    "nota": "cucurbitácea",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Zanahoria",
@@ -2591,7 +2720,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 2.1
+   "purinas": 2.1,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -2619,7 +2750,9 @@
    "nota": "misma especie",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Judía verde",
@@ -2670,7 +2803,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 7.5
+   "purinas": 7.5,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -2698,7 +2833,9 @@
    "nota": "legumbre fresca",
    "pais": "Japan",
    "anio": "2020"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Brócoli",
@@ -2749,7 +2886,9 @@
    "treonina": 0.088,
    "triptofano": 0.033,
    "valina": 0.125,
-   "purinas": 70.0
+   "purinas": 70.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "duplicado_de": "Brecol",
   "dato_no_fiable": true,
@@ -2766,7 +2905,9 @@
    "nota": "misma especie",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Espinaca",
@@ -2817,7 +2958,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 39.18
+   "purinas": 39.18,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -2845,7 +2988,9 @@
    "nota": "espinaca",
    "pais": "Japan",
    "anio": "2008"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Pimiento rojo",
@@ -2896,7 +3041,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 5.1
+   "purinas": 5.1,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -2923,7 +3070,9 @@
    "nota": "misma especie",
    "pais": "Japan",
    "anio": "2020"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Acelga",
@@ -2974,7 +3123,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -2990,7 +3141,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Manzana",
@@ -3041,12 +3194,16 @@
    "treonina": 0.006,
    "triptofano": 0.0039,
    "valina": 0.012,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "purinas",
    "selenio"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Pera",
@@ -3097,12 +3254,16 @@
    "treonina": 0.011,
    "triptofano": 0.0026,
    "valina": 0.017,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "purinas",
    "selenio"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Arándano",
@@ -3153,7 +3314,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -3169,7 +3332,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Plátano",
@@ -3220,14 +3385,18 @@
    "treonina": 0.028,
    "triptofano": 0.013,
    "valina": 0.047,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "restricciones_patologia": {
    "diabetes": "Alto en azúcar/potasio; limitar en perros diabéticos u obesos."
   },
   "sin_dato": [
    "purinas"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Fresa",
@@ -3278,7 +3447,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -3295,7 +3466,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Naranja",
@@ -3346,7 +3519,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -3362,7 +3537,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Sandía",
@@ -3413,7 +3590,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -3430,7 +3609,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Melón",
@@ -3481,7 +3662,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -3498,7 +3681,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Pulmón de cordero",
@@ -3549,12 +3734,16 @@
    "treonina": 0.614,
    "triptofano": 0.171,
    "valina": 0.92,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 95.6,
+   "lcarnitina": 40.0
   },
   "nota_datos": "DEVUELTO a Vísceras (5 agosto, madrugada): a diferencia del corazón/molleja/lengua/tripa, donde todas las fuentes coinciden, el pulmón es un caso genuinamente debatido en la comunidad de alimentación cruda -- unas fuentes lo tratan como carne, otras como víscera, sin consenso claro. Se deja como víscera por prudencia.",
   "sin_dato": [
    "purinas"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 95,6 mg/100g: no hay dato propio de pulmon de cordero -- se usa \"Beef, Lung\" por familia (mismo organo, otro rumiante), confianza MEDIA.",
+  "lcarnitina_fuente": "L-carnitina = 40 mg/100g: valor agregado tipico de cordero/oveja (no separa corte ni tejido); la literatura da un rango muy amplio entre fuentes (40-200 mg/100g) -- se usa el extremo BAJO por ser el lado conservador ante esa incertidumbre real."
  },
  {
   "nombre": "Riñón de cordero",
@@ -3605,7 +3794,9 @@
    "treonina": 0.741,
    "triptofano": 0.212,
    "valina": 0.923,
-   "purinas": 213.0
+   "purinas": 213.0,
+   "taurina": 23.9,
+   "lcarnitina": 40.0
   },
   "purinas_bases": {
    "adenina": 42.0,
@@ -3619,7 +3810,9 @@
    "nota": "mismo órgano",
    "pais": "USA",
    "anio": "1976"
-  }
+  },
+  "taurina_fuente": "Taurina = 23,9 mg/100g: Spitze et al. 2003, tabla 1, \"Lamb, Kidney\" = 239 (128-440) mg/kg -> 23,9 mg/100g.",
+  "lcarnitina_fuente": "L-carnitina = 40 mg/100g: valor agregado tipico de cordero/oveja (no separa corte ni tejido); la literatura da un rango muy amplio entre fuentes (40-200 mg/100g) -- se usa el extremo BAJO por ser el lado conservador ante esa incertidumbre real."
  },
  {
   "nombre": "Corazón de vaca",
@@ -3670,7 +3863,9 @@
    "treonina": 0.802,
    "triptofano": 0.184,
    "valina": 0.845,
-   "purinas": 171.0
+   "purinas": 171.0,
+   "taurina": 65.2,
+   "lcarnitina": 80.0
   },
   "aminograma_estimado": {
    "desde": "Corazón de cordero, crudo",
@@ -3690,7 +3885,9 @@
    "nota": "misma especie y órgano",
    "pais": "USA",
    "anio": "1976"
-  }
+  },
+  "taurina_fuente": "Taurina = 65,2 mg/100g: Spitze et al. 2003, tabla 1, \"Beef, Heart\" = 652 (254-851) mg/kg -> 65,2 mg/100g.",
+  "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g)."
  },
  {
   "nombre": "Carcasa de pollo",
@@ -3741,7 +3938,9 @@
    "treonina": 0.676,
    "triptofano": 0.181,
    "valina": 0.794,
-   "purinas": 93.6
+   "purinas": 93.6,
+   "taurina": 99.6,
+   "lcarnitina": 10.0
   },
   "pct_carne": 0.3,
   "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso+piel).",
@@ -3764,7 +3963,9 @@
    "nota": "carcasa de ave, el equivalente más cercano",
    "pais": "USA",
    "anio": "1980"
-  }
+  },
+  "taurina_fuente": "Taurina = 99,6 mg/100g: Spitze et al. 2003, tabla 1, \"Chicken, whole carcass\" = 996 mg/kg -> 99,6 mg/100g.",
+  "lcarnitina_fuente": "L-carnitina = 10 mg/100g: valor agregado tipico de pollo (no separa corte), literatura general sobre contenido de carnitina en carne."
  },
  {
   "nombre": "Cuello de pavo",
@@ -3815,7 +4016,9 @@
    "treonina": 0.712,
    "triptofano": 0.209,
    "valina": 0.627,
-   "purinas": 96.0
+   "purinas": 96.0,
+   "taurina": 93.2,
+   "lcarnitina": 21.0
   },
   "pct_carne": 0.4,
   "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso+piel).",
@@ -3838,7 +4041,9 @@
    "nota": "pavo; el USDA solo trae picado",
    "pais": "Canada",
    "anio": "1985"
-  }
+  },
+  "taurina_fuente": "Taurina = 93,2 mg/100g: no hay dato de cuello de pavo especificamente -- se usa \"Turkey\" (Spitze et al. 2003, agregado sin corte) por familia, confianza MEDIA.",
+  "lcarnitina_fuente": "L-carnitina = 21 mg/100g: valor agregado tipico de pavo (no separa corte), literatura general sobre contenido de carnitina en carne."
  },
  {
   "nombre": "Cuello de pato",
@@ -3889,7 +4094,9 @@
    "treonina": 0.5,
    "triptofano": 0.153,
    "valina": 0.608,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 178.0,
+   "lcarnitina": 27.0
   },
   "pct_carne": 0.45,
   "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso+piel).",
@@ -3902,7 +4109,9 @@
   },
   "sin_dato": [
    "purinas"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 178 mg/100g: no hay dato de carcasa/cuello de pato especificamente -- se usa \"Duck, leg meat\" (Spitze et al. 2003) por familia (mismo animal, otro corte), confianza MEDIA.",
+  "lcarnitina_fuente": "L-carnitina = 27 mg/100g: valor agregado tipico de pato (no separa corte), literatura general sobre contenido de carnitina en carne."
  },
  {
   "nombre": "Carcasa de conejo",
@@ -3976,7 +4185,11 @@
    "nota": "carcasa de ave, el equivalente más cercano",
    "pais": "USA",
    "anio": "1980"
-  }
+  },
+  "sin_dato": [
+   "taurina",
+   "lcarnitina"
+  ]
  },
  {
   "nombre": "Costillas de cordero",
@@ -4027,7 +4240,9 @@
    "treonina": 0.844,
    "triptofano": 0.23,
    "valina": 1.063,
-   "purinas": 127.5
+   "purinas": 127.5,
+   "taurina": 47.3,
+   "lcarnitina": 40.0
   },
   "pct_carne": 0.6,
   "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso+piel).",
@@ -4050,7 +4265,9 @@
    "nota": "misma especie",
    "pais": "Canada",
    "anio": "1988"
-  }
+  },
+  "taurina_fuente": "Taurina = 47,3 mg/100g: Spitze et al. 2003, tabla 1, \"Lamb, Leg\" (crudo) = 473 (446-510) mg/kg -> 47,3 mg/100g.",
+  "lcarnitina_fuente": "L-carnitina = 40 mg/100g: valor agregado tipico de cordero/oveja (no separa corte ni tejido); la literatura da un rango muy amplio entre fuentes (40-200 mg/100g) -- se usa el extremo BAJO por ser el lado conservador ante esa incertidumbre real."
  },
  {
   "nombre": "Aceite de girasol",
@@ -4101,7 +4318,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0.0
+   "purinas": 0.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "araquidonico",
@@ -4131,7 +4350,9 @@
    "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
    "pais": "—",
    "anio": "—"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida."
  },
  {
   "nombre": "Aceite de linaza",
@@ -4182,7 +4403,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0.0
+   "purinas": 0.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "araquidonico",
@@ -4213,7 +4436,9 @@
    "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
    "pais": "—",
    "anio": "—"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida."
  },
  {
   "nombre": "Pato (carne sin hueso)",
@@ -4264,12 +4489,16 @@
    "treonina": 0.781,
    "triptofano": 0.254,
    "valina": 0.956,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 178.0,
+   "lcarnitina": 27.0
   },
   "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar.",
   "sin_dato": [
    "purinas"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 178 mg/100g: Spitze et al. 2003, tabla 1, \"Duck, leg meat\" = 1780 (1722-1837) mg/kg -> 178 mg/100g. Es de pato de verdad (no aproximado de otra especie), aunque solo del corte de pierna.",
+  "lcarnitina_fuente": "L-carnitina = 27 mg/100g: valor agregado tipico de pato (no separa corte), literatura general sobre contenido de carnitina en carne."
  },
  {
   "nombre": "Corazón de cordero",
@@ -4320,7 +4549,9 @@
    "treonina": 0.777,
    "triptofano": 0.178,
    "valina": 0.819,
-   "purinas": 171.0
+   "purinas": 171.0,
+   "taurina": 65.2,
+   "lcarnitina": 40.0
   },
   "purinas_bases": {
    "adenina": 30.0,
@@ -4334,7 +4565,9 @@
    "nota": "mismo órgano",
    "pais": "USA",
    "anio": "1976"
-  }
+  },
+  "taurina_fuente": "Taurina = 65,2 mg/100g: no hay \"Lamb, Heart\" en la fuente -- se usa \"Beef, Heart\" por familia (mismo organo, otro rumiante), confianza MEDIA.",
+  "lcarnitina_fuente": "L-carnitina = 40 mg/100g: valor agregado tipico de cordero/oveja (no separa corte ni tejido); la literatura da un rango muy amplio entre fuentes (40-200 mg/100g) -- se usa el extremo BAJO por ser el lado conservador ante esa incertidumbre real."
  },
  {
   "nombre": "Gallina (carne sin hueso)",
@@ -4385,7 +4618,9 @@
    "treonina": 0.898,
    "triptofano": 0.248,
    "valina": 1.054,
-   "purinas": 93.6
+   "purinas": 93.6,
+   "taurina": 99.6,
+   "lcarnitina": 10.0
   },
   "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar.",
   "purinas_bases": {
@@ -4400,7 +4635,9 @@
    "nota": "carcasa de ave, el equivalente más cercano",
    "pais": "USA",
    "anio": "1980"
-  }
+  },
+  "taurina_fuente": "Taurina = 99,6 mg/100g: no hay dato propio de esta especie en la fuente consultada -- se usa \"Chicken, whole carcass\" (Spitze et al. 2003) por familia (ave domestica de corral, carne sin hueso sin distinguir corte), con confianza BAJA.",
+  "lcarnitina_fuente": "L-carnitina = 10 mg/100g: valor agregado tipico de pollo (no separa corte), literatura general sobre contenido de carnitina en carne."
  },
  {
   "nombre": "Lengua de cordero",
@@ -4451,7 +4688,9 @@
    "treonina": 0.71,
    "triptofano": 0.159,
    "valina": 0.752,
-   "purinas": 90.4
+   "purinas": 90.4,
+   "taurina": 175.2,
+   "lcarnitina": 40.0
   },
   "nota_datos": "CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular, misma razón que el corazón y la molleja: no segrega, así que en alimentación cruda va con la carne, no con las vísceras secretoras (hígado, riñón, bazo...). Confirmado en varias guías de raw feeding.",
   "purinas_bases": {
@@ -4466,7 +4705,9 @@
    "nota": "misma especie y tejido",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 175,2 mg/100g: no hay dato propio de lengua de cordero -- se usa \"Beef, Tongue\" por familia (mismo organo, otro rumiante), confianza MEDIA.",
+  "lcarnitina_fuente": "L-carnitina = 40 mg/100g: valor agregado tipico de cordero/oveja (no separa corte ni tejido); la literatura da un rango muy amplio entre fuentes (40-200 mg/100g) -- se usa el extremo BAJO por ser el lado conservador ante esa incertidumbre real."
  },
  {
   "nombre": "Lengua de buey",
@@ -4517,7 +4758,9 @@
    "treonina": 0.648,
    "triptofano": 0.114,
    "valina": 0.713,
-   "purinas": 90.4
+   "purinas": 90.4,
+   "taurina": 175.2,
+   "lcarnitina": 80.0
   },
   "nota_datos": "CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular, misma razón que el corazón y la molleja: no segrega, así que en alimentación cruda va con la carne, no con las vísceras secretoras (hígado, riñón, bazo...). Confirmado en varias guías de raw feeding.",
   "aminograma_estimado": {
@@ -4538,7 +4781,9 @@
    "nota": "misma especie y tejido",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 175,2 mg/100g: Spitze et al. 2003, tabla 1, \"Beef, Tongue, muscle\" = 1752 (1726-1778) mg/kg -> 175,2 mg/100g.",
+  "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g)."
  },
  {
   "nombre": "Lengua de ternera",
@@ -4589,7 +4834,9 @@
    "treonina": 0.691,
    "triptofano": 0.185,
    "valina": 0.788,
-   "purinas": 90.4
+   "purinas": 90.4,
+   "taurina": 175.2,
+   "lcarnitina": 80.0
   },
   "nota_datos": "CORREGIDO (5 agosto, madrugada): estaba en Vísceras -- corregido a Carne muscular, misma razón que el corazón y la molleja: no segrega, así que en alimentación cruda va con la carne, no con las vísceras secretoras (hígado, riñón, bazo...). Confirmado en varias guías de raw feeding.",
   "purinas_bases": {
@@ -4604,7 +4851,9 @@
    "nota": "misma especie y tejido",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 175,2 mg/100g: Spitze et al. 2003, tabla 1, \"Beef, Tongue, muscle\" = 1752 (1726-1778) mg/kg -> 175,2 mg/100g.",
+  "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g)."
  },
  {
   "nombre": "Pavo pechuga sin piel",
@@ -4655,7 +4904,9 @@
    "treonina": 0.859,
    "triptofano": 0.237,
    "valina": 0.756,
-   "purinas": 96.0
+   "purinas": 96.0,
+   "taurina": 18.0,
+   "lcarnitina": 21.0
   },
   "fuente": "USDA FDC 174515 'Turkey, retail parts, breast, meat only, raw'.",
   "nota_datos": "CORREGIDO 4 agosto. El valor anterior (145 kcal/29,9 g proteina) era de pechuga COCINADA A LA PLANCHA, no cruda -- la coccion concentra el resto al perder agua. Sustituido por el crudo real. ⚠️ CORREGIDO 6 sep 2026 contra FDC 174515: la vitamina A (0,0017→5 µg) era un error de escala de tres órdenes de magnitud. VitD (0→0,20), sodio, cobre, hierro, zinc, magnesio, calcio y los macros (energía/proteína/grasa/fósforo/selenio) también ajustados a la ficha. El yodo (2 µg) no tiene respaldo en USDA -- pasa a sin_dato.",
@@ -4674,7 +4925,9 @@
   },
   "sin_dato": [
    "yodo"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 18 mg/100g: Spitze et al. 2003, tabla 1, \"Chicken, light meat\" (crudo) = 180 +/- 30 mg/kg peso humedo -> 18 mg/100g. Aplicado tambien a pechuga de pavo por familia (ave domestica, mismo tipo de fibra muscular): no hay dato de pavo separado por corte.",
+  "lcarnitina_fuente": "L-carnitina = 21 mg/100g: valor agregado tipico de pavo (no separa corte), literatura general sobre contenido de carnitina en carne."
  },
  {
   "nombre": "Pollo ala con piel (sin hueso)",
@@ -4725,7 +4978,9 @@
    "treonina": 0.786,
    "triptofano": 0.195,
    "valina": 0.907,
-   "purinas": 137.5
+   "purinas": 137.5,
+   "taurina": 33.7,
+   "lcarnitina": 10.0
   },
   "nota_datos": "Dato de carne deshuesada. Ojo: NO confundir con 'Ala de pollo' (categoría Hueso carnoso, 900 mg de calcio), que sí lleva el hueso.",
   "purinas_bases": {
@@ -4740,7 +4995,9 @@
    "nota": "misma especie y corte",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 33,7 mg/100g: Spitze et al. 2003, tabla 1, \"Chicken, leg\" (crudo, n=12) = 337 (300-380) mg/kg -> 33,7 mg/100g. HAY DISCREPANCIA REAL: la misma tabla da \"Chicken, dark meat\" (n=6, otro origen) = 1690 +/- 370 mg/kg -> 169 mg/100g, cinco veces mas. Se usa el valor de mas muestras (n=12); el otro queda citado aqui para que no se pierda. Aplicado tambien a muslo de pavo por familia.",
+  "lcarnitina_fuente": "L-carnitina = 10 mg/100g: valor agregado tipico de pollo (no separa corte), literatura general sobre contenido de carnitina en carne."
  },
  {
   "nombre": "Pollo con piel (sin hueso)",
@@ -4791,7 +5048,9 @@
    "treonina": 0.767,
    "triptofano": 0.207,
    "valina": 0.902,
-   "purinas": 111.35
+   "purinas": 111.35,
+   "taurina": 99.6,
+   "lcarnitina": 10.0
   },
   "nota_datos": "El dato es de CARNE DESHUESADA (BEDCA mide siempre sin hueso). Se renombró porque decir 'entero' hacía pensar que el cálculo incluía los huesos, y no es así: el calcio del hueso iría sin controlar. CORREGIDO 4 agosto: calcio estaba en 0, imposible en tejido muscular; puesto a 10 mg. ⚠️ CORREGIDO 6 sep 2026: la vitD (0) no es un cero real -- BEDCA distingue 0 de trazas de n.d., y aquí es trazas. Pasa a sin_dato. El calcio ya estaba correctamente en sin_dato desde antes -- BEDCA publica 0 pero no es plausible en carne de pollo, así que sigue sin rellenarse con un número inventado.",
   "sin_dato": [
@@ -4810,7 +5069,9 @@
    "nota": "pollo sin corte especificado",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 99,6 mg/100g: Spitze et al. 2003, tabla 1, \"Chicken, whole carcass\" = 996 mg/kg -> 99,6 mg/100g. Es pollo entero (mezcla de clara y oscura con piel), el corte mas parecido a esta ficha.",
+  "lcarnitina_fuente": "L-carnitina = 10 mg/100g: valor agregado tipico de pollo (no separa corte), literatura general sobre contenido de carnitina en carne."
  },
  {
   "nombre": "Lomo de ternera con grasa",
@@ -4861,7 +5122,9 @@
    "treonina": 0.807,
    "triptofano": 0.133,
    "valina": 1.002,
-   "purinas": 74.3
+   "purinas": 74.3,
+   "taurina": 31.3,
+   "lcarnitina": 80.0
   },
   "sin_dato": [
    "araquidonico",
@@ -4888,7 +5151,9 @@
    "nota": "mismo corte",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 31,3 mg/100g: Spitze et al. 2003, tabla 1, \"Beef, lean\" (crudo) = 313 (277-348) mg/kg -> 31,3 mg/100g.",
+  "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g)."
  },
  {
   "nombre": "Yogur griego",
@@ -4939,11 +5204,13 @@
    "treonina": 0.255,
    "triptofano": 0.083,
    "valina": 0.414,
-   "purinas": 7.0
+   "purinas": 7.0,
+   "taurina": 3.3
   },
   "sin_dato": [
    "cobre",
-   "manganeso"
+   "manganeso",
+   "lcarnitina"
   ],
   "aminograma_estimado": {
    "desde": "Yogur griego natural, desnatado",
@@ -4963,7 +5230,8 @@
    "nota": "lácteo fermentado",
    "pais": "Canada",
    "anio": "1988"
-  }
+  },
+  "taurina_fuente": "Taurina = 3,3 mg/100g: Spitze et al. 2003, tabla 1, \"Yogurt, low-fat, plain\" = 33 +/- 5 mg/kg -> 3,3 mg/100g. Nuestra ficha tiene mas grasa (10,2g/100g) que un yogur \"low-fat\" tipico, asi que el valor real podria diferir -- es la entrada mas cercana disponible, no una medida directa de yogur griego."
  },
  {
   "nombre": "Huevo de codorniz",
@@ -5019,7 +5287,9 @@
   "sin_dato": [
    "araquidonico",
    "cobre",
-   "manganeso"
+   "manganeso",
+   "taurina",
+   "lcarnitina"
   ],
   "purinas_bases": {
    "adenina": 0.0,
@@ -5083,13 +5353,15 @@
    "treonina": 0.553,
    "triptofano": 0.166,
    "valina": 0.854,
-   "purinas": 0.0
+   "purinas": 0.0,
+   "taurina": 0
   },
   "sin_dato": [
    "araquidonico",
    "cobre",
    "fibra",
-   "manganeso"
+   "manganeso",
+   "lcarnitina"
   ],
   "aminograma_estimado": {
    "desde": "Huevo entero de gallina, fresco, crudo",
@@ -5108,7 +5380,8 @@
    "nota": "mismo alimento. CERO purinas",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003, tabla 1, \"Eggs (large AA)\" (huevo entero) y \"Eggs (large AA), egg whites\" (solo clara) dan los dos 0 mg/kg -- la yema SI tiene un poco (ver Huevo yema), pero diluida en el huevo entero queda por debajo de deteccion."
  },
  {
   "nombre": "Huevo de pato",
@@ -5164,7 +5437,9 @@
   "sin_dato": [
    "araquidonico",
    "cobre",
-   "manganeso"
+   "manganeso",
+   "taurina",
+   "lcarnitina"
   ],
   "duplicado_de": "Huevo de pato entero",
   "dato_no_fiable": true,
@@ -5242,7 +5517,9 @@
   "sin_dato": [
    "araquidonico",
    "cobre",
-   "manganeso"
+   "manganeso",
+   "taurina",
+   "lcarnitina"
   ],
   "aminograma_estimado": {
    "desde": "Huevo de pata, entero, fresco, crudo",
@@ -5312,7 +5589,8 @@
    "treonina": 0.763,
    "triptofano": 0.195,
    "valina": 0.896,
-   "purinas": 110.3
+   "purinas": 110.3,
+   "taurina": 36.7
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3». ⚠️ CORREGIDO 6 sep 2026: vitamina A y vitD (ambas a 0) no son ceros reales -- BEDCA distingue 0 de trazas de n.d., y aquí es trazas. Sin cifra publicada, pasan a sin_dato en vez de mantenerse como ceros con forma de dato bueno.",
@@ -5337,8 +5615,10 @@
   },
   "sin_dato": [
    "vitA",
-   "vitD"
-  ]
+   "vitD",
+   "lcarnitina"
+  ],
+  "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente."
  },
  {
   "nombre": "Besugo",
@@ -5389,7 +5669,8 @@
    "treonina": 0.794,
    "triptofano": 0.203,
    "valina": 0.933,
-   "purinas": 129.1
+   "purinas": 129.1,
+   "taurina": 36.7
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3».",
@@ -5411,7 +5692,11 @@
    "nota": "misma familia Sparidae",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente.",
+  "sin_dato": [
+   "lcarnitina"
+  ]
  },
  {
   "nombre": "Boquerón",
@@ -5462,7 +5747,8 @@
    "treonina": 0.771,
    "triptofano": 0.197,
    "valina": 0.906,
-   "purinas": 411.0
+   "purinas": 411.0,
+   "taurina": 154.4
   },
   "nota_datos": "USDA FoodData Central 174182 (Engraulis encrasicolus, raw): EPA 0,538 g y DHA 0,911 g por 100 g. ⚠️ CORREGIDO el 26 de agosto: el día anterior se puso 0,763/1,292 de la tabla de Mozaffarian & Wu, y la revisión posterior fijó la ficha de USDA como fuente. Antes de las dos estaba a CERO en los dos campos, y el boquerón es pescado azul: aquel cero no era «no tiene», era «no lo sabíamos», y el semáforo lo contaba como si de verdad no aportara nada.",
   "fuente_epa_dha": "USDA_FDC",
@@ -5484,7 +5770,11 @@
    "nota": "misma especie",
    "pais": "USA",
    "anio": "1976"
-  }
+  },
+  "taurina_fuente": "Taurina = 154,4 mg/100g: no hay dato propio de boqueron -- se usa \"Herring, whole\" (Spitze et al. 2003) por familia (pescado azul pequeno, mismo patron de grasa y tejido), confianza MEDIA.",
+  "sin_dato": [
+   "lcarnitina"
+  ]
  },
  {
   "nombre": "Calamar",
@@ -5535,7 +5825,8 @@
    "treonina": 0.67,
    "triptofano": 0.22,
    "valina": 0.68,
-   "purinas": 135.0
+   "purinas": 135.0,
+   "taurina": 356.0
   },
   "nota_datos": "⚠️ SIN FUENTE DECLARADA: no se ha revisado su ficha de BEDCA todavía. Es el único pescado del catálogo cuyo origen sigue sin comprobar (26 agosto). ⚠️ CORREGIDO 6 sep 2026: el yodo (0 µg) era un cero FALSO -- BEDCA no publica el dato para Calamar crudo (n.d.), y la ficha de Chipirón (misma especie) da 64 µg, así que un cero no está sostenido -- pasa a sin_dato. La vitD (0 µg) tampoco es un cero real: BEDCA distingue 0 de trazas de n.d., y este es trazas -- pasa a sin_dato también, sin inventar una cifra.",
   "purinas_bases": {
@@ -5553,8 +5844,10 @@
   },
   "sin_dato": [
    "vitD",
-   "yodo"
-  ]
+   "yodo",
+   "lcarnitina"
+  ],
+  "taurina_fuente": "Taurina = 356 mg/100g: Spitze et al. 2003, tabla 1, \"Squid\" = 3560 +/- 950 mg/kg -> 356 mg/100g."
  },
  {
   "nombre": "Dorada",
@@ -5605,7 +5898,8 @@
    "treonina": 0.745,
    "triptofano": 0.191,
    "valina": 0.875,
-   "purinas": 129.1
+   "purinas": 129.1,
+   "taurina": 36.7
   },
   "nota_datos": "Ficha de BEDCA. Todos los campos son los suyos MENOS la energía, y el motivo está medido:\n\nBEDCA declara 78 kcal (326 kJ), pero su propia ficha NO CUADRA CONSIGO MISMA:\n  · agua 82 g + proteína 17 g + grasa 7,22 g = 106,22 g por cada 100 g de pescado. Sobran más de 6 g de materia, y aún faltarían los minerales. Es imposible.\n  · la energía de un alimento SE CALCULA de sus macros: 17x4 + 7,22x9 = 133 kcal. Solo la proteína ya son 68, casi las 78 declaradas -- lo que dejaría 10 kcal para 7,22 g de grasa, que son 65.\n\nCOMPROBADO que es de esta ficha y no del método: las mismas dos cuentas aplicadas a los 19 pescados de BEDCA cuadran en 18. Atún 119 declaradas / 118 calculadas, salmón 182/182, sardina 140/140. Solo la dorada falla, y falla las dos a la vez.\n\nCAUSA: cada fila viene de un estudio distinto (agua de la fuente 7, proteína de la 32, grasa de la 296, energía de la 236) y en la dorada se cruzaron dos pescados. Los 78 kcal y los 82 g de agua son una dorada salvaje magra; los 7,22 g de grasa, una de piscifactoría. Lo confirma la propia tabla: los demás pescados con 82% de agua tienen 1,3-1,8 g de grasa; los que tienen 7 g de grasa andan por 74-76% de agua.\n\nSE USAN 133 kcal, que es lo coherente con la grasa que también guardamos. Poner 78 manteniendo 7,22 g de grasa haría que la app calculara una ración 83% grasa en calorías, y la energía es el divisor de los 30 requisitos. `auditar_catalogo.py` lo caza solo con el aviso [BASE] -- esa alarma se deja encendida a propósito, no se silencia.\n\nPENDIENTE para la nutricionista: si la dorada del catálogo es salvaje, hay que bajar la grasa a ~1,5 g Y con ella el EPA y el DHA, que salen de esa misma fuente 296. Energía y grasa se deciden juntas o no se decide ninguna. ⚠️ CORREGIDO 6 sep 2026, dos errores graves de la misma errata de BEDCA: agua (82) + proteína (17) + grasa (7,22) sumaban 106 g por 100 g -- imposible. El campo que sobraba era la GRASA: corregida a 1 g (FEN/Moreiras 2013, ficha Dorada). La vitD (14→1,5 µg, misma fuente) arrastraba sola casi toda la vitD de una ración con 14 -- con eso corregido, la energía se recalcula a 78 kcal (BEDCA 78 + FEN 77, coinciden) en vez de los 133 que el catálogo había recalculado para sostener la grasa errónea: había que corregir en el sentido contrario. ⚠️ QUEDA ABIERTO, tal y como avisaba el párrafo de arriba: el DHA (0,527) y el EPA (0,312) siguen sin tocar porque no hay cifra de fuente para la dorada salvaje -- son de la MISMA fuente 296 (piscifactoría) que la grasa ya corregida, así que ahora suman, con el linoleico y el araquidónico ya en mg, 1,97 g de ácidos grasos contra 1 g de grasa total: no cuadra, y `auditar_catalogo.py` lo señala con [GRASOS] a propósito, sin silenciarlo. Falta la cifra de EPA/DHA de una dorada salvaje para cerrarlo del todo.",
   "fuente_epa_dha": "BEDCA",
@@ -5627,7 +5921,11 @@
    "nota": "misma familia Sparidae",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente.",
+  "sin_dato": [
+   "lcarnitina"
+  ]
  },
  {
   "nombre": "Gamba roja",
@@ -5678,7 +5976,8 @@
    "treonina": 0.714,
    "triptofano": 0.205,
    "valina": 0.842,
-   "purinas": 182.4
+   "purinas": 182.4,
+   "taurina": 31.0
   },
   "nota_datos": "EPA 0,100 g y DHA 0,200 g por 100 g. ⚠️ ESTIMACIÓN POR ESPECIE PARECIDA: la gamba roja (Aristeus antennatus) no tiene ficha propia ni en BEDCA ni en USDA. ⚠️ CORREGIDO el 26 de agosto: el día anterior se puso 0,170/0,330 de «mixed shrimp» de USDA. ⚠️ CORREGIDO 6 sep 2026: la vitD (0) no es un cero real -- BEDCA distingue 0 de trazas de n.d., y aquí es trazas. Sin cifra publicada, pasa a sin_dato en vez de mantenerse como cero con forma de dato bueno.",
   "fuente_epa_dha": "estimacion_especie_similar",
@@ -5702,8 +6001,10 @@
    "anio": "2024"
   },
   "sin_dato": [
-   "vitD"
-  ]
+   "vitD",
+   "lcarnitina"
+  ],
+  "taurina_fuente": "Taurina = 31 mg/100g: Spitze et al. 2003, tabla 1, \"Shrimp, freshwater, de-shelled, large\" = 310 (305-315) mg/kg -> 31 mg/100g."
  },
  {
   "nombre": "Langostino",
@@ -5754,7 +6055,8 @@
    "treonina": 0.964,
    "triptofano": 0.277,
    "valina": 1.137,
-   "purinas": 182.4
+   "purinas": 182.4,
+   "taurina": 31.0
   },
   "duplicado_de": "Langostinos",
   "dato_no_fiable": true,
@@ -5778,7 +6080,11 @@
    "nota": "mismo grupo",
    "pais": "USA",
    "anio": "2024"
-  }
+  },
+  "taurina_fuente": "Taurina = 31 mg/100g: Spitze et al. 2003, tabla 1, \"Shrimp, freshwater, de-shelled, large\" = 310 (305-315) mg/kg -> 31 mg/100g.",
+  "sin_dato": [
+   "lcarnitina"
+  ]
  },
  {
   "nombre": "Lenguado",
@@ -5829,7 +6135,8 @@
    "treonina": 0.778,
    "triptofano": 0.214,
    "valina": 0.866,
-   "purinas": 113.0
+   "purinas": 113.0,
+   "taurina": 36.7
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3». ⚠️ CORREGIDO 6 sep 2026: vitamina A y vitD (ambas a 0) no son ceros reales -- BEDCA distingue 0 de trazas de n.d., y aquí es trazas. Sin cifra publicada, pasan a sin_dato en vez de mantenerse como ceros con forma de dato bueno.",
@@ -5854,8 +6161,10 @@
   },
   "sin_dato": [
    "vitA",
-   "vitD"
-  ]
+   "vitD",
+   "lcarnitina"
+  ],
+  "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente."
  },
  {
   "nombre": "Lubina",
@@ -5906,7 +6215,8 @@
    "treonina": 0.789,
    "triptofano": 0.201,
    "valina": 0.928,
-   "purinas": 107.3
+   "purinas": 107.3,
+   "taurina": 36.7
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3». ⚠️ CORREGIDO 6 sep 2026: vitamina A y vitD (ambas a 0) no son ceros reales -- BEDCA distingue 0 de trazas de n.d., y aquí es trazas. Sin cifra publicada, pasan a sin_dato en vez de mantenerse como ceros con forma de dato bueno.",
@@ -5931,8 +6241,10 @@
   },
   "sin_dato": [
    "vitA",
-   "vitD"
-  ]
+   "vitD",
+   "lcarnitina"
+  ],
+  "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente."
  },
  {
   "nombre": "Perca",
@@ -5983,7 +6295,8 @@
    "treonina": 0.85,
    "triptofano": 0.23,
    "valina": 0.999,
-   "purinas": 107.3
+   "purinas": 107.3,
+   "taurina": 36.7
   },
   "nota_datos": "USDA FoodData Central 173678 (Perca, mixed species, raw): EPA 0,150 g y DHA 0,280 g por 100 g. La perca de río europea (Perca fluviatilis) no tiene ficha propia; se usa la de especies mezcladas del mismo género.",
   "fuente_epa_dha": "USDA_FDC",
@@ -5999,7 +6312,11 @@
    "nota": "pez blanco de agua dulce",
    "pais": "Japan, China",
    "anio": "2014, 2017"
-  }
+  },
+  "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente.",
+  "sin_dato": [
+   "lcarnitina"
+  ]
  },
  {
   "nombre": "Pescadilla",
@@ -6050,7 +6367,8 @@
    "treonina": 0.515,
    "triptofano": 0.132,
    "valina": 0.605,
-   "purinas": 144.1
+   "purinas": 144.1,
+   "taurina": 36.7
   },
   "nota_datos": "EPA 0,090 g y DHA 0,270 g por 100 g, ratio EPA:DHA ≈ 1:3. Piñeiro-Corrales et al., Nutrición Hospitalaria 2013. La pescadilla es merluza joven, y la merluza de este mismo catálogo trae 100 mg de EPA y 266 de DHA de otra fuente: las dos cifras casan, lo que da confianza en las dos.",
   "fuente_epa_dha": "estimacion_especie_similar",
@@ -6071,7 +6389,11 @@
    "nota": "pescado blanco magro",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente.",
+  "sin_dato": [
+   "lcarnitina"
+  ]
  },
  {
   "nombre": "Pulpo",
@@ -6122,7 +6444,8 @@
    "treonina": 0.642,
    "triptofano": 0.167,
    "valina": 0.651,
-   "purinas": 137.2
+   "purinas": 137.2,
+   "taurina": 356.0
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3». ⚠️ CORREGIDO 6 sep 2026: la vitD (0) no es un cero real -- BEDCA distingue 0 de trazas de n.d., y aquí es trazas. Sin cifra publicada, pasa a sin_dato en vez de mantenerse como cero con forma de dato bueno.",
@@ -6140,8 +6463,10 @@
    "anio": "2014"
   },
   "sin_dato": [
-   "vitD"
-  ]
+   "vitD",
+   "lcarnitina"
+  ],
+  "taurina_fuente": "Taurina = 356 mg/100g: no hay dato propio de esta especie -- se usa \"Squid\" (Spitze et al. 2003) por familia (mismo grupo, cefalopodo), confianza MEDIA."
  },
  {
   "nombre": "Sepia",
@@ -6192,7 +6517,8 @@
    "treonina": 0.699,
    "triptofano": 0.182,
    "valina": 0.709,
-   "purinas": 135.0
+   "purinas": 135.0,
+   "taurina": 356.0
   },
   "fuente_epa_dha": "BEDCA",
   "nota_datos": "Ficha completa de BEDCA, comprobada campo a campo el 26 de agosto contra la tabla oficial: energía, proteína, grasa, EPA, DHA, linoleico, linolénico, araquidónico y los 18 vitaminas y minerales COINCIDEN todos. Los valores llevaban aquí desde antes sin que constara de dónde salían; ahora consta. EPA es el «ácido graso 20:5» de BEDCA y DHA el «ácido graso 22:6 n-3». ⚠️ CORREGIDO 6 sep 2026: la vitD (0) no es un cero real -- BEDCA distingue 0 de trazas de n.d., y aquí es trazas. Sin cifra publicada, pasa a sin_dato en vez de mantenerse como cero con forma de dato bueno.",
@@ -6210,8 +6536,10 @@
    "anio": "1976"
   },
   "sin_dato": [
-   "vitD"
-  ]
+   "vitD",
+   "lcarnitina"
+  ],
+  "taurina_fuente": "Taurina = 356 mg/100g: no hay dato propio de esta especie -- se usa \"Squid\" (Spitze et al. 2003) por familia (mismo grupo, cefalopodo), confianza MEDIA."
  },
  {
   "nombre": "Aceite de cacahuete",
@@ -6262,7 +6590,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0.0
+   "purinas": 0.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "araquidonico",
@@ -6293,7 +6623,9 @@
    "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
    "pais": "—",
    "anio": "—"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida."
  },
  {
   "nombre": "Aceite de coco",
@@ -6344,7 +6676,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0.0
+   "purinas": 0.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "araquidonico",
@@ -6376,7 +6710,9 @@
    "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
    "pais": "—",
    "anio": "—"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida."
  },
  {
   "nombre": "Aceite de hígado de bacalao",
@@ -6427,7 +6763,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0.0
+   "purinas": 0.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "araquidonico",
@@ -6460,7 +6798,9 @@
    "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
    "pais": "—",
    "anio": "—"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida."
  },
  {
   "nombre": "Aceite de sésamo",
@@ -6511,7 +6851,9 @@
    "treonina": 0.0,
    "triptofano": 0.0,
    "valina": 0.0,
-   "purinas": 0.0
+   "purinas": 0.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "araquidonico",
@@ -6530,13 +6872,16 @@
    "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
    "pais": "—",
    "anio": "—"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida."
  },
  {
   "nombre": "Grasa de pollo",
   "tipo": "Alimento",
   "categoria": "Extras",
   "energia": 886,
+  "nota_datos": "⚠️ AÑADIDO (7 sep 2026): linoleico. USDA FoodData Central FDC 173564 \"Fat, chicken\" (SR Legacy, NDB 4542) da PUFA 18:2 = 19,5 g/100g -- proteína (0) y grasa (99,8) coinciden exactos con esta misma ficha, así que es con altísima probabilidad la misma fuente que el resto de esta fila. El propio FDC 173564 no publica 18:3 (linolénico), 20:4 (araquidónico) ni vitamina E: siguen en sin_dato, no son un cero inventado.",
   "nutrientes": {
    "proteina": 0,
    "grasa": 99.8,
@@ -6581,7 +6926,9 @@
    "treonina": 0.0,
    "triptofano": 0.0,
    "valina": 0.0,
-   "purinas": 0.0
+   "purinas": 0.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "araquidonico",
@@ -6603,7 +6950,8 @@
    "pais": "—",
    "anio": "—"
   },
-  "nota_datos": "⚠️ AÑADIDO (7 sep 2026): linoleico. USDA FoodData Central FDC 173564 \"Fat, chicken\" (SR Legacy, NDB 4542) da PUFA 18:2 = 19,5 g/100g -- proteína (0) y grasa (99,8) coinciden exactos con esta misma ficha, así que es con altísima probabilidad la misma fuente que el resto de esta fila. El propio FDC 173564 no publica 18:3 (linolénico), 20:4 (araquidónico) ni vitamina E: siguen en sin_dato, no son un cero inventado."
+  "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida."
  },
  {
   "nombre": "Manteca",
@@ -6654,7 +7002,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0.0
+   "purinas": 0.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "araquidonico",
@@ -6687,7 +7037,9 @@
    "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
    "pais": "—",
    "anio": "—"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida."
  },
  {
   "nombre": "Semilla de lino",
@@ -6738,7 +7090,9 @@
    "treonina": 0.766,
    "triptofano": 0.297,
    "valina": 1.072,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "cobre",
@@ -6750,7 +7104,9 @@
    "factor": "1.0",
    "confianza": "ALTA",
    "nota": "mismo alimento. Proteína idéntica"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 confirma explicitamente 0 taurina en semilla de girasol y de sesamo (analizadas), y en el resto de semillas y frutos secos probados (almendra, anacardo, avellana, cacahuete, nuez, pipa) -- ninguna dio taurina detectable. Pipa de calabaza y semilla de lino no se analizaron especificamente, pero siguen el mismo patron de familia (semilla vegetal).",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento vegetal que el resto del catalogo."
  },
  {
   "nombre": "Pipa de calabaza",
@@ -6801,13 +7157,17 @@
    "treonina": 0.998,
    "triptofano": 0.576,
    "valina": 1.579,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "cobre",
    "manganeso",
    "purinas"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 confirma explicitamente 0 taurina en semilla de girasol y de sesamo (analizadas), y en el resto de semillas y frutos secos probados (almendra, anacardo, avellana, cacahuete, nuez, pipa) -- ninguna dio taurina detectable. Pipa de calabaza y semilla de lino no se analizaron especificamente, pero siguen el mismo patron de familia (semilla vegetal).",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento vegetal que el resto del catalogo."
  },
  {
   "nombre": "Pipa de girasol",
@@ -6858,13 +7218,17 @@
    "treonina": 0.928,
    "triptofano": 0.348,
    "valina": 1.315,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "cobre",
    "manganeso",
    "purinas"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 confirma explicitamente 0 taurina en semilla de girasol y de sesamo (analizadas), y en el resto de semillas y frutos secos probados (almendra, anacardo, avellana, cacahuete, nuez, pipa) -- ninguna dio taurina detectable. Pipa de calabaza y semilla de lino no se analizaron especificamente, pero siguen el mismo patron de familia (semilla vegetal).",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento vegetal que el resto del catalogo."
  },
  {
   "nombre": "Semilla de sésamo",
@@ -6915,7 +7279,9 @@
    "treonina": 0.789,
    "triptofano": 0.416,
    "valina": 1.061,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "dato_dudoso": {
    "calcio": {
@@ -6943,7 +7309,9 @@
   },
   "sin_dato": [
    "purinas"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 confirma explicitamente 0 taurina en semilla de girasol y de sesamo (analizadas), y en el resto de semillas y frutos secos probados (almendra, anacardo, avellana, cacahuete, nuez, pipa) -- ninguna dio taurina detectable. Pipa de calabaza y semilla de lino no se analizaron especificamente, pero siguen el mismo patron de familia (semilla vegetal).",
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento vegetal que el resto del catalogo."
  },
  {
   "nombre": "Albahaca",
@@ -6994,7 +7362,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 289.3
+   "purinas": 289.3,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "fuente": "USDA FDC 172232 'Basil, fresh'.",
   "nota_datos": "CORREGIDO 4 agosto. El valor anterior (178 kcal) era de albahaca SECA (FDC 171317, 233 kcal), no fresca. Error de x7,7. ⚠️ CORREGIDO 6 sep 2026: siete valores (fósforo, potasio, sodio, magnesio, hierro, zinc, selenio) eran los de albahaca DESHIDRATADA (FDC 171317) cargados por error bajo la cita de la fresca (FDC 172232, que sí es la correcta). El zinc pasaba de 0,81 a 5,82 -- +619%, la convertía en la fuente n.º 1 de zinc del catálogo sin serlo. Calcio también ajustado (154→177, -13%). Corregidos los siete contra la ficha FDC 172232 de verdad. Ver CORRECCIONES_CATALOGO.csv en canislab-fuentes.",
@@ -7024,7 +7394,9 @@
    "nota": "hierba fresca. OJO: 289 mg, de las más altas",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Alcachofa",
@@ -7075,7 +7447,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -7091,7 +7465,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Apio",
@@ -7142,7 +7518,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -7158,7 +7536,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Berenjena",
@@ -7209,7 +7589,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "preparacion": "cocido",
   "nota_datos": "⚠️ DAR SIEMPRE COCIDO, no crudo: crudo es indigesto/duro y da riesgo de obstrucción o malestar GI. Es la excepción al BARF crudo por defecto.",
@@ -7227,7 +7609,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Boniato",
@@ -7278,7 +7662,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 17.0
+   "purinas": 17.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "preparacion": "cocido",
   "nota_datos": "⚠️ DAR SIEMPRE COCIDO, no crudo: crudo es indigesto/duro y da riesgo de obstrucción o malestar GI. Es la excepción al BARF crudo por defecto.",
@@ -7308,7 +7694,9 @@
    "nota": "misma especie",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Canónigos",
@@ -7359,7 +7747,9 @@
    "treonina": 0.075,
    "triptofano": 0.026,
    "valina": 0.099,
-   "purinas": 4.7
+   "purinas": 4.7,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "selenio"
@@ -7376,7 +7766,9 @@
    "nota": "hoja de ensalada",
    "pais": "Japan",
    "anio": "2020"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Cardo",
@@ -7427,7 +7819,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -7443,7 +7837,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Champiñón",
@@ -7508,7 +7904,9 @@
    "tirosina",
    "treonina",
    "triptofano",
-   "valina"
+   "valina",
+   "taurina",
+   "lcarnitina"
   ],
   "purinas_bases": {
    "adenina": 18.8,
@@ -7573,7 +7971,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 10.0
+   "purinas": 10.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "fuente": "BEDCA",
   "nota_datos": "BEDCA, «Coles de Bruselas» — fibra dietética total 4,3 g/100 g (fuente 149). La energía (35 kcal), la proteína (4 g) y la grasa (0,5 g) que ya teníamos coinciden exactas con esa misma ficha, así que solo faltaba este campo.",
@@ -7603,7 +8003,9 @@
    "nota": "brásica",
    "pais": "USA",
    "anio": "2024"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Col lombarda",
@@ -7654,7 +8056,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 10.0
+   "purinas": 10.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "nota_datos": "Fusionado 4 agosto: 'Col lombarda' y 'Lombarda' eran el mismo vegetal duplicado. Promediados los dos valores.",
   "sin_dato": [
@@ -7683,7 +8087,9 @@
    "nota": "brásica",
    "pais": "USA",
    "anio": "2024"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Col rizada",
@@ -7734,7 +8140,9 @@
    "treonina": 0.151,
    "triptofano": 0.04,
    "valina": 0.185,
-   "purinas": 10.0
+   "purinas": 10.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "aminograma_estimado": {
    "desde": "Col rizada (kale), cocida sin sal",
@@ -7754,7 +8162,9 @@
    "nota": "brásica",
    "pais": "USA",
    "anio": "2024"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Coliflor",
@@ -7805,7 +8215,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 33.0
+   "purinas": 33.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -7833,7 +8245,9 @@
    "nota": "misma especie",
    "pais": "USA",
    "anio": "2024"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Endibia",
@@ -7884,7 +8298,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -7900,7 +8316,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Espárrago verde",
@@ -7951,7 +8369,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 32.85
+   "purinas": 32.85,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "preparacion": "cocido",
   "nota_datos": "⚠️ DAR SIEMPRE COCIDO, no crudo: crudo es indigesto/duro y da riesgo de obstrucción o malestar GI. Es la excepción al BARF crudo por defecto.",
@@ -7981,7 +8401,9 @@
    "nota": "misma especie",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Grelo",
@@ -8032,14 +8454,18 @@
    "treonina": 0.106,
    "triptofano": 0.043,
    "valina": 0.153,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "restricciones_patologia": {
    "hipotiroidismo": "Crucífera con goitrógenos; limitar en perros con hipotiroidismo o en tratamiento con levotiroxina."
   },
   "sin_dato": [
    "purinas"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Lechuga",
@@ -8090,7 +8516,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 4.7
+   "purinas": 4.7,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -8118,7 +8546,9 @@
    "nota": "hoja de ensalada",
    "pais": "Japan",
    "anio": "2020"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Nabo pelado",
@@ -8169,7 +8599,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "restricciones_patologia": {
    "hipotiroidismo": "Crucífera con goitrógenos; limitar en perros con hipotiroidismo."
@@ -8188,7 +8620,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Pepino",
@@ -8239,7 +8673,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 9.4
+   "purinas": 9.4,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -8267,7 +8703,9 @@
    "nota": "misma especie",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Rábano",
@@ -8318,7 +8756,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -8334,7 +8774,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Repollo",
@@ -8385,7 +8827,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 10.0
+   "purinas": 10.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -8413,7 +8857,9 @@
    "nota": "brásica",
    "pais": "USA",
    "anio": "2024"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Rucula",
@@ -8464,7 +8910,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 4.7
+   "purinas": 4.7,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -8492,7 +8940,9 @@
    "nota": "hoja de ensalada",
    "pais": "Japan",
    "anio": "2020"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Tomate (puré)",
@@ -8543,7 +8993,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 6.6
+   "purinas": 6.6,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "fuente": "BEDCA",
   "nota_datos": "BEDCA, «Tomate, maduro, puré» — fibra dietética total 2,8 g/100 g (fuente 29). Es el puré, no el tomate fresco, que en BEDCA es otra ficha distinta y trae 1,1 g. La energía (73 kcal), la proteína (4,5 g) y la grasa (0,2 g) que ya teníamos coinciden exactas con la ficha del puré, así que es la buena.",
@@ -8573,7 +9025,9 @@
    "nota": "misma especie",
    "pais": "Japan",
    "anio": "2020"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Albaricoque",
@@ -8624,11 +9078,15 @@
    "treonina": 0.047,
    "triptofano": 0.006,
    "valina": 0.047,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "purinas"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Coco fresco",
@@ -8679,14 +9137,18 @@
    "treonina": 0.121,
    "triptofano": 0.039,
    "valina": 0.202,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "restricciones_patologia": {
    "pancreatitis": "Alto en grasa saturada; limitar en perros con antecedente de pancreatitis, hiperlipidemia u obesidad."
   },
   "sin_dato": [
    "purinas"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Dátil",
@@ -8737,7 +9199,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "restricciones_patologia": {
    "diabetes": "Muy alto en azúcar (~60%+ en peso seco); evitar o limitar mucho en perros diabéticos u obesos."
@@ -8756,7 +9220,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Frambuesa",
@@ -8807,7 +9273,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -8823,7 +9291,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Mandarina",
@@ -8874,7 +9344,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -8891,7 +9363,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Mango",
@@ -8942,7 +9416,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "restricciones_patologia": {
    "diabetes": "Alto en azúcar; limitar en perros diabéticos u obesos."
@@ -8961,7 +9437,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Piña",
@@ -9012,12 +9490,16 @@
    "treonina": 0.019,
    "triptofano": 0.006,
    "valina": 0.024,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "purinas",
    "selenio"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
  },
  {
   "nombre": "Cáscara de huevo casera (en polvo)",
@@ -9068,7 +9550,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "dosis_max_por_100g_comida": 0.8,
   "dosis_fuente": "Misma dosificación que la cáscara comercial: ~4 g por cada 500 g de carne",
@@ -9108,7 +9592,9 @@
    "vitE",
    "yodo",
    "zinc"
-  ]
+  ],
+  "taurina_fuente": "Taurina/L-carnitina = 0: carbonato calcico (cascara de huevo molida), compuesto mineral sin materia organica soluble relevante.",
+  "lcarnitina_fuente": "Taurina/L-carnitina = 0: carbonato calcico (cascara de huevo molida), compuesto mineral sin materia organica soluble relevante."
  },
  {
   "nombre": "Hígado de conejo",
@@ -9179,7 +9665,11 @@
    "nota": "hígado de otra especie",
    "pais": "USA",
    "anio": "1976"
-  }
+  },
+  "sin_dato": [
+   "taurina",
+   "lcarnitina"
+  ]
  },
  {
   "nombre": "Homemadekun (multivitamínico completo)",
@@ -9266,7 +9756,9 @@
    "tirosina",
    "treonina",
    "triptofano",
-   "valina"
+   "valina",
+   "taurina",
+   "lcarnitina"
   ]
  },
  {
@@ -9341,7 +9833,9 @@
    "tirosina",
    "treonina",
    "triptofano",
-   "valina"
+   "valina",
+   "taurina",
+   "lcarnitina"
   ]
  },
  {
@@ -9393,7 +9887,8 @@
    "treonina": 0.725,
    "triptofano": 0.23,
    "valina": 0.998,
-   "purinas": 243.0
+   "purinas": 243.0,
+   "taurina": 110.0
   },
   "nota_datos": "AJUSTADO 4 agosto contra USDA (antes 137/22,12/4,7, dentro de rango pero se prefiere el valor USDA directo). ⚠️ CORREGIDO 6 sep 2026 contra FDC 171060: vitamina A (11078→3296 µg, +236%, con sospecha de contaminación cruzada con hígado de pato que en el catálogo da 11984) y cobre (4,5→0,492 mg, +815%, era magnitud de hígado de rumiante, no de ave) eran los errores graves. Además vitD (1,3→0, USDA da cero), magnesio, hierro, zinc, potasio, sodio y selenio ajustados a la ficha real. El yodo (3 µg) no tiene respaldo -- USDA no publica yodo para este alimento -- pasa a sin_dato en vez de mantenerse como cifra inventada.",
   "fuente": "USDA FDC 171060 'Chicken, liver, all classes, raw'.",
@@ -9411,8 +9906,10 @@
    "anio": "1976"
   },
   "sin_dato": [
-   "yodo"
-  ]
+   "yodo",
+   "lcarnitina"
+  ],
+  "taurina_fuente": "Taurina = 110 mg/100g: Spitze et al. 2003, tabla 1, \"Chicken, liver\" = 1100 mg/kg -> 110 mg/100g."
  },
  {
   "nombre": "Carcasa de pato",
@@ -9463,7 +9960,9 @@
    "treonina": 0.658,
    "triptofano": 0.214,
    "valina": 0.805,
-   "purinas": 93.6
+   "purinas": 93.6,
+   "taurina": 178.0,
+   "lcarnitina": 27.0
   },
   "pct_carne": 0.45,
   "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso+piel).",
@@ -9486,7 +9985,9 @@
    "nota": "carcasa de ave, el equivalente más cercano",
    "pais": "USA",
    "anio": "1980"
-  }
+  },
+  "taurina_fuente": "Taurina = 178 mg/100g: no hay dato de carcasa/cuello de pato especificamente -- se usa \"Duck, leg meat\" (Spitze et al. 2003) por familia (mismo animal, otro corte), confianza MEDIA.",
+  "lcarnitina_fuente": "L-carnitina = 27 mg/100g: valor agregado tipico de pato (no separa corte), literatura general sobre contenido de carnitina en carne."
  },
  {
   "nombre": "Espinazo de conejo",
@@ -9560,7 +10061,11 @@
    "nota": "carcasa de ave, el equivalente más cercano",
    "pais": "USA",
    "anio": "1980"
-  }
+  },
+  "sin_dato": [
+   "taurina",
+   "lcarnitina"
+  ]
  },
  {
   "nombre": "napfcheck Novomineral proLEBER",
@@ -9628,7 +10133,9 @@
    "tirosina",
    "treonina",
    "triptofano",
-   "valina"
+   "valina",
+   "taurina",
+   "lcarnitina"
   ]
  },
  {
@@ -9703,7 +10210,9 @@
    "triptofano",
    "valina",
    "vitA",
-   "vitD"
+   "vitD",
+   "taurina",
+   "lcarnitina"
   ]
  },
  {
@@ -9774,7 +10283,9 @@
    "tirosina",
    "treonina",
    "triptofano",
-   "valina"
+   "valina",
+   "taurina",
+   "lcarnitina"
   ]
  },
  {
@@ -9828,7 +10339,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0.0
+   "purinas": 0.0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -9862,7 +10375,9 @@
    "nota": "grasa o mineral puro: sin células, sin ácidos nucleicos, sin purinas",
    "pais": "—",
    "anio": "—"
-  }
+  },
+  "taurina_fuente": "Taurina = 0: compuesto quimico inorganico puro, sin materia organica.",
+  "lcarnitina_fuente": "L-carnitina = 0: compuesto quimico inorganico puro, sin materia organica."
  },
  {
   "nombre": "Yoduro potásico (comprimidos 200 µg)",
@@ -9915,7 +10430,9 @@
    "treonina": 0,
    "triptofano": 0,
    "valina": 0,
-   "purinas": 0
+   "purinas": 0,
+   "taurina": 0,
+   "lcarnitina": 0
   },
   "sin_dato": [
    "arginina",
@@ -9931,7 +10448,9 @@
    "treonina",
    "triptofano",
    "valina"
-  ]
+  ],
+  "taurina_fuente": "Taurina = 0: compuesto quimico inorganico puro, sin materia organica.",
+  "lcarnitina_fuente": "L-carnitina = 0: compuesto quimico inorganico puro, sin materia organica."
  },
  {
   "nombre": "Nutratop Vitamínico-Mineral 7:1",
@@ -10021,7 +10540,9 @@
    "vitB6",
    "vitD",
    "vitE",
-   "zinc"
+   "zinc",
+   "taurina",
+   "lcarnitina"
   ]
  },
  {
@@ -10080,7 +10601,9 @@
    "cloruro",
    "colina",
    "vitD",
-   "yodo"
+   "yodo",
+   "taurina",
+   "lcarnitina"
   ],
   "aminograma_estimado": {
    "desde": "Molleja de pavo, cruda",
@@ -10156,7 +10679,9 @@
   "nota_datos": "Fuente: USDA FDC 171085 (SR Legacy). Por 100 g crudo, peso fresco.",
   "sin_dato": [
    "cloruro",
-   "yodo"
+   "yodo",
+   "taurina",
+   "lcarnitina"
   ],
   "purinas_bases": {
    "adenina": 35.1,
@@ -10221,7 +10746,9 @@
    "treonina": 1.009,
    "triptofano": 0.237,
    "valina": 1.165,
-   "purinas": 174.9
+   "purinas": 174.9,
+   "taurina": 18.0,
+   "lcarnitina": 10.0
   },
   "nota_datos": "AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras. ⚠️ CORREGIDO 6 sep 2026 contra FDC 171077: potasio (256→334, -23%), energía y proteína ajustados (sesgo del -5/-6% de la ficha entera) y selenio (27→22,8). Cobre, vitamina A y vitD, que estaban en sin_dato, se rellenan con los valores reales de la ficha (0,037 mg / 9 µg / cero real). El yodo se queda en sin_dato -- sin cambios, seguía sin tener respaldo.",
   "sin_dato": [
@@ -10248,7 +10775,9 @@
    "nota": "misma especie y corte",
    "pais": "USA",
    "anio": "1983, 1982"
-  }
+  },
+  "taurina_fuente": "Taurina = 18 mg/100g: Spitze et al. 2003, tabla 1, \"Chicken, light meat\" (crudo) = 180 +/- 30 mg/kg peso humedo -> 18 mg/100g. Aplicado tambien a pechuga de pavo por familia (ave domestica, mismo tipo de fibra muscular): no hay dato de pavo separado por corte.",
+  "lcarnitina_fuente": "L-carnitina = 10 mg/100g: valor agregado tipico de pollo (no separa corte), literatura general sobre contenido de carnitina en carne."
  },
  {
   "nombre": "Pollo muslo sin piel",
@@ -10299,7 +10828,9 @@
    "treonina": 0.895,
    "triptofano": 0.217,
    "valina": 0.933,
-   "purinas": 141.7
+   "purinas": 141.7,
+   "taurina": 33.7,
+   "lcarnitina": 10.0
   },
   "nota_datos": "AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras. ⚠️ CORREGIDO 6 sep 2026 contra FDC 173627: calcio (10→7, +43%), hierro y cobre ajustados. Sodio, magnesio, vitamina A y vitD, que estaban en sin_dato, se rellenan con los valores reales de la ficha (95 mg / 23,0 mg / 7 µg / cero real).",
   "sin_dato": [
@@ -10327,7 +10858,9 @@
    "nota": "misma especie y corte",
    "pais": "USA",
    "anio": "1983, 1980, 1982"
-  }
+  },
+  "taurina_fuente": "Taurina = 33,7 mg/100g: Spitze et al. 2003, tabla 1, \"Chicken, leg\" (crudo, n=12) = 337 (300-380) mg/kg -> 33,7 mg/100g. HAY DISCREPANCIA REAL: la misma tabla da \"Chicken, dark meat\" (n=6, otro origen) = 1690 +/- 370 mg/kg -> 169 mg/100g, cinco veces mas. Se usa el valor de mas muestras (n=12); el otro queda citado aqui para que no se pierda. Aplicado tambien a muslo de pavo por familia.",
+  "lcarnitina_fuente": "L-carnitina = 10 mg/100g: valor agregado tipico de pollo (no separa corte), literatura general sobre contenido de carnitina en carne."
  },
  {
   "nombre": "Hígado de cordero",
@@ -10379,7 +10912,9 @@
    "treonina": 0.882,
    "triptofano": 0.236,
    "valina": 1.122,
-   "purinas": 147.0
+   "purinas": 147.0,
+   "taurina": 68.8,
+   "lcarnitina": 40.0
   },
   "sin_dato": [
    "acidoPantotenico",
@@ -10407,7 +10942,9 @@
    "nota": "misma especie y órgano",
    "pais": "USA",
    "anio": "1976"
-  }
+  },
+  "taurina_fuente": "Taurina = 68,8 mg/100g: no hay \"Lamb, Liver\" en la fuente -- se usa \"Beef, Liver\" por familia (mismo organo, otro rumiante), confianza MEDIA.",
+  "lcarnitina_fuente": "L-carnitina = 40 mg/100g: valor agregado tipico de cordero/oveja (no separa corte ni tejido); la literatura da un rango muy amplio entre fuentes (40-200 mg/100g) -- se usa el extremo BAJO por ser el lado conservador ante esa incertidumbre real."
  },
  {
   "nombre": "Corazón de conejo",
@@ -10483,7 +11020,9 @@
    "vitD",
    "vitE",
    "yodo",
-   "zinc"
+   "zinc",
+   "taurina",
+   "lcarnitina"
   ],
   "aminograma_estimado": {
    "desde": "Corazón de cordero, crudo",
@@ -10573,7 +11112,9 @@
    "tirosina",
    "treonina",
    "triptofano",
-   "valina"
+   "valina",
+   "taurina",
+   "lcarnitina"
   ]
  },
  {
@@ -10644,7 +11185,9 @@
    "tirosina",
    "treonina",
    "triptofano",
-   "valina"
+   "valina",
+   "taurina",
+   "lcarnitina"
   ]
  },
  {
@@ -10716,7 +11259,9 @@
    "tirosina",
    "treonina",
    "triptofano",
-   "valina"
+   "valina",
+   "taurina",
+   "lcarnitina"
   ]
  },
  {
@@ -10787,7 +11332,9 @@
    "tirosina",
    "treonina",
    "triptofano",
-   "valina"
+   "valina",
+   "taurina",
+   "lcarnitina"
   ]
  },
  {
@@ -10839,7 +11386,9 @@
    "treonina": 0.806,
    "triptofano": 0.133,
    "valina": 1.001,
-   "purinas": 79.2
+   "purinas": 79.2,
+   "taurina": 31.3,
+   "lcarnitina": 80.0
   },
   "sin_dato": [
    "araquidonico",
@@ -10869,7 +11418,9 @@
    "nota": "mismo corte",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 31,3 mg/100g: Spitze et al. 2003, tabla 1, \"Beef, lean\" (crudo) = 313 (277-348) mg/kg -> 31,3 mg/100g.",
+  "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g)."
  },
  {
   "nombre": "Cuello de ternera",
@@ -10920,7 +11471,9 @@
    "treonina": 0.893,
    "triptofano": 0.229,
    "valina": 0.917,
-   "purinas": 100.6
+   "purinas": 100.6,
+   "taurina": 31.3,
+   "lcarnitina": 80.0
   },
   "sin_dato": [
    "araquidonico",
@@ -10950,7 +11503,9 @@
    "nota": "mismo corte",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "taurina_fuente": "Taurina = 31,3 mg/100g: Spitze et al. 2003, tabla 1, \"Beef, lean\" (crudo) = 313 (277-348) mg/kg -> 31,3 mg/100g.",
+  "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g)."
  },
  {
   "nombre": "Laringe de vacuno",
@@ -11021,7 +11576,9 @@
    "tirosina",
    "treonina",
    "triptofano",
-   "valina"
+   "valina",
+   "taurina",
+   "lcarnitina"
   ],
   "pct_carne": 0.35,
   "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1, fila 'Cattle larynges'. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda.",
@@ -11076,7 +11633,9 @@
    "treonina": 0.747,
    "triptofano": 0.202,
    "valina": 1.195,
-   "purinas": 185.0
+   "purinas": 185.0,
+   "taurina": 87.4,
+   "lcarnitina": 80.0
   },
   "nota_datos": "Bazo -- órgano linfoide, no muscular, encaja en la categoría BARF de vísceras igual que riñón/pulmón. Datos cruzados entre varias fuentes derivadas de USDA, consistentes entre sí. Sin dato fiable para yodo, vitA/D/E, folato, colina, cloruro, linoleico/linolénico/araquidónico -- se dejan en 0. [Renombrado de \"Bazo de ternera\" a \"Bazo de vaca\" tras verificación: el hierro tan alto (44.5mg) es propio de animal adulto, no de ternera lechal -- la investigación encontró un dato distinto y genuino para ternera joven, añadido aparte.] ⚠️ CORREGIDO 7 sep 2026: `sin_dato` solo traía \"cloruro\" -- el resto de huecos que esta misma nota ya declaraba (yodo, vitA/D/E, folato, colina, linoleico/linolénico/araquidónico) no estaban marcados, así que contra un máximo contaban como cero medido en vez de hueco. Encontrado por auditar_catalogo.py comparando la nota contra el campo estructurado.",
   "sin_dato": [
@@ -11103,7 +11662,9 @@
    "nota": "Souci vía Eichhorn, bazo de vacuno adulto. Compilación, no análisis primario: calidad de dato inferior al resto de la columna.",
    "pais": "Alemania",
    "anio": ""
-  }
+  },
+  "taurina_fuente": "Taurina = 87,4 mg/100g: Spitze et al. 2003, tabla 1, \"Beef, Spleen\" = 874 (659-1114) mg/kg -> 87,4 mg/100g.",
+  "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g)."
  },
  {
   "nombre": "Páncreas de vaca",
@@ -11167,7 +11728,9 @@
    "vitD",
    "vitE",
    "folato",
-   "colina"
+   "colina",
+   "taurina",
+   "lcarnitina"
   ],
   "aminograma_estimado": {
    "desde": "Ternera, páncreas, crudo",
@@ -11225,7 +11788,9 @@
    "treonina": 0.702,
    "triptofano": 0.19,
    "valina": 1.123,
-   "purinas": 322.0
+   "purinas": 322.0,
+   "taurina": 87.4,
+   "lcarnitina": 40.0
   },
   "nota_datos": "Bazo de cordero -- USDA, cruzado con FatSecret y NutrientOptimiser (crudo). Confianza alta. Sin dato fiable de calcio, vitaminas del grupo B (salvo B12) ni vitA/D/E -- se dejan en 0. ⚠️ CORREGIDO 7 sep 2026: `sin_dato` solo traía cloruro y manganeso -- faltaban calcio, vitA/D/E y las vitaminas del grupo B (niacina, riboflavina, tiamina, vitB6, ácido pantoténico, folato, colina) que esta misma nota ya declaraba sin dato fiable. La colina se incluye por ser tratada como parte del grupo B en las demás vísceras de este catálogo (Bazo de vaca, Páncreas de vaca, Cerebro de ternera), aunque la nota original no la nombrase suelta. Encontrado por auditar_catalogo.py comparando la nota contra el campo estructurado.",
   "sin_dato": [
@@ -11249,7 +11814,9 @@
    "nota": "Souci vía Eichhorn, bazo de cordero. Compilación, no análisis primario: calidad de dato inferior al resto de la columna.",
    "pais": "Alemania",
    "anio": ""
-  }
+  },
+  "taurina_fuente": "Taurina = 87,4 mg/100g: no hay dato propio de bazo de cordero en la fuente -- se usa \"Beef, Spleen\" (Spitze et al. 2003) por familia (mismo organo, otro rumiante), confianza MEDIA.",
+  "lcarnitina_fuente": "L-carnitina = 40 mg/100g: valor agregado tipico de cordero/oveja (no separa corte ni tejido); la literatura da un rango muy amplio entre fuentes (40-200 mg/100g) -- se usa el extremo BAJO por ser el lado conservador ante esa incertidumbre real."
  },
  {
   "nombre": "Timo de ternera",
@@ -11308,7 +11875,9 @@
    "colina",
    "vitD",
    "vitE",
-   "yodo"
+   "yodo",
+   "taurina",
+   "lcarnitina"
   ],
   "purinas_fuente": {
    "desde": "Souci-Fachmann-Kraut (vía compilaciones)",
@@ -11383,7 +11952,9 @@
    "niacina",
    "riboflavina",
    "tiamina",
-   "vitB6"
+   "vitB6",
+   "taurina",
+   "lcarnitina"
   ],
   "purinas_bases": {
    "adenina": 12.0,
@@ -11453,7 +12024,9 @@
   "sin_dato": [
    "cloruro",
    "folato",
-   "yodo"
+   "yodo",
+   "taurina",
+   "lcarnitina"
   ],
   "nota_datos": "Fuente: USDA FoodData Central SR Legacy, FDC 171484. Por 100 g crudo, peso fresco. ⚠️ CORREGIDO 6 sep 2026 contra la misma ficha FDC 171484 ya citada: energía (135→140 kcal) y vitamina A (80→82 µg), diferencias menores de redondeo.",
   "purinas_bases": {
@@ -11518,12 +12091,14 @@
    "treonina": 0.7823,
    "triptofano": 0.1896,
    "valina": 1.0776,
-   "purinas": 243.0
+   "purinas": 243.0,
+   "taurina": 153.7
   },
   "energia": 128,
   "sin_dato": [
    "cloruro",
-   "yodo"
+   "yodo",
+   "lcarnitina"
   ],
   "nota_datos": "Fuente: USDA FDC 171486 (SR Legacy). Por 100 g crudo, peso fresco.",
   "purinas_bases": {
@@ -11538,7 +12113,8 @@
    "nota": "hígado de otra especie",
    "pais": "USA",
    "anio": "1976"
-  }
+  },
+  "taurina_fuente": "Taurina = 153,7 mg/100g: no hay dato propio de esta especie -- se usa \"Poultry, liver\" (Spitze et al. 2003) = 1537 (1300-1784) mg/kg -> 153,7 mg/100g, agregado de varias aves de corral, confianza MEDIA."
  },
  {
   "nombre": "Hígado de pato",
@@ -11588,7 +12164,8 @@
    "treonina": 0.833,
    "triptofano": 0.264,
    "valina": 1.181,
-   "purinas": 81.9
+   "purinas": 81.9,
+   "taurina": 153.7
   },
   "energia": 136,
   "sin_dato": [
@@ -11596,7 +12173,8 @@
    "colina",
    "vitD",
    "vitE",
-   "yodo"
+   "yodo",
+   "lcarnitina"
   ],
   "nota_datos": "Fuente: USDA FDC 174467 (SR Legacy). Por 100 g crudo, peso fresco.",
   "purinas_bases": {
@@ -11611,6 +12189,7 @@
    "nota": "hígado de ave; el foie es hipergraso y probablemente infraestima",
    "pais": "Japan",
    "anio": "2020"
-  }
+  },
+  "taurina_fuente": "Taurina = 153,7 mg/100g: no hay dato propio de esta especie -- se usa \"Poultry, liver\" (Spitze et al. 2003) = 1537 (1300-1784) mg/kg -> 153,7 mg/100g, agregado de varias aves de corral, confianza MEDIA."
  }
 ]

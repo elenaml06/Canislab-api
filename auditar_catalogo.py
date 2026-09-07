@@ -106,6 +106,19 @@ for a in al:
     # tenemos, que es justo lo contrario de lo que vigila.
     if a.get("purinas_fuente"):
         sd = sd | {"purinas"}
+    # ⚠️ MISMO CRITERIO PARA TAURINA Y L-CARNITINA (7 sep 2026). El cero de
+    # taurina de "Repollo" o el de lcarnitina de "Sal común" no es un hueco:
+    # es un cero MEDIDO -- Spitze et al. 2003 dice literal "None of the
+    # vegetables contained any measurable amount of taurine" -- y ese cero
+    # lleva su procedencia en `taurina_fuente`/`lcarnitina_fuente`. Sin esto,
+    # añadir estas dos claves a las 159 fichas empujaba a 27 verduras y
+    # frutas (que ya tenian varios ceros reales: dha, epa, linoleico...) por
+    # encima del umbral de 10 y disparaba este aviso por datos que SI
+    # tenemos, exactamente el mismo fallo que ya se corrigio para purinas.
+    if a.get("taurina_fuente"):
+        sd = sd | {"taurina"}
+    if a.get("lcarnitina_fuente"):
+        sd = sd | {"lcarnitina"}
     sin_declarar = [k for k, v in n.items() if not v and k not in sd]
     if len(sin_declarar) >= 10:
         avisos.append(("HUECOS", a["nombre"],

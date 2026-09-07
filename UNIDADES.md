@@ -79,16 +79,36 @@ son.
 | Vitamina B12 | `vitB12` | **µg** |
 | Colina | `colina` | mg |
 
-Y dos campos más que no son requisitos de FEDIAF:
+Y cuatro campos más que no son requisitos de FEDIAF:
 
 | Campo | Clave | Unidad |
 |---|---|---|
 | Energía | `energia` | **kcal** por 100 g |
 | Fibra | `fibra` | g |
+| Taurina | `taurina` | **mg** por 100 g |
+| L-carnitina | `lcarnitina` | **mg** por 100 g |
 
 La fibra se guarda pero **no se verifica**: ni FEDIAF, ni AAFCO, ni el NRC
 fijan un mínimo para perros. Ver la sección de fibra del documento de
 consultoría.
+
+**Taurina y L-carnitina (7 de septiembre)** tampoco son requisitos de
+FEDIAF para perros (sí lo es la taurina para gatos, Tabla III-4c) y
+tampoco se verifican hoy -- se guardan para el día que haya un suelo real
+por patología en `patologias.json` (candidata: `dcm_taurina_respondedora`
+y las cardiopatías). Las 159 fichas ya tienen las dos claves, con valor
+real donde hay fuente fiable y `sin_dato` donde no la hay -- **no se ha
+inventado ningún número**. La fuente principal de taurina es Spitze,
+Wong, Rogers y Fascetti (2003), *J. Anim. Physiol. Anim. Nutr.* 87:251-262,
+que mide ~80 alimentos reales (carne, vísceras, pescado, marisco) y
+confirma que ningún vegetal ni fruta tiene taurina detectable. Donde esa
+fuente no cubre la especie exacta, se usa el mismo valor de la especie o
+el tejido más parecido (mismo animal, otro corte; u otro animal, mismo
+órgano), y la ficha lo dice en su `taurina_fuente`/`lcarnitina_fuente`
+con la confianza de esa aproximación. La L-carnitina tiene menos fuentes
+sólidas: son valores agregados por especie de la literatura general, sin
+distinguir corte ni tejido -- por eso hay más `sin_dato` en L-carnitina
+(58 de 159) que en taurina (29 de 159).
 
 ---
 
