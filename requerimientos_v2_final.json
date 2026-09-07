@@ -221,8 +221,9 @@
     "minCachorroCrecimiento": 1750,
     "maxCachorroJoven": "-",
     "maxCachorroCrecimiento": "-",
-    "maxAdulto": 4000,
-    "minAdulto110": 1000.0
+    "maxAdulto": "-",
+    "minAdulto110": 1000.0,
+    "nota_auditoria": "⚠️ QUITADO el maxAdulto=4000 (7 sep 2026): no tenia fuente -- llevaba asi desde el primer PR del repo (ae7878b), antes de la disciplina de \"cada cifra lleva fuente\". Comprobado a fondo antes de quitarlo, no solo no encontrado: FEDIAF (Tabla III-3a/III-3b) no da ningun maximo de fosforo, solo la nota \"h\" informativa sobre biodisponibilidad, sin cifra. NRC 2006 dice literalmente \"There are insufficient data on which to base an SUL for P in dogs\". Dobenecker et al. 2021 (PLOS ONE, el estudio mas especifico sobre toxicidad de fosforo en perros adultos sanos, ya en canislab-fuentes) concluye \"More work is needed... no-effect-levels can be defined\" -- ni la fuente mas centrada en el tema da un numero. AAFCO/SACN5 cap.6 solo dan MINIMO de fosforo (0,5% MS adulto), ningun maximo. El numero de 4000 recortaba activamente el menu automatico estandar de un adulto (justo en el limite, medido antes de quitarlo) contra un limite que nadie podia rastrear a ninguna fuente -- exactamente lo que la regla del proyecto prohibe."
   },
   {
     "nutriente": "Yodo",

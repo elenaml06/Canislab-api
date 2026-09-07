@@ -240,11 +240,18 @@ las tiene que tomar una persona, no yo.
 - [x] **`EPA_DHA_total` ya suma las dos claves.** Hecho el 25 de agosto,
       con claves derivadas en `valor_nutriente`. Detalle completo: `HECHO.md`.
 
-- [ ] **Repasar la transcripción de la tabla de FEDIAF.** En
-      `auditar_fediaf.py` la tabla III-3b está escrita a mano. La auditoría
-      compara el JSON contra ESA transcripción: si un número se tecleó mal
-      en los dos sitios igual, cuadra y nadie lo ve. Es leer las columnas
-      contra el PDF una vez, y ya queda cerrado. Nació el 25 de agosto,
+- [x] **Repasar la transcripción de la tabla de FEDIAF — HECHO el 7 de
+      septiembre.** En `auditar_fediaf.py` la tabla III-3b está escrita a
+      mano. La auditoría compara el JSON contra ESA transcripción: si un
+      número se tecleó mal en los dos sitios igual, cuadra y nadie lo ve.
+      Se extrajo la Tabla III-3b entera del PDF de nuevo (independiente de
+      la transcripción) y se comparó celda a celda, los 41 nutrientes:
+      **40 coinciden exactamente**. El único que no —
+      `MAXIMOS["Fósforo"] = 4000`— no era un error de transcripción, era
+      un número sin fuente que llevaba ahí desde el primer PR del repo
+      (`ae7878b`): ni FEDIAF, ni NRC 2006, ni Dobenecker et al. 2021 (el
+      estudio más específico sobre toxicidad de fósforo en perros) dan
+      ningún máximo. Quitado — ver `HECHO.md`. Nació el 25 de agosto,
       cuando apareció una fila (`Fibra`) que no era de FEDIAF y la
       auditoría la daba por buena. Ver el recuadro del apartado 5.
 

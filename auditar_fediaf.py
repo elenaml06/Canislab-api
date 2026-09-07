@@ -183,7 +183,6 @@ for nombre_json, (clave, factor) in EQUIV.items():
 # ══════════════════════════════════════════════════════════════════════
 MAXIMOS = {
  "Calcio":     {"Adulto": 6250, "CachorroJoven": 4000, "CachorroCrecimiento": 4500},
- "Fósforo":    {"Adulto": 4000},
  "Cobre":      {"todas": 2.80 * 2.5},
  "Yodo":       {"todas": 1.10 * 2.5 * 1000},
  "Hierro":     {"todas": 68.18 * 2.5},
@@ -206,9 +205,22 @@ MAXIMOS = {
 }
 # Nutrientes que NO tienen maximo en FEDIAF: que el JSON ponga "-" es lo
 # correcto, y ponerle un numero seria inventarselo. La vitamina E es uno.
+#
+# ⚠️ "Fósforo" se une a la lista el 7 de septiembre (2026), tras QUITAR un
+# maxAdulto=4000 que llevaba desde el primer PR del repo sin fuente. Ni
+# FEDIAF (Tabla III-3a/III-3b: solo la nota "h", informativa, sin cifra) ni
+# NRC 2006 ("There are insufficient data on which to base an SUL for P in
+# dogs") ni Dobenecker et al. 2021 (PLOS ONE, el estudio mas centrado en
+# toxicidad de fosforo en perros adultos sanos: "no-effect-levels can be
+# defined" -- todavia no hay ninguno) dan un maximo. El numero recortaba de
+# verdad el menu automatico estandar de un adulto contra un limite sin
+# origen. Si algun dia una fuente real da un numero, va aqui documentado
+# con su cita -- nunca inventado, igual que Vitamina_E o cualquier otro de
+# esta lista.
 SIN_MAXIMO = ("Proteína_total", "Grasa_total", "Vitamina_E", "Tiamina",
               "Riboflavina", "Acido_pantotenico", "Vitamina_B6", "Vitamina_B12",
               "Niacina", "Folato", "Colina", "Potasio", "Magnesio",
+              "Fósforo",
               "Linolénico", "EPA_DHA_total", "Araquidónico",
               "Arginina", "Histidina", "Isoleucina", "Leucina", "Metionina",
               "Metionina_cistina", "Fenilalanina", "Fenilalanina_tirosina",
