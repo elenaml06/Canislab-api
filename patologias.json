@@ -306,8 +306,20 @@
       "nombre": "Miocardiopatía dilatada respondedora a taurina",
       "formulable": true,
       "avisos": {
-        "general": "La taurina no está entre los 41 nutrientes que este motor mide (el catálogo no tiene analítica de taurina de ningún alimento), así que no hay un tope numérico que aplicar aquí. Lo que sí hace el motor: no excluye el corazón ni los músculos, que son las fuentes más ricas en taurina de una ración cruda. Si tu veterinario ha diagnosticado un déficit de taurina (analítica en sangre), la suplementación dirigida y el seguimiento de esa analítica son cosa suya, no de este menú.",
-        "profesional": "SACN5 5ª ed., cap.36 «Cardiovascular Disease» documenta la miocardiopatía dilatada por déficit de taurina (Pion et al, 1987) como reversible con suplementación. El motor no mide taurina: no puede garantizar un nivel mínimo, solo evitar excluir las fuentes obvias (corazón, músculo). La confirmación analítica y la dosis de suplementación son responsabilidad tuya."
+        "general": "⚠️ ACTUALIZADO (7 de septiembre 2026): la taurina y la L-carnitina ya están medidas en el catálogo (Spitze et al. 2003, principalmente) y este menú sube ambas por encima del mínimo general para asegurar que las fuentes más ricas en taurina de una ración cruda (corazón, músculo) no falten. Esto es un apoyo nutricional, no el tratamiento: si tu veterinario ha diagnosticado un déficit de taurina (analítica en sangre), la suplementación dirigida a dosis terapéuticas y el seguimiento de esa analítica siguen siendo cosa suya, no de este menú.",
+        "profesional": "SACN5 5ª ed., cap.36 «Cardiovascular Disease» documenta la miocardiopatía dilatada por déficit de taurina (Pion et al, 1987) como reversible con suplementación. El suelo de este menú (taurina 250, L-carnitina 50 mg/1000kcal) viene de la Tabla 36-4 del mismo capítulo y es un apoyo dietético, no la dosis terapéutica de un déficit ya diagnosticado -- esa suplementación y su seguimiento analítico siguen siendo responsabilidad tuya."
+      },
+      "suelos_por_1000kcal": {
+        "taurina": {
+          "valor": 250.0,
+          "fuente": "SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4, verificado 7-sep-2026",
+          "por_que": "Tabla 36-4 (perro): taurina ≥0,1% de materia seca. A 4000kcal/kgMS son 1000mg/4000kcal = 250 mg/1000kcal. Antes de esta fecha el motor no medía taurina en ningún alimento (activado el mismo día en verificar.MAPA, con dato ya en las 159 fichas del catálogo)."
+        },
+        "lcarnitina": {
+          "valor": 50.0,
+          "fuente": "SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4, verificado 7-sep-2026",
+          "por_que": "Tabla 36-4 (perro): L-carnitina ≥0,02% de materia seca. A 4000kcal/kgMS son 200mg/4000kcal = 50 mg/1000kcal. Mismo mecanismo y misma fecha de activación que la taurina de esta patología."
+        }
       },
       "formulable_por_profesional": true
     },

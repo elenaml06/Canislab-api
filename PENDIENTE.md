@@ -74,10 +74,11 @@ que tomar una persona, no yo.
 
 ## `PENDIENTE_NUTRICION.md` — auditado contra el PDF oficial
 
-- [ ] Contrastar con la ficha original de USDA (testículos de cordero: grasa y selenio son deducidos, no leídos)
-- [ ] El linoleico de la grasa de pollo sigue sin dato (y tiene máximo en cachorros)
+- [x] Contrastar con la ficha original de USDA — RESUELTO 7 sep: testículos de cordero ya no existe en el catálogo, timo de ternera ya cita FDC 170194 directo, y el acceso a USDA (`DEMO_KEY`) sí funciona (usado para el linoleico de abajo)
+- [x] El linoleico de la grasa de pollo — RESUELTO 7 sep: 19,5 g/100g, USDA FDC 173564
 - [ ] Plantearse que el aviso de datos incompletos no dependa de una lista mantenida a mano
 - [ ] Conseguir cifras verificadas de EPA/DHA para seis pescados (incluido el boquerón)
 - [ ] Completar las cuatro vísceras sin dato (bazo de vaca, páncreas de vaca, bazo de cordero, cerebro de ternera) — el 7 sep se corrigió que `sin_dato` ya diga la verdad (antes esos huecos contaban como cero medido); conseguir el dato real sigue pendiente
-- [ ] Decisión pendiente: `Laringe de vacuno` — ¿mover a Extras o quitar del catálogo?
-- [ ] Añadir vísceras e hígados de las especies que faltan (pollo, pavo, pato, cerdo)
+- [x] Decisión pendiente: `Laringe de vacuno` — RESUELTO 7 sep: movida a `Extras`
+- [ ] Añadir vísceras (no hígado) de las especies que faltan: pollo, pavo, conejo, pato, cerdo. El hígado ya no es el hueco — solo falta hígado de cerdo (pollo/pavo/pato ya existen, corregido 7 sep)
+- [x] Taurina y L-carnitina — RESUELTO 7 sep: dato en las 159 fichas y suelo activado en `dcm_taurina_respondedora` (250/50 mg/1000kcal, SACN5 cap.36)

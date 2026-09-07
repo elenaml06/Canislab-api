@@ -192,16 +192,22 @@ Validación: tras rellenarlos, la energía declarada cuadra con los macros
 por Atwater (ratio 1,01 y 1,00), lo que confirma que las cifras son
 coherentes entre sí.
 
-- [ ] **Contrastar esas cifras con la ficha original de USDA.** Se
-      recuperaron de espejos por buscador porque el entorno no tiene
-      acceso a `fdc.nal.usda.gov`. Dos valores de los testículos son
-      **deducidos, no leídos**, y van marcados como tal: la grasa (del
-      balance energético) y el selenio (del 48 % del valor diario que
-      publica la fuente, porque no da la cifra absoluta).
-- [ ] **El linoleico de la grasa de pollo sigue sin dato**, y esta vez no
-      por descuido: USDA no publica un valor diferenciado para ese
-      alimento. Importa porque el linoleico **tiene máximo** en cachorros,
-      y un hueco contado como cero no lo detectaría.
+- [x] **Contrastar esas cifras con la ficha original de USDA — RESUELTO,
+      y la premisa había caducado.** «El entorno no tiene acceso a
+      fdc.nal.usda.gov» dejó de ser cierto en algún punto posterior a
+      escribir esto: `api.nal.usda.gov/fdc/v1` responde con `DEMO_KEY`
+      (usado con éxito el 7 de septiembre para el linoleico de "Grasa de
+      pollo", FDC 173564). **Testículos de cordero ya no existe en el
+      catálogo** (retirado en algún punto posterior a esta nota — no hay
+      nada que contrastar). **Timo de ternera** ya cita FDC 170194
+      directamente en su `nota_datos` y se corrigió con esa misma ficha el
+      6 de septiembre (cobre, -27%) — ya está a la fuente primaria, no a un
+      espejo.
+- [x] **El linoleico de la grasa de pollo — RESUELTO el 7 de septiembre.**
+      19,5 g/100g, USDA FDC 173564 "Fat, chicken" (SR Legacy, NDB 4542):
+      su proteína (0) y grasa (99,8) ya coincidían exactas con esta ficha,
+      así que es con altísima probabilidad la misma fuente que el resto de
+      la fila. Cerrado en `alimentos_v3_final.json`.
 - [ ] Plantearse que el aviso de datos incompletos no dependa de una lista
       mantenida a mano: un alimento con el 90 % de los valores a cero es
       sospechoso por sí solo, lo declare o no.
@@ -232,18 +238,18 @@ ternera). Pasan a `sin_dato` para que salte el aviso de datos incompletos.
 - [ ] **Completar las cuatro vísceras** con la ficha de su fuente, igual
       que se hizo con el timo y los testículos.
 
-### Decisión pendiente: `Laringe de vacuno`
+### `Laringe de vacuno` — RESUELTO el 7 de septiembre
 
-Está en la categoría **Hueso carnoso** con **66 mg de calcio**. Los huesos
-carnosos de verdad traen entre 1.250 y 1.810. No es un error de dato: la
-laringe es cartílago, no hueso.
+Estaba en la categoría **Hueso carnoso** con **66 mg de calcio**. Los
+huesos carnosos de verdad traen entre 1.250 y 1.810. No era un error de
+dato: la laringe es cartílago, no hueso.
 
-El problema es que cuenta para el 20-60 % de hueso de la ración sin
-aportar el calcio que esa proporción da por supuesto. No es peligroso —el
-calcio tiene mínimo duro, así que el menú lo cubre igual— pero permite
-menús que parecen BARF sin serlo.
-
-- [ ] Decidir: moverla a `Extras`, o quitarla del catálogo.
+Se decidió moverla a **`Extras`**: bloqueada por tejido tiroideo desde el
+6 de septiembre (`TIROIDES_EXCLUIR`), nunca puede aportar hueso a ningún
+menú, así que la categoría antigua solo servía para disparar dos avisos
+ya conocidos en `auditar_catalogo.py`. 0 referencias en
+`catalogo_menus.json` (comprobado), así que no afecta a los menús
+precalculados.
 
 ### Qué alimentos faltan, con evidencia
 
@@ -259,15 +265,20 @@ Las vísceras y el hígado son lo que deja a un perro alérgico sin menú — es
 exactamente lo que medimos que bloqueaba al adulto con tres alergias. Y la
 causa es la variedad de especies, no el número de alimentos:
 
-- **Vísceras**: solo cordero, ternera y vaca. Faltan pollo, pavo, conejo,
-  pato y cerdo.
-- **Hígado**: solo conejo, cordero, pollo y vaca. Faltan pavo, pato, cerdo.
+- **Vísceras** (categoría "Vísceras", no hígado): **sigue siendo solo
+  cordero, ternera y vaca** (bazo, páncreas, cerebro, pulmón, riñón, timo).
+  Faltan pollo, pavo, conejo, pato y cerdo enteros — esto no ha cambiado.
+- **Hígado**: ⚠️ **CORREGIDO 7 de septiembre — esta lista estaba
+  desactualizada.** Ya existen hígado de pollo, pavo, pato, cordero,
+  conejo y vaca (verificado contra el catálogo real, no de memoria).
+  **Solo falta hígado de cerdo.**
 
-- [ ] Añadir vísceras e hígados de las especies que faltan. Lo más útil y
-      lo más fácil de encontrar en una carnicería: **corazón y molleja de
-      pollo y de pavo**, **hígado de pavo, de pato y de cerdo**, **riñón de
-      cerdo**. Cada especie nueva en esas dos categorías vale más que diez
-      cortes nuevos de carne muscular, que ya va sobrada.
+- [ ] Añadir vísceras (no hígado) de las especies que faltan: **corazón y
+      molleja de pollo y de pavo**, **riñón de cerdo**, y considerar
+      vísceras de conejo y pato. Es lo que sigue dejando a un perro con
+      alergias sin variedad en esta categoría — el hígado ya no es el
+      cuello de botella, las vísceras no-hígado sí.
+- [ ] **Hígado de cerdo**: única pieza que falta en esa categoría.
 
 Los pescados (20) no se ven afectados por las alergias a mamíferos, y por
 eso la escalera de relajación funciona: casi siempre queda pescado.
@@ -465,27 +476,25 @@ FEDIAF ya en vigor:
   mínimo FEDIAF (430) queda por debajo de 1,5× cualquiera de los topes
   de sodio ya aplicados (480 a 900), así que tampoco hace falta un tope
   nuevo.
-- **Taurina y L-carnitina** (≥250 y ≥50 mg/1000kcal): estos SÍ son
-  huecos reales, pero no por falta de dato limpio — es que ninguno de
-  los dos está entre los 41 nutrientes que mide el motor, ni en ninguna
-  ficha del catálogo. Esto es exactamente lo que ya documenta el aviso
-  de `dcm_taurina_respondedora` (añadida en la misma ronda): «la taurina
-  no está entre los 41 nutrientes que este motor mide». Añadirlos de
-  verdad significaría (a) sacar el dato de taurina y L-carnitina de las
-  159 fichas del catálogo, cosa que ni BEDCA ni USDA dan de forma
-  sistemática para muchos alimentos frescos, y (b) el motor solo sabe
-  poner TECHOS por patología, no SUELOS — un mínimo de taurina necesita
-  el mismo mecanismo nuevo que ya le faltaba a `artrosis` (omega-3) y
-  `dermatosis_zinc` (zinc), ver §12-quinquies de `VETERINARIOS.md`.
+- **Taurina y L-carnitina** (≥250 y ≥50 mg/1000kcal): ⚠️ **CERRADO el 7 de
+  septiembre — los dos huecos que bloqueaban esto ya no existen.** Cuando
+  se escribió este párrafo faltaban dos cosas: (a) el dato de taurina y
+  L-carnitina en el catálogo, y (b) el mecanismo de suelos por patología.
+  Las dos se resolvieron el mismo día: (a) las 159 fichas ya tienen
+  `taurina`/`lcarnitina` (Spitze et al. 2003, principalmente; `sin_dato`
+  donde no hay fuente fiable — nunca un número inventado), y (b) el
+  mecanismo de suelos se construyó y se usó primero en `artrosis` y
+  `dermatosis_zinc`. Con las dos piezas puestas, se activó el suelo real
+  de `dcm_taurina_respondedora` (taurina 250, L-carnitina 50 mg/1000kcal,
+  misma fuente SACN5 cap.36 Tabla 36-4 de aquí arriba), probado contra el
+  solver y verificado también en `_garantizar_verificado()` — no se quedó
+  en aviso.
 
-**Conclusión: los 5 estadios MMVD completos NO necesitan más números de
-los que ya tienen.** El reparto de macros "más allá del sodio" que
-proponía el borrador ya está cubierto en su totalidad por los mínimos de
-FEDIAF vigentes, excepto taurina y L-carnitina — y esos dos no son un
-hueco de verificación, son un hueco de arquitectura (falta el mecanismo
-de suelos por patología) y de catálogo (falta el dato). Se deja
-documentado aquí para que quede cerrado, no abierto esperando "una fuente
-más limpia" que ya se consiguió y no cambió la conclusión.
+**Conclusión: los 5 estadios MMVD completos ya no tienen ningún hueco
+pendiente.** El reparto de macros "más allá del sodio" que proponía el
+borrador está cubierto en su totalidad: los mínimos de FEDIAF vigentes
+para fósforo/potasio/magnesio/cloruro, y desde el 7 de septiembre también
+taurina y L-carnitina con su propio suelo activado.
 
 `alergia_alimentaria`, `cachorro_raza_grande`,
 `gestacion_lactancia_con_patologia`, `mucocele_biliar` y la partición de
@@ -590,11 +599,12 @@ mínimo). Con esto:
   20,8).
 
 Los dos probados contra el solver real (varios pesos/etapas) antes de
-darlos por buenos — mismo criterio que ya se aplicó a `obesidad`. Sigue
-sin ser posible para `dcm_taurina_respondedora` (taurina y L-carnitina no
-están en el catálogo ni en el MAPA de 41 nutrientes: el mecanismo nuevo no
-sirve de nada si no hay dato que sumar), documentado también en la
-sección de MMVD, arriba.
+darlos por buenos — mismo criterio que ya se aplicó a `obesidad`. ⚠️
+**ACTUALIZADO 7 de septiembre**: ya sí es posible para
+`dcm_taurina_respondedora` — taurina y L-carnitina se añadieron al
+catálogo y al MAPA (43 nutrientes) el mismo día, y el suelo (250/50
+mg/1000kcal) ya está activado y probado contra el solver, documentado en
+la sección de MMVD, arriba.
 
 **Un hallazgo de honestidad de datos que merece quedar escrito**: el
 primer intento de `obesidad` usó literalmente el número de SACN5 (≤9% MS

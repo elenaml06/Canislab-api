@@ -93,10 +93,14 @@ fijan un mínimo para perros. Ver la sección de fibra del documento de
 consultoría.
 
 **Taurina y L-carnitina (7 de septiembre)** tampoco son requisitos de
-FEDIAF para perros (sí lo es la taurina para gatos, Tabla III-4c) y
-tampoco se verifican hoy -- se guardan para el día que haya un suelo real
-por patología en `patologias.json` (candidata: `dcm_taurina_respondedora`
-y las cardiopatías). Las 159 fichas ya tienen las dos claves, con valor
+FEDIAF para perros (sí lo es la taurina para gatos, Tabla III-4c), así que
+no llevan mínimo ni máximo en `requerimientos_v2_final.json` para un perro
+sano -- **pero desde el mismo día sí están activadas** como suelo real de
+`dcm_taurina_respondedora` (taurina ≥250, L-carnitina ≥50 mg/1000kcal,
+SACN5 5ª ed. cap.36 Tabla 36-4), con el mismo mecanismo que ya usan
+`artrosis` y `dermatosis_zinc`: comprobado en el solver Y en
+`_garantizar_verificado()` (regla 2 del `CLAUDE.md`), no solo como aviso.
+Las 159 fichas ya tienen las dos claves, con valor
 real donde hay fuente fiable y `sin_dato` donde no la hay -- **no se ha
 inventado ningún número**. La fuente principal de taurina es Spitze,
 Wong, Rogers y Fascetti (2003), *J. Anim. Physiol. Anim. Nutr.* 87:251-262,

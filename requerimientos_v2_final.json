@@ -362,6 +362,28 @@
     "nota_auditoria": "FEDIAF NO da minimo ni maximo de fibra en la Tabla III-3b -- no es un requisito de FEDIAF, y por eso auditar_fediaf.py la lista en NO_SON_NUTRIENTES_DE_LA_TABLA en vez de compararla contra el PDF. Esta fila existe SOLO para que el motor pueda leer el nutriente (por eso esta tambien en verificar.MAPA) y mostrarlo en la ficha de cualquier menu sin exigir nada a un perro sano, y para que topes_de_patologias() pueda ponerle un suelo cuando una patologia concreta lo necesite con una fuente real -- nunca al reves: si algun dia esto lleva un numero en minAdulto/maxAdulto, deja de ser una excepcion documentada y vuelve a ser el fallo del 25 de agosto (ver PENDIENTE_NUTRICION.md parrafo 5, punto 3). Primer uso real: hiperlipidemia, suelo de 25 g/1000kcal, SACN5 cap.28."
   },
   {
+    "nutriente": "Taurina",
+    "unidad": "mg",
+    "minAdulto": "-",
+    "minCachorroJoven": "-",
+    "minCachorroCrecimiento": "-",
+    "maxCachorroJoven": "-",
+    "maxCachorroCrecimiento": "-",
+    "maxAdulto": "-",
+    "nota_auditoria": "AÑADIDA (7 septiembre 2026), MISMO PATRON QUE 'Fibra' -- FEDIAF no exige taurina en perro (si en gato, Tabla III-4c), asi que no es un requisito de la III-3b y no se compara contra el PDF: por eso esta en NO_SON_NUTRIENTES_DE_LA_TABLA. Esta fila existe SOLO para que el motor pueda leer la clave `taurina` (ya en las 159 fichas del catalogo desde el mismo dia) y para que topes_de_patologias() pueda ponerle un suelo por patologia con fuente real -- primer uso: dcm_taurina_respondedora, suelo 250 mg/1000kcal, SACN5 5a ed. cap.36 Tabla 36-4 (0,1% MS a 4000kcal/kgMS). Si algun dia esto lleva un numero en minAdulto/maxAdulto, deja de ser esta excepcion documentada y vuelve a ser el fallo del 25 de agosto de 'Fibra' (ver PENDIENTE_NUTRICION.md)."
+  },
+  {
+    "nutriente": "L_carnitina",
+    "unidad": "mg",
+    "minAdulto": "-",
+    "minCachorroJoven": "-",
+    "minCachorroCrecimiento": "-",
+    "maxCachorroJoven": "-",
+    "maxCachorroCrecimiento": "-",
+    "maxAdulto": "-",
+    "nota_auditoria": "AÑADIDA (7 septiembre 2026), MISMO PATRON QUE 'Fibra' Y 'Taurina' -- la L-carnitina no esta en ninguna tabla de FEDIAF para perro, asi que no es un requisito de la III-3b y no se compara contra el PDF: por eso esta en NO_SON_NUTRIENTES_DE_LA_TABLA. Esta fila existe SOLO para que el motor pueda leer la clave `lcarnitina` (ya en las 159 fichas del catalogo desde el mismo dia) y para que topes_de_patologias() pueda ponerle un suelo por patologia con fuente real -- primer uso: dcm_taurina_respondedora, suelo 50 mg/1000kcal, SACN5 5a ed. cap.36 Tabla 36-4 (0,02% MS a 4000kcal/kgMS). Si algun dia esto lleva un numero en minAdulto/maxAdulto, deja de ser esta excepcion documentada y vuelve a ser el fallo del 25 de agosto de 'Fibra' (ver PENDIENTE_NUTRICION.md)."
+  },
+  {
     "nutriente": "Arginina",
     "unidad": "g",
     "minAdulto": 1.51,

@@ -4445,13 +4445,19 @@ else:
     # no le da fila propia -- así que aparece siempre. Si el día de mañana
     # alguien le pone un número, dejará de estar aquí y este bloque avisará
     # (línea de arriba: "sí trae mínimo o máximo").
+    #
+    # ⚠️ ACTUALIZADO (7 septiembre, más tarde): "Taurina" y "L_carnitina" se
+    # unen por el MISMO motivo que Fibra -- no son requisito de FEDIAF para
+    # perro en ninguna etapa, así que sus filas traen "-" siempre. Es la
+    # activación como suelo de `dcm_taurina_respondedora`, no un requisito
+    # nuevo para perro sano.
     _sr38 = {x["nutriente"] for x in _d38 if x.get("sin_referencia")}
-    if _sr38 != {"Linolénico", "Araquidónico", "Fibra"}:
+    if _sr38 != {"Linolénico", "Araquidónico", "Fibra", "Taurina", "L_carnitina"}:
         fallos.append(f"BLOQUE38: los nutrientes sin referencia en adulto son {_sr38} y tenían "
                       f"que ser el linolénico, el araquidónico (FEDIAF pone «-» fuera de "
-                      f"crecimiento y reproducción) y la fibra (FEDIAF no le da fila en ninguna "
-                      f"etapa). Si aparece otro, o se ha perdido un valor de la tabla o se ha "
-                      f"dejado de escalar algo.")
+                      f"crecimiento y reproducción), la fibra y la taurina/L-carnitina (FEDIAF "
+                      f"no les da fila en ninguna etapa para perro). Si aparece otro, o se ha "
+                      f"perdido un valor de la tabla o se ha dejado de escalar algo.")
     _pcts38 = [x["cubre_pct"] for x in _d38 if x.get("cubre_pct") is not None]
     if _pcts38 != sorted(_pcts38):
         fallos.append("BLOQUE38: `dentro_de_rango` no viene ordenado por lo que va más justo. "

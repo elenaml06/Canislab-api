@@ -325,6 +325,14 @@ NO_SON_NUTRIENTES_DE_LA_TABLA = {
     # en minAdulto/maxAdulto: si algún día lo lleva, deja de ser esta
     # excepción documentada.
     "Fibra",
+    # ⚠️ AÑADIDAS (7 septiembre) -- MISMO CASO QUE "FIBRA": "Taurina" y
+    # "L_carnitina" no están en la Tabla III-3b de FEDIAF para perro (la
+    # taurina sí es requisito de gato, Tabla III-4c, pero esto es Rawku
+    # para perros), así que no hay fila del PDF contra la que compararlas.
+    # Existen para que verificar.MAPA pueda leer las claves y
+    # `topes_de_patologias()` pueda ponerles un suelo por patología con
+    # fuente real -- primer uso: dcm_taurina_respondedora, SACN5 cap.36.
+    "Taurina", "L_carnitina",
 }
 _cubiertos = set(EQUIV) | set(MAXIMOS) | set(SIN_MAXIMO) | NO_SON_NUTRIENTES_DE_LA_TABLA
 for _n in req:
@@ -345,19 +353,26 @@ for _n in req:
 # regla posible es que no lleve ninguno. El día que haga falta un suelo
 # real por patología, ese número vive en patologias.json (con fuente),
 # nunca aquí.
-_fibra_b = req.get("Fibra")
-if _fibra_b:
+#
+# ⚠️ GENERALIZADO (7 septiembre) a "Taurina" y "L_carnitina", mismo caso
+# y mismo motivo que "Fibra": las tres están en NO_SON_NUTRIENTES_DE_LA_TABLA
+# porque FEDIAF no les da número para perro, así que ninguna puede llevar
+# uno aquí sin repetir el fallo del 25 de agosto.
+for _fila_sin_numero in ("Fibra", "Taurina", "L_carnitina"):
+    _fb = req.get(_fila_sin_numero)
+    if not _fb:
+        continue
     for _campo_fibra in ("minAdulto", "minCachorroJoven", "minCachorroCrecimiento",
                          "maxAdulto", "maxCachorroJoven", "maxCachorroCrecimiento"):
-        _v_fibra = str(_fibra_b.get(_campo_fibra, "-"))
+        _v_fibra = str(_fb.get(_campo_fibra, "-"))
         if _v_fibra not in ("-", "", "None"):
-            problemas.append(("FIBRA CON NÚMERO", _campo_fibra,
-                              f"'Fibra' tiene {_v_fibra} en {_campo_fibra}, y FEDIAF no da "
-                              f"ningún valor de fibra en la Tabla III-3b. Es exactamente el "
-                              f"fallo del 25 de agosto (un mínimo/máximo inventado, sin "
-                              f"fuente, que el analizador acababa exigiendo). Si hace falta "
-                              f"un objetivo de fibra, va en patologias.json con su fuente, "
-                              f"nunca aquí."))
+            problemas.append((f"{_fila_sin_numero.upper()} CON NÚMERO", _campo_fibra,
+                              f"'{_fila_sin_numero}' tiene {_v_fibra} en {_campo_fibra}, y "
+                              f"FEDIAF no le da ningún valor a esto en la Tabla III-3b para "
+                              f"perro. Es exactamente el fallo del 25 de agosto (un mínimo/"
+                              f"máximo inventado, sin fuente, que el analizador acababa "
+                              f"exigiendo). Si hace falta un objetivo, va en patologias.json "
+                              f"con su fuente, nunca aquí."))
 
 if a_proposito:
     print()
