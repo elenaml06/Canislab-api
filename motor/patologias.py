@@ -60,9 +60,29 @@ def _a_forma_del_motor(crudo):
         topes = {n: t["valor"] for n, t in (p.get("topes_por_1000kcal") or {}).items()}
         if topes:
             e["max_por_1000kcal"] = topes
+        # ⚠️ AÑADIDO (7 septiembre) — LOS SUELOS, EL ESPEJO DE LOS TOPES.
+        # Hasta hoy una patología solo podía ENDURECER un máximo (artrosis
+        # quería más omega-3 que el mínimo normal, y no había manera de
+        # pedirlo). `suelos_por_1000kcal` es exactamente `topes_por_1000kcal`
+        # boca abajo: un mínimo reforzado, no un máximo rebajado. Mismas
+        # reglas de auditoría, en espejo -- ver `auditar_patologias.py`.
+        suelos = {n: t["valor"] for n, t in (p.get("suelos_por_1000kcal") or {}).items()}
+        if suelos:
+            e["min_por_1000kcal"] = suelos
         cond = p.get("max_pct_kcal_grasa_si_ademas")
         if cond:
             e["max_pct_kcal_grasa_si_ademas"] = (cond["valor"], tuple(cond["requiere"]))
+        # ⚠️ AÑADIDO (7 septiembre) — UN AVISO QUE SOLO SALTA POR LA
+        # COMBINACIÓN, no por cada patología sola. Caso que lo motivó:
+        # Fascetti & Delaney 2ª ed., cap.3, verificado contra el libro --
+        # "weight loss is never a goal during treatment and recovery from
+        # trauma and critical illness". `obesidad` sola es correcta; la
+        # combinación con una patología aguda necesita decirlo. Mismo
+        # patrón que `max_pct_kcal_grasa_si_ademas`, para texto en vez de
+        # un número.
+        aviso_cond = p.get("aviso_si_ademas")
+        if aviso_cond:
+            e["aviso_si_ademas"] = (aviso_cond["texto"], tuple(aviso_cond["requiere"]))
         for campo in ("solo_en_adulto", "en_crecimiento", "excluye_fruta",
                       "sin_dieta_automatica",
                       # ⚠️ LO DEL VETERINARIO (29 agosto). `formulable_por_

@@ -57,9 +57,9 @@
       "formulable": true,
       "topes_por_1000kcal": {
         "vitD": {
-          "valor": 20.0,
-          "fuente": "Máximo nutricional de FEDIAF 2025 (Tabla III-3b)",
-          "por_que": "No es un tope propio de la patología: es el máximo de FEDIAF, puesto aquí explícito porque en oxalato el exceso de vitamina D sí importa. En oxalato NO se baja el calcio: el calcio intestinal secuestra el oxalato y bajarlo empeora el problema (Today's Veterinary Practice 2025 citando a Carr 2020). OJO -- conflicto de fuentes, resuelto a favor de la más reciente: SACN5 5ª ed. (2010), cap.40 «Canine Calcium Oxalate Urolithiasis», Tabla 40-5, todavía recomendaba «Restrict dietary calcium to 0.4 to 0.7% DM» (bajar el calcio). Today's Veterinary Practice 2025 (citando a Carr 2020), que es la fuente que aquí se sigue, invierte esa recomendación: el calcio intestinal bajo aumenta la absorción de oxalato libre y empeora el problema -- es el cambio de paradigma que siguió a estudios de la década de 2010 sobre unión intestinal calcio-oxalato. Se mantiene la posición de NO bajar el calcio por ser la más reciente y la que tiene el mecanismo mejor descrito. SACN5 Tabla 40-5 sí coincide con lo ya aplicado en fósforo (0,3-0,6%MS = 0,75-1,5 g/1000kcal, dentro de rango normal) y en sodio (<0,3%MS = <7,5 g/1000kcal, sin tope propio hoy)."
+          "valor": 14.1875,
+          "fuente": "Máximo LEGAL de FEDIAF 2025 (Tabla III-3a, Reglamento (UE) 2017/1492), no el nutricional",
+          "por_que": "No es un tope propio de la patología: es el máximo de FEDIAF ya vigente para cualquier perro, puesto aquí explícito porque en oxalato el exceso de vitamina D sí importa. Actualizado 7-sep-2026: el valor era 20,0 (el máximo NUTRICIONAL antiguo, 800 UI); desde la corrección del 6-sep-2026 el máximo que manda es el LEGAL (14,1875 µg = 567,5 UI, más estricto). No cambiaba el menú real (el máximo de FEDIAF ya se aplicaba de por sí, y esta patología solo podía ENDURECER, nunca relajar), pero el número aquí escrito estaba desactualizado. En oxalato NO se baja el calcio: el calcio intestinal secuestra el oxalato y bajarlo empeora el problema (Today's Veterinary Practice 2025 citando a Carr 2020). OJO -- conflicto de fuentes, resuelto a favor de la más reciente: SACN5 5ª ed. (2010), cap.40 «Canine Calcium Oxalate Urolithiasis», Tabla 40-5, todavía recomendaba «Restrict dietary calcium to 0.4 to 0.7% DM» (bajar el calcio). Today's Veterinary Practice 2025 (citando a Carr 2020), que es la fuente que aquí se sigue, invierte esa recomendación: el calcio intestinal bajo aumenta la absorción de oxalato libre y empeora el problema -- es el cambio de paradigma que siguió a estudios de la década de 2010 sobre unión intestinal calcio-oxalato. Se mantiene la posición de NO bajar el calcio por ser la más reciente y la que tiene el mecanismo mejor descrito. SACN5 Tabla 40-5 sí coincide con lo ya aplicado en fósforo (0,3-0,6%MS = 0,75-1,5 g/1000kcal, dentro de rango normal) y en sodio (<0,3%MS = <7,5 g/1000kcal, sin tope propio hoy)."
         }
       },
       "avisos": {
@@ -273,7 +273,18 @@
       "avisos": {
         "general": "El adelgazamiento en Rawku se hace principalmente bajando las kcal totales al peso objetivo, que es como FEDIAF dice que hay que hacerlo -- este menú además limita la grasa dentro de esas kcal (hasta donde el catálogo real lo permite sin dejar de cumplir el resto de nutrientes: el ≤9% de materia seca del SACN5 no es alcanzable con comida de verdad, así que se usa 30 g/1000kcal en vez de 22,5). SACN5 (Tabla 27-4) recomienda también subir la fibra (12-25% de la materia seca, para dar saciedad) y añadir L-carnitina (≥300 ppm), pero ninguno de los dos es un dato que el catálogo tenga hoy -- ver PENDIENTE_NUTRICION.md §9. Es un menú de mantenimiento con menos grasa y menos kcal, no una reformulación completa de adelgazamiento."
       },
-      "formulable_por_profesional": true
+      "formulable_por_profesional": true,
+      "aviso_si_ademas": {
+        "requiere": [
+          "fracaso_renal_agudo",
+          "encefalopatia_hepatica",
+          "cancer_soporte",
+          "inmunosupresion",
+          "pancreatitis"
+        ],
+        "fuente": "Fascetti & Delaney, Applied Veterinary Clinical Nutrition, 2ª ed. (Wiley-Blackwell, 2024), cap.3 «Determining Energy Requirements» (Ramsey), verificado 7-sep-2026 contra el texto",
+        "texto": "Se ha marcado también una enfermedad aguda o crítica junto con el adelgazamiento. La fuente es literal: «weight loss is never a goal during treatment and recovery from trauma and critical illness» -- y también: «it should rarely be necessary to feed injured or ill cats and dogs above the predicted energy requirement for a healthy animal at maintenance». En fase aguda, revisa con tu veterinario si de verdad toca bajar peso ahora, o si conviene esperar a que la enfermedad esté estable."
+      }
     },
     "cardiopatia_a": {
       "nombre": "Cardiopatía, estadio ACVIM A (predispuesto, sin enfermedad todavía)",
@@ -352,9 +363,16 @@
       "nombre": "Artrosis / osteoartritis",
       "formulable": true,
       "avisos": {
-        "general": "SACN5 5ª ed., cap.34 «Nutritional Management of Osteoarthritis», Tabla 34-2, recomienda subir el omega-3 (EPA+DHA) por encima del mínimo normal por su efecto antiinflamatorio -- el motor ya exige un mínimo de EPA+DHA (0,11 g/1000kcal, ver requerimientos_v2_final.json), pero no hay hoy un mecanismo para pedirle un mínimo MÁS ALTO solo en artrosis (el motor solo sabe poner techos por patología, no suelos). Elegir pescado azul con frecuencia ayuda. La glucosamina y el condroitín sulfato, que también se citan, no son datos que el catálogo tenga de ningún alimento. Mantener el peso ideal es lo que más impacto tiene, y eso ya lo cubre el cálculo de peso objetivo del DER."
+        "general": "SACN5 5ª ed., cap.34 «Nutritional Management of Osteoarthritis», Tabla 34-2, recomienda subir el omega-3 (EPA+DHA) por encima del mínimo normal por su efecto antiinflamatorio -- el motor ya exige un mínimo de EPA+DHA (0,11 g/1000kcal, ver requerimientos_v2_final.json), pero no hay hoy un mecanismo para pedirle un mínimo MÁS ALTO solo en artrosis (a partir del 7 de septiembre el motor ya sabe pedir un mínimo reforzado: este menú exige al menos 1,0 g/1000kcal de EPA+DHA, casi diez veces el suelo general, eligiendo pescado azul con la frecuencia que haga falta. La glucosamina y el condroitín sulfato, que también se citan, no son datos que el catálogo tenga de ningún alimento. Mantener el peso ideal es lo que más impacto tiene, y eso ya lo cubre el cálculo de peso objetivo del DER."
       },
-      "formulable_por_profesional": true
+      "formulable_por_profesional": true,
+      "suelos_por_1000kcal": {
+        "epa_dha": {
+          "valor": 1.0,
+          "fuente": "SACN5 5ª ed., cap.34 «Nutritional Management of Osteoarthritis», Tabla 34-2, verificado 7-sep-2026",
+          "por_que": "Tabla 34-2: «Eicosapentaenoic acid 0.4 to 1.1%» (materia seca). A 4000kcal/kgMS son 1,0-2,75 g/1000kcal; se usa el extremo bajo (1,0) porque ya es varias veces el suelo general de EPA+DHA (0,11 g/1000kcal, NRC 2006) y es el que ya se ha probado que resuelve con el catalogo real. El mecanismo (min_por_1000kcal) se añadio el 7 de septiembre junto con este primer uso real: antes el motor solo sabia poner techos por patologia, nunca suelos."
+        }
+      }
     },
     "riesgo_gdv": {
       "nombre": "Riesgo de dilatación-vólvulo gástrico (razas grandes/profundas de tórax)",
@@ -412,9 +430,16 @@
       "nombre": "Dermatosis zinc-sensible (razas nórdicas, defecto de absorción)",
       "formulable": true,
       "avisos": {
-        "general": "Este es un defecto de ABSORCIÓN intestinal de zinc (husky siberiano, malamute de Alaska, sobre todo), no una falta de zinc en la dieta -- SACN5 5ª ed., cap.32 «Skin and Hair Disorders», Tabla 32-1, pide 100-200 mg/kg de materia seca (25-50 mg/1000kcal a 4000kcal/kgMS), que ya cae DENTRO del rango normal de FEDIAF para cualquier perro (20,8-56,75 mg/1000kcal): no hace falta ni es posible tratarlo subiendo el zinc de la comida. Lo que trata de verdad esta condición es la suplementación oral de zinc a dosis terapéuticas, pautada y vigilada por tu veterinario -- eso no es un ajuste de menú."
+        "general": "Este es un defecto de ABSORCIÓN intestinal de zinc (husky siberiano, malamute de Alaska, sobre todo), no una falta de zinc en la dieta -- SACN5 5ª ed., cap.32 «Skin and Hair Disorders», Tabla 32-1, pide 100-200 mg/kg de materia seca (25-50 mg/1000kcal a 4000kcal/kgMS), que ya cae DENTRO del rango normal de FEDIAF para cualquier perro (20,8-56,75 mg/1000kcal): no hace falta ni es posible tratarlo subiendo el zinc de la comida. Este menú sí sube el zinc de la dieta un poco por encima del mínimo general (25 en vez de 20,8 mg/1000kcal, SACN5 cap.32), pero eso es un apoyo, no el tratamiento: lo que trata de verdad esta condición es la suplementación oral de zinc a dosis terapéuticas, pautada y vigilada por tu veterinario."
       },
-      "formulable_por_profesional": true
+      "formulable_por_profesional": true,
+      "suelos_por_1000kcal": {
+        "zinc": {
+          "valor": 25.0,
+          "fuente": "SACN5 5ª ed., cap.32 «Skin and Hair Disorders», Tabla 32-1, verificado 7-sep-2026",
+          "por_que": "Tabla 32-1: «Zinc: Dogs: 100 to 200 mg/kg food DM». A 4000kcal/kgMS son 25-50 mg/1000kcal; se usa el extremo bajo (25) porque ya es un aumento real sobre el mínimo general de FEDIAF (20,8 mg/1000kcal), suficiente para probar que resuelve con el catálogo real."
+        }
+      }
     },
     "dermatitis_atopica": {
       "nombre": "Dermatitis atópica",

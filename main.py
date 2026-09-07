@@ -44,7 +44,7 @@ import persistencia
 from motor_completo import resolver as resolver_v2, especie_de
 # PATOLOGIAS: los topes por patología, para poder comprobarlos también
 # en la puerta de verificación (ver _tope_patologia_roto).
-from constructor import tabla_imputacion_maximos, valor_para_maximo
+from constructor import tabla_imputacion_maximos, valor_para_maximo, valor_nutriente
 from motor_completo import PATOLOGIAS, topes_de_patologias
 from exclusiones import filtrar as filtrar_exclusiones
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
@@ -84,7 +84,7 @@ def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=N
     # revalidar), así que con ponerlo en esta función sale en los ocho
     # sitios sin tocar la app ni añadir una clave nueva que alguien tenga
     # que acordarse de leer.
-    _topes, _pct, avisos_por_la_etapa = topes_de_patologias(patologias, etapa)
+    _topes, _pct, avisos_por_la_etapa, _suelos = topes_de_patologias(patologias, etapa)
     problemas += avisos_por_la_etapa
     return problemas
 
@@ -257,11 +257,31 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto"):
     # (25 agosto). Si aquí se leyeran otra vez a mano de la tabla, esta
     # comprobación y la restricción podrían decir cosas distintas -- que es
     # exactamente lo que pasó entre el analizador y el semáforo con la fibra.
-    topes, pct, _ = topes_de_patologias(patologias, etapa)
+    topes, pct, _, suelos = topes_de_patologias(patologias, etapa)
     for clave, tope in topes.items():
         v = por_1000(clave)
         if v > tope * MARGEN:
             rotos.append(f"{clave} {v:.1f} (tope {tope:.1f} por patología)")
+
+    # ⚠️ AÑADIDO (7 septiembre) — EL ESPEJO DEL CHEQUEO DE ARRIBA, PARA LOS
+    # SUELOS. Sin margen de redondeo A FAVOR (al revés que el tope: aquí lo
+    # que preocupa es quedarse CORTO, así que no se resta margen). Se usa
+    # `valor_nutriente` sin imputar huecos -- lo contrario que el tope de
+    # arriba, que imputa al percentil alto de la familia porque ahí el
+    # hueco preocuparía si se contara de menos. En un suelo, un hueco
+    # contado como algo que no se ha medido sería INFLAR el mínimo real;
+    # contarlo como 0 es el lado seguro.
+    def _por_1000_min(clave):
+        total = 0.0
+        for n, g in gramos.items():
+            total += valor_nutriente(al.get(n, {}).get("nutrientes", {}), clave) / 100.0 * g
+        return total / kcal * 1000.0
+
+    MARGEN_SUELO = 0.995
+    for clave, suelo in suelos.items():
+        v = _por_1000_min(clave)
+        if v < suelo * MARGEN_SUELO:
+            rotos.append(f"{clave} {v:.1f} (suelo {suelo:.1f} por patología)")
     if pct is not None:
         grasa_g = sum((_valor_num(al.get(n, {}).get("nutrientes", {}).get("grasa")) or 0.0) / 100.0 * g
                       for n, g in gramos.items())

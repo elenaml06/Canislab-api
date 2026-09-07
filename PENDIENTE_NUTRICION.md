@@ -530,18 +530,40 @@ objetivo terapéutico cae bajo el mínimo FEDIAF (`shunt_sin_encefalopatia`
 proteína 37,5-50, `encefalopatia_hepatica` proteína 25-37,5, ambas de
 SACN5 cap.68 Tabla 68-8). El resto (`cardiopatia_a`, `dcm_taurina_
 respondedora`, `dcm_asociada_a_dieta`, `fracaso_renal_agudo`,
-`enteropatia_cronica`, `artrosis`, `riesgo_gdv`, `disfuncion_cognitiva`,
-`raza_predispuesta_cobre`, `dermatosis_zinc`, `dermatitis_atopica`,
+`enteropatia_cronica`, `riesgo_gdv`, `disfuncion_cognitiva`,
+`raza_predispuesta_cobre`, `dermatitis_atopica`,
 `epilepsia_idiopatica`, `mielopatia_degenerativa`, `cushing`, `addison`,
 `cancer_soporte`, `inmunosupresion`) son informativas, sin tope numérico,
-porque en cada caso o (a) la fuente pide un SUELO más alto en vez de un
-techo — el motor solo sabe poner techos por patología, no suelos, así que
-subir el omega-3 en artrosis o el zinc en dermatosis_zinc por encima del
-mínimo de FEDIAF no es hoy mecánicamente posible —, o (b) el nutriente
-clave (taurina, L-carnitina, fibra, MCT) no está entre los 41 que mide el
-motor, o (c) el propio SACN5 dice que el tratamiento es farmacológico o de
-manejo, no dietético (Cushing, Addison, GDV, epilepsia). La tabla completa
-con la razón de cada una está en `VETERINARIOS.md` §12-bis.
+porque en cada caso o (a) el nutriente clave (taurina, L-carnitina, fibra,
+MCT) no está entre los 41 que mide el motor, o (b) el propio SACN5 dice
+que el tratamiento es farmacológico o de manejo, no dietético (Cushing,
+Addison, GDV, epilepsia). La tabla completa con la razón de cada una está
+en `VETERINARIOS.md` §12-bis.
+
+**Actualizado el 7 de septiembre — `artrosis` y `dermatosis_zinc` ya NO
+son informativas sin tope.** El motor solo sabía poner TECHOS por
+patología (el `min()` de todas las activas); artrosis y dermatosis_zinc
+necesitaban lo contrario, un SUELO más alto que el de FEDIAF, y eso no
+existía. Se añadió `min_por_1000kcal` en `motor/motor_completo.py`
+(espejo exacto de `max_por_1000kcal`, combinando con `max()` en vez de
+`min()` porque un suelo reforzado solo puede EXIGIR más, nunca menos), un
+campo nuevo `suelos_por_1000kcal` en `patologias.json`, y la comprobación
+espejo en `auditar_patologias.py` (una formulable no puede pedir un suelo
+por ENCIMA del máximo FEDIAF, igual que un tope no puede pedir MENOS del
+mínimo). Con esto:
+- `artrosis`: EPA+DHA ≥1,0 g/1000kcal (SACN5 cap.34 Tabla 34-2: EPA
+  0,4-1,1% MS: se usa el extremo bajo, ya varias veces el suelo general
+  de 0,11).
+- `dermatosis_zinc`: zinc ≥25 mg/1000kcal (SACN5 cap.32 Tabla 32-1: zinc
+  100-200 mg/kgMS; el extremo bajo, sobre el mínimo general de FEDIAF de
+  20,8).
+
+Los dos probados contra el solver real (varios pesos/etapas) antes de
+darlos por buenos — mismo criterio que ya se aplicó a `obesidad`. Sigue
+sin ser posible para `dcm_taurina_respondedora` (taurina y L-carnitina no
+están en el catálogo ni en el MAPA de 41 nutrientes: el mecanismo nuevo no
+sirve de nada si no hay dato que sumar), documentado también en la
+sección de MMVD, arriba.
 
 **Un hallazgo de honestidad de datos que merece quedar escrito**: el
 primer intento de `obesidad` usó literalmente el número de SACN5 (≤9% MS

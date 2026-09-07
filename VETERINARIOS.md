@@ -957,6 +957,32 @@ línea (`sin_dieta_automatica: true` + `formulable_por_profesional: true`
 + `motivo_no_formulable`) — se deja anotado aquí para que sea una decisión
 explícita, no un descuido.
 
+### Los suelos por patología (7 de septiembre): el espejo de los topes
+
+Hasta hoy el motor solo sabía ENDURECER un máximo por patología (`renal`
+bajando el fósforo). Cuando una fuente pedía lo contrario — un MÍNIMO más
+alto que el de FEDIAF, como el omega-3 de artrosis o el zinc de
+dermatosis_zinc — no había mecanismo que lo aplicara, y esas patologías se
+quedaban en "solo aviso" aunque el número existiera.
+
+Se añadió `suelos_por_1000kcal` en `patologias.json`, espejo exacto de
+`topes_por_1000kcal`: mismas reglas de auditoría (fuente y porqué
+obligatorios, la clave tiene que estar en el MAPA, y una `formulable:
+true` no puede pedir un suelo por encima del máximo de FEDIAF — el espejo
+de "no puede pedir un tope por debajo del mínimo"). En el solver, el suelo
+se combina con `max()` entre patologías activas (el más exigente gana,
+nunca se pierde al combinar dos), justo al revés que un tope (`min()`, el
+más restrictivo gana). Usa el mismo cajón que ya existía para el mínimo de
+calcio de raza grande (`minimos_reforzados`): es exactamente el mismo
+mecanismo, con una patología en vez de un tamaño de raza como motivo.
+
+**Primeros dos usos reales, cada uno probado contra el solver antes de
+darlo por bueno**: `artrosis` (EPA+DHA ≥1,0 g/1000kcal, SACN5 cap.34) y
+`dermatosis_zinc` (zinc ≥25 mg/1000kcal, SACN5 cap.32). No sirve para
+`dcm_taurina_respondedora`: taurina y L-carnitina no están entre los 41
+nutrientes del MAPA ni en el catálogo, así que no hay nada que sumar
+aunque el mecanismo ya exista.
+
 ### La tabla completa, generada del propio `patologias.json`
 
 | Patología | El tutor genera menú solo | Por qué bloquea (si bloquea) | Tope(s) |
@@ -986,13 +1012,13 @@ explícita, no un descuido.
 | `insuficiencia_pancreatica_exocrina` | ✅ Sí | — | grasa 37,5 (SACN5 cap.66; el tratamiento real es enzimático, no dietético) |
 | `fracaso_renal_agudo` | ✅ Sí | — | ninguno (a propósito: no es la restricción de `renal`, que es para crónica) |
 | `enteropatia_cronica` | ✅ Sí | — | ninguno (proteína única vía Alergias, si hace falta) |
-| `artrosis` | ✅ Sí | — | ninguno (sube omega-3 con pescado azul; el motor no sabe poner suelos por patología) |
+| `artrosis` | ✅ Sí | — | suelo EPA+DHA ≥1,0 g/1000kcal (SACN5 cap.34; desde el 7-sep, el motor ya sabe poner suelos por patología, ver §12-bis abajo) |
 | `riesgo_gdv` | ✅ Sí | — | ninguno (los factores de riesgo son de manejo, no de nutrientes) |
 | `disfuncion_cognitiva` | ✅ Sí | — | ninguno |
 | `shunt_sin_encefalopatia` | ❌ No | Razón A: proteína 37,5-50 bajo el mínimo FEDIAF (52,1) | — (solo aviso) |
 | `encefalopatia_hepatica` | ❌ No | Razón A: proteína 25-37,5, más estricto y temporal | — (solo aviso) |
 | `raza_predispuesta_cobre` | ✅ Sí | — | ninguno (sin diagnóstico confirmado no se baja del mínimo) |
-| `dermatosis_zinc` | ✅ Sí | — | ninguno (el defecto es de absorción, no de dieta) |
+| `dermatosis_zinc` | ✅ Sí | — | suelo zinc ≥25 mg/1000kcal (SACN5 cap.32; el defecto real es de absorción, no de dieta, así que esto es un apoyo, no el tratamiento) |
 | `dermatitis_atopica` | ✅ Sí | — | ninguno |
 | `epilepsia_idiopatica` | ✅ Sí | — | ninguno (sin evidencia de que la dieta cambie el curso) |
 | `mielopatia_degenerativa` | ✅ Sí | — | ninguno (peso ideal ya cubierto por el DER) |

@@ -99,6 +99,61 @@ def auditar(crudo=None, req=None):
                     f"o la patología pasa a `formulable: false` con su motivo. "
                     f"{'Si el tope solo vale en adulto, ponle `solo_en_adulto`.' if etiqueta != 'Adulto' else ''}")
 
+        # 4-bis. EL ESPEJO DE LA REGLA GRANDE, PARA LOS SUELOS (7 septiembre).
+        #    `suelos_por_1000kcal` es un mínimo reforzado (artrosis pide más
+        #    omega-3 que un perro sano) -- mismas dos reglas que un tope, con
+        #    los papeles cambiados: fuente y porqué obligatorios, la clave
+        #    tiene que existir en el MAPA, y una formulable no puede pedir
+        #    MÁS de lo que FEDIAF permite como máximo (si lo pide, ninguna
+        #    combinación de alimentos puede cumplir suelo y techo a la vez).
+        for clave, suelo in (p.get("suelos_por_1000kcal") or {}).items():
+            valor = _num(suelo.get("valor"))
+
+            if not (suelo.get("fuente") or "").strip():
+                problemas.append(f"{nombre_pat}/{clave}: el suelo {valor} no tiene FUENTE.")
+            if not (suelo.get("por_que") or "").strip():
+                problemas.append(f"{nombre_pat}/{clave}: el suelo {valor} no dice POR QUÉ es ese "
+                                 f"número y no otro.")
+
+            if clave not in por_clave:
+                problemas.append(f"{nombre_pat}/{clave}: esa clave NO está en el MAPA del "
+                                 f"verificador, así que este suelo no se aplica a nada. Claves "
+                                 f"válidas: {sorted(por_clave)}")
+                continue
+
+            r = req.get(por_clave[clave]) or {}
+            etapas = [("Adulto", "maxAdulto")]
+            if not p.get("solo_en_adulto"):
+                etapas += [("CachorroJoven", "maxCachorroJoven"),
+                           ("CachorroCrecimiento", "maxCachorroCrecimiento")]
+            for etiqueta, campo in etapas:
+                maximo = _num(r.get(campo))
+                if maximo is None or valor is None or valor <= maximo:
+                    continue
+                if formulable is False:
+                    continue      # terapéutico declarado: es correcto que pida más
+                problemas.append(
+                    f"{nombre_pat}/{clave}: suelo {valor} POR ENCIMA del máximo FEDIAF de "
+                    f"{etiqueta} ({maximo}), y la patología está marcada como formulable. "
+                    f"Ninguna combinación de alimentos puede cumplir un suelo por encima del "
+                    f"techo: o se baja el número, o la patología pasa a `formulable: false`.")
+
+        # 4-ter. EL AVISO POR COMBINACIÓN (7 septiembre) — mismo patrón que
+        #    `max_pct_kcal_grasa_si_ademas`: fuente obligatoria, y cada
+        #    clave que exige tiene que ser una patología que exista de
+        #    verdad, o el aviso nunca dispara y nadie se entera.
+        aviso_cond = p.get("aviso_si_ademas")
+        if aviso_cond:
+            if not (aviso_cond.get("fuente") or "").strip():
+                problemas.append(f"{nombre_pat}: `aviso_si_ademas` sin FUENTE.")
+            if not (aviso_cond.get("texto") or "").strip():
+                problemas.append(f"{nombre_pat}: `aviso_si_ademas` sin texto.")
+            for otra in (aviso_cond.get("requiere") or []):
+                if otra not in crudo["patologias"]:
+                    problemas.append(f"{nombre_pat}: `aviso_si_ademas.requiere` cita "
+                                     f"'{otra}', que no es ninguna patología de este archivo. "
+                                     f"El aviso nunca va a disparar.")
+
         # 5. Soltar un tope en crecimiento se dice SIEMPRE (regla 5 del
         #    CLAUDE.md: se puede bajar de peldaño, pero nunca en silencio).
         if p.get("solo_en_adulto"):
@@ -123,7 +178,9 @@ if __name__ == "__main__":
     crudo = cargar_crudo()
     fallos = auditar(crudo)
     n_topes = sum(len(p.get("topes_por_1000kcal") or {}) for p in crudo["patologias"].values())
-    print("%d patologías, %d topes numéricos" % (len(crudo["patologias"]), n_topes))
+    n_suelos = sum(len(p.get("suelos_por_1000kcal") or {}) for p in crudo["patologias"].values())
+    print("%d patologías, %d topes numéricos, %d suelos numéricos"
+          % (len(crudo["patologias"]), n_topes, n_suelos))
     print("─" * 60)
     if fallos:
         print("\n%d PROBLEMAS:\n" % len(fallos))
