@@ -1110,6 +1110,85 @@ hay más margen del que parece. Para cobre no hay número de NRC en el que
 apoyarse, y eso también hay que decirlo en la pantalla, no rellenarlo con
 un valor que suena a autoridad y no la tiene.
 
+### 12-quater. El mismo análisis, para las dos patologías que se bloquearon en la ronda SACN5
+
+`shunt_sin_encefalopatia` y `encefalopatia_hepatica` (añadidas el 6 de
+septiembre) bloquean por la misma Razón A que `hepatopatia`, pero por
+PROTEÍNA, no por cobre — así que el suelo real de NRC que aplica es
+exactamente el mismo que ya se citó arriba para la proteína renal: **el
+suelo NRC de proteína no es específico de cada enfermedad, es un único
+número (Sanderson et al. 2001, 20 g/1000 kcal) que aplica a cualquier
+restricción de proteína, venga de donde venga la enfermedad** — riñón,
+hígado o cualquier otra. Eso cambia la lectura de las dos:
+
+- **`shunt_sin_encefalopatia`** (objetivo SACN5: 37,5-50 g/1000 kcal).
+  Margen amplio sobre el suelo NRC (20): casi el doble en el extremo bajo.
+  Es la más segura de bajar de las cuatro que ya bloquean por proteína.
+- **`encefalopatia_hepatica`** (objetivo SACN5: 25-37,5 g/1000 kcal,
+  **temporal, "hasta que los signos resuelvan"**). El extremo bajo (25)
+  sigue con margen sobre 20, pero menos que shunt — y aquí SACN5 mismo
+  avisa de que es una restricción de urgencia, no de mantenimiento. Un
+  veterinario que la mantenga más de lo necesario, o que la aprieta hacia
+  20 sin vigilar taurina, entra en la misma zona documentada con el evento
+  adverso de Sanderson 2001.
+
+**Para la pantalla de prescripción (fase 4), esto quiere decir**: un
+campo de proteína objetivo con avisos en dos escalones, no uno — uno al
+cruzar el mínimo FEDIAF (52,1, ya lo hay) y un segundo, más serio, al
+cruzar por debajo de ~20-25 g/1000 kcal cerca del suelo de Sanderson,
+recordando el evento de taurina documentado y sugiriendo vigilar taurina
+en sangre si se sostiene ahí.
+
+### 12-quinquies. Qué preguntar en la pantalla del veterinario, patología por patología
+
+Escrito porque se preguntó directamente y no existía en ningún sitio: la
+Fase 4 (§10) describe el principio general de la prescripción, pero no
+qué campo concreto hay que desplegar para cada patología. Aquí sí, una
+por una — es una tabla de DISEÑO (para cuando se construya la pantalla),
+no código que exista hoy.
+
+**Grupo 1 — patologías bloqueadas al tutor: la pantalla necesita un
+campo numérico o un dato clínico que hoy no se pregunta a nadie.**
+
+| Patología | Qué preguntar | Por qué ese dato y no otro |
+|---|---|---|
+| `hepatopatia` | Objetivo de cobre (mg/1000kcal); ¿confirmado por biopsia hepática o ceruloplasmina, o solo predisposición racial? | Si no hay diagnóstico confirmado, la patología correcta es `raza_predispuesta_cobre` (formulable sin bajar de FEDIAF), no ésta |
+| `urato` | ¿Hay alopurinol pautado? ¿Qué alimentos concretos, más allá de vísceras, quiere excluir el veterinario? | Las purinas no tienen un suelo NRC — la decisión es de qué alimentos evitar, no de un número |
+| `cistina` | pH urinario actual (analítica); objetivo de metionina+cistina (g/1000kcal) | Con pH >7,1 la cistina es soluble aunque la dieta no baje del todo — el pH manda sobre el número |
+| `estruvita` | pH urinario actual y objetivo; ¿fase disolución o prevención? | Los rangos de SACN5 cap.43 son distintos para cada fase (proteína ≤8% disolución vs <25% prevención) |
+| `shunt_sin_encefalopatia` | Objetivo de proteína (g/1000kcal); ¿hay signos neurológicos AHORA? | Si los hay, la patología correcta es `encefalopatia_hepatica` (más estricta), no ésta |
+| `encefalopatia_hepatica` | Objetivo de proteína (g/1000kcal); fecha de reevaluación | Es temporal por diseño (SACN5: "until signs resolve") — sin fecha de reevaluación, una restricción de urgencia se queda fija para siempre |
+| `otra` | Campo de texto libre + contacto del veterinario | No hay regla nutricional que aplicar: la pantalla solo puede registrar que un profesional se hizo cargo fuera del motor |
+
+**Grupo 2 — patologías formulables para el tutor, pero que hoy usan una
+entrada genérica porque la app no pregunta el matiz clínico.** Aquí no
+hace falta acreditación de veterinario para preguntarlo — es información
+que el tutor ya tiene porque se la dijo su veterinario — pero sin la
+pregunta, la app no sabe qué entrada específica usar:
+
+| Patología genérica hoy | Qué preguntar | Qué activa cada respuesta |
+|---|---|---|
+| `cardiopatia` | Estadio ACVIM, si se conoce (A/B1/B2/C/D) | `cardiopatia_a/_b1/_b2/_c/_d` en vez de la genérica (900 mg de sodio); ver §12-bis |
+| `renal` | Estadio IRIS, si se conoce (hoy no cambia nada — pendiente partir `renal` en 4 entradas, ver PENDIENTE_NUTRICION.md §10) | Hoy: nada, usa siempre el fósforo más restrictivo que cabe en FEDIAF. El día que se parta, el estadio decidirá la entrada |
+| junto con `renal` | UPC (cociente proteína:creatinina urinaria), si hay proteinuria | Añade `renal_proteinuria` a la lista de patologías (hoy solo informativo, sin recorte automático) |
+| `hepatopatia` vs `raza_predispuesta_cobre` | ¿Diagnóstico confirmado (biopsia/cobre hepático) o solo raza predispuesta? | Decide cuál de las dos entradas usar — ver Grupo 1 |
+| `shunt_sin_encefalopatia` vs `encefalopatia_hepatica` | ¿Hay signos neurológicos activos ahora? | Decide cuál de las dos usar — ver Grupo 1 |
+| `diabetes` | ¿Hay pancreatitis o hipertrigliceridemia diagnosticada además? | Activa `max_pct_kcal_grasa_si_ademas` (baja la grasa al 30% de las kcal) — hoy se consigue añadiendo también `pancreatitis` a la lista, no hace falta un campo nuevo |
+| `cushing` / `addison` | ¿Hay diabetes o hiperlipidemia diagnosticada además? | Igual que el caso anterior: añadir también esa patología a la lista activa sus ajustes |
+| `insuficiencia_pancreatica_exocrina` | ¿Dosis de enzima pancreática pautada? | No cambia el motor (la app no dosifica enzimas), pero sin esta pregunta el aviso "esto es un apoyo, no el tratamiento" queda descontextualizado — vale para que la pantalla muestre al veterinario qué SÍ está ajustando el menú y qué no |
+
+**Grupo 3 — el resto (`renal_proteinuria` en solitario, `pancreatitis`,
+`oxalato`, `dcm_taurina_respondedora`, `dcm_asociada_a_dieta`,
+`hiperlipidemia`, `obesidad`, `ple_linfangiectasia`, `fracaso_renal_agudo`,
+`enteropatia_cronica`, `artrosis`, `riesgo_gdv`, `disfuncion_cognitiva`,
+`dermatosis_zinc`, `dermatitis_atopica`, `epilepsia_idiopatica`,
+`mielopatia_degenerativa`, `cancer_soporte`, `inmunosupresion`,
+`hipotiroidismo`)**: ninguna pregunta adicional. Se activan con el
+checkbox estándar de "mi perro tiene esto", igual que cualquier patología
+de la lista, y el ajuste (o el aviso de por qué no hay ajuste) es siempre
+el mismo una vez marcada. Añadir una pregunta aquí sería preguntar por
+preguntar: no hay ninguna decisión que dependa de la respuesta.
+
 ## 13. Lo que sigue abierto — y no lo decide un programador
 
 - **Qué dice el documento sobre qué se firma exactamente** — ver el final

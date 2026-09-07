@@ -24,6 +24,7 @@ sys.path.insert(0, '.')
 sys.path.insert(0, './motor')
 
 from motor_completo import resolver, patologias_bloquean, especie_de
+from exclusiones import _palabras as _palabras_b11
 from constructor import cargar, MARGENES
 from verificar import verificar
 from requisitos import dosis_maxima_fabricante
@@ -1049,7 +1050,14 @@ if _r.get("factible"):
                       "no hay nada que colar — este caso no prueba nada")
     _nala = next((p for p in _r["perros"] if p["nombre"] == "Nala"), {})
     _menu_nala = (_nala.get("menus") or [{}])[0].get("menu") or {}
-    _colados = [n for n in _menu_nala if "pollo" in n.lower()]
+    # ⚠️ ARREGLADO (7 septiembre) — FALSO POSITIVO ENCONTRADO: comparaba por
+    # SUBCADENA ("pollo" in n.lower()), y "Repollo" (una verdura, sin
+    # ninguna relación con el pollo) contiene "pollo" como subcadena. El
+    # motor real nunca tiene este fallo -- usa `_palabras()` de
+    # exclusiones.py, que compara por PALABRA completa, igual que aquí
+    # ahora. Confirmado: el menú de Nala nunca llevó pollo de verdad, era
+    # la prueba la que se equivocaba, no el motor.
+    _colados = [n for n in _menu_nala if "pollo" in _palabras_b11(n)]
     if _colados:
         fallos.append(f"BLOQUE11 alergias: parecerse coló un alérgeno en el menú "
                       f"del perro alérgico: {_colados}")
@@ -1315,7 +1323,11 @@ _NUMEROS_REVISADOS_B13 = [
     # (patologías, etapa, topes esperados, % de grasa esperado)
     (["renal"],                  "Adulto",             {"fosforo": 1200.0}, None),
     (["renal"],                  "CachorroCrecimiento", {},                 None),
-    (["pancreatitis"],           "Adulto",             {"grasa": 20.0},     None),
+    # ⚠️ AÑADIDO (6-sep-2026) — SACN5 cap.67 Tabla 67-3 confirmó el tope de
+    # grasa y añadió uno de proteína (75 g/1000kcal) que no existía: los
+    # aminoácidos libres estimulan la secreción pancreática incluso más
+    # que la grasa. Ver patologias.json / PENDIENTE_NUTRICION.md §10.
+    (["pancreatitis"],           "Adulto",             {"grasa": 20.0, "proteina": 75.0}, None),
     (["pancreatitis"],           "CachorroJoven",      {},                  None),
     (["cardiopatia"],            "Adulto",             {"sodio": 900.0},    None),
     (["oxalato"],                "Adulto",             {"vitD": 20.0},      None),
@@ -1324,7 +1336,7 @@ _NUMEROS_REVISADOS_B13 = [
     # es fibra alta e índice glucémico bajo. Solo con pancreatitis o
     # hipertrigliceridemia concurrente se baja al 30%.
     (["diabetes"],               "Adulto",             {},                  None),
-    (["diabetes", "pancreatitis"], "Adulto",           {"grasa": 20.0},     0.30),
+    (["diabetes", "pancreatitis"], "Adulto",           {"grasa": 20.0, "proteina": 75.0}, 0.30),
 ]
 for _pats, _et, _esperados, _esperado_pct in _NUMEROS_REVISADOS_B13:
     _t, _p, _ = _topes_b13(_pats, _et)
@@ -4416,12 +4428,20 @@ for _p39 in _BLOQUEADAS39:
                       f"veterinario. Al dueño se le dice «no generamos menú» y al veterinario se "
                       f"le genera: no pueden decir lo mismo.")
 
-# (e) Las cuatro que necesitarían bajar de FEDIAF siguen marcadas, porque son
+# (e) Las que necesitarían bajar de FEDIAF siguen marcadas, porque son
 # las que definen qué necesita firma cuando llegue la prescripción.
+#
+# ⚠️ AÑADIDO (6-sep-2026): `shunt_sin_encefalopatia` y
+# `encefalopatia_hepatica` se sumaron con la ronda SACN5 cap.68 Tabla 68-8
+# (proteína 37,5-50 y 25-37,5 g/1000kcal, ambas bajo el mínimo FEDIAF de
+# 52,1) -- son las mismas DOS razones (cobre / proteína) que ya bloqueaban
+# `hepatopatia`, aplicadas a los otros dos cuadros clínicos hepáticos.
 _bajo39 = {k for k, v in _P39.items() if v.get("necesita_bajo_fediaf")}
-if _bajo39 != {"hepatopatia", "urato", "cistina", "renal"}:
+_bajo39_esperado = {"hepatopatia", "urato", "cistina", "renal",
+                    "shunt_sin_encefalopatia", "encefalopatia_hepatica"}
+if _bajo39 != _bajo39_esperado:
     fallos.append(f"BLOQUE39: las marcadas `necesita_bajo_fediaf` son {_bajo39} y tenían que ser "
-                  f"hepatopatía, urato, cistina y renal. Esa lista es la que define qué necesita "
+                  f"{_bajo39_esperado}. Esa lista es la que define qué necesita "
                   f"firma el día que exista la prescripción.")
 
 # (f) SEGURIDAD: el rol NO puede venir del cliente. Se manda un booleano por
