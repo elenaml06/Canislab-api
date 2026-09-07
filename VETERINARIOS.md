@@ -1000,6 +1000,7 @@ explícita, no un descuido.
 | `addison` | ✅ Sí | — | ninguno (¡no restringir sodio: Addison lo pierde, no lo retiene!) |
 | `cancer_soporte` | ✅ Sí | — | ninguno (el perfil BARF ya encaja con lo que pide SACN5) |
 | `inmunosupresion` | ✅ Sí | — | ninguno (aviso sobre riesgo de patógenos de la comida cruda) |
+| `renal_avanzada` | ❌ No | Razón A: proteína 35-50 bajo el mínimo FEDIAF (52,1); SACN5 confirma evidencia Grade III de la restricción de fósforo específicamente aquí | fósforo 1200 (igual que `renal`) |
 
 Para las que bloquean, un veterinario acreditado (fase 1+) SÍ puede
 formular — es exactamente el punto de `formulable_por_profesional: true`,
@@ -1110,16 +1111,17 @@ hay más margen del que parece. Para cobre no hay número de NRC en el que
 apoyarse, y eso también hay que decirlo en la pantalla, no rellenarlo con
 un valor que suena a autoridad y no la tiene.
 
-### 12-quater. El mismo análisis, para las dos patologías que se bloquearon en la ronda SACN5
+### 12-quater. El mismo análisis, para las patologías que se bloquearon en la ronda SACN5
 
-`shunt_sin_encefalopatia` y `encefalopatia_hepatica` (añadidas el 6 de
-septiembre) bloquean por la misma Razón A que `hepatopatia`, pero por
-PROTEÍNA, no por cobre — así que el suelo real de NRC que aplica es
-exactamente el mismo que ya se citó arriba para la proteína renal: **el
-suelo NRC de proteína no es específico de cada enfermedad, es un único
-número (Sanderson et al. 2001, 20 g/1000 kcal) que aplica a cualquier
-restricción de proteína, venga de donde venga la enfermedad** — riñón,
-hígado o cualquier otra. Eso cambia la lectura de las dos:
+`shunt_sin_encefalopatia`, `encefalopatia_hepatica` y `renal_avanzada`
+(añadidas el 6-7 de septiembre) bloquean por la misma Razón A que
+`hepatopatia` y `renal`, pero por PROTEÍNA, no por cobre ni fósforo — así
+que el suelo real de NRC que aplica es exactamente el mismo que ya se citó
+arriba para la proteína renal: **el suelo NRC de proteína no es específico
+de cada enfermedad, es un único número (Sanderson et al. 2001, 20 g/1000
+kcal) que aplica a cualquier restricción de proteína, venga de donde venga
+la enfermedad** — riñón, hígado o cualquier otra. Eso cambia la lectura de
+las tres:
 
 - **`shunt_sin_encefalopatia`** (objetivo SACN5: 37,5-50 g/1000 kcal).
   Margen amplio sobre el suelo NRC (20): casi el doble en el extremo bajo.
@@ -1131,6 +1133,12 @@ hígado o cualquier otra. Eso cambia la lectura de las dos:
   veterinario que la mantenga más de lo necesario, o que la aprieta hacia
   20 sin vigilar taurina, entra en la misma zona documentada con el evento
   adverso de Sanderson 2001.
+- **`renal_avanzada`** (objetivo SACN5: 35-50 g/1000 kcal, mismo rango que
+  la `renal` de base — la diferencia entre las dos no está en el número,
+  sino en que aquí SACN5 documenta evidencia real (Grade III, Tabla 37-10)
+  de que restringir también el fósforo ayuda a frenar la progresión,
+  mientras que en estadios más tempranos esa evidencia es más débil
+  (Grade IV). Mismo margen sobre el suelo de Sanderson que shunt.
 
 **Para la pantalla de prescripción (fase 4), esto quiere decir**: un
 campo de proteína objetivo con avisos en dos escalones, no uno — uno al
@@ -1158,6 +1166,7 @@ campo numérico o un dato clínico que hoy no se pregunta a nadie.**
 | `estruvita` | pH urinario actual y objetivo; ¿fase disolución o prevención? | Los rangos de SACN5 cap.43 son distintos para cada fase (proteína ≤8% disolución vs <25% prevención) |
 | `shunt_sin_encefalopatia` | Objetivo de proteína (g/1000kcal); ¿hay signos neurológicos AHORA? | Si los hay, la patología correcta es `encefalopatia_hepatica` (más estricta), no ésta |
 | `encefalopatia_hepatica` | Objetivo de proteína (g/1000kcal); fecha de reevaluación | Es temporal por diseño (SACN5: "until signs resolve") — sin fecha de reevaluación, una restricción de urgencia se queda fija para siempre |
+| `renal_avanzada` | Creatinina/SDMA más recientes (para IRIS 3 vs 4, aunque hoy el motor no distingue entre ellos); objetivo de proteína (g/1000kcal) | Sin ese dato no se sabe si corresponde `renal` (formulable) o `renal_avanzada` (bloqueada) — ver fila de `renal` abajo |
 | `otra` | Campo de texto libre + contacto del veterinario | No hay regla nutricional que aplicar: la pantalla solo puede registrar que un profesional se hizo cargo fuera del motor |
 
 **Grupo 2 — patologías formulables para el tutor, pero que hoy usan una
@@ -1169,7 +1178,7 @@ pregunta, la app no sabe qué entrada específica usar:
 | Patología genérica hoy | Qué preguntar | Qué activa cada respuesta |
 |---|---|---|
 | `cardiopatia` | Estadio ACVIM, si se conoce (A/B1/B2/C/D) | `cardiopatia_a/_b1/_b2/_c/_d` en vez de la genérica (900 mg de sodio); ver §12-bis |
-| `renal` | Estadio IRIS, si se conoce (hoy no cambia nada — pendiente partir `renal` en 4 entradas, ver PENDIENTE_NUTRICION.md §10) | Hoy: nada, usa siempre el fósforo más restrictivo que cabe en FEDIAF. El día que se parta, el estadio decidirá la entrada |
+| `renal` | Creatinina/SDMA (o el estadio IRIS si el veterinario ya lo dio) | Decide entre `renal` (IRIS 1-2, o sin dato — sigue formulable) y `renal_avanzada` (IRIS 3-4 — bloquea, Razón A). No hay una entrada por cada uno de los 4 estadios IRIS: verificado el 7 de septiembre contra la fuente primaria (`IRIS_CKD_Staging_Modified_2026.pdf`, en canislab-fuentes) y esa guía SOLO estadía por creatinina/SDMA, no da ni un número de dieta — los números por estadio que proponía el borrador citaban un documento ("IRIS 2023 + ACVN") que no está en canislab-fuentes y no se pueden verificar, así que no se usan |
 | junto con `renal` | UPC (cociente proteína:creatinina urinaria), si hay proteinuria | Añade `renal_proteinuria` a la lista de patologías (hoy solo informativo, sin recorte automático) |
 | `hepatopatia` vs `raza_predispuesta_cobre` | ¿Diagnóstico confirmado (biopsia/cobre hepático) o solo raza predispuesta? | Decide cuál de las dos entradas usar — ver Grupo 1 |
 | `shunt_sin_encefalopatia` vs `encefalopatia_hepatica` | ¿Hay signos neurológicos activos ahora? | Decide cuál de las dos usar — ver Grupo 1 |

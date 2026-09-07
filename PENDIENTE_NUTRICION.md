@@ -391,16 +391,37 @@ disponible**: se verificaron y añadieron 23 patologías más (de 16 a 39 en
 FEDIAF, nunca de memoria ni del borrador sin comprobar — ver el detalle
 completo, con las tablas y capítulos citados, en §10 más abajo.
 
-**Lo que sigue sin entrar, y por qué, tras esta ronda**: los 4 estadios
-IRIS renales completos como entradas separadas (`erc_iris_1` a `_4` con
-fósforo Y proteína por estadio) — hoy `renal` sigue siendo una sola
-entrada con el fósforo más restrictivo que cabe dentro de FEDIAF, sin
-diferenciar estadio; partirla en 4 es la pieza más grande que queda y
-necesita decidir primero cómo la app pregunta el estadio IRIS (ese sí es
-trabajo de producto, no solo de motor, igual que pasó con el estadio
-ACVIM de cardiopatía). Los 5 estadios MMVD completos con reparto de
-macros más allá del sodio tampoco se han hecho: hoy `cardiopatia_a` a
-`_d` solo tocan sodio, que es lo único con fuente sólida encontrada.
+**Actualizado el 7 de septiembre — la renal SÍ se partió, pero en DOS, no
+en 4**: se buscó la fuente primaria que citaba el borrador para los 4
+estadios IRIS ("IRIS 2023 + ACVN") y no existe en `canislab-fuentes` —
+solo hay `IRIS_Guidelines/IRIS_CKD_Staging_Modified_2026.pdf`, que es
+la guía de ESTADIAJE de verdad (creatinina/SDMA, sustadiaje por
+proteinuria y presión) y no contiene ni un solo número de dieta. Con lo
+que SÍ hay (SACN5 cap.37, Tabla 37-9 y 37-10), la única distinción
+verificable es de DOS grupos, no cuatro: la restricción de fósforo tiene
+evidencia real (Grade III) específicamente en IRIS 3-4, donde además la
+proteína (35-50 g/1000kcal) ya cae bajo el mínimo FEDIAF; en IRIS 1-2 la
+evidencia es más débil (Grade IV) y no hay un número de fósforo propio.
+Se añadió `renal_avanzada` (bloqueada, mismo fósforo que `renal` pero con
+la proteína documentada por debajo del mínimo) y se dejó `renal` tal cual
+para 1-2 o cuando no se conoce el estadio. Partir en los 4 estadios
+exactos del borrador significaría inventar tres números sin fuente —
+exactamente lo que la regla de este proyecto prohíbe.
+
+También se cruzó `cardiopatia_b2/_c/_d` contra SACN5 cap.36 Tabla 36-4
+(sodio por clase ISACHC): confirma el PATRÓN de restringir más cuanto más
+avanzada la enfermedad, pero no se cambiaron los números — SACN5 usa la
+clasificación ISACHC (I/II/III), no la ACVIM (A-D) de esta app, y el
+consenso ACVIM 2019 (Keene et al.) ya citado es la fuente más moderna y
+específica para MMVD. El resto de la Tabla 36-4 (fósforo, potasio,
+magnesio, taurina, L-carnitina) llegó con las columnas visiblemente
+descolocadas por el OCR del PDF — no se ha usado nada de eso: un dato que
+no se puede leer con confianza no es un dato, y forzar una lectura
+arriesgaría asignar un número al nutriente equivocado. Los 5 estadios
+MMVD completos con reparto de macros más allá del sodio siguen sin
+hacerse por este motivo — necesitaría releer esa tabla desde un PDF
+limpio antes de poder usarla.
+
 `alergia_alimentaria`, `cachorro_raza_grande`,
 `gestacion_lactancia_con_patologia`, `mucocele_biliar` y la partición de
 `pancreatitis` en dos se dejaron fuera a propósito — el porqué de cada

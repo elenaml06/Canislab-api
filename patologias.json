@@ -121,7 +121,7 @@
         "sodio": {
           "valor": 900.0,
           "fuente": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio",
-          "por_que": "ACVIM 2019 pide «mild dietary sodium restriction» en B2 sin dar cifra; la escala moderna por estadio la sitúa en 80-99 mg/100 kcal (800-990 mg/1000 kcal). 900 es el mismo valor que ya usaba la entrada genérica 'cardiopatia', ahora explícito para quien sabe que su perro está en B2."
+          "por_que": "ACVIM 2019 pide «mild dietary sodium restriction» en B2 sin dar cifra; la escala moderna por estadio la sitúa en 80-99 mg/100 kcal (800-990 mg/1000 kcal). 900 es el mismo valor que ya usaba la entrada genérica 'cardiopatia', ahora explícito para quien sabe que su perro está en B2. Confirmado 7-sep-2026 contra SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4: sodio «Class Ia = 0,15 a 0,25% (375-625 mg/1000kcal a 4000kcal/kgMS); Class Ib, II y III = 0,08 a 0,15% (200-375 mg/1000kcal)». Confirma el PATRÓN (restringir más cuanto más avanzada la enfermedad) pero no se sustituyen los números: SACN5 usa la clasificación ISACHC (I/II/III), no la ACVIM (A/B1/B2/C/D) que usa esta app, y las dos NO son intercambiables grado a grado -- además el consenso ACVIM 2019 (Keene et al.) es la fuente específica de miocardiopatía/insuficiencia mitral más moderna y más citada en cardiología veterinaria de pequeños animales que un capítulo general de un libro de texto de 2010. El extremo bajo de Class Ib/II/III (200 mg) cae POR DEBAJO del mínimo FEDIAF (290): confirma que un cardiópata en fase avanzada, si se sigue la restricción más agresiva de la literatura, puede necesitar bajar de FEDIAF -- que es justo por lo que «cardiopatia_d» (480, con margen sobre 290) se quedó formulable a propósito, sin llegar ahí."
         }
       },
       "avisos": {
@@ -137,7 +137,7 @@
         "sodio": {
           "valor": 790.0,
           "fuente": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio",
-          "por_que": "La escala moderna por estadio sitúa el estadio C en 50-79 mg/100 kcal (500-790 mg/1000 kcal). Se usa el extremo MENOS restrictivo del rango (790): una restricción severa puede activar el sistema renina-angiotensina-aldosterona y empeorar el pronóstico, y la prioridad clínica en insuficiencia cardíaca es que el perro siga comiendo lo suficiente, no apretar el sodio al máximo."
+          "por_que": "La escala moderna por estadio sitúa el estadio C en 50-79 mg/100 kcal (500-790 mg/1000 kcal). Se usa el extremo MENOS restrictivo del rango (790): una restricción severa puede activar el sistema renina-angiotensina-aldosterona y empeorar el pronóstico, y la prioridad clínica en insuficiencia cardíaca es que el perro siga comiendo lo suficiente, no apretar el sodio al máximo. Confirmado 7-sep-2026 contra SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4: sodio «Class Ia = 0,15 a 0,25% (375-625 mg/1000kcal a 4000kcal/kgMS); Class Ib, II y III = 0,08 a 0,15% (200-375 mg/1000kcal)». Confirma el PATRÓN (restringir más cuanto más avanzada la enfermedad) pero no se sustituyen los números: SACN5 usa la clasificación ISACHC (I/II/III), no la ACVIM (A/B1/B2/C/D) que usa esta app, y las dos NO son intercambiables grado a grado -- además el consenso ACVIM 2019 (Keene et al.) es la fuente específica de miocardiopatía/insuficiencia mitral más moderna y más citada en cardiología veterinaria de pequeños animales que un capítulo general de un libro de texto de 2010. El extremo bajo de Class Ib/II/III (200 mg) cae POR DEBAJO del mínimo FEDIAF (290): confirma que un cardiópata en fase avanzada, si se sigue la restricción más agresiva de la literatura, puede necesitar bajar de FEDIAF -- que es justo por lo que «cardiopatia_d» (480, con margen sobre 290) se quedó formulable a propósito, sin llegar ahí."
         }
       },
       "avisos": {
@@ -153,7 +153,7 @@
         "sodio": {
           "valor": 480.0,
           "fuente": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio",
-          "por_que": "La escala moderna por estadio da el estadio D como <50 mg/100 kcal (<500 mg/1000 kcal). Se usa 480 (48 mg/100 kcal), con margen bajo ese umbral y por encima del mínimo de FEDIAF adulto (290 mg/1000 kcal a DER 95), para que el menú siga siendo formulable sin necesitar profesional."
+          "por_que": "La escala moderna por estadio da el estadio D como <50 mg/100 kcal (<500 mg/1000 kcal). Se usa 480 (48 mg/100 kcal), con margen bajo ese umbral y por encima del mínimo de FEDIAF adulto (290 mg/1000 kcal a DER 95), para que el menú siga siendo formulable sin necesitar profesional. Confirmado 7-sep-2026 contra SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4: sodio «Class Ia = 0,15 a 0,25% (375-625 mg/1000kcal a 4000kcal/kgMS); Class Ib, II y III = 0,08 a 0,15% (200-375 mg/1000kcal)». Confirma el PATRÓN (restringir más cuanto más avanzada la enfermedad) pero no se sustituyen los números: SACN5 usa la clasificación ISACHC (I/II/III), no la ACVIM (A/B1/B2/C/D) que usa esta app, y las dos NO son intercambiables grado a grado -- además el consenso ACVIM 2019 (Keene et al.) es la fuente específica de miocardiopatía/insuficiencia mitral más moderna y más citada en cardiología veterinaria de pequeños animales que un capítulo general de un libro de texto de 2010. El extremo bajo de Class Ib/II/III (200 mg) cae POR DEBAJO del mínimo FEDIAF (290): confirma que un cardiópata en fase avanzada, si se sigue la restricción más agresiva de la literatura, puede necesitar bajar de FEDIAF -- que es justo por lo que «cardiopatia_d» (480, con margen sobre 290) se quedó formulable a propósito, sin llegar ahí."
         }
       },
       "avisos": {
@@ -471,6 +471,27 @@
         "general": "No hay en las fuentes disponibles una restricción nutricional específica para perros inmunodeprimidos -- lo que sí es una preocupación clínica conocida y ampliamente documentada en medicina veterinaria es que CUALQUIER alimento crudo (carne, pescado, huevo) lleva un riesgo de patógenos (Salmonella, Listeria, Campylobacter) mayor que uno cocinado, y ese riesgo pesa más en un sistema inmune debilitado. Este motor no cocina ni pasteuriza nada: sigue siendo BARF. Coméntaselo a tu veterinario -- en inmunosupresión activa (quimioterapia, dosis altas de corticoides) muchos oncólogos veterinarios recomiendan pasar a alimento cocinado o comercial mientras dure, y eso es una decisión clínica que este sistema no puede tomar por ti."
       },
       "formulable_por_profesional": true
+    },
+    "renal_avanzada": {
+      "nombre": "Insuficiencia renal crónica, moderada-grave (equivalente a IRIS 3-4)",
+      "formulable": false,
+      "motivo_no_formulable": "El objetivo terapéutico de proteína (35-50 g/1000kcal, SACN5 Tabla 37-9) está por debajo del mínimo que FEDIAF exige a cualquier perro (52,1 g) -- es el mismo umbral que ya bloquea la 'renal' de base en su aviso.profesional, pero aquí SACN5 documenta que restringir también el fósforo tiene evidencia real (Grade III, Tabla 37-10) en estos estadios, no solo en teoría.",
+      "sin_dieta_automatica": true,
+      "avisos": {
+        "general": "En insuficiencia renal moderada-grave (tu veterinario te habrá hablado de 'estadio 3' o '4', o de creatinina/SDMA claramente altos), la restricción real de proteína va por debajo de lo que un perro sano necesita -- eso no se puede resolver eligiendo mejor los alimentos, hace falta una dieta renal terapéutica pautada por tu veterinario. Si tu perro está en fases más tempranas (o no sabes el estadio), usa la patología «renal» normal, que sí genera menú.",
+        "profesional": "Se ha formulado con el fósforo en 1200 mg/1000kcal (lo más bajo que permite el mínimo de FEDIAF, 1160), igual que la 'renal' de base. SACN5 5ª ed., cap.37 «Chronic Kidney Disease», Tabla 37-10: la restricción de fósforo tiene evidencia Grade III específicamente en IRIS 3-4 (en 1-2 la evidencia es más débil, Grade IV, y de progresión general, no de un número de fósforo distinto). La Tabla 37-9 da además proteína 14-20% de materia seca (35-50 g/1000kcal a 4000kcal/kgMS) -- por debajo del mínimo FEDIAF -- que es la restricción de verdad en estos estadios y que este menú NO aplica. Ver también VETERINARIOS.md §12-ter (suelo NRC de proteína, evento de taurina en Sanderson 2001) antes de bajar de 35."
+      },
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "nutriente_frontera": "proteina",
+      "objetivo_terapeutico_por_1000kcal": 42.5,
+      "topes_por_1000kcal": {
+        "fosforo": {
+          "valor": 1200.0,
+          "fuente": "Igual que renal (Freeman LM, dvm360 2009; WSAVA; IRIS; SACN5 cap.37 Tabla 37-9)",
+          "por_que": "Mismo tope que la renal de base: es lo mas restrictivo que el solver puede aplicar sin romper el minimo FEDIAF de adulto (1160 mg). La diferencia real de esta patologia esta en la proteina, no en el fosforo -- el fosforo ya estaba al limite posible en ambas."
+        }
+      }
     }
   }
 }

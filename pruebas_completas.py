@@ -4438,7 +4438,8 @@ for _p39 in _BLOQUEADAS39:
 # `hepatopatia`, aplicadas a los otros dos cuadros clínicos hepáticos.
 _bajo39 = {k for k, v in _P39.items() if v.get("necesita_bajo_fediaf")}
 _bajo39_esperado = {"hepatopatia", "urato", "cistina", "renal",
-                    "shunt_sin_encefalopatia", "encefalopatia_hepatica"}
+                    "shunt_sin_encefalopatia", "encefalopatia_hepatica",
+                    "renal_avanzada"}
 if _bajo39 != _bajo39_esperado:
     fallos.append(f"BLOQUE39: las marcadas `necesita_bajo_fediaf` son {_bajo39} y tenían que ser "
                   f"{_bajo39_esperado}. Esa lista es la que define qué necesita "
