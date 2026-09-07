@@ -260,13 +260,13 @@ for a in al:
     sd = set(a.get("sin_dato") or [])
     if c == "Hígado" and nut(a, "vitA") < 1000 and "vitA" not in sd:
         avisos.append(("RARO", nombre, f"hígado con vitA={nut(a,'vitA')} (rondan 5.000-20.000 µg)"))
-    # Laringe de vacuno es la excepción conocida (ver la sección de "el
-    # hueso carnoso tiene que tener hueso", más abajo): es cartílago, no
-    # hueso, así que no está mineralizada y el calcio no la ve. Sin esta
-    # exclusión, este aviso y el de más abajo decían lo mismo dos veces --
-    # y con umbrales distintos (aquí 400, allá también 400, pero solo uno
-    # de los dos la excluía).
-    if c == "Hueso carnoso" and nut(a, "calcio") < 400 and nombre != "Laringe de vacuno":
+    # ⚠️ "Laringe de vacuno" ya no necesita excepción aquí (7 sep 2026):
+    # se movió de "Hueso carnoso" a "Extras" -- ver su nota_datos -- porque
+    # bloqueada como está por tejido tiroideo, nunca puede aportar hueso a
+    # ningún menú, y la categoría solo servía para disparar este aviso y
+    # el de más abajo ("el hueso carnoso tiene que tener hueso") dos veces
+    # por el mismo motivo ya sabido (es cartílago, no hueso).
+    if c == "Hueso carnoso" and nut(a, "calcio") < 400:
         avisos.append(("RARO", nombre, f"en 'Hueso carnoso' con calcio={nut(a,'calcio'):.0f} mg — "
                                        f"los huesos de verdad traen 1.250-1.810. ¿Es hueso o cartílago?"))
     if c == "Carne muscular" and nut(a, "calcio") > 300:
@@ -366,10 +366,10 @@ for a_ in al:
     # FINELI -todas dan PORCION COMESTIBLE- estaria mal por dos ordenes
     # de magnitud y el menu saldria verde igual, porque 18 mg es un
     # numero perfectamente plausible para una carne.
-    # La LARINGE es la excepcion conocida y esta bien: es cartilago, no
-    # hueso, asi que no esta mineralizada y el calcio no la ve. Es la misma
-    # pieza que se deja sin aminograma a proposito.
-    if cat_ == "Hueso carnoso" and nom_ != "Laringe de vacuno":
+    # ⚠️ "Laringe de vacuno" (cartílago, no hueso, sin aminograma a
+    # propósito) ya no necesita excepción aquí: se movió a "Extras" el
+    # 7 de septiembre, así que este filtro de categoría ya no la alcanza.
+    if cat_ == "Hueso carnoso":
         ca_, fo_ = nut(a_, "calcio"), nut(a_, "fosforo")
         if ca_ and ca_ < 400:
             avisos.append(("HUESO", nom_,

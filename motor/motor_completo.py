@@ -704,10 +704,36 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # TODOS los cachorros. Lo que de verdad falta para raza grande/gigante es
     # un MÍNIMO más alto (2500 en vez de 2000): necesitan una ingesta más
     # consistente, no tienen margen para quedarse cortas. Solo se activa para
-    # razas grande/gigante (peso adulto esperado >= 25kg) Y en crecimiento --
-    # nunca para razas pequeñas, donde este mínimo más alto no aplica.
+    # razas grande/gigante Y en crecimiento -- nunca para razas pequeñas,
+    # donde este mínimo más alto no aplica.
+    #
+    # ⚠️ CORREGIDO (7 septiembre) — EL UMBRAL ERA 25 KG Y TENÍA QUE SER 15.
+    # Leyendo la Tabla III-3b del PDF de FEDIAF 2025 a mano (página 16) y sus
+    # notas al pie (página 21, footnotes a y b) contra la transcripción de
+    # `auditar_fediaf.py`: el calcio de Late Growth tiene DOS valores, 2,00ᵃ
+    # y 2,50ᵇ, y las notas dicen literalmente:
+    #   a. "For puppies of dog breeds with adult body weight UP TO 15 kg"
+    #   b. "For puppies of breeds with adult body weight OVER 15 kg, until
+    #      the age of about 6 months. Only after that time, calcium can be
+    #      reduced to 0,8% DM (2 g/1000 kcal)..."
+    # El corte de FEDIAF es 15 kg, no 25. El 25 venía de una fuente
+    # SECUNDARIA (el artículo de Vet Clinics) que nadie había comparado
+    # contra el PDF original hasta ahora -- exactamente el punto que
+    # PENDIENTE_DECISIONES.md llevaba abierto desde el 25 de agosto ("repasar
+    # la transcripción... es leer las columnas contra el PDF una vez").
+    # Con el corte en 25, un cachorro de raza MEDIANA-GRANDE (15-25 kg de
+    # peso adulto esperado -- Border Collie, Springer Spaniel, Bulldog
+    # inglés, Beagle grande...) en crecimiento tardío recibía el mínimo
+    # GENÉRICO (2,00) en vez del reforzado (2,50) que FEDIAF exige para él.
+    # Probado contra el solver real antes de darlo por bueno (18-24 kg de
+    # peso adulto esperado, cachorro de 12 kg, DER 1200): resuelve en los
+    # cuatro casos con el mínimo ya en 2500. El valor de 2500 en
+    # `Calcio_LateGrowth_RazaGrande` ya era correcto (coincide con la nota b:
+    # es el nivel ANTES de los ~6 meses, más estricto que reducirlo después
+    # -- el motor no distingue esa sub-fase dentro de CachorroCrecimiento y
+    # aplica el reforzado a toda ella, que es el lado seguro, nunca menos).
     minimos_reforzados = {}
-    RAZA_GRANDE_O_GIGANTE_KG = 25
+    RAZA_GRANDE_O_GIGANTE_KG = 15
     if (peso_adulto_esperado_kg and peso_adulto_esperado_kg >= RAZA_GRANDE_O_GIGANTE_KG
             and etapa in ("CachorroJoven", "CachorroCrecimiento")):
         r_grande = req.get("Calcio_LateGrowth_RazaGrande")
