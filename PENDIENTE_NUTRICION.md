@@ -578,3 +578,48 @@ automáticamente un tope viable con comida de verdad, y hay que probarlo
 contra el solver antes de darlo por bueno — exactamente lo que dice la
 regla 1 del `CLAUDE.md`, aplicada a un tope nuevo, no solo al menú final.
 
+## 11. Fascetti & Delaney, 2ª ed. completo (7 de septiembre): tres verificaciones
+
+Llegaron los 21 capítulos que faltaban (`canislab-fuentes` PR#1, extraídos
+por Cowork desde Perlego). Verificado punto por punto, contra el libro y
+no contra el resumen previo:
+
+**RER y factor de enfermedad — confirmado que NO hace falta tocar nada.**
+El método americano multiplica el RER por un factor de 1,1 a 2,3 según
+gravedad (Remillard & Thatcher 1989, citada íntegra en Fascetti cap.3).
+Esta app nunca ha aplicado ninguno — `der.py` usa el método europeo
+(Thes 2015) para adultos y FEDIAF para crecimiento/gestación/lactancia,
+sin ningún parámetro de enfermedad en absoluto. Comprobado que NO es un
+hueco: es lo que la propia fuente recomienda — *"it seems reasonable to
+target energy requirements for most sick or injured dogs and cats
+initially at RER"* y *"it should rarely be necessary to feed injured or
+ill cats and dogs above the predicted energy requirement for a healthy
+animal at maintenance"*. Documentado ahora explícitamente en `der.py`
+(antes no decía nada, que se podía leer como "no se pensó" en vez de "se
+decidió no hacerlo").
+
+**El hallazgo que sí requería un cambio.** La misma fuente, literal:
+*"weight loss is never a goal during treatment and recovery from trauma
+and critical illness"*. Comprobado: `obesidad` se podía combinar con una
+patología aguda o crítica (`fracaso_renal_agudo`, `encefalopatia_
+hepatica`, `cancer_soporte`, `inmunosupresion`, `pancreatitis`) sin
+ningún aviso — el mecanismo `aviso_si_ademas` (nuevo, ver arriba junto a
+los suelos) lo cubre ahora, sourced a este mismo capítulo.
+
+**La pregunta de la vitamina E, ya cerrada.** El informe de Fascetti
+dejaba pendiente confirmar la unidad de la columna de vitamina E del
+catálogo. Verificado contra la Tabla VII-14 de FEDIAF (la fuente
+primaria, no de memoria): nuestro ×0,67 (UI→mg) es la equivalencia de
+tocoferol NATURAL (d-α-tocoferol, 1mg = 1,49 UI), correcta para
+alimentos frescos. El 1 IU = 1 mg que cita Fascetti es la del acetato
+SINTÉTICO (dl-α-tocoferil acetato), la forma de los premezclados de
+suplemento — no la que llevan las fichas de carne, pescado o víscera del
+catálogo. Confirmación, no bug; ya se aplicaba bien en
+`auditar_fediaf.py`.
+
+Las dos correcciones de cita que trae el mismo informe (§3.6: el rango
+real es 1,1-2,3 y no 1,1-1,5, y la fuente no dice que los factores estén
+"deprecados") son sobre la documentación interna de `canislab-fuentes`,
+no sobre nada implementado aquí — no había ningún factor de enfermedad
+en el código al que esa cita pudiera aplicar.
+

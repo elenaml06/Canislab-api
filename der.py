@@ -53,6 +53,39 @@ QUÉ CAMBIÓ RESPECTO A LA VERSIÓN ANTERIOR (y por qué)
    se baja al RER puro (70) y eso MANDA sobre todo lo demás.
 
 Todo se calcula sobre el PESO IDEAL cuando se conoce, no sobre el actual.
+
+=============================================================================
+POR QUÉ NO HAY UN FACTOR DE ENFERMEDAD (verificado 7-sep-2026, no de memoria)
+=============================================================================
+El método AMERICANO (arriba) multiplica el RER por un factor por
+enfermedad/lesión -- 1,1 a 2,3 según la tabla de Remillard & Thatcher 1989,
+la misma que cita literal Fascetti & Delaney, Applied Veterinary Clinical
+Nutrition 2ª ed. (Wiley-Blackwell, 2024), cap.3 "Determining Energy
+Requirements" (Ramsey), verificado contra el libro (no contra un resumen).
+Esta app NUNCA ha aplicado nada así, y no es un hueco: es la recomendación
+de la propia fuente. Tres citas literales del capítulo:
+
+  "These factors have not been extensively tested in dogs and cats, and use
+   of these equations assumes that dogs and cats will have similar
+   energetic responses to disease and injury to humans. [...] it seems
+   reasonable to target energy requirements for most sick or injured dogs
+   and cats initially at RER, followed by adjustments based on individual
+   progress."
+
+  "It should rarely be necessary to feed injured or ill cats and dogs above
+   the predicted energy requirement for a healthy animal at maintenance."
+
+  "Weight loss is never a goal during treatment and recovery from trauma
+   and critical illness."
+
+Ninguna patología de `patologias.json` toca esta fórmula ni recibe un
+multiplicador propio: el DER de un perro enfermo se calcula EXACTAMENTE
+igual que el de uno sano de su mismo peso/etapa/actividad, y eso es lo
+correcto según la fuente, no un descuido. La última cita sí motivó un
+cambio real: `main.py` avisa (vía `aviso_si_ademas` en `obesidad`) si se
+intenta combinar un objetivo de adelgazamiento con una patología aguda o
+crítica (`fracaso_renal_agudo`, `encefalopatia_hepatica`, `cancer_soporte`,
+`inmunosupresion`, `pancreatitis`) -- ver PENDIENTE_NUTRICION.md.
 """
 
 # =============================================================================
