@@ -1,7 +1,7 @@
 # Rawku — lo que queda por hacer (índice)
 
 Lista viva. Se actualiza al terminar cada cosa, no al final.
-Última revisión: 6 de septiembre de 2026.
+Última revisión: 7 de septiembre de 2026.
 
 **Desde el 6 de septiembre esto es solo el índice.** Cada punto vive en uno
 de cuatro archivos, por tema — ábrelos según lo que toque la tarea, no
@@ -76,9 +76,12 @@ que tomar una persona, no yo.
 
 - [x] Contrastar con la ficha original de USDA — RESUELTO 7 sep: testículos de cordero ya no existe en el catálogo, timo de ternera ya cita FDC 170194 directo, y el acceso a USDA (`DEMO_KEY`) sí funciona (usado para el linoleico de abajo)
 - [x] El linoleico de la grasa de pollo — RESUELTO 7 sep: 19,5 g/100g, USDA FDC 173564
-- [ ] Plantearse que el aviso de datos incompletos no dependa de una lista mantenida a mano
-- [ ] Conseguir cifras verificadas de EPA/DHA para seis pescados (incluido el boquerón)
-- [ ] Completar las cuatro vísceras sin dato (bazo de vaca, páncreas de vaca, bazo de cordero, cerebro de ternera) — el 7 sep se corrigió que `sin_dato` ya diga la verdad (antes esos huecos contaban como cero medido); conseguir el dato real sigue pendiente
+- [x] El aviso de datos incompletos ya no depende de una lista a mano — RESUELTO 7 sep: `[SOSPECHOSO]` en `auditar_catalogo.py` compara cada alimento con los demás de su categoría (BLOQUE 44). Encontró 11 huecos el mismo día
+- [ ] Enganchar (o no) ese detector al aviso que ve la usuaria — decisión abierta, hoy acierta 9 de 13
+- [x] EPA/DHA de los seis pescados — ya estaban cerrados desde el 25 ago; el punto llevaba describiendo trabajo hecho (verificado 7 sep)
+- [x] Las cuatro vísceras sin dato — COMPLETADAS 7 sep con la ficha de su fuente (BEDCA 1047 el cerebro; USDA 169454/169452/174364 las otras tres, que coincidían celda a celda)
+- [ ] Dos discrepancias del cerebro que NO son huecos: calcio 43 vs 10-12 y selenio 21,3 vs 10-11,6. Y el araquidónico de tres fichas de pavo, ~20× el de USDA. Corregir no es rellenar: lo decide una persona
 - [x] Decisión pendiente: `Laringe de vacuno` — RESUELTO 7 sep: movida a `Extras`
-- [ ] Añadir vísceras (no hígado) de las especies que faltan: pollo, pavo, conejo, pato, cerdo. El hígado ya no es el hueco — solo falta hígado de cerdo (pollo/pavo/pato ya existen, corregido 7 sep)
+- [x] Vísceras de ave — NO EXISTEN en BEDCA, CIQUAL ni USDA (comprobado 7 sep): de pollo/pavo/pato/oca/conejo solo hay hígado, corazón y molleja, y los tres últimos ya están (en Carne muscular, porque no segregan)
+- [ ] Vísceras solo tiene DOS especies (bovino y ovino) y es pilar obligatorio: un perro alérgico a las dos se queda sin ninguna. Es decisión de producto (admitir cerdo, o decirlo claro), no un dato que falte
 - [x] Taurina y L-carnitina — RESUELTO 7 sep: dato en las 159 fichas y suelo activado en `dcm_taurina_respondedora` (250/50 mg/1000kcal, SACN5 cap.36)

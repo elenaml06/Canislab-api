@@ -2008,7 +2008,7 @@
    "vitD": 4.5,
    "vitE": 3.6,
    "folato": 140,
-   "niacina": 0,
+   "niacina": 0.024,
    "riboflavina": 0.5,
    "tiamina": 0.22,
    "vitB12": 4.7,
@@ -2046,8 +2046,8 @@
   "sin_dato": [
    "araquidonico",
    "fibra",
-   "manganeso",
-   "lcarnitina"
+   "lcarnitina",
+   "manganeso"
   ],
   "aminograma_estimado": {
    "desde": "Yema de huevo, fresca, cruda",
@@ -2067,7 +2067,8 @@
    "pais": "Japan",
    "anio": "2014"
   },
-  "taurina_fuente": "Taurina = 1,21 mg/100g: Spitze et al. 2003, tabla 1, \"Eggs (large AA), egg yolks\" = 12,14 mg/kg peso humedo (12,14-12,14, n=2) -> 1,214 mg/100g."
+  "taurina_fuente": "Taurina = 1,21 mg/100g: Spitze et al. 2003, tabla 1, \"Eggs (large AA), egg yolks\" = 12,14 mg/kg peso humedo (12,14-12,14, n=2) -> 1,214 mg/100g.",
+  "nota_datos": "⚠️ NIACINA RELLENADO 7 sep 2026 (0.024): USDA FDC 172184 (BEDCA 2125 TR y CIQUAL 22002 sin cifra). Lo encontro el detector automatico de ceros sospechosos de auditar_catalogo.py -- estaba a 0 sin declararse hueco."
  },
  {
   "nombre": "Aceite de oliva",
@@ -2537,7 +2538,7 @@
    "folato": 25,
    "niacina": 0.1,
    "riboflavina": 0.07,
-   "tiamina": 0,
+   "tiamina": 0.05,
    "vitB12": 0,
    "vitB6": 0.1,
    "calcio": 18,
@@ -2600,7 +2601,8 @@
    "anio": "2014"
   },
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "nota_datos": "⚠️ TIAMINA RELLENADO 7 sep 2026 (0.05): CIQUAL 20044 (BEDCA 2378 lo marca TR: sin cifra). Lo encontro el detector automatico de ceros sospechosos de auditar_catalogo.py -- estaba a 0 sin declararse hueco."
  },
  {
   "nombre": "Calabacín",
@@ -2617,7 +2619,7 @@
    "araquidonico": 0,
    "vitA": 4,
    "vitD": 0,
-   "vitE": 0,
+   "vitE": 0.12,
    "folato": 50,
    "niacina": 0.56,
    "riboflavina": 0.04,
@@ -2669,7 +2671,8 @@
    "anio": "2014"
   },
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "nota_datos": "⚠️ VITE RELLENADO 7 sep 2026 (0.12): CIQUAL 20020 (BEDCA 2376 lo marca TR: sin cifra). Lo encontro el detector automatico de ceros sospechosos de auditar_catalogo.py -- estaba a 0 sin declararse hueco."
  },
  {
   "nombre": "Zanahoria",
@@ -3220,7 +3223,7 @@
    "araquidonico": 0,
    "vitA": 1,
    "vitD": 0,
-   "vitE": 0,
+   "vitE": 0.41,
    "folato": 11,
    "niacina": 0.2,
    "riboflavina": 0.03,
@@ -3263,7 +3266,8 @@
    "selenio"
   ],
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "nota_datos": "⚠️ VITE RELLENADO 7 sep 2026 (0.41): CIQUAL 13037 (BEDCA 2241 lo marca TR: sin cifra). Lo encontro el detector automatico de ceros sospechosos de auditar_catalogo.py -- estaba a 0 sin declararse hueco."
  },
  {
   "nombre": "Arándano",
@@ -4166,7 +4170,7 @@
   },
   "pct_carne": 0.35,
   "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso+piel).",
-  "nota_datos": "Ca/P/proteina/grasa medidos por Köber 2017 en la pieza entera. Ratio Ca:P real 1.79 (antes teniamos 2.00 inventado). Energia calculada de sus macros. Materia seca 34.3%, cenizas 6.0%. ",
+  "nota_datos": "Ca/P/proteina/grasa medidos por Köber 2017 en la pieza entera. Ratio Ca:P real 1.79 (antes teniamos 2.00 inventado). Energia calculada de sus macros. Materia seca 34.3%, cenizas 6.0%.",
   "aminograma_estimado": {
    "desde": "Conejo doméstico, despiece variado, crudo",
    "factor": "0.933",
@@ -4246,7 +4250,7 @@
   },
   "pct_carne": 0.6,
   "fuente": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), 'Bones and gristle as a source of calcium in BARF-rations', 21st ESVCN Congress, Cirencester. Tabla 1. Ca por fotometria de emision de llama, P por espectrofotometria tras digestion por microondas. Valores de pieza ENTERA cruda (carne+hueso+piel).",
-  "nota_datos": "Ca/P/proteina/grasa medidos por Köber 2017 en la pieza entera. Ratio Ca:P real 1.67 (antes teniamos 2.00 inventado). Energia calculada de sus macros. Materia seca 36.9%, cenizas 5.6%. ",
+  "nota_datos": "Ca/P/proteina/grasa medidos por Köber 2017 en la pieza entera. Ratio Ca:P real 1.67 (antes teniamos 2.00 inventado). Energia calculada de sus macros. Materia seca 36.9%, cenizas 5.6%.",
   "aminograma_estimado": {
    "desde": "Cordero, despiece comercial, crudo",
    "factor": "1.167",
@@ -5478,7 +5482,7 @@
    "araquidonico": 0,
    "vitA": 166,
    "vitD": 0,
-   "vitE": 0,
+   "vitE": 0.74,
    "folato": 71,
    "niacina": 4.05,
    "riboflavina": 0.47,
@@ -5517,9 +5521,9 @@
   "sin_dato": [
    "araquidonico",
    "cobre",
+   "lcarnitina",
    "manganeso",
-   "taurina",
-   "lcarnitina"
+   "taurina"
   ],
   "aminograma_estimado": {
    "desde": "Huevo de pata, entero, fresco, crudo",
@@ -5538,7 +5542,8 @@
    "nota": "mismo alimento. CERO purinas",
    "pais": "Japan",
    "anio": "2014"
-  }
+  },
+  "nota_datos": "⚠️ VITE RELLENADO 7 sep 2026 (0.74): BEDCA 764. Lo encontro el detector automatico de ceros sospechosos de auditar_catalogo.py -- estaba a 0 sin declararse hueco."
  },
  {
   "nombre": "Bacaladilla",
@@ -6722,8 +6727,8 @@
   "nutrientes": {
    "proteina": 0,
    "grasa": 99.9,
-   "dha": 0,
-   "epa": 0,
+   "dha": 11.4,
+   "epa": 8.39,
    "linoleico": 0,
    "linolenico": 0,
    "araquidonico": 0,
@@ -6742,7 +6747,7 @@
    "magnesio": 0,
    "sodio": 0,
    "fosforo": 0,
-   "yodo": 0,
+   "yodo": 400,
    "selenio": 0,
    "zinc": 0,
    "cobre": 0,
@@ -6771,8 +6776,6 @@
    "araquidonico",
    "arginina",
    "cistina",
-   "dha",
-   "epa",
    "fenilalanina",
    "histidina",
    "isoleucina",
@@ -6800,7 +6803,9 @@
    "anio": "—"
   },
   "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
-  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida."
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida.",
+  "nota_datos": "⚠️ EPA, DHA y YODO, 7 sep 2026. El resto de esta ficha es BEDCA 755 (vitA 20000, vitD 210, vitE 20, grasa 99,9: clavadas), pero BEDCA no publica ni un solo acido graso individual de este aceite, solo saturados/mono/poliinsaturados totales. Siguiente escalon de Bases.md: CIQUAL 17630 (\"Huile de foie de morue\"), EPA 8,39 y DHA 11,4. HASTA HOY ESTE ACEITE ENTRABA EN EL MOTOR CON EPA=0 Y DHA=0: la fuente de omega-3 mas densa del catalogo era invisible para el solver. Tercera fuente, USDA FDC 173577, da 6,898 y 10,968 -- un 18% menos; se toma CIQUAL por el orden de Bases.md, sabiendo que tanto CIQUAL como USDA describen un producto un 50% mas concentrado en vitamina A y D que el de BEDCA, asi que este EPA/DHA es el techo del rango y no su centro. NO se rellenan linoleico/linolenico/araquidonico: USDA los da como 0,935 repetido en cinco acidos grasos distintos, que es relleno y no medida, y el par de CIQUAL (2,71/1,79) arrastra esa misma diferencia de concentracion sin nada que lo ancle. El YODO estaba a 0 SIN declararse hueco, y es uno de los cinco topes duros de seguridad cronica: BEDCA lo marca TR (trazas, sin cifra) y CIQUAL mide 400 ug/100g. Se toma el 400 porque en un nutriente CON TECHO quedarse corto es el lado peligroso.",
+  "fuente_epa_dha": "CIQUAL"
  },
  {
   "nombre": "Aceite de sésamo",
@@ -7167,7 +7172,14 @@
    "purinas"
   ],
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 confirma explicitamente 0 taurina en semilla de girasol y de sesamo (analizadas), y en el resto de semillas y frutos secos probados (almendra, anacardo, avellana, cacahuete, nuez, pipa) -- ninguna dio taurina detectable. Pipa de calabaza y semilla de lino no se analizaron especificamente, pero siguen el mismo patron de familia (semilla vegetal).",
-  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento vegetal que el resto del catalogo."
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento vegetal que el resto del catalogo.",
+  "dato_dudoso": {
+   "folato": {
+    "desde": "2026-09-07",
+    "motivo": "BEDCA 2204 da folato = 0 ug y cita a USDA como fuente -- pero USDA FDC 170556 (\"Seeds, pumpkin and squash seed kernels, dried\") da 58 ug. La propia fuente que BEDCA dice estar copiando la contradice, asi que el 0 es un fallo de transcripcion aguas arriba, no una medida. Encontrado el 7 sep 2026 por el detector automatico de ceros sospechosos de auditar_catalogo.py, no por una lista a mano. NO SE TOCA EL VALOR: la regla de este proyecto es que un dato de la fuente primaria no se sobrescribe con uno de la secundaria. Se marca aqui para que salga junto al menu y lo decida una persona.",
+    "resolver": "Mirar la ficha en su fuente original y elegir: o se corrige el valor citando CIQUAL/USDA, o se pasa a `sin_dato` si se acepta que BEDCA no lo midio. Mientras tanto el 0 solo INFRAvalora el alimento (el folato no tiene techo), asi que no es peligroso -- solo desaprovecha el alimento."
+   }
+  }
  },
  {
   "nombre": "Pipa de girasol",
@@ -7768,7 +7780,14 @@
    "anio": "2020"
   },
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "dato_dudoso": {
+   "folato": {
+    "desde": "2026-09-07",
+    "motivo": "BEDCA 2379 (la fuente primaria de esta ficha) da folato = 0 ug, citando Moreiras 2001. CIQUAL 20099 (\"Mache, crue\") mide 45,5 ug. Los canonigos son una de las hojas mas ricas en folato que se comen, asi que un 0 no es plausible: casi seguro es un dato AUSENTE que la tabla de origen escribio como cero. Encontrado el 7 sep 2026 por el detector automatico de ceros sospechosos de auditar_catalogo.py, no por una lista a mano. NO SE TOCA EL VALOR: la regla de este proyecto es que un dato de la fuente primaria no se sobrescribe con uno de la secundaria. Se marca aqui para que salga junto al menu y lo decida una persona.",
+    "resolver": "Mirar la ficha en su fuente original y elegir: o se corrige el valor citando CIQUAL/USDA, o se pasa a `sin_dato` si se acepta que BEDCA no lo midio. Mientras tanto el 0 solo INFRAvalora el alimento (el folato no tiene techo), asi que no es peligroso -- solo desaprovecha el alimento."
+   }
+  }
  },
  {
   "nombre": "Cardo",
@@ -7839,7 +7858,11 @@
    "valina"
   ],
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "nota_datos": "⚠️ EL CERO DE VITA ES REAL, comprobado el 7 sep 2026: CIQUAL 20054 (\"Cardon, cru\") mide 0. Se anota porque el detector automatico de ceros sospechosos lo levanta (es raro en su categoria) y sin esta nota se volveria a investigar cada vez.",
+  "cero_verificado": {
+   "vitA": "CIQUAL 20054 «Cardon, cru» mide 0 (7 sep 2026)"
+  }
  },
  {
   "nombre": "Champiñón",
@@ -7920,6 +7943,10 @@
    "nota": "seta cultivada",
    "pais": "Canada",
    "anio": "1988"
+  },
+  "nota_datos": "⚠️ EL CERO DE VITA ES REAL, comprobado el 7 sep 2026: BEDCA 2384 mide 0. Se anota porque el detector automatico de ceros sospechosos lo levanta (es raro en su categoria) y sin esta nota se volveria a investigar cada vez.",
+  "cero_verificado": {
+   "vitA": "BEDCA 2384 mide 0 (7 sep 2026)"
   }
  },
  {
@@ -8247,7 +8274,11 @@
    "anio": "2024"
   },
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "nota_datos": "⚠️ EL CERO DE VITA ES REAL, comprobado el 7 sep 2026: BEDCA 859 mide 0. Se anota porque el detector automatico de ceros sospechosos lo levanta (es raro en su categoria) y sin esta nota se volveria a investigar cada vez.",
+  "cero_verificado": {
+   "vitA": "BEDCA 859 mide 0 (7 sep 2026)"
+  }
  },
  {
   "nombre": "Endibia",
@@ -8565,7 +8596,7 @@
    "araquidonico": 0,
    "vitA": 2.6667,
    "vitD": 0,
-   "vitE": 0,
+   "vitE": 0.03,
    "folato": 16,
    "niacina": 6,
    "riboflavina": 0.05,
@@ -8622,7 +8653,8 @@
    "valina"
   ],
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "nota_datos": "⚠️ VITE RELLENADO 7 sep 2026 (0.03): CIQUAL 20064 (BEDCA 880 lo marca TR: sin cifra). Lo encontro el detector automatico de ceros sospechosos de auditar_catalogo.py -- estaba a 0 sin declararse hueco."
  },
  {
   "nombre": "Pepino",
@@ -8776,7 +8808,11 @@
    "valina"
   ],
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "nota_datos": "⚠️ EL CERO DE VITE ES REAL, comprobado el 7 sep 2026: CIQUAL 20045 da \"< 0,08 mg\": por debajo de su limite de deteccion, no es un hueco sino una medida con tope. Se anota porque el detector automatico de ceros sospechosos lo levanta (es raro en su categoria) y sin esta nota se volveria a investigar cada vez.",
+  "cero_verificado": {
+   "vitE": "CIQUAL 20045 da «< 0,08 mg»: por debajo de su límite de detección, no es un hueco sino una medida con tope (7 sep 2026)"
+  }
  },
  {
   "nombre": "Repollo",
@@ -9148,7 +9184,11 @@
    "purinas"
   ],
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "nota_datos": "⚠️ EL CERO DE VITA ES REAL, comprobado el 7 sep 2026: BEDCA 909 mide 0, citando USDA. Se anota porque el detector automatico de ceros sospechosos lo levanta (es raro en su categoria) y sin esta nota se volveria a investigar cada vez.",
+  "cero_verificado": {
+   "vitA": "BEDCA 909 mide 0, citando USDA (7 sep 2026)"
+  }
  },
  {
   "nombre": "Dátil",
@@ -10867,7 +10907,7 @@
   "categoria": "Hígado",
   "energia": 139,
   "fuente": "USDA FDC 172531 'Lamb, liver, raw'.",
-  "nota_datos": "⚠️ Vitamina A muy alta (~7.400 ug/100g). Limitar igual que el resto de higados: tope de plato por cobre. AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras. ⚠️ CORREGIDO 6 sep 2026 contra FDC 172531: fósforo, potasio, sodio y magnesio, que estaban en sin_dato, se rellenan con los valores reales de la ficha (364 / 313 / 70 / 19,0 mg).",
+  "nota_datos": "⚠️ Vitamina A muy alta (~7.400 ug/100g). Limitar igual que el resto de higados: tope de plato por cobre. AÑADIDO 5 agosto (noche): cobre/zinc/selenio/hierro/vitB12 completados con datos de USDA FoodData Central (vía myfooddata.com/foodstruct.com, que citan la fuente original). El yodo se queda sin dato: no aparece en ninguna fuente consultada, ni siquiera en USDA -- no es un fallo nuestro, esa base de datos no mide yodo en la mayoría de carnes y vísceras. ⚠️ CORREGIDO 6 sep 2026 contra FDC 172531: fósforo, potasio, sodio y magnesio, que estaban en sin_dato, se rellenan con los valores reales de la ficha (364 / 313 / 70 / 19,0 mg). ⚠️ ÁCIDOS GRASOS RELLENADOS 7 sep 2026 (linoleico 0,32 g, linolénico 0,07 g, araquidónico 360 mg): USDA FDC 172531, la misma ficha de la que sale el resto de esta fila (energía 139 y proteína 20,4 coinciden). BEDCA no tiene hígado de cordero y CIQUAL 40102 (\"Foie, agneau, cru\") da 0,36 / 0,029 / 420, del mismo orden. Los dos primeros estaban a 0 SIN declararse hueco; lo levantó el detector automático de ceros sospechosos al mirar contra los OTROS hígados del catálogo, que los cinco lo tienen.",
   "nutrientes": {
    "proteina": 20.7,
    "grasa": 5.0,
@@ -10878,9 +10918,9 @@
    "hierro": 7.4,
    "dha": 0,
    "epa": 0,
-   "linoleico": 0,
-   "linolenico": 0,
-   "araquidonico": 0,
+   "linoleico": 0.32,
+   "linolenico": 0.07,
+   "araquidonico": 360,
    "cobre": 7.14,
    "zinc": 4.64,
    "selenio": 83.57,
@@ -10918,7 +10958,6 @@
   },
   "sin_dato": [
    "acidoPantotenico",
-   "araquidonico",
    "cloruro",
    "colina",
    "folato",
@@ -11594,13 +11633,13 @@
    "grasa": 3.0,
    "dha": 0,
    "epa": 0,
-   "linoleico": 0,
+   "linoleico": 0.22,
    "linolenico": 0,
    "araquidonico": 0,
    "vitA": 0,
    "vitD": 0,
    "vitE": 0,
-   "folato": 0,
+   "folato": 4,
    "niacina": 8.4,
    "riboflavina": 0.37,
    "tiamina": 0.05,
@@ -11637,18 +11676,13 @@
    "taurina": 87.4,
    "lcarnitina": 80.0
   },
-  "nota_datos": "Bazo -- órgano linfoide, no muscular, encaja en la categoría BARF de vísceras igual que riñón/pulmón. Datos cruzados entre varias fuentes derivadas de USDA, consistentes entre sí. Sin dato fiable para yodo, vitA/D/E, folato, colina, cloruro, linoleico/linolénico/araquidónico -- se dejan en 0. [Renombrado de \"Bazo de ternera\" a \"Bazo de vaca\" tras verificación: el hierro tan alto (44.5mg) es propio de animal adulto, no de ternera lechal -- la investigación encontró un dato distinto y genuino para ternera joven, añadido aparte.] ⚠️ CORREGIDO 7 sep 2026: `sin_dato` solo traía \"cloruro\" -- el resto de huecos que esta misma nota ya declaraba (yodo, vitA/D/E, folato, colina, linoleico/linolénico/araquidónico) no estaban marcados, así que contra un máximo contaban como cero medido en vez de hueco. Encontrado por auditar_catalogo.py comparando la nota contra el campo estructurado.",
+  "nota_datos": "Bazo -- órgano linfoide, no muscular, encaja en la categoría BARF de vísceras igual que riñón/pulmón. Datos cruzados entre varias fuentes derivadas de USDA, consistentes entre sí. Sin dato fiable para yodo, vitA/D/E, folato, colina, cloruro, linoleico/linolénico/araquidónico -- se dejan en 0. [Renombrado de \"Bazo de ternera\" a \"Bazo de vaca\" tras verificación: el hierro tan alto (44.5mg) es propio de animal adulto, no de ternera lechal -- la investigación encontró un dato distinto y genuino para ternera joven, añadido aparte.] ⚠️ CORREGIDO 7 sep 2026: `sin_dato` solo traía \"cloruro\" -- el resto de huecos que esta misma nota ya declaraba (yodo, vitA/D/E, folato, colina, linoleico/linolénico/araquidónico) no estaban marcados, así que contra un máximo contaban como cero medido en vez de hueco. Encontrado por auditar_catalogo.py comparando la nota contra el campo estructurado. ⚠️ COMPLETADO 7 sep 2026. Fuente identificada con certeza: la ficha coincide CELDA A CELDA con USDA FDC 169454 (\"Beef, variety meats and by-products, spleen, raw\") en las 20 celdas que ya tenian valor -- energia, proteina, grasa, los ocho minerales y las vitaminas del grupo B, exactas. Asi que rellenar sus huecos con esa misma ficha es completar la MISMA fuente, no cruzar dos. BEDCA y CIQUAL no tienen bazo de ninguna especie. Siguen sin dato yodo, vitD, vitE, colina y cloruro: USDA no los publica.",
   "sin_dato": [
    "cloruro",
-   "yodo",
-   "vitA",
+   "colina",
    "vitD",
    "vitE",
-   "folato",
-   "colina",
-   "linoleico",
-   "linolenico",
-   "araquidonico"
+   "yodo"
   ],
   "aminograma_estimado": {
    "desde": "Bazo de cordero, crudo",
@@ -11676,13 +11710,13 @@
    "grasa": 19,
    "dha": 0,
    "epa": 0,
-   "linoleico": 0,
-   "linolenico": 0,
-   "araquidonico": 0,
+   "linoleico": 2.03,
+   "linolenico": 0.13,
+   "araquidonico": 800,
    "vitA": 0,
    "vitD": 0,
    "vitE": 0,
-   "folato": 0,
+   "folato": 3,
    "niacina": 4.5,
    "riboflavina": 0.4,
    "tiamina": 0.1,
@@ -11695,8 +11729,8 @@
    "sodio": 67,
    "fosforo": 327,
    "yodo": 0,
-   "selenio": 0,
-   "zinc": 0,
+   "selenio": 24.7,
+   "zinc": 2.58,
    "cobre": 0.1,
    "manganeso": 0.2,
    "acidoPantotenico": 3.9,
@@ -11717,20 +11751,16 @@
    "valina": 0.858,
    "purinas": 0
   },
-  "nota_datos": "Páncreas -- órgano glandular que segrega enzimas digestivas, encaja en vísceras. No confundir con la molleja de pollo/pavo del catálogo, que es un órgano completamente distinto (estómago muscular de ave, no glándula). Datos cruzados de varias fuentes USDA-derivadas. Bastante más graso que el resto de vísceras del catálogo (19g/100g) -- tenlo en cuenta si el perro tiene tendencia a la pancreatitis. Sin dato fiable para yodo, selenio, zinc, vitA/D/E, folato, colina, cloruro -- se dejan en 0. ⚠️ CORREGIDO 7 sep 2026: `sin_dato` solo traía cloruro, purinas y zinc -- faltaban yodo, selenio, vitA/D/E, folato y colina, que esta misma nota ya declaraba como sin dato fiable. Encontrado por auditar_catalogo.py comparando la nota contra el campo estructurado.",
+  "nota_datos": "Páncreas -- órgano glandular que segrega enzimas digestivas, encaja en vísceras. No confundir con la molleja de pollo/pavo del catálogo, que es un órgano completamente distinto (estómago muscular de ave, no glándula). Datos cruzados de varias fuentes USDA-derivadas. Bastante más graso que el resto de vísceras del catálogo (19g/100g) -- tenlo en cuenta si el perro tiene tendencia a la pancreatitis. Sin dato fiable para yodo, selenio, zinc, vitA/D/E, folato, colina, cloruro -- se dejan en 0. ⚠️ CORREGIDO 7 sep 2026: `sin_dato` solo traía cloruro, purinas y zinc -- faltaban yodo, selenio, vitA/D/E, folato y colina, que esta misma nota ya declaraba como sin dato fiable. Encontrado por auditar_catalogo.py comparando la nota contra el campo estructurado. ⚠️ COMPLETADO 7 sep 2026. Misma comprobacion que el bazo: la ficha coincide con USDA FDC 169452 (\"Beef, variety meats and by-products, pancreas, raw\") en las celdas que ya tenian valor, asi que los huecos se cierran con esa misma ficha. Ojo al araquidonico: 800 mg/100g, con diferencia el mas alto del catalogo -- es coherente con un organo glandular graso y esta publicado, no derivado. BEDCA y CIQUAL no tienen pancreas.",
   "sin_dato": [
    "cloruro",
+   "colina",
+   "lcarnitina",
    "purinas",
-   "zinc",
-   "yodo",
-   "selenio",
-   "vitA",
+   "taurina",
    "vitD",
    "vitE",
-   "folato",
-   "colina",
-   "taurina",
-   "lcarnitina"
+   "yodo"
   ],
   "aminograma_estimado": {
    "desde": "Ternera, páncreas, crudo",
@@ -11755,13 +11785,13 @@
    "vitA": 0,
    "vitD": 0,
    "vitE": 0,
-   "folato": 0,
-   "niacina": 0,
-   "riboflavina": 0,
-   "tiamina": 0,
+   "folato": 4,
+   "niacina": 7.895,
+   "riboflavina": 0.348,
+   "tiamina": 0.047,
    "vitB12": 5.3,
-   "vitB6": 0,
-   "calcio": 0,
+   "vitB6": 0.11,
+   "calcio": 9,
    "hierro": 41.89,
    "potasio": 358,
    "magnesio": 21,
@@ -11771,7 +11801,7 @@
    "selenio": 32.4,
    "zinc": 2.8,
    "cobre": 0.1,
-   "manganeso": 0,
+   "manganeso": 0.051,
    "acidoPantotenico": 0,
    "colina": 0,
    "cloruro": 0,
@@ -11792,21 +11822,18 @@
    "taurina": 87.4,
    "lcarnitina": 40.0
   },
-  "nota_datos": "Bazo de cordero -- USDA, cruzado con FatSecret y NutrientOptimiser (crudo). Confianza alta. Sin dato fiable de calcio, vitaminas del grupo B (salvo B12) ni vitA/D/E -- se dejan en 0. ⚠️ CORREGIDO 7 sep 2026: `sin_dato` solo traía cloruro y manganeso -- faltaban calcio, vitA/D/E y las vitaminas del grupo B (niacina, riboflavina, tiamina, vitB6, ácido pantoténico, folato, colina) que esta misma nota ya declaraba sin dato fiable. La colina se incluye por ser tratada como parte del grupo B en las demás vísceras de este catálogo (Bazo de vaca, Páncreas de vaca, Cerebro de ternera), aunque la nota original no la nombrase suelta. Encontrado por auditar_catalogo.py comparando la nota contra el campo estructurado.",
+  "nota_datos": "Bazo de cordero -- USDA, cruzado con FatSecret y NutrientOptimiser (crudo). Confianza alta. Sin dato fiable de calcio, vitaminas del grupo B (salvo B12) ni vitA/D/E -- se dejan en 0. ⚠️ CORREGIDO 7 sep 2026: `sin_dato` solo traía cloruro y manganeso -- faltaban calcio, vitA/D/E y las vitaminas del grupo B (niacina, riboflavina, tiamina, vitB6, ácido pantoténico, folato, colina) que esta misma nota ya declaraba sin dato fiable. La colina se incluye por ser tratada como parte del grupo B en las demás vísceras de este catálogo (Bazo de vaca, Páncreas de vaca, Cerebro de ternera), aunque la nota original no la nombrase suelta. Encontrado por auditar_catalogo.py comparando la nota contra el campo estructurado. ⚠️ COMPLETADO 7 sep 2026 contra USDA FDC 174364 (\"Lamb, variety meats and by-products, spleen, raw\"), que coincide con las celdas que ya tenian valor. Se cierran ocho huecos (calcio, manganeso, vitA, las cuatro del grupo B y el folato). Y se DECLARAN cinco huecos nuevos que antes eran ceros mudos: esta ficha de USDA no publica NINGUN acido graso individual, asi que linoleico, linolenico, araquidonico, EPA y DHA no eran ceros medidos -- eran ceros de relleno.",
   "sin_dato": [
-   "cloruro",
-   "manganeso",
-   "calcio",
-   "vitA",
-   "vitD",
-   "vitE",
-   "niacina",
-   "riboflavina",
-   "tiamina",
-   "vitB6",
    "acidoPantotenico",
-   "folato",
-   "colina"
+   "araquidonico",
+   "cloruro",
+   "colina",
+   "dha",
+   "epa",
+   "linoleico",
+   "linolenico",
+   "vitD",
+   "vitE"
   ],
   "purinas_fuente": {
    "desde": "Souci-Fachmann-Kraut (vía compilaciones)",
@@ -11895,32 +11922,32 @@
   "nutrientes": {
    "proteina": 10.86,
    "grasa": 10.3,
-   "dha": 0,
-   "epa": 0,
-   "linoleico": 0,
-   "linolenico": 0,
-   "araquidonico": 0,
+   "dha": 0.36,
+   "epa": 0.031,
+   "linoleico": 0.036,
+   "linolenico": 0.048,
+   "araquidonico": 425,
    "vitA": 0,
    "vitD": 0,
-   "vitE": 0,
-   "folato": 0,
-   "niacina": 0,
-   "riboflavina": 0,
-   "tiamina": 0,
+   "vitE": 1.2,
+   "folato": 6,
+   "niacina": 4,
+   "riboflavina": 0.26,
+   "tiamina": 0.16,
    "vitB12": 9.51,
-   "vitB6": 0,
+   "vitB6": 0.16,
    "calcio": 43,
    "hierro": 2.55,
    "potasio": 274,
-   "magnesio": 0,
+   "magnesio": 14,
    "sodio": 126,
-   "fosforo": 0,
-   "yodo": 0,
+   "fosforo": 320,
+   "yodo": 0.62,
    "selenio": 21.3,
    "zinc": 1.02,
-   "cobre": 0,
-   "manganeso": 0,
-   "acidoPantotenico": 0,
+   "cobre": 0.22,
+   "manganeso": 0.037,
+   "acidoPantotenico": 2.72,
    "colina": 0,
    "cloruro": 0,
    "fibra": 0.0,
@@ -11938,23 +11965,12 @@
    "valina": 0.491,
    "purinas": 162.0
   },
-  "nota_datos": "Cerebro -- tejido neuroendocrino, rico en DHA de forma natural. USDA, cruzado con Recipal/FatSecret/Prospre (crudo). OJO: colesterol muy elevado (~3010mg/100g) -- no es un problema nutricional de perro sano (el colesterol dietético apenas afecta al colesterol sanguíneo canino), pero se anota por si acaso. Sin dato fiable de magnesio, fósforo, cobre, ni la mayoría de vitaminas -- se dejan en 0. ⚠️ CORREGIDO 7 sep 2026: `sin_dato` no incluía ninguna vitamina, y la nota ya decía que faltaba \"la mayoría\" -- vitA/D/E, folato, niacina, riboflavina, tiamina y vitB6 (todas menos la B12, que sí trae dato: 9,51 µg). Encontrado por auditar_catalogo.py comparando la nota contra el campo estructurado.",
+  "nota_datos": "Cerebro -- tejido neuroendocrino, rico en DHA de forma natural. USDA, cruzado con Recipal/FatSecret/Prospre (crudo). OJO: colesterol muy elevado (~3010mg/100g) -- no es un problema nutricional de perro sano (el colesterol dietético apenas afecta al colesterol sanguíneo canino), pero se anota por si acaso. Sin dato fiable de magnesio, fósforo, cobre, ni la mayoría de vitaminas -- se dejan en 0. ⚠️ CORREGIDO 7 sep 2026: `sin_dato` no incluía ninguna vitamina, y la nota ya decía que faltaba \"la mayoría\" -- vitA/D/E, folato, niacina, riboflavina, tiamina y vitB6 (todas menos la B12, que sí trae dato: 9,51 µg). Encontrado por auditar_catalogo.py comparando la nota contra el campo estructurado. ⚠️ COMPLETADO 7 sep 2026 contra las tres fuentes en el orden de Bases.md. La primaria es BEDCA 1047 (\"Sesos, de ternera, crudos\"), que confirma proteina, grasa, sodio, potasio y hierro de la ficha y aporta 17 celdas que estaban a cero: fosforo, magnesio, cobre, vitE, las cinco del grupo B, y los cinco acidos grasos -- entre ellos el DHA (0,36 g/100g), que esta misma nota llevaba describiendo como abundante mientras la celda decia 0. La vitamina A es cero LOGICO declarado (LZ) en BEDCA, no un hueco. Manganeso y yodo salen de CIQUAL 40006 (\"Cervelle, veau, crue\"), que BEDCA no publica. NO se han tocado calcio (43 frente a 10-12 en las tres fuentes) ni selenio (21,3 frente a 10-11,6): son discrepancias reales de un valor YA declarado, no huecos, y cambiarlas no es rellenar sino corregir -- quedan anotadas en PENDIENTE_NUTRICION.md para que las decida una persona.",
   "sin_dato": [
    "cloruro",
-   "cobre",
-   "fosforo",
-   "magnesio",
-   "manganeso",
-   "vitA",
-   "vitD",
-   "vitE",
-   "folato",
-   "niacina",
-   "riboflavina",
-   "tiamina",
-   "vitB6",
-   "taurina",
-   "lcarnitina"
+   "colina",
+   "lcarnitina",
+   "taurina"
   ],
   "purinas_bases": {
    "adenina": 12.0,
@@ -12190,6 +12206,9 @@
    "pais": "Japan",
    "anio": "2020"
   },
-  "taurina_fuente": "Taurina = 153,7 mg/100g: no hay dato propio de esta especie -- se usa \"Poultry, liver\" (Spitze et al. 2003) = 1537 (1300-1784) mg/kg -> 153,7 mg/100g, agregado de varias aves de corral, confianza MEDIA."
+  "taurina_fuente": "Taurina = 153,7 mg/100g: no hay dato propio de esta especie -- se usa \"Poultry, liver\" (Spitze et al. 2003) = 1537 (1300-1784) mg/kg -> 153,7 mg/100g, agregado de varias aves de corral, confianza MEDIA.",
+  "cero_verificado": {
+   "linolenico": "USDA FDC 174467 publica 18:3 = 0 y CIQUAL 40121 («Foie, canard, cru») da 0 también: dos fuentes independientes, cero real y no hueco (7 sep 2026)"
+  }
  }
 ]

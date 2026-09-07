@@ -2384,6 +2384,32 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # solver no lo usa en ninguno de los 21 menús automáticos con ninguno
     # de los tres calcios, y forzando 5 g el Ca:P del menú se mueve 0,08.
     ("DUDOSO", "Semilla de sésamo"),
+    # ⚠️ AÑADIDOS EL 7 DE SEPTIEMBRE, y los tres los encontró el detector
+    # automático de ceros sospechosos nuevo, no una lista a mano.
+    #
+    # Los dos [DUDOSO] son el mismo caso y enseñan lo que pasa cuando la
+    # fuente PRIMARIA es la que falla. `Bases.md` fija el orden BEDCA ->
+    # CIQUAL -> USDA, y la regla es que un dato de la primaria no se
+    # sobrescribe con uno de la secundaria. Pero aquí BEDCA da 0 y no cuela:
+    #   · Canónigos, folato: BEDCA 2379 da 0 µg citando Moreiras 2001;
+    #     CIQUAL 20099 ("Mâche, crue") mide 45,5. Los canónigos son de las
+    #     hojas más ricas en folato que se comen -- ese 0 casi seguro es un
+    #     dato AUSENTE que la tabla de origen escribió como cero.
+    #   · Pipa de calabaza, folato: BEDCA 2204 da 0 µg y CITA A USDA como
+    #     fuente -- pero USDA FDC 170556 da 58. La propia fuente que BEDCA
+    #     dice estar copiando la contradice.
+    # No se toca el valor (sería sobrescribir la primaria): se marcan en
+    # `dato_dudoso`, salen junto al menú y lo decide una persona. El folato
+    # no tiene techo, así que el 0 solo INFRAvalora el alimento.
+    ("DUDOSO", "Canónigos"), ("DUDOSO", "Pipa de calabaza"),
+    # Y el [OMEGA] del cerebro es correcto y era invisible hasta hoy: al
+    # completar la ficha con BEDCA 1047 aparecen sus cinco ácidos grasos,
+    # y el linolénico (0,048 g) queda por encima del linoleico (0,036 g).
+    # En tejido nervioso eso es lo esperable -- es el órgano que concentra
+    # omega-3 -- y las dos cifras salen medidas de la misma ficha, así que
+    # no puede ser una inversión de columnas. Antes no aparecía porque los
+    # dos valían 0.
+    ("OMEGA", "Cerebro de ternera"),
 }
 
 import re as _re_b19
@@ -4974,6 +5000,86 @@ for _etq43c, _cuerpo43c in [
     if _no_verdes43:
         fallos.append(f"BLOQUE43 {_etq43c}: ha salido un menú que no está verde. Con prisa se "
                       f"acepta un menú con un alimento de más, nunca uno que no cumpla.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 44 — UN CERO MUDO SE DELATA SOLO, SIN LISTA QUE MANTENER
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (7 septiembre). El aviso de datos incompletos dependía
+# entero de `sin_dato`, una lista que se rellena A MANO ficha por ficha. Si
+# alguien mete un alimento nuevo y se olvida de declarar un hueco, ese hueco
+# vale CERO para el motor y no avisa nadie: el menú sale verde igual.
+#
+# El caso que lo demuestra es el peor posible y era real hasta hoy: el
+# "Aceite de hígado de bacalao" entraba en el solver con EPA = 0 y DHA = 0.
+# La fuente de omega-3 más densa del catálogo era invisible, y ninguna
+# comprobación lo veía porque el resto de sus ceros SÍ estaban declarados.
+#
+# Ahora `auditar_catalogo.py` lo deduce del propio catálogo: si el 90 % de
+# los alimentos de una categoría tienen un nutriente y uno lo tiene a cero
+# sin declarar, eso se dice. No hay lista que mantener -- el criterio crece
+# solo cuando entra un alimento nuevo.
+#
+# ESTA PRUEBA NO SE CONFORMA CON VER QUE SALE LIMPIA. Una comprobación que
+# solo se ha visto pasar no se ha visto funcionar. Así que PLANTA el fallo
+# en una copia del catálogo y exige que la auditoría lo encuentre. Si el día
+# de mañana alguien rompe el detector, esta mitad se cae aunque la otra siga
+# en verde.
+print("=== BLOQUE 44: el detector de ceros mudos, probado con el fallo puesto ===")
+
+import json as _json_b44, subprocess as _sp_b44, tempfile as _tmp_b44, os as _os_b44
+
+_dir_b44 = _os_b44.path.dirname(_os_b44.path.abspath(__file__))
+
+def _auditar_b44(ruta_catalogo):
+    _env = dict(_os_b44.environ, CANISLAB_CATALOGO=ruta_catalogo)
+    _r = _sp_b44.run([sys.executable, "auditar_catalogo.py"], capture_output=True,
+                     text=True, cwd=_dir_b44, env=_env)
+    if _r.returncode not in (0, 1):
+        return None, _r.stderr[-400:]
+    return [l for l in _r.stdout.splitlines() if "[SOSPECHOSO]" in l], None
+
+# ── mitad 1: con el catálogo de verdad no puede sonar nada ────────────
+_vivos_b44, _err_b44 = _auditar_b44(_os_b44.path.join(_dir_b44, "alimentos_v3_final.json"))
+if _err_b44:
+    fallos.append(f"BLOQUE44: auditar_catalogo.py ha reventado:\n{_err_b44}")
+elif _vivos_b44:
+    fallos.append(
+        f"BLOQUE44: {len(_vivos_b44)} ceros mudos en el catálogo. Cada uno es un nutriente "
+        f"que vale 0 para el motor sin que nadie haya comprobado que de verdad sea 0. "
+        f"O se rellena con su fuente, o se declara en `sin_dato`, o -- si el cero es real "
+        f"y se ha ido a mirar -- se escribe en `cero_verificado` con la fuente al lado:\n    "
+        + "\n    ".join(l.strip()[:110] for l in _vivos_b44[:6]))
+
+# ── mitad 2: con el fallo plantado TIENE que sonar ────────────────────
+# Se vacía la tiamina del hígado de vaca, que es justo el perfil del fallo
+# real: una ficha por lo demás completa, con UN cero mudo, en una categoría
+# donde el resto sí tiene el dato.
+_cat_b44 = _json_b44.load(open(_os_b44.path.join(_dir_b44, "alimentos_v3_final.json"),
+                               encoding="utf-8"))
+_victima_b44 = next(a for a in _cat_b44 if a["nombre"] == "Hígado de vaca")
+assert _victima_b44["nutrientes"].get("tiamina"), \
+    "BLOQUE44 mal escrito: la víctima ya tenía la tiamina a cero"
+_victima_b44["nutrientes"]["tiamina"] = 0
+_victima_b44["sin_dato"] = [k for k in (_victima_b44.get("sin_dato") or []) if k != "tiamina"]
+
+with _tmp_b44.NamedTemporaryFile("w", suffix=".json", delete=False, encoding="utf-8") as _f_b44:
+    _json_b44.dump(_cat_b44, _f_b44, ensure_ascii=False)
+    _roto_b44 = _f_b44.name
+try:
+    _con_fallo_b44, _err2_b44 = _auditar_b44(_roto_b44)
+    if _err2_b44:
+        fallos.append(f"BLOQUE44: la auditoría revienta con el catálogo plantado:\n{_err2_b44}")
+    elif not any("Hígado de vaca" in l and "tiamina" in l for l in (_con_fallo_b44 or [])):
+        fallos.append(
+            "BLOQUE44: se ha vaciado la tiamina del hígado de vaca SIN declararla y el "
+            "detector de ceros mudos no ha dicho nada. El detector está roto o desactivado, "
+            "y con él la única red que queda cuando alguien se olvida de rellenar `sin_dato`.")
+finally:
+    _os_b44.unlink(_roto_b44)
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

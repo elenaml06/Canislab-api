@@ -46,7 +46,14 @@ def _sin_tildes(s):
     return "".join(c for c in s if unicodedata.category(c) != "Mn")
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), "motor"))
-RUTA = os.path.join(os.path.dirname(os.path.abspath(__file__)), "alimentos_v3_final.json")
+# ⚠️ LA RUTA SE PUEDE APUNTAR A OTRO CATÁLOGO (7 septiembre). No es para
+# producción: es para que una prueba pueda PLANTAR un fallo en una copia y
+# comprobar que esta auditoría lo ve. Una comprobación que solo se ha visto
+# pasar no se ha visto funcionar -- es exactamente lo que dice el CLAUDE.md:
+# "un test que pasa con el fallo puesto no sirve". Sin esta línea, la única
+# forma de probar el detector era tocar el catálogo de verdad.
+RUTA = os.environ.get("CANISLAB_CATALOGO") or os.path.join(
+    os.path.dirname(os.path.abspath(__file__)), "alimentos_v3_final.json")
 al = json.load(open(RUTA, encoding="utf-8"))
 def nut(a, k): return (a.get("nutrientes") or {}).get(k, 0) or 0
 def es_grasa(a): return nut(a, "grasa") > 80          # aceites: sus ceros son reales
@@ -146,6 +153,103 @@ for a in al:
         avisos.append(("OMEGA", a["nombre"],
                        f"omega-3 ({w3} g) por encima del omega-6 ({w6} g). Es posible, pero "
                        f"revisa que no esten cambiados: linoleico=omega-6, linolenico=omega-3"))
+
+# ── 2bis. CEROS SOSPECHOSOS, SIN NINGUNA LISTA A MANO ─────────────────
+#
+# ⚠️ POR QUÉ HACÍA FALTA (7 septiembre). El aviso [HUECOS] de arriba solo ve
+# lo que NO está declarado en `sin_dato`, y con un umbral absoluto: diez
+# ceros mudos en la misma ficha. Eso deja pasar el caso que más duele, que
+# es el contrario: una ficha por lo demás completa con UN solo cero mudo,
+# justo en el nutriente por el que ese alimento existe. Pasó de verdad tres
+# veces el mismo día:
+#
+#   · "Aceite de hígado de bacalao" entraba en el motor con EPA=0 y DHA=0.
+#     La fuente de omega-3 más densa del catálogo era invisible para el
+#     solver, y no saltaba nada porque sus otros ceros están declarados.
+#   · "Cerebro de ternera" tenía DHA=0 mientras su propia `nota_datos`
+#     decía, escrito, "rico en DHA de forma natural". BEDCA da 0,36 g.
+#   · "Canónigos" tiene folato=0 siendo una de las hojas más ricas en
+#     folato que se comen.
+#
+# La idea, que estaba apuntada en PENDIENTE desde el 21 de agosto: un cero
+# es sospechoso POR SÍ SOLO, lo declare o no, si CASI TODOS sus compañeros
+# de categoría sí tienen ese nutriente. Eso no necesita ninguna lista que
+# alguien tenga que mantener -- el criterio sale del propio catálogo, así
+# que crece solo cuando entra un alimento nuevo.
+#
+# El umbral (90 %) se eligió midiendo: con 80 % entraban los ceros REALES de
+# la grasa de la fruta, y con 95 % se escapaban seis que sí eran huecos.
+#
+# ⚠️ EL PORCENTAJE ES SOBRE LOS DEMÁS, NO SOBRE TODOS, y esto no es un
+# detalle. La primera versión metía al propio alimento en el denominador, y
+# así un hueco se tapaba a sí mismo en cuanto la categoría era pequeña: en
+# «Hígado», que tiene 6, vaciar uno deja 5 de 6 = 83 % y ya no llega al 90 %.
+# O sea que el aviso se apagaba justo en las categorías donde más duele, que
+# son las pequeñas. Se descubrió porque el BLOQUE 44 planta el fallo en un
+# hígado a propósito y NO saltaba. La pregunta correcta es "¿es este alimento
+# la excepción entre sus compañeros?", y en esa pregunta el alimento que se
+# examina no puede contarse a sí mismo.
+#
+# Con el denominador arreglado la categoría mínima puede bajar a 5, que es
+# lo que hace falta para cubrir «Hígado» -- y cubrirla encontró un hueco
+# real el mismo día: el linoleico del hígado de cordero, a cero sin declarar
+# cuando los otros cinco hígados lo tienen.
+UMBRAL_CATEGORIA = 0.90
+MINIMO_POR_CATEGORIA = 5
+
+_por_categoria = {}
+for a in al:
+    if (a.get("categoria") in SUPLEMENTOS or es_grasa(a)
+            or a["nombre"] in SIN_INCERTIDUMBRE or not a.get("nutrientes")):
+        continue
+    _por_categoria.setdefault(a["categoria"], []).append(a)
+
+def _ya_contestado(a):
+    """Las claves de una ficha sobre las que ya NO hay nada que preguntar.
+
+    Son cuatro casos, y ninguno es una lista central que alguien tenga que
+    mantener: los cuatro viven en la propia ficha, junto al dato.
+
+      · `sin_dato`         — el hueco ya está declarado.
+      · `*_fuente`         — el cero lleva su procedencia escrita, así que es
+                             un valor medido y no una celda vacía (mismo
+                             criterio que el aviso [HUECOS]).
+      · `cero_verificado`  — alguien fue a la fuente, comprobó que el cero es
+                             REAL, y dejó escrito cuál y cuándo. Sin esto el
+                             aviso volvería a sonar cada vez sobre algo ya
+                             contestado, que es la forma más rápida de que
+                             una auditoría deje de leerse.
+      · `dato_dudoso`      — ya está marcado como no creíble y sale junto al
+                             menú por su propio camino. Avisar dos veces del
+                             mismo problema con distinto texto ya pasó una
+                             vez (la laringe) y solo hace ruido."""
+    sd = set(a.get("sin_dato") or [])
+    for extra in ("purinas", "taurina", "lcarnitina"):
+        if a.get(extra + "_fuente"):
+            sd.add(extra)
+    sd |= set(a.get("cero_verificado") or {})
+    sd |= set(a.get("dato_dudoso") or {})
+    return sd
+
+for cat, grupo in sorted(_por_categoria.items()):
+    if len(grupo) < MINIMO_POR_CATEGORIA:
+        continue
+    claves = set()
+    for g in grupo:
+        claves |= set(g["nutrientes"])
+    for k in sorted(claves):
+        for g in grupo:
+            if nut(g, k) or k in _ya_contestado(g):
+                continue
+            companeros = [o for o in grupo if o is not g]
+            con_dato = sum(1 for o in companeros if nut(o, k))
+            if con_dato / len(companeros) < UMBRAL_CATEGORIA:
+                continue
+            avisos.append(("SOSPECHOSO", g["nombre"],
+                           f"{k} = 0 sin declarar, pero {con_dato} de los otros "
+                           f"{len(companeros)} alimentos de «{cat}» sí lo tienen. O es un "
+                           f"hueco que hay que declarar en `sin_dato`, o es un cero real "
+                           f"que hay que escribir en `cero_verificado` con su fuente"))
 
 # ── 2c. LOS GRASOS TIENEN QUE CABER DENTRO DE LA GRASA ────────────────
 #

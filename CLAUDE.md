@@ -224,13 +224,35 @@ salta nada, el menú sale verde igual. Lo vigilan el BLOQUE 26 y
 `auditar_catalogo.py` (los nueve alimentos donde el omega-3 supera al
 omega-6).
 
-**Los dos campos que dicen qué NO nos creemos.** Un 0 puede ser «no lo
+**Los TRES campos que dicen qué sabemos de cada 0.** Un 0 puede ser «no lo
 tiene» o «no lo sabemos» — eso lo separa `sin_dato`. Un valor declarado y
 erróneo (tiene forma de dato bueno y pasa cualquier validación de formato)
 va en **`dato_dudoso`**, que `verificar()` devuelve junto al menú igual que
 los huecos. Lo vigila el BLOQUE 28. Los tres casos reales que lo motivaron
 (omega-3 de salmón, fósforo de harina de hueso, cobre de polvo de sangre):
 `HISTORIA_TECNICA.md`.
+El tercero es **`cero_verificado`** (7 de septiembre): un 0 al que alguien
+fue a la fuente, comprobó que es real, y dejó escrito cuál y cuándo. Existe
+porque el aviso `[SOSPECHOSO]` de `auditar_catalogo.py` deduce los ceros
+raros del propio catálogo —si el 90 % de los DEMÁS de su categoría tienen
+ese nutriente y este no, se dice— y sin una forma de contestarle volvería a
+preguntar lo mismo cada vez, que es como una auditoría deja de leerse. Es el
+mismo patrón que `purinas_fuente` o `fuente_epa_dha`: la procedencia vive en
+la ficha, no en una lista central. Lo vigila el BLOQUE 44, que no se
+conforma con verlo salir limpio — vacía la tiamina de un hígado en una copia
+del catálogo y exige que la auditoría lo encuentre.
+
+**Y las tres bases de datos no son intercambiables.** El orden lo fija
+`Bases.md`: BEDCA (primaria) → Köber 2017 para el hueso → CIQUAL → USDA. No
+es preferencia, es que **ninguna tiene los 41 nutrientes**: BEDCA trae yodo
+pero ni un aminoácido, USDA trae los 12 aminoácidos y la colina pero no
+publica yodo, CIQUAL trae todos los ácidos grasos pero tampoco aminoácidos.
+Casi todos los huecos del catálogo están justo donde ninguna llegaba — no
+son fallos de copia: donde una ficha entera sale del mismo registro de USDA,
+coinciden 153 de 156 celdas. Y BEDCA distingue «midieron 0» (`value_type`
+`AR`) de «no hay cifra» (`TR` con la celda vacía), distinción que se pierde
+al volcarla a un CSV y que convierte huecos en ceros mudos. Detalle y las
+medidas: `PENDIENTE_NUTRICION.md` §5-quater.
 
 En la raíz, los cuatro: `alimentos_v3_final.json` (el catálogo),
 `requerimientos_v2_final.json` (la tabla de FEDIAF), `catalogo_menus.json`

@@ -120,7 +120,28 @@ VISCERAS = [
     # fuente cada uno) dan variedad real sin inventar ninguna cifra.
     "Bazo de vaca", "Páncreas de vaca",
     "Bazo de cordero", 
-    "Timo de ternera", "Cerebro de ternera",
+    "Timo de ternera",
+    # ⚠️ QUITADO "Cerebro de ternera" (7 septiembre), mismo criterio que la
+    # laringe de vacuno: se queda en el catálogo para quien lo elija A MANO,
+    # pero el automático ya no lo propone. Y esta vez el motivo se midió.
+    #
+    # Hasta hoy su ficha tenía el DHA a CERO -- un cero mudo, ni siquiera
+    # declarado -- mientras su propia `nota_datos` decía, escrito, "rico en
+    # DHA de forma natural". Al ponerle el valor real de BEDCA 1047 (0,36 g
+    # /100 g) pasó a ser LA ÚNICA VÍSCERA DEL CATÁLOGO CON DHA, así que
+    # cubría dos casillas con un solo alimento -- la de víscera y la de
+    # omega-3 -- y ganaba siempre. MEDIDO con 20 menús automáticos idénticos
+    # antes y después: el cerebro pasó de 0/20 a 15/20, y a cambio
+    # desaparecieron el timo (6/20 -> 0), el riñón de ternera (5/20 -> 0),
+    # el pulmón de ternera (4/20 -> 0) y el riñón de cordero (2/20 -> 0).
+    # De paso dejaba al pescado fuera: de 30 semillas, solo 2 conservaban el
+    # boquerón que el usuario había pedido conservar (lo cazó el BLOQUE 17).
+    #
+    # El dato es CORRECTO y se queda: el problema no es nutricional, es que
+    # los sesos de ternera no se piden en una carnicería normal y no pueden
+    # ser la víscera por defecto de tres de cada cuatro menús. Igual que la
+    # laringe: el criterio de esta lista es "fácil y seguro de encontrar",
+    # no solo "con buenos datos".
     # ⚠️ QUITADO "Testículos de cordero" (27 agosto). Estaba aqui desde el
     # 21 de agosto "con datos USDA reales", y esa frase era la que fallaba:
     # de sus 31 nutrientes, 30 estaban a CERO. Solo tenia la vitamina B12
