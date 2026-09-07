@@ -351,6 +351,17 @@
     "nota_auditoria": "El tope estaba en la columna 'maxAdulto', que NO se consulta para un cachorro: era papel mojado. Movido a maxCachorroCrecimiento/Joven. Además el motor no tenía este nutriente en su MAPA, así que lo ignoraba por completo. En razas grandes el exceso de calcio durante el crecimiento causa osteocondrosis: no pueden regular su absorción como los adultos."
   },
   {
+    "nutriente": "Fibra",
+    "unidad": "g",
+    "minAdulto": "-",
+    "minCachorroJoven": "-",
+    "minCachorroCrecimiento": "-",
+    "maxCachorroJoven": "-",
+    "maxCachorroCrecimiento": "-",
+    "maxAdulto": "-",
+    "nota_auditoria": "FEDIAF NO da minimo ni maximo de fibra en la Tabla III-3b -- no es un requisito de FEDIAF, y por eso auditar_fediaf.py la lista en NO_SON_NUTRIENTES_DE_LA_TABLA en vez de compararla contra el PDF. Esta fila existe SOLO para que el motor pueda leer el nutriente (por eso esta tambien en verificar.MAPA) y mostrarlo en la ficha de cualquier menu sin exigir nada a un perro sano, y para que topes_de_patologias() pueda ponerle un suelo cuando una patologia concreta lo necesite con una fuente real -- nunca al reves: si algun dia esto lleva un numero en minAdulto/maxAdulto, deja de ser una excepcion documentada y vuelve a ser el fallo del 25 de agosto (ver PENDIENTE_NUTRICION.md parrafo 5, punto 3). Primer uso real: hiperlipidemia, suelo de 25 g/1000kcal, SACN5 cap.28."
+  },
+  {
     "nutriente": "Arginina",
     "unidad": "g",
     "minAdulto": 1.51,

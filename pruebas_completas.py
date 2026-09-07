@@ -1308,7 +1308,7 @@ from motor_completo import topes_de_patologias as _topes_b13
 # Las patologías que se prueban una a una. Las que bloquean no llevan menú
 # que comprobar, así que no van aquí.
 _PATOLOGIAS_B13 = ["renal", "pancreatitis", "cardiopatia", "oxalato", "diabetes",
-                   "artrosis", "dermatosis_zinc"]
+                   "artrosis", "dermatosis_zinc", "hiperlipidemia"]
 
 # ⚠️ EL ANCLA DE LOS NÚMEROS (25 agosto). Leer los topes del motor evita que
 # esta prueba y el motor se separen -- pero por eso mismo ya no puede cazar
@@ -2166,14 +2166,33 @@ for _der, _kg, _tam, _etapa in _CASOS_b18:
                       f"sobra {_sobran}. Los dos lados de la app, en desacuerdo sobre el "
                       f"mismo plato.")
 
-# 3) Y que la fibra no haya vuelto a colarse por ningún lado: ni en la
-#    lista, ni en el JSON de requisitos. No está en la tabla de FEDIAF.
-if "Fibra" in _MAPA_SEMAFORO_b18:
-    fallos.append("BLOQUE18: 'Fibra' ha vuelto a la lista de requisitos. No está en la "
-                  "tabla de FEDIAF.")
-if any(_r["nutriente"] == "Fibra" for _r in _api.cargar_v2()[1].values()
-       if isinstance(_r, dict) and "nutriente" in _r):
-    fallos.append("BLOQUE18: ha vuelto la fila 'Fibra' a requerimientos_v2_final.json.")
+# 3) ⚠️ ACTUALIZADO (7 septiembre) — "Fibra" SÍ está ahora en las dos, a
+#    propósito y de forma distinta a como volvió la vez del 25 de agosto.
+#    Aquella vez traía un mínimo y un máximo inventados (4,29 / 14,3) que
+#    el analizador exigía. Esta vez los seis campos son "-": no es un
+#    requisito de FEDIAF, no exige ni limita nada a un perro sano, y solo
+#    sirve para que `topes_de_patologias()` le pueda poner un suelo con
+#    fuente real (hiperlipidemia, SACN5 cap.28). Lo que este bloque vigila
+#    ahora es que siga siendo ESO y no el fallo de antes: si vuelve a
+#    llevar un número, es la misma fibra del 25 de agosto otra vez.
+if "Fibra" not in _MAPA_SEMAFORO_b18:
+    fallos.append("BLOQUE18: 'Fibra' ha desaparecido de verificar.MAPA. Es la fila que deja "
+                  "que topes_de_patologias() le ponga un suelo a hiperlipidemia (SACN5 "
+                  "cap.28) sin exigirle nada a un perro sano -- ver PENDIENTE_NUTRICION.md §5.")
+_fila_fibra_b18 = next((_r for _r in _api.cargar_v2()[1].values()
+                        if isinstance(_r, dict) and _r.get("nutriente") == "Fibra"), None)
+if not _fila_fibra_b18:
+    fallos.append("BLOQUE18: ha desaparecido la fila 'Fibra' de requerimientos_v2_final.json.")
+else:
+    for _campo_b18 in ("minAdulto", "minCachorroJoven", "minCachorroCrecimiento",
+                       "maxAdulto", "maxCachorroJoven", "maxCachorroCrecimiento"):
+        if str(_fila_fibra_b18.get(_campo_b18, "-")) not in ("-", "", "None"):
+            fallos.append(
+                f"BLOQUE18: la fila 'Fibra' lleva un número en {_campo_b18} "
+                f"({_fila_fibra_b18.get(_campo_b18)}). FEDIAF no da ningún valor de fibra: "
+                f"es exactamente el fallo del 25 de agosto (un mínimo/máximo inventado que "
+                f"el analizador acababa exigiendo). Un suelo real por patología va en "
+                f"patologias.json con su fuente, nunca aquí.")
 
 # 4) Y la auditoría contra FEDIAF tiene que salir limpia. Comprueba los dos
 #    sentidos: que cada valor de FEDIAF esté bien puesto, y que no sobre
@@ -4381,12 +4400,22 @@ else:
             fallos.append(f"BLOQUE38: {_x38.get('nutriente')} está marcado `sin_referencia` "
                           f"pero sí trae mínimo o máximo.")
     # Y ordenado por lo que va MÁS JUSTO, que es por donde mira un profesional.
+    #
+    # ⚠️ ACTUALIZADO (7 septiembre): "Fibra" se une a la lista, y por un
+    # motivo distinto a los otros dos. Linolénico y Araquidónico están sin
+    # referencia solo en Adulto -- FEDIAF SÍ les da mínimo en crecimiento y
+    # reproducción, y por eso el bloque 27 exige que EN ESA ETAPA no
+    # aparezcan aquí. Fibra no tiene referencia en NINGUNA etapa -- FEDIAF
+    # no le da fila propia -- así que aparece siempre. Si el día de mañana
+    # alguien le pone un número, dejará de estar aquí y este bloque avisará
+    # (línea de arriba: "sí trae mínimo o máximo").
     _sr38 = {x["nutriente"] for x in _d38 if x.get("sin_referencia")}
-    if _sr38 != {"Linolénico", "Araquidónico"}:
+    if _sr38 != {"Linolénico", "Araquidónico", "Fibra"}:
         fallos.append(f"BLOQUE38: los nutrientes sin referencia en adulto son {_sr38} y tenían "
-                      f"que ser el linolénico y el araquidónico -- los dos a los que FEDIAF pone "
-                      f"«-» fuera de crecimiento y reproducción. Si aparece otro, o se ha perdido "
-                      f"un valor de la tabla o se ha dejado de escalar algo.")
+                      f"que ser el linolénico, el araquidónico (FEDIAF pone «-» fuera de "
+                      f"crecimiento y reproducción) y la fibra (FEDIAF no le da fila en ninguna "
+                      f"etapa). Si aparece otro, o se ha perdido un valor de la tabla o se ha "
+                      f"dejado de escalar algo.")
     _pcts38 = [x["cubre_pct"] for x in _d38 if x.get("cubre_pct") is not None]
     if _pcts38 != sorted(_pcts38):
         fallos.append("BLOQUE38: `dentro_de_rango` no viene ordenado por lo que va más justo. "
