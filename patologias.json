@@ -13,7 +13,13 @@
         "fosforo": {
           "valor": 1200.0,
           "fuente": "Freeman LM, dvm360 2009; WSAVA; IRIS. Confirmado 6-sep-2026 contra SACN5 5ª ed., cap.37 «Chronic Kidney Disease», Tabla 37-9",
-          "por_que": "Las dietas renales comerciales aportan 480-1000 mg/1000 kcal. 1200 es lo más restrictivo que el solver puede aplicar sin romper el mínimo FEDIAF de adulto (1160 mg). IRIS da objetivos en SANGRE, no en la dieta, así que no sirve para poner este número. SACN5 Tabla 37-9 da «Phosphorus 0.2 to 0.5% in foods for dogs» (materia seca) = 500-1250 mg/1000kcal a 4000kcal/kgMS: 1200 cae justo dentro, en el extremo menos restrictivo del rango de la fuente."
+          "por_que": "Las dietas renales comerciales aportan 480-1000 mg/1000 kcal. 1200 es lo más restrictivo que el solver puede aplicar sin romper el mínimo FEDIAF de adulto (1160 mg). IRIS da objetivos en SANGRE, no en la dieta, así que no sirve para poner este número. SACN5 Tabla 37-9 da «Phosphorus 0.2 to 0.5% in foods for dogs» (materia seca) = 500-1250 mg/1000kcal a 4000kcal/kgMS: 1200 cae justo dentro, en el extremo menos restrictivo del rango de la fuente.",
+          "margen_del_profesional": {
+            "direccion": null,
+            "hasta": null,
+            "criterio": "El estadio IRIS y la fosfatemia piden bajarlo mas: las dietas renales comerciales van a 480-1000 mg/1000 kcal, y SACN5 (cap. 37, Tabla 37-9) da 0,2-0,5 % de materia seca, o sea 500-1250.",
+            "donde_para": "1200 ya es lo mas bajo que cabe: el minimo de FEDIAF de adulto es 1160 mg y solo queda un 3,4 % de sitio. Bajar de ahi es prescribir por debajo de FEDIAF, y eso Rawku todavia no lo hace."
+          }
         }
       },
       "solo_en_adulto": true,
@@ -36,12 +42,24 @@
         "proteina": {
           "valor": 75.0,
           "fuente": "SACN5 5ª ed., cap. 67 «Pancreatitis», Tabla 67-3, verificado 6-sep-2026 contra el texto",
-          "por_que": "Tabla 67-3: «Protein 15 to 30% for dogs» (base materia seca). Al 4000kcal/kgMS de referencia son 37,5-75 g/1000kcal; se usa el extremo alto (75) porque es el mínimo restrictivo que ya sirve — BARF sin tocar va sobre ~130g/1000kcal, muy por encima. Motivo, del propio texto: los aminoácidos libres (fenilalanina, triptófano, valina) son un estímulo de secreción pancreática incluso mayor que la grasa, así que el exceso de proteína hay que evitarlo aunque no sea el nutriente que más se cita."
+          "por_que": "Tabla 67-3: «Protein 15 to 30% for dogs» (base materia seca). Al 4000kcal/kgMS de referencia son 37,5-75 g/1000kcal; se usa el extremo alto (75) porque es el mínimo restrictivo que ya sirve — BARF sin tocar va sobre ~130g/1000kcal, muy por encima. Motivo, del propio texto: los aminoácidos libres (fenilalanina, triptófano, valina) son un estímulo de secreción pancreática incluso mayor que la grasa, así que el exceso de proteína hay que evitarlo aunque no sea el nutriente que más se cita.",
+          "margen_del_profesional": {
+            "direccion": "bajar",
+            "hasta": 52.1,
+            "criterio": "Lo agudo del cuadro. Los aminoacidos libres (fenilalanina, triptofano, valina) estimulan la secrecion pancreatica mas que la grasa, asi que en un brote se aprieta hacia el extremo bajo del rango de SACN5 (15-30 % de materia seca = 37,5-75 g/1000 kcal). El valor por defecto es el extremo alto.",
+            "donde_para": "El minimo de proteina de FEDIAF en adulto es 52,10 g/1000 kcal. El extremo bajo de la fuente (37,5) queda por debajo: eso ya es prescripcion, no ajuste."
+          }
         },
         "grasa": {
           "valor": 20.0,
           "fuente": "Merck Veterinary Manual, «Pancreatitis in Dogs and Cats»",
-          "por_que": "Literal de la fuente: «feeding a low-fat diet (ie, less than 20 g fat/1,000 kcal) is crucial for treatment success». Se expresa en gramos por 1000 kcal y no en % de kcal a propósito: es como lo dice la fuente. Confirmado 6-sep-2026 contra SACN5 cap.67 Tabla 67-3: el rango general es ≤15% MS (≈37,5 g/1000kcal) y para el paciente obeso o hipertrigliceridémico baja a ≤10% MS (≈25 g/1000kcal) -- los 20 de Merck caen dentro de ambos rangos, así que se mantienen sin cambio, ya cubren el caso más estricto."
+          "por_que": "Literal de la fuente: «feeding a low-fat diet (ie, less than 20 g fat/1,000 kcal) is crucial for treatment success». Se expresa en gramos por 1000 kcal y no en % de kcal a propósito: es como lo dice la fuente. Confirmado 6-sep-2026 contra SACN5 cap.67 Tabla 67-3: el rango general es ≤15% MS (≈37,5 g/1000kcal) y para el paciente obeso o hipertrigliceridémico baja a ≤10% MS (≈25 g/1000kcal) -- los 20 de Merck caen dentro de ambos rangos, así que se mantienen sin cambio, ya cubren el caso más estricto.",
+          "margen_del_profesional": {
+            "direccion": "subir",
+            "hasta": 37.5,
+            "criterio": "La condicion corporal y los trigliceridos. SACN5 (cap. 67, Tabla 67-3) pone el techo en <=15 % de materia seca (37,5 g/1000 kcal) si el perro NO es obeso ni hipertrigliceridemico, y lo baja a <=10 % (25 g/1000 kcal) si lo es.",
+            "donde_para": "El valor por defecto, 20 (Merck), es mas estricto que los dos: ya cubre el caso peor. Por debajo de 20 no hay ninguna cifra publicada; el suelo absoluto seria el minimo de grasa de FEDIAF, 13,75."
+          }
         }
       },
       "solo_en_adulto": true,
@@ -59,7 +77,13 @@
         "vitD": {
           "valor": 14.1875,
           "fuente": "Máximo LEGAL de FEDIAF 2025 (Tabla III-3a, Reglamento (UE) 2017/1492), no el nutricional",
-          "por_que": "No es un tope propio de la patología: es el máximo de FEDIAF ya vigente para cualquier perro, puesto aquí explícito porque en oxalato el exceso de vitamina D sí importa. Actualizado 7-sep-2026: el valor era 20,0 (el máximo NUTRICIONAL antiguo, 800 UI); desde la corrección del 6-sep-2026 el máximo que manda es el LEGAL (14,1875 µg = 567,5 UI, más estricto). No cambiaba el menú real (el máximo de FEDIAF ya se aplicaba de por sí, y esta patología solo podía ENDURECER, nunca relajar), pero el número aquí escrito estaba desactualizado. En oxalato NO se baja el calcio: el calcio intestinal secuestra el oxalato y bajarlo empeora el problema (Today's Veterinary Practice 2025 citando a Carr 2020). OJO -- conflicto de fuentes, resuelto a favor de la más reciente: SACN5 5ª ed. (2010), cap.40 «Canine Calcium Oxalate Urolithiasis», Tabla 40-5, todavía recomendaba «Restrict dietary calcium to 0.4 to 0.7% DM» (bajar el calcio). Today's Veterinary Practice 2025 (citando a Carr 2020), que es la fuente que aquí se sigue, invierte esa recomendación: el calcio intestinal bajo aumenta la absorción de oxalato libre y empeora el problema -- es el cambio de paradigma que siguió a estudios de la década de 2010 sobre unión intestinal calcio-oxalato. Se mantiene la posición de NO bajar el calcio por ser la más reciente y la que tiene el mecanismo mejor descrito. SACN5 Tabla 40-5 sí coincide con lo ya aplicado en fósforo (0,3-0,6%MS = 0,75-1,5 g/1000kcal, dentro de rango normal) y en sodio (<0,3%MS = <7,5 g/1000kcal, sin tope propio hoy)."
+          "por_que": "No es un tope propio de la patología: es el máximo de FEDIAF ya vigente para cualquier perro, puesto aquí explícito porque en oxalato el exceso de vitamina D sí importa. Actualizado 7-sep-2026: el valor era 20,0 (el máximo NUTRICIONAL antiguo, 800 UI); desde la corrección del 6-sep-2026 el máximo que manda es el LEGAL (14,1875 µg = 567,5 UI, más estricto). No cambiaba el menú real (el máximo de FEDIAF ya se aplicaba de por sí, y esta patología solo podía ENDURECER, nunca relajar), pero el número aquí escrito estaba desactualizado. En oxalato NO se baja el calcio: el calcio intestinal secuestra el oxalato y bajarlo empeora el problema (Today's Veterinary Practice 2025 citando a Carr 2020). OJO -- conflicto de fuentes, resuelto a favor de la más reciente: SACN5 5ª ed. (2010), cap.40 «Canine Calcium Oxalate Urolithiasis», Tabla 40-5, todavía recomendaba «Restrict dietary calcium to 0.4 to 0.7% DM» (bajar el calcio). Today's Veterinary Practice 2025 (citando a Carr 2020), que es la fuente que aquí se sigue, invierte esa recomendación: el calcio intestinal bajo aumenta la absorción de oxalato libre y empeora el problema -- es el cambio de paradigma que siguió a estudios de la década de 2010 sobre unión intestinal calcio-oxalato. Se mantiene la posición de NO bajar el calcio por ser la más reciente y la que tiene el mecanismo mejor descrito. SACN5 Tabla 40-5 sí coincide con lo ya aplicado en fósforo (0,3-0,6%MS = 0,75-1,5 g/1000kcal, dentro de rango normal) y en sodio (<0,3%MS = <7,5 g/1000kcal, sin tope propio hoy).",
+          "margen_del_profesional": {
+            "direccion": null,
+            "hasta": null,
+            "criterio": "Ninguna. No es un tope de la patologia: es el maximo LEGAL de vitamina D de FEDIAF (Tabla III-3a, Reglamento (UE) 2017/1492), que se aplica a cualquier perro.",
+            "donde_para": "Un maximo legal no se relaja. Y en oxalato tampoco se baja el calcio: el calcio intestinal secuestra el oxalato, y bajarlo empeora el problema."
+          }
         }
       },
       "avisos": {
@@ -75,7 +99,13 @@
         "cobre": {
           "valor": 2.4,
           "fuente": "Center SA et al., JAVMA 264(2):171-180, 2026 (límite tolerable 0,24 mg/100 kcal). Confirmado 6-sep-2026 contra SACN5 5ª ed., cap.68 «Hepatobiliary Disease», Tabla 68-8",
-          "por_que": "Se deja puesto aunque hoy la patología bloquee: si algún día se distingue «hepatopatía por cobre» de otras hepatopatías, el número ya está aquí. SACN5 Tabla 68-8 da «Copper ≤5 mg/kg» de materia seca para perros con hepatobiliopatía = 1,25 mg/1000kcal a 4000kcal/kgMS -- prácticamente idéntico al objetivo terapéutico de 1,2 ya citado (Center 2026): dos fuentes independientes, veinte años de diferencia, coinciden en el mismo número. La misma Tabla 68-8 da además proteína 15-20%MS para perro (37,5-50 g/1000kcal) -- también por debajo del mínimo FEDIAF (52,1) -- así que la hepatopatía real está por debajo del suelo nutricional en DOS ejes, no solo en cobre."
+          "por_que": "Se deja puesto aunque hoy la patología bloquee: si algún día se distingue «hepatopatía por cobre» de otras hepatopatías, el número ya está aquí. SACN5 Tabla 68-8 da «Copper ≤5 mg/kg» de materia seca para perros con hepatobiliopatía = 1,25 mg/1000kcal a 4000kcal/kgMS -- prácticamente idéntico al objetivo terapéutico de 1,2 ya citado (Center 2026): dos fuentes independientes, veinte años de diferencia, coinciden en el mismo número. La misma Tabla 68-8 da además proteína 15-20%MS para perro (37,5-50 g/1000kcal) -- también por debajo del mínimo FEDIAF (52,1) -- así que la hepatopatía real está por debajo del suelo nutricional en DOS ejes, no solo en cobre.",
+          "margen_del_profesional": {
+            "direccion": "bajar",
+            "hasta": null,
+            "criterio": "El objetivo terapeutico publicado es 1,2-1,25 mg/1000 kcal (Center 2026, JAVMA; SACN5 cap. 68, Tabla 68-8: <=5 mg/kg de materia seca).",
+            "donde_para": "El minimo de cobre de FEDIAF en adulto es 2,08 mg/1000 kcal: el objetivo terapeutico esta POR DEBAJO del minimo nutricional. Es prescripcion, no ajuste, y por eso esta patologia no formula sola."
+          }
         }
       },
       "sin_dieta_automatica": true,
@@ -95,7 +125,13 @@
         "sodio": {
           "valor": 900.0,
           "fuente": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140",
-          "por_que": "ACVIM da el sodio por estadio: B2 80-99 mg/100 kcal, C 50-79, D <50. 900 mg/1000 kcal = 90 mg/100 kcal, dentro del rango de B2. La app no pregunta el estadio, así que se usa el MENOS restrictivo: bajar a C o D sin saberlo sería quitarle sodio a un perro que no lo necesita."
+          "por_que": "ACVIM da el sodio por estadio: B2 80-99 mg/100 kcal, C 50-79, D <50. 900 mg/1000 kcal = 90 mg/100 kcal, dentro del rango de B2. La app no pregunta el estadio, así que se usa el MENOS restrictivo: bajar a C o D sin saberlo sería quitarle sodio a un perro que no lo necesita.",
+          "margen_del_profesional": {
+            "direccion": "bajar",
+            "hasta": 480.0,
+            "criterio": "El estadio ACVIM. El consenso (Keene 2019) da 80-99 mg/100 kcal en B2, 50-79 en C y <50 en D. Esta entrada generica no sabe el estadio y usa el menos restrictivo a proposito: bajar el sodio de un perro que no lo necesita tambien hace dano. Si lo sabes, marca el estadio concreto en vez de «Cardiopatia»: cada uno lleva su cifra.",
+            "donde_para": "El minimo de sodio de FEDIAF en adulto es 290 mg/1000 kcal."
+          }
         }
       },
       "avisos": {
@@ -121,7 +157,13 @@
         "sodio": {
           "valor": 900.0,
           "fuente": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio",
-          "por_que": "ACVIM 2019 pide «mild dietary sodium restriction» en B2 sin dar cifra; la escala moderna por estadio la sitúa en 80-99 mg/100 kcal (800-990 mg/1000 kcal). 900 es el mismo valor que ya usaba la entrada genérica 'cardiopatia', ahora explícito para quien sabe que su perro está en B2. Confirmado 7-sep-2026 contra SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4: sodio «Class Ia = 0,15 a 0,25% (375-625 mg/1000kcal a 4000kcal/kgMS); Class Ib, II y III = 0,08 a 0,15% (200-375 mg/1000kcal)». Confirma el PATRÓN (restringir más cuanto más avanzada la enfermedad) pero no se sustituyen los números: SACN5 usa la clasificación ISACHC (I/II/III), no la ACVIM (A/B1/B2/C/D) que usa esta app, y las dos NO son intercambiables grado a grado -- además el consenso ACVIM 2019 (Keene et al.) es la fuente específica de miocardiopatía/insuficiencia mitral más moderna y más citada en cardiología veterinaria de pequeños animales que un capítulo general de un libro de texto de 2010. El extremo bajo de Class Ib/II/III (200 mg) cae POR DEBAJO del mínimo FEDIAF (290): confirma que un cardiópata en fase avanzada, si se sigue la restricción más agresiva de la literatura, puede necesitar bajar de FEDIAF -- que es justo por lo que «cardiopatia_d» (480, con margen sobre 290) se quedó formulable a propósito, sin llegar ahí."
+          "por_que": "ACVIM 2019 pide «mild dietary sodium restriction» en B2 sin dar cifra; la escala moderna por estadio la sitúa en 80-99 mg/100 kcal (800-990 mg/1000 kcal). 900 es el mismo valor que ya usaba la entrada genérica 'cardiopatia', ahora explícito para quien sabe que su perro está en B2. Confirmado 7-sep-2026 contra SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4: sodio «Class Ia = 0,15 a 0,25% (375-625 mg/1000kcal a 4000kcal/kgMS); Class Ib, II y III = 0,08 a 0,15% (200-375 mg/1000kcal)». Confirma el PATRÓN (restringir más cuanto más avanzada la enfermedad) pero no se sustituyen los números: SACN5 usa la clasificación ISACHC (I/II/III), no la ACVIM (A/B1/B2/C/D) que usa esta app, y las dos NO son intercambiables grado a grado -- además el consenso ACVIM 2019 (Keene et al.) es la fuente específica de miocardiopatía/insuficiencia mitral más moderna y más citada en cardiología veterinaria de pequeños animales que un capítulo general de un libro de texto de 2010. El extremo bajo de Class Ib/II/III (200 mg) cae POR DEBAJO del mínimo FEDIAF (290): confirma que un cardiópata en fase avanzada, si se sigue la restricción más agresiva de la literatura, puede necesitar bajar de FEDIAF -- que es justo por lo que «cardiopatia_d» (480, con margen sobre 290) se quedó formulable a propósito, sin llegar ahí.",
+          "margen_del_profesional": {
+            "direccion": "bajar",
+            "hasta": 800.0,
+            "criterio": "Dentro del estadio B2 el rango es 800-990 mg/1000 kcal (80-99 mg/100 kcal). ACVIM 2019 pide aqui «restriccion moderada de sodio» sin dar cifra; el numero viene de la escala moderna por estadio.",
+            "donde_para": "El minimo de sodio de FEDIAF en adulto es 290 mg/1000 kcal."
+          }
         }
       },
       "avisos": {
@@ -137,7 +179,13 @@
         "sodio": {
           "valor": 790.0,
           "fuente": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio",
-          "por_que": "La escala moderna por estadio sitúa el estadio C en 50-79 mg/100 kcal (500-790 mg/1000 kcal). Se usa el extremo MENOS restrictivo del rango (790): una restricción severa puede activar el sistema renina-angiotensina-aldosterona y empeorar el pronóstico, y la prioridad clínica en insuficiencia cardíaca es que el perro siga comiendo lo suficiente, no apretar el sodio al máximo. Confirmado 7-sep-2026 contra SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4: sodio «Class Ia = 0,15 a 0,25% (375-625 mg/1000kcal a 4000kcal/kgMS); Class Ib, II y III = 0,08 a 0,15% (200-375 mg/1000kcal)». Confirma el PATRÓN (restringir más cuanto más avanzada la enfermedad) pero no se sustituyen los números: SACN5 usa la clasificación ISACHC (I/II/III), no la ACVIM (A/B1/B2/C/D) que usa esta app, y las dos NO son intercambiables grado a grado -- además el consenso ACVIM 2019 (Keene et al.) es la fuente específica de miocardiopatía/insuficiencia mitral más moderna y más citada en cardiología veterinaria de pequeños animales que un capítulo general de un libro de texto de 2010. El extremo bajo de Class Ib/II/III (200 mg) cae POR DEBAJO del mínimo FEDIAF (290): confirma que un cardiópata en fase avanzada, si se sigue la restricción más agresiva de la literatura, puede necesitar bajar de FEDIAF -- que es justo por lo que «cardiopatia_d» (480, con margen sobre 290) se quedó formulable a propósito, sin llegar ahí."
+          "por_que": "La escala moderna por estadio sitúa el estadio C en 50-79 mg/100 kcal (500-790 mg/1000 kcal). Se usa el extremo MENOS restrictivo del rango (790): una restricción severa puede activar el sistema renina-angiotensina-aldosterona y empeorar el pronóstico, y la prioridad clínica en insuficiencia cardíaca es que el perro siga comiendo lo suficiente, no apretar el sodio al máximo. Confirmado 7-sep-2026 contra SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4: sodio «Class Ia = 0,15 a 0,25% (375-625 mg/1000kcal a 4000kcal/kgMS); Class Ib, II y III = 0,08 a 0,15% (200-375 mg/1000kcal)». Confirma el PATRÓN (restringir más cuanto más avanzada la enfermedad) pero no se sustituyen los números: SACN5 usa la clasificación ISACHC (I/II/III), no la ACVIM (A/B1/B2/C/D) que usa esta app, y las dos NO son intercambiables grado a grado -- además el consenso ACVIM 2019 (Keene et al.) es la fuente específica de miocardiopatía/insuficiencia mitral más moderna y más citada en cardiología veterinaria de pequeños animales que un capítulo general de un libro de texto de 2010. El extremo bajo de Class Ib/II/III (200 mg) cae POR DEBAJO del mínimo FEDIAF (290): confirma que un cardiópata en fase avanzada, si se sigue la restricción más agresiva de la literatura, puede necesitar bajar de FEDIAF -- que es justo por lo que «cardiopatia_d» (480, con margen sobre 290) se quedó formulable a propósito, sin llegar ahí.",
+          "margen_del_profesional": {
+            "direccion": "bajar",
+            "hasta": 500.0,
+            "criterio": "Dentro del estadio C el rango es 500-790 mg/1000 kcal. El valor por defecto es el extremo MENOS restrictivo a proposito: una restriccion severa puede activar el eje renina-angiotensina-aldosterona y empeorar el pronostico, y lo prioritario en insuficiencia cardiaca es que el perro siga comiendo.",
+            "donde_para": "El minimo de sodio de FEDIAF en adulto es 290 mg/1000 kcal."
+          }
         }
       },
       "avisos": {
@@ -153,7 +201,13 @@
         "sodio": {
           "valor": 480.0,
           "fuente": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio",
-          "por_que": "La escala moderna por estadio da el estadio D como <50 mg/100 kcal (<500 mg/1000 kcal). Se usa 480 (48 mg/100 kcal), con margen bajo ese umbral y por encima del mínimo de FEDIAF adulto (290 mg/1000 kcal a DER 95), para que el menú siga siendo formulable sin necesitar profesional. Confirmado 7-sep-2026 contra SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4: sodio «Class Ia = 0,15 a 0,25% (375-625 mg/1000kcal a 4000kcal/kgMS); Class Ib, II y III = 0,08 a 0,15% (200-375 mg/1000kcal)». Confirma el PATRÓN (restringir más cuanto más avanzada la enfermedad) pero no se sustituyen los números: SACN5 usa la clasificación ISACHC (I/II/III), no la ACVIM (A/B1/B2/C/D) que usa esta app, y las dos NO son intercambiables grado a grado -- además el consenso ACVIM 2019 (Keene et al.) es la fuente específica de miocardiopatía/insuficiencia mitral más moderna y más citada en cardiología veterinaria de pequeños animales que un capítulo general de un libro de texto de 2010. El extremo bajo de Class Ib/II/III (200 mg) cae POR DEBAJO del mínimo FEDIAF (290): confirma que un cardiópata en fase avanzada, si se sigue la restricción más agresiva de la literatura, puede necesitar bajar de FEDIAF -- que es justo por lo que «cardiopatia_d» (480, con margen sobre 290) se quedó formulable a propósito, sin llegar ahí."
+          "por_que": "La escala moderna por estadio da el estadio D como <50 mg/100 kcal (<500 mg/1000 kcal). Se usa 480 (48 mg/100 kcal), con margen bajo ese umbral y por encima del mínimo de FEDIAF adulto (290 mg/1000 kcal a DER 95), para que el menú siga siendo formulable sin necesitar profesional. Confirmado 7-sep-2026 contra SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4: sodio «Class Ia = 0,15 a 0,25% (375-625 mg/1000kcal a 4000kcal/kgMS); Class Ib, II y III = 0,08 a 0,15% (200-375 mg/1000kcal)». Confirma el PATRÓN (restringir más cuanto más avanzada la enfermedad) pero no se sustituyen los números: SACN5 usa la clasificación ISACHC (I/II/III), no la ACVIM (A/B1/B2/C/D) que usa esta app, y las dos NO son intercambiables grado a grado -- además el consenso ACVIM 2019 (Keene et al.) es la fuente específica de miocardiopatía/insuficiencia mitral más moderna y más citada en cardiología veterinaria de pequeños animales que un capítulo general de un libro de texto de 2010. El extremo bajo de Class Ib/II/III (200 mg) cae POR DEBAJO del mínimo FEDIAF (290): confirma que un cardiópata en fase avanzada, si se sigue la restricción más agresiva de la literatura, puede necesitar bajar de FEDIAF -- que es justo por lo que «cardiopatia_d» (480, con margen sobre 290) se quedó formulable a propósito, sin llegar ahí.",
+          "margen_del_profesional": {
+            "direccion": "bajar",
+            "hasta": 290.0,
+            "criterio": "El estadio D pide <50 mg/100 kcal (<500 mg/1000 kcal). Se usa 480 para dejar margen bajo ese umbral y que el menu siga saliendo.",
+            "donde_para": "290 mg/1000 kcal, el minimo de FEDIAF en adulto. Por debajo es prescripcion."
+          }
         }
       },
       "avisos": {
@@ -252,7 +306,13 @@
         "grasa": {
           "valor": 30.0,
           "fuente": "SACN5 5ª ed., cap.28 «Disorders of Lipid Metabolism», Tabla 28-2, verificado 6-sep-2026",
-          "por_que": "Tabla 28-2: «Restrict dietary fat (<12% dry matter)» para bajar triglicéridos. A 4000kcal/kgMS de referencia son <30 g/1000kcal. Por encima del mínimo FEDIAF de grasa (13,75), así que es un tope normal, no una prescripción: se puede alcanzar eligiendo carnes magras."
+          "por_que": "Tabla 28-2: «Restrict dietary fat (<12% dry matter)» para bajar triglicéridos. A 4000kcal/kgMS de referencia son <30 g/1000kcal. Por encima del mínimo FEDIAF de grasa (13,75), así que es un tope normal, no una prescripción: se puede alcanzar eligiendo carnes magras.",
+          "margen_del_profesional": {
+            "direccion": "bajar",
+            "hasta": 13.75,
+            "criterio": "La respuesta de los trigliceridos. La fuente (SACN5 cap. 28, Tabla 28-2) da un solo numero, «<12 % de materia seca» = 30 g/1000 kcal, sin rango: por debajo de eso no hay cifra publicada.",
+            "donde_para": "13,75 g/1000 kcal, el minimo de grasa de FEDIAF en adulto."
+          }
         }
       },
       "avisos": {
@@ -263,7 +323,13 @@
         "fibra": {
           "valor": 25.0,
           "fuente": "SACN5 5ª ed., cap.28 «Disorders of Lipid Metabolism», sección «Key Nutritional Factors · Fiber», verificado 7-sep-2026",
-          "por_que": "Literal: «fiber levels of at least 10% DM are recommended for dogs». A 4000kcal/kgMS de referencia son 25 g/1000kcal. El propio texto matiza que ningún estudio en animales ha medido el efecto de la fibra sobre triglicéridos (\"no studies have been done in animals to evaluate the effects of dietary fiber type or amount on reducing serum triglyceride levels\") y que el mecanismo es más claro para colesterol que para triglicéridos -- el 10% es una recomendación práctica basada en las dietas terapéuticas comerciales que sí han funcionado clínicamente, no un valor con dosis-respuesta demostrada. Se aplica igual porque es la única cifra que da la fuente, y es alcanzable con el catálogo real (verdura fibrosa: col rizada, alcachofa, dátil...)."
+          "por_que": "Literal: «fiber levels of at least 10% DM are recommended for dogs». A 4000kcal/kgMS de referencia son 25 g/1000kcal. El propio texto matiza que ningún estudio en animales ha medido el efecto de la fibra sobre triglicéridos (\"no studies have been done in animals to evaluate the effects of dietary fiber type or amount on reducing serum triglyceride levels\") y que el mecanismo es más claro para colesterol que para triglicéridos -- el 10% es una recomendación práctica basada en las dietas terapéuticas comerciales que sí han funcionado clínicamente, no un valor con dosis-respuesta demostrada. Se aplica igual porque es la única cifra que da la fuente, y es alcanzable con el catálogo real (verdura fibrosa: col rizada, alcachofa, dátil...).",
+          "margen_del_profesional": {
+            "direccion": "subir",
+            "hasta": null,
+            "criterio": "La fuente da «al menos 10 % de materia seca» (25 g/1000 kcal) y no pone techo. El propio texto avisa de que ningun estudio en animales ha medido el efecto de la fibra sobre los trigliceridos: el 10 % viene de las dietas terapeuticas que si funcionaron clinicamente, no de una dosis-respuesta demostrada.",
+            "donde_para": "FEDIAF no pone minimo ni maximo de fibra. El limite real es que la racion siga llegando a las kcal y al resto de requisitos."
+          }
         }
       }
     },
@@ -274,7 +340,13 @@
         "grasa": {
           "valor": 30.0,
           "fuente": "SACN5 5ª ed., cap.27 «Obesity», Tabla 27-4, verificado 6-sep-2026",
-          "por_que": "Tabla 27-4, perros, adelgazamiento: «Foods for weight loss should contain ≤9%» (materia seca) de grasa. A 4000kcal/kgMS son ≤22,5 g/1000kcal -- pero probado contra el solver con el catálogo real, 22,5 (y hasta 27) no dan menú ni en 40s de reintentos: una comida de verdad, sin premezcla vitamínica sintética como la de un pienso, no puede bajar tanto la grasa y seguir llegando a los mínimos de EFA y micronutrientes con las kcal que quedan. Probado en escalón: 28 sí resuelve, 5 de 5 intentos. Se deja en 30 (el mismo valor de hiperlipidemia, y el límite de «prevención de recuperación de peso» de la propia Tabla 27-4 es ≤14%MS = 35, así que 30 queda dentro de esa franja, no en la más agresiva de adelgazamiento puro). Sigue por encima del mínimo FEDIAF (13,75) y bastante por debajo de una ración BARF sin ajustar."
+          "por_que": "Tabla 27-4, perros, adelgazamiento: «Foods for weight loss should contain ≤9%» (materia seca) de grasa. A 4000kcal/kgMS son ≤22,5 g/1000kcal -- pero probado contra el solver con el catálogo real, 22,5 (y hasta 27) no dan menú ni en 40s de reintentos: una comida de verdad, sin premezcla vitamínica sintética como la de un pienso, no puede bajar tanto la grasa y seguir llegando a los mínimos de EFA y micronutrientes con las kcal que quedan. Probado en escalón: 28 sí resuelve, 5 de 5 intentos. Se deja en 30 (el mismo valor de hiperlipidemia, y el límite de «prevención de recuperación de peso» de la propia Tabla 27-4 es ≤14%MS = 35, así que 30 queda dentro de esa franja, no en la más agresiva de adelgazamiento puro). Sigue por encima del mínimo FEDIAF (13,75) y bastante por debajo de una ración BARF sin ajustar.",
+          "margen_del_profesional": {
+            "direccion": "bajar",
+            "hasta": 28.0,
+            "criterio": "La fuente (SACN5 cap. 27, Tabla 27-4) pide <=9 % de materia seca (22,5 g/1000 kcal) para adelgazar; el valor por defecto, 30, es el limite de «prevencion de recuperacion de peso» de esa misma tabla (<=14 % MS = 35).",
+            "donde_para": "28. Probado contra el catalogo real: 22,5 -- y hasta 27 -- no dan menu ni en 40 s de reintentos, y 28 si, 5 de 5. Una comida de verdad, sin premezcla vitaminica sintetica como la de un pienso, no puede bajar tanto la grasa y seguir llegando a los minimos de acidos grasos esenciales y micronutrientes con las kcal que quedan."
+          }
         }
       },
       "avisos": {
@@ -313,12 +385,24 @@
         "taurina": {
           "valor": 250.0,
           "fuente": "SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4, verificado 7-sep-2026",
-          "por_que": "Tabla 36-4 (perro): taurina ≥0,1% de materia seca. A 4000kcal/kgMS son 1000mg/4000kcal = 250 mg/1000kcal. Antes de esta fecha el motor no medía taurina en ningún alimento (activado el mismo día en verificar.MAPA, con dato ya en las 159 fichas del catálogo)."
+          "por_que": "Tabla 36-4 (perro): taurina ≥0,1% de materia seca. A 4000kcal/kgMS son 1000mg/4000kcal = 250 mg/1000kcal. Antes de esta fecha el motor no medía taurina en ningún alimento (activado el mismo día en verificar.MAPA, con dato ya en las 159 fichas del catálogo).",
+          "margen_del_profesional": {
+            "direccion": "subir",
+            "hasta": null,
+            "criterio": "La fuente (SACN5 cap. 36, Tabla 36-4) da >=0,1 % de materia seca como suelo y no pone techo.",
+            "donde_para": "FEDIAF no pide taurina en el perro: este suelo es entero de la patologia. El limite practico es lo que el catalogo puede aportar."
+          }
         },
         "lcarnitina": {
           "valor": 50.0,
           "fuente": "SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4, verificado 7-sep-2026",
-          "por_que": "Tabla 36-4 (perro): L-carnitina ≥0,02% de materia seca. A 4000kcal/kgMS son 200mg/4000kcal = 50 mg/1000kcal. Mismo mecanismo y misma fecha de activación que la taurina de esta patología."
+          "por_que": "Tabla 36-4 (perro): L-carnitina ≥0,02% de materia seca. A 4000kcal/kgMS son 200mg/4000kcal = 50 mg/1000kcal. Mismo mecanismo y misma fecha de activación que la taurina de esta patología.",
+          "margen_del_profesional": {
+            "direccion": "subir",
+            "hasta": null,
+            "criterio": "La fuente (SACN5 cap. 36, Tabla 36-4) da >=0,02 % de materia seca como suelo y no pone techo.",
+            "donde_para": "FEDIAF no pide L-carnitina en el perro: este suelo es entero de la patologia."
+          }
         }
       },
       "formulable_por_profesional": true
@@ -339,7 +423,13 @@
         "grasa": {
           "valor": 37.5,
           "fuente": "SACN5 5ª ed., cap.58 «Protein-Losing Enteropathies», Tabla 58-1, verificado 6-sep-2026",
-          "por_que": "Tabla 58-1: «Fat <15% for dogs and cats» (materia seca), porque la grasa de cadena larga sobrecarga los linfáticos intestinales dañados. A 4000kcal/kgMS son <37,5 g/1000kcal. Por encima del mínimo FEDIAF (13,75), alcanzable con carnes magras."
+          "por_que": "Tabla 58-1: «Fat <15% for dogs and cats» (materia seca), porque la grasa de cadena larga sobrecarga los linfáticos intestinales dañados. A 4000kcal/kgMS son <37,5 g/1000kcal. Por encima del mínimo FEDIAF (13,75), alcanzable con carnes magras.",
+          "margen_del_profesional": {
+            "direccion": "bajar",
+            "hasta": 13.75,
+            "criterio": "Lo que tolere el paciente. La grasa de cadena larga sobrecarga los linfaticos intestinales danados, asi que si sigue perdiendo proteina se aprieta mas. La fuente (SACN5 cap. 58, Tabla 58-1) da «<15 % de materia seca» y no da suelo.",
+            "donde_para": "13,75 g/1000 kcal, el minimo de grasa de FEDIAF en adulto."
+          }
         }
       },
       "avisos": {
@@ -354,7 +444,13 @@
         "grasa": {
           "valor": 37.5,
           "fuente": "SACN5 5ª ed., cap.66 «Exocrine Pancreatic Insufficiency», Tabla 66-1, verificado 6-sep-2026",
-          "por_que": "Tabla 66-1: «Fat 10 to 15% for dogs» (materia seca). A 4000kcal/kgMS son 25-37,5 g/1000kcal; se usa el extremo alto porque el propio texto (cap.66) dice que restringir la grasa NO es lo prioritario si hay reemplazo enzimático adecuado -- es un apoyo, no el tratamiento."
+          "por_que": "Tabla 66-1: «Fat 10 to 15% for dogs» (materia seca). A 4000kcal/kgMS son 25-37,5 g/1000kcal; se usa el extremo alto porque el propio texto (cap.66) dice que restringir la grasa NO es lo prioritario si hay reemplazo enzimático adecuado -- es un apoyo, no el tratamiento.",
+          "margen_del_profesional": {
+            "direccion": "bajar",
+            "hasta": 25.0,
+            "criterio": "Si el reemplazo enzimatico es suficiente, restringir la grasa NO es lo prioritario -- lo dice el propio capitulo 66 --, y por eso el valor por defecto es el extremo alto del rango de la fuente (10-15 % de materia seca = 25-37,5 g/1000 kcal). Si la esteatorrea no cede con las enzimas, se aprieta hacia 25.",
+            "donde_para": "25 g/1000 kcal es el extremo bajo de la fuente. Mas abajo ya no es esta patologia: el minimo de grasa de FEDIAF es 13,75."
+          }
         }
       },
       "avisos": {
@@ -389,7 +485,13 @@
         "epa_dha": {
           "valor": 1.0,
           "fuente": "SACN5 5ª ed., cap.34 «Nutritional Management of Osteoarthritis», Tabla 34-2, verificado 7-sep-2026",
-          "por_que": "Tabla 34-2: «Eicosapentaenoic acid 0.4 to 1.1%» (materia seca). A 4000kcal/kgMS son 1,0-2,75 g/1000kcal; se usa el extremo bajo (1,0) porque ya es varias veces el suelo general de EPA+DHA (0,11 g/1000kcal, NRC 2006) y es el que ya se ha probado que resuelve con el catalogo real. El mecanismo (min_por_1000kcal) se añadio el 7 de septiembre junto con este primer uso real: antes el motor solo sabia poner techos por patologia, nunca suelos."
+          "por_que": "Tabla 34-2: «Eicosapentaenoic acid 0.4 to 1.1%» (materia seca). A 4000kcal/kgMS son 1,0-2,75 g/1000kcal; se usa el extremo bajo (1,0) porque ya es varias veces el suelo general de EPA+DHA (0,11 g/1000kcal, NRC 2006) y es el que ya se ha probado que resuelve con el catalogo real. El mecanismo (min_por_1000kcal) se añadio el 7 de septiembre junto con este primer uso real: antes el motor solo sabia poner techos por patologia, nunca suelos.",
+          "margen_del_profesional": {
+            "direccion": "subir",
+            "hasta": 2.75,
+            "criterio": "La fuente (SACN5 cap. 34, Tabla 34-2) da 0,4-1,1 % de EPA en materia seca = 1,0-2,75 g/1000 kcal. Se arranca en el extremo bajo, que ya es nueve veces el suelo general de EPA+DHA (0,11 g/1000 kcal, NRC 2006).",
+            "donde_para": "2,75 g/1000 kcal, el extremo alto de la fuente."
+          }
         }
       }
     },
@@ -456,7 +558,13 @@
         "zinc": {
           "valor": 25.0,
           "fuente": "SACN5 5ª ed., cap.32 «Skin and Hair Disorders», Tabla 32-1, verificado 7-sep-2026",
-          "por_que": "Tabla 32-1: «Zinc: Dogs: 100 to 200 mg/kg food DM». A 4000kcal/kgMS son 25-50 mg/1000kcal; se usa el extremo bajo (25) porque ya es un aumento real sobre el mínimo general de FEDIAF (20,8 mg/1000kcal), suficiente para probar que resuelve con el catálogo real."
+          "por_que": "Tabla 32-1: «Zinc: Dogs: 100 to 200 mg/kg food DM». A 4000kcal/kgMS son 25-50 mg/1000kcal; se usa el extremo bajo (25) porque ya es un aumento real sobre el mínimo general de FEDIAF (20,8 mg/1000kcal), suficiente para probar que resuelve con el catálogo real.",
+          "margen_del_profesional": {
+            "direccion": "subir",
+            "hasta": 50.0,
+            "criterio": "La fuente (SACN5 cap. 32, Tabla 32-1) da 100-200 mg/kg de materia seca = 25-50 mg/1000 kcal. En un defecto de absorcion real puede hacer falta el extremo alto.",
+            "donde_para": "50 mg/1000 kcal. El maximo de zinc de FEDIAF en adulto es 56,75, asi que el extremo alto de la fuente cabe justo debajo."
+          }
         }
       }
     },
@@ -533,7 +641,13 @@
         "fosforo": {
           "valor": 1200.0,
           "fuente": "Igual que renal (Freeman LM, dvm360 2009; WSAVA; IRIS; SACN5 cap.37 Tabla 37-9)",
-          "por_que": "Mismo tope que la renal de base: es lo mas restrictivo que el solver puede aplicar sin romper el minimo FEDIAF de adulto (1160 mg). La diferencia real de esta patologia esta en la proteina, no en el fosforo -- el fosforo ya estaba al limite posible en ambas."
+          "por_que": "Mismo tope que la renal de base: es lo mas restrictivo que el solver puede aplicar sin romper el minimo FEDIAF de adulto (1160 mg). La diferencia real de esta patologia esta en la proteina, no en el fosforo -- el fosforo ya estaba al limite posible en ambas.",
+          "margen_del_profesional": {
+            "direccion": null,
+            "hasta": null,
+            "criterio": "Igual que en la renal de base. La diferencia real de IRIS 3-4 esta en la proteina, no en el fosforo: el fosforo ya estaba al limite posible en las dos.",
+            "donde_para": "1200 es lo mas bajo que cabe con el minimo de FEDIAF de adulto en 1160 mg. Bajar de ahi es prescripcion por debajo de FEDIAF."
+          }
         }
       }
     }

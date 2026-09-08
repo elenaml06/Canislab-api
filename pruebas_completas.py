@@ -5888,6 +5888,76 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora"
 
 
 # ============================================================
+# BLOQUE 51 — QUE PUEDE MOVER EL VETERINARIO EN CADA TOPE
+# ============================================================
+# ⚠️ CASO REAL (8 septiembre): el bloque «que puedes tocar y que no» de la
+# ficha decia LO MISMO en las 40 patologias -- «nada de la patologia», y tres
+# lineas genericas, una de ellas el peldano de BARF, que se elige en cada menu
+# de todas formas. Era generico Y redundante.
+#
+# Y es falso que sea lo mismo en todas: en pancreatitis el techo de grasa
+# depende de la condicion corporal y de los trigliceridos, en EPI el valor por
+# defecto es el extremo ALTO del rango porque el tratamiento son las enzimas, y
+# en renal no se puede mover NADA porque 1200 ya choca con el minimo de FEDIAF.
+#
+# Este bloque vigila las dos cosas que lo hacen inutil si se rompen:
+#   1. Que NINGUN tope o suelo se quede sin margen escrito. Anadir una
+#      patologia nueva y olvidar el margen devolveria el texto generico justo
+#      en la recien anadida, y saldria verde igual.
+#   2. Que el endpoint sirva el margen del ARCHIVO, palabra por palabra. Es la
+#      misma razon por la que existe /patologias: que el numero no se copie.
+print("\n=== BLOQUE 51: que puede mover el veterinario, tope a tope ===")
+
+import json as _json51
+_crudo51 = _json51.load(open("patologias.json", encoding="utf-8"))["patologias"]
+_servido51 = _c.get("/patologias").json()["patologias"]
+
+_DIRECCIONES51 = {None, "subir", "bajar"}
+
+for _k51, _p51 in _crudo51.items():
+    for _campo51, _lista51 in (("topes_por_1000kcal", "topes"),
+                               ("suelos_por_1000kcal", "suelos")):
+        for _n51, _t51 in (_p51.get(_campo51) or {}).items():
+            _m51 = _t51.get("margen_del_profesional")
+            if not _m51:
+                fallos.append(
+                    f"BLOQUE51 {_k51}.{_n51}: tope sin `margen_del_profesional`. "
+                    f"Sin el, la ficha vuelve a decirle al veterinario el texto "
+                    f"generico justo en esta patologia, y el menu sale verde igual.")
+                continue
+            if _m51.get("direccion") not in _DIRECCIONES51:
+                fallos.append(f"BLOQUE51 {_k51}.{_n51}: direccion "
+                              f"{_m51.get('direccion')!r} no es None/subir/bajar")
+            for _campo_txt51 in ("criterio", "donde_para"):
+                if not (_m51.get(_campo_txt51) or "").strip():
+                    fallos.append(f"BLOQUE51 {_k51}.{_n51}: `{_campo_txt51}` vacio")
+            # Un margen que apunta al MISMO numero que el tope no dice nada:
+            # o hay recorrido, o `hasta` va a null y `donde_para` explica por que.
+            if _m51.get("hasta") is not None and _t51.get("valor") is not None:
+                if abs(float(_m51["hasta"]) - float(_t51["valor"])) < 1e-9:
+                    fallos.append(f"BLOQUE51 {_k51}.{_n51}: `hasta` es el propio tope; "
+                                  f"o hay recorrido de verdad o va a null")
+                # La direccion tiene que cuadrar con el numero, o el veterinario
+                # lee «puedes bajarlo» junto a un numero mas alto.
+                _sube51 = float(_m51["hasta"]) > float(_t51["valor"])
+                if _sube51 != (_m51.get("direccion") == "subir"):
+                    fallos.append(
+                        f"BLOQUE51 {_k51}.{_n51}: direccion={_m51.get('direccion')!r} "
+                        f"pero el tope es {_t51['valor']} y `hasta` es {_m51['hasta']}")
+
+            # Y lo que sirve la API es lo del archivo, sin retoques.
+            _srv51 = next((x for x in _servido51[_k51][_lista51]
+                           if x["nutriente"] == _n51), None)
+            if _srv51 is None:
+                fallos.append(f"BLOQUE51 {_k51}.{_n51}: el endpoint no lo sirve")
+            elif _srv51.get("margen_del_profesional") != _m51:
+                fallos.append(f"BLOQUE51 {_k51}.{_n51}: /patologias sirve un margen "
+                              f"distinto del que aplica el solver")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")

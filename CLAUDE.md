@@ -120,6 +120,24 @@ app**: sería la tercera copia de la misma tabla, que es exactamente cómo se
 desincronizó la del `POST /menu`. Lo vigila el BLOQUE 44, cifra a cifra
 contra el archivo que aplica el solver.
 
+Desde el 8 de septiembre cada tope y cada suelo lleva además
+**`margen_del_profesional`**: qué puede mover el veterinario en ESE número,
+hasta dónde, qué variable clínica lo decide y dónde para. Nació porque el
+bloque de la ficha decía **lo mismo en las 40 patologías** — «nada de la
+patología» y tres líneas genéricas, una de ellas el peldaño de BARF, que se
+elige en cada menú de todas formas. Y es falso que sea lo mismo: en
+pancreatitis el techo de grasa lo mueven la condición corporal y los
+triglicéridos (SACN5 Tabla 67-3, ≤15 % de materia seca, o ≤10 % si es obeso
+o hipertrigliceridémico); en EPI el valor de partida es el extremo **alto**
+del rango porque el tratamiento son las enzimas y no la dieta; en renal no
+se mueve **nada**, porque 1200 ya choca con el mínimo de FEDIAF (1160) y
+bajar de ahí es prescribir por debajo. Tres respuestas distintas a la misma
+pregunta, y quien firma necesita la suya. Los 19 márgenes salen del mismo
+archivo que aplica el solver, y el BLOQUE 51 vigila que ninguno se quede sin
+escribir —añadir un tope y olvidarlo devolvería el texto genérico justo en
+la patología recién añadida, y el menú saldría verde igual—, que la
+dirección cuadre con el número, y que la API sirva el del archivo.
+
 `GET /relajacion` (8 de septiembre) sirve los peldaños de la escalera con su
 nombre y qué suelta cada uno, y `/menu/v2` y `/formular/autocompletar`
 aceptan `peldano`. **Con un peldaño elegido no se baja solo**: bajar sería

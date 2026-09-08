@@ -4806,6 +4806,25 @@ def listar_patologias():
                 "margen_pct": margen,
                 "fuente": t.get("fuente"),
                 "por_que": t.get("por_que"),
+                # ⚠️ QUE PUEDE MOVER EL VETERINARIO Y QUE NO, TOPE A TOPE
+                # (8 septiembre). CASO REAL: el bloque de la ficha decia lo
+                # MISMO en las 40 patologias -- «no puedes tocar nada de la
+                # patologia» y tres lineas genericas, una de ellas el peldano
+                # de BARF, que se elige en cada menu de todas formas.
+                #
+                # Y es falso que sea lo mismo en todas. En pancreatitis el
+                # techo de grasa depende de la condicion corporal y de los
+                # triglicéridos (SACN5 Tabla 67-3: <=15 % de materia seca, o
+                # <=10 % si es obeso o hipertrigliceridemico); en EPI el valor
+                # por defecto es el extremo ALTO del rango porque el
+                # tratamiento son las enzimas, no la dieta; y en renal no se
+                # puede mover NADA, porque 1200 ya choca con el minimo de
+                # FEDIAF. Son tres respuestas distintas a la misma pregunta, y
+                # quien firma la pauta necesita la suya.
+                #
+                # Sale del mismo archivo que aplica el solver, como el resto:
+                # es la razon de ser de este endpoint (ver su docstring).
+                "margen_del_profesional": t.get("margen_del_profesional"),
             })
         salida.sort(key=lambda x: x["nutriente"])
         return salida

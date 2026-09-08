@@ -9,6 +9,71 @@ Este archivo no se lee solo: se abre cuando hace falta el detalle de algo
 que ya se resolvió — por qué se decidió así, qué se midió, qué PR lo trajo.
 Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 
+## Qué puede tocar el veterinario en CADA patología — 8 de septiembre
+
+El bloque «qué es inamovible y qué decides tú» de la ficha clínica se puso
+el 7 de septiembre y estaba **genérico y a medias**. Lo dijo la usuaria sin
+rodeos: «en qué puede tocar y qué no siempre pones lo mismo... no puede
+tocar nada relacionado con la patología, y puede tocar qué alimentos entran
+y cuántos gramos, las categorías y las exclusiones, y las proporciones BARF
+— **que eso lo puede hacer siempre en cada menú, es redundante que pongas
+eso**».
+
+Tenía razón por partida doble: las tres líneas eran iguales en las 40
+patologías, y encima dos de ellas no dependen de la patología para nada.
+
+Y el fondo del asunto es que **no es lo mismo en todas**. Su ejemplo:
+«en pancreatitis, según las analíticas y lo agudo del cuadro, el veterinario
+puede decidir hasta dónde bajarla». Abriendo las fuentes primarias
+(`canislab-fuentes`, clonado para esto) resulta que es literal:
+
+- **Pancreatitis, grasa.** SACN5 cap. 67, Tabla 67-3: «Fat ≤15% for
+  non-obese and non-hypertriglyceridemic dogs» y «≤10% for obese and/or
+  hypertriglyceridemic dogs» — o sea 37,5 y 25 g/1000 kcal. El techo lo
+  mueven la condición corporal y los triglicéridos del paciente. Nuestro
+  valor de partida (20, de Merck) es más estricto que los dos.
+- **EPI, grasa.** El valor de partida es el extremo **alto** del rango
+  (25-37,5) porque el propio capítulo 66 dice que restringir la grasa no es
+  lo prioritario si el reemplazo enzimático es adecuado. Si la esteatorrea
+  no cede, se aprieta hacia 25.
+- **Renal, fósforo.** Aquí no se mueve **nada**, y eso también hay que
+  decirlo: 1200 ya es lo más bajo que cabe con el mínimo de FEDIAF de
+  adulto en 1160. Las dietas renales comerciales van a 480-1000, así que un
+  veterinario **va a querer** bajarlo — y lo que necesita leer es que eso es
+  prescribir por debajo de FEDIAF, que Rawku todavía no hace.
+- **Cardiopatía genérica, sodio.** El margen es *elegir el estadio*: la
+  entrada genérica usa el menos restrictivo (900) porque no sabe el estadio,
+  y B2/C/D existen como patologías propias con 900/790/480.
+- **Obesidad, grasa.** La fuente pide ≤22,5 y el motor **no llega con comida
+  real**: probado, 22,5 y hasta 27 no dan menú ni en 40 s; 28 sí, 5 de 5.
+
+Los 19 topes y suelos llevan ahora `margen_del_profesional` en
+`patologias.json` (dirección, hasta dónde, qué lo decide, dónde para), lo
+sirve `GET /patologias` y lo pinta la ficha. Lo vigila el **BLOQUE 51**: que
+ninguno se quede sin margen, que la dirección cuadre con el número, y que la
+API sirva el del archivo y no una copia.
+
+## El veterinario entra a su fichero, y la rueda vuelve al formulador — 8 de septiembre
+
+Los dos fallos se encontraron **abriendo rawku.app desplegado** con un
+veterinario de tres pacientes: Chromium de verdad, el bundle de Vercel y el
+motor de Render detrás. Ninguna de las pruebas que había los veía, porque
+todas empezaban dando por hecho que se estaba dentro de una ficha.
+
+1. **La app abría la ficha del último paciente mirado.** Con cincuenta
+   pacientes es la pantalla equivocada: nadie abre su motor para seguir con
+   el caso de ayer. La decisión se toma mirando si es el ARRANQUE de la app
+   y no si hay un paciente montado — abrir un paciente remonta el componente
+   entero, así que con la otra condición pulsar un paciente en la lista
+   habría devuelto a la lista, en bucle y sin error. Hace falta además un
+   efecto: en el primer render `enModoProfesional` todavía vale false porque
+   la fila de `profiles` llega un instante después, así que el veterinario
+   entraba por la rama del tutor. Eso lo cazó la prueba, no el código.
+2. **El formulador no tenía la rueda de ajustes.** Es la pantalla donde un
+   veterinario pasa el rato, y tiene cabecera propia: por eso se quedó fuera
+   cuando la regla («la rueda va en todas las pantallas») se aplicó a las
+   demás.
+
 ## Hecho el 20 de agosto
 
 - Sentry en el backend, con avisos por correo.
