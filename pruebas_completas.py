@@ -1405,6 +1405,12 @@ _CIFRAS_CON_FUENTE = [
      "SACN5 Tabla 67-3: «Protein 15 to 30% for dogs» = 37,5-75, extremo alto"),
     ("oxalato", "topes_por_1000kcal", "vitD", 14.1875,
      "máximo LEGAL de FEDIAF (Reg. UE 2017/1492), 227 UI x 2,5 = 567,5 UI"),
+    ("oxalato", "topes_por_1000kcal", "sodio", 750.0,
+     "SACN5 Tabla 40-5: «Dietary sodium should be <0.3% DM» = 750 (más estricto que los 1200 de Today's Veterinary Practice 2025)"),
+    ("oxalato", "topes_por_1000kcal", "fosforo", 1500.0,
+     "SACN5 Tabla 40-5: «phosphorus should be in the range of 0.3 to 0.6% DM» = 750-1500, se aplica el techo"),
+    ("oxalato", "topes_por_1000kcal", "magnesio", 375.0,
+     "SACN5 Tabla 40-5: «magnesium should be in the range of 0.04 to 0.15% DM» = 100-375, se aplica el techo"),
     ("hepatopatia", "topes_por_1000kcal", "cobre", 2.4,
      "Center 2026 JAVMA; techo legal Reg. UE 2020/354 entrada 28 = 2,50"),
     # Los cuatro sodios cardíacos, con el techo legal europeo delante.

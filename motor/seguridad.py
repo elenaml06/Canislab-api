@@ -238,7 +238,62 @@ TOPE_CLARA_PESO = 0.05
 # evitarlos en perros con antecedente de urolitos de oxalato calcico. Ahi el
 # tope es 0 y eso si esta fundado.
 # Las hojas de ruibarbo son el mayor riesgo agudo (oxalato muy alto).
-OXALATO_ALTO = {"espinaca", "acelga", "ruibarbo", "remolacha"}
+# ⚠️ AMPLIADA (8 septiembre) — LA LISTA ERA DE CUATRO Y LA FUENTE MARCA
+# CATORCE QUE TENEMOS. Hasta hoy esto eran "espinaca, acelga, ruibarbo,
+# remolacha": conocimiento general, sin una tabla detrás, y de esas cuatro
+# solo dos existen en el catálogo (ruibarbo y remolacha no están).
+#
+# SACN5 5ª ed., cap.40, Tabla 40-3 «Selected human foods to limit or avoid
+# feeding to dogs with calcium oxalate uroliths», columna «Moderate/high-
+# oxalate foods», tiene la lista de verdad y la gradúa: (H) = «high; avoid
+# feeding», (M) = «moderate; feed in limited amounts». Se excluyen SOLO las
+# (H), que es lo que la fuente manda evitar. Verificado literal el 8-sep-2026.
+#
+# Las (M) NO se excluyen a propósito, y una de ellas conviene conocerla: la
+# SARDINA es «Sardines (M)», la única de la lista que no es verdura ni fruta.
+# Las otras (M) del catálogo son brócoli, espárrago, lechuga, pera, piña,
+# tomate, zanahoria y naranja.
+#
+# La ACELGA y el RUIBARBO se quedan aunque NO estén en la Tabla 40-3: son
+# los dos casos clásicos de oxalato alto y estaban aquí antes con criterio
+# clínico general. Se marcan como tales para que se sepa cuáles vienen de la
+# tabla y cuáles no -- que es justo lo que faltaba en la versión de cuatro.
+#
+# ⚠️ Y ESTO ES LO ÚNICO que excluye alimentos por oxalato. Cuando el 8 de
+# septiembre se escribió que «el oxalato no ajusta nada», era verdad solo a
+# medias: no aplicaba ningún tope NUMÉRICO (sodio, fósforo, magnesio se
+# añadieron ese día), pero la exclusión de alimentos sí existía desde el 5 de
+# agosto. Ver PATOLOGIAS.md §1.2.
+_OXALATO_TABLA_40_3 = {
+    # Verduras marcadas (H) en la Tabla 40-3
+    "apio",           # Celery (H)
+    "berenjena",      # Eggplant (H)
+    "boniato",        # Sweet potatoes (H)
+    "calabacin",      # Summer squash (H)
+    "espinaca",       # Spinach (H)
+    "judia verde",    # Green beans (H)
+    "pepino",         # Cucumber (H)
+    "pimiento",       # Green peppers (H)
+    # Frutas marcadas (H)
+    "albaricoque",    # Apricots (H)
+    "arandano",       # Most berries (H)
+    "frambuesa",      # Most berries (H)
+    "fresa",          # Most berries (H)
+    "mandarina",      # Tangerine (H)
+    "manzana",        # Apples (H)
+    # Frutos secos marcados (H)
+    "cacahuete",      # Peanuts (H)
+    "soja",           # Soybeans (H)
+    "tofu",           # Tofu (H)
+}
+_OXALATO_CRITERIO_CLINICO = {
+    # No están en la Tabla 40-3, pero son los dos casos clásicos y estaban
+    # aquí desde antes. Se conservan; queda escrito que no vienen de la tabla.
+    "acelga",
+    "ruibarbo",
+    "remolacha",
+}
+OXALATO_ALTO = _OXALATO_TABLA_40_3 | _OXALATO_CRITERIO_CLINICO
 
 # ⚠️ URATO — vísceras metabólicas y marisco/cefalópodos son altos en
 # purinas. En perro sano no hay problema (el hígado ya elimina el urato

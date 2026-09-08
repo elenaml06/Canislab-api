@@ -118,32 +118,84 @@ fuentes del motor, y sostiene **cuatro números**.
 Lo que hay que corregir es la atribución, no el número: las entradas por estadio
 (`cardiopatia_b2/_c/_d`) ya lo dicen bien; la genérica, no.
 
-### 1.2 · El oxalato cálcico no ajusta nada
+### 1.2 · El oxalato cálcico ✅ ARREGLADO — y la afirmación de partida era medio falsa
 
-`oxalato` es formulable y su **único** tope es la vitamina D a 14,1875 µg… que
-es el **máximo legal de FEDIAF que ya se aplica a cualquier perro**. Su propio
-`por_que` lo admite: *«No es un tope propio de la patología»*.
+**Lo que decía este apartado el 8 de septiembre por la mañana:** «el oxalato no
+ajusta nada; su único tope es la vitamina D, que ya es el máximo legal general».
 
-O sea: se marca oxalato, sale menú, sale verde, y **no se le ha ajustado nada**.
+**Media verdad, y hay que corregirla:** no aplicaba ningún tope **numérico**, eso
+sí era cierto. Pero **sí excluía alimentos altos en ácido oxálico desde el 5 de
+agosto** (`OXALATO_ALTO` en `motor/seguridad.py`), y esa exclusión nació de un
+caso real idéntico al que yo describí: *«con oxalato cálcico avisa que no debería
+dársele espinaca, y la mete en el menú de todas formas»*. Verlo antes de escribir
+me habría ahorrado la afirmación.
 
-La Tabla 40-5 de SACN5 pide siete cosas, verificadas literalmente:
+**Lo que sí estaba mal, y ya está arreglado:**
 
-| Factor | Cita literal | Por 1000 kcal |
-|---|---|---|
-| Proteína | *«Restrict dietary protein to 10 to 18% dry matter»* | 25-45 g — **bajo el mínimo de FEDIAF (52,1)** |
-| Calcio | *«Restrict dietary calcium to 0.4 to 0.7% DM»* | 1000-1750 mg |
-| Fósforo | *«Dietary phosphorus should be in the range of 0.3 to 0.6% DM»* | 750-1500 mg |
-| Ca:P | *«maintain a normal Ca:P ratio (1.1:1 to 2:1)»* | ratio |
-| Sodio | *«Dietary sodium should be <0.3% DM»* | <750 mg |
-| Magnesio | *«in the range of 0.04 to 0.15% DM»* | 100-375 mg (**con techo**) |
-| Vitamina C | *«Avoid pet foods, supplements or human foods that contain ascorbic acid»* | exclusión de alimento |
-| Oxálico | *«Avoid foods high in oxalic acid (Table 40-3)»* | exclusión de alimento |
+| | Antes | Ahora | Fuente |
+|---|---|---|---|
+| Sodio | — | **≤ 750** mg | Tabla 40-5: *«Dietary sodium should be <0.3% DM»* |
+| Fósforo | — | **≤ 1500** mg | Tabla 40-5: *«in the range of 0.3 to 0.6% DM»*, se aplica el techo |
+| Magnesio | — | **≤ 375** mg | Tabla 40-5: *«in the range of 0.04 to 0.15% DM»*, se aplica el techo |
+| Alimentos excluidos | 4 en la lista, **2 en el catálogo** | **20 en la lista, 16 en el catálogo** | Tabla 40-3, solo las marcadas (H) |
+| Calcio | no se baja | **no se baja, y ahora se sabe por qué** | ver abajo |
 
-De estas ocho, **cinco son implementables hoy** sin bajar de FEDIAF: fósforo,
-Ca:P, sodio, magnesio y las dos exclusiones. La del calcio es la que tiene el
-conflicto de fuentes ya documentado (SACN5 dice bajarlo, Today's Veterinary
-Practice 2025 citando a Carr 2020 dice que bajarlo empeora el problema) y se
-mantiene sin tocar, que es la posición conservadora.
+Los suelos de los rangos (fósforo 750, magnesio 100) **no se aplican**: los dos
+caen por debajo del mínimo de FEDIAF (1160 y 200), o sea que el requisito general
+ya es más exigente que el suelo de la fuente.
+
+**Medido en cinco pesos (5, 8, 22, 40 y 60 kg): verde en el peldaño estricto los
+cinco**, con sodio 423-571, fósforo 1420-1499 y magnesio 202-225.
+
+**El oxalato pasa a `solo_en_adulto`.** Lo cazó `auditar_patologias.py` en el
+acto: 1500 mg de fósforo está **por debajo** del mínimo de FEDIAF en crecimiento
+(2250 en CachorroJoven, 1750 en CachorroCrecimiento), así que en un cachorro no
+sería un tope sino una prescripción. Clínicamente encaja — el oxalato cálcico es
+enfermedad de perro adulto y maduro — y se suelta en crecimiento con su aviso,
+nunca en silencio.
+
+#### El conflicto del calcio, resuelto y verificado
+
+Era el punto más incómodo de todo el documento: había un conflicto de fuentes
+declarado y resuelto **a favor de una fuente que nadie había abierto**. Ya está
+abierta.
+
+- **SACN5 (2010), Tabla 40-5:** *«Restrict dietary calcium to 0.4 to 0.7% DM»*.
+- **Cook A, Atiee GF, *Today's Veterinary Practice*, 10 de diciembre de 2025**
+  (los dos DACVIM), literal: *«**Dietary calcium restriction does not appear to
+  mitigate CaOx urolithiasis and is not recommended.**»*, citando a Carr et al.,
+  J Vet Intern Med, marzo de 2020.
+
+El mecanismo es el que ya estaba escrito: el calcio del intestino secuestra el
+oxalato de la comida, y bajarlo **aumenta** la absorción de oxalato libre. Se
+sigue la fuente de 2025. **El motor no baja el calcio, que es lo que ya hacía;
+lo que cambia es que ahora se sabe por qué.**
+
+La misma fuente da además un techo de sodio propio — *«avoid diets exceeding 120
+mg/100 kcal»* = 1200 mg/1000 kcal — más laxo que el de SACN5. Se aplica el
+estricto.
+
+#### La lista de alimentos: de 4 a 20, y de dónde sale cada uno
+
+La lista vivía en `seguridad.py` con cuatro entradas de conocimiento general
+—espinaca, acelga, ruibarbo, remolacha— de las cuales **solo dos existen en el
+catálogo**. La Tabla 40-3 de SACN5 tiene la lista de verdad y **la gradúa**:
+`(H)` = *«high; avoid feeding»*, `(M)` = *«moderate; feed in limited amounts»*.
+
+Se excluyen **solo las (H)**, que son las que la fuente manda evitar. En el
+catálogo son 16: apio, berenjena, boniato, calabacín, espinaca, judía verde,
+pepino, pimiento rojo, albaricoque, arándano, frambuesa, fresa, mandarina,
+manzana, aceite de cacahuete, más la acelga que se conserva por criterio clínico.
+Quedan **30 de las 45** fichas de «Verduras y frutas».
+
+**Las (M) no se excluyen a propósito**, y una conviene conocerla: la **sardina**
+es *«Sardines (M)»*, la única de la lista que no es verdura ni fruta. Las demás
+(M) del catálogo son brócoli, espárrago, lechuga, pera, piña, tomate, zanahoria
+y naranja.
+
+Y la lista sigue viviendo **en un solo sitio**. Se llegó a escribir una segunda
+copia en `patologias.json` y se retiró antes de commitear: sería exactamente cómo
+se desincronizó la tabla de patologías del `POST /menu`.
 
 ### 1.3 · La artrosis mide el nutriente equivocado
 
@@ -524,22 +576,94 @@ Tres de estas merecen mirada aparte y **quedan pendientes**:
 
 ---
 
-## 4 · Fuentes que sostienen números vivos y NO están verificadas
+## 3-bis · ¿Nos falta alguna patología? Barrido completo de las fuentes
 
-Cuatro. Se dicen para que nadie las dé por buenas sin abrirlas:
+**Hecho el 8 de septiembre**, a partir de las 70 tablas «Key nutritional factors»
+de SACN5 (barrido automático sobre los 70 capítulos) y las 20 entradas caninas del
+Reglamento (UE) 2020/354.
 
-| Número del motor | Fuente citada | Estado |
+### Las que SÍ tenemos
+
+De las tablas caninas de SACN5, el motor cubre: obesidad (27-4), hiperlipidemia
+(28-2), diabetes (29-3), dermatosis (32-1), dermatitis inflamatorias (32-6),
+artrosis (34-2), disfunción cognitiva (35-3), cardiovascular (36-4), renal (37-9),
+urato/purina (39-4), oxalato (40-5), cistina (42-1), estruvita (43-3), IBD (57-1),
+colitis (62-1, dentro de `enteropatia_cronica`), PLE (58-1), EPI (66-1),
+pancreatitis (67-3) y hepatobiliar (68-8). **Diecinueve.**
+
+### Las que la fuente declara y el motor NO ofrece
+
+| Tabla | Patología | Cifras que da | ¿Encaja en Rawku? |
+|---|---|---|---|
+| **41-6** | **Urolitos de fosfato cálcico** | proteína 10-25 % · Ca 0,4-0,7 % · P 0,3-0,6 % · **Ca:P 1,1-2:1** · Na <0,3 % · Mg 0,06-0,15 % · vit. D 500-1500 UI/kg | **Sí.** Es el quinto tipo de urolito y tenemos los otros cuatro |
+| **44-1** | **Urolitos de sílice** | proteína 10-18 % MS · pH 7,1-7,7 · evitar corn gluten feed, cáscara de arroz y de soja | **Sí**, aunque los ingredientes que evita no existen en BARF |
+| **64-2** | **Estreñimiento crónico** | **fibra ≥7 % MS = ≥17,5 g** · agua >75 % | **Sí.** Crónico, doméstico, y la fibra es directamente aplicable |
+| **65-1** | **Flatulencia excesiva** | proteína ≤30 % = **≤75 g** · **fibra ≤5 % = ≤12,5 g** · evitar legumbres, lácteos, crucíferas, cebolla, frutos secos y fructosa | **Sí.** Es el motivo de consulta más común que no cubrimos |
+| **60-1** | **Sobrecrecimiento bacteriano (SIBO)** | grasa 12-15 % = **30-37,5 g** · densidad 3,5-4 kcal/g MS | **Sí.** Y es complicación frecuente de la EPI, que sí tenemos |
+| **63-3** | **Síndrome de intestino irritable** | fibra soluble 1-5 % · mixta 5-10 % · insoluble 10-15 % · **cruda ≥8 % = ≥20 g** | **Sí** |
+| **59-1** | Síndrome de intestino corto | — | Postquirúrgico, hospitalario |
+| **56-2** | Gastroenteritis aguda | sodio 0,3-0,5 % | Aguda, días. Es la entrada 21 del Reglamento |
+| 50-3 · 50-4 | Deglución · esofagitis y reflujo | — | Hospitalario / dudoso |
+| 52-2 | Gastritis y úlcera gastroduodenal | — | Dudoso |
+| 54-2 | Motilidad y vaciado gástrico | — | Dudoso |
+| 47-4 · 49-2 | Periodontal · enfermedades orales | — | No es cuestión de ración |
+
+**Seis patologías con cifras aplicables que el motor no ofrece**, más otras siete
+de contexto agudo u hospitalario que probablemente no deban estar.
+
+Y del Reglamento europeo faltan tres purposes: **convalecencia (15)**, diarrea
+aguda (21) y apoyo en estrés (30).
+
+### Lo que esto NO es
+
+No es una lista de deberes. **Añadir una patología es una decisión de producto**,
+no de fuentes: la flatulencia tiene cifras y fuente, y aun así puede no querer
+ofrecerse. Lo que sí era necesario era **saber que existen**, porque hasta hoy la
+pregunta «¿nos falta alguna?» no tenía respuesta en ninguna parte.
+
+Las tres que yo pondría primero, por este orden: **fosfato cálcico** (completa la
+familia de urolitos, y sus cifras son casi las mismas que las del oxalato que ya
+están aplicadas), **estreñimiento** (una sola cifra, la fibra) y **SIBO** (una
+sola cifra, la grasa, y es complicación de una patología que ya tenemos).
+
+---
+
+## 4 · Las fuentes: todas abiertas ✅
+
+**Estado al cierre del 8 de septiembre: no queda ninguna fuente de patología sin
+verificar contra el documento original.** Eran cuatro.
+
+| Número | Fuente | Estado |
 |---|---|---|
-| grasa ≤20 en pancreatitis | Merck Veterinary Manual | ✅ **verificado literal** el 8-sep-2026 |
-| sodio 900/900/790/480 | «ACVIM 2019 (Keene)» | ⚠️ **atribución incorrecta** — ACVIM no da cifras. La fuente real es Cavanaugh, Veterinary Practice News, 2020 (✅ verificada) |
-| cobre ≤2,4 | Center SA et al., JAVMA 2026 | ⚠️ el artículo no se ha abierto, pero el número queda **triplemente acotado** por SACN5 (1,25) y el Reglamento UE (2,50) |
-| grasa <30 % ME en diabetes | Purina Institute | ❌ **sin verificar** |
-| no bajar el calcio en oxalato | Today's Veterinary Practice 2025, citando Carr 2020 | ❌ **sin verificar**, y **contradice a SACN5 Tabla 40-5**, que sí manda bajarlo |
+| Grasa ≤37,5 en pancreatitis | SACN5 Tabla 67-3 | ✅ literal |
+| Grasa ≤20 (la que se retiró) | Merck Veterinary Manual | ✅ literal: *«less than 20 g fat/1,000 kcal»*, cifra única, sin distinguir aguda de crónica |
+| Sodio cardíaco | «ACVIM 2019 (Keene)» | ✅ abierto — **y no contiene las cifras**. La fuente real es Cavanaugh 2020 (§1.1) |
+| **Cobre ≤2,4** | **Center SA et al., JAVMA 264(2), 2026** | ✅ **abierto**. El límite tolerable es **0,24 mg Cu/100 kcal = 2,40 mg/1000 kcal**, exactamente nuestro número, y el rango de dieta restringida del estudio es **1,50-2,40** |
+| **Grasa <30 % ME en diabetes** | **Purina Institute** | ✅ **verificado** — y sale un matiz nuevo, abajo |
+| **No bajar el calcio en oxalato** | **Cook & Atiee, Today's Veterinary Practice, 10-dic-2025** | ✅ **abierto**: *«Dietary calcium restriction does not appear to mitigate CaOx urolithiasis and is not recommended»* (§1.2) |
 
-La última es la más incómoda: hay un **conflicto de fuentes declarado** y
-resuelto a favor de la más reciente, pero la más reciente no se ha leído.
-Operativamente da igual hoy (el motor no toca el calcio, que es la posición
-conservadora), pero la decisión está tomada sobre una fuente sin abrir.
+### Lo que apareció al abrirlas
+
+**El cobre queda triplemente acotado.** Center 2026 da 2,40 como tolerable;
+SACN5 Tabla 68-8 da 1,25 como objetivo terapéutico; el Reglamento (UE) 2020/354
+pone el techo legal en 2,50. Nuestro 2,40 cae justo bajo el techo legal y justo
+en el tolerable del estudio. El dato que lo motiva: **35 de 91 perros (38 %)**
+con dieta comercial normal tenían rodanina positiva, y 20 (22 %) superaban el
+límite de referencia de 400 µg/g de hígado seco.
+
+**Y en la diabetes hay una excepción que el motor no aplica.** La frase de Purina
+completa es: *«Dietary fat restriction (<30% of metabolizable energy) is
+recommended for diabetic dogs with concurrent chronic pancreatitis or persistent
+hypertriglyceridemia, **except for diabetic dogs in thin body condition**»*.
+
+Esa última coma no estaba recogida. Un perro diabético **delgado** con
+pancreatitis no debería llevar la restricción de grasa, y hoy se la lleva. La app
+conoce la condición corporal, así que es implementable. Queda anotado; no se
+cambia sin decidirlo.
+
+La misma fuente da además la equivalencia *«<12 percent on a dry matter basis»*,
+que es **exactamente** el tope de grasa de la hiperlipidemia de SACN5 (Tabla
+28-2). Dos fuentes independientes llegan al mismo número por caminos distintos.
 
 ---
 
@@ -586,5 +710,21 @@ decidir si esas patologías pasan a formulables; y el de cardiopatía C (proteí
 ≥50) es más laxo que el mínimo de FEDIAF (52,1), así que no cambiaría nada — mismo
 caso que el linoleico.
 
-**Verificar (fuentes sin abrir):** Purina Institute (diabetes), Today's
-Veterinary Practice 2025 / Carr 2020 (calcio en oxalato), Center 2026 (cobre).
+**Verificar (fuentes sin abrir):** ✅ **ninguna.** Las cuatro se abrieron el 8 de
+septiembre — ver §4.
+
+**Lo que queda abierto, en una lista:**
+
+1. **El oxalato en crecimiento.** Pasa a `solo_en_adulto` porque su tope de
+   fósforo cae bajo el mínimo de un cachorro. Se suelta con aviso, que es lo
+   correcto, pero un cachorro con oxalato no recibe ningún ajuste.
+2. **La excepción del perro diabético delgado** (§4). Implementable: la app
+   conoce la condición corporal.
+3. **Seis patologías con cifras que la fuente declara y no ofrecemos** (§3-bis):
+   fosfato cálcico, sílice, estreñimiento, flatulencia, SIBO e intestino
+   irritable. Es decisión de producto, no de fuentes.
+4. **Los siete «márgenes interpretados»** de `PREGUNTAS_ABIERTAS.md` P-02, donde
+   la fuente da un solo número y el otro extremo lo pusimos nosotros.
+5. **La ficha de permisos**, condición 3 de las seis del cierre. No existe.
+6. **La humedad del catálogo** (`PARA_EL_NUTRICIONISTA.md` §10.0), de la que
+   depende toda conversión desde porcentaje de materia seca.
