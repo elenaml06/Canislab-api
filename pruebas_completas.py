@@ -6273,6 +6273,148 @@ if _der54.GESTACION_BASE != 132 or _der54.GESTACION_EXTRA_DESDE_SEM5 != 26:
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
+# BLOQUE 55 — CADA CIFRA DE PATOLOGÍA, CONTRA LA CIFRA DE SU FUENTE
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (8 septiembre). El 8 de septiembre se verificaron las 40
+# patologías contra su fuente original y salieron CINCO errores: el sodio
+# cardíaco atribuido a un consenso que no da cifras, la artrosis midiendo
+# EPA+DHA cuando la fuente pide EPA sola, la grasa de pancreatitis con una
+# fuente terciaria por delante de SACN5, tres sodios por encima del techo
+# legal europeo y el oxalato sin ajustar nada.
+#
+# Se corrigieron cuatro de los cinco. Pero corregir no es cerrar: medí a mano
+# que el sodio queda en 739 y que la artrosis mide EPA, y **nada impedía que
+# mañana alguien lo devolviera a 900 con la batería en verde**. El semáforo de
+# FEDIAF no ve estos números -- son más estrictos que los de un perro sano --,
+# así que un menú con el valor mal puesto sale verde igual. Es exactamente el
+# agujero que ya documenta el CLAUDE.md para los topes de patología.
+#
+# Este bloque es el "no se puede tocar" de verdad: no un candado, sino que
+# moverlo salte en ROJO. Cada cifra va escrita aquí con la cita de la fuente
+# que la sostiene, así que si alguien la cambia tiene que venir a cambiarla
+# también aquí -- y al hacerlo se topa con la cita y ve contra qué está
+# discrepando. Mismo patrón que el BLOQUE 44 con la tabla que sirve la API.
+#
+# NO comprueba que el número sea "bueno": comprueba que sigue siendo el que su
+# fuente dice. Cambiarlo con una fuente nueva en la mano es legítimo -- lo que
+# no es legítimo es cambiarlo sin enterarse.
+print("=== BLOQUE 55: cada cifra de patología contra la de su fuente ===")
+
+from patologias import CRUDO as _CRUDO55
+
+# (patologia, tipo, nutriente, valor, de dónde sale)
+_CIFRAS_CON_FUENTE = [
+    ("renal", "topes_por_1000kcal", "fosforo", 1200.0,
+     "SACN5 Tabla 37-9: «Phosphorus 0.2 to 0.5% in foods for dogs» = 500-1250"),
+    ("renal", "topes_por_1000kcal", "sodio", 750.0,
+     "SACN5 Tabla 37-9: «Sodium <=0.3% in foods for dogs» = 750"),
+    ("renal_avanzada", "topes_por_1000kcal", "fosforo", 1200.0,
+     "igual que renal"),
+    ("pancreatitis", "topes_por_1000kcal", "grasa", 37.5,
+     "SACN5 Tabla 67-3: «Fat <=15% for non-obese and non-hypertriglyceridemic dogs» = 37,5"),
+    ("pancreatitis", "topes_por_1000kcal", "proteina", 75.0,
+     "SACN5 Tabla 67-3: «Protein 15 to 30% for dogs» = 37,5-75, extremo alto"),
+    ("oxalato", "topes_por_1000kcal", "vitD", 14.1875,
+     "máximo LEGAL de FEDIAF (Reg. UE 2017/1492), 227 UI x 2,5 = 567,5 UI"),
+    ("hepatopatia", "topes_por_1000kcal", "cobre", 2.4,
+     "Center 2026 JAVMA; techo legal Reg. UE 2020/354 entrada 28 = 2,50"),
+    # Los cuatro sodios cardíacos, con el techo legal europeo delante.
+    ("cardiopatia", "topes_por_1000kcal", "sodio", 739.0,
+     "Reg. (UE) 2020/354 entrada 24: <=2,6 g/kg al 12 % humedad / 3,52 = 738,6"),
+    ("cardiopatia_b2", "topes_por_1000kcal", "sodio", 739.0,
+     "igual: el rango de Cavanaugh para B2 (800-990) supera el techo legal"),
+    ("cardiopatia_c", "topes_por_1000kcal", "sodio", 625.0,
+     "SACN5 Tabla 36-4 Class Ia extremo alto, dentro del rango de Cavanaugh para C"),
+    ("cardiopatia_d", "topes_por_1000kcal", "sodio", 480.0,
+     "Cavanaugh estadio D <50 mg/100 kcal, con margen sobre el mínimo FEDIAF 290"),
+    ("hiperlipidemia", "topes_por_1000kcal", "grasa", 30.0,
+     "SACN5 Tabla 28-2: «Restrict dietary fat (<12% dry matter)» = 30"),
+    ("hiperlipidemia", "suelos_por_1000kcal", "fibra", 25.0,
+     "SACN5 Tabla 28-2: «Increase dietary fiber: Dogs: >=10% DM» = 25"),
+    ("obesidad", "topes_por_1000kcal", "grasa", 30.0,
+     "SACN5 Tabla 27-4: la fuente dice <=9% (22,5) pero no resuelve; 30 cae en la franja de mantenimiento (<=14% = 35)"),
+    ("obesidad", "suelos_por_1000kcal", "proteina", 62.5,
+     "SACN5 Tabla 27-4: «Foods for weight loss should contain >=25%» = 62,5"),
+    ("dcm_taurina_respondedora", "suelos_por_1000kcal", "taurina", 250.0,
+     "SACN5 Tabla 36-4: «Taurine — Dogs: >=0.1%» = 250"),
+    ("dcm_taurina_respondedora", "suelos_por_1000kcal", "lcarnitina", 50.0,
+     "SACN5 Tabla 36-4: «L-Carnitine — Dogs: >=0.02%» = 50"),
+    ("ple_linfangiectasia", "topes_por_1000kcal", "grasa", 37.5,
+     "SACN5 Tabla 58-1: «Fat <15% for dogs and cats» = 37,5"),
+    ("ple_linfangiectasia", "suelos_por_1000kcal", "proteina", 62.5,
+     "SACN5 Tabla 58-1: «Protein >=25% for dogs» = 62,5"),
+    ("ple_linfangiectasia", "topes_por_1000kcal", "fibra", 12.5,
+     "SACN5 Tabla 58-1: «Crude fiber <=5%» = 12,5"),
+    ("insuficiencia_pancreatica_exocrina", "topes_por_1000kcal", "grasa", 37.5,
+     "SACN5 Tabla 66-1: «Fat 10 to 15% for dogs» = 25-37,5, extremo alto"),
+    ("insuficiencia_pancreatica_exocrina", "topes_por_1000kcal", "fibra", 12.5,
+     "SACN5 Tabla 66-1: «Fiber <=5%, lower is better» = 12,5"),
+    ("enteropatia_cronica", "topes_por_1000kcal", "grasa", 37.5,
+     "SACN5 Tabla 57-1: «Fat 12 to 15% for dogs» (muy digestible) = 30-37,5"),
+    ("enteropatia_cronica", "suelos_por_1000kcal", "proteina", 62.5,
+     "SACN5 Tabla 57-1: «Protein >=25% for dogs» = 62,5"),
+    ("artrosis", "suelos_por_1000kcal", "epa", 1.0,
+     "SACN5 Tabla 34-2: «Eicosapentaenoic acid 0.4 to 1.1%» = 1,0-2,75, EPA SOLA"),
+    ("dermatosis_zinc", "suelos_por_1000kcal", "zinc", 25.0,
+     "SACN5 Tabla 32-1: «Zinc — Dogs: 100 to 200 mg/kg food DM» = 25-50"),
+    ("diabetes", "suelos_por_1000kcal", "fibra", 17.5,
+     "SACN5 Tabla 29-3: «Fiber 7 to 18%» = 17,5-45, extremo bajo"),
+]
+
+_pats55 = _CRUDO55["patologias"]
+for _p, _tipo, _nut, _esperado, _cita in _CIFRAS_CON_FUENTE:
+    _bloque = (_pats55.get(_p) or {}).get(_tipo) or {}
+    if _nut not in _bloque:
+        fallos.append(f"BLOQUE55: {_p}.{_tipo}.{_nut} ha DESAPARECIDO. "
+                      f"Lo pedía: {_cita}")
+        continue
+    _real = _bloque[_nut]["valor"]
+    if abs(_real - _esperado) > 1e-9:
+        fallos.append(f"BLOQUE55: {_p}.{_tipo}.{_nut} vale {_real} y su fuente "
+                      f"dice {_esperado} — {_cita}. Si el cambio es a propósito y "
+                      f"con una fuente nueva, cámbialo TAMBIÉN aquí y escribe cuál")
+
+# Y al revés: que no aparezca una cifra nueva sin pasar por esta lista. Una
+# patología puede ganar un límite -- eso es bueno -- pero tiene que quedar
+# anotado con su fuente aquí, o vuelve a haber números que nadie vigila.
+_declaradas = {(a, b, c) for a, b, c, _, _ in _CIFRAS_CON_FUENTE}
+for _clave, _info in _pats55.items():
+    for _tipo in ("topes_por_1000kcal", "suelos_por_1000kcal"):
+        for _nut in (_info.get(_tipo) or {}):
+            if (_clave, _tipo, _nut) not in _declaradas:
+                fallos.append(f"BLOQUE55: {_clave}.{_tipo}.{_nut} es una cifra "
+                              f"NUEVA que no está en la lista de este bloque. "
+                              f"Añádela con la cita literal de su fuente")
+
+# ⚠️ Y LA COMPROBACIÓN QUE DE VERDAD IMPORTA: que el número no solo esté
+# escrito, sino que el SOLVER lo aplique. Es el fallo de la fibra otra vez --
+# una cifra perfecta en el JSON cuya clave el motor no mira nunca, y el menú
+# sale verde igual. Se comprueba que cada nutriente con límite exista en el
+# MAPA del verificador (si no, el bucle del solver hace `continue` y el límite
+# no se aplica jamás) y que topes_de_patologias() lo devuelva de verdad.
+from verificar import MAPA as _MAPA55
+from motor_completo import topes_de_patologias as _topes55
+_claves_mapa = set(_MAPA55.values())
+for _p, _tipo, _nut, _esperado, _cita in _CIFRAS_CON_FUENTE:
+    if _nut not in _claves_mapa:
+        fallos.append(f"BLOQUE55: la clave '{_nut}' de {_p} NO está en "
+                      f"verificar.MAPA — el solver nunca la mirará y el menú "
+                      f"saldrá verde igual")
+        continue
+    _t, _pct, _av, _s = _topes55([_p], "Adulto")
+    _aplicado = (_t if _tipo == "topes_por_1000kcal" else _s).get(_nut)
+    if _aplicado is None:
+        # solo_en_adulto no puede ser la excusa: se ha pedido en Adulto.
+        fallos.append(f"BLOQUE55: {_p}.{_tipo}.{_nut} está escrito en el JSON "
+                      f"pero topes_de_patologias() NO lo devuelve en Adulto")
+    elif abs(_aplicado - _esperado) > 1e-9:
+        fallos.append(f"BLOQUE55: {_p}.{_nut} vale {_esperado} en el JSON pero "
+                      f"el solver recibe {_aplicado}")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")
