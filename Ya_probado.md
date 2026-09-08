@@ -64,6 +64,7 @@ parece que damos vueltas — porque las damos.
 - **Citar una fuente de memoria en vez de abrirla.** Pasó con FEDIAF: se "corrigieron" valores correctos
 - **Escribir una prueba mal y creerse el resultado.** Pasó el 2 ago: una prueba dijo "51 alimentos con error"; el error estaba en la prueba (no hay campo de carbohidratos)
 - **Una regla de categoría con índice vacío se desactiva EN SILENCIO.** Si se poda el único hígado, la regla "hígado ≥ X%" deja de aplicarse
+- **Leer `TR` de BEDCA como «trazas».** Pasó el 3 de septiembre en la rama `nutrition-audit-data-validation-bihto9`: se creó un campo `trazas` con 14 celdas de vitamina A y D de diez pescados y **se sacaron de `sin_dato`**, con el argumento de que una traza es un dato publicado y no un hueco. Se comprobó el 8 de septiembre pidiéndole las fichas a BEDCA una a una: las 14 son `TR` **con la celda vacía**, que en BEDCA significa NO HAY CIFRA. La prueba de que era eso y no otra cosa: donde la rama NO marcaba traza —la vitamina A de calamar, pulpo y sepia— BEDCA sí publica cifra con `AR` (63, 70 y 2). El campo calcaba exactamente las celdas `TR`. Sacarlas de `sin_dato` habría convertido catorce huecos bien declarados en ceros medidos falsos, **aflojando el techo crónico de la vitamina D** en diez pescados. No se rescató; `main` ya las tenía bien.
 - **Un fallo silencioso es peor que un error visible.** El analizador decía "dieta perfecta" con 15 nutrientes faltando, porque la clave de etapa llegaba mal escrita
 
 ---
