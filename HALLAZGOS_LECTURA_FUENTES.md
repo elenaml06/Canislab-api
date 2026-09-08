@@ -412,3 +412,77 @@ motor lo está contando.
 
 No es una obligación, pero es la respuesta de FEDIAF al problema del calcio alto
 del F-14, y encaja con la dermatosis zinc-sensible que ya tenemos.
+
+
+---
+
+## Resto de FEDIAF (leído el 8 de septiembre por la noche)
+
+### F-17 · La vitamina E depende de los AGPI — y lo dice FEDIAF, no solo NRC
+
+> *«**Vitamin E requirements depend on the intake of polyunsaturated fatty acids
+> (PUFA)** and the presence of other antioxidants. An increased level of vitamin E
+> may be required **if the intake of PUFA is high, particularly from fish oil**.»*
+
+**Segunda fuente independiente** de lo mismo que dice NRC con su 0,6 mg de
+tocoferol por gramo de AGPI (N-2). Y nombra el aceite de pescado, que es
+exactamente lo que suben nuestros suelos de omega-3. Medido y por ahora cumple
+(peor ratio 1,98), pero ya no es «una frase suelta de NRC»: lo piden las dos.
+
+### F-18 · El máximo de vitamina D distingue el tamaño de la raza
+
+> *«320 IU per 100 g DM should be the nutritional maximum for **growing giant
+> breed** dogs… 425 IU/100 g DM can be considered a safe nutritional maximum for
+> **small breed** puppies. Since there is no information on maximum safe intakes
+> for adult dogs and breeding bitches, FEDIAF recommends the same nutritional
+> maximum for other life stages as those indicated for puppies.»*
+
+No nos afecta hoy porque aplicamos el máximo **legal** (227 UI), más estricto que
+los dos. Pero conviene saber que el nutricional distingue raza gigante de raza
+pequeña, y que el de adulto es prestado del de cachorro por falta de datos.
+
+### F-19 · La biotina y la vitamina K NO tienen mínimo, y por qué
+
+> *«For healthy dogs **biotin does not need to be added** to the food **unless the
+> food contains antimicrobial or anti-vitamin compounds**.»* Y lo mismo para la
+> vitamina K.
+
+En la Tabla III-3b las dos llevan «-» en todas las columnas, así que **que no
+estén en el `MAPA` es correcto**, no un olvido. Comprobado.
+
+Y la excepción que nombra —«anti-vitamin compounds»— es la **avidina de la clara
+de huevo cruda**, que es un caso muy nuestro: **ya está cubierto**
+(`seguridad.py`, tope del 5 % del peso para la clara cruda, con el daño medido al
+20 % citado en `PARA_EL_NUTRICIONISTA.md`).
+
+### F-20 · Comprobado: no falta ninguna FILA de la tabla de FEDIAF
+
+Contadas una contra otra: **42 filas con valor en la Tabla III-3b y 42 en nuestro
+JSON.** Las otras 6 de nuestro fichero son añadidos documentados y con «-» en
+todas las columnas (fibra, taurina, L-carnitina, EPA, omega-3 total y el calcio
+de raza grande). **Ninguna fila de FEDIAF se ha quedado fuera.**
+
+Importaba comprobarlo porque una fila que falta entera **es invisible** para un
+auditor que recorre nuestras propias filas.
+
+### F-21 · La ecuación de escalado es literalmente la nuestra
+
+> *«Units/1000 kcal = Nutrient requirement per day (Units/kg metabolic BW) × 1000
+> ÷ DER (kcal/kg metabolic BW)»* (§7.2.5)
+
+Es exactamente lo que hace `minimo_de()`. ✓ Y el texto añade el porqué: *«the
+energy needs may be satisfied before the requirements of protein, minerals or
+vitamins are met»*.
+
+### F-22 · Los cambios de 2025 y de 2024 son cosméticos
+
+Sección 8, leída: lo de 2025 vs 2024 son encabezados de tabla y símbolos
+matemáticos. Lo de 2024 vs 2021 añade *«Table VII-8b: Added n-4 to equation»* y
+actualiza la nota (f). **No arrastramos nada de una edición vieja.**
+
+### Lo que queda de FEDIAF sin leer, y por qué no corre prisa
+
+§7.1 (condición corporal), §7.7 (riesgos de alimentos humanos — comprobado que
+**ninguno** de los que nombra está en nuestro catálogo), §4 (alimento
+complementario), §5 y §6 (métodos analíticos y protocolos de prueba de
+digestibilidad). Ninguna contiene requisitos de nutrientes.
