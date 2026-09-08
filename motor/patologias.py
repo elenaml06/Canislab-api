@@ -72,6 +72,19 @@ def _a_forma_del_motor(crudo):
         cond = p.get("max_pct_kcal_grasa_si_ademas")
         if cond:
             e["max_pct_kcal_grasa_si_ademas"] = (cond["valor"], tuple(cond["requiere"]))
+        # ⚠️ AÑADIDO (8 septiembre) — UN TOPE ABSOLUTO QUE SOLO APLICA CON OTRA
+        # PATOLOGÍA MARCADA. Ya existía para el % de kcal de grasa (arriba);
+        # faltaba para los topes normales, y hacía falta por un caso concreto:
+        # SACN5 Tabla 67-3 GRADÚA la grasa de la pancreatitis -- «≤15% for
+        # non-obese and non-hypertriglyceridemic dogs» y «≤10% for obese and/or
+        # hypertriglyceridemic dogs» --, o sea 37,5 y 25. El motor solo aplicaba
+        # el primero, así que un perro obeso con pancreatitis recibía el tope
+        # del perro delgado. Mismo patrón, misma forma: (valor, patologías que
+        # lo activan), por nutriente.
+        cond_topes = p.get("topes_por_1000kcal_si_ademas")
+        if cond_topes:
+            e["max_por_1000kcal_si_ademas"] = {
+                n: (t["valor"], tuple(t["requiere"])) for n, t in cond_topes.items()}
         # ⚠️ AÑADIDO (7 septiembre) — UN AVISO QUE SOLO SALTA POR LA
         # COMBINACIÓN, no por cada patología sola. Caso que lo motivó:
         # Fascetti & Delaney 2ª ed., cap.3, verificado contra el libro --

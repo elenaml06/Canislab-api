@@ -65,7 +65,18 @@
         "general": "Se ha bajado la grasa a menos de 20 g por cada 1000 kcal, que es lo que recomienda la literatura veterinaria en pancreatitis. La tolerancia es muy individual: ajústalo con tu veterinario según cómo responda.",
         "crecimiento": "Este menú NO ha podido bajar la grasa al nivel que se recomienda en pancreatitis (menos de 20 g por cada 1000 kcal), porque en crecimiento, gestación o lactancia el mínimo que el perro necesita es mayor que ese tope. Consúltalo con tu veterinario."
       },
-      "formulable_por_profesional": true
+      "formulable_por_profesional": true,
+      "topes_por_1000kcal_si_ademas": {
+        "grasa": {
+          "valor": 25.0,
+          "requiere": [
+            "obesidad",
+            "hiperlipidemia"
+          ],
+          "fuente": "SACN5 5a ed., cap.67 «Pancreatitis», Tabla 67-3, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026, y cierra un hueco que llevaba ahi desde siempre. La Tabla 67-3 GRADUA la grasa en dos niveles y el motor solo aplicaba uno: «Fat <=15% for non-obese and non-hypertriglyceridemic dogs» = 37,5 g/1000 kcal, y «<=10% for obese and/or hypertriglyceridemic dogs» = 25. El texto del capitulo lo repite: «Obese and hypertriglyceridemic patients recovering from pancreatitis should receive low-fat foods (<=10 and <=15% DM for dog and cat foods, respectively). Other patients can be fed moderate-fat foods». || El perro obeso o hipertrigliceridemico es el que MAS riesgo tiene -- la hipertrigliceridemia es causa reconocida de pancreatitis, no solo consecuencia -- y era el que recibia el tope del perro delgado. Antes de hoy, un obeso con pancreatitis se quedaba en 30 (el tope de `obesidad`), que es mas laxo que los 25 que pide la fuente. || Se activa con `obesidad` o `hiperlipidemia` marcadas, que es como la app conoce las dos condiciones que nombra la fuente. Sigue por encima del minimo de FEDIAF de grasa (13,75), asi que no necesita prescripcion. || El mecanismo (`topes_por_1000kcal_si_ademas`) se creo para esto: hasta hoy solo existia el condicional del % de kcal de grasa, no el de un tope absoluto."
+        }
+      }
     },
     "oxalato": {
       "nombre": "Cálculos de oxalato cálcico",

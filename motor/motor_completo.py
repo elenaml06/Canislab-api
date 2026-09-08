@@ -124,6 +124,18 @@ def topes_de_patologias(patologias, etapa="Adulto"):
             if any(otra in lista for otra in requiere):
                 pct_grasa = valor if pct_grasa is None else min(pct_grasa, valor)
 
+        # ⚠️ AÑADIDO (8 septiembre) — LO MISMO PARA UN TOPE ABSOLUTO. Caso que
+        # lo motivó: SACN5 Tabla 67-3 gradúa la grasa de la pancreatitis en dos
+        # niveles según el perro esté obeso o hipertrigliceridémico (≤10 % de
+        # materia seca = 25 g) o no (≤15 % = 37,5 g). El motor aplicaba solo el
+        # segundo, así que el perro obeso con pancreatitis -- que es el que MÁS
+        # riesgo tiene -- recibía el tope del perro delgado. Se combina con
+        # `min()` como todos los demás: solo puede apretar.
+        for _clave_c, (_valor_c, _requiere_c) in (info.get("max_por_1000kcal_si_ademas") or {}).items():
+            if any(otra in lista for otra in _requiere_c):
+                _actual_c = topes.get(_clave_c)
+                topes[_clave_c] = _valor_c if _actual_c is None else min(_actual_c, _valor_c)
+
     return topes, pct_grasa, avisos, suelos
 
 def limites_de_patologias_con_procedencia(patologias, etapa="Adulto"):

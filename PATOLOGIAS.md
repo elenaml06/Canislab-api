@@ -348,6 +348,56 @@ y *«≤10% for obese and/or hypertriglyceridemic dogs»* = **25 g**.
 
 **Aplicado el 8 de septiembre: 20 → 37,5.**
 
+**Y por qué NO se usa el 20 de Merck, aunque venga en la unidad correcta.** Es la
+objeción más fuerte que tiene esta decisión y merece estar escrita: los 20 de
+Merck vienen ya en **g/1000 kcal**, la unidad del motor, así que son **inmunes al
+puente de 4000 kcal/kg de materia seca**. Los 37,5 no: salen de convertir «≤15 %
+MS» y dependen de esa asunción. La fuente que se descartó estaba en mejor unidad
+que la que se adoptó.
+
+Se mantiene SACN5 por tres razones, en orden de peso:
+
+1. **No sería una decisión sobre la pancreatitis, sería sobre el método.** Adoptar
+   «prefiero la fuente que ya viene en g/1000 kcal» afectaría a casi todas las
+   cifras del motor, porque casi todas salen de SACN5 en porcentaje de materia
+   seca. Cambiaría la regla de fuentes por una regla de unidades.
+2. **La unidad no dice nada de la calidad.** Merck es un manual terciario:
+   resume literatura, no mide, y **no cita estudio** para esta cifra. (Cuidado con
+   una confusión fácil: el «Sanderson et al. 2001, 20 g/1000 kcal» que aparece en
+   `VETERINARIOS.md` es de **proteína**, no de grasa. Coincidencia numérica.)
+3. **SACN5 gradúa y Merck no** — ver justo abajo, que es lo que esta objeción
+   acabó destapando.
+
+Y medido, la asunción juega a favor: el menú de pancreatitis tiene una densidad
+estimada de **3674 kcal/kg MS**, no 4000, así que «≤15 % MS» equivaldría a **40,8**
+y aplicamos **37,5**. Somos más estrictos que la fuente, y es autocorrectivo: al
+apretar la grasa baja la densidad y la cuenta se vuelve más conservadora.
+
+#### El hueco que destapó: no aplicábamos la graduación
+
+La Tabla 67-3 dice **dos** cosas y el motor aplicaba una:
+
+> *«Fat ≤15% for non-obese and non-hypertriglyceridemic dogs»* → **37,5**
+> *«≤10% for obese and/or hypertriglyceridemic dogs»* → **25**
+
+**El perro obeso o hipertrigliceridémico recibía el tope del perro delgado** — y
+es el de más riesgo, porque la hipertrigliceridemia **causa** pancreatitis, no
+solo la acompaña. Antes de hoy se quedaba en 30, el tope de `obesidad`, cuando la
+fuente pide 25.
+
+Arreglado el 8 de septiembre. Hubo que **crear el mecanismo**: existía el
+condicional para el % de kcal de grasa (`max_pct_kcal_grasa_si_ademas`) pero no
+para un tope absoluto; ahora existe `topes_por_1000kcal_si_ademas`, con la misma
+forma y la misma regla — se combina con `min()`, así que solo puede apretar.
+
+| Combinación | Grasa aplicada |
+|---|---|
+| pancreatitis sola | 37,5 |
+| **pancreatitis + obesidad** | **25** |
+| **pancreatitis + hiperlipidemia** | **25** |
+| obesidad sola | 30 |
+
+
 ⚠️ **Y midiendo el cambio salió algo más gordo, que no tiene que ver con el
 número: los dos topes de esta patología son incompatibles entre sí**, y ya lo
 eran con los 20 anteriores. Medido en peldaño estricto, adulto de 22 kg:
