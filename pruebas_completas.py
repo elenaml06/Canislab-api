@@ -4688,7 +4688,13 @@ else:
     # activación como suelo de `dcm_taurina_respondedora`, no un requisito
     # nuevo para perro sano.
     _sr38 = {x["nutriente"] for x in _d38 if x.get("sin_referencia")}
-    if _sr38 != {"Linolénico", "Araquidónico", "Fibra", "Taurina", "L_carnitina"}:
+    # ⚠️ ACTUALIZADO (8 septiembre): "EPA" se une por el MISMO motivo que las
+    # tres de arriba -- FEDIAF no pide EPA por separado en el perro (la Tabla
+    # III-3b solo trae la suma EPA+DHA), así que su fila lleva "-" en los seis
+    # campos y no tiene referencia en ninguna etapa. Existe para que el suelo
+    # de artrosis pueda medir EPA SOLA, que es lo que pide SACN5 Tabla 34-2.
+    # Este bloque cazó la fila nueva en cuanto se añadió, que es su trabajo.
+    if _sr38 != {"Linolénico", "Araquidónico", "Fibra", "Taurina", "L_carnitina", "EPA"}:
         fallos.append(f"BLOQUE38: los nutrientes sin referencia en adulto son {_sr38} y tenían "
                       f"que ser el linolénico, el araquidónico (FEDIAF pone «-» fuera de "
                       f"crecimiento y reproducción), la fibra y la taurina/L-carnitina (FEDIAF "
