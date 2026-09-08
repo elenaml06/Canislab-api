@@ -750,3 +750,69 @@ cifra. El margen por nutriente, cuando existe, sigue viniendo de las tablas de
 *key nutritional factors and their target levels* de SACN5 — que es donde una
 fuente escribe un rango a propósito — y para los siete márgenes interpretados del
 motor sigue sin respuesta: P-02.
+
+---
+
+## D-13 · Qué puede mover un profesional, y qué no
+
+**Fecha:** 8 de septiembre de 2026.
+**Estado:** **cerrado como criterio de producto.** Lo decide Elena; queda escrito
+porque **invierte** el valor por defecto que fijaba `PROMPT_CIERRE_RAWKU_2.md`
+(«el valor por defecto de `modificable_por` es **nadie**») para una clase concreta
+de dato.
+
+### La regla
+
+> **Por defecto, un profesional acreditado puede mover cualquier valor de
+> patología, en la dirección que sea.** Lo que no se mueve es lo marcado como
+> legal o de seguridad. Cruzar un requisito de FEDIAF se puede, pero convierte el
+> menú en prescripción firmada.
+
+| Clase de número | ¿Se puede mover? |
+|---|---|
+| **Legal** — máximos `(L)` de FEDIAF (cobre, yodo, hierro, manganeso, selenio, zinc, vitamina D; Reglamento (UE) 2017/1492) y los cinco topes de seguridad crónica | **No.** Tampoco un veterinario: no puede autorizar más cobre del que permite la ley de aditivos |
+| **Requisito de FEDIAF** — los mínimos de los 41 nutrientes, el ratio Ca:P | **Sí, pero deja de ser un menú.** El resultado es una prescripción firmada. El motor ya tiene el concepto: `necesita_bajo_fediaf` |
+| **Tope o suelo de patología** | **Sí, libremente, en las dos direcciones** |
+
+### Por qué se invierte el valor por defecto
+
+No es laxitud: es fidelidad a la fuente. Verificando las once tablas de SACN5
+que sostienen los topes del motor (ver `PATOLOGIAS.md`), **las fuentes casi nunca
+dan un número: dan un rango.** «≤15 % o ≤10 % según el perro» en pancreatitis,
+«10 a 15 %» en EPI, «100 a 200 mg/kg» en zinc, «0,4 a 1,1 %» en EPA. El número
+único del motor **lo elegimos nosotros dentro de ese rango**, y en al menos un
+caso —la grasa en obesidad, 30 en vez de los 22,5 de la fuente— por razones de
+ingeniería, no clínicas: 22,5 no daba menú con el catálogo real.
+
+Fijar el punto y no dejarlo mover es **menos fiel a la fuente** que dejarlo mover.
+
+Y hay un argumento clínico que apunta igual: **apretar no es automáticamente el
+lado seguro.** Está escrito en el `por_que` de `cardiopatia_c`: una restricción
+severa de sodio puede activar el eje renina-angiotensina-aldosterona y empeorar
+el pronóstico. Si ni siquiera «más estricto» es siempre mejor, no tenemos por qué
+ser nosotros quienes fijemos el punto.
+
+### Dos condiciones que no son burocracia
+
+1. **Queda registrado**: quién, cuándo, de qué valor a qué valor, y sobre qué dato
+   de entrada. Es lo que ya pedía la ficha de permisos.
+2. **El menú se sigue verificando igual**, contra el juego de requisitos que
+   resulte. **La regla 1 de `CLAUDE.md` no se toca**: ningún menú sale sin
+   verificar, y un objetivo pedido por el profesional y no cumplido tiene que
+   hacer que el menú **no salga** — no que salga verde porque el semáforo solo
+   mira FEDIAF.
+
+### Un matiz que hay que decir bien, o se cita de más
+
+«Dentro de los márgenes legales» **no existe para la mayoría de patologías**. El
+Reglamento (UE) 2020/354 pone cifra a 14 de sus 20 entradas caninas, y hay
+patologías centrales que **no están en la lista**: la pancreatitis, la primera. Ahí
+el único acotamiento real son los mínimos de FEDIAF y los topes de seguridad. Es
+un margen ancho, y saberlo forma parte de usarlo bien.
+
+### Qué queda abierto
+
+**Hasta dónde** debería moverse cada valor sigue siendo criterio del nutricionista,
+y ahora se sabe que **no hay fuente normativa que dé ese rango** (D-12). Los siete
+márgenes «interpretados» de `PREGUNTAS_ABIERTAS.md` P-02 siguen sin respuesta, y
+P-03 se cierra parcialmente: **quién** puede, sí; **hasta dónde**, no.

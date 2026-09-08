@@ -229,7 +229,15 @@ detrás de un pendiente que no hace falta releer cada vez, en
 `PENDIENTE_DETALLE.md` (el bloque de veterinarios señala directamente a
 `VETERINARIOS.md`, que ya lo tenía completo) — los dos con resumen de una
 línea y puntero en su sitio, para no recargar lo que se lee al empezar
-cualquier sesión. `DATOS_QUE_FALTAN.md` son los valores del catálogo
+cualquier sesión. `PATOLOGIAS.md` (8 de septiembre) es la lista de las 40 patologías una por
+una: qué aplica el motor, la **cita literal** de la fuente con su conversión, el
+**techo duro** que nadie puede pasar y de dónde sale (legal, seguridad crónica o
+mínimo de FEDIAF), y **qué margen le queda al profesional**. Se escribió
+verificando cada cifra contra su fuente original, y encontró cinco errores y
+catorce patologías con factores de su propia fuente sin aplicar. Ábrelo antes de
+tocar `patologias.json`: los números siguen viviendo allí y este documento es su
+lectura, no una segunda copia — si discrepan, manda el JSON.
+`DATOS_QUE_FALTAN.md` son los valores del catálogo
 que hay que conseguir de BEDCA/CIQUAL/USDA, uno a uno — **no los rellena el
 asistente**. `Bases.md` y `Ya_probado.md` son de las primeras sesiones:
 decisiones cerradas y callejones sin salida ya recorridos, léelos antes de

@@ -183,6 +183,10 @@ Detalle y medidas: `PREGUNTAS_ABIERTAS.md` P-10 a P-13, y
 | **La batería NO sale en verde hoy sobre `main` sin tocar** | **roto (prueba mal diseñada)** | Ver §1.9. 1 fallo de 50 bloques, 1.232 s. Es el BLOQUE 4, y no es la nutrición. **Arreglado el 8 de septiembre** fijando la semilla |
 | ~~El tope de lactancia y las razas de FEDIAF~~ | **cerrado 8 sep** | `DECISIONES.md` D-11 |
 | **4 de los 19 límites de patología discrepan de SACN5** | **abierto** | cobre hepático (2,4 vs 1,25), sodio cardíaco (900 vs 625), obesidad grasa (30 vs 22,5, declarado). §8.1-bis |
+| **La cardiopatía genérica atribuye a ACVIM cifras que ACVIM no da** | **roto** | Verificado contra Keene 2019: el consenso es cualitativo en las 4 etapas, sin una sola cifra. Los 80-99/50-79/<50 mg/100 kcal son de Cavanaugh, Veterinary Practice News 2020. `PATOLOGIAS.md` §1.1 |
+| **El oxalato cálcico no ajusta nada** | **roto** | Su único tope es el máximo legal general de vitamina D. La Tabla 40-5 pide 8 factores; 5 son implementables hoy. `PATOLOGIAS.md` §1.2 |
+| **La artrosis mide el nutriente equivocado** | **roto** | Suelo sobre `epa_dha` cuando SACN5 Tabla 34-2 dice **EPA sola**. Es más laxo que la fuente. `PATOLOGIAS.md` §1.3 |
+| **14 patologías tienen factores de su propia fuente sin aplicar** | **no empezado** | Ninguno baja del mínimo de FEDIAF: no necesitan firma. Lista completa en `PATOLOGIAS.md` §5 |
 | **El sodio cardíaco está por encima del techo legal europeo** | **roto** | Reg. (UE) 2020/354: ≤2,6 g/kg = **739 mg/1000 kcal**. El motor: 900 · 900 · 790. §8.1-quater. Fuente guardada en `canislab-fuentes/Reglamento_UE_2020_354/` |
 | **Faltan dos techos de proteína que NO necesitan prescripción** | **no empezado** | Renal 62,5 y hepática 79,3 g/1000 kcal, del Reg. 2020/354. Los dos por encima del mínimo de FEDIAF (52,1) |
 | **3 de los 5 topes de seguridad crónica no pueden activarse nunca** | **roto (documentación)** | El máximo legal de FEDIAF es más estricto en vitamina D (×2) y selenio (×4). No deja a nadie desprotegido, pero la regla 2 del `CLAUDE.md` dice que protegen |
