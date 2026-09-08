@@ -937,6 +937,51 @@ fósforo que FEDIAF exige a un cachorro joven son **2250**, por encima del techo
 del adulto. Aplicárselo no sería un techo, sería dejarlo sin menú. Esas etapas
 tienen además sus propias tablas en SACN5 (17-1, 33-5, 15-5) con otros números.
 
+### Lo que la batería encontró al aplicarlo, y que no estaba previsto
+
+**El techo dejaba sin menú al perro a dieta.** Lo cazó el BLOQUE 34: a DER 49 por
+kg^0,75 dejaba de salir menú. No era un fallo del techo, era la aritmética que
+`CLAUDE.md` ya avisa — los mínimos de FEDIAF **suben** cuando el perro come menos
+(ecuación 7.2.5) y los máximos no, porque son concentración:
+
+| DER por kg^0,75 | Mínimo de fósforo | Techo | |
+|---|---|---|---|
+| 95 (come lo normal) | 1160 | 2000 | caben |
+| 56 (el 80 % del RER de AAHA) | 1968 | 2000 | caben por 32 mg |
+| 55 | 2004 | 2000 | **ya no** |
+| 49 (pérdida de peso de verdad) | 2249 | 2000 | imposible |
+
+**Y quien vive por debajo de 55 es justamente el perro obeso.** O sea que el
+techo del perro sano habría dejado sin comida a quien más falta le hace comer
+bien.
+
+**La regla que se añade: cuando cruzan, manda el mínimo de FEDIAF y el techo se
+cae.** Por lo mismo que ninguna patología formulable puede tener un tope por
+debajo del mínimo (lo vigila `auditar_patologias.py`): el mínimo es un
+**requisito** y este techo una **recomendación**, escrita además pensando en un
+alimento para un perro que come lo normal. Y no se cae en silencio:
+`cedidos_ante_fediaf()` lo cuenta.
+
+### Lo que cuesta, medido
+
+**Al perro más pequeño le cuesta más sacar menú.** Toy de 1,5 kg, DER 200,
+peldaño 0, dos suplementos, un sorteo de alimentos por intento y 1 s de solver:
+
+```
+con el techo .....  12 sin menú de 30
+sin el techo .....   0 sin menú de 30
+```
+
+No es que el menú no exista: es que **ese sorteo** no lo tiene. La API reintenta
+—con tres sorteos vuelve a 0 de 10— así que el dueño acaba teniendo su menú, pero
+tarda más. En 3, 10, 22 y 40 kg no pasa: los cuatro salen a la primera.
+
+Se aplica igual, y el arreglo de verdad queda escrito: el sorteo de alimentos no
+sabe qué límites hay puestos, y podría saberlo
+(`PENDIENTE_NUTRICION.md` §14.4). Medido y descartado como atajo: subir
+`max_suplementos` a 3 **no** lo arregla (5 sin menú de 10) — más huecos hacen el
+MILP más grande, no más fácil.
+
 ### Qué lo vigila
 
 **BLOQUE 57**, que comprueba las cuatro cosas que pueden romperse: que la cifra

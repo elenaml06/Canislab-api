@@ -872,8 +872,29 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # también a propósito: el diagnóstico de «¿qué me está bloqueando?» tiene
     # que poder soltar este techo como suelta cualquier otro, o diría que el
     # culpable es una patología cuando el culpable es el libro.
+    # ⚠️ LOS MINIMOS ESCALADOS POR LA DER EFECTIVA (28 agosto). Va AQUI,
+    # dentro del solver, y no como un aviso posterior: si un perro come
+    # menos, necesita mas nutriente por caloria, y eso es una restriccion
+    # del problema, no una nota al pie. Ver `minimo_de()` en verificar.py,
+    # que es el unico sitio que sabe escalar -- el semaforo lee por ahi
+    # tambien, para que no puedan discrepar.
+    #
+    # El peso de referencia es el OBJETIVO si se sabe: en un perro con
+    # sobrepeso las kcal ya se calculan sobre el peso ideal, asi que la DER
+    # efectiva tiene que salir del mismo peso o el numero no significa
+    # nada. Si no llega, se usa el real y se escala un poco de mas -- que
+    # es el lado seguro.
+    _peso_ref = peso_objetivo_kg or peso_perro_kg
+    _der_ef = der_efectiva_de(der, _peso_ref)
+
+    # ⚠️ Y CON EL DER EFECTIVO EN LA MANO, EL TECHO DEL LIBRO PUEDE CEDER.
+    # `topes_de_la_etapa` lo decide con `req` y `_der_ef`: si el minimo de
+    # FEDIAF ya escalado supera al techo, el techo se cae, porque el minimo es
+    # un REQUISITO y el techo una RECOMENDACION. Ver el comentario largo de esa
+    # funcion -- lo cazo el BLOQUE 34, y el perro al que dejaba sin menu era
+    # justamente el que esta a dieta.
     from recomendaciones import topes_de_la_etapa as _topes_de_la_etapa
-    for _clave_r, _valor_r in _topes_de_la_etapa(etapa).items():
+    for _clave_r, _valor_r in _topes_de_la_etapa(etapa, req, _der_ef).items():
         _actual_r = topes_patologia.get(_clave_r)
         topes_patologia[_clave_r] = (_valor_r if _actual_r is None
                                      else min(_actual_r, _valor_r))
@@ -1064,20 +1085,8 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                 TOPE_CRONICO_KCAL[clave_nut] = min(TOPE_CRONICO_KCAL[clave_nut], tope_efectivo_tasa)
     tabla_max = tabla_imputacion_maximos(alimentos)
 
-    # ⚠️ LOS MINIMOS ESCALADOS POR LA DER EFECTIVA (28 agosto). Va AQUI,
-    # dentro del solver, y no como un aviso posterior: si un perro come
-    # menos, necesita mas nutriente por caloria, y eso es una restriccion
-    # del problema, no una nota al pie. Ver `minimo_de()` en verificar.py,
-    # que es el unico sitio que sabe escalar -- el semaforo lee por ahi
-    # tambien, para que no puedan discrepar.
-    #
-    # El peso de referencia es el OBJETIVO si se sabe: en un perro con
-    # sobrepeso las kcal ya se calculan sobre el peso ideal, asi que la DER
-    # efectiva tiene que salir del mismo peso o el numero no significa
-    # nada. Si no llega, se usa el real y se escala un poco de mas -- que
-    # es el lado seguro.
-    _peso_ref = peso_objetivo_kg or peso_perro_kg
-    _der_ef = der_efectiva_de(der, _peso_ref)
+    # (`_peso_ref` y `_der_ef` se calculan mucho mas arriba, junto a los topes
+    # del perro adulto sano, porque aquellos ya los necesitan.)
 
     for nombre_req, clave in MAPA.items():
         r = req.get(nombre_req)

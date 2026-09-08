@@ -50,7 +50,7 @@ with open(_RUTA, encoding="utf-8") as _f:
 POR_ETAPA = CRUDO["por_etapa"]
 
 
-def topes_de_la_etapa(etapa):
+def topes_de_la_etapa(etapa, req=None, der_efectiva=None):
     """Los techos del libro para esta etapa, en la forma que espera el solver.
 
     Devuelve `{clave_nutriente: valor}`, o `{}` si la etapa no tiene ninguno.
@@ -61,10 +61,86 @@ def topes_de_la_etapa(etapa):
     números, y además el mínimo de fósforo de un cachorro joven que exige FEDIAF
     (2250) está POR ENCIMA del techo del adulto (2000). Aplicárselo no sería un
     techo: sería dejarlo sin menú.
+
+    ⚠️ Y CON `req` Y `der_efectiva`, EL TECHO CEDE ANTE EL MÍNIMO DE FEDIAF.
+
+    CASO REAL, y lo cazó el BLOQUE 34 en la primera batería con esto puesto:
+    **a DER 49 dejaba de salir menú**. No era un fallo del techo: es la
+    aritmética que `CLAUDE.md` ya avisa en «los mínimos escalan hacia arriba,
+    nunca hacia abajo». Cuando el perro come menos, el mínimo de FEDIAF SUBE
+    (ecuación 7.2.5); los máximos NO, porque son concentración. Así que la
+    ventana entre los dos se cierra según bajan las kcal:
+
+        DER 95 (normal) .... mínimo de fósforo 1160, techo 2000 -> caben
+        DER 56 ............. mínimo 1968, techo 2000 -> caben por 32 mg
+        DER 55 ............. mínimo 2004, techo 2000 -> YA NO CABEN
+        DER 49 ............. mínimo 2249, techo 2000 -> imposible
+
+    **Y quien vive por debajo de 55 no es un caso raro: es el perro a dieta.**
+    El 80 % del RER que recomienda AAHA para adelgazar sale a 56, justo en el
+    borde, y un plan de pérdida de peso de verdad baja al 60-70 % del RER, que
+    son 42-49. O sea que el techo del perro sano habría dejado sin menú
+    exactamente al perro obeso.
+
+    Cuando cruzan, **manda el mínimo de FEDIAF y el techo se cae**, por lo mismo
+    que ninguna patología formulable puede tener un tope por debajo del mínimo
+    (lo vigila `auditar_patologias.py`): el mínimo es un REQUISITO y este techo
+    es una RECOMENDACIÓN, escrita además pensando en un alimento para un perro
+    que come lo normal. Preferir la recomendación sería dejar al perro sin
+    comida para cumplir un consejo.
+
+    Sin `req` y `der_efectiva` se devuelven los techos tal cual. Es el lado
+    estricto, y así quien no pueda calcular el mínimo escalado nunca aplica uno
+    de más por accidente.
     """
     ficha = POR_ETAPA.get(etapa) or {}
-    return {clave: t["valor"]
-            for clave, t in (ficha.get("topes_por_1000kcal") or {}).items()}
+    salida = {}
+    for clave, t in (ficha.get("topes_por_1000kcal") or {}).items():
+        valor = t["valor"]
+        if req is not None and der_efectiva is not None:
+            minimo = _minimo_de_fediaf(req, clave, etapa, der_efectiva)
+            if minimo is not None and minimo > valor:
+                # El techo se cae. No en silencio: `cedidos_ante_fediaf` lo
+                # cuenta, y de ahí sale el aviso que lee quien pide el menú.
+                continue
+        salida[clave] = valor
+    return salida
+
+
+def cedidos_ante_fediaf(etapa, req, der_efectiva):
+    """Los techos que se han caído por cruzarse con el mínimo de FEDIAF.
+
+    Devuelve `[{clave, techo, minimo_de_fediaf}]`. Existe para poder DECIRLO:
+    la regla 5 del CLAUDE.md es que se puede bajar de peldaño pero se dice, y
+    esto es lo mismo un escalón más abajo -- un límite que estaba puesto y ha
+    dejado de aplicarse a este perro concreto.
+    """
+    ficha = POR_ETAPA.get(etapa) or {}
+    fuera = []
+    for clave, t in (ficha.get("topes_por_1000kcal") or {}).items():
+        minimo = _minimo_de_fediaf(req, clave, etapa, der_efectiva)
+        if minimo is not None and minimo > t["valor"]:
+            fuera.append({"clave": clave, "techo": t["valor"],
+                          "minimo_de_fediaf": round(minimo, 1)})
+    return fuera
+
+
+def _minimo_de_fediaf(req, clave, etapa, der_efectiva):
+    """El mínimo de FEDIAF de este nutriente, YA escalado a lo que come el perro.
+
+    Se pregunta a `verificar`, que es el único sitio que sabe escalar (regla del
+    CLAUDE.md: `minimo_de()` es el único que escala mínimos). Aquí no se repite
+    esa lógica: repetirla es como el motor y el analizador acabaron discrepando
+    por la fibra.
+    """
+    from verificar import MAPA, minimo_de
+    nombre = next((n for n, c in MAPA.items() if c == clave), None)
+    if not nombre:
+        return None
+    fila = (req or {}).get(nombre)
+    if not fila:
+        return None
+    return minimo_de(fila, nombre, etapa, der_efectiva)
 
 
 def con_procedencia(etapa):

@@ -1091,3 +1091,37 @@ Las tres salidas posibles, y **ninguna la decide el asistente**:
    los menús, y hay que medir antes cuántos siguen saliendo.
 
 Es decisión de nutrición. Apuntada también en `PENDIENTE_DECISIONES.md`.
+
+### 14.4 · El sorteo de alimentos no sabe que hay un techo de fósforo — **coste medido**
+
+Desde que existe el techo del perro adulto sano (2000 mg/1000 kcal, `DECISIONES.md`
+D-15), **al perro más pequeño le cuesta más sacar menú**. Medido, toy de 1,5 kg
+con DER 200, peldaño 0, dos suplementos, un sorteo de alimentos por intento y 1 s
+de solver:
+
+```
+con el techo .....  12 sin menú de 30
+sin el techo .....   0 sin menú de 30
+```
+
+**No es que el menú no exista: es que ESE sorteo no lo tiene.** La API reintenta
+—con tres sorteos vuelve a 0 de 10— así que el dueño acaba teniendo su menú,
+pero tarda más, y en Render el presupuesto de tiempo es real. En los perros de 3,
+10, 22 y 40 kg no pasa: los cuatro salen en el peldaño 0 a la primera.
+
+**Qué lo causa.** `elegir_alimentos` sortea candidatos por categoría sin saber
+qué límites hay puestos. Si el hueso que sale en el sorteo trae mucho fósforo por
+cada miligramo de calcio, con dos huecos de suplemento no siempre se puede
+compensar. Las dos fuentes de calcio sin fósforo del catálogo —las dos cáscaras
+de huevo, con Ca:P de 370:1 y 422:1— existen, pero gastar un hueco de suplemento
+en calcio compite con el multivitamínico y con el aceite.
+
+**Qué haría falta.** Que el sorteo mire los límites activos: cuando hay techo de
+fósforo, sesgar la elección de hueso hacia los de mejor Ca:P y asegurar que una
+fuente de calcio sin fósforo está entre los candidatos. Es acotado y no toca
+ninguna cifra nutricional — es la FORMA de elegir candidatos, no los requisitos.
+
+⚠️ **Medido y descartado como atajo**: subir `max_suplementos` a 3 **no** lo
+arregla (5 sin menú de 10 en la misma prueba). Más huecos hacen el MILP más
+grande, no más fácil. El problema es qué entra en el sorteo, no cuántos huecos
+hay.

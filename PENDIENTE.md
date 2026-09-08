@@ -40,6 +40,7 @@ que tomar una persona, no yo.
 - [x] Fibra de la borraja — CERRADO 7 sep: el alimento ya no existe en el catálogo, no es un hueco de dato
 - [ ] `renal + pancreatitis` no da menú en ningún tamaño — decisión de nutrición: qué tope cede, y qué se le dice mientras (BLOQUE 50)
 - [x] El fósforo del perro sano — APLICADO 8 sep: 2000 en adulto, 1750 en senior, medido y en el peldaño 0 (`DECISIONES.md` D-15)
+- [ ] El sorteo de alimentos no sabe que hay techo de fósforo: al toy de 1,5 kg le cuesta 12 sorteos de 30 (`PENDIENTE_NUTRICION.md` §14.4)
 - [ ] En crecimiento, ¿los suelos de una patología también se caen con el tope?
 - [ ] La proteína de la reacción adversa: la fuente la limita solo en casos dermatológicos y la ficha no lo pregunta
 - [ ] ¿Rawku apunta a algún rango de fibra? — decisión de nutrición, no de código (nota: hiperlipidemia ya tiene suelo real, 7 sep — ver `PENDIENTE_NUTRICION.md` §10)

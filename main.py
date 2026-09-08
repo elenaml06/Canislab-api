@@ -50,6 +50,10 @@ from exclusiones import filtrar as filtrar_exclusiones
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
 from verificar import verificar as verificar_v2
 from verificar import peso_objetivo_desde_bcs, BCS_ESCALA_SATURADA
+# ⚠️ El DER por kg de peso metabólico, que es lo que dispara el escalado de los
+# mínimos. Se importa de `verificar` y no se recalcula aquí: es el único sitio
+# que sabe hacerlo, y dos copias de esta cuenta serían dos criterios.
+from verificar import der_efectiva_de
 from seguridad import revisar_seguridad as revisar_seguridad_v2
 from seguridad import avisos_rotacion as avisos_rotacion_v2
 
@@ -242,7 +246,8 @@ def _valor_num(v):
         return None
 
 
-def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto"):
+def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto",
+                         req=None, der_efectiva=None):
     """¿Este menú se pasa de algún tope por patología? Devuelve la lista de
     los que se pasa, vacía si está bien.
 
@@ -302,9 +307,16 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto"):
     # septiembre). Tienen que resolverse EXACTAMENTE igual que allí o esta
     # comprobación y la restricción dirían cosas distintas, que es el fallo
     # que este bloque entero existe para no repetir.
+    # ⚠️ CON `req` Y `der_efectiva` EL TECHO DEL LIBRO PUEDE CEDER, exactamente
+    # igual que en el solver. Tienen que decidirlo con el MISMO criterio o esta
+    # comprobación tiraría menús que el solver construyó bien: a DER 49 el
+    # mínimo de fósforo de FEDIAF (2249) supera al techo del libro (2000), el
+    # solver deja de aplicarlo y el menú sale con 2216 -- correcto. Sin
+    # pasarle `req` aquí, este filtro lo rechazaría por «pasarse» de un techo
+    # que ya no está puesto.
     from recomendaciones import topes_de_la_etapa as _topes_etapa
     _del_libro = set()
-    for _clave_r, _valor_r in _topes_etapa(etapa).items():
+    for _clave_r, _valor_r in _topes_etapa(etapa, req, der_efectiva).items():
         _actual_r = topes.get(_clave_r)
         if _actual_r is None or _valor_r < _actual_r:
             topes[_clave_r] = _valor_r
@@ -545,7 +557,9 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
     ficha = verificar_v2(gramos, al, req, der, etapa,
                          peso_referencia_kg=(peso_objetivo_kg or peso_perro_kg))
     seguro = _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg)
-    topes_rotos = _tope_patologia_roto(gramos, al, patologias, etapa)
+    topes_rotos = _tope_patologia_roto(
+        gramos, al, patologias, etapa, req=req,
+        der_efectiva=der_efectiva_de(der, peso_objetivo_kg or peso_perro_kg))
     calcio_corto = _minimo_calcio_raza_grande_roto(gramos, al, req, etapa,
                                                    peso_adulto_esperado_kg)
     ratio_pasado = _ratio_cap_raza_grande_roto(gramos, al, req, etapa,
@@ -4506,7 +4520,9 @@ def _estado_de_la_racion(datos):
     # sano. Es la regla 2, y se comprueba aquí por lo mismo que se comprueba
     # en `_garantizar_verificado`: porque el que se olvida no da error.
     salida["topes_de_patologia_rotos"] = _tope_patologia_roto(
-        gramos, al, datos.patologias, datos.etapa_requisitos)
+        gramos, al, datos.patologias, datos.etapa_requisitos, req=req,
+        der_efectiva=der_efectiva_de(datos.der_objetivo,
+                                     _peso_de_referencia(datos)[0]))
     salida["huecos"] = _huecos_en_cristiano(salida["ficha"])
     return salida
 
@@ -4813,7 +4829,9 @@ def pauta_firmar(datos: PeticionFirmar):
                          peso_referencia_kg=peso_ref)
     problemas = _seguridad_completa(gramos, al, datos.der_objetivo, datos.etapa_requisitos,
                                     datos.patologias, peso_perro_kg=datos.peso_perro_kg)
-    topes_rotos = _tope_patologia_roto(gramos, al, datos.patologias, datos.etapa_requisitos)
+    topes_rotos = _tope_patologia_roto(gramos, al, datos.patologias,
+                                       datos.etapa_requisitos, req=req,
+                                       der_efectiva=der_efectiva_de(datos.der_objetivo, peso_ref))
 
     # ⚠️ NO SE FIRMA LO QUE NO ESTÁ VERDE. Es la regla 1 leída donde más
     # importa: "ningún menú sale sin verificar, y si no está verde no se

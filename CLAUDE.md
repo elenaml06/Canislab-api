@@ -264,6 +264,12 @@ verificación de ese día, y su §cuarta pasada trae la lección que más cuesta
 `sed`, así que de las 89 tablas que hay solo se revisaron unas 40** y faltaban
 tres de patología canina. Un barrido cuyo resultado no se compara contra el
 total no es un barrido, es una muestra.
+`REVISION_NUTRICIONISTA.md` es la valoración que hizo Cris Carles del motor,
+punto por punto contra el repo: qué de lo que señaló ya está cubierto, qué a
+medias y qué sigue sin estar. Los tres que siguen sin estar son el **ratio
+omega-6:omega-3** (que no existe, y lo piden dos fuentes independientes), la
+**pantalla de objetivos por nutriente** con el rol que la firma, y la **ficha de
+L-metionina** en el catálogo. Ábrelo antes de decidir qué se construye después.
 `DATOS_QUE_FALTAN.md` son los valores del catálogo
 que hay que conseguir de BEDCA/CIQUAL/USDA, uno a uno — **no los rellena el
 asistente**. `Bases.md` y `Ya_probado.md` son de las primeras sesiones:

@@ -5357,13 +5357,44 @@ for _etq43, _der43, _etapa43, _peso43, _adulto43 in _CASOS_43:
     # (2-6 s), así que aquí siempre salta el límite: es imitar a Render sin
     # depender de lo rápido que vaya la máquina donde corra esto.
     for _vuelta43 in range(3):
-        _ok43, _g43 = _resolver_43(_der43, _etapa43, al, req, _peso43, dosis_maxima_fabricante,
-                                   margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
-                                   time_limit=1.0, peso_adulto_esperado_kg=_adulto43)
+        # ⚠️ TRES SORTEOS POR VUELTA, NO UNO (8 septiembre, noche). Y hay que
+        # explicar bien por qué, porque cambiar un test para que pase es
+        # exactamente lo que no se hace.
+        #
+        # Lo que este bloque vigila es EL TIEMPO: que una solución YA
+        # CALCULADA dentro del solver no se tire porque saltó el límite. Eso
+        # no ha cambiado y se sigue comprobando igual.
+        #
+        # Lo que ha cambiado es otra cosa: el techo de fósforo del perro
+        # adulto sano (2000 mg/1000 kcal, SACN5 Tabla 13-3) hace que un
+        # SORTEO de alimentos de cada varios no tenga solución en el peldaño
+        # 0 con dos suplementos. MEDIDO, toy de 1,5 kg con DER 200, un sorteo
+        # por intento y 1 s de solver:
+        #
+        #     con el techo ..... 12 sin menú de 30
+        #     sin el techo .....  0 sin menú de 30
+        #
+        # Eso NO es «una solución calculada que se tira»: es un sorteo que de
+        # verdad no tiene solución. La API ya reintenta —es lo que hace en
+        # producción, y con tres sorteos vuelve a 0 de 10—, así que el test
+        # tiene que reintentar igual o estaría midiendo la suerte del sorteo
+        # en vez del tiempo.
+        #
+        # ⚠️ Y ESTO ES UN COSTE REAL, NO UN DETALLE: al perro más pequeño le
+        # cuesta más sacar menú desde que existe el techo. Está apuntado en
+        # `PENDIENTE_NUTRICION.md` §14.4 como trabajo pendiente — el sorteo de
+        # alimentos no sabe que hay un techo de fósforo, y podría saberlo.
+        _ok43, _g43 = False, None
+        for _sorteo43 in range(3):
+            _ok43, _g43 = _resolver_43(_der43, _etapa43, al, req, _peso43, dosis_maxima_fabricante,
+                                       margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
+                                       time_limit=1.0, peso_adulto_esperado_kg=_adulto43)
+            if _ok43:
+                break
         if not _ok43:
-            fallos.append(f"BLOQUE43 {_etq43}: con el tiempo justo no sale menú. La solución "
-                          f"factible ya está calculada dentro del solver: tirarla es decirle a "
-                          f"la usuaria que no existe un menú que sí existe.")
+            fallos.append(f"BLOQUE43 {_etq43}: con el tiempo justo no sale menú en TRES sorteos. "
+                          f"La solución factible ya está calculada dentro del solver: tirarla es "
+                          f"decirle a la usuaria que no existe un menú que sí existe.")
             continue
         _f43 = verificar(_g43, al, req, _der43, _etapa43)
         if _f43["semaforo"] != "verde":
@@ -6881,6 +6912,44 @@ else:
             fallos.append("BLOQUE57: se cuadruplica el hueso de un menu de adulto sano (que es "
                           "cuadruplicar su fosforo) y el filtro final no dice nada. Entonces no "
                           "esta comprobando el techo del perro sano.")
+
+# 3-bis. EL TECHO CEDE ANTE EL MINIMO DE FEDIAF, y hay que probarlo con el caso
+#        que lo destapo: a DER 49 por kg^0.75 el minimo de fosforo escalado
+#        (2249) supera al techo del libro (2000). Si el techo no cediera, el
+#        perro A DIETA -- que es justo quien vive ahi -- se quedaria sin menu.
+from recomendaciones import cedidos_ante_fediaf as _cedidos_b57
+from verificar import der_efectiva_de as _der_ef_b57
+if _topes_b57("Adulto", req, 95.0).get("fosforo") != 2000.0:
+    fallos.append("BLOQUE57: a DER 95 (un perro que come lo normal) el techo de fosforo "
+                  "tendria que seguir puesto y no lo esta")
+if "fosforo" in _topes_b57("Adulto", req, 49.0):
+    fallos.append("BLOQUE57: a DER 49 el minimo de fosforo de FEDIAF (2249) supera al techo "
+                  "del libro (2000) y el techo NO ha cedido. Asi, el perro a dieta se queda "
+                  "sin menu por cumplir una recomendacion.")
+if not any(c["clave"] == "fosforo" for c in _cedidos_b57("Adulto", req, 49.0)):
+    fallos.append("BLOQUE57: el techo cede a DER 49 pero `cedidos_ante_fediaf` no lo cuenta. "
+                  "Un limite que deja de aplicarse y no se puede decir es un cambio en "
+                  "silencio (regla 5 del CLAUDE.md).")
+if _cedidos_b57("Adulto", req, 95.0):
+    fallos.append("BLOQUE57: a DER 95 no cede nada y `cedidos_ante_fediaf` dice que si")
+# y de verdad, con el solver: a DER 49 tiene que salir menu
+_der49 = 49.0 * 10 ** 0.75
+_ok49, _g49 = False, None
+_t0_49 = time.time()
+while time.time() - _t0_49 < 25:
+    _ok49, _g49 = resolver(_der49, "Adulto", al, req, 10, dosis_maxima_fabricante)
+    if _ok49:
+        break
+if not _ok49:
+    fallos.append("BLOQUE57: un adulto de 10 kg a DER 49 (una dieta de bajada de peso de "
+                  "verdad) no obtiene menu. El techo del libro tenia que haber cedido ante "
+                  "el minimo de FEDIAF y no lo ha hecho.")
+else:
+    _rotos49 = __import__("main")._tope_patologia_roto(
+        _g49, al, [], "Adulto", req=req, der_efectiva=_der_ef_b57(_der49, 10))
+    if _rotos49:
+        fallos.append(f"BLOQUE57: a DER 49 el solver da un menu y el filtro final lo tira: "
+                      f"{_rotos49}. Los dos tienen que decidir con el MISMO criterio.")
 
 # 4. Una patologia que aprieta MAS tiene que ganar, y una que aprieta menos no
 #    puede relajar el techo del libro.
