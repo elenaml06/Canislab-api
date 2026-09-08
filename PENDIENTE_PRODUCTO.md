@@ -82,12 +82,47 @@ menús comparados no tienen sentido sin él.
 - [ ] **Borrar las ramas viejas de los dos repos.** No es programación y
       no corre prisa, pero cuanto más se acumulen peor: el 21 de agosto se
       lió justo por esto (ver «Cómo se trabaja con git aquí» en
-      `CLAUDE.md`). Comprobado el 23 de agosto rama por rama —15 ramas
-      entre los dos repos, ninguna tiene nada que rescatar—; la lista
-      completa con los commits comprobados de cada una: `PENDIENTE_DETALLE.md`.
+      `CLAUDE.md`).
+
+      ⚠️ **RECUENTO CORREGIDO (8 de septiembre).** Aquí ponía «comprobado el
+      23 de agosto rama por rama —15 ramas entre los dos repos, ninguna
+      tiene nada que rescatar». **Aquella auditoría no estaba equivocada:
+      está caducada y su alcance se lee mal.** Sus conclusiones siguen
+      siendo ciertas para las 15 ramas que miró — pero once de aquellas ya
+      no existen, y hoy hay **11 ramas vivas de las que SEIS son posteriores
+      a esa auditoría y nunca se han mirado**, con **22 commits que no están
+      en `main`**.
+
+      Leído hoy, este punto decía «las ramas que hay están comprobadas,
+      bórralas», y eso no es cierto. Un documento que manda borrar y cuya
+      lista no cubre lo que hay es peor que no tenerlo, porque quien lo lee
+      no tiene motivo para desconfiar.
+
+      **Borrables (5, todas en `canislab-web`)** — las cinco son antepasadas
+      de `main`, o sea que no contienen ni una línea que `main` no tenga:
+      `aviso-composicion-menu`, `ficha-completa`, `multi-perro`,
+      `perfil-perro-no-se-guarda`, `rawku-sentry-login-nav-ro683v`.
+
+      **NO borrables (6), y ⚠️ CUATRO SUENAN A TRABAJO NUTRICIONAL:**
+      `el-corazon-de-ternera-es-musculo` (API, 4 comm., **nutrición**),
+      `nutrition-audit-data-validation-bihto9` (API, 11 comm., **nutrición**),
+      `calcio-raza-grande-contrato` (web, 3 comm., **nutrición**),
+      `laringe-y-trazas` (web, 2 comm., **nutrición**),
+      `de-punta-a-punta-con-la-api-real` (web, 1 comm.),
+      `la-ficha-clinica-pinta-los-que-cumplen` (web, 1 comm.).
+      **Las cuatro de nutrición las tiene que mirar quien esté cerrando esa
+      parte, no una sesión de limpieza.**
+
+      La comprobación buena es
+      `git merge-base --is-ancestor origin/claude/<rama> origin/main`.
+      **`git cherry` NO vale** (compara por `patch-id` y da falsos
+      positivos con los merges en squash: marcó como «no fusionada» una
+      rama cuyos ficheros SÍ están en `main`). Detalle completo, con los
+      títulos de los 22 commits: `TRASPASO.md` §1 y §2.
+
       Se borran desde github.com/elenaml06/<repo>/branches, tocando la
-      papelera. Desde el contenedor no se puede: el proxy bloquea el
-      borrado de ramas.
+      papelera. Desde el contenedor no se puede (comprobado otra vez el 8 de
+      septiembre, ahora lo para el clasificador de permisos).
 
 - [ ] **Rellenar a mano la fecha de nacimiento de los perros ya guardados.**
       No es programación: las fichas creadas antes del 21 de agosto tienen
