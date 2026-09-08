@@ -210,6 +210,13 @@ necesita de aquí.
   dentro del documento: el logo no es parte de lo que se verificó, así que
   puede cambiar sin invalidar el sello.
 
+- **El recorrido, sin escalones** (8 de septiembre). En modo profesional la
+  pantalla «Perfil» del tutor no se pinta nunca: la ficha clínica es toda la
+  fase, lleva las kcal en la cabecera y su único botón —«Guardar y formular
+  la ración»— va directo al formulador. `paso` deja de decidir qué se pinta
+  en este modo, que es lo que hacía que desde la ficha no se pudiera navegar
+  a ningún sitio. Detalle en `HECHO.md`.
+
 Con esto la fase 1 está entera.
 
 ## 7. El formulador del veterinario: su pantalla, no la nuestra con más botones

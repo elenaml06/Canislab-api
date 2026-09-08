@@ -666,3 +666,52 @@ medida" junto a las legumbres — ampliado con el mismo argumento estructural
 conocido del BLOQUE43 con un perro de juguete de 1,5 kg y 3 s de
 presupuesto, que no es de esta ficha: el menú se calcula bien, lo que
 falta a veces es el margen para verificarlo, y verificar cuesta 1,6 ms).
+
+## De la ficha del paciente a formular, sin escalones — hecho el 8 de septiembre
+
+Cambio en `canislab-web`. Encontrado ABRIENDO LA APP y mirando las
+pantallas, no leyendo el código — que es la única forma de encontrar esto.
+
+**Lo que se veía.** Al abrir un paciente, y otra vez al guardar su ficha,
+salía la pantalla «Perfil» del TUTOR: el perro rosa, «Nala necesita 1211
+kilocalorías al día», «pésalo cada 2-3 semanas y ajusta si lo ves más
+delgado o más gordo» y «Borrar a Nala de mi cuenta». Una pantalla entera
+que repite lo que el veterinario acaba de rellenar, para que su único botón
+útil sea «Todo bien, ir al generador de menús →». Pedido expreso: «eso
+debería estar ahí simplemente en esa pantalla, y que la siguiente pantalla
+sea directamente ir al generador de menús».
+
+**Y detrás había dos fallos que no dan error:**
+
+1. **La ficha secuestraba la navegación.** Con ella abierta `paso` valía 1,
+   y el render mira `paso` antes que `fase`: pulsar «Menús» o «Pacientes» en
+   el panel cambiaba la fase de verdad y la pantalla no se movía. Botón
+   muerto, sin aviso. Es el mismo fallo que ya está escrito en
+   `navegarDesdeElPanel` («navegabas bien y no lo veías»), otra vez.
+2. **La ficha llevaba el contador del asistente del dueño**: «/ 6» con seis
+   rayitas apagadas, prometiendo cinco pantallas que no existen.
+
+**La raíz de los tres es la misma**: en modo profesional `paso` no puede
+decidir qué se pinta. La ficha clínica ES toda la fase `"onboarding"`, en
+una pantalla, y cualquier otra fase manda. Los seis `if (paso === N)` del
+asistente llevan ahora `!enModoProfesional` delante, para que un `paso`
+heredado no vuelva a secuestrar nada.
+
+**Lo que hubo que traerse antes de quitar esa pantalla**, porque vivía solo
+ahí: las **kcal/día** (el número del que cuelga todo, ahora en la cabecera
+de la ficha y moviéndose mientras se teclea el peso o el BCS) y el aviso de
+que **la pauta guardada se le ha quedado corta**, que es lo único
+clínicamente urgente que tenía.
+
+Queda: `Pacientes → paciente → Ficha (todo, editable, con las kcal) →
+[Guardar y formular la ración →] → Formulador`. El botón reutiliza
+`irAlGeneradorDeMenus`, que es quien sabe guardar con la etapa — guardar por
+otro camino dejaba al perro con la etapa vieja, y de la etapa salen los 43
+requisitos.
+
+Seis pruebas en `tests/vet-de-la-ficha-a-formular.spec.js`, cinco de ellas
+comprobadas reintroduciendo el fallo (la sexta es la del tutor, que tiene
+que seguir pasando y pasa). Y `ayudas.js` tiene ahora `esperarElPaciente`
+aparte de `esperarLaFicha`: son dos pantallas de llegada distintas, y una
+espera que aceptara cualquiera de las dos daría por buena justamente la
+regresión que esto arregla.
