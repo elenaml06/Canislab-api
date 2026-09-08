@@ -1,0 +1,327 @@
+# PREGUNTAS ABIERTAS — lo que no sabemos, y quién lo puede contestar
+
+Abierto el 8 de septiembre de 2026.
+
+Una auditoría que hace preguntas necesita una vía para que alguien las
+conteste, o se acumulan hasta que dejan de leerse. **Aquí cada pregunta lleva
+dueño**: quién puede contestarla, no quién la hizo.
+
+**Ninguna pregunta se queda en un comentario del código.** Si la encuentras
+ahí, tráela aquí.
+
+---
+
+## Cómo se lee
+
+- **Dueño** — quién puede contestar: **Elena** (producto, alcance, negocio) ·
+  **el nutricionista** (criterio clínico) · **una fuente** (se contesta
+  leyendo, no opinando) · **medible** (se contesta midiéndolo, y entonces no
+  es una pregunta: es trabajo).
+- **¿Bloquea?** — si algo no puede cerrarse mientras esto siga abierto.
+- **Abierta desde** — la fecha en que se supo, no la de hoy.
+
+**Lo que NO va aquí:** el trabajo pendiente. Eso vive en `PENDIENTE.md` y sus
+cuatro ficheros. Aquí solo lo que **no se puede resolver programando**.
+Cuando un punto de `PENDIENTE_DECISIONES.md` es de verdad una pregunta para
+alguien de fuera, se apunta aquí con un puntero, no se copia.
+
+---
+
+## Bloqueantes
+
+### P-01 · La grasa en pancreatitis: ¿20 o el rango de SACN5?
+
+| | |
+|---|---|
+| **Dueño** | **El nutricionista** |
+| **Bloquea** | Sí: es lo que deja sin menú a `renal` + `pancreatitis`, y es el caso de manual de «constante que debería ser rango» |
+| **Abierta desde** | 8 de septiembre de 2026 (el hecho; la pregunta de fondo, del 25 de agosto) |
+
+**Lo que sabemos, medido.** Hoy el tope es **20 g/1000 kcal**, y sale del
+Merck Veterinary Manual, literal: *«feeding a low-fat diet (ie, less than 20 g
+fat/1,000 kcal) is crucial for treatment success»*. La otra fuente del mismo
+campo, **SACN5 5ª ed. cap. 67, Tabla 67-3**, da **≤15 % de materia seca** para
+perros no obesos y no hipertrigliceridémicos, y **≤10 %** para los que sí. Con
+el puente de 4000 kcal/kg MS que usa el repo, eso son **37,5** y **25**.
+
+**Y la elección entre las dos fuentes decide si un perro come.** Medido el 8
+de septiembre (adulto 25 kg, DER 1200, los seis peldaños de la escalera):
+
+| Tope de grasa | `renal` + `pancreatitis` |
+|---|---|
+| 20 (Merck, el de hoy) | **no sale menú** |
+| 25 (SACN5, 10 % MS) | no sale menú |
+| 37,5 (SACN5, 15 % MS) | **sale menú** |
+
+**Las preguntas:**
+
+1. ¿El objetivo de grasa en pancreatitis canina es un número o un rango? La
+   nutricionista ya dijo que **ha tenido que bajarlo mucho en ciertos casos y
+   que depende del caso** — si eso es la respuesta, esto deja de ser pregunta
+   y pasa a ser trabajo: se implementa como rango con palanca del veterinario
+   y el 20 se queda como valor por defecto.
+2. Si es un rango, **¿cuáles son sus dos extremos, y qué variable clínica
+   mueve dentro de él?** (triglicéridos, episodio agudo vs. crónico, obesidad
+   concurrente).
+3. **¿Qué se hace mientras tanto con un perro renal y pancreático?** Hoy no
+   recibe menú y el mensaje que lee es el genérico de «quita alguna
+   restricción», que a un veterinario no le sirve porque no hay ninguna que él
+   pueda quitar.
+
+**El puente que hay debajo, y que también hay que revisar:** convertir «% de
+materia seca» a «g/1000 kcal» se hace suponiendo **4000 kcal de EM por kg de
+materia seca**. Ese número **no viene de SACN5**: es la densidad de referencia
+del repo. Y es sensible en la dirección que importa — una ración baja en grasa
+es *menos* densa, no más:
+
+| Densidad supuesta | 15 % MS equivale a |
+|---|---|
+| 3500 kcal/kg MS | 42,9 g/1000 kcal |
+| **4000 (el que se usa)** | **37,5** |
+| 4500 kcal/kg MS | 33,3 |
+
+Ver también `PENDIENTE_DECISIONES.md` → «Límites por patología: confirmar los
+números (fósforo, cobre, grasa)», que es la misma pregunta apuntada antes sin
+la medida.
+
+---
+
+### P-02 · Los siete márgenes «interpretados» del veterinario
+
+| | |
+|---|---|
+| **Dueño** | **El nutricionista** |
+| **Bloquea** | Sí: son la mitad de la ficha de permisos, y si están mal el veterinario tiene una palanca que no debería |
+| **Abierta desde** | 8 de septiembre de 2026 |
+
+La rama `claude/veterinary-mode-ui-fixes-s9l5j7` estructura, para los 19 topes
+y suelos de `patologias.json`, hasta dónde podría moverlos un profesional.
+**Doce salen de un rango escrito en la fuente. Siete los puso la sesión**, y
+hay un patrón en los siete: **la fuente da un solo número, y se usó el mínimo
+de FEDIAF como la otra punta del rango.**
+
+Eso no es lo mismo: **FEDIAF es el suelo de un perro sano, no el suelo
+terapéutico de esa patología.**
+
+| # | Patología · nutriente | `hasta` | Por qué hay que revisarlo |
+|---|---|---|---|
+| 3 | pancreatitis · proteína | 52,1 | El extremo de SACN5 (37,5) está BAJO el mínimo de FEDIAF; se puso el mínimo de FEDIAF como parada |
+| 6 | hepatopatía · cobre | `null` | El objetivo terapéutico (1,2) está bajo el mínimo de FEDIAF (2,08): el margen real es cero sin prescripción. Probablemente debería ser `direccion: null`, como renal |
+| 7 | cardiopatía genérica · sodio | 480 | Se puso el valor del estadio D. Discutible: la entrada genérica existe justo porque NO se sabe el estadio |
+| 10 | cardiopatía D · sodio | 290 | 290 es el mínimo de FEDIAF, no una cifra de la fuente |
+| 11 | hiperlipidemia · grasa | 13,75 | La fuente da UN número; 13,75 es el mínimo de FEDIAF |
+| 13 | obesidad · grasa | 28 | **No es nutrición: es ingeniería.** 28 es un límite MEDIDO del solver con el catálogo real (22,5 y hasta 27 no dan menú ni en 40 s; 28 sí, 5 de 5). Mezcla una cifra de máquina con las de fuente y merece campo aparte |
+| 16 | PLE / linfangiectasia · grasa | 13,75 | La fuente no da suelo; 13,75 es el mínimo de FEDIAF |
+
+**Las preguntas:** ¿en cada uno de los siete, cuál es el suelo terapéutico
+real, y qué lo mueve? Y en el 13, ¿tiene sentido que un límite del solver
+viaje en el mismo campo que un límite clínico, o hay que separarlos?
+
+**No verificado por mí:** los doce «de prosa clara». Sí verificado: que la
+rama **no cambia ni un valor** de los 19 topes ni de los 40 `formulable`.
+
+---
+
+### P-03 · ¿Un veterinario puede RELAJAR un tope de patología?
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (es alcance de producto) **con el nutricionista** |
+| **Bloquea** | Sí: sin esto, `margen_del_profesional` no puede pasar de texto a control |
+| **Abierta desde** | 8 de septiembre de 2026 |
+
+Uno de los 19 márgenes tiene `direccion: "subir"` **sobre un tope** —
+pancreatitis · grasa. Subir un tope es **relajarlo**. Es correcto según la
+fuente, pero es la línea que más fácil se lee mal, y **hoy las reglas 2 y 3
+del `CLAUDE.md` no se lo permiten a nadie**.
+
+**Las preguntas:**
+
+1. ¿Un veterinario acreditado puede relajar un tope de patología, o solo
+   apretarlo?
+2. Si puede, ¿eso sigue siendo «una dieta completa» o pasa a ser una
+   **prescripción**, con constancia de quién la firma? (`VETERINARIOS.md` ya
+   dice que una prescripción por debajo de FEDIAF se verifica igual, contra un
+   juego de requisitos escrito que viaja con el menú. La pregunta es si esto
+   es ese caso.)
+3. ¿Qué se registra al moverlo? La ficha pide: quién, cuándo, a qué valor,
+   sobre qué dato de entrada, y **si el cambio saca la ración de lo que es una
+   dieta completa**.
+
+---
+
+## No bloqueantes
+
+### P-04 · El techo de lisina de FEDIAF: ¿sobre qué proteína se mide?
+
+| | |
+|---|---|
+| **Dueño** | **El nutricionista** |
+| **Bloquea** | No — hay decisión provisional escrita (`DECISIONES.md` D-03) |
+| **Abierta desde** | 28 de agosto de 2026 |
+
+El techo (7,00 g/1000 kcal, solo en crecimiento) no se aplica porque **0 de 15
+menús de cachorro caben debajo**: la lisina va detrás de la proteína y una
+ración BARF de cachorro lleva ~134 g/1000 kcal contra un mínimo de 50.
+Aplicarlo dejaría a todos los cachorros sin menú.
+
+**La pregunta:** ¿ese techo está pensado para una dieta con la proteína
+ajustada al mínimo, y por eso no es transferible a una ración cruda? ¿O
+estamos midiendo algo distinto de lo que él mide? Es el único máximo de FEDIAF
+que no aplicamos, y un revisor externo va a preguntar por él el primer día.
+
+Ya estaba apuntada en `PENDIENTE_DECISIONES.md`. Aquí solo con dueño y fecha.
+
+---
+
+### P-05 · El mínimo de EPA+DHA de adulto no es de FEDIAF
+
+| | |
+|---|---|
+| **Dueño** | **El nutricionista** |
+| **Bloquea** | No |
+| **Abierta desde** | 26 de agosto de 2026 |
+
+FEDIAF 2025 solo exige EPA+DHA en crecimiento y reproducción (0,13 g), y para
+adulto dice literalmente que *«the current information is insufficient to
+recommend a specific level of omega-3 fatty acids for adult dogs»*. Nuestro
+mínimo de adulto (0,11 g = 110 mg/1000 kcal) **viene del NRC 2006 y lo
+adoptamos a propósito** por su relevancia clínica documentada.
+
+Es, por tanto, **criterio nuestro**, no un requisito. Está escrito en el
+`nota_auditoria` de la fila, pero no marcado como criterio en ninguna parte
+legible por un revisor.
+
+**La pregunta:** ¿se mantiene, se sube, se baja, o se retira y se deja como
+recomendación en vez de como mínimo duro?
+
+---
+
+### P-06 · Los umbrales de seguridad crónica son criterio nuestro. ¿Cuáles cambian?
+
+| | |
+|---|---|
+| **Dueño** | **El nutricionista** |
+| **Bloquea** | No, pero es de lo primero que va a mirar |
+| **Abierta desde** | 5 de agosto de 2026 |
+
+La cabecera de `motor/seguridad.py` lo dice sin adornos: *«los MECANISMOS
+están documentados con estudios reales; los NÚMEROS DE CORTE (10 %, 5 %, 4 %,
+10 %) son CRITERIO DE DESARROLLO nuestro, salvo el 20 % de clara cruda, que es
+donde se midió daño»*.
+
+Concretamente:
+
+| Umbral | Valor | Qué lo respalda |
+|---|---|---|
+| Tiaminasa | 10 % de las kcal del día | El mecanismo (Markovich 2013, JAVMA). **La cifra, no**: la literatura dice «proporción sustancial de la dieta», sin número |
+| Mercurio | 10 % de las kcal del día | Extrapolado de la dosis de referencia humana de la EPA. **No existe límite canino**, y así se dice en Dunham-Cheatham 2019 |
+| Hígado | 10 % del peso | Criterio |
+| Vísceras metabólicas | 10 % del peso | Criterio |
+| Clara cruda | 5 % del peso | **El único con daño medido** (20 %) |
+| Oxalato | 100 % del peso en sano, 0 con antecedente | Criterio |
+
+**Las preguntas:** ¿alguno de estos seis está mal puesto, en un sentido o en
+el otro? ¿Y alguno debería depender del caso —o sea, ser un rango con palanca
+del veterinario— en vez de una constante?
+
+---
+
+### P-07 · Las 13 condiciones clínicas sin perfil
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (alcance) primero, **el nutricionista** después |
+| **Bloquea** | No |
+| **Abierta desde** | 5 de septiembre de 2026 |
+
+`canislab-fuentes/TRABAJO_RAWKU/entregas/AUDITORIA_PATOLOGIAS.md` lista 13
+condiciones estudiadas sin perfil en `patologias.json`: estreñimiento,
+megaesófago, enfermedad periodontal, gastroenteritis aguda, SIBO, intestino
+corto, flatulencia, hipotiroidismo, urolitiasis por sílice, realimentación
+tras anorexia, hipertensión sistémica, acidosis tubular renal y gastritis
+aguda.
+
+⚠️ **Antes de usar esa lista hay que arreglar su premisa.** Dice auditar «las
+47 patologías que carga `patologias.json`»; **el motor tiene 40**, y la lista
+de 47 es la del borrador `TRABAJO_RAWKU/code/patologias.json`, marcado «NADA
+DE ESTO ESTA VERIFICADO», que se borró dos días después (`DECISIONES.md`
+D-07). **Y al menos un punto es falso por eso:** el 8 dice que el
+hipotiroidismo «nunca llegó al motor», y `hipotiroidismo` **sí está** en
+`patologias.json`, con restricción por alimento (grelo y nabo, por la
+progoitrina) y sin tope numérico.
+
+**Las preguntas:** ¿cuáles de las 13 quiere Rawku cubrir? Y de las que sí:
+¿tienen objetivo nutricional formulable, o son de las que bloquean?
+
+---
+
+### P-08 · Se borró la lista viva de preguntas para la nutricionista
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (tiene el PDF que se le envió a Cris el 29 de agosto y su respuesta) |
+| **Bloquea** | No, pero se pierde si nadie lo recupera |
+| **Abierta desde** | 7 de septiembre de 2026 |
+
+El `PREGUNTAS_NUTRICIONISTA.md` del borrador de `canislab-fuentes` está
+marcado **«SUPERADO — 3 de septiembre»**, y remite a `datos_motor.json →
+huecos_para_nutricionista` y a `MOTOR.md §6` como la lista vigente. **Los
+tres se borraron el 7 de septiembre**, en la limpieza de `TRABAJO_RAWKU`, y
+con buen motivo (`DECISIONES.md` D-07).
+
+O sea que **la lista vigente de preguntas para la nutricionista, y la
+respuesta que ella ya dio y que cambió tres de ellas, no están hoy en ningún
+repo.** Están en el PDF del 29 de agosto y en la respuesta de Cris.
+
+**La pregunta / la petición:** ¿se puede recuperar ese contenido de la rama
+`add-sacn5-58-capitulos` (que aún existe) o del PDF, para traerlo a este
+fichero antes de que la rama se borre?
+
+Ver también `PENDIENTE_DECISIONES.md` → «Siete preguntas para Cris».
+
+---
+
+### P-09 · ¿Dónde deben vivir las fuentes?
+
+| | |
+|---|---|
+| **Dueño** | **Elena** |
+| **Bloquea** | No |
+| **Abierta desde** | 8 de septiembre de 2026 |
+
+**Los números, medidos hoy:** `canislab-fuentes` ocupa **553 MB** en disco, de
+los que `sacn5/` son **293 MB** (70 PDFs) y su `.git` pesa **246 MB**. Los 70
+`.txt` extraídos con `pdftotext -layout` ocupan **7,1 MB entre todos**, y las
+tablas sobreviven a la extracción (comprobado en la Tabla 6-1 del cap. 6). En
+la documentación se cita el `.txt` seis veces y el `.pdf` dos.
+
+**Las cuatro opciones, con su coste:**
+
+| | Qué se gana | Qué cuesta |
+|---|---|---|
+| **(a) Dejarlo** | 0 de trabajo, 0 de riesgo | Cada clon se lleva 246 MB, siempre |
+| **(b) `git lfs migrate`** | El clon baja a ~22 MB | **Reescribe el historial entero**, exige `force-push`, y **el carril anónimo de git de estas sesiones no sirve objetos LFS**: una sesión de Claude Code se bajaría los PDFs como punteros vacíos |
+| **(c) `git filter-repo` y los PDFs fuera de git** | Máximo ahorro, repo limpio | Mismo coste que (b), **más** que los PDFs dejan de estar versionados: si se pierde la copia, se perdió. Son la copia legal |
+| **(d) Repo aparte** | — | Dos repos que mantener, y **no arregla nada solo**: el historial seguiría cargando los 246 MB |
+
+**Recomendación: (a), por ahora.** Es lo único de toda la limpieza que es
+irreversible, y el problema que resuelve es incomodidad, no corrección.
+**Lo que sí conviene decidir ya es no meter más PDFs grandes sin pensarlo**,
+porque el coste de arreglarlo sube con cada uno.
+
+**Y la parte que sí es una respuesta, no una opción:** las fuentes **no pueden
+depender de que sigan en un ordenador**. Ya están en `canislab-fuentes` y ahí
+deben quedarse. Para FEDIAF el PDF **sí hace falta** (2,6 MB) por el riesgo de
+columnas pegadas en las tablas III-3a/III-3b; para SACN5, el `.txt` basta y el
+PDF es respaldo.
+
+---
+
+## Cerradas
+
+*(Cuando una pregunta se contesta, se mueve aquí con la respuesta, la fecha y
+quién la dio — y si de ella sale una decisión, se escribe en `DECISIONES.md`
+y se enlaza.)*
+
+Ninguna todavía.

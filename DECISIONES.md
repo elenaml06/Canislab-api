@@ -1,0 +1,454 @@
+# DECISIONES — lo que no se vuelve a discutir
+
+Las decisiones **cerradas** del nivel 1 (la nutrición), con fecha, qué se
+decidió, la fuente y el motivo. Se lee al empezar cualquier sesión, junto con
+`ESTADO.md`, **antes de tocar nada**. Si lo que ibas a hacer ya está aquí, no
+se hace.
+
+Abierto el 8 de septiembre de 2026, porque no existía y por eso las cosas
+dadas por hechas volvían a salir cada pocas semanas.
+
+---
+
+## 0 · Qué es «cerrado», y cuándo se puede reabrir
+
+Algo del nivel 1 está cerrado cuando cumple **las seis condiciones a la vez**:
+
+1. **Vive en el repo, versionado.** No en una conversación, no en un informe,
+   no en un fichero suelto en un ordenador.
+2. **Lleva su fuente**, de forma que alguien pueda ir a comprobarla.
+3. **Lleva su ficha de permisos completa** —`tipo`, `fuente`, `visible_para`,
+   `modificable_por`, `rango_permitido`, `requiere`, `defecto`,
+   `al_moverlo`— o la parte que falte está declarada como pregunta abierta.
+4. **Hay un test automático que falla si se rompe.** «Lo comprobé» no cierra
+   nada.
+5. **Está escrito como decisión**, con fecha y motivo.
+6. **No deja preguntas colgando sin dueño.**
+
+### Se reabre solo si
+
+- Lo dice el nutricionista.
+- Aparece una fuente que lo contradice **y se puede citar**.
+- Un test o un caso real demuestra que está mal.
+- Cambia el alcance del producto y la decisión deja de aplicar.
+
+**Nada más.** Que a alguien —a la usuaria incluida, o a una sesión nueva— le
+parezca dudoso **no es motivo**. Si te asalta la duda sobre algo de aquí,
+apúntalo en `PREGUNTAS_ABIERTAS.md` con dueño; no reabras el trabajo. Cuando
+algo se reabra, queda constancia de la decisión anterior, del motivo y de
+quién lo pide.
+
+### Sobre la condición 3 (la ficha de permisos)
+
+**Ninguna decisión de este fichero la cumple todavía**, porque la ficha de
+permisos no existe aún en ninguna parte del nivel 1 (`ESTADO.md` §1). Están
+aquí igualmente y la razón importa: **son decisiones sobre qué es verdad, no
+sobre quién puede moverlo.** Un dato que se comprobó contra su fuente y salió
+falso no deja de ser falso porque nadie haya escrito todavía quién podría
+tocarlo. Lo que la ficha les falta va apuntado en cada una, y cerrar esa
+columna es la fase 1.
+
+### Las tres cajas
+
+Cada decisión numérica dice en cuál cae, porque es lo que le permite a un
+revisor externo saber qué está mirando:
+
+- **Tope duro** — límite legal o valor verificado contra fuente primaria. No
+  se mueve.
+- **Rango clínico** — la fuente da un rango a propósito, porque depende del
+  caso, del estadio y de la analítica. Se implementa como rango con palanca
+  del veterinario, **nunca como constante**.
+- **Criterio nuestro** — lo pusimos porque resolvía un problema real
+  observado, sin fuente veterinaria detrás. Es legítimo, pero va **declarado
+  como criterio**, no disfrazado de ciencia.
+
+---
+
+## D-01 · El `TR` de BEDCA NO significa «trazas». El campo `trazas` se rechaza
+
+**Fecha:** 8 de septiembre de 2026.
+**Caja:** no aplica — es una decisión sobre lectura de fuente, no un valor.
+**Estado:** cerrado salvo ficha (no le corresponde ficha: no es un valor movible).
+
+**Qué se decidió.** La rama `claude/nutrition-audit-data-validation-bihto9`
+(3–6 de septiembre, nunca fusionada) creaba un campo **`trazas`** con 14
+celdas de vitamina A y D en diez pescados, y **las sacaba de `sin_dato`**. El
+argumento escrito era razonable: «una traza es un dato publicado, no un
+hueco». **Se rechaza. No se rescata, y no se vuelve a proponer.**
+
+**La fuente y qué dice.** El esquema de BEDCA:
+
+| código | significa |
+|---|---|
+| `AR` / `BE` + un número | es una **medida**, aunque el número sea 0 |
+| `LZ` + un 0 | cero **lógico**: por composición no puede tenerlo |
+| `TR` + **celda vacía** | **NO HAY CIFRA.** Es un hueco |
+
+**Comprobado dos veces, por dos sesiones distintas, contra el servicio de
+BEDCA en directo** (`contrastar_fuentes.bedca_ficha`, que imprime el
+`value_type`). La segunda comprobación es del 8 de septiembre y estos son los
+ocho identificadores, tal como respondió el servicio:
+
+| id | ficha | Vitamina A | Vitamina D |
+|---|---|---|---|
+| 2347 | Merluza fresca | `('', 'TR')` | `('', 'TR')` |
+| 2136 | Bacaladilla | `('', 'TR')` | `('', 'TR')` |
+| 2341 | Lenguado | `('', 'TR')` | `('', 'TR')` |
+| 2344 | Lubina | `('', 'TR')` | `('', 'TR')` |
+| 825 | Merluza, congelada, cruda | `('', 'TR')` | `('', 'TR')` |
+| 2320 | Calamar, asado | **`('63', 'AR')`** | `('', 'TR')` |
+| 2471 | Pulpo | **`('70', 'AR')`** | `('', 'TR')` |
+| 2635 | Sepia | **`('2', 'AR')`** | `('', 'TR')` |
+
+**La prueba de que el campo era exactamente eso y no otra cosa** está en las
+tres últimas filas: **donde la rama NO marcaba traza —la vitamina A de
+calamar, pulpo y sepia— BEDCA sí publica cifra con `AR`: 63, 70 y 2.** El
+campo `trazas` calcaba celda por celda las `TR`. No era una lectura parcial de
+la fuente: era la lectura del código de ausencia.
+
+**Qué habría pasado si se aplica.** Catorce huecos correctamente declarados se
+habrían convertido en **ceros medidos falsos**. Y eso no es cosmético: un
+`sin_dato` **no cuenta como cero contra un techo** —se imputa al percentil 90
+de su familia, `constructor.valor_para_maximo`—, mientras que un cero medido
+sí defiende. El resultado habría sido **aflojar el techo crónico de la
+vitamina D** en diez pescados, que es uno de los cinco topes duros de la
+regla 2 de `CLAUDE.md`. Un hueco no es un cero: contra un mínimo el cero es
+conservador, contra un máximo es peligroso, porque aprueba lo que no sabemos.
+
+`main` ya las tenía bien, en `sin_dato`.
+
+**Test que lo protege:** BLOQUE 51 de `pruebas_completas.py`, que falla si
+vuelve a aparecer el campo `trazas` en el catálogo. ⚠️ **Ese bloque vive hoy
+en la rama `claude/nutricion-pendiente-vuoobq`, sin fusionar.** Mientras no
+entre, esta decisión cumple cinco de las seis condiciones, no las seis.
+
+**Nota al margen, sin efecto sobre la decisión:** el id 2320 es «Calamar,
+**asado**», no crudo. No cambia nada aquí —lo que se comprueba es el código de
+ausencia, no la cifra—, pero conviene saberlo si alguien usa esa ficha para
+otra cosa.
+
+---
+
+## D-02 · La rama `nutrition-audit-data-validation-bihto9` no tiene nada que rescatar
+
+**Fecha:** 8 de septiembre de 2026.
+**Estado:** cerrado (decisión de proceso; no lleva ficha ni test).
+
+**Por qué se escribe.** Una rama descartada **necesita una decisión escrita
+que diga por qué, o vuelve**: otra sesión la abrirá, verá trabajo
+aparentemente pendiente y deshará una comprobación ya hecha.
+
+**Contexto.** La rama salió del `main` del 2 de septiembre. `main` ha cambiado
+mucho desde entonces: aplicarla tal cual —o hacer cherry-pick— **borra trabajo
+posterior verificado**. Hoy está 11 commits por delante y **56 por detrás**.
+
+**Qué se rescató**, ya aplicado en la rama `claude/nutricion-pendiente-vuoobq`:
+
+- **86 casillas** donde el mismo número se repite entre fichas distintas: 21
+  cobres con solo cuatro valores en todo el grupo, y 70 celdas en seis huesos
+  carnosos donde conejo, pato, pollo y cordero declaran la misma vitamina A,
+  la misma D y la misma riboflavina siendo especies distintas. Pasan a
+  `sin_dato`. Comprobado antes: BEDCA **no publica cobre** para besugo,
+  lubina, pulpo, calamar, trucha, lenguado ni pescadilla.
+- **La columna de humedad** con procedencia, en 65 fichas.
+
+**Qué se descartó a propósito, y no se vuelve a mirar:**
+
+1. **El campo `trazas`** — D-01.
+2. **46 de las 132 casillas que la rama vacía**: son valores contrastados
+   **después** del 2 de septiembre contra BEDCA/CIQUAL/USDA. El EPA, el DHA y
+   los **400 µg de yodo del aceite de hígado de bacalao** están entre ellos, y
+   **el yodo es un tope crónico**. Aplicar la rama los borra.
+3. **Las 69 diferencias de `Cerebro de ternera`**: `main` tiene la ficha
+   rehecha desde USDA 168622 tras el lío vaca/ternera. La rama tiene la
+   versión vieja.
+4. **Borrar los tres cuellos y la laringe del catálogo**: `main` los conserva
+   y los **bloquea en el solver** por tejido tiroideo
+   (`seguridad.TIROIDES_EXCLUIR`), que es mejor — el alimento sigue existiendo
+   y el motivo queda escrito.
+
+**Lo que ya estaba en `main` por otro camino** (PR #76 y #80), comprobado una a
+una: las 103 correcciones del catálogo (albahaca fósforo 56, hígado de pollo
+vitA 3296 y cobre 0,492, dorada grasa 1 y vitD 1,5), el techo legal de la
+vitamina D y el bloqueo de tejido tiroideo.
+
+**Conclusión: la rama se puede borrar.**
+
+**No verificado por mí:** el detalle casilla a casilla de los cuatro puntos
+descartados. Lo verificó la sesión de `claude/nutricion-pendiente-vuoobq` el 8
+de septiembre y lo dejó escrito en su `TRASPASO.md`. Yo he confirmado los
+hechos estructurales: la rama existe, está 11 delante y 56 detrás, y su
+catálogo difiere de `main` en 1.213 líneas.
+
+---
+
+## D-03 · El techo de lisina no se aplica. El mínimo sí
+
+**Fecha:** 28 de agosto de 2026 (recogida aquí el 8 de septiembre).
+**Caja:** **criterio nuestro**, declarado como tal.
+**Estado:** cerrado salvo ficha.
+
+**Qué se decidió.** El techo de lisina de FEDIAF (7,00 g/1000 kcal, solo en
+crecimiento) **no se aplica**. El mínimo sí.
+
+**El motivo, medido:** 0 de 15 menús de cachorro caben debajo, porque la
+lisina va detrás de la proteína y una ración BARF de cachorro lleva ~134
+g/1000 kcal contra un mínimo de 50. Aplicarlo dejaría a **todos** los
+cachorros sin menú.
+
+**Dónde vive:** `verificar.MAXIMOS_NO_APLICADOS = {"Lisina"}`, lista única
+leída por el solver y por el semáforo vía `maximo_de()`.
+
+**Test:** BLOQUE 27 comprueba, entre otras cosas, que **es el único máximo no
+aplicado**.
+
+**Lo que le falta para las seis:** la ficha, y **no está cerrada la pregunta
+de fondo** — sigue abierta en `PREGUNTAS_ABIERTAS.md` P-04 con el
+nutricionista como dueño. Es un criterio nuestro declarado, no una decisión
+nutricional cerrada.
+
+---
+
+## D-04 · Los mínimos escalan hacia arriba y nunca hacia abajo. Los máximos no escalan
+
+**Fecha:** anterior al 26 de agosto de 2026 (recogida aquí el 8 de septiembre).
+**Caja:** **tope duro** (la ecuación es de FEDIAF).
+**Estado:** cerrado salvo ficha.
+
+**Qué se decidió.** `minimo_de()` en `verificar.py` es el único sitio que
+escala los mínimos cuando el perro come menos (ecuación de FEDIAF 7.2.5), y
+`maximo_de()` el único que sabe de máximos. **Solo hacia arriba**: no hay base
+en FEDIAF para bajar el mínimo de un perro que come más.
+
+**No escalan** la grasa (FEDIAF publica 13,75 g/1000 kcal en las dos columnas;
+escalarla haría que las kcal dejaran de cerrar), el
+EPA+DHA/linolénico/araquidónico (no hay requerimiento absoluto en adulto), ni
+crecimiento/gestación/lactancia (la ecuación no está verificada ahí).
+
+**Los máximos no escalan nunca** — son concentración, no cantidad.
+
+**La consecuencia, que es lo que hay que saber:** la ventana entre mínimo y
+máximo **se cierra según bajan las kcal**. En dieta húmeda el selenio se cruza
+en DER 45,2: por debajo el motor devuelve `imposible_por_aritmetica` (el
+nutriente y los dos números) en vez del «quita una restricción» de siempre,
+porque ahí no hay combinación que lo arregle.
+
+**El peso de referencia para escalar es `peso_objetivo_kg`, no el real.** Sin
+ese campo se usa el real y se escala de más, que es el lado seguro.
+
+**Tests:** BLOQUE 34 aquí; `tests/peso-objetivo-en-cada-peticion.spec.js` en
+`canislab-web`.
+
+---
+
+## D-05 · El peso objetivo desde el BCS se DIVIDE, no se resta
+
+**Fecha:** 29 de agosto de 2026 (recogida aquí el 8 de septiembre).
+**Caja:** **tope duro** (valor verificado contra fuente primaria).
+**Estado:** cerrado salvo ficha.
+
+**Qué se decidió.** `peso_ideal = peso_actual / (1 + 0,10 × (BCS − 5))`.
+
+**El error que se corrigió no fue un número mal copiado: fue leer una frase de
+un ejemplo sin abrir la tabla que tiene al lado.** «30 % overweight» significa
+un 30 % **por encima del ideal**, no un 30 % del peso de hoy, y eso se
+invierte dividiendo:
+
+    actual = 1,30 × ideal    →  ideal = actual / 1,30 = 34,6 kg
+    restar el 30 % del actual →  45 × 0,70            = 31,5 kg   MAL
+
+**Las tres comprobaciones que lo cierran**, ninguna de interpretación:
+
+1. La **Tabla 1 de la propia guía AAHA** da el % de sobrepeso por punto de BCS
+   y el % de grasa. Su tercer método, `[peso × (100 − %grasa)] / 0,8`, no
+   depende de cómo se lea «overweight» porque sale de la masa magra: da ×0,7875
+   en BCS 8. Dividiendo sale ×0,7692, un 2 % de diferencia. Restando sale
+   ×0,70, que se sale del propio rango del método de la grasa ya desde BCS 7.
+2. La **Global Pet Obesity Initiative** (2019, Ward, German y Churchill,
+   respaldada por ECVCN, WSAVA y ACVIM) define la obesidad como «30 % above
+   ideal body weight» y dice que equivale a 8/9. «Above ideal» no admite dos
+   lecturas.
+3. **El ejemplo de AAHA es el raro de su propio documento:** dos de sus tres
+   métodos dan 34-35 kg para ese labrador y el ejemplo escribe 32. Es una
+   errata aritmética en la guía.
+
+**Los dos límites, y son deliberados:**
+
+- **Por debajo de BCS 5 no se estima.** La Tabla 1 empieza en BCS 4, no hay
+  columna de «% underweight», y AAHA 2021 manda lo contrario de estimar: «base
+  feeding calculations on current weight if ideal or underweight».
+- **En BCS 9 la cifra es un techo, no una medida.** Broome et al. (2023, Sci
+  Rep 13:22958) observan con DXA perros que «exceed the description for score
+  9», y Bjornvad 2011 no encuentra diferencia de grasa entre 8 y 9. Se estima
+  igual —una cota inferior es mejor que nada— pero `_peso_de_referencia` lo
+  devuelve **con procedencia propia**, para que se vea que lo es.
+
+**Test:** BLOQUE 37. Las kcal de los 85 casos del contrato del DER no se
+mueven, porque el que cambió fue `verificar.py` y no `der.py`.
+
+---
+
+## D-06 · La rama `el-corazon-de-ternera-es-musculo` no se fusiona
+
+**Fecha:** 8 de septiembre de 2026.
+**Estado:** cerrado (decisión de proceso).
+
+**Qué se decidió.** No se fusiona, y su contenido **no se rescata en bloque**.
+Si alguien quiere el cambio que le da nombre —que el corazón de ternera es
+músculo y no víscera— se hace **de nuevo**, en una rama desde el `main` de
+hoy, como un cambio de una línea del catálogo con su fuente.
+
+**Los tres motivos, medidos hoy:**
+
+1. **Está 79 commits por detrás de `main`.** Su diff contra `main` **borra**
+   `VETERINARIOS.md`, `HECHO.md`, `HISTORIA_TECNICA.md`, `patologias.json`,
+   `auditar_patologias.py`, `contrastar_fuentes.py` y los cinco
+   `PENDIENTE_*.md`. Fusionarla no añade un alimento: revierte semanas.
+2. **Su catálogo tiene 477 fichas y las 477 están sin lisina** — es del 27 de
+   agosto, un día antes de que se encendieran los 12 aminoácidos. Hoy
+   reventaría el BLOQUE 27. (⚠️ Corrijo aquí lo que dice el `TRASPASO.md` de
+   `claude/nutricion-pendiente-vuoobq`, que habla de «318 alimentos nuevos y
+   las 318 sin aminograma»: **no son las nuevas, son las 477**, porque la rama
+   entera es anterior al aminograma. `main` tiene 163 fichas, 69 de ellas sin
+   lisina, y la mayoría son verduras, aceites y suplementos.)
+3. **Su commit base es un WIP con la batería en rojo**, literalmente: «WIP: la
+   carga puesta, con la bateria en rojo (13 fallos)».
+
+**Nunca tuvo PR y no había una línea en ninguna parte diciendo por qué se
+quedó fuera.** No se descartó: se olvidó. Esta entrada es para que no vuelva.
+
+---
+
+## D-07 · La rama `add-sacn5-58-capitulos` de `canislab-fuentes` no se fusiona
+
+**Fecha:** 8 de septiembre de 2026 (la decisión de fondo es del 7).
+**Estado:** cerrado (decisión de proceso).
+
+**Qué se decidió.** No se fusiona. Es la línea **anterior** a la limpieza del
+7 de septiembre, y fusionarla resucita 27 ficheros que se borraron a
+conciencia.
+
+**Qué se borró y por qué**, según el propio commit `e0eb90f` de `main`: un
+borrador de investigación entero (`datos_motor.json` de 59 secciones, un
+`patologias.json` de 47 perfiles marcado **«NADA DE ESTO ESTA VERIFICADO»**,
+`CORRECCIONES_CATALOGO.csv`, `MOTOR.md`, `AUTORIDAD.md`, `PATOLOGIAS.md`,
+`PREGUNTAS_NUTRICIONISTA.md`, cuatro scripts que dependían de esos datos, y
+las carpetas `informes/` y `lecturas/`, resúmenes que su propio autor ya
+marcaba «no sirven para citar»). **Nunca se reconcilió con el motor real**, y
+su propio README de aviso estaba a su vez caducado: decía «11 patologías en
+producción» cuando ya había 40.
+
+**Qué se conservó, porque sí pasó verificación real:**
+`HUMEDAD_CATALOGO.csv` (65 fichas de fuente directa USDA), la base de datos de
+purinas en `fuentes_datos/`, y el rastro de auditoría de `entregas/`.
+
+**Verificado por mí hoy:** la rama no borra nada de `main`; solo añade los 27
+ficheros de la línea vieja. Los capítulos de SACN5 y Fascetti **ya están en
+`main`** (70 PDF + 70 `.txt` en `sacn5/`), así que la rama no aporta fuentes.
+
+⚠️ **Con una salvedad que no cierra:** entre lo borrado estaba
+`PREGUNTAS_NUTRICIONISTA.md`, y su cabecera dice que la lista vigente vive en
+`datos_motor.json → huecos_para_nutricionista` y en `MOTOR.md §6` — **los dos
+también borrados**. O sea que **la lista viva de preguntas para la
+nutricionista se borró junto con el borrador**. No es motivo para fusionar la
+rama (el resto sí había que borrarlo), pero sí para recuperar **ese** contenido
+antes de que la rama se borre. Va a `PREGUNTAS_ABIERTAS.md` P-08.
+
+---
+
+## D-08 · El tope de mercurio por días de la semana se eliminó, y no vuelve
+
+**Fecha:** 25 de agosto de 2026 (recogida aquí el 8 de septiembre).
+**Caja:** **criterio nuestro retirado**. Lo que queda (10 % de las kcal) es
+criterio nuestro declarado.
+**Estado:** cerrado salvo ficha — **y con un incumplimiento vivo en el front**.
+
+**Qué se decidió.** Se elimina `TOPE_MERCURIO_DIAS_SEMANA = 1`. Los dos
+motivos, y los dos importan:
+
+1. **No lo usaba nadie.** Estaba declarado y ninguna línea del repositorio lo
+   leía. La app decía tener una regla de «máximo un día a la semana» que no se
+   aplicaba en ningún sitio. Peor que no tenerla: aparecía escrita en la
+   documentación para la nutricionista como si fuera una restricción real.
+2. **No tiene base en perros.** No existe estudio canino ni guía veterinaria
+   que fije una frecuencia semanal de pescado con mercurio. Ese «≤1
+   día/semana» es una transposición directa de las recomendaciones de FDA/EFSA
+   para **embarazadas y niños pequeños**, grupos de especial sensibilidad al
+   metilmercurio por su efecto sobre un sistema nervioso **en desarrollo**. Un
+   perro adulto no es ese caso.
+
+**Lo que sí queda:** `TOPE_MERCURIO_KCAL = 0.10`, una restricción por
+**concentración calórica diaria**. El único número de referencia que existe es
+el MTL de la FDA para mercurio en dieta canina (0,27 mg/kg de materia seca), y
+viene extrapolado de Charbonneau et al. 1976, **que era en gatos**. Está dicho
+así en el aviso al usuario.
+
+⚠️ **Esta decisión está incumplida hoy en el nivel 2.**
+`canislab-web/src/instrucciones.js:32` sigue diciéndole al dueño: «Si usas
+atún u otro pescado grande, **no más de 1 vez por semana**». El nivel 1 retiró
+la regla por no tener base y el nivel 2 se la sigue dando. Corregirlo es fase
+3; está en `ESTADO.md` §3.2.
+
+---
+
+## D-09 · `POST /menu` no vuelve
+
+**Fecha:** 26 de agosto de 2026 (recogida aquí el 8 de septiembre).
+**Estado:** cerrado.
+
+**Qué se decidió.** El endpoint `POST /menu` —el motor anterior al MILP— se
+borra y no vuelve.
+
+**El motivo:** arrastraba **su propia tabla de patologías, desincronizada de
+la buena**: fósforo renal a 1.400 en vez de 1.200, cobre en hepatopatía a 3,0
+y sin bloquear, grasa en pancreatitis al 25 % de las kcal, diabetes bajando la
+grasa siempre, y urato, cistinuria y «otra» sin existir.
+
+No llegó a dar menús malos porque `_garantizar_verificado()` los habría
+rechazado — **que es otra forma de decir que ese camino construía menús que el
+filtro final iba a tirar**.
+
+**Test:** BLOQUE 24 vigila que no vuelva, y que no haya tablas clínicas
+duplicadas.
+
+⚠️ **La misma familia de fallo está viva hoy en dos sitios**, y esta decisión
+es el motivo por el que hay que arreglarlos: la tabla de patologías cargada
+dos veces en memoria (`ESTADO.md` §1.4) y la lista `PATOLOGIAS` duplicada en
+`App.jsx` con una tercera copia en `tests/fake-supabase.js` (`ESTADO.md` §3.1).
+Ninguno de los dos lo ve ningún test.
+
+---
+
+## D-10 · El máximo de EPA+DHA es semanal, no por menú
+
+**Fecha:** 26 de agosto de 2026 (recogida aquí el 8 de septiembre).
+**Caja:** **tope duro**, aplicado en la base correcta.
+**Estado:** cerrado salvo ficha.
+
+**Qué se decidió.** El máximo de EPA+DHA **se quita de
+`requerimientos_v2_final.json`** y vive en el **promedio de la rotación
+semanal**, en el presupuesto de `/menu/semana`.
+
+**Los dos motivos:**
+
+1. **FEDIAF 2025 deja la columna Maximum VACÍA para EPA+DHA.** No hay máximo.
+2. Los 2.800 mg de Lenox & Bauer (JVIM 2013;27:217-226) son el **SUL del NRC
+   2006**, o sea una concentración de la **dieta habitual crónica**, no el tope
+   de un plato.
+
+**Y la medida que lo cierra:** puesto como máximo por menú, **18 de los 20
+pescados del catálogo lo pasan ellos solos** (solo el bacalao, 1.928, y el
+pulpo, 2.527, quedan por debajo; el boquerón llega a ~11.000 mg/1000 kcal),
+porque el pescado tiene mucho omega-3 y pocas calorías. El tope por menú
+**borraba el pescado azul entero del catálogo**: los menús con pescado bajaron
+de 13 de cada 24 a 4.
+
+**Dónde vive:** `seguridad.TOPE_EPA_DHA_SEMANAL_KCAL = 2.8`.
+**Test:** BLOQUE 21.
+
+**Nota:** el **mínimo** de EPA+DHA de adulto (0,11 g) tampoco es de FEDIAF
+—FEDIAF dice literalmente que «the current information is insufficient to
+recommend a specific level of omega-3 fatty acids for adult dogs»—: viene del
+NRC 2006 y **se adopta a propósito** por su relevancia clínica documentada.
+Eso lo hace **criterio nuestro** y está escrito en el `nota_auditoria` de la
+fila. Va a `PREGUNTAS_ABIERTAS.md` P-05 para que el nutricionista lo vea.
