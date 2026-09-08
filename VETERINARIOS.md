@@ -180,6 +180,38 @@ necesita de aquí.
 
 ---
 
+### Lo que ya está hecho de esta fase (7 de septiembre)
+
+- La ficha clínica del menú (los nutrientes con su mínimo, su máximo y su
+  margen) y los huecos y datos dudosos, en su pestaña.
+- **Qué le impone al motor cada patología**: el tope, con su fuente, su
+  motivo y el margen que le queda contra el mínimo de FEDIAF del mismo
+  nutriente, al marcarla en la ficha Y dentro del menú. Sale de
+  `GET /patologias`, que lee `patologias.json` — el mismo archivo que aplica
+  el solver — para que no haya una tercera copia de esos números.
+- El caso a la vista mientras se formula (raza, peso objetivo, BCS, etapa,
+  kcal, patologías), como en Nutrimenta o VetMenu.
+- Los textos de tutor apagados en su modo, avisos de seguridad incluidos.
+
+- **Elegir el peldaño de la escalera de relajación** (8 de septiembre).
+  `GET /relajacion` sirve los peldaños con su nombre y qué suelta cada uno, y
+  el formulador los ofrece. Con un peldaño elegido el motor **no baja solo**:
+  bajar sería cambiarle la decisión a quien la ha tomado. Y aquí importaba el
+  doble, porque `autocompletar` no recorría la escalera nunca — o sea que un
+  veterinario tenía MENOS margen que un tutor, al que sí se le baja de
+  peldaño. Lo vigila el BLOQUE 45.
+- **La pauta en papel, con el logo de la clínica** (8 de septiembre). Es el
+  final del trabajo: lo que se lleva el tutor a casa, y lo que en Nutrimenta,
+  VetMenu o MyVetDiet sale con la marca de quien firma. Se imprime el
+  DOCUMENTO firmado y no la pantalla —la ficha del perro cambia y un papel
+  firmado no puede cambiar con ella—, y el PDF lo hace el navegador, sin
+  librerías. Los datos de la clínica viven en `profiles`
+  (`supabase/migracion-clinica.sql`, **hay que ejecutarla**) y NO viajan
+  dentro del documento: el logo no es parte de lo que se verificó, así que
+  puede cambiar sin invalidar el sello.
+
+Con esto la fase 1 está entera.
+
 ## 7. El formulador del veterinario: su pantalla, no la nuestra con más botones
 
 Dictado el 29 de agosto, y corrige algo que el resto del plan daba por
