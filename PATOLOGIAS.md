@@ -112,6 +112,84 @@ una tabla deje de leerse. Queda escrito aquí y no en los datos.
 
 ---
 
+## 0-quater · Segunda tanda del 8 de septiembre: los huecos y seis patologías nuevas
+
+**El motor pasa de 40 a 46 patologías, de 21 topes a 36 y de 9 suelos a 21.**
+Todo verificado contra su fuente, con la conversión recalculada por el BLOQUE 55,
+y todo medido: **cada una da menú verde en el peldaño estricto**.
+
+### Los huecos rellenados
+
+| Patología | Añadido | Cita | Medido |
+|---|---|---|---|
+| `renal` | potasio ≤ **2000** · proteína ≤ **62,5** | Tabla 37-9 «0.4 to 0.8%» · Reg. UE entrada 10 | potasio 1783 · proteína 62,4 |
+| `obesidad` | fibra ≥ **30** · lisina ≥ **4,25** · L-carnitina ≥ **75** | Tabla 27-4 | fibra 30,4 · lisina 13,7 · carnitina 350 |
+| `artrosis` | L-carnitina ≥ **75** | Tabla 34-2 | 121 |
+| `enteropatia_cronica` | potasio ≤ **2750** | Tabla 57-1 «0.8 to 1.1%» | 2720 |
+| `disfuncion_cognitiva` | vitamina E ≥ **187,5** | Tabla 35-3 «≥750 mg/kg» | 189,4 — **peldaño 5**, ver abajo |
+| `dermatosis_zinc` y `dermatitis_atopica` | Phe+Tyr ≥ **3,25** | Tabla 32-1 «>1.3% DM» | zinc 26,6 · Phe+Tyr 8,0 |
+| `cistina` | sodio ≤ **750** | Tabla 42-1 | (sigue no formulable) |
+| `hepatopatia` | zinc ≥ **50** · hierro ≥ **20** · sodio ≤ **625** · taurina ≥ **250** | Tabla 68-8 | (sigue bloqueada) |
+
+Tres cosas que salen de aquí y merecen leerse:
+
+- **La proteína renal viene del Reglamento europeo, no de SACN5.** La restricción
+  terapéutica de verdad (Tabla 37-9, «14 to 20%» = 35-50 g) está bajo el mínimo de
+  FEDIAF y sigue necesitando firma. Los 62,5 del Reglamento sí caben, y **muerden**:
+  una ración sin ajustar va por 130-150.
+- **La lisina en obesidad es el único aminoácido concreto** que pide alguna de las
+  quince tablas verificadas. Y es la cifra que escribí mal (42,5 en vez de 4,25).
+- **El zinc en hepatopatía tiene 6,75 mg de margen hasta el techo legal** de FEDIAF
+  (50 frente a 56,75). Es el límite más estrecho de todo el motor.
+
+**Y una excepción medida:** la **disfunción cognitiva** es la única de todas que
+**no resuelve en el peldaño estricto** — sale en el 5. Tiene sentido: 187,5 mg de
+vitamina E por 1000 kcal son **27 veces** el mínimo de un perro sano, y con comida
+sola no se llega; hace falta suplemento, y el peldaño 0 solo deja dos. Sale verde
+con 189,4. Se acepta y **se dice**: un menú de disfunción cognitiva llevará más
+suplementos y más vísceras de lo normal. Bajar el suelo para que saliera en el
+estricto sería apartarse de la fuente.
+
+### La estruvita pasa de bloqueada a formulable
+
+Estaba en `formulable: false` con el motivo «dependen del pH urinario y de
+analíticas que la app no puede ver» — cierto, **y escondía que la fuente da tres
+cifras perfectamente formulables para la PREVENCIÓN**: magnesio ≤250, fósforo
+≤1500, proteína ≤62,5 (Tabla 43-3). Las tres por encima del mínimo de FEDIAF.
+
+**La disolución no se modela y se dice por qué**: pide magnesio <50, fósforo ≤250
+y proteína ≤20 g, los tres muy por debajo de los mínimos. Eso es prescripción. Se
+abre la prevención de recurrencia, no la disolución de un cálculo ya formado.
+
+### Las seis patologías nuevas
+
+| Nueva | Aplica | Medido |
+|---|---|---|
+| **Urolitos de fosfato cálcico** | fósforo ≤1500 · magnesio ≤375 · sodio ≤750 · proteína ≤62,5 | verde: 1229 · 226 · 500 · 62,4 |
+| **Urolitos de sílice** | — (no formulable) | su único eje es proteína 25-45 g, bajo el mínimo de FEDIAF |
+| **Estreñimiento crónico** | fibra ≥17,5 | verde: 27,6 |
+| **Flatulencia excesiva** | proteína ≤75 · fibra ≤12,5 | verde: 72,1 · 0,2 |
+| **SIBO** | grasa ≤37,5 | verde: 37,5 |
+| **Intestino irritable** | fibra ≥20 | verde: 23,8 |
+
+Y la estruvita abierta, medida: verde en peldaño estricto con magnesio 217,5, fósforo 1202,7 y proteína 61,2.
+
+Con el fosfato cálcico **se completa la familia de urolitos**: ya están los cinco.
+Y el propio capítulo 41 dice que sus recomendaciones son *«the same as for
+prevention of recurrence of calcium oxalate uroliths»*, así que comparte casi todo
+con el oxalato que ya estaba.
+
+**Dos cosas que conviene saber de las nuevas:**
+
+- **La flatulencia es de los topes que más mueven el menú de todo el motor.** Pide
+  proteína ≤75 y una ración sin ajustar va por 130-150: casi el doble.
+- **Flatulencia y estreñimiento son incompatibles entre sí**, y a propósito: una
+  pide fibra ≤12,5 y la otra ≥17,5. Lo mismo con hiperlipidemia (≥25). No es un
+  fallo — son dos objetivos clínicos opuestos, y el motor lo dirá nombrando los dos
+  límites.
+
+---
+
 ## 1 · Lo que está MAL y hay que arreglar
 
 Cinco cosas. Ninguna es un número inventado; son atribuciones, unidades y

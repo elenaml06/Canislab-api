@@ -19,6 +19,16 @@
           "valor": 750.0,
           "fuente": "SACN5 5a ed., cap.37 «Chronic Kidney Disease», Tabla 37-9, verificado literal 8-sep-2026",
           "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba una fila de ella. Tabla 37-9, literal: «Sodium <=0.3% in foods for dogs» = 750 mg/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 25 = por 1000 kcal a la densidad de referencia de 4000 kcal EM/kg MS. Restringir el sodio es uno de los tres ejes de la dieta renal (con el fosforo y la proteina) y era el unico de los tres que no estaba ni modelado ni bloqueado. Muy por encima del minimo de FEDIAF (290 mg a DER 95), asi que no necesita prescripcion. Margen del profesional: 290 a 750."
+        },
+        "potasio": {
+          "valor": 2000.0,
+          "fuente": "SACN5 5a ed., cap.37 «Chronic Kidney Disease», Tabla 37-9, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Tabla 37-9: «Potassium 0.4 to 0.8% in foods for dogs» = 1000-2000 mg/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si el nutriente va en mg) a la densidad de referencia de 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. Se aplica el TECHO (2000); el suelo del rango (1000) queda por debajo del minimo de FEDIAF (1450), asi que el general ya es mas exigente. Es un rango CON techo, cosa poco habitual: la propia tabla avisa «If patient becomes hyperkalemic, switch to a lower potassium food». Margen del profesional: 1450 a 2000."
+        },
+        "proteina": {
+          "valor": 62.5,
+          "fuente": "Reglamento (UE) 2020/354, Anexo parte B, entrada 10, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Entrada 10 («Support of renal function in case of chronic renal insufficiency»): «High quality proteins and phosphorus <= 5 g/kg complete feed with a moisture content of 12% AND crude protein <= 220 g/kg complete feed with a moisture content of 12%». 220 g/kg / 3,52 = 62,5 g/1000 kcal (nota al pie (2) del reglamento: base 4000 kcal EM/kg MS, y 0,88 x 4000 = 3520 kcal/kg de pienso). Queda POR ENCIMA del minimo de FEDIAF (52,1), asi que NO necesita prescripcion -- y muerde de verdad: una racion BARF sin ajustar va sobre 130-150 g/1000 kcal. OJO: no es la restriccion proteica terapeutica de una dieta renal de verdad, que SACN5 Tabla 37-9 situa en «14 to 20%» = 35-50 g y esta por debajo del minimo de FEDIAF; esa sigue necesitando firma y sigue avisada en `avisos.general`."
         }
       },
       "solo_en_adulto": true,
@@ -105,6 +115,11 @@
           "valor": 2.4,
           "fuente": "Center SA et al., «Lower risk for liver copper accumulation in dogs fed copper-restricted diets versus those fed copper-replete diets», JAVMA 264(2), 2026 (doi javma.25.05.0295). VERIFICADO 8-sep-2026. Confirmado ademas contra SACN5 5a ed., cap.68, Tabla 68-8, y contra el Reglamento (UE) 2020/354, entrada 28",
           "por_que": "Se deja puesto aunque hoy la patología bloquee: si algún día se distingue «hepatopatía por cobre» de otras hepatopatías, el número ya está aquí. SACN5 Tabla 68-8 da «Copper ≤5 mg/kg» de materia seca para perros con hepatobiliopatía = 1,25 mg/1000kcal a 4000kcal/kgMS -- prácticamente idéntico al objetivo terapéutico de 1,2 ya citado (Center 2026): dos fuentes independientes, veinte años de diferencia, coinciden en el mismo número. La misma Tabla 68-8 da además proteína 15-20%MS para perro (37,5-50 g/1000kcal) -- también por debajo del mínimo FEDIAF (52,1) -- así que la hepatopatía real está por debajo del suelo nutricional en DOS ejes, no solo en cobre. || VERIFICADO 8-sep-2026 contra el articulo: el limite tolerable superior es 0,24 mg Cu/100 kcal = 2,40 mg/1000 kcal, que es EXACTAMENTE el numero del motor, y el rango de dieta restringida que define el estudio es 0,15-0,24 mg/100 kcal = 1,50-2,40 mg/1000 kcal. Como el minimo de FEDIAF es 2,08, el margen que queda SIN prescripcion es 2,08-2,40 y por debajo de 2,08 hace falta firma -- que es justo lo que ya decia esta entrada. El dato del estudio que lo motiva: 35 de 91 perros (38 %) alimentados con dieta comercial normal tenian tincion de rodanina positiva, y 20 (22 %) superaban el limite superior de referencia de 400 ug Cu/g de higado seco. Ninguno de los alimentados con dieta restringida en cobre alcanzo niveles peligrosos. TRIPLE CORROBORACION: SACN5 Tabla 68-8 da «Copper <=5 mg/kg» de materia seca = 1,25 mg/1000 kcal (objetivo terapeutico, mas estricto) y el Reglamento (UE) 2020/354 entrada 28 pone el techo legal en 8,8 mg/kg = 2,50 mg/1000 kcal. Los 2,4 caen justo por debajo del techo legal y justo en el tolerable del estudio."
+        },
+        "sodio": {
+          "valor": 625.0,
+          "fuente": "SACN5 5a ed., cap.68 «Hepatobiliary Disease», Tabla 68-8, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Tabla 68-8, perros: «Sodium (%) 0.08 to 0.25» = 200-625 mg/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si el nutriente va en mg) a la densidad de referencia de 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. Se aplica el TECHO (625); el suelo (200) queda bajo el minimo de FEDIAF (290). El motivo es la hipertension portal y la ascitis, no el corazon. Margen: 290 a 625."
         }
       },
       "sin_dieta_automatica": true,
@@ -115,7 +130,24 @@
       "formulable_por_profesional": true,
       "necesita_bajo_fediaf": true,
       "nutriente_frontera": "cobre",
-      "objetivo_terapeutico_por_1000kcal": 1.2
+      "objetivo_terapeutico_por_1000kcal": 1.2,
+      "suelos_por_1000kcal": {
+        "zinc": {
+          "valor": 50.0,
+          "fuente": "SACN5 5a ed., cap.68 «Hepatobiliary Disease», Tabla 68-8, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Tabla 68-8, columna perros: «Zinc (mg/kg) >200» de materia seca / 4 = 50 mg/1000 kcal. El zinc compite con el cobre en la absorcion intestinal (induce metalotioneina), asi que SUBIRLO es parte del tratamiento del acumulo de cobre, no un extra. Minimo de FEDIAF 20,8 y maximo LEGAL 56,75: el margen hasta el techo legal es de solo 6,75 mg. Margen: 20,8 a 56,75, y ese techo NO lo mueve nadie."
+        },
+        "hierro": {
+          "valor": 20.0,
+          "fuente": "SACN5 5a ed., cap.68 «Hepatobiliary Disease», Tabla 68-8, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Tabla 68-8, perros: «Iron (mg/kg) 80 to 140» de materia seca / 4 = 20-35 mg/1000 kcal. Se usa el extremo bajo (20). Minimo de FEDIAF 10,4, maximo 170,45."
+        },
+        "taurina": {
+          "valor": 250.0,
+          "fuente": "SACN5 5a ed., cap.68 «Hepatobiliary Disease», Tabla 68-8, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Tabla 68-8, perros: «Taurine (%) >=0.1» = 250 mg/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si el nutriente va en mg) a la densidad de referencia de 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. El texto lo dice explicito: «Although no minimum recommended allowances for taurine for healthy dogs have been defined, foods for dogs with liver disease should contain at least 0.1% DM taurine». Mismo numero que la MCD respondedora a taurina, por caminos distintos."
+        }
+      }
     },
     "cardiopatia": {
       "nombre": "Cardiopatía",
@@ -232,15 +264,34 @@
     },
     "estruvita": {
       "nombre": "Cálculos de estruvita",
-      "formulable": false,
-      "motivo_no_formulable": "Dependen del pH urinario y de analíticas que la app no puede ver.",
-      "sin_dieta_automatica": true,
+      "formulable": true,
       "avisos": {
-        "general": "Estos cálculos dependen del pH de la orina y de analíticas que la app no puede ver. Una dieta mal ajustada aquí puede empeorarlos, así que no generamos menú automático: necesitas una dieta pautada por tu veterinario.",
-        "profesional": "Se ha formulado una ración completa y equilibrada. Lo que decide en estruvita es el pH urinario y el manejo de la infección, y eso la app no lo ve ni lo ajusta: la parte que importa es tuya. SACN5 5ª ed., cap.43 «Canine Struvite Urolithiasis», Tabla 43-3, para contexto: disolución pide fósforo ≤0,1%MS y proteína ≤8%MS (muy por debajo del mínimo FEDIAF), prevención pide fósforo <0,6%MS y proteína <25%MS (dentro de lo alcanzable) -- pero ninguno de los dos números arregla nada sin controlar el pH urinario (objetivo 6,2-6,4 en prevención), que es justo lo que esta app no puede vigilar."
+        "general": "Se han ajustado el magnesio, el fosforo y la proteina a los niveles que la literatura recomienda para PREVENIR que vuelvan a formarse calculos de estruvita. Esto NO disuelve un calculo que ya existe: para eso hace falta una dieta de prescripcion que baja de los minimos nutricionales, y solo la pauta un veterinario. Ademas la estruvita casi siempre va con una infeccion de orina, que se trata con antibiotico y no con comida: sin tratar la infeccion, la dieta sola no basta. El pH de la orina, que es el otro factor, esta app no puede verlo.",
+        "profesional": "Se ha formulado una ración completa y equilibrada. Lo que decide en estruvita es el pH urinario y el manejo de la infección, y eso la app no lo ve ni lo ajusta: la parte que importa es tuya. SACN5 5ª ed., cap.43 «Canine Struvite Urolithiasis», Tabla 43-3, para contexto: disolución pide fósforo ≤0,1%MS y proteína ≤8%MS (muy por debajo del mínimo FEDIAF), prevención pide fósforo <0,6%MS y proteína <25%MS (dentro de lo alcanzable) -- pero ninguno de los dos números arregla nada sin controlar el pH urinario (objetivo 6,2-6,4 en prevención), que es justo lo que esta app no puede vigilar.",
+        "crecimiento": "Este menu NO ha podido aplicar los topes de estruvita: en crecimiento, gestacion o lactancia los minimos de fosforo y proteina que el perro necesita son MAYORES que los techos que pide la fuente. Consultalo con tu veterinario."
       },
       "formulable_por_profesional": true,
-      "necesita_bajo_fediaf": false
+      "necesita_bajo_fediaf": false,
+      "solo_en_adulto": true,
+      "en_crecimiento": "sin_tope",
+      "topes_por_1000kcal": {
+        "magnesio": {
+          "valor": 250.0,
+          "fuente": "SACN5 5a ed., cap.43 «Canine struvite urolithiasis», Tabla 43-3, verificado literal 8-sep-2026",
+          "por_que": "PATOLOGIA ABIERTA EL 8-sep-2026. Estaba en `formulable: false` con el motivo «dependen del pH urinario y de analiticas que la app no puede ver», que es cierto PERO escondia que la fuente da tres cifras perfectamente formulables para la PREVENCION. Tabla 43-3: «Magnesium — Prevention: restrict dietary magnesium to 0.04 to 0.1% DM» = 100-250 mg/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si el nutriente va en mg) a la densidad de referencia de 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. Se aplica el techo (250); el suelo (100) queda bajo el minimo de FEDIAF (200). Coincide con el Reglamento (UE) 2020/354, entradas 17 y 18: magnesio <=1,8 g/kg = 511 mg, mas laxo. Se aplica el de SACN5. || LA DISOLUCION NO se modela: pide «magnesium <0.02% DM» (50 mg), «phosphorus <=0.1%» (250 mg) y «protein <=8%» (20 g), los tres MUY por debajo de los minimos de FEDIAF. Eso es prescripcion y sigue necesitando veterinario. Lo que se abre es la prevencion de recurrencia, no la disolucion de un calculo ya formado."
+        },
+        "fosforo": {
+          "valor": 1500.0,
+          "fuente": "SACN5 5a ed., cap.43 «Canine struvite urolithiasis», Tabla 43-3, verificado literal 8-sep-2026",
+          "por_que": "Tabla 43-3: «Phosphorus — Prevention: restrict dietary phosphorus to <0.6% DM» = 1500 mg/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si el nutriente va en mg) a la densidad de referencia de 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. Por encima del minimo de FEDIAF (1160). Margen: 1160 a 1500."
+        },
+        "proteina": {
+          "valor": 62.5,
+          "fuente": "SACN5 5a ed., cap.43 «Canine struvite urolithiasis», Tabla 43-3, verificado literal 8-sep-2026",
+          "por_que": "Tabla 43-3: «Protein — Prevention: restrict dietary protein to <25% DM» = 62,5 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si el nutriente va en mg) a la densidad de referencia de 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. El mecanismo esta en el texto: el exceso de proteina se cataboliza a urea, y la ureasa bacteriana la convierte en amoniaco, que alcaliniza la orina y precipita la estruvita. Por encima del minimo de FEDIAF (52,1). Margen: 52,1 a 62,5, estrecho."
+        }
+      },
+      "aviso_crecimiento": "Este menu NO ha podido aplicar los topes de estruvita: en crecimiento, gestacion o lactancia los minimos de fosforo y proteina que el perro necesita son MAYORES que los techos que pide la fuente. Consultalo con tu veterinario."
     },
     "urato": {
       "nombre": "Urolitos de urato",
@@ -267,7 +318,14 @@
       },
       "formulable_por_profesional": true,
       "necesita_bajo_fediaf": true,
-      "nutriente_frontera": "metionina_cistina"
+      "nutriente_frontera": "metionina_cistina",
+      "topes_por_1000kcal": {
+        "sodio": {
+          "valor": 750.0,
+          "fuente": "SACN5 5a ed., cap.42 «Canine cystine urolith dissolution and prevention», Tabla 42-1, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Tabla 42-1: «Sodium — Restrict sodium to less than 0.3% dry matter» = 750 mg/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si el nutriente va en mg) a la densidad de referencia de 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. La patologia sigue en `formulable: false` porque su eje principal (proteina 10-18 % MS = 25-45 g) cae bajo el minimo de FEDIAF y depende del pH urinario. Pero este tope SI es formulable, y se deja escrito y aplicado para cuando la patologia se abra: hasta hoy la cistina no tenia ni un solo numero. Margen: 290 a 750."
+        }
+      }
     },
     "otra": {
       "nombre": "Otra condición no especificada",
@@ -333,6 +391,21 @@
           "valor": 62.5,
           "fuente": "SACN5 5a ed., cap.27 «Obesity», Tabla 27-4, verificado literal 8-sep-2026",
           "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba una fila de ella. Tabla 27-4, perros, adelgazamiento, literal: «Protein — Foods for weight loss should contain >=25%» = 62,5 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 25 = por 1000 kcal a la densidad de referencia de 4000 kcal EM/kg MS. Es el factor que protege la masa magra mientras se recortan las kcal, y el motor solo aplicaba el minimo de FEDIAF (52,1), que es MENOS. Por encima de ese minimo, asi que no necesita prescripcion. Margen del profesional: 52,1 a sin techo (FEDIAF no pone maximo de proteina)."
+        },
+        "fibra": {
+          "valor": 30.0,
+          "fuente": "SACN5 5a ed., cap.27 «Obesity», Tabla 27-4, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Tabla 27-4: «Fiber — Foods for weight loss should contain 12 to 25%» = 30-62,5 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si el nutriente va en mg) a la densidad de referencia de 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. Se usa el extremo bajo (30). La fibra da saciedad con pocas kcal, que es el mecanismo del adelgazamiento. FEDIAF no da minimo ni maximo de fibra, asi que no hay techo de ningun tipo por arriba: margen 0 a 62,5."
+        },
+        "lisina": {
+          "valor": 4.25,
+          "fuente": "SACN5 5a ed., cap.27 «Obesity», Tabla 27-4, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Tabla 27-4: «Lysine — Foods for weight loss should contain >=1.7%» = 4,25 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si el nutriente va en mg) a la densidad de referencia de 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. ⚠️ Este numero se escribio primero como 42,5 (multiplicando por 25 en vez de por 2,5) y se caza ahora automaticamente: el BLOQUE 55 rehace la conversion desde el valor de la fuente. Es la unica tabla de todas las verificadas que pide un aminoacido concreto, y tiene sentido: la lisina es limitante para conservar masa magra cuando se recortan kcal. Minimo de FEDIAF: 1,22, asi que 4,25 es mas de tres veces ese suelo."
+        },
+        "lcarnitina": {
+          "valor": 75.0,
+          "fuente": "SACN5 5a ed., cap.27 «Obesity», Tabla 27-4, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Tabla 27-4: «L-carnitine — Foods for weight loss and prevention of weight regain should contain >=300 ppm» = 300 mg/kg de materia seca / 4 = 75 mg/1000 kcal. La L-carnitina transporta acidos grasos a la mitocondria; es el unico de los factores de esta tabla con mecanismo directo sobre la oxidacion de grasa. FEDIAF no la exige, asi que no hay techo."
         }
       }
     },
@@ -442,6 +515,11 @@
           "valor": 37.5,
           "fuente": "SACN5 5a ed., cap.57 «Inflammatory Bowel Disease», Tabla 57-1, verificado literal 8-sep-2026",
           "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba una fila de ella. Esta patologia no aplicaba NINGUN limite, teniendo tabla propia. Tabla 57-1, literal: «Fat 12 to 15% for dogs ... for highly digestible foods» = 30-37,5 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 25 = por 1000 kcal a la densidad de referencia de 4000 kcal EM/kg MS. Se usa el extremo ALTO (37,5), como en la EPI y por el mismo motivo: la dieta es un apoyo y apretar de mas quita densidad energetica a un perro que ya absorbe mal. Por encima del minimo de FEDIAF (13,75). Margen del profesional: 13,75 a 37,5."
+        },
+        "potasio": {
+          "valor": 2750.0,
+          "fuente": "SACN5 5a ed., cap.57 «Inflammatory Bowel Disease», Tabla 57-1, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Tabla 57-1: «Potassium 0.8 to 1.1%» = 2000-2750 mg/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si el nutriente va en mg) a la densidad de referencia de 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. Se aplica el TECHO (2750); el suelo del rango (2000) esta por encima del minimo de FEDIAF (1450) pero no se aplica a proposito: la tabla pide potasio ALTO porque la diarrea cronica lo pierde, y forzar 2000 de suelo con el catalogo real aprieta sin necesidad cuando el perro no esta perdiendo. Es el techo lo que evita el exceso. Margen: 1450 a 2750."
         }
       },
       "suelos_por_1000kcal": {
@@ -464,6 +542,11 @@
           "valor": 1.0,
           "fuente": "SACN5 5a ed., cap.34 «Nutritional Management of Osteoarthritis», Tabla 34-2, verificado literal 8-sep-2026",
           "por_que": "⚠️ CORREGIDO 8-sep-2026, NUTRIENTE EQUIVOCADO: este suelo estaba puesto sobre `epa_dha` (la SUMA de EPA y DHA) y la fuente pide EPA SOLA. Tabla 34-2, literal: «Eicosapentaenoic acid 0.4 to 1.1%» de materia seca = 1,0-2,75 g/1000 kcal a 4000 kcal/kg MS (la tabla lleva «*All values are expressed on a dry matter basis»). Exigir que la SUMA llegue a 1,0 es mas laxo que exigir que el EPA llegue a 1,0: un menu con 0,3 de EPA y 0,7 de DHA pasaba nuestro filtro sin cumplir la fuente. El valor (1,0) no cambia; cambia sobre que se mide. La clave `epa` se anadio ese mismo dia a verificar.MAPA y a requerimientos_v2_final.json con «-» en los seis campos, mismo patron que Fibra, Taurina y L_carnitina. || Se usa el extremo BAJO del rango (1,0) porque ya es varias veces el minimo general de EPA+DHA de FEDIAF (0,11 g/1000 kcal) y es el que resuelve con el catalogo real. || Margen del profesional: 0,11 a 2,75. Sin techo legal ni de seguridad por arriba."
+        },
+        "lcarnitina": {
+          "valor": 75.0,
+          "fuente": "SACN5 5a ed., cap.34, Tabla 34-2, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Tabla 34-2: «L-carnitine >=300 mg/kg» de materia seca / 4 = 75 mg/1000 kcal. Mismo valor que en obesidad y de la misma logica: el perro artrosico suele tener sobrepeso y perderlo es la medida con mas evidencia de todas en artrosis."
         }
       }
     },
@@ -481,7 +564,14 @@
       "avisos": {
         "general": "SACN5 5ª ed., cap.35 «Cognitive Dysfunction in Dogs», cita mejoras con antioxidantes (vitamina E, vitamina C, betacaroteno) y con aceite MCT como fuente de energía alternativa para el cerebro envejecido. No es un tope: es subir cosas que el catálogo ya cubre por el mínimo de FEDIAF (vitamina E, vitamina C no es un nutriente FEDIAF para perro) y el MCT no es un suplemento que use hoy el motor. No se ha aplicado ningún ajuste al menú."
       },
-      "formulable_por_profesional": true
+      "formulable_por_profesional": true,
+      "suelos_por_1000kcal": {
+        "vitE": {
+          "valor": 187.5,
+          "fuente": "SACN5 5a ed., cap.35 «Brain aging and cognitive dysfunction», Tabla 35-3, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Esta patologia no aplicaba NINGUN limite, teniendo tabla propia. Tabla 35-3: «Vitamin E — Increase dietary antioxidants. Provide foods with >=750 mg/kg» de materia seca / 4 = 187,5 mg/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si el nutriente va en mg) a la densidad de referencia de 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. Es el factor con mas respaldo de esa tabla: el ensayo clinico aleatorizado que cita el capitulo (alimento enriquecido en antioxidantes) mejoro 13 de 15 conductas frente a 4 de 15 del control. Minimo de FEDIAF: 6,97 mg, o sea que esto es 27 veces el suelo de un perro sano -- y por eso hay que medir que resuelva. || MEDIDO 8-sep-2026: esta patologia es la UNICA de las tocadas que NO resuelve en el peldano estricto -- sale en el peldano 5, el que suelta el techo de visceras/higado/verdura y permite hasta 4 suplementos. Tiene sentido: 187,5 mg de vitamina E por 1000 kcal son 27 veces el minimo de un perro sano (6,97), y con comida sola no se llega -- hace falta suplemento, y el peldano 0 solo deja dos. Resultado: 189,4 mg, verde. Se acepta y SE DICE (regla 5): un menu de disfuncion cognitiva llevara mas suplementos y mas visceras de lo normal. Si se quisiera que saliera en el peldano estricto habria que bajar el suelo, y eso seria apartarse de la fuente."
+        }
+      }
     },
     "shunt_sin_encefalopatia": {
       "nombre": "Shunt portosistémico sin encefalopatía hepática activa",
@@ -531,6 +621,11 @@
           "valor": 25.0,
           "fuente": "SACN5 5ª ed., cap.32 «Skin and Hair Disorders», Tabla 32-1, verificado 7-sep-2026",
           "por_que": "Tabla 32-1: «Zinc: Dogs: 100 to 200 mg/kg food DM». A 4000kcal/kgMS son 25-50 mg/1000kcal; se usa el extremo bajo (25) porque ya es un aumento real sobre el mínimo general de FEDIAF (20,8 mg/1000kcal), suficiente para probar que resuelve con el catálogo real."
+        },
+        "fenilalanina_tirosina": {
+          "valor": 3.25,
+          "fuente": "SACN5 5a ed., cap.32 «Skin and Hair Disorders», Tabla 32-1, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Tabla 32-1, fila «Protein and fat»: «Phenylalanine + tyrosine >1.3% DM» = 3,25 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si el nutriente va en mg) a la densidad de referencia de 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. ⚠️ Escrito primero como 32,5 (x25 en vez de x2,5); lo caza ahora el BLOQUE 55 rehaciendo la conversion. Fenilalanina y tirosina son los precursores de la melanina: su deficit da perdida de color del pelo, que es uno de los signos que lista la propia tabla. Minimo de FEDIAF: 2,58, asi que aprieta poco pero aprieta."
         }
       }
     },
@@ -540,7 +635,14 @@
       "avisos": {
         "general": "SACN5 5ª ed., cap.32, cita el omega-3 (EPA+DHA) como apoyo antiinflamatorio en dermatitis atópica -- el motor ya exige un mínimo de EPA+DHA (0,11 g/1000kcal) y usar pescado azul con frecuencia sube ese aporte por encima del mínimo de forma natural. No hay un tope numérico que aplicar aquí: la dermatitis atópica es una alergia ambiental (ácaros, polen), no alimentaria -- si además hay alergia alimentaria confirmada, decláralo en Alergias, que es el mecanismo que ya existe para eso."
       },
-      "formulable_por_profesional": true
+      "formulable_por_profesional": true,
+      "suelos_por_1000kcal": {
+        "fenilalanina_tirosina": {
+          "valor": 3.25,
+          "fuente": "SACN5 5a ed., cap.32 «Skin and Hair Disorders», Tabla 32-1, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Tabla 32-1, fila «Protein and fat»: «Phenylalanine + tyrosine >1.3% DM» = 3,25 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si el nutriente va en mg) a la densidad de referencia de 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. ⚠️ Escrito primero como 32,5 (x25 en vez de x2,5); lo caza ahora el BLOQUE 55 rehaciendo la conversion. Fenilalanina y tirosina son los precursores de la melanina: su deficit da perdida de color del pelo, que es uno de los signos que lista la propia tabla. Minimo de FEDIAF: 2,58, asi que aprieta poco pero aprieta."
+        }
+      }
     },
     "epilepsia_idiopatica": {
       "nombre": "Epilepsia idiopática",
@@ -609,6 +711,119 @@
           "fuente": "Igual que renal (Freeman LM, dvm360 2009; WSAVA; IRIS; SACN5 cap.37 Tabla 37-9)",
           "por_que": "Mismo tope que la renal de base: es lo mas restrictivo que el solver puede aplicar sin romper el minimo FEDIAF de adulto (1160 mg). La diferencia real de esta patologia esta en la proteina, no en el fosforo -- el fosforo ya estaba al limite posible en ambas."
         }
+      }
+    },
+    "urolitos_fosfato_calcico": {
+      "nombre": "Urolitos de fosfato cálcico",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "solo_en_adulto": true,
+      "en_crecimiento": "sin_tope",
+      "topes_por_1000kcal": {
+        "fosforo": {
+          "valor": 1500.0,
+          "fuente": "SACN5 5a ed., cap.41 «Canine Calcium Phosphate Urolithiasis», Tabla 41-6, verificado literal 8-sep-2026",
+          "por_que": "PATOLOGIA NUEVA, 8-sep-2026. Salio del barrido de las 70 tablas «Key nutritional factors» de SACN5 contra las 40 patologias del motor: la fuente la declara con cifras y el motor no la ofrecia. Ver PATOLOGIAS.md §3-bis. Era el QUINTO tipo de urolito y el unico que faltaba: el motor ya tenia oxalato, urato, cistina y estruvita. Tabla 41-6: «Phosphorus 0.3 to 0.6%» = 750-1500 mg/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si va en mg) a 4000 kcal EM/kg MS. Se aplica el techo; el suelo queda bajo el minimo de FEDIAF (1160). El propio capitulo dice que sus recomendaciones son «the same as for prevention of recurrence of calcium oxalate uroliths», o sea que esta patologia comparte casi todo con el oxalato que ya estaba."
+        },
+        "magnesio": {
+          "valor": 375.0,
+          "fuente": "SACN5 5a ed., cap.41 «Canine Calcium Phosphate Urolithiasis», Tabla 41-6, verificado literal 8-sep-2026",
+          "por_que": "Tabla 41-6: «Magnesium 0.06 to 0.15%» = 150-375 mg/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si va en mg) a 4000 kcal EM/kg MS. Techo del rango; el suelo (150) queda bajo el minimo de FEDIAF (200)."
+        },
+        "sodio": {
+          "valor": 750.0,
+          "fuente": "SACN5 5a ed., cap.41 «Canine Calcium Phosphate Urolithiasis», Tabla 41-6, verificado literal 8-sep-2026",
+          "por_que": "Tabla 41-6: «Sodium <0.3%» = 750 mg/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si va en mg) a 4000 kcal EM/kg MS. El texto es explicito sobre por que aqui NO se hace lo de siempre con la sal: «oral sodium chloride therapy is not recommended to promote diuresis in dogs with uroliths containing calcium salts», porque el exceso de sodio provoca hipercalciuria y empeora el problema."
+        },
+        "proteina": {
+          "valor": 62.5,
+          "fuente": "SACN5 5a ed., cap.41 «Canine Calcium Phosphate Urolithiasis», Tabla 41-6, verificado literal 8-sep-2026",
+          "por_que": "Tabla 41-6: «Protein 10 to 25%» = 25-62,5 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si va en mg) a 4000 kcal EM/kg MS. Se aplica el TECHO (62,5), que es el unico extremo del rango por encima del minimo de FEDIAF (52,1); por debajo seria prescripcion. Motivo del texto: la proteina alta contribuye a hipocitraturia (y el citrato es lo que inhibe la cristalizacion) y a hipercalciuria."
+        }
+      },
+      "avisos": {
+        "general": "Se han ajustado el fósforo, el magnesio, el sodio y la proteína a los niveles que la literatura recomienda para prevenir que vuelvan a formarse cálculos de fosfato cálcico. El calcio NO se baja, igual que en el oxalato: bajarlo aumenta la absorción intestinal de oxalato y no ayuda. La sal tampoco se sube para forzar que beba, que es lo que se hace en otros cálculos — aquí el exceso de sodio empeora el problema. Depende además del pH urinario, que esta app no puede ver.",
+        "crecimiento": "Este menú NO ha podido aplicar los topes de fosfato cálcico: en crecimiento, gestación o lactancia los mínimos de fósforo y proteína que el perro necesita son mayores que los techos de la fuente. Consúltalo con tu veterinario."
+      },
+      "aviso_crecimiento": "Este menú NO ha podido aplicar los topes de fosfato cálcico: en crecimiento los mínimos de fósforo y proteína son mayores que los techos de la fuente."
+    },
+    "urolitos_silice": {
+      "nombre": "Urolitos de sílice",
+      "formulable": false,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "nutriente_frontera": "proteina",
+      "objetivo_terapeutico_por_1000kcal": 35.0,
+      "motivo_no_formulable": "El único eje dietético que da la fuente es bajar la proteína a 10-18 % de materia seca (25-45 g/1000 kcal), y todo ese rango está POR DEBAJO del mínimo que FEDIAF exige a cualquier perro (52,1 g). La dieta que trata está por debajo de la que alimenta: no se resuelve eligiendo mejor los alimentos.",
+      "sin_dieta_automatica": true,
+      "avisos": {
+        "general": "Los cálculos de sílice se previenen bajando la proteína por debajo de lo que necesita un perro sano, y eso es una dieta de prescripción que solo puede pautar tu veterinario. La otra recomendación de la fuente —evitar gluten de maíz, cáscara de arroz y cáscara de soja— no aplica a una ración de comida cruda: son ingredientes de pienso.",
+        "profesional": "SACN5 cap.44, Tabla 44-1: proteína de alta calidad restringida a 10-18 % MS (25-45 g/1000 kcal), pH urinario objetivo 7,1-7,7, densidad urinaria <1,020. La fuente avisa de que las fuentes proteicas de origen ANIMAL son improbables como origen del sílice; el problema son las vegetales (gluten de maíz), que en BARF apenas existen."
+      }
+    },
+    "estrenimiento_cronico": {
+      "nombre": "Estreñimiento crónico",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "suelos_por_1000kcal": {
+        "fibra": {
+          "valor": 17.5,
+          "fuente": "SACN5 5a ed., cap.64 «Chronic constipation/obstipation», Tabla 64-2, verificado literal 8-sep-2026",
+          "por_que": "PATOLOGIA NUEVA, 8-sep-2026. Salio del barrido de las 70 tablas «Key nutritional factors» de SACN5 contra las 40 patologias del motor: la fuente la declara con cifras y el motor no la ofrecia. Ver PATOLOGIAS.md §3-bis. Tabla 64-2: «Fiber >=7% crude fiber (insoluble or mixed is best) for cats and dogs with chronic constipation and intermittent obstipation» = 17,5 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si va en mg) a 4000 kcal EM/kg MS. La fuente explica el mecanismo: la fibra actua como laxante de volumen, distiende la luz del colon, aumenta el agua fecal y acelera el transito. FEDIAF no da minimo ni maximo de fibra, asi que no hay techo de ningun tipo: margen 0 a sin techo. || La misma tabla pide agua >75 %, que en BARF se cumple sola (la carne cruda ronda el 70-75 % y el pienso el 8-10 %): es justamente la ventaja de la comida humeda en esta patologia, y por eso no se modela como un limite."
+        }
+      },
+      "avisos": {
+        "general": "Se ha subido la fibra al nivel que recomienda la literatura para el estreñimiento crónico. La comida cruda ya juega a favor aquí: lleva mucha más agua que un pienso, y el agua de la comida es el otro factor que la fuente pide. Si el estreñimiento es reciente o el perro hace fuerza sin resultado, eso no es dietético: llévalo al veterinario."
+      }
+    },
+    "flatulencia": {
+      "nombre": "Flatulencia excesiva (gases)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "topes_por_1000kcal": {
+        "proteina": {
+          "valor": 75.0,
+          "fuente": "SACN5 5a ed., cap.65 «Excessive flatulence», Tabla 65-1, verificado literal 8-sep-2026",
+          "por_que": "PATOLOGIA NUEVA, 8-sep-2026. Salio del barrido de las 70 tablas «Key nutritional factors» de SACN5 contra las 40 patologias del motor: la fuente la declara con cifras y el motor no la ofrecia. Ver PATOLOGIAS.md §3-bis. Tabla 65-1: «Protein — Avoid high-protein foods. Adult dogs: limit to <=30% or less» = 75 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si va en mg) a 4000 kcal EM/kg MS. La proteina que no se digiere llega al colon y la fermentan las bacterias: de ahi el gas sulfurado. Por encima del minimo de FEDIAF (52,1), asi que es un tope normal. || OJO, y es lo interesante de esta patologia: una racion BARF sin ajustar va sobre 130-150 g/1000 kcal, o sea casi el DOBLE del techo. Es de los topes que mas mueven el menu de todo el motor."
+        },
+        "fibra": {
+          "valor": 12.5,
+          "fuente": "SACN5 5a ed., cap.65 «Excessive flatulence», Tabla 65-1, verificado literal 8-sep-2026",
+          "por_que": "Tabla 65-1: «Fiber — Dogs and cats: limit to <=5% fiber (most important aspect regarding fiber)» = 12,5 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si va en mg) a 4000 kcal EM/kg MS. La propia tabla lo marca como el aspecto MAS importante de la fibra aqui, y va en direccion contraria al estrenimiento: la fibra fermentable es precisamente la que produce gas. FEDIAF no pone limites a la fibra, asi que este techo no choca con nada. || CHOQUE CONOCIDO: flatulencia (fibra <=12,5) e hiperlipidemia o estrenimiento (fibra >=25 y >=17,5) son incompatibles. El motor lo dira nombrando los dos limites, que es lo correcto: no es un fallo, son dos objetivos clinicos opuestos."
+        }
+      },
+      "avisos": {
+        "general": "Se han bajado la proteína y la fibra a los niveles que recomienda la literatura para la flatulencia. La fuente además desaconseja legumbres, lácteos, crucíferas (brócoli, coliflor, coles de Bruselas, repollo), cebolla, frutos secos, especias y fruta: de esas, las crucíferas y la fruta sí pueden estar en tu menú, así que si los gases siguen, prueba a quitarlas. Gases de aparición súbita, con dolor o con el abdomen hinchado y duro no son dietéticos: es una urgencia."
+      }
+    },
+    "sibo": {
+      "nombre": "Sobrecrecimiento bacteriano en el intestino delgado (SIBO)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "topes_por_1000kcal": {
+        "grasa": {
+          "valor": 37.5,
+          "fuente": "SACN5 5a ed., cap.60 «Small intestinal bacterial overgrowth», Tabla 60-1, verificado literal 8-sep-2026",
+          "por_que": "PATOLOGIA NUEVA, 8-sep-2026. Salio del barrido de las 70 tablas «Key nutritional factors» de SACN5 contra las 40 patologias del motor: la fuente la declara con cifras y el motor no la ofrecia. Ver PATOLOGIAS.md §3-bis. Tabla 60-1: «Fat 12 to 15% for dogs» = 30-37,5 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si va en mg) a 4000 kcal EM/kg MS. Se usa el extremo alto, como en la EPI y la enteropatia cronica y por el mismo motivo: apretar de mas quita densidad energetica a un perro que ya absorbe mal. El texto lo dice: «High-fat foods may contribute to osmotic diarrhea and GI protein losses, which complicate SIBO. Therefore, it is often advantageous to initially provide a food with moderate energy density... Higher fat and more energy-dense foods can be offered if the patient tolerates these fat levels». O sea que el 37,5 es un punto de partida, no un techo fisiologico. Por encima del minimo de FEDIAF (13,75). Margen: 13,75 a 37,5. || Se anade tambien porque es COMPLICACION FRECUENTE de la insuficiencia pancreatica exocrina, que el motor ya tenia: el propio capitulo dice «Exocrine pancreatic insufficiency is also a predisposing factor for SIBO»."
+        }
+      },
+      "avisos": {
+        "general": "Se ha moderado la grasa al nivel que recomienda la literatura para el sobrecrecimiento bacteriano. La fuente lo plantea como punto de partida, no como techo: si el perro tolera bien más grasa, puede subirse. El tratamiento del SIBO es antibiótico y la dieta acompaña, no sustituye."
+      }
+    },
+    "intestino_irritable": {
+      "nombre": "Síndrome de intestino irritable",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "suelos_por_1000kcal": {
+        "fibra": {
+          "valor": 20.0,
+          "fuente": "SACN5 5a ed., cap.63 «Idiopathic bowel syndrome», Tabla 63-3, verificado literal 8-sep-2026",
+          "por_que": "PATOLOGIA NUEVA, 8-sep-2026. Salio del barrido de las 70 tablas «Key nutritional factors» de SACN5 contra las 40 patologias del motor: la fuente la declara con cifras y el motor no la ofrecia. Ver PATOLOGIAS.md §3-bis. Tabla 63-3: «Crude fiber >=8%***» = 20 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si va en mg) a 4000 kcal EM/kg MS. La tabla da CUATRO opciones segun el tipo de fibra (soluble 1-5 %, mixta 5-10 %, insoluble 10-15 %, cruda >=8 %) y avisa: «Any one of the three types of fiber listed at the recommended levels can be effective, depending on patient response». Se usa la fila de fibra CRUDA porque es la unica que el catalogo sabe medir -- la propia nota al pie de la tabla lo reconoce: «Crude fiber is the only fiber value readily available for pet foods». FEDIAF no limita la fibra, asi que no hay techo. || El capitulo es honesto sobre lo que no se sabe: la relacion entre estres y motilidad «is not completely understood» y la investigacion comparable «has not been performed in dogs»."
+        }
+      },
+      "avisos": {
+        "general": "Se ha subido la fibra al nivel que recomienda la literatura para el intestino irritable. La fuente dice que sirve cualquiera de los tres tipos de fibra según responda cada perro, así que si con este menú no mejora, cambiar el TIPO de verdura puede importar más que la cantidad. Y avisa de algo que no es dietético: en este síndrome el estrés dispara los síntomas."
       }
     }
   }
