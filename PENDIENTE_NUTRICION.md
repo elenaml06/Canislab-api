@@ -517,7 +517,16 @@ del cerebro de ternera y el araquidónico del pavo, arriba).
 
 ### `DATOS_QUE_FALTAN.md`
 
-Generado por `auditar_catalogo.py`: **57 alimentos y 431 valores** por
+⚠️ **CORREGIDO el 8 de septiembre**: aquí ponía «Generado por
+`auditar_catalogo.py`: 57 alimentos y 431 valores». Lo primero es falso —
+**ningún código escribe ese archivo**, la auditoría encuentra los huecos
+pero el documento se mantiene a mano — y por eso lo segundo también se
+quedó viejo: seguía pidiendo datos de los seis alimentos que salieron del
+catálogo el 27 de agosto (los testículos de cordero, las dos harinas de
+hueso, el Kelp, y los aceites de salmón de Pets Purest y Brit Care).
+Pedir datos de un alimento retirado manda a una persona a buscar un número
+que, aunque lo encuentre, no se puede usar. Limpiado: hoy son
+**53 alimentos y 330 valores** por
 conseguir, cada uno con su unidad y una casilla vacía. Está pensado para
 llevarlo a BEDCA o CIQUAL y rellenarlo, y entonces sí pasárselo al
 asistente para que lo inserte con el formato correcto.
