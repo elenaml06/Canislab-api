@@ -1,7 +1,7 @@
 # Rawku — lo que queda por hacer (índice)
 
 Lista viva. Se actualiza al terminar cada cosa, no al final.
-Última revisión: 6 de septiembre de 2026.
+Última revisión: 7 de septiembre de 2026.
 
 **Desde el 6 de septiembre esto es solo el índice.** Cada punto vive en uno
 de cuatro archivos, por tema — ábrelos según lo que toque la tarea, no
@@ -44,10 +44,10 @@ que tomar una persona, no yo.
 
 ## `PENDIENTE_DINERO_Y_SALUD.md` — lo urgente, antes de cobrar, lo que mira Stripe
 
-- [ ] `/menu/varios-perros` devuelve a veces 1 menú en vez de 3 (presupuesto de tiempo, no cabe con 2 perros y 3 menús)
-- [ ] El canario del BLOQUE 14 cantó: 0,99 g de salmón (falta un mínimo por alimento semicontinuo en el solver)
+- [x] `/menu/varios-perros` devolvía 1 menú en vez de 3 — ARREGLADO 7 sep: decidía si seguir con el TOPE de cada rodaja (peor caso 10 s) en vez de con lo que había costado de verdad la ronda anterior. Ahora se mide. Con el presupuesto apretado a 14 s: antes [2,1,1,1,2], ahora [3,3,2,3,3]. BLOQUE 48
+- [x] Los 0,99 g de salmón — CERRADO 7 sep: el suelo de «esto se puede pesar» se recortaba contra el techo del propio alimento (`min(porcion, techos[i])`) y podía quedarse por debajo del gramo. Ahora nunca baja de 1 g y el MILP deja fuera solo al alimento del que no cabe ni un gramo
 - [ ] Nadie debería poder suscribirse dos veces
-- [ ] El yodo de los perros muy pequeños vive al 101 % del mínimo (el margen de redondeo no escala)
+- [x] El yodo de los perros pequeños — ARREGLADO 7 sep, y era peor de lo apuntado: el margen del suelo era un 1,5 % fijo cuando lo que tiene que cubrir es el error ABSOLUTO del redondeo. Medido en 60 menús de perros de 1,5-4,5 kg: antes el yodo bajaba al 82 % y 3 menús se caían; ahora mínimo 100 % y ninguno. BLOQUE 49
 - [ ] `profiles` es una frontera de autorización y no está en el repo (RLS sin versionar)
 - [ ] Comprobar que la cancelación quita el premium
 - [ ] Verificar el negocio en Stripe, crear productos/precios/webhook reales, quitar `STRIPE_PRUEBA`, primer cobro real
@@ -70,15 +70,20 @@ que tomar una persona, no yo.
 - [ ] `aviso_composicion` en la web: ver cómo queda con tres alergias
 - [ ] `tipo_de_clave_supabase` sale como `[Filtered]` en Sentry (renombrar)
 - [ ] La `HTTPException` genérica del webhook sobra en Sentry
-- [ ] `/perro/{id}/menus` devuelve menús sin verificar
+- [x] `/perro/{id}/menus` — ARREGLADO 7 sep, era el único agujero en la regla 1: la tabla no guardaba la etapa ni el DER, así que el menú no se podía verificar NI EN PRINCIPIO. Ahora se guarda el contexto con el menú y se verifica al leerlo. BLOQUE 47
 
 ## `PENDIENTE_NUTRICION.md` — auditado contra el PDF oficial
 
 - [x] Contrastar con la ficha original de USDA — RESUELTO 7 sep: testículos de cordero ya no existe en el catálogo, timo de ternera ya cita FDC 170194 directo, y el acceso a USDA (`DEMO_KEY`) sí funciona (usado para el linoleico de abajo)
 - [x] El linoleico de la grasa de pollo — RESUELTO 7 sep: 19,5 g/100g, USDA FDC 173564
-- [ ] Plantearse que el aviso de datos incompletos no dependa de una lista mantenida a mano
-- [ ] Conseguir cifras verificadas de EPA/DHA para seis pescados (incluido el boquerón)
-- [ ] Completar las cuatro vísceras sin dato (bazo de vaca, páncreas de vaca, bazo de cordero, cerebro de ternera) — el 7 sep se corrigió que `sin_dato` ya diga la verdad (antes esos huecos contaban como cero medido); conseguir el dato real sigue pendiente
+- [x] El aviso de datos incompletos ya no depende de una lista a mano — RESUELTO 7 sep: `[SOSPECHOSO]` en `auditar_catalogo.py` compara cada alimento con los demás de su categoría (BLOQUE 46). Encontró 11 huecos el mismo día
+- [ ] Enganchar (o no) ese detector al aviso que ve la usuaria — decisión abierta, hoy acierta 9 de 13
+- [x] EPA/DHA de los seis pescados — ya estaban cerrados desde el 25 ago; el punto llevaba describiendo trabajo hecho (verificado 7 sep)
+- [x] Las cuatro vísceras sin dato — COMPLETADAS 7 sep con la ficha de su fuente (BEDCA 1047 el cerebro; USDA 169454/169452/174364 las otras tres, que coincidían celda a celda)
+- [x] Las dos «discrepancias» del cerebro — RESUELTAS 7 sep, y NO eran errores: calcio 43 y selenio 21,3 son exactos de cerebro de VACA (USDA 168622) y se comparaban contra cerebro de ternera. La ficha se llamaba «de ternera» con datos de vaca, igual que pasó con el bazo y el páncreas: renombrada a `Cerebro de vaca` y rehecha entera desde su fuente real. El araquidónico del pavo también se retiró: era un fallo de mi herramienta (USDA publica dos filas de 20:4 y el catálogo usa la buena)
 - [x] Decisión pendiente: `Laringe de vacuno` — RESUELTO 7 sep: movida a `Extras`
-- [ ] Añadir vísceras (no hígado) de las especies que faltan: pollo, pavo, conejo, pato, cerdo. El hígado ya no es el hueco — solo falta hígado de cerdo (pollo/pavo/pato ya existen, corregido 7 sep)
+- [x] Vísceras de ave — NO EXISTEN en BEDCA, CIQUAL ni USDA (comprobado 7 sep): de pollo/pavo/pato/oca/conejo solo hay hígado, corazón y molleja, y los tres últimos ya están (en Carne muscular, porque no segregan)
+- [ ] ⚠️ DECISIÓN: `Timo de ternera` y `Pulmón de ternera` tampoco son de ternera (11/11 y 10/11 celdas coinciden con las fichas de VACA de USDA). Y no es cosmético: el timo de vaca tiene 20,35 g de grasa y 236 kcal, el de ternera 3,07 y 101 — quien compre mollejas de ternera da algo muy distinto de lo que el menú calculó. O se renombran (como el bazo y el páncreas en agosto) o se cambian los datos a los de ternera. Detalle en `PENDIENTE_NUTRICION.md`
+- [ ] Buscado 8 sep si hay ESTUDIOS con vísceras de ave: lo mejor es Seong et al. 2015 (Food Sci. Anim. Resour. 35(2):179-188), ocho despojos de pollo con proximal, 10 minerales, 6 vitaminas, 17 aminoácidos y grasos — pero NO trae bazo, páncreas, riñón ni timo, y le faltan vitD, vitE, B12, folato, colina y yodo (dos de ellos, topes de seguridad). Lo único aprovechable sería el PULMÓN de pollo, y entraría con seis huecos. Decisión, no dato
+- [ ] Vísceras solo tiene DOS especies (bovino y ovino) y es pilar obligatorio: un perro alérgico a las dos se queda sin ninguna. Es decisión de producto (admitir cerdo, o decirlo claro), no un dato que falte
 - [x] Taurina y L-carnitina — RESUELTO 7 sep: dato en las 159 fichas y suelo activado en `dcm_taurina_respondedora` (250/50 mg/1000kcal, SACN5 cap.36)

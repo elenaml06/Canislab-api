@@ -1,5 +1,27 @@
 # Datos que faltan en el catálogo
 
+> ⚠️ **LIMPIADO EL 8 DE SEPTIEMBRE, y hay que saber por qué se ensució.**
+> Este archivo dice de sí mismo que lo genera `auditar_catalogo.py`, y **no
+> es verdad: ningún código lo escribe.** Se generó una vez y desde entonces
+> se mantiene a mano, así que el 27 de agosto -- cuando cinco suplementos y
+> los testículos de cordero salieron del catálogo por no cuadrar sus datos
+> -- sus secciones se quedaron aquí pidiendo valores de alimentos que ya no
+> existen. Eran seis: `Testículos de cordero`, `Sonrisa de Diez Kelp`, `GRAU Harina de Hueso`, `LUPO NATURAL BARF Huesos en polvo`, `Pets Purest Aceite de Salmón`, `Brit Care Aceite de Salmón`.
+>
+> Pedir datos de un alimento retirado no es solo ruido: manda a una persona
+> a buscar en BEDCA o en la ficha del fabricante un número que, aunque lo
+> encuentre, no se puede usar. El de **Pets Purest Aceite de Salmón** era el
+> peor de los seis, porque salió justo por eso -- sus porcentajes de EPA/DHA
+> solo aparecen en fichas de marketing del fabricante, y era el más denso de
+> los cinco aceites, así que era el que el solver prefería.
+>
+> Comprobado el mismo día que de esos seis **no queda ni una referencia** en
+> los cuatro archivos de datos (`alimentos_v3_final.json`,
+> `catalogo_menus.json`, `requerimientos_v2_final.json`, `der_casos.json`).
+> Lo único que los nombra es el BLOQUE 30 de `pruebas_completas.py`, y ahí
+> es a propósito: vigila que no vuelvan.
+
+
 
 ## Peso del cacito de los suplementos en polvo
 
@@ -26,7 +48,10 @@ Code — se rellena cuando lo tengáis, y la línea aparece sola.
 | NEKTON Dog Easy-BARF (multivitamínico) | |
 | Cáscara de huevo PAWS & PATCH | |
 
-Generado por `auditar_catalogo.py`. **Esto no lo rellena el asistente.**
+Los huecos los ENCUENTRA `auditar_catalogo.py`, pero **este archivo no lo
+escribe ningún código**: se mantiene a mano, y por eso pudo quedarse
+pidiendo datos de seis alimentos retirados (ver el aviso de arriba). Hoy
+son **53 alimentos y 330 valores**. **Esto no lo rellena el asistente.**
 
 Cada valor tiene que venir de una fuente verificada por una persona:
 
@@ -49,41 +74,6 @@ y DHA van en gramos aunque las tablas los den en miligramos, y `linoleico`
 opuestas.
 
 ---
-
-## Testículos de cordero  ·  _Vísceras_
-
-| Nutriente | Unidad | Valor |
-|---|---|---|
-| acidoPantotenico | mg | |
-| araquidonico | mg | |
-| calcio | mg | |
-| cloruro | mg | |
-| cobre | mg | |
-| colina | mg | |
-| dha | g | |
-| epa | g | |
-| fibra | g | |
-| folato | µg | |
-| fosforo | mg | |
-| grasa | g | |
-| hierro | mg | |
-| linoleico (omega-6, C18:2) | g | |
-| linolenico (omega-3, C18:3) | g | |
-| magnesio | mg | |
-| manganeso | mg | |
-| niacina | mg | |
-| potasio | mg | |
-| proteina | g | |
-| riboflavina | mg | |
-| selenio | µg | |
-| sodio | mg | |
-| tiamina | mg | |
-| vitA | µg | |
-| vitB6 | mg | |
-| vitD | µg | |
-| vitE | mg | |
-| yodo | µg | |
-| zinc | mg | |
 
 ## Timo de ternera  ·  _Vísceras_
 
@@ -155,33 +145,6 @@ quedan estos 5, que la propia ficha marca `sin_dato`:
 | yodo | µg | |
 | zinc | mg | |
 
-## Sonrisa de Diez Kelp  ·  _Yodo_
-
-| Nutriente | Unidad | Valor |
-|---|---|---|
-| acidoPantotenico | mg | |
-| calcio | mg | |
-| cloruro | mg | |
-| colina | mg | |
-| folato | µg | |
-| fosforo | mg | |
-| hierro | mg | |
-| magnesio | mg | |
-| manganeso | mg | |
-| niacina | mg | |
-| potasio | mg | |
-| proteina | g | |
-| riboflavina | mg | |
-| selenio | µg | |
-| sodio | mg | |
-| tiamina | mg | |
-| vitA | µg | |
-| vitB12 | µg | |
-| vitB6 | mg | |
-| vitD | µg | |
-| vitE | mg | |
-| zinc | mg | |
-
 ## Cáscara de huevo casera (en polvo)  ·  _Calcio_
 
 | Nutriente | Unidad | Valor |
@@ -236,7 +199,7 @@ quedan estos 5, que la propia ficha marca `sin_dato`:
 | folato | µg | |
 | colina | mg | |
 
-## Cerebro de ternera  ·  _Vísceras_
+## Cerebro de vaca  ·  _Vísceras_
 
 | Nutriente | Unidad | Valor |
 |---|---|---|
@@ -287,54 +250,6 @@ quedan estos 5, que la propia ficha marca `sin_dato`:
 | vitD | µg | |
 | vitE | mg | |
 | yodo | µg | |
-
-## GRAU Harina de Hueso  ·  _Calcio_
-
-| Nutriente | Unidad | Valor |
-|---|---|---|
-| acidoPantotenico | mg | |
-| cobre | mg | |
-| colina | mg | |
-| folato | µg | |
-| hierro | mg | |
-| magnesio | mg | |
-| manganeso | mg | |
-| niacina | mg | |
-| potasio | mg | |
-| riboflavina | mg | |
-| selenio | µg | |
-| tiamina | mg | |
-| vitA | µg | |
-| vitB12 | µg | |
-| vitB6 | mg | |
-| vitD | µg | |
-| vitE | mg | |
-| yodo | µg | |
-| zinc | mg | |
-
-## LUPO NATURAL BARF Huesos en polvo  ·  _Calcio_
-
-| Nutriente | Unidad | Valor |
-|---|---|---|
-| acidoPantotenico | mg | |
-| cobre | mg | |
-| colina | mg | |
-| folato | µg | |
-| hierro | mg | |
-| magnesio | mg | |
-| manganeso | mg | |
-| niacina | mg | |
-| potasio | mg | |
-| riboflavina | mg | |
-| selenio | µg | |
-| tiamina | mg | |
-| vitA | µg | |
-| vitB12 | µg | |
-| vitB6 | mg | |
-| vitD | µg | |
-| vitE | mg | |
-| yodo | µg | |
-| zinc | mg | |
 
 ## AniForte Seaweed Meal  ·  _Yodo_
 
@@ -446,18 +361,6 @@ quedan estos 5, que la propia ficha marca `sin_dato`:
 | vitE | mg | |
 | yodo | µg | |
 
-## Pets Purest Aceite de Salmón  ·  _Omega-3_
-
-| Nutriente | Unidad | Valor |
-|---|---|---|
-| araquidonico | mg | |
-| grasa | g | |
-| linoleico (omega-6, C18:2) | g | |
-| linolenico (omega-3, C18:3) | g | |
-| vitA | µg | |
-| vitD | µg | |
-| vitE | mg | |
-
 ## Aceite de Salmón Natural Greatness  ·  _Omega-3_
 
 | Nutriente | Unidad | Valor |
@@ -490,16 +393,6 @@ quedan estos 5, que la propia ficha marca `sin_dato`:
 | selenio | µg | |
 | zinc | mg | |
 | yodo | µg | |
-
-## Brit Care Aceite de Salmón  ·  _Omega-3_
-
-| Nutriente | Unidad | Valor |
-|---|---|---|
-| araquidonico | mg | |
-| grasa | g | |
-| vitA | µg | |
-| vitD | µg | |
-| vitE | mg | |
 
 ## Oleum Canis Aceite de Salmón  ·  _Omega-3_
 

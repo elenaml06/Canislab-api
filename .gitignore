@@ -2,3 +2,7 @@ __pycache__/
 *.pyc
 .env
 canislab.db
+
+# Los volcados de CIQUAL y USDA que se baja `contrastar_fuentes.py`: 10 MB
+# de tablas oficiales que se pueden volver a bajar en cualquier momento.
+.fuentes_cache/

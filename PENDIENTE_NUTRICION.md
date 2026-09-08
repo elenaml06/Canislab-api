@@ -208,9 +208,37 @@ coherentes entre sí.
       su proteína (0) y grasa (99,8) ya coincidían exactas con esta ficha,
       así que es con altísima probabilidad la misma fuente que el resto de
       la fila. Cerrado en `alimentos_v3_final.json`.
-- [ ] Plantearse que el aviso de datos incompletos no dependa de una lista
-      mantenida a mano: un alimento con el 90 % de los valores a cero es
-      sospechoso por sí solo, lo declare o no.
+- [x] **Que el aviso de datos incompletos no dependa de una lista mantenida
+      a mano — HECHO el 7 de septiembre, y encontró once huecos el mismo
+      día.** `auditar_catalogo.py` tiene ahora un aviso `[SOSPECHOSO]` que
+      no lee ninguna lista: compara cada alimento con **los demás de su
+      categoría**. Si el 90 % de sus compañeros tienen un nutriente y él lo
+      tiene a cero sin declararlo, se dice. El criterio sale del propio
+      catálogo, así que crece solo cuando entra un alimento nuevo.
+      El umbral se midió: con 80 % entraban los ceros REALES de la grasa de
+      la fruta y con 95 % se escapaban seis huecos de verdad.
+      **El denominador son LOS DEMÁS, no todos**, y eso no es un detalle: la
+      primera versión metía al propio alimento en la cuenta, así que en una
+      categoría pequeña un hueco se tapaba a sí mismo (en «Hígado», que
+      tiene 6, vaciar uno deja 5 de 6 = 83 % y ya no llegaba al 90 %). Se
+      descubrió porque el BLOQUE 46 planta el fallo a propósito y NO
+      saltaba; al arreglarlo apareció un hueco real, el linoleico del hígado
+      de cordero. Lo vigila el **BLOQUE 46**, que no se conforma con verlo
+      salir limpio: vacía la tiamina de un hígado en una copia del catálogo
+      y exige que la auditoría lo encuentre.
+      Sale a cero hoy porque los once que levantó están resueltos, y hay una
+      salida nueva para no volver a preguntar lo ya contestado:
+      **`cero_verificado`**, un campo por ficha donde se escribe que un cero
+      se fue a mirar, es real, y con qué fuente — el mismo patrón que ya
+      usaban `purinas_fuente`, `taurina_fuente` y `fuente_epa_dha`.
+- [ ] El aviso que ve el USUARIO (`datos_incompletos`, en `verificar.py`)
+      sigue leyendo solo `sin_dato`. No se enganchó al detector nuevo a
+      propósito: el `[SOSPECHOSO]` acierta lo bastante para que una persona
+      lo lea una vez, pero no lo bastante para salir en cada menú — de los
+      trece que levantó, cuatro eran ceros REALES (la vitamina A del
+      champiñón, la coliflor, el coco y el cardo). Un aviso que se equivoca
+      una de cada tres veces enseña a la usuaria a ignorarlo, y entonces
+      tampoco verá el que sí importa. Queda como decisión abierta.
 
 ## 5-ter. Revisión del catálogo entero (21 de agosto)
 
@@ -228,15 +256,49 @@ que con 6,3 g de grasa es pescado azul y ese cero es falso— y cuatro
 vísceras (bazo de vaca, páncreas de vaca, bazo de cordero, cerebro de
 ternera). Pasan a `sin_dato` para que salte el aviso de datos incompletos.
 
-- [ ] **Conseguir cifras verificadas de EPA/DHA para esos seis pescados.**
-      No se rellenaron a ojo a propósito: los valores que devuelve el
-      buscador vienen redondeados y no coinciden entre sí, y un dato
-      inventado con cara de dato es peor que un hueco declarado. Contarlos
-      como cero solo los infravalora (el omega-3 no tiene máximo), así que
-      no es peligroso — pero desaprovecha el pescado y mete aceite que
-      quizá no hacía falta.
-- [ ] **Completar las cuatro vísceras** con la ficha de su fuente, igual
-      que se hizo con el timo y los testículos.
+- [x] **Los seis pescados con EPA/DHA — YA ESTABAN CERRADOS**, y este punto
+      llevaba desde el 25 de agosto describiendo un trabajo hecho. Se
+      comprobó el 7 de septiembre recorriendo el catálogo entero: **no
+      queda ni un solo pescado con `epa` o `dha` en `sin_dato`**. Los seis
+      (bacalao, boquerón, gamba roja, langostino, perca, pescadilla) llevan
+      su fuente en `nota_datos` y sus cifras ancladas en el BLOQUE 21.
+- [x] **Las cuatro vísceras — COMPLETADAS el 7 de septiembre**, con la
+      ficha de su fuente, como pedía este punto. Y la fuente se pudo
+      identificar con certeza en vez de suponerla: bazo de vaca, páncreas
+      de vaca y bazo de cordero coinciden **celda a celda** con USDA FDC
+      169454, 169452 y 174364 en todas las que ya tenían valor, así que
+      rellenar sus huecos con esa misma ficha es completar la MISMA fuente,
+      no cruzar dos. El cerebro de ternera es el único de los cuatro que
+      tiene fuente primaria española (BEDCA 1047, "Sesos, de ternera,
+      crudos") y de ahí salen sus 17 celdas nuevas.
+      Siguen sin dato yodo, vitD, vitE, colina y cloruro de los tres de
+      USDA: esa base no los publica, y BEDCA y CIQUAL no tienen bazo ni
+      páncreas de ninguna especie.
+- [x] **Las dos «discrepancias» del cerebro NO lo eran, y detrás había algo
+      peor — RESUELTO el 7 de septiembre.** El calcio (43 mg frente a 10-12)
+      y el selenio (21,3 µg frente a 10-11,6) se apuntaron aquí como posibles
+      errores de dato. No lo son: **son exactos de USDA FDC 168622, que es
+      cerebro de VACA**, y se estaban comparando contra cerebro de TERNERA
+      (USDA 174351, BEDCA 1047, CIQUAL 40006), que es otro animal.
+      La ficha se llamaba «Cerebro de ternera» y sus datos eran de vaca:
+      coincide celda a celda con la ficha de vaca en las nueve que tenían
+      valor (proteína 10,86, grasa 10,3, calcio 43, selenio 21,3, hierro
+      2,55, potasio 274, zinc 1,02, vitB12 9,51). **Es exactamente lo que ya
+      pasó con «Bazo de ternera» y «Páncreas de ternera»**, renombrados a
+      «de vaca» el 21 de agosto por la misma razón — al cerebro se le pasó.
+      Renombrado a **`Cerebro de vaca`** (0 referencias en
+      `catalogo_menus.json`, comprobado).
+      **Y la ficha se rehízo entera**, porque ese mismo día yo le había
+      rellenado 17 celdas desde BEDCA 1047, que es la ficha de ternera: el
+      DHA quedó en 0,36 g cuando el de vaca es **0,851**, y la vitamina A en
+      0 cuando son 7 µg. Ahora toda la ficha sale de USDA 168622, una sola
+      fuente, y lo que esa ficha no publica (vitD, yodo, colina) vuelve a
+      `sin_dato` en vez de llevar cifras de la otra especie.
+      **La lección, y es la de este proyecto entera**: una explicación
+      plausible para un aviso nuevo no es una comprobación. El aviso `[OMEGA]`
+      saltó al rellenar y se le buscó una razón razonable («el cerebro
+      concentra omega-3»); lo que decía de verdad es que la ficha que yo
+      acababa de rellenar tenía datos de otro animal.
 
 ### `Laringe de vacuno` — RESUELTO el 7 de septiembre
 
@@ -273,12 +335,117 @@ causa es la variedad de especies, no el número de alimentos:
   conejo y vaca (verificado contra el catálogo real, no de memoria).
   **Solo falta hígado de cerdo.**
 
-- [ ] Añadir vísceras (no hígado) de las especies que faltan: **corazón y
-      molleja de pollo y de pavo**, **riñón de cerdo**, y considerar
-      vísceras de conejo y pato. Es lo que sigue dejando a un perro con
-      alergias sin variedad en esta categoría — el hígado ya no es el
-      cuello de botella, las vísceras no-hígado sí.
-- [ ] **Hígado de cerdo**: única pieza que falta en esa categoría.
+- [x] **Corazón y molleja de pollo y de pavo — YA ESTÁN**, y este punto
+      estaba desactualizado igual que lo estuvo el del hígado. Existen los
+      cuatro (más corazón de conejo, de cordero y de vaca), solo que en
+      **Carne muscular** y no en Vísceras, y eso es a propósito y está
+      razonado en `accesibles.py`: el criterio no es "de dónde sale" sino
+      **si el órgano SEGREGA algo**. La molleja tritura, el corazón bombea,
+      la lengua mueve: ninguno segrega, así que son músculo. Solo el pulmón
+      se quedó en Vísceras, y por prudencia, porque ahí las fuentes no
+      coinciden.
+- [x] **Vísceras secretoras de ave: NO EXISTEN, comprobado el 7 de
+      septiembre en las tres bases.** Se buscó una por una en BEDCA, CIQUAL
+      y el volcado completo de USDA SR Legacy: de pollo, pavo, pato, oca y
+      conejo **solo hay hígado, corazón y molleja**. Ni bazo, ni páncreas,
+      ni riñón, ni timo, ni cerebro de ninguna de esas especies, en ninguna
+      de las tres. No es un hueco de datos que se pueda llenar buscando
+      mejor: esos órganos no se separan ni se venden, así que nadie los ha
+      analizado. `accesibles.py` ya lo decía desde el 5 de agosto
+      ("Confirmado que NO existen datos fiables de bazo/páncreas de pollo,
+      pavo ni conejo") y ahora está verificado contra las tres fuentes.
+### Buscado el 8 de septiembre: ¿hay algún estudio con vísceras de ave?
+
+Sí hay literatura, pero **ninguna sirve para hacer una ficha del catálogo**,
+y conviene que quede escrito para no volver a buscarlo cada vez.
+
+Lo mejor que existe, con diferencia, es **Seong, Cho, Park, Kang, Park,
+Moon & Ba (2015), «Characterization of Chicken By-products by Mean of
+Proximate and Nutritional Compositions», *Food Science of Animal Resources*
+35(2):179-188, doi 10.5851/kosfa.2015.35.2.179**. Analiza OCHO despojos de
+pollo — corazón, **pulmón**, hígado, molleja, ciego, buche, intestino
+delgado y duodeno — con proximal, diez minerales (Na, K, Ca, Mg, P, Fe, Zn,
+Mn, Cu, Cr), seis vitaminas (A, B1, B2, B3, B5, B6), diecisiete aminoácidos
+y el perfil de ácidos grasos.
+
+**Y aun así no cierra el problema**, por dos motivos:
+
+1. **No trae bazo, páncreas, riñón ni timo de ave**, que son justo las
+   piezas que faltan. Trae pulmón, que sí sería una víscera nueva de una
+   especie nueva — es lo único aprovechable de todo lo que hay publicado.
+2. **Le faltan seis de los 41 que mide el motor**: vitamina D, vitamina E,
+   B12, folato, colina y yodo. Con esos seis en `sin_dato`, y siendo la
+   vitamina D y el yodo dos de los cinco topes duros de seguridad crónica,
+   un pulmón de pollo entraría al catálogo ciego justo donde más duele.
+
+El resto de lo publicado es peor: el estudio de metales en órganos de pollo
+(Sci. Total Environ. 1999) da once metales y fósforo y **ni una vitamina**;
+las vísceras de oca (Kokoszyński et al., *Foods* 2025) son otra vez hígado,
+molleja y corazón —que ya tenemos— con proximal y diez minerales, sin
+vitaminas, sin aminoácidos y sin ácidos grasos. Y una revisión reciente
+(*Edible Offal as a Valuable Source of Nutrients in the Diet*, 2024) lo dice
+con todas las letras: la información sobre despojos de ave es la más escasa
+de todas.
+
+**Conclusión, y es la misma a la que llegó `accesibles.py` el 5 de agosto
+por otro camino**: no es que no se haya buscado bien. Es que esos órganos no
+se separan ni se venden, así que nadie los ha analizado con la profundidad
+que necesita una ficha. Lo único con recorrido real es **el pulmón de pollo
+del estudio coreano**, y aun ese entraría con seis huecos, dos de ellos de
+seguridad. Decidir si compensa es una decisión, no un dato que falte.
+
+- [ ] **Queda entonces el problema de verdad, y no se arregla con datos**:
+      la categoría Vísceras solo tiene DOS especies —bovino (ternera/vaca,
+      que para `exclusiones.py` son la misma) y ovino— y es un pilar
+      obligatorio con un mínimo del 2 %. Un perro alérgico a las dos se
+      queda sin ninguna, y lo único que puede hacer el motor es bajar un
+      peldaño de la escalera de relajación y decirlo. Las salidas son de
+      producto, no de catálogo: (a) admitir el cerdo, que sí tiene bazo,
+      páncreas, riñón y cerebro publicados en las tres bases —hoy queda
+      fuera y además el TVT Merkblatt 181 bloquea el cerdo crudo—, o (b)
+      aceptar que con esas dos alergias el menú va sin víscera y decirlo
+      claro. Es una decisión, no un dato que falte.
+- [ ] ⚠️ **DECISIÓN TUYA: el timo y el pulmón «de ternera» tampoco son de
+      ternera, y aquí NO es cosmético.** Encontrado el 7 de septiembre al
+      barrer todas las fichas «de ternera» contra las dos fichas de USDA
+      (vaca y ternera) después de descubrir lo del cerebro:
+
+      | ficha | coincide con VACA | con TERNERA |
+      |---|---|---|
+      | `Timo de ternera` | **11 de 11** | 0 de 11 |
+      | `Pulmón de ternera` | **10 de 11** | 2 de 11 |
+      | `Riñón de ternera` | 1 de 11 | 2 de 11 → se queda como está |
+      | `Lengua de ternera` | 0 | 0 → viene de otra fuente, no de USDA |
+
+      **Y la diferencia es enorme, no un decimal.** El timo:
+
+      | | catálogo | vaca (FDC 170194) | ternera (FDC 172542) |
+      |---|---|---|---|
+      | energía | 236 | **236** | 101 |
+      | grasa | 20,35 | **20,35** | 3,07 |
+      | proteína | 12,17 | **12,18** | 17,21 |
+
+      Si alguien lee «timo de ternera» y compra mollejas de ternera —que es
+      lo que se vende en España— está dando un alimento con **la séptima
+      parte de la grasa y menos de la mitad de las calorías** que el menú
+      creía. Eso descuadra la ración de verdad, no es una etiqueta.
+
+      **Las dos salidas son válidas y la decisión no es de datos:**
+      1. **Renombrar a `Timo de vaca` y `Pulmón de vaca`**, como ya se hizo
+         con el bazo y el páncreas en agosto. Los datos se quedan como
+         están, que son correctos. Cuesta: 27 + 72 referencias en
+         `catalogo_menus.json` (renombrado consistente, los menús siguen
+         siendo válidos y `_garantizar_verificado` los revisa igual).
+      2. **Dejar el nombre y cambiar los datos** a los de ternera (FDC
+         172542 y 174361), porque las mollejas de ternera son lo que la
+         gente encuentra en la carnicería. Cuesta: dos fichas rehechas, y
+         los menús precalculados que las lleven cambian de perfil.
+
+      La 1 es más fiel al dato; la 2 es más fiel a lo que se compra. No la
+      tomo yo.
+- [ ] **Hígado de cerdo**: única pieza que falta en esa categoría. Fuera de
+      esta ronda a propósito — el 7 de septiembre se decidió no meter nada
+      de cerdo.
 
 Los pescados (20) no se ven afectados por las alergias a mamíferos, y por
 eso la escalera de relajación funciona: casi siempre queda pescado.
@@ -305,9 +472,61 @@ conversión de la vitamina E sale de la tabla de bioequivalencia de la
 página 63 de ese mismo PDF — **d-α-tocoferol 1 mg = 1,49 UI**, de donde
 1 UI = 0,671 mg. Eso es comparar contra FEDIAF, no inventar datos.
 
+### La premisa de esa regla caducó, y así queda (7 de septiembre)
+
+Lo que hacía falta que decidiera una persona no era «tocar el catálogo»:
+era que el asistente **no podía abrir la ficha original** y tiraba de
+buscadores y espejos, que redondean y no coinciden entre sí. Eso ya no es
+cierto. Las tres fuentes de `Bases.md` se leen enteras desde una sesión:
+
+| Fuente | Cómo se lee | Qué publica y qué no |
+|---|---|---|
+| **BEDCA** (primaria) | Su servicio público (`bedca.net/bdpub/procquery.php`, XML) | Macros, minerales **y yodo**. Ácidos grasos uno a uno **solo en algunas fichas**. **Ni un aminoácido, ni colina** |
+| **CIQUAL** | La tabla 2020 entera, un `.xls` de 3,6 MB, en local | Macros, minerales, yodo **y todos los ácidos grasos**, ficha por ficha. **Ningún aminoácido** |
+| **USDA** | El volcado oficial de SR Legacy, un `.zip` de 6 MB, en local | Todo, **incluidos los 12 aminoácidos y la colina**. **No publica yodo** |
+
+Dos cosas que salieron de leerlas de verdad y que conviene no volver a
+aprender:
+
+1. **Ninguna base tiene los 41 nutrientes.** BEDCA tiene yodo pero ni un
+   aminoácido; USDA tiene los aminoácidos pero no el yodo; CIQUAL tiene los
+   ácidos grasos pero tampoco aminoácidos. Una ficha completa **hay que
+   armarla con las tres**, y los huecos del catálogo están, casi todos,
+   justo donde ninguna llegaba. No son fallos de copia.
+2. **BEDCA distingue «midieron 0» de «no hay cifra», y esa distinción se
+   pierde al volcarla a una tabla.** Cada celda lleva un `value_type`: `AR`
+   con un 0 es un cero medido; `TR` con la celda vacía es que no hay
+   número. Al pasarlo a un CSV el `TR` vacío se convierte en 0 y ya nadie
+   sabe que no era una medida. Seis de los huecos cerrados el 7 de
+   septiembre (tiamina de la calabaza, vitE de pera, calabacín y nabo…)
+   son exactamente eso, y hoy se resuelven mirando el `value_type`.
+
+**Y se midió cuánto de bien está copiado el catálogo, porque la pregunta se
+hizo en voz alta.** De las 12 fichas que citan un FDC de USDA que se puede
+abrir y confirmar que es el mismo alimento, en las cinco donde la ficha
+**entera** sale de ese registro —molleja de pollo, molleja de pavo, hígado
+de cordero, timo de ternera, hígado de pato— coinciden **153 de 156 celdas,
+el 98,1 %**, y tres de las cinco al decimal. La copia y la conversión de
+unidades están bien hechas. De las 52 celdas cerradas ese día, **ninguna
+era un número mal copiado: las 52 eran ceros**.
+
+Lo que **no** ha cambiado: un valor que la fuente no publica sigue sin
+inventarse, y una discrepancia con un valor YA declarado **no se corrige
+sola** — eso es corregir, no rellenar, y lo decide una persona (ver las dos
+del cerebro de ternera y el araquidónico del pavo, arriba).
+
 ### `DATOS_QUE_FALTAN.md`
 
-Generado por `auditar_catalogo.py`: **57 alimentos y 431 valores** por
+⚠️ **CORREGIDO el 8 de septiembre**: aquí ponía «Generado por
+`auditar_catalogo.py`: 57 alimentos y 431 valores». Lo primero es falso —
+**ningún código escribe ese archivo**, la auditoría encuentra los huecos
+pero el documento se mantiene a mano — y por eso lo segundo también se
+quedó viejo: seguía pidiendo datos de los seis alimentos que salieron del
+catálogo el 27 de agosto (los testículos de cordero, las dos harinas de
+hueso, el Kelp, y los aceites de salmón de Pets Purest y Brit Care).
+Pedir datos de un alimento retirado manda a una persona a buscar un número
+que, aunque lo encuentre, no se puede usar. Limpiado: hoy son
+**53 alimentos y 330 valores** por
 conseguir, cada uno con su unidad y una casilla vacía. Está pensado para
 llevarlo a BEDCA o CIQUAL y rellenarlo, y entonces sí pasárselo al
 asistente para que lo inserte con el formato correcto.
@@ -695,4 +914,35 @@ real es 1,1-2,3 y no 1,1-1,5, y la fuente no dice que los factores estén
 "deprecados") son sobre la documentación interna de `canislab-fuentes`,
 no sobre nada implementado aquí — no había ningún factor de enfermedad
 en el código al que esa cita pudiera aplicar.
+
+## 12. Ratio vitamina E / AGPI de NRC 2006 — real, no implementado, no urgente (7 de septiembre)
+
+Leyendo NRC 2006 buscando el máximo de fósforo (punto 4 de arriba) apareció
+otra frase, en otro sitio del mismo libro, que no tiene nada que ver con el
+fósforo: *"A ratio of at least 0.6 mg of tocopherol per gram of PUFA in the
+diet should be maintained"* (línea 21885 de `nrc2006.txt`). Es un requisito
+real, cuantificable, y esta app no lo comprueba en ningún sitio hoy: no está
+en `verificar.MAPA`, no está en el solver, no está en `seguridad.py`.
+
+Antes de proponer añadirlo se probó contra el solver de verdad, en vez de
+razonar solo con la fórmula: ~30 menús variados (raza pequeña y gigante,
+cachorro sin pescado, artrosis con aceite de pescado forzado, adulto
+estándar...), calculando en cada uno mg de vitamina E ÷ g de AGPI totales
+(linoleico + linolénico + araquidónico + EPA + DHA). El peor ratio
+encontrado fue ~1,19 — por encima de 0,6 en todos los casos reales, aunque
+tres de los aceites de salmón del catálogo tengan vitE=0 en `sin_dato` por
+separado (con AGPI alto): el resto del menú siempre aporta suficiente
+vitamina E para compensar.
+
+**Conclusión: el ratio existe y es real, pero hoy no aprieta ningún menú de
+Rawku.** No se ha implementado como restricción nueva porque añadir un
+suelo global sin verlo fallar nunca en la práctica es el tipo de cambio que
+esta sesión decidió evitar (ver la advertencia de arriba sobre organizar el
+git primero) — queda aquí escrito para que quien siga sepa que la fuente
+existe y el número exacto, por si el catálogo cambia lo suficiente (más
+aceites muy concentrados en AGPI con vitE=0, por ejemplo) como para que
+empiece a importar. Si se implementa, va como suelo genérico en
+`topes_de_patologias()` o como comprobación transversal en
+`_garantizar_verificado()`, no como tope de una patología concreta: NRC lo
+da para todos los perros, no para un diagnóstico.
 

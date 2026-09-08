@@ -1022,17 +1022,47 @@ for _cuantos in (1, 3):
             #
             # Medido con el mecanismo apagado: la proteína salía IDÉNTICA en
             # los tres menús, 3 de 3 intentos. Con él, tres distintas.
-            if _cuantos > 1 and len(_p.get("menus") or []) > 1:
-                _proteinas = []
-                for _mm in _p["menus"]:
+            #
+            # ⚠️ SI COINCIDEN, SE VUELVE A PEDIR UNA VEZ, y esto no es aflojar
+            # la prueba (7 septiembre). La rotación NO es una exclusión dura:
+            # `motor_completo.py` solo PENALIZA la especie del menú anterior
+            # en el objetivo, a propósito -- una exclusión dura e invisible
+            # podía dejar sin menú a un perro que nunca pidió evitar nada. Al
+            # ser blanda, que los tres menús caigan en la misma especie es
+            # RARO pero posible, y esta prueba lo daba por fallo: saltó una
+            # vez con los tres menús de Nala en Pavo, y al repetir el mismo
+            # caso cuatro veces seguidas salieron doce proteínas distintas y
+            # ninguna repetición. Una prueba que falla sola de vez en cuando
+            # se acaba ignorando, y entonces tampoco avisa cuando importa.
+            #
+            # Lo que NO cambia es su fuerza: con el mecanismo apagado la
+            # proteína sale idéntica SIEMPRE (3 de 3 medido), así que dos
+            # intentos independientes coincidiendo los dos siguen delatándolo.
+            # Lo que se elimina es el falso positivo de una coincidencia
+            # aislada, que no prueba nada.
+            def _proteinas_de_b11(perro):
+                out = []
+                for _mm in perro.get("menus") or []:
                     _carnes = [(n, g) for n, g in (_mm.get("menu") or {}).items()
                                if al.get(n, {}).get("categoria") == "Carne muscular"]
                     if _carnes:
-                        _proteinas.append(especie_de(max(_carnes, key=lambda x: x[1])[0]))
+                        out.append(especie_de(max(_carnes, key=lambda x: x[1])[0]))
+                return out
+
+            if _cuantos > 1 and len(_p.get("menus") or []) > 1:
+                _proteinas = _proteinas_de_b11(_p)
                 if len(_proteinas) > 1 and len(set(_proteinas)) == 1:
-                    fallos.append(f"BLOQUE11 {_caso}: los {_cuantos} menús de "
-                                  f"{_p.get('nombre')} llevan la MISMA proteína "
-                                  f"({_proteinas[0]}) — la rotación no está haciendo nada")
+                    _otra_b11 = _pedir_casa(_perros, _noms, cuantos=_cuantos)
+                    _mismo_b11 = next((x for x in (_otra_b11.get("perros") or [])
+                                       if x.get("nombre") == _p.get("nombre")), None)
+                    _seg_b11 = _proteinas_de_b11(_mismo_b11) if _mismo_b11 else []
+                    if len(_seg_b11) > 1 and len(set(_seg_b11)) == 1:
+                        fallos.append(
+                            f"BLOQUE11 {_caso}: los {_cuantos} menús de {_p.get('nombre')} "
+                            f"llevan la MISMA proteína DOS VECES SEGUIDAS ({_proteinas[0]} y "
+                            f"luego {_seg_b11[0]}) — la rotación no está haciendo nada. Una "
+                            f"coincidencia suelta es posible (la penalización es blanda); dos "
+                            f"seguidas es el mecanismo apagado.")
 
 # (4) un alérgeno NO se cuela por parecerse.
 #
@@ -1645,6 +1675,19 @@ _CASOS_B14 = [
     {"der_objetivo": 450, "peso_perro_kg": 6, "etapa_requisitos": "Adulto",
      "especies_excluidas": ["pollo", "pavo", "conejo"],
      "categorias_excluidas": ["Hueso carnoso"]},
+    # ⚠️ AÑADIDOS EL 7 DE SEPTIEMBRE, los perros MÁS pequeños del catálogo.
+    # El suelo de "esto se puede pesar" se recortaba contra el techo del
+    # propio alimento (`min(porcion, techos[i])`), y el techo de un Extra
+    # sale de la dosis del FABRICANTE: en un perro diminuto esa dosis puede
+    # ser de medio gramo, y entonces el suelo se quedaba por debajo del
+    # gramo -- que es exactamente lo que esta restricción existe para
+    # impedir. Ahora el suelo nunca baja de 1 g y el propio MILP deja fuera
+    # al alimento del que no cabe ni un gramo. Aquí es donde asomaría.
+    {"der_objetivo": 140, "peso_perro_kg": 1.0, "etapa_requisitos": "Adulto"},
+    {"der_objetivo": 140, "peso_perro_kg": 1.0, "etapa_requisitos": "Adulto",
+     "especies_excluidas": ["pollo", "pavo", "vacuno"]},
+    {"der_objetivo": 300, "peso_perro_kg": 3, "etapa_requisitos": "Adulto",
+     "especies_excluidas": ["pollo", "pavo"]},
 ]
 
 _menus_b14 = 0
@@ -2097,10 +2140,37 @@ else:
 #
 # La de arriba no basta como vigilancia: depende del azar y solo saltaba
 # 1 de cada 12 veces. Esta va con SEMILLA FIJA, así que es determinista.
-# MEDIDO con el fallo puesto: 16 de 30 semillas tiraban el pescado
-# preferido; con el arreglo, ninguna de estas cinco. (La semilla 9 lo
-# tira de las dos formas: ahí es por otro motivo, y preferir es una
-# preferencia, no una imposición -- por eso no está en la lista.)
+#
+# ⚠️ REANCLADA EL 7 DE SEPTIEMBRE, y al medirla se vio que casi no
+# vigilaba. Las semillas eran (1, 3, 7, 15, 22) y se volvieron a medir las
+# 30, con el arreglo y con el fallo reintroducido a mano:
+#
+#     con el arreglo puesto      28 de 30 conservan el boquerón
+#     con el fallo reintroducido 20 de 30
+#
+# O sea que las semillas que DISTINGUEN una cosa de la otra son ocho:
+# 2, 3, 4, 5, 12, 17, 20 y 26. De las cinco que había, sólo la 3 estaba en
+# esa lista; las otras cuatro conservaban el pescado con el fallo puesto y
+# sin él, así que no habrían cazado nada. Y la 7 lo tira de las dos formas
+# --como la 9, que ya estaba documentada así-- porque ahí se caen DOS
+# preferidos a la vez (el boquerón y la carcasa de pollo) y el motivo no es
+# la penalización: preferir es una preferencia, no una imposición.
+#
+# Ahora van las cinco primeras de las que sí distinguen. Si alguien vuelve
+# a romper la línea `and n not in preferidos`, las cinco se caen a la vez.
+#
+# ⚠️ Y SE REMIDE CADA VEZ QUE CAMBIA EL CATÁLOGO, porque las semillas no son
+# un número mágico: son un muestreo del azar del solver, y ese azar recorre
+# los alimentos que hay. Van dos remedidas seguidas para que quede claro:
+#   · 7 sep, al darle su DHA real al cerebro: el motor encontraba menús sin
+#     pescado y sólo 2 de 30 semillas conservaban el boquerón. Se sacó el
+#     cerebro del automático y volvió a 28 de 30.
+#   · 8 sep, al partir timo, pulmón y cerebro en vaca y ternera (tres
+#     alimentos nuevos): conservan 27 de 30 con el arreglo y 15 de 30 con el
+#     fallo reintroducido, así que las que DISTINGUEN son doce -- 1, 2, 3, 7,
+#     8, 15, 19, 21, 24, 27, 28 y 29. Van las cinco primeras.
+# Si esta prueba se cae después de tocar el catálogo, lo primero no es
+# sospechar del motor: es volver a medir las 30 con y sin el fallo.
 _al_b17, _req_b17 = _api.cargar_v2()
 _PREFERIR_B17 = [n for n in ["Boquerón", "Carcasa de pollo", "Hígado de ternera",
                              "Corazón de ternera", "Calabacín", "Aceite de girasol"]
@@ -2108,7 +2178,7 @@ _PREFERIR_B17 = [n for n in ["Boquerón", "Carcasa de pollo", "Hígado de terner
 if "Boquerón" not in _PREFERIR_B17:
     fallos.append("BLOQUE17: el boquerón ya no está en el catálogo; hay que reanclar esta prueba.")
 else:
-    for _sem_b17 in (1, 3, 7, 15, 22):
+    for _sem_b17 in (1, 2, 3, 7, 8):
         _ok_b17, _g_b17 = _api.resolver_v2(
             1040.0, "Adulto", _al_b17, _req_b17, 20.0, _api.dosis_maxima_fabricante,
             margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=12,
@@ -2384,6 +2454,46 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # solver no lo usa en ninguno de los 21 menús automáticos con ninguno
     # de los tres calcios, y forzando 5 g el Ca:P del menú se mueve 0,08.
     ("DUDOSO", "Semilla de sésamo"),
+    # ⚠️ AÑADIDOS EL 7 DE SEPTIEMBRE, y los tres los encontró el detector
+    # automático de ceros sospechosos nuevo, no una lista a mano.
+    #
+    # Los dos [DUDOSO] son el mismo caso y enseñan lo que pasa cuando la
+    # fuente PRIMARIA es la que falla. `Bases.md` fija el orden BEDCA ->
+    # CIQUAL -> USDA, y la regla es que un dato de la primaria no se
+    # sobrescribe con uno de la secundaria. Pero aquí BEDCA da 0 y no cuela:
+    #   · Canónigos, folato: BEDCA 2379 da 0 µg citando Moreiras 2001;
+    #     CIQUAL 20099 ("Mâche, crue") mide 45,5. Los canónigos son de las
+    #     hojas más ricas en folato que se comen -- ese 0 casi seguro es un
+    #     dato AUSENTE que la tabla de origen escribió como cero.
+    #   · Pipa de calabaza, folato: BEDCA 2204 da 0 µg y CITA A USDA como
+    #     fuente -- pero USDA FDC 170556 da 58. La propia fuente que BEDCA
+    #     dice estar copiando la contradice.
+    # No se toca el valor (sería sobrescribir la primaria): se marcan en
+    # `dato_dudoso`, salen junto al menú y lo decide una persona. El folato
+    # no tiene techo, así que el 0 solo INFRAvalora el alimento.
+    ("DUDOSO", "Canónigos"), ("DUDOSO", "Pipa de calabaza"),
+    # ⚠️ EL [OMEGA] DEL CEREBRO: SE PUSO, SE QUITÓ Y VOLVIÓ, TODO EN DOS
+    # DÍAS. Es la mejor historia que hay aquí sobre cómo se cuela un error
+    # de especie, así que va entera.
+    #
+    #   7 sep, mañana. Se completa "Cerebro de ternera" con BEDCA 1047 y
+    #     salta este aviso: linolénico 0,048 por encima del linoleico
+    #     0,036. Se le busca una explicación razonable ("es el órgano que
+    #     concentra omega-3") y se apunta aquí como conocido.
+    #   7 sep, tarde. La ficha resulta ser de VACA -- coincide celda a celda
+    #     con USDA FDC 168622 -- y BEDCA 1047 son "Sesos de TERNERA". O sea
+    #     que el aviso no estaba señalando una rareza del cerebro: estaba
+    #     señalando que la ficha llevaba datos de dos animales distintos.
+    #     Rehecha con su fuente real, el aviso desaparece.
+    #   8 sep. La ficha se parte en dos y nace "Cerebro de ternera" de
+    #     verdad, con BEDCA 1047 entera. El aviso VUELVE, y ahora sí es
+    #     correcto: los dos números salen medidos de la misma ficha del
+    #     mismo animal, así que no puede ser una inversión de columnas.
+    #
+    # La lección: una explicación plausible para un aviso nuevo no es una
+    # comprobación. El aviso tuvo razón las dos veces -- primero sobre un
+    # error que yo acababa de meter, y ahora sobre un hecho real.
+    ("OMEGA", "Cerebro de ternera"),
 }
 
 import re as _re_b19
@@ -3293,12 +3403,15 @@ _al28 = {a["nombre"]: a for a in json.load(open("alimentos_v3_final.json", encod
 # filtrara por grasa, el día que alguien vuelva a poner la grasa a cero el
 # aceite se caería de la lista y la comprobación dejaría de aplicarse sola.
 _ACEITES_28 = [n for n, a in _al28.items() if a.get("categoria") == "Omega-3"]
-if len(_ACEITES_28) != 3:
+if len(_ACEITES_28) != 4:
     fallos.append(f"BLOQUE28a: hay {len(_ACEITES_28)} aceites en la categoría Omega-3 y tienen "
-                  f"que ser 3. Eran 5 hasta el 27 de agosto: se fueron Pets Purest (su EPA/DHA "
-                  f"solo aparece en fichas de marketing del fabricante, y es el más denso de "
-                  f"todos, así que el solver lo prefería) y Brit Care (su EPA/DHA no cuadra con "
-                  f"la única ficha localizable). Ver el BLOQUE 30.")
+                  f"que ser 4. Eran 5 hasta el 27 de agosto: se fueron Pets Purest (su EPA/DHA "
+                  f"solo aparecía en fichas de marketing del fabricante, y era el más denso de "
+                  f"todos, así que el solver lo prefería) y Brit Care (su EPA/DHA no cuadraba con "
+                  f"la única ficha localizable). El 7 de septiembre volvió Pets Purest, ahora "
+                  f"'Pets Purest Aceite de Salmón Escocés': la usuaria mandó la foto de la "
+                  f"etiqueta física del bote que tiene en casa, así que ya no es un dato de "
+                  f"marketing sin verificar. Brit Care sigue fuera. Ver el BLOQUE 30.")
 for _n28 in _ACEITES_28:
     _nu28 = _al28[_n28].get("nutrientes") or {}
     _ala = _nu28.get("linolenico") or 0
@@ -3667,10 +3780,13 @@ _FUERA_30 = {
         "su yodo varía hasta 100 veces entre lotes (Aakre 2021) y no salía en ningún menú. "
         "Quedan el yoduro potásico, donde el yodo es el 76,45% del peso por definición "
         "química, y el Seaweed Meal.",
-    "Pets Purest Aceite de Salmón":
-        "sus porcentajes de EPA/DHA solo aparecen en fichas de marketing del fabricante, "
-        "replicadas por revendedores. Y es el más denso de los cinco aceites, así que era "
-        "justo el que el solver prefería.",
+    # Pets Purest volvió el 7 de septiembre de 2026, como "Pets Purest Aceite de Salmón
+    # Escocés": la usuaria mandó la foto de la etiqueta física del bote que tiene en
+    # casa (Analytical Constituents + Nutritional Content, no una ficha de marketing de
+    # un revendedor), así que el motivo de la salida del 27 de agosto ya no aplica. Es
+    # el propio BLOQUE30 el que dice qué hacer en este caso: "si vuelve con una ficha
+    # que cuadre, quita esta comprobación". Se comprueba en el BLOQUE28a que sigue
+    # habiendo un aceite más en Omega-3 que los tres que quedaron tras el 27 de agosto.
     "Brit Care Aceite de Salmón":
         "su EPA/DHA (4,7 y 6) no cuadra con la única ficha localizable (2,5 y 3,5).",
 }
@@ -4910,24 +5026,39 @@ _CASOS_43 = [
     ("cachorro 4 meses", 549.0, "CachorroCrecimiento", 4.0, 9.0),
     ("toy 1,5 kg", 200.0, "Adulto", 1.5, None),
 ]
+# ⚠️ CADA CASO VA TRES VECES (8 septiembre). Con una sola tirada esto
+# dependía de la suerte: el fallo que destapó -- un menú del toy de 1,5 kg
+# en ROJO por el yodo -- salía 1 de cada 24 veces, así que la prueba lo
+# encontró por casualidad dentro de la batería completa y luego no
+# reproducía en aislado. El motivo era real y está arreglado (el margen del
+# suelo cubría el redondeo de UN alimento y un menú lleva varios; ahora
+# cubre tres, ver `FUENTES_QUE_PUEDEN_COINCIDIR` en motor_completo.py),
+# pero una prueba que solo caza 1 de cada 24 no es una prueba: es un
+# accidente afortunado. Con tres tiradas por caso la probabilidad de que se
+# escape pasa de 96 % a 88 %, y sobre todo el fallo queda ANCLADO -- si
+# alguien vuelve a bajar ese margen, esto se cae mucho antes.
 for _etq43, _der43, _etapa43, _peso43, _adulto43 in _CASOS_43:
     # Un segundo es MENOS de lo que tarda este equipo en demostrar el óptimo
     # (2-6 s), así que aquí siempre salta el límite: es imitar a Render sin
     # depender de lo rápido que vaya la máquina donde corra esto.
-    _ok43, _g43 = _resolver_43(_der43, _etapa43, al, req, _peso43, dosis_maxima_fabricante,
-                               margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
-                               time_limit=1.0, peso_adulto_esperado_kg=_adulto43)
-    if not _ok43:
-        fallos.append(f"BLOQUE43 {_etq43}: con el tiempo justo no sale menú. La solución "
-                      f"factible ya está calculada dentro del solver: tirarla es decirle a la "
-                      f"usuaria que no existe un menú que sí existe.")
-        continue
-    _f43 = verificar(_g43, al, req, _der43, _etapa43)
-    if _f43["semaforo"] != "verde":
-        fallos.append(f"BLOQUE43 {_etq43}: el menú que sale con el tiempo justo está en "
-                      f"{_f43['semaforo']}. Aceptar una solución sin demostrar que es la que "
-                      f"usa menos alimentos NO puede relajar ni un requisito: lo que se suelta "
-                      f"es el objetivo, no las restricciones.")
+    for _vuelta43 in range(3):
+        _ok43, _g43 = _resolver_43(_der43, _etapa43, al, req, _peso43, dosis_maxima_fabricante,
+                                   margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
+                                   time_limit=1.0, peso_adulto_esperado_kg=_adulto43)
+        if not _ok43:
+            fallos.append(f"BLOQUE43 {_etq43}: con el tiempo justo no sale menú. La solución "
+                          f"factible ya está calculada dentro del solver: tirarla es decirle a "
+                          f"la usuaria que no existe un menú que sí existe.")
+            continue
+        _f43 = verificar(_g43, al, req, _der43, _etapa43)
+        if _f43["semaforo"] != "verde":
+            _corto43 = [(x.get("nutriente"), x.get("cubre_pct")) for x in (_f43.get("faltan") or [])]
+            fallos.append(f"BLOQUE43 {_etq43}: el menú que sale con el tiempo justo está en "
+                          f"{_f43['semaforo']} {_corto43[:3]}. Aceptar una solución sin demostrar "
+                          f"que es la que usa menos alimentos NO puede relajar ni un requisito: "
+                          f"lo que se suelta es el objetivo, no las restricciones. Mira el margen "
+                          f"del suelo contra el redondeo (FUENTES_QUE_PUEDEN_COINCIDIR).")
+            break
 
 # Y lo que de verdad no tiene solución sigue sin tenerla: aceptar la
 # solución guardada no puede convertir un imposible en un menú.
@@ -5240,6 +5371,368 @@ elif _auto_ultimo45.get("peldano") != "tope_maximo_de_visceras_higado_y_verdura"
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
+
+# BLOQUE 46 — UN CERO MUDO SE DELATA SOLO, SIN LISTA QUE MANTENER
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (7 septiembre). El aviso de datos incompletos dependía
+# entero de `sin_dato`, una lista que se rellena A MANO ficha por ficha. Si
+# alguien mete un alimento nuevo y se olvida de declarar un hueco, ese hueco
+# vale CERO para el motor y no avisa nadie: el menú sale verde igual.
+#
+# El caso que lo demuestra es el peor posible y era real hasta hoy: el
+# "Aceite de hígado de bacalao" entraba en el solver con EPA = 0 y DHA = 0.
+# La fuente de omega-3 más densa del catálogo era invisible, y ninguna
+# comprobación lo veía porque el resto de sus ceros SÍ estaban declarados.
+#
+# Ahora `auditar_catalogo.py` lo deduce del propio catálogo: si el 90 % de
+# los alimentos de una categoría tienen un nutriente y uno lo tiene a cero
+# sin declarar, eso se dice. No hay lista que mantener -- el criterio crece
+# solo cuando entra un alimento nuevo.
+#
+# ESTA PRUEBA NO SE CONFORMA CON VER QUE SALE LIMPIA. Una comprobación que
+# solo se ha visto pasar no se ha visto funcionar. Así que PLANTA el fallo
+# en una copia del catálogo y exige que la auditoría lo encuentre. Si el día
+# de mañana alguien rompe el detector, esta mitad se cae aunque la otra siga
+# en verde.
+print("=== BLOQUE 46: el detector de ceros mudos, probado con el fallo puesto ===")
+
+import json as _json_b46, subprocess as _sp_b46, tempfile as _tmp_b46, os as _os_b46
+
+_dir_b46 = _os_b46.path.dirname(_os_b46.path.abspath(__file__))
+
+def _auditar_b46(ruta_catalogo):
+    _env = dict(_os_b46.environ, CANISLAB_CATALOGO=ruta_catalogo)
+    _r = _sp_b46.run([sys.executable, "auditar_catalogo.py"], capture_output=True,
+                     text=True, cwd=_dir_b46, env=_env)
+    if _r.returncode not in (0, 1):
+        return None, _r.stderr[-400:]
+    return [l for l in _r.stdout.splitlines() if "[SOSPECHOSO]" in l], None
+
+# ── mitad 1: con el catálogo de verdad no puede sonar nada ────────────
+_vivos_b46, _err_b46 = _auditar_b46(_os_b46.path.join(_dir_b46, "alimentos_v3_final.json"))
+if _err_b46:
+    fallos.append(f"BLOQUE46: auditar_catalogo.py ha reventado:\n{_err_b46}")
+elif _vivos_b46:
+    fallos.append(
+        f"BLOQUE46: {len(_vivos_b46)} ceros mudos en el catálogo. Cada uno es un nutriente "
+        f"que vale 0 para el motor sin que nadie haya comprobado que de verdad sea 0. "
+        f"O se rellena con su fuente, o se declara en `sin_dato`, o -- si el cero es real "
+        f"y se ha ido a mirar -- se escribe en `cero_verificado` con la fuente al lado:\n    "
+        + "\n    ".join(l.strip()[:110] for l in _vivos_b46[:6]))
+
+# ── mitad 2: con el fallo plantado TIENE que sonar ────────────────────
+# Se vacía UN nutriente de UN alimento: el perfil exacto del fallo real, una
+# ficha por lo demás completa con un solo cero mudo.
+#
+# ⚠️ LA VÍCTIMA SE ELIGE SOLA, y no es comodidad. La primera versión de esta
+# prueba escogió a dedo la tiamina del hígado de vaca y NO saltaba: el
+# hígado de cordero también tiene la tiamina a cero, así que al vaciar la de
+# otro quedaban 4 de 5 = 80 % y no se llegaba al 90 % del umbral. O sea que
+# la prueba no fallaba porque el detector estuviera roto, sino porque la
+# víctima elegida a mano no servía -- y eso mismo puede volver a pasar cada
+# vez que cambie el catálogo. Buscándola aquí, se coge una que de verdad
+# cumpla la condición HOY, y la prueba no caduca.
+_cat_b46 = _json_b46.load(open(_os_b46.path.join(_dir_b46, "alimentos_v3_final.json"),
+                               encoding="utf-8"))
+_SUPL_B46 = ("Multivitamínico", "Vitamina B", "Hierro", "Calcio", "Yodo", "Fibra", "Omega-3")
+_grupos_b46 = {}
+for _a_b46 in _cat_b46:
+    if (_a_b46.get("categoria") not in _SUPL_B46
+            and (_a_b46.get("nutrientes") or {}).get("grasa", 0) <= 80):
+        _grupos_b46.setdefault(_a_b46["categoria"], []).append(_a_b46)
+
+_victima_b46 = _clave_b46 = None
+for _cat_n_b46, _g_b46 in sorted(_grupos_b46.items()):
+    if len(_g_b46) < 5:
+        continue
+    for _k_b46 in sorted((_g_b46[0].get("nutrientes") or {})):
+        # todos los de la categoría lo tienen: quitárselo a uno lo deja como
+        # la única excepción, que es justo lo que el detector busca
+        if all((_x.get("nutrientes") or {}).get(_k_b46) for _x in _g_b46):
+            _victima_b46, _clave_b46 = _g_b46[0], _k_b46
+            break
+    if _victima_b46:
+        break
+
+if not _victima_b46:
+    fallos.append("BLOQUE46: no se ha encontrado ningún nutriente que TODOS los alimentos "
+                  "de alguna categoría tengan, así que no se puede plantar el fallo. O el "
+                  "catálogo ha cambiado mucho, o esta prueba hay que reescribirla.")
+else:
+    _victima_b46["nutrientes"][_clave_b46] = 0
+    _victima_b46["sin_dato"] = [k for k in (_victima_b46.get("sin_dato") or [])
+                                if k != _clave_b46]
+
+    with _tmp_b46.NamedTemporaryFile("w", suffix=".json", delete=False,
+                                     encoding="utf-8") as _f_b46:
+        _json_b46.dump(_cat_b46, _f_b46, ensure_ascii=False)
+        _roto_b46 = _f_b46.name
+    try:
+        _con_fallo_b46, _err2_b46 = _auditar_b46(_roto_b46)
+        if _err2_b46:
+            fallos.append(f"BLOQUE46: la auditoría revienta con el catálogo "
+                          f"plantado:\n{_err2_b46}")
+        elif not any(_victima_b46["nombre"] in l and _clave_b46 in l
+                     for l in (_con_fallo_b46 or [])):
+            fallos.append(
+                f"BLOQUE46: se ha vaciado «{_clave_b46}» de «{_victima_b46['nombre']}» SIN "
+                f"declararlo -- y lo tienen TODOS los demás de su categoría -- y el detector "
+                f"de ceros mudos no ha dicho nada. Está roto o desactivado, y con él la única "
+                f"red que queda cuando alguien se olvida de rellenar `sin_dato`.")
+    finally:
+        _os_b46.unlink(_roto_b46)
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 47 — EL ÚLTIMO CAMINO QUE ENTREGABA MENÚS SIN VERIFICAR
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (7 septiembre). La regla 1 del CLAUDE.md dice que TODO
+# camino que devuelva un menú pasa por `_garantizar_verificado()`. Había
+# una excepción, y llevaba abierta desde el 20 de agosto: los menús
+# guardados. La tabla `menus` almacenaba nombre, gramos y kcal, y nada
+# más -- sin la etapa ni el DER contra los que se verificó, ese menú no se
+# podía verificar NI SIQUIERA EN PRINCIPIO. No faltaba código: faltaba el
+# dato. Se devolvía con `verificado: false` y un aviso, que era honesto
+# pero dejaba en manos de quien llamara el acordarse. Y un aviso se puede
+# ignorar; es la misma razón por la que los topes de seguridad crónica son
+# restricciones duras y no avisos.
+#
+# Ahora el contexto se guarda CON el menú y aquí se verifica de cero. Se
+# comprueban los tres desenlaces, porque el que importa es el del medio:
+# un menú que se guardó bueno puede haber dejado de cumplir si el catálogo
+# cambió debajo, y eso solo se ve verificándolo otra vez.
+print("=== BLOQUE 47: los menús guardados se verifican al leerlos ===")
+
+import tempfile as _tmp_b47, os as _os_b47
+import persistencia as _pers_b47
+
+_db_b47 = _os_b47.path.join(_tmp_b47.mkdtemp(), "b45.db")
+_pers_b47.crear_tablas(_db_b47)
+_pid_b47 = _pers_b47.guardar_perro({"nombre": "B45", "tamano": "mediano"}, ruta_db=_db_b47)
+
+_r_b47 = _c.post("/menu/v2", json={"nombres_alimentos": [], "modo": "automatico",
+                                   "der_objetivo": 1100, "peso_perro_kg": 20,
+                                   "etapa_requisitos": "Adulto"}).json()
+if not _r_b47.get("factible"):
+    fallos.append("BLOQUE47: no se pudo generar el menú de partida.")
+else:
+    _ctx_b47 = {"etapa_requisitos": "Adulto", "der_objetivo": 1100, "peso_perro_kg": 20}
+    _pers_b47.guardar_menu(_pid_b47, "bueno", {"gramos": _r_b47["menu"], "kcal_total": 1100},
+                           contexto=_ctx_b47, ruta_db=_db_b47)
+    # sin contexto: es como se guardaban antes del 7 de septiembre
+    _pers_b47.guardar_menu(_pid_b47, "viejo", {"gramos": _r_b47["menu"], "kcal_total": 1100},
+                           ruta_db=_db_b47)
+    # ⚠️ EL FALLO PLANTADO: medio kilo de pollo a secas. Tiene contexto, así
+    # que se verifica -- y no cumple ni de lejos (sin hueso no hay calcio).
+    # Si esto sale `verificado: true`, es que no se está verificando nada.
+    _pers_b47.guardar_menu(_pid_b47, "roto",
+                           {"gramos": {"Pollo con piel (sin hueso)": 500}, "kcal_total": 1100},
+                           contexto=_ctx_b47, ruta_db=_db_b47)
+
+    _real_b47 = _pers_b47.obtener_menus
+    _pers_b47.obtener_menus = lambda _p, ruta_db=_db_b47: _real_b47(_p, ruta_db=_db_b47)
+    try:
+        _por_nombre_b47 = {m["nombre"]: m for m in _api.endpoint_obtener_menus(_pid_b47)}
+    finally:
+        _pers_b47.obtener_menus = _real_b47
+
+    _bueno_b47 = _por_nombre_b47.get("bueno") or {}
+    if _bueno_b47.get("verificado") is not True or not _bueno_b47.get("ficha"):
+        fallos.append(f"BLOQUE47: un menú guardado que SÍ cumple vuelve como "
+                      f"verificado={_bueno_b47.get('verificado')!r} y "
+                      f"{'con' if _bueno_b47.get('ficha') else 'SIN'} ficha. Tenía que "
+                      f"volver verificado y con su ficha recalculada.")
+
+    _viejo_b47 = _por_nombre_b47.get("viejo") or {}
+    if _viejo_b47.get("verificado") is not None or not _viejo_b47.get("aviso"):
+        fallos.append("BLOQUE47: un menú SIN contexto (guardado antes del 7 de septiembre) "
+                      "tiene que volver con verificado=None y su aviso. No se puede "
+                      "verificar contra nada, y fingir que sí es peor que decirlo.")
+
+    _roto_b47 = _por_nombre_b47.get("roto") or {}
+    if _roto_b47.get("verificado") is not False:
+        fallos.append(
+            f"BLOQUE47: medio kilo de pollo sin hueso ha vuelto como "
+            f"verificado={_roto_b47.get('verificado')!r}. Ese menú no cumple ni el calcio "
+            f"ni el Ca:P, así que o no se está verificando o el filtro lo deja pasar. Es "
+            f"la regla 1: preferimos no dar menú a dar uno que no cumple.")
+    elif _roto_b47.get("alimentos"):
+        fallos.append("BLOQUE47: el menú que NO cumple ha vuelto con sus gramos dentro. "
+                      "Un menú rechazado no se entrega: se dice por qué y se regenera.")
+# BLOQUE 48 — LA CASA DE VARIOS PERROS DA LOS MENÚS QUE SE PIDEN
+# ============================================================
+#
+# ⚠️ CASO REAL, abierto desde el 27 de agosto: la casa de dos perros
+# pidiendo 3 menús devolvía 1 para cada uno, sin error y sin aviso.
+#
+# El análisis de entonces llegó hasta la aritmética y era correcto:
+#
+#     ronda 0: primer menú de la base 12 s + amoldar 4 s = 16 s
+#     ronda 1: menú 6 s + amoldar 4 s                    = 10 s
+#     ronda 2: otros                                     = 10 s
+#                                        TOTAL 36 s, presupuesto 24
+#
+# La conclusión fue "con dos perros y tres menús no cabe, nunca". Pero esos
+# 12, 6 y 4 son TOPES, no costes: `presupuesto_segundos` es un techo y el
+# solver vuelve en cuanto encuentra solución. La propia nota lo decía sin
+# sacarle la consecuencia: "la petición tarda 9-15 s de los 24".
+#
+# Lo que fallaba no era el presupuesto: era la DECISIÓN de seguir. Se
+# preguntaba "¿caben otros 10 s en el peor caso?" aunque la ronda anterior
+# hubiera costado 3. Ahora se mide lo que ha costado de verdad.
+#
+# ⚠️ Y LA PRUEBA MIDE LAS DOS VERSIONES EN LA MISMA MÁQUINA Y EL MISMO
+# RATO, que es la única forma de que signifique algo. La primera versión de
+# este bloque comparaba contra un número apuntado a mano ("al menos 2 de 4
+# tiradas dan 3 menús") y se caía dentro de la batería completa aunque en
+# aislado diera [3,3,2,3,3]: con la máquina cargada las rondas cuestan más,
+# la estimación sube -- que es lo CORRECTO -- y salen menos menús. O sea que
+# la prueba medía lo ocupada que estaba la máquina, no si el arreglo está.
+# Con el interruptor `_PEOR_CASO_SIEMPRE_SOLO_PRUEBAS` las dos versiones
+# corren seguidas y se comparan entre ellas.
+print("=== BLOQUE 48: varios perros, los menús que se piden ===")
+
+_PRESU_REAL_B48 = _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS
+# Apretado a propósito: con los 24 s normales y una máquina libre las dos
+# versiones dan 3 menús y esto no probaría nada. El fallo solo asoma cuando
+# el reloj va justo, que es lo que pasa en Render.
+_api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = 14.0
+
+_PERROS_B48 = [
+    {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 900,
+     "etapa_requisitos": "CachorroJoven", "peso_perro_kg": 12,
+     "peso_adulto_esperado_kg": 25},
+    {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 1211,
+     "etapa_requisitos": "Adulto", "peso_perro_kg": 24.5},
+]
+
+def _tirada_b48():
+    _r = _c.post("/menu/varios-perros", json={
+        "perros": _PERROS_B48, "nombres": ["Kira", "Nala"],
+        "modo_conjunto": "parecidos", "numero_de_menus": 3}).json()
+    _n = [len(_p.get("menus") or []) for _p in (_r.get("perros") or [])]
+    return (min(_n) if _n else 0), _r
+
+try:
+    _midiendo_b48, _peor_b48, _mudas_b48 = [], [], []
+    for _k_b48 in range(3):
+        _api._PEOR_CASO_SIEMPRE_SOLO_PRUEBAS = False
+        _cuantos, _resp = _tirada_b48()
+        _midiendo_b48.append(_cuantos)
+        if _cuantos < 3 and not _resp.get("menus_pedidos_no_dados"):
+            _mudas_b48.append(_cuantos)
+
+        _api._PEOR_CASO_SIEMPRE_SOLO_PRUEBAS = True
+        _cuantos_p, _ = _tirada_b48()
+        _peor_b48.append(_cuantos_p)
+finally:
+    _api._PEOR_CASO_SIEMPRE_SOLO_PRUEBAS = False
+    _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = _PRESU_REAL_B48
+
+# Medir lo que cuesta no puede dar MENOS menús que suponer el peor caso: la
+# estimación medida nunca es mayor que el peor caso, así que nunca corta
+# antes. Si sale igual o peor, es que ha dejado de medirse.
+if sum(_midiendo_b48) <= sum(_peor_b48):
+    fallos.append(
+        f"BLOQUE48: midiendo lo que cuesta cada ronda salen {_midiendo_b48} menús y "
+        f"suponiendo el peor caso {_peor_b48} -- o sea que medir no está dando NINGUNA "
+        f"ventaja. La estimación medida nunca puede ser mayor que el peor caso, así que "
+        f"esto solo pasa si se ha vuelto a decidir por el tope. (Se comparan las dos en la "
+        f"misma máquina y seguidas, así que la carga afecta a las dos igual.)")
+if _mudas_b48:
+    fallos.append(
+        f"BLOQUE48: han salido menos menús de los 3 pedidos ({_mudas_b48}) y la respuesta NO "
+        f"trae `menus_pedidos_no_dados`. Recortar se puede; recortar EN SILENCIO es el fallo "
+        f"original -- pedías 3, recibías 1, y no había ni una palabra.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
+# BLOQUE 49 — EL MARGEN DEL SUELO CUBRE EL REDONDEO, NO UN PORCENTAJE
+# ============================================================
+#
+# ⚠️ CASO REAL, abierto desde el 28 de agosto: "el yodo de los perros muy
+# pequeños vive al 101 % del mínimo". Se apuntó como una molestia estética
+# y era algo peor: un menú que el solver daba por bueno y que el
+# verificador tiraba después.
+#
+# La causa está escrita en el propio motor. El suelo se pedía con un +1,5 %
+# (`lo = mn * der / 1000 * 1.015`), pero lo que ese margen tiene que cubrir
+# es el error del REDONDEO -- cada alimento se redondea a 2 decimales, o
+# sea hasta 0,005 g de menos por alimento -- y ese error es ABSOLUTO: no
+# escala con el tamaño del perro. Un porcentaje sí.
+#
+# La cuenta, con el yodo de un perro de 3 kg: el mínimo es 300 µg/1000 kcal
+# = 90 µg, así que el 1,5 % son 1,35 µg. Pero medio paso de redondeo del
+# yoduro potásico (800 µg/g, la fuente más concentrada del catálogo) mueve
+# 4 µg -- tres veces el margen. En un perro de 20 kg el mismo error
+# absoluto es el 0,6 % del mínimo y el porcentaje lo cubre de sobra; por
+# eso solo se veía en los pequeños.
+#
+# MEDIDO, 60 menús de cuatro perfiles pequeños (1,5 a 4,5 kg):
+#
+#                       yodo mínimo   mediana   bajo 102 %   menús caídos
+#     antes (solo %)         82 %      102 %      16 de 60        3
+#     ahora (% o redondeo)  100 %      106 %       2 de 60        0
+#
+# El 82 % es lo que importa: no es "poco margen", es un menú que NO CUMPLE
+# saliendo del solver. Lo paraba `_garantizar_verificado` -- la regla 1
+# funcionando -- pero a costa de dejar a la usuaria sin menú.
+print("=== BLOQUE 49: el suelo aguanta el redondeo en perros pequeños ===")
+
+import statistics as _stat_b49
+
+_al_b49, _req_b49 = _api.cargar_v2()
+
+def _cubre_b49(gramos, clave, der, etapa, peso):
+    _f = _api.verificar_v2(gramos, _al_b49, _req_b49, der, etapa, peso_referencia_kg=peso)
+    for _lista in ("dentro_de_rango", "faltan", "se_pasa", "rojos", "ambar"):
+        for _fila in _f.get(_lista) or []:
+            if _fila.get("clave") == clave:
+                return _fila.get("cubre_pct"), _f.get("semaforo")
+    return None, _f.get("semaforo")
+
+_yodos_b49, _caidos_b49, _cortos_b49 = [], 0, []
+for _der_b49, _peso_b49 in ((300, 3), (200, 1.5), (250, 2.2), (400, 4.5)):
+    for _sem_b49 in range(1, 6):
+        _ok_b49, _g_b49 = _api.resolver_v2(
+            _der_b49, "Adulto", _al_b49, _req_b49, _peso_b49, _api.dosis_maxima_fabricante,
+            margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=8,
+            semilla_aleatoria=_sem_b49)
+        if not _ok_b49:
+            _caidos_b49 += 1
+            continue
+        _pct_b49, _sem_color_b49 = _cubre_b49(_g_b49, "yodo", _der_b49, "Adulto", _peso_b49)
+        if _sem_color_b49 != "verde":
+            _caidos_b49 += 1
+        if _pct_b49 is not None:
+            _yodos_b49.append(_pct_b49)
+            if _pct_b49 < 100:
+                _cortos_b49.append((_der_b49, _peso_b49, _sem_b49, _pct_b49))
+
+if _cortos_b49:
+    fallos.append(
+        f"BLOQUE49: {len(_cortos_b49)} menús salen del solver con el yodo POR DEBAJO del "
+        f"mínimo después de redondear los gramos {_cortos_b49[:3]}. El margen del suelo "
+        f"tiene que cubrir el paso de redondeo de la fuente más concentrada, no un "
+        f"porcentaje fijo -- con solo el 1,5 % esto bajaba al 82 %.")
+if _caidos_b49:
+    fallos.append(
+        f"BLOQUE49: {_caidos_b49} de 20 menús de perros pequeños no salen o no están verdes. "
+        f"No es inseguro (la regla 1 los para) pero deja a la usuaria sin menú, que es el "
+        f"síntoma con el que se encontró esto.")
+if _yodos_b49 and _stat_b49.median(_yodos_b49) < 104:
+    fallos.append(
+        f"BLOQUE49: la mediana del yodo en perros pequeños ha bajado a "
+        f"{_stat_b49.median(_yodos_b49):.0f} % del mínimo. Con el margen solo porcentual era "
+        f"102 % y con el absoluto 106 %: si vuelve a 102 es que el suelo ha dejado de cubrir "
+        f"el redondeo y los menús se van a caer otra vez en el verificador.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
 # RESUMEN FINAL

@@ -116,6 +116,44 @@ distinguir corte ni tejido -- por eso hay más `sin_dato` en L-carnitina
 
 ---
 
+## Los tres campos que dicen qué sabemos de cada 0
+
+Añadido el 7 de septiembre, cuando se cerraron 52 celdas contra las tres
+fuentes y **ninguna era un número mal copiado: las 52 eran ceros**. Un 0 en
+este catálogo puede ser tres cosas distintas y hay que poder decir cuál:
+
+| Campo | Significa | Cómo lo trata el motor |
+|---|---|---|
+| *(nada)* | Es un 0 medido | Vale 0 |
+| `sin_dato: ["clave"]` | **No lo sabemos.** La fuente no lo publica | Vale 0, pero sale en `datos_incompletos` junto al menú. Contra un máximo se imputa por familia |
+| `dato_dudoso: {clave: {...}}` | Hay un número declarado **que no nos creemos** | Se usa igual, pero sale marcado junto al menú |
+| `cero_verificado: {clave: "fuente"}` | **El 0 es real y alguien fue a mirarlo**, con la fuente escrita | Vale 0, y calla el aviso automático de ceros sospechosos |
+
+`cero_verificado` es la respuesta a `[SOSPECHOSO]` de `auditar_catalogo.py`,
+que deduce del propio catálogo qué ceros son raros: si el 90 % de los DEMÁS
+alimentos de la categoría tienen ese nutriente y este lo tiene a 0 sin
+declararlo, lo dice. Sin una forma de contestarle, volvería a preguntar lo
+mismo en cada pasada.
+
+## Qué publica cada base, y qué no
+
+Esto es lo que obliga a que el orden de `Bases.md` sea un orden y no una
+preferencia: **ninguna de las tres tiene los 41 nutrientes.**
+
+| | Yodo | Ácidos grasos uno a uno | Aminoácidos | Colina |
+|---|---|---|---|---|
+| **BEDCA** (primaria) | **sí** | solo en algunas fichas | **no** | **no** |
+| **CIQUAL** | sí | **sí, todas** | **no** | no |
+| **USDA** | **no** | sí | **sí, los 12** | **sí** |
+
+Y una trampa de BEDCA que se cuela al copiar: cada celda lleva un
+`value_type`. **`AR` con un 0 es un cero medido; `TR` con la celda vacía es
+que no hay número.** Al volcarlo a una tabla el `TR` vacío se convierte en 0
+y ya nadie sabe que no era una medida. Seis de los huecos cerrados el 7 de
+septiembre eran exactamente eso.
+
+---
+
 ## Las trampas, en orden de frecuencia
 
 **EPA y DHA van en GRAMOS, no en miligramos.** Es la que más se cuela,
