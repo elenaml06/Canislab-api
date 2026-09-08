@@ -39,6 +39,48 @@ grande de esta revisión.
 
 ---
 
+## 0-bis · Lo aplicado el 8 de septiembre
+
+Este documento se escribió como diagnóstico y **los cambios ya están hechos**. Lo
+que sigue describe el estado tras aplicarlos; donde algo se corrigió, se dice qué
+había antes, porque el error es parte de lo que hay que poder auditar.
+
+**Cuatro correcciones:**
+
+| | Antes | Ahora | Medido |
+|---|---|---|---|
+| Sodio cardíaco (genérica y B2) | 900 | **739** | verde, sodio real 501 y 485 |
+| Sodio cardíaco (C) | 790 | **625** | verde, 499 |
+| Grasa en pancreatitis | 20 | **37,5** | verde en peldaño 5; **renal+pancreatitis vuelve a dar menú** |
+| Suelo de artrosis | sobre `epa_dha` | sobre **`epa`** | verde, EPA real 1,2 |
+
+Más la atribución de fuente de la cardiopatía genérica, que citaba a ACVIM unas
+cifras que ACVIM no da.
+
+**Siete factores nuevos**, todos de la tabla de la propia patología y todos por
+encima del mínimo de FEDIAF (ninguno necesita prescripción). Medidos por el camino
+real: **los siete resuelven en el peldaño estricto, sin bajar ni un escalón**.
+
+| Patología | Factor añadido | Menú medido |
+|---|---|---|
+| `renal` | sodio ≤ **750** | verde, sodio 466 (22 kg) · 547 (8 kg) |
+| `diabetes` | fibra ≥ **17,5** | verde, fibra 27,7 |
+| `obesidad` | proteína ≥ **62,5** | verde, proteína 159,8 (22 kg) · 170,0 (8 kg) |
+| `ple_linfangiectasia` | proteína ≥ **62,5** · fibra ≤ **12,5** | verde, 144,9 y 2,2 (22 kg) · 144,3 y 2,5 (40 kg) |
+| `insuficiencia_pancreatica_exocrina` | fibra ≤ **12,5** | verde, fibra 0,6 |
+| `enteropatia_cronica` | grasa ≤ **37,5** · proteína ≥ **62,5** | verde, 37,5 y 148,8 — **antes no aplicaba nada** |
+
+**Uno que se decidió NO añadir**, y el motivo importa: el ácido linoleico de la
+Tabla 32-1 (dermatosis y atopia, *«Dogs: Linoleic acid >1.0% DM»* = 2,5 g/1000
+kcal). El **mínimo de FEDIAF para un adulto ya es 3,3**, o sea más exigente. Un
+suelo de 2,5 se combina con `max()` contra el de FEDIAF y no cambiaría ni un menú:
+sería un número en el JSON que no hace nada, y eso es exactamente lo que hace que
+una tabla deje de leerse. Queda escrito aquí y no en los datos.
+
+**Lo que sigue pendiente** está en §5.
+
+---
+
 ## 1 · Lo que está MAL y hay que arreglar
 
 Cinco cosas. Ninguna es un número inventado; son atribuciones, unidades y
@@ -143,13 +185,55 @@ FEDIAF no cubre la pancreatitis. **SACN5 sí** (Tabla 67-3, verificada):
 *«≤15% for non-obese and non-hypertriglyceridemic dogs»* = **37,5 g/1000 kcal**,
 y *«≤10% for obese and/or hypertriglyceridemic dogs»* = **25 g**.
 
-Y hay un dato medido que hace esto urgente: **con 20 g no hay menú posible por
-debajo de ~26-28 g/1000 kcal con comida real** — medido: grasa ≤28 resuelve,
-≤25 no. Los 20 de Merck están **por debajo de la frontera física del catálogo**,
-lo que significa que la pancreatitis sola ya está al borde de no dar menú, y
-combinada con renal no lo da.
+**Aplicado el 8 de septiembre: 20 → 37,5.**
 
-Esto no lo decido yo. Es la PREGUNTA 21-quinquies.
+⚠️ **Y midiendo el cambio salió algo más gordo, que no tiene que ver con el
+número: los dos topes de esta patología son incompatibles entre sí**, y ya lo
+eran con los 20 anteriores. Medido en peldaño estricto, adulto de 22 kg:
+
+| | Resultado |
+|---|---|
+| proteína ≤75, grasa ≤45 · 50 · 55 · 60 · 65 | **ninguno da menú** |
+| grasa ≤37,5, proteína ≤90 · 105 · 120 · 135 | **ninguno da menú** |
+| proteína ≤75 con la grasa suelta | sale, con grasa **77,6** |
+| grasa ≤37,5 con la proteína suelta | sale, con proteína **148,2** |
+
+Es aritmética de energía: 37,5 g de grasa más 75 g de proteína son unas **600 de
+las 1000 kcal**, y las otras 400 tendrían que venir de carbohidrato — que una
+ración cruda apenas tiene. La dieta de pancreatitis que describe SACN5 (45 % de
+la materia seca entre proteína y grasa, el resto carbohidrato) **es un pienso, no
+un BARF**.
+
+**No hay que bloquear la patología: la escalera ya lo resuelve, y estaba puesta
+para esto.** Medido por el camino real (recorriendo `_escalera_de_relajacion`):
+
+| Perro | Resultado |
+|---|---|
+| Adulto 8 kg | verde en el **peldaño 5**, grasa 37,5 · proteína 73,2 |
+| Adulto 22 kg | verde en el **peldaño 5**, grasa 37,5 · proteína 74,8 |
+| Adulto 35 kg | verde en el **peldaño 5**, grasa 25,8 · proteína 74,9 |
+
+El peldaño 5 es `tope_maximo_de_visceras_higado_y_verdura`, que suelta el techo
+del 10 % de «Verduras y frutas» — y su comentario en `main.py` lo puso ahí
+**exactamente por un caso de pancreatitis**. O sea que la pancreatitis **siempre**
+cae al último peldaño, y por la regla 5 eso se le dice a quien pide el menú.
+
+Consecuencia práctica que hay que escribir en la pantalla: un menú de pancreatitis
+lleva mucha más verdura de la que lleva un BARF normal. No es un fallo — es lo que
+pide la fuente.
+
+**Y el cambio resuelve el caso que motivó todo el diagnóstico de choque.** Medido
+por el camino real:
+
+| Combinación | Antes (grasa ≤20) | Ahora (grasa ≤37,5) |
+|---|---|---|
+| **renal + pancreatitis** | sin menú en ningún tamaño | **verde**, peldaño 5, grasa 37,5 · fósforo 1198,8 |
+| obesidad + pancreatitis | — | **verde**, peldaño 5, grasa 27,4 (manda el 30 de obesidad) |
+
+El choque que se diagnosticó era **renal fósforo ≤1200 contra pancreatitis grasa
+≤20**. Con la grasa en el valor que pide la fuente, el choque desaparece: no había
+una incompatibilidad clínica entre las dos patologías, había un número que no era
+el de la fuente que manda.
 
 ---
 
@@ -461,36 +545,46 @@ conservadora), pero la decisión está tomada sobre una fuente sin abrir.
 
 ## 5 · Resumen: qué hay que hacer
 
-**Arreglar (son errores):**
+**Arreglar (son errores):** ✅ **los cuatro, hechos el 8 de septiembre.** Ver §0-bis.
 
-1. Corregir la atribución de fuente del sodio cardíaco en la entrada `cardiopatia`.
-2. Cambiar el suelo de artrosis de `epa_dha` a `epa`.
-3. Decidir el número de la grasa en pancreatitis (Merck 20 vs SACN5 37,5/25) —
-   **PREGUNTA 21-quinquies**, bloqueante: hoy deja perros sin menú.
-4. Decidir el sodio cardíaco frente al techo legal europeo de 739 —
-   **PREGUNTA 21-quater**.
+1. ~~Atribución de fuente del sodio cardíaco~~ ✅
+2. ~~Suelo de artrosis de `epa_dha` a `epa`~~ ✅
+3. ~~La grasa en pancreatitis~~ ✅ → 37,5 (SACN5). Y resolvió renal+pancreatitis.
+4. ~~El sodio cardíaco frente al techo legal europeo~~ ✅ → 739 / 739 / 625 / 480.
+
+**Sigue roto y NO se ha tocado:** el **oxalato cálcico** (§1.2). Es el único de
+los cinco que queda, y es el más laborioso: son cinco factores más dos exclusiones
+de alimento (ácido oxálico y vitamina C), y una de las dos necesita una lista de
+alimentos ricos en oxalato que hoy no existe en el catálogo.
 
 **Implementar (no bajan de FEDIAF, no necesitan firma):**
 
 | Patología | Qué añadir |
 |---|---|
-| renal | sodio ≤750 · potasio 1000-2000 · **proteína ≤62,5** |
+| ~~renal~~ | ~~sodio ≤750~~ ✅ · potasio 1000-2000 · **proteína ≤62,5** |
 | oxalato | fósforo 750-1500 · Ca:P 1,1-2:1 · sodio <750 · magnesio 100-375 · excluir oxálico y vitamina C |
-| obesidad | **proteína ≥62,5** · fibra 30-62,5 · lisina ≥42,5 · L-carnitina ≥75 |
+| obesidad | ~~**proteína ≥62,5**~~ ✅ · fibra 30-62,5 · lisina ≥42,5 · L-carnitina ≥75 |
 | artrosis | omega-3 totales ≥8,75 · L-carnitina ≥75 |
-| PLE | **proteína ≥62,5** · fibra ≤12,5 |
-| EPI | fibra ≤12,5 |
-| diabetes | **fibra ≥17,5** |
-| enteropatía crónica | potasio 2000-2750 · grasa 30-37,5 · proteína ≥62,5 · fibra |
+| ~~PLE~~ | ~~**proteína ≥62,5** · fibra ≤12,5~~ ✅ |
+| ~~EPI~~ | ~~fibra ≤12,5~~ ✅ |
+| ~~diabetes~~ | ~~**fibra ≥17,5**~~ ✅ |
+| enteropatía crónica | ~~grasa ≤37,5 · proteína ≥62,5~~ ✅ · potasio 2000-2750 · fibra |
 | disfunción cognitiva | vitamina E ≥187,5 · omega-3 ≥2,5 |
-| dermatosis y atopia | linoleico >2,5 · fenilalanina+tirosina >32,5 |
+| dermatosis y atopia | ~~linoleico >2,5~~ (descartado: más laxo que FEDIAF) · fenilalanina+tirosina >32,5 |
 | estruvita (prevención) | magnesio 100-250 · fósforo <1500 · proteína <62,5, **y pasarla a formulable** |
 | cistina | sodio <750 |
 | hepatopatía | zinc >50 · hierro 20-35 · sodio 200-625 · taurina ≥250 |
 | cardiopatía C | proteína ≥50 |
 
-Son **catorce patologías** con al menos un factor de su propia fuente sin
-aplicar. Ninguno requiere prescripción.
+Eran **catorce patologías**. Tras la tanda del 8 de septiembre quedan **ocho** con
+al menos un factor de su propia fuente sin aplicar. Ninguno requiere prescripción.
+
+Los que quedan y por qué no se hicieron ya: los tres de artrosis y obesidad
+(omega-3 totales, lisina, L-carnitina) **necesitan claves nuevas en el `MAPA`**
+como la que se añadió para el EPA; los de oxalato y estruvita necesitan además
+decidir si esas patologías pasan a formulables; y el de cardiopatía C (proteína
+≥50) es más laxo que el mínimo de FEDIAF (52,1), así que no cambiaría nada — mismo
+caso que el linoleico.
 
 **Verificar (fuentes sin abrir):** Purina Institute (diabetes), Today's
 Veterinary Practice 2025 / Carr 2020 (calcio en oxalato), Center 2026 (cobre).

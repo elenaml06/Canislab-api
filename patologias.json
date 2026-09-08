@@ -14,6 +14,11 @@
           "valor": 1200.0,
           "fuente": "Freeman LM, dvm360 2009; WSAVA; IRIS. Confirmado 6-sep-2026 contra SACN5 5ª ed., cap.37 «Chronic Kidney Disease», Tabla 37-9",
           "por_que": "Las dietas renales comerciales aportan 480-1000 mg/1000 kcal. 1200 es lo más restrictivo que el solver puede aplicar sin romper el mínimo FEDIAF de adulto (1160 mg). IRIS da objetivos en SANGRE, no en la dieta, así que no sirve para poner este número. SACN5 Tabla 37-9 da «Phosphorus 0.2 to 0.5% in foods for dogs» (materia seca) = 500-1250 mg/1000kcal a 4000kcal/kgMS: 1200 cae justo dentro, en el extremo menos restrictivo del rango de la fuente."
+        },
+        "sodio": {
+          "valor": 750.0,
+          "fuente": "SACN5 5a ed., cap.37 «Chronic Kidney Disease», Tabla 37-9, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba una fila de ella. Tabla 37-9, literal: «Sodium <=0.3% in foods for dogs» = 750 mg/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 25 = por 1000 kcal a la densidad de referencia de 4000 kcal EM/kg MS. Restringir el sodio es uno de los tres ejes de la dieta renal (con el fosforo y la proteina) y era el unico de los tres que no estaba ni modelado ni bloqueado. Muy por encima del minimo de FEDIAF (290 mg a DER 95), asi que no necesita prescripcion. Margen del profesional: 290 a 750."
         }
       },
       "solo_en_adulto": true,
@@ -183,7 +188,14 @@
       "avisos": {
         "general": "Lo más importante en diabetes no es el menú sino la REGULARIDAD: misma cantidad, a la misma hora, coordinada con la insulina. Se ha quitado la fruta del menú: su azúcar se absorbe rápido y descuadra la pauta de insulina. La verdura fibrosa sí se mantiene, porque ayuda a amortiguar la subida de glucosa."
       },
-      "formulable_por_profesional": true
+      "formulable_por_profesional": true,
+      "suelos_por_1000kcal": {
+        "fibra": {
+          "valor": 17.5,
+          "fuente": "SACN5 5a ed., cap.29 «Diabetes Mellitus», Tabla 29-3, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba una fila de ella. Tabla 29-3, columna «Dogs (increased-fiber/high-carbohydrate food)», literal: «Fiber 7 to 18%» = 17,5-45 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 25 = por 1000 kcal a la densidad de referencia de 4000 kcal EM/kg MS. Se usa el extremo BAJO del rango porque es el que resuelve con el catalogo real y ya es un aumento sobre lo que lleva una racion sin ajustar. Hasta hoy la diabetes solo excluia fruta, cuando el pilar dietetico que describe el propio capitulo es la fibra y el indice glucemico. FEDIAF no da minimo ni maximo de fibra, asi que este suelo no tiene techo de ningun tipo por arriba: margen del profesional 0 a 45 (el extremo alto de la fuente)."
+        }
+      }
     },
     "hipotiroidismo": {
       "nombre": "Hipotiroidismo",
@@ -291,6 +303,13 @@
         ],
         "fuente": "Fascetti & Delaney, Applied Veterinary Clinical Nutrition, 2ª ed. (Wiley-Blackwell, 2024), cap.3 «Determining Energy Requirements» (Ramsey), verificado 7-sep-2026 contra el texto",
         "texto": "Se ha marcado también una enfermedad aguda o crítica junto con el adelgazamiento. La fuente es literal: «weight loss is never a goal during treatment and recovery from trauma and critical illness» -- y también: «it should rarely be necessary to feed injured or ill cats and dogs above the predicted energy requirement for a healthy animal at maintenance». En fase aguda, revisa con tu veterinario si de verdad toca bajar peso ahora, o si conviene esperar a que la enfermedad esté estable."
+      },
+      "suelos_por_1000kcal": {
+        "proteina": {
+          "valor": 62.5,
+          "fuente": "SACN5 5a ed., cap.27 «Obesity», Tabla 27-4, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba una fila de ella. Tabla 27-4, perros, adelgazamiento, literal: «Protein — Foods for weight loss should contain >=25%» = 62,5 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 25 = por 1000 kcal a la densidad de referencia de 4000 kcal EM/kg MS. Es el factor que protege la masa magra mientras se recortan las kcal, y el motor solo aplicaba el minimo de FEDIAF (52,1), que es MENOS. Por encima de ese minimo, asi que no necesita prescripcion. Margen del profesional: 52,1 a sin techo (FEDIAF no pone maximo de proteina)."
+        }
       }
     },
     "cardiopatia_a": {
@@ -340,12 +359,24 @@
           "valor": 37.5,
           "fuente": "SACN5 5ª ed., cap.58 «Protein-Losing Enteropathies», Tabla 58-1, verificado 6-sep-2026",
           "por_que": "Tabla 58-1: «Fat <15% for dogs and cats» (materia seca), porque la grasa de cadena larga sobrecarga los linfáticos intestinales dañados. A 4000kcal/kgMS son <37,5 g/1000kcal. Por encima del mínimo FEDIAF (13,75), alcanzable con carnes magras."
+        },
+        "fibra": {
+          "valor": 12.5,
+          "fuente": "SACN5 5a ed., cap.58, Tabla 58-1, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba una fila de ella. Tabla 58-1, literal: «Crude fiber <=5%» = 12,5 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 25 = por 1000 kcal a la densidad de referencia de 4000 kcal EM/kg MS. FEDIAF no da minimo ni maximo de fibra, asi que este techo no choca con ningun requisito."
         }
       },
       "avisos": {
         "general": "Se ha bajado la grasa: en esta enfermedad, la grasa de cadena larga sobrecarga los vasos linfáticos intestinales dañados y empeora la diarrea y la pérdida de proteína. SACN5 recomienda además usar aceite MCT (cadena media), que no pasa por la vía linfática -- eso no está entre los suplementos que hoy usa el motor. La proteína NO se ha bajado: SACN5 pide ≥25% de materia seca, muy por debajo de lo que ya da una ración BARF sin ajustar."
       },
-      "formulable_por_profesional": true
+      "formulable_por_profesional": true,
+      "suelos_por_1000kcal": {
+        "proteina": {
+          "valor": 62.5,
+          "fuente": "SACN5 5a ed., cap.58 «Protein-Losing Enteropathies», Tabla 58-1, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba una fila de ella. Tabla 58-1, literal: «Protein >=25% for dogs» = 62,5 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 25 = por 1000 kcal a la densidad de referencia de 4000 kcal EM/kg MS. El texto lo explica: «Foods for patients with PLE should contain enough high biologic value proteins to support hepatic protein synthesis and replace depleted tissue proteins». Es una enfermedad que pierde proteina por el intestino y el motor solo le ponia un TECHO de grasa, sin ningun suelo de proteina. Por encima del minimo de FEDIAF (52,1)."
+        }
+      }
     },
     "insuficiencia_pancreatica_exocrina": {
       "nombre": "Insuficiencia pancreática exocrina (EPI)",
@@ -355,6 +386,11 @@
           "valor": 37.5,
           "fuente": "SACN5 5ª ed., cap.66 «Exocrine Pancreatic Insufficiency», Tabla 66-1, verificado 6-sep-2026",
           "por_que": "Tabla 66-1: «Fat 10 to 15% for dogs» (materia seca). A 4000kcal/kgMS son 25-37,5 g/1000kcal; se usa el extremo alto porque el propio texto (cap.66) dice que restringir la grasa NO es lo prioritario si hay reemplazo enzimático adecuado -- es un apoyo, no el tratamiento."
+        },
+        "fibra": {
+          "valor": 12.5,
+          "fuente": "SACN5 5a ed., cap.66 «Exocrine Pancreatic Insufficiency», Tabla 66-1, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba una fila de ella. Tabla 66-1, literal: «Fiber <=5%**» con la nota «**Lower is better» = 12,5 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 25 = por 1000 kcal a la densidad de referencia de 4000 kcal EM/kg MS. El motivo esta en el texto: «Dietary fiber impairs pancreatic enzyme activity in vitro», y el tratamiento de la EPI son precisamente las enzimas. Era el segundo factor de una tabla de tres y no se aplicaba."
         }
       },
       "avisos": {
@@ -376,7 +412,21 @@
       "avisos": {
         "general": "SACN5 5ª ed., cap.57 «Inflammatory Bowel Disease», Tabla 57-1, recomienda proteína ≥25% de materia seca -- una ración BARF sin ajustar ya va muy por encima -- y, si se necesita un enfoque de eliminación, usar una sola fuente de proteína que el perro no haya comido antes. Esto último ya lo hace Rawku con las alergias: si tu veterinario identifica una proteína nueva como la única a usar, selecciónala en Personalizar y excluye el resto de carnes en Alergias -- no hace falta una patología aparte para eso. No se aplica un tope ni un mínimo de fibra: la propia Tabla 57-1 da DOS enfoques válidos y opuestos según el caso -- ≤5% de materia seca (\"highly digestible\") o 7-15% (\"increased-fiber\", para normalizar la motilidad) -- así que un número único aquí acertaría para un perro y se equivocaría para el otro. Es tu veterinario quien decide cuál de los dos encaja con tu perro."
       },
-      "formulable_por_profesional": true
+      "formulable_por_profesional": true,
+      "topes_por_1000kcal": {
+        "grasa": {
+          "valor": 37.5,
+          "fuente": "SACN5 5a ed., cap.57 «Inflammatory Bowel Disease», Tabla 57-1, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba una fila de ella. Esta patologia no aplicaba NINGUN limite, teniendo tabla propia. Tabla 57-1, literal: «Fat 12 to 15% for dogs ... for highly digestible foods» = 30-37,5 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 25 = por 1000 kcal a la densidad de referencia de 4000 kcal EM/kg MS. Se usa el extremo ALTO (37,5), como en la EPI y por el mismo motivo: la dieta es un apoyo y apretar de mas quita densidad energetica a un perro que ya absorbe mal. Por encima del minimo de FEDIAF (13,75). Margen del profesional: 13,75 a 37,5."
+        }
+      },
+      "suelos_por_1000kcal": {
+        "proteina": {
+          "valor": 62.5,
+          "fuente": "SACN5 5a ed., cap.57, Tabla 57-1, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba una fila de ella. Tabla 57-1, literal: «Protein >=25% for dogs» = 62,5 g/1000 kcal, y el texto lo ata al mecanismo: «avoiding excessive GI protein loss (at least 25% for adult dogs [DM])». Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 25 = por 1000 kcal a la densidad de referencia de 4000 kcal EM/kg MS. Por encima del minimo de FEDIAF (52,1). OJO: la misma tabla ofrece un enfoque ALTERNATIVO de eliminacion con proteina BAJA (16-26 % MS = 40-65) para el perro con sospecha de reaccion adversa al alimento; ese enfoque cae bajo el minimo de FEDIAF y seria prescripcion, asi que no se modela. Aqui se aplica el enfoque de alta digestibilidad, que es el que puede formularse sin firma."
+        }
+      }
     },
     "artrosis": {
       "nombre": "Artrosis / osteoartritis",
