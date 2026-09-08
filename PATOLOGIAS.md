@@ -39,6 +39,37 @@ grande de esta revisión.
 
 ---
 
+## 0-ter · Dos errores propios en este documento, y qué se hizo para que no se repitan
+
+**Encontrados el 8 de septiembre, segunda tanda, recalculando las 50 conversiones
+del documento en vez de releerlas.**
+
+| Dónde | Escrito | Correcto |
+|---|---|---|
+| Lisina en obesidad (§2.9) | 42,5 g/1000 kcal | **4,25** |
+| Fenilalanina+tirosina en dermatosis (§2.13, §3.1) | 32,5 g/1000 kcal | **3,25** |
+
+Los dos son el mismo fallo: multiplicar un porcentaje pequeño **por 25 en vez de
+por 2,5**. Un factor 10.
+
+**Ninguno llegó al motor**, porque eran cifras aún sin aplicar. Pero eso fue
+suerte, no protección: se encontraron porque volví a mirar, y «volver a mirar» no
+es un mecanismo. Un documento que dice estar verificado y contiene un factor 10 no
+está cerrado.
+
+**Lo que se cambió para que no dependa de que alguien multiplique bien:** cada
+cifra del BLOQUE 55 lleva ahora, además del número y la cita, **el valor de la
+fuente y su unidad de origen** (`pct_ms`, `mgkg_ms` o `directo`). El test rehace
+la multiplicación y falla si no cuadra. Probado con los dos errores reales
+reintroducidos: los caza los dos.
+
+Las 23 cifras que sí están aplicadas en el motor tenían todas la conversión
+correcta. Y hay una discrepancia que **no** es un error: el fósforo renal está en
+1200 y el techo del rango de la fuente es 1250 — es una elección deliberada dentro
+del rango, y por eso su origen va marcado como `directo` con el motivo escrito.
+
+---
+
 ## 0-bis · Lo aplicado el 8 de septiembre
 
 Este documento se escribió como diagnóstico y **los cambios ya están hechos**. Lo
@@ -438,7 +469,7 @@ es un límite legal. Todo lo específico de la patología está sin implementar.
   for weight loss should contain ≥25%»* = **≥62,5 g** (subir la proteína
   mientras se recortan kcal es lo que protege la masa magra, y el motor solo
   aplica el mínimo de FEDIAF, 52,1); *«Fiber — 12 to 25%»* = **30-62,5 g**;
-  *«Lysine ≥1.7%»* = **≥42,5 g**; *«L-carnitine ≥300 ppm»* = **≥75 mg**;
+  *«Lysine ≥1.7%»* = **≥4,25 g**; *«L-carnitine ≥300 ppm»* = **≥75 mg**;
   sodio 0,2-0,4 % = 500-1000 mg; fósforo 0,4-0,8 % = 1000-2000 mg.
   **Seis factores, y aplicamos uno.**
 
@@ -487,7 +518,7 @@ por abajo, el mínimo general de EPA+DHA, **0,11 g**.
   claro de todos: el margen hacia arriba lo corta la ley, no el criterio.
 - **Margen del profesional:** **25 → 50**, y ahí para de golpe.
 - ⚠️ **Falta:** la misma tabla pide *«Linoleic acid >1.0% DM»* = **>2,5 g**,
-  *«Phenylalanine + tyrosine >1.3% DM»* = **>32,5 g**, y *«Avoid excess copper
+  *«Phenylalanine + tyrosine >1.3% DM»* = **>3,25 g**, y *«Avoid excess copper
   (copper <200 mg/kg food DM)»*. También avisa de que *«Higher levels of zinc are
   required in foods with calcium >1.5% DM»* — o sea que en una ración BARF con
   mucho hueso, 25 mg puede no bastar. Eso no lo mira nadie.
@@ -552,7 +583,7 @@ da número» que «no hemos mirado».** Separado:
 |---|---|---|---|
 | **`enteropatia_cronica`** | 57-1 (IBD) | *«Potassium 0.8 to 1.1%»* · *«Fat 12 to 15% for dogs»* (muy digestible) · *«Protein ≥25% for dogs»* · *«Crude fiber ≤5%»* o *«7 to 15%»* según enfoque | K **2000-2750 mg (con techo)** · grasa 30-37,5 · proteína ≥62,5 · fibra ≤12,5 o 17,5-37,5 |
 | **`disfuncion_cognitiva`** | 35-3 | *«Vitamin E ≥750 mg/kg»* · *«Vitamin C ≥150 mg/kg»* · *«Selenium 0.5 to 1.3 mg/kg»* · *«L-carnitine ≥100 mg/kg»* · *«Total omegas-3 >1%»* · *«1% of each of five vegetable and fruit ingredients»* | vitE **≥187,5 mg** · vitC ≥37,5 · Se 0,125-0,325 · carnitina ≥25 · **ω-3 ≥2,5 g** |
-| **`dermatitis_atopica`** | 32-1 | Las mismas de dermatosis: linoleico >1,0 % MS, fenilalanina+tirosina >1,3 % MS, digestibilidad MS >80 % | linoleico **>2,5 g** · Phe+Tyr **>32,5 g** |
+| **`dermatitis_atopica`** | 32-1 | Las mismas de dermatosis: linoleico >1,0 % MS, fenilalanina+tirosina >1,3 % MS, digestibilidad MS >80 % | linoleico **>2,5 g** · Phe+Tyr **>3,25 g** |
 
 **Los tres son implementables hoy** y ninguno baja del mínimo de FEDIAF. La
 enteropatía crónica es la más llamativa: es una de las patologías más marcadas y
@@ -687,14 +718,14 @@ alimentos ricos en oxalato que hoy no existe en el catálogo.
 |---|---|
 | ~~renal~~ | ~~sodio ≤750~~ ✅ · potasio 1000-2000 · **proteína ≤62,5** |
 | oxalato | fósforo 750-1500 · Ca:P 1,1-2:1 · sodio <750 · magnesio 100-375 · excluir oxálico y vitamina C |
-| obesidad | ~~**proteína ≥62,5**~~ ✅ · fibra 30-62,5 · lisina ≥42,5 · L-carnitina ≥75 |
+| obesidad | ~~**proteína ≥62,5**~~ ✅ · fibra 30-62,5 · lisina ≥4,25 · L-carnitina ≥75 |
 | artrosis | omega-3 totales ≥8,75 · L-carnitina ≥75 |
 | ~~PLE~~ | ~~**proteína ≥62,5** · fibra ≤12,5~~ ✅ |
 | ~~EPI~~ | ~~fibra ≤12,5~~ ✅ |
 | ~~diabetes~~ | ~~**fibra ≥17,5**~~ ✅ |
 | enteropatía crónica | ~~grasa ≤37,5 · proteína ≥62,5~~ ✅ · potasio 2000-2750 · fibra |
 | disfunción cognitiva | vitamina E ≥187,5 · omega-3 ≥2,5 |
-| dermatosis y atopia | ~~linoleico >2,5~~ (descartado: más laxo que FEDIAF) · fenilalanina+tirosina >32,5 |
+| dermatosis y atopia | ~~linoleico >2,5~~ (descartado: más laxo que FEDIAF) · fenilalanina+tirosina >3,25 |
 | estruvita (prevención) | magnesio 100-250 · fósforo <1500 · proteína <62,5, **y pasarla a formulable** |
 | cistina | sodio <750 |
 | hepatopatía | zinc >50 · hierro 20-35 · sodio 200-625 · taurina ≥250 |
