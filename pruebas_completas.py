@@ -5095,7 +5095,269 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
-# BLOQUE 44 — UN CERO MUDO SE DELATA SOLO, SIN LISTA QUE MANTENER
+# BLOQUE 44 — LO QUE UN VETERINARIO LEE ANTES DE FIRMAR
+#
+# `GET /patologias` existe desde el 7 de septiembre para contestar una
+# pregunta concreta de la usuaria: "cuando pones una patologia... que cambia,
+# que no, que puedes modificar y que no, de que margen puede salir".
+#
+# LO QUE VIGILA ESTE BLOQUE, y por que cada cosa:
+#
+#   1. Que los numeros que sirve sean los MISMOS que aplica el solver. Es la
+#      regla de siempre: una tabla copiada es una tabla que se separa, y ya
+#      paso -- el POST /menu borrado el 26 de agosto llevaba su propia copia
+#      con el fosforo renal a 1.400 en vez de 1.200, durante semanas, sin que
+#      saltara nada. Si alguien "arregla" este endpoint escribiendo cifras a
+#      mano, esto se pone rojo.
+#   2. Que el MARGEN se mida contra el minimo de FEDIAF de VERDAD, leido de
+#      requerimientos_v2_final.json por el mismo MAPA que usa el semaforo. Un
+#      margen calculado contra otro numero seria peor que no darlo: diria que
+#      hay sitio donde no lo hay.
+#   3. Que la fuente y el porque viajen. Sin ellos el numero es una cifra
+#      suelta, y quien firma no puede comprobarla.
+# ============================================================
+print("=== BLOQUE 44: la tabla de patologias que lee el veterinario ===")
+from motor.patologias import cargar_crudo as _crudo_44
+from motor.verificar import MAPA as _MAPA_44, maximo_de as _maximo_de_44
+
+
+def _num_44(v):
+    try:
+        n = float(v)
+        return n if n == n else None
+    except (TypeError, ValueError):
+        return None
+
+
+_r44 = _c.get("/patologias")
+if _r44.status_code != 200:
+    fallos.append(f"BLOQUE44: /patologias contesta {_r44.status_code}. Sin el, un veterinario "
+                  f"marca una patologia y no ve el tope que decide si sale menu.")
+else:
+    _d44 = _r44.json()
+    _servidas = _d44.get("patologias") or {}
+    _tabla44 = _crudo_44()["patologias"]
+
+    if set(_servidas) != set(_tabla44):
+        _faltan44 = sorted(set(_tabla44) - set(_servidas))
+        _sobran44 = sorted(set(_servidas) - set(_tabla44))
+        fallos.append(f"BLOQUE44: la lista servida no cuadra con patologias.json. "
+                      f"Faltan: {_faltan44}. Sobran: {_sobran44}.")
+
+    # Las cifras, una a una, contra el archivo que aplica el solver.
+    # ⚠️ La tabla se vuelve a cargar aquí y NO se usa el `req` de arriba: a
+    # estas alturas de la bateria ese nombre ya lo han reutilizado otros
+    # bloques con otra forma, y una prueba que depende de en que orden se
+    # ejecutan las de antes no prueba nada.
+    from requisitos import cargar_requerimientos as _cargar_req_44
+    _por_clave_44 = {}
+    for _fila44 in _cargar_req_44():
+        _cl44 = _MAPA_44.get(_fila44.get("nutriente"))
+        if _cl44:
+            _por_clave_44[_cl44] = _fila44
+
+    for _clave44, _p44 in _tabla44.items():
+        _servida44 = _servidas.get(_clave44)
+        if not _servida44:
+            continue
+        if _servida44.get("nombre") != _p44.get("nombre"):
+            fallos.append(f"BLOQUE44 {_clave44}: el nombre servido no es el de patologias.json.")
+        if bool(_servida44.get("formulable")) != bool(_p44.get("formulable")):
+            fallos.append(f"BLOQUE44 {_clave44}: `formulable` no coincide con patologias.json. "
+                          f"De ese campo depende que se bloquee o no la generacion.")
+
+        for _bloque44, _campo44, _es_tope44 in [("topes", "topes_por_1000kcal", True),
+                                                ("suelos", "suelos_por_1000kcal", False)]:
+            _reales44 = _p44.get(_campo44) or {}
+            _dichos44 = {l["nutriente"]: l for l in _servida44.get(_bloque44) or []}
+            if set(_dichos44) != set(_reales44):
+                fallos.append(f"BLOQUE44 {_clave44}: los {_bloque44} servidos "
+                              f"({sorted(_dichos44)}) no son los de patologias.json "
+                              f"({sorted(_reales44)}).")
+                continue
+            for _nut44, _t44 in _reales44.items():
+                _l44 = _dichos44[_nut44]
+                if abs(float(_l44["valor"]) - float(_t44["valor"])) > 1e-9:
+                    fallos.append(f"BLOQUE44 {_clave44}/{_nut44}: sirve {_l44['valor']} y el "
+                                  f"solver aplica {_t44['valor']}. Un numero copiado a mano es "
+                                  f"exactamente como se desincronizo la tabla del POST /menu.")
+                if not _l44.get("fuente") or not _l44.get("por_que"):
+                    fallos.append(f"BLOQUE44 {_clave44}/{_nut44}: sin fuente o sin motivo. "
+                                  f"Quien firma tiene que poder comprobar el numero.")
+
+                # El margen, contra el minimo de FEDIAF leido de la tabla.
+                _fila44 = _por_clave_44.get(_nut44)
+                _ref44 = None
+                if _fila44 is not None:
+                    _ref44 = (_num_44(_fila44.get("minAdulto")) if _es_tope44
+                              else _maximo_de_44(_fila44, _fila44.get("nutriente"), "Adulto"))
+                if _ref44:
+                    _esperado44 = round((float(_t44["valor"]) - _ref44) / _ref44 * 100, 1)
+                    if _l44.get("margen_pct") is None or abs(_l44["margen_pct"] - _esperado44) > 0.05:
+                        fallos.append(f"BLOQUE44 {_clave44}/{_nut44}: el margen dice "
+                                      f"{_l44.get('margen_pct')} % y contra el limite real de "
+                                      f"FEDIAF ({_ref44}) son {_esperado44} %. Un margen mal "
+                                      f"medido dice que hay sitio donde no lo hay.")
+                elif _l44.get("margen_pct") is not None:
+                    fallos.append(f"BLOQUE44 {_clave44}/{_nut44}: da un margen contra un limite "
+                                  f"de FEDIAF que no existe para ese nutriente.")
+
+    # Y el caso que motivo todo esto, escrito con sus numeros: renal aprieta
+    # el fosforo a 1200 con el minimo de FEDIAF en 1160. Un 3,4 % de sitio.
+    _renal44 = _servidas.get("renal") or {}
+    _fos44 = next((l for l in _renal44.get("topes") or [] if l["nutriente"] == "fosforo"), None)
+    if not _fos44:
+        fallos.append("BLOQUE44: renal no trae su tope de fosforo. Es el ejemplo de manual de "
+                      "por que existe este endpoint.")
+    elif not (0 < (_fos44.get("margen_pct") or 0) < 10):
+        fallos.append(f"BLOQUE44: el margen del fosforo en renal sale {_fos44.get('margen_pct')} %. "
+                      f"Tiene que ser positivo y estrecho: si fuera negativo, el tope estaria por "
+                      f"debajo del minimo de FEDIAF y entonces renal no podria ser `formulable`.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 45 — EL PELDANO DE LA ESCALERA, ELEGIDO POR QUIEN FIRMA
+#
+# Escrito el 8 de septiembre. Estaba pedido desde la fase 1 de
+# VETERINARIOS.md: "que peldano de la escalera se uso, Y PODER ELEGIRLO. Hoy
+# se baja solo y se avisa; un profesional quiere decidir si prefiere otro
+# reparto antes que soltar la proporcion de hueso".
+#
+# LO QUE VIGILA, y por que cada cosa:
+#
+#   1. Que `GET /relajacion` sirva EXACTAMENTE los peldanos que recorre
+#      `_escalera_de_relajacion`, en su orden. Si esa lista se escribiera a
+#      mano, el selector del veterinario ofreceria una escalera que ya no es
+#      la del motor -- y elegir un peldano que no existe no daria error: se
+#      trataria como "no ha elegido" y bajaria sola, en silencio.
+#   2. Que elegir un peldano SE APLIQUE y NO SE BAJE de ahi. Bajar seria
+#      cambiarle la decision sin decirselo, que es lo contrario de por que
+#      existe poder elegirlo.
+#   3. Y lo que no puede pasar nunca: que un peldano relaje la NUTRICION. La
+#      regla 3 del CLAUDE.md dice que se suelta la FORMA. Asi que el menu del
+#      ultimo peldano tiene que salir verde y con los topes de patologia
+#      intactos, igual que cualquier otro.
+#
+# El caso es el de la pancreatitis de 25 kg, que es el que motivo el ultimo
+# peldano: no sale con las proporciones completas y si soltando el techo de
+# la verdura (ver el comentario de `_escalera_de_relajacion`).
+# ============================================================
+print("=== BLOQUE 45: el peldano de la escalera, elegido ===")
+
+_r45 = _c.get("/relajacion")
+if _r45.status_code != 200:
+    fallos.append(f"BLOQUE45: /relajacion contesta {_r45.status_code}. Sin el, el selector del "
+                  f"veterinario no tiene que ofrecer.")
+else:
+    _servidos45 = _r45.json().get("peldanos") or []
+    _reales45 = [(k or _api.PELDANO_ESTRICTO)
+                 for _m, _s, k in _api._escalera_de_relajacion(True)]
+    if [p["clave"] for p in _servidos45] != _reales45:
+        fallos.append(f"BLOQUE45: /relajacion sirve {[p['clave'] for p in _servidos45]} y el "
+                      f"motor recorre {_reales45}. Una lista escrita a mano se separa, y "
+                      f"elegir un peldano que no existe no da error: baja sola en silencio.")
+    for _p45 in _servidos45:
+        if not _p45.get("titulo") or not _p45.get("que_se_suelta"):
+            fallos.append(f"BLOQUE45 {_p45.get('clave')}: sin titulo o sin explicacion. El "
+                          f"selector ofreceria el nombre de una variable.")
+    _supl45 = {p["clave"]: p["max_suplementos"] for p in _servidos45}
+    for _m45, _s45, _k45 in _api._escalera_de_relajacion(True):
+        _k45 = _k45 or _api.PELDANO_ESTRICTO
+        if _supl45.get(_k45) != _s45:
+            fallos.append(f"BLOQUE45 {_k45}: dice {_supl45.get(_k45)} suplementos y el motor "
+                          f"usa {_s45}.")
+
+# El caso real: pancreatitis en un adulto de 25 kg.
+_CUERPO_45 = {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 1040.0,
+              "peso_perro_kg": 25.0, "etapa_requisitos": "Adulto",
+              "patologias": ["pancreatitis"], "presupuesto_segundos": 30.0}
+
+# a) Sin elegir nada: la escalera baja sola, como siempre, y ahora ademas
+#    DICE en que peldano ha salido -- antes "no dice nada" y "estricto" se
+#    leian igual, y quien firma necesita poder afirmar lo segundo.
+_sola45 = _c.post("/menu/v2", json=dict(_CUERPO_45)).json()
+if not _sola45.get("factible"):
+    fallos.append("BLOQUE45: sin elegir peldano no sale menu para la pancreatitis de 25 kg. La "
+                  "escalera automatica existe justo para este caso.")
+elif not _sola45.get("peldano"):
+    fallos.append("BLOQUE45: el menu no dice en que peldano ha salido. 'No dice nada' y "
+                  "'proporciones completas' se leen igual, y no son lo mismo.")
+elif _sola45.get("peldano_lo_eligio_el_profesional"):
+    fallos.append("BLOQUE45: sin pedir peldano, el menu dice que lo eligio un profesional.")
+
+# b) Eligiendo el primero: NO se baja, y se dice que no. Es lo que hace que
+#    elegir signifique algo.
+_estricto45 = _c.post("/menu/v2", json={**_CUERPO_45, "peldano": "estricto"}).json()
+if _estricto45.get("factible"):
+    fallos.append("BLOQUE45: con el peldano 'estricto' elegido ha salido menu para una "
+                  "pancreatitis de 25 kg. Ese caso NO tiene solucion con las proporciones "
+                  "completas: si sale, es que se ha bajado de peldano por detras -- o sea que "
+                  "elegir no sirve de nada.")
+
+# c) Eligiendo el ultimo: sale, se marca como eleccion suya, y NO se anota
+#    como relajacion automatica (no se ha bajado: se ha empezado ahi).
+_ultimo45 = _c.post("/menu/v2", json={**_CUERPO_45,
+                                      "peldano": "tope_maximo_de_visceras_higado_y_verdura"}).json()
+if not _ultimo45.get("factible"):
+    fallos.append("BLOQUE45: eligiendo el ultimo peldano no sale menu, y sin elegir nada la "
+                  "escalera llega hasta ahi y si sale. Elegir un peldano no puede dar menos "
+                  "que no elegir ninguno.")
+else:
+    if not _ultimo45.get("peldano_lo_eligio_el_profesional"):
+        fallos.append("BLOQUE45: el menu no consta como formulado en el peldano que se pidio.")
+    if _ultimo45.get("se_relajo"):
+        fallos.append("BLOQUE45: dice que se ha relajado algo cuando el peldano se eligio a "
+                      "mano. 'Se bajo de peldano' y 'se pidio este peldano' son cosas "
+                      "distintas, y la de arriba lleva un aviso al usuario que aqui sobra.")
+    # ⚠️ Y LO QUE NO PUEDE PASAR NUNCA: que soltar la FORMA relaje la
+    # NUTRICION. Regla 3 del CLAUDE.md.
+    _f45 = (_ultimo45.get("ficha") or {}).get("semaforo")
+    if _f45 != "verde":
+        fallos.append(f"BLOQUE45: el menu del ultimo peldano sale en {_f45}. Un peldano suelta "
+                      f"las proporciones de BARF, que son criterio nuestro; los 43 requisitos "
+                      f"de FEDIAF no se tocan en ninguno.")
+    _rotos45 = _api._tope_patologia_roto(_ultimo45.get("menu") or {}, al,
+                                         ["pancreatitis"], "Adulto")
+    if _rotos45:
+        fallos.append(f"BLOQUE45: el menu del ultimo peldano rompe un tope de patologia: "
+                      f"{_rotos45}. Los topes por patologia son restricciones duras y no "
+                      f"dependen del peldano.")
+
+# d) Una clave que no existe no puede dejar a nadie sin menu: se trata como
+#    "no ha elegido" y se recorre la escalera de siempre. Un 400 aqui seria
+#    quedarse sin racion por un nombre mal escrito.
+_raro45 = _c.post("/menu/v2", json={**_CUERPO_45, "peldano": "peldano-que-no-existe"}).json()
+if not _raro45.get("factible"):
+    fallos.append("BLOQUE45: una clave de peldano desconocida deja sin menu. Tiene que caer en "
+                  "la escalera normal, no en un error.")
+
+# e) Y el formulador del veterinario, que es donde de verdad se usa: hasta
+#    hoy NO recorria la escalera nunca, asi que un profesional tenia MENOS
+#    margen que un tutor.
+_form45 = {"gramos_por_alimento": {}, "der_objetivo": 1040.0, "peso_perro_kg": 25.0,
+           "etapa_requisitos": "Adulto", "patologias": ["pancreatitis"]}
+_auto_estricto45 = _c.post("/formular/autocompletar", json=dict(_form45)).json()
+_auto_ultimo45 = _c.post("/formular/autocompletar",
+                         json={**_form45,
+                               "peldano": "tope_maximo_de_visceras_higado_y_verdura"}).json()
+if _auto_estricto45.get("factible"):
+    fallos.append("BLOQUE45: autocompletar saca racion para la pancreatitis de 25 kg con las "
+                  "proporciones completas. Ese caso no tiene solucion ahi.")
+elif _auto_estricto45.get("peldano") != "estricto":
+    fallos.append("BLOQUE45: autocompletar no dice en que peldano NO ha salido. 'No se puede' a "
+                  "secas no le dice a nadie si queda algo que probar.")
+if not _auto_ultimo45.get("factible"):
+    fallos.append("BLOQUE45: autocompletar no saca racion ni eligiendo el ultimo peldano, y el "
+                  "generador si. El veterinario no puede tener menos margen que el tutor.")
+elif _auto_ultimo45.get("peldano") != "tope_maximo_de_visceras_higado_y_verdura":
+    fallos.append("BLOQUE45: autocompletar no devuelve el peldano con el que ha formulado.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# BLOQUE 46 — UN CERO MUDO SE DELATA SOLO, SIN LISTA QUE MANTENER
 # ============================================================
 #
 # ⚠️ POR QUÉ EXISTE (7 septiembre). El aviso de datos incompletos dependía
@@ -5118,31 +5380,31 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 # en una copia del catálogo y exige que la auditoría lo encuentre. Si el día
 # de mañana alguien rompe el detector, esta mitad se cae aunque la otra siga
 # en verde.
-print("=== BLOQUE 44: el detector de ceros mudos, probado con el fallo puesto ===")
+print("=== BLOQUE 46: el detector de ceros mudos, probado con el fallo puesto ===")
 
-import json as _json_b44, subprocess as _sp_b44, tempfile as _tmp_b44, os as _os_b44
+import json as _json_b46, subprocess as _sp_b46, tempfile as _tmp_b46, os as _os_b46
 
-_dir_b44 = _os_b44.path.dirname(_os_b44.path.abspath(__file__))
+_dir_b46 = _os_b46.path.dirname(_os_b46.path.abspath(__file__))
 
-def _auditar_b44(ruta_catalogo):
-    _env = dict(_os_b44.environ, CANISLAB_CATALOGO=ruta_catalogo)
-    _r = _sp_b44.run([sys.executable, "auditar_catalogo.py"], capture_output=True,
-                     text=True, cwd=_dir_b44, env=_env)
+def _auditar_b46(ruta_catalogo):
+    _env = dict(_os_b46.environ, CANISLAB_CATALOGO=ruta_catalogo)
+    _r = _sp_b46.run([sys.executable, "auditar_catalogo.py"], capture_output=True,
+                     text=True, cwd=_dir_b46, env=_env)
     if _r.returncode not in (0, 1):
         return None, _r.stderr[-400:]
     return [l for l in _r.stdout.splitlines() if "[SOSPECHOSO]" in l], None
 
 # ── mitad 1: con el catálogo de verdad no puede sonar nada ────────────
-_vivos_b44, _err_b44 = _auditar_b44(_os_b44.path.join(_dir_b44, "alimentos_v3_final.json"))
-if _err_b44:
-    fallos.append(f"BLOQUE44: auditar_catalogo.py ha reventado:\n{_err_b44}")
-elif _vivos_b44:
+_vivos_b46, _err_b46 = _auditar_b46(_os_b46.path.join(_dir_b46, "alimentos_v3_final.json"))
+if _err_b46:
+    fallos.append(f"BLOQUE46: auditar_catalogo.py ha reventado:\n{_err_b46}")
+elif _vivos_b46:
     fallos.append(
-        f"BLOQUE44: {len(_vivos_b44)} ceros mudos en el catálogo. Cada uno es un nutriente "
+        f"BLOQUE46: {len(_vivos_b46)} ceros mudos en el catálogo. Cada uno es un nutriente "
         f"que vale 0 para el motor sin que nadie haya comprobado que de verdad sea 0. "
         f"O se rellena con su fuente, o se declara en `sin_dato`, o -- si el cero es real "
         f"y se ha ido a mirar -- se escribe en `cero_verificado` con la fuente al lado:\n    "
-        + "\n    ".join(l.strip()[:110] for l in _vivos_b44[:6]))
+        + "\n    ".join(l.strip()[:110] for l in _vivos_b46[:6]))
 
 # ── mitad 2: con el fallo plantado TIENE que sonar ────────────────────
 # Se vacía UN nutriente de UN alimento: el perfil exacto del fallo real, una
@@ -5156,61 +5418,61 @@ elif _vivos_b44:
 # víctima elegida a mano no servía -- y eso mismo puede volver a pasar cada
 # vez que cambie el catálogo. Buscándola aquí, se coge una que de verdad
 # cumpla la condición HOY, y la prueba no caduca.
-_cat_b44 = _json_b44.load(open(_os_b44.path.join(_dir_b44, "alimentos_v3_final.json"),
+_cat_b46 = _json_b46.load(open(_os_b46.path.join(_dir_b46, "alimentos_v3_final.json"),
                                encoding="utf-8"))
-_SUPL_B44 = ("Multivitamínico", "Vitamina B", "Hierro", "Calcio", "Yodo", "Fibra", "Omega-3")
-_grupos_b44 = {}
-for _a_b44 in _cat_b44:
-    if (_a_b44.get("categoria") not in _SUPL_B44
-            and (_a_b44.get("nutrientes") or {}).get("grasa", 0) <= 80):
-        _grupos_b44.setdefault(_a_b44["categoria"], []).append(_a_b44)
+_SUPL_B46 = ("Multivitamínico", "Vitamina B", "Hierro", "Calcio", "Yodo", "Fibra", "Omega-3")
+_grupos_b46 = {}
+for _a_b46 in _cat_b46:
+    if (_a_b46.get("categoria") not in _SUPL_B46
+            and (_a_b46.get("nutrientes") or {}).get("grasa", 0) <= 80):
+        _grupos_b46.setdefault(_a_b46["categoria"], []).append(_a_b46)
 
-_victima_b44 = _clave_b44 = None
-for _cat_n_b44, _g_b44 in sorted(_grupos_b44.items()):
-    if len(_g_b44) < 5:
+_victima_b46 = _clave_b46 = None
+for _cat_n_b46, _g_b46 in sorted(_grupos_b46.items()):
+    if len(_g_b46) < 5:
         continue
-    for _k_b44 in sorted((_g_b44[0].get("nutrientes") or {})):
+    for _k_b46 in sorted((_g_b46[0].get("nutrientes") or {})):
         # todos los de la categoría lo tienen: quitárselo a uno lo deja como
         # la única excepción, que es justo lo que el detector busca
-        if all((_x.get("nutrientes") or {}).get(_k_b44) for _x in _g_b44):
-            _victima_b44, _clave_b44 = _g_b44[0], _k_b44
+        if all((_x.get("nutrientes") or {}).get(_k_b46) for _x in _g_b46):
+            _victima_b46, _clave_b46 = _g_b46[0], _k_b46
             break
-    if _victima_b44:
+    if _victima_b46:
         break
 
-if not _victima_b44:
-    fallos.append("BLOQUE44: no se ha encontrado ningún nutriente que TODOS los alimentos "
+if not _victima_b46:
+    fallos.append("BLOQUE46: no se ha encontrado ningún nutriente que TODOS los alimentos "
                   "de alguna categoría tengan, así que no se puede plantar el fallo. O el "
                   "catálogo ha cambiado mucho, o esta prueba hay que reescribirla.")
 else:
-    _victima_b44["nutrientes"][_clave_b44] = 0
-    _victima_b44["sin_dato"] = [k for k in (_victima_b44.get("sin_dato") or [])
-                                if k != _clave_b44]
+    _victima_b46["nutrientes"][_clave_b46] = 0
+    _victima_b46["sin_dato"] = [k for k in (_victima_b46.get("sin_dato") or [])
+                                if k != _clave_b46]
 
-    with _tmp_b44.NamedTemporaryFile("w", suffix=".json", delete=False,
-                                     encoding="utf-8") as _f_b44:
-        _json_b44.dump(_cat_b44, _f_b44, ensure_ascii=False)
-        _roto_b44 = _f_b44.name
+    with _tmp_b46.NamedTemporaryFile("w", suffix=".json", delete=False,
+                                     encoding="utf-8") as _f_b46:
+        _json_b46.dump(_cat_b46, _f_b46, ensure_ascii=False)
+        _roto_b46 = _f_b46.name
     try:
-        _con_fallo_b44, _err2_b44 = _auditar_b44(_roto_b44)
-        if _err2_b44:
-            fallos.append(f"BLOQUE44: la auditoría revienta con el catálogo "
-                          f"plantado:\n{_err2_b44}")
-        elif not any(_victima_b44["nombre"] in l and _clave_b44 in l
-                     for l in (_con_fallo_b44 or [])):
+        _con_fallo_b46, _err2_b46 = _auditar_b46(_roto_b46)
+        if _err2_b46:
+            fallos.append(f"BLOQUE46: la auditoría revienta con el catálogo "
+                          f"plantado:\n{_err2_b46}")
+        elif not any(_victima_b46["nombre"] in l and _clave_b46 in l
+                     for l in (_con_fallo_b46 or [])):
             fallos.append(
-                f"BLOQUE44: se ha vaciado «{_clave_b44}» de «{_victima_b44['nombre']}» SIN "
+                f"BLOQUE46: se ha vaciado «{_clave_b46}» de «{_victima_b46['nombre']}» SIN "
                 f"declararlo -- y lo tienen TODOS los demás de su categoría -- y el detector "
                 f"de ceros mudos no ha dicho nada. Está roto o desactivado, y con él la única "
                 f"red que queda cuando alguien se olvida de rellenar `sin_dato`.")
     finally:
-        _os_b44.unlink(_roto_b44)
+        _os_b46.unlink(_roto_b46)
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
-# BLOQUE 45 — EL ÚLTIMO CAMINO QUE ENTREGABA MENÚS SIN VERIFICAR
+# BLOQUE 47 — EL ÚLTIMO CAMINO QUE ENTREGABA MENÚS SIN VERIFICAR
 # ============================================================
 #
 # ⚠️ POR QUÉ EXISTE (7 septiembre). La regla 1 del CLAUDE.md dice que TODO
@@ -5228,70 +5490,65 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 # comprueban los tres desenlaces, porque el que importa es el del medio:
 # un menú que se guardó bueno puede haber dejado de cumplir si el catálogo
 # cambió debajo, y eso solo se ve verificándolo otra vez.
-print("=== BLOQUE 45: los menús guardados se verifican al leerlos ===")
+print("=== BLOQUE 47: los menús guardados se verifican al leerlos ===")
 
-import tempfile as _tmp_b45, os as _os_b45
-import persistencia as _pers_b45
+import tempfile as _tmp_b47, os as _os_b47
+import persistencia as _pers_b47
 
-_db_b45 = _os_b45.path.join(_tmp_b45.mkdtemp(), "b45.db")
-_pers_b45.crear_tablas(_db_b45)
-_pid_b45 = _pers_b45.guardar_perro({"nombre": "B45", "tamano": "mediano"}, ruta_db=_db_b45)
+_db_b47 = _os_b47.path.join(_tmp_b47.mkdtemp(), "b45.db")
+_pers_b47.crear_tablas(_db_b47)
+_pid_b47 = _pers_b47.guardar_perro({"nombre": "B45", "tamano": "mediano"}, ruta_db=_db_b47)
 
-_r_b45 = _c.post("/menu/v2", json={"nombres_alimentos": [], "modo": "automatico",
+_r_b47 = _c.post("/menu/v2", json={"nombres_alimentos": [], "modo": "automatico",
                                    "der_objetivo": 1100, "peso_perro_kg": 20,
                                    "etapa_requisitos": "Adulto"}).json()
-if not _r_b45.get("factible"):
-    fallos.append("BLOQUE45: no se pudo generar el menú de partida.")
+if not _r_b47.get("factible"):
+    fallos.append("BLOQUE47: no se pudo generar el menú de partida.")
 else:
-    _ctx_b45 = {"etapa_requisitos": "Adulto", "der_objetivo": 1100, "peso_perro_kg": 20}
-    _pers_b45.guardar_menu(_pid_b45, "bueno", {"gramos": _r_b45["menu"], "kcal_total": 1100},
-                           contexto=_ctx_b45, ruta_db=_db_b45)
+    _ctx_b47 = {"etapa_requisitos": "Adulto", "der_objetivo": 1100, "peso_perro_kg": 20}
+    _pers_b47.guardar_menu(_pid_b47, "bueno", {"gramos": _r_b47["menu"], "kcal_total": 1100},
+                           contexto=_ctx_b47, ruta_db=_db_b47)
     # sin contexto: es como se guardaban antes del 7 de septiembre
-    _pers_b45.guardar_menu(_pid_b45, "viejo", {"gramos": _r_b45["menu"], "kcal_total": 1100},
-                           ruta_db=_db_b45)
+    _pers_b47.guardar_menu(_pid_b47, "viejo", {"gramos": _r_b47["menu"], "kcal_total": 1100},
+                           ruta_db=_db_b47)
     # ⚠️ EL FALLO PLANTADO: medio kilo de pollo a secas. Tiene contexto, así
     # que se verifica -- y no cumple ni de lejos (sin hueso no hay calcio).
     # Si esto sale `verificado: true`, es que no se está verificando nada.
-    _pers_b45.guardar_menu(_pid_b45, "roto",
+    _pers_b47.guardar_menu(_pid_b47, "roto",
                            {"gramos": {"Pollo con piel (sin hueso)": 500}, "kcal_total": 1100},
-                           contexto=_ctx_b45, ruta_db=_db_b45)
+                           contexto=_ctx_b47, ruta_db=_db_b47)
 
-    _real_b45 = _pers_b45.obtener_menus
-    _pers_b45.obtener_menus = lambda _p, ruta_db=_db_b45: _real_b45(_p, ruta_db=_db_b45)
+    _real_b47 = _pers_b47.obtener_menus
+    _pers_b47.obtener_menus = lambda _p, ruta_db=_db_b47: _real_b47(_p, ruta_db=_db_b47)
     try:
-        _por_nombre_b45 = {m["nombre"]: m for m in _api.endpoint_obtener_menus(_pid_b45)}
+        _por_nombre_b47 = {m["nombre"]: m for m in _api.endpoint_obtener_menus(_pid_b47)}
     finally:
-        _pers_b45.obtener_menus = _real_b45
+        _pers_b47.obtener_menus = _real_b47
 
-    _bueno_b45 = _por_nombre_b45.get("bueno") or {}
-    if _bueno_b45.get("verificado") is not True or not _bueno_b45.get("ficha"):
-        fallos.append(f"BLOQUE45: un menú guardado que SÍ cumple vuelve como "
-                      f"verificado={_bueno_b45.get('verificado')!r} y "
-                      f"{'con' if _bueno_b45.get('ficha') else 'SIN'} ficha. Tenía que "
+    _bueno_b47 = _por_nombre_b47.get("bueno") or {}
+    if _bueno_b47.get("verificado") is not True or not _bueno_b47.get("ficha"):
+        fallos.append(f"BLOQUE47: un menú guardado que SÍ cumple vuelve como "
+                      f"verificado={_bueno_b47.get('verificado')!r} y "
+                      f"{'con' if _bueno_b47.get('ficha') else 'SIN'} ficha. Tenía que "
                       f"volver verificado y con su ficha recalculada.")
 
-    _viejo_b45 = _por_nombre_b45.get("viejo") or {}
-    if _viejo_b45.get("verificado") is not None or not _viejo_b45.get("aviso"):
-        fallos.append("BLOQUE45: un menú SIN contexto (guardado antes del 7 de septiembre) "
+    _viejo_b47 = _por_nombre_b47.get("viejo") or {}
+    if _viejo_b47.get("verificado") is not None or not _viejo_b47.get("aviso"):
+        fallos.append("BLOQUE47: un menú SIN contexto (guardado antes del 7 de septiembre) "
                       "tiene que volver con verificado=None y su aviso. No se puede "
                       "verificar contra nada, y fingir que sí es peor que decirlo.")
 
-    _roto_b45 = _por_nombre_b45.get("roto") or {}
-    if _roto_b45.get("verificado") is not False:
+    _roto_b47 = _por_nombre_b47.get("roto") or {}
+    if _roto_b47.get("verificado") is not False:
         fallos.append(
-            f"BLOQUE45: medio kilo de pollo sin hueso ha vuelto como "
-            f"verificado={_roto_b45.get('verificado')!r}. Ese menú no cumple ni el calcio "
+            f"BLOQUE47: medio kilo de pollo sin hueso ha vuelto como "
+            f"verificado={_roto_b47.get('verificado')!r}. Ese menú no cumple ni el calcio "
             f"ni el Ca:P, así que o no se está verificando o el filtro lo deja pasar. Es "
             f"la regla 1: preferimos no dar menú a dar uno que no cumple.")
-    elif _roto_b45.get("alimentos"):
-        fallos.append("BLOQUE45: el menú que NO cumple ha vuelto con sus gramos dentro. "
+    elif _roto_b47.get("alimentos"):
+        fallos.append("BLOQUE47: el menú que NO cumple ha vuelto con sus gramos dentro. "
                       "Un menú rechazado no se entrega: se dice por qué y se regenera.")
-
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
-
-
-# ============================================================
-# BLOQUE 46 — LA CASA DE VARIOS PERROS DA LOS MENÚS QUE SE PIDEN
+# BLOQUE 48 — LA CASA DE VARIOS PERROS DA LOS MENÚS QUE SE PIDEN
 # ============================================================
 #
 # ⚠️ CASO REAL, abierto desde el 27 de agosto: la casa de dos perros
@@ -5322,15 +5579,15 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 # la prueba medía lo ocupada que estaba la máquina, no si el arreglo está.
 # Con el interruptor `_PEOR_CASO_SIEMPRE_SOLO_PRUEBAS` las dos versiones
 # corren seguidas y se comparan entre ellas.
-print("=== BLOQUE 46: varios perros, los menús que se piden ===")
+print("=== BLOQUE 48: varios perros, los menús que se piden ===")
 
-_PRESU_REAL_B46 = _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS
+_PRESU_REAL_B48 = _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS
 # Apretado a propósito: con los 24 s normales y una máquina libre las dos
 # versiones dan 3 menús y esto no probaría nada. El fallo solo asoma cuando
 # el reloj va justo, que es lo que pasa en Render.
 _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = 14.0
 
-_PERROS_B46 = [
+_PERROS_B48 = [
     {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 900,
      "etapa_requisitos": "CachorroJoven", "peso_perro_kg": 12,
      "peso_adulto_esperado_kg": 25},
@@ -5338,44 +5595,127 @@ _PERROS_B46 = [
      "etapa_requisitos": "Adulto", "peso_perro_kg": 24.5},
 ]
 
-def _tirada_b46():
+def _tirada_b48():
     _r = _c.post("/menu/varios-perros", json={
-        "perros": _PERROS_B46, "nombres": ["Kira", "Nala"],
+        "perros": _PERROS_B48, "nombres": ["Kira", "Nala"],
         "modo_conjunto": "parecidos", "numero_de_menus": 3}).json()
     _n = [len(_p.get("menus") or []) for _p in (_r.get("perros") or [])]
     return (min(_n) if _n else 0), _r
 
 try:
-    _midiendo_b46, _peor_b46, _mudas_b46 = [], [], []
-    for _k_b46 in range(3):
+    _midiendo_b48, _peor_b48, _mudas_b48 = [], [], []
+    for _k_b48 in range(3):
         _api._PEOR_CASO_SIEMPRE_SOLO_PRUEBAS = False
-        _cuantos, _resp = _tirada_b46()
-        _midiendo_b46.append(_cuantos)
+        _cuantos, _resp = _tirada_b48()
+        _midiendo_b48.append(_cuantos)
         if _cuantos < 3 and not _resp.get("menus_pedidos_no_dados"):
-            _mudas_b46.append(_cuantos)
+            _mudas_b48.append(_cuantos)
 
         _api._PEOR_CASO_SIEMPRE_SOLO_PRUEBAS = True
-        _cuantos_p, _ = _tirada_b46()
-        _peor_b46.append(_cuantos_p)
+        _cuantos_p, _ = _tirada_b48()
+        _peor_b48.append(_cuantos_p)
 finally:
     _api._PEOR_CASO_SIEMPRE_SOLO_PRUEBAS = False
-    _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = _PRESU_REAL_B46
+    _api.PRESUPUESTO_SEGUNDOS_VARIOS_PERROS = _PRESU_REAL_B48
 
 # Medir lo que cuesta no puede dar MENOS menús que suponer el peor caso: la
 # estimación medida nunca es mayor que el peor caso, así que nunca corta
 # antes. Si sale igual o peor, es que ha dejado de medirse.
-if sum(_midiendo_b46) <= sum(_peor_b46):
+if sum(_midiendo_b48) <= sum(_peor_b48):
     fallos.append(
-        f"BLOQUE46: midiendo lo que cuesta cada ronda salen {_midiendo_b46} menús y "
-        f"suponiendo el peor caso {_peor_b46} -- o sea que medir no está dando NINGUNA "
+        f"BLOQUE48: midiendo lo que cuesta cada ronda salen {_midiendo_b48} menús y "
+        f"suponiendo el peor caso {_peor_b48} -- o sea que medir no está dando NINGUNA "
         f"ventaja. La estimación medida nunca puede ser mayor que el peor caso, así que "
         f"esto solo pasa si se ha vuelto a decidir por el tope. (Se comparan las dos en la "
         f"misma máquina y seguidas, así que la carga afecta a las dos igual.)")
-if _mudas_b46:
+if _mudas_b48:
     fallos.append(
-        f"BLOQUE46: han salido menos menús de los 3 pedidos ({_mudas_b46}) y la respuesta NO "
+        f"BLOQUE48: han salido menos menús de los 3 pedidos ({_mudas_b48}) y la respuesta NO "
         f"trae `menus_pedidos_no_dados`. Recortar se puede; recortar EN SILENCIO es el fallo "
         f"original -- pedías 3, recibías 1, y no había ni una palabra.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
+# BLOQUE 49 — EL MARGEN DEL SUELO CUBRE EL REDONDEO, NO UN PORCENTAJE
+# ============================================================
+#
+# ⚠️ CASO REAL, abierto desde el 28 de agosto: "el yodo de los perros muy
+# pequeños vive al 101 % del mínimo". Se apuntó como una molestia estética
+# y era algo peor: un menú que el solver daba por bueno y que el
+# verificador tiraba después.
+#
+# La causa está escrita en el propio motor. El suelo se pedía con un +1,5 %
+# (`lo = mn * der / 1000 * 1.015`), pero lo que ese margen tiene que cubrir
+# es el error del REDONDEO -- cada alimento se redondea a 2 decimales, o
+# sea hasta 0,005 g de menos por alimento -- y ese error es ABSOLUTO: no
+# escala con el tamaño del perro. Un porcentaje sí.
+#
+# La cuenta, con el yodo de un perro de 3 kg: el mínimo es 300 µg/1000 kcal
+# = 90 µg, así que el 1,5 % son 1,35 µg. Pero medio paso de redondeo del
+# yoduro potásico (800 µg/g, la fuente más concentrada del catálogo) mueve
+# 4 µg -- tres veces el margen. En un perro de 20 kg el mismo error
+# absoluto es el 0,6 % del mínimo y el porcentaje lo cubre de sobra; por
+# eso solo se veía en los pequeños.
+#
+# MEDIDO, 60 menús de cuatro perfiles pequeños (1,5 a 4,5 kg):
+#
+#                       yodo mínimo   mediana   bajo 102 %   menús caídos
+#     antes (solo %)         82 %      102 %      16 de 60        3
+#     ahora (% o redondeo)  100 %      106 %       2 de 60        0
+#
+# El 82 % es lo que importa: no es "poco margen", es un menú que NO CUMPLE
+# saliendo del solver. Lo paraba `_garantizar_verificado` -- la regla 1
+# funcionando -- pero a costa de dejar a la usuaria sin menú.
+print("=== BLOQUE 49: el suelo aguanta el redondeo en perros pequeños ===")
+
+import statistics as _stat_b49
+
+_al_b49, _req_b49 = _api.cargar_v2()
+
+def _cubre_b49(gramos, clave, der, etapa, peso):
+    _f = _api.verificar_v2(gramos, _al_b49, _req_b49, der, etapa, peso_referencia_kg=peso)
+    for _lista in ("dentro_de_rango", "faltan", "se_pasa", "rojos", "ambar"):
+        for _fila in _f.get(_lista) or []:
+            if _fila.get("clave") == clave:
+                return _fila.get("cubre_pct"), _f.get("semaforo")
+    return None, _f.get("semaforo")
+
+_yodos_b49, _caidos_b49, _cortos_b49 = [], 0, []
+for _der_b49, _peso_b49 in ((300, 3), (200, 1.5), (250, 2.2), (400, 4.5)):
+    for _sem_b49 in range(1, 6):
+        _ok_b49, _g_b49 = _api.resolver_v2(
+            _der_b49, "Adulto", _al_b49, _req_b49, _peso_b49, _api.dosis_maxima_fabricante,
+            margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=8,
+            semilla_aleatoria=_sem_b49)
+        if not _ok_b49:
+            _caidos_b49 += 1
+            continue
+        _pct_b49, _sem_color_b49 = _cubre_b49(_g_b49, "yodo", _der_b49, "Adulto", _peso_b49)
+        if _sem_color_b49 != "verde":
+            _caidos_b49 += 1
+        if _pct_b49 is not None:
+            _yodos_b49.append(_pct_b49)
+            if _pct_b49 < 100:
+                _cortos_b49.append((_der_b49, _peso_b49, _sem_b49, _pct_b49))
+
+if _cortos_b49:
+    fallos.append(
+        f"BLOQUE49: {len(_cortos_b49)} menús salen del solver con el yodo POR DEBAJO del "
+        f"mínimo después de redondear los gramos {_cortos_b49[:3]}. El margen del suelo "
+        f"tiene que cubrir el paso de redondeo de la fuente más concentrada, no un "
+        f"porcentaje fijo -- con solo el 1,5 % esto bajaba al 82 %.")
+if _caidos_b49:
+    fallos.append(
+        f"BLOQUE49: {_caidos_b49} de 20 menús de perros pequeños no salen o no están verdes. "
+        f"No es inseguro (la regla 1 los para) pero deja a la usuaria sin menú, que es el "
+        f"síntoma con el que se encontró esto.")
+if _yodos_b49 and _stat_b49.median(_yodos_b49) < 104:
+    fallos.append(
+        f"BLOQUE49: la mediana del yodo en perros pequeños ha bajado a "
+        f"{_stat_b49.median(_yodos_b49):.0f} % del mínimo. Con el margen solo porcentual era "
+        f"102 % y con el absoluto 106 %: si vuelve a 102 es que el suelo ha dejado de cubrir "
+        f"el redondeo y los menús se van a caer otra vez en el verificador.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

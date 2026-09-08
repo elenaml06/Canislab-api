@@ -44,10 +44,10 @@ que tomar una persona, no yo.
 
 ## `PENDIENTE_DINERO_Y_SALUD.md` — lo urgente, antes de cobrar, lo que mira Stripe
 
-- [x] `/menu/varios-perros` devolvía 1 menú en vez de 3 — ARREGLADO 7 sep: decidía si seguir con el TOPE de cada rodaja (peor caso 10 s) en vez de con lo que había costado de verdad la ronda anterior. Ahora se mide. Con el presupuesto apretado a 14 s: antes [2,1,1,1,2], ahora [3,3,2,3,3]. BLOQUE 46
+- [x] `/menu/varios-perros` devolvía 1 menú en vez de 3 — ARREGLADO 7 sep: decidía si seguir con el TOPE de cada rodaja (peor caso 10 s) en vez de con lo que había costado de verdad la ronda anterior. Ahora se mide. Con el presupuesto apretado a 14 s: antes [2,1,1,1,2], ahora [3,3,2,3,3]. BLOQUE 48
 - [x] Los 0,99 g de salmón — CERRADO 7 sep: el suelo de «esto se puede pesar» se recortaba contra el techo del propio alimento (`min(porcion, techos[i])`) y podía quedarse por debajo del gramo. Ahora nunca baja de 1 g y el MILP deja fuera solo al alimento del que no cabe ni un gramo
 - [ ] Nadie debería poder suscribirse dos veces
-- [x] El yodo de los perros pequeños — ARREGLADO 7 sep, y era peor de lo apuntado: el margen del suelo era un 1,5 % fijo cuando lo que tiene que cubrir es el error ABSOLUTO del redondeo. Medido en 60 menús de perros de 1,5-4,5 kg: antes el yodo bajaba al 82 % y 3 menús se caían; ahora mínimo 100 % y ninguno. BLOQUE 47
+- [x] El yodo de los perros pequeños — ARREGLADO 7 sep, y era peor de lo apuntado: el margen del suelo era un 1,5 % fijo cuando lo que tiene que cubrir es el error ABSOLUTO del redondeo. Medido en 60 menús de perros de 1,5-4,5 kg: antes el yodo bajaba al 82 % y 3 menús se caían; ahora mínimo 100 % y ninguno. BLOQUE 49
 - [ ] `profiles` es una frontera de autorización y no está en el repo (RLS sin versionar)
 - [ ] Comprobar que la cancelación quita el premium
 - [ ] Verificar el negocio en Stripe, crear productos/precios/webhook reales, quitar `STRIPE_PRUEBA`, primer cobro real
@@ -70,13 +70,13 @@ que tomar una persona, no yo.
 - [ ] `aviso_composicion` en la web: ver cómo queda con tres alergias
 - [ ] `tipo_de_clave_supabase` sale como `[Filtered]` en Sentry (renombrar)
 - [ ] La `HTTPException` genérica del webhook sobra en Sentry
-- [x] `/perro/{id}/menus` — ARREGLADO 7 sep, era el único agujero en la regla 1: la tabla no guardaba la etapa ni el DER, así que el menú no se podía verificar NI EN PRINCIPIO. Ahora se guarda el contexto con el menú y se verifica al leerlo. BLOQUE 45
+- [x] `/perro/{id}/menus` — ARREGLADO 7 sep, era el único agujero en la regla 1: la tabla no guardaba la etapa ni el DER, así que el menú no se podía verificar NI EN PRINCIPIO. Ahora se guarda el contexto con el menú y se verifica al leerlo. BLOQUE 47
 
 ## `PENDIENTE_NUTRICION.md` — auditado contra el PDF oficial
 
 - [x] Contrastar con la ficha original de USDA — RESUELTO 7 sep: testículos de cordero ya no existe en el catálogo, timo de ternera ya cita FDC 170194 directo, y el acceso a USDA (`DEMO_KEY`) sí funciona (usado para el linoleico de abajo)
 - [x] El linoleico de la grasa de pollo — RESUELTO 7 sep: 19,5 g/100g, USDA FDC 173564
-- [x] El aviso de datos incompletos ya no depende de una lista a mano — RESUELTO 7 sep: `[SOSPECHOSO]` en `auditar_catalogo.py` compara cada alimento con los demás de su categoría (BLOQUE 44). Encontró 11 huecos el mismo día
+- [x] El aviso de datos incompletos ya no depende de una lista a mano — RESUELTO 7 sep: `[SOSPECHOSO]` en `auditar_catalogo.py` compara cada alimento con los demás de su categoría (BLOQUE 46). Encontró 11 huecos el mismo día
 - [ ] Enganchar (o no) ese detector al aviso que ve la usuaria — decisión abierta, hoy acierta 9 de 13
 - [x] EPA/DHA de los seis pescados — ya estaban cerrados desde el 25 ago; el punto llevaba describiendo trabajo hecho (verificado 7 sep)
 - [x] Las cuatro vísceras sin dato — COMPLETADAS 7 sep con la ficha de su fuente (BEDCA 1047 el cerebro; USDA 169454/169452/174364 las otras tres, que coincidían celda a celda)

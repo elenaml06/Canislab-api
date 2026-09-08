@@ -20,7 +20,7 @@ Parte de `PENDIENTE.md` (secciones 1, 2 y 3), separado el 6 de septiembre.
 > Con el presupuesto apretado a 14 s a propósito, cinco tiradas de cada:
 > **antes [2, 1, 1, 1, 2] — nunca llegaba a 3; ahora [3, 3, 2, 3, 3]**. Con
 > el presupuesto normal de 24 s, 8 de 8 tiradas dan 3/3 en 7-13 s.
-> Lo vigila el BLOQUE 46, que aprieta el presupuesto porque con 24 s en una
+> Lo vigila el BLOQUE 48, que aprieta el presupuesto porque con 24 s en una
 > máquina rápida las dos versiones aciertan y no probaría nada.
 
 ### 1.0 `/menu/varios-perros` devuelve a veces 1 menú en vez de 3
@@ -197,7 +197,7 @@ Hace falta, antes de abrir el cobro:
 >
 > El 82 % es un menú que NO CUMPLE saliendo del solver. Lo paraba
 > `_garantizar_verificado` —la regla 1 haciendo su trabajo— a costa de dejar
-> a la usuaria sin menú. Lo vigila el BLOQUE 47.
+> a la usuaria sin menú. Lo vigila el BLOQUE 49.
 
 ### 1.0-ter El yodo de los perros muy pequeños vive al 101 % del mínimo
 

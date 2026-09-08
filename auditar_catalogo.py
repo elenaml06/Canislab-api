@@ -185,7 +185,7 @@ for a in al:
 # así un hueco se tapaba a sí mismo en cuanto la categoría era pequeña: en
 # «Hígado», que tiene 6, vaciar uno deja 5 de 6 = 83 % y ya no llega al 90 %.
 # O sea que el aviso se apagaba justo en las categorías donde más duele, que
-# son las pequeñas. Se descubrió porque el BLOQUE 44 planta el fallo en un
+# son las pequeñas. Se descubrió porque el BLOQUE 46 planta el fallo en un
 # hígado a propósito y NO saltaba. La pregunta correcta es "¿es este alimento
 # la excepción entre sus compañeros?", y en esa pregunta el alimento que se
 # examina no puede contarse a sí mismo.

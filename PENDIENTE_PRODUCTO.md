@@ -181,6 +181,6 @@ menús comparados no tienen sentido sin él.
       motivo **y sin los gramos** (un menú rechazado no se entrega); y
       `verificado: null` para las filas anteriores a este cambio, que no se
       pueden verificar contra nada y siguen necesitando `/menu/revalidar`.
-      Lo vigila el BLOQUE 45, que planta medio kilo de pollo sin hueso y
+      Lo vigila el BLOQUE 47, que planta medio kilo de pollo sin hueso y
       exige que vuelva rechazado.
 

@@ -221,9 +221,9 @@ coherentes entre sí.
       primera versión metía al propio alimento en la cuenta, así que en una
       categoría pequeña un hueco se tapaba a sí mismo (en «Hígado», que
       tiene 6, vaciar uno deja 5 de 6 = 83 % y ya no llegaba al 90 %). Se
-      descubrió porque el BLOQUE 44 planta el fallo a propósito y NO
+      descubrió porque el BLOQUE 46 planta el fallo a propósito y NO
       saltaba; al arreglarlo apareció un hueco real, el linoleico del hígado
-      de cordero. Lo vigila el **BLOQUE 44**, que no se conforma con verlo
+      de cordero. Lo vigila el **BLOQUE 46**, que no se conforma con verlo
       salir limpio: vacía la tiamina de un hígado en una copia del catálogo
       y exige que la auditoría lo encuentre.
       Sale a cero hoy porque los once que levantó están resueltos, y hay una
