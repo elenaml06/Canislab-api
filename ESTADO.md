@@ -120,7 +120,7 @@ nivel 2 tal como está.
 | La tabla de patologías está cargada **dos veces en memoria** | `motor.patologias` y el módulo suelto `patologias` | ✅ | — | — | ❌ **ningún test lo ve** | ❌ | **roto (latente)** |
 
 **Verificado hoy, no de memoria:**
-- `auditar_patologias.py` ejecutado: **46 patologías, 36 topes, 21 suelos**, «todo
+- `auditar_patologias.py` ejecutado: **47 patologías, 41 topes, 32 suelos** (por la tarde, tras la cuarta pasada; por la mañana eran 46/36/21), «todo
   cuadra» (8 de septiembre, tarde). Eran 40/14/5 esa misma mañana: la ronda de
   verificación contra las fuentes añadió seis patologías y rellenó los factores
   que las tablas pedían y no se aplicaban. Ver `PATOLOGIAS.md` §0-bis y §0-quater.

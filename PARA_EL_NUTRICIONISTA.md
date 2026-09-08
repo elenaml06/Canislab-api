@@ -714,86 +714,183 @@ motor. (Da igual en la práctica, porque el legal de 142 manda de todos modos.)
 
 ---
 
-## 8 · Las patologías: 40 perfiles, 19 límites numéricos
+## 8 · Las patologías: 47 perfiles, 73 límites numéricos
 
 Los topes por patología **son más estrictos que FEDIAF** y se miden sobre las
 **kcal reales del menú**, no las pedidas — el menú puede salir un 3 % por
-debajo, y menos kcal con el mismo nutriente es más concentración.
+debajo, y menos kcal con el mismo nutriente es más concentración. **Los suelos
+también** (desde el 8 de septiembre por la tarde: hasta entonces el solver los
+exigía sobre las kcal pedidas y el filtro final los medía sobre las reales, así
+que un menú un 3 % por encima del DER cumplía para uno y no para el otro).
 
 **Regla que se comprueba automáticamente:** ninguna patología formulable
 puede tener un tope **por debajo** del mínimo de FEDIAF. Si lo tiene, eso ya
 no es un tope: es una dieta de prescripción, y va marcada como no formulable
 automáticamente.
 
-### 8.1 · Los 19, verificados uno a uno contra su capítulo
+> **⚠️ Esta sección se rehízo entera el 8 de septiembre de 2026.** La versión
+> anterior decía «40 perfiles, 19 límites» y traía los números de antes de las
+> cuatro pasadas de verificación de ese día. Ninguna de sus cifras era falsa
+> cuando se escribió; varias habían dejado de serlo. Se sustituye por la tabla
+> completa, generada del propio `patologias.json` para que no pueda volver a
+> desincronizarse a mano.
+
+### 8.1 · Los 73, verificados uno a uno contra su capítulo
 
 **Verificado el 8 de septiembre abriendo cada capítulo de SACN5 y leyendo la
-tabla citada.** «Convertido» = el valor de la fuente pasado a g o mg por 1000
-kcal con el puente de 4000 kcal/kg MS (§0.1).
+tabla citada, fila a fila y no solo la fila del nutriente que ya teníamos.** El
+motivo clínico completo de cada cifra —con la cita literal, la conversión y el
+margen que le queda al profesional— está en `patologias.json` y se sirve en
+`GET /patologias`; aquí va el resumen.
 
-| Patología · nutriente | Motor | Lo que dice la fuente | Convertido | |
-|---|---|---|---|---|
-| renal · fósforo | ≤ 1200 mg | SACN5 37-9: *«Phosphorus 0.2 to 0.5% in foods for dogs»* | 500-1250 | ✅ dentro, extremo alto |
-| renal avanzada · fósforo | ≤ 1200 mg | Íd. | 500-1250 | ✅ |
-| pancreatitis · proteína | ≤ 75 g | SACN5 67-3: *«Protein 15 to 30% for dogs»* | 37,5-75 | ✅ extremo alto |
-| **pancreatitis · grasa** | **≤ 20 g** | Merck: *«less than 20 g fat/1,000 kcal»*. SACN5 67-3: *«≤15%»* no obeso, *«≤10%»* obeso | 37,5 / 25 | ⚠️ **más estricto que las dos cifras de SACN5** |
-| oxalato · vitamina D | ≤ 14,19 µg | FEDIAF III-3a, 227 **(L)** legal | 14,19 | ✅ exacto |
-| **hepatopatía · cobre** | **≤ 2,4 mg** | Center 2026 JAVMA. **SACN5 68-8: *«Copper ≤5 mg/kg»* MS**, y en el texto *«less than 5 ppm DM»* | **1,25** | ⚠️ **el doble de permisivo que SACN5** |
-| **cardiopatía (genérica)** | **≤ 900 mg Na** | ACVIM 2019. **SACN5 36-4: perros, Class Ia 0,15-0,25 % MS; Ib/II/III 0,08-0,15 %** | **375-625 / 200-375** | ⚠️ **1,4× más permisivo que el techo de SACN5** |
-| cardiopatía B2 | ≤ 900 mg Na | Íd. | Íd. | ⚠️ íd. |
-| cardiopatía C | ≤ 790 mg Na | Íd. | Íd. | ⚠️ íd. |
-| cardiopatía D | ≤ 480 mg Na | Íd. | Íd. | ✅ dentro de Class Ia |
-| hiperlipidemia · grasa | ≤ 30 g | SACN5 28: *«Restrict dietary fat (<12% dry [matter])»* | 30 | ✅ **exacto** |
-| hiperlipidemia · fibra | ≥ 25 g | SACN5 28: *«Dogs: ≥10% DM»* | 25 | ✅ **exacto** |
-| **obesidad · grasa** | **≤ 30 g** | SACN5 27-4: *«Foods for weight loss should contain ≤9%»* | **22,5** | ⚠️ **más permisivo — declarado y medido, ver abajo** |
-| MCD · taurina | ≥ 250 mg | SACN5 36-4: *«Dogs: ≥0.1%»* | 250 | ✅ **exacto** |
-| MCD · L-carnitina | ≥ 50 mg | SACN5 36-4: *«Dogs: ≥0.02%»* | 50 | ✅ **exacto** |
-| PLE · grasa | ≤ 37,5 g | SACN5 58: *«<15% for dogs and cats»* | 37,5 | ✅ **exacto** |
-| EPI · grasa | ≤ 37,5 g | SACN5 66-1: *«Fat 10 to 15% for dogs»* | 25-37,5 | ✅ extremo alto |
-| artrosis · EPA+DHA | ≥ 1,0 g | SACN5 34-2: *«0.4 to 1.1% DM»* | 1,0-2,75 | ✅ extremo bajo |
-| dermatosis zinc · zinc | ≥ 25 mg | SACN5 32-1: *«Dogs: 100 to 200 mg/kg food DM»* | 25-50 | ✅ extremo bajo |
+«Convertido» = el valor de la fuente pasado a g o mg por 1000 kcal con el puente
+de 4000 kcal/kg MS (§0.1). **El BLOQUE 55 de la batería rehace esa conversión
+desde el número de la fuente y compara**, así que ninguna de estas cifras puede
+moverse sin que salte.
 
-**Resultado: 13 de 19 caen exactos o dentro del rango de su fuente.** Cuatro
-discrepan y dos de esos cuatro son la misma familia (cardiopatía).
+| Patología | Nutriente | | Valor | Mín. FEDIAF adulto | Máx. FEDIAF adulto | Fuente |
+|---|---|---|---|---|---|---|
+| Artrosis / osteoartritis | fosforo | ≤ | **1750.0 mg** | 1160 | sin máximo | SACN5 cap.34, Tabla 34-2 |
+| Artrosis / osteoartritis | sodio | ≤ | **1000.0 mg** | 290 | 3750 | SACN5 cap.34, Tabla 34-2 |
+| Artrosis / osteoartritis | epa | ≥ | **1.0 g** | — | sin máximo | SACN5 cap.34 «Nutritional Management of Osteoarthritis», Tabla 34-2 |
+| Artrosis / osteoartritis | lcarnitina | ≥ | **75.0 mg** | — | sin máximo | SACN5 cap.34, Tabla 34-2 |
+| Artrosis / osteoartritis | omega3_total | ≥ | **8.75 g** | — | sin máximo | SACN5 cap.34, Tabla 34-2; y Reglamento (UE) 2020/354, entrada 27 |
+| Artrosis / osteoartritis | vitE | ≥ | **67.1 mg** | 6.968 | sin máximo | SACN5 Tabla 34-2 |
+| Soporte nutricional oncológico (incluye caquexia/sarcopenia asociada) | arginina | ≥ | **5.0 g** | 1.51 | sin máximo | SACN5 cap.30 «Cancer», Tabla 30-5 |
+| Soporte nutricional oncológico (incluye caquexia/sarcopenia asociada) | grasa | ≥ | **62.5 g** | 13.75 | sin máximo | SACN5 cap.30 «Cancer», Tabla 30-5 |
+| Soporte nutricional oncológico (incluye caquexia/sarcopenia asociada) | proteina | ≥ | **75.0 g** | 52.1 | sin máximo | SACN5 cap.30 «Cancer», Tabla 30-5 |
+| Cardiopatía | sodio | ≤ | **739.0 mg** | 290 | 3750 | Cavanaugh SM (DACVIM cardiologia), «Understanding nutrition in dogs with degenerative mitral valve disease», Veterinary Practice News, 6-jul-2020 — las CIFRAS por estadio salen de aqui. El consenso ACVIM 2019 (Keene BW et al., JVIM 2019;33:1127-1140) es el marco clinico, pero NO da cifras. Techo legal: Reglamento (UE) 2020/354, entrada 24 |
+| Cardiopatía, estadio ACVIM B2 (remodelado, sin síntomas) | sodio | ≤ | **739.0 mg** | 290 | 3750 | Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio |
+| Cardiopatía, estadio ACVIM C (insuficiencia cardíaca, actual o pasada) | sodio | ≤ | **625.0 mg** | 290 | 3750 | Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio |
+| Cardiopatía, estadio ACVIM D (insuficiencia cardíaca refractaria) | sodio | ≤ | **480.0 mg** | 290 | 3750 | Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio |
+| Urolitos de cistina | sodio | ≤ | **750.0 mg** | 290 | 3750 | SACN5 cap.42 «Canine cystine urolith dissolution and prevention», Tabla 42-1 |
+| Miocardiopatía dilatada respondedora a taurina | lcarnitina | ≥ | **50.0 mg** | — | sin máximo | SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4, verificado 7-sep-2026 |
+| Miocardiopatía dilatada respondedora a taurina | taurina | ≥ | **250.0 mg** | — | sin máximo | SACN5 5ª ed., cap.36 «Cardiovascular Disease», Tabla 36-4, verificado 7-sep-2026 |
+| Dermatitis atópica | fenilalanina_tirosina | ≥ | **3.25 g** | 2.58 | sin máximo | SACN5 cap.32 «Skin and Hair Disorders», Tabla 32-1 |
+| Dermatitis atópica | omega3_total | ≥ | **0.875 g** | — | sin máximo | SACN5 cap.32, Tabla 32-6 |
+| Dermatosis zinc-sensible (razas nórdicas, defecto de absorción) | fenilalanina_tirosina | ≥ | **3.25 g** | 2.58 | sin máximo | SACN5 cap.32 «Skin and Hair Disorders», Tabla 32-1 |
+| Dermatosis zinc-sensible (razas nórdicas, defecto de absorción) | zinc | ≥ | **25.0 mg** | 20.8 | 56.75 | SACN5 5ª ed., cap.32 «Skin and Hair Disorders», Tabla 32-1, verificado 7-sep-2026 |
+| Diabetes mellitus | fibra | ≥ | **17.5 g** | — | sin máximo | SACN5 cap.29 «Diabetes Mellitus», Tabla 29-3 |
+| Disfunción cognitiva canina | omega3_total | ≥ | **2.5 g** | — | sin máximo | SACN5 cap.35, Tabla 35-3 |
+| Disfunción cognitiva canina | vitE | ≥ | **187.5 mg** | 6.968 | sin máximo | SACN5 cap.35 «Brain aging and cognitive dysfunction», Tabla 35-3 |
+| Enteropatía crónica / colitis (incluye enfermedad inflamatoria intestinal) | grasa | ≤ | **37.5 g** | 13.75 | sin máximo | SACN5 cap.57 «Inflammatory Bowel Disease», Tabla 57-1 |
+| Enteropatía crónica / colitis (incluye enfermedad inflamatoria intestinal) | potasio | ≤ | **2750.0 mg** | 1450 | sin máximo | SACN5 cap.57 «Inflammatory Bowel Disease», Tabla 57-1 |
+| Enteropatía crónica / colitis (incluye enfermedad inflamatoria intestinal) | proteina | ≥ | **62.5 g** | 52.1 | sin máximo | SACN5 cap.57, Tabla 57-1 |
+| Estreñimiento crónico | fibra | ≥ | **17.5 g** | — | sin máximo | SACN5 cap.64 «Chronic constipation/obstipation», Tabla 64-2 |
+| Cálculos de estruvita | fosforo | ≤ | **1500.0 mg** | 1160 | sin máximo | SACN5 cap.43 «Canine struvite urolithiasis», Tabla 43-3 |
+| Cálculos de estruvita | magnesio | ≤ | **250.0 mg** | 200 | sin máximo | SACN5 cap.43 «Canine struvite urolithiasis», Tabla 43-3 |
+| Cálculos de estruvita | proteina | ≤ | **62.5 g** | 52.1 | sin máximo | SACN5 cap.43 «Canine struvite urolithiasis», Tabla 43-3 |
+| Flatulencia excesiva (gases) | fibra | ≤ | **12.5 g** | — | sin máximo | SACN5 cap.65 «Excessive flatulence», Tabla 65-1 |
+| Flatulencia excesiva (gases) | proteina | ≤ | **75.0 g** | 52.1 | sin máximo | SACN5 cap.65 «Excessive flatulence», Tabla 65-1 |
+| Hepatopatía por acúmulo de cobre | cobre | ≤ | **2.4 mg** | 2.08 | 7 | Center SA et al., «Lower risk for liver copper accumulation in dogs fed copper-restricted diets versus those fed copper-replete diets», JAVMA 264(2), 2026 (doi javma.25.05.0295). VERIFICADO 8-sep-2026. Confirmado ademas contra SACN5 cap.68, Tabla 68-8, y contra el Reglamento (UE) 2020/354, entrada 28 |
+| Hepatopatía por acúmulo de cobre | sodio | ≤ | **625.0 mg** | 290 | 3750 | SACN5 cap.68 «Hepatobiliary Disease», Tabla 68-8 |
+| Hepatopatía por acúmulo de cobre | hierro | ≥ | **20.0 mg** | 10.4 | 170.45 | SACN5 cap.68 «Hepatobiliary Disease», Tabla 68-8 |
+| Hepatopatía por acúmulo de cobre | taurina | ≥ | **250.0 mg** | — | sin máximo | SACN5 cap.68 «Hepatobiliary Disease», Tabla 68-8 |
+| Hepatopatía por acúmulo de cobre | vitE | ≥ | **67.1 mg** | 6.968 | sin máximo | SACN5 Tabla 68-8 |
+| Hepatopatía por acúmulo de cobre | zinc | ≥ | **50.0 mg** | 20.8 | 56.75 | SACN5 cap.68 «Hepatobiliary Disease», Tabla 68-8 |
+| Hiperlipidemia (triglicéridos o colesterol altos) | grasa | ≤ | **30.0 g** | 13.75 | sin máximo | SACN5 5ª ed., cap.28 «Disorders of Lipid Metabolism», Tabla 28-2, verificado 6-sep-2026 |
+| Hiperlipidemia (triglicéridos o colesterol altos) | fibra | ≥ | **25.0 g** | — | sin máximo | SACN5 5ª ed., cap.28 «Disorders of Lipid Metabolism», sección «Key Nutritional Factors · Fiber», verificado 7-sep-2026 |
+| Insuficiencia pancreática exocrina (EPI) | fibra | ≤ | **12.5 g** | — | sin máximo | SACN5 cap.66 «Exocrine Pancreatic Insufficiency», Tabla 66-1 |
+| Insuficiencia pancreática exocrina (EPI) | grasa | ≤ | **37.5 g** | 13.75 | sin máximo | SACN5 5ª ed., cap.66 «Exocrine Pancreatic Insufficiency», Tabla 66-1, verificado 6-sep-2026 |
+| Síndrome de intestino irritable | fibra | ≥ | **20.0 g** | — | sin máximo | SACN5 cap.63 «Idiopathic bowel syndrome», Tabla 63-3 |
+| Obesidad / sobrepeso, adelgazamiento dirigido | grasa | ≤ | **30.0 g** | 13.75 | sin máximo | SACN5 5ª ed., cap.27 «Obesity», Tabla 27-4, verificado 6-sep-2026 |
+| Obesidad / sobrepeso, adelgazamiento dirigido | fibra | ≥ | **30.0 g** | — | sin máximo | SACN5 cap.27 «Obesity», Tabla 27-4 |
+| Obesidad / sobrepeso, adelgazamiento dirigido | lcarnitina | ≥ | **75.0 mg** | — | sin máximo | SACN5 cap.27 «Obesity», Tabla 27-4 |
+| Obesidad / sobrepeso, adelgazamiento dirigido | lisina | ≥ | **4.25 g** | 1.22 | sin máximo | SACN5 cap.27 «Obesity», Tabla 27-4 |
+| Obesidad / sobrepeso, adelgazamiento dirigido | proteina | ≥ | **62.5 g** | 52.1 | sin máximo | SACN5 cap.27 «Obesity», Tabla 27-4 |
+| Obesidad / sobrepeso, adelgazamiento dirigido | vitE | ≥ | **67.1 mg** | 6.968 | sin máximo | SACN5 Tabla 27-4 |
+| Cálculos de oxalato cálcico | fosforo | ≤ | **1500.0 mg** | 1160 | sin máximo | SACN5 cap.40 «Canine Calcium Oxalate Urolithiasis», Tabla 40-5 |
+| Cálculos de oxalato cálcico | magnesio | ≤ | **375.0 mg** | 200 | sin máximo | SACN5 cap.40 «Canine Calcium Oxalate Urolithiasis», Tabla 40-5 |
+| Cálculos de oxalato cálcico | sodio | ≤ | **750.0 mg** | 290 | 3750 | SACN5 cap.40 «Canine Calcium Oxalate Urolithiasis», Tabla 40-5; contrastado con Cook A, Atiee GF, «Understanding and Addressing Canine Calcium Oxalate Urolithiasis», Today's Veterinary Practice, 10-dic-2025 |
+| Cálculos de oxalato cálcico | vitD | ≤ | **14.1875 µg** | 3.975 | 14.1875 | Máximo LEGAL de FEDIAF 2025 (Tabla III-3a, Reglamento (UE) 2017/1492), no el nutricional |
+| Pancreatitis | grasa | ≤ | **37.5 g** | 13.75 | sin máximo | SACN5 cap. 67 «Pancreatitis», Tabla 67-3. Merck Veterinary Manual («less than 20 g fat/1,000 kcal») queda como referencia mas estricta, no como el valor aplicado |
+| Pancreatitis | proteina | ≤ | **75.0 g** | 52.1 | sin máximo | SACN5 5ª ed., cap. 67 «Pancreatitis», Tabla 67-3, verificado 6-sep-2026 contra el texto |
+| Enteropatía pierde-proteínas / linfangiectasia intestinal | fibra | ≤ | **12.5 g** | — | sin máximo | SACN5 cap.58, Tabla 58-1 |
+| Enteropatía pierde-proteínas / linfangiectasia intestinal | grasa | ≤ | **37.5 g** | 13.75 | sin máximo | SACN5 5ª ed., cap.58 «Protein-Losing Enteropathies», Tabla 58-1, verificado 6-sep-2026 |
+| Enteropatía pierde-proteínas / linfangiectasia intestinal | proteina | ≥ | **62.5 g** | 52.1 | sin máximo | SACN5 cap.58 «Protein-Losing Enteropathies», Tabla 58-1 |
+| Reacción adversa al alimento (alergia o intolerancia alimentaria diagnosticada) | fosforo | ≤ | **2000.0 mg** | 1160 | sin máximo | SACN5 cap.31 «Adverse Reactions to Food», Tabla 31-3 |
+| Reacción adversa al alimento (alergia o intolerancia alimentaria diagnosticada) | sodio | ≤ | **1000.0 mg** | 290 | 3750 | SACN5 cap.31 «Adverse Reactions to Food», Tabla 31-3 |
+| Reacción adversa al alimento (alergia o intolerancia alimentaria diagnosticada) | omega3_total | ≥ | **0.875 g** | — | sin máximo | SACN5 cap.31 «Adverse Reactions to Food», Tabla 31-3 |
+| Insuficiencia renal crónica | fosforo | ≤ | **1200.0 mg** | 1160 | sin máximo | Freeman LM, dvm360 2009; WSAVA; IRIS. Confirmado 6-sep-2026 contra SACN5 5ª ed., cap.37 «Chronic Kidney Disease», Tabla 37-9 |
+| Insuficiencia renal crónica | potasio | ≤ | **2000.0 mg** | 1450 | sin máximo | SACN5 cap.37 «Chronic Kidney Disease», Tabla 37-9 |
+| Insuficiencia renal crónica | proteina | ≤ | **62.5 g** | 52.1 | sin máximo | Reglamento (UE) 2020/354, Anexo parte B, entrada 10 |
+| Insuficiencia renal crónica | sodio | ≤ | **750.0 mg** | 290 | 3750 | SACN5 cap.37 «Chronic Kidney Disease», Tabla 37-9 |
+| Insuficiencia renal crónica | vitE | ≥ | **67.1 mg** | 6.968 | sin máximo | SACN5 Tabla 37-9 |
+| Insuficiencia renal crónica, moderada-grave (equivalente a IRIS 3-4) | fosforo | ≤ | **1200.0 mg** | 1160 | sin máximo | Igual que renal (Freeman LM, dvm360 2009; WSAVA; IRIS; SACN5 cap.37 Tabla 37-9) |
+| Sobrecrecimiento bacteriano en el intestino delgado (SIBO) | grasa | ≤ | **37.5 g** | 13.75 | sin máximo | SACN5 cap.60 «Small intestinal bacterial overgrowth», Tabla 60-1 |
+| Urolitos de fosfato cálcico | fosforo | ≤ | **1500.0 mg** | 1160 | sin máximo | SACN5 cap.41 «Canine Calcium Phosphate Urolithiasis», Tabla 41-6 |
+| Urolitos de fosfato cálcico | magnesio | ≤ | **375.0 mg** | 200 | sin máximo | SACN5 cap.41 «Canine Calcium Phosphate Urolithiasis», Tabla 41-6 |
+| Urolitos de fosfato cálcico | proteina | ≤ | **62.5 g** | 52.1 | sin máximo | SACN5 cap.41 «Canine Calcium Phosphate Urolithiasis», Tabla 41-6 |
+| Urolitos de fosfato cálcico | sodio | ≤ | **750.0 mg** | 290 | 3750 | SACN5 cap.41 «Canine Calcium Phosphate Urolithiasis», Tabla 41-6 |
+| Urolitos de fosfato cálcico | vitD | ≤ | **9.375 µg** | 3.975 | 14.1875 | SACN5 cap.41, Tabla 41-6 |
 
-### 8.1-bis · Los cuatro que discrepan, y por qué
+**Además, dos cifras escritas con la etiqueta de que el solver NO las aplica**,
+porque escribirlas sin decirlo parecería un límite y no lo son:
 
-**1 · Obesidad · grasa: 30 donde SACN5 dice 22,5.** Está **declarado en el
-propio dato** y con la medida al lado: 22,5 —y hasta 27— **no dan menú** con
+| Patología | Qué pide la fuente | Por qué no se aplica |
+|---|---|---|
+| Oxalato y fosfato cálcico · **Ca:P 1,1-2:1** | SACN5 40-5 y 41-6: *«maintain a normal Ca:P ratio (1.1:1 to 2:1)»* | El motor sabe de ratios Ca:P (los aplica desde FEDIAF y desde la nota b de raza grande) pero no tiene forma de que una **patología** pida el suyo. Falta motor, no fuente |
+| Cáncer · **omega-3 ≥ 12,5 g** | SACN5 30-5: *«>5% DM»* | **No cabe en este catálogo.** Medido: con los otros tres suelos del cáncer puestos, 11,5 sale en el peldaño 5 y 12,0 no sale en ninguno. La fuente más concentrada es el aceite de linaza (62,5 g/1000 kcal) y haría falta ~20 % de las kcal del día en aceite. Falta un concentrado de EPA+DHA en el catálogo |
+
+### 8.1-bis · Los tres que discrepaban, y en qué quedaron
+
+La versión anterior de este documento marcaba **cuatro** discrepancias con
+SACN5 y dejaba una pregunta bloqueante (la 21-bis). El 8 de septiembre se
+resolvieron tres de las cuatro **aplicando la fuente**, que es lo que se pidió:
+
+**1 · Pancreatitis · grasa: era 20, ahora 37,5 — y 25 si además hay obesidad o
+hiperlipidemia.** El 20 venía de Merck (*«less than 20 g fat/1,000 kcal»*) y la
+Tabla 67-3 de SACN5 **gradúa** la grasa en dos niveles: *«≤15% for non-obese and
+non-hypertriglyceridemic dogs»* = 37,5 y *«≤10% for obese and/or
+hypertriglyceridemic dogs»* = 25. El motor aplicaba un solo nivel y encima el más
+estricto de los tres, así que el perro **obeso** con pancreatitis —el de más
+riesgo— recibía de hecho el tope de `obesidad` (30), más laxo que los 25 que pide
+la fuente para él. Ahora hay un mecanismo de tope condicional
+(`topes_por_1000kcal_si_ademas`) y los dos niveles están puestos. **Efecto
+lateral medido:** `renal + pancreatitis` pasó de no dar menú nunca a darlo en
+verde (fósforo 1198,8, grasa 37,5). El choque no era clínico: era un número que
+no venía de la fuente que manda.
+
+**2 · Cardiopatía · sodio: era 900/900/790/480, ahora 739/739/625/480.** Las
+cifras por estadio salen de Cavanaugh 2020 (DACVIM cardiología); el consenso
+ACVIM 2019 es el marco clínico pero **no da cifras**, que es justo lo que había
+que comprobar. Sigue habiendo distancia con las clases de SACN5 36-4
+(0,15-0,25 % MS en Ia = 375-625), pero son dos escalas distintas y la que usa la
+app es la de estadios ACVIM.
+
+**3 · Hepatopatía · cobre: sigue en 2,4 donde SACN5 dice 1,25.** Dos fuentes que
+no dicen lo mismo: SACN5 cap. 68 Tabla 68-8 da **≤5 mg/kg MS** (*«less than 5 ppm
+DM copper»*) = 1,25 mg/1000 kcal; Center et al. 2026 (*JAVMA* 264(2):171-180) da
+0,24 mg/100 kcal = 2,4. Se usa la más nueva. **No tiene efecto práctico** —la
+hepatopatía bloquea la formulación automática antes de llegar al tope— pero el
+número está ahí y la elección la hicimos nosotras.
+
+**4 · Obesidad · grasa: sigue en 30 donde SACN5 27-4 dice 22,5.** Está declarado
+en el propio dato y con la medida al lado: 22,5 —y hasta 27— **no dan menú** con
 el catálogo real ni en 40 s de reintentos, porque una comida de verdad, sin
-premezcla vitamínica sintética, no puede bajar tanto la grasa y seguir
-llegando a los mínimos de ácidos grasos esenciales y micronutrientes con las
-kcal que quedan. El 30 se apoya en la otra fila de la misma Tabla 27-4:
-*«Foods for prevention of weight regain should contain ≤14%»* = 35, así que
-30 queda dentro de esa franja. **Es honesto, pero es un límite de máquina
-vestido de límite clínico.**
+premezcla vitamínica sintética, no puede bajar tanto la grasa y seguir llegando a
+los mínimos de ácidos grasos esenciales con las kcal que quedan. El 30 se apoya
+en la otra fila de la misma tabla: *«Foods for prevention of weight regain should
+contain ≤14%»* = 35. **Es honesto, pero es un límite de máquina vestido de límite
+clínico.**
 
-**2 · Hepatopatía · cobre: 2,4 donde SACN5 dice 1,25.** Dos fuentes que no
-dicen lo mismo: SACN5 cap. 68 Tabla 68-8 da **≤5 mg/kg MS** (y el texto
-insiste: *«a low-copper (<5 mg/kg, dry matter) veterinary…»*, *«less than 5
-ppm DM copper»*), que son 1,25 mg/1000 kcal; Center et al. 2026 (*JAVMA*
-264(2):171-180) da 0,24 mg/100 kcal = 2,4. **Se usa la más nueva.** Hoy no
-tiene efecto práctico —la hepatopatía bloquea la formulación automática antes
-de llegar al tope— pero el número está ahí.
-
-**3 y 4 · Cardiopatía · sodio.** También dos fuentes que no coinciden.
-SACN5 36-4 da, para perro, **0,15-0,25 % MS** en clase Ia (375-625
-mg/1000 kcal) y **0,08-0,15 %** en Ib/II/III (200-375). Nuestros topes —900
-en la genérica y en B2, 790 en C, 480 en D— **están por encima del techo de
-SACN5 en los tres primeros**; solo el de estadio D cae dentro. La fuente que
-usamos es el consenso ACVIM 2019, veinte años más nuevo y específico de
-cardiología, que trabaja con una escala por estadios distinta de las clases
-de SACN5.
-
-> **PREGUNTA 21-bis (bloqueante).** En los tres casos de arriba tenemos dos
-> fuentes que no dicen lo mismo, y hemos elegido una sin que nadie lo firme:
+> **PREGUNTA 21-bis (sigue abierta, y ahora son dos).** Las dos donde elegimos
+> nosotras sin que nadie lo firme:
 > 1. **Cobre en hepatopatía**: ¿Center 2026 (2,4) o SACN5 (1,25)?
-> 2. **Sodio en cardiopatía**: ¿ACVIM 2019 por estadios, o las clases de
->    SACN5, que son bastante más estrictas? Es el que más perros toca.
-> 3. **Obesidad**: el 30 es lo que la máquina puede hacer, no lo que dice la
+> 2. **Obesidad**: el 30 es lo que la máquina puede hacer, no lo que dice la
 >    fuente. ¿Se acepta y se declara como «lo mejor alcanzable con comida
->    real», o hay que decirle al dueño que para adelgazar de verdad hace
->    falta otra cosa?
+>    real», o hay que decirle al dueño que para adelgazar de verdad hace falta
+>    otra cosa?
+>
+> **PREGUNTA 21-ter (nueva, 8 de septiembre).** El fósforo del perro **sano**.
+> SACN5 recomienda ≤2000 mg/1000 kcal a cualquier adulto (Tabla 13-3) y ≤1750 al
+> maduro (14-2); una ración BARF de este motor ronda los **4000**, y FEDIAF no
+> pone máximo de fósforo. Hoy solo se aprieta en las dos patologías cuya tabla
+> repite esa cifra —artrosis (1750) y reacción adversa al alimento (2000)—, así
+> que el mismo perro pasa de 4000 a 1750 por marcar «artrosis», sin que la
+> artrosis tenga nada que ver con el fósforo. ¿Se deja así, se quitan esas dos
+> filas por ser recomendaciones del perro sano, o se aplica el techo a todos los
+> adultos? Detalle y medidas: `PENDIENTE_NUTRICION.md` §14.3.
 
 ### 8.1-quater · Y contra el reglamento europeo de alimentos dietéticos
 
@@ -927,6 +1024,14 @@ sigue siendo tuya, y sigue siendo la PREGUNTA 22.
 
 ### 8.1-ter · Lo que las mismas tablas piden y el motor NO aplica
 
+> **⚠️ Esta lista se escribió en la TERCERA pasada y se ha quedado corta por los
+> dos lados.** Varias de sus filas se aplicaron ese mismo día (los omega-3
+> totales de artrosis y disfunción cognitiva, la vitamina E de cuatro tablas, el
+> fósforo y el sodio de la artrosis, la vitamina D del fosfato cálcico). Y
+> faltaban tres tablas enteras, que se encontraron en la cuarta pasada. Lo que
+> **hoy** sigue sin aplicarse, con su motivo, está en
+> `VERIFICACION_FILA_A_FILA.md` §cuarta pasada.
+
 Al leer las tablas enteras —no solo la fila del nutriente que ya teníamos—
 aparecen factores que el motor no implementa:
 
@@ -950,7 +1055,14 @@ sí quedan cubiertos: los mínimos de FEDIAF, 1450 mg y 200 mg/1000 kcal, son
 > **PREGUNTA 21-ter.** ¿Cuáles de estos cinco hay que añadir? La proteína en
 > obesidad es la que más nos preocupa.
 
-### 8.2 · El caso que más falta hace resolver: la grasa en pancreatitis
+### 8.2 · La grasa en pancreatitis — RESUELTO el 8 de septiembre
+
+> **⚠️ Esta sección describe un problema que ya no existe, y se deja porque el
+> razonamiento sigue siendo el bueno.** Se resolvió aplicando la fuente que
+> manda: la grasa de la pancreatitis pasó de 20 a **37,5**, y a **25** si además
+> hay obesidad o hiperlipidemia marcadas (Tabla 67-3, que gradúa en dos
+> niveles). Lo que sigue vigente es el diagnóstico: era una constante que
+> debería ser un rango. Ver §8.1-bis.
 
 **Es el ejemplo de manual de una constante que debería ser un rango, y no es
 teórico: es lo que deja sin comer a un perro.**
@@ -1091,9 +1203,14 @@ con 37,5 el perro renal con pancreatitis SÍ recibe menú.**
 > resuelve el caso `renal + pancreatitis`. **Pero relaja un tope de patología,
 > y eso no lo decide el software.** ¿Se cambia?
 
-### 8.5 · Las 24 patologías sin límite numérico
+### 8.5 · Las patologías sin límite numérico
 
-De las 40, **24 no fijan ningún número**. Lo que sí hacen es excluir
+> **⚠️ Actualizado el 8 de septiembre: son 47 perfiles, no 40, y las que no
+> fijan ningún número ya no son 24.** El recuento exacto y por patología se lee
+> de `GET /patologias`, que es el que no puede desincronizarse; aquí se deja el
+> criterio, que no ha cambiado.
+
+De las 47, **dieciocho no fijan ningún número**. Lo que sí hacen es excluir
 alimentos, excluir fruta, bloquear la formulación automática, o exigir una
 prescripción por debajo de FEDIAF. Ejemplos: hipotiroidismo (excluye grelo y
 nabo por progoitrina, sin umbral canino publicado), diabetes (excluye fruta;

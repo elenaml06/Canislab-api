@@ -732,7 +732,7 @@ Dos cosas de aquí:
 
 ## 3 · Las 21 sin cifra: cuáles tienen fuente y cuáles no
 
-De las 40 patologías, 21 no aplican ningún número. **No es lo mismo «la fuente no
+De las 40 patologías de entonces, 21 no aplicaban ningún número (hoy son 47 y 18). **No es lo mismo «la fuente no
 da número» que «no hemos mirado».** Separado:
 
 ### 3.1 · Tienen tabla en SACN5 y NO la usamos
@@ -749,7 +749,8 @@ el motor no le ajusta nada.
 
 ### 3.2 · No tienen tabla de factores nutricionales clave en SACN5
 
-Comprobado con un barrido de las 70 tablas «Key nutritional factors» de la obra
+Comprobado con un barrido de las tablas «Key nutritional factors» de la obra
+⚠️ **que estaba cortado: eran unas 40 de las 89 que hay. Ver §0-quinquies**
 completa: **no existe** tabla para `epilepsia_idiopatica`, `cushing`, `addison`,
 `mielopatia_degenerativa`, `riesgo_gdv`, `hipotiroidismo`,
 `raza_predispuesta_cobre`, `dcm_asociada_a_dieta`, `renal_proteinuria`,
@@ -767,7 +768,8 @@ Tres de estas merecen mirada aparte y **quedan pendientes**:
 
 ## 3-bis · ¿Nos falta alguna patología? Barrido completo de las fuentes
 
-**Hecho el 8 de septiembre**, a partir de las 70 tablas «Key nutritional factors»
+**Hecho el 8 de septiembre**, a partir de un barrido de las tablas «Key nutritional factors» —
+⚠️ **incompleto: unas 40 de 89, ver §0-quinquies** —
 de SACN5 (barrido automático sobre los 70 capítulos) y las 20 entradas caninas del
 Reglamento (UE) 2020/354.
 
@@ -902,7 +904,8 @@ caso que el linoleico.
 **Verificar (fuentes sin abrir):** ✅ **ninguna.** Las cuatro se abrieron el 8 de
 septiembre — ver §4.
 
-**Lo que queda abierto, en una lista:**
+**Lo que queda abierto, en una lista** *(⚠️ escrita por la mañana; los puntos 3
+y 5 se cerraron ese mismo día — ver §0-quinquies al final)*:
 
 1. **El oxalato en crecimiento.** Pasa a `solo_en_adulto` porque su tope de
    fósforo cae bajo el mínimo de un cachorro. Se suelta con aviso, que es lo
@@ -917,3 +920,72 @@ septiembre — ver §4.
 5. **La ficha de permisos**, condición 3 de las seis del cierre. No existe.
 6. **La humedad del catálogo** (`PARA_EL_NUTRICIONISTA.md` §10.0), de la que
    depende toda conversión desde porcentaje de materia seca.
+
+
+---
+
+# 0-quinquies · CUARTA PASADA (8 de septiembre, tarde)
+
+**Este documento decía «las 21 tablas de SACN5 verificadas fila a fila». Eran
+las 21 que yo había visto, y no son las que hay.**
+
+El barrido que las encontró recortaba su propia salida con `sed -n '20,60p'`
+para que cupiera en pantalla. **Hay 89 tablas «Key nutritional factors» en
+SACN5.** Faltaban tres de patología canina, y una de ellas era de una patología
+que el motor no ofrecía. No lo encontró una revisión: apareció leyendo el
+capítulo 30 entero por otra cosa.
+
+El relato completo, con la clasificación de las 89 y lo que se aplicó de cada
+tabla, está en **`VERIFICACION_FILA_A_FILA.md` §cuarta pasada**. Aquí, el
+resumen y lo que cambia en este documento.
+
+## Lo que se aplicó
+
+| Tabla | Patología | Qué |
+|---|---|---|
+| 30-5 | `cancer_soporte` (no aplicaba **nada**) | grasa ≥62,5 · proteína ≥75 · arginina ≥5. Y omega-3 ≥12,5 **escrito y no aplicado: medido, no cabe** |
+| 32-6 | `dermatitis_atopica` | omega-3 total ≥0,875 |
+| 31-3 | **`reaccion_adversa_alimento`, patología nueva (la 47)** | omega-3 ≥0,875 · fósforo ≤2000 · sodio ≤1000 (solo en adulto) · **atún y caballa fuera del menú** · proteína ≤55 escrita y no aplicada («dermatologic cases only») |
+
+Más un aviso con fuente en `epilepsia_idiopatica`: SACN5 cap.28 documenta un
+subgrupo —muchos schnauzer miniatura— con hipertrigliceridemia en el que *«dietary
+therapy has successfully reduced blood triglyceride levels and eliminated
+seizures without concomitant use of anticonvulsant drugs»*. Eso **sí** se
+formula hoy: es la hiperlipidemia, que ya está en la lista.
+
+## Y tres cosas que no son cifras
+
+**1 · Un fallo del solver.** Los suelos por patología se exigían sobre las kcal
+**pedidas** y `_tope_patologia_roto` los mide sobre las **reales**. Un menú puede
+salir un 3 % por encima del DER, así que un suelo podía cumplirse para el solver
+y no para el filtro final: medido, 61,6 g de grasa contra un suelo de 62,5, y el
+cáncer sin menú en ningún peldaño por eso y solo por eso. Es el fallo del 21 de
+agosto (el fósforo renal a 1426 con el tope en 1400) visto desde el otro lado.
+Arreglado con `patologia_suelo_relativo`.
+
+**2 · Un agujero de diseño en los avisos.** `patologias.py` solo dejaba pasar
+cuatro claves de `avisos`; **cualquier otra se cargaba del JSON y no llegaba a
+ningún sitio.** Texto escrito con su fuente que no leía nadie. Ahora hay
+`avisos_extra`.
+
+**3 · Un aviso mío que decía algo falso.** El de crecimiento de la artrosis
+afirmaba que «los suelos de omega-3 y vitamina E sí se aplican igual» en un
+cachorro. No se aplican: con `solo_en_adulto` se salta la patología **entera**.
+Lo escribí describiendo lo que me parecía razonable en vez de lo que hace el
+código. Corregido el texto; separar suelos de topes en crecimiento es decisión
+clínica y está en `PENDIENTE_DECISIONES.md`.
+
+## Lo que esta cuarta pasada deja abierto
+
+1. **El fósforo del perro sano.** Los topes de fósforo y sodio de la artrosis
+   (34-2) y de la reacción adversa (31-3) **son los del perro adulto sano**
+   (13-3 y 14-2), repetidos por la comorbilidad de su población. Una ración BARF
+   ronda los 4000 mg/1000 kcal y FEDIAF no pone máximo, así que el mismo perro
+   pasa de 4000 a 1750 por marcar «artrosis». Tres salidas posibles, ninguna
+   evidente: `PENDIENTE_NUTRICION.md` §14.3.
+2. **Un concentrado de EPA+DHA en el catálogo.** Sin él, el omega-3 del cáncer
+   no llega. Va en `DATOS_QUE_FALTAN.md`.
+3. **El ratio omega-6:omega-3 y el NFE** (Tabla 30-5), que el motor no sabe
+   expresar. El ratio se arregla con el mismo trabajo que el Ca:P por patología.
+4. **La proteína de la reacción adversa**, que depende de si el perro reacciona
+   por la piel o por el intestino — un dato que la ficha no pregunta.

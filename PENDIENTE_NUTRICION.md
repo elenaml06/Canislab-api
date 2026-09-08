@@ -998,3 +998,88 @@ el perro.
 Mismo caso, más suave, en `mastín 55 kg + renal_proteinuria + artrosis`: sale
 unas veces sí y otras no según lo cargada que vaya la máquina — ahí es el
 presupuesto de tiempo del solver, no la nutrición.
+
+---
+
+## 14. Lo que abrió la cuarta pasada (8 de septiembre, tarde)
+
+Detalle completo en `VERIFICACION_FILA_A_FILA.md` §cuarta pasada. Aquí solo lo
+que queda **por hacer**, con dueño.
+
+### 14.1 · Una fuente concentrada de EPA+DHA en el catálogo — **falta un dato**
+
+La Tabla 30-5 pide para el cáncer **omega-3 > 5 % MS = 12,5 g/1000 kcal** y el
+catálogo no llega: el techo medido está entre **11,5 y 12,0**. La fuente más
+concentrada que hay es el aceite de linaza (62,5 g/1000 kcal), que además es ALA
+y no EPA/DHA.
+
+SACN5 enseña en su propia Tabla 30-6 que sí se alcanza: la Hill's n/d —el
+alimento de los ensayos de Ogilvie en linfoma canino— trae **7,29 % MS**.
+
+**Lo que falta es un producto real con su etiqueta**: un concentrado de EPA+DHA
+(aceite de pescado de alta concentración) con los gramos por 100 g y la dosis
+máxima del fabricante. Va en `DATOS_QUE_FALTAN.md` — **no lo rellena el
+asistente**.
+
+Mientras tanto la cifra está escrita en `patologias.json` bajo
+`limites_escritos_que_el_solver_no_aplica`, con la medida y el motivo, y el menú
+de cáncer lo dice en un aviso: lleva todo el omega-3 que se puede dar y no llega
+a lo que pide la literatura.
+
+### 14.2 · El ratio omega-6:omega-3 y el techo de carbohidrato — **falta motor**
+
+La misma Tabla 30-5 pide «an omega-6:omega-3 ratio approximating 1:1» y «NFE
+≤25 % DM».
+
+- El **ratio** es implementable: el motor ya monta restricciones de ratio (el
+  calcio:fósforo), y un ratio entre dos sumas de nutrientes es lineal igual que
+  aquel. Lo que no hay es la forma de que una **patología** pida el suyo — es el
+  mismo hueco que tiene el `ratio_ca_p` de los urolitos de calcio, escrito desde
+  la tercera pasada con `aplicado_por_el_solver: false`. **Los dos se arreglan
+  con el mismo trabajo.**
+- El **NFE** no se puede calcular con lo que hay: haría falta el extracto libre
+  de nitrógeno de cada ficha. Una ración BARF con la verdura topada al 10 % queda
+  muy por debajo del 25 % por construcción, así que el riesgo real es bajo.
+
+### 14.3 · El fósforo del perro sano: la pregunta grande — **para el nutricionista**
+
+Esta es la que más pesa de las tres, y sale de comparar tablas que hasta ahora no
+se habían mirado juntas:
+
+| Tabla | Para quién | Fósforo | Sodio |
+|---|---|---|---|
+| 13-3 | Perro adulto joven **sano** | 0,4-0,8 % MS = **1000-2000** mg/1000 kcal | 0,2-0,4 % = 500-1000 |
+| 14-2 | Perro maduro **sano** | 0,3-0,7 % MS = **750-1750** | 0,15-0,4 % = 375-1000 |
+| 34-2 | Artrosis | 0,3-0,7 % = **750-1750** (aplicado: techo 1750) | 0,2-0,4 % (aplicado: 1000) |
+| 31-3 | Reacción adversa al alimento | 0,4-0,8 % = **1000-2000** (aplicado: 2000) | 0,2-0,4 % (aplicado: 1000) |
+
+Las dos filas de patología **son las del perro sano**, repetidas. Sus notas lo
+dicen: la 34-2 porque «dogs with osteoarthritis are often in age groups at risk
+for kidney and/or heart disease», la 31-3 porque «phosphorus and sodium are
+considered key nutritional factors for apparently healthy adult dogs… for
+purposes of ameliorating or slowing the progression of subclinical kidney
+disease».
+
+Y el número que importa: **una ración BARF normal de este motor ronda los 4.000
+mg de fósforo por 1000 kcal** (medido: 3.933 a 4.115 en menús verdes de adulto
+sano). El doble del techo que SACN5 recomienda a **cualquier** perro adulto.
+
+FEDIAF **no pone máximo de fósforo** —se le quitó el 7 de septiembre justamente
+por no tener fuente (NRC 2006 dice que no hay datos para fijar un SUL, y
+Dobenecker 2021 que todavía no se puede definir un no-effect-level)—, así que hoy
+el motor solo aprieta el fósforo en las patologías cuya tabla lo repite. El
+resultado es incoherente y conviene decirlo: **el mismo perro pasa de 4.000 a
+1.750 por marcar «artrosis», y de 4.000 a 2.000 por marcar «alergia
+alimentaria», sin que ninguna de las dos cosas tenga que ver con el fósforo.**
+
+Las tres salidas posibles, y **ninguna la decide el asistente**:
+
+1. **Dejarlo como está**: FEDIAF manda en el perro sano, y la patología aplica lo
+   que dice su tabla. Es lo que hay hoy.
+2. **Quitar esas dos filas de las patologías**, por ser recomendaciones del perro
+   sano y no de la enfermedad. Deja artrosis y reacción adversa sin techo de
+   fósforo.
+3. **Aplicar el techo a todos los adultos**. Es el cambio grande: afecta a todos
+   los menús, y hay que medir antes cuántos siguen saliendo.
+
+Es decisión de nutrición. Apuntada también en `PENDIENTE_DECISIONES.md`.

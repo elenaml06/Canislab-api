@@ -116,6 +116,29 @@ def _a_forma_del_motor(crudo):
             e["aviso_profesional"] = avisos["profesional"]
         if avisos.get("profesional_crecimiento"):
             e["aviso_profesional_crecimiento"] = avisos["profesional_crecimiento"]
+        # ⚠️ AÑADIDO (8 septiembre) — LOS AVISOS QUE NO SON NINGUNO DE ESOS
+        # CUATRO. Hasta hoy `avisos` solo dejaba pasar «general»,
+        # «crecimiento», «profesional» y «profesional_crecimiento»: cualquier
+        # otra clave se cargaba del JSON y se quedaba aquí dentro, sin llegar
+        # ni al menú ni a `GET /patologias`. O sea, texto escrito con su
+        # fuente que no leía NADIE, y sin que saltara nada -- el menú sale
+        # verde igual. Es el mismo fallo de la fibra, y el de las categorías
+        # de Personalizar de las que solo se respetaban tres de las seis: una
+        # cosa puesta a propósito que no hace nada y calla.
+        #
+        # Se descubrió al escribir la Tabla 31-3, que tiene tres avisos que
+        # no son «el general»: que la fuente pide una o dos proteínas y no
+        # más, que el omega-3 puede confundir la fase de diagnóstico, y por
+        # qué se quitan el atún y la caballa. Los tres se habrían perdido.
+        #
+        # Van en una lista aparte y ORDENADA por su clave, para que el mismo
+        # archivo dé siempre los mismos avisos en el mismo orden -- si
+        # dependiera del orden del JSON, un reordenado cambiaría lo que lee
+        # el usuario sin cambiar ni una palabra.
+        _reservados = ("general", "crecimiento", "profesional", "profesional_crecimiento")
+        extra = [avisos[k] for k in sorted(avisos) if k not in _reservados and avisos[k]]
+        if extra:
+            e["avisos_extra"] = extra
         salida[clave] = e
     return salida
 

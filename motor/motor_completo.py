@@ -318,11 +318,16 @@ def avisos_de_patologias(patologias, etapa="Adulto", es_profesional=False):
         info = PATOLOGIAS.get(p)
         if not info:
             continue
+        # ⚠️ AÑADIDO (8 septiembre) — ver `avisos_extra` en patologias.py: los
+        # avisos de una patología que no son ninguno de los cuatro con nombre
+        # propio. Se añaden en TODOS los caminos, incluidos los dos `continue`
+        # de abajo, que si no se los saltarían.
+        _extra = info.get("avisos_extra") or []
         if es_profesional:
             if _es_crecimiento(etapa) and info.get("aviso_profesional_crecimiento"):
-                salida.append(info["aviso_profesional_crecimiento"]); continue
+                salida.append(info["aviso_profesional_crecimiento"]); salida.extend(_extra); continue
             if info.get("aviso_profesional"):
-                salida.append(info["aviso_profesional"]); continue
+                salida.append(info["aviso_profesional"]); salida.extend(_extra); continue
         # En crecimiento, NINGÚN tope `solo_en_adulto` se ha aplicado: ni el
         # que bloquea (renal) ni el que se suelta (pancreatitis). El aviso de
         # adulto dice "se ha bajado el fósforo" o "se ha bajado la grasa", y
@@ -340,6 +345,7 @@ def avisos_de_patologias(patologias, etapa="Adulto", es_profesional=False):
             salida.append(info["aviso_crecimiento"])
         elif info.get("aviso"):
             salida.append(info["aviso"])
+        salida.extend(_extra)
 
         # ⚠️ AÑADIDO (7 septiembre) — el aviso que solo sale por la
         # COMBINACIÓN de dos patologías, no por cada una sola (ver
@@ -1270,6 +1276,57 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                 if coef:
                     fila_rel[idx[n]] = coef
             _fila("fediaf_relativo", fila_rel, -np.inf, 0.0)
+
+        # ⚠️ AÑADIDO (8 septiembre) — EL ESPEJO DE LA FILA DE ARRIBA, PARA LOS
+        # SUELOS POR PATOLOGÍA. CASO REAL MEDIDO, y es el mismo fallo del 21 de
+        # agosto visto desde el otro lado:
+        #
+        #   soporte oncológico, perro de 22 kg, DER 1138 kcal. El menú salía
+        #   con 1172 kcal -- un 3 % POR ENCIMA de las pedidas, que la
+        #   tolerancia permite -- y con 72,2 g de grasa. Contra las kcal
+        #   pedidas eso son 63,4 g/1000 kcal y el suelo (62,5) se cumplía;
+        #   contra las kcal REALES son 61,6 y no se cumple. El solver decía
+        #   que sí y `_tope_patologia_roto` decía que no, así que el menú se
+        #   construía entero para que el filtro final lo tirara. Con los tres
+        #   suelos de la Tabla 30-5 puestos, el cáncer se quedaba SIN MENÚ EN
+        #   NINGÚN PELDAÑO por esto y solo por esto.
+        #
+        # El techo ya tenía su fila relativa desde el 21 de agosto (justo
+        # arriba); el suelo no, porque los suelos por patología no existían
+        # hasta el 7 de septiembre y se añadieron copiando la mitad absoluta.
+        # `_tope_patologia_roto` sí los mide sobre las kcal reales -- y hace
+        # bien, un suelo es una concentración igual que un techo --, así que
+        # el que iba desalineado era el solver.
+        #
+        #     suma(nut_i * g_i)  >=  (mn/1000) * suma(kcal_i * g_i)
+        #   → suma(((mn/1000) * kcal_i - nut_i) * g_i)  <=  0
+        #
+        # SOLO para los suelos de patología, y por el mismo motivo por el que
+        # el `mx_rel` de arriba solo aprieta los topes de patología: los
+        # mínimos de FEDIAF los comprueba `verificar()` contra el DER (mira
+        # `escala = der / 1000.0`), no contra las kcal reales, así que ahí no
+        # hay desalineo que arreglar y meter la fila cambiaría todos los menús
+        # para nada. El vector es el del SUELO -- el valor plausible del dato
+        # dudoso y el hueco a cero --, el mismo que la cota absoluta.
+        #
+        # El apretón es del 0,1 %, el mismo que `mx_rel`: el filtro final
+        # tolera un 0,5 % (`MARGEN_SUELO`), así que deja el mismo colchón de
+        # redondeo que ya se midió suficiente para los techos.
+        # Se usa el suelo DE LA PATOLOGÍA, no `mn` -- que a estas alturas es
+        # `max(mínimo de FEDIAF, suelo de patología)`. Hoy el suelo de patología
+        # gana ese `max()` en los 32 casos, así que da el mismo número; pero si
+        # algún día no lo ganara, usar `mn` estaría imponiendo un mínimo de
+        # FEDIAF sobre las kcal reales, y eso es justo lo que este bloque dice
+        # tres párrafos más arriba que NO hay que hacer.
+        if clave in suelos_patologia:
+            mn_rel = suelos_patologia[clave] * (1 + 0.001)
+            fila_rel_min = fila_vacia()
+            for n in nombres:
+                kcal_n = (alimentos[n].get("energia", 0) or 0.0) / 100.0
+                coef = (mn_rel / 1000.0) * kcal_n - fila_suelo[idx[n]]
+                if coef:
+                    fila_rel_min[idx[n]] = coef
+            _fila("patologia_suelo_relativo", fila_rel_min, -np.inf, 0.0)
 
     # ⚠️ QUITADO (26 agosto) — aquí había una fila más en el sistema,
     # "selenio_por_gramo", que topaba el selenio a 2 µg por cada gramo de

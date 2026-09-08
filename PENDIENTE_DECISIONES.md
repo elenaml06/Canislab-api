@@ -354,3 +354,30 @@ las tiene que tomar una persona, no yo.
       borrador puede salir de ahí — datos reales, no plantilla — pero es
       un texto legal y necesita revisión de quien sepa antes de publicarse.
 
+
+---
+
+## Lo que dejó abierto la cuarta pasada (8 de septiembre, tarde)
+
+- [ ] **El fósforo del perro sano.** SACN5 recomienda ≤2000 mg/1000 kcal a
+  cualquier perro adulto y ≤1750 al maduro; una ración BARF de este motor ronda
+  los 4000, y FEDIAF no pone máximo. Hoy solo se aprieta en las dos patologías
+  cuya tabla repite esa cifra (artrosis y reacción adversa al alimento), lo que
+  deja al mismo perro pasando de 4000 a 1750 por marcar «artrosis». Tres salidas
+  posibles, ninguna evidente: `PENDIENTE_NUTRICION.md` §14.3.
+
+- [ ] **En crecimiento, ¿los suelos de una patología también se caen?** Hoy sí:
+  `solo_en_adulto` se salta la patología **entera**, topes y suelos. Para la
+  artrosis eso significa que un cachorro con displasia no recibe el refuerzo de
+  omega-3 ni el de vitamina E, que no tienen nada de peligroso a esa edad. El
+  motivo de que se caigan es el **techo** de fósforo (2000 cae bajo el mínimo de
+  un cachorro, 2250), no el suelo. Separar las dos cosas es cinco líneas de
+  código; **si se debe hacer es criterio clínico.** El aviso de crecimiento de la
+  artrosis, mientras tanto, dice la verdad: no se aplica nada.
+
+- [ ] **La proteína de la reacción adversa al alimento (≤55 g/1000 kcal).** La
+  fuente la pide «(dermatologic cases only)» y el motor no sabe si este perro
+  reacciona por la piel o por el intestino — y en el segundo caso la misma página
+  pide **más** proteína, no menos. Está escrita y **no** aplicada. Se resuelve o
+  bien preguntando en la ficha cómo se manifiesta, o bien con la pantalla de
+  objetivos por nutriente, donde un profesional la fijaría a mano.

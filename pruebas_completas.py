@@ -1555,6 +1555,25 @@ _CIFRAS_CON_FUENTE = [
      "SACN5 Tabla 68-8, perros: «Vitamin E (IU/kg) >=400»"),
     ("urolitos_fosfato_calcico", "topes_por_1000kcal", "vitD", 9.375, ("directo", None),
      "SACN5 Tabla 41-6: «Vitamin D 500 to 1,500 IU/kg» MS; a 4000 kcal/kg son 125-375 UI/1000 kcal y a 40 UI/ug, 3,125-9,375 ug. Techo. MAS estricto que el maximo legal (14,1875)"),
+
+    # ── Cuarta pasada, 8 de septiembre: las TRES TABLAS QUE SE HABIAN PERDIDO
+    # al cortar la salida del barrido con `sed`. De las 89 tablas «Key
+    # nutritional factors» de SACN5 solo se habian revisado unas 40. Ver
+    # VERIFICACION_FILA_A_FILA.md §cuarta pasada.
+    ("cancer_soporte", "suelos_por_1000kcal", "grasa", 62.5, ("pct_ms", 25),
+     "SACN5 Tabla 30-5: «Fat = 25 to 40% of DM or 50 to 65% of the food's ME», extremo bajo. UNICA patologia del motor que pide MAS grasa"),
+    ("cancer_soporte", "suelos_por_1000kcal", "proteina", 75.0, ("pct_ms", 30),
+     "SACN5 Tabla 30-5: «Dogs: protein = 30 to 45% of DM», extremo bajo. «Provide protein in excess of adult requirements»"),
+    ("cancer_soporte", "suelos_por_1000kcal", "arginina", 5.0, ("pct_ms", 2),
+     "SACN5 Tabla 30-5: «Provide foods with arginine DM levels >2%». Mas de tres veces el minimo de FEDIAF (1,51)"),
+    ("dermatitis_atopica", "suelos_por_1000kcal", "omega3_total", 0.875, ("pct_ms", 0.35),
+     "SACN5 Tabla 32-6 (dermatosis INFLAMATORIAS, distinta de la 32-1 que ya se aplicaba): «Foods should contain between 0.35 to 1.8% dry matter», extremo bajo"),
+    ("reaccion_adversa_alimento", "suelos_por_1000kcal", "omega3_total", 0.875, ("pct_ms", 0.35),
+     "SACN5 Tabla 31-3, perros: «Total omega-3 fatty acids 0.35 to 1.8% DM», extremo bajo. Mismo rango que la 32-6 y la fuente dice por que: sale de ahi"),
+    ("reaccion_adversa_alimento", "topes_por_1000kcal", "fosforo", 2000.0, ("pct_ms", 0.8),
+     "SACN5 Tabla 31-3, perros: «Phosphorus* 0.4 to 0.8% DM», techo. El asterisco dice que no es de la alergia sino de la dieta de eliminacion comida a largo plazo"),
+    ("reaccion_adversa_alimento", "topes_por_1000kcal", "sodio", 1000.0, ("pct_ms", 0.4),
+     "SACN5 Tabla 31-3, perros: «Sodium* 0.2 to 0.4% DM», techo. Mismo asterisco que el fosforo"),
 ]
 
 # Vista por patología, para que el BLOQUE 13 no reescriba los números.
@@ -3252,9 +3271,37 @@ if not (_raiz_b24 / "patologias.json").exists():
 _pat_py_b24 = (_raiz_b24 / "motor" / "patologias.py")
 if not _pat_py_b24.exists():
     fallos.append("BLOQUE24: falta motor/patologias.py, que es quien carga los topes.")
-elif len(_pat_py_b24.read_text(encoding="utf-8").split("\n")) > 120:
-    fallos.append("BLOQUE24: motor/patologias.py se está volviendo un almacén otra vez. Es un "
-                  "cargador: los números van en patologias.json.")
+else:
+    # ⚠️ REESCRITO (8 septiembre) — ANTES ESTO CONTABA LÍNEAS, Y CONTAR LÍNEAS
+    # NO ES LO QUE QUEREMOS SABER.
+    #
+    # El umbral era `> 120` y el fichero llevaba 124 desde antes de hoy: la
+    # batería estaba en rojo por esto y no se había visto, porque no se ejecutó
+    # entera después del commit que lo cruzó. Y lo que lo cruzó no fue una tabla
+    # volviendo: fueron COMENTARIOS explicando por qué existe cada cosa, que es
+    # justo lo que el CLAUDE.md pide escribir.
+    #
+    # Lo que este bloque tiene que impedir es que los NÚMEROS vuelvan al código.
+    # Así que se comprueba eso: se lee el fichero con `ast` y no puede haber ni
+    # un literal numérico fuera de los comentarios y los textos. Un cargador no
+    # necesita números; una tabla clínica es toda números. Si vuelve la tabla,
+    # salta en la primera cifra, y no a las 121 líneas de documentación.
+    #
+    # Se deja también un tope de líneas, pero muy holgado (300) y solo como red:
+    # un cargador de 300 líneas es otra cosa, se llame como se llame.
+    import ast as _ast_b24
+    _fuente_b24 = _pat_py_b24.read_text(encoding="utf-8")
+    _numeros_b24 = [n for n in _ast_b24.walk(_ast_b24.parse(_fuente_b24))
+                    if isinstance(n, _ast_b24.Constant) and isinstance(n.value, (int, float))
+                    and not isinstance(n.value, bool)]
+    if _numeros_b24:
+        fallos.append(f"BLOQUE24: motor/patologias.py tiene {len(_numeros_b24)} literales "
+                      f"numéricos (líneas {sorted({n.lineno for n in _numeros_b24})}). Es un "
+                      f"CARGADOR: los números van en patologias.json, que es lo que audita "
+                      f"auditar_patologias.py. Si vuelven aquí, vuelve la tabla desincronizada.")
+    if len(_fuente_b24.split("\n")) > 300:
+        fallos.append("BLOQUE24: motor/patologias.py pasa de 300 líneas. Se está volviendo otra "
+                      "cosa distinta de un cargador.")
 
 # el mapa de requisito -> nutriente, igual: solo en motor/verificar.py
 _definen_mapa = [f.name for f in _PY_B24
@@ -4811,7 +4858,18 @@ else:
     # campos y no tiene referencia en ninguna etapa. Existe para que el suelo
     # de artrosis pueda medir EPA SOLA, que es lo que pide SACN5 Tabla 34-2.
     # Este bloque cazó la fila nueva en cuanto se añadió, que es su trabajo.
-    if _sr38 != {"Linolénico", "Araquidónico", "Fibra", "Taurina", "L_carnitina", "EPA"}:
+    # ⚠️ Y "Omega3_total" (8 septiembre, tarde). Se añadió en el mismo commit
+    # que "EPA" y NO se metió aquí, así que este bloque llevaba en rojo desde
+    # entonces sin que nadie lo viera: la batería entera no se ejecutó después
+    # de aquel commit -- se ejecutó tres minutos antes. El bloque hizo su
+    # trabajo; el fallo fue empujar sin correrla. Mismo motivo que las otras
+    # cinco: FEDIAF no pide omega-3 TOTALES en el perro (solo EPA+DHA, y solo
+    # en crecimiento y reproducción), así que su fila lleva "-" en los seis
+    # campos. Existe para que artrosis, disfunción cognitiva, dermatitis
+    # atópica y reacción adversa al alimento puedan ponerle un suelo con
+    # fuente.
+    if _sr38 != {"Linolénico", "Araquidónico", "Fibra", "Taurina", "L_carnitina", "EPA",
+                 "Omega3_total"}:
         fallos.append(f"BLOQUE38: los nutrientes sin referencia en adulto son {_sr38} y tenían "
                       f"que ser el linolénico, el araquidónico (FEDIAF pone «-» fuera de "
                       f"crecimiento y reproducción), la fibra y la taurina/L-carnitina (FEDIAF "
@@ -6536,7 +6594,13 @@ _pats55 = _CRUDO55["patologias"]
 #     X mg/kg de MS  -> X/4 mg por 1000 kcal
 # Los nutrientes que van en GRAMOS son la proteina, la grasa, la fibra, los
 # acidos grasos y los aminoacidos; todos los demas van en mg (o ug).
-_EN_GRAMOS = {"proteina", "grasa", "fibra", "epa", "epa_dha", "linoleico",
+# ⚠️ "omega3_total" FALTABA AQUI (8 septiembre, cuarta pasada). Se anadio como
+# suelo de la artrosis y de la disfuncion cognitiva en la tercera pasada y no se
+# metio en esta lista, asi que el test convertia su 3,5 % de MS a 8750 mg en vez
+# de a 8,75 g y habria cantado un fallo de conversion que no existe. Va en
+# GRAMOS, como el epa y el epa_dha, que son el mismo tipo de nutriente.
+_EN_GRAMOS = {"proteina", "grasa", "fibra", "epa", "epa_dha", "omega3_total",
+              "linoleico",
               "linolenico", "araquidonico", "lisina", "metionina", "cistina",
               "metionina_cistina", "fenilalanina", "tirosina",
               "fenilalanina_tirosina", "treonina", "triptofano", "valina",

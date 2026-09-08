@@ -236,7 +236,7 @@ se rompe · está escrito como decisión con fecha · no deja preguntas sin due�
 que reabrirlo solo vale por una de cuatro razones escritas. Cinco de seis no es
 cerrado, y ahí se dice cuál falta. Ábrelo antes de tocar un número que venga de
 una fuente.
-`PATOLOGIAS.md` (8 de septiembre) es la lista de las 46 patologías una por
+`PATOLOGIAS.md` (8 de septiembre) es la lista de las 47 patologías una por
 una: qué aplica el motor, la **cita literal** de la fuente con su conversión, el
 **techo duro** que nadie puede pasar y de dónde sale (legal, seguridad crónica o
 mínimo de FEDIAF), y **qué margen le queda al profesional**. Se escribió
@@ -244,6 +244,12 @@ verificando cada cifra contra su fuente original, y encontró cinco errores y
 catorce patologías con factores de su propia fuente sin aplicar. Ábrelo antes de
 tocar `patologias.json`: los números siguen viviendo allí y este documento es su
 lectura, no una segunda copia — si discrepan, manda el JSON.
+`VERIFICACION_FILA_A_FILA.md` es el registro de las cuatro pasadas de
+verificación de ese día, y su §cuarta pasada trae la lección que más cuesta:
+**el barrido de las tablas de SACN5 se hizo cortando su propia salida con
+`sed`, así que de las 89 tablas que hay solo se revisaron unas 40** y faltaban
+tres de patología canina. Un barrido cuyo resultado no se compara contra el
+total no es un barrido, es una muestra.
 `DATOS_QUE_FALTAN.md` son los valores del catálogo
 que hay que conseguir de BEDCA/CIQUAL/USDA, uno a uno — **no los rellena el
 asistente**. `Bases.md` y `Ya_probado.md` son de las primeras sesiones:

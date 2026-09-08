@@ -40,17 +40,38 @@ Al reabrir algo, se escribe **por cuál de las cuatro** y se actualiza aquí.
 
 ---
 
-## CERRADO · Los límites de patología
+## REABIERTO Y VUELTO A CERRAR · Los límites de patología
 
-**Fecha de cierre: 8 de septiembre de 2026.**
-**Alcance: las 57 cifras numéricas de las 46 patologías de `patologias.json`** —
-36 topes y 21 suelos.
+**Cerrado el 8 de septiembre de 2026 por la mañana. REABIERTO esa misma tarde,
+por la razón 3 («un test o un caso real demuestra que está mal»), y vuelto a
+cerrar por la noche.**
+
+### Por qué se reabrió, dicho sin adornos
+
+El cierre se declaró sobre **21 tablas de SACN5 leídas fila a fila**, y esa cifra
+era falsa sin que nadie pudiera saberlo: el barrido que las encontró recortaba su
+propia salida con `sed -n '20,60p'` para que cupiera en pantalla. **Hay 89 tablas
+«Key nutritional factors», no 40.** Faltaban tres de patología canina —30-5
+(cáncer), 31-3 (reacciones adversas al alimento) y 32-6 (dermatosis
+inflamatorias)— y una de ellas era de una patología que el motor no ofrecía.
+
+No lo encontró una revisión: apareció leyendo el capítulo 30 entero por otra
+cosa. **La condición 2 («tiene fuente») se estaba cumpliendo cifra a cifra y
+fallando en el conjunto**: cada número tenía la suya, y faltaban números.
+
+La condición que hay que añadirle a un barrido para poder cerrarlo con él:
+**comparar lo revisado contra el total, y que el total se cuente, no se suponga.**
+
+**Alcance del cierre nuevo: las 73 cifras numéricas de las 47 patologías de
+`patologias.json`** — 41 topes y 32 suelos, más 2 límites escritos con la
+etiqueta de que el solver **no** los aplica (el Ca:P de los urolitos de calcio y
+el omega-3 del cáncer).
 
 | | Cómo se cumple |
 |---|---|
 | 1 · Vive en el repo | `patologias.json` |
-| 2 · Tiene fuente | **57/57 con fuente citada y motivo escrito.** Quince tablas de SACN5 leídas literal, más Merck, el consenso ACVIM 2019, Cavanaugh 2020, Center 2026, Purina, Today's Veterinary Practice 2025 y el Reglamento (UE) 2020/354. **No queda ninguna fuente sin abrir** |
-| 3 · Ficha de permisos | `motor/permisos.py`. **Se deriva, no se escribe**: quién lo ve, quién lo mueve, entre qué y qué, y qué pasa al moverlo. 57 fichas |
+| 2 · Tiene fuente | **73/73 con fuente citada y motivo escrito**, y el barrido de las 89 tablas repetido entero y contado (`VERIFICACION_FILA_A_FILA.md` §cuarta pasada). Veinticuatro tablas de SACN5 leídas literal, más Merck, el consenso ACVIM 2019, Cavanaugh 2020, Center 2026, Purina, Today's Veterinary Practice 2025 y el Reglamento (UE) 2020/354. **No queda ninguna fuente sin abrir** |
+| 3 · Ficha de permisos | `motor/permisos.py`. **Se deriva, no se escribe**: quién lo ve, quién lo mueve, entre qué y qué, y qué pasa al moverlo |
 | 4 · Test que falla | **BLOQUE 55** (cada cifra contra su fuente, la conversión recalculada, y que el solver la aplique) y **BLOQUE 56** (que la ficha siga derivándose). Los dos probados con el fallo puesto |
 | 5 · Decisión con fecha | `DECISIONES.md` D-12 y D-13; el detalle por patología en `PATOLOGIAS.md` |
 | 6 · Sin preguntas sin dueño | Lo que queda abierto está en `PATOLOGIAS.md` §5 con dueño, y en `PREGUNTAS_ABIERTAS.md` |
@@ -73,9 +94,16 @@ crecimiento. Ninguno se coló.
 - **No es un candado.** No hay nada que impida editar `patologias.json`. Lo que
   hay es que romperlo salta en rojo, que es lo máximo que da la herramienta — y
   probablemente mejor: un candado se salta y una prueba en rojo se ve.
-- **No cubre las patologías que no ofrecemos.** Seis con cifras publicadas se
-  añadieron ese día; las que la fuente declara y seguimos sin ofrecer están en
-  `PATOLOGIAS.md` §3-bis, y **añadir una es decisión de producto**, no de fuentes.
+- **No cubre las patologías que no ofrecemos.** Siete con cifras publicadas se
+  añadieron ese día —seis por la mañana y `reaccion_adversa_alimento` por la
+  tarde, con la tabla que se había perdido—; las que la fuente declara y seguimos
+  sin ofrecer están en `PATOLOGIAS.md` §3-bis y en `VERIFICACION_FILA_A_FILA.md`
+  §cuarta pasada con el motivo de cada una, y **añadir una es decisión de
+  producto**, no de fuentes.
+- **No cubre lo que el motor no sabe expresar.** La Tabla 30-5 pide un ratio
+  omega-6:omega-3 ≈ 1:1 y un techo de carbohidrato (NFE); el motor solo conoce
+  un ratio, el calcio:fósforo, y no calcula el NFE. Está escrito en el aviso de
+  la patología y en `PENDIENTE_NUTRICION.md`, no aplicado.
 
 ---
 

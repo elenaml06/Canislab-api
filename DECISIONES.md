@@ -816,3 +816,50 @@ un margen ancho, y saberlo forma parte de usarlo bien.
 y ahora se sabe que **no hay fuente normativa que dé ese rango** (D-12). Los siete
 márgenes «interpretados» de `PREGUNTAS_ABIERTAS.md` P-02 siguen sin respuesta, y
 P-03 se cierra parcialmente: **quién** puede, sí; **hasta dónde**, no.
+
+---
+
+## D-14 · Un barrido que no se cuenta contra el total no es un barrido
+
+**8 de septiembre de 2026, tarde.**
+
+### Qué pasó
+
+Por la mañana se cerraron los límites de patología (`CERRADO.md`) sobre **«las 21
+tablas de SACN5 verificadas fila a fila»**. Por la tarde se descubrió que ese
+número era falso: el barrido que las encontró recortaba su propia salida con
+
+```bash
+grep -h "Key nutritional factors" *.txt | sed -n '20,60p'
+```
+
+**Hay 89 tablas, no 40.** Faltaban tres de patología canina —30-5 (cáncer), 31-3
+(reacciones adversas al alimento) y 32-6 (dermatosis inflamatorias)— y una era de
+una patología que el motor no ofrecía.
+
+No lo encontró una revisión ni una prueba: apareció leyendo el capítulo 30 entero
+por otra cosa.
+
+### La decisión
+
+**Un barrido sobre una fuente solo vale como verificación si su resultado se
+compara contra el total, y el total se cuenta en vez de suponerse.** Se añade a
+las condiciones de cierre: la condición 2 («tiene fuente») no se cumple porque
+cada cifra tenga la suya, sino cuando además **no faltan cifras**, y eso solo se
+puede afirmar contando.
+
+Corolario práctico: **ningún barrido con `head`, `sed -n` o `| head -N` dentro
+cuenta como verificación.** Si la salida no cabe, se escribe a un fichero y se
+cuenta; recortarla para leerla es exactamente cómo se pierde la mitad.
+
+### Qué se hizo
+
+- Barrido repetido entero, las 89 clasificadas (comparativas de piensos, gatos,
+  etapas de vida sanas, patologías que el motor no ofrece, y las 24 caninas que
+  sí). `VERIFICACION_FILA_A_FILA.md` §cuarta pasada.
+- Las tres tablas aplicadas; `reaccion_adversa_alimento` creada como la
+  patología 47.
+- `CERRADO.md` marca el bloque como **reabierto por la razón 3 y vuelto a
+  cerrar**, con el alcance nuevo (73 cifras, 47 patologías) y diciendo por qué
+  se reabrió. Un cierre que se corrige y lo cuenta vale; uno que se corrige en
+  silencio no vale nada.

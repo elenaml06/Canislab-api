@@ -1675,7 +1675,10 @@
   "taurina_fuente": "Taurina = 207 mg/100g: Spitze et al. 2003, tabla 1, \"Mackerel, whole\" = 2070 (1463-3524) mg/kg -> 207 mg/100g.",
   "sin_dato": [
    "lcarnitina"
-  ]
+  ],
+  "restricciones_patologia": {
+   "reaccion_adversa_alimento": "Aminas vasoactivas. SACN5 5a ed., cap.31 «Adverse Reactions to Food», Tabla 31-3, columna perros: «Vasoactive amines -- Avoid foods that contain certain fish ingredients (e.g., tuna, mackerel, skipjack, bonito)». No son alergenos: bajan el umbral al que reacciona un perro sensible. Verificado literal 8-sep-2026."
+  }
  },
  {
   "nombre": "Atún",
@@ -1753,7 +1756,10 @@
   "taurina_fuente": "Taurina = 284 mg/100g: Spitze et al. 2003, tabla 1, \"Tuna, whole\" = 2840 mg/kg -> 284 mg/100g.",
   "sin_dato": [
    "lcarnitina"
-  ]
+  ],
+  "restricciones_patologia": {
+   "reaccion_adversa_alimento": "Aminas vasoactivas. SACN5 5a ed., cap.31 «Adverse Reactions to Food», Tabla 31-3, columna perros: «Vasoactive amines -- Avoid foods that contain certain fish ingredients (e.g., tuna, mackerel, skipjack, bonito)». No son alergenos: bajan el umbral al que reacciona un perro sensible. Verificado literal 8-sep-2026."
+  }
  },
  {
   "nombre": "Merluza",

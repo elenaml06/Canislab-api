@@ -192,7 +192,15 @@ taurina ✅ · sodio ✅ · cobre ✅ · zinc ✅ · hierro ✅ · vit E ≥400 
 
 ---
 
-## Resumen
+## Resumen (de la TERCERA pasada — ver más abajo la cuarta)
+
+> ⚠️ **Esta lista de ocho puntos ya no es lo que queda: es lo que quedaba el
+> 8 de septiembre por la mañana.** Los puntos 2, 3, 4, 5 y 8 se aplicaron ese
+> mismo día (commit «Aplicar la tercera pasada»), el 5 con la vitamina E
+> corregida de 100 a 67,1 mg porque la tabla la da en UI. Siguen abiertos el
+> 1 (nivel de obesidad), el 6 (exclusiones de la flatulencia) y el 7
+> (cloruro = 1,5 × sodio). Se deja escrita tal cual porque es el registro de
+> lo que encontró la tercera pasada, no un índice de pendientes.
 
 **Ninguna cifra aplicada está mal.** Lo que había era **incompleto**, y en dos
 casos —la pancreatitis y la obesidad— **incoherente**: tablas que gradúan de las
@@ -218,3 +226,208 @@ Y una que no es una cifra: **«higher levels of zinc are required in foods with
 calcium >1.5 % DM»** (Tabla 32-1). Una ración BARF con hueso suele estar por
 encima de ese calcio, así que el suelo de zinc de 25 mg podría quedarse corto
 justo en la comida que hacemos nosotros.
+
+---
+
+# CUARTA PASADA · el barrido estaba cortado (8 de septiembre)
+
+## Lo que pasó
+
+Este documento decía «las 21 tablas, una por una». Eran las 21 tablas **que yo
+había visto**, y no son las que hay.
+
+El barrido original se hizo así:
+
+```bash
+grep -h "Key nutritional factors" *.txt | sed -n '20,60p'
+```
+
+Ese `sed` está ahí para que la salida cupiera en pantalla. Recorta a 40 líneas.
+**Hay 89 tablas «Key nutritional factors» en SACN5**, así que casi la mitad no
+llegó a leerse nunca, y el documento afirmaba una cobertura que no tenía.
+
+No se descubrió revisando: se descubrió por casualidad, leyendo el capítulo 30
+entero para buscar otra cosa y encontrando en él una tabla con cinco cifras que
+aquí no estaba. El barrido se ha repetido sin cortar:
+
+```bash
+grep -ho "Table [0-9]\+-[0-9]\+\. *Key nutritional factors[^.]*" *.txt | sort -u | wc -l
+# 89
+```
+
+**La lección no es «leer mejor»: es que un barrido cuyo resultado no se compara
+contra el total no es un barrido, es una muestra.**
+
+## Las 89, clasificadas
+
+De las 89, la mayoría no son recomendaciones:
+
+| Cuántas | Qué son | Qué se hace |
+|---|---|---|
+| 34 | «…in selected commercial veterinary therapeutic foods» | Comparativas de piensos comerciales, no recomendaciones. No aplican |
+| 13 | Gatos (20-3, 21-2, 22-1, 24-1, 27-6, 29-12, 46-12, 46-13, y las columnas felinas) | No es esta especie |
+| 8 | Etapas de vida del perro SANO (13-3, 14-2, 15-5, 16-4, 17-1, 18-9, 25-5, 33-5) | Aquí manda FEDIAF, no un libro de texto. Ver más abajo |
+| 21 | Patologías caninas **que ya estaban verificadas** | Son las de la tercera pasada |
+| 3 | Patologías caninas **que se habían perdido** | 30-5, 31-3, 32-6. Aplicadas hoy |
+| 10 | Patologías caninas que el motor no ofrece (oral, gastritis, motilidad gástrica, gastroenteritis aguda, intestino corto, periodontal…) | Cuadros agudos o quirúrgicos, o que no se tratan con la composición de la ración |
+
+## Las tres que faltaban
+
+### 30-5 · Cáncer
+
+La patología `cancer_soporte` existía y **no aplicaba ni una cifra**. La tabla da
+cinco. Aplicadas tres:
+
+- **Grasa ≥ 62,5 g/1000 kcal** («25 to 40% of DM»). Es la **única patología del
+  motor que pide MÁS grasa, no menos**.
+- **Proteína ≥ 75 g** («30 to 45% of DM», «in excess of adult requirements»).
+- **Arginina ≥ 5 g** («>2% DM»), más de tres veces el mínimo de FEDIAF (1,51).
+
+La cuarta, **omega-3 ≥ 12,5 g** («>5% DM»), **está escrita y NO se aplica: no
+cabe**. Medido con las otras tres puestas, perro de 22 kg:
+
+```
+suelo 10,0  -> menú en el peldaño 0
+suelo 11,5  -> menú en el peldaño 5
+suelo 12,0  -> SIN MENÚ EN NINGÚN PELDAÑO
+suelo 12,5  -> SIN MENÚ EN NINGÚN PELDAÑO
+```
+
+El techo de este catálogo está entre 11,5 y 12,0. El motivo es del catálogo, no
+de la nutrición: la fuente más concentrada es el aceite de linaza (62,5
+g/1000 kcal) y para llegar a 12,5 habría que meter ~20 % de las kcal del día en
+aceite. La propia Tabla 30-6 de SACN5 enseña que **sí** se alcanza en un pienso
+(Hill's n/d, el de los ensayos de Ogilvie en linfoma: 7,29 % MS). Lo que falta es
+una fuente concentrada de EPA+DHA en el catálogo.
+
+Y hay una segunda lectura que no se decide aquí: los 12,5 salen del puente
+`%MS × 2,5`, que supone 4000 kcal/kg de materia seca. Una ración de cáncer es la
+más grasa del motor y su densidad ronda los 4400 — con esa densidad el mismo
+«>5 % MS» son **11,4 g, y 11,4 sí cabe**. O sea que puede que el límite no sea
+inalcanzable sino mal convertido. Es exactamente el trabajo de humedad que queda
+pendiente.
+
+La quinta, **omega-6:omega-3 ≈ 1:1**, el motor no la sabe expresar: solo conoce
+un ratio, el calcio:fósforo. Y el techo de carbohidrato («NFE ≤25 % DM») tampoco,
+aunque una ración BARF queda muy por debajo por construcción. Las dos quedan
+escritas en el aviso de la patología y en `PENDIENTE_NUTRICION.md`.
+
+### 32-6 · Dermatosis inflamatorias (la atópica)
+
+El capítulo 32 tiene **dos** tablas y yo había leído una. La 32-1 (que ya se
+aplicaba) es la de dermatosis por **déficit** de nutrientes; la 32-6 es la de
+dermatosis **inflamatorias**, que es la atopia.
+
+- **Omega-3 total ≥ 0,875 g/1000 kcal** («0.35 to 1.8% dry matter»). Sale en el
+  peldaño 0, sin soltar nada.
+
+La misma fila da también «50 to 300 mg total omega-3/kg body weight/day», que es
+como se pauta un **suplemento**, no como se formula una ración. No se modela:
+son dos unidades distintas y mezclarlas sería inventar.
+
+### 31-3 · Reacciones adversas al alimento → **patología nueva**
+
+Esta tabla es de una indicación que el motor **no ofrecía como patología**. Se ha
+creado `reaccion_adversa_alimento`, la número 47.
+
+- **Omega-3 total ≥ 0,875 g** (el mismo rango que la 32-6, y la fuente dice por
+  qué: «Based on levels… recommended for use in the management of inflammatory
+  skin diseases (Chapter 32)»).
+- **Fósforo ≤ 2000 mg** y **sodio ≤ 1000 mg** («0.4 to 0.8% DM» y «0.2 to 0.4%
+  DM»), **solo en adulto**.
+- **Atún y caballa fuera del menú** («Avoid foods that contain certain fish
+  ingredients [e.g., tuna, mackerel, skipjack, bonito]»), por aminas
+  vasoactivas. Puesto en el catálogo con `restricciones_patologia`, el mismo
+  mecanismo por el que el plátano no entra en un menú de diabetes. El bonito y
+  el listado no están en el catálogo.
+- **Proteína ≤ 55 g escrita y NO aplicada**, y el motivo es el paréntesis de la
+  fuente: «(dermatologic cases only)». El motor no sabe si la reacción de este
+  perro sale por la piel o por el intestino, y la misma página dice que en el
+  segundo caso hace falta **más** proteína, no menos. Medido de todas formas
+  —con el techo puesto **sí** hay menú, peldaño 0, verde—, para que quede claro
+  que no se deja fuera porque no quepa.
+
+**`solo_en_adulto` no lo decidí yo: lo cazó `auditar_patologias.py`** al
+aplicarlo. El techo de fósforo (2000) cae por debajo del mínimo de FEDIAF de un
+cachorro joven (2250), así que no sería un tope sino una prescripción. Y la
+fuente ya lo decía: sus cifras son «for apparently healthy **adult** dogs».
+
+## Dos cosas más que salieron de leer los capítulos SIN tabla
+
+### La epilepsia no tiene tabla, pero el capítulo 28 la nombra
+
+Y las dos veces importan: (1) un subgrupo de epilépticos idiopáticos —muchos
+schnauzer miniatura— tiene hipertrigliceridemia, y «in some dogs, dietary therapy
+has successfully reduced blood triglyceride levels and **eliminated seizures**
+without concomitant use of anticonvulsant drugs»; (2) el fenobarbital a largo
+plazo puede subir el colesterol. Lo primero es formulable **hoy**: es la
+hiperlipidemia, que ya está en la lista. Puesto como aviso de la epilepsia.
+
+### El aviso de crecimiento de la artrosis decía algo que no es
+
+Ponía que «los suelos de omega-3 y vitamina E sí se aplican igual» en un
+cachorro. **Es falso.** `topes_de_patologias()` no separa suelos de topes: con
+`solo_en_adulto` y un perro que crece, se salta la patología **entera**. Lo
+escribí yo el mismo día que puse los suelos, describiendo lo que me parecía
+razonable en vez de lo que hace el código.
+
+Se corrige **el texto** y no el código: separar suelos de topes en crecimiento
+(¿le doy a un cachorro con displasia el refuerzo de omega-3?) es una decisión
+clínica. Queda en `PENDIENTE_DECISIONES.md`.
+
+## Un fallo del solver que destapó todo esto
+
+Con los suelos del cáncer puestos, el motor construía un menú y el filtro final
+lo tiraba. La causa:
+
+- El solver exigía los suelos por patología sobre las **kcal pedidas** (`der`).
+- `_tope_patologia_roto` los mide sobre las **kcal reales** del menú, que es lo
+  correcto: un suelo es una concentración igual que un techo.
+
+Un menú puede salir hasta un 3 % **por encima** del DER. Medido: 1172 kcal contra
+1138 pedidas, 72,2 g de grasa → 63,4 g/1000 kcal contra las pedidas (cumple) y
+**61,6 contra las reales (no cumple)**.
+
+Es el mismo fallo del 21 de agosto —el fósforo renal a 1426 con el tope en
+1400— visto desde el otro lado. Los **techos** tienen su fila relativa desde
+entonces; los **suelos** no la tenían, porque no existían hasta el 7 de
+septiembre y se añadieron copiando solo la mitad absoluta. Arreglado con
+`patologia_suelo_relativo` en `motor_completo.py`.
+
+## Y un agujero de diseño: los avisos que no llegaban a nadie
+
+`patologias.py` solo dejaba pasar cuatro claves de `avisos`: `general`,
+`crecimiento`, `profesional` y `profesional_crecimiento`. **Cualquier otra se
+cargaba del JSON y se quedaba dentro**, sin llegar al menú ni a
+`GET /patologias`. Texto escrito con su fuente que no leía nadie, y sin que
+saltara nada.
+
+Se descubrió al escribir la Tabla 31-3, que tiene tres avisos que no son «el
+general» —una o dos proteínas y novel, el omega-3 que confunde la fase de
+diagnóstico, y por qué se van el atún y la caballa—. Los tres se habrían perdido.
+Ahora hay `avisos_extra`, ordenados por su clave para que el mismo archivo dé
+siempre los mismos avisos en el mismo orden.
+
+## Lo que se ha revisado y NO se aplica, con el motivo
+
+- **Tabla 33-5** (crecimiento de razas grandes y gigantes) pide calcio
+  0,8-1,2 % MS = 2000-3000 mg/1000 kcal. **FEDIAF permite hasta 4500** en
+  `CachorroCrecimiento`. Es un libro de texto apretando por encima del
+  regulador en un perro **sano**, no en una patología, y el motor ya aplica la
+  nota b de FEDIAF (2500 de mínimo reforzado en raza grande). Apuntado, no
+  aplicado.
+- **Tabla 47-4** (prevención de enfermedad periodontal) pide vitamina E ≥400
+  UI/kg MS. Es la **quinta** tabla que pide esa misma cifra, y esta vez para un
+  perro sano. La periodontal no es una patología del motor: se trata con
+  textura y cepillado, no con la composición.
+- **Tablas 49-2, 52-2, 54-2, 56-2, 59-1** (enfermedad oral, gastritis,
+  motilidad gástrica, gastroenteritis aguda, intestino corto): cuadros agudos o
+  quirúrgicos. Lo que piden es densidad energética, textura y frecuencia de
+  tomas, no una composición distinta.
+- **Tablas 13-3 y 14-2** (perro adulto joven y maduro sanos) piden fósforo
+  0,4-0,8 % y 0,3-0,7 % MS = 1000-2000 y 750-1750 mg/1000 kcal. **Una ración
+  BARF normal ronda los 4000.** No se aplica —aquí manda FEDIAF, que no pone
+  máximo de fósforo— pero es la pregunta grande que abre este barrido, porque
+  es de donde salen los topes de fósforo y sodio de la artrosis (34-2) y de la
+  reacción adversa (31-3): las dos tablas repiten la cifra del perro sano por
+  la comorbilidad de su población. Ver `PENDIENTE_NUTRICION.md`.
