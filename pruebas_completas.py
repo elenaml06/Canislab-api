@@ -1533,6 +1533,28 @@ _CIFRAS_CON_FUENTE = [
      "SACN5 Tabla 60-1: «Fat 12 to 15% for dogs», extremo alto a proposito"),
     ("intestino_irritable", "suelos_por_1000kcal", "fibra", 20.0, ("pct_ms", 8),
      "SACN5 Tabla 63-3: «Crude fiber >=8%», la unica fila de las cuatro que el catalogo sabe medir"),
+
+    # ── Tercera pasada, 8 de septiembre: las filas que faltaban ──
+    ("artrosis", "suelos_por_1000kcal", "omega3_total", 8.75, ("pct_ms", 3.5),
+     "SACN5 Tabla 34-2: «Total omega-3 fatty acids 3.5 to 4.0%», extremo bajo. El Reg. (UE) 2020/354 entrada 27 pide 8,24 para lo mismo"),
+    ("artrosis", "topes_por_1000kcal", "fosforo", 1750.0, ("pct_ms", 0.7),
+     "SACN5 Tabla 34-2: «Phosphorus** 0.3 to 0.7%», techo. La nota ** dice: los perros con artrosis suelen tener edad de riesgo renal y cardiaco"),
+    ("artrosis", "topes_por_1000kcal", "sodio", 1000.0, ("pct_ms", 0.4),
+     "SACN5 Tabla 34-2: «Sodium** 0.2 to 0.4%», techo"),
+    ("artrosis", "suelos_por_1000kcal", "vitE", 67.1, ("uikg_ms", 400),
+     "SACN5 Tabla 34-2: «Vitamin E >=400 IU/kg». UI, no mg: x0,671 y /4"),
+    ("disfuncion_cognitiva", "suelos_por_1000kcal", "vitE", 187.5, ("mgkg_ms", 750),
+     "SACN5 Tabla 35-3: «Vitamin E >=750 mg/kg». Esta SI viene en mg, no lleva el x0,671"),
+    ("disfuncion_cognitiva", "suelos_por_1000kcal", "omega3_total", 2.5, ("pct_ms", 1.0),
+     "SACN5 Tabla 35-3: «Total omegas-3 >1%»"),
+    ("renal", "suelos_por_1000kcal", "vitE", 67.1, ("uikg_ms", 400),
+     "SACN5 Tabla 37-9: «Vitamin E >=400 IU vitamin E/kg of food for dogs»"),
+    ("obesidad", "suelos_por_1000kcal", "vitE", 67.1, ("uikg_ms", 400),
+     "SACN5 Tabla 27-4: «Vitamin E >=400 IU vitamin E/kg»"),
+    ("hepatopatia", "suelos_por_1000kcal", "vitE", 67.1, ("uikg_ms", 400),
+     "SACN5 Tabla 68-8, perros: «Vitamin E (IU/kg) >=400»"),
+    ("urolitos_fosfato_calcico", "topes_por_1000kcal", "vitD", 9.375, ("directo", None),
+     "SACN5 Tabla 41-6: «Vitamin D 500 to 1,500 IU/kg» MS; a 4000 kcal/kg son 125-375 UI/1000 kcal y a 40 UI/ug, 3,125-9,375 ug. Techo. MAS estricto que el maximo legal (14,1875)"),
 ]
 
 # Vista por patología, para que el BLOQUE 13 no reescriba los números.
@@ -6527,6 +6549,17 @@ for _p, _tipo, _nut, _esperado, _origen, _cita in _CIFRAS_CON_FUENTE:
         _calc = _x * 2.5 if _nut in _EN_GRAMOS else _x * 2500.0
     elif _forma == "mgkg_ms":
         _calc = _x / 4.0
+    elif _forma == "uikg_ms":
+        # ⚠️ UI DE VITAMINA E -> MILIGRAMOS. Cuatro tablas de SACN5 dan la
+        # vitamina E en UI/kg de materia seca y el catálogo la mide en mg de
+        # tocoferol NATURAL. La conversión del repo, verificada contra FEDIAF
+        # Tabla VII-14, es 1 UI = 0,671 mg (el d-alfa-tocoferol natural da
+        # 1 mg = 1,49 UI). El 8 de septiembre se escribió 100 tratando las UI
+        # como mg, y se cazó porque la artrosis dejó de dar menú en ningún
+        # peldaño -- el fallo salió como infactibilidad, no como número raro.
+        # Y ojo: la Tabla 35-3 da la vitamina E en mg/kg, no en UI, así que
+        # esa va con "mgkg_ms". Dos tablas del mismo libro, dos unidades.
+        _calc = _x * 0.671 / 4.0
     else:
         fallos.append(f"BLOQUE55: forma de origen desconocida '{_forma}' en {_p}.{_nut}")
         continue
