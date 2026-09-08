@@ -715,3 +715,96 @@ que seguir pasando y pasa). Y `ayudas.js` tiene ahora `esperarElPaciente`
 aparte de `esperarLaFicha`: son dos pantallas de llegada distintas, y una
 espera que aceptara cualquiera de las dos daría por buena justamente la
 regresión que esto arregla.
+
+
+## Al veterinario no le habla la app del dueño (segunda pasada) — hecho el 8 de septiembre
+
+Cuatro cosas seguidas, después de mirar las capturas del recorrido.
+
+### 1. Fuera los muros de tutor
+
+> «Obviamente a un veterinario no le tiene que saltar ningún tipo de aviso de
+> "necesitas una dieta pautada por tu veterinario". Eso es absurdo.»
+
+Lo era, y **no era un problema de tono**: guardar la ficha de un paciente con
+hepatopatía, shunt o cálculos urinarios le mandaba a la pantalla del dueño —
+«Esto lo tiene que pautar tu veterinario»— al veterinario que lo estaba
+pautando. Y el motor **ya le formula esas ocho** desde el 29 de agosto
+(`formulable_por_profesional`, BLOQUE 39), así que la pantalla era más
+restrictiva que el propio motor: el muro solo servía para mandarle a hacerlo
+en una hoja de cálculo, donde no lo verifica nadie.
+
+Los avisos de seguridad tampoco le saltan ya: bajan a **«Cómo darlo»**, que
+es el texto que él corrige y que acaba impreso en la pauta. Los límites duros
+siguen dentro del cálculo; lo que se enseña ahí es criterio por encima de
+ellos.
+
+### 2. Y en su lugar, qué es inamovible y qué decide él
+
+> «Que le diga las recomendaciones, lo que puede tocar y lo que no. Lo
+> inamovible y lo que puede tocar, y él tiene que tener visibilidad de todo
+> eso.»
+
+`QueCambiaLaPatologia` pasa de una frase corrida al final a **dos listas
+enfrentadas** —«No se toca» / «Lo decides tú»— más un bloque de
+**recomendación clínica** con el objetivo terapéutico de la literatura (que
+suele estar por debajo de lo que el motor puede hacer, y ese tramo lo pauta
+él), el `aviso_profesional` y las notas.
+
+### 3. La lista de patologías, por aparato
+
+> «Me parece un peñazo, es enorme. No me gusta que más de la mitad de la
+> página sea una lista de patologías hacia abajo.»
+
+Eran 27 casillas seguidas en medio de la ficha. Ahora son nueve cabeceras
+plegadas (`APARATOS` en `App.jsx`) con un buscador encima; un aparato con
+algo marcado se abre solo y lo cuenta, porque lo que el paciente **tiene** no
+puede esconderse detrás de un clic. Los grupos se construyen a partir de
+`PATOLOGIAS`, no se escriben aparte: una patología nueva cae en «Otras» en
+vez de desaparecer de la pantalla en silencio.
+
+«Hígado» pasó a llamarse **«Hepático y biliar»**: en esa misma ficha hay una
+categoría de alimento llamada «Hígado», y dos botones iguales en la misma
+pantalla se confunden — lo vio primero una prueba, pero le pasaría igual a
+quien use un lector de pantalla.
+
+### 4. La burbuja seguía siendo una mascota
+
+> «En tus capturas puedo ver perfectamente que en el icono de arriba a la
+> derecha sigue apareciendo Nala.»
+
+Cierto. El 7 se le cambió a dónde lleva —a la lista de pacientes— y se quedó
+con el mismo círculo con la inicial y el mismo nombre del perro que en la app
+del dueño. Ahora es una miga de pan de verdad: **«‹ Pacientes»**. De quién es
+la ficha lo dice la ficha, en su línea de caso.
+
+### Y una que salió buscando: la app no mandaba el token
+
+`_es_profesional_acreditado(token)` existe en la API desde el 29 de agosto, y
+de él cuelga que se le formulen al veterinario las patologías que al tutor se
+le bloquean y que reciba los avisos profesionales. **La app no mandaba el
+token nunca**, así que la API veía siempre a un tutor: todo ese camino
+existía, parecía hecho y no lo recorría nadie. Se manda ahora, y solo en modo
+profesional. Se manda el TOKEN y no un `modo_profesional: true` porque un
+booleano lo escribe cualquiera desde la consola del navegador.
+
+### BLOQUE 50: perros de verdad, patologías mezcladas
+
+> «Tienes que meterte bien y comprobar que haces pruebas con todo tipo de
+> perfiles de perros con todo tipo de patologías mezclándolas entre sí.»
+
+Cinco perfiles (3, 12, 30, 55 y 20 kg) × doce cruces de patologías elegidos
+porque **aprietan nutrientes distintos y por eso pueden pelearse**: renal y
+pancreatitis (fósforo *y* grasa), renal y cardiopatía (dos minerales),
+pancreatitis e hiperlipidemia (grasa por arriba, fibra por abajo)… De cada
+cruce se comprueba que si sale menú está verde, que **ningún tope queda roto
+medido sobre las kcal reales**, que con dos patologías manda la más estricta
+de cada nutriente, y que si no sale se dice por qué. 127 s, 60 combinaciones.
+
+**Lo que encontró, y es una decisión de nutrición, no de código:**
+`renal + pancreatitis` **no da menú en ninguno de los cinco tamaños**. Es
+coherente —fósforo ≤ 1200 con el mínimo de FEDIAF en 1160, grasa ≤ 20 y
+proteína ≤ 75 a la vez dejan una ventana que el catálogo no alcanza— pero el
+mensaje que recibe el veterinario es el del tutor: «quita alguna restricción
+y vuelve a probar». No puede: son las dos enfermedades que tiene el perro.
+Queda apuntado en `PENDIENTE_NUTRICION.md`.

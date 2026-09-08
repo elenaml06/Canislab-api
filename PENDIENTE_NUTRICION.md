@@ -946,3 +946,38 @@ empiece a importar. Si se implementa, va como suelo genérico en
 `_garantizar_verificado()`, no como tope de una patología concreta: NRC lo
 da para todos los perros, no para un diagnóstico.
 
+
+
+## 13. `renal + pancreatitis` no da menú en ningún tamaño (8 de septiembre)
+
+Encontrado por el BLOQUE 50, que cruza cinco perfiles de perro con doce
+combinaciones de patologías. De los sesenta cruces, **el único que no da menú
+en ninguno de los cinco tamaños** (3, 12, 30, 55 y 20 kg) es
+`renal + pancreatitis`.
+
+**Es coherente con los topes**, no un fallo del solver: la combinación deja
+fósforo ≤ 1200 mg/1000 kcal (con el mínimo de FEDIAF en 1160 — un 3,4 % de
+sitio), grasa ≤ 20 g/1000 kcal y proteína ≤ 75 g/1000 kcal **a la vez**, y
+con esa ventana no hay ración BARF que cuadre. La escalera de relajación se
+recorre entera y tampoco.
+
+**Lo que sí es un problema es lo que se le dice.** El mensaje que recibe es
+el del tutor: «No existe ninguna combinación de alimentos accesibles que
+cumpla todos los requisitos para este perro, ni siquiera soltando las
+proporciones habituales del BARF. Quita alguna restricción y vuelve a
+probar». Un veterinario no puede quitar una de las dos enfermedades que tiene
+el perro.
+
+**Las preguntas, que son de nutrición y no de código:**
+
+1. ¿Un perro renal **y** pancreático es un caso real que haya que cubrir, o
+   es una dieta de prescripción comercial y punto?
+2. Si hay que cubrirlo, ¿cuál de los tres topes cede, y con qué fuente?
+   (La grasa de pancreatitis, 20 g/1000 kcal, es el extremo bajo de un rango
+   que Merck da como «less than 20» y SACN5 Tabla 67-3 sitúa en 37,5-75.)
+3. Y mientras tanto: ¿qué se le dice? Lo mínimo sería nombrar los topes en
+   juego y su margen, en vez de pedirle que quite restricciones.
+
+Mismo caso, más suave, en `mastín 55 kg + renal_proteinuria + artrosis`: sale
+unas veces sí y otras no según lo cargada que vaya la máquina — ahí es el
+presupuesto de tiempo del solver, no la nutrición.
