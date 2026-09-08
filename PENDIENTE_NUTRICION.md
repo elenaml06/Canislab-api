@@ -354,6 +354,46 @@ causa es la variedad de especies, no el número de alimentos:
       analizado. `accesibles.py` ya lo decía desde el 5 de agosto
       ("Confirmado que NO existen datos fiables de bazo/páncreas de pollo,
       pavo ni conejo") y ahora está verificado contra las tres fuentes.
+### Buscado el 8 de septiembre: ¿hay algún estudio con vísceras de ave?
+
+Sí hay literatura, pero **ninguna sirve para hacer una ficha del catálogo**,
+y conviene que quede escrito para no volver a buscarlo cada vez.
+
+Lo mejor que existe, con diferencia, es **Seong, Cho, Park, Kang, Park,
+Moon & Ba (2015), «Characterization of Chicken By-products by Mean of
+Proximate and Nutritional Compositions», *Food Science of Animal Resources*
+35(2):179-188, doi 10.5851/kosfa.2015.35.2.179**. Analiza OCHO despojos de
+pollo — corazón, **pulmón**, hígado, molleja, ciego, buche, intestino
+delgado y duodeno — con proximal, diez minerales (Na, K, Ca, Mg, P, Fe, Zn,
+Mn, Cu, Cr), seis vitaminas (A, B1, B2, B3, B5, B6), diecisiete aminoácidos
+y el perfil de ácidos grasos.
+
+**Y aun así no cierra el problema**, por dos motivos:
+
+1. **No trae bazo, páncreas, riñón ni timo de ave**, que son justo las
+   piezas que faltan. Trae pulmón, que sí sería una víscera nueva de una
+   especie nueva — es lo único aprovechable de todo lo que hay publicado.
+2. **Le faltan seis de los 41 que mide el motor**: vitamina D, vitamina E,
+   B12, folato, colina y yodo. Con esos seis en `sin_dato`, y siendo la
+   vitamina D y el yodo dos de los cinco topes duros de seguridad crónica,
+   un pulmón de pollo entraría al catálogo ciego justo donde más duele.
+
+El resto de lo publicado es peor: el estudio de metales en órganos de pollo
+(Sci. Total Environ. 1999) da once metales y fósforo y **ni una vitamina**;
+las vísceras de oca (Kokoszyński et al., *Foods* 2025) son otra vez hígado,
+molleja y corazón —que ya tenemos— con proximal y diez minerales, sin
+vitaminas, sin aminoácidos y sin ácidos grasos. Y una revisión reciente
+(*Edible Offal as a Valuable Source of Nutrients in the Diet*, 2024) lo dice
+con todas las letras: la información sobre despojos de ave es la más escasa
+de todas.
+
+**Conclusión, y es la misma a la que llegó `accesibles.py` el 5 de agosto
+por otro camino**: no es que no se haya buscado bien. Es que esos órganos no
+se separan ni se venden, así que nadie los ha analizado con la profundidad
+que necesita una ficha. Lo único con recorrido real es **el pulmón de pollo
+del estudio coreano**, y aun ese entraría con seis huecos, dos de ellos de
+seguridad. Decidir si compensa es una decisión, no un dato que falte.
+
 - [ ] **Queda entonces el problema de verdad, y no se arregla con datos**:
       la categoría Vísceras solo tiene DOS especies —bovino (ternera/vaca,
       que para `exclusiones.py` son la misma) y ovino— y es un pilar

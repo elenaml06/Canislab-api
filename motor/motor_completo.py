@@ -996,16 +996,42 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # siempre, o medio paso de redondeo de la fuente más concentrada de
         # ESE nutriente. En un perro grande manda el porcentaje y no cambia
         # nada; en uno pequeño manda el absoluto, que es donde estaba el
-        # problema. Se coge la fuente más concentrada y no la suma de todas
+        # problema.
+        #
+        # ⚠️ Y SON LAS TRES FUENTES MÁS CONCENTRADAS, NO UNA (8 septiembre).
+        # Aquí ponía "se coge la fuente más concentrada y no la suma de todas
         # porque los redondeos de varios alimentos no van todos en la misma
-        # dirección: sumarlos sería pedir un colchón que nunca hace falta y
-        # cerraría la ventana entre mínimo y máximo en los perros pequeños.
+        # dirección; sumarlos sería pedir un colchón que nunca hace falta y
+        # cerraría la ventana entre mínimo y máximo en los perros pequeños".
+        # La segunda mitad es cierta; la primera no: un menú lleva varios
+        # alimentos y los redondeos SÍ pueden ir todos hacia abajo a la vez.
+        #
+        # Lo cazó el BLOQUE 43 -- el que aprieta el solver a 1 s para imitar
+        # a Render -- con un menú de un perro de 1,5 kg en ROJO por el yodo.
+        # No llegaba a nadie (`_garantizar_verificado` lo para), pero para la
+        # usuaria el síntoma es el mismo que si no existiera: se queda sin
+        # menú.
+        #
+        # MEDIDO antes de elegir el número, en los perfiles más apretados
+        # (perros de 1,5 a 40 kg, con y sin alergias, solver a 1 y 2 s):
+        #
+        #     una fuente    1 menú en rojo de 70
+        #     dos fuentes   0 de 70, y 0 menús perdidos
+        #     tres fuentes  0 de 70, y 0 menús perdidos
+        #
+        # Se cogen tres y no dos por el mismo motivo por el que se mide en
+        # vez de suponer: dos era el mínimo que funcionaba HOY, con este
+        # catálogo. Tres no cuesta nada y deja margen. Sumarlas TODAS sí
+        # cerraría la ventana en los perros pequeños -- el miedo de aquel
+        # razonamiento era bueno; el número era el equivocado.
         PASO_DE_REDONDEO_G = 0.005          # round(x, 2) -> medio paso
+        FUENTES_QUE_PUEDEN_COINCIDIR = 3
         if mn is not None:
             lo_exacto = mn * der / 1000.0
             # el vector del SUELO, que es el mismo que se usa unas líneas
             # más abajo: el valor plausible cuando el dato es dudoso.
-            mas_concentrada = max(fila_min if hay_dudoso else fila)
+            _por_gramo = sorted(fila_min if hay_dudoso else fila, reverse=True)
+            mas_concentrada = sum(_por_gramo[:FUENTES_QUE_PUEDEN_COINCIDIR])
             lo = max(lo_exacto * 1.015, lo_exacto + PASO_DE_REDONDEO_G * mas_concentrada)
         else:
             lo = -np.inf

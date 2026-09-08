@@ -2463,17 +2463,28 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # `dato_dudoso`, salen junto al menú y lo decide una persona. El folato
     # no tiene techo, así que el 0 solo INFRAvalora el alimento.
     ("DUDOSO", "Canónigos"), ("DUDOSO", "Pipa de calabaza"),
-    # ⚠️ EL [OMEGA] DEL CEREBRO SE PUSO Y SE QUITÓ EL MISMO DÍA, y merece
-    # quedar escrito porque enseña cómo se cuela un error de especie.
-    # Al completar la ficha con BEDCA 1047 el linolénico (0,048) quedaba por
-    # encima del linoleico (0,036) y se apuntó aquí como plausible ("es el
-    # órgano que concentra omega-3"). Lo que pasaba de verdad es que BEDCA
-    # 1047 son "Sesos de TERNERA" y esta ficha es de VACA -- coincide celda
-    # a celda con USDA FDC 168622. Rehecha con su fuente real, el linoleico
-    # es 0,041 y el linolénico 0, así que el aviso ya no salta.
-    # La lección es la de siempre: una explicación plausible para un aviso
-    # nuevo no es una comprobación. El aviso tenía razón, y lo que estaba
-    # mal era la ficha que yo mismo acababa de rellenar.
+    # ⚠️ EL [OMEGA] DEL CEREBRO: SE PUSO, SE QUITÓ Y VOLVIÓ, TODO EN DOS
+    # DÍAS. Es la mejor historia que hay aquí sobre cómo se cuela un error
+    # de especie, así que va entera.
+    #
+    #   7 sep, mañana. Se completa "Cerebro de ternera" con BEDCA 1047 y
+    #     salta este aviso: linolénico 0,048 por encima del linoleico
+    #     0,036. Se le busca una explicación razonable ("es el órgano que
+    #     concentra omega-3") y se apunta aquí como conocido.
+    #   7 sep, tarde. La ficha resulta ser de VACA -- coincide celda a celda
+    #     con USDA FDC 168622 -- y BEDCA 1047 son "Sesos de TERNERA". O sea
+    #     que el aviso no estaba señalando una rareza del cerebro: estaba
+    #     señalando que la ficha llevaba datos de dos animales distintos.
+    #     Rehecha con su fuente real, el aviso desaparece.
+    #   8 sep. La ficha se parte en dos y nace "Cerebro de ternera" de
+    #     verdad, con BEDCA 1047 entera. El aviso VUELVE, y ahora sí es
+    #     correcto: los dos números salen medidos de la misma ficha del
+    #     mismo animal, así que no puede ser una inversión de columnas.
+    #
+    # La lección: una explicación plausible para un aviso nuevo no es una
+    # comprobación. El aviso tuvo razón las dos veces -- primero sobre un
+    # error que yo acababa de meter, y ahora sobre un hecho real.
+    ("OMEGA", "Cerebro de ternera"),
 }
 
 import re as _re_b19
@@ -5000,24 +5011,39 @@ _CASOS_43 = [
     ("cachorro 4 meses", 549.0, "CachorroCrecimiento", 4.0, 9.0),
     ("toy 1,5 kg", 200.0, "Adulto", 1.5, None),
 ]
+# ⚠️ CADA CASO VA TRES VECES (8 septiembre). Con una sola tirada esto
+# dependía de la suerte: el fallo que destapó -- un menú del toy de 1,5 kg
+# en ROJO por el yodo -- salía 1 de cada 24 veces, así que la prueba lo
+# encontró por casualidad dentro de la batería completa y luego no
+# reproducía en aislado. El motivo era real y está arreglado (el margen del
+# suelo cubría el redondeo de UN alimento y un menú lleva varios; ahora
+# cubre tres, ver `FUENTES_QUE_PUEDEN_COINCIDIR` en motor_completo.py),
+# pero una prueba que solo caza 1 de cada 24 no es una prueba: es un
+# accidente afortunado. Con tres tiradas por caso la probabilidad de que se
+# escape pasa de 96 % a 88 %, y sobre todo el fallo queda ANCLADO -- si
+# alguien vuelve a bajar ese margen, esto se cae mucho antes.
 for _etq43, _der43, _etapa43, _peso43, _adulto43 in _CASOS_43:
     # Un segundo es MENOS de lo que tarda este equipo en demostrar el óptimo
     # (2-6 s), así que aquí siempre salta el límite: es imitar a Render sin
     # depender de lo rápido que vaya la máquina donde corra esto.
-    _ok43, _g43 = _resolver_43(_der43, _etapa43, al, req, _peso43, dosis_maxima_fabricante,
-                               margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
-                               time_limit=1.0, peso_adulto_esperado_kg=_adulto43)
-    if not _ok43:
-        fallos.append(f"BLOQUE43 {_etq43}: con el tiempo justo no sale menú. La solución "
-                      f"factible ya está calculada dentro del solver: tirarla es decirle a la "
-                      f"usuaria que no existe un menú que sí existe.")
-        continue
-    _f43 = verificar(_g43, al, req, _der43, _etapa43)
-    if _f43["semaforo"] != "verde":
-        fallos.append(f"BLOQUE43 {_etq43}: el menú que sale con el tiempo justo está en "
-                      f"{_f43['semaforo']}. Aceptar una solución sin demostrar que es la que "
-                      f"usa menos alimentos NO puede relajar ni un requisito: lo que se suelta "
-                      f"es el objetivo, no las restricciones.")
+    for _vuelta43 in range(3):
+        _ok43, _g43 = _resolver_43(_der43, _etapa43, al, req, _peso43, dosis_maxima_fabricante,
+                                   margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
+                                   time_limit=1.0, peso_adulto_esperado_kg=_adulto43)
+        if not _ok43:
+            fallos.append(f"BLOQUE43 {_etq43}: con el tiempo justo no sale menú. La solución "
+                          f"factible ya está calculada dentro del solver: tirarla es decirle a "
+                          f"la usuaria que no existe un menú que sí existe.")
+            continue
+        _f43 = verificar(_g43, al, req, _der43, _etapa43)
+        if _f43["semaforo"] != "verde":
+            _corto43 = [(x.get("nutriente"), x.get("cubre_pct")) for x in (_f43.get("faltan") or [])]
+            fallos.append(f"BLOQUE43 {_etq43}: el menú que sale con el tiempo justo está en "
+                          f"{_f43['semaforo']} {_corto43[:3]}. Aceptar una solución sin demostrar "
+                          f"que es la que usa menos alimentos NO puede relajar ni un requisito: "
+                          f"lo que se suelta es el objetivo, no las restricciones. Mira el margen "
+                          f"del suelo contra el redondeo (FUENTES_QUE_PUEDEN_COINCIDIR).")
+            break
 
 # Y lo que de verdad no tiene solución sigue sin tenerla: aceptar la
 # solución guardada no puede convertir un imposible en un menú.
