@@ -1611,7 +1611,18 @@ for _pats, _et, _bloquean in [
     (["renal"], "CachorroJoven", ["renal"]),
     (["renal"], "Adulto", []),
     (["pancreatitis"], "CachorroJoven", []),
-    (["estruvita"], "Adulto", ["estruvita"]),
+    # ⚠️ CAMBIADO (8 septiembre): la estruvita YA NO BLOQUEA. Estaba en
+    # `formulable: false` con el motivo «dependen del pH urinario y de
+    # analíticas que la app no puede ver» -- cierto, y escondía que SACN5
+    # Tabla 43-3 da tres cifras formulables para la PREVENCIÓN de recurrencia
+    # (magnesio <=250, fósforo <=1500, proteína <=62,5), las tres por encima
+    # del mínimo de FEDIAF. Lo que sigue sin modelarse es la DISOLUCIÓN de un
+    # cálculo ya formado, que pide proteína <=8% MS (20 g) y eso sí es
+    # prescripción. Este caso se cayó en cuanto se abrió, que es su trabajo.
+    (["estruvita"], "Adulto", []),
+    # Y las dos que se abrieron o nacieron el mismo día y tampoco bloquean.
+    (["urolitos_fosfato_calcico"], "Adulto", []),
+    (["urolitos_silice"], "Adulto", ["urolitos_silice"]),
 ]:
     _b = patologias_bloquean(_pats, _et)
     if sorted(_b) != sorted(_bloquean):
