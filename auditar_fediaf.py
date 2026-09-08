@@ -352,6 +352,12 @@ NO_SON_NUTRIENTES_DE_LA_TABLA = {
     # `topes_de_patologias()` pueda ponerles un suelo por patología con
     # fuente real -- primer uso: dcm_taurina_respondedora, SACN5 cap.36.
     "Taurina", "L_carnitina",
+    # ⚠️ AÑADIDA (8 septiembre) -- MISMO CASO QUE LAS TRES DE ARRIBA. FEDIAF
+    # no pide EPA por separado en el perro: la Tabla III-3b solo trae la suma
+    # EPA+DHA, así que no hay fila del PDF contra la que comparar "EPA" sola.
+    # Existe para corregir un fallo concreto: `artrosis` ponía su suelo sobre
+    # la SUMA cuando SACN5 cap.34 Tabla 34-2 pide EPA sola. Ver PATOLOGIAS.md §1.3.
+    "EPA",
 }
 # ══════════════════════════════════════════════════════════════════════
 # LO QUE VIVE EN LAS NOTAS AL PIE, Y QUE NADIE COMPROBABA

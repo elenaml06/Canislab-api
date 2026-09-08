@@ -104,6 +104,18 @@ MAPA = {
     # PENDIENTE_NUTRICION.md §8 y VETERINARIOS.md "Los suelos por
     # patología".
     "Taurina": "taurina", "L_carnitina": "lcarnitina",
+    # ⚠️ "EPA" -- AÑADIDA (8 septiembre), MISMO PATRÓN QUE LAS TRES DE
+    # ARRIBA, y por un fallo concreto: `artrosis` ponía su suelo sobre
+    # `epa_dha` (la SUMA) cuando su fuente pide EPA SOLA. SACN5 5ª ed.,
+    # cap.34, Tabla 34-2, literal: «Eicosapentaenoic acid 0.4 to 1.1%»
+    # (materia seca) = 1,0-2,75 g/1000kcal. Exigir que la suma llegue a 1,0
+    # es MÁS LAXO que exigir que el EPA llegue a 1,0: un menú con 0,3 de EPA
+    # y 0,7 de DHA pasaba el filtro y no cumplía la fuente. No era un número
+    # mal copiado, era el nutriente equivocado. FEDIAF no pide EPA por
+    # separado (solo EPA+DHA, Tabla III-3b), así que su fila en
+    # requerimientos_v2_final.json lleva "-" en los seis campos: no exige ni
+    # limita nada a un perro sano. Detalle: PATOLOGIAS.md §1.3.
+    "EPA": "epa",
 }
 # ⚠️ EL ÚNICO MÁXIMO DE FEDIAF QUE NO SE APLICA, Y AQUÍ ESTÁ POR QUÉ
 # (28 agosto). La Tabla III-3b pone un solo máximo a un aminoácido: lisina
