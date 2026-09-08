@@ -39,6 +39,35 @@ grande de esta revisión.
 
 ---
 
+## 0-pre · Qué significa aquí «verificado», y qué NO significaba
+
+**Leer esto antes que nada.**
+
+Las dos primeras pasadas de este documento comprobaron que **el número que aplica
+el motor coincide con el de su fuente**. Eso es cierto y sigue siéndolo: las 57
+cifras están comprobadas contra el texto literal.
+
+**Pero eso no es lo mismo que haber recogido todo lo que la fuente dice**, y aquí
+se llamó «verificado» a lo primero.
+
+Lo destapó una pregunta de Elena sobre la pancreatitis: la Tabla 67-3 tiene **dos**
+filas de grasa —≤15 % para el perro no obeso y ≤10 % para el obeso o
+hipertrigliceridémico— y este documento citaba una diciendo «verificado literal».
+No se escapó una tabla: se escapó media fila de la tabla que se estaba mirando.
+
+Por eso hay una **tercera pasada**, en `VERIFICACION_FILA_A_FILA.md`: se leen
+**todas** las filas de las 21 tablas y se dice qué se hace con cada una. Encontró
+dos incoherencias más del mismo tipo —la obesidad mezclando los dos niveles de su
+tabla, la artrosis aplicando 2 de 7 filas— y una lista de ocho cosas que faltan.
+
+**Conclusión que hay que tener presente al leer lo que sigue:** ninguna cifra
+aplicada está mal. Lo que estaba era **incompleto**, y en dos casos incoherente.
+Son problemas distintos y el segundo no lo caza ningún test, porque un test
+compara lo que hay contra lo que se declaró — no contra lo que la fuente dice
+además.
+
+---
+
 ## 0-ter · Dos errores propios en este documento, y qué se hizo para que no se repitan
 
 **Encontrados el 8 de septiembre, segunda tanda, recalculando las 50 conversiones
