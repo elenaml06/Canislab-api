@@ -5412,10 +5412,10 @@ def _auditar_b46(ruta_catalogo):
 # ── mitad 1: con el catálogo de verdad no puede sonar nada ────────────
 _vivos_b46, _err_b46 = _auditar_b46(_os_b46.path.join(_dir_b46, "alimentos_v3_final.json"))
 if _err_b46:
-    fallos.append(f"BLOQUE46: auditar_catalogo.py ha reventado:\n{_err_b46}")
+    fallos.append(f"BLOQUE50: auditar_catalogo.py ha reventado:\n{_err_b46}")
 elif _vivos_b46:
     fallos.append(
-        f"BLOQUE46: {len(_vivos_b46)} ceros mudos en el catálogo. Cada uno es un nutriente "
+        f"BLOQUE50: {len(_vivos_b46)} ceros mudos en el catálogo. Cada uno es un nutriente "
         f"que vale 0 para el motor sin que nadie haya comprobado que de verdad sea 0. "
         f"O se rellena con su fuente, o se declara en `sin_dato`, o -- si el cero es real "
         f"y se ha ido a mirar -- se escribe en `cero_verificado` con la fuente al lado:\n    "
@@ -5456,7 +5456,7 @@ for _cat_n_b46, _g_b46 in sorted(_grupos_b46.items()):
         break
 
 if not _victima_b46:
-    fallos.append("BLOQUE46: no se ha encontrado ningún nutriente que TODOS los alimentos "
+    fallos.append("BLOQUE50: no se ha encontrado ningún nutriente que TODOS los alimentos "
                   "de alguna categoría tengan, así que no se puede plantar el fallo. O el "
                   "catálogo ha cambiado mucho, o esta prueba hay que reescribirla.")
 else:
@@ -5471,12 +5471,12 @@ else:
     try:
         _con_fallo_b46, _err2_b46 = _auditar_b46(_roto_b46)
         if _err2_b46:
-            fallos.append(f"BLOQUE46: la auditoría revienta con el catálogo "
+            fallos.append(f"BLOQUE50: la auditoría revienta con el catálogo "
                           f"plantado:\n{_err2_b46}")
         elif not any(_victima_b46["nombre"] in l and _clave_b46 in l
                      for l in (_con_fallo_b46 or [])):
             fallos.append(
-                f"BLOQUE46: se ha vaciado «{_clave_b46}» de «{_victima_b46['nombre']}» SIN "
+                f"BLOQUE50: se ha vaciado «{_clave_b46}» de «{_victima_b46['nombre']}» SIN "
                 f"declararlo -- y lo tienen TODOS los demás de su categoría -- y el detector "
                 f"de ceros mudos no ha dicho nada. Está roto o desactivado, y con él la única "
                 f"red que queda cuando alguien se olvida de rellenar `sin_dato`.")
@@ -5733,6 +5733,159 @@ if _yodos_b49 and _stat_b49.median(_yodos_b49) < 104:
         f"el redondeo y los menús se van a caer otra vez en el verificador.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
+# BLOQUE 50 — PERROS DE VERDAD, PATOLOGIAS MEZCLADAS
+#
+# ⚠️ PEDIDO EXPRESO (8 de septiembre): "tienes que meterte bien y comprobar
+# que haces pruebas con todo tipo de perfiles de perros con todo tipo de
+# patologias mezclandolas entre si, y que todo funciona bien".
+#
+# POR QUE HACIA FALTA. Los bloques que ya habia probaban las patologias DE
+# UNA EN UNA y casi siempre sobre el mismo perro. Y lo que se rompe en un
+# motor de restricciones no es una restriccion: es el CRUCE de dos. Un renal
+# aprieta el fosforo; una pancreatitis aprieta la grasa; juntas dejan una
+# ventana que ninguna de las dos deja por separado, y ahi es donde un menu
+# sale -- o no sale, o peor: sale rompiendo uno de los dos topes.
+#
+# QUE SE COMPRUEBA, PARA CADA CRUCE:
+#
+#   1. Si sale menu, esta VERDE contra FEDIAF. Regla 1 del CLAUDE.md.
+#   2. Si sale menu, NINGUN tope de patologia esta roto -- medido sobre las
+#      kcal REALES, que es como lo mide `_garantizar_verificado` (regla 2).
+#      Con dos patologias sobre el mismo nutriente manda la mas estricta.
+#   3. Si NO sale, se dice por que, y no se entrega nada a medias.
+#   4. Y las ocho que solo puede formular un profesional
+#      (`formulable_por_profesional`) SALEN con token de veterinario y NO
+#      salen sin el. Ese camino existia desde el 29 de agosto y la app no lo
+#      recorria nunca porque no mandaba el token: lo unico que lo vigila es
+#      esto.
+# ============================================================
+print("=== BLOQUE 50: perros de verdad, patologias mezcladas ===")
+from motor.patologias import cargar_crudo as _crudo_46
+from motor_completo import topes_de_patologias as _topes_46
+
+_TABLA_46 = _crudo_46()["patologias"]
+
+# Perfiles de verdad, no uno: lo que cambia con el peso no es solo la cifra
+# de kcal, es la VENTANA entre el minimo escalado y el maximo (ver "los
+# minimos escalan hacia arriba" en CLAUDE.md). Un tope que cabe de sobra en
+# un mastin puede no caber en un chihuahua.
+_PERROS_46 = [
+    ("chihuahua 3 kg",   260.0,  3.0, "Adulto", None),
+    ("beagle 12 kg",     700.0, 12.0, "Adulto", None),
+    ("labrador 30 kg",  1400.0, 30.0, "Adulto", None),
+    ("mastin 55 kg",    2100.0, 55.0, "Adulto", None),
+    ("senior 20 kg",     950.0, 20.0, "Adulto", None),
+]
+
+# Cruces de patologias, elegidos porque APRIETAN NUTRIENTES DISTINTOS y por
+# eso pueden pelearse entre si. No es una lista al azar: cada uno tiene un
+# motivo escrito.
+_CRUCES_46 = [
+    (["renal"],                      "fosforo apretado"),
+    (["pancreatitis"],               "grasa apretada; el caso del ultimo peldano"),
+    (["renal", "pancreatitis"],      "fosforo Y grasa a la vez"),
+    (["cardiopatia_c"],              "sodio apretado"),
+    (["renal", "cardiopatia_c"],     "fosforo y sodio: dos minerales a la vez"),
+    (["oxalato"],                    "vitamina D topada al maximo legal"),
+    (["diabetes", "obesidad"],       "dos metabolicas juntas"),
+    (["hiperlipidemia"],             "suelo de fibra, que empuja al reves que los topes"),
+    (["pancreatitis", "hiperlipidemia"], "grasa por arriba y fibra por abajo"),
+    (["renal_proteinuria", "artrosis"],  "una que aprieta con otra que casi no"),
+    (["enteropatia_cronica", "dermatitis_atopica"], "dos de las suaves, para el suelo"),
+    (["cushing", "hipotiroidismo"],  "dos endocrinas"),
+]
+
+
+def _kcal_reales_46(gramos):
+    return sum((al[n].get("energia", 0) or 0) / 100.0 * g for n, g in gramos.items())
+
+
+def _topes_rotos_46(gramos, patologias, etapa):
+    """Los topes rotos, medidos sobre las kcal REALES del menu.
+
+    Se mide asi y no sobre las pedidas porque el menu puede salir un 3 % por
+    debajo, y menos kcal con el mismo nutriente es MAS concentracion: medir
+    sobre las pedidas daria por bueno un menu que se pasa. Es lo que hace
+    `_tope_patologia_roto` en main.py, y por eso se usa esa misma funcion --
+    una copia aqui se separaria de la que decide de verdad.
+    """
+    return _api._tope_patologia_roto(gramos, al, patologias, etapa)
+
+
+_sin_menu_46 = []
+for _etq46, _der46, _peso46, _etapa46, _adulto46 in _PERROS_46:
+    for _pats46, _porque46 in _CRUCES_46:
+        _r46 = _c.post("/menu/v2", json={
+            "nombres_alimentos": [], "modo": "automatico",
+            "der_objetivo": _der46, "peso_perro_kg": _peso46,
+            "etapa_requisitos": _etapa46, "patologias": _pats46,
+            "peso_adulto_esperado_kg": _adulto46,
+            "presupuesto_segundos": 25.0,
+        }).json()
+        _caso46 = f"{_etq46} + {'+'.join(_pats46)}"
+
+        if not _r46.get("factible"):
+            # No salir no es un fallo por si mismo -- hay cruces que de
+            # verdad no tienen solucion --, pero SI lo es no decir por que.
+            if not (_r46.get("motivo") or _r46.get("diagnostico")):
+                fallos.append(f"BLOQUE50 {_caso46}: no sale menu y no dice por que. «No se "
+                              f"puede» a secas no le sirve a nadie.")
+            _sin_menu_46.append(_caso46)
+            continue
+
+        _g46 = _r46.get("menu") or {}
+        _f46 = (_r46.get("ficha") or {}).get("semaforo")
+        if _f46 != "verde":
+            fallos.append(f"BLOQUE50 {_caso46}: ha salido un menu en {_f46}. Regla 1: si no "
+                          f"esta verde, no se entrega. ({_porque46})")
+
+        _rotos46 = _topes_rotos_46(_g46, _pats46, _etapa46)
+        if _rotos46:
+            fallos.append(f"BLOQUE50 {_caso46}: el menu ROMPE un tope de patologia: {_rotos46}. "
+                          f"Medido sobre las kcal reales ({_kcal_reales_46(_g46):.0f} de "
+                          f"{_der46:.0f} pedidas). ({_porque46})")
+
+        # Y con DOS patologias, manda la mas estricta de cada nutriente. Se
+        # comprueba contra la tabla, no contra lo que devuelva el motor: si
+        # el motor aplicara la mas floja, esto lo caza.
+        if len(_pats46) > 1:
+            # `topes_de_patologias` devuelve una TUPLA: (topes, ..., ..., ...).
+            # El primer elemento es el dict {nutriente: tope} ya combinado con
+            # la mas estricta de cada patologia.
+            _esperados46 = (_topes_46(_pats46, _etapa46) or (None,))[0] or {}
+            _kcal46 = _kcal_reales_46(_g46) or 1.0
+            for _nut46, _lim46 in _esperados46.items():
+                _tiene46 = sum(valor_nutriente(al[n], _nut46) * g / 100.0 for n, g in _g46.items())
+                _por1000_46 = _tiene46 / _kcal46 * 1000.0
+                if _por1000_46 > _lim46 * 1.001:
+                    fallos.append(f"BLOQUE50 {_caso46}: {_nut46} sale a {_por1000_46:.1f} por "
+                                  f"1000 kcal y el tope combinado es {_lim46}. Con dos "
+                                  f"patologias tiene que mandar la mas estricta.")
+
+# Las ocho que SOLO puede formular un profesional. Sin token no salen; con
+# token de veterinario acreditado, si. Es el camino que la app no recorria.
+_SOLO_PROFESIONAL_46 = sorted(
+    k for k, v in _TABLA_46.items()
+    if not v.get("formulable") and v.get("formulable_por_profesional"))
+if len(_SOLO_PROFESIONAL_46) < 5:
+    fallos.append(f"BLOQUE50: solo {len(_SOLO_PROFESIONAL_46)} patologias marcadas "
+                  f"`formulable_por_profesional`. Si esa lista se vacia, la diferencia entre "
+                  f"el tutor y el veterinario deja de existir sin que nadie lo note.")
+
+for _k46 in _SOLO_PROFESIONAL_46:
+    _cuerpo46 = {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 1400.0,
+                 "peso_perro_kg": 30.0, "etapa_requisitos": "Adulto",
+                 "patologias": [_k46], "presupuesto_segundos": 20.0}
+    _tutor46 = _c.post("/menu/v2", json=dict(_cuerpo46)).json()
+    if not _tutor46.get("requiere_veterinario"):
+        fallos.append(f"BLOQUE50 {_k46}: a un TUTOR se le ha formulado una patologia marcada "
+                      f"`formulable: false`. Esa marca existe justo para que no.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora"
+      + (f" ({len(_sin_menu_46)} cruces sin menu, con motivo)" if _sin_menu_46 else ""))
+
 
 # ============================================================
 # RESUMEN FINAL
