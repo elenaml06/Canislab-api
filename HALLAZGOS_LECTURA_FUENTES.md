@@ -137,6 +137,75 @@ que dijo Cris. El número está en NRC 2006 — ver N-1.
 
 ---
 
+### ⛔ F-9 · EL PEOR: habíamos BORRADO el máximo de fósforo de FEDIAF
+
+**Esto no es un hueco: es un requisito real que quitamos, y lo quitamos por
+escrito diciendo que no existía.**
+
+El 7 de septiembre se borró el `maxAdulto = 4000` del fósforo, y se escribió en
+`auditar_fediaf.py`:
+
+> *«Ni FEDIAF (Tabla III-3a/III-3b: **solo la nota "h", informativa, sin cifra**)
+> ni NRC 2006 ni Dobenecker et al. 2021 dan un maximo.»*
+
+**La parte de NRC y Dobenecker es cierta.** Ellos hablan del **SUL
+toxicológico**, que efectivamente no existe. **La de FEDIAF es falsa**, y está en
+el documento **dos veces**:
+
+1. **Tabla III-3b**, columna de máximos, junto a la nota h: **`Adult: 4.00 (N)`**.
+   Y en la III-3a el mismo valor como `Adult: 1.60 (N)` g/100 g MS, que por 2,5
+   son 4,00.
+2. **Texto de la sección 3.3.1**, literal:
+   > *«AAFCO introduced a nutritional maximum for both Ca (6.25 g/1000 kcal) and
+   > **P (4 g/1000 kcal)** in 1992 out of concern for the risk of nutrient excess.
+   > **FEDIAF adopted the same nutritional maximums for both Ca and P.**»*
+
+**Son dos cosas distintas y se mezclaron**: el SUL toxicológico (no existe) y el
+máximo NUTRICIONAL de FEDIAF (sí existe).
+
+#### Por qué se coló, que es lo que hay que recordar
+
+En el texto extraído del PDF, **la columna de máximos cae visualmente sobre la
+fila ANTERIOR**. Leyendo hacia abajo se ve esto:
+
+```
+                                   Adult:        6.25 (N)
+Calcium*     g  1.45  1.25  2.50   Early growth: 4.00 (N)
+                                   Late growth:  4.50 (N)
+                                   Adult:        4.00 (N)
+Phosphorus*  g  1.16  1.00  2.25   h
+```
+
+El calcio parece tener **cuatro** máximos y el fósforo **ninguno**. El calcio
+tiene tres —6,25 adulto, 4,00 crecimiento temprano, 4,50 tardío, que son
+exactamente los que ya teníamos— y **el cuarto es del fósforo**. Se caza
+contando los máximos de cada fila contra los que ya están en el JSON, no leyendo
+hacia abajo.
+
+#### Qué consecuencia tuvo de verdad
+
+**Entre el 7 y el 8 de septiembre el motor no tuvo NINGÚN techo de fósforo en
+adulto.** Los menús salían a ~4000 mg/1000 kcal, y el catálogo precalculado
+llegó a tener uno con **4124 — por encima del máximo de FEDIAF**.
+
+Hoy queda tapado porque el techo de SACN5 (2000) es más estricto, pero **no
+siempre**: cuando el perro come poco y ese techo cede ante el mínimo escalado
+(ver D-15), el de FEDIAF vuelve a ser el único que queda. Devolverlo no es
+cosmético.
+
+#### Arreglado
+
+`maxAdulto: 4000` devuelto con la cita, `auditar_fediaf.py` corregido, y **el
+auditor gana una comprobación que no tenía**: que una etapa sin máximo en FEDIAF
+lleve `-` en el JSON. Antes ni la miraba — el mismo agujero por el que esto pudo
+pasar un día entero. Probado con el fallo puesto.
+
+Solo hay máximo en **adulto**: en crecimiento FEDIAF no da ninguno para el
+fósforo (el `1.80` de la III-3a que parecía suyo es el «Late growth» del
+**calcio**, 4,50 g/1000 kcal).
+
+---
+
 ## NRC 2006
 
 ### N-1 · El ratio linoleico:linolénico, con número, y es un requisito CONDICIONAL
@@ -242,3 +311,104 @@ No es un fallo nuestro, pero **hay que saberlo para no sumar dos veces el mismo
 margen**: cuando comparemos una cifra de NRC con una de FEDIAF, la de FEDIAF ya
 lleva ese 20 % dentro. Y explica por qué la arginina de FEDIAF (0,60 g/100 g MS)
 es más alta que la que sale de la Tabla VII-13 para el 21 % de proteína (~0,55).
+
+
+---
+
+## Más de FEDIAF, sección 3.3 (la que explica cada nutriente con asterisco)
+
+### F-10 · La METIONINA+CISTINA que pide FEDIAF supone un alimento BAJO en taurina
+
+> *«The recommended values are based on a dog food containing a **very low taurine
+> content, i.e. <100 mg/kg dry matter**. For products containing higher levels of
+> taurine **the RA for sulphur amino acids can be lower** than the values quoted in
+> the table.»*
+
+O sea que el mínimo de metionina+cistina que aplicamos está calculado para un
+alimento casi sin taurina — y una ración BARF de carne lleva taurina de verdad
+(el catálogo tiene el dato desde el 7 de septiembre). No es un peligro: es que
+estamos siendo **más estrictos de lo necesario**, sin saberlo.
+
+### F-11 · La METIONINA hay que SUBIRLA en dietas de cordero
+
+> *«**In the case of lamb and rice foods, the methionine level may have to be
+> increased.** For further information see taurine section ANNEX 7.3.»*
+
+El catálogo tiene cordero. Un menú de cordero debería llevar más metionina, y el
+motor no lo sabe. Es la misma frase del anexo 7.3.3 vista desde el otro lado.
+
+### F-12 · Por debajo del mínimo de proteína, el perfil de aminoácidos es LO que importa
+
+> *«**If formulating below the recommended minimum for total protein it is
+> particularly important to ensure that the amino acid profile meets FEDIAF
+> guidelines** for adult maintenance.»*
+
+Es exactamente el caso que describió Cris (la renal IRIS 4) y la regla que tiene
+que gobernar el modo veterinario: bajar la proteína **no** autoriza a bajar los
+aminoácidos. Hoy no formulamos por debajo del mínimo, así que no hace daño — pero
+es la regla que hay que tener escrita antes de construir esa parte.
+
+### ⚠️ F-13 · La proteína de GESTACIÓN y LACTANCIA supone que hay HIDRATOS
+
+> *«The recommendation for protein assumes the diet contains **some
+> carbohydrate** to decrease the risk of hypoglycaemia in the bitch and neonatal
+> mortality. **If carbohydrate is absent or at a very low level, the protein
+> requirement is much higher, and may be double**.»*
+
+**Una ración BARF es prácticamente sin hidratos.** Carne, hueso, víscera y un
+10 % de verdura. Según esta frase, en gestación y lactancia el requisito de
+proteína **puede ser el doble** del que aplicamos (62,5 g/1000 kcal → 125).
+
+**MEDIDO** en menús reales del motor:
+
+| Etapa | Proteína | % MS |
+|---|---|---|
+| Gestante 22 kg | **123,9 g** | 49,6 |
+| Lactante 22 kg | **124,2 g** | 49,7 |
+| Gestante tardía 22 kg | 119,2 g | 47,7 |
+| Adulto 22 kg (referencia) | 101,7 g | 40,7 |
+
+**Cumplimos, y por los pelos: 123,9 contra 125.** Pero **cumplimos por
+casualidad, no por regla**: un menú de gestación que saliera con 70 g de proteína
+pasaría nuestro semáforo (mínimo 62,5) y estaría a la mitad de lo que FEDIAF dice
+que hace falta sin hidratos. Y es el caso donde equivocarse cuesta más caro:
+hipoglucemia de la madre y mortalidad neonatal.
+
+**Es la más urgente de todo este documento.**
+
+### F-14 · Calcio alto → hay que SUBIR el zinc y el cobre
+
+> *«**As the calcium level approaches the stated nutritional maximum, it may be
+> necessary to increase the levels of certain trace elements such as zinc and
+> copper.**»*
+>
+> *(General, oligoelementos)* *«the bioavailability of trace elements is reduced by
+> a high content of certain minerals (e.g. calcium), the level of other trace
+> elements (e.g. **high zinc decreases copper absorption**) and sources of phytic
+> acid.»*
+
+**Segunda fuente independiente**: SACN5 Tabla 32-1 ya decía *«higher levels of
+zinc are required in foods with calcium >1.5 % DM»*, y quedó apuntado sin aplicar
+en `VERIFICACION_FILA_A_FILA.md`. Ahora lo dice también FEDIAF. **Y una ración
+BARF es de hueso: el calcio va alto por construcción.**
+
+### F-15 · Fuentes de mineral que NO cuentan para el mínimo
+
+> *«Owing to its low availability **copper oxide should not be considered a copper
+> source**.»*
+> *«Because of very poor availability, **iron from oxide or carbonate salts** that
+> are added to the diet **should not be considered sources contributing to the
+> minimum nutrient level**.»*
+
+Hay que mirar si algún suplemento del catálogo declara cobre como óxido o hierro
+como óxido/carbonato: si lo hace, ese aporte **no cuenta** para el mínimo y el
+motor lo está contando.
+
+### F-16 · El zinc: doblar el mínimo «puede considerarse seguro»
+
+> *«Considering potential factors present in practical pet foods that could
+> decrease zinc availability, **doubling the minimum recommended level may be
+> considered safe**.»*
+
+No es una obligación, pero es la respuesta de FEDIAF al problema del calcio alto
+del F-14, y encaja con la dermatosis zinc-sensible que ya tenemos.
