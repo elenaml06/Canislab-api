@@ -1148,6 +1148,67 @@ nutrientes**. BEDCA trae yodo pero ni un aminoácido; USDA trae los 12
 aminoácidos y la colina pero no publica yodo; CIQUAL trae todos los ácidos
 grasos pero tampoco aminoácidos.
 
+### 10.0 · La humedad, que no está — y de la que dependen casi todas las cifras de patología
+
+**Esto es lo primero que hay que mirar de este apartado, y salió el 8 de
+septiembre al verificar la pancreatitis.**
+
+Casi todas las cifras clínicas que aplica el motor vienen de tablas que las dan
+en **porcentaje de materia seca**: SACN5 las expresa así en las quince tablas que
+se han verificado, y el Reglamento europeo las da por kg de pienso al 12 % de
+humedad. El motor, en cambio, trabaja en **gramos por 1000 kcal**, porque es la
+única unidad que no depende de cuánta agua lleve la comida.
+
+El puente entre las dos es **multiplicar por 2,5**, y ese 2,5 sale de asumir una
+densidad de **4000 kcal metabolizables por kg de materia seca**. Es la referencia
+de FEDIAF, la de NRC 2006, y **la que impone la propia ley**: el Reglamento (UE)
+2020/354, en su nota al pie (2), dice literalmente *«based on a diet with a dry
+matter energy density of 4000 kcal Metabolisable Energy/kg… **the values shall be
+adapted if the energy density deviates**»*.
+
+**«Shall be adapted».** La ley obliga a adaptar los valores si la densidad se
+desvía. Y una ración de comida cruda no tiene por qué tener 4000.
+
+**El problema: no podemos comprobarlo.** Las 163 fichas del catálogo **no llevan
+humedad**. Ninguna. Así que no se puede calcular la materia seca de un menú, y por
+tanto no se puede saber su densidad energética real. La conversión ×2,5 es una
+asunción que hoy **no es verificable con nuestros propios datos**.
+
+**Lo que sí se ha podido hacer es estimarla**, deduciendo el carbohidrato por
+diferencia (Atwater modificado) y la ceniza del calcio y el fósforo. Con ese
+método, sobre menús reales de un adulto de 22 kg:
+
+| Menú | Densidad estimada | Qué significa para un «≤15 % MS» |
+|---|---|---|
+| Perro sano, sin patología | **4420** kcal/kg MS | equivaldría a 33,9 g/1000 kcal |
+| Pancreatitis (grasa ≤37,5) | **3674** | equivaldría a **40,8** |
+| Obesidad (grasa ≤30) | **3886** | equivaldría a 38,6 |
+
+Tres cosas de aquí:
+
+1. **El error es del orden del ±10 %**, no de un factor. La conversión aguanta.
+2. **Y en las patologías es conservador.** Un menú con la grasa topada tiene
+   *menos* densidad que la referencia, así que el número que aplicamos (37,5) es
+   más estricto que el que saldría con la densidad real (40,8). El sesgo trabaja
+   a favor de la seguridad, no en contra — y es autocorrectivo: cuanto más se
+   aprieta la grasa, más baja la densidad y más conservadora se vuelve la cuenta.
+3. **Pero es una estimación, no una medida.** Y afecta a **todas** las cifras de
+   patología a la vez, no solo a la grasa.
+
+> **PREGUNTA 30-bis.**
+> 1. ¿Te parece aceptable el puente de 4000 kcal/kg MS para una ración cruda, o
+>    hay que medir la humedad antes de seguir usando cifras convertidas desde
+>    porcentaje de materia seca?
+> 2. Si hay que medirla: ¿vale la humedad publicada de las bases de datos
+>    (BEDCA/CIQUAL/USDA) para un alimento que se sirve crudo y entero, o el
+>    despiece y el goteo la cambian lo bastante como para que haya que medirla?
+> 3. ¿Hay algún nutriente donde este ±10 % sí sea determinante y haya que
+>    tratarlo aparte?
+
+**Estado:** dato que falta, identificado y cuantificado, sin resolver. Existe un
+`HUMEDAD_CATALOGO.csv` en el material de trabajo con 66 humedades documentadas y
+93 pendientes con su motivo, que nunca llegó al catálogo.
+
 ### 10.1 · Los tres estados de un 0
 
 Esto es de lo que más orgullosas estamos y conviene que lo mires:

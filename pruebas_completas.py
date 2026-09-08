@@ -1371,6 +1371,94 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 #      FEDIAF, que son los de un perro SANO, y 3084 mg de fósforo entra
 #      dentro del máximo de FEDIAF. Salía en VERDE.
 # ============================================================
+# ══════════════════════════════════════════════════════════════════════
+# LAS CIFRAS DE PATOLOGÍA, CON SU FUENTE, EN UN SOLO SITIO
+# ══════════════════════════════════════════════════════════════════════
+#
+# ⚠️ UNIFICADA (8 septiembre). Esta lista la usan DOS bloques: el 13, que
+# comprueba que el motor devuelve los topes que se esperan y que los menús
+# los cumplen, y el 55, que comprueba las 27 cifras contra su fuente y que
+# el solver las aplica de verdad.
+#
+# Estaban separadas: el 13 tenía su propia tabla `_NUMEROS_REVISADOS_B13`
+# escrita a mano. Al cambiar cuatro cifras el 8 de septiembre, el 13 se cayó
+# -- que es lo que tenía que hacer -- pero dejaba el repo con DOS listas de
+# los mismos números, que es el fallo que este proyecto lleva documentando
+# desde la fibra: dos copias de lo mismo que se separan y nadie se entera.
+# Ahora hay una.
+#
+# Cada fila lleva la CITA LITERAL de la fuente que sostiene el número. No
+# comprueba que el número sea "bueno": comprueba que sigue siendo el que su
+# fuente dice. Cambiarlo con una fuente nueva en la mano es legítimo -- lo
+# que no lo es es cambiarlo sin enterarse.
+#
+_CIFRAS_CON_FUENTE = [
+    ("renal", "topes_por_1000kcal", "fosforo", 1200.0,
+     "SACN5 Tabla 37-9: «Phosphorus 0.2 to 0.5% in foods for dogs» = 500-1250"),
+    ("renal", "topes_por_1000kcal", "sodio", 750.0,
+     "SACN5 Tabla 37-9: «Sodium <=0.3% in foods for dogs» = 750"),
+    ("renal_avanzada", "topes_por_1000kcal", "fosforo", 1200.0,
+     "igual que renal"),
+    ("pancreatitis", "topes_por_1000kcal", "grasa", 37.5,
+     "SACN5 Tabla 67-3: «Fat <=15% for non-obese and non-hypertriglyceridemic dogs» = 37,5"),
+    ("pancreatitis", "topes_por_1000kcal", "proteina", 75.0,
+     "SACN5 Tabla 67-3: «Protein 15 to 30% for dogs» = 37,5-75, extremo alto"),
+    ("oxalato", "topes_por_1000kcal", "vitD", 14.1875,
+     "máximo LEGAL de FEDIAF (Reg. UE 2017/1492), 227 UI x 2,5 = 567,5 UI"),
+    ("hepatopatia", "topes_por_1000kcal", "cobre", 2.4,
+     "Center 2026 JAVMA; techo legal Reg. UE 2020/354 entrada 28 = 2,50"),
+    # Los cuatro sodios cardíacos, con el techo legal europeo delante.
+    ("cardiopatia", "topes_por_1000kcal", "sodio", 739.0,
+     "Reg. (UE) 2020/354 entrada 24: <=2,6 g/kg al 12 % humedad / 3,52 = 738,6"),
+    ("cardiopatia_b2", "topes_por_1000kcal", "sodio", 739.0,
+     "igual: el rango de Cavanaugh para B2 (800-990) supera el techo legal"),
+    ("cardiopatia_c", "topes_por_1000kcal", "sodio", 625.0,
+     "SACN5 Tabla 36-4 Class Ia extremo alto, dentro del rango de Cavanaugh para C"),
+    ("cardiopatia_d", "topes_por_1000kcal", "sodio", 480.0,
+     "Cavanaugh estadio D <50 mg/100 kcal, con margen sobre el mínimo FEDIAF 290"),
+    ("hiperlipidemia", "topes_por_1000kcal", "grasa", 30.0,
+     "SACN5 Tabla 28-2: «Restrict dietary fat (<12% dry matter)» = 30"),
+    ("hiperlipidemia", "suelos_por_1000kcal", "fibra", 25.0,
+     "SACN5 Tabla 28-2: «Increase dietary fiber: Dogs: >=10% DM» = 25"),
+    ("obesidad", "topes_por_1000kcal", "grasa", 30.0,
+     "SACN5 Tabla 27-4: la fuente dice <=9% (22,5) pero no resuelve; 30 cae en la franja de mantenimiento (<=14% = 35)"),
+    ("obesidad", "suelos_por_1000kcal", "proteina", 62.5,
+     "SACN5 Tabla 27-4: «Foods for weight loss should contain >=25%» = 62,5"),
+    ("dcm_taurina_respondedora", "suelos_por_1000kcal", "taurina", 250.0,
+     "SACN5 Tabla 36-4: «Taurine — Dogs: >=0.1%» = 250"),
+    ("dcm_taurina_respondedora", "suelos_por_1000kcal", "lcarnitina", 50.0,
+     "SACN5 Tabla 36-4: «L-Carnitine — Dogs: >=0.02%» = 50"),
+    ("ple_linfangiectasia", "topes_por_1000kcal", "grasa", 37.5,
+     "SACN5 Tabla 58-1: «Fat <15% for dogs and cats» = 37,5"),
+    ("ple_linfangiectasia", "suelos_por_1000kcal", "proteina", 62.5,
+     "SACN5 Tabla 58-1: «Protein >=25% for dogs» = 62,5"),
+    ("ple_linfangiectasia", "topes_por_1000kcal", "fibra", 12.5,
+     "SACN5 Tabla 58-1: «Crude fiber <=5%» = 12,5"),
+    ("insuficiencia_pancreatica_exocrina", "topes_por_1000kcal", "grasa", 37.5,
+     "SACN5 Tabla 66-1: «Fat 10 to 15% for dogs» = 25-37,5, extremo alto"),
+    ("insuficiencia_pancreatica_exocrina", "topes_por_1000kcal", "fibra", 12.5,
+     "SACN5 Tabla 66-1: «Fiber <=5%, lower is better» = 12,5"),
+    ("enteropatia_cronica", "topes_por_1000kcal", "grasa", 37.5,
+     "SACN5 Tabla 57-1: «Fat 12 to 15% for dogs» (muy digestible) = 30-37,5"),
+    ("enteropatia_cronica", "suelos_por_1000kcal", "proteina", 62.5,
+     "SACN5 Tabla 57-1: «Protein >=25% for dogs» = 62,5"),
+    ("artrosis", "suelos_por_1000kcal", "epa", 1.0,
+     "SACN5 Tabla 34-2: «Eicosapentaenoic acid 0.4 to 1.1%» = 1,0-2,75, EPA SOLA"),
+    ("dermatosis_zinc", "suelos_por_1000kcal", "zinc", 25.0,
+     "SACN5 Tabla 32-1: «Zinc — Dogs: 100 to 200 mg/kg food DM» = 25-50"),
+    ("diabetes", "suelos_por_1000kcal", "fibra", 17.5,
+     "SACN5 Tabla 29-3: «Fiber 7 to 18%» = 17,5-45, extremo bajo"),
+]
+
+
+# Vista por patología, para que el BLOQUE 13 no reescriba los números.
+_TOPES_ESPERADOS = {}
+_SUELOS_ESPERADOS = {}
+for _p, _tipo, _nut, _val, _cita in _CIFRAS_CON_FUENTE:
+    (_TOPES_ESPERADOS if _tipo == "topes_por_1000kcal" else _SUELOS_ESPERADOS
+     ).setdefault(_p, {})[_nut] = _val
+
+
 print("=== BLOQUE 13: los topes por patología se cumplen ===")
 
 # ⚠️ REHECHO (25 agosto) — LOS TOPES SE LEEN DEL MOTOR, NO SE COPIAN.
@@ -1402,30 +1490,27 @@ _PATOLOGIAS_B13 = ["renal", "pancreatitis", "cardiopatia", "oxalato", "diabetes"
 #
 # NO se toca ninguno sin criterio veterinario. Las fuentes están escritas al
 # lado de cada tope en motor/motor_completo.py.
+# ⚠️ REHECHA (8 septiembre): los NÚMEROS ya no se escriben aquí, se leen de
+# `_TOPES_ESPERADOS` (arriba, con su cita). Lo que sigue escrito a mano es lo
+# que esta tabla aporta y la otra no: QUÉ COMBINACIÓN se prueba, en QUÉ ETAPA,
+# y qué se espera que pase en crecimiento (donde varios topes no se aplican) y
+# con el % de grasa condicional de la diabetes.
+_T = _TOPES_ESPERADOS
 _NUMEROS_REVISADOS_B13 = [
     # (patologías, etapa, topes esperados, % de grasa esperado)
-    (["renal"],                  "Adulto",             {"fosforo": 1200.0}, None),
+    (["renal"],                  "Adulto",              _T["renal"],        None),
     (["renal"],                  "CachorroCrecimiento", {},                 None),
-    # ⚠️ AÑADIDO (6-sep-2026) — SACN5 cap.67 Tabla 67-3 confirmó el tope de
-    # grasa y añadió uno de proteína (75 g/1000kcal) que no existía: los
-    # aminoácidos libres estimulan la secreción pancreática incluso más
-    # que la grasa. Ver patologias.json / PENDIENTE_NUTRICION.md §10.
-    (["pancreatitis"],           "Adulto",             {"grasa": 20.0, "proteina": 75.0}, None),
-    (["pancreatitis"],           "CachorroJoven",      {},                  None),
-    (["cardiopatia"],            "Adulto",             {"sodio": 900.0},    None),
-    # ⚠️ ACTUALIZADO (7-sep-2026): 20.0 era el máximo NUTRICIONAL antiguo de
-    # vitamina D (800 UI). Desde la corrección del 6-sep-2026 el que manda
-    # es el LEGAL (14,1875 µg = 567,5 UI), más estricto. No cambia el menú
-    # (oxalato solo podía endurecer, nunca relajar, así que el de FEDIAF ya
-    # se aplicaba), pero el número que cita esta ancla tiene que ser el
-    # real para que valga como ancla de verdad.
-    (["oxalato"],                "Adulto",             {"vitD": 14.1875},   None),
-    (["hepatopatia"],            "Adulto",             {"cobre": 2.4},      None),
-    # La diabetes SOLA ya no restringe la grasa (Purina Institute): el pilar
-    # es fibra alta e índice glucémico bajo. Solo con pancreatitis o
-    # hipertrigliceridemia concurrente se baja al 30%.
-    (["diabetes"],               "Adulto",             {},                  None),
-    (["diabetes", "pancreatitis"], "Adulto",           {"grasa": 20.0, "proteina": 75.0}, 0.30),
+    (["pancreatitis"],           "Adulto",              _T["pancreatitis"], None),
+    (["pancreatitis"],           "CachorroJoven",       {},                 None),
+    (["cardiopatia"],            "Adulto",              _T["cardiopatia"],  None),
+    (["oxalato"],                "Adulto",              _T["oxalato"],      None),
+    (["hepatopatia"],            "Adulto",              _T["hepatopatia"],  None),
+    # La diabetes SOLA no restringe la grasa (Purina Institute): el pilar es
+    # fibra alta e índice glucémico bajo. Su suelo de fibra (17,5, SACN5
+    # Tabla 29-3) es un SUELO, así que no aparece aquí, que son topes.
+    (["diabetes"],               "Adulto",              {},                 None),
+    # Con pancreatitis concurrente sí, y además se suman los topes de las dos.
+    (["diabetes", "pancreatitis"], "Adulto",            _T["pancreatitis"], 0.30),
 ]
 for _pats, _et, _esperados, _esperado_pct in _NUMEROS_REVISADOS_B13:
     _t, _p, _, _ = _topes_b13(_pats, _et)
@@ -6304,63 +6389,7 @@ print("=== BLOQUE 55: cada cifra de patología contra la de su fuente ===")
 from patologias import CRUDO as _CRUDO55
 
 # (patologia, tipo, nutriente, valor, de dónde sale)
-_CIFRAS_CON_FUENTE = [
-    ("renal", "topes_por_1000kcal", "fosforo", 1200.0,
-     "SACN5 Tabla 37-9: «Phosphorus 0.2 to 0.5% in foods for dogs» = 500-1250"),
-    ("renal", "topes_por_1000kcal", "sodio", 750.0,
-     "SACN5 Tabla 37-9: «Sodium <=0.3% in foods for dogs» = 750"),
-    ("renal_avanzada", "topes_por_1000kcal", "fosforo", 1200.0,
-     "igual que renal"),
-    ("pancreatitis", "topes_por_1000kcal", "grasa", 37.5,
-     "SACN5 Tabla 67-3: «Fat <=15% for non-obese and non-hypertriglyceridemic dogs» = 37,5"),
-    ("pancreatitis", "topes_por_1000kcal", "proteina", 75.0,
-     "SACN5 Tabla 67-3: «Protein 15 to 30% for dogs» = 37,5-75, extremo alto"),
-    ("oxalato", "topes_por_1000kcal", "vitD", 14.1875,
-     "máximo LEGAL de FEDIAF (Reg. UE 2017/1492), 227 UI x 2,5 = 567,5 UI"),
-    ("hepatopatia", "topes_por_1000kcal", "cobre", 2.4,
-     "Center 2026 JAVMA; techo legal Reg. UE 2020/354 entrada 28 = 2,50"),
-    # Los cuatro sodios cardíacos, con el techo legal europeo delante.
-    ("cardiopatia", "topes_por_1000kcal", "sodio", 739.0,
-     "Reg. (UE) 2020/354 entrada 24: <=2,6 g/kg al 12 % humedad / 3,52 = 738,6"),
-    ("cardiopatia_b2", "topes_por_1000kcal", "sodio", 739.0,
-     "igual: el rango de Cavanaugh para B2 (800-990) supera el techo legal"),
-    ("cardiopatia_c", "topes_por_1000kcal", "sodio", 625.0,
-     "SACN5 Tabla 36-4 Class Ia extremo alto, dentro del rango de Cavanaugh para C"),
-    ("cardiopatia_d", "topes_por_1000kcal", "sodio", 480.0,
-     "Cavanaugh estadio D <50 mg/100 kcal, con margen sobre el mínimo FEDIAF 290"),
-    ("hiperlipidemia", "topes_por_1000kcal", "grasa", 30.0,
-     "SACN5 Tabla 28-2: «Restrict dietary fat (<12% dry matter)» = 30"),
-    ("hiperlipidemia", "suelos_por_1000kcal", "fibra", 25.0,
-     "SACN5 Tabla 28-2: «Increase dietary fiber: Dogs: >=10% DM» = 25"),
-    ("obesidad", "topes_por_1000kcal", "grasa", 30.0,
-     "SACN5 Tabla 27-4: la fuente dice <=9% (22,5) pero no resuelve; 30 cae en la franja de mantenimiento (<=14% = 35)"),
-    ("obesidad", "suelos_por_1000kcal", "proteina", 62.5,
-     "SACN5 Tabla 27-4: «Foods for weight loss should contain >=25%» = 62,5"),
-    ("dcm_taurina_respondedora", "suelos_por_1000kcal", "taurina", 250.0,
-     "SACN5 Tabla 36-4: «Taurine — Dogs: >=0.1%» = 250"),
-    ("dcm_taurina_respondedora", "suelos_por_1000kcal", "lcarnitina", 50.0,
-     "SACN5 Tabla 36-4: «L-Carnitine — Dogs: >=0.02%» = 50"),
-    ("ple_linfangiectasia", "topes_por_1000kcal", "grasa", 37.5,
-     "SACN5 Tabla 58-1: «Fat <15% for dogs and cats» = 37,5"),
-    ("ple_linfangiectasia", "suelos_por_1000kcal", "proteina", 62.5,
-     "SACN5 Tabla 58-1: «Protein >=25% for dogs» = 62,5"),
-    ("ple_linfangiectasia", "topes_por_1000kcal", "fibra", 12.5,
-     "SACN5 Tabla 58-1: «Crude fiber <=5%» = 12,5"),
-    ("insuficiencia_pancreatica_exocrina", "topes_por_1000kcal", "grasa", 37.5,
-     "SACN5 Tabla 66-1: «Fat 10 to 15% for dogs» = 25-37,5, extremo alto"),
-    ("insuficiencia_pancreatica_exocrina", "topes_por_1000kcal", "fibra", 12.5,
-     "SACN5 Tabla 66-1: «Fiber <=5%, lower is better» = 12,5"),
-    ("enteropatia_cronica", "topes_por_1000kcal", "grasa", 37.5,
-     "SACN5 Tabla 57-1: «Fat 12 to 15% for dogs» (muy digestible) = 30-37,5"),
-    ("enteropatia_cronica", "suelos_por_1000kcal", "proteina", 62.5,
-     "SACN5 Tabla 57-1: «Protein >=25% for dogs» = 62,5"),
-    ("artrosis", "suelos_por_1000kcal", "epa", 1.0,
-     "SACN5 Tabla 34-2: «Eicosapentaenoic acid 0.4 to 1.1%» = 1,0-2,75, EPA SOLA"),
-    ("dermatosis_zinc", "suelos_por_1000kcal", "zinc", 25.0,
-     "SACN5 Tabla 32-1: «Zinc — Dogs: 100 to 200 mg/kg food DM» = 25-50"),
-    ("diabetes", "suelos_por_1000kcal", "fibra", 17.5,
-     "SACN5 Tabla 29-3: «Fiber 7 to 18%» = 17,5-45, extremo bajo"),
-]
+# (la lista vive arriba, antes del BLOQUE 13, para que los dos la usen)
 
 _pats55 = _CRUDO55["patologias"]
 for _p, _tipo, _nut, _esperado, _cita in _CIFRAS_CON_FUENTE:
