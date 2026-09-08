@@ -42,7 +42,14 @@
       "formulable_por_profesional": true,
       "necesita_bajo_fediaf": true,
       "nutriente_frontera": "fosforo",
-      "objetivo_terapeutico_por_1000kcal": 1000
+      "objetivo_terapeutico_por_1000kcal": 1000,
+      "suelos_por_1000kcal": {
+        "vitE": {
+          "valor": 100.0,
+          "fuente": "SACN5 5a ed., Tabla 37-9, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026, TERCERA PASADA. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Cuatro tablas distintas de SACN5 piden vitamina E >=400 UI/kg de materia seca: la 37-9 (renal), la 34-2 (artrosis), la 27-4 (obesidad) y la 68-8 (hepatobiliar). A 4000 kcal/kg MS son 100 UI/1000 kcal. Es el factor que MAS se repite de todas las tablas verificadas y no se aplicaba en ninguna. El motivo es el mismo en las cuatro: son cuadros con estres oxidativo, y la vitamina E es el antioxidante liposoluble de membrana. || El minimo de FEDIAF es 6,97 mg/1000 kcal, asi que esto es unas catorce veces ese suelo -- pero queda por DEBAJO de los 187,5 que ya aplica la disfuncion cognitiva (Tabla 35-3) y que se ha medido que resuelve. || Unidad: 1 UI de vitamina E = 1 mg de acetato de all-rac-alfa-tocoferol (FEDIAF Tabla VII-14, confirmado en Fascetti cap.6), asi que 100 UI se aplican como 100."
+        }
+      }
     },
     "pancreatitis": {
       "nombre": "Pancreatitis",
@@ -115,7 +122,14 @@
       "solo_en_adulto": true,
       "en_crecimiento": "sin_tope",
       "aviso_crecimiento": "Este menú NO ha podido aplicar los topes de oxalato (sodio, fósforo y magnesio), porque en crecimiento, gestación o lactancia el mínimo de fósforo que el perro necesita es MAYOR que el techo que pide la fuente para el oxalato. Los alimentos altos en ácido oxálico sí se han retirado igual. Un perro en crecimiento con cálculos de oxalato necesita un plan hecho por un veterinario.",
-      "nota_exclusion_alimentos": "Los alimentos altos en acido oxalico NO se listan aqui: viven en `motor/seguridad.py`, en OXALATO_ALTO, que es lo unico que el solver lee para excluirlos (desde el 5 de agosto). El 8-sep-2026 esa lista se amplio de 4 entradas a 20 con la Tabla 40-3 de SACN5 («Selected human foods to limit or avoid feeding to dogs with calcium oxalate uroliths»), quedandose solo con las marcadas (H) = «high; avoid feeding». Escribirlas tambien aqui seria una SEGUNDA copia de la misma lista, que es como se desincronizo la tabla de patologias del POST /menu. Si hay que tocarlas, se tocan alli."
+      "nota_exclusion_alimentos": "Los alimentos altos en acido oxalico NO se listan aqui: viven en `motor/seguridad.py`, en OXALATO_ALTO, que es lo unico que el solver lee para excluirlos (desde el 5 de agosto). El 8-sep-2026 esa lista se amplio de 4 entradas a 20 con la Tabla 40-3 de SACN5 («Selected human foods to limit or avoid feeding to dogs with calcium oxalate uroliths»), quedandose solo con las marcadas (H) = «high; avoid feeding». Escribirlas tambien aqui seria una SEGUNDA copia de la misma lista, que es como se desincronizo la tabla de patologias del POST /menu. Si hay que tocarlas, se tocan alli.",
+      "ratio_ca_p": {
+        "min": 1.1,
+        "max": 2.0,
+        "fuente": "SACN5 5a ed., cap.40 «Canine Calcium Oxalate Urolithiasis», Tabla 40-5, verificado literal 8-sep-2026",
+        "por_que": "ANADIDO 8-sep-2026, TERCERA PASADA. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Tabla 40-5: «maintain a normal Ca:P ratio (1.1:1 to 2:1)». El motor ya sabe de ratios Ca:P -- los aplica desde FEDIAF y desde la nota b de raza grande -- pero no tenia forma de que una PATOLOGIA pidiera el suyo. ⚠️ ESTE CAMPO NO LO LEE EL SOLVER TODAVIA: se deja escrito con su fuente para no perderlo, y queda anotado en VERIFICACION_FILA_A_FILA.md como pendiente de implementar. Escribirlo sin decir que no se aplica seria peor que no escribirlo: pareceria un limite y no lo es.",
+        "aplicado_por_el_solver": false
+      }
     },
     "hepatopatia": {
       "nombre": "Hepatopatía por acúmulo de cobre",
@@ -157,6 +171,11 @@
           "valor": 250.0,
           "fuente": "SACN5 5a ed., cap.68 «Hepatobiliary Disease», Tabla 68-8, verificado literal 8-sep-2026",
           "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Tabla 68-8, perros: «Taurine (%) >=0.1» = 250 mg/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si el nutriente va en mg) a la densidad de referencia de 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. El texto lo dice explicito: «Although no minimum recommended allowances for taurine for healthy dogs have been defined, foods for dogs with liver disease should contain at least 0.1% DM taurine». Mismo numero que la MCD respondedora a taurina, por caminos distintos."
+        },
+        "vitE": {
+          "valor": 100.0,
+          "fuente": "SACN5 5a ed., Tabla 68-8, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026, TERCERA PASADA. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Cuatro tablas distintas de SACN5 piden vitamina E >=400 UI/kg de materia seca: la 37-9 (renal), la 34-2 (artrosis), la 27-4 (obesidad) y la 68-8 (hepatobiliar). A 4000 kcal/kg MS son 100 UI/1000 kcal. Es el factor que MAS se repite de todas las tablas verificadas y no se aplicaba en ninguna. El motivo es el mismo en las cuatro: son cuadros con estres oxidativo, y la vitamina E es el antioxidante liposoluble de membrana. || El minimo de FEDIAF es 6,97 mg/1000 kcal, asi que esto es unas catorce veces ese suelo -- pero queda por DEBAJO de los 187,5 que ya aplica la disfuncion cognitiva (Tabla 35-3) y que se ha medido que resuelve. || Unidad: 1 UI de vitamina E = 1 mg de acetato de all-rac-alfa-tocoferol (FEDIAF Tabla VII-14, confirmado en Fascetti cap.6), asi que 100 UI se aplican como 100."
         }
       }
     },
@@ -417,6 +436,11 @@
           "valor": 75.0,
           "fuente": "SACN5 5a ed., cap.27 «Obesity», Tabla 27-4, verificado literal 8-sep-2026",
           "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Tabla 27-4: «L-carnitine — Foods for weight loss and prevention of weight regain should contain >=300 ppm» = 300 mg/kg de materia seca / 4 = 75 mg/1000 kcal. La L-carnitina transporta acidos grasos a la mitocondria; es el unico de los factores de esta tabla con mecanismo directo sobre la oxidacion de grasa. FEDIAF no la exige, asi que no hay techo."
+        },
+        "vitE": {
+          "valor": 100.0,
+          "fuente": "SACN5 5a ed., Tabla 27-4, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026, TERCERA PASADA. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Cuatro tablas distintas de SACN5 piden vitamina E >=400 UI/kg de materia seca: la 37-9 (renal), la 34-2 (artrosis), la 27-4 (obesidad) y la 68-8 (hepatobiliar). A 4000 kcal/kg MS son 100 UI/1000 kcal. Es el factor que MAS se repite de todas las tablas verificadas y no se aplicaba en ninguna. El motivo es el mismo en las cuatro: son cuadros con estres oxidativo, y la vitamina E es el antioxidante liposoluble de membrana. || El minimo de FEDIAF es 6,97 mg/1000 kcal, asi que esto es unas catorce veces ese suelo -- pero queda por DEBAJO de los 187,5 que ya aplica la disfuncion cognitiva (Tabla 35-3) y que se ha medido que resuelve. || Unidad: 1 UI de vitamina E = 1 mg de acetato de all-rac-alfa-tocoferol (FEDIAF Tabla VII-14, confirmado en Fascetti cap.6), asi que 100 UI se aplican como 100."
         }
       }
     },
@@ -545,7 +569,8 @@
       "nombre": "Artrosis / osteoartritis",
       "formulable": true,
       "avisos": {
-        "general": "SACN5 5ª ed., cap.34 «Nutritional Management of Osteoarthritis», Tabla 34-2, recomienda subir el omega-3 (EPA+DHA) por encima del mínimo normal por su efecto antiinflamatorio -- el motor ya exige un mínimo de EPA+DHA (0,11 g/1000kcal, ver requerimientos_v2_final.json), pero no hay hoy un mecanismo para pedirle un mínimo MÁS ALTO solo en artrosis (a partir del 7 de septiembre el motor ya sabe pedir un mínimo reforzado: este menú exige al menos 1,0 g/1000kcal de EPA+DHA, casi diez veces el suelo general, eligiendo pescado azul con la frecuencia que haga falta. La glucosamina y el condroitín sulfato, que también se citan, no son datos que el catálogo tenga de ningún alimento. Mantener el peso ideal es lo que más impacto tiene, y eso ya lo cubre el cálculo de peso objetivo del DER."
+        "general": "SACN5 5ª ed., cap.34 «Nutritional Management of Osteoarthritis», Tabla 34-2, recomienda subir el omega-3 (EPA+DHA) por encima del mínimo normal por su efecto antiinflamatorio -- el motor ya exige un mínimo de EPA+DHA (0,11 g/1000kcal, ver requerimientos_v2_final.json), pero no hay hoy un mecanismo para pedirle un mínimo MÁS ALTO solo en artrosis (a partir del 7 de septiembre el motor ya sabe pedir un mínimo reforzado: este menú exige al menos 1,0 g/1000kcal de EPA+DHA, casi diez veces el suelo general, eligiendo pescado azul con la frecuencia que haga falta. La glucosamina y el condroitín sulfato, que también se citan, no son datos que el catálogo tenga de ningún alimento. Mantener el peso ideal es lo que más impacto tiene, y eso ya lo cubre el cálculo de peso objetivo del DER.",
+        "crecimiento": "Este menú NO ha podido aplicar los topes de fósforo y sodio de la artrosis: en crecimiento, gestación o lactancia el mínimo de fósforo que el perro necesita es mayor que el techo que pide la fuente. Los suelos de omega-3 y vitamina E sí se aplican igual."
       },
       "formulable_por_profesional": true,
       "suelos_por_1000kcal": {
@@ -558,8 +583,33 @@
           "valor": 75.0,
           "fuente": "SACN5 5a ed., cap.34, Tabla 34-2, verificado literal 8-sep-2026",
           "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Tabla 34-2: «L-carnitine >=300 mg/kg» de materia seca / 4 = 75 mg/1000 kcal. Mismo valor que en obesidad y de la misma logica: el perro artrosico suele tener sobrepeso y perderlo es la medida con mas evidencia de todas en artrosis."
+        },
+        "omega3_total": {
+          "valor": 8.75,
+          "fuente": "SACN5 5a ed., cap.34, Tabla 34-2, verificado literal 8-sep-2026; y Reglamento (UE) 2020/354, entrada 27",
+          "por_que": "ANADIDO 8-sep-2026, TERCERA PASADA. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Tabla 34-2: «Total omega-3 fatty acids 3.5 to 4.0%» de materia seca = 8,75-10 g/1000 kcal. Conversion: la tabla lleva «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si va en mg) a 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. Se usa el extremo bajo. || LO QUE HACE ESTE NUMERO ESPECIAL: el Reglamento (UE) 2020/354, entrada 27 («Support of the metabolism of joints in the case of osteoarthritis»), pide «Total omega-3 fatty acids >= 29 g per kg» de pienso completo al 12 % de humedad = 8,24 g/1000 kcal. Dos fuentes independientes -- un libro de texto de 2010 y una norma europea de 2020 -- piden casi el MISMO numero para la misma indicacion, y el motor no pedia ninguno: solo miraba EPA+DHA, que es un subconjunto. FEDIAF no da maximo de omega-3 en adulto, asi que no hay techo. Margen del profesional: 0 a sin techo."
+        },
+        "vitE": {
+          "valor": 100.0,
+          "fuente": "SACN5 5a ed., Tabla 34-2, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026, TERCERA PASADA. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Cuatro tablas distintas de SACN5 piden vitamina E >=400 UI/kg de materia seca: la 37-9 (renal), la 34-2 (artrosis), la 27-4 (obesidad) y la 68-8 (hepatobiliar). A 4000 kcal/kg MS son 100 UI/1000 kcal. Es el factor que MAS se repite de todas las tablas verificadas y no se aplicaba en ninguna. El motivo es el mismo en las cuatro: son cuadros con estres oxidativo, y la vitamina E es el antioxidante liposoluble de membrana. || El minimo de FEDIAF es 6,97 mg/1000 kcal, asi que esto es unas catorce veces ese suelo -- pero queda por DEBAJO de los 187,5 que ya aplica la disfuncion cognitiva (Tabla 35-3) y que se ha medido que resuelve. || Unidad: 1 UI de vitamina E = 1 mg de acetato de all-rac-alfa-tocoferol (FEDIAF Tabla VII-14, confirmado en Fascetti cap.6), asi que 100 UI se aplican como 100."
         }
-      }
+      },
+      "topes_por_1000kcal": {
+        "fosforo": {
+          "valor": 1750.0,
+          "fuente": "SACN5 5a ed., cap.34, Tabla 34-2, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026, TERCERA PASADA. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Tabla 34-2: «Phosphorus** 0.3 to 0.7%» de materia seca = 750-1750 mg/1000 kcal. Conversion: la tabla lleva «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si va en mg) a 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. Se aplica el techo; el suelo queda bajo el minimo de FEDIAF (1160). La Tabla 34-2 los marca con «**» y la nota dice por que, y no es un detalle: «Dogs with osteoarthritis are often in age groups at risk for kidney and/or heart disease». O sea que la tabla ya esta pensando en la comorbilidad del perro mayor, no en la articulacion. Margen del profesional: 1160 a 1750. || `solo_en_adulto` PUESTO EL MISMO DIA: auditar_patologias.py lo caza en el acto, porque 1750 esta por debajo del minimo de FEDIAF en crecimiento (2250 en CachorroJoven). Clinicamente encaja sin forzar nada -- la artrosis es enfermedad de perro adulto y mayor, y la propia nota de la tabla habla de «age groups at risk». Los SUELOS (omega-3, EPA, L-carnitina, vitamina E) se aplican igual en crecimiento: solo se sueltan los topes."
+        },
+        "sodio": {
+          "valor": 1000.0,
+          "fuente": "SACN5 5a ed., cap.34, Tabla 34-2, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026, TERCERA PASADA. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Tabla 34-2: «Sodium** 0.2 to 0.4%» de materia seca = 500-1000 mg/1000 kcal. Conversion: la tabla lleva «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si va en mg) a 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. Se aplica el techo; el suelo (500) esta por encima del minimo de FEDIAF (290) pero no se aplica, porque un suelo de sodio en artrosis no tiene sentido clinico: lo que la tabla quiere es no pasarse. La Tabla 34-2 los marca con «**» y la nota dice por que, y no es un detalle: «Dogs with osteoarthritis are often in age groups at risk for kidney and/or heart disease». O sea que la tabla ya esta pensando en la comorbilidad del perro mayor, no en la articulacion. Margen del profesional: 290 a 1000."
+        }
+      },
+      "solo_en_adulto": true,
+      "en_crecimiento": "sin_tope",
+      "aviso_crecimiento": "Este menú NO ha podido aplicar los topes de fósforo y sodio de la artrosis: en crecimiento, gestación o lactancia el mínimo de fósforo que el perro necesita es mayor que el techo que pide la fuente. Los suelos de omega-3 y vitamina E sí se aplican igual."
     },
     "riesgo_gdv": {
       "nombre": "Riesgo de dilatación-vólvulo gástrico (razas grandes/profundas de tórax)",
@@ -581,6 +631,11 @@
           "valor": 187.5,
           "fuente": "SACN5 5a ed., cap.35 «Brain aging and cognitive dysfunction», Tabla 35-3, verificado literal 8-sep-2026",
           "por_que": "ANADIDO 8-sep-2026 al verificar la tabla entera y ver que el motor solo aplicaba parte de ella. Esta patologia no aplicaba NINGUN limite, teniendo tabla propia. Tabla 35-3: «Vitamin E — Increase dietary antioxidants. Provide foods with >=750 mg/kg» de materia seca / 4 = 187,5 mg/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si el nutriente va en mg) a la densidad de referencia de 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. Es el factor con mas respaldo de esa tabla: el ensayo clinico aleatorizado que cita el capitulo (alimento enriquecido en antioxidantes) mejoro 13 de 15 conductas frente a 4 de 15 del control. Minimo de FEDIAF: 6,97 mg, o sea que esto es 27 veces el suelo de un perro sano -- y por eso hay que medir que resuelva. || MEDIDO 8-sep-2026: esta patologia es la UNICA de las tocadas que NO resuelve en el peldano estricto -- sale en el peldano 5, el que suelta el techo de visceras/higado/verdura y permite hasta 4 suplementos. Tiene sentido: 187,5 mg de vitamina E por 1000 kcal son 27 veces el minimo de un perro sano (6,97), y con comida sola no se llega -- hace falta suplemento, y el peldano 0 solo deja dos. Resultado: 189,4 mg, verde. Se acepta y SE DICE (regla 5): un menu de disfuncion cognitiva llevara mas suplementos y mas visceras de lo normal. Si se quisiera que saliera en el peldano estricto habria que bajar el suelo, y eso seria apartarse de la fuente."
+        },
+        "omega3_total": {
+          "valor": 2.5,
+          "fuente": "SACN5 5a ed., cap.35, Tabla 35-3, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026, TERCERA PASADA. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Tabla 35-3: «Omega-3 fatty acids (docosahexaenoic and eicosapentaenoic acids) -- Total omegas-3 >1%» de materia seca = 2,5 g/1000 kcal. Conversion: la tabla lleva «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si va en mg) a 4000 kcal EM/kg MS; y mg/kg MS / 4 = mg/1000 kcal. Es el segundo factor de esa tabla con respaldo de ensayo clinico, junto con la vitamina E que ya se aplicaba."
         }
       }
     },
@@ -750,13 +805,25 @@
           "valor": 62.5,
           "fuente": "SACN5 5a ed., cap.41 «Canine Calcium Phosphate Urolithiasis», Tabla 41-6, verificado literal 8-sep-2026",
           "por_que": "Tabla 41-6: «Protein 10 to 25%» = 25-62,5 g/1000 kcal. Conversion: la tabla lleva la nota «Nutrients expressed on a dry matter basis», asi que %MS x 2,5 = g/1000 kcal (o x2500 si va en mg) a 4000 kcal EM/kg MS. Se aplica el TECHO (62,5), que es el unico extremo del rango por encima del minimo de FEDIAF (52,1); por debajo seria prescripcion. Motivo del texto: la proteina alta contribuye a hipocitraturia (y el citrato es lo que inhibe la cristalizacion) y a hipercalciuria."
+        },
+        "vitD": {
+          "valor": 9.375,
+          "fuente": "SACN5 5a ed., cap.41, Tabla 41-6, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026, TERCERA PASADA. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Tabla 41-6: «Vitamin D 500 to 1,500 IU/kg» de materia seca. A 4000 kcal/kg MS son 125-375 UI/1000 kcal, y a 40 UI por ug son 3,125-9,375 ug/1000 kcal. Se aplica el techo del rango (9,375). || LO IMPORTANTE: es MAS ESTRICTO que el maximo LEGAL de FEDIAF (14,1875 ug), que es el que se aplica a cualquier perro. O sea que aqui la patologia SI aprieta de verdad, al contrario que en el oxalato, donde el unico tope de vitamina D que habia era el legal reproducido. El suelo del rango (3,125) no se aplica: queda por debajo del minimo de FEDIAF."
         }
       },
       "avisos": {
         "general": "Se han ajustado el fósforo, el magnesio, el sodio y la proteína a los niveles que la literatura recomienda para prevenir que vuelvan a formarse cálculos de fosfato cálcico. El calcio NO se baja, igual que en el oxalato: bajarlo aumenta la absorción intestinal de oxalato y no ayuda. La sal tampoco se sube para forzar que beba, que es lo que se hace en otros cálculos — aquí el exceso de sodio empeora el problema. Depende además del pH urinario, que esta app no puede ver.",
         "crecimiento": "Este menú NO ha podido aplicar los topes de fosfato cálcico: en crecimiento, gestación o lactancia los mínimos de fósforo y proteína que el perro necesita son mayores que los techos de la fuente. Consúltalo con tu veterinario."
       },
-      "aviso_crecimiento": "Este menú NO ha podido aplicar los topes de fosfato cálcico: en crecimiento los mínimos de fósforo y proteína son mayores que los techos de la fuente."
+      "aviso_crecimiento": "Este menú NO ha podido aplicar los topes de fosfato cálcico: en crecimiento los mínimos de fósforo y proteína son mayores que los techos de la fuente.",
+      "ratio_ca_p": {
+        "min": 1.1,
+        "max": 2.0,
+        "fuente": "SACN5 5a ed., cap.41 «Canine Calcium Phosphate Urolithiasis», Tabla 41-6, verificado literal 8-sep-2026",
+        "por_que": "ANADIDO 8-sep-2026, TERCERA PASADA. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Tabla 41-6: «maintain a normal Ca:P ratio (1.1:1 to 2:1)». El motor ya sabe de ratios Ca:P -- los aplica desde FEDIAF y desde la nota b de raza grande -- pero no tenia forma de que una PATOLOGIA pidiera el suyo. ⚠️ ESTE CAMPO NO LO LEE EL SOLVER TODAVIA: se deja escrito con su fuente para no perderlo, y queda anotado en VERIFICACION_FILA_A_FILA.md como pendiente de implementar. Escribirlo sin decir que no se aplica seria peor que no escribirlo: pareceria un limite y no lo es.",
+        "aplicado_por_el_solver": false
+      }
     },
     "urolitos_silice": {
       "nombre": "Urolitos de sílice",

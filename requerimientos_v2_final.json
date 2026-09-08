@@ -386,6 +386,17 @@
     "nota_auditoria": "ANADIDA (8 septiembre 2026), MISMO PATRON QUE 'Fibra', 'Taurina' y 'L_carnitina' -- FEDIAF no pide EPA por separado en el perro: la Tabla III-3b solo trae la suma EPA+DHA (0,11 g/1000 kcal de minimo en adulto). Por eso los seis campos van a '-': esta fila no exige ni limita nada a un perro sano y auditar_fediaf.py la lista en NO_SON_NUTRIENTES_DE_LA_TABLA. Existe para que topes_de_patologias() pueda ponerle un SUELO por patologia con fuente real, y su primer y unico uso es corregir un fallo: 'artrosis' pedia el suelo sobre epa_dha (la suma) cuando SACN5 5a ed., cap.34, Tabla 34-2 pide «Eicosapentaenoic acid 0.4 to 1.1%» de materia seca, o sea EPA SOLA = 1,0-2,75 g/1000 kcal. La clave 'epa' ya existia en las 163 fichas del catalogo."
   },
   {
+    "nutriente": "Omega3_total",
+    "unidad": "g",
+    "minAdulto": "-",
+    "minCachorroJoven": "-",
+    "minCachorroCrecimiento": "-",
+    "maxCachorroJoven": "-",
+    "maxCachorroCrecimiento": "-",
+    "maxAdulto": "-",
+    "nota_auditoria": "ANADIDA (8 septiembre 2026), MISMO PATRON que 'Fibra', 'Taurina', 'L_carnitina' y 'EPA' -- FEDIAF no pide omega-3 TOTALES en el perro: la Tabla III-3b solo trae EPA+DHA, y solo con minimo en crecimiento y reproduccion. Por eso los seis campos van a '-'. Existe porque DOS tablas de SACN5 la piden (34-2 artrosis, «Total omega-3 fatty acids 3.5 to 4.0%» de materia seca = 8,75-10 g/1000 kcal; y 35-3 disfuncion cognitiva, «Total omegas-3 >1%» = 2,5 g) y porque el Reglamento (UE) 2020/354, entrada 27, pide para la artrosis «Total omega-3 fatty acids >= 29 g per kg» de pienso al 12 % de humedad = 8,24 g/1000 kcal. Tres fuentes independientes y el motor no pedia ninguna. Se calcula como linolenico + EPA + DHA."
+  },
+  {
     "nutriente": "L_carnitina",
     "unidad": "mg",
     "minAdulto": "-",

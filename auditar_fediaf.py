@@ -358,6 +358,9 @@ NO_SON_NUTRIENTES_DE_LA_TABLA = {
     # Existe para corregir un fallo concreto: `artrosis` ponía su suelo sobre
     # la SUMA cuando SACN5 cap.34 Tabla 34-2 pide EPA sola. Ver PATOLOGIAS.md §1.3.
     "EPA",
+    # ⚠️ AÑADIDA (8 septiembre) -- ídem: FEDIAF no pide omega-3 totales en el
+    # perro, solo EPA+DHA. La piden SACN5 (dos tablas) y el Reglamento UE.
+    "Omega3_total",
 }
 # ══════════════════════════════════════════════════════════════════════
 # LO QUE VIVE EN LAS NOTAS AL PIE, Y QUE NADIE COMPROBABA

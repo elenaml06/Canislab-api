@@ -116,6 +116,13 @@ MAPA = {
     # requerimientos_v2_final.json lleva "-" en los seis campos: no exige ni
     # limita nada a un perro sano. Detalle: PATOLOGIAS.md §1.3.
     "EPA": "epa",
+    # ⚠️ "Omega3_total" -- AÑADIDA (8 septiembre), mismo patrón. FEDIAF no pide
+    # omega-3 totales en el perro (solo EPA+DHA en crecimiento y reproducción),
+    # así que su fila lleva "-" en los seis campos. Existe porque SACN5 la pide
+    # en DOS tablas (34-2 artrosis, 35-3 disfunción cognitiva) y el Reglamento
+    # (UE) 2020/354 entrada 27 pide casi el mismo número para la artrosis. Se
+    # calcula como linolénico + EPA + DHA en `NUTRIENTES_COMPUESTOS`.
+    "Omega3_total": "omega3_total",
 }
 # ⚠️ EL ÚNICO MÁXIMO DE FEDIAF QUE NO SE APLICA, Y AQUÍ ESTÁ POR QUÉ
 # (28 agosto). La Tabla III-3b pone un solo máximo a un aminoácido: lisina
