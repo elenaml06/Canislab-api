@@ -4826,7 +4826,15 @@ print("\n=== BLOQUE 39: el veterinario formula todas, y nadie más ===")
 from motor_completo import (patologias_bloquean as _B39, avisos_de_patologias as _A39,
                             PATOLOGIAS as _P39)
 
-_BLOQUEADAS39 = ["hepatopatia", "estruvita", "urato", "cistina", "otra"]
+# ⚠️ ACTUALIZADA (8 septiembre): la ESTRUVITA sale de esta lista y entra
+# UROLITOS_SILICE. La estruvita se abrió a formulable ese día -- su motivo
+# («depende del pH urinario y de analíticas que la app no puede ver») era
+# cierto pero escondía que SACN5 Tabla 43-3 da tres cifras formulables para la
+# PREVENCIÓN de recurrencia; lo que sigue sin modelarse es la DISOLUCIÓN, que
+# pide proteína <=8% MS y eso sí es prescripción. Y el sílice nace ya
+# bloqueado: su único eje dietético es bajar la proteína a 10-18% MS
+# (25-45 g/1000 kcal), todo por debajo del mínimo de FEDIAF.
+_BLOQUEADAS39 = ["hepatopatia", "urolitos_silice", "urato", "cistina", "otra"]
 
 # (a) Al dueño se le siguen bloqueando. Esto no cambia.
 _b39 = _B39(_BLOQUEADAS39, "Adulto")
@@ -4870,9 +4878,15 @@ for _p39 in _BLOQUEADAS39:
 # 52,1) -- son las mismas DOS razones (cobre / proteína) que ya bloqueaban
 # `hepatopatia`, aplicadas a los otros dos cuadros clínicos hepáticos.
 _bajo39 = {k for k, v in _P39.items() if v.get("necesita_bajo_fediaf")}
+# ⚠️ AÑADIDO (8-sep-2026): `urolitos_silice`, patología nueva de esa ronda.
+# Entra aquí por la misma razón que el urato y la cistina: SACN5 cap.44,
+# Tabla 44-1, da como único eje dietético «Restrict high quality dietary
+# protein to 10 to 18% dry matter» = 25-45 g/1000 kcal, y TODO ese rango cae
+# bajo el mínimo de FEDIAF (52,1). La dieta que trata está por debajo de la
+# que alimenta.
 _bajo39_esperado = {"hepatopatia", "urato", "cistina", "renal",
                     "shunt_sin_encefalopatia", "encefalopatia_hepatica",
-                    "renal_avanzada"}
+                    "renal_avanzada", "urolitos_silice"}
 if _bajo39 != _bajo39_esperado:
     fallos.append(f"BLOQUE39: las marcadas `necesita_bajo_fediaf` son {_bajo39} y tenían que ser "
                   f"{_bajo39_esperado}. Esa lista es la que define qué necesita "
