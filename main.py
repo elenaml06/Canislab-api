@@ -647,6 +647,11 @@ class PeticionMenu(BaseModel):
     bcs: Optional[float] = None
     nombres_excluidos: Optional[list] = None
     patologias: Optional[list] = None
+    # ⚠️ AÑADIDO (8 septiembre) — EL PELDAÑO DE LA ESCALERA, ELEGIDO.
+    # Sin esto (lo normal, y todo lo que manda la app del tutor) el motor
+    # recorre la escalera como siempre. Con esto se formula EN ese peldaño y
+    # no se baja solo. Ver `_peldanos_publicos` y `GET /relajacion`.
+    peldano: Optional[str] = None
     # ⚠️ AÑADIDO (5 agosto): "Toy"/"Mini"/"Pequeño"/"Mediano"/"Grande"/
     # "Gigante" -- para poder intentar primero la vía rápida del catálogo
     # fijo (mismo tamaño y etapa) antes de la búsqueda libre completa.
@@ -1358,6 +1363,114 @@ def _escalera_de_relajacion(hay_comida_de_verdad=True):
     return peldanos
 
 
+# ─── LA ESCALERA, ELEGIBLE POR UN PROFESIONAL ────────────────────────────────
+#
+# ⚠️ PEDIDO EXPRESO, y estaba escrito desde el 28 de agosto en la fase 1 de
+# VETERINARIOS.md: "que peldano de la escalera de relajacion se uso, Y PODER
+# ELEGIRLO. Hoy se baja solo y se avisa; un profesional quiere decidir si
+# prefiere otro reparto antes que soltar la proporcion de hueso".
+#
+# La diferencia con el tutor no es de permisos, es de trabajo. A un dueno la
+# escalera le resuelve el problema: no le sale menu, se sueltan las
+# proporciones de BARF -- que son criterio NUESTRO, no de FEDIAF -- y se le
+# dice. Un veterinario tiene una opinion propia sobre ese reparto: puede
+# preferir subir el higado antes que quedarse sin visceras, o al reves. Que
+# el motor decida por el es quitarle justo la decision que el sabe tomar.
+#
+# LO QUE ESTO NO ES: no relaja NADA nutricional. Un peldano solo mueve las
+# proporciones de categoria y cuantos suplementos caben. Los 43 requisitos,
+# el ratio Ca:P, los topes de seguridad cronica y los de patologia son
+# identicos en todos los peldanos, y el menu sigue pasando por
+# `_garantizar_verificado()` igual. Es la regla 3 del CLAUDE.md: se relaja la
+# FORMA, nunca la nutricion.
+#
+# El primer peldano se llama "estricto" y no `None`: una clave que viaja por
+# HTTP tiene que poder escribirse.
+PELDANO_ESTRICTO = "estricto"
+
+# Que suelta cada uno, dicho para quien lo va a elegir. Sin esto el selector
+# ofreceria "proporcion_minima_visceras_higado_verdura", que es el nombre de
+# una variable, no una opcion.
+PELDANOS_EN_CRISTIANO = {
+    PELDANO_ESTRICTO: (
+        "Proporciones BARF completas",
+        "Carne, hueso, vísceras, hígado y verdura dentro de sus rangos habituales, "
+        "y hasta 2 suplementos."),
+    "proporcion_minima_visceras_higado_verdura": (
+        "Sin mínimo de vísceras, hígado y verdura",
+        "Pueden quedarse a cero si no hacen falta. Sus topes máximos siguen puestos, "
+        "y los de la carne y el hueso no se tocan."),
+    "proporcion_minima_de_todas_las_categorias": (
+        "Sin ningún mínimo de categoría",
+        "Ninguna categoría está obligada a aparecer. Los máximos siguen puestos: la ración "
+        "no se puede convertir en hígado y suplementos."),
+    "proporcion_minima_y_un_suplemento_mas": (
+        "Sin mínimos, y hasta 3 suplementos",
+        "Un suplemento más de los dos habituales, para cerrar un nutriente que la comida "
+        "no alcanza."),
+    "proporcion_minima_y_dos_suplementos_mas": (
+        "Sin mínimos, y hasta 4 suplementos",
+        "Dos suplementos más. Es lo más lejos que llega la escalera sin tocar ningún techo."),
+    "tope_maximo_de_visceras_higado_y_verdura": (
+        "Sin tope de vísceras, hígado y verdura",
+        "Se levanta el techo de lo accesorio — el 10 % de verdura es lo que suele bloquear "
+        "una pancreatitis. Los mínimos de carne y hueso siguen intactos: son lo que hace "
+        "que la ración siga siendo una ración."),
+}
+
+
+def _peldanos_publicos(hay_comida_de_verdad=True):
+    """La escalera con nombre y explicacion, en su orden real.
+
+    Se construye recorriendo `_escalera_de_relajacion()` y NO escribiendo la
+    lista a mano: si manana se anade un peldano y esta lista fuera aparte, el
+    selector del veterinario ofreceria una escalera que ya no es la que
+    aplica el motor. Es la misma razon por la que los topes de patologia se
+    sirven leyendo `patologias.json` en vez de copiarlos.
+    """
+    salida = []
+    for orden, (_m, supl, clave) in enumerate(_escalera_de_relajacion(hay_comida_de_verdad)):
+        clave = clave or PELDANO_ESTRICTO
+        titulo, detalle = PELDANOS_EN_CRISTIANO.get(clave, (clave, ""))
+        salida.append({"clave": clave, "orden": orden, "titulo": titulo,
+                       "que_se_suelta": detalle, "max_suplementos": supl})
+    return salida
+
+
+def _peldano_por_clave(clave, hay_comida_de_verdad=True):
+    """(margenes, max_suplementos) del peldano pedido, o None si no existe.
+
+    Devolver None y no reventar es deliberado: una clave que no existe se
+    trata como "no ha pedido ninguno" y se recorre la escalera de siempre.
+    Un 400 aqui dejaria sin menu a alguien por un nombre mal escrito.
+    """
+    if not clave:
+        return None
+    for margenes, supl, k in _escalera_de_relajacion(hay_comida_de_verdad):
+        if (k or PELDANO_ESTRICTO) == clave:
+            return margenes, supl
+    return None
+
+
+@app.get("/relajacion")
+def listar_peldanos():
+    """Los peldanos de la escalera, para que un profesional pueda elegir.
+
+    Se sirven los siete -- el ultimo incluido -- porque esto es la tabla, no
+    una decision sobre un paciente concreto: si al formular no hay carne y
+    hueso de donde tirar, ese peldano simplemente no se aplica (ver
+    `_hay_comida_de_verdad`). Decir aqui que no existe seria esconder una
+    opcion que para casi todos los pacientes si existe.
+    """
+    return {
+        "que_es": ("Los peldaños que el motor recorre cuando no existe menú con las "
+                   "proporciones de BARF habituales. Solo mueven la FORMA de la ración: "
+                   "los 43 requisitos de FEDIAF, el ratio Ca:P y los topes de seguridad y "
+                   "de patología son idénticos en todos."),
+        "peldanos": _peldanos_publicos(True),
+    }
+
+
 def _aviso_de_lo_que_falta(gramos, al, categorias_excluidas=None):
     """
     Qué categorías del BARF se han quedado fuera del menú. Se dice en
@@ -1879,7 +1992,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # menú se siga generando igual (con aviso), en vez de fallar del
     # todo.
     def _intentar_generacion(forzar_este, restringir_a_elegidos_este,
-                             margenes=None, max_supl=2):
+                             margenes=None, max_supl=None):
         """Un intento completo: llamada + reintentos para mejorar a
         verde mientras quede presupuesto de tiempo -- misma lógica que
         ya existía, solo que reutilizable para los tres niveles."""
@@ -1887,8 +2000,9 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             datos.der_objetivo, datos.etapa_requisitos, al, req,
             datos.peso_perro_kg, dosis_maxima_fabricante,
             excluidos=excluidos or None,
-            margenes_categoria=(margenes if margenes is not None else MARGENES_V2),
-            max_suplementos=max_supl, time_limit=tiempo_restante(),
+            margenes_categoria=(margenes if margenes is not None else _margenes_base),
+            max_suplementos=(max_supl if max_supl is not None else _supl_base),
+            time_limit=tiempo_restante(),
             forzar=forzar_este, preferir=preferir,
             patologias=datos.patologias, restringir_especie=datos.restringir_especie,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -1978,6 +2092,19 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                        if ok_i else None)
         return (ok_i and ficha_i and ficha_i["semaforo"] == "verde"), gramos_i, ficha_i
 
+    # ⚠️ EL PELDANO ELEGIDO (8 septiembre). Ver `_peldanos_publicos`.
+    #
+    # Sin `peldano` esto vale (MARGENES_V2, 2) y no cambia absolutamente
+    # nada: es el primer peldano de la escalera, o sea lo de siempre. Con
+    # `peldano`, se formula EN ese peldano y NO se baja solo -- que es justo
+    # lo que pide un profesional: si el elige soltar el tope de la verdura,
+    # no quiere que ademas se le suelte el minimo del hueso por detras.
+    _hay_comida_para_peldano = _hay_comida_de_verdad(al, excluidos, datos.categorias_excluidas)
+    _peldano_pedido = _peldano_por_clave(getattr(datos, "peldano", None),
+                                         _hay_comida_para_peldano)
+    _margenes_base = _peldano_pedido[0] if _peldano_pedido else MARGENES_V2
+    _supl_base = _peldano_pedido[1] if _peldano_pedido else 2
+
     aviso_extra_alimentos = None
     if datos.modo == "personalizar" and forzar:
         restriccion = _restriccion_desde_elegidos(forzar)
@@ -2042,7 +2169,8 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             datos.der_objetivo, datos.etapa_requisitos, al, req,
             datos.peso_perro_kg, dosis_maxima_fabricante,
             excluidos=excluidos or None,
-            margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=tiempo_restante(),
+            margenes_categoria=_margenes_base, max_suplementos=_supl_base,
+            time_limit=tiempo_restante(),
             patologias=datos.patologias,
             categorias_excluidas=datos.categorias_excluidas,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -2061,8 +2189,12 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # recorren los peldaños, soltando SOLO esas proporciones (ver
     # _escalera_de_relajacion, arriba, para lo que no se suelta jamás).
     relajaciones = []
-    hay_comida = _hay_comida_de_verdad(al, excluidos, datos.categorias_excluidas)
-    if not ok:
+    hay_comida = _hay_comida_para_peldano
+    # ⚠️ CON PELDANO ELEGIDO NO SE BAJA SOLO (8 septiembre). Bajar seria
+    # cambiarle la decision sin decirselo, que es lo contrario de por que
+    # existe poder elegirlo. Si en ese peldano no hay menu, se dice que no en
+    # ese peldano -- y el elige otro.
+    if not ok and not _peldano_pedido:
         for margenes_peldano, supl_peldano, que_se_suelta in _escalera_de_relajacion(hay_comida)[1:]:
             if tiempo_restante() <= 1.5:
                 break  # sin tiempo: mejor no factible que un timeout de Render
@@ -2158,6 +2290,14 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         aviso_falta = _aviso_de_lo_que_falta(gramos, al, datos.categorias_excluidas)
         if aviso_falta:
             resultado["aviso_composicion"] = aviso_falta
+    # ⚠️ EN QUE PELDANO SALIO, SIEMPRE (8 septiembre). `se_relajo` solo
+    # aparece cuando hubo que bajar, asi que un menu normal no decia en que
+    # peldano estaba -- y "no dice nada" y "estricto" se leen igual. Un
+    # profesional que va a firmar necesita poder afirmar lo segundo.
+    resultado["peldano"] = (
+        getattr(datos, "peldano", None) if _peldano_pedido
+        else (relajaciones[-1] if relajaciones else PELDANO_ESTRICTO))
+    resultado["peldano_lo_eligio_el_profesional"] = bool(_peldano_pedido)
     return resultado
 
 
@@ -3992,6 +4132,12 @@ class PeticionFormular(BaseModel):
     categorias_excluidas: Optional[list] = None
     # Solo para autocompletar: si el total de gramos lo fija él.
     gramos_totales: Optional[float] = None
+    # ⚠️ AÑADIDO (8 septiembre) — EL PELDAÑO DE LA ESCALERA.
+    # Aquí importa más que en `/menu/v2`: autocompletar no recorría la
+    # escalera NUNCA -- formulaba con las proporciones completas y, si no
+    # salía, decía que no. O sea que el veterinario tenía menos margen que un
+    # tutor, al que el motor sí le baja de peldaño solo. Ahora lo elige él.
+    peldano: Optional[str] = None
 
 
 def _estado_de_la_racion(datos):
@@ -4113,11 +4259,17 @@ def formular_autocompletar(datos: PeticionFormular):
         raise HTTPException(400, "No tenemos datos de: " + ", ".join(desconocidos))
 
     excluidos = list(datos.especies_excluidas or []) + list(datos.nombres_excluidos or [])
+    # El peldaño que haya elegido. Sin él, el primero: exactamente lo que
+    # hacía antes. Ver `_peldanos_publicos`.
+    _peldano_f = _peldano_por_clave(
+        datos.peldano, _hay_comida_de_verdad(al, excluidos, datos.categorias_excluidas))
+    _margenes_f = _peldano_f[0] if _peldano_f else MARGENES_V2
+    _supl_f = _peldano_f[1] if _peldano_f else 2
     ok, gramos = resolver_v2(
         datos.der_objetivo, datos.etapa_requisitos, al, req,
         datos.peso_perro_kg, dosis_maxima_fabricante,
         excluidos=excluidos or None,
-        margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=20.0,
+        margenes_categoria=_margenes_f, max_suplementos=_supl_f, time_limit=20.0,
         forzar=list(fijos) or None,
         gramos_fijos=fijos or None,
         patologias=datos.patologias,
@@ -4130,7 +4282,10 @@ def formular_autocompletar(datos: PeticionFormular):
         respuesta_no = {"factible": False,
                         "motivo": _imp or ("Con esas cantidades fijas no existe ninguna ración "
                                            "que cumpla los requisitos de este paciente."),
-                        "imposible_por_aritmetica": bool(_imp)}
+                        "imposible_por_aritmetica": bool(_imp),
+                        # En qué peldaño no ha salido. Sin esto, "no sale" no
+                        # dice si queda algo que probar o no queda nada.
+                        "peldano": datos.peldano or PELDANO_ESTRICTO}
         # ⚠️ "NO SE PUEDE" A SECAS NO LE SIRVE A NADIE (29 agosto). Cuando no
         # sale, la pregunta del veterinario es "¿es POR LOS ALIMENTOS o por
         # LAS CANTIDADES?", y eso se puede contestar midiéndolo en vez de
@@ -4147,7 +4302,7 @@ def formular_autocompletar(datos: PeticionFormular):
                 datos.der_objetivo, datos.etapa_requisitos, al, req,
                 datos.peso_perro_kg, dosis_maxima_fabricante,
                 excluidos=excluidos or None,
-                margenes_categoria=MARGENES_V2, max_suplementos=2, time_limit=12.0,
+                margenes_categoria=_margenes_f, max_suplementos=_supl_f, time_limit=12.0,
                 forzar=list(fijos) or None,
                 patologias=datos.patologias,
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -4189,7 +4344,8 @@ def formular_autocompletar(datos: PeticionFormular):
                 "gramos_fijos_movidos": movidos,
                 "alternativa": gramos}
 
-    respuesta = {"factible": True, "menu": gramos, "gramos_fijos_movidos": movidos}
+    respuesta = {"factible": True, "menu": gramos, "gramos_fijos_movidos": movidos,
+                 "peldano": datos.peldano or PELDANO_ESTRICTO}
     respuesta = _garantizar_verificado(
         respuesta, datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
         origen="formulador del veterinario", patologias=datos.patologias,

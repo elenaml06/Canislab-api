@@ -552,3 +552,64 @@ pinta, y la app se quedaba en blanco sin error.
 
 Once pruebas nuevas en `tests/veterinario-pantallas.spec.js` (canislab-web) y
 el BLOQUE 44 en la API. Todas comprobadas reintroduciendo el fallo.
+
+
+## La fase 1 del modo veterinario, entera — hecho el 8 de septiembre
+
+Las dos que quedaban de `VETERINARIOS.md` §6, pedidas seguidas.
+
+### Elegir el peldaño de la escalera de relajación
+
+Estaba escrito desde el 28 de agosto: «qué peldaño se usó, Y PODER
+ELEGIRLO. Hoy se baja solo y se avisa; un profesional quiere decidir si
+prefiere otro reparto antes que soltar la proporción de hueso».
+
+Y en el formulador era peor de lo que parecía: **`autocompletar` no recorría
+la escalera nunca**. Formulaba con las proporciones completas y, si no salía,
+decía que no — o sea que un veterinario tenía MENOS margen que un tutor, al
+que el motor sí le baja de peldaño solo. La pancreatitis de 25 kg, que es el
+caso que motivó el último peldaño, no salía para él de ninguna manera.
+
+`GET /relajacion` sirve los peldaños con su nombre y qué suelta cada uno,
+leídos de `_escalera_de_relajacion` y no copiados. `/menu/v2` y
+`/formular/autocompletar` aceptan `peldano`, y **con uno elegido no se baja
+solo**: bajar sería cambiarle la decisión a quien la ha tomado. Cuando no
+sale, se dice en qué peldaño no sale y cuántos quedan por debajo — «no se
+puede» a secas no dice si queda algo que probar.
+
+Un peldaño mueve las proporciones de BARF y cuántos suplementos caben, que es
+criterio nuestro. Los 43 requisitos, el ratio Ca:P y los topes de seguridad y
+de patología son idénticos en todos, y el BLOQUE 45 lo comprueba sobre el
+menú del último peldaño.
+
+### La pauta en papel, con el logo de la clínica
+
+Es el final del trabajo, y hasta hoy no existía: se formulaba aquí y se
+copiaban los gramos a mano en la plantilla de la clínica. En Nutrimenta,
+VetMenu y MyVetDiet el informe con la marca de quien firma es el producto.
+
+Tres decisiones que van escritas porque tienen precio:
+
+- **Se imprime el DOCUMENTO firmado, no la pantalla.** La ficha del perro
+  cambia, el catálogo cambia y el motor cambia; un papel firmado tiene que
+  seguir diciendo lo mismo dentro de un año. Si la vista leyera el estado de
+  la app, imprimiría hoy una cosa y en marzo otra, las dos con la misma firma
+  debajo.
+- **El PDF lo hace el navegador** (`window.print()` → «Guardar como PDF»).
+  jsPDF o html2canvas serían 300 KB para hacer peor lo que el navegador ya
+  hace bien, y además imprime de verdad en la impresora de la consulta.
+- **El logo va como `data:` URI en `profiles`, no en Storage.** Un logo en
+  Storage se puede borrar, y entonces una pauta firmada dejaría de poder
+  imprimirse igual. Se redimensiona a 320 px de ancho antes de guardarlo
+  (20-40 KB) y se rechaza lo que pase de 200 KB. El razonamiento entero está
+  en `supabase/migracion-clinica.sql`.
+
+Los datos de la clínica NO viajan dentro del documento firmado: el logo no es
+parte de lo que se verificó, así que puede cambiar sin invalidar el sello.
+
+Ocho pruebas nuevas en `tests/pauta-en-papel-y-peldanos.spec.js` y el BLOQUE
+45 en la API, todas comprobadas reintroduciendo el fallo.
+
+⚠️ **Falta ejecutar `supabase/migracion-clinica.sql`** en Supabase. Sin ella
+todo lo demás funciona y el bloque de la clínica lo dice al guardar, en vez
+de fingir que ha guardado.

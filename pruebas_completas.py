@@ -5102,6 +5102,146 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 45 — EL PELDANO DE LA ESCALERA, ELEGIDO POR QUIEN FIRMA
+#
+# Escrito el 8 de septiembre. Estaba pedido desde la fase 1 de
+# VETERINARIOS.md: "que peldano de la escalera se uso, Y PODER ELEGIRLO. Hoy
+# se baja solo y se avisa; un profesional quiere decidir si prefiere otro
+# reparto antes que soltar la proporcion de hueso".
+#
+# LO QUE VIGILA, y por que cada cosa:
+#
+#   1. Que `GET /relajacion` sirva EXACTAMENTE los peldanos que recorre
+#      `_escalera_de_relajacion`, en su orden. Si esa lista se escribiera a
+#      mano, el selector del veterinario ofreceria una escalera que ya no es
+#      la del motor -- y elegir un peldano que no existe no daria error: se
+#      trataria como "no ha elegido" y bajaria sola, en silencio.
+#   2. Que elegir un peldano SE APLIQUE y NO SE BAJE de ahi. Bajar seria
+#      cambiarle la decision sin decirselo, que es lo contrario de por que
+#      existe poder elegirlo.
+#   3. Y lo que no puede pasar nunca: que un peldano relaje la NUTRICION. La
+#      regla 3 del CLAUDE.md dice que se suelta la FORMA. Asi que el menu del
+#      ultimo peldano tiene que salir verde y con los topes de patologia
+#      intactos, igual que cualquier otro.
+#
+# El caso es el de la pancreatitis de 25 kg, que es el que motivo el ultimo
+# peldano: no sale con las proporciones completas y si soltando el techo de
+# la verdura (ver el comentario de `_escalera_de_relajacion`).
+# ============================================================
+print("=== BLOQUE 45: el peldano de la escalera, elegido ===")
+
+_r45 = _c.get("/relajacion")
+if _r45.status_code != 200:
+    fallos.append(f"BLOQUE45: /relajacion contesta {_r45.status_code}. Sin el, el selector del "
+                  f"veterinario no tiene que ofrecer.")
+else:
+    _servidos45 = _r45.json().get("peldanos") or []
+    _reales45 = [(k or _api.PELDANO_ESTRICTO)
+                 for _m, _s, k in _api._escalera_de_relajacion(True)]
+    if [p["clave"] for p in _servidos45] != _reales45:
+        fallos.append(f"BLOQUE45: /relajacion sirve {[p['clave'] for p in _servidos45]} y el "
+                      f"motor recorre {_reales45}. Una lista escrita a mano se separa, y "
+                      f"elegir un peldano que no existe no da error: baja sola en silencio.")
+    for _p45 in _servidos45:
+        if not _p45.get("titulo") or not _p45.get("que_se_suelta"):
+            fallos.append(f"BLOQUE45 {_p45.get('clave')}: sin titulo o sin explicacion. El "
+                          f"selector ofreceria el nombre de una variable.")
+    _supl45 = {p["clave"]: p["max_suplementos"] for p in _servidos45}
+    for _m45, _s45, _k45 in _api._escalera_de_relajacion(True):
+        _k45 = _k45 or _api.PELDANO_ESTRICTO
+        if _supl45.get(_k45) != _s45:
+            fallos.append(f"BLOQUE45 {_k45}: dice {_supl45.get(_k45)} suplementos y el motor "
+                          f"usa {_s45}.")
+
+# El caso real: pancreatitis en un adulto de 25 kg.
+_CUERPO_45 = {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 1040.0,
+              "peso_perro_kg": 25.0, "etapa_requisitos": "Adulto",
+              "patologias": ["pancreatitis"], "presupuesto_segundos": 30.0}
+
+# a) Sin elegir nada: la escalera baja sola, como siempre, y ahora ademas
+#    DICE en que peldano ha salido -- antes "no dice nada" y "estricto" se
+#    leian igual, y quien firma necesita poder afirmar lo segundo.
+_sola45 = _c.post("/menu/v2", json=dict(_CUERPO_45)).json()
+if not _sola45.get("factible"):
+    fallos.append("BLOQUE45: sin elegir peldano no sale menu para la pancreatitis de 25 kg. La "
+                  "escalera automatica existe justo para este caso.")
+elif not _sola45.get("peldano"):
+    fallos.append("BLOQUE45: el menu no dice en que peldano ha salido. 'No dice nada' y "
+                  "'proporciones completas' se leen igual, y no son lo mismo.")
+elif _sola45.get("peldano_lo_eligio_el_profesional"):
+    fallos.append("BLOQUE45: sin pedir peldano, el menu dice que lo eligio un profesional.")
+
+# b) Eligiendo el primero: NO se baja, y se dice que no. Es lo que hace que
+#    elegir signifique algo.
+_estricto45 = _c.post("/menu/v2", json={**_CUERPO_45, "peldano": "estricto"}).json()
+if _estricto45.get("factible"):
+    fallos.append("BLOQUE45: con el peldano 'estricto' elegido ha salido menu para una "
+                  "pancreatitis de 25 kg. Ese caso NO tiene solucion con las proporciones "
+                  "completas: si sale, es que se ha bajado de peldano por detras -- o sea que "
+                  "elegir no sirve de nada.")
+
+# c) Eligiendo el ultimo: sale, se marca como eleccion suya, y NO se anota
+#    como relajacion automatica (no se ha bajado: se ha empezado ahi).
+_ultimo45 = _c.post("/menu/v2", json={**_CUERPO_45,
+                                      "peldano": "tope_maximo_de_visceras_higado_y_verdura"}).json()
+if not _ultimo45.get("factible"):
+    fallos.append("BLOQUE45: eligiendo el ultimo peldano no sale menu, y sin elegir nada la "
+                  "escalera llega hasta ahi y si sale. Elegir un peldano no puede dar menos "
+                  "que no elegir ninguno.")
+else:
+    if not _ultimo45.get("peldano_lo_eligio_el_profesional"):
+        fallos.append("BLOQUE45: el menu no consta como formulado en el peldano que se pidio.")
+    if _ultimo45.get("se_relajo"):
+        fallos.append("BLOQUE45: dice que se ha relajado algo cuando el peldano se eligio a "
+                      "mano. 'Se bajo de peldano' y 'se pidio este peldano' son cosas "
+                      "distintas, y la de arriba lleva un aviso al usuario que aqui sobra.")
+    # ⚠️ Y LO QUE NO PUEDE PASAR NUNCA: que soltar la FORMA relaje la
+    # NUTRICION. Regla 3 del CLAUDE.md.
+    _f45 = (_ultimo45.get("ficha") or {}).get("semaforo")
+    if _f45 != "verde":
+        fallos.append(f"BLOQUE45: el menu del ultimo peldano sale en {_f45}. Un peldano suelta "
+                      f"las proporciones de BARF, que son criterio nuestro; los 43 requisitos "
+                      f"de FEDIAF no se tocan en ninguno.")
+    _rotos45 = _api._tope_patologia_roto(_ultimo45.get("menu") or {}, al,
+                                         ["pancreatitis"], "Adulto")
+    if _rotos45:
+        fallos.append(f"BLOQUE45: el menu del ultimo peldano rompe un tope de patologia: "
+                      f"{_rotos45}. Los topes por patologia son restricciones duras y no "
+                      f"dependen del peldano.")
+
+# d) Una clave que no existe no puede dejar a nadie sin menu: se trata como
+#    "no ha elegido" y se recorre la escalera de siempre. Un 400 aqui seria
+#    quedarse sin racion por un nombre mal escrito.
+_raro45 = _c.post("/menu/v2", json={**_CUERPO_45, "peldano": "peldano-que-no-existe"}).json()
+if not _raro45.get("factible"):
+    fallos.append("BLOQUE45: una clave de peldano desconocida deja sin menu. Tiene que caer en "
+                  "la escalera normal, no en un error.")
+
+# e) Y el formulador del veterinario, que es donde de verdad se usa: hasta
+#    hoy NO recorria la escalera nunca, asi que un profesional tenia MENOS
+#    margen que un tutor.
+_form45 = {"gramos_por_alimento": {}, "der_objetivo": 1040.0, "peso_perro_kg": 25.0,
+           "etapa_requisitos": "Adulto", "patologias": ["pancreatitis"]}
+_auto_estricto45 = _c.post("/formular/autocompletar", json=dict(_form45)).json()
+_auto_ultimo45 = _c.post("/formular/autocompletar",
+                         json={**_form45,
+                               "peldano": "tope_maximo_de_visceras_higado_y_verdura"}).json()
+if _auto_estricto45.get("factible"):
+    fallos.append("BLOQUE45: autocompletar saca racion para la pancreatitis de 25 kg con las "
+                  "proporciones completas. Ese caso no tiene solucion ahi.")
+elif _auto_estricto45.get("peldano") != "estricto":
+    fallos.append("BLOQUE45: autocompletar no dice en que peldano NO ha salido. 'No se puede' a "
+                  "secas no le dice a nadie si queda algo que probar.")
+if not _auto_ultimo45.get("factible"):
+    fallos.append("BLOQUE45: autocompletar no saca racion ni eligiendo el ultimo peldano, y el "
+                  "generador si. El veterinario no puede tener menos margen que el tutor.")
+elif _auto_ultimo45.get("peldano") != "tope_maximo_de_visceras_higado_y_verdura":
+    fallos.append("BLOQUE45: autocompletar no devuelve el peldano con el que ha formulado.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")

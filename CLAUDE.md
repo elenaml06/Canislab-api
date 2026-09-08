@@ -108,7 +108,7 @@ jubilado — que desde fuera se parecen mucho.
 Los que llama el frontend hoy: `/menu/v2`, `/menu/semana`,
 `/menu/varios-perros`, `/menu/anadir`, `/menu/cambiar`, `/menu/quitar`,
 `/menu/revalidar`, `/analizar`, `/alimentos`, `/formular/*`, `/pauta/*`,
-`/patologias`, y los de Stripe.
+`/patologias`, `/relajacion`, y los de Stripe.
 
 `GET /patologias` (7 de septiembre) sirve la tabla de `patologias.json` con
 los topes, su fuente, su motivo y **el margen contra el límite de FEDIAF del
@@ -118,6 +118,18 @@ número que decide si sale menú, y **para que ese número no se copie a la
 app**: sería la tercera copia de la misma tabla, que es exactamente cómo se
 desincronizó la del `POST /menu`. Lo vigila el BLOQUE 44, cifra a cifra
 contra el archivo que aplica el solver.
+
+`GET /relajacion` (8 de septiembre) sirve los peldaños de la escalera con su
+nombre y qué suelta cada uno, y `/menu/v2` y `/formular/autocompletar`
+aceptan `peldano`. **Con un peldaño elegido no se baja solo**: bajar sería
+cambiarle la decisión a quien la ha tomado, que es lo contrario de por qué se
+puede elegir. Un peldaño mueve las proporciones de BARF y cuántos suplementos
+caben — la FORMA, regla 3 — y **nunca** los 43 requisitos, el ratio Ca:P ni
+los topes de seguridad y de patología: eso lo vigila el BLOQUE 45, que además
+comprueba que la lista servida es la que recorre `_escalera_de_relajacion` y
+no una copia. Y el menú dice ahora **siempre** en qué peldaño salió, no solo
+cuando hubo que bajar: «no dice nada» y «estricto» se leían igual, y quien
+firma necesita poder afirmar lo segundo.
 
 **Los que nadie llama pero siguen expuestos**: `/catalogo/{tamano}/{etapa}`,
 `/der`, `/transicion` y `/perro/{perro_id}/menus`. Se dejan a propósito: no
