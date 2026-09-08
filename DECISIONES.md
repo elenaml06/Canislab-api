@@ -651,16 +651,81 @@ cómo el reglamento separa sus dos vías para el urato (≤130 g/kg de proteína
 que cae bajo el mínimo de FEDIAF, frente a ≤220 g/kg con fuentes
 seleccionadas, que no).
 
-### Un beneficio inesperado: el puente de 4000 kcal/kg MS queda validado
+### El puente de 4000 kcal/kg MS no queda «validado»: lo manda la propia ley
 
-El reglamento expresa todo **por kg de pienso completo al 12 % de humedad**, y
-su entrada de restablecimiento nutricional pide **≥3520 kcal**. 3520 = 0,88 ×
-4000. O sea que **el propio reglamento usa la densidad de referencia de 4000
-kcal/kg de materia seca**, la misma que NRC 2006 y FEDIAF, y la misma que usa
-el repo para convertir. La conversión es X / 3,52 por 1000 kcal.
+*(Corregido el 8 de septiembre, tarde, al leer el PDF oficial. La primera
+redacción de este apartado lo deducía de que la entrada de convalecencia pide
+≥3520 kcal = 0,88 × 4000. La deducción era correcta pero innecesaria: **el
+reglamento lo dice con todas las letras en su nota al pie (2)**.)*
 
-Eso contesta en parte la PREGUNTA 1 de `PARA_EL_NUTRICIONISTA.md`: el puente
-no es nuestro, lo usan las tres referencias **y la ley**.
+> *«based on a diet with a dry matter energy density of **4000 kcal Metabolisable
+> Energy/kg** calculated using the equation described in the **FEDIAF Nutritional
+> Guidelines**… **The values shall be adapted if the energy density deviates from
+> the 4000 kcal Metabolisable Energy/kg.**»*
+
+Tres cosas de una sola frase:
+
+1. La densidad de referencia es 4000 kcal EM/kg de materia seca — la misma que
+   NRC 2006, la misma que FEDIAF, la misma que usa el repo.
+2. La ecuación de energía que manda usar es **la de FEDIAF**, no otra.
+3. **«The values shall be adapted»**: adaptar las cifras cuando la densidad se
+   desvía no es una licencia que nos tomemos, es una obligación de la norma. Una
+   ración BARF no tiene 4000 kcal/kg MS, así que leer el anexo sin convertir
+   sería leerlo mal.
+
+```
+1 kg de pienso al 12 % de humedad = 0,88 kg MS
+0,88 × 4000 = 3520 kcal/kg de pienso   →   por 1000 kcal = valor por kg ÷ 3,52
+```
+
+**Trampa, y ya mordió una vez:** la nota al pie **(12)** cambia la base a **3500
+kcal/kg MS** → divisor **3,08**. En la lista canina la usa **solo la entrada 22,
+hiperlipidemia**. La primera versión de esta comparación aplicó 3,52 a esa fila y
+dio «grasa legal 31,25 g/1000 kcal»; **la cifra correcta es 35,7 g**. La
+conclusión no cambia (el motor pone 30, más estricto que las dos), pero el número
+estaba mal y queda corregido aquí y en `PARA_EL_NUTRICIONISTA.md` §8.1-quater.
+
+### Dos frases más del reglamento que respaldan reglas que ya tenía el motor
+
+**Un techo terapéutico no autoriza a bajar de los mínimos de FEDIAF** — nota al
+pie (11), colgada del tope de grasa de la entrada 22:
+
+> *«The minimum recommendations according to the FEDIAF Nutritional Guidelines
+> for all essential fatty acids shall be met in the daily ration.»*
+
+Es la **regla 3 de `CLAUDE.md`** —lo que se relaja es la forma, nunca la
+nutrición— escrita en el Diario Oficial.
+
+**Con dos patologías se cumplen los dos topes** — parte A, punto 7:
+
+> *«Where a feed intended for particular nutritional purposes is intended to meet
+> more than one particular nutritional purpose, **it shall comply with each
+> respective entry** in Part B.»*
+
+Respalda dos cosas del motor a la vez: que renal + pancreatitis aplique los dos
+topes simultáneamente en vez de promediarlos, y que la respuesta correcta cuando
+no caben juntos sea **decir qué dos límites chocan** (BLOQUE 52) en lugar de
+aflojar uno por su cuenta.
+
+### El único porcentaje del texto NO es un margen clínico
+
+Parte A, punto 2:
+
+> *«…a technical deviation of **+/- 15 %** shall be permitted.»*
+
+Es la **tolerancia analítica de fabricación** frente a lo que declara la etiqueta,
+cuando el anexo IV del Reg. 767/2009 no fija una. Citarlo como «el veterinario
+puede subir un 15 %» sería un error, y es un error fácil de cometer porque es el
+único número con pinta de margen en toda la norma.
+
+### Dónde vive la fuente
+
+`canislab-fuentes/Reglamento_UE_2020_354/` — PDF oficial del Diario Oficial en
+castellano y en inglés, texto extraído, y una `LECTURA.md` con las **20 entradas
+caninas** de la parte B, su cifra convertida a por-1000-kcal, y el reparto de qué
+contesta y qué no. Descargado del *cellar* de la Oficina de Publicaciones
+(`publications.europa.eu/resource/celex/32020R0354`): EUR-Lex por navegador está
+detrás de un desafío anti-bot que devuelve 202 con el cuerpo vacío.
 
 ### Lo que NO cierra esto
 
@@ -668,3 +733,20 @@ El marco dice **quién puede salirse y por qué vía**. No dice **hasta dónde**
 en cada caso concreto: eso sigue siendo la ficha de permisos, y sigue
 necesitando al nutricionista para los rangos. Ver `PREGUNTAS_ABIERTAS.md`
 P-02 y P-03.
+
+Dicho con precisión, porque es fácil citar esta fuente de más: **el reglamento no
+da, por patología y por nutriente, un rango con un extremo que el veterinario
+pueda mover.** Da, para cada uno de los 20 objetivos caninos, **una sola
+característica nutricional esencial** — casi siempre un techo, a veces un suelo —
+y le asigna al veterinario un papel distinto y explícito, que es el de decidir
+**empezar** y decidir **prolongar**:
+
+> *«It is recommended that advice from a veterinarian be sought **before use and
+> before extending the period of use**.»*
+
+Lo que la norma pone como rango es **el tiempo** (parte A punto 6: «indicates a
+range within which the nutritional purpose should normally be achieved»), no la
+cifra. El margen por nutriente, cuando existe, sigue viniendo de las tablas de
+*key nutritional factors and their target levels* de SACN5 — que es donde una
+fuente escribe un rango a propósito — y para los siete márgenes interpretados del
+motor sigue sin respuesta: P-02.

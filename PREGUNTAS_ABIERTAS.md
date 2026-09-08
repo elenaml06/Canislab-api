@@ -148,6 +148,32 @@ del `CLAUDE.md` no se lo permiten a nadie**.
    sobre qué dato de entrada, y **si el cambio saca la ración de lo que es una
    dieta completa**.
 
+**Lo que se buscó y lo que se encontró (8 de septiembre, tarde).** Se fue a
+buscar documentación veterinaria que dijera de qué límites se puede salir un
+profesional y de cuáles no. La respuesta existe y está guardada
+(`canislab-fuentes/Reglamento_UE_2020_354/`), pero **contesta una pregunta
+distinta de la que hacía falta, y conviene no confundirlas**:
+
+- **Sí contesta quién y por qué vía.** El Reglamento (UE) 2020/354 fija, para
+  20 objetivos clínicos caninos, una característica nutricional esencial con su
+  cifra y su duración, y le da al veterinario un papel explícito: decidir
+  **empezar** y decidir **prolongar** (*«before use and before extending the
+  period of use»*). Ver `DECISIONES.md` D-12.
+- **No contesta hasta dónde.** No hay, por patología y por nutriente, un rango
+  con un extremo movible. Hay **un techo (o un suelo) por objetivo**, y punto.
+  Lo que la norma pone como rango es **el tiempo**, no la cifra. El único
+  porcentaje del texto (±15 %, parte A punto 2) es **tolerancia analítica de
+  fabricación**, no margen clínico.
+- **Y pone un límite a la relajación** que hoy no está escrito en el motor
+  —nota al pie (11)—: los mínimos de FEDIAF para los ácidos grasos esenciales
+  hay que cumplirlos **aunque** se esté aplicando un techo terapéutico.
+
+O sea: **esta pregunta sigue abierta tal cual**, y el margen por nutriente sigue
+saliendo solo de las tablas de *key nutritional factors* de SACN5, que es donde
+una fuente escribe un rango a propósito. Lo que ha cambiado es que ahora se sabe
+que **no hay una fuente normativa que dé ese rango**, así que la respuesta tendrá
+que ser criterio del nutricionista, declarado como tal.
+
 ---
 
 ### P-10 · Un tope nuestro recorta hasta un tercio la fórmula de lactancia de FEDIAF

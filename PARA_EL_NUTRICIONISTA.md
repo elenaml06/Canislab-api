@@ -809,26 +809,58 @@ Es decir: **existe una lista legal europea de en qué casos un alimento puede
 salirse de FEDIAF, con qué número y durante cuánto.** Ver `DECISIONES.md`
 D-12.
 
-Sus cifras van **por kg de pienso completo al 12 % de humedad**. A 4000 kcal
-de EM por kg de materia seca eso son 3520 kcal/kg — y el propio reglamento lo
-confirma, porque su entrada de restablecimiento nutricional pide **≥3520
-kcal**. La conversión es X ÷ 3,52.
+**La fuente está guardada** en `canislab-fuentes/Reglamento_UE_2020_354/`:
+el PDF oficial del Diario Oficial en castellano y en inglés, el texto extraído,
+y una `LECTURA.md` con las 20 entradas caninas entrada por entrada.
 
-| Objetivo del Reg. 2020/354 (perro) | Cifra legal | Por 1000 kcal | El motor | |
-|---|---|---|---|---|
-| Renal · fósforo | ≤ 5 g/kg | 1420 mg | 1200 | ✅ más estricto |
-| **Renal · proteína** | **≤ 220 g/kg** | **62,5 g** | **no existe** | ❌ **falta** |
-| **Cardíaca · sodio** | **≤ 2,6 g/kg** | **739 mg** | 900 · 900 · 790 · 480 | ❌ **tres por encima** |
-| Cobre en hígado | ≤ 8,8 mg/kg | 2,5 mg | 2,4 | ✅ más estricto |
-| Hiperlipidemia · grasa | ≤ 110 g/kg | 31,25 g | 30 | ✅ más estricto |
-| Urato · proteína (vía A) | ≤ 130 g/kg | 36,9 g | bloquea | ✅ 36,9 < 52,1: es prescripción |
-| **Urato · proteína (vía B)** | **≤ 220 g/kg + fuentes seleccionadas** | **62,5 g** | bloquea | ⚠️ **esta vía NO baja de FEDIAF** |
-| **Hepática · proteína** | **≤ 279 g/kg** | **79,3 g** | no existe | ❌ **falta** |
+**Cómo se convierten sus cifras — y no es cosa nuestra, lo manda la norma.**
+Van por kg de pienso completo al 12 % de humedad, y su nota al pie (2) dice:
+*«based on a diet with a dry matter energy density of 4000 kcal Metabolisable
+Energy/kg calculated using the equation described in the FEDIAF Nutritional
+Guidelines… **the values shall be adapted if the energy density deviates**»*.
+0,88 kg MS × 4000 kcal = 3520 kcal/kg de pienso → **valor ÷ 3,52**. Con una
+trampa: la nota **(12)** cambia la base a 3500 kcal/kg MS (**÷ 3,08**) y en la
+lista canina la usa **solo la entrada 22, hiperlipidemia**.
 
-**Cuatro cosas que salen de aquí:**
+*(Corrección: la primera versión de esta tabla aplicó 3,52 también a la grasa y
+dio 31,25 g. La cifra correcta es **35,7 g**. La conclusión no cambia.)*
+
+**Las 20 entradas caninas, y qué hace el motor con cada una.** «—» = la norma no
+pone cifra, solo una propiedad cualitativa.
+
+| Nº | Objetivo del Reg. 2020/354 (perro) | Cifra legal | Por 1000 kcal | El motor | |
+|---|---|---|---|---|---|
+| 10 | Renal · fósforo | ≤ 5 g/kg | 1420 mg | 1200 | ✅ más estricto |
+| 10 | **Renal · proteína cruda** | **≤ 220 g/kg** | **62,5 g** | **no existe** | ❌ **falta** |
+| 11 | Oxalato · calcio y vit. D bajos, orina alcalina | — | — | vitD 14,19 µg | ⚠️ la ley no da cifra |
+| 12 | **Diabetes · azúcares totales** | **≤ 62 g/kg** | **17,6 g** | no existe | ⚠️ una ración cruda casi no los lleva |
+| 13 | Intolerancias · fuentes limitadas/hidrolizadas | — | — | exclusiones y alergias | ✅ cualitativo, cubierto |
+| 14 | **Cistina · proteína** | ≤ 160 g/kg · o · ≤ 220 | **45,5 g** · o · **62,5 g** | bloquea | ⚠️ la vía B no baja de FEDIAF |
+| 15 | **Convalecencia · proteína (suelo)** | ≥ 250 g/kg | **71,0 g** | **no existe la etapa** | ❌ **falta** |
+| 16 | Urato · proteína (vía A) | ≤ 130 g/kg | 36,9 g | bloquea | ✅ 36,9 < 52,1: es prescripción |
+| 16 | **Urato · proteína (vía B)** | ≤ 220 g/kg + fuentes bajas en purinas | **62,5 g** | bloquea | ⚠️ **esta vía NO baja de FEDIAF** |
+| 17-18 | **Estruvita · magnesio** | ≤ 1,8 g/kg | **511 mg** | no existe | ❌ **falta** |
+| 19 | Maldigestión / IPE · digestibilidad | — | — | grasa ≤ 37,5 g | ⚠️ la ley no pone cifra de grasa |
+| 20 | **Absorción intestinal · Na y K (suelos)** | ≥ 1,8 y ≥ 5 g/kg | **511 y 1420 mg** | grasa ≤ 37,5 g | ⚠️ palanca distinta |
+| 21 | Diarrea aguda | (pienso complementario) | — | **no existe** | ❌ fuera de alcance hoy |
+| 22 | Hiperlipidemia · grasa | ≤ 110 g/kg **(base 3500)** | **35,7 g** | 30 | ✅ más estricto |
+| 23 | **Hepática · proteína cruda** | ≤ 279 g/kg | **79,3 g** | no existe | ❌ **falta** |
+| 24 | **Cardíaca · sodio** | **≤ 2,6 g/kg** | **739 mg** | 900 · 900 · 790 · 480 | ❌ **tres por encima** |
+| 25 | Adelgazamiento · densidad energética | < 3060 kcal/kg | (densidad) | grasa ≤ 30 g | ⚠️ palanca distinta |
+| 26 | **Dermatosis · LA y EPA+DHA (suelos)** | LA ≥ 12,3 + EPA+DHA ≥ 2,9 g/kg · o · LA ≥ 18,5 + EPA+DHA ≥ 0,39 | **3,49 + 0,82 g** · o · **5,26 + 0,111 g** | zinc ≥ 25 mg | ❌ **falta** |
+| 27 | **Artrosis · omega-3 totales y EPA** | ω-3 ≥ 29 g/kg **y** EPA ≥ 3,3 g/kg | **8,24 g** y **0,94 g** | EPA+DHA ≥ 1,0 g | ⚠️ el EPA encaja; **el ω-3 total, no** |
+| 28 | Cobre en hígado | ≤ 8,8 mg/kg | 2,50 mg | 2,40 | ✅ más estricto |
+| 30 | Estrés · caseína hidrolizada | 1-3 g/kg | (aditivo) | **no existe** | ❌ fuera de alcance hoy |
+
+**Cobertura: 17 de los 20 objetivos caninos** tienen una patología equivalente en
+el motor. Los tres que faltan son **convalecencia (15)**, **diarrea aguda (21)** y
+**estrés (30)**; los dos últimos son discutiblemente producto y no motor, pero el
+primero no.
+
+**Siete cosas que salen de aquí:**
 
 1. **El cobre hepático queda resuelto a favor de lo que ya teníamos.** Center
-   2026 daba 2,4 y SACN5 1,25; el reglamento europeo permite hasta 2,5. Los
+   2026 daba 2,4 y SACN5 1,25; el reglamento europeo permite hasta 2,50. Los
    2,4 del motor son legales y más estrictos.
 2. **El sodio cardíaco no.** Ahora hay tres cifras: SACN5 200-625, el
    reglamento **739**, y las nuestras 900/900/790/480. Las tres primeras
@@ -841,15 +873,57 @@ kcal**. La conversión es X ÷ 3,52.
    (≤220 g/kg con fuentes seleccionadas = 62,5). Hoy lo bloqueamos entero
    porque la carga de purinas de una ración cruda está muy por encima de
    cualquier objetivo; pero el reglamento ataca el problema por la proteína y
-   la selección de fuentes, no por las purinas.
+   la selección de fuentes, no por las purinas. Lo mismo vale para la
+   **cistina** (entrada 14, ≤220 g/kg con fuentes bajas en cistina).
+5. **La artrosis se queda corta por el lado que no miramos.** El motor pide
+   EPA+DHA ≥ 1,0 g/1000 kcal, y la ley pide EPA ≥ 0,94 — encaja — **pero además
+   pide omega-3 totales ≥ 8,24 g**, que no comprobamos en absoluto.
+6. **La estruvita tiene una cifra legal implementable y no la usamos**: magnesio
+   ≤ 511 mg/1000 kcal. Hoy la patología está en «no formulable» sin ningún tope.
+7. **La pancreatitis no está en el reglamento.** Ni en FEDIAF. La entrada 19
+   cubre la insuficiencia pancreática **exocrina**, que es otra cosa, y no pone
+   cifra de grasa. O sea: **para la pancreatitis no hay número oficial de
+   ninguna de las dos referencias normativas**, y por la regla adoptada
+   (FEDIAF manda; donde FEDIAF no llega, SACN5) el número tendría que ser el de
+   SACN5 (37,5 g no obeso / 25 g obeso), no los 20 g de Merck que aplica hoy el
+   motor. Ver §8.2, que es donde esto se decide.
+
+**Y dos frases del reglamento que respaldan reglas que el motor ya tenía**, y que
+conviene que veas porque son las que sostienen todo lo demás:
+
+- **Un techo terapéutico no autoriza a bajar de los mínimos de FEDIAF** — nota al
+  pie (11): *«The minimum recommendations according to the FEDIAF Nutritional
+  Guidelines for all essential fatty acids shall be met in the daily ration.»*
+- **Con dos patologías se cumplen los dos topes** — parte A, punto 7: *«it shall
+  comply with each respective entry in Part B»*. No se promedian ni se elige el
+  menos malo: por eso renal + pancreatitis, cuando no caben juntos, **dice qué
+  dos límites chocan** en vez de aflojar uno.
+
+**Lo que el reglamento NO contesta, dicho con precisión** porque es fácil citarlo
+de más: **no da, por patología y por nutriente, un rango con un extremo que tú
+puedas mover.** Da una sola característica esencial por objetivo — casi siempre un
+techo, a veces un suelo — y te asigna un papel distinto y explícito, el de decidir
+**empezar** y decidir **prolongar**: *«It is recommended that advice from a
+veterinarian be sought before use and before extending the period of use»*. Lo que
+la norma pone como rango es **el tiempo**, no la cifra. El único porcentaje del
+texto, el ±15 % de la parte A punto 2, es **tolerancia analítica de fabricación**,
+no margen clínico. Así que la pregunta de hasta dónde se puede mover cada número
+sigue siendo tuya, y sigue siendo la PREGUNTA 22.
 
 > **PREGUNTA 21-quater (bloqueante).**
 > 1. **Sodio cardíaco: ¿nos bajamos a los 739 del reglamento europeo?** Es más
 >    estricto que lo nuestro en tres de las cuatro entradas.
 > 2. **¿Añadimos los techos de proteína de renal (62,5) y hepática (79,3)?**
 >    No requieren firma y hoy no existen.
-> 3. **Urato: ¿la vía de «proteína ≤220 + fuentes seleccionadas» es viable con
->    comida real**, o la carga de purinas la tumba igual?
+> 3. **Urato y cistina: ¿la vía de «proteína ≤220 + fuentes seleccionadas» es
+>    viable con comida real**, o la carga de purinas / cistina la tumba igual?
+> 4. **Artrosis: ¿añadimos el suelo de omega-3 totales (8,24 g/1000 kcal)?**
+>    Hoy solo comprobamos EPA+DHA ≥ 1,0 y ese lado sí encaja.
+> 5. **Estruvita: ¿añadimos el techo de magnesio (511 mg/1000 kcal)** y la
+>    pasamos a formulable, o sigue bloqueada?
+> 6. **Convalecencia (suelo de proteína 71 g/1000 kcal): ¿es una etapa que
+>    debería existir?** Es el único de los tres objetivos legales que faltan
+>    que parece nuestro.
 
 ### 8.1-ter · Lo que las mismas tablas piden y el motor NO aplica
 
@@ -967,15 +1041,24 @@ alimenta. Por eso no se genera menú automático.
 
 ### 8.4-bis · Cobertura contra la lista legal europea
 
-El Anexo B del Reglamento (UE) 2020/354 tiene **19 objetivos nutricionales
-particulares para perro**. El motor cubre **17**.
+El Anexo B del Reglamento (UE) 2020/354 tiene **20 objetivos nutricionales
+particulares para perro** (entradas 10 a 28 y la 30; la 29 no es canina). El
+motor cubre **17**.
 
-**Los dos que faltan:**
+*(Corrección del 8 de septiembre, tarde: la primera cuenta decía 19 objetivos y
+dos que faltaban. Al leer el PDF oficial entrada por entrada son **20**, y los
+que faltan son **tres** — se había pasado por alto la 21, diarrea aguda.)*
 
-| Objetivo legal | Característica esencial que pide | Por 1000 kcal |
-|---|---|---|
-| **Restablecimiento nutricional, convalecencia** | Ingredientes muy digestibles · energía **≥3520 kcal/kg** · proteína bruta **≥250 g/kg** | proteína ≥ **71 g** |
-| **Apoyo en situaciones de estrés** | Caseína bovina hidrolizada por tripsina, **1-3 g/kg** | 0,28-0,85 g |
+**Los tres que faltan:**
+
+| Nº | Objetivo legal | Característica esencial que pide | Por 1000 kcal |
+|---|---|---|---|
+| 15 | **Restablecimiento nutricional, convalecencia** | Ingredientes muy digestibles · energía **≥3520 kcal/kg** · proteína bruta **≥250 g/kg** | proteína ≥ **71 g** |
+| 21 | **Trastornos agudos de la absorción intestinal** (diarrea aguda) | Na ≥1,8 %, K ≥0,6 %, carbohidratos digestibles ≥32 %, **1-7 días** | pienso **complementario**, no ración completa |
+| 30 | **Apoyo en situaciones de estrés** | Caseína bovina hidrolizada por tripsina, **1-3 g/kg** | 0,28-0,85 g |
+
+La 21 es la menos nuestra de las tres: la norma la define como pienso
+**complementario** para 1-7 días, no como la ración completa de un perro.
 
 El primero es un **suelo** de proteína y de densidad energética para un perro
 que sale de una enfermedad o una cirugía — justo lo contrario de casi todo lo
