@@ -61,9 +61,6 @@ revisor externo saber qué está mirando:
 - **Criterio nuestro** — lo pusimos porque resolvía un problema real
   observado, sin fuente veterinaria detrás. Es legítimo, pero va **declarado
   como criterio**, no disfrazado de ciencia.
-
----
-
 ## D-01 · El `TR` de BEDCA NO significa «trazas». El campo `trazas` se rechaza
 
 **Fecha:** 8 de septiembre de 2026.
@@ -452,3 +449,129 @@ recommend a specific level of omega-3 fatty acids for adult dogs»—: viene del
 NRC 2006 y **se adopta a propósito** por su relevancia clínica documentada.
 Eso lo hace **criterio nuestro** y está escrito en el `nota_auditoria` de la
 fila. Va a `PREGUNTAS_ABIERTAS.md` P-05 para que el nutricionista lo vea.
+## D-11 · El DER, cerrado contra FEDIAF 2025
+
+**Fecha:** 8 de septiembre de 2026.
+**Caja:** **tope duro** donde FEDIAF publica cifra; **rango clínico** en nada
+(el DER no es un límite: es una estimación de partida).
+**Estado:** **cerrado salvo ficha** — vive en el repo, cada cifra con su tabla
+citada, protegido por el BLOQUE 54 y por el contrato de 100 casos, escrito
+aquí, y sus preguntas están en `PREGUNTAS_ABIERTAS.md` con dueño.
+
+### La regla que decide, y de quién es
+
+**FEDIAF manda. Donde FEDIAF no llega, SACN5.** Es criterio de producto de
+Elena, tomado el 8 de septiembre: FEDIAF es la referencia europea y es la que
+aplica a quien usa la app. No se vuelve a discutir salvo por la regla de
+reapertura del §0.
+
+### Qué se verificó, y contra qué
+
+Hasta hoy el DER solo estaba comprobado contra `der_casos.json`, que garantiza
+que los dos repos calculan **lo mismo** — no que lo que calculan sea lo que
+dice la fuente. Se abrió el PDF de FEDIAF 2025 (Tablas VII-7 y VII-8b), SACN5
+(Tabla 5-2) y AAHA 2021.
+
+**Lo que ya estaba bien, y ahora consta:**
+
+| Qué | Contra | |
+|---|---|---|
+| Los 5 escalones de actividad: 95 · 110 · 125 · 150 · 175 | **FEDIAF VII-7** | exactos |
+| La ecuación de crecimiento `(1,063 − 0,565 × frac) × kg^0,75` MJ | **FEDIAF VII-8b** | **es la de FEDIAF**, que cita a Klein 2019. Su forma en kcal, `[254,1 − 135,0 × frac] × kg^0,75`, es la misma ×239 |
+| Gestación: 132 × kg^0,75, y +26 × kg las últimas 5 semanas | **FEDIAF VII-8b** | exacta |
+| Lactancia: `145 × kg^0,75 + 24n × kg × L` (1-4) y `+ [96+12(n−4)] × kg × L` (5-8), con L = 0,75 / 0,95 / 1,10 / 1,20 | **FEDIAF VII-8b** | **exacta, letra por letra** |
+| Adelgazar: RER del peso ideal (1,0 × RER) | SACN5 Tabla 5-2 («Weight loss = 1.0 x RER») | coincide, y es más estricto que el «obese prone ≤ 90» de FEDIAF |
+| RER = 70 × kg^0,75 | Convención universal | — |
+
+### Los tres cambios que se aplican, y por qué
+
+**1 · Se quita el tope de ×6 RER en lactancia.**
+
+FEDIAF (VII-8b) **no pone ningún techo** a esa fórmula. El que había salía de
+SACN5 Tabla 5-2, donde el ×6 **no es un techo general: es la fila de camadas
+de ≥9 cachorros**. Se estaba usando una fila de una tabla indexada por tamaño
+de camada como si fuera un límite universal.
+
+**Y recortaba de verdad.** Medido en semana 4:
+
+| Perra | Cachorros | FEDIAF | Se daba | |
+|---|---|---|---|---|
+| 25 kg | 6 | 5221 kcal | 4696 | −10 % |
+| 40 kg | 8 | 9218 kcal | 6680 | −28 % |
+| 60 kg | 8 | 13 494 kcal | 9054 | **−33 %** |
+
+⚠️ **Y el comentario que lo justificaba decía dos cosas falsas**: que la
+fórmula venía «de una fuente secundaria que no se ha podido contrastar con el
+texto original de FEDIAF» (sí se puede, y cuadra), y que el ×6 era «el máximo
+de la tabla clínica» (es una fila, no un máximo). Un comentario que declara no
+verificado algo que sí lo está es peor que no tenerlo: nadie vuelve a mirarlo,
+y aquí además se usó para justificar el recorte.
+
+**2 · Se adoptan las dos razas con cifra propia de FEDIAF.**
+
+La Tabla VII-7 termina con una sección «Breed specific differences»:
+**Great Danes 200 (200-250)** y **Newfoundlands 105 (80-132)** kcal/kg^0,75.
+Las dos razas están en la lista de 136 de la app y **el motor no las usaba**.
+
+Medido: un Gran Danés de 67,5 kg marcado como «normal» recibía **2590 kcal
+donde FEDIAF dice 4710 — el 55 %**. Un perro así adelgaza.
+
+Y 200 no es un valor extremo: SACN5 cap. 5 dice que las estimaciones de DER en
+perro *«range between 95 to 200 kcal … per (BWkg)0.75 per day»*.
+
+⚠️ **Cómo se aplica es interpretación nuestra**, y va declarada: FEDIAF pone
+las dos filas dentro de la tabla de actividad, con valor central y rango, pero
+sin cruzarlas con los cinco niveles. Se hace así: el valor central sustituye a
+la base de «normal», el nivel de actividad sigue moviendo su diferencia contra
+«normal», el ±15 de Thes 2014 **no** se suma encima (estas razas ya tienen su
+propia cifra medida), y el resultado se recorta al rango que publica FEDIAF.
+La pregunta de si eso es lo que FEDIAF quiere decir: `PREGUNTAS_ABIERTAS.md`
+P-11.
+
+**3 · El respaldo de crecimiento pasa a la regla de SACN5, por edad.**
+
+Había una tabla de tres escalones por % del peso adulto —210 / 175 / 140— y
+**el código leía SIEMPRE el último, en los dos repos**: dos de las tres filas
+eran código muerto. O sea que un cachorro de dos meses sin peso adulto
+esperado recibía 140 (= 2 × RER), que es lo que corresponde **después** de los
+cuatro meses. Un 33 % menos.
+
+FEDIAF no cubre este caso —su ecuación necesita el peso adulto esperado—, así
+que manda SACN5 (Tabla 5-2, parte 2 canina), literal: *«Daily energy intake
+for growing puppies should be 3 x RER from weaning until four months of age.
+At four months of age energy intake should be reduced to 2 x RER until the
+puppy reaches adult size.»* Dos escalones, y cortan **por edad**. Sin edad ni
+peso adulto se queda en 140, que es el lado prudente.
+
+Y el 175 (2,5 × RER) **no está en FEDIAF ni en SACN5**: era nuestro, y se va.
+
+### Qué protege esto
+
+- **BLOQUE 54**, nuevo: comprueba los cinco escalones contra VII-7, las dos
+  razas y su rango, que la fórmula de lactancia siga siendo la de VII-8b, que
+  `LACTANCIA_TOPE_RER` no vuelva, que el respaldo de crecimiento sea el de
+  SACN5, y la gestación. **Probado con el fallo puesto por tres lados
+  distintos**: devolviendo el tope, quitando el Gran Danés y quitando el
+  escalón de los 4 meses. Los tres se cazan.
+- **`der_casos.json`, de 85 a 100 casos**, con los dos repos idénticos
+  (md5 comprobado): se añadieron las dos razas en los cinco niveles, un Boxer
+  de control (para que el ±15 de Thes no se contamine), y cuatro casos de
+  lactancia sin tope. Cambiaron 5 de los 85 originales, todos de lactancia, y
+  todos son los que el tope recortaba.
+
+⚠️ **Lo que el contrato NO puede cubrir, y consta en el propio fichero:** los
+casos con `mesesEdad`. `der.py`, al recibir la edad, **deduce** el peso adulto
+con `peso_adulto_desde_curva` y pasa a la ecuación de Klein; `der.js` no tiene
+esa función (la app deduce el peso adulto por su cuenta y lo pasa ya hecho).
+Con la edad, los dos toman caminos distintos **a propósito**, y un caso así no
+puede vivir en un contrato compartido. Ese camino se prueba en cada lado por
+separado.
+
+### Lo que queda abierto, y no impide cerrar esto
+
+`PREGUNTAS_ABIERTAS.md` P-11 (cómo cruzar las razas con la actividad), P-13
+(a ≤ RER, AAHA recomienda dieta terapéutica), y la de si la app debería dar
+menú automático en lactancia. Son preguntas **para el nutricionista**, no
+huecos de verificación: los números están donde dice la fuente.
+
+

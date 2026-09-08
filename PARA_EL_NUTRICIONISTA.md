@@ -663,33 +663,100 @@ puede tener un tope **por debajo** del mínimo de FEDIAF. Si lo tiene, eso ya
 no es un tope: es una dieta de prescripción, y va marcada como no formulable
 automáticamente.
 
-### 8.1 · Los 19, con su fuente y su holgura contra FEDIAF
+### 8.1 · Los 19, verificados uno a uno contra su capítulo
 
-«Holgura» = cuánto sitio queda entre nuestro tope y el mínimo que FEDIAF
-exige a cualquier perro. **Una holgura del 3 % significa que el motor está
-trabajando casi sin margen.**
+**Verificado el 8 de septiembre abriendo cada capítulo de SACN5 y leyendo la
+tabla citada.** «Convertido» = el valor de la fuente pasado a g o mg por 1000
+kcal con el puente de 4000 kcal/kg MS (§0.1).
 
-| Patología | Nutriente | Límite | Contra FEDIAF | Holgura | Fuente |
-|---|---|---|---|---|---|
-| Insuficiencia renal crónica | fósforo | ≤ 1200 mg | mín 1160 | **3 %** | Freeman, dvm360 2009; WSAVA; IRIS; SACN5 cap.37 Tabla 37-9 |
-| Renal moderada-grave (IRIS 3-4) | fósforo | ≤ 1200 mg | mín 1160 | **3 %** | Íd. |
-| Pancreatitis | proteína | ≤ 75 g | mín 52,1 | 44 % | SACN5 cap.67 Tabla 67-3 |
-| **Pancreatitis** | **grasa** | **≤ 20 g** | mín 13,75 | 45 % | **Merck Vet Manual** — ver §8.2 |
-| Cálculos de oxalato cálcico | vitamina D | ≤ 14,19 µg | mín 3,975 | 257 % | Máximo **legal** de FEDIAF |
-| Hepatopatía por acúmulo de cobre | cobre | ≤ 2,4 mg | mín 2,08 | 15 % | Center et al., *JAVMA* 264(2):171-180, 2026 |
-| Cardiopatía (genérica) | sodio | ≤ 900 mg | mín 290 | 210 % | Keene et al., ACVIM consensus, *JVIM* 2019;33:1127-1140 |
-| Cardiopatía ACVIM B2 | sodio | ≤ 900 mg | mín 290 | 210 % | Íd. |
-| Cardiopatía ACVIM C | sodio | ≤ 790 mg | mín 290 | 172 % | Íd. |
-| Cardiopatía ACVIM D | sodio | ≤ 480 mg | mín 290 | 66 % | Íd. |
-| Hiperlipidemia | grasa | ≤ 30 g | mín 13,75 | 118 % | SACN5 cap.28 Tabla 28-2 |
-| Hiperlipidemia | fibra | **≥ 25 g** | (sin máx.) | — | SACN5 cap.28 |
-| Obesidad | grasa | ≤ 30 g | mín 13,75 | 118 % | SACN5 cap.27 Tabla 27-4 |
-| MCD respondedora a taurina | taurina | **≥ 250 mg** | (sin máx.) | — | SACN5 cap.36 Tabla 36-4 |
-| MCD respondedora a taurina | L-carnitina | **≥ 50 mg** | (sin máx.) | — | Íd. |
-| PLE / linfangiectasia | grasa | ≤ 37,5 g | mín 13,75 | 173 % | SACN5 cap.58 Tabla 58-1 |
-| Insuficiencia pancreática exocrina | grasa | ≤ 37,5 g | mín 13,75 | 173 % | SACN5 cap.66 Tabla 66-1 |
-| Artrosis | EPA+DHA | **≥ 1,0 g** | (sin máx.) | — | SACN5 cap.34 Tabla 34-2 |
-| Dermatosis zinc-sensible | zinc | **≥ 25 mg** | máx 56,75 | — | SACN5 cap.32 Tabla 32-1 |
+| Patología · nutriente | Motor | Lo que dice la fuente | Convertido | |
+|---|---|---|---|---|
+| renal · fósforo | ≤ 1200 mg | SACN5 37-9: *«Phosphorus 0.2 to 0.5% in foods for dogs»* | 500-1250 | ✅ dentro, extremo alto |
+| renal avanzada · fósforo | ≤ 1200 mg | Íd. | 500-1250 | ✅ |
+| pancreatitis · proteína | ≤ 75 g | SACN5 67-3: *«Protein 15 to 30% for dogs»* | 37,5-75 | ✅ extremo alto |
+| **pancreatitis · grasa** | **≤ 20 g** | Merck: *«less than 20 g fat/1,000 kcal»*. SACN5 67-3: *«≤15%»* no obeso, *«≤10%»* obeso | 37,5 / 25 | ⚠️ **más estricto que las dos cifras de SACN5** |
+| oxalato · vitamina D | ≤ 14,19 µg | FEDIAF III-3a, 227 **(L)** legal | 14,19 | ✅ exacto |
+| **hepatopatía · cobre** | **≤ 2,4 mg** | Center 2026 JAVMA. **SACN5 68-8: *«Copper ≤5 mg/kg»* MS**, y en el texto *«less than 5 ppm DM»* | **1,25** | ⚠️ **el doble de permisivo que SACN5** |
+| **cardiopatía (genérica)** | **≤ 900 mg Na** | ACVIM 2019. **SACN5 36-4: perros, Class Ia 0,15-0,25 % MS; Ib/II/III 0,08-0,15 %** | **375-625 / 200-375** | ⚠️ **1,4× más permisivo que el techo de SACN5** |
+| cardiopatía B2 | ≤ 900 mg Na | Íd. | Íd. | ⚠️ íd. |
+| cardiopatía C | ≤ 790 mg Na | Íd. | Íd. | ⚠️ íd. |
+| cardiopatía D | ≤ 480 mg Na | Íd. | Íd. | ✅ dentro de Class Ia |
+| hiperlipidemia · grasa | ≤ 30 g | SACN5 28: *«Restrict dietary fat (<12% dry [matter])»* | 30 | ✅ **exacto** |
+| hiperlipidemia · fibra | ≥ 25 g | SACN5 28: *«Dogs: ≥10% DM»* | 25 | ✅ **exacto** |
+| **obesidad · grasa** | **≤ 30 g** | SACN5 27-4: *«Foods for weight loss should contain ≤9%»* | **22,5** | ⚠️ **más permisivo — declarado y medido, ver abajo** |
+| MCD · taurina | ≥ 250 mg | SACN5 36-4: *«Dogs: ≥0.1%»* | 250 | ✅ **exacto** |
+| MCD · L-carnitina | ≥ 50 mg | SACN5 36-4: *«Dogs: ≥0.02%»* | 50 | ✅ **exacto** |
+| PLE · grasa | ≤ 37,5 g | SACN5 58: *«<15% for dogs and cats»* | 37,5 | ✅ **exacto** |
+| EPI · grasa | ≤ 37,5 g | SACN5 66-1: *«Fat 10 to 15% for dogs»* | 25-37,5 | ✅ extremo alto |
+| artrosis · EPA+DHA | ≥ 1,0 g | SACN5 34-2: *«0.4 to 1.1% DM»* | 1,0-2,75 | ✅ extremo bajo |
+| dermatosis zinc · zinc | ≥ 25 mg | SACN5 32-1: *«Dogs: 100 to 200 mg/kg food DM»* | 25-50 | ✅ extremo bajo |
+
+**Resultado: 13 de 19 caen exactos o dentro del rango de su fuente.** Cuatro
+discrepan y dos de esos cuatro son la misma familia (cardiopatía).
+
+### 8.1-bis · Los cuatro que discrepan, y por qué
+
+**1 · Obesidad · grasa: 30 donde SACN5 dice 22,5.** Está **declarado en el
+propio dato** y con la medida al lado: 22,5 —y hasta 27— **no dan menú** con
+el catálogo real ni en 40 s de reintentos, porque una comida de verdad, sin
+premezcla vitamínica sintética, no puede bajar tanto la grasa y seguir
+llegando a los mínimos de ácidos grasos esenciales y micronutrientes con las
+kcal que quedan. El 30 se apoya en la otra fila de la misma Tabla 27-4:
+*«Foods for prevention of weight regain should contain ≤14%»* = 35, así que
+30 queda dentro de esa franja. **Es honesto, pero es un límite de máquina
+vestido de límite clínico.**
+
+**2 · Hepatopatía · cobre: 2,4 donde SACN5 dice 1,25.** Dos fuentes que no
+dicen lo mismo: SACN5 cap. 68 Tabla 68-8 da **≤5 mg/kg MS** (y el texto
+insiste: *«a low-copper (<5 mg/kg, dry matter) veterinary…»*, *«less than 5
+ppm DM copper»*), que son 1,25 mg/1000 kcal; Center et al. 2026 (*JAVMA*
+264(2):171-180) da 0,24 mg/100 kcal = 2,4. **Se usa la más nueva.** Hoy no
+tiene efecto práctico —la hepatopatía bloquea la formulación automática antes
+de llegar al tope— pero el número está ahí.
+
+**3 y 4 · Cardiopatía · sodio.** También dos fuentes que no coinciden.
+SACN5 36-4 da, para perro, **0,15-0,25 % MS** en clase Ia (375-625
+mg/1000 kcal) y **0,08-0,15 %** en Ib/II/III (200-375). Nuestros topes —900
+en la genérica y en B2, 790 en C, 480 en D— **están por encima del techo de
+SACN5 en los tres primeros**; solo el de estadio D cae dentro. La fuente que
+usamos es el consenso ACVIM 2019, veinte años más nuevo y específico de
+cardiología, que trabaja con una escala por estadios distinta de las clases
+de SACN5.
+
+> **PREGUNTA 21-bis (bloqueante).** En los tres casos de arriba tenemos dos
+> fuentes que no dicen lo mismo, y hemos elegido una sin que nadie lo firme:
+> 1. **Cobre en hepatopatía**: ¿Center 2026 (2,4) o SACN5 (1,25)?
+> 2. **Sodio en cardiopatía**: ¿ACVIM 2019 por estadios, o las clases de
+>    SACN5, que son bastante más estrictas? Es el que más perros toca.
+> 3. **Obesidad**: el 30 es lo que la máquina puede hacer, no lo que dice la
+>    fuente. ¿Se acepta y se declara como «lo mejor alcanzable con comida
+>    real», o hay que decirle al dueño que para adelgazar de verdad hace
+>    falta otra cosa?
+
+### 8.1-ter · Lo que las mismas tablas piden y el motor NO aplica
+
+Al leer las tablas enteras —no solo la fila del nutriente que ya teníamos—
+aparecen factores que el motor no implementa:
+
+| Tabla | Factor que falta | Lo que dice | Convertido |
+|---|---|---|---|
+| SACN5 27-4 (obesidad) | **Fibra** | *«Foods for weight loss should contain 12 to 25%»* | 30-62,5 g/1000 kcal |
+| SACN5 27-4 (obesidad) | **Proteína** | *«…should contain ≥25%»* | ≥62,5 g/1000 kcal |
+| SACN5 27-4 (obesidad) | Densidad energética | *«≤3.4 kcal ME/g»* MS | otra base |
+| SACN5 36-4 (cardiopatía) | **Fósforo** | *«Dogs: 0.2 to 0.7%»* | 500-1750 mg/1000 kcal |
+| SACN5 36-4 (cardiopatía) | Cloruro | *«1.5 x sodium levels»* | ligado al sodio |
+
+Dos de ellos importan de verdad: **la proteína en el adelgazamiento** (subir
+la proteína mientras se recortan kcal es lo que protege la masa magra, y el
+motor solo aplica el mínimo de FEDIAF, 52,1, por debajo de los 62,5 de SACN5)
+y **la fibra**, que es la que da saciedad.
+
+*(El potasio y el magnesio cardíacos de esa misma tabla —≥0,4 % y ≥0,06 % MS—
+sí quedan cubiertos: los mínimos de FEDIAF, 1450 mg y 200 mg/1000 kcal, son
+0,58 % y 0,08 % MS, por encima de los dos.)*
+
+> **PREGUNTA 21-ter.** ¿Cuáles de estos cinco hay que añadir? La proteína en
+> obesidad es la que más nos preocupa.
 
 ### 8.2 · El caso que más falta hace resolver: la grasa en pancreatitis
 

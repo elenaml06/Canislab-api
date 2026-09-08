@@ -6172,6 +6172,106 @@ if _menu53:
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
+
+# ============================================================
+# BLOQUE 54 — el DER, contra su fuente y no solo contra sí mismo
+# ============================================================
+#
+# ⚠️ POR QUÉ (8 septiembre). El DER solo estaba comprobado contra
+# `der_casos.json`, que garantiza que los dos repos calculan LO MISMO --
+# no que lo que calculan sea lo que dice la fuente. Al abrir FEDIAF 2025
+# salieron tres cosas, y este bloque las fija para que no vuelvan.
+print("=== BLOQUE 54: el DER contra FEDIAF, no solo contra sí mismo ===")
+
+import der as _der54
+
+# --- 1. Los cinco escalones son los de la Tabla VII-7 ----------------------
+# Verificados el 8 de septiembre contra el PDF: «Low activity (<1h/day) 95 ·
+# Moderate (1-3 h/day) low impact 110 · Moderate high impact 125 · High
+# activity (3-6 h/day) 150-175».
+_VII7 = {"sedentario": 95, "normal": 110, "activo": 125,
+         "muy_activo": 150, "trabajo": 175}
+for _k54, _v54 in _VII7.items():
+    if _der54.BASE_ACTIVIDAD.get(_k54) != _v54:
+        fallos.append(f"BLOQUE54: la base de actividad «{_k54}» vale "
+                      f"{_der54.BASE_ACTIVIDAD.get(_k54)} y la Tabla VII-7 de FEDIAF dice {_v54}")
+
+# --- 2. Las dos razas con cifra propia de FEDIAF ---------------------------
+# Misma tabla, sección «Breed specific differences»: Great Danes 200 (200-250),
+# Newfoundlands 105 (80-132). MEDIDO antes de aplicarlas: un Gran Danés de
+# 67,5 kg en «normal» recibía 2590 kcal donde FEDIAF dice 4710 -- el 55 %.
+_ESPERADO_RAZA = {"Gran Danés": (200.0, 200.0, 250.0), "Terranova": (105.0, 80.0, 132.0)}
+if dict(_der54.RAZAS_CIFRA_FEDIAF) != _ESPERADO_RAZA:
+    fallos.append(f"BLOQUE54: `RAZAS_CIFRA_FEDIAF` es {dict(_der54.RAZAS_CIFRA_FEDIAF)} y la "
+                  f"Tabla VII-7 de FEDIAF dice {_ESPERADO_RAZA}")
+_gd54 = _der54.calcular_der(67.5, "adulto", actividad="normal", raza="Gran Danés")["der"]
+if abs(_gd54 - 200.0 * 67.5 ** 0.75) > 1.0:
+    fallos.append(f"BLOQUE54: un Gran Danés de 67,5 kg en «normal» recibe {_gd54:.0f} kcal y "
+                  f"FEDIAF dice {200.0 * 67.5 ** 0.75:.0f}")
+# Y el ±15 de Thes NO se suma encima: son dos ajustes por raza sobre el mismo
+# perro, y la cifra de FEDIAF ya es una medida de ESA raza.
+for _r54, (_c54, _mn54, _mx54) in _der54.RAZAS_CIFRA_FEDIAF.items():
+    for _act54 in _VII7:
+        _k = _der54._coef_adulto(_act54, "adulto", "solo", False, _r54)
+        if not (_mn54 - 1e-9 <= _k <= _mx54 + 1e-9):
+            fallos.append(f"BLOQUE54: {_r54} en «{_act54}» sale a {_k} kcal/kg^0,75, fuera del "
+                          f"rango {_mn54}-{_mx54} que publica FEDIAF")
+
+# --- 3. La lactancia es la fórmula de FEDIAF, y SIN TOPE -------------------
+# FEDIAF 2025, Tabla VII-8b: «1 to 4 puppies: 145 x kg BW^0.75 + 24 n x kg BW
+# x L» y «5 to 8 puppies: 145 x kg BW^0.75 + [96 + 12 (n-4)] x kg BW x L»,
+# con L = 0.75 / 0.95 / 1.1 / 1.2. FEDIAF no pone ningún techo.
+#
+# Aquí hubo uno de x6 RER que no era de FEDIAF -- salía de SACN5, donde el x6
+# es la FILA de camadas de ≥9 cachorros, no un techo general -- y recortaba
+# hasta un 33 %: una perra de 60 kg con 8 cachorros recibía 9054 kcal donde
+# FEDIAF dice 13.494.
+if hasattr(_der54, "LACTANCIA_TOPE_RER"):
+    fallos.append("BLOQUE54: ha vuelto `LACTANCIA_TOPE_RER`. FEDIAF (Tabla VII-8b) no pone "
+                  "ningún techo a la fórmula de lactancia, y el que había recortaba hasta un "
+                  "33 % apoyándose en una fila de SACN5 que es de camadas de ≥9 cachorros.")
+if _der54.LACTANCIA_BASE != 145 or list(_der54.LACTANCIA_PESO_SEMANA) != [0.75, 0.95, 1.10, 1.20]:
+    fallos.append(f"BLOQUE54: la fórmula de lactancia ya no es la de FEDIAF VII-8b "
+                  f"(base {_der54.LACTANCIA_BASE}, L {_der54.LACTANCIA_PESO_SEMANA})")
+for _peso54, _n54, _esp54 in [(25.0, 6, 5221), (40.0, 8, 9218), (60.0, 8, 13494)]:
+    _got54 = _der54.calcular_der(_peso54, "lactante", actividad="normal",
+                                 n_cachorros=_n54, semana_lactancia=4)["der"]
+    if abs(_got54 - _esp54) > 1.0:
+        fallos.append(f"BLOQUE54: perra de {_peso54} kg con {_n54} cachorros en semana 4 recibe "
+                      f"{_got54:.0f} kcal y la fórmula de FEDIAF da {_esp54}")
+
+# --- 4. El respaldo de crecimiento, cuando no hay peso adulto -------------
+# FEDIAF no cubre este caso: su ecuación necesita el peso adulto esperado.
+# Donde FEDIAF no llega se tira de SACN5 (Tabla 5-2): «3 x RER from weaning
+# until four months of age. At four months ... reduced to 2 x RER».
+# Aquí había tres escalones (210/175/140) por % del peso adulto y el código
+# leía SIEMPRE el último: un cachorro de dos meses recibía 140 (= 2 x RER),
+# un 33 % menos de lo que le toca.
+if _der54.CRECIMIENTO_ANTES_4M != 210.0 or _der54.CRECIMIENTO_DESDE_4M != 140.0:
+    fallos.append(f"BLOQUE54: el respaldo de crecimiento ya no es el de SACN5 "
+                  f"({_der54.CRECIMIENTO_ANTES_4M} / {_der54.CRECIMIENTO_DESDE_4M}; "
+                  f"3 x RER = 210 y 2 x RER = 140)")
+if _der54._coef_crecimiento(5.0, None, meses=2.0) != 210.0:
+    fallos.append("BLOQUE54: un cachorro de 2 meses sin peso adulto esperado no recibe los "
+                  "3 x RER de SACN5")
+if _der54._coef_crecimiento(5.0, None, meses=6.0) != 140.0:
+    fallos.append("BLOQUE54: un cachorro de 6 meses sin peso adulto esperado no recibe los "
+                  "2 x RER de SACN5")
+if _der54._coef_crecimiento(5.0, None, meses=None) != 140.0:
+    fallos.append("BLOQUE54: sin edad NI peso adulto el respaldo tiene que ser el prudente (140)")
+if hasattr(_der54, "CRECIMIENTO"):
+    fallos.append("BLOQUE54: ha vuelto la tabla `CRECIMIENTO` de tres escalones. Dos de sus "
+                  "tres filas eran código muerto: `_coef_crecimiento` leía siempre la última.")
+
+# --- 5. Gestación, que sí estaba bien -------------------------------------
+# FEDIAF VII-8b: «first 4 weeks: 132 x kg BW^0.75» y «last 5 weeks: 132 x kg
+# BW^0.75 + 26 x kg BW». Se comprueba para que no se mueva sin querer.
+if _der54.GESTACION_BASE != 132 or _der54.GESTACION_EXTRA_DESDE_SEM5 != 26:
+    fallos.append(f"BLOQUE54: la gestación ya no es la de FEDIAF VII-8b "
+                  f"({_der54.GESTACION_BASE} + {_der54.GESTACION_EXTRA_DESDE_SEM5})")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
 # ============================================================
 # RESUMEN FINAL
 # ============================================================

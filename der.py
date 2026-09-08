@@ -140,6 +140,40 @@ RAZAS_MENOS_GASTO = {
 }
 AJUSTE_RAZA = 15
 
+# ⚠️ AÑADIDO (8 septiembre) — LAS DOS RAZAS A LAS QUE FEDIAF LES DA CIFRA
+# PROPIA, Y QUE EL MOTOR IGNORABA.
+#
+# La Tabla VII-7 de FEDIAF 2025, la misma de la que salen los cinco escalones
+# de actividad, termina con una seccion "Breed specific differences":
+#
+#     Great Danes      200 (200 - 250) kcal ME per kg BW^0.75
+#     Newfoundlands    105 (80 - 132)
+#
+# Las dos razas estan en la lista de 136 de la app y no se usaban. MEDIDO
+# antes de arreglarlo: un Gran Danes de 67,5 kg marcado como "normal" recibia
+# 2590 kcal/dia donde FEDIAF dice 4710. EL 55 %. Un perro asi adelgaza.
+#
+# Y 200 no es un valor extremo: SACN5 cap.5 dice que las estimaciones de DER
+# en perro "range between 95 to 200 kcal ... per (BWkg)0.75 per day", o sea
+# que es el extremo alto del rango publicado, no un caso raro.
+#
+# ⚠️ CÓMO SE APLICA, Y ESTO ES INTERPRETACION NUESTRA. FEDIAF pone las dos
+# filas DENTRO de la tabla de actividad, con un valor central y un rango,
+# pero sin cruzarlas con los cinco niveles. Lo que se hace:
+#   · el valor central sustituye a la base de "normal";
+#   · el nivel de actividad sigue moviendo lo mismo que movia (la diferencia
+#     contra "normal"), porque un Gran Danes sedentario no gasta lo mismo que
+#     uno de trabajo;
+#   · y el resultado se RECORTA al rango que publica la propia FEDIAF, para
+#     no salirse de la fuente por interpretar de mas.
+# La pregunta de si eso es lo que FEDIAF quiere decir esta en
+# PREGUNTAS_ABIERTAS.md P-11, con dueño.
+RAZAS_CIFRA_FEDIAF = {
+    # raza -> (central, minimo, maximo) en kcal/kg^0.75
+    "Gran Danés": (200.0, 200.0, 250.0),
+    "Terranova":  (105.0,  80.0, 132.0),
+}
+
 # =============================================================================
 # CRECIMIENTO (FEDIAF) — por % del peso ADULTO esperado, no por edad
 # =============================================================================
@@ -163,11 +197,31 @@ MJ_A_KCAL = 239.0
 # convención clínica genérica RER x3.0/2.5/2.0 (la que traía el motor
 # ANTES de adoptar Klein, ver CLAUDE.md); se conserva solo como respaldo
 # prudente si no hay peso adulto esperado, no como cifra de FEDIAF.
-CRECIMIENTO = [
-    (0.50, 210),   # hasta el 50% del peso final   (= RER x 3.0)
-    (0.80, 175),   # del 50 al 80%                 (= RER x 2.5)
-    (None, 140),   # del 80% en adelante           (= RER x 2.0)
-]
+# ⚠️ REESCRITO (8 septiembre) — ERAN TRES ESCALONES Y SOLO SE USABA UNO.
+#
+# Aqui habia una tabla de tres filas por % del peso adulto (210 / 175 / 140),
+# y `_coef_crecimiento` leia SIEMPRE la ultima -- las otras dos eran codigo
+# muerto, en los dos repos. O sea que un cachorro de dos meses sin peso adulto
+# esperado recibia 140 (= 2 x RER), que es lo que SACN5 da para DESPUES de los
+# cuatro meses. Un 33 % menos de lo que le toca.
+#
+# FEDIAF no cubre este caso: su ecuacion de crecimiento (Tabla VII-8b, la de
+# Klein) NECESITA el peso adulto esperado. Donde FEDIAF no llega se tira de
+# SACN5, y SACN5 lo dice sin rodeos (Tabla 5-2, parte 2 canina):
+#
+#     "Daily energy intake for growing puppies should be 3 x RER from weaning
+#      until four months of age. At four months of age energy intake should be
+#      reduced to 2 x RER until the puppy reaches adult size."
+#
+# 3 x RER = 210 kcal/kg^0.75  ·  2 x RER = 140. Son DOS escalones y cortan por
+# EDAD, no por % del peso adulto -- que era ademas el otro problema de la
+# tabla vieja: para aplicar un corte por % del peso adulto hace falta el peso
+# adulto, que es justo el dato que no hay cuando se llega aqui.
+#
+# Sin edad tampoco, se queda en 140, que es el lado prudente.
+CRECIMIENTO_SACN5_MESES = 4.0
+CRECIMIENTO_ANTES_4M = 210.0   # 3 x RER
+CRECIMIENTO_DESDE_4M = 140.0   # 2 x RER
 
 # =============================================================================
 # GESTACIÓN y LACTANCIA (FEDIAF)
@@ -179,46 +233,41 @@ LACTANCIA_BASE = 145              # kcal/kg^0.75
 # Factores de semana de lactancia del NRC 2006: 0.75 / 0.95 / 1.1 / 1.2.
 # Antes teniamos 1.40 en la semana 4, que venia de la fuente secundaria.
 LACTANCIA_PESO_SEMANA = [0.75, 0.95, 1.10, 1.20]
-# ⚠️ CORREGIDO EL COMENTARIO (8 septiembre) — DECIA ALGO QUE NO ES CIERTO.
+# ⚠️ QUITADO EL TOPE DE x6 RER (8 de septiembre). FEDIAF NO PONE NINGUNO.
 #
-# Aqui ponia que "la formula de lactancia viene de una fuente SECUNDARIA y no
-# se ha podido contrastar con el texto original de FEDIAF", y que por eso era
-# "la parte menos verificada de todo el DER".
+# Aqui habia un `LACTANCIA_TOPE_RER = 6.0` que recortaba la formula, y el
+# comentario que lo justificaba decia dos cosas, las dos falsas:
 #
-# SI SE PUEDE CONTRASTAR, Y CUADRA EXACTA. FEDIAF 2025, Tabla VII-8b
-# ("Average energy requirements during growth and reproduction in dogs"),
-# literal:
+# 1. Que la formula de lactancia "viene de una fuente SECUNDARIA y no se ha
+#    podido contrastar con el texto original de FEDIAF". SI SE PUEDE, y cuadra
+#    letra por letra. FEDIAF 2025, Tabla VII-8b ("Average energy requirements
+#    during growth and reproduction in dogs"):
 #
-#     1 to 4 puppies:  145 x kg BW^0.75 + 24 n x kg BW x L
-#     5 to 8 puppies:  145 x kg BW^0.75 + [96 + 12 (n-4)] x kg BW x L
-#     n = number of puppies; L = 0.75 en semana 1; 0.95 en 2; 1.1 en 3; 1.2 en 4
+#        1 to 4 puppies:  145 x kg BW^0.75 + 24 n x kg BW x L
+#        5 to 8 puppies:  145 x kg BW^0.75 + [96 + 12 (n-4)] x kg BW x L
+#        n = number of puppies; L = 0.75 sem 1; 0.95 sem 2; 1.1 sem 3; 1.2 sem 4
 #
-# Que es letra por letra lo que hace `calcular_der` mas abajo, con los mismos
-# 145, los mismos 24n / 96+12(n-4) y los mismos cuatro factores L. Un
-# comentario que declara no verificado algo que si lo esta es peor que no
-# tener comentario: nadie vuelve a mirarlo, y ademas lo usa para justificar
-# un recorte.
+#    Que es exactamente lo que hace `calcular_der`, con los mismos 145, los
+#    mismos 24n / 96+12(n-4) y los mismos cuatro factores L.
 #
-# LO QUE SI ES NUESTRO ES ESTE TOPE, Y FEDIAF NO PONE NINGUNO.
+# 2. Que el x6 era "el maximo de la tabla clinica". Leida esa tabla (Small
+#    Animal Clinical Nutrition 5a ed., Tabla 5-2, parte 2 canina), el x6 NO es
+#    un techo general: es la FILA de camadas de 9 o mas cachorros. Se estaba
+#    usando una fila de una tabla indexada por tamaño de camada como si fuera
+#    un limite universal.
 #
-# Sale de la tabla de Small Animal Clinical Nutrition (5a ed., Tabla 5-2,
-# parte 2 canina), donde el x6 NO es un techo general: es la FILA de camadas
-# de 9 o mas cachorros. Se esta usando una fila de una tabla indexada por
-# tamano de camada como si fuera un limite universal.
-#
-# ⚠️ Y RECORTA DE VERDAD. Medido el 8 de septiembre, en semana 4:
+# ⚠️ Y RECORTABA DE VERDAD. Medido el 8 de septiembre, en semana 4:
 #     25 kg, 6 cachorros:  FEDIAF 5221 kcal -> recortado a 4696  (-10 %)
 #     40 kg, 8 cachorros:  FEDIAF 9218 kcal -> recortado a 6680  (-28 %)
 #     60 kg, 8 cachorros:  FEDIAF 13494 kcal -> recortado a 9054 (-33 %)
 #
-# Una perra de 60 kg con 8 cachorros recibe un tercio menos de lo que dice
-# FEDIAF. Ver `PREGUNTAS_ABIERTAS.md` P-10: la decision de quitarlo o
-# justificarlo no la toma una sesion sola, porque el DER manda desde el front
-# y hay un contrato de 85 casos compartido entre los dos repos.
+# Una perra de 60 kg con 8 cachorros recibia un tercio menos de lo que dice
+# FEDIAF, por un techo que no era de FEDIAF y cuya justificacion escrita era
+# incorrecta. Se quita: manda FEDIAF.
 #
 # Lo que sigue siendo verdad del comentario viejo: la lactancia deberia
-# pautarla un veterinario, y hay que recalcular cada semana.
-LACTANCIA_TOPE_RER = 6.0
+# pautarla un veterinario, y hay que recalcular cada semana. Eso es un aviso,
+# no un recorte de kcal.
 
 # =============================================================================
 # PESO CORPORAL — manda sobre todo lo demás
@@ -274,14 +323,19 @@ def peso_ideal_desde_condicion(peso_actual_kg: float, condicion_idx: int) -> flo
     return round(ideal, 2)
 
 
-def _coef_crecimiento(peso_actual: float, peso_adulto: float) -> float:
+def _coef_crecimiento(peso_actual: float, peso_adulto: float,
+                      meses: float = None) -> float:
     """
     Devuelve el coeficiente en kcal/kg^0.75 para un cachorro.
     Con peso adulto conocido usa KLEIN 2019 (curva continua medida en 493
-    cachorros de compania). Sin el, cae al escalon mas prudente de FEDIAF.
+    cachorros de compania), que es la que publica FEDIAF en su Tabla VII-8b.
+    Sin el, cae a la regla de SACN5 por edad -- ver el comentario de
+    CRECIMIENTO_ANTES_4M.
     """
     if not peso_adulto or peso_adulto <= 0:
-        return CRECIMIENTO[-1][1]     # sin peso adulto, lo prudente
+        if meses is not None and meses < CRECIMIENTO_SACN5_MESES:
+            return CRECIMIENTO_ANTES_4M
+        return CRECIMIENTO_DESDE_4M
     frac = peso_actual / peso_adulto
     if frac > 1.0:
         frac = 1.0                    # ya llego a su peso adulto
@@ -294,11 +348,26 @@ def _coef_crecimiento(peso_actual: float, peso_adulto: float) -> float:
 def _coef_adulto(actividad, edad_grupo, convivencia, macho_entero, raza):
     if actividad not in BASE_ACTIVIDAD:
         raise ValueError(f"Actividad '{actividad}' no reconocida")
-    k = BASE_ACTIVIDAD[actividad]
+    # ⚠️ LAS DOS RAZAS CON CIFRA PROPIA DE FEDIAF MANDAN SOBRE LA BASE.
+    # Ver RAZAS_CIFRA_FEDIAF, arriba, para el porque y para que parte de esto
+    # es interpretacion nuestra. El nivel de actividad sigue moviendo lo mismo
+    # que movia: se aplica su diferencia contra "normal".
+    propia = RAZAS_CIFRA_FEDIAF.get(raza)
+    if propia:
+        central, minimo, maximo = propia
+        k = central + (BASE_ACTIVIDAD[actividad] - BASE_ACTIVIDAD["normal"])
+    else:
+        k = BASE_ACTIVIDAD[actividad]
     k += AJUSTE_EDAD.get(edad_grupo, 0)
     k += AJUSTE_CONVIVENCIA.get(convivencia, 0)
     if macho_entero:
         k += AJUSTE_MACHO_ENTERO
+    if propia:
+        # El +-15 de Thes 2014 NO se aplica encima: es un ajuste sobre la media
+        # de 586 perros, y estas dos razas ya tienen su propia cifra medida.
+        # Y se recorta al rango que publica FEDIAF, para no salirse de la
+        # fuente por interpretar de mas.
+        return max(minimo, min(maximo, k))
     if raza in RAZAS_MAS_GASTO:
         k += AJUSTE_RAZA
     elif raza in RAZAS_MENOS_GASTO:
@@ -457,7 +526,7 @@ def calcular_der(peso_actual_kg: float, etapa: str, actividad: str = None,
 
     # --- coeficiente según la etapa ---
     if en_crecimiento:
-        coef = _coef_crecimiento(peso_actual_kg, peso_adulto_esperado_kg)
+        coef = _coef_crecimiento(peso_actual_kg, peso_adulto_esperado_kg, meses)
         der = coef * peso_actual_kg ** 0.75
     elif etapa in ("gestante_temprana", "gestante_tardia"):
         coef = GESTACION_BASE
@@ -474,11 +543,9 @@ def calcular_der(peso_actual_kg: float, etapa: str, actividad: str = None,
         # 24x4 = 96, y 96 + 12x0 = 96. Se usa la continua.
         extra = (24 * n * peso_calculo) if n <= 4 else ((96 + 12 * (n - 4)) * peso_calculo)
         sem = min(max(semana_lactancia or 3, 1), 4)
+        # ⚠️ SIN TOPE. Ver el comentario largo de arriba: el x6 que habia aqui
+        # no era de FEDIAF y recortaba hasta un 33 %.
         der = coef * peso_calculo ** 0.75 + extra * LACTANCIA_PESO_SEMANA[sem - 1]
-        tope = LACTANCIA_TOPE_RER * calcular_rer(peso_calculo)
-        topada = der > tope
-        if topada:
-            der = tope
     elif etapa in ("adulto", "senior"):
         grupo = "senior" if etapa == "senior" else "adulto"
         coef = _coef_adulto(actividad or "normal", grupo, convivencia,
@@ -507,8 +574,7 @@ def calcular_der(peso_actual_kg: float, etapa: str, actividad: str = None,
             "La lactancia es la etapa de mayor demanda de toda la vida de una "
             "perra y la que peor se estima con una fórmula. Este número es "
             "solo un punto de partida: pésala cada semana, ajusta según su "
-            "condición corporal, y que lo supervise tu veterinario."
-            + (" (Se ha aplicado el tope de seguridad.)" if locals().get("topada") else ""))
+            "condición corporal, y que lo supervise tu veterinario.")
     return resultado
 
 

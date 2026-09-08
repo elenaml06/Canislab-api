@@ -4271,7 +4271,7 @@ def verificar():
     import hashlib, os, json
     SELLOS = SELLOS_DE_LOS_DATOS
     SELLOS_CRUDOS = {
-        "der.py": "4dbd7f93d9296bd9",   # 7 sep: documentado por que NO hay factor de enfermedad sobre el RER, verificado contra Fascetti & Delaney 2a ed. cap.3 (Ramsey) -- la fuente dice literal "target energy requirements... initially at RER" y "weight loss is never a goal during treatment and recovery from trauma and critical illness". Ningun numero ni comportamiento cambia, es documentacion de una decision que ya estaba tomada.
+        "der.py": "899fcb431743286a",   # 8 sep: el DER verificado contra FEDIAF 2025 (Tablas VII-7 y VII-8b) y cerrado -- ver DECISIONES.md D-11. Cambian TRES cosas: se quita el tope de x6 RER en lactancia (no es de FEDIAF y recortaba hasta un 33 %), se adoptan las dos razas con cifra propia de FEDIAF (Gran Danes 200, Terranova 105; un Gran Danes recibia el 55 % de lo que le toca), y el respaldo de crecimiento pasa a la regla de SACN5 por edad (3 x RER hasta los 4 meses, 2 x RER despues) -- de sus tres escalones viejos, DOS eran codigo muerto. Lo vigila el BLOQUE 54.
         # 6 sep: 3 correcciones de cita en comentarios (VII-7 no VII-6, Thes 2015 no 2014, y el escalon 210/175/140 no es tabla de FEDIAF) -- ningun numero ni comportamiento cambia.
     }
     base = os.path.dirname(os.path.abspath(__file__))

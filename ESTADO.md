@@ -103,6 +103,7 @@ nivel 2 tal como está.
 | Qué | Dónde | Rp | Fu | Fi | Te | De | Estado |
 |---|---|---|---|---|---|---|---|
 | 40 perfiles · 14 topes · 5 suelos · 6 objetivos terapéuticos | `patologias.json` | ✅ | ✅ **19/19 topes y suelos llevan `fuente` y `por_que`** | ❌ | ✅ BLOQUE 13, 32, 36, 44, 50 (`auditar_patologias.py`) | ⚠️ en `por_que` | **en curso** |
+| **Los 19, verificados uno a uno contra su capítulo de SACN5** (8 sep) | — | — | **13 de 19 exactos o dentro del rango de su fuente**; 4 discrepan; 2 dependen de fuentes que no tenemos en local (Merck, ACVIM 2019, Center 2026) | ❌ | — | ⚠️ | **en curso** |
 | `GET /patologias` sirve la tabla desde el mismo archivo que aplica el solver | `main.py` | ✅ | ✅ | ❌ | ✅ BLOQUE 44, cifra a cifra | ✅ | **en curso** (falta ficha) |
 | Ningún tope formulable por debajo del mínimo de FEDIAF | `auditar_patologias.py` | ✅ | ✅ | — | ✅ BLOQUE 32/36 — **ejecutado hoy: «todo cuadra»** | ✅ | **cerrado salvo ficha** |
 | `margen_del_profesional`: hasta dónde puede mover cada cifra un veterinario ⏳ | **rama `claude/veterinary-mode-ui-fixes-s9l5j7`**, 19/19 cifras | ❌ **fuera de `main`** | ✅ | ⚠️ **2,5 de los 8 campos** | ✅ BLOQUE 51 (en la rama) | ❌ | **en curso, sin fusionar** |
@@ -121,7 +122,12 @@ nivel 2 tal como está.
 
 ### 1.5 · La energía (DER)
 
-⚠️ **Verificado contra fuente el 8 de septiembre, y salieron cuatro cosas.**
+✅ **CERRADO el 8 de septiembre** — `DECISIONES.md` D-11. Verificado contra
+FEDIAF 2025 (Tablas VII-7 y VII-8b) y SACN5 (Tabla 5-2), aplicada la regla
+«FEDIAF manda; donde FEDIAF no llega, SACN5», y protegido por el BLOQUE 54 y
+por el contrato de 100 casos idéntico en los dos repos.
+
+⚠️ **Lo que se encontró al verificarlo, y ya está aplicado:**
 Hasta ese día el DER solo estaba comprobado contra su propio contrato de 85
 casos — que garantiza que los dos repos calculan lo mismo, **no que lo que
 calculan sea lo que dice la fuente**. Al abrir FEDIAF VII-7, SACN5 Tabla 5-2 y
@@ -134,9 +140,9 @@ AAHA 2021:
 | La ecuación de crecimiento (Klein) | ✅ **es la de FEDIAF VII-8b**, idéntica |
 | Gestación (132 · 132+26×kg) | ✅ **FEDIAF VII-8b**, exacta |
 | La fórmula de lactancia | ✅ **FEDIAF VII-8b**, letra por letra, con sus factores L |
-| **El tope de ×6 RER en lactancia** | ❌ **es nuestro y FEDIAF no pone ninguno**: recorta hasta un −33 % |
-| Los 3 escalones de crecimiento de respaldo | ⚠️ **210 y 140 sí (SACN5), 175 no existe en ninguna fuente** |
-| Gran Danés y Terranova | ❌ **FEDIAF les da cifra propia y el motor no la usa**: a un Gran Danés le damos el 55 % |
+| **El tope de ×6 RER en lactancia** | ✅ **QUITADO**: no era de FEDIAF y recortaba hasta un −33 % |
+| Los 3 escalones de crecimiento de respaldo | ✅ **SUSTITUIDOS** por la regla de SACN5 (3×RER hasta los 4 meses, 2×RER después). Dos de los tres eran código muerto |
+| Gran Danés y Terranova | ✅ **ADOPTADOS** de FEDIAF VII-7 (200 y 105). Un Gran Danés pasa de 2590 a 4710 kcal |
 
 Detalle y medidas: `PREGUNTAS_ABIERTAS.md` P-10 a P-13, y
 `PARA_EL_NUTRICIONISTA.md` §1.
@@ -145,8 +151,9 @@ Detalle y medidas: `PREGUNTAS_ABIERTAS.md` P-10 a P-13, y
 |---|---|---|---|---|---|---|---|
 | El DER se calcula en dos sitios y manda el del front | `der.py` + `canislab-web/src/der.js` | ✅ | ✅ | ❌ | ✅ contrato de 85 casos: BLOQUE 23 aquí, `der-contrato.spec.js` allí | ✅ `CLAUDE.md` | **en curso** |
 | Los escalones de actividad | `der.BASE_ACTIVIDAD` | ✅ | ✅ **FEDIAF VII-7, verificado** | ❌ | ✅ | ⚠️ | **en curso** |
-| La fórmula de lactancia | `der.LACTANCIA_*` | ✅ | ✅ **FEDIAF VII-8b, verificada** | ❌ | ⚠️ solo el contrato | ❌ | **en curso** |
-| **El tope de ×6 en lactancia** | `der.LACTANCIA_TOPE_RER` | ✅ | ❌ **no es de FEDIAF** | ❌ | ❌ | ❌ | **roto** |
+| La fórmula de lactancia, sin tope | `der.LACTANCIA_*` | ✅ | ✅ **FEDIAF VII-8b** | ❌ | ✅ BLOQUE 54 | ✅ D-11 | **cerrado salvo ficha** |
+| Las dos razas con cifra de FEDIAF | `der.RAZAS_CIFRA_FEDIAF` | ✅ | ✅ **FEDIAF VII-7** | ❌ | ✅ BLOQUE 54 + contrato | ✅ D-11 | **cerrado salvo ficha** |
+| El respaldo de crecimiento | `der.CRECIMIENTO_*` | ✅ | ✅ **SACN5 5-2** | ❌ | ✅ BLOQUE 54 + `der-contrato` | ✅ D-11 | **cerrado salvo ficha** |
 | **Las razas con cifra propia de FEDIAF** | — | ❌ **no existe** | ✅ FEDIAF VII-7 | ❌ | ❌ | ❌ | **no empezado** |
 | El contrato está sincronizado entre los dos repos | `der_casos.json` | ✅ | — | — | ✅ | ✅ | **verificado hoy: md5 `92506f87…` idéntico en los dos repos** |
 | El peso objetivo desde el BCS se **divide**, no se resta | `verificar.peso_objetivo_desde_bcs` | ✅ | ✅ AAHA 2014/2021 + GPOI 2019 | ❌ | ✅ BLOQUE 37 | ✅ `DECISIONES.md` D-05 | **en curso** (falta ficha) |
@@ -164,8 +171,9 @@ Detalle y medidas: `PREGUNTAS_ABIERTAS.md` P-10 a P-13, y
 | Qué | Estado | Medida |
 |---|---|---|
 | **La batería NO sale en verde hoy sobre `main` sin tocar** | **roto (prueba mal diseñada)** | Ver §1.9. 1 fallo de 50 bloques, 1.232 s. Es el BLOQUE 4, y no es la nutrición. **Arreglado el 8 de septiembre** fijando la semilla |
-| **Un tope nuestro recorta hasta un −33 % la fórmula de lactancia de FEDIAF** | **roto** | 60 kg y 8 cachorros: FEDIAF 13.494 kcal, le damos 9.054. `PREGUNTAS_ABIERTAS.md` P-10 |
-| **Un Gran Danés recibe el 55 % de las kcal que le da su propia fuente** | **roto** | FEDIAF VII-7 le da 200 kcal/kg^0,75 y el motor tope en 175. P-11 |
+| ~~El tope de lactancia y las razas de FEDIAF~~ | **cerrado 8 sep** | `DECISIONES.md` D-11 |
+| **4 de los 19 límites de patología discrepan de SACN5** | **abierto** | cobre hepático (2,4 vs 1,25), sodio cardíaco (900 vs 625), obesidad grasa (30 vs 22,5, declarado). `PARA_EL_NUTRICIONISTA.md` §8.1-bis |
+| **5 factores de las tablas de SACN5 que el motor no aplica** | **no empezado** | proteína y fibra en obesidad, fósforo y cloruro en cardiopatía. §8.1-ter |
 | **Un cachorro de raza grande sin hueso carnoso se queda sin menú ~1 de cada 4 veces** | **roto** | Medido: 11/15 con menú. No lo causa el techo de Ca:P nuevo (sin él, 9/15). Es el mínimo de calcio reforzado, que sin hueso hay que cerrar solo con suplementos |
 | **`renal` + `pancreatitis` no da menú, y el motor no sabe decir por qué** | **roto** | Ver §1.8. Confirmado y, además, **diagnosticado**: chocan el fósforo renal (1200) y la grasa de pancreatitis (20) |
 | La ficha de permisos de los ocho campos | **no empezado** | 0 de 8 campos en `main`; 2,5 de 8 en una rama, solo para 19 cifras de patología |
