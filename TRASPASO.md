@@ -6,21 +6,33 @@ mensajes de commit.
 
 ---
 
-## 0. AVISO: `c6af011` NO ESTÁ VERIFICADO
-
-Va primero porque en el mensaje del commit no lo va a leer nadie.
+## 0. Estado de los dos commits: los dos VERIFICADOS
 
 | commit | qué es | batería |
 |---|---|---|
-| `9bc0a8d` | 95 casillas a hueco declarado + columna de humedad | ✅ **verde**, 51 bloques, 821 s |
-| `c6af011` | `fuentes_id` en 99 fichas + `fijar_identificadores.py` | ❌ **se interrumpió a media ejecución** |
+| `9bc0a8d` | 95 casillas a hueco declarado + columna de humedad | ✅ verde · 51 bloques · 821 s |
+| `c6af011` | `fuentes_id` en 99 fichas + `fijar_identificadores.py` | ✅ verde · 51 bloques · **857 s** |
 
-**No se fusiona `c6af011` sin correr `python3 pruebas_completas.py` entero.**
-No es que fallara: es que no llegó a terminar. El riesgo real es bajo
-—comprobé que no mueve ni una casilla numérica— pero eso es exactamente lo
-que se decía de todo lo que luego rompió algo.
+⚠️ **Corregido el mismo día.** Este apartado decía que `c6af011` no estaba
+verificado, porque la ejecución de la batería se interrumpió al parar la
+sesión. **Terminó después**, en segundo plano, y salió en verde. Se
+comprobaron las tres cosas antes de cambiar esta línea, porque un «ya está
+verificado» equivocado es peor que el aviso:
 
----
+- la ejecución arrancó **después** de añadir la guarda de especie al BLOQUE
+  51, y el `pruebas_completas.py` de `c6af011` la lleva;
+- el árbol de trabajo no cambió entre lanzarla y hacer el commit, así que
+  corrió contra ese contenido exacto;
+- y el sello declarado en el `main.py` de `c6af011` cuadra con su propio
+  `alimentos_v3_final.json` — si no, un bloque habría fallado.
+
+**Aun así sigue sin fusionarse**: no hay PR y no se pidió ninguno.
+
+⚠️ **Y una trampa que casi cuela**: la batería se lanzó como
+`python3 pruebas_completas.py | tail -30`, y el código de salida de una
+tubería es el del **último** comando. Salió 0 con la batería en rojo o en
+verde por igual. **El código de salida de una tubería no dice nada**: hay
+que leer la línea «TODO EN VERDE» de la salida.
 
 ## 1. DECISIÓN CERRADA: el `TR` de BEDCA NO significa «trazas»
 
