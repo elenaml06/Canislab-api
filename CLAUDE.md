@@ -229,7 +229,14 @@ detrás de un pendiente que no hace falta releer cada vez, en
 `PENDIENTE_DETALLE.md` (el bloque de veterinarios señala directamente a
 `VETERINARIOS.md`, que ya lo tenía completo) — los dos con resumen de una
 línea y puntero en su sitio, para no recargar lo que se lee al empezar
-cualquier sesión. `PATOLOGIAS.md` (8 de septiembre) es la lista de las 40 patologías una por
+cualquier sesión. `CERRADO.md` (8 de septiembre) dice **qué está cerrado y qué no**, y por qué.
+Cerrado no es «terminado»: es que cumple **las seis condiciones a la vez** (vive
+en el repo · tiene fuente · tiene ficha de permisos · tiene un test que falla si
+se rompe · está escrito como decisión con fecha · no deja preguntas sin dueño), y
+que reabrirlo solo vale por una de cuatro razones escritas. Cinco de seis no es
+cerrado, y ahí se dice cuál falta. Ábrelo antes de tocar un número que venga de
+una fuente.
+`PATOLOGIAS.md` (8 de septiembre) es la lista de las 46 patologías una por
 una: qué aplica el motor, la **cita literal** de la fuente con su conversión, el
 **techo duro** que nadie puede pasar y de dónde sale (legal, seguridad crónica o
 mínimo de FEDIAF), y **qué margen le queda al profesional**. Se escribió

@@ -6573,6 +6573,91 @@ for _p, _tipo, _nut, _esperado, _origen, _cita in _CIFRAS_CON_FUENTE:
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
+# BLOQUE 56 — LA FICHA DE PERMISOS, Y QUE SIGA DERIVANDOSE
+# ============================================================
+#
+# ⚠️ POR QUE EXISTE (8 septiembre). La ficha de permisos es la condicion 3 de las
+# seis del cierre -- «tiene ficha de permisos» -- y hasta hoy NO EXISTIA en
+# ninguna parte del repo. Por eso ninguna decision podia llamarse cerrada.
+#
+# Lo que este bloque vigila no es que la ficha exista: es que siga siendo
+# DERIVADA y no una copia. Si alguien empieza a escribir los rangos a mano,
+# tendremos una tercera tabla con los mismos numeros que patologias.json y
+# requerimientos_v2_final.json, que se desincronizara como ya paso con la tabla
+# de patologias del POST /menu. Se comprueba recalculando.
+print("=== BLOQUE 56: la ficha de permisos, derivada y no copiada ===")
+
+import permisos as _perm56
+
+# 1. Hay una ficha por cada cifra del motor, ni una mas ni una menos.
+_fichas56 = _perm56.todas()
+_cifras56 = {(k, t, n)
+             for k, v in _CRUDO55["patologias"].items()
+             for t in ("topes_por_1000kcal", "suelos_por_1000kcal")
+             for n in (v.get(t) or {})}
+_en_ficha56 = {(f["patologia"],
+                "topes_por_1000kcal" if f["tipo"] != "suelo_de_patologia" else "suelos_por_1000kcal",
+                f["nutriente"]) for f in _fichas56}
+if len(_fichas56) != len(_cifras56):
+    fallos.append(f"BLOQUE56: hay {len(_fichas56)} fichas de permisos y "
+                  f"{len(_cifras56)} cifras en patologias.json. Tienen que ser "
+                  f"la misma cantidad: la ficha se DERIVA de las cifras")
+
+# 2. El `defecto` de cada ficha es el valor real del JSON, no una copia vieja.
+for _f in _fichas56:
+    _bloque = ("suelos_por_1000kcal" if _f["tipo"] == "suelo_de_patologia"
+               else "topes_por_1000kcal")
+    _real = ((_CRUDO55["patologias"].get(_f["patologia"]) or {}).get(_bloque) or {}
+             ).get(_f["nutriente"], {}).get("valor")
+    if _real is None or abs(_real - _f["defecto"]) > 1e-9:
+        fallos.append(f"BLOQUE56: la ficha de {_f['patologia']}.{_f['nutriente']} "
+                      f"dice defecto={_f['defecto']} y el JSON dice {_real}. La "
+                      f"ficha ha dejado de derivarse")
+
+# 3. Un limite LEGAL no lo mueve nadie. Es la regla de DECISIONES.md D-13 y es
+#    la unica que no admite excepcion: un veterinario no puede autorizar un
+#    alimento con mas cobre del que permite el Reglamento (UE) 2017/1492.
+for _f in _fichas56:
+    if _f["tipo"] == "legal" and _f["modificable_por"]:
+        fallos.append(f"BLOQUE56: {_f['patologia']}.{_f['nutriente']} es un limite "
+                      f"LEGAL y la ficha dice que lo puede mover "
+                      f"{_f['modificable_por']}. Los (L) de FEDIAF no los mueve nadie")
+    if _f["tipo"] != "legal" and not _f["modificable_por"]:
+        fallos.append(f"BLOQUE56: {_f['patologia']}.{_f['nutriente']} no es legal y "
+                      f"la ficha no deja moverlo a nadie. Por D-13, un profesional "
+                      f"puede mover cualquier valor de patologia")
+
+# 4. La lista de los siete maximos LEGALES sigue cuadrando con lo que dicen las
+#    notas de auditoria de requerimientos_v2_final.json. Si FEDIAF cambia uno de
+#    (N) a (L) o al reves, esto lo dice en vez de quedarse vieja en silencio.
+_coh56 = _perm56._comprobar_coherencia()
+if _coh56["solo_en_la_lista"] or _coh56["solo_en_las_notas"]:
+    fallos.append(f"BLOQUE56: MAXIMO_ES_LEGAL ya no cuadra con las notas de "
+                  f"auditoria de requerimientos_v2_final.json. Solo en la lista: "
+                  f"{_coh56['solo_en_la_lista']}. Solo en las notas: "
+                  f"{_coh56['solo_en_las_notas']}")
+
+# 5. Y el rango se RECALCULA: el extremo de abajo de un techo tiene que ser el
+#    minimo de FEDIAF del nutriente, no un numero escrito a mano. Se comprueba
+#    volviendo a pedirlo a minimo_de(), que es de donde debe salir.
+from verificar import minimo_de as _min56, MAPA as _MAPA56
+_req56 = _perm56._req()
+for _f in _fichas56:
+    _nr = next((n for n, c in _MAPA56.items() if c == _f["nutriente"]), None)
+    _r = (_req56 or {}).get(_nr) or {}
+    _mn = _min56(_r, _nr, "Adulto") if _nr and _r else None
+    _desde = _f["rango_permitido"]["desde"]
+    if (_mn is None) != (_desde is None):
+        fallos.append(f"BLOQUE56: el rango de {_f['patologia']}.{_f['nutriente']} "
+                      f"empieza en {_desde} y el minimo de FEDIAF es {_mn}")
+    elif _mn is not None and abs(_mn - _desde) > 1e-9:
+        fallos.append(f"BLOQUE56: el rango de {_f['patologia']}.{_f['nutriente']} "
+                      f"empieza en {_desde} y deberia empezar en el minimo de "
+                      f"FEDIAF, {_mn}. La ficha ha dejado de derivarse")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")
