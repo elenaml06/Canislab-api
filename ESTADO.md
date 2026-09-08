@@ -120,7 +120,10 @@ nivel 2 tal como está.
 | La tabla de patologías está cargada **dos veces en memoria** | `motor.patologias` y el módulo suelto `patologias` | ✅ | — | — | ❌ **ningún test lo ve** | ❌ | **roto (latente)** |
 
 **Verificado hoy, no de memoria:**
-- `auditar_patologias.py` ejecutado: 40 patologías, 14 topes, 5 suelos, «todo cuadra».
+- `auditar_patologias.py` ejecutado: **46 patologías, 36 topes, 21 suelos**, «todo
+  cuadra» (8 de septiembre, tarde). Eran 40/14/5 esa misma mañana: la ronda de
+  verificación contra las fuentes añadió seis patologías y rellenó los factores
+  que las tablas pedían y no se aplicaban. Ver `PATOLOGIAS.md` §0-bis y §0-quater.
 - La rama del veterinario **no cambia ni un valor**: comparadas las 19 cifras
   y los 40 `formulable` entre `main` y la rama, **0 diferencias**. Solo añade
   el bloque `margen_del_profesional`. Su afirmación es cierta.
@@ -182,13 +185,13 @@ Detalle y medidas: `PREGUNTAS_ABIERTAS.md` P-10 a P-13, y
 |---|---|---|
 | **La batería NO sale en verde hoy sobre `main` sin tocar** | **roto (prueba mal diseñada)** | Ver §1.9. 1 fallo de 50 bloques, 1.232 s. Es el BLOQUE 4, y no es la nutrición. **Arreglado el 8 de septiembre** fijando la semilla |
 | ~~El tope de lactancia y las razas de FEDIAF~~ | **cerrado 8 sep** | `DECISIONES.md` D-11 |
-| **4 de los 19 límites de patología discrepan de SACN5** | **abierto** | cobre hepático (2,4 vs 1,25), sodio cardíaco (900 vs 625), obesidad grasa (30 vs 22,5, declarado). §8.1-bis |
-| **La cardiopatía genérica atribuye a ACVIM cifras que ACVIM no da** | **roto** | Verificado contra Keene 2019: el consenso es cualitativo en las 4 etapas, sin una sola cifra. Los 80-99/50-79/<50 mg/100 kcal son de Cavanaugh, Veterinary Practice News 2020. `PATOLOGIAS.md` §1.1 |
-| **El oxalato cálcico no ajusta nada** | **roto** | Su único tope es el máximo legal general de vitamina D. La Tabla 40-5 pide 8 factores; 5 son implementables hoy. `PATOLOGIAS.md` §1.2 |
-| **La artrosis mide el nutriente equivocado** | **roto** | Suelo sobre `epa_dha` cuando SACN5 Tabla 34-2 dice **EPA sola**. Es más laxo que la fuente. `PATOLOGIAS.md` §1.3 |
-| **14 patologías tienen factores de su propia fuente sin aplicar** | **no empezado** | Ninguno baja del mínimo de FEDIAF: no necesitan firma. Lista completa en `PATOLOGIAS.md` §5 |
-| **El sodio cardíaco está por encima del techo legal europeo** | **roto** | Reg. (UE) 2020/354: ≤2,6 g/kg = **739 mg/1000 kcal**. El motor: 900 · 900 · 790. §8.1-quater. Fuente guardada en `canislab-fuentes/Reglamento_UE_2020_354/` |
-| **Faltan dos techos de proteína que NO necesitan prescripción** | **no empezado** | Renal 62,5 y hepática 79,3 g/1000 kcal, del Reg. 2020/354. Los dos por encima del mínimo de FEDIAF (52,1) |
+| ~~4 de los 19 límites de patología discrepan de SACN5~~ | **resuelto 8 sep** | El sodio cardíaco baja a 739/739/**625**/480 y ya no discrepa. El cobre (2,4) queda triplemente acotado: Center 2026 lo da como tolerable, SACN5 pide 1,25 como objetivo y la ley pone el techo en 2,50. La grasa de obesidad (30 frente a los 22,5 de la fuente) sigue declarada y con su motivo medido: 22,5 no resuelve con el catálogo real |
+| ~~La cardiopatía genérica atribuye a ACVIM cifras que ACVIM no da~~ | **arreglado 8 sep** | Verificado contra Keene 2019: el consenso es cualitativo en las 4 etapas, sin una sola cifra. Los 80-99/50-79/<50 mg/100 kcal son de Cavanaugh, Veterinary Practice News 2020. `PATOLOGIAS.md` §1.1 |
+| ~~El oxalato cálcico no ajusta nada~~ | **arreglado 8 sep** | Y la afirmación era medio falsa: no aplicaba ningún tope NUMÉRICO, pero sí excluía alimentos altos en oxalato desde agosto. Ahora aplica sodio ≤750, fósforo ≤1500 y magnesio ≤375, y la lista de alimentos pasa de 4 entradas a 20 (Tabla 40-3, solo las marcadas «avoid»). `PATOLOGIAS.md` §1.2 |
+| ~~La artrosis mide el nutriente equivocado~~ | **arreglado 8 sep** | El suelo pasa de `epa_dha` a `epa`, con clave nueva en el `MAPA` y fila propia en la tabla de FEDIAF (patrón de Fibra/Taurina/L-carnitina). `PATOLOGIAS.md` §1.3 |
+| ~~14 patologías tienen factores de su propia fuente sin aplicar~~ | **hecho 8 sep** | Aplicados los de renal, obesidad, artrosis, enteropatía crónica, disfunción cognitiva, dermatosis, atopia, cistina y hepatopatía, y la estruvita pasa a formulable. Lo que queda, en `PATOLOGIAS.md` §5 |
+| ~~El sodio cardíaco está por encima del techo legal europeo~~ | **arreglado 8 sep** | Bajado a **739 · 739 · 625 · 480**. El 625 del estadio C es el único número que admiten las tres fuentes a la vez (techo de SACN5 Class Ia, dentro del rango de Cavanaugh para C, y bajo el techo legal). Fuente en `canislab-fuentes/Reglamento_UE_2020_354/` |
+| **Falta un techo de proteína que NO necesita prescripción** | **medio hecho 8 sep** | El renal (62,5, Reg. 2020/354 entrada 10) ya está aplicado. Queda el hepático (79,3, entrada 23), que no se aplicó porque `hepatopatia` sigue bloqueada por el cobre |
 | **3 de los 5 topes de seguridad crónica no pueden activarse nunca** | **roto (documentación)** | El máximo legal de FEDIAF es más estricto en vitamina D (×2) y selenio (×4). No deja a nadie desprotegido, pero la regla 2 del `CLAUDE.md` dice que protegen |
 | **El techo de yodo es el nivel al que el NRC documenta DAÑO** | **roto** | NRC 2006: a 1400 µg/1000 kcal hubo función tiroidea deprimida y alteraciones óseas en cachorros, y dice que **no se puede predecir un SUL**. El motor usa 1400 como techo. §7.2 |
 | Faltan 3 de los 20 objetivos legales europeos | **no empezado** | Convalecencia (proteína ≥71 g/1000 kcal), diarrea aguda y apoyo en estrés. §8.4-bis |

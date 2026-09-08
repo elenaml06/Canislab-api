@@ -479,7 +479,7 @@ es un límite legal. Todo lo específico de la patología está sin implementar.
 
 ### 2.6 · Cardiopatía · `cardiopatia`, `_b1`, `_b2`, `_c`, `_d`, `_a`
 
-- **Aplica:** sodio ≤ **900** (genérica y B2), **790** (C), **480** (D). B1 y A
+- **Aplica:** sodio ≤ **739** (genérica y B2), **625** (C), **480** (D). B1 y A
   sin tope, a propósito.
 - **Fuente real:** Cavanaugh SM, Veterinary Practice News, 6-jul-2020 (ver §1.1).
   ACVIM 2019 **no da cifras**. SACN5 Tabla 36-4 sí, pero con otra clasificación
@@ -630,9 +630,10 @@ las fuentes dan cifras formulables**:
 
 Dos cosas de aquí:
 
-1. **La estruvita de prevención es formulable y está bloqueada.** Sus tres
-   cifras están por encima del mínimo de FEDIAF. Y el Reglamento (entradas 17 y
-   18) coincide: magnesio ≤511 mg.
+1. ~~La estruvita de prevención es formulable y está bloqueada.~~ ✅ **Abierta el
+   8 de septiembre.** Sus tres cifras están por encima del mínimo de FEDIAF, y el
+   Reglamento (entradas 17 y 18) coincide: magnesio ≤511 mg, más laxo que los 250
+   de SACN5 que se aplican.
 2. **La cistina la atacamos por el nutriente equivocado.** Nuestro
    `nutriente_frontera` es `metionina_cistina`; la fuente restringe **proteína
    total y sodio**, y el Reglamento (entrada 14) también va por proteína. El

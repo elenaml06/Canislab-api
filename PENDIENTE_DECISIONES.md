@@ -189,11 +189,17 @@ las tiene que tomar una persona, no yo.
          sugiere ≥75 g. Es un cambio grande: afectaría a todos los seniors.
       2. **¿Distinguir el estadio ACVIM en cardiopatía (B2/C/D)? RESUELTO
          (6-7 de septiembre).** Se añadieron `cardiopatia_a/_b1/_b2/_c/_d`
-         (sodio 900/900/790/480 según estadio, ACVIM 2019 Keene et al.),
+         (sodio 739/739/625/480 según estadio -- ⚠️ CORREGIDO el 8 de
+         septiembre: eran 900/900/790/480 y se atribuían a «ACVIM 2019
+         Keene et al.», pero al abrir el consenso resultó que NO da ninguna
+         cifra de sodio: es cualitativo en las cuatro etapas. Las cifras son
+         de Cavanaugh, Veterinary Practice News 2020, y tres de las cuatro
+         superaban el techo legal europeo de 739 mg. Ver `PATOLOGIAS.md`
+         §1.1 y §1.4),
          cruzadas además contra SACN5 cap.36 Tabla 36-4 (confirma el patrón,
          no cambia los números -- framework ISACHC distinto del ACVIM). La
          app ya pregunta el estadio (familia "cardiopatia" en
-         `VETERINARIOS.md` §12-quinquies). La genérica `cardiopatia` (900,
+         `VETERINARIOS.md` §12-quinquies). La genérica `cardiopatia` (739,
          sin estadio) se queda para quien no lo sepa.
       3. **Cachorro con pancreatitis: ¿solo aviso, o bloquear?** Hoy avisa
          y genera el menú sin bajar la grasa, porque el mínimo de grasa que

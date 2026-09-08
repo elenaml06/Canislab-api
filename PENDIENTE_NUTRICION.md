@@ -955,7 +955,24 @@ combinaciones de patologías. De los sesenta cruces, **el único que no da menú
 en ninguno de los cinco tamaños** (3, 12, 30, 55 y 20 kg) es
 `renal + pancreatitis`.
 
-**Es coherente con los topes**, no un fallo del solver: la combinación deja
+⚠️ **RESUELTO EL 8 DE SEPTIEMBRE DE 2026, y no como se esperaba.** Lo que
+sigue debajo describe el estado hasta esa fecha; se deja porque el diagnóstico
+era correcto y el desenlace enseña algo.
+
+**No había incompatibilidad clínica entre las dos patologías: había un número
+que no era el de la fuente que manda.** La grasa de pancreatitis estaba en 20
+g/1000 kcal (Merck) cuando por la regla del propio proyecto —FEDIAF, y donde
+FEDIAF no llega, SACN5— debía ser **37,5** (Tabla 67-3). Con 37,5, `renal +
+pancreatitis` **sale verde**: peldaño 5, grasa 37,5 y fósforo 1198,8. Ver
+`PATOLOGIAS.md` §1.5 y `PREGUNTAS_ABIERTAS.md` P-01, ya cerrada.
+
+**Y el mensaje también se arregló**, por otro camino: desde ese día el motor
+nombra los dos límites que chocan con su fuente en vez de pedir que se quite
+una restricción (BLOQUE 52).
+
+---
+
+**Era coherente con los topes**, no un fallo del solver: la combinación dejaba
 fósforo ≤ 1200 mg/1000 kcal (con el mínimo de FEDIAF en 1160 — un 3,4 % de
 sitio), grasa ≤ 20 g/1000 kcal y proteína ≤ 75 g/1000 kcal **a la vez**, y
 con esa ventana no hay ración BARF que cuadre. La escalera de relajación se

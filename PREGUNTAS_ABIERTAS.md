@@ -29,13 +29,16 @@ alguien de fuera, se apunta aquí con un puntero, no se copia.
 
 ## Bloqueantes
 
-### P-01 · La grasa en pancreatitis: ¿20 o el rango de SACN5?
+### ~~P-01 · La grasa en pancreatitis: ¿20 o el rango de SACN5?~~ ✅ CERRADA
 
 | | |
 |---|---|
-| **Dueño** | **El nutricionista** |
-| **Bloquea** | Sí: es lo que deja sin menú a `renal` + `pancreatitis`, y es el caso de manual de «constante que debería ser rango» |
-| **Abierta desde** | 8 de septiembre de 2026 (el hecho; la pregunta de fondo, del 25 de agosto) |
+| **Resuelta** | **8 de septiembre de 2026**, aplicando la regla de fuentes del propio proyecto |
+| **Decisión** | **37,5 g/1000 kcal** (SACN5 Tabla 67-3, «Fat ≤15% for non-obese and non-hypertriglyceridemic dogs»). Merck (20) queda como referencia más estricta, no como el valor aplicado |
+| **Por qué** | Manda FEDIAF; donde FEDIAF no llega, SACN5. Ni FEDIAF ni el Reglamento (UE) 2020/354 cubren la pancreatitis — la entrada 19 del Reglamento es la insuficiencia pancreática **exocrina**, que es otra cosa, y no pone cifra de grasa. Luego manda SACN5, y Merck es fuente terciaria |
+| **Y resolvió el caso** | `renal` + `pancreatitis` vuelve a dar menú: verde, peldaño 5, grasa 37,5 y fósforo 1198,8. No había incompatibilidad clínica entre las dos patologías; había un número que no era el de la fuente que manda |
+| **Hallazgo al medirlo** | Los **dos** topes de la pancreatitis son incompatibles entre sí en peldaño estricto, y ya lo eran con los 20: con proteína ≤75 hace falta grasa ≈78, y con grasa ≤37,5 hace falta proteína ≈148. Son 600 de las 1000 kcal entre las dos y las otras 400 tendrían que venir de carbohidrato. Lo salva el último peldaño de la escalera, que suelta el techo del 10 % de verdura — y que está puesto ahí precisamente por un caso de pancreatitis |
+| **Dónde** | `PATOLOGIAS.md` §1.5, `CERRADO.md` |
 
 **Lo que sabemos, medido.** Hoy el tope es **20 g/1000 kcal**, y sale del
 Merck Veterinary Manual, literal: *«feeding a low-fat diet (ie, less than 20 g
