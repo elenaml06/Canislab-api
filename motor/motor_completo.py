@@ -214,6 +214,18 @@ def limites_de_patologias_con_procedencia(patologias, etapa="Adulto"):
             continue          # una patología aprieta más: manda ella
         fuera = [x for x in fuera if x not in _mismo]
         fuera.append(_r)
+
+    # Y los suelos condicionales, por lo mismo: el que aprieta la proteína de
+    # una lactante no es ninguna patología, y decir que sí manda a mirar la
+    # fila equivocada.
+    from condicionales import con_procedencia as _cond_procedencia
+    for _c in _cond_procedencia(etapa):
+        _mismo_s = [x for x in fuera
+                    if x["tipo"] == "suelo" and x["clave"] == _c["clave"]]
+        if any(x["valor"] >= _c["valor"] for x in _mismo_s):
+            continue          # una patología aprieta más: manda ella
+        fuera = [x for x in fuera if x not in _mismo_s]
+        fuera.append(_c)
     return fuera
 
 
@@ -898,6 +910,24 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         _actual_r = topes_patologia.get(_clave_r)
         topes_patologia[_clave_r] = (_valor_r if _actual_r is None
                                      else min(_actual_r, _valor_r))
+
+    # ⚠️ AÑADIDO (8 septiembre, noche) — LOS SUELOS CONDICIONALES. Ver
+    # `motor/condicionales.py`: requisitos que no son un número fijo porque
+    # dependen de la propia dieta. El primero, y el que más pesa: la proteína de
+    # GESTACIÓN y LACTANCIA, que FEDIAF calcula suponiendo que la dieta lleva
+    # hidratos -- y una ración BARF no lleva. La fuente dice «may be double», y
+    # NRC trae el experimento: con la dieta sin hidratos y la proteína baja, la
+    # mortalidad perinatal subió un 75 %.
+    #
+    # Van al MISMO cajón que los suelos de patología (`minimos_reforzados` los
+    # recoge más abajo) y con el mismo `max()`, así que a partir de aquí el
+    # solver, `_tope_patologia_roto` y el diagnóstico de choques los tratan
+    # igual, sin ninguna rama nueva.
+    from condicionales import suelos_de_la_etapa as _suelos_condicionales
+    for _clave_c2, _valor_c2 in _suelos_condicionales(etapa).items():
+        _actual_c2 = suelos_patologia.get(_clave_c2)
+        suelos_patologia[_clave_c2] = (_valor_c2 if _actual_c2 is None
+                                       else max(_actual_c2, _valor_c2))
 
     # ⚠️ `soltar_limites_patologia` NO ES UNA PUERTA TRASERA (8 septiembre).
     #

@@ -374,7 +374,37 @@ pasaría nuestro semáforo (mínimo 62,5) y estaría a la mitad de lo que FEDIAF
 que hace falta sin hidratos. Y es el caso donde equivocarse cuesta más caro:
 hipoglucemia de la madre y mortalidad neonatal.
 
-**Es la más urgente de todo este documento.**
+**Era la más urgente de todo este documento. ✅ APLICADA la misma noche.**
+
+#### Y NRC trae el experimento, con las cifras
+
+Buscando de dónde sale la frase de FEDIAF apareció el estudio, en NRC 2006
+cap. 5, «Effects on Reproductive Performance»:
+
+> *«Kienzle et al. (1985) fed carbohydrate-free diets with different
+> concentrations of protein to pregnant and lactating bitches. In bitches fed the
+> **high-protein, carbohydrate-free diet (42 percent of calories from protein)**,
+> litter size, birth weight, and puppy survival rate were **comparable** to those
+> when bitches were fed a carbohydrate-containing control diet. In contrast, in
+> bitches fed the **low-protein, carbohydrate-free diet (20 percent of calories
+> from protein)**, a reduction in **birth weight (30 to 40 percent)** and an
+> increase in **perinatal mortality rate (75 percent)** were observed.»*
+
+**No es una recomendación teórica: es mortalidad neonatal medida.**
+
+#### Qué se ha aplicado
+
+**Suelo de proteína de 125 g/1000 kcal** en gestante, gestante tardía y
+lactante. Vive en `requisitos_condicionales.json` con
+`motor/condicionales.py` de cargador, y lo vigila el **BLOQUE 58**.
+
+El número es la lectura **más estricta** de las dos que dan las fuentes: el
+«doble» de FEDIAF sobre el mínimo de reproducción (62,5) son 125; los «42 % de
+las kcal» de Kienzle son 105 g a 4 kcal/g o 120 a 3,5, los dos por debajo.
+
+**MEDIDO antes de aplicarlo**, los nueve casos (5, 22 y 40 kg × las tres
+etapas): **los nueve en el peldaño 0 y en verde**, con la proteína real entre
+125,1 y 152,6. **No cuesta ni un peldaño.**
 
 ### F-14 · Calcio alto → hay que SUBIR el zinc y el cobre
 
@@ -486,3 +516,169 @@ actualiza la nota (f). **No arrastramos nada de una edición vieja.**
 **ninguno** de los que nombra está en nuestro catálogo), §4 (alimento
 complementario), §5 y §6 (métodos analíticos y protocolos de prueba de
 digestibilidad). Ninguna contiene requisitos de nutrientes.
+
+
+---
+
+## Lo que salió de leer NRC sobre aminoácidos, y una afirmación nuestra que ya no es cierta
+
+### N-3 · El antagonismo lisina-arginina: el techo de lisina no es toxicidad, es antagonismo
+
+NRC 2006, capítulo de aminoácidos, «Amino Acid Imbalances and Antagonisms»:
+
+> *«**A lysine-arginine antagonism has been reported in growing dogs by Czarnecki
+> et al. (1985)** (i.e., 40 g lysine·kg⁻¹ added to a basal diet somewhat limiting
+> in arginine caused a decrease in weight gain **that was largely corrected by the
+> addition of 4 g arginine·kg⁻¹ diet**).»*
+
+Y en la misma página, otros dos que también nos tocan:
+
+> *«…when 4 g lysine·kg⁻¹ was added to a low-protein basal diet, apparently
+> limiting in sulfur amino acids, **weight gain was depressed 28 percent and was
+> restored by the further addition of 3 g DL-methionine**.»*
+> *«…in puppies the addition of 2.2 g cystine·kg⁻¹ to a diet severely limiting in
+> methionine caused a decrease in weight gain and **necrotic skin lesions on the
+> pads of the front feet**, which were corrected rapidly when methionine was
+> added.»*
+
+**Czarnecki et al. 1985 es EL MISMO estudio que FEDIAF cita para el máximo de
+lisina** (*«excess dietary lysine (4.91 % DM) decreases weight gain in puppies but
+not 2.91 % DM»*). O sea que **el techo de lisina no es un límite de toxicidad: es
+un límite de antagonismo, y solo muerde cuando la arginina va justa.** Eso no
+estaba escrito en ningún sitio nuestro, y cambia cómo hay que leer la excepción.
+
+### ⛔ N-4 · La justificación escrita de la excepción de la lisina ya no es cierta
+
+`CLAUDE.md` dice, y lo repite `PARA_EL_NUTRICIONISTA.md`:
+
+> *«el techo de lisina (7,00 g/1000 kcal, solo en crecimiento) no se aplica —
+> **0 de 15 menús de cachorro caben debajo**»*
+
+**MEDIDO hoy, 15 menús de cachorro (7 de CachorroJoven y 8 de
+CachorroCrecimiento, de 2 a 60 kg): 13 de 15 caben debajo.** Solo dos se pasan
+(8,61 y 8,02), y la cifra **baila mucho entre sorteos** — el mismo perro da 5,12
+en un intento y 10,23 en otro, porque depende de qué alimentos salgan.
+
+**La excepción sigue estando bien puesta** (hay menús que se pasan, y aplicar el
+techo dejaría a esos sin menú). **Lo que ya no vale es el motivo escrito.**
+
+### ⛔ N-5 · Y no podemos afirmar ninguna de las dos cosas, porque no vemos la lisina
+
+En los menús de cachorro, **entre el 17 y el 41 % de la proteína del plato viene
+de alimentos sin dato de lisina**. Y el culpable es casi siempre **uno solo**:
+`V-INTEGRA Cachorro`, un suplemento que declara proteína y no trae aminograma.
+(De las 66 fichas sin lisina, **ninguna es carne, hueso, víscera, hígado ni
+pescado**: son 34 verduras, 10 extras y 22 suplementos.)
+
+Contar un hueco como 0 es el **lado seguro para un mínimo** —se exige de más— pero
+es el **lado malo para un techo**: el menú parece cumplir porque no hemos mirado.
+Así que el «13 de 15 caben» de arriba es, él mismo, poco de fiar.
+
+**Y el BLOQUE 27 no lo caza**, porque su guardia de «la proteína sin aminograma no
+pasa del 5 %» se mide sobre **un único menú de ADULTO de 25 kg**. Nunca ha mirado
+un cachorro — que es justo donde el hueco es del 17-41 % y donde los aminoácidos
+más aprietan.
+
+**El arreglo es un DATO, no código**: el aminograma de `V-INTEGRA Cachorro` (y
+probablemente el de las otras cuatro variantes de V-INTEGRA). Va a
+`DATOS_QUE_FALTAN.md`. Y el BLOQUE 27 tiene que medir su guardia también en
+crecimiento.
+
+
+---
+
+# ⛔ AVISO SOBRE LAS MEDIDAS DE ESTE DOCUMENTO (8 de septiembre, noche)
+
+**Varias de las medidas de arriba están hechas sobre menús que la app nunca
+produciría, y hay que rehacerlas.**
+
+## El fallo
+
+`motor_completo.resolver()` aplica las proporciones de BARF **solo si se las
+pasas**:
+
+```python
+if margenes_categoria:        # línea 1501
+```
+
+Sin ese argumento **no hay ni suelo ni techo de categoría**, y el solver es libre
+de montar cualquier cosa que cumpla los números. Lo que monta, medido:
+
+```
+CachorroCrecimiento 22 kg:  Dorada 503 g · ALCACHOFA 2.566 g · Carcasa 165 g
+CachorroJoven 10 kg:        Pollo 259 g · RÚCULA 1.089 g
+```
+
+**2,5 kg de alcachofa al día**, el 79 % del plato en verdura, con el tope real en
+el 10 %. Eso no es un menú: es una solución matemática del problema sin la forma
+de una ración.
+
+## Qué medidas se salvan y cuáles no
+
+**Se salvan** — usaron `_escalera_de_relajacion()`, que sí pasa las proporciones,
+y son justo las que han decidido algo:
+
+| Medida | Dónde |
+|---|---|
+| El techo de fósforo cabe en el peldaño 0 (3, 10, 22, 40 kg) | D-15 |
+| La proteína de reproducción a 125 cabe en los nueve casos | F-13 |
+| El omega-3 del cáncer: 11,5 sí, 12,0 no | 30-5 |
+| El toy de 1,5 kg: 12 sorteos sin menú de 30 | §14.4 |
+
+**No valen, y hay que rehacerlas:**
+
+- La arginina de los menús reales (decía 3,8-5,1 contra un requisito de 1,85) → **F-1**
+- El ratio vitamina E : AGPI (decía 1,98 en el peor caso) → **N-2**
+- La lisina de los cachorros (decía 13 de 15 bajo el techo) → **N-4**
+- La proteína de gestación y lactancia de la PRIMERA medida (123,9 y 124,2) →
+  **F-13**. La segunda, la que decidió el número, sí es buena.
+
+## Lo que hay que aprender
+
+Es el mismo error que el del barrido cortado y el del araquidónico en gramos:
+**una medida mal hecha da un número, y un número parece un hecho.** Las tres veces
+lo que faltó fue comprobar que la herramienta estaba midiendo lo que yo creía.
+
+A partir de aquí, **ninguna medida de este documento vale sin decir con qué
+proporciones se hizo**.
+
+
+---
+
+## NRC 2006, minerales: lo que dice del fitato y por qué nos toca poco
+
+### N-6 · El problema del fitato con el zinc es de dietas VEGETALES, y una ración BARF no lo es
+
+> *«**Most animal products and seafood are relatively free of constituents that
+> interfere with Zn absorption**, and, as mentioned previously, **amino acids
+> derived from meat digestion may actually improve the absorption of Zn**.
+> Vegetable products are more likely to contain chemicals that interfere with Zn
+> absorption, the most notable of these being **phytate**; phytate is present in
+> many plant sources including cereals such as corn, wheat, and rice and oilseed
+> meals such as **soy, peanut, and sesame**, which may contain 1.5 percent or more
+> phytate. Dietary phytate has long been known to reduce the absorption of Zn, and
+> **this effect is exacerbated by high concentrations of dietary Ca**.»*
+
+Es la contrapartida buena de F-14 y F-16: FEDIAF avisa de que con el calcio alto
+hay que subir el zinc, y NRC explica **por qué** —el fitato— y añade que **en una
+dieta de carne ese mecanismo apenas existe**. Una ración BARF es carne, hueso y
+víscera; no lleva cereal ni harina de oleaginosa.
+
+**Comprobado en el catálogo**, porque la fuente nombra el sésamo: los **aceites**
+de sésamo, girasol, cacahuete y linaza traen **cero calcio y cero zinc** —el
+fitato se queda en la torta, no pasa al aceite—. Las que sí podrían aportarlo son
+las tres **semillas** (sésamo 975 mg de calcio y 7,75 de zinc, lino, pipa de
+girasol), y van como «Extras» en cantidades pequeñas.
+
+**Conclusión: no es una alarma, es un matiz que había que comprobar en vez de
+suponer.** Queda escrito para que la próxima vez que alguien lea F-14 no se
+asuste de más.
+
+### N-7 · Otras dos que conviene tener anotadas
+
+> *«Ca availability **decreases during the growth period and also with increasing
+> dietary Ca concentration**»* — o sea que el calcio alto se absorbe peor, lo que
+> juega a favor del margen que ya tenemos.
+> *«…with **high dietary Ca significantly reducing absorption of P**»* — el calcio
+> alto baja la absorción del fósforo, que es otro matiz a favor en la discusión
+> del techo de fósforo (F-7).

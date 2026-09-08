@@ -6966,6 +6966,125 @@ for _pat57, _esperado57 in (("renal", 1200.0), ("artrosis", 1750.0)):
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
+# BLOQUE 58 — LA PROTEINA DE GESTACION Y LACTANCIA
+# ============================================================
+#
+# POR QUE EXISTE (8 septiembre, noche)
+#
+# Es el requisito mas serio que aparecio al leer las fuentes ENTERAS en vez de
+# sus tablas, y no estaba en ningun sitio del motor.
+#
+# FEDIAF 3.3.1: «The recommendation for protein ASSUMES THE DIET CONTAINS SOME
+# CARBOHYDRATE to decrease the risk of hypoglycaemia in the bitch and neonatal
+# mortality. If carbohydrate is absent or at a very low level, the protein
+# requirement is much higher, AND MAY BE DOUBLE».
+#
+# Y NRC 2006 trae el experimento: con dieta sin hidratos y proteina al 20 % de
+# las kcal, el peso al nacer bajo un 30-40 % y la MORTALIDAD PERINATAL SUBIO UN
+# 75 %. Con proteina al 42 % de las kcal, igual que el control con hidratos.
+#
+# Una racion BARF no lleva cereal: es «carbohydrate absent» por construccion.
+#
+# ANTES DE HOY, un menu de gestacion con 70 g de proteina PASABA EL SEMAFORO
+# (minimo 62,5). Los menus reales salian a 119-124, o sea que cumpliamos por
+# casualidad y por los pelos.
+print("\n=== BLOQUE 58: la proteina de gestacion y lactancia ===")
+
+from condicionales import suelos_de_la_etapa as _cond58, REGLAS as _REGLAS58
+
+_ETAPAS_REPRO_58 = ("Gestante", "GestanteTardia", "Lactante")
+_ESPERADO_58 = 125.0
+
+# 1. La cifra, contra su fuente: es el DOBLE del minimo de reproduccion.
+_min_repro_58 = _min56(req.get("Proteína_total"), "Proteína_total", "CachorroJoven")
+if _min_repro_58 is None or abs(_min_repro_58 * 2 - _ESPERADO_58) > 0.01:
+    fallos.append(f"BLOQUE58: el suelo condicional son {_ESPERADO_58} y tendria que ser el DOBLE "
+                  f"del minimo de reproduccion de FEDIAF ({_min_repro_58}), que es lo que dice "
+                  f"«may be double». Uno de los dos esta mal")
+for _r58 in _REGLAS58.values():
+    if not _r58.get("fuente") or not _r58.get("por_que"):
+        fallos.append(f"BLOQUE58: la regla {_r58.get('nombre')} no trae fuente o no trae por_que")
+
+# 2. Aplica en las tres etapas de reproduccion y EN NINGUNA MAS.
+for _et58 in _ETAPAS_REPRO_58:
+    if abs((_cond58(_et58) or {}).get("proteina", 0) - _ESPERADO_58) > 1e-9:
+        fallos.append(f"BLOQUE58: en {_et58} el suelo de proteina no son {_ESPERADO_58}")
+for _et58 in ("Adulto", "Senior", "CachorroJoven", "CachorroCrecimiento"):
+    if _cond58(_et58):
+        fallos.append(f"BLOQUE58: la etapa {_et58} ha ganado un suelo de reproduccion. La frase de "
+                      f"FEDIAF es «Total protein (Reproduction)»: fuera de ahi no aplica")
+
+# 3. Que el SOLVER lo aplique de verdad, y que el menu salga.
+import main as _api58
+for _et58, _peso58 in (("Gestante", 22), ("Lactante", 5), ("Lactante", 40)):
+    _der58 = 70 * _peso58 ** 0.75 * 1.8
+    _ok58, _g58 = False, None
+    _t0_58 = time.time()
+    while time.time() - _t0_58 < 30:
+        _ok58, _g58 = resolver(_der58, _et58, al, req, _peso58, dosis_maxima_fabricante)
+        if _ok58:
+            break
+    if not _ok58:
+        fallos.append(f"BLOQUE58: {_et58} de {_peso58} kg no obtiene menu. Si el suelo de "
+                      f"proteina lo ha dejado sin comida, no cabe y hay que decirlo, no aplicarlo")
+        continue
+    _kcal58 = sum(al[_n]["energia"] * _g / 100.0 for _n, _g in _g58.items())
+    _p58 = sum((valor_nutriente(al[_n]["nutrientes"], "proteina") or 0) * _g / 100.0
+               for _n, _g in _g58.items()) / _kcal58 * 1000.0
+    if _p58 < _ESPERADO_58 * 0.995:
+        fallos.append(f"BLOQUE58: el menu de {_et58} trae {_p58:.1f} g de proteina/1000 kcal y el "
+                      f"suelo son {_ESPERADO_58}. El solver NO lo esta aplicando")
+    if _api58._tope_patologia_roto(_g58, al, [], _et58, req=req):
+        fallos.append(f"BLOQUE58: el menu de {_et58} que da el solver no pasa su propio filtro "
+                      f"final: {_api58._tope_patologia_roto(_g58, al, [], _et58, req=req)}")
+
+# 4. PROBADO CON EL FALLO PUESTO: se le quita carne a un menu de lactancia hasta
+#    bajar la proteina, y el filtro final TIENE que cazarlo. Un test que pasa con
+#    el fallo puesto no sirve.
+if _ok58 and _g58:
+    # ⚠️ CÓMO SE INYECTA EL FALLO, Y POR QUÉ NO VALE LO OBVIO. El primer intento
+    # de este test quitaba el 60 % de la carne -- y NO servía: quitar carne baja
+    # también las kcal del plato, así que la proteína POR 1000 KCAL se quedaba
+    # casi igual (129,2 contra un suelo de 125). El suelo es una CONCENTRACIÓN,
+    # no una cantidad.
+    #
+    # Para bajar una concentración hay que subir el denominador: se le añade
+    # aceite, que son kcal sin proteína. Es además lo que pasaría de verdad --
+    # un menú de lactancia demasiado graso y poco proteico es exactamente el
+    # caso que la fuente describe.
+    _flaco = dict(_g58)
+    _aceite = next((_n for _n, _a in al.items()
+                    if _a.get("categoria") == "Extras"
+                    and (_a["nutrientes"].get("proteina") or 0) < 1
+                    and (_a.get("energia") or 0) > 800), None)
+    if not _aceite:
+        fallos.append("BLOQUE58: no hay ningún aceite puro en el catálogo para poder inyectar "
+                      "el fallo. Sin poder romperlo, este test no demuestra nada")
+    else:
+        _flaco[_aceite] = _flaco.get(_aceite, 0) + 40.0
+    _rotos58 = _api58._tope_patologia_roto(_flaco, al, [], "Lactante", req=req)
+    if not any("proteina" in _x for _x in _rotos58):
+        _kc = sum(al[_n]["energia"] * _g / 100.0 for _n, _g in _flaco.items())
+        _pp = sum((valor_nutriente(al[_n]["nutrientes"], "proteina") or 0) * _g / 100.0
+                  for _n, _g in _flaco.items()) / _kc * 1000.0 if _kc else 0
+        fallos.append(f"BLOQUE58: se le anaden 40 g de aceite a un menu de lactancia -- la "
+                      f"proteina baja a {_pp:.1f} g/1000 kcal contra un suelo de {_ESPERADO_58} "
+                      f"-- y el filtro final no dice nada. Entonces no lo esta comprobando")
+
+# 5. Y el diagnostico tiene que saber NOMBRARLO: un limite que aprieta y no se
+#    puede nombrar es una pared, no un limite.
+from motor_completo import limites_de_patologias_con_procedencia as _proc58
+_nombres58 = [x for x in _proc58([], "Lactante")
+              if x["tipo"] == "suelo" and x["clave"] == "proteina"]
+if not _nombres58:
+    fallos.append("BLOQUE58: `limites_de_patologias_con_procedencia` no nombra el suelo de "
+                  "proteina de la lactancia, asi que quien lo choque no sabra contra que")
+elif not _nombres58[0].get("fuente"):
+    fallos.append("BLOQUE58: el suelo de proteina de la lactancia se nombra sin fuente")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")

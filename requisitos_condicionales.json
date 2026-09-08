@@ -1,0 +1,19 @@
+{
+  "_meta": {
+    "que_es": "Requisitos que NO son un numero fijo: dependen de otra cosa de la propia dieta. Son los que un barrido de tablas no encuentra, porque no tienen forma de fila.",
+    "unidad": "por 1000 kcal de energia metabolizable, igual que requerimientos_v2_final.json",
+    "por_que_existe_este_fichero": "Porque el 8 de septiembre, al leer las fuentes ENTERAS en vez de sus tablas, aparecieron varios requisitos escritos como «el requisito de X depende del contenido de Y». Ninguno cabe en requerimientos_v2_final.json, que es una tabla de numeros fijos por etapa, ni en patologias.json, que es por enfermedad. Ver HALLAZGOS_LECTURA_FUENTES.md.",
+    "verificado": "8 de septiembre de 2026, leyendo FEDIAF 2025 seccion 3.3.1 y NRC 2006 capitulo 5"
+  },
+  "reglas": {
+    "proteina_en_reproduccion_sin_hidratos": {
+      "nombre": "La proteina de gestacion y lactancia, en una dieta sin hidratos",
+      "nutriente": "proteina",
+      "tipo": "suelo",
+      "valor": 125.0,
+      "aplica_a_etapas": ["Gestante", "GestanteTardia", "Lactante"],
+      "fuente": "FEDIAF 2025, seccion 3.3.1 «Total protein (Reproduction)»; y NRC 2006 cap.5, «Effects on Reproductive Performance», que trae el experimento (Kienzle E et al. 1985, Romsos DR et al. 1981). Verificado literal 8-sep-2026",
+      "por_que": "⚠️ ES EL REQUISITO MAS SERIO QUE HA APARECIDO AL LEER EL TEXTO EN VEZ DE LAS TABLAS, y no estaba en ningun sitio del motor. || FEDIAF, literal: «The recommendation for protein assumes the diet contains SOME CARBOHYDRATE to decrease the risk of hypoglycaemia in the bitch and neonatal mortality. If carbohydrate is absent or at a very low level, the protein requirement is much higher, AND MAY BE DOUBLE». || Y NRC 2006 trae el experimento que hay detras, con las cifras: «In bitches fed the high-protein, carbohydrate-free diet (42 percent of calories from protein), litter size, birth weight, and puppy survival rate were comparable to those when bitches were fed a carbohydrate-containing control diet. In contrast, in bitches fed the low-protein, carbohydrate-free diet (20 percent of calories from protein), a reduction in birth weight (30 to 40 percent) and an increase in PERINATAL MORTALITY RATE (75 PERCENT) were observed». No es una recomendacion teorica: es mortalidad neonatal medida. || POR QUE NOS APLICA A NOSOTROS Y NO A UN PIENSO: una racion BARF es carne, hueso, viscera, higado y como mucho un 10 % de verdura. NO LLEVA CEREAL. Es exactamente «carbohydrate absent or at a very low level», por construccion -- no hace falta medirlo, y de hecho el catalogo no tiene clave de hidratos. || EL NUMERO: se toma la lectura MAS ESTRICTA de las dos que dan las fuentes. El «doble» de FEDIAF sobre el minimo de reproduccion (62,5) son 125. Los «42 % de las kcal» de Kienzle son 105 g a 4 kcal/g o 120 a 3,5; los dos por debajo de 125. Se aplica 125 porque cabe: MEDIDO en los nueve casos (5, 22 y 40 kg x gestante, gestante tardia y lactante), los nueve salen en el PELDANO 0 y en VERDE, con la proteina real entre 125,1 y 152,6. O sea que no cuesta ni un peldano. || Y ESTO ES LO QUE IMPORTA: antes de hoy, un menu de gestacion que hubiera salido con 70 g de proteina PASABA EL SEMAFORO, porque el minimo era 62,5. Habria estado a la mitad de lo que la fuente pide para una dieta sin hidratos, en el unico caso donde equivocarse se cobra en cachorros muertos. Los menus reales salian a 119-124, o sea que cumpliamos por casualidad y por los pelos, no por regla."
+    }
+  }
+}

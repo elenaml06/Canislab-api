@@ -345,11 +345,26 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto",
             total += valor_nutriente(al.get(n, {}).get("nutrientes", {}), clave) / 100.0 * g
         return total / kcal * 1000.0
 
+    # ⚠️ Y LOS SUELOS CONDICIONALES (8 septiembre, noche), con el mismo `max()`
+    # que usa el solver: la proteína de gestación y lactancia, que FEDIAF calcula
+    # suponiendo hidratos que una ración BARF no lleva. Si el solver lo exige y
+    # este filtro no lo mirara, el hueco sería justo el de la regla 2 -- un menú
+    # construido bien que nadie vuelve a comprobar.
+    from condicionales import suelos_de_la_etapa as _suelos_cond
+    _del_libro_suelo = set()
+    for _clave_c, _valor_c in _suelos_cond(etapa).items():
+        _actual_c = suelos.get(_clave_c)
+        if _actual_c is None or _valor_c > _actual_c:
+            suelos[_clave_c] = _valor_c
+            _del_libro_suelo.add(_clave_c)
+
     MARGEN_SUELO = 0.995
     for clave, suelo in suelos.items():
         v = _por_1000_min(clave)
         if v < suelo * MARGEN_SUELO:
-            rotos.append(f"{clave} {v:.1f} (suelo {suelo:.1f} por patología)")
+            _de_s = ("exigido por la etapa, no por una patología"
+                     if clave in _del_libro_suelo else "por patología")
+            rotos.append(f"{clave} {v:.1f} (suelo {suelo:.1f} {_de_s})")
     if pct is not None:
         grasa_g = sum((_valor_num(al.get(n, {}).get("nutrientes", {}).get("grasa")) or 0.0) / 100.0 * g
                       for n, g in gramos.items())

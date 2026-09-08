@@ -99,6 +99,7 @@ jubilado — que desde fuera se parecen mucho.
 | `constructor.py` | Proporciones BARF de partida y `valor_nutriente()` (las claves derivadas, como `epa_dha`) |
 | `exclusiones.py` | Alergias por palabras y familias de especie. Excluir «pollo» quita también «gallina» |
 | `accesibles.py`, `modos.py` | Qué alimentos entran según el modo (automático / personalizar / aprovechar) |
+| `condicionales.py` | Lee `requisitos_condicionales.json`: **los requisitos que NO son un número fijo porque dependen de la propia dieta**. El primero y el que más pesa: la proteína de **gestación y lactancia**, que FEDIAF calcula suponiendo que la dieta lleva hidratos — y una ración BARF no lleva. NRC trae el experimento: con la dieta sin hidratos y la proteína baja, la **mortalidad perinatal subió un 75 %**. Ninguno de estos tiene forma de fila, así que ninguno lo encontró el trabajo de transcribir tablas |
 | `recomendaciones.py` | Lee `recomendaciones_adulto.json`: **los dos techos que SACN5 recomienda a un perro adulto SANO** (fósforo y sodio). Es la tercera clase de límite del motor, y no existía hasta el 8 de septiembre: los de FEDIAF valen para cualquier perro, los de patología solo si está marcada, y estos valen para el perro que **no tiene nada**. Se combinan con `min()` como los de patología: solo pueden apretar |
 | `patologias.py` | Lee `patologias.json` y lo pasa a la forma que espera el solver. **Aquí no hay ni una cifra**: hasta el 28 de agosto la tabla eran 200 líneas de `dict` dentro de `motor_completo.py`, mezclando números, motivo clínico, textos y lógica de crecimiento. Se sacó por lo mismo que el catálogo y la tabla de FEDIAF: un número que decide si un menú se entrega tiene que poder auditarse, y no se audita lo que está enterrado entre `if`s |
 | `catalogo_menus.py` | Carga los menús precalculados de la vista previa. Los datos están en `catalogo_menus.json`, en la raíz con los demás: aquí solo quedan 55 líneas de código |
@@ -328,11 +329,13 @@ coinciden 153 de 156 celdas. Y BEDCA distingue «midieron 0» (`value_type`
 al volcarla a un CSV y que convierte huecos en ceros mudos. Detalle y las
 medidas: `PENDIENTE_NUTRICION.md` §5-quater.
 
-En la raíz, los cinco: `alimentos_v3_final.json` (el catálogo),
+En la raíz, los seis: `alimentos_v3_final.json` (el catálogo),
 `requerimientos_v2_final.json` (la tabla de FEDIAF), `catalogo_menus.json`
 (los 36 menús precalculados de la vista previa y sus 180 variantes),
 `der_casos.json` (el contrato del DER, ver arriba) y
-`recomendaciones_adulto.json` (los dos techos del perro adulto sano).
+`recomendaciones_adulto.json` (los dos techos del perro adulto sano) y
+`requisitos_condicionales.json` (los requisitos que dependen de la propia
+dieta).
 
 **El quinto es del 8 de septiembre y merece una línea de por qué está solo.**
 No cabía en ninguno de los otros dos sin romper lo que significan: en
