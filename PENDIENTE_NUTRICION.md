@@ -915,3 +915,34 @@ real es 1,1-2,3 y no 1,1-1,5, y la fuente no dice que los factores estén
 no sobre nada implementado aquí — no había ningún factor de enfermedad
 en el código al que esa cita pudiera aplicar.
 
+## 12. Ratio vitamina E / AGPI de NRC 2006 — real, no implementado, no urgente (7 de septiembre)
+
+Leyendo NRC 2006 buscando el máximo de fósforo (punto 4 de arriba) apareció
+otra frase, en otro sitio del mismo libro, que no tiene nada que ver con el
+fósforo: *"A ratio of at least 0.6 mg of tocopherol per gram of PUFA in the
+diet should be maintained"* (línea 21885 de `nrc2006.txt`). Es un requisito
+real, cuantificable, y esta app no lo comprueba en ningún sitio hoy: no está
+en `verificar.MAPA`, no está en el solver, no está en `seguridad.py`.
+
+Antes de proponer añadirlo se probó contra el solver de verdad, en vez de
+razonar solo con la fórmula: ~30 menús variados (raza pequeña y gigante,
+cachorro sin pescado, artrosis con aceite de pescado forzado, adulto
+estándar...), calculando en cada uno mg de vitamina E ÷ g de AGPI totales
+(linoleico + linolénico + araquidónico + EPA + DHA). El peor ratio
+encontrado fue ~1,19 — por encima de 0,6 en todos los casos reales, aunque
+tres de los aceites de salmón del catálogo tengan vitE=0 en `sin_dato` por
+separado (con AGPI alto): el resto del menú siempre aporta suficiente
+vitamina E para compensar.
+
+**Conclusión: el ratio existe y es real, pero hoy no aprieta ningún menú de
+Rawku.** No se ha implementado como restricción nueva porque añadir un
+suelo global sin verlo fallar nunca en la práctica es el tipo de cambio que
+esta sesión decidió evitar (ver la advertencia de arriba sobre organizar el
+git primero) — queda aquí escrito para que quien siga sepa que la fuente
+existe y el número exacto, por si el catálogo cambia lo suficiente (más
+aceites muy concentrados en AGPI con vitE=0, por ejemplo) como para que
+empiece a importar. Si se implementa, va como suelo genérico en
+`topes_de_patologias()` o como comprobación transversal en
+`_garantizar_verificado()`, no como tope de una patología concreta: NRC lo
+da para todos los perros, no para un diagnóstico.
+

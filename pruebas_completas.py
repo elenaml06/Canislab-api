@@ -3403,12 +3403,15 @@ _al28 = {a["nombre"]: a for a in json.load(open("alimentos_v3_final.json", encod
 # filtrara por grasa, el día que alguien vuelva a poner la grasa a cero el
 # aceite se caería de la lista y la comprobación dejaría de aplicarse sola.
 _ACEITES_28 = [n for n, a in _al28.items() if a.get("categoria") == "Omega-3"]
-if len(_ACEITES_28) != 3:
+if len(_ACEITES_28) != 4:
     fallos.append(f"BLOQUE28a: hay {len(_ACEITES_28)} aceites en la categoría Omega-3 y tienen "
-                  f"que ser 3. Eran 5 hasta el 27 de agosto: se fueron Pets Purest (su EPA/DHA "
-                  f"solo aparece en fichas de marketing del fabricante, y es el más denso de "
-                  f"todos, así que el solver lo prefería) y Brit Care (su EPA/DHA no cuadra con "
-                  f"la única ficha localizable). Ver el BLOQUE 30.")
+                  f"que ser 4. Eran 5 hasta el 27 de agosto: se fueron Pets Purest (su EPA/DHA "
+                  f"solo aparecía en fichas de marketing del fabricante, y era el más denso de "
+                  f"todos, así que el solver lo prefería) y Brit Care (su EPA/DHA no cuadraba con "
+                  f"la única ficha localizable). El 7 de septiembre volvió Pets Purest, ahora "
+                  f"'Pets Purest Aceite de Salmón Escocés': la usuaria mandó la foto de la "
+                  f"etiqueta física del bote que tiene en casa, así que ya no es un dato de "
+                  f"marketing sin verificar. Brit Care sigue fuera. Ver el BLOQUE 30.")
 for _n28 in _ACEITES_28:
     _nu28 = _al28[_n28].get("nutrientes") or {}
     _ala = _nu28.get("linolenico") or 0
@@ -3777,10 +3780,13 @@ _FUERA_30 = {
         "su yodo varía hasta 100 veces entre lotes (Aakre 2021) y no salía en ningún menú. "
         "Quedan el yoduro potásico, donde el yodo es el 76,45% del peso por definición "
         "química, y el Seaweed Meal.",
-    "Pets Purest Aceite de Salmón":
-        "sus porcentajes de EPA/DHA solo aparecen en fichas de marketing del fabricante, "
-        "replicadas por revendedores. Y es el más denso de los cinco aceites, así que era "
-        "justo el que el solver prefería.",
+    # Pets Purest volvió el 7 de septiembre de 2026, como "Pets Purest Aceite de Salmón
+    # Escocés": la usuaria mandó la foto de la etiqueta física del bote que tiene en
+    # casa (Analytical Constituents + Nutritional Content, no una ficha de marketing de
+    # un revendedor), así que el motivo de la salida del 27 de agosto ya no aplica. Es
+    # el propio BLOQUE30 el que dice qué hacer en este caso: "si vuelve con una ficha
+    # que cuadre, quita esta comprobación". Se comprueba en el BLOQUE28a que sigue
+    # habiendo un aceite más en Omega-3 que los tres que quedaron tras el 27 de agosto.
     "Brit Care Aceite de Salmón":
         "su EPA/DHA (4,7 y 6) no cuadra con la única ficha localizable (2,5 y 3,5).",
 }

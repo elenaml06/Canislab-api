@@ -327,9 +327,9 @@
       "nombre": "Miocardiopatía dilatada asociada a dieta (\"grain-free/BEG\")",
       "formulable": true,
       "avisos": {
-        "general": "La alerta de la FDA (2018-2019) sobre miocardiopatía dilatada y piensos \"grain-free\" señala sobre todo dietas SECAS donde legumbres (guisante, sobre todo, no lenteja ni soja) sustituyen al cereal como fuente principal de kcal, y la relación causal no está establecida (Quilliam et al 2023). Rawku no usa ese patrón: no hay cereal que sustituir, y este menú no usa legumbres como fuente de kcal. No se ha añadido ninguna restricción porque el mecanismo de riesgo descrito no aplica a la estructura de una ración BARF."
+        "general": "La alerta de la FDA (2018-2019) sobre miocardiopatía dilatada y piensos \"grain-free\" señala sobre todo dietas SECAS donde legumbres (guisante, sobre todo, no lenteja ni soja) y, en menor medida, patata o boniato sustituyen al cereal como fuente principal de kcal, y la relación causal no está establecida (Quilliam et al 2023). Rawku no usa ese patrón: no hay cereal que sustituir, y ni las legumbres ni el boniato son fuente principal de kcal en un menú BARF -- van en \"Verduras y frutas\", topada como el resto de esa categoría, nunca como sustituto del hueso/carne/pescado que aporta la energía. No se ha añadido ninguna restricción porque el mecanismo de riesgo descrito no aplica a la estructura de una ración BARF, ni para legumbres ni para boniato."
       },
-      "nota": "Ver PENDIENTE_NUTRICION.md §7: se investigó explícitamente si había que excluir legumbres del catálogo por este motivo, y la conclusión fue que no, precisamente por esto.",
+      "nota": "⚠️ AMPLIADO (7 sep 2026): la fuente menciona explícitamente patata/boniato \"en menor medida\" junto a las legumbres -- comprobado que el mismo argumento estructural (nunca fuente principal de kcal en BARF) aplica a los dos, así que no hace falta un análisis aparte. Ver PENDIENTE_NUTRICION.md §7: se investigó explícitamente si había que excluir legumbres del catálogo por este motivo, y la conclusión fue que no, precisamente por esto.",
       "formulable_por_profesional": true
     },
     "ple_linfangiectasia": {
@@ -441,7 +441,7 @@
       "nombre": "Raza predispuesta a acumular cobre (sin diagnóstico confirmado de hepatopatía)",
       "formulable": true,
       "avisos": {
-        "general": "Bedlington terrier, West Highland White terrier, Labrador y Dálmata, entre otras, tienen predisposición genética a acumular cobre en el hígado -- pero tener la raza no es tener la enfermedad. Se sirve un menú normal, sin restringir el cobre por debajo del mínimo de FEDIAF (eso solo tiene sentido con diagnóstico confirmado: usa la patología «hepatopatia»). Se evitan a propósito los alimentos con más cobre por ración del catálogo (hígado, sobre todo el de cordero y pollo) sin necesidad de bajar del mínimo, como medida preventiva razonable mientras no haya diagnóstico."
+        "general": "⚠️ TEXTO CORREGIDO (7 de septiembre 2026): decía que se evitaban a propósito los alimentos con más cobre (hígado, sobre todo de cordero y pollo) -- no era cierto, no existe ningún mecanismo en el motor que excluya ni penalice alimentos por patología, solo topes/suelos de nutrientes (verificado contra motor_completo.py y patologias.json: esta entrada no lleva ningún tope). Se corrige aquí en vez de inventar un mecanismo nuevo sin fuente que respalde la cifra concreta que habría que ponerle. Bedlington terrier, West Highland White terrier, Labrador y Dálmata, entre otras, tienen predisposición genética a acumular cobre en el hígado -- pero tener la raza no es tener la enfermedad. Se sirve un menú normal, sin restringir el cobre por debajo del mínimo de FEDIAF (eso solo tiene sentido con diagnóstico confirmado: usa la patología «hepatopatia»). El menú puede incluir hígado y otros alimentos ricos en cobre como cualquier menú normal; si tu veterinario quiere que se eviten de forma preventiva, dile que use exclusiones a mano (Personalizar) en vez de esta patología."
       },
       "formulable_por_profesional": true
     },
