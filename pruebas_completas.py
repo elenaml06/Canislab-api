@@ -6769,6 +6769,134 @@ for _f in _fichas56:
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
+# BLOQUE 57 — LOS TECHOS DEL PERRO ADULTO SANO
+# ============================================================
+#
+# POR QUÉ EXISTE (8 septiembre)
+#
+# Son las dos únicas cifras del motor que se aplican a un perro que NO tiene
+# nada: el fósforo y el sodio que SACN5 recomienda para cualquier adulto (Tabla
+# 13-3) y para cualquier senior (Tabla 14-2). Antes de hoy no existían, y el
+# número solo entraba por la puerta de atrás en las patologías cuya tabla lo
+# repite -- así que el mismo perro pasaba de 4000 mg de fósforo a 1750 por
+# marcar «artrosis».
+#
+# Este bloque vigila las cuatro cosas que pueden romperse, y son las mismas que
+# vigila el BLOQUE 55 para las patologías:
+#   1. Que la cifra sea la de su fuente, REHACIENDO la conversión desde el %MS.
+#   2. Que el SOLVER la aplique de verdad (el fallo de la fibra: una cifra
+#      perfecta en el JSON cuya clave el motor no mira nunca).
+#   3. Que el FILTRO FINAL la compruebe (el fallo del fósforo renal a 3084: el
+#      semáforo no ve estos topes porque no son de FEDIAF).
+#   4. Que NO se aplique en crecimiento, donde el mínimo de FEDIAF (2250) está
+#      POR ENCIMA del techo del adulto (2000) y aplicarlo sería dejar al
+#      cachorro sin menú.
+print("\n=== BLOQUE 57: los techos del perro adulto sano ===")
+
+import json as _json_b57
+from recomendaciones import topes_de_la_etapa as _topes_b57, CRUDO as _CRUDO_B57
+from verificar import MAPA as _MAPA_B57
+
+# (etapa, nutriente, valor, % de materia seca de la fuente, cita literal)
+_CIFRAS_B57 = [
+    ("Adulto", "fosforo", 2000.0, 0.8,
+     "SACN5 Tabla 13-3, «Phosphorus (%) 0.4 to 0.8» en las dos columnas. Techo"),
+    ("Adulto", "sodio", 1000.0, 0.4,
+     "SACN5 Tabla 13-3, «Sodium (%) 0.2 to 0.4» en las dos columnas. Techo"),
+    ("Senior", "fosforo", 1750.0, 0.7,
+     "SACN5 Tabla 14-2, «Phosphorus (%) 0.3 to 0.7». Techo. Mas estricto que el "
+     "del adulto joven, y el capitulo dice por que: el perro maduro tiene mas "
+     "riesgo de enfermedad renal cronica subclinica"),
+    ("Senior", "sodio", 1000.0, 0.4,
+     "SACN5 Tabla 14-2, «Sodium (%) 0.15 to 0.4». Techo, el mismo que en adulto"),
+]
+
+# 1. La conversión, rehecha por el test. Los dos van en mg, así que %MS x 2500.
+for _et, _nut, _val, _pct, _cita in _CIFRAS_B57:
+    _calc = _pct * 2500.0
+    if abs(_calc - _val) > 0.01:
+        fallos.append(f"BLOQUE57 conversion: {_et}.{_nut} esta escrito como {_val} pero su "
+                      f"fuente da {_pct} % de materia seca, que a 4000 kcal/kg son {_calc}. "
+                      f"Uno de los dos esta mal - {_cita}")
+    _real = _topes_b57(_et).get(_nut)
+    if _real is None:
+        fallos.append(f"BLOQUE57: {_et}.{_nut} ha DESAPARECIDO de "
+                      f"recomendaciones_adulto.json. Lo pedia: {_cita}")
+    elif abs(_real - _val) > 1e-9:
+        fallos.append(f"BLOQUE57: {_et}.{_nut} vale {_real} y su fuente dice {_val} - {_cita}")
+
+# y al revés: ninguna cifra nueva sin pasar por esta lista
+_declaradas_b57 = {(a, b) for a, b, _, _, _ in _CIFRAS_B57}
+for _et57, _f57 in (_CRUDO_B57.get("por_etapa") or {}).items():
+    for _nut57 in (_f57.get("topes_por_1000kcal") or {}):
+        if (_et57, _nut57) not in _declaradas_b57:
+            fallos.append(f"BLOQUE57: {_et57}.{_nut57} es una cifra NUEVA que no esta en la "
+                          f"lista de este bloque. Añadela con la cita literal de su fuente")
+        _t57 = (_f57["topes_por_1000kcal"][_nut57])
+        if not _t57.get("fuente") or not _t57.get("por_que"):
+            fallos.append(f"BLOQUE57: {_et57}.{_nut57} no trae fuente o no trae por_que")
+        if _nut57 not in set(_MAPA_B57.values()):
+            fallos.append(f"BLOQUE57: la clave '{_nut57}' NO esta en verificar.MAPA -- el solver "
+                          f"nunca la mirara y el menu saldra verde igual")
+
+# 2. En crecimiento NO se aplica ninguno, y no es un olvido.
+for _et57 in ("CachorroJoven", "CachorroCrecimiento", "Gestante", "GestanteTardia", "Lactante"):
+    if _topes_b57(_et57):
+        fallos.append(f"BLOQUE57: la etapa {_et57} ha ganado un techo del perro ADULTO. El "
+                      f"minimo de fosforo que FEDIAF exige a un cachorro joven (2250) esta POR "
+                      f"ENCIMA del techo del adulto (2000): aplicarselo no seria un techo, seria "
+                      f"dejarlo sin menu.")
+
+# 3. Que el SOLVER los aplique y que el FILTRO FINAL los vea. Se resuelve un
+#    menú de adulto sano de verdad y se mide, que es lo único que lo demuestra.
+_ok57, _g57 = False, None
+_der57 = 70 * 22 ** 0.75 * 1.6
+_t0_57 = time.time()
+while time.time() - _t0_57 < 25:
+    _ok57, _g57 = resolver(_der57, "Adulto", al, req, 22, dosis_maxima_fabricante)
+    if _ok57:
+        break
+if not _ok57:
+    fallos.append("BLOQUE57: un adulto sano de 22 kg no obtiene menu. Si el techo de fosforo "
+                  "lo ha dejado sin comida, el techo no cabe y hay que decirlo, no aplicarlo.")
+else:
+    _kcal57 = sum(al[_n]["energia"] * _g / 100.0 for _n, _g in _g57.items())
+    _p57 = sum((valor_nutriente(al[_n]["nutrientes"], "fosforo") or 0) * _g / 100.0
+               for _n, _g in _g57.items()) / _kcal57 * 1000.0
+    if _p57 > 2000.0 * 1.005:
+        fallos.append(f"BLOQUE57: el menu de un adulto sano trae {_p57:.0f} mg de fosforo/1000 "
+                      f"kcal y el techo son 2000. El solver NO lo esta aplicando.")
+    # y el filtro final tiene que verlo aunque no haya ninguna patologia marcada
+    _rotos57 = _tope_roto_b57 = __import__("main")._tope_patologia_roto(_g57, al, [], "Adulto")
+    if _rotos57:
+        fallos.append(f"BLOQUE57: el menu que da el solver no pasa su propio filtro final: "
+                      f"{_rotos57}")
+    # el mismo menú, inflado a proposito, TIENE que ser rechazado: un test que
+    # pasa con el fallo puesto no sirve.
+    _inflado = dict(_g57)
+    _hueso = next((_n for _n in _g57 if al[_n].get("categoria") == "Hueso carnoso"), None)
+    if _hueso:
+        _inflado[_hueso] = _g57[_hueso] * 4
+        if not __import__("main")._tope_patologia_roto(_inflado, al, [], "Adulto"):
+            fallos.append("BLOQUE57: se cuadruplica el hueso de un menu de adulto sano (que es "
+                          "cuadruplicar su fosforo) y el filtro final no dice nada. Entonces no "
+                          "esta comprobando el techo del perro sano.")
+
+# 4. Una patologia que aprieta MAS tiene que ganar, y una que aprieta menos no
+#    puede relajar el techo del libro.
+from motor_completo import topes_de_patologias as _topes_pat_b57
+_solo_libro = _topes_b57("Adulto")
+for _pat57, _esperado57 in (("renal", 1200.0), ("artrosis", 1750.0)):
+    _t, _p, _a, _s = _topes_pat_b57([_pat57], "Adulto")
+    _efectivo = min(_t.get("fosforo", 1e9), _solo_libro["fosforo"])
+    if abs(_efectivo - _esperado57) > 1e-9:
+        fallos.append(f"BLOQUE57: con {_pat57} el fosforo efectivo son {_efectivo} y tenian que "
+                      f"ser {_esperado57}. Los topes se combinan con min(): el del libro nunca "
+                      f"puede relajar el de una patologia, ni al reves.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 print(f"\n{'='*60}")

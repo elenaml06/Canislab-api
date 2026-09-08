@@ -39,7 +39,7 @@ que tomar una persona, no yo.
 - [x] Auditar los valores de los ALIMENTOS — RESUELTO 7 sep: la auditoría ya existía (`auditar_catalogo.py`), se ejecutó de verdad y se investigaron sus 20 avisos. Ver `PENDIENTE_DECISIONES.md`
 - [x] Fibra de la borraja — CERRADO 7 sep: el alimento ya no existe en el catálogo, no es un hueco de dato
 - [ ] `renal + pancreatitis` no da menú en ningún tamaño — decisión de nutrición: qué tope cede, y qué se le dice mientras (BLOQUE 50)
-- [ ] El fósforo del perro sano: SACN5 lo topa en 2000 y una ración BARF ronda los 4000 (`PENDIENTE_NUTRICION.md` §14.3)
+- [x] El fósforo del perro sano — APLICADO 8 sep: 2000 en adulto, 1750 en senior, medido y en el peldaño 0 (`DECISIONES.md` D-15)
 - [ ] En crecimiento, ¿los suelos de una patología también se caen con el tope?
 - [ ] La proteína de la reacción adversa: la fuente la limita solo en casos dermatológicos y la ficha no lo pregunta
 - [ ] ¿Rawku apunta a algún rango de fibra? — decisión de nutrición, no de código (nota: hiperlipidemia ya tiene suelo real, 7 sep — ver `PENDIENTE_NUTRICION.md` §10)

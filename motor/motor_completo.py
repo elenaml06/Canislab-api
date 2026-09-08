@@ -199,6 +199,21 @@ def limites_de_patologias_con_procedencia(patologias, etapa="Adulto"):
                 fuera.append({"tipo": "pct_kcal_grasa", "clave": "grasa", "valor": valor,
                               "patologia": p, "nombre_patologia": nombre_pat,
                               "fuente": m.get("fuente"), "por_que": m.get("por_que")})
+
+    # ⚠️ Y LOS TECHOS DEL PERRO ADULTO SANO (8 septiembre). Van aquí porque el
+    # diagnóstico de «¿qué me está bloqueando?» los tiene que poder nombrar: el
+    # fósforo de un adulto lo aprieta este techo, no ninguna patología, y decir
+    # «el fósforo de la renal» cuando el que topa es el del libro manda a
+    # investigar la fila equivocada. Solo se listan los que de verdad GANAN el
+    # `min()` contra los de patología, igual que arriba.
+    from recomendaciones import con_procedencia as _recom_procedencia
+    for _r in _recom_procedencia(etapa):
+        _mismo = [x for x in fuera
+                  if x["tipo"] == "tope" and x["clave"] == _r["clave"]]
+        if any(x["valor"] <= _r["valor"] for x in _mismo):
+            continue          # una patología aprieta más: manda ella
+        fuera = [x for x in fuera if x not in _mismo]
+        fuera.append(_r)
     return fuera
 
 
@@ -841,6 +856,27 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # aplicaban igual a un cachorro que a un adulto -- ver el comentario
     # largo de esa función.
     topes_patologia, pct_grasa_patologia, _avisos_pat, suelos_patologia = topes_de_patologias(patologias, etapa)
+
+    # ⚠️ AÑADIDO (8 septiembre) — LOS TECHOS DEL PERRO ADULTO SANO. Ver
+    # `motor/recomendaciones.py` y `recomendaciones_adulto.json`: son las dos
+    # únicas cifras de SACN5 que se aplican a un perro que NO tiene nada
+    # (fósforo y sodio, Tabla 13-3 en adulto y 14-2 en senior).
+    #
+    # Se meten en el MISMO cajón que los topes de patología, y con el mismo
+    # `min()`, a propósito: a partir de aquí el solver, `_tope_patologia_roto`
+    # y el diagnóstico de choques los tratan exactamente igual que a los demás
+    # techos duros, sin ninguna rama nueva. Si además hay una patología que
+    # aprieta más (la renal pide 1200 de fósforo), manda la patología.
+    #
+    # Van DESPUÉS de `topes_de_patologias` y ANTES de `soltar_limites_patologia`
+    # también a propósito: el diagnóstico de «¿qué me está bloqueando?» tiene
+    # que poder soltar este techo como suelta cualquier otro, o diría que el
+    # culpable es una patología cuando el culpable es el libro.
+    from recomendaciones import topes_de_la_etapa as _topes_de_la_etapa
+    for _clave_r, _valor_r in _topes_de_la_etapa(etapa).items():
+        _actual_r = topes_patologia.get(_clave_r)
+        topes_patologia[_clave_r] = (_valor_r if _actual_r is None
+                                     else min(_actual_r, _valor_r))
 
     # ⚠️ `soltar_limites_patologia` NO ES UNA PUERTA TRASERA (8 septiembre).
     #

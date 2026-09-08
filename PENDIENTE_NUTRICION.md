@@ -1041,7 +1041,15 @@ La misma Tabla 30-5 pide «an omega-6:omega-3 ratio approximating 1:1» y «NFE
   de nitrógeno de cada ficha. Una ración BARF con la verdura topada al 10 % queda
   muy por debajo del 25 % por construcción, así que el riesgo real es bajo.
 
-### 14.3 · El fósforo del perro sano: la pregunta grande — **para el nutricionista**
+### 14.3 · El fósforo del perro sano — ✅ RESUELTO el mismo día, aplicándolo
+
+> **⚠️ Esto se escribió como una pregunta para el nutricionista y no lo era.**
+> «Si lo dice el manual, aplícalo» — y el manual lo dice. Se midió, cabe, y está
+> aplicado desde el 8 de septiembre por la noche: `recomendaciones_adulto.json`,
+> `motor/recomendaciones.py`, BLOQUE 57, y `DECISIONES.md` **D-15** con las
+> medidas. Los cuatro pesos probados salen en el peldaño 0 y en verde, y el de
+> 3 kg pasa de ámbar a verde. Se deja el texto de abajo porque explica de dónde
+> venía el problema, que sigue siendo lo que hay que entender.
 
 Esta es la que más pesa de las tres, y sale de comparar tablas que hasta ahora no
 se habían mirado juntas:

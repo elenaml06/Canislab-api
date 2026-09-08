@@ -359,12 +359,13 @@ las tiene que tomar una persona, no yo.
 
 ## Lo que dejó abierto la cuarta pasada (8 de septiembre, tarde)
 
-- [ ] **El fósforo del perro sano.** SACN5 recomienda ≤2000 mg/1000 kcal a
-  cualquier perro adulto y ≤1750 al maduro; una ración BARF de este motor ronda
-  los 4000, y FEDIAF no pone máximo. Hoy solo se aprieta en las dos patologías
-  cuya tabla repite esa cifra (artrosis y reacción adversa al alimento), lo que
-  deja al mismo perro pasando de 4000 a 1750 por marcar «artrosis». Tres salidas
-  posibles, ninguna evidente: `PENDIENTE_NUTRICION.md` §14.3.
+- [x] **El fósforo del perro sano.** ✅ RESUELTO el 8 de septiembre por la
+  noche, y no era una decisión tuya: lo dice SACN5 (Tabla 13-3 para el adulto,
+  14-2 para el maduro) y se midió que cabe. Aplicado como techo duro, 2000 en
+  adulto y 1750 en senior, con el sodio a 1000. Los cuatro pesos probados salen
+  en el peldaño 0 y en verde, y el perro de 3 kg pasa de ámbar a verde. Costó
+  regenerar los 216 menús precalculados de la vista previa. Ver `DECISIONES.md`
+  D-15.
 
 - [ ] **En crecimiento, ¿los suelos de una patología también se caen?** Hoy sí:
   `solo_en_adulto` se salta la patología **entera**, topes y suelos. Para la

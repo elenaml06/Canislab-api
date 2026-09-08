@@ -714,6 +714,64 @@ motor. (Da igual en la práctica, porque el legal de 142 manda de todos modos.)
 
 ---
 
+## 7-bis · Los dos techos del perro adulto SANO (8 de septiembre)
+
+**Es la tercera clase de límite del motor, y hasta este día no existía.**
+
+Los de FEDIAF valen para cualquier perro. Los de patología, solo si esa
+patología está marcada. Estos dos valen para el perro que **no tiene nada**:
+
+| Etapa | Fósforo | Sodio | Fuente |
+|---|---|---|---|
+| Adulto | ≤ **2000** mg/1000 kcal | ≤ **1000** mg | SACN5 Tabla 13-3, *«Phosphorus (%) 0.4 to 0.8»*, *«Sodium (%) 0.2 to 0.4»* |
+| Senior | ≤ **1750** mg | ≤ **1000** mg | SACN5 Tabla 14-2, *«Phosphorus (%) 0.3 to 0.7»*, *«Sodium (%) 0.15 to 0.4»* |
+| Crecimiento, gestación, lactancia | — | — | No se aplican: ver abajo |
+
+### Por qué hacían falta
+
+**FEDIAF no pone máximo de fósforo.** Se le quitó el 7 de septiembre por no
+tener fuente: NRC 2006 dice que no hay datos para fijar un SUL en perros, y
+Dobenecker et al. 2021 (*PLOS ONE*) que todavía no se puede definir un
+no-effect-level. Sin techo, **una ración BARF de este motor salía con ~4000
+mg/1000 kcal**: el doble de lo que este libro recomienda para cualquier perro
+adulto.
+
+Y ese número **ya estaba entrando en el motor, pero por la puerta de atrás**: en
+las dos patologías cuya tabla lo repite —artrosis (1750, Tabla 34-2) y reacción
+adversa al alimento (2000, Tabla 31-3)—, que lo llevan porque su población es de
+riesgo renal, no porque la enfermedad tenga que ver con el fósforo. El resultado
+era incoherente: **el mismo perro pasaba de 4000 a 1750 por marcar «artrosis»**.
+
+### Medido antes de aplicarlo
+
+Un techo así solo se puede aplicar si cabe, y eso se mide, no se supone. Perro
+adulto sano, sin alergias, solver a 15 s:
+
+| Peso | Sin techo | Con el techo |
+|---|---|---|
+| 3 kg | P=4007, **ámbar** | P=1889, peldaño 0, **verde** |
+| 10 kg | P=4013, verde | P=1962, peldaño 0, verde |
+| 22 kg | P=3813, verde | P=1586, peldaño 0, verde |
+| 40 kg | P=3811, verde | P=1524, peldaño 0, verde |
+
+Los cuatro en el **peldaño 0** —sin soltar ni una proporción de BARF— y los
+cuatro verdes. El de 3 kg, que sin techo salía ámbar, sale verde con él.
+
+Lo que sí costó: **207 de los 216 menús precalculados de la vista previa**
+estaban por encima (mediana 3149). Se regeneró el catálogo entero.
+
+### En crecimiento no se aplica, y no es un olvido
+
+El mínimo de fósforo que FEDIAF exige a un **cachorro joven** son **2250**, por
+encima del techo del adulto. Aplicárselo no sería un techo: sería dejarlo sin
+menú. Esas etapas tienen además sus propias tablas en SACN5 (17-1, 33-5, 15-5).
+
+> **PREGUNTA 22 (nueva).** El sodio de estas dos tablas tiene también un
+> **suelo** (0,2 % MS = 500 mg en adulto, 0,15 % = 375 en maduro) que **no** se
+> aplica: se ha entendido que lo que la tabla quiere es no pasarse, y que un
+> suelo de sodio por encima del mínimo de FEDIAF (290) en un perro sano no lo
+> pide nadie. Si eso es leerlo mal, es una línea de cambio.
+
 ## 8 · Las patologías: 47 perfiles, 73 límites numéricos
 
 Los topes por patología **son más estrictos que FEDIAF** y se miden sobre las

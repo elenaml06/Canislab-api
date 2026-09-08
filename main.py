@@ -261,8 +261,14 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto"):
 
     Se mide sobre las kcal REALES del menú, no sobre las pedidas: es como se
     definen los topes y como se lo va a comer el perro.
+
+    ⚠️ AMPLIADO (8 septiembre) — TAMBIÉN COMPRUEBA LOS TECHOS DEL PERRO ADULTO
+    SANO (`motor/recomendaciones.py`): el fósforo y el sodio que SACN5
+    recomienda para CUALQUIER adulto, tenga lo que tenga. Por eso ya no vale
+    salirse cuando no hay ninguna patología marcada: el perro sin nada es
+    justamente al que se le aplican.
     """
-    if not patologias or not gramos:
+    if not gramos:
         return []
     kcal = sum((al.get(n, {}).get("energia", 0) or 0) / 100.0 * g
                for n, g in gramos.items())
@@ -292,10 +298,26 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto"):
     # comprobación y la restricción podrían decir cosas distintas -- que es
     # exactamente lo que pasó entre el analizador y el semáforo con la fibra.
     topes, pct, _, suelos = topes_de_patologias(patologias, etapa)
+    # ⚠️ Y LOS DEL PERRO SANO, con el mismo `min()` que usa el solver (8
+    # septiembre). Tienen que resolverse EXACTAMENTE igual que allí o esta
+    # comprobación y la restricción dirían cosas distintas, que es el fallo
+    # que este bloque entero existe para no repetir.
+    from recomendaciones import topes_de_la_etapa as _topes_etapa
+    _del_libro = set()
+    for _clave_r, _valor_r in _topes_etapa(etapa).items():
+        _actual_r = topes.get(_clave_r)
+        if _actual_r is None or _valor_r < _actual_r:
+            topes[_clave_r] = _valor_r
+            # Quién manda en este nutriente, para poder decirlo bien más abajo:
+            # «por patología» sobre un techo que viene del libro sería mentira, y
+            # a quien lo lee le mandaría a mirar la patología equivocada.
+            _del_libro.add(_clave_r)
     for clave, tope in topes.items():
         v = por_1000(clave)
         if v > tope * MARGEN:
-            rotos.append(f"{clave} {v:.1f} (tope {tope:.1f} por patología)")
+            _de = ("recomendado para el perro adulto sano" if clave in _del_libro
+                   else "por patología")
+            rotos.append(f"{clave} {v:.1f} (tope {tope:.1f} {_de})")
 
     # ⚠️ AÑADIDO (7 septiembre) — EL ESPEJO DEL CHEQUEO DE ARRIBA, PARA LOS
     # SUELOS. Sin margen de redondeo A FAVOR (al revés que el tope: aquí lo

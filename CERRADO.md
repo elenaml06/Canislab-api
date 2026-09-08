@@ -107,6 +107,27 @@ crecimiento. Ninguno se coló.
 
 ---
 
+## CERRADO · Los techos del perro adulto sano
+
+**Fecha de cierre: 8 de septiembre de 2026, noche.** Ver `DECISIONES.md` **D-15**.
+
+Las **cuatro cifras** de `recomendaciones_adulto.json`: fósforo y sodio, en
+adulto y en senior. Son la tercera clase de límite del motor y no existían por
+la mañana.
+
+| | Cómo se cumple |
+|---|---|
+| 1 · Vive en el repo | `recomendaciones_adulto.json`, con `motor/recomendaciones.py` de cargador |
+| 2 · Tiene fuente | 4/4, con la cita literal de SACN5 Tabla 13-3 y 14-2 y la conversión escrita |
+| 3 · Ficha de permisos | ⚠️ **no la tiene todavía.** `permisos.py` deriva de `patologias.json` y estas cifras no son de una patología |
+| 4 · Test que falla | **BLOQUE 57**, y comprueba las cuatro cosas que pueden romperse: la conversión rehecha desde el %MS, que el solver lo aplique, que el filtro final lo vea sin ninguna patología marcada, y que NO se aplique en crecimiento. Probado con el fallo puesto (se cuadruplica el hueso y tiene que saltar) |
+| 5 · Decisión con fecha | `DECISIONES.md` D-15, con las medidas de los cuatro pesos |
+| 6 · Sin preguntas sin dueño | Queda una, escrita: el **suelo** de sodio de esas tablas no se aplica. `PARA_EL_NUTRICIONISTA.md` PREGUNTA 22 |
+
+**Así que esto está en cinco de seis**, y lo que falta es la condición 3.
+
+---
+
 ## CERRADO · El DER
 
 **Fecha de cierre: 8 de septiembre de 2026.** Ver `DECISIONES.md` **D-11**.

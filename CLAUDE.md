@@ -44,6 +44,19 @@ con alguna, casi siempre el error está en el cambio.
    salía verde. Si un camino nuevo llama al motor, tiene que pasarle
    `patologias` — se olvidó una vez en la edición y una sola edición
    tiraba el tope.
+   Y desde el 8 de septiembre hay una **tercera clase de techo**: los dos
+   que SACN5 recomienda al perro adulto **sano** (fósforo 2000 y sodio 1000
+   por 1000 kcal; 1750 el fósforo en senior). Se aplican **sin que haya
+   ninguna patología marcada**, viven en `recomendaciones_adulto.json` y se
+   comprueban en el mismo sitio y con el mismo `min()` que los de patología.
+   Existen porque FEDIAF **no pone máximo de fósforo** y una ración BARF de
+   este motor salía con ~4000 mg — el doble de lo que el libro recomienda
+   para cualquier perro —, y ese número solo entraba antes por la puerta de
+   atrás, en las dos patologías cuya tabla lo repite: el mismo perro pasaba
+   de 4000 a 1750 por marcar «artrosis». Medido antes de aplicarlo: cabe en
+   el peldaño 0 y en verde en 3, 10, 22 y 40 kg. **En crecimiento no se
+   aplica** — el mínimo de un cachorro joven (2250) está por encima del
+   techo del adulto.
 3. **Lo que se puede relajar es la FORMA, nunca la nutrición.** Cuando no
    existe menú, se sueltan las proporciones de BARF (hueso 20-60 %, etc.),
    que son criterio nuestro y no de FEDIAF. Nunca los requisitos ni la
@@ -86,6 +99,7 @@ jubilado — que desde fuera se parecen mucho.
 | `constructor.py` | Proporciones BARF de partida y `valor_nutriente()` (las claves derivadas, como `epa_dha`) |
 | `exclusiones.py` | Alergias por palabras y familias de especie. Excluir «pollo» quita también «gallina» |
 | `accesibles.py`, `modos.py` | Qué alimentos entran según el modo (automático / personalizar / aprovechar) |
+| `recomendaciones.py` | Lee `recomendaciones_adulto.json`: **los dos techos que SACN5 recomienda a un perro adulto SANO** (fósforo y sodio). Es la tercera clase de límite del motor, y no existía hasta el 8 de septiembre: los de FEDIAF valen para cualquier perro, los de patología solo si está marcada, y estos valen para el perro que **no tiene nada**. Se combinan con `min()` como los de patología: solo pueden apretar |
 | `patologias.py` | Lee `patologias.json` y lo pasa a la forma que espera el solver. **Aquí no hay ni una cifra**: hasta el 28 de agosto la tabla eran 200 líneas de `dict` dentro de `motor_completo.py`, mezclando números, motivo clínico, textos y lógica de crecimiento. Se sacó por lo mismo que el catálogo y la tabla de FEDIAF: un número que decide si un menú se entrega tiene que poder auditarse, y no se audita lo que está enterrado entre `if`s |
 | `catalogo_menus.py` | Carga los menús precalculados de la vista previa. Los datos están en `catalogo_menus.json`, en la raíz con los demás: aquí solo quedan 55 líneas de código |
 
@@ -308,10 +322,19 @@ coinciden 153 de 156 celdas. Y BEDCA distingue «midieron 0» (`value_type`
 al volcarla a un CSV y que convierte huecos en ceros mudos. Detalle y las
 medidas: `PENDIENTE_NUTRICION.md` §5-quater.
 
-En la raíz, los cuatro: `alimentos_v3_final.json` (el catálogo),
+En la raíz, los cinco: `alimentos_v3_final.json` (el catálogo),
 `requerimientos_v2_final.json` (la tabla de FEDIAF), `catalogo_menus.json`
-(los 36 menús precalculados de la vista previa y sus 180 variantes) y
-`der_casos.json` (el contrato del DER, ver arriba).
+(los 36 menús precalculados de la vista previa y sus 180 variantes),
+`der_casos.json` (el contrato del DER, ver arriba) y
+`recomendaciones_adulto.json` (los dos techos del perro adulto sano).
+
+**El quinto es del 8 de septiembre y merece una línea de por qué está solo.**
+No cabía en ninguno de los otros dos sin romper lo que significan: en
+`requerimientos_v2_final.json` no, porque ese fichero **es** la Tabla III-3b de
+FEDIAF y `auditar_fediaf.py` comprueba sus 43 filas contra el PDF celda a celda
+—meter ahí un número de un libro de texto es exactamente cómo se coló en agosto
+una fila «Fibra» con mínimo y máximo inventados—; y en `patologias.json` tampoco,
+porque esto **no es una patología**: se aplica al perro que no tiene ninguna.
 
 Los dos primeros llevan **sello** en `/verificar`: si cambian sin que se
 actualice el hash en `main.py`, la API lo dice. Los otros dos no, y es a

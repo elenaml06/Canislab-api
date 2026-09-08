@@ -863,3 +863,85 @@ cuenta; recortarla para leerla es exactamente cómo se pierde la mitad.
   cerrar**, con el alcance nuevo (73 cifras, 47 patologías) y diciendo por qué
   se reabrió. Un cierre que se corrige y lo cuenta vale; uno que se corrige en
   silencio no vale nada.
+
+---
+
+## D-15 · Los techos del perro adulto sano: SACN5 también manda cuando no hay enfermedad
+
+**8 de septiembre de 2026, noche.**
+
+### El problema, en una línea
+
+FEDIAF **no pone máximo de fósforo** —se le quitó el 7 de septiembre por no
+tener fuente— y una ración BARF de este motor salía con **~4000 mg/1000 kcal**.
+SACN5 recomienda que el alimento de **cualquier** perro adulto sano no pase de
+**2000** (Tabla 13-3) y el de un perro maduro de **1750** (Tabla 14-2).
+
+Ese número entraba antes solo por la puerta de atrás: en las dos patologías cuya
+tabla lo repite —artrosis (1750, Tabla 34-2) y reacción adversa al alimento
+(2000, Tabla 31-3)—, que lo llevan porque su población es de riesgo renal, no
+porque la enfermedad tenga que ver con el fósforo. **El resultado era
+incoherente: el mismo perro pasaba de 4000 a 1750 por marcar «artrosis».**
+
+### La decisión
+
+Se aplica, como techo duro, a las etapas **Adulto** y **Senior**. Y se aplica
+por la razón más simple: **lo dice la fuente**. Hasta hoy SACN5 gobernaba solo
+las patologías y FEDIAF el perro sano; esto extiende su alcance al perro sano en
+los dos nutrientes donde el libro da cifra y FEDIAF no.
+
+**No es una decisión de criterio: es una decisión de medida.** Un techo así solo
+se puede aplicar si cabe, y se midió antes, no después. Perro adulto sano, sin
+alergias, solver a 15 s:
+
+| Peso | Sin techo | Con P≤2000 y Na≤1000 |
+|---|---|---|
+| 3 kg | P=4007, Na=558, **ámbar** | P=1889, Na=724, peldaño 0, **verde** |
+| 10 kg | P=4013, Na=743, verde | P=1962, Na=496, peldaño 0, verde |
+| 22 kg | P=3813, Na=787, verde | P=1586, Na=513, peldaño 0, verde |
+| 40 kg | P=3811, Na=729, verde | P=1524, Na=552, peldaño 0, verde |
+
+Los cuatro en el **peldaño 0** —sin soltar ni una proporción de BARF— y los
+cuatro verdes; el de 3 kg, que sin techo salía ámbar, sale verde con él. Y
+buscando dónde se rompe (22 kg): 4000, 3500, 3000, 2500 y 2000 salen todos en el
+peldaño 0. **No cuesta nada y arregla algo.**
+
+### Dónde vive, y por qué no en ninguno de los dos ficheros que ya había
+
+En **`recomendaciones_adulto.json`**, con `motor/recomendaciones.py` de
+cargador. Es un tercer fichero de datos a propósito:
+
+- En `requerimientos_v2_final.json` no, porque ese fichero **es** la Tabla III-3b
+  de FEDIAF y `auditar_fediaf.py` comprueba sus 43 filas contra el PDF celda a
+  celda. Meter ahí un número de un libro de texto es exactamente cómo se coló en
+  agosto una fila «Fibra» con mínimo y máximo inventados que el analizador
+  exigía.
+- En `patologias.json` tampoco, porque esto **no es una patología**: se aplica al
+  perro que no tiene ninguna.
+
+Se combina con `min()` igual que un tope de patología, así que solo puede
+apretar: con `renal` marcada manda el 1200 de la renal, nunca el 2000 del libro.
+
+### Lo que costó
+
+**207 de los 216 menús precalculados de la vista previa** estaban por encima del
+techo (mediana 3149, máximo 4124). Sin regenerarlos, `_garantizar_verificado`
+los habría rechazado y la vista previa habría dejado de dar menú. Se regeneró
+`catalogo_menus.json` entero —los 36 menús y sus 180 variantes— con las reglas
+de hoy, comprobando uno a uno que sale verde antes de guardarlo.
+
+### Lo que NO se aplica, y por qué
+
+**En crecimiento, gestación y lactancia, nada.** No es un olvido: el mínimo de
+fósforo que FEDIAF exige a un cachorro joven son **2250**, por encima del techo
+del adulto. Aplicárselo no sería un techo, sería dejarlo sin menú. Esas etapas
+tienen además sus propias tablas en SACN5 (17-1, 33-5, 15-5) con otros números.
+
+### Qué lo vigila
+
+**BLOQUE 57**, que comprueba las cuatro cosas que pueden romperse: que la cifra
+sea la de su fuente rehaciendo la conversión desde el %MS, que el solver la
+aplique de verdad, que el filtro final la vea aunque no haya ninguna patología
+marcada, y que no se aplique en crecimiento. Probado con el fallo puesto: se
+cuadruplica el hueso de un menú de adulto sano y el filtro final tiene que
+cazarlo.
