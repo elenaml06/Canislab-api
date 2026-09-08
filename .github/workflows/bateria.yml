@@ -1,0 +1,67 @@
+# ─────────────────────────────────────────────────────────────────────────
+# LA BATERÍA, EJECUTADA SOLA
+#
+# POR QUÉ EXISTE (8 de septiembre)
+#
+# La regla de este repo dice que `pruebas_completas.py` se ejecuta ENTERA
+# antes de entregar cualquier cambio. Hasta hoy eso dependía de que
+# alguien se acordara — y en el historial hay un commit que se llama
+# literalmente «WIP: la carga puesta, con la batería en rojo (13 fallos)».
+# O sea que en rojo sí se empuja.
+#
+# Esto no impide empujar. Tarda unos diez minutos, así que te lo cuenta
+# DESPUÉS. Lo que hace es que un rojo no pueda llegar a `main` en silencio
+# y que un PR diga por sí solo si el motor sigue en pie.
+#
+# POR QUÉ SE PUEDE HACER, que no era obvio: la batería NO necesita red ni
+# claves de verdad. Se fabrica su propio Stripe (`STRIPE_WEBHOOK_SECRET`
+# inventado) y su propio Supabase (`https://supabase.dementira`) dentro
+# del BLOQUE 10. Sin secretos que configurar y sin nada que se pueda
+# escapar a producción desde aquí.
+#
+# POR QUÉ SOLO EN PR Y EN `main`, y no en cada empujón a cada rama: diez
+# minutos por commit de una rama en marcha es ruido, y el aviso que
+# importa es el de antes de fusionar.
+#
+# EL ÚNICO BLOQUE QUE PODRÍA FALLAR POR LA MÁQUINA Y NO POR EL CÓDIGO es
+# el 7, que exige que una llamada al solver no pase de 15 s. Hay margen:
+# medido en un contenedor lento de 4 CPU, 3,3 s. Si algún día empieza a
+# fallar solo aquí, el arreglo es mirar el `time_limit`, no subir el
+# número para que calle.
+#
+# Coste: 0 €. GitHub Actions es gratis en repos públicos.
+# ─────────────────────────────────────────────────────────────────────────
+name: La batería
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:        # para poder lanzarla a mano desde la web
+
+# Si empujas dos veces seguidas, que no se acumulen dos baterías de 10 min.
+concurrency:
+  group: bateria-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  bateria:
+    runs-on: ubuntu-latest
+    # 10 min de media. 30 deja sitio a un runner lento sin dejar colgado
+    # un trabajo roto durante una hora.
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Instalar lo que hace falta
+        run: pip install -r requirements.txt
+
+      - name: Ejecutar los 50 bloques
+        # Sin `-u` la salida sale a trompicones y, si algo se cuelga, el
+        # registro no dice por qué bloque iba.
+        run: python3 -u pruebas_completas.py
