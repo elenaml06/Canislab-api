@@ -87,6 +87,16 @@ arregla existe y está fuera de `main`.
 
 ### 1.3 · Los topes de seguridad crónica y las reglas por alimento
 
+⚠️ **Verificados contra NRC 2006 el 8 de septiembre, y salen tres cosas**
+(detalle en `PARA_EL_NUTRICIONISTA.md` §7.1 y §7.2):
+
+| Tope | Qué se encontró |
+|---|---|
+| Vitamina D (20 µg y 2,6 µg/kg^0,75) | **No puede activarse**: el máximo legal de FEDIAF (14,19) es más estricto. Ya estaba dicho para la vitamina D en su `nota_auditoria` |
+| Selenio (570 µg) | **No puede activarse**: el legal de FEDIAF (142) es 4× más estricto. Y el NRC dice *«no data are available on an acceptable SUL»*; el de AAFCO son 500, no 570 |
+| **Yodo (1400 µg)** | **Sí actúa, y es el nivel al que el NRC documenta DAÑO** en cachorros. El NRC dice expresamente que **no se puede predecir un SUL** de yodo |
+| Tiaminasa, mercurio, hígado, vísceras, clara, oxalato | Sin cambios: ya estaban **declarados como criterio nuestro** en la cabecera del propio fichero |
+
 | Qué | Dónde | Rp | Fu | Fi | Te | De | Estado |
 |---|---|---|---|---|---|---|---|
 | Los 5 topes crónicos (vit. D, yodo, selenio, mercurio, tiaminasa) | `motor/seguridad.py`, **como constantes de código** | ✅ | ✅ cada cifra con su fuente al lado, en comentario | ❌ | ✅ BLOQUE 21, 22 + duros en el solver | ⚠️ en comentarios | **en curso** |
@@ -172,7 +182,12 @@ Detalle y medidas: `PREGUNTAS_ABIERTAS.md` P-10 a P-13, y
 |---|---|---|
 | **La batería NO sale en verde hoy sobre `main` sin tocar** | **roto (prueba mal diseñada)** | Ver §1.9. 1 fallo de 50 bloques, 1.232 s. Es el BLOQUE 4, y no es la nutrición. **Arreglado el 8 de septiembre** fijando la semilla |
 | ~~El tope de lactancia y las razas de FEDIAF~~ | **cerrado 8 sep** | `DECISIONES.md` D-11 |
-| **4 de los 19 límites de patología discrepan de SACN5** | **abierto** | cobre hepático (2,4 vs 1,25), sodio cardíaco (900 vs 625), obesidad grasa (30 vs 22,5, declarado). `PARA_EL_NUTRICIONISTA.md` §8.1-bis |
+| **4 de los 19 límites de patología discrepan de SACN5** | **abierto** | cobre hepático (2,4 vs 1,25), sodio cardíaco (900 vs 625), obesidad grasa (30 vs 22,5, declarado). §8.1-bis |
+| **El sodio cardíaco está por encima del techo legal europeo** | **roto** | Reg. (UE) 2020/354: ≤2,6 g/kg = **739 mg/1000 kcal**. El motor: 900 · 900 · 790. §8.1-quater |
+| **Faltan dos techos de proteína que NO necesitan prescripción** | **no empezado** | Renal 62,5 y hepática 79,3 g/1000 kcal, del Reg. 2020/354. Los dos por encima del mínimo de FEDIAF (52,1) |
+| **3 de los 5 topes de seguridad crónica no pueden activarse nunca** | **roto (documentación)** | El máximo legal de FEDIAF es más estricto en vitamina D (×2) y selenio (×4). No deja a nadie desprotegido, pero la regla 2 del `CLAUDE.md` dice que protegen |
+| **El techo de yodo es el nivel al que el NRC documenta DAÑO** | **roto** | NRC 2006: a 1400 µg/1000 kcal hubo función tiroidea deprimida y alteraciones óseas en cachorros, y dice que **no se puede predecir un SUL**. El motor usa 1400 como techo. §7.2 |
+| Faltan 2 de los 19 objetivos legales europeos | **no empezado** | Convalecencia (proteína ≥71 g/1000 kcal) y apoyo en estrés. §8.4-bis |
 | **5 factores de las tablas de SACN5 que el motor no aplica** | **no empezado** | proteína y fibra en obesidad, fósforo y cloruro en cardiopatía. §8.1-ter |
 | **Un cachorro de raza grande sin hueso carnoso se queda sin menú ~1 de cada 4 veces** | **roto** | Medido: 11/15 con menú. No lo causa el techo de Ca:P nuevo (sin él, 9/15). Es el mínimo de calcio reforzado, que sin hueso hay que cerrar solo con suplementos |
 | **`renal` + `pancreatitis` no da menú, y el motor no sabe decir por qué** | **roto** | Ver §1.8. Confirmado y, además, **diagnosticado**: chocan el fósforo renal (1200) y la grasa de pancreatitis (20) |

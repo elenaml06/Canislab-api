@@ -574,4 +574,97 @@ separado.
 menú automático en lactancia. Son preguntas **para el nutricionista**, no
 huecos de verificación: los números están donde dice la fuente.
 
+---
 
+## D-12 · Cuándo se puede salir de un límite, y quién puede
+
+**Fecha:** 8 de septiembre de 2026.
+**Estado:** **cerrado** como marco (es un hecho documentado, no un criterio
+nuestro). Lo que cuelga de él —clasificar cada límite— es trabajo, y está en
+`ESTADO.md`.
+
+### La pregunta
+
+¿Existe alguna fuente que diga **qué límites son rígidos y cuáles quedan a
+criterio profesional**? Hasta hoy lo más cercano era implícito: FEDIAF marca
+sus máximos como `(L)` legal o `(N)` nutricional, NRC define el *Safe Upper
+Limit*, y SACN5 llama a lo suyo *«key nutritional factors and their target
+levels»* y enumera siete cosas que los mueven.
+
+**Sí existe, es explícito, es europeo y es ley.**
+
+### Lo que dice FEDIAF de su propio alcance
+
+Dos frases de su sección de alcance, literales, que hasta hoy no estaban
+recogidas en ninguna parte del repo:
+
+> *«Pet foods can be adequate and safe when nutrient levels are **outside the
+> recommendations in this guide**, based on the manufacturer's substantiation
+> of nutritional adequacy and safety.»*
+
+> *«**Excluded from the FEDIAF's Nutritional Guidelines are pet foods for
+> particular nutritional purposes** and some other specialised foods… specific
+> products **may have nutrient levels that are different from those stated in
+> these guidelines**.»*
+
+Y sobre las dietas de eliminación:
+
+> *«Through veterinarians, special diets… are available for dogs and cats
+> suffering of adverse reactions to food; the formulation and the label
+> declarations for those foods are **regulated by the specific EU legislation
+> on dietetic foods for animals**.»*
+
+O sea: **los requisitos de FEDIAF son los del alimento completo de un animal
+sano, y salirse de ellos tiene una vía legal con nombre.**
+
+### La vía: Reglamento (UE) 2020/354
+
+Establece la lista de **objetivos nutricionales particulares** (los llamados
+alimentos dietéticos o PARNUT) y deroga la Directiva 2008/38/CE. Su Anexo,
+parte B, es una tabla con estas columnas exactas:
+
+> *Entry number · **Particular nutritional purpose** · **Essential nutritional
+> characteristics** · Species or category of animal · Labelling declarations ·
+> **Recommended length of time** · Other provisions*
+
+Es decir, para cada motivo clínico: **qué se le permite hacer al alimento, con
+qué cifra, durante cuánto tiempo, y qué hay que declarar.** Y la frase que
+aparece en las entradas caninas:
+
+> *«It is recommended that advice from a veterinarian be sought before use and
+> before extending the period of use.»*
+
+### La regla que sale de ahí, y que se adopta
+
+| Nivel | Qué es | ¿Se puede salir? |
+|---|---|---|
+| **Límite legal `(L)` de FEDIAF** | Ley de la UE sobre aditivos (Reg. 2017/1492): cobre, yodo, hierro, manganeso, selenio, zinc, vitamina D | **NO. Nadie, tampoco el veterinario.** Es ley y aplica también al alimento dietético |
+| **Requisito de FEDIAF** (mínimos y máximos `(N)`) | La referencia del **alimento completo para un animal sano** | **SÍ**, por dos vías: la sustanciación del fabricante, o un **objetivo nutricional particular del Reg. 2020/354** — que lleva cifra, duración y consejo veterinario |
+| **Objetivo de SACN5** (*key nutritional factor*) | Objetivo terapéutico, con rango a propósito | **SÍ**, criterio clínico dentro del rango que da la fuente |
+| **Criterio nuestro** | Sin fuente veterinaria detrás | Se puede cambiar, pero va **declarado como criterio** |
+
+**Y hay una frontera práctica que ya usa el motor y ahora tiene respaldo
+legal:** un objetivo terapéutico **por encima** del mínimo de FEDIAF se puede
+formular como alimento completo; uno **por debajo** es prescripción y necesita
+firma. Eso es exactamente lo que hace `necesita_bajo_fediaf`, y coincide con
+cómo el reglamento separa sus dos vías para el urato (≤130 g/kg de proteína,
+que cae bajo el mínimo de FEDIAF, frente a ≤220 g/kg con fuentes
+seleccionadas, que no).
+
+### Un beneficio inesperado: el puente de 4000 kcal/kg MS queda validado
+
+El reglamento expresa todo **por kg de pienso completo al 12 % de humedad**, y
+su entrada de restablecimiento nutricional pide **≥3520 kcal**. 3520 = 0,88 ×
+4000. O sea que **el propio reglamento usa la densidad de referencia de 4000
+kcal/kg de materia seca**, la misma que NRC 2006 y FEDIAF, y la misma que usa
+el repo para convertir. La conversión es X / 3,52 por 1000 kcal.
+
+Eso contesta en parte la PREGUNTA 1 de `PARA_EL_NUTRICIONISTA.md`: el puente
+no es nuestro, lo usan las tres referencias **y la ley**.
+
+### Lo que NO cierra esto
+
+El marco dice **quién puede salirse y por qué vía**. No dice **hasta dónde**
+en cada caso concreto: eso sigue siendo la ficha de permisos, y sigue
+necesitando al nutricionista para los rangos. Ver `PREGUNTAS_ABIERTAS.md`
+P-02 y P-03.

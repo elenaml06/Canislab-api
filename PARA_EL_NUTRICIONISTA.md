@@ -640,6 +640,68 @@ los pusimos nosotras.**
 **Todos son diarios y no admiten balance semanal**, salvo el de EPA+DHA: una
 tiaminasa no se «compensa» el jueves.
 
+### 7.1 · Verificado el 8 de septiembre: tres de los cinco no pueden activarse nunca
+
+Los cinco «topes de seguridad crónica» son, según la regla 2 del `CLAUDE.md`,
+restricciones duras dentro del solver. **Puestos en la misma unidad que el
+máximo de FEDIAF que el motor ya aplica, tres de ellos están por encima**, así
+que no pueden morder jamás:
+
+| Tope crónico | Valor | Máximo de FEDIAF ya aplicado | |
+|---|---|---|---|
+| Vitamina D (por kcal) | 20 µg/1000 kcal | **14,19 µg** (legal) | ❌ **nunca se activa** |
+| Vitamina D (por peso metabólico) | 2,6 µg/kg^0,75 ≈ 23,2 µg/1000 kcal | **14,19 µg** | ❌ **nunca se activa** |
+| Selenio | 570 µg/1000 kcal | **142 µg** (legal) | ❌ **nunca se activa** (4× más permisivo) |
+| Yodo | 1400 µg/1000 kcal | 2750 µg (legal) | ✅ este sí manda |
+
+**Esto no deja a ningún perro desprotegido** —lo que protege es el máximo
+legal de FEDIAF, que es más estricto— pero **la documentación dice que
+protegen y no protegen**. Si mañana alguien tocara un máximo de FEDIAF
+pensando que «ya está el tope crónico debajo», no hay nada debajo.
+
+*(Para la vitamina D esto ya estaba escrito en el `nota_auditoria` de su fila
+desde el 6 de septiembre. Para el selenio, no.)*
+
+### 7.2 · Y dos cifras están mal atribuidas al NRC
+
+**El yodo, que es el único de los tres que sí actúa, usa como techo el nivel
+en el que se midió DAÑO.** NRC 2006, literal:
+
+> *«Castillo et al. (2001a) reported **evidence of depressed thyroid gland
+> function**, evidenced by reduced plasma concentrations of thyroid hormones
+> and **bone abnormalities**, in puppies fed diets containing an estimated
+> maximum I content of **1,400 μg I per 1,000 kcal ME**… Based on this
+> information **an absolute figure for a SUL of dietary I cannot be predicted
+> for adult dogs**.»*
+
+O sea: **el NRC no da un SUL de yodo**, dice expresamente que no se puede
+predecir, y los 1400 son el nivel al que unos cachorros mostraron función
+tiroidea deprimida y alteraciones óseas. **El motor usa ese mismo número como
+techo**, citando «NRC 2006».
+
+**El selenio también.** NRC 2006, literal:
+
+> *«**no data are available on an acceptable SUL for dietary Se in dogs**
+> although for regulatory purposes, a maximum standard of **2.0 mg Se·kg–1**
+> has been suggested (AAFCO, 2001).»*
+
+2,0 mg/kg a 4000 kcal/kg son **500 µg/1000 kcal**, no los 570 que tiene el
+motor. (Da igual en la práctica, porque el legal de 142 manda de todos modos.)
+
+> **PREGUNTA 19-bis (bloqueante, y es la que más nos preocupa de todo el
+> apartado 7).** El techo de yodo del motor **es el nivel al que la fuente
+> documenta daño en cachorros**. Un techo de seguridad debería estar por
+> debajo de eso, con su factor de seguridad. **¿Qué cifra ponemos?** Y como el
+> NRC dice que no se puede predecir un SUL: ¿nos quedamos con el límite legal
+> de FEDIAF (2750), que es todavía más alto, o ponemos un criterio nuestro
+> declarado y más bajo?
+
+> **PREGUNTA 19-ter.** ¿Merece la pena mantener los topes de vitamina D y
+> selenio de `seguridad.py`, sabiendo que el límite legal de FEDIAF es
+> siempre más estricto y que nunca llegan a actuar? La alternativa es
+> quitarlos y dejar escrito que quien protege es FEDIAF.
+
+
 > **PREGUNTA 19 (bloque entero).** De los seis umbrales marcados como
 > criterio nuestro, ¿alguno está mal puesto, en un sentido o en el otro? Y
 > sobre todo: **¿alguno debería depender del caso** —o sea, ser un rango con
@@ -732,6 +794,62 @@ de SACN5.
 >    fuente. ¿Se acepta y se declara como «lo mejor alcanzable con comida
 >    real», o hay que decirle al dueño que para adelgazar de verdad hace
 >    falta otra cosa?
+
+### 8.1-quater · Y contra el reglamento europeo de alimentos dietéticos
+
+**Encontrado el 8 de septiembre, y es la pieza que faltaba.** FEDIAF dice en su
+propio alcance que sus recomendaciones son las del **alimento completo para un
+animal sano**, y que *«excluded from the FEDIAF's Nutritional Guidelines are
+pet foods for particular nutritional purposes»*. Esa categoría tiene su propia
+ley: el **Reglamento (UE) 2020/354**, cuyo Anexo B da, para cada motivo
+clínico, **la característica nutricional esencial con su cifra, el tiempo
+recomendado de uso y la advertencia veterinaria**.
+
+Es decir: **existe una lista legal europea de en qué casos un alimento puede
+salirse de FEDIAF, con qué número y durante cuánto.** Ver `DECISIONES.md`
+D-12.
+
+Sus cifras van **por kg de pienso completo al 12 % de humedad**. A 4000 kcal
+de EM por kg de materia seca eso son 3520 kcal/kg — y el propio reglamento lo
+confirma, porque su entrada de restablecimiento nutricional pide **≥3520
+kcal**. La conversión es X ÷ 3,52.
+
+| Objetivo del Reg. 2020/354 (perro) | Cifra legal | Por 1000 kcal | El motor | |
+|---|---|---|---|---|
+| Renal · fósforo | ≤ 5 g/kg | 1420 mg | 1200 | ✅ más estricto |
+| **Renal · proteína** | **≤ 220 g/kg** | **62,5 g** | **no existe** | ❌ **falta** |
+| **Cardíaca · sodio** | **≤ 2,6 g/kg** | **739 mg** | 900 · 900 · 790 · 480 | ❌ **tres por encima** |
+| Cobre en hígado | ≤ 8,8 mg/kg | 2,5 mg | 2,4 | ✅ más estricto |
+| Hiperlipidemia · grasa | ≤ 110 g/kg | 31,25 g | 30 | ✅ más estricto |
+| Urato · proteína (vía A) | ≤ 130 g/kg | 36,9 g | bloquea | ✅ 36,9 < 52,1: es prescripción |
+| **Urato · proteína (vía B)** | **≤ 220 g/kg + fuentes seleccionadas** | **62,5 g** | bloquea | ⚠️ **esta vía NO baja de FEDIAF** |
+| **Hepática · proteína** | **≤ 279 g/kg** | **79,3 g** | no existe | ❌ **falta** |
+
+**Cuatro cosas que salen de aquí:**
+
+1. **El cobre hepático queda resuelto a favor de lo que ya teníamos.** Center
+   2026 daba 2,4 y SACN5 1,25; el reglamento europeo permite hasta 2,5. Los
+   2,4 del motor son legales y más estrictos.
+2. **El sodio cardíaco no.** Ahora hay tres cifras: SACN5 200-625, el
+   reglamento **739**, y las nuestras 900/900/790/480. Las tres primeras
+   nuestras están por encima del techo legal-dietético europeo.
+3. **Faltan dos techos de proteína que son perfectamente implementables**:
+   renal 62,5 y hepática 79,3 g/1000 kcal. Los dos quedan **por encima** del
+   mínimo de FEDIAF (52,1), o sea que **no hacen falta prescripción ni firma**
+   — y una ración BARF sin ajustar va por ~130, así que morderían de verdad.
+4. **El urato tiene una segunda vía legal que no exige bajar de FEDIAF**
+   (≤220 g/kg con fuentes seleccionadas = 62,5). Hoy lo bloqueamos entero
+   porque la carga de purinas de una ración cruda está muy por encima de
+   cualquier objetivo; pero el reglamento ataca el problema por la proteína y
+   la selección de fuentes, no por las purinas.
+
+> **PREGUNTA 21-quater (bloqueante).**
+> 1. **Sodio cardíaco: ¿nos bajamos a los 739 del reglamento europeo?** Es más
+>    estricto que lo nuestro en tres de las cuatro entradas.
+> 2. **¿Añadimos los techos de proteína de renal (62,5) y hepática (79,3)?**
+>    No requieren firma y hoy no existen.
+> 3. **Urato: ¿la vía de «proteína ≤220 + fuentes seleccionadas» es viable con
+>    comida real**, o la carga de purinas la tumba igual?
 
 ### 8.1-ter · Lo que las mismas tablas piden y el motor NO aplica
 
@@ -846,6 +964,49 @@ alimenta. Por eso no se genera menú automático.
 > bajar la proteína por debajo de FEDIAF, eso es prescripción y solo lo firma
 > un veterinario — pero entonces la entrada debería decir eso y no fingir que
 > aprieta el fósforo un poco más.
+
+### 8.4-bis · Cobertura contra la lista legal europea
+
+El Anexo B del Reglamento (UE) 2020/354 tiene **19 objetivos nutricionales
+particulares para perro**. El motor cubre **17**.
+
+**Los dos que faltan:**
+
+| Objetivo legal | Característica esencial que pide | Por 1000 kcal |
+|---|---|---|
+| **Restablecimiento nutricional, convalecencia** | Ingredientes muy digestibles · energía **≥3520 kcal/kg** · proteína bruta **≥250 g/kg** | proteína ≥ **71 g** |
+| **Apoyo en situaciones de estrés** | Caseína bovina hidrolizada por tripsina, **1-3 g/kg** | 0,28-0,85 g |
+
+El primero es un **suelo** de proteína y de densidad energética para un perro
+que sale de una enfermedad o una cirugía — justo lo contrario de casi todo lo
+demás, que son techos. El motor no tiene ninguna entrada para eso.
+
+**Y catorce perfiles del motor no corresponden a ningún objetivo legal**:
+addison, cushing, cáncer, disfunción cognitiva, epilepsia, fracaso renal
+agudo, hipotiroidismo, inmunosupresión, mielopatía degenerativa, las dos
+miocardiopatías dilatadas, pancreatitis, riesgo de dilatación-vólvulo, y
+«otra». **Eso no es un fallo**: la lista legal es de **alimentos dietéticos
+comerciales**, no un catálogo de enfermedades. Pero sí dice dónde no hay
+número europeo al que agarrarse.
+
+⚠️ **Y ahí está el caso de la pancreatitis, que es el que deja sin comer a un
+perro.** Aplicando la regla que usa este proyecto —FEDIAF primero; donde
+FEDIAF no llega, SACN5— resulta que:
+
+- **FEDIAF** no dice nada de pancreatitis.
+- **El Reglamento 2020/354 tampoco**: no hay objetivo dietético «pancreatitis»
+  en la lista.
+- Luego **manda SACN5**: ≤15 % MS (no obeso, no hipertrigliceridémico) =
+  **37,5 g/1000 kcal**, y ≤10 % MS (obeso o hipertrigliceridémico) = **25**.
+
+Hoy el motor usa **20**, de Merck, que no es ninguna de las dos. Y **medido:
+con 37,5 el perro renal con pancreatitis SÍ recibe menú.**
+
+> **PREGUNTA 21-quinquies.** Siguiendo la propia regla del proyecto, el tope
+> de grasa en pancreatitis debería ser el de SACN5 —37,5 en el perro normal,
+> 25 en el obeso o hipertrigliceridémico— y no los 20 de Merck. Eso además
+> resuelve el caso `renal + pancreatitis`. **Pero relaja un tope de patología,
+> y eso no lo decide el software.** ¿Se cambia?
 
 ### 8.5 · Las 24 patologías sin límite numérico
 
