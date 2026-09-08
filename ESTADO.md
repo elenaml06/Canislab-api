@@ -121,9 +121,33 @@ nivel 2 tal como está.
 
 ### 1.5 · La energía (DER)
 
+⚠️ **Verificado contra fuente el 8 de septiembre, y salieron cuatro cosas.**
+Hasta ese día el DER solo estaba comprobado contra su propio contrato de 85
+casos — que garantiza que los dos repos calculan lo mismo, **no que lo que
+calculan sea lo que dice la fuente**. Al abrir FEDIAF VII-7, SACN5 Tabla 5-2 y
+AAHA 2021:
+
+| Qué | Resultado |
+|---|---|
+| Los 5 escalones de actividad (95/110/125/150/175) | ✅ **exactos** contra FEDIAF VII-7 |
+| El adelgazamiento a 1,0 × RER del peso ideal | ✅ coincide con SACN5, más estricto que FEDIAF |
+| La ecuación de crecimiento (Klein) | ✅ **es la de FEDIAF VII-8b**, idéntica |
+| Gestación (132 · 132+26×kg) | ✅ **FEDIAF VII-8b**, exacta |
+| La fórmula de lactancia | ✅ **FEDIAF VII-8b**, letra por letra, con sus factores L |
+| **El tope de ×6 RER en lactancia** | ❌ **es nuestro y FEDIAF no pone ninguno**: recorta hasta un −33 % |
+| Los 3 escalones de crecimiento de respaldo | ⚠️ **210 y 140 sí (SACN5), 175 no existe en ninguna fuente** |
+| Gran Danés y Terranova | ❌ **FEDIAF les da cifra propia y el motor no la usa**: a un Gran Danés le damos el 55 % |
+
+Detalle y medidas: `PREGUNTAS_ABIERTAS.md` P-10 a P-13, y
+`PARA_EL_NUTRICIONISTA.md` §1.
+
 | Qué | Dónde | Rp | Fu | Fi | Te | De | Estado |
 |---|---|---|---|---|---|---|---|
 | El DER se calcula en dos sitios y manda el del front | `der.py` + `canislab-web/src/der.js` | ✅ | ✅ | ❌ | ✅ contrato de 85 casos: BLOQUE 23 aquí, `der-contrato.spec.js` allí | ✅ `CLAUDE.md` | **en curso** |
+| Los escalones de actividad | `der.BASE_ACTIVIDAD` | ✅ | ✅ **FEDIAF VII-7, verificado** | ❌ | ✅ | ⚠️ | **en curso** |
+| La fórmula de lactancia | `der.LACTANCIA_*` | ✅ | ✅ **FEDIAF VII-8b, verificada** | ❌ | ⚠️ solo el contrato | ❌ | **en curso** |
+| **El tope de ×6 en lactancia** | `der.LACTANCIA_TOPE_RER` | ✅ | ❌ **no es de FEDIAF** | ❌ | ❌ | ❌ | **roto** |
+| **Las razas con cifra propia de FEDIAF** | — | ❌ **no existe** | ✅ FEDIAF VII-7 | ❌ | ❌ | ❌ | **no empezado** |
 | El contrato está sincronizado entre los dos repos | `der_casos.json` | ✅ | — | — | ✅ | ✅ | **verificado hoy: md5 `92506f87…` idéntico en los dos repos** |
 | El peso objetivo desde el BCS se **divide**, no se resta | `verificar.peso_objetivo_desde_bcs` | ✅ | ✅ AAHA 2014/2021 + GPOI 2019 | ❌ | ✅ BLOQUE 37 | ✅ `DECISIONES.md` D-05 | **en curso** (falta ficha) |
 
@@ -139,7 +163,10 @@ nivel 2 tal como está.
 
 | Qué | Estado | Medida |
 |---|---|---|
-| **La batería NO sale en verde hoy sobre `main` sin tocar** | **roto (prueba mal diseñada)** | Ver §1.9. 1 fallo de 50 bloques, 1.232 s. Es el BLOQUE 4, y no es la nutrición |
+| **La batería NO sale en verde hoy sobre `main` sin tocar** | **roto (prueba mal diseñada)** | Ver §1.9. 1 fallo de 50 bloques, 1.232 s. Es el BLOQUE 4, y no es la nutrición. **Arreglado el 8 de septiembre** fijando la semilla |
+| **Un tope nuestro recorta hasta un −33 % la fórmula de lactancia de FEDIAF** | **roto** | 60 kg y 8 cachorros: FEDIAF 13.494 kcal, le damos 9.054. `PREGUNTAS_ABIERTAS.md` P-10 |
+| **Un Gran Danés recibe el 55 % de las kcal que le da su propia fuente** | **roto** | FEDIAF VII-7 le da 200 kcal/kg^0,75 y el motor tope en 175. P-11 |
+| **Un cachorro de raza grande sin hueso carnoso se queda sin menú ~1 de cada 4 veces** | **roto** | Medido: 11/15 con menú. No lo causa el techo de Ca:P nuevo (sin él, 9/15). Es el mínimo de calcio reforzado, que sin hueso hay que cerrar solo con suplementos |
 | **`renal` + `pancreatitis` no da menú, y el motor no sabe decir por qué** | **roto** | Ver §1.8. Confirmado y, además, **diagnosticado**: chocan el fósforo renal (1200) y la grasa de pancreatitis (20) |
 | La ficha de permisos de los ocho campos | **no empezado** | 0 de 8 campos en `main`; 2,5 de 8 en una rama, solo para 19 cifras de patología |
 | La clasificación en las tres cajas (tope duro / rango clínico / criterio nuestro) | **no empezado** | No existe como dato en ninguna parte |

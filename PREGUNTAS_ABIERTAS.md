@@ -150,6 +150,148 @@ del `CLAUDE.md` no se lo permiten a nadie**.
 
 ---
 
+### P-10 · Un tope nuestro recorta hasta un tercio la fórmula de lactancia de FEDIAF
+
+| | |
+|---|---|
+| **Dueño** | **El nutricionista**, y **Elena** para decidir si la lactancia debe ser automática |
+| **Bloquea** | Sí para una perra grande con camada grande |
+| **Abierta desde** | 8 de septiembre de 2026 |
+
+⚠️ **Corrige una versión anterior de esta entrada**, que decía que el motor
+daba de más comparado con SACN5. Al leer FEDIAF entero resultó lo contrario:
+**la fórmula del motor ES la de FEDIAF, exacta**, y lo que sobra es un techo
+nuestro que la recorta.
+
+**FEDIAF 2025, Tabla VII-8b, literal:**
+
+> *1 to 4 puppies: 145 × kg BW^0.75 + 24 n × kg BW × L*
+> *5 to 8 puppies: 145 × kg BW^0.75 + [96 + 12 (n−4)] × kg BW × L*
+> *L = 0.75 in week 1; 0.95 in week 2; 1.1 in week 3 and 1.2 in week 4*
+
+El motor implementa eso letra por letra. **Lo que no es de FEDIAF es
+`LACTANCIA_TOPE_RER = 6.0`**: FEDIAF no pone ningún techo. El nuestro sale de
+SACN5 Tabla 5-2, donde el ×6 **no es un techo general: es la fila de camadas
+de ≥9 cachorros**.
+
+Medido en semana 4:
+
+| Perra | Cachorros | FEDIAF | Le damos | |
+|---|---|---|---|---|
+| 25 kg | 6 | 5221 kcal | 4696 | **−10 %** |
+| 40 kg | 8 | 9218 kcal | 6680 | **−28 %** |
+| 60 kg | 8 | 13 494 kcal | 9054 | **−33 %** |
+
+⚠️ **Y el comentario del código decía que esta parte venía de una fuente
+secundaria «que no se ha podido contrastar con el texto original de FEDIAF».**
+Sí se puede, y cuadra. Ese comentario es lo que hizo que nadie volviera a
+mirarlo, y además se usó para justificar el recorte. Ya está corregido en
+`der.py`.
+
+**Las preguntas:** ¿se quita el tope y se sigue a FEDIAF? Si se mantiene algún
+techo, ¿cuál y con qué respaldo? ¿O la app no debería dar menú automático en
+lactancia?
+
+**No aplicado a propósito:** el DER manda desde el front y hay un contrato de
+85 casos compartido entre los dos repos; cambiar la ración de una perra
+lactante no lo decide una sesión sola.
+
+---
+
+### P-11 · FEDIAF da cifras para dos razas que la app tiene y el motor ignora
+
+| | |
+|---|---|
+| **Dueño** | **El nutricionista** (¿son adoptables?) y **Elena** (¿cómo se pregunta en la app?) |
+| **Bloquea** | Sí para un Gran Danés: hoy se le da el 55 % de lo que dice su propia fuente |
+| **Abierta desde** | 8 de septiembre de 2026 |
+
+**Verificado el 8 de septiembre leyendo la Tabla VII-7 de FEDIAF 2025 entera**,
+no solo la parte que ya estaba citada en el código. Los cinco escalones de
+actividad del motor cuadran exactos (95 · 110 · 125 · 150-175). Pero la misma
+tabla trae una sección **«Breed specific differences»** con dos filas:
+
+| | FEDIAF VII-7 |
+|---|---|
+| **Great Danes** | **200 (200-250) kcal/kg^0,75** |
+| **Newfoundlands** | **105 (80-132)** |
+
+**Las dos razas están en la lista de 136 de la app.** Medido:
+
+| Perro | FEDIAF, su raza | Motor en «normal» | Le damos |
+|---|---|---|---|
+| Gran Danés 67,5 kg | **4710 kcal/día** | 2590 kcal/día | **el 55 %** |
+| Terranova 56,5 kg | 2164 kcal/día | 2267 kcal/día | el 105 % |
+
+El ajuste por raza que sí tiene el motor (±15, Thes 2014) **no incluye a
+ninguna de las dos**. Y los 200 no son un valor extremo: SACN5 cap. 5 dice
+que las estimaciones de DER en perro *«range between 95 to 200 kcal … per
+(BWkg)0.75 per day»*.
+
+**Las preguntas:** ¿adoptamos las dos cifras? ¿Y esos 200 son **en vez** del
+nivel de actividad o el suelo sobre el que se aplica? La tabla los pone bajo
+«DER in relation to activity» sin cruzarlos con los cinco niveles.
+
+---
+
+### P-12 · El escalón intermedio de crecimiento (2,5 × RER) no tiene fuente
+
+| | |
+|---|---|
+| **Dueño** | **El nutricionista** |
+| **Bloquea** | No — solo actúa cuando no se conoce el peso adulto esperado |
+| **Abierta desde** | 8 de septiembre de 2026 |
+
+Cuando no se sabe el peso adulto esperado, el motor cae a tres escalones:
+**210 / 175 / 140** kcal/kg^0,75 por tramos del 50 % y el 80 % del peso adulto.
+
+**Verificado el 8 de septiembre: dos de los tres sí tienen fuente.** SACN5
+Tabla 5-2, parte 2, literal: *«Daily energy intake for growing puppies should
+be 3 x RER from weaning until four months of age. At four months of age energy
+intake should be reduced to 2 x RER until the puppy reaches adult size.»*
+
+3 × RER = **210** ✓ · 2 × RER = **140** ✓ · **2,5 × RER = 175: no está en
+ninguna parte.**
+
+**Y el criterio de corte tampoco coincide:** SACN5 corta por **edad** (4
+meses); el motor corta por **% del peso adulto** (50 % y 80 %).
+
+**Las preguntas:** ¿tiene sentido clínico el escalón intermedio, o hay que
+quedarse con los dos de SACN5? ¿Y cortar por edad o por % del peso adulto?
+
+---
+
+### P-13 · A ≤ RER, AAHA recomienda dieta terapéutica — y Rawku no lo es
+
+| | |
+|---|---|
+| **Dueño** | **El nutricionista**, y **Elena** para el alcance |
+| **Bloquea** | No, pero afecta a todos los perros con sobrepeso |
+| **Abierta desde** | 8 de septiembre de 2026 |
+
+A un perro con sobrepeso el motor le da exactamente el **RER de su peso
+ideal** (1,0 × RER). Está bien apoyado: coincide con SACN5 Tabla 5-2 («Weight
+loss = 1.0 x RER») y es **más estricto** que el «obese prone ≤ 90» de FEDIAF
+VII-7.
+
+Pero AAHA 2021 dice, literal: *«Therapeutic weight loss diets are recommended
+for patients undergoing significant calorie restriction (less than or equal to
+RER) for weight loss.»* A ese nivel de kcal, **la ventana entre los mínimos
+escalados y los máximos se estrecha** (es el mismo mecanismo que hace que el
+selenio se cruce en DER 45,2).
+
+**Y hay algo más, que conviene decir en voz alta:** la Tabla 4 de AAHA 2021
+(«Nutritional Screening: Risk Factors») lista literalmente *«Unconventional
+diet (e.g., **raw meat based, home prepared**, vegetarian, vegan)»* entre los
+factores de riesgo que justifican una evaluación nutricional extendida. Eso es
+exactamente lo que produce Rawku.
+
+**Las preguntas:** ¿es aceptable adelgazar a 1,0 × RER con una ración BARF, o
+hay que ser menos agresivo (1,2 × RER) para que quepan los nutrientes? ¿Y qué
+debería decirle la app al dueño sobre lo de AAHA?
+
+---
+
 ## No bloqueantes
 
 ### P-04 · El techo de lisina de FEDIAF: ¿sobre qué proteína se mide?

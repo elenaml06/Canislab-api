@@ -179,14 +179,45 @@ LACTANCIA_BASE = 145              # kcal/kg^0.75
 # Factores de semana de lactancia del NRC 2006: 0.75 / 0.95 / 1.1 / 1.2.
 # Antes teniamos 1.40 en la semana 4, que venia de la fuente secundaria.
 LACTANCIA_PESO_SEMANA = [0.75, 0.95, 1.10, 1.20]
-# TOPE DE SEGURIDAD. El termino extra de la lactancia escala con el PESO VIVO
-# (24 x n x peso), asi que en perros grandes se dispara muy por encima de lo
-# que da la tabla clinica (Small Animal Clinical Nutrition), cuyo maximo es
-# x6 del RER incluso con camadas de 9 o mas cachorros. Como la formula de
-# lactancia viene de una fuente SECUNDARIA y no se ha podido contrastar con
-# el texto original de FEDIAF, se limita al maximo de la tabla clinica.
-# Es la parte menos verificada de todo el DER: la lactancia SIEMPRE deberia
-# pautarla un veterinario, y ademas hay que recalcular cada semana.
+# ⚠️ CORREGIDO EL COMENTARIO (8 septiembre) — DECIA ALGO QUE NO ES CIERTO.
+#
+# Aqui ponia que "la formula de lactancia viene de una fuente SECUNDARIA y no
+# se ha podido contrastar con el texto original de FEDIAF", y que por eso era
+# "la parte menos verificada de todo el DER".
+#
+# SI SE PUEDE CONTRASTAR, Y CUADRA EXACTA. FEDIAF 2025, Tabla VII-8b
+# ("Average energy requirements during growth and reproduction in dogs"),
+# literal:
+#
+#     1 to 4 puppies:  145 x kg BW^0.75 + 24 n x kg BW x L
+#     5 to 8 puppies:  145 x kg BW^0.75 + [96 + 12 (n-4)] x kg BW x L
+#     n = number of puppies; L = 0.75 en semana 1; 0.95 en 2; 1.1 en 3; 1.2 en 4
+#
+# Que es letra por letra lo que hace `calcular_der` mas abajo, con los mismos
+# 145, los mismos 24n / 96+12(n-4) y los mismos cuatro factores L. Un
+# comentario que declara no verificado algo que si lo esta es peor que no
+# tener comentario: nadie vuelve a mirarlo, y ademas lo usa para justificar
+# un recorte.
+#
+# LO QUE SI ES NUESTRO ES ESTE TOPE, Y FEDIAF NO PONE NINGUNO.
+#
+# Sale de la tabla de Small Animal Clinical Nutrition (5a ed., Tabla 5-2,
+# parte 2 canina), donde el x6 NO es un techo general: es la FILA de camadas
+# de 9 o mas cachorros. Se esta usando una fila de una tabla indexada por
+# tamano de camada como si fuera un limite universal.
+#
+# ⚠️ Y RECORTA DE VERDAD. Medido el 8 de septiembre, en semana 4:
+#     25 kg, 6 cachorros:  FEDIAF 5221 kcal -> recortado a 4696  (-10 %)
+#     40 kg, 8 cachorros:  FEDIAF 9218 kcal -> recortado a 6680  (-28 %)
+#     60 kg, 8 cachorros:  FEDIAF 13494 kcal -> recortado a 9054 (-33 %)
+#
+# Una perra de 60 kg con 8 cachorros recibe un tercio menos de lo que dice
+# FEDIAF. Ver `PREGUNTAS_ABIERTAS.md` P-10: la decision de quitarlo o
+# justificarlo no la toma una sesion sola, porque el DER manda desde el front
+# y hay un contrato de 85 casos compartido entre los dos repos.
+#
+# Lo que sigue siendo verdad del comentario viejo: la lactancia deberia
+# pautarla un veterinario, y hay que recalcular cada semana.
 LACTANCIA_TOPE_RER = 6.0
 
 # =============================================================================

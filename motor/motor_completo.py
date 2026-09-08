@@ -126,6 +126,134 @@ def topes_de_patologias(patologias, etapa="Adulto"):
 
     return topes, pct_grasa, avisos, suelos
 
+def limites_de_patologias_con_procedencia(patologias, etapa="Adulto"):
+    """Los mismos límites que `topes_de_patologias`, pero cada uno sabiendo
+    DE QUÉ PATOLOGÍA VIENE y con qué fuente.
+
+    `topes_de_patologias` combina con `min()`/`max()` y en el resultado ya no
+    queda rastro de quién puso cada número. Para poder decirle a alguien «lo
+    que choca es el fósforo de la renal contra la grasa de la pancreatitis»
+    hace falta el rastro, así que se recorre otra vez guardándolo.
+
+    Devuelve una lista de dicts:
+        {tipo, clave, valor, patologia, nombre_patologia, fuente, por_que}
+    con `tipo` en ("tope", "suelo", "pct_kcal_grasa"). Solo los límites que
+    de verdad se aplican en esta etapa: los que la etapa desactiva no salen,
+    porque no pueden ser el culpable de nada.
+    """
+    lista = list(patologias or [])
+    crece = _es_crecimiento(etapa)
+    fuera = []
+    # `topes_de_patologias` es quien decide qué se aplica en esta etapa. Se
+    # le pregunta a él en vez de repetir su lógica aquí: si algún día cambia,
+    # esto cambia con él en vez de quedarse mintiendo por su cuenta.
+    topes_efectivos, pct_efectivo, _avisos, suelos_efectivos = topes_de_patologias(lista, etapa)
+    # La fuente y el motivo NO están en la forma del motor a propósito
+    # (`patologias.py` los deja fuera para no meter documentación dentro del
+    # cálculo). Se leen del crudo -- del MISMO módulo que usa el solver, no
+    # de `motor.patologias`, que es una segunda carga del mismo archivo.
+    crudo = (PATOLOGIAS_CRUDO or {}).get("patologias", {})
+
+    def _meta(clave_pat, grupo, nutriente):
+        ficha = (crudo.get(clave_pat) or {}).get(grupo) or {}
+        return ficha.get(nutriente) or {}
+
+    for p in lista:
+        info = PATOLOGIAS.get(p, {})
+        if info.get("solo_en_adulto") and crece:
+            continue
+        nombre_pat = (crudo.get(p) or {}).get("nombre", p)
+        for clave, valor in (info.get("max_por_1000kcal") or {}).items():
+            # Solo el que GANÓ el `min()`: si otra patología puso uno más
+            # estricto sobre el mismo nutriente, el que no manda no bloquea.
+            if topes_efectivos.get(clave) != valor:
+                continue
+            m = _meta(p, "topes_por_1000kcal", clave)
+            fuera.append({"tipo": "tope", "clave": clave, "valor": valor,
+                          "patologia": p, "nombre_patologia": nombre_pat,
+                          "fuente": m.get("fuente"), "por_que": m.get("por_que")})
+        for clave, valor in (info.get("min_por_1000kcal") or {}).items():
+            if suelos_efectivos.get(clave) != valor:
+                continue
+            m = _meta(p, "suelos_por_1000kcal", clave)
+            fuera.append({"tipo": "suelo", "clave": clave, "valor": valor,
+                          "patologia": p, "nombre_patologia": nombre_pat,
+                          "fuente": m.get("fuente"), "por_que": m.get("por_que")})
+        condicional = info.get("max_pct_kcal_grasa_si_ademas")
+        if condicional:
+            valor, requiere = condicional
+            if any(otra in lista for otra in requiere) and pct_efectivo == valor:
+                m = (crudo.get(p) or {}).get("max_pct_kcal_grasa_si_ademas") or {}
+                fuera.append({"tipo": "pct_kcal_grasa", "clave": "grasa", "valor": valor,
+                              "patologia": p, "nombre_patologia": nombre_pat,
+                              "fuente": m.get("fuente"), "por_que": m.get("por_que")})
+    return fuera
+
+
+def diagnosticar_choque_de_patologias(patologias, etapa, intentar,
+                                      max_pruebas=12):
+    """Cuando no sale menú con varias patologías, dice QUÉ LÍMITES CHOCAN.
+
+    ⚠️ POR QUÉ EXISTE (8 septiembre) — CASO REAL MEDIDO: un adulto de 25 kg
+    con `renal` + `pancreatitis` no obtiene menú en ninguno de los seis
+    peldaños de la escalera, y lo único que se le decía era «no existe
+    ninguna combinación de alimentos accesibles... quita alguna restricción y
+    vuelve a probar». Ese texto está escrito para un dueño y a un veterinario
+    no le sirve: **no hay ninguna restricción que él pueda quitar**, y sin
+    saber cuál es el choque tampoco puede decidir cuál cedería él.
+
+    Cada patología por separado SÍ da menú. El choque es entre dos.
+
+    CÓMO SE AVERIGUA. HiGHS a través de scipy no expone un conjunto
+    infactible irreducible, así que no hay forma de preguntárselo al solver.
+    Lo que sí se puede es preguntar por eliminación: se vuelve a resolver
+    soltando UN límite cada vez, y el que desbloquea es culpable. Es una
+    llamada al solver por límite -- con dos patologías son dos o tres, y en
+    la medida del 8 de septiembre cada una tardó entre 0,1 y 2,2 s.
+
+    ⚠️ ESTO NO ENTREGA NINGÚN MENÚ NI RELAJA NADA. Los menús que construye
+    para preguntar se tiran; lo único que sale de aquí es texto. El límite
+    sigue aplicándose exactamente igual después.
+
+    `intentar(soltar)` es una función que recibe un conjunto de
+    `(tipo, clave)` y devuelve True si con esos límites sueltos SÍ hay menú.
+    La pone quien llama, porque es quien tiene los argumentos del solver.
+    """
+    limites = limites_de_patologias_con_procedencia(patologias, etapa)
+    if len(limites) < 2:
+        # Con un solo límite activo no hay dos cosas que choquen: lo que
+        # falta es comida, no acuerdo. Decir «choca X consigo mismo» sería
+        # peor que no decir nada.
+        return None
+
+    culpables = []
+    for lim in limites[:max_pruebas]:
+        if intentar({(lim["tipo"], lim["clave"])}):
+            culpables.append(lim)
+
+    if len(culpables) < 2:
+        # O no es un choque entre límites de patología (puede ser el
+        # catálogo, las exclusiones o los propios requisitos de FEDIAF), o
+        # solo hay un culpable y soltarlo no es una opción que ofrecer.
+        # En los dos casos se prefiere no decir nada a decir algo falso.
+        return None
+
+    return {"limites_que_chocan": culpables,
+            "todos_los_limites_activos": limites}
+
+
+# ⚠️ EL UMBRAL DE «RAZA GRANDE», EN UN SOLO SITIO (8 septiembre).
+#
+# Es el 15 kg de peso ADULTO ESPERADO de las notas a y b de la Tabla III-3b de
+# FEDIAF 2025, y decide DOS cosas a la vez: el mínimo de calcio reforzado
+# (2,50 en vez de 2,00 g/1000 kcal) y el techo del ratio Ca:P (1,6 en vez de
+# 1,8). Estaba escrito a mano en tres sitios -- dos aquí y uno en `main.py` --,
+# y ya se desincronizó una vez: el 7 de septiembre había un 25 aquí y un 25
+# allí que tenían que ser 15, y un cachorro de 15-25 kg de peso adulto recibía
+# el mínimo genérico en vez del reforzado. Un número que decide si un menú se
+# entrega no puede estar escrito tres veces.
+RAZA_GRANDE_O_GIGANTE_KG = 15
+
 FRUTAS = {"Manzana", "Pera", "Plátano", "Fresa", "Sandía", "Melón", "Naranja",
          "Mandarina", "Piña", "Mango", "Frambuesa", "Arándano", "Albaricoque", "Dátil"}
 
@@ -242,7 +370,8 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             time_limit=15, restringir_especie=None, peso_adulto_esperado_kg=None,
             evitar_especies=None, restringir_a_elegidos=None, categorias_excluidas=None,
             presupuesto_semanal_restante=None, diagnostico=None,
-            peso_objetivo_kg=None, gramos_fijos=None):
+            peso_objetivo_kg=None, gramos_fijos=None,
+            soltar_limites_patologia=None):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -695,6 +824,29 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # largo de esa función.
     topes_patologia, pct_grasa_patologia, _avisos_pat, suelos_patologia = topes_de_patologias(patologias, etapa)
 
+    # ⚠️ `soltar_limites_patologia` NO ES UNA PUERTA TRASERA (8 septiembre).
+    #
+    # Sirve para UNA cosa y solo una: que `diagnosticar_choque_de_patologias`
+    # pueda preguntar «¿y si este tope no estuviera?» para saber CUÁL de dos
+    # restricciones está bloqueando. Ningún camino que entregue un menú lo
+    # usa nunca -- el BLOQUE 52 lo comprueba recorriendo `main.py`.
+    #
+    # Va aquí, sobre el resultado ya resuelto de `topes_de_patologias`, y no
+    # tocando la tabla: mutar `PATOLOGIAS` en memoria para hacer este mismo
+    # experimento NO FUNCIONA, porque la tabla está cargada dos veces (el
+    # módulo suelto `patologias`, que es el que usa el solver, y
+    # `motor.patologias`, que es el que sirve `GET /patologias`). Mutar la
+    # copia equivocada da «sigue infactible» y hace creer que ese tope no era
+    # el culpable. Ya pasó y costó dos rondas.
+    if soltar_limites_patologia:
+        for _tipo, _clave in soltar_limites_patologia:
+            if _tipo == "tope":
+                topes_patologia.pop(_clave, None)
+            elif _tipo == "suelo":
+                suelos_patologia.pop(_clave, None)
+            elif _tipo == "pct_kcal_grasa":
+                pct_grasa_patologia = None
+
     # ⚠️ AÑADIDO (5 agosto, noche) — CONECTADO: "Calcio_LateGrowth_RazaGrande"
     # ya existía en los datos, con nota de auditoría explícita diciendo que
     # el motor nunca lo usaba porque no estaba en su MAPA. Fuente: 4.5g/1000kcal
@@ -733,7 +885,6 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # -- el motor no distingue esa sub-fase dentro de CachorroCrecimiento y
     # aplica el reforzado a toda ella, que es el lado seguro, nunca menos).
     minimos_reforzados = {}
-    RAZA_GRANDE_O_GIGANTE_KG = 15
     if (peso_adulto_esperado_kg and peso_adulto_esperado_kg >= RAZA_GRANDE_O_GIGANTE_KG
             and etapa in ("CachorroJoven", "CachorroCrecimiento")):
         r_grande = req.get("Calcio_LateGrowth_RazaGrande")
@@ -1155,6 +1306,40 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     if r_ratio:
         rmin = _num(r_ratio.get(f"min{et}"))
         rmax = _num(r_ratio.get(f"max{et}"))
+        # ⚠️ AÑADIDO (8 septiembre) — LA OTRA MITAD DE LA NOTA b DE FEDIAF.
+        #
+        # La nota b de la Tabla III-3b manda DOS cosas para el cachorro de
+        # raza grande (>15 kg de peso adulto), y aquí solo se aplicaba una.
+        # Literal, del PDF de FEDIAF 2025 leído a mano (pág. 21):
+        #
+        #   «For puppies of breeds with adult body weight over 15 kg, until
+        #    the age of about 6 months. Only after that time, calcium can be
+        #    reduced to 0.8 % DM (2 g/1000 kcal or 0.48 g/MJ) AND THE
+        #    CALCIUM-PHOSPHORUS RATIO CAN BE INCREASED TO 1.8/1.»
+        #
+        # Y la propia fila del ratio en la III-3b lo dice:
+        #   «Late growth: 1.8/1a (N) or 1.6/1b (N)»
+        # o sea 1,8 para el cachorro de raza pequeña (nota a) y 1,6 para el
+        # de raza grande (nota b). El motor aplicaba 1,8 a los dos.
+        #
+        # Se usa el MISMO umbral (15 kg) y el MISMO criterio que el mínimo de
+        # calcio reforzado de unas líneas más arriba, porque es la misma nota
+        # al pie: aplicar el valor más estricto a TODA la fase de crecimiento
+        # y no solo hasta los 6 meses, porque el motor no distingue esa
+        # sub-fase y quedarse con el techo más bajo es el lado seguro.
+        #
+        # ⚠️ MEDIDO ANTES DE PONERLO: 0 de 32 menús de cachorro de raza grande
+        # caían entre 1,6 y 1,8. O sea que el agujero era real en las reglas y
+        # no estaba dando menús malos hoy -- igual que pasó con el mínimo de
+        # calcio de esta misma nota. Se cierra igual: lo que lo tapaba es una
+        # propiedad del catálogo de hoy, no una garantía.
+        if (peso_adulto_esperado_kg
+                and peso_adulto_esperado_kg >= RAZA_GRANDE_O_GIGANTE_KG
+                and etapa in ("CachorroJoven", "CachorroCrecimiento")):
+            _r_grande = req.get("Calcio_LateGrowth_RazaGrande") or {}
+            _rmax_grande = _num(_r_grande.get("maxRatioCaP"))
+            if _rmax_grande is not None:
+                rmax = _rmax_grande if rmax is None else min(rmax, _rmax_grande)
         fila_ca = fila_vacia(); fila_p = fila_vacia()
         for n in nombres:
             ca = (_num(alimentos[n].get("nutrientes", {}).get("calcio")) or 0.0) / 100.0

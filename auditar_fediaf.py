@@ -324,7 +324,14 @@ NO_SON_NUTRIENTES_DE_LA_TABLA = {
     "Relacion_Ca_P",
     # Caso especial derivado: el calcio de cachorros de raza grande en
     # crecimiento tardío. No es una fila propia de la tabla III-3b; el motor
-    # lo aplica aparte, solo si el peso adulto esperado es >= 25 kg.
+    # lo aplica aparte, solo si el peso adulto esperado es >= 15 kg (el
+    # umbral vive en `motor_completo.RAZA_GRANDE_O_GIGANTE_KG`).
+    # ⚠️ Este comentario decía «>= 25 kg» hasta el 8 de septiembre, cuando el
+    # código ya usaba 15 desde el día 7. Un comentario caducado sobre un
+    # umbral clínico es exactamente lo que hace que el siguiente lo "corrija"
+    # al revés.
+    # Sus DOS valores (el mínimo de calcio y `maxRatioCaP`) se comprueban
+    # abajo, en NOTAS_AL_PIE.
     "Calcio_LateGrowth_RazaGrande",
     # ⚠️ AÑADIDO (7 septiembre) — LA MISMA "FIBRA" DEL CASO REAL DE ARRIBA,
     # de vuelta a propósito y con la lección aprendida. FEDIAF no le da
@@ -346,6 +353,77 @@ NO_SON_NUTRIENTES_DE_LA_TABLA = {
     # fuente real -- primer uso: dcm_taurina_respondedora, SACN5 cap.36.
     "Taurina", "L_carnitina",
 }
+# ══════════════════════════════════════════════════════════════════════
+# LO QUE VIVE EN LAS NOTAS AL PIE, Y QUE NADIE COMPROBABA
+# ══════════════════════════════════════════════════════════════════════
+#
+# ⚠️ AÑADIDO (8 septiembre) — TRES HUECOS ENCONTRADOS AL LEER EL PDF ENTERO.
+#
+# `NO_SON_NUTRIENTES_DE_LA_TABLA` libra a una fila de compararse contra las
+# columnas de la III-3b. Pero librarla de la COMPARACIÓN la libraba también
+# de TODA comprobación, y tres cifras que sí salen de FEDIAF -- de sus notas
+# al pie y de la propia fila del ratio -- no las miraba nadie:
+#
+#   · `Relacion_Ca_P`  — está en la III-3b, en su propia fila, con sus tres
+#     máximos escritos. Estaba exenta entera por «no ser un nutriente».
+#   · `Sodio` y `Cloruro`, máximos — no están en la columna Maximum: están
+#     en la NOTA c. No estaban ni en MAXIMOS ni en SIN_MAXIMO, así que
+#     caían por el hueco entre las dos listas y no se comprobaban nunca.
+#
+# Todas transcritas del PDF de FEDIAF 2025 leído a mano el 8 de septiembre.
+NOTAS_AL_PIE = {
+    # Fila «Ca / P ratio» de la Tabla III-3b, columna Maximum, literal:
+    #     Adult:                   2/1 (N)
+    #     Early growth & reprod.:  1.6/1 (N)
+    #     Late growth:             1.8/1a (N) or 1.6/1b (N)
+    # El mínimo es 1/1 en las tres etapas (una sola celda centrada).
+    ("Relacion_Ca_P", "minAdulto"): 1,
+    ("Relacion_Ca_P", "minCachorroJoven"): 1,
+    ("Relacion_Ca_P", "minCachorroCrecimiento"): 1,
+    ("Relacion_Ca_P", "maxAdulto"): 2,
+    ("Relacion_Ca_P", "maxCachorroJoven"): 1.6,
+    # 1.8 es el «1.8/1a», o sea el de la nota a: cachorro de raza PEQUEÑA
+    # (peso adulto hasta 15 kg). El de la nota b -- raza grande -- es 1.6, y
+    # vive en `Calcio_LateGrowth_RazaGrande.maxRatioCaP`, aquí abajo.
+    ("Relacion_Ca_P", "maxCachorroCrecimiento"): 1.8,
+    # Nota c, literal: «Scientific data show that sodium levels up to 1.5 %
+    # DM (3.75 g/1000 kcal or 0.89 g/MJ ME) and chloride levels up to 2.35 %
+    # DM (5.87 g/1000 kcal or 1.40 g/MJ ME) are safe for healthy dogs.
+    # Higher levels may still be safe, but no scientific data are available.»
+    # ⚠️ OJO CON QUÉ ES ESTO: FEDIAF no lo llama máximo, ni (N) ni (L). Es un
+    # nivel del que hay datos de seguridad, y dice expresamente que por
+    # encima «puede que también sea seguro». Usarlo como techo duro es
+    # CRITERIO NUESTRO, del lado prudente, y está bien -- pero es una
+    # decisión nuestra, no un límite de FEDIAF, y tiene que poder leerse así.
+    ("Sodio", "maxAdulto"): 3750.0,
+    ("Sodio", "maxCachorroJoven"): 3750.0,
+    ("Sodio", "maxCachorroCrecimiento"): 3750.0,
+    ("Cloruro", "maxAdulto"): 5870.0,
+    ("Cloruro", "maxCachorroJoven"): 5870.0,
+    ("Cloruro", "maxCachorroCrecimiento"): 5870.0,
+    # Notas a y b de la III-3b, para el cachorro de raza grande (>15 kg de
+    # peso adulto). La nota b manda DOS cosas y hasta el 8 de septiembre solo
+    # se aplicaba una. Literal: «... calcium can be reduced to 0.8 % DM
+    # (2 g/1000 kcal or 0.48 g/MJ) and the calcium-phosphorus ratio can be
+    # increased to 1.8/1» -- o sea que ANTES de ese momento el techo del
+    # ratio es 1.6 y el mínimo de calcio 2.50 g/1000 kcal (1.00 % DM).
+    ("Calcio_LateGrowth_RazaGrande", "minCachorroCrecimiento"): 2500,
+    ("Calcio_LateGrowth_RazaGrande", "maxRatioCaP"): 1.6,
+}
+for (_nut_n, _campo_n), _esperado_n in NOTAS_AL_PIE.items():
+    _fila_n = req.get(_nut_n)
+    if not _fila_n:
+        problemas.append(("FALTA", _nut_n, "no está en el JSON")); continue
+    _actual_n = num(_fila_n.get(_campo_n))
+    if _actual_n is None:
+        problemas.append(("FALTA UNA CIFRA DE FEDIAF", _nut_n,
+                          f"{_campo_n}: el PDF da {_esperado_n} y el JSON no trae nada"))
+    elif abs(_actual_n - _esperado_n) > max(abs(_esperado_n) * 0.01, 1e-9):
+        problemas.append(("NO CUADRA CON EL PDF", _nut_n,
+                          f"{_campo_n}: JSON={_actual_n}, FEDIAF={_esperado_n}"))
+    else:
+        ok_n += 1
+
 _cubiertos = set(EQUIV) | set(MAXIMOS) | set(SIN_MAXIMO) | NO_SON_NUTRIENTES_DE_LA_TABLA
 for _n in req:
     if _n in _cubiertos:

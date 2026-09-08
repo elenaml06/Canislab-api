@@ -45,13 +45,47 @@ from motor_completo import resolver as resolver_v2, especie_de
 # PATOLOGIAS: los topes por patología, para poder comprobarlos también
 # en la puerta de verificación (ver _tope_patologia_roto).
 from constructor import tabla_imputacion_maximos, valor_para_maximo, valor_nutriente
-from motor_completo import PATOLOGIAS, topes_de_patologias
+from motor_completo import PATOLOGIAS, topes_de_patologias, RAZA_GRANDE_O_GIGANTE_KG
 from exclusiones import filtrar as filtrar_exclusiones
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
 from verificar import verificar as verificar_v2
 from verificar import peso_objetivo_desde_bcs, BCS_ESCALA_SATURADA
 from seguridad import revisar_seguridad as revisar_seguridad_v2
 from seguridad import avisos_rotacion as avisos_rotacion_v2
+
+# ⚠️ CÓMO SE ESCRIBE UN NUTRIENTE EN UN MENSAJE (8 septiembre).
+#
+# Lo necesita el diagnóstico de choque entre patologías, que tiene que
+# escribir «el fósforo de la renal, 1200 mg por cada 1000 kcal» a partir de
+# la clave interna `fosforo`. Se DERIVA del `MAPA` del verificador y de la
+# tabla de FEDIAF, nunca se escribe a mano: una lista de nombres copiada es
+# exactamente el fallo del que avisa la regla 5 del CLAUDE.md -- el día que
+# se añada un nutriente, una lista a mano se queda corta EN SILENCIO y el
+# mensaje enseña la clave interna al veterinario.
+_NOMBRE_NUTRIENTE = {}
+_UNIDAD_DE = {}
+try:
+    from verificar import MAPA as _MAPA_NUTRIENTES
+    # `cargar_v2()` devuelve los requisitos como dict indexado por el nombre
+    # de FEDIAF, que es la misma clave que usa el MAPA del verificador.
+    _, _req_unidades = cargar_v2()
+    for _fediaf, _clave in _MAPA_NUTRIENTES.items():
+        _NOMBRE_NUTRIENTE[_clave] = _fediaf.replace("_", " ").lower()
+        _u = (_req_unidades.get(_fediaf) or {}).get("unidad") or ""
+        _UNIDAD_DE[_clave] = "" if _u == "ratio" else _u
+except Exception as _e:   # nunca puede impedir que arranque la API
+    print(f"[aviso] no se pudo montar el nombre legible de los nutrientes: {_e}")
+
+
+def _num_bonito(v):
+    """1200.0 -> «1200»; 14.1875 -> «14,19». Para texto, no para cálculo."""
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        return str(v)
+    if abs(f - round(f)) < 1e-9:
+        return str(int(round(f)))
+    return f"{f:.2f}".replace(".", ",")
 
 # ⚠️ AÑADIDO (5 agosto, madrugada) — DOS CASOS REALES ENCONTRADOS
 # AUDITANDO: (1) avisos_rotacion() ya existía en seguridad.py, con
@@ -330,7 +364,6 @@ def _minimo_calcio_raza_grande_roto(gramos, al, req, etapa, peso_adulto_esperado
     la cita literal de la footnote "b" de la Tabla III-3b de FEDIAF 2025
     (página 21 del PDF, leída a mano, no de memoria).
     """
-    RAZA_GRANDE_O_GIGANTE_KG = 15
     if not gramos or not peso_adulto_esperado_kg:
         return None
     if peso_adulto_esperado_kg < RAZA_GRANDE_O_GIGANTE_KG:
@@ -355,6 +388,65 @@ def _minimo_calcio_raza_grande_roto(gramos, al, req, etapa, peso_adulto_esperado
     if tasa < minimo * 0.995:
         return (f"calcio {tasa:.0f} mg/1000 kcal (mínimo {minimo:.0f} en raza "
                 f"grande en crecimiento)")
+    return None
+
+
+# ⚠️ AÑADIDO (8 septiembre) — LA OTRA MITAD DE LA MISMA NOTA b.
+#
+# La nota b de la Tabla III-3b de FEDIAF 2025 manda DOS cosas para el cachorro
+# de raza grande, y hasta hoy solo se aplicaba una. Literal, del PDF (pág. 21),
+# leído a mano:
+#
+#   «For puppies of breeds with adult body weight over 15 kg, until the age of
+#    about 6 months. Only after that time, calcium can be reduced to 0.8 % DM
+#    (2 g/1000 kcal or 0.48 g/MJ) AND THE CALCIUM-PHOSPHORUS RATIO CAN BE
+#    INCREASED TO 1.8/1.»
+#
+# Y la propia fila del ratio en la III-3b: «Late growth: 1.8/1a (N) or 1.6/1b
+# (N)». O sea: 1,8 es el techo del cachorro de raza PEQUEÑA y 1,6 el de la
+# grande. El motor aplicaba 1,8 a los dos, así que un cachorro de raza grande
+# podía recibir un menú con el ratio entre 1,6 y 1,8 -- por encima del techo
+# que su propia fuente le pone-- y salir VERDE, porque el semáforo mide contra
+# la fila genérica.
+#
+# Es el mismo agujero que ya se cerró con el mínimo de calcio y por el mismo
+# motivo: `verificar()` no sabe qué raza es el perro. Y aquí importa más que
+# allí, porque el mínimo reforzado de calcio EMPUJA EL RATIO HACIA ARRIBA: las
+# dos mitades de la nota b tiran en sentidos opuestos y aplicar solo una deja
+# al perro justo del lado malo.
+#
+# ⚠️ MEDIDO ANTES DE PONERLO: 0 de 32 menús de cachorro de raza grande caían
+# entre 1,6 y 1,8, así que el agujero era real en las reglas y no estaba dando
+# menús malos hoy. Se cierra igual: lo que lo tapaba es una propiedad del
+# catálogo de hoy, no una garantía.
+def _ratio_cap_raza_grande_roto(gramos, al, req, etapa, peso_adulto_esperado_kg):
+    """¿Este menú se pasa del techo de Ca:P REFORZADO de las razas grandes en
+    crecimiento? Devuelve el texto del fallo, o None.
+
+    Mismo umbral y misma fila de la tabla que usa el solver: si se leyera aquí
+    de otra manera, la comprobación y la restricción podrían discrepar.
+    """
+    if not gramos or not peso_adulto_esperado_kg:
+        return None
+    if peso_adulto_esperado_kg < RAZA_GRANDE_O_GIGANTE_KG:
+        return None
+    if etapa not in ("CachorroJoven", "CachorroCrecimiento"):
+        return None
+    fila = (req or {}).get("Calcio_LateGrowth_RazaGrande")
+    techo = _valor_num((fila or {}).get("maxRatioCaP"))
+    if not techo:
+        return None
+    ca = sum((_valor_num(al.get(n, {}).get("nutrientes", {}).get("calcio")) or 0.0) / 100.0 * g
+             for n, g in gramos.items())
+    p = sum((_valor_num(al.get(n, {}).get("nutrientes", {}).get("fosforo")) or 0.0) / 100.0 * g
+            for n, g in gramos.items())
+    if p <= 0:
+        return None
+    ratio = ca / p
+    # El mismo 0,5 % de margen por redondeo que usa el semáforo para el ratio.
+    if ratio > techo * 1.005:
+        return (f"ratio Ca:P {ratio:.2f}:1 (máximo {techo}:1 en raza grande en "
+                f"crecimiento, nota b de FEDIAF)")
     return None
 # ⚠️ LA ESCALERA DEL PESO DE REFERENCIA (28 agosto). UN SOLO SITIO.
 #
@@ -434,6 +526,8 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
     topes_rotos = _tope_patologia_roto(gramos, al, patologias, etapa)
     calcio_corto = _minimo_calcio_raza_grande_roto(gramos, al, req, etapa,
                                                    peso_adulto_esperado_kg)
+    ratio_pasado = _ratio_cap_raza_grande_roto(gramos, al, req, etapa,
+                                               peso_adulto_esperado_kg)
 
     # ¿es dable? Ver TOPE_GRAMOS_SOBRE_PESO, arriba.
     total_g = sum(gramos.values())
@@ -494,6 +588,26 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
                        "crece. No te lo damos. Prueba a cambiar algún alimento o a "
                        "quitar alguna restricción."),
             "verificacion": {"minimo_calcio_raza_grande_roto": calcio_corto},
+        }
+
+    if ratio_pasado:
+        # La otra mitad de la nota b de FEDIAF, mismo trato que el mínimo de
+        # calcio: es un fallo del motor, no de lo que haya pedido nadie.
+        observabilidad.capturar(
+            RuntimeError(f"Menu por encima del techo de Ca:P de raza grande "
+                         f"bloqueado en {origen}: {ratio_pasado}"),
+            endpoint=origen, etapa=etapa, der_objetivo=der,
+            peso_perro_kg=peso_perro_kg,
+            peso_adulto_esperado_kg=peso_adulto_esperado_kg,
+            ratio_pasado=ratio_pasado, n_alimentos=len(gramos))
+        return {
+            "factible": False,
+            "motivo": ("El menú que salía lleva demasiado calcio para el fósforo "
+                       "que tiene. En un cachorro de raza grande ese margen es más "
+                       "estrecho que en uno pequeño, porque un exceso durante el "
+                       "crecimiento afecta al hueso. No te lo damos. Prueba a "
+                       "cambiar algún alimento o a quitar alguna restricción."),
+            "verificacion": {"ratio_cap_raza_grande_roto": ratio_pasado},
         }
 
     if ficha["semaforo"] != "verde" or not seguro:
@@ -1992,10 +2106,14 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # menú se siga generando igual (con aviso), en vez de fallar del
     # todo.
     def _intentar_generacion(forzar_este, restringir_a_elegidos_este,
-                             margenes=None, max_supl=None):
+                             margenes=None, max_supl=None, soltar=None):
         """Un intento completo: llamada + reintentos para mejorar a
         verde mientras quede presupuesto de tiempo -- misma lógica que
-        ya existía, solo que reutilizable para los tres niveles."""
+        ya existía, solo que reutilizable para los tres niveles.
+
+        `soltar` SOLO lo usa el diagnóstico de choque entre patologías, que
+        tira los menús que construye y se queda con el texto. Ningún camino
+        que entregue un menú lo pasa nunca: lo comprueba el BLOQUE 52."""
         ok_i, gramos_i = resolver_v2(
             datos.der_objetivo, datos.etapa_requisitos, al, req,
             datos.peso_perro_kg, dosis_maxima_fabricante,
@@ -2011,6 +2129,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             restringir_a_elegidos=restringir_a_elegidos_este,
             categorias_excluidas=datos.categorias_excluidas,
             presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
+            soltar_limites_patologia=soltar,
         )
         # ⚠️ VERIFICAR CUESTA 1,6 ms: NO SE PUEDE QUEDAR SIN TIEMPO (29 agosto).
         #
@@ -2253,6 +2372,68 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         # sobre el DER -- un número escrito en dos sitios se separa, y el
         # que está en un texto no lo cubre ninguna prueba.
         # Encontrado pidiendo un menú de hepatopatía contra producción.
+        # ⚠️ ANTES DE RENDIRSE, DECIR QUÉ CHOCA (8 septiembre).
+        #
+        # CASO REAL MEDIDO: un adulto de 25 kg con `renal` + `pancreatitis`
+        # no obtiene menú en ninguno de los seis peldaños -- y cada patología
+        # POR SEPARADO sí lo obtiene. Lo único que se decía era el texto de
+        # abajo, «quita alguna restricción y vuelve a probar», que está
+        # escrito para un dueño. A un veterinario no le sirve: no hay ninguna
+        # restricción que él pueda quitar, y sin saber cuál es el choque
+        # tampoco puede decidir cuál cedería.
+        #
+        # `diagnosticar_choque_de_patologias` lo averigua por eliminación:
+        # vuelve a resolver soltando UN límite cada vez y el que desbloquea
+        # es culpable. En el caso medido tarda 2,2 s y contesta «el fósforo
+        # de la renal (≤1200) contra la grasa de la pancreatitis (≤20)».
+        #
+        # ⚠️ NO ENTREGA NINGÚN MENÚ. Los menús que construye para preguntar
+        # se tiran: de aquí solo sale texto, y el tope se sigue aplicando
+        # igual. Lo vigila el BLOQUE 52.
+        _choque = None
+        if datos.patologias and tiempo_restante() > 3.0:
+            try:
+                from motor_completo import diagnosticar_choque_de_patologias
+                _choque = diagnosticar_choque_de_patologias(
+                    datos.patologias, datos.etapa_requisitos,
+                    lambda soltar: _intentar_generacion(
+                        forzar, None,
+                        margenes=_escalera_de_relajacion(hay_comida)[-1][0],
+                        max_supl=_escalera_de_relajacion(hay_comida)[-1][1],
+                        soltar=soltar)[0])
+            except Exception as e:   # el diagnóstico NUNCA puede tumbar la respuesta
+                observabilidad.capturar(e, endpoint="/menu/v2",
+                                        nota="diagnostico de choque de patologias")
+                _choque = None
+
+        if _choque:
+            _l = _choque["limites_que_chocan"]
+            _texto = " y ".join(
+                f"{x['nombre_patologia']} exige "
+                f"{'como mucho' if x['tipo'] != 'suelo' else 'al menos'} "
+                f"{_num_bonito(x['valor'])} {_UNIDAD_DE.get(x['clave'], '')} "
+                f"de {_NOMBRE_NUTRIENTE.get(x['clave'], x['clave'])} por cada 1000 kcal".strip()
+                for x in _l)
+            return {
+                "factible": False,
+                "motivo": (
+                    "No hay ninguna ración que cumpla a la vez los límites de las "
+                    "patologías marcadas: " + _texto + ". Cada una por separado sí "
+                    "tiene menú; juntas no queda margen. Elegir cuál de los dos "
+                    "límites cede es una decisión clínica, así que no la toma la app."),
+                "choque_de_patologias": [
+                    {"patologia": x["patologia"],
+                     "nombre_patologia": x["nombre_patologia"],
+                     "nutriente": x["clave"],
+                     "nombre_nutriente": _NOMBRE_NUTRIENTE.get(x["clave"], x["clave"]),
+                     "tipo": x["tipo"],
+                     "valor": x["valor"],
+                     "unidad": ((_UNIDAD_DE.get(x["clave"]) or "") + "/1000 kcal").lstrip("/"),
+                     "fuente": x["fuente"],
+                     "por_que": x["por_que"]}
+                    for x in _l],
+                "se_intento_relajando": [p[2] for p in _escalera_de_relajacion(hay_comida)[1:]]}
+
         return {"factible": False,
                 "motivo": "No existe ninguna combinación de alimentos accesibles "
                           "que cumpla todos los requisitos para este perro, ni "
@@ -4064,7 +4245,7 @@ SELLOS_DE_LOS_DATOS = {
         # 7 sep: nota_auditoria de Vitamina_E ampliada con la cita exacta de FEDIAF (Tabla VII-14, "Conversion factors - Vitamin source to activity") tras la pregunta que dejo abierta Fascetti & Delaney 2a ed. -- CONFIRMA el x0.67 ya usado (tocoferol NATURAL de alimentos frescos, no el acetato SINTETICO de suplemento que cita Fascetti, que da un numero distinto). Ningun numero cambia, solo el texto de una fila.
         # 7 sep (4): QUITADO el maxAdulto=4000 de Fosforo -- no tenia fuente, llevaba asi desde el primer PR del repo. Investigado a fondo antes de quitarlo: FEDIAF no da numero (solo nota "h" informativa), NRC 2006 dice explicitamente que no hay datos para fijar un SUL de fosforo en perros, y Dobenecker et al. 2021 (PLOS ONE, el estudio mas centrado en el tema) concluye que todavia no se puede definir un no-effect-level. El numero recortaba de verdad el menu automatico estandar de un adulto (justo en el limite) contra un maximo sin origen -- encontrado revisando la Tabla III-3b entera del PDF contra la transcripcion de auditar_fediaf.py, celda a celda. Fosforo pasa a SIN_MAXIMO, igual que Vitamina_E.
         # 7 sep (3): dos filas nuevas, "Taurina" y "L_carnitina", MISMO PATRON que "Fibra" -- las seis columnas a "-", no exigen ni limitan nada a un perro sano. Existen para que verificar.MAPA pueda leer las claves y topes_de_patologias() pueda ponerles un suelo por patologia con fuente real -- primer uso: dcm_taurina_respondedora (250/50 mg/1000kcal, SACN5 cap.36 Tabla 36-4). auditar_fediaf.py las lista en NO_SON_NUTRIENTES_DE_LA_TABLA y comprueba que nunca lleven un numero, igual que Fibra.
-        "requerimientos_v2_final.json": "7492f93f5fa76d86",
+        "requerimientos_v2_final.json": "b9101dd2c84d449f",
         # 6 sep (2): nota_auditoria de los 12 aminoacidos corregida -- decia "el motor todavia no lo verifica porque ningun alimento tiene aminograma", que era cierto ANTES del 28 de agosto y llevaba mas de una semana desactualizado (los 12 SI estan en verificar.MAPA desde entonces, 94/159 fichas con aminograma). Ningun numero cambia, solo el texto de 12 filas.
         # 6 sep: VITAMINA D AL TECHO LEGAL. Es el UNICO nutriente del perfil canino con techo legal (UE) por debajo del nutricional -- 227.00 UI (L) frente a 320.00 UI (N) en la Tabla III-3a, confirmado dos veces en el PDF de FEDIAF. El max de antes (20 ug = 800 UI) era el nutricional; el que manda por ser mas estricto es el legal, 227 x 2.5 = 567.5 UI = 14.1875 ug/1000kcal. auditar_fediaf.py actualizado a la vez para no comparar contra el numero equivocado. Ver PENDIENTE_NUTRICION.md.
         # 28 ago: EL ANCLA DE 110. Cada nutriente lleva ahora `minAdulto110`, la columna de DER 110 de la Tabla III-3b, sacada de NUESTRA transcripcion auditada del PDF y no de fuera. Con las dos anclas se puede aplicar la ecuacion del apartado 7.2.5: cuando el perro come menos, el minimo por 1000 kcal sube. Los 38 cuadraron con el minAdulto de siempre sin una discrepancia, o sea que nuestra columna ES la de 95. Ver el BLOQUE 34

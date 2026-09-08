@@ -181,24 +181,59 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora"); json.dump(fallos, open("/tm
 # BLOQUE 4 — variedad real: pescado y multivitamínico, varios intentos
 # ============================================================
 print("=== BLOQUE 4: variedad real (pescado, multivitamínico) ===")
+# ⚠️ CORREGIDO (8 septiembre) — CASO REAL: ESTE BLOQUE SE PONÍA ROJO SOLO.
+#
+# Salió "BLOQUE4: pescado NUNCA (0/10)" en una batería sobre `main` sin
+# tocar nada, y NO era una regresión: los diez menús fueron factibles y el
+# pescado volvió a salir con normalidad al repetir.
+#
+# La causa está en `motor_completo`: para dar variedad, el solver tira una
+# moneda (`rng.random() < 0.5`) y en la mitad de las llamadas penaliza el
+# pescado en la función objetivo. Con la semilla a `None` esa moneda es
+# distinta cada vez, así que este bloque era una afirmación ESTADÍSTICA con
+# n=10 sobre un proceso aleatorio. Medido en seis tandas limpias: 6, 4, 3,
+# 5, 3 y 3 de 10 — tasa base ~40 %, y un 0/10 sale aproximadamente 1 vez de
+# cada 170 ejecuciones.
+#
+# Una batería que se pone roja sola enseña a ignorar el rojo, que es lo
+# contrario de para lo que existe. Y desde hoy la ejecuta el CI en cada PR,
+# así que un intermitente aquí sale caro.
+#
+# EL ARREGLO ES FIJAR LA SEMILLA, NO SUBIR EL UMBRAL. Con `semilla_aleatoria`
+# fija, la moneda es determinista para cada tirada: veinte semillas distintas
+# dan ~diez con penalización y ~diez sin ella, así que la mezcla está
+# garantizada por construcción y el resultado es el mismo en cada ejecución y
+# en cada máquina. Se sigue comprobando exactamente lo mismo -- que el motor
+# no elige siempre lo mismo -- pero ahora es reproducible: si algún día sale
+# rojo, es que algo cambió de verdad.
+TIRADAS_VARIEDAD = 20
 con_pescado = 0
+factibles = 0
 vistos_multi = {}
-for i in range(10):
+for semilla in range(TIRADAS_VARIEDAD):
     ok, g = resolver(der, etapa, al, req, peso, dosis_maxima_fabricante,
-                     margenes_categoria=MARGENES, max_suplementos=2)
+                     margenes_categoria=MARGENES, max_suplementos=2,
+                     semilla_aleatoria=semilla)
     if not ok:
         continue
+    factibles += 1
     if any(n in PESCADOS for n in g):
         con_pescado += 1
     for n in g:
         if al.get(n, {}).get("categoria") in SUP_COMERCIALES:
             vistos_multi[n] = vistos_multi.get(n, 0) + 1
-print(f"  pescado en {con_pescado}/10 (sano: ni 0 ni 10)")
+print(f"  pescado en {con_pescado}/{factibles} factibles "
+      f"(de {TIRADAS_VARIEDAD} semillas fijas; sano: ni 0 ni todas)")
 print(f"  multivitamínicos vistos: {vistos_multi}")
-if con_pescado == 10:
-    fallos.append("BLOQUE4: pescado SIEMPRE (10/10) — sin variedad real")
-if con_pescado == 0:
-    fallos.append("BLOQUE4: pescado NUNCA (0/10) — revisar si es lo esperado")
+# Que TODAS sean factibles es parte de lo que se comprueba: si el motor
+# empieza a fallar en algunas semillas, antes eso se escondía en el
+# `continue` y el contador de pescado bajaba sin decir por qué.
+if factibles < TIRADAS_VARIEDAD:
+    fallos.append(f"BLOQUE4: solo {factibles}/{TIRADAS_VARIEDAD} semillas dieron menú")
+if factibles and con_pescado == factibles:
+    fallos.append(f"BLOQUE4: pescado SIEMPRE ({con_pescado}/{factibles}) — sin variedad real")
+if factibles and con_pescado == 0:
+    fallos.append(f"BLOQUE4: pescado NUNCA (0/{factibles}) — revisar si es lo esperado")
 
 # ============================================================
 # BLOQUE 5 — exclusiones + patologías combinadas
@@ -5886,6 +5921,256 @@ for _k46 in _SOLO_PROFESIONAL_46:
 print(f"  hecho, {len(fallos)} fallos hasta ahora"
       + (f" ({len(_sin_menu_46)} cruces sin menu, con motivo)" if _sin_menu_46 else ""))
 
+
+
+# ============================================================
+# BLOQUE 52 — cuando dos patologías chocan, se dice CUÁLES
+# ============================================================
+#
+# ⚠️ POR QUÉ (8 septiembre) — CASO REAL: un adulto de 25 kg con `renal` +
+# `pancreatitis` no obtenía menú en ninguno de los seis peldaños, y cada una
+# por separado sí lo obtiene. Lo único que se decía era «quita alguna
+# restricción y vuelve a probar», que está escrito para un dueño: a un
+# veterinario no le sirve, porque NO HAY ninguna restricción que él pueda
+# quitar y sin saber cuál es el choque tampoco puede decidir cuál cedería.
+#
+# Este bloque vigila TRES cosas, y las tres son distintas:
+#   1. Que el diagnóstico nombre los dos límites que de verdad chocan.
+#   2. Que `soltar_limites_patologia` NO sea una puerta trasera: ningún menú
+#      entregado puede haber salido con un límite suelto.
+#   3. Que las DOS copias en memoria de la tabla de patologías digan lo mismo.
+print("=== BLOQUE 52: cuando dos patologías chocan, se dice cuáles ===")
+
+# --- 1. El diagnóstico nombra el choque ------------------------------------
+_cuerpo52 = {"nombres_alimentos": [], "modo": "automatico", "der_objetivo": 1200.0,
+             "peso_perro_kg": 25.0, "etapa_requisitos": "Adulto",
+             "patologias": ["renal", "pancreatitis"], "presupuesto_segundos": 24.0}
+_r52 = _c.post("/menu/v2", json=dict(_cuerpo52)).json()
+if _r52.get("factible"):
+    # Si algún día SÍ sale menú, este bloque deja de aplicar y hay que
+    # decirlo en voz alta en vez de dar por bueno el silencio: la
+    # combinación habría dejado de ser infactible y eso es una noticia.
+    print("  ⚠️ renal+pancreatitis YA DA MENÚ — revisar si este bloque sigue teniendo sentido")
+else:
+    _choque52 = _r52.get("choque_de_patologias") or []
+    if len(_choque52) < 2:
+        fallos.append("BLOQUE52: renal+pancreatitis no da menú y el motor NO dice qué dos "
+                      "límites chocan. Es el mensaje genérico otra vez.")
+    else:
+        _pares52 = {(x.get("patologia"), x.get("nutriente")) for x in _choque52}
+        _esperados52 = {("renal", "fosforo"), ("pancreatitis", "grasa")}
+        if not _esperados52 <= _pares52:
+            fallos.append(f"BLOQUE52: el choque señalado es {sorted(_pares52)}, y lo medido "
+                          f"el 8 de septiembre es {sorted(_esperados52)} (soltando cualquiera "
+                          f"de los dos SÍ sale menú)")
+        for _x52 in _choque52:
+            # Sin fuente, un veterinario no puede ir a comprobarlo, y entonces
+            # el mensaje vuelve a ser una afirmación de la app sin respaldo.
+            if not _x52.get("fuente"):
+                fallos.append(f"BLOQUE52: el límite {_x52.get('patologia')}/{_x52.get('nutriente')} "
+                              f"se señala sin fuente")
+            if not _x52.get("unidad") or "1000 kcal" not in _x52.get("unidad", ""):
+                fallos.append(f"BLOQUE52: {_x52.get('nutriente')} se dice sin unidad "
+                              f"({_x52.get('unidad')!r}). Tres convenciones conviven en el repo "
+                              f"(g/1000kcal, % materia seca, % EM): un número desnudo se lee mal")
+        _motivo52 = _r52.get("motivo") or ""
+        if "decisión clínica" not in _motivo52:
+            fallos.append("BLOQUE52: el mensaje no dice que elegir cuál cede es una decisión "
+                          "clínica. La app no puede parecer que la toma ella.")
+
+# --- 2. `soltar_limites_patologia` no es una puerta trasera -----------------
+# Se comprueba sobre el CÓDIGO, no sobre una llamada: lo que hay que impedir
+# es que mañana alguien lo pase desde un camino que sí entrega menú.
+_fuente52 = open("main.py", encoding="utf-8").read()
+_usos52 = [l.strip() for l in _fuente52.splitlines() if "soltar_limites_patologia" in l
+           or "soltar=soltar" in l or "soltar=" in l and "def " not in l]
+# El único sitio que puede pasarlo es el diagnóstico. Se identifica porque la
+# llamada va dentro de `diagnosticar_choque_de_patologias`.
+if "diagnosticar_choque_de_patologias" not in _fuente52:
+    fallos.append("BLOQUE52: main.py ya no llama al diagnóstico de choque")
+_soltar_en_entrega = [u for u in _usos52
+                      if "soltar=soltar" not in u
+                      and "soltar_limites_patologia=soltar" not in u
+                      and "soltar=None" not in u]
+if _soltar_en_entrega:
+    fallos.append(f"BLOQUE52: `soltar` aparece en main.py fuera del diagnóstico: "
+                  f"{_soltar_en_entrega[:3]}. Es la puerta trasera que este bloque existe "
+                  f"para impedir: un menú entregado con un tope de patología suelto.")
+# Y que de verdad no relaja nada: el mismo caso, sin soltar nada, sigue sin menú.
+if not _r52.get("factible") and _r52.get("menu"):
+    fallos.append("BLOQUE52: la respuesta infactible trae un menú dentro. El diagnóstico "
+                  "construye menús para preguntar y TIENE que tirarlos todos.")
+
+# --- 3. Las dos copias de la tabla de patologías dicen lo mismo -------------
+# ⚠️ `motor.patologias` y el módulo suelto `patologias` son DOS módulos
+# distintos para el mismo archivo, cada uno con su propio `PATOLOGIAS`:
+#     >>> import motor.patologias as A, motor_completo as MC
+#     >>> MC.PATOLOGIAS is A.PATOLOGIAS
+#     False
+# El solver usa la copia del módulo suelto; `GET /patologias` usa la otra.
+# Hoy tienen el mismo contenido, así que no hay ningún fallo vivo -- pero es
+# la misma familia que la tabla duplicada del `POST /menu` borrado (BLOQUE
+# 24), solo que en memoria en vez de en disco, y por eso no la veía nadie.
+import motor.patologias as _pat_paquete
+import patologias as _pat_suelto
+if json.dumps(_pat_paquete.PATOLOGIAS, sort_keys=True, ensure_ascii=False) != \
+   json.dumps(_pat_suelto.PATOLOGIAS, sort_keys=True, ensure_ascii=False):
+    fallos.append("BLOQUE52: las DOS copias en memoria de la tabla de patologías "
+                  "(`motor.patologias` y el módulo suelto `patologias`) NO dicen lo mismo. "
+                  "El solver usa una y `GET /patologias` la otra.")
+if json.dumps(_pat_paquete.CRUDO, sort_keys=True, ensure_ascii=False) != \
+   json.dumps(_pat_suelto.CRUDO, sort_keys=True, ensure_ascii=False):
+    fallos.append("BLOQUE52: las dos copias del JSON crudo de patologías no coinciden")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 53 — la nota b de FEDIAF, sus DOS mitades
+# ============================================================
+#
+# ⚠️ POR QUÉ (8 septiembre) — ENCONTRADO LEYENDO EL PDF DE FEDIAF 2025 PÁGINA
+# A PÁGINA, no el texto extraído. La nota b de la Tabla III-3b manda dos cosas
+# para el cachorro de raza grande (>15 kg de peso adulto), y hasta hoy solo se
+# aplicaba una. Literal, de la página 21:
+#
+#   «For puppies of breeds with adult body weight over 15 kg, until the age of
+#    about 6 months. Only after that time, calcium can be reduced to 0.8 % DM
+#    (2 g/1000 kcal or 0.48 g/MJ) AND THE CALCIUM-PHOSPHORUS RATIO CAN BE
+#    INCREASED TO 1.8/1.»
+#
+# Y la fila del ratio en la III-3b: «Late growth: 1.8/1a (N) or 1.6/1b (N)».
+#
+# NO había un número mal puesto: el 1.8 del JSON es correcto -- es el de la
+# nota a, el cachorro de raza PEQUEÑA. Lo que no existía era el 1.6 de la nota
+# b, ni en los datos, ni en el solver, ni en la garantía final.
+#
+# Y las dos mitades TIRAN EN SENTIDOS OPUESTOS: el mínimo de calcio reforzado
+# empuja el ratio hacia arriba, así que aplicar solo esa mitad deja al perro
+# justo del lado malo del techo que su propia fuente le pone.
+#
+# MEDIDO ANTES DE ARREGLARLO: 0 de 32 menús de cachorro de raza grande caían
+# entre 1,6 y 1,8 (el peor, 1,49). El agujero era real en las reglas y no
+# estaba dando menús malos -- igual que pasó con el mínimo de calcio de esta
+# misma nota. Lo que lo tapaba es una propiedad del catálogo de hoy.
+from constructor import perfil_nutricional as _perfil53
+from verificar import _num as _num53
+print("=== BLOQUE 53: la nota b de FEDIAF, sus dos mitades ===")
+
+_fila53 = req.get("Calcio_LateGrowth_RazaGrande") or {}
+_TECHO53 = _fila53.get("maxRatioCaP")
+if _TECHO53 != 1.6:
+    fallos.append(f"BLOQUE53: `Calcio_LateGrowth_RazaGrande.maxRatioCaP` vale {_TECHO53!r} y "
+                  f"la nota b de FEDIAF dice 1.6. Es la mitad de la nota que se aplicaba mal.")
+
+# El umbral de raza grande, en UN solo sitio. Ya se desincronizó una vez (un
+# 25 donde tenía que haber un 15) y un cachorro de 15-25 kg de peso adulto
+# recibía el requisito del pequeño.
+import motor_completo as _mc53
+if _mc53.RAZA_GRANDE_O_GIGANTE_KG != 15:
+    fallos.append(f"BLOQUE53: el umbral de raza grande vale {_mc53.RAZA_GRANDE_O_GIGANTE_KG} "
+                  f"y las notas a/b de FEDIAF dicen 15 kg de peso adulto")
+_sueltos53 = [l.strip() for l in open("main.py", encoding="utf-8").read().splitlines()
+              if "RAZA_GRANDE_O_GIGANTE_KG" in l and "=" in l and "import" not in l
+              and "<" not in l and ">" not in l]
+if _sueltos53:
+    fallos.append(f"BLOQUE53: `main.py` vuelve a declarar el umbral de raza grande por su "
+                  f"cuenta ({_sueltos53[:2]}). Tiene que venir de `motor_completo`: un número "
+                  f"que decide si un menú se entrega no puede estar escrito dos veces.")
+
+# --- El techo se aplica a la raza grande, y NO a la pequeña ----------------
+def _ratio53(g):
+    pf = _perfil53(g, al)
+    return (pf["calcio"] / pf["fosforo"]) if pf.get("fosforo") else None
+
+_peor_grande, _n_grande, _infact53 = 0.0, 0, 0
+for _peso53, _adulto53 in [(12.0, 25.0), (18.0, 35.0), (25.0, 45.0), (9.0, 20.0)]:
+    _der53 = 70 * _peso53 ** 0.75 * 2.0
+    for _s53 in range(4):
+        _ok53, _g53 = resolver(_der53, "CachorroCrecimiento", al, req, _peso53,
+                               dosis_maxima_fabricante, margenes_categoria=MARGENES,
+                               max_suplementos=2, semilla_aleatoria=_s53,
+                               peso_adulto_esperado_kg=_adulto53)
+        if not _ok53:
+            _infact53 += 1
+            continue
+        _n_grande += 1
+        _r53 = _ratio53(_g53)
+        if _r53:
+            _peor_grande = max(_peor_grande, _r53)
+        if _r53 and _r53 > 1.6 * 1.005:
+            fallos.append(f"BLOQUE53: cachorro de {_peso53} kg (adulto {_adulto53} kg) recibe "
+                          f"un menú con Ca:P {_r53:.2f}, y la nota b de FEDIAF le pone el techo "
+                          f"en 1.6")
+if _infact53:
+    fallos.append(f"BLOQUE53: {_infact53} cachorros de raza grande se han quedado SIN MENÚ al "
+                  f"apretar el techo del ratio. El techo es de FEDIAF y no se toca, pero "
+                  f"quedarse sin menú es una regresión que hay que mirar.")
+print(f"  raza grande: {_n_grande} menús, peor Ca:P {_peor_grande:.2f} (techo 1,6)")
+
+# El cachorro de raza PEQUEÑA no hereda el techo apretado: su nota es la a,
+# y apretarle a él sería inventarse una restricción que FEDIAF no le pone.
+_fila_ratio53 = req.get("Relacion_Ca_P") or {}
+if _num53(_fila_ratio53.get("maxCachorroCrecimiento")) != 1.8:
+    fallos.append("BLOQUE53: el techo genérico de Ca:P en crecimiento tardío ya no es 1.8. "
+                  "Ese es el de la nota a (raza pequeña) y sale de la Tabla III-3b.")
+
+# --- Y la garantía final lo caza aunque el solver falle -------------------
+# ⚠️ Con el fallo puesto a mano: un menú con el ratio por encima del techo NO
+# se puede entregar a un cachorro de raza grande. Es el mismo trato que un
+# tope de patología roto -- el semáforo de FEDIAF no lo ve, porque mide contra
+# la fila genérica.
+_menu53 = {"Hueso carnoso de pollo": 300.0, "Carne muscular de pollo": 300.0}
+_menu53 = {n: g for n, g in _menu53.items() if n in al}
+if not _menu53:
+    # El catálogo no tiene esos nombres: se coge el hueso con más calcio.
+    _hueso53 = max((a for a in al.values() if a.get("categoria") == "Hueso carnoso"),
+                   key=lambda a: _num53(a.get("nutrientes", {}).get("calcio")) or 0, default=None)
+    _menu53 = {_hueso53["nombre"]: 400.0} if _hueso53 else {}
+if _menu53:
+    _ratio_menu53 = _ratio53(_menu53)
+
+    # ⚠️ SE LLAMA A `_garantizar_verificado` ENTERO, NO A LA FUNCIÓN SUELTA.
+    #
+    # La primera versión de este bloque llamaba directamente a
+    # `_ratio_cap_raza_grande_roto`, y con eso NO cazaba el fallo que importa:
+    # quité a mano la línea que la enchufa a `_garantizar_verificado` y la
+    # prueba siguió en verde, porque la función existía y contestaba bien --
+    # solo que ya no la llamaba nadie. Es exactamente el fallo del
+    # `TOPE_MERCURIO_DIAS_SEMANA`: una regla declarada que no aplica nadie.
+    # Comprobar la garantía entera es lo único que prueba que está conectada.
+    # ⚠️ Y SE MIRA EL MOTIVO DEL RECHAZO, NO SOLO QUE RECHACE.
+    # Este menú de un solo hueso tampoco pasaría el semáforo de FEDIAF, así
+    # que «no factible» sale igual con la guardia puesta que sin ella:
+    # comprobado, desenchufándola a mano. Lo único que distingue las dos
+    # situaciones es POR QUÉ se rechaza.
+    def _motivo_de_rechazo53(peso_adulto, etapa53):
+        r = _api._garantizar_verificado(
+            {"factible": True, "menu": dict(_menu53)},
+            der=1400.0, etapa=etapa53, peso_perro_kg=12.0,
+            origen="BLOQUE53", al=al, req=req,
+            peso_adulto_esperado_kg=peso_adulto)
+        return (r.get("verificacion") or {}) if not r.get("factible") else None
+
+    if _ratio_menu53 and _ratio_menu53 > 1.6 * 1.005:
+        _verif53 = _motivo_de_rechazo53(30.0, "CachorroCrecimiento")
+        if _verif53 is None or not _verif53.get("ratio_cap_raza_grande_roto"):
+            fallos.append(f"BLOQUE53: un menú con Ca:P {_ratio_menu53:.2f} no lo para "
+                          f"`_garantizar_verificado` POR EL RATIO (dio {_verif53!r}). O la "
+                          f"guardia no está enchufada, o la para otra cosa por casualidad -- "
+                          f"y una guardia que solo funciona por casualidad no es una guardia.")
+    # Y al revés: al cachorro de raza PEQUEÑA (nota a, techo 1.8) y al ADULTO
+    # (la nota b es solo de crecimiento) no se les puede apretar. Apretarles
+    # sería inventarse una restricción que FEDIAF no les pone.
+    if _ratio_menu53 and _ratio_menu53 <= 1.8:
+        if _api._ratio_cap_raza_grande_roto(_menu53, al, req, "CachorroCrecimiento", 8.0):
+            fallos.append("BLOQUE53: la garantía del ratio se le aplica a un cachorro de raza "
+                          "PEQUEÑA. Su nota es la a y su techo es 1.8.")
+        if _api._ratio_cap_raza_grande_roto(_menu53, al, req, "Adulto", 30.0):
+            fallos.append("BLOQUE53: la garantía del ratio se le aplica a un ADULTO. La nota b "
+                          "es solo de crecimiento.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
 # RESUMEN FINAL
