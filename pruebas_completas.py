@@ -2158,10 +2158,19 @@ else:
 #
 # Ahora van las cinco primeras de las que sí distinguen. Si alguien vuelve
 # a romper la línea `and n not in preferidos`, las cinco se caen a la vez.
-# (Se remidió porque el catálogo cambió ese día: al darle su DHA real al
-# cerebro de ternera, el motor encontraba menús sin pescado y sólo 2 de 30
-# semillas conservaban el boquerón. El cerebro salió del automático y esto
-# volvió a su sitio -- ver `accesibles.py`.)
+#
+# ⚠️ Y SE REMIDE CADA VEZ QUE CAMBIA EL CATÁLOGO, porque las semillas no son
+# un número mágico: son un muestreo del azar del solver, y ese azar recorre
+# los alimentos que hay. Van dos remedidas seguidas para que quede claro:
+#   · 7 sep, al darle su DHA real al cerebro: el motor encontraba menús sin
+#     pescado y sólo 2 de 30 semillas conservaban el boquerón. Se sacó el
+#     cerebro del automático y volvió a 28 de 30.
+#   · 8 sep, al partir timo, pulmón y cerebro en vaca y ternera (tres
+#     alimentos nuevos): conservan 27 de 30 con el arreglo y 15 de 30 con el
+#     fallo reintroducido, así que las que DISTINGUEN son doce -- 1, 2, 3, 7,
+#     8, 15, 19, 21, 24, 27, 28 y 29. Van las cinco primeras.
+# Si esta prueba se cae después de tocar el catálogo, lo primero no es
+# sospechar del motor: es volver a medir las 30 con y sin el fallo.
 _al_b17, _req_b17 = _api.cargar_v2()
 _PREFERIR_B17 = [n for n in ["Boquerón", "Carcasa de pollo", "Hígado de ternera",
                              "Corazón de ternera", "Calabacín", "Aceite de girasol"]
@@ -2169,7 +2178,7 @@ _PREFERIR_B17 = [n for n in ["Boquerón", "Carcasa de pollo", "Hígado de terner
 if "Boquerón" not in _PREFERIR_B17:
     fallos.append("BLOQUE17: el boquerón ya no está en el catálogo; hay que reanclar esta prueba.")
 else:
-    for _sem_b17 in (2, 3, 4, 5, 12):
+    for _sem_b17 in (1, 2, 3, 7, 8):
         _ok_b17, _g_b17 = _api.resolver_v2(
             1040.0, "Adulto", _al_b17, _req_b17, 20.0, _api.dosis_maxima_fabricante,
             margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=12,
