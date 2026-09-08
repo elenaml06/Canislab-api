@@ -5967,6 +5967,46 @@ if any("trazas" in a for a in _CAT51):
     fallos.append("BLOQUE51: ha vuelto el campo `trazas` al catálogo. Es la lectura "
                   "equivocada del `TR` de BEDCA. Ver Ya_probado.md.")
 
+# ── 3. El índice de fuentes, y la ficha que ya se cargó mal una vez.
+#
+# ⚠️ `fuentes_id` es ÍNDICE, NO DATO: dice de qué fila de qué base salió la
+# ficha, y por eso ponerlo no movió ni una casilla. Lo que se vigila aquí no
+# es que estén todos -- 38 fichas no tienen fuente y es correcto (16
+# suplementos de marca con datos de etiqueta, la sal, el yoduro potásico y 9
+# huesos carnosos, que vienen de Köber 2017) -- sino que los que hay no se
+# crucen de especie.
+#
+# ⚠️ CASO REAL: «Cerebro de vaca» llevaba 17 celdas copiadas del registro de
+# TERNERA, y hubo que rehacer la ficha entera el 8 de septiembre. La huella
+# numérica NO los separa -- proteína, grasa y agua se parecen -- así que
+# `fijar_identificadores.py` propuso BEDCA 1047 («Sesos de ternera») y
+# CIQUAL 40006 («Cervelle, veau») para la ficha de VACA, y las dos cuadraban.
+# Lo único que las tumbó fue mirar el nombre. Si alguien quita esa guarda,
+# esto lo dice.
+_ESPECIE51 = [("Cerebro de vaca", "usda", "168622", "vaca"),
+              ("Cerebro de ternera", "usda", "174351", "ternera"),
+              ("Timo de vaca", "usda", "170194", "vaca"),
+              ("Pulmón de ternera", "usda", "174361", "ternera")]
+for _n51, _f51, _esperado51, _quien51 in _ESPECIE51:
+    _fi51 = _ficha51.get(_n51)
+    if _fi51 is None:
+        fallos.append(f"BLOQUE51: falta la ficha «{_n51}».")
+        continue
+    _puesto51 = (_fi51.get("fuentes_id") or {}).get(_f51)
+    if _puesto51 and _puesto51 != _esperado51:
+        fallos.append(
+            f"BLOQUE51: «{_n51}» apunta a {_f51} {_puesto51} y le toca {_esperado51}. "
+            f"Es una ficha de {_quien51}: vaca y ternera se parecen en proteina, grasa y "
+            f"agua, asi que un cruce de especie NO lo caza la huella numerica -- solo el "
+            f"nombre. Ya paso una vez y hubo que rehacer la ficha entera.")
+
+_con_id51 = sum(1 for _a51 in _CAT51 if _a51.get("fuentes_id"))
+if _con_id51 < 95:
+    fallos.append(f"BLOQUE51: solo {_con_id51} fichas tienen `fuentes_id` y habia 99. "
+                  f"Sin identificador el catalogo deja de ser auditable entero y hay que "
+                  f"volver a buscar por nombre, que es como se llego a comprobarlo seis "
+                  f"veces sin cerrarlo. Ver PENDIENTE_NUTRICION.md apartado 14.")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 

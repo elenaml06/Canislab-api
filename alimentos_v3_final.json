@@ -920,7 +920,10 @@
   "lcarnitina_fuente": "L-carnitina = 21 mg/100g: valor agregado tipico de pavo (no separa corte), literatura general sobre contenido de carnitina en carne.",
   "humedad_g_100g": 70.0,
   "humedad_fuente": "USDA FoodData Central · Turkey, all classes, breast, meat and skin, raw",
-  "humedad_fdc": "171093"
+  "humedad_fdc": "171093",
+  "fuentes_id": {
+   "usda": "171093"
+  }
  },
  {
   "nombre": "Pollo pechuga con piel",
@@ -996,7 +999,10 @@
   "lcarnitina_fuente": "L-carnitina = 10 mg/100g: valor agregado tipico de pollo (no separa corte), literatura general sobre contenido de carnitina en carne.",
   "humedad_g_100g": 69.5,
   "humedad_fuente": "USDA FoodData Central · Chicken, broilers or fryers, breast, meat and skin, raw",
-  "humedad_fdc": "171474"
+  "humedad_fdc": "171474",
+  "fuentes_id": {
+   "usda": "171474"
+  }
  },
  {
   "nombre": "Conejo",
@@ -1068,7 +1074,11 @@
   ],
   "humedad_g_100g": 72.8,
   "humedad_fuente": "USDA FoodData Central · Game meat, rabbit, domesticated, composite of cuts, raw",
-  "humedad_fdc": "172521"
+  "humedad_fdc": "172521",
+  "fuentes_id": {
+   "bedca": "1162",
+   "usda": "172521"
+  }
  },
  {
   "nombre": "Pollo muslo con piel",
@@ -1151,7 +1161,10 @@
   "lcarnitina_fuente": "L-carnitina = 10 mg/100g: valor agregado tipico de pollo (no separa corte), literatura general sobre contenido de carnitina en carne.",
   "humedad_g_100g": 66.5,
   "humedad_fuente": "USDA FoodData Central · Chicken, broilers or fryers, thigh, meat and skin, raw",
-  "humedad_fdc": "172385"
+  "humedad_fdc": "172385",
+  "fuentes_id": {
+   "usda": "172385"
+  }
  },
  {
   "nombre": "Pavo",
@@ -1230,7 +1243,10 @@
   "humedad_g_100g": 72.7,
   "humedad_fuente": "USDA FoodData Central · Turkey, whole, meat and skin, raw",
   "humedad_fdc": "171081",
-  "humedad_nota": "⚠️ NO CUADRA CON NUESTROS MACROS: agua + proteina + grasa = 101.4 g por cada 100 g de alimento, y no puede pasar de 100. Nuestra proteina y grasa no declaran fuente. La fila del USDA de la que sale esta humedad SI cuadra consigo misma (su suma de proximales esta comprobada), asi que el que sobra es uno de NUESTROS numeros, no el agua. Se deja la humedad porque es el unico dato de esta fila con procedencia escrita; lo que hay que revisar es la proteina y la grasa contra ese mismo FDC. Anotado el 5-sep-2026."
+  "humedad_nota": "⚠️ NO CUADRA CON NUESTROS MACROS: agua + proteina + grasa = 101.4 g por cada 100 g de alimento, y no puede pasar de 100. Nuestra proteina y grasa no declaran fuente. La fila del USDA de la que sale esta humedad SI cuadra consigo misma (su suma de proximales esta comprobada), asi que el que sobra es uno de NUESTROS numeros, no el agua. Se deja la humedad porque es el unico dato de esta fila con procedencia escrita; lo que hay que revisar es la proteina y la grasa contra ese mismo FDC. Anotado el 5-sep-2026.",
+  "fuentes_id": {
+   "bedca": "2285"
+  }
  },
  {
   "nombre": "Pavo muslo con piel",
@@ -1302,7 +1318,10 @@
   "lcarnitina_fuente": "L-carnitina = 21 mg/100g: valor agregado tipico de pavo (no separa corte), literatura general sobre contenido de carnitina en carne.",
   "humedad_g_100g": 72.7,
   "humedad_fuente": "USDA FoodData Central · Turkey, all classes, leg, meat and skin, raw",
-  "humedad_fdc": "171493"
+  "humedad_fdc": "171493",
+  "fuentes_id": {
+   "usda": "171493"
+  }
  },
  {
   "nombre": "Ternera solomillo sin grasa",
@@ -1542,7 +1561,11 @@
   ],
   "humedad_g_100g": 64.9,
   "humedad_fuente": "USDA FoodData Central · Fish, salmon, Atlantic, farmed, raw",
-  "humedad_fdc": "175167"
+  "humedad_fdc": "175167",
+  "fuentes_id": {
+   "bedca": "2626",
+   "usda": "175167"
+  }
  },
  {
   "nombre": "Sardina",
@@ -1620,7 +1643,10 @@
   "taurina_fuente": "Taurina = 154,4 mg/100g: no hay dato propio de sardina -- se usa \"Herring, whole\" (Spitze et al. 2003) = 1544 mg/kg -> 154,4 mg/100g por familia (pescado azul pequeño), confianza MEDIA.",
   "sin_dato": [
    "lcarnitina"
-  ]
+  ],
+  "fuentes_id": {
+   "bedca": "2630"
+  }
  },
  {
   "nombre": "Caballa",
@@ -1702,7 +1728,10 @@
   "humedad_g_100g": 63.6,
   "humedad_fuente": "USDA FoodData Central · Fish, mackerel, Atlantic, raw",
   "humedad_fdc": "175119",
-  "humedad_nota": "La fila de USDA suma 97,45 y no 100: es propio de los pescados grasos, donde el lipido se mide como acidos grasos. El agua es el valor analizado de la propia fuente. Declarado, no corregido."
+  "humedad_nota": "La fila de USDA suma 97,45 y no 100: es propio de los pescados grasos, donde el lipido se mide como acidos grasos. El agua es el valor analizado de la propia fuente. Declarado, no corregido.",
+  "fuentes_id": {
+   "usda": "175119"
+  }
  },
  {
   "nombre": "Atún",
@@ -1861,7 +1890,10 @@
    "vitA",
    "vitD"
   ],
-  "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente."
+  "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente.",
+  "fuentes_id": {
+   "bedca": "2347"
+  }
  },
  {
   "nombre": "Bacalao",
@@ -1944,7 +1976,11 @@
   "taurina_fuente": "Taurina = 31,4 mg/100g: Spitze et al. 2003, tabla 1, \"Cod\" = 314 mg/kg -> 31,4 mg/100g.",
   "humedad_g_100g": 81.2,
   "humedad_fuente": "USDA FoodData Central · Fish, cod, Atlantic, raw",
-  "humedad_fdc": "171955"
+  "humedad_fdc": "171955",
+  "fuentes_id": {
+   "bedca": "2302",
+   "usda": "171955"
+  }
  },
  {
   "nombre": "Trucha",
@@ -2016,7 +2052,10 @@
   "sin_dato": [
    "cobre",
    "lcarnitina"
-  ]
+  ],
+  "fuentes_id": {
+   "bedca": "2636"
+  }
  },
  {
   "nombre": "Huevo clara",
@@ -2103,7 +2142,10 @@
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003, tabla 1, \"Eggs (large AA)\" (huevo entero) y \"Eggs (large AA), egg whites\" (solo clara) dan los dos 0 mg/kg -- la yema SI tiene un poco (ver Huevo yema), pero diluida en el huevo entero queda por debajo de deteccion.",
   "humedad_g_100g": 87.6,
   "humedad_fuente": "USDA FoodData Central · Egg, white, raw, fresh",
-  "humedad_fdc": "172183"
+  "humedad_fdc": "172183",
+  "fuentes_id": {
+   "usda": "172183"
+  }
  },
  {
   "nombre": "Huevo yema",
@@ -2185,7 +2227,12 @@
   "nota_datos": "⚠️ NIACINA RELLENADO 7 sep 2026 (0.024): USDA FDC 172184 (BEDCA 2125 TR y CIQUAL 22002 sin cifra). Lo encontro el detector automatico de ceros sospechosos de auditar_catalogo.py -- estaba a 0 sin declararse hueco.",
   "humedad_g_100g": 52.3,
   "humedad_fuente": "USDA FoodData Central · Egg, yolk, raw, fresh",
-  "humedad_fdc": "172184"
+  "humedad_fdc": "172184",
+  "fuentes_id": {
+   "bedca": "2125",
+   "ciqual": "22002",
+   "usda": "172184"
+  }
  },
  {
   "nombre": "Aceite de oliva",
@@ -2426,7 +2473,10 @@
   "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g).",
   "humedad_g_100g": 70.8,
   "humedad_fuente": "USDA FoodData Central · Beef, variety meats and by-products, liver, raw",
-  "humedad_fdc": "169451"
+  "humedad_fdc": "169451",
+  "fuentes_id": {
+   "usda": "169451"
+  }
  },
  {
   "nombre": "Corazón de pollo",
@@ -2504,7 +2554,11 @@
   },
   "humedad_g_100g": 73.6,
   "humedad_fuente": "USDA FoodData Central · Chicken, heart, all classes, raw",
-  "humedad_fdc": "171458"
+  "humedad_fdc": "171458",
+  "fuentes_id": {
+   "bedca": "970",
+   "usda": "171458"
+  }
  },
  {
   "nombre": "Pulmón de vaca",
@@ -2646,7 +2700,10 @@
   "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g).",
   "humedad_g_100g": 79.1,
   "humedad_fuente": "USDA FoodData Central · Veal, variety meats and by-products, kidneys, raw",
-  "humedad_fdc": "174356"
+  "humedad_fdc": "174356",
+  "fuentes_id": {
+   "usda": "174356"
+  }
  },
  {
   "nombre": "Calabaza",
@@ -2734,7 +2791,12 @@
   "nota_datos": "⚠️ TIAMINA RELLENADO 7 sep 2026 (0.05): CIQUAL 20044 (BEDCA 2378 lo marca TR: sin cifra). Lo encontro el detector automatico de ceros sospechosos de auditar_catalogo.py -- estaba a 0 sin declararse hueco.",
   "humedad_g_100g": 91.6,
   "humedad_fuente": "USDA FoodData Central · Pumpkin, raw",
-  "humedad_fdc": "168448"
+  "humedad_fdc": "168448",
+  "fuentes_id": {
+   "bedca": "2378",
+   "ciqual": "20044",
+   "usda": "168448"
+  }
  },
  {
   "nombre": "Calabacín",
@@ -2804,7 +2866,11 @@
   },
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
-  "nota_datos": "⚠️ VITE RELLENADO 7 sep 2026 (0.12): CIQUAL 20020 (BEDCA 2376 lo marca TR: sin cifra). Lo encontro el detector automatico de ceros sospechosos de auditar_catalogo.py -- estaba a 0 sin declararse hueco."
+  "nota_datos": "⚠️ VITE RELLENADO 7 sep 2026 (0.12): CIQUAL 20020 (BEDCA 2376 lo marca TR: sin cifra). Lo encontro el detector automatico de ceros sospechosos de auditar_catalogo.py -- estaba a 0 sin declararse hueco.",
+  "fuentes_id": {
+   "bedca": "2376",
+   "ciqual": "20020"
+  }
  },
  {
   "nombre": "Zanahoria",
@@ -2890,7 +2956,11 @@
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "humedad_g_100g": 88.3,
   "humedad_fuente": "USDA FoodData Central · Carrots, raw",
-  "humedad_fdc": "170393"
+  "humedad_fdc": "170393",
+  "fuentes_id": {
+   "bedca": "2424",
+   "usda": "170393"
+  }
  },
  {
   "nombre": "Judía verde",
@@ -2973,7 +3043,10 @@
    "anio": "2020"
   },
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "fuentes_id": {
+   "bedca": "2198"
+  }
  },
  {
   "nombre": "Brócoli",
@@ -3048,7 +3121,11 @@
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "humedad_g_100g": 89.3,
   "humedad_fuente": "USDA FoodData Central · Broccoli, raw",
-  "humedad_fdc": "170379"
+  "humedad_fdc": "170379",
+  "fuentes_id": {
+   "ciqual": "20057",
+   "usda": "170379"
+  }
  },
  {
   "nombre": "Espinaca",
@@ -3134,7 +3211,10 @@
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "humedad_g_100g": 91.4,
   "humedad_fuente": "USDA FoodData Central · Spinach, raw",
-  "humedad_fdc": "168462"
+  "humedad_fdc": "168462",
+  "fuentes_id": {
+   "usda": "168462"
+  }
  },
  {
   "nombre": "Pimiento rojo",
@@ -3216,7 +3296,10 @@
    "anio": "2020"
   },
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "fuentes_id": {
+   "bedca": "2409"
+  }
  },
  {
   "nombre": "Acelga",
@@ -3290,7 +3373,11 @@
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "humedad_g_100g": 92.7,
   "humedad_fuente": "USDA FoodData Central · Chard, swiss, raw",
-  "humedad_fdc": "169991"
+  "humedad_fdc": "169991",
+  "fuentes_id": {
+   "bedca": "2212",
+   "usda": "169991"
+  }
  },
  {
   "nombre": "Manzana",
@@ -3353,7 +3440,11 @@
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "humedad_g_100g": 85.6,
   "humedad_fuente": "USDA FoodData Central · Apples, raw, with skin",
-  "humedad_fdc": "171688"
+  "humedad_fdc": "171688",
+  "fuentes_id": {
+   "bedca": "2231",
+   "usda": "171688"
+  }
  },
  {
   "nombre": "Pera",
@@ -3488,7 +3579,10 @@
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "humedad_g_100g": 84.21,
   "humedad_fuente": "USDA FoodData Central · Blueberries, raw (Foundation Foods, sin cenizas publicadas)",
-  "humedad_fdc": "2344769"
+  "humedad_fdc": "2344769",
+  "fuentes_id": {
+   "bedca": "2368"
+  }
  },
  {
   "nombre": "Plátano",
@@ -3550,7 +3644,10 @@
    "purinas"
   ],
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "fuentes_id": {
+   "bedca": "2245"
+  }
  },
  {
   "nombre": "Fresa",
@@ -3622,7 +3719,10 @@
    "valina"
   ],
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "fuentes_id": {
+   "bedca": "2225"
+  }
  },
  {
   "nombre": "Naranja",
@@ -3696,7 +3796,11 @@
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "humedad_g_100g": 86.8,
   "humedad_fuente": "USDA FoodData Central · Oranges, raw, all commercial varieties",
-  "humedad_fdc": "169097"
+  "humedad_fdc": "169097",
+  "fuentes_id": {
+   "bedca": "2235",
+   "usda": "169097"
+  }
  },
  {
   "nombre": "Sandía",
@@ -3840,7 +3944,10 @@
    "valina"
   ],
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "fuentes_id": {
+   "usda": "167629"
+  }
  },
  {
   "nombre": "Pulmón de cordero",
@@ -3903,7 +4010,10 @@
   "lcarnitina_fuente": "L-carnitina = 40 mg/100g: valor agregado tipico de cordero/oveja (no separa corte ni tejido); la literatura da un rango muy amplio entre fuentes (40-200 mg/100g) -- se usa el extremo BAJO por ser el lado conservador ante esa incertidumbre real.",
   "humedad_g_100g": 79.7,
   "humedad_fuente": "USDA FoodData Central · Lamb, variety meats and by-products, lungs, raw",
-  "humedad_fdc": "174359"
+  "humedad_fdc": "174359",
+  "fuentes_id": {
+   "usda": "174359"
+  }
  },
  {
   "nombre": "Riñón de cordero",
@@ -3975,7 +4085,10 @@
   "lcarnitina_fuente": "L-carnitina = 40 mg/100g: valor agregado tipico de cordero/oveja (no separa corte ni tejido); la literatura da un rango muy amplio entre fuentes (40-200 mg/100g) -- se usa el extremo BAJO por ser el lado conservador ante esa incertidumbre real.",
   "humedad_g_100g": 79.2,
   "humedad_fuente": "USDA FoodData Central · Lamb, variety meats and by-products, kidneys, raw",
-  "humedad_fdc": "174354"
+  "humedad_fdc": "174354",
+  "fuentes_id": {
+   "usda": "174354"
+  }
  },
  {
   "nombre": "Corazón de vaca",
@@ -4053,7 +4166,11 @@
   "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g).",
   "humedad_g_100g": 77.1,
   "humedad_fuente": "USDA FoodData Central · Beef, variety meats and by-products, heart, raw",
-  "humedad_fdc": "168625"
+  "humedad_fdc": "168625",
+  "fuentes_id": {
+   "bedca": "2265",
+   "usda": "168625"
+  }
  },
  {
   "nombre": "Carcasa de pollo",
@@ -4709,7 +4826,10 @@
   "lcarnitina_fuente": "L-carnitina = 27 mg/100g: valor agregado tipico de pato (no separa corte), literatura general sobre contenido de carnitina en carne.",
   "humedad_g_100g": 73.8,
   "humedad_fuente": "USDA FoodData Central · Duck, domesticated, meat only, raw",
-  "humedad_fdc": "172410"
+  "humedad_fdc": "172410",
+  "fuentes_id": {
+   "usda": "172410"
+  }
  },
  {
   "nombre": "Corazón de cordero",
@@ -4781,7 +4901,11 @@
   "lcarnitina_fuente": "L-carnitina = 40 mg/100g: valor agregado tipico de cordero/oveja (no separa corte ni tejido); la literatura da un rango muy amplio entre fuentes (40-200 mg/100g) -- se usa el extremo BAJO por ser el lado conservador ante esa incertidumbre real.",
   "humedad_g_100g": 76.7,
   "humedad_fuente": "USDA FoodData Central · Lamb, variety meats and by-products, heart, raw",
-  "humedad_fdc": "172527"
+  "humedad_fdc": "172527",
+  "fuentes_id": {
+   "bedca": "966",
+   "usda": "172527"
+  }
  },
  {
   "nombre": "Gallina (carne sin hueso)",
@@ -4928,7 +5052,11 @@
   "lcarnitina_fuente": "L-carnitina = 40 mg/100g: valor agregado tipico de cordero/oveja (no separa corte ni tejido); la literatura da un rango muy amplio entre fuentes (40-200 mg/100g) -- se usa el extremo BAJO por ser el lado conservador ante esa incertidumbre real.",
   "humedad_g_100g": 66.6,
   "humedad_fuente": "USDA FoodData Central · Lamb, variety meats and by-products, tongue, raw",
-  "humedad_fdc": "174366"
+  "humedad_fdc": "174366",
+  "fuentes_id": {
+   "bedca": "2276",
+   "usda": "174366"
+  }
  },
  {
   "nombre": "Lengua de buey",
@@ -5007,7 +5135,10 @@
   "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g).",
   "humedad_g_100g": 64.5,
   "humedad_fuente": "USDA FoodData Central · Beef, variety meats and by-products, tongue, raw",
-  "humedad_fdc": "170196"
+  "humedad_fdc": "170196",
+  "fuentes_id": {
+   "usda": "170196"
+  }
  },
  {
   "nombre": "Lengua de ternera",
@@ -5080,7 +5211,10 @@
   "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g).",
   "humedad_g_100g": 74.5,
   "humedad_fuente": "USDA FoodData Central · Veal, variety meats and by-products, tongue, raw",
-  "humedad_fdc": "174368"
+  "humedad_fdc": "174368",
+  "fuentes_id": {
+   "usda": "174368"
+  }
  },
  {
   "nombre": "Pavo pechuga sin piel",
@@ -5157,7 +5291,10 @@
   "lcarnitina_fuente": "L-carnitina = 21 mg/100g: valor agregado tipico de pavo (no separa corte), literatura general sobre contenido de carnitina en carne.",
   "humedad_g_100g": 74.7,
   "humedad_fuente": "USDA FoodData Central · Turkey, retail parts, breast, meat only, raw",
-  "humedad_fdc": "174515"
+  "humedad_fdc": "174515",
+  "fuentes_id": {
+   "usda": "174515"
+  }
  },
  {
   "nombre": "Pollo ala con piel (sin hueso)",
@@ -5231,7 +5368,10 @@
   "humedad_g_100g": 69.2,
   "humedad_fuente": "USDA FoodData Central · Chicken, broilers or fryers, wing, meat and skin, raw",
   "humedad_fdc": "172390",
-  "humedad_nota": "⚠️ NO CUADRA CON NUESTROS MACROS: agua + proteina + grasa = 103.5 g por cada 100 g de alimento, y no puede pasar de 100. Nuestra proteina y grasa no declaran fuente. Es el mayor de los cuatro. La fila del USDA de la que sale esta humedad SI cuadra consigo misma (su suma de proximales esta comprobada), asi que el que sobra es uno de NUESTROS numeros, no el agua. Se deja la humedad porque es el unico dato de esta fila con procedencia escrita; lo que hay que revisar es la proteina y la grasa contra ese mismo FDC. Anotado el 5-sep-2026."
+  "humedad_nota": "⚠️ NO CUADRA CON NUESTROS MACROS: agua + proteina + grasa = 103.5 g por cada 100 g de alimento, y no puede pasar de 100. Nuestra proteina y grasa no declaran fuente. Es el mayor de los cuatro. La fila del USDA de la que sale esta humedad SI cuadra consigo misma (su suma de proximales esta comprobada), asi que el que sobra es uno de NUESTROS numeros, no el agua. Se deja la humedad porque es el unico dato de esta fila con procedencia escrita; lo que hay que revisar es la proteina y la grasa contra ese mismo FDC. Anotado el 5-sep-2026.",
+  "fuentes_id": {
+   "usda": "172390"
+  }
  },
  {
   "nombre": "Pollo con piel (sin hueso)",
@@ -5465,7 +5605,10 @@
    "pais": "Canada",
    "anio": "1988"
   },
-  "taurina_fuente": "Taurina = 3,3 mg/100g: Spitze et al. 2003, tabla 1, \"Yogurt, low-fat, plain\" = 33 +/- 5 mg/kg -> 3,3 mg/100g. Nuestra ficha tiene mas grasa (10,2g/100g) que un yogur \"low-fat\" tipico, asi que el valor real podria diferir -- es la entrada mas cercana disponible, no una medida directa de yogur griego."
+  "taurina_fuente": "Taurina = 3,3 mg/100g: Spitze et al. 2003, tabla 1, \"Yogurt, low-fat, plain\" = 33 +/- 5 mg/kg -> 3,3 mg/100g. Nuestra ficha tiene mas grasa (10,2g/100g) que un yogur \"low-fat\" tipico, asi que el valor real podria diferir -- es la entrada mas cercana disponible, no una medida directa de yogur griego.",
+  "fuentes_id": {
+   "bedca": "2520"
+  }
  },
  {
   "nombre": "Huevo de codorniz",
@@ -5536,6 +5679,9 @@
    "nota": "mismo alimento. CERO purinas",
    "pais": "Japan",
    "anio": "2014"
+  },
+  "fuentes_id": {
+   "bedca": "757"
   }
  },
  {
@@ -5618,7 +5764,10 @@
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003, tabla 1, \"Eggs (large AA)\" (huevo entero) y \"Eggs (large AA), egg whites\" (solo clara) dan los dos 0 mg/kg -- la yema SI tiene un poco (ver Huevo yema), pero diluida en el huevo entero queda por debajo de deteccion.",
   "humedad_g_100g": 76.2,
   "humedad_fuente": "USDA FoodData Central · Egg, whole, raw, fresh",
-  "humedad_fdc": "171287"
+  "humedad_fdc": "171287",
+  "fuentes_id": {
+   "usda": "171287"
+  }
  },
  {
   "nombre": "Huevo de pato",
@@ -5698,6 +5847,9 @@
    "nota": "mismo alimento. CERO purinas",
    "pais": "Japan",
    "anio": "2014"
+  },
+  "fuentes_id": {
+   "bedca": "764"
   }
  },
  {
@@ -5776,7 +5928,10 @@
    "pais": "Japan",
    "anio": "2014"
   },
-  "nota_datos": "⚠️ VITE RELLENADO 7 sep 2026 (0.74): BEDCA 764. Lo encontro el detector automatico de ceros sospechosos de auditar_catalogo.py -- estaba a 0 sin declararse hueco."
+  "nota_datos": "⚠️ VITE RELLENADO 7 sep 2026 (0.74): BEDCA 764. Lo encontro el detector automatico de ceros sospechosos de auditar_catalogo.py -- estaba a 0 sin declararse hueco.",
+  "fuentes_id": {
+   "bedca": "764"
+  }
  },
  {
   "nombre": "Bacaladilla",
@@ -5858,7 +6013,10 @@
    "vitA",
    "vitD"
   ],
-  "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente."
+  "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente.",
+  "fuentes_id": {
+   "bedca": "2136"
+  }
  },
  {
   "nombre": "Besugo",
@@ -5938,7 +6096,10 @@
    "cobre",
    "lcarnitina",
    "manganeso"
-  ]
+  ],
+  "fuentes_id": {
+   "bedca": "2312"
+  }
  },
  {
   "nombre": "Boquerón",
@@ -6019,7 +6180,11 @@
   ],
   "humedad_g_100g": 73.4,
   "humedad_fuente": "USDA FoodData Central · Fish, anchovy, european, raw",
-  "humedad_fdc": "174182"
+  "humedad_fdc": "174182",
+  "fuentes_id": {
+   "bedca": "2316",
+   "usda": "174182"
+  }
  },
  {
   "nombre": "Calamar",
@@ -6096,7 +6261,11 @@
   "taurina_fuente": "Taurina = 356 mg/100g: Spitze et al. 2003, tabla 1, \"Squid\" = 3560 +/- 950 mg/kg -> 356 mg/100g.",
   "humedad_g_100g": 78.6,
   "humedad_fuente": "USDA FoodData Central · Mollusks, squid, mixed species, raw",
-  "humedad_fdc": "174223"
+  "humedad_fdc": "174223",
+  "fuentes_id": {
+   "bedca": "807",
+   "ciqual": "10001"
+  }
  },
  {
   "nombre": "Dorada",
@@ -6256,7 +6425,10 @@
    "lcarnitina",
    "vitD"
   ],
-  "taurina_fuente": "Taurina = 31 mg/100g: Spitze et al. 2003, tabla 1, \"Shrimp, freshwater, de-shelled, large\" = 310 (305-315) mg/kg -> 31 mg/100g."
+  "taurina_fuente": "Taurina = 31 mg/100g: Spitze et al. 2003, tabla 1, \"Shrimp, freshwater, de-shelled, large\" = 310 (305-315) mg/kg -> 31 mg/100g.",
+  "fuentes_id": {
+   "bedca": "817"
+  }
  },
  {
   "nombre": "Langostino",
@@ -6337,7 +6509,10 @@
   "sin_dato": [
    "cobre",
    "lcarnitina"
-  ]
+  ],
+  "fuentes_id": {
+   "bedca": "2340"
+  }
  },
  {
   "nombre": "Lenguado",
@@ -6419,7 +6594,10 @@
    "vitA",
    "vitD"
   ],
-  "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente."
+  "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente.",
+  "fuentes_id": {
+   "bedca": "2341"
+  }
  },
  {
   "nombre": "Lubina",
@@ -6501,7 +6679,10 @@
    "vitA",
    "vitD"
   ],
-  "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente."
+  "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente.",
+  "fuentes_id": {
+   "bedca": "2344"
+  }
  },
  {
   "nombre": "Perca",
@@ -6578,7 +6759,11 @@
   ],
   "humedad_g_100g": 79.1,
   "humedad_fuente": "USDA FoodData Central · Fish, perch, mixed species, raw",
-  "humedad_fdc": "173678"
+  "humedad_fdc": "173678",
+  "fuentes_id": {
+   "bedca": "831",
+   "usda": "173678"
+  }
  },
  {
   "nombre": "Pescadilla",
@@ -6734,7 +6919,10 @@
   "taurina_fuente": "Taurina = 356 mg/100g: no hay dato propio de esta especie -- se usa \"Squid\" (Spitze et al. 2003) por familia (mismo grupo, cefalopodo), confianza MEDIA.",
   "humedad_g_100g": 80.2,
   "humedad_fuente": "USDA FoodData Central · Mollusks, octopus, common, raw",
-  "humedad_fdc": "174218"
+  "humedad_fdc": "174218",
+  "fuentes_id": {
+   "bedca": "2471"
+  }
  },
  {
   "nombre": "Sepia",
@@ -6808,7 +6996,10 @@
    "lcarnitina",
    "vitD"
   ],
-  "taurina_fuente": "Taurina = 356 mg/100g: no hay dato propio de esta especie -- se usa \"Squid\" (Spitze et al. 2003) por familia (mismo grupo, cefalopodo), confianza MEDIA."
+  "taurina_fuente": "Taurina = 356 mg/100g: no hay dato propio de esta especie -- se usa \"Squid\" (Spitze et al. 2003) por familia (mismo grupo, cefalopodo), confianza MEDIA.",
+  "fuentes_id": {
+   "bedca": "2635"
+  }
  },
  {
   "nombre": "Aceite de cacahuete",
@@ -7384,7 +7575,11 @@
   "lcarnitina_fuente": "L-carnitina = 0: mismo argumento vegetal que el resto del catalogo.",
   "humedad_g_100g": 6.96,
   "humedad_fuente": "USDA FoodData Central · Seeds, flaxseed",
-  "humedad_fdc": "169414"
+  "humedad_fdc": "169414",
+  "fuentes_id": {
+   "bedca": "2178",
+   "usda": "169414"
+  }
  },
  {
   "nombre": "Pipa de calabaza",
@@ -7452,6 +7647,9 @@
     "motivo": "BEDCA 2204 da folato = 0 ug y cita a USDA como fuente -- pero USDA FDC 170556 (\"Seeds, pumpkin and squash seed kernels, dried\") da 58 ug. La propia fuente que BEDCA dice estar copiando la contradice, asi que el 0 es un fallo de transcripcion aguas arriba, no una medida. Encontrado el 7 sep 2026 por el detector automatico de ceros sospechosos de auditar_catalogo.py, no por una lista a mano. NO SE TOCA EL VALOR: la regla de este proyecto es que un dato de la fuente primaria no se sobrescribe con uno de la secundaria. Se marca aqui para que salga junto al menu y lo decida una persona.",
     "resolver": "Mirar la ficha en su fuente original y elegir: o se corrige el valor citando CIQUAL/USDA, o se pasa a `sin_dato` si se acepta que BEDCA no lo midio. Mientras tanto el 0 solo INFRAvalora el alimento (el folato no tiene techo), asi que no es peligroso -- solo desaprovecha el alimento."
    }
+  },
+  "fuentes_id": {
+   "bedca": "2204"
   }
  },
  {
@@ -7513,7 +7711,10 @@
    "purinas"
   ],
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 confirma explicitamente 0 taurina en semilla de girasol y de sesamo (analizadas), y en el resto de semillas y frutos secos probados (almendra, anacardo, avellana, cacahuete, nuez, pipa) -- ninguna dio taurina detectable. Pipa de calabaza y semilla de lino no se analizaron especificamente, pero siguen el mismo patron de familia (semilla vegetal).",
-  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento vegetal que el resto del catalogo."
+  "lcarnitina_fuente": "L-carnitina = 0: mismo argumento vegetal que el resto del catalogo.",
+  "fuentes_id": {
+   "bedca": "2205"
+  }
  },
  {
   "nombre": "Semilla de sésamo",
@@ -7599,7 +7800,10 @@
   "lcarnitina_fuente": "L-carnitina = 0: mismo argumento vegetal que el resto del catalogo.",
   "humedad_g_100g": 4.69,
   "humedad_fuente": "USDA FoodData Central · Seeds, sesame seeds, whole, dried",
-  "humedad_fdc": "170150"
+  "humedad_fdc": "170150",
+  "fuentes_id": {
+   "bedca": "1127"
+  }
  },
  {
   "nombre": "Albahaca",
@@ -7684,7 +7888,10 @@
    "anio": "2014"
   },
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "fuentes_id": {
+   "usda": "172232"
+  }
  },
  {
   "nombre": "Alcachofa",
@@ -7755,7 +7962,10 @@
    "valina"
   ],
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "fuentes_id": {
+   "bedca": "1176"
+  }
  },
  {
   "nombre": "Apio",
@@ -7829,7 +8039,10 @@
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "humedad_g_100g": 95.2,
   "humedad_fuente": "USDA FoodData Central · Celery, raw (Foundation Foods, sin cenizas publicadas)",
-  "humedad_fdc": "2709778"
+  "humedad_fdc": "2709778",
+  "fuentes_id": {
+   "bedca": "2366"
+  }
  },
  {
   "nombre": "Berenjena",
@@ -7905,7 +8118,11 @@
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "humedad_g_100g": 92.3,
   "humedad_fuente": "USDA FoodData Central · Eggplant, raw",
-  "humedad_fdc": "169228"
+  "humedad_fdc": "169228",
+  "fuentes_id": {
+   "bedca": "2370",
+   "usda": "169228"
+  }
  },
  {
   "nombre": "Boniato",
@@ -7990,7 +8207,10 @@
    "anio": "2014"
   },
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "fuentes_id": {
+   "bedca": "731"
+  }
  },
  {
   "nombre": "Canónigos",
@@ -8069,6 +8289,9 @@
     "motivo": "BEDCA 2379 (la fuente primaria de esta ficha) da folato = 0 ug, citando Moreiras 2001. CIQUAL 20099 (\"Mache, crue\") mide 45,5 ug. Los canonigos son una de las hojas mas ricas en folato que se comen, asi que un 0 no es plausible: casi seguro es un dato AUSENTE que la tabla de origen escribio como cero. Encontrado el 7 sep 2026 por el detector automatico de ceros sospechosos de auditar_catalogo.py, no por una lista a mano. NO SE TOCA EL VALOR: la regla de este proyecto es que un dato de la fuente primaria no se sobrescribe con uno de la secundaria. Se marca aqui para que salga junto al menu y lo decida una persona.",
     "resolver": "Mirar la ficha en su fuente original y elegir: o se corrige el valor citando CIQUAL/USDA, o se pasa a `sin_dato` si se acepta que BEDCA no lo midio. Mientras tanto el 0 solo INFRAvalora el alimento (el folato no tiene techo), asi que no es peligroso -- solo desaprovecha el alimento."
    }
+  },
+  "fuentes_id": {
+   "bedca": "2379"
   }
  },
  {
@@ -8144,6 +8367,10 @@
   "nota_datos": "⚠️ EL CERO DE VITA ES REAL, comprobado el 7 sep 2026: CIQUAL 20054 (\"Cardon, cru\") mide 0. Se anota porque el detector automatico de ceros sospechosos lo levanta (es raro en su categoria) y sin esta nota se volveria a investigar cada vez.",
   "cero_verificado": {
    "vitA": "CIQUAL 20054 «Cardon, cru» mide 0 (7 sep 2026)"
+  },
+  "fuentes_id": {
+   "bedca": "2380",
+   "usda": "169981"
   }
  },
  {
@@ -8229,6 +8456,9 @@
   "nota_datos": "⚠️ EL CERO DE VITA ES REAL, comprobado el 7 sep 2026: BEDCA 2384 mide 0. Se anota porque el detector automatico de ceros sospechosos lo levanta (es raro en su categoria) y sin esta nota se volveria a investigar cada vez.",
   "cero_verificado": {
    "vitA": "BEDCA 2384 mide 0 (7 sep 2026)"
+  },
+  "fuentes_id": {
+   "bedca": "2384"
   }
  },
  {
@@ -8317,7 +8547,10 @@
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "humedad_g_100g": 86.0,
   "humedad_fuente": "USDA FoodData Central · Brussels sprouts, raw",
-  "humedad_fdc": "170383"
+  "humedad_fdc": "170383",
+  "fuentes_id": {
+   "usda": "170383"
+  }
  },
  {
   "nombre": "Col lombarda",
@@ -8476,7 +8709,10 @@
    "anio": "2024"
   },
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "fuentes_id": {
+   "bedca": "852"
+  }
  },
  {
   "nombre": "Coliflor",
@@ -8637,7 +8873,11 @@
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "humedad_g_100g": 93.8,
   "humedad_fuente": "USDA FoodData Central · Endive, raw",
-  "humedad_fdc": "168412"
+  "humedad_fdc": "168412",
+  "fuentes_id": {
+   "bedca": "2388",
+   "usda": "168412"
+  }
  },
  {
   "nombre": "Espárrago verde",
@@ -8784,7 +9024,10 @@
    "purinas"
   ],
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "fuentes_id": {
+   "bedca": "2396"
+  }
  },
  {
   "nombre": "Lechuga",
@@ -8867,7 +9110,10 @@
    "anio": "2020"
   },
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "fuentes_id": {
+   "bedca": "2399"
+  }
  },
  {
   "nombre": "Nabo pelado",
@@ -8942,7 +9188,10 @@
   ],
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
-  "nota_datos": "⚠️ VITE RELLENADO 7 sep 2026 (0.03): CIQUAL 20064 (BEDCA 880 lo marca TR: sin cifra). Lo encontro el detector automatico de ceros sospechosos de auditar_catalogo.py -- estaba a 0 sin declararse hueco."
+  "nota_datos": "⚠️ VITE RELLENADO 7 sep 2026 (0.03): CIQUAL 20064 (BEDCA 880 lo marca TR: sin cifra). Lo encontro el detector automatico de ceros sospechosos de auditar_catalogo.py -- estaba a 0 sin declararse hueco.",
+  "fuentes_id": {
+   "bedca": "880"
+  }
  },
  {
   "nombre": "Pepino",
@@ -9028,7 +9277,11 @@
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "humedad_g_100g": 95.2,
   "humedad_fuente": "USDA FoodData Central · Cucumber, with peel, raw",
-  "humedad_fdc": "168409"
+  "humedad_fdc": "168409",
+  "fuentes_id": {
+   "bedca": "2407",
+   "usda": "168409"
+  }
  },
  {
   "nombre": "Rábano",
@@ -9103,6 +9356,9 @@
   "nota_datos": "⚠️ EL CERO DE VITE ES REAL, comprobado el 7 sep 2026: CIQUAL 20045 da \"< 0,08 mg\": por debajo de su limite de deteccion, no es un hueco sino una medida con tope. Se anota porque el detector automatico de ceros sospechosos lo levanta (es raro en su categoria) y sin esta nota se volveria a investigar cada vez.",
   "cero_verificado": {
    "vitE": "CIQUAL 20045 da «< 0,08 mg»: por debajo de su límite de detección, no es un hueco sino una medida con tope (7 sep 2026)"
+  },
+  "fuentes_id": {
+   "bedca": "2415"
   }
  },
  {
@@ -9186,7 +9442,10 @@
    "anio": "2024"
   },
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "fuentes_id": {
+   "bedca": "2417"
+  }
  },
  {
   "nombre": "Rucula",
@@ -9269,7 +9528,10 @@
    "anio": "2020"
   },
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "fuentes_id": {
+   "bedca": "2418"
+  }
  },
  {
   "nombre": "Tomate (puré)",
@@ -9479,6 +9741,9 @@
   "nota_datos": "⚠️ EL CERO DE VITA ES REAL, comprobado el 7 sep 2026: BEDCA 909 mide 0, citando USDA. Se anota porque el detector automatico de ceros sospechosos lo levanta (es raro en su categoria) y sin esta nota se volveria a investigar cada vez.",
   "cero_verificado": {
    "vitA": "BEDCA 909 mide 0, citando USDA (7 sep 2026)"
+  },
+  "fuentes_id": {
+   "bedca": "909"
   }
  },
  {
@@ -9553,7 +9818,10 @@
    "valina"
   ],
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "fuentes_id": {
+   "bedca": "2224"
+  }
  },
  {
   "nombre": "Frambuesa",
@@ -9624,7 +9892,10 @@
    "valina"
   ],
   "taurina_fuente": "Taurina = 0: Spitze et al. 2003 (J. Anim. Physiol. Anim. Nutr. 87:251-262) prueba una lista amplia de verduras y frutas y no detecta taurina en ninguna -- textual: 'None of the vegetables contained any measurable amount of taurine'.",
-  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada."
+  "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
+  "fuentes_id": {
+   "bedca": "914"
+  }
  },
  {
   "nombre": "Mandarina",
@@ -9773,7 +10044,11 @@
   "lcarnitina_fuente": "L-carnitina = 0: no hay biosintesis vegetal relevante (la ruta parte de lisina/metionina con enzimas que las plantas no usan para esto); la fruta y verdura no dan cifra detectable en la literatura consultada.",
   "humedad_g_100g": 83.5,
   "humedad_fuente": "USDA FoodData Central · Mangos, raw",
-  "humedad_fdc": "169910"
+  "humedad_fdc": "169910",
+  "fuentes_id": {
+   "bedca": "1186",
+   "usda": "169910"
+  }
  },
  {
   "nombre": "Piña",
@@ -10246,7 +10521,10 @@
   "taurina_fuente": "Taurina = 110 mg/100g: Spitze et al. 2003, tabla 1, \"Chicken, liver\" = 1100 mg/kg -> 110 mg/100g.",
   "humedad_g_100g": 76.5,
   "humedad_fuente": "USDA FoodData Central · Chicken, liver, all classes, raw",
-  "humedad_fdc": "171060"
+  "humedad_fdc": "171060",
+  "fuentes_id": {
+   "usda": "171060"
+  }
  },
  {
   "nombre": "Carcasa de pato",
@@ -10995,7 +11273,10 @@
   },
   "humedad_g_100g": 79.3,
   "humedad_fuente": "USDA FoodData Central · Chicken, gizzard, all classes, raw",
-  "humedad_fdc": "171456"
+  "humedad_fdc": "171456",
+  "fuentes_id": {
+   "usda": "171456"
+  }
  },
  {
   "nombre": "Molleja de pavo",
@@ -11070,7 +11351,10 @@
   },
   "humedad_g_100g": 77.5,
   "humedad_fuente": "USDA FoodData Central · Turkey, gizzard, all classes, raw",
-  "humedad_fdc": "171085"
+  "humedad_fdc": "171085",
+  "fuentes_id": {
+   "usda": "171085"
+  }
  },
  {
   "nombre": "Pollo pechuga sin piel",
@@ -11155,7 +11439,10 @@
   "lcarnitina_fuente": "L-carnitina = 10 mg/100g: valor agregado tipico de pollo (no separa corte), literatura general sobre contenido de carnitina en carne.",
   "humedad_g_100g": 73.9,
   "humedad_fuente": "USDA FoodData Central · Chicken, broiler or fryers, breast, skinless, boneless, meat only, raw",
-  "humedad_fdc": "171077"
+  "humedad_fdc": "171077",
+  "fuentes_id": {
+   "usda": "171077"
+  }
  },
  {
   "nombre": "Pollo muslo sin piel",
@@ -11241,7 +11528,10 @@
   "lcarnitina_fuente": "L-carnitina = 10 mg/100g: valor agregado tipico de pollo (no separa corte), literatura general sobre contenido de carnitina en carne.",
   "humedad_g_100g": 76.2,
   "humedad_fuente": "USDA FoodData Central · Chicken, broilers or fryers, dark meat, thigh, meat only, raw",
-  "humedad_fdc": "173627"
+  "humedad_fdc": "173627",
+  "fuentes_id": {
+   "usda": "173627"
+  }
  },
  {
   "nombre": "Hígado de cordero",
@@ -11327,7 +11617,11 @@
   "lcarnitina_fuente": "L-carnitina = 40 mg/100g: valor agregado tipico de cordero/oveja (no separa corte ni tejido); la literatura da un rango muy amplio entre fuentes (40-200 mg/100g) -- se usa el extremo BAJO por ser el lado conservador ante esa incertidumbre real.",
   "humedad_g_100g": 71.4,
   "humedad_fuente": "USDA FoodData Central · Lamb, variety meats and by-products, liver, raw",
-  "humedad_fdc": "172531"
+  "humedad_fdc": "172531",
+  "fuentes_id": {
+   "ciqual": "40102",
+   "usda": "172531"
+  }
  },
  {
   "nombre": "Corazón de conejo",
@@ -12050,7 +12344,10 @@
   "lcarnitina_fuente": "L-carnitina = 80 mg/100g: valor agregado tipico de vaca/ternera (no separa corte ni tejido), literatura general (rango de fuentes 70-91 mg/100g).",
   "humedad_g_100g": 77.2,
   "humedad_fuente": "USDA FoodData Central · Beef, variety meats and by-products, spleen, raw",
-  "humedad_fdc": "169454"
+  "humedad_fdc": "169454",
+  "fuentes_id": {
+   "usda": "169454"
+  }
  },
  {
   "nombre": "Páncreas de vaca",
@@ -12122,7 +12419,10 @@
   },
   "humedad_g_100g": 65.2,
   "humedad_fuente": "USDA FoodData Central · Beef, variety meats and by-products, pancreas, raw",
-  "humedad_fdc": "169452"
+  "humedad_fdc": "169452",
+  "fuentes_id": {
+   "usda": "169452"
+  }
  },
  {
   "nombre": "Bazo de cordero",
@@ -12201,7 +12501,10 @@
   "lcarnitina_fuente": "L-carnitina = 40 mg/100g: valor agregado tipico de cordero/oveja (no separa corte ni tejido); la literatura da un rango muy amplio entre fuentes (40-200 mg/100g) -- se usa el extremo BAJO por ser el lado conservador ante esa incertidumbre real.",
   "humedad_g_100g": 78.2,
   "humedad_fuente": "USDA FoodData Central · Lamb, variety meats and by-products, spleen, raw",
-  "humedad_fdc": "174364"
+  "humedad_fdc": "174364",
+  "fuentes_id": {
+   "usda": "174364"
+  }
  },
  {
   "nombre": "Timo de vaca",
@@ -12270,6 +12573,9 @@
    "nota": "Souci-Fachmann-Kraut vía compilaciones alemanas de dieta para la gota. «Kalbsbries (Thymusdrüse)» es inequívocamente el TIMO, no el páncreas: en inglés «sweetbread» cubre los dos y ahí está la confusión. Es el alimento sólido con más purinas de las tablas. Compilación, no análisis primario: calidad de dato inferior al resto de la columna.",
    "pais": "Alemania",
    "anio": ""
+  },
+  "fuentes_id": {
+   "usda": "170194"
   }
  },
  {
@@ -12344,6 +12650,9 @@
    "nota": "mismo órgano",
    "pais": "USA",
    "anio": "1976"
+  },
+  "fuentes_id": {
+   "usda": "168622"
   }
  },
  {
@@ -12420,7 +12729,10 @@
   },
   "humedad_g_100g": 74.5,
   "humedad_fuente": "USDA FoodData Central · Turkey, all classes, heart, raw",
-  "humedad_fdc": "171484"
+  "humedad_fdc": "171484",
+  "fuentes_id": {
+   "usda": "171484"
+  }
  },
  {
   "nombre": "Hígado de pavo",
@@ -12496,7 +12808,10 @@
   "taurina_fuente": "Taurina = 153,7 mg/100g: no hay dato propio de esta especie -- se usa \"Poultry, liver\" (Spitze et al. 2003) = 1537 (1300-1784) mg/kg -> 153,7 mg/100g, agregado de varias aves de corral, confianza MEDIA.",
   "humedad_g_100g": 75.5,
   "humedad_fuente": "USDA FoodData Central · Turkey, all classes, liver, raw",
-  "humedad_fdc": "171486"
+  "humedad_fdc": "171486",
+  "fuentes_id": {
+   "usda": "171486"
+  }
  },
  {
   "nombre": "Hígado de pato",
@@ -12578,7 +12893,11 @@
   },
   "humedad_g_100g": 71.8,
   "humedad_fuente": "USDA FoodData Central · Duck, domesticated, liver, raw",
-  "humedad_fdc": "174467"
+  "humedad_fdc": "174467",
+  "fuentes_id": {
+   "ciqual": "40121",
+   "usda": "174467"
+  }
  },
  {
   "nombre": "Timo de ternera",
@@ -12728,7 +13047,10 @@
   },
   "humedad_g_100g": 80.5,
   "humedad_fuente": "USDA FoodData Central · Veal, variety meats and by-products, lungs, raw",
-  "humedad_fdc": "174361"
+  "humedad_fdc": "174361",
+  "fuentes_id": {
+   "usda": "174361"
+  }
  },
  {
   "nombre": "Cerebro de ternera",
@@ -12791,6 +13113,10 @@
   "humedad_g_100g": 79.8,
   "humedad_fuente": "USDA FoodData Central · Veal, variety meats and by-products, brain, raw",
   "humedad_fdc": "174351",
-  "humedad_nota": "⚠️ NO CUADRA CON NUESTROS MACROS: agua + proteina + grasa = 101.0 g por cada 100 g de alimento, y no puede pasar de 100. Nuestra ficha declara ser un CRUCE de USDA con Recipal, FatSecret y Prospre: el agua es de la fila de USDA sola. La fila del USDA de la que sale esta humedad SI cuadra consigo misma (su suma de proximales esta comprobada), asi que el que sobra es uno de NUESTROS numeros, no el agua. Se deja la humedad porque es el unico dato de esta fila con procedencia escrita; lo que hay que revisar es la proteina y la grasa contra ese mismo FDC. Anotado el 5-sep-2026."
+  "humedad_nota": "⚠️ NO CUADRA CON NUESTROS MACROS: agua + proteina + grasa = 101.0 g por cada 100 g de alimento, y no puede pasar de 100. Nuestra ficha declara ser un CRUCE de USDA con Recipal, FatSecret y Prospre: el agua es de la fila de USDA sola. La fila del USDA de la que sale esta humedad SI cuadra consigo misma (su suma de proximales esta comprobada), asi que el que sobra es uno de NUESTROS numeros, no el agua. Se deja la humedad porque es el unico dato de esta fila con procedencia escrita; lo que hay que revisar es la proteina y la grasa contra ese mismo FDC. Anotado el 5-sep-2026.",
+  "fuentes_id": {
+   "bedca": "1047",
+   "usda": "174351"
+  }
  }
 ]

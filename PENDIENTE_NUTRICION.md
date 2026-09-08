@@ -981,3 +981,61 @@ el perro.
 Mismo caso, más suave, en `mastín 55 kg + renal_proteinuria + artrosis`: sale
 unas veces sí y otras no según lo cargada que vaya la máquina — ahí es el
 presupuesto de tiempo del solver, no la nutrición.
+
+## 14. El catálogo, direccionable: las 26 fichas que faltan por identificar (8 de septiembre)
+
+**Por qué existe este apartado.** El catálogo se había revisado seis o siete
+veces y siempre se volvía a abrir. La causa no eran los datos: era que **no
+era direccionable**. 117 de las 163 fichas no tenían ningún identificador de
+fuente, y las otras 45 lo llevaban escrito en prosa dentro de `nota_datos`
+—«FDC 172343»—, donde ninguna herramienta puede leerlo. Sin identificador
+hay que buscar por nombre en cada pasada, y buscar por nombre falla: medido
+el mismo día, «Atún» devuelve *Atún en aceite de oliva*, «Salmón» devuelve
+*Queso para untar con salmón* y «Cardo» devuelve *Anacardo*. Como cada
+búsqueda cuesta y puede salir mal, cada revisión solo se permitía mirar unas
+docenas de celdas por un criterio distinto, y siempre quedaba un ángulo
+nuevo.
+
+Ahora **99 fichas llevan `fuentes_id`**, puesto por
+`fijar_identificadores.py`, que solo lo acepta si la fila candidata cuadra
+con la nuestra en proteína, grasa, agua y energía **y** el nombre es
+compatible en preparación y en especie. Ni un número del catálogo cambió al
+ponerlos: es índice, no dato.
+
+**No hace falta identificador en 38 fichas, y es correcto:** 16 suplementos
+y productos de marca (llevan datos de etiqueta, no están en ninguna base),
+la sal común y el yoduro potásico (productos químicos), y 9 huesos carnosos,
+que según `Bases.md` vienen de **Köber 2017** y no de las tres bases.
+
+### Lo que queda, y es esto y no más
+
+**Ocho aceites y grasas.** El nombre coincide exacto («Aceite de cacahuete»
+contra «Aceite de cacahuete»), pero un alimento que es casi todo grasa **no
+tiene huella**: proteína 0, grasa ~100 y agua 0 describen a todos por igual,
+así que la máquina no puede demostrar cuál es. Hay que aceptarlos a ojo:
+aceite de cacahuete, de coco, de sésamo, de hígado de bacalao, grasa de
+pollo, manteca y los tres aceites de salmón de marca. Ojo con «Aceite de
+oliva» y «Aceite de oliva virgen extra», que reciben el mismo candidato y
+son dos fichas distintas.
+
+**Cinco donde el candidato viene preparado y la ficha es cruda:** col
+lombarda (BEDCA solo la tiene hervida), coliflor y pescadilla (solo
+congeladas), gallina (USDA solo tiene *stewing*). Decidir si esa fila sirve
+o si la ficha se queda sin identificador.
+
+**Seis fruta y verdura** donde solo hay dos magnitudes que comparar porque
+les falta el agua: albaricoque, mandarina, pera, sandía. Se cierran solas en
+cuanto tengan `humedad_g_100g` (ver `UNIDADES.md`).
+
+**Y cuatro de verdad sin resolver:**
+- **Atún** — BEDCA solo devuelve conservas. Falta la fila del atún fresco.
+- **Piña** — no aparece en BEDCA; la búsqueda devuelve espinaca en conserva.
+- **Timo de ternera** — USDA solo publica el de vaca (170194) y la guarda de
+  especie lo rechaza, con razón: son 3 g de grasa contra 20.
+- **Dorada** — sale `NO` con las tres magnitudes comparables, y **eso
+  confirma por otro camino lo que ya sabíamos**: su fila de BEDCA mezcla dos
+  peces. Ya está marcada `dato_no_fiable`.
+
+El informe completo, ficha a ficha y con las cifras de cada comparación,
+está en `identificadores_informe.json`. **Se regenera con
+`python3 fijar_identificadores.py`** (unos 5 minutos, necesita red).
