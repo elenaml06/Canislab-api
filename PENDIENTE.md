@@ -59,7 +59,7 @@ que tomar una persona, no yo.
 - [~] Ajustes de cuenta: falta método de pago (portal Stripe) y darse de baja de verdad
 - [ ] Volver a encender el muro de pago cuando toque (`VITE_PAYWALL`, dos pruebas paradas a propósito)
 - [ ] Los 34 pesos de referencia que faltan en «cómo preparar» (verduras y frutas)
-- [ ] Borrar las ramas viejas de los dos repos (15 ya comprobadas, nada que rescatar)
+- [ ] Borrar las ramas viejas — ⚠️ **RECUENTO CORREGIDO 8 sep**: la auditoría del 23 de agosto era buena pero está caducada. Hoy hay **11 ramas vivas y 6 nunca se miraron** (22 commits fuera de `main`), y **cuatro de ellas suenan a trabajo nutricional**. Solo 5 son borrables, comprobadas con `--is-ancestor`. Lista real y comandos: `TRASPASO.md` §1
 - [ ] Rellenar a mano la fecha de nacimiento de los perros guardados antes del 21 de agosto
 - [ ] Una versión para dueños y otra para veterinarios — decidido, plan completo en `VETERINARIOS.md`
 - [ ] Personalizar perro por perro cuando son varios

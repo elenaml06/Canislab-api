@@ -58,6 +58,15 @@ esté en esa lista y nadie más — sirve para comprobar que funciona, no para a
 
 ## Borrar las ramas viejas — auditoría rama por rama (23 de agosto)
 
+> ⚠️ **ESTO CUBRE LAS RAMAS DE AQUEL DÍA, NO LAS DE HOY (nota del 8 de
+> septiembre).** Lo de abajo sigue siendo correcto para las 15 ramas que
+> miró, y las 5 de `canislab-web` se han vuelto a confirmar hoy. Pero once
+> de las que lista ya no existen, y han aparecido **seis ramas nuevas que
+> esta auditoría no vio**, cuatro de ellas con trabajo que suena a
+> nutrición. **No borres nada a partir de esta lista sin mirar antes
+> `TRASPASO.md` §1**, que trae el recuento de hoy y el comando correcto
+> (`git merge-base --is-ancestor`, no `git cherry`).
+
 Contexto en `PENDIENTE.md`: no es programación, no corre prisa, pero cuanto más se
 acumulen peor (ver «Cómo se trabaja con git aquí» en `CLAUDE.md`). Comprobado con
 `git rev-list --count origin/main..origin/<rama>`:

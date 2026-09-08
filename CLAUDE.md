@@ -80,12 +80,13 @@ jubilado — que desde fuera se parecen mucho.
 
 | Archivo | Qué hace |
 |---|---|
-| `motor_completo.py` | **El corazón.** `resolver()` monta el problema MILP y lo resuelve: los 41 nutrientes (los 12 aminoácidos entre ellos desde el 28 de agosto), el ratio Ca:P y los topes de seguridad como restricciones simultáneas. Aquí viven también `PATOLOGIAS` y `topes_de_patologias()` |
+| `motor_completo.py` | **El corazón.** `resolver()` monta el problema MILP y lo resuelve: los 41 nutrientes (los 12 aminoácidos entre ellos desde el 28 de agosto), el ratio Ca:P y los topes de seguridad como restricciones simultáneas. Aquí vive `topes_de_patologias()`, que resuelve los topes para una etapa y una combinación de patologías — pero **la tabla ya no está aquí**: se importa de `patologias.py` |
 | `verificar.py` | El semáforo. `MAPA` es **la** lista de requisitos, la única, compartida con el solver y con el analizador. Y `suplementar()`, que cierra huecos |
 | `seguridad.py` | Los cinco topes crónicos y los avisos. Cada cifra con su fuente escrita al lado |
 | `constructor.py` | Proporciones BARF de partida y `valor_nutriente()` (las claves derivadas, como `epa_dha`) |
 | `exclusiones.py` | Alergias por palabras y familias de especie. Excluir «pollo» quita también «gallina» |
 | `accesibles.py`, `modos.py` | Qué alimentos entran según el modo (automático / personalizar / aprovechar) |
+| `patologias.py` | Lee `patologias.json` y lo pasa a la forma que espera el solver. **Aquí no hay ni una cifra**: hasta el 28 de agosto la tabla eran 200 líneas de `dict` dentro de `motor_completo.py`, mezclando números, motivo clínico, textos y lógica de crecimiento. Se sacó por lo mismo que el catálogo y la tabla de FEDIAF: un número que decide si un menú se entrega tiene que poder auditarse, y no se audita lo que está enterrado entre `if`s |
 | `catalogo_menus.py` | Carga los menús precalculados de la vista previa. Los datos están en `catalogo_menus.json`, en la raíz con los demás: aquí solo quedan 55 líneas de código |
 
 ### La API (raíz)
@@ -100,6 +101,9 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
+| `pruebas_completas.py` | **La batería.** Los 50 bloques, ~10 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `auditar_patologias.py` | Cada cifra de `patologias.json` contra `requerimientos_v2_final.json`: que ninguna patología formulable tenga un tope por debajo del mínimo de FEDIAF, y que la clave del nutriente exista en el `MAPA`. Lo ejecuta el BLOQUE 32 |
+| `radiografia.py` | Imprime los números que **ENTRAN** al motor, para comparar `main` con una rama a golpe de `diff`. No lo ejecuta la batería: se corre a mano. Existe porque el semáforo comprueba el menú contra las kcal que le dieron — si las kcal ya venían mal, el menú sale VERDE para un perro que no es el tuyo, y eso solo se ve en la entrada |
 | `auditar_catalogo.py` | Huecos y datos raros del catálogo, y quién se queda sin aminograma. Lo ejecuta el BLOQUE 19 |
 | `auditar_fediaf.py` | Cada valor del JSON contra la tabla de FEDIAF. Lo ejecuta el BLOQUE 18 |
 | `contrastar_fuentes.py` | Una ficha del catálogo contra **BEDCA, CIQUAL y USDA a la vez**, en el orden de `Bases.md`. **No lo ejecuta la batería** (necesita red y se baja 10 MB): es la herramienta de quien va a mirar una ficha. Trae dentro cómo se lee cada fuente — el XML de BEDCA hay que reconstruirlo de su `query.js`, y con la lista de atributos recortada devuelve el cuerpo vacío sin dar error |
@@ -297,8 +301,21 @@ se comprueba entero en cada batería.
 ## Cómo se prueba
 
 ```bash
-python3 pruebas_completas.py     # ~2 min, tiene que salir TODO EN VERDE
+python3 pruebas_completas.py     # ~10 min, tiene que salir TODO EN VERDE
 ```
+
+Los 50 bloques tardan unos **10 minutos** (559 s, 590 s y 593 s en las
+tres últimas medidas apuntadas en los commits; el «~2 min» que ponía aquí
+llevaba meses caducado). No necesita red ni claves de verdad: se fabrica
+su propio Stripe y su propio Supabase de mentira, así que corre igual en
+cualquier máquina y sin conexión.
+
+**Desde el 8 de septiembre la ejecuta también GitHub Actions** en cada
+pull request y en cada empujón a `main` (`.github/workflows/bateria.yml`).
+Eso no sustituye a ejecutarla antes de abrir el PR — te lo cuenta diez
+minutos después, no antes —, pero cierra el hueco de que un rojo se cuele
+por olvido: en el historial hay un commit que se llama literalmente «WIP:
+la carga puesta, con la batería en rojo (13 fallos)».
 
 Se ejecuta **entero** antes de entregar cualquier cambio, no solo el
 trozo que parece afectado. Existe porque antes cada arreglo se probaba
