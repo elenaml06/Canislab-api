@@ -1,8 +1,8 @@
 # TRASPASO — sesión del 8 de septiembre
 
-Rama: `claude/nutricion-pendiente-vuoobq`. Dos commits, **sin PR y sin
-fusionar**. Escrito al pararme para que nadie tenga que deducir nada de los
-mensajes de commit.
+Rama: `claude/nutricion-pendiente-vuoobq`. **Sin PR y sin fusionar.** Dos
+commits de código (`9bc0a8d`, `c6af011`) y los de este archivo. Escrito al
+pararme para que nadie tenga que deducir nada de los mensajes de commit.
 
 ---
 
@@ -34,6 +34,8 @@ tubería es el del **último** comando. Salió 0 con la batería en rojo o en
 verde por igual. **El código de salida de una tubería no dice nada**: hay
 que leer la línea «TODO EN VERDE» de la salida.
 
+---
+
 ## 1. DECISIÓN CERRADA: el `TR` de BEDCA NO significa «trazas»
 
 **Esto es lo que no puede volver a abrirse.** Es una comprobación hecha
@@ -50,8 +52,9 @@ razonable: «una traza es un dato publicado, no un hueco».
 ### Contra qué fuente se comprobó, y qué dijo
 
 Se le pidieron las fichas al servicio de BEDCA una a una el 8 de septiembre
-(`contrastar_fuentes.py`, que imprime el `value_type`). Las **14 celdas son
-`TR` con la celda VACÍA**. En el esquema de BEDCA:
+(`contrastar_fuentes.py`, que imprime el `value_type`). **13 de las 14
+celdas son `TR` con la celda VACÍA**, y ninguna es `AR` con un 0. En el
+esquema de BEDCA:
 
 | código | significa |
 |---|---|
@@ -59,8 +62,21 @@ Se le pidieron las fichas al servicio de BEDCA una a una el 8 de septiembre
 | `LZ` + un 0 | cero **lógico**: por composición no puede tener |
 | `TR` + **celda vacía** | **NO HAY CIFRA**. Es un hueco |
 
-Comprobado en Merluza (2347), Bacaladilla (2136), Lenguado (2341), Lubina
-(2344), Calamar (2320), Pulpo (2471), Sepia (2635) y Merluza congelada (825).
+Comprobado ficha a ficha: Merluza (2347), Bacalao (2302, «Bacalao, crudo»),
+Bacaladilla (2136), Lenguado (2341), Lubina (2344), Calamar (2320), Pulpo
+(2471), Sepia (2635), Gamba roja (817, «Gamba roja, cruda») y, de refuerzo,
+Merluza congelada (825). Las 13 celdas de esas nueve fichas: `TR` vacío.
+
+**La que falta es una sola y conviene decir cuál:** la vitamina D de «Pollo
+con piel (sin hueso)». Esa ficha **no tiene registro identificado en BEDCA**
+—es una de las 26 pendientes del apartado 14 de `PENDIENTE_NUTRICION.md`—,
+así que no hay fila contra la que comprobarla. Sigue en `sin_dato` en
+`main`, que es lo conservador.
+
+**Y una corroboración que vale más que las trece:** «Gamba, hervida» (2337)
+da vitamina D = **0 con `AR`**, o sea un cero MEDIDO, mientras que «Gamba
+roja, cruda» (817) da `TR` vacío. BEDCA distingue las dos cosas de verdad, y
+esa es exactamente la distinción que el campo `trazas` borraba.
 
 **La prueba de que el campo era exactamente eso y no otra cosa:** donde la
 rama **no** marcaba traza —la vitamina A de calamar, pulpo y sepia— BEDCA
@@ -108,9 +124,14 @@ septiembre**, y `main` ha cambiado mucho desde entonces: aplicarla tal cual
   contrastaron **después** del 2 de septiembre contra BEDCA/CIQUAL/USDA. El
   EPA, el DHA y los **400 µg de yodo del aceite de hígado de bacalao** están
   entre ellos, y el yodo es un tope crónico. Aplicar la rama los borra.
-- **Las 69 diferencias de `Cerebro de ternera`**: `main` tiene la ficha
-  rehecha desde USDA 168622 tras el lío vaca/ternera. La rama tiene la
-  versión vieja.
+- **Las 69 diferencias del cerebro.** Ojo, que es fácil contarlo al revés:
+  la rama tiene **una sola** ficha, «Cerebro de ternera», y lleva dentro los
+  números de la **vaca** (proteína 10,86 · grasa 10,3 · calcio 43, que son
+  clavados los de USDA 168622, *Beef brain*). `main` la partió en dos, y hoy
+  cada una tiene los suyos, comprobado: `Cerebro de vaca` = 10,86 / 10,3 /
+  43 (USDA 168622) y `Cerebro de ternera` = 10,4 / 8,6 / 12, que es USDA
+  174351, *Veal brain* (10,32 / 8,21 / 10). Aplicar la rama devuelve los
+  números de vaca a la ficha de ternera.
 - **Borrar los tres cuellos y la laringe del catálogo**: `main` los conserva
   y los **bloquea en el solver** por tejido tiroideo, que es mejor — el
   alimento sigue existiendo y el motivo queda escrito.
@@ -122,7 +143,21 @@ Comprobado una a una: las 103 correcciones del catálogo (albahaca fósforo
 techo legal de la vitamina D y el bloqueo de tejido tiroideo. Llegaron por
 los PR #76 y #80.
 
-**Conclusión: esa rama ya no tiene nada que rescatar.** Se puede borrar.
+### Hasta dónde llegó esta revisión, para que nadie herede una certeza falsa
+
+**Lo que sí se auditó entero:** su `alimentos_v3_final.json`, casilla por
+casilla contra el de `main` (las 210 diferencias, clasificadas una a una), y
+lo que su `main.py` hacía con `trazas`.
+
+**Lo que NO se leyó línea a línea:** su `pruebas_completas.py` (+529 líneas)
+y su `motor/seguridad.py` (+176). Se comprobó que **el trabajo grande de
+esos dos archivos ya está en `main`** —el techo legal de la vitamina D y el
+bloqueo de tejido tiroideo, por el PR #76— pero no que no quede ninguna
+prueba suelta que mereciera la pena.
+
+Así que la conclusión honesta es: **del catálogo no queda nada que
+rescatar**, y del código queda por mirar un rato de pruebas. Si alguien la
+borra, eso es lo que se pierde.
 
 ---
 
