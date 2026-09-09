@@ -109,12 +109,42 @@ BASE_ACTIVIDAD = {
 }
 
 # Ajustes ADITIVOS, en kcal/kg^0.75. Solo se aplican a adulto y senior.
+# ⚠️ EL ESCALON DE EDAD ES EL DE FEDIAF, TABLA VII-6 (9 septiembre 2026).
+#
+# «Practical recommendations for MER in dogs at different ages»:
+#
+#     1-2 anos ................ 130 (125-140) kcal ME/kg BW^0,75
+#     3-7 anos ................ 110  (95-130)
+#     > 7 anos (senior) ....... 95   (80-120)
+#
+# O sea +20 el joven y -15 el senior sobre la banda de 3-7. Aqui ponia +15 y -7,
+# que venian de Thes 2014 (100 kcal/kg^0,75 en jovenes contra 93 en mayores de 7).
+#
+# ⚠️ CASO REAL: esta tabla SE HABIA LEIDO. El comentario de arriba, del 6 de
+# septiembre, dice «no la VII-6 (esa es solo por EDAD, sin actividad -- confirmado
+# literal en fediaf_2025.txt)». Se abrio, se confirmo, se clasifico bien y se
+# aparto -- y nadie cruzo su escalon de edad contra el que aplicabamos. El -7 era
+# un -6,4 %, cuando FEDIAF dice -13,6 % y SACN5 cap.5 dice, aparte, «dogs over
+# seven years of age required 10 to 20% less energy» y recomienda «foods providing
+# a 15 to 20% caloric reduction». Las dos fuentes coincidian y nosotras ibamos por
+# menos de la mitad. Lo vigila ahora `fediaf_tablas.json` + BLOQUE 67.
+#
+# ⚠️ Y CRUZAR EDAD CON ACTIVIDAD ES LO QUE PIDE LA FUENTE, aunque la VII-6 y la
+# VII-7 sean alternativas entre si. FEDIAF, justo encima de la VII-6: «some young
+# adult dogs may have a sedentary lifestyle and need fewer calories than the
+# average shown in table VII-6, whereas older dogs (> 7 years of age) which are
+# still playing and running will need more energy than indicated». Lo que no era
+# de la fuente era el TAMAÑO del escalon.
 AJUSTE_EDAD = {
-    "joven":   +15,   # 1 a 2 años
-    "adulto":    0,   # 2 a 7 años
-    "senior":   -7,   # Thes et al. 2014: 100 kcal/kg^0.75 en jovenes vs 93 en
-                      # mayores de 7 anos -> -7 (antes teniamos -5)
+    "joven":   +20,   # 1 a 2 años  -- FEDIAF VII-6: 130 contra 110
+    "adulto":    0,   # 2 a 7 años  -- la banda de referencia, 110
+    "senior":   -15,  # > 7 años    -- FEDIAF VII-6: 95 contra 110
 }
+# La banda de 1-2 anos de la Tabla VII-6. Un perro es "adulto joven" mientras no
+# cumpla los dos anos; por debajo del fin de su crecimiento ni siquiera llega aqui,
+# porque manda la etapa de cachorro.
+ADULTO_JOVEN_HASTA_MESES = 24.0
+
 AJUSTE_CONVIVENCIA = {"solo": 0, "con_otros_perros": +10}
 AJUSTE_MACHO_ENTERO = +10
 
@@ -582,7 +612,19 @@ def calcular_der(peso_actual_kg: float, etapa: str, actividad: str = None,
         # no era de FEDIAF y recortaba hasta un 33 %.
         der = coef * peso_calculo ** 0.75 + extra * LACTANCIA_PESO_SEMANA[sem - 1]
     elif etapa in ("adulto", "senior"):
-        grupo = "senior" if etapa == "senior" else "adulto"
+        # ⚠️ EL GRUPO «joven» EXISTIA Y NO SE USABA NUNCA (9 septiembre 2026).
+        # `AJUSTE_EDAD` tenia una entrada "joven" desde que se escribio esto, y
+        # aqui solo se pasaba "senior" o "adulto": codigo muerto que PARECIA
+        # aplicado. Es el mismo fallo que los tres escalones de crecimiento, de
+        # los que dos no se leian nunca.
+        # FEDIAF VII-6 da 130 kcal/kg^0,75 al perro de 1-2 anos contra 110 al de
+        # 3-7: un 18 % mas, y la app sabe la fecha de nacimiento. Ahora se aplica.
+        if etapa == "senior":
+            grupo = "senior"
+        elif meses is not None and meses < ADULTO_JOVEN_HASTA_MESES:
+            grupo = "joven"
+        else:
+            grupo = "adulto"
         coef = _coef_adulto(actividad or "normal", grupo, convivencia,
                             macho_entero, raza)
         der = coef * peso_calculo ** 0.75

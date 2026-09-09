@@ -1,0 +1,193 @@
+{
+  "_meta": {
+    "que_es": "Inventario de TODAS las tablas de FEDIAF 2025 y qué hace el motor con cada una. Una tabla sin veredicto aquí es una tabla que nadie ha decidido si aplica.",
+    "por_que_existe": "El 9 de septiembre Elena preguntó cómo podía ser que no usáramos la Tabla VII-6 si se había leído FEDIAF entero. La respuesta estaba en un comentario de `der.py` fechado el 6 de septiembre: la tabla SE LEYÓ, se confirmó literal en el PDF, se clasificó bien ('esa es la de edad, no la de actividad') y se apartó. Nadie cruzó su escalón de edad contra el que aplicábamos, que venía de otro estudio y era la mitad. Y ese mismo día, con esa misma tabla de al lado (VII-7), había pasado lo mismo con sus dos filas de raza. || O sea que el fallo no es de lectura: es de no dejar constancia, tabla por tabla, de qué se hace con ella. 'Me lo he leído' no es comprobable. Esto sí.",
+    "como_se_mantiene": "Lo vigila `auditar_fediaf_tablas.py` (BLOQUE 67): recorre el texto de FEDIAF, encuentra cada 'Table X-n' y falla si alguna no está aquí con veredicto. Añadir una tabla sin veredicto no compila.",
+    "veredictos": {
+      "aplicada": "el motor usa sus cifras, y se dice dónde",
+      "alternativa_declarada": "es una vía alternativa a otra que sí usamos, y la elección está razonada",
+      "no_aplicable": "no hay nada que aplicar, con el motivo",
+      "felina": "es de gato",
+      "pendiente": "hay algo que aplicar y no está hecho: es deuda, no un veredicto"
+    }
+  },
+  "tablas": {
+    "III-1": {
+      "titulo": "Nutrients (lista de nutrientes)",
+      "veredicto": "no_aplicable",
+      "por_que": "Es el índice de qué se considera nutriente. No trae cifras."
+    },
+    "III-2": {
+      "titulo": "Conversion factors",
+      "veredicto": "aplicada",
+      "donde": "UNIDADES.md y las conversiones del catálogo",
+      "por_que": "Los factores de unidad de los nutrientes."
+    },
+    "III-3a": {
+      "titulo": "Niveles recomendados, por 100 g de materia seca",
+      "veredicto": "alternativa_declarada",
+      "donde": "requerimientos_v2_final.json usa la 3b",
+      "por_que": "Es la MISMA tabla que la 3b en otra unidad. Trabajamos por 1000 kcal, así que usamos la 3b. Sirve de comprobación cruzada: 3a x 2,5 = 3b."
+    },
+    "III-3b": {
+      "titulo": "Niveles recomendados, por 1000 kcal ME",
+      "veredicto": "aplicada",
+      "donde": "requerimientos_v2_final.json, las 43 filas, y auditar_fediaf.py las comprueba una a una",
+      "por_que": "ES la tabla del motor."
+    },
+    "III-3c": {
+      "titulo": "Niveles recomendados, por MJ ME",
+      "veredicto": "alternativa_declarada",
+      "donde": "-",
+      "por_que": "La 3b en julios. No usamos julios."
+    },
+    "III-4a": {
+      "titulo": "Niveles recomendados para GATO, por 100 g MS",
+      "veredicto": "felina"
+    },
+    "III-4b": {
+      "titulo": "Niveles recomendados para GATO, por 1000 kcal",
+      "veredicto": "felina"
+    },
+    "III-4c": {
+      "titulo": "Niveles recomendados para GATO, por MJ",
+      "veredicto": "felina"
+    },
+    "V-1": {
+      "titulo": "Indicadores para digestibilidad",
+      "veredicto": "no_aplicable",
+      "por_que": "Método de laboratorio para medir digestibilidad in vivo. No medimos digestibilidad: por eso se aplica el x1,10 de FEDIAF §3.2.1 a los aminoácidos."
+    },
+    "VI-1": {
+      "titulo": "Abbreviations",
+      "veredicto": "no_aplicable",
+      "por_que": "Glosario."
+    },
+    "VII-1": {
+      "titulo": "Body condition score, 9 puntos (descripciones)",
+      "veredicto": "aplicada",
+      "donde": "canislab-web/src/bcs.js",
+      "por_que": "La escala de 9 puntos de la que sale nuestro mapeo de 5 niveles."
+    },
+    "VII-2": {
+      "titulo": "BCS: % de peso por encima o por debajo del ideal",
+      "veredicto": "aplicada",
+      "donde": "canislab-web/src/bcs.js, BLOQUE 63",
+      "por_que": "El 10 % por punto y el 45 % del BCS 9 salen de aquí."
+    },
+    "VII-3": {
+      "titulo": "4-point muscle mass scoring system",
+      "veredicto": "pendiente",
+      "por_que": "NO SE USA, y es un hueco real. La masa muscular es independiente del BCS -- un perro puede estar obeso y sarcopénico a la vez --, y es justo lo que importa en el senior, en el oncológico y en la caquexia. La ficha del veterinario tiene BCS y no tiene esto. Ver PENDIENTE_PRODUCTO.md."
+    },
+    "VII-4": {
+      "titulo": "Abbreviations",
+      "veredicto": "no_aplicable",
+      "por_que": "Glosario."
+    },
+    "VII-5": {
+      "titulo": "Energía BRUTA de proteína, grasa e hidratos",
+      "veredicto": "no_aplicable",
+      "por_que": "Energía bruta (5,7 / 9,4 / 4,1 kcal/g). El catálogo va en energía METABOLIZABLE, que es lo que come el perro. Se usarían solo para calcular ME desde cero con las ecuaciones de digestibilidad, y las kcal del catálogo vienen ya como ME de las bases de datos."
+    },
+    "VII-6": {
+      "titulo": "MER en perros a distintas edades",
+      "veredicto": "aplicada",
+      "donde": "der.py y src/der.js, AJUSTE_EDAD; BLOQUE 54",
+      "por_que": "130 (1-2 años) / 110 (3-7) / 95 (>7). De aquí sale el escalón de edad: +20 el joven y -15 el senior. APLICADA EL 9 DE SEPTIEMBRE: hasta ese día el escalón venía de Thes 2014 (+15 y -7), o sea menos de la mitad del de FEDIAF para el senior. La tabla se había leído el 6 de septiembre y se apartó por ser 'la de edad, no la de actividad'."
+    },
+    "VII-7": {
+      "titulo": "DER en relación con la actividad",
+      "veredicto": "aplicada",
+      "donde": "der.py y src/der.js, BASE_ACTIVIDAD y RAZAS_CIFRA_FEDIAF; BLOQUE 54",
+      "por_que": "Los cinco escalones (95/110/125/150/175) y las dos filas de raza (gran danés 200, terranova 105), estas últimas aplicadas el 8 de septiembre después de estar leídas y sin usar."
+    },
+    "VII-8a": {
+      "titulo": "Ecuaciones de curvas de crecimiento",
+      "veredicto": "no_aplicable",
+      "por_que": "Curvas de peso esperado por edad (Gesellschaft 1989, Meyer y Zentek 1992). El motor no predice el peso del cachorro: lo pesa el dueño. La curva que sí usamos para el DER es la de la VII-8b."
+    },
+    "VII-8b": {
+      "titulo": "Energía media en crecimiento y reproducción",
+      "veredicto": "aplicada",
+      "donde": "der.py y src/der.js; BLOQUE 54",
+      "por_que": "La ecuación de crecimiento (= Klein 2019 convertida), la gestación (132 x kg^0,75, +26/kg las últimas 5 semanas) y la lactancia entera con sus factores por camada y semana."
+    },
+    "VII-9": {
+      "titulo": "Energía diaria del GATO adulto",
+      "veredicto": "felina"
+    },
+    "VII-10": {
+      "titulo": "Energía en crecimiento y reproducción del GATO",
+      "veredicto": "felina"
+    },
+    "VII-11": {
+      "titulo": "Niveles recomendados por kg de peso metabólico",
+      "veredicto": "alternativa_declarada",
+      "donde": "auditar_fediaf.py la usa como COMPROBACIÓN CRUZADA de la III-3b",
+      "por_que": "Es la misma exigencia en una tercera unidad (por kg^0,75). No se aplica, pero sirve para algo mejor: verificar que nuestra transcripción de la III-3b es correcta contra una tabla impresa aparte. Comprobadas las 25 filas de adulto el 9 de septiembre: todas cuadran. || OJO con la GRASA: su valor (1,51 g/kg^0,75) NO cuadra con nuestro 13,75 g/1000 kcal al dividir por 95, y no es un error de nadie -- la grasa es un SUELO DE CONCENTRACIÓN, 5,50 % de materia seca en las DOS columnas de adulto (95 y 110), así que su expresión por peso metabólico depende de qué MER supongas. FEDIAF eligió 110 (13,75 x 110/1000 = 1,51). Todas las demás filas son independientes de la columna."
+    },
+    "VII-12": {
+      "titulo": "Impacto del requerimiento energético en la ingesta de nutrientes",
+      "veredicto": "aplicada",
+      "donde": "verificar.minimo_de(), BLOQUE 34",
+      "por_que": "Es la base del escalado de mínimos cuando el perro come menos (ecuación 7.2.5). Solo hacia arriba."
+    },
+    "VII-13": {
+      "titulo": "Aumento del requisito de arginina al subir la proteína",
+      "veredicto": "aplicada",
+      "donde": "requisitos_condicionales.json, BLOQUE 60",
+      "por_que": "+0,01 g de arginina por g de proteína sobre el requisito, en todas las etapas."
+    },
+    "VII-14": {
+      "titulo": "Factores de conversión: fuente de vitamina a actividad",
+      "veredicto": "pendiente",
+      "por_que": "NO SE HA COMPROBADO, y puede haber un error de datos sistemático. Las etiquetas de los suplementos declaran la SAL o el ÉSTER, y esta tabla da la equivalencia: cloruro de colina 1 mg = 0,75 mg de colina, clorhidrato de piridoxina 1 mg = 0,82 de B6, mononitrato de tiamina 1 mg = 0,81 de B1, pantotenato cálcico 1 mg = 0,92. Si en alguna de las 11 fichas de multivitamínico se anotó el número de la etiqueta como si fuera la vitamina, estaríamos sobreestimando hasta un 25 %. Hay que mirarlo etiqueta por etiqueta. Ver DATOS_QUE_FALTAN.md."
+    },
+    "VII-15": {
+      "titulo": "Contenido de teobromina en productos de cacao",
+      "veredicto": "no_aplicable",
+      "por_que": "El chocolate no está en el catálogo ni puede entrar: no es un alimento del que se formule. Lo que sí se aplica del mismo anexo es el Allium (ajo, cebolla, puerro), que tampoco está en el catálogo y que vigila la batería."
+    },
+    "VII-16": {
+      "titulo": "Compuestos de ajo y cebolla que oxidan los eritrocitos caninos",
+      "veredicto": "aplicada",
+      "donde": "pruebas_completas.py, el bloque de Allium",
+      "por_que": "Ninguno de los Allium está en el catálogo, y la batería exige que siga siendo así citando el anexo 7.7.3."
+    },
+    "VII-17a": {
+      "titulo": "Niveles recomendados, perro, crecimiento temprano y reproducción",
+      "veredicto": "aplicada",
+      "donde": "requerimientos_v2_final.json, columnas de CachorroJoven"
+    },
+    "VII-17b": {
+      "titulo": "Niveles recomendados, perro, crecimiento tardío",
+      "veredicto": "aplicada",
+      "donde": "requerimientos_v2_final.json, columnas de CachorroCrecimiento"
+    },
+    "VII-17c": {
+      "titulo": "Niveles recomendados, perro adulto, MER 110 kcal/kg^0,75",
+      "veredicto": "alternativa_declarada",
+      "donde": "usamos la 17d",
+      "por_que": "Es la columna de 110 kcal. Usamos la de 95, que es la MÁS EXIGENTE: a menos kcal, más concentración por 1000 kcal. Ver el §1 de PARA_EL_NUTRICIONISTA.md."
+    },
+    "VII-17d": {
+      "titulo": "Niveles recomendados, perro adulto, MER 95 kcal/kg^0,75",
+      "veredicto": "aplicada",
+      "donde": "requerimientos_v2_final.json, columnas de Adulto",
+      "por_que": "ES la tabla del adulto que aplica el motor. Comprobadas sus 25 filas contra la VII-11 el 9 de septiembre."
+    },
+    "VII-18a": {
+      "titulo": "Niveles recomendados, GATO, crecimiento y reproducción",
+      "veredicto": "felina"
+    },
+    "VII-18b": {
+      "titulo": "Niveles recomendados, GATO, adulto",
+      "veredicto": "felina"
+    },
+    "VII-18c": {
+      "titulo": "Niveles recomendados, GATO, otra unidad",
+      "veredicto": "felina"
+    }
+  }
+}

@@ -143,7 +143,7 @@ un perro sin menú. **No está aplicado**: hay que verificar tabla por tabla qu�
 densidad declara cada una, porque el cap.33 ya demuestra que no todas usan la
 misma.
 
-> **PREGUNTA 1 — reescrita el 9 de septiembre, porque estaba mal planteada.**
+> **PREGUNTA 1 — reducida el 9 de septiembre, y además estaba mal planteada.**
 > Preguntaba si había que cambiar el puente «a la densidad real de la ración». No:
 > la densidad de la ración no entra, y eso ya no es una pregunta (ver arriba). Lo
 > que queda, que sí es tuyo, es más concreto:

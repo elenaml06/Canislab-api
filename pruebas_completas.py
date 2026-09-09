@@ -3494,7 +3494,11 @@ if _contrato_b23:
                 convivencia="con_otros_perros" if _op23.get("conOtrosPerros") else "solo",
                 macho_entero=_op23.get("machoEntero", False),
                 n_cachorros=_op23.get("nCachorros"),
-                semana_lactancia=_op23.get("semanaLactancia"))
+                semana_lactancia=_op23.get("semanaLactancia"),
+                # ⚠️ AÑADIDO (9 sep): sin pasar la edad, el contrato no podia
+                # cubrir el ajuste de «adulto joven» de la Tabla VII-6, que hasta
+                # ese dia era codigo muerto en los dos repos.
+                meses=_op23.get("mesesEdad"))
             _obtenido23 = round(_r23["der"] if isinstance(_r23, dict) else _r23)
         except Exception as _e23:
             fallos.append(f"BLOQUE23: der.py revienta con {_c23['etapa']} de {_c23['peso']} kg "
@@ -7098,6 +7102,40 @@ for _r54b, _act54b, _esp54b in _ENVEZDE_54:
                       f"de FEDIAF (la cifra de raza EN VEZ del nivel de actividad, colocada "
                       f"dentro del rango publicado) da {_esp54b}")
 
+# --- 2-ter. El escalon de edad es el de la Tabla VII-6, no el de otro estudio -
+#
+# ⚠️ AÑADIDO (9 septiembre). FEDIAF tiene una tabla entera para esto y no la
+# usabamos: «Practical recommendations for MER in dogs at different ages»,
+# 130 (1-2 anos) / 110 (3-7) / 95 (>7 anos). O sea +20 y -15 sobre la banda de
+# 3-7. El motor aplicaba +15 y -7, de Thes 2014.
+#
+# Y LA TABLA SE HABIA LEIDO: el comentario de `der.py` del 6 de septiembre decia
+# «no la VII-6 (esa es solo por EDAD, sin actividad -- confirmado literal en
+# fediaf_2025.txt)». Se abrio, se confirmo, se clasifico bien y se aparto sin
+# cruzar su escalon contra el nuestro. El -7 era un -6,4 % cuando FEDIAF dice
+# -13,6 % y SACN5 cap.5, aparte, dice «10 to 20% less energy». Lo que evita que
+# vuelva a pasar con otra tabla es `fediaf_tablas.json` (BLOQUE 67).
+#
+# El grupo «joven» ADEMAS era codigo muerto: existia en AJUSTE_EDAD y no se
+# pasaba nunca, ni aqui ni en el front. Mismo fallo que los tres escalones de
+# crecimiento de los que dos no se leian.
+_VII6 = {"joven": 130.0, "adulto": 110.0, "senior": 95.0}
+for _g54, _esp54c in _VII6.items():
+    _k54c = _der54._coef_adulto("normal", _g54, "solo", False, None)
+    if abs(_k54c - _esp54c) > 1e-9:
+        fallos.append(f"BLOQUE54: un perro «{_g54}» con actividad normal sale a {_k54c} "
+                      f"kcal/kg^0,75 y la Tabla VII-6 de FEDIAF dice {_esp54c}")
+if _der54.AJUSTE_EDAD.get("joven") != 20 or _der54.AJUSTE_EDAD.get("senior") != -15:
+    fallos.append(f"BLOQUE54: AJUSTE_EDAD es {dict(_der54.AJUSTE_EDAD)} y la Tabla VII-6 pide "
+                  f"joven +20 y senior -15 (130 y 95 contra la banda de 110)")
+# Y que el grupo «joven» siga LLEGANDO: es lo que fallaba antes, no el numero.
+_joven54 = _der54.calcular_der(20.0, "adulto", actividad="normal", meses=12.0)["der"]
+_medio54 = _der54.calcular_der(20.0, "adulto", actividad="normal", meses=60.0)["der"]
+if not _joven54 > _medio54:
+    fallos.append(f"BLOQUE54: un perro de 12 meses recibe {_joven54:.0f} kcal y uno de 60 meses "
+                  f"{_medio54:.0f}. El ajuste de «adulto joven» no esta llegando: eso es lo que "
+                  f"pasaba hasta el 9 de septiembre, con la entrada puesta y nadie pasandola")
+
 # --- 3. La lactancia es la fórmula de FEDIAF, y SIN TOPE -------------------
 # FEDIAF 2025, Tabla VII-8b: «1 to 4 puppies: 145 x kg BW^0.75 + 24 n x kg BW
 # x L» y «5 to 8 puppies: 145 x kg BW^0.75 + [96 + 12 (n-4)] x kg BW x L»,
@@ -8892,6 +8930,11 @@ def _preguntas_del_documento_66(texto):
         _t = " ".join(_blq)
         if "CERRADA" in _t:
             _est = "cerrada"
+        # ⚠️ LISTA CERRADA A PROPOSITO. Son las tres unicas formas de decir
+        # «reducida», y no se amplia cada vez que a alguien le apetece otra
+        # palabra: el 9 de septiembre se escribio «reescrita el» y este bloque
+        # lo leyo como abierta, que es justo lo que tiene que hacer. Si hace
+        # falta una cuarta, se anade aqui A PROPOSITO y se dice por que.
         elif ("reducida el" in _t or "contestada en parte" in _t
               or "replanteada el" in _t):
             _est = "reducida"
@@ -8959,6 +9002,46 @@ if _reg66 is not None and _doc65 is not None:
                               f"esa pregunta ya no esta en PARA_EL_NUTRICIONISTA.md. Si se "
                               f"quito a proposito, va como «retirada» y con el motivo; si no, "
                               f"se ha perdido")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 67 — ninguna tabla de FEDIAF sin veredicto
+# ============================================================
+#
+# ⚠️ POR QUE (9 septiembre). Elena pregunto como podia ser que no usaramos la
+# Tabla VII-6 de FEDIAF si se habia leido FEDIAF entero. La respuesta estaba en
+# un comentario de `der.py` fechado tres dias antes: la tabla SE LEYO, se
+# confirmo literal en el PDF, se clasifico bien («esa es la de edad, no la de
+# actividad») y se aparto. Nadie cruzo su escalon de edad contra el que
+# aplicabamos, que venia de otro estudio y era la mitad. Y el mismo dia, con la
+# tabla de al lado, habia pasado lo mismo con sus dos filas de raza.
+#
+# O sea que el fallo no es de lectura: es de no dejar constancia. «Me lo he
+# leido» no se puede comprobar. Un inventario con veredicto por tabla, si.
+#
+# `fediaf_tablas.json` lleva las 34 tablas de FEDIAF con lo que hace el motor
+# con cada una, y `auditar_fediaf_tablas.py` exige que no falte ninguna, que
+# ningun veredicto raro pase, que lo que se declara «aplicada» diga DONDE y que
+# lo que se descarta diga POR QUE.
+print("\n=== BLOQUE 67: ninguna tabla de FEDIAF sin veredicto ===")
+
+_aud67 = _sp_b18.run([sys.executable, "auditar_fediaf_tablas.py"], capture_output=True, text=True,
+                     cwd=_os_b18.path.dirname(_os_b18.path.abspath(__file__)))
+if "Discrepancias: 0" not in _aud67.stdout:
+    _cola67 = "\n      ".join((_aud67.stdout + _aud67.stderr).strip().splitlines()[-8:])
+    fallos.append(f"BLOQUE67: auditar_fediaf_tablas.py encuentra problemas:\n      {_cola67}")
+
+# Y las «pendientes» se cuentan y se dicen, sin fallar: son deuda declarada, no
+# un error. Lo que no puede pasar es que dejen de estar declaradas.
+_inv67 = _json_b12.load(open("fediaf_tablas.json", encoding="utf-8"))["tablas"]
+_pend67 = sorted(k for k, v in _inv67.items() if v["veredicto"] == "pendiente")
+for _t67 in _pend67:
+    if not _inv67[_t67].get("por_que"):
+        fallos.append(f"BLOQUE67: la tabla {_t67} esta «pendiente» y no dice de que. Una deuda "
+                      f"sin describir es una deuda que nadie va a pagar")
+print(f"  pendientes declaradas: {_pend67 or 'ninguna'}")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
