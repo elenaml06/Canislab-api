@@ -1598,6 +1598,91 @@ quien marcó dos casillas sin tener un urolito compuesto.
 
 ---
 
+## 11-quater · Lo que salió de leer los últimos capítulos de SACN5 (9 de septiembre, tarde)
+
+Con esto queda **leído entero todo lo canino de SACN5**: de los 70 capítulos, los
+5 que siguen sin citarse en el repo son felinos o de otras especies (22, 23, 24,
+46 y 70). Estas son las preguntas que salieron y que **no puede decidir el
+asistente**.
+
+### PREGUNTA 39 — El omega-3 tiene dos caras y las dos están escritas. ¿Dónde está el techo?
+
+**Lo que pide una parte del libro.** Las tablas de **cáncer** y de **artrosis**
+piden omega-3 en cantidades que el catálogo real no alcanza. Las dos están en
+`limites_escritos_que_el_solver_no_aplica` de `patologias.json`, con su medida.
+
+**Lo que dice otra parte, cap.25, y no lo teníamos:**
+
+> *«Chronic suppression of the inflammatory and/or immune response by feeding
+> high levels of omega-3 fatty acids should be done cautiously and **is not
+> warranted in disease states in which a fully competent immune system is
+> essential for survival and recovery**.»*
+
+Con dos medidas: ratones prealimentados con el **40 % de las calorías como aceite
+de pescado** tenían comprometida la resistencia a la infección (Chang et al,
+1992), y gatos sanos con **omega-6:omega-3 de 1,3:1** durante ocho semanas tenían
+la **función plaquetaria significativamente disminuida** (Saker et al, 1998).
+
+**La pregunta**: ¿hay un techo de omega-3 para el perro, y cuál? Hoy el motor no
+le pone ninguno — solo el suelo de EPA+DHA de FEDIAF. Si lo hay, entra como los
+demás. Y si el techo existe, la respuesta a por qué esos dos suelos no caben deja
+de ser «el catálogo no llega» y pasa a ser «no habría que llegar».
+
+### PREGUNTA 40 — El ratio omega-6:omega-3: dos fuentes que no dicen lo mismo
+
+Es la primera de las tres que Cris echó de menos en `REVISION_NUTRICIONISTA.md`, y
+ahora hay material para decidirla:
+
+| Fuente | Qué dice |
+|---|---|
+| **NRC 2006, cap.5** | Del ratio de **totales**: *«is not helpful»*. Recomienda en su lugar el **linoleico:linolénico** |
+| **SACN5 cap.25** | Sugiere **5:1 a 1:1** de omega-6:omega-3 «depending on patient assessment», y añade que **no está estandarizado** |
+| **Lo que hace el motor hoy** | Aplica el **linoleico:linolénico** (2,6-26 en adulto y crecimiento, 2,6-16 en gestación y lactancia), que es lo que dice el NRC. El de totales **no existe** |
+
+**La pregunta**: ¿se queda así? Nuestra lectura es que sí —el rango del cap.25 es
+para el paciente crítico y la propia fuente lo llama no estandarizado— pero es
+una decisión clínica, no aritmética, y quien firma tiene que poder decir por qué
+el ratio que le pidieron no está.
+
+### PREGUNTA 41 — La lactosa: hay umbral, hay lácteo y no hay dato
+
+**El umbral, con cifra** (SACN5 cap.55, recuadro 55-3): *«dogs developed diarrhea
+while consuming more than **1 g of lactose/kg body weight**»*. Y el cap.59 pide
+las dietas de intestino corto **«lactose free»**.
+
+**Lo que hay**: un lácteo en el catálogo, «Yogur griego», en Extras. **0 de los
+216 menús del catálogo lo usan** hoy, pero Extras va siempre libre, así que un
+menú personalizado sí puede meterlo.
+
+**Lo que falta**: la lactosa no es uno de los 41 nutrientes, así que el motor no
+sabe cuánta lleva. Con 4 g/100 g el tope saldría en **25 g de yogur por kg de
+peso** — 75 g para un perro de 3 kg.
+
+**La pregunta**: cuando el dato esté, ¿esto es un **tope de seguridad** (como el
+mercurio del atún, que también se mide por peso del perro) o solo un **aviso**?
+El mercurio se acumula y una diarrea no; el criterio es tuyo.
+
+### PREGUNTA 42 — Los avisos de fármaco: ¿faltan más?
+
+De leer entero el cap.69 («Effects of Food on Pharmacokinetics») han entrado dos
+avisos nuevos, y los dos describen algo que pasa **por culpa del cambio de dieta
+que hace esta app**:
+
+- **Bromuro potásico** (epilepsia): bromo y cloro compiten por la reabsorción
+  tubular renal. Una ración de este motor lleva **la mitad de cloro** que la
+  comida que mantenía estable al perro del caso 69-1 (mediana 826 mg/1000 kcal =
+  0,33 % MS, contra 0,65 %). Menos cloro es **más bromo en sangre**: el riesgo va
+  hacia la toxicidad, no hacia la crisis.
+- **Mitotano** (Cushing): en ayunas la absorción cae de 13,0 a **0,4 mg/l**. La
+  pastilla va con la comida.
+
+**La pregunta**: ¿hay más fármacos frecuentes en el perro cuya pauta cambie al
+pasar a una ración cruda alta en proteína y sin cereales? El capítulo da el
+mecanismo general —proteína alta acelera el metabolismo hepático de muchos
+fármacos— pero solo esos dos con cifra canina.
+
+---
+
 ## 12 · Cómo contestar
 
 No hace falta contestarlo todo ni en orden. Si solo hay tiempo para tres:

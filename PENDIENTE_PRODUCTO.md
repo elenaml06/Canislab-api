@@ -329,3 +329,185 @@ mínimo, y las caseras además vitamina D y E altas y el Ca:P mal. **Eso es
 exactamente lo que este motor comprueba en cada menú antes de entregarlo.** El
 argumento de venta no es «BARF es mejor»: es «este BARF está calculado y
 verificado, y el 95 % de las recetas que hay por ahí no lo están».
+
+---
+
+## Siete patologías digestivas y esofágicas que la fuente declara y no ofrecemos (9 de septiembre de 2026)
+
+**Decisión de producto, no de fuentes** (`CERRADO.md`: «añadir una patología es
+decisión de producto»). Salen de leer enteros los capítulos de SACN5 que no
+tenían ni una cita en el repo, y **están todas transcritas y convertidas** en
+`HALLAZGOS_LECTURA_FUENTES.md`. Lo que falta es decidir si se ofrecen.
+
+### Las cinco digestivas comparten un núcleo, así que son una decisión y no cinco
+
+Gastritis y úlcera (52-2), motilidad gástrica (54-2), gastroenteritis aguda
+(56-2), intestino corto (59-1) y colitis (62-1). Cuatro de las cinco piden los
+mismos tres **suelos** de electrolitos, y SACN5 lo dice explícitamente: por
+encima de los mínimos del perro sano.
+
+| | Por 1000 kcal | Mínimo de FEDIAF |
+|---|---|---|
+| Potasio | 2000-2750 mg | 1450 |
+| Cloruro | 1250-3250 mg | 430 |
+| Sodio | 750-1250 mg | 290 |
+
+Más grasa ≤37,5 g/1000 kcal y fibra ≤12,5 g (enfoque muy digestible) o ≥17,5 g
+(enfoque enriquecido en fibra).
+
+**Lo que hay que decidir:** si se ofrecen como cinco patologías separadas, como
+una sola («apoyo digestivo») con variantes, o ninguna. Y quién las marca: son
+diagnósticos, no observaciones del dueño.
+
+### Las dos esofágicas van en direcciones opuestas
+
+Disfagia obstructiva (50-3) pide grasa **≥62,5 g**/1000 kcal; esofagitis y
+reflujo (50-4) la pide **≤37,5 g**. La fuente explica el porqué: la grasa alta
+retrasa el vaciamiento gástrico y baja la presión del esfínter esofágico, o sea
+favorece el reflujo. Las dos suben la proteína a ≥62,5 g, y también con motivo:
+la proteína sube la presión de ese esfínter.
+
+**Ninguna de las dos se puede marcar sin diagnóstico.**
+
+---
+
+## Sugerir patologías por raza (9 de septiembre de 2026)
+
+Los capítulos 49, 51 y 61 de SACN5 traen **tablas de trastornos asociados a
+raza**, y la app ya sabe la raza (la usa para el DER).
+
+| Trastorno | Razas |
+|---|---|
+| Dilatación-vólvulo gástrico | basset hound, dóberman, setter gordon, gran danés, setter irlandés, san bernardo, weimaraner |
+| Colitis ulcerativa | bóxer, bulldog francés |
+| Gastroenteritis hemorrágica | teckel, schnauzer miniatura, caniche toy |
+| Neoplasia oral | cocker, pastor alemán, braco alemán de pelo corto, golden retriever, weimaraner |
+
+Rawku **ya tiene `riesgo_gdv`** con un aviso muy completo, pero **lo tiene que
+marcar el dueño**, y el dueño de un gran danés no tiene por qué saber que existe.
+
+**Lo que se propone:** que la app lo **sugiera** —nunca que lo marque sola— a las
+razas que la fuente nombra. «Tu raza está en la lista de riesgo de X: ¿lo
+marcamos?». Es un cambio de pantalla, no de motor.
+
+### ⚠️ Y AHORA HAY DOS TABLAS MÁS, DE PATOLOGÍAS QUE EL MOTOR YA APLICA
+
+Añadidas el mismo día, de leer enteros los capítulos 38 y 55.
+
+**Tabla 38-11** (urolitos) es la más valiosa de las tres, porque **las seis
+patologías de urolito ya existen en `patologias.json`** — aquí no hay que
+construir nada nuevo en el motor, solo la pregunta:
+
+| Piedra | Razas | Sexo | Edad típica |
+|---|---|---|---|
+| Estruvita | schnauzer miniatura, caniche miniatura, bichón frisé, cocker spaniel | hembras (>80 %) | 2-9 años |
+| Oxalato cálcico | schnauzer miniatura y estándar, lhasa apso, yorkshire, caniche miniatura, shih tzu, bichón frisé | machos (>70 %) | 5-12 años |
+| Urato | **dálmata**, bulldog inglés, schnauzer miniatura, yorkshire, shih tzu | machos (>90 %) | 1-5 años |
+| Fosfato cálcico | yorkshire, schnauzer miniatura, shih tzu | machos (>55 %) | <1 año y 6-10 |
+| Cistina | bulldog inglés, teckel, basset hound, terranova | machos (>98 %) | 1-7 años |
+| Sílice | pastor alemán, golden retriever, labrador, schnauzer miniatura, cavalier | machos (95 %) | 3-10 años |
+
+**Tabla 55-3** (intestino delgado): gastroenteritis eosinofílica (pastor alemán,
+setter irlandés), enteritis linfoplasmocítica (pastor alemán, shar-pei,
+soft-coated wheaten terrier), sobrecrecimiento bacteriano (pastor alemán,
+beagle), linfangiectasia (yorkshire, golden, teckel, basenji), enteropatía
+sensible al trigo (setter irlandés).
+
+**Y la app tiene además el sexo y la edad**, que estas tablas también dan. Una
+sugerencia que cruza raza, sexo y edad acierta mucho más que una que solo mira la
+raza: el dálmata macho joven es el 90 % de los uratos.
+
+⚠️ **El límite sigue siendo el mismo, y es lo importante**: una predisposición de
+raza **no es un diagnóstico**. Marcarla sola sería decidir por criterio clínico
+sin que nadie lo haya pedido, y eso no lo hace ni el motor ni la app. Se sugiere
+la pregunta, la marca la persona.
+
+Detalle y citas literales: `HALLAZGOS_LECTURA_FUENTES.md`, capítulos 38 y 55.
+
+---
+
+## ⚠️ Los ocho `avisos_extra` de patología no los pinta nadie (9 de septiembre de 2026)
+
+**Medido hoy**, contando el JSON y buscando en el front:
+
+| | |
+|---|---|
+| Avisos `avisos_extra` en `patologias.json` | **8**, en 4 patologías |
+| Sitios de `canislab-web` que los pintan | **0** |
+
+Los ocho son: `epilepsia_idiopatica` (hipertrigliceridemia, y el nuevo
+`bromuro_y_cloro`), `cushing` (`mitotano_con_comida`), `cancer_soporte` (dos) y
+`reaccion_adversa_alimento` (tres: una o dos proteínas, fase de diagnóstico,
+aminas vasoactivas).
+
+**La API sí los sirve**, y por dos caminos: `patologias.py` los mete en la
+respuesta del menú y `GET /patologias` los sirve al elegir la patología, que es
+lo que se construyó el 8 de septiembre justamente para que quien firma una pauta
+los leyera antes de decidir. Lo que no existe es el sitio donde se ven.
+
+Lo que el dueño ve hoy con cualquier patología marcada es **un solo aviso
+genérico**: «Este menú TIENE que aprobarlo tu veterinario … enséñale este menú
+antes de empezar». Es correcto y no basta: los ocho dicen cosas que ese texto no
+dice.
+
+**Por qué esto importa más desde hoy.** Los dos avisos nuevos son de FÁRMACO, y
+los dos describen algo que pasa **por culpa del cambio de dieta que hace esta
+app**:
+
+- Un perro con bromuro potásico que pasa a esta ración baja su carga de cloro a
+  la mitad, y el bromo sérico sube. Hay que medirlo.
+- Un perro con mitotano tiene que tomar la pastilla **con** la comida: en ayunas
+  la absorción cae de 13,0 a 0,4 mg/l.
+
+Un aviso que vive en un JSON y no llega a ninguna pantalla es, para quien usa la
+app, un aviso que no existe. Es la misma familia que el `null` puesto a mano en
+la pantalla de varios perros, y la misma que el fallo de `guardarPerro`: nada da
+error, nada se ve, y solo aparece usándolo.
+
+**Lo que hace falta**, y es de pantalla, no de motor:
+1. Que `VistaMenus` pinte `avisos_extra` debajo del aviso genérico de patología,
+   uno por línea.
+2. Que la pantalla de elegir patologías pinte los de `GET /patologias` **antes**
+   de marcar, que es cuando se decide.
+3. Un test como los de `ficha-ida-y-vuelta`: marcar una patología que tenga
+   `avisos_extra` y exigir que su texto esté en pantalla. Sin él vuelve a
+   perderse en el siguiente refactor.
+
+Fuente de los dos nuevos: SACN5 5ª ed., cap.69, casos 69-1 y 69-2. Detalle en
+`HALLAZGOS_LECTURA_FUENTES.md`.
+
+---
+
+## La app no dice que un perro que come crudo EXCRETA más patógenos (9 de septiembre de 2026)
+
+**De leer entero el capítulo 56 de SACN5.** Literal: *«**Dogs consuming such
+foods shed bacterial pathogens at a much higher rate than those consuming
+conventionally cooked commercial foods**» (Weese and Armstrong, 2006)*, y los
+patógenos cultivados en comida cruda casera y comercial: *Salmonella*,
+*Campylobacter*, *Escherichia*, *Yersinia* (Weese, 2006; Strohmeyer et al, 2006).
+
+**Lo que Rawku dice hoy, comprobado:**
+
+| Dónde | Qué dice |
+|---|---|
+| `instrucciones.js` (panel de Congelación) | Tiempos: una semana, dos el pescado, tres días descongelado |
+| `instrucciones.js` (Pescados y mariscos) | Qué va crudo y qué cocinado, y por qué |
+| `patologias.json` → `inmunosupresion` | El riesgo de patógenos **para el perro** con las defensas bajas |
+
+O sea: **manipulación del alimento, sí; higiene de la casa, en ninguna parte**.
+Y son dos cosas distintas. Congelar bien protege al perro de los parásitos; no
+impide que el perro excrete salmonela y que la toque un niño de dos años.
+
+**Lo que se propone**, y es de texto, no de motor:
+1. Una línea en el panel que ya existe: lavarse las manos después de dar de
+   comer y de recoger las heces, limpiar el cuenco y la superficie, y no dejar
+   que el perro lama la cara a nadie del grupo sensible justo después de comer.
+2. **Y un aviso propio si en casa hay alguien de riesgo** — niños pequeños,
+   embarazadas, mayores, personas inmunodeprimidas. La app no pregunta eso hoy.
+   Es una pregunta de una casilla y cambia lo que hay que decir.
+
+⚠️ **Esto no es un argumento contra el crudo ni cambia ningún menú.** Es
+información que la fuente da, que quien elige alimentar así tiene derecho a
+tener, y que hoy no está.
+
+Cita completa y contexto: `HALLAZGOS_LECTURA_FUENTES.md`, capítulo 56.

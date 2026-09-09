@@ -20,6 +20,64 @@ Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 - Tope de volumen y porciones que escalan con el tamaño del perro.
 - Cobro de prueba completado de punta a punta y premium activado de verdad.
 
+## El BCS 9 pasa del 40 % al 45 %, en las TRES copias — resuelto el 9 de septiembre de 2026
+
+**Aplicado el mismo día en los dos repos.** La Tabla VII-2 del Anexo
+7.1 de FEDIAF da la columna «% BW below or above BCS 5» del perro, y puesta al
+lado de nuestra regla del 10 % por punto:
+
+| BCS | FEDIAF | Rawku |
+|---|---|---|
+| 1 | −≥40 % | −40 ✓ |
+| 2 | −30 a 40 % | −30 ✓ |
+| 3 | −20 a 30 % | −20 ✓ |
+| 4 | −10 a 15 % | −10 ✓ |
+| 5 | 0 % | 0 ✓ |
+| 6 | +10 a 15 % | +10 ✓ |
+| 7 | +20 a 30 % | +20 ✓ |
+| 8 | +30 a 45 % | +30 ✓ |
+| **9** | **>45 %** | **+40 ✗** |
+
+O sea que la recta del 10 % lineal **es el extremo bajo de cada rango de
+FEDIAF** —el más conservador— en ocho puntos de nueve. En el noveno la escala
+deja de ser lineal.
+
+**Cambiado en la API**, en las dos copias que había aquí
+(`verificar.peso_objetivo_desde_bcs` y `der.peso_ideal_desde_condicion`), y con
+el BLOQUE 63 comparándolas para que no vuelvan a separarse.
+
+**Y la tercera copia, en `canislab-web`**: no estaba en `src/der.js` sino en
+`src/bcs.js`, en `pesoIdealDesdeBcs`, que es la única de ese repo y la que
+**MANDA** — el DER que viaja en `der_objetivo` sale de ahí, no de `der.py`. Es
+decir que el número que de verdad decide las kcal del día era justo el que
+faltaba por cambiar. Un perro de 20 kg con BCS 9 tenía dos pesos objetivo según
+quién lo calculara: 14,29 kg en el frontend y 13,79 en la API — medio kilo, y
+hacia arriba, o sea más kcal para el perro que peor lo lleva.
+
+Lo vigila `tests/bcs.spec.js`, con el test de la Tabla VII-2 fila a fila (el
+mismo que el BLOQUE 63 de aquí) y con uno que falla si el 9 vuelve a la recta.
+Comprobado con el fallo puesto: cuatro de los ocho tests se caen.
+
+**Y hay un efecto que hay que decir**: el escalón «Obeso» de la pantalla del
+dueño ES un BCS 9, así que este cambio mueve el peso objetivo de fichas ya
+guardadas sin que nadie las toque. Se acepta porque el 40 % no tenía fuente y el
+45 % la tiene, y porque va al lado seguro (menos kcal para un perro obeso). El
+test que exigía que la escala nueva diera EXACTAMENTE lo mismo que la vieja se
+ha partido en dos: sigue exigiéndolo en los escalones 0 a 3, y en el 4 exige el
+número nuevo y que sea menor que el viejo.
+
+**Lo que NO hace falta:** regenerar `der_casos.json`. Ninguno de sus 100 casos
+usa `condicion_idx`, así que el contrato del DER no se mueve. Comprobado.
+
+**Y una cosa más que se cerró de paso:** por debajo de BCS 5 la API **ya estima**
+peso objetivo, hacia arriba y topado al +20 %. Antes `verificar.py` devolvía
+`None` (apoyándose en AAHA, que no tiene esas filas) mientras `der.py` sí
+estimaba: dos reglas del mismo repo que discrepaban justo ahí. FEDIAF tiene las
+cuatro filas y su §7.1.1 dice que la energía se calcula sobre el peso óptimo sin
+distinguir dirección.
+
+---
+
 ## El peso ideal desde el BCS estaba calculado de dos formas — resuelto el 29 de agosto
 
 **RESUELTO el 29 de agosto, y al revés de como se escribió el 28.**

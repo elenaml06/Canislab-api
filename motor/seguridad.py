@@ -463,6 +463,54 @@ HUESO_RIESGO_DENTAL = set()
 # hueso estrecho que puede encajarse entre los molares.
 HUESO_RIESGO_ASTILLADO = {"costillas de cordero"}
 
+# ⚠️ Y LA CIFRA QUE FALTABA AQUÍ, DE SACN5 cap.50 (9 de septiembre de 2026).
+#
+# Estas dos listas son POR CORTE: dicen qué hueso concreto tiene qué riesgo. Lo
+# que no había era la magnitud del riesgo general de dar hueso, y existe
+# publicada. SACN5 cap.50, literal, citando a Rousseau et al. (2007):
+#
+#   «In a recent retrospective review, **46 of 60 esophageal foreign bodies
+#    removed from dogs were bones»
+#
+# Cuarenta y seis de sesenta. No es un argumento contra el hueso carnoso —una
+# ración BARF lleva entre un 20 y un 60 % y es su fuente de calcio— pero sí es
+# el número que hay que tener delante al decidir qué cortes se ofrecen y con qué
+# aviso, y al contestar a un dueño que pregunta si es peligroso. La respuesta
+# honesta no es «no», es «el hueso es la primera causa de cuerpo extraño
+# esofágico en el perro, y por eso estos dos conjuntos existen».
+#
+# ⚠️ Y EL SEGUNDO NÚMERO, DE SACN5 cap.47 (mismo día, leído entero).
+#
+# El capítulo de enfermedad periodontal trae el recuadro 47-6, «Natural Food
+# Sources and Periodontal Disease», con el estudio de **67 foxhounds ingleses**
+# de uno a nueve años alimentados de rutina con carcasas crudas —esqueleto,
+# músculo y tejidos asociados—: «Oral examinations revealed that **all dogs had
+# varying signs of periodontal disease as well as a high prevalence of tooth
+# fractures**».
+#
+# Y el caso 47-1 va directo al argumento del hueso carnoso crudo: «there are **no
+# reliable, published studies showing dental benefits derived from bone
+# chewing** … anecdotal reports suggest the health concerns presented with cooked
+# bones **also occur commonly with raw, meaty bones** … The safety and efficacy of
+# feeding bones, regardless of type, remain undetermined».
+#
+# LO QUE ESTO CAMBIA AQUÍ: nada del motor, y a propósito. El hueso carnoso está
+# en el catálogo porque es la fuente de calcio de una ración BARF, no por los
+# dientes, y este capítulo no toca esa razón. Lo que desmonta es un beneficio que
+# Rawku **nunca ha prometido**: se comprobó `instrucciones.js` de `canislab-web`
+# entero el 9 de septiembre y no hay ni una afirmación dental — lo que dice del
+# hueso carnoso es crudo siempre, entero o en trozos grandes, que lo roa y no lo
+# trague, supervisado, y esperar a las 14 semanas para los duros.
+#
+# Se escribe aquí para que la cautela esté CITADA y para que, si algún día se
+# escribe en la app que el hueso limpia los dientes, alguien encuentre esto
+# antes.
+#
+# El mismo capítulo trae la otra mitad, que es la que hace que el riesgo importe
+# poco o mucho según el corte: los cuerpos extraños esofágicos son de los que se
+# tragan enteros. Un hueso que el perro roe y muele no es el mismo problema que
+# uno que le cabe en la garganta de una pieza.
+
 # ⚠️ BORRAJA — ALCALOIDES PIRROLIZIDÍNICOS (PA) HEPATOTÓXICOS. La HOJA (que
 # es lo que se da en BARF) contiene PA hepatotoxicos y carcinogenicos
 # (amabilina, licopsamina). EFSA fijo niveles maximos y la UK FSA

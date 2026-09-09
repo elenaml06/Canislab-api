@@ -3560,3 +3560,797 @@ such as cleft palate… may have nutritional causes (e.g., **copper deficiency i
 pregnant queens**)»*. Es en gata, no en perra, así que no se aplica — pero es la
 primera vez que aparece un déficit de cobre en gestación con consecuencia
 malformativa, y nuestro mínimo de cobre no distingue etapa reproductora.
+
+### Las once tablas «sin mirar»: cerradas las once (9 de septiembre)
+
+La §quinta pasada de `VERIFICACION_FILA_A_FILA.md` dejó once tablas de requisito
+canino o mixto sin leer. Leídas las once, **el resultado es mejor de lo que
+parecía y más ordenado**:
+
+| Tabla | Qué es | Qué pasa con ella |
+|---|---|---|
+| **18-9** | Perro de trabajo y deporte | **APLICADA**: vitamina E ≥83,9 mg/1000 kcal |
+| **49-2** | Enfermedades orales | **No pide ni un nutriente**: agua, densidad y textura |
+| **16-4** | Cachorros lactantes | **No aplica**: es la composición de la leche de la perra, el patrón para criar huérfanos. No formulamos leche |
+| **25-5** | Alimentos líquidos para nutrición enteral | **No aplica**: osmolaridad 250-400 mOsm/l y 1 kcal/ml. No formulamos líquidos |
+| **52-2** | Gastritis y úlcera gastroduodenal | familia digestiva, abajo |
+| **54-2** | Motilidad y vaciamiento gástrico | familia digestiva |
+| **56-2** | Gastroenteritis aguda | familia digestiva |
+| **59-1** | Síndrome de intestino corto | familia digestiva |
+| **62-1** | Colitis | familia digestiva |
+| **50-3** | Disfagia por lesión obstructiva | esofágicas, abajo |
+| **50-4** | Esofagitis y reflujo | esofágicas |
+
+#### La familia digestiva: cinco tablas y UN núcleo común
+
+Las cinco piden lo mismo en lo esencial, y **son suelos, no techos** — cap.52 lo
+dice literal: *«Foods for patients with acute gastroenteritis should contain
+levels of potassium, chloride and sodium **above the minimum allowances for
+normal dogs and cats**»*.
+
+| | La fuente (% MS) | Por 1000 kcal | Mínimo de FEDIAF |
+|---|---|---|---|
+| Potasio | 0,8-1,1 | **2000-2750 mg** | 1450 |
+| Cloruro | 0,5-1,3 | **1250-3250 mg** | 430 |
+| Sodio | 0,3-0,5 | **750-1250 mg** | 290 |
+
+Y alrededor: grasa ≤15 % MS (≤37,5 g/1000 kcal) en perro, fibra ≤5 % MS
+(≤12,5 g) en el enfoque «muy digestible» o 7-15 % en el enriquecido, densidad
+4,0-4,5 kcal/g MS, y digestibilidad ≥87 % proteína y ≥90 % grasa.
+
+Dos avisos concretos de la 54-2 que no son números: **evitar fibras
+gelificantes** (pectinas y gomas: arábiga, guar, carragenato, psyllium, xantana,
+garrofín, ghatti, tragacanto) en trastornos de motilidad, y servir la comida
+**entre 21 y 38 °C**, porque la comida fría retrasa el vaciamiento gástrico.
+
+Y una que va al revés de todo lo demás, en el intestino corto (59-1): ahí se
+prefiere el **alimento seco**, porque vacía el estómago más despacio.
+
+**Ninguna de las cinco es una patología que ofrezcamos.** Añadirlas es decisión
+de producto, no de fuentes (`CERRADO.md`), y va a `PENDIENTE_PRODUCTO.md`.
+
+#### Las dos esofágicas
+
+| | Disfagia obstructiva (50-3) | Esofagitis y reflujo (50-4) |
+|---|---|---|
+| Densidad | ≥4,5 kcal/g MS | ≥4 kcal/g MS |
+| Grasa | **≥25 % MS** (≥62,5 g) | **≤15 % MS** (≤37,5 g) |
+| Proteína | ≥25 % MS (≥62,5 g) | ≥25 % MS |
+
+Van en direcciones opuestas en la grasa, y el capítulo explica por qué: *«High
+dietary fat delays gastric emptying and reduces lower esophageal sphincter
+pressure, which promotes reflux»*. Y la proteína sube a propósito, porque
+*«protein stimulates an increase in gastroesophageal sphincter pressure»*.
+
+#### Y la cifra del hueso, que es la que más nos toca
+
+Del mismo cap.50, citando a Rousseau et al. (2007):
+
+> *«In a recent retrospective review, **46 of 60 esophageal foreign bodies
+> removed from dogs were bones**»*
+
+Cuarenta y seis de sesenta. **No es un argumento contra el hueso carnoso** —una
+ración BARF lleva entre un 20 y un 60 % y es su fuente de calcio— pero es el
+número que hay que tener delante al decidir qué cortes se ofrecen, y al
+contestarle a un dueño que pregunta si es peligroso. Escrito en `seguridad.py`,
+al lado de las dos listas de riesgo por corte que ya había.
+
+### Capítulo 1 · «An Iterative Process» — leído entero, y trae un matiz al cambio de hoy
+
+Es el primer capítulo del libro y uno de los 26 sin citar. No tiene tabla de
+factores nutricionales, así que ningún barrido de tablas lo habría abierto
+nunca. Trae tres cosas.
+
+#### 1 · Confirma el BCS ideal 4-5/9, por una vía independiente
+
+Literal: *«A BCS of **2.5/5 to 3/5** is probably ideal for most mature dogs and
+cats for optimal health and resultant longevity. Thus, overall, **an ideal BCS is
+a range of numbers rather than simply a "3/5"**»*.
+
+En escala de nueve, 2,5/5 es 4/9 y 3/5 es 5/9. **Es exactamente lo que dice
+FEDIAF** en su §7.1.3 («The ideal BCS should therefore be between 4/9 and 5/9»).
+Dos fuentes independientes, el mismo rango.
+
+#### 2 · ⚠️ Y UN MATIZ AL CAMBIO DE HOY, que conviene tener escrito
+
+La misma frase sigue: *«a BCS of **2/5 to 2.5/5 may be desirable for a racing
+greyhound**»* — o sea **3 a 4 sobre 9 para un perro de carreras**.
+
+Hoy se ha cambiado la API para que **estime peso objetivo también por debajo de
+BCS 5**, siguiendo la Tabla VII-2 de FEDIAF. Para un galgo de competición en BCS
+4 eso significa proponerle un peso objetivo un 10 % mayor: **engordarlo**.
+
+No se toca nada por ahora, y el motivo es que el efecto real es pequeño y va del
+lado seguro: ese peso objetivo NO cambia las kcal en la app —las calcula el
+frontend— sino el peso de referencia con el que se **escalan los mínimos** de
+FEDIAF, y un peso de referencia mayor escala los mínimos **hacia arriba**, que es
+más conservador. Pero queda escrito, porque el día que el peso objetivo alimente
+las kcal, un galgo de carreras en BCS 4 no está delgado: está en su sitio.
+
+Y la app ya sabe distinguirlo: tiene el nivel de actividad, y el «trabajo» (175
+kcal/kg^0,75) es justo esa población.
+
+#### 3 · La malnutrición incluye los excesos, y el ejemplo es el de hoy
+
+Box 1-1, literal: *«Another example of malnutrition due to unbalanced nutrition
+is **developmental orthopedic disease seen in rapidly growing large- and
+giant-breed puppies as a result of excessive calcium and energy intake**»*.
+
+Es el tercer sitio del libro que dice lo mismo —caps. 10 de Fascetti, 33 y ahora
+el 1— y es exactamente el techo de calcio que se aplicó esta mañana. En el
+**primer capítulo**, en un recuadro, sin tabla.
+
+#### Y dos apuntes de método
+
+- **Repetibilidad del BCS**: entre observadores coincide el **80-90 %** de las
+  veces, y correlaciona 0,9 con la composición corporal medida. O sea que el
+  dato de entrada del que cuelga el peso objetivo tiene ese margen, y ninguna
+  cifra que salga de él puede ser más precisa que eso.
+- *«Intakes of **treats and nutritional supplements** should be recorded»* — los
+  premios, otra vez. Es la tercera fuente que los nombra (FEDIAF §4.1 y SACN5
+  cap.17) y Rawku sigue sin modelarlos.
+
+---
+
+### Capítulo 38 · Urolitiasis canina: definiciones, fisiopatología y manifestaciones clínicas — leído entero
+
+Es uno de los 26 sin citar. Es un capítulo **de diagnóstico**, no de dietas: la
+dieta de cada tipo de piedra vive en los capítulos 39 a 45, que ya están leídos.
+Aun así deja cuatro cosas.
+
+#### 38.1 · Cuántas piedras hay de cada tipo, sobre 350.803 urolitos
+
+Tabla 38-8, Minnesota Urolith Center, 1981-2007. Es el censo, y ordena por dónde
+merece la pena mirar:
+
+| Tipo | % |
+|---|---|
+| Estruvita (fosfato amónico magnésico) | 42,53 |
+| Oxalato cálcico | 38,01 |
+| **Compuestos** (núcleo de un mineral, capas de otro) | **8,79** |
+| Purinas (urato amónico, urato sódico, ácido úrico, xantina) | 6,39 |
+| Mixtos | 2,32 |
+| Cistina | 0,97 |
+| Fosfato cálcico | 0,51 |
+| Sílice | 0,40 |
+
+Las seis patologías de urolito que tiene el motor —`estruvita`, `oxalato`,
+`urato`, `cistina`, `urolitos_fosfato_calcico` y `urolitos_silice`— cubren el
+**88,8 %** del censo. Lo que queda fuera son los compuestos y los mixtos, que no
+son un séptimo tipo sino **combinaciones de los seis**.
+
+#### 38.2 · Y el 8,79 % refuerza la nota del urolito compuesto, que ya estaba escrita
+
+`patologias.json` lleva desde ayer `nota_urolito_compuesto` en `oxalato` y en
+`estruvita`, con el 7 % que da el capítulo 45. Aquí el mismo libro, con la serie
+entera y más larga, da **8,79 % de 350.803**. O sea que **casi una piedra de cada
+once es compuesta**, y que marcar dos casillas de urolito a la vez no es un caso
+de laboratorio.
+
+El capítulo 38 añade el **porqué mecánico**, que el 45 daba como regla de manejo:
+*«Veterinarians have encountered difficulty in dissolving uroliths composed
+primarily of struvite with an outer shell composed primarily of calcium apatite.
+Difficulty will also be encountered in attempting to induce complete dissolution
+of a urolith with a nucleus of calcium oxalate, calcium phosphate, ammonium urate
+or silica and a shell of struvite **because the solubility characteristics of
+this combination of minerals are dissimilar**»*. Tratar los dos a la vez no es
+que sea redundante: es que las dos dietas piden orinas incompatibles.
+
+La nota se actualiza con esta cifra. Sigue sin bloquearse, por lo mismo que ya
+está escrito allí: cuál es el núcleo sale del análisis de la piedra, y la app no
+lo tiene.
+
+#### 38.3 · La raza y el sexo predicen el tipo de piedra — Tabla 38-11
+
+Es la tabla que le falta al punto de **sugerencias por raza** que está apuntado
+en `PENDIENTE_PRODUCTO.md`, y es una fuente de verdad, no una lista de internet:
+
+| Piedra | Razas | Sexo | Edad típica |
+|---|---|---|---|
+| Estruvita | schnauzer miniatura, caniche miniatura, bichón frisé, cocker spaniel | hembras (>80 %) | 2-9 años |
+| Oxalato cálcico | schnauzer miniatura y estándar, lhasa apso, yorkshire, caniche miniatura, shih tzu, bichón frisé | machos (>70 %) | 5-12 años |
+| Urato | **dálmata**, bulldog inglés, schnauzer miniatura, yorkshire, shih tzu | machos (>90 %) | 1-5 años |
+| Fosfato cálcico | yorkshire, schnauzer miniatura, shih tzu | machos (>55 %) | <1 año y 6-10 |
+| Cistina | bulldog inglés, teckel, basset hound, terranova | machos (>98 %) | 1-7 años |
+| Sílice | pastor alemán, golden retriever, labrador, schnauzer miniatura, cavalier | machos (95 %) | 3-10 años |
+
+⚠️ **No se aplica nada de esto, y no por olvido.** Una predisposición de raza no
+es un diagnóstico: proponerle una dieta de urato a un dálmata sano sería decidir
+por criterio clínico sin que nadie lo haya marcado, y eso no lo hace el motor.
+Lo que sí puede hacer, y es lo que está apuntado, es **sugerir la pregunta**.
+
+Y el schnauzer miniatura sale en **cinco de las seis filas**.
+
+#### 38.4 · Un aviso de método sobre la hipercalciuria, por si algún día se mide
+
+*«Dogs that absorb excessive amounts of calcium from their food and subsequently
+excrete large quantities of calcium in their urine have **intestinal
+hypercalciuria**. Hypercalciuria primarily occurs during food consumption; normal
+or lower quantities of urine calcium are excreted when food is withheld»*. O sea
+que en el perro de oxalato la vía dietética es real y medible, y se distingue de
+la hipercalcemia por análisis en ayunas. No cambia nada hoy: el motor ya aprieta
+el calcio en `oxalato`. Queda escrito porque explica **por qué** ese tope es
+dietético y no un parche.
+
+---
+
+### Capítulo 48 · Introducción a las enfermedades digestivas y del páncreas exocrino — leído entero
+
+Otro de los 26 sin citar. Es corto y es el índice de los capítulos 49 a 67, pero
+trae en un recuadro (el 48-3) **la cifra que Elena preguntó ayer** y una
+corroboración del tope de grasa de la pancreatitis.
+
+#### 48.1 · ⚠️ LA DIGESTIBILIDAD, CON NÚMEROS — y responde a la pregunta de ayer
+
+Elena preguntó si hay alguna fuente de la que sacar la digestibilidad de los
+alimentos. `DATOS_QUE_FALTAN.md` quedó con la pregunta abierta. Aquí no está el
+dato por alimento, pero sí **la escala con la que se lee**, literal:
+
+- *«**highly digestible** has generally been reserved for products with protein
+  digestibility **≥87 %** and fat and carbohydrate digestibilities **≥90 %**»*.
+- *«The **average** digestibility coefficients for popular commercial foods are
+  **78 a 81 %**, **77 a 85 %** y **69 a 79 %** for crude protein, crude fat and
+  carbohydrate, respectively»*.
+- *«Average fat digestibility in commercial dog food is approximately **90 %**»*.
+
+⚠️ **Y esto sostiene el +10 % de los aminoácidos que se aplicó anoche.** FEDIAF
+manda subir un 10 % los mínimos de aminoácidos cuando **no se garantiza la
+digestibilidad** de la dieta. Hasta ahora ese factor se aplicaba porque FEDIAF lo
+dice; con esta tabla se puede además situar: la comida comercial media va en
+**78-81 %** de digestibilidad proteica, y «alta digestibilidad» empieza en **87 %**.
+Una ración cruda casera no tiene ensayo de digestibilidad de ningún tipo, así que
+no está ni en una casilla ni en la otra: está sin medir, que es exactamente el
+supuesto que FEDIAF cubre con el +10 %.
+
+**Lo que sigue faltando** es el coeficiente por alimento, y este capítulo no lo
+trae. Queda como estaba en `DATOS_QUE_FALTAN.md`.
+
+#### 48.2 · El tope de grasa de la pancreatitis, corroborado desde otro capítulo
+
+El motor aplica **37,5 g/1000 kcal** en `pancreatitis`, que salen del ≤15 % MS de
+la Tabla 67-3. El capítulo 48 dice lo mismo desde el lado general, sin hablar de
+pancreatitis: *«Patients with GI or pancreatic disease may not tolerate high-fat
+foods (**>25 % DM**) … Foods containing **moderate amounts of fat (12 a 15 % DM
+for dogs)** are generally tolerated and have sufficient caloric density for most
+patients»*.
+
+Nuestro 37,5 **es** el 15 % MS, o sea el extremo alto de lo que este capítulo
+llama tolerado. Dos capítulos independientes del mismo libro y el mismo número.
+
+Y trae el aviso que explica por qué no se baja más: *«foods containing **less
+than 10 % DM fat need to be fed in larger volumes** to meet the patient's caloric
+requirement. **Some patients may not tolerate this volume of food**»*. Que es,
+dicho por la fuente, la frontera física que la medida del 8 de septiembre
+encontró con el catálogo: por debajo de 25 g no salía menú.
+
+#### 48.3 · La fibra en enfermedad digestiva, y por qué no cambia nada aquí
+
+*«It is unusual for GI foods to contain crude fiber levels greater than **5 % DM**
+because fiber reduces dry matter digestibility and decreases pancreatic enzymatic
+activity in vitro»*, y por el otro lado la fibra insoluble es lo primero para la
+diarrea de intestino grueso: *«increasing the insoluble fiber content of the food
+resolves or modulates most cases of colitis»*.
+
+**No se aplica**: la fibra no es uno de los 43 requisitos de FEDIAF —la fila
+«Fibra» con mínimo y máximo inventados es justo la que se coló en agosto y se
+quitó— y el motor no la restringe ni la exige. Queda escrito porque las siete
+patologías digestivas que están apuntadas en `PENDIENTE_PRODUCTO.md` van a
+necesitar exactamente este eje, y este es el capítulo que lo define.
+
+#### 48.4 · Gluten y gliadina: existe en el perro y no nos toca
+
+*«An analogous condition, termed **wheat-sensitive enteropathy**, has been
+identified in **Irish setter** dogs»*, por la gliadina de trigo, cebada, centeno,
+trigo sarraceno y avena; no la hay en arroz ni maíz.
+
+**No aplica al motor**: el catálogo de Rawku no tiene cereales. Se escribe para
+que no se «descubra» dentro de seis meses y para que quede claro que la ausencia
+es del catálogo, no un olvido.
+
+#### 48.5 · Y una regla de método que vale para toda la app
+
+*«All too often, relative terms such as "low" vs. "high" are used **without
+stating the point of reference**»*. Es la misma norma que ya sigue el proyecto al
+escribir cada tope con su cifra y su base (`UNIDADES.md`), dicha por la fuente.
+
+---
+
+### Capítulo 55 · Introducción a las enfermedades del intestino delgado — leído entero
+
+Corto, casi todo fisiopatología de la diarrea, y trae **tres cosas que tocan a
+Rawku**, dos de ellas con cifra.
+
+#### 55.1 · ⚠️ «Raw meat consumption» está en la lista de causas de diarrea aguda
+
+Tabla 55-1, columna «Dietary», literal y en este orden: *«Dietary indiscretion ·
+Foreign bodies · Garbage toxicity · **Raw meat consumption**»*, y en la columna
+de al lado los agentes: *Bacillus, Campylobacter, Clostridium, Escherichia coli,
+Salmonella, Staphylococcus, Yersinia*.
+
+Es el libro de referencia poniendo **la comida cruda** —lo que hace este
+producto— en su lista de causas, para el perro sano y no solo para el
+inmunodeprimido, que es donde `patologias.json` lo tenía escrito hasta hoy.
+
+**Y no deja un hueco: corrobora lo que la app ya hace.** El panel de
+«Congelación» de `instrucciones.js` en `canislab-web` ya da los tiempos (una
+semana, dos el pescado, tres días una vez descongelado) y la ficha de pescados y
+mariscos ya dice qué va crudo y qué cocinado. Esta es la fuente que sostiene ese
+panel, y hasta hoy no estaba citada en ningún sitio.
+
+#### 55.2 · La lactosa tiene un número, y hay un lácteo en el catálogo
+
+Recuadro 55-3, literal: *«In one study, **dogs developed diarrhea while consuming
+more than 1 g of lactose/kg body weight**, an amount equivalent to about 20 ml
+milk/kg body weight or three-fourths cup of milk for a 10-kg dog»*. Y el
+mecanismo: el perro adulto tiene poca lactasa, la lactosa sin hidrolizar llega al
+colon y arrastra agua.
+
+**En el catálogo hay un lácteo**: «Yogur griego», en Extras.
+
+**Medido hoy sobre el catálogo regenerado: 0 de los 216 menús lo usan.** O sea
+que hoy no aprieta a nadie. Pero Extras va **siempre libre** (regla 5 del
+`CLAUDE.md`: es una de las herramientas con las que el motor cierra los 43
+requisitos), así que un menú personalizado sí puede meterlo, y no hay nada que lo
+tope por este motivo.
+
+⚠️ **No se aplica, y por una razón concreta**: la lactosa **no es uno de los 41
+nutrientes** del catálogo, así que el motor no sabe cuánta lleva el yogur. Poner
+el dato es rellenar el catálogo, y eso no lo hace el asistente. Va a
+`PENDIENTE_NUTRICION.md` con la cifra y la cuenta hecha.
+
+#### 55.3 · Más razas asociadas, y una que ya conocíamos
+
+Tabla 55-3, «Breed-associated small intestinal disorders» — la segunda tabla de
+raza del día, después de la 38-11 de los urolitos:
+
+| Trastorno | Razas |
+|---|---|
+| Gastroenteritis eosinofílica | pastor alemán, setter irlandés |
+| Gastroenteritis hemorrágica | teckel, caniche miniatura, schnauzer miniatura |
+| Enteritis linfoplasmocítica | pastor alemán, shar-pei, soft-coated wheaten terrier |
+| Sobrecrecimiento bacteriano | pastor alemán, beagle |
+| Linfangiectasia | yorkshire, golden retriever, teckel, basenji |
+| Enteropatía sensible al trigo | setter irlandés |
+
+Mismo criterio que con la 38-11: **no se aplica nada**. Una predisposición de
+raza no es un diagnóstico.
+
+Y la enteropatía por gliadina vuelve a salir (recuadro 55-2), con el detalle de
+que el perro afectado da síntomas **antes de los seis meses** y que la gliadina
+no está en arroz, maíz ni patata. Sigue sin tocarnos: el catálogo no tiene
+cereales.
+
+---
+
+### Capítulo 47 · Enfermedad periodontal — leído entero
+
+Otro de los 26 sin citar, y **el que más toca a Rawku de los cuatro de hoy**. Es
+un capítulo de perro y gato, con dos tablas de cifras y un recuadro que habla
+directamente de la dieta cruda.
+
+#### 47.1 · ⚠️ LO QUE DICE DE LOS HUESOS CARNOSOS, Y HAY QUE LEERLO ENTERO
+
+El recuadro 47-6 se titula «Natural Food Sources and Periodontal Disease» y trae
+**el estudio de los 67 foxhounds ingleses**, de uno a nueve años, alimentados de
+rutina con carcasas crudas —esqueleto, músculo y tejidos asociados—: *«Oral
+examinations revealed that **all dogs had varying signs of periodontal disease as
+well as a high prevalence of tooth fractures**»*.
+
+Y el caso 47-1, respuesta 2, va directo al argumento del «hueso carnoso crudo»:
+
+> *«there are **no reliable, published studies showing dental benefits derived
+> from bone chewing** … Current theory proposes that uncooked bones are not as
+> hard as cooked bones and do not fracture teeth …; however, **anecdotal reports
+> suggest the health concerns presented with cooked bones also occur commonly
+> with raw, meaty bones** … The **safety and efficacy of feeding bones, regardless
+> of type, remain undetermined**. Veterinarians should be cautious about
+> recommending bones for dental benefits.»*
+
+**Lo primero que se hizo con esto fue comprobar qué dice la app**, porque una
+afirmación falsa en la pantalla sería lo grave. **No la hay**: `instrucciones.js`
+en `canislab-web` no promete beneficio dental en ninguna parte. Lo que dice del
+hueso carnoso es lo contrario —crudo siempre, entero o en trozos grandes, que lo
+roa y no lo trague, supervisado, esperar a las 14 semanas para los duros— y la
+app tiene además la vía del senior sin dientes, que puede quitar la categoría
+entera.
+
+O sea que Rawku **no vende el argumento que la fuente desmonta**. Lo que sí hace
+falta es que esa cautela esté citada: el aviso de `seguridad.py`
+(`HUESO_RIESGO_ASTILLADO`) tenía la cifra de Rousseau 2007 y no esta.
+
+⚠️ **Y una cosa que NO se cambia sola**: el hueso carnoso está en el motor porque
+es la fuente de calcio de una ración BARF, no por los dientes. Este capítulo no
+toca esa razón. Lo que quita es un beneficio que nunca prometimos.
+
+#### 47.2 · ⚠️ EL FÓSFORO 2000 Y EL SODIO 1000 TIENEN UNA SEGUNDA FUENTE, Y ES ESTE CAPÍTULO
+
+Los dos techos de `recomendaciones_libro.json` para el adulto sano salen de la
+Tabla 13-3 (cap.13, «Feeding Young Adult Dogs»). La Tabla 47-4 de este capítulo,
+escrita por otros autores y para otra cosa, da **exactamente los mismos rangos**:
+
+| | Tabla 13-3 (cap.13) | Tabla 47-4 (cap.47) | Lo que aplicamos |
+|---|---|---|---|
+| Fósforo | 0,4-0,8 % MS | 0,4-0,8 % MS | techo 2000 mg/1000 kcal |
+| Sodio | 0,2-0,4 % MS | 0,2-0,4 % MS | techo 1000 mg/1000 kcal |
+
+Y el texto dice **por qué** están ahí, que es lo que faltaba: *«Phosphorus and
+sodium are considered key nutritional factors for apparently healthy adult dogs
+and cats for purposes of **ameliorating or slowing the progression of subclinical
+kidney disease and/or hypertension**»*. O sea que no son un capricho del capítulo
+del adulto joven: son una medida de prevención renal y cardiovascular para el
+perro **que no tiene nada diagnosticado**, que es exactamente la clase de límite
+que `recomendaciones_libro.json` existe para guardar.
+
+Dos capítulos independientes, los mismos dos números, y ahora con el motivo
+escrito.
+
+#### 47.3 · Tres cifras más de la Tabla 47-4, ninguna aplicable hoy
+
+| Nutriente | Tabla 47-4 (perro) | En nuestras unidades |
+|---|---|---|
+| Vitamina E | ≥400 UI/kg MS | ≥67,1 mg/1000 kcal |
+| Vitamina C | ≥100 mg/kg MS | ≥25 mg/1000 kcal |
+| Selenio | 0,5-1,3 mg/kg MS | 125-325 µg/1000 kcal |
+
+- La **vitamina E**: el mínimo de FEDIAF en adulto ya está por encima de esa
+  cifra en el menú real, así que no aprieta. Y el techo sugerido por el NRC que
+  salió del cap.7 (167,75 mg/1000 kcal) sigue siendo el número relevante.
+- La **vitamina C** no es uno de los 43 requisitos: el perro la sintetiza y
+  FEDIAF no le pone requisito. Aquí es un antioxidante «para mejor rendimiento»,
+  no un requerimiento. **No se aplica.**
+- El **selenio**: es el **tercer sitio del libro** con el mismo rango (cap.7,
+  Tabla 35-3 y ahora la 47-4). Y sigue chocando con lo mismo: 125 µg de suelo
+  contra un máximo legal de FEDIAF de 142. No cambia nada.
+
+#### 47.4 · Y dos frases sobre la comida casera, que son la razón de ser de esto
+
+*«Improperly formulated **homemade foods** are more likely to be **deficient in
+calcium**»* y *«Adequate vitamin content can be a problem in improperly
+formulated homemade foods»*, con la lista de lo que se ve en la boca cuando
+faltan: vitamina A (gingivitis marginal, reabsorción de hueso alveolar), complejo
+B (inflamación gingival, necrosis epitelial), vitamina D (encía, ligamento
+periodontal, hueso alveolar).
+
+Es lo que hace este motor, dicho por la fuente y con las consecuencias
+enumeradas. Y añade una que no teníamos escrita: *«Experiments in dogs have
+demonstrated **resorption of alveolar bone** following consumption of a food with
+a **low ratio of calcium to phosphorus**»* — el ratio Ca:P, que el motor ya
+verifica como una de las 43 filas, tiene aquí su consecuencia clínica concreta.
+
+#### 47.5 · Los premios, por cuarta vez
+
+*«Generally, feeding excessive amounts (**>10 % of the total food intake** on a
+volume or calorie basis) of any treat is not recommended»*. Es la cuarta fuente
+que los nombra (FEDIAF §4.1, SACN5 cap.17, SACN5 cap.1 y ahora el 47), y la
+primera que da **una cifra**. Rawku sigue sin modelarlos. Va a
+`PENDIENTE_PRODUCTO.md`.
+
+---
+
+### Capítulo 69 · Efectos de la comida sobre la farmacocinética — leído entero
+
+⚠️ **El de más consecuencias directas de todos los que van leídos hoy**, y no
+porque cambie un número del motor: no cambia ninguno. Cambia lo que hay que
+DECIR. Rawku cambia la dieta de un perro, y este capítulo es el que explica qué
+le pasa a la medicación cuando la dieta cambia.
+
+#### 69.1 · ⚠️ EL BROMURO Y EL CLORO: un perro epiléptico con crisis por cambiar de comida
+
+Caso 69-1, y es un perro real. Teckel de 11 años con epilepsia idiopática,
+controlada con bromuro potásico, **dos meses sin crisis** y bromo sérico en
+1.100 mg/l. Le cambian la comida a una dieta disolvente de estruvita —más sal— y
+**dos semanas después tiene un racimo de cinco crisis en 36 horas**. El bromo
+sérico había caído a **410 mg/l**, muy por debajo del rango terapéutico
+(1.000-2.000), sin que nadie tocara la dosis.
+
+El mecanismo, literal: *«Bromide and chloride **compete for renal tubular
+reabsorption**. An increase in chloride load … will markedly increase urinary
+excretion of bromide in several species, **including dogs**»*.
+
+Las dos comidas del caso, en cloro sobre materia seca: la buena **0,65 %**, la
+que dio el problema **2,41 %**.
+
+**Medido hoy sobre los 216 menús del catálogo regenerado:**
+
+| | mg/1000 kcal | % materia seca |
+|---|---|---|
+| mínimo | 424 | 0,17 |
+| mediana | 826 | 0,33 |
+| máximo | 2.973 | 1,19 |
+
+O sea que la mediana de una ración de este motor es **la mitad de cloro** que la
+comida que mantenía estable a ese perro, y el máximo se queda por debajo de la
+que le provocó las crisis.
+
+⚠️ **Y por eso el riesgo va AL REVÉS que en el caso.** Menos cloro es menos bromo
+excretado, o sea bromo sérico **que sube**. Un perro que viene de un pienso y
+pasa a esta ración puede irse hacia la **toxicidad por bromuro** (sedación,
+ataxia), no hacia la crisis. Es la misma competencia leída en la otra dirección,
+y es la que nos toca a nosotros.
+
+**Aplicado**: `epilepsia_idiopatica` gana el aviso `bromuro_y_cloro` en
+`patologias.json`, con el caso, el mecanismo, las dos cifras del libro y las tres
+nuestras. No es un tope: el menú no cambia, y bajar o subir el cloro no sería más
+seguro — sería otro cambio. Lo que corresponde es que el veterinario **mida el
+bromo sérico** después del cambio de dieta, que es literalmente lo que dice el
+caso.
+
+#### 69.2 · Y el fenobarbital, con 27 beagles
+
+Maguire et al. (2000), en el mismo capítulo: 27 beagles adultos, farmacocinética
+del fenobarbital antes y dos meses después de cambiarles la comida. Restringir
+**proteína** o **grasa** acortó la vida media:
+
+| Comida | Vida media (h) |
+|---|---|
+| mantenimiento | 32,9 ± 5,2 |
+| renal (baja en proteína) | 25,9 ± 6,1 |
+| adelgazamiento (baja en grasa) | 24,0 ± 4,7 |
+
+Conclusión de los autores, literal: *«**phenobarbital dosage should be
+reevaluated if a dog's diet, body weight or body composition changes during
+treatment**»*.
+
+Una ración BARF es **alta** en proteína, así que el cambio va en la dirección
+contraria a la dieta renal del estudio — y sigue siendo un cambio. El aviso lo
+recoge junto al del bromuro, porque el perro epiléptico suele llevar uno de los
+dos fármacos, o los dos.
+
+#### 69.3 · El mitotano del Cushing: treinta veces más con comida que en ayunas
+
+Caso 69-2, Tabla 1, concentración plasmática máxima en el perro:
+
+| Cómo se da | mg/l |
+|---|---|
+| Comprimidos **en ayunas** | 0,4 |
+| Comprimidos **con comida** | 13,0 |
+| Comprimidos molidos en aceite con comida | 15,4 |
+
+*«Mitotane is soluble in fat but poorly soluble in water»*, y la consecuencia
+clínica: *«**Failure to administer the drug with food may contribute to the
+apparent "resistance"** to the effects of the drug seen in some dogs with
+hyperadrenocorticism»*. Un perro que no responde puede no ser resistente: puede
+ser un perro al que le dan la pastilla en ayunas.
+
+**Aplicado**: `cushing` gana el aviso `mitotano_con_comida`, con la tabla y con
+la cosa que el dueño sí puede vigilar — *«the owners should observe the dog's
+appetite closely before administering the daily mitotane dose»*, porque perder el
+apetito es el primer signo de toxicidad. Tampoco cambia el menú: una ración de
+este motor lleva grasa de sobra.
+
+#### 69.4 · La tiaminasa del pescado crudo, otra vez y desde otro sitio
+
+*«thiamin to replace that lost to **thiaminase activity in raw fish**»*, en la
+lista de suplementaciones indicadas para contrarrestar efectos de fármacos y
+dietas. Es uno de **los cinco topes de seguridad crónica** que el motor ya aplica
+como restricción dura dentro del solver. No cambia nada; es la enésima fuente que
+lo dice, y esta desde el capítulo de farmacocinética.
+
+#### 69.5 · Lo demás, medido y sin efecto
+
+- **Proteína alta y metabolismo hepático de fármacos**: *«High-protein (44 vs. 10 %
+  of kcal) … foods enhance the hepatic metabolism and excretion of many different
+  drugs»*. Una ración BARF está en el extremo alto. Es el mecanismo general
+  detrás de lo del fenobarbital, y no hay cifra canina para nada más.
+- **Proteína y gentamicina**: subir la proteína en el perro de 9,4 a 27,3 % MS
+  **aumenta** la eliminación de gentamicina y **reduce** su nefrotoxicidad. Va a
+  favor.
+- **Calcio y magnesio de la dieta** reducen la acumulación tubular renal de
+  aminoglucósidos: también a favor.
+- **Obesidad**: cambia el volumen de distribución de los fármacos lipófilos y de
+  los polares en direcciones opuestas, y *«must be considered whenever a
+  patient's body weight changes markedly»*. Rawku ya calcula sobre el peso
+  objetivo, no el real.
+- **Pomelo, hipérico, tiramina de quesos curados, metilxantinas**: nada de eso
+  está en el catálogo.
+
+---
+
+### Capítulo 4 · Nutrigenómica y nutrigenética — leído entero
+
+Otro de los 26 sin citar, y hay que decirlo claro: **no trae ni una cifra
+aplicable**. Es un capítulo de método —transcriptómica, proteómica,
+metabolómica—, con el estado del genoma canino (2,4 Gb, ~19.300 genes, secuenciado
+de un bóxer hembra) y más de 450 enfermedades genéticas descritas en el perro.
+
+Lo único que toca a algo nuestro es una frase de pasada que **corrobora por cuarta
+vez** el techo de calcio del cachorro de raza grande: *«large- and giant-breed
+puppies with genetic variation that responds to diet for the **prevention of
+developmental orthopedic disease**»*. Los otros tres sitios son Fascetti cap.10 y
+SACN5 caps. 1 y 33.
+
+Se deja escrito que está leído entero y que no hay nada más, para que nadie tenga
+que volver.
+
+---
+
+### Capítulo 26 · Alimentación parenteral asistida — leído entero
+
+De los que quedaban sin cita, y hay que decirlo sin adornos: **es nutrición
+intravenosa de hospital**. Bolsas de tres en uno, catéteres yugulares y
+periféricos, osmolaridades, compatibilidad de fármacos con el complejo B. Nada de
+eso es una ración BARF en casa.
+
+Se deja escrito que está leído entero para que nadie tenga que volver, y con las
+dos únicas cosas que se pueden leer fuera del hospital:
+
+- **El síndrome de realimentación.** Caso 26-3: un gato que llevaba sin comer,
+  al que se le pasó de por debajo del gasto en reposo a un 40 % por encima entre
+  la vía intravenosa y la sonda, y a las 24 horas tenía potasio 2,7 y fósforo
+  1,2. La regla del libro: *«All patients fed with PN, enteral nutrition or both
+  should initially be fed at RER»* — al gasto en REPOSO, no por encima, y sin
+  «factores de enfermedad». **No aplica a Rawku**: un perro que lleva tres días
+  sin comer no está pidiendo una ración BARF, está en el veterinario. Queda
+  escrito porque es el único sitio del libro donde alimentar de MÁS es el daño.
+- Las soluciones de aminoácidos *«contain all the essential amino acids for dogs
+  and cats, **except taurine**»*. La taurina no es uno de los 43 de FEDIAF para
+  el perro. Sin efecto.
+
+---
+
+### Capítulos 54, 56 y 59 · La familia digestiva, ahora enteros
+
+Los tres estaban leídos **solo por sus tablas** (54-2, 56-2 y 59-1), que ya
+están transcritas en la §cuarta pasada de `VERIFICACION_FILA_A_FILA.md`. Leerlos
+enteros confirma las tres tablas y añade **una cosa importante y dos menores**.
+
+#### ⚠️ 56.1 · EL PÁRRAFO DE LA COMIDA CRUDA, Y ESTE SÍ NOS TOCA
+
+Capítulo 56 («Acute Gastroenteritis and Enteritis»), sección de factores de
+riesgo, literal:
+
+> *«Consumption of **raw food diets** has been associated with bacterial
+> enteritides (Chengappa et al, 1993; Stone et al, 1993; Morley et al, 2006).
+> Cultures of **home-prepared** and commercially available raw foods have
+> demonstrated bacterial pathogens including Salmonella spp., Campylobacter
+> spp., Escherichia spp. and Yersinia spp. (Weese, 2006; Strohmeyer et al, 2006).
+> **Dogs consuming such foods SHED bacterial pathogens at a much higher rate than
+> those consuming conventionally cooked commercial foods** (Weese and Armstrong,
+> 2006).»*
+
+Y antes: *«Feeding uncooked meat in homemade foods and racing greyhound rations
+is linked to bacterial enteritis … Incorporation of raw poultry in foods has been
+linked to campylobacteriosis and salmonellosis»*.
+
+**Lo que esto añade a lo que ya había.** `patologias.json` tiene el riesgo
+escrito en `inmunosupresion`, y está bien escrito, pero habla del **perro**: un
+sistema inmune débil aguanta peor un patógeno. Este párrafo dice otra cosa: que
+**el perro que come crudo EXCRETA más patógenos**, o sea que el riesgo no es solo
+suyo, es de quien vive con él — niños pequeños, embarazadas, mayores,
+inmunodeprimidos de la casa.
+
+Rawku **no dice eso en ninguna parte**. Lo que hay en `instrucciones.js` de
+`canislab-web` son los tiempos de congelación y qué va crudo y qué cocinado, que
+es manipulación del alimento, no higiene de la casa. Va a
+`PENDIENTE_PRODUCTO.md`, y el aviso de `inmunosupresion` gana la parte que le
+faltaba.
+
+#### 59.1 · «Lactose free», y es la segunda vez hoy
+
+La Tabla 59-1 (síndrome de intestino corto) lleva una fila que no es un número:
+**`Carbohydrate: Lactose free`**, porque *«extensive small bowel resection
+results in loss of lactase and other brush border disaccharidases»*.
+
+Es la **segunda fuente del día** que señala la lactosa, después del umbral de
+**1 g/kg de peso** del recuadro 55-3. El catálogo tiene un lácteo y no tiene el
+dato. Ya está apuntado en `PENDIENTE_NUTRICION.md` y en `DATOS_QUE_FALTAN.md`;
+esto solo lo refuerza.
+
+#### 54.1 · Lo que la Tabla 54-2 no dice, y son cosas de manejo
+
+- El estómago del perro se vacía en **6-8 horas** tras una comida media (4-6 en
+  el gato).
+- **La comida fría retrasa el vaciado**: ofrecerla entre **21 y 38 °C**. ⚠️ Ojo,
+  porque `instrucciones.js` recomienda dar el cuello de pollo **semicongelado** a
+  los perros tragones, para que lo roan en vez de tragárselo. Las dos cosas son
+  ciertas y no chocan —una es para un perro con un trastorno de vaciado gástrico
+  y la otra para evitar un atragantamiento en un perro sano— pero conviene que
+  esté escrito el día que se ofrezcan menús para esos trastornos.
+- **Las comidas grandes se vacían más despacio**: al menos tres al día.
+- **Las fibras gelificantes** (pectinas y gomas: arábiga, guar, carragenato,
+  psyllium, xantana, garrofín, ghatti, tragacanto) retrasan el vaciado y hay que
+  evitarlas. Ninguna está en el catálogo de Rawku.
+- La grasa en el duodeno libera colecistoquinina y retrasa el vaciado: es el
+  mecanismo detrás del ≤15 % MS de grasa de la tabla.
+- Razas: braquicéfalos (estenosis pilórica congénita) y lhasa apso, maltés, shih
+  tzu y pequinés (gastropatía pilórica hipertrófica crónica). Tercera tabla de
+  raza del día; mismo criterio que las otras dos, no se aplica sola.
+
+---
+
+### Capítulo 25 · Nutrición de cuidados críticos y alimentación enteral asistida — leído entero
+
+El último de los caninos que quedaban sin cita. Como el 26, es de hospital
+—sondas nasoesofágicas, de esofagostomía, de gastrostomía, de yeyunostomía— y
+**casi todo él no aplica**. Pero, a diferencia del 26, trae **tres cosas que sí**,
+y una de ellas es un número que el dueño puede medir en casa.
+
+#### ⚠️ 25.1 · CUÁNTO PUEDE ADELGAZAR UN PERRO A LA SEMANA, Y NO ESTABA EN NINGÚN SITIO
+
+Literal, sección «History and Physical Examination»:
+
+> *«Pets on a designated weight-loss program can safely lose **1 to 4%, more
+> typically 1 to 2%, of their body weight per week** (Laflamme, 1993).»*
+
+Y la frase de al lado, que es la que evita el susto:
+
+> *«a weight change of **10 to 15% within several days is most likely a hydration
+> problem** and should be corrected first with medical or fluid management.»*
+
+**Comprobado hoy: la cifra no estaba en el repo.** `obesidad` en `patologias.json`
+tenía el tope de grasa (30 g/1000 kcal, de la Tabla 27-4) y el aviso de que se
+adelgaza bajando kcal sobre el peso objetivo, pero **ningún ritmo**. Sin ritmo,
+«adelgazamiento dirigido» no tiene forma de comprobarse desde casa: la báscula
+sube o baja y nadie sabe si eso está bien.
+
+Aplicado como aviso `ritmo_de_perdida_de_peso`, con la cuenta hecha: un perro de
+30 kg pierde bien entre 300 y 600 g a la semana, como mucho 1,2 kg; uno de 5 kg,
+entre 50 y 100 g. No cambia el menú.
+
+#### 25.2 · El omega-3 también tiene un lado malo, y es la otra cara de dos pendientes
+
+`patologias.json` lleva dos entradas en
+`limites_escritos_que_el_solver_no_aplica` porque el omega-3 que piden las tablas
+de **cáncer** y de **artrosis** no cabe con el catálogo real. Este capítulo dice
+lo contrario desde el otro extremo, y con cifras:
+
+> *«chronic suppression of the inflammatory and/or immune response by feeding
+> high levels of omega-3 fatty acids should be done cautiously and **is not
+> warranted in disease states in which a fully competent immune system is
+> essential for survival and recovery**.»*
+
+- Ratones prealimentados dos a cuatro semanas con **40 % de las calorías como
+  aceite de pescado** tenían **comprometida la resistencia** a una enfermedad
+  infecciosa (Chang et al, 1992).
+- Gatos sanos con una dieta de **omega-6:omega-3 de 1,3:1** durante ocho semanas
+  tuvieron la **función plaquetaria significativamente disminuida** (Saker et al,
+  1998).
+
+Y la frase de cierre: *«As with many other nutrients, **excessive levels of
+omega-3 fatty acids can be detrimental**»*.
+
+**Lo que esto cambia**: nada del motor, y mejora una pregunta. Que esos dos
+suelos de omega-3 no quepan deja de ser solo un problema del catálogo — la propia
+fuente dice que pasarse tiene coste. Va a la pregunta del nutricionista, no a un
+tope.
+
+#### 25.3 · Y el ratio omega-6:omega-3, que es una de las tres cosas que Cris echó de menos
+
+`REVISION_NUTRICIONISTA.md` lista el **ratio omega-6:omega-3** como una de las
+tres que siguen sin estar. Este capítulo trae una cifra, y hay que leerla con
+cuidado:
+
+> *«The dietary dose that favors a less inflammatory cascade during a disease
+> process **is still not standardized across veterinary patients**, but is
+> suggested as an **omega-6:omega-3 fatty acid ratio ranging between 5:1 to
+> 1:1**, depending on patient assessment.»*
+
+⚠️ **No se aplica, y por tres motivos que conviene tener escritos:**
+1. Es para el **paciente crítico** en un proceso inflamatorio, no para el perro
+   sano que usa esta app.
+2. La propia fuente dice que **no está estandarizado**.
+3. El **NRC 2006** dice del ratio de omega-6:omega-3 **totales** que *«is not
+   helpful»*, y recomienda en su lugar el **linoleico:linolénico**, que es
+   justamente el que el motor **sí aplica** desde ayer (2,6-26 en adulto y
+   crecimiento, 2,6-16 en gestación y lactancia), vía
+   `requisitos_condicionales.json`.
+
+O sea que la pregunta de Cris tiene ahora **dos respuestas escritas y en
+tensión**: una fuente que da un rango para el enfermo crítico y otra que dice que
+el ratio total no sirve. Eso es exactamente lo que hay que ponerle delante al
+nutricionista, en vez de elegir por él.
+
+#### 25.4 · Lo demás, leído y sin efecto
+
+- **Tabla 25-5**, factores clave para alimentación enteral: osmolaridad 250-400
+  mOsm/l, densidad 1-2 kcal/ml, hidratos 2-4 g/100 kcal, proteína 5-12 g/100 kcal
+  en el perro, arginina ≥146 mg/100 kcal, glutamina ≥500 mg/100 kcal, grasa 5-7,5
+  g/100 kcal. Son cifras **por 100 kcal de comida líquida por sonda**. No hay
+  ninguna ración masticable detrás.
+- **El síndrome de realimentación** otra vez (recuadro 25-3), con la misma regla
+  que el cap.26: no pasar del gasto en reposo al realimentar. No aplica.
+- *«Patients fed **homemade foods**, table foods, vegetarian or single item foods
+  are at greater risk for developing subclinical nutritional imbalances»* — la
+  razón de ser de este motor, dicha una vez más.
+- Los **potes de comida de bebé** llevan *«only 10 % of the calcium required by
+  dogs and cats»* y a veces polvo de cebolla. No están en el catálogo.

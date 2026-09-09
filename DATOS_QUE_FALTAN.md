@@ -857,7 +857,19 @@ otra magnitud, y se mide con perros, no con un espectrofotómetro.
    **Hofmann, Dobenecker y Kienzle (2025)**, que también está en el repo de
    fuentes y **no se ha usado nunca**, trae las cifras en su Tabla 3.
 
-3. **Cómo se mide de verdad.** FEDIAF sección 6 da los dos protocolos completos
+3. **La escala con la que se lee un coeficiente** (SACN5 cap.48, recuadro 48-3,
+   leído entero el 9 de septiembre). *«**Highly digestible** has generally been
+   reserved for products with protein digestibility **≥87 %** and fat and
+   carbohydrate digestibilities **≥90 %**»*, y la comida comercial media va en
+   *«**78 a 81 %**, **77 a 85 %** y **69 a 79 %** for crude protein, crude fat
+   and carbohydrate»*.
+
+   Sirve para situar el +10 %: la comida comercial corriente **no llega** al
+   umbral de «alta digestibilidad», y una ración cruda casera no está ni por
+   encima ni por debajo — está **sin medir**, que es el supuesto exacto que
+   FEDIAF cubre con ese factor.
+
+4. **Cómo se mide de verdad.** FEDIAF sección 6 da los dos protocolos completos
    (método del indicador con óxido de cromo, y colección cuantitativa total).
    Hacen falta perros, seis o más, y varios días de recogida de heces. No es algo
    que se saque de una tabla.
@@ -875,3 +887,23 @@ otra magnitud, y se mide con perros, no con un espectrofotómetro.
 
 **Mientras tanto, la decisión tomada es la conservadora**: no se supone nada, se
 aplica el +10 % que FEDIAF manda aplicar cuando no se puede garantizar.
+
+---
+
+## La lactosa del «Yogur griego» (9 de septiembre de 2026)
+
+**Un dato, una ficha.** SACN5 cap.55, recuadro 55-3, da un umbral con cifra para
+el perro: *«dogs developed diarrhea while consuming more than **1 g of lactose/kg
+body weight**»*. El catálogo tiene un lácteo —«Yogur griego», en Extras— y **no
+tiene el campo**: la lactosa no es uno de los 41 nutrientes.
+
+**Dónde está**: BEDCA y USDA publican lactosa en los yogures. USDA la trae como
+`Lactose` en su ficha de *Yogurt, Greek, plain*; BEDCA, en la ficha del yogur
+natural. El orden de `Bases.md` manda: BEDCA primero.
+
+**Qué hacer con él cuando esté**: la decisión (tope duro o aviso) y la cuenta ya
+hecha están en `PENDIENTE_NUTRICION.md`. Aquí solo falta el número, con su
+fuente y su fecha, como cualquier otro. **No lo rellena el asistente.**
+
+Medido el 9 de septiembre: **0 de los 216 menús del catálogo usan el yogur**, así
+que el hueco no está afectando a nadie hoy.

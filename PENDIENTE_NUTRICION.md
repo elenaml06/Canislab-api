@@ -732,6 +732,14 @@ entrada que **hoy no existe en ningún sitio** — ni en el schema de la API
   campo que preguntar cuántas kcal vienen de fuera de la ración. Añadirlo
   necesita una pantalla nueva en la app y una decisión de producto sobre
   dónde se pregunta, no solo un parámetro nuevo en el backend.
+
+  ⚠️ **Y ya van CUATRO fuentes** (actualizado el 9 de septiembre de 2026, de
+  leer capítulos enteros de SACN5): FEDIAF §4.1, SACN5 cap.17, SACN5 cap.1
+  (*«Intakes of treats and nutritional supplements should be recorded»*) y
+  SACN5 cap.47, que es la única que da **la misma cifra que Hervera**:
+  *«Generally, feeding excessive amounts (**>10 % of the total food intake** on
+  a volume or calorie basis) of any treat is not recommended»*. El 10 % ya no
+  es de una sola fuente. Lo que sigue sin existir es el campo.
 - **La reformulación de adelgazamiento** (proteína≥25%MS, grasa≤9%MS,
   L-carnitina, fibra — Tabla 27-4 de SACN5). Hoy adelgazar solo baja las
   kcal (vía RER en `der.py`); no hay un perfil de macros dedicado. Además
@@ -1230,43 +1238,35 @@ seguro sería 1,5, y hoy sale gratis.
 
 ---
 
-## El BCS 9 hay que cambiarlo también en `canislab-web` (9 de septiembre de 2026)
+## La lactosa del yogur griego no está medida, y SACN5 da el umbral (9 de septiembre de 2026)
 
-**Aplicado hoy en la API, pendiente en el frontend.** La Tabla VII-2 del Anexo
-7.1 de FEDIAF da la columna «% BW below or above BCS 5» del perro, y puesta al
-lado de nuestra regla del 10 % por punto:
+**De leer entero el capítulo 55 de SACN5.** Recuadro 55-3, literal: *«In one
+study, **dogs developed diarrhea while consuming more than 1 g of lactose/kg body
+weight**»*. El perro adulto tiene poca lactasa; lo que no se hidroliza llega al
+colon y arrastra agua.
 
-| BCS | FEDIAF | Rawku |
-|---|---|---|
-| 1 | −≥40 % | −40 ✓ |
-| 2 | −30 a 40 % | −30 ✓ |
-| 3 | −20 a 30 % | −20 ✓ |
-| 4 | −10 a 15 % | −10 ✓ |
-| 5 | 0 % | 0 ✓ |
-| 6 | +10 a 15 % | +10 ✓ |
-| 7 | +20 a 30 % | +20 ✓ |
-| 8 | +30 a 45 % | +30 ✓ |
-| **9** | **>45 %** | **+40 ✗** |
+**Lo que hay en el catálogo:** un lácteo, «Yogur griego», en la categoría Extras.
 
-O sea que la recta del 10 % lineal **es el extremo bajo de cada rango de
-FEDIAF** —el más conservador— en ocho puntos de nueve. En el noveno la escala
-deja de ser lineal.
+**Lo medido hoy:** de los 216 menús del catálogo regenerado, **0 lo usan**. Hoy
+no aprieta a nadie.
 
-**Cambiado en la API**, en las dos copias que había aquí
-(`verificar.peso_objetivo_desde_bcs` y `der.peso_ideal_desde_condicion`), y con
-el BLOQUE 63 comparándolas para que no vuelvan a separarse.
+**Por qué sigue siendo un pendiente y no un no-problema:** Extras va **siempre
+libre** (regla 5 del `CLAUDE.md`), así que un menú personalizado o una
+formulación del veterinario sí puede meterlo, y no hay nada que lo tope por este
+motivo. Los cinco topes de seguridad crónica no incluyen la lactosa.
 
-**Falta la tercera copia, en `canislab-web`**: `src/der.js` / `calcularDER()`.
-Mientras no se cambie, un perro con BCS 9 tendrá un peso objetivo distinto según
-quién lo calcule — medio kilo en un perro de 20 kg, y hacia arriba, o sea más
-kcal para el que peor lo lleva.
+**Por qué no se aplica hoy:** la lactosa **no es uno de los 41 nutrientes** del
+catálogo, así que el motor no sabe cuánta lleva la ficha. Aplicarlo pide un dato
+nuevo, y los datos del catálogo no los rellena el asistente.
 
-**Lo que NO hace falta:** regenerar `der_casos.json`. Ninguno de sus 100 casos
-usa `condicion_idx`, así que el contrato del DER no se mueve. Comprobado.
+**La cuenta, hecha, para cuando el dato exista:** el yogur griego natural va por
+los 3-4 g de lactosa por 100 g. Con 4 g/100 g y el umbral de 1 g/kg, el tope
+sale en **25 g de yogur por kg de peso**: 75 g para un perro de 3 kg, 250 g para
+uno de 10, 1 kg para uno de 40. Los perros pequeños son los que quedan cerca.
 
-**Y una cosa más que se cerró de paso:** por debajo de BCS 5 la API **ya estima**
-peso objetivo, hacia arriba y topado al +20 %. Antes `verificar.py` devolvía
-`None` (apoyándose en AAHA, que no tiene esas filas) mientras `der.py` sí
-estimaba: dos reglas del mismo repo que discrepaban justo ahí. FEDIAF tiene las
-cuatro filas y su §7.1.1 dice que la energía se calcula sobre el peso óptimo sin
-distinguir dirección.
+**Lo que falta**, en este orden:
+1. La lactosa del «Yogur griego» de BEDCA o USDA, con su fuente, en la ficha
+   (`DATOS_QUE_FALTAN.md`).
+2. Decidir si es un **tope de seguridad más** (como el mercurio del atún, que
+   también se mide por peso del perro) o solo un **aviso**. Es criterio, no
+   aritmética: el mercurio se acumula y una diarrea no.

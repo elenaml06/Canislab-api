@@ -148,6 +148,28 @@ forma de que una patología —o un profesional— pida el suyo. Es el mismo tra
 que arreglaría el `ratio_ca_p` de los urolitos de calcio, que también está
 escrito y sin aplicar.
 
+### ⚠️ ACTUALIZADO EL 9 DE SEPTIEMBRE: ahora hay TRES fuentes y NO dicen lo mismo
+
+Y por eso esto ya no es un «implementarlo y ya», sino una decisión con nombre:
+
+| Fuente | Qué dice del ratio |
+|---|---|
+| Cris Carles | La relación omega-6:omega-3 es crucial en muchas patologías |
+| **SACN5 Tabla 30-5** (cáncer) | *«an omega-6:omega-3 fatty acid ratio approximating 1:1»* |
+| **SACN5 cap.25** (cuidados críticos) | **5:1 a 1:1**, «depending on patient assessment», y añade que **no está estandarizado** |
+| **NRC 2006, cap.5** | Del ratio de **totales**: *«is not helpful»*. Recomienda en su lugar el **linoleico:linolénico** |
+
+**Y esa última ya está aplicada.** Desde el 9 de septiembre el motor exige el
+**ratio linoleico:linolénico** —2,6-26 en adulto y crecimiento, 2,6-16 en
+gestación y lactancia— vía `requisitos_condicionales.json`, que es exactamente lo
+que el NRC recomienda **en lugar** del de totales.
+
+O sea que la mitad de lo que Cris pedía **sí está**, con otra forma y con la
+fuente que dice por qué esa forma y no la otra. Lo que sigue sin estar es el
+ratio de **totales**, y ahora la pregunta no es «¿se puede?» sino «¿debe?». Va
+como **PREGUNTA 40** en `PARA_EL_NUTRICIONISTA.md`, con las tres fuentes en la
+mano.
+
 **Y tiene razón en lo de FEDIAF**: no se moja. Da mínimo de linoleico, y de
 EPA+DHA solo en crecimiento y reproducción; en adulto, nada. Por eso el motor
 adoptó el mínimo de EPA+DHA de NRC 2006 para adulto (0,11 g), decidido el 25 de

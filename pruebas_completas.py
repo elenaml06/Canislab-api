@@ -8465,6 +8465,104 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 64 — LOS AVISOS QUE NO SON NINGUNO DE LOS CUATRO CON NOMBRE PROPIO
+#
+# POR QUE EXISTE (9 septiembre, tarde)
+#
+# `patologias.json` tiene avisos con nombre propio -- general, crecimiento,
+# profesional, profesional_crecimiento -- y ademas cualquier otra clave, que
+# `motor/patologias.py` recoge en `avisos_extra` y `GET /patologias` sirve.
+#
+# Son OCHO hoy, en cuatro patologias, y son justo los que dicen lo que el motor
+# NO puede hacer solo: que el bromuro potasico se mide en sangre despues de
+# cambiar la dieta, que el mitotano va con comida, que la reaccion adversa
+# necesita una o dos proteinas y novel, que un perro adelgaza 1-2 % a la semana.
+# Ninguno cambia un numero del menu; todos cambian lo que hay que decir.
+#
+# Y NO LOS VIGILABA NADIE. El BLOQUE 44 compara las CIFRAS de /patologias contra
+# el JSON, cifra a cifra, pero los avisos son texto y no pasaban por ahi. Un
+# refactor de `patologias.py` que dejara de recoger las claves sueltas -- que es
+# exactamente lo que pasaba antes del 8 de septiembre, cuando `avisos` solo
+# dejaba pasar «general» -- se llevaria los ocho por delante y la bateria
+# seguiria verde.
+#
+# Esto comprueba tres cosas:
+#   1. Que TODOS los avisos sueltos del JSON llegan a `GET /patologias`.
+#   2. Que llegan tambien por la otra puerta, la que usa el menu
+#      (`motor.patologias.tabla_para_solver`), porque son dos caminos distintos.
+#   3. Que los cuatro nuevos siguen llevando SU CIFRA dentro. Un aviso truncado
+#      es peor que ninguno: parece que esta y no dice el numero.
+# ============================================================
+print("\n=== BLOQUE 64: los avisos sueltos de patologia llegan enteros ===")
+
+from motor.patologias import cargar_crudo as _crudo_64, PATOLOGIAS as _solver64
+
+_RESERVADOS_64 = ("general", "crecimiento", "profesional", "profesional_crecimiento")
+_crudo64 = _crudo_64()["patologias"]
+
+# Lo que hay escrito en el JSON, patologia -> {clave: texto}
+_esperados_64 = {}
+for _k64, _p64 in _crudo64.items():
+    _av64 = _p64.get("avisos") or {}
+    _sueltos64 = {_c64: _t64 for _c64, _t64 in _av64.items()
+                  if _c64 not in _RESERVADOS_64 and _t64}
+    if _sueltos64:
+        _esperados_64[_k64] = _sueltos64
+
+if not _esperados_64:
+    fallos.append("BLOQUE64: no hay ni un aviso suelto en patologias.json. O se han borrado los "
+                  "ocho que habia, o alguien ha cambiado como se escriben. Los ocho dicen cosas "
+                  "que el motor no puede hacer solo (el bromuro, el mitotano, las dos proteinas "
+                  "de la reaccion adversa, el ritmo de adelgazamiento) y no los sustituye ningun "
+                  "numero del menu")
+
+# 1 y 2. Que lleguen por las dos puertas.
+_r64 = _c.get("/patologias")
+_servidas64 = (_r64.json().get("patologias") or {}) if _r64.status_code == 200 else {}
+if _r64.status_code != 200:
+    fallos.append(f"BLOQUE64: /patologias contesta {_r64.status_code}, asi que no se puede "
+                  f"comprobar que los avisos llegan a quien firma")
+
+for _k64, _sueltos64 in sorted(_esperados_64.items()):
+    _api64 = (_servidas64.get(_k64) or {}).get("avisos_extra") or []
+    _motor64 = (_solver64.get(_k64) or {}).get("avisos_extra") or []
+    for _clave64, _texto64 in sorted(_sueltos64.items()):
+        if _texto64 not in _api64:
+            fallos.append(f"BLOQUE64: el aviso «{_clave64}» de «{_k64}» esta en patologias.json y "
+                          f"NO llega a GET /patologias. Ese endpoint existe para que quien firma "
+                          f"una pauta lea esto ANTES de marcar la patologia; un aviso que no llega "
+                          f"es un aviso que no existe")
+        if _texto64 not in _motor64:
+            fallos.append(f"BLOQUE64: el aviso «{_clave64}» de «{_k64}» no llega por la puerta del "
+                          f"MENU (motor.patologias.PATOLOGIAS, que es lo que lee el solver). Son "
+                          f"dos caminos distintos y los dos tienen que llevarlo")
+
+# 3. Que los cuatro de la tarde del 9 de septiembre sigan con su cifra dentro.
+#    Cada par es (patologia, clave del aviso, trozo que TIENE que estar).
+_CIFRAS_64 = [
+    ("epilepsia_idiopatica", "bromuro_y_cloro", "410 mg/l"),
+    ("epilepsia_idiopatica", "bromuro_y_cloro", "2,41 %"),
+    ("cushing", "mitotano_con_comida", "0,4"),
+    ("cushing", "mitotano_con_comida", "13,0"),
+    ("inmunosupresion", "excrecion_de_patogenos_en_casa", "SHED BACTERIAL PATHOGENS"),
+    ("obesidad", "ritmo_de_perdida_de_peso", "1 to 4%"),
+]
+for _pat64, _clave64, _trozo64 in _CIFRAS_64:
+    _texto64 = ((_crudo64.get(_pat64) or {}).get("avisos") or {}).get(_clave64)
+    if not _texto64:
+        fallos.append(f"BLOQUE64: falta el aviso «{_clave64}» en «{_pat64}». Es uno de los cuatro "
+                      f"que entraron el 9 de septiembre de leer enteros los capitulos 25, 56 y 69 "
+                      f"de SACN5, y cada uno lleva una cifra que no esta en ningun otro sitio")
+        continue
+    if _trozo64 not in _texto64:
+        fallos.append(f"BLOQUE64: el aviso «{_clave64}» de «{_pat64}» ha perdido «{_trozo64}». Un "
+                      f"aviso sin su cifra parece que esta y no dice el numero, que es peor que no "
+                      f"tenerlo")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 print(f"\n{'='*60}")
 print(f"TOTAL: {time.time()-t_total:.0f}s de pruebas")
 if fallos:

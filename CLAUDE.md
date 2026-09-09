@@ -139,7 +139,7 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 62 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `pruebas_completas.py` | **La batería.** Los 64 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
 | `auditar_patologias.py` | Cada cifra de `patologias.json` contra `requerimientos_v2_final.json`: que ninguna patología formulable tenga un tope por debajo del mínimo de FEDIAF, y que la clave del nutriente exista en el `MAPA`. Lo ejecuta el BLOQUE 32 |
 | `radiografia.py` | Imprime los números que **ENTRAN** al motor, para comparar `main` con una rama a golpe de `diff`. No lo ejecuta la batería: se corre a mano. Existe porque el semáforo comprueba el menú contra las kcal que le dieron — si las kcal ya venían mal, el menú sale VERDE para un perro que no es el tuyo, y eso solo se ve en la entrada |
 | `auditar_catalogo.py` | Huecos y datos raros del catálogo, y quién se queda sin aminograma. Lo ejecuta el BLOQUE 19 |
@@ -175,6 +175,16 @@ número que decide si sale menú, y **para que ese número no se copie a la
 app**: sería la tercera copia de la misma tabla, que es exactamente cómo se
 desincronizó la del `POST /menu`. Lo vigila el BLOQUE 44, cifra a cifra
 contra el archivo que aplica el solver.
+Y sirve también los **avisos sueltos** de cada patología —los que no son
+«general», «crecimiento», «profesional» ni «profesional_crecimiento»—, que son
+ocho y dicen justo lo que el motor NO puede hacer solo: que al perro con bromuro
+potásico hay que medirle el bromo en sangre después de cambiarle la dieta, que el
+mitotano va con comida, que la reacción adversa necesita una o dos proteínas y
+novel, que un perro adelgaza 1-2 % a la semana. Son texto, así que el BLOQUE 44
+no los miraba: los vigila el **BLOQUE 64** (9 de septiembre), que exige que
+lleguen **por las dos puertas** —`GET /patologias` y la tabla que lee el solver—
+y que sigan llevando su cifra dentro. Un aviso truncado parece que está y no dice
+el número.
 
 `GET /relajacion` (8 de septiembre) sirve los peldaños de la escalera con su
 nombre y qué suelta cada uno, y `/menu/v2` y `/formular/autocompletar`
@@ -395,7 +405,7 @@ se comprueba entero en cada batería.
 python3 pruebas_completas.py     # ~25 min, tiene que salir TODO EN VERDE
 ```
 
-Los 62 bloques tardan unos **25 minutos** (1.354 s en la última medida; el
+Los 64 bloques tardan unos **25 minutos** (1.354 s en la última medida; el
 «~10 min» que ponía aquí se quedó corto en cuanto los bloques 50 a 61
 empezaron a resolver menús de verdad, y el «~2 min» de antes llevaba meses
 caducado). No necesita red ni claves de verdad: se fabrica

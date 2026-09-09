@@ -61,6 +61,9 @@ que tomar una persona, no yo.
 
 ## `PENDIENTE_PRODUCTO.md` — funcionalidades nuevas y deuda técnica
 
+- [ ] ⚠️ **Los ocho `avisos_extra` de patología no los pinta ninguna pantalla.** La API los sirve por dos caminos y `canislab-web` no los lee en ninguno. Dos de ellos son de fármaco y describen algo que pasa por culpa del cambio de dieta que hace la app
+- [ ] **La app no dice que un perro que come crudo EXCRETA más patógenos.** Hay tiempos de congelación (que protegen al perro) y nada de higiene de la casa (que protege a quien vive con él). SACN5 cap.56
+- [ ] Sugerir patologías por raza: ahora hay **tres** tablas de fuente, incluida la de urolitos, cuyas seis patologías el motor ya tiene
 - [~] Ajustes de cuenta: falta método de pago (portal Stripe) y darse de baja de verdad
 - [ ] Volver a encender el muro de pago cuando toque (`VITE_PAYWALL`, dos pruebas paradas a propósito)
 - [ ] Los 34 pesos de referencia que faltan en «cómo preparar» (verduras y frutas)
@@ -80,6 +83,7 @@ que tomar una persona, no yo.
 
 ## `PENDIENTE_NUTRICION.md` — auditado contra el PDF oficial
 
+- [ ] **La lactosa del «Yogur griego»**: SACN5 da el umbral (1 g/kg de peso) y el catálogo no tiene el dato. 0 de 216 menús lo usan hoy, pero Extras va siempre libre
 - [x] Contrastar con la ficha original de USDA — RESUELTO 7 sep: testículos de cordero ya no existe en el catálogo, timo de ternera ya cita FDC 170194 directo, y el acceso a USDA (`DEMO_KEY`) sí funciona (usado para el linoleico de abajo)
 - [x] El linoleico de la grasa de pollo — RESUELTO 7 sep: 19,5 g/100g, USDA FDC 173564
 - [x] El aviso de datos incompletos ya no depende de una lista a mano — RESUELTO 7 sep: `[SOSPECHOSO]` en `auditar_catalogo.py` compara cada alimento con los demás de su categoría (BLOQUE 46). Encontró 11 huecos el mismo día

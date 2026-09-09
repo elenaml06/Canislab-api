@@ -76,9 +76,34 @@ glosario, la introducción, la guía 3.1, alimento complementario y **tres anexo
 que sí tocan lo que hace el motor** — condición corporal (7.1), taurina (7.3) y
 reacción adversa al alimento (7.6).
 
-Hasta entonces, lo que sigue siendo cierto es lo de abajo, y solo eso: **las
-cifras que hay son las de su fuente y moverlas salta en rojo**. Que estén todas
-las que la fuente tiene, no.
+### ✅ LAS DOS COSAS ESTÁN HECHAS AL CERRAR EL 9 DE SEPTIEMBRE. LA DECISIÓN ES DE ELENA
+
+Se dice con los números delante, y sin redondear a favor:
+
+| | Estado |
+|---|---|
+| **FEDIAF 2025** | **Leída entera**, anexos incluidos. Los tres que faltaban dieron cosecha: del 7.1 salió la Tabla VII-2 y el BCS 9, que era el 40 % y son más del 45 |
+| **Las 11 tablas caninas sin mirar** | **Leídas las once**, con su reparto escrito arriba: 1 aplicada, 1 sin nutrientes, 2 que no aplican y 7 de patologías que no ofrecemos |
+| **Los 26 capítulos sin una sola cita** | **Leídos los 21 caninos, enteros.** Quedan 5 sin citar y los cinco son de otra especie: 22, 23 y 24 (gata y gatitos), 46 (tracto urinario felino) y 70 (pequeños mamíferos) |
+
+Lo que la lectura completa encontró **fuera de las tablas**, que es la razón por
+la que se exigió: el BCS 9 de FEDIAF, la arginina que sube con la proteína, el
+ratio linoleico:linolénico, el +10 % de los aminoácidos, el techo de calcio del
+cachorro de raza grande, el bromuro y el cloro del perro epiléptico, el mitotano
+con comida, el ritmo de adelgazamiento y la excreción de patógenos. **Ninguna de
+esas nueve estaba en una tabla de «Key nutritional factors».**
+
+⚠️ **Y la parte que NO se cierra sola.** Los cinco capítulos que quedan son
+felinos o de otra especie **según su título**, y este documento existe
+precisamente porque «según parece» no vale. La diferencia con el error de agosto
+es que allí se suponía que un barrido de tablas cubría la prosa —que es una
+suposición sobre el CONTENIDO— y aquí lo que se afirma está en la portada del
+capítulo. Aun así: **la decisión de dar esto por cerrado es de Elena**, no del
+asistente, y por la razón 1 de las cuatro.
+
+Hasta que ella lo diga, lo que sigue siendo cierto es esto y solo esto: **las
+cifras que hay son las de su fuente, moverlas salta en rojo, y ya no queda
+material canino sin leer del que puedan salir más**.
 
 ---
 

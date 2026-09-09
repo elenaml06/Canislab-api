@@ -481,6 +481,79 @@ Casi todas son del bloque digestivo, que es justo donde el motor **sí** ofrece
 patología (`enteropatia_cronica`, con la Tabla 57-1) y donde por lo tanto es más
 fácil que falte una vecina.
 
+### ✅ CERRADAS LAS ONCE, EL MISMO DÍA
+
+Leídas las once. El resultado, que es más ordenado de lo que parecía:
+
+| | Cuántas | |
+|---|---|---|
+| Aplicada | **1** | 18-9, la vitamina E del perro de trabajo |
+| Sin ningún nutriente | **1** | 49-2: agua, densidad energética y textura |
+| No aplican a Rawku | **2** | 16-4 (leche de la perra) y 25-5 (alimentos líquidos enterales) |
+| Familia digestiva, con núcleo común | **5** | 52-2, 54-2, 56-2, 59-1, 62-1 |
+| Esofágicas | **2** | 50-3 y 50-4 |
+
+Las siete últimas son **patologías que no ofrecemos**, y añadirlas es decisión de
+producto, no de fuentes. Están transcritas y convertidas en
+`HALLAZGOS_LECTURA_FUENTES.md`, con su núcleo común identificado —tres suelos de
+electrolitos que se repiten en cuatro de las cinco tablas digestivas— para que la
+decisión se pueda tomar con los números delante y de una vez, no tabla a tabla.
+
+**Lo que sigue abierto es el recuento grande**: 26 capítulos de 70 sin una sola
+cita, de los que van leídos enteros el 7, el 45, el 49, el 51 y el 61, más los
+bloques que hacían falta del 18, el 50, el 52, el 54, el 56, el 59 y el 62.
+
+⚠️ **Actualizado el 9 de septiembre por la tarde: van cuatro más, enteros** — el
+**38** (urolitiasis canina), el **47** (enfermedad periodontal), el **48**
+(introducción a las digestivas y del páncreas exocrino) y el **55** (introducción
+al intestino delgado). O sea **nueve de los 26** leídos completos, y con ellos se
+cierran los tres temas caninos que la lista nombraba aparte: urolitiasis general,
+enfermedad periodontal y la entrada del bloque digestivo.
+
+Lo que trajeron, y ninguna de las cuatro cosas estaba en una tabla que hubiéramos
+mirado:
+- El **8,79 % de 350.803 urolitos son compuestos** (Tabla 38-8), que refuerza una
+  nota que ya estaba escrita y le pone el porqué mecánico.
+- La **Tabla 47-4 repite el fósforo 0,4-0,8 % y el sodio 0,2-0,4 %** de la 13-3
+  —los dos techos que el motor aplica al adulto sano— y da el motivo que la 13-3
+  no daba: prevención renal y de hipertensión en el perro sin nada.
+- **La escala de digestibilidad** (recuadro 48-3), que responde a una pregunta
+  que estaba abierta desde ayer.
+- Y **la cautela del libro sobre el hueso**: 67 foxhounds con carcasas crudas,
+  todos con enfermedad periodontal y muchas fracturas dentales, y «no reliable,
+  published studies showing dental benefits derived from bone chewing». Se
+  comprobó que la app **no promete** ese beneficio; la cita está ahora en
+  `seguridad.py`.
+
+⚠️ **Y una segunda tanda, la misma tarde: el 26 (parenteral), el 4
+(nutrigenómica) y los tres digestivos que solo estaban leídos por sus tablas —
+el 54, el 56 y el 59 — enteros.** De los tres digestivos las tres tablas se
+confirman, y el 56 trae en prosa **el párrafo que más nos toca de todo el
+libro**: que el perro que come crudo **excreta** patógenos a mucha mayor tasa
+que el que come cocinado (Weese y Armstrong, 2006). No es el riesgo del perro,
+que ya estaba escrito en `inmunosupresion`: es el de quien vive con él. La app no
+lo dice en ninguna parte y está apuntado en `PENDIENTE_PRODUCTO.md`.
+
+### El recuento, rehecho a máquina esta tarde
+
+Contando otra vez como la primera vez —buscando cada capítulo del 1 al 70 en
+todos los `.md`, `.json` y `.py` del repo— **quedan 5 capítulos sin una sola
+cita**, de los 26 que había esta mañana, y **los cinco son de otra especie**:
+
+| Capítulo | Tema |
+|---|---|
+| 22, 23, 24 | Gata reproductora, gatitos lactantes, gatitos en crecimiento |
+| 46 | Tracto urinario inferior felino |
+| 70 | Pequeños mamíferos de compañía |
+
+⚠️ **O sea que lo canino de SACN5 está leído entero.** El último fue el **25**
+(cuidados críticos y alimentación enteral asistida), el hermano del 26 —sonda en
+vez de vena—, y se leyó precisamente porque la suposición de que «casi seguro no
+trae nada» es la que la §cuarta pasada dice que no vale. Menos mal: trae **el
+ritmo al que un perro puede adelgazar** (1-4 % del peso a la semana, típicamente
+1-2 %, Laflamme 1993), que no estaba en el repo y que es lo único que permite
+comprobar desde casa si «adelgazamiento dirigido» está funcionando.
+
 ### Y 26 capítulos de 70 sin una sola cita
 
 Contado igual: buscando cada capítulo en todos los `.md` y `.json` del repo.
