@@ -61,9 +61,9 @@ cambia de estado, y este índice no se actualiza, la batería lo dice. Sin eso,
 
 | Pregunta | Estado |
 |---|---|
-| 1 | abierta |
-| 2 | abierta |
-| 3 | abierta |
+| 1 | reducida |
+| 2 | reducida |
+| 3 | reducida |
 | 4 | abierta |
 | 5 | abierta |
 | 6 | abierta |

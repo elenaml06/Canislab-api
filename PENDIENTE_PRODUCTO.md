@@ -255,6 +255,49 @@ Lo que se puede hacer, y no está hecho:
 - **Recordar la reposición de suplementos**, que son los que se acaban y los que
   más pesan en el semáforo.
 
+#### ⚠️ Y SACN5 lo mide por el otro lado, con más números (9 de septiembre)
+
+Leyendo entero el **cap.3** de SACN5 —alfabetización sanitaria y cumplimiento—
+aparecen las cifras del **AAHA Compliance Study**, que es el estudio más grande
+que hay de esto en veterinaria. Lo que dicen, y va todo en la misma dirección
+que el 13 % de Fascetti:
+
+> «**55%** of pet owners who fed a therapeutic food also supplemented the
+> recommended food with other foods or treats. **The primary reason cited by
+> clients was that they didn't know not to.**»
+
+| Dato | Cifra |
+|---|---|
+| Cumplimiento de dieta terapéutica, perro | **19 %** |
+| Ídem contando todos los que se beneficiarían | **5-7 %** |
+| Dueños que quieren instrucciones habladas **y** escritas | casi **80 %** |
+| Dueños que agradecerían **varios recordatorios** | **65 %** |
+| Dueños que querrían una llamada si van con retraso | **72 %** |
+| Dueños que abandonaron la dieta **por precio** | **4 %** |
+| Veterinarios que creen que la barrera es el precio | **60 %** |
+
+**Tres consecuencias, y las tres son de producto:**
+
+1. **El aviso de «no le añadas nada» es lo primero que hay que decir, no una
+   nota al pie.** Aplicado el 9 de septiembre: `canislab-web` pinta un recuadro
+   propio, el primero de «Cómo darlo», y lo vigila `menu-dos-pestanas.spec.js`
+   comprobando también que va POR ENCIMA del de congelación — el mismo capítulo
+   mide que el dueño recuerda «as little as half» de lo que se le cuenta, así
+   que lo que va al final no se lee.
+2. **Los recordatorios son la única palanca con evidencia.** En el estudio, el
+   servicio con más cumplimiento (vacunas, 87 %) es el único para el que
+   prácticamente todas las clínicas mandan recordatorio, y el 65 % de los dueños
+   los pide. Eso respalda directamente el tercer punto de arriba —recordar la
+   reposición de suplementos— y le pone número.
+3. **El precio no es la barrera, aunque lo parezca.** Solo el 4 % abandonó por
+   coste y el 60 % de los veterinarios cree que es el motivo principal. Si algún
+   día se recorta una funcionalidad «porque la gente no va a pagar», este es el
+   dato que dice que el problema estaba en otro sitio.
+
+Y el capítulo trae además la medida que justifica los dibujos: el recuerdo de
+instrucciones habladas pasa de **14 % a 85 %** cuando van con pictogramas (Houts
+et al. 1998, p<0,0001). Eso es de la §7.2 de aquí abajo, que va justo de eso.
+
 ### 7.2 · El dueño puntúa mal la condición corporal, y de ahí sale TODO
 
 Fascetti, cap.9, dos medidas:

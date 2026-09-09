@@ -80,23 +80,86 @@ se pesó por los gramos de los 216 menús del catálogo:
 4000 son la cifra de un pienso, que lleva hidratos a 4 kcal/g y bastante ceniza y
 fibra; una ración cruda no lleva hidratos y sí grasa a 9 kcal/g.
 
-**Lo que eso le hace a cada límite convertido, que es lo que hay que decidir:** a
-5159 kcal/kg MS, 1000 kcal son **194 g de materia seca**, no 250. Un techo que la
-fuente da como «≤15 % MS» son **29 g/1000 kcal** en esta comida, y aplicamos 37,5.
+⚠️ **CORREGIDO EL 9 DE SEPTIEMBRE, Y AQUÍ PONÍA LO CONTRARIO.** Esta sección
+decía que, por ser nuestra ración más densa, los techos convertidos desde % de
+materia seca quedaban «un 29 % más flojos» y los suelos «un 29 % más estrictos».
+**Es falso, y la medida de arriba no tiene la culpa: la culpa era de la deducción.**
 
-- Los **techos** convertidos desde % MS quedan un **29 % más flojos** de lo que su
-  fuente pretende. Son 42, más los del perro sano.
-- Los **suelos** convertidos quedan un **29 % más estrictos**. Ese lado va al lado
-  seguro.
+El capítulo 1 de SACN5 dice lo contrario, y dos veces:
 
-*(La materia seca es estimada: el catálogo no tiene campo de humedad. La dirección
-y el orden de magnitud son sólidos y se pueden comprobar ficha a ficha — corazón
-de pollo 25,9 % de MS, hígado de vaca 26,1 %, espinaca 7,4 %, aceite 100,9 %.)*
+> «Animals require less food to meet their energy requirements when foods with
+> higher energy densities are fed. Under these circumstances, **the concentrations
+> of the other nutrients in the food need to be increased proportionately**, to
+> ensure the animal receives the minimum amount of all nutrients needed in a
+> smaller amount of food.»
 
-> **PREGUNTA 1.** Con esa medida delante: ¿se cambia el puente a la densidad real
-> de la ración —y con ello se aprietan los 42 topes de patología y los del perro
-> sano—, se dejan como están declarando el margen, o los objetivos deberían
-> pedirse directamente en g/1000 kcal y olvidarnos del porcentaje de materia seca?
+Y la simétrica, que es la que vale para los techos:
+
+> «When foods with lower energy densities are fed... **the nutrient levels need to
+> be decreased proportionately**, so that the animal would not receive toxic levels
+> of nutrients in a larger amount of food.»
+
+O sea que el porcentaje sobre materia seca **sube o baja con la densidad del
+alimento a propósito**, justo para que la cantidad **por caloría** se mantenga. La
+cantidad por 1000 kcal es la invariante, y es la unidad en la que trabaja el motor.
+**Por eso la conversión sí vale para una ración cruda**: lo que no vale es coger el
+porcentaje y aplicarlo tal cual.
+
+El **Caso 1-1** del mismo capítulo lo resuelve con números: un techo de 1,2 % a 3,6
+kcal/g son 3,33 g/1000 kcal, y su versión corregida a 4,0 kcal/g —1,32 %— son 3,30.
+El mismo número.
+
+### ⚠️ LO QUE SÍ ESTÁ MAL, Y ES OTRA COSA: la densidad de referencia
+
+La conversión no se hace con la densidad de nuestra ración, sino con **la que
+declara la fuente**. Y ahí depende de quién sea el número:
+
+| De quién es el número | Densidad de referencia | Multiplicador | ¿Lo hacemos bien? |
+|---|---|---|---|
+| **FEDIAF** (Tablas III-3b y VII-17) | **4 kcal/g MS** | ×2,5 | ✅ Comprobado en su propia tabla: proteína 62,50 g/1000 kcal = 25,00 g/100 g MS |
+| **NRC** (recommended allowances) | **4 kcal/g MS** | ×2,5 | ✅ Lo dice el cap.13 de SACN5 citándolo |
+| **SACN5** (sus «key nutritional factors») | **3,5 kcal/g MS** | **×2,857** | ❌ **usamos ×2,5, que es el del gato** |
+| **SACN5 cap.33** (calcio del cachorro grande) | **3,8 kcal/g MS** | ×2,63 | ❌ y además tiene densidad propia |
+
+La fuente lo dice en el método —Box 1-2: *«recommended nutrient values for canine
+and feline foods are based on an energy density of 3.5 and 4.0 kcal ME/g of food
+dry matter, respectively»*— y lo repite dentro del capítulo del que salen nuestros
+techos del perro sano, el **13**: *«At an energy density of 3.5 kcal (14.6 kJ)/g DM
+this corresponds to about 0.4 to 0.6% DM phosphorus»*.
+
+**Afecta a 68 de las 74 cifras clínicas**, que son las que vienen de una tabla de
+SACN5. Y en casi todas resulta que somos **MÁS estrictas** que la fuente, no menos:
+
+| Cifra | Hoy | Con la densidad de su fuente |
+|---|---|---|
+| perro sano adulto, fósforo | 2000 | **2286** |
+| senior, fósforo | 1750 | **2000** |
+| pancreatitis, grasa | 37,5 | **42,9** |
+| renal, fósforo (rango de la fuente) | 500-1250 | **571-1429** |
+| oxalato, sodio | 750 | **857** |
+
+Apretar de más no es gratis: en `renal` + `pancreatitis` es justo lo que dejaba a
+un perro sin menú. **No está aplicado**: hay que verificar tabla por tabla qué
+densidad declara cada una, porque el cap.33 ya demuestra que no todas usan la
+misma.
+
+> **PREGUNTA 1 — reescrita el 9 de septiembre, porque estaba mal planteada.**
+> Preguntaba si había que cambiar el puente «a la densidad real de la ración». No:
+> la densidad de la ración no entra, y eso ya no es una pregunta (ver arriba). Lo
+> que queda, que sí es tuyo, es más concreto:
+>
+> 1. **¿Se corrige la densidad de referencia de las 68 cifras que vienen de
+>    SACN5**, de 4,0 a la que declara cada tabla? Es lo que dice la fuente, y
+>    aflojaría casi todas —el techo de fósforo del perro sano pasaría de 2000 a
+>    2286, la grasa de la pancreatitis de 37,5 a 42,9—, que es una dirección
+>    incómoda aunque sea la correcta.
+> 2. **¿Hay alguna donde aflojar hasta la cifra de la fuente NO sea aceptable?**
+>    Ahí es donde nos hace falta tu criterio: la aritmética dice que sí y la
+>    clínica puede decir que no.
+> 3. Y una de método: las tablas de SACN5 llevan la nota «Nutrients expressed on a
+>    dry matter basis» sin repetir la densidad. **¿Se puede dar por hecho que todas
+>    son los 3,5 del Box 1-2**, o hay que buscar la densidad declarada de cada
+>    capítulo? El cap.33 declara 3,8, así que al menos una no lo es.
 
 ### 0.2 · Las tres cajas: lo que se te pide clasificar
 
@@ -133,16 +196,47 @@ O sea: **cuando SACN5 escribe un rango («0.2 to 0.5 %»), el rango es la
 respuesta, no una imprecisión.** Eso encaja exactamente con la caja
 «rango clínico».
 
-> **PREGUNTA 2.** ¿Te vale esta correspondencia — `(L)` y SUL = tope duro ·
-> «key nutritional factor» con rango = rango clínico · lo demás = criterio
-> nuestro — como regla general para clasificar los 19 límites del §8? ¿O hay
-> casos donde no funciona?
+> **PREGUNTA 2 — replanteada el 9 de septiembre.** La correspondencia que
+> proponíamos aquí (`(L)` y SUL = tope duro · «key nutritional factor» con rango =
+> rango clínico · lo demás = criterio nuestro) **era nuestra, y ya no hace falta
+> inventarla**: la Tabla 2-1 de SACN5 da una escala publicada (ver PREGUNTA 3). Lo
+> que sí sigue haciendo falta es cruzar las dos cosas, porque miden cosas
+> distintas: el grado de evidencia dice **cuánto te fías del número**, y el origen
+> legal o nutricional dice **si se puede pasar**. Un límite legal de grado 4 sigue
+> siendo intocable, y una recomendación de grado 1 sigue siendo una recomendación.
+> **Lo que queda**: ¿el cruce correcto es «lo legal no se toca nunca, lo demás se
+> mueve según el grado», o hay casos donde eso no funciona?
 
-> **PREGUNTA 3.** ¿Conoces algún documento veterinario que trate
-> explícitamente **qué límites son rígidos y cuáles quedan a criterio
-> profesional**? Hemos buscado en FEDIAF 2025, NRC 2006 y SACN5 y lo más
-> cercano es lo de arriba, que es implícito. Si existe algo explícito
-> (ECVCN, WSAVA, AAHA), es lo que nos falta.
+> **PREGUNTA 3 — reducida el 9 de septiembre. Estaba en SACN5, en el capítulo 2.**
+> No es «qué se puede mover», pero sí la clasificación que falta para poder
+> discutirlo, y es explícita, publicada, veterinaria y de nutrición clínica: la
+> **Tabla 2-1, «Guidelines for quality of evidence that can be used for veterinary
+> clinical nutrition»**, adaptada del U.S. Preventive Services Task Force por
+> Roudebush et al. 2004, y que **usa el propio SACN5** para calificar sus
+> recomendaciones. Cuatro grados, literal:
+>
+> · **1** — ensayo aleatorizado y controlado, **en la especie diana y con la
+>   enfermedad desarrollada de forma natural**.
+> · **2** — ensayo aleatorizado y controlado **en laboratorio**, misma especie,
+>   enfermedad natural.
+> · **3** — estudio clínico bien diseñado **sin aleatorizar**; cohortes o casos y
+>   controles; **modelos o simulaciones** de la enfermedad en la especie diana;
+>   series de casos; resultados espectaculares de estudios no controlados.
+> · **4** — opinión basada en experiencia clínica (libros de texto, monografías,
+>   ponencias); estudios descriptivos; **estudios en otras especies**;
+>   justificación fisiopatológica; informes de comités de expertos.
+>
+> Con esa escala, cada una de las 74 cifras clínicas se puede etiquetar **sin
+> inventar nada**, derivándolo de la fuente que ya lleva escrita. Ejemplos que
+> salen solos: nuestro techo de **mercurio es grado 4** («studies conducted in
+> other species» — es una dosis humana); la **tiaminasa, grado 4**
+> («pathophysiologic justification»); los techos del perro sano, grado 4 (informe
+> de comité o libro de texto); la proteína y la fibra de obesidad, **grado 2**,
+> porque el cap.27 cita ensayos controlados de restricción energética en perro.
+>
+> **Lo que sigue siendo tuyo, y es más estrecho**: ¿un grado 4 debería poder
+> moverlo un colegiado y un grado 1 no? ¿O el grado dice cuánto te fías del
+> número, y quién lo toca es otra cosa?
 
 ---
 

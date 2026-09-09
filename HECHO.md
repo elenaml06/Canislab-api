@@ -20,6 +20,53 @@ Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 - Tope de volumen y porciones que escalan con el tamaño del perro.
 - Cobro de prueba completado de punta a punta y premium activado de verdad.
 
+## Leyendo SACN5 entero: lo aplicado de los capítulos 1, 2 y 3 — 9 de septiembre de 2026
+
+Encargo: leer los capítulos **enteros**, no las tablas. La primera tanda ya
+demuestra por qué, porque el método de conversión vive en el capítulo 1 y las
+cifras están en el 13, el 27, el 33, el 37 y el 40 — con las tablas solas la
+conversión parece obvia y no lo es.
+
+**Aplicado:**
+
+- **La transición de dieta tiene fuente**, y figuraba como «criterio nuestro,
+  declarado». Es literalmente el calendario **largo del perro** de la Tabla 1-1
+  (75/25 los días 1-3, 50/50 los 4-6, 25/75 los 7-9, 100 % el día 10), que es
+  exactamente lo que hace `transicion.py`. Y el largo es el que la fuente
+  recomienda «for situations in which the food change is known to be
+  significant», que es lo que es pasar de pienso a ración cruda.
+- **«Esto es todo lo que come» pasa a ser lo primero de «Cómo darlo».** El cap.3
+  cita el AAHA Compliance Study: «55% of pet owners who fed a therapeutic food
+  also supplemented the recommended food with other foods or treats. The primary
+  reason cited by clients was that **they didn't know not to**». Más de la mitad
+  rompe la dieta calculada sin saberlo. Lo vigila `menu-dos-pestanas.spec.js`, y
+  comprueba también que va **por encima** del aviso de congelación, porque el
+  mismo capítulo mide que el dueño recuerda «as little as half» de lo que se le
+  dice. Probado con el fallo puesto: quitando el título, se cae.
+- **Las PREGUNTAS 2 y 3 se reducen con la Tabla 2-1**, «Guidelines for quality of
+  evidence that can be used for veterinary clinical nutrition» (Roudebush et al.
+  2004, adaptada del U.S. Preventive Services Task Force). Cuatro grados, y la
+  usa el propio SACN5. La pregunta era «¿existe algo explícito?»: existe, y con
+  ella cada una de las 74 cifras clínicas se puede etiquetar sin inventar nada.
+  Nuestro techo de mercurio es grado 4 con las palabras de la propia tabla
+  («studies conducted in other species»).
+
+**Anotado y NO aplicado, porque mueve 68 cifras y hay que verificarlo tabla a
+tabla**: la densidad de referencia para convertir desde «% de materia seca» es la
+que declara la fuente, y para alimento **canino** SACN5 usa **3,5 kcal/g**, no
+4,0. Lo dice el Box 1-2 y lo repite el cap.13 dentro de su propio párrafo. Las
+cifras de FEDIAF y las del NRC sí van a 4,0 —comprobado en la propia tabla de
+FEDIAF—, así que no es un error global: es un error solo en lo que viene de
+SACN5. Detalle, ejemplos y el método trabajado del Caso 1-1, en el cuaderno de
+lectura.
+
+⚠️ **Y de paso corrige algo que estaba escrito y era falso**: que un techo
+convertido desde % de materia seca queda «un 29 % más flojo» en una ración cruda
+por ser más densa. No. El porcentaje sube o baja **con** la densidad del alimento
+a propósito, para que la cantidad por caloría se mantenga; el Caso 1-1 lo resuelve
+con números. La densidad de nuestra ración no entra en la conversión, y por eso la
+conversión sí vale para comida cruda.
+
 ## El corte de cachorro joven pasa de 4 meses a las 14 semanas de FEDIAF — resuelto el 9 de septiembre de 2026
 
 Estaba escrito en tres sitios como **diferencia declarada con FEDIAF, al lado
