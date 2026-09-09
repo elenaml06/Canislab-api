@@ -565,10 +565,31 @@ un perro pequeño el margen de apretado es más corto que el que sale aquí.
 
 ### 2.4 · Cálculos de oxalato cálcico · `oxalato`
 
-Ver §1.2. **Aplica** solo vitamina D ≤14,1875 µg, que es el máximo legal general.
-**Techo duro:** ése, y es **legal** — no lo mueve nadie.
-**Margen del profesional:** ninguno sobre lo que hay hoy, porque lo que hay hoy
-es un límite legal. Todo lo específico de la patología está sin implementar.
+Ver §1.2. **Aplica** (actualizado el 9 de septiembre): vitamina D ≤ **8,75 µg**,
+fósforo ≤1500, sodio ≤750 y magnesio ≤375, todos por 1000 kcal.
+
+- **La vitamina D bajó de 14,1875 a 8,75 el 9 de septiembre.** El 14,1875 era el
+  máximo **legal** de FEDIAF para cualquier perro, o sea que esta patología no
+  tenía tope propio de vitamina D: tenía el de todo el mundo escrito en su ficha,
+  que parece un límite y no lo es. La cifra nueva es de Fascetti cap.16, literal:
+  *«Diets with vitamin D between 250 and 350 IU/Mcal should suffice»* = 6,25-8,75
+  µg/1000 kcal, y se aplica el extremo alto, que es el techo.
+- **Medido antes de aplicarlo:** cinco perros (3, 8, 20, 30 y 55 kg) con oxalato
+  marcado dan menú en el peldaño **estricto**, con 4,08-5,72 µg reales — por
+  debajo incluso del extremo bajo del rango de la fuente.
+- **Techo duro:** por arriba sigue estando el legal (14,1875), que nadie mueve.
+  Por abajo, el mínimo de FEDIAF (3,975 en adulto).
+- **Margen del profesional:** **3,975 → 14,1875**, y el motor se queda en 8,75.
+
+**Y cuatro cosas que la fuente dice y el motor NO aplica**, escritas en
+`patologias.json` bajo `limites_escritos_que_el_solver_no_aplica` y con pregunta
+abierta en `PARA_EL_NUTRICIONISTA.md` §11-bis: la **proteína** (10-18 % MS, que
+cae entera por debajo del mínimo de FEDIAF), el **suelo** de fósforo (750) y el
+de magnesio (100), que no aplican porque los mínimos de FEDIAF ya son más altos,
+el **conflicto de fuentes del fósforo** (Fascetti dice que NO se restrinja y que
+el fósforo bajo es factor de riesgo), el **debate del sodio** (la misma fuente
+dice que el sodio bajo aumenta el riesgo) y el **ácido ascórbico**, que es una
+regla sobre ingredientes y no un número.
 
 ### 2.5 · Hepatopatía por acúmulo de cobre · `hepatopatia`
 
@@ -587,6 +608,15 @@ es un límite legal. Todo lo específico de la patología está sin implementar.
   bajo FEDIAF), **taurina ≥0,1 % = 250 mg**, **zinc >200 mg/kg = >50 mg**,
   **hierro 80-140 mg/kg = 20-35 mg** y **sodio 0,08-0,25 % = 200-625 mg**. La
   hepatopatía real está bajo el suelo nutricional en **dos** ejes, no en uno.
+- **La metionina (9 de septiembre): no hay techo que poner.** El NRC avisaba con
+  un experimento de dosis (Merino 1975: 1 g/kg cada 4 h dio signos de coma
+  hepático en perros con shunt portocava), pero **SACN5 cap.68 dice que esa vía
+  no importa** — *«these compounds do not play an important role in the
+  pathogenesis of HE»* — y que lo que hay que hacer es *«do not administer…
+  **methionine-containing products**»*. Es una **exclusión de suplementos**, no
+  un límite por nutriente. Hoy no hay nada que excluir (el catálogo no tiene
+  ficha de L-metionina); el día que entre, esta patología tiene que excluirla, y
+  está escrito en `patologias.json`.
 
 ### 2.6 · Cardiopatía · `cardiopatia`, `_b1`, `_b2`, `_c`, `_d`, `_a`
 
@@ -909,7 +939,7 @@ alimentos ricos en oxalato que hoy no existe en el catálogo.
 | Patología | Qué añadir |
 |---|---|
 | ~~renal~~ | ~~sodio ≤750~~ ✅ · potasio 1000-2000 · **proteína ≤62,5** |
-| oxalato | fósforo 750-1500 · Ca:P 1,1-2:1 · sodio <750 · magnesio 100-375 · excluir oxálico y vitamina C |
+| oxalato | vitamina D 250-350 UI/Mcal (Fascetti, aplicado 9-sep) · fósforo 750-1500 · Ca:P 1,1-2:1 · sodio <750 · magnesio 100-375 · proteína 10-18 % MS · excluir oxálico y vitamina C |
 | obesidad | ~~**proteína ≥62,5**~~ ✅ · fibra 30-62,5 · lisina ≥4,25 · L-carnitina ≥75 |
 | artrosis | ~~L-carnitina ≥75~~ ✅ · omega-3 totales ≥8,75 → **escrito y NO aplicado** (ver §1.4-bis) |
 | ~~PLE~~ | ~~**proteína ≥62,5** · fibra ≤12,5~~ ✅ |

@@ -138,7 +138,8 @@ def topes_de_patologias(patologias, etapa="Adulto"):
 
     return topes, pct_grasa, avisos, suelos
 
-def limites_de_patologias_con_procedencia(patologias, etapa="Adulto"):
+def limites_de_patologias_con_procedencia(patologias, etapa="Adulto",
+                                          peso_adulto_esperado_kg=None):
     """Los mismos límites que `topes_de_patologias`, pero cada uno sabiendo
     DE QUÉ PATOLOGÍA VIENE y con qué fuente.
 
@@ -207,7 +208,7 @@ def limites_de_patologias_con_procedencia(patologias, etapa="Adulto"):
     # investigar la fila equivocada. Solo se listan los que de verdad GANAN el
     # `min()` contra los de patología, igual que arriba.
     from recomendaciones import con_procedencia as _recom_procedencia
-    for _r in _recom_procedencia(etapa):
+    for _r in _recom_procedencia(etapa, peso_adulto_esperado_kg):
         _mismo = [x for x in fuera
                   if x["tipo"] == "tope" and x["clave"] == _r["clave"]]
         if any(x["valor"] <= _r["valor"] for x in _mismo):
@@ -230,7 +231,8 @@ def limites_de_patologias_con_procedencia(patologias, etapa="Adulto"):
 
 
 def diagnosticar_choque_de_patologias(patologias, etapa, intentar,
-                                      max_pruebas=12):
+                                      max_pruebas=12,
+                                      peso_adulto_esperado_kg=None):
     """Cuando no sale menú con varias patologías, dice QUÉ LÍMITES CHOCAN.
 
     ⚠️ POR QUÉ EXISTE (8 septiembre) — CASO REAL MEDIDO: un adulto de 25 kg
@@ -258,7 +260,8 @@ def diagnosticar_choque_de_patologias(patologias, etapa, intentar,
     `(tipo, clave)` y devuelve True si con esos límites sueltos SÍ hay menú.
     La pone quien llama, porque es quien tiene los argumentos del solver.
     """
-    limites = limites_de_patologias_con_procedencia(patologias, etapa)
+    limites = limites_de_patologias_con_procedencia(patologias, etapa,
+                                                   peso_adulto_esperado_kg)
     if len(limites) < 2:
         # Con un solo límite activo no hay dos cosas que choquen: lo que
         # falta es comida, no acuerdo. Decir «choca X consigo mismo» sería
@@ -870,7 +873,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     topes_patologia, pct_grasa_patologia, _avisos_pat, suelos_patologia = topes_de_patologias(patologias, etapa)
 
     # ⚠️ AÑADIDO (8 septiembre) — LOS TECHOS DEL PERRO ADULTO SANO. Ver
-    # `motor/recomendaciones.py` y `recomendaciones_adulto.json`: son las dos
+    # `motor/recomendaciones.py` y `recomendaciones_libro.json`: son las dos
     # únicas cifras de SACN5 que se aplican a un perro que NO tiene nada
     # (fósforo y sodio, Tabla 13-3 en adulto y 14-2 en senior).
     #
@@ -905,8 +908,15 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # un REQUISITO y el techo una RECOMENDACION. Ver el comentario largo de esa
     # funcion -- lo cazo el BLOQUE 34, y el perro al que dejaba sin menu era
     # justamente el que esta a dieta.
+    # ⚠️ Y CON `peso_adulto_esperado_kg` (9 septiembre): los techos de
+    # crecimiento de SACN5 tienen DOS columnas, la del cachorro que sera un
+    # perro de menos de 25 kg y la del que sera de mas. Sin pasarlo, el
+    # cachorro de gran danes recibe el techo de calcio del yorkshire (4250 en
+    # vez de 2750), que para el es papel mojado -- el mismo olvido que el 7 de
+    # septiembre dejo sin efecto el minimo de calcio reforzado en la via rapida.
     from recomendaciones import topes_de_la_etapa as _topes_de_la_etapa
-    for _clave_r, _valor_r in _topes_de_la_etapa(etapa, req, _der_ef).items():
+    for _clave_r, _valor_r in _topes_de_la_etapa(
+            etapa, req, _der_ef, peso_adulto_esperado_kg).items():
         _actual_r = topes_patologia.get(_clave_r)
         topes_patologia[_clave_r] = (_valor_r if _actual_r is None
                                      else min(_actual_r, _valor_r))
@@ -1401,8 +1411,10 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         #     suma(nut_i * g_i)  >=  (mn/1000) * suma(kcal_i * g_i)
         #   → suma(((mn/1000) * kcal_i - nut_i) * g_i)  <=  0
         #
-        # SOLO para los suelos de patología, y por el mismo motivo por el que
-        # el `mx_rel` de arriba solo aprieta los topes de patología: los
+        # SOLO para los suelos que se comprueban después sobre las kcal reales
+        # -- los de patología y el del calcio de raza grande --, y por el mismo
+        # motivo por el que el `mx_rel` de arriba solo aprieta los topes de
+        # patología: los
         # mínimos de FEDIAF los comprueba `verificar()` contra el DER (mira
         # `escala = der / 1000.0`), no contra las kcal reales, así que ahí no
         # hay desalineo que arreglar y meter la fila cambiaría todos los menús
@@ -1412,14 +1424,36 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # El apretón es del 0,1 %, el mismo que `mx_rel`: el filtro final
         # tolera un 0,5 % (`MARGEN_SUELO`), así que deja el mismo colchón de
         # redondeo que ya se midió suficiente para los techos.
-        # Se usa el suelo DE LA PATOLOGÍA, no `mn` -- que a estas alturas es
-        # `max(mínimo de FEDIAF, suelo de patología)`. Hoy el suelo de patología
-        # gana ese `max()` en los 32 casos, así que da el mismo número; pero si
-        # algún día no lo ganara, usar `mn` estaría imponiendo un mínimo de
-        # FEDIAF sobre las kcal reales, y eso es justo lo que este bloque dice
-        # tres párrafos más arriba que NO hay que hacer.
-        if clave in suelos_patologia:
-            mn_rel = suelos_patologia[clave] * (1 + 0.001)
+        # Se usa `minimos_reforzados`, NO `mn` -- que a estas alturas es
+        # `max(mínimo de FEDIAF, suelo de patología, calcio de raza grande)`.
+        # Usar `mn` estaría imponiendo el mínimo de FEDIAF sobre las kcal
+        # reales, y eso es justo lo que este bloque dice tres párrafos más
+        # arriba que NO hay que hacer.
+        #
+        # ⚠️ Y NO SOLO LOS DE PATOLOGÍA (9 septiembre) — TAMBIÉN EL MÍNIMO DE
+        # CALCIO REFORZADO DE LA RAZA GRANDE. Es `minimos_reforzados`, que es
+        # el `max()` de los dos, y los dos se comprueban después sobre las
+        # kcal REALES: los de patología en `_tope_patologia_roto` y el del
+        # calcio en `_minimo_calcio_raza_grande_roto` (`ca / kcal * 1000`,
+        # con las kcal del menú). O sea que el desalineado era el mismo, solo
+        # que en el calcio no se veía.
+        #
+        # CASO REAL MEDIDO, y lo destapó el techo de calcio de SACN5 de este
+        # mismo día: cachorro de raza gigante, 30 kg, DER 2400, sin vacuno.
+        # El menú salía con 2472 kcal -- un 3 % por encima de las pedidas, que
+        # la tolerancia permite -- y con 6.000 mg de calcio, que contra las
+        # kcal PEDIDAS son 2500 justos (el suelo) y contra las REALES 2427.
+        # `_garantizar_verificado` lo tiraba con «se queda corto de calcio para
+        # un cachorro de raza grande»: 2 de cada 20 cachorros de raza grande se
+        # quedaban sin menú.
+        #
+        # Antes de hoy no se notaba porque el calcio de una dieta con hueso iba
+        # sobradísimo por arriba (2618-4500 medido el 7 de septiembre) y nunca
+        # se apoyaba en su suelo. En cuanto el techo del libro lo baja a 2750,
+        # el suelo pasa a tocarse, y un desalineo del 3 % en una ventana del
+        # 10 % deja de ser teoría.
+        if clave in minimos_reforzados:
+            mn_rel = minimos_reforzados[clave] * (1 + 0.001)
             fila_rel_min = fila_vacia()
             for n in nombres:
                 kcal_n = (alimentos[n].get("energia", 0) or 0.0) / 100.0

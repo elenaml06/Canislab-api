@@ -762,3 +762,49 @@ sistemática (no es uno de los 41 nutrientes del perfil). Hay tablas específica
 en la literatura de urolitiasis humana. Es el mismo caso que las purinas, que ya
 viven en el catálogo con su `purinas_fuente` propia: **la procedencia vive en la
 ficha, no en una lista central**.
+
+---
+
+## El retinol y el β-caroteno, por separado (9 de septiembre de 2026)
+
+**Por qué hace falta, en una línea:** hoy cada ficha trae una sola columna
+`vitA` en µg, y **no está escrito qué son esos microgramos**. Pueden ser retinol
+solo, equivalentes de retinol europeos (β-caroteno ÷ 6) o RAE americanos
+(÷ 12), y contrastando contra USDA se ve que **las fichas mezclan los tres**:
+zanahoria 1.346 (= ÷ 6), boniato 667 (= RAE), rúcula 596 (que no es ni lo uno
+ni lo otro).
+
+**Y ahora sabemos contra qué hay que compararlo.** FEDIAF 2025, Tabla VII-14
+(«Conversion factors – Vitamin source to activity»), fila literal:
+
+> Provitamin A (β-carotene) **(dogs)** — 1.0 mg = **833 IU**
+
+Con el retinol a 0,3 µg = 1 IU en la misma tabla, eso son **1 mg de β-caroteno
+= 250 µg de equivalentes de retinol**: un factor de **4 a 1**. Más generoso que
+el 6:1 europeo y que el 12:1 americano.
+
+O sea que **una ficha calculada con ÷ 6 declara un 33 % menos** de lo que FEDIAF
+le contaría a un perro, y una con RAE, **un 67 % menos**. Y el NRC 2006 confirma
+la parte cualitativa: *«only dogs have the ability to use carotenoid precursors
+of vitamin A»*.
+
+**Qué falta**, y es un dato, así que **no lo rellena el asistente**:
+
+- `retinol` (µg/100 g de alimento tal cual): el retinol preformado, que es lo
+  que traen vísceras, huevo, lácteos y suplementos;
+- `betacaroteno` (µg/100 g): lo que traen verduras y frutas;
+- con su fuente por ficha, como el resto del catálogo. USDA los publica los dos
+  por separado (`Retinol` y `Carotene, beta`); BEDCA también.
+
+**Qué se gana cuando estén.** Que `vitA` se calcule como
+`retinol + β-caroteno / 4` con el factor de la propia FEDIAF, en vez de heredar
+el convenio de la base de datos de la que salió cada ficha. Hoy **el 83 % de la
+vitamina A de los 216 menús precalculados viene de verduras y frutas** —o sea de
+caroteno— y **103 de los 216 no llegarían al mínimo si el caroteno no contara**:
+es la columna que más depende de un convenio que no está escrito.
+
+**Y una cosa que sí se puede decir ya:** contra el TECHO esto va del lado
+seguro. La toxicidad de la vitamina A es del **retinol preformado**, no del
+β-caroteno, así que un menú cuya vitamina A venga de zanahoria no se acerca al
+máximo aunque el número lo parezca. Eso es información que la ficha verificada
+debería dar y hoy no da.

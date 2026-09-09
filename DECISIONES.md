@@ -908,7 +908,7 @@ peldaño 0. **No cuesta nada y arregla algo.**
 
 ### Dónde vive, y por qué no en ninguno de los dos ficheros que ya había
 
-En **`recomendaciones_adulto.json`**, con `motor/recomendaciones.py` de
+En **`recomendaciones_libro.json`**, con `motor/recomendaciones.py` de
 cargador. Es un tercer fichero de datos a propósito:
 
 - En `requerimientos_v2_final.json` no, porque ese fichero **es** la Tabla III-3b
@@ -932,10 +932,12 @@ de hoy, comprobando uno a uno que sale verde antes de guardarlo.
 
 ### Lo que NO se aplica, y por qué
 
-**En crecimiento, gestación y lactancia, nada.** No es un olvido: el mínimo de
-fósforo que FEDIAF exige a un cachorro joven son **2250**, por encima del techo
-del adulto. Aplicárselo no sería un techo, sería dejarlo sin menú. Esas etapas
-tienen además sus propias tablas en SACN5 (17-1, 33-5, 15-5) con otros números.
+**En crecimiento, gestación y lactancia, este techo no.** No es un olvido: el
+mínimo de fósforo que FEDIAF exige a un cachorro joven son **2250**, por encima
+del techo del adulto. Aplicárselo no sería un techo, sería dejarlo sin menú.
+Esas etapas tienen además sus propias tablas en SACN5 (17-1, 33-5, 15-5) con
+otros números — **las dos primeras se aplicaron al día siguiente, y están en la
+D-16**.
 
 ### Lo que la batería encontró al aplicarlo, y que no estaba previsto
 
@@ -990,3 +992,113 @@ aplique de verdad, que el filtro final la vea aunque no haya ninguna patología
 marcada, y que no se aplique en crecimiento. Probado con el fallo puesto: se
 cuadruplica el hueso de un menú de adulto sano y el filtro final tiene que
 cazarlo.
+
+
+---
+
+## D-16 · El cachorro de raza grande comía un 64 % más de calcio del que dicen sus fuentes
+
+**9 de septiembre de 2026.** Es el hallazgo más urgente de toda la lectura de
+fuentes, y el que más se parece a un daño real y no a un número feo.
+
+### Lo que pasaba
+
+El motor le daba a un cachorro de raza grande el calcio que le permite FEDIAF,
+que en crecimiento tardío son 4500 mg/1000 kcal. Medido por la vía de la API, en
+el peldaño estricto, antes de tocar nada:
+
+| perro | calcio | % materia seca |
+|---|---|---|
+| labrador (32 kg de adulto), 15 kg, DER 1300 | 4489 | 1,80 % |
+| gran danés (55 kg), 25 kg, DER 2000 | 4500 | 1,80 % |
+| pastor alemán (35 kg), 18 kg, DER 1500 | 4054 | 1,62 % |
+
+Los tres **en verde**: 4500 es exactamente el máximo de FEDIAF. El semáforo no
+tenía nada que decir.
+
+### Lo que dicen las fuentes
+
+- **SACN5 Tabla 17-1** parte sus columnas en 25 kg de peso adulto esperado y a
+  la de «>25 kg» le da «Calcium (%) **0.8-1.2**» y «Phosphorus (%) **0.6-1.1**».
+- **SACN5 Tabla 33-5**, la del cachorro de raza grande y gigante, repite
+  «Calcium 0.8 to 1.2 %», y el capítulo define la población: *«large- and
+  giant-breed puppies (>25 kg adult weight)»*.
+- **Fascetti cap.10** aprieta el techo, literal: *«In order to prevent
+  panosteitis, a diet designed for young dogs of large breeds with a calcium
+  content no greater than 1.1% dm should be fed during the growth period»*.
+
+Se aplica **1,1 % = 2750 mg/1000 kcal**, que es el más estricto de los dos y
+cae dentro del rango del otro. Y **2750 también el fósforo**, de la 17-1.
+
+**Por qué importa y no es cosmético:** el cachorro de raza grande no regula su
+absorción de calcio como el adulto. SACN5 cap.33 trae la Figura 33-6 —dos
+hermanos de camada de gran danés, con 1,1 % y con 3,3 % de calcio, y el segundo
+con crecimiento pobre y deformidad angular de los miembros— y la Tabla 33-4
+resume los factores de riesgo de enfermedad ortopédica del desarrollo.
+
+### Y el fósforo del cachorro no tenía techo ninguno
+
+Al transcribir la Tabla 17-1 salió lo segundo: **FEDIAF no da máximo de fósforo
+en crecimiento**. Es el mismo agujero que motivó la D-15 en adulto, un piso más
+abajo. Se tapa con el único número canino con fuente que existe: **3250** al
+cachorro de menos de 25 kg de adulto, **2750** al de más.
+
+### El umbral son 25 kg, y NO son los 15 de FEDIAF
+
+`RAZA_GRANDE_O_GIGANTE_KG = 15` sale de las notas a y b de la Tabla III-3b de
+FEDIAF y decide otras dos cosas: el mínimo de calcio reforzado (2500) y el techo
+del ratio Ca:P (1,6). Los 25 kg son el corte de SACN5 para la enfermedad
+ortopédica del desarrollo. **Dos fuentes, dos poblaciones, dos números.**
+Unificarlos sería inventarse uno de los dos, y hay un comentario en
+`motor/recomendaciones.py` y otro en el propio JSON para que nadie los «arregle».
+
+### Medido después de aplicarlo
+
+Veinte cachorros de raza grande y gigante (Grande 32 kg y Gigante 55 kg de
+adulto, crecimiento temprano y tardío) por cinco configuraciones cada uno:
+
+```
+SIN MENÚ ........ 0 de 20
+peldaño ......... estricto los 20, sin soltar ni una proporción de BARF
+calcio .......... 2463 a 2748 (1,0 a 1,1 % MS), techo 2750
+fósforo ......... 1839 a 2708, techo 2750
+```
+
+Y el techo del cachorro pequeño también aprieta de verdad: un beagle de 18 kg de
+adulto sale a **3247** de fósforo contra su techo de 3250.
+
+### Lo que destapó, que es lo de siempre
+
+**El mínimo de calcio reforzado se exigía sobre las kcal pedidas y se comprobaba
+sobre las reales.** El solver ponía la fila absoluta (2500 × DER/1000) y
+`_minimo_calcio_raza_grande_roto` medía `calcio / kcal_reales × 1000`. Con la
+tolerancia del 3 %, un menú de 2400 kcal pedidas que sale a 2472 con 6000 mg de
+calcio da 2500 por un lado y 2427 por el otro.
+
+Antes no se notaba porque el calcio iba sobradísimo y nunca se apoyaba en su
+suelo. Con el techo en 2750 la ventana pasa a ser del 10 %: **2 de cada 20
+cachorros de raza grande se quedaban sin menú**. Arreglado con la fila relativa
+que ya tenían los suelos de patología. Después, 20 de 20.
+
+Es el **tercer fallo de esta familia en dos días** —dos sitios que calculan lo
+mismo de dos maneras— y los tres se han arreglado igual: que uno lea al otro.
+
+### Lo que costó
+
+Los 216 menús precalculados hubo que regenerarlos: los de `Grande_` y
+`Gigante_` en crecimiento estaban entre 3884 y 4520 de calcio. Y
+`regenerar_catalogo.py` **no le pasaba al motor el peso adulto esperado**, así
+que medía el calcio de un gran danés contra el techo del yorkshire — el mismo
+fallo que su propio docstring cuenta que ya pasó con `margenes_categoria`.
+Ahora el peso adulto de cada tamaño se lee del propio catálogo, no se escribe a
+mano.
+
+### Cómo se vigila
+
+**BLOQUE 57** para las cifras (la conversión rehecha desde el %MS, que ninguna
+entre sin pasar por la lista del test, que la sección de raza grande solo pueda
+apretar, y que el corte siga en 25 kg) y **BLOQUE 62** de punta a punta: seis
+cachorros de raza grande por la vía de la API, verdes y por debajo de 2750, en
+el peldaño estricto. Probado con el fallo puesto: se triplica el hueso de un
+menú bueno y el filtro final tiene que cazarlo — y **sin** el peso adulto no
+tiene que saltar, que es justo el olvido que ese parámetro existe para evitar.

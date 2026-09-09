@@ -1427,8 +1427,12 @@ _CIFRAS_CON_FUENTE = [
      "SACN5 Tabla 67-3: «Fat <=15% for non-obese and non-hypertriglyceridemic dogs»"),
     ("pancreatitis", "topes_por_1000kcal", "proteina", 75.0, ("pct_ms", 30),
      "SACN5 Tabla 67-3: «Protein 15 to 30% for dogs», extremo alto"),
-    ("oxalato", "topes_por_1000kcal", "vitD", 14.1875, ("directo", None),
-     "maximo LEGAL de FEDIAF (Reg. UE 2017/1492): 227 UI x 2,5 = 567,5 UI = 14,1875 ug"),
+    ("oxalato", "topes_por_1000kcal", "vitD", 8.75, ("directo", None),
+     "Fascetti cap.16: «Diets with vitamin D between 250 and 350 IU/Mcal should suffice» = "
+     "6,25-8,75 ug/1000 kcal (1 ug = 40 UI). Se aplica el extremo alto, que es el techo. "
+     "APRETADO 9-sep-2026: antes era 14,1875, que es el maximo LEGAL de FEDIAF para cualquier "
+     "perro -- o sea que esta patologia no tenia tope propio de vitamina D. Medido: cinco "
+     "perros (3, 8, 20, 30 y 55 kg) dan menu en el peldano estricto, con 4,08-5,72 ug reales"),
     ("oxalato", "topes_por_1000kcal", "sodio", 750.0, ("pct_ms", 0.3),
      "SACN5 Tabla 40-5: «Dietary sodium should be <0.3% DM»"),
     ("oxalato", "topes_por_1000kcal", "fosforo", 1500.0, ("pct_ms", 0.6),
@@ -1604,6 +1608,63 @@ _CIFRAS_CON_FUENTE = [
      "SACN5 Tabla 37-9: «Omega-6:omega-3 fatty acid ratio of 1:1 to 7:1». NO SE APLICA: el NRC 2006 cap.5 dice que el ratio n-6:n-3 TOTAL «is not helpful» y recomienda en su lugar el linoleico:linolenico, que el motor si aplica"),
     ("reaccion_adversa_alimento", "limites_escritos_que_el_solver_no_aplica", "proteina", 55.0, ("pct_ms", 22),
      "SACN5 Tabla 31-3, perros: «protein should be 16 to 22% DM», techo. NO SE APLICA: la fuente dice «dermatologic cases only» y el motor no sabe si este perro es de piel o de intestino"),
+
+    # --- 9 de septiembre: lo que las fuentes dicen y el motor NO puede aplicar,
+    #     escrito igual. La regla es de Elena y es la buena: que gane hoy el
+    #     limite legal o el minimo de FEDIAF no hace que el numero de la fuente
+    #     deje de existir -- si manana cambia el que gana, este tiene que estar
+    #     aqui y no haber que volver a encontrarlo.
+    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "proteina", 45.0, ("pct_ms", 18),
+     "SACN5 Tabla 40-5: «Restrict dietary protein to 10 to 18% dry matter» = 25-45 g/1000 kcal. "
+     "NO SE APLICA porque el techo ENTERO cae por debajo del minimo de FEDIAF (52,1): no hay "
+     "ningun numero que cumpla las dos cosas. Solo un colegiado puede bajar de FEDIAF (fase 4)"),
+    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "suelo_fosforo_750", 750.0,
+     ("pct_ms", 0.3),
+     "SACN5 Tabla 40-5: «Dietary phosphorus should be in the range of 0.3 to 0.6% DM». El techo "
+     "(1500) si se aplica; este es el SUELO del mismo rango, y no se aplica porque el minimo de "
+     "FEDIAF (1160) ya es mas alto y gana siempre"),
+    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "suelo_magnesio_100", 100.0,
+     ("pct_ms", 0.04),
+     "SACN5 Tabla 40-5: «Dietary magnesium should be in the range of 0.04 to 0.15% DM». El techo "
+     "(375) si se aplica; el suelo no, porque el minimo de FEDIAF (200) ya es mas alto"),
+    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "fosforo_conflicto_de_fuentes", None,
+     ("directo", None),
+     "SIN CIFRA A PROPOSITO: las dos fuentes dicen lo contrario. SACN5 Tabla 40-5 pone el "
+     "fosforo como TECHO (0,3-0,6 % MS) y Fascetti cap.16 dice literalmente «Dietary phosphorus "
+     "should not be restricted with calcium oxalate urolithiasis. Low dietary phosphorus is a "
+     "risk factor». Se queda el techo de SACN5 y el conflicto va como pregunta al nutricionista"),
+    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "sodio_debate_abierto", None,
+     ("directo", None),
+     "SIN CIFRA A PROPOSITO: Fascetti cap.16 dice que el sodio bajo AUMENTA el riesgo y que las "
+     "concentraciones recomendadas «is debated», con dietas comerciales de 0,4 a 3,5 g/Mcal. Un "
+     "rango de casi diez veces no cambia un limite que hoy si tiene cifra (750, SACN5)"),
+    ("oxalato", "limites_escritos_que_el_solver_no_aplica", "acido_ascorbico", None,
+     ("directo", None),
+     "SIN CIFRA PORQUE NO ES UN NUMERO: SACN5 Tabla 40-5 dice «Avoid pet foods, supplements or "
+     "human foods that contain ascorbic acid» (es precursor del oxalato). Es una regla sobre "
+     "ingredientes, y falta la revision de etiquetas de los suplementos del catalogo"),
+    ("dermatosis_zinc", "limites_escritos_que_el_solver_no_aplica", "zinc_100_con_linoleico_15",
+     100.0, ("directo", 100.0),
+     "Fascetti cap.14 citando a NRC 2006: «The combination of zinc (100 mg/1000 kcal) and "
+     "linoleic acid (15 g/1000 kcal) produced statistically significant improvements in coat "
+     "gloss and decreased TEWL». NO CABE, medido: con el zinc en 100 no sale menu a ningun peso, "
+     "ni con 60, 75 o 90; y ademas 100 esta POR ENCIMA del maximo LEGAL de la UE (56,75)"),
+    ("cancer_soporte", "limites_escritos_que_el_solver_no_aplica", "ratio_omega6_omega3", 1.0,
+     ("directo", 1.0),
+     "SACN5 cap.30: «an omega-6:omega-3 fatty acid ratio approximating 1:1». NO SE APLICA por lo "
+     "mismo que el de la renal: el NRC 2006 dice que el ratio de TOTALES «is not helpful» y "
+     "recomienda en su lugar el linoleico:linolenico, que el motor si aplica"),
+    ("artrosis", "limites_escritos_que_el_solver_no_aplica", "ratio_omega6_omega3", 1.0,
+     ("directo", 1.0),
+     "SACN5 cap.34: «The omega-6 to omega-3 fatty acid ratio should be less than 1:1». Mismo "
+     "motivo que el de la renal y el del cancer: el NRC 2006 dice que ese ratio no sirve"),
+    ("hepatopatia", "limites_escritos_que_el_solver_no_aplica", "metionina", None,
+     ("directo", None),
+     "SIN CIFRA PORQUE LA FUENTE DICE QUE NO HACE FALTA UN TECHO DIETETICO. SACN5 cap.68: la via "
+     "de los mercaptanos «do not play an important role in the pathogenesis of HE», y lo que si "
+     "manda es «Do not administer ... methionine-containing products» -- una regla de exclusion "
+     "de suplementos, no un limite por nutriente. Cuando entre la ficha de L-metionina al "
+     "catalogo, hepatopatia tiene que excluirla"),
 ]
 
 # Vista por patología, para que el BLOQUE 13 no reescriba los números.
@@ -6391,7 +6452,7 @@ _CRUCES_46 = [
     (["renal", "pancreatitis"],      "fosforo Y grasa a la vez"),
     (["cardiopatia_c"],              "sodio apretado"),
     (["renal", "cardiopatia_c"],     "fosforo y sodio: dos minerales a la vez"),
-    (["oxalato"],                    "vitamina D topada al maximo legal"),
+    (["oxalato"],                    "vitamina D topada a 8,75 (Fascetti cap.16)"),
     (["diabetes", "obesidad"],       "dos metabolicas juntas"),
     (["hiperlipidemia"],             "suelo de fibra, que empuja al reves que los topes"),
     (["pancreatitis", "hiperlipidemia"], "grasa por arriba y fibra por abajo"),
@@ -6927,6 +6988,21 @@ for _p, _tipo, _nut, _esperado, _origen, _cita in _CIFRAS_CON_FUENTE:
                       f"Lo pedía: {_cita}")
         continue
     _real = _bloque[_nut]["valor"]
+    # ⚠️ HAY FILAS SIN CIFRA A PROPOSITO (9 septiembre), y no son un hueco: son
+    # las que la fuente enuncia sin cuantificar, o las que dos fuentes dicen al
+    # reves. Se escriben para poder auditarlas y para no volver a
+    # «descubrirlas» dentro de seis meses -- mismo patron que las tres
+    # `documentado_sin_cifra` de `requisitos_condicionales.json`. Lo que se
+    # exige es que sigan sin cifra Y que expliquen por que.
+    if _esperado is None:
+        if _real is not None:
+            fallos.append(f"BLOQUE55: {_p}.{_tipo}.{_nut} estaba escrito SIN cifra a proposito "
+                          f"y ahora vale {_real}. Si se le ha encontrado un numero, muevelo al "
+                          f"bloque que corresponda y cambialo tambien aqui — {_cita}")
+        if len((_bloque[_nut].get("por_que") or "")) < 80:
+            fallos.append(f"BLOQUE55: {_p}.{_tipo}.{_nut} no tiene cifra y tampoco explica por "
+                          f"que. Una fila sin numero y sin motivo no se puede auditar")
+        continue
     if abs(_real - _esperado) > 1e-9:
         fallos.append(f"BLOQUE55: {_p}.{_tipo}.{_nut} vale {_real} y su fuente "
                       f"dice {_esperado} — {_cita}. Si el cambio es a propósito y "
@@ -7103,55 +7179,120 @@ import json as _json_b57
 from recomendaciones import topes_de_la_etapa as _topes_b57, CRUDO as _CRUDO_B57
 from verificar import MAPA as _MAPA_B57
 
-# (etapa, nutriente, valor, % de materia seca de la fuente, cita literal)
+# (etapa, peso adulto esperado, nutriente, valor, % de materia seca, cita literal)
+#
+# El peso adulto es None cuando la cifra vale para cualquier perro de esa etapa,
+# y un numero cuando sale de la columna «>25 kg» de SACN5.
 _CIFRAS_B57 = [
-    ("Adulto", "fosforo", 2000.0, 0.8,
+    ("Adulto", None, "fosforo", 2000.0, 0.8,
      "SACN5 Tabla 13-3, «Phosphorus (%) 0.4 to 0.8» en las dos columnas. Techo"),
-    ("Adulto", "sodio", 1000.0, 0.4,
+    ("Adulto", None, "sodio", 1000.0, 0.4,
      "SACN5 Tabla 13-3, «Sodium (%) 0.2 to 0.4» en las dos columnas. Techo"),
-    ("Senior", "fosforo", 1750.0, 0.7,
+    ("Senior", None, "fosforo", 1750.0, 0.7,
      "SACN5 Tabla 14-2, «Phosphorus (%) 0.3 to 0.7». Techo. Mas estricto que el "
      "del adulto joven, y el capitulo dice por que: el perro maduro tiene mas "
      "riesgo de enfermedad renal cronica subclinica"),
-    ("Senior", "sodio", 1000.0, 0.4,
+    ("Senior", None, "sodio", 1000.0, 0.4,
      "SACN5 Tabla 14-2, «Sodium (%) 0.15 to 0.4». Techo, el mismo que en adulto"),
+    # --- crecimiento (9 septiembre) ---------------------------------------
+    ("CachorroJoven", None, "calcio", 4250.0, 1.7,
+     "SACN5 Tabla 17-1, «Calcium (%) 0.7-1.7» en la columna «Puppies with an "
+     "adult BW <25 kg». Techo"),
+    ("CachorroJoven", None, "fosforo", 3250.0, 1.3,
+     "SACN5 Tabla 17-1, «Phosphorus (%) 0.6-1.3» en la columna «<25 kg». Techo, "
+     "y es el UNICO que tiene un cachorro: FEDIAF no da maximo de fosforo en "
+     "crecimiento"),
+    ("CachorroCrecimiento", None, "calcio", 4250.0, 1.7,
+     "SACN5 Tabla 17-1, «Calcium (%) 0.7-1.7», columna «<25 kg». Techo"),
+    ("CachorroCrecimiento", None, "fosforo", 3250.0, 1.3,
+     "SACN5 Tabla 17-1, «Phosphorus (%) 0.6-1.3», columna «<25 kg». Techo"),
+    ("CachorroJoven", 25.0, "calcio", 2750.0, 1.1,
+     "Fascetti & Delaney 2a ed. cap.10, literal: «a diet designed for young dogs "
+     "of large breeds with a calcium content no greater than 1.1% dm should be "
+     "fed during the growth period». Cae dentro del 0,8-1,2 % de la Tabla 33-5 "
+     "de SACN5 y ademas cumple el techo de Fascetti, asi que manda el 1,1"),
+    ("CachorroJoven", 25.0, "fosforo", 2750.0, 1.1,
+     "SACN5 Tabla 17-1, «Phosphorus (%) 0.6-1.1» en la columna «adult BW >25 kg»"),
+    ("CachorroCrecimiento", 25.0, "calcio", 2750.0, 1.1,
+     "Fascetti & Delaney 2a ed. cap.10 («no greater than 1.1% dm»), dentro del "
+     "0,8-1,2 % de la Tabla 33-5 de SACN5"),
+    ("CachorroCrecimiento", 25.0, "fosforo", 2750.0, 1.1,
+     "SACN5 Tabla 17-1, «Phosphorus (%) 0.6-1.1», columna «>25 kg»"),
 ]
 
-# 1. La conversión, rehecha por el test. Los dos van en mg, así que %MS x 2500.
-for _et, _nut, _val, _pct, _cita in _CIFRAS_B57:
+# 1. La conversión, rehecha por el test. Todos van en mg, así que %MS x 2500.
+for _et, _padu57, _nut, _val, _pct, _cita in _CIFRAS_B57:
     _calc = _pct * 2500.0
     if abs(_calc - _val) > 0.01:
         fallos.append(f"BLOQUE57 conversion: {_et}.{_nut} esta escrito como {_val} pero su "
                       f"fuente da {_pct} % de materia seca, que a 4000 kcal/kg son {_calc}. "
                       f"Uno de los dos esta mal - {_cita}")
-    _real = _topes_b57(_et).get(_nut)
+    _real = _topes_b57(_et, peso_adulto_esperado_kg=_padu57).get(_nut)
     if _real is None:
         fallos.append(f"BLOQUE57: {_et}.{_nut} ha DESAPARECIDO de "
-                      f"recomendaciones_adulto.json. Lo pedia: {_cita}")
+                      f"recomendaciones_libro.json. Lo pedia: {_cita}")
     elif abs(_real - _val) > 1e-9:
-        fallos.append(f"BLOQUE57: {_et}.{_nut} vale {_real} y su fuente dice {_val} - {_cita}")
+        fallos.append(f"BLOQUE57: {_et}.{_nut} (peso adulto {_padu57}) vale {_real} y su fuente "
+                      f"dice {_val} - {_cita}")
 
-# y al revés: ninguna cifra nueva sin pasar por esta lista
-_declaradas_b57 = {(a, b) for a, b, _, _, _ in _CIFRAS_B57}
-for _et57, _f57 in (_CRUDO_B57.get("por_etapa") or {}).items():
-    for _nut57 in (_f57.get("topes_por_1000kcal") or {}):
-        if (_et57, _nut57) not in _declaradas_b57:
-            fallos.append(f"BLOQUE57: {_et57}.{_nut57} es una cifra NUEVA que no esta en la "
-                          f"lista de este bloque. Añadela con la cita literal de su fuente")
-        _t57 = (_f57["topes_por_1000kcal"][_nut57])
+# y al revés: ninguna cifra nueva sin pasar por esta lista. Se recorren las dos
+# secciones -- la general y la de raza grande --, porque una cifra escondida en
+# la segunda decide el calcio de un cachorro de gran danes.
+_declaradas_b57 = {(a, b, c) for a, b, c, _, _, _ in _CIFRAS_B57}
+
+
+def _revisar_seccion_b57(etapa, seccion, peso_adulto):
+    for _nut57, _t57 in (seccion.get("topes_por_1000kcal") or {}).items():
+        if (etapa, peso_adulto, _nut57) not in _declaradas_b57:
+            fallos.append(f"BLOQUE57: {etapa}.{_nut57} (peso adulto {peso_adulto}) es una cifra "
+                          f"NUEVA que no esta en la lista de este bloque. Añadela con la cita "
+                          f"literal de su fuente")
         if not _t57.get("fuente") or not _t57.get("por_que"):
-            fallos.append(f"BLOQUE57: {_et57}.{_nut57} no trae fuente o no trae por_que")
+            fallos.append(f"BLOQUE57: {etapa}.{_nut57} no trae fuente o no trae por_que")
         if _nut57 not in set(_MAPA_B57.values()):
             fallos.append(f"BLOQUE57: la clave '{_nut57}' NO esta en verificar.MAPA -- el solver "
                           f"nunca la mirara y el menu saldra verde igual")
 
-# 2. En crecimiento NO se aplica ninguno, y no es un olvido.
-for _et57 in ("CachorroJoven", "CachorroCrecimiento", "Gestante", "GestanteTardia", "Lactante"):
-    if _topes_b57(_et57):
-        fallos.append(f"BLOQUE57: la etapa {_et57} ha ganado un techo del perro ADULTO. El "
-                      f"minimo de fosforo que FEDIAF exige a un cachorro joven (2250) esta POR "
-                      f"ENCIMA del techo del adulto (2000): aplicarselo no seria un techo, seria "
-                      f"dejarlo sin menu.")
+
+for _et57, _f57 in (_CRUDO_B57.get("por_etapa") or {}).items():
+    _revisar_seccion_b57(_et57, _f57, None)
+    _gr57 = _f57.get("si_peso_adulto_esperado_supera_kg")
+    if _gr57:
+        if not _gr57.get("umbral_kg") or not _gr57.get("por_que_ese_umbral"):
+            fallos.append(f"BLOQUE57: {_et57} tiene seccion de raza grande sin umbral escrito o "
+                          f"sin decir de donde sale ese umbral")
+        _revisar_seccion_b57(_et57, _gr57, _gr57.get("umbral_kg"))
+        # la seccion de raza grande solo puede APRETAR
+        for _nut57, _t57 in (_gr57.get("topes_por_1000kcal") or {}).items():
+            _gen57 = ((_f57.get("topes_por_1000kcal") or {}).get(_nut57) or {}).get("valor")
+            if _gen57 is not None and _t57["valor"] > _gen57:
+                fallos.append(f"BLOQUE57: el techo de raza grande de {_et57}.{_nut57} "
+                              f"({_t57['valor']}) AFLOJA el general ({_gen57}). Estos topes se "
+                              f"combinan con min(): solo pueden apretar")
+
+# 2. Gestacion y lactancia siguen sin ninguno, y NO es un olvido: SACN5 les da
+#    su propia tabla (la 15-5) que todavia no se ha transcrito. Que devuelvan
+#    vacio es el lado seguro, pero tiene que seguir siendo visible.
+for _et57 in ("Gestante", "GestanteTemprana", "GestanteTardia", "Lactante"):
+    if _topes_b57(_et57) or _topes_b57(_et57, peso_adulto_esperado_kg=60.0):
+        fallos.append(f"BLOQUE57: la etapa {_et57} ha ganado un techo del libro. Si se ha "
+                      f"transcrito la Tabla 15-5 de SACN5, este bloque tiene que saberlo; si "
+                      f"lo que ha pasado es que se le esta aplicando el de otra etapa, es un "
+                      f"fallo.")
+
+# 2-bis. Y el techo del ADULTO no puede aparecer en crecimiento: el minimo de
+#        fosforo de un cachorro joven (2250) esta por encima de 2000 y
+#        aplicarselo no seria un techo, seria dejarlo sin menu.
+for _et57 in ("CachorroJoven", "CachorroCrecimiento"):
+    if _topes_b57(_et57).get("sodio") is not None:
+        fallos.append(f"BLOQUE57: {_et57} ha ganado el techo de SODIO del adulto, que no sale "
+                      f"de ninguna tabla de cachorro")
+    for _padu57, _esperado57 in ((None, 3250.0), (10.0, 3250.0), (30.0, 2750.0)):
+        _p57 = _topes_b57(_et57, peso_adulto_esperado_kg=_padu57).get("fosforo")
+        if _p57 != _esperado57:
+            fallos.append(f"BLOQUE57: {_et57} con peso adulto {_padu57} da un techo de fosforo "
+                          f"de {_p57} y tenia que ser {_esperado57}. El corte son 25 kg (SACN5 "
+                          f"cap.33: «large- and giant-breed puppies (>25 kg adult weight)»)")
 
 # 3. Que el SOLVER los aplique y que el FILTRO FINAL los vea. Se resuelve un
 #    menú de adulto sano de verdad y se mide, que es lo único que lo demuestra.
@@ -7643,7 +7784,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 # se cruzaron:
 #
 #   · Tabla 35-3 (disfuncion cognitiva) .... vitamina E >= 187,5 mg/1000 kcal
-#   · recomendaciones_adulto.json (SACN5) .. fosforo <= 2000 mg/1000 kcal
+#   · recomendaciones_libro.json (SACN5) .. fosforo <= 2000 mg/1000 kcal
 #
 # Cada una cabe. JUNTAS NO: para llegar a 187,5 mg de vitamina E hay que cargar
 # de verdura y de higado, y eso sube el fosforo por encima de 2000. Resultado:
@@ -7726,6 +7867,180 @@ for _pat61 in _EXCEPCIONES_61:
                       f"alarma apagada")
 
 print(f"  {len(_FORMULABLES_61)} patologias formulables, {len(_sin_menu_61)} sin menu")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 62 — EL TECHO DE CALCIO DEL CACHORRO DE RAZA GRANDE
+# ============================================================
+#
+# POR QUÉ EXISTE (9 septiembre)
+#
+# Hasta hoy el motor le daba a un cachorro de raza grande el calcio que le
+# permite FEDIAF, que en crecimiento tardío son 4500 mg/1000 kcal. Medido antes
+# de tocar nada, por la vía de la API y en el peldaño estricto:
+#
+#     labrador (32 kg de adulto), 15 kg, DER 1300 ....... 4489  (1,80 % MS)
+#     gran danés (55 kg), 25 kg, DER 2000 ............... 4500  (1,80 % MS)
+#     pastor alemán (35 kg), 18 kg, DER 1500 ............ 4054  (1,62 % MS)
+#
+# Y las dos fuentes caninas que hablan de esto dicen la mitad: SACN5 Tabla 17-1
+# y Tabla 33-5 dan «Calcium 0.8 to 1.2 %» de materia seca para el cachorro de
+# más de 25 kg de adulto, y Fascetti cap.10 aprieta el techo a 1,1 % «in order
+# to prevent panosteitis». 1,1 % son 2750 mg/1000 kcal.
+#
+# No es un número feo en una ficha: el cachorro de raza grande no regula su
+# absorción de calcio como el adulto, y el exceso da enfermedad ortopédica del
+# desarrollo. SACN5 cap.33 trae la foto de dos hermanos de camada de gran danés
+# alimentados con 1,1 % y con 3,3 %, y el segundo con deformidad angular.
+#
+# Este bloque comprueba las cuatro cosas que pueden romperse:
+#   1. Que el techo SE APLIQUE: un menú real de cachorro de raza grande, por la
+#      vía de la API, tiene que salir verde Y por debajo de 2750.
+#   2. Que sea un techo y no un MURO: tiene que salir menú en el peldaño
+#      estricto, también con las exclusiones más comunes.
+#   3. Que el filtro final lo vea (inflar el hueso de un menú bueno tiene que
+#      hacerlo saltar). Un test que pasa con el fallo puesto no sirve.
+#   4. Que NO se le aplique al cachorro de raza pequeña, que tiene otra columna:
+#      aplicárselo sería inventarse un número que su fuente no le pone.
+print("\n=== BLOQUE 62: el techo de calcio del cachorro de raza grande ===")
+
+from fastapi.testclient import TestClient as _TC_b62
+import main as _api_b62
+from main import tabla_imputacion_maximos as _tabla_max_b62, valor_para_maximo as _v_max_b62
+
+_c62 = _TC_b62(_api_b62.app, raise_server_exceptions=False)
+_T62 = _tabla_max_b62(al)
+
+
+def _por_1000_b62(gramos, clave):
+    """El nutriente por 1000 kcal REALES, imputando huecos -- exactamente como
+    lo mide `_tope_patologia_roto`, que es quien decide si el menú sale."""
+    _kcal = sum((al.get(n, {}).get("energia", 0) or 0) / 100.0 * g
+                for n, g in gramos.items())
+    _tot = sum(_v_max_b62(al.get(n, {}), clave, _T62)[0] / 100.0 * g
+               for n, g in gramos.items())
+    return _tot / _kcal * 1000.0 if _kcal else 0.0
+
+
+# (nombre, etapa, peso hoy, DER, peso adulto esperado, exclusiones)
+_CASOS_B62 = [
+    ("gran danes tardio", "CachorroCrecimiento", 25.0, 2000.0, 55.0, []),
+    ("gran danes temprano", "CachorroJoven", 12.0, 1400.0, 55.0, []),
+    ("labrador tardio", "CachorroCrecimiento", 15.0, 1300.0, 32.0, []),
+    ("labrador temprano", "CachorroJoven", 9.0, 950.0, 32.0, []),
+    ("pastor aleman sin pollo", "CachorroCrecimiento", 18.0, 1500.0, 35.0, ["pollo"]),
+    ("gigante sin vacuno", "CachorroCrecimiento", 30.0, 2400.0, 55.0, ["vacuno"]),
+]
+_TECHO_CA_B62 = 2750.0      # 1,1 % MS
+_SUELO_CA_B62 = 2500.0      # el reforzado de la nota b de FEDIAF
+
+_bueno_b62 = None
+for _nom62, _et62, _peso62, _der62, _padu62, _excl62 in _CASOS_B62:
+    _r62 = _c62.post("/menu/v2", json={
+        "nombres_alimentos": [], "der_objetivo": _der62, "etapa_requisitos": _et62,
+        "peso_perro_kg": _peso62, "peso_adulto_esperado_kg": _padu62,
+        "especies_excluidas": _excl62, "modo": "automatico"}).json()
+    if not _r62.get("factible"):
+        fallos.append(f"BLOQUE62: «{_nom62}» se queda SIN MENU. El techo de calcio de 2750 "
+                      f"(1,1 % MS) tiene que ser un techo, no un muro: si no cabe, se mueve a "
+                      f"`limites_escritos_que_el_solver_no_aplica` con su medida y se pregunta, "
+                      f"no se baja a ojo. Motivo: «{str(_r62.get('motivo'))[:120]}»")
+        continue
+    _g62 = _r62["menu"]
+    _ca62 = _por_1000_b62(_g62, "calcio")
+    _p62 = _por_1000_b62(_g62, "fosforo")
+    if _ca62 > _TECHO_CA_B62 * 1.005:
+        fallos.append(f"BLOQUE62: «{_nom62}» sale con {_ca62:.0f} mg de calcio/1000 kcal y el "
+                      f"techo son {_TECHO_CA_B62:.0f}. El solver NO lo esta aplicando")
+    if _ca62 < _SUELO_CA_B62 * 0.99 and _et62 == "CachorroCrecimiento":
+        fallos.append(f"BLOQUE62: «{_nom62}» sale con {_ca62:.0f} mg de calcio/1000 kcal y el "
+                      f"minimo reforzado de la nota b de FEDIAF son {_SUELO_CA_B62:.0f}. El "
+                      f"techo no puede empujar por debajo del suelo")
+    if _p62 > 2750.0 * 1.005:
+        fallos.append(f"BLOQUE62: «{_nom62}» sale con {_p62:.0f} mg de fosforo/1000 kcal y el "
+                      f"techo de la Tabla 17-1 para el cachorro de mas de 25 kg son 2750")
+    # el peldaño: tiene que salir en el estricto, sin soltar ni una proporcion
+    _peld62 = _r62.get("peldano") or (_r62.get("relajacion") or {}).get("peldano")
+    if _peld62 not in (None, "estricto"):
+        fallos.append(f"BLOQUE62: «{_nom62}» solo sale bajando al peldaño «{_peld62}». Medido el "
+                      f"9 de septiembre, los seis salian en el estricto: si ahora hace falta "
+                      f"soltar la forma para cumplir el techo, el catalogo se ha quedado corto "
+                      f"de fuentes de calcio bajas y hay que mirarlo")
+    _bueno_b62 = _bueno_b62 or (_g62, _et62, _padu62)
+
+# 3. Y el filtro final tiene que verlo. Se coge un menu bueno y se le dobla el
+#    hueso: es la forma mas directa de subirle el calcio.
+if _bueno_b62:
+    _g_ok62, _et_ok62, _padu_ok62 = _bueno_b62
+    # ⚠️ EL CEBO NO ES «TRIPLICAR EL HUESO», Y ESO SE APRENDIÓ FALLANDO DOS VECES.
+    #
+    # La primera versión multiplicaba por 3 el alimento de la categoría «Hueso
+    # carnoso» del menú, dando por hecho que más hueso es más calcio. **No lo
+    # es, en mg por 1000 kcal.** Medido: en un menú de gran danés cuyo hueso era
+    # «Pecho de ternera con hueso», multiplicarlo bajaba el calcio de 2510 a
+    # 2485 (x1,05), 2146 (x2) y 1382 (x20) -- porque ese corte es lo bastante
+    # graso para aportar más kcal que calcio, y el techo se mide por energía.
+    #
+    # Así que el cebo se fabrica con el alimento MÁS DENSO EN CALCIO POR KCAL de
+    # todo el catálogo, y se busca la cantidad que deja el menú DENTRO de la
+    # ventana entre los dos techos: por encima del de raza grande (2750) y por
+    # debajo del general del cachorro (4250). Si se pasara de los dos, la
+    # comprobación de más abajo -- «sin el peso adulto NO tiene que saltar» --
+    # dejaría de significar nada, porque saltaría por el techo general y con
+    # razón.
+    _denso62 = max(
+        (n for n in al if (al[n].get("nutrientes") or {}).get("calcio")
+         and (al[n].get("energia") or 0) > 0),
+        key=lambda n: float(al[n]["nutrientes"]["calcio"]) / float(al[n]["energia"]))
+    _inflado62, _ca_inf62 = None, None
+    _g_extra62 = 0.0
+    for _paso62 in range(1, 400):
+        _prueba62 = dict(_g_ok62)
+        _prueba62[_denso62] = _g_ok62.get(_denso62, 0.0) + _paso62 * 0.5
+        _ca62p = _por_1000_b62(_prueba62, "calcio")
+        if _ca62p > _TECHO_CA_B62 * 1.01:
+            if _ca62p < 4250.0 * 0.99:
+                _inflado62, _ca_inf62, _g_extra62 = _prueba62, _ca62p, _paso62 * 0.5
+            break
+    if _inflado62 is None:
+        fallos.append(f"BLOQUE62: no se ha podido fabricar un menu con el calcio ENTRE los dos "
+                      f"techos (2750 y 4250) anadiendo «{_denso62}», que es el alimento mas "
+                      f"denso en calcio por kcal del catalogo. Sin ese cebo, las dos "
+                      f"comprobaciones de abajo no prueban nada")
+    else:
+        if not _api_b62._tope_patologia_roto(
+                _inflado62, al, [], _et_ok62,
+                peso_adulto_esperado_kg=_padu_ok62):
+            fallos.append(f"BLOQUE62: se le anaden {_g_extra62:.1f} g de «{_denso62}» a un menu "
+                          f"de cachorro de raza grande hasta dejarlo en {_ca_inf62:.0f} mg de "
+                          f"calcio/1000 kcal, por encima del techo de {_TECHO_CA_B62:.0f}, y el "
+                          f"filtro final no dice nada. Entonces no esta comprobando el techo de "
+                          f"SACN5")
+        # y sin el peso adulto NO tiene que saltar, que es justo el olvido que
+        # este parametro existe para no repetir
+        if _api_b62._tope_patologia_roto(_inflado62, al, [], _et_ok62):
+            fallos.append(f"BLOQUE62: el filtro salta SIN saberse el peso adulto del perro, con "
+                          f"un menu de {_ca_inf62:.0f} mg de calcio que esta por DEBAJO del "
+                          f"techo general del cachorro (4250). Entonces le esta aplicando el "
+                          f"techo de raza grande a cualquier cachorro, y eso es inventarse un "
+                          f"numero que su fuente no le pone")
+
+# 4. Al cachorro de raza PEQUEÑA no se le aplica: su columna de la Tabla 17-1
+#    dice 1,7 % (4250), no 1,1 %.
+from recomendaciones import topes_de_la_etapa as _topes_b62
+for _et62 in ("CachorroJoven", "CachorroCrecimiento"):
+    if _topes_b62(_et62, peso_adulto_esperado_kg=10.0).get("calcio") != 4250.0:
+        fallos.append(f"BLOQUE62: a un cachorro de 10 kg de adulto se le esta aplicando un techo "
+                      f"de calcio que no es el 4250 de su columna. SACN5 parte las dos columnas "
+                      f"en 25 kg de peso adulto y darle al pequeño el techo del grande no es "
+                      f"«ir sobre seguro»: es aplicar un numero que su fuente no le pone")
+    if _topes_b62(_et62).get("calcio") != 4250.0:
+        fallos.append(f"BLOQUE62: sin peso adulto, {_et62} tiene que quedarse con el techo "
+                      f"general (4250). Es el lado que no rechaza menus buenos por un dato que "
+                      f"el usuario no ha dado")
+
+print(f"  {len(_CASOS_B62)} cachorros de raza grande probados de punta a punta")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 

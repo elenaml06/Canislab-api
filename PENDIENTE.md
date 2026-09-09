@@ -1,7 +1,7 @@
 # Rawku — lo que queda por hacer (índice)
 
 Lista viva. Se actualiza al terminar cada cosa, no al final.
-Última revisión: 8 de septiembre de 2026.
+Última revisión: 9 de septiembre de 2026.
 
 **Desde el 6 de septiembre esto es solo el índice.** Cada punto vive en uno
 de cuatro archivos, por tema — ábrelos según lo que toque la tarea, no
@@ -41,6 +41,7 @@ que tomar una persona, no yo.
 - [ ] `renal + pancreatitis` no da menú en ningún tamaño — decisión de nutrición: qué tope cede, y qué se le dice mientras (BLOQUE 50)
 - [x] El fósforo del perro sano — APLICADO 8 sep: 2000 en adulto, 1750 en senior, medido y en el peldaño 0 (`DECISIONES.md` D-15)
 - [ ] El sorteo de alimentos no sabe que hay techo de fósforo: al toy de 1,5 kg le cuesta 12 sorteos de 30 (`PENDIENTE_NUTRICION.md` §14.4)
+- [ ] El techo de Ca:P del cachorro de raza grande: SACN5 Tabla 17-1 dice 1,5 y aplicamos el 1,6 de FEDIAF. Hoy no cambiaría ni un menú (los reales van de 1,03 a 1,29), y el propio libro se contradice — la 33-5 dice 2,0. Necesita mecanismo de ratio en `recomendaciones_libro.json` (`PENDIENTE_NUTRICION.md`, último punto)
 - [ ] En crecimiento, ¿los suelos de una patología también se caen con el tope?
 - [ ] La proteína de la reacción adversa: la fuente la limita solo en casos dermatológicos y la ficha no lo pregunta
 - [ ] ¿Rawku apunta a algún rango de fibra? — decisión de nutrición, no de código (nota: hiperlipidemia ya tiene suelo real, 7 sep — ver `PENDIENTE_NUTRICION.md` §10)

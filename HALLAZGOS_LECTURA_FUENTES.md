@@ -1406,7 +1406,7 @@ Esa noche se aplicaron, en pasadas distintas y con horas de diferencia:
 
 - **Tabla 35-3 de SACN5** (disfunción cognitiva): vitamina E **≥ 187,5
   mg/1000 kcal** («Provide foods with ≥750 mg/kg» de materia seca ÷ 4).
-- **`recomendaciones_adulto.json`** (SACN5, perro adulto sano): fósforo
+- **`recomendaciones_libro.json`** (SACN5, perro adulto sano): fósforo
   **≤ 2.000 mg/1000 kcal**.
 
 Cada una se midió por separado, y **cada una cabía por separado**. Juntas no:
@@ -2837,3 +2837,251 @@ Y una segunda lección, sobre las pruebas: los tres fallos se han encontrado en
 la misma noche porque el **BLOQUE 61** empezó a fallar. Ninguno de los tres se
 manifestaba como un número raro; los tres se manifestaban como **«no hay menú»**,
 que hasta hoy no lo miraba nadie.
+
+---
+
+## ⚠️ APLICADO EL 9 DE SEPTIEMBRE: EL TECHO DE CALCIO DEL CACHORRO DE RAZA GRANDE
+
+Era el hallazgo más urgente de toda la lectura de fuentes, y aquí está aplicado
+con la medida al lado.
+
+### Lo que decía el motor hasta hoy
+
+Un cachorro de raza grande recibía el calcio que le permite FEDIAF, y nada más.
+Medido por la vía de la API, en el peldaño estricto, antes de tocar nada:
+
+| perro | calcio mg/1000 kcal | % materia seca |
+|---|---|---|
+| labrador (32 kg de adulto), 15 kg, DER 1300 | 4489 | 1,80 % |
+| gran danés (55 kg), 25 kg, DER 2000 | 4500 | 1,80 % |
+| gran danés temprano (55 kg), 12 kg, DER 1400 | 3750 | 1,50 % |
+| pastor alemán (35 kg), 18 kg, DER 1500 | 4054 | 1,62 % |
+
+Los cuatro **en verde**, porque 4500 es exactamente el máximo de FEDIAF para
+crecimiento tardío. El semáforo no tenía nada que decir.
+
+### Lo que dicen las fuentes
+
+Las dos que hablan de esto, y las dos son caninas y específicas:
+
+- **SACN5 cap.17, Tabla 17-1** («Key nutritional factors for foods for growing
+  puppies») parte sus columnas en 25 kg de peso adulto esperado, y a la de
+  «>25 kg» le da **«Calcium (%) 0.8-1.2»** y **«Phosphorus (%) 0.6-1.1»**. La
+  columna de «<25 kg» dice 0,7-1,7 y 0,6-1,3.
+- **SACN5 cap.33, Tabla 33-5** («Key nutritional factors for foods for growth
+  (postweaning) of large- and giant-breed puppies») repite **«Calcium 0.8 to
+  1.2 %»**, y el propio capítulo define la población: *«To help prevent DOD in
+  large- and giant-breed puppies (>25 kg adult weight)»*.
+- **Fascetti & Delaney cap.10** aprieta el techo, literal: *«In order to prevent
+  panosteitis, a diet designed for young dogs of large breeds with a calcium
+  content no greater than 1.1% dm should be fed during the growth period,
+  starting at partial weaning»*.
+
+Se aplica **1,1 %**, que es el más estricto de los dos y cae dentro del rango
+del otro: 1,1 × 2500 = **2750 mg/1000 kcal**. O sea que el motor estaba dando
+un **64 % más de calcio** del que recomiendan sus propias fuentes al perro al
+que más le importa.
+
+Y no es un número feo en una ficha. El cachorro de raza grande **no regula su
+absorción de calcio como el adulto**; el exceso da enfermedad ortopédica del
+desarrollo. SACN5 cap.33 trae la Figura 33-6: dos hermanos de camada de gran
+danés, uno alimentado con 1,1 % de calcio y otro con 3,3 %, y el segundo con
+crecimiento pobre y deformidad angular de los miembros.
+
+### El fósforo del cachorro no tenía techo NINGUNO
+
+Al transcribir la Tabla 17-1 salió lo segundo: **FEDIAF no da máximo de fósforo
+en crecimiento**. Las columnas `maxCachorroJoven` y `maxCachorroCrecimiento` de
+esa fila están vacías, y está comprobado contra el PDF (la nota de auditoría de
+esa fila lo cuenta: el máximo de adulto, 4000, se llegó a borrar por error el 7
+de septiembre y se devolvió el 8).
+
+Es exactamente el mismo agujero que motivó el techo de fósforo del adulto, un
+piso más abajo. La Tabla 17-1 es el único número canino con fuente que existe
+para taparlo: **3250** al cachorro de menos de 25 kg de adulto, **2750** al de
+más.
+
+### Dos umbrales de «raza grande», y no son el mismo número
+
+- **15 kg** (`RAZA_GRANDE_O_GIGANTE_KG`) es el corte de las notas a y b de la
+  Tabla III-3b de FEDIAF: decide el mínimo de calcio reforzado (2500) y el
+  techo del ratio Ca:P (1,6).
+- **25 kg** es el corte de SACN5 para la enfermedad ortopédica del desarrollo.
+
+Dos fuentes, dos poblaciones, dos números. Unificarlos sería inventarse uno de
+los dos, así que cada uno vive donde vive su fuente y hay un comentario en
+`motor/recomendaciones.py` para que nadie los «arregle».
+
+### Medido después de aplicarlo
+
+Veinte cachorros de raza grande y gigante (Grande 32 kg y Gigante 55 kg de
+adulto, crecimiento temprano y tardío) por cinco configuraciones cada uno (sin
+exclusiones, sin pollo, sin hueso carnoso, sin pescado ni cerdo, sin vacuno):
+
+    SIN MENÚ ............ 0 de 20
+    peldaño ............. estricto los 20 (sin soltar ni una proporción de BARF)
+    calcio .............. 2463 a 2748 (1,0 a 1,1 % MS), techo 2750
+    fósforo ............. 1839 a 2708, techo 2750
+
+Y ocho cachorros más, mezclando tamaños, para ver la otra columna: el beagle
+(18 kg de adulto) sale a 4187 de calcio y **3247 de fósforo**, contra su techo
+de 3250. O sea que el techo del cachorro pequeño también aprieta de verdad: no
+es una fila decorativa.
+
+### Y un tercer fallo del motor, destapado por esto
+
+Los dos primeros fallos de esta familia están más arriba en este documento. Este
+es el tercero en dos días, y es literalmente el mismo: **dos sitios que calculan
+lo mismo de dos maneras**.
+
+El mínimo de calcio reforzado de la raza grande (2500) lo exigía el solver
+contra las **kcal pedidas**, y lo comprobaba `_minimo_calcio_raza_grande_roto`
+contra las **kcal reales** del menú. Como la tolerancia permite salirse un 3 %,
+un menú de 2400 kcal pedidas que sale a 2472 reales con 6000 mg de calcio da
+2500 por un lado y 2427 por el otro.
+
+Antes de hoy no se notaba porque el calcio de una dieta con hueso iba sobradísimo
+(2618-4500 medido el 7 de septiembre) y nunca se apoyaba en su suelo. En cuanto
+el techo del libro lo baja a 2750, la ventana pasa a ser del 10 % y un desalineo
+del 3 % deja de ser teoría: **2 de cada 20 cachorros de raza grande se quedaban
+sin menú**, con el mensaje «se queda corto de calcio para un cachorro de raza
+grande» — el solver construyendo un menú que el filtro final tiraba.
+
+Arreglado igual que los otros dos: el suelo tiene ahora su fila relativa sobre
+las kcal reales, la misma que ya tenían los suelos de patología. Después del
+arreglo, 20 de 20.
+
+### Y una cosa más, que también estaba mal y no daba error
+
+`regenerar_catalogo.py` **no le pasaba al motor el peso adulto esperado**, así
+que regeneraba los 216 menús del catálogo midiendo el calcio de un cachorro de
+gran danés contra el techo del yorkshire. Es exactamente el fallo que el propio
+docstring de ese archivo cuenta que ya pasó una vez con `margenes_categoria`. El
+peso adulto de cada tamaño se lee ahora del propio catálogo (la entrada
+`<tamaño>_Adulto`) en vez de escribirse a mano, para que no haya una segunda
+copia de esos seis números.
+
+---
+
+## LO QUE SALIÓ DE VOLVER A LAS FUENTES CON LAS PREGUNTAS EN LA MANO (9 de septiembre)
+
+Elena lo dijo así: *«las que no se pueden resolver con documentación, busca otra
+documentación que las pueda resolver, que ya hemos visto más de una vez que no
+has mirado bien»*. Tenía razón. **Cuatro de las preguntas abiertas tenían la
+respuesta escrita en una fuente que ya estaba en el repo.**
+
+### 1 · El factor del β-caroteno para el perro SÍ está definido, y lo da FEDIAF
+
+Yo había escrito que no existía, apoyándome solo en el NRC 2006 (*«a retinol
+equivalency has not been defined»*). **FEDIAF 2025, Tabla VII-14**, trae la fila
+con nombre y apellidos:
+
+> Provitamin A (β-carotene) **(dogs)** — 1.0 mg = **833 IU**
+
+Con el retinol a 0,3 µg = 1 IU en la misma tabla, eso son **1 mg de β-caroteno =
+250 µg de equivalentes de retinol**: factor **4 a 1**, más generoso que el 6:1
+europeo y el 12:1 americano.
+
+Las dos frases conviven —el NRC habla de que no hay estudio de equivalencia,
+FEDIAF publica un factor reglamentario— pero la conclusión cambia entera: **ya no
+es una pregunta de criterio, es un dato que falta.** Las fichas están calculadas
+con factores ajenos, así que una con ÷6 declara un 33 % menos de lo que FEDIAF le
+contaría al perro, y una con RAE, un 67 % menos. Hacen falta dos columnas,
+`retinol` y `betacaroteno`. Escrito en `UNIDADES.md` y `DATOS_QUE_FALTAN.md`.
+
+### 2 · El techo de yodo: FEDIAF ya evaluó el estudio del que sale nuestro número
+
+La pregunta era si bajar el techo de 1.275 µg/1000 kcal, porque está a un 9 % de
+la dosis que hizo daño en el estudio de Castillo 2001. **FEDIAF 2025 §3.3.1
+«Iodine» habla de ese estudio exacto:**
+
+> *«…in these studies **puppies were significantly overfed** (approx. 75 % above
+> energy requirement)… the food was **deficient in a number of key nutrients**,
+> e.g. Ca, P and K… Consequently, **these results are irrelevant** for normal
+> commercial nutritionally balanced foods, and **the existing legal maximum is
+> safe for all dogs**.»*
+
+El máximo legal son 2.750. Nuestro 1.275 es **2,2 veces más estricto** que lo que
+FEDIAF considera seguro y no cuesta ni un menú. **No se toca**, y ahora hay un
+motivo escrito en vez de una pregunta abierta.
+
+### 3 · La metionina en hepatopatía: no hay techo que poner, hay una exclusión
+
+El NRC contaba el experimento de Merino 1975 (1 g/kg cada 4 h provocó signos de
+coma hepático en perros con shunt portocava). **SACN5 cap.68 dice dos cosas que
+cambian la pregunta:** que esa vía *«does not play an important role in the
+pathogenesis of HE»* porque los métodos antiguos la sobrevaloraron, y que lo que
+hay que hacer es *«do not administer… **methionine-containing products**»*.
+
+O sea: **una regla de exclusión de suplementos, no un límite por nutriente.** Hoy
+no hay nada que excluir porque el catálogo no tiene ficha de L-metionina; el día
+que entre, `hepatopatia` tiene que excluirla, y está escrito.
+
+### 4 · El ratio omega-6:omega-3, que es lo que preguntó Cris
+
+**Para el perro sano no existe en ninguna fuente que tengamos**, y el NRC 2006
+dice literalmente que el ratio de totales *«is not helpful»*, recomendando en su
+lugar el **linoleico:linolénico** — que el motor ya aplica desde hoy.
+
+**Para las patologías sí existe**, y SACN5 lo dice en cuatro sitios:
+
+| patología | ratio | dónde |
+|---|---|---|
+| Enfermedad renal crónica | 1:1 a 7:1 | cap.37 |
+| Cáncer | «approximating 1:1» | cap.30 |
+| Artrosis | **menos de 1:1** | cap.34 |
+| Reacción adversa al alimento | *«currently unknown»* | cap.31 |
+
+Los tres primeros quedan escritos en `patologias.json` como
+`limites_escritos_que_el_solver_no_aplica`, con el mismo motivo que ya tenía el
+de la renal: dos fuentes que se contradicen, y eso lo decide un clínico. El
+cuarto es un no-número de la propia fuente, que también se escribe.
+
+### 5 · La grasa en pancreatitis son DOS cifras — y ya estaban las dos puestas
+
+SACN5 cap.67, literal: *«Obese and hypertriglyceridemic patients recovering from
+pancreatitis should receive low-fat foods (**≤10** … % DM for dog…). Other
+patients can be fed moderate-fat foods (**≤15** … % DM for dog…)»*. Para el
+perro: **25 g/1000 kcal** si es obeso o hipertrigliceridémico, **37,5** si no.
+
+Lo apunté como hallazgo y **estaba equivocado**: el 8 de septiembre ya se
+implementó, incluido el mecanismo que hacía falta
+(`topes_por_1000kcal_si_ademas`, que condiciona un tope a que otra patología
+esté marcada). Está en `PATOLOGIAS.md` §1.5 con su tabla:
+
+| combinación | grasa aplicada |
+|---|---|
+| pancreatitis sola | 37,5 |
+| pancreatitis + obesidad | **25** |
+| pancreatitis + hiperlipidemia | **25** |
+| obesidad sola | 30 |
+
+**Lo dejo escrito porque el error es la lección**: llegué a poner la cifra en
+`limites_escritos_que_el_solver_no_aplica` diciendo «el motor no tiene ese
+mecanismo», y lo tiene desde ayer. Miré `topes_por_1000kcal` y `suelos_…` y no
+`topes_por_1000kcal_si_ademas`. Un hallazgo que no se contrasta contra lo que ya
+hay no es un hallazgo: es trabajo repetido, y del que ensucia el JSON.
+
+### 6 · Y el changelog de FEDIAF, leído entero (2011 → 2025)
+
+Los trece apartados de «Adaptations in the Nutritional Guidelines», que era lo
+que quedaba pendiente de FEDIAF. **No hay nada que aplicar**, y eso también es un
+resultado: nuestra tabla ya recoge los cambios que importan. Comprobado uno a
+uno contra `requerimientos_v2_final.json`:
+
+| cambio del changelog | lo que tenemos |
+|---|---|
+| 2013: se borra el máximo NUTRICIONAL de zinc | tenemos 56,75, que es el **legal** |
+| 2016: se borran los máximos nutricionales de sodio y cloruro para perro, y se sustituyen por una nota de niveles seguros | tenemos 3.750 y 5.870, que salen de esa nota (1,5 % y 2,35 % MS) |
+| 2016: potasio de crecimiento tardío corregido a 1,10 g/1000 kcal | tenemos 1.100 mg |
+| 2017: máximo legal de zinc a 22,70 mg/100 g MS | 22,70 ÷ 4 × 10 = **56,75** ✓ |
+| 2018: colina de crecimiento temprano de 209 a 170 mg/100 g MS | tenemos **425** = 1.700 ÷ 4 ✓ |
+| 2019: máximo legal de hierro a 68,18 mg/100 g MS | tenemos **170,45** = 68,18 × 10 ÷ 4 ✓ |
+| 2025 vs 2024 | **solo editorial**: encabezados de tablas, símbolos matemáticos y espacios |
+
+Y las secciones 5 y 6 de FEDIAF, que también estaban sin leer, son **métodos
+analíticos** (referencias AOAC/USP por nutriente) y **protocolos de ensayo de
+digestibilidad**. No fijan ningún requisito. Lo único aprovechable: FEDIAF
+distingue **fibra dietética total, insoluble y soluble** como tres analitos con
+método propio, así que «soluble vs insoluble» no es un concepto vago — es una
+columna que no tenemos.

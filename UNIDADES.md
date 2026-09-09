@@ -173,10 +173,31 @@ distintas y no está escrito cuál:
 | Equivalentes de retinol (europeo clásico, BEDCA) | Retinol + caroteno | **6 a 1** |
 | RAE (americano, USDA) | Retinol + caroteno | **12 a 1** |
 
-Y el NRC 2006 dice, literal, que **para el perro el factor no está
-definido**: *«Even though dogs appear to utilize β-carotene from carrots
-efficiently, a retinol equivalency has not been defined»*. En humanos son
-**21 a 1** desde el alimento.
+**⚠️ Y HAY UN CUARTO CONVENIO, QUE ES EL QUE MANDA AQUÍ Y SE ME PASÓ:
+FEDIAF LO DEFINE, para el perro, con nombre y apellidos.** Tabla VII-14
+(«Conversion factors – Vitamin source to activity»), fila literal:
+
+> Provitamin A (β-carotene) **(dogs)** — 1.0 mg = **833 IU**
+
+Y en la misma tabla, retinol: 0,3 µg = 1 IU. Así que **1 mg de β-caroteno =
+833 × 0,3 = 250 µg de equivalentes de retinol**, o sea un factor de **4 a 1**
+en peso — más generoso que el 6:1 europeo y que el 12:1 americano, y muy
+lejos del 21:1 humano.
+
+Es la fuente cuyo mínimo estamos comprobando, así que es el factor que
+tenemos que usar. **Lo escribí al revés el 9 de septiembre por la mañana**,
+apoyándome solo en el NRC 2006, que dice literal que *«Even though dogs
+appear to utilize β-carotene from carrots efficiently, a retinol equivalency
+has not been defined»*. Las dos frases pueden convivir —el NRC habla de que
+no hay un estudio de equivalencia y FEDIAF publica un factor de conversión
+reglamentario— pero la conclusión práctica cambia entera: **sí hay factor, y
+es 4:1.**
+
+El NRC además confirma la parte cualitativa, y eso no cambia: *«only dogs
+have the ability to use carotenoid precursors of vitamin A»* (los gatos no,
+y el hurón lo hace quince veces peor), y cita a Turner (1934), que dio 150 g
+de zanahoria fresca a perros y les subió la vitamina A del hígado igual que
+el aceite de hígado de bacalao.
 
 **Las fichas del catálogo mezclan convenios.** Contrastado con USDA:
 zanahoria 1.346 (= β-caroteno ÷ 6), boniato 667 (= RAE), rúcula 596 (que
@@ -188,9 +209,21 @@ sea de caroteno, no de retinol— y **103 de los 216 no llegarían al mínimo
 de FEDIAF (526,2 µg/1000 kcal) si el caroteno no contara**. El peor, un
 menú de lactancia, declara 11.191 µg y solo **29** son retinol de verdad.
 
-Contra el TECHO esto va del lado seguro (se cuenta de más). Contra el
-SUELO va del lado peligroso, y el semáforo no lo ve porque comprueba
-contra estos mismos números. Detalle y medidas:
+**Y con el factor de FEDIAF en la mano, el problema es otro y más
+concreto**: no es que no sepamos si el caroteno cuenta —cuenta, 4 a 1—, es
+que las fichas están calculadas con factores ajenos (6:1, 12:1, o ninguno
+reconocible), así que **ninguna de las tres columnas es la que FEDIAF pide**.
+Una ficha con β-caroteno ÷ 6 declara un 33 % MENOS de lo que FEDIAF le
+contaría, y una con RAE (÷ 12), un 67 % menos.
+
+Para arreglarlo hace falta lo que no tenemos: **el retinol y el β-caroteno
+por separado** en cada ficha, para poder calcular `retinol + β-caroteno / 4`.
+Está en `DATOS_QUE_FALTAN.md`.
+
+Contra el TECHO esto va del lado seguro (se cuenta de menos, y además el
+β-caroteno no es tóxico: la toxicidad de la vitamina A es del retinol
+preformado). Contra el SUELO va del lado peligroso, y el semáforo no lo ve
+porque comprueba contra estos mismos números. Detalle y medidas:
 `HALLAZGOS_LECTURA_FUENTES.md` §N-19. Pregunta abierta:
 `PREGUNTAS_PARA_ELENA.md` §4.
 

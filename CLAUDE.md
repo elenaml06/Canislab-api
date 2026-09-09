@@ -44,19 +44,34 @@ con alguna, casi siempre el error está en el cambio.
    salía verde. Si un camino nuevo llama al motor, tiene que pasarle
    `patologias` — se olvidó una vez en la edición y una sola edición
    tiraba el tope.
-   Y desde el 8 de septiembre hay una **tercera clase de techo**: los dos
-   que SACN5 recomienda al perro adulto **sano** (fósforo 2000 y sodio 1000
-   por 1000 kcal; 1750 el fósforo en senior). Se aplican **sin que haya
-   ninguna patología marcada**, viven en `recomendaciones_adulto.json` y se
-   comprueban en el mismo sitio y con el mismo `min()` que los de patología.
+   Y desde el 8 de septiembre hay una **tercera clase de techo**: los que el
+   libro recomienda al perro **sano**, que se aplican **sin que haya ninguna
+   patología marcada**, viven en `recomendaciones_libro.json` y se comprueban
+   en el mismo sitio y con el mismo `min()` que los de patología. En adulto son
+   dos (fósforo 2000 y sodio 1000 por 1000 kcal; 1750 el fósforo en senior).
    Existen porque FEDIAF **no pone máximo de fósforo** y una ración BARF de
    este motor salía con ~4000 mg — el doble de lo que el libro recomienda
    para cualquier perro —, y ese número solo entraba antes por la puerta de
    atrás, en las dos patologías cuya tabla lo repite: el mismo perro pasaba
    de 4000 a 1750 por marcar «artrosis». Medido antes de aplicarlo: cabe en
-   el peldaño 0 y en verde en 3, 10, 22 y 40 kg. **En crecimiento no se
-   aplica** — el mínimo de un cachorro joven (2250) está por encima del
-   techo del adulto.
+   el peldaño 0 y en verde en 3, 10, 22 y 40 kg. **El techo del adulto no se
+   aplica en crecimiento** — el mínimo de un cachorro joven (2250) está por
+   encima del techo del adulto.
+   **En crecimiento hay otros dos, y son del 9 de septiembre**: el calcio y el
+   fósforo de la Tabla 17-1 de SACN5, que tiene **dos columnas** según el
+   cachorro vaya a pesar más o menos de **25 kg de adulto** (cap.33: «large-
+   and giant-breed puppies (>25 kg adult weight)»). Al pequeño, calcio 4250 y
+   fósforo 3250; al grande, **2750 los dos** — el calcio apretado al 1,1 % de
+   materia seca que pide Fascetti cap.10 «in order to prevent panosteitis»,
+   dentro del 0,8-1,2 % de las Tablas 17-1 y 33-5. Existen porque hasta ese día
+   un cachorro de raza grande recibía **4500 mg de calcio** (1,80 % MS), que es
+   el máximo de FEDIAF y un **64 % por encima** de lo que dicen las dos fuentes
+   caninas que hablan de esto; y porque **FEDIAF no pone máximo de fósforo en
+   crecimiento**, igual que no lo ponía en adulto. Ojo con los dos umbrales: los
+   **25 kg** de SACN5 no son los **15 kg** de la nota b de FEDIAF
+   (`RAZA_GRANDE_O_GIGANTE_KG`), que decide otra cosa — el mínimo de calcio
+   reforzado y el techo del ratio Ca:P. Dos fuentes, dos poblaciones, dos
+   números. Lo vigilan los BLOQUES 57 y 62.
 3. **Lo que se puede relajar es la FORMA, nunca la nutrición.** Cuando no
    existe menú, se sueltan las proporciones de BARF (hueso 20-60 %, etc.),
    que son criterio nuestro y no de FEDIAF. Nunca los requisitos ni la
@@ -100,7 +115,7 @@ jubilado — que desde fuera se parecen mucho.
 | `exclusiones.py` | Alergias por palabras y familias de especie. Excluir «pollo» quita también «gallina» |
 | `accesibles.py`, `modos.py` | Qué alimentos entran según el modo (automático / personalizar / aprovechar) |
 | `condicionales.py` | Lee `requisitos_condicionales.json`: **los requisitos que NO son un número fijo porque dependen de la propia dieta**. Son **seis** desde el 9 de septiembre: **tres que se aplican** y **tres escritas sin cifra**, porque FEDIAF las enuncia y no las cuantifica para el perro. (1) La proteína de **gestación y lactancia**, que FEDIAF calcula suponiendo que la dieta lleva hidratos — y una ración BARF no lleva; NRC trae el experimento: con la dieta sin hidratos y la proteína baja, la **mortalidad perinatal subió un 75 %**. (2) La **arginina que sube con la proteína**: FEDIAF publica una tabla entera para esto (Anexo 7.4 y Tabla VII-13, «+0,01 g de arginina por cada gramo de proteína sobre el requisito, en todas las etapas») y no la aplicábamos — con los 105 g/1000 kcal de proteína que lleva un BARF típico, la tabla pide 1,90 g de arginina y el motor exigía 1,51. (3) El **ratio linoleico:linolénico**, 2,6-26 en adulto y crecimiento y 2,6-16 en gestación y lactancia (NRC 2006 cap.5) — que es lo que el NRC recomienda **en lugar** del ratio omega-6:omega-3 totales, del que dice literalmente que «is not helpful». Ninguno de los tres tiene forma de fila, así que ninguno lo encontró el trabajo de transcribir tablas. || Y las **tres que NO se aplican**, con `tipo: documentado_sin_cifra`: la **vitamina E sube con los PUFA**, la **B6 sube con la proteína** y la **K en dietas con mucho pescado**. Las tres las nombra FEDIAF en su sección 3.3 y de las tres da número solo para el GATO o para ninguno, así que aplicarlas sería inventarse la cifra. Están escritas para que se puedan auditar y para no volver a «descubrirlas» dentro de seis meses; el BLOQUE 60 vigila que sigan inertes. Medido: por la relación clásica de vitamina E:PUFA (≥0,6 mg/g) vamos holgados —0 de 216 menús por debajo, el peor a 1,53— y la B6 real va de tres a doce veces el mínimo de FEDIAF. **El solver y el semáforo llaman a las mismas funciones de este módulo**, y eso no es elegancia: es la lección del 8 de septiembre, cuando cada uno aplicaba los suelos de patología a su manera y el motor construía menús enteros para que el filtro final los tirara |
-| `recomendaciones.py` | Lee `recomendaciones_adulto.json`: **los dos techos que SACN5 recomienda a un perro adulto SANO** (fósforo y sodio). Es la tercera clase de límite del motor, y no existía hasta el 8 de septiembre: los de FEDIAF valen para cualquier perro, los de patología solo si está marcada, y estos valen para el perro que **no tiene nada**. Se combinan con `min()` como los de patología: solo pueden apretar |
+| `recomendaciones.py` | Lee `recomendaciones_libro.json`: **los techos que el libro recomienda al perro SANO**, por etapa. Es la tercera clase de límite del motor, y no existía hasta el 8 de septiembre: los de FEDIAF valen para cualquier perro, los de patología solo si está marcada, y estos valen para el perro que **no tiene nada**. Se combinan con `min()` como los de patología: solo pueden apretar. Empezó con dos cifras de adulto (fósforo y sodio) y el 9 de septiembre entraron las de **crecimiento** — calcio y fósforo, con **dos columnas** según el cachorro vaya a pesar más o menos de 25 kg de adulto |
 | `patologias.py` | Lee `patologias.json` y lo pasa a la forma que espera el solver. **Aquí no hay ni una cifra**: hasta el 28 de agosto la tabla eran 200 líneas de `dict` dentro de `motor_completo.py`, mezclando números, motivo clínico, textos y lógica de crecimiento. Se sacó por lo mismo que el catálogo y la tabla de FEDIAF: un número que decide si un menú se entrega tiene que poder auditarse, y no se audita lo que está enterrado entre `if`s |
 | `catalogo_menus.py` | Carga los menús precalculados de la vista previa. Los datos están en `catalogo_menus.json`, en la raíz con los demás: aquí solo quedan 55 líneas de código |
 
@@ -116,7 +131,7 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 61 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `pruebas_completas.py` | **La batería.** Los 62 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
 | `auditar_patologias.py` | Cada cifra de `patologias.json` contra `requerimientos_v2_final.json`: que ninguna patología formulable tenga un tope por debajo del mínimo de FEDIAF, y que la clave del nutriente exista en el `MAPA`. Lo ejecuta el BLOQUE 32 |
 | `radiografia.py` | Imprime los números que **ENTRAN** al motor, para comparar `main` con una rama a golpe de `diff`. No lo ejecuta la batería: se corre a mano. Existe porque el semáforo comprueba el menú contra las kcal que le dieron — si las kcal ya venían mal, el menú sale VERDE para un perro que no es el tuyo, y eso solo se ve en la entrada |
 | `auditar_catalogo.py` | Huecos y datos raros del catálogo, y quién se queda sin aminograma. Lo ejecuta el BLOQUE 19 |
@@ -348,7 +363,7 @@ En la raíz, los seis: `alimentos_v3_final.json` (el catálogo),
 `requerimientos_v2_final.json` (la tabla de FEDIAF), `catalogo_menus.json`
 (los 36 menús precalculados de la vista previa y sus 180 variantes),
 `der_casos.json` (el contrato del DER, ver arriba) y
-`recomendaciones_adulto.json` (los dos techos del perro adulto sano) y
+`recomendaciones_libro.json` (los techos del libro para el perro sano) y
 `requisitos_condicionales.json` (los requisitos que dependen de la propia
 dieta).
 
@@ -372,7 +387,7 @@ se comprueba entero en cada batería.
 python3 pruebas_completas.py     # ~25 min, tiene que salir TODO EN VERDE
 ```
 
-Los 61 bloques tardan unos **25 minutos** (1.354 s en la última medida; el
+Los 62 bloques tardan unos **25 minutos** (1.354 s en la última medida; el
 «~10 min» que ponía aquí se quedó corto en cuanto los bloques 50 a 61
 empezaron a resolver menús de verdad, y el «~2 min» de antes llevaba meses
 caducado). No necesita red ni claves de verdad: se fabrica

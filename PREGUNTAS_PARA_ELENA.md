@@ -26,13 +26,30 @@ por Belshaw 1975, rango 400-1.275). No es una cifra mía: sale del NRC.
 a **1.038**, la mediana a **418**, y **ninguno** pasa de 1.275. O sea que el
 cambio no quita ni un menú.
 
-**Lo que te pregunto.** 1.275 está a un 9 % de la cifra que hizo daño, y esa cifra
-es de **cachorros**, que son el grupo sensible; nuestro techo se aplica igual a
-todos. Como el peor menú real va a 1.038, habría sitio para bajarlo bastante más
-sin coste ninguno. ¿Lo dejamos en 1.275, o se lo pasas al nutricionista para que
-diga un número con más margen? La referencia del propio NRC para perro adulto es
-**220 µg/1000 kcal**, o sea que incluso 1.000 seguirían siendo casi cinco veces
-la dosis recomendada.
+### ✅ RESUELTA EL MISMO DÍA — y la contesta FEDIAF, que no había mirado
+
+Te iba a preguntar si bajábamos más el techo. **No hace falta preguntarlo: la
+respuesta está en FEDIAF 2025, sección 3.3.1, apartado «Iodine», y habla justo
+del estudio del que sale nuestro número.** Literal:
+
+> *«From studies by Castillo et al. (2001a, b) low nutritional maximum for iodine
+> in dogs (0.4 mg/100 g DM) was recommended. However in these studies **puppies
+> were significantly overfed** (approx. 75 % above energy requirement) which
+> resulted in a substantially increased intake of iodine. Furthermore the food
+> was **deficient in a number of key nutrients**, e.g. Ca, P and K, and therefore
+> inappropriate for puppies. Consequently, **these results are irrelevant** for
+> normal commercial nutritionally balanced foods, and **the existing legal
+> maximum is safe for all dogs**.»*
+
+O sea: el organismo que fija los requisitos ya evaluó ese estudio, explica por
+qué no aplica a una dieta equilibrada, y declara seguro el **máximo legal
+entero**, que son **2.750 µg/1000 kcal**.
+
+**Así que no se toca nada, y ahora se sabe por qué.** Nuestro 1.275 es **2,2
+veces más estricto** que lo que FEDIAF considera seguro, no cuesta ni un menú
+(el peor real va a 1.038), y bajarlo más no tendría base: no hay daño documentado
+en ese rango con una dieta equilibrada. Se queda donde está a propósito, y el
+porqué está escrito en `motor/seguridad.py`.
 
 ---
 
@@ -52,10 +69,30 @@ Convertirla a µg/1000 kcal sería inventarme el número, que es exactamente lo 
 `CERRADO.md` prohíbe. Y además nuestra «hepatopatía» es genérica: un shunt
 portosistémico no es lo mismo que una hepatitis.
 
-**Lo que hace falta.** Que el nutricionista (o un internista) diga si en
-hepatopatía hay que topar la metionina, y con qué cifra y sobre qué base. Si la
-respuesta es que sí, el motor puede aplicarlo: la clave `metionina` ya está en
-las 163 fichas del catálogo desde el 28 de agosto.
+### ✅ RESUELTA EL MISMO DÍA — y no hay techo que poner, hay otra cosa
+
+**La contesta SACN5 cap.68, que es más reciente que el NRC y es canino**, y dice
+dos cosas que cambian la pregunta entera:
+
+1. **Sobre la patogenia, que esa vía ya no se sostiene.** Literal: *«previous
+   diagnostic methods overestimated the importance of these compounds; in rats
+   and dogs, there was **no correlation** between the severity of HE and the
+   concentrations of methanethiol and dimethyldisulfide. Thus these compounds
+   **do not play an important role** in the pathogenesis of HE»*.
+2. **Sobre qué hacer, la acción concreta**, en su tabla de manejo de la
+   encefalopatía hepática: *«Do not administer sedatives, analgesics,
+   anesthetics, diuretics, stored blood or **methionine-containing products**»*.
+
+O sea: **no es un techo de metionina de la comida, es no dar productos con
+metionina añadida.** Es una regla de exclusión, no un límite por nutriente, y el
+motor ya sabe excluir alimentos.
+
+**Lo que queda, y es pequeño:** hoy no hay nada que excluir, porque el catálogo
+no tiene ninguna ficha de L-metionina — la pide `REVISION_NUTRICIONISTA.md`. El
+día que entre, `hepatopatia` tiene que excluirla, y está escrito en
+`patologias.json` para que no se olvide. La otra mitad de esa misma tabla
+(*«Avoid excess dietary protein»*) ya la cubre el tope de proteína que la
+hepatopatía tiene puesto.
 
 ---
 
@@ -113,19 +150,38 @@ nada de esto (ya lo dice: lo he añadido con la medida).
 los relleno yo. Ni ningún factor de conversión: el NRC dice que no existe para el
 perro, y ponerlo sería inventármelo.
 
-**Lo que te pregunto, y hay tres decisiones distintas ahí dentro:**
+### ⚠️ CORRECCIÓN DEL MISMO DÍA: el factor SÍ existe, y lo da FEDIAF
 
-1. **¿Qué convenio queremos?** Lo natural sería «retinol y caroteno separados»,
-   como ya hacemos con `epa` y `dha`: dos campos en vez de uno. Eso es trabajo de
-   datos (hay que ir a la fuente ficha por ficha) y va en `DATOS_QUE_FALTAN.md`.
-2. **¿Qué factor le ponemos al caroteno para el perro?** Esto es pregunta para
-   el nutricionista, no para mí, y no tiene respuesta buena en la literatura: el
-   NRC dice que no está definida.
-3. **Mientras tanto, ¿el menú debería DECIRLO?** Yo puedo hacer que la ficha
-   verificada informe de cuánta de la vitamina A es retinol preformado, igual que
-   ya informa de los huecos y de los `dato_dudoso`. Eso es información, no una
-   decisión clínica, y lo haría sin problema si me dices que sí. Es lo único de
-   los tres que se puede hacer esta semana.
+Escribí arriba que «el NRC dice que para el perro no está definido» y me quedé
+ahí. **Estaba mirando la fuente equivocada.** FEDIAF 2025, Tabla VII-14
+(«Conversion factors – Vitamin source to activity»), trae la fila con nombre y
+apellidos:
+
+> Provitamin A (β-carotene) **(dogs)** — 1.0 mg = **833 IU**
+
+Y en la misma tabla, retinol: 0,3 µg = 1 IU. O sea **1 mg de β-caroteno = 250 µg
+de equivalentes de retinol**, un factor de **4 a 1** — más generoso que el 6:1
+europeo y que el 12:1 americano. Es la fuente cuyo mínimo estamos comprobando,
+así que es el factor que manda.
+
+Las dos frases conviven sin contradecirse: el NRC habla de que **no hay un
+estudio de equivalencia**, y FEDIAF publica un **factor reglamentario** para
+usar. Pero la conclusión práctica cambia entera.
+
+**Así que ya no hay pregunta de criterio aquí: hay un dato que falta.** Las
+fichas están calculadas con factores ajenos (6:1, 12:1 o ninguno reconocible),
+así que una ficha con ÷6 declara un **33 % menos** de lo que FEDIAF le contaría
+al perro, y una con RAE, un **67 % menos**. Para arreglarlo hacen falta dos
+columnas separadas, `retinol` y `betacaroteno`, y calcular
+`retinol + β-caroteno / 4`. Está escrito en `DATOS_QUE_FALTAN.md` y en
+`UNIDADES.md`, y los datos no los relleno yo.
+
+**Lo que sí queda para ti, y es lo único:**
+
+> ¿Hago que la ficha verificada informe de cuánta de la vitamina A es retinol
+> preformado y cuánta caroteno? Es información, no una decisión clínica, y se
+> puede hacer en cuanto existan las dos columnas. Hasta entonces no hay de dónde
+> sacarlo, porque la ficha trae los dos ya sumados.
 
 **Lo tranquilizador, para que no cunda el pánico:** por arriba no hay problema.
 El techo de vitamina A que aplicamos (30.000 µg/1000 kcal, FEDIAF) se aplica a
@@ -201,7 +257,7 @@ Medí que resolvía —salía en el peldaño 5, con 189,4 mg, verde— y lo dej�
 
 **Qué se me escapó.** Ese mismo día, en **otra pasada**, se puso el techo de
 fósforo del perro adulto sano (2.000 mg/1000 kcal, también de SACN5,
-`recomendaciones_adulto.json`). Cada cifra la medí por separado y cada una cabía.
+`recomendaciones_libro.json`). Cada cifra la medí por separado y cada una cabía.
 **Juntas no.** Para llegar a 187,5 mg de vitamina E el motor tiene que cargar de
 verdura y de hígado, y eso sube el fósforo por encima de 2.000.
 

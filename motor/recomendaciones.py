@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-LOS TECHOS DEL PERRO ADULTO SANO, QUE NO SON DE FEDIAF NI DE UNA PATOLOGÍA.
+LOS TECHOS DEL LIBRO PARA EL PERRO SANO, QUE NO SON DE FEDIAF NI DE UNA PATOLOGÍA.
 
 Hasta el 8 de septiembre de 2026 el motor solo conocía dos clases de límite:
 los de **FEDIAF** (los 43 requisitos, que valen para cualquier perro) y los de
@@ -20,7 +20,7 @@ que ver con el fósforo. El resultado era incoherente: **el mismo perro pasaba d
 Es la misma regla que sacó la tabla de patologías de dentro del código el 28 de
 agosto: **un número que decide si un menú se entrega tiene que poder
 auditarse**, y no se audita lo que está enterrado entre `if`s. Aquí no hay ni
-una cifra: están en `recomendaciones_adulto.json`, con su fuente, su cita
+una cifra: están en `recomendaciones_libro.json`, con su fuente, su cita
 literal y el porqué, y las vigila el BLOQUE 57.
 
 ⚠️ Y POR QUÉ NO VAN EN NINGUNO DE LOS DOS FICHEROS QUE YA HABÍA
@@ -32,6 +32,32 @@ literal y el porqué, y las vigila el BLOQUE 57.
 - En `patologias.json` tampoco, porque esto **no es una patología**: se aplica
   al perro que no tiene ninguna.
 
+⚠️ Y DESDE EL 9 DE SEPTIEMBRE NO SON SOLO DEL ADULTO (por eso el fichero ya
+no se llama `recomendaciones_adulto.json`)
+
+SACN5 le da al cachorro sus propias tablas —la 17-1 para cualquier cachorro y
+la 33-5 para el de raza grande y gigante— y ahí hay techos que **no existen en
+FEDIAF**: el de fósforo en crecimiento, sin ir más lejos, donde las dos columnas
+de máximo de FEDIAF están vacías. Es el mismo agujero que el del fósforo del
+adulto, un piso más abajo.
+
+Y el del calcio del cachorro de raza grande no es un número feo en una ficha:
+es enfermedad ortopédica del desarrollo. El cachorro no regula su absorción de
+calcio como el adulto.
+
+⚠️ HAY DOS UMBRALES DE «RAZA GRANDE» Y NO SON EL MISMO NÚMERO
+
+- **15 kg** (`RAZA_GRANDE_O_GIGANTE_KG` en `motor_completo.py`) es el corte de
+  las notas a y b de la Tabla III-3b de FEDIAF: decide el mínimo de calcio
+  reforzado (2500) y el techo del ratio Ca:P (1,6).
+- **25 kg** es el corte de SACN5 para la enfermedad ortopédica del desarrollo
+  («large- and giant-breed puppies (>25 kg adult weight)», cap.33), y es el que
+  parte en dos las columnas de la Tabla 17-1.
+
+Dos fuentes, dos poblaciones, dos números. Unificarlos sería inventarse uno de
+los dos, así que cada uno vive donde vive su fuente y este comentario está aquí
+para que nadie los «arregle».
+
 CÓMO SE COMBINA CON LO DEMÁS
 
 Igual que un tope de patología: con `min()`, así que solo puede APRETAR. Si el
@@ -42,7 +68,7 @@ import json
 import os
 
 _RUTA = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
-                     "recomendaciones_adulto.json")
+                     "recomendaciones_libro.json")
 
 with open(_RUTA, encoding="utf-8") as _f:
     CRUDO = json.load(_f)
@@ -50,17 +76,44 @@ with open(_RUTA, encoding="utf-8") as _f:
 POR_ETAPA = CRUDO["por_etapa"]
 
 
-def topes_de_la_etapa(etapa, req=None, der_efectiva=None):
+def _topes_crudos(etapa, peso_adulto_esperado_kg=None):
+    """Los techos escritos para esta etapa, ya combinados con los de raza grande.
+
+    Devuelve `{clave: ficha}`. La sección `si_peso_adulto_esperado_supera_kg`
+    solo entra si el perro llega al umbral, y entra con `min()`: como todo en
+    este fichero, un techo solo puede APRETAR. Nunca puede aflojar el de la
+    columna general por el hecho de ser un perro grande.
+    """
+    ficha = POR_ETAPA.get(etapa) or {}
+    salida = dict(ficha.get("topes_por_1000kcal") or {})
+    grande = ficha.get("si_peso_adulto_esperado_supera_kg") or {}
+    umbral = grande.get("umbral_kg")
+    if (umbral is not None and peso_adulto_esperado_kg
+            and peso_adulto_esperado_kg >= umbral):
+        for clave, t in (grande.get("topes_por_1000kcal") or {}).items():
+            actual = salida.get(clave)
+            if actual is None or t["valor"] < actual["valor"]:
+                salida[clave] = t
+    return salida
+
+
+def topes_de_la_etapa(etapa, req=None, der_efectiva=None,
+                      peso_adulto_esperado_kg=None):
     """Los techos del libro para esta etapa, en la forma que espera el solver.
 
     Devuelve `{clave_nutriente: valor}`, o `{}` si la etapa no tiene ninguno.
 
-    Las etapas que NO tienen ninguno son las de crecimiento, gestación y
-    lactancia, y no es un olvido: SACN5 les da sus propias tablas (17-1 para el
-    cachorro, 33-5 para el de raza grande, 15-5 para la reproductora) con otros
-    números, y además el mínimo de fósforo de un cachorro joven que exige FEDIAF
-    (2250) está POR ENCIMA del techo del adulto (2000). Aplicárselo no sería un
-    techo: sería dejarlo sin menú.
+    Las etapas que NO tienen ninguno son gestación y lactancia: SACN5 les da su
+    propia tabla (la 15-5 de la reproductora) que todavía no se ha transcrito.
+    Que devuelvan `{}` es el lado seguro y no un olvido silencioso —lo vigila el
+    BLOQUE 62—, pero está apuntado como pendiente.
+
+    ⚠️ `peso_adulto_esperado_kg` NO ES OPCIONAL PARA UN CACHORRO, aunque lo
+    parezca por la firma. Sin él, un cachorro de raza grande recibe el techo de
+    calcio del cachorro pequeño (4250 en vez de 2750), que para él es papel
+    mojado. Es exactamente el olvido que el 7 de septiembre dejó sin efecto el
+    mínimo de calcio reforzado en la vía rápida de `/menu/v2`, y por eso los
+    tres sitios que llaman a `_tope_patologia_roto` se lo pasan.
 
     ⚠️ Y CON `req` Y `der_efectiva`, EL TECHO CEDE ANTE EL MÍNIMO DE FEDIAF.
 
@@ -93,9 +146,8 @@ def topes_de_la_etapa(etapa, req=None, der_efectiva=None):
     estricto, y así quien no pueda calcular el mínimo escalado nunca aplica uno
     de más por accidente.
     """
-    ficha = POR_ETAPA.get(etapa) or {}
     salida = {}
-    for clave, t in (ficha.get("topes_por_1000kcal") or {}).items():
+    for clave, t in _topes_crudos(etapa, peso_adulto_esperado_kg).items():
         valor = t["valor"]
         if req is not None and der_efectiva is not None:
             minimo = _minimo_de_fediaf(req, clave, etapa, der_efectiva)
@@ -107,7 +159,7 @@ def topes_de_la_etapa(etapa, req=None, der_efectiva=None):
     return salida
 
 
-def cedidos_ante_fediaf(etapa, req, der_efectiva):
+def cedidos_ante_fediaf(etapa, req, der_efectiva, peso_adulto_esperado_kg=None):
     """Los techos que se han caído por cruzarse con el mínimo de FEDIAF.
 
     Devuelve `[{clave, techo, minimo_de_fediaf}]`. Existe para poder DECIRLO:
@@ -115,9 +167,8 @@ def cedidos_ante_fediaf(etapa, req, der_efectiva):
     esto es lo mismo un escalón más abajo -- un límite que estaba puesto y ha
     dejado de aplicarse a este perro concreto.
     """
-    ficha = POR_ETAPA.get(etapa) or {}
     fuera = []
-    for clave, t in (ficha.get("topes_por_1000kcal") or {}).items():
+    for clave, t in _topes_crudos(etapa, peso_adulto_esperado_kg).items():
         minimo = _minimo_de_fediaf(req, clave, etapa, der_efectiva)
         if minimo is not None and minimo > t["valor"]:
             fuera.append({"clave": clave, "techo": t["valor"],
@@ -143,18 +194,19 @@ def _minimo_de_fediaf(req, clave, etapa, der_efectiva):
     return minimo_de(fila, nombre, etapa, der_efectiva)
 
 
-def con_procedencia(etapa):
+def con_procedencia(etapa, peso_adulto_esperado_kg=None):
     """Lo mismo, pero cada techo sabiendo de dónde viene y por qué.
 
     Para poder decirle a alguien «lo que te está apretando el fósforo no es tu
     perro, es la recomendación del libro para cualquier adulto», que es la
     diferencia entre un límite y una pared.
     """
-    ficha = POR_ETAPA.get(etapa) or {}
     fuera = []
-    for clave, t in (ficha.get("topes_por_1000kcal") or {}).items():
+    for clave, t in _topes_crudos(etapa, peso_adulto_esperado_kg).items():
         fuera.append({"tipo": "tope", "clave": clave, "valor": t["valor"],
                       "patologia": None,
-                      "nombre_patologia": "Recomendación para el perro adulto sano",
+                      "nombre_patologia": ("Recomendación del libro para el perro sano"
+                                           if etapa in ("CachorroJoven", "CachorroCrecimiento")
+                                           else "Recomendación para el perro adulto sano"),
                       "fuente": t.get("fuente"), "por_que": t.get("por_que")})
     return fuera

@@ -196,16 +196,35 @@ TOPE_VITD_KCAL = 20.0      # µg por 1000 kcal -- NRC 2006
 # O sea que el cambio NO quita ni un menú: solo saca el techo del sitio donde
 # hay daño documentado.
 #
-# ⚠️ Y QUEDA UNA PREGUNTA ABIERTA, en PREGUNTAS_PARA_ELENA.md §1: 1.275 está
-# a un 9 % de la cifra que hizo daño, y esa cifra es de CACHORROS, que son el
-# grupo sensible, mientras que este techo se aplica a todos por igual. Como
-# el peor menú real va a 1.038, habría sitio para bajarlo bastante más sin
-# coste — pero cuánto margen se le deja a una tiroides es criterio clínico.
-# La referencia del propio NRC para perro adulto son 220 µg/1000 kcal.
+# ⚠️ LA PREGUNTA QUE HABÍA ABIERTA AQUÍ (PREGUNTAS_PARA_ELENA.md §1) LA
+# CONTESTA FEDIAF, Y NO LA HABÍAMOS MIRADO (9 de septiembre).
 #
-# (El máximo LEGAL de FEDIAF son 2.750 µg/1000 kcal -- Tabla III-3a, 1,10
-# mg/100 g MS x 2,5 --, o sea más flojo que este, así que no ata: el que
-# aprieta es este.)
+# Era: «1.275 está a un 9 % de la cifra que hizo daño, y esa cifra es de
+# CACHORROS; ¿bajamos más?». La respuesta está en FEDIAF 2025, sección 3.3.1,
+# apartado «Iodine», y habla justo del estudio del que sale nuestro número.
+# Literal:
+#
+#   «From studies by Castillo et al. (2001a, b) low nutritional maximum for
+#    iodine in dogs (0.4 mg/100 g DM) was recommended. However in these studies
+#    PUPPIES WERE SIGNIFICANTLY OVERFED (approx. 75 % above energy requirement)
+#    which resulted in a substantially increased intake of iodine. Furthermore
+#    the food was DEFICIENT IN A NUMBER OF KEY NUTRIENTS, e.g. Ca, P and K, and
+#    therefore inappropriate for puppies. Consequently, THESE RESULTS ARE
+#    IRRELEVANT for normal commercial nutritionally balanced foods, and THE
+#    EXISTING LEGAL MAXIMUM IS SAFE FOR ALL DOGS.»
+#
+# O sea que el organismo que fija los requisitos ya evaluó ese estudio, explica
+# por qué no aplica a una dieta equilibrada, y declara seguro el máximo legal
+# entero: 2.750 µg/1000 kcal (Tabla III-3a, 1,10 mg/100 g MS x 2,5).
+#
+# NO SE CAMBIA NADA, y ahora se sabe por qué: nuestro 1.275 es **2,2 veces más
+# estricto** que lo que FEDIAF considera seguro, y no cuesta ni un menú (el peor
+# real va a 1.038). Bajarlo más tampoco haría falta -- no hay daño documentado
+# en este rango para una dieta equilibrada --, y subirlo hasta el legal sería
+# soltar un margen que hoy sale gratis. Se queda donde está, a propósito.
+#
+# La referencia del propio NRC para perro adulto son 220 µg/1000 kcal, así que
+# incluso este techo es casi seis veces la recomendación.
 #
 # ⚠️ Por la enorme variabilidad del kelp, se aplica un margen de seguridad
 # extra del 50% cuando el yodo del menú viene, en parte, de kelp -- para no

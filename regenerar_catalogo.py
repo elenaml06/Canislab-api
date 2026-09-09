@@ -64,9 +64,28 @@ CAT_DE = {"Salmón": "Pescados y mariscos", "Merluza": "Pescados y mariscos"}
 LLAMADA_COMO_LA_API = dict(margenes_categoria=MARGENES_V2, max_suplementos=2)
 
 
-def resolver_uno(al, req, der, etapa, peso, especie=None, proteina=None, segundos=45):
+def peso_adulto_de(d, tamano):
+    """El peso ADULTO de ese tamaño, leído del propio catálogo.
+
+    ⚠️ NO ES EL `peso_kg` DE LA ENTRADA, y confundirlos es justo el fallo que
+    esto evita (9 septiembre): el `peso_kg` de un cachorro es lo que pesa HOY
+    (a los 2 meses, o a mitad del crecimiento), y lo que decide el techo de
+    calcio de SACN5 es lo que va a pesar de ADULTO. Un gran danés de 12 kg a
+    los dos meses es un cachorro de raza gigante, no un perro mediano.
+
+    Se lee de la entrada `<tamaño>_Adulto` del mismo fichero en vez de
+    escribirse aquí a mano, para que no haya una segunda copia de los seis
+    pesos que se pueda desincronizar de la primera.
+    """
+    ent = d["CATALOGO"].get("%s_Adulto" % tamano)
+    return (ent or {}).get("peso_kg")
+
+
+def resolver_uno(al, req, der, etapa, peso, especie=None, proteina=None,
+                 segundos=45, peso_adulto=None):
     """Un menú verde para esa ficha, o el mejor que haya salido, o (None, None)."""
     kw = dict(LLAMADA_COMO_LA_API)
+    kw["peso_adulto_esperado_kg"] = peso_adulto
     if especie and proteina:
         kw["restringir_especie"] = {especie: proteina}
     t0 = time.time()
@@ -75,7 +94,12 @@ def resolver_uno(al, req, der, etapa, peso, especie=None, proteina=None, segundo
         ok, g = mc.resolver(der, etapa, al, req, peso, dosis_maxima_fabricante, **kw)
         if not ok:
             continue
-        if main._tope_patologia_roto(g, al, [], etapa):
+        # ⚠️ CON EL PESO ADULTO TAMBIÉN AQUÍ (9 septiembre). Sin él, el filtro
+        # mediría el calcio de un cachorro de raza gigante contra el techo del
+        # cachorro pequeño (4250 en vez de 2750) y daría por bueno un menú que
+        # la API va a rechazar en cuanto el usuario diga qué perro tiene.
+        if main._tope_patologia_roto(g, al, [], etapa,
+                                     peso_adulto_esperado_kg=peso_adulto):
             continue
         v = verificar(g, al, req, der, etapa)
         if v["semaforo"] == "verde":
@@ -90,7 +114,8 @@ def main_regenerar(solo_base=False):
     cambios, fallos = [], []
 
     for clave, e in d["CATALOGO"].items():
-        g, v = resolver_uno(al, req, e["der"], e["etapa"], e["peso_kg"])
+        g, v = resolver_uno(al, req, e["der"], e["etapa"], e["peso_kg"],
+                            peso_adulto=peso_adulto_de(d, e["tamano"]))
         if g is None or v["semaforo"] != "verde":
             fallos.append(clave)
             print("  %-28s NO SALE -- se deja el viejo" % clave, flush=True)
@@ -109,7 +134,9 @@ def main_regenerar(solo_base=False):
             for var in lista:
                 p = var["proteina"]
                 cat = CAT_DE.get(p, "Carne muscular")
-                g, v = resolver_uno(al, req, ent["der"], ent["etapa"], ent["peso_kg"], cat, p)
+                g, v = resolver_uno(al, req, ent["der"], ent["etapa"], ent["peso_kg"],
+                                    cat, p,
+                                    peso_adulto=peso_adulto_de(d, ent["tamano"]))
                 if g is None or v["semaforo"] != "verde":
                     fallos.append("%s/%s" % (clave, p))
                     print("  %-28s variante %-10s NO -- se deja la vieja"

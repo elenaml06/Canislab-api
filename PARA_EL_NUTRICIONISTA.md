@@ -1437,6 +1437,120 @@ Para que la revisión no dé por hecho lo que no hay:
 
 ---
 
+## 11-bis · Lo que las fuentes dicen y el motor NO aplica (9 de septiembre)
+
+Todas estas están **escritas en el repo con su fuente y su motivo**
+(`patologias.json`, bloque `limites_escritos_que_el_solver_no_aplica`, y el
+BLOQUE 55 de la batería vigila que sigan sin aplicarse). Ninguna se ha aplicado
+en silencio y ninguna se ha tirado a la basura. Lo que falta es la decisión
+clínica.
+
+### 11-bis.1 · Oxalato: el fósforo, y las dos fuentes dicen lo contrario
+
+Hoy el motor le pone al oxalato un **techo de fósforo de 1500 mg/1000 kcal**,
+de SACN5 Tabla 40-5 (*«Dietary phosphorus should be in the range of 0.3 to 0.6%
+DM»*).
+
+Fascetti & Delaney cap.16 dice literalmente lo contrario: *«Dietary phosphorus
+should not be restricted with calcium oxalate urolithiasis. **Low dietary
+phosphorus is a risk factor** for calcium oxalate urolith formation in cats and
+dogs»*, y recomienda **1,5-2,0 g/Mcal** — o sea que lo que una fuente da como
+máximo aconsejable la otra lo da como **mínimo**.
+
+> **PREGUNTA 31.** ¿Se restringe el fósforo en el oxalato cálcico canino, o no?
+> Si no, ¿quitamos el techo o lo subimos a 2000? Equivocarse por abajo aquí
+> **no es el lado seguro**, porque el fósforo bajo es factor de riesgo de la
+> propia enfermedad, y por eso no lo hemos tocado nosotras.
+
+### 11-bis.2 · Oxalato: el sodio, y la propia fuente dice que el debate está abierto
+
+Hoy: techo de **750 mg/1000 kcal** (SACN5 Tabla 40-5, *«Dietary sodium should be
+<0.3% DM»*).
+
+Fascetti cap.16 apunta al revés: *«the **low** dietary sodium concentrations…
+**increase** the risk… diets that contain **high** dietary sodium concentrations
+**decrease** the risk»*, y a la vez reconoce que *«recommended concentrations…
+**is debated**, as diets containing as low as 0,4 g/Mcal and as high as 3,5
+g/Mcal are available commercially»*.
+
+> **PREGUNTA 32.** Con un rango de mercado de casi diez veces, ¿qué techo (o
+> qué suelo) de sodio tiene sentido en un perro con oxalato?
+
+### 11-bis.3 · Oxalato: la proteína, que cae entera por debajo de FEDIAF
+
+SACN5 Tabla 40-5: *«Restrict dietary protein to **10 to 18% dry matter**»* =
+25-45 g/1000 kcal. El **mínimo** de FEDIAF para el adulto son **52,1**, así que
+el techo entero de la fuente está por debajo del suelo del perro sano: no existe
+ningún número que cumpla las dos cosas. Y una ración BARF real de este motor
+ronda los **105 g/1000 kcal**, más del doble del techo de la tabla.
+
+> **PREGUNTA 33.** ¿Es esta una de las que solo puede pautar un colegiado (la
+> «fase 4»: una prescripción declarada, por debajo de FEDIAF, que viaja con el
+> menú y contra la que se verifica)? ¿O el objetivo realista en una ración
+> cruda es simplemente «no pasarse», y entonces cuál es el número?
+
+### 11-bis.4 · Dermatosis por zinc: la dosis del ensayo está por encima del máximo legal
+
+Fascetti cap.14, citando a NRC 2006: *«The combination of **zinc (100 mg/1000
+kcal) and linoleic acid (15 g/1000 kcal)** produced statistically significant
+improvements in coat gloss and decreased TEWL over a nine-week period in dogs»*.
+Y van juntas a propósito: la misma fuente dice que *«EFA deficiency impairs zinc
+absorption»*.
+
+Nuestro suelo de zinc es **25** (SACN5 Tabla 32-1, extremo bajo). Medido: con el
+zinc en 100 **no sale menú a ningún peso**; con 60, 75 y 90 tampoco, ni bajando
+la escalera entera. Zinc 50 solo sí sale, y linoleico 15 solo también; lo que no
+existe es la combinación, que es justo lo que la fuente probó.
+
+Y hay un motivo que no es del catálogo: **100 mg/1000 kcal está por encima del
+máximo LEGAL de la UE** (22,70 mg/100 g MS = 56,75 mg/1000 kcal). Esa dosis no
+se puede vender en un alimento completo en Europa.
+
+> **PREGUNTA 34.** Con el techo legal en 56,75, ¿cuánto zinc tiene sentido
+> pedirle a esta patología? ¿Y el linoleico de 15 g/1000 kcal (cinco veces el
+> mínimo de FEDIAF) aporta algo por sí solo, sin el zinc?
+
+### 11-bis.5 · El ratio omega-6:omega-3, que es lo que preguntó Cris
+
+SACN5 lo da para cuatro patologías, y el cap.37 lo dice explícitamente: *«These
+recommendations are similar to omega-3 fatty acid content and omega-6:omega-3
+ratios recommended for dogs and cats with cancer, osteoarthritis and
+inflammatory skin diseases»*.
+
+| patología | ratio que pide SACN5 | dónde |
+|---|---|---|
+| Enfermedad renal crónica | 1:1 a 7:1 | cap.37 |
+| Cáncer | «approximating 1:1» / «as close to 1:1 as possible» | cap.30 |
+| Artrosis | **menos de 1:1** | cap.34 |
+| Reacción adversa al alimento | *«currently unknown»* | cap.31 |
+
+Y **para el perro sano no hay ninguno en ninguna fuente que tengamos.** El NRC
+2006 cap.5 dice literalmente que el ratio de totales *«is not helpful»* porque
+mezcla ácidos grasos de potencia muy distinta, y recomienda en su lugar el ratio
+**linoleico:linolénico**, que el motor sí aplica desde el 9 de septiembre (2,6-26
+en adulto y crecimiento, 2,6-16 en gestación y lactancia).
+
+> **PREGUNTA 35.** ¿Aplicamos el ratio de totales en esas tres patologías, a
+> pesar de que el NRC dice que no sirve? Si sí, hay que contar con que se cumple
+> metiendo aceite de pescado, y el aceite de un menú de este motor ya llega a
+> 25,3 g en el peor caso.
+
+### 11-bis.6 · Y una que ya estaba, y sigue igual
+
+El **selenio de la disfunción cognitiva** (SACN5 Tabla 35-3, 0,5-1,3 mg/kg MS =
+125-325 µg/1000 kcal). El rango empieza 12 µg por debajo del máximo de FEDIAF
+(142) y termina en 325, **dos veces y media** ese máximo. Medido: con el suelo en
+125 salen los cinco perros de prueba, pero su selenio real queda entre el **88 %
+y el 98 % del máximo de FEDIAF**, y el selenio es uno de los cinco límites de
+toxicidad crónica del motor. **No se aplica**: un techo existe para no vivir en
+él.
+
+> **PREGUNTA 36.** ¿Merece la pena acercar el selenio al techo de FEDIAF en esta
+> patología, o el margen de 3 µg es demasiado poco para un nutriente con
+> toxicidad crónica documentada?
+
+---
+
 ## 12 · Cómo contestar
 
 No hace falta contestarlo todo ni en orden. Si solo hay tiempo para tres:

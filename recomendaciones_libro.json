@@ -1,0 +1,106 @@
+{
+  "_meta": {
+    "que_es": "Los techos que el LIBRO (SACN5, y en un caso Fascetti) recomienda para el perro SANO, por etapa. No son de FEDIAF y no son de una patologia: se aplican al perro que no tiene nada.",
+    "unidad": "por 1000 kcal de energía metabolizable, igual que requerimientos_v2_final.json",
+    "por_que_existe_este_fichero": "Porque no cabe en ninguno de los dos que ya hay, y meterlo a la fuerza en cualquiera de ellos rompería lo que ese fichero significa. En `requerimientos_v2_final.json` no, porque ese fichero ES la Tabla III-3b de FEDIAF y `auditar_fediaf.py` comprueba sus 43 filas contra el PDF celda a celda: meter ahí un número de un libro de texto es exactamente cómo se coló en agosto una fila «Fibra» con mínimo y máximo inventados que el analizador exigía. En `patologias.json` tampoco, porque esto no es una patología: se aplica al perro que no tiene ninguna. Así que va aparte, con la misma forma que patologias.json (valor + fuente + por_que) para que se audite igual.",
+    "que_NO_es": "No es un límite de seguridad crónica (esos viven en seguridad.py y salen de NRC 2006). No es un requisito de FEDIAF. Es la recomendación de un libro de texto veterinario para el alimento de un perro adulto sano, aplicada como techo duro porque se ha medido que cabe.",
+    "verificado": "8 de septiembre de 2026 las dos tablas del adulto (13-3 y 14-2); 9 de septiembre de 2026 las de crecimiento (17-1 y 33-5) y la frase de Fascetti cap.10, leidas literales en el texto de las fuentes.",
+    "por_que_ya_no_se_llama_recomendaciones_adulto": "Se llamaba `recomendaciones_adulto.json` porque el 8 de septiembre solo traia las dos cifras del perro adulto (fosforo y sodio). El 9 de septiembre entraron los techos de CRECIMIENTO de las Tablas 17-1 y 33-5 de SACN5, y un fichero que se llama «adulto» y decide el calcio de un cachorro es exactamente la clase de trampa silenciosa que este repo tiene documentada tres veces. Renombrado a `recomendaciones_libro.json`, que es lo que es: los techos del libro, para cualquier etapa."
+  },
+  "por_etapa": {
+    "Adulto": {
+      "de_donde": "SACN5 5a ed., cap.13 «Feeding Young Adult Dogs», Tabla 13-3 «Key nutritional factors for foods for young adult dogs», columnas «Normal weight and body condition» e «Inactive/obese prone» -- las dos dan lo mismo en estos dos nutrientes",
+      "topes_por_1000kcal": {
+        "fosforo": {
+          "valor": 2000.0,
+          "fuente": "SACN5 5a ed., cap.13, Tabla 13-3, verificado literal 8-sep-2026",
+          "por_que": "APLICADO 8-sep-2026. Tabla 13-3, fila «Phosphorus (%)»: 0,4-0,8 % de materia seca en las dos columnas. Conversion: %MS x 2500 = mg/1000 kcal a 4000 kcal EM/kg MS, asi que el rango son 1000-2000 y se aplica el TECHO. El suelo (1000) queda por debajo del minimo de FEDIAF (1160) y no se toca: manda FEDIAF. || POR QUE IMPORTA: FEDIAF NO PONE MAXIMO DE FOSFORO -- se le quito el 7 de septiembre justamente por no tener fuente (NRC 2006 dice que no hay datos para fijar un SUL en perros, y Dobenecker et al. 2021 en PLOS ONE que todavia no se puede definir un no-effect-level). Sin techo, una racion BARF de este motor sale con ~4000 mg/1000 kcal: el DOBLE de lo que este libro recomienda para cualquier perro adulto. || Y POR QUE SE APLICA AHORA Y NO ANTES: hasta hoy este numero solo entraba por la puerta de atras, en las patologias cuya tabla lo repite -- la artrosis (Tabla 34-2, 1750) y la reaccion adversa al alimento (Tabla 31-3, 2000) --, que lo llevan porque su poblacion es de riesgo renal, no porque la enfermedad tenga que ver con el fosforo. El resultado era incoherente: el mismo perro pasaba de 4000 a 1750 por marcar «artrosis». || MEDIDO ANTES DE APLICARLO, que es la unica forma de saber si un techo asi es un techo o un muro. Perro adulto sano, sin alergias, solver a 15 s: 3 kg -> 1889 mg, 10 kg -> 1962, 22 kg -> 1586, 40 kg -> 1524. Los cuatro en el PELDANO 0 de la escalera (sin soltar ni una proporcion de BARF) y los cuatro VERDES; el de 3 kg, que sin techo salia AMBAR, sale verde con el. O sea que no cuesta nada y arregla algo. || Lo que si cuesta: 207 de los 216 menus precalculados de la vista previa estaban por encima (mediana 3149), y hubo que regenerarlos."
+        },
+        "sodio": {
+          "valor": 1000.0,
+          "fuente": "SACN5 5a ed., cap.13, Tabla 13-3, verificado literal 8-sep-2026",
+          "por_que": "APLICADO 8-sep-2026. Tabla 13-3, fila «Sodium (%)»: 0,2-0,4 % de materia seca en las dos columnas = 500-1000 mg/1000 kcal. Se aplica el techo. El suelo (500) esta por encima del minimo de FEDIAF (290) y NO se aplica: un suelo de sodio en un perro sano no lo pide nadie, lo que la tabla quiere es no pasarse. || Muy por debajo del maximo de FEDIAF (3750 mg, nota c de la Tabla III-3b: «hasta 1,5 % MS es seguro en perros sanos»), asi que este es el que manda. Los menus reales del motor ya salian por debajo -- medido: 496 a 787 mg en 3, 10, 22 y 40 kg --, asi que este techo no cambia practicamente ningun menu; se aplica igual porque la fila esta en la tabla y porque un techo que hoy no aprieta seguira estando el dia que el catalogo cambie."
+        }
+      }
+    },
+    "Senior": {
+      "de_donde": "SACN5 5a ed., cap.14 «Feeding Mature Adult Dogs», Tabla 14-2 «Key nutritional factors for foods for mature dogs»",
+      "topes_por_1000kcal": {
+        "fosforo": {
+          "valor": 1750.0,
+          "fuente": "SACN5 5a ed., cap.14, Tabla 14-2, verificado literal 8-sep-2026",
+          "por_que": "APLICADO 8-sep-2026. Tabla 14-2, fila «Phosphorus (%)»: 0,3-0,7 % de materia seca = 750-1750 mg/1000 kcal. Techo. Es MAS ESTRICTO que el del adulto joven (2000) y a proposito: el propio capitulo dice que el perro maduro tiene mas riesgo de enfermedad renal cronica subclinica. Es exactamente la misma cifra que la Tabla 34-2 aplica a la artrosis, y por el mismo motivo -- ahi se explica en la nota **: «Dogs with osteoarthritis are often in age groups at risk for kidney and/or heart disease». || El motor mapea Senior a Adulto para los REQUISITOS (verificar.EQUIVALENCIA: FEDIAF no da columna de senior), pero la etapa «Senior» si llega al solver y se usa ya para otra cosa (elegir la variante correcta de V-INTEGRA). Asi que aqui si se puede distinguir, y distinguirlo es lo fiel: son dos tablas distintas del mismo libro."
+        },
+        "sodio": {
+          "valor": 1000.0,
+          "fuente": "SACN5 5a ed., cap.14, Tabla 14-2, verificado literal 8-sep-2026",
+          "por_que": "APLICADO 8-sep-2026. Tabla 14-2, fila «Sodium (%)»: 0,15-0,4 % de materia seca = 375-1000 mg/1000 kcal. El TECHO es el mismo que en el adulto joven (1000); lo que baja en el perro maduro es el suelo, y los suelos de sodio no se aplican (ver la nota del sodio de Adulto)."
+        }
+      }
+    },
+    "CachorroJoven": {
+      "de_donde": "SACN5 5a ed., cap.17 «Feeding Growing Puppies», Tabla 17-1 «Key nutritional factors for foods for growing puppies», columna «Puppies with an adult BW <25 kg»",
+      "topes_por_1000kcal": {
+        "calcio": {
+          "valor": 4250.0,
+          "fuente": "SACN5 5a ed., cap.17 «Feeding Growing Puppies», Tabla 17-1, verificado literal 9-sep-2026",
+          "por_que": "APLICADO 9-sep-2026. Tabla 17-1, fila «Calcium (%)», columna «Puppies with an adult BW <25 kg»: 0,7-1,7 % de materia seca. Conversion: %MS x 2500 = mg/1000 kcal, suponiendo 4000 kcal EM/kg MS, que es la misma que usan las otras cuatro cifras de este fichero y la que documenta UNIDADES.md. Asi que el rango son 1750-4250 y se aplica el TECHO; el suelo (1750) queda por debajo del minimo de FEDIAF (2500 en crecimiento temprano, 2000 en tardio) y no se toca: manda FEDIAF. || QUE APRIETA DE VERDAD: en crecimiento TARDIO, donde el maximo de FEDIAF es 4500 y este es 4250. En el temprano FEDIAF ya pone 4000, que es mas estricto, y este techo no hace nada -- se pone igual, porque un techo que hoy no aprieta seguira estando el dia que la tabla de FEDIAF cambie."
+        },
+        "fosforo": {
+          "valor": 3250.0,
+          "fuente": "SACN5 5a ed., cap.17 «Feeding Growing Puppies», Tabla 17-1, verificado literal 9-sep-2026",
+          "por_que": "APLICADO 9-sep-2026. Tabla 17-1, fila «Phosphorus (%)», columna «Puppies with an adult BW <25 kg»: 0,6-1,3 % de materia seca = 1500-3250 mg/1000 kcal. Se aplica el techo; el suelo queda por debajo del minimo de FEDIAF (2250 / 1750) y no se toca. || POR QUE IMPORTA, y es el mismo argumento que puso el techo de fosforo del adulto: FEDIAF NO DA NINGUN MAXIMO DE FOSFORO EN CRECIMIENTO -- las columnas maxCachorroJoven y maxCachorroCrecimiento de la fila «Fosforo» estan vacias, y esta comprobado contra el PDF (ver la nota de auditoria de esa fila). O sea que hasta hoy un cachorro no tenia techo de fosforo NINGUNO, ni de FEDIAF ni de nadie, mientras que el adulto sano si. Este es el unico numero canino y con fuente que existe para taparlo."
+        }
+      },
+      "si_peso_adulto_esperado_supera_kg": {
+        "umbral_kg": 25.0,
+        "por_que_ese_umbral": "25 kg de peso ADULTO ESPERADO, y es la cifra literal de SACN5, no una eleccion nuestra: cap.33, «To help prevent DOD in large- and giant-breed puppies (>25 kg adult weight)», y la Tabla 17-1 parte sus dos columnas justo ahi. || ⚠️ NO ES EL MISMO 15 kg DE `RAZA_GRANDE_O_GIGANTE_KG`, y no es una desincronizacion: aquel es el corte de las notas a y b de la Tabla III-3b de FEDIAF, que decide el minimo de calcio reforzado y el techo del ratio Ca:P; este es el corte de SACN5 para la enfermedad ortopedica del desarrollo. Dos fuentes, dos poblaciones, dos numeros. Unificarlos seria inventarse uno de los dos.",
+        "de_donde": "SACN5 5a ed., cap.17 Tabla 17-1 columna «adult BW >25 kg» + cap.33 Tabla 33-5, apretado por Fascetti & Delaney 2a ed. cap.10",
+        "topes_por_1000kcal": {
+          "calcio": {
+            "valor": 2750.0,
+            "fuente": "SACN5 5a ed., cap.17 Tabla 17-1 (columna «adult BW >25 kg») y cap.33 Tabla 33-5, apretado por Fascetti & Delaney 2a ed., cap.10; verificado literal 9-sep-2026",
+            "por_que": "APLICADO 9-sep-2026, y es el hallazgo mas urgente de la lectura de fuentes. DOS fuentes dicen lo mismo con un pelo de diferencia y se aplica la mas estricta: (1) SACN5 Tabla 17-1, columna «adult BW >25 kg», y Tabla 33-5 «Key nutritional factors for foods for growth (postweaning) of large- and giant-breed puppies», las dos «Calcium 0,8 to 1,2 %» de materia seca = 2000-3000 mg/1000 kcal; y (2) Fascetti & Delaney 2a ed., cap.10, literal: «In order to prevent panosteitis, a diet designed for young dogs of large breeds with a calcium content no greater than 1.1% dm should be fed during the growth period, starting at partial weaning». 1,1 % x 2500 = 2750, que cae DENTRO del rango de SACN5 y cumple ademas el techo de Fascetti, asi que se aplica 2750 y no 3000. || POR QUE ES GRAVE: en el cachorro de raza grande el exceso de calcio no es un numero feo en una ficha, es enfermedad ortopedica del desarrollo -- SACN5 cap.33 trae la foto de dos hermanos de camada de gran danes, uno con 1,1 % y otro con 3,3 % de calcio, y el segundo con deformidad angular de los miembros. El cachorro no regula su absorcion de calcio como el adulto. FEDIAF solo pone 4000/4500, que es ORIENTATIVO para el problema, y esto es el numero de la fuente clinica. || MEDIDO ANTES DE APLICARLO: ver la nota del BLOQUE 62 en pruebas_completas.py."
+          },
+          "fosforo": {
+            "valor": 2750.0,
+            "fuente": "SACN5 5a ed., cap.17 Tabla 17-1 (columna «adult BW >25 kg») y cap.33 Tabla 33-5, apretado por Fascetti & Delaney 2a ed., cap.10; verificado literal 9-sep-2026",
+            "por_que": "APLICADO 9-sep-2026. Tabla 17-1, fila «Phosphorus (%)», columna «adult BW >25 kg»: 0,6-1,1 % de materia seca = 1500-2750 mg/1000 kcal. Techo. Es mas estricto que el del cachorro de raza pequena (3250) por el mismo motivo que el calcio, y la propia Tabla 33-5 lo dice sin dar cifra: «Phosphorus amount is based on calcium amount to maintain recommended Ca-P ratio». Aqui si hay cifra, en la 17-1, asi que se usa la cifra."
+          }
+        }
+      }
+    },
+    "CachorroCrecimiento": {
+      "de_donde": "SACN5 5a ed., cap.17 «Feeding Growing Puppies», Tabla 17-1 «Key nutritional factors for foods for growing puppies», columna «Puppies with an adult BW <25 kg»",
+      "topes_por_1000kcal": {
+        "calcio": {
+          "valor": 4250.0,
+          "fuente": "SACN5 5a ed., cap.17 «Feeding Growing Puppies», Tabla 17-1, verificado literal 9-sep-2026",
+          "por_que": "APLICADO 9-sep-2026. Tabla 17-1, fila «Calcium (%)», columna «Puppies with an adult BW <25 kg»: 0,7-1,7 % de materia seca. Conversion: %MS x 2500 = mg/1000 kcal, suponiendo 4000 kcal EM/kg MS, que es la misma que usan las otras cuatro cifras de este fichero y la que documenta UNIDADES.md. Asi que el rango son 1750-4250 y se aplica el TECHO; el suelo (1750) queda por debajo del minimo de FEDIAF (2500 en crecimiento temprano, 2000 en tardio) y no se toca: manda FEDIAF. || QUE APRIETA DE VERDAD: en crecimiento TARDIO, donde el maximo de FEDIAF es 4500 y este es 4250. En el temprano FEDIAF ya pone 4000, que es mas estricto, y este techo no hace nada -- se pone igual, porque un techo que hoy no aprieta seguira estando el dia que la tabla de FEDIAF cambie."
+        },
+        "fosforo": {
+          "valor": 3250.0,
+          "fuente": "SACN5 5a ed., cap.17 «Feeding Growing Puppies», Tabla 17-1, verificado literal 9-sep-2026",
+          "por_que": "APLICADO 9-sep-2026. Tabla 17-1, fila «Phosphorus (%)», columna «Puppies with an adult BW <25 kg»: 0,6-1,3 % de materia seca = 1500-3250 mg/1000 kcal. Se aplica el techo; el suelo queda por debajo del minimo de FEDIAF (2250 / 1750) y no se toca. || POR QUE IMPORTA, y es el mismo argumento que puso el techo de fosforo del adulto: FEDIAF NO DA NINGUN MAXIMO DE FOSFORO EN CRECIMIENTO -- las columnas maxCachorroJoven y maxCachorroCrecimiento de la fila «Fosforo» estan vacias, y esta comprobado contra el PDF (ver la nota de auditoria de esa fila). O sea que hasta hoy un cachorro no tenia techo de fosforo NINGUNO, ni de FEDIAF ni de nadie, mientras que el adulto sano si. Este es el unico numero canino y con fuente que existe para taparlo."
+        }
+      },
+      "si_peso_adulto_esperado_supera_kg": {
+        "umbral_kg": 25.0,
+        "por_que_ese_umbral": "25 kg de peso ADULTO ESPERADO, y es la cifra literal de SACN5, no una eleccion nuestra: cap.33, «To help prevent DOD in large- and giant-breed puppies (>25 kg adult weight)», y la Tabla 17-1 parte sus dos columnas justo ahi. || ⚠️ NO ES EL MISMO 15 kg DE `RAZA_GRANDE_O_GIGANTE_KG`, y no es una desincronizacion: aquel es el corte de las notas a y b de la Tabla III-3b de FEDIAF, que decide el minimo de calcio reforzado y el techo del ratio Ca:P; este es el corte de SACN5 para la enfermedad ortopedica del desarrollo. Dos fuentes, dos poblaciones, dos numeros. Unificarlos seria inventarse uno de los dos.",
+        "de_donde": "SACN5 5a ed., cap.17 Tabla 17-1 columna «adult BW >25 kg» + cap.33 Tabla 33-5, apretado por Fascetti & Delaney 2a ed. cap.10",
+        "topes_por_1000kcal": {
+          "calcio": {
+            "valor": 2750.0,
+            "fuente": "SACN5 5a ed., cap.17 Tabla 17-1 (columna «adult BW >25 kg») y cap.33 Tabla 33-5, apretado por Fascetti & Delaney 2a ed., cap.10; verificado literal 9-sep-2026",
+            "por_que": "APLICADO 9-sep-2026, y es el hallazgo mas urgente de la lectura de fuentes. DOS fuentes dicen lo mismo con un pelo de diferencia y se aplica la mas estricta: (1) SACN5 Tabla 17-1, columna «adult BW >25 kg», y Tabla 33-5 «Key nutritional factors for foods for growth (postweaning) of large- and giant-breed puppies», las dos «Calcium 0,8 to 1,2 %» de materia seca = 2000-3000 mg/1000 kcal; y (2) Fascetti & Delaney 2a ed., cap.10, literal: «In order to prevent panosteitis, a diet designed for young dogs of large breeds with a calcium content no greater than 1.1% dm should be fed during the growth period, starting at partial weaning». 1,1 % x 2500 = 2750, que cae DENTRO del rango de SACN5 y cumple ademas el techo de Fascetti, asi que se aplica 2750 y no 3000. || POR QUE ES GRAVE: en el cachorro de raza grande el exceso de calcio no es un numero feo en una ficha, es enfermedad ortopedica del desarrollo -- SACN5 cap.33 trae la foto de dos hermanos de camada de gran danes, uno con 1,1 % y otro con 3,3 % de calcio, y el segundo con deformidad angular de los miembros. El cachorro no regula su absorcion de calcio como el adulto. FEDIAF solo pone 4000/4500, que es ORIENTATIVO para el problema, y esto es el numero de la fuente clinica. || MEDIDO ANTES DE APLICARLO: ver la nota del BLOQUE 62 en pruebas_completas.py."
+          },
+          "fosforo": {
+            "valor": 2750.0,
+            "fuente": "SACN5 5a ed., cap.17 Tabla 17-1 (columna «adult BW >25 kg») y cap.33 Tabla 33-5, apretado por Fascetti & Delaney 2a ed., cap.10; verificado literal 9-sep-2026",
+            "por_que": "APLICADO 9-sep-2026. Tabla 17-1, fila «Phosphorus (%)», columna «adult BW >25 kg»: 0,6-1,1 % de materia seca = 1500-2750 mg/1000 kcal. Techo. Es mas estricto que el del cachorro de raza pequena (3250) por el mismo motivo que el calcio, y la propia Tabla 33-5 lo dice sin dar cifra: «Phosphorus amount is based on calcium amount to maintain recommended Ca-P ratio». Aqui si hay cifra, en la 17-1, asi que se usa la cifra."
+          }
+        }
+      }
+    }
+  }
+}

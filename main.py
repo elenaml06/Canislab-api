@@ -247,7 +247,8 @@ def _valor_num(v):
 
 
 def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto",
-                         req=None, der_efectiva=None):
+                         req=None, der_efectiva=None,
+                         peso_adulto_esperado_kg=None):
     """¿Este menú se pasa de algún tope por patología? Devuelve la lista de
     los que se pasa, vacía si está bien.
 
@@ -314,9 +315,15 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto",
     # solver deja de aplicarlo y el menú sale con 2216 -- correcto. Sin
     # pasarle `req` aquí, este filtro lo rechazaría por «pasarse» de un techo
     # que ya no está puesto.
+    # ⚠️ Y CON EL PESO ADULTO ESPERADO (9 septiembre), por lo mismo: los techos
+    # de crecimiento tienen dos columnas segun el perro pase o no de 25 kg de
+    # adulto. Si el solver aplica el de 2750 y este filtro midiera contra el de
+    # 4250, el filtro dejaria pasar menus que el solver no habria construido --
+    # y al reves, que es peor: tiraria menus buenos.
     from recomendaciones import topes_de_la_etapa as _topes_etapa
     _del_libro = set()
-    for _clave_r, _valor_r in _topes_etapa(etapa, req, der_efectiva).items():
+    for _clave_r, _valor_r in _topes_etapa(etapa, req, der_efectiva,
+                                           peso_adulto_esperado_kg).items():
         _actual_r = topes.get(_clave_r)
         if _actual_r is None or _valor_r < _actual_r:
             topes[_clave_r] = _valor_r
@@ -574,7 +581,8 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
     seguro = _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg)
     topes_rotos = _tope_patologia_roto(
         gramos, al, patologias, etapa, req=req,
-        der_efectiva=der_efectiva_de(der, peso_objetivo_kg or peso_perro_kg))
+        der_efectiva=der_efectiva_de(der, peso_objetivo_kg or peso_perro_kg),
+        peso_adulto_esperado_kg=peso_adulto_esperado_kg)
     calcio_corto = _minimo_calcio_raza_grande_roto(gramos, al, req, etapa,
                                                    peso_adulto_esperado_kg)
     ratio_pasado = _ratio_cap_raza_grande_roto(gramos, al, req, etapa,
@@ -603,6 +611,25 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
             },
         }
 
+    # ⚠️ CADA RECHAZO DICE **TODOS** LOS MOTIVOS, NO SOLO EL PRIMERO (9
+    # septiembre). Los cuatro `if` de abajo devuelven en cuanto encuentran lo
+    # suyo, así que un menú que rompía tres cosas contaba una: arreglabas esa y
+    # aparecía la siguiente, y desde fuera parecía que el arreglo no había
+    # servido de nada.
+    #
+    # CASO REAL, y lo cazó el BLOQUE 53 al aplicar el techo de calcio del
+    # cachorro de raza grande: un menú con el ratio Ca:P a 1,79 lo empezó a
+    # parar el techo de calcio -- que va antes-- en vez de la guardia del ratio,
+    # y el test que comprueba que esa guardia sigue enchufada se quedó sin ver
+    # su motivo. El menú se paraba igual; lo que se perdía era saber por qué.
+    _todos_los_motivos = {}
+    if topes_rotos:
+        _todos_los_motivos["topes_de_patologia_rotos"] = topes_rotos
+    if calcio_corto:
+        _todos_los_motivos["minimo_calcio_raza_grande_roto"] = calcio_corto
+    if ratio_pasado:
+        _todos_los_motivos["ratio_cap_raza_grande_roto"] = ratio_pasado
+
     if topes_rotos:
         # Que esto salte significa que algún camino ha construido un menú
         # saltándose un tope por patología. No se entrega, y va a Sentry:
@@ -618,7 +645,7 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
             "motivo": ("El menú que salía se pasa de los límites de la patología "
                        "de este perro, así que no te lo damos. Prueba a cambiar "
                        "algún alimento o a quitar alguna restricción."),
-            "verificacion": {"topes_de_patologia_rotos": topes_rotos},
+            "verificacion": dict(_todos_los_motivos),
         }
 
     if calcio_corto:
@@ -638,7 +665,7 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
                        "de raza grande, que necesita más que uno pequeño mientras "
                        "crece. No te lo damos. Prueba a cambiar algún alimento o a "
                        "quitar alguna restricción."),
-            "verificacion": {"minimo_calcio_raza_grande_roto": calcio_corto},
+            "verificacion": dict(_todos_los_motivos),
         }
 
     if ratio_pasado:
@@ -658,7 +685,7 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
                        "estrecho que en uno pequeño, porque un exceso durante el "
                        "crecimiento afecta al hueso. No te lo damos. Prueba a "
                        "cambiar algún alimento o a quitar alguna restricción."),
-            "verificacion": {"ratio_cap_raza_grande_roto": ratio_pasado},
+            "verificacion": dict(_todos_los_motivos),
         }
 
     if ficha["semaforo"] != "verde" or not seguro:
@@ -1113,9 +1140,18 @@ def endpoint_catalogo(tamano: str, etapa: str, der_objetivo: float = None, peso_
         # por peso, puede quedarse CORTO en nutrientes sin superar ningún
         # tope -- y se servía igual. Ahora se verifica de verdad contra
         # los 30 requisitos por el mismo filtro que el resto.
+        # ⚠️ Y CON EL PESO ADULTO ESPERADO DEL TAMAÑO (9 septiembre). Este
+        # endpoint no recibe el peso adulto del perro -- solo su tamaño --,
+        # pero el tamaño ES eso: la entrada `<tamaño>_Adulto` del catálogo
+        # dice cuánto pesa de adulto un perro de ese grupo. Sin pasarlo, un
+        # menú de cachorro «Gigante» se comprobaría contra el techo de calcio
+        # del cachorro pequeño (4250 en vez de 2750) y este endpoint sería el
+        # agujero de la regla 1 para justo el perro al que más le importa.
+        _padu_cat = (CATALOGO.get(f"{tamano}_Adulto") or {}).get("peso_kg")
         verificado = _garantizar_verificado(
             {"factible": True, "gramos": gramos_escalados},
-            der_objetivo, etapa, peso_perro_kg, origen="/catalogo", al=al, req=_req_cat)
+            der_objetivo, etapa, peso_perro_kg, origen="/catalogo", al=al, req=_req_cat,
+            peso_adulto_esperado_kg=_padu_cat)
         if not verificado.get("factible"):
             return {"encontrado": False,
                     "motivo": "El menú de catálogo para este tamaño/etapa, reescalado a "
@@ -2496,7 +2532,8 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                         forzar, None,
                         margenes=_escalera_de_relajacion(hay_comida)[-1][0],
                         max_supl=_escalera_de_relajacion(hay_comida)[-1][1],
-                        soltar=soltar)[0])
+                        soltar=soltar)[0],
+                    peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg)
             except Exception as e:   # el diagnóstico NUNCA puede tumbar la respuesta
                 observabilidad.capturar(e, endpoint="/menu/v2",
                                         nota="diagnostico de choque de patologias")
@@ -4583,7 +4620,8 @@ def _estado_de_la_racion(datos):
     salida["topes_de_patologia_rotos"] = _tope_patologia_roto(
         gramos, al, datos.patologias, datos.etapa_requisitos, req=req,
         der_efectiva=der_efectiva_de(datos.der_objetivo,
-                                     _peso_de_referencia(datos)[0]))
+                                     _peso_de_referencia(datos)[0]),
+        peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None))
     salida["huecos"] = _huecos_en_cristiano(salida["ficha"])
     return salida
 
@@ -4890,9 +4928,10 @@ def pauta_firmar(datos: PeticionFirmar):
                          peso_referencia_kg=peso_ref)
     problemas = _seguridad_completa(gramos, al, datos.der_objetivo, datos.etapa_requisitos,
                                     datos.patologias, peso_perro_kg=datos.peso_perro_kg)
-    topes_rotos = _tope_patologia_roto(gramos, al, datos.patologias,
-                                       datos.etapa_requisitos, req=req,
-                                       der_efectiva=der_efectiva_de(datos.der_objetivo, peso_ref))
+    topes_rotos = _tope_patologia_roto(
+        gramos, al, datos.patologias, datos.etapa_requisitos, req=req,
+        der_efectiva=der_efectiva_de(datos.der_objetivo, peso_ref),
+        peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None))
 
     # ⚠️ NO SE FIRMA LO QUE NO ESTÁ VERDE. Es la regla 1 leída donde más
     # importa: "ningún menú sale sin verificar, y si no está verde no se

@@ -1045,7 +1045,7 @@ La misma Tabla 30-5 pide «an omega-6:omega-3 ratio approximating 1:1» y «NFE
 
 > **⚠️ Esto se escribió como una pregunta para el nutricionista y no lo era.**
 > «Si lo dice el manual, aplícalo» — y el manual lo dice. Se midió, cabe, y está
-> aplicado desde el 8 de septiembre por la noche: `recomendaciones_adulto.json`,
+> aplicado desde el 8 de septiembre por la noche: `recomendaciones_libro.json`,
 > `motor/recomendaciones.py`, BLOQUE 57, y `DECISIONES.md` **D-15** con las
 > medidas. Los cuatro pesos probados salen en el peldaño 0 y en verde, y el de
 > 3 kg pasa de ámbar a verde. Se deja el texto de abajo porque explica de dónde
@@ -1170,3 +1170,50 @@ mientras tanto, tener presente que **el margen de error del calcio del hueso es
 mayor que el de los demás nutrientes del catálogo**, lo que es un argumento más
 para no formular pegados al techo — ver `HALLAZGOS_LECTURA_FUENTES.md` §F-1, que
 es justo lo que estamos haciendo hoy en los cachorros de raza grande.
+
+---
+
+## El techo de Ca:P del cachorro de raza grande: SACN5 dice 1,5 y aplicamos 1,6 (9 de septiembre de 2026)
+
+**No es urgente y no está dando menús malos hoy, pero es una cifra de una
+fuente que no se aplica, así que se escribe en vez de olvidarse.**
+
+Al transcribir la Tabla 17-1 de SACN5 para los techos de calcio y fósforo del
+cachorro (ver `DECISIONES.md` D-16) salió una tercera fila de la misma tabla:
+
+| | cachorro <25 kg de adulto | cachorro >25 kg de adulto |
+|---|---|---|
+| Ca:P ratio (Tabla 17-1) | 1:1 a **1,8**:1 | 1:1 a **1,5**:1 |
+| Ca:P ratio (Tabla 33-5) | — | 1,1:1 a 2:1, «the lower end of range is preferred» |
+
+Y lo que aplica el motor hoy es la nota b de FEDIAF: **1,6** para el cachorro
+de más de **15 kg** de adulto, 1,8 para el resto.
+
+Hay dos discrepancias, y ninguna es un error de nadie:
+
+1. **El umbral.** FEDIAF corta en 15 kg y SACN5 en 25. Son dos poblaciones
+   distintas (la nota b de FEDIAF, y la enfermedad ortopédica del desarrollo de
+   SACN5), así que los dos números pueden ser correctos a la vez.
+2. **El número.** Para el cachorro de más de 25 kg, SACN5 pide 1,5 y FEDIAF
+   1,6. La propia Tabla 33-5 del mismo libro dice 1,1-2:1 con el matiz de que
+   se prefiere la parte baja, así que **el libro no se pone de acuerdo consigo
+   mismo**: la 17-1 da 1,5 y la 33-5 da 2,0.
+
+**Medido, para saber si esto cuesta algo:** los cachorros de raza grande que
+saca el motor hoy salen con el ratio entre **1,03 y 1,29** (labrador temprano
+1,03, gran danés tardío 1,11, labrador tardío 1,23, pastor alemán 1,26). O sea
+que **aplicar 1,5 hoy no cambiaría ni un menú** — y por eso mismo no corre
+prisa.
+
+**Lo que haría falta para aplicarlo:** `recomendaciones.py` sabe de techos por
+nutriente, no de ratios. El ratio Ca:P se aplica hoy desde
+`requerimientos_v2_final.json` (`maxRatioCaP` en la fila
+`Calcio_LateGrowth_RazaGrande`) y desde `_ratio_cap_raza_grande_roto` en
+`main.py`, y ahí no se puede meter un número de SACN5: ese fichero **es** la
+Tabla III-3b de FEDIAF y `auditar_fediaf.py` lo audita celda a celda. Haría
+falta un mecanismo de ratio en `recomendaciones_libro.json`, con su fila en el
+solver y su espejo en el filtro final.
+
+**Pregunta abierta para el nutricionista** (no la decide el asistente): con la
+17-1 diciendo 1,5 y la 33-5 diciendo 2,0 para el mismo perro, ¿cuál manda? Lo
+seguro sería 1,5, y hoy sale gratis.

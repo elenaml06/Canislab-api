@@ -33,7 +33,7 @@ Aquí no hay ni una.
   `auditar_fediaf.py` la compara con el PDF celda a celda. Un valor que depende
   de la dieta no es una celda de esa tabla.
 - `patologias.json` es por enfermedad, y esto le pasa a un perro **sano**.
-- `recomendaciones_adulto.json` son los techos de SACN5 para el adulto sano.
+- `recomendaciones_libro.json` son los techos de SACN5 para el adulto sano.
   Esto son **suelos**, y de otra fuente.
 
 Cada uno de los cuatro dice una cosa distinta, y mezclarlos es cómo se

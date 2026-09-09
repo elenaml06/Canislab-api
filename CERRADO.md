@@ -107,21 +107,26 @@ crecimiento. Ninguno se coló.
 
 ---
 
-## CERRADO · Los techos del perro adulto sano
+## CERRADO · Los techos del libro para el perro sano
 
 **Fecha de cierre: 8 de septiembre de 2026, noche.** Ver `DECISIONES.md` **D-15**.
+**Ampliado el 9 de septiembre** con los de crecimiento: ver `DECISIONES.md`
+**D-16**.
 
-Las **cuatro cifras** de `recomendaciones_adulto.json`: fósforo y sodio, en
-adulto y en senior. Son la tercera clase de límite del motor y no existían por
-la mañana.
+Las **cuatro cifras** de adulto de `recomendaciones_libro.json` —fósforo y
+sodio, en adulto y en senior— más las **ocho de crecimiento** del 9 de
+septiembre: calcio y fósforo, en las dos etapas de cachorro y en las dos
+columnas de la Tabla 17-1 de SACN5 (según el cachorro vaya a pesar más o menos
+de 25 kg de adulto). Son la tercera clase de límite del motor y no existían la
+mañana del 8.
 
 | | Cómo se cumple |
 |---|---|
-| 1 · Vive en el repo | `recomendaciones_adulto.json`, con `motor/recomendaciones.py` de cargador |
-| 2 · Tiene fuente | 4/4, con la cita literal de SACN5 Tabla 13-3 y 14-2 y la conversión escrita |
+| 1 · Vive en el repo | `recomendaciones_libro.json`, con `motor/recomendaciones.py` de cargador |
+| 2 · Tiene fuente | 12/12, con la cita literal (SACN5 Tablas 13-3, 14-2, 17-1 y 33-5, y Fascetti cap.10 para el 1,1 % del calcio) y la conversión escrita |
 | 3 · Ficha de permisos | ⚠️ **no la tiene todavía.** `permisos.py` deriva de `patologias.json` y estas cifras no son de una patología |
-| 4 · Test que falla | **BLOQUE 57**, y comprueba las cuatro cosas que pueden romperse: la conversión rehecha desde el %MS, que el solver lo aplique, que el filtro final lo vea sin ninguna patología marcada, y que NO se aplique en crecimiento. Probado con el fallo puesto (se cuadruplica el hueso y tiene que saltar) |
-| 5 · Decisión con fecha | `DECISIONES.md` D-15, con las medidas de los cuatro pesos |
+| 4 · Test que falla | **BLOQUE 57** para las cifras (la conversión rehecha desde el %MS, que el solver las aplique, que el filtro final las vea sin ninguna patología marcada, y que el techo del adulto no se cuele en crecimiento) y **BLOQUE 62** para el cachorro de raza grande de punta a punta. Los dos probados con el fallo puesto: se infla el hueso de un menú bueno y tiene que saltar |
+| 5 · Decisión con fecha | `DECISIONES.md` D-15 (adulto, con las medidas de los cuatro pesos) y D-16 (crecimiento, con los 20 cachorros de raza grande medidos) |
 | 6 · Sin preguntas sin dueño | Queda una, escrita: el **suelo** de sodio de esas tablas no se aplica. `PARA_EL_NUTRICIONISTA.md` PREGUNTA 22 |
 
 **Así que esto está en cinco de seis**, y lo que falta es la condición 3.
