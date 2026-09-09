@@ -778,7 +778,7 @@ El mínimo de fósforo que FEDIAF exige a un **cachorro joven** son **2250**, po
 encima del techo del adulto. Aplicárselo no sería un techo: sería dejarlo sin
 menú. Esas etapas tienen además sus propias tablas en SACN5 (17-1, 33-5, 15-5).
 
-> **PREGUNTA 22 (nueva).** El sodio de estas dos tablas tiene también un
+> **PREGUNTA 28.** El sodio de estas dos tablas tiene también un
 > **suelo** (0,2 % MS = 500 mg en adulto, 0,15 % = 375 en maduro) que **no** se
 > aplica: se ha entendido que lo que la tabla quiere es no pasarse, y que un
 > suelo de sodio por encima del mínimo de FEDIAF (290) en un perro sano no lo
@@ -1122,7 +1122,7 @@ y **la fibra**, que es la que da saciedad.
 sí quedan cubiertos: los mínimos de FEDIAF, 1450 mg y 200 mg/1000 kcal, son
 0,58 % y 0,08 % MS, por encima de los dos.)*
 
-> **PREGUNTA 21-ter.** ¿Cuáles de estos cinco hay que añadir? La proteína en
+> **PREGUNTA 29.** ¿Cuáles de estos cinco hay que añadir? La proteína en
 > obesidad es la que más nos preocupa.
 
 ### 8.2 · La grasa en pancreatitis — RESUELTO el 8 de septiembre
@@ -1382,7 +1382,7 @@ Tres cosas de aquí:
 3. **Pero es una estimación, no una medida.** Y afecta a **todas** las cifras de
    patología a la vez, no solo a la grasa.
 
-> **PREGUNTA 30-bis.**
+> **PREGUNTA 30.**
 > 1. ¿Te parece aceptable el puente de 4000 kcal/kg MS para una ración cruda, o
 >    hay que medir la humedad antes de seguir usando cifras convertidas desde
 >    porcentaje de materia seca?
