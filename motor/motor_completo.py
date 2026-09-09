@@ -1497,6 +1497,83 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             fila = [fila_ca[j] - rmax * fila_p[j] for j in range(2 * n_var)]
             _fila("ratio_ca_p_max", fila, -np.inf, 0.0)
 
+    # 2c. LOS DOS REQUISITOS QUE DEPENDEN DE LA PROPIA DIETA (9 septiembre).
+    #
+    # Ninguno de los dos cabe en `requerimientos_v2_final.json`, que es una
+    # tabla de números fijos por etapa, así que ninguno lo encontró el trabajo
+    # de transcribir tablas celda a celda. Los dos viven en
+    # `requisitos_condicionales.json` con su cita literal, y los dos entran aquí
+    # como filas lineales — igual que el ratio Ca:P de arriba, y por el mismo
+    # motivo: una relación entre dos nutrientes es lineal y el LP la resuelve
+    # sin ninguna maquinaria nueva.
+    #
+    # ⚠️ Y LOS DOS LLAMAN A LAS MISMAS FUNCIONES QUE EL SEMÁFORO. Esto no es
+    # elegancia: es la lección del 8 de septiembre, cuando los suelos de
+    # patología los aplicaba el solver de una forma y `_tope_patologia_roto` de
+    # otra, y el motor construía menús enteros para que el filtro final los
+    # tirara. Si `condicionales.py` cambia, cambian los dos a la vez o ninguno.
+    from condicionales import (suelos_relativos_de_la_etapa as _suelos_rel_cond,
+                               ratios_de_la_etapa as _ratios_cond)
+
+    # (a) LA ARGININA QUE SUBE CON LA PROTEÍNA — FEDIAF 2025, Anexo 7.4 y
+    #     Tabla VII-13, que FEDIAF publica y que no aplicábamos.
+    #
+    #        arg  >=  ancla_arg + coef * (prot/escala - ancla_prot)   [por 1000 kcal]
+    #     →  suma(arg_i*g_i) >= ancla_arg*escala + coef*suma(prot_i*g_i) - coef*ancla_prot*escala
+    #     →  suma((arg_i - coef*prot_i)*g_i) >= (ancla_arg - coef*ancla_prot)*escala
+    #
+    #     MEDIDO ANTES DE PONERLA: 0 de los 216 menús del catálogo precalculado
+    #     se quedaban cortos, y el peor dejaba 1,06 g/1000 kcal de margen. La
+    #     carne va sobrada de arginina. Se pone porque la regla faltaba, no
+    #     porque estuviera dando menús malos — igual que la nota b del calcio.
+    _escala_cond = der / 1000.0
+    for _rel in _suelos_rel_cond(etapa):
+        _clave_a, _clave_b = _rel["nutriente"], _rel["depende_de"]
+        _coef = _rel["coeficiente"]
+        _fila_rel_c = fila_vacia()
+        _aporta_rel = False
+        for n in nombres:
+            _nut_n = alimentos[n].get("nutrientes", {})
+            _pa = valor_plausible_de(alimentos[n], _clave_a)
+            _pb = valor_plausible_de(alimentos[n], _clave_b)
+            _va = (valor_nutriente(_nut_n, _clave_a) if _pa is None else float(_pa)) / 100.0
+            _vb = (valor_nutriente(_nut_n, _clave_b) if _pb is None else float(_pb)) / 100.0
+            _c = _va - _coef * _vb
+            if _c:
+                _fila_rel_c[idx[n]] = _c
+                _aporta_rel = True
+        if _aporta_rel:
+            _lo_rel = (_rel["ancla_nutriente"] - _coef * _rel["ancla_depende_de"]) * _escala_cond
+            _fila("condicional_suelo_relativo", _fila_rel_c, _lo_rel, np.inf)
+
+    # (b) EL RATIO LINOLEICO:LINOLÉNICO — NRC 2006 cap.5, 2,6 a 26 en adulto y
+    #     crecimiento, 2,6 a 16 en gestación y lactancia. Es adimensional, así
+    #     que no depende del DER ni de la escala: el solver y el semáforo miden
+    #     literalmente el mismo número.
+    #
+    #     ⚠️ ESTE SÍ CUESTA MENÚS, a diferencia de la arginina: 15 de los 216
+    #     precalculados se pasaban de 26 (el peor a 109:1) y uno se quedaba por
+    #     debajo de 2,6. FEDIAF no da mínimo de linolénico en adulto, así que
+    #     no había nada que sujetara el cociente.
+    for _rt in _ratios_cond(etapa):
+        _fn, _fd = fila_vacia(), fila_vacia()
+        _aporta_rt = False
+        for n in nombres:
+            _nut_n = alimentos[n].get("nutrientes", {})
+            _vn = valor_nutriente(_nut_n, _rt["numerador"]) / 100.0
+            _vd = valor_nutriente(_nut_n, _rt["denominador"]) / 100.0
+            if _vn or _vd:
+                _fn[idx[n]], _fd[idx[n]] = _vn, _vd
+                _aporta_rt = True
+        if not _aporta_rt:
+            continue
+        if _rt.get("max") is not None:
+            _f = [_fn[j] - _rt["max"] * _fd[j] for j in range(2 * n_var)]
+            _fila("condicional_ratio_max", _f, -np.inf, 0.0)
+        if _rt.get("min") is not None:
+            _f = [_fn[j] - _rt["min"] * _fd[j] for j in range(2 * n_var)]
+            _fila("condicional_ratio_min", _f, 0.0, np.inf)
+
     # 3. margen por peso de cada categoría de COMIDA (no suplementos)
     if margenes_categoria:
         # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL ENCONTRADO: las
@@ -1763,12 +1840,48 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # Los Extras (sal, aceites, semillas) se quedan en 1 g: ahí una cucharada
     # pequeña SÍ es una porción real, y ese fue siempre el caso que motivó
     # este suelo -- los 0,35 g de sal del 24 de agosto.
+    # ⚠️ Y NI SIQUIERA UN SUPLEMENTO PUEDE ENTRAR POR DEBAJO DE LO QUE SE
+    # ENTREGA (9 septiembre). CASO REAL, cazado por el BLOQUE 49:
+    #
+    #   perro de 4,5 kg, DER 400 -> menú con el YODO AL 96 % del mínimo,
+    #   rechazado luego por `_garantizar_verificado`. La usuaria se queda
+    #   sin menú y nadie sabe por qué.
+    #
+    # La causa NO era el redondeo (eso ya lo cubre el margen del suelo, más
+    # abajo): era que **el solver había puesto 0,0185 g de una fuente de yodo
+    # concentrada y la entrega los TIRA**. La línea que recoge la solución
+    # es `if x[idx[n]] > 0.02`, un umbral que existe desde el 5 de agosto y
+    # que está bien puesto -- 18 mg no los pesa nadie. Lo que estaba mal era
+    # dejar que el solver los USARA: resolvía un problema y entregaba otro.
+    #
+    # Con 76.000 µg de yodo por 100 g (harina de algas) o 80.000 (yoduro
+    # potásico), esos 0,0185 g son 14 µg. En un perro de 4,5 kg el mínimo de
+    # yodo son 120 µg, o sea que ese descarte silencioso se lleva el 12 % del
+    # requisito. En un perro de 30 kg el mismo descarte es el 1,7 % y no se
+    # nota: por eso solo aparecía en los pequeños, igual que el problema del
+    # redondeo con el que se confundía.
+    #
+    # Es exactamente el mismo error que ya se arregló una vez y por el otro
+    # lado: el 5 de agosto el umbral era 0,5 g y borraba aportes reales de
+    # yoduro potásico, y se bajó a 0,02. Bajarlo más no arregla nada, porque
+    # el problema no es dónde está el umbral: es que **el solver no lo sabe**.
+    # Así que ahora lo sabe, y la regla queda dicha una sola vez: lo que el
+    # motor planifica es lo que se entrega.
+    SUELO_ENTREGABLE_G = 0.03           # > UMBRAL_DE_ENTREGA_G (0,02)
     _tope_porcion = 0.15 * 0.6 * der
     for n in nombres:
         cat_n = alimentos[n].get("categoria")
-        if cat_n in CATEGORIAS_QUE_SE_DOSIFICAN:
-            continue
         i = idx[n]
+        if cat_n in CATEGORIAS_QUE_SE_DOSIFICAN:
+            # No se pesan, se dosifican -- así que no se les pide 1 g. Pero sí
+            # lo mínimo que sobrevive a la entrega, o el solver cuenta con un
+            # aporte que luego no está.
+            if techos[i] >= SUELO_ENTREGABLE_G:
+                fila = fila_vacia()
+                fila[i] = 1.0
+                fila[n_var + i] = -SUELO_ENTREGABLE_G
+                _fila("suelo_entregable", fila, 0.0, np.inf, alimento=n)
+            continue
         if cat_n == "Extras":
             porcion = SUELO_MEDIBLE_G
         else:
@@ -2091,7 +2204,15 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # aunque el LP internamente SÍ lo había resuelto bien. Bajado a
         # 0.02g -- bajo el umbral de lo que se puede pesar en casa, pero
         # sin perder aportes reales de suplementos muy concentrados.
-        gramos = {n: round(x[idx[n]], 2) for n in nombres if x[idx[n]] > 0.02}
+        # ⚠️ EL UMBRAL Y EL SUELO DEL SOLVER VAN JUNTOS (9 septiembre). Este
+        # número tiene su pareja arriba, `SUELO_ENTREGABLE_G = 0.03`: el
+        # solver tiene prohibido usar menos de 0,03 g de nada, así que aquí
+        # ya no se puede caer un aporte que la solución contaba. Si alguien
+        # toca uno de los dos, tiene que tocar el otro -- y el BLOQUE 49 lo
+        # comprueba con un menú de perro pequeño, que es donde se nota.
+        UMBRAL_DE_ENTREGA_G = 0.02
+        gramos = {n: round(x[idx[n]], 2) for n in nombres
+                  if x[idx[n]] > UMBRAL_DE_ENTREGA_G}
 
         # ⚠️ AÑADIDO (5 agosto, madrugada) — RED DE SEGURIDAD FINAL: caso
         # real de la usuaria, un menú de solo 4 alimentos (carne, víscera,

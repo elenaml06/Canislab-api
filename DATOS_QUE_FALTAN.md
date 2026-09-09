@@ -722,3 +722,43 @@ mínimo de FEDIAF si el caroteno no contara**. El peor declara 11.191 µg y solo
 29 son retinol. Detalle: `HALLAZGOS_LECTURA_FUENTES.md` §N-19.
 
 **Esto no lo rellena el asistente**, como todo lo de este archivo.
+
+---
+
+## Ácido oxálico: una columna que no existe y que ahora tiene cifra objetivo (9 de septiembre de 2026)
+
+**Qué hacemos hoy.** En la patología `oxalato` (urolitos de oxalato cálcico) el
+motor excluye los alimentos altos en ácido oxálico con una **lista escrita a
+mano**: `OXALATO_ALTO`, en `motor/seguridad.py`. Funciona, pero es una lista: se
+desincroniza en cuanto entra una ficha nueva al catálogo, y no sabe de
+cantidades — un alimento está dentro o fuera.
+
+**Qué dice la fuente.** Fascetti & Delaney 2ª ed., cap.16, leído entero el 9 de
+septiembre:
+
+> *«Dietary oxalic acid concentrations should be reduced to the lowest possible
+> concentration in cases of calcium oxalate urolithiasis. **Suggested dietary
+> concentration is <20 mg oxalic acid/100 g of food (dry matter basis) or about
+> <40-45 mg oxalic acid/Mcal.**»*
+
+Y dice también **dónde está**: *«Most pet food ingredients are low in oxalic acid,
+**with the exception of vegetables, legumes, and several vegetable-based
+fermentable fibers** (e.g. beet pulp and soybean fiber).»* O sea que en nuestro
+catálogo el problema está concentrado en las 45 fichas de «Verduras y frutas».
+
+**Qué falta**, y es un dato, así que **no lo rellena el asistente**:
+
+- una clave `acido_oxalico` (mg/100 g de alimento tal cual, como todo lo demás —
+  ver `UNIDADES.md`) en las fichas donde la haya, empezando por las 45 verduras;
+- con su fuente por ficha, como el resto del catálogo.
+
+**Qué se gana cuando esté.** Que el oxalato deje de ser una lista de nombres y
+pase a ser un **techo por nutriente**, que es como se aplican todos los demás
+límites del motor: auditable, con cifra, y sin desincronizarse al añadir un
+alimento. El objetivo son **<45 mg/1000 kcal**.
+
+**Dónde buscarlo.** Ni BEDCA ni CIQUAL ni USDA publican ácido oxálico de forma
+sistemática (no es uno de los 41 nutrientes del perfil). Hay tablas específicas
+en la literatura de urolitiasis humana. Es el mismo caso que las purinas, que ya
+viven en el catálogo con su `purinas_fuente` propia: **la procedencia vive en la
+ficha, no en una lista central**.

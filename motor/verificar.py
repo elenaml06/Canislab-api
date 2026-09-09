@@ -9,6 +9,12 @@ partida; lo que se puede defender ante un veterinario es ESTO: "cubre 26 de
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from constructor import perfil_nutricional, tabla_imputacion_maximos, valor_nutriente
+# ⚠️ Los requisitos que NO son un número fijo (9 septiembre). El semáforo y el
+# solver llaman a LAS MISMAS funciones de este módulo: si cada uno hiciera su
+# propia cuenta acabarían discrepando, que es exactamente lo que pasó con los
+# suelos de patología el 8 de septiembre y costó dos rondas de depuración.
+from condicionales import (suelo_relativo_de as _suelo_relativo_de,
+                           ratios_de_la_etapa as _ratios_de_la_etapa)
 
 # Nombre del requisito -> clave en los nutrientes de cada alimento
 MAPA = {
@@ -398,6 +404,13 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
     A diferencia del LP, esto NUNCA falla: siempre dice que hay y que falta.
     Los requisitos de FEDIAF van POR 1000 kcal, asi que se escalan al DER.
     """
+    # ⚠️ La etapa SIN colapsar hace falta (9 septiembre). `EQUIVALENCIA` manda
+    # Gestante y Lactante a la columna de cachorro de FEDIAF, que es correcto
+    # para la Tabla III-3b -- FEDIAF las agrupa en «Growth and Reproduction» --
+    # pero las reglas de `condicionales.py` SÍ las distinguen: el ratio
+    # linoleico:linolénico del NRC es 2,6-26 en crecimiento y 2,6-16 en
+    # gestación y lactancia, y colapsarlas antes perdería justo esa diferencia.
+    etapa_pedida = etapa
     etapa = EQUIVALENCIA.get(etapa, etapa)
     if etapa not in SUFIJO:
         raise ValueError(
@@ -454,6 +467,20 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
         tiene_min = perfil_min.get(clave, 0.0)     # con los dudosos a su valor plausible
         minimo = minimo_de(r, nombre, etapa, _der_ef)
         maximo = maximo_de(r, nombre, etapa)
+
+        # ⚠️ AÑADIDO (9 septiembre) — LA ARGININA SUBE CON LA PROTEÍNA DEL MENÚ.
+        # Tabla VII-13 y Anexo 7.4 de FEDIAF 2025, que publican una tabla entera
+        # para esto y que no aplicábamos. Ver `requisitos_condicionales.json`.
+        # Se compone con un `max()`: nunca baja el mínimo de la Tabla III-3b,
+        # solo lo sube cuando la proteína del menú lo pide. El solver mete la
+        # misma regla como fila lineal -- y llama a la MISMA función, que es
+        # justo lo que evita el desalineo que costó dos rondas con los suelos
+        # de patología el 8 de septiembre.
+        if minimo is not None:
+            _rel = _suelo_relativo_de(etapa_pedida, clave,
+                                      perfil_min.get("proteina", 0.0) / escala if escala else 0.0)
+            if _rel is not None:
+                minimo = max(minimo, _rel)
 
         if minimo is not None:
             objetivo = minimo * escala
@@ -552,6 +579,70 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
                            "tiene": round(ratio, 2), "minimo": mn, "maximo": mx,
                            "cubre_pct": round(ratio / mn * 100) if mn else None,
                            "del_maximo_pct": round(ratio / mx * 100) if mx else None})
+
+    # ==================================================================
+    # LA RELACION LINOLEICO : LINOLENICO  (omega-6 : omega-3 de 18 carbonos)
+    # ==================================================================
+    # ⚠️ AÑADIDO EL 9 DE SEPTIEMBRE DE 2026, leyendo el capítulo 5 del NRC
+    # entero. Es la pregunta que hizo la nutricionista, y la respuesta de la
+    # fuente no es la que uno espera: el NRC dice que el ratio de omega-6
+    # TOTALES a omega-3 TOTALES «is not helpful», y recomienda en su lugar el
+    # de los dos de 18 carbonos. Rango: 2,6 a 26 en adulto y crecimiento,
+    # 2,6 a 16 en gestación y lactancia. La cita entera y el porqué del suelo
+    # están en `requisitos_condicionales.json`.
+    #
+    # POR QUÉ EL MOTOR NO LO TENÍA: FEDIAF no da mínimo de linolénico en
+    # adulto (la fila lleva «-»), así que nada impedía que el omega-3 cayera a
+    # cero mientras el omega-6 subía. MEDIDO: 15 de los 216 menús del catálogo
+    # precalculado se pasaban de 26, y uno llegaba a 109:1.
+    #
+    # Se mide con `perfil` (los valores declarados) y no con `perfil_min`,
+    # porque es una RELACIÓN: sustituir un lado por su valor plausible y el
+    # otro no distorsionaría el cociente en una dirección arbitraria.
+    for _rt in _ratios_de_la_etapa(etapa_pedida):
+        _num_v = perfil.get(_rt["numerador"], 0.0)
+        _den_v = perfil.get(_rt["denominador"], 0.0)
+        if _den_v <= 0:
+            # Sin denominador no hay cociente. Y no es un caso raro que se
+            # pueda ignorar: es EL caso peligroso -- omega-3 a cero --, así
+            # que se cuenta como que se pasa del techo, no como «no aplica».
+            if _rt.get("max") is not None and _num_v > 0:
+                se_pasa.append({
+                    "nutriente": "Relación linoleico:linolénico",
+                    "clave": "_ratio_la_ala", "tiene": None,
+                    "maximo": _rt["max"], "critico": True,
+                    "explicacion": ("Este menú no lleva nada de omega-3 vegetal (linolénico) "
+                                    "y sí lleva omega-6. Los dos compiten por la misma enzima, "
+                                    "así que el omega-6 solo bloquea el poco omega-3 que hubiera. "
+                                    "Se arregla con aceite de lino, semillas o pescado azul.")})
+            continue
+        _r = _num_v / _den_v
+        _mn, _mx = _rt.get("min"), _rt.get("max")
+        if _mn is not None and _r < _mn * 0.995:
+            faltan.append({
+                "nutriente": "Relación linoleico:linolénico", "clave": "_ratio_la_ala",
+                "tiene": round(_r, 2), "necesita": _mn,
+                "cubre_pct": round(_r / _mn * 100), "falta": 0.0, "critico": True,
+                "explicacion": (f"Hay demasiado omega-3 para el omega-6 que lleva "
+                                f"({_r:.1f}:1, y el mínimo es {_mn}:1). Se arregla con "
+                                f"más grasa de ave o aceite de girasol, no con suplementos.")})
+        elif _mx is not None and _r > _mx * 1.005:
+            se_pasa.append({
+                "nutriente": "Relación linoleico:linolénico", "clave": "_ratio_la_ala",
+                "tiene": round(_r, 2), "maximo": _mx,
+                "veces": round(_r / _mx, 2), "critico": True,
+                "explicacion": (f"Demasiado omega-6 para el omega-3 que lleva ({_r:.1f}:1, "
+                                f"y el máximo es {_mx}:1). Los dos compiten por la misma "
+                                f"enzima, así que un omega-6 alto deja el poco omega-3 sin "
+                                f"convertir. Se arregla con aceite de lino, semillas o "
+                                f"pescado azul.")})
+        else:
+            correctos.append("Relación linoleico:linolénico")
+            dentro.append({"nutriente": "Relación linoleico:linolénico",
+                           "clave": "ratio_la_ala", "tiene": round(_r, 2),
+                           "minimo": _mn, "maximo": _mx,
+                           "cubre_pct": round(_r / _mn * 100) if _mn else None,
+                           "del_maximo_pct": round(_r / _mx * 100) if _mx else None})
 
     # ==================================================================
     # SEMAFORO -- no todos los huecos son iguales de graves

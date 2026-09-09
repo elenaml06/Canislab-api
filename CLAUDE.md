@@ -99,7 +99,7 @@ jubilado — que desde fuera se parecen mucho.
 | `constructor.py` | Proporciones BARF de partida y `valor_nutriente()` (las claves derivadas, como `epa_dha`) |
 | `exclusiones.py` | Alergias por palabras y familias de especie. Excluir «pollo» quita también «gallina» |
 | `accesibles.py`, `modos.py` | Qué alimentos entran según el modo (automático / personalizar / aprovechar) |
-| `condicionales.py` | Lee `requisitos_condicionales.json`: **los requisitos que NO son un número fijo porque dependen de la propia dieta**. El primero y el que más pesa: la proteína de **gestación y lactancia**, que FEDIAF calcula suponiendo que la dieta lleva hidratos — y una ración BARF no lleva. NRC trae el experimento: con la dieta sin hidratos y la proteína baja, la **mortalidad perinatal subió un 75 %**. Ninguno de estos tiene forma de fila, así que ninguno lo encontró el trabajo de transcribir tablas |
+| `condicionales.py` | Lee `requisitos_condicionales.json`: **los requisitos que NO son un número fijo porque dependen de la propia dieta**. Son **tres** desde el 9 de septiembre. (1) La proteína de **gestación y lactancia**, que FEDIAF calcula suponiendo que la dieta lleva hidratos — y una ración BARF no lleva; NRC trae el experimento: con la dieta sin hidratos y la proteína baja, la **mortalidad perinatal subió un 75 %**. (2) La **arginina que sube con la proteína**: FEDIAF publica una tabla entera para esto (Anexo 7.4 y Tabla VII-13, «+0,01 g de arginina por cada gramo de proteína sobre el requisito, en todas las etapas») y no la aplicábamos — con los 105 g/1000 kcal de proteína que lleva un BARF típico, la tabla pide 1,90 g de arginina y el motor exigía 1,51. (3) El **ratio linoleico:linolénico**, 2,6-26 en adulto y crecimiento y 2,6-16 en gestación y lactancia (NRC 2006 cap.5) — que es lo que el NRC recomienda **en lugar** del ratio omega-6:omega-3 totales, del que dice literalmente que «is not helpful». Ninguno de los tres tiene forma de fila, así que ninguno lo encontró el trabajo de transcribir tablas. **El solver y el semáforo llaman a las mismas funciones de este módulo**, y eso no es elegancia: es la lección del 8 de septiembre, cuando cada uno aplicaba los suelos de patología a su manera y el motor construía menús enteros para que el filtro final los tirara |
 | `recomendaciones.py` | Lee `recomendaciones_adulto.json`: **los dos techos que SACN5 recomienda a un perro adulto SANO** (fósforo y sodio). Es la tercera clase de límite del motor, y no existía hasta el 8 de septiembre: los de FEDIAF valen para cualquier perro, los de patología solo si está marcada, y estos valen para el perro que **no tiene nada**. Se combinan con `min()` como los de patología: solo pueden apretar |
 | `patologias.py` | Lee `patologias.json` y lo pasa a la forma que espera el solver. **Aquí no hay ni una cifra**: hasta el 28 de agosto la tabla eran 200 líneas de `dict` dentro de `motor_completo.py`, mezclando números, motivo clínico, textos y lógica de crecimiento. Se sacó por lo mismo que el catálogo y la tabla de FEDIAF: un número que decide si un menú se entrega tiene que poder auditarse, y no se audita lo que está enterrado entre `if`s |
 | `catalogo_menus.py` | Carga los menús precalculados de la vista previa. Los datos están en `catalogo_menus.json`, en la raíz con los demás: aquí solo quedan 55 líneas de código |
@@ -116,12 +116,26 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 50 bloques, ~10 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `pruebas_completas.py` | **La batería.** Los 61 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
 | `auditar_patologias.py` | Cada cifra de `patologias.json` contra `requerimientos_v2_final.json`: que ninguna patología formulable tenga un tope por debajo del mínimo de FEDIAF, y que la clave del nutriente exista en el `MAPA`. Lo ejecuta el BLOQUE 32 |
 | `radiografia.py` | Imprime los números que **ENTRAN** al motor, para comparar `main` con una rama a golpe de `diff`. No lo ejecuta la batería: se corre a mano. Existe porque el semáforo comprueba el menú contra las kcal que le dieron — si las kcal ya venían mal, el menú sale VERDE para un perro que no es el tuyo, y eso solo se ve en la entrada |
 | `auditar_catalogo.py` | Huecos y datos raros del catálogo, y quién se queda sin aminograma. Lo ejecuta el BLOQUE 19 |
+| `regenerar_catalogo.py` | Rehace los 36 menús de la vista previa y sus 180 variantes. **Está en el repo por un fallo real**: el 8 de septiembre se regeneró el catálogo con una copia de este script que vivía en un scratchpad y que llamaba al motor **sin `margenes_categoria`** — el motor formula sin proporciones BARF, y salieron menús de **25,8 kg de comida al día con un 91 % de verdura y sin hueso**, los 216 **en verde**, porque lo que se había apagado no era la nutrición sino la FORMA, y la forma no la mira el semáforo. No llegó a `main`. Desde el 9 de septiembre el script vive aquí, hace la misma llamada que la API, y **el BLOQUE 25 comprueba las proporciones de los 216 menús** |
 | `auditar_fediaf.py` | Cada valor del JSON contra la tabla de FEDIAF. Lo ejecuta el BLOQUE 18 |
 | `contrastar_fuentes.py` | Una ficha del catálogo contra **BEDCA, CIQUAL y USDA a la vez**, en el orden de `Bases.md`. **No lo ejecuta la batería** (necesita red y se baja 10 MB): es la herramienta de quien va a mirar una ficha. Trae dentro cómo se lee cada fuente — el XML de BEDCA hay que reconstruirlo de su `query.js`, y con la lista de atributos recortada devuelve el cuerpo vacío sin dar error |
+
+**Y una patología marcada `formulable: true` tiene que formular de verdad.**
+Suena a perogrullada y fue un fallo real del 8 de septiembre: se aplicaron dos
+cifras de SACN5 en pasadas distintas —la vitamina E de la disfunción cognitiva y
+el techo de fósforo del adulto sano—, cada una medida sola y cada una viable
+sola, y **juntas dejaban esa patología sin menú a cualquier peso**. El semáforo no
+puede cazarlo por construcción: no hay menú que mirar. Lo vigila desde el 9 el
+**BLOQUE 61**, que recorre las 39 formulables y exige menú verde para el perro de
+referencia. Cuando una cifra de la fuente no cabe, no se baja: se mueve a
+`limites_escritos_que_el_solver_no_aplica` con su medida —donde ya están el
+omega-3 del cáncer y el de la artrosis— y se pregunta. Detalle: `PATOLOGIAS.md`
+§1.4-bis.
+
 
 ### Endpoints: cuáles usa la app y cuáles no
 
@@ -354,12 +368,13 @@ se comprueba entero en cada batería.
 ## Cómo se prueba
 
 ```bash
-python3 pruebas_completas.py     # ~10 min, tiene que salir TODO EN VERDE
+python3 pruebas_completas.py     # ~25 min, tiene que salir TODO EN VERDE
 ```
 
-Los 50 bloques tardan unos **10 minutos** (559 s, 590 s y 593 s en las
-tres últimas medidas apuntadas en los commits; el «~2 min» que ponía aquí
-llevaba meses caducado). No necesita red ni claves de verdad: se fabrica
+Los 61 bloques tardan unos **25 minutos** (1.354 s en la última medida; el
+«~10 min» que ponía aquí se quedó corto en cuanto los bloques 50 a 61
+empezaron a resolver menús de verdad, y el «~2 min» de antes llevaba meses
+caducado). No necesita red ni claves de verdad: se fabrica
 su propio Stripe y su propio Supabase de mentira, así que corre igual en
 cualquier máquina y sin conexión.
 

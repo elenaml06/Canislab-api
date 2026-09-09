@@ -3,7 +3,7 @@
     "que_es": "Requisitos que NO son un numero fijo: dependen de otra cosa de la propia dieta. Son los que un barrido de tablas no encuentra, porque no tienen forma de fila.",
     "unidad": "por 1000 kcal de energia metabolizable, igual que requerimientos_v2_final.json",
     "por_que_existe_este_fichero": "Porque el 8 de septiembre, al leer las fuentes ENTERAS en vez de sus tablas, aparecieron varios requisitos escritos como «el requisito de X depende del contenido de Y». Ninguno cabe en requerimientos_v2_final.json, que es una tabla de numeros fijos por etapa, ni en patologias.json, que es por enfermedad. Ver HALLAZGOS_LECTURA_FUENTES.md.",
-    "verificado": "8 de septiembre de 2026, leyendo FEDIAF 2025 seccion 3.3.1 y NRC 2006 capitulo 5"
+    "verificado": "8 de septiembre de 2026 (proteina de reproduccion), leyendo FEDIAF 2025 seccion 3.3.1 y NRC 2006 capitulo 5. AMPLIADO el 9 de septiembre de 2026 con la arginina de la Tabla VII-13 de FEDIAF y el ratio linoleico:linolenico del NRC 2006 capitulo 5, leyendo los dos documentos ENTEROS."
   },
   "reglas": {
     "proteina_en_reproduccion_sin_hidratos": {
@@ -11,9 +11,90 @@
       "nutriente": "proteina",
       "tipo": "suelo",
       "valor": 125.0,
-      "aplica_a_etapas": ["Gestante", "GestanteTardia", "Lactante"],
+      "aplica_a_etapas": [
+        "Gestante",
+        "GestanteTardia",
+        "Lactante"
+      ],
       "fuente": "FEDIAF 2025, seccion 3.3.1 «Total protein (Reproduction)»; y NRC 2006 cap.5, «Effects on Reproductive Performance», que trae el experimento (Kienzle E et al. 1985, Romsos DR et al. 1981). Verificado literal 8-sep-2026",
       "por_que": "⚠️ ES EL REQUISITO MAS SERIO QUE HA APARECIDO AL LEER EL TEXTO EN VEZ DE LAS TABLAS, y no estaba en ningun sitio del motor. || FEDIAF, literal: «The recommendation for protein assumes the diet contains SOME CARBOHYDRATE to decrease the risk of hypoglycaemia in the bitch and neonatal mortality. If carbohydrate is absent or at a very low level, the protein requirement is much higher, AND MAY BE DOUBLE». || Y NRC 2006 trae el experimento que hay detras, con las cifras: «In bitches fed the high-protein, carbohydrate-free diet (42 percent of calories from protein), litter size, birth weight, and puppy survival rate were comparable to those when bitches were fed a carbohydrate-containing control diet. In contrast, in bitches fed the low-protein, carbohydrate-free diet (20 percent of calories from protein), a reduction in birth weight (30 to 40 percent) and an increase in PERINATAL MORTALITY RATE (75 PERCENT) were observed». No es una recomendacion teorica: es mortalidad neonatal medida. || POR QUE NOS APLICA A NOSOTROS Y NO A UN PIENSO: una racion BARF es carne, hueso, viscera, higado y como mucho un 10 % de verdura. NO LLEVA CEREAL. Es exactamente «carbohydrate absent or at a very low level», por construccion -- no hace falta medirlo, y de hecho el catalogo no tiene clave de hidratos. || EL NUMERO: se toma la lectura MAS ESTRICTA de las dos que dan las fuentes. El «doble» de FEDIAF sobre el minimo de reproduccion (62,5) son 125. Los «42 % de las kcal» de Kienzle son 105 g a 4 kcal/g o 120 a 3,5; los dos por debajo de 125. Se aplica 125 porque cabe: MEDIDO en los nueve casos (5, 22 y 40 kg x gestante, gestante tardia y lactante), los nueve salen en el PELDANO 0 y en VERDE, con la proteina real entre 125,1 y 152,6. O sea que no cuesta ni un peldano. || Y ESTO ES LO QUE IMPORTA: antes de hoy, un menu de gestacion que hubiera salido con 70 g de proteina PASABA EL SEMAFORO, porque el minimo era 62,5. Habria estado a la mitad de lo que la fuente pide para una dieta sin hidratos, en el unico caso donde equivocarse se cobra en cachorros muertos. Los menus reales salian a 119-124, o sea que cumpliamos por casualidad y por los pelos, no por regla."
+    },
+    "arginina_segun_proteina": {
+      "nombre": "La arginina sube con la proteina del menu",
+      "nutriente": "arginina",
+      "tipo": "suelo_relativo",
+      "depende_de": "proteina",
+      "coeficiente": 0.01,
+      "anclas_por_etapa": {
+        "Adulto": {
+          "proteina": 45.0,
+          "nutriente": 1.3
+        },
+        "Senior": {
+          "proteina": 45.0,
+          "nutriente": 1.3
+        },
+        "CachorroCrecimiento": {
+          "proteina": 50.0,
+          "nutriente": 1.725
+        },
+        "CachorroJoven": {
+          "proteina": 56.25,
+          "nutriente": 1.975
+        },
+        "Gestante": {
+          "proteina": 56.25,
+          "nutriente": 1.975
+        },
+        "GestanteTardia": {
+          "proteina": 56.25,
+          "nutriente": 1.975
+        },
+        "Lactante": {
+          "proteina": 56.25,
+          "nutriente": 1.975
+        }
+      },
+      "fuente": "FEDIAF 2025, ANEXO 7.4 y Tabla VII-13 «Increases in arginine requirement with increasing protein content»; el coeficiente lo toma FEDIAF del NRC 2006 cap.6. Verificado literal 9-sep-2026.",
+      "por_que": "⚠️ ESTO NO ES UNA EXTRAPOLACION NUESTRA NI DEL NRC: ES UNA TABLA QUE FEDIAF PUBLICA Y QUE NO APLICABAMOS. || FEDIAF 2025, seccion 3.3.1, literal: «Arginine (All life stages) The arginine requirement INCREASES WITH INCREASED PROTEIN CONTENT owing to its role as an intermediate in the urea cycle. For every gram of crude protein above the stated values, an additional 0.01 g of arginine is required (NRC 2006g). See ANNEX 7.4». Y el Anexo 7.4: «The NRC 2006 advises an extra 0.01 g arginine for every 1 % increase in protein (% DM) above the recommended allowance FOR ALL LIFE STAGES IN DOGS». || LAS ANCLAS son la primera fila de cada columna de la Tabla VII-13, convertidas con el x2.5 de siempre (%MS -> por 1000 kcal a 4000 kcal EM/kg MS): adulto 18 %MS de proteina con 0,52 g/100gMS de arginina = 45 y 1,30; crecimiento (columna Growth) 20 %MS con 0,69 = 50 y 1,725; crecimiento temprano y reproduccion (columnas Early growth y Reproduction) 22,5 %MS con 0,79 = 56,25 y 1,975. El coeficiente 0,01 sale igual en las dos unidades: 1 %MS de proteina son 2,5 g/1000 kcal y 0,01 g/100gMS de arginina son 0,025 g/1000 kcal, y 0,025/2,5 = 0,01. Comprobado contra la propia tabla: de 18 a 20 %MS la arginina de adulto va de 0,52 a 0,54, que son los 0,01 por punto. || SE COMPONE CON UN max() CONTRA EL MINIMO DE LA TABLA III-3b, nunca lo sustituye: por debajo de unos 66 g/1000 kcal de proteina manda el 1,51 de la III-3b y por encima manda esta regla. || POR QUE NOS IMPORTA A NOSOTROS MAS QUE A UN PIENSO: la tabla llega hasta 55 %MS de proteina y nuestros menus viven ahi. MEDIDO sobre los 216 menus del catalogo precalculado, la proteina mediana es 105 g/1000 kcal = 42 %MS, donde la tabla exige 1,90 g de arginina y el motor solo exigia 1,51 -- un 26 % menos. || ⚠️ MEDIDO ANTES DE APLICARLO, Y NO CUESTA NI UN MENU: la arginina real mediana de esos menus es 4,23 g/1000 kcal y el peor caso deja 1,06 g de margen sobre lo exigido. 0 de 216 se quedan cortos. Es lo que cabe esperar de una racion de carne: la carne va sobrada de arginina. Se aplica porque la regla faltaba, no porque estuviera dando menus malos hoy -- igual que la nota b del calcio de raza grande. || Y ES LA OTRA MITAD DEL TECHO DE LISINA (ver verificar.MAXIMOS_NO_APLICADOS y HALLAZGOS_LECTURA_FUENTES.md N-13): lo que enfermo a los cachorros de Czarnecki 1985 no fue la lisina alta, fue la arginina corta que la lisina alta provoco -- con 4 g de arginina/kg de dieta, o sea 1 g/1000 kcal, POR DEBAJO del minimo de FEDIAF de adulto. Anadir 4 g de arginina prevenia los signos. Techo de lisina y suelo de arginina son la misma restriccion vista por sus dos lados."
+    },
+    "ratio_linoleico_linolenico": {
+      "nombre": "La relacion entre el omega-6 y el omega-3 de 18 carbonos",
+      "tipo": "ratio",
+      "numerador": "linoleico",
+      "denominador": "linolenico",
+      "rangos_por_etapa": {
+        "Adulto": {
+          "min": 2.6,
+          "max": 26.0
+        },
+        "Senior": {
+          "min": 2.6,
+          "max": 26.0
+        },
+        "CachorroCrecimiento": {
+          "min": 2.6,
+          "max": 26.0
+        },
+        "CachorroJoven": {
+          "min": 2.6,
+          "max": 26.0
+        },
+        "Gestante": {
+          "min": 2.6,
+          "max": 16.0
+        },
+        "GestanteTardia": {
+          "min": 2.6,
+          "max": 16.0
+        },
+        "Lactante": {
+          "min": 2.6,
+          "max": 16.0
+        }
+      },
+      "fuente": "NRC 2006, cap.5 «Fat and Fatty Acids», secciones «Adult Maintenance» y «Gestation and Lactation». Verificado literal 9-sep-2026.",
+      "por_que": "⚠️ ES LA PREGUNTA DE LA NUTRICIONISTA («falta el ratio omega-6:omega-3»), Y LA FUENTE DA UNA RESPUESTA QUE NO ES LA QUE UNO ESPERA. || El NRC dice que el ratio de omega-6 TOTALES a omega-3 TOTALES NO sirve: «The European expert committee also specifically concluded that the use of a TOTAL n-6:n-3 ratio IS NOT HELPFUL (de Deckere et al., 1998). The British Nutrition Foundation Task Force on Fatty Acids (BNF) has stated that attempts to explain data based on the total n-6:n-3 ratio MAY BE DISTORTED». El motivo esta escrito justo antes: unos estudios suman los derivados de cadena larga y otros no, y no son equivalentes porque «the long-chain metabolites are known to be more potent as substrates for eicosanoid production than their parent fatty acids». || LO QUE EL NRC SI RECOMIENDA es el ratio entre los DOS DE 18 CARBONOS, linoleico y linolenico. Adulto, literal: «A range for this ratio of 2.6 TO 26 is presumed safe based on evidence to date. It includes a margin of safety of approximately 10 percent at both extremes». Gestacion y lactancia: «Because of competition between LA and ALA for metabolism, the LA:ALA ratio should range BETWEEN 2.6 AND 16. This range is not as wide as that for maintenance, thereby helping ensure the availability of 18-carbon n-3 ALA for subsequent elongation». Crecimiento: el NRC calcula 16,3 y lo describe como «less than 17», dentro del rango de adulto, asi que se le deja el de adulto. || EL MECANISMO, que es por que existe el suelo y no solo el techo: linoleico y linolenico compiten por la misma delta-6-desaturasa, y «high cellular LA will affect ALA conversion to a greater extent than high ALA at lower LA content». || POR QUE EL MOTOR NO LO TENIA, y no es un descuido de nadie: FEDIAF NO DA MINIMO DE LINOLENICO EN ADULTO (la fila lleva «-»), asi que en un menu de adulto no habia NADA que impidiera al omega-3 caer a cero mientras el omega-6 subia. Y una relacion entre dos nutrientes no cabe en una tabla de numeros fijos por etapa, asi que ningun barrido de tablas la encuentra. Es el mismo agujero que tenia el ratio Ca:P antes de ponerlo, por el mismo motivo. || ⚠️ MEDIDO ANTES DE APLICARLO, Y ESTE SI CUESTA MENUS: sobre los 216 del catalogo precalculado, la mediana es 7,79, pero 15 se pasan de 26 y uno llega a 109,14 (un senior mini con 1,53 g de linoleico contra 0,014 de linolenico). Uno se queda por debajo de 2,6. O sea que 16 de 216 tendrian que cambiar. Es lo que tiene tapar un agujero de verdad."
     }
   }
 }

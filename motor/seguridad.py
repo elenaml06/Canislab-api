@@ -154,13 +154,64 @@ TOPE_VITD_KCAL = 20.0      # µg por 1000 kcal -- NRC 2006
 # FUENTE DEL MECANISMO (con caso real documentado): tirotoxicosis por
 # exceso de yodo en perros, Veterinary Record 2017; caso similar más
 # detallado en Isidori, Corbee & Kooistra, Vet Rec Case Rep 2024;12:e975.
-# El NRC (2006) fija el límite superior seguro en 1.400 µg por cada 1000
-# kcal de dieta.
+#
+# ⚠️⚠️ CORREGIDO EL 9 DE SEPTIEMBRE DE 2026, Y EL ERROR ERA SERIO.
+#
+# Aquí ponía 1.400 µg/1000 kcal, y el comentario decía: «El NRC (2006) fija
+# el límite superior seguro en 1.400 µg por cada 1000 kcal de dieta».
+#
+# **EL NRC DICE LO CONTRARIO.** Literal, cap.8, «Safe Upper Limit of Iodine
+# for Dogs»:
+#
+#   «Castillo et al. (2001a) reported evidence of DEPRESSED THYROID GLAND
+#    FUNCTION, evidenced by reduced plasma concentrations of thyroid hormones
+#    AND BONE ABNORMALITIES, IN PUPPIES FED DIETS CONTAINING an estimated
+#    maximum I content of 1,400 μg I per 1,000 kcal ME, providing an
+#    estimated 250 μg I·kg BW-1·d-1. Based on this information AN ABSOLUTE
+#    FIGURE FOR A SUL OF DIETARY I CANNOT BE PREDICTED for adult dogs.»
+#
+# O sea que los 1.400 son **la concentración a la que se observó el daño**, y
+# el NRC dice expresamente que **no puede fijar un límite superior seguro**.
+# Teníamos el techo puesto justo en la dosis que hace daño. Un techo ahí no
+# es un techo.
+#
+# Es la misma familia de fallo que el máximo de fósforo borrado el 7 de
+# septiembre: leer una línea de una fuente y aplicarla al revés.
+#
+# EL NUEVO NÚMERO SALE DE LA MISMA PÁGINA, no de mi criterio. El NRC cita a
+# Belshaw (1975), que midió el yodo de varias marcas comerciales de pienso:
+#
+#   «The results corresponded to concentrations ranging, at a minimum, from
+#    400 to 1,275 μg I per 1,000 kcal ME … APPARENTLY THESE FOODS WERE FED
+#    WITHOUT ANY CLINICAL ABNORMALITIES in dogs consuming them.»
+#
+# Así que 1.275 es lo más alto que la fuente documenta como comido sin
+# problemas, y por debajo de donde se vio el daño.
+#
+# ⚠️ MEDIDO ANTES DE BAJARLO, sobre los 216 menús del catálogo precalculado:
+#       peor menú ......... 1.038 µg/1000 kcal
+#       mediana ...........   418
+#       por encima de 1.275 ...... 0 de 216
+#       por encima de 1.000 ...... 2 de 216
+# O sea que el cambio NO quita ni un menú: solo saca el techo del sitio donde
+# hay daño documentado.
+#
+# ⚠️ Y QUEDA UNA PREGUNTA ABIERTA, en PREGUNTAS_PARA_ELENA.md §1: 1.275 está
+# a un 9 % de la cifra que hizo daño, y esa cifra es de CACHORROS, que son el
+# grupo sensible, mientras que este techo se aplica a todos por igual. Como
+# el peor menú real va a 1.038, habría sitio para bajarlo bastante más sin
+# coste — pero cuánto margen se le deja a una tiroides es criterio clínico.
+# La referencia del propio NRC para perro adulto son 220 µg/1000 kcal.
+#
+# (El máximo LEGAL de FEDIAF son 2.750 µg/1000 kcal -- Tabla III-3a, 1,10
+# mg/100 g MS x 2,5 --, o sea más flojo que este, así que no ata: el que
+# aprieta es este.)
+#
 # ⚠️ Por la enorme variabilidad del kelp, se aplica un margen de seguridad
 # extra del 50% cuando el yodo del menú viene, en parte, de kelp -- para no
 # confiar en una cifra de producto que en la práctica puede estar muy lejos
 # de la real.
-TOPE_YODO_KCAL = 1400.0    # µg por 1000 kcal -- NRC 2006
+TOPE_YODO_KCAL = 1275.0    # µg por 1000 kcal -- NRC 2006, Belshaw 1975
 MARGEN_EXTRA_YODO_KELP = 1.5  # +50% de margen si el yodo viene de kelp
 
 # ---------------------------------------------------------------------------

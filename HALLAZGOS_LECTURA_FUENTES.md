@@ -1332,3 +1332,1429 @@ distintas en dos sitios distintos, que es exactamente como está montado el rest
 
 Va a `PREGUNTAS_PARA_ELENA.md` §5, porque «qué ratio se le pide a un perro
 renal» es criterio clínico y no mío.
+
+---
+
+## ⚠️ Y UN FALLO NUESTRO, ENCONTRADO POR CASUALIDAD AL MEDIR OTRA COSA
+
+### N-27 · El catálogo de la vista previa se regeneró SIN las proporciones BARF
+
+**No salió de leer una fuente.** Salió mirando de dónde venía la vitamina A del
+peor menú de cachorro (N-19) y viendo esto en la lista de ingredientes:
+
+```
+Zanahoria .......  620,3 g
+Nabo pelado ..... 1405,7 g      ← en un menú de 493 kcal para un cachorro mini
+```
+
+Un menú de 1,6 kg para un cachorro de raza mini. Eso no es una ración BARF.
+
+**Medido, la rama contra `main`:**
+
+| Menú | En `main` | En la rama | Verdura |
+|---|---|---|---|
+| Toy_Adulto | 131 g | **655 g** | 5 % → **89 %** |
+| Pequeño_CachorroCrecimiento | 586 g | **2.903 g** | 10 % → **92 %**, y **sin nada de hueso** |
+| Gigante_Lactante | 6.846 g | **25.792 g** | 10 % → **91 %** |
+
+**Veinticinco kilos y ocho gramos de comida al día.**
+
+**La causa, en una línea:** el 8 de septiembre el catálogo se regeneró con un
+script que vivía en un scratchpad —fuera del repo— y que llamaba a
+`mc.resolver()` **sin `margenes_categoria`**. `motor_completo.py` aplica las
+proporciones BARF dentro de un `if margenes_categoria:`, así que sin ese
+argumento el motor formula **sin proporciones**.
+
+**Y los 216 salían VERDES.** Cumplen los 43 requisitos, así que ni el semáforo
+ni `_garantizar_verificado` tenían nada que objetar. Lo que se había apagado no
+era la nutrición: era **la FORMA**. Y la forma no la mira el semáforo — por
+diseño, porque la regla 3 del `CLAUDE.md` dice que la forma es lo único que se
+puede relajar. Lo que la regla 3 **no** dice es que se pueda relajar sola, sin
+que nadie lo pida y sin decirlo, que es exactamente lo que pasó.
+
+**No llegó a `main`**: se quedó en la rama. Pero habría llegado, porque nada lo
+miraba.
+
+**Las tres cosas que se han arreglado, y las tres importan por separado:**
+
+1. **El script está en el repo**, como `regenerar_catalogo.py`, y hace la misma
+   llamada que hace la API. La lección es la de siempre en este proyecto y ya
+   estaba escrita para los datos: *si vive solo en tu ordenador, se pierde* —
+   resulta que también vale para **la herramienta que produce un dato**.
+2. **El BLOQUE 25 comprueba desde hoy las proporciones** de cada uno de los 216
+   menús contra `constructor.MARGENES`, que es la misma tabla que usa el motor.
+   Es la única comprobación que lo caza, porque por nutrientes es indetectable.
+3. **El catálogo se ha regenerado bien**, con las proporciones puestas. Los
+   tamaños vuelven a ser de comida: Toy_Adulto en 166 g, no en 655.
+
+**Y la lección general, que es la que más vale:** *estaba todo verde* no
+significa *estaba bien*. El semáforo comprueba los 43 requisitos y **solo** los
+43 requisitos. Cualquier otra cosa que se rompa —la forma, las cantidades, la
+procedencia de un dato— sale verde igual, y hace falta una prueba distinta para
+cada una. Es el mismo argumento que hay detrás de `dato_dudoso`, de
+`cero_verificado` y del sello de los datos: **cada cosa que puede romperse en
+silencio necesita su propio testigo**.
+
+---
+
+## ⚠️ EL FALLO DE LA NOCHE DEL 8 AL 9: DOS CIFRAS DEL MISMO LIBRO QUE NO CABEN JUNTAS
+
+**Y no lo encontró leer una fuente: lo encontró comprobar que lo que decimos
+que se puede formular se pueda formular.**
+
+Esa noche se aplicaron, en pasadas distintas y con horas de diferencia:
+
+- **Tabla 35-3 de SACN5** (disfunción cognitiva): vitamina E **≥ 187,5
+  mg/1000 kcal** («Provide foods with ≥750 mg/kg» de materia seca ÷ 4).
+- **`recomendaciones_adulto.json`** (SACN5, perro adulto sano): fósforo
+  **≤ 2.000 mg/1000 kcal**.
+
+Cada una se midió por separado, y **cada una cabía por separado**. Juntas no:
+para llegar a 187,5 mg de vitamina E el motor tiene que cargar de verdura y de
+hígado, y eso sube el fósforo por encima de 2.000.
+
+**Resultado, medido sobre el camino real de la API y todos los peldaños:**
+
+```
+disfunción cognitiva,  8 kg .... SIN MENU
+disfunción cognitiva, 22 kg .... SIN MENU
+disfunción cognitiva, 40 kg .... SIN MENU
+```
+
+Una patología marcada `formulable: true` que **no formulaba nada, a ningún
+peso** — y que en `main` sí daba menú. El cambio la dejó peor que como estaba.
+
+**Dónde está el techo de verdad** (bisecando el suelo con el techo de fósforo
+puesto, perro de 22 kg y DER 1.000):
+
+```
+vitE ≥ 120 ..... peldaño ESTRICTO   (real 125,5;  fósforo 1.998)
+vitE ≥ 150 ..... peldaño 5          (real 156,9;  fósforo 1.998)
+vitE ≥ 175 ..... peldaño 5          (real 177,7;  fósforo 1.998)
+vitE ≥ 185 ..... SIN MENU
+vitE ≥ 187,5 ... SIN MENU          ← lo que pide la fuente
+```
+
+El catálogo llega a ~180 y la fuente pide 187,5: **se queda fuera por un 5 %**.
+Sin el techo de fósforo el menú que sale lleva 4.000 mg de fósforo y **403 g de
+albahaca** para un perro de 22 kg — el solver exprimiendo la columna de la
+vitamina E, no una ración.
+
+**Qué se ha hecho.** La vitamina E pasa a
+`limites_escritos_que_el_solver_no_aplica`, con la cita, la medida y el motivo:
+el mismo trato que ya tenía el omega-3 del cáncer, que no cabe por lo mismo. El
+suelo de omega-3 (2,5 g/1000 kcal) de esa misma tabla **se sigue aplicando** y
+resuelve en el peldaño estricto.
+
+### Las tres lecciones, y ninguna es «leer mejor»
+
+1. **Medir una cifra sola no dice nada sobre el conjunto.** Las dos se midieron
+   bien; lo que faltó fue volver a medir la primera después de poner la
+   segunda. En un motor de restricciones, **cada limite nuevo invalida todas
+   las medidas anteriores**, no solo las del mismo nutriente.
+2. **El semáforo no puede cazar esto, por construcción.** No hay menú que
+   mirar. `_garantizar_verificado()` es el filtro que impide entregar un menú
+   malo; no existe nada que impida **no entregar ninguno**. Son dos fallos
+   opuestos y hasta hoy solo teníamos testigo para uno.
+3. **Faltaba la comprobación más tonta de todas.** El BLOQUE 50 prueba doce
+   cruces de patologías elegidos a mano, y la disfunción cognitiva no estaba en
+   ninguno. El BLOQUE 36 audita las cifras de una en una, que es aritmética y
+   no ve un cruce entre **dos nutrientes distintos**. Desde hoy el **BLOQUE 61**
+   recorre las 39 patologías formulables y exige que cada una dé menú verde
+   para el perro de referencia. Tarda ~110 s y es la única prueba del repo que
+   vigila la frase *«esta patología se puede formular»*.
+
+Y la lección general es la misma que dejó el catálogo regenerado sin
+proporciones, vista por el otro lado: **estaba todo verde** no significa que
+esté bien, y **no hay menú** tampoco salta solo. Cada cosa que puede romperse
+en silencio necesita su propio testigo — incluido el silencio de no dar nada.
+
+---
+
+## Fascetti & Delaney 2ª ed., capítulo 10 (enfermedades ortopédicas), leído entero
+
+Lo escribe **Herman Hazewinkel**, que es el autor de casi todos los estudios que
+cita — y de los que SACN5 y FEDIAF citan a su vez cuando hablan del calcio del
+cachorro de raza grande. O sea que no es una fuente más: es la fuente de las
+otras.
+
+### F-1 · ⚠️ EL CALCIO DE NUESTROS CACHORROS DE RAZA GRANDE VA AL TOPE DE FEDIAF, Y ESTA FUENTE PIDE LA MITAD
+
+**Es lo más serio que ha salido de este capítulo, y toca a la población donde
+equivocarse no se arregla después.**
+
+Lo que dice Fascetti, literal, dos veces y en dos sitios distintos:
+
+> *«In order to prevent panosteitis, a diet designed for young dogs of large
+> breeds with a **calcium content no greater than 1.1% dm** should be fed during
+> the growth period, starting at partial weaning.»*
+
+> *«In general, in foods with a protein content of high biological value, **the
+> calcium content should be between 0.8% and 1.0% on a dry matter basis** (for a
+> food with 4200 ME kcal/kg diet) (Nap et al. 2000).»*
+
+Y remata con una frase que va dirigida exactamente a lo que hacemos nosotros:
+
+> *«The occurrence of these dietary orthopedic diseases **is increasing since the
+> feeding of BARF and homemade diets has become more popular**.»*
+
+**Lo que aplica el motor hoy:** el máximo de FEDIAF, 4.500 mg/1000 kcal =
+**1,8 % MS**. Es decir, **el 64 % por encima del techo que da esta fuente** para
+esa misma población, y el 125 % por encima del 0,8 % que llama «probado seguro».
+
+**Y no es teórico: nuestros menús se pegan al techo.** Medido sobre los 12 menús
+de crecimiento del catálogo precalculado:
+
+```
+Grande_CachorroCrecimiento ....... 4.500 mg/1000 kcal  = 1,80 % MS  ← EL TOPE EXACTO
+Gigante_CachorroCrecimiento ...... 4.500                 1,80 %      ← EL TOPE EXACTO
+Toy_CachorroCrecimiento .......... 4.500                 1,80 %
+Pequeño_CachorroCrecimiento ...... 4.426                 1,77 %
+Grande_CachorroJoven ............. 3.987                 1,59 %
+Mini_CachorroCrecimiento ......... 3.956                 1,58 %
+Gigante_CachorroJoven ............ 3.884                 1,55 %
+...
+Mediano_CachorroJoven ............ 2.551                 1,02 %   ← el único por debajo de 1,1 %
+mediana .......................... 3.920                 1,57 %
+11 de los 12 pasan de 1,1 % MS
+```
+
+Los tres que salen clavados en 4.500 no es casualidad: es el solver empujando
+contra el techo, porque una ración con hueso va sobrada de calcio y el techo es
+lo único que la frena. **Si mañana FEDIAF subiera el techo, subiríamos con él.**
+
+**Por qué pasa, y por qué no es un fallo del motor:** FEDIAF da para el
+crecimiento un mínimo de 2.000 (2.500 en raza grande tardía) y un máximo de
+4.500. Los dos son requisitos y los dos se cumplen. Lo que dice Hazewinkel es
+que **el sitio correcto dentro de esa ventana está pegado al mínimo, no al
+máximo**, y eso el motor no lo sabe: el solver no tiene motivo para preferir un
+extremo de una ventana legal.
+
+**Los otros números del mismo capítulo, para tener la escala:**
+
+| Calcio (% MS) en el cachorro | Qué se vio |
+|---|---|
+| 0,05 % (poodle miniatura) | fracturas patológicas |
+| 0,55 % (gran danés) | fracturas patológicas |
+| **0,8-1,0 %** | **lo que recomienda la fuente** |
+| 1,1 % | el control sano de todos esos estudios; techo que da para prevenir panosteítis |
+| **1,8 %** | **donde formulamos nosotros (= el máximo de FEDIAF)** |
+| 3,3 % (gran danés) | osteocondrosis severa, radius curvus, wobbler |
+| 3,3 % solo de la 3ª a la 6ª semana | panosteítis en TODOS, con la comida ya normalizada después |
+
+Ese último es el que más asusta: **tres semanas de exceso en el destete y la
+lesión aparece meses después**, con la dieta ya corregida.
+
+Y por peso vivo, del mismo capítulo: *«at 2 months of age, 260-830 mg Ca/kg
+BW/d appears to be safe for skeletal growth; decreasing to 210-540 mg Ca/kg BW/d
+at 5 months of age»*.
+
+**Qué NO he hecho.** Bajar el techo yo. Apretar el calcio del cachorro por
+debajo de lo que permite FEDIAF cambia todos los menús de crecimiento del
+producto y es exactamente «una decisión que depende de criterio clínico».
+Va como pregunta a `PREGUNTAS_PARA_ELENA.md` §8, con la medida de si cabe.
+
+### F-2 · El techo de vitamina D que aplicamos, contrastado con la dosis que hizo daño
+
+La Tabla 10.5 del mismo capítulo da la dosis-respuesta en gran danés:
+
+```
+1,14 µg vitamina D/100 g MS ..... osificación endocondral NORMAL
+  10 µg/100 g MS ................ osteocondrosis LEVE
+ 135 µg/100 g MS ................ osteocondrosis SEVERA
+```
+
+Los 10 µg/100 g MS son 100 µg/kg MS = **25 µg/1000 kcal** con el puente de
+siempre. **Nuestro techo son 14,1875 µg/1000 kcal** (el legal, Reglamento (UE)
+2017/1492, que es más estricto que el nutricional de FEDIAF). O sea que estamos
+al **57 % de la dosis más baja a la que se documenta lesión**, un factor de
+seguridad de 1,76.
+
+No cambia nada —el límite legal manda y ya lo aplicamos— pero conviene tenerlo
+escrito: **el margen no es enorme**, y el propio capítulo avisa de que *«a true
+safe upper limit for vitamin D intake… is not currently known in dogs»*, que es
+la misma frase que el NRC usa para el yodo.
+
+### F-3 · Lo que confirma, sin cambiar nada
+
+- **El EPA de la artrosis tiene respaldo clínico y el omega-3 total no.** Ver
+  el detalle en `patologias.json` y en `PREGUNTAS_PARA_ELENA.md` §7: el ensayo
+  del 4 % de omega-3 (Hazewinkel 1998) movió el marcador bioquímico y **no** la
+  cojera medida con placa de fuerza; el del EPA (Schoenherr 2005) mejoró el
+  apoyo en el 82 % frente al 31 % del control.
+- **La proteína alta no daña el esqueleto del cachorro.** Gran daneses con 29 %
+  de las kcal en proteína: ninguna diferencia en crecimiento, metabolismo del
+  calcio ni desarrollo esquelético (Nap et al. 1993b). Es la respuesta a un
+  miedo clásico de quien da BARF a un cachorro de raza grande, y nuestras
+  raciones van muy por encima de eso.
+- **El perro no sintetiza vitamina D en la piel**, así que toda la que hay viene
+  de la comida — que es por lo que el techo importa más que en humanos.
+
+---
+
+## Fascetti & Delaney 2ª ed., capítulo 15 (enfermedad renal), leído entero
+
+Lo firman **Yann Queau y Denise Elliott**. Es la otra mitad de lo que ya
+teníamos por SACN5 cap.37 y por IRIS, y sirve sobre todo para **contrastar**:
+donde los dos libros coinciden, el número está firme; donde no, hay que decirlo.
+
+### F-4 · Lo que CONFIRMA lo que ya aplicamos
+
+**El fósforo, con la cifra de supervivencia detrás.** Literal:
+
+> *«In one study of dogs with surgically induced reduced renal function, dogs
+> fed a **low‐phosphorus diet (0.44% dm)** for 24 months had a **75% survival**
+> versus a **33% survival** in dogs fed a **high‐phosphorus diet (1.44% dm)**
+> (Finco et al. 1992b). Renal function also deteriorated more rapidly in the
+> high‐phosphorus group.»*
+
+0,44 % MS = **1.100 mg/1000 kcal** con el puente de siempre. **Nuestro tope
+renal son 1.200**, o sea prácticamente la dieta del brazo que sobrevivió. Es la
+primera vez que ese número aparece con un desenlace duro (supervivencia a 24
+meses) y no solo como recomendación de tabla.
+
+**El omega-3, y por qué el suelo que puse ayer va en la dirección correcta:**
+
+> *«Supplementation with menhaden fish oil **lowered glomerular capillary
+> pressure, reduced proteinuria, and slowed progressive decline in the GFR**
+> (Brown et al. 1998).»* Y del otro lado: *«**Omega-6 fatty acids appeared to be
+> detrimental** to renal disease… supplementation with omega-6 PUFA… was
+> associated with **increased glomerular capillary pressure, glomerular
+> enlargement**, and increased eicosanoid excretion rates (Brown et al. 2000).»*
+
+Y una precisión que importa a un catálogo como el nuestro, donde el aceite de
+linaza es la fuente de omega-3 más concentrada que hay: *«one study suggests
+that the provision of dietary long-chain omega-3 fatty acids **from marine
+sources** versus dietary shorter-chain omega-3 fatty acids **from plant
+sources** is also important in the dog (Waldron et al. 2012)»*. O sea que **el
+lino no sustituye al pescado** para esto: nuestro suelo renal es de omega-3
+totales (linolénico + EPA + DHA) y el motor puede cumplirlo con lino solo.
+Apuntado, sin cambiar nada: separar el suelo en «totales» y «de cadena larga»
+es decisión clínica.
+
+### F-5 · ⚠️ Donde los dos libros NO dicen lo mismo: el sodio del renal
+
+**SACN5 (Tabla 37-9) pide sodio ≤0,3 % MS**, que es de donde sale nuestro tope
+renal de **750 mg/1000 kcal** — y de ahí el cloruro de 1.125 que puse ayer,
+porque la misma tabla lo escribe como «1,5 × el sodio». **Fascetti dice que eso
+no tiene evidencia.** Literal:
+
+> *«There have not been any published studies to demonstrate that dietary sodium
+> restriction will alleviate hypertension or slow disease progression.»*
+>
+> *«In healthy cats and dogs, dietary sodium intake **up to… 4.1 g/Mcal in
+> dogs** does not affect blood pressure or renal or cardiac functions.»*
+>
+> *«**there is currently no evidence to suggest that lowering dietary sodium will
+> reduce blood pressure** in cats or dogs with CKD.»*
+
+Y añade que en el gato la restricción de sodio **activó el sistema
+renina-angiotensina-aldosterona y bajó el potasio** sin tocar la presión
+(Buranakarl et al. 2004). O sea que no es solo inútil: puede tener coste.
+
+**4,1 g/Mcal son 4.100 mg/1000 kcal: cinco veces y media nuestro tope.**
+
+**Qué he hecho: nada, y a propósito.** Nuestro tope es el más estricto de los
+dos y está muy por encima del mínimo de FEDIAF, así que **no puede hacer daño**
+y no deja a nadie sin menú (medido ayer: los cuatro renales salen con 436-470 mg
+de cloruro contra un techo de 1.125). Pero el propio Fascetti reconoce que las
+dietas renales del mercado siguen siendo moderadamente bajas en sodio
+(«remain common and recommended»), así que estamos donde está el mercado.
+Queda escrito para que quien firme una pauta sepa que ese número es
+**convención, no evidencia**.
+
+### F-6 · Y una frase que vale por un capítulo entero, sobre lo que hacemos
+
+> *«In one report evaluating 28 and 39 recipes advocated for cats and dogs with
+> kidney disease, respectively, assumptions on ingredient and/or supplement type
+> were required for every recipe, and their analysis with computer software
+> revealed that **no recipe met all National Research Council nutrient
+> recommended allowances** for adult animals (Larsen et al. 2012). Deficiencies
+> were common for essential amino acids, trace minerals, or some vitamins.»*
+
+**Sesenta y siete recetas caseras para perro y gato renal, y ninguna cumplía.**
+Los huecos que enumera —aminoácidos esenciales, oligoelementos y vitaminas— son
+exactamente las tres cosas que este motor comprueba de cero en cada menú desde
+el 28 de agosto, cuando entraron los 12 aminoácidos. Es la mejor descripción que
+he leído de por qué existe la regla 1 del `CLAUDE.md`.
+
+Y el aviso que va con ella, que también nos toca: *«owners are likely to
+substitute or delete some ingredients or supplements, unbalancing the diet in a
+process referred to as **“diet drift”**… only **13% of dog owners** that were
+provided a homemade diet recommendation at a veterinary teaching hospital were
+strictly adhering to the recipe a few years later (Johnson et al. 2016)»*.
+Trece por ciento. Es un argumento de producto, no de nutrición, y va a
+`PENDIENTE_PRODUCTO.md`: el menú se cumple si es fácil de cumplir.
+
+---
+
+## Fascetti & Delaney 2ª ed., capítulo 9 (manejo del peso), leído entero
+
+### F-7 · La frase que justifica, palabra por palabra, el escalado de mínimos
+
+> *«**Maintenance foods in general are likely not fortified enough in essential
+> nutrients to be safely used for the caloric restriction necessary for active
+> weight loss.**»*
+
+Es exactamente lo que hace `minimo_de()` en `verificar.py` con la ecuación 7.2.5
+de FEDIAF: cuando el perro come menos, el mínimo por 1000 kcal **sube**, porque
+lo que necesita no baja con las calorías. Un alimento normal no está formulado
+para eso; el nuestro se reformula para cada perro, que es la única forma de que
+la restricción calórica no se cobre un micronutriente. Lo vigila el BLOQUE 34.
+
+Y con ella la otra mitad, que es la que sostiene el suelo de proteína en
+obesidad: *«increasing dietary protein may help preserve lean body mass during
+weight loss in both dogs and cats»*.
+
+### F-8 · La cifra de restricción calórica, que NO es la misma base que la nuestra
+
+Fascetti da dos, y hay que leer bien la base de cada una:
+
+> *«weight reduction may be achieved simply by **restricting the current calorie
+> intake by 20-40%**»* — es decir, sobre lo que el perro come HOY.
+>
+> *«Typically the recommendation is to restrict the pet to **60-70% of the
+> calories it would normally require to maintain its current weight**»* — es
+> decir, sobre el **MER** del peso ACTUAL.
+>
+> *«The patient's resting energy requirement (RER) should be calculated using an
+> estimate of its **optimal body weight** (RER = 70 × BWkg^0,75).»*
+
+**Nosotros calculamos el DER sobre el peso OBJETIVO** (ver «el peso de
+referencia para escalar es `peso_objetivo_kg`» en `CLAUDE.md`), que es la
+tercera de las tres y la que recomienda AAHA. No hay contradicción —Fascetti
+también usa el peso óptimo para el RER— pero **las dos primeras cifras se
+expresan sobre el peso actual y la nuestra sobre el objetivo**, así que no son
+comparables sin convertir. Queda escrito porque es justo el tipo de cifra que
+alguien copia de un libro a un campo sin mirar la base, y `der_casos.json` es el
+contrato que lo sujeta. No cambio nada: el DER lo manda el frontend y su fuente
+es AAHA 2021, ya verificada.
+
+### F-9 · Ritmo de pérdida y L-carnitina: uno se confirma y el otro se enfría
+
+- **El ritmo**: *«the target weight loss rate of **1-2% of body weight/week**»*.
+  Coincide con lo que ya decimos.
+- **La L-carnitina**, que aplicamos como suelo en obesidad y en artrosis (75
+  mg/1000 kcal, de SACN5), aquí sale mucho más floja: *«May increase the rate of
+  weight loss while promoting retention of lean body mass… **Effects are modest
+  and inconsistent**»*. No es motivo para quitarla —es un suelo, no un techo, y
+  no cuesta menú— pero sí para no venderla como más de lo que es en el texto que
+  lee el dueño.
+- Y una que **no** tenemos y tampoco vamos a poner: el cromo. *«no companion
+  animal study to date has shown any benefit from supplementation»*.
+
+### F-10 · Y el dato que explica por qué la app pregunta el BCS y no se fía de la foto
+
+> *«A study involving 201 dogs found that while the expert scored **79% of the
+> dogs as overweight or obese, only 28% of the caregivers** scored their dogs
+> above ideal.»*
+
+Y del lado del veterinario: *«approximately 28% of the canine and feline
+patients were scored as overweight or obese, but **only 2% had weight recorded
+as an issue**»*. Es un argumento de producto y va a `PENDIENTE_PRODUCTO.md`: si
+el dueño se equivoca al puntuar, el peso objetivo sale mal, y de ahí sale el DER
+y de ahí los 43 requisitos escalados. Es la misma cadena que el `radiografia.py`
+vigila por dentro, vista desde fuera.
+
+---
+
+## Fascetti & Delaney 2ª ed., capítulo 12 (páncreas exocrino), leído entero
+
+### F-11 · La grasa de la pancreatitis: tres fuentes y tres definiciones de «baja en grasa»
+
+Primero, un aviso del propio capítulo que vale para todo el motor:
+
+> *«The use of generalized terms like “low-fat” or “high-fat” is confusing
+> because **there is no established definition** of what a “standard” or
+> “typical” dietary fat concentration is… Ideally, **percentage of ME is the
+> ideal way to compare different foods**, since it allows for comparison between
+> foods with varying amounts of moisture, fiber, and ash.»*
+
+Y da la referencia práctica: *«For most of the population eating commercial
+diets, **a diet that has less than 20% fat on an ME basis will be considered low
+fat**»*.
+
+**Dónde nos deja eso.** Nuestro tope de pancreatitis son **37,5 g/1000 kcal**
+(SACN5 Tabla 67-3, «Fat ≤15 % DM»). En porcentaje de las kcal eso es
+**≈33-34 % ME** — o sea que, con la definición de Fascetti, **nuestro menú de
+pancreatitis no es una dieta baja en grasa**: está justo en el borde de lo que
+él llama sin restringir.
+
+Las tres cifras, en la misma unidad, para poder compararlas de una vez:
+
+| Fuente | Lo que dice | g/1000 kcal | % ME |
+|---|---|---|---|
+| SACN5 Tabla 67-3, perro no obeso | «Fat ≤15 % DM» | **37,5** ← el que aplicamos | ≈34 % |
+| SACN5 Tabla 67-3, obeso o hipertrigliceridémico | «≤10 % DM» | **25,0** ← también aplicado, graduado | ≈22 % |
+| Merck Veterinary Manual | «less than 20 g fat/1,000 kcal» | 20,0 | ≈18 % |
+| Fascetti cap.12 | «low fat» = <20 % ME | ≈22 | <20 % |
+
+**Fascetti y Merck coinciden casi exactamente** (≈18-20 % ME), y los dos son
+bastante más estrictos que el valor que aplicamos. Nuestro tramo graduado (25
+g para el obeso o hipertrigliceridémico, puesto el 8 de septiembre) sí cae en
+esa zona.
+
+**Y la otra cara, que también está en el capítulo y que hay que decir entera:**
+
+> *«Some authors have recommended using **highly digestible diets not restricted
+> in fat (34-51% ME)** unless there is evidence of hyperlipidemia (Jensen and
+> Chan 2014).»* Y un estudio de 10 perros sanos con 16 % vs 38 % ME de grasa
+> *«did not find any differences in blood PLI, TLI, or gastrin concentrations»*.
+> Y un retrospectivo de 34 perros con pancreatitis aguda: *«a **trend** toward
+> fewer episodes of gastrointestinal intolerance in dogs fed low-fat diets, but
+> **this did not reach significance**»*.
+
+O sea que la literatura va de «no hace falta restringir» a «menos de 20 % ME», y
+nosotros estamos en medio. La conclusión del propio capítulo es la única frase
+que zanja algo: *«**If energy needs can be met, the use of a low-fat diet has no
+drawbacks and is recommended** until more information is available»* — y en un
+menú BARF formulado a medida las kcal se cubren siempre, así que el argumento
+de la densidad energética, que es el único en contra, no nos aplica.
+
+**No lo he cambiado.** El 8 de septiembre se subió de 20 a 37,5 con una regla
+escrita (manda FEDIAF; donde no llega, SACN5) y una medida, y cambiarlo otra vez
+esta noche sería ir y venir. Pero la regla de fuentes no contemplaba el caso de
+**dos manuales que no dicen lo mismo**, y este es. Va a
+`PREGUNTAS_PARA_ELENA.md` §9.
+
+### F-12 · La EPI: lo que ya teníamos escrito era exactamente lo que dice esta fuente
+
+El tope de grasa de la EPI (37,5, el extremo ALTO del rango de SACN5) se puso
+con este motivo escrito: *«el propio texto dice que restringir la grasa NO es lo
+prioritario si hay reemplazo enzimático adecuado -- es un apoyo, no el
+tratamiento»*. Fascetti lo dice más fuerte todavía:
+
+> *«current information indicates that **a low-fat diet is not necessary unless
+> steatorrhea is uncontrollable**, at least initially.»*
+>
+> *«The most important finding of these studies was that **response to fat
+> restriction varied greatly from dog to dog**: some animals responded favorably,
+> others were not affected, **others were negatively affected**.»*
+>
+> *«There are studies in experimentally induced EPI in dogs that suggest that
+> **fat restriction actually worsens lipase activity**, since fat and protein
+> protect lipase during aboral intestinal transit.»*
+
+Es una confirmación en toda regla de una decisión que ya estaba tomada por el
+motivo correcto, y de que el aviso de la EPI («el tratamiento son las enzimas y
+este menú no lo sustituye») es lo primero que hay que leer.
+
+Y un aviso que sí nos toca por ser BARF: *«raw pancreas can also be used;
+however, it **still carries the same risks associated with feeding any raw
+animal product**, including the potential for zoonotic diseases»*. El páncreas
+crudo circula como remedio casero para la EPI. No está en el catálogo y no debe
+estarlo sin decir esto.
+
+### F-13 · Y la lección de unidades, que es la de siempre
+
+Este capítulo mide la grasa en **% de las kcal (ME)**; SACN5 la mide en **% de
+materia seca**; Merck en **g/1000 kcal**; y la etiqueta de un pienso en **% tal
+cual**. Son cuatro números distintos para la misma dieta y solo uno de ellos es
+comparable entre alimentos. `UNIDADES.md` ya avisa de la trampa para el
+catálogo; esta es la misma trampa un piso más arriba, en los LÍMITES.
+
+---
+
+## Fascetti & Delaney 2ª ed., capítulo 8 (dietas comerciales y caseras), leído entero
+
+**Es el capítulo que habla de nosotros.** No de «una dieta casera» en abstracto:
+del BARF, por su nombre, y de lo que sale mal cuando se hace sin cuentas. Hay
+que leerlo entero y sin filtrar, porque la mitad de lo que dice es incómoda y la
+otra mitad es exactamente el argumento de por qué existe este motor.
+
+### F-14 · Las cifras de lo que pasa cuando una dieta casera no se calcula
+
+> *«Overall, **most (190/200 [95%]) recipes resulted in at least 1 essential
+> nutrient at concentrations that did not meet NRC or AAFCO guidelines**, and
+> many (**167 [83.5%]) recipes had multiple deficiencies**… Only 3 recipes
+> provided all essential nutrients in concentrations meeting or exceeding the
+> NRC RA… **all 5 of these recipes were written by veterinarians**.»*
+
+Doscientas recetas. **Nueve** cumplían el mínimo de AAFCO, y **ocho de esas nueve
+las había escrito un veterinario**. Y en el capítulo 15 la misma medida sobre
+recetas renales: 67 recetas, **ninguna** cumplía.
+
+Y en crudo específicamente:
+
+> *«One study evaluated the nutritional adequacy of **five raw food diets**. Two
+> were commercial products, the remaining three home-prepared. **All five diets
+> had essential nutrients that were analyzed to be below AAFCO minimum
+> recommendations**… The home-prepared diets had **excessive concentrations of
+> vitamins D and E**, as well as **inappropriate calcium to phosphorus
+> ratios**.»*
+
+Los tres fallos que enumera —vitamina D alta, vitamina E alta, Ca:P mal— son
+tres de las cosas que este motor comprueba en cada menú: la D tiene techo legal
+duro, la E tiene mínimo y el Ca:P es una de las 43 filas. No es casualidad: son
+los fallos típicos de una ración de carne con hueso y suplementos, que es lo que
+formulamos.
+
+**Esto es el argumento entero de la regla 1 del `CLAUDE.md`**, escrito por
+alguien de fuera: *ningún menú sale sin verificar*. Lo que separa nuestra ración
+de las 190 que fallaban no es la receta: es que la nuestra se comprueba de cero
+contra los 43 requisitos antes de entregarla, y si no está verde no se entrega.
+
+### F-15 · ⚠️ «La disponibilidad del calcio del hueso molido es DESCONOCIDA»
+
+Literal, y es la frase que más nos toca de todo el capítulo:
+
+> *«Grinding bones may help reduce the risk of trauma and obstruction, but **the
+> availability of the calcium from these sources is unknown**.»*
+
+Nuestro catálogo cuenta el calcio del hueso carnoso como calcio disponible, con
+las cifras de **Köber 2017** (que es el abstract del ESVCN con Ca, P y Ca:P de 15
+huesos y cartílagos, y es la fuente que `Bases.md` fija justo para esto). Köber
+da el CONTENIDO; esta frase dice que la **absorción** no está medida.
+
+**No cambia ningún número** —no hay factor que aplicar sin inventarlo, que es
+justo lo que `CERRADO.md` prohíbe— pero sí cambia lo que se puede AFIRMAR. Y hay
+un matiz que juega a nuestro favor y conviene tenerlo escrito: el capítulo 10
+(Hazewinkel) mide absorción real de calcio en cachorros con trazador ⁴⁵Ca y dice
+que **la fuente casi no importa**: *«The source of calcium – **bone meal, fresh
+bones**, or dairy products – **does not make a lot of difference**; it is the
+amount of calcium eaten and absorbed that counts»*. O sea que las dos frases no
+se contradicen del todo: la primera dice que no está cuantificado para hueso
+molido, la segunda que en la práctica se comporta como las demás fuentes.
+
+Queda anotado en `PENDIENTE_NUTRICION.md` como lo que es: **una incertidumbre
+conocida sobre un dato que decide menús**, no un error.
+
+### F-16 · Lo que dice del crudo, entero y sin recortar
+
+Es lo más duro del capítulo y hay que copiarlo tal cual, porque recortarlo sería
+elegir la parte que nos gusta:
+
+> *«**There is no documented evidence that feeding raw meat has any health or
+> nutritional advantages over cooked foods.** The US Food and Drug Administration
+> (FDA) **does not advocate the feeding of raw meat**, poultry, or seafood to
+> pets (FDA 2007).»*
+>
+> *«while many animals never become ill while consuming raw food diets, they
+> **still pose a risk to humans and other animals through environmental
+> shedding**… Individuals preparing raw diets are also at risk by handling
+> contaminated meat and egg products. **Those greatest at risk are the very young
+> and old, in addition to the immunocompromised.**»*
+>
+> *«It has been shown that **simple routine washing may not be enough** to
+> eliminate potential food-borne pathogens in the animal companion's food bowl
+> and environment.»*
+>
+> Y sobre el hueso: *«The use of raw bones (compared to cooked) **may reduce the
+> risk of splintering and tooth fractures, but sharp fragments can still occur**
+> and puncture the mucosa at any point along the gastrointestinal route.»*
+
+**Qué hacemos con esto.** No es un número: no hay nada que aplicar en el solver.
+Pero es información que quien usa la app **no tiene** y que le afecta a ella y a
+quien viva en su casa. Dos cosas concretas, las dos de producto y ninguna
+decidida por mí:
+
+1. **Manipulación segura**, dicho una vez y bien: tabla y cuchillo aparte, lavado
+   del comedero con algo más que agua, y el aviso explícito de que en una casa
+   con bebés, personas mayores o alguien inmunodeprimido el riesgo no es del
+   perro, es de ellos.
+2. **El hueso**: ya avisamos de lo que no se puede pesar (BLOQUE 14), pero no del
+   riesgo de fragmento. El propio texto reconoce que el crudo es mejor que el
+   cocido en esto, que es la única ventaja documentada que le concede.
+
+Va a `PENDIENTE_PRODUCTO.md`. Y con una regla de honestidad que creo que es la
+correcta: **si la fuente que usamos para justificar los números dice esto, la app
+no puede citarla solo cuando conviene.**
+
+---
+
+## Fascetti & Delaney 2ª ed., capítulo 13 (hígado y vías biliares), leído entero
+
+### F-17 · La estrategia del cobre es la nuestra, contada por el otro lado
+
+Fascetti describe la dieta hepática comercial así:
+
+> *«the hepatic diets are **restricted in dietary copper**, have **increased
+> concentrations of dietary zinc** and B vitamins, are **controlled in sodium**,
+> and are fortified with antioxidants.»*
+
+Es exactamente lo que aplica nuestra `hepatopatia`: cobre ≤2,4 · zinc ≥50 ·
+sodio ≤625 · vitamina E ≥67,1 (más hierro ≥20 y taurina ≥250). Cuatro de cuatro,
+y la vitamina E además con su motivo aquí escrito: *«Vitamin E may be beneficial
+for the management of patients with copper-associated liver damage because of
+its antioxidant effects that protect against lipid peroxidation»*.
+
+Y la razón de que el zinc suba a la vez que el cobre baja, que no estaba escrita
+en nuestro JSON: *«**zinc ions induce the synthesis of metallothionein, which
+binds copper tightly, rendering it unabsorbable**»*. No es que el hígado enfermo
+necesite más zinc: es que el zinc **bloquea la absorción del cobre**. Vale la
+pena tenerlo escrito porque explica por qué los dos números van juntos y por qué
+subir uno sin bajar el otro no sirve.
+
+### F-18 · La lista de alimentos ricos en cobre, y por qué NO hace falta ponerla
+
+> *«Homemade diets should **exclude liver, nuts, shellfish, mushrooms, and organ
+> meats** that are all high in copper content (Center 1996b).»*
+
+Es una instrucción operativa y sería tentador implementarla: el motor ya sabe
+excluir alimentos por patología (lo hace con el oxalato y con el urato). **Pero
+sería redundante y peor.** Nuestro tope de cobre (2,4 mg/1000 kcal) hace lo mismo
+por el camino correcto: no prohíbe el hígado, prohíbe **pasarse de cobre**, y deja
+que el solver decida si cabe una pizca de hígado o ninguna. Una exclusión por
+nombre de alimento es más burda y se desincroniza cuando entra una ficha nueva
+al catálogo.
+
+Lo que sí conviene: que el aviso de `hepatopatia` **nombre esos cinco** para
+quien además come fuera del menú. La regla de la comida es una cosa; el premio
+de la tarde es otra.
+
+Y una precisión útil para `raza_predispuesta_cobre`, cuyo aviso ya dice (bien) que
+tener la raza no es tener la enfermedad: Fascetti confirma que **la dieta sola
+funciona en poco más de la mitad**: *«hepatic copper concentrations could be
+normalized in one study with dietary intervention alone in **15 out of 28**
+subclinical Labrador retrievers… However, some study individuals **continued to
+accumulate copper despite being fed a low-copper and high-zinc diet**»* — y por
+eso el seguimiento es con biopsia, no con el menú.
+
+### F-19 · La proteína hepática: confirma que necesita firma
+
+> *«the hepatic formulas are generally **less protein restricted (14-15.5%
+> protein on an ME basis)** than most renal diets»*
+
+14-15,5 % de las kcal en proteína son **≈35-39 g/1000 kcal**, es decir **por
+debajo del mínimo de FEDIAF para adulto (52,1)**. Es lo que ya dice nuestro
+`necesita_bajo_fediaf` para las hepatopatías con encefalopatía y para el shunt: no
+se puede formular por la puerta normal, hace falta prescripción. Segunda fuente
+que da el mismo rango.
+
+Y el matiz clínico que va con ello, que también teníamos: *«Dietary protein should
+**not** be restricted… **unless** the cat is showing signs of encephalopathy»*.
+Restringir proteína en una hepatopatía sin signos neurológicos no es lo indicado —
+que es exactamente por qué en el motor `hepatopatia`, `shunt_sin_encefalopatia` y
+`encefalopatia_hepatica` son **tres entradas distintas** con tres objetivos
+distintos, y no una sola.
+
+---
+
+## Fascetti & Delaney 2ª ed., capítulo 18 (cardiovascular), leído entero
+
+### F-20 · La escalera de sodio del corazón: la fuente da el número de la etapa C y confirma la nuestra
+
+> *«one study showed that **a low-sodium diet (40 mg/100 kcal) reduced cardiac
+> size** in dogs with CHF compared to a diet containing 70 mg/100 kcal (Rush et
+> al. 2000). **In dogs with ACVIM Stage C, the authors recommend moderate sodium
+> restriction (i.e. <80 mg/100 kcal).**»*
+
+En nuestras unidades: el estudio comparó **400 vs 700 mg/1000 kcal** y la
+recomendación de etapa C es **<800 mg/1000 kcal**. Nuestra escalera:
+
+```
+cardiopatia (genérica) ..... 739   (tope legal del Reg. (UE) 2020/354)
+cardiopatia_a .............. sin tope
+cardiopatia_b1 ............. sin tope
+cardiopatia_b2 ............. 739
+cardiopatia_c .............. 625   ← la fuente pide <800: cumplimos con margen
+cardiopatia_d .............. 480   ← cerca de los 400 del estudio de Rush
+```
+
+**Las cinco encajan**, y las dos primeras encajan *por no tener tope*, que es lo
+importante: Fascetti avisa expresamente de lo contrario a lo que uno haría por
+instinto —
+
+> *«**severe sodium restriction in animals with early heart disease could
+> theoretically be detrimental** by early and excessive activation of the RAA
+> system.»*
+
+O sea que **no poner tope en A y B1 no es un olvido: es lo correcto**, y ahora
+está escrito con su fuente. Lo que sí pide en esas etapas es *«mild sodium
+restriction and the maintenance of an optimal body condition score»*, y lo
+segundo ya lo cubre el DER sobre peso objetivo.
+
+### F-21 · La DCM asociada a dieta, medida por fin en vez de argumentada
+
+Nuestra entrada `dcm_asociada_a_dieta` no aplica ningún tope y explicaba por qué
+con un argumento estructural: *legumbres y boniato nunca son la fuente principal
+de kcal en un menú BARF*. Era una afirmación **sin número**. Ya lo tiene:
+
+```
+boniato en los 36 menús base ............. 0 de 36
+boniato en las 180 variantes ............. 2 de 180, y el peor aporta el 6,3 % de las kcal
+legumbres en el catálogo entero .......... 0 de 163 fichas
+   (ni guisante, ni lenteja, ni garbanzo, ni judía, ni soja)
+```
+
+El patrón que describe la FDA —legumbres o patata **sustituyendo al cereal** como
+fuente principal de energía— no es que sea improbable aquí: **no puede darse**,
+porque no hay cereal que sustituir y porque los ingredientes implicados o no
+están en el catálogo o no llegan al 7 % de las kcal.
+
+Y dos cosas del capítulo que sí cambian lo que hay que **decir**:
+
+> *«This secondary form of DCM is unique because of the **improvement in various
+> echocardiographic variables and longer survival times after diet change**,
+> whereas dogs with primary DCM typically have limited echocardiographic
+> improvement and shorter survival times.»*
+
+El cambio de dieta **es** el tratamiento — por eso esta patología existe en el
+motor aunque no aplique ni un tope.
+
+> *«Except in one study of golden retrievers, **plasma and whole blood taurine
+> deficiency have been uncommon** in affected dogs.»*
+
+**No es un problema de taurina** y no se arregla suplementándola, que es lo que
+mucha gente hace por su cuenta. Y el mecanismo sigue sin conocerse: un estudio de
+«foodomics» encontró más de 100 compuestos que diferían entre las dietas
+implicadas y las tradicionales, con el guisante como el ingrediente que más los
+explicaba.
+
+### F-22 · Taurina y L-carnitina en el perro, con la matización que faltaba
+
+> *«While taurine is an essential nutrient for cats…, **dogs are thought to be
+> able to synthesize adequate amounts of taurine endogenously, so it is not
+> classified as an essential nutrient for dogs**. Dog breeds at high risk for DCM
+> (e.g. Doberman pinschers, boxers) typically do not have taurine deficiency.»*
+
+Coherente con que la taurina sea en nuestro motor una fila **sin referencia** de
+FEDIAF (como la fibra y el EPA) y con que solo aparezca como suelo donde una
+fuente clínica lo pide: `dcm_taurina_respondedora` y `hepatopatia`.
+
+Y de la L-carnitina, la misma prudencia que ya salía en el capítulo 9: *«**the
+supporting data are not yet robust enough** to make firm recommendations for most
+of these nutrients»*. Es un suelo barato y sin riesgo, pero no hay que venderlo
+como más de lo que es.
+
+---
+
+## Fascetti & Delaney 2ª ed., capítulos 17 (endocrino) y 19 (oncología), leídos enteros
+
+### F-23 · La fibra de la diabetes: nuestro suelo es el más bajo de todos los estudiados
+
+El capítulo 17 repasa seis estudios de fibra en perro diabético. Las cantidades
+que usaron, convertidas a nuestras unidades:
+
+```
+Nelson 1998 ..... 11 % vs 23 % de fibra total sobre materia seca  =  27,5 vs 57,5 g/1000 kcal
+un estudio de 12 perros estables ....... «total fiber 50 g/1000 kcal», 90 % insoluble
+Blaxter 1990 .... 20 g de salvado de trigo o de goma guar añadidos a la lata
+NUESTRO SUELO EN DIABETES ..............  17,5 g/1000 kcal   (SACN5)
+```
+
+O sea que **el suelo que aplicamos está por debajo de todo lo que se ha
+estudiado**. No está mal —es un SUELO, y el motor puede subir de ahí— pero
+conviene saber que no es una dosis terapéutica: es el mínimo por debajo del cual
+no dejamos bajar.
+
+Y la conclusión honesta del propio capítulo, que hay que citar entera para no
+vender más de lo que hay: *«Research examining the efficacy of fiber
+supplementation in diabetes **has raised a number of questions, perhaps more than
+it has answered**. Most controlled studies support that increasing amounts of
+**insoluble** fiber may reduce the postprandial glycemic curve»*. **Insoluble** —
+y nuestro catálogo tiene un solo campo `fibra` que no distingue soluble de
+insoluble, que es exactamente la misma limitación que ya está anotada en
+`PREGUNTAS_PARA_ELENA.md` §3 para el hierro. Es la segunda vez que la misma
+carencia del catálogo aparece por otro camino.
+
+Y el cromo, otra vez: *«no companion animal study to date has shown any
+benefit»*. No lo tenemos y no hay que ponerlo.
+
+### F-24 · El cáncer: los dos suelos que aplicamos son exactamente los de la fuente
+
+> *«providing protein at **30-35% of total calories** will achieve this goal in
+> most animals»* → a 4 kcal/g son **75-87,5 g/1000 kcal**. Nuestro suelo de
+> proteína en `cancer_soporte` es **75,0**: el extremo bajo exacto.
+>
+> *«Most cats and dogs can tolerate as much as **60-65% of their total energy
+> requirement as fat**»* → nuestro suelo de grasa (62,5 g/1000 kcal) son **≈56 %
+> de las kcal**, dentro de lo tolerable y por debajo del techo que da la fuente.
+
+Dos fuentes independientes (SACN5 Tabla 30-5 y este capítulo) dando el mismo par
+de números. Eso es lo más cerca de «cerrado» que puede estar una cifra clínica.
+
+Y el matiz que faltaba, sobre el estudio del que sale todo esto: *«Although a
+high-fat ration appeared to normalize carbohydrate metabolism and prolong
+survival times **in a subset of dogs with lymphoma** in one study, this diet was
+also enriched with **other nutrients including n-3 fatty acids and arginine**
+(Ogilvie et al. 2000)»* — o sea que el ensayo no separa la grasa del omega-3 ni
+de la arginina, y por eso las tres cifras de la Tabla 30-5 van juntas. Es
+coherente con que apliquemos las tres (grasa, proteína, arginina) y con que la
+cuarta (omega-3 ≥12,5) se quede escrita sin aplicar porque no cabe.
+
+### F-25 · ⚠️ Y el aviso que SÍ falta en nuestra entrada de cáncer
+
+> *«it is also important to recognize that **a high-fat, high-protein diet is
+> contraindicated in many cats and dogs with cancer**. Animals with a history of
+> dietary fat intolerance should continue to have their dietary fat intake
+> restricted… High-fat diets also make it more difficult to maintain optimal body
+> condition in the substantial proportion of animals with cancer that are
+> **overweight or obese**. Switching to a high-protein diet for a cat or dog with
+> cancer that **also has concurrent and significant renal or hepatic
+> insufficiency may precipitate clinical decompensation that is difficult to
+> reverse**.»*
+
+Nuestro `cancer_soporte` empuja la grasa y la proteína hacia ARRIBA. Los tres
+casos en que eso está contraindicado —intolerancia a la grasa, sobrepeso, y
+insuficiencia renal o hepática concurrente— son tres cruces que el motor **ya
+resuelve por aritmética**: si además marcas `pancreatitis`, `obesidad`, `renal` o
+`hepatopatia`, sus topes chocan con estos suelos y el BLOQUE 52 hace que se diga
+cuáles. Lo que falta no es lógica: es que **el aviso de cáncer lo diga en
+palabras**, porque quien marca solo «cáncer» en un perro que además está gordo no
+recibe hoy ninguna advertencia.
+
+Es información, no una decisión clínica, así que lo añado al aviso. Y también
+esto, que es lo primero del capítulo: *«**A change in diet is not automatically
+indicated in every cat or dog with cancer.** Each animal must be carefully and
+individually evaluated, and those that are already maintaining good body
+condition on a high-quality complete and balanced food… may remain on this ration
+until there is an objective reason to change»*.
+
+---
+
+## Fascetti & Delaney 2ª ed., capítulo 16 (tracto urinario inferior), leído entero
+
+**⚠️ Es el capítulo que más contradice lo que aplicamos hoy**, y hay que leerlo
+entero antes de tocar nada, porque tres de nuestros cuatro topes de `oxalato`
+apuntan en la dirección que esta fuente desaconseja.
+
+### F-26 · El fósforo del oxalato: la fuente dice expresamente que NO se restrinja
+
+> *«**Dietary phosphorus should not be restricted with calcium oxalate
+> urolithiasis. Low dietary phosphorus is a risk factor for calcium oxalate
+> urolith formation in cats and dogs** (Lekcharoensuk et al. 2000a,b, 2001,
+> 2002). Reduction in dietary phosphorus may be associated with activation of
+> vitamin D, which in turn promotes intestinal calcium absorption and
+> hypercalciuria.»*
+>
+> *«Diets formulated for oxalate prevention in cats and dogs contain phosphorus
+> from 0.3 to 2.1 g/Mcal. **Concentrations from approximately 1.5 to 2.0 g/Mcal
+> have been recommended** (Kirk et al. 2003).»*
+
+**Nuestro tope de `oxalato` es fósforo ≤1.500 mg/1000 kcal = 1,5 g/Mcal**, es
+decir **el extremo BAJO exacto de lo recomendado** — y como es un TECHO, el
+solver formula pegado a él o por debajo. Es decir: aplicamos como límite
+superior lo que la fuente da como límite **inferior** de lo aconsejable.
+
+No digo que esté mal: nuestro número sale de SACN5 y hay dos manuales que no
+coinciden, igual que con la grasa de la pancreatitis. Pero **la dirección del
+error importa**: aquí equivocarse por abajo no es el lado seguro, porque la
+propia fuente dice que el fósforo bajo **es un factor de riesgo de la
+enfermedad que estamos tratando**.
+
+### F-27 · El sodio del oxalato: la fuente dice que el debate está abierto y que bajo puede ser peor
+
+> *«Epidemiologic evidence suggests that **the low dietary sodium concentrations
+> in cat and dog foods increase the risk** for calcium oxalate urolithiasis and
+> that **diets that contain high dietary sodium concentrations decrease the
+> risk**.»*
+>
+> *«**recommended concentrations of sodium in foods for cats and dogs predisposed
+> to calcium oxalate formation is debated**, as diets containing as low as **0.4
+> g/Mcal** sodium and as high as **3.5 g/Mcal** sodium are available
+> commercially.»*
+
+**Nuestro tope es 750 mg/1000 kcal = 0,75 g/Mcal**: dentro del rango comercial,
+pero en su cuarto inferior. El mecanismo que da la fuente para el sodio alto es
+la dilución de la orina — *«high dietary sodium chloride promotes urine dilution
+in cats and dogs, and while calcium excretion increased in dogs in this study,
+**the overall urinary calcium concentration decreased**, as did relative
+supersaturation for calcium oxalate (Queau et al. 2020)»* — y la alternativa que
+propone si el sodio alto preocupa es *«the use of a **high-moisture diet** is
+generally recommended»*. Una ración BARF es de por sí una dieta de humedad alta,
+así que por ese lado ya estamos donde hay que estar.
+
+### F-28 · El magnesio: coincidimos, y por poco
+
+> *«Studies in cats associate **low dietary magnesium with calcium oxalate
+> risk**… it appears logical that **magnesium should not be highly restricted**…
+> **Prudent concentrations of dietary magnesium have been suggested from 0.08 to
+> 0.10 % dry matter or approximately 200 mg magnesium/Mcal**.»*
+
+Nuestro tope de magnesio en oxalato es **375 mg/1000 kcal**, o sea **por encima**
+de los 200 que sugiere la fuente: no restringe de más. Aquí no hay conflicto.
+
+### F-29 · ⚠️ La vitamina D del oxalato: la fuente da un número, y es la MITAD del nuestro
+
+> *«Excessive concentrations of vitamin D (which promotes intestinal absorption
+> of calcium)… should be avoided. **Diets with vitamin D between 250 and 350
+> IU/Mcal should suffice.**»*
+
+250-350 UI/Mcal son **6,25-8,75 µg/1000 kcal** (1 µg = 40 UI). **Nuestro tope de
+vitamina D en oxalato es 14,1875**, que es el máximo LEGAL para cualquier perro
+(Reglamento (UE) 2017/1492) — o sea que en la práctica **no estamos aplicando
+ningún tope específico de oxalato**: estamos aplicando el techo que ya tiene
+cualquier menú.
+
+Esta es la única de las cuatro donde el cambio iría en el **lado seguro** (bajar
+un techo) y donde la fuente da una cifra concreta. Antes de aplicarla hay que
+medir si sale menú, que es la lección de esta misma noche. Queda propuesto en
+`PREGUNTAS_PARA_ELENA.md` §10.
+
+### F-30 · Y tres cosas más del mismo capítulo que sí podemos usar ya
+
+- **La proteína alta PROTEGE**, al revés que en humanos: *«a case-controlled,
+  retrospective study showed that **higher protein concentration in cat and dog
+  foods appeared protective against calcium oxalate uroliths**»*. Una ración BARF
+  va a 130 g/1000 kcal. A favor nuestro.
+- **El ácido oxálico tiene una cifra**: *«Suggested dietary concentration is **<20
+  mg oxalic acid/100 g of food (dry matter basis) or about <40-45 mg oxalic
+  acid/Mcal**»*. Nosotros excluimos alimentos altos en oxálico por una LISTA
+  (`OXALATO_ALTO` en `seguridad.py`), no por una cifra, porque **el catálogo no
+  tiene columna de ácido oxálico**. Es un dato que falta y ahora tiene número
+  objetivo: va a `DATOS_QUE_FALTAN.md`.
+- **Las dietas acidificantes son un factor de riesgo mayor** y el objetivo de pH
+  urinario sugerido es ~7,5: *«feeding an acidifying diet or administering urinary
+  acidifiers to cats and dogs at risk for calcium oxalate is **contraindicated**»*.
+  El repo de fuentes ya tiene la maquinaria del KAB (balance ácido-base) y la
+  ecuación de Behnsen, **sin aplicar a producción**. Este es el primer uso
+  clínico concreto que le he encontrado: no es un adorno, es el factor que la
+  fuente pone por delante de todos los demás en el oxalato.
+
+---
+
+## Fascetti & Delaney 2ª ed., capítulo 14 (piel), leído entero
+
+### F-31 · El zinc del pelo y la piel: la dosis estudiada es CUATRO VECES nuestro suelo
+
+> *«The combination of **zinc (100 mg/1000 kcal) and linoleic acid (15 g/1000
+> kcal)** produced **statistically significant improvements in coat gloss and
+> decreased TEWL** over a nine-week period in dogs (Marsh et al. 2000; NRC
+> 2006).»*
+
+Nuestro suelo de zinc en `dermatosis_zinc` es **25 mg/1000 kcal** (SACN5). La
+combinación con evidencia medida es **100 de zinc + 15 g de linoleico**, y las
+dos van juntas — el propio capítulo explica por qué: *«**EFA deficiency impairs
+zinc absorption**»*. O sea que subir el zinc sin subir el linoleico puede no
+servir de nada.
+
+Es la primera cifra que encuentro con un ensayo controlado detrás para la piel, y
+el NRC la recoge. **No la aplico**: subir un suelo cambia todos los menús de esa
+patología, el linoleico de 15 g/1000 kcal es más de cinco veces el mínimo de
+FEDIAF (2,8) y no sé si cabe. Va a `PREGUNTAS_PARA_ELENA.md` §10 con la propuesta
+de medirlo.
+
+Y el aviso que va con ello, del mismo capítulo: la dermatosis que responde al
+zinc **se trata con zinc oral (2-3 mg/kg de peso vivo)**, no con la dieta, y
+*«**zinc oxide should not be used as it is not very bioavailable**»* — que es
+exactamente el tipo de detalle que decide si un suplemento del catálogo sirve o
+no sirve.
+
+### F-32 · La dieta de eliminación: lo que hay que decirle a quien la hace
+
+Nada de esto es un número del motor, y todo es lo que hace que una dieta de
+eliminación funcione o no:
+
+> *«**There is no such thing as a “hypoallergenic diet.”**»*
+>
+> *«in order to diagnose CAFR in more than 90% of dogs and cats, an elimination
+> diet trial should last for a **minimum of 8 weeks**, but **10-12 weeks (or
+> more)** may be required.»*
+>
+> *«**up to 75% in one survey** of dogs will still have **instances of food
+> indiscretions** during a trial, including provision of treats by the pet owner
+> (dental chews, rawhides, jerky) or access to unmonitored food sources.»*
+>
+> *«**B vitamins (especially thiamin) can be very quickly depleted and should be
+> supplemented even in the short term.**»*
+>
+> *«food-allergic dogs will react to the **flavored heartworm preventive**… with
+> increased pruritus and increased serum IgE within days.»*
+>
+> *«Sometimes it is necessary to **place all animals in a house on the same
+> diet** to ensure an effective trial.»*
+
+Las seis son producto, no motor, y las seis explican por qué una dieta de
+eliminación «falla» cuando en realidad no se ha hecho. La pantalla de varios
+perros que ya existe hace fácil lo de la última. Va a `PENDIENTE_PRODUCTO.md`.
+
+---
+
+## Fascetti & Delaney 2ª ed., capítulo 11 (aparato digestivo), leído entero
+
+### F-33 · La grasa del intestino: otra vez el 20 % de las kcal
+
+Igual que en pancreatitis (§F-11), la referencia práctica que da esta fuente para
+el aparato digestivo es **el 20 % de las kcal**, no un % de materia seca:
+
+> *«**Low fat.** No fat-titration studies have been performed to guide firm
+> recommendations. However, a pragmatic recommendation especially to promote gut
+> motility would be to choose the lowest fat content available. **An almost
+> arbitrary cutoff of 20% of metabolizable energy (ME) could be made.**»*
+>
+> *«**Dietary fiber content.** …An empirical recommendation is to select diets
+> that contain **less than 8% total dietary fiber or less than 5% crude fiber**.»*
+
+Y es honesto sobre lo que vale: *«an almost arbitrary cutoff»*. Nuestro tope de
+grasa en `enteropatia_cronica` (37,5 g/1000 kcal ≈ 34 % de las kcal) está por
+encima de esa referencia, exactamente igual que el de pancreatitis. Es la misma
+pregunta y va en el mismo sitio: `PREGUNTAS_PARA_ELENA.md` §9.
+
+El 8 % de fibra total sobre materia seca son **20 g/1000 kcal**, que es justo el
+SUELO que aplicamos en `intestino_irritable` (SACN5 Tabla 63-3, «Crude fiber
+≥8 %»). Ojo: **una fuente da ese 8 % como TECHO de fibra total y la otra como
+SUELO de fibra bruta**, y son dos medidas distintas de la fibra. No es una
+contradicción —fibra bruta y fibra dietética total no son lo mismo, y la bruta es
+siempre menor— pero es exactamente el tipo de cruce que hay que mirar dos veces.
+Nuestro catálogo mide una sola `fibra`, así que no puede distinguirlas: mismo
+hueco que ya está anotado en `PREGUNTAS_PARA_ELENA.md` §3.
+
+### F-34 · Lo que se agota en una enteropatía crónica, y que el menú no puede reponer
+
+El capítulo enumera los déficits que aparecen en la enteropatía crónica: **B12 y
+folato**, **zinc**, **magnesio**, **hierro** y **vitamina K**. Dos cosas
+importantes para nosotros:
+
+1. **La B12 no se repone con la dieta en este caso.** La fuente da la pauta y es
+   inyectable o a dosis altas por boca: *«Dogs and cats are typically supplemented
+   with B12 at a dose of **250 μg (cats) or 500 μg (dogs) per dose, subcutaneously
+   or intramuscularly, weekly for 4-5 weeks**»*. Eso no es un menú: es una
+   prescripción. Nuestro aviso de `enteropatia_cronica` debería decirlo, porque un
+   dueño que ve el menú «completo y equilibrado» puede pensar que ya está cubierto
+   — y el propio capítulo dice que *«la respuesta al tratamiento puede ser limitada
+   hasta que se corrige»*.
+2. **El zinc sí tiene efecto medido**: *«In a study of CD patients with increased
+   intestinal permeability, daily oral zinc supplementation **improved symptoms and
+   normalized the permeability in 80% of cases**»*. Es humano (enfermedad de
+   Crohn), así que no se convierte en un suelo, pero explica por qué el zinc
+   aparece en tantas tablas.
+
+### F-35 · Y la mejor noticia del capítulo para lo que hacemos
+
+> *«dietary therapy can be **extremely successful even as the sole therapy** in
+> some cases… In a report of 13 dogs with lymphocytic-plasmacytic colitis,
+> **clinical signs resolved in all 13** with the introduction of an elimination
+> diet… **hydrolyzed and elimination diets were equally successful**.»*
+
+Y algo que cambia el consejo que se le da al dueño: *«Interestingly, **31 of 39
+dogs showed no recurrence of clinical signs when switched back to their original
+diet**»*. O sea que en la enteropatía que responde a la comida, la dieta de
+eliminación puede no ser para siempre. Eso es lo contrario de lo que se suele
+contar, y es información que quien paga un menú a medida merece tener.
+
+---
+
+## Fascetti & Delaney 2ª ed., capítulo 2 (nutrición básica), leído entero
+
+### F-36 · La frase que valida los TRES campos de `sin_dato`, `dato_dudoso` y `cero_verificado`
+
+Es la mejor confirmación de una decisión de diseño que he encontrado en toda la
+noche, y viene de un capítulo introductorio:
+
+> *«These programs rely heavily on reference databases like that of the USDA…
+> However, **certain nutrients of interest such as taurine, chloride, iodine, and
+> vitamin D are typically or often not available. Therefore, “deficiencies” in
+> these nutrients suggested by computer analysis when compared to reported
+> nutrient requirements for dogs and cats may be the result of a LACK OF
+> AVAILABLE DATA RATHER THAN A REAL DEFICIENCY** (this can also be true of
+> choline, which is not routinely reported by USDA).»*
+
+Es literalmente el problema que resuelven los tres campos del catálogo: un 0 que
+puede ser «no lo tiene» o «no lo sabemos», y que sin separarlos se convierte en
+un hueco mudo. Y **nombra los mismos nutrientes**: yodo y colina son justo dos de
+los huecos que `Bases.md` explica (BEDCA trae yodo pero ni un aminoácido; USDA
+trae los aminoácidos y la colina pero no publica yodo).
+
+O sea que el problema no es del catálogo de Rawku: **es de las bases de datos**, y
+lo tiene cualquiera que formule con ellas. La diferencia es que nosotros lo
+decimos por ficha en vez de dejar que salga como una deficiencia falsa.
+
+### F-37 · Y la que valida el escalado de mínimos, por si quedaba duda
+
+> *«The NRC also uses an additional unit not used by AAFCO: **amount per kilogram
+> body weight raised to the three-quarter power** (i.e. amt/kg BW^0.75), which is
+> more analogous to the “dosing” of medications… **when a very low energy intake
+> is expected or suggested, this third method may be used.**»*
+
+Es exactamente la ecuación 7.2.5 de FEDIAF que aplica `minimo_de()`, y el caso de
+uso que da —**consumo de energía muy bajo**— es el perro a dieta, que es el que
+casi se queda sin menú cuando se puso el techo de fósforo del adulto sano (ver
+`motor/recomendaciones.py`). Dos fuentes, el mismo mecanismo, el mismo motivo.
+
+### F-38 · La dosis terapéutica de omega-3 por peso metabólico, y que encaja con la nuestra
+
+> *«Recommended amounts of EPA plus DHA use MBW multiplied by **factors ranging
+> from 115 to 310**… These recommendations are intended as a starting point for
+> therapy under veterinary supervision and are **below the canine safe upper
+> limit**.»* (mg de EPA+DHA al día, MBW = kg^0,75; Bauer 2011.)
+
+Para un perro de 20 kg (kg^0,75 = 9,46) eso son **1.088 a 2.932 mg de EPA+DHA al
+día**. Con un DER de 1.000 kcal, **1,09 a 2,93 g/1000 kcal**. Nuestro suelo de
+EPA en artrosis (1,0 g/1000 kcal) cae justo en el borde bajo de esa horquilla, y
+el de omega-3 totales del renal (1,0) también. Tercera fuente independiente que
+apunta al mismo sitio.
+
+Y el aviso que la acompaña, que es el que hay que tener presente cuando alguien
+lee la etiqueta de un aceite de salmón: *«omega-3 dosages indicated on **product
+labels** are those suggested for **health maintenance of normal animals**… These
+amounts may be sufficient to help alleviate low-level inflammatory states»* — o
+sea que la dosis de la etiqueta **no es la dosis terapéutica**, y la diferencia
+es de dos a tres veces.
+
+---
+
+## Fascetti & Delaney 2ª ed., capítulo 3 (requisitos de energía) — ⚠️ LA FUENTE QUE FIGURABA COMO PENDIENTE, Y YA NO LO ESTÁ
+
+`LECTURAS_PENDIENTES.md` del repo de fuentes tenía **una sola entrada viva** en
+prioridad 1, y era esta:
+
+> *«Fascetti & Delaney 2ª ed., capítulo 3 ("Determining Energy Requirements") —
+> Vía Perlego, con la suscripción de la usuaria, **requiere su cuenta, no es
+> accesible por red pública** — Los factores energéticos citados en §3.6 y §3.8
+> del inventario.»*
+
+**El capítulo está descargado en el repo** (`fascetti/cap03.txt`, con su
+cabecera `URL: https://ereader.perlego.com`). Leído entero el 9 de septiembre.
+Estos son sus números, que es lo que se pedía verificar:
+
+### F-39 · Los coeficientes, en la misma unidad que usamos nosotros
+
+**Tabla 3.1** (perro adulto, kcal/día, todos sobre kg de peso vivo^0,75):
+
+```
+RER  (energía en reposo) .................  70 × kg^0,75
+MER  perro activo de compañía o de perrera  130 × kg^0,75
+MER  adulto joven activo .................. 140 × kg^0,75
+MER  perro inactivo .......................  95 × kg^0,75
+MER  perro mayor activo ................... 105 × kg^0,75
+```
+
+**Y los factores del método americano** (Box 3.1, perro):
+
+```
+adulto castrado ......... 1,6 × RER      pérdida de peso .... 1,0 × RER
+adulto entero ........... 1,8 × RER      cuidados críticos .. 1,0 × RER
+inactivo / propenso ..... 1,2-1,4 × RER  ganar peso ......... 1,2-1,8 × RER
+trabajo ligero .......... 1,6-2,0 × RER
+trabajo moderado ........ 2,0-5,0 × RER
+trabajo duro ............ 5,0-11,0 × RER
+```
+
+### F-40 · Cómo encajan con lo nuestro, y la única discrepancia que importa
+
+`der.py` (y `src/der.js` en la app, que es el que manda) usa el **método europeo**
+de FEDIAF: un coeficiente por nivel de actividad, multiplicado por kg^0,75. Los
+nuestros y los suyos, uno al lado del otro:
+
+| | nuestro (FEDIAF) | Fascetti (Tabla 3.1) |
+|---|---|---|
+| perro sedentario / inactivo | **95** | **95** ← coinciden exactamente |
+| perro normal | 110 | 130 («active pet dog») |
+| perro activo | 125 | 140 («active young adult») |
+| perro mayor | — (se usa el de su actividad) | 105 |
+
+El **95 del perro inactivo es idéntico**, que es la mejor señal de que las dos
+escalas hablan de lo mismo. Los otros dos son más altos en la americana, y eso ya
+está explicado dentro de `der.py`: las dos escuelas no son intercambiables y el
+proyecto eligió la europea a propósito (FEDIAF es la fuente primaria). **No hay
+nada que cambiar**; lo que había que hacer era poder afirmarlo, y ahora se puede.
+
+**⚠️ La discrepancia que sí hay que mirar es la pérdida de peso**, y son tres
+cifras distintas de tres sitios:
+
+```
+Fascetti cap.3 (Box 3.1) ..... pérdida de peso = 1,0 × RER
+Fascetti cap.9 ............... restringir al 60-70 % del MER del peso ACTUAL
+AAHA 2021 (lo que usamos) .... 0,8 × RER sobre el peso OBJETIVO
+```
+
+No se contradicen del todo —cada una se expresa sobre una base distinta, y
+`HALLAZGOS §F-8` ya lo desmenuza— pero **son tres bases distintas para el mismo
+número**, y es exactamente el tipo de cifra que alguien copia de un libro a un
+campo sin mirar sobre qué se calcula. Lo que nos protege de eso es
+`der_casos.json`: 85 casos con su esperado, el mismo archivo en los dos repos, y
+dos pruebas que lo vigilan (BLOQUE 23 aquí, `der-contrato.spec.js` allí).
+
+### F-41 · Y la frase con la que empieza el capítulo, que conviene tener escrita
+
+> *«It should be stressed that **predicted energy requirements should be viewed
+> as an “educated guess”** at the animal's true energy requirement. These
+> equations should be used as a tool to provide **a starting point** for selecting
+> the amount of food to give an animal, and **adjustments should be made based on
+> any observed changes in body weight**.»*
+
+Lo dice el autor del capítulo que da las ecuaciones. Todo el motor cuelga del
+DER —de él salen los gramos y contra él se escalan los 43 mínimos—, así que
+merece estar dicho en la app con estas palabras: el número de partida es una
+estimación, y lo que manda es el peso del perro dentro de un mes.
+
+---
+
+## Fascetti & Delaney: los capítulos restantes (1, 4, 5, 6, 20 y 21), leídos
+
+Los seis se han leído enteros. Cuatro no tocan nada del motor y hay que decirlo
+igual, para que quede constancia de que se leyeron y no de que se saltaron:
+
+- **Cap.1 (integrar la nutrición en la clínica)** y **cap.5 (regulación de
+  alimentos y suplementos)** son de gestión de clínica y de derecho **de Estados
+  Unidos** (FFDCA, DSHEA, AAFCO, NASC). Nuestro marco es europeo —Reglamento (UE)
+  2020/354 y FEDIAF—, que ya está leído y aplicado. Lo único trasladable del
+  cap.5: *«a product represented to be a vitamin or mineral supplement **must
+  provide guarantees for each and every added vitamin and/or mineral**»*, que es
+  la razón por la que las fichas de suplemento del catálogo declaran valor a
+  valor y no un «complejo vitamínico» genérico.
+- **Cap.20 (nutrición enteral y sondas)** y **cap.21 (nutrición parenteral)** son
+  el perro hospitalizado que no come. El motor no formula para sonda y no debe:
+  una ración BARF no pasa por una sonda. No hay nada que aplicar.
+
+Los otros dos sí dejan algo:
+
+### F-42 · Cap.4: el rango real del perro de compañía es de 1 a 4
+
+Tabla 4.1, gasto energético medido en perros libres, en **kcal ME/kg^0,75**:
+
+```
+metabolismo basal ..................  76 (48-114)
+perro de COMPAÑÍA .................. (50-200)   ← el rango entero
+perros de laboratorio con carrera .. 130 (80-170)
+galgos de carreras ................. 140 (120-160)
+perros de caza ..................... 240 (200-280)
+perros de trineo en carrera larga .. 1050 (860-1240)
+```
+
+Nuestros coeficientes de actividad (95 sedentario · 110 normal · 125 activo ·
+150-175 muy activo) caen todos dentro del rango del perro de compañía. Pero el
+dato que importa es **la anchura**: entre el perro de compañía menos activo y el
+más activo hay un factor de **cuatro**. Eso es lo que hay detrás de la frase del
+cap.3 —el DER es «an educated guess»— y es el mejor argumento para que la app
+insista en pesar al perro al mes y ajustar.
+
+### F-43 · Cap.6: el ejemplo que explica por qué TODO el motor va por 1000 kcal
+
+El Box 6.1 pone el caso con números, y es exactamente la trampa que
+`UNIDADES.md` avisa, un piso más arriba:
+
+> Alimento A: 3.000 kcal/kg, 10 % humedad, **1,0 % de calcio**.
+> Alimento B: 4.750 kcal/kg, 10 % humedad, **1,1 % de calcio**.
+>
+> Mirando la materia seca, B parece tener más calcio. Por energía, **el perro que
+> come B ingiere un 30 % MENOS de calcio**, porque necesita mucha menos cantidad
+> de alimento para cubrir sus kcal.
+
+*«This means that the patient eating the second food will consume 30% less
+calcium… If the practitioner had just looked at the information on a dry matter
+basis, they would have thought that the patient was getting **less** calcium.»*
+
+Es la justificación, escrita por otro, de que **los 43 requisitos, los topes de
+patología, los de seguridad y los condicionales vayan todos por 1000 kcal** y de
+que el puente `%MS × 2,5` lleve siempre escrito el supuesto de 4000 kcal/kg de
+materia seca. Un número de nutriente sin su base energética no significa nada, y
+este ejemplo lo demuestra al revés de lo que uno esperaría.
+
+---
+
+# RESUMEN DE LA LECTURA DE FASCETTI & DELANEY (9 de septiembre de 2026)
+
+**Los 21 capítulos, enteros.** Lo que ha salido, ordenado por lo que hay que
+hacer con ello:
+
+**Un cambio grande, medido y sin aplicar** (necesita tu decisión):
+- **§F-1 / PREGUNTAS §8** — el calcio de los cachorros de raza grande. Formulamos
+  a 1,80 % MS (el techo de FEDIAF) y la fuente pide **≤1,1 %**. Medido: a 1,1 %
+  **salen los cuatro cachorros de prueba en el peldaño estricto**, y a 1,0 % ya no
+  sale ninguno. Es la más importante de la noche.
+
+**Cuatro cifras más de fuente que no aplicamos** (PREGUNTAS §10): la vitamina D
+del oxalato (la fuente da la mitad de nuestro techo), el fósforo del oxalato (la
+fuente dice que NO se restrinja y nosotros lo restringimos), el sodio del oxalato
+(debate abierto) y el zinc+linoleico de la piel (la dosis con ensayo es 4× la
+nuestra).
+
+**Una contradicción entre manuales, sin resolver** (PREGUNTAS §9): la grasa de la
+pancreatitis y del intestino — SACN5 da 37,5 g/1000 kcal, Fascetti y Merck dan
+≈20-22. Y con ella, la pregunta de fondo: **qué manda cuando dos manuales no
+coinciden**, que la regla de fuentes del proyecto no cubre.
+
+**Seis confirmaciones de cosas que ya hacíamos** (§F-4, F-12, F-17, F-19, F-20,
+F-24, F-36, F-37, F-39): el fósforo renal con su cifra de supervivencia, la
+estrategia del cobre, la escalera de sodio cardíaca, los dos suelos del cáncer,
+el escalado de mínimos, los tres campos de procedencia de los datos, y los
+coeficientes de energía.
+
+**Una medida que faltaba y ya está** (§F-21): la DCM asociada a dieta. El
+argumento estructural que sostenía esa entrada era una afirmación sin número;
+ahora son 2 de 216 menús con boniato, 6,3 % de las kcal en el peor, y cero
+legumbres en las 163 fichas.
+
+**Una fuente que figuraba como pendiente y ya no lo está** (§F-39): el capítulo 3
+de Fascetti, el único que quedaba vivo en `LECTURAS_PENDIENTES.md`.
+
+**Y tres cosas de producto** (`PENDIENTE_PRODUCTO.md` §7): el «diet drift» (a los
+pocos años solo el 13 % sigue la receta), que el dueño puntúa mal la condición
+corporal, y lo que la fuente dice del crudo — que hay que decir entero, porque la
+citamos para lo demás.
+
+---
+
+## ⚠️ UN FALLO DEL MOTOR, ENCONTRADO POR LA BATERÍA A LAS TANTAS: el solver resolvía un problema y entregaba otro
+
+**No viene de leer ninguna fuente. Lo cazó el BLOQUE 49**, y explica DOS fallos
+que parecían distintos.
+
+### El síntoma
+
+```
+BLOQUE49: 1 menú sale del solver con el YODO al 96 % del mínimo  (perro de 4,5 kg, DER 400)
+BLOQUE49: 3 de 20 menús de perros pequeños no salen o no están verdes
+BLOQUE61: «oxalato» está marcada formulable y NO da menú para el perro de referencia
+```
+
+Los tres son el mismo fallo.
+
+### La causa
+
+La línea que recoge la solución del MILP es, desde el 5 de agosto:
+
+```python
+gramos = {n: round(x[idx[n]], 2) for n in nombres if x[idx[n]] > 0.02}
+```
+
+El umbral está **bien puesto**: 18 mg no los pesa nadie, y ese mismo día se bajó
+de 0,5 g a 0,02 porque el yoduro potásico funciona en fracciones de gramo. Lo que
+estaba mal es que **el solver no lo sabía**. Podía poner **0,0185 g** de una
+fuente concentrada, darse por satisfecho, y la entrega tiraba ese aporte.
+
+Con **76.000 µg de yodo/100 g** (harina de algas) o **80.000** (yoduro potásico),
+0,0185 g son **14 µg**. En un perro de 4,5 kg el mínimo de yodo son 120 µg: ese
+descarte silencioso se lleva el **12 % del requisito**. En un perro de 30 kg el
+mismo descarte absoluto es el 1,7 % y no se nota — por eso solo salía en los
+pequeños, que es exactamente el mismo disfraz con el que se presentaba el
+problema del redondeo, y por eso se confundían.
+
+**Y explica también el de oxalato**, que parecía otra cosa: al tirar unos gramos,
+el menú entregado tiene **menos kcal** que el que resolvió el solver, y menos
+kcal con el mismo nutriente es **más concentración**. Un techo de patología que
+cabía por poco deja de caber, `_garantizar_verificado` lo rechaza (regla 1
+funcionando) y la usuaria se queda sin menú. Es la misma aritmética que ya está
+escrita en la regla 2 del `CLAUDE.md` —los topes se miden sobre las kcal REALES—
+vista desde el otro lado.
+
+### El arreglo
+
+Que el solver tenga **prohibido usar menos de lo que sobrevive a la entrega**:
+
+```
+SUELO_ENTREGABLE_G = 0.03      (nuevo, en el bloque de suelos)
+UMBRAL_DE_ENTREGA_G = 0.02     (el de siempre, ahora con nombre)
+```
+
+Los suplementos siguen exentos del suelo de 1 g —no se pesan, se dosifican— pero
+no del de 0,03. Y los dos números **solo valen juntos**: el BLOQUE 49 los lee del
+código y falla si alguien invierte la pareja.
+
+**Medido, los mismos 20 menús de perros de 1,5 a 4,5 kg:**
+
+```
+                    menús caídos   yodo mínimo   mediana
+antes                    3             96 %       112 %
+después                  0            107 %       117 %
+```
+
+Y `oxalato`, que fallaba, sale ahora **6 de 6 veces en el peldaño estricto**.
+
+### La lección, que es la de siempre pero por un sitio nuevo
+
+Los dos números —el que usa el solver y el que usa la entrega— describían la
+misma frontera y **no se hablaban**. Es la familia de la tabla de patologías
+duplicada, la de la fibra entre el motor y el analizador, y la del denominador
+del BLOQUE 25 que también se ha arreglado esta noche: **dos sitios que calculan
+lo mismo acaban discrepando siempre**. La única defensa que funciona es que uno
+lea al otro, o que una prueba los compare.
+
+Y una segunda: **el fallo llevaba puesto desde el 5 de agosto** y la batería lo
+tocaba desde el 28 pensando que era otra cosa (el redondeo). Lo que lo separó no
+fue leer el código: fue que el BLOQUE 61 —la comprobación nueva, la de «cada
+patología formulable formula de verdad»— fallara **al mismo tiempo** y por lo
+que parecía otro motivo. Dos síntomas distintos de la misma causa se reconocen
+antes que uno solo.

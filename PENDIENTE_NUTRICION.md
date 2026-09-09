@@ -1125,3 +1125,48 @@ ninguna cifra nutricional — es la FORMA de elegir candidatos, no los requisito
 arregla (5 sin menú de 10 en la misma prueba). Más huecos hacen el MILP más
 grande, no más fácil. El problema es qué entra en el sorteo, no cuántos huecos
 hay.
+
+---
+
+## La disponibilidad del calcio del hueso molido no está medida (9 de septiembre de 2026)
+
+Fascetti & Delaney 2ª ed., cap.8, literal:
+
+> *«Grinding bones may help reduce the risk of trauma and obstruction, but **the
+> availability of the calcium from these sources is unknown**.»*
+
+**Qué usamos hoy.** El calcio del hueso carnoso sale de **Köber 2017** (abstract
+del ESVCN 2017, Tabla 1: Ca, P y Ca:P de 15 huesos y cartílagos), que es la
+fuente que `Bases.md` fija para el hueso precisamente porque BEDCA no lo trae. Y
+el motor lo cuenta como calcio **disponible**, igual que el de cualquier otra
+ficha.
+
+**Qué falta.** Köber da el CONTENIDO. La frase de arriba dice que la ABSORCIÓN
+del hueso molido no está cuantificada. No es un error de dato: es una
+incertidumbre conocida sobre un número que decide menús — y el calcio es de los
+que más deciden, porque tiene mínimo, máximo, la nota b de raza grande y el ratio
+Ca:P encima.
+
+**Lo que juega a favor, y por qué esto no es urgente.** El cap.10 del mismo libro
+(Hazewinkel, que es quien hizo los estudios de absorción de calcio con trazador
+⁴⁵Ca en gran danés y poodle) dice:
+
+> *«The source of calcium – **bone meal, fresh bones**, or dairy products – **does
+> not make a lot of difference**; it is the amount of calcium eaten and absorbed
+> that counts.»*
+
+O sea que las dos frases no se contradicen: la primera dice que para hueso
+**molido** no hay cifra publicada; la segunda que en la práctica la fuente del
+calcio importa poco frente a la cantidad. Y la absorción que sí está medida —27 %
+en poodle a las 24 semanas, 53 % en beagle, 60 % en gran danés; ~13-20 % en
+adulto— es de dietas normales, con el calcio de sales o de harina de hueso.
+
+**Lo que NO se puede hacer**: inventarse un factor de disponibilidad para el
+hueso. Sería exactamente lo que `CERRADO.md` prohíbe.
+
+**Lo que sí se puede, si algún día hace falta**: buscar si hay balance de calcio
+publicado con ración BARF real (no con sales), que es lo que cerraría esto. Y
+mientras tanto, tener presente que **el margen de error del calcio del hueso es
+mayor que el de los demás nutrientes del catálogo**, lo que es un argumento más
+para no formular pegados al techo — ver `HALLAZGOS_LECTURA_FUENTES.md` §F-1, que
+es justo lo que estamos haciendo hoy en los cachorros de raza grande.

@@ -219,3 +219,113 @@ menús comparados no tienen sentido sin él.
       Lo vigila el BLOQUE 47, que planta medio kilo de pollo sin hueso y
       exige que vuelva rechazado.
 
+
+---
+
+## 7. Dos cosas que dice Fascetti y que son de producto, no de nutrición
+
+Escritas el 9 de septiembre de 2026 leyendo Fascetti & Delaney 2ª ed. entera.
+Ninguna de las dos cambia un número del motor: las dos cambian **si el menú
+sirve de algo una vez que sale de la pantalla**.
+
+### 7.1 · El «diet drift»: a los pocos años, solo el 13 % sigue la receta
+
+Fascetti, cap.15, literal:
+
+> *«owners are likely to substitute or delete some ingredients or supplements,
+> unbalancing the diet in a process referred to as **“diet drift”**… only **13%
+> of dog owners** that were provided a homemade diet recommendation at a
+> veterinary teaching hospital were strictly adhering to the recipe a few years
+> later (Johnson et al. 2016).»*
+
+**Trece por ciento**, y eso en pacientes de un hospital universitario, que son
+los más motivados que hay. Nuestro producto es exactamente una receta casera:
+todo el trabajo de cumplir los 43 requisitos vale cero si a los seis meses el
+dueño ha quitado el suplemento porque se acabó y no lo ha repuesto.
+
+Lo que se puede hacer, y no está hecho:
+
+- **Avisar de qué se rompe si quitas algo.** El motor ya sabe decirlo: quitar un
+  alimento y revalidar es `/menu/quitar` + `_garantizar_verificado()`. Falta que
+  la app lo ofrezca como pregunta normal («se me ha acabado el aceite de salmón,
+  ¿qué hago?») en vez de como una operación de edición.
+- **Distinguir lo que se puede sustituir de lo que no.** Hoy todos los alimentos
+  de un menú parecen igual de opcionales en pantalla. La verdura no lo es igual
+  que el suplemento que cierra el yodo.
+- **Recordar la reposición de suplementos**, que son los que se acaban y los que
+  más pesan en el semáforo.
+
+### 7.2 · El dueño puntúa mal la condición corporal, y de ahí sale TODO
+
+Fascetti, cap.9, dos medidas:
+
+> *«A study involving 201 dogs found that while the expert scored **79% of the
+> dogs as overweight or obese, only 28% of the caregivers** scored their dogs
+> above ideal (Singh et al. 2002).»*
+>
+> *«approximately 28% of the canine and feline patients were scored as
+> overweight or obese, but **only 2% had weight recorded as an issue** (Lund et
+> al. 1999).»*
+
+Por qué nos importa más que a un pienso: del BCS sale el **peso objetivo**, del
+peso objetivo sale el **DER**, y del DER salen **los 43 mínimos escalados**
+(`minimo_de()`). Un BCS mal puesto no da error en ningún sitio: da un menú
+verde para un perro que no es el tuyo. Es la familia de fallos de la sección
+«Fallos que no puede encontrar la usuaria» del `CLAUDE.md`, y `radiografia.py`
+existe justo para verlo por dentro.
+
+Lo que se puede hacer:
+
+- **Enseñar las ilustraciones de las nueve categorías** (Purina, las que
+  reproduce Fascetti en las Figuras 9.1 y 9.2), no solo el número. La validación
+  del sistema de 9 puntos es *con* la descripción y el dibujo, no con la cifra
+  sola.
+- **Preguntar por palpación, no por aspecto**: la escala se aplica tocando las
+  costillas, y esa es la pregunta que distingue un 5 de un 7.
+- **Y contrastar**: si el dueño dice 5 y el peso declarado está muy por encima
+  del estándar de la raza, decirlo. Hoy no se dice nada.
+
+### 7.3 · Lo que la fuente dice del crudo, y que la app no dice
+
+Fascetti & Delaney 2ª ed., cap.8, leído entero el 9 de septiembre de 2026. Es el
+capítulo que habla de BARF por su nombre, y trae cosas incómodas que **usamos
+como fuente para otros números**, así que no se pueden citar solo cuando
+convienen:
+
+> *«**There is no documented evidence that feeding raw meat has any health or
+> nutritional advantages over cooked foods.** The FDA **does not advocate the
+> feeding of raw meat**, poultry, or seafood to pets.»*
+>
+> *«while many animals never become ill…, they **still pose a risk to humans and
+> other animals through environmental shedding**… **Those greatest at risk are
+> the very young and old, in addition to the immunocompromised.**»*
+>
+> *«**simple routine washing may not be enough** to eliminate potential
+> food-borne pathogens in the animal companion's food bowl and environment.»*
+>
+> *«The use of raw bones (compared to cooked) **may reduce the risk of
+> splintering and tooth fractures, but sharp fragments can still occur** and
+> puncture the mucosa.»*
+
+**Ninguna de las cuatro se puede meter en el solver**: no son números. Las
+cuatro son información que quien usa la app no tiene y que le afecta a ella y a
+quien viva en su casa. Dos cosas concretas, y **las dos las decides tú, no yo**,
+porque son de tono de producto:
+
+1. **Una sección de manipulación segura**, dicha una vez y bien: tabla y cuchillo
+   aparte, lavar el comedero con algo más que agua, y el aviso explícito de que
+   en una casa con bebés, personas mayores o alguien inmunodeprimido **el riesgo
+   no es del perro, es de las personas**.
+2. **El hueso**: ya avisamos de lo que no se puede pesar (BLOQUE 14), pero no del
+   riesgo de fragmento. El propio texto reconoce que el crudo es mejor que el
+   cocido en esto — es la única ventaja documentada que le concede, y decirlo así
+   es más creíble que no decir nada.
+
+Y la parte que juega a nuestro favor, que también hay que decir: de 200 recetas
+caseras publicadas, **190 tenían al menos un nutriente esencial por debajo** del
+mínimo de NRC o AAFCO y 167 tenían varios; de las cinco dietas crudas analizadas
+(dos comerciales y tres caseras), **las cinco** tenían nutrientes por debajo del
+mínimo, y las caseras además vitamina D y E altas y el Ca:P mal. **Eso es
+exactamente lo que este motor comprueba en cada menú antes de entregarlo.** El
+argumento de venta no es «BARF es mejor»: es «este BARF está calculado y
+verificado, y el 95 % de las recetas que hay por ahí no lo están».

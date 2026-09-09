@@ -351,6 +351,38 @@ suelo de omega-3 totales coincide casi exactamente con el que exige el
 Reglamento (UE) 2020/354 para la misma indicación (≥8,24), o sea que dos fuentes
 independientes piden lo mismo y nosotros no pedimos ninguna.
 
+### 1.4-bis · Los dos límites que se aplicaron el 8 y se retiraron el 9
+
+**Añadido el 9 de septiembre de 2026, y es una rectificación, no un hallazgo
+nuevo.** Los dos se aplicaron el 8 tras verificar su tabla, cada uno se midió
+por separado y cada uno resolvía. Puestos a la vez con el resto del motor, los
+dos dejaban **sin menú a perros de verdad** — que es peor que no haberlos
+aplicado. Los dos pasan a `limites_escritos_que_el_solver_no_aplica`, con su
+cita y su medida, igual que el omega-3 del cáncer.
+
+| Límite | Lo que pide la fuente | Lo que da este catálogo | Qué pasaba |
+|---|---|---|---|
+| Disfunción cognitiva, **vitamina E** (Tabla 35-3) | ≥187,5 mg/1000 kcal | hasta ~180 con el fósforo por debajo de 2.000 | **SIN MENU a 8, 22 y 40 kg** — la patología entera dejaba de formular |
+| Artrosis, **omega-3 totales** (Tabla 34-2) | ≥8,75 g/1000 kcal | ~6,5 fiable; 8,12 a veces | **SIN MENU de 25 kg en adelante** — el labrador con artrosis se quedaba sin menú y el yorkshire no |
+
+**El de la vitamina E choca con otra cifra del MISMO libro**: el techo de
+fósforo del perro adulto sano (2.000 mg/1000 kcal). Para llegar a 187,5 mg de
+vitamina E hay que cargar de verdura y de hígado, y eso sube el fósforo.
+
+**El del omega-3 no choca con nada: es que no hay catálogo.** La fuente más
+concentrada es el aceite de linaza, y detrás la semilla de lino y el aceite de
+hígado de bacalao; la carne no aporta prácticamente nada. Es el mismo motivo
+por el que el 12,5 del cáncer tampoco cabe, y por eso el arreglo no es bajar el
+número: es traer una fuente concentrada de EPA+DHA al catálogo.
+
+**Lo que sí se sigue aplicando de las dos tablas**: en disfunción cognitiva, el
+omega-3 ≥2,5 (peldaño estricto); en artrosis, EPA ≥1,0, L-carnitina ≥75,
+vitamina E ≥67,1, fósforo ≤1.750 y sodio ≤1.000.
+
+**Y lo que vigila que no vuelva a pasar**: el BLOQUE 61 de la batería recorre
+las 39 patologías formulables y exige que cada una dé menú verde para el perro
+de referencia. Hasta hoy nada comprobaba que «formulable» fuera verdad.
+
 ### 1.4 · Tres de los cuatro sodios cardíacos superan el techo legal europeo
 
 Reglamento (UE) 2020/354, entrada 24: sodio ≤ 2,6 g/kg = **738,6 mg/1000 kcal**.
@@ -879,12 +911,12 @@ alimentos ricos en oxalato que hoy no existe en el catálogo.
 | ~~renal~~ | ~~sodio ≤750~~ ✅ · potasio 1000-2000 · **proteína ≤62,5** |
 | oxalato | fósforo 750-1500 · Ca:P 1,1-2:1 · sodio <750 · magnesio 100-375 · excluir oxálico y vitamina C |
 | obesidad | ~~**proteína ≥62,5**~~ ✅ · fibra 30-62,5 · lisina ≥4,25 · L-carnitina ≥75 |
-| artrosis | omega-3 totales ≥8,75 · L-carnitina ≥75 |
+| artrosis | ~~L-carnitina ≥75~~ ✅ · omega-3 totales ≥8,75 → **escrito y NO aplicado** (ver §1.4-bis) |
 | ~~PLE~~ | ~~**proteína ≥62,5** · fibra ≤12,5~~ ✅ |
 | ~~EPI~~ | ~~fibra ≤12,5~~ ✅ |
 | ~~diabetes~~ | ~~**fibra ≥17,5**~~ ✅ |
 | enteropatía crónica | ~~grasa ≤37,5 · proteína ≥62,5~~ ✅ · potasio 2000-2750 · fibra |
-| disfunción cognitiva | vitamina E ≥187,5 · omega-3 ≥2,5 |
+| disfunción cognitiva | ~~omega-3 ≥2,5~~ ✅ · vitamina E ≥187,5 → **escrito y NO aplicado** (ver §1.4-bis) |
 | dermatosis y atopia | ~~linoleico >2,5~~ (descartado: más laxo que FEDIAF) · fenilalanina+tirosina >3,25 |
 | estruvita (prevención) | magnesio 100-250 · fósforo <1500 · proteína <62,5, **y pasarla a formulable** |
 | cistina | sodio <750 |

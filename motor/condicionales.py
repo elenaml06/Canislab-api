@@ -92,3 +92,87 @@ def con_procedencia(etapa):
                       "nombre_patologia": regla.get("nombre", clave_regla),
                       "fuente": regla.get("fuente"), "por_que": regla.get("por_que")})
     return fuera
+
+
+def suelo_relativo_de(etapa, clave_nutriente, valor_del_que_depende):
+    """El suelo de `clave_nutriente` cuando depende de otro nutriente del MISMO menú.
+
+    Hoy solo hay uno —la arginina según la proteína, Tabla VII-13 de FEDIAF—
+    pero la forma es general: `ancla + coeficiente × (lo_que_hay − ancla_del_otro)`,
+    y nunca por debajo del ancla.
+
+    `valor_del_que_depende` va en las mismas unidades que todo lo demás: por
+    1000 kcal. Devuelve `None` si no hay regla para esa etapa y ese nutriente,
+    para que quien llama no tenga que saber si existe.
+
+    ⚠️ NO compone con el mínimo de FEDIAF: eso lo hace quien llama, con un
+    `max()`. Aquí solo se responde «¿qué pide esta regla?», que es lo que
+    permite que el solver y el semáforo hagan la misma cuenta sin copiarla.
+    """
+    for regla in REGLAS.values():
+        if regla.get("tipo") != "suelo_relativo":
+            continue
+        if regla["nutriente"] != clave_nutriente:
+            continue
+        ancla = (regla.get("anclas_por_etapa") or {}).get(etapa)
+        if not ancla:
+            continue
+        extra = max(0.0, float(valor_del_que_depende) - float(ancla["proteina"]
+                                                             if regla["depende_de"] == "proteina"
+                                                             else ancla[regla["depende_de"]]))
+        return float(ancla["nutriente"]) + float(regla["coeficiente"]) * extra
+    return None
+
+
+def suelos_relativos_de_la_etapa(etapa):
+    """Las reglas de suelo relativo que aplican a esta etapa, en crudo.
+
+    Las necesita el SOLVER, que no puede llamar a `suelo_relativo_de` porque
+    todavía no sabe cuánta proteína va a tener el menú: tiene que meter la
+    regla como una fila lineal y dejar que la resuelva el propio LP.
+    """
+    fuera = []
+    for clave_regla, regla in sorted(REGLAS.items()):
+        if regla.get("tipo") != "suelo_relativo":
+            continue
+        ancla = (regla.get("anclas_por_etapa") or {}).get(etapa)
+        if not ancla:
+            continue
+        fuera.append({
+            "clave_regla": clave_regla,
+            "nutriente": regla["nutriente"],
+            "depende_de": regla["depende_de"],
+            "coeficiente": float(regla["coeficiente"]),
+            "ancla_nutriente": float(ancla["nutriente"]),
+            "ancla_depende_de": float(ancla[regla["depende_de"]]),
+            "nombre": regla.get("nombre", clave_regla),
+            "fuente": regla.get("fuente"),
+        })
+    return fuera
+
+
+def ratios_de_la_etapa(etapa):
+    """Las relaciones entre dos nutrientes que hay que respetar en esta etapa.
+
+    Mismo patrón que el ratio Ca:P, que ya vive en `requerimientos_v2_final.json`
+    porque **ese** sí es una fila de la Tabla III-3b de FEDIAF. Este no lo es
+    —es del NRC—, así que vive aquí. Ver el `por_que` de la regla.
+    """
+    fuera = []
+    for clave_regla, regla in sorted(REGLAS.items()):
+        if regla.get("tipo") != "ratio":
+            continue
+        rango = (regla.get("rangos_por_etapa") or {}).get(etapa)
+        if not rango:
+            continue
+        fuera.append({
+            "clave_regla": clave_regla,
+            "numerador": regla["numerador"],
+            "denominador": regla["denominador"],
+            "min": rango.get("min"),
+            "max": rango.get("max"),
+            "nombre": regla.get("nombre", clave_regla),
+            "fuente": regla.get("fuente"),
+            "por_que": regla.get("por_que"),
+        })
+    return fuera

@@ -1493,8 +1493,6 @@ _CIFRAS_CON_FUENTE = [
      "SACN5 Tabla 34-2: «L-carnitine >=300 mg/kg»"),
     ("enteropatia_cronica", "topes_por_1000kcal", "potasio", 2750.0, ("pct_ms", 1.1),
      "SACN5 Tabla 57-1: «Potassium 0.8 to 1.1%», techo del rango"),
-    ("disfuncion_cognitiva", "suelos_por_1000kcal", "vitE", 187.5, ("mgkg_ms", 750),
-     "SACN5 Tabla 35-3: «Vitamin E - Provide foods with >=750 mg/kg»"),
     ("dermatosis_zinc", "suelos_por_1000kcal", "fenilalanina_tirosina", 3.25, ("pct_ms", 1.3),
      "SACN5 Tabla 32-1: «Phenylalanine + tyrosine >1.3% DM» - la otra cifra que se escribio mal, como 32,5"),
     ("dermatitis_atopica", "suelos_por_1000kcal", "fenilalanina_tirosina", 3.25, ("pct_ms", 1.3),
@@ -1535,16 +1533,16 @@ _CIFRAS_CON_FUENTE = [
      "SACN5 Tabla 63-3: «Crude fiber >=8%», la unica fila de las cuatro que el catalogo sabe medir"),
 
     # ── Tercera pasada, 8 de septiembre: las filas que faltaban ──
-    ("artrosis", "suelos_por_1000kcal", "omega3_total", 8.75, ("pct_ms", 3.5),
-     "SACN5 Tabla 34-2: «Total omega-3 fatty acids 3.5 to 4.0%», extremo bajo. El Reg. (UE) 2020/354 entrada 27 pide 8,24 para lo mismo"),
+    ("artrosis", "limites_escritos_que_el_solver_no_aplica", "omega3_total", 8.75, ("pct_ms", 3.5),
+     "SACN5 Tabla 34-2: «Total omega-3 fatty acids 3.5 to 4.0%», extremo bajo. El Reg. (UE) 2020/354 entrada 27 pide 8,24 para lo mismo. RETIRADO DEL SOLVER EL 9-sep-2026: no cabe -- este catalogo llega con fiabilidad a ~6,5 y a 8,75 los perros de 25 kg en adelante se quedaban SIN MENU"),
     ("artrosis", "topes_por_1000kcal", "fosforo", 1750.0, ("pct_ms", 0.7),
      "SACN5 Tabla 34-2: «Phosphorus** 0.3 to 0.7%», techo. La nota ** dice: los perros con artrosis suelen tener edad de riesgo renal y cardiaco"),
     ("artrosis", "topes_por_1000kcal", "sodio", 1000.0, ("pct_ms", 0.4),
      "SACN5 Tabla 34-2: «Sodium** 0.2 to 0.4%», techo"),
     ("artrosis", "suelos_por_1000kcal", "vitE", 67.1, ("uikg_ms", 400),
      "SACN5 Tabla 34-2: «Vitamin E >=400 IU/kg». UI, no mg: x0,671 y /4"),
-    ("disfuncion_cognitiva", "suelos_por_1000kcal", "vitE", 187.5, ("mgkg_ms", 750),
-     "SACN5 Tabla 35-3: «Vitamin E >=750 mg/kg». Esta SI viene en mg, no lleva el x0,671"),
+    ("disfuncion_cognitiva", "limites_escritos_que_el_solver_no_aplica", "vitE", 187.5, ("mgkg_ms", 750),
+     "SACN5 Tabla 35-3: «Vitamin E >=750 mg/kg». Esta SI viene en mg, no lleva el x0,671. RETIRADO DEL SOLVER EL 9-sep-2026: choca con el techo de fosforo del adulto sano (2000) y dejaba la patologia ENTERA sin menu a cualquier peso"),
     ("disfuncion_cognitiva", "suelos_por_1000kcal", "omega3_total", 2.5, ("pct_ms", 1.0),
      "SACN5 Tabla 35-3: «Total omegas-3 >1%»"),
     ("renal", "suelos_por_1000kcal", "vitE", 67.1, ("uikg_ms", 400),
@@ -1574,12 +1572,41 @@ _CIFRAS_CON_FUENTE = [
      "SACN5 Tabla 31-3, perros: «Phosphorus* 0.4 to 0.8% DM», techo. El asterisco dice que no es de la alergia sino de la dieta de eliminacion comida a largo plazo"),
     ("reaccion_adversa_alimento", "topes_por_1000kcal", "sodio", 1000.0, ("pct_ms", 0.4),
      "SACN5 Tabla 31-3, perros: «Sodium* 0.2 to 0.4% DM», techo. Mismo asterisco que el fosforo"),
+
+    # ── Cuarta pasada bis, 9 de septiembre: las dos filas que faltaban de la
+    #    Tabla 37-9 del renal. De sus ocho filas el motor aplicaba cuatro.
+    ("renal", "topes_por_1000kcal", "cloruro", 1125.0, ("directo", 1125.0),
+     "SACN5 Tabla 37-9: «Chloride -- 1.5 x sodium levels in foods for dogs». La tabla lo escribe como una RELACION, no como un numero: 750 (nuestro sodio renal, misma tabla) x 1,5 = 1125. Si algun dia cambia el sodio renal, este hay que rehacerlo A MANO"),
+    ("renal", "suelos_por_1000kcal", "omega3_total", 1.0, ("pct_ms", 0.4),
+     "SACN5 Tabla 37-9: «Omega-3 fatty acids -- 0.4 to 2.5 % in foods for dogs and cats», extremo bajo. Solo el suelo: el techo (6,25) chocaria con el presupuesto semanal de EPA+DHA"),
+
+    # ── Las ESCRITAS QUE EL SOLVER NO APLICA (9 de septiembre) ──
+    # ⚠️ ESTAS TRES YA ESTABAN EN patologias.json Y NINGUN BLOQUE LAS MIRABA.
+    # `limites_escritos_que_el_solver_no_aplica` se invento el 8 de septiembre
+    # para las cifras de una fuente que no se pueden aplicar (porque no caben,
+    # o porque dos fuentes se contradicen, o porque quien decide es el
+    # veterinario), y se hizo bien: la cifra queda en el repo, con su cita, y
+    # `GET /patologias` se la sirve al profesional. Lo que se olvido es que una
+    # cifra que nadie vigila se pudre igual este donde este -- que es la leccion
+    # de la fibra y la de la tabla de patologias duplicada. Desde hoy pasan por
+    # la misma lista y por las mismas comprobaciones de conversion.
+    ("cancer_soporte", "limites_escritos_que_el_solver_no_aplica", "omega3_total", 12.5, ("pct_ms", 5.0),
+     "SACN5 Tabla 30-5: «Provide foods with increased levels of omega-3 fatty acids (>5% DM)». NO SE APLICA: el techo real de este catalogo esta entre 11,5 y 12,0 g/1000 kcal"),
+    ("renal", "limites_escritos_que_el_solver_no_aplica", "ratio_omega6_omega3", 7.0, ("directo", 7.0),
+     "SACN5 Tabla 37-9: «Omega-6:omega-3 fatty acid ratio of 1:1 to 7:1». NO SE APLICA: el NRC 2006 cap.5 dice que el ratio n-6:n-3 TOTAL «is not helpful» y recomienda en su lugar el linoleico:linolenico, que el motor si aplica"),
+    ("reaccion_adversa_alimento", "limites_escritos_que_el_solver_no_aplica", "proteina", 55.0, ("pct_ms", 22),
+     "SACN5 Tabla 31-3, perros: «protein should be 16 to 22% DM», techo. NO SE APLICA: la fuente dice «dermatologic cases only» y el motor no sabe si este perro es de piel o de intestino"),
 ]
 
 # Vista por patología, para que el BLOQUE 13 no reescriba los números.
 _TOPES_ESPERADOS = {}
 _SUELOS_ESPERADOS = {}
 for _p, _tipo, _nut, _val, _origen, _cita in _CIFRAS_CON_FUENTE:
+    # Las escritas-y-no-aplicadas no entran aquí: el BLOQUE 13 mide el menú
+    # que sale, y exigirle una cifra que el solver no aplica sería pedirle que
+    # cumpla por casualidad. Se vigilan aparte, en el BLOQUE 55.
+    if _tipo == "limites_escritos_que_el_solver_no_aplica":
+        continue
     (_TOPES_ESPERADOS if _tipo == "topes_por_1000kcal" else _SUELOS_ESPERADOS
      ).setdefault(_p, {})[_nut] = _val
 
@@ -3376,6 +3403,84 @@ if len(_cat_py_b25.split("\n")) > 120:
                   f"gramos van en catalogo_menus.json, con los demás datos.")
 if not (_raiz_b24 / "catalogo_menus.json").exists():
     fallos.append("BLOQUE25: falta catalogo_menus.json, que es donde viven los menús del catálogo.")
+
+# ============================================================
+# ⚠️ Y LOS MENÚS DEL CATÁLOGO TIENEN QUE SER RACIONES BARF, NO SOLO SER VERDES
+# ============================================================
+#
+# AÑADIDO EL 9 DE SEPTIEMBRE DE 2026, POR UN FALLO REAL QUE ESTUVO EN LA RAMA
+# UN DÍA ENTERO Y QUE NINGUNA PRUEBA VEÍA.
+#
+# El 8 de septiembre se regeneró el catálogo entero con un script que vivía en
+# un scratchpad —fuera del repo— y que llamaba a `mc.resolver()` SIN
+# `margenes_categoria`. El motor aplica las proporciones BARF dentro de un
+# `if margenes_categoria:`, así que sin ese argumento formula sin proporciones.
+# Medido, comparando la rama contra `main`:
+#
+#     Toy_Adulto ....................   131 g  ->    655 g   (5 % verdura -> 89 %)
+#     Gigante_Lactante .............. 6.846 g  -> 25.792 g   (25,8 kg al día)
+#     Pequeño_CachorroCrecimiento ... 2.903 g, 92 % verdura, SIN NADA DE HUESO
+#
+# **Los 216 salían VERDES.** Cumplen los 43 requisitos, así que ni el semáforo
+# ni `_garantizar_verificado` tenían nada que objetar: lo que se había apagado
+# no era la nutrición, era la FORMA. Y la forma no la mira el semáforo.
+#
+# Por eso esto no puede comprobarse con nutrientes. Se comprueba con lo único
+# que lo delata: el reparto por categorías contra `constructor.MARGENES`, que
+# es la misma tabla que usa el motor en el peldaño 0.
+#
+# Se comprueba con TOLERANCIA (un 25 % relativo sobre el margen, y siempre al
+# menos 5 puntos porcentuales) porque los márgenes se aplican sobre el peso de
+# la COMIDA y aquí se mide sobre el total, y porque el propio motor puede haber
+# bajado de peldaño para alguna ficha. Lo que tiene que cazar no son dos puntos
+# de más: es un 89 % de verdura donde el techo son 20.
+_MARGENES_B25 = MARGENES
+
+# ⚠️ EL DENOMINADOR TIENE QUE SER EL MISMO QUE EL DEL SOLVER, Y AL ESCRIBIR ESTO
+# LA PRIMERA VEZ NO LO ERA — fallo real, cazado por esta misma prueba el 9 de
+# septiembre con seis menús que estaban BIEN.
+#
+# El solver mide cada proporción sobre el peso de TODA la comida:
+# `fila_total` suma todos los alimentos cuya categoría no sea "Suplementos", o
+# sea las SEIS de `ACCESIBLES`. Aquí se sumaban solo las CINCO que tienen margen
+# en `MARGENES` — y «Pescados y mariscos» no tiene margen. En un menú con 45 %
+# de pescado eso encoge el denominador casi a la mitad: un 9,8 % de verdura real
+# salía como un 18 % y la prueba cantaba un fallo que no existía.
+#
+# Es el mismo error de siempre visto desde el otro lado: dos formas distintas de
+# calcular lo mismo en dos sitios. Por eso el denominador se toma de
+# `ACCESIBLES`, que es de donde lo toma el motor, y no de una lista escrita aquí.
+from accesibles import ACCESIBLES as _ACCESIBLES_B25
+_CATS_COMIDA_B25 = set(_ACCESIBLES_B25)
+
+_avisados_b25 = 0
+for _origen_b25, _menus_b25 in (("catálogo", [(_k, _e["gramos"]) for _k, _e in _CAT_B25.items()]),
+                                ("variante", [(_k + "/" + _v.get("proteina", "?"), _v["gramos"])
+                                              for _k, _l in _VAR_B25.items() for _v in _l])):
+    for _clave_b25, _gr_b25 in _menus_b25:
+        _tot_b25 = sum(_gr_b25.values())
+        if not _tot_b25:
+            continue
+        _porcat_b25 = {}
+        for _n_b25, _g_b25 in _gr_b25.items():
+            _c_b25 = al.get(_n_b25, {}).get("categoria")
+            if _c_b25 in _CATS_COMIDA_B25:
+                _porcat_b25[_c_b25] = _porcat_b25.get(_c_b25, 0.0) + _g_b25
+        _comida_b25 = sum(_porcat_b25.values())
+        if not _comida_b25:
+            continue
+        for _c_b25, (_mn_b25, _mx_b25) in _MARGENES_B25.items():
+            _frac_b25 = _porcat_b25.get(_c_b25, 0.0) / _comida_b25
+            _holgura = max(0.05, _mx_b25 * 0.25)
+            if _frac_b25 > _mx_b25 + _holgura and _avisados_b25 < 6:
+                _avisados_b25 += 1
+                fallos.append(
+                    f"BLOQUE25: el menú '{_clave_b25}' del {_origen_b25} lleva un "
+                    f"{_frac_b25*100:.0f} % de '{_c_b25}' y el margen BARF son "
+                    f"{_mx_b25*100:.0f} %. Un menú del catálogo puede ser verde y aun así no ser "
+                    f"una ración: si se ha regenerado sin `margenes_categoria`, el motor formula "
+                    f"sin proporciones y salen 25 kg de verdura al día, verdes. "
+                    f"Se regenera con `python3 regenerar_catalogo.py`.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
@@ -6071,6 +6176,47 @@ if _caidos_b49:
         f"BLOQUE49: {_caidos_b49} de 20 menús de perros pequeños no salen o no están verdes. "
         f"No es inseguro (la regla 1 los para) pero deja a la usuaria sin menú, que es el "
         f"síntoma con el que se encontró esto.")
+# ⚠️ Y LA PAREJA DE NÚMEROS QUE HACE QUE ESTO FUNCIONE (9 septiembre).
+#
+# El fallo que se arregló hoy NO era el redondeo: era que el solver podía
+# usar 0,0185 g de una fuente de yodo concentrada y la ENTREGA los tiraba
+# (`if x[idx[n]] > 0.02`). Resolvía un problema y entregaba otro, y con
+# 76.000-80.000 µg de yodo por 100 g eso se lleva el 12 % del requisito de un
+# perro de 4,5 kg. El arreglo es que el solver tenga prohibido usar menos de
+# lo que sobrevive a la entrega: `SUELO_ENTREGABLE_G` (0,03) por encima de
+# `UMBRAL_DE_ENTREGA_G` (0,02).
+#
+# Los dos números están en `motor_completo.py` y SOLO valen juntos. Si
+# alguien toca uno, esto se cae y le obliga a mirar el otro.
+_txt_b49 = (_raiz_b24 / "motor" / "motor_completo.py").read_text(encoding="utf-8")
+import re as _re_b49
+_m_suelo = _re_b49.search(r"SUELO_ENTREGABLE_G\s*=\s*([0-9.]+)", _txt_b49)
+_m_umbral = _re_b49.search(r"UMBRAL_DE_ENTREGA_G\s*=\s*([0-9.]+)", _txt_b49)
+if not _m_suelo or not _m_umbral:
+    fallos.append("BLOQUE49: han desaparecido SUELO_ENTREGABLE_G o UMBRAL_DE_ENTREGA_G de "
+                  "motor_completo.py. Son la pareja que impide que el solver cuente con un "
+                  "aporte que la entrega va a tirar; sin ellos vuelve el yodo al 96 %")
+elif float(_m_suelo.group(1)) <= float(_m_umbral.group(1)):
+    fallos.append(f"BLOQUE49: SUELO_ENTREGABLE_G ({_m_suelo.group(1)}) tiene que ser MAYOR que "
+                  f"UMBRAL_DE_ENTREGA_G ({_m_umbral.group(1)}). Si no, el solver puede usar una "
+                  f"cantidad que la entrega descarta, y el menú sale con menos de lo que el "
+                  f"solver creía. Es el fallo del 9 de septiembre otra vez")
+else:
+    # Y con el fallo puesto: se sube el umbral de entrega por encima del suelo
+    # del solver y tiene que volver a haber menús que pierden un aporte.
+    import motor_completo as _mc49
+    _al49, _req49 = _api.cargar_v2()
+    _ok49, _g49 = _mc49.resolver(400.0, "Adulto", _al49, _req49, 4.5,
+                                 _api.dosis_maxima_fabricante,
+                                 margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
+                                 time_limit=8, semilla_aleatoria=1)
+    if _ok49:
+        _minimo_entregado = min(_g49.values())
+        if _minimo_entregado <= float(_m_umbral.group(1)):
+            fallos.append(f"BLOQUE49: el menú entregado lleva {_minimo_entregado} g de algo, "
+                          f"que está por debajo del umbral de entrega. Imposible si el suelo "
+                          f"del solver funciona")
+
 if _yodos_b49 and _stat_b49.median(_yodos_b49) < 104:
     fallos.append(
         f"BLOQUE49: la mediana del yodo en perros pequeños ha bajado a "
@@ -6680,7 +6826,8 @@ for _p, _tipo, _nut, _esperado, _origen, _cita in _CIFRAS_CON_FUENTE:
 # anotado con su fuente aquí, o vuelve a haber números que nadie vigila.
 _declaradas = {(a, b, c) for a, b, c, _, _, _ in _CIFRAS_CON_FUENTE}
 for _clave, _info in _pats55.items():
-    for _tipo in ("topes_por_1000kcal", "suelos_por_1000kcal"):
+    for _tipo in ("topes_por_1000kcal", "suelos_por_1000kcal",
+                  "limites_escritos_que_el_solver_no_aplica"):
         for _nut in (_info.get(_tipo) or {}):
             if (_clave, _tipo, _nut) not in _declaradas:
                 fallos.append(f"BLOQUE55: {_clave}.{_tipo}.{_nut} es una cifra "
@@ -6697,12 +6844,29 @@ from verificar import MAPA as _MAPA55
 from motor_completo import topes_de_patologias as _topes55
 _claves_mapa = set(_MAPA55.values())
 for _p, _tipo, _nut, _esperado, _origen, _cita in _CIFRAS_CON_FUENTE:
+    _t, _pct, _av, _s = _topes55([_p], "Adulto")
+
+    # ⚠️ LAS ESCRITAS-Y-NO-APLICADAS SE COMPRUEBAN AL REVÉS: que el solver NO
+    # las reciba. No es una comprobación de adorno. Una cifra que se aparca
+    # «porque no cabe» y que el solver sigue aplicando por otro camino es
+    # justo el fallo que se quería evitar, y saldría como menús que no salen
+    # -- que es como se manifestó el 9 de septiembre en artrosis y en
+    # disfunción cognitiva. Y al revés también: si alguien decide aplicarla de
+    # verdad, tiene que moverla de bloque en el JSON y aquí, no colarla.
+    if _tipo == "limites_escritos_que_el_solver_no_aplica":
+        _colado = (_t or {}).get(_nut, (_s or {}).get(_nut))
+        if _colado is not None:
+            fallos.append(f"BLOQUE55: {_p}.{_nut} está en "
+                          f"`limites_escritos_que_el_solver_no_aplica` pero "
+                          f"topes_de_patologias() SÍ lo devuelve ({_colado}). "
+                          f"O se aplica y se mueve de bloque, o no se aplica")
+        continue
+
     if _nut not in _claves_mapa:
         fallos.append(f"BLOQUE55: la clave '{_nut}' de {_p} NO está en "
                       f"verificar.MAPA — el solver nunca la mirará y el menú "
                       f"saldrá verde igual")
         continue
-    _t, _pct, _av, _s = _topes55([_p], "Adulto")
     _aplicado = (_t if _tipo == "topes_por_1000kcal" else _s).get(_nut)
     if _aplicado is None:
         # solo_en_adulto no puede ser la excusa: se ha pedido en Adulto.
@@ -7086,6 +7250,339 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
 # RESUMEN FINAL
+# ============================================================
+# BLOQUE 59 — EL TECHO DE YODO ES UN TECHO, NO LA DOSIS QUE HACE DANO
+# ============================================================
+#
+# ⚠️ ESTE BLOQUE EXISTE POR UN ERROR REAL QUE ESTUVO PUESTO SEMANAS.
+#
+# `seguridad.py` tenia TOPE_YODO_KCAL = 1400 con el comentario «El NRC (2006)
+# fija el limite superior seguro en 1.400 µg por cada 1000 kcal de dieta». El
+# NRC dice lo contrario, literal (cap.8, «Safe Upper Limit of Iodine for Dogs»):
+#
+#   «Castillo et al. (2001a) reported evidence of DEPRESSED THYROID GLAND
+#    FUNCTION ... AND BONE ABNORMALITIES, IN PUPPIES FED DIETS CONTAINING an
+#    estimated maximum I content of 1,400 μg I per 1,000 kcal ME ... Based on
+#    this information AN ABSOLUTE FIGURE FOR A SUL OF DIETARY I CANNOT BE
+#    PREDICTED for adult dogs.»
+#
+# O sea: 1.400 es donde se vio el DANO. Teniamos el techo puesto ahi.
+#
+# Se baja a 1.275, que es lo mas alto que la misma pagina del NRC documenta
+# como comido sin problemas (Belshaw 1975, piensos comerciales de 400 a 1.275).
+# Esto vigila las dos cosas: que la cifra no vuelva a 1.400, y que el limite
+# se aplique de verdad por los tres caminos que lo miran.
+print("\n=== BLOQUE 59: el techo de yodo, y que no vuelva a ser la dosis del dano ===")
+
+import seguridad as _seg59
+
+_ESPERADO_59 = 1275.0
+if getattr(_seg59, "TOPE_YODO_KCAL", None) != _ESPERADO_59:
+    fallos.append(f"BLOQUE59: TOPE_YODO_KCAL vale {getattr(_seg59, 'TOPE_YODO_KCAL', None)} y "
+                  f"tiene que ser {_ESPERADO_59}. Si ha vuelto a 1400, ese numero es la "
+                  f"concentracion a la que el NRC documenta tiroides deprimida y alteraciones "
+                  f"oseas EN CACHORROS (Castillo 2001a), no un limite seguro: el NRC dice "
+                  f"expresamente que no puede fijar uno")
+
+# El comentario que lo acompana tampoco puede volver a afirmar lo que la fuente
+# no dice. Un numero corregido con la justificacion vieja se vuelve a romper.
+_txt59 = (_raiz_b24 / "motor" / "seguridad.py").read_text(encoding="utf-8")
+if "fija el límite superior seguro en 1.400" in _txt59:
+    fallos.append("BLOQUE59: ha vuelto el comentario que dice que el NRC «fija el límite superior "
+                  "seguro en 1.400». El NRC dice que NO puede fijar ninguno, y que a 1.400 se vio "
+                  "el dano. Ver HALLAZGOS_LECTURA_FUENTES.md N-17")
+if "cannot be predicted" not in _txt59.lower() and "no puede fijar" not in _txt59.lower():
+    fallos.append("BLOQUE59: el comentario del yodo ya no explica que el NRC no fija un limite. "
+                  "Sin eso, el proximo que lo lea volvera a subirlo a 1.400")
+
+# Y PROBADO CON EL FALLO PUESTO: un menu justo por encima tiene que rechazarse.
+# Se construye a mano, sin pedirle nada al solver: lo que se prueba es el
+# filtro, no la formulacion.
+_der59 = 1000.0
+_kelp59 = next((_n for _n, _a in al.items()
+                if (_a["nutrientes"].get("yodo") or 0) > 500), None)
+if _kelp59 is None:
+    fallos.append("BLOQUE59: no hay ningun alimento muy rico en yodo en el catalogo, asi que no "
+                  "se puede inyectar el fallo. Sin poder romperlo, este test no demuestra nada")
+else:
+    # gramos justos para pasar el techo por poco
+    _yodo_por_g = (al[_kelp59]["nutrientes"]["yodo"] or 0) / 100.0
+    _g_necesarios = (_ESPERADO_59 * 1.05) / _yodo_por_g
+    _menu59 = {_kelp59: round(_g_necesarios, 3)}
+    _avisos59 = _seg59.revisar_seguridad(_menu59, al, _der59) or []
+    _txt_avisos = " ".join(str(_a) for _a in _avisos59).lower()
+    if "yodo" not in _txt_avisos:
+        _y59 = _yodo_por_g * _menu59[_kelp59]
+        fallos.append(f"BLOQUE59: un menu con {_y59:.0f} µg de yodo para {_der59:.0f} kcal "
+                      f"(techo {_ESPERADO_59}) no dispara ningun aviso de seguridad. Entonces el "
+                      f"techo no se esta aplicando")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 60 — LOS DOS REQUISITOS QUE DEPENDEN DE LA PROPIA DIETA
+# ============================================================
+#
+# La arginina que sube con la proteina (FEDIAF 2025, Anexo 7.4 y Tabla VII-13)
+# y el ratio linoleico:linolenico (NRC 2006, cap.5). Ninguno de los dos cabe en
+# `requerimientos_v2_final.json`, que es una tabla de numeros fijos por etapa,
+# asi que ninguno lo encontro el trabajo de transcribir tablas celda a celda.
+#
+# ⚠️ LO QUE MAS IMPORTA AQUI NO ES QUE SE APLIQUEN: es que el SOLVER y el
+# SEMAFORO hagan LA MISMA CUENTA. El 8 de septiembre los suelos de patologia se
+# aplicaban de dos formas distintas y el motor construia menus enteros para que
+# el filtro final los tirara. Por eso los dos llaman a `condicionales.py` en vez
+# de tener cada uno su copia, y por eso esto lo comprueba.
+print("\n=== BLOQUE 60: la arginina segun la proteina, y el ratio linoleico:linolenico ===")
+
+import condicionales as _cnd60
+
+# 1. Las cifras contra su fuente, y que ninguna regla vaya sin cita.
+for _clave60, _r60 in _cnd60.REGLAS.items():
+    if not _r60.get("fuente") or not _r60.get("por_que"):
+        fallos.append(f"BLOQUE60: la regla '{_clave60}' no trae fuente o no trae por_que. Un "
+                      f"numero que decide si un menu se entrega tiene que poder auditarse")
+
+# La Tabla VII-13 de FEDIAF, comprobada CONTRA SUS PROPIAS FILAS. La tabla da
+# el adulto a 18 %MS de proteina con 0,52 g/100gMS de arginina y a 20 %MS con
+# 0,54: los 0,01 por punto. En por-1000-kcal (x2,5) son 45 -> 1,30 y 50 -> 1,35.
+for _p60, _esperado60 in ((45.0, 1.30), (50.0, 1.35), (100.0, 1.85), (137.5, 2.225)):
+    _v60 = _cnd60.suelo_relativo_de("Adulto", "arginina", _p60)
+    if _v60 is None or abs(_v60 - _esperado60) > 1e-6:
+        fallos.append(f"BLOQUE60: con {_p60} g de proteina/1000 kcal la Tabla VII-13 pide "
+                      f"{_esperado60} g de arginina y sale {_v60}")
+# Por debajo del ancla no baja: la tabla empieza ahi, no extrapola hacia atras.
+if _cnd60.suelo_relativo_de("Adulto", "arginina", 10.0) != 1.30:
+    fallos.append("BLOQUE60: con la proteina por debajo del ancla la arginina exigida baja de "
+                  "1,30. La Tabla VII-13 empieza en 18 %MS: por debajo manda la Tabla III-3b")
+
+# El ratio: 2,6-26 en adulto y crecimiento, 2,6-16 en gestacion y lactancia.
+for _et60, _mn60, _mx60 in (("Adulto", 2.6, 26.0), ("Senior", 2.6, 26.0),
+                            ("CachorroCrecimiento", 2.6, 26.0), ("CachorroJoven", 2.6, 26.0),
+                            ("Gestante", 2.6, 16.0), ("GestanteTardia", 2.6, 16.0),
+                            ("Lactante", 2.6, 16.0)):
+    _rr60 = [x for x in _cnd60.ratios_de_la_etapa(_et60)
+             if x["numerador"] == "linoleico" and x["denominador"] == "linolenico"]
+    if not _rr60:
+        fallos.append(f"BLOQUE60: no hay ratio linoleico:linolenico para {_et60}")
+    elif _rr60[0]["min"] != _mn60 or _rr60[0]["max"] != _mx60:
+        fallos.append(f"BLOQUE60: en {_et60} el ratio es {_rr60[0]['min']}-{_rr60[0]['max']} y "
+                      f"el NRC dice {_mn60}-{_mx60}")
+
+# 2. Que el SEMAFORO los mire, y que el SOLVER entregue menus que los cumplen.
+import main as _api60
+for _et60, _peso60, _der60 in (("Adulto", 20, 1000.0), ("Senior", 6, 380.0),
+                               ("CachorroCrecimiento", 12, 900.0), ("Lactante", 22, 3000.0)):
+    _ok60, _g60 = False, None
+    _t0_60 = time.time()
+    while time.time() - _t0_60 < 30:
+        _ok60, _g60 = resolver(_der60, _et60, al, req, _peso60, dosis_maxima_fabricante,
+                               margenes_categoria=MARGENES, max_suplementos=2)
+        if _ok60:
+            break
+    if not _ok60:
+        fallos.append(f"BLOQUE60: {_et60} de {_peso60} kg se queda sin menu. Si una de las dos "
+                      f"reglas nuevas no cabe, hay que decirlo, no aplicarla en silencio")
+        continue
+    _f60 = verificar(_g60, al, req, _der60, _et60, _peso60)
+    if _f60["semaforo"] != "verde":
+        fallos.append(f"BLOQUE60: el menu de {_et60} sale {_f60['semaforo']}: "
+                      f"faltan {[x['nutriente'] for x in _f60['faltan']]}, "
+                      f"se pasa {[x['nutriente'] for x in _f60['se_pasa']]}. El solver esta "
+                      f"entregando menus que su propio semaforo rechaza")
+    _nombres60 = [d["nutriente"] for d in _f60.get("dentro_de_rango", [])]
+    if "Relación linoleico:linolénico" not in _nombres60:
+        fallos.append(f"BLOQUE60: la ficha de {_et60} no dice nada del ratio "
+                      f"linoleico:linolenico. Si no se ve, no se esta comprobando")
+
+# 3. PROBADO CON EL FALLO PUESTO, las dos.
+#    (a) el ratio: se le echa aceite de girasol (puro omega-6) hasta pasarse.
+_gira60 = next((_n for _n, _a in al.items()
+                if (_a["nutrientes"].get("linoleico") or 0) > 30
+                and (_a["nutrientes"].get("linolenico") or 0) < 1), None)
+if _gira60 is None:
+    fallos.append("BLOQUE60: no hay ningun aceite rico en omega-6 y pobre en omega-3 en el "
+                  "catalogo para inyectar el fallo. Sin poder romperlo, esto no demuestra nada")
+elif _ok60 and _g60:
+    _roto60 = dict(_g60)
+    _roto60[_gira60] = _roto60.get(_gira60, 0) + 60.0
+    _f_roto60 = verificar(_roto60, al, req, _der60, _et60, _peso60)
+    _pasa60 = [x["nutriente"] for x in _f_roto60["se_pasa"]]
+    if "Relación linoleico:linolénico" not in _pasa60:
+        _la = sum((al[_n]["nutrientes"].get("linoleico") or 0) * _g / 100.0
+                  for _n, _g in _roto60.items())
+        _ala = sum((al[_n]["nutrientes"].get("linolenico") or 0) * _g / 100.0
+                   for _n, _g in _roto60.items())
+        fallos.append(f"BLOQUE60: se le echan 60 g de {_gira60} a un menu -- el ratio "
+                      f"linoleico:linolenico sube a {(_la/_ala if _ala else 0):.1f}:1 contra un "
+                      f"techo de 26 -- y el semaforo no dice nada. Entonces no lo comprueba")
+
+#    (b) LA ARGININA. Aqui la inyeccion obvia NO sirve y conviene decir por que:
+#        si se fabrica un menu pobre en arginina, la que lo caza es la Tabla
+#        III-3b (1,51 g en adulto), no la VII-13 -- y el test pasaria igual con
+#        la regla nueva quitada. O sea que no probaria nada.
+#
+#        Lo que hay que demostrar es que la VII-13 MANDA cuando la proteina es
+#        alta, que es el caso de una racion BARF. Se hace en dos pasos: se mide
+#        lo que el semaforo EXIGE en un menu real, y luego se APAGA la regla y
+#        se comprueba que lo exigido baja. Si al apagarla no cambia nada, es que
+#        no estaba haciendo nada.
+if _ok60 and _g60:
+    _f_adulto = None
+    _t0_b = time.time()
+    _ok_b, _g_b = False, None
+    while time.time() - _t0_b < 30:
+        _ok_b, _g_b = resolver(1000.0, "Adulto", al, req, 20, dosis_maxima_fabricante,
+                               margenes_categoria=MARGENES, max_suplementos=2)
+        if _ok_b:
+            break
+    if not _ok_b:
+        fallos.append("BLOQUE60: no sale menu de adulto para comprobar la arginina")
+    else:
+        _kc_b = sum((al[_n]["energia"] or 0) * _g / 100.0 for _n, _g in _g_b.items())
+        _pr_b = sum((al[_n]["nutrientes"].get("proteina") or 0) * _g / 100.0
+                    for _n, _g in _g_b.items()) / (1000.0 / 1000.0)
+        _esperado_b = _cnd60.suelo_relativo_de("Adulto", "arginina", _pr_b)
+        _min_iiib = _min56(req.get("Arginina"), "Arginina", "Adulto")
+        if _esperado_b <= _min_iiib:
+            fallos.append(f"BLOQUE60: con {_pr_b:.0f} g de proteina/1000 kcal la Tabla VII-13 "
+                          f"pide {_esperado_b:.2f} de arginina y la III-3b pide {_min_iiib}. "
+                          f"Si la VII-13 nunca manda, este test no comprueba nada -- una racion "
+                          f"BARF ronda los 105 g de proteina y ahi la VII-13 pide 1,90")
+        else:
+            _f_b = verificar(_g_b, al, req, 1000.0, "Adulto", 20)
+            _arg_b = [d for d in _f_b.get("dentro_de_rango", []) if d["nutriente"] == "Arginina"]
+            _arg_falta_b = [d for d in _f_b["faltan"] if d["nutriente"] == "Arginina"]
+            _pedido_b = (_arg_b[0]["minimo"] if _arg_b
+                         else (_arg_falta_b[0]["necesita"] if _arg_falta_b else None))
+            if _pedido_b is None or abs(_pedido_b - _esperado_b) > 0.02:
+                fallos.append(f"BLOQUE60: con {_pr_b:.0f} g de proteina el semaforo exige "
+                              f"{_pedido_b} g de arginina y la Tabla VII-13 pide "
+                              f"{_esperado_b:.2f}. Si exige {_min_iiib}, esta usando solo la "
+                              f"Tabla III-3b y la regla nueva esta inerte")
+            else:
+                # Y AHORA CON EL FALLO PUESTO: se apaga la regla y lo exigido
+                # TIENE que bajar al minimo de la III-3b. Si no baja, es que el
+                # semaforo no la estaba usando y el numero de arriba venia de
+                # otro sitio.
+                import verificar as _v60
+                _guardada = _v60._suelo_relativo_de
+                try:
+                    _v60._suelo_relativo_de = lambda *a, **k: None
+                    _f_sin = verificar(_g_b, al, req, 1000.0, "Adulto", 20)
+                finally:
+                    _v60._suelo_relativo_de = _guardada
+                _arg_sin = [d for d in _f_sin.get("dentro_de_rango", [])
+                            if d["nutriente"] == "Arginina"]
+                _pedido_sin = _arg_sin[0]["minimo"] if _arg_sin else None
+                if _pedido_sin is None or abs(_pedido_sin - _min_iiib) > 0.02:
+                    fallos.append(f"BLOQUE60: apagando la regla de la Tabla VII-13 el semaforo "
+                                  f"sigue exigiendo {_pedido_sin} g de arginina en vez de bajar "
+                                  f"a {_min_iiib}. Este test no demuestra que la regla haga nada")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 61 — NINGUNA PATOLOGIA FORMULABLE SE QUEDA SIN MENU
+# ============================================================
+#
+# ⚠️ ESTE BLOQUE EXISTE POR UN FALLO REAL DE LA NOCHE DEL 8 AL 9 DE SEPTIEMBRE,
+# Y ES EL AGUJERO QUE TENIAN LOS 60 BLOQUES ANTERIORES.
+#
+# QUE PASO. Leyendo SACN5 entera aparecieron tablas de patologia que el motor
+# no aplicaba, y se aplicaron. Cada una se midio POR SEPARADO y cada una
+# resolvia. Pero se midieron en pasadas distintas del mismo dia, y dos de ellas
+# se cruzaron:
+#
+#   · Tabla 35-3 (disfuncion cognitiva) .... vitamina E >= 187,5 mg/1000 kcal
+#   · recomendaciones_adulto.json (SACN5) .. fosforo <= 2000 mg/1000 kcal
+#
+# Cada una cabe. JUNTAS NO: para llegar a 187,5 mg de vitamina E hay que cargar
+# de verdura y de higado, y eso sube el fosforo por encima de 2000. Resultado:
+# la disfuncion cognitiva, que en `main` daba menu, dejo de darlo A CUALQUIER
+# PESO. Una patologia marcada `formulable: true` que no formula nada.
+#
+# POR QUE NO LO CAZO NADIE. El BLOQUE 50 prueba CRUCES de patologias, que es
+# donde uno espera que se pelee algo, pero prueba doce cruces elegidos a mano y
+# la disfuncion cognitiva no esta en ninguno. Y el BLOQUE 36 audita las CIFRAS
+# (que ningun tope quede por debajo del minimo de FEDIAF), que es aritmetica de
+# una en una y no ve un cruce entre dos nutrientes distintos. O sea que faltaba
+# la comprobacion mas tonta de todas: **que cada patologia que decimos que se
+# puede formular, se pueda formular**.
+#
+# QUE COMPRUEBA, PARA LAS 39 QUE LLEVAN `formulable: true`:
+#
+#   1. Sale menu para un perro de referencia (20 kg, DER 950, adulto).
+#   2. Ese menu esta VERDE contra FEDIAF (regla 1).
+#   3. Ese menu no rompe ningun tope de su propia patologia, medido sobre las
+#      kcal REALES (regla 2), con la misma funcion que decide de verdad.
+#
+# NO comprueba el peldano: bajar de peldano esta permitido y se dice (regla 5).
+# Lo que no esta permitido es no dar nada.
+#
+# ⚠️ Y LA LISTA DE EXCEPCIONES ESTA CLAVADA A PROPOSITO. Si una patologia deja
+# de resolver, el arreglo NO es meterla aqui: es o bien arreglar el catalogo, o
+# bien mover la cifra que no cabe a `limites_escritos_que_el_solver_no_aplica`
+# con su medida, como ya estan el omega-3 del cancer y la vitamina E de la
+# disfuncion cognitiva. Meterla aqui seria apagar la alarma.
+print("\n=== BLOQUE 61: cada patologia formulable formula de verdad ===")
+
+import json as _json61
+
+_TABLA_61 = _json61.loads((_raiz_b24 / "patologias.json").read_text(encoding="utf-8"))["patologias"]
+_FORMULABLES_61 = sorted(k for k, v in _TABLA_61.items() if v.get("formulable"))
+
+# El perro de referencia. 20 kg y DER 950 no es un capricho: es el perro medio
+# del catalogo de menus y el que usan los bloques 8 y 50.
+_PESO_61, _DER_61, _ETAPA_61 = 20.0, 950.0, "Adulto"
+
+# Ninguna. Y mientras siga vacia, esta lista es la prueba de que no hay ninguna
+# patologia que digamos formulable y no lo sea.
+_EXCEPCIONES_61 = {}
+
+_sin_menu_61 = []
+for _pat61 in _FORMULABLES_61:
+    _r61 = _c.post("/menu/v2", json={
+        "nombres_alimentos": [], "der_objetivo": _DER_61,
+        "etapa_requisitos": _ETAPA_61, "peso_perro_kg": _PESO_61,
+        "modo": "automatico", "patologias": [_pat61]}).json()
+    if not _r61.get("factible") or not _r61.get("menu"):
+        _sin_menu_61.append((_pat61, str(_r61.get("motivo") or _r61.get("mensaje"))[:110]))
+        continue
+    _g61 = _r61["menu"]
+    _v61 = verificar(_g61, al, req, _DER_61, _ETAPA_61)
+    if _v61["semaforo"] != "verde":
+        fallos.append(f"BLOQUE61: «{_pat61}» da menu pero sale {_v61['semaforo']}, no verde. "
+                      f"Faltan: {[x['nutriente'] for x in _v61.get('faltan', [])][:4]}. "
+                      f"Regla 1: ningun menu sale sin estar verde")
+    _rotos61 = _api._tope_patologia_roto(_g61, al, [_pat61], _ETAPA_61)
+    if _rotos61:
+        fallos.append(f"BLOQUE61: «{_pat61}» da menu que rompe su propio tope: {_rotos61}")
+
+for _pat61, _motivo61 in _sin_menu_61:
+    if _pat61 in _EXCEPCIONES_61:
+        continue
+    fallos.append(f"BLOQUE61: «{_pat61}» esta marcada `formulable: true` y NO da menu para el "
+                  f"perro de referencia (20 kg, DER 950, adulto). Motivo que devuelve la API: "
+                  f"«{_motivo61}». O el limite que no cabe se mueve a "
+                  f"`limites_escritos_que_el_solver_no_aplica` con su medida, o la patologia "
+                  f"no es formulable y hay que decirlo. Lo que no vale es ofrecerla y no darla")
+
+# Y al reves: una excepcion que ya resuelve tiene que salir de la lista, porque
+# si no la lista deja de significar nada. Es la misma idea que
+# `MAXIMOS_NO_APLICADOS` en verificar.py.
+for _pat61 in _EXCEPCIONES_61:
+    if _pat61 not in dict(_sin_menu_61):
+        fallos.append(f"BLOQUE61: «{_pat61}» esta en la lista de excepciones pero YA resuelve. "
+                      f"Quitala de _EXCEPCIONES_61: una lista de excepciones caducada es una "
+                      f"alarma apagada")
+
+print(f"  {len(_FORMULABLES_61)} patologias formulables, {len(_sin_menu_61)} sin menu")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
 # ============================================================
 print(f"\n{'='*60}")
 print(f"TOTAL: {time.time()-t_total:.0f}s de pruebas")
