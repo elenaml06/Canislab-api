@@ -40,11 +40,49 @@ Al reabrir algo, se escribe **por cuál de las cuatro** y se actualiza aquí.
 
 ---
 
-## REABIERTO Y VUELTO A CERRAR · Los límites de patología
+## ⚠️ REABIERTO OTRA VEZ · Los límites de patología
 
-**Cerrado el 8 de septiembre de 2026 por la mañana. REABIERTO esa misma tarde,
-por la razón 3 («un test o un caso real demuestra que está mal»), y vuelto a
-cerrar por la noche.**
+**Cerrado el 8 de septiembre de 2026 por la mañana. Reabierto esa misma tarde,
+vuelto a cerrar por la noche, y REABIERTO EL 9 DE SEPTIEMBRE**, por la misma
+razón 3 y por el mismo motivo de fondo que la primera vez: **el conjunto**.
+
+### Por qué se reabre, con el número delante
+
+Elena lo dijo así: *«no puedes decir que está cerrado si no te has leído el libro
+completo, porque ese libro habla de patologías»*. Tiene razón, y medirlo lo deja
+sin discusión:
+
+| | |
+|---|---|
+| Tablas «Key nutritional factors» en SACN5 | **91** |
+| Citadas en este repo | **32** |
+| Sin citar | **59** |
+
+De esas 59: **38** son comparativas de piensos comerciales contra la
+recomendación (no traen requisito, esas sí son saltables), **10** son solo de
+gato, y **11 son tablas de requisito canino o mixto que nadie ha mirado**.
+Listadas una a una en `VERIFICACION_FILA_A_FILA.md` §quinta pasada.
+
+**Y hay 26 capítulos de los 70 sin una sola cita en el repo.** El barrido de
+agosto se hizo sobre tablas; la lección del 8 de septiembre fue que un barrido de
+tablas no encuentra lo que la fuente dice en prosa —así salieron la arginina que
+sube con la proteína, el ratio linoleico:linolénico y la proteína de la
+lactancia—, y esa lección **todavía no se ha aplicado al libro entero**.
+
+### Qué hace falta para volver a cerrarlo
+
+Leer SACN5 **completo**, no sus tablas. Y antes, terminar FEDIAF: quedan el
+glosario, la introducción, la guía 3.1, alimento complementario y **tres anexos
+que sí tocan lo que hace el motor** — condición corporal (7.1), taurina (7.3) y
+reacción adversa al alimento (7.6).
+
+Hasta entonces, lo que sigue siendo cierto es lo de abajo, y solo eso: **las
+cifras que hay son las de su fuente y moverlas salta en rojo**. Que estén todas
+las que la fuente tiene, no.
+
+---
+
+### El registro de la primera reapertura, que sigue valiendo
 
 ### Por qué se reabrió, dicho sin adornos
 
@@ -100,6 +138,9 @@ crecimiento. Ninguno se coló.
   sin ofrecer están en `PATOLOGIAS.md` §3-bis y en `VERIFICACION_FILA_A_FILA.md`
   §cuarta pasada con el motivo de cada una, y **añadir una es decisión de
   producto**, no de fuentes.
+- **Y no significa que SACN5 esté leído entero — por eso esto está REABIERTO
+  desde el 9 de septiembre.** Ver arriba: 32 de las 91 tablas citadas, 11 tablas
+  de requisito canino sin mirar, y 26 capítulos de 70 sin una sola cita.
 - **No cubre lo que el motor no sabe expresar.** La Tabla 30-5 pide un ratio
   omega-6:omega-3 ≈ 1:1 y un techo de carbohidrato (NFE); el motor solo conoce
   un ratio, el calcio:fósforo, y no calcula el NFE. Está escrito en el aviso de

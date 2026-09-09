@@ -426,8 +426,77 @@ siempre los mismos avisos en el mismo orden.
   tomas, no una composición distinta.
 - **Tablas 13-3 y 14-2** (perro adulto joven y maduro sanos) piden fósforo
   0,4-0,8 % y 0,3-0,7 % MS = 1000-2000 y 750-1750 mg/1000 kcal. **Una ración
-  BARF normal ronda los 4000.** No se aplica —aquí manda FEDIAF, que no pone
-  máximo de fósforo— pero es la pregunta grande que abre este barrido, porque
+  BARF normal ronda los 4000.** ⚠️ Aquí ponía «aquí manda FEDIAF, que no pone
+  máximo de fósforo», y era falso: **FEDIAF sí lo pone en adulto, 4,00 g/1000
+  kcal** (Tabla III-3b, nota h). Corregido el 9 de septiembre. Lo que pasa es que
+  la ración BARF sale **pegada a ese máximo** y el libro recomienda la mitad, que
+  es justo la razón por la que el techo de SACN5 se aplicó la noche del 8 (ver
+  `DECISIONES.md` D-15). Es la pregunta grande que abrió este barrido, porque
   es de donde salen los topes de fósforo y sodio de la artrosis (34-2) y de la
   reacción adversa (31-3): las dos tablas repiten la cifra del perro sano por
   la comorbilidad de su población. Ver `PENDIENTE_NUTRICION.md`.
+
+---
+
+## Quinta pasada (9 de septiembre de 2026) · contar el barrido contra el total, esta vez de verdad
+
+La §cuarta pasada dejó escrita la lección: *«un barrido cuyo resultado no se
+compara contra el total no es un barrido, es una muestra»*. Ese día se corrigió
+el número de tablas (89, no 40) y se recuperaron tres. **Lo que no se hizo fue
+volver a contar.** Se hace hoy, y sale peor de lo que parecía.
+
+### El recuento
+
+| | |
+|---|---|
+| Tablas «Key nutritional factors» en SACN5 (contadas sobre el texto completo) | **91** |
+| Citadas en `Canislab-api` | **32** |
+| Sin citar | **59** |
+
+Y las 59, clasificadas por lo que son —no por lo que parecen—:
+
+| | Cuántas | Qué son |
+|---|---|---|
+| Comparativas de producto | **38** | «Key nutritional factors **in selected commercial veterinary therapeutic foods**… compared to recommended levels». No traen requisito: comparan piensos del mercado contra la recomendación, que ya tenemos. Son saltables |
+| Solo de gato | **10** | 20-3, 21-2, 22-1, 24-1, 27-5, 27-6, 46-12, 46-13, 68-7 y la de gatitos |
+| **Requisito canino o mixto SIN MIRAR** | **11** | Abajo, una a una |
+
+### Las once
+
+| Tabla | De qué |
+|---|---|
+| **16-4** | Cachorros lactantes — la composición de la leche de la perra |
+| **18-9** | **Perros de trabajo y deporte.** No es una patología: es una etapa/actividad que la app ya pregunta |
+| **25-5** | Alimentos líquidos o batidos comerciales, perro y gato (cuidados críticos) |
+| **49-2** | Enfermedades orales |
+| **50-3** | Trastornos de la deglución por lesión obstructiva |
+| **50-4** | Esofagitis y reflujo gastroesofágico |
+| **52-2** | Gastritis y úlcera gastroduodenal |
+| **54-2** | Motilidad y vaciamiento gástrico |
+| **56-2** | Gastroenteritis o enteritis aguda |
+| **59-1** | Síndrome de intestino corto |
+| **62-1** | **Colitis** |
+
+Casi todas son del bloque digestivo, que es justo donde el motor **sí** ofrece
+patología (`enteropatia_cronica`, con la Tabla 57-1) y donde por lo tanto es más
+fácil que falte una vecina.
+
+### Y 26 capítulos de 70 sin una sola cita
+
+Contado igual: buscando cada capítulo en todos los `.md` y `.json` del repo.
+Siete son felinos o de otras especies. Los caninos que quedan son antioxidantes,
+urolitiasis general, urolitos compuestos caninos, enfermedad periodontal y el
+bloque digestivo entero.
+
+### La consecuencia, que es la que importa
+
+**`CERRADO.md` reabre los límites de patología.** No porque haya una cifra mal
+—las que hay siguen siendo las de su fuente y la batería lo vigila—, sino porque
+«cerrado» no puede significar «cerrado sobre lo que casualmente hemos leído».
+
+Y la lección se apila sobre la de la cuarta pasada, un escalón más arriba: no
+basta con contar el barrido contra el total **de tablas**. El 8 de septiembre se
+vio que las tablas no lo dicen todo —la arginina que sube con la proteína, el
+ratio linoleico:linolénico y la proteína de la lactancia estaban en prosa, no en
+filas—, así que **el total contra el que hay que contar es el libro, no su índice
+de tablas**.

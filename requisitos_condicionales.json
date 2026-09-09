@@ -123,6 +123,38 @@
       "aplicado_por_el_solver": false,
       "fuente": "FEDIAF 2025, seccion 3.3 «Vitamin K» (Kronfeld DS 1989c, NRC 2006j, Strieker MJ et al. 1996). Verificado literal 9-sep-2026",
       "por_que": "FEDIAF, literal: «Usually vitamin K does not need to be added. However there is some indication that CANNED PET FOOD FOR CATS BEING HIGH IN FISH may increase the risk of PROLONGED COAGULATION TIMES; therefore it has been suggested to supplement high fish diets with vitamin K». || TRES MOTIVOS PARA NO APLICARLO, y ninguno es comodidad: (1) el aviso es **para el gato** y para pienso enlatado, no para el perro; (2) **FEDIAF no da fila de vitamina K para el perro** -- no esta entre los 41 nutrientes de la Tabla III-3b -- porque la sintetiza la flora intestinal; y (3) **el catalogo no tiene columna de vitamina K**, asi que no hay nada que medir ni con que verificar. || SE ESCRIBE IGUAL PORQUE NOS SENALA: nuestros menus llevan pescado por diseno y en algunas variantes el pescado es el 45 % del peso de la comida, muy por encima de lo que lleva un pienso. Si algun dia hay que mirar esto, aqui esta por que y donde empieza. || Y hay un dato del mismo NRC que lo hace menos preocupante en crudo que en lata: el aviso se asocia al pescado PROCESADO y a la oxidacion, no al pescado fresco."
+    },
+    "aminoacidos_si_no_se_garantiza_la_digestibilidad": {
+      "nombre": "Los aminoacidos esenciales, +10 %, porque no garantizamos la digestibilidad proteica",
+      "tipo": "factor_sobre_el_minimo",
+      "valor": 1.1,
+      "nutrientes": [
+        "Arginina",
+        "Histidina",
+        "Isoleucina",
+        "Leucina",
+        "Lisina",
+        "Metionina",
+        "Metionina_cistina",
+        "Fenilalanina",
+        "Fenilalanina_tirosina",
+        "Treonina",
+        "Triptofano",
+        "Valina"
+      ],
+      "aplica_a_etapas": [
+        "Adulto",
+        "Senior",
+        "CachorroJoven",
+        "CachorroCrecimiento",
+        "Gestante",
+        "GestanteTemprana",
+        "GestanteTardia",
+        "Lactante"
+      ],
+      "aplicado_por_el_solver": true,
+      "fuente": "FEDIAF 2025, seccion 3.2.1 «How to read the tables» y seccion 2.2 «Scope». Verificado literal 9-sep-2026",
+      "por_que": "APLICADO 9-sep-2026, Y SALIO DE LEER EL TEXTO, NO LA TABLA -- que es la tercera vez que pasa lo mismo (la arginina, el ratio linoleico:linolenico y la proteina de la lactancia fueron las otras dos). || FEDIAF §3.2.1, literal, en el recuadro que hay junto a la tabla de conversiones: «For commercial dog and cat foods it is recommended that the nutrient levels are at or above the levels listed in the tables and do not exceed the nutritional or legal maximum. **If the protein digestibility of >=80% (mentioned under 2.2. Scope) cannot be guaranteed, it is recommended to increase the essential amino acid levels by a minimum of 10%.**» || Y §2.2 «Scope» dice cual es la suposicion de la que cuelga TODA la guia: «These guidelines relate to dog and cat foods manufactured from ingredients with normal digestibility (i.e. >=70% DM digestibility; >=80% protein digestibility) and average bioavailability». || POR QUE NOS TOCA: **no podemos garantizar el 80 %**. El catalogo no tiene columna de digestibilidad -- ni una -- asi que no es que salgamos por debajo: es que no lo sabemos, y la regla de FEDIAF esta escrita justo para ese caso. Y hay motivo para no darlo por hecho: una racion BARF lleva entre un 20 y un 60 % de hueso carnoso, con colageno y tejido conectivo, que es lo menos digestible que hay en el plato. || MEDIDO ANTES DE APLICARLO, dos veces. (1) Sobre los 36 menus del catalogo, cuanto margen tienen hoy los doce sobre su minimo: TODOS por encima del 110 %, con la lisina a 358 % en el peor caso y la arginina a 263 %. El mas ajustado con diferencia es metionina+cistina: 112 % en el peor menu, 149 % en el percentil 10, 240 % de mediana. O sea que once de los doce sobran y uno va justo. (2) Con el +10 % puesto y por la via de la API: 12 perfiles (toy, mini, mediano, grande, gigante, senior, cachorro temprano y tardio, lactante, y adulto sin pollo, sin vacuno y sin pescado) dan menu LOS DOCE, en el peldano ESTRICTO. || ⚠️ Y HAY UNA SEGUNDA RAZON PARA QUE SEA METIONINA+CISTINA EL QUE VA JUSTO, y esta en el mismo documento: el Anexo 7.3 dice que el perro sintetiza la taurina a partir de los aminoacidos azufrados, que un estatus bajo de taurina «may also predispose to dilated cardiomyopathy», y que aparece precisamente «in dogs fed non-supplemented very low protein diets, or foods that are low in sulphur-containing amino acids or with poor availability of the sulphur-containing amino acids». Dos partes distintas de la misma guia apuntando al mismo nutriente. || DONDE SE APLICA: en `verificar.minimo_de()`, que es el unico sitio que escala minimos (regla del CLAUDE.md), asi que el solver y el semaforo lo reciben por la misma puerta y no pueden discrepar."
     }
   }
 }

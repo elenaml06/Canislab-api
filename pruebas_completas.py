@@ -64,7 +64,15 @@ def comprobar_menu(nombre_caso, g, der, etapa, peso=None):
             a = al.get(n, {})
             if a.get("categoria") in SUP_COMERCIALES:
                 techo = dosis_maxima_fabricante(a, peso)
-                if techo and gr > techo * 1.01:
+                # ⚠️ MEDIO PASO DE REDONDEO EN ABSOLUTO, ADEMÁS DEL 1 % (9 sep).
+                # Los gramos se enseñan con `round(x, 2)`, así que un solver que
+                # resuelve exacto en 0,075 g entrega 0,08. Sobre 3 g eso es un
+                # 0,2 % y el 1 % lo cubre; sobre 0,075 g es un 6,7 % y no. El
+                # error del redondeo es ABSOLUTO, no porcentual -- el mismo
+                # argumento que `PASO_DE_REDONDEO_G` en los mínimos del solver.
+                # Se probó lo contrario (bajar el techo del solver medio paso) y
+                # dejaba a un adulto de 2,2 kg en ROJO por vitamina D.
+                if techo and gr > max(techo * 1.01, techo + 0.005):
                     problemas.append(f"{nombre_caso}: {n} pasado de dosis ({gr}g > {techo}g)")
     total = sum(g.values())
     for cat, (mn, mx) in MARGENES.items():
@@ -2716,7 +2724,8 @@ _FRASES_PROHIBIDAS_B18 = (
     "no tiene máximo de fósforo",
 )
 _PERMISOS_B18 = ("crecimiento", "CRECIMIENTO", "CORREGIDO", "ES FALSO", "es falso",
-                 "y es falso", "estuvo mal escrita")
+                 "era falso", "y es falso", "estuvo mal escrita", "Aquí ponía",
+                 "Aqui ponia")
 _FICHEROS_B18 = [f for f in _os_b18.listdir(".")
                  if f.endswith((".md", ".json", ".py")) and f != "pruebas_completas.py"]
 for _f18 in sorted(_FICHEROS_B18):
@@ -2724,6 +2733,12 @@ for _f18 in sorted(_FICHEROS_B18):
         _txt18 = open(_f18, encoding="utf-8").read()
     except (OSError, UnicodeDecodeError):
         continue
+    # ⚠️ CON LOS ESPACIOS APLASTADOS, Y ESTO TAMBIEN SE APRENDIO FALLANDO. La
+    # primera version buscaba la frase tal cual y se le escapo la de
+    # `VERIFICACION_FILA_A_FILA.md`, que estaba partida por un salto de linea:
+    # «que no pone\n  maximo de fosforo». Una guardia sobre texto que no
+    # normaliza el texto solo caza las apariciones bien maquetadas.
+    _txt18 = " ".join(_txt18.split())
     for _frase18 in _FRASES_PROHIBIDAS_B18:
         _desde18 = 0
         while True:
@@ -6632,11 +6647,31 @@ else:
                       "límites chocan. Es el mensaje genérico otra vez.")
     else:
         _pares52 = {(x.get("patologia"), x.get("nutriente")) for x in _choque52}
-        _esperados52 = {("renal", "fosforo"), ("pancreatitis", "grasa")}
+        # ⚠️ REMEDIDO EL 9 DE SEPTIEMBRE, Y EL CULPABLE RENAL HA CAMBIADO.
+        #
+        # El 8 de septiembre el choque era («renal», FOSFORO) contra
+        # («pancreatitis», grasa). Hoy es («renal», POTASIO) contra la misma
+        # grasa, y no es que el diagnóstico se haya estropeado: es que el
+        # problema es otro. Al aplicar el +10 % de FEDIAF §3.2.1 sobre los
+        # aminoácidos, el solver necesita fuentes de proteína más densas, que
+        # traen más potasio -- así que soltar solo el fósforo YA NO desbloquea
+        # y soltar el potasio sí.
+        #
+        # `diagnosticar_choque_de_patologias` devuelve TODOS los límites cuya
+        # suelta desbloquea (no los dos primeros), así que la lista de hoy es
+        # completa: el fósforo ya no está porque ya no basta.
+        #
+        # Esto se actualiza en vez de relajarse a propósito. Un test que
+        # aceptara «cualquier límite renal» dejaría de vigilar lo único que
+        # importa aquí: que el motor sepa nombrar el choque en vez de soltar el
+        # mensaje genérico.
+        _esperados52 = {("renal", "potasio"), ("pancreatitis", "grasa")}
         if not _esperados52 <= _pares52:
-            fallos.append(f"BLOQUE52: el choque señalado es {sorted(_pares52)}, y lo medido "
-                          f"el 8 de septiembre es {sorted(_esperados52)} (soltando cualquiera "
-                          f"de los dos SÍ sale menú)")
+            fallos.append(f"BLOQUE52: el choque señalado es {sorted(_pares52)}, y lo remedido "
+                          f"el 9 de septiembre es {sorted(_esperados52)} (soltando cualquiera "
+                          f"de los dos SÍ sale menú). El 8 de septiembre era el fosforo renal, y "
+                          f"cambió al aplicar el +10 % de los aminoacidos: si vuelve a moverse, "
+                          f"mira qué restricción nueva ha entrado antes de tocar este número")
         for _x52 in _choque52:
             # Sin fuente, un veterinario no puede ir a comprobarlo, y entonces
             # el mensaje vuelve a ser una afirmación de la app sin respaldo.
@@ -7737,18 +7772,38 @@ if _gira60 is None:
     fallos.append("BLOQUE60: no hay ningun aceite rico en omega-6 y pobre en omega-3 en el "
                   "catalogo para inyectar el fallo. Sin poder romperlo, esto no demuestra nada")
 elif _ok60 and _g60:
-    _roto60 = dict(_g60)
-    _roto60[_gira60] = _roto60.get(_gira60, 0) + 60.0
-    _f_roto60 = verificar(_roto60, al, req, _der60, _et60, _peso60)
-    _pasa60 = [x["nutriente"] for x in _f_roto60["se_pasa"]]
-    if "Relación linoleico:linolénico" not in _pasa60:
-        _la = sum((al[_n]["nutrientes"].get("linoleico") or 0) * _g / 100.0
-                  for _n, _g in _roto60.items())
-        _ala = sum((al[_n]["nutrientes"].get("linolenico") or 0) * _g / 100.0
-                   for _n, _g in _roto60.items())
-        fallos.append(f"BLOQUE60: se le echan 60 g de {_gira60} a un menu -- el ratio "
-                      f"linoleico:linolenico sube a {(_la/_ala if _ala else 0):.1f}:1 contra un "
-                      f"techo de 26 -- y el semaforo no dice nada. Entonces no lo comprueba")
+    # ⚠️ EL CEBO SE AJUSTA HASTA QUE DE VERDAD SE PASA, Y SE COMPRUEBA QUE SE
+    # PASA (9 septiembre). Antes echaba 60 g fijos y daba por hecho que con eso
+    # bastaba. Fallo al aplicar el +10 % de los aminoacidos: el menu base cambio,
+    # los 60 g solo subian el ratio a 15,6 contra un techo de 26, y el test
+    # cantaba un fallo del semaforo que no existia. Un test que da por hecho que
+    # su propio cebo funciona no prueba nada -- se comprueba el cebo.
+    def _ratio60(gr):
+        _la = sum((al[_n]["nutrientes"].get("linoleico") or 0) * _q / 100.0
+                  for _n, _q in gr.items())
+        _ala = sum((al[_n]["nutrientes"].get("linolenico") or 0) * _q / 100.0
+                   for _n, _q in gr.items())
+        return (_la / _ala) if _ala else 0.0
+
+    _roto60, _r60 = None, 0.0
+    for _g_extra60 in (60.0, 120.0, 240.0, 480.0, 960.0):
+        _prueba60 = dict(_g60)
+        _prueba60[_gira60] = _prueba60.get(_gira60, 0) + _g_extra60
+        _r60 = _ratio60(_prueba60)
+        if _r60 > 26.0:
+            _roto60 = _prueba60
+            break
+    if _roto60 is None:
+        fallos.append(f"BLOQUE60: no se ha podido pasar del techo de 26 echandole hasta 960 g "
+                      f"de {_gira60} (el ratio se queda en {_r60:.1f}:1). Sin cebo, la "
+                      f"comprobacion de abajo no prueba nada")
+    else:
+        _f_roto60 = verificar(_roto60, al, req, _der60, _et60, _peso60)
+        _pasa60 = [x["nutriente"] for x in _f_roto60["se_pasa"]]
+        if "Relación linoleico:linolénico" not in _pasa60:
+            fallos.append(f"BLOQUE60: se le echa {_gira60} a un menu hasta dejar el ratio "
+                          f"linoleico:linolenico en {_r60:.1f}:1, contra un techo de 26, y el "
+                          f"semaforo no dice nada. Entonces no lo comprueba")
 
 #    (b) LA ARGININA. Aqui la inyeccion obvia NO sirve y conviene decir por que:
 #        si se fabrica un menu pobre en arginina, la que lo caza es la Tabla
@@ -7812,6 +7867,70 @@ if _ok60 and _g60:
                     fallos.append(f"BLOQUE60: apagando la regla de la Tabla VII-13 el semaforo "
                                   f"sigue exigiendo {_pedido_sin} g de arginina en vez de bajar "
                                   f"a {_min_iiib}. Este test no demuestra que la regla haga nada")
+
+# ⚠️ Y EL FACTOR DEL 10 % SOBRE LOS AMINOACIDOS (9 septiembre), que es la
+# CUARTA cosa que sale de leer el texto de FEDIAF en vez de sus tablas.
+#
+# §3.2.1, literal: «If the protein digestibility of >=80% (mentioned under 2.2.
+# Scope) cannot be guaranteed, it is recommended to increase the essential amino
+# acid levels by a MINIMUM OF 10%». Y §2.2 dice de que cuelga toda la guia:
+# «ingredients with normal digestibility (i.e. >=70% DM digestibility; >=80%
+# protein digestibility)».
+#
+# No podemos garantizarlo: el catalogo no tiene columna de digestibilidad, y una
+# racion BARF lleva 20-60 % de hueso carnoso. Asi que se aplica.
+#
+# Se vigilan las tres cosas que pueden romperse, que son las de siempre:
+#   1. Que el factor siga siendo el de su fuente (1,10) y siga cubriendo los 12.
+#   2. Que `minimo_de()` lo aplique DE VERDAD -- es el unico sitio que escala
+#      minimos, y si alguien lo moviera al solver el semaforo mediria otra cosa.
+#   3. Que NO se lo coma ningun otro nutriente: la proteina, el calcio y los
+#      demas se quedan como estan.
+from condicionales import factor_sobre_el_minimo as _factor_b60
+from verificar import minimo_de as _min_b60, _num as _num_b60, EQUIVALENCIA as _EQ_B60
+
+_AMINOS_B60 = ["Arginina", "Histidina", "Isoleucina", "Leucina", "Lisina",
+               "Metionina", "Metionina_cistina", "Fenilalanina",
+               "Fenilalanina_tirosina", "Treonina", "Triptofano", "Valina"]
+_FACTOR_B60 = 1.10
+
+for _et_b60 in ("Adulto", "Senior", "CachorroJoven", "CachorroCrecimiento", "Lactante"):
+    for _aa_b60 in _AMINOS_B60:
+        _f = _factor_b60(_aa_b60, _et_b60)
+        if abs(_f - _FACTOR_B60) > 1e-9:
+            fallos.append(f"BLOQUE60: el factor de {_aa_b60} en {_et_b60} vale {_f} y FEDIAF "
+                          f"§3.2.1 dice «a minimum of 10%», o sea 1,10. Si se ha quitado a "
+                          f"proposito hay que decir con que fuente")
+        # y que llegue al minimo de verdad, no solo a la funcion que lo lee
+        _fila_b60 = req.get(_aa_b60)
+        if not _fila_b60:
+            fallos.append(f"BLOQUE60: {_aa_b60} no esta en requerimientos_v2_final.json")
+            continue
+        _crudo_b60 = _num_b60(_fila_b60.get(f"min{_EQ_B60.get(_et_b60, _et_b60)}"))
+        _con_factor = _min_b60(_fila_b60, _aa_b60, _EQ_B60.get(_et_b60, _et_b60))
+        if _crudo_b60 and _con_factor and abs(_con_factor - _crudo_b60 * _FACTOR_B60) > 1e-6:
+            fallos.append(f"BLOQUE60: `minimo_de` devuelve {_con_factor} para {_aa_b60} en "
+                          f"{_et_b60} y el JSON dice {_crudo_b60}. El +10 % de FEDIAF §3.2.1 no "
+                          f"se esta aplicando donde tiene que aplicarse")
+
+# 3. Y que no se le pegue a nadie mas. La proteina NO lleva factor -- FEDIAF
+#    habla de «essential amino acid levels», no de la proteina total.
+for _otro_b60 in ("Proteína_total", "Calcio", "Grasa_total", "Taurina"):
+    if abs(_factor_b60(_otro_b60, "Adulto") - 1.0) > 1e-9:
+        fallos.append(f"BLOQUE60: {_otro_b60} ha ganado un factor sobre su minimo y FEDIAF "
+                      f"§3.2.1 habla solo de «essential amino acid levels»")
+
+# 4. Y el test tiene que fallar con el fallo puesto: si se quita la regla del
+#    JSON, `minimo_de` tiene que volver al valor publicado. Se comprueba que hoy
+#    NO devuelve el publicado, que es la misma afirmacion vista del otro lado.
+_fila_mc = req.get("Metionina_cistina")
+if _fila_mc:
+    _pub = _num_b60(_fila_mc.get("minAdulto"))
+    if _pub and abs(_min_b60(_fila_mc, "Metionina_cistina", "Adulto") - _pub) < 1e-9:
+        fallos.append("BLOQUE60: `minimo_de` de metionina+cistina devuelve el valor publicado "
+                      "tal cual, o sea que el factor condicional no esta puesto. Es el "
+                      "aminoacido con menos margen del catalogo (112 % del minimo en el peor "
+                      "menu), asi que es justo donde se notaria")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

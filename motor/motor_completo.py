@@ -793,6 +793,24 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             continue
         if categoria_de[n] == "Suplementos":
             t = dosis_maxima_fn(a, peso_perro_kg)
+            # ⚠️ NO SE LE RESTA MEDIO PASO DE REDONDEO, Y SE PROBÓ (9 septiembre).
+            #
+            # El BLOQUE 1 cazó que un cachorro joven de 1,5 kg salía con 0,08 g
+            # de un multivitamínico cuyo tope de fabricante son 0,075: el solver
+            # resuelve exacto en 0,075 y el `round(x, 2)` con el que se enseñan
+            # los gramos lo sube a 0,08. La reacción obvia -- bajar el techo a
+            # 0,07 para que el redondeo no pueda pasarse -- se probó y sale
+            # CARA: un adulto de 2,2 kg a DER 250 pasaba a salir en ROJO por
+            # vitamina D, reproducible en 3 de 3 tandas. Al perro pequeño, esos
+            # 0,005 g de multivitamínico son su vitamina D.
+            #
+            # Así que el techo se queda entero y lo que se ajusta es la
+            # comprobación, que tolera medio paso de redondeo en valor ABSOLUTO
+            # (0,005 g). Es el mismo razonamiento que `PASO_DE_REDONDEO_G` en
+            # los mínimos, visto desde el otro lado: el error del redondeo es
+            # absoluto, no porcentual, y sobre 0,075 g un porcentaje no lo
+            # cubre. Y 0,005 g de un multivitamínico no los pesa nadie: la
+            # diferencia es de la pantalla, no del plato.
             techos.append(t if t else 5.0)
         else:
             kcal100 = a.get("energia", 0) or 1.0

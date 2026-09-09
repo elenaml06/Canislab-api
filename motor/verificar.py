@@ -330,8 +330,30 @@ def peso_objetivo_desde_bcs(peso_actual_kg, bcs):
     return round(p / (1.0 + exceso), 3)
 
 
+def _factor_condicional(nombre_req, etapa):
+    """El factor de `condicionales.py` que aplica a este requisito, o 1.0.
+
+    Se importa dentro de la función a propósito: `condicionales` lee un JSON al
+    cargarse y `verificar` es el módulo más bajo del motor. Importarlo arriba
+    haría que cualquier cosa que toque el semáforo arrastre el fichero.
+    """
+    try:
+        from condicionales import factor_sobre_el_minimo
+    except ImportError:
+        return 1.0
+    return factor_sobre_el_minimo(nombre_req, etapa)
+
+
 def minimo_de(r, nombre_req, etapa, der_efectiva=None):
     """El mínimo de FEDIAF de un requisito, escalado por la DER efectiva.
+
+    ⚠️ Y DESDE EL 9 DE SEPTIEMBRE, POR EL FACTOR CONDICIONAL DE FEDIAF §3.2.1:
+    los doce aminoácidos esenciales van un 10 % por encima del publicado, porque
+    la guía entera supone ≥80 % de digestibilidad proteica (§2.2) y nosotros no
+    la podemos garantizar — el catálogo no tiene esa columna. La cifra y la cita
+    viven en `requisitos_condicionales.json`; aquí solo se aplica, y se aplica
+    AQUÍ porque este es el único sitio que escala mínimos: si se hiciera en el
+    solver, el semáforo mediría contra otro número.
 
     ES EL ÚNICO SITIO que sabe escalar. El solver y el semáforo leen el
     mínimo por aquí, igual que leen el máximo por `maximo_de()`: si cada
@@ -342,11 +364,21 @@ def minimo_de(r, nombre_req, etapa, der_efectiva=None):
     Sin ella (o fuera de adulto) se devuelve el mínimo publicado tal cual.
     """
     mn = _num(r.get(f"min{etapa}"))
-    if mn is None or der_efectiva is None or etapa != "Adulto":
+    if mn is None:
+        return None
+    # El factor condicional se aplica SIEMPRE y ANTES que el escalado por DER:
+    # es una corrección del mínimo publicado, no del consumo del perro. Se
+    # multiplica también `minAdulto110` unas líneas más abajo, o el escalado
+    # mezclaría un ancla corregida con otra que no lo está.
+    _f = _factor_condicional(nombre_req, etapa)
+    mn = mn * _f
+    if der_efectiva is None or etapa != "Adulto":
         return mn
     if nombre_req in NO_SE_ESCALAN:
         return mn
     v110 = _num(r.get("minAdulto110"))
+    if v110 is not None:
+        v110 = v110 * _f
     if v110 is None:
         # Sin las dos anclas no se escala: son los tres que FEDIAF no da
         # para adulto (EPA+DHA, linolénico, araquidónico) y el ratio Ca:P.

@@ -94,6 +94,37 @@ def con_procedencia(etapa):
     return fuera
 
 
+def factor_sobre_el_minimo(nombre_requisito, etapa):
+    """El factor por el que hay que multiplicar el mínimo de FEDIAF, o 1.0.
+
+    ⚠️ HOY SOLO HAY UNO, Y NO ES UN CAPRICHO DE FEDIAF: es la condición sobre la
+    que cuelga toda su tabla. §2.2 «Scope» dice que la guía vale para alimentos
+    «with normal digestibility (i.e. ≥70 % DM digestibility; ≥80 % protein
+    digestibility)», y §3.2.1 dice qué hacer cuando eso no se puede garantizar:
+    subir los aminoácidos esenciales «by a minimum of 10 %».
+
+    **No podemos garantizarlo.** El catálogo no tiene columna de digestibilidad,
+    y una ración BARF lleva entre un 20 y un 60 % de hueso carnoso, que es lo
+    menos digestible del plato. No es que salgamos por debajo: es que no lo
+    sabemos, y la regla está escrita justo para ese caso.
+
+    Vive aquí y no en `verificar.py` por lo mismo que el resto de este módulo:
+    la cifra va en el JSON, con su cita, y el código solo la lee. Lo llama
+    `minimo_de()`, que es el ÚNICO sitio que escala mínimos — así el solver y el
+    semáforo lo reciben por la misma puerta y no pueden discrepar.
+    """
+    factor = 1.0
+    for regla in REGLAS.values():
+        if regla.get("tipo") != "factor_sobre_el_minimo":
+            continue
+        if nombre_requisito not in (regla.get("nutrientes") or []):
+            continue
+        if etapa not in (regla.get("aplica_a_etapas") or []):
+            continue
+        factor = max(factor, float(regla["valor"]))
+    return factor
+
+
 def suelo_relativo_de(etapa, clave_nutriente, valor_del_que_depende):
     """El suelo de `clave_nutriente` cuando depende de otro nutriente del MISMO menú.
 

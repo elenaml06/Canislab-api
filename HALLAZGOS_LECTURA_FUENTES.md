@@ -3088,3 +3088,309 @@ digestibilidad**. No fijan ningún requisito. Lo único aprovechable: FEDIAF
 distingue **fibra dietética total, insoluble y soluble** como tres analitos con
 método propio, así que «soluble vs insoluble» no es un concepto vago — es una
 columna que no tenemos.
+
+---
+
+## FEDIAF 2025, LEÍDA ENTERA (9 de septiembre) — y lo gordo estaba en un recuadro, no en una tabla
+
+Elena: *«cuando te digo que te los leas me refiero a que te los leas completos.
+No me vale que cojas las tablas y listo, porque hemos visto que haciendo eso hay
+errores»*. Esto es el resultado de hacerlo. Nueve hallazgos, y el primero cambia
+doce mínimos.
+
+### 1 · Los aminoácidos esenciales van un 10 % por encima, y no lo aplicábamos
+
+**§3.2.1 «How to read the tables»**, en el recuadro que hay al lado de la tabla
+de conversiones, literal:
+
+> *«For commercial dog and cat foods it is recommended that the nutrient levels
+> are at or above the levels listed in the tables and do not exceed the
+> nutritional or legal maximum. **If the protein digestibility of ≥80 %
+> (mentioned under 2.2. Scope) cannot be guaranteed, it is recommended to
+> increase the essential amino acid levels by a minimum of 10 %.**»*
+
+Y **§2.2 «Scope»** dice de qué cuelga toda la guía:
+
+> *«These guidelines relate to dog and cat foods manufactured from ingredients
+> with **normal digestibility (i.e. ≥70 % DM digestibility; ≥80 % protein
+> digestibility)** and average bioavailability.»*
+
+**No podemos garantizar ese 80 %.** El catálogo no tiene columna de
+digestibilidad —ni una— así que no es que salgamos por debajo: es que no lo
+sabemos, y la regla está escrita justo para ese caso. Y hay motivo para no darlo
+por hecho: una ración BARF lleva entre un 20 y un 60 % de hueso carnoso, con
+colágeno y tejido conectivo, que es lo menos digestible del plato.
+
+**Medido, dos veces.** Primero, cuánto margen tienen hoy los doce sobre su
+mínimo, en los 36 menús base del catálogo:
+
+| aminoácido | peor menú | percentil 10 | mediana |
+|---|---|---|---|
+| Lisina | 358 % | 385 % | 503 % |
+| Arginina | 263 % | 312 % | 372 % |
+| Histidina | 246 % | 279 % | 376 % |
+| Isoleucina | 234 % | 290 % | 360 % |
+| Leucina | 228 % | 248 % | 314 % |
+| Valina | 209 % | 254 % | 366 % |
+| Treonina | 204 % | 217 % | 264 % |
+| Fenilalanina+tirosina | 202 % | 237 % | 287 % |
+| Fenilalanina | 180 % | 221 % | 306 % |
+| Triptófano | 143 % | 168 % | 229 % |
+| Metionina | 137 % | 189 % | 319 % |
+| **Metionina+cistina** | **112 %** | **149 %** | 240 % |
+
+Once de los doce sobran. **Uno va justo**, y es metionina+cistina.
+
+Segundo, con el +10 % puesto y por la vía de la API: doce perfiles (toy, mini,
+mediano, grande, gigante, senior, cachorro temprano y tardío, lactante, y adulto
+sin pollo, sin vacuno y sin pescado) dan menú **los doce, en el peldaño
+estricto**.
+
+**Y hay una segunda razón para que sea justo ese el que va apretado**, en otra
+parte del mismo documento — ver el hallazgo 6.
+
+### 2 · El máximo LEGAL solo se aplica si el nutriente se añade como aditivo
+
+**§3.1.3**, literal:
+
+> *«**A legal maximum only applies when the particular trace element or vitamin
+> is added to the recipe as an additive**, but relates to the "total" amount
+> present in the finished product… **If the nutrient comes exclusively from feed
+> materials, the legal maximum does not apply**, instead the nutritional
+> maximum, when included in the relevant tables, should be taken into account.»*
+
+Nosotros aplicamos **siempre** el legal, para el zinc (56,75), el yodo (2750),
+el hierro (170,45), el selenio (142), el cobre (7,0), el manganeso (42,5) y la
+vitamina D (14,1875). En un menú **sin suplementos** esos nutrientes vienen solo
+de materia prima y el legal no aplicaría.
+
+**No se cambia nada**, y ahora hay un motivo escrito: el legal suele ser más
+estricto que el nutricional (vitamina D: 227 legal contra 320 nutricional), así
+que aplicarlo siempre es el lado seguro. Lo que sí importa es no volver a
+escribir «está por encima del máximo legal» sin el matiz.
+
+### 3 · La definición de «máximo nutricional», que es la que faltaba
+
+**§1.1 Glosario**: *«Nutritional maximum limit is the maximum level of a
+nutrient in a complete pet food that, **based on scientific data, has not been
+associated with adverse effects** in healthy dogs and cats. **Levels exceeding
+the nutritional maximum may still be safe**, however, no scientific data are
+currently known to FEDIAF.»*
+
+Es exactamente la distinción que hoy hizo falta con el fósforo: un máximo
+nutricional no es un techo toxicológico, es «hasta aquí hay datos». Y explica por
+qué FEDIAF puede decir del yodo que *«the existing legal maximum is safe for all
+dogs»* después de descartar el estudio de Castillo.
+
+### 4 · El BCS ideal del perro es 4/9 a 5/9, y en BCS 9 FEDIAF dice más del 45 %
+
+**Anexo 7.1**, literal: *«**The ideal BCS should therefore be between 4/9 and
+5/9**»*, con grasa corporal óptima **15-25 %** en perro (Kealy 2002, el estudio
+de 14 años con labradores).
+
+Y la **Tabla VII-2** da los rangos por punto, que es lo que usamos para derivar
+el peso objetivo desde el BCS:
+
+| BCS | % de peso sobre el ideal (FEDIAF) | lo que aplica Rawku |
+|---|---|---|
+| 6 | +10 a 15 % | +10 % |
+| 7 | +20 a 30 % | +20 % |
+| 8 | +30 a **45** % | +30 % |
+| 9 | **>45 %** | 40 % |
+
+Coincidimos con el **extremo bajo** del rango en 6, 7 y 8 — o sea que estimamos
+**menos exceso**, y el peso objetivo sale más alto y con él más kcal. Y en BCS 9
+FEDIAF dice **más del 45 %** y nosotros aplicamos 40.
+
+Eso confirma con fuente primaria lo que ya estaba escrito en `verificar.py` a
+partir de Broome et al. (2023): en BCS 9 nuestra estimación es una **cota
+inferior**. **Y FEDIAF también da filas por DEBAJO de 5**, que AAHA no tiene
+(BCS 4 = −10 a 15 %, 3 = −20 a 30 %, 2 = −30 a 40 %, 1 = −≥40 %).
+
+No se toca todavía porque el peso objetivo alimenta el DER, que se calcula en
+los dos repos y tiene contrato compartido (`der_casos.json`). Va a
+`PENDIENTE_NUTRICION.md` con la medida.
+
+### 5 · La ración diaria TOTAL incluye los premios
+
+**§4.1**: *«The total daily ration should match the recommended allowances and
+nutritional and legal maximum values listed in the tables for complete pet
+food.»* Rawku no modela premios ni snacks. Es un hueco de producto, no de motor.
+
+### 6 · Taurina: no es esencial en el perro, pero el mecanismo apunta a met+cis
+
+**Anexo 7.3**, sobre el perro: sintetiza taurina de los aminoácidos azufrados,
+así que **no es esencial**. Pero:
+
+> *«low plasma levels of taurine (<40 µmol/L) **may also predispose to dilated
+> cardiomyopathy**… low plasma or low whole-blood taurine levels may be seen in
+> dogs fed non-supplemented very low protein diets, **or foods that are low in
+> sulphur-containing amino acids or with poor availability of the
+> sulphur-containing amino acids**»*
+
+Y la intervención que nombra: *«The addition of taurine to such foods **or
+increasing the intake of the precursors (methionine and cysteine)** can prevent
+such a decrease»*. Razas más sensibles: **Terranova**, con la tasa de síntesis
+disminuida (Backus 2006) — y es una de las dos razas con cifra propia de DER.
+
+**Dos partes distintas de la misma guía apuntando al mismo nutriente**: §3.2.1
+dice que subamos los aminoácidos esenciales porque no garantizamos la
+digestibilidad, y el anexo 7.3 dice que el azufrado poco disponible es
+precisamente el que lleva a cardiomiopatía dilatada. Y metionina+cistina es el
+que menos margen tiene del catálogo. Conecta con `dcm_asociada_a_dieta`, que hoy
+solo tiene avisos.
+
+### 7 · Reacción adversa al alimento: el diagnóstico es la dieta de eliminación
+
+**Anexo 7.6**: el signo predominante es el **prurito, en casi el 100 % de los
+casos**; solo el 10-15 % dan signos digestivos. Y *«adverse reactions to food are
+**only diagnosed through the elimination of the food component** (eviction
+diet)»*, idealmente confirmado por reintroducción.
+
+Los alérgenos más citados son leche, vacuno, huevo, cereales y lácteos; los
+estudios controlados nombran trigo, soja, **pollo** y maíz — con el matiz de que
+puede ser simplemente lo que más se come. **Casi cualquier proteína intacta puede
+causarla.**
+
+Rawku ya tiene la herramienta (exclusiones por palabra y por familia de especie).
+Lo que no tiene es un **modo dieta de eliminación**: una o como mucho dos fuentes
+de proteína novedosas, que es lo que pide SACN5 cap.31. Va a producto.
+
+### 8 · Anexo 7.7: los alimentos humanos, con cifras
+
+| | Dosis más baja documentada |
+|---|---|
+| Pasas | **2,8 g/kg de peso vivo** |
+| Uvas | 19,6 g/kg |
+| Cebolla fresca | **5-10 g/kg** |
+| Ajo | 5 g/kg (extracto equivalente, 7 días) |
+| Teobromina | letal a 90-115 mg/kg; LD50 250-500 |
+
+*«Even a large dog of 40 kg may need to eat only 120 g to be at risk»* (pasas), y
+*«the severity of the illness does not seem to be dose-related»*.
+
+**Ninguno está en el catálogo** — comprobado, cero coincidencias con uva, pasa,
+cebolla, ajo, puerro, cebollino, chalota, chocolate y cacao. Lo que no hay es
+nada que impida meterlos mañana.
+
+### 9 · El changelog 2011→2025, y las secciones 5 y 6
+
+Ya contadas más arriba: el changelog no deja nada que aplicar y nuestra tabla
+recoge los seis cambios que importan; las secciones 5 y 6 son métodos analíticos
+y protocolos de digestibilidad. Lo único aprovechable de ahí: FEDIAF distingue
+**fibra total, insoluble y soluble** como tres analitos con método propio, así
+que «soluble vs insoluble» no es un concepto vago, es una columna que no
+tenemos — y hace falta para la pregunta de la fibra y el hierro.
+
+---
+
+## SACN5 · empieza la lectura por capítulos ENTEROS (9 de septiembre)
+
+No por tablas. El recuento de la §quinta pasada de `VERIFICACION_FILA_A_FILA.md`
+dice por qué: 32 de 91 tablas citadas y 26 capítulos de 70 sin una sola cita, y
+la lección del 8 de septiembre es que las tablas no traen lo que la fuente dice
+en prosa.
+
+### Capítulo 7 · Antioxidantes — leído entero
+
+Es uno de los 26 sin citar, y trae **cinco cosas**, dos de ellas con cifra.
+
+#### 7.1 · La vitamina E no tiene máximo en FEDIAF, y aquí hay uno sugerido
+
+Literal: *«There are no published toxicity data for vitamin E in dogs; however,
+concentrations exceeding 2,000 IU/kg DM of food have been fed for 17 weeks
+without observable negative reactions. Although an upper limit of toxicity has
+not been documented, **a level of 1,000 IU/kg DM of food, or 45 IU/kg of body
+weight, has been suggested (NRC, 2006)**»*.
+
+1.000 UI/kg MS ÷ 4 = 250 UI/1000 kcal, y × 0,671 = **167,75 mg/1000 kcal**.
+
+**FEDIAF no da máximo de vitamina E** (está en la lista `SIN_MAXIMO` de
+`auditar_fediaf.py`), así que hoy el motor no le pone ninguno. Es la misma forma
+que el fósforo del adulto: un nutriente sin techo y una fuente que sí sugiere
+uno.
+
+**Y corrobora algo de ayer**: el suelo de vitamina E de la disfunción cognitiva
+que hubo que apartar por no caber eran **187,5 mg/1000 kcal** — o sea que estaba
+**por encima del nivel que el NRC sugiere como límite superior**. Apartarlo no
+fue solo aritmética del catálogo.
+
+#### 7.2 · El selenio: el rango protector es el mismo de la Tabla 35-3
+
+*«Studies indicate antioxidant protective ranges for selenium would be
+approximately **0.50 to 1.3 mg selenium/kg food DM** for dogs and cats»* — que es
+exactamente el rango de la Tabla 35-3 (125-325 µg/1000 kcal) que la disfunción
+cognitiva pide y que no aplicamos.
+
+Y el techo: *«**AAFCO (2007) suggests a safe upper limit of 2 mg selenium/kg diet
+for dogs**»* = **500 µg/1000 kcal**, o sea **3,5 veces el máximo legal de FEDIAF**
+(142) que aplicamos nosotros. No cambia nada —manda el legal— pero sitúa la
+decisión: no aplicar el suelo de 125 no es por miedo a la toxicidad, es porque
+obliga a vivir pegado a un techo legal, y eso sigue valiendo.
+
+#### 7.3 · El β-caroteno del perro, corroborado por la vía del plasma
+
+*«β-carotene can serve as a precursor to vitamin A in dogs, but not cats»*, y el
+dato que lo cuantifica: a la misma dosis, el gato alcanza en plasma
+**concentraciones 50 veces mayores** que el perro, *«indicating that most of the
+β-carotene administered to dogs is probably converted to vitamin A rather than
+absorbed directly»*.
+
+O sea que el perro es un convertidor eficiente, que es justo lo que dice el
+factor 4:1 de FEDIAF Tabla VII-14 encontrado hoy. Dos fuentes independientes.
+
+#### 7.4 · De dónde sale el mínimo de vitamina E, y por qué es condicional
+
+*«NRC recommends that dogs receive 22 IU vitamin E per kg/food DM (**based on a
+food containing 0.1 ppm selenium, not more than 1 % linoleic acid** and 3,670
+kcal ME/kg DM)»*.
+
+Esto le pone **cifra a la condición** de la regla `vitamina_e_segun_pufa` que
+tenemos escrita como `documentado_sin_cifra`: el mínimo publicado supone **no más
+de un 1 % de ácido linoleico en materia seca**. Una ración BARF pasa de ahí de
+sobra. No cambia nada hoy —está medido que vamos holgados, 0 de 216 menús por
+debajo de la relación clásica 0,6 mg/g y el peor a 1,53— pero la regla deja de
+ser «FEDIAF lo nombra y no lo cuantifica»: hay un ancla.
+
+#### 7.5 · Y dos avisos sueltos que no cambian el motor
+
+- **Vitamina C y oxalato**: en personas, 2.000 mg/día suben la excreción urinaria
+  de oxalato; en gatos, hasta 193 mg/kg MS no aumentó el riesgo. Es el respaldo
+  de la fila «Ascorbic acid» de la Tabla 40-5 que hoy no podemos aplicar por
+  falta de datos de etiqueta.
+- **Vitamina C y galgos**: *«oral vitamin C supplementation at 1 g/day may slow
+  racing times in greyhounds»*. No es nuestro caso, pero desmonta la idea de que
+  suplementar antioxidantes siempre suma.
+
+### Capítulo 62 · Colitis — la Tabla 62-1, que era una de las once sin mirar
+
+**No es una patología que ofrezcamos** (tenemos `enteropatia_cronica`, con la
+Tabla 57-1), y añadirla es decisión de producto, no de fuentes. Se transcribe
+aquí para que la decisión se pueda tomar con la tabla delante.
+
+Tabla 62-1, columna perro, convertida a por 1000 kcal (× 2,5 en gramos, × 2500
+en mg):
+
+| Factor | La fuente | Por 1000 kcal |
+|---|---|---|
+| Proteína, adulto | 15-30 % MS | 37,5-75 g |
+| Proteína, cachorro | 22-32 % MS | 55-80 g |
+| Grasa | 8-15 % MS | 20-37,5 g |
+| Fibra, alimento muy digestible | ≤5 % MS | ≤12,5 g |
+| Fibra, alimento enriquecido | ≥7 % MS | ≥17,5 g |
+| Sodio | 0,3-0,5 % MS | 750-1250 mg |
+| Cloruro | 0,5-1,3 % MS | 1250-3250 mg |
+| Potasio | 0,8-1,1 % MS | 2000-2750 mg |
+
+Dos cosas que saltan a la vista:
+
+- **El suelo de proteína (37,5) está por debajo del mínimo de FEDIAF (52,1)**,
+  igual que en el oxalato. Otra que solo podría pautar un colegiado.
+- **El techo de proteína (75) es exactamente el mismo que aplicamos en
+  pancreatitis**, y el de grasa (37,5) también. Las dos tablas coinciden sin
+  haberlo buscado.
+
+Y por tercera vez en el mismo día, la **digestibilidad**: *«Highly digestible
+foods: **≥87 % for protein** and ≥90 % for fat»*, *«Fiber-enhanced foods: ≥80 %
+for protein»*. Aparece en FEDIAF §2.2, en FEDIAF §3.2.1 y aquí. Es una columna
+que el catálogo no tiene y de la que cuelgan cosas.
