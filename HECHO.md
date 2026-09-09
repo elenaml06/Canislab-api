@@ -990,3 +990,224 @@ proteína ≤ 75 a la vez dejan una ventana que el catálogo no alcanza— pero 
 mensaje que recibe el veterinario es el del tutor: «quita alguna restricción
 y vuelve a probar». No puede: son las dos enfermedades que tiene el perro.
 Queda apuntado en `PENDIENTE_NUTRICION.md`.
+
+---
+
+## 9 de septiembre de 2026 (noche) — FEDIAF leída ENTERA, y lo que faltaba aplicado
+
+Elena, tras la tercera vez que una lectura «completa» dejó cosas fuera:
+
+> «TODO SE LEE AL PIE DE LA LETRA Y SE VA APUNTANDO TODO PARA APLICAR LO
+> NECESARIO.» · «todo lo que falta de fediaf aplicalo»
+
+El inventario `fediaf_tablas.json` decía «aplicada» de tres secciones que
+**nadie se había leído enteras**, y «pendiente» de otras cuatro. Se han leído
+las siete y ha salido esto.
+
+### Lo que se ha aplicado
+
+**La histamina del pescado mal conservado** (§7.6.2.4), que no estaba en
+ningún sitio del repo. FEDIAF la nombra literalmente: «pseudo-allergic
+reactions caused by high histamine levels in **not well-preserved scombroid
+fish (e.g. tuna)**», y lo hace en el apartado titulado «All individuals
+susceptible if sufficient quantity eaten» — o sea que no depende de que el
+perro tenga nada. Servimos pescado crudo y cuatro especies del catálogo
+forman histamina: Atún y Caballa (Scombridae), Sardina (Clupeidae) y
+Boquerón (Engraulidae), tres de las seis familias que nombra el Reglamento
+(CE) 2073/2005. Va como aviso y no como tope porque la histamina la genera la
+mala conservación, no el pez, y es **termorresistente**: no se va ni
+congelando ni cocinando, así que limitar los gramos no arreglaría nada.
+
+**La uva y la pasa**, que faltaban en la lista de prohibidos. Estaban los
+Allium y el chocolate — las §§7.7.2 y 7.7.3 — y faltaba la §7.7.1 entera. Con
+sus dosis: 2,8 g de pasas o 19,6 g de uva por kg de peso, «a large dog of
+40 kg may need to eat only 120 g». Y el tóxico **sigue sin identificarse**
+(«Analysis for a variety of substances has proved negative»), así que no hay
+forma de acotarlo por análisis. La uva es una **fruta**, o sea la categoría
+del catálogo por donde habría entrado sin que chirriara nada.
+
+**Las dos cifras en sangre de la taurina del perro** (§7.3.3): >40 µmol/L en
+plasma y >200 µmol/L en sangre entera. El aviso de miocardiopatía dilatada
+mandaba a hacer una analítica **sin decir contra qué se lee**. Y con ellas,
+que el **Terranova** sintetiza taurina más despacio (Backus 2006), que es un
+riesgo de raza y no de dieta.
+
+**La confirmación por reintroducción** (§7.6.4): «Ideally this should be
+confirmed by a challenge (reintroduction of the suspected component)». Es la
+mitad del diagnóstico que casi nadie hace, y sin ella se le quita de por vida
+un alimento a un perro al que puede no hacerle nada.
+
+**La Tabla VII-14 entera**, en `fediaf_conversiones_vitaminas.json`, y el
+**BLOQUE 70** rehaciendo con ella las seis conversiones de UI que declaran
+tres fichas del catálogo. Las seis salen bien; lo que no había era forma de
+saberlo. Convertir la vitamina D con el factor de la A multiplica por doce el
+aporte de un multivitamínico y el semáforo no dice nada.
+
+**La ecuación de energía que de verdad nos toca** (§7.2.2.2 b). FEDIAF tiene
+tres formas de calcular la ME y dedica un apartado a «products of vegetable
+or animal origin, **in their natural state**, fresh or preserved, such as
+meat, offal», que es exactamente este catálogo: `4 × %proteína + 9 × %grasa +
+4 × %NFE`. Medido: la mediana del catálogo sale a **1,014 veces** esa
+ecuación y 70 de 73 fichas animales caen dentro del ±10 %. Ya la seguía. Lo
+que no había era comprobación — y las kcal son el **denominador de las 43
+filas del semáforo**, así que un error ahí desplaza todas las
+concentraciones y ninguna prueba lo ve, porque todas usan el mismo
+denominador. **BLOQUE 71.** Los hígados que se pasan quedan explicados por el
+tercer término (NFE, o sea glucógeno) que el catálogo no tiene como columna.
+
+**La salvedad del extremo bajo del BCS** (§7.1.3 + Tabla VII-3): «scores at
+the lower end of the BCS are **confounded by muscle atrophy**». El BCS 9 ya
+llevaba la suya («la escala se satura») y faltaba la otra mitad. Ahora las dos
+salen de la misma función, `salvedadDelBcs()`, porque escritas a mano en las
+dos pantallas que pintan el peso objetivo acabarían diciendo cosas distintas.
+
+### Lo que NO se ha aplicado, y por qué
+
+**El invierno** (§7.2.3.5): «When kept outside in winter, dogs may need **10
+to 90 % more calories**». Es un hueco real —la ficha no pregunta dónde vive
+el perro— pero no hay *una* cifra, hay un rango de 1 a 9. Es decisión.
+`PENDIENTE_PRODUCTO.md`.
+
+**El suelo de 70 kcal/kg^0,75** de perros enjaulados: es su revisión de
+literatura, no su recomendación. La Tabla VII-7 dice 95 y es la que manda.
+
+**La termogénesis de la comida**: da el total («about 10 %») y no cuánto sube
+con la proteína ni con el número de tomas. Aplicarlo sería inventarse dos
+cifras.
+
+**La forma química de las vitaminas B**: es dato, no código. Medido con el
+peor factor de la Tabla VII-14, el **ácido pantoténico caería por debajo del
+mínimo de FEDIAF con el menú en verde**, y la tiamina aguanta por un 2 %.
+`DATOS_QUE_FALTAN.md`, etiqueta por etiqueta, y **no lo rellena el asistente**.
+
+### Y una corrección de método, que es lo que más vale
+
+Las tres condicionales nuevas de la §3.3.1 se habían escrito con su medida
+**contra `catalogo_menus.json`**: «hoy 0 de 216 menús llevan clara de huevo».
+Elena: *«pero no tiene que estar en base a los menus del catalogo, porque eso
+puede cambiar..»*.
+
+Tiene razón, y es exactamente el fallo que este repo lleva persiguiendo desde
+agosto: una frase medida una vez se queda escrita en un fichero de datos, el
+catálogo se regenera, la frase deja de ser verdad **y no la desmiente nadie**.
+Así que la medida no se guarda: **se rehace**. El **BLOQUE 69** resuelve menús
+de verdad en cada batería y falla cuando la conclusión que sostiene cada regla
+se da la vuelta. En el JSON se queda solo lo que no depende de ningún menú: la
+aritmética de las tablas.
+
+### Un test que no podía fallar
+
+En el BLOQUE 50, la comprobación de «con dos patologías manda la más
+estricta» llamaba a `valor_nutriente(al[n], …)` — la ficha entera donde la
+función espera el diccionario de nutrientes. Devolvía 0 para todo, así que la
+comprobación **no podía fallar ni con el fallo puesto**. Arreglada, y
+comprobados los otros ocho sitios que llaman a esa función: era el único.
+
+---
+
+## 9-10 de septiembre de 2026 (noche) — SACN5 leída ENTERA, los 70 capítulos
+
+Elena, después de que yo anunciara una corrección de densidad y la desmintiera
+dos comprobaciones después:
+
+> «PRIMERO LEE TODO Y APUNTA TODO Y CUANDO YA TENGAS CLARO TODO LO QUE TIENES QUE
+>  HACER CUANDO TERMINES LA LECTURA APLICAS PORQUE SI NO ESTAS APLICANDO COSAS
+>  QUE LUEGO TIENES QUE CAMBIAR 10 VECES»
+
+Así que esta vez: leer los 70 capítulos enteros —texto **y** tablas—, apuntar
+todo sin tocar nada, y aplicar al final de una vez. El barrido contó **476
+tablas** y **121 «Key nutritional factors»**, sin cortar la salida (la lección de
+`VERIFICACION_FILA_A_FILA.md`).
+
+### La corrección que motivó todo, resuelta al revés de lo que yo dije
+
+Quedaba escrito que SACN5 declara **3,5 kcal/g** de materia seca y que por tanto
+las 68 cifras de patología convertidas con 4,0 estaban un 14 % apretadas de más.
+**Es falso.** De las 24 tablas de SACN5 que cita `patologias.json`, **una sola
+declara densidad** —la 13-3— y dice «Concentrations presume an energy density of
+**4.0 kcal/g**». El 3,5 del Box 1-2 es un ejemplo trabajado con un alimento
+concreto; en el mismo párrafo del cap.13 el fósforo se deriva a 3,5 y el sodio
+dice «this allowance is for foods with an energy density of **4 kcal/g**».
+
+Y ahora está **probado y no supuesto**: las 88 cifras del motor se reproducen
+desde las filas de sus tablas a 4,0 —fósforo 0,8 % MS → 2000, sodio 0,4 % →
+1000—, 84 exactas y 4 con un ajuste declarado.
+
+### Lo que se aplica
+
+**Las 88 conversiones, como dato y no como prosa.** Cada cifra de
+`patologias.json` lleva ahora un bloque `conversion` con el valor literal de la
+fuente, su unidad, la densidad y la cita, y `auditar_conversiones.py` **rehace la
+cuenta** (BLOQUE 72). Una cifra sin ese bloque falla igual. Existe porque el 8 de
+septiembre una conversión se escribió ×25 en vez de ×2,5 y lo único que la cazó
+fue que alguien la leyó.
+
+**El suelo de DHA de crecimiento y reproducción: 0,05 g/1000 kcal.** Aparece con
+la misma cifra en cuatro sitios (Tablas 15-5, 17-1 en sus dos columnas y 33-5,
+más el texto de los caps. 15 y 33): «DHA needs to be at least 40 % of the total
+DHA plus EPA, or 0,02 % DM». El motor pedía EPA+DHA ≥0,125 g y **no pedía
+reparto**, así que un menú de cachorro podía cumplirlo entero con EPA y salir
+verde. Medido antes de aplicarlo: 0 de 10 menús por debajo, el más justo a 1,47
+veces el suelo, el DHA entre el 57 % y el 75 % del total. No aprieta nada hoy —
+que es el motivo de ponerlo hoy. BLOQUE 73.
+
+**El umbral de calcio del BLOQUE 69, corregido de 5625 a 3750.** Esa tarde escribí
+«FEDIAF no da a partir de qué nivel de calcio empieza» y usé el 90 % del máximo,
+que me inventé. La Tabla 32-1 de SACN5 lo publica: «Higher levels of zinc are
+required in foods with **calcium >1,5 % DM**» = 3750 mg/1000 kcal, el 60 % del
+máximo y no el 90 %. El factor sigue sin existir en ninguna fuente.
+
+**La cifra del frío, que decíamos que no existía.** `der.py` y
+`PENDIENTE_PRODUCTO.md` afirmaban que no hay una cifra sino un rango de 1 a 9.
+Eso es verdad de FEDIAF y falso del conjunto: la **Tabla 5-3** la da por tipo de
+pelo y salto de temperatura (pelo corto **+95 %**, pelo largo +59,5 %, Labrador
++25 %, Gran Danés +22 %). Lo que falta no es la cifra: es la pregunta en la ficha.
+
+**`sacn5_fuentes_de_minerales.json`**, la hermana de la Tabla VII-14 para
+minerales, con el % elemental de cada sal y —lo que la de vitaminas no tiene—
+**dos ceros**: el óxido de hierro («not biologically available», se añade como
+colorante y hace que el alimento *parezca* alto en hierro) y el óxido de cobre
+(«essentially zero»; AAFCO pidió dejar de usarlo). Y el hígado de cerdo, que
+también es cero — no nos afecta porque no hay ninguna ficha de cerdo, y los de
+vaca, cordero y pavo la fuente los llama «highly available».
+
+**Seis avisos** que la fuente da y la app no decía: el agua con menos de 150 ppm
+de sodio en la insuficiencia cardíaca avanzada; la dosis terapéutica de
+L-carnitina (2 g tres veces al día); el potasio con diuréticos; que el zinc oral
+**no se da con la comida**; y cuándo empieza la dieta renal (estadio 2, o
+creatinina >2 mg/dl).
+
+### Lo que NO se aplica, y por qué
+
+Las **nueve tablas de recomendación canina sin patología en el motor** quedan
+leídas enteras y con sus números en `PENDIENTE_PRODUCTO.md`, para que la decisión
+se tome con ellos delante. Dos de las nueve están **cerradas**: la 53-2 (vólvulo)
+porque su único factor es el tamaño del bocado, que ya está en el aviso de
+`riesgo_gdv`; y la 47-4 (periodontal) porque sus cifras de fósforo y sodio son
+**exactamente** las del perro adulto sano, que ya se aplican a todos.
+
+### Dos confirmaciones que valen tanto como un hallazgo
+
+El suelo de proteína de la perra gestante (125 g/1000 kcal) se aplicó desde
+FEDIAF («may be double»). SACN5 llega al mismo número por un experimento: «a food
+that had about **50 % DM protein** … no problems with hypoglycemia or ketosis»
+(Blaza 1989). 50 % de MS a 4,0 son exactamente 125. Y la vitamina E del perro de
+trabajo (83,9) cuadra con la Tabla 18-9 leída entera: ≥500 UI/kg MS en las cuatro
+columnas de actividad.
+
+### Y dos guardias que dejaron de vigilar al cambiar lo que vigilaban
+
+La batería los cazó a los dos, que es exactamente lo que tenían que hacer:
+
+- **BLOQUE 58** comprobaba que las etapas de crecimiento no tuvieran *ningún*
+  suelo condicional, como forma de asegurar que el de proteína de reproducción no
+  se escapara. Funcionó mientras hubo un solo suelo; en cuanto entró el de DHA,
+  CachorroJoven «ganó un suelo de reproducción» que no era de reproducción. Ahora
+  mira **la proteína**, que es de lo que habla la frase de FEDIAF.
+- **BLOQUE 65** ancla 25 cifras del documento de revisión contra el motor vivo, y
+  una de ellas buscaba «el ajuste senior de **Thes 2014**». Al pasar el escalón
+  de edad a la Tabla VII-6 de FEDIAF, el documento dejó de decir Thes y el ancla
+  dejó de encontrar su frase — y el propio bloque lo dice: «o se reescribió la
+  frase (y hay que actualizar el patrón aquí) o se borró el dato». Era lo
+  primero. De paso se ancló también el ajuste **joven**, que no lo estaba y era
+  el que había sido código muerto.

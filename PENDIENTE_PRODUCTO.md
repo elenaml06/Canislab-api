@@ -412,6 +412,26 @@ la proteína sube la presión de ese esfínter.
 
 **Ninguna de las dos se puede marcar sin diagnóstico.**
 
+### ⚠️ Y el barrido está ahora COMPLETO — 10 de septiembre de 2026
+
+Al leer SACN5 entera (los 70 capítulos) se contaron **476 tablas** y **121 «Key
+nutritional factors»**, sin cortar la salida. De ellas, las que son
+**recomendación canina** están todas mapeadas contra `patologias.json` menos las
+nueve de esta sección — y **dos de las nueve resultan estar cerradas**:
+
+- **Tabla 53-2 (dilatación-vólvulo gástrico).** Su único factor nutricional es el
+  tamaño del bocado: «**The only key nutritional factor** … >30 mm was protective
+  against GDV in giant-breed dogs». Ni un nutriente. Es exactamente lo que ya
+  dice el aviso de `riesgo_gdv`, así que **no falta nada**.
+- **Tabla 47-4 (enfermedad periodontal).** Sus cifras de fósforo (0,4-0,8 % MS) y
+  sodio (0,2-0,4 %) son **las mismas** que las del perro adulto sano de la Tabla
+  13-3, que ya se aplican a todo perro desde el 8 de septiembre. Y su único
+  factor propio es la textura con sello VOHC, que es de pienso seco. **Tampoco
+  falta nada.**
+
+Las siete de arriba quedan **confirmadas fila a fila** contra el PDF esa misma
+noche: los números de esta sección son los de la fuente.
+
 ---
 
 ## Sugerir patologías por raza (9 de septiembre de 2026)
@@ -554,3 +574,69 @@ información que la fuente da, que quien elige alimentar así tiene derecho a
 tener, y que hoy no está.
 
 Cita completa y contexto: `HALLAZGOS_LECTURA_FUENTES.md`, capítulo 56.
+
+## Dos preguntas que la ficha no hace y que FEDIAF cuantifica (9 de septiembre de 2026)
+
+Las dos salen de leer **enteras** dos secciones de FEDIAF que estaban sin leer.
+Las dos son de producto y no de nutrición: la cifra existe, lo que no existe es
+la pregunta. Por eso están aquí y no aplicadas.
+
+### 1 · ¿Duerme fuera? — hasta un 90 % más de calorías en invierno
+
+FEDIAF §7.2.3.5, literal:
+
+> «When kept outside in winter, dogs may need **10 to 90 % more calories** than
+> during summer.»
+
+Y en la misma sección, el mecanismo con su cifra: por debajo de la zona
+termoneutra el gasto sube **2-5 kcal/kg^0,75 por cada grado**, y la zona
+termoneutra depende del pelo — 15-20 °C en razas de pelo largo, 20-25 °C en
+pelo corto, 10-15 °C en un husky de Alaska.
+
+**Qué recibe hoy un mastín que duerme en el patio en enero:** exactamente la
+misma ración que un perro de piso. La app no pregunta dónde vive.
+
+**⚠️ Y LA CIFRA EXISTE — corregido el 9 de septiembre por la noche.** Cuando se
+escribió este punto decía que «no hay una cifra, hay un rango de 1 a 9». Eso era
+verdad de FEDIAF y falso del conjunto de las fuentes: **SACN5 cap.5, Tabla 5-3**
+lo publica por tipo de pelo y por salto de temperatura concreto.
+
+| Perro | Aumento del DER | De | A |
+|---|---|---|---|
+| Labrador retriever y beagle | **+25 %** (12-43) | 15 °C | 8,5 °C |
+| Gran Danés | **+22 %** | verano | invierno |
+| Pelo **corto** | **+95 %** | 25 °C | 7,6 °C |
+| Pelo **largo** | **+59,5 %** | 25 °C | 7,6 °C |
+| Beagle | +70,5 % | 17 °C | −17 °C |
+| Perro de trineo de Alaska | +61,5 % | 17 °C | −17 °C |
+
+(Blaza 1982, Zentek y Meyer 1992, Meyer 1990.) Ojo al sentido: el de **pelo
+corto necesita más** que el de pelo largo, porque aísla peor.
+
+**Así que lo que falta no es la cifra: es la pregunta.** La ficha no sabe dónde
+duerme el perro ni a qué temperatura, y sin eso no hay a qué fila ir. Lo que hay
+que decidir es (a) si se pregunta, (b) qué se pregunta exactamente — ¿duerme
+fuera? ¿a cuántos grados? ¿pelo corto o largo, que la app ya podría deducir de la
+raza? — y (c) qué se hace con un perro que duerme fuera solo en invierno. Las dos
+citas están en `der.py`, junto a `BASE_ACTIVIDAD`.
+
+### 2 · La masa muscular, que es la Tabla VII-3 y no es el BCS
+
+FEDIAF §7.1.3, sobre nuestra propia escala:
+
+> «scores at the lower end of the BCS are **confounded by muscle atrophy**»
+
+y publica una segunda escala para eso, la **Tabla VII-3**, de 0 a 3, que se mide
+**palpando** espina, escápulas, cráneo y alas del ilion.
+
+**Ya aplicado, el 9 de septiembre:** la salvedad. `salvedadDelBcs()` en
+`src/bcs.js` avisa en la parte baja de la escala de que el peso objetivo puede
+quedarse corto si lo que falta es músculo y no grasa — el BCS 9 ya llevaba la
+suya («la escala se satura») y faltaba la del otro extremo. Lo vigila
+`tests/bcs.spec.js`.
+
+**Lo que sigue pendiente:** la escala entera, que es una pantalla nueva y de
+palpación. Importa sobre todo en la ficha del veterinario: un perro puede estar
+**obeso y sarcopénico a la vez**, y eso es justo lo que hay que ver en el
+senior, en el oncológico y en la caquexia. Hoy la ficha tiene BCS y no tiene
+esto.

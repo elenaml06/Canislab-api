@@ -139,12 +139,13 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 68 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `pruebas_completas.py` | **La batería.** Los 73 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
 | `auditar_patologias.py` | Cada cifra de `patologias.json` contra `requerimientos_v2_final.json`: que ninguna patología formulable tenga un tope por debajo del mínimo de FEDIAF, y que la clave del nutriente exista en el `MAPA`. Lo ejecuta el BLOQUE 32 |
 | `radiografia.py` | Imprime los números que **ENTRAN** al motor, para comparar `main` con una rama a golpe de `diff`. No lo ejecuta la batería: se corre a mano. Existe porque el semáforo comprueba el menú contra las kcal que le dieron — si las kcal ya venían mal, el menú sale VERDE para un perro que no es el tuyo, y eso solo se ve en la entrada |
 | `auditar_catalogo.py` | Huecos y datos raros del catálogo, y quién se queda sin aminograma. Lo ejecuta el BLOQUE 19 |
 | `regenerar_catalogo.py` | Rehace los 36 menús de la vista previa y sus 180 variantes. **Está en el repo por un fallo real**: el 8 de septiembre se regeneró el catálogo con una copia de este script que vivía en un scratchpad y que llamaba al motor **sin `margenes_categoria`** — el motor formula sin proporciones BARF, y salieron menús de **25,8 kg de comida al día con un 91 % de verdura y sin hueso**, los 216 **en verde**, porque lo que se había apagado no era la nutrición sino la FORMA, y la forma no la mira el semáforo. No llegó a `main`. Desde el 9 de septiembre el script vive aquí, hace la misma llamada que la API, y **el BLOQUE 25 comprueba las proporciones de los 216 menús** |
 | `auditar_fediaf.py` | Cada valor del JSON contra la tabla de FEDIAF. Lo ejecuta el BLOQUE 18 |
+| `auditar_conversiones.py` | **Que la conversión de cada cifra se rehaga en vez de creerse.** Las 88 cifras de `patologias.json` vienen de tablas publicadas en **% de materia seca** y el motor trabaja **por 1000 kcal**. Esa conversión estaba hecha una vez y **contada en prosa** dentro del campo `por_que`, y una frase no se ejecuta: el 8 de septiembre una se escribió ×25 en vez de ×2,5 —10 veces el valor bueno, con forma de dato bueno— y lo único que la cazó fue que alguien la leyó. Ahora cada cifra lleva un bloque `conversion` con el valor literal de la fuente, su unidad, la densidad de referencia y la cita, y este script **rehace la cuenta**. Una cifra sin ese bloque falla igual: lo que no se puede rehacer no se puede auditar. Lo ejecuta el BLOQUE 72 |
 | `leer_fuente.py` + `lecturas_fuentes.json` | **Que una lectura no se deje nada.** «Leída» dejó de significar «he pasado los ojos» el 9 de septiembre, después de que la misma cosa fallara **tres veces el mismo día**: se leyó FEDIAF entero y se escaparon dos filas de raza y un escalón de edad; se hizo un inventario de tablas para arreglarlo y se escaparon siete cosas que estaban en el texto; se amplió a secciones y cuatro decían «aplicada» sin estar leídas — y al leerlas salió la más gorda de todas, que el máximo **legal** de FEDIAF solo aplica si el nutriente se **añade como aditivo**. El arreglo no podía ser tener más cuidado. `leer_fuente.py` extrae de cada sección **todas** sus cifras con unidad y **todas** sus frases normativas, y `lecturas_fuentes.json` tiene que dar veredicto a cada una. Las frases importan tanto como las cifras: la regla del máximo legal no lleva ni un número. Lo ejecuta el BLOQUE 68, que además exige que lo que `fediaf_tablas.json` declare «leído» tenga aquí su desglose |
 | `auditar_fediaf_tablas.py` | **Que ninguna tabla de FEDIAF se quede sin veredicto.** Recorre el PDF, encuentra cada «Table X-n» y exige que esté en `fediaf_tablas.json` diciendo qué hace el motor con ella. Nació el 9 de septiembre de una pregunta de Elena: cómo podía ser que no usáramos la Tabla VII-6 si se había leído FEDIAF entero. La respuesta estaba en un comentario de `der.py` de tres días antes — la tabla **se leyó**, se confirmó literal, se clasificó bien y se apartó, sin que nadie cruzara su escalón de edad contra el que aplicábamos, que era la mitad. Lo mismo había pasado con las dos filas de raza de la tabla de al lado. El fallo no es de lectura: es que «me lo he leído» no se puede comprobar y un inventario sí. Lo ejecuta el BLOQUE 67 |
 | `contrastar_fuentes.py` | Una ficha del catálogo contra **BEDCA, CIQUAL y USDA a la vez**, en el orden de `Bases.md`. **No lo ejecuta la batería** (necesita red y se baja 10 MB): es la herramienta de quien va a mirar una ficha. Trae dentro cómo se lee cada fuente — el XML de BEDCA hay que reconstruirlo de su `query.js`, y con la lista de atributos recortada devuelve el cuerpo vacío sin dar error |
@@ -272,7 +273,7 @@ completo y las medidas: `HISTORIA_TECNICA.md`.
 El DER se calcula dos veces: `der.py` aquí y `calcularDER()`/`src/der.js` en
 `canislab-web` — y **manda el del frontend**, que se envía en
 `der_objetivo`; `der.py` solo corre si alguien llama a `/der`, que no llama
-nadie. Se vigilan por separado contra `der_casos.json` (100 casos, **el
+nadie. Se vigilan por separado contra `der_casos.json` (124 casos, **el
 mismo archivo en los dos repos**): BLOQUE 23 aquí, `der-contrato.spec.js`
 allí. Si tocas la fórmula de un lado, regenera esperados y copia
 `der_casos.json` a los dos repos — los dos commits, o ninguno. Detalle
@@ -309,6 +310,15 @@ verificando cada cifra contra su fuente original, y encontró cinco errores y
 catorce patologías con factores de su propia fuente sin aplicar. Ábrelo antes de
 tocar `patologias.json`: los números siguen viviendo allí y este documento es su
 lectura, no una segunda copia — si discrepan, manda el JSON.
+`LECTURA_SACN5.md` (10 de septiembre) es el **registro de la lectura íntegra de
+SACN5**, capítulo a capítulo, texto y tablas. Existe porque una lectura que no
+deja rastro no se puede comprobar ni continuar: dice de cada capítulo qué se
+aplicó, qué no y **por qué no**, y trae leídas enteras las **nueve tablas de
+recomendación canina que el motor no ofrece**, para que esa decisión se tome con
+los números delante. Su cabecera explica el método —leer todo, apuntar todo, y
+aplicar solo al final— y el fallo que lo motivó: leer un párrafo, aplicarlo, y
+descubrir en el siguiente que estaba mal. Ábrelo antes de volver a abrir SACN5.
+
 `VERIFICACION_FILA_A_FILA.md` es el registro de las cuatro pasadas de
 verificación de ese día, y su §cuarta pasada trae la lección que más cuesta:
 **el barrido de las tablas de SACN5 se hizo cortando su propia salida con
@@ -404,13 +414,43 @@ coinciden 153 de 156 celdas. Y BEDCA distingue «midieron 0» (`value_type`
 al volcarla a un CSV y que convierte huecos en ceros mudos. Detalle y las
 medidas: `PENDIENTE_NUTRICION.md` §5-quater.
 
-En la raíz, los seis: `alimentos_v3_final.json` (el catálogo),
+En la raíz, los ocho: `alimentos_v3_final.json` (el catálogo),
 `requerimientos_v2_final.json` (la tabla de FEDIAF), `catalogo_menus.json`
 (los 36 menús precalculados de la vista previa y sus 180 variantes),
-`der_casos.json` (el contrato del DER, ver arriba) y
-`recomendaciones_libro.json` (los techos del libro para el perro sano) y
+`der_casos.json` (el contrato del DER, ver arriba),
+`recomendaciones_libro.json` (los techos del libro para el perro sano),
 `requisitos_condicionales.json` (los requisitos que dependen de la propia
-dieta).
+dieta), `fediaf_conversiones_vitaminas.json` (la Tabla VII-14: cuántos
+microgramos de cada fuente hacen una UI) y `sacn5_fuentes_de_minerales.json` (su
+hermana para los minerales, del capítulo 6 de SACN5).
+
+**El octavo es de la noche del 9 de septiembre y trae algo que la tabla de
+vitaminas no tiene: dos ceros.** El problema de base es el mismo —la etiqueta
+declara la **sal** y el catálogo anota el número como si fuera el elemento, así
+que «óxido de zinc 100 mg» son 72 mg de zinc—, pero SACN5 añade dos fuentes cuyo
+mineral **se analiza y no llega al perro**: el **óxido de hierro** («the iron in
+iron oxide is not biologically available»; se añade como colorante rojo, y «a pet
+food containing iron oxide will appear to be high in iron») y el **óxido de
+cobre** («copper availability was essentially zero»; AAFCO pidió dejar de
+usarlo). Eso no es un factor de conversión, es un cero. Y una tercera cosa que sí
+es un alimento: el **hígado de cerdo** también tiene cobre con disponibilidad
+cero, mientras que los de **vaca, cordero y pavo** —tres de los seis del
+catálogo— la fuente los nombra como «highly available». Hoy no afecta: no hay
+ninguna ficha de cerdo. Queda escrito para el día que alguien proponga añadirla.
+
+**El séptimo es del 9 de septiembre por la noche y existe por un hueco
+concreto.** Tres fichas del catálogo llevan la vitamina A y la D convertidas
+de UI a microgramos, y la conversión estaba *hecha y escrita* en el campo
+`nota_datos` de cada ficha sin comprobarse contra nada. Es el peor sitio para
+un error, porque tiene forma de dato bueno: convertir la vitamina D con el
+factor de la A (0,3 en vez de 0,025) multiplica por **doce** el aporte de un
+multivitamínico y el semáforo no dice nada. El **BLOQUE 70** rehace las seis
+conversiones desde la nota de cada ficha; las seis salen bien, y una séptima
+ya no puede entrar sin comprobarse. Lo que sigue sin resolverse es dato y no
+código: ninguna ficha dice en qué **forma química** viene cada vitamina del
+grupo B, y con el peor factor de la tabla el ácido pantoténico caería por
+debajo del mínimo de FEDIAF con el menú en verde. Está en
+`DATOS_QUE_FALTAN.md` y **no lo rellena el asistente**.
 
 **El quinto es del 8 de septiembre y merece una línea de por qué está solo.**
 No cabía en ninguno de los otros dos sin romper lo que significan: en
@@ -432,7 +472,7 @@ se comprueba entero en cada batería.
 python3 pruebas_completas.py     # ~25 min, tiene que salir TODO EN VERDE
 ```
 
-Los 68 bloques tardan unos **25 minutos** (1.458 s en la última medida; el
+Los 73 bloques tardan unos **25 minutos** (1.458 s en la última medida; el
 «~10 min» que ponía aquí se quedó corto en cuanto los bloques 50 a 61
 empezaron a resolver menús de verdad, y el «~2 min» de antes llevaba meses
 caducado). No necesita red ni claves de verdad: se fabrica

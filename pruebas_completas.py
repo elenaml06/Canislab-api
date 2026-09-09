@@ -6716,7 +6716,15 @@ for _etq46, _der46, _peso46, _etapa46, _adulto46 in _PERROS_46:
             _esperados46 = (_topes_46(_pats46, _etapa46) or (None,))[0] or {}
             _kcal46 = _kcal_reales_46(_g46) or 1.0
             for _nut46, _lim46 in _esperados46.items():
-                _tiene46 = sum(valor_nutriente(al[n], _nut46) * g / 100.0 for n, g in _g46.items())
+                # ⚠️ CASO REAL ENCONTRADO (9 septiembre 2026): esta linea decia
+                # `valor_nutriente(al[n], _nut46)`, o sea le pasaba la FICHA ENTERA
+                # donde la funcion espera el dict de NUTRIENTES. Una ficha no tiene
+                # "fosforo" en la raiz -- lo tiene dentro de `nutrientes` --, asi que
+                # `valor_nutriente` devolvia 0 para todo y `_por1000_46` salia 0
+                # siempre. La comprobacion entera estaba MUERTA: no podia fallar ni
+                # con el fallo puesto. Es justo lo que dice CLAUDE.md que no vale.
+                _tiene46 = sum(valor_nutriente(al[n].get("nutrientes", {}), _nut46) * g / 100.0
+                               for n, g in _g46.items())
                 _por1000_46 = _tiene46 / _kcal46 * 1000.0
                 if _por1000_46 > _lim46 * 1.001:
                     fallos.append(f"BLOQUE50 {_caso46}: {_nut46} sale a {_por1000_46:.1f} por "
@@ -7715,10 +7723,18 @@ for _r58 in _REGLAS58.values():
 for _et58 in _ETAPAS_REPRO_58:
     if abs((_cond58(_et58) or {}).get("proteina", 0) - _ESPERADO_58) > 1e-9:
         fallos.append(f"BLOQUE58: en {_et58} el suelo de proteina no son {_ESPERADO_58}")
+# ⚠️ Y SE MIRA LA PROTEINA, NO «QUE NO HAYA NINGUN SUELO» (10 septiembre 2026).
+# Esto decia `if _cond58(_et58):` -- o sea, fallaba si la etapa tenia CUALQUIER
+# suelo condicional. Funciono mientras hubo uno solo, y dejo de funcionar en
+# cuanto entro el suelo de DHA de crecimiento (BLOQUE 73): CachorroJoven y
+# CachorroCrecimiento «ganaron un suelo de reproduccion» que no era de
+# reproduccion. Lo que este bloque tiene que vigilar es que no se escape LA
+# PROTEINA, que es de lo que habla la frase de FEDIAF.
 for _et58 in ("Adulto", "Senior", "CachorroJoven", "CachorroCrecimiento"):
-    if _cond58(_et58):
-        fallos.append(f"BLOQUE58: la etapa {_et58} ha ganado un suelo de reproduccion. La frase de "
-                      f"FEDIAF es «Total protein (Reproduction)»: fuera de ahi no aplica")
+    if "proteina" in (_cond58(_et58) or {}):
+        fallos.append(f"BLOQUE58: la etapa {_et58} ha ganado el suelo de PROTEINA de reproduccion "
+                      f"({_cond58(_et58)['proteina']}). La frase de FEDIAF es «Total protein "
+                      f"(Reproduction)»: fuera de ahi no aplica")
 
 # 3. Que el SOLVER lo aplique de verdad, y que el menu salga.
 import main as _api58
@@ -7911,15 +7927,27 @@ for _k60 in _SIN_CIFRA_60:
         fallos.append(f"BLOQUE60: la regla sin cifra '{_k60}' no dice `aplicado_por_el_solver: "
                       f"false`. Una regla que el motor no aplica tiene que decirlo en el propio "
                       f"JSON, no solo en un comentario")
-    _nut = _r.get("nutriente")
-    for _et60_i in ("Adulto", "CachorroCrecimiento", "Lactante"):
-        if _nut in _cnd60.suelos_de_la_etapa(_et60_i):
-            fallos.append(f"BLOQUE60: '{_k60}' no tiene cifra para el perro y sin embargo "
-                          f"`suelos_de_la_etapa({_et60_i})` devuelve {_nut}. El solver estaria "
-                          f"aplicando un numero que no ha traido nadie")
-        if any(x["nutriente"] == _nut for x in _cnd60.suelos_relativos_de_la_etapa(_et60_i)):
-            fallos.append(f"BLOQUE60: '{_k60}' aparece como suelo relativo en {_et60_i} y no "
-                          f"tiene coeficiente publicado para el perro")
+    # ⚠️ TODOS los nutrientes de la regla, no solo `nutriente`. Una regla puede
+    # tocar dos -- el zinc y el cobre cuando el calcio esta alto, la biotina y la
+    # vitamina K con antivitaminas -- y entonces la convencion del fichero es
+    # `nutriente: null` + `nutrientes: [...]`. Comprobar solo el primero dejaria
+    # el segundo sin vigilar, que es la mitad de la regla sin alarma.
+    _nuts60 = [x for x in ([_r.get("nutriente")] + list(_r.get("nutrientes") or [])) if x]
+    for _nut in _nuts60:
+        for _et60_i in ("Adulto", "CachorroCrecimiento", "Lactante"):
+            if _nut in _cnd60.suelos_de_la_etapa(_et60_i):
+                fallos.append(f"BLOQUE60: '{_k60}' no tiene cifra para el perro y sin embargo "
+                              f"`suelos_de_la_etapa({_et60_i})` devuelve {_nut}. El solver estaria "
+                              f"aplicando un numero que no ha traido nadie")
+            if any(x["nutriente"] == _nut for x in _cnd60.suelos_relativos_de_la_etapa(_et60_i)):
+                fallos.append(f"BLOQUE60: '{_k60}' aparece como suelo relativo en {_et60_i} y no "
+                              f"tiene coeficiente publicado para el perro")
+    # Y que una regla sin cifra no se quede SIN nutriente que vigilar: si nadie
+    # dice a que nutriente afecta, el bucle de arriba no mira nada y pasa siempre.
+    if not _nuts60 and not (_r.get("depende_de") or _r.get("nombre")):
+        fallos.append(f"BLOQUE60: la regla sin cifra '{_k60}' no nombra ningun nutriente ni en "
+                      f"`nutriente` ni en `nutrientes`, asi que este bloque no vigila nada de "
+                      f"ella y pasaria en verde diga lo que diga")
 
 # La Tabla VII-13 de FEDIAF, comprobada CONTRA SUS PROPIAS FILAS. La tabla da
 # el adulto a 18 %MS de proteina con 0,52 g/100gMS de arginina y a 20 %MS con
@@ -8256,6 +8284,18 @@ _PROHIBIDOS_B60 = (
     ("chalota", "Allium spp."),
     ("chocolate", "teobromina: letal a 90-115 mg/kg, FEDIAF Anexo 7.7.2"),
     ("cacao", "teobromina: 10-30 mg/g en el cacao en polvo; 4 g/kg pueden matar"),
+    # ⚠️ LOS DOS QUE FALTABAN (9 septiembre 2026, leyendo entera la §7.7, que
+    # decia «aplicada» sin que nadie se la hubiera leido). La lista tenia los
+    # Allium y el chocolate -- las dos toxicidades de las §§7.7.2 y 7.7.3 -- y
+    # NO tenia la primera de las tres, que es la §7.7.1. Y la uva no es un
+    # ingrediente raro: es una FRUTA, o sea la categoria «Verduras y frutas»
+    # del catalogo, que es justo donde podria entrar sin que chirriara nada.
+    ("uva", "2,8 g de pasas o 19,6 g de uva por kg de peso ya son dosis de riesgo "
+            "(FEDIAF §7.7.1): un perro de 40 kg solo necesita comer 120 g. Y el toxico "
+            "sigue SIN IDENTIFICAR -- «Analysis for a variety of substances has proved "
+            "negative» --, asi que no hay forma de medirlo ni de descartarlo por analisis"),
+    ("pasa", "la pasa es peor que la uva por peso: 2,8 g/kg contra 19,6 g/kg, y una caja "
+             "de pasas trae tipicamente 500 g (FEDIAF §7.7.1)"),
 )
 for _pal_b60, _motivo_b60 in _PROHIBIDOS_B60:
     _encontrados = [_n for _n in al if _pal_b60 in _n.lower()]
@@ -8626,6 +8666,22 @@ if _v9_b63 is not None and abs(_v9_b63 - 20.0 / 1.40) < 0.01:
                   "«>45 %», y con 40 el peso objetivo sale medio kilo mas alto en un perro de "
                   "20 kg -- o sea mas kcal justo para el que peor lo lleva")
 
+# ⚠️ Y LA CORRESPONDENCIA DE 5 A 9 PUNTOS ES LA QUE PUBLICA FEDIAF (9 sep 2026).
+#
+# Aqui habia una nuestra, {0:2, 1:4, 2:5, 3:7, 4:9}. Las Tablas VII-1 y VII-2
+# traen una COLUMNA 2 DE CINCO PUNTOS al lado de la de nueve, y su
+# correspondencia es 1-3-5-7-9. En los tres escalones de arriba coincidiamos; en
+# los dos de perro delgado eramos MENOS severas.
+#
+# Se comprueba aqui y no solo en el front porque hay TRES copias de esta escala
+# (src/bcs.js, der.py y verificar.py) y ya se desincronizaron una vez.
+_VII1_COLUMNA2_B63 = {0: 1, 1: 3, 2: 5, 3: 7, 4: 9}
+if dict(_COND_B63) != _VII1_COLUMNA2_B63:
+    fallos.append(f"BLOQUE63: BCS_DESDE_CONDICION es {dict(_COND_B63)} y la columna de 5 puntos "
+                  f"de las Tablas VII-1 y VII-2 de FEDIAF dice {_VII1_COLUMNA2_B63}. Si ha vuelto "
+                  f"a 2-4-5-7-9, eso era criterio nuestro y le calcula a un perro delgado un peso "
+                  f"objetivo mas bajo del que le toca")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
@@ -8711,6 +8767,14 @@ _CIFRAS_64 = [
     ("cushing", "mitotano_con_comida", "13,0"),
     ("inmunosupresion", "excrecion_de_patogenos_en_casa", "SHED BACTERIAL PATHOGENS"),
     ("obesidad", "ritmo_de_perdida_de_peso", "1 to 4%"),
+    # Y los tres del 9 de septiembre por la noche, de leer ENTERAS las §7.3 y
+    # §7.6 de FEDIAF, que estaban sin leer. Los dos primeros son los unicos
+    # numeros que FEDIAF publica para la taurina DEL PERRO -- y estaban en un
+    # aviso que mandaba a hacer una analitica sin decir contra que se lee.
+    ("dcm_taurina_respondedora", "analitica_de_taurina", "40 µmol/L"),
+    ("dcm_taurina_respondedora", "analitica_de_taurina", "200 µmol/L"),
+    ("dcm_taurina_respondedora", "quien_sintetiza_menos", "NEWFOUNDLAND"),
+    ("reaccion_adversa_alimento", "confirmar_con_reintroduccion", "CONFIRMED BY A CHALLENGE"),
 ]
 for _pat64, _clave64, _trozo64 in _CIFRAS_64:
     _texto64 = ((_crudo64.get(_pat64) or {}).get("avisos") or {}).get(_clave64)
@@ -8795,8 +8859,15 @@ if _doc65 is not None:
          r"\| Muy activo \| ([\d.,]+) \|", _der54.BASE_ACTIVIDAD["muy_activo"], "der.BASE_ACTIVIDAD"),
         ("los cinco escalones, trabajo",
          r"\| Trabajo \| ([\d.,]+) \|", _der54.BASE_ACTIVIDAD["trabajo"], "der.BASE_ACTIVIDAD"),
-        ("el ajuste senior de Thes 2014",
-         r"Ajuste senior \(>7 años\) \| −([\d.,]+) \|", -_der54.AJUSTE_EDAD["senior"],
+        # ⚠️ El ancla decia «de Thes 2014» y ya no: el escalon de edad paso a ser
+        # el de la Tabla VII-6 de FEDIAF el 9 de septiembre (+20/-15 contra el
+        # +15/-7 de Thes), y el documento se reescribio para decirlo. El ancla
+        # se actualiza a la fuente nueva; el patron sigue leyendo la MISMA celda.
+        ("el ajuste senior, ahora de la Tabla VII-6 de FEDIAF",
+         r"Ajuste senior \(>7 años\) \| \*\*−([\d.,]+)\*\* \|", -_der54.AJUSTE_EDAD["senior"],
+         "der.AJUSTE_EDAD"),
+        ("el ajuste joven, que era codigo muerto y ahora llega",
+         r"Ajuste joven \(1-2 años\) \| \*\*\+([\d.,]+)\*\* \|", _der54.AJUSTE_EDAD["joven"],
          "der.AJUSTE_EDAD"),
         ("la cifra de FEDIAF para el gran danes",
          r"\*\*Great Danes\*\* \| \*\*([\d.,]+) \(", _der54.RAZAS_CIFRA_FEDIAF["Gran Danés"][0],
@@ -9091,6 +9162,534 @@ for _sec68, _f68 in sorted(_inv68.items()):
                       f"vuelve a ser una palabra que se escribe sola")
 print(f"  {_aud68.stdout.strip().splitlines()[0].strip() if _aud68.stdout.strip() else ''}")
 
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+
+# ============================================================
+# BLOQUE 69 — LAS TRES CONDICIONALES DE LA §3.3.1, MEDIDAS EN VIVO
+# ============================================================
+#
+# ⚠️ POR QUE EXISTE, y es una correccion de METODO, no un test mas (9 septiembre).
+#
+# Al leer entera la §3.3.1 de FEDIAF salieron tres reglas condicionales que el
+# motor no tenia, las tres sin cifra. Se escribieron en
+# `requisitos_condicionales.json` con su medida al lado, y la medida se hizo
+# CONTRA `catalogo_menus.json`: «hoy 0 de 216 menus llevan clara de huevo»,
+# «hoy ninguno se acerca al maximo de calcio».
+#
+# Elena, al verlo: «pero no tiene que estar en base a los menus del catalogo,
+# porque eso puede cambiar..».
+#
+# Y tiene razon, y el fallo es exactamente el que este repo lleva persiguiendo
+# desde agosto: una frase medida una vez se queda escrita en un fichero de datos,
+# el catalogo se regenera, la frase deja de ser verdad Y NO LA DESMIENTE NADIE.
+# El semaforo no la mira -- no es un nutriente --, y el fichero se lee como si
+# siguiera vigente. Es la misma familia que el fosforo renal a 1.400 del `POST
+# /menu` jubilado: un numero correcto el dia que se escribio.
+#
+# ASI QUE LA MEDIDA NO SE GUARDA: SE REHACE. Este bloque resuelve menus DE VERDAD,
+# con el motor vivo y el catalogo que haya en ese momento, y falla cuando la
+# conclusion que sostiene cada regla se da la vuelta. En el JSON se queda solo lo
+# que no depende de ningun menu: la aritmetica de las tablas.
+print("\n=== BLOQUE 69: las tres condicionales de la §3.3.1, medidas en vivo ===")
+
+import json as _json69
+
+_REGLAS_69 = _json69.load(open("requisitos_condicionales.json", encoding="utf-8"))["reglas"]
+
+# Menus de adulto y senior resueltos AHORA, no leidos de un fichero. Es la
+# poblacion de la que hablan los dos apartados de FEDIAF («Calcium (Adult dogs)»
+# y «Methionine-Cystine (Adult dogs)»); tres pesos para cubrir el rango.
+_CASOS_69 = [(3.0, 230.0, "Adulto"), (10.0, 560.0, "Adulto"), (20.0, 950.0, "Adulto"),
+             (40.0, 1600.0, "Adulto"), (10.0, 480.0, "Senior"), (30.0, 1150.0, "Senior")]
+
+# La densidad de referencia que declara el PROPIO FEDIAF: 4,0 kcal EM por gramo de
+# materia seca, o sea 1 kg MS = 4000 kcal. Se comprueba en su propia Tabla III-3b
+# (proteina 62,50 g/1000 kcal = 25,00 g/100 g MS). Es la que hay que usar para
+# comparar contra un umbral que FEDIAF da en mg/kg MS, y no otra.
+_KCAL_POR_KG_MS_69 = 4000.0
+
+_CA_MAX_69 = 6250.0      # Tabla III-3b, maximo de calcio en adulto
+# ⚠️ EL UMBRAL LO DA LA FUENTE, Y NO ERA EL QUE HABIA (9 septiembre, de noche).
+#
+# Cuando se escribio este bloque se uso «el 90 % del maximo de FEDIAF» (5625) para
+# leer el «as the calcium level APPROACHES the stated nutritional maximum» de la
+# §3.3.1, porque FEDIAF no da umbral. Ese 90 % me lo invente yo.
+#
+# Al leer entera la Tabla 32-1 de SACN5 aparecio el umbral publicado, en la fila
+# del zinc: «Avoid excess calcium — **Higher levels of zinc are required in foods
+# with calcium >1.5 % DM**». A 4,0 kcal/g son 3750 mg/1000 kcal, o sea el 60 % del
+# maximo de FEDIAF y no el 90 %: la advertencia empieza MUCHO antes de estar
+# pegado al techo.
+#
+# Lo que sigue sin existir en ninguna de las dos fuentes es el FACTOR: cuanto hay
+# que subir el zinc. Por eso la regla sigue siendo `documentado_sin_cifra`.
+_CA_UMBRAL_ZINC_69 = 3750.0   # 1,5 % MS a 4,0 kcal/g -- SACN5 Tabla 32-1
+_ZN_MAX_69, _ZN_MIN_69 = 56.75, 20.8    # techo LEGAL (Reglamento (UE) 2016/1095) y minimo
+_CU_MAX_69, _CU_MIN_69 = 7.0, 2.08
+_TAURINA_UMBRAL_MS_69 = 100.0   # «<100 mg/kg dry matter», FEDIAF §3.3.1
+
+def _por_1000_69(gramos, clave):
+    _kcal = _tot = 0.0
+    for _n, _g in gramos.items():
+        _a = al.get(_n)
+        if not _a:
+            continue
+        _kcal += (_a.get("energia") or 0) * _g / 100.0
+        _tot += valor_nutriente(_a["nutrientes"], clave) * _g / 100.0
+    return (_tot * 1000.0 / _kcal) if _kcal > 0 else 0.0
+
+_medidos69 = []
+for _peso69, _der69, _etapa69 in _CASOS_69:
+    _r69 = _c.post("/menu/v2", json={
+        "nombres_alimentos": [], "der_objetivo": _der69,
+        "etapa_requisitos": _etapa69, "peso_perro_kg": _peso69, "modo": "automatico"}).json()
+    if not _r69.get("factible") or not _r69.get("menu"):
+        continue
+    _medidos69.append((f"{_peso69:g} kg {_etapa69}", _r69["menu"]))
+
+if not _medidos69:
+    fallos.append("BLOQUE69: ningun caso dio menu, asi que no se ha medido nada. Un bloque que "
+                  "no mide no vigila")
+
+# --- 1. El calcio, y si la condicion de FEDIAF ha empezado a cumplirse ---------
+# FEDIAF: «As the calcium level APPROACHES the stated nutritional maximum, it may
+# be necessary to increase the levels of certain trace elements such as zinc and
+# copper». Mientras ningun menu se acerque, no aplicarlo no cambia nada. El dia
+# que uno se acerque, si -- y entonces hay que mirarlo, no enterarse por casualidad.
+_peor_ca_69 = (0.0, "")
+for _quien69, _m69 in _medidos69:
+    _ca69 = _por_1000_69(_m69, "calcio")
+    if _ca69 > _peor_ca_69[0]:
+        _peor_ca_69 = (_ca69, _quien69)
+    if _ca69 > _CA_UMBRAL_ZINC_69:
+        _zn69, _cu69 = _por_1000_69(_m69, "zinc"), _por_1000_69(_m69, "cobre")
+        fallos.append(
+            f"BLOQUE69: el menu de {_quien69} lleva {_ca69:.0f} mg/1000 kcal de calcio, por encima "
+            f"de los {_CA_UMBRAL_ZINC_69:.0f} a partir de los cuales SACN5 (Tabla 32-1, fila Zinc) "
+            f"dice que «higher levels of zinc are required in foods with calcium >1.5 % DM» -- y es "
+            f"la misma condicion que FEDIAF §3.3.1 enuncia sin umbral. Ese menu tiene el zinc en "
+            f"{_zn69:.1f} ({_zn69/_ZN_MAX_69*100:.0f} % de su techo LEGAL, {_ZN_MAX_69}) y el cobre "
+            f"en {_cu69:.2f} ({_cu69/_CU_MAX_69*100:.0f} % de {_CU_MAX_69}). Ninguna de las dos "
+            f"fuentes dice CUANTO hay que subirlos, asi que esto no se arregla solo: es una "
+            f"pregunta con datos para la nutricionista")
+
+# --- 2. La clara de huevo: la premisa de la regla, no cuantos menus la llevan ---
+# Contar menus seria otra vez la foto que caduca. Lo que hay que vigilar es que la
+# PREMISA siga en pie: que la clara siga existiendo y siga siendo alcanzable por el
+# motor. El dia que no lo sea, esta regla hablaria de algo que ya no existe -- y una
+# regla que habla de lo que no existe es una alarma apagada.
+_CLARA_69 = "Huevo clara"
+if _CLARA_69 not in al:
+    fallos.append(f"BLOQUE69: «{_CLARA_69}» ya no esta en el catalogo, y la regla "
+                  f"`biotina_y_vitamina_k_con_antivitaminas` se apoya en que existe: es el "
+                  f"compuesto antivitaminico que dispara la condicion de FEDIAF («unless the food "
+                  f"contains antimicrobial or anti-vitamin compounds»). O vuelve, o la regla hay "
+                  f"que reescribirla diciendo contra que se aplica ahora")
+else:
+    # Y la premisa entera: la clara es un EXTRA, y los Extras van SIEMPRE libres
+    # (regla 5 de CLAUDE.md). Por eso el motor PUEDE meterla en cualquier menu sin
+    # que nadie la pida -- que es lo que hace que la condicion de FEDIAF se pueda
+    # cumplir en cualquier momento, y no solo en los menus de hoy.
+    _catclara69 = al[_CLARA_69].get("categoria")
+    if _catclara69 in _api.CATEGORIAS_QUE_ELIGE_EL_USUARIO:
+        fallos.append(f"BLOQUE69: «{_CLARA_69}» esta ahora en «{_catclara69}», que es una de las "
+                      f"categorias que elige el usuario. La regla "
+                      f"`biotina_y_vitamina_k_con_antivitaminas` se apoya en que el motor puede "
+                      f"meterla sin que nadie la pida, por ser Extra. Si ya no es asi, la regla "
+                      f"describe un motor que no es este")
+    # Y el otro lado del mecanismo: el motor sabe que la clara es antivitaminica
+    # cuando LIMITA la cantidad, y no lo sabe cuando fija el requisito. Si el tope
+    # desaparece, desaparece la unica senal de que lo sabemos.
+    if not getattr(_seg21, "TOPE_CLARA_PESO", None):
+        fallos.append("BLOQUE69: `seguridad.TOPE_CLARA_PESO` ha desaparecido. Ese tope existe "
+                      "PORQUE la avidina de la clara cruda secuestra la biotina, y es la unica "
+                      "senal en el motor de que conocemos el mecanismo del que habla FEDIAF")
+
+# --- 3. La taurina contra el umbral con el que FEDIAF calculo la metionina+cistina --
+# FEDIAF: «The recommended values are based on a dog food containing a very low
+# taurine content, i.e. <100 mg/kg dry matter. For products containing higher
+# levels of taurine the RA for sulphur amino acids CAN BE LOWER».
+# Si un menu de adulto bajara de ese umbral, la suposicion de FEDIAF SI valdria
+# para nosotros y la pregunta escrita en PARA_EL_NUTRICIONISTA.md dejaria de tener
+# sentido. Un documento que pide decidir algo que ya no se sostiene es peor que no
+# tenerlo.
+_peor_tau_69 = (None, "")
+for _quien69, _m69 in _medidos69:
+    _tau_ms69 = _por_1000_69(_m69, "taurina") * (_KCAL_POR_KG_MS_69 / 1000.0)
+    if _peor_tau_69[0] is None or _tau_ms69 < _peor_tau_69[0]:
+        _peor_tau_69 = (_tau_ms69, _quien69)
+    if _tau_ms69 < _TAURINA_UMBRAL_MS_69:
+        fallos.append(
+            f"BLOQUE69: el menu de {_quien69} tiene {_tau_ms69:.0f} mg/kg de materia seca de "
+            f"taurina, por DEBAJO de los {_TAURINA_UMBRAL_MS_69:.0f} con los que FEDIAF calculo el "
+            f"minimo de metionina+cistina. La regla "
+            f"`metionina_cistina_segun_la_taurina` dice que nuestros menus van muy por encima de "
+            f"ese umbral, y ya no es verdad: o se corrige la regla, o se retira la pregunta de "
+            f"PARA_EL_NUTRICIONISTA.md, que pide decidir sobre una premisa que se ha caido")
+
+# --- 4. Y que las tres reglas sigan existiendo y sigan sin aplicarse -----------
+# Las tres son `documentado_sin_cifra`. Si alguna pasara a aplicarse, seria porque
+# alguien se invento la cifra que FEDIAF no da, que es justo lo que este fichero
+# existe para no hacer.
+for _k69 in ("zinc_y_cobre_cuando_el_calcio_esta_alto",
+             "biotina_y_vitamina_k_con_antivitaminas",
+             "metionina_cistina_segun_la_taurina"):
+    _reg69 = _REGLAS_69.get(_k69)
+    if not _reg69:
+        fallos.append(f"BLOQUE69: la regla «{_k69}» ha desaparecido de "
+                      f"requisitos_condicionales.json. Salio de leer entera la §3.3.1 de FEDIAF; "
+                      f"si se borra, se vuelve a «descubrir» dentro de seis meses")
+        continue
+    if _reg69.get("tipo") != "documentado_sin_cifra" or _reg69.get("aplicado_por_el_solver"):
+        fallos.append(f"BLOQUE69: la regla «{_k69}» ha pasado a aplicarse. FEDIAF la enuncia y NO "
+                      f"la cuantifica para el perro, asi que aplicarla exige una cifra que solo "
+                      f"puede salir de inventarsela. Si la cifra existe ahora, tiene que venir con "
+                      f"su fuente y este bloque hay que reescribirlo a mano")
+
+print(f"  {len(_medidos69)} menus resueltos en vivo")
+print(f"  calcio mas alto: {_peor_ca_69[0]:.0f} mg/1000 kcal ({_peor_ca_69[0]/_CA_MAX_69*100:.0f} %"
+      f" del maximo) en {_peor_ca_69[1]}")
+if _peor_tau_69[0] is not None:
+    print(f"  taurina mas baja: {_peor_tau_69[0]:.0f} mg/kg MS (umbral de FEDIAF: "
+          f"{_TAURINA_UMBRAL_MS_69:.0f}) en {_peor_tau_69[1]}")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+
+# ============================================================
+# BLOQUE 70 — LAS CONVERSIONES DE UI, CONTRA LA TABLA VII-14 DE FEDIAF
+# ============================================================
+#
+# ⚠️ POR QUE (9 septiembre 2026, leyendo la §7.5 de FEDIAF, que estaba sin leer).
+#
+# La Tabla VII-14 es la unica de FEDIAF que dice cuantos microgramos de cada
+# fuente hacen una UI. Tres fichas del catalogo tienen la vitamina A y la D
+# convertidas de UI a microgramos, y la conversion estaba HECHA Y ESCRITA en el
+# campo `nota_datos` de cada ficha -- «Vit A 250.000 UI/kg y D3 25.000 UI/kg
+# convertidas a ug» -- sin comprobarse contra nada.
+#
+# Y ese es el peor sitio donde puede estar un error, porque tiene forma de dato
+# bueno: pasa cualquier validacion de formato y el menu sale VERDE. Convertir la
+# vitamina D con el factor de la A (0,3 en vez de 0,025) multiplica por DOCE el
+# aporte de un multivitaminico, y el tope cronico de vitamina D es una de las
+# cinco restricciones duras del motor.
+#
+# Se comprobaron las tres al escribir esto y las tres estan BIEN. Este bloque
+# existe para que sigan estandolo, y para que la cuarta ficha que se anada con
+# una conversion no entre sin comprobar.
+print("\n=== BLOQUE 70: las conversiones de UI, contra la Tabla VII-14 ===")
+
+import json as _json70
+import re as _re70
+
+_CONV70 = _json70.load(open("fediaf_conversiones_vitaminas.json", encoding="utf-8"))
+
+# 1. Que la tabla no se vacie ni pierda las dos filas que de verdad se usan.
+_UG_POR_UI_A_70 = ((_CONV70.get("ui_a_microgramos") or {}).get("vitA") or {}).get("retinol")
+_UG_POR_UI_D_70 = ((_CONV70.get("ui_a_microgramos") or {}).get("vitD") or {}).get("colecalciferol_D3")
+if _UG_POR_UI_A_70 != 0.3:
+    fallos.append(f"BLOQUE70: el factor de la vitamina A vale {_UG_POR_UI_A_70} y la Tabla VII-14 "
+                  f"de FEDIAF dice 0,3 ug de retinol = 1 UI")
+if _UG_POR_UI_D_70 != 0.025:
+    fallos.append(f"BLOQUE70: el factor de la vitamina D vale {_UG_POR_UI_D_70} y la Tabla VII-14 "
+                  f"de FEDIAF dice 0,025 ug de D3 = 1 UI (o sea 1 ug = 40 UI)")
+
+# 2. Y lo que de verdad vigila: cada ficha que DECLARA una conversion de UI tiene
+#    que cuadrar con esos factores. Se lee el numero de la propia nota de la ficha
+#    y se rehace la cuenta; no se copia el resultado.
+#    La nota va en UI/kg de producto y el catalogo va por 100 g, asi que /10.
+_PAT70 = _re70.compile(
+    r"(?:vit(?:amina)?\s*)?(A|D3?)\s*([\d.]+)\s*(?:UI|IU)\s*/\s*kg", _re70.I)
+_revisadas70 = 0
+for _ficha70 in _json70.load(open("alimentos_v3_final.json", encoding="utf-8")):
+    _nota70 = " ".join(str(_ficha70.get(_k70) or "") for _k70 in ("nota_datos", "fuente"))
+    for _vit70, _ui70 in _PAT70.findall(_nota70.replace(".", "")):
+        # el replace quita el separador de miles europeo: «250.000 UI/kg»
+        try:
+            _ui_kg70 = float(_ui70)
+        except ValueError:
+            continue
+        _clave70 = "vitA" if _vit70.upper().startswith("A") else "vitD"
+        _factor70 = _UG_POR_UI_A_70 if _clave70 == "vitA" else _UG_POR_UI_D_70
+        _esperado70 = _ui_kg70 / 10.0 * _factor70          # UI/kg -> UI/100 g -> ug/100 g
+        _tiene70 = float((_ficha70.get("nutrientes") or {}).get(_clave70) or 0)
+        _revisadas70 += 1
+        if abs(_tiene70 - _esperado70) > max(0.02 * _esperado70, 0.5):
+            fallos.append(
+                f"BLOQUE70: «{_ficha70.get('nombre')}» declara en su nota {_ui_kg70:.0f} UI/kg de "
+                f"{_vit70.upper()} y tiene {_tiene70:g} ug/100 g en el catalogo. Con el factor de "
+                f"la Tabla VII-14 de FEDIAF ({_factor70} ug = 1 UI) saldrian {_esperado70:.4g}. O "
+                f"la nota o el numero estan mal, y un error asi tiene forma de dato bueno: pasa "
+                f"cualquier validacion de formato y el menu sale VERDE")
+
+if _revisadas70 == 0:
+    fallos.append("BLOQUE70: no se ha encontrado ni una ficha con conversion de UI declarada. "
+                  "Habia tres (napfcheck proLEBER y los dos V-INTEGRA). O se han quitado, o ha "
+                  "cambiado como se escribe la nota y este bloque ha dejado de mirar nada -- que "
+                  "es peor, porque sigue saliendo verde")
+
+# 3. El factor que NO se usa y por el que hay que pasar de largo con cuidado: el
+#    betacaroteno da 833 UI/mg en el perro, cuatro veces menos que el retinol. Si
+#    algun dia una ficha declara la vitamina A como betacaroteno y se convierte con
+#    el factor del retinol, el aporte sale CUADRUPLICADO. La cifra vive en el JSON
+#    para que ese dia haya contra que comprobarlo.
+_BCAR70 = ((_CONV70.get("ui_a_microgramos") or {}).get("vitA") or {}).get("betacaroteno_UI_por_mg_perro")
+if _BCAR70 != 833.0:
+    fallos.append(f"BLOQUE70: el factor del betacaroteno vale {_BCAR70} y la Tabla VII-14 dice "
+                  f"833 UI por mg EN EL PERRO (el gato no lo convierte)")
+
+print(f"  {_revisadas70} conversiones de UI rehechas desde la nota de la ficha")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+
+# ============================================================
+# BLOQUE 71 — LAS KCAL DEL CATALOGO, CONTRA LA ECUACION DE FEDIAF
+# ============================================================
+#
+# ⚠️ POR QUE (9 septiembre 2026, leyendo entera la §7.2, que decia «aplicada»
+#     sin que nadie se la hubiera leido).
+#
+# La §7.2.2.2 tiene TRES formas de calcular la energia metabolizable, y no son
+# intercambiables. La que se usa para un pienso -- la ecuacion de cuatro pasos
+# con la digestibilidad de la fibra -- NO es la nuestra. FEDIAF dedica un
+# apartado entero, el b), a lo que si somos:
+#
+#   «The ME in products of vegetable or animal origin, IN THEIR NATURAL STATE,
+#    FRESH OR PRESERVED, such as MEAT, OFFAL, milk products ... has to be
+#    predicted with the following equations. Dogs: kcal ME = (4 x % crude
+#    protein) + (9 x % crude fat) + (4 x % NFE)»
+#
+# Y esto no es un detalle contable: TODO el motor trabaja por 1000 kcal. La
+# columna `energia` del catalogo es el denominador de las 43 comprobaciones del
+# semaforo. Si estuviera calculada con otra ecuacion, cada concentracion del
+# menu estaria desplazada y ninguna prueba lo veria, porque todas usan el mismo
+# denominador equivocado.
+#
+# MEDIDO al escribir esto, sobre las 73 fichas de origen animal: la mediana sale
+# a 1,014 veces la ecuacion de FEDIAF y 70 de 73 caen dentro del +-10 %. O sea
+# que el catalogo YA la sigue. Lo que no se sabia es que la seguia.
+#
+# LOS QUE SE PASAN POR ARRIBA SON LOS HIGADOS, y no es un error: la ecuacion
+# lleva un tercer termino, «+ 4 x % NFE» (extracto libre de nitrogeno, o sea los
+# hidratos digestibles), y el catalogo NO TIENE esa columna. El higado guarda
+# glucogeno -- del orden de 3 a 4 g/100 g --, que son 12-16 kcal, y es justo el
+# hueco que se ve. Por eso la lista de abajo existe: para que un valor raro
+# NUEVO no pueda esconderse detras de la excepcion del higado.
+print("\n=== BLOQUE 71: las kcal del catalogo, contra la ecuacion de FEDIAF ===")
+
+# Categorias donde el NFE es despreciable y la ecuacion se puede comprobar casi
+# entera. La verdura queda fuera A PROPOSITO: ahi el NFE es la mayor parte de la
+# energia y sin esa columna la comprobacion no significaria nada.
+_CAT_ANIMAL_71 = ("Carne muscular", "Vísceras", "Hígado", "Pescados y mariscos", "Hueso carnoso")
+
+# Las que llevan glucogeno u otro NFE apreciable y por eso salen por encima. Cada
+# una medida; el numero es la ratio observada el 9-sep-2026.
+_CON_NFE_71 = {
+    "Hígado de conejo", "Hígado de pato", "Hígado de vaca", "Hígado de cordero",
+    "Hígado de pollo", "Pulpo", "Langostino", "Corazón de conejo", "Lengua de buey",
+    "Molleja de pollo", "Molleja de pavo", "Pollo pechuga sin piel", "Cerebro de vaca",
+}
+_SUELO_71, _TECHO_71, _TECHO_CON_NFE_71 = 0.95, 1.05, 1.25
+
+_revisadas71 = _fuera71 = 0
+_peor71 = (1.0, "")
+for _f71 in _json70.load(open("alimentos_v3_final.json", encoding="utf-8")):
+    if _f71.get("categoria") not in _CAT_ANIMAL_71:
+        continue
+    _n71 = _f71.get("nutrientes") or {}
+    _p71 = float(_n71.get("proteina") or 0)
+    _g71 = float(_n71.get("grasa") or 0)
+    _e71 = float(_f71.get("energia") or 0)
+    if _e71 <= 0 or _p71 <= 0:
+        continue
+    _pred71 = 4.0 * _p71 + 9.0 * _g71
+    _r71 = _e71 / _pred71
+    _revisadas71 += 1
+    if abs(_r71 - 1.0) > abs(_peor71[0] - 1.0):
+        _peor71 = (_r71, _f71["nombre"])
+    _techo71 = _TECHO_CON_NFE_71 if _f71["nombre"] in _CON_NFE_71 else _TECHO_71
+    if not (_SUELO_71 <= _r71 <= _techo71):
+        _fuera71 += 1
+        fallos.append(
+            f"BLOQUE71: «{_f71['nombre']}» declara {_e71:g} kcal/100 g y la ecuacion de FEDIAF "
+            f"para productos naturales (§7.2.2.2 b: 4 x proteina + 9 x grasa) da {_pred71:.1f} "
+            f"-- una ratio de {_r71:.3f}, fuera de [{_SUELO_71}, {_techo71}]. Las kcal son el "
+            f"DENOMINADOR de las 43 comprobaciones del semaforo: si estan mal, todas las "
+            f"concentraciones del menu estan desplazadas y ninguna prueba lo ve, porque todas "
+            f"usan el mismo denominador. Si el exceso es NFE de verdad (glucogeno del higado, "
+            f"por ejemplo), la ficha va a `_CON_NFE_71` con su medida; si no, el numero esta mal")
+
+# Y al reves: una excepcion que ya no hace falta tiene que salir, o la lista deja
+# de significar nada. Misma idea que `_EXCEPCIONES_61` y que `MAXIMOS_NO_APLICADOS`.
+_cat71 = {a["nombre"]: a for a in _json70.load(open("alimentos_v3_final.json", encoding="utf-8"))}
+for _nom71 in sorted(_CON_NFE_71):
+    _f71 = _cat71.get(_nom71)
+    if not _f71:
+        continue
+    _n71 = _f71.get("nutrientes") or {}
+    _pred71 = 4.0 * float(_n71.get("proteina") or 0) + 9.0 * float(_n71.get("grasa") or 0)
+    if _pred71 <= 0:
+        continue
+    if float(_f71.get("energia") or 0) / _pred71 <= _TECHO_71:
+        fallos.append(f"BLOQUE71: «{_nom71}» esta en la lista de fichas con NFE apreciable y ya "
+                      f"cae dentro del margen normal. Quitala: una lista de excepciones caducada "
+                      f"es una alarma apagada")
+
+if _revisadas71 < 50:
+    fallos.append(f"BLOQUE71: solo se han comprobado {_revisadas71} fichas de origen animal y "
+                  f"habia 73. O el catalogo ha encogido, o han cambiado los nombres de categoria "
+                  f"y este bloque ha dejado de mirar casi nada")
+
+print(f"  {_revisadas71} fichas de origen animal contra la ecuacion de FEDIAF, {_fuera71} fuera")
+print(f"  la mas alejada: {_peor71[1]} a {_peor71[0]:.3f} veces la ecuacion")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+
+# ============================================================
+# BLOQUE 72 — LA CONVERSION DE CADA CIFRA, REHECHA
+# ============================================================
+#
+# ⚠️ POR QUE (9 septiembre 2026, de noche). Elena:
+#
+#     «lo de sacn5 de la corrección de densidad, tienes que hacer algún tipo de
+#      escrito o algo para que no sea manual y para que si hay algún valor que no
+#      esté bien hecho que lo cace»
+#
+# Las 88 cifras numericas de `patologias.json` vienen casi todas de una tabla que
+# las publica en % de MATERIA SECA, y el motor trabaja por 1000 KCAL. Esa
+# conversion estaba hecha una vez y CONTADA EN PROSA dentro del campo `por_que`.
+# Una frase no se ejecuta, y ya mordio: el 8 de septiembre la fenilalanina+
+# tirosina de la dermatitis atopica se escribio x25 en vez de x2,5 -- 32,5 en
+# lugar de 3,25, diez veces el valor bueno -- y lo unico que lo cazo fue que
+# alguien lo leyo.
+#
+# Y el segundo motivo es mas fino: la DENSIDAD de referencia no es la misma en
+# todas las fuentes, y elegirla mal desplaza la cifra un 14 % sin que chirrie
+# nada. Esta comprobado que es 4,0 y no 3,5, y no de memoria:
+#   · de las 24 tablas de SACN5 que cita el fichero, UNA declara densidad -- la
+#     13-3 -- y dice «Concentrations presume an energy density of 4.0 kcal/g»;
+#   · el cap.34 la usa para convertir la glucosamina («in a food with an energy
+#     density of 4 kcal/g DM»);
+#   · FEDIAF declara la misma en su Tabla III-2;
+#   · y a 4,0 las cifras del motor se reproducen EXACTAS desde las filas de sus
+#     tablas: fosforo 0,8 % MS -> 2000, sodio 0,4 % -> 1000, y asi 84 de 88.
+#
+# Ahora cada cifra lleva su conversion como DATO (valor de la fuente + unidad +
+# densidad + cita) y `auditar_conversiones.py` la REHACE. Una cifra sin ese
+# bloque tambien falla: lo que no se puede rehacer no se puede auditar.
+print("\n=== BLOQUE 72: la conversion de cada cifra, rehecha ===")
+
+_aud72 = _sp_b18.run([sys.executable, "auditar_conversiones.py"], capture_output=True, text=True,
+                     cwd=_os_b18.path.dirname(_os_b18.path.abspath(__file__)))
+if "Discrepancias: 0" not in _aud72.stdout:
+    _cola72 = "\n      ".join((_aud72.stdout + _aud72.stderr).strip().splitlines()[-12:])
+    fallos.append(f"BLOQUE72: hay cifras de patologia cuya conversion no se puede rehacer o no "
+                  f"cuadra:\n      {_cola72}")
+print(f"  {_aud72.stdout.strip().splitlines()[0].strip() if _aud72.stdout.strip() else ''}")
+
+# Y la densidad, fijada en un solo sitio: si alguien la cambia a 3,5 «porque el
+# Box 1-2 lo dice», esto lo para. El Box 1-2 es un ejemplo trabajado con un
+# alimento concreto, no la densidad de referencia de las tablas.
+import json as _json72
+_dens72 = set()
+for _pat72, _f72 in _json72.load(open("patologias.json", encoding="utf-8"))["patologias"].items():
+    for _b72 in ("topes_por_1000kcal", "suelos_por_1000kcal", "topes_por_1000kcal_si_ademas",
+                 "suelos_por_1000kcal_si_ademas", "limites_escritos_que_el_solver_no_aplica"):
+        for _n72, _c72 in (_f72.get(_b72) or {}).items():
+            if isinstance(_c72, dict) and _c72.get("conversion"):
+                _dens72.add(_c72["conversion"]["densidad_kcal_por_g_MS"])
+if _dens72 != {4.0}:
+    fallos.append(f"BLOQUE72: hay cifras convertidas con densidades {sorted(_dens72)} y todas las "
+                  f"tablas que las publican asumen 4,0 kcal/g de materia seca. Si de verdad hay una "
+                  f"fuente que declara otra -- el cap.33 de SACN5 declara 3,8 para el calcio del "
+                  f"cachorro grande via el Caso 1-1 --, tiene que venir con su cita y este bloque "
+                  f"hay que ampliarlo a mano, no relajarlo")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+
+# ============================================================
+# BLOQUE 73 — EL SUELO DE DHA DE CRECIMIENTO Y REPRODUCCION
+# ============================================================
+#
+# ⚠️ POR QUE (9 septiembre 2026, de noche, tras leer SACN5 ENTERO).
+#
+# El motor pide EPA+DHA >= 0,125 g/1000 kcal en crecimiento y reproduccion (es
+# la fila de FEDIAF, que no distingue los dos). SACN5 dice que ese reparto SI
+# importa, y lo dice en CUATRO sitios con la misma cifra -- Tablas 15-5, 17-1
+# (sus DOS columnas) y 33-5, mas el texto de los caps. 15 y 33:
+#
+#   «the minimum recommended allowance of DHA plus EPA of at least 0.05 % (DM)
+#    (NRC, 2006). Therefore, DHA needs to be at least 40 % of the total DHA plus
+#    EPA, or 0.02 % DM»
+#
+# Hasta hoy un menu de cachorro podia cumplir los 0,125 g ENTEROS con EPA y
+# salir verde, con cero DHA. Y el DHA no es intercambiable: la Tabla 33-5 dice
+# para que es («***For improved learning») y el cap.15 anade que «milk
+# concentrations of DHA parallel dietary intake».
+#
+# Medido antes de aplicarlo: 0 de 10 menus por debajo, el mas justo a 1,47 veces
+# el suelo, y el DHA sale entre el 57 % y el 75 % del EPA+DHA. O sea que no
+# aprieta nada hoy -- que es el motivo de ponerlo hoy y no cuando muerda.
+print("\n=== BLOQUE 73: el suelo de DHA de crecimiento y reproduccion ===")
+
+import json as _json73
+from condicionales import suelos_de_la_etapa as _suelos73
+
+_SUELO_DHA_73 = 0.05      # g/1000 kcal = 0,02 % de MS a 4,0 kcal/g
+_ETAPAS_DHA_73 = ("CachorroJoven", "CachorroCrecimiento", "Gestante", "GestanteTardia", "Lactante")
+
+# 1. Que la regla siga puesta, con su cifra, en las cinco etapas y en NINGUNA mas.
+for _et73 in _ETAPAS_DHA_73:
+    _v73 = _suelos73(_et73).get("dha")
+    if _v73 != _SUELO_DHA_73:
+        fallos.append(f"BLOQUE73: en {_et73} el suelo de DHA vale {_v73} y tiene que ser "
+                      f"{_SUELO_DHA_73} (0,02 % de MS a 4,0 kcal/g). Lo piden las Tablas 15-5, 17-1 "
+                      f"y 33-5 de SACN5, las tres con la misma cifra")
+if "dha" in _suelos73("Adulto"):
+    fallos.append("BLOQUE73: hay suelo de DHA en ADULTO. Ninguna de las tres tablas es de adulto y "
+                  "FEDIAF no pone requerimiento absoluto de EPA+DHA en adulto (la fila esta vacia): "
+                  "ponerlo ahi seria pasar una cifra de una etapa a otra")
+
+# 2. Y que los menus de verdad lo cumplan. Un suelo que deja sin menu no es un
+#    suelo, es un bloqueo -- que es lo que paso el 8 de septiembre con la
+#    vitamina E de la artrosis.
+_CASOS_73 = [(2.0, 480.0, "CachorroJoven"), (25.0, 2200.0, "CachorroJoven"),
+             (15.0, 1500.0, "CachorroCrecimiento"), (35.0, 2600.0, "CachorroCrecimiento"),
+             (25.0, 2400.0, "GestanteTardia"), (8.0, 1800.0, "Lactante")]
+_peor73 = (None, "")
+for _peso73, _der73, _et73 in _CASOS_73:
+    _r73 = _c.post("/menu/v2", json={
+        "nombres_alimentos": [], "der_objetivo": _der73, "etapa_requisitos": _et73,
+        "peso_perro_kg": _peso73, "modo": "automatico"}).json()
+    if not _r73.get("factible") or not _r73.get("menu"):
+        fallos.append(f"BLOQUE73: {_et73} de {_peso73:g} kg se queda SIN MENU. El suelo de DHA se "
+                      f"midio antes de aplicarlo y no apretaba (0 de 10 menus por debajo); si ahora "
+                      f"bloquea, o el catalogo ha perdido sus fuentes de DHA o el suelo esta mal")
+        continue
+    _kc73 = _tot73 = 0.0
+    for _n73, _g73 in _r73["menu"].items():
+        _a73 = al.get(_n73)
+        if not _a73:
+            continue
+        _kc73 += (_a73.get("energia") or 0) * _g73 / 100.0
+        _tot73 += valor_nutriente(_a73.get("nutrientes", {}), "dha") * _g73 / 100.0
+    _dha73 = (_tot73 * 1000.0 / _kc73) if _kc73 else 0.0
+    if _peor73[0] is None or _dha73 < _peor73[0]:
+        _peor73 = (_dha73, f"{_peso73:g} kg {_et73}")
+    if _dha73 < _SUELO_DHA_73 * 0.995:
+        fallos.append(f"BLOQUE73: el menu de {_peso73:g} kg {_et73} sale con {_dha73:.4f} g de DHA "
+                      f"por 1000 kcal y el suelo son {_SUELO_DHA_73}. El solver lo exige y el menu "
+                      f"no lo cumple: es la regla 2 al reves, un menu construido mal que llega")
+
+if _peor73[0] is not None:
+    print(f"  {len(_CASOS_73)} menus; el mas justo: {_peor73[0]:.4f} g/1000 kcal en {_peor73[1]} "
+          f"(suelo {_SUELO_DHA_73})")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 

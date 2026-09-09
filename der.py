@@ -108,6 +108,64 @@ BASE_ACTIVIDAD = {
     # lo cubre esta app y tendria que pautarlo un veterinario.
 }
 
+# ⚠️ LO QUE LA §7.2.3.5 DE FEDIAF ANADE A ESTA TABLA, Y QUE NO SE APLICA
+#     (9 de septiembre de 2026, leyendo esa seccion entera; hasta ese dia
+#     estaba sin leer).
+#
+# La tabla de arriba es la VII-7, o sea la RECOMENDACION PRACTICA de FEDIAF. La
+# §7.2.3.5 es su revision de literatura, y trae tres cosas que la tabla no dice.
+# Ninguna se aplica, y cada una por un motivo distinto -- escritas aqui para que
+# no haya que volver a descubrirlas:
+#
+# 1. EL FRIO, QUE ES UN HUECO DE VERDAD. Literal: «When kept outside in winter,
+#    dogs may need 10 to 90 % MORE CALORIES than during summer». Diez a noventa
+#    por ciento. Y esta app NO PREGUNTA DONDE VIVE EL PERRO: un mastin que duerme
+#    fuera en enero recibe hoy la misma racion que un perro de piso.
+#    ⚠️ Y LA CIFRA EXISTE, aunque no la de FEDIAF: la trae SACN5 cap.5, Tabla 5-3
+#    («Influence of low environmental temperatures on daily energy requirement»),
+#    por TIPO DE PELO y por salto de temperatura concreto:
+#
+#        Labrador y beagle ...... +25 %   (12-43)   de 15 C a 8,5 C
+#        Gran Danes ............. +22 %             de verano a invierno
+#        Perro de pelo CORTO .... +95 %             de 25 C a 7,6 C
+#        Perro de pelo LARGO .... +59,5 %           de 25 C a 7,6 C
+#        Beagle ................. +70,5 %           de 17 C a -17 C
+#        Perro de trineo ........ +61,5 %           de 17 C a -17 C
+#
+#    Ojo al sentido, que es el contrario del que uno diria de memoria: el de pelo
+#    CORTO necesita mas subida que el de pelo largo, porque aisla peor.
+#
+#    ASI QUE LO QUE FALTA NO ES LA CIFRA: ES LA PREGUNTA. La ficha no sabe donde
+#    duerme el perro ni a que temperatura, y sin eso no hay a que fila ir. Anadir
+#    esa pregunta es una decision de producto (que se pregunta exactamente, y con
+#    que palabras), no de lectura, y por eso no se aplica sola. Esta en
+#    PENDIENTE_PRODUCTO.md con las dos citas -- la de FEDIAF y esta -- para que se
+#    decida con los numeros delante. Lo que SI se puede decir mientras tanto es lo que ya dice la
+#    §7.2.4 de FEDIAF y la app repite: la racion es un punto de partida y se
+#    ajusta viendo si el perro engorda o adelgaza.
+#
+# 2. EL SUELO DE 95 NO ES EL SUELO DE LA LITERATURA. Literal: «Individually housed
+#    dogs, with little opportunity to move, may have daily energy requirements
+#    (DER) AS LOW AS 70 kcal ME/kg0.75». Nuestro «sedentario» son 95, o sea que a
+#    un perro de verdad muy quieto podemos darle hasta un 36 % de mas.
+#    NO SE BAJA A PROPOSITO: 95 es lo que FEDIAF RECOMIENDA en su Tabla VII-7, y
+#    70 es lo que documenta su revision de literatura para perros enjaulados. Son
+#    dos cosas distintas y la que manda es la recomendacion. Ademas el error va
+#    del lado que se corrige solo -- el dueño ve que engorda y baja la racion --,
+#    y el contrario no. El otro extremo de la misma frase, «over 144 kcal
+#    ME/kg0.75» para perros en jauria con mucha interaccion, SI cae dentro de
+#    nuestra tabla (entre «activo» y «muy_activo»), asi que ahi no falta nada.
+#
+# 3. LA TERMOGENESIS DE LA PROPIA COMIDA, que nos toca mas que a un pienso.
+#    Literal: «Diet-induced thermogenesis plays a small role; it represents about
+#    10 % of the daily energy expenditure in dogs. It INCREASES WITH DIETS RICH IN
+#    PROTEIN and is greater in dogs fed FOUR MEALS PER DAY than in dogs fed once
+#    daily». Una racion BARF es rica en proteina por construccion y la app
+#    reparte en 2-3 tomas, o sea que caemos en el lado alto de las dos.
+#    NO SE APLICA porque FEDIAF da el total («about 10 %») y NO da cuanto sube
+#    con la proteina ni cuanto con el numero de tomas. Sin esas dos cifras,
+#    aplicarlo seria inventarselas.
+
 # Ajustes ADITIVOS, en kcal/kg^0.75. Solo se aplican a adulto y senior.
 # ⚠️ EL ESCALON DE EDAD ES EL DE FEDIAF, TABLA VII-6 (9 septiembre 2026).
 #
@@ -326,10 +384,27 @@ LACTANCIA_PESO_SEMANA = [0.75, 0.95, 1.10, 1.20]
 RER_COEF = 70                     # RER = 70 x peso^0.75
 
 # ESCALA DE CONDICION CORPORAL. La app usa 5 niveles; la escala validada
-# (Laflamme 1997, contrastada con DEXA) es de 9 puntos. Equivalencia:
-#   0 Muy delgado -> BCS 2   ·   1 Delgado -> BCS 4   ·   2 Ideal -> BCS 5
-#   3 Sobrepeso   -> BCS 7   ·   4 Obeso   -> BCS 9
-BCS_DESDE_CONDICION = {0: 2, 1: 4, 2: 5, 3: 7, 4: 9}
+# (Laflamme 1997, contrastada con DEXA) es de 9 puntos.
+#
+# ⚠️ CORREGIDA (9 septiembre 2026) — LA CORRESPONDENCIA LA PUBLICA FEDIAF Y NO
+# ERA LA NUESTRA. Aqui ponia {0:2, 1:4, 2:5, 3:7, 4:9}, que era criterio propio.
+# Al leer entera la seccion 7.1 resulta que las Tablas VII-1 y VII-2 traen una
+# COLUMNA 2 DE CINCO PUNTOS al lado de la de nueve, y su correspondencia es:
+#
+#     5 puntos    1     2     3     4     5
+#     9 puntos    1     3     5     7     9
+#
+# En los tres escalones de arriba coincidiamos. En los dos de perro delgado
+# eramos MENOS severas: el escalon 0 iba a BCS 2 (-30 %) donde FEDIAF pone BCS 1
+# (->=40 %), y el 1 iba a BCS 4 (-10 %) donde pone BCS 3 (-20 %).
+#
+# MEDIDO, y se mueve menos de lo que parece porque el tope de subida del 20 %
+# absorbe casi todo: el escalon 0 se topaba antes y se topa ahora (sin cambio), y
+# el UNICO que se mueve es el 1, de x1,111 a x1,20 -- un 8 % mas de racion para
+# un perro delgado, que es la direccion correcta.
+#
+# ⚠️ TIENE QUE SEGUIR SIENDO IDENTICO A `BCS_DESDE_CONDICION` de `src/bcs.js`.
+BCS_DESDE_CONDICION = {0: 1, 1: 3, 2: 5, 3: 7, 4: 9}
 # Regla practica aceptada: cada punto de BCS por encima de 5 equivale a un
 # 10% de exceso de peso corporal (y por debajo, a un 10% de defecto).
 #

@@ -1,0 +1,63 @@
+{
+  "_meta": {
+    "que_es": "La Tabla VII-14 de FEDIAF 2025 (§7.5.1, «Conversion factors - Vitamin source to activity»), transcrita fila a fila.",
+    "por_que_existe": "Porque tres fichas del catalogo llevan la vitamina A y la D convertidas de UI a microgramos, y hasta el 9 de septiembre de 2026 esa conversion no se comprobaba contra ninguna fuente: estaba hecha y escrita en el campo `nota_datos` de cada ficha, y nadie la volvia a mirar. Una conversion mal hecha tiene forma de dato bueno -- pasa cualquier validacion de formato, y el menu sale VERDE -- que es exactamente el patron de `dato_dudoso`. Convertir la vitamina D con el factor de la A (0,3 en vez de 0,025) multiplicaria por doce el aporte de un multivitaminico y el semaforo no diria nada.",
+    "unidad": "microgramos de la fuente que equivalen a 1 UI, o miligramos de actividad por miligramo de fuente, tal y como lo publica FEDIAF",
+    "verificado": "9 de septiembre de 2026, leyendo la §7.5 entera del PDF de FEDIAF 2025 (pagina 63)",
+    "lo_que_este_fichero_NO_hace": "No corrige ningun dato del catalogo. Las tres fichas que declaran una conversion la tienen BIEN -- se comprobo al escribir esto --, y el resto de fichas de multivitaminico no declaran en que forma quimica viene cada vitamina, asi que no se puede saber si su numero es actividad o peso de aditivo. Eso esta en DATOS_QUE_FALTAN.md y no lo rellena el asistente."
+  },
+  "ui_a_microgramos": {
+    "vitA": {
+      "retinol": 0.3,
+      "acetato_de_retinilo": 0.344,
+      "propionato_de_retinilo": 0.359,
+      "palmitato_de_retinilo": 0.55,
+      "nota": "1,0 mg de retinol = 3.333 UI, y 1,0 ug de retinol = 1 RE (equivalente de retinol). El betacaroteno va aparte: 1,0 mg = 833 UI EN EL PERRO, o sea CUATRO VECES MENOS actividad por miligramo que el retinol. Si una etiqueta declarase la vitamina A como betacaroteno en mg y se convirtiera con el factor del retinol, el aporte saldria cuadruplicado.",
+      "betacaroteno_UI_por_mg_perro": 833.0
+    },
+    "vitD": {
+      "colecalciferol_D3": 0.025,
+      "nota": "1 ug de D3 = 40 UI. Es el factor que usan las tres fichas del catalogo que declaran conversion, y comprobado que lo usan bien."
+    }
+  },
+  "actividad_por_mg_de_fuente": {
+    "vitE": {
+      "d_alfa_tocoferol": 1.49,
+      "d_alfa_tocoferol_acetato": 1.36,
+      "dl_alfa_tocoferol": 1.1,
+      "dl_alfa_tocoferil_acetato": 1.0,
+      "dl_beta_tocoferol": 0.33,
+      "dl_delta_tocoferol": 0.25,
+      "dl_gamma_tocoferol": 0.01,
+      "unidad": "UI de actividad por mg de fuente",
+      "nota": "El patron es el dl-alfa-tocoferil acetato: 1 mg = 1 UI. El gamma-tocoferol tiene CIEN VECES menos actividad que el patron."
+    },
+    "tiamina": {
+      "tiamina_CL": 0.88,
+      "mononitrato_de_tiamina": 0.81,
+      "clorhidrato_de_tiamina": 0.79,
+      "unidad": "mg de cation tiamina por mg de fuente"
+    },
+    "acidoPantotenico": {
+      "D_pantotenato_calcico": 0.92,
+      "DL_pantotenato_calcico_min": 0.41,
+      "DL_pantotenato_calcico_max": 0.52,
+      "unidad": "mg de acido pantotenico por mg de fuente",
+      "nota": "El DL da un rango, y su extremo bajo es el factor mas agresivo de toda la tabla: 0,41. Una etiqueta que declarase el peso de DL-pantotenato calcico y se cargara como si fuera acido pantotenico dejaria el aporte real en el 41 % del anotado."
+    },
+    "vitB6": {"clorhidrato_de_piridoxina": 0.82, "unidad": "mg de piridoxina por mg de fuente"},
+    "niacina": {"acido_nicotinico": 1.0, "nicotinamida": 1.0, "unidad": "mg de niacina por mg de fuente"},
+    "colina": {
+      "cloruro_de_colina_base_ion_colina": 0.75,
+      "cloruro_de_colina_base_analogo_hidroxilo": 0.87,
+      "unidad": "mg de colina por mg de fuente"
+    },
+    "vitK3": {
+      "menadiona_bisulfito_sodico_MSB": 0.51,
+      "menadiona_bisulfito_de_pirimidinol_MPB": 0.45,
+      "menadiona_bisulfito_de_nicotinamida_MNB": 0.46,
+      "unidad": "mg de menadiona por mg de fuente",
+      "nota": "FEDIAF no pone requisito de vitamina K al perro -- la fila de la Tabla III-3b esta vacia --, asi que este bloque no tiene ningun uso hoy. Se transcribe para que la tabla este entera y no haya que volver al PDF."
+    }
+  }
+}

@@ -907,3 +907,49 @@ fuente y su fecha, como cualquier otro. **No lo rellena el asistente.**
 
 Medido el 9 de septiembre: **0 de los 216 menús del catálogo usan el yogur**, así
 que el hueco no está afectando a nadie hoy.
+
+## La forma química de las vitaminas del grupo B, ficha por ficha (9 de septiembre de 2026)
+
+Sale de leer entera la **§7.5 de FEDIAF** y su **Tabla VII-14**, que hasta ese
+día estaba marcada «pendiente». Es la hermana de las dos secciones de arriba
+sobre la vitamina A: **la misma pregunta, para otros seis nutrientes.**
+
+**Qué dice la fuente.** Una etiqueta puede declarar el peso de la SAL o del
+ÉSTER, no el de la vitamina, y la Tabla VII-14 da la equivalencia:
+
+| Fuente declarada | 1 mg de fuente = |
+|---|---|
+| Mononitrato de tiamina | 0,81 mg de B1 |
+| Clorhidrato de tiamina | 0,79 mg de B1 |
+| D-pantotenato cálcico | 0,92 mg de ácido pantoténico |
+| **DL-pantotenato cálcico** | **0,41 – 0,52 mg** |
+| Clorhidrato de piridoxina | 0,82 mg de B6 |
+| Cloruro de colina (ion colina) | 0,75 mg de colina |
+
+**Qué falta.** Ninguna de las 11 fichas de multivitamínico dice en qué forma
+química viene cada vitamina. Sin eso no se puede saber si el número que
+copiamos de la etiqueta es actividad o peso de aditivo.
+
+**Y está medido, que es lo que decide si esto importa.** Sobre menús resueltos
+en vivo el 9 de septiembre, suponiendo el peor factor de la tabla para cada uno:
+
+| Nutriente | Peor factor | Peor menú, veces el mínimo de FEDIAF | ¿Aguantaría? |
+|---|---|---|---|
+| Ácido pantoténico | ×0,41 | 1,96 | **No: se quedaría en 0,80 del mínimo** |
+| Tiamina | ×0,79 | 1,29 | Sí, por muy poco (1,02) |
+| Colina | ×0,75 | 1,40 | Sí |
+| Vitamina B6 | ×0,82 | 3,58 | Sí, sobrado |
+
+O sea: **uno de los cuatro caería por debajo del mínimo de FEDIAF con el menú
+saliendo verde**, y otro aguanta por un 2 %. No es una duda teórica.
+
+**Lo que sí está comprobado ya**, y por eso no está aquí: las seis conversiones
+de UI a microgramos que declaran tres fichas (napfcheck proLEBER y los dos
+V-INTEGRA, vitamina A y D3 cada uno) usan exactamente los factores de la
+Tabla VII-14 y salen bien. Lo rehace el **BLOQUE 70** en cada batería, desde la nota de cada ficha.
+
+**Cómo se rellena.** Etiqueta a etiqueta, buscando en la lista de aditivos la
+forma exacta (el número E/3a suele venir al lado). Si la etiqueta declara
+«Vitamina B5 (ácido pantoténico)» el número ya es actividad y no hay que tocar
+nada; si declara «D-pantotenato cálcico», hay que multiplicar. **No lo rellena
+el asistente.**

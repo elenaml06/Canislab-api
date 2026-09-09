@@ -1,0 +1,51 @@
+{
+  "_meta": {
+    "que_es": "La tabla de fuentes de minerales de SACN5 5a ed., cap.6 «Minerals and Vitamins» (adaptada del NRC 1986): el porcentaje de mineral ELEMENTAL que aporta cada sal, y las dos fuentes cuyo mineral NO se absorbe.",
+    "por_que_existe": "Es la hermana de la Tabla VII-14 de FEDIAF, que solo cubre vitaminas. El problema es el mismo y muerde igual: la etiqueta de un suplemento declara la SAL y el catalogo anota el numero como si fuera el elemento. Un multivitaminico que declare «oxido de zinc 100 mg» aporta 72 mg de zinc, no 100. || Y trae ademas algo que la tabla de vitaminas no tiene: DOS fuentes cuyo mineral se analiza y NO llega al perro. Eso no es un factor de conversion, es un cero.",
+    "verificado": "9 de septiembre de 2026, leyendo el cap.6 entero.",
+    "nota_de_la_fuente": "«Actual mineral levels in technical grade sources may vary.»",
+    "estado_en_el_catalogo": "NINGUNA ficha de multivitaminico del catalogo declara en que forma quimica viene cada mineral, igual que no declara la de las vitaminas. Esta en DATOS_QUE_FALTAN.md y no lo rellena el asistente. Este fichero existe para que, el dia que se lea una etiqueta, haya contra que comprobarla."
+  },
+  "no_biodisponibles": {
+    "oxido_de_hierro": {
+      "elemental_por_ciento": 69.9,
+      "disponible": false,
+      "cita": "SACN5 cap.6: «The iron in iron oxide, however, is NOT BIOLOGICALLY AVAILABLE. Iron oxide is often added to pet foods to impart a “meaty red” color... Analytically, a pet food containing iron oxide will APPEAR TO BE HIGH IN IRON, but may not be high in available iron»",
+      "por_que_importa": "Es el patron exacto de `dato_dudoso`: un numero con forma de dato bueno que pasa cualquier validacion de formato. El ejemplo que da el propio libro: 0,04 % de MS de oxido de hierro aporta 933 mg de hierro/kg de alimento que no sirven de nada."
+    },
+    "oxido_de_cobre": {
+      "elemental_por_ciento": 79.9,
+      "disponible": false,
+      "cita": "SACN5 cap.6: «copper availability was ESSENTIALLY ZERO from copper oxide and pork liver... AAFCO (2007) has recommended that pet food companies DISCONTINUE THE USE OF COPPER OXIDE as a copper source»",
+      "por_que_importa": "Es la sal de cobre con MAS cobre por miligramo (79,9 %) y la que menos llega. Si una etiqueta la declara, su cobre cuenta cero."
+    },
+    "higado_de_cerdo": {
+      "es_un_alimento": true,
+      "disponible": false,
+      "cita": "SACN5 cap.6: «copper availability was essentially zero from copper oxide and PORK LIVER. BEEF, SHEEP AND TURKEY LIVER, however, were HIGHLY AVAILABLE sources of copper» (Aoyagi et al, 1993)",
+      "estado": "NO AFECTA HOY: comprobado el 9-sep-2026 que no hay ni una ficha de cerdo en el catalogo. Los seis higados son de vaca, conejo, pollo, cordero, pavo y pato, y tres de ellos (vaca, cordero, pavo) son los que la fuente nombra como altamente disponibles. Queda escrito para el dia que alguien proponga anadir higado de cerdo: su cobre no cuenta."
+    }
+  },
+  "por_ciento_elemental_de_cada_sal": {
+    "calcio": {"carbonato_calcico": 39, "caliza": 38, "citrato_calcico": 24, "sulfato_calcico": 23, "cloruro_calcico": 35},
+    "calcio_y_fosforo": {
+      "harina_de_hueso": {"Ca": 24, "P": 12.6},
+      "fosfato_curacao": {"Ca": 36, "P": 14},
+      "fosfato_desfluorado": {"Ca": "30-34", "P": 18},
+      "fosfato_dicalcico": {"Ca": "18-24", "P": 18.5},
+      "fosfato_mono_y_dicalcico": {"Ca": "16-19", "P": 21},
+      "roca_blanda": {"Ca": 17, "P": 9},
+      "tripolifosfato_sodico": {"Ca": 0, "P": 25, "Na": 31}
+    },
+    "fosforo": {"acido_fosforico": 23, "fosfato_tricalcico": {"Ca": "31-34", "P": 18}},
+    "magnesio": {"oxido_de_magnesio": 54, "sulfato_de_magnesio": 9},
+    "potasio": {"citrato_potasico": 36, "cloruro_potasico": 50, "sulfato_potasico": 42},
+    "sodio_y_cloruro": {"cloruro_sodico": {"Na": 39, "Cl": 61}, "acetato_sodico": {"Na": 28}},
+    "hierro": {"sulfato_ferroso_monohidrato": 33, "sulfato_ferroso_heptahidrato": 20, "citrato_ferrico_amonico": "16.5-18.5", "fumarato_ferroso": 32.9, "cloruro_ferrico": 20.7, "carbonato_ferroso": 48.2, "oxido_ferrico": 69.9},
+    "cobre": {"carbonato_cuprico": 57.5, "cloruro_cuprico": 37.3, "hidroxido_cuprico": 65.1, "oxido_cuprico": 79.9, "sulfato_cuprico": 25.4},
+    "manganeso": {"carbonato_de_manganeso": 47.8, "cloruro_manganoso": 27.8, "oxido_manganoso": 77.4, "sulfato_de_manganeso_pentahidrato": 22.7, "sulfato_manganoso_monohidrato": 32.5},
+    "zinc": {"carbonato_de_zinc": 56.0, "cloruro_de_zinc": 48.0, "oxido_de_zinc": 72.0, "sulfato_de_zinc_heptahidrato": 22.7, "sulfato_de_zinc_monohidrato": 36.4},
+    "yodo": {"yodato_calcico": 65.1, "yoduro_potasico": 76.4, "yoduro_cuproso": 66.6, "sal_yodada_mg_por_kg": 48.2},
+    "selenio": {"selenito_sodico": 45.6, "selenato_sodico": 41.8}
+  }
+}

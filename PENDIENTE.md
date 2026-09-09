@@ -36,6 +36,7 @@ que tomar una persona, no yo.
 - [ ] Siete preguntas para Cris (proteína senior, estadio ACVIM, pancreatitis en cachorro, umbral 1,10, tiaminasa, qué firma un veterinario, qué hace AnVet)
 - [x] La app no distingue hepatopatía por cobre de otras hepatopatías — RESUELTO 7 sep (`raza_predispuesta_cobre`)
 - [ ] Repasar la transcripción de la tabla de FEDIAF en `auditar_fediaf.py`
+- [ ] **Tres decisiones que dejó leer SACN5 entera** (10 sep): si se pregunta dónde duerme el perro (la Tabla 5-3 da las cifras del frío, pelo corto +95 %), con qué densidad se leen las cifras de obesidad (la 27-4 es la única que propone ≤3,4 kcal/g), y si la energía del cachorro pasa a ir por fracción de peso adulto (Tabla 17-2, tres escalones) en vez de por edad
 - [x] Auditar los valores de los ALIMENTOS — RESUELTO 7 sep: la auditoría ya existía (`auditar_catalogo.py`), se ejecutó de verdad y se investigaron sus 20 avisos. Ver `PENDIENTE_DECISIONES.md`
 - [x] Fibra de la borraja — CERRADO 7 sep: el alimento ya no existe en el catálogo, no es un hueco de dato
 - [ ] `renal + pancreatitis` no da menú en ningún tamaño — decisión de nutrición: qué tope cede, y qué se le dice mientras (BLOQUE 50)
@@ -64,6 +65,8 @@ que tomar una persona, no yo.
 - [ ] ⚠️ **Los ocho `avisos_extra` de patología no los pinta ninguna pantalla.** La API los sirve por dos caminos y `canislab-web` no los lee en ninguno. Dos de ellos son de fármaco y describen algo que pasa por culpa del cambio de dieta que hace la app
 - [ ] **La app no dice que un perro que come crudo EXCRETA más patógenos.** Hay tiempos de congelación (que protegen al perro) y nada de higiene de la casa (que protege a quien vive con él). SACN5 cap.56
 - [ ] Sugerir patologías por raza: ahora hay **tres** tablas de fuente, incluida la de urolitos, cuyas seis patologías el motor ya tiene
+- [ ] **¿Duerme fuera?** FEDIAF §7.2.3.5 cuantifica el invierno: **10 a 90 % más de calorías**, y 2-5 kcal/kg^0,75 por cada grado bajo la zona termoneutra. La ficha no pregunta dónde vive el perro, así que hoy un mastín en el patio en enero recibe lo mismo que un perro de piso. Y **la cifra existe**: SACN5 Tabla 5-3 la da por tipo de pelo y salto de temperatura (pelo corto +95 %, pelo largo +59,5 %, Labrador +25 %, Gran Danés +22 %). Lo que falta es **la pregunta en la ficha**, que es decisión de producto
+- [ ] **La masa muscular (Tabla VII-3 de FEDIAF), que no es el BCS.** La salvedad ya está puesta el 9 sep (`salvedadDelBcs`, avisa en la parte baja de la escala); la escala entera es una pantalla de palpación y falta. Importa en la ficha del veterinario: un perro puede estar obeso y sarcopénico a la vez
 - [~] Ajustes de cuenta: falta método de pago (portal Stripe) y darse de baja de verdad
 - [ ] Volver a encender el muro de pago cuando toque (`VITE_PAYWALL`, dos pruebas paradas a propósito)
 - [ ] Los 34 pesos de referencia que faltan en «cómo preparar» (verduras y frutas)
@@ -83,6 +86,7 @@ que tomar una persona, no yo.
 
 ## `PENDIENTE_NUTRICION.md` — auditado contra el PDF oficial
 
+- [ ] **La forma química de las vitaminas B, ficha por ficha** (Tabla VII-14 de FEDIAF). Medido: con el peor factor de la tabla el ácido pantoténico caería POR DEBAJO del mínimo de FEDIAF con el menú en verde, y la tiamina aguanta por un 2 %. Las conversiones de UI sí están comprobadas (BLOQUE 70)
 - [ ] **La lactosa del «Yogur griego»**: SACN5 da el umbral (1 g/kg de peso) y el catálogo no tiene el dato. 0 de 216 menús lo usan hoy, pero Extras va siempre libre
 - [x] Contrastar con la ficha original de USDA — RESUELTO 7 sep: testículos de cordero ya no existe en el catálogo, timo de ternera ya cita FDC 170194 directo, y el acceso a USDA (`DEMO_KEY`) sí funciona (usado para el linoleico de abajo)
 - [x] El linoleico de la grasa de pollo — RESUELTO 7 sep: 19,5 g/100g, USDA FDC 173564

@@ -133,6 +133,224 @@
         "frase:8 µg/kg BW per day, when Vitamin B7 (Biotin) Biotin For healthy dogs biotin does not need to be or anti-vitami": "pendiente — ⚠️ la biotina solo hace falta si la dieta lleva compuestos ANTIVITAMÍNICOS, y la clara de huevo cruda lo es (avidina). Nuestras raciones llevan huevo, y por eso el motor ya topa la clara sola al 5 % del peso",
         "frase:Vitamin K Vitamin K Vitamin K does not need to be added unless (Kronfeld DS 1989c, NRC 2006j).": "pendiente — la vitamina K, mismo condicional que la biotina"
       }
+    },
+    "FEDIAF/7.2.3.5": {
+      "rango": [
+        2766,
+        2804
+      ],
+      "leida": "9-sep-2026",
+      "veredictos": {
+        "cifra:10 %": "NO SE APLICA. «Diet-induced thermogenesis ... represents about 10 % of the daily energy expenditure ... It increases with diets rich in protein and is greater in dogs fed four meals per day». Nos toca por los dos lados (BARF es rico en proteina y la app reparte en 2-3 tomas) pero FEDIAF da el TOTAL y no cuanto sube con cada cosa. Aplicarlo seria inventarse las dos cifras. Escrito en der.py.",
+        "cifra:144 kcal": "YA CABE. «DER may rise to over 144 kcal ME/kg0.75» para perros en jauria con mucha interaccion: cae entre «activo» (125) y «muy_activo» (150) de BASE_ACTIVIDAD, asi que por ese lado no falta nada.",
+        "cifra:602.5 kJ": "la misma cifra anterior en kilojulios (144 kcal). El motor trabaja en kcal.",
+        "cifra:70 kcal": "NO SE ADOPTA, a proposito. «Individually housed dogs, with little opportunity to move, may have DER as low as 70 kcal ME/kg0.75». Nuestro suelo («sedentario») son 95, que es lo que FEDIAF RECOMIENDA en su Tabla VII-7; los 70 son lo que documenta su revision de literatura para perros enjaulados. Manda la recomendacion, y ademas el error va del lado que se corrige solo (el dueno ve que engorda y baja la racion). Escrito en der.py.",
+        "cifra:90 %": "NO SE APLICA, Y ES UN HUECO REAL. «When kept outside in winter, dogs may need 10 to 90 % more calories than during summer». La app no pregunta donde vive el perro, asi que un perro que duerme fuera en enero recibe la misma racion que uno de piso. No se aplica porque no hay UNA cifra: hay un rango de 1 a 9, y elegir dentro de el es decision de producto y de criterio, ademas de necesitar una pregunta nueva en la ficha. Escrito en der.py y en PENDIENTE_PRODUCTO.md con la cita.",
+        "frase:temperature increases above the upper critical When kept outside in winter, dogs may need 10 to temperature (U": "Dos cosas pegadas por el volcado a texto en dos columnas: la temperatura critica superior (30-35 C en el perro adulto) y el 10-90 % del invierno. La primera es fisiologia y no cambia ninguna racion; la segunda es el hueco de arriba."
+      }
+    },
+    "FEDIAF/7.3": {
+      "rango": [
+        3196,
+        3257
+      ],
+      "leida": "9-sep-2026",
+      "veredictos": {
+        "frase:Conclusion The taurine values for cats, stated in the tables III-4a-c, amino acids, therefore dog foods should": "APLICADO como aviso. La mitad felina no nos toca. La canina si: «For dogs dietary taurine is not essential, since dogs can synthesize taurine from sulphur amino acids, therefore dog foods should be formulated to maintain adequate body reserves of taurine». No es un requisito de la dieta sino un objetivo en sangre, asi que no puede ser una fila del solver: va en los avisos de `dcm_taurina_respondedora` con sus dos cifras (>40 umol/L en plasma, >200 en sangre entera), que es lo que el aviso viejo mandaba medir sin decir contra que. Lo vigila el BLOQUE 64.",
+        "frase:the products maintain adequate blood value in the cat’s body (plasma levels should be greater than 50/60 µmol/": "FELINA. Los 50/60 umol/L en plasma son del gato; el perro tiene los suyos (40 y 200) y son los que se han aplicado. Mezclarlos seria copiar la cifra de otra especie, que es justo el error que este fichero existe para no repetir."
+      }
+    },
+    "FEDIAF/7.5": {
+      "rango": [
+        3318,
+        3372
+      ],
+      "leida": "9-sep-2026",
+      "veredictos": {
+        "cifra:0.01 IU": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:0.025 µg": "APLICADA Y COMPROBADA. 0,025 ug de D3 = 1 UI (o sea 1 ug = 40 UI). Es el factor de las mismas tres fichas. Convertir la D con el factor de la A multiplicaria por DOCE el aporte de un multivitaminico y el semaforo no diria nada: por eso el BLOQUE 70 la rehace.",
+        "cifra:0.25 IU": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:0.3 µg": "APLICADA Y COMPROBADA. 0,3 ug de retinol = 1 UI. Es el factor con el que estan convertidas las tres fichas del catalogo que declaran vitamina A en UI/kg, y el BLOQUE 70 rehace la cuenta desde la nota de cada ficha.",
+        "cifra:0.33 IU": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:0.344 µg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:0.359 µg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:0.45 mg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:0.46 mg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:0.51 mg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:0.52 mg": "TRANSCRITA. Es el extremo alto del DL-pantotenato calcico (0,41-0,52), el factor mas agresivo de la tabla: una etiqueta que declarase el peso de DL-pantotenato y se cargara como acido pantotenico dejaria el aporte real en el 41 %. Ninguna ficha del catalogo declara en que forma quimica viene su pantotenico -- eso esta en DATOS_QUE_FALTAN.md y no lo rellena el asistente.",
+        "cifra:0.55 µg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:0.75 mg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:0.79 mg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:0.81 mg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:0.82 mg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:0.87 mg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:0.88 mg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:0.92 mg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:1 IU": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:1 mg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:1 µg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:1.0 mg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:1.0 µg": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:1.00 IU": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:1.10 IU": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:1.36 IU": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:1.49 IU": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:3,333 IU": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:40 IU": "TRANSCRITA. Tabla VII-14 entera en `fediaf_conversiones_vitaminas.json`, y el BLOQUE 70 rehace con ella las seis conversiones de UI que declaran las fichas del catalogo (las tres estaban bien).",
+        "cifra:833 IU": "TRANSCRITA Y VIGILADA, sin uso hoy. Betacaroteno: 1,0 mg = 833 UI EN EL PERRO, cuatro veces menos actividad por miligramo que el retinol. Ninguna ficha declara la vitamina A como betacaroteno; el dia que una lo haga, convertirla con el factor del retinol cuadruplicaria el aporte. La cifra vive en el JSON y el BLOQUE 70 comprueba que sigue ahi."
+      }
+    },
+    "FEDIAF/7.6": {
+      "rango": [
+        3373,
+        3518
+      ],
+      "leida": "9-sep-2026",
+      "veredictos": {
+        "cifra:100 %": "APLICADO como aviso. «The predominant clinical sign in dogs and cats (almost 100% of the cases) is pruritus (itching)». Cambia lo que hay que decirle al dueno -- una reaccion adversa al alimento se ve en la PIEL, no en la tripa --, no ningun numero del menu. Va en los avisos de `reaccion_adversa_alimento`.",
+        "cifra:15 %": "APLICADO en el mismo aviso. «An estimated 10 to 15 % of the cases of food allergy in dogs and cats are believed to result into gastrointestinal signs». Es el complemento del anterior y es el que evita el error de buscar solo diarrea.",
+        "cifra:5 %": "CONTEXTO. «Adverse reactions to food are deemed to account for about 1-5 % of all skin conditions in dogs». Es prevalencia sobre la poblacion dermatologica: no cambia nada del motor ni de lo que se le dice a un dueno que ya tiene el diagnostico.",
+        "cifra:6 %": "FELINA. «1-6 % of all feline dermatoses».",
+        "frase:Ideally this should be confirmed by a challenge (reintroduction of the suspected component) Through veterinari": "APLICADO como aviso, y es la mitad del diagnostico que casi nadie hace. «In dogs and cats, adverse reactions to food are only diagnosed through the elimination of the food component (eviction diet) ... Ideally this should be CONFIRMED BY A CHALLENGE (reintroduction of the suspected component)». Sin esa segunda mitad se le quita de por vida un alimento a un perro al que puede no hacerle nada. Va en `reaccion_adversa_alimento`, aviso `confirmar_con_reintroduccion`, y lo vigila el BLOQUE 64."
+      }
+    },
+    "FEDIAF/3.2.1": {
+      "rango": [
+        523,
+        619
+      ],
+      "leida": "9-sep-2026",
+      "veredictos": {
+        "cifra:10 %": "APLICADA. Es el 10 % de la frase anterior: los doce aminoacidos esenciales van un 10 % por encima del publicado.",
+        "cifra:100 g": "unidad. «units/100 g DM», la base de la Tabla III-3a. El motor usa la 3b (por 1000 kcal).",
+        "cifra:100 kcal": "FELINA (la otra ancla del gato).",
+        "cifra:1000 kcal": "unidad, y la del motor: la Tabla III-3b es la que carga requerimientos_v2_final.json.",
+        "cifra:110 kcal": "APLICADA. La otra ancla, columna `minAdulto110`.",
+        "cifra:12 %": "CONTEXTO IMPORTANTE Y YA TENIDO EN CUENTA. «Legal maxima in EU legislation are expressed on 12% moisture content and they do not account for energy density. Therefore in these guidelines they are only provided on a dry matter basis». Es por lo que los maximos LEGALES del JSON llevan su nota de auditoria con la conversion x2,5 desde la Tabla III-3a, y no un numero copiado del Reglamento.",
+        "cifra:15 kg": "CONTEXTO, y explica de donde salen los minimos de adulto: «assuming a moderate-sized lean adult dog of 15 kg bodyweight». No es un umbral ni se aplica -- y ojo, NO es el mismo 15 kg de la nota b (raza grande), que decide otra cosa.",
+        "cifra:16.7 kJ": "los 4,0 kcal/g MS en kilojulios.",
+        "cifra:314 kJ": "FELINA, en kilojulios.",
+        "cifra:398 kJ": "los 95 kcal en kilojulios. El motor trabaja en kcal.",
+        "cifra:4 kg": "FELINA («a moderate-sized lean adult cat of 4 kg»).",
+        "cifra:4.0 kcal": "APLICADA COMO DENSIDAD DE REFERENCIA. «These conversions assume an energy density of 16.7 kJ (4.0 kcal) ME/g DM». Es el numero con el que se convierte cualquier cifra en %MS o mg/kg MS de una fuente que declare esta densidad, y el que usa el BLOQUE 69 para la taurina. Comprobado contra la propia tabla: proteina 62,50 g/1000 kcal = 25,00 g/100 g MS.",
+        "cifra:418 kJ": "FELINA, en kilojulios.",
+        "cifra:460 kJ": "los 110 kcal en kilojulios.",
+        "cifra:75 kcal": "FELINA (ancla de MER del gato).",
+        "cifra:80 %": "APLICADA. «If the protein digestibility of >=80% (mentioned under 2.2 Scope) cannot be guaranteed, it is recommended to increase the essential amino acid levels by a minimum of 10%». El catalogo no tiene columna de digestibilidad, asi que no se puede garantizar: se aplica. Vive en requisitos_condicionales.json y lo aplica `verificar.minimo_de()`.",
+        "cifra:95 kcal": "APLICADA. Es una de las dos anclas de MER sobre las que estan calculados los minimos de adulto. requerimientos_v2_final.json trae las dos columnas (minAdulto a 95 y minAdulto110 a 110) y `verificar.minimo_de()` interpola entre ellas.",
+        "frase:Unless the life stage is indicated it applies to all life stages.": "APLICADA. Es la regla de lectura de las notas de la tabla, y es la que hace que un maximo sin etapa (como el ratio Ca:P o los legales de oligoelementos) valga en todas. Asi esta cargado requerimientos_v2_final.json y lo comprueba `auditar_fediaf.py`.",
+        "frase:energy densities different from this value, the recommendations should be corrected for An asterisk (*) indica": "NO NOS TOCA, y conviene que quede escrito por que. «For foods with energy densities different from this value, the recommendations should be corrected for energy density» se refiere a las cifras en %MS: es la conversion %MS <-> por 1000 kcal la que depende de la densidad. El motor NO trabaja en %MS, trabaja en por 1000 kcal, que es la cifra invariante. Fue el origen de un error real: se dedujo que nuestros techos quedaban un 29 % flojos porque la racion mide 5159 kcal/kg MS, y el propio capitulo 1 de SACN5 dice lo contrario dos veces."
+      }
+    },
+    "FEDIAF/7.7": {
+      "rango": [
+        3519,
+        3773
+      ],
+      "leida": "9-sep-2026",
+      "veredictos": {
+        "cifra:10 g": "YA APLICADA. «onions (5 to 10 g/kg BW) can already be toxic», la cita del motivo de «cebolla».",
+        "cifra:100 %": "CONTEXTO. Porcentaje dentro del relato clinico de la intoxicacion, no una dosis.",
+        "cifra:115 mg": "YA APLICADA. «of 90-115 mg/kg BW» es la dosis a la que se han descrito MUERTES, mas baja que la toxica: es la que lleva el motivo del BLOQUE 60.",
+        "cifra:120 g": "APLICADA, la misma frase.",
+        "cifra:19.6 g": "APLICADA. «19.6 g of grapes per kg BW», la misma dosis para la uva fresca.",
+        "cifra:2.8 g": "APLICADA. «2.8 g of raisins per kg bodyweight». Es la dosis de riesgo de la PASA, y la pasa es peor que la uva por peso. La lista de prohibidos del BLOQUE 60 no tenia ni uva ni pasa -- tenia los Allium y el chocolate, o sea las §§7.7.2 y 7.7.3, y le faltaba la 7.7.1 entera. Anadidas el 9-sep-2026.",
+        "cifra:20 mg": "CONTEXTO. Teobromina de un producto concreto de chocolate; el prohibido ya es la categoria entera.",
+        "cifra:250 mg": "YA APLICADA. Teobromina, dosis toxica 250-500 mg/kg. El chocolate y el cacao ya estaban en la lista de prohibidos del BLOQUE 60 con esta cita.",
+        "cifra:30 mg": "YA APLICADA. «the average theobromine level varies from 10 to 30 mg/g» en cacao en polvo, que es la cifra que lleva el motivo de «cacao» en el BLOQUE 60.",
+        "cifra:40 kg": "APLICADA como el ejemplo que hace la cifra entendible: «a large dog of 40 kg may need to eat only 120 g to be at risk». Va en el motivo que da el BLOQUE 60.",
+        "cifra:5 g": "YA APLICADA. Allium: «5 g/kg BW of whole garlic» (equivalente a 1,25 ml/kg de extracto). Es la cita del motivo de «ajo».",
+        "cifra:500 g": "APLICADA, y es la parte que asusta: «cartons of raisins typically contain 500 g». O sea que la dosis de riesgo de un perro de 40 kg es una cuarta parte de una caja.",
+        "cifra:500 mg": "YA APLICADA, el otro extremo del mismo rango.",
+        "frase:Even a metabolism, but this seems unlikely as dogs are not known large dog of 40 kg may need to eat only 120 g": "APLICADA: es la frase del perro de 40 kg y los 120 g.",
+        "frase:It has to be pointed out, later.": "trozo partido por el volcado a dos columnas; sin contenido normativo propio.",
+        "frase:considered a threat; the grape or raisin itself has to be eaten Analysis for a variety of substances has prove": "APLICADA, y es el motivo de que no haya forma de acotar el riesgo: «Analysis for a variety of substances has proved negative», o sea que el toxico de la uva SIGUE SIN IDENTIFICARSE. No se puede medir ni descartar por analisis, asi que la unica respuesta posible es que no entre en el catalogo. Escrito en el motivo del BLOQUE 60.",
+        "frase:to increase the chances of survival, and should be 2005).": "tratamiento veterinario de urgencia. No cambia nada del motor: el alimento no entra."
+      }
+    },
+    "FEDIAF/7.2": {
+      "rango": [
+        2508,
+        3195
+      ],
+      "leida": "9-sep-2026",
+      "veredictos": {
+        "cifra:0.9 kcal": "parte de la ecuacion de CUATRO PASOS para pienso preparado (§7.2.2.2 a). NO es la nuestra: FEDIAF da un apartado aparte, el b), para «products of vegetable or animal origin, in their natural state, fresh or preserved, such as meat, offal», que es exactamente el catalogo. Ver el BLOQUE 71.",
+        "cifra:1 MJ": "conversion de unidades de energia (kcal <-> kJ <-> MJ). El motor trabaja en kcal.",
+        "cifra:1 kcal": "conversion de unidades de energia (kcal <-> kJ <-> MJ). El motor trabaja en kcal.",
+        "cifra:1.25 kcal": "parte de la ecuacion de CUATRO PASOS para pienso preparado (§7.2.2.2 a). NO es la nuestra: FEDIAF da un apartado aparte, el b), para «products of vegetable or animal origin, in their natural state, fresh or preserved, such as meat, offal», que es exactamente el catalogo. Ver el BLOQUE 71.",
+        "cifra:10 %": "§7.2.3.5, veredicto alli: termogenesis de la comida, sin cifra para el reparto.",
+        "cifra:10.0 mg": "parte del mismo ejemplo del zinc.",
+        "cifra:100 g": "unidad.",
+        "cifra:100 kJ": "conversion de unidades de energia (kcal <-> kJ <-> MJ). El motor trabaja en kcal.",
+        "cifra:100 kcal": "FELINA (ancla de MER del gato).",
+        "cifra:1000 kJ": "conversion de unidades de energia (kcal <-> kJ <-> MJ). El motor trabaja en kcal.",
+        "cifra:1000 kcal": "unidad, la del motor.",
+        "cifra:105 kcal": "CONTEXTO Y RESPALDO DE NUESTRO SUELO. «an average energy intake ranging from 94 to 105 kcal» en perros de casa con menos de 1 h/dia de actividad de bajo impacto. Nuestro «sedentario» son 95, dentro de ese rango medido.",
+        "cifra:110 kcal": "APLICADA: ancla alta de los minimos de adulto y «normal» de BASE_ACTIVIDAD.",
+        "cifra:130 kcal": "CONTEXTO. Es el supuesto del NRC (130 kcal/kg^0,75), no el de FEDIAF (110), y la §7.2.5 explica que la diferencia entre las dos guias sale justo de ahi. El motor usa las cifras de FEDIAF.",
+        "cifra:144 kcal": "§7.2.3.5, veredicto alli: ya cabe entre «activo» y «muy_activo».",
+        "cifra:15 %": "APLICADA. Es el escalon de edad: «Dogs over seven years of age may need 10-15 % less». der.py y src/der.js llevan -15 para senior, que es ademas lo que da la Tabla VII-6 (95 contra 110). Lo vigila el BLOQUE 54 apartado 2-ter.",
+        "cifra:15 kg": "CONTEXTO: el perro de referencia de 15 kg sobre el que estan calculados los minimos.",
+        "cifra:15 mg": "parte del mismo ejemplo del zinc.",
+        "cifra:17.1 kJ": "Tabla VII-5, energia BRUTA (bomba calorimetrica). NO se usa: el catalogo va en energia METABOLIZABLE, que es lo que come el perro. La VII-5 solo es el primer paso de la ecuacion de cuatro pasos, que ademas no es la nuestra (ver §7.2.2.2 b).",
+        "cifra:181 g": "CONTEXTO, el mismo ejemplo.",
+        "cifra:189 kcal": "FELINA (el mismo gato, esterilizado o de interior).",
+        "cifra:19 %": "igual que la anterior: cifra de un estudio de actividad, no de la tabla que se aplica.",
+        "cifra:200 kcal": "CONTEXTO. El extremo alto del mismo rango. Coincide con el Gran Danes de la Tabla VII-7 (200), que SI esta aplicado en der.py.",
+        "cifra:21 kJ": "conversion de unidades de energia (kcal <-> kJ <-> MJ). El motor trabaja en kcal.",
+        "cifra:210 g": "CONTEXTO, el mismo ejemplo.",
+        "cifra:22 %": "igual: cifra de estudio dentro de la revision de literatura de actividad.",
+        "cifra:23.8 kJ": "Tabla VII-5, energia BRUTA (bomba calorimetrica). NO se usa: el catalogo va en energia METABOLIZABLE, que es lo que come el perro. La VII-5 solo es el primer paso de la ecuacion de cuatro pasos, que ademas no es la nuestra (ver §7.2.2.2 b).",
+        "cifra:239 kcal": "conversion de unidades de energia (kcal <-> kJ <-> MJ). El motor trabaja en kcal.",
+        "cifra:253 kcal": "FELINA (ejemplo de kcal/dia de un gato de 4 kg).",
+        "cifra:27.5 %": "CONTEXTO, gestacion/lactancia: reparto de la ganancia de peso de la perra.",
+        "cifra:3.77 kJ": "parte de la ecuacion de CUATRO PASOS para pienso preparado (§7.2.2.2 a). NO es la nuestra: FEDIAF da un apartado aparte, el b), para «products of vegetable or animal origin, in their natural state, fresh or preserved, such as meat, offal», que es exactamente el catalogo. Ver el BLOQUE 71.",
+        "cifra:377 kJ": "conversion de unidades de energia (kcal <-> kJ <-> MJ). El motor trabaja en kcal.",
+        "cifra:39.3 kJ": "Tabla VII-5, energia BRUTA (bomba calorimetrica). NO se usa: el catalogo va en energia METABOLIZABLE, que es lo que come el perro. La VII-5 solo es el primer paso de la ecuacion de cuatro pasos, que ademas no es la nuestra (ver §7.2.2.2 b).",
+        "cifra:4 kg": "FELINA (gato de referencia).",
+        "cifra:4.1 kcal": "Tabla VII-5, energia BRUTA (bomba calorimetrica). NO se usa: el catalogo va en energia METABOLIZABLE, que es lo que come el perro. La VII-5 solo es el primer paso de la ecuacion de cuatro pasos, que ademas no es la nuestra (ver §7.2.2.2 b).",
+        "cifra:4.184 kJ": "conversion de unidades de energia (kcal <-> kJ <-> MJ). El motor trabaja en kcal.",
+        "cifra:4.75 mg": "EJEMPLO DEL ZINC, y es el que explica por que existen las dos columnas de adulto. FEDIAF muestra como un mismo requisito diario da concentraciones distintas segun las kcal que coma el perro. Es exactamente lo que hace `verificar.minimo_de()`, y lo vigila el BLOQUE 34.",
+        "cifra:400 kcal": "CONTEXTO: ejemplo de densidad energetica de un producto, no un limite.",
+        "cifra:47 g": "CONTEXTO, el mismo ejemplo.",
+        "cifra:47.5 %": "CONTEXTO, la otra mitad del mismo reparto.",
+        "cifra:5 kcal": "NO SE APLICA. El incremento de MER por grado por debajo de la zona termoneutra (2-5 kcal/kg^0,75 por grado). Necesita saber donde vive el perro y a que temperatura, que es la misma pregunta que falta para el 10-90 % del invierno. Escrito en der.py y en PENDIENTE_PRODUCTO.md.",
+        "cifra:5.23 kJ": "parte de la ecuacion de CUATRO PASOS para pienso preparado (§7.2.2.2 a). NO es la nuestra: FEDIAF da un apartado aparte, el b), para «products of vegetable or animal origin, in their natural state, fresh or preserved, such as meat, offal», que es exactamente el catalogo. Ver el BLOQUE 71.",
+        "cifra:5.7 kcal": "Tabla VII-5, energia BRUTA (bomba calorimetrica). NO se usa: el catalogo va en energia METABOLIZABLE, que es lo que come el perro. La VII-5 solo es el primer paso de la ecuacion de cuatro pasos, que ademas no es la nuestra (ver §7.2.2.2 b).",
+        "cifra:60 %": "CONTEXTO de la §7.2.3.2 (actividad): proporcion de aumento de gasto descrita en un estudio. La Tabla VII-7, que es la recomendacion practica, ya esta aplicada en der.py.",
+        "cifra:602.5 kJ": "conversion de unidades de energia (kcal <-> kJ <-> MJ). El motor trabaja en kcal.",
+        "cifra:63 g": "CONTEXTO: ejemplo numerico de FEDIAF de cuanta comida come un perro segun la densidad.",
+        "cifra:7 %": "CONTEXTO de la §7.2.3.3 (edad): porcentaje de un estudio de composicion corporal.",
+        "cifra:7.2 mg": "parte del mismo ejemplo del zinc: es el minimo de zinc por 100 g MS a 110 kcal (Tabla III-3a).",
+        "cifra:7.5 mg": "parte del mismo ejemplo del zinc.",
+        "cifra:70 kcal": "§7.2.3.5, veredicto alli: no se adopta, los 95 de la Tabla VII-7 son la recomendacion.",
+        "cifra:724 kcal": "CONTEXTO Y COMPROBACION, la otra ancla: 15^0,75 x 95 = 724. Las dos cuadran, y son las dos columnas de adulto de requerimientos_v2_final.json.",
+        "cifra:75 kcal": "FELINA (la otra ancla del gato).",
+        "cifra:8 %": "aviso de la ecuacion de cuatro pasos: «In dog foods with crude fibre content above 8 % in DM ... the predictive equation can underestimate the energy density». No nos toca, porque esa ecuacion no es la nuestra.",
+        "cifra:8.34 mg": "parte del mismo ejemplo: el minimo de zinc por 100 g MS a 95 kcal (Tabla III-3a). Cargado en requerimientos_v2_final.json como 20,8 mg/1000 kcal (x2,5).",
+        "cifra:810 kJ": "conversion de unidades de energia (kcal <-> kJ <-> MJ). El motor trabaja en kcal.",
+        "cifra:838 kcal": "CONTEXTO Y COMPROBACION. «110 kcal/kg BW0.75/d (e.g. 838 kcal/d for 15 kg dog)». 15^0,75 x 110 = 838, o sea que nuestra formula da lo mismo que el ejemplo de FEDIAF.",
+        "cifra:9.4 kcal": "Tabla VII-5, energia BRUTA (bomba calorimetrica). NO se usa: el catalogo va en energia METABOLIZABLE, que es lo que come el perro. La VII-5 solo es el primer paso de la ecuacion de cuatro pasos, que ademas no es la nuestra (ver §7.2.2.2 b).",
+        "cifra:90 %": "es el 10-90 % del invierno de la §7.2.3.5, con veredicto detallado alli.",
+        "cifra:90 kcal": "CONTEXTO Y COTA. «Energy allowances ... ranging from less than 90 kcal ME/kg0.75 to approximately 200». Nuestro BASE_ACTIVIDAD va de 95 a 175, o sea dentro. El extremo bajo de la literatura es mas bajo que el nuestro por lo mismo que los 70 de la §7.2.3.5: es literatura, no la recomendacion de la Tabla VII-7.",
+        "cifra:90 kg": "CONTEXTO. El San Bernardo como extremo del rango de tamano canino. No es una cifra que se aplique.",
+        "cifra:95 kcal": "APLICADA: ancla baja de los minimos de adulto y suelo de BASE_ACTIVIDAD.",
+        "frase:(2002) it is young adult dogs may have a sedentary lifestyle and recommended that dogs should be fed to mainta": "APLICADA EN PARTE, Y CON UNA DEUDA ESCRITA. «it is recommended that dogs should be fed to maintain a body condition score (BCS) between 4 and 5 on the 9-point BCS». El motor usa BCS_NEUTRO=5 como PUNTO, no como rango 4-5. Es una de las cuatro cosas que salieron de leer la §7.1 y sigue en el inventario como pendiente.",
+        "frase:(2011) recommended that neutered cats for cats with a lean body condition, many lean cats may should be fed to": "FELINA.",
+        "frase:2012b) comparing the accuracy between the modified Atwater method and the equations cited by the National Rese": "parte de la ecuacion de CUATRO PASOS para pienso preparado (§7.2.2.2 a). NO es la nuestra: FEDIAF da un apartado aparte, el b), para «products of vegetable or animal origin, in their natural state, fresh or preserved, such as meat, offal», que es exactamente el catalogo. Ver el BLOQUE 71.",
+        "frase:50 of 98 Page FEDIAF Nutritional Guidelines | Publication September 2025 b) The ME in products of vegetable or": "LA MAS IMPORTANTE DE ESTA SECCION, Y APLICADA EL 9-sep-2026. «The ME in products of vegetable or animal origin, IN THEIR NATURAL STATE, fresh or preserved, such as MEAT, OFFAL ... has to be predicted with the following equations. Dogs: kcal ME = (4 x % crude protein) + (9 x % crude fat) + (4 x % NFE)». Es LA ecuacion que nos toca, y no la de cuatro pasos del pienso. Medido: la mediana del catalogo sale a 1,014 veces esta ecuacion y 70 de 73 fichas animales caen dentro del +-10 %, o sea que el catalogo ya la seguia -- lo que no habia es forma de saberlo. Ahora lo comprueba el BLOQUE 71, ficha a ficha, y los higados que se pasan quedan explicados por el tercer termino (NFE, o sea glucogeno) que el catalogo no tiene como columna.",
+        "frase:67 proposed by Heusner in 1991 should be used (NRC 2006b), For indoor and/or neutered adult cats the average w": "FELINA en su segunda mitad. La primera es el exponente metabolico: FEDIAF menciona kg^0,67 como alternativa discutida para el perro y usa kg^0,75 en sus tablas practicas, que es el que usa der.py.",
+        "frase:77kJ/g) for Manufacturers should be aware that feeding trials are cats (NRC 2006a).": "parte de la ecuacion de CUATRO PASOS para pienso preparado (§7.2.2.2 a). NO es la nuestra: FEDIAF da un apartado aparte, el b), para «products of vegetable or animal origin, in their natural state, fresh or preserved, such as meat, offal», que es exactamente el catalogo. Ver el BLOQUE 71.",
+        "frase:Alternatively, NRC 2006 trials recommends subtracting 1.": "parte de la ecuacion de CUATRO PASOS para pienso preparado (§7.2.2.2 a). NO es la nuestra: FEDIAF da un apartado aparte, el b), para «products of vegetable or animal origin, in their natural state, fresh or preserved, such as meat, offal», que es exactamente el catalogo. Ver el BLOQUE 71.",
+        "frase:Dogs over seven years of age may need 10 one to two years old, the average adult dog (three to seven - 15 % le": "APLICADA. Es el escalon de edad entero (los tres grupos), aplicado en der.py y src/der.js con las cifras de la Tabla VII-6 y vigilado por el BLOQUE 54.",
+        "frase:Older animals need fewer calories because cut-off point, but this should not be regarded as a general of decre": "MATIZ APLICADO EN PARTE. FEDIAF avisa de que los 7 anos «should not be regarded as a general cut-off point» -- envejecer no es una fecha. La app usa una edad porque no tiene otra cosa que preguntar, pero la §7.2.4.1 anade que un perro mayor que sigue corriendo necesita mas: eso ya lo cubre el nivel de actividad, que es una pregunta aparte y se suma.",
+        "frase:The next section provides general in age, breed, body size, body condition, insulation recommendations for hou": "enumeracion de los factores que hacen variar la energia. Cada uno tiene su seccion; los veredictos van alli.",
+        "frase:Using the trials described FEDIAF recommends that members who wish to use in Chapter 6.": "protocolo de ensayos de digestibilidad con animales. No aplicable: el catalogo viene de bases de composicion, no de ensayos propios.",
+        "frase:energy) allocation to ensure growth along the curve Meyer H and Zentek J 1992), valid from weaning age (8 week": "CRECIMIENTO: curvas de peso esperado por edad (Tabla VII-8a). No se usan -- la app pregunta el peso adulto estimado en vez de deducirlo de una curva --, y esta escrito asi en el inventario.",
+        "frase:temperature increases above the upper critical When kept outside in winter, dogs may need 10 to temperature (U": "§7.2.3.5, veredicto detallado alli: es el hueco del invierno.",
+        "frase:walking on products must be formulated to match these needs.": "trozo partido por el volcado a dos columnas; el contenido esta en los veredictos de la §7.2.5."
+      }
     }
   }
 }

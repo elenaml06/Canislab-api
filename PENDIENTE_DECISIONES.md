@@ -382,3 +382,58 @@ las tiene que tomar una persona, no yo.
   pide **más** proteína, no menos. Está escrita y **no** aplicada. Se resuelve o
   bien preguntando en la ficha cómo se manifiesta, o bien con la pantalla de
   objetivos por nutriente, donde un profesional la fijaría a mano.
+
+## Lo que dejó abierto leer SACN5 entera (10 de septiembre de 2026)
+
+Tres decisiones, las tres con los números ya delante. **Ninguna es de fuentes:**
+la fuente ya dijo lo que dice, y lo que falta es criterio de producto.
+
+### 1 · ¿Se pregunta dónde duerme el perro?
+
+FEDIAF §7.2.3.5 dice que un perro que vive fuera en invierno puede necesitar de
+un **10 a un 90 %** más de calorías. Ese rango era la razón por la que esto
+estaba parado. **SACN5 Tabla 5-3 da las cifras concretas:**
+
+| Perro | Aumento del DER | De | A |
+|---|---|---|---|
+| Labrador retriever y beagle | +25 % (12-43) | 15 °C | 8,5 °C |
+| Gran Danés | +22 % | verano | invierno |
+| Pelo **corto** | **+95 %** | 25 °C | 7,6 °C |
+| Pelo **largo** | +59,5 % | 25 °C | 7,6 °C |
+| Beagle | +70,5 % | 17 °C | −17 °C |
+| Perro de trineo | +61,5 % | 17 °C | −17 °C |
+
+Lo que hay que decidir: **(a)** si se pregunta; **(b)** qué se pregunta
+exactamente —¿duerme fuera? ¿a cuántos grados? el tipo de pelo la app podría
+deducirlo de la raza—; **(c)** qué se hace con un perro que duerme fuera solo
+parte del año. Hoy ese perro recibe la misma ración que uno de piso.
+
+### 2 · La densidad con la que se leen las cifras de obesidad
+
+Todas las tablas de SACN5 se convierten a 4,0 kcal/g de materia seca, y eso está
+probado (ver `HECHO.md` del 9-10 de septiembre). **La Tabla 27-4 es la única de
+las 24 que propone otra cosa** — pero para el propio alimento, no como base de
+conversión: «Foods for weight loss … should contain **≤3,4 kcal ME/g**».
+
+No dice que sus otras filas estén expresadas a esa densidad; ninguna tabla lo
+dice salvo la 13-3, que dice 4,0. Pero si lo estuvieran, **sus cifras subirían un
+18 %**. Se ha dejado en 4,0 por ser la lectura literal. Es una pregunta para la
+nutricionista, no una decisión de código.
+
+### 3 · La energía del cachorro: ¿por edad o por fracción de peso adulto?
+
+SACN5 da la misma regla de dos maneras y el motor usa la del capítulo 5:
+
+| Fuente | Cómo la parte | Escalones |
+|---|---|---|
+| Cap. 5 (lo que aplica el motor) | por **edad** | 3 × RER hasta los 4 meses, 2 × RER después |
+| **Tabla 17-2** (capítulo de crecimiento) | por **fracción del peso adulto** | 3 × RER hasta el 50 %, 2,5 × del 50 al 80 %, 1,8-2,0 × por encima del 80 % |
+
+No se contradicen: dicen lo mismo con variables distintas. Pero la del capítulo
+de crecimiento es **más fina** (tres escalones en vez de dos) y **la app ya
+pregunta el peso adulto estimado**, así que tiene el dato. Cambiarla movería la
+ración de los cachorros que están entre el 50 y el 80 % de su peso adulto.
+
+Y trae aparte al Gran Danés otra vez: «may need **25 % more energy** during the
+first two months after weaning = **250 kcal/BWkg^0,75**», y «may not grow when
+daily energy intake is less than 175 kcal ME/BWkg^0,75».

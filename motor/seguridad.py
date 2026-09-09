@@ -463,6 +463,43 @@ HUESO_RIESGO_DENTAL = set()
 # hueso estrecho que puede encajarse entre los molares.
 HUESO_RIESGO_ASTILLADO = {"costillas de cordero"}
 
+# ⚠️ LA HISTAMINA DEL PESCADO MAL CONSERVADO (9 de septiembre de 2026, leyendo
+#     ENTERA la §7.6 de FEDIAF, que hasta ese día estaba sin leer).
+#
+# FEDIAF §7.6.2.4, literal, en el apartado que se titula «All individuals
+# susceptible if sufficient quantity eaten»:
+#
+#   «Pharmacologic reaction — Adverse reaction to a food as result of a
+#    naturally derived or added chemical producing a drug-like or
+#    pharmacological effect in the host such as methylxanthines in chocolate
+#    or **pseudo-allergic reactions caused by high histamine levels in not
+#    well-preserved scombroid fish (e.g. tuna)**»
+#
+# POR QUÉ ESTO ES NUESTRO Y NO DE OTRO. Servimos pescado CRUDO, y cuatro de las
+# especies del catálogo son de las que forman histamina: Atún y Caballa
+# (Scombridae), Sardina (Clupeidae) y Boquerón (Engraulidae). No es una lista
+# nuestra: son tres de las seis familias que nombra el Reglamento (CE) 2073/2005
+# al fijar el límite de histamina «productos de la pesca de especies de peces
+# asociadas a un alto contenido de histidina».
+#
+# Y POR QUÉ NO ES LO MISMO QUE LO QUE YA HABÍA, que es la pregunta que hay que
+# hacerse antes de añadir un aviso más:
+#   · El tope de MERCURIO (atún) es un metal que se acumula. Otro mecanismo.
+#   · El aviso de aminas vasoactivas de `reaccion_adversa_alimento` (SACN5
+#     cap.31) sale SOLO si esa patología está marcada, y habla de bajar el
+#     umbral de un perro YA sensible.
+#   · Esto es de FEDIAF, va en el apartado «TODOS los individuos son
+#     susceptibles si comen cantidad suficiente», y no depende de que el perro
+#     tenga nada: depende de cómo se haya conservado el pescado. Un perro sano
+#     con una caballa que rompió la cadena de frío tiene el mismo problema.
+#
+# LO QUE NO SE HACE, y es a propósito: no se topa la cantidad ni se saca el
+# pescado del catálogo. La histamina no la genera el pez, la genera la mala
+# conservación, y es TERMORRESISTENTE — cocinar y congelar no la destruyen una
+# vez formada, así que un tope en gramos no arregla nada y un pescado bien
+# conservado no tiene ningún problema. Lo que hay que decir es cuándo se forma.
+PESCADO_HISTAMINA = {"atun", "caballa", "sardina", "boqueron"}
+
 # ⚠️ Y LA CIFRA QUE FALTABA AQUÍ, DE SACN5 cap.50 (9 de septiembre de 2026).
 #
 # Estas dos listas son POR CORTE: dicen qué hueso concreto tiene qué riesgo. Lo
@@ -909,6 +946,15 @@ def avisos_rotacion(menu, alimentos):
                 avisos.append(
                     "%s: acumula cadmio y cobre (misma familia que el "
                     "mejillón). Servir sin cabeza/vísceras y no a diario." % n)
+            if _es(n, PESCADO_HISTAMINA):
+                avisos.append(
+                    "%s: es de las especies que acumulan histamina si se rompe "
+                    "la cadena de frío. Compralo bien frío y dalo el mismo día "
+                    "que lo descongeles; si huele fuerte o pica en la lengua, "
+                    "tíralo. La histamina no se va ni congelando ni cocinando "
+                    "una vez formada, y puede dar una reacción parecida a una "
+                    "alergia en cualquier perro, no solo en uno alérgico "
+                    "(FEDIAF 2025, §7.6.2.4)." % n)
             # ⚠️ QUITADO (5 agosto, madrugada) — pedido expreso: este aviso
             # ("congelar antes de dar") era redundante con la instrucción
             # general de la categoría "Pescados y mariscos" en el

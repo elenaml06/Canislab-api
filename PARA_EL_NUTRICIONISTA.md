@@ -261,16 +261,26 @@ DER  = (base por actividad + ajustes) × peso^0,75
 | Activo | 125 | Íd. (moderada, alto impacto) |
 | Muy activo | 150 | Íd. (alta, 3-6 h/día) |
 | Trabajo | 175 | Íd., extremo superior del rango |
-| Ajuste joven (1-2 años) | +15 | Thes et al. 2014, *J Anim Physiol Anim Nutr* |
-| Ajuste senior (>7 años) | −7 | Íd.: 100 kcal/kg^0,75 en jóvenes vs. 93 en >7 años |
+| Ajuste joven (1-2 años) | **+20** | FEDIAF 2025, **Tabla VII-6** («Practical recommendations for MER in dogs at different ages»): 130 kcal/kg^0,75 de 1 a 2 años contra 110 de 3 a 7 |
+| Ajuste senior (>7 años) | **−15** | Íd., Tabla VII-6: 95 kcal/kg^0,75 en >7 años contra 110. Y SACN5 cap.5 dice lo mismo por otro lado: «senior dogs should be offered foods providing a 15 to 20 % caloric reduction» |
 | Convive con otros perros | +10 | Íd. |
 | Macho entero | +10 | Íd. |
 | Ajuste por raza | ±15 | Thes et al. 2014, Universidad de Múnich, 586 perros de compañía reales. Media 98; las razas de la lista, 113 y 82 |
 
 **Estado: los cinco escalones de actividad, VERIFICADOS** el 8 de septiembre
 contra la Tabla VII-7 de FEDIAF 2025 («Recommendations for DER in relation to
-activity»): 95 · 110 · 125 · 150-175, exactos. Y hay un contrato de **100 casos**
+activity»): 95 · 110 · 125 · 150-175, exactos. Y hay un contrato de **124 casos**
 con sus kcal esperadas, que se comprueba en cada batería.
+
+⚠️ **El escalón de edad cambió el 9 de septiembre y hay que decirlo**, porque la
+versión anterior de este documento daba +15/−7 (Thes et al. 2014). Al inventariar
+las tablas de FEDIAF apareció que la **Tabla VII-6** publica el escalón de edad
+—130 / 110 / 95 kcal/kg^0,75 para 1-2 años, 3-7 años y >7 años— y que **no se
+estaba usando**: nuestro −7 era un −6,4 % cuando FEDIAF dice −13,6 % y SACN5
+cap.5 dice «15 to 20 %». Y había algo peor: el grupo «joven» era **código
+muerto**, no se pasaba nunca ni desde el servidor ni desde la app, así que un
+perro de año y medio recibía lo mismo que uno de cinco. Los 24 casos nuevos del
+contrato del DER (de 100 a 124) son justo los que fijan ese escalón.
 
 **Y esa misma tabla trae dos filas más que el motor no usaba. Ya las usa.**
 
@@ -337,7 +347,7 @@ estas dos: ya tienen cifra propia medida.
 
 **Lo que hay que saber:** el DER se calcula **en dos sitios** (servidor y
 app), y manda el de la app. Es una duplicación conocida, y por eso existe el
-contrato de 100 casos: los dos lados se comprueban contra el mismo fichero.
+contrato de 124 casos: los dos lados se comprueban contra el mismo fichero.
 
 > **PREGUNTA 4.** El ajuste por raza (±15 kcal/kg^0,75) sale de un solo
 > estudio de 586 perros y son 20 razas concretas. ¿Lo mantendrías, o es
