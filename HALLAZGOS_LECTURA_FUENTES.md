@@ -3394,3 +3394,115 @@ Y por tercera vez en el mismo día, la **digestibilidad**: *«Highly digestible
 foods: **≥87 % for protein** and ≥90 % for fat»*, *«Fiber-enhanced foods: ≥80 %
 for protein»*. Aparece en FEDIAF §2.2, en FEDIAF §3.2.1 y aquí. Es una columna
 que el catálogo no tiene y de la que cuelgan cosas.
+
+### Capítulo 18 · Perros de trabajo y de deporte — leído entero
+
+Otro de los 26 sin citar, y **el que más cambia el motor para un perro SANO**.
+
+#### El hallazgo: al perro que trabaja le faltaba doce veces la vitamina E
+
+Tabla 18-9, fila «Antioxidants / Vitamin E», **en las cuatro columnas de
+actividad** —sprint, intermedia baja, intermedia alta y resistencia—:
+
+> *«≥500 IU vitamin E/kg food (DM)»*
+
+500 ÷ 4 = 125 UI/1000 kcal, y × 0,671 (tocoferol natural, conversión de la Tabla
+VII-14 de FEDIAF) = **83,9 mg/1000 kcal**.
+
+El mínimo de FEDIAF para el adulto son **6,968**. O sea que el perro de trabajo
+necesita **doce veces** eso. Y medido sobre los 36 menús del catálogo:
+
+```
+vitamina E real ..... de 13,4 a 89,0 mg/1000 kcal, mediana 25,1
+llegan a 83,9 ....... 3 de 36
+```
+
+Un perro de pastoreo estaba recibiendo **un tercio** de lo que su fuente pide, y
+salía **verde**, porque el semáforo mide contra el mínimo del perro de
+mantenimiento.
+
+#### Y no hacía falta ningún campo nuevo
+
+**La DER efectiva en kcal por kg^0,75 ES el nivel de actividad.** `der.py` y la
+Tabla VII-7 de FEDIAF usan los mismos cinco escalones, y el motor ya calcula esa
+cifra para escalar los mínimos:
+
+| DER efectiva | `der.py` lo llama | |
+|---|---|---|
+| 95 | sedentario | |
+| 110 | normal | |
+| 125 | activo | |
+| **150** | **muy activo** | *«perro de trabajo, pastoreo»* |
+| **175** | **trabajo** | |
+
+Así que el suelo se dispara desde 150 sin pedirle al frontend un campo más que
+podría desincronizarse — que es exactamente la lección del DER.
+
+**Medido antes de aplicarlo:** diez perros de trabajo (8, 15, 25, 35 y 55 kg, a
+150 y a 175 kcal/kg^0,75) dan menú **los diez en el peldaño estricto**, con la
+vitamina E real entre 82,7 y 87,8. Y no choca con ningún techo: FEDIAF no da
+máximo de vitamina E, y el único escrito —el que sugiere el NRC vía cap.7,
+167,75 mg/1000 kcal— es el doble.
+
+**Dónde está la línea, y qué es interpretación nuestra:** la Tabla 18-1 lista las
+actividades, y en «intermediate» incluye *«exercise with people (running,
+bicycling)»*, que podría ser también nuestro «activo» (125). Se aplica desde 150
+porque cubre a los perros que la fuente nombra sin discusión —pastoreo, policía,
+rescate, caza, trineo— y no le pone un suelo nuevo a un perro que la fuente no
+cubre claramente. Bajarlo a 125 es decisión de nutrición.
+
+#### Las otras dos filas de la misma tabla, escritas y sin aplicar
+
+- **Vitamina C, 150-250 mg/kg MS** = 37,5-62,5 mg/1000 kcal. **No se aplica**: el
+  perro la sintetiza y **FEDIAF no le pone requisito ninguno** — no hay fila de
+  vitamina C en la Tabla III-3b. Y el cap.7 avisa de que suplementar no siempre
+  suma: *«oral vitamin C supplementation at 1 g/day may slow racing times in
+  greyhounds»*.
+- **Selenio, 0,5-1,3 mg/kg MS** = 125-325 µg/1000 kcal. **No se aplica**: el rango
+  se sale por arriba del máximo legal de FEDIAF (142). Es la **tercera vez** que
+  aparece este mismo rango —Tabla 35-3, cap.7 y aquí—, así que la pregunta para
+  el nutricionista es una sola.
+
+#### Y lo que dice FEDIAF de esta población, que cierra el círculo
+
+**§2.2 «Scope»**: *«Excluded from the FEDIAF's Nutritional Guidelines are pet
+foods for particular nutritional purposes and **some other specialised foods such
+as for sporting dogs**»*. O sea que para estos perros la propia FEDIAF dice que
+su tabla no basta. SACN5 es la que la completa.
+
+#### El resto de la Tabla 18-9, para cuando toque
+
+| Factor | Sprint | Intermedia baja | Intermedia alta | Resistencia |
+|---|---|---|---|---|
+| Grasa (% MS) | 8-10 | 15-30 | 25-40 | >50 |
+| Proteína (% MS) | 22-28 | 22-32 | 22-32 | 28-34 |
+| Densidad (kcal/g MS) | 3,5-4,0 | 4,0-5,0 | 4,5-5,5 | >6,0 |
+| Digestibilidad MS | >80 % | >80 % | >80 % | >80 % |
+| Ácidos grasos insaturados | — | >60 % | >60 % | — |
+
+La fila de insaturados lleva su porqué escrito: *«to optimize olfaction»* — es
+para los perros de detección. Y la digestibilidad **>80 % de materia seca** en
+las cuatro columnas, que es más de lo que FEDIAF supone (≥70 %) y la **cuarta
+vez** que la digestibilidad aparece hoy.
+
+### Capítulo 45 · Urolitos compuestos — leído entero (es corto)
+
+Uno de los 26 sin citar. Trae **una regla de manejo** que el motor no cumple.
+
+Los urolitos compuestos —núcleo de un mineral, capas de otro— son el **7 %** de
+los urolitos caninos analizados en Minnesota, y el primer ejemplo del capítulo es
+*«a nucleus of 100 % calcium oxalate monohydrate surrounded by a shell of 80 %
+magnesium ammonium phosphate»*: oxalato dentro, estruvita fuera.
+
+Y la regla: *«management protocols designed primarily to minimize recurrence of
+minerals composing the **nucleus** (rather than those in shells)»*.
+
+**El motor combina `oxalato` + `estruvita` con `min()` y no dice nada.** Las otras
+tres parejas de urolitos sí se paran, pero por casualidad: `urato` y `cistina`
+están marcadas «sin dieta automática» porque necesitan bajar de FEDIAF, no porque
+sean incompatibles. No existe ningún mecanismo de **parejas incompatibles**: el
+motor solo sabe bloquear patologías sueltas.
+
+Escrito en `patologias.json` (`nota_urolito_compuesto`, en las dos) y como
+PREGUNTA 37 y 38 en `PARA_EL_NUTRICIONISTA.md`. No se bloquea porque cuál es el
+núcleo sale del análisis de la piedra, un dato que la app no pide.

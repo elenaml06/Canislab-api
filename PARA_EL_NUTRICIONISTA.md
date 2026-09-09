@@ -1563,6 +1563,41 @@ toxicidad crónica del motor. **No se aplica**: un techo existe para no vivir en
 
 ---
 
+## 11-ter · El urolito compuesto: dos patologías marcadas y la fuente dice que se trata una
+
+**SACN5 cap.45** («Canine Compound Urolithiasis»), leído entero el 9 de
+septiembre. Los urolitos compuestos —núcleo de un mineral con capas de otro— son
+el **7 %** de los urolitos caninos analizados en Minnesota, y el primer ejemplo
+que pone el capítulo es *«a nucleus of 100 % calcium oxalate monohydrate
+surrounded by a shell of 80 % magnesium ammonium phosphate»* — o sea oxalato por
+dentro y estruvita por fuera.
+
+Y la regla de manejo, literal:
+
+> *«it seems logical to recommend management protocols designed primarily to
+> minimize recurrence of minerals composing the **nucleus** (rather than those in
+> shells) of compound uroliths»*
+
+**Qué hace hoy el motor:** si se marcan `oxalato` y `estruvita` a la vez, combina
+los dos juegos de límites con `min()` y no dice nada. Las otras tres parejas de
+urolitos sí se paran, pero **por casualidad**: `urato` y `cistina` están marcadas
+«sin dieta automática» porque necesitan bajar de FEDIAF, no porque sean
+incompatibles con nada.
+
+**Por qué no lo he bloqueado yo:** cuál es el núcleo sale del **análisis de la
+piedra**, que la app no tiene y no puede deducir. Bloquear dejaría sin menú a
+quien marcó dos casillas sin tener un urolito compuesto.
+
+> **PREGUNTA 37.** Con dos tipos de urolito marcados, ¿qué debe hacer la app?
+> Tres opciones: (a) preguntar por el análisis y aplicar solo el del núcleo,
+> (b) bloquear y mandar al veterinario, o (c) seguir combinando y avisar. La (a)
+> es la que dice la fuente, y necesita un dato que hoy no pedimos.
+> **PREGUNTA 38.** ¿Hay más parejas de patologías cuyos límites no deban
+> combinarse? El motor hoy combina siempre con `min()`, que es lo seguro para un
+> techo pero puede no ser lo correcto clínicamente.
+
+---
+
 ## 12 · Cómo contestar
 
 No hace falta contestarlo todo ni en orden. Si solo hay tiempo para tres:

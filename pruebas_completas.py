@@ -7932,6 +7932,128 @@ if _fila_mc:
                       "aminoacido con menos margen del catalogo (112 % del minimo en el peor "
                       "menu), asi que es justo donde se notaria")
 
+# ⚠️ Y EL SUELO DE VITAMINA E DEL PERRO DE TRABAJO (9 septiembre), que sale de
+# leer el capitulo 18 entero -- uno de los 26 de SACN5 que no tenian ni una cita
+# en el repo.
+#
+# Tabla 18-9, «>=500 IU vitamin E/kg food (DM)» en LAS CUATRO columnas de
+# actividad = 83,9 mg/1000 kcal. El minimo de FEDIAF para adulto son 6,968, o
+# sea DOCE VECES menos. Medido sobre los 36 menus del catalogo: la vitamina E
+# real va de 13,4 a 89,0 con mediana 25,1, asi que solo 3 de 36 llegarian.
+#
+# Lo dispara la DER efectiva (>=150 kcal/kg^0,75), que ya se calcula y que ES el
+# nivel de actividad. Se comprueban cuatro cosas:
+#   1. Que el suelo aparezca donde toca y NO donde no toca.
+#   2. Que no se le aplique a un cachorro (su DER es alta por crecer, no por
+#      trabajar).
+#   3. Que un perro de trabajo de verdad reciba un menu que lo cumpla.
+#   4. Y con el fallo puesto: sin el suelo, ese mismo perro sale MUY por debajo.
+from verificar import minimo_de as _min_b60t
+
+_SUELO_TRABAJO_B60 = 83.9
+_fila_ve_b60 = req.get("Vitamina_E")
+if not _fila_ve_b60:
+    fallos.append("BLOQUE60: no hay fila de Vitamina_E en requerimientos_v2_final.json")
+else:
+    _publicado_b60 = _num_b60(_fila_ve_b60.get("minAdulto"))
+    for _der_ef_b60, _espera_b60 in ((95, _publicado_b60), (110, _publicado_b60),
+                                     (125, _publicado_b60), (150, _SUELO_TRABAJO_B60),
+                                     (175, _SUELO_TRABAJO_B60), (None, _publicado_b60)):
+        _v = _min_b60t(_fila_ve_b60, "Vitamina_E", "Adulto", _der_ef_b60)
+        if abs((_v or 0) - _espera_b60) > 1e-6:
+            fallos.append(f"BLOQUE60: a DER efectiva {_der_ef_b60} el minimo de vitamina E es "
+                          f"{_v} y tenia que ser {_espera_b60}. El suelo del perro de trabajo "
+                          f"(SACN5 Tabla 18-9) entra a partir de 150 kcal/kg^0,75, que es el "
+                          f"«muy activo» de der.py")
+    # 2. a un cachorro no: su DER es alta por crecer, no por trabajar
+    for _et_cach_b60 in ("CachorroJoven", "CachorroCrecimiento"):
+        _pub_c = _num_b60(_fila_ve_b60.get(f"min{_et_cach_b60}"))
+        _v = _min_b60t(_fila_ve_b60, "Vitamina_E", _et_cach_b60, 200)
+        if _pub_c and abs((_v or 0) - _pub_c) > 1e-6:
+            fallos.append(f"BLOQUE60: a un {_et_cach_b60} con DER efectiva 200 se le esta "
+                          f"aplicando el suelo del perro de trabajo ({_v}). Un cachorro come "
+                          f"mucho porque crece, no porque trabaje")
+
+# 3 y 4. Con el solver, y con el fallo puesto. Un perro de 25 kg a 150
+#        kcal/kg^0,75 es el «muy activo» de la app: pastoreo, rescate, caza.
+_peso_t60 = 25.0
+_der_t60 = round(150 * _peso_t60 ** 0.75, 1)
+_r_t60 = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": _der_t60,
+                                   "etapa_requisitos": "Adulto", "peso_perro_kg": _peso_t60,
+                                   "modo": "automatico"}).json()
+if not _r_t60.get("factible"):
+    fallos.append(f"BLOQUE60: un perro de trabajo de 25 kg (DER {_der_t60:.0f}) se queda SIN "
+                  f"MENU con el suelo de vitamina E de la Tabla 18-9. Medido el 9 de "
+                  f"septiembre, diez perros de trabajo salian los diez en peldano estricto: si "
+                  f"esto falla, mira que ha entrado nuevo antes de quitar el suelo")
+else:
+    _g_t60 = _r_t60["menu"]
+    _kcal_t60 = sum((al.get(_n, {}).get("energia", 0) or 0) / 100.0 * _q
+                    for _n, _q in _g_t60.items())
+    _ve_t60 = sum(valor_nutriente(al.get(_n, {}).get("nutrientes", {}), "vitE") / 100.0 * _q
+                  for _n, _q in _g_t60.items()) / _kcal_t60 * 1000.0
+    # el suelo se pide sobre las kcal PEDIDAS, asi que sobre las reales puede
+    # quedar un pelo por debajo -- es el mismo criterio que usa `verificar`
+    if _ve_t60 < _SUELO_TRABAJO_B60 * 0.97:
+        fallos.append(f"BLOQUE60: el menu de un perro de trabajo trae {_ve_t60:.1f} mg de "
+                      f"vitamina E/1000 kcal y la Tabla 18-9 pide {_SUELO_TRABAJO_B60}. El "
+                      f"suelo no se esta aplicando")
+    # con el fallo puesto: el mismo perro SIN el suelo sale muy por debajo, y si
+    # no fuera asi este test no probaria nada
+    _r_sin_t60 = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": _der_t60,
+                                           "etapa_requisitos": "Adulto",
+                                           "peso_perro_kg": _peso_t60 * 3,
+                                           "modo": "automatico"}).json()
+    if _r_sin_t60.get("factible"):
+        _g_s = _r_sin_t60["menu"]
+        _k_s = sum((al.get(_n, {}).get("energia", 0) or 0) / 100.0 * _q for _n, _q in _g_s.items())
+        _ve_s = sum(valor_nutriente(al.get(_n, {}).get("nutrientes", {}), "vitE") / 100.0 * _q
+                    for _n, _q in _g_s.items()) / _k_s * 1000.0
+        if _ve_s >= _SUELO_TRABAJO_B60:
+            fallos.append(f"BLOQUE60: un perro NO trabajador sale ya con {_ve_s:.1f} mg de "
+                          f"vitamina E, o sea por encima del suelo del perro de trabajo. "
+                          f"Entonces esta prueba no demuestra que el suelo haga nada -- hay que "
+                          f"buscar un caso donde se note")
+
+# ⚠️ Y LOS ALIMENTOS HUMANOS QUE NO PUEDEN ENTRAR AL CATALOGO NUNCA
+# (9 septiembre, del Anexo 7.7 de FEDIAF leido entero).
+#
+# FEDIAF le dedica un anexo a los alimentos humanos con efecto adverso
+# documentado en el perro, y da las dosis mas bajas a las que se ha visto dano:
+#
+#     pasas .......... 2,8 g/kg de peso vivo   («even a large dog of 40 kg may
+#                                                need to eat only 120 g»)
+#     uvas ........... 19,6 g/kg
+#     cebolla fresca . 5-10 g/kg  («relatively small amounts... can already be
+#                                   toxic»)
+#     ajo ............ 5 g/kg de ajo entero, 7 dias
+#     teobromina ..... letal a 90-115 mg/kg; LD50 250-500
+#
+# Y del de la uva dice lo que lo hace imposible de dosificar: «the severity of
+# the illness does not seem to be dose-related».
+#
+# Hoy NINGUNO esta en el catalogo -- comprobado. Lo que no habia es nada que
+# impida meterlos manana. Un alimento nuevo entra editando un JSON, y el
+# semaforo no tiene ni idea de toxicos: mediria sus nutrientes y lo daria por
+# bueno. Esto es lo unico que lo para.
+_PROHIBIDOS_B60 = (
+    ("uva", "uva y pasa: 19,6 g/kg de uva y 2,8 g/kg de pasa, FEDIAF Anexo 7.7.1"),
+    ("pasa", "uva y pasa: fallo renal agudo, y la gravedad NO es dosis-dependiente"),
+    ("cebolla", "Allium: 5-10 g/kg de cebolla fresca ya son toxicos, FEDIAF Anexo 7.7.3"),
+    ("ajo", "Allium: 5 g/kg de ajo entero durante 7 dias, FEDIAF Anexo 7.7.3"),
+    ("puerro", "Allium spp., mismo mecanismo que la cebolla (cuerpos de Heinz)"),
+    ("cebollino", "Allium spp. -- «Chinese chives» estan nombrados en el anexo"),
+    ("chalota", "Allium spp."),
+    ("chocolate", "teobromina: letal a 90-115 mg/kg, FEDIAF Anexo 7.7.2"),
+    ("cacao", "teobromina: 10-30 mg/g en el cacao en polvo; 4 g/kg pueden matar"),
+)
+for _pal_b60, _motivo_b60 in _PROHIBIDOS_B60:
+    _encontrados = [_n for _n in al if _pal_b60 in _n.lower()]
+    if _encontrados:
+        fallos.append(f"BLOQUE60: el catalogo tiene {_encontrados} y contiene «{_pal_b60}», que "
+                      f"FEDIAF documenta como toxico para el perro -- {_motivo_b60}. El semaforo "
+                      f"no sabe de toxicos: mediria sus nutrientes y lo daria por bueno")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 

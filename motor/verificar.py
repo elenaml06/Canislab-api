@@ -372,6 +372,20 @@ def minimo_de(r, nombre_req, etapa, der_efectiva=None):
     # mezclaría un ancla corregida con otra que no lo está.
     _f = _factor_condicional(nombre_req, etapa)
     mn = mn * _f
+    # ⚠️ Y EL SUELO DEL PERRO QUE TRABAJA (9 septiembre). La DER efectiva ya
+    # está aquí porque es lo que dispara el escalado, y resulta que es también
+    # el nivel de actividad: 150 kcal/kg^0,75 es el «muy activo» de `der.py`,
+    # descrito allí como «perro de trabajo, pastoreo». La Tabla 18-9 de SACN5
+    # le pide 12 veces la vitamina E del perro de mantenimiento, y hasta hoy
+    # recibía la del perro de mantenimiento y salía verde. Va con `max()`: un
+    # suelo condicional solo puede SUBIR el publicado.
+    try:
+        from condicionales import suelo_por_der_efectiva
+        _suelo_act = suelo_por_der_efectiva(nombre_req, etapa, der_efectiva)
+    except ImportError:
+        _suelo_act = None
+    if _suelo_act is not None:
+        mn = max(mn, _suelo_act)
     if der_efectiva is None or etapa != "Adulto":
         return mn
     if nombre_req in NO_SE_ESCALAN:

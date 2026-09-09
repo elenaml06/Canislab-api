@@ -125,6 +125,41 @@ def factor_sobre_el_minimo(nombre_requisito, etapa):
     return factor
 
 
+def suelo_por_der_efectiva(nombre_requisito, etapa, der_efectiva):
+    """El suelo que aplica cuando el perro come MUCHO, o None.
+
+    ⚠️ HOY SOLO HAY UNO: la vitamina E del perro de trabajo y de deporte, que
+    la Tabla 18-9 de SACN5 pone en ≥500 UI/kg de materia seca —83,9 mg/1000
+    kcal— **en las cuatro columnas de actividad**. O sea que no depende de
+    cuánto trabaje el perro, solo de que trabaje.
+
+    ⚠️ Y NO HACE FALTA UN CAMPO NUEVO PARA SABER SI TRABAJA. La DER efectiva en
+    kcal por kg^0,75 **es** el nivel de actividad: `der.py` y la Tabla VII-7 de
+    FEDIAF usan los mismos cinco escalones (95 sedentario, 110 normal, 125
+    activo, 150 muy activo, 175 trabajo), y el motor ya calcula esa cifra para
+    escalar los mínimos. Se aprovecha la que hay en vez de pedirle al frontend
+    un campo más que podría desincronizarse — que es la lección del DER.
+
+    El umbral (150) y su porqué están en el JSON, con la parte que es
+    interpretación nuestra dicha en voz alta.
+    """
+    if der_efectiva is None:
+        return None
+    suelo = None
+    for regla in REGLAS.values():
+        if regla.get("tipo") != "suelo_si_der_efectiva_supera":
+            continue
+        if regla.get("nutriente") != nombre_requisito:
+            continue
+        if etapa not in (regla.get("aplica_a_etapas") or []):
+            continue
+        if float(der_efectiva) < float(regla["umbral_der_efectiva"]):
+            continue
+        v = float(regla["valor"])
+        suelo = v if suelo is None else max(suelo, v)
+    return suelo
+
+
 def suelo_relativo_de(etapa, clave_nutriente, valor_del_que_depende):
     """El suelo de `clave_nutriente` cuando depende de otro nutriente del MISMO menú.
 

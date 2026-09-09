@@ -808,3 +808,70 @@ seguro. La toxicidad de la vitamina A es del **retinol preformado**, no del
 β-caroteno, así que un menú cuya vitamina A venga de zanahoria no se acerca al
 máximo aunque el número lo parezca. Eso es información que la ficha verificada
 debería dar y hoy no da.
+
+---
+
+## La digestibilidad, que no está en ninguna base de composición (9 de septiembre de 2026)
+
+**Pregunta de Elena: «¿hay alguna fuente donde se pueda sacar la digestibilidad
+de los alimentos?».** La respuesta corta es **no, no para un alimento crudo,
+ficha a ficha**. La larga es lo que sí hay.
+
+### Por qué hace falta
+
+FEDIAF **§2.2 «Scope»** dice que toda su tabla vale para alimentos *«with normal
+digestibility (i.e. ≥70 % DM digestibility; **≥80 % protein digestibility**)»*, y
+**§3.2.1** dice qué hacer si no se puede garantizar: subir los aminoácidos
+esenciales un 10 % como mínimo. Como no la tenemos, desde el 9 de septiembre
+**se aplica ese +10 %** — o sea que la falta de este dato ya está costando
+margen.
+
+Y aparece cuatro veces más el mismo día: SACN5 Tabla 18-9 pide **>80 % de
+digestibilidad de materia seca** al perro de trabajo, y la Tabla 62-1 (colitis)
+distingue *«highly digestible: ≥87 % for protein»* de *«fiber-enhanced: ≥80 %»*.
+
+### Lo que NO la tiene
+
+**Ninguna de las tres bases de composición.** BEDCA, CIQUAL y USDA dan lo que hay
+*en* el alimento, no lo que el perro absorbe. No es un hueco de esas bases: es
+otra magnitud, y se mide con perros, no con un espectrofotómetro.
+
+### Lo que sí hay, y de dónde sale cada cosa
+
+1. **El supuesto general, para calcular kcal.** SACN5 cap.5: el método de Atwater
+   modificado *«assume an average apparent digestibility of **80 % for protein,
+   90 % for crude fat and 84 % for carbohydrate**»*, y los alimentos comerciales
+   típicos *«range in digestibility from 75 to 85 %»*.
+
+   ⚠️ **Y trae un aviso que nos toca de lleno**: ese método *«**overestimates the
+   ME content of foods high in fiber or ash**»*. Una ración BARF lleva entre un
+   20 y un 60 % de hueso carnoso, que es ceniza. Si las kcal de las fichas salen
+   de Atwater, **están sobreestimadas** para los alimentos con hueso — y las
+   kcal son el denominador de los 43 requisitos. Está sin comprobar de dónde
+   viene el campo `energia` de cada ficha.
+
+2. **Para los minerales del hueso, sí hay medidas concretas.** Köber 2017 —que ya
+   está en el repo de fuentes— dice literal: *«Ca and P from bones were shown to
+   have a **lower apparent digestibility in dogs** than other mineral sources»*,
+   citando a **Siedler & Dobenecker (2015), ESVCN Proceedings p.128**. Y
+   **Hofmann, Dobenecker y Kienzle (2025)**, que también está en el repo de
+   fuentes y **no se ha usado nunca**, trae las cifras en su Tabla 3.
+
+3. **Cómo se mide de verdad.** FEDIAF sección 6 da los dos protocolos completos
+   (método del indicador con óxido de cromo, y colección cuantitativa total).
+   Hacen falta perros, seis o más, y varios días de recogida de heces. No es algo
+   que se saque de una tabla.
+
+### Qué falta, entonces
+
+- **Dos campos por ficha**, `digestibilidad_ms` y `digestibilidad_proteina`, con
+  su fuente — igual que `purinas_fuente` o `fuente_epa_dha`. **No los rellena el
+  asistente.**
+- Y como no van a existir para 163 fichas, la alternativa realista es **una
+  cifra por familia** (músculo crudo, hueso carnoso, víscera, vegetal) sacada de
+  la literatura de dietas crudas, que hoy **no está en el repo de fuentes**: los
+  trabajos del grupo de Illinois (Beloshapka, Kerr, Swanson) son los que la
+  publican.
+
+**Mientras tanto, la decisión tomada es la conservadora**: no se supone nada, se
+aplica el +10 % que FEDIAF manda aplicar cuando no se puede garantizar.
