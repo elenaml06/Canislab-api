@@ -1898,6 +1898,51 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         """
         return max(1.0, PRESUPUESTO_SEGUNDOS - (time.time() - t_inicio_total))
 
+    def tiempo_de_un_intento():
+        """Lo que se le da a UNA llamada del solver, que NO es todo lo que
+        queda.
+
+        ⚠️ AÑADIDO (8 septiembre, noche) — CASO REAL MEDIDO, y el fallo era de
+        REPARTO, no del motor.
+
+        Al poner el techo de fósforo del perro adulto sano (2000 mg/1000 kcal,
+        SACN5 Tabla 13-3), el toy de 1,5 kg empezó a quedarse sin menú 1 de cada
+        3 veces con el presupuesto apretado a 3 s -- que es como el BLOQUE 43
+        imita a Render, que va 6-10 veces más lento que este equipo.
+
+        Diagnosticado, y no era infactibilidad:
+
+            sin el techo, 1 s ....  0 sin menú de 15
+            con el techo, 1 s ....  3 de 15        (el problema es MÁS LENTO)
+            con el techo, 8 s ....  0 de 15        (con tiempo, sale siempre)
+
+        Y aflojar la exigencia de optimalidad NO lo arregla (`mip_rel_gap` a
+        0,30 / 0,50 / 0,80 falla igual, 2-6 de 15): lo que le cuesta a HiGHS no
+        es demostrar el óptimo, es encontrar la primera solución entera.
+
+        Lo que SÍ lo arregla es **bajar de peldaño**:
+
+            peldaño 0 (2 suplementos), 3 s ....  3 sin menú de 15
+            peldaño 4 (4 suplementos), 3 s ....  0 de 15
+
+        Con cuatro huecos de suplemento el motor puede meter cáscara de huevo
+        --calcio con un Ca:P de 370:1, o sea calcio sin fósforo-- y el techo
+        deja de apretar. Es exactamente para lo que existe la escalera.
+
+        **El problema era que nunca llegaba a bajar.** `time_limit` era
+        `tiempo_restante()`, o sea TODO el presupuesto: con 3 s, la primera
+        llamada se los comía enteros, los dos reintentos recibían el mínimo de
+        1 s cada uno (y ya está medido que reintentar el mismo peldaño no
+        ayuda), y el bucle de la escalera se encontraba con `tiempo_restante()
+        <= 1.5` y se rompía sin pisar un solo peldaño.
+
+        Ahora una llamada nunca se lleva más del 40 % del presupuesto, así que
+        siempre queda para bajar. Con 24 s (lo normal) son 9,6 s a la primera,
+        de sobra para cualquier caso medido; con 3 s son 1,2 s y quedan casi 2
+        para la escalera, que es donde está la solución.
+        """
+        return max(1.0, min(tiempo_restante(), PRESUPUESTO_SEGUNDOS * 0.4))
+
     excluidos = list(datos.especies_excluidas or []) + list(datos.nombres_excluidos or [])
 
     # ⚠️ CONECTADO (5 agosto, noche): las patologías existían en el modelo
@@ -2102,7 +2147,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 ok_rapido, gramos_rapido = resolver_v2(
                     datos.der_objetivo, datos.etapa_requisitos, al, req,
                     datos.peso_perro_kg, dosis_maxima_fabricante,
-                    margenes_categoria=MARGENES_V2, max_suplementos=2, forzar=base, time_limit=tiempo_restante(),
+                    margenes_categoria=MARGENES_V2, max_suplementos=2, forzar=base, time_limit=tiempo_de_un_intento(),
                     presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
                     # ⚠️ AÑADIDO (28 agosto): esta vía era la única de las
                     # cuatro que llaman al motor que NO le pasaba el peso
@@ -2171,7 +2216,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             excluidos=excluidos or None,
             margenes_categoria=(margenes if margenes is not None else _margenes_base),
             max_suplementos=(max_supl if max_supl is not None else _supl_base),
-            time_limit=tiempo_restante(),
+            time_limit=tiempo_de_un_intento(),
             forzar=forzar_este, preferir=preferir,
             patologias=datos.patologias, restringir_especie=datos.restringir_especie,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -2206,7 +2251,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 datos.peso_perro_kg, dosis_maxima_fabricante,
                 excluidos=excluidos or None,
                 margenes_categoria=(margenes if margenes is not None else MARGENES_V2),
-                max_suplementos=max_supl, time_limit=tiempo_restante(),
+                max_suplementos=max_supl, time_limit=tiempo_de_un_intento(),
                 forzar=forzar_este, preferir=preferir,
                 patologias=datos.patologias, restringir_especie=datos.restringir_especie,
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -2248,7 +2293,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 datos.peso_perro_kg, dosis_maxima_fabricante,
                 excluidos=excluidos or None,
                 margenes_categoria=(margenes if margenes is not None else MARGENES_V2),
-                max_suplementos=max_supl, time_limit=tiempo_restante(),
+                max_suplementos=max_supl, time_limit=tiempo_de_un_intento(),
                 forzar=forzar_este, preferir=preferir,
                 patologias=datos.patologias, restringir_especie=datos.restringir_especie,
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -2340,7 +2385,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             datos.peso_perro_kg, dosis_maxima_fabricante,
             excluidos=excluidos or None,
             margenes_categoria=_margenes_base, max_suplementos=_supl_base,
-            time_limit=tiempo_restante(),
+            time_limit=tiempo_de_un_intento(),
             patologias=datos.patologias,
             categorias_excluidas=datos.categorias_excluidas,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,

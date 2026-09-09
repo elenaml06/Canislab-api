@@ -679,3 +679,46 @@ proporciones internamente coherentes: el pavo del USDA cuadraba consigo mismo
 perfectamente y solo fallaba contra el resto del mundo. Un cociente entre dos
 aminoácidos de la misma fila, en cambio, **no se mueve al reescalar por la
 proteína del destino**, así que sobrevive a la transferencia y la delata.
+
+---
+
+## La vitamina A: hace falta saber qué son esos microgramos, ficha por ficha
+
+**Añadido el 9 de septiembre de 2026, leyendo el capítulo 8 del NRC entero.**
+
+El campo `vitA` de las 163 fichas está en microgramos, pero **no está escrito de
+qué**: puede ser retinol preformado, equivalentes de retinol a 6:1, o RAE a
+12:1. Y contrastado con USDA, **el catálogo mezcla al menos dos convenios**:
+
+| Alimento | Nuestra ficha | USDA RAE (12:1) | β-caroteno ÷ 6 | Parece |
+|---|---|---|---|---|
+| Zanahoria | 1.346 | 835 | 1.381 | equivalentes 6:1 |
+| Boniato | 667 | 709 | 1.418 | RAE |
+| Rúcula | 596 | 119 | 237 | **ninguno de los dos** |
+
+**Por qué esto es un dato que falta y no un cálculo que se pueda hacer.** El NRC
+dice literalmente que para el perro **el factor de conversión del β-caroteno no
+está definido**, así que no se puede recalcular una cosa desde la otra. Hay que
+ir a la fuente y sacar los dos números por separado, igual que se hace con `epa`
+y `dha`.
+
+**Lo que hay que conseguir**, para las **11 fichas vegetales con vitamina A por
+encima de 100 µg/100 g** (zanahoria, grelo, boniato, rúcula, espinaca,
+canónigos, albahaca, tomate en puré, acelga, col rizada, mandarina) y para las
+fichas animales que aportan retinol (hígados, riñones, huevo, mantequilla,
+aceites de hígado, suplementos):
+
+- `vitA_retinol` — µg de retinol preformado por 100 g
+- `vitA_betacaroteno` — µg de β-caroteno por 100 g
+
+En BEDCA los dos campos existen por separado («Retinol» y «Carotenos totales» o
+«β-caroteno»); en CIQUAL también («Rétinol» y «Beta-carotène»); en USDA son
+«Retinol», «Carotene, beta» y «Vitamin A, RAE». **El orden de `Bases.md` sigue
+mandando**: BEDCA primero.
+
+**Por qué corre prisa, con la medida hecha.** En los 216 menús precalculados el
+**83 %** de la vitamina A viene de vegetal, y **103 de los 216 no llegarían al
+mínimo de FEDIAF si el caroteno no contara**. El peor declara 11.191 µg y solo
+29 son retinol. Detalle: `HALLAZGOS_LECTURA_FUENTES.md` §N-19.
+
+**Esto no lo rellena el asistente**, como todo lo de este archivo.

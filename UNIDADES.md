@@ -163,6 +163,37 @@ porque casi todas las tablas los dan en mg. La sardina lleva
 **Vitaminas A y D en microgramos, no en UI.** Si la fuente da UI:
 vitamina A ÷ 3,33 y vitamina D ÷ 40.
 
+**⚠️ Y LA VITAMINA A TIENE UNA TRAMPA MÁS, DESCUBIERTA EL 9 DE SEPTIEMBRE
+DE 2026: no se sabe qué son esos microgramos.** Pueden ser tres cosas
+distintas y no está escrito cuál:
+
+| Convenio | Qué cuenta | Factor del β-caroteno |
+|---|---|---|
+| Retinol | Solo el retinol preformado (vísceras, huevo, suplementos) | no lo cuenta |
+| Equivalentes de retinol (europeo clásico, BEDCA) | Retinol + caroteno | **6 a 1** |
+| RAE (americano, USDA) | Retinol + caroteno | **12 a 1** |
+
+Y el NRC 2006 dice, literal, que **para el perro el factor no está
+definido**: *«Even though dogs appear to utilize β-carotene from carrots
+efficiently, a retinol equivalency has not been defined»*. En humanos son
+**21 a 1** desde el alimento.
+
+**Las fichas del catálogo mezclan convenios.** Contrastado con USDA:
+zanahoria 1.346 (= β-caroteno ÷ 6), boniato 667 (= RAE), rúcula 596 (que
+no es ni lo uno ni lo otro: RAE sería 119 y ÷6 sería 237).
+
+**Por qué importa, con la medida hecha.** En los 216 menús del catálogo
+precalculado, **el 83 % de la vitamina A viene de verduras y frutas** —o
+sea de caroteno, no de retinol— y **103 de los 216 no llegarían al mínimo
+de FEDIAF (526,2 µg/1000 kcal) si el caroteno no contara**. El peor, un
+menú de lactancia, declara 11.191 µg y solo **29** son retinol de verdad.
+
+Contra el TECHO esto va del lado seguro (se cuenta de más). Contra el
+SUELO va del lado peligroso, y el semáforo no lo ve porque comprueba
+contra estos mismos números. Detalle y medidas:
+`HALLAZGOS_LECTURA_FUENTES.md` §N-19. Pregunta abierta:
+`PREGUNTAS_PARA_ELENA.md` §4.
+
 **El araquidónico va en mg** aunque los demás ácidos grasos vayan en
 gramos. No es un descuido: es como lo da FEDIAF.
 

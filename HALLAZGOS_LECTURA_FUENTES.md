@@ -682,3 +682,653 @@ asuste de más.
 > *«…with **high dietary Ca significantly reducing absorption of P**»* — el calcio
 > alto baja la absorción del fósforo, que es otro matiz a favor en la discusión
 > del techo de fósforo (F-7).
+
+---
+
+## NRC 2006, capítulo 4 (hidratos y fibra) y capítulo 5 (grasa y ácidos grasos)
+
+Leídos enteros la noche del 8 al 9 de septiembre. El capítulo 4 es casi todo
+pienso extrusionado y sirve de poco a una ración cruda; el capítulo 5 es **lo
+más importante que ha salido en toda la lectura**, porque es justo lo que la
+nutricionista señaló por encima —«falta el lipidograma, falta el ratio
+omega-6:omega-3»— y aquí está la fuente, con cifras.
+
+### N-8 · La proteína de la reproducción sin hidratos: la fuente exacta
+
+Ya estaba aplicada (`requisitos_condicionales.json`), pero conviene dejar
+escrito de dónde sale el número, porque el capítulo 4 lo trae con las dos
+mitades del experimento:
+
+> *«Kienzle et al. (1985) fed carbohydrate-free diets with different
+> concentrations of protein to pregnant and lactating bitches. In bitches fed
+> the **high-protein, carbohydrate-free diet (42 percent of calories from
+> protein)**, litter size, birth weight, and puppy survival rate were comparable
+> to those when bitches were fed a carbohydrate-containing control diet. In
+> contrast, in bitches fed the **low-protein, carbohydrate-free diet (20 percent
+> of calories from protein)**, a reduction in birth weight (30 to 40 percent) and
+> an **increase in perinatal mortality rate (75 percent)** were observed.»*
+
+Y Romsos 1981, con el 26 % de las calorías en proteína y sin hidratos: 63 % de
+cachorros vivos al nacer contra el 96 % del control, y **35 % vivos a los tres
+días contra el 93 %**. Las bitches sin hidratos entraron en cetosis con glucemias
+de 15-20 mg/dL la semana antes del parto.
+
+O sea que el umbral está **entre el 26 % y el 42 % de las calorías**. Nuestro
+suelo de 125 g/1000 kcal es el **43,75 %** de las kcal (a 3,5 kcal/g, el Atwater
+modificado del pienso) o el 50 % (a 4 kcal/g): por encima del 42 % que sí
+funcionó. Está del lado seguro y ahora se sabe por qué.
+
+### N-9 · «El ratio omega-6:omega-3» que pide la nutricionista: el NRC dice que ESE ratio no sirve, y da otro
+
+Esto hay que leerlo entero antes de aplicar nada, porque es una trampa:
+
+> *«The European expert committee also specifically concluded that **the use of a
+> total n-6:n-3 ratio is not helpful** (de Deckere et al., 1998). The British
+> Nutrition Foundation Task Force on Fatty Acids (BNF) has stated that attempts
+> to explain data based on the total n-6:n-3 ratio **may be distorted**.»*
+
+El motivo está escrito justo antes: unos estudios calculan el ratio sumando
+**todos** los omega-6 y **todos** los omega-3 (derivados de cadena larga
+incluidos) y otros solo los de 18 carbonos (LA y ALA), y **no son
+equivalentes**, porque «the long-chain metabolites are known to be more potent as
+substrates for eicosanoid production than their parent fatty acids».
+
+Lo que el NRC sí recomienda es el ratio **LA:ALA** —linoleico partido por
+linolénico, los dos de 18 carbonos—, y da rangos por etapa:
+
+| Etapa | Rango LA:ALA | Cita |
+|---|---|---|
+| Adulto mantenimiento | **2,6 – 26** | *«A range for this ratio of 2.6 to 26 is presumed safe based on evidence to date. It includes a margin of safety of approximately 10 percent at both extremes.»* |
+| Gestación y lactancia | **2,6 – 16** | *«Because of competition between LA and ALA for metabolism, the LA:ALA ratio should range between 2.6 and 16. This range is not as wide as that for maintenance, thereby helping ensure the availability of 18-carbon n-3 ALA for subsequent elongation.»* |
+| Crecimiento | **≈ 16,3**, «less than 17» | *«the RAs are 1.3 percent DM for LA and 0.08 percent DM for ALA with an LA:ALA ratio of 16.3»* |
+
+Y el porqué del suelo de 2,6 y del techo de 26 es metabólico, no arbitrario:
+*«high cellular LA will affect ALA conversion to a greater extent than high ALA
+at lower LA content»*. El linoleico y el linolénico compiten por la misma
+Δ6-desaturasa.
+
+**Esto no está aplicado.** El motor exige el mínimo de linoleico (3,82 g/1000
+kcal en adulto, FEDIAF) y el de linolénico solo en crecimiento (0,20 g), pero
+**no mira la relación entre los dos en ninguna etapa**. Es exactamente la clase
+de cosa que sale verde y está mal.
+
+### N-10 · Tres techos del NRC para el perro adulto que no tenemos
+
+FEDIAF deja las tres columnas de máximo vacías. El NRC no.
+
+| Qué | Cifra | De dónde sale |
+|---|---|---|
+| **Grasa total, SUL** | **82,5 g/1000 kcal** (≈70 % ME) | *«Another study, noted earlier, **induced pancreatitis** in dogs using approximately 92 g per 1,000 kcal ME (Lindsay et al., 1948). Thus, the SUL for total fat is based on a safety margin of about 10 percent less than the amount reported to have induced pancreatitis»*. Y a ~95 g/1000 kcal se indujo **hipertensión y obesidad** (Rochhini 1987). |
+| **Linoleico, SUL** | **16,3 g/1000 kcal** (13,8 % ME) | *«the SUL for LA is estimated at 16.3 g per 1,000 kcal (13.8 percent ME) … Amounts of LA in excess of this amount are not recommended for long-term feeding.»* |
+| **Omega-3 de cadena larga (EPA+DPA+DHA), SUL** | **2,8 g/1000 kcal** (2,4 % ME) | Inmunidad celular deprimida a 3,13 % ME durante 12 semanas (Wander 1997), menos un 10 % de margen. |
+
+Dos cosas que merecen subrayarse:
+
+1. El **16,3 del NRC para adulto** y el **16,25 de FEDIAF para crecimiento
+   temprano** son, a efectos prácticos, el mismo número desde dos sitios
+   distintos. Que dos fuentes independientes caigan en el mismo sitio es la
+   mejor señal que se puede pedir de que el techo es real.
+2. El **2,8 de omega-3 de cadena larga ya lo tenemos**, y en el sitio correcto:
+   en el promedio semanal de `/menu/semana`, no plato a plato. La nota de
+   auditoría de `EPA_DHA_total` en `requerimientos_v2_final.json` ya explica por
+   qué (18 de los 20 pescados del catálogo pasan de 2.800 ellos solos). Nada que
+   cambiar ahí — pero conviene saber que el NRC lo llama SUL de **la suma de los
+   tres**, DPA incluido, y nosotros sumamos solo EPA+DHA. Va del lado seguro,
+   porque sumar menos con el mismo techo aprieta menos; queda apuntado.
+
+### N-11 · Lo poco que el capítulo 4 le dice a una ración cruda
+
+- **Lactosa**: *«Adult dogs … tolerate lactose at approximately 3 g·kg BW⁻¹·d⁻¹»*
+  y Burger 1993, *«dogs tolerate lactose at concentrations of 5 percent or less
+  of total energy»*. El único lácteo del catálogo es el **yogur griego**, con
+  ~3,5 g de lactosa por 100 g. **Medido: sale en 0 de los 216 menús
+  precalculados.** Para llegar al 5 % de la energía haría falta que el yogur
+  fuera casi la mitad de las calorías del menú. No es un riesgo, pero queda la
+  cifra escrita por si algún día entra otro lácteo.
+- **La fibra baja la absorción del hierro**: *«iron + pectin reduced (P < 0.05)
+  iron uptake (28.5 μg·h⁻¹) as compared to iron alone (71.9 μg·h⁻¹)»*. Es la
+  misma advertencia de la nota g de FEDIAF, con el número. Nos toca porque
+  tenemos **suelos de fibra en cuatro patologías** (hiperlipidemia ≥25,
+  obesidad ≥30, intestino irritable ≥20, estreñimiento ≥17,5): en esos cuatro
+  casos el hierro del menú se absorbe peor de lo que dice la ficha. No hay cifra
+  que aplicar —el efecto depende del tipo de fibra—, pero es una pregunta
+  legítima para el nutricionista.
+- **Fibra insoluble en gestación tardía y lactancia: evitarla.** *«supplementing
+  a bitch's diet with insoluble fiber during the latter phases of pregnancy and
+  during lactation should be avoided since it will decrease the energy density
+  of the diet»*. No tenemos ningún suelo de fibra en esas etapas, así que no
+  chocamos con ello; pero si alguna vez se añade uno, esto lo prohíbe.
+
+---
+
+## NRC 2006, capítulo 6 (proteína y aminoácidos)
+
+Leído entero. Es el capítulo que contesta a **dos** cosas: la pregunta que
+llevamos abierta desde el 28 de agosto sobre el techo de lisina, y la petición
+de la nutricionista sobre la metionina.
+
+### N-12 · La arginina tiene que subir con la proteína, y ahora hay fórmula
+
+> *«Since both of the above groups have shown that increasing dietary nitrogen
+> increases the severity of clinical signs when a low-arginine or arginine-free
+> diet is fed, **it is recommended that 0.01 g arginine be added for each gram of
+> crude protein above the requirement**.»* (perro, crecimiento)
+
+Y el mismo mecanismo, medido en el gato con una regresión (r² = 0,99):
+`arginina g/kg = 0,02 × proteína g/kg + 4,0`. En el perro el coeficiente es la
+mitad, 0,01.
+
+**Lo que significa para una ración BARF, con números.** El requisito de proteína
+del NRC para un cachorro de 4-14 semanas es 180 g/kg de dieta a 4 kcal/g, o sea
+**45 g/1000 kcal**. Un menú BARF de cachorro lleva **~134 g/1000 kcal** (medido,
+ver §aminoácidos de `HISTORIA_TECNICA.md`). El exceso son ~89 g/1000 kcal, que a
+0,01 g de arginina por gramo pide **+0,89 g de arginina/1000 kcal** sobre el
+mínimo. El mínimo del NRC en esa etapa es 1,575 g/1000 kcal (6,3 g/kg ÷ 4), así
+que el requisito real de ese menú sería **≈ 2,47 g/1000 kcal**, no 1,575.
+
+Esto **no está aplicado**, y es el mismo patrón que la proteína de gestación sin
+hidratos: un requisito que depende de otro nutriente del mismo menú, no una cifra
+fija de tabla. Va en `requisitos_condicionales.json`.
+
+### N-13 · El techo de lisina: por fin el mecanismo, y por fin un número
+
+Llevamos desde el 28 de agosto con el techo de lisina de FEDIAF (7,00 g/1000 kcal
+en crecimiento) **no aplicado**, en `verificar.MAXIMOS_NO_APLICADOS`, con la
+pregunta abierta para el nutricionista y sin saber por qué existe ese techo. El
+NRC lo explica:
+
+> *«A **lysine-arginine antagonism** was reported by Czarnecki et al. (1985) in
+> growing English pointer puppies. They found that, although 10 or 20 g of extra
+> free lysine per kilogram of diet had no effect, **40 g excess lysine** in the
+> diet caused a growth depression and classical clinical signs of **arginine
+> deficiency** (emesis, increased plasma ammonia, and orotic aciduria) **when the
+> diet contained 4 g arginine·kg⁻¹**. **An additional 4 g arginine prevented the
+> clinical signs** and improved weight gain. … The SUL for lysine is **>20 and
+> <40 g·kg⁻¹ diet** containing 4.0 kcal ME·g⁻¹.»*
+
+Tres cosas que cambian la conversación:
+
+1. **El SUL del NRC en nuestras unidades es «más de 5 y menos de 10 g/1000
+   kcal»** (÷4). El techo de FEDIAF, 7,00, cae **justo en medio de esa horquilla**.
+   O sea que el 7,00 no es un número inventado: es el punto medio del único
+   experimento que existe.
+2. **El daño no es de la lisina: es de la arginina que se queda corta.** Lo que
+   enfermó a los cachorros fue una deficiencia de arginina inducida, con 4 g de
+   arginina por kilo de dieta —**1 g/1000 kcal**, que está *por debajo* del
+   mínimo de FEDIAF en adulto (1,51)—. Con arginina suficiente, los signos no
+   aparecieron.
+3. Por eso N-12 y N-13 **son el mismo hallazgo visto por los dos lados**: el
+   techo de lisina y el suelo de arginina que sube con la proteína son la misma
+   restricción. Si la arginina acompaña, la lisina alta no es el problema.
+
+**Falta medir** —y es lo primero que hay que hacer con el motor libre— el
+cociente lisina:arginina de los menús de cachorro reales, con
+`margenes_categoria=MARGENES_V2` (ver el aviso de más arriba sobre las medidas
+sin proporciones). El caso que enfermó a los perros de Czarnecki iba a ~11,8:1
+de lisina a arginina; la carne ronda 1,4:1. Si la medida confirma esa distancia,
+la excepción del techo de lisina deja de ser una decisión pendiente y pasa a ser
+una decisión **justificada**, y la pregunta al nutricionista cambia de «¿lo
+aplicamos?» a «¿confirmas que con este cociente no hay antagonismo?».
+
+### N-14 · Los otros tres antagonismos de aminoácidos del perro, y por qué no nos tocan
+
+El NRC cierra el capítulo con esto, y merece leerse entero porque es
+tranquilizador **por el motivo correcto**:
+
+> *«…in general, **dogs appear to be more sensitive to disproportionalities among
+> dietary amino acids than cats, especially when fed low-protein diets**.»*
+
+Los cuatro antagonismos documentados en el perro son todos **sobre dietas bajas
+en proteína o limitantes en el aminoácido contrario**:
+
+| Antagonismo | Qué pasó | Con qué se corrigió |
+|---|---|---|
+| Lisina → arginina | +40 g lisina/kg con 4 g arginina/kg: emesis, hiperamoniemia, aciduria orótica | +4 g arginina/kg |
+| Lisina → metionina | +4 g lisina/kg en dieta baja en azufrados: −28 % de crecimiento | +3 g DL-metionina/kg |
+| Metionina → lisina | +1,5 g metionina/kg en dieta limitante en lisina: −37 % de crecimiento | +1,3 g lisina/kg |
+| Cistina → metionina | +2,2 g cistina/kg con metionina a 1,1 g/kg: lesiones necróticas en almohadillas | más metionina |
+
+Una ración BARF **no está en ninguna de esas condiciones**: es carne, hueso y
+víscera, con la proteína dos y tres veces por encima del requisito y con los
+aminoácidos en la proporción del músculo. La lección no es «no pasa nada», es
+que **el riesgo de los aminoácidos en el perro vive en las dietas pobres, no en
+las ricas** — y eso es exactamente lo contrario de lo que uno supondría al ver
+un techo en una tabla.
+
+### N-15 · La metionina: la nutricionista tenía razón, y hay una advertencia que no teníamos
+
+Cris Carles nombró la **L-metionina** en el contexto renal. El NRC trae dos cosas
+sobre metionina en el perro que no estaban en el repo:
+
+**Primera, la buena, y sostiene lo que ella dijo:**
+
+> *«Over a period of two decades (Stekol, 1935; Miller, 1944; Allison, 1947,
+> 1956), it was shown in both growing and adult dogs that **methionine (either the
+> L- or the DL-form) had a unique effect in reducing nitrogen loss and maintaining
+> serum albumin when dogs were fed a low-protein or a protein-free diet**.»*
+
+Es justo el escenario de un renal restringido: proteína baja, y la metionina
+protege la albúmina y reduce la pérdida de nitrógeno. Y en el perro, además:
+*«Daily supplements of methionine, without changing the diet, results in an
+increase in plasma taurine concentration»* — o sea que también cubre el riesgo de
+taurina de una dieta baja en proteína, que es como salió la miocardiopatía
+dilatada de los Newfoundland.
+
+**Segunda, la que nos faltaba, y es una advertencia de seguridad:**
+
+> *«Oral administration of about 1 g methionine·kg BW⁻¹ every 4 hours for 24
+> hours caused **no acute clinical signs in normal dogs** but caused **severe
+> clinical signs similar to hepatic coma in dogs with portacaval shunts**
+> (Merino et al., 1975).»*
+
+Y un caso real de intoxicación por error de formulación: seis perros de caza con
+una sola comida de ~300 g de un pienso con 47 g de DL-metionina/kg — ataxia,
+desorientación, temblores, vómitos, y el más joven con convulsiones. *«the SUL
+for DL-methionine is well below 47 g·kg⁻¹ diet»* (= muy por debajo de 11,75
+g/1000 kcal).
+
+**Lo que esto abre, y no lo decido yo**: hoy `patologias.json` no tiene ningún
+tope de metionina en **hepatopatía**, y el NRC dice que en un perro con shunt
+portosistémico la metionina que un perro sano tolera sin inmutarse provoca
+signos de coma hepático. No lo aplico porque la cifra del NRC es una **dosis por
+kilo de peso administrada cada 4 horas**, no una concentración de dieta, y
+convertir una cosa en la otra sería inventarme el número — que es exactamente lo
+que `CERRADO.md` prohíbe. Va a `PREGUNTAS_PARA_ELENA.md` para el nutricionista.
+
+### N-16 · Requisitos del NRC para el perro adulto, para tener con qué comparar
+
+Ninguno se aplica (manda FEDIAF), pero conviene tenerlos escritos porque son la
+segunda fuente:
+
+| | NRC (MR adulto, ÷4 desde g/kg a 4 kcal/g) | FEDIAF (mínimo adulto) |
+|---|---|---|
+| Proteína bruta | 80 g/kg = **20 g/1000 kcal** (RA 100 g/kg = 25) | 52,1 g/1000 kcal |
+| Azufrados totales (met+cis) | 5,2 g/kg = **1,30 g/1000 kcal** | 1,63 g/1000 kcal |
+| Metionina | 2,6 g/kg = **0,65 g/1000 kcal** | 0,82 g/1000 kcal |
+| Arginina | 2,8 g/kg = **0,70 g/1000 kcal** | 1,51 g/1000 kcal |
+
+FEDIAF es más exigente en las cuatro. No hay ninguna fila donde el NRC pida más
+que FEDIAF en el adulto sano, así que **el semáforo no se queda corto por este
+lado**. Eso era lo que había que comprobar.
+
+---
+
+## NRC 2006, capítulo 7 (minerales)
+
+### ⚠️ N-17 · EL PEOR HALLAZGO DE LA NOCHE: nuestro techo de yodo es EXACTAMENTE la dosis que hizo daño
+
+`motor/seguridad.py` línea 163:
+
+```python
+TOPE_YODO_KCAL = 1400.0    # µg por 1000 kcal -- NRC 2006
+```
+
+y el comentario de encima dice: *«El NRC (2006) fija el límite superior seguro
+en 1.400 µg por cada 1000 kcal de dieta.»*
+
+**Eso no es lo que dice el NRC.** Lo que dice, literal, es lo contrario:
+
+> *«Castillo et al. (2001a) reported evidence of **depressed thyroid gland
+> function**, evidenced by reduced plasma concentrations of thyroid hormones **and
+> bone abnormalities, in puppies fed diets containing an estimated maximum I
+> content of 1,400 μg I per 1,000 kcal ME**, providing an estimated 250 μg I·kg
+> BW⁻¹·d⁻¹. **Based on this information an absolute figure for a SUL of dietary I
+> cannot be predicted for adult dogs.**»*
+
+O sea: **1.400 es la concentración a la que se observó el daño** —tiroides
+deprimida y alteraciones óseas en cachorros—, y el NRC dice **expresamente que
+no puede fijar un límite superior seguro**. Nosotros lo copiamos como si fuera
+el límite seguro y lo pusimos de techo. Un techo puesto justo en la dosis que
+hace daño no es un techo.
+
+Es la misma familia de fallo que el máximo de fósforo borrado el 7 de
+septiembre: leer una línea de una fuente y aplicarla al revés de lo que dice.
+Y es peor que aquel, porque aquel dejaba un menú sin techo y este pone el techo
+en el sitio equivocado con un comentario que afirma una fuente que no dice eso.
+
+**Lo que la fuente sí da, y sirve de anclaje:**
+
+| Cifra | Qué es |
+|---|---|
+| 220 µg/1000 kcal | La dosis recomendada (RA) del NRC para perro adulto |
+| **400 – 1.275 µg/1000 kcal** | El rango de piensos comerciales que Belshaw (1975) midió y que *«apparently these foods were fed without any clinical abnormalities»* |
+| 1.400 µg/1000 kcal | **Donde se vio el daño** (Castillo 2001a, cachorros) |
+| 2.750 µg/1000 kcal | El máximo LEGAL de FEDIAF (Tabla III-3a, 1,10 mg/100 g MS × 2,5) — más flojo que el nuestro, así que no ata |
+
+**Medido antes de tocar nada**, sobre los 216 menús del catálogo precalculado:
+
+```
+peor menú ............ 1.038 µg/1000 kcal
+mediana .............. 418
+menús por encima de 1.275 ....... 0 de 216
+menús por encima de 1.000 ....... 2 de 216
+```
+
+Así que bajar el techo de 1.400 a **1.275** —el punto más alto que la fuente
+documenta como comido sin problemas— **no quita ni un menú** y saca el techo del
+sitio donde hay daño documentado. Se aplica.
+
+Lo que **no** decido yo, y va a `PREGUNTAS_PARA_ELENA.md`: si 1.275 es
+suficiente margen. Está a un 9 % de la cifra que hizo daño, y esa cifra es de
+**cachorros**, que son el grupo sensible, mientras que nuestro techo se aplica a
+todos por igual. El peor menú real va a 1.038, o sea que habría sitio para
+bajarlo bastante más sin coste. Pero elegir cuánto margen se le deja a una
+tiroides es criterio clínico, y ahí no me meto.
+
+### N-18 · Lo demás del capítulo 7, que sí cuadra
+
+Tres coincidencias que conviene tener escritas, porque son la segunda fuente
+diciendo lo mismo que ya aplicamos:
+
+- **Calcio, techo de crecimiento.** NRC: *«a safe upper limit (SUL) for Ca in
+  growing giant-breed puppies may reasonably be set at a minimum of 4.5 g per
+  1,000 kcal ME»*. Nuestro `Calcio_LateGrowth_RazaGrande` tiene **4.500 mg**.
+  Mismo número desde otra fuente. Y hay un dato más fino que no teníamos: Slater
+  (1992) encontró que dar a cachorros de raza grande dietas con **≥3,6 g/1000
+  kcal** se asociaba a más riesgo de osteocondritis — por debajo del techo, o sea
+  que el margen real es más estrecho de lo que parece.
+- **Fósforo: el NRC NO tiene techo.** *«There are insufficient data on which to
+  base an SUL for P in dogs.»* Eso deja al techo del perro adulto sano (2.000
+  mg/1000 kcal, SACN5 Tabla 13-3) como **la única cifra con fuente que existe**
+  para esa pregunta — lo cual refuerza haberlo puesto, y explica por qué FEDIAF
+  se queda en el 4.000 nutricional de AAFCO.
+- **Sodio: el techo del NRC es 15 g/kg MS** = 3.750 mg/1000 kcal, muy por encima
+  del nuestro (1.000 mg, SACN5). No hay conflicto: el nuestro es el estricto.
+
+Y una cuarta que ya estaba anotada en N-7 pero ahora con el número: **el calcio
+alto baja la absorción del fósforo**, y el efecto *«is most evident at Ca:P
+ratios greater than 2:1»* — que es justo donde FEDIAF pone su techo de Ca:P en
+adulto (2/1). Otra convergencia.
+
+---
+
+## NRC 2006, capítulo 8 (vitaminas) — y la trampa de la vitamina A
+
+### ⚠️ N-19 · La mitad de nuestros menús no llegarían al mínimo de vitamina A sin contar caroteno, y en ningún sitio se dice
+
+Esto **no lo buscaba**. Salió leyendo el capítulo 8 del NRC, que empieza
+explicando algo que damos por sabido y no lo está:
+
+> *«In nature, **all of the vitamin A ingested by animals originates from
+> carotenoids** synthesized by plants… **1 IU of vitamin A is equivalent to 0.344
+> μg of pure all-trans retinyl acetate (0.3 μg all-trans retinol)**… In humans, **21
+> μg of β-carotene is required to provide 1 RE**… Even though **dogs appear to
+> utilize β-carotene from carrots efficiently** (Turner, 1933; Bradfield and Smith,
+> 1938), **a retinol equivalency has not been defined**.»*
+
+O sea: **la vitamina A de una zanahoria y la de un hígado no son el mismo
+nutriente**, hay un factor de conversión entre ellas, y **para el perro ese
+factor no está definido**. En humanos son 21 a 1 desde el alimento; el convenio
+europeo clásico usa 6 a 1; el americano moderno (RAE) usa 12 a 1.
+
+**Medido en los 216 menús del catálogo precalculado**, separando la vitamina A
+que viene de la categoría «Verduras y frutas» (todo caroteno, cero retinol) de
+la que viene de vísceras, carne y suplementos:
+
+```
+% de la vitamina A que viene de vegetal .... mediana 83 %, máximo 100 %
+
+menús que NO llegarían al mínimo de FEDIAF (526,2 µg/1000 kcal)
+si no se cuenta el caroteno ................ 103 de 216   (48 %)
+
+el peor:  Grande_Lactante   11.191 µg totales,
+                            de los cuales retinol de verdad: 29
+```
+
+**Veintinueve microgramos de retinol en el menú de una perra lactante**, y el
+semáforo lo da verde porque suma los 11.191. Si el factor real del perro fuera
+el humano (21:1 en vez del 6:1 que traen las fichas), ese menú tendría que
+dividir el caroteno por 3,5 y se quedaría muy corto.
+
+**Y las fichas no siguen un solo convenio.** Comparadas con USDA:
+
+| Alimento | Nuestra ficha | USDA RAE (12:1) | β-caroteno ÷ 6 |
+|---|---|---|---|
+| Zanahoria | 1.346 | 835 | 1.381 ← nuestro valor es este |
+| Boniato | 667 | 709 ← nuestro valor es este | 1.418 |
+| Rúcula | 596 | 119 | 237 ← **ninguno de los dos** |
+
+O sea que la columna `vitA` del catálogo mezcla al menos dos convenios
+distintos, y en algún caso ninguno de los dos.
+
+**Y `UNIDADES.md` no lo dice.** El archivo que existe justo para que esto no
+pase trae una sola línea —«Vitamina A · `vitA` · µg»— y una regla de conversión
+desde UI. No dice si esos microgramos son **retinol**, **equivalentes de retinol
+a 6:1** o **RAE a 12:1**, ni menciona los carotenoides. Es exactamente el mismo
+tipo de agujero que el `linoleico`/`linolenico`, y con la misma propiedad: **no
+salta nada, el menú sale verde igual**.
+
+**Lo que NO he hecho, a propósito.** No he tocado ni un valor del catálogo:
+rellenar datos no es mi trabajo (regla escrita desde la primera sesión). Y no he
+puesto ningún factor de conversión, porque el NRC dice literalmente que para el
+perro **no está definido** — inventarme uno sería justo lo que `CERRADO.md`
+prohíbe.
+
+**Lo que sí he hecho:** medirlo, escribirlo aquí, avisarlo en `UNIDADES.md`,
+abrir la pregunta en `PREGUNTAS_PARA_ELENA.md` y apuntar el trabajo de datos en
+`DATOS_QUE_FALTAN.md`.
+
+### N-20 · Los techos de vitamina A del NRC, y por qué el nuestro no es el que aprieta
+
+| | NRC 2006 (µg retinol/1000 kcal) | Lo nuestro (FEDIAF) |
+|---|---|---|
+| Cachorro | **3.750** (15.000 µg/kg de dieta a 4 kcal/g) | 30.000 |
+| Hembra reproductora | **3.750** | 30.000 |
+| Adulto no reproductor | **16.000** (64.000 µg/kg) | 30.000 |
+
+El techo de FEDIAF es **ocho veces** el que el NRC sugiere para un cachorro. Y
+medido, **116 de 216** de nuestros menús pasan de 3.750 y **4** pasan incluso de
+16.000, mientras que **ninguno** pasa de 30.000: o sea que más de la mitad de
+los menús viven justo en ese hueco entre las dos fuentes.
+
+**Antes de asustarse hay que leer las dos mitades**, y es importante:
+
+1. El 3.750 del NRC **no sale de ningún experimento con cachorros**. Sale de
+   *«The NRC (1987) proposed a presumed maximal safe level … of 10 times the
+   requirement … Because carnivores appear to have a higher tolerance … **it is
+   suggested that** an upper limit of 15,000 μg retinol·kg⁻¹ diet … be used for
+   puppies»*. Es precaución, no daño observado.
+2. El daño observado en el perro está **muchísimo más arriba**: Cho (1975) dio
+   90.000 µg de retinol **por kilo de peso y día** —que en un cachorro de 6 kg
+   comiendo 800 kcal son unos **675.000 µg/1000 kcal**, veintinueve veces
+   nuestro peor menú—. Y Cline (1997) dio a perros adultos **67.500 µg/1000
+   kcal durante un año** sin encontrar ningún cambio en el hueso.
+3. Y el 73 % de la vitamina A de nuestro peor menú de cachorro **es caroteno de
+   zanahoria**, y *«dietary carotenoids are assumed to have **a low toxicity for
+   dogs**»*: el caroteno no da hipervitaminosis A. Contarlo contra un techo es
+   ir del lado seguro.
+
+**Conclusión: por el techo no hay problema, y el motivo es interesante** — el
+techo se aplica a una suma que mezcla retinol y caroteno, y eso aprieta de más,
+que es el lado bueno. El problema está en el **suelo**, que es N-19: la misma
+mezcla, mirada desde abajo, afloja de más. Es el mismo dato leído por sus dos
+extremos, y solo uno de los dos es peligroso.
+
+---
+
+## Lo que queda MEDIDO y listo para aplicar (noche del 8 al 9)
+
+Tres cosas del NRC que no están en el motor, con la medida hecha **antes** de
+tocar nada, para saber si cuestan menús o no.
+
+### N-21 · El ratio linoleico:linolénico — 15 de 216 menús se salen, uno a 109:1
+
+La regla es N-9: **2,6 a 26 en adulto**, **2,6 a 16 en gestación y lactancia**,
+≈16 en crecimiento. Medido sobre los 216 menús precalculados:
+
+```
+ratio LA:ALA .......... mínimo 0,50   mediana 7,79   máximo 109,14
+
+por debajo de 2,6 ..........  1 de 216
+por encima de 26 ........... 15 de 216
+por encima de 16 ........... 67 de 216
+```
+
+El peor, un menú de senior de raza mini: **1,53 g de linoleico contra 0,014 g de
+linolénico**. Ciento nueve a uno, cuando el techo es veintiséis.
+
+**Y se entiende por qué pasa.** FEDIAF **no da mínimo de linolénico en adulto**
+(la fila lleva «-»), así que en un menú de adulto no hay nada que impida al
+omega-3 caer a cero mientras el omega-6 sube. La restricción de FEDIAF es solo
+un suelo de linoleico (3,82 g/1000 kcal); no hay techo, y no hay ninguna
+relación entre los dos. Es el mismo agujero que tenía el ratio Ca:P antes de
+ponerlo, y por el mismo motivo: **una relación entre dos nutrientes no cabe en
+una tabla de números fijos**, así que un barrido de tablas no la encuentra.
+
+Es lineal (`LA − 26·ALA ≤ 0` y `2,6·ALA − LA ≤ 0`), así que entra en el solver
+exactamente igual que el Ca:P, que ya está.
+
+**Esta sí cuesta menús**, a diferencia del yodo: quince de doscientos dieciséis
+tendrían que cambiar. Es lo que tiene tapar un agujero real.
+
+### N-22 · La arginina que sube con la proteína
+
+La regla es N-12: **+0,01 g de arginina por cada gramo de proteína bruta por
+encima del requisito** (perro, NRC 2006 cap.6). También es lineal:
+
+    arginina − 0,01 × proteína  ≥  arginina_minima − 0,01 × proteina_requerida
+
+Pendiente de medir con el motor libre (la batería estaba corriendo), porque
+medirlo bien exige `margenes_categoria=MARGENES_V2` — ver el aviso de más
+arriba sobre las medidas hechas sin proporciones BARF.
+
+### N-23 · Y una comprobación que sale bien, escrita para no repetirla
+
+**La vitamina K y el pescado.** El NRC trae un caso feo: gatos con dietas
+comerciales de salmón y atún **muriendo de hemorragias**, con 60 µg de vitamina
+K/kg de dieta, y recuperándose con vitamina K1 (Strieker 1996). Como el BARF
+puede llevar bastante pescado, había que mirarlo.
+
+**No nos aplica, y la fuente lo dice explícitamente.** FEDIAF 2025 pone el aviso
+del pescado **solo en la sección del gato** (§3.3.2): *«there is some indication
+that canned pet food for cats being high in fish may increase the risk of
+prolonged coagulation times»*. En la sección del perro (§3.3.1) dice solo:
+*«Vitamin K does not need to be added unless diet contains antimicrobial or
+anti-vitamin compounds»*. Y el NRC, en el capítulo del perro: *«Many commercial
+dog foods do not contain supplemental vitamin K, and **there is a lack of reports
+of dogs fed these diets having prolonged clotting times**»*. Los dos casos
+publicados son de gato.
+
+**La tiaminasa, en cambio, sí, y nuestra lista cuadra.** El NRC dice: *«Carp and
+saltwater herring contain thiaminases, but **perch**, catfish, butterfish, and
+spots apparently **do not**»*, y *«Both thiaminase I and thiaminase II are
+inactivated by cooking»* — que es justo por qué al BARF le importa y al pienso
+no. Nuestra lista (`motor/seguridad.py`) lleva sardina, caballa, arenque,
+boquerón, carpa, atún, gamba y langostino, y **no** lleva la perca, que sí está
+en el catálogo. Coincide con la fuente en las dos direcciones.
+
+**Y el techo de vitamina D está bien puesto y bien atribuido**, al contrario que
+el del yodo: *«It is suggested that a dietary concentration of cholecalciferol
+should not exceed **20 μg per 1,000 kcal** for growing dogs»* — que es
+exactamente `TOPE_VITD_KCAL = 20.0`. Y el límite legal de FEDIAF que aplicamos
+además (14,1875 µg) coincide casi al decimal con la otra recomendación del mismo
+párrafo: *«mammals not be exposed to diets containing more than 55 μg
+cholecalciferol·kg⁻¹ … equivalent to **14 μg** cholecalciferol per 1,000 kcal»*.
+
+### N-24 · Un número del NRC que parece un techo y NO hay que aplicar: la colina
+
+Lo escribo porque es el reverso de N-17, y la lección es la contraria: **no todo
+lo que la fuente llama límite lo es**, y leer solo la frase del límite lleva a
+romper el motor.
+
+El NRC dice: *«A presumed safe maximum intake of **2,000 mg choline·kg⁻¹ diet**
+is proposed»* — que a 4 kcal/g son **500 mg/1000 kcal**.
+
+**Medido: 213 de nuestros 216 menús lo pasan**, con una mediana de 878 y un
+máximo de 2.052. Aplicarlo dejaría al motor casi sin menús.
+
+**Y no hay que aplicarlo**, por tres cosas que están en el mismo párrafo:
+
+1. **El mínimo de FEDIAF para el perro adulto son 474 mg/1000 kcal.** Un «techo»
+   un 5 % por encima del suelo obligatorio no es un techo: es un número que no
+   deja ventana. Cuando eso pasa, casi siempre el número no es lo que parece.
+2. **El NRC desmonta él mismo el único estudio de daño.** Davis (1944) vio
+   anemia, y el NRC anota: *«No control dogs given only this diet were used in
+   either study, and … injections of a liver extract or the feeding of a stomach
+   preparation restored red cell numbers, **suggesting that the basal diet may
+   have been deficient in an essential nutrient(s)**»*.
+3. **Y lo que sí se probó salió bien**: *«McKibbin et al. (1944) supplemented the
+   diet of growing puppies with 1,500 mg choline chloride·kg⁻¹ and **reported no
+   problems**»*, y luego 2.000 mg/kg igual. O sea que los 2.000 son **lo más alto
+   que alguien probó**, no la dosis a la que algo pasó.
+
+**La regla que sale de aquí, y vale para todo el documento:** un «safe upper
+limit» del NRC puede ser tres cosas distintas —daño observado menos un margen
+(la grasa: 92 → 82,5), lo más alto probado sin incidentes (la colina), o una
+extrapolación de «diez veces el requisito» (la vitamina A del cachorro)—, y el
+NRC lo dice cada vez. **Hay que leer cuál de las tres es antes de aplicarlo**, y
+es exactamente lo que no se hizo con el yodo (N-17), donde se aplicó como techo
+seguro una cifra que era daño observado.
+
+---
+
+## SACN5 capítulo 37 (enfermedad renal crónica), leído entero — y aquí está lo de Cris
+
+Este es **el capítulo del que salen las cosas que dijo la nutricionista**, y
+leerlo entero encuentra que de su tabla de nutrientes clave aplicamos cuatro
+filas de ocho.
+
+### N-25 · La Tabla 37-9 completa, y lo que falta de ella
+
+Literal, columna de perro (todo sobre materia seca; conversión ×2,5 a
+g/1000 kcal, la misma que usa el resto del repo):
+
+| Fila de la tabla | Lo que dice (perro) | En g/mg por 1000 kcal | ¿Lo aplicamos? |
+|---|---|---|---|
+| Proteína | 14 – 20 % MS | 35 – 50 g | **sí**, pero a 62,5 (ver abajo) |
+| Fósforo | 0,2 – 0,5 % MS | 500 – 1.250 mg | **sí**, 1.200 |
+| Sodio | ≤ 0,3 % MS | ≤ 750 mg | **sí**, 750 |
+| Potasio | 0,4 – 0,8 % MS | 1.000 – 2.000 mg | **sí** el techo (2.000); el suelo **ya lo cubre FEDIAF**, que pide 1.450 |
+| **Cloruro** | **1,5 × el sodio** | **≤ 1.125 mg** con nuestro tope de sodio | **NO** |
+| **Omega-3 totales** | **0,4 – 2,5 % MS** | **1,0 – 6,25 g** | **NO** |
+| **Ratio omega-6 : omega-3** | **de 1:1 a 7:1** | — | **NO** |
+| Vitamina E | ≥ 400 UI/kg de alimento | ≥ 67,1 mg | **sí**, 67,1 |
+| Vitamina C | ≥ 100 mg/kg de alimento | ≥ 25 mg | **no se puede**: el perro la sintetiza, FEDIAF no la pide y el catálogo no tiene la clave |
+
+**Medido, sobre los 216 menús precalculados** (que son de perro sano, así que no
+es que estén mal — es para saber si estas restricciones morderían):
+
+```
+cloruro / sodio ....... mediana 1,27   máximo 2,63    por encima de 1,5:  24 de 216
+omega-3 totales ....... mediana 1,28   mínimo 0,15    por debajo de 1,0:  73 de 216
+omega-6 / omega-3 ..... mediana 4,68   máximo 28,34   por encima de 7:    52 de 216
+```
+
+O sea: **las tres muerden**. No son filas decorativas.
+
+### N-26 · Los dos matices que hay que leer antes de aplicar nada de esto
+
+**Primero, la proteína.** La tabla pide 14-20 % MS = **35-50 g/1000 kcal**, y el
+mínimo de FEDIAF para el perro adulto sano son **52,1**. O sea que **el rango
+entero de la tabla cae por debajo del mínimo de FEDIAF**: no es formulable sin
+bajar de FEDIAF, que es justo lo que `necesita_bajo_fediaf` marca. Nuestro
+62,5 no es la tabla: es lo más bajo que se puede pedir sin romper el suelo, con
+margen. Esto ya estaba bien resuelto y documentado; lo escribo para que quien
+lea la tabla no piense que el motor se quedó corto.
+
+**Segundo, y es la respuesta a Cris sobre el ratio omega-6:omega-3: las dos
+fuentes se contradicen, y hay que decirlo.**
+
+- **SACN5, Tabla 37-9**, para el renal: *«Omega-6:omega-3 fatty acid ratio of
+  **1:1 to 7:1**»*. Un objetivo clínico, con números, para una patología
+  concreta.
+- **NRC 2006, cap.5**: *«The European expert committee also specifically
+  concluded that the use of a **total n-6:n-3 ratio is not helpful**»*, y
+  recomienda en su lugar el ratio **LA:ALA** (N-9).
+
+No es que una de las dos esté equivocada. Es que **hablan de cosas distintas**:
+el NRC habla del perro **sano** y de fijar requisitos generales, donde el ratio
+total mezcla ácidos grasos de potencia muy distinta; SACN5 habla de un objetivo
+**terapéutico** en un perro **enfermo**, donde lo que se busca es un efecto
+antiinflamatorio concreto y el ratio total es la forma en que la literatura
+clínica lo escribe.
+
+**La lectura que propongo, y que no aplico solo:** el ratio **LA:ALA** del NRC
+como requisito del perro sano en todas las etapas (N-21, N-9), y el ratio
+**total omega-6:omega-3** de SACN5 **solo dentro de las patologías que lo
+piden**, como un tope más de `patologias.json`, con su cita. Son dos reglas
+distintas en dos sitios distintos, que es exactamente como está montado el resto
+(FEDIAF en un fichero, SACN5 en otro, condicionales en un tercero).
+
+Va a `PREGUNTAS_PARA_ELENA.md` §5, porque «qué ratio se le pide a un perro
+renal» es criterio clínico y no mío.
