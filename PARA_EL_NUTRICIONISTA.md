@@ -64,10 +64,39 @@ metabolizable**, que usa por ejemplo el objetivo de grasa en diabetes
 (Purina, «<30 % ME»). A 8,5 kcal/g de grasa: 20 g/1000 kcal ≈ 17 % EM;
 25 ≈ 21 % EM; 37,5 ≈ 32 % EM.
 
-> **PREGUNTA 1.** ¿Es aceptable convertir con 4000 kcal/kg MS en una ración
-> BARF, que es húmeda y bastante menos densa que un pienso? Si no lo es,
-> ¿qué densidad usarías, o preferirías que los objetivos se expresaran
-> directamente en % de EM?
+⚠️ **MEDIDO EL 9 DE SEPTIEMBRE, Y NO SALEN 4000.** Se estimó la materia seca de
+cada alimento como proteína + grasa + fibra + cenizas —las cenizas a partir del
+calcio, porque el mineral del hueso es hidroxiapatita y el calcio es su ~39 %— y
+se pesó por los gramos de los 216 menús del catálogo:
+
+| | kcal por kg de materia seca |
+|---|---|
+| Mínimo | 4157 |
+| **Mediana** | **5159** |
+| Máximo | 6365 |
+| Menús por debajo de 4000 | **0 de 216** |
+
+**La mediana está un 29 % por encima del puente.** Y tiene sentido físico: los
+4000 son la cifra de un pienso, que lleva hidratos a 4 kcal/g y bastante ceniza y
+fibra; una ración cruda no lleva hidratos y sí grasa a 9 kcal/g.
+
+**Lo que eso le hace a cada límite convertido, que es lo que hay que decidir:** a
+5159 kcal/kg MS, 1000 kcal son **194 g de materia seca**, no 250. Un techo que la
+fuente da como «≤15 % MS» son **29 g/1000 kcal** en esta comida, y aplicamos 37,5.
+
+- Los **techos** convertidos desde % MS quedan un **29 % más flojos** de lo que su
+  fuente pretende. Son 42, más los del perro sano.
+- Los **suelos** convertidos quedan un **29 % más estrictos**. Ese lado va al lado
+  seguro.
+
+*(La materia seca es estimada: el catálogo no tiene campo de humedad. La dirección
+y el orden de magnitud son sólidos y se pueden comprobar ficha a ficha — corazón
+de pollo 25,9 % de MS, hígado de vaca 26,1 %, espinaca 7,4 %, aceite 100,9 %.)*
+
+> **PREGUNTA 1.** Con esa medida delante: ¿se cambia el puente a la densidad real
+> de la ración —y con ello se aprietan los 42 topes de patología y los del perro
+> sano—, se dejan como están declarando el margen, o los objetivos deberían
+> pedirse directamente en g/1000 kcal y olvidarnos del porcentaje de materia seca?
 
 ### 0.2 · Las tres cajas: lo que se te pide clasificar
 
@@ -710,10 +739,23 @@ motor. (Da igual en la práctica, porque el legal de 142 manda de todos modos.)
 > de FEDIAF (2750), que es todavía más alto, o ponemos un criterio nuestro
 > declarado y más bajo?
 
-> **PREGUNTA 19-ter.** ¿Merece la pena mantener los topes de vitamina D y
-> selenio de `seguridad.py`, sabiendo que el límite legal de FEDIAF es
-> siempre más estricto y que nunca llegan a actuar? La alternativa es
-> quitarlos y dejar escrito que quien protege es FEDIAF.
+**Medido el 9 de septiembre, y el «siempre» tiene una excepción:**
+
+| Tope nuestro | Máximo de FEDIAF | ¿Quién manda? |
+|---|---|---|
+| Selenio 570 µg/1000 kcal | 142 µg/1000 kcal | FEDIAF. El nuestro **nunca actúa** |
+| Vitamina D 20 µg/1000 kcal | 14,1875 µg/1000 kcal | FEDIAF. Tampoco actúa nunca |
+| Vitamina D 2,6 µg/kg^0,75 | 1,35 · 1,56 · 1,77 · 2,13 · 2,48 µg/kg^0,75, según el nivel de actividad | FEDIAF en los cinco niveles |
+
+Los dos se cruzan en **183 kcal/kg^0,75**, y hay un perro por encima: el **gran
+danés**, al que FEDIAF le da 200. Ahí el que protege es el nuestro (2,60 contra
+2,84).
+
+> **PREGUNTA 19-ter.** El de selenio y el de vitamina D por kcal **no actúan
+> nunca**: ¿se quitan y se deja escrito que quien protege es FEDIAF, o se quedan
+> como segunda red por si FEDIAF cambia? El de vitamina D **por peso metabólico**
+> sí actúa —en el gran danés y en cualquier perro por encima de 183
+> kcal/kg^0,75—, así que ese se queda en cualquier caso.
 
 
 > **PREGUNTA 19 (bloque entero).** De los seis umbrales marcados como
@@ -1632,10 +1674,16 @@ de pescado** tenían comprometida la resistencia a la infección (Chang et al,
 1992), y gatos sanos con **omega-6:omega-3 de 1,3:1** durante ocho semanas tenían
 la **función plaquetaria significativamente disminuida** (Saker et al, 1998).
 
-**La pregunta**: ¿hay un techo de omega-3 para el perro, y cuál? Hoy el motor no
-le pone ninguno — solo el suelo de EPA+DHA de FEDIAF. Si lo hay, entra como los
-demás. Y si el techo existe, la respuesta a por qué esos dos suelos no caben deja
-de ser «el catálogo no llega» y pasa a ser «no habría que llegar».
+**Lo que hemos podido contestar nosotras, buscándolo:** no hay cifra canina. Las
+dos medidas que da el capítulo son de otras especies —ratones al 40 % de las
+calorías y gatos a 1,3:1— y el único número aplicable al perro que existe en el
+repo es el **SUL de EPA+DHA del NRC 2006: 2,8 g/1000 kcal**, que el motor ya
+aplica como promedio semanal.
+
+**La pregunta**: ¿vale ese SUL como techo de omega-3, o hace falta uno de omega-3
+totales? Y si hace falta: si existe un techo, la respuesta a por qué los suelos de
+cáncer y artrosis no caben deja de ser «el catálogo no llega» y pasa a ser «no
+habría que llegar».
 
 ### PREGUNTA 40 — El ratio omega-6:omega-3: dos fuentes que no dicen lo mismo
 
@@ -1692,10 +1740,16 @@ que hace esta app**:
 - **Mitotano** (Cushing): en ayunas la absorción cae de 13,0 a **0,4 mg/l**. La
   pastilla va con la comida.
 
+**Lo que hemos podido contestar nosotras:** en el capítulo entero, esos **dos son
+los únicos con cifra canina**. Hay un tercero con dirección pero sin número —el
+fenobarbital, cuya vida media se acorta al restringir proteína o grasa— y está
+recogido en el mismo aviso. Del resto, el capítulo da el mecanismo general
+(proteína alta acelera el metabolismo hepático de muchos fármacos) y todos los
+números son de personas o de rata.
+
 **La pregunta**: ¿hay más fármacos frecuentes en el perro cuya pauta cambie al
-pasar a una ración cruda alta en proteína y sin cereales? El capítulo da el
-mecanismo general —proteína alta acelera el metabolismo hepático de muchos
-fármacos— pero solo esos dos con cifra canina.
+pasar a una ración cruda, alta en proteína y sin cereales? Es una pregunta de
+consulta, no de bibliografía: lo que se ve en la práctica.
 
 ---
 
