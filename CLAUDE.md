@@ -49,11 +49,17 @@ con alguna, casi siempre el error está en el cambio.
    patología marcada**, viven en `recomendaciones_libro.json` y se comprueban
    en el mismo sitio y con el mismo `min()` que los de patología. En adulto son
    dos (fósforo 2000 y sodio 1000 por 1000 kcal; 1750 el fósforo en senior).
-   Existen porque FEDIAF **no pone máximo de fósforo** y una ración BARF de
-   este motor salía con ~4000 mg — el doble de lo que el libro recomienda
-   para cualquier perro —, y ese número solo entraba antes por la puerta de
-   atrás, en las dos patologías cuya tabla lo repite: el mismo perro pasaba
-   de 4000 a 1750 por marcar «artrosis». Medido antes de aplicarlo: cabe en
+   Existen porque una ración BARF de este motor salía **pegada al máximo de
+   FEDIAF** (~4000 mg/1000 kcal, y un menú del catálogo llegó a 4124, por
+   encima), y el libro recomienda **la mitad** para cualquier perro adulto
+   sano. ⚠️ Ojo con una frase que estuvo mal escrita aquí hasta el 9 de
+   septiembre: **FEDIAF SÍ pone máximo de fósforo en adulto, 4,00 g/1000 kcal**
+   (Tabla III-3b, «Adult: 4.00 (N)», nota h, y el texto de la sección 3.3.1).
+   Se borró por error el 7 de septiembre y se devolvió la noche del 8. Un
+   máximo de seguridad y una recomendación no son lo mismo, y este techo es lo
+   segundo. Y ese número solo entraba antes por la puerta de atrás, en las dos
+   patologías cuya tabla lo repite: el mismo perro pasaba de 4000 a 1750 por
+   marcar «artrosis». Medido antes de aplicarlo: cabe en
    el peldaño 0 y en verde en 3, 10, 22 y 40 kg. **El techo del adulto no se
    aplica en crecimiento** — el mínimo de un cachorro joven (2250) está por
    encima del techo del adulto.
@@ -67,7 +73,9 @@ con alguna, casi siempre el error está en el cambio.
    un cachorro de raza grande recibía **4500 mg de calcio** (1,80 % MS), que es
    el máximo de FEDIAF y un **64 % por encima** de lo que dicen las dos fuentes
    caninas que hablan de esto; y porque **FEDIAF no pone máximo de fósforo en
-   crecimiento**, igual que no lo ponía en adulto. Ojo con los dos umbrales: los
+   crecimiento** — las dos columnas de máximo de esa fila están vacías, y ahí
+   el hueco sí es total: el adulto tiene el 4,00 de FEDIAF y el cachorro no
+   tenía ninguno. Ojo con los dos umbrales: los
    **25 kg** de SACN5 no son los **15 kg** de la nota b de FEDIAF
    (`RAZA_GRANDE_O_GIGANTE_KG`), que decide otra cosa — el mínimo de calcio
    reforzado y el techo del ratio Ca:P. Dos fuentes, dos poblaciones, dos

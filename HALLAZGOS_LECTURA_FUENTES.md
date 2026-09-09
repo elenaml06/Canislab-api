@@ -2896,8 +2896,11 @@ esa fila están vacías, y está comprobado contra el PDF (la nota de auditoría
 esa fila lo cuenta: el máximo de adulto, 4000, se llegó a borrar por error el 7
 de septiembre y se devolvió el 8).
 
-Es exactamente el mismo agujero que motivó el techo de fósforo del adulto, un
-piso más abajo. La Tabla 17-1 es el único número canino con fuente que existe
+**Y aquí el hueco es de verdad, a diferencia del adulto**, que es un matiz que
+conviene no perder: el adulto **sí tiene máximo de FEDIAF** (4,00 g/1000 kcal), y
+lo que se le añadió el 8 de septiembre fue la **recomendación del libro**, que es
+la mitad. El cachorro no tenía **ninguno de los dos**. La Tabla 17-1 es el único
+número canino con fuente que existe
 para taparlo: **3250** al cachorro de menos de 25 kg de adulto, **2750** al de
 más.
 

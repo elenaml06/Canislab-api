@@ -2697,6 +2697,51 @@ if "Discrepancias: 0" not in _aud.stdout:
     _cola = "\n      ".join(_aud.stdout.strip().splitlines()[-6:])
     fallos.append(f"BLOQUE18: auditar_fediaf.py encuentra discrepancias:\n      {_cola}")
 
+# ⚠️ Y LA MISMA COMPROBACION SOBRE LO ESCRITO, NO SOLO SOBRE EL NUMERO
+# (9 septiembre). El numero llevaba bien desde la noche del 8 -- lo pinaba ya
+# `auditar_fediaf.py` con `"Fósforo": {"Adulto": 4000}` y un comentario largo
+# contando el error --, pero la FRASE «FEDIAF no pone maximo de fosforo» se
+# quedo en CINCO documentos y en dos `por_que` del JSON, escrita el 7 y el 8 por
+# la manana, o sea antes de devolver el maximo. Lo caza Elena leyendo, no la
+# bateria, y esa es la definicion de una alarma que falta.
+#
+# FEDIAF SI pone maximo de fosforo en ADULTO: 4,00 g/1000 kcal (Tabla III-3b,
+# «Adult: 4.00 (N)», nota h, y el texto de 3.3.1). Lo que no tiene maximo es el
+# CRECIMIENTO. Asi que la frase solo vale si dice «en crecimiento» o si es una
+# correccion que se cita a si misma.
+_FRASES_PROHIBIDAS_B18 = (
+    "no pone máximo de fósforo", "no pone maximo de fosforo",
+    "NO PONE MAXIMO DE FOSFORO", "no da máximo de fósforo",
+    "no da ningún máximo de fósforo", "NO DA NINGUN MAXIMO DE FOSFORO",
+    "no tiene máximo de fósforo",
+)
+_PERMISOS_B18 = ("crecimiento", "CRECIMIENTO", "CORREGIDO", "ES FALSO", "es falso",
+                 "y es falso", "estuvo mal escrita")
+_FICHEROS_B18 = [f for f in _os_b18.listdir(".")
+                 if f.endswith((".md", ".json", ".py")) and f != "pruebas_completas.py"]
+for _f18 in sorted(_FICHEROS_B18):
+    try:
+        _txt18 = open(_f18, encoding="utf-8").read()
+    except (OSError, UnicodeDecodeError):
+        continue
+    for _frase18 in _FRASES_PROHIBIDAS_B18:
+        _desde18 = 0
+        while True:
+            _i18 = _txt18.find(_frase18, _desde18)
+            if _i18 < 0:
+                break
+            _desde18 = _i18 + 1
+            _ventana18 = _txt18[max(0, _i18 - 400):_i18 + 400]
+            if any(_ok18 in _ventana18 for _ok18 in _PERMISOS_B18):
+                continue
+            fallos.append(
+                f"BLOQUE18: «{_f18}» dice «{_frase18}» sin decir que es EN CRECIMIENTO y sin "
+                f"corregirse. FEDIAF SI pone maximo de fosforo en ADULTO: 4,00 g/1000 kcal "
+                f"(Tabla III-3b «Adult: 4.00 (N)», nota h, y el texto de 3.3.1). Se borro por "
+                f"error el 7 de septiembre y se devolvio la noche del 8; el numero se arreglo y "
+                f"la frase se quedo en cinco documentos. Contexto: "
+                f"...{_txt18[max(0, _i18 - 90):_i18 + 90]}...")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 

@@ -729,12 +729,24 @@ patología está marcada. Estos dos valen para el perro que **no tiene nada**:
 
 ### Por qué hacían falta
 
-**FEDIAF no pone máximo de fósforo.** Se le quitó el 7 de septiembre por no
-tener fuente: NRC 2006 dice que no hay datos para fijar un SUL en perros, y
-Dobenecker et al. 2021 (*PLOS ONE*) que todavía no se puede definir un
-no-effect-level. Sin techo, **una ración BARF de este motor salía con ~4000
-mg/1000 kcal**: el doble de lo que este libro recomienda para cualquier perro
-adulto.
+**FEDIAF SÍ pone máximo de fósforo en adulto: 4,00 g/1000 kcal.** Está en la
+Tabla III-3b («Adult: 4.00 (N)», nota h) y en el texto de la sección 3.3.1:
+*«AAFCO introduced a nutritional maximum for both Ca (6.25 g/1000 kcal) and P
+(4 g/1000 kcal)… FEDIAF adopted the same nutritional maximums for both Ca and
+P»*. Se borró por error el 7 de septiembre y **se devolvió la noche del 8**
+(ver la nota de auditoría de esa fila en `requerimientos_v2_final.json`).
+En **crecimiento** sí que no hay ninguno: las dos columnas están vacías.
+
+Lo que pasa es que **una ración BARF de este motor salía pegada a ese máximo**
+—medido, 3.933 a 4.115 mg/1000 kcal, y un menú del catálogo llegó a 4.124, por
+encima— y SACN5 recomienda **la mitad** para cualquier perro adulto sano. El
+techo del libro no existe porque falte el de FEDIAF: existe porque el de FEDIAF
+es un máximo de seguridad y este es lo que el libro recomienda de verdad.
+
+Y el matiz que sí sigue en pie: el NRC 2006 dice que **no hay datos para fijar
+un SUL toxicológico** en perros, y Dobenecker et al. 2021 (*PLOS ONE*) que
+todavía no se puede definir un no-effect-level. Eso es otra cosa que el máximo
+NUTRICIONAL de FEDIAF, que sí existe.
 
 Y ese número **ya estaba entrando en el motor, pero por la puerta de atrás**: en
 las dos patologías cuya tabla lo repite —artrosis (1750, Tabla 34-2) y reacción

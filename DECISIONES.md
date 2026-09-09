@@ -872,10 +872,19 @@ cuenta; recortarla para leerla es exactamente cómo se pierde la mitad.
 
 ### El problema, en una línea
 
-FEDIAF **no pone máximo de fósforo** —se le quitó el 7 de septiembre por no
-tener fuente— y una ración BARF de este motor salía con **~4000 mg/1000 kcal**.
-SACN5 recomienda que el alimento de **cualquier** perro adulto sano no pase de
-**2000** (Tabla 13-3) y el de un perro maduro de **1750** (Tabla 14-2).
+⚠️ **CORREGIDO EL 9 DE SEPTIEMBRE.** Aquí ponía «FEDIAF no pone máximo de
+fósforo», que era lo que se creía esa mañana. **Es falso: sí lo pone en adulto,
+4,00 g/1000 kcal** (Tabla III-3b, «Adult: 4.00 (N)», nota h, y el texto de la
+sección 3.3.1). Se había borrado por error el 7 de septiembre y **se devolvió esa
+misma noche del 8**, unas horas después de escribir esto. Lo que no tiene máximo
+es el **crecimiento**.
+
+El problema real, entonces, no es que faltara un techo: es que una ración BARF de
+este motor salía **pegada al máximo de seguridad de FEDIAF** (~4000 mg/1000 kcal,
+y un menú del catálogo llegó a 4.124, por encima), y SACN5 recomienda **la mitad**
+para cualquier perro adulto sano: **2000** (Tabla 13-3), y **1750** para el perro
+maduro (Tabla 14-2). Un máximo de seguridad y una recomendación no son lo mismo, y
+esta decisión va de aplicar la segunda.
 
 Ese número entraba antes solo por la puerta de atrás: en las dos patologías cuya
 tabla lo repite —artrosis (1750, Tabla 34-2) y reacción adversa al alimento
@@ -1039,8 +1048,13 @@ resume los factores de riesgo de enfermedad ortopédica del desarrollo.
 ### Y el fósforo del cachorro no tenía techo ninguno
 
 Al transcribir la Tabla 17-1 salió lo segundo: **FEDIAF no da máximo de fósforo
-en crecimiento**. Es el mismo agujero que motivó la D-15 en adulto, un piso más
-abajo. Se tapa con el único número canino con fuente que existe: **3250** al
+en crecimiento**. Las columnas `maxCachorroJoven` y `maxCachorroCrecimiento` de
+esa fila están vacías, y está comprobado contra el PDF.
+
+**Y aquí sí es un hueco de verdad, a diferencia del adulto**: el adulto tiene el
+máximo de FEDIAF (4,00 g/1000 kcal), y lo que la D-15 le añadió fue la
+recomendación del libro, más estricta. El cachorro no tenía **ninguno de los
+dos**. Se tapa con el único número canino con fuente que existe: **3250** al
 cachorro de menos de 25 kg de adulto, **2750** al de más.
 
 ### El umbral son 25 kg, y NO son los 15 de FEDIAF

@@ -1072,13 +1072,23 @@ Y el número que importa: **una ración BARF normal de este motor ronda los 4.00
 mg de fósforo por 1000 kcal** (medido: 3.933 a 4.115 en menús verdes de adulto
 sano). El doble del techo que SACN5 recomienda a **cualquier** perro adulto.
 
-FEDIAF **no pone máximo de fósforo** —se le quitó el 7 de septiembre justamente
-por no tener fuente (NRC 2006 dice que no hay datos para fijar un SUL, y
-Dobenecker 2021 que todavía no se puede definir un no-effect-level)—, así que hoy
-el motor solo aprieta el fósforo en las patologías cuya tabla lo repite. El
-resultado es incoherente y conviene decirlo: **el mismo perro pasa de 4.000 a
-1.750 por marcar «artrosis», y de 4.000 a 2.000 por marcar «alergia
-alimentaria», sin que ninguna de las dos cosas tenga que ver con el fósforo.**
+⚠️ **CORREGIDO EL 9 DE SEPTIEMBRE.** Aquí ponía «FEDIAF no pone máximo de
+fósforo», y es falso: **sí lo pone en adulto, 4,00 g/1000 kcal** (Tabla III-3b,
+«Adult: 4.00 (N)», nota h, y el texto de la sección 3.3.1). Se borró por error el
+7 de septiembre y se devolvió la noche del 8. Lo que no tiene máximo es el
+**crecimiento**.
+
+Así que el problema no era que faltara el techo: es que **la ración BARF salía
+pegada al máximo de seguridad de FEDIAF** y SACN5 recomienda la mitad. Antes de
+aplicar el techo del libro, el motor solo apretaba el fósforo por debajo de 4.000
+en las patologías cuya tabla lo repite, y eso sí era incoherente: **el mismo
+perro pasaba de 4.000 a 1.750 por marcar «artrosis», y de 4.000 a 2.000 por
+marcar «alergia alimentaria», sin que ninguna de las dos cosas tenga que ver con
+el fósforo.**
+
+(Lo que sí sigue en pie del párrafo viejo: NRC 2006 dice que no hay datos para
+fijar un **SUL toxicológico** y Dobenecker 2021 que no se puede definir un
+no-effect-level. Eso es otra cosa que el máximo **nutricional**, que sí existe.)
 
 Las tres salidas posibles, y **ninguna la decide el asistente**:
 
