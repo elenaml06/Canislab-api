@@ -74,6 +74,8 @@ def auditar():
         if v == "aplicada" and not ficha.get("donde"):
             fallos.append(f"la tabla {nombre} dice «aplicada» y no dice DÓNDE. Sin eso no se puede "
                           f"comprobar que siga aplicándose")
+        if "leida" not in ficha:
+            fallos.append(f"la tabla {nombre} no dice si está LEÍDA entera")
 
     # ─── Y LAS SECCIONES DE TEXTO, que es donde está lo que califica las tablas
     #
@@ -98,6 +100,14 @@ def auditar():
                 fallos.append(f"la sección {nombre} es «{v}» y no dice POR QUÉ")
             if v == "aplicada" and not ficha.get("donde"):
                 fallos.append(f"la sección {nombre} dice «aplicada» y no dice DÓNDE")
+            # ⚠️ `leida` NO es opcional, y es distinto del veredicto. El veredicto
+            # dice qué hace el motor con la sección; `leida` dice si alguien se la
+            # ha leído ENTERA o solo la ha clasificado por su encabezado. Sin este
+            # campo, un inventario vuelve a poder afirmar «leído y aplicado» sin
+            # que nadie pueda comprobarlo -- que es de donde viene todo esto.
+            if "leida" not in ficha:
+                fallos.append(f"la sección {nombre} no dice si está LEÍDA entera. Un veredicto sin "
+                              f"eso vuelve a ser «me lo he leído», que no se puede comprobar")
 
     texto = _texto_fediaf()
     if texto is None:
@@ -145,6 +155,18 @@ def auditar():
     print(f"  {len(tablas)} tablas ({len(pendientes)} pendientes: {sorted(pendientes)})")
     print(f"  {len(inventario.get('secciones') or {})} secciones "
           f"({len(pend_sec)} pendientes: {sorted(pend_sec)})")
+    # ⚠️ Y LO QUE DE VERDAD IMPORTA: cuánto está leído al pie de la letra. Esto no
+    # falla la auditoría -- leer lleva tiempo y la deuda declarada no es un error --
+    # pero sale impreso en cada tanda para que nadie pueda volver a decir que un
+    # documento está «leído y aplicado» mientras el número diga otra cosa.
+    _lt = sum(1 for v in tablas.values() if v.get("leida"))
+    _ls = sum(1 for v in (inventario.get("secciones") or {}).values() if v.get("leida"))
+    _sin = sorted(k for k, v in (inventario.get("secciones") or {}).items()
+                  if v["veredicto"] == "aplicada" and not v.get("leida"))
+    print(f"  LEÍDO AL PIE DE LA LETRA: {_lt}/{len(tablas)} tablas · "
+          f"{_ls}/{len(inventario.get('secciones') or {})} secciones")
+    if _sin:
+        print(f"  ⚠️ secciones con veredicto «aplicada» y SIN leer enteras: {_sin}")
     return fallos
 
 

@@ -10,185 +10,220 @@
       "felina": "es de gato",
       "pendiente": "hay algo que aplicar y no está hecho: es deuda, no un veredicto"
     },
-    "por_que_tambien_las_secciones": "Elena, 9 de septiembre: «a parte de las tablas hay cosas de las tablas que se especifican en el texto, y precisamente por eso te estabas leyendo todo el documento». Tiene razón, y es donde está casi todo lo que se nos ha escapado: el máximo de fósforo del adulto vive en el texto de la 3.3.1, no en la tabla; que la metionina+cistina de la tabla supone una dieta con MUY poca taurina, también; que el calcio alto pide más zinc y más cobre, también; que la grasa no se ajusta por energía porque no es esencial, también. Un inventario que solo cubriera tablas dejaría fuera justo la parte que más veces ha fallado."
+    "por_que_tambien_las_secciones": "Elena, 9 de septiembre: «a parte de las tablas hay cosas de las tablas que se especifican en el texto, y precisamente por eso te estabas leyendo todo el documento». Tiene razón, y es donde está casi todo lo que se nos ha escapado: el máximo de fósforo del adulto vive en el texto de la 3.3.1, no en la tabla; que la metionina+cistina de la tabla supone una dieta con MUY poca taurina, también; que el calcio alto pide más zinc y más cobre, también; que la grasa no se ajusta por energía porque no es esencial, también. Un inventario que solo cubriera tablas dejaría fuera justo la parte que más veces ha fallado.",
+    "la_regla": "⚠️ REGLA, puesta por Elena el 9 de septiembre después de que un inventario de tablas dejara fuera SIETE cosas que estaban en el texto: TODO SE LEE AL PIE DE LA LETRA Y SE VA APUNTANDO TODO PARA APLICAR LO NECESARIO. Y no se dice que un documento está leído y aplicado mientras no lo esté. || Por eso cada entrada lleva `leida`, que es distinto de `veredicto`: el veredicto dice qué hace el motor con ella, y `leida` dice si alguien se la ha leído ENTERA, palabra por palabra, o solo la ha clasificado por su encabezado. Una entrada con veredicto «aplicada» y `leida: false` NO es una garantía de nada: significa «usamos su tabla y no hemos leído lo que el texto dice de ella», que es exactamente cómo se nos escaparon las siete de la 3.3.1."
   },
   "tablas": {
     "III-1": {
       "titulo": "Nutrients (lista de nutrientes)",
       "veredicto": "no_aplicable",
-      "por_que": "Es el índice de qué se considera nutriente. No trae cifras."
+      "por_que": "Es el índice de qué se considera nutriente. No trae cifras.",
+      "leida": false
     },
     "III-2": {
       "titulo": "Conversion factors",
       "veredicto": "aplicada",
       "donde": "UNIDADES.md y las conversiones del catálogo",
-      "por_que": "Los factores de unidad de los nutrientes."
+      "por_que": "Los factores de unidad de los nutrientes.",
+      "leida": false
     },
     "III-3a": {
       "titulo": "Niveles recomendados, por 100 g de materia seca",
       "veredicto": "alternativa_declarada",
       "donde": "requerimientos_v2_final.json usa la 3b",
-      "por_que": "Es la MISMA tabla que la 3b en otra unidad. Trabajamos por 1000 kcal, así que usamos la 3b. Sirve de comprobación cruzada: 3a x 2,5 = 3b."
+      "por_que": "Es la MISMA tabla que la 3b en otra unidad. Trabajamos por 1000 kcal, así que usamos la 3b. Sirve de comprobación cruzada: 3a x 2,5 = 3b.",
+      "leida": false
     },
     "III-3b": {
       "titulo": "Niveles recomendados, por 1000 kcal ME",
       "veredicto": "aplicada",
       "donde": "requerimientos_v2_final.json, las 43 filas, y auditar_fediaf.py las comprueba una a una",
-      "por_que": "ES la tabla del motor."
+      "por_que": "ES la tabla del motor.",
+      "leida": "auditar_fediaf.py la comprueba fila a fila contra el PDF"
     },
     "III-3c": {
       "titulo": "Niveles recomendados, por MJ ME",
       "veredicto": "alternativa_declarada",
       "donde": "-",
-      "por_que": "La 3b en julios. No usamos julios."
+      "por_que": "La 3b en julios. No usamos julios.",
+      "leida": false
     },
     "III-4a": {
       "titulo": "Niveles recomendados para GATO, por 100 g MS",
-      "veredicto": "felina"
+      "veredicto": "felina",
+      "leida": false
     },
     "III-4b": {
       "titulo": "Niveles recomendados para GATO, por 1000 kcal",
-      "veredicto": "felina"
+      "veredicto": "felina",
+      "leida": false
     },
     "III-4c": {
       "titulo": "Niveles recomendados para GATO, por MJ",
-      "veredicto": "felina"
+      "veredicto": "felina",
+      "leida": false
     },
     "V-1": {
       "titulo": "Indicadores para digestibilidad",
       "veredicto": "no_aplicable",
-      "por_que": "Método de laboratorio para medir digestibilidad in vivo. No medimos digestibilidad: por eso se aplica el x1,10 de FEDIAF §3.2.1 a los aminoácidos."
+      "por_que": "Método de laboratorio para medir digestibilidad in vivo. No medimos digestibilidad: por eso se aplica el x1,10 de FEDIAF §3.2.1 a los aminoácidos.",
+      "leida": false
     },
     "VI-1": {
       "titulo": "Abbreviations",
       "veredicto": "no_aplicable",
-      "por_que": "Glosario."
+      "por_que": "Glosario.",
+      "leida": false
     },
     "VII-1": {
       "titulo": "Body condition score, 9 puntos (descripciones)",
       "veredicto": "aplicada",
       "donde": "canislab-web/src/bcs.js",
-      "por_que": "La escala de 9 puntos de la que sale nuestro mapeo de 5 niveles."
+      "por_que": "La escala de 9 puntos de la que sale nuestro mapeo de 5 niveles.",
+      "leida": false
     },
     "VII-2": {
       "titulo": "BCS: % de peso por encima o por debajo del ideal",
       "veredicto": "aplicada",
       "donde": "canislab-web/src/bcs.js, BLOQUE 63",
-      "por_que": "El 10 % por punto y el 45 % del BCS 9 salen de aquí."
+      "por_que": "El 10 % por punto y el 45 % del BCS 9 salen de aquí.",
+      "leida": "8-sep-2026, entera, fila a fila (BLOQUE 63)"
     },
     "VII-3": {
       "titulo": "4-point muscle mass scoring system",
       "veredicto": "pendiente",
-      "por_que": "NO SE USA, y es un hueco real. La masa muscular es independiente del BCS -- un perro puede estar obeso y sarcopénico a la vez --, y es justo lo que importa en el senior, en el oncológico y en la caquexia. La ficha del veterinario tiene BCS y no tiene esto. Ver PENDIENTE_PRODUCTO.md."
+      "por_que": "NO SE USA, y es un hueco real. La masa muscular es independiente del BCS -- un perro puede estar obeso y sarcopénico a la vez --, y es justo lo que importa en el senior, en el oncológico y en la caquexia. La ficha del veterinario tiene BCS y no tiene esto. Ver PENDIENTE_PRODUCTO.md.",
+      "leida": "9-sep-2026, entera -- y por eso está «pendiente»"
     },
     "VII-4": {
       "titulo": "Abbreviations",
       "veredicto": "no_aplicable",
-      "por_que": "Glosario."
+      "por_que": "Glosario.",
+      "leida": false
     },
     "VII-5": {
       "titulo": "Energía BRUTA de proteína, grasa e hidratos",
       "veredicto": "no_aplicable",
-      "por_que": "Energía bruta (5,7 / 9,4 / 4,1 kcal/g). El catálogo va en energía METABOLIZABLE, que es lo que come el perro. Se usarían solo para calcular ME desde cero con las ecuaciones de digestibilidad, y las kcal del catálogo vienen ya como ME de las bases de datos."
+      "por_que": "Energía bruta (5,7 / 9,4 / 4,1 kcal/g). El catálogo va en energía METABOLIZABLE, que es lo que come el perro. Se usarían solo para calcular ME desde cero con las ecuaciones de digestibilidad, y las kcal del catálogo vienen ya como ME de las bases de datos.",
+      "leida": false
     },
     "VII-6": {
       "titulo": "MER en perros a distintas edades",
       "veredicto": "aplicada",
       "donde": "der.py y src/der.js, AJUSTE_EDAD; BLOQUE 54",
-      "por_que": "130 (1-2 años) / 110 (3-7) / 95 (>7). De aquí sale el escalón de edad: +20 el joven y -15 el senior. APLICADA EL 9 DE SEPTIEMBRE: hasta ese día el escalón venía de Thes 2014 (+15 y -7), o sea menos de la mitad del de FEDIAF para el senior. La tabla se había leído el 6 de septiembre y se apartó por ser 'la de edad, no la de actividad'."
+      "por_que": "130 (1-2 años) / 110 (3-7) / 95 (>7). De aquí sale el escalón de edad: +20 el joven y -15 el senior. APLICADA EL 9 DE SEPTIEMBRE: hasta ese día el escalón venía de Thes 2014 (+15 y -7), o sea menos de la mitad del de FEDIAF para el senior. La tabla se había leído el 6 de septiembre y se apartó por ser 'la de edad, no la de actividad'.",
+      "leida": "9-sep-2026, entera"
     },
     "VII-7": {
       "titulo": "DER en relación con la actividad",
       "veredicto": "aplicada",
       "donde": "der.py y src/der.js, BASE_ACTIVIDAD y RAZAS_CIFRA_FEDIAF; BLOQUE 54",
-      "por_que": "Los cinco escalones (95/110/125/150/175) y las dos filas de raza (gran danés 200, terranova 105), estas últimas aplicadas el 8 de septiembre después de estar leídas y sin usar."
+      "por_que": "Los cinco escalones (95/110/125/150/175) y las dos filas de raza (gran danés 200, terranova 105), estas últimas aplicadas el 8 de septiembre después de estar leídas y sin usar.",
+      "leida": "8 y 9-sep-2026, entera, incluidas sus dos filas de raza"
     },
     "VII-8a": {
       "titulo": "Ecuaciones de curvas de crecimiento",
       "veredicto": "no_aplicable",
-      "por_que": "Curvas de peso esperado por edad (Gesellschaft 1989, Meyer y Zentek 1992). El motor no predice el peso del cachorro: lo pesa el dueño. La curva que sí usamos para el DER es la de la VII-8b."
+      "por_que": "Curvas de peso esperado por edad (Gesellschaft 1989, Meyer y Zentek 1992). El motor no predice el peso del cachorro: lo pesa el dueño. La curva que sí usamos para el DER es la de la VII-8b.",
+      "leida": false
     },
     "VII-8b": {
       "titulo": "Energía media en crecimiento y reproducción",
       "veredicto": "aplicada",
       "donde": "der.py y src/der.js; BLOQUE 54",
-      "por_que": "La ecuación de crecimiento (= Klein 2019 convertida), la gestación (132 x kg^0,75, +26/kg las últimas 5 semanas) y la lactancia entera con sus factores por camada y semana."
+      "por_que": "La ecuación de crecimiento (= Klein 2019 convertida), la gestación (132 x kg^0,75, +26/kg las últimas 5 semanas) y la lactancia entera con sus factores por camada y semana.",
+      "leida": false
     },
     "VII-9": {
       "titulo": "Energía diaria del GATO adulto",
-      "veredicto": "felina"
+      "veredicto": "felina",
+      "leida": false
     },
     "VII-10": {
       "titulo": "Energía en crecimiento y reproducción del GATO",
-      "veredicto": "felina"
+      "veredicto": "felina",
+      "leida": false
     },
     "VII-11": {
       "titulo": "Niveles recomendados por kg de peso metabólico",
       "veredicto": "alternativa_declarada",
       "donde": "auditar_fediaf.py la usa como COMPROBACIÓN CRUZADA de la III-3b",
-      "por_que": "Es la misma exigencia en una tercera unidad (por kg^0,75). No se aplica, pero sirve para algo mejor: verificar que nuestra transcripción de la III-3b es correcta contra una tabla impresa aparte. Comprobadas las 25 filas de adulto el 9 de septiembre: todas cuadran. || OJO con la GRASA: su valor (1,51 g/kg^0,75) NO cuadra con nuestro 13,75 g/1000 kcal al dividir por 95, y no es un error de nadie -- la grasa es un SUELO DE CONCENTRACIÓN, 5,50 % de materia seca en las DOS columnas de adulto (95 y 110), así que su expresión por peso metabólico depende de qué MER supongas. FEDIAF eligió 110 (13,75 x 110/1000 = 1,51). Todas las demás filas son independientes de la columna."
+      "por_que": "Es la misma exigencia en una tercera unidad (por kg^0,75). No se aplica, pero sirve para algo mejor: verificar que nuestra transcripción de la III-3b es correcta contra una tabla impresa aparte. Comprobadas las 25 filas de adulto el 9 de septiembre: todas cuadran. || OJO con la GRASA: su valor (1,51 g/kg^0,75) NO cuadra con nuestro 13,75 g/1000 kcal al dividir por 95, y no es un error de nadie -- la grasa es un SUELO DE CONCENTRACIÓN, 5,50 % de materia seca en las DOS columnas de adulto (95 y 110), así que su expresión por peso metabólico depende de qué MER supongas. FEDIAF eligió 110 (13,75 x 110/1000 = 1,51). Todas las demás filas son independientes de la columna.",
+      "leida": "9-sep-2026, sus 25 filas de adulto"
     },
     "VII-12": {
       "titulo": "Impacto del requerimiento energético en la ingesta de nutrientes",
       "veredicto": "aplicada",
       "donde": "verificar.minimo_de(), BLOQUE 34",
-      "por_que": "Es la base del escalado de mínimos cuando el perro come menos (ecuación 7.2.5). Solo hacia arriba."
+      "por_que": "Es la base del escalado de mínimos cuando el perro come menos (ecuación 7.2.5). Solo hacia arriba.",
+      "leida": false
     },
     "VII-13": {
       "titulo": "Aumento del requisito de arginina al subir la proteína",
       "veredicto": "aplicada",
       "donde": "requisitos_condicionales.json, BLOQUE 60",
-      "por_que": "+0,01 g de arginina por g de proteína sobre el requisito, en todas las etapas."
+      "por_que": "+0,01 g de arginina por g de proteína sobre el requisito, en todas las etapas.",
+      "leida": false
     },
     "VII-14": {
       "titulo": "Factores de conversión: fuente de vitamina a actividad",
       "veredicto": "pendiente",
-      "por_que": "NO SE HA COMPROBADO, y puede haber un error de datos sistemático. Las etiquetas de los suplementos declaran la SAL o el ÉSTER, y esta tabla da la equivalencia: cloruro de colina 1 mg = 0,75 mg de colina, clorhidrato de piridoxina 1 mg = 0,82 de B6, mononitrato de tiamina 1 mg = 0,81 de B1, pantotenato cálcico 1 mg = 0,92. Si en alguna de las 11 fichas de multivitamínico se anotó el número de la etiqueta como si fuera la vitamina, estaríamos sobreestimando hasta un 25 %. Hay que mirarlo etiqueta por etiqueta. Ver DATOS_QUE_FALTAN.md."
+      "por_que": "NO SE HA COMPROBADO, y puede haber un error de datos sistemático. Las etiquetas de los suplementos declaran la SAL o el ÉSTER, y esta tabla da la equivalencia: cloruro de colina 1 mg = 0,75 mg de colina, clorhidrato de piridoxina 1 mg = 0,82 de B6, mononitrato de tiamina 1 mg = 0,81 de B1, pantotenato cálcico 1 mg = 0,92. Si en alguna de las 11 fichas de multivitamínico se anotó el número de la etiqueta como si fuera la vitamina, estaríamos sobreestimando hasta un 25 %. Hay que mirarlo etiqueta por etiqueta. Ver DATOS_QUE_FALTAN.md.",
+      "leida": "9-sep-2026, entera -- y por eso está «pendiente»"
     },
     "VII-15": {
       "titulo": "Contenido de teobromina en productos de cacao",
       "veredicto": "no_aplicable",
-      "por_que": "El chocolate no está en el catálogo ni puede entrar: no es un alimento del que se formule. Lo que sí se aplica del mismo anexo es el Allium (ajo, cebolla, puerro), que tampoco está en el catálogo y que vigila la batería."
+      "por_que": "El chocolate no está en el catálogo ni puede entrar: no es un alimento del que se formule. Lo que sí se aplica del mismo anexo es el Allium (ajo, cebolla, puerro), que tampoco está en el catálogo y que vigila la batería.",
+      "leida": false
     },
     "VII-16": {
       "titulo": "Compuestos de ajo y cebolla que oxidan los eritrocitos caninos",
       "veredicto": "aplicada",
       "donde": "pruebas_completas.py, el bloque de Allium",
-      "por_que": "Ninguno de los Allium está en el catálogo, y la batería exige que siga siendo así citando el anexo 7.7.3."
+      "por_que": "Ninguno de los Allium está en el catálogo, y la batería exige que siga siendo así citando el anexo 7.7.3.",
+      "leida": false
     },
     "VII-17a": {
       "titulo": "Niveles recomendados, perro, crecimiento temprano y reproducción",
       "veredicto": "aplicada",
-      "donde": "requerimientos_v2_final.json, columnas de CachorroJoven"
+      "donde": "requerimientos_v2_final.json, columnas de CachorroJoven",
+      "leida": false
     },
     "VII-17b": {
       "titulo": "Niveles recomendados, perro, crecimiento tardío",
       "veredicto": "aplicada",
-      "donde": "requerimientos_v2_final.json, columnas de CachorroCrecimiento"
+      "donde": "requerimientos_v2_final.json, columnas de CachorroCrecimiento",
+      "leida": false
     },
     "VII-17c": {
       "titulo": "Niveles recomendados, perro adulto, MER 110 kcal/kg^0,75",
       "veredicto": "alternativa_declarada",
       "donde": "usamos la 17d",
-      "por_que": "Es la columna de 110 kcal. Usamos la de 95, que es la MÁS EXIGENTE: a menos kcal, más concentración por 1000 kcal. Ver el §1 de PARA_EL_NUTRICIONISTA.md."
+      "por_que": "Es la columna de 110 kcal. Usamos la de 95, que es la MÁS EXIGENTE: a menos kcal, más concentración por 1000 kcal. Ver el §1 de PARA_EL_NUTRICIONISTA.md.",
+      "leida": false
     },
     "VII-17d": {
       "titulo": "Niveles recomendados, perro adulto, MER 95 kcal/kg^0,75",
       "veredicto": "aplicada",
       "donde": "requerimientos_v2_final.json, columnas de Adulto",
-      "por_que": "ES la tabla del adulto que aplica el motor. Comprobadas sus 25 filas contra la VII-11 el 9 de septiembre."
+      "por_que": "ES la tabla del adulto que aplica el motor. Comprobadas sus 25 filas contra la VII-11 el 9 de septiembre.",
+      "leida": "9-sep-2026, sus 25 filas de adulto cruzadas contra la VII-11"
     },
     "VII-18a": {
       "titulo": "Niveles recomendados, GATO, crecimiento y reproducción",
-      "veredicto": "felina"
+      "veredicto": "felina",
+      "leida": false
     },
     "VII-18b": {
       "titulo": "Niveles recomendados, GATO, adulto",
-      "veredicto": "felina"
+      "veredicto": "felina",
+      "leida": false
     },
     "VII-18c": {
       "titulo": "Niveles recomendados, GATO, otra unidad",
-      "veredicto": "felina"
+      "veredicto": "felina",
+      "leida": false
     }
   },
   "secciones": {
@@ -196,80 +231,99 @@
       "titulo": "Guidance (recomendaciones mínimas, energía, máximos, validación)",
       "veredicto": "aplicada",
       "donde": "requerimientos_v2_final.json y auditar_fediaf.py",
-      "por_que": "Es la guía de cómo se leen las tablas."
+      "por_que": "Es la guía de cómo se leen las tablas.",
+      "leida": false,
+      "ojo": "Veredicto puesto por su encabezado y por lo que el motor ya usa, NO por haberla leído entera. Usamos su tabla; lo que el texto diga de ella está sin comprobar."
     },
     "3.2.1": {
       "titulo": "How to read the tables",
       "veredicto": "aplicada",
       "donde": "requisitos.py y motor/condicionales.py",
-      "por_que": "De aquí sale el x1,10 de aminoácidos cuando no se garantiza la digestibilidad, y la elección de la columna de 95 kcal."
+      "por_que": "De aquí sale el x1,10 de aminoácidos cuando no se garantiza la digestibilidad, y la elección de la columna de 95 kcal.",
+      "leida": false,
+      "ojo": "Veredicto puesto por su encabezado y por lo que el motor ya usa, NO por haberla leído entera. Usamos su tabla; lo que el texto diga de ella está sin comprobar."
     },
     "3.3.1": {
       "titulo": "Substantiation of nutrient recommendations for complete DOG food",
       "veredicto": "pendiente",
-      "por_que": "LEÍDA ENTERA el 9 de septiembre, y de ahí salen SIETE cosas que el motor no aplica y que no están en ninguna tabla: (1) el calcio alto pide más zinc y cobre; (2) la metionina+cistina de la tabla supone <100 mg/kg MS de taurina y con más taurina «can be lower» -- y met+cistina es el nutriente frontera que bloquea la cistinuria; (3) el mínimo de selenio del perro adulto es, por admisión de FEDIAF, un valor de GATO; (4) biotina y vitamina K dependen de si la dieta lleva antivitaminas, y la clara cruda lo es; (5) el cobre en óxido y el hierro en óxido o carbonato NO cuentan para el mínimo; (6) el zinc en crecimiento admite doblarse; (7) el ratio omega-6:omega-3 lo nombra FEDIAF también, sin cifra. Detalle en el cuaderno de lectura."
+      "por_que": "LEÍDA ENTERA el 9 de septiembre, y de ahí salen SIETE cosas que el motor no aplica y que no están en ninguna tabla: (1) el calcio alto pide más zinc y cobre; (2) la metionina+cistina de la tabla supone <100 mg/kg MS de taurina y con más taurina «can be lower» -- y met+cistina es el nutriente frontera que bloquea la cistinuria; (3) el mínimo de selenio del perro adulto es, por admisión de FEDIAF, un valor de GATO; (4) biotina y vitamina K dependen de si la dieta lleva antivitaminas, y la clara cruda lo es; (5) el cobre en óxido y el hierro en óxido o carbonato NO cuentan para el mínimo; (6) el zinc en crecimiento admite doblarse; (7) el ratio omega-6:omega-3 lo nombra FEDIAF también, sin cifra. Detalle en el cuaderno de lectura.",
+      "leida": "9-sep-2026, entera, y de ahí salieron las siete"
     },
     "3.3.2": {
       "titulo": "Substantiation, GATO",
-      "veredicto": "felina"
+      "veredicto": "felina",
+      "leida": false
     },
     "4": {
       "titulo": "Recommended allowances y validación para el fabricante",
       "veredicto": "no_aplicable",
-      "por_que": "Procedimientos de control de calidad de fábrica: análisis repetidos, tolerancias. No fabricamos alimento."
+      "por_que": "Procedimientos de control de calidad de fábrica: análisis repetidos, tolerancias. No fabricamos alimento.",
+      "leida": false
     },
     "5": {
       "titulo": "Métodos analíticos",
       "veredicto": "no_aplicable",
-      "por_que": "Cómo analizar un alimento en laboratorio. El catálogo viene de bases de composición, no de análisis propios."
+      "por_que": "Cómo analizar un alimento en laboratorio. El catálogo viene de bases de composición, no de análisis propios.",
+      "leida": false
     },
     "6": {
       "titulo": "Digestibilidad: método del indicador y colección cuantitativa",
       "veredicto": "no_aplicable",
-      "por_que": "Protocolos in vivo con animales para medir digestibilidad. No los podemos hacer y por eso se aplica el x1,10 de la 3.2.1. Es la raíz de la PREGUNTA sobre digestibilidad de DATOS_QUE_FALTAN.md."
+      "por_que": "Protocolos in vivo con animales para medir digestibilidad. No los podemos hacer y por eso se aplica el x1,10 de la 3.2.1. Es la raíz de la PREGUNTA sobre digestibilidad de DATOS_QUE_FALTAN.md.",
+      "leida": false
     },
     "7.1": {
       "titulo": "Body Condition Score",
-      "veredicto": "aplicada",
-      "donde": "canislab-web/src/bcs.js, BLOQUE 63"
+      "veredicto": "pendiente",
+      "donde": "canislab-web/src/bcs.js, BLOQUE 63",
+      "leida": "9-sep-2026, entera",
+      "por_que": "LEÍDA ENTERA el 9 de septiembre y salen CUATRO cosas, una de ellas contra el motor: (1) el BCS ideal es un RANGO 4-5 sobre 9 y no el 5 -- «The ideal BCS should therefore be between 4/9 and 5/9», y §7.2.4.1 lo repite citando Kealy 2002; el motor usa BCS_NEUTRO=5 como punto. (2) LA CORRESPONDENCIA DE 5 PUNTOS A 9 LA PUBLICA FEDIAF en la columna 2 de las Tablas VII-1 y VII-2, y es 1-3-5-7-9; la nuestra es 2-4-5-7-9, o sea menos severa en los dos niveles de perro delgado. Es la PREGUNTA 8 y deja de ser una pregunta de diseño. (3) el BCS bajo está confundido por atrofia muscular y por eso existe la VII-3. (4) un dueño SÍ puede puntuar con precisión suficiente si coge práctica (German 2006)."
     },
     "7.2": {
       "titulo": "Energy (introducción, densidad, revisión bibliográfica, recomendaciones prácticas)",
       "veredicto": "aplicada",
       "donde": "der.py y src/der.js, BLOQUE 54",
-      "por_que": "Incluye 7.2.3.2 actividad, 7.2.3.3 edad (la VII-6), 7.2.3.4 raza (la lectura de que la diferencia de raza ya contiene la de actividad) y 7.2.5, que es el escalado de mínimos."
+      "por_que": "Incluye 7.2.3.2 actividad, 7.2.3.3 edad (la VII-6), 7.2.3.4 raza (la lectura de que la diferencia de raza ya contiene la de actividad) y 7.2.5, que es el escalado de mínimos.",
+      "leida": "9-sep-2026, entera (introducción, densidad, revisión bibliográfica y recomendaciones prácticas)"
     },
     "7.2.3.5": {
       "titulo": "Thermoregulation and housing",
       "veredicto": "pendiente",
-      "por_que": "NO SE APLICA. FEDIAF: por debajo de la zona termoneutra el MER sube 2-5 kcal/kg^0,75 por cada grado, y un perro que vive fuera en invierno puede necesitar de un 10 a un 90 % más (SACN5 Tabla 5-3 lo mide por raza: 95 % en perro de pelo corto a 7,6 °C). La app no pregunta si el perro vive fuera. Es una decisión de producto, no de nutrición: si se pregunta, hay cifra."
+      "por_que": "NO SE APLICA. FEDIAF: por debajo de la zona termoneutra el MER sube 2-5 kcal/kg^0,75 por cada grado, y un perro que vive fuera en invierno puede necesitar de un 10 a un 90 % más (SACN5 Tabla 5-3 lo mide por raza: 95 % en perro de pelo corto a 7,6 °C). La app no pregunta si el perro vive fuera. Es una decisión de producto, no de nutrición: si se pregunta, hay cifra.",
+      "leida": false
     },
     "7.3": {
       "titulo": "Taurina",
       "veredicto": "pendiente",
-      "por_que": "El perro sintetiza taurina y FEDIAF no se la exige, y por eso la fila está a '-' en nuestro JSON. Pero esta sección es la que explica el matiz de la metionina+cistina (§3.3.1) y la que hace falta para el suelo de taurina de la cardiopatía (SACN5 36-4, >=0,1 % MS) que tampoco aplicamos. Hay que leerla entera antes de tocar ninguna de las dos."
+      "por_que": "El perro sintetiza taurina y FEDIAF no se la exige, y por eso la fila está a '-' en nuestro JSON. Pero esta sección es la que explica el matiz de la metionina+cistina (§3.3.1) y la que hace falta para el suelo de taurina de la cardiopatía (SACN5 36-4, >=0,1 % MS) que tampoco aplicamos. Hay que leerla entera antes de tocar ninguna de las dos.",
+      "leida": false
     },
     "7.4": {
       "titulo": "Arginina",
       "veredicto": "aplicada",
       "donde": "requisitos_condicionales.json, BLOQUE 60",
-      "por_que": "+0,01 g por g de proteína sobre el requisito."
+      "por_que": "+0,01 g por g de proteína sobre el requisito.",
+      "leida": false,
+      "ojo": "Veredicto puesto por su encabezado y por lo que el motor ya usa, NO por haberla leído entera. Usamos su tabla; lo que el texto diga de ella está sin comprobar."
     },
     "7.5": {
       "titulo": "Vitaminas: compuestos químicos",
       "veredicto": "pendiente",
-      "por_que": "Es el texto que acompaña a la Tabla VII-14 (factores de conversión de fuente a actividad). Misma deuda: hay que mirar las 11 fichas de multivitamínico etiqueta por etiqueta."
+      "por_que": "Es el texto que acompaña a la Tabla VII-14 (factores de conversión de fuente a actividad). Misma deuda: hay que mirar las 11 fichas de multivitamínico etiqueta por etiqueta.",
+      "leida": false
     },
     "7.6": {
       "titulo": "Adverse reaction to food",
       "veredicto": "pendiente",
-      "por_que": "Definiciones de alergia, hipersensibilidad no alérgica e intolerancia. El motor tiene la patología `reaccion_adversa` y las exclusiones por alergia, pero esta sección no se ha leído entera: puede calificar qué cuenta como proteína novel y cuántas fuentes admite."
+      "por_que": "Definiciones de alergia, hipersensibilidad no alérgica e intolerancia. El motor tiene la patología `reaccion_adversa` y las exclusiones por alergia, pero esta sección no se ha leído entera: puede calificar qué cuenta como proteína novel y cuántas fuentes admite.",
+      "leida": false
     },
     "7.7": {
       "titulo": "Riesgo de algunos alimentos humanos (uva/pasa, Allium, chocolate...)",
       "veredicto": "aplicada",
       "donde": "pruebas_completas.py, bloque de Allium y de alimentos prohibidos",
-      "por_que": "Ninguno está en el catálogo y la batería exige que siga siendo así, citando el anexo 7.7.3."
+      "por_que": "Ninguno está en el catálogo y la batería exige que siga siendo así, citando el anexo 7.7.3.",
+      "leida": "8-sep-2026, entera (es de donde sale el bloque de Allium de la batería)"
     }
   }
 }
