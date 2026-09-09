@@ -1,6 +1,6 @@
 {
   "_meta": {
-    "que_es": "Inventario de TODAS las tablas de FEDIAF 2025 y qué hace el motor con cada una. Una tabla sin veredicto aquí es una tabla que nadie ha decidido si aplica.",
+    "que_es": "Inventario de TODO FEDIAF 2025 -- sus tablas Y las secciones de texto que las califican -- y qué hace el motor con cada cosa. Una tabla o una sección sin veredicto aquí es algo que nadie ha decidido si aplica.",
     "por_que_existe": "El 9 de septiembre Elena preguntó cómo podía ser que no usáramos la Tabla VII-6 si se había leído FEDIAF entero. La respuesta estaba en un comentario de `der.py` fechado el 6 de septiembre: la tabla SE LEYÓ, se confirmó literal en el PDF, se clasificó bien ('esa es la de edad, no la de actividad') y se apartó. Nadie cruzó su escalón de edad contra el que aplicábamos, que venía de otro estudio y era la mitad. Y ese mismo día, con esa misma tabla de al lado (VII-7), había pasado lo mismo con sus dos filas de raza. || O sea que el fallo no es de lectura: es de no dejar constancia, tabla por tabla, de qué se hace con ella. 'Me lo he leído' no es comprobable. Esto sí.",
     "como_se_mantiene": "Lo vigila `auditar_fediaf_tablas.py` (BLOQUE 67): recorre el texto de FEDIAF, encuentra cada 'Table X-n' y falla si alguna no está aquí con veredicto. Añadir una tabla sin veredicto no compila.",
     "veredictos": {
@@ -9,7 +9,8 @@
       "no_aplicable": "no hay nada que aplicar, con el motivo",
       "felina": "es de gato",
       "pendiente": "hay algo que aplicar y no está hecho: es deuda, no un veredicto"
-    }
+    },
+    "por_que_tambien_las_secciones": "Elena, 9 de septiembre: «a parte de las tablas hay cosas de las tablas que se especifican en el texto, y precisamente por eso te estabas leyendo todo el documento». Tiene razón, y es donde está casi todo lo que se nos ha escapado: el máximo de fósforo del adulto vive en el texto de la 3.3.1, no en la tabla; que la metionina+cistina de la tabla supone una dieta con MUY poca taurina, también; que el calcio alto pide más zinc y más cobre, también; que la grasa no se ajusta por energía porque no es esencial, también. Un inventario que solo cubriera tablas dejaría fuera justo la parte que más veces ha fallado."
   },
   "tablas": {
     "III-1": {
@@ -188,6 +189,87 @@
     "VII-18c": {
       "titulo": "Niveles recomendados, GATO, otra unidad",
       "veredicto": "felina"
+    }
+  },
+  "secciones": {
+    "3.1": {
+      "titulo": "Guidance (recomendaciones mínimas, energía, máximos, validación)",
+      "veredicto": "aplicada",
+      "donde": "requerimientos_v2_final.json y auditar_fediaf.py",
+      "por_que": "Es la guía de cómo se leen las tablas."
+    },
+    "3.2.1": {
+      "titulo": "How to read the tables",
+      "veredicto": "aplicada",
+      "donde": "requisitos.py y motor/condicionales.py",
+      "por_que": "De aquí sale el x1,10 de aminoácidos cuando no se garantiza la digestibilidad, y la elección de la columna de 95 kcal."
+    },
+    "3.3.1": {
+      "titulo": "Substantiation of nutrient recommendations for complete DOG food",
+      "veredicto": "pendiente",
+      "por_que": "LEÍDA ENTERA el 9 de septiembre, y de ahí salen SIETE cosas que el motor no aplica y que no están en ninguna tabla: (1) el calcio alto pide más zinc y cobre; (2) la metionina+cistina de la tabla supone <100 mg/kg MS de taurina y con más taurina «can be lower» -- y met+cistina es el nutriente frontera que bloquea la cistinuria; (3) el mínimo de selenio del perro adulto es, por admisión de FEDIAF, un valor de GATO; (4) biotina y vitamina K dependen de si la dieta lleva antivitaminas, y la clara cruda lo es; (5) el cobre en óxido y el hierro en óxido o carbonato NO cuentan para el mínimo; (6) el zinc en crecimiento admite doblarse; (7) el ratio omega-6:omega-3 lo nombra FEDIAF también, sin cifra. Detalle en el cuaderno de lectura."
+    },
+    "3.3.2": {
+      "titulo": "Substantiation, GATO",
+      "veredicto": "felina"
+    },
+    "4": {
+      "titulo": "Recommended allowances y validación para el fabricante",
+      "veredicto": "no_aplicable",
+      "por_que": "Procedimientos de control de calidad de fábrica: análisis repetidos, tolerancias. No fabricamos alimento."
+    },
+    "5": {
+      "titulo": "Métodos analíticos",
+      "veredicto": "no_aplicable",
+      "por_que": "Cómo analizar un alimento en laboratorio. El catálogo viene de bases de composición, no de análisis propios."
+    },
+    "6": {
+      "titulo": "Digestibilidad: método del indicador y colección cuantitativa",
+      "veredicto": "no_aplicable",
+      "por_que": "Protocolos in vivo con animales para medir digestibilidad. No los podemos hacer y por eso se aplica el x1,10 de la 3.2.1. Es la raíz de la PREGUNTA sobre digestibilidad de DATOS_QUE_FALTAN.md."
+    },
+    "7.1": {
+      "titulo": "Body Condition Score",
+      "veredicto": "aplicada",
+      "donde": "canislab-web/src/bcs.js, BLOQUE 63"
+    },
+    "7.2": {
+      "titulo": "Energy (introducción, densidad, revisión bibliográfica, recomendaciones prácticas)",
+      "veredicto": "aplicada",
+      "donde": "der.py y src/der.js, BLOQUE 54",
+      "por_que": "Incluye 7.2.3.2 actividad, 7.2.3.3 edad (la VII-6), 7.2.3.4 raza (la lectura de que la diferencia de raza ya contiene la de actividad) y 7.2.5, que es el escalado de mínimos."
+    },
+    "7.2.3.5": {
+      "titulo": "Thermoregulation and housing",
+      "veredicto": "pendiente",
+      "por_que": "NO SE APLICA. FEDIAF: por debajo de la zona termoneutra el MER sube 2-5 kcal/kg^0,75 por cada grado, y un perro que vive fuera en invierno puede necesitar de un 10 a un 90 % más (SACN5 Tabla 5-3 lo mide por raza: 95 % en perro de pelo corto a 7,6 °C). La app no pregunta si el perro vive fuera. Es una decisión de producto, no de nutrición: si se pregunta, hay cifra."
+    },
+    "7.3": {
+      "titulo": "Taurina",
+      "veredicto": "pendiente",
+      "por_que": "El perro sintetiza taurina y FEDIAF no se la exige, y por eso la fila está a '-' en nuestro JSON. Pero esta sección es la que explica el matiz de la metionina+cistina (§3.3.1) y la que hace falta para el suelo de taurina de la cardiopatía (SACN5 36-4, >=0,1 % MS) que tampoco aplicamos. Hay que leerla entera antes de tocar ninguna de las dos."
+    },
+    "7.4": {
+      "titulo": "Arginina",
+      "veredicto": "aplicada",
+      "donde": "requisitos_condicionales.json, BLOQUE 60",
+      "por_que": "+0,01 g por g de proteína sobre el requisito."
+    },
+    "7.5": {
+      "titulo": "Vitaminas: compuestos químicos",
+      "veredicto": "pendiente",
+      "por_que": "Es el texto que acompaña a la Tabla VII-14 (factores de conversión de fuente a actividad). Misma deuda: hay que mirar las 11 fichas de multivitamínico etiqueta por etiqueta."
+    },
+    "7.6": {
+      "titulo": "Adverse reaction to food",
+      "veredicto": "pendiente",
+      "por_que": "Definiciones de alergia, hipersensibilidad no alérgica e intolerancia. El motor tiene la patología `reaccion_adversa` y las exclusiones por alergia, pero esta sección no se ha leído entera: puede calificar qué cuenta como proteína novel y cuántas fuentes admite."
+    },
+    "7.7": {
+      "titulo": "Riesgo de algunos alimentos humanos (uva/pasa, Allium, chocolate...)",
+      "veredicto": "aplicada",
+      "donde": "pruebas_completas.py, bloque de Allium y de alimentos prohibidos",
+      "por_que": "Ninguno está en el catálogo y la batería exige que siga siendo así, citando el anexo 7.7.3."
     }
   }
 }

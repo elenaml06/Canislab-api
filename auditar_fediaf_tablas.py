@@ -75,6 +75,30 @@ def auditar():
             fallos.append(f"la tabla {nombre} dice «aplicada» y no dice DÓNDE. Sin eso no se puede "
                           f"comprobar que siga aplicándose")
 
+    # ─── Y LAS SECCIONES DE TEXTO, que es donde está lo que califica las tablas
+    #
+    # ⚠️ Elena, 9 de septiembre: «a parte de las tablas hay cosas de las tablas que
+    # se especifican en el texto, y precisamente por eso te estabas leyendo todo el
+    # documento». Tiene razón, y es donde está casi todo lo que se ha escapado: el
+    # máximo de fósforo del adulto vive en el texto de la 3.3.1 y no en la tabla;
+    # que la metionina+cistina supone una dieta con muy poca taurina, también; que
+    # el calcio alto pide más zinc y cobre, también. Un inventario que solo cubriera
+    # tablas dejaría fuera justo la parte que más veces ha fallado.
+    secciones = inventario.get("secciones")
+    if not secciones:
+        fallos.append("no hay inventario de SECCIONES en fediaf_tablas.json. Las tablas solas no "
+                      "bastan: lo que las califica está en el texto")
+    else:
+        for nombre, ficha in sorted(secciones.items()):
+            v = ficha.get("veredicto")
+            if v not in validos:
+                fallos.append(f"la sección {nombre} tiene el veredicto «{v}», que no es ninguno de "
+                              f"{sorted(validos)}")
+            if v in ("no_aplicable", "alternativa_declarada", "pendiente") and not ficha.get("por_que"):
+                fallos.append(f"la sección {nombre} es «{v}» y no dice POR QUÉ")
+            if v == "aplicada" and not ficha.get("donde"):
+                fallos.append(f"la sección {nombre} dice «aplicada» y no dice DÓNDE")
+
     texto = _texto_fediaf()
     if texto is None:
         print("  (no está el texto de FEDIAF: se audita solo el inventario)")
@@ -116,7 +140,11 @@ def auditar():
                               f"con lo que colgaba de ella")
 
     pendientes = [k for k, v in tablas.items() if v["veredicto"] == "pendiente"]
-    print(f"  {len(tablas)} tablas inventariadas, {len(pendientes)} pendientes: {sorted(pendientes)}")
+    pend_sec = [k for k, v in (inventario.get("secciones") or {}).items()
+                if v["veredicto"] == "pendiente"]
+    print(f"  {len(tablas)} tablas ({len(pendientes)} pendientes: {sorted(pendientes)})")
+    print(f"  {len(inventario.get('secciones') or {})} secciones "
+          f"({len(pend_sec)} pendientes: {sorted(pend_sec)})")
     return fallos
 
 
