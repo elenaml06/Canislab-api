@@ -1,0 +1,138 @@
+{
+  "_meta": {
+    "que_es": "Veredicto ELEMENTO A ELEMENTO de cada sección de fuente que se declara leída. Una sección solo cuenta como leída si TODAS sus cifras con unidad y TODAS sus frases normativas tienen aquí un veredicto.",
+    "por_que_existe": "Elena, 9 de septiembre, después de que una lectura «completa» de FEDIAF dejara fuera siete cosas y de que el inventario hecho para arreglarlo dejara fuera otras cuatro: «esto no puede pasar en ninguna lectura, por favor.... no sé cómo tienes que hacerlo pero apáñatelas para que esto no pase Nunca». || El arreglo no puede ser «tener más cuidado», porque eso es lo que falló las tres veces. `leer_fuente.py` extrae MECÁNICAMENTE las cifras con unidad y las frases normativas, y aquí hay que decir qué se hace con cada una. Lo que no se clasifica, se ve.",
+    "por_que_tambien_las_frases": "Porque lo más gordo que se ha escapado no lleva número: que el máximo LEGAL de FEDIAF solo aplica si el nutriente se añade como aditivo (§3.1.3). Un extractor de cifras solo no lo habría cazado.",
+    "veredictos": {
+      "aplicado": "el motor lo usa; se dice dónde",
+      "no_aplicable": "no hay nada que aplicar, con el motivo",
+      "contexto": "es prosa de encuadre, no una regla ni un límite",
+      "pendiente": "hay algo que aplicar y no está hecho: es deuda declarada"
+    }
+  },
+  "lecturas": {
+    "FEDIAF/3.1": {
+      "rango": [
+        378,
+        470
+      ],
+      "leida": "9-sep-2026",
+      "veredictos": {
+        "cifra:100 g": "contexto — es la unidad de las tablas («units/100g DM»), no un límite",
+        "cifra:1000 kcal": "contexto — la otra unidad de las tablas, y la que usa el motor",
+        "cifra:1.25 kcal": "no_aplicable — factor de corrección de energía urinaria por g de proteína digestible (perro), para calcular EM en un ensayo. El catálogo trae la EM ya calculada de las bases de composición",
+        "cifra:5.23 kJ": "no_aplicable — el mismo factor en julios",
+        "cifra:0.86 kcal": "no_aplicable — el mismo factor, pero del GATO",
+        "cifra:3.60 kJ": "no_aplicable — ídem en julios",
+        "frase:GUIDANCE Complete pet food means pet food which, by reason of FEDIAF recommends to all members of each Nationa": "contexto — definición de «alimento completo» del Reglamento 767/2009",
+        "frase:It should be formulated to take account of current provide all the nutritional needs of the particular animals": "aplicado — es lo que hace el motor: formular contra los datos de esta guía",
+        "frase:If certain nutrient levels are outside the values stated in If a manufacturer labels a product as a complete p": "pendiente — «if certain nutrient levels are outside the values stated in this guide, manufacturers should be able to PROVE that the product provides adequate and safe intakes». Es la puerta que usaría una prescripción veterinaria por debajo de FEDIAF (fase 4 de VETERINARIOS.md): la carga de la prueba recae en quien se sale. Y la otra mitad de la frase, del texto de al lado: un alimento sin etapa declarada se asume completo PARA TODAS y se formula según crecimiento temprano y reproducción",
+        "frase:Each product should be validated by chemical analysis specific life stage, then the label must clearly state t": "no_aplicable — validación por análisis químico del producto acabado. No fabricamos",
+        "frase:It is recommended to use an example “Bloggo” is a complete pet food for breeding cats, officially recognised m": "no_aplicable — métodos analíticos oficiales, capítulo 5",
+        "frase:) manufacturers should not use a reference to minimum and “units/MJ ME” (Tables III-3c.": "contexto — que se hable de «niveles mínimos recomendados» y no de «requisitos mínimos». Es terminología, y el motor ya usa esa distinción",
+        "frase:A legal maximum only applies level of a nutrient in a complete pet food that, based on when the particular tra": "pendiente — ⚠️ LA REGLA GORDA: el máximo LEGAL solo aplica si el nutriente se AÑADE como aditivo. El motor lo aplica siempre. Ver el cuaderno de lectura y la ficha de la §3.1 en fediaf_tablas.json",
+        "frase:Levels exceeding the present in the finished product (amount coming from the nutritional maximum may still be ": "pendiente — la definición del máximo NUTRICIONAL: «has not been associated with adverse effects ... levels exceeding may still be safe». Es la misma lectura que la nota c del sodio, y va con la regla de arriba",
+        "frase:If the nutrient comes exclusively from feed materials, the legal maximum does not apply, instead the nutrition": "pendiente — la segunda mitad de la regla gorda, y la que la hace accionable: sin aditivo, manda el nutricional. Para los seis oligoelementos NO HAY nutricional, y para la vitamina D es 20 µg/1000 kcal en vez de 14,1875",
+        "frase:The following nutrients should be taken into consideration for evaluation of nutritional adequacy.": "contexto — encabeza la Tabla III-1, que es el índice de qué cuenta como nutriente"
+      }
+    },
+    "FEDIAF/7.1": {
+      "rango": [
+        2233,
+        2292
+      ],
+      "leida": "9-sep-2026",
+      "veredictos": {
+        "cifra:50 %": "contexto — prevalencia de sobrepeso entre los 6 y los 11 años; no es un límite",
+        "cifra:30 %": "contexto — grasa corporal del BCS 5 en GATO (20-30 %)",
+        "cifra:20 %": "aplicado — grasa corporal ideal del perro, 15-25 %, extremo bajo. Sostiene que el BCS 5 es el ideal y es el ancla de `bcs.js`",
+        "cifra:25 %": "aplicado — el extremo alto del mismo rango",
+        "frase:Introduction About one third of cats and dogs over one year of age should be based on optimal body weight (BW)": "aplicado — «energy requirements should be based on optimal body weight»: es exactamente por qué el motor calcula sobre `peso_objetivo_kg` y no sobre el real"
+      }
+    },
+    "FEDIAF/7.4": {
+      "rango": [
+        3258,
+        3316
+      ],
+      "leida": "9-sep-2026",
+      "veredictos": {
+        "cifra:0.01 g": "aplicado — el incremento de arginina por punto de % MS de proteína. `requisitos_condicionales.json`, BLOQUE 60. Verificado: nuestra regla por gramo es aritméticamente idéntica",
+        "cifra:100 g": "contexto — la unidad de la Tabla VII-13 (g/100 g MS)",
+        "cifra:1 %": "aplicado — el paso de la regla: por cada 1 % de MS de proteína por encima del recomendado",
+        "cifra:0.02 g": "no_aplicable — es el incremento del GATO"
+      }
+    },
+    "FEDIAF/3.3.1": {
+      "rango": [
+        1150,
+        1424
+      ],
+      "leida": "9-sep-2026",
+      "veredictos": {
+        "cifra:20 %": "aplicado — el +20 % que FEDIAF le suma a las cifras del NRC «to compensate for the lower energy requirement of household dogs». Es la procedencia de TODA la columna de adulto que aplicamos",
+        "cifra:1000 kcal": "contexto — la unidad de la tabla",
+        "cifra:6 g": "contexto — los 25 g/1000 kcal del NRC expresados por MJ",
+        "cifra:550 kJ": "contexto — los 130 kcal/kg^0,75 del estudio del NRC, en julios",
+        "cifra:80 %": "aplicado — la digestibilidad aparente de proteína bruta que FEDIAF supone al ajustar las cifras del NRC. Es la contraparte del x1,10 de la §3.2.1 que sí aplicamos a los aminoácidos",
+        "cifra:0.01 g": "aplicado — el incremento de arginina. requisitos_condicionales.json, BLOQUE 60",
+        "cifra:2006 g": "contexto — artefacto de extracción: es la cita «(NRC 2006g)» pegada a una unidad",
+        "cifra:4.91 %": "contexto — la dosis de lisina que SÍ redujo la ganancia de peso en cachorros (Czarnecki 1985). Es el lado malo del experimento del que sale el techo",
+        "cifra:2.91 %": "aplicado — el no-effect-level de lisina, del que sale el techo de 7,00 g/1000 kcal. Es el único máximo de FEDIAF que NO aplicamos, y está declarado en verificar.MAXIMOS_NO_APLICADOS",
+        "cifra:4156 kcal": "contexto — la densidad de la dieta del experimento de lisina, que es como se convierte el 2,91 % a 7,00 g/1000 kcal",
+        "cifra:0.91 %": "contexto — la lisina de la dieta basal del experimento",
+        "cifra:4 %": "contexto — el suplemento de lisina que se añadió a la dieta basal",
+        "cifra:17.39 MJ": "contexto — la densidad del experimento en julios",
+        "cifra:7.0 g": "aplicado — el techo de lisina en crecimiento, escrito y declarado como no aplicado (0 de 12 menús de cachorro caben debajo)",
+        "cifra:1.67 g": "contexto — el mismo techo por MJ",
+        "cifra:2.8 %": "contexto — el mismo techo en % MS a 4 kcal/g, y de paso CONFIRMA que el puente de FEDIAF es 4 kcal/g",
+        "cifra:4 kcal": "aplicado — la densidad de referencia de FEDIAF, 4 kcal/g MS. Es la que usa el motor para convertir sus % MS, y es correcta (la de SACN5 es 3,5, que es otra cosa)",
+        "cifra:2 %": "contexto — el suplemento de lisina del brazo que no hizo daño; y en otra frase, el 2 % de sodio MS que da balance negativo de potasio",
+        "cifra:100 mg": "pendiente — ⚠️ «<100 mg/kg dry matter» de taurina: es la dieta que se supone al fijar la metionina+cistina, y con más taurina «the RA for sulphur amino acids CAN BE LOWER». Nuestra ración va muy por encima. Toca la frontera que bloquea la cistinuria",
+        "cifra:95 kcal": "aplicado — la columna de MER que usa el motor (la más exigente de las dos de adulto)",
+        "cifra:110 kcal": "aplicado — la otra columna de adulto, declarada como alternativa en fediaf_tablas.json",
+        "cifra:0.8 %": "aplicado — el calcio mínimo del cachorro de raza pequeña y mediana en crecimiento tardío, y el nivel al que puede bajar el de raza grande después de los ~6 meses (nota b)",
+        "cifra:0.8 g": "contexto — el mismo 0,8 % expresado en g/100 g MS",
+        "cifra:100 g": "contexto — la unidad de la tabla III-3a",
+        "cifra:1.6 %": "pendiente — ⚠️ el máximo de calcio del GRAN DANÉS en crecimiento tardío, contra el 1,8 % del resto de razas. Cubierto por abajo hoy por el techo del libro (2750 mg para cachorro de >25 kg de adulto), pero no está escrito como regla propia",
+        "cifra:1.8 %": "aplicado — el calcio máximo del crecimiento tardío, 4500 mg/1000 kcal en requerimientos_v2_final.json",
+        "cifra:1 g": "aplicado — el calcio mínimo del crecimiento temprano (1 g/100 g MS) y el que mantienen las razas grandes hasta los ~6 meses",
+        "cifra:1 %": "aplicado — el mismo mínimo en porcentaje",
+        "cifra:6.25 g": "aplicado — el máximo nutricional de calcio del adulto, 6250 mg/1000 kcal",
+        "cifra:4 g": "aplicado — el máximo nutricional de FÓSFORO del adulto, 4000 mg/1000 kcal. Es el que se borró por error el 7 de septiembre y se devolvió el 8",
+        "cifra:7.1 g": "contexto — el calcio total del estudio de Stockman 2017, tolerado 40 semanas, que es lo que respalda los máximos",
+        "cifra:4.5 g": "contexto — el fósforo total del mismo estudio",
+        "cifra:45.4 mg": "contexto — el sodio adecuado por MJ (Czarnecki-Maulden 1989); nuestro mínimo viene de la tabla, que ya lo incorpora",
+        "cifra:0.19 g": "contexto — el mismo dato por 1000 kcal. OJO: es MUY inferior a nuestro mínimo de 0,29 g, porque la tabla lleva el margen de FEDIAF encima",
+        "cifra:0.4 mg": "aplicado — el máximo de yodo de Castillo 2001 que FEDIAF DESCARTA por diseño del estudio. Es la base del BLOQUE 59 y de por qué nuestro techo crónico se queda en 1275",
+        "cifra:75 %": "contexto — cuánto se sobrealimentó a los cachorros del estudio de Castillo, que es el motivo por el que FEDIAF lo descarta",
+        "cifra:0.21 mg": "contexto — el requisito mínimo de selenio en cachorros (Wedekind), antes del margen de seguridad",
+        "cifra:5 mg": "pendiente — el zinc suficiente en crecimiento con dieta purificada, y la frase de al lado dice que «doubling the minimum recommended level may be considered safe» por la disponibilidad real",
+        "cifra:45 %": "contexto — el porcentaje del no-adverse-effect de vitamina A (Cline 1997) que representa el máximo de FEDIAF",
+        "cifra:16.74 kJ": "contexto — 4 kcal/g en julios",
+        "cifra:435 IU": "contexto — el nivel de vitamina D que SÍ afectó a la absorción de calcio en cachorros de gran danés (Tryfonidou)",
+        "cifra:425 IU": "contexto — el máximo nutricional de vitamina D para cachorro de raza pequeña",
+        "cifra:320 IU": "pendiente — ⚠️ el máximo NUTRICIONAL de vitamina D por 100 g MS = 800 UI/1000 kcal = 20 µg/1000 kcal. El motor aplica el LEGAL (14,1875), y según la §3.1.3 el legal solo vale si la vitamina D se añade como aditivo",
+        "cifra:0.6 mg": "contexto — la riboflavina por 100 g MS para alimentos prácticos, ya incorporada a la tabla",
+        "cifra:25 %": "contexto — el margen de seguridad que FEDIAF le pone a la riboflavina",
+        "cifra:66.8 µg": "contexto — el requisito de riboflavina por kg de peso vivo del experimento",
+        "frase:Substantiation of nutrient recommendations for complete dog food GENERAL Amino acids, trace elements, vitamins": "aplicado — la regla general: salvo asterisco, las cifras del adulto son las del NRC 2006 subidas un 20 %",
+        "frase:During analysis, taurine the RA for sulphur amino acids can be lower than cystine and cysteine are both determ": "pendiente — ⚠️ la metionina+cistina puede ser MENOR con más taurina. Es el nutriente frontera de la cistinuria",
+        "frase:Tyrosine Tyrosine (All life stages) For maximisation of black hair colour, the tyrosine content may need to be": "no_aplicable — es para maximizar el color negro del pelo, no salud. 1,5-2 veces la cifra de tabla; queda escrito por si algún día se pregunta",
+        "frase:Consequently it is preferable MINERALS Calcium Calcium (Adult dogs) As the calcium level approaches breeds may": "pendiente — ⚠️ «As the calcium level approaches the stated nutritional maximum, it may be necessary to increase the levels of certain trace elements such as zinc and copper». Condicional real y sin aplicar, y una ración BARF va cargada de hueso",
+        "frase:1960a, Jenkins KJ Therefore a strict nutritional maximum is recommended et al.": "aplicado — el máximo estricto de calcio para cachorro de raza grande",
+        "frase:After comparing all the data, FEDIAF recommends that During later growth up to 1.": "aplicado — el mínimo de 1 g/100 g MS en crecimiento temprano",
+        "frase:8 % DM can be fed to all the calcium level in a pet food for early growth should be at breed dogs including gi": "pendiente — la excepción del gran danés (máximo 1,6 % contra 1,8 %)",
+        "frase:During late growth, it is recommended great Danes.": "aplicado — el refuerzo de calcio de la raza grande en crecimiento tardío (nota b)",
+        "frase:19 g / 1000 kcal) sodium is trated that foods containing 2% of sodium (DM) may result adequate for all life st": "pendiente — «foods containing 2% of sodium (DM) may result in a negative potassium balance». 2 % MS = 5000 mg/1000 kcal, muy por encima de nuestro techo de sodio (1000 del libro, 3750 de la nota c), así que hoy no muerde. Se escribe para que conste el mecanismo",
+        "frase:Copper Copper Owing to its low availability copper oxide should not be considered as a copper source (Fascetti": "pendiente — ⚠️ el cobre en óxido NO cuenta como fuente. Hay que mirar las 11 fichas de multivitamínico",
+        "frase:Iron Iron Because of very poor availability, iron from oxide or In addition, the amount of inert iron is not t": "pendiente — ⚠️ el hierro en óxido o carbonato NO cuenta para el mínimo. Misma revisión etiqueta por etiqueta",
+        "frase:However, a safety margin requirement for selenium in dogs are similar to those in has to be added because the ": "pendiente — ⚠️ «There are no data available about the exact requirements for selenium of adult dogs ... the recommended allowance for CATS is used for dogs». No cambia el número, cambia lo que se puede decir de él: es grado 4 en la escala de SACN5",
+        "frase:(1996) identified “as may Vitamin A (Puppies) There is no evidence so far that the be approaching a level that": "aplicado — el máximo de vitamina A vale igual para cachorro y adulto",
+        "frase:Since there is no information on maximum safe intakes for adult dogs and breeding bitches, FEDIAF recommends T": "aplicado — el máximo de vitamina D del cachorro se extiende a las demás etapas por falta de datos",
+        "frase:8 µg/kg BW per day, when Vitamin B7 (Biotin) Biotin For healthy dogs biotin does not need to be or anti-vitami": "pendiente — ⚠️ la biotina solo hace falta si la dieta lleva compuestos ANTIVITAMÍNICOS, y la clara de huevo cruda lo es (avidina). Nuestras raciones llevan huevo, y por eso el motor ya topa la clara sola al 5 % del peso",
+        "frase:Vitamin K Vitamin K Vitamin K does not need to be added unless (Kronfeld DS 1989c, NRC 2006j).": "pendiente — la vitamina K, mismo condicional que la biotina"
+      }
+    }
+  }
+}

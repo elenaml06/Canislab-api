@@ -229,11 +229,10 @@
   "secciones": {
     "3.1": {
       "titulo": "Guidance (recomendaciones mínimas, energía, máximos, validación)",
-      "veredicto": "aplicada",
+      "veredicto": "pendiente",
       "donde": "requerimientos_v2_final.json y auditar_fediaf.py",
-      "por_que": "Es la guía de cómo se leen las tablas.",
-      "leida": false,
-      "ojo": "Veredicto puesto por su encabezado y por lo que el motor ya usa, NO por haberla leído entera. Usamos su tabla; lo que el texto diga de ella está sin comprobar."
+      "por_que": "LEÍDA ENTERA el 9 de septiembre. §3.1.3 trae una regla que el motor no modela y que cambia qué techo aplica: «A legal maximum only applies when the particular trace element or vitamin is ADDED TO THE RECIPE AS AN ADDITIVE ... If the nutrient comes exclusively from feed materials, the legal maximum does not apply, instead the nutritional maximum, when included in the relevant tables, should be taken into account». El motor aplica el LEGAL siempre. En la Tabla VII-17d, los seis oligoelementos (cobre, yodo, hierro, manganeso, selenio, zinc) SOLO tienen legal -- o sea que sin aditivo no queda ningún máximo de FEDIAF --, y la vitamina D tiene los dos: legal 227 UI/100 g MS (14,1875 µg/1000 kcal) y NUTRICIONAL 320 UI/100 g MS (= 20 µg/1000 kcal). Afecta al cruce del selenio que deja sin menú a perros de 1,5-2 kg, al zinc de la dermatosis y al cobre de la hepatopatía. Es CONDICIONAL AL MENÚ (si lleva multivitamínico, que sí es aditivo, el legal aplica al total), así que hay que medir antes de tocar nada. Los cinco topes de seguridad crónica nuestros no dependen de esto.",
+      "leida": "9-sep-2026, entera"
     },
     "3.2.1": {
       "titulo": "How to read the tables",
@@ -241,7 +240,7 @@
       "donde": "requisitos.py y motor/condicionales.py",
       "por_que": "De aquí sale el x1,10 de aminoácidos cuando no se garantiza la digestibilidad, y la elección de la columna de 95 kcal.",
       "leida": false,
-      "ojo": "Veredicto puesto por su encabezado y por lo que el motor ya usa, NO por haberla leído entera. Usamos su tabla; lo que el texto diga de ella está sin comprobar."
+      "ojo": "Leída en prosa el 8 o el 9 de septiembre, pero SIN el desglose elemento a elemento de `lecturas_fuentes.json`. Bajo la definición nueva de «leída» —que ninguna cifra ni frase normativa se quede sin veredicto— todavía no lo está, y por eso figura en false."
     },
     "3.3.1": {
       "titulo": "Substantiation of nutrient recommendations for complete DOG food",
@@ -284,7 +283,8 @@
       "veredicto": "aplicada",
       "donde": "der.py y src/der.js, BLOQUE 54",
       "por_que": "Incluye 7.2.3.2 actividad, 7.2.3.3 edad (la VII-6), 7.2.3.4 raza (la lectura de que la diferencia de raza ya contiene la de actividad) y 7.2.5, que es el escalado de mínimos.",
-      "leida": "9-sep-2026, entera (introducción, densidad, revisión bibliográfica y recomendaciones prácticas)"
+      "leida": false,
+      "ojo": "Leída en prosa el 8 o el 9 de septiembre, pero SIN el desglose elemento a elemento de `lecturas_fuentes.json`. Bajo la definición nueva de «leída» —que ninguna cifra ni frase normativa se quede sin veredicto— todavía no lo está, y por eso figura en false."
     },
     "7.2.3.5": {
       "titulo": "Thermoregulation and housing",
@@ -302,9 +302,8 @@
       "titulo": "Arginina",
       "veredicto": "aplicada",
       "donde": "requisitos_condicionales.json, BLOQUE 60",
-      "por_que": "+0,01 g por g de proteína sobre el requisito.",
-      "leida": false,
-      "ojo": "Veredicto puesto por su encabezado y por lo que el motor ya usa, NO por haberla leído entera. Usamos su tabla; lo que el texto diga de ella está sin comprobar."
+      "por_que": "VERIFICADA el 9 de septiembre: la Tabla VII-13 va en g/100 g MS y por punto de % MS de proteína, y nuestra regla («+0,01 g de arginina por gramo de proteína sobre el requisito») es aritméticamente IDÉNTICA, porque el factor 2,5 se cancela. Comprobado contra la fila de 50 % MS: la tabla da 0,84 g/100 g MS = 2,10 g/1000 kcal, y nuestra fórmula sobre la columna de 110 da exactamente 2,10. Sobre la de 95, que es la que usamos, da 2,24: somos más estrictas.",
+      "leida": "9-sep-2026, entera"
     },
     "7.5": {
       "titulo": "Vitaminas: compuestos químicos",
@@ -323,7 +322,8 @@
       "veredicto": "aplicada",
       "donde": "pruebas_completas.py, bloque de Allium y de alimentos prohibidos",
       "por_que": "Ninguno está en el catálogo y la batería exige que siga siendo así, citando el anexo 7.7.3.",
-      "leida": "8-sep-2026, entera (es de donde sale el bloque de Allium de la batería)"
+      "leida": false,
+      "ojo": "Leída en prosa el 8 o el 9 de septiembre, pero SIN el desglose elemento a elemento de `lecturas_fuentes.json`. Bajo la definición nueva de «leída» —que ninguna cifra ni frase normativa se quede sin veredicto— todavía no lo está, y por eso figura en false."
     }
   }
 }

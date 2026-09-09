@@ -9047,6 +9047,54 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 68 — «leida» significa que no queda nada sin veredicto
+# ============================================================
+#
+# ⚠️ POR QUE (9 septiembre). Tres veces el mismo dia:
+#   1. Se leyo FEDIAF «entero» y se aplico lo que se fue a buscar. Se quedaron
+#      fuera las dos filas de raza de la VII-7 y el escalon de edad de la VII-6.
+#   2. Se hizo un inventario de TABLAS para arreglarlo. Se quedaron fuera siete
+#      cosas que estaban en el TEXTO, no en ninguna tabla.
+#   3. Se amplio el inventario a las secciones. Cuatro de ellas decian
+#      «aplicada» sin que nadie se las hubiera leido enteras, y al leerlas
+#      salieron otras cuatro cosas -- una de ellas, la mas gorda de todas: que
+#      el maximo LEGAL de FEDIAF solo aplica si el nutriente se anade como
+#      aditivo.
+#
+# Elena: «esto no puede pasar en ninguna lectura, por favor.... no se como
+# tienes que hacerlo pero apañatelas para que esto no pase Nunca».
+#
+# Y no puede arreglarse teniendo mas cuidado, porque eso es lo que fallo las
+# tres veces. `leer_fuente.py` extrae MECANICAMENTE de cada seccion sus cifras
+# con unidad y sus frases normativas, y `lecturas_fuentes.json` tiene que dar
+# un veredicto a cada una. «Leida» pasa a significar eso y no «pase los ojos».
+#
+# Y las FRASES importan tanto como las cifras: la regla del maximo legal no
+# lleva ni un numero. Un extractor de cifras solo no la habria cazado.
+print("\n=== BLOQUE 68: leer una fuente sin dejarse nada ===")
+
+_aud68 = _sp_b18.run([sys.executable, "leer_fuente.py"], capture_output=True, text=True,
+                     cwd=_os_b18.path.dirname(_os_b18.path.abspath(__file__)))
+if "Discrepancias: 0" not in _aud68.stdout:
+    _cola68 = "\n      ".join((_aud68.stdout + _aud68.stderr).strip().splitlines()[-10:])
+    fallos.append(f"BLOQUE68: hay elementos de una fuente declarada leida sin veredicto:\n      {_cola68}")
+
+# Y las dos cosas tienen que decir lo mismo: si `fediaf_tablas.json` dice que una
+# seccion esta leida, tiene que estar en `lecturas_fuentes.json` con sus
+# veredictos. Sin esto, «leida» volveria a ser una palabra que se escribe sola.
+_inv68 = _json_b12.load(open("fediaf_tablas.json", encoding="utf-8")).get("secciones") or {}
+_lec68 = _json_b12.load(open("lecturas_fuentes.json", encoding="utf-8")).get("lecturas") or {}
+for _sec68, _f68 in sorted(_inv68.items()):
+    if _f68.get("leida") and f"FEDIAF/{_sec68}" not in _lec68:
+        fallos.append(f"BLOQUE68: fediaf_tablas.json dice que la seccion {_sec68} esta LEIDA y no "
+                      f"esta en lecturas_fuentes.json. Sin el desglose elemento a elemento, «leida» "
+                      f"vuelve a ser una palabra que se escribe sola")
+print(f"  {_aud68.stdout.strip().splitlines()[0].strip() if _aud68.stdout.strip() else ''}")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 print(f"\n{'='*60}")
 print(f"TOTAL: {time.time()-t_total:.0f}s de pruebas")
 if fallos:
