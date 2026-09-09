@@ -5041,7 +5041,17 @@ from der import peso_ideal_desde_condicion as _pideal37, BCS_DESDE_CONDICION as 
 #     ideal = [peso x (100 - %grasa)] / 0,8
 # Se exige quedar dentro del 3 % de esa cifra. Restando el exceso -que es
 # como estaba- BCS 8 daba 31,5 contra 35,4: un 11 % fuera.
-for _peso37, _bcs37, _grasa37 in [(45, 8, 37), (30, 7, 32), (20, 9, 42), (20, 6, 27)]:
+# ⚠️ EL BCS 9 YA NO ENTRA EN ESTA COMPROBACIÓN, Y HAY QUE EXPLICARLO (9 sep).
+# Los dos métodos DIVERGEN justo en el 9, y no por un fallo: es la saturación de
+# la escala. Con el 42 % de grasa de la Tabla 1 de AAHA, su fórmula da un exceso
+# del 38 % (14,50 kg en un perro de 20). La Tabla VII-2 de FEDIAF dice, en su
+# columna de PESO, «>45 %» -- y en la de grasa, «>40 %», o sea que las dos son
+# cotas abiertas y la fórmula las trata como si fueran valores exactos.
+# En este repo manda FEDIAF, así que el 9 se comprueba abajo contra su fila y no
+# aquí contra la fórmula. En 6, 7 y 8 los dos métodos coinciden dentro del 3 %,
+# y ahí el cruce sigue valiendo para lo que se escribió: cazar que alguien vuelva
+# a RESTAR el exceso en vez de dividir.
+for _peso37, _bcs37, _grasa37 in [(45, 8, 37), (30, 7, 32), (20, 6, 27)]:
     _obt37 = _pobj37(_peso37, _bcs37)
     _esp37 = _peso37 * (100 - _grasa37) / 100 / 0.8
     if _obt37 is None:
@@ -5053,6 +5063,14 @@ for _peso37, _bcs37, _grasa37 in [(45, 8, 37), (30, 7, 32), (20, 9, 42), (20, 6,
                       f"de diferencia: comprueba que se DIVIDE por (1+exceso) y no se resta — "
                       f"«30 % overweight» es un 30 % SOBRE EL IDEAL, no del peso de hoy.")
 
+# (a-bis) Y EL 9, CONTRA LA FILA DE FEDIAF QUE MANDA AHÍ.
+_esp9_37 = 20.0 / 1.45
+if _pobj37(20, 9) is None or abs(_pobj37(20, 9) - _esp9_37) > 0.01:
+    fallos.append(f"BLOQUE37: 20 kg con BCS 9 da {_pobj37(20, 9)} y FEDIAF Tabla VII-2 dice "
+                  f"«>45 %», o sea {_esp9_37:.3f}. Si sale 14,29 es que ha vuelto la recta del "
+                  f"10 % por punto, que en el 9 se queda corta -- medio kilo de más en un perro "
+                  f"de 20 kg, y hacia arriba: más kcal para el que peor lo lleva")
+
 # (b) SE DIVIDE. La prueba directa, por si alguien vuelve a restar.
 if _pobj37(45, 8) is None or abs(_pobj37(45, 8) - 45 / 1.30) > 0.01:
     fallos.append(f"BLOQUE37: el labrador de 45 kg con BCS 8 tiene que dar 34,62 (45/1,30). "
@@ -5060,15 +5078,42 @@ if _pobj37(45, 8) is None or abs(_pobj37(45, 8) - 45 / 1.30) > 0.01:
                   f"ejemplo trabajado de AAHA, que es una errata de la propia guía — dos de "
                   f"sus tres métodos dan 34-35.")
 
-# (c) POR DEBAJO DE BCS 5 NO SE ESTIMA. La Tabla 1 empieza en 4 y no tiene
-# columna de «% underweight»; AAHA 2021 manda alimentar sobre el peso ACTUAL
-# en un perro delgado o ideal. Y BCS 4 es «Ideal» en esa tabla, no «delgado».
-for _b37 in (1, 2, 3, 4, 5):
-    if _pobj37(20, _b37) is not None:
-        fallos.append(f"BLOQUE37: con BCS {_b37} se está estimando un peso objetivo "
-                      f"({_pobj37(20, _b37)}). Por debajo de 5 no hay regla publicada y AAHA "
-                      f"2021 dice lo contrario: «base feeding calculations on current weight "
-                      f"if ideal or underweight».")
+# (c) POR DEBAJO DE BCS 5 SÍ SE ESTIMA DESDE EL 9 DE SEPTIEMBRE, Y MANDA FEDIAF.
+#
+# ⚠️ AQUÍ SE COMPROBABA LO CONTRARIO, y el cambio no es un ablandamiento: es
+# que la fuente que mandaba no era la buena. Ponía que «por debajo de 5 no hay
+# regla publicada» apoyándose en la Tabla 1 de AAHA 2021, que empieza en BCS 4 y
+# no tiene columna de «% underweight».
+#
+# **FEDIAF sí las tiene.** Anexo 7.1, Tabla VII-2, columna «% BW below or above
+# BCS 5», filas 1 a 4: -≥40 %, -30 a 40 %, -20 a 30 % y -10 a 15 %. Y su §7.1.1
+# dice que la energía se calcula sobre el peso ÓPTIMO -- «Energy requirements
+# should be based on optimal body weight» -- sin distinguir dirección.
+#
+# En este repo manda FEDIAF. Así que ahora se estima también hacia arriba, con
+# la corrección topada al +20 % (criterio nuestro: un perro muy delgado suele
+# estarlo por una enfermedad, y pasarlo de golpe a la ración de un peso un 43 %
+# mayor es mala idea).
+#
+# Y de paso cierra una discrepancia que llevaba dentro del repo desde siempre:
+# `der.peso_ideal_desde_condicion` YA estimaba en las dos direcciones. Eran dos
+# reglas de BCS que decían cosas distintas justo por debajo de 5.
+for _b37, _desvio37 in ((1, -0.40), (2, -0.30), (3, -0.20), (4, -0.10)):
+    _esp_b37 = 20.0 / (1.0 + _desvio37)
+    if _esp_b37 > 20.0 * 1.20:
+        _esp_b37 = 20.0 * 1.20          # el tope del +20 %
+    _obt_b37 = _pobj37(20, _b37)
+    if _obt_b37 is None:
+        fallos.append(f"BLOQUE37: con BCS {_b37} no se estima peso objetivo, y FEDIAF Tabla "
+                      f"VII-2 tiene esa fila. Su §7.1.1 calcula la energía sobre el peso "
+                      f"ÓPTIMO, sin distinguir si el perro está por encima o por debajo")
+    elif abs(_obt_b37 - _esp_b37) > 0.01:
+        fallos.append(f"BLOQUE37: con BCS {_b37} el peso objetivo de un perro de 20 kg sale "
+                      f"{_obt_b37} y tenía que ser {_esp_b37:.3f} (FEDIAF Tabla VII-2, con el "
+                      f"tope del +20 % en los muy delgados)")
+if _pobj37(20, 5) is not None:
+    fallos.append("BLOQUE37: en BCS 5 se está estimando un peso objetivo. Un perro que ya está "
+                  "en su peso ideal no tiene nada que corregir")
 
 # (d) EL 9 SE ESTIMA, PERO ES UNA COTA INFERIOR. Tiene que salir con
 # procedencia propia, o la app no puede distinguirlo de una estimación normal.
@@ -5089,7 +5134,7 @@ for _peso37 in (5, 20, 30, 45, 60):
         _a37 = _pideal37(_peso37, _idx37)
         _b_37 = _pobj37(_peso37, _b37)
         if _b_37 is None:
-            continue          # por debajo de 5 verificar no estima, y es a propósito
+            continue          # solo BCS 5: ninguna de las dos estima ahí
         if abs(_a37 - _b_37) > 0.02:
             fallos.append(f"BLOQUE37: para {_peso37} kg con BCS {_b37}, der.py dice {_a37} kg y "
                           f"verificar.py dice {_b_37}. Son la MISMA cuenta escrita dos veces: si "
@@ -8327,6 +8372,95 @@ for _et62 in ("CachorroJoven", "CachorroCrecimiento"):
                       f"el usuario no ha dado")
 
 print(f"  {len(_CASOS_B62)} cachorros de raza grande probados de punta a punta")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 63 — EL BCS, CONTRA LA TABLA VII-2 DE FEDIAF, Y SUS DOS COPIAS
+# ============================================================
+#
+# POR QUÉ EXISTE (9 septiembre)
+#
+# El peso objetivo sale del BCS, y de él salen dos cosas: las kcal del día y el
+# peso de referencia con el que se ESCALAN los mínimos de FEDIAF. O sea que un
+# error aquí no se ve en ninguna pantalla y sale por los dos lados.
+#
+# Y había DOS reglas de BCS en el repo, que discrepaban:
+#
+#   `verificar.peso_objetivo_desde_bcs`  ..  10 %/punto, y None por debajo de 5
+#   `der.peso_ideal_desde_condicion`     ..  10 %/punto en las DOS direcciones
+#
+# Es la familia de siempre -- dos sitios que calculan lo mismo de dos maneras --
+# y encima ninguna de las dos cuadraba con FEDIAF en el punto 9.
+#
+# La Tabla VII-2 del Anexo 7.1 de FEDIAF da la columna «% BW below or above
+# BCS 5» para el perro, en RANGOS. Nuestro 10 % lineal es el extremo BAJO de
+# cada rango -- el más conservador -- en ocho de los nueve puntos. En el noveno
+# no: FEDIAF dice «>45 %» y la recta da 40.
+print("\n=== BLOQUE 63: el BCS contra la Tabla VII-2 de FEDIAF ===")
+
+from verificar import peso_objetivo_desde_bcs as _bcs_b63
+from der import peso_ideal_desde_condicion as _bcs_der_b63
+from der import BCS_DESDE_CONDICION as _COND_B63
+
+# (BCS, desvío que aplicamos, lo que dice la Tabla VII-2, cita)
+_TABLA_VII2_B63 = [
+    (1, -0.40, "-≥40 %",     "1. Emaciated -- se aplica el 40, que es donde empieza el «≥»"),
+    (2, -0.30, "-30 a 40 %", "2. Very Thin -- extremo bajo del rango"),
+    (3, -0.20, "-20 a 30 %", "3. Thin -- extremo bajo"),
+    (4, -0.10, "-10 a 15 %", "4. Slightly underweight -- extremo bajo"),
+    (6, +0.10, "+10 a 15 %", "6. Slightly overweight -- extremo bajo"),
+    (7, +0.20, "+20 a 30 %", "7. Overweight -- extremo bajo"),
+    (8, +0.30, "+30 a 45 %", "8. Obese -- extremo bajo"),
+    (9, +0.45, ">45 %",      "9. Grossly Obese -- LA RECTA SE QUEDA CORTA: daria 40"),
+]
+_PESO_B63 = 20.0
+for _bcs63, _desvio63, _rango63, _cita63 in _TABLA_VII2_B63:
+    _esperado63 = _PESO_B63 / (1.0 + _desvio63)
+    # hacia arriba la corrección va topada al 20 %, que es criterio nuestro
+    if _esperado63 > _PESO_B63 * 1.20:
+        _esperado63 = _PESO_B63 * 1.20
+    _real63 = _bcs_b63(_PESO_B63, _bcs63)
+    if _real63 is None:
+        fallos.append(f"BLOQUE63: en BCS {_bcs63} no se estima peso objetivo, y FEDIAF Tabla "
+                      f"VII-2 da la fila: «{_rango63}» ({_cita63}). Su §7.1.1 dice que la "
+                      f"energia se calcula sobre el peso OPTIMO, sin distinguir direccion")
+        continue
+    if abs(_real63 - _esperado63) > 0.01:
+        fallos.append(f"BLOQUE63: en BCS {_bcs63} el peso objetivo de un perro de 20 kg sale "
+                      f"{_real63} y tenia que ser {_esperado63:.3f} (FEDIAF Tabla VII-2: "
+                      f"«{_rango63}», {_cita63})")
+
+# En BCS 5 no se estima: ya esta en su peso.
+if _bcs_b63(_PESO_B63, 5) is not None:
+    fallos.append("BLOQUE63: en BCS 5 se esta estimando un peso objetivo. Un perro en su peso "
+                  "ideal no tiene nada que corregir")
+
+# ⚠️ Y LAS DOS COPIAS TIENEN QUE DECIR LO MISMO. `der.py` solo corre si alguien
+# llama a `/der` -- que no llama nadie -- pero es una segunda regla escrita, y
+# una segunda regla que nadie ejecuta es justo la que se queda vieja sin que
+# nadie se entere. Es lo que paso con la tabla de patologias del `POST /menu`.
+for _cond63, _bcs_equiv63 in sorted(_COND_B63.items()):
+    for _peso_pr63 in (3.0, 20.0, 55.0):
+        _a63 = _bcs_der_b63(_peso_pr63, _cond63)
+        _b63 = _bcs_b63(_peso_pr63, _bcs_equiv63)
+        if _bcs_equiv63 == 5:
+            continue                    # una devuelve el peso y la otra None, a proposito
+        if _a63 is None or _b63 is None or abs(_a63 - _b63) > 0.02:
+            fallos.append(f"BLOQUE63: las dos reglas de BCS discrepan en condicion {_cond63} "
+                          f"(BCS {_bcs_equiv63}) con {_peso_pr63} kg: der.py dice {_a63} y "
+                          f"verificar.py dice {_b63}. Un numero que decide las kcal del dia no "
+                          f"puede estar escrito dos veces y decir cosas distintas")
+
+# Y con el fallo puesto: si el BCS 9 volviera a 40, el peso objetivo de un perro
+# de 20 kg subiria de 13,79 a 14,29 -- medio kilo mas, o sea mas kcal para el
+# perro que peor lo lleva.
+_v9_b63 = _bcs_b63(20.0, 9)
+if _v9_b63 is not None and abs(_v9_b63 - 20.0 / 1.40) < 0.01:
+    fallos.append("BLOQUE63: el BCS 9 ha vuelto al 40 % de la recta. FEDIAF Tabla VII-2 dice "
+                  "«>45 %», y con 40 el peso objetivo sale medio kilo mas alto en un perro de "
+                  "20 kg -- o sea mas kcal justo para el que peor lo lleva")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 

@@ -1227,3 +1227,46 @@ solver y su espejo en el filtro final.
 **Pregunta abierta para el nutricionista** (no la decide el asistente): con la
 17-1 diciendo 1,5 y la 33-5 diciendo 2,0 para el mismo perro, ¿cuál manda? Lo
 seguro sería 1,5, y hoy sale gratis.
+
+---
+
+## El BCS 9 hay que cambiarlo también en `canislab-web` (9 de septiembre de 2026)
+
+**Aplicado hoy en la API, pendiente en el frontend.** La Tabla VII-2 del Anexo
+7.1 de FEDIAF da la columna «% BW below or above BCS 5» del perro, y puesta al
+lado de nuestra regla del 10 % por punto:
+
+| BCS | FEDIAF | Rawku |
+|---|---|---|
+| 1 | −≥40 % | −40 ✓ |
+| 2 | −30 a 40 % | −30 ✓ |
+| 3 | −20 a 30 % | −20 ✓ |
+| 4 | −10 a 15 % | −10 ✓ |
+| 5 | 0 % | 0 ✓ |
+| 6 | +10 a 15 % | +10 ✓ |
+| 7 | +20 a 30 % | +20 ✓ |
+| 8 | +30 a 45 % | +30 ✓ |
+| **9** | **>45 %** | **+40 ✗** |
+
+O sea que la recta del 10 % lineal **es el extremo bajo de cada rango de
+FEDIAF** —el más conservador— en ocho puntos de nueve. En el noveno la escala
+deja de ser lineal.
+
+**Cambiado en la API**, en las dos copias que había aquí
+(`verificar.peso_objetivo_desde_bcs` y `der.peso_ideal_desde_condicion`), y con
+el BLOQUE 63 comparándolas para que no vuelvan a separarse.
+
+**Falta la tercera copia, en `canislab-web`**: `src/der.js` / `calcularDER()`.
+Mientras no se cambie, un perro con BCS 9 tendrá un peso objetivo distinto según
+quién lo calcule — medio kilo en un perro de 20 kg, y hacia arriba, o sea más
+kcal para el que peor lo lleva.
+
+**Lo que NO hace falta:** regenerar `der_casos.json`. Ninguno de sus 100 casos
+usa `condicion_idx`, así que el contrato del DER no se mueve. Comprobado.
+
+**Y una cosa más que se cerró de paso:** por debajo de BCS 5 la API **ya estima**
+peso objetivo, hacia arriba y topado al +20 %. Antes `verificar.py` devolvía
+`None` (apoyándose en AAHA, que no tiene esas filas) mientras `der.py` sí
+estimaba: dos reglas del mismo repo que discrepaban justo ahí. FEDIAF tiene las
+cuatro filas y su §7.1.1 dice que la energía se calcula sobre el peso óptimo sin
+distinguir dirección.

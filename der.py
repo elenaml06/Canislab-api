@@ -281,7 +281,14 @@ RER_COEF = 70                     # RER = 70 x peso^0.75
 BCS_DESDE_CONDICION = {0: 2, 1: 4, 2: 5, 3: 7, 4: 9}
 # Regla practica aceptada: cada punto de BCS por encima de 5 equivale a un
 # 10% de exceso de peso corporal (y por debajo, a un 10% de defecto).
+#
+# ⚠️ Y LA TABLA VII-2 DE FEDIAF LA CONFIRMA EN OCHO PUNTOS DE NUEVE (9 de
+# septiembre de 2026). Su columna «% BW below or above BCS 5» da un RANGO por
+# punto, y este 10 % lineal es exactamente el extremo bajo de cada uno -- el mas
+# conservador -- de BCS 1 a BCS 8. El unico que no cuadra es el 9: FEDIAF dice
+# «>45 %» y la recta da 40. Ver el comentario largo de `verificar.py`.
 BCS_PCT_POR_PUNTO = 0.10
+EXCESO_BCS_9 = 0.45          # FEDIAF 2025, Tabla VII-2, fila «9. Grossly Obese»
 SOBREPESO_UMBRAL = 1.10           # >=10% por encima del ideal
 INFRAPESO_UMBRAL = 0.90           # >=10% por debajo
 INFRAPESO_AUMENTO = 1.20          # +20%
@@ -311,7 +318,14 @@ def peso_ideal_desde_condicion(peso_actual_kg: float, condicion_idx: int) -> flo
     bcs = BCS_DESDE_CONDICION.get(condicion_idx)
     if bcs is None:
         return None
-    desvio = (bcs - 5) * BCS_PCT_POR_PUNTO      # +0.2 si BCS 7, -0.3 si BCS 2
+    # ⚠️ El 9 va aparte: FEDIAF dice «>45 %» y la recta se queda en 40. Tiene que
+    # decir lo mismo que `verificar.peso_objetivo_desde_bcs`, que es la copia que
+    # sí usa la API -- este modulo solo corre si alguien llama a `/der`. Dos
+    # sitios que calculan lo mismo, y por eso el BLOQUE 63 los compara.
+    if bcs >= 9:
+        desvio = EXCESO_BCS_9
+    else:
+        desvio = (bcs - 5) * BCS_PCT_POR_PUNTO  # +0.2 si BCS 7, -0.3 si BCS 2
     ideal = peso_actual_kg / (1 + desvio)
     # TOPE DE SEGURIDAD hacia arriba. Un perro muy delgado (BCS 2) daria un
     # objetivo un 43% por encima de su peso actual, y pasar de golpe a esa

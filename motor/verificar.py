@@ -306,28 +306,96 @@ BCS_MAXIMO_PUBLICADO = 9.0
 BCS_ESCALA_SATURADA = 9.0    # a partir de aqui la estimacion es una cota inferior
 PCT_POR_PUNTO_BCS = 0.10
 
+# ⚠️ Y LA TABLA VII-2 DE FEDIAF, QUE CONFIRMA LA REGLA EN OCHO PUNTOS DE NUEVE
+# Y LA CORRIGE EN EL NOVENO (9 de septiembre de 2026).
+#
+# El anexo 7.1 de FEDIAF trae la tabla entera, con la columna «% BW below or
+# above BCS 5» para el perro. Puesta al lado de nuestro 10 % por punto:
+#
+#     BCS 1  -≥40 %      nuestra regla: -40      ✓ (extremo bajo del rango)
+#     BCS 2  -30 a 40 %                  -30      ✓
+#     BCS 3  -20 a 30 %                  -20      ✓
+#     BCS 4  -10 a 15 %                  -10      ✓
+#     BCS 5    0 %                         0      ✓
+#     BCS 6  +10 a 15 %                  +10      ✓
+#     BCS 7  +20 a 30 %                  +20      ✓
+#     BCS 8  +30 a 45 %                  +30      ✓
+#     BCS 9  >45 %                       +40      ✗  ← el unico que no cuadra
+#
+# O sea que la regla lineal del 10 % por punto ES el extremo bajo de cada rango
+# de FEDIAF -- el mas conservador, el que menos exceso estima y por tanto el que
+# menos aprieta la racion -- en los ocho primeros. En el noveno la escala deja de
+# ser lineal: FEDIAF dice MAS del 45 % y la recta da 40.
+#
+# Se pasa a 45, que es la frontera de «>45 %» y sigue siendo el extremo bajo de
+# lo que dice la fuente. Y esto convierte en NUMERO CON FUENTE lo que hasta hoy
+# era un razonamiento nuestro: aqui abajo ya estaba escrito que en BCS 9 la
+# estimacion es una COTA INFERIOR porque Broome et al. (2023) ven perros que
+# «exceed the description for score 9». FEDIAF dice lo mismo con una cifra.
+EXCESO_BCS_9 = 0.45          # FEDIAF 2025, Anexo 7.1, Tabla VII-2, fila «9. Grossly Obese»
+
+# ⚠️ Y POR DEBAJO DE BCS 5 AHORA SI SE ESTIMA, tambien por FEDIAF.
+#
+# Hasta hoy esta funcion devolvia None por debajo de 5, con el argumento de que
+# «la Tabla 1 de AAHA empieza en BCS 4 y no tiene columna de % underweight». Eso
+# es cierto de AAHA y falso del conjunto: **FEDIAF si tiene esas cuatro filas**,
+# y su §7.1.1 dice que la energia se calcula sobre el peso OPTIMO -- «Energy
+# requirements should be based on optimal body weight» --, sin distinguir si el
+# perro esta por encima o por debajo.
+#
+# ⚠️ Y HABIA UNA SEGUNDA COPIA QUE YA LO HACIA. `der.peso_ideal_desde_condicion`
+# estima en las dos direcciones desde siempre, con el mismo 10 % por punto. O
+# sea que el repo tenia dos reglas de BCS que discrepaban justo por debajo de 5:
+# una devolvia None y la otra un numero. Es la familia de fallos de siempre --
+# dos sitios que calculan lo mismo de dos maneras -- y se cierra aqui.
+#
+# El TOPE del 20 % hacia arriba se copia de alli, con su motivo, que sigue
+# siendo bueno: un perro muy delgado suele estarlo por una ENFERMEDAD, y pasarlo
+# de golpe a la racion de un peso un 43 % mayor es mala idea.
+TOPE_CORRECCION_AL_ALZA = 1.20
+
 
 def peso_objetivo_desde_bcs(peso_actual_kg, bcs):
     """El peso objetivo estimado desde el BCS, o None si no se puede.
 
-    Devuelve None -y hay que usar el peso real- por debajo o en BCS 5: la
-    regla no existe hacia abajo y AAHA 2021 dice expresamente que en un
-    perro delgado se alimenta sobre el peso ACTUAL.
+    Devuelve None solo EN BCS 5 (ya esta en su peso, no hay nada que estimar) y
+    con datos que no son numeros.
 
-    En BCS 9 devuelve numero, pero es una COTA INFERIOR del exceso: la
-    escala se satura ahi. Quien llame tiene que decirlo (ver
-    `_peso_de_referencia` en main.py).
+    ⚠️ POR DEBAJO DE 5 SI ESTIMA DESDE EL 9 DE SEPTIEMBRE, y hacia ARRIBA: el
+    peso optimo de un perro delgado es mayor que el suyo. Antes devolvia None
+    apoyandose en AAHA 2021 («base feeding calculations on current weight if
+    ideal or underweight»), pero **FEDIAF tiene las cuatro filas de BCS 1 a 4 en
+    su Tabla VII-2** y su §7.1.1 dice que la energia se calcula sobre el peso
+    optimo sin distinguir direccion. Manda FEDIAF.
+
+    La correccion al alza se topa en +20 % (`TOPE_CORRECCION_AL_ALZA`), que es
+    criterio nuestro y esta explicado alli.
+
+    En BCS 9 el exceso es 45 % y no 40: FEDIAF dice «>45 %» y la recta del 10 %
+    por punto se queda corta justo ahi. Sigue siendo una COTA INFERIOR -- Broome
+    et al. (2023) ven perros por encima de esa descripcion -- y quien llame tiene
+    que poder decirlo (ver `_peso_de_referencia` en main.py).
     """
     try:
         p = float(peso_actual_kg)
         b = float(bcs)
     except (TypeError, ValueError):
         return None
-    if p <= 0 or b <= BCS_NEUTRO or b > BCS_MAXIMO_PUBLICADO:
+    if p <= 0 or b <= 0 or b > BCS_MAXIMO_PUBLICADO:
         return None
-    exceso = PCT_POR_PUNTO_BCS * (b - BCS_NEUTRO)
-    # SE DIVIDE: el exceso esta medido SOBRE EL IDEAL, no sobre el actual.
-    return round(p / (1.0 + exceso), 3)
+    if b == BCS_NEUTRO:
+        return None                       # ya esta en su peso: no hay nada que estimar
+    if b >= BCS_ESCALA_SATURADA:
+        # FEDIAF Tabla VII-2: «>45 %». La recta daria 40 y se queda corta.
+        exceso = EXCESO_BCS_9
+    else:
+        exceso = PCT_POR_PUNTO_BCS * (b - BCS_NEUTRO)
+    # SE DIVIDE: el desvio esta medido SOBRE EL IDEAL, no sobre el actual.
+    ideal = p / (1.0 + exceso)
+    # Y hacia arriba, el tope del 20 %: ver `TOPE_CORRECCION_AL_ALZA`.
+    if ideal > p * TOPE_CORRECCION_AL_ALZA:
+        ideal = p * TOPE_CORRECCION_AL_ALZA
+    return round(ideal, 3)
 
 
 def _factor_condicional(nombre_req, etapa):

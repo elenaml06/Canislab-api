@@ -3506,3 +3506,57 @@ motor solo sabe bloquear patologías sueltas.
 Escrito en `patologias.json` (`nota_urolito_compuesto`, en las dos) y como
 PREGUNTA 37 y 38 en `PARA_EL_NUTRICIONISTA.md`. No se bloquea porque cuál es el
 núcleo sale del análisis de la piedra, un dato que la app no pide.
+
+### Capítulos 51 y 61 · Las dos introducciones del aparato digestivo — leídas enteras
+
+Cortas las dos, y de las 26 sin citar. **No traen números**, traen listas — que
+es justo lo que un barrido de tablas de «key nutritional factors» no recoge,
+porque no son esas tablas.
+
+**Tabla 51-1, trastornos gástricos por raza.** Dilatación-vólvulo gástrico:
+basset hound, dóberman, setter gordon, **gran danés**, setter irlandés, san
+bernardo, weimaraner. Estenosis pilórica: boston terrier, bóxer, gato siamés.
+
+**Tabla 61-3, trastornos colónicos por raza.** Flatulencia: braquicéfalos.
+Gastroenteritis hemorrágica: teckel, schnauzer miniatura, caniche toy. Síndrome
+de intestino irritable: razas de trabajo y toy. Colitis ulcerativa: **bóxer y
+bulldog francés**.
+
+**Lo que esto abre, y no es motor:** Rawku ya tiene `riesgo_gdv` con un aviso muy
+completo —comprobado antes de escribir esto, para no descubrir otra vez algo que
+ya está— pero **el dueño tiene que marcarlo**. La app sabe la raza (la usa para
+el DER). Podría **sugerirlo** a las siete razas que la fuente nombra, en vez de
+esperar a que alguien lo sepa. Lo mismo con la colitis ulcerativa del bóxer.
+
+Es decisión de producto y va a `PENDIENTE_PRODUCTO.md`, no al motor.
+
+### Capítulo 49 · Enfermedades orales — leído entero
+
+La Tabla 49-2 era una de las once «sin mirar», y al leerla resulta que **no pide
+ni un nutriente**. Sus tres factores son:
+
+| Factor | Lo que pide |
+|---|---|
+| Agua | mantener el equilibrio, oral o parenteral |
+| Densidad energética | **>4,5 kcal/g de materia seca** en perro |
+| Forma del alimento | líquido o papilla, que se aceptan mejor |
+
+Es una tabla de **forma**, no de nutrición: densidad energética y textura. El
+motor no modela ninguna de las dos, y para esta indicación la fuente **no pide un
+perfil distinto de nutrientes**. Así que «enfermedad oral» no sería una patología
+del motor, sería un consejo — y eso **baja de once a diez** las tablas de
+requisito canino que de verdad faltan por mirar.
+
+El manejo que sí es accionable: **varias comidas pequeñas al día**, y enjuagar la
+boca con agua después de cada una para que no se queden restos pegados a las
+lesiones.
+
+**Tabla 49-1, razas**: paladar hendido en braquicéfalos; épulides en bóxer;
+gingivitis y estomatitis en maltés y husky siberiano; neoplasia oral en cocker,
+pastor alemán, braco alemán de pelo corto, golden retriever y weimaraner.
+
+Y un dato nutricional suelto que conviene no perder: *«Oral congenital anomalies
+such as cleft palate… may have nutritional causes (e.g., **copper deficiency in
+pregnant queens**)»*. Es en gata, no en perra, así que no se aplica — pero es la
+primera vez que aparece un déficit de cobre en gestación con consecuencia
+malformativa, y nuestro mínimo de cobre no distingue etapa reproductora.

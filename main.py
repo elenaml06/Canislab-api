@@ -49,7 +49,8 @@ from motor_completo import PATOLOGIAS, topes_de_patologias, RAZA_GRANDE_O_GIGANT
 from exclusiones import filtrar as filtrar_exclusiones
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
 from verificar import verificar as verificar_v2
-from verificar import peso_objetivo_desde_bcs, BCS_ESCALA_SATURADA
+from verificar import (peso_objetivo_desde_bcs, BCS_ESCALA_SATURADA,
+                       BCS_NEUTRO as BCS_NEUTRO_MAIN)
 # ⚠️ El DER por kg de peso metabólico, que es lo que dispara el escalado de los
 # mínimos. Se importa de `verificar` y no se recalcula aquí: es el único sitio
 # que sabe hacerlo, y dos copias de esta cuenta serían dos criterios.
@@ -541,10 +542,21 @@ def _peso_de_referencia(datos):
             # nada- pero quien lea la respuesta tiene que poder verlo.
             if float(bcs) >= BCS_ESCALA_SATURADA:
                 return derivado, "derivado_del_bcs_cota_inferior"
+            # ⚠️ Y POR DEBAJO DE 5 TAMBIEN SE ESTIMA DESDE EL 9 DE SEPTIEMBRE,
+            # hacia ARRIBA: el peso óptimo de un perro delgado es mayor que el
+            # suyo. Aquí ponía que «la regla no existe hacia abajo», apoyándose
+            # en AAHA 2021 -- y era verdad de AAHA y falso del conjunto: FEDIAF
+            # tiene las cuatro filas de BCS 1 a 4 en su Tabla VII-2, y su §7.1.1
+            # dice que la energía se calcula sobre el peso óptimo sin distinguir
+            # dirección. Manda FEDIAF.
+            #
+            # Se devuelve con procedencia propia porque la corrección al alza va
+            # topada al 20 % (un perro muy delgado suele estarlo por una
+            # enfermedad), así que en BCS 1, 2 y 3 el número es el tope y no la
+            # estimación.
+            if float(bcs) < BCS_NEUTRO_MAIN:
+                return derivado, "derivado_del_bcs_por_debajo_del_ideal"
             return derivado, "derivado_del_bcs"
-        # Por debajo de BCS 5 no se estima: la regla no existe hacia abajo
-        # y AAHA 2021 dice lo contrario -«base feeding calculations on
-        # current weight if ideal or underweight»-. Se usa el peso real.
     if actual:
         return float(actual), "peso_real_sin_objetivo"
     return None, "sin_peso"
@@ -4408,8 +4420,19 @@ def verificar():
     import hashlib, os, json
     SELLOS = SELLOS_DE_LOS_DATOS
     SELLOS_CRUDOS = {
-        "der.py": "899fcb431743286a",   # 8 sep: el DER verificado contra FEDIAF 2025 (Tablas VII-7 y VII-8b) y cerrado -- ver DECISIONES.md D-11. Cambian TRES cosas: se quita el tope de x6 RER en lactancia (no es de FEDIAF y recortaba hasta un 33 %), se adoptan las dos razas con cifra propia de FEDIAF (Gran Danes 200, Terranova 105; un Gran Danes recibia el 55 % de lo que le toca), y el respaldo de crecimiento pasa a la regla de SACN5 por edad (3 x RER hasta los 4 meses, 2 x RER despues) -- de sus tres escalones viejos, DOS eran codigo muerto. Lo vigila el BLOQUE 54.
+        "der.py": "ec3bfbaaec0370be",   # 8 sep: el DER verificado contra FEDIAF 2025 (Tablas VII-7 y VII-8b) y cerrado -- ver DECISIONES.md D-11. Cambian TRES cosas: se quita el tope de x6 RER en lactancia (no es de FEDIAF y recortaba hasta un 33 %), se adoptan las dos razas con cifra propia de FEDIAF (Gran Danes 200, Terranova 105; un Gran Danes recibia el 55 % de lo que le toca), y el respaldo de crecimiento pasa a la regla de SACN5 por edad (3 x RER hasta los 4 meses, 2 x RER despues) -- de sus tres escalones viejos, DOS eran codigo muerto. Lo vigila el BLOQUE 54.
         # 6 sep: 3 correcciones de cita en comentarios (VII-7 no VII-6, Thes 2015 no 2014, y el escalon 210/175/140 no es tabla de FEDIAF) -- ningun numero ni comportamiento cambia.
+        # ⚠️ 9 sep: SELLO MOVIDO, y solo cambia UN numero. El BCS 9 pasa de un
+        # exceso del 40 % a uno del 45 %, porque la Tabla VII-2 del Anexo 7.1 de
+        # FEDIAF dice «>45 %» y la recta del 10 % por punto se queda corta justo
+        # ahi. La misma tabla CONFIRMA la recta en los otros ocho puntos: nuestro
+        # 10 % lineal es el extremo bajo de cada uno de sus rangos, de BCS 1 a 8.
+        # || Ninguno de los 100 casos de `der_casos.json` usa `condicion_idx`, asi
+        # que el contrato del DER no se mueve y no hay que regenerarlo ni copiarlo
+        # al otro repo. Lo que SI hay que hacer alli es el mismo cambio en la copia
+        # de `src/der.js`: esta anotado en PENDIENTE_NUTRICION.md.
+        # || Lo vigila el BLOQUE 63, que compara la tabla de FEDIAF fila a fila y
+        # ademas las DOS copias de la regla de BCS que hay en este repo.
     }
     base = os.path.dirname(os.path.abspath(__file__))
     detalle, todo_ok = [], True
