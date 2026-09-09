@@ -157,17 +157,38 @@ AJUSTE_RAZA = 15
 # en perro "range between 95 to 200 kcal ... per (BWkg)0.75 per day", o sea
 # que es el extremo alto del rango publicado, no un caso raro.
 #
-# ⚠️ CÓMO SE APLICA, Y ESTO ES INTERPRETACION NUESTRA. FEDIAF pone las dos
-# filas DENTRO de la tabla de actividad, con un valor central y un rango,
-# pero sin cruzarlas con los cinco niveles. Lo que se hace:
+# ⚠️ CÓMO SE APLICA: LA CIFRA DE RAZA VA EN VEZ DEL NIVEL DE ACTIVIDAD.
+# No es un suelo sobre el que se aplique la actividad, ni un ajuste que se
+# sume. Lo dice la propia guia dos veces (leido entero el 9 de septiembre, al
+# cerrar PREGUNTAS_ABIERTAS.md P-11):
+#
+#   · La frase que presenta la tabla: "Table VII-7 provides examples of daily
+#     energy requirements of dogs at different activity levels, FOR SPECIFIC
+#     BREEDS and for obese prone adults". Tres clases de fila en paralelo, la
+#     misma columna y el mismo coeficiente: la fila de raza es ALTERNATIVA a
+#     la de actividad, igual que "obese prone adults <=90" es una alternativa
+#     y no un descuento sobre el 95 del sedentario.
+#   · Y la seccion 7.2.3.4 "Breed & type", que dice de que esta hecha esa
+#     diferencia: "Breed-specific needs probably reflect differences in
+#     temperament, RESULTING IN HIGHER OR LOWER ACTIVITY, as well as variation
+#     in stature or insulation capacity of skin and hair coat". O sea que la
+#     diferencia de raza YA CONTIENE la de actividad: sumar un nivel encima
+#     seria contar dos veces lo mismo.
+#
+# ⚠️ LO UNICO QUE SIGUE SIENDO INTERPRETACION NUESTRA es donde caer DENTRO del
+# rango publicado, porque FEDIAF da 200 (200-250) y 105 (80-132) y ninguna
+# regla para colocarse. Lo que se hace:
 #   · el valor central sustituye a la base de "normal";
-#   · el nivel de actividad sigue moviendo lo mismo que movia (la diferencia
-#     contra "normal"), porque un Gran Danes sedentario no gasta lo mismo que
-#     uno de trabajo;
+#   · el nivel de actividad coloca dentro del rango moviendo lo mismo que
+#     movia (su diferencia contra "normal");
 #   · y el resultado se RECORTA al rango que publica la propia FEDIAF, para
 #     no salirse de la fuente por interpretar de mas.
-# La pregunta de si eso es lo que FEDIAF quiere decir esta en
-# PREGUNTAS_ABIERTAS.md P-11, con dueño.
+# Consecuencia: para el Gran Danes "en vez de" y "suelo" acaban coincidiendo,
+# porque 200 es a la vez el centro y el extremo bajo de su rango, y ningun
+# ajuste a la baja (sedentario, senior) puede pasar de ahi. Para el Terranova
+# no coinciden, porque su rango abre a los dos lados: 90 sedentario, 132
+# trabajo. Ese es el caso que separa las tres lecturas, y por eso lo fija el
+# BLOQUE 54 apartado 2-bis.
 RAZAS_CIFRA_FEDIAF = {
     # raza -> (central, minimo, maximo) en kcal/kg^0.75
     "Gran Danés": (200.0, 200.0, 250.0),

@@ -175,41 +175,75 @@ DER  = (base por actividad + ajustes) × peso^0,75
 
 **Estado: los cinco escalones de actividad, VERIFICADOS** el 8 de septiembre
 contra la Tabla VII-7 de FEDIAF 2025 («Recommendations for DER in relation to
-activity»): 95 · 110 · 125 · 150-175, exactos. Y hay un contrato de **85
-casos** con sus kcal esperadas, que se comprueba en cada batería.
+activity»): 95 · 110 · 125 · 150-175, exactos. Y hay un contrato de **100 casos**
+con sus kcal esperadas, que se comprueba en cada batería.
 
-⚠️ **PERO ESA MISMA TABLA TRAE DOS FILAS QUE EL MOTOR NO USA, Y UNA DUELE.**
-Verificado leyendo la tabla entera, no solo la parte que ya estaba citada:
+**Y esa misma tabla trae dos filas más que el motor no usaba. Ya las usa.**
 
 | Fila de FEDIAF VII-7 | Qué dice | Qué hace el motor |
 |---|---|---|
-| **Great Danes** | **200 (200-250) kcal/kg^0,75** | Nada. Su máximo es 175 («trabajo») |
-| **Newfoundlands** | **105 (80-132)** | Nada |
+| **Great Danes** | **200 (200-250) kcal/kg^0,75** | La aplica desde el 8 de septiembre |
+| **Newfoundlands** | **105 (80-132)** | Íd. |
 | Obese prone adults | ≤ 90 | Usa RER del peso ideal (70), **más estricto** — ver §1.4 |
 
-**Las dos razas están en la lista de la app.** Medido:
+Las dos razas están en la lista de 136 de la app y no se usaban. Lo que
+costaba, medido:
 
-| Perro | FEDIAF, específico de su raza | Motor en «normal» (110) | Le damos |
+| Perro | FEDIAF, específico de su raza | Motor antes, en «normal» (110) | Le dábamos |
 |---|---|---|---|
 | Gran Danés 67,5 kg | **4710 kcal/día** | 2590 kcal/día | **el 55 %** |
 | Terranova 56,5 kg | 2164 kcal/día | 2267 kcal/día | el 105 % |
 
-El Gran Danés se queda **2100 kcal/día corto** si su dueño marca «normal».
-Y no es una cifra rara: SACN5 cap. 5 dice que las estimaciones de DER en
-perro *«range between 95 to 200 kcal … per (BWkg)0.75 per day»*, o sea que
-200 es el extremo alto del rango publicado, no un valor extremo.
+Un gran danés se quedaba **2100 kcal/día corto** si su dueño marcaba «normal».
+Y los 200 no son un valor extremo: SACN5 cap. 5 dice que las estimaciones de
+DER en perro *«range between 95 to 200 kcal … per (BWkg)0.75 per day»*.
 
-El ajuste por raza que sí tiene el motor (±15 kcal/kg^0,75, Thes 2014) **no
-incluye a ninguna de las dos**.
+**¿En vez del nivel de actividad, o el suelo sobre el que se aplica? EN VEZ
+DE, y lo dice la propia guía dos veces.** Primero la frase que presenta la
+tabla:
 
-> **PREGUNTA 4-bis (bloqueante).** ¿Adoptamos las cifras de FEDIAF para Gran
-> Danés y Terranova? Y si sí: ¿esos 200 kcal/kg^0,75 son **en vez** del nivel
-> de actividad, o el suelo sobre el que se aplica? La tabla los pone bajo
-> «DER in relation to activity» pero sin cruzarlos con los cinco niveles.
+> *«Table VII-7 provides examples of daily energy requirements of dogs at
+> different activity levels, for specific breeds and for obese prone adults.»*
+
+Tres clases de ejemplo en paralelo, la misma columna y el mismo coeficiente:
+una fila de raza es una alternativa a una fila de actividad, igual que
+`Obese prone adults ≤ 90` es una alternativa y no un descuento sobre el 95.
+Y después la sección **7.2.3.4 «Breed & type»**, que dice de qué está hecha
+esa diferencia:
+
+> *«Breed-specific needs probably reflect differences in temperament,
+> resulting in higher or lower activity, as well as variation in stature or
+> insulation capacity of skin and hair coat.»*
+
+La diferencia de raza **ya contiene** la de actividad. Sumar un nivel de
+actividad encima sería contarla dos veces.
+
+**Lo único que FEDIAF no resuelve es dónde caer dentro del rango que publica.**
+Da `200 (200-250)` y `105 (80-132)` y ninguna regla para colocarse dentro. El
+motor coloca por actividad —su diferencia contra «normal»— y recorta al rango
+de FEDIAF, de forma que ningún resultado sale de lo que publica la fuente.
+Esa parte es interpretación nuestra, y se declara:
+
+| Gran Danés 67,5 kg | coef | kcal/día |
+|---|---|---|
+| sedentario | 200 (recortado) | 4710 |
+| normal | 200 | 4710 |
+| activo | 215 | 5063 |
+| muy activo | 240 | 5652 |
+| trabajo | 250 (recortado) | 5887 |
+| senior, normal | 200 (recortado) | 4710 |
+
+Para el gran danés «en vez de» y «suelo» acaban coincidiendo, porque 200 es a
+la vez el valor central y el extremo bajo de su rango: ningún ajuste a la baja
+puede bajar de ahí. Para el terranova no coinciden — su rango abre hacia los
+dos lados, y va de 90 (sedentario) a 132 (trabajo).
+
+El ajuste por raza de Thes 2014 (±15 kcal/kg^0,75) **no se aplica encima** de
+estas dos: ya tienen cifra propia medida.
 
 **Lo que hay que saber:** el DER se calcula **en dos sitios** (servidor y
 app), y manda el de la app. Es una duplicación conocida, y por eso existe el
-contrato de 85 casos: los dos lados se comprueban contra el mismo fichero.
+contrato de 100 casos: los dos lados se comprueban contra el mismo fichero.
 
 > **PREGUNTA 4.** El ajuste por raza (±15 kcal/kg^0,75) sale de un solo
 > estudio de 586 perros y son 20 razas concretas. ¿Lo mantendrías, o es
@@ -231,10 +265,17 @@ marcos casi coinciden:
 Los tres primeros cuadran casi exactos. Los de trabajo, el motor se queda
 **por debajo** de SACN5 (175 contra 210 en trabajo moderado).
 
+> **La segunda mitad de esta pregunta la contesta FEDIAF** (9 de septiembre): su
+> propia fila para esa descripción es *«High activity (3-6 h/day) (working dogs, e.g.
+> sheep dogs) — 150-175»*, y 175 es su extremo alto. Los 210 son 3,0 × RER de la
+> escala **paralela** de SACN5: son dos marcos distintos y mezclarlos cuenta dos veces
+> lo mismo. Manda FEDIAF. *(Y por encima FEDIAF solo tiene «High activity under
+> extreme conditions (racing sled dogs 168 km/d in extreme cold) — 860-1240», que esta
+> app no cubre y tendría que pautar un veterinario.)*
+
 > **PREGUNTA 5.** Los cinco escalones de actividad los elige el DUEÑO en la
-> app, describiendo a su perro. ¿Hay alguna forma mejor de preguntarlo, o
-> algún escalón que sobre o falte? Y en concreto: ¿el escalón «trabajo» (175)
-> debería llegar a los 210 de «moderate work» de SACN5?
+> app, describiendo a su perro. ¿Hay alguna forma mejor de preguntarlo, o algún
+> escalón que sobre o falte?
 
 ### 1.2 · Crecimiento
 
@@ -256,30 +297,33 @@ una curva continua, sin saltos al cruzar el 50 % y el 80 % del peso adulto.
 Klein también documenta que el NRC 2006 sobreestima ~20 % en menores de 6
 meses.
 
-**Si no se conoce el peso adulto esperado**, se cae a los escalones
-210/175/140 kcal/kg^0,75. No están en FEDIAF (se comprobó el PDF entero el 6
-de septiembre).
-
-⚠️ **VERIFICADO EL 8 DE SEPTIEMBRE: DOS DE LOS TRES SÍ TIENEN FUENTE, Y EL
-DE EN MEDIO NO.** SACN5 Tabla 5-2, parte 2 (canina), literal:
+**Si no se conoce el peso adulto esperado** se cae a un camino de respaldo,
+que hasta el 8 de septiembre eran tres escalones —**210 / 175 / 140**
+kcal/kg^0,75 por tramos del 50 % y el 80 % del peso adulto— y ahora son dos,
+cortados por edad. FEDIAF no cubre este caso: su ecuación de crecimiento
+necesita el peso adulto. La única fuente con cifra es SACN5 Tabla 5-2, parte 2
+(canina), literal:
 
 > *«Daily energy intake for growing puppies should be 3 x RER from weaning
 > until four months of age. At four months of age energy intake should be
 > reduced to 2 x RER until the puppy reaches adult size.»*
 
-3 × RER = **210** ✓ · 2 × RER = **140** ✓ · **2,5 × RER = 175 no está en
-ninguna parte**: lo pusimos nosotras.
+3 × RER = **210** ✓ · 2 × RER = **140** ✓ · **2,5 × RER = 175 no estaba en
+ninguna parte**: lo habíamos puesto nosotras. Y el criterio de corte tampoco
+coincidía — SACN5 corta **por edad** y el motor cortaba **por % del peso
+adulto**, que en este camino ni se conoce. Se aplicó la fuente: **210 antes de
+los 4 meses, 140 desde los 4 meses**.
 
-**Y el criterio de corte tampoco es el mismo:** SACN5 corta **por edad** (4
-meses); el motor corta **por % del peso adulto** (50 % y 80 %).
-
-> **PREGUNTA 6-bis.** ¿El escalón intermedio de 2,5 × RER tiene sentido
-> clínico, o hay que quedarse con los dos de SACN5? ¿Y cortar por edad o por
-> % del peso adulto?
+⚠️ **Debajo había un segundo fallo, y es el que dolía.** El código leía
+**siempre el último** escalón, en los dos repos: un cachorro de dos meses sin
+peso adulto esperado recibía **140**, que es lo que SACN5 da para *después* de
+los cuatro meses. El escalón sin fuente no solo sobraba: tapaba que los otros
+dos no se estaban usando.
 
 > **PREGUNTA 6.** ¿Klein 2019 te parece la referencia correcta para
-> crecimiento en una app de consumo? ¿Y el respaldo 210/175/140 cuando no se
-> sabe el peso adulto, o preferirías que la app exigiera ese dato?
+> crecimiento en una app de consumo? ¿Y el respaldo de SACN5 (210 antes de los
+> 4 meses, 140 después) cuando no se sabe el peso adulto, o preferirías que la
+> app exigiera ese dato?
 
 ### 1.3 · Gestación y lactancia
 
@@ -423,9 +467,19 @@ del adulto:
 | Techo de fósforo | **1750** mg/1000 kcal | SACN5 Tabla 14-2 (el adulto joven tiene 2000) |
 | Techo de sodio | **1000** mg/1000 kcal | SACN5 Tabla 14-2 |
 
-> **PREGUNTA 10.** ¿Le falta algo más al senior? En concreto: ¿algún
-> antioxidante, o un mínimo de proteína por encima de esos 45 para compensar la
-> menor eficiencia de síntesis proteica de la edad?
+> **PREGUNTA 10 — contestada en parte el 9 de septiembre, leyendo la Tabla 14-2
+> entera.** «Key nutritional factors for foods for mature dogs» da, literal, tres
+> antioxidantes con cifra: **Vitamin E 400 IU/kg · Vitamin C ≥100 mg/kg · Selenium
+> 0.5 to 1.3 mg/kg** de materia seca. Convertidos (÷4): **67,1 mg · 25 mg · 125-325
+> µg por 1000 kcal**. Ninguno se aplica hoy al senior. Los mismos 400 UI de vitamina E
+> ya se aplican a la obesidad, así que la cifra no es nueva en el motor.
+> **Y contesta la otra mitad en contra**: la proteína **no** sube. Su rango es
+> *«Protein (%) 15-23»* = 37,5-57,5 g/1000 kcal, y el extremo bajo queda **por debajo**
+> del mínimo de FEDIAF (52,10) que ya aplicamos.
+> ⚠️ El extremo alto del selenio (325 µg) **supera el máximo legal de FEDIAF**
+> (142 µg), así que ese rango no se puede aplicar entero: mandaría el legal.
+> Lo que queda por decidir es tuyo: **¿se aplican los tres al senior, sabiendo que
+> son de una tabla de alimentos comerciales, o alguno sobra en una ración cruda?**
 
 ---
 
@@ -483,8 +537,16 @@ are safe for healthy dogs. **Higher levels may still be safe, but no
 scientific data are available.**»* O sea: FEDIAF no lo llama máximo. **Usarlo
 como techo duro es criterio nuestro**, del lado prudente.
 
-> **PREGUNTA 11.** ¿Está bien tratar el «hasta aquí hay datos» de la nota c
-> como un techo que impide entregar el menú? ¿O debería ser un aviso?
+> **PREGUNTA 11 — reducida el 9 de septiembre, leyendo la nota c entera.** Dice,
+> literal: *«Scientific data show that sodium levels up to 1.5 % DM (3.75 g/1000
+> kcal) and chloride levels up to 2.35 % DM (5.87 g/1000 kcal) are safe for healthy
+> dogs. **Higher levels may still be safe, but no scientific data are available.»*
+> O sea que la nota **no es un máximo**: es hasta dónde llegan los datos, y la propia
+> frase dice que por encima puede seguir siendo seguro. Tratarlo como techo duro es
+> más estricto que la fuente, y consta. Lo que queda es la decisión de producto:
+> **¿se mantiene el lado estricto, o pasa a aviso?** Con el dato al lado: en adulto
+> no llega a morder nunca, porque el techo de sodio del perro sano (1000 mg) está
+> muy por debajo de esos 3750.
 
 **Nutrientes sin máximo en FEDIAF, y el motor no les pone ninguno:** proteína,
 grasa, vitamina E, las vitaminas del grupo B, colina, potasio, magnesio,
@@ -503,7 +565,27 @@ Y por debajo de ese máximo legal actúa el techo del libro para el perro **sano
 (Tabla 14-2). Es la mitad del de FEDIAF, y es el que aprieta de verdad: una
 ración cruda de este motor sale pegada a los 4000 sin él.
 
-> **PREGUNTA 12.** El techo del perro sano son **2000 mg/1000 kcal**, del libro,
+> **PREGUNTA 12 — reducida el 9 de septiembre, leyendo Dobenecker 2021 entero.**
+> El estudio contesta la pregunta tal y como estaba formulada: **sí, la forma importa,
+> y lo demuestra con el fósforo total igualado entre los brazos.** Mismos perros,
+> cuatro dietas, todas a **1,7 % MS de fósforo (cinco veces la RDA)**, cambiando solo
+> la fuente: fosfato inorgánico (NaH2PO4, KH2PO4) contra fósforo orgánico (harina de
+> ave como única fuente). Resultado literal:
+> *«Pi (KH2PO4, NaH2PO4) **but not organic P** caused an increased apparent P
+> digestibility and significantly influenced kinetics of serum FGF23, parathyroid
+> hormone, P, CrossLaps and bone-specific alkaline phosphatase»*, y la conclusión:
+> *«**The use of Pi in food can therefore not be considered as safe.**»*
+> El brazo orgánico, a ≈4250 mg/1000 kcal —por encima del máximo de FEDIAF— no alteró
+> la homeostasis. Nuestra ración no lleva ni un fosfato añadido: es hueso e
+> hidroxiapatita y carne.
+> **Lo que el estudio no contesta, y es lo que queda**: si por eso se suelta el techo
+> del libro. SACN5 lo recomienda sobre fósforo TOTAL y por otra línea de evidencia.
+> La pregunta pasa a ser mucho más estrecha: **sabiendo que el daño documentado es del
+> fosfato inorgánico y que aquí no hay ninguno, ¿se mantienen los 2000 o se sube hasta
+> el máximo de FEDIAF (4000)?**
+>
+> *(Lo que decía antes, y sigue en pie como contexto:)* El techo del perro sano son
+> **2000 mg/1000 kcal**, del libro,
 > no de FEDIAF. ¿Es el número correcto para una ración cruda, o en un alimento
 > húmedo y sin fosfatos añadidos el fósforo del hueso se comporta distinto? Lo
 > preguntamos porque **NRC 2006** dice que no hay datos para fijar un límite
@@ -601,13 +683,27 @@ cargan cambiados **no salta nada**: el menú sale verde igual. Hay una prueba
 dedicada, y una auditoría que señala los nueve alimentos donde el omega-3
 supera al omega-6.
 
-> **PREGUNTA 15.** ¿Mantenemos el mínimo de EPA+DHA de adulto del NRC, lo
-> subimos, lo bajamos, o lo convertimos en recomendación en vez de requisito
-> duro?
+> **PREGUNTA 15 — reducida el 9 de septiembre, leyendo el NRC entero en ese punto.**
+> El NRC lo llama **adequate intake**, no requisito, y lo dice con todas las letras:
+> *«A specific requirement for long-chain n-3 PUFAs (EPA and DHA) in adult dogs has
+> not been identified to date. ... However, an AI of 0.11 g per 1,000 kcal of
+> combined EPA and DHA for overall health is recommended based on studies in other
+> species including humans, and pet food usage data. ... small variations in amounts
+> of both of these n-3 LCPUFAs are acceptable until more data become available.»*
+> O sea que la fuente ni lo exige ni lo cuantifica como mínimo, y tolera variación.
+> Aplicarlo como requisito duro es más estricto que la fuente. La decisión que queda
+> es tuya y es más estrecha: **¿requisito duro, o recomendación que se dice y no
+> bloquea?**
 
-> **PREGUNTA 16.** ¿El SUL de 2800 mg aplicado al **promedio semanal** es la
-> lectura correcta de «concentración de la dieta habitual»? ¿O el promedio
-> debería ser de más días?
+> **~~PREGUNTA 16~~ — CERRADA el 9 de septiembre. El promedio semanal es la lectura
+> estricta, no la laxa.** El SUL sale de perros **alimentados con esas dietas durante
+> 12 semanas** — *«impaired cellular immunity when dogs were fed diets containing
+> 3.13 percent ME n-3 LCPUFAs ... for 12 weeks (Wander et al., 1997)»* — y se contrasta
+> con la ingesta poblacional groenlandesa a largo plazo. Es una **concentración de la
+> dieta sostenida durante semanas**, así que promediar 7 días es exigir más, no menos.
+> ⚠️ **Lo que sí conviene saber**: el SUL del NRC es de n-3 LCPUFA **totales** y
+> nosotras lo aplicamos a **EPA+DHA**, que deja fuera el DPA presente en muchas
+> fuentes naturales. Por ese lado somos permisivas, y queda declarado.
 
 ---
 
@@ -646,13 +742,26 @@ estaba dando menús malos. Se cerró igual.
 los 6 meses: el motor no distingue esa sub-fase, y quedarse con el valor más
 exigente es el lado seguro.
 
-> **PREGUNTA 17.** ¿Es correcto aplicar el requisito reforzado de raza grande
-> a **toda** la fase de crecimiento tardío, en vez de solo hasta los ~6 meses
-> como dice la nota b? Es más estricto que la fuente, a propósito.
+> **PREGUNTA 17 — reducida el 9 de septiembre, leyendo la nota b entera.** Dice,
+> literal: *«For puppies of breeds with adult body weight over 15 kg, until the age
+> of about 6 months. Only after that time, calcium **can be** reduced to 0.8 % DM
+> (2 g/1000 kcal or 0.48 g/MJ) and the calcium-phosphorus ratio **can be** increased
+> to 1.8/1.»* O sea que la fuente no obliga a relajar a los 6 meses: **lo permite**.
+> Mantenerlo toda la fase no contradice la nota, es declinar un permiso. Lo que
+> queda por decidir es solo si merece la pena declinarlo, y esa parte sí es tuya:
+> **¿hay motivo clínico para soltar el refuerzo a los 6 meses, o el lado estricto es
+> preferible?**
 
-> **PREGUNTA 18.** El umbral de «raza grande» es **15 kg de peso adulto
-> esperado**, que es lo que dicen las notas a y b. ¿Hay algún matiz por raza
-> (gigantes vs. grandes) que deberíamos recoger?
+> **~~PREGUNTA 18~~ — CERRADA el 9 de septiembre. Sí hay matiz, y es del gran danés,
+> no de «los gigantes».** FEDIAF lo dice en el texto de calcio, literal:
+> *«During later growth up to 1.8 % DM can be fed to all breed dogs including giant
+> breeds **with the exception of great Danes**. This breed may be more susceptible
+> and it is preferable to continue with a food containing a maximum calcium content
+> of 1.6%.»*
+> 1,6 % MS = **4000** mg/1000 kcal contra los **4500** del resto. Y no hace falta
+> implementarlo aparte: el techo del libro para un cachorro de más de 25 kg de adulto
+> esperado, aplicado desde el 9 de septiembre, son **2750** — por debajo de los dos.
+> El matiz del gran danés ya está cubierto, y por abajo.
 
 ---
 
@@ -670,7 +779,7 @@ los pusimos nosotras.**
 | **Tiaminasa** (sardina, caballa, arenque, boquerón, carpa, atún, gamba, langostino) | ≤10 % de las kcal del día | Markovich, Heinze & Freeman 2013, *JAVMA* 243(5):649 | ⚠️ **Nuestro.** La literatura dice «proporción sustancial de la dieta», sin cifra |
 | **Mercurio** (atún) | ≤10 % de las kcal del día | Merck Vet Manual; datos FDA de contenido real | ⚠️ **Nuestro**, extrapolado de la dosis de referencia humana de la EPA. **No existe límite canino**: lo dice Dunham-Cheatham et al. 2019, *Sci Total Environ* 684:276-280 |
 | **Vitamina D** | 2,6 µg/kg^0,75 y 20 µg/1000 kcal | Lenox & Bauer 2013; NRC 2006 | De fuente |
-| **Yodo** | 1400 µg/1000 kcal (+50 % de margen si viene de kelp) | NRC 2006 | De fuente |
+| **Yodo** | **1275** µg/1000 kcal (+50 % de margen si viene de kelp) | NRC 2006, Belshaw 1975 | De fuente |
 | **Selenio** | 570 µg/1000 kcal | AAFCO (= 2 mg/kg MS de Merck) | De fuente |
 | **EPA+DHA semanal** | 2,8 g/1000 kcal de promedio | NRC 2006 vía Lenox & Bauer | De fuente |
 | **Clara de huevo cruda** | ≤5 % del peso | Avidina/biotina | ⚠️ **El ÚNICO con daño medido** (al 20 %) |
@@ -695,7 +804,7 @@ que no pueden morder jamás:
 | Vitamina D (por kcal) | 20 µg/1000 kcal | **14,19 µg** (legal) | ❌ **nunca se activa** |
 | Vitamina D (por peso metabólico) | 2,6 µg/kg^0,75 ≈ 23,2 µg/1000 kcal | **14,19 µg** | ❌ **nunca se activa** |
 | Selenio | 570 µg/1000 kcal | **142 µg** (legal) | ❌ **nunca se activa** (4× más permisivo) |
-| Yodo | 1400 µg/1000 kcal | 2750 µg (legal) | ✅ este sí manda |
+| Yodo | **1275** µg/1000 kcal | 2750 µg (legal) | ✅ este sí manda |
 
 **Esto no deja a ningún perro desprotegido** —lo que protege es el máximo
 legal de FEDIAF, que es más estricto— pero **la documentación dice que
@@ -704,6 +813,26 @@ pensando que «ya está el tope crónico debajo», no hay nada debajo.
 
 *(Para la vitamina D esto ya estaba escrito en el `nota_auditoria` de su fila
 desde el 6 de septiembre. Para el selenio, no.)*
+
+**El de yodo bajó de 1400 a 1275 el 9 de septiembre**, y de paso se contestó la
+pregunta que llevaba abierta: *«1275 está a un 9 % de la cifra que hizo daño, y
+esa cifra es de cachorros; ¿bajamos más?»*. La contesta FEDIAF 2025 §3.3.1,
+apartado «Iodine», hablando del mismo estudio del que sale nuestro número:
+
+> *«From studies by Castillo et al. (2001a, b) low nutritional maximum for
+> iodine in dogs (0.4 mg/100 g DM) was recommended. However in these studies
+> puppies were significantly overfed (approx. 75 % above energy requirement)
+> which resulted in a substantially increased intake of iodine. Furthermore the
+> food was deficient in a number of key nutrients, e.g. Ca, P and K, and
+> therefore inappropriate for puppies. Consequently, these results are
+> irrelevant for normal commercial nutritionally balanced foods, and the
+> existing legal maximum is safe for all dogs.»*
+
+O sea que el organismo que fija los requisitos ya evaluó ese estudio, explica
+por qué no aplica a una dieta equilibrada, y declara seguro el máximo legal
+entero (2750). Nuestro 1275 es **2,2 veces más estricto** que eso y no cuesta
+ni un menú: el peor de los 216 va a 1038. Se queda donde está, y ahora consta
+por qué.
 
 ### 7.2 · Y dos cifras están mal atribuidas al NRC
 
@@ -731,13 +860,21 @@ techo**, citando «NRC 2006».
 2,0 mg/kg a 4000 kcal/kg son **500 µg/1000 kcal**, no los 570 que tiene el
 motor. (Da igual en la práctica, porque el legal de 142 manda de todos modos.)
 
-> **PREGUNTA 19-bis (bloqueante, y es la que más nos preocupa de todo el
-> apartado 7).** El techo de yodo del motor **es el nivel al que la fuente
-> documenta daño en cachorros**. Un techo de seguridad debería estar por
-> debajo de eso, con su factor de seguridad. **¿Qué cifra ponemos?** Y como el
-> NRC dice que no se puede predecir un SUL: ¿nos quedamos con el límite legal
-> de FEDIAF (2750), que es todavía más alto, o ponemos un criterio nuestro
-> declarado y más bajo?
+> **~~PREGUNTA 19-bis~~ — CERRADA el 9 de septiembre, y la contesta FEDIAF.**
+> Era: el techo de yodo estaba en **1400**, que es justo el nivel al que Castillo
+> 2001a documenta tiroides deprimida y alteraciones óseas en cachorros. Se bajó a
+> **1275**, que es lo más alto que la propia fuente documenta comido sin problemas
+> (piensos medidos por Belshaw 1975, rango 400-1275), y quedaba la pregunta de si
+> había que bajar más. **No hace falta**: FEDIAF 2025 §3.3.1, apartado «Iodine»,
+> evalúa ese mismo estudio y lo descarta —
+> *«...puppies were significantly overfed (approx. 75 % above energy requirement)...
+> the food was deficient in a number of key nutrients, e.g. Ca, P and K, and
+> therefore inappropriate for puppies. Consequently, these results are irrelevant
+> for normal commercial nutritionally balanced foods, and the existing legal maximum
+> is safe for all dogs.»*
+> O sea que el organismo que fija los requisitos declara seguro el máximo legal
+> entero (2750). Nuestro 1275 es **2,2 veces más estricto** que eso y no cuesta ni un
+> menú: el peor de los 216 va a 1038. Se queda. Lo vigilan los BLOQUES 59 y 65.
 
 **Medido el 9 de septiembre, y el «siempre» tiene una excepción:**
 
@@ -770,18 +907,34 @@ danés**, al que FEDIAF le da 200. Ahí el que protege es el nuestro (2,60 contr
 
 ---
 
-## 7-bis · Los dos techos del perro adulto SANO (8 de septiembre)
+## 7-bis · Los techos del perro SANO
 
-**Es la tercera clase de límite del motor, y hasta este día no existía.**
+**Es la tercera clase de límite del motor, y hasta el 8 de septiembre no
+existía.** Los de FEDIAF valen para cualquier perro. Los de patología, solo si
+esa patología está marcada. Estos valen para el perro que **no tiene nada**:
 
-Los de FEDIAF valen para cualquier perro. Los de patología, solo si esa
-patología está marcada. Estos dos valen para el perro que **no tiene nada**:
+| Etapa | Techo | Fuente |
+|---|---|---|
+| Adulto | Fósforo ≤ **2000** mg/1000 kcal · sodio ≤ **1000** | SACN5 Tabla 13-3, *«Phosphorus (%) 0.4 to 0.8»*, *«Sodium (%) 0.2 to 0.4»* |
+| Senior | Fósforo ≤ **1750** · sodio ≤ **1000** | SACN5 Tabla 14-2, *«Phosphorus (%) 0.3 to 0.7»*, *«Sodium (%) 0.15 to 0.4»* |
+| Crecimiento, hasta 25 kg de adulto esperado | Calcio ≤ **4250** · fósforo ≤ **3250** | SACN5 Tabla 17-1, columna *«Puppies with an adult BW <25 kg»* |
+| Crecimiento, **más de 25 kg** de adulto esperado | Calcio ≤ **2750** · fósforo ≤ **2750** | SACN5 Tablas 17-1 (segunda columna) y 33-5 · Fascetti cap.10 |
+| Gestación y lactancia | — | No hay |
 
-| Etapa | Fósforo | Sodio | Fuente |
-|---|---|---|---|
-| Adulto | ≤ **2000** mg/1000 kcal | ≤ **1000** mg | SACN5 Tabla 13-3, *«Phosphorus (%) 0.4 to 0.8»*, *«Sodium (%) 0.2 to 0.4»* |
-| Senior | ≤ **1750** mg | ≤ **1000** mg | SACN5 Tabla 14-2, *«Phosphorus (%) 0.3 to 0.7»*, *«Sodium (%) 0.15 to 0.4»* |
-| Crecimiento, gestación, lactancia | — | — | No se aplican: ver abajo |
+**Los cuatro de crecimiento son del 9 de septiembre** y se aplican a las dos
+etapas de cachorro. Existen porque hasta ese día un cachorro de raza grande
+recibía **4500 mg de calcio** (1,80 % de materia seca), que es el máximo de
+FEDIAF y un **64 % por encima** de lo que dicen las dos fuentes caninas que
+hablan de esto; y porque **FEDIAF no pone máximo de fósforo en crecimiento** —
+las dos columnas de máximo de esa fila están vacías. El calcio del grande queda
+apretado al 1,1 % de materia seca que pide Fascetti cap.10 *«in order to prevent
+panosteitis»*, dentro del 0,8-1,2 % de las Tablas 17-1 y 33-5.
+
+⚠️ **Ojo con los dos umbrales, que no son el mismo.** Los **25 kg** de SACN5
+(cap.33: *«large- and giant-breed puppies (>25 kg adult weight)»*) parten la
+Tabla 17-1 en dos columnas y deciden estos techos. Los **15 kg** de la nota b de
+FEDIAF deciden otra cosa: el mínimo de calcio reforzado y el techo del ratio
+Ca:P. Dos fuentes, dos poblaciones, dos números.
 
 ### Por qué hacían falta
 
@@ -828,11 +981,12 @@ cuatro verdes. El de 3 kg, que sin techo salía ámbar, sale verde con él.
 Lo que sí costó: **207 de los 216 menús precalculados de la vista previa**
 estaban por encima (mediana 3149). Se regeneró el catálogo entero.
 
-### En crecimiento no se aplica, y no es un olvido
+### El techo del ADULTO no se aplica en crecimiento, y no es un olvido
 
 El mínimo de fósforo que FEDIAF exige a un **cachorro joven** son **2250**, por
-encima del techo del adulto. Aplicárselo no sería un techo: sería dejarlo sin
-menú. Esas etapas tienen además sus propias tablas en SACN5 (17-1, 33-5, 15-5).
+encima del techo del adulto (2000). Aplicárselo no sería un techo: sería dejarlo
+sin menú. Lo que el crecimiento tiene son **sus propios techos**, los de la
+Tabla 17-1 de arriba, que están por encima de ese mínimo.
 
 > **PREGUNTA 28.** El sodio de estas dos tablas tiene también un
 > **suelo** (0,2 % MS = 500 mg en adulto, 0,15 % = 375 en maduro) que **no** se
@@ -840,7 +994,7 @@ menú. Esas etapas tienen además sus propias tablas en SACN5 (17-1, 33-5, 15-5)
 > suelo de sodio por encima del mínimo de FEDIAF (290) en un perro sano no lo
 > pide nadie. Si eso es leerlo mal, es una línea de cambio.
 
-## 8 · Las patologías: 47 perfiles, 73 límites numéricos
+## 8 · Las patologías: 47 perfiles, 74 límites numéricos
 
 Los topes por patología **son más estrictos que FEDIAF** y se miden sobre las
 **kcal reales del menú**, no las pedidas — el menú puede salir un 3 % por
@@ -1103,9 +1257,9 @@ primero no.
    cubre la insuficiencia pancreática **exocrina**, que es otra cosa, y no pone
    cifra de grasa. O sea: **para la pancreatitis no hay número oficial de
    ninguna de las dos referencias normativas**, y por la regla adoptada
-   (FEDIAF manda; donde FEDIAF no llega, SACN5) el número tendría que ser el de
-   SACN5 (37,5 g no obeso / 25 g obeso), no los 20 g de Merck que aplica hoy el
-   motor. Ver §8.2, que es donde esto se decide.
+   (FEDIAF manda; donde FEDIAF no llega, SACN5) el número tiene que ser el de
+   SACN5 (37,5 g no obeso / 25 g obeso) y no los 20 g de Merck. **Aplicado el 8 de
+   septiembre**: el motor topa hoy en 37,5. Ver §8.2.
 
 **Y dos frases del reglamento que respaldan reglas que el motor ya tenía**, y que
 conviene que veas porque son las que sostienen todo lo demás:
@@ -1157,27 +1311,34 @@ vive declarado en `limites_escritos_que_el_solver_no_aplica`, con su medida.
 > `VERIFICACION_FILA_A_FILA.md` §cuarta pasada.
 
 Al leer las tablas enteras —no solo la fila del nutriente que ya teníamos—
-aparecen factores que el motor no implementa:
+aparecieron factores que el motor no implementaba. **La mayoría ya están puestos**,
+y esto es lo que queda:
 
-| Tabla | Factor que falta | Lo que dice | Convertido |
-|---|---|---|---|
-| SACN5 27-4 (obesidad) | **Fibra** | *«Foods for weight loss should contain 12 to 25%»* | 30-62,5 g/1000 kcal |
-| SACN5 27-4 (obesidad) | **Proteína** | *«…should contain ≥25%»* | ≥62,5 g/1000 kcal |
-| SACN5 27-4 (obesidad) | Densidad energética | *«≤3.4 kcal ME/g»* MS | otra base |
-| SACN5 36-4 (cardiopatía) | **Fósforo** | *«Dogs: 0.2 to 0.7%»* | 500-1750 mg/1000 kcal |
-| SACN5 36-4 (cardiopatía) | Cloruro | *«1.5 x sodium levels»* | ligado al sodio |
+| Tabla | Factor | Lo que dice | Convertido | Estado |
+|---|---|---|---|---|
+| SACN5 27-4 (obesidad) | Proteína | *«≥25%»* | ≥62,5 g/1000 kcal | ✅ aplicado 8-sep |
+| SACN5 27-4 | Fibra | *«12 to 25%»* | 30-62,5 g/1000 kcal | ✅ aplicado (suelo 30) |
+| SACN5 27-4 | Lisina | *«≥1.7%»* | ≥4,25 g/1000 kcal | ✅ aplicado |
+| SACN5 27-4 | L-carnitina | *«≥300 ppm»* | ≥75 mg/1000 kcal | ✅ aplicado |
+| SACN5 27-4 | Vitamina E | *«≥400 IU/kg»* | ≥67,1 mg/1000 kcal | ✅ aplicado |
+| SACN5 27-4 | Grasa | *«Foods for weight loss should contain ≤9%»* | ≤22,5 g/1000 kcal | ⚠️ el motor topa en **30**, más flojo que la fuente — ver PREGUNTA 23 |
+| SACN5 27-4 | Densidad energética | *«≤3.4 kcal ME/g»* MS | no transferible | ❌ es otra base: una ración cruda va a ~5,2 kcal/g de MS |
+| SACN5 36-4 (cardiopatía) | **Taurina** | *«Dogs: ≥0.1%»* | **≥250 mg/1000 kcal** | ❌ no aplicado |
+| SACN5 36-4 | **L-carnitina** | *«Dogs: ≥0.02%»* | **≥50 mg/1000 kcal** | ❌ no aplicado |
+| SACN5 36-4 | **Fósforo** | *«Dogs: 0.2 to 0.7%»* | **500-1750 mg/1000 kcal** | ❌ no aplicado |
+| SACN5 36-4 | Cloruro | *«1.5 x sodium levels»* | ligado al sodio | ❌ no aplicado |
 
-Dos de ellos importan de verdad: **la proteína en el adelgazamiento** (subir
-la proteína mientras se recortan kcal es lo que protege la masa magra, y el
-motor solo aplica el mínimo de FEDIAF, 52,1, por debajo de los 62,5 de SACN5)
-y **la fibra**, que es la que da saciedad.
+*(El potasio y el magnesio cardíacos de esa misma tabla —≥0,4 % y ≥0,06 % MS— sí
+quedan cubiertos: los mínimos de FEDIAF, 1450 mg y 200 mg/1000 kcal, son 0,58 % y
+0,08 % MS, por encima de los dos.)*
 
-*(El potasio y el magnesio cardíacos de esa misma tabla —≥0,4 % y ≥0,06 % MS—
-sí quedan cubiertos: los mínimos de FEDIAF, 1450 mg y 200 mg/1000 kcal, son
-0,58 % y 0,08 % MS, por encima de los dos.)*
+**Lo que falta es de cardiopatía, y es trabajo, no pregunta**: la fuente da la
+cifra. Se aplica midiendo antes, y solo se pregunta lo que no quepa.
 
-> **PREGUNTA 29.** ¿Cuáles de estos cinco hay que añadir? La proteína en
-> obesidad es la que más nos preocupa.
+> **PREGUNTA 29.** De la Tabla 36-4, la **taurina** es la única con matiz: FEDIAF no
+> se la exige al perro porque la sintetiza, y SACN5 la pide en cardiopatía. ¿El suelo
+> de 250 mg/1000 kcal vale para **cualquier** cardiopatía, o solo para la
+> miocardiopatía dilatada, que es donde la respuesta está documentada?
 
 ### 8.2 · La grasa en pancreatitis — RESUELTO el 8 de septiembre
 
@@ -1569,7 +1730,31 @@ Y hay un motivo que no es del catálogo: **100 mg/1000 kcal está por encima del
 máximo LEGAL de la UE** (22,70 mg/100 g MS = 56,75 mg/1000 kcal). Esa dosis no
 se puede vender en un alimento completo en Europa.
 
-> **PREGUNTA 34.** Con el techo legal en 56,75, ¿cuánto zinc tiene sentido
+> **PREGUNTA 34 — replanteada el 9 de septiembre, leyendo el cap.14 de Fascetti
+> entero. La fuente dice que la pregunta está mal hecha: no pide más zinc en la
+> DIETA, pide un suplemento.** Literal:
+> *«Therapy requires zinc supplementation with a recommended dosage of **2–3 mg/kg/
+> body weight (BW) of elemental zinc** in the form of zinc sulfate, zinc gluconate,
+> or zinc methionine (White et al. 2001). Zinc oxide should not be used as it is not
+> very bioavailable.»*
+> Y sobre el síndrome I, que es el de las razas nórdicas de nuestra ficha:
+> *«Skin lesions develop **despite adequate consumption of diets with sufficient
+> bioavailable zinc**»*, porque *«these dogs have a genetic defect in the intestinal
+> absorption or the metabolism of zinc»*.
+> Puesto en nuestras unidades se ve por qué chocaba con el techo legal: un perro de
+> 20 kg necesita **40-60 mg de zinc elemental al día**, que con un DER de ~1000 kcal
+> son 40-60 mg/1000 kcal **además** de la dieta, y el techo legal es 56,75 mg/1000
+> kcal en total. El suplemento terapéutico solo ya se lo come entero. No es que el
+> catálogo se quede corto: **es que esto no se hace con comida**.
+> Y la segunda mitad la contesta también: el linoleico no actúa por su cuenta, es
+> coadyuvante — *«EFA deficiency impairs zinc absorption, and supplementation with
+> EFAs appears to enhance zinc absorption... the clinical signs of zinc deficiency can
+> be partially reversed by supplementing with EFA»*, con el mecanismo escrito (la
+> delta-6-desaturasa necesita zinc como cofactor).
+> **Lo que queda es de producto**: esta patología debería decir «necesita un
+> suplemento de zinc pautado, no un menú con más zinc», que es lo que dice la fuente.
+>
+> *(La pregunta como estaba:)* Con el techo legal en 56,75, ¿cuánto zinc tiene sentido
 > pedirle a esta patología? ¿Y el linoleico de 15 g/1000 kcal (cinco veces el
 > mínimo de FEDIAF) aporta algo por sí solo, sin el zinc?
 

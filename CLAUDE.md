@@ -139,7 +139,7 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 64 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `pruebas_completas.py` | **La batería.** Los 66 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
 | `auditar_patologias.py` | Cada cifra de `patologias.json` contra `requerimientos_v2_final.json`: que ninguna patología formulable tenga un tope por debajo del mínimo de FEDIAF, y que la clave del nutriente exista en el `MAPA`. Lo ejecuta el BLOQUE 32 |
 | `radiografia.py` | Imprime los números que **ENTRAN** al motor, para comparar `main` con una rama a golpe de `diff`. No lo ejecuta la batería: se corre a mano. Existe porque el semáforo comprueba el menú contra las kcal que le dieron — si las kcal ya venían mal, el menú sale VERDE para un perro que no es el tuyo, y eso solo se ve en la entrada |
 | `auditar_catalogo.py` | Huecos y datos raros del catálogo, y quién se queda sin aminograma. Lo ejecuta el BLOQUE 19 |
@@ -270,7 +270,7 @@ completo y las medidas: `HISTORIA_TECNICA.md`.
 El DER se calcula dos veces: `der.py` aquí y `calcularDER()`/`src/der.js` en
 `canislab-web` — y **manda el del frontend**, que se envía en
 `der_objetivo`; `der.py` solo corre si alguien llama a `/der`, que no llama
-nadie. Se vigilan por separado contra `der_casos.json` (85 casos, **el
+nadie. Se vigilan por separado contra `der_casos.json` (100 casos, **el
 mismo archivo en los dos repos**): BLOQUE 23 aquí, `der-contrato.spec.js`
 allí. Si tocas la fórmula de un lado, regenera esperados y copia
 `der_casos.json` a los dos repos — los dos commits, o ninguno. Detalle
@@ -313,6 +313,31 @@ verificación de ese día, y su §cuarta pasada trae la lección que más cuesta
 `sed`, así que de las 89 tablas que hay solo se revisaron unas 40** y faltaban
 tres de patología canina. Un barrido cuyo resultado no se compara contra el
 total no es un barrido, es una muestra.
+`PARA_EL_NUTRICIONISTA.md` es **el documento que se entrega para revisión**:
+qué hace hoy el motor en cada punto, de qué fuente sale cada número, y qué
+queda sin decidir. Se escribe a mano y el motor cambia debajo, así que se
+desincroniza sin que se vea — pasó dos veces el 9 de septiembre, y en
+direcciones opuestas: decía que el motor «no usa» las dos filas de raza de
+FEDIAF cuando ya las usaba, y decía «<14 semanas» para Early Growth cuando el
+código cortaba a los 4 meses. Por eso lo vigila el **BLOQUE 65**, que ancla
+25 cifras del documento contra el valor **vivo** que aplica el motor: los
+escalones de actividad, las dos razas, el respaldo de crecimiento, los topes
+de seguridad crónica, los techos del perro sano, los dos umbrales de raza
+grande y el recuento de patologías y de sus límites. No revisa la prosa, solo
+números — que es donde están las decisiones —, y si un ancla deja de encontrar
+su frase también falla, porque un ancla que ya no vigila nada no avisa a nadie.
+`PREGUNTAS_ABIERTAS.md` es **el registro de preguntas**, y desde el 9 de
+septiembre dice también dónde vive cada una. Vivían en tres ficheros con tres
+numeraciones y tres formas de marcar el cierre, sin que ninguno comprobara a los
+otros, y eso dejaba **preguntas zombi**: resueltas y aplicadas en el motor, y
+todavía abiertas en el documento que va a revisión. El techo de yodo bajó de 1400
+a 1275 y la pregunta siguió marcada «bloqueante, la que más nos preocupa» en
+`PARA_EL_NUTRICIONISTA.md`, afirmando algo del motor que ya era falso. Ahora este
+fichero lleva el **índice** de las preguntas del documento de revisión con su
+estado —`abierta` · `reducida` · `cerrada` · `retirada`, cuatro y no dos, porque
+la fuente casi nunca contesta la pregunta entera— y el **BLOQUE 66** exige que
+índice y documento digan lo mismo. Nada se borra al cerrarse: se tacha con la
+fuente que lo cerró, porque una pregunta borrada se vuelve a hacer.
 `REVISION_NUTRICIONISTA.md` es la valoración que hizo Cris Carles del motor,
 punto por punto contra el repo: qué de lo que señaló ya está cubierto, qué a
 medias y qué sigue sin estar. Los tres que siguen sin estar son el **ratio
@@ -405,7 +430,7 @@ se comprueba entero en cada batería.
 python3 pruebas_completas.py     # ~25 min, tiene que salir TODO EN VERDE
 ```
 
-Los 64 bloques tardan unos **25 minutos** (1.354 s en la última medida; el
+Los 66 bloques tardan unos **25 minutos** (1.458 s en la última medida; el
 «~10 min» que ponía aquí se quedó corto en cuanto los bloques 50 a 61
 empezaron a resolver menús de verdad, y el «~2 min» de antes llevaba meses
 caducado). No necesita red ni claves de verdad: se fabrica

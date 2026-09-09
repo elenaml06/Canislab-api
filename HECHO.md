@@ -20,6 +20,83 @@ Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 - Tope de volumen y porciones que escalan con el tamaño del perro.
 - Cobro de prueba completado de punta a punta y premium activado de verdad.
 
+## El corte de cachorro joven pasa de 4 meses a las 14 semanas de FEDIAF — resuelto el 9 de septiembre de 2026
+
+Estaba escrito en tres sitios como **diferencia declarada con FEDIAF, al lado
+estricto**: FEDIAF corta *Early Growth* en las **14 semanas** y nosotras
+cortábamos en los **4 meses**, unas 17. Tres semanas de más con los requisitos
+de cachorro joven, que son los más altos —calcio 2500 contra 2000, fósforo 2250
+contra 1750, proteína 62,5 contra 50—, así que el margen pedía más y no menos.
+
+**Eso no lo convierte en defendible.** El umbral lo pone la fuente: FEDIAF 2025
+titula las dos columnas de sus tablas de requisitos *«Early Growth (< 14
+weeks)»* y *«Late Growth (≥ 14 weeks)»*. Un margen conservador inventado
+existiendo el número de la fuente sigue siendo un número inventado, y encima
+`PARA_EL_NUTRICIONISTA.md` §2 ya decía «<14 semanas» — o sea que el documento
+que va a revisión describía una cosa y el código hacía otra.
+
+**Cambiado donde se decide la etapa**, que es `canislab-web/src/der.js`: el
+corte va ahora en **días** (`EARLY_GROWTH_DIAS = 98`) y no en meses, porque 14
+semanas caen a mitad del cuarto mes y con meses enteros no se puede expresar.
+`calcularEdad` pasa a devolver `totalDias`, calculado sobre el calendario y no
+multiplicando meses por 30.
+
+⚠️ **Y el respaldo va al lado estricto a propósito.** Si falta `totalDias` —una
+ficha guardada antes de que el campo existiera—, comparar contra `undefined`
+daría siempre false y mandaría a un cachorro de dos meses a *Late Growth*, que
+pide **menos**. Se cae al corte viejo de 4 meses en su lugar: un fallo de datos
+no puede bajar requisitos. Es la familia de fallos de `ficha-ida-y-vuelta`.
+
+Lo vigila `tests/der-contrato.spec.js` con tres pruebas: que la constante sean
+98 días, que el día 97 sea todavía cachorro joven y el 98 ya no (los dos lados
+del corte, no solo uno), y el respaldo sin `totalDias`. Probado con el fallo
+puesto: subiendo la constante a 120 se caen dos.
+
+**No toca el otro «4 meses» del motor**, que es el de SACN5 —3 × RER hasta los
+cuatro meses, 2 × RER después— en el respaldo del DER cuando no se conoce el
+peso adulto. Ese sí es la cifra de su fuente.
+
+## Las dos filas de raza del DER: la fuente dice EN VEZ DE, no suelo — resuelto el 9 de septiembre de 2026
+
+Quedaba abierto desde el 8 de septiembre, cuando se adoptaron las dos cifras de
+la Tabla VII-7 de FEDIAF (`Great Danes 200 (200-250)`, `Newfoundlands 105
+(80-132)`): **¿esos 200 van en vez del nivel de actividad, o son el suelo sobre
+el que se aplica?** Se anotó como interpretación nuestra porque la tabla no
+cruza las filas de raza con los cinco niveles.
+
+**Estaba contestado en la guía, y en dos sitios.** La frase que presenta la
+tabla — *«examples of daily energy requirements of dogs at different activity
+levels, for specific breeds and for obese prone adults»* — pone las tres clases
+de fila en paralelo, en la misma columna y con el mismo coeficiente: una fila de
+raza es alternativa a una de actividad, igual que `obese prone adults ≤ 90` lo
+es y no un descuento sobre el 95 del sedentario. Y la sección **7.2.3.4 «Breed
+& type»** dice de qué está hecha esa diferencia: *«Breed-specific needs probably
+reflect differences in temperament, resulting in higher or lower activity, as
+well as variation in stature or insulation capacity of skin and hair coat.»* La
+diferencia de raza **ya contiene** la de actividad; sumarle un nivel encima
+sería contarla dos veces.
+
+**El motor ya lo hacía así**, en los dos repos. Lo que faltaba era la lectura
+que lo respalda, y una guardia que separase las tres lecturas posibles: las
+comprobaciones que había no lo hacían — «Gran Danés en normal = 200» lo cumplen
+igual la lectura buena y la de «suelo», y el recorte al rango tapa la de
+«sumar». El **BLOQUE 54, apartado 2-bis** fija siete casos, y el terranova es el
+que las separa porque su rango abre a los dos lados. Probado con el fallo puesto
+por los dos lados: con `max(105, base)` fallan 4 casos, con `200 + base` fallan
+5.
+
+**Lo único que sigue siendo nuestro** es dónde caer dentro del rango publicado,
+porque FEDIAF da el rango y ninguna regla para colocarse. Se coloca por
+actividad y se recorta al rango, así que ningún resultado sale de la fuente.
+Para el gran danés «en vez de» y «suelo» acaban coincidiendo, porque 200 es a la
+vez el centro y el extremo bajo de su rango.
+
+Cerradas con esto `PREGUNTAS_ABIERTAS.md` **P-11** y **P-12** (esta última, el
+escalón de crecimiento de 2,5 × RER, ya estaba aplicada desde el 8 y el
+documento seguía describiendo el estado viejo). Y de paso, el contrato del DER
+decía **85 casos** en nueve documentos y en tres ficheros de código cuando hace
+tiempo que son **100**.
+
 ## El BCS 9 pasa del 40 % al 45 %, en las TRES copias — resuelto el 9 de septiembre de 2026
 
 **Aplicado el mismo día en los dos repos.** La Tabla VII-2 del Anexo
@@ -101,7 +178,7 @@ IDEAL**, así que se invierte dividiendo. Tres cosas lo cierran:
 
 Así que **`der.py` y `App.jsx` estaban bien desde el principio** y el
 que estaba mal era `verificar.peso_objetivo_desde_bcs`, que ya
-divide. Las kcal de los 85 casos del contrato **no se han movido**.
+divide. las kcal de los casos del contrato **no se han movido**.
 
 Y como no había ni una prueba que tocara esa función —por eso se
 coló—, ahora está el **BLOQUE 37**, que ancla los cuatro puntos

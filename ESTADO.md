@@ -162,7 +162,7 @@ Detalle y medidas: `PREGUNTAS_ABIERTAS.md` P-10 a P-13, y
 
 | Qué | Dónde | Rp | Fu | Fi | Te | De | Estado |
 |---|---|---|---|---|---|---|---|
-| El DER se calcula en dos sitios y manda el del front | `der.py` + `canislab-web/src/der.js` | ✅ | ✅ | ❌ | ✅ contrato de 85 casos: BLOQUE 23 aquí, `der-contrato.spec.js` allí | ✅ `CLAUDE.md` | **en curso** |
+| El DER se calcula en dos sitios y manda el del front | `der.py` + `canislab-web/src/der.js` | ✅ | ✅ | ❌ | ✅ contrato de 100 casos: BLOQUE 23 aquí, `der-contrato.spec.js` allí | ✅ `CLAUDE.md` | **en curso** |
 | Los escalones de actividad | `der.BASE_ACTIVIDAD` | ✅ | ✅ **FEDIAF VII-7, verificado** | ❌ | ✅ | ⚠️ | **en curso** |
 | La fórmula de lactancia, sin tope | `der.LACTANCIA_*` | ✅ | ✅ **FEDIAF VII-8b** | ❌ | ✅ BLOQUE 54 | ✅ D-11 | **cerrado salvo ficha** |
 | Las dos razas con cifra de FEDIAF | `der.RAZAS_CIFRA_FEDIAF` | ✅ | ✅ **FEDIAF VII-7** | ❌ | ✅ BLOQUE 54 + contrato | ✅ D-11 | **cerrado salvo ficha** |
@@ -370,7 +370,7 @@ retirado seguían ofreciéndose en la app).
 ### 3.4 · El DER se calcula dos veces
 
 Conocido y documentado en `CLAUDE.md`. **Es el único de los cuatro que está
-bien defendido**: contrato de 85 casos, probado en los dos repos, y
+bien defendido**: contrato de 100 casos, probado en los dos repos, y
 `der_casos.json` verificado hoy como idéntico (md5 `92506f87725fbfa084de25701ab0e8d8`).
 Se deja aquí como referencia de cómo deberían estar los otros tres.
 

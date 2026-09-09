@@ -2553,7 +2553,7 @@ No se contradicen del todo —cada una se expresa sobre una base distinta, y
 `HALLAZGOS §F-8` ya lo desmenuza— pero **son tres bases distintas para el mismo
 número**, y es exactamente el tipo de cifra que alguien copia de un libro a un
 campo sin mirar sobre qué se calcula. Lo que nos protege de eso es
-`der_casos.json`: 85 casos con su esperado, el mismo archivo en los dos repos, y
+`der_casos.json`: 100 casos con su esperado, el mismo archivo en los dos repos, y
 dos pruebas que lo vigilan (BLOQUE 23 aquí, `der-contrato.spec.js` allí).
 
 ### F-41 · Y la frase con la que empieza el capítulo, que conviene tener escrita

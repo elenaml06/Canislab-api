@@ -3434,7 +3434,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 # CÓMO SE VIGILA. No comprobando un repo contra el otro -- eso obligaría a
 # tener los dos clonados y node instalado, y una prueba que se salta sola
 # cuando no encuentra al vecino no vigila nada. En vez de eso hay un
-# CONTRATO: der_casos.json, con 85 casos y sus kcal, el mismo archivo en
+# CONTRATO: der_casos.json, con 100 casos y sus kcal, el mismo archivo en
 # los dos repos. Cada lado comprueba SU implementación contra esos números.
 # Si alguien toca la fórmula de un lado, la prueba de ESE lado se cae en el
 # acto y le obliga a mirar el otro.
@@ -3458,7 +3458,7 @@ except FileNotFoundError:
 if _contrato_b23:
     _casos_b23 = _contrato_b23["casos"]
     if len(_casos_b23) < 80:
-        fallos.append(f"BLOQUE23: el contrato del DER tiene solo {len(_casos_b23)} casos. Eran 85: "
+        fallos.append(f"BLOQUE23: el contrato del DER tiene solo {len(_casos_b23)} casos. Eran 100: "
                       f"si se recortan, deja de cubrir etapas o regímenes de peso enteros.")
     for _c23 in _casos_b23:
         _op23 = _c23.get("opciones") or {}
@@ -5086,11 +5086,11 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 #
 # Y hay una segunda mitad, peor: la MISMA cuenta vive en `der.py` (que
 # divide) y en `App.jsx` (que divide). El contrato del DER no puede
-# cubrirla -- `der_casos.json` no lleva `condicionIdx` en ninguno de sus 85
+# cubrirla -- `der_casos.json` no lleva `condicionIdx` en ninguno de sus 100
 # casos y `src/der.js` ni siquiera lo acepta: pasa el peso ideal YA
 # CALCULADO. O sea que la conversión BCS -> ideal es, tal y como está
 # montado, estructuralmente incubrible por el contrato. Medido: cambiando
-# `der.py` de dividir a restar NO SE MOVIÓ NI UN CASO de los 85.
+# `der.py` de dividir a restar NO SE MOVIÓ NI UN CASO del contrato.
 #
 # Así que se cubre aquí, dentro del repo, comparando las dos cuentas.
 print("\n=== BLOQUE 37: el peso ideal desde el BCS ===")
@@ -7034,6 +7034,47 @@ for _r54, (_c54, _mn54, _mx54) in _der54.RAZAS_CIFRA_FEDIAF.items():
             fallos.append(f"BLOQUE54: {_r54} en «{_act54}» sale a {_k} kcal/kg^0,75, fuera del "
                           f"rango {_mn54}-{_mx54} que publica FEDIAF")
 
+# --- 2-bis. La cifra de raza va EN VEZ del nivel de actividad, no como suelo -
+#
+# ⚠️ AÑADIDO (9 septiembre) al cerrar la pregunta P-11. Las comprobaciones de
+# arriba no separan las tres lecturas posibles: el «Gran Danés en normal = 200»
+# lo cumplen igual la buena («en vez de») y la mala («suelo», es decir
+# max(200, base)), y el recorte al rango tapa la tercera («sumar», 200 + base).
+# Un test que pasa con el fallo puesto no sirve, así que aquí se fija la
+# lectura, que es de la propia guía y no interpretación:
+#
+#   · Tabla VII-7, frase de entrada: «Table VII-7 provides examples of daily
+#     energy requirements of dogs at different activity levels, FOR SPECIFIC
+#     BREEDS and for obese prone adults». Tres clases de fila en paralelo, la
+#     misma columna, el mismo coeficiente: la fila de raza es ALTERNATIVA a la
+#     de actividad, igual que «obese prone adults ≤90» no es un descuento
+#     sobre el 95 del sedentario.
+#   · Sección 7.2.3.4 «Breed & type»: «Breed-specific needs probably reflect
+#     differences in temperament, RESULTING IN HIGHER OR LOWER ACTIVITY, as
+#     well as variation in stature or insulation capacity of skin and hair
+#     coat». La diferencia de raza ya CONTIENE la de actividad: sumar un nivel
+#     encima sería contar dos veces lo mismo.
+#
+# Lo que FEDIAF no dice es dónde caer dentro del rango publicado. Eso lo
+# colocamos por actividad y lo recortamos al rango, y es lo que fijan estos
+# casos: el terranova es el que separa las tres lecturas, porque su rango abre
+# hacia los dos lados (un «suelo» de 105 nunca daría 90).
+_ENVEZDE_54 = [
+    ("Gran Danés", "sedentario", 200.0),   # recortado: 200 es el extremo bajo de su rango
+    ("Gran Danés", "normal",     200.0),
+    ("Gran Danés", "activo",     215.0),   # con «suelo» daría 200; sumando, 250
+    ("Gran Danés", "trabajo",    250.0),   # recortado al extremo alto
+    ("Terranova",  "sedentario",  90.0),   # con «suelo» daría 105; sumando, 132
+    ("Terranova",  "normal",     105.0),
+    ("Terranova",  "trabajo",    132.0),   # recortado
+]
+for _r54b, _act54b, _esp54b in _ENVEZDE_54:
+    _k54b = _der54._coef_adulto(_act54b, "adulto", "solo", False, _r54b)
+    if abs(_k54b - _esp54b) > 1e-9:
+        fallos.append(f"BLOQUE54: {_r54b} en «{_act54b}» sale a {_k54b} kcal/kg^0,75 y la lectura "
+                      f"de FEDIAF (la cifra de raza EN VEZ del nivel de actividad, colocada "
+                      f"dentro del rango publicado) da {_esp54b}")
+
 # --- 3. La lactancia es la fórmula de FEDIAF, y SIN TOPE -------------------
 # FEDIAF 2025, Tabla VII-8b: «1 to 4 puppies: 145 x kg BW^0.75 + 24 n x kg BW
 # x L» y «5 to 8 puppies: 145 x kg BW^0.75 + [96 + 12 (n-4)] x kg BW x L»,
@@ -8621,6 +8662,280 @@ for _pat64, _clave64, _trozo64 in _CIFRAS_64:
         fallos.append(f"BLOQUE64: el aviso «{_clave64}» de «{_pat64}» ha perdido «{_trozo64}». Un "
                       f"aviso sin su cifra parece que esta y no dice el numero, que es peor que no "
                       f"tenerlo")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 65 — el documento que va a revision dice lo que hace el motor
+# ============================================================
+#
+# ⚠️ POR QUE (9 septiembre). `PARA_EL_NUTRICIONISTA.md` es el documento que
+# se le entrega a alguien de fuera para que revise el motor. Se escribe a
+# mano y el motor cambia debajo, asi que se desincroniza SIN QUE NADIE LO
+# VEA: no es codigo, no lo ejecuta nadie, y leerlo entero cada vez para
+# comprobar 40 cifras no lo hace nadie tampoco.
+#
+# Y ya paso, dos veces el mismo dia:
+#   · §1.1 decia que el motor «no usa» las dos filas de raza de la Tabla
+#     VII-7 de FEDIAF. Las usa desde el 8 de septiembre. O sea que el
+#     documento le pedia a la nutricionista que decidiera algo YA DECIDIDO.
+#   · §2 decia que el corte de Early Growth son «<14 semanas» -- que es lo
+#     correcto y lo que dice FEDIAF -- mientras el codigo cortaba a los 4
+#     meses. El documento describia una cosa y el motor hacia otra.
+#
+# Los dos errores van en direcciones opuestas, y ese es el punto: no basta
+# con «recordar actualizarlo». Aqui cada cifra del documento se compara
+# contra el valor VIVO que aplica el motor. Si una cambia y el documento no,
+# la bateria lo dice antes de que salga por la puerta.
+#
+# QUE NO HACE: no revisa la prosa. Solo ancla NUMEROS, que es donde estan
+# las decisiones. Cada ancla es una frase literal del documento con su
+# cifra dentro; si la frase desaparece tambien falla, porque un ancla que
+# ya no encuentra nada deja de vigilar y no se entera nadie.
+print("\n=== BLOQUE 65: el documento para la nutricionista, contra el motor vivo ===")
+
+import re as _re_b65
+import motor.seguridad as _sg_b65
+import motor.verificar as _vf_b65
+from motor_completo import RAZA_GRANDE_O_GIGANTE_KG as _RG_B65
+
+try:
+    _doc65 = open("PARA_EL_NUTRICIONISTA.md", encoding="utf-8").read()
+except OSError:
+    _doc65 = None
+    fallos.append("BLOQUE65: no esta PARA_EL_NUTRICIONISTA.md. Es el documento que va a "
+                  "revision: si desaparece, nadie se entera hasta que hace falta")
+
+if _doc65 is not None:
+    _doc65_plano = " ".join(_doc65.split())
+    _reco65 = _json_b12.load(open("recomendaciones_libro.json", encoding="utf-8"))["por_etapa"]
+    _req65 = {f["nutriente"]: f for f in
+              _json_b12.load(open("requerimientos_v2_final.json", encoding="utf-8"))}
+    _pat65 = _json_b12.load(open("patologias.json", encoding="utf-8"))["patologias"]
+    _casos65 = _json_b12.load(open("der_casos.json", encoding="utf-8"))["casos"]
+
+    def _num65(x):
+        """La cifra viva, como texto y con coma decimal, para buscarla en el .md."""
+        if float(x) == int(float(x)):
+            return str(int(float(x)))
+        return ("%g" % float(x)).replace(".", ",")
+
+    # (que es · patron con UN grupo que captura la cifra · valor vivo · de donde sale)
+    _ANCLAS_65 = [
+        ("los cinco escalones de actividad, sedentario",
+         r"\| Sedentario \| ([\d.,]+) kcal", _der54.BASE_ACTIVIDAD["sedentario"],
+         "der.BASE_ACTIVIDAD"),
+        ("los cinco escalones, normal",
+         r"\| Normal \| ([\d.,]+) \|", _der54.BASE_ACTIVIDAD["normal"], "der.BASE_ACTIVIDAD"),
+        ("los cinco escalones, activo",
+         r"\| Activo \| ([\d.,]+) \|", _der54.BASE_ACTIVIDAD["activo"], "der.BASE_ACTIVIDAD"),
+        ("los cinco escalones, muy activo",
+         r"\| Muy activo \| ([\d.,]+) \|", _der54.BASE_ACTIVIDAD["muy_activo"], "der.BASE_ACTIVIDAD"),
+        ("los cinco escalones, trabajo",
+         r"\| Trabajo \| ([\d.,]+) \|", _der54.BASE_ACTIVIDAD["trabajo"], "der.BASE_ACTIVIDAD"),
+        ("el ajuste senior de Thes 2014",
+         r"Ajuste senior \(>7 años\) \| −([\d.,]+) \|", -_der54.AJUSTE_EDAD["senior"],
+         "der.AJUSTE_EDAD"),
+        ("la cifra de FEDIAF para el gran danes",
+         r"\*\*Great Danes\*\* \| \*\*([\d.,]+) \(", _der54.RAZAS_CIFRA_FEDIAF["Gran Danés"][0],
+         "der.RAZAS_CIFRA_FEDIAF"),
+        ("el extremo alto del rango del gran danes",
+         r"\*\*Great Danes\*\* \| \*\*[\d.,]+ \([\d.,]+-([\d.,]+)\)", _der54.RAZAS_CIFRA_FEDIAF["Gran Danés"][2],
+         "der.RAZAS_CIFRA_FEDIAF"),
+        ("la cifra de FEDIAF para el terranova",
+         r"\*\*Newfoundlands\*\* \| \*\*([\d.,]+) \(", _der54.RAZAS_CIFRA_FEDIAF["Terranova"][0],
+         "der.RAZAS_CIFRA_FEDIAF"),
+        ("el respaldo de crecimiento, antes de los 4 meses",
+         r"3 × RER = \*\*([\d.,]+)\*\*", _der54.CRECIMIENTO_ANTES_4M, "der.CRECIMIENTO_ANTES_4M"),
+        ("el respaldo de crecimiento, desde los 4 meses",
+         r"2 × RER = \*\*([\d.,]+)\*\*", _der54.CRECIMIENTO_DESDE_4M, "der.CRECIMIENTO_DESDE_4M"),
+        ("cuantos casos tiene el contrato del DER",
+         r"contrato de \*\*([\d.,]+)\s*casos\*\*", len(_casos65), "der_casos.json"),
+        ("el tope cronico de vitamina D por kcal",
+         r"\*\*Vitamina D\*\* \| [\d.,]+ µg/kg\^0,75 y ([\d.,]+) µg/1000 kcal",
+         _sg_b65.TOPE_VITD_KCAL, "seguridad.TOPE_VITD_KCAL"),
+        ("el tope cronico de vitamina D por peso metabolico",
+         r"\*\*Vitamina D\*\* \| ([\d.,]+) µg/kg\^0,75", _sg_b65.TOPE_VITD_KG075,
+         "seguridad.TOPE_VITD_KG075"),
+        ("el tope cronico de yodo",
+         r"\*\*Yodo\*\* \| \*\*([\d.,]+)\*\* µg/1000 kcal", _sg_b65.TOPE_YODO_KCAL,
+         "seguridad.TOPE_YODO_KCAL"),
+        ("el tope cronico de selenio",
+         r"\*\*Selenio\*\* \| ([\d.,]+) µg/1000 kcal", _sg_b65.TOPE_SELENIO_KCAL,
+         "seguridad.TOPE_SELENIO_KCAL"),
+        ("el tope cronico de EPA+DHA semanal",
+         r"\*\*EPA\+DHA semanal\*\* \| ([\d.,]+) g/1000 kcal", _sg_b65.TOPE_EPA_DHA_SEMANAL_KCAL,
+         "seguridad.TOPE_EPA_DHA_SEMANAL_KCAL"),
+        ("el techo del perro sano adulto, fosforo",
+         r"\| Adulto \| Fósforo ≤ \*\*([\d.,]+)\*\*",
+         _reco65["Adulto"]["topes_por_1000kcal"]["fosforo"]["valor"], "recomendaciones_libro.json"),
+        ("el techo del perro sano senior, fosforo",
+         r"\| Senior \| Fósforo ≤ \*\*([\d.,]+)\*\*",
+         _reco65["Senior"]["topes_por_1000kcal"]["fosforo"]["valor"], "recomendaciones_libro.json"),
+        ("el techo de calcio del cachorro de hasta 25 kg de adulto",
+         r"Crecimiento, hasta 25 kg de adulto esperado \| Calcio ≤ \*\*([\d.,]+)\*\*",
+         _reco65["CachorroJoven"]["topes_por_1000kcal"]["calcio"]["valor"],
+         "recomendaciones_libro.json"),
+        ("el techo de calcio del cachorro de raza grande",
+         r"más de 25 kg\*\* de adulto esperado \| Calcio ≤ \*\*([\d.,]+)\*\*",
+         _reco65["CachorroJoven"]["si_peso_adulto_esperado_supera_kg"]["topes_por_1000kcal"]["calcio"]["valor"],
+         "recomendaciones_libro.json"),
+        ("el umbral de SACN5 que parte la Tabla 17-1",
+         r"Los \*\*([\d.,]+) kg\*\* de SACN5",
+         _reco65["CachorroJoven"]["si_peso_adulto_esperado_supera_kg"]["umbral_kg"],
+         "recomendaciones_libro.json"),
+        ("el umbral de raza grande de la nota b de FEDIAF",
+         r"«raza grande» es \*\*([\d.,]+) kg de peso adulto", _RG_B65,
+         "motor_completo.RAZA_GRANDE_O_GIGANTE_KG"),
+        ("cuantas patologias hay",
+         r"## 8 · Las patologías: ([\d.,]+) perfiles", len(_pat65), "patologias.json"),
+        ("cuantos limites numericos tienen las patologias",
+         r"## 8 · Las patologías: [\d.,]+ perfiles, ([\d.,]+) límites",
+         sum(len(v.get("topes_por_1000kcal", {})) + len(v.get("suelos_por_1000kcal", {}))
+             for v in _pat65.values()), "patologias.json"),
+    ]
+
+    for _que65, _pat_re65, _vivo65, _donde65 in _ANCLAS_65:
+        _m65 = _re_b65.search(_pat_re65, _doc65_plano)
+        if not _m65:
+            fallos.append(f"BLOQUE65: en PARA_EL_NUTRICIONISTA.md ya no esta la frase que dice "
+                          f"{_que65}. El ancla ha dejado de vigilar: o se reescribio la frase (y "
+                          f"hay que actualizar el patron aqui) o se borro el dato del documento")
+            continue
+        _dicho65 = _m65.group(1).replace(".", "").replace(",", ".")
+        try:
+            _dicho_num65 = float(_dicho65)
+        except ValueError:
+            fallos.append(f"BLOQUE65: {_que65}: el documento dice «{_m65.group(1)}», que no es un "
+                          f"numero")
+            continue
+        if abs(_dicho_num65 - float(_vivo65)) > 1e-6:
+            fallos.append(f"BLOQUE65: {_que65}: PARA_EL_NUTRICIONISTA.md dice {_m65.group(1)} y el "
+                          f"motor aplica {_num65(_vivo65)} ({_donde65}). El documento va a revision: "
+                          f"una cifra vieja le pide a la nutricionista que decida algo ya decidido, "
+                          f"o le esconde lo que de verdad se aplica")
+
+    # Y las dos frases que ya se desincronizaron una vez, cada una por un lado.
+    if "no usaba" not in _doc65_plano and "no las usa" in _doc65_plano:
+        fallos.append("BLOQUE65: PARA_EL_NUTRICIONISTA.md vuelve a decir que el motor NO usa las dos "
+                      "filas de raza de la Tabla VII-7. Las usa desde el 8 de septiembre, y lo fija "
+                      "el BLOQUE 54")
+    if _re_b65.search(r"Cachorro *<? *4 meses \| Early Growth", _doc65_plano):
+        fallos.append("BLOQUE65: PARA_EL_NUTRICIONISTA.md vuelve a cortar Early Growth en los 4 "
+                      "meses. FEDIAF titula sus columnas «Early Growth (< 14 weeks)»; el corte son "
+                      "14 semanas y lo aplica `canislab-web/src/der.js`")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 66 — el registro de preguntas y el documento no se separan
+# ============================================================
+#
+# ⚠️ POR QUE (9 septiembre). Las preguntas vivian en TRES ficheros, con tres
+# numeraciones y tres formas de marcar el cierre, y ninguno comprobaba a los
+# otros. La consecuencia real: preguntas ya resueltas y aplicadas en el motor
+# que seguian abiertas en el documento que va a revision.
+#
+# El caso que lo define: el techo de yodo bajo de 1400 a 1275 el mismo dia; la
+# pregunta se cerro en `PREGUNTAS_PARA_ELENA.md` y en el codigo, y en
+# `PARA_EL_NUTRICIONISTA.md` seguia marcada «bloqueante, y es la que mas nos
+# preocupa», afirmando que el techo del motor «es el nivel al que la fuente
+# documenta dano». Ya no lo era. Una pregunta zombi no es un despiste de
+# formato: le pide a quien revisa que decida algo ya decidido, y le esconde lo
+# que de verdad se aplica.
+#
+# Este bloque no juzga el contenido de ninguna pregunta. Solo exige que el
+# INDICE de `PREGUNTAS_ABIERTAS.md` y el documento digan lo mismo: las mismas
+# preguntas, con el mismo estado. Si aparece una, desaparece otra o cambia de
+# estado y el indice no se toca, esto se cae.
+print("\n=== BLOQUE 66: el indice de preguntas contra el documento ===")
+
+_ESTADOS_66 = ("abierta", "reducida", "cerrada", "retirada")
+
+def _preguntas_del_documento_66(texto):
+    """Los bloques `> **PREGUNTA n ...**` del documento, con su estado."""
+    _lin = texto.split("\n")
+    _out, _i = [], 0
+    while _i < len(_lin):
+        _m = _re_b65.match(r"> \*\*(~~)?PREGUNTA ([0-9]+(?:-[a-z]+)?)", _lin[_i])
+        if not _m:
+            _i += 1
+            continue
+        _blq = []
+        while _i < len(_lin) and _lin[_i].startswith(">"):
+            _blq.append(_lin[_i]); _i += 1
+        _t = " ".join(_blq)
+        if "CERRADA" in _t:
+            _est = "cerrada"
+        elif ("reducida el" in _t or "contestada en parte" in _t
+              or "replanteada el" in _t):
+            _est = "reducida"
+        else:
+            _est = "abierta"
+        # Un bloque puede llevar dos preguntas dentro (la 37 lleva la 38).
+        for _extra in _re_b65.findall(r"\*\*PREGUNTA ([0-9]+(?:-[a-z]+)?)", _t):
+            if _extra != _m.group(2):
+                _out.append((_extra, "abierta"))
+        _out.append((_m.group(2), _est))
+    _visto, _orden = set(), []
+    for _n, _e in _out:
+        if _n not in _visto:
+            _visto.add(_n); _orden.append((_n, _e))
+    return dict(_orden)
+
+try:
+    _reg66 = open("PREGUNTAS_ABIERTAS.md", encoding="utf-8").read()
+except OSError:
+    _reg66 = None
+    fallos.append("BLOQUE66: no esta PREGUNTAS_ABIERTAS.md, que es el registro de "
+                  "preguntas. Sin el, cada pregunta vuelve a vivir en el fichero que "
+                  "toque y nadie comprueba a nadie")
+
+if _reg66 is not None and _doc65 is not None:
+    _i66 = _reg66.find("### Índice de `PARA_EL_NUTRICIONISTA.md`")
+    if _i66 < 0:
+        fallos.append("BLOQUE66: PREGUNTAS_ABIERTAS.md ya no tiene el indice de "
+                      "`PARA_EL_NUTRICIONISTA.md`. Es lo unico que ata las preguntas "
+                      "del documento de revision al registro")
+    else:
+        # Solo la tabla del indice: se para en cuanto la tabla termina. Sin esto
+        # se comia filas de OTRAS tablas del mismo fichero (una que empieza por
+        # «| 3 | pancreatitis |» encajaba igual) y el bloque acusaba en falso.
+        _indice66 = {}
+        _dentro66 = False
+        for _fila66 in _reg66[_i66:].split("\n"):
+            _mf = _re_b65.match(r"\|\s*([0-9]+(?:-[a-z]+)?)\s*\|\s*([a-zá-ú]+)", _fila66)
+            if _mf:
+                _dentro66 = True
+                _indice66[_mf.group(1)] = _mf.group(2)
+            elif _dentro66 and not _fila66.startswith("|"):
+                break
+        if not _indice66:
+            fallos.append("BLOQUE66: el indice de PREGUNTAS_ABIERTAS.md esta vacio o "
+                          "cambio de formato: no se ha podido leer ni una fila")
+        for _n66, _e66 in _indice66.items():
+            if _e66 not in _ESTADOS_66:
+                fallos.append(f"BLOQUE66: la pregunta {_n66} tiene el estado «{_e66}», que "
+                              f"no es ninguno de {_ESTADOS_66}")
+        _doc_pregs66 = _preguntas_del_documento_66(_doc65)
+        for _n66, _e66 in sorted(_doc_pregs66.items()):
+            if _n66 not in _indice66:
+                fallos.append(f"BLOQUE66: la PREGUNTA {_n66} esta en "
+                              f"PARA_EL_NUTRICIONISTA.md y NO en el indice de "
+                              f"PREGUNTAS_ABIERTAS.md. Una pregunta fuera del registro "
+                              f"es una que nadie va a cerrar")
+            elif _indice66[_n66] != _e66:
+                fallos.append(f"BLOQUE66: la PREGUNTA {_n66} esta «{_e66}» en el documento "
+                              f"y «{_indice66[_n66]}» en el indice. Es exactamente el fallo "
+                              f"del techo de yodo: cerrada en un sitio y abierta en otro")
+        for _n66, _e66 in sorted(_indice66.items()):
+            if _n66 not in _doc_pregs66 and _e66 != "retirada":
+                fallos.append(f"BLOQUE66: el indice trae la PREGUNTA {_n66} como «{_e66}» y "
+                              f"esa pregunta ya no esta en PARA_EL_NUTRICIONISTA.md. Si se "
+                              f"quito a proposito, va como «retirada» y con el motivo; si no, "
+                              f"se ha perdido")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

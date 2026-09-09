@@ -27,6 +27,85 @@ alguien de fuera, se apunta aquí con un puntero, no se copia.
 
 ---
 
+## El registro de preguntas: dónde vive cada una
+
+⚠️ **AÑADIDO EL 9 DE SEPTIEMBRE, y por un fallo repetido.** Las preguntas vivían
+en **tres** ficheros con tres numeraciones y tres formas de marcar el cierre, y
+ninguno comprobaba a los otros. Resultado: preguntas resueltas y aplicadas en el
+motor que seguían abiertas en el documento que va a revisión. El techo de yodo se
+bajó de 1400 a 1275 y la pregunta se cerró en dos de los tres sitios; en el
+tercero seguía marcada «bloqueante, la que más nos preocupa» y afirmando que el
+techo del motor «es el nivel al que la fuente documenta daño». Ya no lo era.
+
+**La regla, desde hoy:**
+
+| Fichero | Qué es | Numeración |
+|---|---|---|
+| `PREGUNTAS_ABIERTAS.md` (este) | **El registro.** Toda pregunta viva figura aquí, con dueño | `P-nn` para las propias · el índice de abajo para las del documento de revisión |
+| `PARA_EL_NUTRICIONISTA.md` | El documento de revisión. Las preguntas van **en su contexto**, que es como se contestan | `PREGUNTA n`, indexadas aquí abajo |
+| `PREGUNTAS_PARA_ELENA.md` | **Histórico** de la sesión del 8-9 de septiembre. No se le añaden preguntas nuevas | `§ n` |
+
+**Nada se borra al cerrarse.** Se tacha, se dice con qué fuente se cerró y se deja.
+Una pregunta borrada se vuelve a hacer dentro de seis meses, y entonces no hay
+manera de saber que ya se había contestado.
+
+**Y tres estados, no dos:** `abierta` · `reducida` (la fuente contestó una parte y
+lo que queda es más estrecho) · `cerrada`. La mayoría de lo que se cierra leyendo
+pasa por «reducida» antes: la fuente casi nunca contesta la pregunta entera.
+
+### Índice de `PARA_EL_NUTRICIONISTA.md`
+
+Lo vigila el **BLOQUE 66**: si una pregunta aparece o desaparece del documento, o
+cambia de estado, y este índice no se actualiza, la batería lo dice. Sin eso,
+«acordarse» es la única garantía, y ya se ha visto lo que vale.
+
+| Pregunta | Estado |
+|---|---|
+| 1 | abierta |
+| 2 | abierta |
+| 3 | abierta |
+| 4 | abierta |
+| 5 | abierta |
+| 6 | abierta |
+| 7 | abierta |
+| 8 | abierta |
+| 9 | abierta |
+| 10 | reducida |
+| 11 | reducida |
+| 12 | reducida |
+| 13 | abierta |
+| 14 | abierta |
+| 15 | reducida |
+| 16 | cerrada |
+| 17 | reducida |
+| 18 | cerrada |
+| 19 | abierta |
+| 19-bis | cerrada |
+| 19-ter | abierta |
+| 20 | abierta |
+| 21 | abierta |
+| 21-bis | abierta |
+| 21-quater | abierta |
+| 22 | abierta |
+| 23 | abierta |
+| 24 | abierta |
+| 25 | abierta |
+| 26 | abierta |
+| 27 | abierta |
+| 28 | abierta |
+| 29 | abierta |
+| 30 | abierta |
+| 31 | abierta |
+| 32 | abierta |
+| 33 | abierta |
+| 34 | reducida |
+| 36 | abierta |
+| 37 | abierta |
+| 38 | abierta |
+| 35 | retirada — se cerró y se sacó del documento el 9 de septiembre |
+
+---
+
 ## Bloqueantes
 
 ### ~~P-01 · La grasa en pancreatitis: ¿20 o el rango de SACN5?~~ ✅ CERRADA
@@ -222,71 +301,98 @@ techo, ¿cuál y con qué respaldo? ¿O la app no debería dar menú automático
 lactancia?
 
 **No aplicado a propósito:** el DER manda desde el front y hay un contrato de
-85 casos compartido entre los dos repos; cambiar la ración de una perra
+100 casos compartido entre los dos repos; cambiar la ración de una perra
 lactante no lo decide una sesión sola.
 
 ---
 
-### P-11 · FEDIAF da cifras para dos razas que la app tiene y el motor ignora
+### ~~P-11 · FEDIAF da cifras para dos razas que la app tiene y el motor ignora~~ ✅ CERRADA
 
 | | |
 |---|---|
-| **Dueño** | **El nutricionista** (¿son adoptables?) y **Elena** (¿cómo se pregunta en la app?) |
-| **Bloquea** | Sí para un Gran Danés: hoy se le da el 55 % de lo que dice su propia fuente |
-| **Abierta desde** | 8 de septiembre de 2026 |
+| **Resuelta** | **9 de septiembre de 2026**, leyendo la Tabla VII-7 con su frase de entrada y la sección 7.2.3.4 de la misma guía |
+| **Decisión** | Las dos cifras se adoptan, y son **EN VEZ** del nivel de actividad. No son un suelo sobre el que se suma la actividad, ni un ajuste que se añada |
+| **Ya estaba aplicado** | Sí, desde el 8 de septiembre, en `der.py` y en `src/der.js` (`RAZAS_CIFRA_FEDIAF`). Lo que faltaba era la lectura que dice que esa forma de aplicarlo es la correcta |
+| **Dónde** | `PARA_EL_NUTRICIONISTA.md` §1.1, `HISTORIA_TECNICA.md` (duplicación del DER) |
 
-**Verificado el 8 de septiembre leyendo la Tabla VII-7 de FEDIAF 2025 entera**,
-no solo la parte que ya estaba citada en el código. Los cinco escalones de
-actividad del motor cuadran exactos (95 · 110 · 125 · 150-175). Pero la misma
-tabla trae una sección **«Breed specific differences»** con dos filas:
+**La primera prueba: la propia tabla.** La frase que la presenta, literal:
 
-| | FEDIAF VII-7 |
-|---|---|
-| **Great Danes** | **200 (200-250) kcal/kg^0,75** |
-| **Newfoundlands** | **105 (80-132)** |
+> *«Table VII-7 provides examples of daily energy requirements of dogs at
+> different activity levels, for specific breeds and for obese prone adults.
+> It is a good alternative to table VII-6 to estimate the energy requirements
+> of adult dogs.»*
 
-**Las dos razas están en la lista de 136 de la app.** Medido:
+Son **tres clases de ejemplo en paralelo** —niveles de actividad, razas
+concretas, y el perro con tendencia a la obesidad—, todas en la **misma
+columna**, `kcal ME per kg BW^0,75`, y todas dando un valor del mismo
+coeficiente. Una fila de raza es una **alternativa** a una fila de actividad,
+igual que `Obese prone adults ≤ 90` es una alternativa y no un descuento que
+se reste al 95 del sedentario. Sumarlas sería sumar dos veces la misma
+columna.
 
-| Perro | FEDIAF, su raza | Motor en «normal» | Le damos |
-|---|---|---|---|
-| Gran Danés 67,5 kg | **4710 kcal/día** | 2590 kcal/día | **el 55 %** |
-| Terranova 56,5 kg | 2164 kcal/día | 2267 kcal/día | el 105 % |
+**La segunda, y es la que lo cierra:** FEDIAF explica de qué está hecha la
+diferencia de raza, sección **7.2.3.4 «Breed & type»**, literal:
 
-El ajuste por raza que sí tiene el motor (±15, Thes 2014) **no incluye a
-ninguna de las dos**. Y los 200 no son un valor extremo: SACN5 cap. 5 dice
-que las estimaciones de DER en perro *«range between 95 to 200 kcal … per
-(BWkg)0.75 per day»*.
+> *«Breed-specific needs probably reflect differences in temperament,
+> resulting in higher or lower activity, as well as variation in stature or
+> insulation capacity of skin and hair coat.»*
 
-**Las preguntas:** ¿adoptamos las dos cifras? ¿Y esos 200 son **en vez** del
-nivel de actividad o el suelo sobre el que se aplica? La tabla los pone bajo
-«DER in relation to activity» sin cruzarlos con los cinco niveles.
+O sea que la diferencia de raza **ya contiene** la diferencia de actividad.
+Aplicar encima un nivel de actividad sería contar dos veces lo mismo, y por
+eso «suelo sobre el que se aplica» no era una lectura posible: el 200 no está
+midiendo un gran danés parado, está midiendo gran daneses.
+
+**Lo único que FEDIAF no resuelve es dónde caer dentro del rango publicado.**
+Da `200 (200-250)` y `105 (80-132)` y ninguna regla para colocarse. El motor
+coloca por actividad —la diferencia contra «normal»— y **recorta al rango de
+FEDIAF**, que es lo que mantiene cada resultado dentro de lo que publica la
+fuente. Eso sigue siendo interpretación nuestra, y está declarada. Medido hoy
+en los dos repos, que dan lo mismo:
+
+| Gran Danés 67,5 kg | coef | kcal/día |
+|---|---|---|
+| sedentario | 200 (recortado) | 4710 |
+| normal | 200 | 4710 |
+| activo | 215 | 5063 |
+| muy activo | 240 | 5652 |
+| trabajo | 250 (recortado) | 5887 |
+| senior, normal | 200 (recortado) | 4710 |
+
+**Consecuencia práctica para el gran danés: «en vez de» y «suelo» coinciden.**
+Como 200 es a la vez el valor central y el extremo bajo del rango, ningún
+ajuste a la baja —sedentario, senior— puede bajar de ahí. Para el terranova
+no coinciden, porque su rango abre hacia los dos lados: sedentario da 90 y
+trabajo 132.
 
 ---
 
-### P-12 · El escalón intermedio de crecimiento (2,5 × RER) no tiene fuente
+### ~~P-12 · El escalón intermedio de crecimiento (2,5 × RER) no tiene fuente~~ ✅ CERRADA
 
 | | |
 |---|---|
-| **Dueño** | **El nutricionista** |
-| **Bloquea** | No — solo actúa cuando no se conoce el peso adulto esperado |
-| **Abierta desde** | 8 de septiembre de 2026 |
+| **Resuelta** | **8 de septiembre de 2026**, aplicando la única fuente que da cifra |
+| **Decisión** | Fuera el escalón intermedio, y el corte pasa a ser por **edad**: **210** (3 × RER) antes de los 4 meses, **140** (2 × RER) desde los 4 meses |
+| **Alcance** | Solo el camino de respaldo: cuando **no** se conoce el peso adulto esperado. Conociéndolo manda la curva continua de Klein 2019 |
+| **Dónde** | `der.py` y `src/der.js` (`CRECIMIENTO_SACN5_MESES`, `CRECIMIENTO_ANTES_4M`, `CRECIMIENTO_DESDE_4M`), contrato de 100 casos |
 
-Cuando no se sabe el peso adulto esperado, el motor cae a tres escalones:
-**210 / 175 / 140** kcal/kg^0,75 por tramos del 50 % y el 80 % del peso adulto.
+Había **210 / 175 / 140** por tramos del 50 % y el 80 % del peso adulto. Dos
+de los tres números tienen fuente y el de en medio no. SACN5 Tabla 5-2,
+parte 2, literal:
 
-**Verificado el 8 de septiembre: dos de los tres sí tienen fuente.** SACN5
-Tabla 5-2, parte 2, literal: *«Daily energy intake for growing puppies should
-be 3 x RER from weaning until four months of age. At four months of age energy
-intake should be reduced to 2 x RER until the puppy reaches adult size.»*
+> *«Daily energy intake for growing puppies should be 3 x RER from weaning
+> until four months of age. At four months of age energy intake should be
+> reduced to 2 x RER until the puppy reaches adult size.»*
 
 3 × RER = **210** ✓ · 2 × RER = **140** ✓ · **2,5 × RER = 175: no está en
-ninguna parte.**
+ninguna parte**, y el criterio de corte tampoco coincidía — SACN5 corta por
+**edad** y el motor cortaba por **% del peso adulto**, que en este camino ni
+se conoce.
 
-**Y el criterio de corte tampoco coincide:** SACN5 corta por **edad** (4
-meses); el motor corta por **% del peso adulto** (50 % y 80 %).
-
-**Las preguntas:** ¿tiene sentido clínico el escalón intermedio, o hay que
-quedarse con los dos de SACN5? ¿Y cortar por edad o por % del peso adulto?
+**Y había un segundo fallo debajo, que es el que dolía.** El código leía
+**siempre el último** escalón, en los dos repos: un cachorro de dos meses sin
+peso adulto esperado recibía **140**, que es lo que SACN5 da para **después**
+de los cuatro meses. El escalón sin fuente no solo sobraba: tapaba que los
+otros dos no se estaban usando.
 
 ---
 

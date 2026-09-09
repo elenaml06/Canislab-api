@@ -607,9 +607,14 @@ TIROIDES_EXCLUIR = {"cuello", "laringe", "traquea", "esofago", "garganta"}
 #   Calcio de cachorro de raza grande, 2500-4500 mg/1000 kcal
 #       Correcto. Hazewinkel; Dobenecker et al. 2006 (JAPN).
 #
-#   Corte de etapa cachorro a los 4 meses
-#       Correcto y conservador a propósito: FEDIAF usa 14 semanas. El margen
-#       extra es deliberado.
+#   Corte de etapa cachorro: 14 SEMANAS
+#       Correcto -- y es el de FEDIAF, literal: sus tablas de requisitos
+#       titulan las dos columnas «Early Growth (< 14 weeks)» y «Late Growth
+#       (>= 14 weeks)». Aquí ponía «4 meses» (unas 17 semanas) y se defendía
+#       como margen conservador deliberado, que es otra forma de decir que nos
+#       inventábamos un umbral existiendo el de la fuente. Cambiado el 9 de
+#       septiembre en `canislab-web/src/der.js`, que es donde se decide la
+#       etapa; lo vigila `tests/der-contrato.spec.js`.
 #
 #   Ratio Ca:P — adulto 1,0-2,0 · crecimiento tardío 1,0-1,8
 #       Correctos. FEDIAF.

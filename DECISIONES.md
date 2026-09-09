@@ -280,7 +280,7 @@ invierte dividiendo:
   igual —una cota inferior es mejor que nada— pero `_peso_de_referencia` lo
   devuelve **con procedencia propia**, para que se vea que lo es.
 
-**Test:** BLOQUE 37. Las kcal de los 85 casos del contrato del DER no se
+**Test:** BLOQUE 37. las kcal de los casos del contrato del DER no se
 mueven, porque el que cambió fue `verificar.py` y no `der.py`.
 
 ---
@@ -456,7 +456,10 @@ fila. Va a `PREGUNTAS_ABIERTAS.md` P-05 para que el nutricionista lo vea.
 (el DER no es un límite: es una estimación de partida).
 **Estado:** **cerrado salvo ficha** — vive en el repo, cada cifra con su tabla
 citada, protegido por el BLOQUE 54 y por el contrato de 100 casos, escrito
-aquí, y sus preguntas están en `PREGUNTAS_ABIERTAS.md` con dueño.
+aquí, y sus preguntas están en `PREGUNTAS_ABIERTAS.md` con dueño. Dos de ellas
+—**P-11** (si la cifra de raza va en vez del nivel de actividad) y **P-12** (el
+escalón de crecimiento sin fuente)— se cerraron el **9 de septiembre**, y las
+dos leyendo, no opinando.
 
 ### La regla que decide, y de quién es
 
@@ -519,14 +522,35 @@ donde FEDIAF dice 4710 — el 55 %**. Un perro así adelgaza.
 Y 200 no es un valor extremo: SACN5 cap. 5 dice que las estimaciones de DER en
 perro *«range between 95 to 200 kcal … per (BWkg)0.75 per day»*.
 
-⚠️ **Cómo se aplica es interpretación nuestra**, y va declarada: FEDIAF pone
-las dos filas dentro de la tabla de actividad, con valor central y rango, pero
-sin cruzarlas con los cinco niveles. Se hace así: el valor central sustituye a
-la base de «normal», el nivel de actividad sigue moviendo su diferencia contra
-«normal», el ±15 de Thes 2014 **no** se suma encima (estas razas ya tienen su
-propia cifra medida), y el resultado se recorta al rango que publica FEDIAF.
-La pregunta de si eso es lo que FEDIAF quiere decir: `PREGUNTAS_ABIERTAS.md`
-P-11.
+**La cifra de raza va EN VEZ del nivel de actividad, y lo dice la guía**
+(leído el 9 de septiembre, cerrando `PREGUNTAS_ABIERTAS.md` P-11). Dos veces:
+
+> *«Table VII-7 provides examples of daily energy requirements of dogs at
+> different activity levels, for specific breeds and for obese prone adults.»*
+
+Tres clases de fila en paralelo, la misma columna y el mismo coeficiente: una
+fila de raza es **alternativa** a una de actividad, igual que `obese prone
+adults ≤ 90` es una alternativa y no un descuento sobre el 95 del sedentario.
+Y la sección **7.2.3.4 «Breed & type»** dice de qué está hecha la diferencia:
+
+> *«Breed-specific needs probably reflect differences in temperament,
+> resulting in higher or lower activity, as well as variation in stature or
+> insulation capacity of skin and hair coat.»*
+
+La diferencia de raza **ya contiene** la de actividad. Sumar un nivel encima
+sería contar dos veces lo mismo, y por eso «suelo sobre el que se aplica» no
+era una lectura posible: el 200 no mide un gran danés parado, mide gran
+daneses.
+
+⚠️ **Lo que sigue siendo interpretación nuestra es solo dónde caer dentro del
+rango publicado**, porque FEDIAF da `200 (200-250)` y `105 (80-132)` y ninguna
+regla para colocarse. Se coloca por actividad —la diferencia contra «normal»—
+y se recorta al rango, de forma que ningún resultado sale de la fuente. El ±15
+de Thes 2014 **no** se suma encima: estas razas ya tienen su propia cifra
+medida. Consecuencia: para el gran danés «en vez de» y «suelo» acaban
+coincidiendo, porque 200 es a la vez el centro y el extremo bajo de su rango;
+para el terranova no, porque el suyo abre a los dos lados (90 sedentario, 132
+trabajo).
 
 **3 · El respaldo de crecimiento pasa a la regla de SACN5, por edad.**
 
@@ -553,6 +577,13 @@ Y el 175 (2,5 × RER) **no está en FEDIAF ni en SACN5**: era nuestro, y se va.
   SACN5, y la gestación. **Probado con el fallo puesto por tres lados
   distintos**: devolviendo el tope, quitando el Gran Danés y quitando el
   escalón de los 4 meses. Los tres se cazan.
+- **BLOQUE 54, apartado 2-bis** (9 de septiembre): fija la lectura «en vez de»
+  con siete casos que **separan las tres lecturas posibles**. Hacía falta
+  porque las comprobaciones anteriores no las distinguían: «Gran Danés en
+  normal = 200» lo cumple igual la lectura buena y la de «suelo», y el recorte
+  al rango tapa la de «sumar». El terranova es el que las separa, porque su
+  rango abre a los dos lados. Probado con el fallo puesto por los dos lados:
+  con `max(105, base)` fallan 4 casos, con `200 + base` fallan 5.
 - **`der_casos.json`, de 85 a 100 casos**, con los dos repos idénticos
   (md5 comprobado): se añadieron las dos razas en los cinco niveles, un Boxer
   de control (para que el ±15 de Thes no se contamine), y cuatro casos de
