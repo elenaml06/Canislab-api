@@ -364,10 +364,11 @@ BCS 7 · 4 Obeso → BCS 9.
 > aceptable, sabiendo que la rellena un dueño mirando a su perro? La
 > alternativa es enseñarle la de 9 puntos de Laflamme con dibujos.
 
-> **PREGUNTA 9.** En un perro con BCS 9 damos una estimación que sabemos que
-> se queda corta (y por tanto **da menos kcal de las que tocarían para
-> adelgazar bien**). ¿Preferirías que no diéramos ninguna y pidiéramos el
-> peso objetivo al veterinario?
+> **PREGUNTA 9.** En un perro con BCS 9 aplicamos el **45 %** de exceso que da
+> la Tabla VII-2 de FEDIAF («>45 %»), y sigue siendo una **cota inferior**: la
+> escala satura ahí y Broome et al. (2023) ven perros que superan la descripción
+> del 9. ¿Se acepta la cota inferior como está, o en ese extremo preferirías que
+> no diéramos estimación y pidiéramos el peso objetivo al veterinario?
 
 ---
 
@@ -384,13 +385,18 @@ Solo existen tres juegos de requisitos, porque FEDIAF solo publica tres:
 | Gestante | Growth and Reproduction | FEDIAF agrupa gestación y lactancia con crecimiento |
 | Lactante | Growth and Reproduction | Íd. |
 
-**Senior lleva un único ajuste**: la proteína mínima sube a **45 g/1000 kcal**
-si el valor de adulto fuera menor. FEDIAF eleva la recomendación de 40 a 45
-por este motivo. (En la práctica nuestro mínimo de adulto ya es 52,10, así
-que hoy no cambia nada.)
+**El senior tiene tres cosas propias**, aunque comparta la tabla de requisitos
+del adulto:
 
-> **PREGUNTA 10.** ¿Un senior necesita algo más que subir la proteína?
-> ¿Fósforo, sodio, algún antioxidante? Hoy come exactamente como un adulto.
+| | Valor | Fuente |
+|---|---|---|
+| Proteína mínima | 45 g/1000 kcal si el valor de adulto fuera menor | FEDIAF. Hoy no cambia nada: nuestro mínimo de adulto ya es 52,10 |
+| Techo de fósforo | **1750** mg/1000 kcal | SACN5 Tabla 14-2 (el adulto joven tiene 2000) |
+| Techo de sodio | **1000** mg/1000 kcal | SACN5 Tabla 14-2 |
+
+> **PREGUNTA 10.** ¿Le falta algo más al senior? En concreto: ¿algún
+> antioxidante, o un mínimo de proteína por encima de esos 45 para compensar la
+> menor eficiencia de síntesis proteica de la edad?
 
 ---
 
@@ -453,21 +459,29 @@ como techo duro es criterio nuestro**, del lado prudente.
 
 **Nutrientes sin máximo en FEDIAF, y el motor no les pone ninguno:** proteína,
 grasa, vitamina E, las vitaminas del grupo B, colina, potasio, magnesio,
-**fósforo**, linolénico, EPA+DHA, araquidónico y los 12 aminoácidos (salvo el
-techo de lisina).
+linolénico, EPA+DHA, araquidónico y los 12 aminoácidos (salvo el techo de
+lisina).
 
-⚠️ **El fósforo llevaba un máximo de 4000 mg desde el primer día del
-proyecto, sin fuente, y se quitó el 7 de septiembre.** No lo da FEDIAF (solo
-la nota h, informativa y sin cifra), ni NRC 2006 (*«There are insufficient
-data on which to base an SUL for P in dogs»*), ni Dobenecker et al. 2021
-(*PLOS ONE*, el estudio más centrado en toxicidad de fósforo en perros
-adultos sanos: *«no-effect-levels can be defined»* — todavía ninguno).
-Recortaba menús reales contra un límite sin origen.
+**El fósforo sí lo tiene, y por partida doble.** El máximo de FEDIAF en adulto
+es **4,00 g/1000 kcal** (Tabla III-3b, fila «Adult: 4.00 (N)», nota h, y el
+texto de la sección 3.3.1: *«AAFCO introduced a nutritional maximum for both Ca
+(6.25 g/1000 kcal) and P (4 g/1000 kcal)… FEDIAF adopted the same nutritional
+maximums»*). En **crecimiento** las dos columnas de máximo están vacías, así que
+ahí FEDIAF no pone ninguno.
 
-> **PREGUNTA 12 (importante).** El fósforo **no tiene techo** en el motor
-> para un perro sano. Un menú BARF va sobrado de fósforo. ¿Es aceptable, o
-> pondrías un techo aunque las tres fuentes se abstengan? Si pondrías uno,
-> ¿cuál y con qué respaldo?
+Y por debajo de ese máximo legal actúa el techo del libro para el perro **sano**:
+**2000 mg/1000 kcal** en adulto (SACN5 Tabla 13-3) y **1750** en maduro
+(Tabla 14-2). Es la mitad del de FEDIAF, y es el que aprieta de verdad: una
+ración cruda de este motor sale pegada a los 4000 sin él.
+
+> **PREGUNTA 12.** El techo del perro sano son **2000 mg/1000 kcal**, del libro,
+> no de FEDIAF. ¿Es el número correcto para una ración cruda, o en un alimento
+> húmedo y sin fosfatos añadidos el fósforo del hueso se comporta distinto? Lo
+> preguntamos porque **NRC 2006** dice que no hay datos para fijar un límite
+> toxicológico (*«There are insufficient data on which to base an SUL for P in
+> dogs»*) y **Dobenecker et al. 2021** (*PLOS ONE*) distingue fosfato
+> **inorgánico añadido** de fósforo **orgánico** de la matriz del alimento, que
+> es el que lleva el hueso carnoso.
 
 ### 3.3 · Los mínimos se escalan cuando el perro come poco
 
@@ -952,15 +966,11 @@ clínico.**
 >    real», o hay que decirle al dueño que para adelgazar de verdad hace falta
 >    otra cosa?
 >
-> **PREGUNTA 21-ter (nueva, 8 de septiembre).** El fósforo del perro **sano**.
-> SACN5 recomienda ≤2000 mg/1000 kcal a cualquier adulto (Tabla 13-3) y ≤1750 al
-> maduro (14-2); una ración BARF de este motor ronda los **4000**, y FEDIAF no
-> pone máximo de fósforo. Hoy solo se aprieta en las dos patologías cuya tabla
-> repite esa cifra —artrosis (1750) y reacción adversa al alimento (2000)—, así
-> que el mismo perro pasa de 4000 a 1750 por marcar «artrosis», sin que la
-> artrosis tenga nada que ver con el fósforo. ¿Se deja así, se quitan esas dos
-> filas por ser recomendaciones del perro sano, o se aplica el techo a todos los
-> adultos? Detalle y medidas: `PENDIENTE_NUTRICION.md` §14.3.
+*El fósforo del perro sano ya no es una pregunta: el techo del libro
+—2000 mg/1000 kcal en adulto (SACN5 Tabla 13-3) y 1750 en maduro (14-2)— se
+aplica a todos los adultos, por debajo del máximo de FEDIAF (4,00 g). Lo que
+queda de aquello es la PREGUNTA 12, sobre si 2000 es el número correcto para una
+ración cruda.*
 
 ### 8.1-quater · Y contra el reglamento europeo de alimentos dietéticos
 
@@ -1077,20 +1087,22 @@ texto, el ±15 % de la parte A punto 2, es **tolerancia analítica de fabricaci�
 no margen clínico. Así que la pregunta de hasta dónde se puede mover cada número
 sigue siendo tuya, y sigue siendo la PREGUNTA 22.
 
-> **PREGUNTA 21-quater (bloqueante).**
-> 1. **Sodio cardíaco: ¿nos bajamos a los 739 del reglamento europeo?** Es más
->    estricto que lo nuestro en tres de las cuatro entradas.
-> 2. **¿Añadimos los techos de proteína de renal (62,5) y hepática (79,3)?**
->    No requieren firma y hoy no existen.
-> 3. **Urato y cistina: ¿la vía de «proteína ≤220 + fuentes seleccionadas» es
->    viable con comida real**, o la carga de purinas / cistina la tumba igual?
-> 4. **Artrosis: ¿añadimos el suelo de omega-3 totales (8,24 g/1000 kcal)?**
->    Hoy solo comprobamos EPA+DHA ≥ 1,0 y ese lado sí encaja.
-> 5. **Estruvita: ¿añadimos el techo de magnesio (511 mg/1000 kcal)** y la
->    pasamos a formulable, o sigue bloqueada?
-> 6. **Convalecencia (suelo de proteína 71 g/1000 kcal): ¿es una etapa que
->    debería existir?** Es el único de los tres objetivos legales que faltan
->    que parece nuestro.
+**De los seis puntos que tenía esta pregunta, cuatro ya están cerrados por el
+propio motor y no hace falta contestarlos:** el sodio cardíaco se bajó a **739**,
+el techo de proteína renal está en **62,5**, la estruvita es formulable y su
+magnesio está en **250** (más estricto que los 511 que se preguntaban), y el
+suelo de omega-3 totales de la artrosis **no cabe** con el catálogo real y por eso
+vive declarado en `limites_escritos_que_el_solver_no_aplica`, con su medida.
+
+> **PREGUNTA 21-quater.** Quedan dos, y las dos son tuyas:
+> 1. **Urato y cistina: ¿la vía de «proteína ≤220 g/1000 kcal + fuentes
+>    seleccionadas» es viable con comida real**, o la carga de purinas o de
+>    cistina la tumba igual? Hoy las dos están bloqueadas: medido con nuestro
+>    catálogo, una ración cruda va de **687 a 922 mg de purinas/1000 kcal**, y no
+>    por las vísceras — la mayor parte es carne muscular.
+> 2. **Convalecencia (suelo de proteína 71 g/1000 kcal): ¿es una etapa que
+>    debería existir?** Es el único de los tres objetivos legales que faltan que
+>    parece nuestro.
 
 ### 8.1-ter · Lo que las mismas tablas piden y el motor NO aplica
 
@@ -1264,14 +1276,11 @@ FEDIAF no llega, SACN5— resulta que:
 - Luego **manda SACN5**: ≤15 % MS (no obeso, no hipertrigliceridémico) =
   **37,5 g/1000 kcal**, y ≤10 % MS (obeso o hipertrigliceridémico) = **25**.
 
-Hoy el motor usa **20**, de Merck, que no es ninguna de las dos. Y **medido:
-con 37,5 el perro renal con pancreatitis SÍ recibe menú.**
+El motor aplica **37,5**, y **25** si además hay obesidad o hiperlipidemia
+marcadas. Con eso el perro renal con pancreatitis sí recibe menú.
 
-> **PREGUNTA 21-quinquies.** Siguiendo la propia regla del proyecto, el tope
-> de grasa en pancreatitis debería ser el de SACN5 —37,5 en el perro normal,
-> 25 en el obeso o hipertrigliceridémico— y no los 20 de Merck. Eso además
-> resuelve el caso `renal + pancreatitis`. **Pero relaja un tope de patología,
-> y eso no lo decide el software.** ¿Se cambia?
+*Esto ya no es una pregunta. Lo que queda de aquí es la **PREGUNTA 21**, que es
+otra cosa: si ese 37,5 es un número o un rango, y qué variable clínica lo mueve.*
 
 ### 8.5 · Las patologías sin límite numérico
 
@@ -1542,10 +1551,10 @@ mezcla ácidos grasos de potencia muy distinta, y recomienda en su lugar el rati
 **linoleico:linolénico**, que el motor sí aplica desde el 9 de septiembre (2,6-26
 en adulto y crecimiento, 2,6-16 en gestación y lactancia).
 
-> **PREGUNTA 35.** ¿Aplicamos el ratio de totales en esas tres patologías, a
-> pesar de que el NRC dice que no sirve? Si sí, hay que contar con que se cumple
-> metiendo aceite de pescado, y el aceite de un menú de este motor ya llega a
-> 25,3 g en el peor caso.
+*Esto es la mitad de la **PREGUNTA 40**, donde está la pregunta entera con las
+tres fuentes juntas. Lo que hay que añadir aquí es la consecuencia práctica: el
+ratio de totales se cumple metiendo aceite de pescado, y el aceite de un menú de
+este motor ya llega a **25,3 g** en el peor caso.*
 
 ### 11-bis.6 · Y una que ya estaba, y sigue igual
 
@@ -1635,14 +1644,21 @@ ahora hay material para decidirla:
 
 | Fuente | Qué dice |
 |---|---|
-| **NRC 2006, cap.5** | Del ratio de **totales**: *«is not helpful»*. Recomienda en su lugar el **linoleico:linolénico** |
-| **SACN5 cap.25** | Sugiere **5:1 a 1:1** de omega-6:omega-3 «depending on patient assessment», y añade que **no está estandarizado** |
+| **NRC 2006, cap.5** | Del ratio de **totales**: *«is not helpful»*, porque mezcla ácidos grasos de potencia muy distinta. Recomienda en su lugar el **linoleico:linolénico** |
+| **SACN5**, cuatro patologías | Renal 1:1 a 7:1 (cap.37) · cáncer «as close to 1:1 as possible» (cap.30) · artrosis menos de 1:1 (cap.34) · reacción adversa «currently unknown» (cap.31) |
+| **SACN5 cap.25** | **5:1 a 1:1** «depending on patient assessment», y añade que **no está estandarizado** |
 | **Lo que hace el motor hoy** | Aplica el **linoleico:linolénico** (2,6-26 en adulto y crecimiento, 2,6-16 en gestación y lactancia), que es lo que dice el NRC. El de totales **no existe** |
 
-**La pregunta**: ¿se queda así? Nuestra lectura es que sí —el rango del cap.25 es
-para el paciente crítico y la propia fuente lo llama no estandarizado— pero es
-una decisión clínica, no aritmética, y quien firma tiene que poder decir por qué
-el ratio que le pidieron no está.
+**Para el perro sano no hay ratio en ninguna fuente que tengamos.** Todos los de
+arriba son de patología.
+
+**La pregunta**: ¿se queda así? Nuestra lectura es que sí —el de totales lo
+desaconseja la fuente primaria, y el rango del cap.25 es para el paciente crítico
+y sin estandarizar— pero es una decisión clínica, no aritmética, y quien firma
+tiene que poder decir por qué el ratio que le pidieron no está. Si la respuesta es
+que sí se aplica en esas cuatro patologías, hay que contar con que se cumple
+metiendo aceite de pescado, y el aceite de un menú de este motor ya llega a
+**25,3 g** en el peor caso.
 
 ### PREGUNTA 41 — La lactosa: hay umbral, hay lácteo y no hay dato
 

@@ -2717,6 +2717,7 @@ if "Discrepancias: 0" not in _aud.stdout:
 # «Adult: 4.00 (N)», nota h, y el texto de 3.3.1). Lo que no tiene maximo es el
 # CRECIMIENTO. Asi que la frase solo vale si dice «en crecimiento» o si es una
 # correccion que se cita a si misma.
+import re as _re_b18
 _FRASES_PROHIBIDAS_B18 = (
     "no pone máximo de fósforo", "no pone maximo de fosforo",
     "NO PONE MAXIMO DE FOSFORO", "no da máximo de fósforo",
@@ -2756,6 +2757,68 @@ for _f18 in sorted(_FICHEROS_B18):
                 f"error el 7 de septiembre y se devolvio la noche del 8; el numero se arreglo y "
                 f"la frase se quedo en cinco documentos. Contexto: "
                 f"...{_txt18[max(0, _i18 - 90):_i18 + 90]}...")
+
+
+# ⚠️ Y LA SEGUNDA MITAD DE ESTA GUARDIA, QUE HIZO FALTA (9 de septiembre, tarde).
+#
+# La lista de frases de arriba caza la frase EXACTA, y por eso se le escaparon
+# dos que decian lo mismo con otras palabras, las dos en el documento que lee el
+# nutricionista:
+#
+#   «Nutrientes sin máximo en FEDIAF, y el motor no les pone ninguno: … fósforo …»
+#   «El fósforo **no tiene techo** en el motor para un perro sano»
+#
+# O sea que el documento que se le manda a quien tiene que revisar los numeros le
+# estaba diciendo que no hay techo de fosforo, cuando FEDIAF pone 4,00 g/1000
+# kcal en adulto y ademas el motor aplica el techo del libro (2000 en adulto,
+# 1750 en maduro) desde el 8 de septiembre.
+#
+# ⚠️ Y POR QUE ESTO MIRA FRASES Y NO UNA VENTANA DE CARACTERES. La primera
+# version buscaba la negacion a ±160 caracteres de la palabra y daba OCHO falsos
+# positivos, todos del mismo sitio: una tabla cuya columna se llama «Máx. FEDIAF
+# adulto» y donde la casilla de OTRO nutriente dice «sin máximo» en la fila de al
+# lado del fosforo. Una guardia que grita donde no hay nada se deja de leer, que
+# es la leccion de `auditar_catalogo.py`. Asi que se parte el texto en frases
+# —por saltos de linea y por las barras de las tablas— y se exige que el fosforo
+# y la negacion esten en LA MISMA frase.
+_NEGACIONES_B18 = (
+    "sin maximo", "sin máximo", "no tiene techo", "no tiene maximo",
+    "no tiene máximo", "no pone maximo", "no pone máximo", "no da maximo",
+    "no da máximo", "no le pone ninguno", "no les pone ninguno",
+    "se abstienen", "no lo da fediaf", "carece de maximo", "carece de máximo",
+)
+for _f18 in sorted(_FICHEROS_B18):
+    try:
+        _t18 = open(_f18, encoding="utf-8").read()
+    except (OSError, UnicodeDecodeError):
+        continue
+    # ⚠️ EL TEXTO SE APLASTA PRIMERO, y esto tambien se aprendio fallando: la
+    # version que partia por saltos de linea daba tres falsos positivos, todos
+    # la misma frase real —«FEDIAF no pone máximo de fósforo EN CRECIMIENTO»—
+    # cortada por el salto justo antes de «en crecimiento», con lo que la
+    # palabra que la permite se quedaba en el trozo siguiente. Es el mismo
+    # fallo que ya tenia la lista de frases exactas de arriba.
+    _t18 = " ".join(_t18.split())
+    for _linea18 in _t18.split("|"):
+        for _frase18b in _re_b18.split(r"(?<=[.;:])\s", _linea18):
+            _v18 = _frase18b.lower()
+            if "fosforo" not in _v18 and "fósforo" not in _v18:
+                continue
+            if not any(_neg18 in _v18 for _neg18 in _NEGACIONES_B18):
+                continue
+            # En CRECIMIENTO es verdad: las dos columnas de maximo estan vacias.
+            # Y si la frase habla del NRC o de otra fuente que no es FEDIAF,
+            # tambien: el NRC dice literal que no hay datos para un SUL.
+            if any(_ok18.lower() in _v18 for _ok18 in _PERMISOS_B18):
+                continue
+            if "nrc" in _v18 or "dobenecker" in _v18:
+                continue
+            fallos.append(
+                f"BLOQUE18: «{_f18}» niega en la misma frase que el fosforo tenga techo, sin "
+                f"decir que habla de CRECIMIENTO. En ADULTO lo tiene dos veces: el maximo de "
+                f"FEDIAF (4,00 g/1000 kcal, Tabla III-3b nota h y seccion 3.3.1) y el techo del "
+                f"libro que aplica el motor (2000 en adulto, 1750 en maduro). Frase: "
+                f"«{_frase18b.strip()[:150]}»")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
