@@ -1580,6 +1580,14 @@ _CIFRAS_CON_FUENTE = [
     ("renal", "suelos_por_1000kcal", "omega3_total", 1.0, ("pct_ms", 0.4),
      "SACN5 Tabla 37-9: «Omega-3 fatty acids -- 0.4 to 2.5 % in foods for dogs and cats», extremo bajo. Solo el suelo: el techo (6,25) chocaria con el presupuesto semanal de EPA+DHA"),
 
+    # ── La Tabla 35-3 entera, 9 de septiembre: las tres filas que faltaban ──
+    ("disfuncion_cognitiva", "suelos_por_1000kcal", "lcarnitina", 25.0, ("mgkg_ms", 100),
+     "SACN5 Tabla 35-3: «L-carnitine -- Provide foods with >=100 mg/kg». FEDIAF no da fila de L-carnitina, asi que no hay techo con el que chocar. Medido: cinco perros, los cinco en el peldano estricto, con 130-332 mg reales"),
+    ("disfuncion_cognitiva", "limites_escritos_que_el_solver_no_aplica", "selenio", 125.0, ("pct_ms", 0.05),
+     "SACN5 Tabla 35-3: «Selenium 0.5 to 1.3 mg/kg» MS = 125-325 ug/1000 kcal. NO SE APLICA: el maximo de FEDIAF son 142, o sea que DOS TERCIOS del rango de la fuente estan por encima del techo legal. Con el suelo puesto cabe, pero deja los menus al 88-98 % del maximo de un nutriente con toxicidad cronica"),
+    ("disfuncion_cognitiva", "limites_escritos_que_el_solver_no_aplica", "vitC", 37.5, ("mgkg_ms", 150),
+     "SACN5 Tabla 35-3: «Vitamin C -- Provide foods with >=150 mg/kg». NO SE APLICA: el perro sintetiza su propia vitamina C, FEDIAF no le da fila y el catalogo no tiene esa columna"),
+
     # ── Las ESCRITAS QUE EL SOLVER NO APLICA (9 de septiembre) ──
     # ⚠️ ESTAS TRES YA ESTABAN EN patologias.json Y NINGUN BLOQUE LAS MIRABA.
     # `limites_escritos_que_el_solver_no_aplica` se invento el 8 de septiembre
@@ -1878,6 +1886,44 @@ for _et_no, _pat_no, _que in [("Adulto", ["pancreatitis"], "un adulto con pancre
         if any("no ha podido bajar la grasa" in a.lower() for a in _av_no):
             fallos.append(f"BLOQUE13 aviso de etapa: a {_que} se le da el aviso de "
                           f"que no se ha podido bajar la grasa, y ahí no toca")
+
+# ⚠️ Y EL TOPE TIENE QUE AGUANTAR VARIAS SEMILLAS, NO UNA (9 septiembre).
+#
+# CASO REAL, cazado por el BLOQUE 61 y solo porque falla una vez de cada
+# siete: `oxalato`, perro de 20 kg, DER 950 -> **3 de cada 20 menús salían
+# con la vitamina D a 14,6 contra su tope de 14,2**, y `_garantizar_verificado`
+# los tiraba. La usuaria se quedaba sin menú sin patrón visible.
+#
+# La causa: la fila RELATIVA del techo (la que mide sobre las kcal reales)
+# recalculaba el vector con `valor_nutriente()` -- el valor DECLARADO --
+# mientras que la fila absoluta y `_tope_patologia_roto` usan el valor con
+# EL HUECO IMPUTADO a su familia. En ese menú la vitamina D declarada era
+# 8,4 y la imputada 14,6: el solver decía que cabía y el filtro decía que no.
+#
+# Le pasa a cualquier tope de patología cuyo nutriente tenga huecos en el
+# catálogo, que son casi todos. Por eso esto prueba VARIAS semillas: con una
+# sola, la prueba pasa cinco de cada siete veces y el fallo parece un
+# fantasma.
+_SEMILLAS_B13 = 12
+for _pats_semilla in (["oxalato"], ["renal"], ["hepatopatia"], ["renal", "cardiopatia_c"]):
+    _rotos_semilla = {}
+    for _s_b13 in range(1, _SEMILLAS_B13 + 1):
+        _ok_s, _g_s = resolver(950.0, "Adulto", al, req, 20.0, dosis_maxima_fabricante,
+                               margenes_categoria=MARGENES, max_suplementos=2,
+                               patologias=_pats_semilla, time_limit=12,
+                               semilla_aleatoria=_s_b13)
+        if not _ok_s:
+            continue
+        for _r_s in (_api._tope_patologia_roto(_g_s, al, _pats_semilla, "Adulto") or []):
+            _rotos_semilla[str(_r_s)] = _rotos_semilla.get(str(_r_s), 0) + 1
+    if _rotos_semilla:
+        fallos.append(
+            f"BLOQUE13 semillas: con {_pats_semilla} el solver entrega menús que rompen su "
+            f"propio tope en {sum(_rotos_semilla.values())} de {_SEMILLAS_B13} intentos: "
+            f"{sorted(_rotos_semilla)}. El solver y `_tope_patologia_roto` tienen que medir el "
+            f"MISMO número: la fila relativa del techo usa `fila_techo` (con el hueco imputado), "
+            f"no `valor_nutriente()` (el declarado). Si vuelven a separarse, la usuaria se queda "
+            f"sin menú sin patrón visible.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
@@ -2452,8 +2498,23 @@ else:
 #     alimentos nuevos): conservan 27 de 30 con el arreglo y 15 de 30 con el
 #     fallo reintroducido, así que las que DISTINGUEN son doce -- 1, 2, 3, 7,
 #     8, 15, 19, 21, 24, 27, 28 y 29. Van las cinco primeras.
-# Si esta prueba se cae después de tocar el catálogo, lo primero no es
-# sospechar del motor: es volver a medir las 30 con y sin el fallo.
+#   · 9 sep, al tocar DOS restricciones del solver (`SUELO_ENTREGABLE_G` y la
+#     fila relativa de los techos, que ahora usa el vector imputado): la
+#     prueba se cayó en la semilla 3, y NO era el motor. Remedidas las 30 con
+#     y sin el fallo, como manda el párrafo de abajo:
+#         arreglado ... 26 de 30; no conservan 3, 23, 25 y 27
+#         con fallo ... 14 de 30; no conservan 1, 3, 4, 7, 9, 14, 16, 17, 18,
+#                       21, 23, 25, 26, 27, 28 y 29
+#     O sea que 3, 23, 25 y 27 fallan de las DOS formas -- ahí el motor suelta
+#     el boquerón por su cuenta, y hace bien: preferir es una preferencia, no
+#     una imposición. Las que DISTINGUEN son doce: 1, 4, 7, 9, 14, 16, 17, 18,
+#     21, 26, 28 y 29. Van las cinco primeras.
+#     Cambiar una restricción del solver mueve la solución de cada semilla
+#     igual que cambiar el catálogo: la lista de semillas es un muestreo del
+#     azar, no un número mágico, y hay que remedirla las dos veces.
+# Si esta prueba se cae después de tocar el catálogo O UNA RESTRICCIÓN DEL
+# SOLVER, lo primero no es sospechar del motor: es volver a medir las 30 con y
+# sin el fallo.
 _al_b17, _req_b17 = _api.cargar_v2()
 _PREFERIR_B17 = [n for n in ["Boquerón", "Carcasa de pollo", "Hígado de ternera",
                              "Corazón de ternera", "Calabacín", "Aceite de girasol"]
@@ -2461,7 +2522,7 @@ _PREFERIR_B17 = [n for n in ["Boquerón", "Carcasa de pollo", "Hígado de terner
 if "Boquerón" not in _PREFERIR_B17:
     fallos.append("BLOQUE17: el boquerón ya no está en el catálogo; hay que reanclar esta prueba.")
 else:
-    for _sem_b17 in (1, 2, 3, 7, 8):
+    for _sem_b17 in (1, 4, 7, 9, 14):
         _ok_b17, _g_b17 = _api.resolver_v2(
             1040.0, "Adulto", _al_b17, _req_b17, 20.0, _api.dosis_maxima_fabricante,
             margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=12,
@@ -3683,13 +3744,33 @@ for _clave, _esp in (("metionina_cistina", 0.7), ("fenilalanina_tirosina", 1.4))
 _TOPE_HUECO_B27 = 0.05
 import random as _rnd_b27
 _rnd_b27.seed(1)
-_ok_b27, _g_b27 = resolver(1200.0, "Adulto", al, req, 25.0, dosis_maxima_fabricante,
-                           margenes_categoria=MARGENES, max_suplementos=2, time_limit=20)
-if not _ok_b27:
-    fallos.append(
-        "BLOQUE27: no sale menú para un adulto de 25 kg con los aminoácidos activados. Eran "
-        "20 de 20 el 28 de agosto.")
-else:
+
+# ⚠️ Y NO SOLO EN ADULTO (9 septiembre). Esto medía UN menú, de un adulto de
+# 25 kg, y se quedaba corto justo donde más importa: **el aminograma pesa más
+# en crecimiento y en lactancia que en ningún otro sitio**. Un aminoácido
+# esencial que falta no le hace lo mismo a un adulto que a un cachorro que
+# está construyendo tejido, y las etapas de cría son las que tiran de
+# alimentos distintos -- más hueso, más víscera, más suplemento --, que son
+# justo los que se quedan sin aminograma en el catálogo (faltan 16, once de
+# ellos suplementos).
+#
+# Se prueban cuatro etapas con su perro típico. Si en alguna la proteína
+# "ciega" pasa del 5 %, el semáforo está diciendo verde sobre una cuenta que
+# no ha podido hacer.
+_CASOS_B27 = [
+    ("adulto 25 kg",      1200.0, "Adulto",              25.0),
+    ("cachorro 4 meses",  1200.0, "CachorroCrecimiento", 15.0),
+    ("cachorro joven",     700.0, "CachorroJoven",        6.0),
+    ("lactante 22 kg",    3000.0, "Lactante",            22.0),
+]
+for _etq_b27, _der_b27, _et_b27, _peso_b27 in _CASOS_B27:
+    _ok_b27, _g_b27 = resolver(_der_b27, _et_b27, al, req, _peso_b27, dosis_maxima_fabricante,
+                               margenes_categoria=MARGENES, max_suplementos=2, time_limit=20)
+    if not _ok_b27:
+        fallos.append(
+            f"BLOQUE27: no sale menú para {_etq_b27} con los aminoácidos activados. Eran "
+            f"20 de 20 el 28 de agosto.")
+        continue
     _prot_total_b27 = sum((al[_n]["nutrientes"].get("proteina") or 0) / 100 * _v
                           for _n, _v in _g_b27.items())
     _prot_ciega_b27 = sum((al[_n]["nutrientes"].get("proteina") or 0) / 100 * _v
@@ -3699,11 +3780,11 @@ else:
         _quienes_b27 = sorted(_n for _n in _g_b27 if _sin_aminograma_b27(al[_n])
                               and (al[_n]["nutrientes"].get("proteina") or 0) > 0)
         fallos.append(
-            f"BLOQUE27: el {_frac_b27*100:.1f} % de la proteína de un menú viene de alimentos SIN "
-            f"aminograma ({_quienes_b27}), y el tope es el {_TOPE_HUECO_B27*100:.0f} %. Eran el "
-            f"1,0 % cuando se activaron los doce requisitos. Un alimento sin aminograma cuenta "
-            f"como CERO: cuanta más proteína venga de ahí, más se aleja el menú de lo que dice "
-            f"el semáforo, y en verde.")
+            f"BLOQUE27 ({_etq_b27}): el {_frac_b27*100:.1f} % de la proteína del menú viene de "
+            f"alimentos SIN aminograma ({_quienes_b27}), y el tope es el "
+            f"{_TOPE_HUECO_B27*100:.0f} %. Eran el 1,0 % cuando se activaron los doce "
+            f"requisitos. Un alimento sin aminograma cuenta como CERO: cuanta más proteína "
+            f"venga de ahí, más se aleja el menú de lo que dice el semáforo, y en verde.")
 
 # ⚠️ EL ÚNICO MÁXIMO DE FEDIAF QUE NO SE APLICA, Y ESTO LO VIGILA.
 #
@@ -5489,8 +5570,24 @@ for _etq43, _der43, _etapa43, _peso43, _adulto43 in _CASOS_43:
         # cuesta más sacar menú desde que existe el techo. Está apuntado en
         # `PENDIENTE_NUTRICION.md` §14.4 como trabajo pendiente — el sorteo de
         # alimentos no sabe que hay un techo de fósforo, y podría saberlo.
+        # ⚠️ REMEDIDO A OCHO SORTEOS (9 septiembre). Los tres de arriba se
+        # midieron sobre DIEZ vueltas y daban 0; sobre TREINTA vueltas dejan
+        # entre 1 y 3 sin menú, o sea un 3-7 % por vuelta -- y como el bloque
+        # da tres vueltas por perfil, eso es una batería roja cada seis o
+        # siete ejecuciones, sin que nada esté mal. Medido el 9 de septiembre,
+        # toy de 1,5 kg con DER 200 y 1 s de solver, 30 vueltas cada uno:
+        #
+        #     3 sorteos ..... 1-3 sin menú de 30
+        #     5 sorteos ..... 1 sin menú de 30
+        #     8 sorteos ..... 0 sin menú de 30
+        #
+        # No es bajarle el listón: lo que este bloque afirma -- que una
+        # solución ya calculada no se tira por el reloj -- se sigue exigiendo
+        # igual. Lo que se corrige es el número de reintentos, que estaba
+        # medido con una muestra demasiado pequeña. En producción el perro
+        # además baja de peldaño, cosa que aquí no se hace.
         _ok43, _g43 = False, None
-        for _sorteo43 in range(3):
+        for _sorteo43 in range(8):
             _ok43, _g43 = _resolver_43(_der43, _etapa43, al, req, _peso43, dosis_maxima_fabricante,
                                        margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
                                        time_limit=1.0, peso_adulto_esperado_kg=_adulto43)
@@ -6150,9 +6247,23 @@ def _cubre_b49(gramos, clave, der, etapa, peso):
 _yodos_b49, _caidos_b49, _cortos_b49 = [], 0, []
 for _der_b49, _peso_b49 in ((300, 3), (200, 1.5), (250, 2.2), (400, 4.5)):
     for _sem_b49 in range(1, 6):
+        # ⚠️ EL MISMO TIEMPO QUE LE DA LA API, Y NO MENOS (9 septiembre).
+        #
+        # Aquí ponía `time_limit=8` y la API usa 15. Con las restricciones
+        # nuevas del 9 de septiembre el problema es un pelo más duro, y con 8
+        # segundos **un menú de cada veinte se caía por reloj**, no por el
+        # yodo: la búsqueda del MILP está limitada por tiempo de pared, así que
+        # el resultado depende de lo cargada que esté la máquina y la prueba
+        # pasaba o fallaba según el momento.
+        #
+        # Lo que este bloque tiene que medir es si el SUELO cubre el redondeo,
+        # no si el solver llega a tiempo con menos tiempo del que tiene en
+        # producción. Bajarle el listón al umbral de fallos habría escondido
+        # el problema de verdad si algún día vuelve; darle el tiempo real lo
+        # deja midiendo lo que dice medir.
         _ok_b49, _g_b49 = _api.resolver_v2(
             _der_b49, "Adulto", _al_b49, _req_b49, _peso_b49, _api.dosis_maxima_fabricante,
-            margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=8,
+            margenes_categoria=_api.MARGENES_V2, max_suplementos=2, time_limit=15,
             semilla_aleatoria=_sem_b49)
         if not _ok_b49:
             _caidos_b49 += 1
@@ -7343,6 +7454,41 @@ for _clave60, _r60 in _cnd60.REGLAS.items():
     if not _r60.get("fuente") or not _r60.get("por_que"):
         fallos.append(f"BLOQUE60: la regla '{_clave60}' no trae fuente o no trae por_que. Un "
                       f"numero que decide si un menu se entrega tiene que poder auditarse")
+
+# ⚠️ Y LAS REGLAS ESCRITAS SIN CIFRA TIENEN QUE SEGUIR SIENDO INERTES (9 sep).
+#
+# FEDIAF nombra en su seccion 3.3 tres dependencias mas -- la vitamina E con
+# los PUFA, la B6 con la proteina y la K con el pescado -- y NO da numero para
+# el perro en ninguna de las tres. Estan escritas en el JSON con
+# `tipo: "documentado_sin_cifra"` para que se puedan auditar y para que no se
+# vuelvan a "descubrir" dentro de seis meses.
+#
+# Lo que esto vigila es que sigan SIN aplicarse: si alguien les pone un tipo
+# de los que el motor lee, empezarian a decidir menus con una cifra que nadie
+# ha traido de ninguna fuente. Es el mismo test al reves que el del BLOQUE 55
+# para `limites_escritos_que_el_solver_no_aplica`.
+_SIN_CIFRA_60 = [k for k, r in _cnd60.REGLAS.items()
+                 if r.get("tipo") == "documentado_sin_cifra"]
+if len(_SIN_CIFRA_60) < 3:
+    fallos.append(f"BLOQUE60: quedan {len(_SIN_CIFRA_60)} reglas `documentado_sin_cifra` y eran "
+                  f"tres (vitamina E con PUFA, B6 con proteina, K con pescado). Si se han "
+                  f"aplicado, tienen que traer una cifra CANINA de su fuente; FEDIAF solo da la "
+                  f"del gato")
+for _k60 in _SIN_CIFRA_60:
+    _r = _cnd60.REGLAS[_k60]
+    if _r.get("aplicado_por_el_solver") is not False:
+        fallos.append(f"BLOQUE60: la regla sin cifra '{_k60}' no dice `aplicado_por_el_solver: "
+                      f"false`. Una regla que el motor no aplica tiene que decirlo en el propio "
+                      f"JSON, no solo en un comentario")
+    _nut = _r.get("nutriente")
+    for _et60_i in ("Adulto", "CachorroCrecimiento", "Lactante"):
+        if _nut in _cnd60.suelos_de_la_etapa(_et60_i):
+            fallos.append(f"BLOQUE60: '{_k60}' no tiene cifra para el perro y sin embargo "
+                          f"`suelos_de_la_etapa({_et60_i})` devuelve {_nut}. El solver estaria "
+                          f"aplicando un numero que no ha traido nadie")
+        if any(x["nutriente"] == _nut for x in _cnd60.suelos_relativos_de_la_etapa(_et60_i)):
+            fallos.append(f"BLOQUE60: '{_k60}' aparece como suelo relativo en {_et60_i} y no "
+                          f"tiene coeficiente publicado para el perro")
 
 # La Tabla VII-13 de FEDIAF, comprobada CONTRA SUS PROPIAS FILAS. La tabla da
 # el adulto a 18 %MS de proteina con 0,52 g/100gMS de arginina y a 20 %MS con

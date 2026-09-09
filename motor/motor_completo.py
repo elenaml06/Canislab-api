@@ -1343,9 +1343,34 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             # no molesta -- pasarse una millonésima del máximo de un
             # nutriente no tiene consecuencia, saltarse el tope renal sí.
             mx_rel = mx * (1 - 0.001) if clave in topes_patologia else mx
+            # ⚠️ CON EL MISMO VECTOR QUE LA FILA ABSOLUTA, Y ESTO ERA UN FALLO
+            # DE VERDAD (9 septiembre). CASO REAL, cazado por el BLOQUE 61:
+            #
+            #   oxalato, perro de 20 kg, DER 950 -> 3 de cada 20 menús salían
+            #   con la vitamina D a 14,6 contra su tope de 14,2, y
+            #   `_garantizar_verificado` los tiraba. La usuaria se quedaba sin
+            #   menú una de cada siete veces, sin patrón visible.
+            #
+            # Aquí se recalculaba el vector con `valor_nutriente()`, o sea con
+            # el valor DECLARADO, mientras que la fila absoluta de arriba usa
+            # `fila_techo` -- que es `fila_max` cuando hay huecos, es decir el
+            # valor declarado CON EL HUECO IMPUTADO a su familia. Y
+            # `_tope_patologia_roto` mide como la absoluta, imputando.
+            #
+            # O sea que el solver comprobaba el techo contra una cuenta y el
+            # filtro final contra otra: en ese menú la vitamina D declarada era
+            # 8,4 (varios alimentos con el dato vacío) y la imputada 14,6. El
+            # solver decía que cabía y el filtro decía que no.
+            #
+            # No es un caso raro de la vitamina D: le pasa a CUALQUIER tope de
+            # patología cuyo nutriente tenga huecos en el catálogo, que son
+            # casi todos. Es la misma familia de siempre -- dos sitios que
+            # calculan lo mismo de dos maneras -- y por eso ahora la fila
+            # relativa se construye A PARTIR de la absoluta en vez de repetir
+            # la cuenta.
             fila_rel = fila_vacia()
             for n in nombres:
-                v_nut = valor_nutriente(alimentos[n].get("nutrientes", {}), clave) / 100.0
+                v_nut = fila_techo[idx[n]]      # ya es valor/100, con el hueco imputado
                 kcal_n = (alimentos[n].get("energia", 0) or 0.0) / 100.0
                 coef = v_nut - (mx_rel / 1000.0) * kcal_n
                 if coef:

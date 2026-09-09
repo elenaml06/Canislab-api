@@ -2758,3 +2758,82 @@ fue leer el código: fue que el BLOQUE 61 —la comprobación nueva, la de «cad
 patología formulable formula de verdad»— fallara **al mismo tiempo** y por lo
 que parecía otro motivo. Dos síntomas distintos de la misma causa se reconocen
 antes que uno solo.
+
+---
+
+## ⚠️ Y UN SEGUNDO FALLO DEL MOTOR, DE LA MISMA FAMILIA: el techo se comprobaba con un número y se medía con otro
+
+Lo cazó el **BLOQUE 61**, el testigo nuevo, y solo porque falla **una vez de cada
+siete** — con una sola tirada la prueba pasa y el fallo parece un fantasma.
+
+### El síntoma
+
+```
+BLOQUE61: «oxalato» está marcada formulable y NO da menú para el perro de referencia
+   motivo: «El menú que salía se pasa de los límites de la patología de este perro»
+```
+
+Medido con 20 semillas: **3 de 20 menús de oxalato salían con la vitamina D a
+14,6 contra su tope de 14,2** y `_garantizar_verificado` los tiraba. La regla 1
+funcionando — y la usuaria sin menú, una vez de cada siete, sin patrón visible.
+
+### La causa
+
+El motor pone **dos filas** por cada techo, y con motivo (está escrito ahí desde
+el 21 de agosto): una **absoluta**, sobre las kcal pedidas, y otra **relativa**,
+sobre las kcal reales — porque el menú puede salir un 3 % por debajo y menos
+kcal con el mismo nutriente es más concentración.
+
+Las dos filas usaban **vectores distintos**:
+
+```
+fila absoluta ..... fila_techo  = el valor declarado CON EL HUECO IMPUTADO a su familia
+fila relativa ..... valor_nutriente()  = el valor DECLARADO a secas
+```
+
+Y `_tope_patologia_roto` —el filtro que decide si el menú se entrega— mide como
+la **absoluta**, imputando. En el menú que fallaba, la vitamina D **declarada**
+era 8,4 µg/1000 kcal y la **imputada** 14,6: varios alimentos tenían el dato
+vacío. El solver comprobaba su techo contra 8,4, lo daba por bueno, y el filtro
+lo medía contra 14,6 y lo tiraba.
+
+**No es un caso raro de la vitamina D.** Le pasa a **cualquier tope de patología
+cuyo nutriente tenga huecos en el catálogo**, que son casi todos. Que solo se
+viera en el oxalato es porque su techo de vitamina D es el más apretado que hay
+(14,1875, el máximo legal) y porque la vitamina D es de los nutrientes con más
+huecos.
+
+### El arreglo, y por qué es una línea
+
+La fila relativa se construye ahora **a partir de la absoluta** en vez de repetir
+la cuenta:
+
+```python
+v_nut = fila_techo[idx[n]]      # ya es valor/100, con el hueco imputado
+```
+
+**Medido:** oxalato pasa de **3 de 20** menús con el tope roto a **0 de 20**.
+
+Y lo vigila el BLOQUE 13 con una comprobación nueva que prueba **doce semillas**
+por combinación de patologías (oxalato, renal, hepatopatía, y renal+cardiopatía),
+porque con una sola tirada este fallo se esconde.
+
+### Tres veces la misma familia en una noche
+
+```
+· el denominador del BLOQUE 25 ..... la prueba sumaba cinco categorías y el motor seis
+· SUELO_ENTREGABLE_G .............. el solver planificaba 0,0185 g y la entrega los tiraba
+· fila_techo vs valor_nutriente ... el solver comprobaba declarado y el filtro imputado
+```
+
+Los tres son **dos sitios que calculan lo mismo de dos maneras**, que es
+exactamente lo que ya había pasado con la tabla de patologías duplicada del
+`POST /menu`, con la fibra entre el motor y el analizador, y con los suelos de
+patología el 8 de septiembre. No es mala suerte: es la forma que tiene este
+motor de romperse. **La única defensa que funciona es que uno lea al otro** — que
+es lo que se ha hecho en los tres — o que una prueba los compare.
+
+Y una segunda lección, sobre las pruebas: los tres fallos se han encontrado en
+la misma noche porque el **BLOQUE 61** empezó a fallar. Ninguno de los tres se
+manifestaba como un número raro; los tres se manifestaban como **«no hay menú»**,
+que hasta hoy no lo miraba nadie.

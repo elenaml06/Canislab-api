@@ -559,3 +559,152 @@ excluimos alimentos altos en oxálico **por una lista** (`OXALATO_ALTO`), no por
 una cifra, porque el catálogo **no tiene columna de ácido oxálico**. Ahora esa
 columna tiene un objetivo numérico. Va a `DATOS_QUE_FALTAN.md` — y los datos no
 los relleno yo.
+
+---
+
+## 11 · El selenio de la disfunción cognitiva: la fuente pide un rango que se sale del techo de FEDIAF
+
+**Corta, y con la medida hecha.** Al volver a la Tabla 35-3 entera (después de
+retirar la vitamina E, §6) quedaban tres filas sin mirar. Dos están resueltas y
+la tercera es esta.
+
+**Lo que pide la fuente:** *«Selenium **0.5 to 1.3 mg/kg**»* de materia seca =
+**125 a 325 µg/1000 kcal**.
+
+**El problema:** el **máximo de selenio de FEDIAF para adulto son 142
+µg/1000 kcal**. O sea:
+
+```
+125 ....... el suelo que pide SACN5      (12 µg por debajo del techo)
+142 ....... EL MÁXIMO DE FEDIAF
+225 ....... el punto medio del rango de SACN5   (58 % POR ENCIMA del techo)
+325 ....... el extremo alto de SACN5     (2,3 veces el techo)
+```
+
+**Dos tercios del rango que recomienda la fuente están por encima de lo que
+FEDIAF permite** a un perro sano.
+
+**Medido de todas formas**, porque no aplicarlo por comodidad no vale. Con el
+suelo de 125 puesto, **los cinco perros de prueba salen, en el peldaño
+estricto**. Cabe. Pero mira dónde deja el selenio:
+
+```
+            sin el suelo        con el suelo de 125     (máximo FEDIAF: 142)
+ 3 kg .....   124,9                  138,1  = 97 % del máximo
+ 8 kg .....   123,2                  128,0  = 90 %
+20 kg .....    95,9                  125,1  = 88 %
+30 kg .....    93,8                  130,8  = 92 %
+55 kg .....   107,3                  139,2  = 98 % del máximo   ← 3 µg de margen
+```
+
+**Por qué no lo he aplicado.** Obligar a *todos* los menús de esta patología a
+vivir al 88-98 % del techo de un nutriente **con toxicidad crónica documentada**
+—el selenio es uno de los cinco topes de `motor/seguridad.py`, y no por
+casualidad— es exactamente lo que esta misma noche he señalado como error en el
+calcio de los cachorros (§8). **Un techo existe para no vivir en él.** Y con 3 µg
+de margen en el perro de 55 kg, cualquier cambio del catálogo lo cruza.
+
+Hay un segundo motivo, y es aritmético: **los máximos no escalan con las kcal y
+los mínimos de FEDIAF sí** (ecuación 7.2.5), así que en un perro que come menos
+de lo esperado la ventana entre 125 y 142 se cierra sola. Es el mismo cruce que
+el BLOQUE 34 ya vigila para el selenio en dieta húmeda.
+
+**Lo que SÍ he aplicado de la misma tabla**: **L-carnitina ≥25 mg/1000 kcal**
+(«Provide foods with ≥100 mg/kg» MS). FEDIAF no da fila de L-carnitina, así que
+no hay techo con el que chocar, y **no cuesta nada**: los cinco menús ya iban a
+130-332 mg, de cinco a trece veces el suelo.
+
+**Y lo que NO se puede aplicar aunque la tabla lo pida**: la **vitamina C ≥150
+mg/kg**. El perro la sintetiza a partir de glucosa —no es un nutriente esencial
+para él y FEDIAF no le da fila—, el catálogo no tiene esa columna, y encima el
+capítulo 16 de Fascetti avisa de que el exceso de vitamina C es precursor de
+oxalato y acidifica la orina, que es un mal negocio justo en un perro mayor.
+Queda escrito en `limites_escritos_que_el_solver_no_aplica` con el motivo.
+
+**Lo que te pregunto:** ¿lo dejamos escrito y sin aplicar, o prefieres que el
+selenio suba a 125 aceptando vivir pegados al máximo de FEDIAF? Yo recomiendo
+dejarlo como está, y la alternativa intermedia sería un suelo más bajo (por
+ejemplo 110, el 77 % del techo) que suba el selenio sin pegarse — pero ese número
+no lo dice ninguna fuente y me lo estaría inventando.
+
+---
+
+## 12 · Tres requisitos más que FEDIAF nombra y no cuantifica para el perro
+
+**No hay que decidir nada urgente aquí**, pero conviene que sepas que existen,
+porque son de la misma familia que la arginina que sí he aplicado esta noche: los
+que **no tienen forma de fila** y por eso ningún barrido de tablas los encuentra.
+Los tres están en la sección 3.3 de FEDIAF 2025, escritos con todas las letras.
+
+Los tres quedan en `requisitos_condicionales.json` con `tipo:
+documentado_sin_cifra` — escritos, auditables, y **sin aplicar**, porque FEDIAF
+enuncia la dependencia y no da número para el perro. Un requisito sin coeficiente
+no se puede aplicar sin inventárselo.
+
+### 12.1 · La vitamina E sube con los PUFA
+
+> *«The vitamin E requirement **depends on the intake of polyunsaturated fatty
+> acids (PUFA)**… An increased level of vitamin E may be required under
+> conditions of high PUFA intake. **For cat food**, it is recommended to add 5 to
+> 10 IU Vitamin E above minimum level per gram of fish oil added per kilogram of
+> diet.»*
+
+La cifra es **del gato**. Para el perro el NRC solo aporta esto: *«Hayes et al.
+(1969) demonstrated that **in the presence of large amounts of PUFAs** in the
+diet, **100 mg α-tocopherol per kg of diet may be inadequate**»* — unos 25
+mg/1000 kcal, 3,6 veces el mínimo de FEDIAF.
+
+**Nos toca más que a un pienso** porque nuestras raciones llevan pescado azul y
+aceites por diseño: son la herramienta con la que el motor cierra el EPA+DHA y
+ahora también el ratio linoleico:linolénico.
+
+**Medido sobre los 216 menús:**
+
+```
+PUFA totales ....... 3,7 a 10,2 g/1000 kcal   (mediana 5,0)
+vitamina E ......... 11,2 a 93,2 mg/1000 kcal (mediana 26,4; mínimo FEDIAF 6,97)
+vitE : PUFA ........ 1,53 a 23,80 mg/g        (mediana 5,55)
+   por debajo de 0,6 mg de vitE por g de PUFA ....... 0 de 216
+   con la vitamina E por debajo de 25 mg/1000 kcal .. 97 de 216
+```
+
+Por la relación clásica (≥0,6 mg de vitamina E por gramo de PUFA) vamos
+**holgados**: el peor menú está a 1,53, dos veces y media la referencia. Por la
+cifra absoluta de Hayes casi la mitad quedan por debajo, pero esa cifra es de una
+dieta experimental y no es un requisito.
+
+*(Un apunte de método: la primera medida me salió al revés —«211 de 216 por
+debajo»— porque sumé el araquidónico **en mg** con los demás ácidos grasos **en
+g**. Es la trampa que `UNIDADES.md` avisa en su línea 197, y caí en ella. La
+cifra buena es la de arriba.)*
+
+### 12.2 · La vitamina B6 sube con la proteína
+
+> *«**Requirements of vitamin B6 increase with increasing protein content of the
+> food.**»* — y eso es todo lo que dice: no hay coeficiente.
+
+Es la misma forma que la arginina, con una diferencia decisiva: **para la
+arginina FEDIAF publica la Tabla VII-13 con el coeficiente (0,01 g por gramo de
+proteína) y para la B6 no publica nada.**
+
+**Medido:** la B6 real de los 216 menús va de **1,37 a 4,95 mg/1000 kcal**
+(mediana 2,75) contra un mínimo de FEDIAF de **0,42** — entre tres y doce veces.
+Habría que triplicar el requisito para que el menú mediano se quedara corto. La
+carne y la víscera van sobradas de B6, igual que de arginina y de carnitina.
+
+### 12.3 · La vitamina K con mucho pescado
+
+> *«there is some indication that **canned pet food for cats being high in fish**
+> may increase the risk of **prolonged coagulation times**; therefore it has been
+> suggested to supplement high fish diets with vitamin K.»*
+
+Tres motivos para no aplicarlo, y ninguno es comodidad: el aviso es **del gato** y
+de pienso enlatado; **FEDIAF no da fila de vitamina K para el perro** (no está
+entre los 41, porque la sintetiza la flora intestinal); y **el catálogo no tiene
+columna de vitamina K**. Se escribe igual porque nos señala: en algunas variantes
+el pescado es el **45 % del peso de la comida**, muy por encima de lo que lleva un
+pienso.
+
+**Lo que te pregunto, si acaso:** ¿le pasas las tres al nutricionista? Son
+exactamente el tipo de pregunta que él puede cerrar en dos minutos y yo no puedo
+cerrar de ninguna manera, porque la respuesta es un número que la fuente no da.
