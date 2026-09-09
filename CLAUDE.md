@@ -543,5 +543,15 @@ Contra eso hay tres cosas, y las tres hay que mantenerlas:
 - **Stripe quitó `current_period_end` del objeto Subscription** en la
   versión Basil: ahora vive en `items.data[]`.
 - **Un `StripeObject` no es un dict**: no admite `.get()`.
+- **El bytecode cacheado puede mentirle a la batería.** La invalidación de `.pyc`
+  de CPython compara la fecha del fuente con la guardada en el `.pyc` **con
+  resolución de un segundo**. Si tocas un `.py` dentro del mismo segundo en que
+  Python escribió su `.pyc`, Python sigue sirviendo el viejo. Pasó el 9 de
+  septiembre: `seguridad.py` decía 1275 en el disco y la batería informaba de
+  1400, dos veces, 50 minutos buscando un fallo que no existía. Es la peor clase
+  de fallo posible aquí — la batería **afirma algo del motor que el código no
+  dice** —, y un verde así taparía un cambio real. Desde entonces la batería borra
+  todos los `__pycache__` antes de importar nada. Si algún día una cifra del motor
+  y la del fichero no cuadran, esto es lo primero que hay que mirar.
 - **Render duerme el servicio** tras ~15 min sin tráfico. Lo mantiene
   despierto un GitHub Action cada 10 minutos.

@@ -752,6 +752,10 @@ exigente es el lado seguro.
 > **¿hay motivo clínico para soltar el refuerzo a los 6 meses, o el lado estricto es
 > preferible?**
 
+**El umbral de «raza grande» es **15 kg de peso adulto esperado**, que es lo que
+dicen las notas a y b de la Tabla III-3b.** No confundirlo con los 25 kg de SACN5,
+que deciden otra cosa (§7-bis).
+
 > **~~PREGUNTA 18~~ — CERRADA el 9 de septiembre. Sí hay matiz, y es del gran danés,
 > no de «los gigantes».** FEDIAF lo dice en el texto de calcio, literal:
 > *«During later growth up to 1.8 % DM can be fed to all breed dogs including giant

@@ -20,6 +20,29 @@ final dice "TODO EN VERDE", se puede entregar el archivo. Si dice que hay
 fallos, se arreglan ANTES de entregar nada, no después.
 """
 import sys, time, json
+
+# ⚠️ LO PRIMERO DE TODO: BORRAR EL BYTECODE CACHEADO (9 septiembre).
+#
+# CASO REAL, y costó dos baterías enteras (50 minutos) buscando un fallo que no
+# existía. `motor/seguridad.py` decía `TOPE_YODO_KCAL = 1275.0` en el disco, y la
+# bateria informaba, con toda la razon aparente, de que valia 1400.0.
+#
+# El motivo: probando una guardia se toco el fichero y se restauro con `cp` 474
+# MILISEGUNDOS despues de que Python escribiera el .pyc. La invalidacion de
+# bytecode de CPython compara la mtime de la fuente con la guardada en la
+# cabecera del .pyc **con resolucion de un segundo**, asi que los dos caian en el
+# mismo segundo y Python dio el .pyc por bueno. Siguio sirviendo el 1400 con la
+# fuente diciendo 1275.
+#
+# Esto es la peor clase de fallo que hay aqui: la bateria AFIRMA algo del motor
+# que el codigo no dice. Un rojo asi se investiga en el sitio equivocado, y un
+# VERDE asi seria peor todavia -- taparia un cambio real. Se borra la cache antes
+# de importar nada, y asi la tanda entera se compila de la fuente.
+import pathlib as _pl_cache, shutil as _sh_cache
+for _pyc in _pl_cache.Path(".").rglob("__pycache__"):
+    if "node_modules" not in str(_pyc):
+        _sh_cache.rmtree(_pyc, ignore_errors=True)
+
 sys.path.insert(0, '.')
 sys.path.insert(0, './motor')
 
