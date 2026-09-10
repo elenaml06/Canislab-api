@@ -1211,3 +1211,52 @@ La batería los cazó a los dos, que es exactamente lo que tenían que hacer:
   frase (y hay que actualizar el patrón aquí) o se borró el dato». Era lo
   primero. De paso se ancló también el ajuste **joven**, que no lo estaba y era
   el que había sido código muerto.
+
+---
+
+## 10 de septiembre de 2026 — Los avisos de patología llegan por fin a la pantalla, y dos de ellos mentían
+
+Era el punto que encabezaba `PENDIENTE_PRODUCTO.md` con ⚠️, y esta misma noche
+lo había hecho más grande yo: los `avisos_extra` eran ocho y pasaron a ser
+**veinte** al aplicar FEDIAF y SACN5.
+
+**Lo que pasaba.** La API manda `avisos_patologia` con **cada** menú desde el 29
+de agosto — los monta `avisos_de_patologias` en el motor — y `respuestaApiAMenu`
+recoge campo por campo lo que le interesa de la respuesta. Ese campo no estaba en
+la lista, así que se perdían ahí mismo, **dos líneas por debajo del comentario
+que cuenta que eso ya había pasado antes con `problemas_seguridad`**.
+
+Y no son avisos de relleno. Dicen justo lo que el motor no puede hacer solo: que
+a un perro con bromuro potásico hay que medirle el bromo en sangre **después** de
+cambiarle la dieta —y el cambio de dieta lo hace esta app—, que el mitotano se
+absorbe treinta veces mejor con comida que en ayunas, que el zinc oral **no** se
+da con la comida, contra qué número se lee una analítica de taurina.
+
+Ahora salen dentro del panel que ya aparece exactamente cuando hay patología, el
+de «Este menú TIENE que aprobarlo tu veterinario». Van ahí y no en un panel
+propio a propósito: un aviso más entre los avisos se lee, un panel más se cierra.
+
+### Y al ir a pintarlos se vio que dos mentían
+
+`cardiopatia_b2` le decía al dueño «Sodio bajado a una restricción moderada
+(estadio B2, **900 mg/1000 kcal**)» y el motor aplica **739**. `cardiopatia_c`
+decía **790** y aplica **625**. Los dos topes se bajaron el 8 de septiembre
+—porque el rango clínico entero se salía del techo legal europeo— y los avisos se
+quedaron con el número viejo.
+
+Es la peor versión del fallo: no falta información, la que hay es **falsa**, y
+además en la dirección que tranquiliza. Un veterinario que lea «bajado a 900»
+cree que la dieta está menos restringida de lo que está. Llevaban dos días así, y
+lo único que los habría encontrado era ir a leerlos — que es justo lo que nadie
+hacía, porque no se pintaban.
+
+### Y diez avisos llevaban contabilidad del repo dentro
+
+Diez empezaban con «⚠️ AÑADIDO 9-sep-2026, DE LEER ENTERO EL CAP.25 DE SACN5…».
+Eso es de `por_que` y de este fichero. El dueño de un perro con Cushing no
+necesita saber qué día leímos el capítulo 69. Los 87 avisos están limpios.
+
+**BLOQUE 74** vigila las dos cosas: que ningún aviso afirme «<nutriente> bajado a
+N por 1000 kcal» con un número que el motor no aplica, y que ninguno lleve
+fechas ni marcas de trabajo interno. Comprobado que falla con el fallo puesto:
+devolviendo el 790 a la cardiopatía C, salta.

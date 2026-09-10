@@ -62,7 +62,7 @@ que tomar una persona, no yo.
 
 ## `PENDIENTE_PRODUCTO.md` — funcionalidades nuevas y deuda técnica
 
-- [ ] ⚠️ **Los ocho `avisos_extra` de patología no los pinta ninguna pantalla.** La API los sirve por dos caminos y `canislab-web` no los lee en ninguno. Dos de ellos son de fármaco y describen algo que pasa por culpa del cambio de dieta que hace la app
+- [x] **Los `avisos_extra` de patología, PINTADOS** — HECHO 10 sep. Eran ocho y ya son **veinte**; la API los mandaba con cada menú desde el 29 de agosto y `respuestaApiAMenu` no los recogía, así que se perdían. Ahora salen dentro del panel de «lo tiene que aprobar tu veterinario». Y al ir a pintarlos se vio que **dos mentían**: el aviso de cardiopatía B2 decía 900 mg/1000 kcal de sodio y el motor aplica 739, y el de estadio C decía 790 y aplica 625. BLOQUE 74 y `tests/avisos-de-patologia.spec.js`
 - [ ] **La app no dice que un perro que come crudo EXCRETA más patógenos.** Hay tiempos de congelación (que protegen al perro) y nada de higiene de la casa (que protege a quien vive con él). SACN5 cap.56
 - [ ] Sugerir patologías por raza: ahora hay **tres** tablas de fuente, incluida la de urolitos, cuyas seis patologías el motor ya tiene
 - [ ] **¿Duerme fuera?** FEDIAF §7.2.3.5 cuantifica el invierno: **10 a 90 % más de calorías**, y 2-5 kcal/kg^0,75 por cada grado bajo la zona termoneutra. La ficha no pregunta dónde vive el perro, así que hoy un mastín en el patio en enero recibe lo mismo que un perro de piso. Y **la cifra existe**: SACN5 Tabla 5-3 la da por tipo de pelo y salto de temperatura (pelo corto +95 %, pelo largo +59,5 %, Labrador +25 %, Gran Danés +22 %). Lo que falta es **la pregunta en la ficha**, que es decisión de producto

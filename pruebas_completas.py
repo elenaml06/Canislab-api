@@ -7783,15 +7783,35 @@ if _ok58 and _g58:
         fallos.append("BLOQUE58: no hay ningún aceite puro en el catálogo para poder inyectar "
                       "el fallo. Sin poder romperlo, este test no demuestra nada")
     else:
-        _flaco[_aceite] = _flaco.get(_aceite, 0) + 40.0
+        # ⚠️ LA CANTIDAD SE CALCULA, NO SE ADIVINA (10 septiembre). Esto sumaba
+        # 40 g fijos, y una noche el menú que devolvió el solver tenía tanta
+        # proteína que con 40 g solo bajó a 127,0 -- por ENCIMA del suelo de
+        # 125. El filtro calló con razón y el test concluyó que no estaba
+        # comprobando nada. O sea: un test que falla cuando el motor acierta,
+        # que es la peor clase de rojo -- el que enseña a desconfiar de la
+        # batería. El menú de partida lo elige el solver y cambia entre
+        # ejecuciones, así que la dosis no puede ser un número escrito a mano.
+        #
+        # Se calcula la que hace falta para cruzar el suelo con margen. Sale de
+        # despejar: proteina_total / ((kcal + aceite_g * kcal_g / 100) / 1000)
+        # = objetivo, con objetivo un 4 % por debajo del suelo.
+        _kc58 = sum(al[_n]["energia"] * _g / 100.0 for _n, _g in _flaco.items())
+        _pt58 = sum((valor_nutriente(al[_n]["nutrientes"], "proteina") or 0) * _g / 100.0
+                    for _n, _g in _flaco.items())
+        _obj58 = _ESPERADO_58 * 0.96
+        _kc_necesarias58 = (_pt58 * 1000.0 / _obj58) - _kc58
+        _kcal_g58 = al[_aceite]["energia"] / 100.0
+        _dosis58 = max(40.0, _kc_necesarias58 / _kcal_g58 if _kcal_g58 else 40.0)
+        _flaco[_aceite] = _flaco.get(_aceite, 0) + _dosis58
     _rotos58 = _api58._tope_patologia_roto(_flaco, al, [], "Lactante", req=req)
     if not any("proteina" in _x for _x in _rotos58):
         _kc = sum(al[_n]["energia"] * _g / 100.0 for _n, _g in _flaco.items())
         _pp = sum((valor_nutriente(al[_n]["nutrientes"], "proteina") or 0) * _g / 100.0
                   for _n, _g in _flaco.items()) / _kc * 1000.0 if _kc else 0
-        fallos.append(f"BLOQUE58: se le anaden 40 g de aceite a un menu de lactancia -- la "
-                      f"proteina baja a {_pp:.1f} g/1000 kcal contra un suelo de {_ESPERADO_58} "
-                      f"-- y el filtro final no dice nada. Entonces no lo esta comprobando")
+        fallos.append(f"BLOQUE58: se le anaden {_dosis58:.0f} g de aceite a un menu de "
+                      f"lactancia -- la proteina baja a {_pp:.1f} g/1000 kcal contra un suelo de "
+                      f"{_ESPERADO_58} -- y el filtro final no dice nada. Entonces no lo esta "
+                      f"comprobando")
 
 # 5. Y el diagnostico tiene que saber NOMBRARLO: un limite que aprieta y no se
 #    puede nombrar es una pared, no un limite.
@@ -9690,6 +9710,114 @@ for _peso73, _der73, _et73 in _CASOS_73:
 if _peor73[0] is not None:
     print(f"  {len(_CASOS_73)} menus; el mas justo: {_peor73[0]:.4f} g/1000 kcal en {_peor73[1]} "
           f"(suelo {_SUELO_DHA_73})")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+
+# ============================================================
+# BLOQUE 74 — LOS AVISOS LOS LEE EL DUEÑO
+# ============================================================
+#
+# ⚠️ POR QUE (10 septiembre 2026). Dos cosas distintas, encontradas al ir a
+# pintar los avisos en la app y mirar por fin lo que dicen.
+#
+# 1. UNA CIFRA QUE MENTIA. El aviso de `cardiopatia_c` decia al dueño «Sodio
+#    bajado a la restriccion del estadio C (790 mg/1000 kcal)» y el motor
+#    aplicaba 625. El de `cardiopatia_b2` decia 900 y aplicaba 739. Los dos
+#    topes se bajaron el 8 de septiembre —el rango clinico entero se salia del
+#    techo LEGAL europeo— y los avisos se quedaron con el numero viejo.
+#    Es la peor version del fallo: no es que falte informacion, es que la que
+#    hay es FALSA, y ademas en la direccion que tranquiliza (dice que aprieta
+#    menos de lo que aprieta). Un veterinario que lea «bajado a 900» cree que
+#    la dieta esta menos restringida de lo que esta.
+#
+# 2. CONTABILIDAD DEL REPO EN UN TEXTO QUE LEE UNA PERSONA. Diez avisos
+#    empezaban con «⚠️ AÑADIDO 9-sep-2026, DE LEER ENTERO EL CAP.25 DE
+#    SACN5…». Eso es de `por_que` y de HECHO.md. El dueño de un perro con
+#    Cushing no necesita saber que dia leimos el capitulo 69.
+#
+# Lo que este bloque vigila es exactamente esas dos cosas. No revisa el estilo
+# ni la prosa: revisa que ningun aviso afirme un numero que el motor no aplica,
+# y que ninguno lleve fechas ni marcas de trabajo interno.
+print("\n=== BLOQUE 74: los avisos los lee el dueño ===")
+
+import json as _json74
+import re as _re74
+
+_CRUDO_74 = _json74.load(open("patologias.json", encoding="utf-8"))["patologias"]
+_BL74 = ("topes_por_1000kcal", "suelos_por_1000kcal",
+         "topes_por_1000kcal_si_ademas", "suelos_por_1000kcal_si_ademas")
+
+# 1. «<nutriente> bajado a … (N unidad/1000 kcal)» tiene que ser lo que se aplica.
+#    Solo se mira ESA forma —la que afirma lo que el motor HIZO— y no cualquier
+#    cifra suelta: los avisos citan a proposito numeros de la fuente y limites
+#    que NO se aplican (el objetivo terapeutico del urato, el maximo legal del
+#    zinc), y confundirlos con una afirmacion daria una alarma que no se lee.
+_NUT74 = {"sodio": "sodio", "fosforo": "fósforo", "potasio": "potasio", "grasa": "grasa",
+          "cobre": "cobre", "proteina": "proteína", "magnesio": "magnesio",
+          "cloruro": "cloruro", "fibra": "fibra", "calcio": "calcio"}
+_afirmaciones74 = 0
+for _pat74, _f74 in sorted(_CRUDO_74.items()):
+    _aplicados74 = {}
+    for _b74 in _BL74:
+        for _n74, _c74 in (_f74.get(_b74) or {}).items():
+            if isinstance(_c74, dict) and _c74.get("valor") is not None:
+                _aplicados74.setdefault(_n74, set()).add(float(_c74["valor"]))
+    for _clave74, _t74 in sorted((_f74.get("avisos") or {}).items()):
+        if not isinstance(_t74, str):
+            continue
+        for _k74, _es74 in _NUT74.items():
+            _pat_re74 = _re74.compile(
+                _es74 + r"\s+bajad[oa]\s+a[^.()]{0,90}\(([^)]*?([\d.,]+)\s*(?:mg|g|µg|ug)\s*/\s*1[.,]?000\s*kcal)",
+                _re74.I)
+            for _m74 in _pat_re74.finditer(_t74):
+                _afirmaciones74 += 1
+                try:
+                    _num74 = float(_m74.group(2).replace(".", "").replace(",", "."))
+                except ValueError:
+                    continue
+                _ap74 = _aplicados74.get(_k74) or set()
+                if not any(abs(_a - _num74) <= max(0.01 * _a, 0.001) for _a in _ap74):
+                    fallos.append(
+                        f"BLOQUE74: el aviso «{_clave74}» de «{_pat74}» le dice a quien lo lea que "
+                        f"el {_es74} se ha bajado a {_num74:g} por 1000 kcal, y el motor aplica "
+                        f"{sorted(_ap74) if _ap74 else 'ningun tope de ese nutriente'}. Un aviso "
+                        f"que afirma un numero que el motor no aplica es peor que no tener aviso: "
+                        f"es informacion falsa, y normalmente en la direccion que tranquiliza")
+
+if _afirmaciones74 == 0:
+    fallos.append("BLOQUE74: no se ha encontrado ni un aviso que diga «<nutriente> bajado a (N por "
+                  "1000 kcal)». Habia tres (los tres estadios de cardiopatia). O han cambiado de "
+                  "redaccion —y entonces este patron hay que actualizarlo— o han desaparecido, y "
+                  "este bloque ha dejado de mirar nada mientras sigue saliendo verde")
+
+# 2. Ninguna marca de trabajo interno en un texto que lee una persona.
+_BASURA_74 = (
+    # ⚠️ SIN `re.I`, Y NO ES UN DETALLE: con la bandera puesta esto cazaba
+    # «no se ha AÑADIDO ninguna restriccion», que es castellano normal dentro
+    # del aviso de la miocardiopatia asociada a dieta. La contabilidad del repo
+    # se escribe SIEMPRE en mayusculas («⚠️ AÑADIDO 9-sep-2026, DE LEER...»), y
+    # es esa forma la que no puede estar aqui. Un patron que da falsos positivos
+    # se acaba relajando entero, y entonces deja de vigilar lo que importaba.
+    (_re74.compile(r"\bA[ÑN]ADIDO\b"), "«AÑADIDO» en mayusculas, que es como el repo marca su propia contabilidad"),
+    (_re74.compile(r"verificado literal", _re74.I), "«verificado literal»"),
+    (_re74.compile(r"\b\d{1,2}-(?:ene|feb|mar|abr|may|jun|jul|ago|sep|oct|nov|dic)-\d{4}\b", _re74.I),
+     "una fecha del repo (formato 9-sep-2026)"),
+    (_re74.compile(r"CUARTA PASADA|TERCERA PASADA", _re74.I), "el nombre de una pasada de verificacion"),
+)
+for _pat74, _f74 in sorted(_CRUDO_74.items()):
+    for _clave74, _t74 in sorted((_f74.get("avisos") or {}).items()):
+        if not isinstance(_t74, str):
+            continue
+        for _re_b74, _que74 in _BASURA_74:
+            if _re_b74.search(_t74):
+                fallos.append(
+                    f"BLOQUE74: el aviso «{_clave74}» de «{_pat74}» lleva {_que74} dentro. Los "
+                    f"avisos los lee el DUEÑO (o el veterinario), no quien mantiene el repo: la "
+                    f"fecha y el «de leer entero el capitulo tal» van en `por_que` y en HECHO.md")
+
+print(f"  {sum(len(v.get('avisos') or {}) for v in _CRUDO_74.values())} avisos revisados, "
+      f"{_afirmaciones74} afirmaciones de «bajado a» comprobadas contra el tope aplicado")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
