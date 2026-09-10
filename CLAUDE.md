@@ -494,6 +494,30 @@ que nadie se enterara hasta que los encontraba la usuaria.
 Un test que pasa con el fallo puesto no sirve: al añadir uno, comprueba
 que falla si reintroduces el problema.
 
+**Y un test que falla cuando el motor ACIERTA es peor todavía**, porque enseña
+a desconfiar de la batería — y una batería de la que se desconfía se mira por
+encima. Pasó dos veces la noche del 9 al 10 de septiembre, con la misma forma
+las dos: **una prueba que da por hecha una propiedad incidental del menú que
+devuelve el solver**.
+
+- El BLOQUE 58 sumaba **40 g fijos** de aceite a un menú de lactancia para
+  empujar la proteína por debajo de su suelo. Una ejecución devolvió un menú
+  con tanta proteína que 40 g solo la bajaron a 127,0 — por encima del suelo
+  de 125 —, el filtro calló con razón y el test concluyó que no comprobaba
+  nada. Ahora la dosis **se calcula** para cruzar el suelo con margen.
+- El BLOQUE 60 exigía que en el menú resuelto la Tabla VII-13 pidiera más
+  arginina que la III-3b. Otra ejecución devolvió 74 g de proteína — por
+  debajo del cruce, que está en torno a 82 —, donde manda la III-3b y **eso es
+  lo correcto**. Ahora la aritmética se comprueba aparte, a una proteína fija
+  y representativa, y del menú real solo se exige el invariante: que se aplique
+  **la más estricta** de las dos.
+
+La regla que sale de ahí: **el menú que devuelve el solver cambia entre
+ejecuciones**, así que una prueba solo puede afirmar de él lo que sea verdad de
+CUALQUIER menú válido (que esté verde, que respete sus topes, que aplique el
+límite más estricto). Todo lo que dependa de una cifra concreta del menú, o se
+calcula a partir de ese menú, o se comprueba aparte con números fijos.
+
 ## Comprobar qué hay desplegado
 
 `https://canislab-api.onrender.com/verificar` dice, sin necesidad de

@@ -29,6 +29,7 @@ que tomar una persona, no yo.
 
 - [ ] Ejecutar el SQL de la fase 0 en Supabase (rol profesional)
 - [ ] La lista de las nueve `formulable: false` (la necesita la fase 4)
+- [ ] ⚠️ **Un perro en BCS 4 recibe hoy un 8 % más de comida, y FEDIAF §7.1.3 dice que «the ideal BCS should therefore be between 4/9 and 5/9»** — o sea que ya está en su peso. Encontrado con `radiografia.py` el 10 sep, con la tabla de efecto por BCS medida. Es tensión DENTRO de FEDIAF (§7.1.1 no distingue dirección, §7.1.3 da el rango) y toca a todo perro marcado «delgado»
 - [ ] Tres cambios de producto sobre la estimación por BCS por debajo de 5
 - [ ] Cuatro fichas de aminoácidos que hay que mirar en su fuente
 - [ ] El máximo de lisina de FEDIAF: ¿sobre qué proteína se mide? (para el nutricionista)

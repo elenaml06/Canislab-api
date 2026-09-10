@@ -1282,3 +1282,27 @@ casilla en la ficha y cambia lo que hay que decir.
 
 No es un argumento contra el crudo ni cambia ningún menú. Es información que la
 fuente da y que quien elige alimentar así tiene derecho a tener.
+
+### Y la radiografía, corrida por primera vez contra `main`
+
+`radiografia.py` existe desde el 28 de agosto para contestar la pregunta que la
+batería no contesta: no «¿este menú cumple?» sino «¿este menú se ha hecho con los
+números del perro que pediste?». Se corre en `main` y en la rama y se comparan
+los dos archivos. **No se había corrido en esta rama.**
+
+De 301 líneas, cambian 128, y todas menos dos tienen un motivo que se puede decir
+en voz alta:
+
+- **`(máx 4000.0)`** aparece en el fósforo de todas las etapas de adulto: es el
+  máximo de FEDIAF que se borró por error el 7 de septiembre y volvió el 8.
+- **Metionina 1,16 → 1,276 y lisina 1,22 → 1,342**, y así los doce aminoácidos:
+  es exactamente ×1,1, el factor de digestibilidad de la §3.2.1 de FEDIAF.
+- **BCS 9: peso de referencia 21,429 → 20,69 kg** en un perro de 30: es el
+  EXCESO_BCS_9 pasando del 40 % al 45 % que dice la Tabla VII-2.
+
+Las dos que no: un perro en **BCS 4** pasa de no tener peso objetivo a tener
+33,33 kg sobre 30 reales, o sea **un 8,2 % más de kcal**. Eso salió del cambio
+del 9 de septiembre —derivar hacia arriba por debajo de 5— y **choca con la
+§7.1.3 de FEDIAF**, que dice que el BCS ideal es el **rango 4-5**. Medido,
+escrito con las dos citas y puesto como decisión en `PENDIENTE_DECISIONES.md`
+§4: no se cambia sola porque toca la ración de todo perro marcado «delgado».

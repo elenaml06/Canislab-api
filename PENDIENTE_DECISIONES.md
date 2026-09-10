@@ -437,3 +437,52 @@ ración de los cachorros que están entre el 50 y el 80 % de su peso adulto.
 Y trae aparte al Gran Danés otra vez: «may need **25 % more energy** during the
 first two months after weaning = **250 kcal/BWkg^0,75**», y «may not grow when
 daily energy intake is less than 175 kcal ME/BWkg^0,75».
+
+### 4 · ⚠️ Un perro en BCS 4 recibe hoy un 8 % más de comida, y FEDIAF dice que BCS 4 ya es ideal
+
+**Encontrado el 10 de septiembre con `radiografia.py`**, comparando lo que ENTRA
+al motor contra `main`. Es la clase de fallo que la batería no puede ver: el menú
+sale verde porque cuadra con las kcal que le dieron, y lo que cambia es el peso
+con el que se calcularon esas kcal.
+
+**Lo que hace el motor hoy** (perro de 30 kg reales, peso que usa para escalar):
+
+| BCS | Peso de referencia | Cambio | Efecto en las kcal |
+|---|---|---|---|
+| 1, 2, 3 | 36,00 kg | +20,0 % | **+14,7 %** |
+| **4** | **33,33 kg** | **+11,1 %** | **+8,2 %** |
+| 5 | (no deriva) | — | — |
+| 6 | 27,27 kg | −9,1 % | −6,9 % |
+| 7 | 25,00 kg | −16,7 % | −12,8 % |
+| 8 | 23,08 kg | −23,1 % | −17,9 % |
+| 9 | 20,69 kg | −31,0 % | −24,3 % |
+
+**La tensión, y está dentro de FEDIAF, no entre FEDIAF y otra fuente:**
+
+- La **§7.1.1** dice que la energía se calcula sobre el peso óptimo y **no
+  distingue dirección**. Es la lectura con la que se aplicó el 9 de septiembre:
+  si el perro está por debajo de 5, se deriva hacia arriba.
+- La **§7.1.3** dice, literal: *«**The ideal BCS should therefore be between 4/9
+  and 5/9**»*, y la **§7.2.4.1** lo repite citando a Kealy 2002 — el estudio de
+  los catorce años en labradores, que es justo el que enseña que el perro más
+  delgado vive más.
+
+Si el ideal es el **rango 4-5** y no el punto 5, un perro en BCS 4 **ya está en
+su peso**, y darle un 8 % más de comida es empujarlo fuera del rango que la
+propia fuente asocia con vivir más.
+
+**Qué hay que decidir**, y es de criterio, no de lectura:
+
+1. ¿`BCS_NEUTRO` sigue siendo el **punto 5**, o pasa a ser el **rango 4-5**?
+2. Si pasa a ser rango: ¿el BCS 4 deja de derivar peso objetivo (lo más simple),
+   o deriva hacia el punto medio del rango?
+3. Y lo mismo por arriba: hoy el BCS 6 baja un 6,9 % las kcal. Si el ideal llega
+   hasta 5, el 6 sí está por encima y eso se queda como está.
+
+⚠️ **Toca a todo perro marcado como «delgado» en la pantalla del dueño**, porque
+el escalón 1 de los cinco del dueño mapea a BCS 3 — y a cualquiera al que un
+veterinario le ponga un 4. No es un caso raro.
+
+Las dos citas y la medida están aquí; el cambio, en `main._peso_de_referencia` y
+en `verificar.peso_objetivo_desde_bcs`, que son **dos copias** de la misma regla
+y tendrían que moverse juntas.
