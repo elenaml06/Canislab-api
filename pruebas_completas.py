@@ -10309,6 +10309,80 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 78 — NINGUNA TABLA DE SACN5 SIN VEREDICTO
+# ============================================================
+#
+# ⚠️ POR QUE EXISTE (10 septiembre). Elena, esa manana:
+#
+#   «sacn5 leido completo significa leido de verdad con todas sus tablas, todos
+#    sus parrafos y todo bien extraido? no quiero que pase como paso con FEDIAF
+#    que estaba "todo leido" y luego resulta que seguian saliendo cosas que
+#    habias ignorado»
+#
+# La respuesta honesta era NO. FEDIAF tiene inventario de tablas con veredicto
+# (BLOQUE 67) y desglose de secciones (BLOQUE 68); SACN5 tenia un cuaderno de
+# lectura y ningun sitio donde COMPROBAR que no se hubiera saltado nada. Y ya
+# habia pasado: `VERIFICACION_FILA_A_FILA.md` deja escrito que un barrido de sus
+# tablas se corto solo con `sed` y reviso unas 40.
+#
+# `sacn5_tablas.json` es el inventario: las 474 tablas del libro, una por una.
+# Hoy: 64 con rastro en el repo, 44 felinas y 67 listados de productos comerciales
+# -- estas dos ultimas clasificadas POR SU PROPIO TITULO, y el campo
+# `veredicto_por` lo dice, porque «leida» y «apartada por el titulo» no pueden
+# leerse igual --, y 299 PENDIENTES. Pendiente es un veredicto honesto («nadie lo
+# ha mirado») y por eso se cuentan y se clavan aqui.
+#
+# EL NUMERO DE PENDIENTES SE COMPARA EXACTO, no «menor o igual». Si baja, hay
+# que bajarlo aqui a mano, y esa es la idea: cada tabla que se resuelve deja
+# constancia en el mismo commit. Si sube, es que el libro trae tablas nuevas sin
+# clasificar. Las dos cosas tienen que verse.
+print("\n=== BLOQUE 78: ninguna tabla de SACN5 sin veredicto ===")
+
+import json as _json78
+
+_PENDIENTES_78 = 299       # ← bajalo cuando resuelvas tablas. Solo puede bajar.
+_TOTAL_78 = 474
+
+_inv78 = _json78.loads((_raiz_b24 / "sacn5_tablas.json").read_text(encoding="utf-8"))["tablas"]
+_VEREDICTOS_78 = ("aplicada", "citada_en_el_repo", "leida_y_no_aplica", "felina",
+                  "lista_de_productos", "pendiente")
+
+for _t78, _f78 in sorted(_inv78.items()):
+    if _f78.get("veredicto") not in _VEREDICTOS_78:
+        fallos.append(f"BLOQUE78: la tabla {_t78} tiene el veredicto «{_f78.get('veredicto')}», "
+                      f"que no es ninguno de {_VEREDICTOS_78}")
+    if _f78.get("veredicto") != "pendiente" and not (_f78.get("nota") or "").strip():
+        fallos.append(f"BLOQUE78: la tabla {_t78} dice «{_f78['veredicto']}» y no dice POR QUE. "
+                      f"Un veredicto sin motivo es una firma en blanco")
+
+_pend78 = sum(1 for _f in _inv78.values() if _f["veredicto"] == "pendiente")
+if len(_inv78) != _TOTAL_78:
+    fallos.append(f"BLOQUE78: el inventario tiene {len(_inv78)} tablas y aqui pone {_TOTAL_78}. "
+                  f"Si SACN5 no ha cambiado, es que el extractor si -- y entonces lo que hay que "
+                  f"mirar es que se ha dejado de ver")
+if _pend78 != _PENDIENTES_78:
+    fallos.append(
+        f"BLOQUE78: hay {_pend78} tablas de SACN5 sin veredicto y aqui pone {_PENDIENTES_78}. "
+        f"{'Si has resuelto tablas, baja el numero en este bloque: la cuenta va en el mismo commit que el veredicto.' if _pend78 < _PENDIENTES_78 else 'Han APARECIDO tablas sin clasificar, que es justo lo que este bloque existe para no dejar pasar.'}")
+
+# Y el cruce contra el texto del libro, cuando el repo de fuentes esta al lado.
+# En la CI no esta, asi que ahi este bloque comprueba el inventario y NO finge
+# haberlo cruzado: decirlo es parte de la prueba.
+import subprocess as _sub78
+_aud78 = _sub78.run([sys.executable, "auditar_sacn5_tablas.py"],
+                    capture_output=True, text=True, cwd=str(_raiz_b24))
+if _aud78.returncode != 0:
+    _cola78 = "\n      ".join((_aud78.stdout + _aud78.stderr).strip().splitlines()[-10:])
+    fallos.append(f"BLOQUE78: el inventario de SACN5 no cuadra con el texto del libro:"
+                  f"\n      {_cola78}")
+for _l78 in (_aud78.stdout.strip().splitlines() if _aud78.stdout.strip() else []):
+    if _l78.startswith("-"):
+        break
+    print(f"  {_l78.strip()}")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 print(f"\n{'='*60}")
 print(f"TOTAL: {time.time()-t_total:.0f}s de pruebas")
 if fallos:

@@ -151,7 +151,7 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 77 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `pruebas_completas.py` | **La batería.** Los 78 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
 | `auditar_patologias.py` | Cada cifra de `patologias.json` contra `requerimientos_v2_final.json`: que ninguna patología formulable tenga un tope por debajo del mínimo de FEDIAF, y que la clave del nutriente exista en el `MAPA`. Lo ejecuta el BLOQUE 32 |
 | `radiografia.py` | Imprime los números que **ENTRAN** al motor, para comparar `main` con una rama a golpe de `diff`. No lo ejecuta la batería: se corre a mano. Existe porque el semáforo comprueba el menú contra las kcal que le dieron — si las kcal ya venían mal, el menú sale VERDE para un perro que no es el tuyo, y eso solo se ve en la entrada |
 | `auditar_catalogo.py` | Huecos y datos raros del catálogo, y quién se queda sin aminograma. Lo ejecuta el BLOQUE 19 |
@@ -323,6 +323,7 @@ verificando cada cifra contra su fuente original, y encontró cinco errores y
 catorce patologías con factores de su propia fuente sin aplicar. Ábrelo antes de
 tocar `patologias.json`: los números siguen viviendo allí y este documento es su
 lectura, no una segunda copia — si discrepan, manda el JSON.
+`sacn5_tablas.json` + `auditar_sacn5_tablas.py` (10 de septiembre) son **el inventario de las 474 tablas de SACN5**, una por una, con lo que el motor hace con cada una. Nació de una pregunta de Elena: «¿leída completa significa leída de verdad, con todas sus tablas?». La respuesta era **no se puede comprobar**, que es justo lo que le había pasado a FEDIAF. Hoy: 64 con rastro en el repo, 44 felinas y 67 listados de productos —estas dos últimas apartadas **por su propio título**, y el campo `veredicto_por` lo dice—, y **299 sin veredicto**. Ese número lo clava el BLOQUE 78 comparándolo **exacto**: baja solo cuando alguien resuelve tablas y lo baja en el mismo commit.
 `LECTURA_SACN5.md` (10 de septiembre) es el **registro de la lectura íntegra de
 SACN5**, capítulo a capítulo, texto y tablas. Existe porque una lectura que no
 deja rastro no se puede comprobar ni continuar: dice de cada capítulo qué se
@@ -485,7 +486,7 @@ se comprueba entero en cada batería.
 python3 pruebas_completas.py     # ~25 min, tiene que salir TODO EN VERDE
 ```
 
-Los 77 bloques tardan unos **25 minutos** (1.458 s en la última medida; el
+Los 78 bloques tardan unos **25 minutos** (1.458 s en la última medida; el
 «~10 min» que ponía aquí se quedó corto en cuanto los bloques 50 a 61
 empezaron a resolver menús de verdad, y el «~2 min» de antes llevaba meses
 caducado). No necesita red ni claves de verdad: se fabrica

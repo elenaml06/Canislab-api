@@ -18,10 +18,35 @@
 
 ## Estado de la lectura
 
+> ⚠️ **CORREGIDO EL 10 DE SEPTIEMBRE, Y ES LA PARTE IMPORTANTE DE ESTE FICHERO.**
+> Aquí ponía «capítulos 5-70: pendientes de esta noche», y se quedó escrito así
+> después de leerlos. Elena preguntó esa mañana si «SACN5 leída completa»
+> significaba de verdad **todas sus tablas y todos sus párrafos**, y la respuesta
+> honesta era **no se puede comprobar**: este fichero es un cuaderno, y un
+> cuaderno no es un inventario.
+>
+> Ahora sí se puede, y el número está medido, no estimado:
+>
+> | | Tablas de SACN5 |
+> |---|---|
+> | En el libro, contadas por el extractor | **474** |
+> | Con rastro en el repo (alguna ficha, decisión o documento las cita) | 64 |
+> | Felinas, apartadas **por su propio título** | 44 |
+> | Listados de productos comerciales, apartados por su propio título | 67 |
+> | **Sin que nadie haya dicho qué hace el motor con ellas** | **299** |
+>
+> Vive en `sacn5_tablas.json`, lo comprueba `auditar_sacn5_tablas.py` y lo clava
+> el **BLOQUE 78**: el número de pendientes se compara **exacto**, así que baja
+> solo cuando alguien resuelve tablas y lo baja en el mismo commit, y sube si
+> aparecen tablas sin clasificar.
+>
+> Lo de abajo sigue valiendo: es lo que se leyó y lo que salió de leerlo. Lo que
+> ya no vale es leerlo como «está todo visto».
+
 | Capítulos | Estado |
 |---|---|
 | 1-4 | leídos en la sesión anterior; hallazgos abajo, y uno de ellos CORREGIDO |
-| 5-70 | pendientes de esta noche |
+| 5-70 | leídos la noche del 9 al 10; hallazgos abajo. Cobertura real: `sacn5_tablas.json` |
 
 ---
 
