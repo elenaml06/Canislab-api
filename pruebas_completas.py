@@ -10041,6 +10041,119 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 76 — NO SE REINTENTA LO QUE ESTA DEMOSTRADO IMPOSIBLE
+# ============================================================
+#
+# ⚠️ POR QUE EXISTE (10 septiembre). CASO REAL MEDIDO.
+#
+# Un chihuahua de 3 kg (DER 260) con `renal` tardaba 21-24 s en dar menu y
+# hacia DIECISEIS llamadas al solver. La escalera son seis peldanos, y los
+# cinco primeros salen `status 2` -- infactible DEMOSTRADO por HiGHS -- con
+# todas las semillas probadas. Las otras diez llamadas eran reintentos del
+# mismo peldano imposible.
+#
+# El bucle que los hacia se puso por un motivo bueno: «el motor lleva
+# aleatoriedad a proposito» y la misma peticion sale casi siempre a la segunda.
+# Eso es cierto cuando lo que paso fue que se acabo el reloj (status 1: HiGHS
+# no llego a encontrar la primera solucion entera). Es FALSO cuando la
+# infactibilidad esta demostrada, porque lo unico que cambia entre llamadas es
+# el ruido del OBJETIVO -- y un objetivo no vuelve factible un problema
+# infactible.
+#
+# Medido tras arreglarlo: 23,6 s -> 9,3 s y 16 llamadas -> 6, una por peldano,
+# con el mismo menu y el mismo peldano. Y dos cruces del BLOQUE 50 que se
+# quedaban sin menu por falta de tiempo -- «chihuahua + renal» y «chihuahua +
+# renal+cardiopatia_c» -- pasan a darlo. En Render, 6-10 veces mas lento, esa
+# diferencia es entre dar menu y contestar «esta tardando mas de lo normal».
+#
+# QUE VIGILA, y por que asi:
+#   1. Que `resolver()` diga de verdad si la infactibilidad esta demostrada.
+#   2. Que la API no vuelva a llamar al solver con EL MISMO peldano despues de
+#      que ese peldano haya salido demostrado imposible. No se cuenta el total
+#      de llamadas a proposito: eso dependeria de lo rapido que vaya la maquina
+#      (un peldano que aqui se demuestra imposible en 0,2 s puede agotar el
+#      reloj en una CI lenta, y entonces reintentar SI es correcto). Lo que se
+#      afirma es la regla, no el rendimiento.
+print("\n=== BLOQUE 76: no se reintenta lo que esta demostrado imposible ===")
+
+from motor_completo import resolver as _resolver_76
+
+# 1. El motor lo dice, y dice lo contrario cuando hay menu.
+_est76_no = {}
+_ok76_no, _ = _resolver_76(260.0, "Adulto", al, req, 3.0, dosis_maxima_fabricante,
+                           margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
+                           patologias=["renal"], time_limit=9.6, semilla_aleatoria=1,
+                           estado_del_solver=_est76_no)
+if _ok76_no:
+    fallos.append("BLOQUE76: el chihuahua de 3 kg con renal SI da menu en el peldano 0. "
+                  "Es el caso que este bloque usa como «imposible demostrado»: si ha dejado "
+                  "de serlo (catalogo nuevo, tope movido), hay que elegir otro caso, no "
+                  "borrar la comprobacion")
+elif not _est76_no:
+    fallos.append("BLOQUE76: `resolver()` no ha rellenado `estado_del_solver`. Sin eso la API "
+                  "no puede distinguir «HiGHS ha probado que no hay» de «se acabo el reloj», "
+                  "y vuelve a quemar el presupuesto reintentando lo imposible")
+elif not _est76_no.get("infactible_demostrado"):
+    fallos.append(f"BLOQUE76: el peldano 0 del chihuahua renal sale status "
+                  f"{_est76_no.get('status')} y no el 2 (infactible demostrado). Si HiGHS ha "
+                  f"dejado de demostrarlo, reintentar vuelve a tener sentido y este bloque "
+                  f"esta afirmando algo que ya no es cierto")
+
+_est76_si = {}
+_ok76_si, _ = _resolver_76(950.0, "Adulto", al, req, 20.0, dosis_maxima_fabricante,
+                           margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
+                           time_limit=9.6, semilla_aleatoria=1, estado_del_solver=_est76_si)
+if _ok76_si and _est76_si.get("infactible_demostrado"):
+    fallos.append("BLOQUE76: un caso que SI da menu sale marcado «infactible demostrado». "
+                  "Con eso la API dejaria de reintentar justo donde reintentar funciona")
+
+# 2. La API no repite un peldano ya demostrado imposible.
+#
+# Se espia `resolver_v2` y se guarda, por llamada, con que peldano se llamo
+# (margenes + suplementos) y que estado devolvio. Un peldano repetido DESPUES
+# de salir demostrado imposible es el fallo.
+_llamadas_76 = []
+_orig_76 = _api.resolver_v2
+
+def _espia_76(*_a76, **_k76):
+    _est = _k76.get("estado_del_solver")
+    _r76 = _orig_76(*_a76, **_k76)
+    _marg76 = _k76.get("margenes_categoria")
+    _clave76 = (repr(sorted((_marg76 or {}).items())), _k76.get("max_suplementos"))
+    _llamadas_76.append((_clave76, bool((_est or {}).get("infactible_demostrado"))))
+    return _r76
+
+_api.resolver_v2 = _espia_76
+try:
+    _r76 = _c.post("/menu/v2", json={
+        "nombres_alimentos": [], "modo": "automatico", "der_objetivo": 260.0,
+        "peso_perro_kg": 3.0, "etapa_requisitos": "Adulto", "patologias": ["renal"],
+        "presupuesto_segundos": 25.0}).json()
+finally:
+    _api.resolver_v2 = _orig_76
+
+_demostrados_76 = set()
+_repetidos_76 = []
+for _clave76, _dem76 in _llamadas_76:
+    if _clave76 in _demostrados_76:
+        _repetidos_76.append(_clave76)
+    if _dem76:
+        _demostrados_76.add(_clave76)
+
+if _repetidos_76:
+    fallos.append(f"BLOQUE76: la API ha vuelto a llamar al solver con un peldano que ya habia "
+                  f"salido INFACTIBLE DEMOSTRADO ({len(_repetidos_76)} veces de "
+                  f"{len(_llamadas_76)} llamadas). Reintentarlo no puede cambiar nada -- lo "
+                  f"unico que varia entre llamadas es el ruido del objetivo -- y se come el "
+                  f"presupuesto que hace falta para bajar de peldano. Es lo que dejaba sin menu "
+                  f"al perro pequeno con patologia en Render")
+
+print(f"  {len(_llamadas_76)} llamadas al solver · {len(_demostrados_76)} peldanos demostrados "
+      f"imposibles · {len(_repetidos_76)} repetidos")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 print(f"\n{'='*60}")
 print(f"TOTAL: {time.time()-t_total:.0f}s de pruebas")
 if fallos:

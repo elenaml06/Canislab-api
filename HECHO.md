@@ -1453,3 +1453,74 @@ exactamente lo que mandó a este punto a diagnosticar la función equivocada.
 
 Queda una pregunta pequeña, de limpieza y no de nutrición: si se borra lo muerto
 de `modos.py`. No se ha tocado: borrar código no es urgente y el mapa ya avisa.
+
+## 10 de septiembre de 2026 — El perro pequeño con patología se quedaba sin menú por reintentar diez veces lo imposible
+
+Encontrado tirando del hilo anterior: si el ruido del solver va en el
+**objetivo**, y un objetivo no puede volver infactible un problema factible,
+entonces **reintentar un problema que HiGHS ha demostrado imposible no puede
+salir bien nunca**. Y la API lo hacía.
+
+### El caso
+
+Chihuahua de 3 kg, DER 260, `renal`. Por la vía de la API: **21-24 segundos y
+dieciséis llamadas al solver**, y a veces se acababa el presupuesto y contestaba
+«El cálculo está tardando más de lo normal».
+
+La escalera son seis peldaños. Medidos uno a uno con tres semillas cada uno:
+
+| Peldaño | Estado de HiGHS | Tiempo |
+|---|---|---|
+| 0 a 4 | **status 2** (infactible **demostrado**), las tres semillas | 0,2 a 2,8 s |
+| 5 | status 0, menú verde, las tres semillas | 1,9 a 2,2 s |
+
+O sea que **la escalera entera cuesta 7,2 segundos**. Las otras diez llamadas
+eran reintentos de peldaños ya demostrados imposibles.
+
+### De dónde venía el bucle, y por qué tenía razón a medias
+
+`_intentar_generacion` reintenta hasta dos veces cuando la primera llamada sale
+infactible, y el motivo escrito es bueno: *«el motor lleva aleatoriedad a
+propósito… la misma petición sale casi siempre a la segunda»*. Eso es **cierto
+cuando se acabó el reloj** —status 1, HiGHS no llegó a encontrar la primera
+solución entera, y otra semilla llega antes— y **falso cuando la infactibilidad
+está demostrada**.
+
+Quien llamaba no podía distinguirlos: `resolver()` devolvía `(False, None)` en
+los dos casos.
+
+### El arreglo
+
+`resolver()` acepta `estado_del_solver`, un diccionario que rellena quien llama
+—como `diagnostico`, pero **sin coste**: aquel cuenta filas y coeficientes en
+cada `_fila()` y esto tiene que poder pedirse en cada llamada de producción—. Ahí
+va el `status` de HiGHS y un `infactible_demostrado`. El bucle de reintentos lo
+mira y para.
+
+Se mira **solo el status 2**. Si el solver devolvió una solución que rechazó la
+red de seguridad de las categorías (status 0 con `ok` falso), reintentar sigue
+sirviendo, y se sigue reintentando.
+
+### Lo que cambia, medido
+
+| | Antes | Después |
+|---|---|---|
+| Chihuahua 3 kg + renal | 23,6 s · 16 llamadas | **9,3 s · 6 llamadas** |
+| Peldaño y menú | el mismo | el mismo |
+| Cruces sin menú (los 60 del BLOQUE 50) | 7 | **5** |
+
+Los dos que pasan a dar menú son **chihuahua + renal** y **chihuahua +
+renal+cardiopatía C**, que antes se quedaban sin menú *por falta de tiempo*, no
+por falta de solución. Los cinco que siguen sin darlo son todos
+`renal+pancreatitis`, que es infactible de verdad —comprobado a 60 s en el último
+peldaño— y es una decisión de nutrición abierta.
+
+Y esto importa más en producción que aquí: Render va 6-10 veces más lento y el
+presupuesto son 24 segundos.
+
+### El test
+
+**BLOQUE 76**, probado con el fallo puesto (quitando la condición vuelve a hacer
+16 llamadas y 9 repeticiones, y el bloque se cae). No cuenta llamadas totales a
+propósito —eso dependería de lo rápido que vaya la máquina—: afirma la **regla**,
+que es que no se repita un peldaño que ya salió demostrado imposible.

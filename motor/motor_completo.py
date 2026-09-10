@@ -472,7 +472,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             evitar_especies=None, restringir_a_elegidos=None, categorias_excluidas=None,
             presupuesto_semanal_restante=None, diagnostico=None,
             peso_objetivo_kg=None, gramos_fijos=None,
-            soltar_limites_patologia=None):
+            soltar_limites_patologia=None, estado_del_solver=None):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -2378,6 +2378,31 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # así que nada de esto puede entregar un menú que no cumpla.
     hay_solucion = res.success or (getattr(res, "x", None) is not None
                                    and res.status == 1)
+
+    # ⚠️ AÑADIDO (10 septiembre) — DECIR SI LA INFACTIBILIDAD ESTÁ DEMOSTRADA.
+    #
+    # «No hay menú» son dos cosas muy distintas y quien llama no las podía
+    # distinguir: que HiGHS haya PROBADO que no existe (status 2) o que se le
+    # haya acabado el reloj antes de encontrar la primera solución entera
+    # (status 1). Y la diferencia decide si reintentar sirve de algo.
+    #
+    # ⚠️ CASO REAL MEDIDO ESE DÍA: chihuahua de 3 kg (DER 260) con `renal`. La
+    # API tardaba 21-24 s y hacía 16 llamadas al solver, de las cuales DIEZ
+    # eran reintentos del mismo peldaño que ya había salido `status 2`. Los
+    # cinco primeros peldaños dan status 2 con las tres semillas probadas, y el
+    # sexto da menú siempre: reintentar no podía cambiar nada, porque lo único
+    # que cambia entre llamadas es el ruido del OBJETIVO, y un objetivo no
+    # vuelve factible un problema infactible. Sin los reintentos inútiles la
+    # escalera entera tarda 7,2 s. En Render, que va 6-10 veces más lento, esa
+    # diferencia es entre dar menú y contestar «está tardando más de lo normal».
+    #
+    # Es un diccionario que rellena quien llama, como `diagnostico`, y NO se
+    # usa `diagnostico` para esto a propósito: aquel cuenta filas y
+    # coeficientes en cada `_fila()`, o sea que cuesta, y esto tiene que poder
+    # pedirse en cada llamada de producción sin pagar nada.
+    if estado_del_solver is not None:
+        estado_del_solver["status"] = int(res.status)
+        estado_del_solver["infactible_demostrado"] = (int(res.status) == 2)
 
     if hay_solucion:
         x = res.x[:n_var]

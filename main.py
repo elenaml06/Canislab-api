@@ -2288,6 +2288,13 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         `soltar` SOLO lo usa el diagnóstico de choque entre patologías, que
         tira los menús que construye y se queda con el texto. Ningún camino
         que entregue un menú lo pasa nunca: lo comprueba el BLOQUE 52."""
+        # ⚠️ EL ESTADO DEL SOLVER, PARA NO REINTENTAR LO IMPOSIBLE (10
+        # septiembre). Ver el comentario largo del bucle de reintentos de más
+        # abajo: distinguir «HiGHS ha PROBADO que no hay» de «se le acabó el
+        # reloj» es lo que ahorra 10 de las 16 llamadas al solver del perro
+        # pequeño con patología. El diccionario se reutiliza en cada llamada:
+        # siempre vale lo que dijo la ÚLTIMA.
+        _estado_solver = {}
         ok_i, gramos_i = resolver_v2(
             datos.der_objetivo, datos.etapa_requisitos, al, req,
             datos.peso_perro_kg, dosis_maxima_fabricante,
@@ -2295,6 +2302,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             margenes_categoria=(margenes if margenes is not None else _margenes_base),
             max_suplementos=(max_supl if max_supl is not None else _supl_base),
             time_limit=tiempo_de_un_intento(),
+            estado_del_solver=_estado_solver,
             forzar=forzar_este, preferir=preferir,
             patologias=datos.patologias, restringir_especie=datos.restringir_especie,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -2362,8 +2370,30 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         # como el bucle de arriba) porque aquí cada intento es una llamada
         # entera al solver, no un ajuste rápido -- si el caso es de verdad
         # irresoluble, más vueltas solo queman el presupuesto de Render.
+        #
+        # ⚠️ Y NO SE REINTENTA LO QUE ESTÁ DEMOSTRADO IMPOSIBLE (10 septiembre).
+        #
+        # Este bucle se puso porque «el motor lleva aleatoriedad a propósito» y
+        # la misma petición sale casi siempre a la segunda. Es verdad cuando lo
+        # que pasó fue que se acabó el reloj -- ahí otra semilla llega antes --,
+        # y es FALSO cuando HiGHS ha demostrado que no hay solución: lo único
+        # que cambia entre llamadas es el ruido del OBJETIVO, y un objetivo no
+        # vuelve factible un problema infactible.
+        #
+        # CASO REAL MEDIDO: chihuahua de 3 kg (DER 260) con `renal`. La API
+        # tardaba 21-24 s y hacía 16 llamadas al solver; DIEZ eran reintentos de
+        # peldaños que ya habían salido `status 2` (infactible demostrado), con
+        # las tres semillas probadas dando lo mismo en los cinco primeros
+        # peldaños y menú siempre en el sexto. La escalera sola tarda 7,2 s. En
+        # Render, 6-10 veces más lento, eso es la diferencia entre dar menú y
+        # contestar «está tardando más de lo normal» -- que es lo que pasaba.
+        #
+        # Se mira SOLO el status 2. Si el solver devolvió una solución que
+        # rechazó la red de seguridad de las categorías (status 0 y `ok_i`
+        # falso), reintentar SÍ sirve: ahí otra semilla da otro menú.
         _reintentos_infactible = 0
         while (not ok_i and _reintentos_infactible < 2
+               and not _estado_solver.get("infactible_demostrado")
                and time.time() - t_inicio_total < PRESUPUESTO_SEGUNDOS):
             _reintentos_infactible += 1
             ok_i, gramos_i = resolver_v2(
@@ -2380,6 +2410,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 restringir_a_elegidos=restringir_a_elegidos_este,
                 categorias_excluidas=datos.categorias_excluidas,
                 presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
+                estado_del_solver=_estado_solver,
             )
             ficha_i = (verificar_v2(gramos_i, al, req, datos.der_objetivo, datos.etapa_requisitos)
                        if ok_i else None)
