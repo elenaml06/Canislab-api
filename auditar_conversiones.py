@@ -187,8 +187,76 @@ def auditar():
     return fallos
 
 
+# ⚠️ AÑADIDO (10 septiembre) — LOS TECHOS DEL LIBRO PARA EL PERRO SANO.
+#
+# `recomendaciones_libro.json` es la TERCERA clase de límite del motor -- ni
+# FEDIAF ni patología: lo que el libro recomienda al perro que no tiene nada --
+# y sus doce cifras salen todas de un porcentaje de materia seca, exactamente
+# igual que las de patología. Y estaban en el mismo estado del que veníamos: la
+# conversión hecha una vez y CONTADA EN PROSA dentro de `por_que` («%MS x 2500 =
+# mg/1000 kcal»). Una frase no se ejecuta, y ahí es donde se coló un x25 en vez
+# de un x2,5 el 8 de septiembre.
+#
+# Deciden cosas gordas: el techo de calcio del cachorro de raza grande (2750) es
+# un 39 % más bajo que el máximo de FEDIAF, y el de fósforo en crecimiento
+# (3250 / 2750) es el ÚNICO que hay, porque FEDIAF deja esas dos celdas vacías.
+def auditar_recomendaciones():
+    ruta = os.path.join(RAIZ, "recomendaciones_libro.json")
+    tabla = json.load(open(ruta, encoding="utf-8"))["por_etapa"]
+    fallos, revisadas, comprobadas, sin_bloque = [], 0, 0, 0
+
+    def recorrer(nodo, ruta_txt):
+        nonlocal revisadas, comprobadas, sin_bloque
+        if not isinstance(nodo, dict):
+            return
+        if isinstance(nodo.get("valor"), (int, float)):
+            revisadas += 1
+            conv = nodo.get("conversion")
+            if not conv:
+                sin_bloque += 1
+                fallos.append(
+                    f"{ruta_txt}: no dice de qué cifra de la fuente sale. Sin `conversion` no "
+                    f"se puede rehacer, y lo que no se puede rehacer no se puede auditar -- "
+                    f"que es exactamente cómo se coló un x25 en vez de un x2,5")
+                return
+            faltan = [c for c in ("valor_en_la_fuente", "unidad_en_la_fuente",
+                                  "densidad_kcal_por_g_MS", "cita") if c not in conv]
+            if faltan:
+                fallos.append(f"{ruta_txt}: al bloque `conversion` le faltan {faltan}")
+                return
+            esperado = _convertir(float(conv["valor_en_la_fuente"]),
+                                  conv["unidad_en_la_fuente"],
+                                  float(conv["densidad_kcal_por_g_MS"]),
+                                  float(conv.get("factor_a_la_unidad_del_motor") or 1.0))
+            if esperado is None:
+                fallos.append(f"{ruta_txt}: unidad de fuente desconocida "
+                              f"«{conv['unidad_en_la_fuente']}»")
+                return
+            aplicado = float(nodo["valor"])
+            if abs(aplicado - esperado) > max(0.01 * esperado, 1e-9):
+                if nodo.get("ajustado_a_proposito") or conv.get("ajustado_a_proposito"):
+                    comprobadas += 1
+                    return
+                fallos.append(
+                    f"{ruta_txt}: el motor aplica {aplicado:g} y la conversión de la fuente da "
+                    f"{esperado:.4g} ({conv['valor_en_la_fuente']} "
+                    f"{conv['unidad_en_la_fuente']} a {conv['densidad_kcal_por_g_MS']} kcal/g "
+                    f"MS). Uno de los dos está mal")
+                return
+            comprobadas += 1
+            return
+        for clave, hijo in nodo.items():
+            recorrer(hijo, f"{ruta_txt}/{clave}")
+
+    for etapa, ficha in sorted(tabla.items()):
+        recorrer(ficha, etapa)
+    print(f"  {revisadas} techos del libro · {comprobadas} con la conversión rehecha y "
+          f"correcta · {sin_bloque} sin declarar de dónde salen")
+    return fallos
+
+
 if __name__ == "__main__":
-    fs = auditar()
+    fs = auditar() + auditar_recomendaciones()
     if fs:
         print(f"\n❌ {len(fs)} problemas:")
         for f in fs[:60]:

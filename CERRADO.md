@@ -302,6 +302,27 @@ no se aplica.
 
 ---
 
+## CERRADO · La transcripción de la Tabla III-3b de FEDIAF (10 de septiembre)
+
+| | Dónde se cumple |
+|---|---|
+| 1 · Vive en el repo | `fediaf_tabla_III_3b.txt` (la tabla tal cual sale del PDF) y `auditar_transcripcion_fediaf.py` |
+| 2 · Tiene fuente | Es la fuente: FEDIAF Nutritional Guidelines, publicación de septiembre de 2025, página 15 del PDF, copiada sin tocar una palabra |
+| 3 · Ficha de permisos | No aplica: son los requisitos de FEDIAF, que valen para cualquier perro |
+| 4 · Test que falla si se rompe | **BLOQUE 77**: rehace las 164 celdas. Probado con el fallo puesto cuatro veces — un valor, una unidad, una fila borrada y el propio texto de la fuente editado |
+| 5 · Decisión escrita | `HECHO.md` del 10 de septiembre, con el hueco que cerraba |
+| 6 · Sin preguntas sin dueño | Ninguna: las cuatro filas que no se transcriben están declaradas con su motivo dentro del script |
+
+**Lo que cerraba era un hueco de método, no una cifra.** El BLOQUE 18 comparaba
+el JSON contra una transcripción escrita a mano dentro de `auditar_fediaf.py`, y
+esa transcripción no la comprobaba nadie. Con un valor mal ahí, el JSON «cuadra»,
+la batería sale verde y todos los menús cumplen bien un requisito equivocado — y
+el motor, que no tiene el PDF, no puede cazarlo. Ya había pasado: esa
+transcripción se saltó **los doce aminoácidos enteros** y lo encontró contar
+filas a mano.
+
+---
+
 ## ABIERTO · Lo que no está cerrado, y por qué
 
 | | Qué falta |

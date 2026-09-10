@@ -1524,3 +1524,113 @@ presupuesto son 24 segundos.
 16 llamadas y 9 repeticiones, y el bloque se cae). No cuenta llamadas totales a
 propósito —eso dependería de lo rápido que vaya la máquina—: afirma la **regla**,
 que es que no se repita un peldaño que ya salió demostrado imposible.
+
+## 10 de septiembre de 2026 — Quién audita al auditor: la transcripción de FEDIAF ya se rehace sola
+
+Estaba en `PENDIENTE.md` como *«Repasar la transcripción de la tabla de FEDIAF en
+`auditar_fediaf.py`»*, y repasarla a ojo no habría servido: lo que hacía falta era
+que no hubiera que repasarla.
+
+### El hueco
+
+La cadena que sostiene los 43 requisitos era:
+
+```
+PDF de FEDIAF  --(a mano, una vez)-->  auditar_fediaf.FEDIAF
+               --(BLOQUE 18)-->        requerimientos_v2_final.json
+```
+
+El segundo tramo estaba vigilado desde el 25 de agosto. **El primero no**, y es
+el que decide todo: con un valor mal transcrito, `auditar_fediaf` dice que el
+JSON cuadra, la batería sale verde, y **todos los menús cumplen bien un requisito
+equivocado**. El motor no tiene el PDF: no puede cazarlo por construcción.
+
+Y no es hipotético. Esa transcripción **se había saltado los doce aminoácidos
+enteros**, que estaban en la Tabla III-3b desde siempre entre «Protein» y «Fat»:
+el motor decía cubrir «todo FEDIAF» con 29 de los 41 nutrientes que la tabla
+pide. Lo encontró contar filas a mano el 26 de agosto, no una prueba.
+
+### Lo que se ha hecho
+
+`fediaf_tabla_III_3b.txt` es **la tabla tal cual sale del PDF** — sin tocar una
+palabra, con su cabecera de página y su pie de notas —, y
+`auditar_transcripcion_fediaf.py` la lee, saca sus filas y **rehace las 164
+celdas** (41 nutrientes × 4 columnas de mínimo) contra la transcripción a mano.
+Las 164 cuadran.
+
+Es el mismo patrón que `auditar_conversiones.py` con las 92 cifras de patología y
+que `leer_fuente.py` con las secciones de texto: **lo que no se puede rehacer no
+se puede auditar**.
+
+Detalles que costaron:
+
+- El PDF escribe los miles con un espacio fino, así que «1 754» hay que pegarlo
+  antes de partir por espacios o la vitamina A pasa a valer **1**.
+- El calcio es la única fila partida en tres líneas, y no por capricho de
+  maquetación: su celda de Late Growth tiene **dos** valores, 2.00ᵃ (raza
+  pequeña) y 2.50ᵇ (raza grande, la nota b). El motor aplica el 2,00 genérico y
+  el 2,50 reforzado va aparte, en `Calcio_LateGrowth_RazaGrande`.
+- La transcripción se lee con `ast` en vez de importar el módulo, porque
+  `auditar_fediaf.py` **revienta** si le falta una fila — y una fila que falta es
+  justo uno de los fallos que esto tiene que poder contar en vez de morirse.
+
+### Y ninguna fila se queda fuera sin decir por qué
+
+Las cuatro que no se transcriben van declaradas una a una:
+
+| Fila | Por qué no está |
+|---|---|
+| **Selenio (dietas secas)** | Rawku formula ración cruda, o sea húmeda. Y la húmeda es **más alta** en adulto (67,50 contra 55,00), así que además es el lado exigente |
+| **Biotina (B7)** | FEDIAF no da cifra: las cuatro columnas son «-» |
+| **Vitamina K** | Igual. FEDIAF la nombra en su §3.3 (más K con mucho pescado) y no la cuantifica para el perro: vive en `requisitos_condicionales.json` como `documentado_sin_cifra` |
+| **Ratio Ca/P** | No es un nutriente de cuatro columnas: es un mínimo único (1/1) y cuatro máximos por etapa. Vive en el JSON como `Relacion_Ca_P` y lo vigila el BLOQUE 53 |
+
+Sin esa lista, saltarse otros doce aminoácidos volvería a ser invisible.
+
+### El test
+
+**BLOQUE 77**, probado con el fallo puesto cuatro veces: un valor cambiado
+(treonina 2,03 → 2,30), una unidad cambiada (valina g → mg), una fila borrada
+(triptófano) y **el propio texto de la fuente editado**. Los cuatro se cazan. El
+último importa tanto como los otros tres: si alguien retoca el `.txt` para que
+cuadre, deja de ser una fuente y pasa a ser una tercera copia de la misma tabla.
+
+## 10 de septiembre de 2026 — Los doce techos del libro también se rehacen ahora, en vez de creerse
+
+Mismo hilo que lo anterior, un fichero más allá. `auditar_conversiones.py` nació
+el 9 de septiembre porque las 88 cifras de `patologias.json` tenían su conversión
+**contada en prosa** dentro de `por_que` — y una frase no se ejecuta: así se
+escribió un ×25 en vez de un ×2,5, diez veces el valor bueno y con forma de dato
+bueno.
+
+`recomendaciones_libro.json` estaba exactamente igual y no lo miraba nadie.
+
+### Qué son y por qué importan
+
+Son la **tercera clase de límite** del motor: ni FEDIAF ni patología, sino lo que
+el libro recomienda al perro que **no tiene nada**. Doce cifras, y todas salen de
+un porcentaje de materia seca de una tabla de SACN5, con la cuenta escrita a mano
+en la nota («%MS × 2500 = mg/1000 kcal»).
+
+No son decorativas:
+
+- El techo de calcio del **cachorro de raza grande** son 2750 mg/1000 kcal, un
+  **39 % por debajo** del máximo de FEDIAF (4500 en crecimiento tardío). Sale de
+  Fascetti cap.10, «no greater than 1.1% dm», *«in order to prevent
+  panosteitis»*.
+- El techo de **fósforo en crecimiento** (3250 en raza pequeña, 2750 en grande)
+  es el **único que existe**: FEDIAF deja esas dos celdas de su tabla vacías.
+
+Un error de conversión ahí no lo caza nada: el semáforo mira los requisitos de
+FEDIAF y el menú sale verde igual.
+
+### Lo hecho
+
+Cada una de las doce lleva ya su bloque `conversion` —valor literal de la fuente,
+unidad, densidad y cita con la tabla y la columna— y `auditar_conversiones.py`
+**rehace la cuenta**. Las doce cuadran exactas (0,8 · 0,4 · 0,7 · 0,4 · 1,7 · 1,3
+· 1,1 · 1,1 % de materia seca × 2500). El BLOQUE 72 lo ejecuta y además exige que
+sus densidades sean las mismas 4,0 que las de patología.
+
+Probado con el fallo puesto dos veces: cambiando el techo de fósforo del adulto a
+2200 y borrando el bloque `conversion` del sodio del senior. Los dos se cazan.

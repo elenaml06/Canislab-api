@@ -36,7 +36,7 @@ que tomar una persona, no yo.
 - [ ] Límites por patología: confirmar los números (fósforo, cobre, grasa)
 - [ ] Siete preguntas para Cris (proteína senior, estadio ACVIM, pancreatitis en cachorro, umbral 1,10, tiaminasa, qué firma un veterinario, qué hace AnVet)
 - [x] La app no distingue hepatopatía por cobre de otras hepatopatías — RESUELTO 7 sep (`raza_predispuesta_cobre`)
-- [ ] Repasar la transcripción de la tabla de FEDIAF en `auditar_fediaf.py`
+- [x] Repasar la transcripción de la tabla de FEDIAF en `auditar_fediaf.py` — HECHO 10 sep, y **mecánico, no a ojo**: `fediaf_tabla_III_3b.txt` es la tabla tal cual sale del PDF y `auditar_transcripcion_fediaf.py` rehace sus **164 celdas** contra la transcripción a mano. Las 164 cuadran. Las cuatro filas que no se transcriben van declaradas con su motivo. BLOQUE 77, probado con el fallo puesto (un valor, una unidad, una fila borrada y el propio texto de la fuente editado)
 - [ ] **Tres decisiones que dejó leer SACN5 entera** (10 sep): si se pregunta dónde duerme el perro (la Tabla 5-3 da las cifras del frío, pelo corto +95 %), con qué densidad se leen las cifras de obesidad (la 27-4 es la única que propone ≤3,4 kcal/g), y si la energía del cachorro pasa a ir por fracción de peso adulto (Tabla 17-2, tres escalones) en vez de por edad
 - [x] Auditar los valores de los ALIMENTOS — RESUELTO 7 sep: la auditoría ya existía (`auditar_catalogo.py`), se ejecutó de verdad y se investigaron sus 20 avisos. Ver `PENDIENTE_DECISIONES.md`
 - [x] Fibra de la borraja — CERRADO 7 sep: el alimento ya no existe en el catálogo, no es un hueco de dato
@@ -63,6 +63,7 @@ que tomar una persona, no yo.
 
 ## `PENDIENTE_PRODUCTO.md` — funcionalidades nuevas y deuda técnica
 
+- [x] **Los doce techos del libro, con su conversión rehecha** — HECHO 10 sep: `recomendaciones_libro.json` tenía la cuenta contada en prosa dentro de `por_que`, igual que tenían las 88 de patología antes del ×25. Ahora `auditar_conversiones.py` las rehace (12 de 12 exactas) y el BLOQUE 72 las mira. Deciden el techo de calcio del cachorro de raza grande y el **único** techo de fósforo que hay en crecimiento
 - [x] **El perro pequeño con patología ya no se queda sin menú por el reloj** — HECHO 10 sep: la API reintentaba hasta dos veces cada peldaño que HiGHS ya había demostrado imposible (status 2), y reintentar eso no puede cambiar nada porque el ruido del motor va en el OBJETIVO. Chihuahua de 3 kg con renal: **23,6 s y 16 llamadas → 9,3 s y 6**, mismo menú y mismo peldaño; y dos cruces del BLOQUE 50 pasan a dar menú. BLOQUE 76 y `HECHO.md`
 - [ ] **¿Se borra lo muerto de `motor/modos.py`?** Son 190 líneas de las que el motor usa **un diccionario** (`CUANTOS_MAX`): `elegir_alimentos`, `cambiar`, `quitar` y `anadir` no los llama nadie. No es urgente, pero código muerto que parece vivo ya costó un diagnóstico equivocado el 10 sep (`HECHO.md`)
 - [x] **El ratio que pide una patología** — HECHO 10 sep: el Ca:P de 1,1-2,0 de las Tablas 40-5 y 41-6 llevaba dos días escrito con `aplicado_por_el_solver: false`, y **no era cosmético**: el perro de 30 kg con oxalato salía con 1,06 y en verde, porque el semáforo mide contra el 1,0-2,0 de FEDIAF, que es el rango de un perro sano. El mecanismo es genérico, así que al **omega-6:omega-3 ya no le falta motor: le falta el número** (PREGUNTA 40). BLOQUE 75 y `HECHO.md`

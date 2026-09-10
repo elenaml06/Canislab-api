@@ -9665,7 +9665,10 @@ if "Discrepancias: 0" not in _aud72.stdout:
     _cola72 = "\n      ".join((_aud72.stdout + _aud72.stderr).strip().splitlines()[-12:])
     fallos.append(f"BLOQUE72: hay cifras de patologia cuya conversion no se puede rehacer o no "
                   f"cuadra:\n      {_cola72}")
-print(f"  {_aud72.stdout.strip().splitlines()[0].strip() if _aud72.stdout.strip() else ''}")
+for _linea72 in (_aud72.stdout.strip().splitlines() if _aud72.stdout.strip() else []):
+    if _linea72.strip().startswith(("Discrepancias", "❌")):
+        break
+    print(f"  {_linea72.strip()}")
 
 # Y la densidad, fijada en un solo sitio: si alguien la cambia a 3,5 «porque el
 # Box 1-2 lo dice», esto lo para.
@@ -9690,6 +9693,23 @@ for _pat72, _f72 in _json72.load(open("patologias.json", encoding="utf-8"))["pat
         for _n72, _c72 in (_f72.get(_b72) or {}).items():
             if isinstance(_c72, dict) and _c72.get("conversion"):
                 _dens72.add(_c72["conversion"]["densidad_kcal_por_g_MS"])
+
+# Y los techos del libro para el perro sano, que son la tercera clase de limite
+# y salen del mismo sitio: un porcentaje de materia seca de una tabla de SACN5.
+# Entraron en esta comprobacion el 10 de septiembre, el dia que dejaron de tener
+# su conversion solo contada en prosa dentro de `por_que`.
+def _dens_recomendaciones_72(nodo):
+    if not isinstance(nodo, dict):
+        return
+    if isinstance(nodo.get("valor"), (int, float)):
+        if nodo.get("conversion"):
+            _dens72.add(nodo["conversion"]["densidad_kcal_por_g_MS"])
+        return
+    for _hijo72 in nodo.values():
+        _dens_recomendaciones_72(_hijo72)
+
+_dens_recomendaciones_72(
+    _json72.load(open("recomendaciones_libro.json", encoding="utf-8"))["por_etapa"])
 if _dens72 != {4.0}:
     fallos.append(f"BLOQUE72: hay cifras convertidas con densidades {sorted(_dens72)} y todas las "
                   f"tablas que las publican asumen 4,0 kcal/g de materia seca. Si de verdad hay una "
@@ -9966,11 +9986,34 @@ else:
                     fallos.append(f"BLOQUE75: /patologias sirve {_campo75}={_d75.get(_campo75)!r} "
                                   f"para «{_p75}/{_c75}» y el archivo dice {_r75.get(_campo75)!r}")
 
-# 1. El menu que se entrega cumple el ratio, medido en vivo.
-_PESOS_75 = [(3.0, 250.0), (10.0, 600.0), (20.0, 950.0), (30.0, 1300.0), (40.0, 1600.0)]
+# 1. QUE LA CIFRA DE LA FUENTE QUEPA, y que el menu que sale la cumpla.
+#
+# ⚠️ SE RESUELVE CON EL MOTOR Y NO POR LA VIA DE LA API, Y ES A PROPOSITO (10
+# septiembre, corregido el mismo dia tras un rojo en GitHub Actions). La primera
+# version pedia el menu a `/menu/v2`, y ahi el presupuesto son 24 s para la
+# ESCALERA ENTERA: en una maquina lenta -- la CI va varias veces mas despacio
+# que este equipo -- el perro de 3 kg se quedaba sin menu por RELOJ, y este
+# bloque lo acusaba de «la cifra de la fuente no cabe». Es el fallo que el
+# CLAUDE.md tiene escrito: una prueba que se cae cuando el motor acierta.
+#
+# Lo que este bloque afirma es que el limite CABE, y eso se pregunta al solver
+# con tiempo suficiente. Que el menu ENTREGADO lo cumpla se comprueba abajo, en
+# el punto 1-bis, sobre los menus que la API sí devuelve. Lo del reloj es del
+# BLOQUE 43, no de aqui.
+# ⚠️ Y SE RECORRE LA ESCALERA, NO SOLO EL PELDANO ESTRICTO (corregido el mismo
+# dia, segunda vez). Exigir menu en el peldano 0 tampoco valia: MEDIDO, el perro
+# de 3 kg con fosfato calcico sale INFACTIBLE DEMOSTRADO (status 2) en los
+# peldanos 0, 1 y 2 y da menu en el 3 -- y sale igual CON el ratio y SIN el, o
+# sea que no lo causa este limite: es la ventana estrecha del perro pequeno, y
+# bajar de peldano diciendolo es exactamente lo que manda la regla 3. Lo que
+# este bloque tiene que afirmar es que la patologia SIGUE dando menu, no en que
+# peldano.
+_PESOS_75 = [(3.0, 250.0), (20.0, 950.0), (40.0, 1600.0)]
 _menus_75 = 0
 _peor_75 = None
 _uno_bueno_75 = None
+from motor_completo import resolver as _resolver_75
+_ESCALERA_75 = _api._escalera_de_relajacion(True)
 for _p75 in _CON_RATIO_75:
     _cotas75 = _ratios_pat_75([_p75], "Adulto")
     if not _cotas75:
@@ -9979,17 +10022,22 @@ for _p75 in _CON_RATIO_75:
                       f"solver no la ve: es justo el estado del que se venia")
         continue
     for _peso75, _der75 in _PESOS_75:
-        _resp75 = _c.post("/menu/v2", json={
-            "nombres_alimentos": [], "der_objetivo": _der75, "etapa_requisitos": "Adulto",
-            "peso_perro_kg": _peso75, "modo": "automatico", "patologias": [_p75]}).json()
-        if not _resp75.get("factible") or not _resp75.get("menu"):
-            fallos.append(f"BLOQUE75: «{_p75}» no da menu a {_peso75:g} kg despues de aplicar su "
-                          f"ratio. Si la cifra de la fuente no cabe, no se baja: se mueve a "
-                          f"`limites_escritos_que_el_solver_no_aplica` con su medida y se "
-                          f"pregunta. Motivo: {str(_resp75.get('motivo'))[:100]}")
+        _ok75, _g75, _peld75 = False, None, None
+        for _i75, (_marg75, _supl75, _nom75) in enumerate(_ESCALERA_75):
+            _ok75, _g75 = _resolver_75(_der75, "Adulto", al, req, _peso75,
+                                       dosis_maxima_fabricante,
+                                       margenes_categoria=_marg75, max_suplementos=_supl75,
+                                       patologias=[_p75], time_limit=15.0)
+            if _ok75 and _g75:
+                _peld75 = _i75
+                break
+        if not _ok75 or not _g75:
+            fallos.append(f"BLOQUE75: «{_p75}» no da menu a {_peso75:g} kg en NINGUN peldano de la "
+                          f"escalera, con 15 s de solver por peldano, despues de aplicar su ratio. "
+                          f"Si la cifra de la fuente no cabe, no se baja: se mueve a "
+                          f"`limites_escritos_que_el_solver_no_aplica` con su medida y se pregunta")
             continue
         _menus_75 += 1
-        _g75 = _resp75["menu"]
         if _uno_bueno_75 is None:
             _uno_bueno_75 = (_p75, _g75)
         for (_n75, _d75n), _cot75 in _cotas75.items():
@@ -10013,6 +10061,32 @@ for _p75 in _CON_RATIO_75:
                               f"{_n75}:{_d75n} = {_v75:.3f} y su fuente pide como mucho "
                               f"{_cot75['max']}")
 
+# 1-bis. Y QUE EL MENU QUE SE ENTREGA DE VERDAD LO CUMPLA, por la via de la API.
+#
+# Aqui NO se exige que salga menu: eso depende del reloj de la maquina y ya lo
+# vigila el BLOQUE 43. Lo que se exige es que el que salga cumpla el ratio, y
+# que al menos uno salga -- si no saliera ninguno, esta comprobacion no estaria
+# comprobando nada y hay que enterarse.
+_por_api_75 = 0
+for _p75 in _CON_RATIO_75:
+    _cotas75 = _ratios_pat_75([_p75], "Adulto")
+    _resp75 = _c.post("/menu/v2", json={
+        "nombres_alimentos": [], "der_objetivo": 950.0, "etapa_requisitos": "Adulto",
+        "peso_perro_kg": 20.0, "modo": "automatico", "patologias": [_p75]}).json()
+    if not _resp75.get("factible") or not _resp75.get("menu"):
+        continue
+    _por_api_75 += 1
+    _rotos_api_75 = _api._tope_patologia_roto(_resp75["menu"], al, [_p75], "Adulto")
+    if any("calcio:fosforo" in str(x) for x in _rotos_api_75):
+        fallos.append(f"BLOQUE75: el menu que ENTREGA la API para «{_p75}» se sale de su propio "
+                      f"ratio: {_rotos_api_75}. `_garantizar_verificado` tendria que haberlo "
+                      f"parado -- es la segunda capa de la regla 1")
+if _CON_RATIO_75 and _por_api_75 == 0:
+    fallos.append("BLOQUE75: ninguna de las patologias con ratio ha devuelto menu por la via de "
+                  "la API, asi que la comprobacion del menu entregado no ha mirado nada. Si es "
+                  "por tiempo, lo dira el BLOQUE 43; si no, hay algo roto en el camino de "
+                  "entrega")
+
 # 2. CON EL FALLO PUESTO. Se coge un menu bueno y se le rompe el ratio a mano
 #    -- se le quita el calcio a todo lo que lo lleva, que es exactamente lo que
 #    pasaba antes de aplicar la restriccion -- y se exige que el filtro final lo
@@ -10033,7 +10107,8 @@ if _uno_bueno_75:
                       f"si un camino nuevo no le pasa las patologias al motor, es lo unico que "
                       f"queda")
 
-print(f"  {len(_CON_RATIO_75)} patologias con ratio · {_menus_75} menus resueltos en vivo")
+print(f"  {len(_CON_RATIO_75)} patologias con ratio · {_menus_75} menus resueltos en vivo · "
+      f"{_por_api_75} comprobados ademas por la via de la API")
 if _peor_75:
     print(f"  el mas justo: {_peor_75[0]:.3f} (suelo {_peor_75[1]}) en {_peor_75[2]} "
           f"a {_peor_75[3]:g} kg")
@@ -10150,6 +10225,68 @@ if _repetidos_76:
 
 print(f"  {len(_llamadas_76)} llamadas al solver · {len(_demostrados_76)} peldanos demostrados "
       f"imposibles · {len(_repetidos_76)} repetidos")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 77 — LA TRANSCRIPCION DE FEDIAF, REHECHA DESDE EL PDF
+# ============================================================
+#
+# ⚠️ POR QUE EXISTE (10 septiembre). QUIEN AUDITA AL AUDITOR.
+#
+# El BLOQUE 18 comprueba las 43 filas de `requerimientos_v2_final.json` contra
+# una transcripcion de la Tabla III-3b que vive DENTRO de `auditar_fediaf.py`,
+# escrita a mano. La cadena era:
+#
+#     PDF de FEDIAF  --(a mano, una vez)-->  auditar_fediaf.FEDIAF
+#                    --(BLOQUE 18)-->        requerimientos_v2_final.json
+#
+# El segundo tramo llevaba vigilado desde el 25 de agosto. El PRIMERO no, y es
+# el que decide todo: si un valor de la transcripcion esta mal, `auditar_fediaf`
+# dice que el JSON cuadra, la bateria sale verde, y todos los menus cumplen bien
+# un requisito equivocado. El motor no tiene el PDF: no puede cazarlo.
+#
+# Y ya paso, y no con un digito: la transcripcion se habia saltado LOS DOCE
+# AMINOACIDOS ENTEROS, que estaban en la tabla desde siempre entre "Protein" y
+# "Fat". El motor decia cubrir «todo FEDIAF» con 29 de los 41 nutrientes que la
+# tabla pide, y lo encontro contar filas a mano el 26 de agosto.
+#
+# `fediaf_tabla_III_3b.txt` es la tabla tal cual sale del PDF -- ni una palabra
+# tocada, con su cabecera de pagina incluida -- y `auditar_transcripcion_fediaf`
+# la lee, saca sus filas y rehace las 164 celdas. Es el mismo patron que
+# `auditar_conversiones.py` con las cifras de patologia: lo que no se puede
+# rehacer no se puede auditar.
+#
+# Y exige ademas que ninguna fila del PDF se quede fuera sin decir por que: las
+# cuatro que no se transcriben (selenio seco, biotina, vitamina K y el ratio
+# Ca/P) estan declaradas una a una con su motivo. Sin eso, saltarse otros doce
+# aminoacidos volveria a ser invisible.
+print("\n=== BLOQUE 77: la transcripcion de FEDIAF, rehecha desde el PDF ===")
+
+import subprocess as _sub77
+
+_aud77 = _sub77.run([sys.executable, "auditar_transcripcion_fediaf.py"],
+                    capture_output=True, text=True, cwd=str(_raiz_b24))
+if _aud77.returncode != 0:
+    _cola77 = "\n      ".join((_aud77.stdout + _aud77.stderr).strip().splitlines()[-12:])
+    fallos.append(f"BLOQUE77: la transcripcion de la Tabla III-3b no cuadra con el texto del "
+                  f"PDF:\n      {_cola77}")
+print(f"  {_aud77.stdout.strip().splitlines()[0].strip() if _aud77.stdout.strip() else ''}")
+
+# Y que el texto de la tabla siga siendo el del PDF y no una copia editada: se
+# comprueba que lleve dentro la cabecera de pagina y el pie de las notas, que
+# son lo que nadie escribiria a mano al «arreglar» una cifra.
+_txt77 = (_raiz_b24 / "fediaf_tabla_III_3b.txt").read_text(encoding="utf-8")
+for _marca77, _que77 in (
+    ("TABLE III-3b.", "el titulo de la tabla"),
+    ("Page   15 of 98", "la cabecera con el numero de pagina del PDF"),
+    ("Footnotes a-h are summarised below Table III-4c.", "el pie de las notas a-h"),
+):
+    if _marca77 not in _txt77:
+        fallos.append(f"BLOQUE77: a `fediaf_tabla_III_3b.txt` le falta {_que77}. Ese fichero es "
+                      f"la fuente copiada TAL CUAL: si alguien lo edita para que cuadre, deja de "
+                      f"ser una fuente y pasa a ser una tercera copia de la misma tabla")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 

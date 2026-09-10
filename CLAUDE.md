@@ -151,13 +151,14 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 76 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `pruebas_completas.py` | **La batería.** Los 77 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
 | `auditar_patologias.py` | Cada cifra de `patologias.json` contra `requerimientos_v2_final.json`: que ninguna patología formulable tenga un tope por debajo del mínimo de FEDIAF, y que la clave del nutriente exista en el `MAPA`. Lo ejecuta el BLOQUE 32 |
 | `radiografia.py` | Imprime los números que **ENTRAN** al motor, para comparar `main` con una rama a golpe de `diff`. No lo ejecuta la batería: se corre a mano. Existe porque el semáforo comprueba el menú contra las kcal que le dieron — si las kcal ya venían mal, el menú sale VERDE para un perro que no es el tuyo, y eso solo se ve en la entrada |
 | `auditar_catalogo.py` | Huecos y datos raros del catálogo, y quién se queda sin aminograma. Lo ejecuta el BLOQUE 19 |
 | `regenerar_catalogo.py` | Rehace los 36 menús de la vista previa y sus 180 variantes. **Está en el repo por un fallo real**: el 8 de septiembre se regeneró el catálogo con una copia de este script que vivía en un scratchpad y que llamaba al motor **sin `margenes_categoria`** — el motor formula sin proporciones BARF, y salieron menús de **25,8 kg de comida al día con un 91 % de verdura y sin hueso**, los 216 **en verde**, porque lo que se había apagado no era la nutrición sino la FORMA, y la forma no la mira el semáforo. No llegó a `main`. Desde el 9 de septiembre el script vive aquí, hace la misma llamada que la API, y **el BLOQUE 25 comprueba las proporciones de los 216 menús** |
-| `auditar_fediaf.py` | Cada valor del JSON contra la tabla de FEDIAF. Lo ejecuta el BLOQUE 18 |
-| `auditar_conversiones.py` | **Que la conversión de cada cifra se rehaga en vez de creerse.** Las 88 cifras de `patologias.json` vienen de tablas publicadas en **% de materia seca** y el motor trabaja **por 1000 kcal**. Esa conversión estaba hecha una vez y **contada en prosa** dentro del campo `por_que`, y una frase no se ejecuta: el 8 de septiembre una se escribió ×25 en vez de ×2,5 —10 veces el valor bueno, con forma de dato bueno— y lo único que la cazó fue que alguien la leyó. Ahora cada cifra lleva un bloque `conversion` con el valor literal de la fuente, su unidad, la densidad de referencia y la cita, y este script **rehace la cuenta**. Una cifra sin ese bloque falla igual: lo que no se puede rehacer no se puede auditar. Lo ejecuta el BLOQUE 72 |
+| `auditar_fediaf.py` | Cada valor del JSON contra la tabla de FEDIAF. Lo ejecuta el BLOQUE 18. ⚠️ Su tabla de FEDIAF está **transcrita a mano dentro del propio archivo**, y quien la audita a ella es el de abajo |
+| `auditar_transcripcion_fediaf.py` + `fediaf_tabla_III_3b.txt` | **Quién audita al auditor** (10 de septiembre). La cadena era: PDF → transcripción a mano dentro de `auditar_fediaf.py` → `requerimientos_v2_final.json`. El segundo tramo estaba vigilado desde el 25 de agosto y el primero no, que es el que decide todo: con un valor mal transcrito el JSON «cuadra», la batería sale verde y **todos** los menús cumplen bien un requisito equivocado — y el motor no tiene el PDF, así que no puede cazarlo. Ya pasó, y no con un dígito: la transcripción se había saltado **los doce aminoácidos enteros**. El `.txt` es la Tabla III-3b tal cual sale del PDF, sin tocar una palabra, y el script **rehace las 164 celdas**. Las cuatro filas que no se transcriben (selenio seco, biotina, vitamina K y el ratio Ca/P) van declaradas una a una con su motivo, para que saltarse una no pueda volver a ser invisible. Lo ejecuta el BLOQUE 77 |
+| `auditar_conversiones.py` | **Que la conversión de cada cifra se rehaga en vez de creerse.** Las 88 cifras de `patologias.json` vienen de tablas publicadas en **% de materia seca** y el motor trabaja **por 1000 kcal**. Esa conversión estaba hecha una vez y **contada en prosa** dentro del campo `por_que`, y una frase no se ejecuta: el 8 de septiembre una se escribió ×25 en vez de ×2,5 —10 veces el valor bueno, con forma de dato bueno— y lo único que la cazó fue que alguien la leyó. Ahora cada cifra lleva un bloque `conversion` con el valor literal de la fuente, su unidad, la densidad de referencia y la cita, y este script **rehace la cuenta**. Una cifra sin ese bloque falla igual: lo que no se puede rehacer no se puede auditar. **Desde el 10 de septiembre también rehace las 12 cifras de `recomendaciones_libro.json`**, que estaban en el mismo estado del que veníamos —la conversión contada en prosa dentro de `por_que`— y que deciden cosas gordas: el techo de calcio del cachorro de raza grande, y el único techo de fósforo que hay en crecimiento. Lo ejecuta el BLOQUE 72 |
 | `leer_fuente.py` + `lecturas_fuentes.json` | **Que una lectura no se deje nada.** «Leída» dejó de significar «he pasado los ojos» el 9 de septiembre, después de que la misma cosa fallara **tres veces el mismo día**: se leyó FEDIAF entero y se escaparon dos filas de raza y un escalón de edad; se hizo un inventario de tablas para arreglarlo y se escaparon siete cosas que estaban en el texto; se amplió a secciones y cuatro decían «aplicada» sin estar leídas — y al leerlas salió la más gorda de todas, que el máximo **legal** de FEDIAF solo aplica si el nutriente se **añade como aditivo**. El arreglo no podía ser tener más cuidado. `leer_fuente.py` extrae de cada sección **todas** sus cifras con unidad y **todas** sus frases normativas, y `lecturas_fuentes.json` tiene que dar veredicto a cada una. Las frases importan tanto como las cifras: la regla del máximo legal no lleva ni un número. Lo ejecuta el BLOQUE 68, que además exige que lo que `fediaf_tablas.json` declare «leído» tenga aquí su desglose |
 | `auditar_fediaf_tablas.py` | **Que ninguna tabla de FEDIAF se quede sin veredicto.** Recorre el PDF, encuentra cada «Table X-n» y exige que esté en `fediaf_tablas.json` diciendo qué hace el motor con ella. Nació el 9 de septiembre de una pregunta de Elena: cómo podía ser que no usáramos la Tabla VII-6 si se había leído FEDIAF entero. La respuesta estaba en un comentario de `der.py` de tres días antes — la tabla **se leyó**, se confirmó literal, se clasificó bien y se apartó, sin que nadie cruzara su escalón de edad contra el que aplicábamos, que era la mitad. Lo mismo había pasado con las dos filas de raza de la tabla de al lado. El fallo no es de lectura: es que «me lo he leído» no se puede comprobar y un inventario sí. Lo ejecuta el BLOQUE 67 |
 | `contrastar_fuentes.py` | Una ficha del catálogo contra **BEDCA, CIQUAL y USDA a la vez**, en el orden de `Bases.md`. **No lo ejecuta la batería** (necesita red y se baja 10 MB): es la herramienta de quien va a mirar una ficha. Trae dentro cómo se lee cada fuente — el XML de BEDCA hay que reconstruirlo de su `query.js`, y con la lista de atributos recortada devuelve el cuerpo vacío sin dar error |
@@ -484,7 +485,7 @@ se comprueba entero en cada batería.
 python3 pruebas_completas.py     # ~25 min, tiene que salir TODO EN VERDE
 ```
 
-Los 76 bloques tardan unos **25 minutos** (1.458 s en la última medida; el
+Los 77 bloques tardan unos **25 minutos** (1.458 s en la última medida; el
 «~10 min» que ponía aquí se quedó corto en cuanto los bloques 50 a 61
 empezaron a resolver menús de verdad, y el «~2 min» de antes llevaba meses
 caducado). No necesita red ni claves de verdad: se fabrica
@@ -524,11 +525,32 @@ devuelve el solver**.
   y representativa, y del menú real solo se exige el invariante: que se aplique
   **la más estricta** de las dos.
 
+- El BLOQUE 75 pedía el menú a `/menu/v2` y exigía que saliera. **Rojo en
+  GitHub Actions y verde aquí**: allí el presupuesto son 24 s para la escalera
+  entera y la máquina va varias veces más lenta, así que el perro de 3 kg se
+  quedaba sin menú **por reloj** — y el bloque lo acusaba de que «la cifra de la
+  fuente no cabe». Reescrito el mismo día para preguntárselo al solver con
+  tiempo suficiente; que el menú **entregado** cumpla se comprueba aparte, sobre
+  los que la API sí devuelve. El reloj es del BLOQUE 43.
+- Y en el segundo intento seguía mal, por otra cosa: exigía el menú **en el
+  peldaño estricto**. Medido, el perro de 3 kg con fosfato cálcico sale
+  infactible demostrado en los peldaños 0, 1 y 2 y da menú en el 3 — **igual con
+  el límite nuevo y sin él**, o sea que no lo causaba el cambio: es la ventana
+  estrecha del perro pequeño, y bajar de peldaño diciéndolo es la regla 3. Ahora
+  recorre la escalera, como hace el motor.
+
 La regla que sale de ahí: **el menú que devuelve el solver cambia entre
 ejecuciones**, así que una prueba solo puede afirmar de él lo que sea verdad de
 CUALQUIER menú válido (que esté verde, que respete sus topes, que aplique el
 límite más estricto). Todo lo que dependa de una cifra concreta del menú, o se
 calcula a partir de ese menú, o se comprueba aparte con números fijos.
+
+Y dos hermanas suyas, del 10 de septiembre, que valen igual: **una prueba no
+puede afirmar en qué peldaño sale un menú** (bajar es legítimo y se dice), ni
+**depender de lo rápida que sea la máquina** — si lo que se quiere afirmar es
+que un límite cabe, se le pregunta al solver con tiempo, no a un endpoint con
+presupuesto. Un rojo que solo sale en la CI no es un rojo de la CI: es una
+prueba que estaba midiendo el reloj sin querer.
 
 ## Comprobar qué hay desplegado
 
