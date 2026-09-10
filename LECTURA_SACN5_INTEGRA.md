@@ -1814,3 +1814,86 @@ las tablas**, y las tres se han medido.
    infections are controlled». La mitad, y solo si lo demas esta controlado. El
    aviso general de `dermatitis_atopica` no dice ninguna de las dos cosas.
    **Propuesta apuntada, no aplicada.**
+
+### cap.33 — Developmental Orthopedic Disease of Dogs (2.358 lineas, LEIDO ENTERO)
+
+**Es el capitulo del cachorro de raza grande, y el unico del libro que ya estaba
+trabajado a fondo antes de esta relectura**: sus elementos tienen veredicto uno a
+uno en `lecturas_sacn5.json` y de el salen cuatro hallazgos ya escritos en
+`HALLAZGOS_SACN5_10SEP.md` — la escalera de energia de crecimiento (S-17), el
+Ca:P de la Tabla 17-1 contra el de la 33-5 (S-18), la proteina del cachorro
+(S-19) y el techo de grasa que no es lo que parece (S-25). **Aqui no se repiten.**
+Lo que sale de leerlo entero, de la primera linea a la ultima, son **dos cosas
+nuevas y dos confirmaciones**, y una de las dos nuevas es una correccion de algo
+que este repo tenia escrito y era falso.
+
+1. **⚠️ EL SUELO DEL RATIO Ca:P, QUE NADIE HABIA MIRADO — Y ESTE SI DEJA PASAR
+   MENUS REALES.** S-18 discutio el **techo** del ratio (1,5 de la Tabla 17-1
+   contra el 1,6/1,8 de FEDIAF que aplicamos). El **suelo** no se miro, y las dos
+   tablas coinciden en el: la celda de la Tabla 33-5 dice «1.1:1 to 2:1 (the lower
+   end of range is preferred)» y el texto lo repite al hilo del calcio — «When
+   calcium intake is set at 0.8 to 1.2% DM of the food, as recommended previously
+   for large breeds at risk for DOD, the calcium-phosphorus ratio should be kept
+   within physiologic limits (1.1:1 to 2:1)». El motor aplica el suelo de FEDIAF,
+   que es **1,0**, y no distingue raza.
+   **MEDIDO sobre los 12 menus de cachorro del catalogo**: el ratio va de 1,020 a
+   1,385, y **dos caen por debajo de 1,1** — `Grande_CachorroJoven` en **1,020** y
+   `Gigante_CachorroJoven` en **1,030**. Los dos son crecimiento temprano de raza
+   grande o gigante, que es exactamente la poblacion de este capitulo.
+   Y eso lo distingue del techo de 1,6, donde 0 de 32 menus caian en la ventana:
+   **aqui el hueco de la regla esta produciendo menus por debajo del suelo de la
+   fuente**. **Decision de Elena**, porque subir el suelo a 1,1 solo para el
+   cachorro de mas de 25 kg de peso adulto es tocar el solver y hay que medir antes
+   si sigue habiendo menu en el peldano 0.
+
+2. **⚠️ CORRECCION: EL DHA POR SEPARADO NO ESTA APLICADO, Y EL REPO DECIA QUE SI.**
+   El veredicto de `cifra#308` en `lecturas_sacn5.json` decia «DHA >=0,02 % MS. Ya
+   aplicado», y es **falso**: el `MAPA` de `verificar.py` tiene `EPA_DHA_total` (la
+   suma) y `EPA` (que existe solo para el suelo de la artrosis), y **no tiene una
+   fila de DHA**. Lo que estaba aplicado es la suma, que es otra cosa. Corregido en
+   el mismo commit.
+   Lo que pide la fuente, literal: «The minimum recommended allowance for DHA plus
+   eicosapentaenoic acid (EPA) is 0.05% (DM) with EPA not exceeding 60% of the
+   total (NRC, 2006). Thus, DHA needs to be at least 40% of the total DHA plus EPA,
+   or 0.02% (DM).» O sea **DHA sola, minimo 0,05 g/1000 kcal y al menos el 40 % de
+   la suma**. Aritmeticamente un menu puede cumplir los 0,13 g de EPA+DHA que exige
+   FEDIAF en crecimiento **con EPA sola y cero DHA**, y salir verde. Y no es
+   intercambiable: el DHA se pide para el desarrollo neural, retiniano y auditivo,
+   y «The conversion of short-chain polyunsaturated fatty acids to DHA is an
+   inefficient process in puppies».
+   **MEDIDO sobre los 12 menus de cachorro**: el DHA va de **0,081 a 1,324**
+   g/1000 kcal (los 12 por encima de 0,05) y supone del **54,4 % al 75,0 %** de la
+   suma (los 12 por encima del 40 %). O sea que el hueco esta en las reglas y no en
+   los menus, y la razon es del catalogo: el omega-3 de aqui viene del pescado, que
+   es rico en DHA. **Apuntado, no aplicado** — pero ahora dice la verdad.
+
+3. **La vitamina D: el tope de seguridad cronica del motor sale CLAVADO por otra
+   puerta.** `seguridad.py` aplica `TOPE_VITD_KCAL = 20,0 µg/1000 kcal` citando al
+   NRC 2006. Este capitulo lo da en la otra unidad: «The safe upper limit is 3,200
+   IU/kg (DM) (NRC, 2006).» A 4000 kcal/kg MS son 800 UI/1000 kcal, y a 40 UI por
+   µg, **20 µg/1000 kcal**. Exacto, por un camino distinto y en un capitulo
+   distinto. Y trae medido lo que pasa al pasarse: 135 veces la dosis recomendada
+   en cachorros de gran danes no subio el calcio ni el fosforo en plasma, y aun asi
+   produjo osteocondrosis y sindrome de radius curvus.
+
+4. **La proteina alta NO es factor de riesgo, y esto hay que poder decirlo.** Es
+   la duda que mas se repite con una racion cruda de cachorro, que lleva ~134 g de
+   proteina por 1000 kcal. SACN5 cap.33, literal: «Protein excess has not been
+   shown to negatively affect health or skeletal development during growth of Great
+   Dane puppies when compared with isoenergetically fed controls». Y el caso
+   clinico 33-3 lo cuenta en vivo: el dueno cambio de comida porque el club de
+   perros culpo a la proteina, y lo que sobraba era energia y calcio. Confirma que
+   el motor hace bien en no poner techo de proteina en crecimiento, y es una frase
+   para `PARA_EL_NUTRICIONISTA.md`.
+
+5. **Y una que hay que leer con cuidado antes de copiarla.** El recuadro 33-5 va
+   contra los suplementos de calcio y no se anda con rodeos: «Because virtually all
+   dog foods contain more calcium than is needed to meet the requirement, the use
+   of a calcium supplement certainly is unnecessary.» **Eso vale para un pienso
+   completo, no para una racion cruda**, donde el hueso o la cascara de huevo SON
+   la fuente de calcio y sin ellos no se cierra el requisito. Lo que si traslada es
+   la advertencia de detras, que es de cantidad y no de principio: dos cucharaditas
+   de carbonato calcico anadidas a mano **doblan** la ingesta diaria de un
+   rottweiler de 15 semanas. En Rawku el calcio lo pone el solver y no el dueno,
+   con techo por 1000 kcal y con la dosis maxima del fabricante encima — que es
+   justo la proteccion que el capitulo pide.
