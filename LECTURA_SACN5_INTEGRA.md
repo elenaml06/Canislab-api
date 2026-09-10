@@ -1729,3 +1729,88 @@ texto corrido** y no tiene forma de tabla, que es justo lo que el contador de
    lacteo del catalogo es el Yogur griego, que lleva poca lactosa y entra en
    cantidades pequenas: no hay tope que poner. Queda escrito por si algun dia
    entra leche.
+
+### cap.32 — Skin and Hair Disorders (2.987 lineas, LEIDO ENTERO)
+
+**Las dos tablas de cifras ya estaban aplicadas**: la 32-1 en `dermatosis_zinc`
+(zinc 25 de suelo, fenilalanina+tirosina 3,25) y la 32-6 en `dermatitis_atopica`
+(omega-3 0,875, el mismo rango que la Tabla 31-3). Lo que sale de leer el
+capitulo entero son **tres cosas que estan en el texto y en los recuadros, no en
+las tablas**, y las tres se han medido.
+
+1. **⚠️ EL RECUADRO 32-2 PIDE MAS FENILALANINA+TIROSINA QUE LA TABLA, Y NO ES UNA
+   ERRATA.** El motor aplica 3,25 g/1000 kcal, que es el «>1.3% DM» de la Tabla
+   32-1. El recuadro «Red Coat Syndrome», en el mismo capitulo, da otra cifra para
+   la misma cosa: en SACN5 cap.32, «Dietary phenylalanine plus tyrosine levels
+   greater than 2% dry matter or addition of L-tyrosine to the food should provide
+   optimal amino acid levels for maximal melanin synthesis in cats and dogs» —
+   **2 % MS = 5,0 g/1000 kcal**, un 54 % mas. Las dos cifras no dicen lo mismo: la
+   tabla da el suelo para que no falte, y el recuadro el que hace falta para la
+   sintesis **maxima** de melanina, que es lo que decide si un pelo negro se
+   vuelve rojizo.
+   **MEDIDO sobre los 36 menus del catalogo**: van de **5,32 a 11,41 g/1000 kcal**
+   (mediana 8,08). **Los 36 pasan las dos cifras**, la de la tabla y la del
+   recuadro, sin que haya que aplicar nada. Una racion cruda va sobrada de
+   aromaticos porque va sobrada de proteina. Queda escrito: no se aplica **porque
+   no hace falta**, no porque no se haya visto.
+
+2. **⚠️ EL CALCIO ESTORBA AL ZINC, Y ESTE MOTOR HACE RACIONES ALTAS EN CALCIO.**
+   Es el hallazgo del capitulo y no tiene forma de fila. La Tabla 32-4 lista como
+   factor de riesgo de dermatosis por zinc los alimentos con «High mineral levels
+   (calcium, phosphorus, magnesium)», el texto lo explica —«Foods high in calcium,
+   phosphorus and magnesium adversely affect absorption of zinc» y «high levels of
+   minerals such as calcium inhibit the absorption of nutrients such as zinc,
+   which are essential for normal, healthy skin»— y la Tabla 32-1 pone el umbral:
+   «Higher levels of zinc are required in foods with calcium >1.5% DM», con la
+   misma frase para el cobre. Y avisa de quien mas riesgo tiene, que es
+   exactamente nuestro caso: «Excessive use of mineral supplements containing
+   calcium in large- and giant-breed puppies is common and can inhibit zinc
+   absorption».
+   **MEDIDO sobre los 36 menus** (calcio en %MS por el puente de siempre, %MS x
+   2500 = mg/1000 kcal):
+       calcio 0,63 a 1,64 % MS, mediana 1,48
+       **17 de 36 por encima del 1,5 % MS** — y los 17 son de crecimiento,
+       gestacion o lactancia; **ninguno** de adulto o senior (el mayor, 0,97)
+   O sea que el umbral de la fuente lo cruza justo la poblacion que ella misma
+   senala. **Y la buena noticia, tambien medida**: en esos 17 menus el zinc va de
+   **27,3 a 47,0** mg/1000 kcal —dentro del rango 25-50 que pide la Tabla 32-1
+   para el perro— y el cobre de **2,79 a 7,00**, por encima de su 1,25-2,5. O sea
+   que **la compensacion que pide la fuente ya esta puesta**, no por diseno sino
+   porque una racion cruda con visceras va sobrada de los dos. **No se cambia
+   nada**, y ahora se sabe por que — hasta hoy era suerte sin medir.
+
+3. **La dosis de omega-3 en mg por kg de perro, que es otra unidad y cuadra.** La
+   Tabla 32-6 y el texto dan la misma recomendacion por dos caminos: «An initial
+   dose of 50 to 300 mg of total omega-3 fatty acids/kg body
+   weight/day seems to be effective in a large number of studies» y «As a food amount, this dose range translates to approximately
+   0.35 to 1.8% total omega-3 fatty acids (DM).» El motor aplica el extremo bajo
+   del segundo (0,875 g/1000 kcal) y nunca habia comprobado el primero. **Cuadra**:
+   el perro de 10 kg del propio capitulo come 600 kcal, y 0,875 x 0,6 = 525 mg,
+   o sea **52,5 mg/kg/dia** — justo por encima del suelo de 50. Es la unica cifra
+   del motor que se puede verificar en dos unidades distintas de la misma fuente.
+
+4. **El cobre, tercera confirmacion de algo que ya esta en
+   `sacn5_fuentes_de_minerales.json`.** El capitulo repite lo del cap.6: «copper
+   from monogastric mammalian liver (pork and rat) and copper oxide is poorly
+   available», y del otro lado «Copper availability is relatively high in poultry
+   by-product meal, avian liver (chicken and turkey) and ruminant liver (beef and
+   sheep)». Los higados del catalogo son de pavo, pollo, vaca y cordero: los
+   cuatro de la lista buena. Sigue sin haber ninguno de cerdo.
+
+5. **La vitamina E, SEXTO capitulo que pide 400 UI/kg MS.** En SACN5 cap.32, «vitamin E in foods is
+   at least 400 IU/kg of food (DM) for dogs and at least 500 IU/kg of food (DM)
+   for cats» — los mismos 67 mg/1000 kcal de los capitulos 1, 7, 27, 34, 35 y 47 que
+   ya estan medidos en `HALLAZGOS_SACN5_10SEP.md` §S-12. Sigue sin aplicarse y por
+   el mismo motivo: subir un minimo diez veces cambia que alimentos entran en
+   todos los menus, y eso lo decide el nutricionista. Lo que este capitulo anade es
+   el contexto — la piel es el organo mas expuesto al oxidante — y una dosis
+   TERAPEUTICA que no es de alimento y no toca al motor: 200 a 800 UI dos veces al
+   dia por boca, para lupus discoide, paniculitis esteril y dermatomiositis.
+
+6. **Y lo que hay que poder decirle al dueno cuando pregunte si el aceite le va a
+   arreglar el picor.** SACN5 cap.32 lo mide en 16 ensayos aleatorizados (Tabla
+   32-10) y lo resume sin adornos: «up to 50% of dogs with allergic pruritus will
+   improve with modification in fatty acid intake, if secondary bacterial and yeast
+   infections are controlled». La mitad, y solo si lo demas esta controlado. El
+   aviso general de `dermatitis_atopica` no dice ninguna de las dos cosas.
+   **Propuesta apuntada, no aplicada.**
