@@ -1404,3 +1404,104 @@ los requisitos por 1000 kcal donde estaban.
   DER va por escalones de actividad, no por distancia.
 - **El DER del atleta intermedio va de 2 a 5 × RER**, muy por encima de nuestros
   escalones. No es nuestro público, pero marca dónde acaba lo que el motor cubre.
+
+---
+
+## Duodécima tanda (10 de septiembre, noche) — el capítulo 68 entero: hepatobiliar
+
+Los 131 elementos con veredicto. **Los seis límites de `hepatopatia` salen de su
+Tabla 68-8 y coinciden uno a uno**, y el capítulo explica —con sus propias
+palabras— por qué esa patología está marcada `formulable: false`.
+
+### Por qué no formula, dicho por la fuente y medido
+
+> *«The specific nutrient requirements of patients with various naturally
+> occurring hepatobiliary diseases **are not well understood or documented**.»*
+
+Y cuando sí da cifras, **dos de ellas caen por debajo del mínimo de FEDIAF**:
+
+| | Lo que pide SACN5 | Por 1000 kcal | Mínimo de FEDIAF |
+|---|---|---|---|
+| Proteína | 15–20 % MS | 37,5 – 50 | **52,1** ← por debajo |
+| Cobre (máximo) | ≤5 mg/kg MS | **1,25** | **2,08** ← por debajo |
+
+Son **dos ejes**, no uno. El motor aplica cobre ≤2,4, que es el límite tolerable
+de Center 2026 y queda justo por encima del mínimo de FEDIAF; la cifra de SACN5
+está escrita en `patologias.json` para el día que se distinga «hepatopatía por
+cobre» del resto. Y la propia fuente añade que su número puede quedarse corto:
+*«This level may still provide too much copper for some patients with hepatic
+copper toxicosis.»*
+
+### S-35 · El zinc de la hepatopatía es la ventana más estrecha del motor, y ningún menú normal entra
+
+> *«Foods for patients with liver disease should contain **more than 200 mg/kg DM
+> zinc**»* = **50 mg/1000 kcal**, que es el suelo que aplicamos.
+
+Puesto al lado de lo que hay:
+
+| | mg/1000 kcal |
+|---|---|
+| Mínimo de FEDIAF | 20,8 |
+| **Nuestros 12 menús de adulto y senior** | **23,3 – 42,6** (mediana 27,5) |
+| **Suelo que pide la hepatopatía** | **50** |
+| Máximo LEGAL, que el motor aplica | 56,75 |
+
+**Ningún menú ordinario llega al suelo**, y entre el suelo y el techo quedan
+**6,75 mg, un 13 % de sitio**. Es de las ventanas más estrechas del motor y otra
+razón, esta ya medida, de que esta patología no formule.
+
+Y la arginina, en cambio, **no es problema**: la fuente pide 1,2-2,0 % MS = 3,0-5,0
+g/1000 kcal y nuestros menús dan **4,95 a 6,56**, o sea en el extremo alto o por
+encima. Ahí no hay nada que hacer.
+
+### S-36 · Los hidratos, cuarta población, y aquí la cifra es la más alta del libro
+
+> *«Providing at least **30 to 50% of dietary calories** in the form of easily
+> digested, complex digestible carbohydrate (e.g., corn, rice, wheat, barley) may
+> help avert encephalopathic clinical signs»*
+
+> *«the recommendations for DM digestible carbohydrates in foods for dogs… with
+> liver disease are **45 to 55%**»*
+
+Es la cifra de hidratos más alta que el libro le pide a un perro, y la que más
+lejos queda de una ración cruda. Y el mecanismo es distinto de las otras tres
+veces: aquí el hidrato está **para desplazar a la proteína** como fuente de
+energía, que es justo lo que hay que evitar en un hígado que no procesa el
+nitrógeno.
+
+Con el capítulo 17 (cachorro), el 15 (reproductora) y el 18 (perro de trabajo),
+van **cuatro poblaciones** en las que el libro pide hidratos digestibles y una
+ración cruda no lleva ninguno.
+
+Y por si quedaba duda de hacia dónde apunta el capítulo, su **receta casera
+propia** para hepatopatía es: arroz integral 192 g, requesón 71 g, margarina 8 g,
+carbonato cálcico, sal con potasio y levadura de cerveza. De base vegetal y con
+hidratos. **Es lo contrario de una ración cruda**, y ninguno de esos ingredientes
+está en el catálogo salvo el carbonato cálcico.
+
+### S-37 · La vía que el motor SÍ podría hacer, y no es bajar una cifra
+
+> *«**Vitamin-mineral supplements that do not contain a copper source are
+> recommended.**»*
+
+O sea que la forma práctica de bajar el cobre no es apretar un número por debajo
+del mínimo de FEDIAF: es **elegir suplementos sin cobre**. Y eso el motor sabe
+hacerlo — es exactamente la misma forma que la exclusión de atún y caballa en
+`reaccion_adversa_alimento`, o la del plátano en la diabetes.
+
+Es la primera vía que he encontrado en toda la lectura para que una patología
+bloqueada pueda dar algo útil **sin tocar ningún límite**. Va como propuesta, no
+como cambio.
+
+### Y una discrepancia dentro del propio capítulo, que va a favor
+
+La Tabla 68-8 pide 15-20 % MS de proteína. Pero en el caso clínico del cobre, el
+mismo capítulo dice:
+
+> *«Protein requirements have not been established for these dogs, but they would
+> be expected to be **similar to those of other adult dogs (15 to 30% dry
+> matter)**.»*
+
+30 % MS son **75 g/1000 kcal**, muy por encima del mínimo de FEDIAF. O sea que
+para la hepatopatía **por cobre** —que es la que tiene cifra de cobre— la proteína
+no sería el obstáculo. Solo lo sería el cobre, y para ése está la vía de S-37.

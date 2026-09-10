@@ -68,6 +68,7 @@ están en `HALLAZGOS_SACN5_10SEP.md` con la medida delante:
 | **37** · enfermedad renal crónica | 129 | **S-30** y **S-31** (los 81 que faltaban), y S-30 **matiza S-10 a favor** |
 | **27** · obesidad | 155 | **S-32**, y refuerza **S-11** con una segunda aparición del selenio |
 | **18** · perro de trabajo | 133 | **S-33** y **S-34**; S-33 es el **primer contrapeso** a S-12 |
+| **68** · hepatobiliar | 131 | **S-35** a **S-37**; S-37 es la primera vía para desbloquear una patología **sin tocar ningún límite** |
 
 ⚠️ **Lo de abajo se escribió ANTES de esa pasada**, leyendo el capítulo de
 corrido. No es falso, pero no es completo: la pasada elemento a elemento
