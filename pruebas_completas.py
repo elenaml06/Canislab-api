@@ -10949,6 +10949,37 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 85 — que cada cita entrecomillada diga lo que dice la fuente
+# ============================================================
+#
+# ⚠️ POR QUE (10 septiembre). El texto de FEDIAF y el de SACN5 se habian
+# extraido de sus PDF conservando la disposicion visual, y los dos libros van a
+# DOS COLUMNAS: cada linea pegaba la de la izquierda con la de la derecha. El
+# 49,3 % de las lineas de FEDIAF y el 37,5 % de las de SACN5.
+#
+# O sea que durante dias se pudo citar entrecomillado, de buena fe, una frase
+# que la fuente NO DICE -- dos medias frases de dos parrafos distintos pegadas.
+#
+# La extraccion ya esta rehecha y el BLOQUE 81 vigila que no vuelva a pasar.
+# Pero las citas escritas ANTES siguen ahi, y son las que justifican cada cifra
+# que aplica el motor: los campos `fuente` y `por_que` de patologias.json son
+# casi 400 citas.
+#
+# `auditar_citas.py` busca cada una LITERAL en los textos que hay en el repo de
+# fuentes, y las reparte en tres: encontrada, «su fuente no esta aqui» (Merck,
+# ACVIM, Today's Veterinary Practice) y ⚠️ «su fuente SI esta y la frase no
+# aparece», que son las que hay que abrir. Ese ultimo numero va CLAVADO.
+print("\n=== BLOQUE 85: cada cita, contra el texto de su fuente ===")
+
+_aud85 = _sp_b18.run([sys.executable, "auditar_citas.py"], capture_output=True, text=True,
+                     cwd=_os_b18.path.dirname(_os_b18.path.abspath(__file__)))
+if "Discrepancias: 0" not in _aud85.stdout:
+    _cola85 = "\n      ".join((_aud85.stdout + _aud85.stderr).strip().splitlines()[-6:])
+    fallos.append(f"BLOQUE85: el recuento de citas sin comprobar no cuadra:\n      {_cola85}")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # BLOQUE 84 — un aviso que el motor calcula y la API no manda no existe
 # ============================================================
 #
