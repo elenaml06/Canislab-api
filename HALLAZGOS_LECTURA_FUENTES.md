@@ -4819,3 +4819,66 @@ aplicar siempre el legal no es solo lo estricto, es **lo único que deja un tech
 justo donde el menú se pega a él**. Las seis filas afectadas llevan ahora escrito
 `sin_maximo_nutricional_publicado` con esta medida dentro, y el auditor falla si
 una fila con techo legal no dice qué quedaría sin él.
+
+
+### F-26 · La comprobación de F-24 y F-25 contra el PDF, porque Elena no se fiaba
+
+*«Pero compruébalo bien, yo lo he dicho, pero no estoy segura, tienes que
+comprobar bien.»* Bien hecho: al ir al PDF aparecieron **dos frases que no
+tenía** y **una tensión dentro del propio documento**.
+
+**1 · §3.1.3 dice dos cosas más de las que yo había citado.**
+
+> *«A legal maximum only applies when the particular trace element or vitamin is
+> added to the recipe as an additive, **but relates to the 'total' amount present
+> in the finished product (amount coming from the additive plus amount from feed
+> materials (ingredients))**.»*
+
+Cuando el techo legal aplica, aplica al **total**, no solo a la parte añadida.
+**Es lo que hace el motor**: mide el nutriente entero del menú. No lo había
+verificado y resulta que está bien.
+
+> *«…instead the nutritional maximum, **when included in the relevant tables**,
+> should be taken into account.»*
+
+FEDIAF admite en su propia frase que el nutricional **puede no estar en las
+tablas**. Es exactamente el caso de los seis oligoelementos.
+
+**2 · Y el registro de cambios de 2012 lo zanja, con un principio escrito.**
+
+> *«**As a general principle it was agreed that no nutritional maximum level will
+> be stated in the Guidelines for nutrients for which no data on potential
+> adverse effects are available.**»*
+
+O sea que la ausencia de (N) para cobre, yodo, hierro, manganeso, selenio y zinc
+**no es un hueco de la tabla ni un fallo de transcripción**: es una decisión
+declarada, y su motivo es que **no hay datos de efectos adversos**. Eso confirma
+F-25 con la fuente en la mano: quitar el techo legal a esos seis no los deja con
+un techo más alto, los deja **sin ninguno, y precisamente porque nadie sabe
+dónde está el daño**.
+
+**3 · ⚠️ Y hay una tensión dentro del propio documento, que conviene tener
+escrita.** §3.2.1, leyendo las tablas:
+
+> *«The legal maximum (L) is **mandatory and always applies to all life
+> stages**.»*
+
+Y §3.1.3, en la sección que trata específicamente de los máximos:
+
+> *«A legal maximum **only applies when** the particular trace element or vitamin
+> is added to the recipe as an additive… If the nutrient comes exclusively from
+> feed materials, the legal maximum **does not apply**.»*
+
+La lectura que las reconcilia es que el «always applies to **all life stages**»
+de §3.2.1 habla de **etapas vitales** —no varía entre cachorro y adulto—, no de
+la procedencia del nutriente. Es la más razonable, y además §3.1.3 es la sección
+específica y la detallada.
+
+**Pero no hace falta elegir**, y eso es lo tranquilizador: **aplicar siempre el
+legal satisface las dos lecturas a la vez**. Una dice que es obligatorio siempre;
+la otra lo condiciona. Cumplir la más estricta cumple las dos.
+
+**4 · Y una tercera confirmación de paso.** El changelog dice también
+*«Nutritional maximum for sodium has been deleted and replaced by a footnote»*.
+Es la nota c, y confirma que el máximo de sodio y cloruro **no es un (N)**: es
+«el nivel más alto con datos», que es como está etiquetado en el JSON desde hoy.
