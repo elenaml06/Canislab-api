@@ -62,7 +62,7 @@ _LARGO_MINIMO = 40
 
 # Cuantas citas quedan por comprobar contra una fuente que SI esta en el repo.
 # Se pone a mano y se compara exacto. Ver el comentario del final de `auditar`.
-PENDIENTES_DECLARADAS = 56        # 10 de septiembre de 2026, tarde
+PENDIENTES_DECLARADAS = 31        # 10 de septiembre de 2026, tarde
 
 # ⚠️ SOLO SE AUDITAN LAS CITAS EN INGLES, Y ESTE FILTRO SI ES LEGITIMO: las
 # fuentes estan todas en ingles, asi que una cita entre comillas angulares en
@@ -94,7 +94,12 @@ def _norm(t):
     t = unicodedata.normalize("NFKC", t)
     t = t.replace("’", "'").replace("‘", "'")
     t = t.replace("“", '"').replace("”", '"')
-    t = t.replace("–", "-").replace("—", "-").replace("‐", "-")
+    # ⚠️ TODOS LOS GUIONES DE UNICODE, que son ocho y se parecen. El que se
+    # colo fue el SIGNO MENOS (U+2212), que en «kg⁻¹» sale al convertir el
+    # superindice y NO es el guion ASCII: la cita quedaba «kg−1» y la fuente
+    # «kg-1», identicas a la vista y distintas para una comparacion.
+    for _g in "–—‐‑‒−﹘﹣－":
+        t = t.replace(_g, "-")
     # ⚠️ EL GUION DE CORTE DE LINEA, que es la trampa de los PDF: «substan-
     # tiation» en el texto es «substantiation» en la cita. Se quita el guion
     # seguido de espacio, no cualquier guion -- «low-taurine» tiene que seguir
@@ -150,7 +155,7 @@ def _sin_guiones(t):
     otro; quitando el guion entero se arreglan los dos, a costa de que «low-fat»
     y «lowfat» pasen a ser lo mismo -- que para comprobar una cita da igual.
     """
-    return re.sub(r"[-\s]", "", t)
+    return re.sub(r"[-\s–—‐‑‒−]", "", t)
 
 
 def textos():
@@ -254,6 +259,13 @@ def auditar(mostrar_todas=False):
         trozos = [x for x in re.split(r"\s*(?:\.\.\.|…|\[\.\.\.\])\s*", n) if len(x) >= 12]
         if not trozos:
             trozos = [n]
+        # ⚠️ EL PUNTO FINAL DE LA CITA, que casi nunca esta en la fuente. Citar
+        # media frase y cerrarla con punto es lo normal: «...sources of phytic
+        # acid.» donde la fuente sigue «...phytic acid (e.g. cereals and
+        # legumes)». Se quita SOLO del final de la cita, nunca del texto -- que
+        # es la diferencia con la regla que probe antes, que quitaba puntuacion
+        # en los dos lados y rompio quince citas que estaban bien.
+        trozos = [re.sub(r"[.,;:]+$", "", x) for x in trozos]
         donde = None
         for nombre, t in tx.items():
             if all(x in t for x in trozos):
@@ -265,6 +277,14 @@ def auditar(mostrar_todas=False):
                 if all(x in t for x in trozos_sg):
                     donde = nombre
                     break
+        # ⚠️ SE PROBO UN TERCER INTENTO QUITANDO DEL TEXTO LOS NUMEROS SUELTOS
+        # -- el PDF del NRC mete el numero de pagina en medio de la frase
+        # («severely limiting 293 in methionine») -- y SE HA QUITADO. No cazaba
+        # ni una cita mas, y en cambio abria la puerta a un FALSO POSITIVO:
+        # `\s\d{2,4}\s` se come tambien numeros de verdad («10 or 20 g» pasa a
+        # « or g»), asi que una cita a la que le faltara una cifra podria salir
+        # «encontrada». Vale mas dejar esas cuatro citas en la lista de mirar
+        # que arriesgarse a dar por buena una cifra que no esta.
         if donde:
             encontradas.append((fichero, cita, donde))
         else:

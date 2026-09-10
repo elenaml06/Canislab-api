@@ -153,9 +153,7 @@ el documento **dos veces**:
    Y en la III-3a el mismo valor como `Adult: 1.60 (N)` g/100 g MS, que por 2,5
    son 4,00.
 2. **Texto de la sección 3.3.1**, literal:
-   > *«AAFCO introduced a nutritional maximum for both Ca (6.25 g/1000 kcal) and
-   > **P (4 g/1000 kcal)** in 1992 out of concern for the risk of nutrient excess.
-   > **FEDIAF adopted the same nutritional maximums for both Ca and P.**»*
+   > *«AAFCO introduced a nutritional maximum for both Ca (6.25 g/1000 kcal) and > **P (4 g/1000 kcal)** in 1992 out of concern for the risk of nutrient excess. … > **FEDIAF adopted the same nutritional maximums for both Ca and P.**»*
 
 **Son dos cosas distintas y se mezclaron**: el SUL toxicológico (no existe) y el
 máximo NUTRICIONAL de FEDIAF (sí existe).
@@ -300,9 +298,7 @@ motor no.
 
 ### F-8 · Los valores de adulto de FEDIAF ya llevan un +20 % sobre NRC
 
-> *«Unless indicated with an * and substantiated hereafter, the values recommended
-> for adult dogs are the levels recommended by NRC 2006 **increased by 20 %** to
-> compensate for the lower energy requirement of household dogs.»*
+> *«Unless indicated with an * and substantiated hereafter, the values recommended > for adult dogs are the levels recommended by NRC 2006 … **increased by 20 %** to > compensate for the lower energy requirement of household dogs.»*
 
 No es un fallo nuestro, pero **hay que saberlo para no sumar dos veces el mismo
 margen**: cuando comparemos una cifra de NRC con una de FEDIAF, la de FEDIAF ya
@@ -316,10 +312,7 @@ es más alta que la que sale de la Tabla VII-13 para el 21 % de proteína (~0,55
 
 ### F-10 · La METIONINA+CISTINA que pide FEDIAF supone un alimento BAJO en taurina
 
-> *«The recommended values are based on a dog food containing a **very low taurine
-> content, i.e. <100 mg/kg dry matter**. For products containing higher levels of
-> taurine **the RA for sulphur amino acids can be lower** than the values quoted in
-> the table.»*
+> *«The recommended values are based on a dog food containing a **very low taurine > content, i.e. <100 mg/kg dry matter**. … For products containing higher levels of > taurine **the RA for sulphur amino acids can be lower** than the values quoted in > the table.»*
 
 O sea que el mínimo de metionina+cistina que aplicamos está calculado para un
 alimento casi sin taurina — y una ración BARF de carne lleva taurina de verdad
@@ -646,15 +639,7 @@ proporciones se hizo**.
 
 ### N-6 · El problema del fitato con el zinc es de dietas VEGETALES, y una ración BARF no lo es
 
-> *«**Most animal products and seafood are relatively free of constituents that
-> interfere with Zn absorption**, and, as mentioned previously, **amino acids
-> derived from meat digestion may actually improve the absorption of Zn**.
-> Vegetable products are more likely to contain chemicals that interfere with Zn
-> absorption, the most notable of these being **phytate**; phytate is present in
-> many plant sources including cereals such as corn, wheat, and rice and oilseed
-> meals such as **soy, peanut, and sesame**, which may contain 1.5 percent or more
-> phytate. Dietary phytate has long been known to reduce the absorption of Zn, and
-> **this effect is exacerbated by high concentrations of dietary Ca**.»*
+> *«**Most animal products and seafood are relatively free of constituents that > interfere with Zn absorption**, and, as mentioned previously, **amino acids > derived from meat digestion may actually improve the absorption of Zn**. > Vegetable products are more likely to contain chemicals that interfere with Zn > absorption, the most notable of these being **phytate**; phytate is present in > many plant sources including cereals such as corn, wheat, and rice and oilseed > meals such as **soy, peanut, and sesame**, which may contain 1.5 percent or more > phytate. … Dietary phytate has long been known to reduce the absorption of Zn, and > **this effect is exacerbated by high concentrations of dietary Ca**.»*
 
 Es la contrapartida buena de F-14 y F-16: FEDIAF avisa de que con el calcio alto
 hay que subir el zinc, y NRC explica **por qué** —el fitato— y añade que **en una
@@ -1826,9 +1811,7 @@ tratamiento»*. Fascetti lo dice más fuerte todavía:
 > restriction varied greatly from dog to dog**: some animals responded favorably,
 > others were not affected, **others were negatively affected**.»*
 >
-> *«There are studies in experimentally induced EPI in dogs that suggest that
-> **fat restriction actually worsens lipase activity**, since fat and protein
-> protect lipase during aboral intestinal transit.»*
+> *«There are studies in experimentally induced EPI in dogs that suggest that > **fat restriction actually worsens lipase activity**, … since fat and protein > protect lipase during aboral intestinal transit.»*
 
 Es una confirmación en toda regla de una decisión que ya estaba tomada por el
 motivo correcto, y de que el aviso de la EPI («el tratamiento son las enzimas y
@@ -2098,10 +2081,7 @@ explicaba.
 
 ### F-22 · Taurina y L-carnitina en el perro, con la matización que faltaba
 
-> *«While taurine is an essential nutrient for cats…, **dogs are thought to be
-> able to synthesize adequate amounts of taurine endogenously, so it is not
-> classified as an essential nutrient for dogs**. Dog breeds at high risk for DCM
-> (e.g. Doberman pinschers, boxers) typically do not have taurine deficiency.»*
+> *«While taurine is an essential nutrient for cats…, … **dogs are thought to be > able to synthesize adequate amounts of taurine endogenously, so it is not > classified as an essential nutrient for dogs**. Dog breeds at high risk for DCM > (e.g. Doberman pinschers, boxers) typically do not have taurine deficiency.»*
 
 Coherente con que la taurina sea en nuestro motor una fila **sin referencia** de
 FEDIAF (como la fibra y el EPA) y con que solo aparezca como suelo donde una
@@ -2333,9 +2313,7 @@ eliminación funcione o no:
 
 > *«**There is no such thing as a “hypoallergenic diet.”**»*
 >
-> *«in order to diagnose CAFR in more than 90% of dogs and cats, an elimination
-> diet trial should last for a **minimum of 8 weeks**, but **10-12 weeks (or
-> more)** may be required.»*
+> *«in order to diagnose CAFR in more than 90% of dogs and cats, an elimination > diet trial should last for a **minimum of 8 weeks**, … but **10-12 weeks (or > more)** may be required.»*
 >
 > *«**up to 75% in one survey** of dogs will still have **instances of food
 > indiscretions** during a trial, including provision of treats by the pet owner
@@ -3290,11 +3268,7 @@ Es uno de los 26 sin citar, y trae **cinco cosas**, dos de ellas con cifra.
 
 #### 7.1 · La vitamina E no tiene máximo en FEDIAF, y aquí hay uno sugerido
 
-Literal: *«There are no published toxicity data for vitamin E in dogs; however,
-concentrations exceeding 2,000 IU/kg DM of food have been fed for 17 weeks
-without observable negative reactions. Although an upper limit of toxicity has
-not been documented, **a level of 1,000 IU/kg DM of food, or 45 IU/kg of body
-weight, has been suggested (NRC, 2006)**»*.
+Literal: *«There are no published toxicity data for vitamin E in dogs; however, concentrations exceeding 2,000 IU/kg DM of food have been fed for 17 weeks without observable negative reactions. … Although an upper limit of toxicity has not been documented, **a level of 1,000 IU/kg DM of food, or 45 IU/kg of body weight, has been suggested (NRC, 2006)**»*.
 
 1.000 UI/kg MS ÷ 4 = 250 UI/1000 kcal, y × 0,671 = **167,75 mg/1000 kcal**.
 
@@ -4436,11 +4410,7 @@ fósforo del adulto** y por qué el cachorro no tiene ninguno.
 De la sección 3.3.1, y **releído sobre el texto bueno**, porque la primera
 versión de este apartado lo contaba mal:
 
-> *«While the current **SUL of Ca and P for adult dogs is extrapolated from
-> puppies**, the work of Stockman J et al. (2017) demonstrated these values being
-> appropriate. In this study a diet providing **7,1 g/1000 kcal of total Ca and
-> 4,5 g/1000 kcal of total P (Ca:P 1,6:1)** was well tolerated over a period of
-> 40 weeks, with no adverse effects noted.»*
+> *«While the current **SUL of Ca and P for adult dogs is extrapolated from > puppies**, the work of Stockman J et al. (2017) demonstrated these values being > appropriate. In this study a diet providing **7,1 g/1000 kcal of total Ca and > 4,5 g/1000 kcal of total P (Ca:P 1,6:1)** … was well tolerated over a period of > 40 weeks, with no adverse effects noted.»*
 
 Dice dos cosas, y la primera no la sabíamos: **el límite superior seguro de
 calcio y fósforo del perro ADULTO está extrapolado del cachorro**, no medido en
@@ -5066,10 +5036,7 @@ humedad, que es lo que desbloquea las dos cosas.
 
 **Anexo 7.3.3, «Dog»**, leído entero:
 
-> *«In dogs, low plasma levels of taurine (< 40 µmol/L) may also predispose to
-> dilated cardiomyopathy. However, **some breeds seem to be more sensitive** to
-> develop such side effects, **particularly Newfoundland dogs, in which the rate
-> of taurine synthesis is decreased** (Backus RC et al. 2006).»*
+> *«In dogs, low plasma levels of taurine (< 40 µmol/L) may also predispose to > dilated cardiomyopathy. … However, **some breeds seem to be more sensitive** to > develop such side effects, … **particularly Newfoundland dogs, in which the rate > of taurine synthesis is decreased** (Backus RC et al. 2006).»*
 
 Y en la misma página, el otro factor de riesgo:
 

@@ -167,7 +167,7 @@ Y el cap.33 añade una cosa más: el **gran danés es la excepción**, «may req
 - **Cap.33**: «Canine growth foods should contain **100 mg/kg DM zinc** (NRC,
   2006)». El motor aplica el mínimo de FEDIAF, 25 mg/1000 kcal, que a 4,0 kcal/g
   son exactamente **100 mg/kg MS**. El mismo número por dos caminos.
-- **Cap.15**: «Food should provide at least **10 to 20 %** … [digestible] carbohydrate to support normal milk lactose production» en la lactante. Una
+- **Cap.15**: «Food should provide at least **10 to 20 %** … [digestible] … carbohydrate to support normal milk lactose production» en la lactante. Una
   ración BARF no lleva hidratos, y por eso el motor **dobla la proteína** en
   gestación y lactancia desde el 8 de septiembre. Esta frase es la otra mitad de
   ese mismo hallazgo, y no se puede aplicar: no vamos a meter cereal.

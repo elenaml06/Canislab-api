@@ -85,7 +85,7 @@ están un 14 % apretadas de más».
   4,0 y a 20,0 % con 3,5. Solo cuadra a 4,0.
 - Y en el propio capítulo 13, en el MISMO párrafo, el fósforo se deriva «at an
   energy density of 3.5 kcal/g DM» mientras el sodio dice «this allowance is for
-  foods with an energy density of **4 kcal/g** (NRC, 2006)». La densidad es de
+  foods with an energy density of **4 kcal/g (DM)** (NRC, 2006)». La densidad es de
   cada derivación, no del libro — pero la de las TABLAS, que es la que usamos, es
   4,0 y está escrita.
 
@@ -285,7 +285,8 @@ referencia.
 Literal:
 
 > «Foods for late gestation and peak lactation should contain the minimum
-> recommended allowance of DHA plus EPA of **at least 0.05 % (DM)** (NRC, 2006).
+> recommended allowance of DHA plus eicosapentaenoic acid (EPA) of **at least
+> 0.05 % (DM)** (NRC, 2006).
 > Therefore, **DHA needs to be at least 40 % of the total DHA plus EPA, or
 > 0.02 % DM**.»
 
@@ -495,7 +496,8 @@ El mínimo de **DHA ≥0,02 % MS = 0,05 g/1000 kcal** aparece, con la misma cifr
 2. **Tabla 17-1** — crecimiento, en **las dos** columnas de peso adulto.
 3. **Tabla 33-5** — crecimiento de raza grande y gigante.
 4. Y el texto del **cap.15** y del **cap.33** lo derivan igual: «the minimum
-   recommended allowance of DHA plus EPA of at least 0,05 % (DM) (NRC, 2006).
+   recommended allowance of DHA plus eicosapentaenoic acid (EPA) of at least
+   0.05 % (DM) (NRC, 2006).
    Therefore, **DHA needs to be at least 40 % of the total DHA plus EPA, or
    0,02 % DM**».
 
