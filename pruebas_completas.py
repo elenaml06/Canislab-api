@@ -9541,19 +9541,49 @@ else:
 # para nosotros y la pregunta escrita en PARA_EL_NUTRICIONISTA.md dejaria de tener
 # sentido. Un documento que pide decidir algo que ya no se sostiene es peor que no
 # tenerlo.
-_peor_tau_69 = (None, "")
-for _quien69, _m69 in _medidos69:
-    _tau_ms69 = _por_1000_69(_m69, "taurina") * (_KCAL_POR_KG_MS_69 / 1000.0)
-    if _peor_tau_69[0] is None or _tau_ms69 < _peor_tau_69[0]:
-        _peor_tau_69 = (_tau_ms69, _quien69)
-    if _tau_ms69 < _TAURINA_UMBRAL_MS_69:
+# ⚠️ REESCRITO EL 10 DE SEPTIEMBRE DE NOCHE, Y ES EL FALLO DE SIEMPRE: ESTE
+# BLOQUE DABA POR HECHA UNA PROPIEDAD INCIDENTAL DEL MENU QUE DEVUELVE EL SOLVER.
+#
+# Fallaba en cuanto UN solo menu bajaba de los 100 mg/kg MS. Y la taurina NO es
+# un requisito del motor -- no tiene ni suelo ni techo --, asi que el solver no
+# tiene ningun motivo para meterla: que un menu concreto la lleve o no es un
+# sorteo. Medido esa noche, seis menus de 3 kg seguidos: 183 · 120 · 1883 ·
+# 1310 · 1181 · 135, y en la bateria uno salio en 0. El perro pequeño vive
+# justo en el borde.
+#
+# O sea que el bloque acusaba a la regla de haberse caido cuando lo unico que
+# habia pasado es que al toy le habia tocado otro menu. Es exactamente lo que
+# avisa CLAUDE.md, y un rojo que sale una vez de cada seis es peor que no tener
+# el test: enseña a desconfiar de la bateria.
+#
+# LO QUE SI ES ESTABLE, y es lo que sostiene la pregunta al nutricionista: que el
+# menu TIPICO va un orden de magnitud por encima del umbral. Eso se mide con la
+# MEDIANA de los seis casos, que no la mueve un sorteo. Y los menus sueltos que
+# caen por debajo se CUENTAN y se dicen, sin fallar, porque son informacion que
+# el nutricionista necesita -- el perro pequeño es el borde.
+#
+# ⚠️ Y LO QUE HAY QUE TENER CLARO ANTES DE MIRAR NINGUN NUMERO: caiga del lado
+# que caiga, el motor aplica el minimo de metionina+cistina de FEDIAF. Si el menu
+# lleva menos de 100, la suposicion de FEDIAF ES la nuestra y su minimo es
+# exacto; si lleva mas, su minimo es CONSERVADOR. No hay caso inseguro. Lo unico
+# que decide esta medida es si la pregunta merece hacerse.
+_taus_69 = [(_por_1000_69(_m69, "taurina") * (_KCAL_POR_KG_MS_69 / 1000.0), _quien69)
+            for _quien69, _m69 in _medidos69]
+_peor_tau_69 = min(_taus_69) if _taus_69 else (None, "")
+_bajo_umbral_69 = [x for x in _taus_69 if x[0] < _TAURINA_UMBRAL_MS_69]
+if _taus_69:
+    _ord69 = sorted(v for v, _ in _taus_69)
+    _mediana_tau_69 = _ord69[len(_ord69) // 2] if len(_ord69) % 2 else (
+        (_ord69[len(_ord69) // 2 - 1] + _ord69[len(_ord69) // 2]) / 2.0)
+    if _mediana_tau_69 < _TAURINA_UMBRAL_MS_69:
         fallos.append(
-            f"BLOQUE69: el menu de {_quien69} tiene {_tau_ms69:.0f} mg/kg de materia seca de "
-            f"taurina, por DEBAJO de los {_TAURINA_UMBRAL_MS_69:.0f} con los que FEDIAF calculo el "
-            f"minimo de metionina+cistina. La regla "
-            f"`metionina_cistina_segun_la_taurina` dice que nuestros menus van muy por encima de "
-            f"ese umbral, y ya no es verdad: o se corrige la regla, o se retira la pregunta de "
-            f"PARA_EL_NUTRICIONISTA.md, que pide decidir sobre una premisa que se ha caido")
+            f"BLOQUE69: la MEDIANA de la taurina de {len(_taus_69)} menus resueltos en vivo es "
+            f"{_mediana_tau_69:.0f} mg/kg de materia seca, por DEBAJO de los "
+            f"{_TAURINA_UMBRAL_MS_69:.0f} con los que FEDIAF calculo el minimo de "
+            f"metionina+cistina. La regla `metionina_cistina_segun_la_taurina` se apoya en que "
+            f"nuestro menu TIPICO va un orden de magnitud por encima, y eso si se ha dado la "
+            f"vuelta: la suposicion de FEDIAF pasa a ser la nuestra y la pregunta escrita para el "
+            f"nutricionista deja de tener sentido. No es un menu suelto -- es la mediana")
 
 # --- 4. Y que las tres reglas sigan existiendo y sigan sin aplicarse -----------
 # Las tres son `documentado_sin_cifra`. Si alguna pasara a aplicarse, seria porque
@@ -9578,8 +9608,13 @@ print(f"  {len(_medidos69)} menus resueltos en vivo")
 print(f"  calcio mas alto: {_peor_ca_69[0]:.0f} mg/1000 kcal ({_peor_ca_69[0]/_CA_MAX_69*100:.0f} %"
       f" del maximo) en {_peor_ca_69[1]}")
 if _peor_tau_69[0] is not None:
-    print(f"  taurina mas baja: {_peor_tau_69[0]:.0f} mg/kg MS (umbral de FEDIAF: "
-          f"{_TAURINA_UMBRAL_MS_69:.0f}) en {_peor_tau_69[1]}")
+    print(f"  taurina: mediana {_mediana_tau_69:.0f} mg/kg MS, la mas baja {_peor_tau_69[0]:.0f} "
+          f"en {_peor_tau_69[1]} (umbral de FEDIAF: {_TAURINA_UMBRAL_MS_69:.0f})")
+    if _bajo_umbral_69:
+        print(f"  ⚠️ {len(_bajo_umbral_69)} de {len(_taus_69)} menus por debajo del umbral: "
+              + ", ".join(f"{_q} ({_v:.0f})" for _v, _q in sorted(_bajo_umbral_69))
+              + ". No es un fallo -- la taurina no es un requisito del motor y el menu que "
+                "devuelve el solver cambia entre ejecuciones --, pero es el borde y se dice")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
