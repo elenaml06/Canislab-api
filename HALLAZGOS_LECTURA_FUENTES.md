@@ -64,7 +64,7 @@ Hay que implementarlo: es un requisito de FEDIAF y lo tenemos plano.
 > sulphur-containing amino acids… Feeding certain **lamb and rice** foods may
 > increase the risk… In dogs, low plasma levels of taurine (< 40 µmol/L) may also
 > predispose to **dilated cardiomyopathy**… particularly **Newfoundland dogs**, in
-> which the rate of taurine synthesis is decreased. The addition of taurine to such
+> which the rate of taurine synthesis is decreased… The addition of taurine to such
 > foods **or increasing the intake of the precursors of taurine (methionine and
 > cysteine)** can prevent such a decrease.»*
 
@@ -89,7 +89,7 @@ motor no dice ni una palabra.
 **Sección 3.1.3**, y es un matiz que cambia el sentido de lo que aplicamos:
 
 > *«A legal maximum only applies **when the particular trace element or vitamin is
-> added to the recipe as an additive**, but relates to the "total" amount present in
+> added to the recipe as an additive**, but relates to the ‘total’ amount present in
 > the finished product… **If the nutrient comes exclusively from feed materials, the
 > legal maximum does not apply**, instead the nutritional maximum… should be taken
 > into account.»*
@@ -414,8 +414,8 @@ BARF es de hueso: el calcio va alto por construcción.**
 
 ### F-15 · Fuentes de mineral que NO cuentan para el mínimo
 
-> *«Owing to its low availability **copper oxide should not be considered a copper
-> source**.»*
+> *«Owing to its low availability **copper oxide should not be considered as a
+> copper source**.»*
 > *«Because of very poor availability, **iron from oxide or carbonate salts** that
 > are added to the diet **should not be considered sources contributing to the
 > minimum nutrient level**.»*
@@ -487,8 +487,9 @@ auditor que recorre nuestras propias filas.
 
 ### F-21 · La ecuación de escalado es literalmente la nuestra
 
-> *«Units/1000 kcal = Nutrient requirement per day (Units/kg metabolic BW) × 1000
-> ÷ DER (kcal/kg metabolic BW)»* (§7.2.5)
+> *«Units/1000 kcal = Nutrient requirement per day (Units/kg metabolic BW) x 1000…
+> DER (kcal/kg metabolic BW)»* (§7.2.5 — en el PDF el DER va debajo de la raya de
+> una fracción, y esa raya se pierde al extraer el texto)
 
 Es exactamente lo que hace `minimo_de()`. ✓ Y el texto añade el porqué: *«the
 energy needs may be satisfied before the requirements of protein, minerals or
@@ -527,9 +528,9 @@ Y en la misma página, otros dos que también nos tocan:
 > limiting in sulfur amino acids, **weight gain was depressed 28 percent and was
 > restored by the further addition of 3 g DL-methionine**.»*
 > *«…in puppies the addition of 2.2 g cystine·kg⁻¹ to a diet severely limiting in
-> methionine caused a decrease in weight gain and **necrotic skin lesions on the
-> pads of the front feet**, which were corrected rapidly when methionine was
-> added.»*
+> methionine (1,1 g·kg⁻¹ diet) caused a decrease in weight gain and **necrotic
+> skin lesions on the pads of the front feet**, which were corrected rapidly when
+> methionine was added.»*
 
 **Czarnecki et al. 1985 es EL MISMO estudio que FEDIAF cita para el máximo de
 lisina** (*«excess dietary lysine (4.91 % DM) decreases weight gain in puppies but
@@ -898,7 +899,7 @@ dilatada de los Newfoundland.
 
 **Segunda, la que nos faltaba, y es una advertencia de seguridad:**
 
-> *«Oral administration of about 1 g methionine·kg BW⁻¹ every 4 hours for 24
+> *«Oral administration of about 1 g methionine·kg⁻¹ BW every 4 hours for 24
 > hours caused **no acute clinical signs in normal dogs** but caused **severe
 > clinical signs similar to hepatic coma in dogs with portacaval shunts**
 > (Merino et al., 1975).»*
@@ -1598,9 +1599,10 @@ meses) y no solo como recomendación de tabla.
 > *«Supplementation with menhaden fish oil **lowered glomerular capillary
 > pressure, reduced proteinuria, and slowed progressive decline in the GFR**
 > (Brown et al. 1998).»* Y del otro lado: *«**Omega-6 fatty acids appeared to be
-> detrimental** to renal disease… supplementation with omega-6 PUFA… was
-> associated with **increased glomerular capillary pressure, glomerular
-> enlargement**, and increased eicosanoid excretion rates (Brown et al. 2000).»*
+> detrimental** to renal disease (Brown et al. 2000). Brown et al. reported that
+> supplementation with omega-6 polyunsaturated fatty acids… was **associated with
+> increased glomerular capillary pressure, glomerular enlargement**, and increased
+> eicosanoid excretion rates.»*
 
 Y una precisión que importa a un catálogo como el nuestro, donde el aceite de
 linaza es la fuente de omega-3 más concentrada que hay: *«one study suggests
@@ -1660,7 +1662,7 @@ he leído de por qué existe la regla 1 del `CLAUDE.md`.
 
 Y el aviso que va con ella, que también nos toca: *«owners are likely to
 substitute or delete some ingredients or supplements, unbalancing the diet in a
-process referred to as **“diet drift”**… only **13% of dog owners** that were
+process referred to as **“diet drift.”**… only **13% of dog owners** that were
 provided a homemade diet recommendation at a veterinary teaching hospital were
 strictly adhering to the recipe a few years later (Johnson et al. 2016)»*.
 Trece por ciento. Es un argumento de producto, no de nutrición, y va a
@@ -2244,7 +2246,10 @@ de los 200 que sugiere la fuente: no restringe de más. Aquí no hay conflicto.
 
 > *«Excessive concentrations of vitamin D (which promotes intestinal absorption
 > of calcium)… should be avoided. **Diets with vitamin D between 250 and 350
-> IU/Mcal should suffice.**»*
+> IU/Mcal kcal should suffice.**»*
+>
+> ⚠️ El libro imprime «IU/Mcal kcal», con las dos unidades seguidas. Es una
+> errata suya y se cita tal cual: la cita dice lo que dice la fuente.
 
 250-350 UI/Mcal son **6,25-8,75 µg/1000 kcal** (1 µg = 40 UI). **Nuestro tope de
 vitamina D en oxalato es 14,1875**, que es el máximo LEGAL para cualquier perro
@@ -2285,8 +2290,9 @@ medir si sale menú, que es la lección de esta misma noche. Queda propuesto en
 
 > *«The combination of **zinc (100 mg/1000 kcal) and linoleic acid (15 g/1000
 > kcal)** produced **statistically significant improvements in coat gloss and
-> decreased TEWL** over a nine-week period in dogs (Marsh et al. 2000; NRC
-> 2006).»*
+> decreased TEWL** over a nine-week period in dogs (NRC 2006).»*
+>
+> El estudio es Marsh et al. 2000, que la fuente cita en la frase de antes.
 
 Nuestro suelo de zinc en `dermatosis_zinc` es **25 mg/1000 kcal** (SACN5). La
 combinación con evidencia medida es **100 de zinc + 15 g de linoleico**, y las
@@ -2315,9 +2321,10 @@ eliminación funcione o no:
 >
 > *«in order to diagnose CAFR in more than 90% of dogs and cats, an elimination > diet trial should last for a **minimum of 8 weeks**, … but **10-12 weeks (or > more)** may be required.»*
 >
-> *«**up to 75% in one survey** of dogs will still have **instances of food
-> indiscretions** during a trial, including provision of treats by the pet owner
-> (dental chews, rawhides, jerky) or access to unmonitored food sources.»*
+> *«a large percentage (**up to 75% in one survey**) of dogs will still have
+> **instances of food indiscretions** during a trial, including provision of
+> treats by the pet owner (e.g. dental chews, rawhides, jerky, etc.) or access to
+> unmonitored food sources.»*
 >
 > *«**B vitamins (especially thiamin) can be very quickly depleted and should be
 > supplemented even in the short term.**»*
@@ -2405,7 +2412,8 @@ contar, y es información que quien paga un menú a medida merece tener.
 Es la mejor confirmación de una decisión de diseño que he encontrado en toda la
 noche, y viene de un capítulo introductorio:
 
-> *«These programs rely heavily on reference databases like that of the USDA…
+> *«These programs rely heavily on reference databases like that of the US
+> Department of Agriculture (USDA)…
 > However, **certain nutrients of interest such as taurine, chloride, iodine, and
 > vitamin D are typically or often not available. Therefore, “deficiencies” in
 > these nutrients suggested by computer analysis when compared to reported
@@ -2985,8 +2993,8 @@ motivo escrito en vez de una pregunta abierta.
 
 El NRC contaba el experimento de Merino 1975 (1 g/kg cada 4 h provocó signos de
 coma hepático en perros con shunt portocava). **SACN5 cap.68 dice dos cosas que
-cambian la pregunta:** que esa vía *«does not play an important role in the
-pathogenesis of HE»* porque los métodos antiguos la sobrevaloraron, y que lo que
+cambian la pregunta:** que esa vía *«these compounds do not play an important role in
+the pathogenesis of HE»* porque los métodos antiguos la sobrevaloraron, y que lo que
 hay que hacer es *«do not administer… **methionine-containing products**»*.
 
 O sea: **una regla de exclusión de suplementos, no un límite por nutriente.** Hoy
@@ -3078,8 +3086,8 @@ de conversiones, literal:
 
 > *«For commercial dog and cat foods it is recommended that the nutrient levels
 > are at or above the levels listed in the tables and do not exceed the
-> nutritional or legal maximum. **If the protein digestibility of ≥80 %
-> (mentioned under 2.2. Scope) cannot be guaranteed, it is recommended to
+> nutritional or legal maximum… **If the protein digestibility of ≥ 80 %
+> (mentioned under “2.2. Scope”) cannot be guaranteed, it is recommended to
 > increase the essential amino acid levels by a minimum of 10 %.**»*
 
 Y **§2.2 «Scope»** dice de qué cuelga toda la guía:
@@ -3127,7 +3135,7 @@ parte del mismo documento — ver el hallazgo 6.
 **§3.1.3**, literal:
 
 > *«**A legal maximum only applies when the particular trace element or vitamin
-> is added to the recipe as an additive**, but relates to the "total" amount
+> is added to the recipe as an additive**, but relates to the ‘total’ amount
 > present in the finished product… **If the nutrient comes exclusively from feed
 > materials, the legal maximum does not apply**, instead the nutritional
 > maximum, when included in the relevant tables, should be taken into account.»*
@@ -3308,9 +3316,10 @@ factor 4:1 de FEDIAF Tabla VII-14 encontrado hoy. Dos fuentes independientes.
 
 #### 7.4 · De dónde sale el mínimo de vitamina E, y por qué es condicional
 
-*«NRC recommends that dogs receive 22 IU vitamin E per kg/food DM (**based on a
-food containing 0.1 ppm selenium, not more than 1 % linoleic acid** and 3,670
-kcal ME/kg DM)»*.
+*«…the National Research Council (NRC) recommends that dogs receive 22 IU
+vitamin E per kg/food dry matter (DM) (**based on a food containing 0.1 ppm
+selenium, not more than 1 % linoleic acid** and 3,670 kcal metabolizable
+energy/kg DM)»*.
 
 Esto le pone **cifra a la condición** de la regla `vitamina_e_segun_pufa` que
 tenemos escrita como `documentado_sin_cifra`: el mínimo publicado supone **no más
@@ -3612,7 +3621,7 @@ nunca. Trae tres cosas.
 
 Literal: *«A BCS of **2.5/5 to 3/5** is probably ideal for most mature dogs and
 cats for optimal health and resultant longevity. Thus, overall, **an ideal BCS is
-a range of numbers rather than simply a "3/5"**»*.
+a range of numbers rather than simply a "3/5."**»*.
 
 En escala de nueve, 2,5/5 es 4/9 y 3/5 es 5/9. **Es exactamente lo que dice
 FEDIAF** en su §7.1.3 («The ideal BCS should therefore be between 4/9 and 5/9»).
@@ -3777,8 +3786,9 @@ trae. Queda como estaba en `DATOS_QUE_FALTAN.md`.
 El motor aplica **37,5 g/1000 kcal** en `pancreatitis`, que salen del ≤15 % MS de
 la Tabla 67-3. El capítulo 48 dice lo mismo desde el lado general, sin hablar de
 pancreatitis: *«Patients with GI or pancreatic disease may not tolerate high-fat
-foods (**>25 % DM**) … Foods containing **moderate amounts of fat (12 a 15 % DM
-for dogs)** are generally tolerated and have sufficient caloric density for most
+foods (**>25 % DM**), which may contribute to diarrhea and steatorrhea. Foods
+containing **moderate amounts of fat (12 to 15 % DM for dogs** and 15 to 22 % DM
+for cats) are generally tolerated and have sufficient caloric density for most
 patients»*.
 
 Nuestro 37,5 **es** el 15 % MS, o sea el extremo alto de lo que este capítulo
@@ -3792,8 +3802,8 @@ encontró con el catálogo: por debajo de 25 g no salía menú.
 
 #### 48.3 · La fibra en enfermedad digestiva, y por qué no cambia nada aquí
 
-*«It is unusual for GI foods to contain crude fiber levels greater than **5 % DM**
-because fiber reduces dry matter digestibility and decreases pancreatic enzymatic
+*«It is unusual for GI foods to contain crude fiber levels greater than **5 % dry
+matter (DM)** because fiber reduces dry matter digestibility and decreases pancreatic enzymatic
 activity in vitro»*, y por el otro lado la fibra insoluble es lo primero para la
 diarrea de intestino grueso: *«increasing the insoluble fiber content of the food
 resolves or modulates most cases of colitis»*.
@@ -3907,7 +3917,7 @@ Y el caso 47-1, respuesta 2, va directo al argumento del «hueso carnoso crudo»
 
 > *«there are **no reliable, published studies showing dental benefits derived
 > from bone chewing** … Current theory proposes that uncooked bones are not as
-> hard as cooked bones and do not fracture teeth …; however, **anecdotal reports
+> hard as cooked bones and do not fracture teeth… However, **anecdotal reports
 > suggest the health concerns presented with cooked bones also occur commonly
 > with raw, meaty bones** … The **safety and efficacy of feeding bones, regardless
 > of type, remain undetermined**. Veterinarians should be cautious about
@@ -4095,9 +4105,9 @@ lo dice, y esta desde el capítulo de farmacocinética.
 
 #### 69.5 · Lo demás, medido y sin efecto
 
-- **Proteína alta y metabolismo hepático de fármacos**: *«High-protein (44 vs. 10 %
-  of kcal) … foods enhance the hepatic metabolism and excretion of many different
-  drugs»*. Una ración BARF está en el extremo alto. Es el mecanismo general
+- **Proteína alta y metabolismo hepático de fármacos**: *«High-protein (e.g., 44
+  vs. 10 % of kcal, as fed), low-carbohydrate foods (e.g., 35 vs. 70 % of kcal, as
+  fed) enhance the hepatic metabolism and excretion of many different drugs»*. Una ración BARF está en el extremo alto. Es el mecanismo general
   detrás de lo del fenobarbital, y no hay cifra canina para nada más.
 - **Proteína y gentamicina**: subir la proteína en el perro de 9,4 a 27,3 % MS
   **aumenta** la eliminación de gentamicina y **reduce** su nefrotoxicidad. Va a
@@ -4122,9 +4132,10 @@ de un bóxer hembra) y más de 450 enfermedades genéticas descritas en el perro
 
 Lo único que toca a algo nuestro es una frase de pasada que **corrobora por cuarta
 vez** el techo de calcio del cachorro de raza grande: *«large- and giant-breed
-puppies with genetic variation that responds to diet for the **prevention of
-developmental orthopedic disease**»*. Los otros tres sitios son Fascetti cap.10 y
-SACN5 caps. 1 y 33.
+puppies with genetic variation that responds to diet for the pre…vention of
+developmental orthopedic disease»* — la palabra se parte en un salto de página
+del libro, y por eso la cita va en dos trozos. Los otros tres sitios son Fascetti
+cap.10 y SACN5 caps. 1 y 33.
 
 Se deja escrito que está leído entero y que no hay nada más, para que nadie tenga
 que volver.
@@ -4150,7 +4161,9 @@ dos únicas cosas que se pueden leer fuera del hospital:
   sin comer no está pidiendo una ración BARF, está en el veterinario. Queda
   escrito porque es el único sitio del libro donde alimentar de MÁS es el daño.
 - Las soluciones de aminoácidos *«contain all the essential amino acids for dogs
-  and cats, **except taurine**»*. La taurina no es uno de los 43 de FEDIAF para
+  and cats, except… taurine. However, some specialized pediatric amino acid
+  products contain taurine.»* (la frase se parte en un salto de página del
+  libro). La taurina no es uno de los 43 de FEDIAF para
   el perro. Sin efecto.
 
 ---
@@ -4378,7 +4391,8 @@ frase:
 
 > *«Because of very poor availability, iron from oxide or carbonate salts that
 > are added to the diet **should not be considered sources** contributing to the
-> minimum nutrient content. In addition, **the amount of inert iron is not to be
+> minimum nutrient level (NRC 2006a). In addition, **the amount of inert iron is
+> not to be
 > taken into consideration for the calculation of the total iron content of the
 > feed for EU legal maximum**.»*
 
@@ -4477,7 +4491,8 @@ Lo que sigue es lo que apareció y no estaba en el repo.
 FEDIAF dedica un anexo a **uva, pasa, chocolate, cebolla y ajo**, con las dosis:
 
 > *«The lowest intake that has so far been reported to cause poisoning is around
-> **2,8 g of raisins per kg bodyweight** and **19,6 g of grapes per kg BW**; one
+> **2,8 g of raisins per kg bodyweight (BW)** and **19,6 g of grapes per kg BW**;
+> one
 > dog became ill after only eating 10 to 12 grapes… **The severity of the illness
 > does not seem to be dose-related**.»*
 
@@ -4535,10 +4550,11 @@ de lisina. La respuesta estaba en §3.3.1 y no se mide sobre proteína:
 
 > *«Czarnecki et al. (1985) showed that excess dietary lysine (**4,91 % DM**
 > [basal diet 0,91 % + **4 % from a supplement**]) decreases weight gain in
-> puppies but not 2,91 % DM… the highest no-effect-level of lysine for puppies
-> was **2,91 % DM** (energy density **4156 kcal/kg**). This is equivalent to
-> **7,0 g/1000 kcal** or 2,8 % DM (at 4 kcal/g DM) and this is therefore the
-> FEDIAF maximum for puppy growth.»*
+> puppies but not 2,91 % DM (basal diet and 2 % from a supplement). It was
+> concluded that the highest no-effect-level of lysine for puppies was **2,91 %
+> DM** (energy density **4156 kcal/kg** or 17,39 MJ/kg). This is equivalent to
+> **7,0 g/1000 kcal** (1,67 g/MJ) or 2,8 % DM (at 4 kcal/g DM) and this is
+> therefore the FEDIAF maximum for puppy growth.»*
 
 Es **lisina total de la dieta**, y el daño se vio **añadiendo lisina libre** a
 una dieta basal, no comiendo más proteína. Eso importa para nuestra excepción:
@@ -4565,9 +4581,9 @@ día ese techo del libro se moviera, el del gran danés no lo sostendría nadie.
 
 > *«Studies in Great Dane puppies showed that a dietary vitamin D level of **435
 > IU/100 g DM** can affect Ca absorption and may stimulate endochondral
-> ossification disturbances. Therefore, **320 IU per 100 g DM** should be the
-> nutritional maximum for growing **giant breed** dogs. Based on differences in
-> cholecalciferol metabolism between giant breed and small breed puppies, **425
+> ossification disturbances… Therefore, **320 IU per 100 g DM** should be the
+> nutritional maximum for growing **giant breed** dogs… Based on differences in
+> cholecalciferol metabolism between giant breed and small breed puppies… **425
 > IU/100 g DM** can be considered a safe nutritional maximum for **small breed**
 > puppies. Since there is no information on maximum safe intakes for adult dogs
 > and breeding bitches, FEDIAF recommends the **same nutritional maximum for
@@ -4636,9 +4652,10 @@ pregunta.
 ya estaba escrita en el repo sin que nadie hubiera sacado esta consecuencia:
 
 > *«A legal maximum only applies when the particular trace element or vitamin is
-> **added to the recipe as an additive**. If the nutrient comes exclusively from
+> **added to the recipe as an additive**… If the nutrient comes exclusively from
 > feed materials, **the legal maximum does not apply, instead the nutritional
-> maximum applies**.»*
+> maximum, when included in the relevant tables, should be taken into
+> account**.»*
 
 O sea que en una ración cruda cuyo cobre, zinc, hierro o vitamina D vengan solo
 de la carne y las vísceras, **el techo que gobierna es el nutricional** — y ese

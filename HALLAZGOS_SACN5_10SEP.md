@@ -24,7 +24,7 @@ estudio de biomarcadores (Jewell et al, 2000):
 | 14 | maduro / senior | «foods for mature dogs should contain **at least 400 IU vitamin E/kg (DM)**» |
 | 34 | artrosis | «foods for osteoarthritis should contain **at least 400 IU/kg DM** (dog foods)» |
 | 37 | renal crónico | «**≥400 IU vitamin E/kg** of food for dogs» |
-| 47 | salud oral | «foods for oral health should contain **at least 400 IU/kg dry matter** (dog foods)» |
+| 47 | salud oral | «foods for oral health should contain **at least 400 IU/kg dry matter (DM)** (dog foods)» |
 
 400 UI/kg MS ÷ 4,0 kcal/g × 0,671 mg/UI = **67,1 mg/1000 kcal**.
 
@@ -269,11 +269,11 @@ Capítulo 8, epígrafe «Safe Upper Limit of Iodine for Dogs», entero:
 > *«Belshaw et al. (1975) measured I concentrations in several commercial brands
 > of dog food. The results corresponded to concentrations ranging, at a minimum,
 > from 400 to 1,275 μg I per 1,000 kcal ME … Apparently these foods were fed
-> without any clinical abnormalities. […] Castillo et al. (2001a) reported
+> without any clinical abnormalities … Castillo et al. (2001a) reported
 > evidence of depressed thyroid gland function … in puppies fed diets containing
-> an estimated maximum I content of 1,400 μg I per 1,000 kcal ME. **Based on this
-> information an absolute figure for a SUL of dietary I cannot be predicted for
-> adult dogs.**»*
+> an estimated maximum I content of 1,400 μg I per 1,000 kcal ME … **Based on
+> this information an absolute figure for a SUL of dietary I cannot be predicted
+> for adult dogs.**»*
 
 Y su tabla resumen lo confirma: la fila de yodo trae **la ingesta adecuada y la
 recomendación, y la columna de «Safe Upper Limit» vacía**.
@@ -298,7 +298,8 @@ Capítulo 6, epígrafe «Vitamin K», literal:
 > *«AAFCO (2007) does not have a recommended allowance for vitamin K for dogs,
 > but recommends 0.1 mg/kg DM for cats… **For dogs, the recommended allowance of
 > vitamin K is 1.64 mg/kg DM for growth, 1.63 mg/kg DM for maintenance and
-> 1.6 mg/kg DM for gestation** (NRC 2006).»*
+> 1.6 mg/kg DM for gestation and lactation.**»* (la cifra es del NRC 2006, que la
+> fuente atribuye en la frase de antes)
 
 **Lo que hay hoy en el motor: nada.** La vitamina K no está en los 43 requisitos
 —es una de las cuatro filas de FEDIAF que no se transcriben— y **tampoco está en

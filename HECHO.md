@@ -9,6 +9,83 @@ Este archivo no se lee solo: se abre cuando hace falta el detalle de algo
 que ya se resolvió — por qué se decidió así, qué se midió, qué PR lo trajo.
 Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 
+## Cerrar FEDIAF: las 783 citas, contra el texto de su fuente — 10 de septiembre de 2026 (noche)
+
+Encargo de Elena, literal: *«FEDIAF LO QUIERO YA TODO COMPROBADO Y CERRADO. OJO
+CON LAS COLUMNAS EH!!!! NO QUIERO FALLOS NI ERRORES»*.
+
+**Lo que faltaba no eran cifras: eran las comillas.** El texto de FEDIAF ya
+estaba rehecho (0 de 10.284 líneas con las columnas pegadas) y sus 2.369
+elementos ya tenían veredicto. Lo que nadie había comprobado es que las frases
+que este repo cita **entre comillas** digan lo que dice el libro — y esas frases
+son las que justifican cada número que aplica el motor.
+
+`auditar_citas.py` saca las **783 citas de más de 40 caracteres** de cuatro
+documentos y seis ficheros de datos y las busca **literales** en los 98 textos
+de fuente. Al empezar el día encontraba 576; al cerrarlo, **759**. Las 24 que
+faltan citan a Merck, al consenso ACVIM, a IRIS en PDF o a Purina, que no están
+en el repo: no se pueden comprobar aquí y **se dice**, en vez de darlas por
+buenas.
+
+### Lo que salió al abrirlas una a una
+
+Ninguna de las 31 que quedaban decía algo que la fuente no diga. **Todas estaban
+en el libro**, y lo que fallaba era cómo se habían copiado:
+
+- **Una condición borrada, repetida en 14 filas.** La regla del máximo legal de
+  FEDIAF, citada en `requerimientos_v2_final.json`, remataba con «instead the
+  nutritional maximum applies» cuando la fuente dice «instead the nutritional
+  maximum, **when included in the relevant tables**, should be taken into
+  account». No es estilo: es una condición que habíamos quitado.
+- **Abreviaturas metidas dentro de las comillas**: «per kg/food DM» donde SACN5
+  escribe «per kg/food dry matter (DM)», «kcal ME/kg DM» donde escribe «kcal
+  metabolizable energy/kg DM».
+- **Una cita de estudio prestada de la frase de al lado**: la del zinc y el
+  linoleico llevaba «(Marsh et al. 2000; NRC 2006)» y la frase citada solo dice
+  «(NRC 2006)».
+- **Un «12 a 15 % DM»** donde el libro pone «12 to 15 % DM» — la mitad de la
+  frase traducida sin querer, dentro de unas comillas.
+- **Puntos fuera de las comillas** donde la fuente los pone dentro («diet
+  drift.», «3/5.»), y equivalencias en MJ y kJ borradas sin marcar el corte.
+- **Y dos erratas del propio libro**, que ahora se citan tal cual y se señalan:
+  Fascetti imprime «IU/Mcal kcal» con las dos unidades seguidas, y SACN5 escribe
+  «ostearthritis».
+
+### Los tres fallos que tenía el auditor, y que también son del método
+
+1. **El circunflejo era nuestro.** El PDF imprime «BW^0,75» con el exponente en
+   superíndice y la extracción lo deja «BW075»; el «^» que escribimos al citar no
+   está en el texto, igual que los asteriscos de negrita.
+2. **El número de página se mete en medio de la frase.** El NRC dice «a diet
+   severely limiting / 293 / in methionine»: la frase de la fuente es continua y
+   el texto extraído no. Se quita **solo** una línea que sea un entero suelto con
+   línea en blanco antes y después — un número dentro de una frase nunca cumple
+   eso, así que no puede comerse una cifra de verdad.
+3. **Y el peor: una cita mal copiada podía esconderse cambiando de casilla.**
+   Solo iba clavado el recuento de «hay que mirarlas»; si el párrafo de una cita
+   dejaba de nombrar su fuente, pasaba a «no dice de dónde sale», que no se
+   contaba. Ahí vivían **46 citas**, entre ellas las 14 de la condición borrada.
+   **Ahora van clavados los tres números**, y el auditor falla si cualquiera se
+   mueve.
+
+### Y lo que el verde de la CI no estaba mirando
+
+Siete bloques (18-bis, 67, 68, 77, 78, 81 y 85) comprueban el repo contra el
+texto de las fuentes, que vive en `canislab-fuentes`. En GitHub Actions ese repo
+no está: imprimían «este control NO SE HA HECHO» y devolvían **cero fallos**, así
+que la batería terminaba en «TODO EN VERDE» habiendo comprobado siete bloques
+menos. Es la misma familia de fallo que el `.pyc` cacheado — la batería
+afirmando algo que no ha mirado. Desde hoy **lo dice al final, contándolos**, y
+el flujo de trabajo trae las fuentes si existe el secreto `FUENTES_TOKEN`.
+
+### Un fallo de la batería, cazado por ella misma
+
+El BLOQUE 81 declaraba **2.944** elementos pendientes de SACN5 cuando 269 ya
+tienen veredicto y los pendientes son **2.675**: se había escrito el total en el
+sitio del pendiente. Corregido, y la batería lo encontró sola.
+
+---
+
 ## Hecho el 20 de agosto
 
 - Sentry en el backend, con avisos por correo.

@@ -589,7 +589,9 @@ fósforo ≤1500, sodio ≤750 y magnesio ≤375, todos por 1000 kcal.
   máximo **legal** de FEDIAF para cualquier perro, o sea que esta patología no
   tenía tope propio de vitamina D: tenía el de todo el mundo escrito en su ficha,
   que parece un límite y no lo es. La cifra nueva es de Fascetti cap.16, literal:
-  *«Diets with vitamin D between 250 and 350 IU/Mcal should suffice»* = 6,25-8,75
+  *«Diets with vitamin D between 250 and 350 IU/Mcal kcal should suffice»* (el
+  libro imprime las dos unidades seguidas; es errata suya y se cita tal cual) =
+  6,25-8,75
   µg/1000 kcal, y se aplica el extremo alto, que es el techo.
 - **Medido antes de aplicarlo:** cinco perros (3, 8, 20, 30 y 55 kg) con oxalato
   marcado dan menú en el peldaño **estricto**, con 4,08-5,72 µg reales — por

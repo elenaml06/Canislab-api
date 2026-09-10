@@ -62,7 +62,26 @@ _LARGO_MINIMO = 40
 
 # Cuantas citas quedan por comprobar contra una fuente que SI esta en el repo.
 # Se pone a mano y se compara exacto. Ver el comentario del final de `auditar`.
-PENDIENTES_DECLARADAS = 31        # 10 de septiembre de 2026, tarde
+# ⚠️ Y LOS OTROS DOS RECUENTOS, CLAVADOS TAMBIEN. Con solo el primero clavado,
+# una cita mal copiada podia esconderse cambiando de casilla: basta con que su
+# parrafo deje de nombrar la fuente para que pase de «hay que mirarla» a «no dice
+# de donde sale», que no se contaba. Paso de verdad -- 46 citas vivian ahi, y 15
+# eran la MISMA frase de FEDIAF copiada mal en 14 filas de
+# `requerimientos_v2_final.json`: remataba con «instead the nutritional maximum
+# applies» cuando la fuente dice «instead the nutritional maximum, WHEN INCLUDED
+# IN THE RELEVANT TABLES, should be taken into account». Una condicion borrada.
+SIN_DECIR_DECLARADAS = 0          # citas que no dicen de que fuente salen
+SIN_TEXTO_DECLARADAS = 24         # citan una fuente que no esta en el repo
+                                  # (Merck, el consenso ACVIM, IRIS en PDF,
+                                  # Purina, Today's Veterinary Practice). Estas
+                                  # no se pueden comprobar aqui, y se DICE.
+
+PENDIENTES_DECLARADAS = 0         # 10 de septiembre de 2026, noche: no queda
+                                  # ninguna. Las 31 que quedaban se abrieron una
+                                  # a una contra su fuente; las 31 estaban en el
+                                  # libro y ninguna decia algo que la fuente no
+                                  # diga -- lo que fallaba era como se habian
+                                  # copiado. Ver el comentario del final.
 
 # ⚠️ SOLO SE AUDITAN LAS CITAS EN INGLES, Y ESTE FILTRO SI ES LEGITIMO: las
 # fuentes estan todas en ingles, asi que una cita entre comillas angulares en
@@ -139,8 +158,12 @@ def _norm(t):
     # ⚠️ Y LOS EXPONENTES DEL NRC, que se escriben de dos maneras: el PDF pone
     # «cystine·kg-1» y al citar se copia «cystine·kg⁻¹» con los caracteres
     # superindice de Unicode. Es el mismo texto con otro teclado.
+    #   El circunflejo va con ellos: el PDF imprime «BW^0,75» con el 0,75 en
+    #   superindice y la extraccion lo deja «BW075», asi que el «^» que
+    #   escribimos al citar no esta en el texto -- es NUESTRO, como los
+    #   asteriscos de negrita.
     for a, b in (("⁻", "-"), ("¹", "1"), ("²", "2"), ("³", "3"), ("⁰", "0"),
-                 ("·", " "), ("•", " ")):
+                 ("·", " "), ("•", " "), ("^", "")):
         t = t.replace(a, b)
     return " ".join(t.split()).lower()
 
@@ -158,15 +181,37 @@ def _sin_guiones(t):
     return re.sub(r"[-\s–—‐‑‒−]", "", t)
 
 
+# ⚠️ EL NUMERO DE PAGINA, QUE SE METE EN MEDIO DE LA FRASE. El PDF pone el pie
+# de pagina entre dos parrafos, y al extraer el texto queda una linea con un
+# numero solo justo donde la frase se parte: el NRC dice «a diet severely
+# limiting / 293 / in methionine», o sea que la frase de la fuente ES continua y
+# el texto extraido NO. Una cita literal correcta salia «no encontrada» por eso.
+#
+# La forma de quitarlo sin riesgo es exigir las TRES cosas a la vez: una linea
+# que sea SOLO un entero de hasta cuatro cifras, con linea en blanco ANTES y
+# DESPUES. Un numero dentro de una frase nunca cumple eso -- va pegado a
+# palabras en su misma linea --, asi que esto no puede comerse una cifra de
+# verdad. Es la diferencia con el intento que se descarto (quitar del texto
+# cualquier numero suelto), que si podia dar por buena una cita a la que le
+# faltara un dato.
+_PIE_DE_PAGINA = re.compile(r"\n[ \t]*\n+[ \t]*\d{1,4}[ \t]*\n[ \t]*\n+")
+
+
 def textos():
-    """Todo el texto de fuente que hay en el repo de al lado, ya normalizado."""
-    fuera = {}
+    """Todo el texto de fuente que hay en el repo de al lado, ya normalizado.
+
+    Devuelve dos versiones de cada fichero: la normal y la que no lleva los
+    numeros de pagina sueltos (ver `_PIE_DE_PAGINA`).
+    """
+    fuera, sin_pie = {}, {}
     for ruta in sorted(glob.glob(os.path.join(FUENTES, "**", "*.txt"), recursive=True)):
         if os.path.getsize(ruta) < 1024:
             continue
         nombre = os.path.relpath(ruta, FUENTES)
-        fuera[nombre] = _norm(open(ruta, encoding="utf-8", errors="ignore").read())
-    return fuera
+        crudo = open(ruta, encoding="utf-8", errors="ignore").read()
+        fuera[nombre] = _norm(crudo)
+        sin_pie[nombre] = _norm(_PIE_DE_PAGINA.sub("\n\n", crudo))
+    return fuera, sin_pie
 
 
 # Las fuentes cuyo TEXTO esta en el repo de al lado. Si una cita dice venir de
@@ -205,12 +250,17 @@ def recoger():
         for m in _CITA.finditer(t):
             c = m.group(1)
             if _parece_de_fuente(c):
-                # el contexto es la MISMA linea o vinyeta, no un parrafo entero:
-                # con 400 caracteres hacia atras se pegaba la fuente de la cita
+                # el contexto es el PARRAFO de la cita, no un trozo fijo de
+                # caracteres: con 400 hacia atras se pegaba la fuente de la cita
                 # de al lado, y una cita de Today's Veterinary Practice salia
-                # clasificada como de SACN5.
-                ini = t.rfind("\n", 0, m.start())
-                fuera.append((f, c, t[ini + 1:m.end() + 200]))
+                # clasificada como de SACN5; con una sola linea se perdia la
+                # linea «**Fuente:** Merck Veterinary Manual» que esta JUSTO
+                # encima, y una cita de Merck -- que no se puede comprobar aqui
+                # porque el manual no esta en el repo -- salia acusada de ser de
+                # FEDIAF y no aparecer. El parrafo es el trozo que de verdad
+                # comparte fuente.
+                ini = t.rfind("\n\n", 0, m.start())
+                fuera.append((f, c, t[ini + 2 if ini >= 0 else 0:m.end() + 200]))
     for f in JSONS:
         p = os.path.join(RAIZ, f)
         if not os.path.exists(p):
@@ -228,14 +278,19 @@ def recoger():
             elif isinstance(o, str):
                 for c in _CITA.findall(o):
                     if _parece_de_fuente(c):
-                        fuera.append((f, c, ctx or o))
+                        # el contexto son las DOS cosas: la `fuente` del bloque
+                        # padre Y el propio texto donde vive la cita. Con solo
+                        # la primera, «el consenso ACVIM ... «no drug or dietary
+                        # treatment is recommended»» salia como «no dice de donde
+                        # sale» -- y lo dice, en su misma frase.
+                        fuera.append((f, c, (ctx + " " + o).strip()))
         _anda(_d)
     return fuera
 
 
 def auditar(mostrar_todas=False):
     fallos = []
-    tx = textos()
+    tx, tx_sin_pie = textos()
     if not tx:
         print("  ⚠️ NO ESTA el repo de fuentes al lado, asi que este control NO SE HA HECHO. "
               "Clona `canislab-fuentes` junto a este repo para que mire de verdad.")
@@ -275,6 +330,12 @@ def auditar(mostrar_todas=False):
             trozos_sg = [_sin_guiones(x) for x in trozos]
             for nombre, t in tx_sg.items():
                 if all(x in t for x in trozos_sg):
+                    donde = nombre
+                    break
+        # Tercer intento: el mismo texto sin los numeros de pagina sueltos.
+        if donde is None:
+            for nombre, t in tx_sin_pie.items():
+                if all(x in t for x in trozos):
                     donde = nombre
                     break
         # ⚠️ SE PROBO UN TERCER INTENTO QUITANDO DEL TEXTO LOS NUMEROS SUELTOS
@@ -325,6 +386,16 @@ def auditar(mostrar_todas=False):
             f"quedan {len(dentro)} citas sin encontrar en su fuente y el fichero declara "
             f"{PENDIENTES_DECLARADAS}. Si ha subido, hay una cita nueva sin comprobar; si ha "
             f"bajado, se cambia este numero en el mismo commit")
+    if SIN_DECIR_DECLARADAS is not None and len(sin) != SIN_DECIR_DECLARADAS:
+        fallos.append(
+            f"hay {len(sin)} citas que no dicen de que fuente salen y el fichero declara "
+            f"{SIN_DECIR_DECLARADAS}. Una cita sin fuente no la comprueba nadie: o se le "
+            f"pone la fuente al lado, o deja de ir entre comillas angulares")
+    if SIN_TEXTO_DECLARADAS is not None and len(fuera_) != SIN_TEXTO_DECLARADAS:
+        fallos.append(
+            f"hay {len(fuera_)} citas cuya fuente no esta en el repo y el fichero declara "
+            f"{SIN_TEXTO_DECLARADAS}. Si ha subido, se ha escrito una cita nueva que aqui "
+            f"no se puede comprobar; si ha bajado, se cambia este numero en el mismo commit")
     return fallos
 
 

@@ -11156,7 +11156,43 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# LO QUE NO SE HA COMPROBADO, DICHO EN VOZ ALTA
+# ============================================================
+#
+# ⚠️ POR QUE (10 de septiembre). Siete bloques comprueban el repo contra el
+# TEXTO de las fuentes, que vive en `canislab-fuentes`, al lado de este repo.
+# En GitHub Actions ese repo NO esta, asi que esos siete bloques imprimian
+# «este control NO SE HA HECHO» y devolvian CERO FALLOS -- y la bateria
+# terminaba en «TODO EN VERDE».
+#
+# O sea que el verde de la CI afirmaba mas de lo que habia mirado, que es la
+# misma familia de fallo que el `.pyc` cacheado: la bateria diciendo algo del
+# motor que no ha comprobado. Aqui se dice, al final y con el recuento, para
+# que un verde parcial no se lea como un verde entero.
+_RUTA_FUENTES = _os_b18.path.join(_os_b18.path.dirname(_os_b18.path.abspath(__file__)),
+                                  "..", "canislab-fuentes")
+_BLOQUES_QUE_NECESITAN_FUENTES = [
+    "18-bis (el PDF de FEDIAF contra el JSON)",
+    "67 (ninguna tabla de FEDIAF sin veredicto)",
+    "68 (leer una fuente sin dejarse nada)",
+    "77 (la transcripcion de FEDIAF, rehecha desde el PDF)",
+    "78 (ninguna tabla de SACN5 sin veredicto)",
+    "81 (el texto de SACN5, elemento a elemento)",
+    "85 (cada cita, contra el texto de su fuente)",
+]
+_hay_fuentes = _os_b18.path.isdir(_RUTA_FUENTES)
+
 print(f"\n{'='*60}")
+if not _hay_fuentes:
+    print(f"⚠️ {len(_BLOQUES_QUE_NECESITAN_FUENTES)} BLOQUES NO HAN COMPROBADO NADA, "
+          f"porque `canislab-fuentes` no esta al lado de este repo:")
+    for _b in _BLOQUES_QUE_NECESITAN_FUENTES:
+        print(f"     · BLOQUE {_b}")
+    print("   El verde de abajo NO incluye esos siete. Para que los incluya, clona")
+    print("   `canislab-fuentes` junto a este repo (en la CI, ver `.github/workflows/")
+    print("   bateria.yml`, el paso que trae las fuentes con el secreto FUENTES_TOKEN).")
+    print(f"{'='*60}")
+
 print(f"TOTAL: {time.time()-t_total:.0f}s de pruebas")
 if fallos:
     print(f"\n❌ {len(fallos)} FALLOS ENCONTRADOS — NO ENTREGAR TODAVÍA:\n")
@@ -11164,5 +11200,7 @@ if fallos:
         print("  -", x)
     sys.exit(1)
 else:
-    print("\n✅ TODO EN VERDE — se puede entregar el archivo")
+    print("\n✅ TODO EN VERDE — se puede entregar el archivo"
+          + ("" if _hay_fuentes else " (MENOS los siete bloques de arriba, que no "
+                                     "se han ejecutado)"))
     sys.exit(0)

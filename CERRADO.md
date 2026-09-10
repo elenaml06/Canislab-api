@@ -357,6 +357,54 @@ contestarlo ninguna fuente.
 
 ---
 
+## CERRADO · FEDIAF, leída entera y citada literal (10 de septiembre, noche)
+
+Es el cierre que Elena pidió con todas las letras: *«FEDIAF LO QUIERO YA TODO
+COMPROBADO Y CERRADO. OJO CON LAS COLUMNAS EH!!!! NO QUIERO FALLOS NI ERRORES»*.
+
+| | Dónde se cumple |
+|---|---|
+| 1 · Vive en el repo | `lecturas_fuentes.json` (el desglose de las 33 secciones), `fediaf_tablas.json` (las tablas una a una), `fediaf_tabla_III_3b.txt` y `fediaf_tabla_VII_14.txt` (la fuente sin tocar), `requerimientos_v2_final.json` (las 43 filas que aplica el motor) |
+| 2 · Tiene fuente | Es la fuente: FEDIAF Nutritional Guidelines, publicación de septiembre de 2025. Y el texto está **rehecho** con `page.get_text()`: **0 de 10.284 líneas** con las dos columnas pegadas, contra el 49,3 % de antes |
+| 3 · Ficha de permisos | No aplica y esa es la razón: los requisitos de FEDIAF son los del perro SANO y valen para cualquiera. Lo que sí lleva ficha es lo que los aprieta, y está cerrado aparte |
+| 4 · Test que falla si se rompe | **Cinco bloques, y ninguno se conforma con «lo he leído»**: el 18 (cada valor del JSON contra la transcripción), el 67 (ninguna tabla sin veredicto), el 68 (2.369 de 2.369 elementos con veredicto, 0 pendientes), el 77 (las 164 celdas de la III-3b y los 27 factores de la VII-14, rehechos desde el PDF) y el **85** (las 783 citas entrecomilladas, contra el texto de su fuente) |
+| 5 · Decisión escrita | `HECHO.md` y `HALLAZGOS_LECTURA_FUENTES.md`, hallazgo a hallazgo, con lo que se aplicó y lo que no |
+| 6 · Sin preguntas sin dueño | Las que quedan están en `PREGUNTAS_ABIERTAS.md` con dueño, y ninguna es de lectura: son de dato (la humedad, la forma química) o de criterio clínico |
+
+**Lo que cerraba era la palabra «leída».** Durante tres días se dijo que FEDIAF
+estaba leída y seguían saliendo cosas. La causa no era descuido: los `.txt` se
+habían extraído conservando la disposición visual y el documento va a **dos
+columnas**, así que **el 49,3 % de sus líneas** pegaban la de la izquierda con la
+de la derecha. Más de un tercio de lo que se leía eran frases que FEDIAF **no
+dice**. Eso explica cómo «leído entero» podía ser verdad en esfuerzo y falso en
+resultado — y por qué ninguna cantidad de cuidado lo habría arreglado.
+
+**Y por eso el cierre no es una afirmación, son cuatro recuentos clavados:**
+
+| | |
+|---|---|
+| Líneas del texto con las columnas pegadas | **0** de 10.284 |
+| Elementos (cifras y frases normativas) con veredicto | **2.369** de 2.369 |
+| Tablas sin veredicto | **0** |
+| Citas encontradas literales en el texto de su fuente | **759** de 783 |
+
+Las **24** que faltan para 783 no son de FEDIAF: citan a Merck, al consenso
+ACVIM, a IRIS en PDF o a Purina, que no están en el repo. El auditor **lo dice**
+en vez de darlas por buenas, y ese número va clavado también, para que nadie
+pueda esconder una cita nueva ahí.
+
+⚠️ **Lo que este cierre NO cierra, y hay que decirlo.** Los siete bloques que
+comprueban el repo contra el texto de las fuentes necesitan `canislab-fuentes`
+al lado, y en GitHub Actions **ese repo no está**: allí imprimían «este control
+NO SE HA HECHO» y devolvían cero fallos, o sea que el verde de la CI afirmaba
+más de lo que había mirado. Desde hoy la batería **lo dice al final, en voz alta
+y contándolos**, y el flujo de trabajo trae las fuentes **si existe el secreto
+`FUENTES_TOKEN`** (un token de solo lectura sobre `elenaml06/canislab-fuentes`).
+Crear ese secreto es de Elena; mientras no exista, la condición 4 se cumple en
+local y no en la CI, y la batería lo dice cada vez en vez de callárselo.
+
+---
+
 ## ABIERTO · Lo que no está cerrado, y por qué
 
 | | Qué falta |

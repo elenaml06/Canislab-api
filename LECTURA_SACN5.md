@@ -97,8 +97,9 @@ esta noche y pendiente de rellenar sus 92 bloques — **en la fase de aplicar, n
 ahora**.
 
 **Queda una pregunta abierta y con datos, para Elena:** la Tabla 27-4 (obesidad)
-recomienda en una de sus propias filas «Foods for weight loss should contain
-≤3,4 kcal ME/g» de materia seca. No dice que sus otras filas estén expresadas a
+recomienda en una de sus propias filas «Foods for weight loss and prevention of
+weight regain should contain ≤3,4 kcal (≤14,2 kJ) metabolizable energy (ME)/g»
+de materia seca. No dice que sus otras filas estén expresadas a
 esa densidad — no lo dice ninguna tabla salvo la 13-3 —, pero si lo estuvieran,
 sus cifras subirían un 18 %. Es la única de las 24 donde la tabla propone una
 densidad distinta de 4,0 para el propio alimento. Se apunta, no se decide.
@@ -205,8 +206,9 @@ números que existen en la etiqueta y NO llegan al perro.
 
 ### CAPS. 7, 8, 9 — sin nada que aplicar
 Antioxidantes (7), fabricación y mercado (8), etiquetado (9). El 9 trae las
-reglas de porcentaje de las etiquetas europeas («With rabbit: at least 4 % of
-the named species», «Beef dinner: at least 26 %»), que son de rotulación
+reglas de porcentaje de las etiquetas europeas («With rabbit… at least 4 % of
+the named species should… be present» — la tabla va a tres columnas y se
+intercalan al extraer el texto), que son de rotulación
 comercial y no tocan el motor. Del 7 no sale ni una frase normativa con cifra.
 
 ### CAP. 10 — Comida casera (nuestro capítulo) — UNA cifra aplicable
@@ -321,13 +323,14 @@ las dos**. Lo que NO tenemos es el aviso de la eclampsia, que es texto y va al
 dueño.
 
 **D. Lactancia de raza grande**: «Foods for lactating large-breed dogs should
-provide **at least 18 % DM fat and 4.0 to 5.0 kcal ME/g DM**» y «foods containing **25 to … 35 % DM crude protein and 1.0 to 1.6 % DM calcium** are adequate».
+provide **at least 18 % DM fat and 4.0 to 5.0 kcal ME (16.7 to 21 kJ)/g DM**» y «foods containing **25 to … 35 % DM crude protein and 1.0 to 1.6 % DM calcium** are adequate».
 
 **E. Energía de gestación y lactancia — DOS fórmulas que hay que cruzar con
 `der.py`.**
 - Tabla 15-6, gestación: semanas 1-4 = DER; semana 5 = DER + **18 kcal/kg PV**;
   semanas 6-8 = DER + **36 kcal/kg PV**; semana 9 = DER + **18**. Y «During
-  gestation DER is estimated as **1,9 × RER** (132 kcal ME/kg^0,75)».
+  gestation DER is estimated as **1,9 x RER** (DER = 132 kcal ME/BWkg^0,75 or 550
+  kJ ME/BWkg^0,75)».
 - Tabla 15-7, lactancia, método 1: `ME = DER + (PVkg × [24n + 12m] × L)`, con
   **DER de la perra lactante = 145 × kg^0,75**, factores de semana L = 0,75 /
   0,95 / 1,1 / 1,2 (semanas 1 a 4), **n = nº de cachorros si son 1-4** y **m = si
@@ -366,8 +369,9 @@ Tabla 17-2, literal:
 | ≥80 % del peso adulto | 1,8-2,0 | 125-140 |
 
 Y el Gran Danés otra vez aparte: «Great Dane puppies **may need 25 % more energy
-during the first two months after weaning = 250 kcal/BWkg^0,75**», y «may not
-grow when daily energy intake is less than 175 kcal ME/BWkg^0,75».
+during the first two months after weaning = 250 kcal or 1050 kJ/BWkg^0,75**», y
+«may not grow when daily energy intake is less than 175 kcal (735 kJ)
+metabolizable energy (ME)/BWkg^0,75 (2,5 x RER)».
 
 ⚠️ **Esto NO es lo que aplica el motor.** El respaldo de crecimiento de `der.py`
 usa la regla del **cap.5** (3 × RER hasta los 4 meses, 2 × RER después), que es
@@ -456,7 +460,8 @@ g/1000 kcal y el motor aplica **30**. Está declarado como criterio nuestro en l
 propia ficha. Al aplicar habrá que marcarlo `ajustado_a_proposito`.
 
 **⚠️ Y LA DENSIDAD, que es la única tabla de las 24 que propone una distinta de
-4,0:** «Foods for weight loss … should contain **≤3,4 kcal ME/g**». No dice que
+4,0:** «Foods for weight loss and prevention of weight regain should contain
+**≤3,4 kcal (≤14,2 kJ) metabolizable energy (ME)/g**». No dice que
 sus otras filas estén expresadas a esa densidad — ninguna tabla lo dice salvo la
 13-3, que dice 4,0 —, pero si lo estuvieran, sus cifras subirían un 18 %. Queda
 como pregunta con datos, no como cambio.
@@ -535,16 +540,17 @@ sulfate should not exceed [0,10 y 0,08 %]». O sea que cuando SACN5 necesita
 convertir entre %MS y mg/kg de peso, usa 4,0. Junto con la nota de la Tabla 13-3
 son **dos declaraciones explícitas de 4,0 y ninguna de 3,5** para este uso.
 
-Nota de manejo: «The daily intake of the therapeutic osteoarthritis food should
+Nota de manejo: «The daily intake of the therapeutic ostearthritis food should
 be based on **80 % of the DER for an ideal body weight** and fed for
-approximately one month» — es una pauta de adelgazamiento del artrósico, no un
+approximately one month» (el libro escribe «ostearthritis», sin la «o»; se cita
+tal cual) — es una pauta de adelgazamiento del artrósico, no un
 nutriente.
 
 ### CAP. 35 — Disfunción cognitiva. Confirmada fila a fila
 Vitamina E ≥750 **mg**/kg MS (=187,5 ✓, y ojo: aquí es mg y en las otras cuatro
 tablas es UI, que es justo por lo que los dos valores del motor son distintos),
 vitamina C ≥150 mg/kg, selenio 0,5-1,3 mg/kg, omega-3 totales >1 %, L-carnitina
-y ácido α-lipoico, y una fila que no es un nutriente: «**Fruits and vegetables:
+y ácido α-lipoico, y una fila que no es un nutriente: «**Fruits and vegetables
 1 % of each of five vegetable and fruit ingredients**». Esa última es de
 variedad, no de cifra, y una ración BARF con su categoría de verduras ya la
 cumple de sobra.
@@ -738,7 +744,8 @@ Dos matices que hay que mirar al aplicar:
    distintas del mismo capítulo y no coinciden.** El texto del cap.40 dice
    «restrict vitamin D in foods to **between 500 to 1,500 IU/kg DM**» (= 125-375
    UI/1000 kcal = 3,125-9,375 µg) y también «Diets with vitamin D **between 250
-   and 350 IU/Mcal** should suffice» (= 8,75 µg). El motor usa **8,75** en
+   and 350 IU/Mcal kcal** should suffice» (el libro imprime las dos unidades
+   seguidas; es errata suya y se cita tal cual) (= 8,75 µg). El motor usa **8,75** en
    `oxalato` (la más estricta) y **9,375** en `urolitos_fosfato_calcico` (la del
    1500 UI/kg). No es un error — son dos frases de la fuente — pero conviene que
    quede escrito por qué dos patologías hermanas llevan cifras distintas.

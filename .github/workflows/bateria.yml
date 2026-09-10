@@ -9,7 +9,7 @@
 # literalmente «WIP: la carga puesta, con la batería en rojo (13 fallos)».
 # O sea que en rojo sí se empuja.
 #
-# Esto no impide empujar. Tarda unos diez minutos, así que te lo cuenta
+# Esto no impide empujar. Tarda unos cuarenta minutos, así que te lo cuenta
 # DESPUÉS. Lo que hace es que un rojo no pueda llegar a `main` en silencio
 # y que un PR diga por sí solo si el motor sigue en pie.
 #
@@ -19,7 +19,7 @@
 # del BLOQUE 10. Sin secretos que configurar y sin nada que se pueda
 # escapar a producción desde aquí.
 #
-# POR QUÉ SOLO EN PR Y EN `main`, y no en cada empujón a cada rama: diez
+# POR QUÉ SOLO EN PR Y EN `main`, y no en cada empujón a cada rama: cuarenta
 # minutos por commit de una rama en marcha es ruido, y el aviso que
 # importa es el de antes de fusionar.
 #
@@ -50,11 +50,47 @@ jobs:
     # ⚠️ SUBIDO A 45 EL 10 DE SEPTIEMBRE. El comentario decia «10 min de
     # media» y llevaba caducado desde que los bloques 50 a 61 empezaron a
     # resolver menus de verdad: la ultima tanda completa en este runner tardo
-    # 1.695 s (28 min) con 78 bloques, y ahora son 81. Con el limite en 30 la
+    # 1.695 s (28 min) con 78 bloques, y ahora son 85. Con el limite en 30 la
     # bateria se moria por reloj y el rojo no diria nada del motor.
-    timeout-minutes: 45
+    # ⚠️ SUBIDO A 60 EL 10 DE SEPTIEMBRE POR LA NOCHE: la ultima tanda completa
+    # en local tardo 2.387 s (40 min), y este runner va mas lento. Con el limite
+    # en 45 volveria a morirse por reloj.
+    timeout-minutes: 60
     steps:
+      # ⚠️ EL REPO VA EN UNA SUBCARPETA, y no es cosmético: los siete bloques que
+      # comprueban el repo contra el TEXTO de las fuentes buscan
+      # `../canislab-fuentes`, o sea AL LADO. Con el checkout por defecto (el
+      # repo en la raíz del espacio de trabajo) ese «al lado» cae fuera y no hay
+      # forma de poner nada ahí.
       - uses: actions/checkout@v4
+        with:
+          path: Canislab-api
+
+      # LAS FUENTES. Sin esto, los BLOQUES 18-bis, 67, 68, 77, 78, 81 y 85
+      # imprimen «este control NO SE HA HECHO» y devuelven cero fallos: la
+      # batería termina en verde habiendo comprobado siete bloques menos.
+      #
+      # Hace falta un secreto del repo llamado `FUENTES_TOKEN`: un token de
+      # acceso personal de grano fino con permiso de SOLO LECTURA de contenido
+      # sobre `elenaml06/canislab-fuentes`. Mientras no exista, este paso se
+      # salta solo y la batería lo dice al final, en voz alta y contándolos.
+      #
+      # `sparse-checkout` trae solo los .txt: el repo de fuentes lleva 286 MB de
+      # PDF que aquí no hace falta bajar.
+      - name: Traer las fuentes (si hay token)
+        if: ${{ env.FUENTES_TOKEN != '' }}
+        env:
+          FUENTES_TOKEN: ${{ secrets.FUENTES_TOKEN }}
+        uses: actions/checkout@v4
+        with:
+          repository: elenaml06/canislab-fuentes
+          token: ${{ secrets.FUENTES_TOKEN }}
+          path: canislab-fuentes
+          sparse-checkout: |
+            *.txt
+            **/*.txt
+            **/*.json
+          sparse-checkout-cone-mode: false
 
       - uses: actions/setup-python@v5
         with:
@@ -62,6 +98,7 @@ jobs:
           cache: pip
 
       - name: Instalar lo que hace falta
+        working-directory: Canislab-api
         run: pip install -r requirements.txt
 
       # `pyflakes` no es del motor: lo usa el BLOQUE 0 para cazar en dos
@@ -69,9 +106,11 @@ jobs:
       # y un NameError de un bloque del final no aparece hasta 45 minutos
       # despues -- que es exactamente lo que paso hoy dos veces.
       - name: Instalar pyflakes, para el BLOQUE 0
+        working-directory: Canislab-api
         run: pip install pyflakes
 
-      - name: Ejecutar los 83 bloques
+      - name: Ejecutar los 85 bloques
         # Sin `-u` la salida sale a trompicones y, si algo se cuelga, el
         # registro no dice por qué bloque iba.
+        working-directory: Canislab-api
         run: python3 -u pruebas_completas.py
