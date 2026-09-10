@@ -325,3 +325,46 @@ queda como dos cosas separadas: un **dato que falta** (la vitamina K ficha por
 ficha, que no rellena el asistente) y una **pregunta para el nutricionista**: si
 la ración es cruda y sin antimicrobianos, ¿basta con el criterio de FEDIAF, o
 conviene medirla porque lleva pescado?
+
+### S-9 · La ración sin hidratos en la gestación: tres estudios, y nuestro número cae donde debe
+
+Es la comprobación que un nutricionista pediría primero, porque una ración BARF
+**no lleva almidón** y la gestación es donde eso más pesa. El capítulo 5 de SACN5
+trae los tres trabajos, y hasta hoy sólo teníamos la frase de FEDIAF.
+
+**Lo que teníamos.** FEDIAF §3.3.1: *«The recommendation for protein assumes the
+diet contains some carbohydrate… If carbohydrate is absent or at a very low
+level, the protein requirement is much higher, and may be double.»* De ahí sale
+el suelo de **125 g de proteína/1000 kcal** que el motor aplica en gestación y
+lactancia.
+
+**Lo que dice SACN5, con las tres cifras:**
+
+| Estudio | Dieta | Resultado |
+|---|---|---|
+| Romsos 1981 | **sin hidratos**, 26 % de la energía como proteína | hipoglucemia la semana antes del parto, **menos cachorros vivos**, letargo, peor cuidado de la camada |
+| Kienzle 1985 | — | *«a starch-free food containing **at least 33 % of ME from protein** is necessary to supply needed glucose precursors»* |
+| Blaza 1989 | **sin almidón**, **51 %** de la energía como proteína | **rindió igual** que la dieta con almidón |
+
+**Dónde cae nuestro número.** 125 g/1000 kcal son **43,8 %** de la energía con el
+factor de Atwater modificado (3,5 kcal/g) y **50 %** con 4,0. Es decir:
+
+- muy por encima del **33 %** que Kienzle marca como necesario,
+- y pegado al **51 %** con el que Blaza no vio diferencia,
+- y a años luz del **26 %** con el que Romsos vio morir cachorros.
+
+**Es una confirmación independiente**, y por un camino distinto: FEDIAF lo dijo
+como «puede ser el doble» y SACN5 lo dice como «al menos el 33 % de la energía».
+Los dos llevan al mismo sitio.
+
+**Y una cifra que no se aplica, a propósito.** El mismo párrafo cierra con:
+
+> *«Overall, a minimum of **23 % carbohydrate** is recommended in foods for
+> gestating and lactating bitches.»*
+
+Una ración cruda no puede cumplirlo. **No se aplica**, y no por descuido: la
+propia fuente dice cuál es la alternativa —subir la proteína— y es exactamente lo
+que hace el motor, con el número por encima del umbral que ella misma marca.
+
+Queda escrito porque es la primera pregunta que va a hacer quien revise, y ahora
+la respuesta tiene tres estudios detrás en vez de una frase.
