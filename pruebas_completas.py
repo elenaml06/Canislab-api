@@ -9380,7 +9380,13 @@ for _sec68, _f68 in sorted(_inv68.items()):
         fallos.append(f"BLOQUE68: fediaf_tablas.json dice que la seccion {_sec68} esta LEIDA y su "
                       f"desglose ({_donde68}) no esta en lecturas_fuentes.json. Sin el desglose "
                       f"elemento a elemento, «leida» vuelve a ser una palabra que se escribe sola")
-print(f"  {_aud68.stdout.strip().splitlines()[0].strip() if _aud68.stdout.strip() else ''}")
+# ⚠️ SE IMPRIMEN TAMBIEN LOS AVISOS, no solo la primera linea (10 septiembre).
+# En GitHub Actions no esta `canislab-fuentes`, asi que alli este control NO SE
+# HACE -- y hasta hoy eso salia en VERDE sin decir una palabra, que es la misma
+# trampa de declarar poco un piso mas abajo. Ahora el aviso sube al registro.
+for _l68 in _aud68.stdout.strip().splitlines():
+    if _l68.strip().startswith("⚠️") or _l68.strip().startswith("FEDIAF:") or "secciones" in _l68:
+        print(" ", _l68.strip())
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

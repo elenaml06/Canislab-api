@@ -110,13 +110,28 @@ def auditar():
     datos = _cargar()
     fallos = []
     total = clasificados = 0
+    # ⚠️ LAS FUENTES NO ESTAN EN GITHUB ACTIONS, Y ESO NO PUEDE SALIR NI ROJO NI
+    # VERDE A SECAS (10 de septiembre). `canislab-fuentes` es otro repositorio y
+    # la bateria de la CI no lo clona, asi que alli el extractor no encuentra el
+    # texto. Antes eso pasaba en silencio: se imprimia una linea «no está el
+    # texto» y la auditoria salia en verde SIN HABER MIRADO NADA -- que es la
+    # misma trampa de declarar poco, un piso mas abajo.
+    #
+    # Y con el recuento de pendientes puesto se volvio rojo, tambien en falso:
+    # sin texto salen 0 elementos, 0 no es 269 y la bateria acusaba de haber
+    # perdido veredictos.
+    #
+    # Ninguna de las dos vale. Ahora se dice EXPRESAMENTE que no se ha podido
+    # auditar y no se compara nada -- una comprobacion que no se ha hecho tiene
+    # que decir que no se ha hecho.
+    sin_texto = set()
     for clave, ficha in sorted(datos.get("lecturas", {}).items()):
         fuente, seccion = clave.split("/", 1)
         a, b = ficha["rango"]
         try:
             items = extraer(fuente, seccion, a, b)
         except SystemExit:
-            print(f"  ({fuente}: no está el texto, no se puede auditar {seccion})")
+            sin_texto.add(fuente)
             continue
         veredictos = ficha.get("veredictos", {})
         for it in items:
@@ -131,7 +146,7 @@ def auditar():
     for fuente in sorted(COMPLETAS):
         lineas = _texto(fuente)
         if lineas is None:
-            print(f"  ({fuente}: no está el texto, no se puede medir la cobertura)")
+            sin_texto.add(fuente)
             continue
         cubierto = set()
         for clave, ficha in datos.get("lecturas", {}).items():
@@ -166,8 +181,14 @@ def auditar():
     # ENTERO y lo que se cuenta es cuanto queda; ese numero se compara EXACTO,
     # como el BLOQUE 78 con las tablas de SACN5, asi que solo baja cuando
     # alguien resuelve elementos y lo baja en el mismo commit.
+    for f in sorted(sin_texto):
+        print(f"  ⚠️ {f}: NO ESTA EL TEXTO de la fuente, asi que este control NO SE HA HECHO. "
+              f"Clona `canislab-fuentes` al lado de este repo para que mire de verdad.")
     pendientes = total - clasificados
     decl = (datos.get("_meta") or {}).get("pendientes_declarados")
+    if sin_texto:
+        print(f"  {len(datos.get('lecturas', {}))} secciones declaradas · sin comprobar")
+        return fallos
     if decl is not None and pendientes != decl:
         fallos.append(
             f"quedan {pendientes} elementos sin veredicto y el fichero declara {decl}. "
