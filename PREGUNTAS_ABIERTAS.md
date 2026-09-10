@@ -256,6 +256,21 @@ una fuente escribe un rango a propósito. Lo que ha cambiado es que ahora se sab
 que **no hay una fuente normativa que dé ese rango**, así que la respuesta tendrá
 que ser criterio del nutricionista, declarado como tal.
 
+**⚠️ REDUCIDA el 10 de septiembre: la mitad de código ya está hecha.** Esta ficha
+decía «sin esto, `margen_del_profesional` no puede pasar de texto a control». Ha
+pasado: las **79 cifras** de `patologias.json` llevan ya su ventana
+(`margen_profesional`) con suelo, techo y **la procedencia de cada extremo como
+una clave que se resuelve** contra la fuente viva; `GET /patologias` la sirve; y
+el **BLOQUE 80** rehace las 79 y exige que la cifra aplicada caiga dentro. El
+día que se escribió cazó que el sodio cardíaco (739) estaba medio miligramo por
+encima de su propio techo legal (738,6).
+
+**Lo que queda abierto es ahora una sola pregunta, y más estrecha:** dentro de esa
+ventana, ¿el veterinario mueve libremente, o hay cifras que no debería tocar
+aunque quepan? El motor sabe hoy **dónde están los bordes**; lo que no sabe —y
+ninguna fuente contesta— es si el interior es todo suyo. Sigue siendo criterio
+del nutricionista, y sigue bloqueando el control de la pantalla, no el dato.
+
 ---
 
 ### P-10 · Un tope nuestro recorta hasta un tercio la fórmula de lactancia de FEDIAF

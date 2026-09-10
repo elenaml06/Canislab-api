@@ -111,29 +111,64 @@ def ficha(clave_pat, tipo_bloque, clave_nut, etapa="Adulto"):
     tipo = _tipo_de(nombre_req, clave_nut, es_tope, valor)
     legal = nombre_req in MAXIMO_ES_LEGAL and mx is not None
 
-    # ── EL RANGO, DERIVADO ───────────────────────────────────────────────
-    # Para un TECHO: se puede apretar hasta el mínimo de FEDIAF (por debajo es
-    # prescripción) y aflojar hasta el máximo legal, si lo hay.
-    # Para un SUELO: se puede aflojar hasta el mínimo de FEDIAF (por debajo el
-    # requisito general manda igual) y apretar hasta el máximo legal.
-    if es_tope:
-        desde, hasta = mn, (mx if mx is not None else None)
-        para_abajo = ("el mínimo de FEDIAF: por debajo deja de ser un menú y pasa "
-                      "a ser una prescripción firmada") if mn is not None else \
-                     "nada: FEDIAF no da mínimo para este nutriente"
-        para_arriba = ("el máximo LEGAL de FEDIAF (Reg. UE 2017/1492), que no mueve "
-                       "nadie") if legal else \
-                      ("el máximo nutricional de FEDIAF" if mx is not None else
-                       "nada: FEDIAF no da máximo para este nutriente")
-    else:
-        desde, hasta = mn, (mx if mx is not None else None)
-        para_abajo = ("el mínimo de FEDIAF, que se aplica igual aunque se baje "
-                      "este suelo") if mn is not None else \
-                     "nada: FEDIAF no da mínimo para este nutriente"
-        para_arriba = ("el máximo LEGAL de FEDIAF (Reg. UE 2017/1492), que no mueve "
-                       "nadie") if legal else \
-                      ("el máximo nutricional de FEDIAF" if mx is not None else
-                       "nada: FEDIAF no da máximo para este nutriente")
+    # ── EL RANGO: SE LEE, NO SE VUELVE A CALCULAR ────────────────────────
+    #
+    # ⚠️ CAMBIADO EL 10 DE SEPTIEMBRE, Y ERA UNA COPIA DE VERDAD. Este trozo
+    # calculaba el rango por su cuenta, a partir SOLO de FEDIAF: `desde` = el
+    # mínimo, `hasta` = el máximo. Cuando se escribió no había otra cosa que
+    # mirar; desde el 10 de septiembre sí la hay, y decía algo distinto.
+    #
+    # Qué se perdía por calcularlo aquí, con el número delante:
+    #
+    #   · El techo del **Reglamento (UE) 2020/354**, que en el renal pone el
+    #     fósforo en **1420** — FEDIAF lo deja en 4000, o sea que esta ficha le
+    #     ofrecía a un veterinario **casi el triple** de recorrido del que
+    #     permite la ley para que ese menú sea una dieta renal.
+    #   · Los **topes de seguridad crónica**, que en la vitamina D del oxalato
+    #     son más estrictos que el máximo de FEDIAF.
+    #
+    # Estaba escrito en `CERRADO.md` como un hueco abierto («el techo del
+    # Reglamento europeo está en el `por_que` y no entra en `rango_permitido`»),
+    # y el arreglo no es enseñarle a este módulo la tercera fuente: es que deje
+    # de calcular. La ventana vive en `margen_profesional`, dentro de la propia
+    # celda, y la rehace `auditar_margen_profesional.py` (BLOQUE 80) contra las
+    # tres fuentes vivas. Dos sitios calculando la misma ventana es exactamente
+    # la cabecera de este archivo: «una tercera copia que se desincroniza».
+    margen = dato.get("margen_profesional") or {}
+    desde, hasta = margen.get("suelo"), margen.get("techo")
+
+    def _en_cristiano(clave, lado):
+        if not clave:
+            return "no está declarado, que es un fallo del propio fichero"
+        if clave.startswith("minimo_fediaf"):
+            return ("el mínimo de FEDIAF: por debajo deja de ser un menú y pasa a "
+                    "ser una prescripción firmada" if es_tope else
+                    "el mínimo de FEDIAF, que se aplica igual aunque se baje este suelo")
+        if clave.startswith("maximo_fediaf"):
+            return ("el máximo LEGAL de FEDIAF (Reg. UE 2017/1492), que no mueve nadie"
+                    if legal else "el máximo nutricional de FEDIAF")
+        if clave.startswith("legal_ue"):
+            # ⚠️ La entrada 20 del Reglamento pone SUELOS (sodio y potasio) y la
+            # 27 también (omega-3 y EPA en osteoartritis), así que esta rama cae
+            # de los dos lados y no puede decir «techo» siempre. La primera
+            # versión lo decía, y le contaba a un veterinario que el suelo de EPA
+            # de la artrosis era «un techo que no pasa nadie».
+            return ("el techo del Reglamento (UE) 2020/354, que es la ley del "
+                    "alimento dietético para esta patología: no lo pasa nadie"
+                    if lado == "techo" else
+                    "el suelo del Reglamento (UE) 2020/354: por debajo, ese menú "
+                    "ya no puede llamarse el alimento dietético de esta patología")
+        if clave.startswith("seguridad"):
+            return ("un tope de seguridad crónica, que es una restricción dura del "
+                    "solver y no un aviso")
+        if clave == "sin_techo":
+            return "nada: no hay techo de FEDIAF, ni legal, ni de seguridad crónica"
+        if clave == "sin_suelo":
+            return "nada: FEDIAF no da mínimo para este nutriente"
+        return clave
+
+    para_abajo = _en_cristiano(margen.get("suelo_de_donde"), "suelo")
+    para_arriba = _en_cristiano(margen.get("techo_de_donde"), "techo")
 
     return {
         "patologia": clave_pat,

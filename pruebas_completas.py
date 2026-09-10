@@ -1472,9 +1472,11 @@ _CIFRAS_CON_FUENTE = [
      "SACN5 Tabla 40-5: «magnesium should be in the range of 0.04 to 0.15% DM», techo del rango"),
     ("hepatopatia", "topes_por_1000kcal", "cobre", 2.4, ("directo", None),
      "Center SA et al., JAVMA 264(2) 2026: tolerable 0,24 mg Cu/100 kcal = 2,40 mg/1000 kcal. Techo legal Reg. UE 2020/354 entrada 28 = 2,50"),
-    ("cardiopatia", "topes_por_1000kcal", "sodio", 739.0, ("directo", None),
-     "Reg. (UE) 2020/354 entrada 24: <=2,6 g/kg al 12 % de humedad, dividido entre 3,52 = 738,6"),
-    ("cardiopatia_b2", "topes_por_1000kcal", "sodio", 739.0, ("directo", None),
+    ("cardiopatia", "topes_por_1000kcal", "sodio", 738.6, ("directo", None),
+     "Reg. (UE) 2020/354 entrada 24: <=2,6 g/kg al 12 % de humedad, dividido entre 3,52 = 738,64. "
+     "⚠️ BAJADO DE 739 A 738,6 el 10-sep-2026: los 739 redondeaban un techo LEGAL hacia arriba, "
+     "que es la unica direccion en la que redondear no vale. Lo cazo el BLOQUE 80"),
+    ("cardiopatia_b2", "topes_por_1000kcal", "sodio", 738.6, ("directo", None),
      "igual: el rango de Cavanaugh para B2 (800-990) supera entero el techo legal"),
     ("cardiopatia_c", "topes_por_1000kcal", "sodio", 625.0, ("pct_ms", 0.25),
      "SACN5 Tabla 36-4 Class Ia «0.15 to 0.25%», techo; y cae dentro del rango de Cavanaugh para C (500-790)"),
@@ -5867,12 +5869,25 @@ for _etq43, _der43, _etapa43, _peso43, _adulto43 in _CASOS_43:
             continue
         _f43 = verificar(_g43, al, req, _der43, _etapa43)
         if _f43["semaforo"] != "verde":
+            # ⚠️ EL MENSAJE DECIA LA MITAD, Y LA MITAD QUE NO DECIA ERA LA QUE
+            # PASO (10 de septiembre). Solo listaba `faltan` -- lo que se queda
+            # CORTO --, asi que cuando el rojo era un MAXIMO pasado imprimia una
+            # lista vacia: «el menú que sale con el tiempo justo está en rojo
+            # []». Un fallo real en GitHub Actions, y sin una sola pista de por
+            # que. Los maximos son justo lo que aprieta en el perro pequeño: no
+            # escalan (son concentracion) y la ventana se cierra segun bajan las
+            # kcal. Ahora se dice lo que se pasa Y lo que falta, y ademas cuanto.
             _corto43 = [(x.get("nutriente"), x.get("cubre_pct")) for x in (_f43.get("faltan") or [])]
+            _pasa43 = [(x.get("nutriente"), x.get("tiene"), x.get("maximo"), x.get("veces"))
+                       for x in (_f43.get("se_pasa") or [])]
             fallos.append(f"BLOQUE43 {_etq43}: el menú que sale con el tiempo justo está en "
-                          f"{_f43['semaforo']} {_corto43[:3]}. Aceptar una solución sin demostrar "
-                          f"que es la que usa menos alimentos NO puede relajar ni un requisito: "
-                          f"lo que se suelta es el objetivo, no las restricciones. Mira el margen "
-                          f"del suelo contra el redondeo (FUENTES_QUE_PUEDEN_COINCIDIR).")
+                          f"{_f43['semaforo']}. Se pasa de: {_pasa43[:3]}. Se queda corto en: "
+                          f"{_corto43[:3]}. Rojos: {_f43.get('rojos')}. Aceptar una solución sin "
+                          f"demostrar que es la que usa menos alimentos NO puede relajar ni un "
+                          f"requisito: lo que se suelta es el objetivo, no las restricciones. Si "
+                          f"lo que se pasa es un MÁXIMO, mira el redondeo de gramos; si lo que "
+                          f"falta es un mínimo, el margen del suelo "
+                          f"(FUENTES_QUE_PUEDEN_COINCIDIR).")
             break
 
 # Y lo que de verdad no tiene solución sigue sin tenerla: aceptar la
@@ -7439,23 +7454,48 @@ if _coh56["solo_en_la_lista"] or _coh56["solo_en_las_notas"]:
                   f"{_coh56['solo_en_la_lista']}. Solo en las notas: "
                   f"{_coh56['solo_en_las_notas']}")
 
-# 5. Y el rango se RECALCULA: el extremo de abajo de un techo tiene que ser el
-#    minimo de FEDIAF del nutriente, no un numero escrito a mano. Se comprueba
-#    volviendo a pedirlo a minimo_de(), que es de donde debe salir.
+# 5. Y el rango SIGUE SIN ESCRIBIRSE A MANO. Hasta el 10 de septiembre esto
+#    comprobaba que el extremo de abajo fuera el minimo de FEDIAF, porque era lo
+#    unico que `permisos.py` miraba para calcularlo. Ya no lo calcula: lo LEE del
+#    bloque `margen_profesional` de la propia celda, que es donde vive la ventana
+#    entera con sus tres fuentes (FEDIAF, el Reglamento (UE) 2020/354 y los topes
+#    de seguridad cronica) y que rehace el BLOQUE 80.
+#
+#    ⚠️ Y el cambio no era cosmetico: calculandolo solo con FEDIAF, la ficha del
+#    renal ofrecia subir el fosforo hasta 4000 -- casi el TRIPLE del techo legal
+#    de 1420 que pone el Reglamento para que ese menu sea una dieta renal.
+#
+#    Asi que lo que se comprueba ahora es que los dos extremos sean EXACTAMENTE
+#    los de la celda (si se separan, alguien ha vuelto a calcular por su cuenta)
+#    y, donde la procedencia dice que el suelo es un minimo de FEDIAF, que ese
+#    minimo siga siendo el de hoy.
 from verificar import minimo_de as _min56, MAPA as _MAPA56
 _req56 = _perm56._req()
+_crudo56 = _perm56._CRUDO["patologias"]
 for _f in _fichas56:
-    _nr = next((n for n, c in _MAPA56.items() if c == _f["nutriente"]), None)
-    _r = (_req56 or {}).get(_nr) or {}
-    _mn = _min56(_r, _nr, "Adulto") if _nr and _r else None
-    _desde = _f["rango_permitido"]["desde"]
-    if (_mn is None) != (_desde is None):
-        fallos.append(f"BLOQUE56: el rango de {_f['patologia']}.{_f['nutriente']} "
-                      f"empieza en {_desde} y el minimo de FEDIAF es {_mn}")
-    elif _mn is not None and abs(_mn - _desde) > 1e-9:
-        fallos.append(f"BLOQUE56: el rango de {_f['patologia']}.{_f['nutriente']} "
-                      f"empieza en {_desde} y deberia empezar en el minimo de "
-                      f"FEDIAF, {_mn}. La ficha ha dejado de derivarse")
+    _celda56 = None
+    for _b56 in ("topes_por_1000kcal", "suelos_por_1000kcal"):
+        _c = ((_crudo56.get(_f["patologia"]) or {}).get(_b56) or {}).get(_f["nutriente"])
+        if _c:
+            _celda56 = _c
+            break
+    _m56 = (_celda56 or {}).get("margen_profesional") or {}
+    for _lado56, _clave56 in (("desde", "suelo"), ("hasta", "techo")):
+        if _f["rango_permitido"][_lado56] != _m56.get(_clave56):
+            fallos.append(
+                f"BLOQUE56: el rango de {_f['patologia']}.{_f['nutriente']} dice "
+                f"{_lado56}={_f['rango_permitido'][_lado56]} y la ventana de la celda "
+                f"dice {_m56.get(_clave56)}. La ficha ha vuelto a calcular por su "
+                f"cuenta, que es la tercera copia otra vez")
+    if (_m56.get("suelo_de_donde") or "").startswith("minimo_fediaf"):
+        _nr = next((n for n, c in _MAPA56.items() if c == _f["nutriente"]), None)
+        _r = (_req56 or {}).get(_nr) or {}
+        _mn = _min56(_r, _nr, "Adulto") if _nr and _r else None
+        _desde = _f["rango_permitido"]["desde"]
+        if _mn is None or _desde is None or abs(_mn - _desde) > 1e-9:
+            fallos.append(f"BLOQUE56: el rango de {_f['patologia']}.{_f['nutriente']} "
+                          f"empieza en {_desde}, dice venir del minimo de FEDIAF, y ese "
+                          f"minimo es hoy {_mn}")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
@@ -7627,16 +7667,71 @@ else:
     if _rotos57:
         fallos.append(f"BLOQUE57: el menu que da el solver no pasa su propio filtro final: "
                       f"{_rotos57}")
-    # el mismo menú, inflado a proposito, TIENE que ser rechazado: un test que
+    # El mismo menu, inflado a proposito, TIENE que ser rechazado: un test que
     # pasa con el fallo puesto no sirve.
-    _inflado = dict(_g57)
-    _hueso = next((_n for _n in _g57 if al[_n].get("categoria") == "Hueso carnoso"), None)
-    if _hueso:
-        _inflado[_hueso] = _g57[_hueso] * 4
-        if not __import__("main")._tope_patologia_roto(_inflado, al, [], "Adulto"):
-            fallos.append("BLOQUE57: se cuadruplica el hueso de un menu de adulto sano (que es "
-                          "cuadruplicar su fosforo) y el filtro final no dice nada. Entonces no "
-                          "esta comprobando el techo del perro sano.")
+    #
+    # ⚠️ REESCRITO EL 10 DE SEPTIEMBRE, Y TENIA DOS FALLOS A LA VEZ. Antes esto
+    # buscaba en el menu un alimento de categoria «Hueso carnoso» y lo
+    # CUADRUPLICABA, dando por hecho dos cosas que dependen del menu que devuelva
+    # el solver, y el menu cambia entre ejecuciones:
+    #
+    #   · Que haya hueso. Medido sobre seis menus de adulto de 22 kg: en CUATRO
+    #     no habia ninguno, asi que el `if` no entraba y este bloque **no
+    #     comprobaba nada**, en silencio. Un test que se salta solo es peor que
+    #     no tenerlo: sale verde igual.
+    #   · Que cuadruplicar el hueso cuadruplique el fosforo POR 1000 KCAL. No lo
+    #     hace: el hueso tambien trae kcal, asi que lo que sube es un cociente.
+    #     En el menu donde si habia hueso, el x4 lo dejo en 2372 -- cruzo por
+    #     poco --, y en GitHub Actions no cruzo: **rojo alli y verde aqui**,
+    #     acusando al filtro final de no mirar el techo del perro sano cuando el
+    #     filtro tenia razon.
+    #
+    # Es la misma trampa del BLOQUE 58 con sus «40 g fijos» de aceite y la del
+    # BLOQUE 60 con la arginina, y esta vez con las dos formas juntas. Un test
+    # que falla cuando el motor ACIERTA ensena a desconfiar de la bateria.
+    #
+    # Ahora no se toca el menu: se le AÑADE fosforo del catalogo, y la cantidad
+    # SE CALCULA. Anadiendo `g` gramos de un alimento con `pf` mg de fosforo y
+    # `ef` kcal por 100 g:
+    #
+    #     (P + pf*g/100) / (E + ef*g/100) * 1000 >= objetivo
+    #     g = 100 * (objetivo*E - 1000*P) / (1000*pf - objetivo*ef)
+    #
+    # El alimento se elige del CATALOGO --el de mas fosforo por kcal que hay--,
+    # no del menu, asi que ni depende de lo que el solver haya puesto ni puede
+    # volver a saltarse solo.
+    _OBJ57 = 2000.0 * 1.05          # con margen, para no quedarse en el borde
+    _P57 = _p57 * _kcal57 / 1000.0  # el fosforo total del menu, en mg
+    _cand57 = []
+    for _n57 in al:
+        _ef57 = al[_n57].get("energia") or 0
+        _pf57 = valor_nutriente(al[_n57]["nutrientes"], "fosforo") or 0
+        if _ef57 > 0 and (1000.0 * _pf57 - _OBJ57 * _ef57) > 0:
+            _cand57.append((_pf57 / _ef57, _n57, _pf57, _ef57))
+    if not _cand57:
+        fallos.append("BLOQUE57: no hay en el catalogo ni un alimento con mas fosforo por kcal "
+                      "que el techo del perro sano, asi que no se puede fabricar un menu que lo "
+                      "cruce. Sin poder cruzarlo, este bloque no demuestra nada.")
+    else:
+        _, _quien57, _pf57, _ef57 = max(_cand57)
+        _g57añadir = 100.0 * (_OBJ57 * _kcal57 - 1000.0 * _P57) / (1000.0 * _pf57 - _OBJ57 * _ef57)
+        _inflado = dict(_g57)
+        _inflado[_quien57] = _inflado.get(_quien57, 0.0) + max(_g57añadir, 1.0) * 1.10
+        # Se comprueba que la aritmetica ha hecho lo que decia ANTES de acusar a
+        # nadie: si el menu inflado sigue por debajo del techo, el fallo es de
+        # esta cuenta y no del filtro final.
+        _kcalI57 = sum(al[_n]["energia"] * _g / 100.0 for _n, _g in _inflado.items())
+        _pI57 = sum((valor_nutriente(al[_n]["nutrientes"], "fosforo") or 0) * _g / 100.0
+                    for _n, _g in _inflado.items()) / _kcalI57 * 1000.0
+        if _pI57 <= 2000.0:
+            fallos.append(f"BLOQUE57: al anadir {_g57añadir:.0f} g de «{_quien57}» el fosforo se "
+                          f"queda en {_pI57:.0f} mg/1000 kcal, por debajo del techo de 2000. La "
+                          f"cuenta de este bloque esta mal; el filtro final no tiene la culpa.")
+        elif not __import__("main")._tope_patologia_roto(_inflado, al, [], "Adulto"):
+            fallos.append(f"BLOQUE57: el menu con {_g57añadir:.0f} g de «{_quien57}» de mas trae "
+                          f"{_pI57:.0f} mg de fosforo/1000 kcal --por encima del techo de 2000 "
+                          f"del perro sano-- y el filtro final no dice nada. Entonces no esta "
+                          f"comprobando ese techo.")
 
 # 3-bis. EL TECHO CEDE ANTE EL MINIMO DE FEDIAF, y hay que probarlo con el caso
 #        que lo destapo: a DER 49 por kg^0.75 el minimo de fosforo escalado
@@ -9882,6 +9977,62 @@ for _pat74, _f74 in sorted(_CRUDO_74.items()):
                         f"que afirma un numero que el motor no aplica es peor que no tener aviso: "
                         f"es informacion falsa, y normalmente en la direccion que tranquiliza")
 
+# 1-bis. LA MISMA AFIRMACION SIN PARENTESIS (10 septiembre). El patron de arriba
+#    exige la forma «(N mg/1000 kcal)» entre parentesis, y por ahi se escapo una
+#    durante dos dias: el aviso de PANCREATITIS decia «se ha bajado la grasa a
+#    MENOS DE 20 g por cada 1000 kcal» y el motor aplica 37,5 (25 si ademas hay
+#    obesidad o hiperlipidemia). Casi el doble de lo que el texto afirmaba, y en
+#    la direccion que tranquiliza.
+#
+#    Venia del 8 de septiembre: ese dia la grasa de la pancreatitis paso de los
+#    20 g de Merck a los 37,5 de SACN5 —porque la regla del repo es que manda
+#    SACN5— y el aviso se quedo con el numero viejo. Es el mismo fallo que los
+#    dos avisos de cardiopatia del 9, y el cuarto de la familia.
+#
+#    Este patron pide el VERBO («bajado», «subido», «ajustado», «limitado») antes
+#    del nutriente, que es lo que convierte una cifra en una AFIRMACION sobre lo
+#    que hizo el motor. Sin el verbo cazaria las cifras que los avisos citan de
+#    la fuente a proposito, y una alarma con falsos positivos se deja de leer.
+_NUT74_SIN_PARENTESIS = {
+    "grasa": "grasa", "fosforo": "f[oó]sforo", "sodio": "sodio", "proteina": "prote[ií]na",
+    "cobre": "cobre", "calcio": "calcio", "magnesio": "magnesio", "fibra": "fibra",
+    "potasio": "potasio", "cloruro": "cloruro",
+}
+_afirmaciones74b = 0
+for _pat74, _f74 in sorted(_CRUDO_74.items()):
+    _aplicados74 = {}
+    for _b74 in _BL74:
+        for _n74, _c74 in (_f74.get(_b74) or {}).items():
+            if isinstance(_c74, dict) and _c74.get("valor") is not None:
+                _aplicados74.setdefault(_n74, set()).add(float(_c74["valor"]))
+    for _clave74, _t74 in sorted((_f74.get("avisos") or {}).items()):
+        if not isinstance(_t74, str):
+            continue
+        for _k74, _es74 in _NUT74_SIN_PARENTESIS.items():
+            _re_b = _re74.compile(
+                r"(?:bajad[oa]|subid[oa]|ajustad[oa]|limitad[oa])\s+(?:el|la|los|las)?\s*"
+                + _es74 + r"\s+a\s+(?:menos de\s+|un m[aá]ximo de\s+|)([\d.,]+)\s*"
+                r"(?:mg|g|µg|ug)?\s*(?:por cada|por|/)\s*1[.,]?000\s*kcal", _re74.I)
+            for _m74b in _re_b.finditer(_t74):
+                try:
+                    _num74b = float(_m74b.group(1).replace(".", "").replace(",", "."))
+                except ValueError:
+                    continue
+                _afirmaciones74b += 1
+                _ap74 = _aplicados74.get(_k74) or set()
+                if not any(abs(_a - _num74b) <= max(0.01 * _a, 0.001) for _a in _ap74):
+                    fallos.append(
+                        f"BLOQUE74: el aviso «{_clave74}» de «{_pat74}» afirma que el {_k74} se ha "
+                        f"bajado a {_num74b:g} por 1000 kcal, y el motor aplica "
+                        f"{sorted(_ap74) if _ap74 else 'ningun tope de ese nutriente'}. Es el fallo "
+                        f"de la pancreatitis otra vez: la cifra del motor cambio y el aviso se "
+                        f"quedo con la vieja")
+
+if _afirmaciones74b == 0:
+    fallos.append("BLOQUE74: el patron sin parentesis no ha encontrado ni una afirmacion. Habia "
+                  "una (la grasa de la pancreatitis). Si han cambiado de redaccion hay que "
+                  "actualizarlo; si no, este trozo ha dejado de mirar nada saliendo verde")
+
 if _afirmaciones74 == 0:
     fallos.append("BLOQUE74: no se ha encontrado ni un aviso que diga «<nutriente> bajado a (N por "
                   "1000 kcal)». Habia tres (los tres estadios de cardiopatia). O han cambiado de "
@@ -9914,7 +10065,7 @@ for _pat74, _f74 in sorted(_CRUDO_74.items()):
                     f"fecha y el «de leer entero el capitulo tal» van en `por_que` y en HECHO.md")
 
 print(f"  {sum(len(v.get('avisos') or {}) for v in _CRUDO_74.values())} avisos revisados, "
-      f"{_afirmaciones74} afirmaciones de «bajado a» comprobadas contra el tope aplicado")
+      f"{_afirmaciones74 + _afirmaciones74b} afirmaciones de «bajado a» comprobadas contra el tope aplicado")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
@@ -10391,6 +10542,165 @@ for _l78 in (_aud78.stdout.strip().splitlines() if _aud78.stdout.strip() else []
     if _l78.startswith("-"):
         break
     print(f"  {_l78.strip()}")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 79 — QUIEN PUEDE MARCAR CADA PATOLOGIA, DERIVADO DE SU FUENTE
+# ============================================================
+#
+# ⚠️ POR QUE EXISTE (10 septiembre). Elena, esa manana:
+#
+#   «lo de que preguntamos para cada patologia quien puede formular todo eso
+#    tampoco es cosa mia. todo eso hay que deducirlo de las fuentes que tenemos,
+#    es decir, si hay algo que necesita analisis o que necesita lo que sea, no lo
+#    puede formular a alguien que no sea un veterinario y las preguntas que hay
+#    que hacer, pues obviamente son las que sean necesarias para estipular los
+#    valores correctos»
+#
+# Y tiene razon: no es una lista de opiniones. LA REGLA SALE DE LA FUENTE. Si la
+# fuente de una patologia condiciona su cifra a un estadio, una fase o una
+# analitica, entonces (1) hay que preguntarlo para poder elegir la cifra correcta
+# y (2) quien contesta es quien tiene el informe. Las dos cosas del mismo sitio.
+#
+# `quien_formula_cada_patologia.json` tiene esa derivacion para las 47, cada una
+# con la CITA de su propia fuente. Resultado: 23 `solo_veterinario`, 19
+# `dueno_con_diagnostico`, 5 `dueno`, y OCHO preguntas que faltan en la ficha.
+#
+# QUE VIGILA ESTE BLOQUE:
+#   1. Que las 47 esten, sin ninguna «pendiente» -- la cuenta es exacta.
+#   2. Que ninguna diga «no necesita dato clinico» y a la vez lleve dentro de su
+#      ficha un estadio, una fase o una analitica. Eso seria la derivacion
+#      contradiciendo a la fuente de la que dice salir, y es justo lo que hace
+#      que una tabla asi deje de servir para nada.
+#   3. Que toda `solo_veterinario` diga QUE dato le falta, y toda derivacion
+#      lleve su cita. Un veredicto sin la frase que lo sostiene es una opinion
+#      con formato de dato.
+print("\n=== BLOQUE 79: quien puede marcar cada patologia, derivado de su fuente ===")
+
+import json as _json79
+import re as _re79
+
+_QUIEN_79 = _json79.loads(
+    (_raiz_b24 / "quien_formula_cada_patologia.json").read_text(encoding="utf-8"))["patologias"]
+_PAT_79 = _json79.loads((_raiz_b24 / "patologias.json").read_text(encoding="utf-8"))["patologias"]
+_VALORES_79 = ("dueno", "dueno_con_diagnostico", "solo_veterinario")
+
+# Los marcadores de «esto depende de un dato clinico». Es la MISMA lista con la
+# que se genero el fichero: si aqui se recortara, el punto 2 dejaria de cazar.
+_MARCADORES_79 = _re79.compile(
+    r"IRIS|estadio|ACVIM|creatinina|UPC|proteinuri|analitic|analític|en sangre|"
+    r"serico|sérico|triglic|colesterol|pH urinario|biopsia|T4|glucemia|bromo", _re79.I)
+
+if set(_QUIEN_79) != set(_PAT_79):
+    _faltan79 = sorted(set(_PAT_79) - set(_QUIEN_79))
+    _sobran79 = sorted(set(_QUIEN_79) - set(_PAT_79))
+    fallos.append(f"BLOQUE79: la derivacion no cubre las mismas patologias que el motor. "
+                  f"Faltan: {_faltan79}. Sobran: {_sobran79}. Una patologia nueva sin derivar es "
+                  f"una que nadie ha mirado si necesita un dato clinico")
+
+_pendientes79 = sorted(k for k, v in _QUIEN_79.items() if v.get("derivado") == "pendiente")
+if _pendientes79:
+    fallos.append(f"BLOQUE79: {len(_pendientes79)} patologias sin derivar: {_pendientes79[:6]}. "
+                  f"Mientras una este sin derivar, nadie ha mirado si su cifra depende de un dato "
+                  f"que la app no pregunta")
+
+_solo_vet_79 = 0
+for _k79, _v79 in sorted(_QUIEN_79.items()):
+    if _v79.get("quien_puede_marcarla") not in _VALORES_79:
+        fallos.append(f"BLOQUE79: «{_k79}» dice que la puede marcar "
+                      f"«{_v79.get('quien_puede_marcarla')}», que no es ninguno de {_VALORES_79}")
+    if not (_v79.get("cita_que_lo_condiciona") or "").strip():
+        fallos.append(f"BLOQUE79: «{_k79}» esta derivada y no dice de QUE FRASE de su fuente sale. "
+                      f"Sin la cita esto es una opinion con formato de dato, que es exactamente lo "
+                      f"que Elena dijo que no queria")
+    if _v79.get("quien_puede_marcarla") == "solo_veterinario":
+        _solo_vet_79 += 1
+        if not (_v79.get("que_dato") or "").strip():
+            fallos.append(f"BLOQUE79: «{_k79}» es `solo_veterinario` y no dice QUE DATO hace falta. "
+                          f"«Que lo mire un veterinario» sin decir el qué no le sirve a nadie")
+    # 2. La derivacion no puede contradecir a la ficha de la que sale.
+    if _v79.get("necesita_dato_clinico") is False:
+        _hits79 = sorted(set(m.group(0).lower() for m in
+                             _MARCADORES_79.finditer(_json79.dumps(_PAT_79[_k79], ensure_ascii=False))))
+        if _hits79 and not (_v79.get("menciona_dato_clinico_pero_no_condiciona") or "").strip():
+            fallos.append(
+                f"BLOQUE79: «{_k79}» esta derivada como que NO necesita dato clinico, y su ficha en "
+                f"`patologias.json` nombra {_hits79}. O la ficha ha cambiado y hay que volver a "
+                f"derivarla, o la derivacion estaba mal: en los dos casos afirma algo de la fuente "
+                f"que la fuente no dice. Si la mencion NO condiciona ninguna cifra -- pasa: la "
+                f"enteropatia nombra la analitica de la B12 y el hipotiroidismo, la que NO hay que "
+                f"falsear --, hay que escribirlo en `menciona_dato_clinico_pero_no_condiciona` con "
+                f"la frase. Relajar este patron no es una opcion: relajado deja de cazar lo de verdad")
+
+_preguntas79 = sum(1 for _v in _QUIEN_79.values() if (_v.get("pregunta_que_falta") or "").strip())
+print(f"  {len(_QUIEN_79)} patologias derivadas · {_solo_vet_79} solo_veterinario · "
+      f"{_preguntas79} con una pregunta que falta en la ficha")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 80: hasta donde puede mover un veterinario cada cifra
+# ============================================================
+# ⚠️ POR QUE EXISTE. Elena, 10-sep-2026: «tenemos que estipular que porcentajes
+# puede variar el veterinario y cuales NO, y hasta que punto o que techo, dentro
+# de cada patologia, de cada caso concreto». La respuesta ya estaba escrita, y
+# ese era el problema: en PROSA, dentro del campo `por_que` de cada cifra
+# («Margen del profesional: 13,75 a 37,5») y en el §2 de PATOLOGIAS.md.
+#
+# Una frase no se ejecuta -- es la leccion de `auditar_conversiones.py`. Y aqui
+# la prosa ya estaba caducada en dos sitios: la de la pancreatitis decia el
+# margen de antes del tope condicional, y el sodio cardiaco aplicaba 739 con su
+# propia celda citando el techo LEGAL en 738,6.
+#
+# El auditor rehace las 79 ventanas contra la fuente viva (FEDIAF de hoy, el
+# Reglamento (UE) 2020/354 y `seguridad.py`) y comprueba las cuatro cosas: que
+# cada cifra tenga ventana, que la ventana sea la de la fuente, que la cifra
+# CAIGA DENTRO, y que el techo declarado sea el mas estricto que exista.
+print(f"\n{'='*60}")
+print("=== BLOQUE 80: el margen del profesional, rehecho cifra a cifra ===")
+import auditar_margen_profesional as _amp80
+for _f80 in _amp80.auditar():
+    fallos.append("BLOQUE80: " + _f80)
+
+# Y QUE LA API LO SIRVA. Un margen que solo vive en un JSON del servidor no le
+# sirve a quien firma la pauta: es lo mismo que pasaba con los ocho avisos_extra
+# de patologia, escritos con su fuente y sin llegar a ninguna pantalla. Se
+# comprueba por la MISMA puerta que usa la app, cifra a cifra.
+_r80 = cliente.get("/patologias")
+assert _r80.status_code == 200, _r80.status_code
+_serv80 = _r80.json()["patologias"]
+_tabla80 = _json79.load(open("patologias.json", encoding="utf-8"))["patologias"]
+_DONDE_80 = {"topes_por_1000kcal": ("topes", "nutriente"),
+             "suelos_por_1000kcal": ("suelos", "nutriente"),
+             "topes_por_1000kcal_si_ademas": ("topes_si_ademas", "nutriente"),
+             "ratios": ("ratios", "clave")}
+_sin80, _n80 = [], 0
+for _k80, _p80 in sorted(_tabla80.items()):
+    for _campo80, (_lista80, _id80) in _DONDE_80.items():
+        _servidas80 = {x[_id80]: x for x in
+                       ((_serv80.get(_k80) or {}).get(_lista80) or [])}
+        for _nut80, _celda80 in sorted((_p80.get(_campo80) or {}).items()):
+            if not isinstance(_celda80, dict) or _celda80.get("valor") is None:
+                continue
+            _m80 = _celda80["margen_profesional"]
+            _srv80 = (_servidas80.get(_nut80) or {}).get("margen_profesional")
+            if not _srv80:
+                _sin80.append(f"{_k80}/{_lista80}/{_nut80}")
+                continue
+            _n80 += 1
+            for _c80 in ("suelo", "techo", "suelo_de_donde", "techo_de_donde",
+                         "bajo_el_suelo_necesita_firma", "sentido_de_la_cifra"):
+                if _srv80.get(_c80) != _m80.get(_c80):
+                    fallos.append(
+                        f"BLOQUE80: GET /patologias sirve {_c80}={_srv80.get(_c80)!r} para "
+                        f"{_k80}/{_nut80} y el fichero que aplica el solver dice "
+                        f"{_m80.get(_c80)!r}. Es la tercera copia de la misma tabla otra vez")
+if _sin80:
+    fallos.append(f"BLOQUE80: GET /patologias no sirve el margen de {len(_sin80)} cifras "
+                  f"({_sin80[:4]}). Un margen que no sale por la API no lo ve quien firma la "
+                  f"pauta, que es para quien se escribio")
+print(f"  {_n80} margenes servidos por GET /patologias y comprobados contra el fichero")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 

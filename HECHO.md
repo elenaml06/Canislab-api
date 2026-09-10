@@ -1701,3 +1701,127 @@ reclame**.
 
 Probado con el fallo puesto dos veces: poniéndole a la D el factor de la A, y
 borrando el gamma-tocoferol del JSON. Los dos se cazan.
+
+## 10 de septiembre de 2026 — Quién puede marcar cada patología, deducido de su fuente y no opinado
+
+Elena, ese día: «lo de que preguntamos para cada patología quién puede formular
+todo eso tampoco es cosa mía. Todo eso hay que deducirlo de las fuentes que
+tenemos: si hay algo que necesita análisis o que necesita lo que sea, no lo
+puede formular a alguien que no sea un veterinario, y las preguntas que hay que
+hacer son las que sean necesarias para estipular los valores correctos».
+
+Tiene razón, y las dos cosas salen del **mismo sitio**: si la fuente condiciona
+su cifra a un estadio, a una fase o a un valor de analítica, entonces (1) hace
+falta preguntarlo para elegir la cifra buena y (2) quien contesta esa pregunta
+es quien tiene el informe. Ninguna de las dos es una preferencia.
+
+Así que se derivaron las **47**, una a una, leyendo la ficha entera de cada una
+en `patologias.json` y copiando la frase que lo condiciona:
+`quien_formula_cada_patologia.json`. Salen **24 `solo_veterinario`**, 18
+`dueno_con_diagnostico`, 5 `dueno` y **8 preguntas que la ficha no hace**.
+
+**Lo vigila el BLOQUE 79**, y su tercera comprobación es la que importa: si una
+patología se declara `necesita_dato_clinico: false` y su propia ficha nombra una
+analítica o un estadio, el bloque falla y exige que se escriba **por qué esa
+mención no condiciona ninguna cifra**. Cazó tres contradicciones mías nada más
+escribirlo:
+
+- `oxalato` — la había puesto de dueño, y su fuente cuelga del **pH urinario**.
+  Pasó a `solo_veterinario`.
+- `enteropatia_cronica` — nombra la **B12 en sangre**, pero para avisar de que
+  hay que suplementarla, no para elegir una cifra. Se escribió la frase.
+- `hipotiroidismo` — nombra la analítica **para advertir de no falsearla**.
+  Igual.
+
+La tentación era relajar el patrón que busca los marcadores. Un patrón relajado
+deja de cazar lo de verdad, así que se escribió el campo.
+
+**Y el otro extremo, en la app.** De las 24 `solo_veterinario`, **once** se le
+ofrecen hoy al dueño con menú automático sin preguntarle el dato: `renal`,
+`renal_proteinuria`, `pancreatitis`, `oxalato`, `estruvita`, `cardiopatia`,
+`dcm_taurina_respondedora`, `diabetes`, `hiperlipidemia`,
+`reaccion_adversa_alimento` y `epilepsia_idiopatica`. El caso que mejor lo
+explica es la pancreatitis: SACN5 Tabla 67-3 baja la grasa de 37,5 a 25 si hay
+hipertrigliceridemia, nadie pregunta los triglicéridos, y el perro que necesita
+25 recibe 37,5 **en verde** — porque el semáforo mide contra FEDIAF, que es el
+perro sano.
+
+Las once están declaradas con su pregunta en
+`SIN_LA_PREGUNTA_QUE_DECIDE_LA_CIFRA`, en
+`tests/patologias-app-y-motor.spec.js` de `canislab-web`, y esa lista **solo
+puede encoger**: una prueba falla si aparece una sin declarar, y otra si una
+excepción caduca. Probadas las dos con el fallo puesto.
+
+## 10 de septiembre de 2026 — Hasta dónde puede mover un veterinario cada cifra, y hasta dónde no
+
+Elena, en el mismo encargo: «tenemos que estipular qué porcentajes puede variar
+el veterinario y cuáles NO, y hasta qué punto o qué techo, dentro de cada
+patología, de cada caso concreto».
+
+**La respuesta ya estaba escrita, y ese era exactamente el problema.** Vivía en
+prosa, en dos sitios: el campo `por_que` de cada cifra de `patologias.json`
+(«Margen del profesional: 13,75 a 37,5») y el §2 de `PATOLOGIAS.md`. Una frase
+no se ejecuta — es la lección que hizo nacer `auditar_conversiones.py`, cuando
+una conversión contada en prosa se copió ×25 en vez de ×2,5 y lo único que la
+cazó fue que alguien la leyó.
+
+**Y las dos frases ya estaban caducadas cuando se fueron a mirar:**
+
+- La de la pancreatitis decía «grasa 13,75 → 37,5» y el motor aplica **37,5 o
+  25** según el perro. Se quedó en la versión de antes del tope condicional del
+  8 de septiembre. Su ficha en `PATOLOGIAS.md` era peor: el §2.3 decía «Aplica:
+  grasa ≤ 20 g» y el §1.5 conservaba la cabecera «esto está mal» tres párrafos
+  por encima de la frase «Aplicado el 8 de septiembre: 20 → 37,5» que lo
+  desmiente.
+- **El sodio cardíaco aplicaba 739 y su propia celda citaba el techo LEGAL en
+  738,6.** La cuenta exacta es 2,6 ÷ 0,88 × 1000 ÷ 4 = **738,64**: los 739
+  redondeaban un techo legal **hacia arriba**. Medio miligramo, clínicamente
+  nada, y aun así por encima de la ley. Un techo legal no se redondea hacia
+  arriba: o se cumple o no se cumple. **Ahora se aplica 738,6.**
+
+Se escapó dos días porque `auditar_conversiones.py` tolera un 1 % de redondeo
+**en las dos direcciones**, que está bien para una recomendación y no para una
+ley.
+
+**Lo que hay ahora.** Cada una de las **79 cifras** de `patologias.json` —los 42
+topes, los 32 suelos, los topes condicionales y los 4 ratios— lleva un bloque
+`margen_profesional` con:
+
+| Campo | Qué dice |
+|---|---|
+| `suelo` + `suelo_de_donde` | Por debajo de eso hace falta firma. Casi siempre el mínimo de FEDIAF |
+| `techo` + `techo_de_donde` | Por encima no se sale nadie. Puede ser legal, de FEDIAF o de seguridad crónica |
+| `bajo_el_suelo_necesita_firma` | La frontera de `VETERINARIOS.md`, y la marca **una sola** cosa: bajar de un mínimo de FEDIAF |
+
+**Y `_de_donde` no es un texto: es una clave que se resuelve** —
+`minimo_fediaf:Fósforo`, `legal_ue:24_cardiaca:sodio`, `seguridad:TOPE_VITD_KCAL`,
+`sin_techo` —, así que el margen no es un número copiado sino una cuenta que se
+rehace. `auditar_margen_profesional.py` (**BLOQUE 80**) rehace las 79 contra la
+fuente viva y comprueba cuatro cosas: que cada cifra tenga ventana, que la
+ventana sea la de la fuente de hoy, que **la cifra caiga dentro**, y que el techo
+declarado sea **el más estricto que exista** (declarar el máximo de FEDIAF
+teniendo encima un techo legal más bajo sería enseñar un margen que la ley no
+permite). Probado con el fallo puesto en las cinco direcciones.
+
+**La fuente nueva: `limites_legales_ue_2020_354.json`**, las 20 entradas caninas
+del Anexo B del Reglamento (UE) 2020/354. Es la **única fuente del repo que es
+ley**, y por tanto la única que pone un techo del que no se sale nadie. Ya estaba
+leída entera desde el 8 de septiembre (`canislab-fuentes/Reglamento_UE_2020_354/`);
+lo que faltaba era que sus cifras dejaran de vivir en prosa.
+
+⚠️ **Y hay que citarlo con precisión, porque es fácil citarlo mal.** El
+Reglamento **no da un rango de maniobra por nutriente**: da un techo o un suelo
+por objetivo. El único rango que escribe es el del **tiempo** («inicialmente
+hasta 6 meses»), y su parte A punto 2 pone un ±15 % que es **tolerancia
+analítica de etiquetado**, no margen clínico — leerlo como «el veterinario puede
+subir un 15 %» sería inventarse una cifra. Lo que sí le asigna a un veterinario,
+entrada por entrada, es decidir **empezar** y decidir **prolongar**. El rango de
+una cifra, cuando existe, lo escribe SACN5 en sus tablas de *key nutritional
+factors*, y por eso sale de la conversión de esa tabla y no de aquí.
+
+**Y llega al frontend, que era la condición.** `GET /patologias` sirve ahora la
+ventana de las 79 cifras, y además los **topes condicionales**
+(`topes_si_ademas`), que existían desde el 8 de septiembre y **no salían por
+ninguna puerta**: quien leía la ficha de la pancreatitis veía 37,5 y no sabía que
+hay un segundo escalón en 25. Mismo hueco que los ocho `avisos_extra`. El BLOQUE
+80 comprueba las 79 por esa misma puerta.

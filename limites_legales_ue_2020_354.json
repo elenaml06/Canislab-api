@@ -1,0 +1,220 @@
+{
+  "_meta": {
+    "que_es": "Las 20 entradas caninas del Anexo, parte B, del Reglamento (UE) 2020/354, con su cifra literal y su conversion a por 1000 kcal.",
+    "por_que_existe": "Es la unica fuente de este repo que es LEY, y por eso es la unica que pone un techo que nadie puede pasar -- ni el motor ni un veterinario. Hasta hoy sus cifras vivian en prosa dentro de `PARA_EL_NUTRICIONISTA.md` y de los campos `por_que` de `patologias.json`, y una frase no se ejecuta: es exactamente el fallo que hizo nacer `auditar_conversiones.py`, cuando una conversion escrita en prosa se copio x25 en vez de x2,5.",
+    "que_contesta_y_que_no": "Contesta de que limites se puede salir un veterinario y de cuales no: FEDIAF declara fuera de su ambito los alimentos para objetivos nutricionales especificos, y este reglamento es donde estan. NO contesta cuanto puede mover cada cifra: su parte B da un techo o un suelo por objetivo, no un rango. El rango, cuando existe, lo escribe SACN5 en sus tablas de key nutritional factors. Y el +/-15 % de la parte A punto 2 NO es margen clinico: es tolerancia analitica de etiquetado.",
+    "la_conversion": "Las cifras van por kg de pienso completo al 12 % de humedad. La nota al pie (2) fija la base en 4000 kcal EM/kg de materia seca: 0,88 kg MS x 4000 = 3520 kcal/kg de pienso, luego valor por 1000 kcal = valor por kg / 3,52. TRAMPA: la nota (12) cambia la base a 3500 kcal/kg MS (divisor 3,08) y en la lista canina la usa SOLO la entrada 22.",
+    "dos_reglas_que_no_son_cifras": {
+      "parte_A_punto_7": "«Where a feed ... is intended to meet more than one particular nutritional purpose, it shall comply with each respective entry in Part B.» Con dos patologias se cumplen las dos, no se promedian. Es lo que hace el motor con min() y max().",
+      "nota_11": "«The minimum recommendations according to the FEDIAF Nutritional Guidelines for all essential fatty acids shall be met in the daily ration.» Un techo terapeutico NO autoriza a bajar del minimo nutricional de FEDIAF. Es la regla 3 de CLAUDE.md escrita en el Diario Oficial."
+    },
+    "quien_decide_empezar_y_prolongar": "La norma repite en cada entrada: «It is recommended that advice from a veterinarian be sought before use and before extending the period of use». Ese es el papel que la ley le da al veterinario, y es el unico que le da.",
+    "fuente": "Reglamento (UE) 2020/354 de la Comision, de 4 de marzo de 2020. DO L 67 de 5.3.2020, p. 1. CELEX 32020R0354. El PDF oficial en las dos lenguas, el texto extraido y la lectura entrada por entrada estan en `canislab-fuentes/Reglamento_UE_2020_354/`.",
+    "leido": "8 de septiembre de 2026, entrada por entrada, contra el PDF del Diario Oficial. El .txt extraido NO sirve para verificar una cifra: el anexo es una tabla a seis columnas y al extraerlo las celdas se desordenan."
+  },
+  "entradas": {
+    "10_renal": {
+      "objetivo": "Ayuda a la funcion renal en caso de insuficiencia renal cronica",
+      "tiempo_recomendado": "inicialmente hasta 6 meses",
+      "patologias_del_motor": ["renal", "renal_avanzada", "renal_proteinuria"],
+      "limites": [
+        {"nutriente": "fosforo", "sentido": "max", "literal": "phosphorus <= 5 g/kg",
+         "valor_en_la_fuente": 5000.0, "unidad_en_la_fuente": "mg/kg", "divisor": 3.52,
+         "por_1000kcal": 1420.45},
+        {"nutriente": "proteina", "sentido": "max", "literal": "crude protein <= 220 g/kg",
+         "valor_en_la_fuente": 220.0, "unidad_en_la_fuente": "g/kg", "divisor": 3.52,
+         "por_1000kcal": 62.5}
+      ]
+    },
+    "11_oxalato": {
+      "objetivo": "Reduccion de la formacion de calculos de oxalato calcico",
+      "tiempo_recomendado": "hasta 6 meses",
+      "patologias_del_motor": ["oxalato"],
+      "limites": [],
+      "sin_cifra_por_que": "La norma da solo propiedades cualitativas: «low level of calcium, low level of vitamin D, and urine alkalising properties». No pone numero a ninguna."
+    },
+    "12_diabetes": {
+      "objetivo": "Regulacion del aporte de glucosa (diabetes mellitus)",
+      "tiempo_recomendado": "inicialmente hasta 6 meses",
+      "patologias_del_motor": ["diabetes"],
+      "limites": [
+        {"nutriente": null, "sentido": "max", "literal": "total sugars (mono- and disaccharides) <= 62 g/kg",
+         "valor_en_la_fuente": 62.0, "unidad_en_la_fuente": "g/kg", "divisor": 3.52,
+         "por_1000kcal": 17.61,
+         "sin_nutriente_por_que": "El motor no modela los azucares totales: no es una fila de FEDIAF ni una columna del catalogo. Una racion cruda casi no los lleva, asi que el techo no morderia, pero eso es una medida y no una excusa: esta anotado."}
+      ]
+    },
+    "13_intolerancias": {
+      "objetivo": "Reduccion de las intolerancias a ingredientes y nutrientes",
+      "tiempo_recomendado": "3-8 semanas; hasta 1 ano si desaparecen los signos",
+      "patologias_del_motor": ["reaccion_adversa_alimento"],
+      "limites": [],
+      "sin_cifra_por_que": "Cualitativa: fuentes proteicas seleccionadas o hidrolizadas. El motor lo cubre con las exclusiones y las alergias, que no se tocan jamas (regla 4)."
+    },
+    "14_cistina": {
+      "objetivo": "Reduccion de la formacion de calculos de cistina",
+      "tiempo_recomendado": "inicialmente hasta 6 meses",
+      "patologias_del_motor": ["cistina"],
+      "limites": [
+        {"nutriente": "proteina", "sentido": "max", "literal": "protein <= 160 g/kg + urine alkalising, or protein <= 220 g/kg with selected low-cystine sources",
+         "valor_en_la_fuente": 220.0, "unidad_en_la_fuente": "g/kg", "divisor": 3.52,
+         "por_1000kcal": 62.5,
+         "hay_dos_vias": "La via A (160 g/kg = 45,5 g/1000 kcal) esta POR DEBAJO del minimo de FEDIAF (52,1) y por tanto es prescripcion. La via B (220 = 62,5) NO baja de FEDIAF. Se declara la via B, que es la que un veterinario puede pedir sin firmar por debajo de un minimo."}
+      ]
+    },
+    "15_convalecencia": {
+      "objetivo": "Recuperacion nutricional, convalecencia",
+      "tiempo_recomendado": "hasta lograr la recuperacion",
+      "patologias_del_motor": [],
+      "limites": [
+        {"nutriente": "proteina", "sentido": "min", "literal": "energy density >= 3520 kcal/kg and crude protein >= 250 g/kg",
+         "valor_en_la_fuente": 250.0, "unidad_en_la_fuente": "g/kg", "divisor": 3.52,
+         "por_1000kcal": 71.02,
+         "sin_patologia_por_que": "El motor no tiene etapa ni patologia de convalecencia. Es uno de los tres objetivos caninos de la norma sin equivalente, y el unico de los tres que no es discutiblemente producto."}
+      ]
+    },
+    "16_urato": {
+      "objetivo": "Reduccion de la formacion de calculos de urato",
+      "tiempo_recomendado": "hasta 6 meses; de por vida si el trastorno es irreversible",
+      "patologias_del_motor": ["urato"],
+      "limites": [
+        {"nutriente": "proteina", "sentido": "max", "literal": "protein <= 130 g/kg, or <= 220 g/kg with selected low-purine sources",
+         "valor_en_la_fuente": 220.0, "unidad_en_la_fuente": "g/kg", "divisor": 3.52,
+         "por_1000kcal": 62.5,
+         "hay_dos_vias": "La via A (130 g/kg = 36,9 g/1000 kcal) esta muy por debajo del minimo de FEDIAF (52,1): prescripcion. La via B (62,5) no baja de FEDIAF, y hoy el motor bloquea el urato entero por la carga de purinas de una racion cruda -- que es una palanca distinta de la que usa la norma."}
+      ]
+    },
+    "17_estruvita_disolucion": {
+      "objetivo": "Disolucion de los calculos de estruvita",
+      "tiempo_recomendado": "5-12 semanas",
+      "patologias_del_motor": ["estruvita"],
+      "limites": [
+        {"nutriente": "magnesio", "sentido": "max", "literal": "magnesium <= 1,8 g/kg",
+         "valor_en_la_fuente": 1800.0, "unidad_en_la_fuente": "mg/kg", "divisor": 3.52,
+         "por_1000kcal": 511.36}
+      ]
+    },
+    "18_estruvita_recurrencia": {
+      "objetivo": "Reduccion de la recurrencia de los calculos de estruvita",
+      "tiempo_recomendado": "inicialmente hasta 6 meses",
+      "patologias_del_motor": ["estruvita"],
+      "limites": [
+        {"nutriente": "magnesio", "sentido": "max", "literal": "magnesium <= 1,8 g/kg",
+         "valor_en_la_fuente": 1800.0, "unidad_en_la_fuente": "mg/kg", "divisor": 3.52,
+         "por_1000kcal": 511.36}
+      ]
+    },
+    "19_maldigestion": {
+      "objetivo": "Compensacion de la maldigestion",
+      "tiempo_recomendado": "12 semanas; de por vida en la insuficiencia pancreatica exocrina cronica",
+      "patologias_del_motor": ["insuficiencia_pancreatica_exocrina"],
+      "limites": [],
+      "sin_cifra_por_que": "La entrada pide digestibilidad aparente (PB >= 85 %, grasa >= 90 %, o 80/80 con fibra), que no es una cifra de nutriente. ⚠️ Y NO pone cifra de grasa: el tope de 37,5 del motor sale de SACN5, no de aqui."
+    },
+    "20_absorcion_intestinal": {
+      "objetivo": "Reduccion de los trastornos de la absorcion intestinal",
+      "tiempo_recomendado": "hasta 12 semanas",
+      "patologias_del_motor": ["enteropatia_cronica", "ple_linfangiectasia"],
+      "limites": [
+        {"nutriente": "sodio", "sentido": "min", "literal": "sodium >= 1,8 g/kg",
+         "valor_en_la_fuente": 1800.0, "unidad_en_la_fuente": "mg/kg", "divisor": 3.52,
+         "por_1000kcal": 511.36},
+        {"nutriente": "potasio", "sentido": "min", "literal": "potassium >= 5 g/kg",
+         "valor_en_la_fuente": 5000.0, "unidad_en_la_fuente": "mg/kg", "divisor": 3.52,
+         "por_1000kcal": 1420.45}
+      ]
+    },
+    "21_diarrea_aguda": {
+      "objetivo": "Reduccion de los trastornos agudos de la absorcion intestinal",
+      "tiempo_recomendado": "1-7 dias",
+      "patologias_del_motor": [],
+      "limites": [],
+      "sin_cifra_por_que": "Sus cifras (Na >= 1,8 %, K >= 0,6 %, carbohidratos digestibles >= 32 %) son para un pienso COMPLEMENTARIO, no completo, asi que no se convierten con el divisor de la nota (2) ni se comparan con una racion completa."
+    },
+    "22_hiperlipidemia": {
+      "objetivo": "Regulacion del metabolismo lipidico en caso de hiperlipidemia",
+      "tiempo_recomendado": "inicialmente hasta 2 meses",
+      "patologias_del_motor": ["hiperlipidemia"],
+      "limites": [
+        {"nutriente": "grasa", "sentido": "max", "literal": "fat <= 110 g/kg",
+         "valor_en_la_fuente": 110.0, "unidad_en_la_fuente": "g/kg", "divisor": 3.08,
+         "por_1000kcal": 35.71,
+         "divisor_distinto_por_que": "⚠️ Esta entrada, y SOLO esta en toda la lista canina, cuelga de la nota al pie (12), que cambia la base energetica a 3500 kcal/kg MS: 0,88 x 3500 = 3080 kcal/kg de pienso. Aplicarle el 3,52 de las demas da 31,25 g, que es un 12 % mas estricto que la ley, y esa fue la primera version de esta cifra en el repo."}
+      ]
+    },
+    "23_hepatica": {
+      "objetivo": "Ayuda a la funcion hepatica en caso de insuficiencia hepatica cronica",
+      "tiempo_recomendado": "inicialmente hasta 4 meses",
+      "patologias_del_motor": ["hepatopatia"],
+      "limites": [
+        {"nutriente": "proteina", "sentido": "max", "literal": "crude protein <= 279 g/kg (dog)",
+         "valor_en_la_fuente": 279.0, "unidad_en_la_fuente": "g/kg", "divisor": 3.52,
+         "por_1000kcal": 79.26}
+      ]
+    },
+    "24_cardiaca": {
+      "objetivo": "Ayuda a la funcion cardiaca en caso de insuficiencia cardiaca cronica",
+      "tiempo_recomendado": "inicialmente hasta 6 meses",
+      "patologias_del_motor": ["cardiopatia", "cardiopatia_b1", "cardiopatia_b2", "cardiopatia_c", "cardiopatia_d"],
+      "limites": [
+        {"nutriente": "sodio", "sentido": "max", "literal": "sodium <= 2,6 g/kg",
+         "valor_en_la_fuente": 2600.0, "unidad_en_la_fuente": "mg/kg", "divisor": 3.52,
+         "por_1000kcal": 738.64}
+      ]
+    },
+    "25_exceso_de_peso": {
+      "objetivo": "Reduccion del exceso de peso corporal",
+      "tiempo_recomendado": "hasta alcanzar el peso objetivo",
+      "patologias_del_motor": ["obesidad"],
+      "limites": [],
+      "sin_cifra_por_que": "Su caracteristica es la densidad energetica del alimento (EM < 3060 kcal/kg al 12 % de humedad), no un nutriente. El motor ataca la obesidad por la grasa y por las kcal, que es otra palanca."
+    },
+    "26_dermatosis": {
+      "objetivo": "Ayuda a la funcion cutanea en caso de dermatosis y caida excesiva de pelo",
+      "tiempo_recomendado": "inicialmente hasta 2 meses",
+      "patologias_del_motor": ["dermatitis_atopica", "dermatosis_zinc"],
+      "limites": [
+        {"nutriente": "linoleico", "sentido": "min", "literal": "LA >= 12,3 g/kg + EPA+DHA >= 2,9 g/kg, or LA >= 18,5 g/kg + EPA+DHA >= 0,39 g/kg",
+         "valor_en_la_fuente": 12.3, "unidad_en_la_fuente": "g/kg", "divisor": 3.52,
+         "por_1000kcal": 3.49,
+         "hay_dos_vias": "Se declara la via A, que es la que pide menos linoleico y mas EPA+DHA. La via B pide LA >= 5,26 g y EPA+DHA >= 0,111 g."},
+        {"nutriente": "epa_dha", "sentido": "min", "literal": "EPA+DHA >= 2,9 g/kg (via A)",
+         "valor_en_la_fuente": 2.9, "unidad_en_la_fuente": "g/kg", "divisor": 3.52,
+         "por_1000kcal": 0.82}
+      ]
+    },
+    "27_osteoartritis": {
+      "objetivo": "Ayuda al metabolismo articular en caso de osteoartritis",
+      "tiempo_recomendado": "inicialmente hasta 3 meses",
+      "patologias_del_motor": ["artrosis"],
+      "limites": [
+        {"nutriente": "omega3_total", "sentido": "min", "literal": "total omega-3 fatty acids >= 29 g/kg",
+         "valor_en_la_fuente": 29.0, "unidad_en_la_fuente": "g/kg", "divisor": 3.52,
+         "por_1000kcal": 8.24},
+        {"nutriente": "epa", "sentido": "min", "literal": "EPA >= 3,3 g/kg",
+         "valor_en_la_fuente": 3.3, "unidad_en_la_fuente": "g/kg", "divisor": 3.52,
+         "por_1000kcal": 0.94}
+      ]
+    },
+    "28_cobre_hepatico": {
+      "objetivo": "Reduccion del cobre en el higado",
+      "tiempo_recomendado": "inicialmente hasta 6 meses",
+      "patologias_del_motor": ["hepatopatia", "raza_predispuesta_cobre"],
+      "limites": [
+        {"nutriente": "cobre", "sentido": "max", "literal": "copper <= 8,8 mg/kg",
+         "valor_en_la_fuente": 8.8, "unidad_en_la_fuente": "mg/kg", "divisor": 3.52,
+         "por_1000kcal": 2.5}
+      ]
+    },
+    "30_estres": {
+      "objetivo": "Apoyo en situaciones de estres para reducir los comportamientos asociados",
+      "tiempo_recomendado": "inicialmente hasta 2 meses",
+      "patologias_del_motor": [],
+      "limites": [],
+      "sin_cifra_por_que": "Su caracteristica es un aditivo (1-3 g/kg de caseina bovina hidrolizada con tripsina), no un nutriente del perfil."
+    }
+  },
+  "no_canina": {
+    "29": "La entrada 29 no es canina."
+  }
+}

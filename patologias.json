@@ -20,6 +20,14 @@
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 37-9 «Key nutritional factors for dogs and cats with chronic kidney disease», nota «*All values expressed on a dry matter basis, unless otherwise indicated». Leida entera 9-sep-2026, fila «Phosphorus 0.2 to 0.5% in foods for dogs», extremo alto",
             "ajustado_a_proposito": "La conversion del extremo alto da 1250 y el motor aplica 1200. Se aprieta a proposito para dejar margen contra el minimo de FEDIAF (1160): con 1250 el hueco seria del 7,8 % y con 1200 es del 3,4 %, que es el que esta medido y documentado en GET /patologias"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 1160.0,
+            "suelo_de_donde": "minimo_fediaf:Fósforo",
+            "techo": 1420.45,
+            "techo_de_donde": "legal_ue:10_renal:fosforo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "sodio": {
@@ -31,6 +39,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 37-9 «Key nutritional factors for dogs and cats with chronic kidney disease», nota «*All values expressed on a dry matter basis, unless otherwise indicated». Leida entera 9-sep-2026, fila «Sodium <=0.3% in foods for dogs»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 290.0,
+            "suelo_de_donde": "minimo_fediaf:Sodio",
+            "techo": 3750.0,
+            "techo_de_donde": "maximo_fediaf:Sodio",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "potasio": {
@@ -42,6 +58,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 37-9 «Key nutritional factors for dogs and cats with chronic kidney disease», nota «*All values expressed on a dry matter basis, unless otherwise indicated». Leida entera 9-sep-2026, fila «Potassium 0.4 to 0.8% in foods for dogs», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 1450.0,
+            "suelo_de_donde": "minimo_fediaf:Potasio",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "proteina": {
@@ -54,6 +78,14 @@
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 37-9 «Key nutritional factors for dogs and cats with chronic kidney disease», nota «*All values expressed on a dry matter basis, unless otherwise indicated». Leida entera 9-sep-2026, fila «Protein 14 to 20% in foods for dogs», extremo alto",
             "ajustado_a_proposito": "La conversion del extremo alto da 50 g/1000 kcal y el motor topa en 62,5, MAS FLOJO. No es un descuido: 50 cae POR DEBAJO del minimo de FEDIAF para adulto (52,1), asi que aplicarlo convertiria el menu en una dieta de prescripcion que ningun perro sano podria comer. El margen del profesional va de 52,1 a 62,5"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 52.1,
+            "suelo_de_donde": "minimo_fediaf:Proteína_total",
+            "techo": 62.5,
+            "techo_de_donde": "legal_ue:10_renal:proteina",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "cloruro": {
@@ -65,6 +97,14 @@
             "unidad_en_la_fuente": "derivado de otro limite",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 37-9 «Key nutritional factors for dogs and cats with chronic kidney disease», nota «*All values expressed on a dry matter basis, unless otherwise indicated». Leida entera 9-sep-2026, fila «Chloride — 1.5 x sodium levels in foods for dogs». 1,5 x 750 = 1125"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 430.0,
+            "suelo_de_donde": "minimo_fediaf:Cloruro",
+            "techo": 5870.0,
+            "techo_de_donde": "maximo_fediaf:Cloruro",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -93,6 +133,14 @@
             "por_que_el_factor": "El catalogo mide mg de d-alfa-tocoferol natural y la tabla da UI. FEDIAF Tabla VII-14: d-alfa-tocoferol 1 mg = 1,49 UI, luego 1 UI = 0,671 mg. ⚠️ El 8-sep-2026 esto se escribio tratando las UI como mg y la artrosis dejo de dar menu.",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 37-9 «Key nutritional factors for dogs and cats with chronic kidney disease», nota «*All values expressed on a dry matter basis, unless otherwise indicated». Leida entera 9-sep-2026, fila «Antioxidants — >=400 IU vitamin E/kg of food for dogs»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 6.968,
+            "suelo_de_donde": "minimo_fediaf:Vitamina_E",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "omega3_total": {
@@ -104,6 +152,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 37-9 «Key nutritional factors for dogs and cats with chronic kidney disease», nota «*All values expressed on a dry matter basis, unless otherwise indicated». Leida entera 9-sep-2026, fila «Omega-3 fatty acids 0.4 to 2.5% in foods for dogs and cats», extremo bajo"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         }
       },
@@ -134,6 +190,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 67-3 «Key nutritional factors for foods for canine and [feline pancreatitis]», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Protein 15 to 30% for dogs», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 52.1,
+            "suelo_de_donde": "minimo_fediaf:Proteína_total",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "grasa": {
@@ -145,14 +209,22 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 67-3 «Key nutritional factors for foods for canine and [feline pancreatitis]», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Fat <=15% for non-obese and non-hypertriglyceridemic dogs»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 13.75,
+            "suelo_de_donde": "minimo_fediaf:Grasa_total",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
       "solo_en_adulto": true,
       "en_crecimiento": "sin_tope",
       "avisos": {
-        "general": "Se ha bajado la grasa a menos de 20 g por cada 1000 kcal, que es lo que recomienda la literatura veterinaria en pancreatitis. La tolerancia es muy individual: ajústalo con tu veterinario según cómo responda.",
-        "crecimiento": "Este menú NO ha podido bajar la grasa al nivel que se recomienda en pancreatitis (menos de 20 g por cada 1000 kcal), porque en crecimiento, gestación o lactancia el mínimo que el perro necesita es mayor que ese tope. Consúltalo con tu veterinario."
+        "general": "Se ha bajado la grasa a 37,5 g por cada 1000 kcal, que es lo que la fuente recomienda en pancreatitis para un perro que no es obeso ni tiene los triglicéridos altos. Si marcas también obesidad o hiperlipidemia, se baja a 25. La tolerancia es muy individual: ajústalo con tu veterinario según cómo responda.",
+        "crecimiento": "Este menú NO ha podido bajar la grasa al nivel que se recomienda en pancreatitis (37,5 g por cada 1000 kcal), porque en crecimiento, gestación o lactancia el mínimo que el perro necesita es mayor que ese tope. Consúltalo con tu veterinario."
       },
       "formulable_por_profesional": true,
       "topes_por_1000kcal_si_ademas": {
@@ -169,6 +241,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 67-3 «Key nutritional factors for foods for canine and [feline pancreatitis]», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, y el texto del cap.67 que la desdobla: «Obese and hypertriglyceridemic patients recovering from pancreatitis should receive low-fat foods (<=10 and <=15 % DM for dog and cat foods, respectively)». Los <=10 % del PERRO son estos 25 g/1000 kcal, y por eso esta cifra vive en `topes_por_1000kcal_si_ademas`: solo se aplica si ademas hay obesidad o hiperlipidemia"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 13.75,
+            "suelo_de_donde": "minimo_fediaf:Grasa_total",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       }
@@ -188,6 +268,14 @@
             "por_que_el_factor": "El catalogo mide microgramos y la fuente da UI. FEDIAF Tabla VII-14: 0,025 ug de colecalciferol = 1 UI (o sea 1 ug = 40 UI).",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "Fascetti cap.16: «Diets with vitamin D between 250 and 350 IU/Mcal should suffice». 1 Mcal = 1000 kcal, asi que la fuente YA la da por 1000 kcal; solo falta pasar UI a microgramos. Se usa el extremo alto, que es el techo. ⚠️ El cap.40 de SACN5 da OTRA cifra en la misma pagina («restrict vitamin D in foods to between 500 to 1,500 IU/kg DM» = 3,125-9,375 ug/1000 kcal) y por eso `urolitos_fosfato_calcico` lleva 9,375 y esta lleva 8,75: son dos frases distintas de la literatura, y aqui se aplica la mas estricta"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 3.975,
+            "suelo_de_donde": "minimo_fediaf:Vitamina_D",
+            "techo": 14.1875,
+            "techo_de_donde": "maximo_fediaf:Vitamina_D",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "sodio": {
@@ -199,6 +287,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 40-5 «Key nutritional factors for foods for prevention of calcium oxalate uroliths». Leida entera 9-sep-2026, fila «Sodium — Dietary sodium should be <0.3% DM»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 290.0,
+            "suelo_de_donde": "minimo_fediaf:Sodio",
+            "techo": 3750.0,
+            "techo_de_donde": "maximo_fediaf:Sodio",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "fosforo": {
@@ -210,6 +306,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 40-5 «Key nutritional factors for foods for prevention of calcium oxalate uroliths». Leida entera 9-sep-2026, fila «Phosphorus — Dietary phosphorus should be in the range of 0.3 to 0.6% DM», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 1160.0,
+            "suelo_de_donde": "minimo_fediaf:Fósforo",
+            "techo": 4000.0,
+            "techo_de_donde": "maximo_fediaf:Fósforo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "magnesio": {
@@ -221,6 +325,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 40-5 «Key nutritional factors for foods for prevention of calcium oxalate uroliths». Leida entera 9-sep-2026, fila «Magnesium — … in the range of 0.04 to 0.15% DM», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 200.0,
+            "suelo_de_donde": "minimo_fediaf:Magnesio",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -251,6 +363,14 @@
             "unidad_en_la_fuente": "adimensional",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 40-5 «Key nutritional factors for foods for prevention of calcium oxalate uroliths». Leida entera 9-sep-2026, fila «maintain a normal Ca:P ratio (1.1:1 to 2:1)», extremo BAJO"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 1.0,
+            "suelo_de_donde": "minimo_fediaf:Relacion_Ca_P",
+            "techo": 2.0,
+            "techo_de_donde": "maximo_fediaf:Relacion_Ca_P",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "calcio_fosforo_max": {
@@ -266,6 +386,14 @@
             "unidad_en_la_fuente": "adimensional",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 40-5 «Key nutritional factors for foods for prevention of calcium oxalate uroliths». Leida entera 9-sep-2026, fila «maintain a normal Ca:P ratio (1.1:1 to 2:1)», extremo ALTO"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 1.0,
+            "suelo_de_donde": "minimo_fediaf:Relacion_Ca_P",
+            "techo": 2.0,
+            "techo_de_donde": "maximo_fediaf:Relacion_Ca_P",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -341,6 +469,14 @@
             "unidad_en_la_fuente": "mg/100 kcal",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "Center SA et al., JAVMA 264(2), 2026: limite tolerable superior 0,24 mg Cu/100 kcal. Corroborado por SACN5 Tabla 68-8 («Copper <=5 mg/kg» de MS = 1,25 mg/1000 kcal, mas estricto) y por el techo legal del Reglamento (UE) 2020/354 entrada 28 (8,8 mg/kg = 2,50 mg/1000 kcal)"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 2.08,
+            "suelo_de_donde": "minimo_fediaf:Cobre",
+            "techo": 2.5,
+            "techo_de_donde": "legal_ue:28_cobre_hepatico:cobre",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "sodio": {
@@ -352,6 +488,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 68-8 «Key nutritional factors for dogs and cats with [hepatobiliary disease]», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Sodium (%) 0.08 to 0.25», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 290.0,
+            "suelo_de_donde": "minimo_fediaf:Sodio",
+            "techo": 3750.0,
+            "techo_de_donde": "maximo_fediaf:Sodio",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -374,6 +518,14 @@
             "unidad_en_la_fuente": "mg/kg MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 68-8 «Key nutritional factors for dogs and cats with [hepatobiliary disease]», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Zinc (mg/kg) >200»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 20.8,
+            "suelo_de_donde": "minimo_fediaf:Zinc",
+            "techo": 56.75,
+            "techo_de_donde": "maximo_fediaf:Zinc",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "hierro": {
@@ -385,6 +537,14 @@
             "unidad_en_la_fuente": "mg/kg MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 68-8 «Key nutritional factors for dogs and cats with [hepatobiliary disease]», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Iron (mg/kg) 80 to 140», extremo bajo"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 10.4,
+            "suelo_de_donde": "minimo_fediaf:Hierro",
+            "techo": 170.45,
+            "techo_de_donde": "maximo_fediaf:Hierro",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "taurina": {
@@ -396,6 +556,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 68-8 «Key nutritional factors for dogs and cats with [hepatobiliary disease]», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Taurine (%) >=0.1»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         },
         "vitE": {
@@ -409,6 +577,14 @@
             "por_que_el_factor": "El catalogo mide mg de d-alfa-tocoferol natural y la tabla da UI. FEDIAF Tabla VII-14: d-alfa-tocoferol 1 mg = 1,49 UI, luego 1 UI = 0,671 mg. ⚠️ El 8-sep-2026 esto se escribio tratando las UI como mg y la artrosis dejo de dar menu.",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 68-8 «Key nutritional factors for dogs and cats with [hepatobiliary disease]», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, vitamina E: «foods for canine and feline liver patients should provide at least 400 and 500 IU/kg DM, respectively»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 6.968,
+            "suelo_de_donde": "minimo_fediaf:Vitamina_E",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -426,14 +602,22 @@
       "formulable": true,
       "topes_por_1000kcal": {
         "sodio": {
-          "valor": 739.0,
+          "valor": 738.6,
           "fuente": "Cavanaugh SM (DACVIM cardiologia), «Understanding nutrition in dogs with degenerative mitral valve disease», Veterinary Practice News, 6-jul-2020 — las CIFRAS por estadio salen de aqui. El consenso ACVIM 2019 (Keene BW et al., JVIM 2019;33:1127-1140) es el marco clinico, pero NO da cifras. Techo legal: Reglamento (UE) 2020/354, entrada 24",
-          "por_que": "⚠️ CORREGIDO 8-sep-2026, ATRIBUCION FALSA: esta entrada decia «ACVIM da el sodio por estadio: B2 80-99 mg/100 kcal, C 50-79, D <50». Se abrio el consenso y NO DICE ESO: es cualitativo en las cuatro etapas -- B2 «mild dietary sodium restriction», C «Modestly restrict sodium intake», D «attempts should be made to further decrease dietary sodium intake if it can be done without compromising appetite or renal function». Ni una cifra. Las cifras son de Cavanaugh 2020, que las propone como lectura practica del consenso y cita a Keene. Es una diplomada del ACVIM en cardiologia, pero es OPINION EN REVISTA PROFESIONAL, no un consenso ni un libro revisado: el eslabon mas debil de la cadena de fuentes del motor, y sostiene cuatro numeros. || VALOR: bajado de 900 a 739 el 8-sep-2026. La app no pregunta el estadio, asi que se usa el menos restrictivo -- pero el menos restrictivo ya no puede ser 900, porque el Reglamento (UE) 2020/354 entrada 24 pone el techo de lo que puede llamarse dieta cardiaca en 2,6 g/kg al 12 % de humedad = 738,6 mg/1000 kcal (nota al pie (2): base 4000 kcal EM/kg MS, divisor 3,52). Por encima de eso, un menu «para cardiopata» lleva mas sodio del que Europa admite para esa indicacion. Margen que queda: 290 (minimo FEDIAF) a 739.",
+          "por_que": "⚠️ CORREGIDO 8-sep-2026, ATRIBUCION FALSA: esta entrada decia «ACVIM da el sodio por estadio: B2 80-99 mg/100 kcal, C 50-79, D <50». Se abrio el consenso y NO DICE ESO: es cualitativo en las cuatro etapas -- B2 «mild dietary sodium restriction», C «Modestly restrict sodium intake», D «attempts should be made to further decrease dietary sodium intake if it can be done without compromising appetite or renal function». Ni una cifra. Las cifras son de Cavanaugh 2020, que las propone como lectura practica del consenso y cita a Keene. Es una diplomada del ACVIM en cardiologia, pero es OPINION EN REVISTA PROFESIONAL, no un consenso ni un libro revisado: el eslabon mas debil de la cadena de fuentes del motor, y sostiene cuatro numeros. || VALOR: bajado de 900 a 739 el 8-sep-2026. La app no pregunta el estadio, asi que se usa el menos restrictivo -- pero el menos restrictivo ya no puede ser 900, porque el Reglamento (UE) 2020/354 entrada 24 pone el techo de lo que puede llamarse dieta cardiaca en 2,6 g/kg al 12 % de humedad = 738,6 mg/1000 kcal (nota al pie (2): base 4000 kcal EM/kg MS, divisor 3,52). Por encima de eso, un menu «para cardiopata» lleva mas sodio del que Europa admite para esa indicacion. Margen que queda: 290 (minimo FEDIAF) a 739. || ⚠️ CORREGIDO 10-sep-2026, DE 739 A 738,6: los 739 estaban POR ENCIMA del techo legal que esta misma celda cita. 2,6 g/kg / 0,88 x 1000 / 4 = 738,64, y se redondeó hacia ARRIBA. Es medio miligramo y da igual clínicamente, pero un techo legal no se redondea hacia arriba: o se cumple o no se cumple. Se escapó porque `auditar_conversiones.py` tolera un 1 % de redondeo en las DOS direcciones —que está bien para una recomendación y no para una ley— y lo cazó el BLOQUE 80, que comprueba que la cifra aplicada cae DENTRO de su ventana.",
           "conversion": {
             "valor_en_la_fuente": 2.6,
             "unidad_en_la_fuente": "g/kg al 12% humedad",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "Reglamento (UE) 2020/354, entrada 24: sodio <= 2,6 g/kg de pienso completo al 12 % de humedad. Se pasa a materia seca dividiendo por 0,88. Es el TECHO LEGAL, no una cifra de SACN5: el rango de Cavanaugh 2020 para el estadio B2 esta entero por encima de el."
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 290.0,
+            "suelo_de_donde": "minimo_fediaf:Sodio",
+            "techo": 738.64,
+            "techo_de_donde": "legal_ue:24_cardiaca:sodio",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -459,14 +643,22 @@
       "en_crecimiento": "bloquear",
       "topes_por_1000kcal": {
         "sodio": {
-          "valor": 739.0,
+          "valor": 738.6,
           "fuente": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio",
-          "por_que": "Cavanaugh 2020 situa B2 en 80-99 mg/100 kcal (800-990 mg/1000 kcal) como lectura practica del consenso ACVIM 2019, que pide «mild dietary sodium restriction» SIN CIFRA. ⚠️ CORREGIDO 8-sep-2026: ese rango entero esta POR ENCIMA del techo legal europeo. Reglamento (UE) 2020/354, entrada 24: sodio <= 2,6 g/kg de pienso completo al 12 % de humedad = 738,6 mg/1000 kcal. Se baja de 900 a 739: es el valor mas alto compatible con que el menu pueda llamarse dieta para insuficiencia cardiaca cronica. SACN5 5a ed., cap.36, Tabla 36-4 es AUN mas estricta (Class Ia = 0,15-0,25 % MS = 375-625 mg/1000 kcal) pero usa la clasificacion ISACHC, que no es intercambiable grado a grado con la ACVIM que usa esta app, asi que no se copia su numero. Margen del profesional: 290 (minimo FEDIAF) a 739.",
+          "por_que": "Cavanaugh 2020 situa B2 en 80-99 mg/100 kcal (800-990 mg/1000 kcal) como lectura practica del consenso ACVIM 2019, que pide «mild dietary sodium restriction» SIN CIFRA. ⚠️ CORREGIDO 8-sep-2026: ese rango entero esta POR ENCIMA del techo legal europeo. Reglamento (UE) 2020/354, entrada 24: sodio <= 2,6 g/kg de pienso completo al 12 % de humedad = 738,6 mg/1000 kcal. Se baja de 900 a 739: es el valor mas alto compatible con que el menu pueda llamarse dieta para insuficiencia cardiaca cronica. SACN5 5a ed., cap.36, Tabla 36-4 es AUN mas estricta (Class Ia = 0,15-0,25 % MS = 375-625 mg/1000 kcal) pero usa la clasificacion ISACHC, que no es intercambiable grado a grado con la ACVIM que usa esta app, asi que no se copia su numero. Margen del profesional: 290 (minimo FEDIAF) a 739. || ⚠️ CORREGIDO 10-sep-2026, DE 739 A 738,6: los 739 estaban POR ENCIMA del techo legal que esta misma celda cita. 2,6 g/kg / 0,88 x 1000 / 4 = 738,64, y se redondeó hacia ARRIBA. Es medio miligramo y da igual clínicamente, pero un techo legal no se redondea hacia arriba: o se cumple o no se cumple. Se escapó porque `auditar_conversiones.py` tolera un 1 % de redondeo en las DOS direcciones —que está bien para una recomendación y no para una ley— y lo cazó el BLOQUE 80, que comprueba que la cifra aplicada cae DENTRO de su ventana.",
           "conversion": {
             "valor_en_la_fuente": 2.6,
             "unidad_en_la_fuente": "g/kg al 12% humedad",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "Reglamento (UE) 2020/354, entrada 24: sodio <= 2,6 g/kg de pienso completo al 12 % de humedad. Se pasa a materia seca dividiendo por 0,88. Es el TECHO LEGAL, no una cifra de SACN5: el rango de Cavanaugh 2020 para el estadio B2 esta entero por encima de el."
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 290.0,
+            "suelo_de_donde": "minimo_fediaf:Sodio",
+            "techo": 738.64,
+            "techo_de_donde": "legal_ue:24_cardiaca:sodio",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -489,6 +681,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 36-4 «Key nutritional factors for foods for dogs and cats with cardiovascular disease», nota «All values are expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Sodium — Dogs: Class Ia = 0.15 to 0.25%», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 290.0,
+            "suelo_de_donde": "minimo_fediaf:Sodio",
+            "techo": 738.64,
+            "techo_de_donde": "legal_ue:24_cardiaca:sodio",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -513,6 +713,14 @@
             "unidad_en_la_fuente": "mg/100 kcal",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "Cavanaugh SM 2020 (Veterinary Practice News), escala por estadio ACVIM: estadio D = <50 mg/100 kcal. Se usa 48 para dejar margen bajo el umbral. SACN5 Tabla 36-4 confirma el PATRON (Class Ib, II y III = 0,08-0,15 % MS = 200-375 mg/1000 kcal) pero usa la clasificacion ISACHC, que no es intercambiable grado a grado con la ACVIM de esta app"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 290.0,
+            "suelo_de_donde": "minimo_fediaf:Sodio",
+            "techo": 738.64,
+            "techo_de_donde": "legal_ue:24_cardiaca:sodio",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -555,6 +763,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 29-3 «Key nutritional factors for diabetic dogs and cats», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, columna «Dogs (increased-fiber/high-carbohydrate food)», fila «Fiber 7 to 18%», extremo bajo"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         }
       }
@@ -590,6 +806,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 43-3 «Key nutritional factors for dissolution and prevention of canine struvite uroliths». Leida entera 9-sep-2026, fila «Magnesium — Prevention: restrict dietary magnesium to 0.04 to 0.1% DM», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 200.0,
+            "suelo_de_donde": "minimo_fediaf:Magnesio",
+            "techo": 511.36,
+            "techo_de_donde": "legal_ue:17_estruvita_disolucion:magnesio",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "fosforo": {
@@ -601,6 +825,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 43-3 «Key nutritional factors for dissolution and prevention of canine struvite uroliths». Leida entera 9-sep-2026, fila «Phosphorus — Prevention: restrict dietary phosphorus to <0.6% DM»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 1160.0,
+            "suelo_de_donde": "minimo_fediaf:Fósforo",
+            "techo": 4000.0,
+            "techo_de_donde": "maximo_fediaf:Fósforo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "proteina": {
@@ -612,6 +844,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 43-3 «Key nutritional factors for dissolution and prevention of canine struvite uroliths». Leida entera 9-sep-2026, fila «Protein — Prevention: restrict dietary protein to <25% DM»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 52.1,
+            "suelo_de_donde": "minimo_fediaf:Proteína_total",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -654,6 +894,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 42-1 «Key nutritional factors for foods for canine cystine urolith dissolution and prevention». Leida entera 9-sep-2026, fila «Sodium — Restrict sodium to less than 0.3% dry matter»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 290.0,
+            "suelo_de_donde": "minimo_fediaf:Sodio",
+            "techo": 3750.0,
+            "techo_de_donde": "maximo_fediaf:Sodio",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       }
@@ -683,6 +931,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 28-2 «Key nutritional factors for hyperlipidemia». Leida entera 9-sep-2026, fila «Restrict dietary fat (<12% dry matter [DM])»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 13.75,
+            "suelo_de_donde": "minimo_fediaf:Grasa_total",
+            "techo": 35.71,
+            "techo_de_donde": "legal_ue:22_hiperlipidemia:grasa",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -700,6 +956,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 28-2 «Key nutritional factors for hyperlipidemia». Leida entera 9-sep-2026, fila «Increase dietary fiber: Dogs: >=10% DM»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         }
       }
@@ -718,6 +982,14 @@
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 27-4 «Key nutritional factors for calorie-restricted dog foods for weight loss and prevention of weight regain», encabezado «Dietary recommendations (dry matter basis)». Leida entera 9-sep-2026, fila «Fat — Foods for weight loss should contain <=9%»",
             "ajustado_a_proposito": "La fuente da <=9 % MS = 22,5 g/1000 kcal y el motor aplica 30, que es el <=14 % de la columna «prevention of weight regain» de la MISMA tabla (35) redondeado hacia abajo. Es criterio nuestro y esta declarado: 22,5 deja sin menu a la mayoria de los pesos con una racion cruda, donde la grasa viene con la carne y no se puede quitar sola"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 13.75,
+            "suelo_de_donde": "minimo_fediaf:Grasa_total",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -747,6 +1019,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 27-4 «Key nutritional factors for calorie-restricted dog foods for weight loss and prevention of weight regain», encabezado «Dietary recommendations (dry matter basis)». Leida entera 9-sep-2026, fila «Protein — Foods for weight loss should contain >=25%»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 52.1,
+            "suelo_de_donde": "minimo_fediaf:Proteína_total",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "fibra": {
@@ -758,6 +1038,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 27-4 «Key nutritional factors for calorie-restricted dog foods for weight loss and prevention of weight regain», encabezado «Dietary recommendations (dry matter basis)». Leida entera 9-sep-2026, fila «Fiber — Foods for weight loss should contain 12 to 25%», extremo bajo"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         },
         "lisina": {
@@ -769,6 +1057,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 27-4 «Key nutritional factors for calorie-restricted dog foods for weight loss and prevention of weight regain», encabezado «Dietary recommendations (dry matter basis)». Leida entera 9-sep-2026, fila «Lysine — Foods for weight loss should contain >=1.7%»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 1.342,
+            "suelo_de_donde": "minimo_fediaf:Lisina",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "lcarnitina": {
@@ -780,6 +1076,14 @@
             "unidad_en_la_fuente": "mg/kg MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 27-4 «Key nutritional factors for calorie-restricted dog foods for weight loss and prevention of weight regain», encabezado «Dietary recommendations (dry matter basis)». Leida entera 9-sep-2026, fila «L-carnitine — … should contain >=300 ppm» (ppm = mg/kg)"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         },
         "vitE": {
@@ -793,6 +1097,14 @@
             "por_que_el_factor": "El catalogo mide mg de d-alfa-tocoferol natural y la tabla da UI. FEDIAF Tabla VII-14: d-alfa-tocoferol 1 mg = 1,49 UI, luego 1 UI = 0,671 mg. ⚠️ El 8-sep-2026 esto se escribio tratando las UI como mg y la artrosis dejo de dar menu.",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 27-4 «Key nutritional factors for calorie-restricted dog foods for weight loss and prevention of weight regain», encabezado «Dietary recommendations (dry matter basis)». Leida entera 9-sep-2026, fila «Vitamin E >=400 IU vitamin E/kg»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 6.968,
+            "suelo_de_donde": "minimo_fediaf:Vitamina_E",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       }
@@ -826,6 +1138,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 36-4 «Key nutritional factors for foods for dogs and cats with cardiovascular disease», nota «All values are expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Taurine — Dogs: >=0.1%»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         },
         "lcarnitina": {
@@ -837,6 +1157,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 36-4 «Key nutritional factors for foods for dogs and cats with cardiovascular disease», nota «All values are expressed on a dry matter basis». Leida entera 9-sep-2026, fila «L-Carnitine — Dogs: >=0.02%»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         }
       },
@@ -864,6 +1192,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 58-1 «Key nutritional factors for foods for patients with [protein-losing enteropathies]», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Fat <15% for dogs and cats»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 13.75,
+            "suelo_de_donde": "minimo_fediaf:Grasa_total",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "fibra": {
@@ -875,6 +1211,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 58-1 «Key nutritional factors for foods for patients with [protein-losing enteropathies]», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Crude fiber <=5%»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         }
       },
@@ -892,6 +1236,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 58-1 «Key nutritional factors for foods for patients with [protein-losing enteropathies]», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Protein >=25% for dogs»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 52.1,
+            "suelo_de_donde": "minimo_fediaf:Proteína_total",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       }
@@ -909,6 +1261,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 66-1 «Key nutritional factors for foods for patients with [exocrine pancreatic insufficiency]», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Fat 10 to 15% for dogs», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 13.75,
+            "suelo_de_donde": "minimo_fediaf:Grasa_total",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "fibra": {
@@ -920,6 +1280,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 66-1 «Key nutritional factors for foods for patients with [exocrine pancreatic insufficiency]», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Fiber <=5%**»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         }
       },
@@ -953,6 +1321,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 57-1 «Key nutritional factors for dogs and cats with inflammatory bowel disease», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Fat 12 to 15% for dogs [highly digestible foods]», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 13.75,
+            "suelo_de_donde": "minimo_fediaf:Grasa_total",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "potasio": {
@@ -964,6 +1340,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 57-1 «Key nutritional factors for dogs and cats with inflammatory bowel disease», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Potassium 0.8 to 1.1%», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 1450.0,
+            "suelo_de_donde": "minimo_fediaf:Potasio",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -977,6 +1361,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 57-1 «Key nutritional factors for dogs and cats with inflammatory bowel disease», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Protein >=25% for dogs»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 52.1,
+            "suelo_de_donde": "minimo_fediaf:Proteína_total",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       }
@@ -999,6 +1391,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 34-2 «Key nutritional factors for foods for canine osteoarthritis patients», nota al pie «All values are expressed on a dry matter basis unless otherwise stated». Leida entera 9-sep-2026, fila «Eicosapentaenoic acid 0.4 to 1.1%», extremo bajo"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 0.94,
+            "suelo_de_donde": "legal_ue:27_osteoartritis:epa",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         },
         "lcarnitina": {
@@ -1010,6 +1410,14 @@
             "unidad_en_la_fuente": "mg/kg MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 34-2 «Key nutritional factors for foods for canine osteoarthritis patients», nota al pie «All values are expressed on a dry matter basis unless otherwise stated». Leida entera 9-sep-2026, fila «L-carnitine >=300 mg/kg»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         },
         "vitE": {
@@ -1023,6 +1431,14 @@
             "por_que_el_factor": "El catalogo mide mg de d-alfa-tocoferol natural y la tabla da UI. FEDIAF Tabla VII-14: d-alfa-tocoferol 1 mg = 1,49 UI, luego 1 UI = 0,671 mg. ⚠️ El 8-sep-2026 esto se escribio tratando las UI como mg y la artrosis dejo de dar menu.",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 34-2 «Key nutritional factors for foods for canine osteoarthritis patients», nota al pie «All values are expressed on a dry matter basis unless otherwise stated». Leida entera 9-sep-2026, fila «Vitamin E >=400 IU/kg»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 6.968,
+            "suelo_de_donde": "minimo_fediaf:Vitamina_E",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -1036,6 +1452,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 34-2 «Key nutritional factors for foods for canine osteoarthritis patients», nota al pie «All values are expressed on a dry matter basis unless otherwise stated». Leida entera 9-sep-2026, fila «Phosphorus** 0.3 to 0.7%», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 1160.0,
+            "suelo_de_donde": "minimo_fediaf:Fósforo",
+            "techo": 4000.0,
+            "techo_de_donde": "maximo_fediaf:Fósforo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "sodio": {
@@ -1047,6 +1471,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 34-2 «Key nutritional factors for foods for canine osteoarthritis patients», nota al pie «All values are expressed on a dry matter basis unless otherwise stated». Leida entera 9-sep-2026, fila «Sodium** 0.2 to 0.4%», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 290.0,
+            "suelo_de_donde": "minimo_fediaf:Sodio",
+            "techo": 3750.0,
+            "techo_de_donde": "maximo_fediaf:Sodio",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -1106,6 +1538,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 35-3 «Key nutritional factors for foods for dogs with [cognitive dysfunction]», nota «*Dry matter basis». Leida entera 9-sep-2026, fila «Omega-3 fatty acids — Total omegas-3 >1%»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         },
         "lcarnitina": {
@@ -1117,6 +1557,14 @@
             "unidad_en_la_fuente": "mg/kg MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 35-3 «Key nutritional factors for foods for dogs with [cognitive dysfunction]», nota «*Dry matter basis». Leida entera 9-sep-2026, fila «L-carnitine — Provide foods with >=100 mg/kg»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         }
       },
@@ -1213,6 +1661,14 @@
             "unidad_en_la_fuente": "mg/kg MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 32-1 «Key nutritional factors for foods and supplements for dogs and cats with nutrient-responsive dermatoses». Leida entera 9-sep-2026, fila «Zinc — Dogs: 100 to 200 mg/kg food DM», extremo bajo"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 20.8,
+            "suelo_de_donde": "minimo_fediaf:Zinc",
+            "techo": 56.75,
+            "techo_de_donde": "maximo_fediaf:Zinc",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "fenilalanina_tirosina": {
@@ -1224,6 +1680,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 32-1 «Key nutritional factors for foods and supplements for dogs and cats with nutrient-responsive dermatoses». Leida entera 9-sep-2026, fila «Protein and fat»: «Phenylalanine + tyrosine >1.3% DM»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 2.838,
+            "suelo_de_donde": "minimo_fediaf:Fenilalanina_tirosina",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -1260,6 +1724,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 32-1 «Key nutritional factors for foods and supplements for dogs and cats with nutrient-responsive dermatoses». Leida entera 9-sep-2026, fila «Protein and fat»: «Phenylalanine + tyrosine >1.3% DM»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 2.838,
+            "suelo_de_donde": "minimo_fediaf:Fenilalanina_tirosina",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "omega3_total": {
@@ -1271,6 +1743,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 32-6 «Key nutritional factors for foods and supplements for [inflammatory dermatoses]». Leida entera 9-sep-2026, «Omega-3 fatty acids (ALA, EPA and/or DHA) 0.35 to 1.8% DM», extremo bajo"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         }
       }
@@ -1329,6 +1809,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 30-5 «Key nutritional factors for foods for canine and feline cancer patients». Leida entera 9-sep-2026, fila «Fat = 25 to 40% of DM», extremo bajo"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 13.75,
+            "suelo_de_donde": "minimo_fediaf:Grasa_total",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "proteina": {
@@ -1340,6 +1828,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 30-5 «Key nutritional factors for foods for canine and feline cancer patients». Leida entera 9-sep-2026, fila «Dogs: protein = 30 to 45% of DM», extremo bajo"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 52.1,
+            "suelo_de_donde": "minimo_fediaf:Proteína_total",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "arginina": {
@@ -1351,6 +1847,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 30-5 «Key nutritional factors for foods for canine and feline cancer patients». Leida entera 9-sep-2026, fila «Arginine — Provide foods with arginine DM levels >2%»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 1.661,
+            "suelo_de_donde": "minimo_fediaf:Arginina",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -1414,6 +1918,14 @@
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 37-9 «Key nutritional factors for dogs and cats with chronic kidney disease», nota «*All values expressed on a dry matter basis, unless otherwise indicated». Leida entera 9-sep-2026, fila «Phosphorus 0.2 to 0.5% in foods for dogs», extremo alto",
             "ajustado_a_proposito": "Igual que en `renal`: 1250 seria la conversion literal y se aprieta a 1200 por el margen contra el minimo de FEDIAF (1160)"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 1160.0,
+            "suelo_de_donde": "minimo_fediaf:Fósforo",
+            "techo": 1420.45,
+            "techo_de_donde": "legal_ue:10_renal:fosforo",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       }
@@ -1434,6 +1946,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 41-6 «Key nutritional factors for foods for the prevention of recurrence of calcium phosphate urolithiasis in dogs», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Phosphorus 0.3 to 0.6%», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 1160.0,
+            "suelo_de_donde": "minimo_fediaf:Fósforo",
+            "techo": 4000.0,
+            "techo_de_donde": "maximo_fediaf:Fósforo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "magnesio": {
@@ -1445,6 +1965,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 41-6 «Key nutritional factors for foods for the prevention of recurrence of calcium phosphate urolithiasis in dogs», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Magnesium 0.06 to 0.15%», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 200.0,
+            "suelo_de_donde": "minimo_fediaf:Magnesio",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "sodio": {
@@ -1456,6 +1984,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 41-6 «Key nutritional factors for foods for the prevention of recurrence of calcium phosphate urolithiasis in dogs», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Sodium <0.3%»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 290.0,
+            "suelo_de_donde": "minimo_fediaf:Sodio",
+            "techo": 3750.0,
+            "techo_de_donde": "maximo_fediaf:Sodio",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "proteina": {
@@ -1467,6 +2003,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 41-6 «Key nutritional factors for foods for the prevention of recurrence of calcium phosphate urolithiasis in dogs», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Protein 10 to 25%», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 52.1,
+            "suelo_de_donde": "minimo_fediaf:Proteína_total",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "vitD": {
@@ -1480,6 +2024,14 @@
             "por_que_el_factor": "El catalogo mide microgramos y la fuente da UI. FEDIAF Tabla VII-14: 0,025 ug de colecalciferol = 1 UI (o sea 1 ug = 40 UI).",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 41-6 «Key nutritional factors for foods for the prevention of recurrence of calcium phosphate urolithiasis in dogs», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Vitamin D 500 to 1,500 IU/kg», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 3.975,
+            "suelo_de_donde": "minimo_fediaf:Vitamina_D",
+            "techo": 14.1875,
+            "techo_de_donde": "maximo_fediaf:Vitamina_D",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -1502,6 +2054,14 @@
             "unidad_en_la_fuente": "adimensional",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 41-6 «Key nutritional factors for foods for prevention of calcium phosphate uroliths». Leida entera 9-sep-2026, fila «maintain a normal Ca:P ratio (1.1:1 to 2:1)», extremo BAJO"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": 1.0,
+            "suelo_de_donde": "minimo_fediaf:Relacion_Ca_P",
+            "techo": 2.0,
+            "techo_de_donde": "maximo_fediaf:Relacion_Ca_P",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "calcio_fosforo_max": {
@@ -1517,6 +2077,14 @@
             "unidad_en_la_fuente": "adimensional",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 41-6 «Key nutritional factors for foods for prevention of calcium phosphate uroliths». Leida entera 9-sep-2026, fila «maintain a normal Ca:P ratio (1.1:1 to 2:1)», extremo ALTO"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 1.0,
+            "suelo_de_donde": "minimo_fediaf:Relacion_Ca_P",
+            "techo": 2.0,
+            "techo_de_donde": "maximo_fediaf:Relacion_Ca_P",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       }
@@ -1549,6 +2117,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 64-2 «Key nutritional factors … for foods for patients with chronic constipation or obstipation», nota «*All values are on a dry matter basis except water». Leida entera 9-sep-2026, fila «Fiber >=7% crude fiber (insoluble or mixed is best)»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         }
       },
@@ -1570,6 +2146,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 65-1 «Key nutritional factors for foods, treats and snacks for dogs and cats with excessive flatulence», nota «*Nutrient values are on a dry matter basis». Leida entera 9-sep-2026, fila «Protein — Adult dogs: limit to <=30% or less»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 52.1,
+            "suelo_de_donde": "minimo_fediaf:Proteína_total",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "fibra": {
@@ -1581,6 +2165,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 65-1 «Key nutritional factors for foods, treats and snacks for dogs and cats with excessive flatulence», nota «*Nutrient values are on a dry matter basis». Leida entera 9-sep-2026, fila «Fiber — Dogs and cats: limit to <=5% fiber»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         }
       },
@@ -1602,6 +2194,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 60-1 «Key nutritional factors for foods for dogs and cats with small intestinal bacterial overgrowth», nota «*Nutrients expressed on a dry matter basis». Leida entera 9-sep-2026, fila «Fat 12 to 15% for dogs», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 13.75,
+            "suelo_de_donde": "minimo_fediaf:Grasa_total",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },
@@ -1623,6 +2223,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 63-3 «Key nutritional factors for foods for dogs with idiopathic bowel syndrome», nota «*All values are on a dry matter basis». Leida entera 9-sep-2026, fila «Crude fiber*** >=8%»"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         }
       },
@@ -1644,6 +2252,14 @@
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 31-3 «Key nutritional factors for foods for the diagnosis and management of adverse food reactions in dogs and cats», nota «Key: DM = dry matter». Leida entera 9-sep-2026, fila «Total omega-3 fatty acids 0.35 to 1.8% DM», extremo bajo"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "min",
+            "suelo": null,
+            "suelo_de_donde": "sin_suelo",
+            "techo": null,
+            "techo_de_donde": "sin_techo",
+            "bajo_el_suelo_necesita_firma": false
           }
         }
       },
@@ -1657,6 +2273,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 31-3 «Key nutritional factors for foods for the diagnosis and management of adverse food reactions in dogs and cats», nota «Key: DM = dry matter». Leida entera 9-sep-2026, fila «Phosphorus* 0.4 to 0.8% DM», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 1160.0,
+            "suelo_de_donde": "minimo_fediaf:Fósforo",
+            "techo": 4000.0,
+            "techo_de_donde": "maximo_fediaf:Fósforo",
+            "bajo_el_suelo_necesita_firma": true
           }
         },
         "sodio": {
@@ -1668,6 +2292,14 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 31-3 «Key nutritional factors for foods for the diagnosis and management of adverse food reactions in dogs and cats», nota «Key: DM = dry matter». Leida entera 9-sep-2026, fila «Sodium* 0.2 to 0.4% DM», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 290.0,
+            "suelo_de_donde": "minimo_fediaf:Sodio",
+            "techo": 3750.0,
+            "techo_de_donde": "maximo_fediaf:Sodio",
+            "bajo_el_suelo_necesita_firma": true
           }
         }
       },

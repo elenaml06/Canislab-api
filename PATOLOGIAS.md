@@ -393,9 +393,14 @@ No es una infracción nuestra —no vendemos pienso— pero sí significa que un
 nuestro «para cardiópata» puede llevar más sodio del que Europa admite para
 llamarse dieta cardíaca. Ver `DECISIONES.md` D-12.
 
-### 1.5 · La pancreatitis usa Merck cuando la regla adoptada manda SACN5
+### 1.5 · ~~La pancreatitis usa Merck cuando la regla adoptada manda SACN5~~ ✅ ARREGLADO
 
-**Aplica:** grasa ≤ 20 g/1000 kcal.
+**Aplica hoy:** grasa ≤ **37,5** g/1000 kcal, y **25** si además está marcada
+obesidad o hiperlipidemia. **Lo que decía esta línea hasta el 10 de septiembre:**
+«grasa ≤ 20 g/1000 kcal» — la cifra de antes del arreglo, tres párrafos por
+encima de la frase «Aplicado el 8 de septiembre: 20 → 37,5» que lo desmiente.
+Un apartado que se arregla y conserva su cabecera de «esto está mal» miente en
+la primera línea, que es la única que mucha gente lee.
 **Fuente:** Merck Veterinary Manual, verificado literal el 8 de septiembre:
 *«In dogs, feeding a low-fat diet (ie, less than 20 g fat/1,000 kcal) is crucial
 for treatment success»* y *«In dogs, a ration with less than 20 g fat/1,000 kcal
@@ -547,8 +552,18 @@ un perro pequeño el margen de apretado es más corto que el que sale aquí.
 
 ### 2.3 · Pancreatitis · `pancreatitis`
 
-- **Aplica:** grasa ≤ **20** g y proteína ≤ **75** g/1000 kcal.
-- **Fuente de la grasa:** Merck (ver §1.5). **De la proteína:** SACN5 Tabla 67-3,
+- **Aplica:** grasa ≤ **37,5** g —y **25** si además está marcada obesidad o
+  hiperlipidemia— y proteína ≤ **75** g/1000 kcal.
+  ⚠️ **Corregido el 10 de septiembre:** esta ficha decía «grasa ≤ 20 g», que era
+  la cifra de Merck de antes del 8 de septiembre. El motor lleva desde entonces
+  aplicando las dos de SACN5 Tabla 67-3 (*«Fat ≤15 % for non-obese and
+  non-hypertriglyceridemic dogs»* y *«≤10 % for obese and/or hypertriglyceridemic
+  dogs»*), y ni el §1.5 de este documento ni el aviso que lee el usuario se
+  habían actualizado. Es justo por esto que el margen del profesional dejó de
+  vivir en prosa: ahora está en el bloque `margen_profesional` de cada cifra y lo
+  rehace el BLOQUE 80.
+- **Fuente de la grasa:** SACN5 Tabla 67-3 (ver §1.5; Merck queda como
+  referencia más estricta, no como el valor aplicado). **De la proteína:** SACN5 Tabla 67-3,
   *«Protein 15 to 30% for dogs»* → 37,5-75 g; usamos el extremo alto.
   El motivo está en el propio texto y no es obvio: *«Free amino acids (i.e.,
   phenylalanine, tryptophan and valine) in the duodenum are a strong stimulus for
@@ -558,10 +573,12 @@ un perro pequeño el margen de apretado es más corto que el que sale aquí.
   **52,1**. Ni FEDIAF ni el Reglamento 2020/354 cubren la pancreatitis, así que
   **no hay techo legal por arriba**: el margen hacia arriba solo lo acota el
   criterio.
-- **Margen del profesional:** grasa **13,75 → sin techo legal** (SACN5 pone
-  25 o 37,5 según el perro); proteína **52,1 → 75**.
+- **Margen del profesional:** grasa **13,75 → sin techo legal**; proteína
+  **52,1 → 75**. Es la ventana que sirve hoy `GET /patologias`, rehecha contra la
+  fuente viva por `auditar_margen_profesional.py`.
 - ⚠️ **Frontera física medida:** por debajo de ~26-28 g de grasa no hay menú con
-  el catálogo real. El valor actual (20) está por debajo de esa frontera.
+  el catálogo real. Los 20 de Merck estaban **por debajo** de esa frontera, y es
+  la otra mitad del motivo por el que se cambiaron.
 
 ### 2.4 · Cálculos de oxalato cálcico · `oxalato`
 
@@ -620,7 +637,7 @@ regla sobre ingredientes y no un número.
 
 ### 2.6 · Cardiopatía · `cardiopatia`, `_b1`, `_b2`, `_c`, `_d`, `_a`
 
-- **Aplica:** sodio ≤ **739** (genérica y B2), **625** (C), **480** (D). B1 y A
+- **Aplica:** sodio ≤ **738,6** (genérica y B2), **625** (C), **480** (D). B1 y A
   sin tope, a propósito.
 - **Fuente real:** Cavanaugh SM, Veterinary Practice News, 6-jul-2020 (ver §1.1).
   ACVIM 2019 **no da cifras**. SACN5 Tabla 36-4 sí, pero con otra clasificación
@@ -629,7 +646,7 @@ regla sobre ingredientes y no un número.
   grado a grado**, y por eso no se sustituyeron.
 - **Techo duro:** por abajo, mínimo FEDIAF **290 mg**. Por arriba, Reglamento
   2020/354 entrada 24, **738,6 mg**.
-- **Margen del profesional:** **290 → 739**. Tres de nuestras cuatro cifras están
+- **Margen del profesional:** **290 → 738,6**. Tres de nuestras cuatro cifras están
   fuera de ese margen por arriba.
 - ⚠️ **Lo que la fuente primaria pide y no aplicamos**, todo verificado en
   ACVIM 2019: en estadio C, *«maintenance calorie intake… should be approximately

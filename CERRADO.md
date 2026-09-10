@@ -323,6 +323,40 @@ filas a mano.
 
 ---
 
+## CERRADO · La ventana del profesional, y el techo europeo dentro de ella (10 de septiembre)
+
+| | Dónde se cumple |
+|---|---|
+| 1 · Vive en el repo | Bloque `margen_profesional` en cada una de las **79 cifras** de `patologias.json`; `motor/margenes.py` resuelve las claves de procedencia; `limites_legales_ue_2020_354.json` trae las 20 entradas caninas del Reglamento |
+| 2 · Tiene fuente | Tres, y cada extremo dice de cuál sale: FEDIAF (`requerimientos_v2_final.json`), el **Reglamento (UE) 2020/354** (PDF oficial del Diario Oficial en `canislab-fuentes/`) y los topes de seguridad crónica de `seguridad.py` |
+| 3 · Ficha de permisos | `motor/permisos.py` **dejó de calcular el rango** y lo lee de aquí; `GET /patologias` sirve las 79 ventanas y la ficha del veterinario las pinta |
+| 4 · Test que falla si se rompe | **BLOQUE 80**, que rehace las 79 contra la fuente viva. Probado con el fallo puesto en cinco direcciones: sin bloque, con el suelo movido, con la cifra fuera de la ventana, con un techo laxo teniendo uno más estricto, y con la frontera de firma mal. Y el **BLOQUE 56**, que ahora exige que la ficha de permisos no vuelva a calcular por su cuenta |
+| 5 · Decisión escrita | `HECHO.md` del 10 de septiembre y `DECISIONES.md` D-12/D-13, puestos al día |
+| 6 · Sin preguntas sin dueño | La que queda es **una y está acotada**: dentro de la ventana, ¿mueve libremente? Tiene dueño (Elena con el nutricionista) y ficha propia, P-03 |
+
+**Lo que cerraba eran dos huecos, y el segundo era una copia de verdad.**
+
+- La ventana vivía en **prosa**, dentro del `por_que` de cada cifra. Y ya estaba
+  caducada: la de la pancreatitis citaba el margen de antes del tope condicional
+  del 8 de septiembre, y **el sodio cardíaco aplicaba 739 con su propia celda
+  citando el techo LEGAL en 738,6** — medio miligramo, clínicamente nada, y por
+  encima de la ley. Un techo legal no se redondea hacia arriba. Ahora aplica
+  738,6.
+- **`permisos.py` calculaba el rango solo con FEDIAF**, porque cuando se escribió
+  no había otra cosa que mirar. Eso hacía que la ficha del renal le ofreciera a
+  un veterinario subir el fósforo hasta **4000** — casi el **triple** del techo
+  legal de 1420 que pone el Reglamento para que ese menú sea una dieta renal. El
+  arreglo no fue enseñarle la tercera fuente: fue que **dejara de calcular**.
+
+⚠️ **Lo que este cierre NO cierra, y hay que decirlo para no citar de más:** el
+Reglamento **no da un rango de maniobra por nutriente**. Da un techo o un suelo
+por objetivo. Lo único que pone como rango es el **tiempo**, y su ±15 % es
+**tolerancia analítica de etiquetado**, no margen clínico. Lo que hay cerrado es
+**dónde están los bordes**; si el interior es todo del veterinario sigue sin
+contestarlo ninguna fuente.
+
+---
+
 ## ABIERTO · Lo que no está cerrado, y por qué
 
 | | Qué falta |
@@ -331,7 +365,6 @@ filas a mano.
 | **La humedad** | No está en ninguna ficha. De ella depende toda conversión desde porcentaje de materia seca. `PARA_EL_NUTRICIONISTA.md` §10.0 |
 | **Los siete márgenes interpretados** | Donde la fuente da un solo número y el otro extremo lo pusimos nosotros. `PREGUNTAS_ABIERTAS.md` P-02 |
 | **Qué ve el dueño** | `visible_para` es lo único de la ficha que no se deriva, porque es criterio de producto. Hoy está puesto con un reparto por defecto que hay que revisar |
-| **El techo del Reglamento europeo en el rango** | La ficha deriva el rango de FEDIAF. Donde el Reglamento (UE) 2020/354 pone un techo adicional —renal 1420, cardíaco 739— está escrito en el `por_que` pero no entra en `rango_permitido` |
 | **El BCS ideal: ¿punto 5 o rango 4-5?** | Tensión DENTRO de FEDIAF: la §7.1.1 no distingue dirección y la §7.1.3 dice «the ideal BCS should therefore be between 4/9 and 5/9». Hoy un perro en BCS 4 recibe un **8,2 % más de kcal**. Medido por BCS en `PENDIENTE_DECISIONES.md` §4 |
 | **La forma química de las vitaminas y los minerales** | Las tablas de conversión están en el repo (`fediaf_conversiones_vitaminas.json` y `sacn5_fuentes_de_minerales.json`) y **ninguna ficha declara en qué forma viene cada nutriente**. Con el peor factor, el ácido pantoténico caería bajo el mínimo de FEDIAF. `DATOS_QUE_FALTAN.md` |
 | **El frío** | SACN5 Tabla 5-3 da las cifras (+95 % en pelo corto), y la ficha no pregunta dónde duerme el perro. Falta la pregunta, no el número |

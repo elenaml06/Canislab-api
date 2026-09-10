@@ -1241,8 +1241,8 @@ moverse sin que salte.
 | Soporte nutricional oncológico (incluye caquexia/sarcopenia asociada) | arginina | ≥ | **5.0 g** | 1.51 | sin máximo | SACN5 cap.30 «Cancer», Tabla 30-5 |
 | Soporte nutricional oncológico (incluye caquexia/sarcopenia asociada) | grasa | ≥ | **62.5 g** | 13.75 | sin máximo | SACN5 cap.30 «Cancer», Tabla 30-5 |
 | Soporte nutricional oncológico (incluye caquexia/sarcopenia asociada) | proteina | ≥ | **75.0 g** | 52.1 | sin máximo | SACN5 cap.30 «Cancer», Tabla 30-5 |
-| Cardiopatía | sodio | ≤ | **739.0 mg** | 290 | 3750 | Cavanaugh SM (DACVIM cardiologia), «Understanding nutrition in dogs with degenerative mitral valve disease», Veterinary Practice News, 6-jul-2020 — las CIFRAS por estadio salen de aqui. El consenso ACVIM 2019 (Keene BW et al., JVIM 2019;33:1127-1140) es el marco clinico, pero NO da cifras. Techo legal: Reglamento (UE) 2020/354, entrada 24 |
-| Cardiopatía, estadio ACVIM B2 (remodelado, sin síntomas) | sodio | ≤ | **739.0 mg** | 290 | 3750 | Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio |
+| Cardiopatía | sodio | ≤ | **738.6 mg** | 290 | 3750 | Cavanaugh SM (DACVIM cardiologia), «Understanding nutrition in dogs with degenerative mitral valve disease», Veterinary Practice News, 6-jul-2020 — las CIFRAS por estadio salen de aqui. El consenso ACVIM 2019 (Keene BW et al., JVIM 2019;33:1127-1140) es el marco clinico, pero NO da cifras. Techo legal: Reglamento (UE) 2020/354, entrada 24 |
+| Cardiopatía, estadio ACVIM B2 (remodelado, sin síntomas) | sodio | ≤ | **738.6 mg** | 290 | 3750 | Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio |
 | Cardiopatía, estadio ACVIM C (insuficiencia cardíaca, actual o pasada) | sodio | ≤ | **625.0 mg** | 290 | 3750 | Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio |
 | Cardiopatía, estadio ACVIM D (insuficiencia cardíaca refractaria) | sodio | ≤ | **480.0 mg** | 290 | 3750 | Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140; rango numérico de Veterinary Practice News, escala moderna por estadio |
 | Urolitos de cistina | sodio | ≤ | **750.0 mg** | 290 | 3750 | SACN5 cap.42 «Canine cystine urolith dissolution and prevention», Tabla 42-1 |
@@ -1420,12 +1420,22 @@ pone cifra, solo una propiedad cualitativa.
 | 21 | Diarrea aguda | (pienso complementario) | — | **no existe** | ❌ fuera de alcance hoy |
 | 22 | Hiperlipidemia · grasa | ≤ 110 g/kg **(base 3500)** | **35,7 g** | 30 | ✅ más estricto |
 | 23 | **Hepática · proteína cruda** | ≤ 279 g/kg | **79,3 g** | no existe | ❌ **falta** |
-| 24 | **Cardíaca · sodio** | **≤ 2,6 g/kg** | **739 mg** | 900 · 900 · 790 · 480 | ❌ **tres por encima** |
+| 24 | **Cardíaca · sodio** | **≤ 2,6 g/kg** | **738,6 mg** | 738,6 · 738,6 · 625 · 480 | ✅ arreglado 8 y 10 sep |
 | 25 | Adelgazamiento · densidad energética | < 3060 kcal/kg | (densidad) | grasa ≤ 30 g | ⚠️ palanca distinta |
 | 26 | **Dermatosis · LA y EPA+DHA (suelos)** | LA ≥ 12,3 + EPA+DHA ≥ 2,9 g/kg · o · LA ≥ 18,5 + EPA+DHA ≥ 0,39 | **3,49 + 0,82 g** · o · **5,26 + 0,111 g** | zinc ≥ 25 mg | ❌ **falta** |
 | 27 | **Artrosis · omega-3 totales y EPA** | ω-3 ≥ 29 g/kg **y** EPA ≥ 3,3 g/kg | **8,24 g** y **0,94 g** | EPA+DHA ≥ 1,0 g | ⚠️ el EPA encaja; **el ω-3 total, no** |
 | 28 | Cobre en hígado | ≤ 8,8 mg/kg | 2,50 mg | 2,40 | ✅ más estricto |
 | 30 | Estrés · caseína hidrolizada | 1-3 g/kg | (aditivo) | **no existe** | ❌ fuera de alcance hoy |
+
+⚠️ **Y una corrección del 10 de septiembre sobre esta misma tabla.** El sodio
+cardíaco se bajó el 8 de septiembre a **739**, que es el techo legal **redondeado
+hacia arriba**: la cuenta exacta es 2,6 ÷ 0,88 × 1000 ÷ 4 = **738,64**. Medio
+miligramo, clínicamente nada, y aun así por encima de la ley. Un techo legal no
+se redondea hacia arriba: o se cumple o no se cumple. Ahora se aplica **738,6**.
+Se escapó dos días porque el auditor de conversiones tolera un 1 % de redondeo
+**en las dos direcciones** —que está bien para una recomendación y no para un
+techo legal— y lo cazó el BLOQUE 80 el día que se escribió, comprobando que cada
+cifra cae dentro de su propia ventana.
 
 **Cobertura: 17 de los 20 objetivos caninos** tienen una patología equivalente en
 el motor. Los tres que faltan son **convalecencia (15)**, **diarrea aguda (21)** y
@@ -1484,6 +1494,30 @@ la norma pone como rango es **el tiempo**, no la cifra. El único porcentaje del
 texto, el ±15 % de la parte A punto 2, es **tolerancia analítica de fabricación**,
 no margen clínico. Así que la pregunta de hasta dónde se puede mover cada número
 sigue siendo tuya, y sigue siendo la PREGUNTA 22.
+
+**⚠️ Y lo que sí cambió el 10 de septiembre, que es la mitad que sí se podía
+hacer.** Los bordes dejaron de vivir en prosa. Cada una de las **79 cifras** de
+patología del motor lleva ahora su ventana escrita — suelo, techo, y **de dónde
+sale cada extremo** — y esa ventana la rehace la batería contra las tres fuentes
+vivas: FEDIAF, este reglamento y los topes de seguridad crónica. `GET /patologias`
+la sirve y la pantalla del veterinario la pinta, diciendo las dos cosas
+**distintas** que son los dos extremos:
+
+- **Bajar del suelo se puede**, y es exactamente la frontera de la firma: por
+  debajo del mínimo de FEDIAF eso deja de ser una dieta completa y pasa a ser una
+  prescripción. De las 79, **60** tienen ese suelo.
+- **Pasar de un techo legal no lo puede hacer nadie**, ni tú ni el motor. **32**
+  de las 79 tienen techo por arriba.
+
+El día que se escribió esa comprobación cazó dos cosas de este mismo documento:
+que **el sodio cardíaco aplicaba 739 y su techo legal es 738,64** —redondeado
+hacia arriba, que es la única dirección en la que redondear no vale—, y que la
+ficha de permisos calculaba el rango **solo con FEDIAF**, así que en el renal te
+ofrecía subir el fósforo hasta **4000**: casi el triple del techo legal de 1420.
+
+Lo que sigue siendo tuyo, y ahora se puede formular en una sola frase: **dentro
+de esa ventana, ¿se mueve libremente, o hay cifras que no deberían tocarse aunque
+quepan?**
 
 **De los seis puntos que tenía esta pregunta, cuatro ya están cerrados por el
 propio motor y no hace falta contestarlos:** el sodio cardíaco se bajó a **739**,

@@ -5233,6 +5233,18 @@ def listar_patologias():
                 # queda enfrente. Negativo = por debajo del minimo, o sea una
                 # dieta de prescripcion: eso solo lo firma un profesional.
                 "margen_pct": margen,
+                # ⚠️ AÑADIDO (10 septiembre) — HASTA DONDE PUEDE MOVERLA EL
+                # PROFESIONAL, Y HASTA DONDE NO. `margen_pct` de arriba dice
+                # cuanta holgura hay contra UN limite de FEDIAF; esto dice la
+                # ventana entera con su procedencia: el suelo (bajo el cual hace
+                # falta firma), el techo (que puede ser LEGAL, y entonces no se
+                # sale nadie) y de donde sale cada uno. Vive en el fichero y no
+                # se calcula aqui a proposito: si la app o esta funcion lo
+                # recalcularan por su cuenta, seria la tercera copia de la misma
+                # tabla -- que es exactamente como se desincronizo la del
+                # POST /menu. Lo rehace `auditar_margen_profesional.py` contra
+                # la fuente viva, en el BLOQUE 80.
+                "margen_profesional": t.get("margen_profesional"),
                 "fuente": t.get("fuente"),
                 "por_que": t.get("por_que"),
             })
@@ -5268,6 +5280,7 @@ def listar_patologias():
                 "minimo_fediaf_adulto": _f_min,
                 "maximo_fediaf_adulto": _f_max,
                 "margen_pct": _margen,
+                "margen_profesional": r.get("margen_profesional"),
                 "aplicado_por_el_solver": bool(r.get("aplicado_por_el_solver")),
                 "fuente": r.get("fuente"),
                 "por_que": r.get("por_que"),
@@ -5294,6 +5307,17 @@ def listar_patologias():
             "nota": p.get("nota"),
             "topes": _limites(p.get("topes_por_1000kcal"), es_tope=True),
             "suelos": _limites(p.get("suelos_por_1000kcal"), es_tope=False),
+            # ⚠️ AÑADIDO (10 septiembre) — LOS TOPES QUE SOLO APLICAN CON OTRA
+            # PATOLOGIA MARCADA. Existen desde el 8 de septiembre (la grasa de
+            # la pancreatitis baja de 37,5 a 25 si ademas hay obesidad o
+            # hipertrigliceridemia) y este endpoint no los servia, asi que quien
+            # leia la ficha veia 37,5 y no sabia que hay un segundo escalon. Es
+            # el mismo hueco de los `avisos_extra`: escrito, aplicado, y sin
+            # llegar a ninguna pantalla.
+            "topes_si_ademas": [
+                dict(t, requiere=list((p.get("topes_por_1000kcal_si_ademas") or {})
+                                      .get(t["nutriente"], {}).get("requiere") or []))
+                for t in _limites(p.get("topes_por_1000kcal_si_ademas"), es_tope=True)],
             # ⚠️ AÑADIDO (10 septiembre) — LOS RATIOS QUE PIDE LA PATOLOGIA.
             # Se sirven con el limite de FEDIAF del MISMO ratio al lado, que es
             # el sentido entero de este endpoint: el oxalato pide Ca:P >= 1,1 y

@@ -72,6 +72,15 @@ Medido con la app real hablando con la API real. De los que puede devolver
 | `formulado_como_profesional` | Si el menú salió por la puerta del veterinario | — |
 | `peldano_lo_eligio_el_profesional` | Si el peldaño lo eligió él o lo bajó el motor | Un profesional que firma necesita poder afirmar cuál de las dos |
 
+**Y dos de `GET /patologias` que ya se arreglaron el 10 de septiembre**, porque
+eran el mismo hueco un piso más arriba: la ficha del veterinario los recibía y
+no los pintaba.
+
+| Campo | Qué llevaba dentro | ✅ |
+|---|---|---|
+| `margen_profesional` | La ventana de cada cifra: suelo, techo y **de dónde sale cada extremo**. Sin él, «fósforo ≤ 1200» no dice si se puede tocar ni hasta dónde | Se pinta, con las dos frases que no dicen lo mismo: bajar del suelo se puede y se firma, pasar del techo legal no lo puede hacer nadie |
+| `topes_si_ademas` | El segundo escalón: la grasa de la pancreatitis baja de 37,5 a 25 si además hay obesidad o hipertrigliceridemia | Se pinta, diciendo con qué se activa. Antes se veía 37,5 y parecía el único número |
+
 ---
 
 ## 3 · Las preguntas que faltan en la ficha
@@ -106,6 +115,45 @@ Las que quedan sin forma de preguntarse:
 4. **`raza_predispuesta_cobre`**: no aplica ninguna cifra, solo avisos. ¿Se
    ofrece igual? El aviso ES la información — y se creó el 7 de septiembre justo
    para separar «raza predispuesta» de «hepatopatía diagnosticada».
+
+---
+
+## 4-bis · Quién puede marcar cada patología, derivado de su fuente
+
+**No es una decisión de producto y por eso no está en la lista de arriba.**
+Elena lo dijo el 10 de septiembre: «si hay algo que necesita análisis o que
+necesita lo que sea, no lo puede formular a alguien que no sea un veterinario,
+y las preguntas que hay que hacer son las que sean necesarias para estipular
+los valores correctos». Las dos cosas se **deducen** de la fuente de cada
+patología, así que se derivaron una a una, con la cita literal que lo
+condiciona, en `quien_formula_cada_patologia.json`.
+
+La regla es una sola: **si la fuente condiciona su cifra a un estadio, a una
+fase o a un valor de analítica, entonces hace falta preguntarlo — y quien
+contesta esa pregunta es quien tiene el informe.** De ahí salen las dos cosas a
+la vez, y de ahí sale el reparto:
+
+| Quién | Cuántas | Qué significa |
+|---|---|---|
+| `solo_veterinario` | 24 | Para elegir la cifra correcta hace falta un dato que solo está en un informe clínico |
+| `dueno_con_diagnostico` | 18 | Hace falta que un veterinario la haya diagnosticado, pero la cifra es una sola |
+| `dueno` | 5 | La puede marcar quien vive con el perro |
+
+**Y lo que la app hace hoy:** de las 24 `solo_veterinario`, **once** se le
+ofrecen al dueño con menú automático sin que nadie le pregunte el dato del que
+depende la cifra — `renal`, `renal_proteinuria`, `pancreatitis`, `oxalato`,
+`estruvita`, `cardiopatia`, `dcm_taurina_respondedora`, `diabetes`,
+`hiperlipidemia`, `reaccion_adversa_alimento` y `epilepsia_idiopatica`. El caso
+más claro es la pancreatitis: su fuente baja la grasa de 37,5 a 25 si hay
+hipertrigliceridemia, la app no pregunta los triglicéridos, y el perro que
+necesita 25 recibe 37,5 **en verde** — porque el semáforo mide contra FEDIAF,
+que es el perro sano.
+
+Las once están declaradas con su pregunta en
+`SIN_LA_PREGUNTA_QUE_DECIDE_LA_CIFRA`, dentro de
+`tests/patologias-app-y-motor.spec.js`. **Esa lista solo puede encoger**: se
+quita una entrada el día que la app pregunte de verdad su dato, y hay una
+segunda prueba que falla si una excepción caduca.
 
 ---
 

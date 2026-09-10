@@ -1,0 +1,752 @@
+{
+  "_meta": {
+    "que_es": "Para cada patologia: si la cifra que aplica el motor depende de un dato clinico, cual es, quien puede marcarla y que pregunta falta en la ficha.",
+    "por_que_existe": "Elena, 10-sep-2026: «lo de que preguntamos para cada patologia quien puede formular todo eso tampoco es cosa mia. todo eso hay que deducirlo de las fuentes que tenemos, es decir, si hay algo que necesita analisis o que necesita lo que sea, no lo puede formular a alguien que no sea un veterinario y las preguntas que hay que hacer, pues obviamente son las que sean necesarias para estipular los valores correctos». Tiene razon y por eso esto no es una lista de opiniones: cada fila se deriva de la cita literal de la fuente de esa patologia, que ya vive en `patologias.json`.",
+    "la_regla": "Si la fuente condiciona su cifra a un estadio, una fase o un valor de analitica, entonces (1) hace falta preguntarlo para elegir la cifra correcta y (2) quien contesta esa pregunta es quien tiene el diagnostico. Las dos cosas salen del mismo sitio: de la fuente.",
+    "campos": {
+      "derivado": "«pendiente» o la fecha en que se derivo leyendo su fuente.",
+      "necesita_dato_clinico": "true/false, DERIVADO de la cita, no opinado.",
+      "que_dato": "El dato concreto: «estadio ACVIM», «creatinina serica», «pH urinario»...",
+      "cita_que_lo_condiciona": "La frase literal de la fuente que lo condiciona.",
+      "quien_puede_marcarla": "Tres valores, y los tres se DEDUCEN de si la fuente condiciona su cifra: «dueno» = la puede marcar quien vive con el perro y la cifra no depende de nada mas; «dueno_con_diagnostico» = hace falta que un veterinario la haya diagnosticado, pero una vez diagnosticada la cifra es una sola y no depende de ningun valor mas; «solo_veterinario» = para elegir la cifra correcta hace falta un dato que solo esta en un informe clinico (un estadio, una analitica), asi que marcarla sin ese dato es elegir mal.",
+      "pregunta_que_falta": "Que habria que preguntar en la ficha, o null si no falta nada.",
+      "pistas_automaticas": "Palabras del texto de su ficha que sugieren un dato clinico. Son PISTAS para no saltarse ninguna, no el veredicto.",
+      "menciona_dato_clinico_pero_no_condiciona": "Solo cuando la ficha de la patologia NOMBRA una analitica o un estadio y aun asi `necesita_dato_clinico` es false. Hay que escribir la frase y por que no condiciona ninguna cifra. Sin este campo el BLOQUE 79 falla, a proposito: la alternativa seria relajar el patron que busca los marcadores, y un patron relajado deja de cazar lo de verdad."
+    },
+    "como_se_comprueba": "El BLOQUE 79 exige que las 47 esten aqui y que el numero de «pendiente» sea exacto, para que baje solo cuando alguien deriva una y lo baje en el mismo commit."
+  },
+  "patologias": {
+    "addison": {
+      "nombre": "Hipoadrenocorticismo (Addison)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: Igual: diagnostico endocrino, y el motor solo avisa."
+    },
+    "artrosis": {
+      "nombre": "Artrosis / osteoartritis",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: La diagnostica un veterinario (radiologia o exploracion), y una vez marcada los suelos de omega-3 y vitamina E son fijos."
+    },
+    "cancer_soporte": {
+      "nombre": "Soporte nutricional oncológico (incluye caquexia/sarcopenia asociada)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: El diagnostico es oncologico. Los suelos de grasa, proteina y arginina de la Tabla 30-5 no dependen de ningun valor."
+    },
+    "cardiopatia": {
+      "nombre": "Cardiopatía",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "estadio ACVIM",
+      "cita_que_lo_condiciona": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140. La guia da UNA cifra de sodio POR ESTADIO, y en los dos primeros dice literalmente «no drug or dietary treatment is recommended».",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": "¿En que estadio ACVIM esta? (A: raza predispuesta sin soplo · B1: soplo sin agrandamiento · B2: agrandamiento sin sintomas · C: insuficiencia cardiaca actual o pasada · D: refractaria). El estadio B2 se separa del B1 por ECOCARDIOGRAFIA o radiografia, asi que no lo puede saber quien no tiene el informe.",
+      "pistas_automaticas": [
+        "acvim",
+        "estadio"
+      ],
+      "nota": "DERIVADO: la fuente da una cifra distinta por estadio (739 / 625 / 480, y NINGUNA restriccion en A y B1), y separar B1 de B2 exige ecocardiografia o radiografia. Asi que la casilla generica que hay hoy en la app aplica el numero del B2 a todos: al de estadio C le queda flojo (deberia ser 625) y al de estadio A le pone un tope que su fuente NO pide. No es criterio nuestro: es que sin el estadio no se puede elegir la cifra."
+    },
+    "cardiopatia_a": {
+      "nombre": "Cardiopatía, estadio ACVIM A (predispuesto, sin enfermedad todavía)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "estadio ACVIM",
+      "cita_que_lo_condiciona": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140. La guia da UNA cifra de sodio POR ESTADIO, y en los dos primeros dice literalmente «no drug or dietary treatment is recommended».",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [
+        "acvim",
+        "estadio"
+      ],
+      "nota": "DERIVADO: ES la respuesta a la pregunta del estadio. No falta pregunta porque la patologia YA es el estadio; lo que falta es que la app la ofrezca (hoy no esta en `PATOLOGIAS` de App.jsx: ver FRONTEND_VS_MOTOR.md)."
+    },
+    "cardiopatia_b1": {
+      "nombre": "Cardiopatía, estadio ACVIM B1 (soplo, sin remodelado cardíaco)",
+      "formulable": true,
+      "formulable_por_profesional": false,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "estadio ACVIM",
+      "cita_que_lo_condiciona": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140. La guia da UNA cifra de sodio POR ESTADIO, y en los dos primeros dice literalmente «no drug or dietary treatment is recommended».",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [
+        "acvim",
+        "estadio"
+      ],
+      "nota": "DERIVADO: ES la respuesta a la pregunta del estadio. No falta pregunta porque la patologia YA es el estadio; lo que falta es que la app la ofrezca (hoy no esta en `PATOLOGIAS` de App.jsx: ver FRONTEND_VS_MOTOR.md)."
+    },
+    "cardiopatia_b2": {
+      "nombre": "Cardiopatía, estadio ACVIM B2 (remodelado, sin síntomas)",
+      "formulable": true,
+      "formulable_por_profesional": false,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "estadio ACVIM",
+      "cita_que_lo_condiciona": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140. La guia da UNA cifra de sodio POR ESTADIO, y en los dos primeros dice literalmente «no drug or dietary treatment is recommended».",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [
+        "acvim",
+        "estadio"
+      ],
+      "nota": "DERIVADO: ES la respuesta a la pregunta del estadio. No falta pregunta porque la patologia YA es el estadio; lo que falta es que la app la ofrezca (hoy no esta en `PATOLOGIAS` de App.jsx: ver FRONTEND_VS_MOTOR.md)."
+    },
+    "cardiopatia_c": {
+      "nombre": "Cardiopatía, estadio ACVIM C (insuficiencia cardíaca, actual o pasada)",
+      "formulable": true,
+      "formulable_por_profesional": false,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "estadio ACVIM",
+      "cita_que_lo_condiciona": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140. La guia da UNA cifra de sodio POR ESTADIO, y en los dos primeros dice literalmente «no drug or dietary treatment is recommended».",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [
+        "acvim",
+        "estadio"
+      ],
+      "nota": "DERIVADO: ES la respuesta a la pregunta del estadio. No falta pregunta porque la patologia YA es el estadio; lo que falta es que la app la ofrezca (hoy no esta en `PATOLOGIAS` de App.jsx: ver FRONTEND_VS_MOTOR.md)."
+    },
+    "cardiopatia_d": {
+      "nombre": "Cardiopatía, estadio ACVIM D (insuficiencia cardíaca refractaria)",
+      "formulable": true,
+      "formulable_por_profesional": false,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "estadio ACVIM",
+      "cita_que_lo_condiciona": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140. La guia da UNA cifra de sodio POR ESTADIO, y en los dos primeros dice literalmente «no drug or dietary treatment is recommended».",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [
+        "acvim",
+        "estadio",
+        "fase"
+      ],
+      "nota": "DERIVADO: ES la respuesta a la pregunta del estadio. No falta pregunta porque la patologia YA es el estadio; lo que falta es que la app la ofrezca (hoy no esta en `PATOLOGIAS` de App.jsx: ver FRONTEND_VS_MOTOR.md)."
+    },
+    "cistina": {
+      "nombre": "Urolitos de cistina",
+      "formulable": false,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "pH urinario",
+      "cita_que_lo_condiciona": "Marcada `formulable: false` y `necesita_bajo_fediaf`: su objetivo terapeutico esta por debajo del minimo de FEDIAF (metionina+cistina).",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [
+        "analític",
+        "ph urinario"
+      ],
+      "nota": "DERIVADO: el propio motor ya la bloquea, que es la consecuencia correcta de que tratarla exija bajar de FEDIAF. Lo que hace falta es la firma de un profesional, no una pregunta."
+    },
+    "cushing": {
+      "nombre": "Hiperadrenocorticismo (Cushing)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: Se diagnostica con pruebas de estimulacion. El motor no cambia ninguna cifra por ella: solo avisa."
+    },
+    "dcm_asociada_a_dieta": {
+      "nombre": "Miocardiopatía dilatada asociada a dieta (\"grain-free/BEG\")",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: El diagnostico es ecocardiografico y el propio nombre dice de que viene (dieta «grain-free/BEG»). El motor no aplica cifras: lo que aporta es el aviso de cambiar la dieta y revaluar."
+    },
+    "dcm_taurina_respondedora": {
+      "nombre": "Miocardiopatía dilatada respondedora a taurina",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "taurina en plasma y en sangre entera",
+      "cita_que_lo_condiciona": "Su aviso `analitica_de_taurina`: «in dogs, adequate levels of taurine are values greater than 40 µmol/L in plasma and greater than 200 µmol/L in whole blood» (SACN5 cap.36).",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [
+        "analitic",
+        "analític",
+        "en sangre"
+      ],
+      "nota": "DERIVADO: la patologia ES «respondedora a taurina», o sea que se define por una analitica. Una vez marcada, los suelos (taurina 250, L-carnitina 50) son fijos: no falta pregunta."
+    },
+    "dermatitis_atopica": {
+      "nombre": "Dermatitis atópica",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: Diagnostico dermatologico; el suelo de omega-3 es fijo."
+    },
+    "dermatosis_zinc": {
+      "nombre": "Dermatosis zinc-sensible (razas nórdicas, defecto de absorción)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: Es de RAZA (nordicas), como `raza_predispuesta_cobre`: lo sabe quien vive con el perro. El suelo de zinc es fijo."
+    },
+    "diabetes": {
+      "nombre": "Diabetes mellitus",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "si ademas hay pancreatitis o hipertrigliceridemia",
+      "cita_que_lo_condiciona": "Su tope de grasa por porcentaje de kcal solo se aplica «si ademas» hay pancreatitis o hipertrigliceridemia (`max_pct_kcal_grasa_si_ademas` en patologias.json).",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": "Ninguna nueva: se resuelve marcando tambien la otra patologia. Lo que falta es que la pantalla DIGA que marcarla cambia el tope de grasa.",
+      "pistas_automaticas": [
+        "triglic"
+      ],
+      "nota": "DERIVADO: la diabetes se diagnostica con una analitica, y ademas su tope de grasa depende de otra condicion que tambien es analitica. El mecanismo ya existe en el motor; lo que no existe es el aviso en la pantalla."
+    },
+    "disfuncion_cognitiva": {
+      "nombre": "Disfunción cognitiva canina",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: Diagnostico clinico por signos. Los suelos que aplica son fijos."
+    },
+    "encefalopatia_hepatica": {
+      "nombre": "Encefalopatía hepática (con signos neurológicos activos)",
+      "formulable": false,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "biopsia hepatica o diagnostico por imagen, segun el caso",
+      "cita_que_lo_condiciona": "Las tres estan marcadas `necesita_bajo_fediaf`: su objetivo terapeutico (cobre 1,2 mg/1000 kcal en la hepatopatia por acumulo; proteina 25-37,5 en la encefalopatia; 37,5-50 en el shunt) esta POR DEBAJO del minimo de FEDIAF.",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: no es que falte una pregunta, es que la dieta que trata esta por debajo de la que alimenta. El motor lo bloquea y ofrece la racion del perro sano diciendo que NO es la dieta de la enfermedad, que es lo correcto."
+    },
+    "enteropatia_cronica": {
+      "nombre": "Enteropatía crónica / colitis (incluye enfermedad inflamatoria intestinal)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Su aviso general: SACN5 cap.57 Tabla 57-1 pide proteina >=25 % MS -- «una racion BARF sin ajustar ya va muy por encima» -- y, si se necesita eliminacion, una sola fuente de proteina. Ninguna cifra depende de un valor.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [
+        "analític"
+      ],
+      "nota": "DERIVADO: el diagnostico es del veterinario (biopsia o respuesta a la dieta), pero elegida la patologia el motor aplica una sola cifra. Lo de la fuente unica de proteina se resuelve en la pantalla de Personalizar, que ya existe.",
+      "menciona_dato_clinico_pero_no_condiciona": "Su ficha nombra una analitica, pero es la de la B12: «Eso lo pide y lo ajusta tu veterinario con una analitica; este menu no lo sustituye». Es una inyeccion que va aparte del menu, no un valor del que dependa ninguna cifra que aplique el motor."
+    },
+    "epilepsia_idiopatica": {
+      "nombre": "Epilepsia idiopática",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "que farmaco antiepileptico toma (bromuro potasico), y los trigliceridos si hay sospecha",
+      "cita_que_lo_condiciona": "Su aviso `bromuro_y_cloro`: con bromuro potasico, cambiar el cloruro de la dieta cambia la bromemia, y hay que medirla despues del cambio. Y su aviso `hipertrigliceridemia`: el cap.28 la nombra dos veces.",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": "¿Toma bromuro potasico? No cambia ninguna cifra del menu, pero cambiar la dieta le cambia el nivel del farmaco en sangre y hay que remedirlo. Es informacion que hoy solo esta en un aviso que hay que leer.",
+      "pistas_automaticas": [
+        "bromo",
+        "colesterol",
+        "sérico",
+        "triglic"
+      ],
+      "nota": "DERIVADO: el motor no cambia el menu por la epilepsia -- no hay «Key nutritional factors» en la fuente -- pero SI hay una interaccion con un farmaco que exige una analitica de seguimiento. Eso no es un tope: es una pregunta."
+    },
+    "estrenimiento_cronico": {
+      "nombre": "Estreñimiento crónico",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: Lo ve la dueña, pero conviene descartar causa; el suelo de fibra es fijo."
+    },
+    "estruvita": {
+      "nombre": "Cálculos de estruvita",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "pH urinario",
+      "cita_que_lo_condiciona": "Su aviso profesional: «Lo que decide en estruvita es el pH urinario y el manejo de la infeccion, y eso la app no lo ve ni lo ajusta» (SACN5 cap.43).",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": "¿De que tipo es el calculo? Hoy la app tiene UNA casilla que manda `estruvita` aunque el perro tenga urato o cistina, y esas dos ni siquiera son formulables. Y ademas: ¿es para PREVENIR que vuelvan o para DISOLVER uno que ya esta? La fuente separa las dos cosas y el motor solo hace la primera.",
+      "pistas_automaticas": [
+        "analitic",
+        "ph urinario"
+      ],
+      "nota": "DERIVADO: la fuente condiciona el tratamiento al pH, que la app no ve. Ademas la casilla esta CONFLACIONADA con urato y cistina (ver FRONTEND_VS_MOTOR.md §3): un veterinario que formule para «urato» esta mandando `estruvita` sin saberlo."
+    },
+    "flatulencia": {
+      "nombre": "Flatulencia excesiva (gases)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: Lo ve la dueña; los topes son fijos."
+    },
+    "fracaso_renal_agudo": {
+      "nombre": "Fracaso renal agudo (distinto de la insuficiencia crónica)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Su aviso general: «Esto es agudo, no cronico: NO se aplica la restriccion de fosforo de la insuficiencia renal cronica». La fuente distingue las dos por el diagnostico, no por una cifra.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [
+        "fase"
+      ],
+      "nota": "DERIVADO: la distincion agudo/cronico ES el diagnostico, y una vez hecha no hay ninguna cifra que dependa de otro valor. No falta pregunta."
+    },
+    "hepatopatia": {
+      "nombre": "Hepatopatía por acúmulo de cobre",
+      "formulable": false,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "biopsia hepatica o diagnostico por imagen, segun el caso",
+      "cita_que_lo_condiciona": "Las tres estan marcadas `necesita_bajo_fediaf`: su objetivo terapeutico (cobre 1,2 mg/1000 kcal en la hepatopatia por acumulo; proteina 25-37,5 en la encefalopatia; 37,5-50 en el shunt) esta POR DEBAJO del minimo de FEDIAF.",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: no es que falte una pregunta, es que la dieta que trata esta por debajo de la que alimenta. El motor lo bloquea y ofrece la racion del perro sano diciendo que NO es la dieta de la enfermedad, que es lo correcto."
+    },
+    "hiperlipidemia": {
+      "nombre": "Hiperlipidemia (triglicéridos o colesterol altos)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "trigliceridos o colesterol en sangre",
+      "cita_que_lo_condiciona": "Su propio nombre y su aviso: «Se ha bajado la grasa para ayudar a controlar los trigliceridos o el colesterol». La condicion se define por una analitica.",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [
+        "colesterol",
+        "triglic"
+      ],
+      "nota": "DERIVADO: la patologia ES una analitica; marcarla sin ella es adivinar. Una vez marcada, la cifra es una sola y no depende de nada mas, asi que no falta ninguna pregunta ADICIONAL."
+    },
+    "hipotiroidismo": {
+      "nombre": "Hipotiroidismo",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Su aviso general: lo unico que hace el motor es quitar el grelo y el nabo, las dos cruciferas mas ricas en compuestos bocigenos. No depende de ningun valor.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [
+        "analític"
+      ],
+      "nota": "DERIVADO: hace falta el diagnostico (es una analitica de T4), pero una vez hecho el ajuste es el mismo para todos. No falta pregunta.",
+      "menciona_dato_clinico_pero_no_condiciona": "Su ficha nombra una analitica, pero al reves: «evita darle cuello de rumiante grande de forma repetida: puede llevar restos de tejido tiroideo y alterar los valores de la analitica». Es un aviso para que la analitica NO salga falseada, no un valor del que dependa ninguna cifra."
+    },
+    "inmunosupresion": {
+      "nombre": "Inmunosupresión (quimioterapia, corticoides a dosis inmunosupresora, enfermedad inmunomediada)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: Lo sabe quien lleva el tratamiento; el motor no aplica cifras, avisa de la manipulacion del crudo."
+    },
+    "insuficiencia_pancreatica_exocrina": {
+      "nombre": "Insuficiencia pancreática exocrina (EPI)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: Se diagnostica con TLI serica, pero una vez diagnosticada los topes de grasa y fibra son fijos."
+    },
+    "intestino_irritable": {
+      "nombre": "Síndrome de intestino irritable",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: Diagnostico de exclusion; el suelo de fibra es fijo."
+    },
+    "mielopatia_degenerativa": {
+      "nombre": "Mielopatía degenerativa",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: Diagnostico neurologico; el motor no aplica cifras."
+    },
+    "obesidad": {
+      "nombre": "Obesidad / sobrepeso, adelgazamiento dirigido",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Su aviso `ritmo_de_perdida_de_peso`: «Pets on a designated weight-loss program can safely lose 1 to 4%, more typically 1 to 2%, of their body weight per week» (Laflamme, 1993). Es un numero que se mide en casa con una bascula.",
+      "quien_puede_marcarla": "dueno",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [
+        "fase"
+      ],
+      "nota": "DERIVADO: la app ya sabe lo que necesita -- el BCS y el peso objetivo, que se preguntan en la ficha -- y el ritmo de perdida lo mide la dueña con una bascula. No hace falta ningun dato de informe."
+    },
+    "otra": {
+      "nombre": "Otra condición no especificada",
+      "formulable": false,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "No es una patologia: es la casilla de «no esta en esta lista».",
+      "quien_puede_marcarla": "dueno",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: `formulable: false` y `sin_dieta_automatica`. Existe para que quien tenga una patologia que el motor no cubre no reciba un menu como si no la tuviera."
+    },
+    "oxalato": {
+      "nombre": "Cálculos de oxalato cálcico",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "pH urinario",
+      "cita_que_lo_condiciona": "Su propio aviso general: «Los calculos de oxalato dependen ademas del pH de la orina y de analiticas que esta app no puede ver: esto es un apoyo, no sustituye el seguimiento de tu veterinario».",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [
+        "acvim",
+        "analític",
+        "fase"
+      ],
+      "nota": "DERIVADO, y CORREGIDO el mismo dia: primero se derivo como `dueno_con_diagnostico` porque sus cinco cifras son fijas, y el BLOQUE 79 lo caz -- su ficha nombra el pH y las analiticas. Las cifras no dependen de un valor, pero el seguimiento si, igual que en estruvita y en fosfato calcico. Las tres van juntas."
+    },
+    "pancreatitis": {
+      "nombre": "Pancreatitis",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "trigliceridos en sangre (y el BCS, que ya se pregunta)",
+      "cita_que_lo_condiciona": "SACN5 Tabla 67-3 gradua la grasa en dos niveles: «<=15% for non-obese and non-hypertriglyceridemic dogs» y «<=10% for obese and/or hypertriglyceridemic dogs», o sea 37,5 y 25 g/1000 kcal.",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": "¿Tiene los trigliceridos altos? La obesidad ya la sabe la app por el BCS, pero la hipertrigliceridemia solo se sabe con una analitica -- y de ella depende que el tope sea 37,5 o 25.",
+      "pistas_automaticas": [
+        "triglic"
+      ],
+      "nota": "DERIVADO: el motor YA resuelve el segundo nivel si se marca ademas `obesidad` o `hiperlipidemia` (`topes_por_1000kcal_si_ademas`). Lo que falta no es motor: es que la pantalla diga que marcar la hiperlipidemia CAMBIA el tope de grasa, porque hoy quien no lo sepa deja el tope flojo sin enterarse."
+    },
+    "ple_linfangiectasia": {
+      "nombre": "Enteropatía pierde-proteínas / linfangiectasia intestinal",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: Diagnostico por biopsia o por proteinas bajas, y luego los tres topes son fijos."
+    },
+    "raza_predispuesta_cobre": {
+      "nombre": "Raza predispuesta a acumular cobre (sin diagnóstico confirmado de hepatopatía)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Se creo el 7 de septiembre precisamente para separarla de la hepatopatia DIAGNOSTICADA: aqui no hay diagnostico, solo raza. No aplica ninguna cifra, solo avisos.",
+      "quien_puede_marcarla": "dueno",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: la puede marcar quien sabe de que raza es su perro. Y hoy la app NO la ofrece, asi que el aviso -- que es toda la informacion que aporta -- no llega a nadie."
+    },
+    "reaccion_adversa_alimento": {
+      "nombre": "Reacción adversa al alimento (alergia o intolerancia alimentaria diagnosticada)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "si la reaccion es DERMATOLOGICA o DIGESTIVA, y en que fase esta (diagnostico o confirmada)",
+      "cita_que_lo_condiciona": "Dos frases de su propia fuente: el techo de proteina de la Tabla 31-3 vale «(dermatologic cases only)» -- y en el caso digestivo la misma pagina pide MAS proteina --, y su aviso `fase_de_diagnostico` avisa de que en la fase de eliminacion el omega-3 puede enmascarar el resultado.",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": "DOS preguntas, y las dos cambian lo que hace el motor: (1) ¿la reaccion es por la PIEL o por el INTESTINO? De eso depende si se aplica el techo de proteina o lo contrario. (2) ¿Estais en la fase de DIAGNOSTICO o ya confirmada? En diagnostico, subir el omega-3 puede tapar el resultado de la dieta de eliminacion.",
+      "pistas_automaticas": [
+        "fase"
+      ],
+      "nota": "DERIVADO, y es el caso mas claro de todos: la fuente dice literalmente «dermatologic cases only» y el motor no sabe cual de los dos es. Hoy el techo de proteina esta en `limites_escritos_que_el_solver_no_aplica` justamente por esto -- lo cual es correcto, pero lo correcto de verdad es preguntarlo."
+    },
+    "renal": {
+      "nombre": "Insuficiencia renal crónica",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "estadio IRIS, o la creatinina serica",
+      "cita_que_lo_condiciona": "SACN5 cap.37, citado en el aviso `cuando_empieza_esta_dieta` de esta patologia: «nutritional management should be considered by stage 2 CKD and is clearly indicated when serum creatinine exceeds 2 mg/dl (179 µmol/l)».",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": "¿En que estadio IRIS esta, o cual fue la ultima creatinina serica? Por debajo del estadio 2 la fuente NO respalda apretar el fosforo, y apretarlo tiene coste.",
+      "pistas_automaticas": [
+        "en sangre",
+        "iris",
+        "proteinuri"
+      ],
+      "nota": "DERIVADO: la fuente no solo da una cifra, dice DESDE CUANDO se aplica. Sin el estadio o la creatinina no se puede saber si esta dieta esta indicada, y quien estadifica es el veterinario (escala IRIS). El propio aviso ya lo dice; lo que falta es la pregunta."
+    },
+    "renal_avanzada": {
+      "nombre": "Insuficiencia renal crónica, moderada-grave (equivalente a IRIS 3-4)",
+      "formulable": false,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "estadio IRIS 3-4, o creatinina/SDMA",
+      "cita_que_lo_condiciona": "SACN5 cap.37, Tabla 37-10: la restriccion de fosforo tiene evidencia Grade III especificamente en IRIS 3-4. Y su objetivo de proteina (35-50 g/1000 kcal) esta por debajo del minimo de FEDIAF (52,1).",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [
+        "creatinina",
+        "estadio",
+        "iris"
+      ],
+      "nota": "DERIVADO: ya esta marcada `formulable: false` y `necesita_bajo_fediaf`, que es la consecuencia correcta. La pregunta del estadio es la misma que la de `renal`."
+    },
+    "renal_proteinuria": {
+      "nombre": "Proteinuria renal (UPC > 0,5)",
+      "formulable": true,
+      "formulable_por_profesional": false,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "cociente proteina:creatinina en orina (UPC)",
+      "cita_que_lo_condiciona": "ACVIM 2013 sobre proteinuria, citado en el aviso general: bajar la proteina «entre un 25 y un 50 % RESPECTO A LO QUE EL PERRO COMIA ANTES» cuando el UPC supera 0,5.",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [
+        "acvim",
+        "creatinina",
+        "proteinuri",
+        "upc"
+      ],
+      "nota": "DERIVADO: el UPC ya esta en el NOMBRE de la casilla («Proteinuria renal (UPC > 0,5)»), asi que la pregunta esta hecha. Lo que la fuente pide y el motor NO puede dar es la reduccion RELATIVA a la ingesta previa: Rawku no sabe lo que comia antes. Eso ya esta escrito en su aviso."
+    },
+    "riesgo_gdv": {
+      "nombre": "Riesgo de dilatación-vólvulo gástrico (razas grandes/profundas de tórax)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: Es de morfologia (torax profundo) y de manejo. Lo sabe la dueña, y el motor no aplica ninguna cifra."
+    },
+    "shunt_sin_encefalopatia": {
+      "nombre": "Shunt portosistémico sin encefalopatía hepática activa",
+      "formulable": false,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "biopsia hepatica o diagnostico por imagen, segun el caso",
+      "cita_que_lo_condiciona": "Las tres estan marcadas `necesita_bajo_fediaf`: su objetivo terapeutico (cobre 1,2 mg/1000 kcal en la hepatopatia por acumulo; proteina 25-37,5 en la encefalopatia; 37,5-50 en el shunt) esta POR DEBAJO del minimo de FEDIAF.",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: no es que falte una pregunta, es que la dieta que trata esta por debajo de la que alimenta. El motor lo bloquea y ofrece la racion del perro sano diciendo que NO es la dieta de la enfermedad, que es lo correcto."
+    },
+    "sibo": {
+      "nombre": "Sobrecrecimiento bacteriano en el intestino delgado (SIBO)",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": false,
+      "que_dato": null,
+      "cita_que_lo_condiciona": "Comprobado sobre su ficha entera de `patologias.json`: no nombra ningun estadio, fase ni analitica de la que dependa su cifra.",
+      "quien_puede_marcarla": "dueno_con_diagnostico",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: Diagnostico digestivo; el tope de grasa es fijo."
+    },
+    "urato": {
+      "nombre": "Urolitos de urato",
+      "formulable": false,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "analisis del calculo",
+      "cita_que_lo_condiciona": "Marcada `formulable: false` y `necesita_bajo_fediaf`: su objetivo terapeutico esta por debajo del minimo de FEDIAF (purinas).",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [],
+      "nota": "DERIVADO: el propio motor ya la bloquea, que es la consecuencia correcta de que tratarla exija bajar de FEDIAF. Lo que hace falta es la firma de un profesional, no una pregunta."
+    },
+    "urolitos_fosfato_calcico": {
+      "nombre": "Urolitos de fosfato cálcico",
+      "formulable": true,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": false,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "pH urinario",
+      "cita_que_lo_condiciona": "Su tabla (SACN5 41-6) da un pH urinario objetivo, y el aviso general lo dice: «Depende ademas del pH urinario, que esta app no puede ver».",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": "Ninguna adicional para elegir la cifra -- los cinco topes y el Ca:P son fijos --, pero la app NO OFRECE esta patologia todavia (ver FRONTEND_VS_MOTOR.md §1).",
+      "pistas_automaticas": [
+        "ph urinario"
+      ],
+      "nota": "DERIVADO: las cifras no dependen de ningun valor, pero el pH que decide si la dieta va en la direccion buena solo esta en un informe. Y hoy no hay casilla para marcarla."
+    },
+    "urolitos_silice": {
+      "nombre": "Urolitos de sílice",
+      "formulable": false,
+      "formulable_por_profesional": true,
+      "necesita_bajo_fediaf": true,
+      "derivado": "10-sep-2026",
+      "necesita_dato_clinico": true,
+      "que_dato": "pH urinario",
+      "cita_que_lo_condiciona": "Marcada `formulable: false` y `necesita_bajo_fediaf`: su objetivo terapeutico esta por debajo del minimo de FEDIAF (proteina).",
+      "quien_puede_marcarla": "solo_veterinario",
+      "pregunta_que_falta": null,
+      "pistas_automaticas": [
+        "ph urinario"
+      ],
+      "nota": "DERIVADO: el propio motor ya la bloquea, que es la consecuencia correcta de que tratarla exija bajar de FEDIAF. Lo que hace falta es la firma de un profesional, no una pregunta."
+    }
+  }
+}

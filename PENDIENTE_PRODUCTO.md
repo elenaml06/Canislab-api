@@ -648,3 +648,47 @@ palpación. Importa sobre todo en la ficha del veterinario: un perro puede estar
 **obeso y sarcopénico a la vez**, y eso es justo lo que hay que ver en el
 senior, en el oncológico y en la caquexia. Hoy la ficha tiene BCS y no tiene
 esto.
+
+## Las ocho preguntas que faltan para elegir bien el tope de una patología (10 de septiembre de 2026)
+
+Derivadas de la fuente de cada patología, no opinadas — el porqué y el reparto
+completo están en `HECHO.md` y en `quien_formula_cada_patologia.json`. Aquí solo
+queda el trabajo de construirlas en la app.
+
+**Las que cambian una cifra del menú:**
+
+- [ ] **Pancreatitis: ¿triglicéridos altos?** De eso depende que el tope de
+      grasa sea 37,5 o 25 (SACN5 Tabla 67-3). La obesidad ya la sabe la app por
+      el BCS; la hipertrigliceridemia solo se sabe con analítica. **Hoy el perro
+      que necesita 25 recibe 37,5 y sale en verde.**
+- [ ] **Renal: ¿estadio IRIS, o la última creatinina?** Por debajo del estadio 2
+      la fuente no respalda apretar el fósforo, y apretarlo tiene coste.
+- [ ] **Cardiopatía: ¿estadio ACVIM?** El motor tiene los cinco (sodio 739 /
+      625 / 480 y dos sin restricción) y la app manda la clave genérica, o sea
+      el tope del B2 para todos. Es la decisión 1 de `FRONTEND_VS_MOTOR.md`.
+- [ ] **Reacción adversa: ¿piel o intestino? ¿diagnóstico o confirmada?** Dos
+      preguntas y las dos cambian lo que hace el motor: el techo de proteína es
+      «dermatologic cases only» —en las digestivas la misma página pide **más**
+      proteína— y en fase de diagnóstico subir el omega-3 puede tapar el
+      resultado de la dieta de eliminación.
+- [ ] **Cálculos: ¿de qué tipo, y para prevenir o para disolver?** Hoy una sola
+      casilla manda `estruvita` aunque el perro tenga urato o cistina. Es la
+      decisión 3 de `FRONTEND_VS_MOTOR.md`.
+
+**Las que no cambian ninguna cifra pero sí lo que hay que hacer:**
+
+- [ ] **Diabetes: decirlo en la pantalla.** No hace falta pregunta nueva —se
+      resuelve marcando también la otra patología—, pero nadie dice que marcarla
+      cambia el tope de grasa.
+- [ ] **Epilepsia: ¿toma bromuro potásico?** Cambiar la dieta le cambia el nivel
+      del fármaco en sangre y hay que remedirlo. Hoy eso vive solo en un
+      `aviso_extra`, que además **no lo pinta nadie** (ver el punto de los ocho
+      avisos, más arriba).
+- [ ] **`urolitos_fosfato_calcico`**: no necesita pregunta —sus cinco topes y su
+      Ca:P son fijos—, necesita existir en alguna pantalla. Decisión 2 de
+      `FRONTEND_VS_MOTOR.md`.
+
+Mientras no se construyan, las once patologías afectadas están declaradas con su
+pregunta en `SIN_LA_PREGUNTA_QUE_DECIDE_LA_CIFRA`
+(`tests/patologias-app-y-motor.spec.js`, en `canislab-web`), y esa lista **solo
+puede encoger**.

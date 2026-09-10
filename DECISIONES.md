@@ -848,6 +848,21 @@ y ahora se sabe que **no hay fuente normativa que dé ese rango** (D-12). Los si
 márgenes «interpretados» de `PREGUNTAS_ABIERTAS.md` P-02 siguen sin respuesta, y
 P-03 se cierra parcialmente: **quién** puede, sí; **hasta dónde**, no.
 
+**⚠️ AL DÍA, 10 de septiembre.** Lo que faltaba no era saber dónde están los
+bordes: era que los bordes dejaran de vivir en prosa. Las **79 cifras** de
+`patologias.json` llevan ya su ventana (`margen_profesional`) con la
+**procedencia de cada extremo como una clave que se resuelve** contra la fuente
+viva, `GET /patologias` la sirve, la ficha del veterinario la pinta y el **BLOQUE
+80** rehace las 79. El día que se escribió cazó que el sodio cardíaco aplicaba
+**739** con su propia celda citando el techo **legal** en **738,6**: medio
+miligramo, clínicamente nada, y por encima de la ley — un techo legal no se
+redondea hacia arriba. Ahora se aplica 738,6.
+
+Lo que sigue abierto es exactamente lo de antes y solo eso: **dentro** de esa
+ventana, ¿mueve libremente, o hay cifras que no debería tocar aunque quepan? El
+motor sabe hoy dónde están los bordes; ninguna fuente dice si el interior es todo
+suyo.
+
 ---
 
 ## D-14 · Un barrido que no se cuenta contra el total no es un barrido
