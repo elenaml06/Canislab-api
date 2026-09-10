@@ -1656,8 +1656,10 @@ _CIFRAS_CON_FUENTE = [
      "SACN5 Tabla 37-9: «Omega-3 fatty acids -- 0.4 to 2.5 % in foods for dogs and cats», extremo bajo. Solo el suelo: el techo (6,25) chocaria con el presupuesto semanal de EPA+DHA"),
 
     # ── La Tabla 35-3 entera, 9 de septiembre: las tres filas que faltaban ──
-    ("disfuncion_cognitiva", "suelos_por_1000kcal", "lcarnitina", 25.0, ("mgkg_ms", 100),
-     "SACN5 Tabla 35-3: «L-carnitine -- Provide foods with >=100 mg/kg». FEDIAF no da fila de L-carnitina, asi que no hay techo con el que chocar. Medido: cinco perros, los cinco en el peldano estricto, con 130-332 mg reales"),
+    ("disfuncion_cognitiva", "suelos_por_1000kcal", "lcarnitina", 62.5, ("mgkg_ms", 250),
+     "SACN5 Tabla 35-3, fila «L-carnitine -- Provide foods with 250 to 750 IU/kg», extremo bajo. ⚠️ CORREGIDO 10-sep: antes ponia 25,0 desde «>=100 mg/kg», que es la fila del ACIDO ALFA-LIPOICO, la de justo debajo. La unidad impresa es IU/kg y se lee como mg/kg -- la carnitina no tiene UI, y la Tabla 35-4 compara ese rango con los 299 mg/kg de un alimento real. FEDIAF no da fila de L-carnitina, asi que no hay techo con el que chocar"),
+    ("disfuncion_cognitiva", "limites_escritos_que_el_solver_no_aplica", "acido_alfa_lipoico", 25.0, ("mgkg_ms", 100),
+     "SACN5 Tabla 35-3, fila «α-lipoic acid -- Provide foods with >=100 mg/kg». NO SE APLICA: no es una columna de ninguna ficha del catalogo ni una fila de FEDIAF. Es el dueño real de los 100 mg/kg que la L-carnitina tenia cogidos por error"),
     ("disfuncion_cognitiva", "limites_escritos_que_el_solver_no_aplica", "selenio", 125.0, ("pct_ms", 0.05),
      "SACN5 Tabla 35-3: «Selenium 0.5 to 1.3 mg/kg» MS = 125-325 ug/1000 kcal. NO SE APLICA: el maximo de FEDIAF son 142, o sea que DOS TERCIOS del rango de la fuente estan por encima del techo legal. Con el suelo puesto cabe, pero deja los menus al 88-98 % del maximo de un nutriente con toxicidad cronica"),
     ("disfuncion_cognitiva", "limites_escritos_que_el_solver_no_aplica", "vitC", 37.5, ("mgkg_ms", 150),

@@ -1549,14 +1549,14 @@
           }
         },
         "lcarnitina": {
-          "valor": 25.0,
-          "fuente": "SACN5 5a ed., cap.35 «Cognitive Dysfunction in Dogs», Tabla 35-3, fila «L-carnitine». Verificado literal 9-sep-2026",
-          "por_que": "ANADIDO 9-sep-2026, AL VOLVER A LA TABLA 35-3 ENTERA. De sus seis filas el motor aplicaba una (el omega-3) y la vitamina E se acababa de retirar por no caber; quedaban tres sin mirar. Tabla 35-3: «L-carnitine … Provide foods with >=100 mg/kg» de materia seca / 4 = 25 mg/1000 kcal. Conversion: mg/kg MS / 4 = mg/1000 kcal a 4000 kcal EM/kg MS. || FEDIAF no da ni minimo ni maximo de L-carnitina (la fila lleva «-» en los seis campos, como Fibra, Taurina y EPA), asi que no hay techo con el que chocar. || ⚠️ MEDIDO ANTES DE APLICARLO, Y NO CUESTA NADA: cinco perros (3, 8, 20, 30 y 55 kg) salen los cinco en el peldano ESTRICTO, y la L-carnitina real de esos menus va de 130 a 332 mg/1000 kcal -- de cinco a trece veces el suelo. La carne va sobrada de carnitina, igual que de arginina. Se aplica porque la fila faltaba, no porque estuviera dando menus malos. || El mismo valor aparece en artrosis y obesidad, pero a 75 (Tablas 34-2 y 27-4, «>=300 mg/kg»): tres tablas del mismo libro con dos cifras distintas para el mismo nutriente, cada una para su cuadro. Se respeta cada una con la suya.",
+          "valor": 62.5,
+          "fuente": "SACN5 5a ed., cap.35 «Cognitive Dysfunction in Dogs», Tabla 35-3, fila «L-carnitine», releida entera 10-sep-2026",
+          "por_que": "⚠️ CORREGIDO 10-sep-2026 (de noche), SALTO DE FILA EN LA TABLA 35-3. Esta celda aplicaba 25,0 mg/1000 kcal citando «L-carnitine ... Provide foods with >=100 mg/kg», y esa frase NO es de la fila de la L-carnitina: es de la del ACIDO ALFA-LIPOICO, que va justo debajo. Las filas de la tabla, en orden: vitamina E >=750 mg/kg, vitamina C >=150 mg/kg, selenio 0,5-1,3 mg/kg, L-carnitina 250 a 750 IU/kg, acido alfa-lipoico >=100 mg/kg, omega-3 totales >1 %. || SE COMPRUEBA POR TRES CAMINOS INDEPENDIENTES, para que no pueda ser un artefacto de la extraccion del PDF: (1) la propia Tabla 35-3; (2) el texto corrido del capitulo, que las lista en una sola frase -- «vitamin E = >=750 mg/kg; vitamin C = >=150 mg/kg; selenium = 0.5 to 1.3 mg/kg; L-carnitine = 250 to 750 IU/kg; alpha-lipoic acid = >=100 mg/kg»; y (3) la Tabla 35-4, donde el alimento comercial de los ensayos (Prescription Diet b/d Canine) trae 299 mg/kg de L-carnitina, que cae dentro de 250-750 y no tendria sentido si el requisito fueran 100. || VALOR NUEVO: 250 mg/kg MS / 4 = 62,5 mg/1000 kcal, el extremo bajo del rango, con el mismo criterio que el resto del fichero. || ⚠️ Y HAY QUE DECIR LO QUE LA FUENTE ESCRIBE MAL: pone «IU/kg» para la L-carnitina, y la L-carnitina no tiene unidades internacionales. Las otras dos apariciones de la cifra en el mismo capitulo la tratan como mg -- la Tabla 35-4 compara esos 250-750 con los 299 mg/kg de un alimento real -- asi que se lee como mg/kg de materia seca y queda escrito que la fuente pone otra unidad. Lo que no se puede es copiar «IU» y hacer como si se hubiera convertido. || FEDIAF no da ni minimo ni maximo de L-carnitina (la fila lleva «-» en los seis campos, como Fibra, Taurina y EPA), asi que no hay techo con el que chocar. || MEDIDO ANTES Y DESPUES: la L-carnitina real de los menus de esta patologia iba de 130 a 332 mg/1000 kcal con el suelo en 25, o sea de dos a cinco veces el suelo nuevo; la carne va sobrada de carnitina, igual que de arginina. || El mismo nutriente aparece en artrosis y obesidad a 75 (Tablas 34-2 y 27-4, «>=300 mg/kg»): tres tablas del mismo libro con tres cifras distintas para el mismo nutriente, cada una para su cuadro. Se respeta cada una con la suya.",
           "conversion": {
-            "valor_en_la_fuente": 100,
+            "valor_en_la_fuente": 250,
             "unidad_en_la_fuente": "mg/kg MS",
             "densidad_kcal_por_g_MS": 4.0,
-            "cita": "SACN5 Tabla 35-3 «Key nutritional factors for foods for dogs with [cognitive dysfunction]», nota «*Dry matter basis». Leida entera 9-sep-2026, fila «L-carnitine … Provide foods with >=100 mg/kg»"
+            "cita": "SACN5 Tabla 35-3 «Key nutritional factors for foods for dogs with brain aging and associated behavioral changes (cognitive dysfunction)», nota «*Dry matter basis». Fila «L-carnitine ... Provide foods with 250 to 750 IU/kg», extremo bajo. La unidad impresa es «IU/kg» y se lee como mg/kg: la L-carnitina no tiene UI, y la Tabla 35-4 del mismo capitulo compara ese rango con los 299 mg/kg de un alimento real"
           },
           "margen_profesional": {
             "sentido_de_la_cifra": "min",
@@ -1603,6 +1603,18 @@
             "unidad_en_la_fuente": "mg/kg MS",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 Tabla 35-3 «Key nutritional factors for foods for dogs with [cognitive dysfunction]», nota «*Dry matter basis». Leida entera 9-sep-2026, fila «Vitamin C … Provide foods with >=150 mg/kg»"
+          }
+        },
+        "acido_alfa_lipoico": {
+          "valor": 25.0,
+          "fuente": "SACN5 5a ed., cap.35 «Cognitive Dysfunction in Dogs», Tabla 35-3, fila «α-lipoic acid», releida entera 10-sep-2026",
+          "aplicado_por_el_solver": false,
+          "por_que": "ANADIDO 10-sep-2026 al corregir el salto de fila de la L-carnitina: los «>=100 mg/kg» de materia seca que esta celda aplicaba a la carnitina son de ESTA fila. 100 mg/kg MS / 4 = 25 mg/1000 kcal. || NO SE APLICA, y no es una decision pendiente: el acido alfa-lipoico no es una columna de ninguna de las 163 fichas del catalogo, no esta en la Tabla III-3b de FEDIAF y no hay forma de calcularlo. Aplicarlo exigiria un dato que no existe. || El capitulo lo agrupa con la L-carnitina como «cofactor mitocondrial» -- los dos suben la eficiencia de la mitocondria vieja para que produzca menos radicales libres -- y lo probo junto a ella y a los antioxidantes en el mismo alimento, asi que su efecto tampoco esta aislado. Queda escrito para que no se «descubra» otra vez dentro de seis meses.",
+          "conversion": {
+            "valor_en_la_fuente": 100,
+            "unidad_en_la_fuente": "mg/kg MS",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "SACN5 Tabla 35-3, nota «*Dry matter basis». Fila «α-lipoic acid ... Provide foods with >=100 mg/kg»"
           }
         }
       }

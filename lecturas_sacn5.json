@@ -11,7 +11,7 @@
   "descartadas_declaradas": 33207,
   "por_que_cambia_el_numero_10sep": "Bajó de 3.140 a 2.944 y NO es que se haya leído nada: es que el extractor se arregló con las tres lecciones del fallo de FEDIAF. (1) UNA CLAVE POR APARICION, con el numero de frase dentro, porque una clave por texto hace que un elemento repetido tenga UN solo veredicto -- asi se descarto como «celda felina» la nota d del selenio, que es un techo del perro. (2) UN CORTADOR DE FRASES QUE NO PARTE LOS NUMEROS: el `[^.]*` de antes cortaba «2.5 mg» en dos y sacaba dos trozos donde hay una frase, que es de donde salia parte del 3.140. (3) UNA FRASE ES UN ELEMENTO: antes una misma frase con dos cifras podia entrar dos veces. || ⚠️ Y SUBIO DE 2.944 A 2.999 LA NOCHE DEL 10, POR UNA PREGUNTA DE ELENA: «cuando dices leido elemento a elemento estas teniendo cuidado con las columnas para leerlo bien, leyendo cada frase y cada tabla?». Al ir a comprobarlo se miro lo que el filtro TIRABA en un capitulo ya leido: de 463 frases descartadas del cap.13, cuatro llevaban cifra con unidad, y una era «the recommended range of sele- nium for adult dog foods is 0.5 to 1.3 mg/kg (DM)» -- justo la cifra del hallazgo S-11, tirada porque el PDF parte la palabra al final de linea y la lista de nutrientes busca «selenium». Misma familia que el fallo de las dos columnas: un artefacto del PDF cambiando en silencio lo que se lee. Ahora el filtro se prueba sobre las DOS formas de cada frase, la original y la de-guionada, porque de-guionar a secas arreglaba 51 frases y CAIA otras tres -- «non-nutritional» pasa a «nonnutritional» -- y una de las tres era un aviso que el repo ya cita. Probar las dos solo puede ensanchar, que es el lado seguro.",
   "por_que_se_cuentan_las_descartadas": "10 de septiembre. Lo que el filtro tiraba era INVISIBLE, que es exactamente el agujero que tenia FEDIAF: alli «532 de 532 con veredicto» sonaba a documento entero y era «532 de los que la lista de palabras supo ver», y se cayo por ahi la frase que explica por que los seis oligoelementos no tienen maximo nutricional. || Aqui el filtro SIGUE HACIENDO FALTA -- SACN5 es un libro de clinica y la mayoria de sus cifras son epidemiologia o dosis de farmaco --, pero ahora su punto ciego se mide: 36.206 frases en el libro, 2.944 entran y 33.262 se descartan. Y las descartadas se comparan EXACTO, para que el filtro no pueda estrecharse solo. || Ademas hay un control INDEPENDIENTE del filtro: una frase que no nombra ningun nutriente entra igual si huele a norma dietetica (`olor`), que es donde estaria escondido un limite que se nos escapa. Medido antes de ponerlo: 340 frases de las descartadas tenian esa forma.",
-  "capitulos_leidos_enteros_declarados": 34,
+  "capitulos_leidos_enteros_declarados": 70,
   "que_es_leido_entero": "⚠️ DOS CONTADORES QUE NO MIDEN LO MISMO (10 de septiembre, de noche). `pendientes_declarados` cuenta FRASES del filtro nutricional con veredicto. `capitulos_leidos_enteros_declarados` cuenta CAPITULOS leidos de principio a fin. Hacen falta los dos porque el filtro descarta el 92 % de las frases del libro: resolver los 2.999 elementos dejaria sin abrir casi todo el texto. Elena lo dijo asi: «por favor no puedes leer todo sin hacer cossd raras de seleccionar frases y cosas asi? simplemente leer como si fueses un opositoe estudiando». El filtro es para contar y se estaba usando para decidir que se lee. Un capitulo entra aqui cuando su `lectura_integra` declara el numero de lineas de su .txt, y `leer_sacn5.py` lo comprueba contra el fichero."
  },
  "capitulos": {
@@ -496,7 +496,12 @@
     "cifra#724:The minimum recommended allowance for dietary phos- phorus is 0.3% DM in foods for healthy adult dogs and 0.26% DM for healthy adu": "contexto COMPARATIVO · el minimo de fosforo del perro adulto sano es 0,3 % MS = 750 mg/1000 kcal (NRC), y los piensos de supermercado rondan el 1,39 % MS = 3475. El minimo de FEDIAF que aplicamos (1160) es mas estricto que el del NRC, y nuestro techo del perro sano (2000) esta muy por debajo de ese 3475.",
     "reco#966:High-phospho- rus human foods (e.g., milk, milk products, cheese, fish, beef liver, chocolate, nuts and legumes) should be avoided": "⚠️ APLICA A DOS ALIMENTOS DEL CATALOGO · «High-phosphorus human foods (e.g., milk, milk products, cheese, fish, beef liver, chocolate, nuts and legumes) should be avoided» en el perro renal. El PESCADO y el HIGADO DE VACUNO estan en el catalogo y el motor puede meterlos en un menu renal: lo que lo limita es el techo de fosforo (1200), no una exclusion. Es la misma forma que S-37 -- excluir en vez de apretar -- y aqui hay dos candidatos concretos."
    },
-   "leido": "capitulo entero: la primera pasada mas los 81 que faltaban, 10 de septiembre de 2026 de noche. ⚠️ PERO LEIDO A TRAVES DEL FILTRO, NO EL TEXTO ENTERO. Elena, 10-sep de noche: «por favor no puedes leer todo sin hacer cosas raras de seleccionar frases y cosas asi? simplemente leer como si fueses un opositor estudiando». Tiene razon: el filtro es para CONTAR y lo estaba usando para DECIDIR QUE LEO. Al releer entero el cap.36 aparecio en la primera pagina la definicion de los estadios A/B/C/D -- que es el dato que decide cual de nuestros cinco topes de sodio se aplica -- y la frase «animals may change classifications in both directions... from Class I to Class III or IV following a salty meal», que no lleva cifra ni nombre de nutriente y por eso el filtro la tiraba. ESTE CAPITULO HAY QUE RELEERLO ENTERO, y los otros nueve de esta tanda tambien."
+   "leido": "capitulo entero: la primera pasada mas los 81 que faltaban, 10 de septiembre de 2026 de noche. ⚠️ PERO LEIDO A TRAVES DEL FILTRO, NO EL TEXTO ENTERO. Elena, 10-sep de noche: «por favor no puedes leer todo sin hacer cosas raras de seleccionar frases y cosas asi? simplemente leer como si fueses un opositor estudiando». Tiene razon: el filtro es para CONTAR y lo estaba usando para DECIDIR QUE LEO. Al releer entero el cap.36 aparecio en la primera pagina la definicion de los estadios A/B/C/D -- que es el dato que decide cual de nuestros cinco topes de sodio se aplica -- y la frase «animals may change classifications in both directions... from Class I to Class III or IV following a salty meal», que no lleva cifra ni nombre de nutriente y por eso el filtro la tiraba. ESTE CAPITULO HAY QUE RELEERLO ENTERO, y los otros nueve de esta tanda tambien.",
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 4779,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
   },
   "cap13": {
    "veredictos": {
@@ -1300,7 +1305,12 @@
     "reco#557:In these cases, high protein foods, various protein supplements and intravenous amino acid solution administration is recommend- e": "contexto CLINICO · en desnutricion hepatica se recomiendan alimentos altos en proteina y aminoacidos intravenosos, con el aviso de que una infusion rapida puede provocar encefalopatia. Es manejo hospitalario.",
     "reco#576:Therefore, moderate copper restriction is recommend- ed for most patients with cholestatic liver disease.": "APLICA COMO RESPALDO · «moderate copper restriction is recommended for most patients with cholestatic liver disease». Confirma que el cobre es el eje de esta patologia, y el «moderate» encaja con nuestro 2,4 antes que con el 1,25 de la Tabla 68-8."
    },
-   "leido": "10 de septiembre de 2026, noche. Capitulo entero, los 131 elementos. ⚠️ PERO LEIDO A TRAVES DEL FILTRO, NO EL TEXTO ENTERO. Elena, 10-sep de noche: «por favor no puedes leer todo sin hacer cosas raras de seleccionar frases y cosas asi? simplemente leer como si fueses un opositor estudiando». Tiene razon: el filtro es para CONTAR y lo estaba usando para DECIDIR QUE LEO. Al releer entero el cap.36 aparecio en la primera pagina la definicion de los estadios A/B/C/D -- que es el dato que decide cual de nuestros cinco topes de sodio se aplica -- y la frase «animals may change classifications in both directions... from Class I to Class III or IV following a salty meal», que no lleva cifra ni nombre de nutriente y por eso el filtro la tiraba. ESTE CAPITULO HAY QUE RELEERLO ENTERO, y los otros nueve de esta tanda tambien."
+   "leido": "10 de septiembre de 2026, noche. Capitulo entero, los 131 elementos. ⚠️ PERO LEIDO A TRAVES DEL FILTRO, NO EL TEXTO ENTERO. Elena, 10-sep de noche: «por favor no puedes leer todo sin hacer cosas raras de seleccionar frases y cosas asi? simplemente leer como si fueses un opositor estudiando». Tiene razon: el filtro es para CONTAR y lo estaba usando para DECIDIR QUE LEO. Al releer entero el cap.36 aparecio en la primera pagina la definicion de los estadios A/B/C/D -- que es el dato que decide cual de nuestros cinco topes de sodio se aplica -- y la frase «animals may change classifications in both directions... from Class I to Class III or IV following a salty meal», que no lleva cifra ni nombre de nutriente y por eso el filtro la tiraba. ESTE CAPITULO HAY QUE RELEERLO ENTERO, y los otros nueve de esta tanda tambien.",
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 3611,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
   },
   "cap40": {
    "veredictos": {
@@ -1362,7 +1372,12 @@
     "cifra#412:The food was offered in two separate meals each day (one-fourth can twice daily, total 375 kcal [1.57 MJ]).": "contexto del caso clinico · dos tomas de 375 kcal. Aritmetica.",
     "cifra#415:Results of a retro- spective study on the recurrence rate of calcium oxalate uroliths in dogs indicated that the rate of recurrenc": "contexto EPIDEMIOLOGICO · frecuencia, razas o recurrencia. No es una cifra de dieta."
    },
-   "leido": "10 de septiembre de 2026, noche. Capitulo entero, los 57 elementos. ⚠️ PERO LEIDO A TRAVES DEL FILTRO, NO EL TEXTO ENTERO. Elena, 10-sep de noche: «por favor no puedes leer todo sin hacer cosas raras de seleccionar frases y cosas asi? simplemente leer como si fueses un opositor estudiando». Tiene razon: el filtro es para CONTAR y lo estaba usando para DECIDIR QUE LEO. Al releer entero el cap.36 aparecio en la primera pagina la definicion de los estadios A/B/C/D -- que es el dato que decide cual de nuestros cinco topes de sodio se aplica -- y la frase «animals may change classifications in both directions... from Class I to Class III or IV following a salty meal», que no lleva cifra ni nombre de nutriente y por eso el filtro la tiraba. ESTE CAPITULO HAY QUE RELEERLO ENTERO, y los otros nueve de esta tanda tambien."
+   "leido": "10 de septiembre de 2026, noche. Capitulo entero, los 57 elementos. ⚠️ PERO LEIDO A TRAVES DEL FILTRO, NO EL TEXTO ENTERO. Elena, 10-sep de noche: «por favor no puedes leer todo sin hacer cosas raras de seleccionar frases y cosas asi? simplemente leer como si fueses un opositor estudiando». Tiene razon: el filtro es para CONTAR y lo estaba usando para DECIDIR QUE LEO. Al releer entero el cap.36 aparecio en la primera pagina la definicion de los estadios A/B/C/D -- que es el dato que decide cual de nuestros cinco topes de sodio se aplica -- y la frase «animals may change classifications in both directions... from Class I to Class III or IV following a salty meal», que no lleva cifra ni nombre de nutriente y por eso el filtro la tiraba. ESTE CAPITULO HAY QUE RELEERLO ENTERO, y los otros nueve de esta tanda tambien.",
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 1798,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
   },
   "cap36": {
    "veredictos": {
@@ -1425,7 +1440,12 @@
     "olor#783:This food avoids excess sodium, chloride, phosphorus, potassium and protein found in regular commercial dog foods (Table 36-5).": "contexto del caso clinico · el alimento evita el exceso de sodio, cloruro, fosforo, potasio y proteina. Sin cifra nueva.",
     "cifra#810:The owner had discontin- ued digoxin and enalapril approximately 10 months after the first admission (he had gone out of town and ": "contexto del caso clinico · aritmetica del ejemplo."
    },
-   "leido": "10 de septiembre de 2026, noche. Capitulo entero, los 58 elementos. ⚠️ PERO LEIDO A TRAVES DEL FILTRO, NO EL TEXTO ENTERO. Elena, 10-sep de noche: «por favor no puedes leer todo sin hacer cosas raras de seleccionar frases y cosas asi? simplemente leer como si fueses un opositor estudiando». Tiene razon: el filtro es para CONTAR y lo estaba usando para DECIDIR QUE LEO. Al releer entero el cap.36 aparecio en la primera pagina la definicion de los estadios A/B/C/D -- que es el dato que decide cual de nuestros cinco topes de sodio se aplica -- y la frase «animals may change classifications in both directions... from Class I to Class III or IV following a salty meal», que no lleva cifra ni nombre de nutriente y por eso el filtro la tiraba. ESTE CAPITULO HAY QUE RELEERLO ENTERO, y los otros nueve de esta tanda tambien."
+   "leido": "10 de septiembre de 2026, noche. Capitulo entero, los 58 elementos. ⚠️ PERO LEIDO A TRAVES DEL FILTRO, NO EL TEXTO ENTERO. Elena, 10-sep de noche: «por favor no puedes leer todo sin hacer cosas raras de seleccionar frases y cosas asi? simplemente leer como si fueses un opositor estudiando». Tiene razon: el filtro es para CONTAR y lo estaba usando para DECIDIR QUE LEO. Al releer entero el cap.36 aparecio en la primera pagina la definicion de los estadios A/B/C/D -- que es el dato que decide cual de nuestros cinco topes de sodio se aplica -- y la frase «animals may change classifications in both directions... from Class I to Class III or IV following a salty meal», que no lleva cifra ni nombre de nutriente y por eso el filtro la tiraba. ESTE CAPITULO HAY QUE RELEERLO ENTERO, y los otros nueve de esta tanda tambien.",
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 3027,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
   },
   "cap1": {
    "lectura_integra": {
@@ -1612,6 +1632,231 @@
    "lectura_integra": {
     "fecha": "2026-09-10",
     "lineas": 1900,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap35": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 1397,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap38_1": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 2118,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap39": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 2598,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap41": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 1094,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap42": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 937,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap43": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 2503,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap44": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 539,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap45": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 268,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap46_1": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 5360,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo.",
+    "es_felino": "Capitulo FELINO leido entero A PROPOSITO: apartarlo por el titulo es exactamente como se descarto una vez la nota d del selenio, que era del PERRO. Y habia: la Tabla 46-18 es la lista de alimentos altos en oxalato mas completa del libro y su texto la enuncia «in dogs and cats»; ademas solo se puede leer bien sacando las palabras del PDF con su coordenada x, porque en el `.txt` sus dos columnas salen entrelazadas."
+   }
+  },
+  "cap47_1": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 1868,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap48": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 306,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap49": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 258,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap50a_1": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 927,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap51": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 132,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap52": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 931,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap53": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 592,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap54": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 576,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap55": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 412,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap56": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 1506,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap57": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 1460,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap58": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 765,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap59": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 887,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap60": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 525,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap61": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 94,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap62": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 1273,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap63": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 426,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap64": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 1009,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap65": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 714,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap66": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 832,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap67": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 1097,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap69": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 1787,
+    "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
+   }
+  },
+  "cap70": {
+   "lectura_integra": {
+    "fecha": "2026-09-10",
+    "lineas": 2585,
     "nota": "LEIDO ENTERO, de la primera linea a la ultima, el 10 de septiembre de 2026 por la noche -- no a traves del filtro de `leer_sacn5.py`, que es para CONTAR. Lo apuntado va en `LECTURA_SACN5_INTEGRA.md`, capitulo por capitulo."
    }
   }
