@@ -9710,6 +9710,15 @@ def _dens_recomendaciones_72(nodo):
 
 _dens_recomendaciones_72(
     _json72.load(open("recomendaciones_libro.json", encoding="utf-8"))["por_etapa"])
+
+# Y los requisitos que dependen de la propia dieta, que son el tercer sitio con
+# cifras de una fuente -- y donde estan las DOS conversiones a la vez: la
+# vitamina E del perro de trabajo sale de «>=500 IU/kg MS» y hay que pasarla
+# ademas a mg de tocoferol natural.
+for _r72 in _json72.load(open("requisitos_condicionales.json",
+                              encoding="utf-8"))["reglas"].values():
+    if isinstance(_r72, dict) and _r72.get("conversion"):
+        _dens72.add(_r72["conversion"]["densidad_kcal_por_g_MS"])
 if _dens72 != {4.0}:
     fallos.append(f"BLOQUE72: hay cifras convertidas con densidades {sorted(_dens72)} y todas las "
                   f"tablas que las publican asumen 4,0 kcal/g de materia seca. Si de verdad hay una "

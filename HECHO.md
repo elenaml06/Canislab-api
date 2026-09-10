@@ -1634,3 +1634,37 @@ sus densidades sean las mismas 4,0 que las de patología.
 
 Probado con el fallo puesto dos veces: cambiando el techo de fósforo del adulto a
 2200 y borrando el bloque `conversion` del sodio del senior. Los dos se cazan.
+
+## 10 de septiembre de 2026 — Y los requisitos condicionales, que son donde están las dos conversiones a la vez
+
+Tercer y último fichero con cifras sacadas de una fuente.
+`requisitos_condicionales.json` tenía cuatro números aplicados y ninguno decía,
+como dato, de qué cifra de la fuente salía: la cuenta estaba en prosa dentro de
+`por_que`, igual que estaban las 88 de patología antes del ×25 y los doce techos
+del libro esta misma noche.
+
+Y aquí importa más, porque **dos de los cuatro llevan las dos conversiones**: la
+de densidad y la de unidad.
+
+| Regla | Valor | De dónde sale |
+|---|---|---|
+| Vitamina E del perro de trabajo | 83,9 mg/1000 kcal | «≥500 IU vitamin E/kg food (DM)» (SACN5 Tabla 18-9) ÷ 4,0 kcal/g × **0,671 mg/UI** de tocoferol natural |
+| DHA en crecimiento y reproducción | 0,05 g/1000 kcal | «0.02 % DM» (SACN5 caps. 15 y 33) ÷ 4,0 |
+| Proteína de gestación y lactancia | 125 g/1000 kcal | 62,50 de la Tabla III-3b **×2**, por «and may be double» de FEDIAF §3.3.1 |
+| Aminoácidos sin digestibilidad garantizada | ×1,1 | Factor de FEDIAF §3.2.1; adimensional, no hay unidad que cambiar |
+
+El de la vitamina E es **literalmente el fallo del 8 de septiembre**: entonces se
+escribió el suelo de vitamina E de la artrosis tratando las UI como si fueran mg
+—100 en vez de 67,1— y lo que lo cazó no fue ninguna comprobación, fue que la
+artrosis dejó de dar menú. Probado con el fallo puesto: quitando el factor de
+unidad, el auditor dice que el motor aplica 83,9 y la fuente da 125.
+
+Las tres reglas cuyo número no es un `valor` suelto —el ratio
+linoleico:linolénico, que es un rango por etapa; las anclas de arginina, que son
+una tabla entera de FEDIAF ya por 1000 kcal; y el umbral de calcio del zinc, que
+está en una regla que el solver no aplica— van declaradas con su motivo, y el
+auditor **falla si una declaración se queda caducada**: si la regla desaparece,
+la excusa tampoco vale.
+
+Con esto los tres ficheros de cifras del motor se rehacen en cada batería: **92
+de patología · 12 del libro · 4 condicionales**.

@@ -255,8 +255,95 @@ def auditar_recomendaciones():
     return fallos
 
 
+# ⚠️ AÑADIDO (10 septiembre) — LOS REQUISITOS QUE DEPENDEN DE LA PROPIA DIETA.
+#
+# `requisitos_condicionales.json` es el tercer sitio con cifras sacadas de una
+# fuente, y dos de ellas llevan las DOS conversiones -- la de densidad y la de
+# unidad --, que es donde se falla de verdad: la vitamina E del perro de trabajo
+# sale de «>=500 IU/kg (DM)» de SACN5 y hay que pasarla a mg de tocoferol
+# NATURAL. Tratar esas UI como si fueran mg es exactamente el fallo del 8 de
+# septiembre con la vitamina E de la artrosis (100 en vez de 67,1), y lo que lo
+# cazó no fue ninguna comprobación: fue que la artrosis dejó de dar menú.
+#
+# Las reglas cuyo número NO es un `valor` suelto -- el ratio linoleico:
+# linolénico, que es un rango por etapa, y las anclas de arginina, que son una
+# tabla entera de FEDIAF -- van declaradas abajo con su motivo, para que
+# saltarse una no pueda pasar en silencio.
+SIN_CONVERSION_CONDICIONALES = {
+    "arginina_segun_proteina": (
+        "Sus números no son un `valor`: son las anclas por etapa de la Tabla VII-13 de "
+        "FEDIAF, que ya vienen POR 1000 KCAL en la unidad del motor. No hay conversión "
+        "que rehacer; lo que hay que comprobar es la aritmética de la recta, y eso lo "
+        "hace el BLOQUE 60."),
+    "ratio_linoleico_linolenico": (
+        "Es un rango por etapa y adimensional (2,6-26 y 2,6-16, NRC 2006 cap.5). No hay "
+        "unidad que convertir. Lo comprueba el BLOQUE 60."),
+    "zinc_y_cobre_cuando_el_calcio_esta_alto": (
+        "El umbral de calcio que lleva dentro (3750 mg/1000 kcal, Tabla 32-1 de SACN5) "
+        "no es el valor de la regla: la regla es `documentado_sin_cifra` y no la aplica "
+        "el solver. Lo mide en vivo el BLOQUE 69."),
+}
+
+
+def auditar_condicionales():
+    ruta = os.path.join(RAIZ, "requisitos_condicionales.json")
+    reglas = json.load(open(ruta, encoding="utf-8"))["reglas"]
+    fallos, revisadas, comprobadas = [], 0, 0
+    for clave, regla in sorted(reglas.items()):
+        if not isinstance(regla.get("valor"), (int, float)):
+            continue
+        if clave in SIN_CONVERSION_CONDICIONALES:
+            continue
+        revisadas += 1
+        conv = regla.get("conversion")
+        if not conv:
+            fallos.append(
+                f"{clave}: tiene un valor ({regla['valor']}) y no dice de qué cifra de la "
+                f"fuente sale. O lleva `conversion`, o va declarada en "
+                f"SIN_CONVERSION_CONDICIONALES con el motivo")
+            continue
+        faltan = [c for c in ("valor_en_la_fuente", "unidad_en_la_fuente",
+                              "densidad_kcal_por_g_MS", "cita") if c not in conv]
+        if conv.get("factor_a_la_unidad_del_motor") and not conv.get("por_que_el_factor"):
+            fallos.append(f"{clave}: lleva `factor_a_la_unidad_del_motor` y no dice de dónde "
+                          f"sale. Ese factor es donde se falló el 8 de septiembre con las UI "
+                          f"de la vitamina E")
+        if faltan:
+            fallos.append(f"{clave}: al bloque `conversion` le faltan {faltan}")
+            continue
+        esperado = _convertir(float(conv["valor_en_la_fuente"]), conv["unidad_en_la_fuente"],
+                              float(conv["densidad_kcal_por_g_MS"]),
+                              float(conv.get("factor_a_la_unidad_del_motor") or 1.0))
+        if esperado is None:
+            fallos.append(f"{clave}: unidad de fuente desconocida "
+                          f"«{conv['unidad_en_la_fuente']}»")
+            continue
+        aplicado = float(regla["valor"])
+        if abs(aplicado - esperado) > max(0.01 * esperado, 1e-9):
+            if regla.get("ajustado_a_proposito") or conv.get("ajustado_a_proposito"):
+                comprobadas += 1
+                continue
+            fallos.append(
+                f"{clave}: el motor aplica {aplicado:g} y la conversión de la fuente da "
+                f"{esperado:.4g} ({conv['valor_en_la_fuente']} {conv['unidad_en_la_fuente']} a "
+                f"{conv['densidad_kcal_por_g_MS']} kcal/g MS). Uno de los dos está mal")
+            continue
+        comprobadas += 1
+
+    # Y una declaración caducada tiene que salir: si la regla ya no existe, la
+    # excusa tampoco vale.
+    for clave in sorted(SIN_CONVERSION_CONDICIONALES):
+        if clave not in reglas:
+            fallos.append(f"{clave} está en SIN_CONVERSION_CONDICIONALES y ya no es una regla "
+                          f"de `requisitos_condicionales.json`. Una excepción caducada es una "
+                          f"alarma apagada")
+    print(f"  {revisadas} requisitos condicionales · {comprobadas} con la conversión rehecha y "
+          f"correcta · {len(SIN_CONVERSION_CONDICIONALES)} declarados sin conversión")
+    return fallos
+
+
 if __name__ == "__main__":
-    fs = auditar() + auditar_recomendaciones()
+    fs = auditar() + auditar_recomendaciones() + auditar_condicionales()
     if fs:
         print(f"\n❌ {len(fs)} problemas:")
         for f in fs[:60]:
