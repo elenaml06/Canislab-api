@@ -249,6 +249,187 @@ def auditar():
 
 
 # ============================================================
+# LA TABLA III-3a, QUE ES DONDE VIVEN LOS MAXIMOS
+# ============================================================
+#
+# ⚠️ POR QUE (10 de septiembre). Todo lo de arriba comprueba las CUATRO COLUMNAS
+# DE MINIMO de la Tabla III-3b. La columna de MAXIMO no la miraba nadie, y hay
+# dos motivos por los que eso era un agujero de verdad:
+#
+# 1. En la III-3b los maximos LEGALES no llevan numero: solo pone «(L)». Es a
+#    proposito y la propia §3.2.1 lo dice -- «Legal maxima in EU legislation are
+#    expressed on 12 % moisture content and they do not account for energy
+#    density. Therefore in these guidelines they are only provided on a dry
+#    matter basis». O sea que los siete techos legales que aplica el motor
+#    (cobre 7, yodo 2750, hierro 170,45, manganeso 42,5, selenio 142, zinc 56,75
+#    y vitamina D 14,1875 por 1000 kcal) son conversiones NUESTRAS de la III-3a,
+#    y no habia nada que las comparara con el PDF.
+#
+# 2. Un maximo mal transcrito es la peor clase de error de este fichero. Un
+#    minimo bajo deja al perro corto y suele verse; un maximo alto deja pasar un
+#    menu que envenena despacio, y el semaforo sale VERDE.
+#
+# ⚠️ Y NO ES HIPOTETICO. El 7 de septiembre se QUITO el maximo de fosforo del
+# adulto escribiendo que «FEDIAF no da numero», y la nota del sello lo explica:
+# «se colo porque en el texto extraido del PDF la columna de maximos cae
+# visualmente sobre la fila ANTERIOR: leyendo linea a linea, el calcio parece
+# tener cuatro maximos y el fosforo ninguno». Durante un dia el motor NO TUVO
+# techo de fosforo en adulto y el catalogo llego a tener un menu con 4124 mg,
+# por encima del maximo de FEDIAF. Era ya el fallo de las dos columnas pegadas,
+# visto en una celda y sin encontrarle la causa.
+#
+# COMO SE REHACE. De `fediaf_tabla_III_3a.txt` (la pagina 15 del PDF tal cual)
+# se saca, para cada fila, el numero que va justo antes de «(L)» o «(N)» con su
+# etiqueta de etapa, y se convierte a la unidad del motor con el x2,5 de la
+# Tabla III-2 -- y con el 0,3 y el 0,025 µg/IU de la Tabla VII-14 para las
+# vitaminas A y D. Despues se compara contra `requerimientos_v2_final.json`.
+import json as _json_3a
+
+RUTA_3A = os.path.join(_AQUI, "fediaf_tabla_III_3a.txt")
+
+# (fila del PDF, etapa que dice el PDF) -> (clave del JSON, columna, factor)
+#
+# El factor es el x2,5 de «unidades/100 g MS -> unidades/1000 kcal» (Tabla
+# III-2), multiplicado por la conversion de unidad donde la hay: la vitamina A
+# va en IU y el motor en µg de retinol (0,3 µg = 1 IU), y la D en IU y el motor
+# en µg de colecalciferol (0,025 µg = 1 IU). El ratio Ca:P es adimensional.
+MAXIMOS_3A = {
+ # (fila del PDF, etapa) -> (clave del JSON, columna, factor, etiqueta que espera)
+ #
+ # ⚠️ EL FACTOR NO ES SIEMPRE 2,5, Y AQUI ES DONDE SE FALLA. El x2,5 es solo el
+ # cambio de base («unidades/100 g MS -> unidades/1000 kcal», Tabla III-2). Si
+ # ademas cambia la UNIDAD hay que multiplicar por eso: el calcio y el fosforo
+ # van en g en la tabla y en mg en el motor (x2.500), el yodo en mg y en µg
+ # (x2.500), la vitamina A en IU y en µg de retinol (0,3 µg = 1 IU) y la D en IU
+ # y en µg de colecalciferol (0,025 µg = 1 IU). El selenio ya va en µg en las
+ # dos (x2,5) y el ratio Ca:P es adimensional (x1).
+ ("Lysine",            "Growth"):                 ("Lisina", "maxCachorroJoven", 2.5, "N"),
+ ("Linoleic acid",     "Growth"):                 ("Linoleico", "maxCachorroJoven", 2.5, "N"),
+ ("Calcium",           "Adult"):                  ("Calcio", "maxAdulto", 2500.0, "N"),
+ ("Calcium",           "Early growth"):           ("Calcio", "maxCachorroJoven", 2500.0, "N"),
+ ("Calcium",           "Late growth"):            ("Calcio", "maxCachorroCrecimiento", 2500.0, "N"),
+ ("Phosphorus",        "Adult"):                  ("Fósforo", "maxAdulto", 2500.0, "N"),
+ ("Ca / P ratio",      "Adult"):                  ("Relacion_Ca_P", "maxAdulto", 1.0, "N"),
+ ("Ca / P ratio",      "Early growth & reprod."): ("Relacion_Ca_P", "maxCachorroJoven", 1.0, "N"),
+ ("Ca / P ratio",      "Late growth"):            ("Relacion_Ca_P", "maxCachorroCrecimiento", 1.0, "N"),
+ ("Copper",            None):                     ("Cobre", "maxAdulto", 2.5, "L"),
+ ("Iodine",            None):                     ("Yodo", "maxAdulto", 2500.0, "L"),
+ ("Iron",              None):                     ("Hierro", "maxAdulto", 2.5, "L"),
+ ("Manganese",         None):                     ("Manganeso", "maxAdulto", 2.5, "L"),
+ ("Zinc",              None):                     ("Zinc", "maxAdulto", 2.5, "L"),
+ ("Selenium* (dry diets)", None):                 ("Selenio", "maxAdulto", 2.5, "L"),
+ ("Vitamin A",         None):                     ("Vitamina_A", "maxAdulto", 2.5 * 0.3, "N"),
+ ("Vitamin D",         None):                     ("Vitamina_D", "maxAdulto", 2.5 * 0.025, "L"),
+}
+# El (N) de la vitamina D, que el motor NO aplica pero deja anotado.
+NUTRICIONAL_3A = {("Vitamin D", None): ("Vitamina_D", "maximo_nutricional_por_1000kcal",
+                                        2.5 * 0.025, "N")}
+
+_FILAS_3A = [
+ "Protein", "Arginine", "Histidine", "Isoleucine", "Leucine", "Lysine", "Methionine",
+ "Methionine + cystine", "Phenylalanine", "Phenylalanine + tyrosine", "Threonine",
+ "Tryptophan", "Valine", "Fat", "Linoleic acid", "Arachidonic acid",
+ "Alpha-linolenic acid", "EPA + DHA", "Calcium", "Phosphorus", "Ca / P ratio",
+ "Potassium", "Sodium", "Chloride", "Magnesium", "Copper", "Iodine", "Iron",
+ "Manganese", "Selenium* (wet diets)", "Selenium* (dry diets)", "Zinc",
+ "Vitamin A", "Vitamin D", "Vitamin E", "Vitamin B1", "Vitamin B2", "Vitamin B5",
+ "Vitamin B6", "Vitamin B12", "Vitamin B3", "Vitamin B9", "Vitamin B7", "Choline",
+ "Vitamin K",
+]
+_MAX_3A = re.compile(r"(?:(Adult|Early growth(?: & reprod\.)?|Late growth|Growth)\s*:\s*)?"
+                     r"((?:\d{1,3}(?: \d{3})+|\d+(?:\.\d+)?)(?:/1[ab]?)?)\s*\((L|N)\)")
+
+
+def leer_maximos_3a():
+    """{(fila, etapa): (valor, etiqueta)} de la columna MAXIMO de la III-3a."""
+    if not os.path.exists(RUTA_3A):
+        return None
+    plano = " ".join(open(RUTA_3A, encoding="utf-8").read().split())
+    pos = sorted((plano.find(f), f) for f in _FILAS_3A if plano.find(f) >= 0)
+    salida = {}
+    for k, (i, fila) in enumerate(pos):
+        j = pos[k + 1][0] if k + 1 < len(pos) else len(plano)
+        for m in _MAX_3A.finditer(plano[i:j]):
+            etapa, valor, tag = m.group(1), m.group(2), m.group(3)
+            v = valor.replace(" ", "")
+            if "/1" in v:                      # el ratio: «2/1», «1.8/1a»
+                v = v.split("/")[0]
+            salida.setdefault((fila, etapa), []).append((float(v), tag))
+    return salida
+
+
+def auditar_maximos():
+    tabla = leer_maximos_3a()
+    if tabla is None:
+        print("  (no esta fediaf_tabla_III_3a.txt: no se puede rehacer la columna de maximos)")
+        return [], 0
+    req = {r["nutriente"]: r for r in
+           _json_3a.load(open(os.path.join(_AQUI, "requerimientos_v2_final.json"),
+                              encoding="utf-8"))}
+    problemas, hechas = [], 0
+
+    def _mira(mapa):
+        nonlocal hechas
+        for (fila, etapa), (clave, columna, factor, etiqueta) in mapa.items():
+            hits = tabla.get((fila, etapa.strip() if etapa else None))
+            if not hits:
+                problemas.append(
+                    f"III-3a: no se encuentra el maximo de «{fila}»"
+                    f"{' / ' + etapa if etapa else ''} en el PDF, y el JSON tiene un numero "
+                    f"en {clave}.{columna}. O la tabla ha cambiado o el patron ha dejado de "
+                    f"encajar -- y un maximo que deja de vigilarse no avisa a nadie")
+                continue
+            elegidos = [v for v, tag in hits if tag == etiqueta]
+            if not elegidos:
+                problemas.append(
+                    f"III-3a: «{fila}»{' / ' + etapa if etapa else ''} tiene maximo en el PDF "
+                    f"pero ninguno etiquetado ({etiqueta}), que es lo que el JSON dice que "
+                    f"aplica en {clave}.{columna}")
+                continue
+            esperado = elegidos[0] * factor
+            dicho = req.get(clave, {}).get(columna)
+            try:
+                dicho = float(dicho)
+            except (TypeError, ValueError):
+                problemas.append(
+                    f"III-3a: el PDF da un maximo de {elegidos[0]} ({etiqueta}) para "
+                    f"«{fila}»{' / ' + etapa if etapa else ''} y el JSON tiene "
+                    f"{clave}.{columna} = {dicho!r}. Un maximo que existe en la fuente y no "
+                    f"en el motor es un menu que envenena despacio y sale VERDE")
+                continue
+            if abs(dicho - esperado) > max(1e-4 * esperado, 1e-9):
+                problemas.append(
+                    f"III-3a: «{fila}»{' / ' + etapa if etapa else ''} vale {elegidos[0]} "
+                    f"({etiqueta}) en el PDF, que por {factor:g} son {esperado:.4f}, y "
+                    f"el JSON tiene {clave}.{columna} = {dicho}")
+            hechas += 1
+
+    _mira(MAXIMOS_3A)
+    _mira(NUTRICIONAL_3A)
+
+    # Y que la etiqueta escrita en el JSON sea la que pone el PDF.
+    for (fila, etapa), (clave, columna, _f, _tag) in MAXIMOS_3A.items():
+        hits = tabla.get((fila, etapa.strip() if etapa else None)) or []
+        if not hits:
+            continue
+        tags = {tag for _v, tag in hits}
+        dicho = req.get(clave, {}).get("maximo_origen")
+        if dicho is None:
+            problemas.append(
+                f"III-3a: «{fila}» tiene maximo en el PDF y la fila {clave} del JSON no dice "
+                f"si es LEGAL o NUTRICIONAL (`maximo_origen`). No es lo mismo: el legal solo "
+                f"aplica si el nutriente se anade como ADITIVO (§3.1.3), y si viene solo del "
+                f"alimento manda el nutricional")
+            continue
+        esperado = "legal_UE" if "L" in tags else "nutricional"
+        if dicho != esperado:
+            problemas.append(
+                f"III-3a: «{fila}» lleva ({'/'.join(sorted(tags))}) en el PDF y el JSON dice "
+                f"`maximo_origen: {dicho}`")
+    return problemas, hechas
+
+
+# ============================================================
 # LA TABLA VII-14, LA DE LAS FORMAS QUIMICAS
 # ============================================================
 #
@@ -392,15 +573,18 @@ def auditar_vii_14():
 if __name__ == "__main__":
     fallos, n = auditar()
     fallos_v, n_v = auditar_vii_14()
+    fallos_m, n_m = auditar_maximos()
     print(f"Tabla III-3b: {n} celdas rehechas desde el texto del PDF, "
           f"{len(NO_TRANSCRITAS)} filas declaradas sin transcribir")
+    print(f"Tabla III-3a: {n_m} MAXIMOS rehechos desde el texto del PDF, con su "
+          f"etiqueta (L) legal o (N) nutricional")
     print(f"Tabla VII-14: {n_v} factores rehechos desde el texto del PDF, "
           f"{len(EN_UNA_NOTA_VII_14)} equivalencias que viven dentro de una nota")
     print("-" * 60)
-    fallos = fallos + fallos_v
+    fallos = fallos + fallos_v + fallos_m
     if fallos:
         print(f"\n{len(fallos)} PROBLEMAS:\n")
         for f in fallos:
             print("  -", f)
         sys.exit(1)
-    print("\nLas dos transcripciones cuadran con el PDF, celda a celda.")
+    print("\nLas tres transcripciones cuadran con el PDF, celda a celda.")

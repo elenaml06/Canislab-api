@@ -10503,6 +10503,16 @@ for _fich77, _marcas77 in (
         ("Table VII-14. Conversion factors - Vitamin source to activity", "el titulo de la tabla"),
         ("7.5.1. Chemical compounds", "el epigrafe de la seccion"),
         ("62 of 98   Page", "la cabecera con el numero de pagina del PDF"))),
+    # ⚠️ LA III-3a ES DONDE VIVEN LOS MAXIMOS, y hasta el 10 de septiembre no la
+    # miraba nadie. En la III-3b los maximos LEGALES no llevan numero -- solo
+    # «(L)» --, porque la §3.2.1 dice que no dependen de la energia y se dan solo
+    # en base materia seca. Asi que los siete techos legales que aplica el motor
+    # son conversiones NUESTRAS de esta tabla.
+    ("fediaf_tabla_III_3a.txt", (
+        ("TABLE III-3a. Unit per 100 g dry matter (DM)", "el titulo de la tabla"),
+        ("15 of 98", "la cabecera con el numero de pagina del PDF"),
+        ("(L) = EU legal limit", "la leyenda que separa el maximo legal del nutricional"),
+        ("Footnotes a-h are summarised below Table III-4c.", "el pie de las notas a-h"))),
 ):
     _txt77 = (_raiz_b24 / _fich77).read_text(encoding="utf-8")
     for _marca77, _que77 in _marcas77:

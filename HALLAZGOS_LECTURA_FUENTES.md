@@ -4663,3 +4663,60 @@ Toca al **BLOQUE 71**, que compara las kcal de cada ficha del catálogo contra
 esa misma ecuación. Un alimento muy fibroso puede salir «alejado de la ecuación»
 sin que su dato esté mal. Hoy el bloque no distingue ese caso — y, como F-16, no
 se puede comprobar sin la humedad.
+
+### F-23 · La columna de MÁXIMOS no la comprobaba nadie, y ya se rompió una vez
+
+**Pregunta de Elena, 10 de septiembre:** *«aunque el legal sea más bajo debes
+dejar anotado el límite nutricional también porque lo legal podría cambiar»*.
+
+Tiene razón, y al ir a hacerlo aparecieron dos cosas peores que la que motivó la
+pregunta.
+
+**Primera: hay una razón más fuerte que «la ley podría cambiar».** Es §3.1.3, y
+ya estaba escrita en el repo sin que nadie hubiera sacado esta consecuencia:
+
+> *«A legal maximum only applies when the particular trace element or vitamin is
+> **added to the recipe as an additive**. If the nutrient comes exclusively from
+> feed materials, **the legal maximum does not apply, instead the nutritional
+> maximum applies**.»*
+
+O sea que en una ración cruda cuyo cobre, zinc, hierro o vitamina D vengan solo
+de la carne y las vísceras, **el techo que gobierna es el nutricional** — y ese
+número no estaba en ninguna parte que se pudiera leer.
+
+**Segunda: los maxima no se auditaban.** `auditar_transcripcion_fediaf.py`
+rehacía las **cuatro columnas de mínimo** de la Tabla III-3b y **no miraba la de
+máximo**. Y en la III-3b los máximos legales **no llevan número**: solo pone
+«(L)», porque la §3.2.1 dice que no dependen de la densidad energética y por eso
+se dan solo en base materia seca. Así que los siete techos legales que aplica el
+motor —cobre 7, yodo 2750, hierro 170,45, manganeso 42,5, selenio 142, zinc
+56,75 y vitamina D 14,1875— son **conversiones nuestras de la Tabla III-3a**, y
+no había nada que las comparara con el PDF.
+
+⚠️ **Y no es hipotético: ya se rompió.** La nota del sello del 8 de septiembre lo
+cuenta con todas las letras — el maximo de fósforo del adulto se quitó el día 7
+porque *«en el texto extraído del PDF la columna de máximos cae visualmente sobre
+la fila ANTERIOR: leyendo línea a línea, el calcio parece tener cuatro máximos y
+el fósforo ninguno»*. Durante un día **el motor no tuvo techo de fósforo en
+adulto** y el catálogo llegó a tener un menú con 4124 mg. Era ya el fallo de las
+dos columnas pegadas (F-16), visto en una celda y sin encontrarle la causa.
+
+**Lo aplicado:**
+
+- `fediaf_tabla_III_3a.txt`, la página 15 del PDF tal cual.
+- Las **13 filas con máximo** llevan ahora `maximo_origen` — legal o nutricional
+  — y la cita de cómo sale en la tabla.
+- La **vitamina D lleva los dos números**: 14,1875 µg (legal, 227,00 (L)) y
+  **20,0 µg (nutricional, 320,00 (N))**. Es el único nutriente del perfil canino
+  con los dos publicados y con el legal por debajo.
+- `auditar_transcripcion_fediaf.py` **rehace los 18 máximos** desde el texto del
+  PDF, con su etiqueta y su conversión — y el factor no es siempre ×2,5: el
+  calcio y el fósforo van en g en la tabla y en mg en el motor, el yodo en mg y
+  en µg, y las vitaminas A y D en UI. Probado con el fallo puesto seis veces,
+  incluida la del 7 de septiembre.
+
+**Y una coincidencia que da confianza:** esos 20,0 µg del máximo nutricional son
+exactamente el máximo que FEDIAF da al cachorro de **raza gigante** (320 IU/100 g
+MS, §3.3.1, por los estudios en gran danés de Tryfonidou 2002) **y** el tope de
+seguridad crónica que el motor ya aplicaba desde NRC 2006. Tres caminos
+independientes al mismo número.
