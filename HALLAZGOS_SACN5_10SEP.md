@@ -495,10 +495,17 @@ del perro sano, 2000 mg/1000 kcal, que vive en `recomendaciones_libro.json` desd
 el 8 de septiembre. Y sobre la proteína en sí, el propio libro dice que el asunto
 *«has yet to be resolved»*. Va como pregunta al nutricionista, no como número.
 
-⚠️ Y una cifra suelta que conviene tener vista: el **mínimo** de grasa que
+⚠️ ~~Y una cifra suelta que conviene tener vista: el **mínimo** de grasa que
 recomienda SACN5 es **8,5 % MS = 21,25 g/1000 kcal**, y el mínimo de FEDIAF que
 aplicamos es **13,75** — un 35 % más bajo. No cambia ningún menú (vamos por 61 a
-70), pero es una fuente pidiendo más que FEDIAF en un suelo.
+70), pero es una fuente pidiendo más que FEDIAF en un suelo.~~
+
+**TACHADO el mismo día, al leer el capítulo 17: eso era una errata del capítulo
+13.** El cap. 17 dice, citando al mismo NRC 2006, que el 8,5 % MS es el mínimo del
+**CRECIMIENTO** y que el del adulto es **5,5 % MS = 13,75 g/1000 kcal**, que es
+exactamente el mínimo de FEDIAF que aplicamos. No hay ninguna fuente pidiendo más
+que FEDIAF aquí: hay una frase del libro que copió sobre el adulto la cifra del
+cachorro. Detalle en **S-20**.
 
 ### S-14 · ✅ El escalón de edad, confirmado por cuarta vez
 
@@ -560,3 +567,146 @@ poder decidirlo.
 - **La vitamina C ≥100 mg/kg MS** no es un requisito (el perro la sintetiza y
   FEDIAF no le da fila) y **ninguna ficha del catálogo la declara**. Queda como
   dato que falta, no como límite.
+
+---
+
+## Cuarta tanda (10 de septiembre, noche) — el capítulo 17 entero: el crecimiento
+
+Los 51 elementos con veredicto. Es el capítulo del que ya salieron los dos techos
+de calcio y fósforo del cachorro el 9 de septiembre — y al leerlo entero aparece
+**lo que se dejó de esa misma tabla**.
+
+### S-18 · ⚠️ De la Tabla 17-1 se cogieron DOS columnas y se dejó la tercera
+
+La Tabla 17-1 tiene tres filas de mineral, cada una con **dos columnas** según el
+cachorro vaya a pesar más o menos de 25 kg de adulto:
+
+| | <25 kg adulto | >25 kg adulto | Qué aplica el motor |
+|---|---|---|---|
+| Calcio | 0,7–1,7 % MS | 0,7–1,2 % MS | **4250** y **2750** ✅ |
+| Fósforo | 0,6–1,3 % MS | 0,6–1,1 % MS | **3250** y **2750** ✅ |
+| **Ca:P** | **1:1–1,8:1** | **1:1–1,5:1** | **1,6 / 1,8 de FEDIAF, sin distinguir raza** ❌ |
+
+Las dos primeras filas se aplicaron el 9 de septiembre. **La tercera no**, y es la
+misma tabla, la misma fuente y la misma población. El motor pone el techo del
+ratio por **etapa** (1,6 en cachorro joven, 1,8 en crecimiento) y **no mira el
+peso adulto esperado**, así que un cachorro de raza grande puede salir en 1,7 con
+el semáforo en verde cuando su propia tabla lo topa en **1,5**.
+
+Es exactamente el fallo que este repo lleva días persiguiendo: **leer la fila que
+ya tenías y no la tabla entera.**
+
+**Medido, y cabe con margen.** Los doce menús de cachorro del catálogo:
+
+| | Ca:P |
+|---|---|
+| Gigante crecimiento / joven | 1,38 · 1,03 |
+| Grande crecimiento / joven | 1,23 · 1,02 |
+| Los ocho de razas menores | 1,15 – 1,31 |
+
+**Ninguno llega a 1,5**, y el más alto de raza grande está en 1,38. O sea que
+aplicarlo hoy no quitaría ni un menú.
+
+No se aplica **en esta pasada** a propósito: es la regla de `LECTURA_SACN5.md`
+—leer todo, apuntar todo, aplicar al final— y estrenar una clase de límite nueva
+(un ratio en `recomendaciones_libro.json`, que hoy solo guarda techos por
+nutriente) a mitad de una lectura es cómo se falló el 8 de septiembre.
+
+### S-17 · ⚠️ SACN5 da DOS escaleras de energía de crecimiento distintas, y usamos la más floja
+
+| | Escalones | Corta por |
+|---|---|---|
+| Caps. 1 y 5, Tabla 5-2 | **3 × RER** → **2 × RER** | **edad** (4 meses) |
+| **Cap. 17, Tabla 17-2** | **3 × → 2,5 × → 1,8-2,0 ×** | **% del peso adulto** (50 %, 80 %) |
+
+`der.py` usa la primera **como respaldo**, y solo cuando no hay peso adulto
+esperado (con él manda la curva continua de Klein, que es la de FEDIAF). Pero en
+esa banda las dos no dicen lo mismo:
+
+| Cachorro entre el 50 % y el 80 % de su peso adulto | kcal/BWkg^0,75 |
+|---|---|
+| Lo que da nuestro respaldo (2 × RER, desde los 4 meses) | **140** |
+| Lo que da la Tabla 17-2 (2,5 × RER) | **175** |
+
+**Un 20 % menos.** Y el capítulo avisa de lo que pasa por debajo de esa cifra:
+*«Young Great Dane puppies may not grow when daily energy intake is less than
+175 kcal (735 kJ) metabolizable energy (ME)/BWkg 0.75 (2.5 x RER)»*.
+
+Al Gran Danés no le afecta —tiene fila propia en FEDIAF (200) y esa es la que se
+aplica—, pero a cualquier otro cachorro sin peso adulto esperado, sí. El
+comentario de `der.py` ya llama a los tres escalones *«la convención clínica
+genérica»* y se quedó con los dos por edad; ahora está medido lo que cuesta.
+
+### S-20 · ⚠️ El libro se contradice consigo mismo en el mínimo de grasa del ADULTO
+
+Dos capítulos, la misma cifra, la misma cita al NRC 2006, dos números:
+
+> **cap. 13** — *«The minimum recommended allowance for dietary fat in foods for
+> normal, healthy adult dogs is 8.5%, with at least 1% of the food as linoleic
+> acid (DM) (NRC, 2006).»*
+
+> **cap. 17** — *«The minimum recommended allowance of dietary fat for growth
+> (8.5% DM) is much less than that needed for nursing, but more than is needed
+> for adult maintenance (5.5% DM) (NRC, 2006).»*
+
+**La buena es la del capítulo 17.** 5,5 % MS = **13,75 g/1000 kcal**, que es
+exactamente el mínimo de grasa de FEDIAF que aplica el motor. El capítulo 13
+copió sobre el adulto la cifra del **crecimiento**.
+
+⚠️ Esto **corrige lo que escribí en S-13**, donde di por buena la cifra del
+cap. 13 y anoté que era «una fuente pidiendo más que FEDIAF en un suelo». No lo
+es: FEDIAF y SACN5 dicen lo mismo, y quien se equivoca es una frase del libro.
+
+### S-19 · La proteína del cachorro, y la duda que el capítulo SÍ cierra
+
+Rango recomendado **22-32 % MS = 55-80 g/1000 kcal**, y una ración BARF de
+cachorro ronda los **134**. Por encima otra vez, como en el adulto.
+
+Pero aquí el capítulo contesta la pregunta que importa, y la contesta a favor:
+
+> *«it has been shown that foods containing 23 to 31% crude protein (6.4 to 8.8
+> g/100 kcal ME) do not have a deleterious effect on skeletal development»*
+
+O sea que **lo que deforma el hueso del cachorro de raza grande no es la
+proteína**: es el calcio y la energía. Que es exactamente lo que el motor limita
+en crecimiento, y exactamente lo que no limita.
+
+### S-21 · Los hidratos que una ración cruda no lleva
+
+> *«It has been suggested that foods contain about **20% digestible carbohydrate
+> until puppies are four months of age** to ensure optimal health.»*
+
+Y lo repite en las respuestas del capítulo: *«puppies appear to do better if
+growth-type foods contain more than 20% complex carbohydrate DM»*. Una ración de
+carne cruda no lleva prácticamente ninguno.
+
+No hay número que aplicar —el propio libro dice *«no specific level of digestible
+(soluble) carbohydrates exists for growing puppies»*— pero es de la **misma
+familia** que el requisito condicional de proteína de gestación y lactancia que
+el motor sí aplica: FEDIAF calcula suponiendo que la dieta lleva hidratos, y ésta
+no. Va como pregunta para el nutricionista.
+
+### Y una errata del libro, localizada exactamente
+
+> *«The recommended minimum allowance for copper in growing puppies is **1.1% DM**
+> (NRC, 2006).»*
+
+Un 1,1 % de materia seca de cobre serían **27.500 mg/1000 kcal**. La cifra real
+del NRC es **11 mg/kg MS = 2,75 mg/1000 kcal**, que es *exactamente* el mínimo de
+FEDIAF que aplicamos. El libro escribió «1.1 % DM» donde iba «11 mg/kg DM». No se
+toma nada de ahí, y queda escrito para que nadie lo tome mañana.
+
+### Lo que confirma, que también cuenta
+
+- **DHA+EPA ≥0,05 % MS y el EPA no más del 60 %**, así que el DHA ≥0,02 % MS. Es
+  la fuente del suelo de DHA de crecimiento, ya aplicado y cerrado.
+- **El fósforo del cachorro grande, 1,1 % MS = 2750**, y el calcio 1,2 % = 3000
+  donde aplicamos **2750** por Fascetti. Coherente.
+- **El umbral son 25 kg de peso adulto**, dicho otra vez y con el método al lado
+  (*«Estimate adult body weight… >25 kg adult weight, use large-/giant-breed
+  recommendation»*). No es el de 15 kg de la nota b de FEDIAF.
+- **Por qué el techo de calcio es una restricción y no un aviso**: entre los dos y
+  los seis meses la absorción intestinal de calcio **no baja del 40 %** por mucho
+  que se le dé. El cachorro no se autorregula.
+- **El BCS del cachorro es un rango**, 2,5/5 a 3,5/5. Tercera fuente que da rango
+  donde nosotros usamos un punto — la pregunta ya está abierta en `CERRADO.md`.
