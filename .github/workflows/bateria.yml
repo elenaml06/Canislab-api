@@ -56,6 +56,14 @@ jobs:
     # en local tardo 2.387 s (40 min), y este runner va mas lento. Con el limite
     # en 45 volveria a morirse por reloj.
     timeout-minutes: 60
+    # ⚠️ AQUI Y NO EN EL PASO. El `env` de un paso NO esta disponible en el `if`
+    # de ese mismo paso -- GitHub evalua el `if` antes de montar el entorno del
+    # paso, asi que `if: env.FUENTES_TOKEN != ''` con el `env` al lado da SIEMPRE
+    # vacio y el paso se salta aunque el secreto exista. Es un fallo que no da
+    # error: el flujo sale verde habiendo comprobado siete bloques menos, que es
+    # exactamente lo que este paso viene a arreglar.
+    env:
+      FUENTES_TOKEN: ${{ secrets.FUENTES_TOKEN }}
     steps:
       # ⚠️ EL REPO VA EN UNA SUBCARPETA, y no es cosmético: los siete bloques que
       # comprueban el repo contra el TEXTO de las fuentes buscan
@@ -79,8 +87,6 @@ jobs:
       # PDF que aquí no hace falta bajar.
       - name: Traer las fuentes (si hay token)
         if: ${{ env.FUENTES_TOKEN != '' }}
-        env:
-          FUENTES_TOKEN: ${{ secrets.FUENTES_TOKEN }}
         uses: actions/checkout@v4
         with:
           repository: elenaml06/canislab-fuentes
@@ -96,6 +102,10 @@ jobs:
         with:
           python-version: "3.11"
           cache: pip
+          # Explícito porque el repo ya no está en la raíz del espacio de
+          # trabajo: sin esta línea la caché busca el `requirements.txt` donde
+          # ya no está y se pierde sin decir nada.
+          cache-dependency-path: Canislab-api/requirements.txt
 
       - name: Instalar lo que hace falta
         working-directory: Canislab-api
