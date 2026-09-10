@@ -4553,7 +4553,14 @@ SELLOS_DE_LOS_DATOS = {
         # («AAFCO introduced a nutritional maximum...») unia dos frases sin
         # marcar el corte donde va «(Dzanis DA, 1994)».
         # Ningun numero cambia; lo caza `auditar_citas.py` (BLOQUE 85).
-        "requerimientos_v2_final.json": "6a2aa8ef7fc6d3be",
+        # ⚠️ Y AQUI SE VOLVIO A CAER EN LA MISMA TRAMPA QUE EL 8 DE SEPTIEMBRE,
+        # con la advertencia escrita cuatro lineas mas arriba: el sello se
+        # calculo con `ensure_ascii=False` y `/verificar` lo calcula con
+        # `ensure_ascii=True`. Da otro hash, tiene la misma pinta, y el numero
+        # equivocado no lo caza nadie salvo el BLOQUE 12 -- que lo cazo. La
+        # forma de sacarlo sin equivocarse no es repetir la cuenta a mano: es
+        # leer lo que devuelve `/verificar` en `encontrado`.
+        "requerimientos_v2_final.json": "d79627207a0231d2",
         # 6 sep (2): nota_auditoria de los 12 aminoacidos corregida -- decia "el motor todavia no lo verifica porque ningun alimento tiene aminograma", que era cierto ANTES del 28 de agosto y llevaba mas de una semana desactualizado (los 12 SI estan en verificar.MAPA desde entonces, 94/159 fichas con aminograma). Ningun numero cambia, solo el texto de 12 filas.
         # 6 sep: VITAMINA D AL TECHO LEGAL. Es el UNICO nutriente del perfil canino con techo legal (UE) por debajo del nutricional -- 227.00 UI (L) frente a 320.00 UI (N) en la Tabla III-3a, confirmado dos veces en el PDF de FEDIAF. El max de antes (20 ug = 800 UI) era el nutricional; el que manda por ser mas estricto es el legal, 227 x 2.5 = 567.5 UI = 14.1875 ug/1000kcal. auditar_fediaf.py actualizado a la vez para no comparar contra el numero equivocado. Ver PENDIENTE_NUTRICION.md.
         # 28 ago: EL ANCLA DE 110. Cada nutriente lleva ahora `minAdulto110`, la columna de DER 110 de la Tabla III-3b, sacada de NUESTRA transcripcion auditada del PDF y no de fuera. Con las dos anclas se puede aplicar la ecuacion del apartado 7.2.5: cuando el perro come menos, el minimo por 1000 kcal sube. Los 38 cuadraron con el minAdulto de siempre sin una discrepancia, o sea que nuestra columna ES la de 95. Ver el BLOQUE 34
