@@ -136,23 +136,91 @@ def _texto(fuente):
     return None
 
 
-def _clave(tipo, valor):
-    """Id estable y corto de un elemento, para que el JSON no dependa de espacios."""
+# ⚠️ Y LA CLAVE LLEVA LA LINEA, DESDE EL 10 DE SEPTIEMBRE POR LA TARDE.
+#
+# Hasta ahora la clave era solo el texto, asi que **un elemento que aparece dos
+# veces en la misma seccion tenia UN solo veredicto**. Suena inofensivo y es
+# justo como se cometio el error de hoy:
+#
+#   La cifra «22,73 µg» sale dos veces en la seccion 3.2.3: una en la tabla
+#   FELINA y otra en la NOTA d, que marca la fila de selenio del PERRO. Con una
+#   sola clave, el veredicto que se escribio fue «celda de la tabla felina, el
+#   motor solo formula para perro» -- verdadero para una de las dos apariciones
+#   y FALSO para la que importa. Y la que importa es un techo 2,5 veces mas
+#   estricto sobre el selenio anadido (F-28).
+#
+# Elena, al enterarse: «no me vale que haya cosas que descartes porque si...
+# tenemos que asegurarnos de que, de una sola pasada, cuando algo queda leido y
+# cerrado esta leido de verdad».
+#
+# Asi que cada APARICION es un elemento. Medido: 2.015 claves de texto eran
+# 2.369 apariciones -- 354 escondidas detras del veredicto de otra.
+def _clave(tipo, valor, linea=None):
+    """Id de una APARICION concreta: tipo, linea del texto original y contenido."""
     v = " ".join(str(valor).split())
-    return f"{tipo}:{v[:110]}"
+    return f"{tipo}@{linea}:{v[:110]}" if linea is not None else f"{tipo}:{v[:110]}"
+
+
+def _plano_con_lineas(lineas, a, b):
+    """El texto de la seccion en una linea, y donde empieza cada linea original."""
+    trozos, marcas, pos = [], [], 0
+    for i in range(a, b + 1):
+        t = " ".join(lineas[i - 1].split())
+        if not t:
+            continue
+        if trozos:
+            pos += 1                      # el espacio que las une
+        marcas.append((pos, i))
+        trozos.append(t)
+        pos += len(t)
+    return " ".join(trozos), marcas
+
+
+def _linea_de(marcas, off):
+    linea = marcas[0][1] if marcas else None
+    for p, i in marcas:
+        if p > off:
+            break
+        linea = i
+    return linea
 
 
 def extraer(fuente, seccion, a, b):
     lineas = _texto(fuente)
     if lineas is None:
         raise SystemExit(f"no encuentro el texto de {fuente}")
-    plano = " ".join(" ".join(lineas[a - 1:b]).split())
+    plano, marcas = _plano_con_lineas(lineas, a, b)
     items = {}
-    for n, u in _CIFRA.findall(plano):
-        items[_clave("cifra", f"{n} {u}")] = None
+
+    def _mete(tipo, texto, off):
+        # ⚠️ Y SI DOS APARICIONES CAEN EN LA MISMA LINEA, se numeran. Sin esto
+        # quedaban 7 pares compartiendo veredicto -- pocas, pero es exactamente
+        # el fallo que se esta arreglando, solo que mas dificil de ver.
+        base = _clave(tipo, texto, _linea_de(marcas, off))
+        k, n = base, 1
+        while k in items:
+            n += 1
+            k = f"{base}#{n}"
+        items[k] = None
+
+    for m in _CIFRA.finditer(plano):
+        _mete("cifra", f"{m.group(1)} {m.group(2)}", m.start())
+    off = 0
     for fr in _frases(plano):
-        items[_clave("frase", fr)] = None
+        i = plano.find(fr, off)
+        if i < 0:
+            i = off
+        _mete("frase", fr, i)
+        off = i + len(fr)
     return items
+
+
+# Un veredicto que dice «esto es del gato», y las palabras con las que la fuente
+# lo diria de verdad.
+_GATO_PALABRA = re.compile(r"felin|gato", re.I)
+_DESCARTE = re.compile(r"no_aplicable|no aplicable|no aplica|no se aplica|se descarta|"
+                       r"solo formula para perro|solo perro|no nos aplica", re.I)
+_GATO_TEXTO = re.compile(r"\bcats?\b|\bfeline\b|\bkitten", re.I)
 
 
 def _cargar():
@@ -193,6 +261,37 @@ def auditar():
             total += 1
             if veredictos.get(it):
                 clasificados += 1
+        # ⚠️ UN VEREDICTO QUE DESCARTA POR CATEGORIA TIENE QUE PODER
+        # COMPROBARSE (10 de septiembre). El error del dia fue descartar la
+        # cifra «22,73 µg» como «celda de la tabla FELINA» cuando era la nota d,
+        # que marca la fila de selenio del PERRO. Elena: «no me vale que haya
+        # cosas que descartes porque si».
+        #
+        # Asi que si un veredicto dice que algo es del GATO, el texto tiene que
+        # decirlo: o el propio elemento, o su linea en la fuente, nombran al
+        # gato. Si no lo nombran, el veredicto tiene que explicar por que lo
+        # sabe -- y para eso lleva la marca `felino_por:`, que obliga a
+        # escribirlo en vez de suponerlo.
+        _lineas_f = _texto(fuente) or []
+        for k, txt in veredictos.items():
+            if not txt or not (_GATO_PALABRA.search(txt) and _DESCARTE.search(txt)):
+                continue
+            if "felino_por:" in txt:
+                continue
+            cuerpo = k.split(":", 1)[1] if ":" in k else k
+            n_lin = None
+            m_lin = re.search(r"@(\d+)", k.split(":", 1)[0])
+            if m_lin:
+                n_lin = int(m_lin.group(1))
+            alrededor = cuerpo
+            if n_lin and 0 < n_lin <= len(_lineas_f):
+                alrededor += " " + " ".join(_lineas_f[max(0, n_lin - 3):n_lin + 2])
+            if not _GATO_TEXTO.search(alrededor):
+                fallos.append(
+                    f"{clave}: el veredicto de «{cuerpo[:60]}» lo descarta por FELINO y ni el "
+                    f"elemento ni su linea ({n_lin}) nombran al gato. Asi se descarto la nota d "
+                    f"del selenio. Si de verdad es felino, escribe `felino_por:` con como se sabe")
+
         sobra = [k for k in veredictos if k not in items]
         for k in sobra:
             fallos.append(f"{clave}: el veredicto «{k[:70]}» ya no corresponde a nada del texto. "

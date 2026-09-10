@@ -4858,7 +4858,15 @@ un techo más alto, los deja **sin ninguno, y precisamente porque nadie sabe
 dónde está el daño**.
 
 **3 · ⚠️ Y hay una tensión dentro del propio documento, que conviene tener
-escrita.** §3.2.1, leyendo las tablas:
+escrita.**
+
+> **⚠️ ESTO ESTABA MAL, y lo corrige F-27 unas líneas más abajo (mismo día, por
+> la tarde). No hay ninguna tensión: las dos frases están en el MISMO PÁRRAFO de
+> §3.1.3, una detrás de otra. Se escribió así por citar un trozo en vez de leer
+> la sección entera. Se deja escrito, no borrado, porque una equivocación
+> borrada se vuelve a cometer.**
+
+§3.2.1, leyendo las tablas:
 
 > *«The legal maximum (L) is **mandatory and always applies to all life
 > stages**.»*
@@ -4882,3 +4890,134 @@ la otra lo condiciona. Cumplir la más estricta cumple las dos.
 *«Nutritional maximum for sodium has been deleted and replaced by a footnote»*.
 Es la nota c, y confirma que el máximo de sodio y cloruro **no es un (N)**: es
 «el nivel más alto con datos», que es como está etiquetado en el JSON desde hoy.
+
+
+### F-27 · La «tensión» de F-26 no existía, y al ir a mirarlo salió algo peor
+
+Leyendo §3.1.3 **entera y al pie de la letra**, no en la frase que tenía citada.
+
+**1 · Primero, una corrección de lo que escribí esta mañana.** El punto 3 de F-26
+decía que había una tensión entre §3.2.1 («the legal maximum is mandatory and
+always applies to all life stages») y §3.1.3 («a legal maximum only applies when…
+added as an additive»), y proponía una lectura que las reconciliara.
+
+No hay tensión y no hace falta reconciliar nada: **las dos frases están en el
+mismo párrafo de §3.1.3**, una detrás de otra. «All life stages» habla de etapas
+vitales, no de procedencia. Leer la sección entera lo resuelve solo. Lo que
+fallaba era, otra vez, haber citado un trozo en vez de leer el sitio.
+
+**2 · Y en §3.2.1 hay una frase que sí cambia algo, y es de las gordas.**
+
+> *«Legal maxima in EU legislation are expressed on 12% moisture content and
+> **they do not account for energy density**. Therefore in these guidelines they
+> are **only provided on a dry matter basis**.»*
+
+> *«These conversions assume an energy density of 16.7 kJ (4.0 kcal) ME/g DM.
+> **For foods with energy densities different from this value, the
+> recommendations should be corrected for energy density.**»*
+
+FEDIAF publica los máximos legales **solo en materia seca, a propósito**, porque
+la ley no habla de calorías. El motor los aplica **por 1000 kcal**, convertidos
+con el ×2,5 de la Tabla III-2 — que es exactamente la conversión que la segunda
+frase condiciona a una densidad de **4,0 kcal ME/g de materia seca**. Y pide
+corregirla cuando la densidad es otra.
+
+Una ración BARF de este motor no tiene por qué estar en 4,0: lleva del 20 al 60 %
+de hueso, que es casi todo mineral y aporta materia seca con muy pocas calorías,
+y por el otro lado grasa, que aporta calorías con poca materia seca. Los dos
+efectos van **en direcciones opuestas**, así que ni siquiera se puede decir de
+antemano hacia dónde falla.
+
+**Lo que está en juego, medido en sensibilidad** (selenio, cuyo techo legal es
+56,80 µg/100 g MS):
+
+| Densidad real (kcal ME/g MS) | Factor 10/E | Techo legal por 1000 kcal |
+|---|---|---|
+| 3,5 | ×2,86 | 162,3 |
+| 3,8 | ×2,63 | 149,5 |
+| **4,0** (el que suponemos) | **×2,50** | **142,0** |
+| 4,5 | ×2,22 | 126,2 |
+| 5,0 | ×2,00 | 113,6 |
+| 5,5 | ×1,82 | 103,3 |
+
+O sea que el techo que aplicamos puede estar **un 14 % por debajo** del que toca
+o un **25 % por encima**. Y no es un nutriente: son **los siete** con máximo
+legal — cobre, yodo, hierro, manganeso, selenio, zinc y vitamina D —, que
+además son justo los seis que **no tienen máximo nutricional ninguno** (F-25), o
+sea aquellos para los que este es el único techo que existe.
+
+**3 · Y por qué no se puede cerrar hoy.** Para saber la densidad real de un menú
+hace falta su materia seca, y **el catálogo no tiene columna de humedad** — ni de
+cenizas. Está en `DATOS_QUE_FALTAN.md` desde antes, como un hueco de ficha; hoy
+deja de ser eso: **es el dato que decide siete techos de seguridad**. No lo
+rellena el asistente.
+
+Mientras tanto no se toca ninguna cifra. Bajar el techo «por si acaso» sería
+inventarse la densidad igual que suponerla 4,0, solo que en la otra dirección, y
+el ×2,5 al menos es el factor que publica la propia FEDIAF.
+
+
+### F-28 · La nota d: un segundo techo de selenio, 2,5 veces más estricto, y un veredicto que estaba mal
+
+Leyendo §3.2.3 **al pie de la letra**, que es la sección de las tablas felinas —
+y donde, al final, están impresas **las notas a-h, que son comunes a las seis
+tablas**.
+
+**1 · Primero, un veredicto mío que era falso — y al buscar sus hermanos salieron
+diez más.** La cifra `22,73 µg` estaba clasificada como *«celda de la tabla
+FELINA, el motor solo formula para perro»*. No lo es: es la **nota d**, y marca
+la fila de **selenio del PERRO** en la Tabla III-3a, que se lee `56.80 (L)d`.
+Las notas están impresas debajo de la última tabla felina y por eso se leyeron
+como felinas. Seis de las ocho —a, b, c, d, g, h— marcan filas del perro.
+
+Y no era un despiste suelto. Al poner una regla que **exige demostrar** el
+descarte por felino, saltaron **once elementos** con la misma etiqueta falsa,
+todos dentro del bloque de notas:
+
+| Línea | Qué es de verdad |
+|---|---|
+| 2931-2932 | **Nota b**: el calcio al que se puede bajar pasados los ~6 meses (0,8 % MS · 2 g/1000 kcal · 0,48 g/MJ) |
+| 2934, 2936-2937 | **Nota c**: el cloruro seguro del perro (2,35 % MS · **5,87 g/1000 kcal** · 1,40 g/MJ) — y **5,87 es el número que aplica el motor** |
+| 2940-2941 | **Nota d**: el selenio orgánico (22,73 µg/100 g MS · 0,20 mg/kg · la humedad del 12 %) |
+
+O sea que estaban etiquetadas como «no nos aplica» **tres cifras que el motor sí
+aplica** y la humedad de referencia del 12 %, que es la misma base de F-27.
+
+**2 · Y lo que dice la nota d es un techo que no aplicamos.**
+
+> *«For organic selenium a maximum supplementation level of **22.73 µg organic
+> Se/100 g DM** (0.20 mg organic Se/kg complete feed with a moisture content of
+> 12 %) applies.»*
+
+Es un techo **de otra naturaleza** que el de la fila:
+
+| | Qué limita | Cuánto | Por 1000 kcal (×2,5) |
+|---|---|---|---|
+| Fila III-3a | el **total** de selenio | 56,80 µg/100 g MS | 142,0 |
+| **Nota d** | **solo lo suplementado**, y solo en forma **orgánica** | 22,73 µg/100 g MS | **56,8** |
+
+O sea: **el 40 %**. Y la cuenta de la propia nota cuadra — 0,20 mg/kg de pienso
+al 12 % de humedad son 0,227 mg/kg de materia seca, que son sus 22,7 µg/100 g.
+
+**3 · Y no es teórico. Medido hoy** sobre menús reales, contando solo lo que
+aportan los alimentos de categoría suplemento:
+
+| Perro | Selenio total | **De suplemento** | ¿Cabe en la nota d? |
+|---|---|---|---|
+| CachorroJoven 6 kg | 139,2 | **63,0** | **NO** (tope 56,8) |
+| CachorroJoven 1,5 kg | 142,0 | 39,0 | sí |
+| CachorroCrecimiento 12 kg | 140,5 | 26,1 | sí |
+| Adulto 22 kg | 139,0 | 9,1 | sí |
+| Lactante 15 kg | 141,0 | 22,1 | sí |
+
+El cachorro de 6 kg **se pasa** — en uno de los menús que devolvió el solver, no
+en todos, porque el menú cambia entre ejecuciones. Los adultos van holgados: su
+selenio viene sobre todo de las vísceras y el pescado, no del bote.
+
+**4 · Por qué no se puede aplicar hoy.** La nota d solo rige si el selenio es
+**orgánico** (levadura de selenio, selenometionina) y no si es selenito o
+selenato sódico. **Ninguna ficha del catálogo dice en qué forma química viene su
+selenio.** Es exactamente el mismo hueco que el de las vitaminas del grupo B, y
+aplicar el techo a ciegas sería inventarse el dato — igual que ignorarlo.
+
+Queda en `DATOS_QUE_FALTAN.md`. **No lo rellena el asistente.**

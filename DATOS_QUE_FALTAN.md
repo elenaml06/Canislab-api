@@ -953,3 +953,86 @@ forma exacta (el número E/3a suele venir al lado). Si la etiqueta declara
 «Vitamina B5 (ácido pantoténico)» el número ya es actividad y no hay que tocar
 nada; si declara «D-pantotenato cálcico», hay que multiplicar. **No lo rellena
 el asistente.**
+
+---
+
+## La humedad de cada ficha, que decide siete techos de seguridad (10 de septiembre de 2026)
+
+**Qué falta:** el **agua** (o la materia seca) de cada uno de los alimentos del
+catálogo, en g/100 g tal cual se da. Y con ella, idealmente, las **cenizas**.
+
+### Por qué hace falta, y por qué ya no es un hueco de ficha cualquiera
+
+Hasta hoy la humedad era «estaría bien tenerla». Leyendo **§3.2.1 de FEDIAF al
+pie de la letra** pasa a ser el dato que decide **siete techos**:
+
+> *«Legal maxima in EU legislation are expressed on 12% moisture content and
+> **they do not account for energy density**. Therefore in these guidelines they
+> are **only provided on a dry matter basis**.»*
+
+> *«These conversions assume an energy density of 16.7 kJ (4.0 kcal) ME/g DM.
+> **For foods with energy densities different from this value, the
+> recommendations should be corrected for energy density.**»*
+
+Los máximos **legales** —cobre, yodo, hierro, manganeso, selenio, zinc y
+vitamina D— FEDIAF los publica **solo en materia seca**. El motor los aplica
+**por 1000 kcal**, convertidos con el ×2,5 de la Tabla III-2, que supone
+**4,0 kcal ME por gramo de materia seca**. Si la ración no está en 4,0, la propia
+FEDIAF pide corregir.
+
+Y estos siete son precisamente los que **no tienen máximo nutricional**: el legal
+es el único techo que tienen.
+
+### Cuánto está en juego
+
+Selenio, techo legal 56,80 µg/100 g MS:
+
+| Densidad real (kcal ME/g MS) | Techo por 1000 kcal |
+|---|---|
+| 3,5 | 162,3 |
+| **4,0** (el supuesto) | **142,0** |
+| 4,5 | 126,2 |
+| 5,0 | 113,6 |
+
+Una ración BARF tira en las dos direcciones a la vez: el hueso (20-60 %) es casi
+todo mineral y suma materia seca casi sin calorías, y la grasa suma calorías casi
+sin materia seca. **No se puede saber ni el signo del error** sin el dato.
+
+### Lo que sí hay
+
+Las tres bases lo publican: BEDCA da el agua como nutriente, CIQUAL trae
+`Eau (g/100 g)` y USDA `Water`. **No es un hueco de las bases: es una columna que
+el catálogo nunca cargó.** Va por el orden de `Bases.md`, ficha a ficha, y **no
+lo rellena el asistente**.
+
+Detalle y la medida de sensibilidad: **F-27** en `HALLAZGOS_LECTURA_FUENTES.md`.
+
+---
+
+## La forma química del selenio de cada suplemento (10 de septiembre de 2026)
+
+**Qué falta:** para cada alimento del catálogo de categoría suplemento que
+declare selenio, **en qué forma viene**: orgánica (levadura de selenio,
+selenometionina) o inorgánica (selenito sódico, selenato sódico). Está en la
+etiqueta del bote.
+
+### Por qué hace falta
+
+La **nota d** de las tablas de FEDIAF pone un **segundo techo**, y solo para la
+forma orgánica:
+
+> *«For organic selenium a maximum supplementation level of **22.73 µg organic
+> Se/100 g DM** applies.»*
+
+Son **56,8 µg/1000 kcal** de lo **añadido**, contra los **142** que aplicamos al
+**total**. El 40 %.
+
+**Medido:** un `CachorroJoven` de 6 kg recibió en uno de sus menús **63,0
+µg/1000 kcal de selenio procedente de suplementos** — por encima del techo de la
+nota d **si ese selenio fuera orgánico**. No lo sabemos.
+
+Es el mismo patrón que la forma química de las vitaminas del grupo B: el dato
+vive en la etiqueta, no en ninguna base de composición, y sin él no se puede ni
+aplicar el techo ni descartarlo.
+
+Detalle y la medida completa: **F-28** en `HALLAZGOS_LECTURA_FUENTES.md`.
