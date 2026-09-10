@@ -1469,3 +1469,113 @@ pero real: Rawku pregunta el `peso_objetivo_kg` y escala los mínimos con él.**
    osteoarthritis was significantly younger (10.3 years)**» que en los de condicion
    normal, donde fueron 13,3 años.
    Casi dos años de vida y tres de articulaciones sanas, por un sobrepeso **moderado**.
+
+### cap.28 — Disorders of Lipid Metabolism (1.158 lineas, LEIDO ENTERO)
+
+**Este capitulo YA esta aplicado, y el releerlo entero lo confirma sin cambiar
+nada.** `patologias.json` lleva desde el 6 y el 7 de septiembre el tope de grasa y el
+suelo de fibra de la hiperlipidemia, los dos de aqui:
+· **Grasa ≤30 g/1000 kcal**, de «**Restrict dietary fat (<12% dry matter [DM])**»
+  (Tabla 28-2) × 2,5. Confirmado literal.
+· **Fibra ≥25 g/1000 kcal**, de «**fiber levels of at least 10% DM are recommended
+  for dogs**». Confirmado literal, y confirmada tambien la salvedad que el propio
+  campo `por_que` del JSON ya recoge: «**no studies have been done in animals to
+  evaluate the effects of dietary fiber type or amount on reducing serum triglyceride
+  levels**». Es decir, la cifra que aplicamos viene declarada por la fuente como una
+  recomendacion practica y no como una dosis-respuesta medida — y eso ya estaba
+  escrito.
+
+**Lo que el capitulo dice y nuestro aviso NO dice**, y son dos cosas que un dueño
+querria saber:
+1. **La dieta no siempre basta, y hay cifra**: «**up to 10 % of dogs with idiopathic
+   hyperlipidemia are unresponsive to dietary fat restriction and may require
+   pharmacologic supplementation**». Nuestro aviso ya manda al veterinario si no
+   baja, pero no dice que a uno de cada diez no le va a bajar por dieta.
+2. **Y un aviso de seguridad del otro lado**: «**Patients that lose a significant
+   amount of weight (more than 1 % of body weight per week) should receive gradually
+   increasing amounts of the recommended food**». Bajar la grasa a 30 g/1000 kcal
+   baja la densidad del menu, y si el perro adelgaza mas del 1 % semanal sin quererlo,
+   hay que darle mas. Eso no lo dice el aviso de hiperlipidemia. **Candidato a aviso
+   nuevo, decision de Elena.**
+
+Y el objetivo clinico, para que quien firma sepa contra que se mide: «**The goals of
+dietary therapy are to achieve: 1) a clear serum sample, 2) a total triglyceride
+concentration less than 500 mg/dl**».
+
+### cap.29 — Endocrine Disorders (2.705 lineas, LEIDO ENTERO)
+
+**Diabetes, hipertiroidismo felino e hipotiroidismo canino. Aqui SI aparece un hueco,
+y esta medido.**
+
+1. **⚠️ DE LA TABLA 29-3 APLICAMOS UNA FILA DE TRES, Y LAS OTRAS DOS NO CUADRAN CON
+   UN BARF.** El motor toma de esa tabla el suelo de fibra de la diabetes (17,5
+   g/1000 kcal, extremo bajo del «Fiber 7 to 18%»), y el propio JSON dice que se
+   añadio al verificar la tabla entera y ver que el motor solo aplicaba una fila de
+   ella (son palabras nuestras, no de la fuente). Pero la columna del perro tiene **cinco** filas y solo se aplico una. Las
+   dos que faltan, convertidas con el ×2,5 de siempre:
+   · **Grasa <25 %MS = <62,5 g/1000 kcal**, sin condiciones. El motor solo aplica un
+     tope de grasa en diabetes **si ademas hay pancreatitis o hipertrigliceridemia**
+     (30 % de las kcal, de Purina).
+   · **Proteina 15-35 %MS = 37,5-87,5 g/1000 kcal**. Es un **TECHO de proteina**, y el
+     motor no aplica ninguno en diabetes.
+   **MEDIDO EN VIVO, 10 de septiembre**, resolviendo con el motor y el catalogo
+   reales, `patologias=["diabetes"]`, adulto, cuatro pesos (5, 12, 22 y 35 kg) y tres
+   semillas cada uno, doce menus:
+
+   | | minimo | maximo | techo de la Tabla 29-3 |
+   |---|---|---|---|
+   | Proteina g/1000 kcal | 92,6 | 111,5 | **87,5** |
+   | Grasa g/1000 kcal | 58,4 | 69,9 | **62,5** |
+
+   **Doce de doce se pasan del techo de proteina. Nueve de doce se pasan del de
+   grasa.**
+
+   **Y HAY UN ARGUMENTO SERIO PARA NO APLICARLOS, que es justo por lo que esto es
+   decision de Elena y no mia.** La columna se titula, en dos lineas, «Dogs (increased-fiber/» + «high-carbohydrate
+   food)»: describe **un tipo de alimento** —pienso con fibra y
+   cereal— que no es lo que hace este motor. Sus 15-35 %MS de proteina son el rango de
+   un alimento cuyo grueso calorico son hidratos; una racion cruda no tiene de donde
+   sacar esas calorias mas que de proteina y grasa. Aplicar ese techo a un BARF es la
+   misma categoria de error que aplicarle la fibra del 12-25 %MS del capitulo de la
+   obesidad. **Pero entonces la fila de fibra que SI aplicamos viene de esa misma
+   columna**, y eso es lo que hay que resolver: o la columna vale para nosotros o no
+   vale, y hoy vale a medias sin que este escrito por que.
+   Lo que la fuente **no** dice en ninguna parte es que 35 %MS sea un maximo de
+   seguridad: la unica nota de esa fila es «**Dogs with renal failure should be fed
+   protein at the low end of the range**». Va a `PENDIENTE_NUTRICION.md`.
+
+2. **El hipotiroidismo tiene una cifra de energia que el motor no usa porque no
+   calcula el DER**, pero que la app si podria: «**energy expenditure, as measured by
+   indirect calorimetry, was approximately 15 % lower in hypothyroid dogs, compared
+   with healthy dogs**», y vuelve a la normalidad con levotiroxina. Un perro
+   hipotiroideo **sin tratar** necesita un 15 % menos de kcal, y hoy Rawku le da las
+   mismas que a uno sano. Es exactamente el mismo tipo de cruce pendiente que la
+   Tabla 33-8 y la 15-6. **Decision de producto.**
+
+3. **⚠️ Y LA TABLA 29-11 LISTA UN ALIMENTO DEL CATALOGO QUE NO EXCLUIMOS.** Nuestro
+   aviso de hipotiroidismo quita el grelo y el nabo y explica por que deja el brocoli,
+   la coliflor y las coles. La Tabla 29-11 de SACN5, «Goitrogenic factors in foods and
+   the environment», lista once alimentos y entre ellos **«Sweet potatoes»** y
+   **«Seaweed»**. **El catalogo tiene BONIATO** (y no tiene algas). Nadie lo ha mirado.
+   ⚠️ Con el matiz que hay que decir y que la propia tabla escribe en su pie:
+   «**Epidemiologic associations and risk factors**» — son asociaciones, no umbrales
+   con dosis. La tabla tampoco da cantidad para ninguno de los once. Asi que **esto no
+   es una cifra aplicable**: es una pregunta para el nutricionista, y va a
+   `PREGUNTAS_ABIERTAS.md`. Lo que no se puede es no haberlo mirado.
+
+4. **Lo que confirma sin cambiar nada**: el aviso de diabetes dice que lo importante
+   es la regularidad y que se quita la fruta. El capitulo lo respalda entero:
+   «**Foods and snacks containing simple sugars rapidly increase blood glucose
+   concentration and should be avoided for diabetic dogs and cats**», y sobre el
+   reparto de las comidas, «**several small meals given at regular intervals
+   throughout the day with and following insulin administration result in minimal
+   hyperglycemia**».
+
+5. **Todo lo del hipertiroidismo es FELINO** y se dice: «hyperthyroidism is uncommon
+   in dogs», y cuando sale en un perro casi siempre es un carcinoma, no la hiperplasia
+   del gato. Su Tabla 29-12 no aplica. Lo unico canino de ese bloque es un dato de
+   catalogo que conviene tener: el Box 29-3 mide el yodo de los alimentos comerciales
+   de EE. UU. y sale que «**I concentrations in U.S. dog foods ranged from 0.8 to
+   196.8 mg/kg**» — un factor 250 entre el mas bajo y el mas alto. Es el mismo
+   argumento por el que el motor aplica un techo de yodo propio y no se fia de que
+   «un alimento completo ya lo trae».
