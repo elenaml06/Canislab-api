@@ -1579,3 +1579,70 @@ y esta medido.**
    196.8 mg/kg**» — un factor 250 entre el mas bajo y el mas alto. Es el mismo
    argumento por el que el motor aplica un techo de yodo propio y no se fia de que
    «un alimento completo ya lo trae».
+
+### cap.30 — Cancer (2.146 lineas, LEIDO ENTERO)
+
+**Este capitulo es una CONFIRMACION, no un hallazgo, y eso tambien hay que
+escribirlo.** La Tabla 30-5 se leyo entera el 8 de septiembre (fue la que se
+habia perdido al cortar el barrido con `sed`, ver `VERIFICACION_FILA_A_FILA.md`
+§cuarta pasada) y `patologias.json` ya aplica lo que se puede aplicar de ella y
+declara por escrito lo que no. Leido el capitulo completo, **no aparece ni una
+cifra canina mas** que la tabla no traiga. Lo que sigue es lo que se ha
+comprobado al releerlo.
+
+1. **La Tabla 30-5, releida celda a celda.** No se transcribe entrecomillada
+   porque sus etiquetas de fila se parten al extraer el texto y la columna de al
+   lado se cuela en medio — pegarlas seria escribir una frase que el libro no
+   dice. En prosa, y para el PERRO: carbohidrato digestible (NFE) **≤25 % de
+   materia seca** o <20 % de las kcal; grasa **25-40 % MS** o 50-65 % de las
+   kcal; omega-3 **>5 % MS**; ratio omega-6:omega-3 **lo mas cerca de 1:1 que se
+   pueda**; proteina **30-45 % MS** o 25-40 % de las kcal; arginina **>2 % MS**.
+   El texto corrido de SACN5 cap.30 repite las tres primeras con decimal y sin
+   forma de tabla: «Currently, recommendations for canine and feline cancer
+   patients continue to be focused on foods with increased fat calories (25 to
+   40% DM fat)».
+   Lo que el motor hace hoy con cada una: grasa **suelo 62,5 g/1000 kcal**
+   (el 25 % MS x 2,5) — la unica patologia del motor que pide MAS grasa;
+   proteina **suelo 75**; arginina **suelo 5** (el 2 % MS); y el omega-3 de
+   12,5 **escrito y no aplicado**, con la medida de por que no cabe en
+   `limites_escritos_que_el_solver_no_aplica`. El NFE y el ratio omega-6:omega-3
+   van declarados como no modelables en los avisos.
+
+2. **La arginina, con el porque de que sea «>2 %» y no otra cosa.** SACN5 cap.30
+   lo dice sin esconderlo: «The minimum effective level of dietary arginine for
+   cancer patients is unknown; however, based on work in other species, it is
+   thought appropriate to provide more than 2% DM arginine in foods for dogs with
+   cancer.» O sea que el 2 % es una extrapolacion declarada, no un ensayo canino.
+   El motor lo aplica igual —es un suelo, y por encima del minimo de FEDIAF—,
+   pero conviene que quien firme una pauta sepa de donde sale.
+
+3. **⚠️ EL CAPITULO CONFIRMA UNA DECISION DEL MOTOR QUE NADIE HABIA COMPROBADO:
+   el cancer NO cambia el DER.** Rawku calcula las kcal igual con cancer marcado
+   que sin el, y eso hasta hoy era una omision, no una decision. SACN5 cap.30 la
+   respalda con los estudios de calorimetria indirecta: «dogs with cancer and no
+   evidence of weight loss do not have energy requirements higher than those of
+   apparently healthy dogs without cancer». Lo que si cambia es el perro que **ya
+   ha perdido peso**, y ahi el libro no da un factor de enfermedad sino el de
+   siempre: en SACN5 cap.30, «the DER factor typically ranges from low activity
+   (1.1 to 1.3 x RER) to adult maintenance (1.4 x RER for cats and 1.6 x RER for
+   dogs)» — que esta dentro de los escalones de actividad que ya usa el motor.
+   Queda como decision escrita: **el cancer no toca el DER, y ahora se sabe por
+   que**.
+
+4. **Los cuatro recuadros (30-2 a 30-5) no dan ni una cifra aplicable, y la
+   fuente lo dice ella misma.** Aminoacidos, vitaminas, minerales y alimentos
+   novedosos ocupan cuatro paginas de mecanismo —glutamina, retinoides, vitamina
+   C, vitamina E, selenio, hierro, zinc— y ninguno llega a un numero para el
+   perro. La frase que lo cierra, en SACN5 cap.30: «cancer prevention and
+   treatment have not been established for pet animals». Importa por contraste:
+   la vitamina E del perro sano si tiene cifra en cinco capitulos distintos
+   (`HALLAZGOS_SACN5_10SEP.md`) y **aqui no**, asi que el cancer no anade nada al
+   caso de la vitamina E. La glutamina aparece otra vez —como en el cap.25— y
+   sigue sin estar en la Tabla III-3b de FEDIAF ni en el catalogo: no hay nada
+   que aplicar.
+
+5. **Las tres contraindicaciones ya estan puestas y se confirman.** El aviso de
+   `cancer_soporte` nombra las tres que trae el capitulo (intolerancia previa a
+   la grasa, perro con sobrepeso, insuficiencia renal o hepatica) y la frase de
+   cabecera de que un cambio de dieta no esta indicado en todo perro con cancer.
+   Releidas las tres en su sitio: dicen lo que el aviso dice.
