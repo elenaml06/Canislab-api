@@ -10280,21 +10280,30 @@ if _aud77.returncode != 0:
     _cola77 = "\n      ".join((_aud77.stdout + _aud77.stderr).strip().splitlines()[-12:])
     fallos.append(f"BLOQUE77: la transcripcion de la Tabla III-3b no cuadra con el texto del "
                   f"PDF:\n      {_cola77}")
-print(f"  {_aud77.stdout.strip().splitlines()[0].strip() if _aud77.stdout.strip() else ''}")
+for _l77 in (_aud77.stdout.strip().splitlines() if _aud77.stdout.strip() else []):
+    if _l77.startswith("-") or not _l77.strip():
+        break
+    print(f"  {_l77.strip()}")
 
 # Y que el texto de la tabla siga siendo el del PDF y no una copia editada: se
 # comprueba que lleve dentro la cabecera de pagina y el pie de las notas, que
 # son lo que nadie escribiria a mano al «arreglar» una cifra.
-_txt77 = (_raiz_b24 / "fediaf_tabla_III_3b.txt").read_text(encoding="utf-8")
-for _marca77, _que77 in (
-    ("TABLE III-3b.", "el titulo de la tabla"),
-    ("Page   15 of 98", "la cabecera con el numero de pagina del PDF"),
-    ("Footnotes a-h are summarised below Table III-4c.", "el pie de las notas a-h"),
+for _fich77, _marcas77 in (
+    ("fediaf_tabla_III_3b.txt", (
+        ("TABLE III-3b.", "el titulo de la tabla"),
+        ("Page   15 of 98", "la cabecera con el numero de pagina del PDF"),
+        ("Footnotes a-h are summarised below Table III-4c.", "el pie de las notas a-h"))),
+    ("fediaf_tabla_VII_14.txt", (
+        ("Table VII-14. Conversion factors - Vitamin source to activity", "el titulo de la tabla"),
+        ("7.5.1. Chemical compounds", "el epigrafe de la seccion"),
+        ("62 of 98   Page", "la cabecera con el numero de pagina del PDF"))),
 ):
-    if _marca77 not in _txt77:
-        fallos.append(f"BLOQUE77: a `fediaf_tabla_III_3b.txt` le falta {_que77}. Ese fichero es "
-                      f"la fuente copiada TAL CUAL: si alguien lo edita para que cuadre, deja de "
-                      f"ser una fuente y pasa a ser una tercera copia de la misma tabla")
+    _txt77 = (_raiz_b24 / _fich77).read_text(encoding="utf-8")
+    for _marca77, _que77 in _marcas77:
+        if _marca77 not in _txt77:
+            fallos.append(f"BLOQUE77: a `{_fich77}` le falta {_que77}. Ese fichero es la fuente "
+                          f"copiada TAL CUAL: si alguien lo edita para que cuadre, deja de ser "
+                          f"una fuente y pasa a ser una copia mas de la misma tabla")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

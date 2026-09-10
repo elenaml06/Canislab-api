@@ -1668,3 +1668,36 @@ la excusa tampoco vale.
 
 Con esto los tres ficheros de cifras del motor se rehacen en cada batería: **92
 de patología · 12 del libro · 4 condicionales**.
+
+## 10 de septiembre de 2026 — Y la Tabla VII-14, la que existe para que nadie confunda dos factores
+
+`fediaf_conversiones_vitaminas.json` nació el 9 de septiembre por un motivo muy
+concreto: tres fichas del catálogo llevan la vitamina A y la D convertidas de UI
+a microgramos, y **convertir la D con el factor de la A** (0,3 en vez de 0,025)
+multiplica por doce el aporte de un multivitamínico sin que el semáforo diga
+nada.
+
+O sea que es un fichero que existe para atrapar un error de transcripción… y
+**su propia transcripción no la comprobaba nadie**. Mismo hueco que el de la
+Tabla III-3b, un piso más arriba.
+
+Ahora `fediaf_tabla_VII_14.txt` guarda la tabla tal cual sale del PDF y
+`auditar_transcripcion_fediaf.py` rehace sus **27 factores**. Los 27 cuadran.
+
+Detalles que costaron, y los dos son de leer el texto de verdad:
+
+- La fila de la vitamina D es «vitamins D3  **0.025 µg** = 1 IU», y sacar «el
+  primer número de la izquierda» devolvía **3** —el del «D3»—, o sea que el
+  auditor acusaba en falso justo a la conversión que este fichero protege. Ahora
+  solo cuentan los números que llevan **unidad pegada**.
+- La única fila con **rango** de toda la tabla es «calcium DL-pantothenate 1 mg =
+  **0,41 - 0,52** mg», y el 0,41 —el factor más agresivo que publica FEDIAF, un
+  41 % de lo declarado— se perdía porque no lleva unidad detrás.
+
+Y tres equivalencias de la tabla no son un número suelto del JSON sino parte de
+una nota (1 mg de retinol = 3.333 UI, 1 µg de retinol = 1 RE, 1 µg de D3 = 40
+UI): van declaradas, y **ninguna fila del PDF puede quedarse sin que alguien la
+reclame**.
+
+Probado con el fallo puesto dos veces: poniéndole a la D el factor de la A, y
+borrando el gamma-tocoferol del JSON. Los dos se cazan.

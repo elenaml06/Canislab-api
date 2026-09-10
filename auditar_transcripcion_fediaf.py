@@ -248,14 +248,159 @@ def auditar():
     return problemas, comprobadas
 
 
+# ============================================================
+# LA TABLA VII-14, LA DE LAS FORMAS QUIMICAS
+# ============================================================
+#
+# ⚠️ POR QUE (10 de septiembre). `fediaf_conversiones_vitaminas.json` es la
+# Tabla VII-14 transcrita a mano, y estaba en el mismo sitio que la III-3b: nadie
+# la comparaba con el PDF. Sus numeros son factores de conversion, y un factor
+# equivocado no se ve -- convertir la vitamina D con el factor de la A (0,3 en
+# vez de 0,025) multiplica por DOCE el aporte de un multivitaminico y el semaforo
+# sale verde igual. Es el motivo por el que existe el fichero, asi que el fichero
+# tampoco puede creerse.
+RUTA_VII_14 = os.path.join(_AQUI, "fediaf_tabla_VII_14.txt")
+
+# (donde vive en el JSON · como se llama la fuente en el PDF · que lado de la
+# igualdad es · valor esperado). El «lado» importa: la tabla escribe unas filas
+# como «0.3 µg = 1 IU» (el numero esta a la izquierda) y otras como «1 mg =
+# 1.49 IU» (a la derecha), y confundirlos es invertir el factor.
+FILAS_VII_14 = [
+    (("ui_a_microgramos", "vitA", "retinol"),               r"vitamin A alcohol \(retinol\).*IU", "izq", 0.3),
+    (("ui_a_microgramos", "vitA", "acetato_de_retinilo"),   r"vitamin A acetate",             "izq", 0.344),
+    (("ui_a_microgramos", "vitA", "propionato_de_retinilo"), r"vitamin A propionate",         "izq", 0.359),
+    (("ui_a_microgramos", "vitA", "palmitato_de_retinilo"), r"vitamin A palmitate",           "izq", 0.55),
+    (("ui_a_microgramos", "vitA", "betacaroteno_UI_por_mg_perro"), r"β-carotene", "der", 833.0),
+    (("ui_a_microgramos", "vitD", "colecalciferol_D3"),     r"vitamins D3",                   "izq", 0.025),
+    (("actividad_por_mg_de_fuente", "vitE", "d_alfa_tocoferol"),         r"d-α-tocopherol\s+1 mg", "der", 1.49),
+    (("actividad_por_mg_de_fuente", "vitE", "d_alfa_tocoferol_acetato"), r"d-α-tocopherol acetate", "der", 1.36),
+    (("actividad_por_mg_de_fuente", "vitE", "dl_alfa_tocoferol"),        r"dl-α-tocopherol\s+1", "der", 1.10),
+    (("actividad_por_mg_de_fuente", "vitE", "dl_alfa_tocoferil_acetato"), r"dl-α-tocopheryl acetate\s+1", "der", 1.00),
+    (("actividad_por_mg_de_fuente", "vitE", "dl_beta_tocoferol"),        r"dl-β-tocopherol", "der", 0.33),
+    (("actividad_por_mg_de_fuente", "vitE", "dl_delta_tocoferol"),       r"dl-δ-tocopherol", "der", 0.25),
+    (("actividad_por_mg_de_fuente", "vitE", "dl_gamma_tocoferol"),       r"dl-γ-tocopherol", "der", 0.01),
+    (("actividad_por_mg_de_fuente", "tiamina", "tiamina_CL"),            r"thiamine CL", "der", 0.88),
+    (("actividad_por_mg_de_fuente", "tiamina", "mononitrato_de_tiamina"), r"thiamine mononitrate", "der", 0.81),
+    (("actividad_por_mg_de_fuente", "tiamina", "clorhidrato_de_tiamina"), r"thiamine hydrochloride", "der", 0.79),
+    (("actividad_por_mg_de_fuente", "acidoPantotenico", "D_pantotenato_calcico"), r"calcium D-pantothenate", "der", 0.92),
+    (("actividad_por_mg_de_fuente", "acidoPantotenico", "DL_pantotenato_calcico_min"), r"calcium DL-pantothenate", "der", 0.41),
+    (("actividad_por_mg_de_fuente", "acidoPantotenico", "DL_pantotenato_calcico_max"), r"calcium DL-pantothenate", "der2", 0.52),
+    (("actividad_por_mg_de_fuente", "vitB6", "clorhidrato_de_piridoxina"), r"pyridoxine hydrochloride", "der", 0.82),
+    (("actividad_por_mg_de_fuente", "niacina", "acido_nicotinico"),      r"nicotinic acid", "der", 1.0),
+    (("actividad_por_mg_de_fuente", "niacina", "nicotinamida"),          r"^\s*nicotinamide\b", "der", 1.0),
+    (("actividad_por_mg_de_fuente", "colina", "cloruro_de_colina_base_ion_colina"), r"basis choline ion", "der", 0.75),
+    (("actividad_por_mg_de_fuente", "colina", "cloruro_de_colina_base_analogo_hidroxilo"), r"basis choline hydroxyl-analogue", "der", 0.87),
+    (("actividad_por_mg_de_fuente", "vitK3", "menadiona_bisulfito_sodico_MSB"), r"\(MSB\)", "der", 0.51),
+    (("actividad_por_mg_de_fuente", "vitK3", "menadiona_bisulfito_de_pirimidinol_MPB"), r"\(MPB\)", "der", 0.45),
+    (("actividad_por_mg_de_fuente", "vitK3", "menadiona_bisulfito_de_nicotinamida_MNB"), r"\(MNB\)", "der", 0.46),
+]
+
+# Las tres equivalencias de la tabla que NO son un numero suelto del JSON: viven
+# dentro de una `nota`, que es prosa. Se declaran para que no puedan
+# desaparecer sin que nadie lo note.
+EN_UNA_NOTA_VII_14 = {
+    "1.0 mg de retinol = 3,333 IU": "ui_a_microgramos.vitA.nota",
+    "1.0 µg de retinol = 1 RE": "ui_a_microgramos.vitA.nota",
+    "1 µg de D3 = 40 IU": "ui_a_microgramos.vitD.nota",
+}
+
+
+def _lado(linea, cual):
+    """Los numeros de una fila «X unidad = Y unidad», por lado.
+
+    ⚠️ SOLO LOS QUE LLEVAN UNIDAD PEGADA. Sin eso, la fila «vitamins D3  0.025 µg
+    = 1 IU» devolvia un 3 -- el de «D3» -- y el auditor acusaba en falso a la
+    conversion de la vitamina D, que es justo la que este fichero existe para
+    proteger.
+    """
+    if "=" not in linea:
+        return []
+    izq, der = linea.split("=", 1)
+    trozo = izq if cual == "izq" else der
+    # El «-\s*\d» del final es por la unica fila con RANGO de toda la tabla:
+    # «calcium DL-pantothenate 1 mg = 0.41 - 0.52 mg». Sin el, el 0,41 -- que es
+    # el factor mas agresivo que publica FEDIAF -- se perdia porque no lleva
+    # unidad pegada detras.
+    return [float(x.replace(",", ""))
+            for x in re.findall(r"(\d[\d,]*(?:\.\d+)?)\s*(?:(?:µg|mg|IU|RE)\b|(?=-\s*\d))",
+                                trozo)]
+
+
+def auditar_vii_14():
+    import json
+    problemas, comprobadas = [], 0
+    lineas = open(RUTA_VII_14, encoding="utf-8").read().split("\n")
+    tabla = json.load(open(os.path.join(_AQUI, "fediaf_conversiones_vitaminas.json"),
+                           encoding="utf-8"))
+    filas_usadas = set()
+    for ruta, patron, cual, esperado in FILAS_VII_14:
+        candidatas = [i for i, l in enumerate(lineas)
+                      if "=" in l and re.search(patron, l)]
+        if not candidatas:
+            # la fila puede llevar el nombre en la linea de arriba o de abajo
+            candidatas = [i for i, l in enumerate(lineas) if "=" in l and (
+                (i and re.search(patron, lineas[i - 1]))
+                or (i + 1 < len(lineas) and re.search(patron, lineas[i + 1])))]
+        if len(candidatas) != 1:
+            problemas.append(
+                f"VII-14 {'.'.join(ruta)}: el patron «{patron}» encaja con {len(candidatas)} "
+                f"filas del PDF y tiene que encajar con UNA. O la tabla cambio de maquetacion o "
+                f"el patron ha dejado de identificar su fila -- y un ancla que ya no vigila nada "
+                f"no avisa a nadie")
+            continue
+        i = candidatas[0]
+        filas_usadas.add(i)
+        nums = _lado(lineas[i], "izq" if cual == "izq" else "der")
+        leido = None
+        if cual == "der2":
+            leido = nums[1] if len(nums) > 1 else None
+        elif nums:
+            leido = nums[0]
+        dicho = tabla
+        for paso in ruta:
+            dicho = (dicho or {}).get(paso) if isinstance(dicho, dict) else None
+        if dicho is None:
+            problemas.append(f"VII-14: `fediaf_conversiones_vitaminas.json` ya no tiene "
+                             f"{'.'.join(ruta)}, y esa fila SI esta en la tabla del PDF")
+            continue
+        comprobadas += 1
+        if leido is None or abs(float(dicho) - leido) > 1e-9:
+            problemas.append(
+                f"VII-14 {'.'.join(ruta)}: el PDF dice {leido} y el JSON tiene {dicho}. Un factor "
+                f"de conversion equivocado no se ve: convertir la vitamina D con el factor de la "
+                f"A multiplica por doce el aporte y el menu sale verde igual")
+
+    # Y ninguna fila del PDF se queda sin reclamar.
+    _sin_reclamar = [l.strip() for i, l in enumerate(lineas)
+                     if "=" in l and i not in filas_usadas and re.search(r"\d", l)]
+    # Las tres que viven dentro de una `nota` se descuentan aqui, por su cifra.
+    # ⚠️ Y LA FILA DEL PATRON DE LA VITAMINA E, que la tabla escribe DOS VECES:
+    # una arriba como «unidad declarada» (dl-α-tocopheryl acetate 1 mg = 1 IU)
+    # y otra dentro de la lista de bioequivalencias. Es el mismo hecho, y el
+    # JSON lo guarda una sola vez, en `dl_alfa_tocoferil_acetato`.
+    _de_nota = ("3,333", "1 RE", "40 IU")
+    _sin_reclamar = [l for l in _sin_reclamar if not any(m in l for m in _de_nota)]
+    _sin_reclamar = [l for l in _sin_reclamar
+                     if not re.fullmatch(r"1 mg\s+=\s+1 IU", l.strip())]
+    for _fila in _sin_reclamar:
+        problemas.append(
+            f"VII-14: la fila «{_fila[:80]}» del PDF no la reclama ninguna cifra del JSON ni "
+            f"esta declarada como parte de una nota. Es asi como se pierde un factor entero")
+    return problemas, comprobadas
+
+
 if __name__ == "__main__":
     fallos, n = auditar()
+    fallos_v, n_v = auditar_vii_14()
     print(f"Tabla III-3b: {n} celdas rehechas desde el texto del PDF, "
           f"{len(NO_TRANSCRITAS)} filas declaradas sin transcribir")
+    print(f"Tabla VII-14: {n_v} factores rehechos desde el texto del PDF, "
+          f"{len(EN_UNA_NOTA_VII_14)} equivalencias que viven dentro de una nota")
     print("-" * 60)
+    fallos = fallos + fallos_v
     if fallos:
         print(f"\n{len(fallos)} PROBLEMAS:\n")
         for f in fallos:
             print("  -", f)
         sys.exit(1)
-    print("\nLa transcripcion cuadra con el PDF, celda a celda.")
+    print("\nLas dos transcripciones cuadran con el PDF, celda a celda.")
