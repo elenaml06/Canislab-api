@@ -232,12 +232,24 @@ estaba hecha una vez y **contada en prosa** dentro del campo `por_que`.
 | 5 · Decisión escrita, con fecha y motivo | `HECHO.md`, 9-10 de septiembre, con el caso que lo motivó |
 | 6 · Sin preguntas sin dueño | La única que quedaba —¿3,5 o 4,0 kcal/g?— está **resuelta con la fuente**, no aplazada |
 
-**La densidad es 4,0 y está probado, no supuesto.** De las 24 tablas de SACN5 que
-cita el fichero, **una sola declara densidad** —la 13-3: «Concentrations presume
-an energy density of 4.0 kcal/g»—, el cap.34 usa 4,0 para convertir la
-glucosamina, FEDIAF declara la misma en su Tabla III-2, y a 4,0 las cifras del
-motor se reproducen exactas desde las filas de sus tablas: 84 de 88 exactas y 4
-con un ajuste declarado.
+**La densidad es 4,0 y está probado, no supuesto — y hubo que probarlo porque
+SACN5 se contradice consigo mismo.** Su Box 1-2 dice, literal: «recommended
+nutrient values for canine and feline foods are based on an energy density of
+**3.5 and 4.0** kcal ME/g of food dry matter, **respectively**» — o sea 3,5 para
+el perro. Pero sus tablas caninas usan 4,0, y lo dicen tres veces:
+
+- la nota al pie de la **Tabla 13-3** («Concentrations presume an energy density
+  of 4.0 kcal/g»), única de las 24 que cita el fichero que declara densidad;
+- el **cap.34**, que convierte la glucosamina «in a food with an energy density
+  of 4 kcal/g DM»;
+- y el **cap.15**, que da la misma cantidad en dos unidades —«approximately 20 %
+  of the energy from carbohydrate … translates to about 23 % DM carbohydrate»— y
+  esa equivalencia sale **22,9 % a densidad 4,0** y 20,0 % a 3,5. Es la
+  comprobación que no depende de ninguna nota ni de ningún número nuestro.
+
+Una nota al pie manda sobre las filas que lleva debajo. Y a 4,0 las cifras del
+motor se reproducen desde las filas de sus tablas: 84 de 88 exactas y 4 con un
+ajuste declarado.
 
 ⚠️ **Y se cerró desmintiendo lo que se había escrito antes.** Quedaba anotado que
 SACN5 declara 3,5 kcal/g y que por tanto 68 cifras estaban un 14 % apretadas de

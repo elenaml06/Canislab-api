@@ -44,11 +44,25 @@ están un 14 % apretadas de más».
   0,4-0,8 % MS y sodio 0,2-0,4 % MS. A 4,0 kcal/g eso es 2000 y 1000 mg/1000
   kcal, que son **exactamente** las dos cifras que aplica el motor. A 3,5 darían
   2286 y 1143, que no son las nuestras.
-- El **3,5 del Box 1-2** aparece en un ejemplo trabajado con un alimento
-  concreto; y en el propio capítulo 13, en el MISMO párrafo, el fósforo se
-  deriva «at an energy density of 3.5 kcal/g DM» mientras el sodio dice «this
-  allowance is for foods with an energy density of **4 kcal/g** (NRC, 2006)».
-  O sea: la densidad es de cada derivación, no del libro.
+- ⚠️ **Y EL BOX 1-2 SÍ DICE 3,5 PARA EL PERRO — corregido el 10 de septiembre.**
+  Aquí quedó escrito que era «un ejemplo trabajado con un alimento concreto», y
+  no lo es. Literal y entero: *«For example, **recommended nutrient values for
+  canine and feline foods are based on an energy density of 3.5 and 4.0 kcal
+  ME/g** (14.64 and 16.74 kJ ME/g) **of food dry matter, respectively**»*. O sea
+  que **SACN5 se contradice consigo mismo**: su método declara 3,5 para el perro
+  y sus tablas caninas usan 4,0.
+- **Y gana el 4,0, por tres cosas del propio libro:** la nota al pie de la Tabla
+  13-3 («Concentrations presume an energy density of 4.0 kcal/g»); el cap.34, que
+  convierte la glucosamina «in a food with an energy density of 4 kcal/g DM»; y
+  —la que no depende de ninguna nota— el cap.15, que da la misma cantidad en dos
+  unidades: «approximately **20 % of the energy from carbohydrate** … translates
+  to about **23 % DM carbohydrate**». Esa equivalencia sale a 22,9 % con densidad
+  4,0 y a 20,0 % con 3,5. Solo cuadra a 4,0.
+- Y en el propio capítulo 13, en el MISMO párrafo, el fósforo se deriva «at an
+  energy density of 3.5 kcal/g DM» mientras el sodio dice «this allowance is for
+  foods with an energy density of **4 kcal/g** (NRC, 2006)». La densidad es de
+  cada derivación, no del libro — pero la de las TABLAS, que es la que usamos, es
+  4,0 y está escrita.
 
 **Conclusión: el ×2,5 estaba bien y no hay 68 cifras que reescalar.** Lo que sí
 hace falta es que eso deje de depender de que alguien lo lea: cada cifra tiene

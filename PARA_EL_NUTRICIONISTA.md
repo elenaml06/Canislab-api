@@ -114,52 +114,81 @@ El mismo número.
 La conversión no se hace con la densidad de nuestra ración, sino con **la que
 declara la fuente**. Y ahí depende de quién sea el número:
 
-| De quién es el número | Densidad de referencia | Multiplicador | ¿Lo hacemos bien? |
-|---|---|---|---|
-| **FEDIAF** (Tablas III-3b y VII-17) | **4 kcal/g MS** | ×2,5 | ✅ Comprobado en su propia tabla: proteína 62,50 g/1000 kcal = 25,00 g/100 g MS |
-| **NRC** (recommended allowances) | **4 kcal/g MS** | ×2,5 | ✅ Lo dice el cap.13 de SACN5 citándolo |
-| **SACN5** (sus «key nutritional factors») | **3,5 kcal/g MS** | **×2,857** | ❌ **usamos ×2,5, que es el del gato** |
-| **SACN5 cap.33** (calcio del cachorro grande) | **3,8 kcal/g MS** | ×2,63 | ❌ y además tiene densidad propia |
-
-La fuente lo dice en el método —Box 1-2: *«recommended nutrient values for canine
-and feline foods are based on an energy density of 3.5 and 4.0 kcal ME/g of food
-dry matter, respectively»*— y lo repite dentro del capítulo del que salen nuestros
-techos del perro sano, el **13**: *«At an energy density of 3.5 kcal (14.6 kJ)/g DM
-this corresponds to about 0.4 to 0.6% DM phosphorus»*.
-
-**Afecta a 68 de las 74 cifras clínicas**, que son las que vienen de una tabla de
-SACN5. Y en casi todas resulta que somos **MÁS estrictas** que la fuente, no menos:
-
-| Cifra | Hoy | Con la densidad de su fuente |
+| De quién es el número | Densidad de referencia | Multiplicador |
 |---|---|---|
-| perro sano adulto, fósforo | 2000 | **2286** |
-| senior, fósforo | 1750 | **2000** |
-| pancreatitis, grasa | 37,5 | **42,9** |
-| renal, fósforo (rango de la fuente) | 500-1250 | **571-1429** |
-| oxalato, sodio | 750 | **857** |
+| **FEDIAF** (Tablas III-3b y VII-17) | **4 kcal/g MS** | ×2,5 |
+| **NRC** (recommended allowances) | **4 kcal/g MS** | ×2,5 |
+| **SACN5**, sus tablas de «key nutritional factors» | **4 kcal/g MS** | ×2,5 |
+| **SACN5 cap.33** (calcio del cachorro grande, vía Caso 1-1) | **3,8 kcal/g MS** | ×2,63 |
 
-Apretar de más no es gratis: en `renal` + `pancreatitis` es justo lo que dejaba a
-un perro sin menú. **No está aplicado**: hay que verificar tabla por tabla qué
-densidad declara cada una, porque el cap.33 ya demuestra que no todas usan la
-misma.
+### ⚠️ CORREGIDO EL 10 DE SEPTIEMBRE: SACN5 SE CONTRADICE CONSIGO MISMO, Y GANA EL 4,0
 
-> **PREGUNTA 1 — reducida el 9 de septiembre, y además estaba mal planteada.**
-> Preguntaba si había que cambiar el puente «a la densidad real de la ración». No:
-> la densidad de la ración no entra, y eso ya no es una pregunta (ver arriba). Lo
-> que queda, que sí es tuyo, es más concreto:
+Aquí ponía que SACN5 usa **3,5** para el perro, que por tanto usábamos el
+multiplicador del gato y que **68 de las 74 cifras clínicas** estaban un 14 %
+apretadas de más, con una tabla de cuánto había que aflojar cada una. **Era
+falso**, y lo era en la dirección peligrosa: proponía relajar 68 límites clínicos.
+
+**Lo que sí dice el Box 1-2**, literal y entero:
+
+> «For example, **recommended nutrient values for canine and feline foods are
+> based on an energy density of 3.5 and 4.0 kcal ME/g** (14.64 and 16.74 kJ ME/g)
+> **of food dry matter, respectively**.»
+
+O sea que el método declara 3,5 para el perro. **Pero sus propias tablas caninas
+no lo usan**, y lo dicen tres veces:
+
+1. **La nota al pie de la Tabla 13-3** —de la que salen nuestros techos del perro
+   sano— dice: *«Dry matter basis. **Concentrations presume an energy density of
+   4.0 kcal/g**. Levels should be corrected for foods with higher energy
+   densities.»* Es la **única** de las 24 tablas que cita `patologias.json` que
+   declara densidad, y dice 4,0.
+2. **El cap.34** convierte la glucosamina así: *«**in a food with an energy
+   density of 4 kcal/g DM**, glucosamine HCl and chondroitin sulfate should not
+   exceed 0,10 y 0,08 %»*.
+3. **Y el cap.15 lo demuestra sin que haya que fiarse de ninguna nota**, porque da
+   la misma cantidad en dos unidades: *«Providing approximately **20 % of the
+   energy from carbohydrate** … translates to about **23 % DM carbohydrate**»*.
+   Esa equivalencia solo sale a 4,0:
+
+   | Densidad supuesta | El 20 % de la energía, en % de MS |
+   |---|---|
+   | 3,5 kcal/g | 20,0 % |
+   | 3,8 kcal/g | 21,7 % |
+   | **4,0 kcal/g** | **22,9 % ≈ 23 %** ✅ |
+
+   (Con los 3,5 kcal/g de Atwater modificado para el hidrato. Es la comprobación
+   que no depende de ningún número nuestro.)
+
+**Conclusión: el ×2,5 estaba bien y no hay 68 cifras que aflojar.** El 3,5 del
+Box 1-2 es lo que el libro dice de su método; el 4,0 es lo que hacen sus tablas,
+y una nota al pie manda sobre las filas que lleva debajo.
+
+Y desde el 10 de septiembre esto **no depende de que alguien lo lea**: cada una
+de las 88 cifras lleva su conversión como dato —valor literal de la fuente,
+unidad, densidad y cita— y `auditar_conversiones.py` **rehace la cuenta** en cada
+batería (BLOQUE 72). 84 de las 88 se reproducen exactas desde las filas de sus
+tablas; las otras 4 llevan `ajustado_a_proposito` con el motivo.
+
+> **PREGUNTA 1 — reducida el 10 de septiembre por segunda vez, y lo que queda
+> es una contradicción de la fuente, no una duda nuestra.**
+> Nació preguntando si el puente había que hacerlo «a la densidad real de la
+> ración»: no, la densidad de la ración no entra. Siguió preguntando si había que
+> corregir 68 cifras de 4,0 a 3,5: tampoco, y eso está resuelto arriba con la
+> propia aritmética del libro.
 >
-> 1. **¿Se corrige la densidad de referencia de las 68 cifras que vienen de
->    SACN5**, de 4,0 a la que declara cada tabla? Es lo que dice la fuente, y
->    aflojaría casi todas —el techo de fósforo del perro sano pasaría de 2000 a
->    2286, la grasa de la pancreatitis de 37,5 a 42,9—, que es una dirección
->    incómoda aunque sea la correcta.
-> 2. **¿Hay alguna donde aflojar hasta la cifra de la fuente NO sea aceptable?**
->    Ahí es donde nos hace falta tu criterio: la aritmética dice que sí y la
->    clínica puede decir que no.
-> 3. Y una de método: las tablas de SACN5 llevan la nota «Nutrients expressed on a
->    dry matter basis» sin repetir la densidad. **¿Se puede dar por hecho que todas
->    son los 3,5 del Box 1-2**, o hay que buscar la densidad declarada de cada
->    capítulo? El cap.33 declara 3,8, así que al menos una no lo es.
+> **Lo que queda, y es tuyo porque es criterio y no lectura:**
+>
+> 1. **El Box 1-2 dice 3,5 para el perro y las tablas caninas usan 4,0.** Nosotras
+>    aplicamos el 4,0 de las tablas, porque una nota al pie manda sobre las filas
+>    que lleva debajo y porque el cap.15 lo confirma con su propia equivalencia.
+>    **¿Estás de acuerdo con esa lectura?** Si el 3,5 fuera lo que vale, 68 límites
+>    clínicos se aflojarían un 14 %.
+> 2. **El cap.33 declara 3,8** para el calcio del cachorro de raza grande, vía el
+>    Caso 1-1. O sea que al menos una tabla tiene densidad propia distinta.
+>    **¿Hay que ir tabla por tabla buscando la suya**, o basta con la de la 13-3
+>    salvo que el capítulo diga otra cosa? Hoy hacemos lo segundo, y las 88
+>    conversiones están escritas como dato para que se pueda auditar cuál usa cada
+>    una.
 
 ### 0.2 · Las tres cajas: lo que se te pide clasificar
 
