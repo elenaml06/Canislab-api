@@ -67,11 +67,66 @@ COMPLETAS = {"FEDIAF"}
 
 _UNID = r"(?:µg|ug|mg|kg|g|IU|UI|kcal|kJ|MJ|%|ppm)"
 _CIFRA = re.compile(rf"(?<![\w.])(\d[\d.,]*)\s*({_UNID})(?![\w])")
+# ⚠️ Y AQUI ESTABA EL AGUJERO DE VERDAD, HASTA EL 10 DE SEPTIEMBRE POR LA TARDE.
+#
+# Esta lista de palabras NO decidia que frases son importantes: decidia cuales
+# EXISTIAN. Lo que no llevaba una de ellas no se extraia, asi que no necesitaba
+# veredicto, asi que no aparecia como pendiente -- y la auditoria informaba de
+# «532 de 532 elementos con veredicto», que suena a documento entero y era
+# «532 de los que la lista supo ver».
+#
+# CASO REAL, y es el que zanja el asunto de los maximos legales. El registro de
+# cambios de 2012 (linea 9116) dice:
+#
+#     «As a general principle it was agreed that no nutritional maximum level
+#      WILL BE STATED in the Guidelines for nutrients for which no data on
+#      potential adverse effects are available.»
+#
+# Esa frase es el motivo por el que los seis oligoelementos no tienen maximo
+# nutricional -- o sea, la razon por la que el techo legal es el UNICO techo que
+# tienen. Lleva «will be stated», que no estaba en la lista, asi que para el
+# contador no existia. Medido el mismo dia: de las 1.764 frases del documento la
+# lista marcaba 151, y de las 1.613 restantes habia 34 con forma de norma, entre
+# ellas «The nutritional maximum (N) is the highest level that is not supposed to
+# cause any harmful effect» y «If the product is designed for a specific life
+# stage, then the label must clearly state this».
+#
+# Elena, al verlo: «lee al pie de la letra todo». Asi que ya no filtra nadie: se
+# extraen TODAS las frases y todas piden veredicto. La lista se queda, pero solo
+# para ORDENAR la cola de pendientes -- las que huelen a norma primero --, que es
+# una ayuda para trabajar y no una puerta que deja cosas fuera.
 _SENALES = (r"only applies|does not apply|should not|should be|must be|may be required|may need|"
             r"unless|is recommended|recommends|can be lower|can be higher|has to be|needs to be|"
             r"is not to be|shall|it is necessary|may result|may still be safe|does not need|"
-            r"do not need|is preferable|it is advisable|are safe|is adequate")
-_FRASE = re.compile(r"[^.]*?(?:" + _SENALES + r")[^.]*\.", re.I)
+            r"do not need|is preferable|it is advisable|are safe|is adequate|will be|was agreed|"
+            r"is not supposed|must clearly|is required|are required|is not to|not be taken")
+_HUELE_A_NORMA = re.compile(_SENALES, re.I)
+
+# Cortar por frases sin destrozar los numeros ni las abreviaturas. Un `[^.]*\.`
+# a secas parte «2.5» en dos y deja 5.459 trozos donde hay 1.764 frases, y un
+# recuento inflado con basura es tan poco auditable como uno recortado.
+_ABREV = {"e.g", "i.e", "al", "cf", "vs", "approx", "fig", "tab", "no", "dr", "prof",
+          "mr", "mrs", "st", "etc", "ca", "resp", "vol", "ed", "eds", "inc", "ltd",
+          "co", "jr", "sr", "u.s", "pp", "p", "min", "max", "wt", "sect", "chap"}
+_CORTE = re.compile(r"(?<!\d)\.(?!\d)\s+(?=[A-Z0-9\u00ab\"'(])")
+_ULTIMA_PALABRA = re.compile(r"([A-Za-z.]+)$")
+
+
+def _frases(texto):
+    """Todas las frases del texto, sin filtrar por contenido."""
+    trozos, ini = [], 0
+    for m in _CORTE.finditer(texto):
+        pal = _ULTIMA_PALABRA.search(texto[ini:m.start()])
+        if pal and pal.group(1).lower().rstrip(".") in _ABREV:
+            continue                      # «e.g. Table III» no es fin de frase
+        t = texto[ini:m.end(0)].strip()
+        if t:
+            trozos.append(t)
+        ini = m.end(0)
+    resto = texto[ini:].strip()
+    if resto:
+        trozos.append(resto)
+    return trozos
 
 
 def _texto(fuente):
@@ -95,8 +150,8 @@ def extraer(fuente, seccion, a, b):
     items = {}
     for n, u in _CIFRA.findall(plano):
         items[_clave("cifra", f"{n} {u}")] = None
-    for m in _FRASE.finditer(plano):
-        items[_clave("frase", m.group(0))] = None
+    for fr in _frases(plano):
+        items[_clave("frase", fr)] = None
     return items
 
 
@@ -199,7 +254,29 @@ def auditar():
     return fallos
 
 
+def pendientes(seccion=None):
+    """Los elementos sin veredicto, los que huelen a norma primero."""
+    datos = _cargar()
+    for clave, ficha in sorted(datos.get("lecturas", {}).items()):
+        if seccion and clave != seccion and not clave.endswith("/" + seccion):
+            continue
+        fuente, sec = clave.split("/", 1)
+        a, b = ficha["rango"]
+        items = extraer(fuente, sec, a, b)
+        ver = ficha.get("veredictos", {})
+        faltan = [k for k in items if not ver.get(k)]
+        if not faltan:
+            continue
+        faltan.sort(key=lambda k: (0 if _HUELE_A_NORMA.search(k) else 1, k))
+        print(f"\n## {clave} ({len(faltan)} sin veredicto)")
+        for k in faltan:
+            print(k)
+
+
 if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "--pendientes":
+        pendientes(sys.argv[2] if len(sys.argv) > 2 else None)
+        sys.exit(0)
     if len(sys.argv) > 1 and sys.argv[1] == "--extraer":
         fuente, seccion = sys.argv[2], sys.argv[3]
         a, b = int(sys.argv[4]), int(sys.argv[5])
