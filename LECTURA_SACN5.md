@@ -65,6 +65,7 @@ están en `HALLAZGOS_SACN5_10SEP.md` con la medida delante:
 | **33** · cachorro de raza grande | 90 | **S-25** a **S-27**, y **S-26** es el más duro de la noche |
 | **5** · macronutrientes y energía | 158 | **S-28** (los 62 que faltaban de la primera pasada) |
 | **6** · minerales y vitaminas | 164 | **S-29** (los 39 que faltaban) |
+| **37** · enfermedad renal crónica | 129 | **S-30** y **S-31** (los 81 que faltaban), y S-30 **matiza S-10 a favor** |
 
 ⚠️ **Lo de abajo se escribió ANTES de esa pasada**, leyendo el capítulo de
 corrido. No es falso, pero no es completo: la pasada elemento a elemento

@@ -370,6 +370,8 @@ la respuesta tiene tres estudios detrás en vez de una frase.
 
 ### S-10 · Ninguna dieta renal de las que alargan la vida cabe dentro de FEDIAF
 
+> ⚠️ **MATIZADO el 10 de septiembre de noche, al completar el capítulo, y a favor:** sigue siendo verdad que no podemos bajar la proteína, pero el propio capítulo trae el estudio que dice que **eso no es lo que da la supervivencia** — la da el fósforo, y ése lo tenemos aplicado en el sitio exacto donde el estudio lo midió. Detalle en **S-30**.
+
 El capítulo 37 (enfermedad renal crónica) trae la composición de **los alimentos
 renales terapéuticos de los estudios de supervivencia**, que son los que
 demostraron alargar la vida del perro. Puestos al lado del mínimo de FEDIAF para
@@ -1104,3 +1106,107 @@ vitamina A de **S-26** y la fuente en el catálogo es la misma: el hígado.
 Y para situar el tope crónico de selenio: la dosis letal mínima **inyectada** en
 el perro es 2,0 mg/kg de peso vivo. Es vía intramuscular y no se traslada a una
 dieta, pero explica por qué el selenio es uno de los cinco topes duros.
+
+---
+
+## Novena tanda (10 de septiembre, noche) — el capítulo 37, ya completo: el renal
+
+Los 81 que faltaban. `renal` es la patología con la ventana más estrecha del motor
+(el fósforo a 1200 con el mínimo de FEDIAF en 1160: un 3,4 % de sitio), así que
+este capítulo importa más que la mayoría. **Confirma los seis números que
+aplicamos** y trae una cosa que cambia cómo hay que leer un hallazgo anterior.
+
+### S-30 · ⚠️ Lo que alarga la vida del perro renal es el FÓSFORO, no bajar la proteína
+
+> *«survival was significantly increased by feeding either of the low-phosphorus
+> foods (0.44 to 0.49% DM phosphorus) and **was not affected by the amount of
+> dietary protein (16.7 to 32% DM)**»*
+
+Los dos extremos de ese rango de proteína son **41,75 y 80 g/1000 kcal**, y la
+supervivencia fue la misma. Y el fósforo que sí la cambió, 0,44-0,49 % MS, son
+**1100 a 1225 mg/1000 kcal** — justo donde está nuestro techo de **1200**.
+
+**Esto matiza S-10 y lo hace a favor.** Allí escribí que «ninguna dieta renal de
+las que alargan la vida cabe dentro de FEDIAF», porque el rango de proteína del
+libro (14-20 % MS = 35-50) cae por debajo del mínimo de FEDIAF (52,1) y el motor
+no puede bajar de ahí sin firma.
+
+Sigue siendo verdad que **no podemos bajar la proteína**. Lo que este estudio dice
+es que **eso no es lo que da la supervivencia**. La palanca que sí la da —el
+fósforo— la tenemos aplicada y en el sitio exacto donde el estudio la midió.
+
+El otro estudio del capítulo pone la cifra al lado: **supervivencia del 75 % con
+fósforo bajo contra el 33 % con fósforo alto**.
+
+### Los seis números renales del motor, confirmados uno a uno
+
+La fila «Recommended levels» de la Tabla 37-11 es de donde salen todos:
+
+| | La fuente | Por 1000 kcal | Lo que aplica el motor |
+|---|---|---|---|
+| Fósforo | 0,2–0,5 % MS | 500 – 1250 | **1200** ✅ (extremo alto) |
+| Sodio | ≤0,3 % MS | ≤750 | **750** ✅ |
+| Potasio | 0,4–0,8 % MS | 1000 – 2000 | **2000** ✅ (extremo alto) |
+| Omega-3 total | 0,4–2,5 % MS | 1,0 – 6,25 g | **1,0** ✅ (extremo bajo) |
+| Vitamina E | ≥400 UI/kg MS | ≥67 mg | **67,1** ✅ |
+| Proteína | 14–20 % MS | 35 – 50 g | **62,5** (el extremo alto, subido) |
+
+Y algo que conviene poder decir en voz alta: en fósforo y potasio aplicamos **el
+extremo alto** del rango de la fuente, no el bajo. **No apretamos de más.** El
+propio capítulo da el argumento: *«Although avoiding excess dietary protein and
+minerals is important in patients with CKD, offering only such a food should not
+be imposed to the detriment of overall nutrient intake.»*
+
+### S-31 · El ratio omega-6:omega-3, otra vez, y ahora con la cifra de omega-3 colgando de él
+
+> *«Until there is definitive work, a somewhat broad range for the omega-6:omega-3
+> fatty acid ratio is recommended (**1:1 to 7:1**).»*
+
+Y lo que importa de verdad:
+
+> *«**With a 5:1 omega-6:omega-3 fatty acid ratio**, the lower end of the range
+> (0.41%) was effective in reducing the magnitude of glomerular hypertension and
+> renal generation of inflammatory eicosanoids»*
+
+O sea que **el 1,0 g/1000 kcal de omega-3 que aplicamos funcionó en un contexto
+con un ratio concreto**, y el motor no sabe expresar ese ratio. Ya estaba escrito
+como pendiente en `REVISION_NUTRICIONISTA.md` (una de las tres cosas que Cris
+Carles señaló y siguen sin estar); esto le pone el número al lado y lo ata a una
+cifra que sí aplicamos.
+
+⚠️ Y el motor **ya tiene la maquinaria**: el bloque `ratios` de `patologias.json`
+existe desde el 10 de septiembre y admite cualquier par de nutrientes. Lo que
+falta es la decisión clínica, que es exactamente por lo que se escribió que el
+omega-6:omega-3 sigue sin aplicarse: sus fuentes van de <1:1 a 7:1 según la
+enfermedad.
+
+### Dos huecos que resulta que NO se pueden cerrar
+
+- **La vitamina D en renal**: *«The effect of varying vitamin D levels in foods has
+  not been studied; therefore, it is not included as a key nutritional factor.»*
+  No hay factor de vitamina D en la ficha renal **porque no se ha estudiado**.
+- **La vitamina C renal** (≥100 mg/kg MS = 25 mg/1000 kcal): el perro la sintetiza,
+  FEDIAF no le da fila y **ninguna ficha del catálogo la declara**. Es dato que
+  falta, no límite.
+
+### Y un dato clínico más que la app no pregunta
+
+> *«Dogs with proteinuria should be fed a reduced-protein food designed for
+> patients with CKD, **whether azotemia exists or not**.»*
+
+O sea que el dato que decide no es solo la creatinina: es también el cociente
+proteína/creatinina en orina. Otro dato clínico que la ficha no tiene, y otra
+razón por la que `renal` es `solo_veterinario`.
+
+### Y una confirmación que estaba en el capítulo equivocado
+
+Escondida en el caso clínico final del capítulo renal, la cifra de **pancreatitis**:
+
+> *«Feeding a moderate-fat food (**≤15% dry matter [DM]**) has been recommended for
+> patients recovering from pancreatitis, whereas a **low-fat food (≤10% DM)** may be
+> more appropriate for those with concurrent obesity or hypertriglyceridemia.»*
+
+15 % MS = **37,5 g/1000 kcal** y 10 % MS = **25**. Son **exactamente** los dos
+valores que el motor aplica en pancreatitis, y exactamente la misma condición: el
+25 solo si además hay obesidad o hiperlipidemia. Confirmación literal, desde otro
+capítulo, de la cifra que se corrigió el 8 de septiembre.
