@@ -1385,3 +1385,71 @@ faltaba motor, falta el número. Las fuentes van de **<1:1** (artrosis, Tabla 34
 a **7:1** (renal, Tabla 37-9) —un factor siete entre dos enfermedades que un mismo
 perro puede tener a la vez— y el NRC 2006 dice del ratio de totales que «is not
 helpful». Es PREGUNTA 40 en `PARA_EL_NUTRICIONISTA.md` y la decide quien firma.
+
+## 10 de septiembre de 2026 — Un pendiente llevaba dos días culpando a una función que no interviene
+
+`PENDIENTE_NUTRICION.md` §14.4 decía, sobre el toy de 1,5 kg al que le cuesta
+sacar menú desde que existe el techo de fósforo:
+
+> *«`elegir_alimentos` sortea candidatos por categoría sin saber qué límites hay
+> puestos»*
+
+y de ahí salía un plan: **sesgar el sorteo hacia los huesos de mejor Ca:P**. Ese
+plan habría sido trabajo tirado, porque arregla una función que no está en el
+camino.
+
+### Los dos hechos
+
+1. **`elegir_alimentos` no lo llama nadie.** De todo `motor/modos.py` —190
+   líneas— el motor importa **una sola cosa**: el diccionario `CUANTOS_MAX`
+   (`motor_completo.py:531`). Ni `elegir_alimentos`, ni `cambiar`, ni `quitar`,
+   ni `anadir`: los endpoints `/menu/cambiar`, `/menu/quitar` y `/menu/anadir`
+   tienen su propia implementación en `main.py`, y la batería tampoco los usa.
+   **No hay sorteo de candidatos**: `resolver()` recibe todos los accesibles de
+   cada categoría y elige el MILP.
+2. **Lo aleatorio va en el objetivo, y un objetivo no vuelve infactible nada.**
+   El ruido son 0 a 0,4 sobre el coste de usar cada alimento, más la penalización
+   del pescado la mitad de las veces. Cambia por dónde busca HiGHS, o sea cuánto
+   TARDA.
+
+### La medida que lo cierra
+
+Mismo toy, mismas 30 semillas, subiendo el reloj:
+
+| `time_limit` | Sin menú de 30 |
+|---|---|
+| 1 s | 11 |
+| 5 s | 6 |
+| **30 s** | **0** |
+
+Con 30 segundos no falla ninguna, así que **las 30 son factibles**: lo que
+faltaba era tiempo para encontrar la primera solución entera. Y no es una
+solución ya encontrada que se tire —eso se arregló el 29 de agosto—: en un
+segundo HiGHS no llega a tener ninguna.
+
+### Y al dueño ya no le llega
+
+Medido por la vía de la API, que es la que usa la app, 20 peticiones:
+
+| Presupuesto | Sin menú | Peldaño |
+|---|---|---|
+| 24 s (lo normal) | **0 de 20** | los 20 estrictos |
+| 3 s (Render lento) | **0 de 20** | 7 estrictos, 13 un peldaño abajo, **y lo dice** |
+
+Lo arregló el reparto de tiempo del 8 de septiembre: `tiempo_de_un_intento()`
+impide que una llamada se lleve más del 40 % del presupuesto, así que siempre
+queda para bajar de peldaño, y con cuatro huecos de suplemento entra la cáscara
+de huevo (Ca:P de 370:1) y el techo deja de apretar. **El diagnóstico correcto
+llevaba desde ese día escrito en el docstring de esa función.** Lo que no se
+actualizó fueron los tres sitios que contaban la versión vieja.
+
+### Corregido en cuatro sitios, y por qué importa
+
+`PENDIENTE_NUTRICION.md` §14.4, `DECISIONES.md` D-15, el comentario del BLOQUE 43
+—que afirmaba «es un sorteo que de verdad no tiene solución»— y la tabla de
+medidas de `HALLAZGOS_LECTURA_FUENTES.md`. Más una línea en `CLAUDE.md` diciendo
+qué se usa de verdad de `modos.py`, porque **código muerto que parece vivo** es
+exactamente lo que mandó a este punto a diagnosticar la función equivocada.
+
+Queda una pregunta pequeña, de limpieza y no de nutrición: si se borra lo muerto
+de `modos.py`. No se ha tocado: borrar código no es urgente y el mapa ya avisa.

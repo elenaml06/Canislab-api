@@ -623,7 +623,7 @@ y son justo las que han decidido algo:
 | El techo de fósforo cabe en el peldaño 0 (3, 10, 22, 40 kg) | D-15 |
 | La proteína de reproducción a 125 cabe en los nueve casos | F-13 |
 | El omega-3 del cáncer: 11,5 sí, 12,0 no | 30-5 |
-| El toy de 1,5 kg: 12 sorteos sin menú de 30 | §14.4 |
+| El toy de 1,5 kg: 12 semillas sin menú de 30 a 1 s de solver — ⚠️ y **0 de 30 a 30 s**, o sea que era el reloj y no el «sorteo» (corregido el 10 sep) | §14.4 |
 
 **No valen, y hay que rehacerlas:**
 

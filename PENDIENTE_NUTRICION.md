@@ -1110,34 +1110,87 @@ Las tres salidas posibles, y **ninguna la decide el asistente**:
 
 Es decisión de nutrición. Apuntada también en `PENDIENTE_DECISIONES.md`.
 
-### 14.4 · El sorteo de alimentos no sabe que hay un techo de fósforo — **coste medido**
+### 14.4 · Al toy de 1,5 kg le cuesta más sacar menú con el techo de fósforo — ✅ **NO le pasa al dueño; queda un coste de tiempo**
+
+> **⚠️ REMEDIDO EL 10 DE SEPTIEMBRE, POR LA VÍA DE LA API, QUE ES LA QUE USA LA
+> APP.** El mismo toy de 1,5 kg y DER 200, 20 peticiones:
+>
+> | Presupuesto | Sin menú | En qué peldaño sale |
+> |---|---|---|
+> | 24 s (lo normal) | **0 de 20** | los 20 en **estricto** |
+> | 3 s (imitando a Render lento) | **0 de 20** | 7 estrictos, 13 un peldaño más abajo, **y lo dice** |
+>
+> O sea que **hoy el dueño tiene su menú siempre**, y cuando se baja de peldaño
+> se avisa, que es la regla 5. Lo arregló el reparto de tiempo del 8 de
+> septiembre (`tiempo_de_un_intento()`: ninguna llamada se lleva más del 40 % del
+> presupuesto, así que siempre queda para bajar de peldaño). Lo que queda escrito
+> abajo es el **coste**: al perro pequeño le cuesta más, y con el presupuesto
+> apretado paga bajando de peldaño.
+
 
 Desde que existe el techo del perro adulto sano (2000 mg/1000 kcal, `DECISIONES.md`
 D-15), **al perro más pequeño le cuesta más sacar menú**. Medido, toy de 1,5 kg
-con DER 200, peldaño 0, dos suplementos, un sorteo de alimentos por intento y 1 s
-de solver:
+con DER 200, peldaño 0, dos suplementos, una semilla por intento y 1 s de solver:
 
 ```
 con el techo .....  12 sin menú de 30
 sin el techo .....   0 sin menú de 30
 ```
 
-**No es que el menú no exista: es que ESE sorteo no lo tiene.** La API reintenta
-—con tres sorteos vuelve a 0 de 10— así que el dueño acaba teniendo su menú,
-pero tarda más, y en Render el presupuesto de tiempo es real. En los perros de 3,
-10, 22 y 40 kg no pasa: los cuatro salen en el peldaño 0 a la primera.
+**El menú existe en las 30**: reintentar con otra semilla lo encuentra, y con 30
+segundos de reloj salen las 30 (ver la corrección de abajo). En Render el
+presupuesto de tiempo es real, así que el coste se paga en segundos o en bajar de
+peldaño. En los perros de 3, 10, 22 y 40 kg no pasa: los cuatro salen en el
+peldaño 0 a la primera.
 
-**Qué lo causa.** `elegir_alimentos` sortea candidatos por categoría sin saber
-qué límites hay puestos. Si el hueso que sale en el sorteo trae mucho fósforo por
-cada miligramo de calcio, con dos huecos de suplemento no siempre se puede
-compensar. Las dos fuentes de calcio sin fósforo del catálogo —las dos cáscaras
-de huevo, con Ca:P de 370:1 y 422:1— existen, pero gastar un hueco de suplemento
-en calcio compite con el multivitamínico y con el aceite.
+### ⚠️ CORREGIDO EL 10 DE SEPTIEMBRE: LA CAUSA ESCRITA AQUÍ ERA FALSA
 
-**Qué haría falta.** Que el sorteo mire los límites activos: cuando hay techo de
-fósforo, sesgar la elección de hueso hacia los de mejor Ca:P y asegurar que una
-fuente de calcio sin fósforo está entre los candidatos. Es acotado y no toca
-ninguna cifra nutricional — es la FORMA de elegir candidatos, no los requisitos.
+Aquí ponía: *«`elegir_alimentos` sortea candidatos por categoría sin saber qué
+límites hay puestos»*, y de ahí salía un plan —sesgar el sorteo hacia los huesos
+de mejor Ca:P— que **habría sido trabajo tirado**, porque arreglaba una función
+que no interviene.
+
+**`elegir_alimentos` no está en el camino vivo.** De todo `motor/modos.py`, el
+motor importa **una sola cosa**: el diccionario `CUANTOS_MAX`
+(`motor_completo.py:531`). Ni `elegir_alimentos`, ni `cambiar`, ni `quitar`, ni
+`anadir` los llama nadie —ni la API, ni la batería—: los endpoints
+`/menu/cambiar`, `/menu/quitar` y `/menu/anadir` tienen su propia implementación
+en `main.py`. **No hay sorteo de candidatos**: `resolver()` recibe *todos* los
+accesibles de cada categoría y **es el MILP quien elige**.
+
+Lo único aleatorio es un ruido pequeño en el **objetivo** (0 a 0,4 sobre el coste
+de usar cada alimento, más la penalización del pescado la mitad de las veces), y
+**un objetivo no puede volver infactible un problema factible**: solo cambia por
+dónde busca el solver y, por tanto, **cuánto tarda**.
+
+**La causa real es el `time_limit`.** Medido el 10 de septiembre, el mismo toy de
+1,5 kg con DER 200, peldaño 0, dos suplementos, 30 semillas fijas:
+
+| `time_limit` | Sin menú | Semillas que fallan |
+|---|---|---|
+| 1 s | **11 de 30** | 0, 4, 7, 9, 12, 13, 19, 23… |
+| 5 s | **6 de 30** | 4, 12, 23, 25, 27, 29 |
+| **30 s** | **0 de 30** | ninguna |
+
+Con 30 segundos **no falla ninguna**, así que las 30 son factibles y lo que
+faltaba era tiempo para encontrar la primera solución entera. Y no es que se
+tirara una solución ya encontrada: eso se arregló el 29 de agosto (se acepta el
+incumbente cuando salta el `time_limit`). Aquí HiGHS **no llega a tener
+ninguna** en un segundo.
+
+**Y por eso el arreglo bueno ya estaba puesto, en otro sitio.**
+`tiempo_de_un_intento()` (8 de septiembre) impide que una sola llamada se lleve
+más del 40 % del presupuesto, así que siempre queda tiempo para **bajar de
+peldaño** — y con cuatro huecos de suplemento el motor puede meter cáscara de
+huevo (Ca:P de 370:1, o sea calcio sin fósforo) y el techo deja de apretar. Es
+exactamente para lo que existe la escalera, y es lo que hace que la medida por la
+vía de la API dé 0 sin menú de 20 arriba. El diagnóstico correcto llevaba desde
+ese día escrito en el docstring de esa función; lo que no se actualizó fue este
+punto.
+
+**Y queda una pregunta pequeña de limpieza**: `motor/modos.py` son 190 líneas de
+las que se usa un diccionario. Código muerto que *parece* vivo es justo lo que
+mandó a este punto a diagnosticar la función equivocada.
 
 ⚠️ **Medido y descartado como atajo**: subir `max_suplementos` a 3 **no** lo
 arregla (5 sin menú de 10 en la misma prueba). Más huecos hacen el MILP más

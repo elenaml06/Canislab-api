@@ -1007,22 +1007,29 @@ alimento para un perro que come lo normal. Y no se cae en silencio:
 ### Lo que cuesta, medido
 
 **Al perro más pequeño le cuesta más sacar menú.** Toy de 1,5 kg, DER 200,
-peldaño 0, dos suplementos, un sorteo de alimentos por intento y 1 s de solver:
+peldaño 0, dos suplementos, una semilla por intento y 1 s de solver:
 
 ```
 con el techo .....  12 sin menú de 30
 sin el techo .....   0 sin menú de 30
 ```
 
-No es que el menú no exista: es que **ese sorteo** no lo tiene. La API reintenta
-—con tres sorteos vuelve a 0 de 10— así que el dueño acaba teniendo su menú, pero
-tarda más. En 3, 10, 22 y 40 kg no pasa: los cuatro salen a la primera.
+⚠️ **CORREGIDO EL 10 DE SEPTIEMBRE.** Aquí ponía «es que **ese sorteo** no lo
+tiene», y es falso: **no hay ningún sorteo de candidatos**. `resolver()` recibe
+todos los accesibles de cada categoría y elige el MILP; lo único que cambia con
+la semilla es un ruido en el **objetivo**, y un objetivo no puede volver
+infactible un problema factible. Remedido con las mismas 30 semillas subiendo el
+reloj: **11 sin menú a 1 s, 6 a 5 s y 0 a 30 s**. O sea que las 30 son factibles
+y lo que falta es tiempo para encontrar la primera solución entera.
 
-Se aplica igual, y el arreglo de verdad queda escrito: el sorteo de alimentos no
-sabe qué límites hay puestos, y podría saberlo
-(`PENDIENTE_NUTRICION.md` §14.4). Medido y descartado como atajo: subir
-`max_suplementos` a 3 **no** lo arregla (5 sin menú de 10) — más huecos hacen el
-MILP más grande, no más fácil.
+El arreglo de verdad ya está puesto y es otro: el reparto de tiempo del 8 de
+septiembre (`tiempo_de_un_intento()`), que deja siempre presupuesto para bajar de
+peldaño. **Medido por la vía de la API, que es la que usa la app: 0 sin menú de
+20, tanto con 24 s como con 3 s** — con 3 s baja de peldaño 13 veces de 20, y lo
+dice. En 3, 10, 22 y 40 kg no pasa: los cuatro salen a la primera.
+
+Medido y descartado como atajo: subir `max_suplementos` a 3 **no** lo arregla
+(5 sin menú de 10) — más huecos hacen el MILP más grande, no más fácil.
 
 ### Qué lo vigila
 

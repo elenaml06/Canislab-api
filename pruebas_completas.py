@@ -5808,34 +5808,45 @@ for _etq43, _der43, _etapa43, _peso43, _adulto43 in _CASOS_43:
         # no ha cambiado y se sigue comprobando igual.
         #
         # Lo que ha cambiado es otra cosa: el techo de fósforo del perro
-        # adulto sano (2000 mg/1000 kcal, SACN5 Tabla 13-3) hace que un
-        # SORTEO de alimentos de cada varios no tenga solución en el peldaño
-        # 0 con dos suplementos. MEDIDO, toy de 1,5 kg con DER 200, un sorteo
-        # por intento y 1 s de solver:
+        # adulto sano (2000 mg/1000 kcal, SACN5 Tabla 13-3) hace el problema
+        # del toy MÁS LENTO. MEDIDO, toy de 1,5 kg con DER 200, un intento por
+        # semilla y 1 s de solver:
         #
         #     con el techo ..... 12 sin menú de 30
         #     sin el techo .....  0 sin menú de 30
         #
-        # Eso NO es «una solución calculada que se tira»: es un sorteo que de
-        # verdad no tiene solución. La API ya reintenta —es lo que hace en
-        # producción, y con tres sorteos vuelve a 0 de 10—, así que el test
-        # tiene que reintentar igual o estaría midiendo la suerte del sorteo
-        # en vez del tiempo.
+        # ⚠️ CORREGIDO EL 10 DE SEPTIEMBRE — AQUÍ PONÍA «es un sorteo que de
+        # verdad no tiene solución», Y ES FALSO. No hay ningún sorteo de
+        # candidatos: `resolver()` ve TODOS los accesibles y elige el MILP; lo
+        # único que cambia con la semilla es un ruido en el OBJETIVO, y un
+        # objetivo no puede volver infactible un problema factible. Remedido
+        # el 10 de septiembre con las MISMAS 30 semillas, subiendo el reloj:
+        #
+        #     time_limit  1 s .... 11 sin menú de 30
+        #     time_limit  5 s ....  6 sin menú de 30
+        #     time_limit 30 s ....  0 sin menú de 30
+        #
+        # O sea que las 30 son factibles y lo que falta es tiempo para
+        # encontrar la PRIMERA solución entera -- que es justo lo que ya decía
+        # el docstring de `tiempo_de_un_intento()` en main.py. Reintentar sigue
+        # siendo lo correcto (otra semilla llega antes), pero por este motivo y
+        # no por el que ponía.
         #
         # ⚠️ Y ESTO ES UN COSTE REAL, NO UN DETALLE: al perro más pequeño le
-        # cuesta más sacar menú desde que existe el techo. Está apuntado en
-        # `PENDIENTE_NUTRICION.md` §14.4 como trabajo pendiente — el sorteo de
-        # alimentos no sabe que hay un techo de fósforo, y podría saberlo.
-        # ⚠️ REMEDIDO A OCHO SORTEOS (9 septiembre). Los tres de arriba se
+        # cuesta más sacar menú desde que existe el techo. Al DUEÑO ya no le
+        # llega -- medido el 10 de septiembre por la vía de la API, 0 sin menú
+        # de 20 con 24 s y con 3 s, bajando de peldaño 13 veces y diciéndolo --
+        # porque la escalera lo cubre. Ver `PENDIENTE_NUTRICION.md` §14.4.
+        # ⚠️ REMEDIDO A OCHO INTENTOS (9 septiembre). Los tres de arriba se
         # midieron sobre DIEZ vueltas y daban 0; sobre TREINTA vueltas dejan
         # entre 1 y 3 sin menú, o sea un 3-7 % por vuelta -- y como el bloque
         # da tres vueltas por perfil, eso es una batería roja cada seis o
         # siete ejecuciones, sin que nada esté mal. Medido el 9 de septiembre,
         # toy de 1,5 kg con DER 200 y 1 s de solver, 30 vueltas cada uno:
         #
-        #     3 sorteos ..... 1-3 sin menú de 30
-        #     5 sorteos ..... 1 sin menú de 30
-        #     8 sorteos ..... 0 sin menú de 30
+        #     3 intentos ..... 1-3 sin menú de 30
+        #     5 intentos ..... 1 sin menú de 30
+        #     8 intentos ..... 0 sin menú de 30
         #
         # No es bajarle el listón: lo que este bloque afirma -- que una
         # solución ya calculada no se tira por el reloj -- se sigue exigiendo
@@ -5843,14 +5854,14 @@ for _etq43, _der43, _etapa43, _peso43, _adulto43 in _CASOS_43:
         # medido con una muestra demasiado pequeña. En producción el perro
         # además baja de peldaño, cosa que aquí no se hace.
         _ok43, _g43 = False, None
-        for _sorteo43 in range(8):
+        for _intento43 in range(8):
             _ok43, _g43 = _resolver_43(_der43, _etapa43, al, req, _peso43, dosis_maxima_fabricante,
                                        margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
                                        time_limit=1.0, peso_adulto_esperado_kg=_adulto43)
             if _ok43:
                 break
         if not _ok43:
-            fallos.append(f"BLOQUE43 {_etq43}: con el tiempo justo no sale menú en TRES sorteos. "
+            fallos.append(f"BLOQUE43 {_etq43}: con el tiempo justo no sale menú en OCHO intentos. "
                           f"La solución factible ya está calculada dentro del solver: tirarla es "
                           f"decirle a la usuaria que no existe un menú que sí existe.")
             continue
