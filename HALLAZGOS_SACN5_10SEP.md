@@ -181,3 +181,75 @@ Las tres tablas con hallazgo (**14-3**, **33-6** y **33-8**) están marcadas
 `leida_con_hallazgo` en `sacn5_tablas.json`, y el **BLOQUE 78 cuenta esa
 etiqueta aparte y exacto**: no se mezclan con las 286 que nadie ha mirado, para
 que el número que baja al trabajar no tape al que sube al encontrar algo.
+
+---
+
+## Segunda tanda (10 de septiembre, tarde) — leyendo con el contador arreglado
+
+Los tres primeros salen de las Tablas **17-1** y **33-5**, que son las dos de las
+que el motor ya aplica el calcio y el fósforo del cachorro. O sea: teníamos esas
+tablas abiertas y aplicamos **unas filas sí y otras no**.
+
+### S-4 · El techo de grasa del cachorro de raza grande, y no cabe ninguno
+
+**Tabla 33-5**, «Key nutritional factors for foods for large- and giant-breed
+puppies», en materia seca:
+
+| Factor | Recomendado |
+|---|---|
+| Densidad energética | 3,2-4,1 kcal/g |
+| **Grasa** | **8,5-17 %** |
+| DHA | ≥0,02 % |
+| Calcio | 0,8-1,2 % |
+| Ca:P | 1,1:1-2:1 (se prefiere el extremo bajo) |
+
+El **calcio** de esa tabla ya se aplica. La **grasa** no. Medido sobre los 12
+menús de cachorro del catálogo:
+
+| | |
+|---|---|
+| Grasa real | **46,0 a 76,1 g/1000 kcal** (mediana 62,0) |
+| Techo de la 33-5 convertido a 4,0 kcal/g | 42,5 → **lo pasan 12 de 12** |
+| Convertido al extremo bajo de su propia tabla (3,2) | 53,1 → lo pasan **8 de 12** |
+
+O sea que **ni uno solo cabe**, y por bastante. Es exactamente la forma del techo
+de lisina: una cifra pensada para pienso, que en una ración cruda no entra
+porque la grasa viene con la carne. **No se aplica**, se escribe con su medida y
+se pregunta — que es lo que dice `PATOLOGIAS.md` §1.4-bis para este caso.
+
+**El DHA de la misma tabla sí se cumple**, y conviene decirlo: 0,081 a 1,322
+g/1000 kcal contra un mínimo de 0,050. **0 de 12 por debajo.**
+
+### S-5 · Dos tablas del mismo libro no dicen lo mismo del Ca:P del cachorro grande
+
+| Fuente | Ca:P para el cachorro de raza grande |
+|---|---|
+| SACN5 **Tabla 17-1**, columna «adult BW >25 kg» | **1:1 – 1,5:1** |
+| SACN5 **Tabla 33-5** y su texto | **1,1:1 – 2:1**, «the lower end of the range is preferred» |
+| FEDIAF nota b (umbral 15 kg) — **lo que aplica el motor** | **≤1,6** |
+
+Nuestro 1,6 cae **entre las dos**. Aplicar el 1,5 de la 17-1 sería seguir una
+tabla y contradecir la otra del mismo libro, así que **no se toca**: es una
+pregunta para el nutricionista, no una decisión de refactor.
+
+Y hay una tercera cosa que las dos sí dicen igual, y que el motor ya cumple: *«el
+valor absoluto del calcio importa más que el ratio en el perro joven»*. El caso
+que lo demuestra está en el capítulo 33: cachorros de gran danés con **Ca:P 1,1:1
+—perfecto— pero 3,3 % de calcio** desarrollaron más enfermedad ortopédica que los
+controles con 1,1 %.
+
+### S-6 · La densidad de referencia no es 4,0 en ninguna de las dos tablas
+
+Las cinco cifras que el motor toma de estas tablas se convierten con **4,0 kcal
+por gramo de materia seca**. Las tablas dicen otra cosa:
+
+- **Tabla 17-1**: energía «3,5-4,5 kcal/g». Es un **rango**, no un punto.
+- **Tabla 33-5**: «3,2-4,1 kcal/g».
+- Y el capítulo 6, para la recomendación de 0,7-1,2 % de calcio del cachorro
+  grande: *«based on foods containing **3,800 kcal/kg**»*.
+
+Convertir 1,1 % de materia seca da **2750** mg/1000 kcal a 4,0 y **2895** a 3,8.
+**Aplicamos 2750**, o sea el lado estricto — no hay ninguna cifra mal, pero la
+densidad declarada en `recomendaciones_libro.json` no es la que dice la fuente, y
+eso es lo que audita `auditar_conversiones.py`. Es la misma familia que **F-27**
+en FEDIAF, y se cierra con el mismo dato: la **humedad** del catálogo.
