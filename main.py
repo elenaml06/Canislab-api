@@ -103,8 +103,32 @@ def _num_bonito(v):
 # vez. Esta función combina ambas cosas en un solo sitio, para usarla
 # en TODOS los puntos donde se devuelve un menú (generación Y edición).
 def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=None):
-    problemas = list(revisar_seguridad_v2(gramos, al, der, etapa, patologias,
-                                          peso_perro_kg=peso_perro_kg) or [])
+    # ⚠️ Y LA SEGUNDA LISTA QUE DEVUELVE `revisar_seguridad` NO LA PEDIA NADIE
+    # (10 septiembre). CASO REAL, y es el mismo de los `avisos_patologia`:
+    #
+    #   `revisar_seguridad(..., devolver_avisos=True)` devuelve DOS listas --
+    #   `problemas` y `avisos` -- y aqui se llamaba sin ese parametro, asi que
+    #   la segunda se construia y se tiraba. Nunca ha salido de la API.
+    #
+    # Lo que se perdia: el aviso de que la vitamina A viene de tres fuentes a la
+    # vez, que lleva ahi desde agosto, y los dos que se aplicaron hoy leyendo
+    # FEDIAF entera -- el del cordero y la taurina (anexo 7.3.3, con el
+    # Terranova dentro) y el de la histamina en pescado escombroide (§1.1).
+    #
+    # Elena, hoy: «tiene que ser aplicable de verdad a la aplicacion, no solo al
+    # motor». Un aviso que el motor calcula y la API no manda es exactamente lo
+    # contrario.
+    #
+    # Van por `problemas_seguridad` por el mismo motivo escrito abajo para los
+    # avisos por etapa: es el canal que la app ya pinta en TODOS los caminos
+    # (generar, semana, varios perros, editar, revalidar, pauta), asi que salen
+    # en los ocho sitios sin una clave nueva que alguien tenga que acordarse de
+    # leer. Y NO bloquean nada: lo que impide entregar o firmar un menu es el
+    # semaforo y los topes de patologia rotos, no esta lista.
+    _problemas, _avisos = revisar_seguridad_v2(gramos, al, der, etapa, patologias,
+                                               peso_perro_kg=peso_perro_kg,
+                                               devolver_avisos=True)
+    problemas = list(_problemas or []) + list(_avisos or [])
     problemas += list(avisos_rotacion_v2(gramos, al) or [])
     # ⚠️ AÑADIDO (25 agosto) — CASO REAL ENCONTRADO: un cachorro con
     # pancreatitis recibía su menú con el tope de grasa QUITADO y sin que

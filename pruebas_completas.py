@@ -10949,30 +10949,44 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
-# BLOQUE 84 — los dos avisos de FEDIAF que no son cifra
+# BLOQUE 84 — un aviso que el motor calcula y la API no manda no existe
 # ============================================================
 #
-# ⚠️ POR QUE (10 septiembre). Al leer FEDIAF 2025 ENTERA, frase a frase,
-# aparecieron dos riesgos que la guia describe y NO cuantifica:
+# ⚠️ DOS COSAS, Y LA SEGUNDA ES EL FALLO DE VERDAD (10 septiembre).
 #
-#   · Anexo 7.3.3: «Feeding certain LAMB and rice foods may increase the risk
-#     of a low-taurine status», y «some breeds seem to be more sensitive...
-#     particularly NEWFOUNDLAND DOGS, in which the rate of taurine synthesis is
-#     decreased». La taurina NO esta entre los 43 requisitos -- el perro sano la
-#     sintetiza --, asi que un menu de cordero sale VERDE y nadie ve el riesgo.
+# 1. Al leer FEDIAF ENTERA, frase a frase, aparecio un riesgo que la guia
+#    describe y NO cuantifica (anexo 7.3.3, «Dog»):
 #
-#   · §1.1, «pharmacologic reaction»: «high histamine levels in not
-#     well-preserved SCROMBOID FISH such as tuna». Es riesgo de conservacion, y
-#     una racion cruda se manipula en casa.
+#      «Feeding certain LAMB and rice foods may increase the risk of a
+#       low-taurine status», y «some breeds seem to be more sensitive...
+#       particularly NEWFOUNDLAND DOGS, in which the rate of taurine synthesis
+#       is decreased».
 #
-# Los dos son AVISO y no cifra a proposito: la fuente no da numero, asi que
-# ponerle un tope seria inventarselo. Callarse tampoco vale: el motor construye
-# justo las raciones donde el riesgo aparece (mete cordero, y mete pescado azul
-# para cerrar el EPA+DHA).
+#    La taurina NO esta entre los 43 requisitos -- el perro sano la sintetiza de
+#    metionina y cisteina, lo dice la propia FEDIAF --, asi que una racion de
+#    cordero sale VERDE y el riesgo no lo ve nadie. Y el motor conoce al
+#    Terranova: tiene su fila de energia de la Tabla VII-7.
 #
-# Este bloque exige que los dos salgan, y con su cifra o su nombre dentro: un
-# aviso truncado parece que esta y no dice lo que hay que hacer.
-print("\n=== BLOQUE 84: los dos avisos de FEDIAF que no son cifra ===")
+#    Va como AVISO y no como cifra a proposito: la fuente da un objetivo de
+#    ANALITICA (>40 µmol/L en plasma), no de receta.
+#
+# 2. Y LA LISTA DE AVISOS NO SALIA DE LA API. `revisar_seguridad` devuelve DOS
+#    listas con `devolver_avisos=True`, y `main._seguridad_completa` la llamaba
+#    sin ese parametro: la segunda se construia y se tiraba. Llevaba asi desde
+#    agosto, con el aviso de la vitamina A de tres fuentes dentro.
+#
+#    Elena: «tiene que ser aplicable de verdad a la aplicacion, no solo al
+#    motor». Por eso este bloque NO prueba el motor: prueba
+#    `_seguridad_completa`, que es la funcion por la que pasan los ocho caminos
+#    que devuelven un menu, o sea lo que de verdad recibe la app.
+#
+# 3. Y comprueba que NO HAY DUPLICADOS, porque al escribir el aviso del cordero
+#    puse tambien uno de histamina que YA EXISTIA en `avisos_rotacion()` desde
+#    antes, del mismo pasaje de FEDIAF y mejor redactado. Lo cazo esta misma
+#    prueba de extremo a extremo. Dos avisos diciendo lo mismo es peor que uno.
+print("\n=== BLOQUE 84: los avisos llegan a la app, y sin duplicados ===")
+
+from seguridad import revisar_seguridad as _rs84_fn
 
 _al84, _req84 = cargar()
 _cord84 = [n for n in _al84 if "cordero" in n.lower()]
@@ -10981,31 +10995,39 @@ if not _cord84 or not _pez84:
     fallos.append("BLOQUE84: el catalogo ya no tiene cordero o pescado azul con el que probar "
                   f"(cordero={len(_cord84)}, azul={len(_pez84)})")
 else:
-    from seguridad import revisar_seguridad as _rs84
     _menu84 = {_cord84[0]: 80.0, _pez84[0]: 60.0}
-    _p84, _a84 = _rs84(_menu84, _al84, 800.0, "Adulto", devolver_avisos=True)
-    _texto84 = " || ".join(_a84)
-    if "taurina" not in _texto84.lower():
-        fallos.append("BLOQUE84: un menu con cordero no avisa de la taurina. FEDIAF anexo 7.3.3 "
-                      f"la relaciona con las dietas de cordero. Avisos: {_a84}")
-    elif "terranova" not in _texto84.lower():
-        fallos.append("BLOQUE84: el aviso de la taurina no nombra al Terranova, que es la raza "
-                      "que nombra la propia FEDIAF. Un aviso sin el dato no sirve para preguntar")
-    if "histamina" not in _texto84.lower():
-        fallos.append("BLOQUE84: un menu con pescado azul no avisa de la histamina. FEDIAF lo "
-                      f"nombra en §1.1 entre las reacciones farmacologicas. Avisos: {_a84}")
-    # Y que NO bloqueen: son avisos, no incumplimientos. Si alguno se colara en
-    # `problemas`, el menu se caeria y el cordero dejaria de poder usarse.
-    _texto_p84 = " || ".join(_p84).lower()
-    if "taurina" in _texto_p84 or "histamina" in _texto_p84:
-        fallos.append("BLOQUE84: uno de los dos avisos esta en `problemas` y no en `avisos`. "
-                      "Bloquearia menus que estan bien: FEDIAF describe el riesgo y NO da cifra")
-    # Y que un menu sin cordero ni pescado azul no los saque.
+    # POR LA PUERTA DE LA API, no por la del motor.
+    _sal84 = _api._seguridad_completa(_menu84, _al84, 800.0, "Adulto")
+    _txt84 = " || ".join(_sal84).lower()
+    if "taurina" not in _txt84:
+        fallos.append("BLOQUE84: un menu con cordero no avisa de la taurina POR LA PUERTA DE LA "
+                      f"API. FEDIAF anexo 7.3.3 la relaciona con las dietas de cordero. Sale: {_sal84}")
+    elif "terranova" not in _txt84:
+        fallos.append("BLOQUE84: el aviso de la taurina no nombra al Terranova, que es la raza que "
+                      "nombra la propia FEDIAF. Un aviso sin el dato no sirve para preguntar")
+    if "histamina" not in _txt84:
+        fallos.append("BLOQUE84: un menu con pescado azul no avisa de la histamina por la puerta "
+                      f"de la API. Sale: {_sal84}")
+    # ⚠️ Y QUE LA SEGUNDA LISTA DE `revisar_seguridad` SIGA SALIENDO. Sin esto,
+    # volver a llamarla sin `devolver_avisos=True` no rompe nada visible.
+    _p84, _a84 = _rs84_fn(_menu84, _al84, 800.0, "Adulto", devolver_avisos=True)
+    _perdidos84 = [x for x in _a84 if x not in _sal84]
+    if _perdidos84:
+        fallos.append(f"BLOQUE84: {len(_perdidos84)} avisos del motor no llegan a la API. Es el "
+                      f"fallo del 10 de septiembre otra vez: `_seguridad_completa` los tira. "
+                      f"Perdidos: {_perdidos84[:2]}")
+    # Ni duplicados: dos avisos que digan lo mismo hacen que se deje de leer la lista.
+    for _clave84 in ("taurina", "histamina"):
+        _n84 = sum(1 for x in _sal84 if _clave84 in x.lower())
+        if _n84 > 1:
+            fallos.append(f"BLOQUE84: {_n84} avisos hablan de {_clave84}. Duplicado -- un aviso "
+                          f"que sale dos veces deja de leerse: {[x[:60] for x in _sal84]}")
+    # Y que no salten en un menu que no lleva ni cordero ni pescado azul.
     _otros84 = [n for n in _al84 if _al84[n].get("categoria") == "Verdura"][:1]
     if _otros84:
-        _, _a84b = _rs84({_otros84[0]: 100.0}, _al84, 800.0, "Adulto", devolver_avisos=True)
-        if any("taurina" in x.lower() or "histamina" in x.lower() for x in _a84b):
-            fallos.append("BLOQUE84: avisa de taurina o histamina en un menu que no lleva ni "
+        _sal84b = _api._seguridad_completa({_otros84[0]: 100.0}, _al84, 800.0, "Adulto")
+        if any("taurina" in x.lower() or "histamina" in x.lower() for x in _sal84b):
+            fallos.append(f"BLOQUE84: avisa de taurina o histamina en un menu que no lleva ni "
                           f"cordero ni pescado azul ({_otros84[0]}). Un aviso que sale siempre "
                           "deja de leerse")
 

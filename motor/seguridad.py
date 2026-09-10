@@ -982,22 +982,23 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
             "del menú: es algo que preguntar si el perro es de esas razas."
             % ", ".join(cordero))
 
-    # 2. HISTAMINA EN PESCADO ESCOMBROIDE (§1.1, definicion de «pharmacologic
-    #    reaction»): «a pseudo-allergic reaction caused by HIGH HISTAMINE LEVELS
-    #    in not well-preserved SCROMBOID FISH SUCH AS TUNA». No es toxicidad del
-    #    pescado: es de su conservacion, y una racion cruda se manipula en casa.
-    #    Por eso es aviso de manejo y no exclusion -- el atun y la caballa son
-    #    fuentes utiles de EPA+DHA.
-    escombroide = [n for n in menu
-                   if _es(n, {"atun", "caballa", "bonito", "sardina", "boqueron",
-                              "anchoa", "arenque"})]
-    if escombroide:
-        avisos.append(
-            "El pescado azul de este menú (%s) es de la familia que acumula "
-            "histamina si se rompe la cadena de frío. FEDIAF lo nombra entre "
-            "las reacciones adversas de tipo farmacológico. No cambia nada del "
-            "menú: significa comprarlo muy fresco o congelado y no dejarlo "
-            "fuera de la nevera." % ", ".join(escombroide))
+    # 2. LA HISTAMINA DEL PESCADO ESCOMBROIDE YA ESTABA, Y AQUI LA PUSE
+    #    DUPLICADA (10 septiembre, y lo cazo la propia prueba de extremo a
+    #    extremo). Leyendo §1.1 de FEDIAF -- la definicion de «pharmacologic
+    #    reaction», que nombra la histamina del escombroide mal conservado --
+    #    escribi un aviso nuevo, y resulta que el mismo pasaje de FEDIAF ya
+    #    estaba aplicado desde antes en `avisos_rotacion()`, con mejor
+    #    redaccion y con el razonamiento escrito de por que no es lo mismo que
+    #    el mercurio ni que las aminas vasoactivas de la reaccion adversa.
+    #
+    #    Se quita el mio. Dos avisos diciendo lo mismo es peor que uno: «un
+    #    aviso que sale siempre deja de leerse», que es la regla con la que se
+    #    decidio no meter mas ruido en esa lista.
+    #
+    #    Lo que si faltaba, y era el fallo de verdad, es que ESTA LISTA no
+    #    salia de la API: `main._seguridad_completa` llamaba a esta funcion sin
+    #    `devolver_avisos=True`, asi que todo lo de aqui abajo se construia y se
+    #    tiraba. Arreglado alli.
 
     if len(fuentes_a) >= 3:
         avisos.append(
