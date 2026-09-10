@@ -764,6 +764,40 @@ del 5 % de un menú real**.
 | Linolénico (ω-3) | — (solo crecimiento: 0,20 g) | FEDIAF |
 | Araquidónico | — (solo crecimiento: 75 mg) | FEDIAF |
 | **EPA + DHA** | **0,11 g** | **NRC 2006 — NO es de FEDIAF** |
+| **DHA solo** | **— en adulto; 0,05 g en crecimiento y reproducción** | **SACN5 (Tablas 15-5, 17-1 y 33-5) — nuevo el 10 de septiembre** |
+
+### ⚠️ EL DHA SE PIDE APARTE DESDE EL 10 DE SEPTIEMBRE, Y ANTES NO
+
+Hasta ese día el motor exigía **EPA+DHA como una sola cifra** y no pedía reparto,
+que es lo que hace la Tabla III-3b de FEDIAF. O sea que un menú de cachorro o de
+perra gestante podía cumplir los 0,125 g **enteros con EPA**, con cero DHA, y
+salir verde.
+
+SACN5 lo pide separado, y con la misma cifra en **cuatro sitios** — Tabla 15-5
+(reproducción), Tabla 17-1 (crecimiento, en **sus dos columnas** de peso adulto),
+Tabla 33-5 (crecimiento de raza grande) y el texto de los capítulos 15 y 33, que
+lo derivan así:
+
+> «Foods for late gestation and peak lactation should contain the minimum
+> recommended allowance of DHA plus eicosapentaenoic acid (EPA) of at least
+> 0,05 % (DM) (NRC, 2006). Therefore, **DHA needs to be at least 40 % of the
+> total DHA plus EPA, or 0,02 % DM**.»
+
+0,02 % de materia seca a 4,0 kcal/g son **0,05 g/1000 kcal**. Y el DHA no es
+intercambiable con el EPA aquí: la Tabla 33-5 dice para qué es —«***For improved
+learning»— y el capítulo 15 añade que «milk concentrations of DHA parallel
+dietary intake», o sea que lo que no lleva la ración no llega al cachorro.
+
+**Medido ANTES de aplicarlo**, sobre diez menús resueltos en vivo (tres de
+CachorroJoven, tres de CachorroCrecimiento, uno de Gestante, uno de
+GestanteTardia y dos de Lactante): **ninguno bajaba de 0,05**, el más justo iba a
+1,47 veces el suelo, y el DHA salía entre el **57 % y el 75 %** del EPA+DHA. O
+sea que **no cambia ni un menú de hoy** — y ese es justamente el motivo de
+ponerlo ahora y no cuando muerda.
+
+**No se aplica en adulto**, a propósito: ninguna de las tres tablas es de adulto,
+y FEDIAF no pone requerimiento absoluto de EPA+DHA en adulto. Pasarlo de una
+etapa a otra sería inventarse la cifra.
 
 ⚠️ **El mínimo de EPA+DHA de adulto es criterio nuestro.** FEDIAF 2025 solo
 lo exige en crecimiento y reproducción (0,13 g) y para adulto dice literalmente
@@ -2043,6 +2077,61 @@ números son de personas o de rata.
 **La pregunta**: ¿hay más fármacos frecuentes en el perro cuya pauta cambie al
 pasar a una ración cruda, alta en proteína y sin cereales? Es una pregunta de
 consulta, no de bibliografía: lo que se ve en la práctica.
+
+---
+
+## 11-quinquies · Lo que salió de leer FEDIAF y SACN5 **enteras** (10 de septiembre)
+
+Las dos fuentes se habían leído «enteras» varias veces y cada vez aparecía algo
+más. Esta vez se hizo con método: extraer mecánicamente de cada sección **todas**
+sus cifras con unidad y **todas** sus frases normativas, y dar veredicto a cada
+una (`leer_fuente.py`); y contar las tablas sin cortar la salida — **476 tablas**
+en SACN5, **121** de «Key nutritional factors».
+
+**Lo que cambia el motor** (los tres, con su medida):
+
+| Qué | De dónde | Efecto medido |
+|---|---|---|
+| Suelo de **DHA** en crecimiento y reproducción, 0,05 g/1000 kcal | SACN5 Tablas 15-5, 17-1 y 33-5 | 0 de 10 menús por debajo. No cambia ninguno hoy |
+| **Histamina**: aviso en atún, caballa, sardina y boquerón | FEDIAF §7.6.2.4 | Aviso, no tope: la genera la mala conservación y es termorresistente |
+| **Uva y pasa**, prohibidas | FEDIAF §7.7.1 | Faltaba la sección entera. 2,8 g de pasas/kg de peso |
+
+**Lo que se corrigió porque era falso:**
+
+- Se había escrito que SACN5 declara **3,5 kcal/g** de materia seca y que por
+  tanto 68 cifras de patología estaban un 14 % apretadas de más. **No.** De las
+  24 tablas que cita el motor, **una sola declara densidad** —la 13-3— y dice
+  **4,0**. Las 88 cifras se reproducen desde las filas de sus tablas a 4,0, y
+  ahora eso lo **rehace una auditoría** en cada batería en vez de creerse una
+  frase escrita en un comentario.
+- El aviso de **cardiopatía B2** decía al dueño «sodio bajado a 900 mg/1000 kcal»
+  y el motor aplica **739**; el de **estadio C** decía 790 y aplica **625**. Los
+  topes bajaron el 8 de septiembre y los avisos se quedaron.
+
+**Lo que la fuente cuantifica y sigue SIN aplicarse, porque falta una pregunta
+en la ficha y no un número:**
+
+- **El frío.** SACN5 Tabla 5-3 da el aumento del DER por tipo de pelo: **+95 %**
+  en pelo corto y **+59,5 %** en pelo largo al pasar de 25 °C a 7,6 °C; +25 % en
+  labrador y beagle; +22 % en gran danés. La app no pregunta dónde duerme el
+  perro. **PREGUNTA para vosotras: ¿se pregunta, y con qué palabras?**
+- **La masa muscular.** FEDIAF Tabla VII-3, escala de 0 a 3 por palpación. Se ha
+  aplicado la **salvedad** —en la parte baja del BCS el peso objetivo puede
+  quedarse corto porque lo que falta puede ser músculo— pero no la escala.
+
+**Y el umbral que FEDIAF no da y SACN5 sí:** FEDIAF dice que «as the calcium
+level approaches the stated nutritional maximum, it may be necessary to increase
+the levels of certain trace elements such as **zinc and copper**» y **no dice
+desde cuándo**. La Tabla 32-1 de SACN5 lo publica: **calcio >1,5 % MS**, o sea
+3750 mg/1000 kcal — el **60 %** del máximo de FEDIAF, no el 90 %. Lo que sigue
+sin existir en ninguna de las dos es **cuánto** hay que subir el zinc.
+
+**Las nueve tablas de recomendación canina que el motor no ofrece** están leídas
+enteras y con sus números en `PENDIENTE_PRODUCTO.md`. Dos de las nueve resultan
+estar **cerradas**: la 53-2 (vólvulo), cuyo único factor nutricional es el tamaño
+del bocado —ya está en el aviso—, y la 47-4 (periodontal), cuyas cifras de
+fósforo y sodio son **las mismas** que las del perro adulto sano que ya
+aplicamos.
 
 ---
 

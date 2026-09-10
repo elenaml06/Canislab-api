@@ -157,7 +157,18 @@ Y por eso esto ya no es un «implementarlo y ya», sino una decisión con nombre
 | Cris Carles | La relación omega-6:omega-3 es crucial en muchas patologías |
 | **SACN5 Tabla 30-5** (cáncer) | *«an omega-6:omega-3 fatty acid ratio approximating 1:1»* |
 | **SACN5 cap.25** (cuidados críticos) | **5:1 a 1:1**, «depending on patient assessment», y añade que **no está estandarizado** |
+| **SACN5 Tabla 34-2** (artrosis) | *«Omega-6:omega-3 fatty acid ratio **<1:1**»* — la más estricta de todas |
+| **SACN5 Tabla 37-9** (renal) | *«Omega-6:omega-3 fatty acid ratio of **1:1 to 7:1**»* — la más floja, y **siete veces** el techo de la artrosis |
 | **NRC 2006, cap.5** | Del ratio de **totales**: *«is not helpful»*. Recomienda en su lugar el **linoleico:linolénico** |
+
+⚠️ **Las dos filas de SACN5 nuevas son del 10 de septiembre, de leer el libro
+entero, y son las que rematan el argumento**: no es que las fuentes den cifras
+parecidas con matices, es que dan **de <1:1 a 7:1 según la enfermedad**. Un
+mismo perro con artrosis y con enfermedad renal recibiría dos objetivos que se
+llevan un factor siete. Las dos están ya en el repo, en
+`limites_escritos_que_el_solver_no_aplica` de sus patologías, con su medida y sin
+aplicar — que es exactamente la forma correcta de tener un número del que no se
+sabe qué hacer.
 
 **Y esa última ya está aplicada.** Desde el 9 de septiembre el motor exige el
 **ratio linoleico:linolénico** —2,6-26 en adulto y crecimiento, 2,6-16 en

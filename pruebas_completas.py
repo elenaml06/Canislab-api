@@ -8090,22 +8090,53 @@ if _ok60 and _g60:
                     for _n, _g in _g_b.items()) / (1000.0 / 1000.0)
         _esperado_b = _cnd60.suelo_relativo_de("Adulto", "arginina", _pr_b)
         _min_iiib = _min56(req.get("Arginina"), "Arginina", "Adulto")
-        if _esperado_b <= _min_iiib:
-            fallos.append(f"BLOQUE60: con {_pr_b:.0f} g de proteina/1000 kcal la Tabla VII-13 "
-                          f"pide {_esperado_b:.2f} de arginina y la III-3b pide {_min_iiib}. "
-                          f"Si la VII-13 nunca manda, este test no comprueba nada -- una racion "
-                          f"BARF ronda los 105 g de proteina y ahi la VII-13 pide 1,90")
-        else:
+
+        # ⚠️ LA DEMOSTRACION DE QUE LA VII-13 MANDA NO PUEDE DEPENDER DEL MENU
+        #    QUE DEVUELVA EL SOLVER (10 septiembre 2026).
+        #
+        # Esto exigia que en el menu resuelto la VII-13 pidiera MAS que la
+        # III-3b, y una noche el solver devolvio un menu con 74 g de proteina
+        # por 1000 kcal -- por debajo del cruce -- asi que la VII-13 pedia 1,59
+        # contra 1,66 y el test declaro que «no comprueba nada». Pero el motor
+        # estaba haciendo lo correcto: con poca proteina manda la III-3b, y eso
+        # es justo lo que dice la tabla. Un test que se pone rojo cuando el
+        # motor acierta es peor que no tenerlo.
+        #
+        # Se parte en dos. Primero la ARITMETICA, que no depende de ningun menu:
+        # a la proteina que lleva una racion BARF de verdad, la VII-13 tiene que
+        # mandar. Si eso deja de ser cierto, la regla es inerte de verdad.
+        _PROT_BARF_60 = 105.0     # g/1000 kcal, la cifra que cita la propia regla
+        _vii13_barf_60 = _cnd60.suelo_relativo_de("Adulto", "arginina", _PROT_BARF_60)
+        if _vii13_barf_60 is None or _vii13_barf_60 <= _min_iiib:
+            fallos.append(f"BLOQUE60: con los {_PROT_BARF_60:.0f} g de proteina/1000 kcal que "
+                          f"lleva una racion BARF tipica, la Tabla VII-13 pide {_vii13_barf_60} "
+                          f"de arginina y la III-3b pide {_min_iiib}. Si ni siquiera ahi manda "
+                          f"la VII-13, la regla esta inerte y no la aplica nadie")
+
+        # Y luego el MENU REAL, con lo que de verdad tiene que pasar: el semaforo
+        # exige LA MAS ESTRICTA de las dos, mande la que mande. Ese es el
+        # invariante; cual de las dos gana depende de la proteina del menu y no
+        # es asunto de este test.
+        _debe_exigir_60 = max(_esperado_b or 0.0, _min_iiib)
+        if True:
             _f_b = verificar(_g_b, al, req, 1000.0, "Adulto", 20)
             _arg_b = [d for d in _f_b.get("dentro_de_rango", []) if d["nutriente"] == "Arginina"]
             _arg_falta_b = [d for d in _f_b["faltan"] if d["nutriente"] == "Arginina"]
             _pedido_b = (_arg_b[0]["minimo"] if _arg_b
                          else (_arg_falta_b[0]["necesita"] if _arg_falta_b else None))
-            if _pedido_b is None or abs(_pedido_b - _esperado_b) > 0.02:
+            if _pedido_b is None or abs(_pedido_b - _debe_exigir_60) > 0.02:
                 fallos.append(f"BLOQUE60: con {_pr_b:.0f} g de proteina el semaforo exige "
-                              f"{_pedido_b} g de arginina y la Tabla VII-13 pide "
-                              f"{_esperado_b:.2f}. Si exige {_min_iiib}, esta usando solo la "
-                              f"Tabla III-3b y la regla nueva esta inerte")
+                              f"{_pedido_b} g de arginina y tendria que exigir "
+                              f"{_debe_exigir_60:.2f}, que es la mas estricta entre la Tabla "
+                              f"VII-13 ({_esperado_b:.2f}) y la III-3b con su factor del 10 % "
+                              f"({_min_iiib})")
+            elif _esperado_b <= _min_iiib:
+                # En este menu manda la III-3b, asi que apagar la VII-13 no
+                # cambiaria nada y la comprobacion de abajo no probaria nada.
+                # No es un fallo: es que este menu no sirve para eso. La
+                # aritmetica de arriba ya demostro que la regla no esta inerte.
+                print(f"  (la arginina de este menu la manda la III-3b: {_pr_b:.0f} g de "
+                      f"proteina queda por debajo del cruce)")
             else:
                 # Y AHORA CON EL FALLO PUESTO: se apaga la regla y lo exigido
                 # TIENE que bajar al minimo de la III-3b. Si no baja, es que el
@@ -8886,6 +8917,13 @@ if _doc65 is not None:
         ("el ajuste senior, ahora de la Tabla VII-6 de FEDIAF",
          r"Ajuste senior \(>7 años\) \| \*\*−([\d.,]+)\*\* \|", -_der54.AJUSTE_EDAD["senior"],
          "der.AJUSTE_EDAD"),
+        # El suelo de DHA de crecimiento y reproduccion, que entro el 10 de
+        # septiembre. Se ancla contra el valor VIVO de la regla condicional:
+        # si alguien lo mueve en el JSON, el documento deja de decir la verdad.
+        ("el suelo de DHA de crecimiento y reproduccion",
+         r"\*\*— en adulto; ([\d.,]+) g en crecimiento y reproducción\*\*",
+         __import__("condicionales").suelos_de_la_etapa("CachorroCrecimiento").get("dha"),
+         "requisitos_condicionales.dha_en_crecimiento_y_reproduccion"),
         ("el ajuste joven, que era codigo muerto y ahora llega",
          r"Ajuste joven \(1-2 años\) \| \*\*\+([\d.,]+)\*\* \|", _der54.AJUSTE_EDAD["joven"],
          "der.AJUSTE_EDAD"),
