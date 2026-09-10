@@ -59,11 +59,11 @@ _NUT = (r"protein|fat\b|calcium|phosphor|sodium|chloride|potassium|magnesium|cop
         r"tyrosine|threonine|tryptophan|valine|taurine|carnitine|fiber|fibre|energy|kcal|"
         r"purine|oxalate|water|moisture|ash|carbohydrate|starch|sugar")
 _UN = r"(?:µg|ug|mg|kg|g|IU|UI|kcal|kJ|MJ|%|ppm|mEq)"
-_CIFRA = re.compile(rf"[^.]*?(?<![\w.])\d[\d.,]*\s*{_UN}(?![\w])[^.]*\.", re.I)
-_RECO = re.compile(r"[^.]*?(?:should contain|should be restricted|should be avoided|"
+_CIFRA = re.compile(rf"(?<![\w.])\d[\d.,]*\s*{_UN}(?![\w])", re.I)
+_RECO = re.compile(r"(?:should contain|should be restricted|should be avoided|"
                    r"is recommended|are recommended|recommended (?:level|amount|range|intake)|"
                    r"key nutritional factor|target level|should be fed|should not exceed|"
-                   r"should be limited|restrict dietary|avoid dietary)[^.]*\.", re.I)
+                   r"should be limited|restrict dietary|avoid dietary)", re.I)
 _ES_NUT = re.compile(_NUT, re.I)
 
 
@@ -74,21 +74,89 @@ def capitulos():
     return sorted(glob.glob(os.path.join(CAPS, "*.txt")), key=clave)
 
 
-def _clave(tipo, valor):
-    return f"{tipo}:{' '.join(str(valor).split())[:130]}"
+# ⚠️ LOS TRES ARREGLOS DEL 10 DE SEPTIEMBRE POR LA TARDE, Y LOS TRES SALEN DE UN
+# FALLO REAL EN FEDIAF, NO DE UNA MEJORA TEORICA.
+#
+# 1. UNA CLAVE POR APARICION, NO POR TEXTO. En FEDIAF la clave era solo el texto,
+#    asi que un elemento que salia dos veces en la misma seccion tenia UN solo
+#    veredicto -- y el veredicto escrito valia para una de las dos. Asi se
+#    descarto como «celda de la tabla felina» la NOTA d, que es un techo del
+#    PERRO 2,5 veces mas estricto sobre el selenio anadido. Aqui, con 70
+#    capitulos de un libro de clinica, la misma frase se repite mucho mas.
+#
+# 2. UN CORTADOR DE FRASES QUE NO PARTA LOS NUMEROS. El `[^.]*` de antes corta
+#    «2.5 mg» en dos, asi que media frase se pierde y la otra media entra
+#    truncada. Se usa el mismo cortador que FEDIAF.
+#
+# 3. Y LO QUE EL FILTRO DESCARTA, CONTADO. El filtro nutricional sigue siendo
+#    necesario -- SACN5 es un libro de clinica y la mayoria de sus cifras son
+#    epidemiologia o dosis de farmaco --, pero HASTA HOY LO QUE DESCARTABA ERA
+#    INVISIBLE, que es exactamente el agujero que tenia FEDIAF. Medido el 10 de
+#    septiembre: 36.206 frases en el libro, 3.140 dejaba pasar el filtro y
+#    33.066 se caian sin que nadie las viera. De esas, 340 tienen forma de NORMA
+#    DIETETICA segun un patron INDEPENDIENTE del filtro -- y esas 340 entran
+#    ahora en la cuenta, marcadas `olor`, porque son justo donde puede estar
+#    escondido un limite que el motor deberia aplicar.
+#
+# El total de descartadas se imprime siempre, para que el tamaño del punto ciego
+# se vea en cada ejecucion en vez de deducirse.
+_ABREV = {"e.g", "i.e", "al", "cf", "vs", "approx", "fig", "tab", "no", "dr", "prof",
+          "mr", "mrs", "st", "etc", "ca", "resp", "vol", "ed", "eds", "inc", "ltd",
+          "co", "jr", "sr", "u.s", "pp", "p", "min", "max", "wt", "sect", "chap"}
+_CORTE = re.compile(r"(?<!\d)\.(?!\d)\s+(?=[A-Z0-9\u00ab\"'(])")
+_ULTIMA = re.compile(r"([A-Za-z.]+)$")
+
+# Huele a norma dietetica SIN usar las palabras del filtro. Es el control
+# independiente: si el filtro se dejara algo importante, esto lo caza.
+_OLOR = re.compile(r"\b(?:will be|was agreed|must (?:be|not)|shall|ought to|"
+                   r"is (?:not )?(?:advis|indicat|contraindicat)|do(?:es)? not need|"
+                   r"no more than|at least|upper limit|maximum (?:of|level|intake)|"
+                   r"minimum (?:of|level|intake)|toxicit|deficien|excess)\b", re.I)
+_COMIDA = re.compile(r"\b(?:diet|dietary|food|feeding|ration|nutrient|supplement|intake)\b", re.I)
 
 
-def extraer(ruta):
-    """Los elementos NUTRICIONALES de un capítulo, sin repetir."""
+def _frases(texto):
+    trozos, ini = [], 0
+    for m in _CORTE.finditer(texto):
+        pal = _ULTIMA.search(texto[ini:m.start()])
+        if pal and pal.group(1).lower().rstrip(".") in _ABREV:
+            continue
+        t = texto[ini:m.end(0)].strip()
+        if t:
+            trozos.append(t)
+        ini = m.end(0)
+    resto = texto[ini:].strip()
+    if resto:
+        trozos.append(resto)
+    return trozos
+
+
+def _clave(tipo, valor, n=None):
+    v = " ".join(str(valor).split())[:130]
+    return f"{tipo}#{n}:{v}" if n is not None else f"{tipo}:{v}"
+
+
+def extraer(ruta, con_descartadas=False):
+    """Los elementos NUTRICIONALES de un capítulo, UNA CLAVE POR APARICION."""
     t = " ".join(open(ruta, encoding="utf-8", errors="ignore").read().split())
-    items = {}
-    for m in _CIFRA.finditer(t):
-        if _ES_NUT.search(m.group(0)):
-            items[_clave("cifra", m.group(0)[:150])] = None
-    for m in _RECO.finditer(t):
-        if _ES_NUT.search(m.group(0)):
-            items[_clave("reco", m.group(0)[:150])] = None
-    return items
+    items, descartadas = {}, 0
+    for i, fr in enumerate(_frases(t)):
+        if not _ES_NUT.search(fr):
+            # ni siquiera nombra un nutriente: solo entra si huele a norma
+            if _OLOR.search(fr) and _COMIDA.search(fr) and len(fr) > 60:
+                items[_clave("olor", fr[:150], i)] = None
+            else:
+                descartadas += 1
+            continue
+        if _CIFRA.search(fr):
+            items[_clave("cifra", fr[:150], i)] = None
+        elif _RECO.search(fr):
+            items[_clave("reco", fr[:150], i)] = None
+        elif _OLOR.search(fr) and _COMIDA.search(fr) and len(fr) > 60:
+            items[_clave("olor", fr[:150], i)] = None
+        else:
+            descartadas += 1
+    return (items, descartadas) if con_descartadas else items
 
 
 def _cargar():
@@ -103,11 +171,12 @@ def auditar():
     if not os.path.isdir(CAPS):
         print("  (no está el texto de SACN5: no se puede contar)")
         return fallos
-    total = con_veredicto = 0
+    total = con_veredicto = descartadas = 0
     por_cap = {}
     for ruta in capitulos():
         nombre = os.path.basename(ruta)[:-4]
-        items = extraer(ruta)
+        items, _desc = extraer(ruta, con_descartadas=True)
+        descartadas += _desc
         ficha = (datos.get("capitulos") or {}).get(nombre) or {}
         ver = ficha.get("veredictos") or {}
         n_ok = sum(1 for k in items if ver.get(k))
@@ -123,6 +192,20 @@ def auditar():
     pend_decl = (datos.get("_meta") or {}).get("pendientes_declarados")
     print(f"  {len(por_cap)} capítulos · {total} elementos nutricionales · "
           f"{con_veredicto} con veredicto · {pend} pendientes")
+    # ⚠️ EL PUNTO CIEGO, IMPRESO SIEMPRE (10 septiembre). Lo que el filtro tira
+    # era invisible, que es el agujero que tenia FEDIAF: alli «532 de 532» sonaba
+    # a documento entero y era «532 de los que la lista supo ver». Aqui el filtro
+    # SIGUE HACIENDO FALTA -- SACN5 es un libro de clinica --, pero su tamaño se
+    # ve en cada ejecucion y se compara exacto, para que no pueda crecer solo.
+    print(f"  {descartadas} frases descartadas por el filtro nutricional "
+          f"(de {total + descartadas} frases del libro)")
+    desc_decl = (datos.get("_meta") or {}).get("descartadas_declaradas")
+    if desc_decl is not None and descartadas != desc_decl:
+        fallos.append(
+            f"SACN5: el filtro descarta {descartadas} frases y el fichero declara {desc_decl}. "
+            f"Si sube, el filtro se ha vuelto mas estrecho y hay material nuevo que nadie ve; "
+            f"si baja sin que el total suba, alguien lo ha relajado. Se cambia en el MISMO "
+            f"commit y se dice por que")
     if declarado is not None and total != declarado:
         fallos.append(
             f"SACN5: el filtro saca {total} elementos y el fichero declara {declarado}. Si se "

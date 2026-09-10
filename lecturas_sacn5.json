@@ -1,13 +1,16 @@
 {
-  "_meta": {
-    "que_es": "El contador del TEXTO de SACN5, capitulo a capitulo. Su hermano para las TABLAS es `sacn5_tablas.json`.",
-    "por_que_existe": "Elena, 10-sep-2026: «te mandé leer SACN5 todo bien con tablas y texto, y ahora resulta que tampoco... ¿qué está fallando?». Fallaba que «leído» significaba tres cosas -- extraido del PDF, con veredicto para cada tabla Y CADA FRASE, y aplicado -- y se usaban como una. Del texto no habia contador ninguno, asi que «leido entero» era una afirmacion mia.",
-    "el_fallo_de_debajo": "⚠️ Y habia algo peor, encontrado el mismo dia: los .txt de SACN5 se habian extraido conservando la DISPOSICION VISUAL, y el libro va a DOS COLUMNAS. El 37,5 % de sus lineas pegaban la linea de la columna izquierda con la de la derecha -- 24.012 de 64.074 --, o sea que mas de un tercio de lo que se estaba leyendo eran frases que el libro NO dice. Se rehizo con `canislab-fuentes/sacn5/extraer_texto.py` y bajo a 2 lineas de 123.191. Cualquier cita sacada de los .txt viejos hay que volver a comprobarla.",
-    "que_cuenta": "No todo: SACN5 es un libro de clinica y la mayoria de sus cifras son epidemiologia o dosis de farmaco. El filtro es NUTRICIONAL y esta escrito en `leer_sacn5.py`: una frase entra si lleva cifra con unidad Y nombra un nutriente, o si es una frase de recomendacion dietetica que nombra un nutriente.",
-    "la_regla_del_numero": "`pendientes_declarados` se compara EXACTO, igual que en el BLOQUE 78 con las tablas. Solo baja cuando alguien lee y resuelve, y lo baja en el mismo commit. Si el filtro se relajara, el total cambiaria y saltaria -- que es la trampa de declarar poco, vista ya en FEDIAF.",
-    "total_declarado": 3140,
-    "pendientes_declarados": 3140,
-    "medido": "10 de septiembre de 2026, sobre el texto ya rehecho."
-  },
-  "capitulos": {}
+ "_meta": {
+  "que_es": "El contador del TEXTO de SACN5, capitulo a capitulo. Su hermano para las TABLAS es `sacn5_tablas.json`.",
+  "por_que_existe": "Elena, 10-sep-2026: «te mandé leer SACN5 todo bien con tablas y texto, y ahora resulta que tampoco... ¿qué está fallando?». Fallaba que «leído» significaba tres cosas -- extraido del PDF, con veredicto para cada tabla Y CADA FRASE, y aplicado -- y se usaban como una. Del texto no habia contador ninguno, asi que «leido entero» era una afirmacion mia.",
+  "el_fallo_de_debajo": "⚠️ Y habia algo peor, encontrado el mismo dia: los .txt de SACN5 se habian extraido conservando la DISPOSICION VISUAL, y el libro va a DOS COLUMNAS. El 37,5 % de sus lineas pegaban la linea de la columna izquierda con la de la derecha -- 24.012 de 64.074 --, o sea que mas de un tercio de lo que se estaba leyendo eran frases que el libro NO dice. Se rehizo con `canislab-fuentes/sacn5/extraer_texto.py` y bajo a 2 lineas de 123.191. Cualquier cita sacada de los .txt viejos hay que volver a comprobarla.",
+  "que_cuenta": "No todo: SACN5 es un libro de clinica y la mayoria de sus cifras son epidemiologia o dosis de farmaco. El filtro es NUTRICIONAL y esta escrito en `leer_sacn5.py`: una frase entra si lleva cifra con unidad Y nombra un nutriente, o si es una frase de recomendacion dietetica que nombra un nutriente.",
+  "la_regla_del_numero": "`pendientes_declarados` se compara EXACTO, igual que en el BLOQUE 78 con las tablas. Solo baja cuando alguien lee y resuelve, y lo baja en el mismo commit. Si el filtro se relajara, el total cambiaria y saltaria -- que es la trampa de declarar poco, vista ya en FEDIAF.",
+  "total_declarado": 2944,
+  "pendientes_declarados": 2944,
+  "medido": "10 de septiembre de 2026, sobre el texto ya rehecho.",
+  "descartadas_declaradas": 33262,
+  "por_que_cambia_el_numero_10sep": "Bajó de 3.140 a 2.944 y NO es que se haya leído nada: es que el extractor se arregló con las tres lecciones del fallo de FEDIAF. (1) UNA CLAVE POR APARICION, con el numero de frase dentro, porque una clave por texto hace que un elemento repetido tenga UN solo veredicto -- asi se descarto como «celda felina» la nota d del selenio, que es un techo del perro. (2) UN CORTADOR DE FRASES QUE NO PARTE LOS NUMEROS: el `[^.]*` de antes cortaba «2.5 mg» en dos y sacaba dos trozos donde hay una frase, que es de donde salia parte del 3.140. (3) UNA FRASE ES UN ELEMENTO: antes una misma frase con dos cifras podia entrar dos veces.",
+  "por_que_se_cuentan_las_descartadas": "10 de septiembre. Lo que el filtro tiraba era INVISIBLE, que es exactamente el agujero que tenia FEDIAF: alli «532 de 532 con veredicto» sonaba a documento entero y era «532 de los que la lista de palabras supo ver», y se cayo por ahi la frase que explica por que los seis oligoelementos no tienen maximo nutricional. || Aqui el filtro SIGUE HACIENDO FALTA -- SACN5 es un libro de clinica y la mayoria de sus cifras son epidemiologia o dosis de farmaco --, pero ahora su punto ciego se mide: 36.206 frases en el libro, 2.944 entran y 33.262 se descartan. Y las descartadas se comparan EXACTO, para que el filtro no pueda estrecharse solo. || Ademas hay un control INDEPENDIENTE del filtro: una frase que no nombra ningun nutriente entra igual si huele a norma dietetica (`olor`), que es donde estaria escondido un limite que se nos escapa. Medido antes de ponerlo: 340 frases de las descartadas tenian esa forma."
+ },
+ "capitulos": {}
 }
