@@ -10949,6 +10949,70 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 84 — los dos avisos de FEDIAF que no son cifra
+# ============================================================
+#
+# ⚠️ POR QUE (10 septiembre). Al leer FEDIAF 2025 ENTERA, frase a frase,
+# aparecieron dos riesgos que la guia describe y NO cuantifica:
+#
+#   · Anexo 7.3.3: «Feeding certain LAMB and rice foods may increase the risk
+#     of a low-taurine status», y «some breeds seem to be more sensitive...
+#     particularly NEWFOUNDLAND DOGS, in which the rate of taurine synthesis is
+#     decreased». La taurina NO esta entre los 43 requisitos -- el perro sano la
+#     sintetiza --, asi que un menu de cordero sale VERDE y nadie ve el riesgo.
+#
+#   · §1.1, «pharmacologic reaction»: «high histamine levels in not
+#     well-preserved SCROMBOID FISH such as tuna». Es riesgo de conservacion, y
+#     una racion cruda se manipula en casa.
+#
+# Los dos son AVISO y no cifra a proposito: la fuente no da numero, asi que
+# ponerle un tope seria inventarselo. Callarse tampoco vale: el motor construye
+# justo las raciones donde el riesgo aparece (mete cordero, y mete pescado azul
+# para cerrar el EPA+DHA).
+#
+# Este bloque exige que los dos salgan, y con su cifra o su nombre dentro: un
+# aviso truncado parece que esta y no dice lo que hay que hacer.
+print("\n=== BLOQUE 84: los dos avisos de FEDIAF que no son cifra ===")
+
+_al84, _req84 = cargar()
+_cord84 = [n for n in _al84 if "cordero" in n.lower()]
+_pez84 = [n for n in _al84 if n.lower() in ("atún", "atun", "caballa", "sardina")]
+if not _cord84 or not _pez84:
+    fallos.append("BLOQUE84: el catalogo ya no tiene cordero o pescado azul con el que probar "
+                  f"(cordero={len(_cord84)}, azul={len(_pez84)})")
+else:
+    from seguridad import revisar_seguridad as _rs84
+    _menu84 = {_cord84[0]: 80.0, _pez84[0]: 60.0}
+    _p84, _a84 = _rs84(_menu84, _al84, 800.0, "Adulto", devolver_avisos=True)
+    _texto84 = " || ".join(_a84)
+    if "taurina" not in _texto84.lower():
+        fallos.append("BLOQUE84: un menu con cordero no avisa de la taurina. FEDIAF anexo 7.3.3 "
+                      f"la relaciona con las dietas de cordero. Avisos: {_a84}")
+    elif "terranova" not in _texto84.lower():
+        fallos.append("BLOQUE84: el aviso de la taurina no nombra al Terranova, que es la raza "
+                      "que nombra la propia FEDIAF. Un aviso sin el dato no sirve para preguntar")
+    if "histamina" not in _texto84.lower():
+        fallos.append("BLOQUE84: un menu con pescado azul no avisa de la histamina. FEDIAF lo "
+                      f"nombra en §1.1 entre las reacciones farmacologicas. Avisos: {_a84}")
+    # Y que NO bloqueen: son avisos, no incumplimientos. Si alguno se colara en
+    # `problemas`, el menu se caeria y el cordero dejaria de poder usarse.
+    _texto_p84 = " || ".join(_p84).lower()
+    if "taurina" in _texto_p84 or "histamina" in _texto_p84:
+        fallos.append("BLOQUE84: uno de los dos avisos esta en `problemas` y no en `avisos`. "
+                      "Bloquearia menus que estan bien: FEDIAF describe el riesgo y NO da cifra")
+    # Y que un menu sin cordero ni pescado azul no los saque.
+    _otros84 = [n for n in _al84 if _al84[n].get("categoria") == "Verdura"][:1]
+    if _otros84:
+        _, _a84b = _rs84({_otros84[0]: 100.0}, _al84, 800.0, "Adulto", devolver_avisos=True)
+        if any("taurina" in x.lower() or "histamina" in x.lower() for x in _a84b):
+            fallos.append("BLOQUE84: avisa de taurina o histamina en un menu que no lleva ni "
+                          f"cordero ni pescado azul ({_otros84[0]}). Un aviso que sale siempre "
+                          "deja de leerse")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 print(f"\n{'='*60}")
 print(f"TOTAL: {time.time()-t_total:.0f}s de pruebas")
 if fallos:

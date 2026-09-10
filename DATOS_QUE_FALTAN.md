@@ -1007,6 +1007,14 @@ lo rellena el asistente**.
 
 Detalle y la medida de sensibilidad: **F-27** en `HALLAZGOS_LECTURA_FUENTES.md`.
 
+### Y una tercera consecuencia, que es la más grave
+
+Con la humedad y las cenizas se puede calcular el **NFE** y con él aplicar la
+ecuación de cuatro pasos del Anexo 7.2 de FEDIAF, que es como se calcula de
+verdad la energía metabolizable de un alimento. Sin ellas, **el campo `energia`
+de cada ficha no se puede comprobar contra nada** — y las kcal son el
+denominador de los 43 requisitos. Ver **F-29**.
+
 ---
 
 ## La forma química del selenio de cada suplemento (10 de septiembre de 2026)

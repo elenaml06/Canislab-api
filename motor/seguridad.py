@@ -952,6 +952,53 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     # eso ya se encarga `verificar()`. Se devuelve aparte para que no bloquee
     # un menú que está bien.
     avisos = []
+
+    # ⚠️ DOS AVISOS DE FEDIAF QUE ESTABAN LEIDOS Y NO SE DECIAN (10 septiembre).
+    #
+    # Los dos salen de leer FEDIAF 2025 entera, y los dos son AVISO y no cifra
+    # a proposito: la fuente describe el riesgo y NO da un numero, asi que
+    # ponerle un tope seria inventarselo -- y callarse tampoco vale, porque el
+    # motor construye justo las raciones donde el riesgo aparece.
+
+    # 1. CORDERO Y TAURINA (Anexo 7.3.3, «Dog»). «Feeding certain LAMB and rice
+    #    foods MAY INCREASE THE RISK OF A LOW-TAURINE STATUS, because of lower
+    #    bioavailability of sulphur-containing amino acids and increased faecal
+    #    losses of taurine». Y en la misma pagina: «some breeds seem to be more
+    #    sensitive... particularly NEWFOUNDLAND DOGS, in which the rate of
+    #    taurine synthesis is decreased».
+    #    La taurina NO esta entre los 43 requisitos porque el perro sano la
+    #    sintetiza de metionina y cisteina -- lo dice la propia FEDIAF --, asi
+    #    que un menu de cordero sale VERDE y nadie ve el riesgo. El objetivo que
+    #    da la fuente es de analitica (>40 µmol/L en plasma), no de receta.
+    cordero = [n for n in menu if _es(n, {"cordero", "ovino", "oveja", "borrego"})]
+    if cordero:
+        avisos.append(
+            "Este menú lleva cordero (%s). FEDIAF (anexo 7.3.3) relaciona las "
+            "dietas de cordero con un riesgo mayor de taurina baja, porque sus "
+            "aminoácidos azufrados se aprovechan peor. El perro sano fabrica su "
+            "propia taurina y no hace falta añadirla, pero hay razas que la "
+            "sintetizan peor —FEDIAF nombra al Terranova— y en ellas conviene "
+            "que el veterinario mire la taurina en sangre. No es un problema "
+            "del menú: es algo que preguntar si el perro es de esas razas."
+            % ", ".join(cordero))
+
+    # 2. HISTAMINA EN PESCADO ESCOMBROIDE (§1.1, definicion de «pharmacologic
+    #    reaction»): «a pseudo-allergic reaction caused by HIGH HISTAMINE LEVELS
+    #    in not well-preserved SCROMBOID FISH SUCH AS TUNA». No es toxicidad del
+    #    pescado: es de su conservacion, y una racion cruda se manipula en casa.
+    #    Por eso es aviso de manejo y no exclusion -- el atun y la caballa son
+    #    fuentes utiles de EPA+DHA.
+    escombroide = [n for n in menu
+                   if _es(n, {"atun", "caballa", "bonito", "sardina", "boqueron",
+                              "anchoa", "arenque"})]
+    if escombroide:
+        avisos.append(
+            "El pescado azul de este menú (%s) es de la familia que acumula "
+            "histamina si se rompe la cadena de frío. FEDIAF lo nombra entre "
+            "las reacciones adversas de tipo farmacológico. No cambia nada del "
+            "menú: significa comprarlo muy fresco o congelado y no dejarlo "
+            "fuera de la nevera." % ", ".join(escombroide))
+
     if len(fuentes_a) >= 3:
         avisos.append(
             "La vitamina A viene de %d fuentes a la vez (%s). Se suman, pero "

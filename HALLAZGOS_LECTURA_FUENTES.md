@@ -5021,3 +5021,88 @@ selenio.** Es exactamente el mismo hueco que el de las vitaminas del grupo B, y
 aplicar el techo a ciegas sería inventarse el dato — igual que ignorarlo.
 
 Queda en `DATOS_QUE_FALTAN.md`. **No lo rellena el asistente.**
+
+
+### F-29 · Las kcal de cada ficha no se pueden comprobar contra la ecuación de FEDIAF
+
+Leyendo el **Anexo 7.2** al pie de la letra. FEDIAF publica la ecuación con la
+que se calcula la energía metabolizable de un alimento, en cuatro pasos
+(NRC 2006a, y es la base de la norma europea EN 16967):
+
+```
+1.  GE (kcal) = 5,7 × %proteína bruta + 9,4 × %grasa bruta + 4,1 × (%NFE + %fibra bruta)
+2.  digestibilidad energética (perro) = 91,2 − 1,43 × %fibra bruta en MS
+3.  DE = GE × digestibilidad / 100
+4.  ME (perro) = DE − 1,04 × %proteína bruta
+```
+
+Y dice cuál es mejor: *«The equations cited by NRC provide a more accurate
+estimate of ME compared to the modified Atwater method in dry pet foods; the
+modified Atwater method and the NRC equations provide an equally moderate
+accuracy … for wet foods»*.
+
+**El problema es que no la podemos aplicar.** El paso 1 necesita el **NFE**
+(extracto libre de nitrógeno), que se obtiene por diferencia:
+
+```
+NFE = 100 − agua − proteína − grasa − cenizas − fibra
+```
+
+O sea que hace falta **humedad y cenizas**, y el catálogo no tiene ninguna de
+las dos. Es el mismo dato que falta en **F-27**, y ésta es su tercera
+consecuencia — y la más grave de las tres:
+
+| Consecuencia | Qué decide |
+|---|---|
+| F-27 | los siete techos **legales**, convertidos con una densidad supuesta |
+| F-27 | el techo de calcio y fósforo del cachorro, por la misma conversión |
+| **F-29** | **las kcal de cada ficha**, que son el **denominador de los 43 requisitos** |
+
+Si las kcal de una ficha están mal, **todo el menú está mal y el semáforo sale
+verde igual**, porque el semáforo mide contra las kcal que le dan.
+
+**Y hay un motivo concreto para sospechar.** SACN5 avisa de que el método de
+Atwater modificado *«overestimates the ME content of foods high in fiber or
+ash»*. Una ración BARF lleva entre un 20 y un 60 % de **hueso carnoso**, que es
+ceniza. Si el campo `energia` de las fichas con hueso sale de Atwater, está
+**sobreestimado** — y sobreestimar las kcal significa dar **menos comida** de la
+que el perro necesita, y repartir los nutrientes sobre un denominador inflado.
+
+Hoy no se puede ni confirmar ni descartar: **está sin comprobar de dónde viene
+el campo `energia` de cada ficha**. Queda en `DATOS_QUE_FALTAN.md` junto a la
+humedad, que es lo que desbloquea las dos cosas.
+
+
+### F-30 · FEDIAF nombra una raza con menos taurina, la app conoce esa raza, y no pasa nada
+
+**Anexo 7.3.3, «Dog»**, leído entero:
+
+> *«In dogs, low plasma levels of taurine (< 40 µmol/L) may also predispose to
+> dilated cardiomyopathy. However, **some breeds seem to be more sensitive** to
+> develop such side effects, **particularly Newfoundland dogs, in which the rate
+> of taurine synthesis is decreased** (Backus RC et al. 2006).»*
+
+Y en la misma página, el otro factor de riesgo:
+
+> *«**Feeding certain lamb and rice foods may increase the risk of a low-taurine
+> status**, because of lower bioavailability of sulphur-containing amino acids
+> and increased faecal losses of taurine possibly caused by rice bran.»*
+
+**Lo que hace hoy el motor.** Conoce al Terranova: tiene su fila de energía de la
+Tabla VII-7 (105 kcal/kg^0,75, rango 80-132) y la app lo ofrece en su lista de
+razas. De la taurina, nada — ni un aviso.
+
+Y las dos condiciones se juntan solas: una ración BARF de cordero para un
+Terranova es exactamente el perfil que describe FEDIAF, y sale **verde**, porque
+la taurina no es esencial para el perro y no está entre los 43 requisitos.
+
+**Lo que se puede hacer y lo que no.** FEDIAF **no da una cifra**: dice que el
+alimento debe formularse para mantener reservas adecuadas (>40 µmol/L en plasma,
+>200 µmol/L en sangre entera), que es un objetivo de analítica, no de receta. Así
+que subir la metionina «un poco» sería inventarse el número — lo mismo que pasa
+con el *«in the case of lamb and rice foods, the methionine level may have to be
+increased»* de §3.3.1, que es este mismo asunto visto desde el otro lado.
+
+Lo que sí se puede es **decirlo**: el motor ya tiene la patología
+`dcm_taurina_respondedora`, y este es el aviso que le falta a la raza. Queda
+apuntado como decisión de producto, no como cifra.
