@@ -7474,10 +7474,17 @@ _req56 = _perm56._req()
 _crudo56 = _perm56._CRUDO["patologias"]
 for _f in _fichas56:
     _celda56 = None
+    # ⚠️ LA VARIABLE SE LLAMA `_celda_b56` Y NO `_c` POR UN FALLO REAL DE HOY
+    # (10 de septiembre): la primera version de este bucle usaba `_c`, que es el
+    # nombre del TestClient global de la bateria. Un `for` a nivel de modulo NO
+    # tiene ambito propio, asi que lo pisaba con un dict -- y la bateria se caia
+    # 40 minutos despues, en el BLOQUE 60, con «'dict' object has no attribute
+    # 'post'», que no dice nada de donde esta el fallo. Por eso aqui todo lleva
+    # sufijo de bloque.
     for _b56 in ("topes_por_1000kcal", "suelos_por_1000kcal"):
-        _c = ((_crudo56.get(_f["patologia"]) or {}).get(_b56) or {}).get(_f["nutriente"])
-        if _c:
-            _celda56 = _c
+        _celda_b56 = ((_crudo56.get(_f["patologia"]) or {}).get(_b56) or {}).get(_f["nutriente"])
+        if _celda_b56:
+            _celda56 = _celda_b56
             break
     _m56 = (_celda56 or {}).get("margen_profesional") or {}
     for _lado56, _clave56 in (("desde", "suelo"), ("hasta", "techo")):
