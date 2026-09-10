@@ -11013,32 +11013,62 @@ if not _cord84 or not _pez84:
                   f"(cordero={len(_cord84)}, azul={len(_pez84)})")
 else:
     _menu84 = {_cord84[0]: 80.0, _pez84[0]: 60.0}
-    # POR LA PUERTA DE LA API, no por la del motor.
-    _sal84 = _api._seguridad_completa(_menu84, _al84, 800.0, "Adulto")
-    _txt84 = " || ".join(_sal84).lower()
+    # LAS DOS PUERTAS, Y NO DICEN LO MISMO A PROPOSITO:
+    #   `_seguridad_completa`        -> lo que ve el DUEÑO (problemas_seguridad)
+    #   `_avisos_para_el_profesional` -> lo que ve solo el VETERINARIO
+    _duenyo84 = _api._seguridad_completa(_menu84, _al84, 800.0, "Adulto")
+    _vet84 = _api._avisos_para_el_profesional(_menu84, _al84, 800.0, "Adulto")
+    _txt84 = " || ".join(_vet84).lower()
+    _txt_duenyo84 = " || ".join(_duenyo84).lower()
+
     if "taurina" not in _txt84:
-        fallos.append("BLOQUE84: un menu con cordero no avisa de la taurina POR LA PUERTA DE LA "
-                      f"API. FEDIAF anexo 7.3.3 la relaciona con las dietas de cordero. Sale: {_sal84}")
+        fallos.append("BLOQUE84: un menu con cordero no avisa de la taurina al PROFESIONAL. "
+                      f"FEDIAF anexo 7.3.3 la relaciona con las dietas de cordero. Sale: {_vet84}")
     elif "terranova" not in _txt84:
         fallos.append("BLOQUE84: el aviso de la taurina no nombra al Terranova, que es la raza que "
                       "nombra la propia FEDIAF. Un aviso sin el dato no sirve para preguntar")
-    if "histamina" not in _txt84:
-        fallos.append("BLOQUE84: un menu con pescado azul no avisa de la histamina por la puerta "
-                      f"de la API. Sale: {_sal84}")
-    # ⚠️ Y QUE LA SEGUNDA LISTA DE `revisar_seguridad` SIGA SALIENDO. Sin esto,
-    # volver a llamarla sin `devolver_avisos=True` no rompe nada visible.
-    _p84, _a84 = _rs84_fn(_menu84, _al84, 800.0, "Adulto", devolver_avisos=True)
-    _perdidos84 = [x for x in _a84 if x not in _sal84]
+
+    # ⚠️ Y NO PUEDE VERLO EL DUEÑO. Elena, 10 septiembre: «esos avisos nunca
+    # tiene que verlos un usuario, solo un veterinario». `problemas_seguridad`
+    # lo pinta la app en las DOS vistas, asi que meter esto ahi es enseñarselo.
+    if "taurina" in _txt_duenyo84:
+        fallos.append("BLOQUE84: el aviso de la taurina sale por `problemas_seguridad`, que la app "
+                      "pinta TAMBIEN al dueño. Tiene que ir por `avisos_profesional`")
+
+    # La histamina SI es del dueño: es manejo, no interpretacion. Compra el
+    # pescado frio y no lo dejes fuera. Va por `avisos_rotacion`, desde antes.
+    if "histamina" not in _txt_duenyo84:
+        fallos.append("BLOQUE84: un menu con pescado azul no avisa de la histamina al dueño, y ese "
+                      f"si es suyo: es una instruccion de manejo. Sale: {_duenyo84}")
+
+    # ⚠️ Y QUE LA SEGUNDA LISTA DE `revisar_seguridad` SIGA SALIENDO ENTERA. Sin
+    # esto, volver a llamarla sin `devolver_avisos=True` no rompe nada visible:
+    # es el fallo que llevaba desde agosto tirando el aviso de la vitamina A.
+    _p84, _a84 = _rs84_fn(_menu84, _al84, 800.0, "Adulto", devolver_avisos=True,
+                          requerimientos=_req84)
+    _perdidos84 = [x for x in _a84 if x not in _vet84]
     if _perdidos84:
         fallos.append(f"BLOQUE84: {len(_perdidos84)} avisos del motor no llegan a la API. Es el "
-                      f"fallo del 10 de septiembre otra vez: `_seguridad_completa` los tira. "
+                      f"fallo del 10 de septiembre otra vez: se construyen y se tiran. "
                       f"Perdidos: {_perdidos84[:2]}")
+
     # Ni duplicados: dos avisos que digan lo mismo hacen que se deje de leer la lista.
     for _clave84 in ("taurina", "histamina"):
-        _n84 = sum(1 for x in _sal84 if _clave84 in x.lower())
+        _n84 = sum(1 for x in (_duenyo84 + _vet84) if _clave84 in x.lower())
         if _n84 > 1:
             fallos.append(f"BLOQUE84: {_n84} avisos hablan de {_clave84}. Duplicado -- un aviso "
-                          f"que sale dos veces deja de leerse: {[x[:60] for x in _sal84]}")
+                          f"que sale dos veces deja de leerse: {[x[:60] for x in _duenyo84 + _vet84]}")
+
+    # Y que TODO menu que sale por la API lleve la clave, porque se pone en el
+    # filtro final y no en cada endpoint: si alguien devolviera un menu sin
+    # pasar por ahi, la clave faltaria y nadie se enteraria.
+    _r84 = _c.post("/menu/v2", json={"peso_perro_kg": 22.0, "der_objetivo": 1000.0,
+                                     "etapa_requisitos": "Adulto", "modo": "automatico"})
+    if _r84.status_code == 200 and (_r84.json() or {}).get("factible"):
+        if "avisos_profesional" not in _r84.json():
+            fallos.append("BLOQUE84: un menu de /menu/v2 sale sin la clave `avisos_profesional`. "
+                          "Se pone en `_garantizar_verificado`, por donde pasa TODO menu: si "
+                          "falta, hay un camino que se lo salta")
     # ⚠️ Y EL AVISO DEL CALCIO ALTO (10 septiembre). FEDIAF lo pide DOS VECES y
     # las dos SIN CIFRA -- §3.3.1 «as the calcium level approaches the stated
     # nutritional maximum, it may be necessary to INCREASE zinc and copper» y la
@@ -11071,7 +11101,7 @@ else:
                       "techo -- se remide y se ajusta el caso")
     else:
         _g84, _et84, _k84 = _menu_ca84
-        _sal_ca84 = _api._seguridad_completa(_g84, _al84, _k84, _et84)
+        _sal_ca84 = _api._avisos_para_el_profesional(_g84, _al84, _k84, _et84)
         if not any("calcio" in x.lower() and "zinc" in x.lower() for x in _sal_ca84):
             fallos.append("BLOQUE84: un menu con el calcio al 85 % o mas de su techo no avisa de "
                           f"que puede hacer falta mas zinc y cobre. FEDIAF lo pide en §3.3.1 y en "
@@ -11080,7 +11110,8 @@ else:
     # Y que no salten en un menu que no lleva ni cordero ni pescado azul.
     _otros84 = [n for n in _al84 if _al84[n].get("categoria") == "Verdura"][:1]
     if _otros84:
-        _sal84b = _api._seguridad_completa({_otros84[0]: 100.0}, _al84, 800.0, "Adulto")
+        _sal84b = (_api._seguridad_completa({_otros84[0]: 100.0}, _al84, 800.0, "Adulto")
+                   + _api._avisos_para_el_profesional({_otros84[0]: 100.0}, _al84, 800.0, "Adulto"))
         if any("taurina" in x.lower() or "histamina" in x.lower() for x in _sal84b):
             fallos.append(f"BLOQUE84: avisa de taurina o histamina en un menu que no lleva ni "
                           f"cordero ni pescado azul ({_otros84[0]}). Un aviso que sale siempre "

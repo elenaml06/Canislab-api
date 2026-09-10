@@ -110,33 +110,22 @@ def _num_bonito(v):
 # vez. Esta función combina ambas cosas en un solo sitio, para usarla
 # en TODOS los puntos donde se devuelve un menú (generación Y edición).
 def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=None):
-    # ⚠️ Y LA SEGUNDA LISTA QUE DEVUELVE `revisar_seguridad` NO LA PEDIA NADIE
-    # (10 septiembre). CASO REAL, y es el mismo de los `avisos_patologia`:
+    # ⚠️ AQUI SOLO VA LO QUE TIENE QUE VER EL DUEÑO (10 septiembre, corregido el
+    # mismo dia). Esta lista sale por `problemas_seguridad`, y la app la pinta
+    # en las DOS vistas -- la del dueño y la del profesional --, asi que lo que
+    # se meta aqui lo lee todo el mundo.
     #
-    #   `revisar_seguridad(..., devolver_avisos=True)` devuelve DOS listas --
-    #   `problemas` y `avisos` -- y aqui se llamaba sin ese parametro, asi que
-    #   la segunda se construia y se tiraba. Nunca ha salido de la API.
+    # La SEGUNDA lista que devuelve `revisar_seguridad` (`avisos`) NO va aqui:
+    # son notas de interpretacion clinica -- «puede hacer falta mas zinc»,
+    # «conviene mirar la taurina en sangre» -- y decirle eso a alguien que solo
+    # quiere alimentar bien a su perro es ruido que ademas asusta. Elena, hoy:
+    # «esos avisos nunca tiene que verlos un usuario, solo un veterinario».
     #
-    # Lo que se perdia: el aviso de que la vitamina A viene de tres fuentes a la
-    # vez, que lleva ahi desde agosto, y los dos que se aplicaron hoy leyendo
-    # FEDIAF entera -- el del cordero y la taurina (anexo 7.3.3, con el
-    # Terranova dentro) y el de la histamina en pescado escombroide (§1.1).
-    #
-    # Elena, hoy: «tiene que ser aplicable de verdad a la aplicacion, no solo al
-    # motor». Un aviso que el motor calcula y la API no manda es exactamente lo
-    # contrario.
-    #
-    # Van por `problemas_seguridad` por el mismo motivo escrito abajo para los
-    # avisos por etapa: es el canal que la app ya pinta en TODOS los caminos
-    # (generar, semana, varios perros, editar, revalidar, pauta), asi que salen
-    # en los ocho sitios sin una clave nueva que alguien tenga que acordarse de
-    # leer. Y NO bloquean nada: lo que impide entregar o firmar un menu es el
-    # semaforo y los topes de patologia rotos, no esta lista.
-    _problemas, _avisos = revisar_seguridad_v2(gramos, al, der, etapa, patologias,
-                                               peso_perro_kg=peso_perro_kg,
-                                               devolver_avisos=True,
-                                               requerimientos=_REQ_FEDIAF)
-    problemas = list(_problemas or []) + list(_avisos or [])
+    # Van por `avisos_profesional`, y se ponen en UN SOLO SITIO: dentro de
+    # `_garantizar_verificado`, que es por donde pasa TODO menu antes de salir
+    # (regla 1). Asi no hay once sitios que acordarse de tocar.
+    problemas = list(revisar_seguridad_v2(gramos, al, der, etapa, patologias,
+                                          peso_perro_kg=peso_perro_kg) or [])
     problemas += list(avisos_rotacion_v2(gramos, al) or [])
     # ⚠️ AÑADIDO (25 agosto) — CASO REAL ENCONTRADO: un cachorro con
     # pancreatitis recibía su menú con el tope de grasa QUITADO y sin que
@@ -624,6 +613,39 @@ def _peso_de_referencia(datos):
     return None, "sin_peso"
 
 
+def _avisos_para_el_profesional(gramos, al, der, etapa, patologias=None,
+                                peso_perro_kg=None):
+    """Las notas que solo tienen sentido para quien sabe interpretarlas.
+
+    ⚠️ POR QUE ESTAN SEPARADAS (10 septiembre). `revisar_seguridad` devuelve dos
+    listas: `problemas`, que son cosas que el dueño tiene que hacer o saber
+    ("compra el pescado bien frio", "la uva no se da"), y `avisos`, que son
+    lecturas del menu que solo sirven si se sabe que hacer con ellas:
+
+      · la vitamina A viene de tres fuentes a la vez, y el total esta dentro
+      · el calcio va al 99 % de su techo, y FEDIAF avisa de que con el calcio
+        alto puede hacer falta mas zinc y mas cobre
+      · el menu lleva cordero, y FEDIAF relaciona el cordero con la taurina baja
+        en las razas que la sintetizan peor
+
+    Ninguna de las tres es un incumplimiento y ninguna se arregla cambiando el
+    menu. A un dueño le sobran; a un veterinario le dicen exactamente que mirar.
+
+    Y hasta hoy NO SALIAN DE LA API: `_seguridad_completa` llamaba a
+    `revisar_seguridad` sin `devolver_avisos=True`, asi que la segunda lista se
+    construia y se tiraba. Llevaba asi desde agosto.
+    """
+    try:
+        _, avisos = revisar_seguridad_v2(gramos, al, der, etapa, patologias,
+                                         peso_perro_kg=peso_perro_kg,
+                                         devolver_avisos=True,
+                                         requerimientos=_REQ_FEDIAF)
+        return list(avisos or [])
+    except Exception as e:      # nunca puede tumbar la entrega de un menu
+        print(f"[aviso] no se pudieron calcular los avisos del profesional: {e}")
+        return []
+
+
 def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
                            origen, al=None, req=None, patologias=None,
                            peso_adulto_esperado_kg=None,
@@ -799,6 +821,18 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
         "de": ficha["total"],
         "ratio_ca_p": ficha.get("ratio_ca_p"),
     }
+    # ⚠️ LAS NOTAS DEL PROFESIONAL SE PONEN AQUI Y EN NINGUN OTRO SITIO
+    # (10 septiembre). Este filtro es por donde pasa TODO menu antes de salir
+    # -- la regla 1 --, asi que poniendolas aqui salen en los once caminos sin
+    # que nadie tenga que acordarse de anadir la clave en cada uno. Es
+    # exactamente el motivo por el que la ficha tambien se calcula aqui y no en
+    # cada endpoint.
+    #
+    # Son NOTAS, no incumplimientos: van en su propia clave para que la app
+    # pueda enseñarselas SOLO al veterinario. Al dueño no le sirven -- ninguna
+    # se arregla cambiando el menu -- y algunas asustan sin motivo.
+    respuesta["avisos_profesional"] = _avisos_para_el_profesional(
+        gramos, al, der, etapa, patologias, peso_perro_kg)
     return respuesta
 
 
