@@ -1646,3 +1646,86 @@ comprobado al releerlo.
    la grasa, perro con sobrepeso, insuficiencia renal o hepatica) y la frase de
    cabecera de que un cambio de dieta no esta indicado en todo perro con cancer.
    Releidas las tres en su sitio: dicen lo que el aviso dice.
+
+### cap.31 — Adverse Reactions to Food (2.597 lineas, LEIDO ENTERO)
+
+**La Tabla 31-3 ya estaba aplicada entera** (`reaccion_adversa_alimento`: omega-3
+0,875 de suelo, fosforo 2000 y sodio 1000 de techo, la proteina de 55 escrita y
+no aplicada por el parentesis «dermatologic cases only», el atun y la caballa
+fuera por `restricciones_patologia`). Lo que sigue es lo que **solo aparece en el
+texto corrido** y no tiene forma de tabla, que es justo lo que el contador de
+`leer_sacn5.py` no puede encontrar.
+
+1. **⚠️ LA REACTIVIDAD CRUZADA, Y UN HUECO MEDIDO EN `exclusiones.py`.** El
+   capitulo nombra los alergenos caninos identificados uno a uno, en SACN5
+   cap.31: «bovine IgG (cow's milk, beef), ovine IgG (lamb), muscle
+   phosphoglucomutase (beef, lamb) and Gly proteins 50 and 75 kD (soy)». Dos de
+   esos cruzan lineas que nuestras familias **no** cruzan:
+   · la **IgG bovina** es la misma en la leche de vaca y en la carne de vaca;
+   · la **fosfoglucomutasa muscular** es la misma en la vaca y en el cordero.
+   Y lo repite por el lado de la leche: «Cross reactivity between milk proteins
+   from cows, goats and sheep is common.»
+   **MEDIDO contra el catalogo de hoy**, con `expandir_exclusiones`:
+       marcar «ternera» quita 19 alimentos y **deja dentro** el Yogur griego
+       (IgG bovina) y los **7 de cordero** (fosfoglucomutasa)
+       marcar «lacteo»  quita 1 (el Yogur griego) y deja los 19 de vaca
+   O sea que un perro con alergia a la vaca diagnosticada puede recibir yogur y
+   cordero. **NO SE TOCA AQUI**: la regla 4 dice que las alergias no se tocan
+   jamas, y ampliar una familia es una decision clinica, no una correccion —
+   ampliar de mas quita alimentos utiles a quien no los necesita. Queda como
+   **decision de Elena**, con la cita y la medida delante.
+   Y lo que el codigo ya hace bien, confirmado por la misma pagina: **no** meter
+   el huevo en la familia de las aves (el capitulo los trata como alergenos
+   distintos y solo cruza el huevo con «egg proteins of other birds»), y **no**
+   agrupar las legumbres, porque el cruce entre ellas «is very rare». Los
+   cereales cruzan entre si — «Wheat, rye and barley cross react in allergic
+   people, but oat allergens appear to cross react only weakly» — y eso hoy no
+   afecta: en el catalogo no hay ni trigo ni cebada ni centeno ni avena.
+
+2. **⚠️ Y AQUI ESTA LA FUENTE QUE LE FALTABA A UNA REGLA DEL MOTOR.** El matiz 2
+   de la regla 5 de `CLAUDE.md` dice que Suplementos y Extras van **siempre
+   libres**, y hasta hoy eso era criterio nuestro sin respaldo escrito. SACN5
+   cap.31 lo dice tal cual, y precisamente en el capitulo de las alergias:
+   «Non-flavored vitamin and mineral supplements are not perceived as causes of
+   adverse food reactions.» Con la condicion que lo acompana y que conviene leer:
+   «Additive-free supplements that do not contain animal or vegetable proteins
+   are unlikely to be sources of ingested allergens.» O sea: sin sabor anadido y
+   sin proteina dentro. Y de los aceites, lo mismo: «Vegetable oils are not a
+   routine source of ingested allergens», con el dato de que los alergicos al
+   cacahuete y a la soja toleran su aceite. Nuestro filtro por palabras quita el
+   «Aceite de cacahuete» a quien marque cacahuete, o sea que **es mas estricto
+   que la fuente** — y se queda asi: la regla 4 solo permite apretar.
+
+3. **La razon de ser de este motor, escrita por la fuente y en su contra.** El
+   capitulo revisa las dietas caseras de eliminacion que recomiendan los
+   dermatologos: «Most of the homemade foods recommended in the AAVD survey for
+   initial management of dogs and cats with suspected food allergy were
+   nutritionally inadequate for growth or adult maintenance», y el porque:
+   «In general, homemade foods lack a source of calcium, essential fatty acids,
+   certain vitamins and other micronutrients and contain excessive levels of
+   protein, which are contraindicated in food allergy cases.» Con el numero:
+   «Many previously recommended homemade elimination foods have a severe inverse
+   calcium-to-phosphorus ratio of 1:10.» Y el plazo: no mas de tres semanas, con
+   enfermedad esqueletica en el cachorro en cuatro. **No es una critica a la
+   comida casera: es la descripcion exacta del problema que resuelve un
+   solver** — cerrar los 43 requisitos a la vez en vez de juntar dos
+   ingredientes. Vale para `PARA_EL_NUTRICIONISTA.md` mejor que cualquier frase
+   nuestra.
+
+4. **Los plazos de la prueba de eliminacion, que los avisos de hoy no llevan.**
+   `reaccion_adversa_alimento` tiene ya el aviso de la reintroduccion (con la
+   cita de FEDIAF) y el de que el omega-3 puede confundir la fase de
+   diagnostico, pero ninguno dice **cuanto dura**. SACN5 cap.31 lo cuantifica:
+   «The patient is then fed a controlled elimination food for six to 12 weeks»
+   en piel, dos a cuatro semanas en aparato digestivo, y a la reintroduccion
+   «A return of GI signs after challenge with the responsible allergen will
+   usually occur within the first three days, but may take as long as seven
+   days». **Propuesta apuntada, no aplicada**: son cifras de manejo clinico y
+   anadirlas a un aviso es cambiar lo que la app le dice al dueno.
+
+5. **Y una cifra suelta que no obliga a nada hoy**: la lactosa. «One study showed
+   that adult dogs were able to use up to 1 g of lactose/kg body weight/day»,
+   que el libro traduce a 20-22 ml/kg de leche de vaca o de cabra. El unico
+   lacteo del catalogo es el Yogur griego, que lleva poca lactosa y entra en
+   cantidades pequenas: no hay tope que poner. Queda escrito por si algun dia
+   entra leche.
