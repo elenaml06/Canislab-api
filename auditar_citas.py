@@ -52,7 +52,13 @@ FUENTES = os.path.join(RAIZ, "..", "canislab-fuentes")
 # ⚠️ `PARA_EL_NUTRICIONISTA.md` NO está: se reescribe entero al final, y sus
 # citas se comprobarán al reescribirlo (decisión de Elena, 10 de septiembre).
 DOCUMENTOS = ["PATOLOGIAS.md", "LECTURA_SACN5.md", "HALLAZGOS_LECTURA_FUENTES.md",
-              "HALLAZGOS_SACN5_10SEP.md"]
+              "HALLAZGOS_SACN5_10SEP.md",
+              # ⚠️ ENTRA EL 10 DE SEPTIEMBRE POR LA NOCHE, en el mismo commit que
+              # nace. Es el registro de la relectura integra de SACN5 y va lleno de
+              # citas literales, que es exactamente el material que este auditor
+              # existe para vigilar. Dejarlo fuera seria abrir una puerta nueva por
+              # la que puede colarse una cita que el libro no dice.
+              "LECTURA_SACN5_INTEGRA.md"]
 JSONS = ["patologias.json", "recomendaciones_libro.json", "requisitos_condicionales.json",
          "requerimientos_v2_final.json", "sacn5_fuentes_de_minerales.json",
          "fediaf_conversiones_vitaminas.json"]

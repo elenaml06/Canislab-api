@@ -245,6 +245,59 @@ def auditar():
             f"SACN5: el filtro saca {total} elementos y el fichero declara {declarado}. Si se "
             f"ha tocado el filtro, el número de pendientes baja sin que nadie haya leído nada. "
             f"Se cambia el declarado en el MISMO commit y se dice por qué")
+    # ============================================================
+    # LA LECTURA INTEGRA, CONTADA APARTE
+    # ============================================================
+    #
+    # ⚠️ POR QUE EXISTE (10 de septiembre, de noche). Elena, despues de ver como
+    # se estaban resolviendo los elementos capitulo a capitulo:
+    #
+    #     «por favor no puedes leer todo sin hacer cossd raras de seleccionar
+    #      frases y cosas asi? simplemente leer como si fueses un opositoe
+    #      estudiando»
+    #
+    # Y tenia razon, y el fallo era mio y de bulto: **el filtro es para CONTAR y
+    # lo estaba usando para DECIDIR QUE LEO**. Un elemento resuelto significa
+    # «esta frase la he mirado», no «este capitulo lo he leido»; y como el filtro
+    # tira 33.207 frases de 36.206, resolver los 2.999 elementos del libro entero
+    # dejaria **el 92 % del texto sin abrir**. Se comprobo releyendo el cap.36
+    # entero justo despues: aparecieron los estadios ACC/AHA y la frase «from
+    # Class I to Class III or IV following a salty meal», y el filtro no habia
+    # sacado ninguna de las dos.
+    #
+    # Asi que hay DOS contadores y miden cosas distintas, y por eso van
+    # separados: `pendientes_declarados` cuenta FRASES con veredicto y este
+    # cuenta CAPITULOS leidos de principio a fin. Un capitulo no cuenta aqui
+    # hasta que su `lectura_integra` declara el numero de lineas del .txt, y ese
+    # numero se comprueba contra el fichero: si alguien vuelve a extraer el texto
+    # y cambia de tamaño, la declaracion queda vieja y esto falla -- que es lo
+    # correcto, porque lo que se leyo ya no es lo que hay.
+    caps_datos = datos.get("capitulos") or {}
+    enteros = []
+    for _n in sorted(por_cap):
+        _li = ((caps_datos.get(_n) or {}).get("lectura_integra") or {})
+        if not _li:
+            continue
+        _dicho = _li.get("lineas")
+        _real = sum(1 for _ in open(os.path.join(CAPS, _n + ".txt"),
+                                    encoding="utf-8", errors="ignore"))
+        if _dicho != _real:
+            fallos.append(
+                f"SACN5/{_n}: la lectura integra declara {_dicho} lineas y el .txt tiene "
+                f"{_real}. O se declaro mal o el texto se ha vuelto a extraer -- y en ese "
+                f"caso lo que se leyo ya no es lo que hay, y hay que releerlo")
+            continue
+        enteros.append(_n)
+    ent_decl = (datos.get("_meta") or {}).get("capitulos_leidos_enteros_declarados")
+    print(f"  {len(enteros)} de {len(por_cap)} capitulos LEIDOS ENTEROS "
+          f"(no es lo mismo que resolver sus elementos: el filtro tira el "
+          f"{100.0 * descartadas / (total + descartadas):.0f} % de las frases)")
+    if ent_decl is not None and len(enteros) != ent_decl:
+        fallos.append(
+            f"SACN5: hay {len(enteros)} capitulos con lectura integra declarada y el fichero "
+            f"dice {ent_decl}. Sube SOLO cuando alguien lee un capitulo entero y lo sube en "
+            f"el mismo commit")
+
     if pend_decl is not None and pend != pend_decl:
         fallos.append(
             f"SACN5: quedan {pend} elementos sin veredicto y el fichero declara {pend_decl}. "
