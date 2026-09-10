@@ -561,13 +561,21 @@ O sea: **manipulación del alimento, sí; higiene de la casa, en ninguna parte**
 Y son dos cosas distintas. Congelar bien protege al perro de los parásitos; no
 impide que el perro excrete salmonela y que la toque un niño de dos años.
 
-**Lo que se propone**, y es de texto, no de motor:
-1. Una línea en el panel que ya existe: lavarse las manos después de dar de
-   comer y de recoger las heces, limpiar el cuenco y la superficie, y no dejar
-   que el perro lama la cara a nadie del grupo sensible justo después de comer.
-2. **Y un aviso propio si en casa hay alguien de riesgo** — niños pequeños,
-   embarazadas, mayores, personas inmunodeprimidas. La app no pregunta eso hoy.
-   Es una pregunta de una casilla y cambia lo que hay que decir.
+**Lo que se propuso**, y es de texto, no de motor:
+1. ~~Una línea en el panel que ya existe~~ — **HECHO el 10 de septiembre.** Es
+   un panel propio, «Higiene en casa», pegado al de Congelación en la pestaña
+   «Cómo darlo»: lavarse las manos después de dar de comer y de recoger las
+   heces, limpiar el cuenco y la superficie, y no dejar que el perro lama la
+   cara justo después de comer. Nombra además a los grupos sensibles (bebés,
+   embarazadas, mayores, defensas bajas) para que quien esté en esa situación
+   se dé por aludido sin que la app tenga que preguntárselo. Lo vigila
+   `tests/menu-dos-pestanas.spec.js`, y comprobado que falla si el panel se
+   rompe.
+2. **Sigue pendiente: un aviso propio si en casa hay alguien de riesgo** — niños
+   pequeños, embarazadas, mayores, personas inmunodeprimidas. La app no pregunta
+   eso hoy. Es una pregunta de una casilla y cambia lo que hay que decir: hoy el
+   panel los NOMBRA, que es lo máximo que se puede hacer sin preguntar, pero no
+   es lo mismo que decírselo a quien le toca.
 
 ⚠️ **Esto no es un argumento contra el crudo ni cambia ningún menú.** Es
 información que la fuente da, que quien elige alimentar así tiene derecho a

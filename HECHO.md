@@ -1260,3 +1260,25 @@ necesita saber qué día leímos el capítulo 69. Los 87 avisos están limpios.
 N por 1000 kcal» con un número que el motor no aplica, y que ninguno lleve
 fechas ni marcas de trabajo interno. Comprobado que falla con el fallo puesto:
 devolviendo el 790 a la cardiopatía C, salta.
+
+### Y la higiene de la casa, que la app no decía en ninguna parte
+
+El mismo día, la otra mitad del capítulo 56 de SACN5: «Dogs consuming such foods
+**shed bacterial pathogens at a much higher rate** than those consuming
+conventionally cooked commercial foods» (Weese y Armstrong, 2006), con
+*Salmonella*, *Campylobacter*, *Escherichia* y *Yersinia* cultivadas en comida
+cruda casera y comercial.
+
+Rawku decía cómo manipular el ALIMENTO —congelar una semana, dos el pescado, tres
+días descongelado— y **nada** de la higiene de la casa. Son dos cosas distintas:
+congelar bien protege al perro de los parásitos, y no impide que el perro excrete
+salmonela y que la toque un niño de dos años.
+
+Ahora hay un panel «Higiene en casa» pegado al de Congelación, en la pestaña
+«Cómo darlo». Nombra además a los grupos sensibles —bebés, embarazadas, mayores,
+defensas bajas— para que quien esté en esa situación se dé por aludido sin que la
+app se lo tenga que preguntar. Preguntarlo de verdad sigue pendiente: es una
+casilla en la ficha y cambia lo que hay que decir.
+
+No es un argumento contra el crudo ni cambia ningún menú. Es información que la
+fuente da y que quien elige alimentar así tiene derecho a tener.
