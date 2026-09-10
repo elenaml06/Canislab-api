@@ -1897,3 +1897,70 @@ que este repo tenia escrito y era falso.
    rottweiler de 15 semanas. En Rawku el calcio lo pone el solver y no el dueno,
    con techo por 1000 kcal y con la dosis maxima del fabricante encima — que es
    justo la proteccion que el capitulo pide.
+
+### cap.34 — Nutritional Management of Osteoarthritis (1.900 lineas, LEIDO ENTERO)
+
+**La Tabla 34-2 ya estaba aplicada casi entera** en `artrosis`: EPA 1,0 de suelo,
+L-carnitina 75, vitamina E 67,1, fosforo 1750 y sodio 1000 de techo, y los dos que
+no caben —el omega-3 total de 8,75 y el ratio omega-6:omega-3 de <1:1— escritos en
+`limites_escritos_que_el_solver_no_aplica`. Leerlo entero saca **un hallazgo nuevo
+y medido**, y tres cosas que hay que dejar escritas porque no se pueden aplicar.
+
+1. **⚠️ LA MISMA CIFRA EN LA OTRA UNIDAD NO CUADRA, Y FALLA JUSTO EN EL PERRO
+   GRANDE.** El capitulo da su recomendacion de EPA por dos caminos. Por
+   concentracion: «a food designed to aid in the management of osteoarthritis in
+   dogs should provide levels of total omega-3 fatty acids between 3.5 to 4.0% DM
+   and specifically 0.4 to 1.1% DM EPA». Y por **dosis**: «Dogs consuming the
+   therapeutic food should receive an average of 50 to 100 mg EPA/kg body
+   weight/day.» El motor aplica el extremo bajo del primero — 0,4 % MS x 2,5 =
+   **1,0 g/1000 kcal** — y nunca habia comprobado el segundo.
+   **No cuadra, y se puede calcular sin resolver nada**: con un suelo por 1000
+   kcal, los mg de EPA por kilo de perro al dia son exactamente **DER/peso**, y ese
+   cociente **baja con el tamano**. Medido sobre los doce perros de referencia del
+   catalogo:
+       Toy adulto (3 kg, 251 kcal) ......... **83,7** mg/kg/dia
+       Mediano adulto (22 kg, 1117 kcal) ... **50,8**
+       Mediano senior (22 kg, 1046 kcal) ... **47,5**  ← por debajo
+       Grande senior (32 kg, 1386 kcal) .... **43,3**  ← por debajo
+       Gigante senior (55 kg, 2080 kcal) ... **37,8**  ← un 24 % por debajo
+   O sea que el suelo que aplicamos cae **por debajo de los 50 mg/kg/dia de la
+   fuente en el perro mediano senior y en todos los grandes y gigantes**, que es
+   exactamente la poblacion con artrosis. Y la solucion esta dentro del rango de la
+   propia tabla: el extremo alto es 1,1 % MS = **2,75 g/1000 kcal**, y con **1,32**
+   ya se llega a 50 mg/kg/dia hasta en el gigante senior. **Decision de Elena**,
+   porque subir un suelo cambia que alimentos entran; pero la aritmetica no depende
+   del solver y por eso se puede afirmar sin medir menus.
+   Y por que EPA y no la suma, que ya estaba bien resuelto y este capitulo lo
+   explica: «EPA was the only omega-3 fatty acid able to significantly decrease the
+   oncostatin M-stimulated loss of aggrecan in the canine cartilage in vitro
+   model».
+
+2. **La vitamina C, que la tabla pide y este motor no puede pedir.** Tabla 34-2:
+   «for improved antioxidant performance, and in conjunction with levels of vitamin
+   E recommended above, foods for adult dogs and cats should contain at least 100
+   mg vitamin C/kg DM» = **25 mg/1000 kcal**. No se aplica y **no es una decision
+   pendiente**: el perro sintetiza su propia vitamina C, FEDIAF no la pone en la
+   Tabla III-3b, y **el catalogo no tiene columna de vitamina C** en ninguna de sus
+   163 fichas. Aplicarla exigiria un dato que no existe. Queda escrito para que no
+   se «descubra» otra vez dentro de seis meses, que es para lo que sirve este
+   documento.
+
+3. **La glucosamina y la condroitina son TECHOS, no suelos, y el motivo no es
+   clinico.** La Tabla 34-2 las pone en «≤0.10%» y «≤0.08%», y el texto dice de
+   donde salen: no de un ensayo de eficacia, sino de un limite **regulatorio** de
+   un estado de EE.UU. — «glucosamine HCl and chondroitin sulfate should not exceed
+   0.10 and 0.08% DM, respectively». Ninguna de las dos esta en el catalogo y no
+   hay nada que aplicar. Lo que si merece quedar escrito es el aviso del recuadro
+   34-1 sobre los suplementos que la gente compra por su cuenta: «26 of 32 (81%)
+   commercially available human products contained less than 90% of the chondroitin
+   sulfate stated on the label». Ocho de cada diez botes traen menos de lo que
+   ponen.
+
+4. **Y una confirmacion de las que no cambian nada pero cierran una duda.** El
+   techo de fosforo de 1750 y el de sodio de 1000 que aplicamos en `artrosis`
+   llevan en la propia tabla el asterisco que explica que **no son de la artrosis**:
+   son los del perro adulto mayor sano, por el riesgo renal y cardiaco de la edad,
+   los mismos de los caps.13 y 14. Es la tercera indicacion del libro que repite
+   esos dos numeros —con la reaccion adversa (Tabla 31-3) y la obesidad (Tabla
+   27-4)—, y las tres coinciden con lo que `recomendaciones_libro.json` aplica al
+   perro sano desde el 8 de septiembre. Cuatro tablas, un numero.
