@@ -1165,7 +1165,7 @@ Tabla 17-1 de arriba, que están por encima de ese mínimo.
 > suelo de sodio por encima del mínimo de FEDIAF (290) en un perro sano no lo
 > pide nadie. Si eso es leerlo mal, es una línea de cambio.
 
-## 8 · Las patologías: 47 perfiles, 74 límites numéricos
+## 8 · Las patologías: 47 perfiles, 74 límites numéricos y 4 ratios
 
 Los topes por patología **son más estrictos que FEDIAF** y se miden sobre las
 **kcal reales del menú**, no las pedidas — el menú puede salir un 3 % por
@@ -1178,6 +1178,37 @@ que un menú un 3 % por encima del DER cumplía para uno y no para el otro).
 puede tener un tope **por debajo** del mínimo de FEDIAF. Si lo tiene, eso ya
 no es un tope: es una dieta de prescripción, y va marcada como no formulable
 automáticamente.
+
+### ⚠️ Y DESDE EL 10 DE SEPTIEMBRE UNA PATOLOGÍA PUEDE PEDIR SU PROPIO RATIO
+
+**Son 4, y son dos veces el mismo:** el Ca:P de **1,1 a 2,0** que piden la Tabla
+40-5 (oxalato cálcico) y la 41-6 (fosfato cálcico), las dos con la misma frase
+—*«maintain a normal Ca:P ratio (1.1:1 to 2:1)»*—. Cada extremo cuenta como un
+límite porque el suelo y el techo del mismo par bloquean por separado.
+
+Estaban escritos desde el 8 de septiembre y **no se aplicaban**, y no por
+descuido: el motor sabe de ratios Ca:P desde el principio —los aplica desde
+FEDIAF y desde la nota b de raza grande— pero no había forma de que una
+**patología** pidiera el suyo, así que la celda vivía con
+`aplicado_por_el_solver: false` para no perder el número.
+
+**Y no era cosmético.** Medido antes de aplicarlo, por la vía de la API y en
+cinco perros adultos, el de 30 kg con oxalato salía con Ca:P **1,06** —por debajo
+del 1,1 de la fuente— **y salía en verde**: el semáforo mide el Ca:P contra el
+rango de FEDIAF, que en adulto es 1,0-2,0, y los requisitos de FEDIAF son los de
+un perro **sano**. Es el mismo agujero del renal con 3084 mg de fósforo, esta vez
+en un cociente.
+
+Medido después: los cinco perros de cada patología siguen dando menú verde, y el
+más justo sale clavado en 1,10. El **techo** (2,0) coincide con el de FEDIAF en
+adulto, así que por arriba no cambia nada; se escribe igual porque es lo que dice
+la fuente. Lo vigila el **BLOQUE 75**, que además lo prueba con el fallo puesto.
+
+El mecanismo es **genérico**: admite cualquier par de nutrientes, porque un
+cociente entre dos sumas es lineal igual que el Ca:P. Eso es lo que hacía falta
+para el **omega-6:omega-3**, que **sigue sin aplicarse** —ver PREGUNTA 40— porque
+ahí lo que falta no es maquinaria sino una decisión: las fuentes van de <1:1
+(artrosis) a 7:1 (renal) y el NRC dice que ese ratio «is not helpful».
 
 > **⚠️ Esta sección se rehízo entera el 8 de septiembre de 2026.** La versión
 > anterior decía «40 perfiles, 19 límites» y traía los números de antes de las

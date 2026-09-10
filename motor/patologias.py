@@ -69,6 +69,45 @@ def _a_forma_del_motor(crudo):
         suelos = {n: t["valor"] for n, t in (p.get("suelos_por_1000kcal") or {}).items()}
         if suelos:
             e["min_por_1000kcal"] = suelos
+        # ⚠️ AÑADIDO (10 septiembre) — QUE UNA PATOLOGÍA PUEDA PEDIR SU PROPIO
+        # RATIO ENTRE DOS NUTRIENTES.
+        #
+        # Estuvo dos días escrito y sin aplicar, y el motivo era exactamente
+        # este hueco: el motor sabe de ratios Ca:P desde el principio -- los
+        # aplica desde FEDIAF y desde la nota b de raza grande -- pero no había
+        # forma de que una PATOLOGÍA pidiera el suyo, así que la Tabla 40-5 del
+        # oxalato («maintain a normal Ca:P ratio (1.1:1 to 2:1)») se quedó en
+        # `ratio_ca_p` con `aplicado_por_el_solver: false`.
+        #
+        # ⚠️ Y NO ERA COSMÉTICO: medido antes de aplicarlo, el menú de un perro
+        # de 30 kg con oxalato salía con Ca:P 1,06 -- por debajo del 1,1 de la
+        # fuente -- y salía EN VERDE, porque el mínimo de FEDIAF en adulto es
+        # 1,0 y el semáforo mide contra los requisitos de un perro SANO.
+        #
+        # Es genérico a propósito, y no por elegancia: un cociente entre dos
+        # sumas de nutrientes es lineal igual que el Ca:P, así que el día que
+        # se decida qué hacer con el omega-6:omega-3 -- que hoy vive en
+        # `limites_escritos_que_el_solver_no_aplica` porque las fuentes se
+        # contradicen (de <1:1 a 7:1 según la enfermedad) -- no hace falta
+        # maquinaria nueva, solo mover la celda de bloque.
+        #
+        # EN `ratios` SOLO VA LO QUE SE APLICA. Lo que está escrito y no se
+        # aplica vive en `limites_escritos_que_el_solver_no_aplica`, como todo
+        # lo demás: una celda aquí que dijera `aplicado_por_el_solver: false`
+        # sería un límite que parece un límite y no hace nada, que es el fallo
+        # de la fibra y el de las categorías de Personalizar otra vez. Lo
+        # rechaza `auditar_patologias.py`.
+        ratios = []
+        for nombre_r, r in (p.get("ratios") or {}).items():
+            ratios.append({
+                "clave": nombre_r,
+                "numerador": r["numerador"],
+                "denominador": r["denominador"],
+                "sentido": r["sentido"],
+                "valor": float(r["valor"]),
+            })
+        if ratios:
+            e["ratios"] = ratios
         cond = p.get("max_pct_kcal_grasa_si_ademas")
         if cond:
             e["max_pct_kcal_grasa_si_ademas"] = (cond["valor"], tuple(cond["requiere"]))

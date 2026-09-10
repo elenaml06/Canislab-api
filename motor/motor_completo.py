@@ -138,6 +138,43 @@ def topes_de_patologias(patologias, etapa="Adulto"):
 
     return topes, pct_grasa, avisos, suelos
 
+
+def ratios_de_patologias(patologias, etapa="Adulto"):
+    """Los ratios entre dos nutrientes que pide cada patología, ya combinados.
+
+    ⚠️ AÑADIDO (10 septiembre). Va aparte de `topes_de_patologias` y no dentro
+    a propósito: esa función devuelve una tupla de cuatro y la llaman siete
+    sitios, y meterle un quinto elemento habría sido tocar los siete para
+    añadir una cosa que solo miran dos. Aquí lo que importa es que el solver y
+    `_tope_patologia_roto` pregunten a LA MISMA función -- que es la lección
+    del 8 de septiembre, cuando cada uno aplicaba los suelos a su manera.
+
+    Devuelve {(numerador, denominador): {"min": x|None, "max": y|None}}, con
+    la misma disciplina que todo lo demás: varios suelos sobre el mismo par se
+    combinan con `max()` y varios techos con `min()`, o sea que una patología
+    solo puede APRETAR el ratio, nunca aflojarlo. Las que la etapa desactiva
+    (`solo_en_adulto` en crecimiento) no entran, igual que sus topes.
+    """
+    lista = list(patologias or [])
+    crece = _es_crecimiento(etapa)
+    fuera = {}
+    for p in lista:
+        info = PATOLOGIAS.get(p, {})
+        if info.get("solo_en_adulto") and crece:
+            continue
+        for r in info.get("ratios") or []:
+            par = (r["numerador"], r["denominador"])
+            hueco = fuera.setdefault(par, {"min": None, "max": None})
+            actual = hueco[r["sentido"]]
+            if actual is None:
+                hueco[r["sentido"]] = r["valor"]
+            elif r["sentido"] == "min":
+                hueco["min"] = max(actual, r["valor"])
+            else:
+                hueco["max"] = min(actual, r["valor"])
+    return fuera
+
+
 def limites_de_patologias_con_procedencia(patologias, etapa="Adulto",
                                           peso_adulto_esperado_kg=None):
     """Los mismos límites que `topes_de_patologias`, pero cada uno sabiendo
@@ -150,8 +187,8 @@ def limites_de_patologias_con_procedencia(patologias, etapa="Adulto",
 
     Devuelve una lista de dicts:
         {tipo, clave, valor, patologia, nombre_patologia, fuente, por_que}
-    con `tipo` en ("tope", "suelo", "pct_kcal_grasa"). Solo los límites que
-    de verdad se aplican en esta etapa: los que la etapa desactiva no salen,
+    con `tipo` en ("tope", "suelo", "pct_kcal_grasa", "ratio"). Solo los límites
+    que de verdad se aplican en esta etapa: los que la etapa desactiva no salen,
     porque no pueden ser el culpable de nada.
     """
     lista = list(patologias or [])
@@ -161,6 +198,7 @@ def limites_de_patologias_con_procedencia(patologias, etapa="Adulto",
     # le pregunta a él en vez de repetir su lógica aquí: si algún día cambia,
     # esto cambia con él en vez de quedarse mintiendo por su cuenta.
     topes_efectivos, pct_efectivo, _avisos, suelos_efectivos = topes_de_patologias(lista, etapa)
+    ratios_efectivos = ratios_de_patologias(lista, etapa)
     # La fuente y el motivo NO están en la forma del motor a propósito
     # (`patologias.py` los deja fuera para no meter documentación dentro del
     # cálculo). Se leen del crudo -- del MISMO módulo que usa el solver, no
@@ -190,6 +228,21 @@ def limites_de_patologias_con_procedencia(patologias, etapa="Adulto",
                 continue
             m = _meta(p, "suelos_por_1000kcal", clave)
             fuera.append({"tipo": "suelo", "clave": clave, "valor": valor,
+                          "patologia": p, "nombre_patologia": nombre_pat,
+                          "fuente": m.get("fuente"), "por_que": m.get("por_que")})
+        # ⚠️ LOS RATIOS (10 septiembre). Van aquí por lo mismo que todo lo
+        # demás: si lo que bloquea es el Ca:P que pide el oxalato, hay que
+        # poder nombrarlo. La clave lleva el par y el extremo dentro
+        # ("calcio:fosforo:min") porque el suelo y el techo del mismo par son
+        # dos límites distintos y solo uno de los dos bloquea.
+        for _r_p in info.get("ratios") or []:
+            _par_p = (_r_p["numerador"], _r_p["denominador"])
+            if (ratios_efectivos.get(_par_p) or {}).get(_r_p["sentido"]) != _r_p["valor"]:
+                continue          # otra patología aprieta más: manda ella
+            m = _meta(p, "ratios", _r_p["clave"])
+            fuera.append({"tipo": "ratio",
+                          "clave": f"{_par_p[0]}:{_par_p[1]}:{_r_p['sentido']}",
+                          "valor": _r_p["valor"],
                           "patologia": p, "nombre_patologia": nombre_pat,
                           "fuente": m.get("fuente"), "por_que": m.get("por_que")})
         condicional = info.get("max_pct_kcal_grasa_si_ademas")
@@ -889,6 +942,13 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # aplicaban igual a un cachorro que a un adulto -- ver el comentario
     # largo de esa función.
     topes_patologia, pct_grasa_patologia, _avisos_pat, suelos_patologia = topes_de_patologias(patologias, etapa)
+    # ⚠️ Y LOS RATIOS QUE PIDE LA PATOLOGÍA (10 septiembre). Se resuelven aquí
+    # arriba, junto a los topes, y no abajo donde se construye su fila, por una
+    # razón concreta: `soltar_limites_patologia` tiene que poder quitarlos igual
+    # que quita un tope. Si un ratio bloquea y el diagnóstico no lo puede soltar,
+    # el diagnóstico dice que el culpable es otro -- y mandar a mirar la fila
+    # equivocada es peor que no decir nada.
+    ratios_patologia = ratios_de_patologias(patologias, etapa)
 
     # ⚠️ AÑADIDO (8 septiembre) — LOS TECHOS DEL PERRO ADULTO SANO. Ver
     # `motor/recomendaciones.py` y `recomendaciones_libro.json`: son las dos
@@ -979,6 +1039,15 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                 suelos_patologia.pop(_clave, None)
             elif _tipo == "pct_kcal_grasa":
                 pct_grasa_patologia = None
+            elif _tipo == "ratio":
+                # La clave de un ratio es "numerador:denominador:sentido", que
+                # es como la escribe `limites_de_patologias_con_procedencia`.
+                # Se suelta solo el extremo que se pregunta, no el par entero:
+                # si lo que bloquea es el suelo, quitar también el techo diría
+                # que el culpable es el par y no lo es.
+                _p_r = _clave.split(":")
+                if len(_p_r) == 3 and (_p_r[0], _p_r[1]) in ratios_patologia:
+                    ratios_patologia[(_p_r[0], _p_r[1])][_p_r[2]] = None
 
     # ⚠️ AÑADIDO (5 agosto, noche) — CONECTADO: "Calcio_LateGrowth_RazaGrande"
     # ya existía en los datos, con nota de auditoría explícita diciendo que
@@ -1573,6 +1642,46 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         if rmax is not None:
             fila = [fila_ca[j] - rmax * fila_p[j] for j in range(2 * n_var)]
             _fila("ratio_ca_p_max", fila, -np.inf, 0.0)
+
+    # 2b-bis. EL RATIO QUE PIDE UNA PATOLOGÍA (10 septiembre).
+    #
+    # La Tabla 40-5 del oxalato y la 41-6 del fosfato cálcico dicen las dos
+    # «maintain a normal Ca:P ratio (1.1:1 to 2:1)». Estaba escrito desde el 8
+    # de septiembre y sin aplicar, porque el motor sabía de ratios Ca:P pero no
+    # tenía forma de que una PATOLOGÍA pidiera el suyo.
+    #
+    # ⚠️ MEDIDO ANTES DE PONERLO: el menú de un perro de 30 kg con oxalato salía
+    # con Ca:P 1,06 -- por debajo del 1,1 de la fuente -- y salía EN VERDE,
+    # porque el mínimo de FEDIAF en adulto es 1,0 y el semáforo son los
+    # requisitos de un perro SANO. O sea que este no es de los que se ponen
+    # porque falta la regla: cambiaba menús de verdad.
+    #
+    # LA FILA ES LA MISMA QUE LA DE ARRIBA, y por eso no hace falta maquinaria:
+    # «num/den >= r» es «suma(num_i·g_i) − r·suma(den_i·g_i) >= 0», lineal. Se
+    # lee con `valor_nutriente` y no del diccionario a pelo para que un par con
+    # una clave compuesta (`omega6_total`, `epa_dha`) entre igual el día que se
+    # decida qué hacer con el omega-6:omega-3.
+    #
+    # SE AÑADE COMO FILA APARTE en vez de apretar la `rmin`/`rmax` de FEDIAF, y
+    # es a propósito: dos restricciones sobre el mismo par se cortan sin más, el
+    # resultado es el más estricto de los dos, y así en la salida del solver se
+    # ve CUÁL de las dos bloqueó -- que es lo que hace falta para explicárselo a
+    # alguien. Y da igual el orden en que lleguen: una restricción de más nunca
+    # afloja.
+    for (_num_r, _den_r), _cotas_r in ratios_patologia.items():
+        _fila_num = fila_vacia(); _fila_den = fila_vacia()
+        for n in nombres:
+            _nut_r = alimentos[n].get("nutrientes", {})
+            _fila_num[idx[n]] = valor_nutriente(_nut_r, _num_r) / 100.0
+            _fila_den[idx[n]] = valor_nutriente(_nut_r, _den_r) / 100.0
+        if _cotas_r.get("min") is not None:
+            _r = _cotas_r["min"]
+            _fila("ratio_patologia_min_" + _num_r + "_" + _den_r,
+                  [_fila_num[j] - _r * _fila_den[j] for j in range(2 * n_var)], 0.0, np.inf)
+        if _cotas_r.get("max") is not None:
+            _r = _cotas_r["max"]
+            _fila("ratio_patologia_max_" + _num_r + "_" + _den_r,
+                  [_fila_num[j] - _r * _fila_den[j] for j in range(2 * n_var)], -np.inf, 0.0)
 
     # 2c. LOS DOS REQUISITOS QUE DEPENDEN DE LA PROPIA DIETA (9 septiembre).
     #

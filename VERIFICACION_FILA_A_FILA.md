@@ -136,12 +136,13 @@ vit E ≥400 UI/kg ❌ · vit C ➖
 ### 40-5 · Oxalato
 Agua ➖ · proteína 10-18 % ➖ *(bajo FEDIAF)* · **calcio 0,4-0,7 % ➖ a propósito**
 *(fuente más reciente lo contradice)* · evitar alimentos con oxálico ✅ ·
-fósforo ✅ · Ca:P 1,1-2:1 ❌ · sodio ✅ · magnesio ✅ · evitar vitamina C ❌ ·
+fósforo ✅ · **Ca:P 1,1-2:1 ✅** *(aplicado el 10-sep)* · sodio ✅ · magnesio ✅ ·
+evitar vitamina C ❌ ·
 pH urinario 7,1-7,5 ➖
 
 ### 41-6 · Fosfato cálcico
 Agua ➖ · proteína ✅ · calcio 0,4-0,7 % ➖ *(mismo criterio que el oxalato)* ·
-fósforo ✅ · **Ca:P 1,1-2:1 ❌** · sodio ✅ · magnesio ✅ ·
+fósforo ✅ · **Ca:P 1,1-2:1 ✅** *(aplicado el 10-sep)* · sodio ✅ · magnesio ✅ ·
 **vitamina D 500-1500 UI/kg ❌** *(= 3,1-9,4 µg/1000 kcal: MÁS estricto que el
 máximo legal de 14,19 que aplicamos)* · pH 6,2-6,6 ➖
 
@@ -212,7 +213,14 @@ Lo que falta, por lo que pesa:
    de producto: la app sabe si el objetivo es bajar peso.
 2. **Omega-3 total en artrosis y en disfunción cognitiva** (8,75 y 2,5 g). Dos
    fuentes independientes lo piden en artrosis. Necesita clave nueva en el `MAPA`.
-3. **Ca:P 1,1-2:1 en los dos urolitos de calcio.** El motor ya sabe de ratios.
+3. ~~**Ca:P 1,1-2:1 en los dos urolitos de calcio.** El motor ya sabe de ratios.~~
+   ✅ **APLICADO EL 10 DE SEPTIEMBRE.** Lo que faltaba no era saber de ratios: era
+   que una **patología** pudiera pedir el suyo. Ahora hay un bloque `ratios` en
+   `patologias.json` que admite cualquier par de nutrientes, y lo aplican el
+   solver y `_tope_patologia_roto` llamando a la misma función. **Y no era
+   cosmético**: medido antes de aplicarlo, el perro de 30 kg con oxalato salía con
+   Ca:P **1,06** y salía **en verde**, porque el semáforo mide contra el 1,0-2,0
+   de FEDIAF, que es el rango de un perro sano. BLOQUE 75.
 4. **Vitamina D 3,1-9,4 µg en fosfato cálcico**, más estricta que el máximo legal.
 5. **Vitamina E ≥100 UI/1000 kcal** en cuatro tablas distintas (renal, artrosis,
    obesidad, hepatobiliar). Es el factor que más se repite de todos.

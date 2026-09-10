@@ -1039,12 +1039,12 @@ a lo que pide la literatura.
 La misma Tabla 30-5 pide «an omega-6:omega-3 ratio approximating 1:1» y «NFE
 ≤25 % DM».
 
-- El **ratio** es implementable: el motor ya monta restricciones de ratio (el
-  calcio:fósforo), y un ratio entre dos sumas de nutrientes es lineal igual que
-  aquel. Lo que no hay es la forma de que una **patología** pida el suyo — es el
-  mismo hueco que tiene el `ratio_ca_p` de los urolitos de calcio, escrito desde
-  la tercera pasada con `aplicado_por_el_solver: false`. **Los dos se arreglan
-  con el mismo trabajo.**
+- El **ratio**: ✅ **el motor está, desde el 10 de septiembre.** Se hizo por el
+  otro extremo —el `ratio_ca_p` de los urolitos de calcio, que llevaba dos días
+  escrito con `aplicado_por_el_solver: false`— y salió genérico: el bloque
+  `ratios` de `patologias.json` admite cualquier par de nutrientes. **Para el
+  omega-6:omega-3 ya no falta código: falta el número**, y ahí las fuentes van de
+  <1:1 (artrosis) a 7:1 (renal). Es PREGUNTA 40 y la decide quien firma.
 - El **NFE** no se puede calcular con lo que hay: haría falta el extracto libre
   de nitrógeno de cada ficha. Una ración BARF con la verdura topada al 10 % queda
   muy por debajo del 25 % por construcción, así que el riesgo real es bajo.

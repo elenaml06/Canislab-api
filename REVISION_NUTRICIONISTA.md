@@ -143,10 +143,18 @@ dermatitis atópica (0,875) y reacción adversa al alimento (0,875). Es la mitad
 la cuenta: el numerador está, el ratio no.
 
 **Es implementable y no es caro:** un ratio entre dos sumas de nutrientes es
-lineal igual que el calcio:fósforo, que el motor ya aplica. Lo que falta es la
-forma de que una patología —o un profesional— pida el suyo. Es el mismo trabajo
-que arreglaría el `ratio_ca_p` de los urolitos de calcio, que también está
-escrito y sin aplicar.
+lineal igual que el calcio:fósforo, que el motor ya aplica. Lo que faltaba era la
+forma de que una patología —o un profesional— pidiera el suyo.
+
+> **✅ ESA MITAD ESTÁ HECHA DESDE EL 10 DE SEPTIEMBRE.** El bloque `ratios` de
+> `patologias.json` admite **cualquier par de nutrientes**, y lo aplican el solver
+> y el filtro final llamando a la misma función. Se estrenó con el `ratio_ca_p` de
+> los dos urolitos de calcio, que llevaba dos días escrito y sin aplicar —y que
+> **no era cosmético**: el perro de 30 kg con oxalato salía con Ca:P 1,06, por
+> debajo del 1,1 de su fuente, y salía en verde. BLOQUE 75.
+>
+> Así que para el omega-6:omega-3 **ya no falta motor**. Lo que falta es decidir
+> qué número, y eso es lo de abajo.
 
 ### ⚠️ ACTUALIZADO EL 9 DE SEPTIEMBRE: ahora hay TRES fuentes y NO dicen lo mismo
 
@@ -197,13 +205,15 @@ agosto y anotado como excepción en `auditar_fediaf.py`.
 | 3 | L-metionina | ❌ se verifica, pero no hay ficha en el catálogo |
 | 4 | Pancreatitis al 8-10 % | 🟡 los dos niveles de la fuente están; el suyo es prescripción |
 | 5 | Objetivos de macros individuales | ❌ diseñado y medido, sin pantalla ni firma |
-| 6 | Ratio omega-6:omega-3 | ❌ no existe |
+| 6 | Ratio omega-6:omega-3 | 🟡 el motor está (10 sep); falta decidir el número |
 
 **Lo que hay que hacer, por orden de lo que desbloquea:**
 
-1. **El ratio omega-6:omega-3.** Es lineal, el motor ya sabe de ratios, y lo
-   piden dos fuentes independientes (Cris y la Tabla 30-5). El mismo trabajo
-   arregla el Ca:P por patología.
+1. **El ratio omega-6:omega-3.** ⚠️ **El motor ya está** desde el 10 de
+   septiembre —el Ca:P por patología se aplicó con él—, así que esto dejó de ser
+   trabajo de programación. Lo que queda es **elegir el número**, y ahí las
+   fuentes van de <1:1 (artrosis) a 7:1 (renal) y el NRC dice que ese ratio «is
+   not helpful». Es PREGUNTA 40, y es de quien firma.
 2. **La pantalla de objetivos por nutriente y el rol que firma.** Es lo que
    convierte «tres escalones de renal» en «el estadio que tú digas», y lo que
    permite el 8 % de grasa de una pancreatitis aguda.

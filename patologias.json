@@ -237,12 +237,37 @@
       "en_crecimiento": "sin_tope",
       "aviso_crecimiento": "Este menú NO ha podido aplicar los topes de oxalato (sodio, fósforo y magnesio), porque en crecimiento, gestación o lactancia el mínimo de fósforo que el perro necesita es MAYOR que el techo que pide la fuente para el oxalato. Los alimentos altos en ácido oxálico sí se han retirado igual. Un perro en crecimiento con cálculos de oxalato necesita un plan hecho por un veterinario.",
       "nota_exclusion_alimentos": "Los alimentos altos en acido oxalico NO se listan aqui: viven en `motor/seguridad.py`, en OXALATO_ALTO, que es lo unico que el solver lee para excluirlos (desde el 5 de agosto). El 8-sep-2026 esa lista se amplio de 4 entradas a 20 con la Tabla 40-3 de SACN5 («Selected human foods to limit or avoid feeding to dogs with calcium oxalate uroliths»), quedandose solo con las marcadas (H) = «high; avoid feeding». Escribirlas tambien aqui seria una SEGUNDA copia de la misma lista, que es como se desincronizo la tabla de patologias del POST /menu. Si hay que tocarlas, se tocan alli.",
-      "ratio_ca_p": {
-        "min": 1.1,
-        "max": 2.0,
-        "fuente": "SACN5 5a ed., cap.40 «Canine Calcium Oxalate Urolithiasis», Tabla 40-5, verificado literal 8-sep-2026",
-        "por_que": "ANADIDO 8-sep-2026, TERCERA PASADA. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Tabla 40-5: «maintain a normal Ca:P ratio (1.1:1 to 2:1)». El motor ya sabe de ratios Ca:P -- los aplica desde FEDIAF y desde la nota b de raza grande -- pero no tenia forma de que una PATOLOGIA pidiera el suyo. ⚠️ ESTE CAMPO NO LO LEE EL SOLVER TODAVIA: se deja escrito con su fuente para no perderlo, y queda anotado en VERIFICACION_FILA_A_FILA.md como pendiente de implementar. Escribirlo sin decir que no se aplica seria peor que no escribirlo: pareceria un limite y no lo es.",
-        "aplicado_por_el_solver": false
+      "ratios": {
+        "calcio_fosforo_min": {
+          "valor": 1.1,
+          "numerador": "calcio",
+          "denominador": "fosforo",
+          "sentido": "min",
+          "aplicado_por_el_solver": true,
+          "fuente": "SACN5 5a ed., cap.40 «Canine Calcium Oxalate Urolithiasis», Tabla 40-5, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 (TERCERA PASADA) Y APLICADO EL 10 DE SEPTIEMBRE. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Tabla 40-5: «maintain a normal Ca:P ratio (1.1:1 to 2:1)». || ESTUVO DOS DIAS ESCRITO Y SIN APLICAR, y no por descuido: el motor sabia de ratios Ca:P -- los aplica desde FEDIAF y desde la nota b de raza grande -- pero no tenia forma de que una PATOLOGIA pidiera el suyo. Ahora la tiene, y es generica: `ratios` admite cualquier par de nutrientes, porque un cociente entre dos sumas es lineal igual que este. || Y NO ERA COSMETICO. Medido antes de aplicarlo, por la via de la API y en el peldano estricto, en cinco perros adultos (3, 10, 20, 30 y 40 kg): el de 30 kg salia con Ca:P 1,06 -- POR DEBAJO del 1,1 que pide la fuente -- y salia EN VERDE, porque el minimo de FEDIAF en adulto es 1,0 y el semaforo mide contra ese. Es el agujero de siempre: el semaforo son los requisitos de un perro SANO. || El maximo (2,0) coincide con el de FEDIAF en adulto, asi que por arriba hoy no cambia nada. Se escribe igual porque es lo que dice la fuente, y porque el limite de FEDIAF puede moverse y entonces este tendria que estar aqui y no haber que volver a buscarlo. || Se combina como todo lo demas: el suelo con max() y el techo con min(). Solo puede apretar, nunca aflojar.",
+          "conversion": {
+            "valor_en_la_fuente": 1.1,
+            "unidad_en_la_fuente": "adimensional",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "SACN5 Tabla 40-5 «Key nutritional factors for foods for prevention of calcium oxalate uroliths». Leida entera 9-sep-2026, fila «maintain a normal Ca:P ratio (1.1:1 to 2:1)», extremo BAJO"
+          }
+        },
+        "calcio_fosforo_max": {
+          "valor": 2.0,
+          "numerador": "calcio",
+          "denominador": "fosforo",
+          "sentido": "max",
+          "aplicado_por_el_solver": true,
+          "fuente": "SACN5 5a ed., cap.40 «Canine Calcium Oxalate Urolithiasis», Tabla 40-5, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 (TERCERA PASADA) Y APLICADO EL 10 DE SEPTIEMBRE. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Tabla 40-5: «maintain a normal Ca:P ratio (1.1:1 to 2:1)». || ESTUVO DOS DIAS ESCRITO Y SIN APLICAR, y no por descuido: el motor sabia de ratios Ca:P -- los aplica desde FEDIAF y desde la nota b de raza grande -- pero no tenia forma de que una PATOLOGIA pidiera el suyo. Ahora la tiene, y es generica: `ratios` admite cualquier par de nutrientes, porque un cociente entre dos sumas es lineal igual que este. || Y NO ERA COSMETICO. Medido antes de aplicarlo, por la via de la API y en el peldano estricto, en cinco perros adultos (3, 10, 20, 30 y 40 kg): el de 30 kg salia con Ca:P 1,06 -- POR DEBAJO del 1,1 que pide la fuente -- y salia EN VERDE, porque el minimo de FEDIAF en adulto es 1,0 y el semaforo mide contra ese. Es el agujero de siempre: el semaforo son los requisitos de un perro SANO. || El maximo (2,0) coincide con el de FEDIAF en adulto, asi que por arriba hoy no cambia nada. Se escribe igual porque es lo que dice la fuente, y porque el limite de FEDIAF puede moverse y entonces este tendria que estar aqui y no haber que volver a buscarlo. || Se combina como todo lo demas: el suelo con max() y el techo con min(). Solo puede apretar, nunca aflojar.",
+          "conversion": {
+            "valor_en_la_fuente": 2.0,
+            "unidad_en_la_fuente": "adimensional",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "SACN5 Tabla 40-5 «Key nutritional factors for foods for prevention of calcium oxalate uroliths». Leida entera 9-sep-2026, fila «maintain a normal Ca:P ratio (1.1:1 to 2:1)», extremo ALTO"
+          }
+        }
       },
       "limites_escritos_que_el_solver_no_aplica": {
         "suelo_fosforo_750": {
@@ -1463,12 +1488,37 @@
         "crecimiento": "Este menú NO ha podido aplicar los topes de fosfato cálcico: en crecimiento, gestación o lactancia los mínimos de fósforo y proteína que el perro necesita son mayores que los techos de la fuente. Consúltalo con tu veterinario."
       },
       "aviso_crecimiento": "Este menú NO ha podido aplicar los topes de fosfato cálcico: en crecimiento los mínimos de fósforo y proteína son mayores que los techos de la fuente.",
-      "ratio_ca_p": {
-        "min": 1.1,
-        "max": 2.0,
-        "fuente": "SACN5 5a ed., cap.41 «Canine Calcium Phosphate Urolithiasis», Tabla 41-6, verificado literal 8-sep-2026",
-        "por_que": "ANADIDO 8-sep-2026, TERCERA PASADA. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Tabla 41-6: «maintain a normal Ca:P ratio (1.1:1 to 2:1)». El motor ya sabe de ratios Ca:P -- los aplica desde FEDIAF y desde la nota b de raza grande -- pero no tenia forma de que una PATOLOGIA pidiera el suyo. ⚠️ ESTE CAMPO NO LO LEE EL SOLVER TODAVIA: se deja escrito con su fuente para no perderlo, y queda anotado en VERIFICACION_FILA_A_FILA.md como pendiente de implementar. Escribirlo sin decir que no se aplica seria peor que no escribirlo: pareceria un limite y no lo es.",
-        "aplicado_por_el_solver": false
+      "ratios": {
+        "calcio_fosforo_min": {
+          "valor": 1.1,
+          "numerador": "calcio",
+          "denominador": "fosforo",
+          "sentido": "min",
+          "aplicado_por_el_solver": true,
+          "fuente": "SACN5 5a ed., cap.41 «Canine Calcium Phosphate Urolithiasis», Tabla 41-6, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 (TERCERA PASADA) Y APLICADO EL 10 DE SEPTIEMBRE. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Tabla 41-6: «maintain a normal Ca:P ratio (1.1:1 to 2:1)». || ESTUVO DOS DIAS ESCRITO Y SIN APLICAR, y no por descuido: el motor sabia de ratios Ca:P -- los aplica desde FEDIAF y desde la nota b de raza grande -- pero no tenia forma de que una PATOLOGIA pidiera el suyo. Ahora la tiene, y es generica: `ratios` admite cualquier par de nutrientes, porque un cociente entre dos sumas es lineal igual que este. || MEDIDO ANTES DE APLICARLO, por la via de la API y en el peldano estricto, en cinco perros adultos (3, 10, 20, 30 y 40 kg): los cinco menus van de 1,60 a 1,90, o sea que hoy no cambia ninguno. Se aplica igual porque lo que lo tapaba es una propiedad del catalogo de hoy, no una garantia -- el mismo motivo por el que se cerro la nota b del calcio. || El maximo (2,0) coincide con el de FEDIAF en adulto, asi que por arriba hoy no cambia nada. Se escribe igual porque es lo que dice la fuente, y porque el limite de FEDIAF puede moverse y entonces este tendria que estar aqui y no haber que volver a buscarlo. || Se combina como todo lo demas: el suelo con max() y el techo con min(). Solo puede apretar, nunca aflojar.",
+          "conversion": {
+            "valor_en_la_fuente": 1.1,
+            "unidad_en_la_fuente": "adimensional",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "SACN5 Tabla 41-6 «Key nutritional factors for foods for prevention of calcium phosphate uroliths». Leida entera 9-sep-2026, fila «maintain a normal Ca:P ratio (1.1:1 to 2:1)», extremo BAJO"
+          }
+        },
+        "calcio_fosforo_max": {
+          "valor": 2.0,
+          "numerador": "calcio",
+          "denominador": "fosforo",
+          "sentido": "max",
+          "aplicado_por_el_solver": true,
+          "fuente": "SACN5 5a ed., cap.41 «Canine Calcium Phosphate Urolithiasis», Tabla 41-6, verificado literal 8-sep-2026",
+          "por_que": "ANADIDO 8-sep-2026 (TERCERA PASADA) Y APLICADO EL 10 DE SEPTIEMBRE. Salio de leer la tabla ENTERA en vez de solo la fila del nutriente que ya teniamos -- ver VERIFICACION_FILA_A_FILA.md. Tabla 41-6: «maintain a normal Ca:P ratio (1.1:1 to 2:1)». || ESTUVO DOS DIAS ESCRITO Y SIN APLICAR, y no por descuido: el motor sabia de ratios Ca:P -- los aplica desde FEDIAF y desde la nota b de raza grande -- pero no tenia forma de que una PATOLOGIA pidiera el suyo. Ahora la tiene, y es generica: `ratios` admite cualquier par de nutrientes, porque un cociente entre dos sumas es lineal igual que este. || MEDIDO ANTES DE APLICARLO, por la via de la API y en el peldano estricto, en cinco perros adultos (3, 10, 20, 30 y 40 kg): los cinco menus van de 1,60 a 1,90, o sea que hoy no cambia ninguno. Se aplica igual porque lo que lo tapaba es una propiedad del catalogo de hoy, no una garantia -- el mismo motivo por el que se cerro la nota b del calcio. || El maximo (2,0) coincide con el de FEDIAF en adulto, asi que por arriba hoy no cambia nada. Se escribe igual porque es lo que dice la fuente, y porque el limite de FEDIAF puede moverse y entonces este tendria que estar aqui y no haber que volver a buscarlo. || Se combina como todo lo demas: el suelo con max() y el techo con min(). Solo puede apretar, nunca aflojar.",
+          "conversion": {
+            "valor_en_la_fuente": 2.0,
+            "unidad_en_la_fuente": "adimensional",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "SACN5 Tabla 41-6 «Key nutritional factors for foods for prevention of calcium phosphate uroliths». Leida entera 9-sep-2026, fila «maintain a normal Ca:P ratio (1.1:1 to 2:1)», extremo ALTO"
+          }
+        }
       }
     },
     "urolitos_silice": {

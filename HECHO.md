@@ -1306,3 +1306,82 @@ del 9 de septiembre —derivar hacia arriba por debajo de 5— y **choca con la
 §7.1.3 de FEDIAF**, que dice que el BCS ideal es el **rango 4-5**. Medido,
 escrito con las dos citas y puesto como decisión en `PENDIENTE_DECISIONES.md`
 §4: no se cambia sola porque toca la ración de todo perro marcado «delgado».
+
+## 10 de septiembre de 2026 — Una patología puede pedir su propio ratio, y el primero que lo usa cambiaba menús de verdad
+
+**El punto 1 de lo que pedía la revisión de Cris Carles**, hecho por el otro
+extremo del que parecía.
+
+`REVISION_NUTRICIONISTA.md` cerraba con una lista ordenada por lo que desbloquea,
+y arriba del todo estaba el ratio omega-6:omega-3, con esta nota: «es el mismo
+trabajo que arreglaría el `ratio_ca_p` de los urolitos de calcio, que también
+está escrito y sin aplicar». Se ha hecho ese trabajo. El omega-6:omega-3 **sigue
+sin aplicarse** —y no por falta de motor, ver abajo—, pero el Ca:P sí.
+
+### Qué faltaba, exactamente
+
+No era saber de ratios. El motor monta restricciones de ratio desde el principio:
+el Ca:P de FEDIAF y el techo de 1,6 de la nota b para el cachorro de raza grande
+son dos filas lineales dentro del MILP. Lo que no había era **la forma de que una
+PATOLOGÍA pidiera el suyo**.
+
+Así que cuando la tercera pasada del 8 de septiembre leyó enteras la Tabla 40-5
+(oxalato cálcico) y la 41-6 (fosfato cálcico) y encontró en las dos la misma
+frase —«maintain a normal Ca:P ratio (1.1:1 to 2:1)»—, la cifra se escribió con
+su fuente y con `aplicado_por_el_solver: false`, que es lo correcto: un límite
+que parece un límite y no hace nada es peor que no escribirlo.
+
+### Y no era cosmético
+
+Medido **antes** de aplicarlo, por la vía de la API y en el peldaño estricto, en
+cinco perros adultos (3, 10, 20, 30 y 40 kg):
+
+| Patología | Ca:P de los cinco menús |
+|---|---|
+| oxalato | 1,11 · 1,40 · 1,30 · **1,06** · 1,49 |
+| urolitos de fosfato cálcico | 1,61 · 1,60 · 1,81 · 1,68 · 1,90 |
+
+El perro de 30 kg con oxalato salía con **1,06** —por debajo del 1,1 que pide su
+fuente— **y salía en verde**. El semáforo comprueba el Ca:P contra el rango de
+FEDIAF, que en adulto es 1,0-2,0, y **los requisitos de FEDIAF son los de un
+perro sano**. Es el agujero del renal con 3084 mg de fósforo otra vez, esta vez
+dentro de un cociente.
+
+Medido **después**: los diez menús siguen saliendo, verdes, y el más justo cae
+clavado en **1,10** — o sea que la restricción está atada y activa, no de adorno.
+El techo (2,0) coincide con el de FEDIAF en adulto, así que por arriba no cambia
+nada hoy; se escribe igual porque es lo que dice la fuente y porque el límite de
+FEDIAF puede moverse.
+
+### Cómo está hecho
+
+- **`patologias.json`**: bloque `ratios`, con `numerador`, `denominador`,
+  `sentido` y su `conversion` como cualquier otra cifra. En `ratios` **solo va lo
+  que se aplica**; lo escrito y no aplicado sigue en
+  `limites_escritos_que_el_solver_no_aplica`, y `auditar_patologias.py` rechaza
+  una celda que diga lo contrario.
+- **`ratios_de_patologias()`** en `motor_completo.py`, y **el solver y
+  `_tope_patologia_roto` la llaman a ella**, no cada uno a su manera. Es la
+  lección del 8 de septiembre: cuando cada uno aplicaba los suelos por su cuenta,
+  el motor construía menús enteros para que el filtro final los tirara.
+- **Genérico a propósito**: admite cualquier par de nutrientes y se lee con
+  `valor_nutriente`, así que una clave compuesta (`omega6_total`, `epa_dha`) entra
+  igual el día que haga falta.
+- **`GET /patologias`** sirve los ratios con el límite de FEDIAF del mismo par al
+  lado, igual que hace con los topes: sin el número de enfrente, «1,1» no dice si
+  aprieta o es un adorno. Aprieta un 10 %.
+- **El diagnóstico de choques** los sabe nombrar y soltar. Un ratio no se dice
+  como un tope —no va «por cada 1000 kcal» y su clave no es un nutriente—, así que
+  tiene su propia frase; sin ella salía «exige como mucho 1,1 de
+  calcio:fosforo:min por cada 1000 kcal», mal en las tres cosas.
+- **BLOQUE 75**, y probado con el fallo puesto: se parte por la mitad el calcio de
+  todo el catálogo y se exige que el filtro final lo cace. Desconectando el ratio
+  del solver, el bloque se cae.
+
+### Lo que esto NO decide
+
+El **omega-6:omega-3 sigue sin aplicarse**, y ahora es más claro por qué: no
+faltaba motor, falta el número. Las fuentes van de **<1:1** (artrosis, Tabla 34-2)
+a **7:1** (renal, Tabla 37-9) —un factor siete entre dos enfermedades que un mismo
+perro puede tener a la vez— y el NRC 2006 dice del ratio de totales que «is not
+helpful». Es PREGUNTA 40 en `PARA_EL_NUTRICIONISTA.md` y la decide quien firma.

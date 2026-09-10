@@ -59,6 +59,14 @@ RAIZ = os.path.dirname(os.path.abspath(__file__))
 # están escritas para no aplicarse, que también hay que poder auditar).
 BLOQUES = ("topes_por_1000kcal", "suelos_por_1000kcal",
            "topes_por_1000kcal_si_ademas", "suelos_por_1000kcal_si_ademas",
+           # ⚠️ `ratios` ENTRA AQUI EL 10 DE SEPTIEMBRE, el dia que se aplico.
+           # Un ratio es adimensional y no hay conversion que rehacer, asi que
+           # parece que no pinta nada en una auditoria de conversiones. Pinta:
+           # lo que este script comprueba de verdad es que CADA cifra que decide
+           # si un menu sale diga de que numero de la fuente sale. Dejar fuera
+           # las que "no se convierten" es como se cuelan: la celda existe, no
+           # la mira nadie, y el menu sale verde igual.
+           "ratios",
            "limites_escritos_que_el_solver_no_aplica")
 
 # Cómo se pasa cada unidad de fuente a «por 1000 kcal».

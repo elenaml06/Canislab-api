@@ -273,6 +273,35 @@ de hoy, y ese es el motivo de ponerlo ahora y no cuando muerda.
 
 ---
 
+## CERRADO · El ratio que pide una patología (10 de septiembre)
+
+| | Dónde se cumple |
+|---|---|
+| 1 · Vive en el repo | Bloque `ratios` de `patologias.json`; `ratios_de_patologias()` en `motor/motor_completo.py`, que llaman el solver **y** `_tope_patologia_roto` |
+| 2 · Tiene fuente | SACN5 **Tabla 40-5** (oxalato cálcico) y **Tabla 41-6** (fosfato cálcico), las dos con la misma frase: «maintain a normal Ca:P ratio (1.1:1 to 2:1)» |
+| 3 · Ficha de permisos | `GET /patologias` sirve cada ratio con el límite de FEDIAF del mismo par al lado y su `margen_pct`: el 1,1 aprieta un 10 % sobre el 1,0 de FEDIAF en adulto |
+| 4 · Test que falla si se rompe | **BLOQUE 75**, y probado con el fallo puesto por partida doble: se parte el calcio del catálogo y se exige que el filtro final lo cace, y desconectando el ratio del solver el bloque se cae. Además `auditar_patologias.py` rechaza una celda de `ratios` inerte, y `auditar_conversiones.py` (BLOQUE 72) rehace sus cuatro cifras |
+| 5 · Decisión escrita | `HECHO.md` del 10 de septiembre y `PARA_EL_NUTRICIONISTA.md` §8, con las dos medidas |
+| 6 · Sin preguntas sin dueño | Ninguna sobre el Ca:P: la fuente da los dos extremos y los dos caben. La que queda —el omega-6:omega-3— es **de otra cifra**, está en PREGUNTA 40 y tiene dueño |
+
+**Y este no es de los que se ponen porque falte la regla.** Medido antes de
+aplicarlo, en cinco perros adultos por la vía de la API: el de 30 kg con oxalato
+salía con Ca:P **1,06** —por debajo del 1,1 de su fuente— **y salía en verde**,
+porque el semáforo mide el Ca:P contra el 1,0-2,0 de FEDIAF, que es el rango de
+un perro **sano**. Medido después: los diez menús siguen verdes y el más justo
+cae clavado en 1,10.
+
+⚠️ **Lo que este cierre NO cierra**: el ratio **omega-6:omega-3** sigue sin
+aplicarse, y ahora se sabe exactamente por qué. No falta motor —el mecanismo es
+genérico y admite cualquier par—: falta el número. Sus fuentes van de **<1:1**
+(artrosis, Tabla 34-2) a **7:1** (renal, Tabla 37-9), un factor siete entre dos
+enfermedades que un mismo perro puede tener a la vez, y el NRC 2006 dice del
+ratio de totales que «is not helpful». Sigue en
+`limites_escritos_que_el_solver_no_aplica`, que es dónde va lo que está escrito y
+no se aplica.
+
+---
+
 ## ABIERTO · Lo que no está cerrado, y por qué
 
 | | Qué falta |

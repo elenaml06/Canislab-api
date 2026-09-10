@@ -373,6 +373,36 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto",
             _de_s = ("exigido por la etapa, no por una patología"
                      if clave in _del_libro_suelo else "por patología")
             rotos.append(f"{clave} {v:.1f} (suelo {suelo:.1f} {_de_s})")
+    # ⚠️ AÑADIDO (10 septiembre) — LOS RATIOS QUE PIDE UNA PATOLOGÍA.
+    #
+    # Es el mismo agujero de siempre visto en un cociente: el semáforo comprueba
+    # el Ca:P contra el rango de FEDIAF, que en adulto es 1,0-2,0, y la Tabla
+    # 40-5 del oxalato pide 1,1-2,0. Un menú con 1,06 sale VERDE y está por
+    # debajo de lo que pide la fuente para ese perro. Medido: pasaba en el perro
+    # de 30 kg.
+    #
+    # Se mide con `valor_nutriente` -- el valor DECLARADO, sin imputar huecos --
+    # y con el mismo 0,5 % de margen que usa el semáforo para este mismo ratio,
+    # porque el solver construye su fila con exactamente estos números. Si aquí
+    # se imputaran los huecos y allí no, este filtro tiraría menús que el solver
+    # construyó bien: es la lección del 8 de septiembre, y en un cociente pesa el
+    # doble porque el hueco puede caer en el numerador o en el denominador.
+    from motor_completo import ratios_de_patologias as _ratios_pat
+    for (_n_r, _d_r), _cotas_r in _ratios_pat(patologias, etapa).items():
+        _tot_n = sum(valor_nutriente(al.get(n, {}).get("nutrientes", {}), _n_r) / 100.0 * g
+                     for n, g in gramos.items())
+        _tot_d = sum(valor_nutriente(al.get(n, {}).get("nutrientes", {}), _d_r) / 100.0 * g
+                     for n, g in gramos.items())
+        if _tot_d <= 0:
+            continue
+        _ratio_real = _tot_n / _tot_d
+        if _cotas_r.get("min") is not None and _ratio_real < _cotas_r["min"] * 0.995:
+            rotos.append(f"{_n_r}:{_d_r} {_ratio_real:.2f} "
+                         f"(mínimo {_cotas_r['min']:.2f} por patología)")
+        if _cotas_r.get("max") is not None and _ratio_real > _cotas_r["max"] * MARGEN:
+            rotos.append(f"{_n_r}:{_d_r} {_ratio_real:.2f} "
+                         f"(máximo {_cotas_r['max']:.2f} por patología)")
+
     if pct is not None:
         grasa_g = sum((_valor_num(al.get(n, {}).get("nutrientes", {}).get("grasa")) or 0.0) / 100.0 * g
                       for n, g in gramos.items())
@@ -2553,12 +2583,29 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
 
         if _choque:
             _l = _choque["limites_que_chocan"]
-            _texto = " y ".join(
-                f"{x['nombre_patologia']} exige "
-                f"{'como mucho' if x['tipo'] != 'suelo' else 'al menos'} "
-                f"{_num_bonito(x['valor'])} {_UNIDAD_DE.get(x['clave'], '')} "
-                f"de {_NOMBRE_NUTRIENTE.get(x['clave'], x['clave'])} por cada 1000 kcal".strip()
-                for x in _l)
+
+            # ⚠️ UN RATIO NO SE DICE IGUAL QUE UN TOPE (10 septiembre). Su clave
+            # es «calcio:fosforo:min», no un nutriente, y no va «por cada 1000
+            # kcal» porque es adimensional. Sin esta rama la frase salía «exige
+            # como mucho 1,1 de calcio:fosforo:min por cada 1000 kcal», que está
+            # mal en las tres cosas: el sentido, la unidad y el nombre. Y este
+            # texto es justo el que lee alguien que tiene que decidir qué límite
+            # cede.
+            def _frase_de_limite(x):
+                if x["tipo"] == "ratio":
+                    _n_r, _d_r, _s_r = x["clave"].split(":")
+                    return (f"{x['nombre_patologia']} exige una relación "
+                            f"{_NOMBRE_NUTRIENTE.get(_n_r, _n_r)}:"
+                            f"{_NOMBRE_NUTRIENTE.get(_d_r, _d_r)} de "
+                            f"{'al menos' if _s_r == 'min' else 'como mucho'} "
+                            f"{_num_bonito(x['valor'])}:1")
+                return (f"{x['nombre_patologia']} exige "
+                        f"{'como mucho' if x['tipo'] != 'suelo' else 'al menos'} "
+                        f"{_num_bonito(x['valor'])} {_UNIDAD_DE.get(x['clave'], '')} "
+                        f"de {_NOMBRE_NUTRIENTE.get(x['clave'], x['clave'])} "
+                        f"por cada 1000 kcal").strip()
+
+            _texto = " y ".join(_frase_de_limite(x) for x in _l)
             return {
                 "factible": False,
                 "motivo": (
@@ -2569,11 +2616,15 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 "choque_de_patologias": [
                     {"patologia": x["patologia"],
                      "nombre_patologia": x["nombre_patologia"],
-                     "nutriente": x["clave"],
+                     "nutriente": (x["clave"].rsplit(":", 1)[0] if x["tipo"] == "ratio"
+                                   else x["clave"]),
                      "nombre_nutriente": _NOMBRE_NUTRIENTE.get(x["clave"], x["clave"]),
                      "tipo": x["tipo"],
                      "valor": x["valor"],
-                     "unidad": ((_UNIDAD_DE.get(x["clave"]) or "") + "/1000 kcal").lstrip("/"),
+                     # Un ratio es adimensional: decir «/1000 kcal» de un
+                     # cociente sería inventarse una unidad que no existe.
+                     "unidad": ("ratio" if x["tipo"] == "ratio"
+                                else ((_UNIDAD_DE.get(x["clave"]) or "") + "/1000 kcal").lstrip("/")),
                      "fuente": x["fuente"],
                      "por_que": x["por_que"]}
                     for x in _l],
@@ -5157,6 +5208,42 @@ def listar_patologias():
         salida.sort(key=lambda x: x["nutriente"])
         return salida
 
+    def _ratios_servidos(bloque):
+        """Los ratios de la patologia, con el de FEDIAF del mismo par al lado."""
+        # El unico ratio que FEDIAF pone es el Ca:P, y esta en su propia fila de
+        # la tabla (no en `MAPA`, porque no es un nutriente). Se lee de ahi y no
+        # se escribe a mano: una segunda copia del 1,0-2,0 es exactamente como
+        # se desincronizo la tabla de patologias del POST /menu.
+        _fediaf_por_par = {}
+        for fila in reqs:
+            if fila.get("nutriente") == "Relacion_Ca_P":
+                _fediaf_por_par[("calcio", "fosforo")] = (_num(fila.get("minAdulto")),
+                                                          _num(fila.get("maxAdulto")))
+        salida = []
+        for clave, r in (bloque or {}).items():
+            _par = (r.get("numerador"), r.get("denominador"))
+            _f_min, _f_max = _fediaf_por_par.get(_par, (None, None))
+            _valor = _num(r.get("valor"))
+            _referencia = _f_min if r.get("sentido") == "min" else _f_max
+            _margen = None
+            if _valor is not None and _referencia:
+                _margen = round((_valor - _referencia) / _referencia * 100, 1)
+            salida.append({
+                "clave": clave,
+                "numerador": r.get("numerador"),
+                "denominador": r.get("denominador"),
+                "sentido": r.get("sentido"),
+                "valor": _valor,
+                "minimo_fediaf_adulto": _f_min,
+                "maximo_fediaf_adulto": _f_max,
+                "margen_pct": _margen,
+                "aplicado_por_el_solver": bool(r.get("aplicado_por_el_solver")),
+                "fuente": r.get("fuente"),
+                "por_que": r.get("por_que"),
+            })
+        salida.sort(key=lambda x: x["clave"])
+        return salida
+
     crudo = cargar_crudo()
     salida = {}
     for clave, p in crudo["patologias"].items():
@@ -5176,6 +5263,14 @@ def listar_patologias():
             "nota": p.get("nota"),
             "topes": _limites(p.get("topes_por_1000kcal"), es_tope=True),
             "suelos": _limites(p.get("suelos_por_1000kcal"), es_tope=False),
+            # ⚠️ AÑADIDO (10 septiembre) — LOS RATIOS QUE PIDE LA PATOLOGIA.
+            # Se sirven con el limite de FEDIAF del MISMO ratio al lado, que es
+            # el sentido entero de este endpoint: el oxalato pide Ca:P >= 1,1 y
+            # FEDIAF pide >= 1,0 en adulto, o sea que aprieta un 10 %. Sin ese
+            # numero enfrente, «1,1» no dice si es un limite estrecho o un
+            # adorno. Van con `aplicado_por_el_solver` explicito porque hasta
+            # hoy estos dos estaban escritos y NO se aplicaban.
+            "ratios": _ratios_servidos(p.get("ratios")),
             # El aviso que ya le llega dentro del menu, aqui tambien: al
             # ELEGIR la patologia, que es cuando decide, no despues de
             # formular.
@@ -5197,8 +5292,9 @@ def listar_patologias():
             # (porque no cabe, o porque depende de un dato clínico que no
             # tenemos) se guarda igual con su fuente para no perderla -- pero
             # servirla sin la etiqueta sería peor que no servirla: parecería un
-            # límite. Mismo criterio que `aplicado_por_el_solver` en el ratio
-            # Ca:P de los urolitos de calcio.
+            # límite. Mismo criterio que `aplicado_por_el_solver`, que desde el
+            # 10 de septiembre viaja también con cada ratio: los dos Ca:P de los
+            # urolitos de calcio eran el ejemplo de aquí y ya SÍ se aplican.
             "limites_escritos_que_el_solver_no_aplica":
                 p.get("limites_escritos_que_el_solver_no_aplica"),
         }

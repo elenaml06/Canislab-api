@@ -8984,6 +8984,13 @@ if _doc65 is not None:
          r"## 8 · Las patologías: [\d.,]+ perfiles, ([\d.,]+) límites",
          sum(len(v.get("topes_por_1000kcal", {})) + len(v.get("suelos_por_1000kcal", {}))
              for v in _pat65.values()), "patologias.json"),
+        # ⚠️ LOS RATIOS SE CUENTAN APARTE (10 septiembre), y no por capricho: no
+        # van «por 1000 kcal», asi que sumarlos a la cifra de arriba diria que
+        # hay 78 limites de la misma clase y no los hay. Cada extremo cuenta uno
+        # porque el suelo y el techo del mismo par bloquean por separado.
+        ("cuantos ratios piden las patologias",
+         r"perfiles, [\d.,]+ límites numéricos y ([\d.,]+) ratios",
+         sum(len(v.get("ratios", {})) for v in _pat65.values()), "patologias.json"),
     ]
 
     for _que65, _pat_re65, _vivo65, _donde65 in _ANCLAS_65:
@@ -9650,13 +9657,25 @@ if "Discrepancias: 0" not in _aud72.stdout:
 print(f"  {_aud72.stdout.strip().splitlines()[0].strip() if _aud72.stdout.strip() else ''}")
 
 # Y la densidad, fijada en un solo sitio: si alguien la cambia a 3,5 «porque el
-# Box 1-2 lo dice», esto lo para. El Box 1-2 es un ejemplo trabajado con un
-# alimento concreto, no la densidad de referencia de las tablas.
+# Box 1-2 lo dice», esto lo para.
+#
+# ⚠️ CORREGIDO EL 10 DE SEPTIEMBRE. Aqui ponia que el Box 1-2 «es un ejemplo
+# trabajado con un alimento concreto». No lo es: dice literalmente que los
+# valores recomendados «for canine and feline foods are based on an energy
+# density of 3.5 and 4.0 kcal ME/g ... respectively», o sea 3,5 para el perro.
+# SACN5 SE CONTRADICE CONSIGO MISMO, y gana el 4,0 de sus TABLAS caninas: la
+# nota al pie de la 13-3 lo declara, el cap.34 convierte la glucosamina con el,
+# y el cap.15 lo demuestra sin depender de ninguna nota -- «20 % of the energy
+# from carbohydrate ... translates to about 23 % DM», que sale 22,9 % a 4,0 y
+# 20,0 % a 3,5. Ver PARA_EL_NUTRICIONISTA.md §0.1.
 import json as _json72
+from auditar_conversiones import BLOQUES as _BLOQUES_72
 _dens72 = set()
 for _pat72, _f72 in _json72.load(open("patologias.json", encoding="utf-8"))["patologias"].items():
-    for _b72 in ("topes_por_1000kcal", "suelos_por_1000kcal", "topes_por_1000kcal_si_ademas",
-                 "suelos_por_1000kcal_si_ademas", "limites_escritos_que_el_solver_no_aplica"):
+    # La lista de bloques se importa del propio auditor y no se copia: una
+    # segunda copia se desincroniza, y la primera vez que pasaria seria justo al
+    # anadir un bloque nuevo -- que es lo que paso con `ratios` el 10 de sep.
+    for _b72 in _BLOQUES_72:
         for _n72, _c72 in (_f72.get(_b72) or {}).items():
             if isinstance(_c72, dict) and _c72.get("conversion"):
                 _dens72.add(_c72["conversion"]["densidad_kcal_por_g_MS"])
@@ -9856,6 +9875,157 @@ for _pat74, _f74 in sorted(_CRUDO_74.items()):
 
 print(f"  {sum(len(v.get('avisos') or {}) for v in _CRUDO_74.values())} avisos revisados, "
       f"{_afirmaciones74} afirmaciones de «bajado a» comprobadas contra el tope aplicado")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 75 — EL RATIO QUE PIDE UNA PATOLOGIA
+# ============================================================
+#
+# ⚠️ POR QUE EXISTE (10 septiembre).
+#
+# La Tabla 40-5 del oxalato y la 41-6 del fosfato calcico dicen las dos
+# «maintain a normal Ca:P ratio (1.1:1 to 2:1)». Estaban escritas desde el 8 de
+# septiembre, con su fuente y su cita literal, y con `aplicado_por_el_solver:
+# false` -- porque el motor sabia de ratios Ca:P (los aplica desde FEDIAF y
+# desde la nota b de raza grande) y NO tenia forma de que una PATOLOGIA pidiera
+# el suyo.
+#
+# ⚠️ Y NO ERA COSMETICO, que es la parte que importa. Medido antes de aplicarlo,
+# por la via de la API y en cinco perros adultos: el de 30 kg con oxalato salia
+# con Ca:P 1,06 -- POR DEBAJO del 1,1 de la fuente -- y salia EN VERDE. El
+# semaforo mide el Ca:P contra el rango de FEDIAF, que en adulto es 1,0-2,0, y
+# los requisitos de FEDIAF son los de un perro SANO. Es el mismo agujero del
+# renal con 3084 mg de fosforo, esta vez en un cociente.
+#
+# QUE VIGILA:
+#   1. Que el menu que se entrega cumple el ratio de su patologia, medido sobre
+#      el menu real y por la via de la API.
+#   2. Que `_tope_patologia_roto` lo CAZA si no se cumple -- probado con el
+#      fallo puesto, rompiendo un menu bueno a proposito. Un test que pasa con
+#      el fallo dentro no sirve (regla del CLAUDE.md).
+#   3. Que en `ratios` no hay ni una celda con `aplicado_por_el_solver: false`.
+#      Ahi solo va lo que se aplica; lo escrito y no aplicado vive en
+#      `limites_escritos_que_el_solver_no_aplica`, como el omega-6:omega-3, que
+#      sigue sin aplicarse porque las fuentes se contradicen (de <1:1 a 7:1
+#      segun la enfermedad) y eso lo decide un clinico.
+#   4. Que `GET /patologias` sirve los mismos numeros que lee el solver.
+print("\n=== BLOQUE 75: el ratio que pide una patologia ===")
+
+import json as _json75
+from motor_completo import ratios_de_patologias as _ratios_pat_75
+
+_CRUDO_75 = _json75.load(open("patologias.json", encoding="utf-8"))["patologias"]
+_CON_RATIO_75 = sorted(k for k, v in _CRUDO_75.items() if v.get("ratios"))
+
+if not _CON_RATIO_75:
+    fallos.append("BLOQUE75: ninguna patologia tiene `ratios`. Habia dos (oxalato y fosfato "
+                  "calcico, Tablas 40-5 y 41-6). Si se han quitado, este bloque deja de vigilar "
+                  "nada y hay que decir por que")
+
+# 3. Nada inerte en `ratios`.
+for _p75, _f75 in sorted(_CRUDO_75.items()):
+    for _c75, _r75 in sorted((_f75.get("ratios") or {}).items()):
+        if not _r75.get("aplicado_por_el_solver"):
+            fallos.append(f"BLOQUE75: «{_p75}/{_c75}» esta en `ratios` y dice que el solver no lo "
+                          f"aplica. En `ratios` solo va lo que se aplica: si no se aplica, va a "
+                          f"`limites_escritos_que_el_solver_no_aplica` con su medida, o es un "
+                          f"limite que parece un limite y no hace nada")
+
+# 4. Lo que sirve el endpoint es lo que lee el solver.
+_r75_api = _c.get("/patologias")
+if _r75_api.status_code != 200:
+    fallos.append(f"BLOQUE75: /patologias contesta {_r75_api.status_code}")
+else:
+    _serv75 = _r75_api.json().get("patologias") or {}
+    for _p75 in _CON_RATIO_75:
+        _dichos75 = {x["clave"]: x for x in (_serv75.get(_p75) or {}).get("ratios") or []}
+        for _c75, _r75 in sorted((_CRUDO_75[_p75].get("ratios") or {}).items()):
+            _d75 = _dichos75.get(_c75)
+            if not _d75:
+                fallos.append(f"BLOQUE75: /patologias no sirve el ratio «{_c75}» de «{_p75}». "
+                              f"Quien firma una pauta lee ese numero ahi, y si no esta lo copiara "
+                              f"a mano a la app -- que es la tercera copia de la misma tabla")
+                continue
+            if abs(float(_d75.get("valor")) - float(_r75["valor"])) > 1e-9:
+                fallos.append(f"BLOQUE75: /patologias sirve {_d75.get('valor')} para «{_p75}/{_c75}» "
+                              f"y el solver aplica {_r75['valor']}")
+            for _campo75 in ("numerador", "denominador", "sentido"):
+                if _d75.get(_campo75) != _r75.get(_campo75):
+                    fallos.append(f"BLOQUE75: /patologias sirve {_campo75}={_d75.get(_campo75)!r} "
+                                  f"para «{_p75}/{_c75}» y el archivo dice {_r75.get(_campo75)!r}")
+
+# 1. El menu que se entrega cumple el ratio, medido en vivo.
+_PESOS_75 = [(3.0, 250.0), (10.0, 600.0), (20.0, 950.0), (30.0, 1300.0), (40.0, 1600.0)]
+_menus_75 = 0
+_peor_75 = None
+_uno_bueno_75 = None
+for _p75 in _CON_RATIO_75:
+    _cotas75 = _ratios_pat_75([_p75], "Adulto")
+    if not _cotas75:
+        fallos.append(f"BLOQUE75: «{_p75}» tiene `ratios` en el archivo y "
+                      f"`ratios_de_patologias` no devuelve ninguno. La celda esta escrita y el "
+                      f"solver no la ve: es justo el estado del que se venia")
+        continue
+    for _peso75, _der75 in _PESOS_75:
+        _resp75 = _c.post("/menu/v2", json={
+            "nombres_alimentos": [], "der_objetivo": _der75, "etapa_requisitos": "Adulto",
+            "peso_perro_kg": _peso75, "modo": "automatico", "patologias": [_p75]}).json()
+        if not _resp75.get("factible") or not _resp75.get("menu"):
+            fallos.append(f"BLOQUE75: «{_p75}» no da menu a {_peso75:g} kg despues de aplicar su "
+                          f"ratio. Si la cifra de la fuente no cabe, no se baja: se mueve a "
+                          f"`limites_escritos_que_el_solver_no_aplica` con su medida y se "
+                          f"pregunta. Motivo: {str(_resp75.get('motivo'))[:100]}")
+            continue
+        _menus_75 += 1
+        _g75 = _resp75["menu"]
+        if _uno_bueno_75 is None:
+            _uno_bueno_75 = (_p75, _g75)
+        for (_n75, _d75n), _cot75 in _cotas75.items():
+            _tn75 = sum(valor_nutriente(al.get(n, {}).get("nutrientes", {}), _n75) / 100.0 * g
+                        for n, g in _g75.items())
+            _td75 = sum(valor_nutriente(al.get(n, {}).get("nutrientes", {}), _d75n) / 100.0 * g
+                        for n, g in _g75.items())
+            if _td75 <= 0:
+                continue
+            _v75 = _tn75 / _td75
+            if _cot75.get("min") is not None:
+                if _peor_75 is None or _v75 < _peor_75[0]:
+                    _peor_75 = (_v75, _cot75["min"], _p75, _peso75)
+                if _v75 < _cot75["min"] * 0.995:
+                    fallos.append(f"BLOQUE75: «{_p75}» a {_peso75:g} kg entrega un menu con "
+                                  f"{_n75}:{_d75n} = {_v75:.3f} y su fuente pide al menos "
+                                  f"{_cot75['min']}. Sale verde igual porque el semaforo mide el "
+                                  f"Ca:P contra FEDIAF, que son los requisitos de un perro SANO")
+            if _cot75.get("max") is not None and _v75 > _cot75["max"] * 1.005:
+                fallos.append(f"BLOQUE75: «{_p75}» a {_peso75:g} kg entrega un menu con "
+                              f"{_n75}:{_d75n} = {_v75:.3f} y su fuente pide como mucho "
+                              f"{_cot75['max']}")
+
+# 2. CON EL FALLO PUESTO. Se coge un menu bueno y se le rompe el ratio a mano
+#    -- se le quita el calcio a todo lo que lo lleva, que es exactamente lo que
+#    pasaba antes de aplicar la restriccion -- y se exige que el filtro final lo
+#    cace. Sin esto, este bloque pasaria igual con el ratio desconectado.
+if _uno_bueno_75:
+    _p75, _g75 = _uno_bueno_75
+    _al_roto_75 = {n: dict(v) for n, v in al.items()}
+    for n in _al_roto_75:
+        _nut_r75 = dict(_al_roto_75[n].get("nutrientes") or {})
+        if _nut_r75.get("calcio"):
+            _nut_r75["calcio"] = float(_nut_r75["calcio"]) * 0.5
+        _al_roto_75[n]["nutrientes"] = _nut_r75
+    _cazado_75 = _api._tope_patologia_roto(_g75, _al_roto_75, [_p75], "Adulto")
+    if not any("calcio:fosforo" in str(x) for x in _cazado_75):
+        fallos.append(f"BLOQUE75: se ha partido por la mitad el calcio de todo el catalogo y "
+                      f"`_tope_patologia_roto` NO dice que «{_p75}» se salga de su ratio "
+                      f"(devuelve {_cazado_75}). El filtro final es la segunda capa de la regla 1: "
+                      f"si un camino nuevo no le pasa las patologias al motor, es lo unico que "
+                      f"queda")
+
+print(f"  {len(_CON_RATIO_75)} patologias con ratio · {_menus_75} menus resueltos en vivo")
+if _peor_75:
+    print(f"  el mas justo: {_peor_75[0]:.3f} (suelo {_peor_75[1]}) en {_peor_75[2]} "
+          f"a {_peor_75[3]:g} kg")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 

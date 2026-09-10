@@ -44,6 +44,18 @@ con alguna, casi siempre el error está en el cambio.
    salía verde. Si un camino nuevo llama al motor, tiene que pasarle
    `patologias` — se olvidó una vez en la edición y una sola edición
    tiraba el tope.
+   Y hay una **cuarta forma de límite desde el 10 de septiembre**: el **ratio
+   entre dos nutrientes que pide una patología**, en el bloque `ratios` de
+   `patologias.json`. Se estrenó con el Ca:P de 1,1-2,0 que piden las Tablas 40-5
+   y 41-6 de SACN5 para los dos urolitos de calcio, que llevaba dos días escrito
+   con `aplicado_por_el_solver: false` porque el motor sabía de ratios Ca:P —los
+   aplica desde FEDIAF y desde la nota b— y **no tenía forma de que una PATOLOGÍA
+   pidiera el suyo**. Y no era cosmético: el perro de 30 kg con oxalato salía con
+   Ca:P **1,06** y salía **en verde**, porque el semáforo mide contra el 1,0-2,0
+   de FEDIAF, que es el rango de un perro SANO. Es genérico —admite cualquier par
+   de nutrientes— porque el omega-6:omega-3 necesita exactamente lo mismo, aunque
+   ese siga **sin aplicarse**: sus fuentes van de <1:1 a 7:1 según la enfermedad y
+   eso lo decide un clínico. Lo vigila el BLOQUE 75, con el fallo puesto.
    Y desde el 8 de septiembre hay una **tercera clase de techo**: los que el
    libro recomienda al perro **sano**, que se aplican **sin que haya ninguna
    patología marcada**, viven en `recomendaciones_libro.json` y se comprueban
@@ -116,7 +128,7 @@ jubilado — que desde fuera se parecen mucho.
 
 | Archivo | Qué hace |
 |---|---|
-| `motor_completo.py` | **El corazón.** `resolver()` monta el problema MILP y lo resuelve: los 41 nutrientes (los 12 aminoácidos entre ellos desde el 28 de agosto), el ratio Ca:P y los topes de seguridad como restricciones simultáneas. Aquí vive `topes_de_patologias()`, que resuelve los topes para una etapa y una combinación de patologías — pero **la tabla ya no está aquí**: se importa de `patologias.py` |
+| `motor_completo.py` | **El corazón.** `resolver()` monta el problema MILP y lo resuelve: los 41 nutrientes (los 12 aminoácidos entre ellos desde el 28 de agosto), el ratio Ca:P y los topes de seguridad como restricciones simultáneas. Aquí vive `topes_de_patologias()`, que resuelve los topes para una etapa y una combinación de patologías — pero **la tabla ya no está aquí**: se importa de `patologias.py`. Y desde el 10 de septiembre `ratios_de_patologias()`, su hermana para los cocientes: una patología puede pedir su propio ratio entre dos nutrientes (bloque `ratios`), y se combina con el mismo criterio que todo lo demás — el suelo con `max()`, el techo con `min()`, o sea que solo puede apretar |
 | `verificar.py` | El semáforo. `MAPA` es **la** lista de requisitos, la única, compartida con el solver y con el analizador. Y `suplementar()`, que cierra huecos |
 | `seguridad.py` | Los cinco topes crónicos y los avisos. Cada cifra con su fuente escrita al lado |
 | `constructor.py` | Proporciones BARF de partida y `valor_nutriente()` (las claves derivadas, como `epa_dha`) |
@@ -139,7 +151,7 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 74 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `pruebas_completas.py` | **La batería.** Los 75 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
 | `auditar_patologias.py` | Cada cifra de `patologias.json` contra `requerimientos_v2_final.json`: que ninguna patología formulable tenga un tope por debajo del mínimo de FEDIAF, y que la clave del nutriente exista en el `MAPA`. Lo ejecuta el BLOQUE 32 |
 | `radiografia.py` | Imprime los números que **ENTRAN** al motor, para comparar `main` con una rama a golpe de `diff`. No lo ejecuta la batería: se corre a mano. Existe porque el semáforo comprueba el menú contra las kcal que le dieron — si las kcal ya venían mal, el menú sale VERDE para un perro que no es el tuyo, y eso solo se ve en la entrada |
 | `auditar_catalogo.py` | Huecos y datos raros del catálogo, y quién se queda sin aminograma. Lo ejecuta el BLOQUE 19 |
@@ -472,7 +484,7 @@ se comprueba entero en cada batería.
 python3 pruebas_completas.py     # ~25 min, tiene que salir TODO EN VERDE
 ```
 
-Los 74 bloques tardan unos **25 minutos** (1.458 s en la última medida; el
+Los 75 bloques tardan unos **25 minutos** (1.458 s en la última medida; el
 «~10 min» que ponía aquí se quedó corto en cuanto los bloques 50 a 61
 empezaron a resolver menús de verdad, y el «~2 min» de antes llevaba meses
 caducado). No necesita red ni claves de verdad: se fabrica
