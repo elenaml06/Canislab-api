@@ -47,9 +47,12 @@ concurrency:
 jobs:
   bateria:
     runs-on: ubuntu-latest
-    # 10 min de media. 30 deja sitio a un runner lento sin dejar colgado
-    # un trabajo roto durante una hora.
-    timeout-minutes: 30
+    # ⚠️ SUBIDO A 45 EL 10 DE SEPTIEMBRE. El comentario decia «10 min de
+    # media» y llevaba caducado desde que los bloques 50 a 61 empezaron a
+    # resolver menus de verdad: la ultima tanda completa en este runner tardo
+    # 1.695 s (28 min) con 78 bloques, y ahora son 81. Con el limite en 30 la
+    # bateria se moria por reloj y el rojo no diria nada del motor.
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
 
@@ -61,7 +64,14 @@ jobs:
       - name: Instalar lo que hace falta
         run: pip install -r requirements.txt
 
-      - name: Ejecutar los 50 bloques
+      # `pyflakes` no es del motor: lo usa el BLOQUE 0 para cazar en dos
+      # segundos un nombre que no existe. Sin el, ese bloque se salta diciendolo
+      # y un NameError de un bloque del final no aparece hasta 45 minutos
+      # despues -- que es exactamente lo que paso hoy dos veces.
+      - name: Instalar pyflakes, para el BLOQUE 0
+        run: pip install pyflakes
+
+      - name: Ejecutar los 81 bloques
         # Sin `-u` la salida sale a trompicones y, si algo se cuelga, el
         # registro no dice por qué bloque iba.
         run: python3 -u pruebas_completas.py

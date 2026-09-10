@@ -107,6 +107,44 @@ def comprobar_menu(nombre_caso, g, der, etapa, peso=None):
 
 
 # ============================================================
+# BLOQUE 0 — que este archivo no tenga un nombre que no existe
+# ============================================================
+#
+# ⚠️ POR QUE ESTA LO PRIMERO, Y ES UN FALLO MIO DE HOY (10 septiembre). Dos
+# veces en la misma tarde, y las dos con la misma forma: un nombre mal escrito
+# en un bloque del final que no revienta hasta 45 MINUTOS despues.
+#
+#   · `cliente.get("/patologias")` en el BLOQUE 80, cuando el TestClient de este
+#     archivo se llama `_c`. NameError en GitHub Actions, tras la bateria entera.
+#     Se escapo porque esa comprobacion se habia probado en un script aparte,
+#     donde el cliente si se llamaba asi -- un trozo de bateria que no se ha
+#     ejecutado DENTRO de la bateria no esta probado.
+#   · Antes, `_c` como variable de bucle en el BLOQUE 56, que PISABA ese mismo
+#     TestClient con un dict y reventaba en el BLOQUE 60 con «'dict' object has
+#     no attribute 'post'», que no dice donde esta el fallo.
+#
+# `python3 -m py_compile` no caza ninguno de los dos: los dos son sintaxis
+# valida. Esto tarda dos segundos y los caza los dos.
+print("=== BLOQUE 0: ningun nombre sin definir en este archivo ===")
+try:
+    from pyflakes.api import checkPath as _chk0
+    from pyflakes.reporter import Reporter as _Rep0
+    import io as _io0
+    _sal0, _err0 = _io0.StringIO(), _io0.StringIO()
+    _chk0(__file__, _Rep0(_sal0, _err0))
+    _malos0 = [l for l in _sal0.getvalue().splitlines() if "undefined name" in l]
+    print(f"  {len(_malos0)} nombres sin definir")
+    for _l0 in _malos0:
+        fallos.append(f"BLOQUE0: {_l0.strip()} -- un nombre que no existe no lo caza "
+                      f"`py_compile`, y revienta cuando llega su bloque, no antes")
+except ImportError:
+    # No se instala aqui a proposito: la bateria no toca la maquina donde corre.
+    # Si falta, se dice -- callarse seria dejar de vigilar sin avisar.
+    print("  (pyflakes no esta instalado: `pip install pyflakes` para que este bloque mire)")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # BLOQUE 1 — todas las etapas x varios pesos, automático
 # ============================================================
 print("=== BLOQUE 1: etapas x pesos (automático) ===")
@@ -9334,10 +9372,14 @@ if "Discrepancias: 0" not in _aud68.stdout:
 _inv68 = _json_b12.load(open("fediaf_tablas.json", encoding="utf-8")).get("secciones") or {}
 _lec68 = _json_b12.load(open("lecturas_fuentes.json", encoding="utf-8")).get("lecturas") or {}
 for _sec68, _f68 in sorted(_inv68.items()):
-    if _f68.get("leida") and f"FEDIAF/{_sec68}" not in _lec68:
-        fallos.append(f"BLOQUE68: fediaf_tablas.json dice que la seccion {_sec68} esta LEIDA y no "
-                      f"esta en lecturas_fuentes.json. Sin el desglose elemento a elemento, «leida» "
-                      f"vuelve a ser una palabra que se escribe sola")
+    # Una seccion puede estar desglosada DENTRO de otra mas grande -- 7.2.3.5 vive
+    # dentro del anexo 7.2 entero desde el 10 de septiembre --, y entonces lo dice
+    # con `desglose_en`. Lo que no vale es que no este en ninguna parte.
+    _donde68 = _f68.get("desglose_en") or f"FEDIAF/{_sec68}"
+    if _f68.get("leida") and _donde68 not in _lec68:
+        fallos.append(f"BLOQUE68: fediaf_tablas.json dice que la seccion {_sec68} esta LEIDA y su "
+                      f"desglose ({_donde68}) no esta en lecturas_fuentes.json. Sin el desglose "
+                      f"elemento a elemento, «leida» vuelve a ser una palabra que se escribe sola")
 print(f"  {_aud68.stdout.strip().splitlines()[0].strip() if _aud68.stdout.strip() else ''}")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
@@ -10674,7 +10716,13 @@ for _f80 in _amp80.auditar():
 # sirve a quien firma la pauta: es lo mismo que pasaba con los ocho avisos_extra
 # de patologia, escritos con su fuente y sin llegar a ninguna pantalla. Se
 # comprueba por la MISMA puerta que usa la app, cifra a cifra.
-_r80 = cliente.get("/patologias")
+# ⚠️ `_c`, que es como se llama el TestClient de este archivo. La primera
+# version puso `cliente` -- el nombre que tiene en mi cabeza, no en el fichero --
+# y reviento en GitHub Actions con un NameError despues de 45 minutos. Se me
+# escapo porque esta comprobacion la habia probado en un script aparte, donde
+# el cliente si se llamaba asi. Un trozo de bateria que no se ha ejecutado
+# DENTRO de la bateria no esta probado.
+_r80 = _c.get("/patologias")
 assert _r80.status_code == 200, _r80.status_code
 _serv80 = _r80.json()["patologias"]
 _tabla80 = _json79.load(open("patologias.json", encoding="utf-8"))["patologias"]
@@ -10708,6 +10756,82 @@ if _sin80:
                   f"({_sin80[:4]}). Un margen que no sale por la API no lo ve quien firma la "
                   f"pauta, que es para quien se escribio")
 print(f"  {_n80} margenes servidos por GET /patologias y comprobados contra el fichero")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 81 — el TEXTO de SACN5, no solo sus tablas
+# ============================================================
+#
+# ⚠️ POR QUE EXISTE (10 septiembre). Elena, despues de que le dijera que SACN5
+# estaba «leido entero con tablas y texto»:
+#
+#     «te mandé leer sacn5 todo bien con tablas y texto, y ahora resulta que
+#      tampoco... ¿qué está fallando?»
+#
+# Fallaban DOS cosas, y la segunda es peor que la primera.
+#
+# 1. «Leido» significaba tres cosas -- sacado del PDF, con veredicto para cada
+#    tabla Y CADA FRASE, y aplicado -- y se usaban como una. De SACN5 habia
+#    contador para las TABLAS (`sacn5_tablas.json`, BLOQUE 78) y del TEXTO no
+#    habia ninguno. Sin contador, «leido entero» es una afirmacion mia, y de
+#    esas ya sabemos lo que valen.
+#
+# 2. ⚠️ LOS .txt ESTABAN MEZCLADOS. Se extrajeron conservando la DISPOSICION
+#    VISUAL de la pagina, y SACN5 va a DOS COLUMNAS: cada linea pegaba la de la
+#    columna izquierda con la de la derecha. **24.012 de 64.074 lineas, el
+#    37,5 %.** O sea que mas de un tercio de lo que se leia eran frases que el
+#    libro NO dice, como «Linoleic and α-linolenic acids are considered / DM fat
+#    should be restricted to between 7 to 10%», que son dos parrafos distintos.
+#    Y en FEDIAF era todavia peor: el 49,3 %.
+#
+#    Eso explica por que «leido entero» podia ser verdad en esfuerzo y falso en
+#    resultado. Se rehizo con `canislab-fuentes/sacn5/extraer_texto.py` y bajo a
+#    2 lineas de 123.191.
+#
+# Este bloque clava el numero de elementos nutricionales del texto que siguen
+# sin veredicto, EXACTO, como el 78 hace con las tablas: solo baja cuando
+# alguien lee y resuelve, y lo baja en el mismo commit.
+print(f"\n{'='*60}")
+print("=== BLOQUE 81: el texto de SACN5, elemento a elemento ===")
+_aud81 = _sp_b18.run([sys.executable, "leer_sacn5.py"], capture_output=True, text=True,
+                     cwd=_os_b18.path.dirname(_os_b18.path.abspath(__file__)))
+if "Discrepancias: 0" not in _aud81.stdout:
+    _cola81 = "\n      ".join((_aud81.stdout + _aud81.stderr).strip().splitlines()[-8:])
+    fallos.append(f"BLOQUE81: el recuento del texto de SACN5 no cuadra:\n      {_cola81}")
+for _l81 in _aud81.stdout.strip().splitlines()[:1]:
+    print(" ", _l81.strip())
+
+# Y QUE EL TEXTO NO VUELVA A ESTAR MEZCLADO. Es la comprobacion que importa: un
+# contador sobre un texto con las columnas pegadas cuenta frases que la fuente
+# no dice, y encima sale en verde. Se mide la senal con la que se descubrio --
+# texto a los dos lados de cuatro o mas espacios en una linea larga -- sobre los
+# dos ficheros de los que se lee.
+import re as _re81
+for _nom81, _ruta81 in (
+        ("SACN5", _os_b18.path.join("..", "canislab-fuentes", "sacn5")),
+        ("FEDIAF", _os_b18.path.join("..", "canislab-fuentes", "FEDIAF"))):
+    if not _os_b18.path.isdir(_ruta81):
+        print(f"  ({_nom81}: no esta el texto, no se puede comprobar el mezclado)")
+        continue
+    import glob as _glob81
+    _malas81 = _tot81 = 0
+    for _f81 in _glob81.glob(_os_b18.path.join(_ruta81, "*.txt")):
+        for _l in open(_f81, encoding="utf-8", errors="ignore"):
+            if not _l.strip():
+                continue
+            _tot81 += 1
+            if len(_l.strip()) > 60 and _re81.search(r"\w\s{4,}\w", _l):
+                _malas81 += 1
+    _pct81 = 100.0 * _malas81 / _tot81 if _tot81 else 0.0
+    print(f"  {_nom81}: {_malas81} de {_tot81} lineas con las dos columnas pegadas ({_pct81:.1f} %)")
+    if _pct81 > 1.0:
+        fallos.append(
+            f"BLOQUE81: el texto de {_nom81} vuelve a tener las dos columnas pegadas en el "
+            f"{_pct81:.1f} % de sus lineas ({_malas81} de {_tot81}). Leerlo asi es leer frases "
+            f"que la fuente NO dice, y cualquier cita sacada de ahi puede ser falsa. Se rehace "
+            f"con `canislab-fuentes/sacn5/extraer_texto.py`")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 

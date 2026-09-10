@@ -290,7 +290,9 @@
       "titulo": "Thermoregulation and housing",
       "veredicto": "pendiente",
       "por_que": "LEIDA ENTERA el 9 de septiembre por la noche. Sigue PENDIENTE a proposito, y ahora se sabe exactamente por que: de las tres cosas que anade a la Tabla VII-7, dos NO se aplican con motivo escrito en `der.py` (el suelo de 70 kcal/kg^0,75 de su revision de literatura, que no sustituye a los 95 que FEDIAF RECOMIENDA; y la termogenesis de la comida, que da el total «about 10 %» sin decir cuanto sube con la proteina ni con el numero de tomas) y la tercera es un HUECO DE PRODUCTO: «When kept outside in winter, dogs may need 10 to 90 % more calories than during summer», y la app no pregunta donde vive el perro. No se aplica solo porque no hay UNA cifra sino un rango de 1 a 9, y elegir dentro de el es criterio, no lectura. Con su cita en PENDIENTE_PRODUCTO.md.",
-      "leida": "9-sep-2026, entera"
+      "leida": "9-sep-2026, entera",
+      "desglose_en": "FEDIAF/7.2",
+      "nota_desglose": "⚠️ 10-sep-2026: su desglose ya no es una entrada propia. El texto de FEDIAF se rehizo respetando las dos columnas -- el 49,3 % de sus lineas pegaban la columna izquierda con la derecha -- y con eso cambiaron todos los numeros de linea. El mapa nuevo desglosa el ANEXO 7.2 ENTERO, que contiene a esta subseccion, en vez de un trozo suelto de el. Se gana cobertura: antes 7.2.3.5 eran 39 lineas y el resto del anexo no lo miraba nadie."
     },
     "7.3": {
       "veredicto": "aplicada",

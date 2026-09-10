@@ -4354,3 +4354,144 @@ nutricionista, en vez de elegir por él.
   razón de ser de este motor, dicha una vez más.
 - Los **potes de comida de bebé** llevan *«only 10 % of the calcium required by
   dogs and cats»* y a veces polvo de cebolla. No están en el catálogo.
+
+---
+
+## FEDIAF · el 66 % del texto que nunca había pasado por el extractor (10 de septiembre)
+
+**Elena, esta mañana:** *«anoche me dijiste que de FEDIAF TODO LEÍDO BIEN CON
+TABLAS Y TEXTO, hoy dices que no. ¿Qué está fallando?»*
+
+La pregunta es la buena, y la respuesta se puede medir. **«Leído» ha significado
+tres cosas distintas** y las he usado como si fueran una:
+
+| | Qué significa | Cómo estaba FEDIAF |
+|---|---|---|
+| 1 | Sacado del PDF entero, sin perder texto | ✅ sí |
+| 2 | Con veredicto para cada tabla **y cada frase** | tablas sí (34/34); **texto solo el 34 %** |
+| 3 | Aplicado, o descartado con motivo escrito | lo que salía del 2 |
+
+Las 11 secciones que tenían desglose cubrían **1.790 de las 5.305 líneas** del
+documento. El otro 66 % nunca había pasado por `leer_fuente.py`. Y ahí es
+exactamente donde estaba lo que seguía apareciendo después de cada «ya está
+leído»: **la regla del máximo legal no lleva ni un número**, así que un
+inventario de tablas no puede verla.
+
+**Hoy son 21 secciones, el 100 % de las líneas y 498 de 498 elementos con
+veredicto.** Lo vigila el BLOQUE 68.
+
+### F-11 · El tope de suplementación del selenio ORGÁNICO, que no estaba en ninguna parte
+
+Nota **d** de las tablas III-3a/b/c y VII-17a-d, literal del PDF (página 21):
+
+> *«For organic selenium a maximum supplementation level of **22.73 µg organic
+> Se/100 g DM** (0.20 mg organic Se/kg complete feed with a moisture content of
+> 12 %) applies.»*
+
+Puesto en la unidad del motor: 22,73 µg/100 g MS = 227,3 µg/kg MS, y a 4000
+kcal/kg MS son **56,8 µg/1000 kcal**. El tope de selenio que aplica el motor son
+**570 µg/1000 kcal** (AAFCO, `seguridad.py`), o sea **diez veces más alto**.
+
+**No son el mismo límite y hay que decirlo bien:** el de FEDIAF acota el selenio
+**orgánico que se AÑADE** —selenometionina, levadura selenizada—, no el selenio
+total del alimento, que es lo que mide el motor. Un menú de carne y vísceras
+lleva su selenio de la matriz, no añadido.
+
+**Pero no estaba escrito en ninguna parte del repo**, y decide algo el día que
+entre al catálogo un suplemento con selenio orgánico declarado. Queda anotado, y
+lo que falta es dato y no código: ninguna ficha dice en qué **forma química**
+viene su selenio, que es el mismo hueco de las vitaminas del grupo B
+(`DATOS_QUE_FALTAN.md`).
+
+### F-12 · El hierro inerte no cuenta contra el máximo legal
+
+De la sección **3.3.1**, la del PERRO —el registro de cambios lo confirma: *«b. 3.3.1.
+Following sentence was added under header “iron”»*—, y son **dos** cosas en la misma
+frase:
+
+> *«Because of very poor availability, iron from oxide or carbonate salts that
+> are added to the diet **should not be considered sources** contributing to the
+> minimum nutrient content. In addition, **the amount of inert iron is not to be
+> taken into consideration for the calculation of the total iron content of the
+> feed for EU legal maximum**.»*
+
+La primera mitad ya la teníamos por SACN5 (`sacn5_fuentes_de_minerales.json`, 9
+de septiembre): el óxido de hierro no cuenta como fuente. **La segunda es nueva:
+tampoco cuenta contra el techo.** Hoy no cambia ningún menú —no hay ninguna
+ficha con óxido ni carbonato de hierro— y queda escrito para el día que alguien
+proponga añadir una. Y el óxido de cobre lo dice FEDIAF con las mismas palabras
+que SACN5: dos fuentes independientes, misma conclusión.
+
+### F-13 · El registro de cambios por año confirma cuatro números del motor
+
+La sección 8 es el changelog de FEDIAF desde 2011, y sirve para lo contrario de
+lo habitual: **verificar que aplicamos la versión vigente y no una anterior.**
+
+| Lo que dice el changelog | Lo que aplica el motor | |
+|---|---|---|
+| Máximo legal de **zinc**: de 28,40 a **22,70** mg/100 g MS | 56,75 mg/1000 kcal (= 22,70 × 10 ÷ 4) | ✅ |
+| Máximo legal de **hierro**: de 142,00 a **68,18** mg/100 g MS | 170,45 mg/1000 kcal (= 68,18 × 10 ÷ 4) | ✅ |
+| Tabla VII-14, **piridoxina**: de 0,89 a **0,82** mg | 0,82 en `fediaf_conversiones_vitaminas.json` | ✅ |
+| Los máximos nutricionales de **calcio (6,25 g)** y **fósforo (4 g)** por 1000 kcal son de **AAFCO 1992**, «out of concern for the risk of nutrient excess» | 6250 y 4000 mg | ✅ |
+
+Ninguna de las cifras **viejas** está en el repo. Y la última fila contesta de
+paso una pregunta que llevaba semanas abierta: **de dónde sale el máximo de
+fósforo del adulto** y por qué el cachorro no tiene ninguno.
+
+### F-14 · Un estudio que respalda el calcio del cachorro, y va muy por encima del nuestro
+
+De la sección 3.3.1, y **releído sobre el texto bueno**, porque la primera
+versión de este apartado lo contaba mal:
+
+> *«While the current **SUL of Ca and P for adult dogs is extrapolated from
+> puppies**, the work of Stockman J et al. (2017) demonstrated these values being
+> appropriate. In this study a diet providing **7,1 g/1000 kcal of total Ca and
+> 4,5 g/1000 kcal of total P (Ca:P 1,6:1)** was well tolerated over a period of
+> 40 weeks, with no adverse effects noted.»*
+
+Dice dos cosas, y la primera no la sabíamos: **el límite superior seguro de
+calcio y fósforo del perro ADULTO está extrapolado del cachorro**, no medido en
+adultos. Stockman 2017 es el trabajo que lo respalda a posteriori, con un
+alimento que llevaba **por encima** de los máximos publicados (7,1 contra 6,25
+de calcio; 4,5 contra 4 de fósforo) y no hizo daño en 40 semanas.
+
+Para el motor no cambia ningún número —seguimos aplicando 6250 y 4000, que es lo
+que publica FEDIAF—, pero sí cambia lo que se puede afirmar de ellos: **no son
+una frontera medida en el animal al que se aplican.**
+
+### Y lo que NO ha aparecido, que también es un resultado
+
+De los 256 elementos nuevos, la gran mayoría son de tres sitios donde no había
+nada que aplicar, y ahora está escrito por qué:
+
+- **§3.3.2**, la sustanciación del **gato** (45 cifras). Se leyó igual porque
+  varias de sus frases hablan de las dos especies, y de ahí salieron F-12 y la
+  confirmación del óxido de cobre.
+- **§5 y §6**, los métodos analíticos y el **protocolo del ensayo de
+  digestibilidad** (24 cifras): cuántos perros, cuántos días de recogida, en qué
+  se conserva la orina. Es lo que hace un fabricante para validar un pienso. El
+  motor no hace ensayos: usa la ecuación predictiva de §7.2, que sí estaba
+  desglosada.
+- **§9**, las referencias.
+
+
+---
+
+## ⚠️ Y LO QUE HAY QUE RELEER: todas las citas sacadas de los `.txt` viejos
+
+Lo de arriba se escribió el 10 de septiembre por la mañana, sobre el texto
+extraído **conservando la disposición visual**. Ese mismo día, por la tarde, se
+descubrió que ese texto pegaba las **dos columnas** de cada página: el **49,3 %**
+de las líneas de FEDIAF y el **37,5 %** de las de SACN5.
+
+**Las cuatro de hoy (F-11 a F-14) se han vuelto a comprobar contra el texto
+bueno**, y una de ellas —F-14— decía algo distinto de lo que dice la fuente: se
+ha corregido. F-12 estaba en la sección del gato y en realidad está en la del
+perro.
+
+Lo que queda pendiente y no es opcional: **releer contra el texto bueno toda
+cita de este documento anterior al 10 de septiembre**, y las de
+`PARA_EL_NUTRICIONISTA.md`, `PATOLOGIAS.md` y `LECTURA_SACN5.md`. Una cita
+sacada de un texto con las columnas pegadas puede decir algo que la fuente no
+dice, y esa es la peor clase de error que puede tener este repo: tiene forma de
+dato bueno y lleva comillas.

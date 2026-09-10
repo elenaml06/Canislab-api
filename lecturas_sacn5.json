@@ -1,0 +1,13 @@
+{
+  "_meta": {
+    "que_es": "El contador del TEXTO de SACN5, capitulo a capitulo. Su hermano para las TABLAS es `sacn5_tablas.json`.",
+    "por_que_existe": "Elena, 10-sep-2026: «te mandé leer SACN5 todo bien con tablas y texto, y ahora resulta que tampoco... ¿qué está fallando?». Fallaba que «leído» significaba tres cosas -- extraido del PDF, con veredicto para cada tabla Y CADA FRASE, y aplicado -- y se usaban como una. Del texto no habia contador ninguno, asi que «leido entero» era una afirmacion mia.",
+    "el_fallo_de_debajo": "⚠️ Y habia algo peor, encontrado el mismo dia: los .txt de SACN5 se habian extraido conservando la DISPOSICION VISUAL, y el libro va a DOS COLUMNAS. El 37,5 % de sus lineas pegaban la linea de la columna izquierda con la de la derecha -- 24.012 de 64.074 --, o sea que mas de un tercio de lo que se estaba leyendo eran frases que el libro NO dice. Se rehizo con `canislab-fuentes/sacn5/extraer_texto.py` y bajo a 2 lineas de 123.191. Cualquier cita sacada de los .txt viejos hay que volver a comprobarla.",
+    "que_cuenta": "No todo: SACN5 es un libro de clinica y la mayoria de sus cifras son epidemiologia o dosis de farmaco. El filtro es NUTRICIONAL y esta escrito en `leer_sacn5.py`: una frase entra si lleva cifra con unidad Y nombra un nutriente, o si es una frase de recomendacion dietetica que nombra un nutriente.",
+    "la_regla_del_numero": "`pendientes_declarados` se compara EXACTO, igual que en el BLOQUE 78 con las tablas. Solo baja cuando alguien lee y resuelve, y lo baja en el mismo commit. Si el filtro se relajara, el total cambiaria y saltaria -- que es la trampa de declarar poco, vista ya en FEDIAF.",
+    "total_declarado": 3140,
+    "pendientes_declarados": 3140,
+    "medido": "10 de septiembre de 2026, sobre el texto ya rehecho."
+  },
+  "capitulos": {}
+}
