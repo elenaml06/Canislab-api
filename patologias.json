@@ -132,7 +132,7 @@
             "factor_a_la_unidad_del_motor": 0.671,
             "por_que_el_factor": "El catalogo mide mg de d-alfa-tocoferol natural y la tabla da UI. FEDIAF Tabla VII-14: d-alfa-tocoferol 1 mg = 1,49 UI, luego 1 UI = 0,671 mg. ⚠️ El 8-sep-2026 esto se escribio tratando las UI como mg y la artrosis dejo de dar menu.",
             "densidad_kcal_por_g_MS": 4.0,
-            "cita": "SACN5 Tabla 37-9 «Key nutritional factors for dogs and cats with chronic kidney disease», nota «*All values expressed on a dry matter basis, unless otherwise indicated». Leida entera 9-sep-2026, fila «Antioxidants — >=400 IU vitamin E/kg of food for dogs»"
+            "cita": "SACN5 Tabla 37-9 «Key nutritional factors for dogs and cats with chronic kidney disease», nota «*All values expressed on a dry matter basis, unless otherwise indicated». Leida entera 9-sep-2026, fila «Antioxidants … >=400 IU vitamin E/kg of food for dogs»"
           },
           "margen_profesional": {
             "sentido_de_la_cifra": "min",
@@ -286,7 +286,7 @@
             "valor_en_la_fuente": 0.3,
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
-            "cita": "SACN5 Tabla 40-5 «Key nutritional factors for foods for prevention of calcium oxalate uroliths». Leida entera 9-sep-2026, fila «Sodium — Dietary sodium should be <0.3% DM»"
+            "cita": "SACN5 Tabla 40-5 «Key nutritional factors for foods for prevention of calcium oxalate uroliths». Leida entera 9-sep-2026, fila «Sodium … Dietary sodium should be <0.3% DM»"
           },
           "margen_profesional": {
             "sentido_de_la_cifra": "max",
@@ -305,7 +305,7 @@
             "valor_en_la_fuente": 0.6,
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
-            "cita": "SACN5 Tabla 40-5 «Key nutritional factors for foods for prevention of calcium oxalate uroliths». Leida entera 9-sep-2026, fila «Phosphorus — Dietary phosphorus should be in the range of 0.3 to 0.6% DM», extremo alto"
+            "cita": "SACN5 Tabla 40-5 «Key nutritional factors for foods for prevention of calcium oxalate uroliths». Leida entera 9-sep-2026, fila «Phosphorus … Dietary phosphorus should be in the range of 0.3 to 0.6% DM», extremo alto"
           },
           "margen_profesional": {
             "sentido_de_la_cifra": "max",
@@ -438,7 +438,7 @@
           "valor": null,
           "aplicado_por_el_solver": false,
           "fuente": "SACN5 5a ed., cap.40, Tabla 40-5, fila «Ascorbic acid (vitamin C)». Verificado literal 9-sep-2026",
-          "por_que": "SE ESCRIBE Y NO SE APLICA PORQUE **NO ES UN NUMERO**: es una regla sobre ingredientes. || Tabla 40-5, literal: «Avoid pet foods, supplements or human foods that contain ascorbic acid». El motivo esta en el mismo capitulo: el ascorbico es precursor del oxalato. || El motor sabe excluir alimentos por nombre y por especie (`exclusiones.py`) y ya excluye los altos en acido oxalico por lista (`OXALATO_ALTO`), asi que el mecanismo existe; lo que no hay es la lista de que suplementos del catalogo llevan vitamina C anadida. Va a `DATOS_QUE_FALTAN.md` con esa forma: no es un dato de composicion, es una revision de etiquetas."
+          "por_que": "SE ESCRIBE Y NO SE APLICA PORQUE **NO ES UN NUMERO**: es una regla sobre ingredientes. || Tabla 40-5, literal: «Avoid pet foods, supplements or human … foods that contain ascorbic acid». El motivo esta en el mismo capitulo: el ascorbico es precursor del oxalato. || El motor sabe excluir alimentos por nombre y por especie (`exclusiones.py`) y ya excluye los altos en acido oxalico por lista (`OXALATO_ALTO`), asi que el mecanismo existe; lo que no hay es la lista de que suplementos del catalogo llevan vitamina C anadida. Va a `DATOS_QUE_FALTAN.md` con esa forma: no es un dato de composicion, es una revision de etiquetas."
         },
         "proteina": {
           "valor": 45.0,
@@ -1551,12 +1551,12 @@
         "lcarnitina": {
           "valor": 25.0,
           "fuente": "SACN5 5a ed., cap.35 «Cognitive Dysfunction in Dogs», Tabla 35-3, fila «L-carnitine». Verificado literal 9-sep-2026",
-          "por_que": "ANADIDO 9-sep-2026, AL VOLVER A LA TABLA 35-3 ENTERA. De sus seis filas el motor aplicaba una (el omega-3) y la vitamina E se acababa de retirar por no caber; quedaban tres sin mirar. Tabla 35-3: «L-carnitine -- Provide foods with >=100 mg/kg» de materia seca / 4 = 25 mg/1000 kcal. Conversion: mg/kg MS / 4 = mg/1000 kcal a 4000 kcal EM/kg MS. || FEDIAF no da ni minimo ni maximo de L-carnitina (la fila lleva «-» en los seis campos, como Fibra, Taurina y EPA), asi que no hay techo con el que chocar. || ⚠️ MEDIDO ANTES DE APLICARLO, Y NO CUESTA NADA: cinco perros (3, 8, 20, 30 y 55 kg) salen los cinco en el peldano ESTRICTO, y la L-carnitina real de esos menus va de 130 a 332 mg/1000 kcal -- de cinco a trece veces el suelo. La carne va sobrada de carnitina, igual que de arginina. Se aplica porque la fila faltaba, no porque estuviera dando menus malos. || El mismo valor aparece en artrosis y obesidad, pero a 75 (Tablas 34-2 y 27-4, «>=300 mg/kg»): tres tablas del mismo libro con dos cifras distintas para el mismo nutriente, cada una para su cuadro. Se respeta cada una con la suya.",
+          "por_que": "ANADIDO 9-sep-2026, AL VOLVER A LA TABLA 35-3 ENTERA. De sus seis filas el motor aplicaba una (el omega-3) y la vitamina E se acababa de retirar por no caber; quedaban tres sin mirar. Tabla 35-3: «L-carnitine … Provide foods with >=100 mg/kg» de materia seca / 4 = 25 mg/1000 kcal. Conversion: mg/kg MS / 4 = mg/1000 kcal a 4000 kcal EM/kg MS. || FEDIAF no da ni minimo ni maximo de L-carnitina (la fila lleva «-» en los seis campos, como Fibra, Taurina y EPA), asi que no hay techo con el que chocar. || ⚠️ MEDIDO ANTES DE APLICARLO, Y NO CUESTA NADA: cinco perros (3, 8, 20, 30 y 55 kg) salen los cinco en el peldano ESTRICTO, y la L-carnitina real de esos menus va de 130 a 332 mg/1000 kcal -- de cinco a trece veces el suelo. La carne va sobrada de carnitina, igual que de arginina. Se aplica porque la fila faltaba, no porque estuviera dando menus malos. || El mismo valor aparece en artrosis y obesidad, pero a 75 (Tablas 34-2 y 27-4, «>=300 mg/kg»): tres tablas del mismo libro con dos cifras distintas para el mismo nutriente, cada una para su cuadro. Se respeta cada una con la suya.",
           "conversion": {
             "valor_en_la_fuente": 100,
             "unidad_en_la_fuente": "mg/kg MS",
             "densidad_kcal_por_g_MS": 4.0,
-            "cita": "SACN5 Tabla 35-3 «Key nutritional factors for foods for dogs with [cognitive dysfunction]», nota «*Dry matter basis». Leida entera 9-sep-2026, fila «L-carnitine — Provide foods with >=100 mg/kg»"
+            "cita": "SACN5 Tabla 35-3 «Key nutritional factors for foods for dogs with [cognitive dysfunction]», nota «*Dry matter basis». Leida entera 9-sep-2026, fila «L-carnitine … Provide foods with >=100 mg/kg»"
           },
           "margen_profesional": {
             "sentido_de_la_cifra": "min",
@@ -1578,7 +1578,7 @@
             "valor_en_la_fuente": 750,
             "unidad_en_la_fuente": "mg/kg MS",
             "densidad_kcal_por_g_MS": 4.0,
-            "cita": "SACN5 Tabla 35-3 «Key nutritional factors for foods for dogs with [cognitive dysfunction]», nota «*Dry matter basis». Leida entera 9-sep-2026, fila «Vitamin E — Provide foods with >=750 mg/kg». ⚠️ AQUI LA TABLA DA MILIGRAMOS, no UI como las tablas 34-2, 27-4, 37-9 y 68-8: por eso este valor y el de la artrosis son distintos y los dos estan bien"
+            "cita": "SACN5 Tabla 35-3 «Key nutritional factors for foods for dogs with [cognitive dysfunction]», nota «*Dry matter basis». Leida entera 9-sep-2026, fila «Vitamin E … Provide foods with >=750 mg/kg». ⚠️ AQUI LA TABLA DA MILIGRAMOS, no UI como las tablas 34-2, 27-4, 37-9 y 68-8: por eso este valor y el de la artrosis son distintos y los dos estan bien"
           }
         },
         "selenio": {
@@ -1597,12 +1597,12 @@
           "valor": 37.5,
           "aplicado_por_el_solver": false,
           "fuente": "SACN5 5a ed., cap.35, Tabla 35-3, fila «Vitamin C». Verificado literal 9-sep-2026",
-          "por_que": "SE ESCRIBE Y NO SE APLICA PORQUE NO SE PUEDE. Tabla 35-3: «Vitamin C -- Provide foods with >=150 mg/kg» de materia seca / 4 = 37,5 mg/1000 kcal. || TRES MOTIVOS, y ninguno es una decision: (1) **el perro sintetiza su propia vitamina C** a partir de glucosa -- Fascetti & Delaney 2a ed., cap.2: «for dogs and cats, the only essential water-soluble vitamins are B vitamins, because unlike humans they are able to synthesize vitamin C from glucose» --, asi que no es un nutriente esencial y FEDIAF no le da ni fila; (2) **el catalogo no tiene columna de vitamina C**, porque no es uno de los 41 nutrientes del perfil, asi que no hay nada que medir; y (3) el propio capitulo 16 de Fascetti avisa de que el exceso de vitamina C es precursor de oxalato y acidifica la orina, o sea que subirla tiene coste en un perro mayor, que es justo la poblacion de esta patologia. || Queda escrito para que quien firme una pauta sepa que la tabla lo pide y por que el motor no lo mide.",
+          "por_que": "SE ESCRIBE Y NO SE APLICA PORQUE NO SE PUEDE. Tabla 35-3: «Vitamin C … Provide foods with >=150 mg/kg» de materia seca / 4 = 37,5 mg/1000 kcal. || TRES MOTIVOS, y ninguno es una decision: (1) **el perro sintetiza su propia vitamina C** a partir de glucosa -- Fascetti & Delaney 2a ed., cap.2: «for dogs and cats, the only essential water-soluble vitamins are B vitamins, because unlike humans they are able to synthesize vitamin C from glucose» --, asi que no es un nutriente esencial y FEDIAF no le da ni fila; (2) **el catalogo no tiene columna de vitamina C**, porque no es uno de los 41 nutrientes del perfil, asi que no hay nada que medir; y (3) el propio capitulo 16 de Fascetti avisa de que el exceso de vitamina C es precursor de oxalato y acidifica la orina, o sea que subirla tiene coste en un perro mayor, que es justo la poblacion de esta patologia. || Queda escrito para que quien firme una pauta sepa que la tabla lo pide y por que el motor no lo mide.",
           "conversion": {
             "valor_en_la_fuente": 150,
             "unidad_en_la_fuente": "mg/kg MS",
             "densidad_kcal_por_g_MS": 4.0,
-            "cita": "SACN5 Tabla 35-3 «Key nutritional factors for foods for dogs with [cognitive dysfunction]», nota «*Dry matter basis». Leida entera 9-sep-2026, fila «Vitamin C — Provide foods with >=150 mg/kg»"
+            "cita": "SACN5 Tabla 35-3 «Key nutritional factors for foods for dogs with [cognitive dysfunction]», nota «*Dry matter basis». Leida entera 9-sep-2026, fila «Vitamin C … Provide foods with >=150 mg/kg»"
           }
         }
       }
@@ -1737,7 +1737,7 @@
         "omega3_total": {
           "valor": 0.875,
           "fuente": "SACN5 5a ed., cap.32, Tabla 32-6, verificado literal 8-sep-2026",
-          "por_que": "ANADIDO 8-sep-2026, CUARTA PASADA. Esta tabla se habia PERDIDO: el barrido de las tablas «Key nutritional factors» de SACN5 se hizo cortando la salida con `sed -n '20,60p'`, asi que de las 89 que hay solo se revisaron unas 40. Se encontro al leer el capitulo entero buscando otra cosa. El fallo no fue de lectura sino de metodo: limitar la salida de un barrido y no comprobar el total contra el numero de tablas que hay. El barrido se ha repetido entero y sin cortar: ver VERIFICACION_FILA_A_FILA.md §cuarta pasada. Tabla 32-6 («inflammatory dermatoses», que es la atopica; la 32-1 que ya se aplicaba es la de dermatosis por DEFICIT de nutrientes -- son DOS tablas distintas del mismo capitulo y se me habia pasado la segunda). Literal: «Omega-3 fatty acids (ALA, EPA and/or DHA) -- Foods should contain between 0.35 to 1.8% dry matter» = 0,875-4,5 g/1000 kcal. Conversion: %MS x 2,5 = g/1000 kcal (x2500 en mg) a 4000 kcal EM/kg de materia seca. Se usa el extremo bajo. MEDIDO: sale en el peldano 0, sin soltar nada. || La misma fila da tambien una dosis por peso vivo -- «Supplements or foods should initially provide 50 to 300 mg total omega-3 fatty acids/kg body weight/day» -- que es como se pauta un SUPLEMENTO, no como se formula una racion, asi que no se modela: son dos unidades distintas y mezclarlas seria inventar. FEDIAF no da maximo de omega-3 en adulto. Margen del profesional: 0,875 a sin techo, y el propio capitulo da el extremo alto del rango (4,5) como referencia.",
+          "por_que": "ANADIDO 8-sep-2026, CUARTA PASADA. Esta tabla se habia PERDIDO: el barrido de las tablas «Key nutritional factors» de SACN5 se hizo cortando la salida con `sed -n '20,60p'`, asi que de las 89 que hay solo se revisaron unas 40. Se encontro al leer el capitulo entero buscando otra cosa. El fallo no fue de lectura sino de metodo: limitar la salida de un barrido y no comprobar el total contra el numero de tablas que hay. El barrido se ha repetido entero y sin cortar: ver VERIFICACION_FILA_A_FILA.md §cuarta pasada. Tabla 32-6 («inflammatory dermatoses», que es la atopica; la 32-1 que ya se aplicaba es la de dermatosis por DEFICIT de nutrientes -- son DOS tablas distintas del mismo capitulo y se me habia pasado la segunda). Literal: «Omega-3 fatty acids (ALA, EPA and/or DHA) … Foods should contain between 0.35 to 1.8% dry matter» = 0,875-4,5 g/1000 kcal. Conversion: %MS x 2,5 = g/1000 kcal (x2500 en mg) a 4000 kcal EM/kg de materia seca. Se usa el extremo bajo. MEDIDO: sale en el peldano 0, sin soltar nada. || La misma fila da tambien una dosis por peso vivo -- «Supplements or foods should … initially provide 50 to 300 mg total omega-3 fatty acids/kg body weight/day» -- que es como se pauta un SUPLEMENTO, no como se formula una racion, asi que no se modela: son dos unidades distintas y mezclarlas seria inventar. FEDIAF no da maximo de omega-3 en adulto. Margen del profesional: 0,875 a sin techo, y el propio capitulo da el extremo alto del rango (4,5) como referencia.",
           "conversion": {
             "valor_en_la_fuente": 0.35,
             "unidad_en_la_fuente": "%MS",
@@ -1868,7 +1868,7 @@
             "valor_en_la_fuente": 5.0,
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
-            "cita": "SACN5 Tabla 30-5 «Key nutritional factors for foods for canine and feline cancer patients». Leida entera 9-sep-2026, fila «Provide foods with increased levels of omega-3 fatty acids (>5% DM)»"
+            "cita": "SACN5 Tabla 30-5 «Key nutritional factors for foods for canine and feline cancer patients». Leida entera 9-sep-2026, fila «Provide foods with increased levels of omega-3 … fatty acids (>5% DM)»"
           }
         },
         "ratio_omega6_omega3": {
@@ -2053,7 +2053,7 @@
             "valor_en_la_fuente": 1.1,
             "unidad_en_la_fuente": "adimensional",
             "densidad_kcal_por_g_MS": 4.0,
-            "cita": "SACN5 Tabla 41-6 «Key nutritional factors for foods for prevention of calcium phosphate uroliths». Leida entera 9-sep-2026, fila «maintain a normal Ca:P ratio (1.1:1 to 2:1)», extremo BAJO"
+            "cita": "SACN5 Tabla 41-6 «Key nutritional factors for foods for prevention … of calcium phosphate uroliths». Leida entera 9-sep-2026, fila «maintain a normal Ca:P ratio (1.1:1 to 2:1)», extremo BAJO"
           },
           "margen_profesional": {
             "sentido_de_la_cifra": "min",
@@ -2076,7 +2076,7 @@
             "valor_en_la_fuente": 2.0,
             "unidad_en_la_fuente": "adimensional",
             "densidad_kcal_por_g_MS": 4.0,
-            "cita": "SACN5 Tabla 41-6 «Key nutritional factors for foods for prevention of calcium phosphate uroliths». Leida entera 9-sep-2026, fila «maintain a normal Ca:P ratio (1.1:1 to 2:1)», extremo ALTO"
+            "cita": "SACN5 Tabla 41-6 «Key nutritional factors for foods for prevention … of calcium phosphate uroliths». Leida entera 9-sep-2026, fila «maintain a normal Ca:P ratio (1.1:1 to 2:1)», extremo ALTO"
           },
           "margen_profesional": {
             "sentido_de_la_cifra": "max",
@@ -2145,7 +2145,7 @@
             "valor_en_la_fuente": 30.0,
             "unidad_en_la_fuente": "%MS",
             "densidad_kcal_por_g_MS": 4.0,
-            "cita": "SACN5 Tabla 65-1 «Key nutritional factors for foods, treats and snacks for dogs and cats with excessive flatulence», nota «*Nutrient values are on a dry matter basis». Leida entera 9-sep-2026, fila «Protein — Adult dogs: limit to <=30% or less»"
+            "cita": "SACN5 Tabla 65-1 «Key nutritional factors for foods, treats and snacks for dogs and cats with excessive flatulence», nota «*Nutrient values are on a dry matter basis». Leida entera 9-sep-2026, fila «Protein … Adult dogs: limit to <=30% or less»"
           },
           "margen_profesional": {
             "sentido_de_la_cifra": "max",

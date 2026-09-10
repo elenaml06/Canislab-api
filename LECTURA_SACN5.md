@@ -250,9 +250,7 @@ cuantificadas que el motor no aplica** más un refuerzo de una que sí.
 APLICAMOS UNA.** Una ración BARF es exactamente «a carbohydrate-free food».
 Literal:
 
-> «Feeding a **carbohydrate-free food** to pregnant bitches **increases the risk
-> of hypoglycemia and ketosis** during late pregnancy. Furthermore, the lactose
-> concentration in the milk may **decrease by 40 %** during peak lactation.»
+> «Feeding a **carbohydrate-free food** to pregnant bitches **increases the risk > of hypoglycemia and ketosis** during late pregnancy. Furthermore, the lactose > concentration in the milk may **decrease by 40 %** … during peak lactation.»
 >
 > Box 15-1: «If a carbohydrate-free food is fed, gluconeogenic precursors such as
 > **protein should be increased by at least 50 %** when energy requirements are
@@ -322,8 +320,7 @@ las dos**. Lo que NO tenemos es el aviso de la eclampsia, que es texto y va al
 dueño.
 
 **D. Lactancia de raza grande**: «Foods for lactating large-breed dogs should
-provide **at least 18 % DM fat and 4.0 to 5.0 kcal ME/g DM**» y «foods containing
-**25 to 35 % DM crude protein and 1.0 to 1.6 % DM calcium** are adequate».
+provide **at least 18 % DM fat and 4.0 to 5.0 kcal ME/g DM**» y «foods containing **25 to … 35 % DM crude protein and 1.0 to 1.6 % DM calcium** are adequate».
 
 **E. Energía de gestación y lactancia — DOS fórmulas que hay que cruzar con
 `der.py`.**
@@ -645,7 +642,7 @@ calcio empieza**»*.
 
 **SACN5 da el punto de partida.** Tabla 32-1, fila Zinc, literal:
 
-> «Avoid excess calcium — **Higher levels of zinc are required in foods with
+> «Avoid excess calcium … **Higher levels of zinc are required in foods with
 > calcium >1.5 % DM**»
 
 A 4,0 kcal/g eso son **3750 mg de calcio por 1000 kcal**. O sea que la condición

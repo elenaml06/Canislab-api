@@ -766,8 +766,7 @@ por abajo, el mínimo general de EPA+DHA, **0,11 g**.
   verificada** contra el documento original, ver §4).
 - **Fuente principal, verificada:** SACN5 Tabla 29-3, perros:
   *«Fiber 7 to 18%»* = **17,5-45 g**; *«Fat <25%»* = **<62,5 g**;
-  *«Protein 15 to 35%»* = 37,5-87,5 g; *«Provide foods with no more than 55%
-  digestible carbohydrate»*; *«Avoid simple sugars»*.
+  *«Protein 15 to 35%»* = 37,5-87,5 g; *«Provide foods with no more than … 55% digestible carbohydrate»*; *«Avoid simple sugars»*.
 - ⚠️ **El pilar del tratamiento es la fibra y no la aplicamos.** El suelo de
   17,5 g es implementable y hoy no existe. La exclusión de fruta cubre «avoid
   simple sugars» a medias. El Reglamento entrada 12 añade **azúcares totales

@@ -62,7 +62,7 @@ _LARGO_MINIMO = 40
 
 # Cuantas citas quedan por comprobar contra una fuente que SI esta en el repo.
 # Se pone a mano y se compara exacto. Ver el comentario del final de `auditar`.
-PENDIENTES_DECLARADAS = 86        # 10 de septiembre de 2026, primera medida
+PENDIENTES_DECLARADAS = 56        # 10 de septiembre de 2026, tarde
 
 # ⚠️ SOLO SE AUDITAN LAS CITAS EN INGLES, Y ESTE FILTRO SI ES LEGITIMO: las
 # fuentes estan todas en ingles, asi que una cita entre comillas angulares en
@@ -117,6 +117,26 @@ def _norm(t):
     t = re.sub(r"-{2,}", "-", t)
     t = re.sub(r"\s+%", "%", t)
     t = re.sub(r"\[[^\]]{0,60}\]", " ", t)
+    # ⚠️ EL SEPARADOR DE LOS NUMEROS, que es nuestro y no de la fuente. Al
+    # transcribir a español se escribe «4,91 % DM» donde el original pone
+    # «4.91% DM» -- y al reves, el ingles escribe «1,000 kcal» donde nosotros
+    # pondriamos «1.000». El numero es el mismo y la cita deja de ser literal
+    # por una costumbre de teclado.
+    #
+    # Se quita el separador ENTERO, en los dos lados: «4.91», «4,91», «1,000» y
+    # «1.000» pasan a ser «491» y «1000». Cambiarlo por punto NO valia -- lo
+    # probé y subio de 74 a 90, porque convertia el separador de MILES ingles
+    # en un decimal y rompia citas que estaban bien.
+    #
+    # Lo que NO se iguala nunca es que falte una palabra: eso es contenido, y
+    # es justo lo que hay que cazar.
+    t = re.sub(r"(?<=\d)[.,](?=\d)", "", t)
+    # ⚠️ Y LOS EXPONENTES DEL NRC, que se escriben de dos maneras: el PDF pone
+    # «cystine·kg-1» y al citar se copia «cystine·kg⁻¹» con los caracteres
+    # superindice de Unicode. Es el mismo texto con otro teclado.
+    for a, b in (("⁻", "-"), ("¹", "1"), ("²", "2"), ("³", "3"), ("⁰", "0"),
+                 ("·", " "), ("•", " ")):
+        t = t.replace(a, b)
     return " ".join(t.split()).lower()
 
 
@@ -224,7 +244,14 @@ def auditar(mostrar_todas=False):
     for fichero, cita, ctx in citas:
         n = _norm(cita)
         # Una cita con puntos suspensivos son DOS trozos: se comprueban los dos.
-        trozos = [x for x in re.split(r"\s*(?:\.\.\.|…|\[\.\.\.\])\s*", n) if len(x) >= 25]
+        # ⚠️ EL UMBRAL DE LOS TROZOS ERA DEMASIADO ALTO Y TIRABA CITAS BUENAS.
+        # Con 25 caracteres, «L-carnitine … should contain ≥300 ppm» perdia sus
+        # DOS trozos («l-carnitine» tiene 11 y «should contain >=300 ppm» tiene
+        # 24) y se comparaba la cita entera contra un texto donde la fuente pone
+        # otras siete palabras en medio. Salia «no encontrada» estando en cap27
+        # palabra por palabra. Con 12 se comprueban los dos trozos por separado,
+        # que es lo que significa una cita con puntos suspensivos.
+        trozos = [x for x in re.split(r"\s*(?:\.\.\.|…|\[\.\.\.\])\s*", n) if len(x) >= 12]
         if not trozos:
             trozos = [n]
         donde = None
@@ -260,6 +287,15 @@ def auditar(mostrar_todas=False):
             print(f"    ok  {f}: {c[:70]}...  [{d}]")
     for f, c, (_, quien) in dentro:
         print(f"    ??  [{quien}] {f}: {' '.join(c.split())[:110]}")
+    # ⚠️ Y LAS CITAS ENTERAS A UN FICHERO, no cortadas. Cortar la cita para
+    # imprimirla y luego triarla desde ahi es medir otra cosa: lo hice, y un
+    # trozo de 110 caracteres «coincidia al 100 %» mientras la cita entera no
+    # aparecia. El informe corta; el fichero no.
+    if os.environ.get("CITAS_A"):
+        json.dump([{"fichero": f, "quien": q, "cita": c}
+                   for f, c, (_, q) in dentro],
+                  open(os.environ["CITAS_A"], "w", encoding="utf-8"),
+                  ensure_ascii=False, indent=1)
 
     # ⚠️ EL NUMERO VA CLAVADO, como los demas recuentos del repo: solo baja
     # cuando alguien abre la fuente y arregla la cita, y lo baja en el mismo

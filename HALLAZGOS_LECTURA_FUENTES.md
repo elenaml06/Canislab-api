@@ -31,9 +31,9 @@ Este documento recoge lo que va apareciendo al leer las fuentes **enteras**.
 **Tabla VII-13**, y el texto que la acompaña:
 
 > *«The arginine requirement **increases with increased protein content** owing to
-> its role as an intermediate in the urea cycle. The NRC 2006 advises an extra
-> 0.01 g arginine for every 1 % increase in protein (% DM) above the recommended
-> allowance for all life stages in dogs.»*
+> its role as an intermediate in the urea cycle. For every gram of crude protein
+> above the stated values, an additional 0.01 g of arginine is required
+> (NRC 2006g). See ANNEX 7.4.»*
 
 La tabla da la arginina para cada nivel de proteína, de 18 % a 55 % de materia
 seca. Nosotros tenemos **un solo número** (`minAdulto: 1.51`), que corresponde a
@@ -124,10 +124,7 @@ nuestro aviso de la fase de diagnóstico no menciona.
 
 ### F-5 · Lo que FEDIAF dice del ratio omega-6:omega-3 — y por qué el número no es suyo
 
-> *«The effects of omega-3 fatty acids depend on the level as well as on **the ratio
-> of omega-6 to omega-3 fatty acids**. Very high levels of long chain omega-3 fatty
-> acids can decrease cellular immunity, particularly in the presence of a low level
-> of omega-6 fatty acids.»*
+> *«The effects of omega-3 fatty acids depend on the level as well as on **the ratio > of omega-6 to omega-3 fatty acids**. Very high levels of long chain omega-3 fatty > acids can decrease cellular immunity, particularly in the presence of a low level > of … omega-6 fatty acids.»*
 >
 > *«…the current information is insufficient to recommend a specific level of
 > omega-3 fatty acids for adult dogs.»*
@@ -739,7 +736,7 @@ linolénico, los dos de 18 carbonos—, y da rangos por etapa:
 | Etapa | Rango LA:ALA | Cita |
 |---|---|---|
 | Adulto mantenimiento | **2,6 – 26** | *«A range for this ratio of 2.6 to 26 is presumed safe based on evidence to date. It includes a margin of safety of approximately 10 percent at both extremes.»* |
-| Gestación y lactancia | **2,6 – 16** | *«Because of competition between LA and ALA for metabolism, the LA:ALA ratio should range between 2.6 and 16. This range is not as wide as that for maintenance, thereby helping ensure the availability of 18-carbon n-3 ALA for subsequent elongation.»* |
+| Gestación y lactancia | **2,6 – 16** | *«Because of competition between LA and ALA for metabolism, the LA:ALA ratio should range between 2.6 and 16. This range is not as wide as that for maintenance, … thereby helping ensure the availability of 18-carbon n-3 ALA for subsequent elongation.»* |
 | Crecimiento | **≈ 16,3**, «less than 17» | *«the RAs are 1.3 percent DM for LA and 0.08 percent DM for ALA with an LA:ALA ratio of 16.3»* |
 
 Y el porqué del suelo de 2,6 y del techo de 26 es metabólico, no arbitrario:
@@ -1200,9 +1197,7 @@ K/kg de dieta, y recuperándose con vitamina K1 (Strieker 1996). Como el BARF
 puede llevar bastante pescado, había que mirarlo.
 
 **No nos aplica, y la fuente lo dice explícitamente.** FEDIAF 2025 pone el aviso
-del pescado **solo en la sección del gato** (§3.3.2): *«there is some indication
-that canned pet food for cats being high in fish may increase the risk of
-prolonged coagulation times»*. En la sección del perro (§3.3.1) dice solo:
+del pescado **solo en la sección del gato** (§3.3.2): *«there is some indication that canned pet food for cats being high in fish … may increase the risk of prolonged coagulation times»*. En la sección del perro (§3.3.1) dice solo:
 *«Vitamin K does not need to be added unless diet contains antimicrobial or
 anti-vitamin compounds»*. Y el NRC, en el capítulo del perro: *«Many commercial
 dog foods do not contain supplemental vitamin K, and **there is a lack of reports
@@ -3228,9 +3223,7 @@ así que **no es esencial**. Pero:
 > sulphur-containing amino acids or with poor availability of the
 > sulphur-containing amino acids**»*
 
-Y la intervención que nombra: *«The addition of taurine to such foods **or
-increasing the intake of the precursors (methionine and cysteine)** can prevent
-such a decrease»*. Razas más sensibles: **Terranova**, con la tasa de síntesis
+Y la intervención que nombra: *«The addition of taurine to such foods **or increasing the intake of the precursors … (methionine and cysteine)** can prevent such a decrease»*. Razas más sensibles: **Terranova**, con la tasa de síntesis
 disminuida (Backus 2006) — y es una de las dos razas con cifra propia de DER.
 
 **Dos partes distintas de la misma guía apuntando al mismo nutriente**: §3.2.1
@@ -3789,7 +3782,7 @@ dato por alimento, pero sí **la escala con la que se lee**, literal:
 - *«**highly digestible** has generally been reserved for products with protein
   digestibility **≥87 %** and fat and carbohydrate digestibilities **≥90 %**»*.
 - *«The **average** digestibility coefficients for popular commercial foods are
-  **78 a 81 %**, **77 a 85 %** y **69 a 79 %** for crude protein, crude fat and
+  **78 to 81 %**, **77 to 85 %** and **69 to 79 %** for crude protein, crude fat and
   carbohydrate, respectively»*.
 - *«Average fat digestibility in commercial dog food is approximately **90 %**»*.
 
@@ -4643,10 +4636,7 @@ propia FEDIAF.
 
 ### F-21 · Tercera fuente independiente para el ratio omega-6:omega-3
 
-> *«The effects of omega-3 fatty acids depend on the level **as well as on the
-> ratio of omega-6 to omega-3 fatty acids**. Very high levels of long chain
-> omega-3 fatty acids can decrease cellular immunity, particularly in the
-> presence of a low level of omega-6 fatty acids.»*
+> *«The effects of omega-3 fatty acids depend on the level **as well as on the > ratio of omega-6 to omega-3 fatty acids**. Very high levels of long chain > omega-3 fatty acids can decrease cellular immunity, particularly in the > presence of a low level of … omega-6 fatty acids.»*
 
 Cris Carles lo señaló, el NRC 2006 lo menciona (y prefiere el
 linoleico:linolénico, que sí aplicamos), y **FEDIAF también lo dice**. Ninguna de
@@ -4897,8 +4887,7 @@ Es la nota c, y confirma que el máximo de sodio y cloruro **no es un (N)**: es
 Leyendo §3.1.3 **entera y al pie de la letra**, no en la frase que tenía citada.
 
 **1 · Primero, una corrección de lo que escribí esta mañana.** El punto 3 de F-26
-decía que había una tensión entre §3.2.1 («the legal maximum is mandatory and
-always applies to all life stages») y §3.1.3 («a legal maximum only applies when…
+decía que había una tensión entre §3.2.1 («the legal maximum … is mandatory and always applies to all life stages») y §3.1.3 («a legal maximum only applies when…
 added as an additive»), y proponía una lectura que las reconciliara.
 
 No hay tensión y no hace falta reconciliar nada: **las dos frases están en el
