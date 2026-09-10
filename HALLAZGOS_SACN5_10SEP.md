@@ -253,3 +253,75 @@ Convertir 1,1 % de materia seca da **2750** mg/1000 kcal a 4,0 y **2895** a 3,8.
 densidad declarada en `recomendaciones_libro.json` no es la que dice la fuente, y
 eso es lo que audita `auditar_conversiones.py`. Es la misma familia que **F-27**
 en FEDIAF, y se cierra con el mismo dato: la **humedad** del catálogo.
+
+### S-7 · SACN5 le atribuye al NRC un límite de yodo que el NRC dice que **no se puede fijar**
+
+Leyendo el capítulo 6 (minerales) aparece esto, literal:
+
+> *«Current AAFCO (2007) guidelines set a maximum safe level for iodine for dogs
+> at 50 mg/kg, whereas **NRC (2006) recommends 4 mg/kg as a safe upper limit**.»*
+
+Cuatro mg/kg de materia seca son **1.000 µg/1000 kcal** (a 4,0 kcal/g), o sea
+**por debajo de los 1.275 que aplica el motor**. Parecía un techo más estricto de
+una fuente que ya usamos, y el motor lo debería aplicar.
+
+**Fui al NRC 2006, que está en el repo de fuentes, y dice lo contrario.**
+Capítulo 8, epígrafe «Safe Upper Limit of Iodine for Dogs», entero:
+
+> *«Belshaw et al. (1975) measured I concentrations in several commercial brands
+> of dog food. The results corresponded to concentrations ranging, at a minimum,
+> from 400 to 1,275 μg I per 1,000 kcal ME … Apparently these foods were fed
+> without any clinical abnormalities. […] Castillo et al. (2001a) reported
+> evidence of depressed thyroid gland function … in puppies fed diets containing
+> an estimated maximum I content of 1,400 μg I per 1,000 kcal ME. **Based on this
+> information an absolute figure for a SUL of dietary I cannot be predicted for
+> adult dogs.**»*
+
+Y su tabla resumen lo confirma: la fila de yodo trae **la ingesta adecuada y la
+recomendación, y la columna de «Safe Upper Limit» vacía**.
+
+**O sea que el 4 mg/kg no está en el NRC.** Es una atribución de SACN5 que su
+fuente primaria no sostiene.
+
+**Qué se hace: nada, y ese es el resultado.** El techo se queda en 1.275, que es
+el número que el NRC sí documenta como comido sin problemas y por debajo de donde
+se vio el daño. Lo que cambia es que ahora está comprobado contra la fuente
+primaria en vez de contra quien la cita.
+
+⚠️ **Y la lección vale para todo lo que venga de SACN5**: es un libro de texto que
+cita, y una cifra suya atribuida a otra fuente **no es esa fuente**. Cuando el
+repo tenga el original —NRC 2006, FEDIAF, el Reglamento— la cifra se comprueba
+contra el original. Aquí ha hecho falta a la primera.
+
+### S-8 · La vitamina K: FEDIAF no la publica, el NRC sí, y nosotros no la tenemos en ninguna parte
+
+Capítulo 6, epígrafe «Vitamin K», literal:
+
+> *«AAFCO (2007) does not have a recommended allowance for vitamin K for dogs,
+> but recommends 0.1 mg/kg DM for cats… **For dogs, the recommended allowance of
+> vitamin K is 1.64 mg/kg DM for growth, 1.63 mg/kg DM for maintenance and
+> 1.6 mg/kg DM for gestation** (NRC 2006).»*
+
+**Lo que hay hoy en el motor: nada.** La vitamina K no está en los 43 requisitos
+—es una de las cuatro filas de FEDIAF que no se transcriben— y **tampoco está en
+el catálogo**: ninguna ficha declara vitamina K.
+
+Y la razón por la que no se transcribió está escrita y es buena. FEDIAF §3.3.1:
+
+> *«Vitamin K does not need to be added unless diet contains antimicrobial or
+> anti-vitamin compounds.»*
+
+**Pero con la cifra del NRC delante, el hueco cambia de naturaleza.** Deja de ser
+«FEDIAF dice que no hace falta» y pasa a ser «FEDIAF dice que no hace falta
+añadirla, el NRC publica cuánta hace falta, y nosotros **no podemos ni mirarlo**
+porque no tenemos la columna».
+
+Y hay un tercer hilo que apunta al mismo sitio: FEDIAF avisa de que **la vitamina
+K sube en dietas con mucho pescado** (§3.3.2, con la cifra sólo para el gato), y
+el motor mete pescado para cerrar el EPA+DHA.
+
+**No se aplica nada** —sin columna en el catálogo no hay nada que verificar— y
+queda como dos cosas separadas: un **dato que falta** (la vitamina K ficha por
+ficha, que no rellena el asistente) y una **pregunta para el nutricionista**: si
+la ración es cruda y sin antimicrobianos, ¿basta con el criterio de FEDIAF, o
+conviene medirla porque lleva pescado?
