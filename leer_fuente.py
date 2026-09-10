@@ -218,6 +218,7 @@ def extraer(fuente, seccion, a, b):
 # Un veredicto que dice «esto es del gato», y las palabras con las que la fuente
 # lo diria de verdad.
 _GATO_PALABRA = re.compile(r"felin|gato", re.I)
+_AMBOS = re.compile(r"perros?\s+y\s+gatos?|gatos?\s+y\s+perros?|perro\s+y\s+gato", re.I)
 _DESCARTE = re.compile(r"no_aplicable|no aplicable|no aplica|no se aplica|se descarta|"
                        r"solo formula para perro|solo perro|no nos aplica", re.I)
 _GATO_TEXTO = re.compile(r"\bcats?\b|\bfeline\b|\bkitten", re.I)
@@ -274,7 +275,9 @@ def auditar():
         # escribirlo en vez de suponerlo.
         _lineas_f = _texto(fuente) or []
         for k, txt in veredictos.items():
-            if not txt or not (_GATO_PALABRA.search(txt) and _DESCARTE.search(txt)):
+            # «perros y gatos» nombra a los dos: no es un descarte por especie.
+            _txt = _AMBOS.sub(" ", txt)
+            if not (_GATO_PALABRA.search(_txt) and _DESCARTE.search(_txt)):
                 continue
             if "felino_por:" in txt:
                 continue
