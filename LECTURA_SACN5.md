@@ -48,6 +48,29 @@
 | 1-4 | leídos en la sesión anterior; hallazgos abajo, y uno de ellos CORREGIDO |
 | 5-70 | leídos la noche del 9 al 10; hallazgos abajo. Cobertura real: `sacn5_tablas.json` |
 
+### Y desde la noche del 10, el TEXTO también se cuenta elemento a elemento
+
+`lecturas_sacn5.json` es al texto lo que `sacn5_tablas.json` es a las tablas: de
+las **2.944** cifras y frases normativas que saca el filtro nutricional, dice
+cuáles tienen veredicto. El **BLOQUE 81** clava el número de pendientes exacto.
+
+Estos capítulos ya lo tienen **entero**, elemento por elemento, y sus hallazgos
+están en `HALLAZGOS_SACN5_10SEP.md` con la medida delante:
+
+| Capítulo | Elementos | Hallazgos |
+|---|---|---|
+| **13** · el adulto joven | 88 | **S-11** a **S-16** |
+| **15** · gestación y lactancia | 79 | **S-22** a **S-24** |
+| **17** · crecimiento | 51 | **S-17** a **S-21** |
+
+⚠️ **Lo de abajo se escribió ANTES de esa pasada**, leyendo el capítulo de
+corrido. No es falso, pero no es completo: la pasada elemento a elemento
+encontró en esos tres capítulos cosas que la lectura de corrido no vio — la
+columna de Ca:P que nos habíamos dejado de la Tabla 17-1, la tabla de la
+reproductora que `recomendaciones.py` decía que faltaba por transcribir, y una
+frase del capítulo 13 que atribuye al adulto el mínimo de grasa del cachorro. Si
+las dos partes discrepan, manda `lecturas_sacn5.json`.
+
 ---
 
 ## ⚠️ CORRECCIÓN AL HALLAZGO DEL CAP. 1 (la densidad de conversión)

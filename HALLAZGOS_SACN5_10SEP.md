@@ -710,3 +710,117 @@ toma nada de ahí, y queda escrito para que nadie lo tome mañana.
   que se le dé. El cachorro no se autorregula.
 - **El BCS del cachorro es un rango**, 2,5/5 a 3,5/5. Tercera fuente que da rango
   donde nosotros usamos un punto — la pregunta ya está abierta en `CERRADO.md`.
+
+---
+
+## Quinta tanda (10 de septiembre, noche) — el capítulo 15 entero: gestación y lactancia
+
+Los 79 elementos con veredicto. Este capítulo **contesta una pregunta que el
+propio código tenía escrita como pendiente** y confirma dos cifras del DER.
+
+### S-22 · ⚠️ La tabla que `recomendaciones.py` decía que faltaba por transcribir es la 15-4, y está aquí
+
+`motor/recomendaciones.py` lo dice en su propia documentación:
+
+> *«Las etapas que NO tienen ninguno son gestación y lactancia: SACN5 les da su
+> propia tabla (la 15-5 de la reproductora) que todavía no se ha transcrito. Que
+> devuelvan `{}` es el lado seguro y no un olvido silencioso.»*
+
+**Es la Tabla 15-4**, y el capítulo la repite dos veces más en el texto. Para
+gestación y lactancia:
+
+| Factor | Rango en la fuente | Por 1000 kcal |
+|---|---|---|
+| Densidad energética | ≥4,0 kcal ME/g MS | (no comprobable sin humedad) |
+| Proteína bruta | 25–35 % MS | 62,5 – 87,5 g |
+| Grasa bruta | ≥20 % MS | ≥50 g |
+| DHA | ≥0,02 % MS | ya aplicado |
+| **Hidratos digestibles** | **≥23 % MS** | ver S-24 |
+| **Calcio** | **1,0–1,7 % MS** | **2500 – 4250 mg** |
+| **Fósforo** | **0,7–1,3 % MS** | **1750 – 3250 mg** |
+| Ca:P | 1:1–2:1 | |
+
+Los dos techos que faltan —**calcio 4250 y fósforo 3250**— resultan ser **los
+mismos números** que el motor ya aplica al cachorro de menos de 25 kg. Así que
+transcribir esta tabla no inventaría una cifra nueva: rellenaría un hueco
+declarado con un número que el motor ya sabe manejar.
+
+⚠️ Dos avisos antes de aplicarlo, que es por lo que no se aplica en esta pasada:
+
+- **El capítulo se contradice en dos sitios menores.** El techo de calcio es
+  **1,7 % MS** en la Tabla 15-4 y en el texto, y **1,6 %** en las respuestas del
+  caso clínico. Y el suelo del ratio Ca:P es **1:1** en la tabla y **1,1:1** en el
+  texto. Si se aplica, se toma el más estricto de cada par.
+- **No está medido.** El catálogo precalculado no tiene menús de gestación ni de
+  lactancia, así que no sé si esos techos caben. Hay que medirlo antes, como se
+  hizo con los del cachorro.
+
+Y el argumento clínico de por qué importa lo da el propio capítulo, en el recuadro
+de la eclampsia: *«Prevention of eclampsia starts during pregnancy by feeding a
+balanced food, without excess calcium and with a balanced calcium-phosphorus
+ratio.»*
+
+### S-23 · La forma del extra de gestación: FEDIAF lo da plano y SACN5 en escalón
+
+| Semana de gestación | SACN5, Tabla 15-6 | FEDIAF, que es lo que aplica `der.py` |
+|---|---|---|
+| 1–4 | DER | DER |
+| 5 | DER + **18** kcal/kg PV | DER + **26** |
+| 6–8 | DER + **36** kcal/kg PV | DER + **26** |
+| 9 | DER + **18** kcal/kg PV | DER + **26** |
+
+En las **tres semanas de máximo crecimiento fetal** (6 a 8) damos **26 donde
+SACN5 da 36**: un 28 % menos. En las semanas 5 y 9 damos de más. El promedio de
+SACN5 sobre las cinco semanas es 28,8, muy cerca del 26 plano de FEDIAF, así que
+sobre el total de la gestación la diferencia casi se cancela — pero no se
+reparte igual.
+
+**FEDIAF manda y no se cambia.** Queda escrito con los dos números al lado,
+porque «damos menos en la semana 7» es la clase de cosa que nadie encuentra si no
+está apuntada.
+
+### S-24 · Los hidratos de la reproductora: cuatro cifras de la misma fuente, y nuestro suelo aguanta
+
+Es el bloque más importante del capítulo para este motor, porque **una ración
+cruda no lleva hidratos digestibles y esta etapa los pide como factor clave**.
+
+La razón fisiológica: *«more than 50% of the energy for fetal development is
+supplied by glucose… bitches have a high metabolic requirement for glucose during
+the last weeks of gestation»*.
+
+Y el capítulo cuantifica **cuatro veces**:
+
+| | Lo que dice | Por 1000 kcal |
+|---|---|---|
+| Con hidratos | *«Foods for gestation should contain at least 23% DM digestible carbohydrate»* | — |
+| Sin hidratos (1) | *«protein intake must almost be doubled; the food must provide at least 12 to 13 g digestible protein/BWkg 0.75»* | **91 – 98 g digestible** |
+| Sin hidratos (2) | *«gluconeogenic precursors such as protein should be increased by at least 50%… and may have to be doubled»* | **94 – 175 g** sobre el rango 62,5-87,5 |
+| Estudio | *«a food that had about 50% DM protein was fed, no problems with hypoglycemia or ketosis resulted and puppies were born healthy»* | **125 g** |
+
+**Nuestro suelo condicional es 125 g/1000 kcal de proteína bruta**, y viene del
+NRC. Cae por encima de las dos cuantificaciones y **exactamente** sobre el estudio
+que probó ese nivel sin daño. Es la mejor confirmación posible: el número que
+aplicamos tiene un ensayo detrás que lo alimentó y salió bien.
+
+Lo que sigue sin resolver no es la proteína, es el hidrato en sí: el capítulo lo
+pone como **factor nutricional clave** de la perra lactante (*«water, energy,
+protein, carbohydrate, fat, calcium, phosphorus and food digestibility»*) para
+sostener la lactosa de la leche, y ahí la proteína no sustituye a nada. Va como
+pregunta, junto con la misma cuestión en el cachorro (**S-21**).
+
+### Lo que confirma, y son dos cifras del DER
+
+- **Gestación: 132 kcal ME/BWkg^0,75 (1,9 × RER)** — es exactamente
+  `GESTACION_BASE` de `der.py`. El capítulo lo dice dos veces.
+- **Lactancia: 145 × BWkg^0,75 sin contar la leche** — es exactamente
+  `LACTANCIA_BASE`, y la fórmula de la Tabla 15-7 con `n`, `m` y el factor de
+  semana es la que aplicamos (el método 1; el método 2 del libro no distingue
+  semana de lactancia y no lo usamos).
+- **DHA+EPA ≥0,05 % MS y el DHA ≥40 % del total** — el suelo de DHA, ya aplicado.
+- **Grasa ≥20 % MS = 50 g/1000 kcal** para gestación tardía, lactantes con menos
+  de cuatro cachorros y perras gigantes: una ración BARF va por 61 a 70 y lo
+  cumple sin añadir nada.
+- Y los mínimos del NRC que cita (hierro 70 mg/kg MS, zinc 96, fenilalanina
+  0,83 %) son **más flojos** que los de FEDIAF que aplicamos. El único que va por
+  encima es el **cobre, 12,4 mg/kg MS = 3,1** contra nuestro 2,75 — diferencia
+  pequeña, del NRC y no de FEDIAF.
