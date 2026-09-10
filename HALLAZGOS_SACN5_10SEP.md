@@ -1055,3 +1055,52 @@ de cosa que no decido yo.
 - **Y una trampa para el día que alguien proponga aceite de cártamo**: va de ~80 %
   de linoleico a ~80 % de oleico **según la variedad**. Una ficha sacada de la
   fuente equivocada estaría completamente mal, y no hay cártamo en el catálogo.
+
+---
+
+## Octava tanda (10 de septiembre, noche) — el capítulo 6, ya completo
+
+Los 39 que faltaban. Son en su mayoría **casos clínicos y cifras felinas**, y por
+eso no cambian nada — pero dejan tres cosas escritas que sí valían la pena.
+
+### Tres mínimos más del NRC, y los tres son más flojos que el nuestro
+
+| | NRC 2006, perro | Por 1000 kcal | Mínimo de FEDIAF que aplicamos |
+|---|---|---|---|
+| Ácido pantoténico | 15 mg/kg MS | 3,75 | **4,11** ✅ |
+| Vitamina B12 | 35 µg/kg MS | 8,75 | **9,68** ✅ |
+| Colina | 1.700 mg/kg MS | 425 | **474** ✅ |
+
+En los tres manda el de FEDIAF. Y las cifras de AAFCO que cita el mismo capítulo
+(B12 5,5 y colina 300) son todavía más flojas.
+
+### S-29 · La tercera regla «sube con la dieta» y tampoco trae número
+
+> *«**Excess dietary protein and/or high-fat foods increase the choline
+> requirement.**»*
+
+Es exactamente la misma forma que las dos que ya viven en
+`requisitos_condicionales.json` marcadas `documentado_sin_cifra`: **la vitamina E
+sube con los PUFA** y **la B6 sube con la proteína**. Esta es la tercera —**la
+colina sube con la proteína y con la grasa**— y una ración BARF es alta en las
+dos. Tampoco tiene cifra, así que tampoco se puede aplicar; queda escrita para
+que se pueda auditar y para no volver a descubrirla.
+
+### Y un hueco que resulta que NO se puede cerrar
+
+> *«**neither AAFCO (2007) nor NRC (2006) has recommended a maximum or safe upper
+> limit for dietary choline for dogs and cats**»*
+
+El motor no tiene techo de colina **porque no existe**, no por olvido. Escrito
+para no volver a buscarlo.
+
+### El mismo mecanismo de S-26, con hígado de por medio
+
+Un gato con vitamina A en suero de **315 µg/dl** (normal 20 a 80) por
+**suplementación diaria de hígado**. Es felino, y el gato es mucho más sensible,
+así que **no se traslada al perro**. Pero el mecanismo es el mismo que el techo de
+vitamina A de **S-26** y la fuente en el catálogo es la misma: el hígado.
+
+Y para situar el tope crónico de selenio: la dosis letal mínima **inyectada** en
+el perro es 2,0 mg/kg de peso vivo. Es vía intramuscular y no se traslada a una
+dieta, pero explica por qué el selenio es uno de los cinco topes duros.
