@@ -1210,3 +1210,96 @@ Escondida en el caso clínico final del capítulo renal, la cifra de **pancreati
 valores que el motor aplica en pancreatitis, y exactamente la misma condición: el
 25 solo si además hay obesidad o hiperlipidemia. Confirmación literal, desde otro
 capítulo, de la cifra que se corrigió el 8 de septiembre.
+
+---
+
+## Décima tanda (10 de septiembre, noche) — el capítulo 27 entero: la obesidad
+
+Los 155 elementos con veredicto. **Es el capítulo mejor cubierto de todos**: los
+seis límites que el motor aplica en `obesidad` salen de su Tabla 27-4 y coinciden
+uno a uno. Lo que sale nuevo es de método, de producto y **una repetición que
+importa**.
+
+### S-11, reforzado: el selenio no era una frase suelta
+
+En el capítulo 13 salió una vez. Aquí sale otra, y esta vez para **el perro en
+control de peso** específicamente:
+
+> *«for increased antioxidant benefits, the recommended range of selenium for
+> **weight-management dog and cat foods is 0.5 to 1.3 mg/kg (DM)**»*
+
+Los mismos **125 a 325 µg/1000 kcal** contra el máximo de FEDIAF de **142** que el
+motor aplica como restricción dura. Y la misma salvedad, también repetida:
+
+> *«There are no data to base a safe upper limit of selenium for dogs or cats, but
+> for regulatory purposes, a maximum standard of 2.0 mg/kg (DM) has been set»*
+
+Dos capítulos independientes recomendando lo mismo y los dos diciendo que no saben
+dónde está el techo. **Sigue sin cambiarse nada**, y ahora con dos apariciones
+detrás en vez de una.
+
+### Los seis límites de `obesidad`, confirmados uno a uno
+
+| | La fuente (Tabla 27-4, columna del perro) | Por 1000 kcal | Lo que aplica el motor |
+|---|---|---|---|
+| Grasa | ≤9 % MS (≤14 % para no recuperar) | 22,5 (35) | **30** — el 12 % MS, entre los dos, con el motivo escrito |
+| Fibra | 12–25 % MS | 30 – 62,5 | **30** ✅ (extremo bajo) |
+| Proteína | ≥25 % MS «higher is better» | ≥62,5 | **62,5** ✅ |
+| Lisina | ≥1,7 % MS | ≥4,25 | **4,25** ✅ |
+| L-carnitina | ≥300 ppm MS | ≥75 mg | **75** ✅ |
+| Vitamina E | (de la misma tabla) | ≥67 mg | **67,1** ✅ |
+
+Y el «**higher is better**» de la proteína importa aquí: una ración BARF va muy por
+encima del 25 % MS, y en obesidad **eso es a favor** — la frase entera es *«at
+least 25% DM crude protein (higher is better) **to help prevent loss of lean body
+mass**»*. Es el reverso exacto del techo de proteína del capítulo 5 (**S-28**).
+
+### S-32 · El método del capítulo para calcular las kcal de adelgazamiento NO es el nuestro
+
+> *«An obese dog has a body weight of 30 kg and a BCS of 5/5. The DER for the
+> dog's obese weight is calculated using the formula DER = RER x 1.4»* … y luego se
+> **resta** el déficit diario que sale de la pérdida objetivo, a razón de **7.920
+> kcal/kg de tejido adiposo**.
+
+O sea: el capítulo parte del DER del **peso actual (obeso)** y resta. **Nosotros
+calculamos el DER sobre el peso OBJETIVO.** Son dos bases distintas, y con la
+tercera que ya estaba anotada en F-8 (restringir un 20-40 % sobre lo que come hoy)
+van tres formas de decir lo mismo con resultados distintos.
+
+No es un error nuestro —Fascetti también usa el peso óptimo para el RER, y es lo
+que recomienda AAHA— pero **hay que saber cuál se usa** antes de comparar una
+cifra con la de un libro.
+
+### Dos cosas que la fuente dice y la app no
+
+- **Los premios, por tercera vez y con cifra**: *«Treats should not make up more
+  than 10% of the total caloric intake and these calories should be accounted for
+  by reducing the amount of kcal fed as food»*. Capítulos 13, 17 y 27. La app
+  sigue sin preguntarlos.
+- **Las heces**: *«Pet owners should be informed that the quantity of feces the
+  animal produces will probably increase when their cats and dogs are fed foods
+  containing more than 10% DM fiber»*. Nuestro suelo de fibra en obesidad es 30
+  g/1000 kcal, que es el 12 % MS — por encima de ese umbral. **Es un aviso que hay
+  que dar y hoy no se da.**
+
+### Y dos límites de lo que se puede afirmar, dichos por la propia fuente
+
+- **Por encima del 2 % de pérdida semanal, el libro no sabe**: *«the impact of
+  losing more than 2% of the initial body weight per week… has not been reported
+  from weight-loss studies using dogs or cats»*. Nuestro aviso dice 1-2 %, que es
+  el rango estudiado; la fuente abre por abajo hasta el **0,5 %**.
+- **El BCS 5/5 es un suelo, no un valor**: *«the maximum amount of body fat
+  compatible with life is unknown and is very likely more than the approximate
+  value of 40% body fat»*. O sea que en el extremo alto el peso objetivo calculado
+  desde el BCS **se queda corto**, y el error va en la dirección de dar de más.
+
+### Lo que no hace falta aplicar, y por qué
+
+- **Sodio 0,2-0,4 % MS y fósforo 0,4-0,8 % MS** en control de peso son 500-1000 y
+  1000-2000 por 1000 kcal. **Los extremos altos son exactamente los dos techos del
+  perro sano que el motor ya aplica a cualquier adulto.** No hace falta cifra
+  propia de obesidad.
+- **Hidratos ≤40 % MS**: una ración cruda no lleva prácticamente ninguno, así que
+  se cumple sin hacer nada.
+- **Vitamina C ≥100 mg/kg MS**: tercera vez que sale y tercera vez que no podemos
+  — no está en FEDIAF ni en ninguna ficha del catálogo.
