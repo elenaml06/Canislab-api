@@ -422,6 +422,25 @@ def auditar_maximos():
         if not tiene:
             continue
         org = fila.get("maximo_origen")
+        # ⚠️ Y SI EL TECHO ES LEGAL, HAY QUE DECIR QUE PASARIA SIN EL. La §3.1.3
+        # dice que el legal solo aplica si el nutriente se ANADE como aditivo, y
+        # el motor saca menu verde sin multivitaminico: en esos menus la lectura
+        # literal dejaria seis oligoelementos SIN NINGUN TECHO, porque FEDIAF no
+        # publica (N) para ellos. Que ese hecho este escrito en la fila es lo que
+        # impide que alguien relaje el legal creyendo que hay red debajo.
+        if org == "legal_UE":
+            tiene_n = fila.get("maximo_nutricional_por_1000kcal") is not None
+            dice_que_no = bool(fila.get("sin_maximo_nutricional_publicado"))
+            if not tiene_n and not dice_que_no:
+                problemas.append(
+                    f"III-3a: «{clave}» aplica un techo LEGAL y no dice si FEDIAF publica "
+                    f"ademas el nutricional. O va `maximo_nutricional_por_1000kcal` con su "
+                    f"cifra, o va `sin_maximo_nutricional_publicado: true` -- porque quitar el "
+                    f"legal sin saber eso puede dejar al nutriente sin ningun techo")
+            if tiene_n and dice_que_no:
+                problemas.append(
+                    f"III-3a: «{clave}» dice a la vez que no hay maximo nutricional publicado y "
+                    f"trae uno ({fila.get('maximo_nutricional_por_1000kcal')})")
         if org not in ORIGENES:
             problemas.append(
                 f"III-3a: la fila «{clave}» tiene maximo y su `maximo_origen` es {org!r}, que "

@@ -4738,8 +4738,21 @@ Esa tercera es fácil de citar mal. Literal: *«Scientific data show that sodium
 levels up to 1,5 % DM… are safe for healthy dogs. **Higher levels may still be
 safe, but no scientific data are available**»*.
 
+⚠️ **Y aquí la primera versión de este apartado contaba mal, lo cazó Elena.**
+Se midió «viene de una ficha de categoría suplemento» y se llamó «va añadido como
+aditivo», y **no es lo mismo**. De las 22 fichas que se contaron, **solo 11 son
+aditivos**: los diez multivitamínicos y el yoduro potásico en comprimidos. El
+alga, la cáscara de huevo, la levadura de cerveza, el aceite de salmón y el polvo
+de sangre son **materias primas**, y su mineral es natural, no añadido.
+
+Rehecha la medida con la clasificación buena, **el número apenas cambia** —el
+yodo pasa de 91,3 % a 90,8 %— porque el multivitamínico domina el aporte de los
+ocho. Pero eso es suerte de qué alimento pesa más, no que la cuenta estuviera
+bien.
+
 **La medida que decide la gestión.** Sobre los 216 menús del catálogo, qué parte
-de cada nutriente con techo viene de un **suplemento**, es decir, añadida:
+de cada nutriente con techo va **añadida como aditivo** (multivitamínico o
+yoduro potásico):
 
 | Nutriente | Mediana | Máximo | Menús sin nada añadido |
 |---|---|---|---|
@@ -4773,3 +4786,36 @@ una precaución nuestra.
    no código. Y para los seis oligoelementos sería además peligroso: FEDIAF **no
    publica (N)** para ellos, así que relajar el legal los dejaría **sin ningún
    techo**.
+
+### F-25 · Y el caso «sin multivitamínico» existe, y se pega al techo
+
+La pregunta de Elena tenía una segunda mitad que la primera respuesta no tocaba:
+si el legal solo aplica a lo añadido, **¿qué pasa en un menú que no lleve
+multivitamínico?**
+
+**Medido: el motor sí saca menú verde sin multivitamínico.** No es hipotético.
+Y en tres de esos menús (5, 12 y 35 kg), qué parte del techo legal alcanzan:
+
+| Nutriente | % del techo legal | Techo |
+|---|---|---|
+| **Selenio** | **97,1 %** | 142 µg |
+| Vitamina D | 74,6 % | 14,19 µg |
+| Cobre | 55,9 % | 7 mg |
+| Yodo | 43,7 % | 2750 µg |
+| Zinc | 36,1 % | 56,75 mg |
+| Hierro | 12,8 % | 170,45 mg |
+| Vitamina A | 7,3 % | 30 000 µg |
+| Manganeso | 4,0 % | 42,5 mg |
+
+En ese menú el aporte de los ocho viene **exclusivamente de materias primas**, así
+que la lectura literal de §3.1.3 diría que el techo legal **no aplica**. Y para
+seis de los ocho FEDIAF **no publica nutricional**: se quedarían **sin ningún
+techo de FEDIAF**. Lo único que quedaría debajo son los topes de seguridad
+crónica, y son **más laxos**: el del selenio son 570 µg (AAFCO) contra los 142 de
+FEDIAF, **cuatro veces más** — y el menú ya está en el 97 % de 142.
+
+**Eso cierra la decisión, y ahora con un argumento y no con una precaución:**
+aplicar siempre el legal no es solo lo estricto, es **lo único que deja un techo
+justo donde el menú se pega a él**. Las seis filas afectadas llevan ahora escrito
+`sin_maximo_nutricional_publicado` con esta medida dentro, y el auditor falla si
+una fila con techo legal no dice qué quedaría sin él.
