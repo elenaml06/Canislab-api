@@ -596,6 +596,25 @@ el semáforo en verde cuando su propia tabla lo topa en **1,5**.
 Es exactamente el fallo que este repo lleva días persiguiendo: **leer la fila que
 ya tenías y no la tabla entera.**
 
+⚠️ **MATIZADO el mismo día, al leer el capítulo 33: el libro da DOS rangos de
+Ca:P para esta misma población y no coinciden.** La **Tabla 33-5**, que es la
+específica de la enfermedad ortopédica del desarrollo, dice **1,1:1 a 2:1** *«(the
+lower end of range is preferred)»*, y el texto lo repite: *«the calcium-phosphorus
+ratio should be kept within physiologic limits (1.1:1 to 2:1)»*. O sea que en el
+**techo** la 33-5 es **más floja** que nuestro 1,6/1,8 de FEDIAF, y en el **suelo**
+es **más estricta** (1,1 contra 1,0).
+
+Así que aplicar el 1,5 de la Tabla 17-1 sería quedarse con la más estricta de dos
+tablas del mismo libro que no dicen lo mismo. **Eso lo decide el nutricionista, no
+yo.** Lo que sí queda medido y firme es que ningún menú del catálogo llega a 1,5,
+así que la decisión no está forzada por lo que el motor pueda o no pueda hacer.
+
+Y el capítulo 33 explica **por qué el techo tiene que ser una cifra de calcio y no
+solo un ratio**: *«Great Dane puppies raised on food with a calcium to phosphorus
+ratio of 1.1:1 but with an excessive absolute amount of calcium (3.3% DM
+calcium:3.0% DM phosphorus) developed more severe signs of DOD than did control
+dogs»*. Un ratio correcto no protege de un calcio absoluto alto.
+
 **Medido, y cabe con margen.** Los doce menús de cachorro del catálogo:
 
 | | Ca:P |
@@ -824,3 +843,138 @@ pregunta, junto con la misma cuestión en el cachorro (**S-21**).
   0,83 %) son **más flojos** que los de FEDIAF que aplicamos. El único que va por
   encima es el **cobre, 12,4 mg/kg MS = 3,1** contra nuestro 2,75 — diferencia
   pequeña, del NRC y no de FEDIAF.
+
+---
+
+## Sexta tanda (10 de septiembre, noche) — el capítulo 33 entero: el cachorro de raza grande
+
+Los 90 elementos con veredicto. Es el capítulo del que sale el umbral de los 25 kg,
+y trae **el hallazgo más duro de toda la lectura de esta noche**.
+
+### S-26 · ⚠️⚠️ El techo de vitamina A del motor es OCHO VECES el límite seguro del NRC para cachorros y reproductoras
+
+> *«The safe upper limit of vitamin A is **15,000 µg/kg DM** (NRC, 2006).»*
+
+A 4,0 kcal/g de materia seca eso son **3.750 µg/1000 kcal**. Y el NRC lo publica
+así en su propia tabla, en esa misma unidad, así que no hay conversión que
+discutir.
+
+**Comprobado en el NRC original, porque la cifra tiene DOS valores y SACN5 solo
+cita uno** (el del capítulo del cachorro):
+
+> *«it is suggested that an upper limit of **15,000 μg retinol·kg⁻¹ diet of 4
+> kcal·g⁻¹ be used for puppies**. For adult non-breeding dogs, it is proposed a
+> safe upper limit of **64,000 μg retinol·kg⁻¹ diet** (4 kcal·g⁻¹) be adopted.»*
+> … *«the level proposed for puppies (15,000 μg retinol·kg⁻¹ diet of 4 kcal·g⁻¹)
+> is also suggested for breeding bitches.»*
+
+| | µg/1000 kcal |
+|---|---|
+| **Techo del motor** (FEDIAF, «100 000 (N)» UI × 0,3 µg/UI) | **30.000** |
+| Límite seguro del NRC, adulto no reproductor | 16.000 |
+| **Límite seguro del NRC, cachorro y reproductora** | **3.750** |
+| Mínimo de FEDIAF, que aplicamos | 375 |
+
+**Ocho veces** para el cachorro y la perra preñada. Casi el doble para el adulto.
+
+**Y no es teórico. Medido sobre los 36 menús precalculados:**
+
+| | µg/1000 kcal |
+|---|---|
+| Mediana de los 36 | 2.098 |
+| **Mediano_Lactante** | **5.052** — un 35 % por encima del límite del NRC |
+| Grande_CachorroJoven | 3.334 — al 89 % del límite |
+| Toy_Adulto y Mini_Adulto | 5.029 y 3.660 — muy por debajo del límite del adulto (16.000) |
+
+O sea: **un menú de perra lactante del catálogo está por encima del límite seguro
+que el NRC propone para reproductoras, y el semáforo lo da verde** porque mide
+contra los 30.000 de FEDIAF.
+
+Esto no es una recomendación del libro: es un **límite de seguridad**, la misma
+familia que los cinco topes crónicos de `seguridad.py` (vitamina D, yodo, selenio,
+mercurio, tiaminasa). Y viene con el mecanismo al lado, en el mismo capítulo: la
+vitamina D a 135 veces la dosis recomendada **no movió el calcio ni el fósforo en
+plasma** y aun así causó osteocondrosis y radius curvus. Con el hígado, que es la
+fuente de vitamina A de una ración BARF, la analítica puede salir normal.
+
+**No se aplica esta noche**, por la regla de leer todo antes de aplicar y porque
+un tope nuevo de esta clase hay que medirlo en los 216 menús y no en 36. Pero es
+el primero de la lista cuando se cierre la lectura.
+
+### S-25 · El techo de grasa del cachorro de raza grande, y por qué NO es lo que parece
+
+La Tabla 33-5 pone la grasa en **8,5 a 17 % MS** = 21,25 a 42,5 g/1000 kcal.
+Nuestros cuatro menús de cachorro de raza grande y gigante:
+
+| | g/1000 kcal |
+|---|---|
+| Gigante crecimiento | **73,8** |
+| Gigante joven | 46,6 |
+| Grande crecimiento | 64,6 |
+| Grande joven | 52,4 |
+
+Los cuatro por encima, y el gigante un **74 %** por encima. Pero el propio
+capítulo desactiva la lectura fácil, dos veces:
+
+> El capítulo lo dice de sus propios límites superiores: *«…dietary fat in foods
+> intended for large- and giant-breed puppies **have not been established** but a
+> dietary fat level of 17% is acceptable **as long as the puppies are fed properly
+> (food-limited feeding)**.»* (la frase empieza al otro lado de la Tabla 33-5, que
+> se cuela en medio al extraer el texto)
+
+> *«when large-breed puppies were fed a very low energy density food… free choice
+> vs. a food of higher energy density and increased fat…, the puppies eating the
+> low energy density food **had less body fat but not slower growth**»*
+
+O sea que el 17 % **no es un límite establecido**: es un nivel aceptable *si se
+limita la cantidad*, y limitar la cantidad es exactamente lo que hace este motor —
+formula para un DER, no da comida a discreción. Lo que hay que controlar es la
+**energía**, no la grasa. Queda escrito con la medida, y con el porqué de no
+aplicarlo.
+
+### S-27 · Hasta cuándo es «cachorro» un perro de raza grande: 18 meses
+
+> *«A balanced, high quality food especially designed for fast growing, large- and
+> giant-breed dogs, characterized by a relatively low calcium content, should be
+> fed **until 18 months of age**.»*
+
+Y en otro sitio: *«free-choice feeding is not recommended for large- and
+giant-breed puppies until they have reached skeletal maturity (**about 12 months
+of age or at least 80 to 90% of adult weight**)»*.
+
+Es un dato de **etapa**, no de nutriente, y decide qué columna de requisitos
+recibe el perro. Hay que cruzarlo con dónde corta hoy la ficha, y eso toca los dos
+repos. Va como pregunta.
+
+### Lo que confirma, y esta vez son cinco números exactos
+
+El capítulo cita al NRC 2006 para cinco mínimos, y **cinco de cinco coinciden con
+lo que aplica el motor**:
+
+| | SACN5 cap. 33 | Por 1000 kcal | Mínimo de FEDIAF que aplicamos |
+|---|---|---|---|
+| Cobre | 11 mg/kg MS | 2,75 | **2,75** ✅ |
+| Zinc | 100 mg/kg MS | 25 | **25** ✅ |
+| Manganeso | 1,4 mg/1000 kcal | 1,4 | **1,4** ✅ |
+| Vitamina A | 1.515 µg/kg MS | 379 | **375** ✅ |
+| Vitamina D | 550 UI/kg MS | 3,44 µg | **3,45** ✅ |
+
+Y el del cobre **cierra la errata del capítulo 17**: allí ponía «1.1 % DM» y aquí
+está el número bueno, 11 mg/kg MS, dicho sin ambigüedad.
+
+**Y el umbral de los 25 kg, literal y con los tres orígenes del exceso:**
+
+> *«Specific factors that are currently thought to increase the risk of DOD in
+> young dogs include: 1) belonging to a large or giant breed (genetics) (**>25 kg
+> adult weight**), 2) free-choice feeding… and 3) excessive intake of calcium and
+> vitamin D **from food, treats and supplements**.»*
+
+Tres orígenes, y el motor controla dos: la comida y los suplementos (por la dosis
+máxima de fabricante). Los premios no los ve nadie.
+
+**Y una frase que explica por qué todos los límites de este motor van por 1000
+kcal y no por porcentaje:** cambiar a un alimento de menor densidad con el
+*mismo* porcentaje de calcio hace que el cachorro coma **más** calcio, porque come
+más gramos para las mismas kilocalorías. El capítulo lo cuantifica con un
+rottweiler de 15 semanas: 5,4 g de calcio contra 6,7 g, sin que el porcentaje de
+la etiqueta cambie.
