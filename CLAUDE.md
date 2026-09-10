@@ -151,7 +151,7 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 81 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `pruebas_completas.py` | **La batería.** Los 82 bloques, ~25 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
 | `auditar_patologias.py` | Cada cifra de `patologias.json` contra `requerimientos_v2_final.json`: que ninguna patología formulable tenga un tope por debajo del mínimo de FEDIAF, y que la clave del nutriente exista en el `MAPA`. Lo ejecuta el BLOQUE 32 |
 | `quien_formula_cada_patologia.json` | **Quién puede marcar cada una de las 47, y qué falta preguntar** (10 de septiembre). No es una opinión de producto: cada línea sale de la **cita de la propia fuente de esa patología**. Si su tabla condiciona la cifra a un dato clínico —el estadio IRIS que decide el techo de fósforo, los triglicéridos que bajan la grasa de 37,5 a 25, la taurina en sangre—, entonces **no la puede marcar quien no tiene ese dato**, y la pregunta que falta en la ficha es la que hace falta para elegir el número. Salen **24 `solo_veterinario`**, 18 `dueno_con_diagnostico`, 5 `dueno` y **8 preguntas que la app no hace**. Lo vigila el BLOQUE 79, que además exige que una patología declarada sin dato clínico no tenga marcadores de analítica en su propio JSON — y cazó tres contradicciones mías nada más escribirlo |
 | `limites_legales_ue_2020_354.json` + `auditar_margen_profesional.py` | **Hasta dónde puede mover un veterinario cada cifra, y hasta dónde no** (10 de septiembre). La respuesta ya estaba escrita y ese era el problema: en **prosa**, dentro del campo `por_que` de cada cifra («Margen del profesional: 13,75 a 37,5») y en el §2 de `PATOLOGIAS.md`. Una frase no se ejecuta — la lección de `auditar_conversiones.py` otra vez —, y las dos que había ya estaban caducadas: la de la pancreatitis citaba el margen de antes del tope condicional, y **el sodio cardíaco aplicaba 739 con su propia celda citando el techo LEGAL en 738,6**. Ahora cada una de las **79 cifras** lleva un bloque `margen_profesional` con su suelo, su techo y **de dónde sale cada uno** —una clave de procedencia, no un número copiado: `minimo_fediaf:Fósforo`, `legal_ue:24_cardiaca:sodio`, `seguridad:TOPE_VITD_KCAL`, `sin_techo`—, y el auditor **rehace las 79 ventanas** contra la fuente viva. El JSON nuevo son **las 20 entradas caninas del Reglamento (UE) 2020/354**, que es la única fuente del repo que es **ley** y por tanto la única que pone un techo del que no se sale nadie. ⚠️ Y hay que citarlo con cuidado: el Reglamento **no da un rango de maniobra por nutriente** —da un techo o un suelo por objetivo—, y su ±15 % es **tolerancia analítica de etiquetado**, no margen clínico. Lo ejecuta el BLOQUE 80, que además exige que `GET /patologias` sirva las 79 ventanas |
@@ -490,7 +490,7 @@ se comprueba entero en cada batería.
 python3 pruebas_completas.py     # ~25 min, tiene que salir TODO EN VERDE
 ```
 
-Los 81 bloques tardan unos **25 minutos** (1.458 s en la última medida; el
+Los 82 bloques tardan unos **25 minutos** (1.458 s en la última medida; el
 «~10 min» que ponía aquí se quedó corto en cuanto los bloques 50 a 61
 empezaron a resolver menús de verdad, y el «~2 min» de antes llevaba meses
 caducado). No necesita red ni claves de verdad: se fabrica

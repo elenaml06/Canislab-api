@@ -71,7 +71,7 @@ jobs:
       - name: Instalar pyflakes, para el BLOQUE 0
         run: pip install pyflakes
 
-      - name: Ejecutar los 81 bloques
+      - name: Ejecutar los 82 bloques
         # Sin `-u` la salida sale a trompicones y, si algo se cuelga, el
         # registro no dice por qué bloque iba.
         run: python3 -u pruebas_completas.py

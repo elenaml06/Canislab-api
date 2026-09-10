@@ -9,7 +9,7 @@
       "contexto": "es prosa de encuadre, no una regla ni un límite",
       "pendiente": "hay algo que aplicar y no está hecho: es deuda declarada"
     },
-    "pendientes_declarados": 269,
+    "pendientes_declarados": 0,
     "texto": "⚠️ 10-sep-2026: los rangos de linea son del texto REHECHO. El anterior se habia extraido conservando la disposicion visual, y FEDIAF va a dos columnas: el 49,3 % de sus lineas pegaban la columna izquierda con la derecha, o sea que la mitad del documento se estaba leyendo como frases que el texto no dice. Se rehizo con `canislab-fuentes/sacn5/extraer_texto.py` (mismo metodo) y las lineas pasaron de 5.305 a 10.683."
   },
   "lecturas": {
@@ -80,7 +80,9 @@
       ],
       "titulo": "Niveles minimos recomendados",
       "veredictos": {
-        "frase:When formulating pet foods, manufacturers should not use a reference to minimum requirements but minimum recom": "APLICADO. El motor formula contra los niveles RECOMENDADOS de las tablas, no contra los requisitos minimos -- que es la diferencia que explica el propio glosario y la que hace que un menu de Rawku sea comparable con un pienso."
+        "frase:When formulating pet foods, manufacturers should not use a reference to minimum requirements but minimum recom": "APLICADO. El motor formula contra los niveles RECOMENDADOS de las tablas, no contra los requisitos minimos -- que es la diferencia que explica el propio glosario y la que hace que un menu de Rawku sea comparable con un pienso.",
+        "cifra:100 g": "Es la unidad en que van las tablas (por 100 g MS y por 1000 kcal). El motor trabaja por 1000 kcal, que es la columna que aplica.",
+        "cifra:1000 kcal": "Es la unidad en que van las tablas (por 100 g MS y por 1000 kcal). El motor trabaja por 1000 kcal, que es la columna que aplica."
       }
     },
     "FEDIAF/3.1.2": {
@@ -89,7 +91,12 @@
         615
       ],
       "titulo": "Contenido energetico de los piensos",
-      "veredictos": {}
+      "veredictos": {
+        "cifra:1.25 kcal": "Factores para convertir energia digestible en metabolizable en un ENSAYO de alimentacion (restar 1,25 kcal/g de proteina digestible en perro, 0,9 en gato). El motor no hace ensayos: lee las kcal de la ficha de cada alimento.",
+        "cifra:5.23 kJ": "Factores para convertir energia digestible en metabolizable en un ENSAYO de alimentacion (restar 1,25 kcal/g de proteina digestible en perro, 0,9 en gato). El motor no hace ensayos: lee las kcal de la ficha de cada alimento.",
+        "cifra:0.86 kcal": "Factores para convertir energia digestible en metabolizable en un ENSAYO de alimentacion (restar 1,25 kcal/g de proteina digestible en perro, 0,9 en gato). El motor no hace ensayos: lee las kcal de la ficha de cada alimento.",
+        "cifra:3.60 kJ": "Factores para convertir energia digestible en metabolizable en un ENSAYO de alimentacion (restar 1,25 kcal/g de proteina digestible en perro, 0,9 en gato). El motor no hace ensayos: lee las kcal de la ficha de cada alimento."
+      }
     },
     "FEDIAF/3.1.3": {
       "rango": [
@@ -148,7 +155,28 @@
         854
       ],
       "titulo": "Como se leen las tablas",
-      "veredictos": {}
+      "veredictos": {
+        "cifra:95 kcal": "APLICADO. Es la MER sobre la que se calculan los minimos de adulto (`minAdulto`). La otra columna, 110, es `minAdulto110`.",
+        "cifra:398 kJ": "La misma MER de 95 kcal/kg^0,75 en kJ.",
+        "cifra:110 kcal": "APLICADO. La segunda MER de adulto. Ver «95 kcal».",
+        "cifra:460 kJ": "La misma MER de 110 kcal/kg^0,75 en kJ.",
+        "cifra:75 kcal": "MER del GATO. El motor solo formula para perro.",
+        "cifra:314 kJ": "MER del GATO, en kJ.",
+        "cifra:100 kcal": "MER del GATO. El motor solo formula para perro.",
+        "cifra:418 kJ": "MER del GATO, en kJ.",
+        "cifra:12 %": "⚠️ LEIDO HOY Y ABRE UN HUECO REAL. «Legal maxima in EU legislation are expressed on 12 % moisture content and THEY DO NOT ACCOUNT FOR ENERGY DENSITY. Therefore in these guidelines they are only provided on a dry matter basis». O sea que el techo LEGAL es por kg de alimento, no por kcal, y pasarlo a por-1000-kcal con el x2,5 es un paso NUESTRO que depende de la densidad energetica del menu. Ver F-16.",
+        "cifra:100 g": "Factor de conversion o base de las tablas, ya aplicado.",
+        "cifra:1000 kcal": "Factor de conversion o base de las tablas, ya aplicado.",
+        "cifra:80 %": "APLICADO. «If the protein digestibility of >= 80% cannot be guaranteed, it is recommended to increase the essential amino acid levels by a minimum of 10%». Es el factor condicional de los doce aminoacidos, en `requisitos_condicionales.json`.",
+        "cifra:10 %": "La otra mitad de la misma frase: el +10 % de los aminoacidos. APLICADO.",
+        "cifra:16.7 kJ": "⚠️ LA MISMA ASUNCION, ESCRITA POR FEDIAF. «These conversions assume an energy density of 16.7 kJ (4.0 kcal) ME/g DM. For foods with energy densities different from this value, the recommendations SHOULD BE CORRECTED for energy density». Es el puente de 4000 kcal/kg MS que usa TODO el repo, y la propia fuente dice que hay que corregirlo. Ver F-16.",
+        "cifra:4.0 kcal": "La misma frase, en kcal. Ver el veredicto de «16.7 kJ».",
+        "cifra:15 kg": "El perro de ejemplo de los dos calculos de arriba. ⚠️ No confundir con el umbral de 15 kg de la nota b, que es peso ADULTO ESPERADO y decide otra cosa.",
+        "cifra:4 kg": "Factor de conversion o base de las tablas, ya aplicado.",
+        "frase:Conversion factors For commercial dog and cat foods it is recommended that the nutrient levels are at or above": "Factor de conversion o base de las tablas, ya aplicado.",
+        "frase:For foods with energy densities different from this value, the recommendations should be corrected for energy ": "⚠️ Ver F-16: el puente de 4 kcal/g MS es una asuncion que la propia fuente manda corregir, y sin la humedad en las fichas no se puede ni medir cuanto nos desviamos.",
+        "frase:Unless the life stage is indicated it applies to all life stages.": "APLICADO. Es como se leen las tablas, y como las lee `resolver_etapa()`."
+      }
     },
     "FEDIAF/3.2.2": {
       "rango": [
@@ -219,7 +247,77 @@
         3332
       ],
       "titulo": "Sustanciacion de los niveles del PERRO",
-      "veredictos": {}
+      "veredictos": {
+        "cifra:20 %": "«the values recommended for adult dogs are the levels recommended by NRC 2006j increased by 20 % to compensate for the lower energy requirement of household dogs». Explica de donde salen las cifras de la tabla que ya aplicamos.",
+        "cifra:25 g": "La RA de proteina de NRC 2006 (25 g/1000 kcal), sobre la que FEDIAF ajusta a la suya. Respalda la fila que aplicamos.",
+        "cifra:1000 kcal": "Cifra de la sustanciacion del perro que ya esta en la tabla III-3b y por tanto en `requerimientos_v2_final.json`, o cifra de un estudio citado como respaldo de una fila que ya aplicamos.",
+        "cifra:6 g": "La misma RA de proteina por MJ. Ver «25 g».",
+        "cifra:130 kcal": "La ingesta que asume NRC (130 kcal/kg^0,75) y de la que FEDIAF se aparta a 110. Explica el +20 % de la seccion 3.3.1.",
+        "cifra:550 kJ": "La misma ingesta en kJ. Ver «130 kcal».",
+        "cifra:80 %": "APLICADO. «If the protein digestibility of >= 80% cannot be guaranteed, it is recommended to increase the essential amino acid levels by a minimum of 10%». Es el factor condicional de los doce aminoacidos, en `requisitos_condicionales.json`.",
+        "cifra:0.01 g": "APLICADO. «For every gram of crude protein above the stated values, an additional 0.01 g of arginine is required». Vive en `requisitos_condicionales.json` y lo aplica `minimo_de()`.",
+        "cifra:2006 g": "Cifra de la sustanciacion del perro que ya esta en la tabla III-3b y por tanto en `requerimientos_v2_final.json`, o cifra de un estudio citado como respaldo de una fila que ya aplicamos.",
+        "cifra:4.91 %": "El nivel que SI bajo la ganancia de peso en el estudio de Czarnecki 1985 (0,91 % basal + 4 % de suplemento). Ver «7.0 g».",
+        "cifra:0.91 %": "La dieta basal del estudio de Czarnecki 1985. Ver «7.0 g».",
+        "cifra:4 %": "Cifra de la sustanciacion del perro que ya esta en la tabla III-3b y por tanto en `requerimientos_v2_final.json`, o cifra de un estudio citado como respaldo de una fila que ya aplicamos.",
+        "cifra:2.91 %": "El nivel sin efecto del mismo estudio, del que sale el techo. Ver «7.0 g».",
+        "cifra:2 %": "«foods containing 2% of sodium (DM) may result in a negative potassium balance» = 5000 mg/1000 kcal. Nuestro maximo de sodio son 3750 (nota c), por debajo. Coherente.",
+        "cifra:4156 kcal": "⚠️ LA DENSIDAD DEL ESTUDIO, y demuestra que FEDIAF SI corrige por densidad: convierte el 2,91 % MS con 4156 kcal/kg (no con 4000) para dar los 7,0 g/1000 kcal, y solo despues lo re-expresa como 2,8 % MS «at 4 kcal/g DM». Nosotros usamos 4000 fijo en todas partes. Ver F-16.",
+        "cifra:17.39 MJ": "La misma densidad del estudio, en MJ. Ver «4156 kcal».",
+        "cifra:7.0 g": "⚠️ CONTESTA LA PREGUNTA ABIERTA P-04, «el techo de lisina: ¿sobre que proteina se mide?». No se mide sobre proteina: «Czarnecki et al. (1985) showed that excess dietary lysine (4.91 % DM [basal diet 0.91 % + 4 % from a supplement]) decreases weight gain in puppies but not 2.91 % DM... the highest no-effect-level of lysine for puppies was 2.91 % DM (energy density 4156 kcal/kg). This is equivalent to 7.0 g/1000 kcal or 2.8 % DM (at 4 kcal/g DM) and this is therefore the FEDIAF maximum for puppy growth». Es LISINA TOTAL de la dieta, y sale de anadir lisina LIBRE a una dieta basal. Ver F-17.",
+        "cifra:1.67 g": "El mismo techo de lisina por MJ. Ver «7.0 g».",
+        "cifra:2.8 %": "El techo de lisina re-expresado a 4 kcal/g MS. Ver «7.0 g».",
+        "cifra:4 kcal": "Cifra de la sustanciacion del perro que ya esta en la tabla III-3b y por tanto en `requerimientos_v2_final.json`, o cifra de un estudio citado como respaldo de una fila que ya aplicamos.",
+        "cifra:100 mg": "El contenido de taurina (<100 mg/kg MS) del alimento del estudio sobre el que se fijan la metionina+cistina de adulto. Con mas taurina, «the RA for sulphur amino acids can be lower».",
+        "cifra:95 kcal": "APLICADO. Es la MER sobre la que se calculan los minimos de adulto (`minAdulto`). La otra columna, 110, es `minAdulto110`.",
+        "cifra:110 kcal": "APLICADO. La segunda MER de adulto. Ver «95 kcal».",
+        "cifra:0.8 g": "La cifra de Goodman/Jenkins/Lauten que FEDIAF considera «adecuada pero marginal para algunas razas», y por la que sube el minimo de early growth a 1 g/100 g MS. Respalda una fila que ya aplicamos.",
+        "cifra:100 g": "Cifra de la sustanciacion del perro que ya esta en la tabla III-3b y por tanto en `requerimientos_v2_final.json`, o cifra de un estudio citado como respaldo de una fila que ya aplicamos.",
+        "cifra:1 g": "Cifra de la sustanciacion del perro que ya esta en la tabla III-3b y por tanto en `requerimientos_v2_final.json`, o cifra de un estudio citado como respaldo de una fila que ya aplicamos.",
+        "cifra:1 %": "APLICADO (nota a/b): el cachorro de raza grande o gigante sigue con al menos 1 % de calcio hasta los ~6 meses.",
+        "cifra:0.8 %": "APLICADO (nota b): en late growth el cachorro de raza pequena o mediana puede bajar a 0,8 % MS de calcio y subir el ratio Ca:P a 1,8/1.",
+        "cifra:1.6 %": "⚠️ UN LIMITE POR RAZA QUE NO TENIAMOS ESCRITO. «During later growth up to 1.8 % DM can be fed to all breed dogs including giant breeds WITH THE EXCEPTION OF GREAT DANES. This breed may be more susceptible and it is preferable to continue with a food containing a maximum calcium content of 1.6%». 1,6 % MS = 4000 mg/1000 kcal. Medido: hoy no cambia ningun menu porque el techo del libro para el cachorro de mas de 25 kg de adulto (2750) ya es mas estricto que 4000 -- pero solo por eso. Ver F-18.",
+        "cifra:1.8 %": "El techo de calcio de late growth para todas las razas menos el gran danes. Ver «1.6 %».",
+        "cifra:45.4 mg": "Sodio adecuado para todas las etapas, 45,4 mg/MJ = 0,19 g/1000 kcal (Czarnecki-Maulden 1989). Muy por debajo del minimo de la tabla (290 mg), que es el que aplicamos.",
+        "cifra:0.19 g": "El mismo sodio en g/1000 kcal. Ver «45.4 mg».",
+        "cifra:6.25 g": "El maximo nutricional de calcio, 6,25 g/1000 kcal, de AAFCO 1992. Es el `maxAdulto` del motor. Ver F-13.",
+        "cifra:4 g": "El maximo nutricional de fosforo, 4 g/1000 kcal, de AAFCO 1992. Es el `maxAdulto` del motor. Ver F-13.",
+        "cifra:7.1 g": "El calcio del estudio de Stockman 2017 que respalda ese maximo. Ver F-14.",
+        "cifra:4.5 g": "El fosforo del mismo estudio. Ver F-14.",
+        "cifra:0.4 mg": "El techo de yodo de Castillo 2001 que FEDIAF descarta: 0,4 mg/100 g MS = 1000 µg/1000 kcal. Ver F-20.",
+        "cifra:75 %": "⚠️ POR QUE FEDIAF DESCARTA UN TECHO DE YODO MAS ESTRICTO. «From studies by Castillo et al. (2001a,b) low nutritional maximum for iodine in dogs (0.4 mg/100 g DM) was recommended. However in these studies puppies were significantly overfed (approx. 75 % above energy requirement)... Consequently, these results are irrelevant for normal commercial nutritionally balanced foods, and the existing legal maximum is safe for all dogs». Ver F-20.",
+        "cifra:0.21 mg": "Minimo de selenio en cachorros (Wedekind), 0,21 mg/kg MS, «however, a safety margin has to be added because the availability of selenium in pet food may be low». Respalda el minimo que ya aplicamos.",
+        "cifra:5 mg": "Zinc en crecimiento: 5 mg/100 g MS bastan con dieta purificada, y FEDIAF dobla el minimo por la disponibilidad real. Respalda la fila que aplicamos.",
+        "cifra:45 %": "El maximo de vitamina A de FEDIAF es el 45 % del no-adverse-effect de Cline 1997 a un ano. Respalda una fila que ya aplicamos.",
+        "cifra:40,000 IU": "Vitamina A: 40.000 IU/100 g MS en cachorros de varias razas sin efecto adverso (Morris 2012, Zentek 2009). Respalda el maximo que ya aplicamos (100.000 IU/1000 kcal = 30.000 µg).",
+        "cifra:16.74 kJ": "La densidad (4 kcal/g) del estudio de vitamina A. Ver «40,000 IU».",
+        "cifra:435 IU": "⚠️ VITAMINA D POR TAMANO DE RAZA, Y APLICAMOS UN SOLO NUMERO. «Studies in Great Dane puppies showed that a dietary vitamin D level of 435 IU/100 g DM can affect Ca absorption and may stimulate endochondral ossification disturbances». Ver F-19.",
+        "cifra:320 IU": "⚠️ «Therefore, 320 IU per 100 g DM should be the nutritional maximum for growing GIANT BREED dogs» = 800 IU/1000 kcal = 20 µg. Ver F-19.",
+        "cifra:425 IU": "⚠️ «425 IU/100 g DM can be considered a safe nutritional maximum for SMALL breed puppies» = 1062,5 IU/1000 kcal = 26,6 µg. Y «FEDIAF recommends the same nutritional maximum for other life stages as those indicated for puppies», o sea que estos dos numeros valen tambien para el adulto. Ver F-19.",
+        "cifra:66.8 µg": "Riboflavina: 66,8 µg/kg PV/dia (Cline 1996), que con un margen del 25 % da los 0,6 mg/100 g MS de la tabla. Respalda la fila que aplicamos.",
+        "cifra:0.6 mg": "El mismo minimo de riboflavina por 100 g MS. Ver «66.8 µg».",
+        "cifra:25 %": "El margen de seguridad del 25 % con el que FEDIAF pasa el dato de riboflavina de Cline a la tabla.",
+        "frase:Substantiation of nutrient recommendations for complete dog food Amino acids, trace elements, vitamins (Adult ": "Cabecera de la seccion. Dice que las cifras de adulto son las de NRC 2006 subidas un 20 %.",
+        "frase:For products containing higher levels of taurine the RA for sulphur amino acids can be lower than the values q": "LEIDO, NO SE APLICA Y ES EL LADO SEGURO: con mas taurina se podria BAJAR el minimo de metionina+cistina. Bajar un minimo nunca es urgente; exigir el de la tabla es lo estricto.",
+        "frase:Tyrosine Tyrosine (All life stages) For maximisation of black hair colour, the tyrosine content may need to be": "LEIDO, NO SE APLICA: el color del pelo negro no es un objetivo nutricional del motor, y subir la tirosina 1,5-2 veces es una recomendacion cosmetica.",
+        "frase:Consequently it is preferable to have small amounts of DHA and/or EPA, as well as AA in foods for growth and r": "APLICADO. Es el suelo de DHA de crecimiento y reproduccion, que vigila el BLOQUE 73.",
+        "frase:After comparing all the data, FEDIAF recommends that the calcium level in a pet food for early growth should b": "Cifra de la sustanciacion del perro que ya esta en la tabla III-3b y por tanto en `requerimientos_v2_final.json`, o cifra de un estudio citado como respaldo de una fila que ya aplicamos.",
+        "frase:During late growth, it is recommended that large breed and giant breed puppies continue to be fed a pet food c": "Cifra de la sustanciacion del perro que ya esta en la tabla III-3b y por tanto en `requerimientos_v2_final.json`, o cifra de un estudio citado como respaldo de una fila que ya aplicamos.",
+        "frase:Therefore a strict nutritional maximum is recommended for foods intended for large breed puppies.": "APLICADO, y por partida doble: el maximo de calcio de crecimiento de FEDIAF y, mas estricto todavia, el techo del libro para el cachorro de mas de 25 kg de adulto (2750 mg).",
+        "frase:This breed may be more susceptible and it is preferable to continue with a food containing a maximum calcium c": "Cifra de la sustanciacion del perro que ya esta en la tabla III-3b y por tanto en `requerimientos_v2_final.json`, o cifra de un estudio citado como respaldo de una fila que ya aplicamos.",
+        "frase:19 g / 1000 kcal) sodium is adequate for all life stages (Czarnecki-Maulden GL et al.": "Cifra de la sustanciacion del perro que ya esta en la tabla III-3b y por tanto en `requerimientos_v2_final.json`, o cifra de un estudio citado como respaldo de una fila que ya aplicamos.",
+        "frase:Sodium (Adult dogs) Studies in dogs have demons- trated that foods containing 2% of sodium (DM) may result in ": "Ver el veredicto de la cifra «2 %».",
+        "frase:Copper Copper Owing to its low availability copper oxide should not be considered as a copper source (Fascetti": "CONFIRMA lo que ya aplica `sacn5_fuentes_de_minerales.json`: el oxido de cobre no cuenta como fuente. Dos fuentes independientes diciendo lo mismo.",
+        "frase:Iron Iron Because of very poor availability, iron from oxide or carbonate salts that are added to the diet sho": "CONFIRMA lo del oxido y el carbonato de hierro (ya en `sacn5_fuentes_de_minerales.json`).",
+        "frase:In addition, the amount of inert iron is not to be taken into consideration for the calculation of the total i": "⚠️ La mitad que NO teniamos: el hierro inerte tampoco cuenta contra el maximo LEGAL. Ver F-12.",
+        "frase:However, a safety margin has to be added because the availability of selenium in pet food may be low (Wedekind": "Cifra de la sustanciacion del perro que ya esta en la tabla III-3b y por tanto en `requerimientos_v2_final.json`, o cifra de un estudio citado como respaldo de una fila que ya aplicamos.",
+        "frase:Vitamin A (Puppies) There is no evidence so far that the nutritional maximum for puppies should be different f": "Cifra de la sustanciacion del perro que ya esta en la tabla III-3b y por tanto en `requerimientos_v2_final.json`, o cifra de un estudio citado como respaldo de una fila que ya aplicamos.",
+        "frase:Therefore, 320 IU per 100 g DM should be the nutritional maximum for growing giant breed dogs (NRC 2006l).": "⚠️ Ver F-19.",
+        "frase:Since there is no information on maximum safe intakes for adult dogs and breeding bitches, FEDIAF recommends t": "Cifra de la sustanciacion del perro que ya esta en la tabla III-3b y por tanto en `requerimientos_v2_final.json`, o cifra de un estudio citado como respaldo de una fila que ya aplicamos.",
+        "frase:An increased level of vitamin E may be required if the intake of PUFA is high, particularly from fish oil (Hal": "Cifra de la sustanciacion del perro que ya esta en la tabla III-3b y por tanto en `requerimientos_v2_final.json`, o cifra de un estudio citado como respaldo de una fila que ya aplicamos.",
+        "frase:Vitamin B7 (Biotin) Biotin For healthy dogs biotin does not need to be added to the food unless the food conta": "Cifra de la sustanciacion del perro que ya esta en la tabla III-3b y por tanto en `requerimientos_v2_final.json`, o cifra de un estudio citado como respaldo de una fila que ya aplicamos.",
+        "frase:Vitamin K Vitamin K Vitamin K does not need to be added unless diet contains antimicrobial or anti-vitamin com": "Cifra de la sustanciacion del perro que ya esta en la tabla III-3b y por tanto en `requerimientos_v2_final.json`, o cifra de un estudio citado como respaldo de una fila que ya aplicamos."
+      }
     },
     "FEDIAF/3.3.2": {
       "rango": [
@@ -468,7 +566,86 @@
         5478
       ],
       "titulo": "Anexo: Energia",
-      "veredictos": {}
+      "veredictos": {
+        "cifra:1 kcal": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:4.184 kJ": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:1 MJ": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:1000 kJ": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:239 kcal": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:5.7 kcal": "Factor de energia bruta de la proteina. Lo usa la ecuacion de FEDIAF que rehace el BLOQUE 71 contra las kcal del catalogo.",
+        "cifra:23.8 kJ": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:9.4 kcal": "Factor de energia bruta de la grasa. Ver «5.7 kcal».",
+        "cifra:39.3 kJ": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:4.1 kcal": "Factor de energia bruta de NFE + fibra bruta. Ver «5.7 kcal».",
+        "cifra:17.1 kJ": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:8 %": "⚠️ LEIDO HOY: la ecuacion predictiva de energia tiene un aviso que no teniamos apuntado. «In dog foods with crude fibre content above 8 % in DM and a high percentage of fermentable NSP in the crude fibre fraction the predictive equation CAN UNDERESTIMATE the energy density». Toca al BLOQUE 71, que compara las kcal del catalogo contra esa ecuacion. Ver F-22.",
+        "cifra:100 kJ": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:1.25 kcal": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:5.23 kJ": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:0.9 kcal": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:3.77 kJ": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:90 kcal": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:377 kJ": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:200 kcal": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:810 kJ": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:90 kg": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:60 %": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:19 %": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:22 %": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:15 %": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:90 %": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:70 kcal": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:144 kcal": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:602.5 kJ": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:10 %": "La otra mitad de la misma frase: el +10 % de los aminoacidos. APLICADO.",
+        "cifra:5 kcal": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:21 kJ": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:47.5 %": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:48.22 %": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:60.70 %": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:56.18 %": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:100 kcal": "MER del GATO. El motor solo formula para perro.",
+        "cifra:75 kcal": "MER del GATO. El motor solo formula para perro.",
+        "cifra:4 kg": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:7. kcal": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:130 kcal": "La ingesta que asume NRC (130 kcal/kg^0,75) y de la que FEDIAF se aparta a 110. Explica el +20 % de la seccion 3.3.1.",
+        "cifra:1000 kcal": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:110 kcal": "APLICADO. La segunda MER de adulto. Ver «95 kcal».",
+        "cifra:838 kcal": "El ejemplo de FEDIAF: 110 kcal/kg^0,75 son 838 kcal/dia para un perro de 15 kg. Comprueba la formula que ya aplicamos.",
+        "cifra:15 kg": "El perro de ejemplo de los dos calculos de arriba. ⚠️ No confundir con el umbral de 15 kg de la nota b, que es peso ADULTO ESPERADO y decide otra cosa.",
+        "cifra:105 kcal": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:95 kcal": "APLICADO. Es la MER sobre la que se calculan los minimos de adulto (`minAdulto`). La otra columna, 110, es `minAdulto110`.",
+        "cifra:724 kcal": "El ejemplo de la otra columna: 95 kcal/kg^0,75 = 724 kcal/dia a 15 kg.",
+        "cifra:253 kcal": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:189 kcal": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:400 kcal": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:100 g": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:63 g": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:47 g": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:210 g": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:181 g": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:4.75 mg": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:15 mg": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:7.5 mg": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:10.0 mg": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:7.2 mg": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "cifra:8.34 mg": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "frase:The next section provides general recommendations for household dogs and cats and should be considered a start": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "frase:Metabolisable energy 50 of 98 Page FEDIAF Nutritional Guidelines | Publication September 2025 a) Predictive Eq": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "frase:22 x % crude protein) FEDIAF Nutritional Guidelines | Publication September 2025 51 of 98 Page b) The ME in pr": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "frase:c) Determination of ME content of foods by feeding trials Manufacturers should be aware that feeding trials ar": "Ensayo de alimentacion para el fabricante. El motor no hace ensayos.",
+        "frase:Alternatively, NRC 2006 recommends subtracting 1.": "Conversion de energia digestible a metabolizable en un ENSAYO. El motor no hace ensayos.",
+        "frase:FEDIAF recommends that members who wish to use feeding trials should employ the quantitative collection protoc": "Igual: protocolo de ensayo para el fabricante.",
+        "frase:Dogs over seven years of age may need 10 - 15 % less energy than at three to seven years (Finke MD 1994, Kienz": "APLICADO por otra puerta y mas estricto: el escalon de edad que usa el motor es el de la Tabla VII-6 (+20/-15 %), no este rango. Lo vigila el ancla del BLOQUE 65.",
+        "frase:Most of the assessed scientific work uses the age of seven years as a cut-off point, but this should not be re": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "frase:When kept outside in winter, dogs may need 10 to 90 % more calories than during summer.": "⚠️ NO SE APLICA, Y FALTA LA PREGUNTA, NO EL NUMERO. La ficha no pregunta donde duerme el perro. Ya estaba abierto por SACN5 Tabla 5-3 (`CERRADO.md`, «El frio»); FEDIAF lo dice tambien y con rango propio.",
+        "frase:(2002) it is recommended that dogs should be fed to maintain a body condition score (BCS) between 4 and 5 on t": "⚠️ ES LA MITAD DE LA TENSION DEL BCS que ya esta abierta: §7.1.3 dice que el ideal es ENTRE 4 y 5, y §7.1.1 no distingue direccion. Hoy un perro en BCS 4 recibe un 8,2 % mas de comida. Decision de Elena en `PENDIENTE_DECISIONES.md`.",
+        "frase:energy) allocation to ensure growth along the curve is recommended for puppy owners.": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "frase:67 proposed by Heusner in 1991 should be used (NRC 2006b), which has recently been confirmed to be a more accu": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "frase:67 is only valid for cats with a lean body condition, many lean cats may need less energy (Riond JL et al.": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "frase:(2011) recommended that neutered cats should be fed to maintain a body condition score (BCS) of 4 on the 9-poi": "Cifra del anexo de ENERGIA. El DER lo calcula el frontend con `calcularDER()`/`src/der.js` y se vigila contra `der_casos.json` (124 casos) por los dos lados: BLOQUE 23 aqui y `der-contrato.spec.js` alli.",
+        "frase:In order to achieve the recommended intake of energy and nutrients, products must be formulated to match these": "APLICADO. Es lo que hace el motor: formular contra los niveles recomendados."
+      }
     },
     "FEDIAF/7.3": {
       "rango": [
@@ -476,7 +653,10 @@
         5569
       ],
       "titulo": "Anexo: Taurina",
-      "veredictos": {}
+      "veredictos": {
+        "frase:Individual companies can have different levels of taurine in their products as long as they ensure that the pr": "Anexo de TAURINA. Para el perro no es esencial (la sintetiza de los aminoacidos azufrados), asi que FEDIAF no le pone minimo y el motor tampoco. Donde si aparece es como SUELO de patologia (DCM taurina-respondedora, hepatopatia), y eso sale de SACN5, no de aqui.",
+        "frase:For dogs dietary taurine is not essential, since dogs can synthesize taurine from sulphur amino acids, therefo": "Anexo de TAURINA. Para el perro no es esencial (la sintetiza de los aminoacidos azufrados), asi que FEDIAF no le pone minimo y el motor tampoco. Donde si aparece es como SUELO de patologia (DCM taurina-respondedora, hepatopatia), y eso sale de SACN5, no de aqui."
+      }
     },
     "FEDIAF/7.4": {
       "rango": [
@@ -484,7 +664,12 @@
         5675
       ],
       "titulo": "Anexo: Arginina",
-      "veredictos": {}
+      "veredictos": {
+        "cifra:0.01 g": "APLICADO. «For every gram of crude protein above the stated values, an additional 0.01 g of arginine is required». Vive en `requisitos_condicionales.json` y lo aplica `minimo_de()`.",
+        "cifra:1 %": "APLICADO (nota a/b): el cachorro de raza grande o gigante sigue con al menos 1 % de calcio hasta los ~6 meses.",
+        "cifra:0.02 g": "Anexo de ARGININA, ya aplicado: la tabla VII-13 y el «+0,01 g de arginina por cada gramo de proteina por encima del requisito» viven en `requisitos_condicionales.json` y los aplica `minimo_de()` (BLOQUE 60).",
+        "cifra:100 g": "Anexo de ARGININA, ya aplicado: la tabla VII-13 y el «+0,01 g de arginina por cada gramo de proteina por encima del requisito» viven en `requisitos_condicionales.json` y los aplica `minimo_de()` (BLOQUE 60)."
+      }
     },
     "FEDIAF/7.5": {
       "rango": [
@@ -492,7 +677,39 @@
         5835
       ],
       "titulo": "Anexo: Vitaminas",
-      "veredictos": {}
+      "veredictos": {
+        "cifra:0.3 µg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:1 IU": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:1.0 mg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:3,333 IU": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.344 µg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.359 µg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.55 µg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:1.0 µg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:833 IU": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.025 µg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:1 µg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:40 IU": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:1 mg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:1.49 IU": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:1.36 IU": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:1.10 IU": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:1.00 IU": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.33 IU": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.25 IU": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.01 IU": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.88 mg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.81 mg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.79 mg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.92 mg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.52 mg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.82 mg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.75 mg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.87 mg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.51 mg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.45 mg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77).",
+        "cifra:0.46 mg": "Factor de la Tabla VII-14 (forma quimica -> actividad vitaminica). Vive en `fediaf_conversiones_vitaminas.json` y `auditar_transcripcion_fediaf.py` rehace sus 27 factores desde el PDF (BLOQUE 77)."
+      }
     },
     "FEDIAF/7.6": {
       "rango": [
@@ -500,7 +717,13 @@
         5997
       ],
       "titulo": "Anexo: Reaccion adversa a los alimentos",
-      "veredictos": {}
+      "veredictos": {
+        "cifra:100 %": "Anexo de REACCION ADVERSA a los alimentos: como se diagnostica (dieta de eliminacion y provocacion). El motor lo cubre por otra puerta -- las exclusiones y las alergias, que no se tocan jamas (regla 4) -- y la patologia `reaccion_adversa_alimento` saca sus cifras de SACN5 Tabla 31-3, no de aqui.",
+        "cifra:15 %": "Anexo de REACCION ADVERSA a los alimentos: como se diagnostica (dieta de eliminacion y provocacion). El motor lo cubre por otra puerta -- las exclusiones y las alergias, que no se tocan jamas (regla 4) -- y la patologia `reaccion_adversa_alimento` saca sus cifras de SACN5 Tabla 31-3, no de aqui.",
+        "cifra:5 %": "Anexo de REACCION ADVERSA a los alimentos: como se diagnostica (dieta de eliminacion y provocacion). El motor lo cubre por otra puerta -- las exclusiones y las alergias, que no se tocan jamas (regla 4) -- y la patologia `reaccion_adversa_alimento` saca sus cifras de SACN5 Tabla 31-3, no de aqui.",
+        "cifra:6 %": "Anexo de REACCION ADVERSA a los alimentos: como se diagnostica (dieta de eliminacion y provocacion). El motor lo cubre por otra puerta -- las exclusiones y las alergias, que no se tocan jamas (regla 4) -- y la patologia `reaccion_adversa_alimento` saca sus cifras de SACN5 Tabla 31-3, no de aqui.",
+        "frase:Ideally this should be confirmed by a challenge (reintroduction of the suspected component) after clinical sig": "LEIDO. Es el metodo de diagnostico de la reaccion adversa (dieta de eliminacion y provocacion), no una cifra. Refuerza la pregunta que falta en la ficha: en que FASE esta el perro, porque en diagnostico subir el omega-3 puede tapar el resultado."
+      }
     },
     "FEDIAF/7.7": {
       "rango": [
@@ -508,7 +731,25 @@
         6323
       ],
       "titulo": "Anexo: riesgo de algunos alimentos humanos",
-      "veredictos": {}
+      "veredictos": {
+        "cifra:2.8 g": "⚠️ LA DOSIS MAS BAJA PUBLICADA QUE ENVENENA: 2,8 g de PASAS por kg de peso. Ninguna ficha del catalogo es uva ni pasa -- comprobado hoy sobre las 163 --, pero nada IMPIDE que entre una. Ver F-15.",
+        "cifra:19.6 g": "La misma dosis en UVA fresca: 19,6 g/kg de peso. Ver F-15.",
+        "cifra:40 kg": "«Even a large dog of 40 kg may need to eat only 120 g to be at risk». Ver F-15.",
+        "cifra:120 g": "Los gramos de pasas que ponen en riesgo a un perro de 40 kg. Ver F-15.",
+        "cifra:500 g": "Lo que suele traer una caja de pasas, y por lo que se puede comer de una vez.",
+        "cifra:100 %": "Anexo de ALIMENTOS HUMANOS peligrosos dados como premio (uva, pasa, chocolate, cebolla, ajo). Ninguno esta en el catalogo -- comprobado hoy sobre las 163 fichas --, y una racion BARF no los lleva. Ver el hallazgo F-15: lo que falta no es la cifra, es que nada IMPIDA que entren.",
+        "cifra:250 mg": "Anexo de ALIMENTOS HUMANOS peligrosos dados como premio (uva, pasa, chocolate, cebolla, ajo). Ninguno esta en el catalogo -- comprobado hoy sobre las 163 fichas --, y una racion BARF no los lleva. Ver el hallazgo F-15: lo que falta no es la cifra, es que nada IMPIDA que entren.",
+        "cifra:500 mg": "Anexo de ALIMENTOS HUMANOS peligrosos dados como premio (uva, pasa, chocolate, cebolla, ajo). Ninguno esta en el catalogo -- comprobado hoy sobre las 163 fichas --, y una racion BARF no los lleva. Ver el hallazgo F-15: lo que falta no es la cifra, es que nada IMPIDA que entren.",
+        "cifra:115 mg": "Anexo de ALIMENTOS HUMANOS peligrosos dados como premio (uva, pasa, chocolate, cebolla, ajo). Ninguno esta en el catalogo -- comprobado hoy sobre las 163 fichas --, y una racion BARF no los lleva. Ver el hallazgo F-15: lo que falta no es la cifra, es que nada IMPIDA que entren.",
+        "cifra:20 mg": "Anexo de ALIMENTOS HUMANOS peligrosos dados como premio (uva, pasa, chocolate, cebolla, ajo). Ninguno esta en el catalogo -- comprobado hoy sobre las 163 fichas --, y una racion BARF no los lleva. Ver el hallazgo F-15: lo que falta no es la cifra, es que nada IMPIDA que entren.",
+        "cifra:30 mg": "Anexo de ALIMENTOS HUMANOS peligrosos dados como premio (uva, pasa, chocolate, cebolla, ajo). Ninguno esta en el catalogo -- comprobado hoy sobre las 163 fichas --, y una racion BARF no los lleva. Ver el hallazgo F-15: lo que falta no es la cifra, es que nada IMPIDA que entren.",
+        "cifra:10 g": "Anexo de ALIMENTOS HUMANOS peligrosos dados como premio (uva, pasa, chocolate, cebolla, ajo). Ninguno esta en el catalogo -- comprobado hoy sobre las 163 fichas --, y una racion BARF no los lleva. Ver el hallazgo F-15: lo que falta no es la cifra, es que nada IMPIDA que entren.",
+        "cifra:5 g": "Anexo de ALIMENTOS HUMANOS peligrosos dados como premio (uva, pasa, chocolate, cebolla, ajo). Ninguno esta en el catalogo -- comprobado hoy sobre las 163 fichas --, y una racion BARF no los lleva. Ver el hallazgo F-15: lo que falta no es la cifra, es que nada IMPIDA que entren.",
+        "frase:Grape extract is not considered a threat; the grape or raisin itself has to be eaten for poisoning to occur (M": "Anexo de ALIMENTOS HUMANOS peligrosos dados como premio (uva, pasa, chocolate, cebolla, ajo). Ninguno esta en el catalogo -- comprobado hoy sobre las 163 fichas --, y una racion BARF no los lleva. Ver el hallazgo F-15: lo que falta no es la cifra, es que nada IMPIDA que entren.",
+        "frase:Even a large dog of 40 kg may need to eat only 120 g to be at risk and as cartons of raisins typically contain": "Anexo de ALIMENTOS HUMANOS peligrosos dados como premio (uva, pasa, chocolate, cebolla, ajo). Ninguno esta en el catalogo -- comprobado hoy sobre las 163 fichas --, y una racion BARF no los lleva. Ver el hallazgo F-15: lo que falta no es la cifra, es que nada IMPIDA que entren.",
+        "frase:It has to be pointed out, however, that many dogs never develop AFR after ingestion of raisins or grapes.": "Anexo de ALIMENTOS HUMANOS peligrosos dados como premio (uva, pasa, chocolate, cebolla, ajo). Ninguno esta en el catalogo -- comprobado hoy sobre las 163 fichas --, y una racion BARF no los lleva. Ver el hallazgo F-15: lo que falta no es la cifra, es que nada IMPIDA que entren.",
+        "frase:Aggressive fluid therapy is essential to increase the chances of survival, and should be maintained long enoug": "Anexo de ALIMENTOS HUMANOS peligrosos dados como premio (uva, pasa, chocolate, cebolla, ajo). Ninguno esta en el catalogo -- comprobado hoy sobre las 163 fichas --, y una racion BARF no los lleva. Ver el hallazgo F-15: lo que falta no es la cifra, es que nada IMPIDA que entren."
+      }
     },
     "FEDIAF/7.8": {
       "rango": [
@@ -548,7 +789,45 @@
         9825
       ],
       "titulo": "Registro de cambios ano a ano",
-      "veredictos": {}
+      "veredictos": {
+        "cifra:95 kcal": "APLICADO. Es la MER sobre la que se calculan los minimos de adulto (`minAdulto`). La otra columna, 110, es `minAdulto110`.",
+        "cifra:75 kcal": "MER del GATO. El motor solo formula para perro.",
+        "cifra:75 IU": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:100 g": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:28 IU": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:188 IU": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:1000 kcal": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:70 IU": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:44.8 IU": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:16.7 IU": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:1.10 g": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:2025 g": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:28.40 mg": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:22.70 mg": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:14 %": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:60 %": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:170 mg": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:22.73 µg": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:0.20 mg": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:12 %": "⚠️ LEIDO HOY Y ABRE UN HUECO REAL. «Legal maxima in EU legislation are expressed on 12 % moisture content and THEY DO NOT ACCOUNT FOR ENERGY DENSITY. Therefore in these guidelines they are only provided on a dry matter basis». O sea que el techo LEGAL es por kg de alimento, no por kcal, y pasarlo a por-1000-kcal con el x2,5 es un paso NUESTRO que depende de la densidad energetica del menu. Ver F-16.",
+        "cifra:1.5 %": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:2.35 %": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:142.00 mg": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:68.18 mg": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:0.82 mg": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:1 g": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:4.0 g": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:5 g": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "cifra:6.25 g": "El maximo nutricional de calcio, 6,25 g/1000 kcal, de AAFCO 1992. Es el `maxAdulto` del motor. Ver F-13.",
+        "cifra:4 g": "El maximo nutricional de fosforo, 4 g/1000 kcal, de AAFCO 1992. Es el `maxAdulto` del motor. Ver F-13.",
+        "cifra:7.1 g": "El calcio del estudio de Stockman 2017 que respalda ese maximo. Ver F-14.",
+        "cifra:4.5 g": "El fosforo del mismo estudio. Ver F-14.",
+        "frase:“Each family of products (ANNEX 8) should be validated by chemical analysis of the finished product” was chang": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "frase:35 % DM are safe for healthy dogs.": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "frase:Higher levels may still be safe, but no scientific data are available.": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "frase:Footnote g was added: The bioavailability of minerals should be carefully considered in diet formulas where th": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo.",
+        "frase:Following sentence was added under header “iron”: In addition, the amount of inert iron is not to be taken int": "Entrada del registro de cambios ano a ano. Sirve para comprobar que aplicamos la version vigente y no una anterior, no para aplicar nada nuevo."
+      }
     },
     "FEDIAF/9": {
       "rango": [

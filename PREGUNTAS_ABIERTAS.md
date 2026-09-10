@@ -444,7 +444,7 @@ debería decirle la app al dueño sobre lo de AAHA?
 
 ## No bloqueantes
 
-### P-04 · El techo de lisina de FEDIAF: ¿sobre qué proteína se mide?
+### ~~P-04 · El techo de lisina de FEDIAF: ¿sobre qué proteína se mide?~~ ✅ CONTESTADA POR LA FUENTE (10 sep)
 
 | | |
 |---|---|
@@ -465,6 +465,22 @@ que no aplicamos, y un revisor externo va a preguntar por él el primer día.
 Ya estaba apuntada en `PENDIENTE_DECISIONES.md`. Aquí solo con dueño y fecha.
 
 ---
+
+**⚠️ CERRADA EL 10 DE SEPTIEMBRE, leyendo §3.3.1 de FEDIAF entera** (antes solo
+se había leído la fila de la tabla, y la explicación no está en la tabla):
+
+> *«Czarnecki et al. (1985) showed that excess dietary lysine (4,91 % DM [basal
+> diet 0,91 % + **4 % from a supplement**]) decreases weight gain in puppies but
+> not 2,91 % DM… the highest no-effect-level of lysine for puppies was 2,91 % DM
+> (energy density 4156 kcal/kg). This is equivalent to **7,0 g/1000 kcal**… and
+> this is therefore the FEDIAF maximum for puppy growth.»*
+
+**No se mide sobre la proteína: es lisina TOTAL de la dieta**, y el daño se vio
+**añadiendo lisina libre**, no comiendo más carne. Eso no cambia la decisión —el
+techo sigue sin aplicarse porque 0 de 12 menús de cachorro caben debajo— pero la
+deja mucho mejor sostenida: nuestros 8-11 g vienen de la proteína del alimento,
+que no es lo que el estudio midió. Detalle en `HALLAZGOS_LECTURA_FUENTES.md`
+F-17.
 
 ### P-05 · El mínimo de EPA+DHA de adulto no es de FEDIAF
 

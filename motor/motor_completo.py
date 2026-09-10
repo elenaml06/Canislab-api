@@ -663,7 +663,8 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # infactible sin motivo real. Quitarlos aquí, del catálogo de
         # candidatos, evita que puedan "gastar" cupo de ninguna
         # restricción, sea la que sea.
-        from seguridad import OXALATO_ALTO, PURINAS_ALTAS, BORRAJA_EXCLUIR, TIROIDES_EXCLUIR, _es as _es_patologia
+        from seguridad import (OXALATO_ALTO, PURINAS_ALTAS, BORRAJA_EXCLUIR, TIROIDES_EXCLUIR,
+                               TOXICOS_FEDIAF_7_7, _es as _es_patologia)
         if "oxalato" in (patologias or []):
             disp = [n for n in disp if not _es_patologia(n, OXALATO_ALTO)]
         if "urato" in (patologias or []) and cat in ("Hígado", "Vísceras", "Pescados y mariscos"):
@@ -674,6 +675,10 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         # sea la patología, igual que la borraja. TVT Merkblatt 181 (mayo
         # 2025). Ver seguridad.TIROIDES_EXCLUIR.
         disp = [n for n in disp if not _es_patologia(n, TIROIDES_EXCLUIR)]
+        # Y los del anexo 7.7 de FEDIAF, que hoy no estan en el catalogo y por eso
+        # mismo hay que dejarlo puesto: el dia que entre una ficha de uva o de
+        # cebolla, no hara falta que nadie se acuerde.
+        disp = [n for n in disp if not _es_patologia(n, TOXICOS_FEDIAF_7_7)]
         disp = [n for n in disp
                if not any(pat in (patologias or [])
                          for pat in (alimentos.get(n, {}).get("restricciones_patologia") or {}))]
@@ -708,6 +713,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         _sup = [n for n in _sup if not _es_patologia(n, OXALATO_ALTO)]
     _sup = [n for n in _sup if not _es_patologia(n, BORRAJA_EXCLUIR)]
     _sup = [n for n in _sup if not _es_patologia(n, TIROIDES_EXCLUIR)]
+    _sup = [n for n in _sup if not _es_patologia(n, TOXICOS_FEDIAF_7_7)]
     _sup = [n for n in _sup
             if not any(pat in (patologias or [])
                       for pat in (alimentos.get(n, {}).get("restricciones_patologia") or {}))]

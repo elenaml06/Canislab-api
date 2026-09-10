@@ -607,6 +607,44 @@ BORRAJA_EXCLUIR = {"borraja"}
 # despues, aparte.
 TIROIDES_EXCLUIR = {"cuello", "laringe", "traquea", "esofago", "garganta"}
 
+# ⚠️ LOS ALIMENTOS HUMANOS QUE FEDIAF DECLARA TOXICOS (10 septiembre de 2026).
+#
+# Salen del ANEXO 7.7 de FEDIAF, «Risks of some human foods regularly given to
+# pets», leido entero hoy. Hasta hoy ese anexo no estaba en ninguna parte del
+# repo, y el motivo por el que no se noto es el peor posible: **hoy no hay
+# ninguno en el catalogo** -- comprobado sobre las 163 fichas --, asi que la
+# ausencia de la lista no daba error, no daba aviso y no cambiaba ningun menu.
+#
+# Es exactamente el patron del oxido de cobre y del oxido de hierro: una regla
+# de la fuente que hoy no muerde y que el dia que muerda ya no habra nadie
+# mirando. El coste de escribirla es cero y el de no escribirla es una ficha de
+# uva o de cebolla entrando sin que salte nada.
+#
+# LAS CIFRAS, literales del anexo:
+#
+#   · Uva y pasa: «The lowest intake that has so far been reported to cause
+#     poisoning is around 2.8 g of raisins per kg bodyweight (BW) and 19.6 g of
+#     grapes per kg BW; one dog became ill after only eating 10 to 12 grapes».
+#     Y ademas: «The severity of the illness does not seem to be dose-related»
+#     -- o sea que no hay una dosis segura de la que fiarse. Solo el perro se ve
+#     afectado; el extracto de uva no, tiene que comerse la fruta.
+#   · Chocolate y cacao: el toxico es la teobromina, «particularly toxic to
+#     dogs, because its elimination is very slow», vida media ~17,5 h y
+#     recirculacion enterohepatica -- «repeated intakes of smaller (non-toxic)
+#     quantities may still cause intoxication». Tampoco hay dosis segura por
+#     acumulacion.
+#   · Cebolla, ajo y el resto del genero Allium: el anexo los nombra en su
+#     entrada («raisins, grapes, onions, garlic and chocolate»).
+#
+# NO SE PONE UNA DOSIS MAXIMA A PROPOSITO. La propia fuente dice de los dos
+# primeros que la gravedad no depende de la dosis y que dosis pequenas repetidas
+# intoxican igual. Un tope numerico aqui seria inventarse una seguridad que la
+# fuente niega: van fuera, en cualquier cantidad, como la borraja y el tiroides.
+TOXICOS_FEDIAF_7_7 = {
+    "uva", "uvas", "pasa", "pasas", "sultana", "chocolate", "cacao",
+    "cebolla", "cebolleta", "ajo", "puerro", "chalota", "cebollino",
+}
+
 # ⚠️ RESTRICCIONES POR PATOLOGIA — investigadas 4 agosto, mismo patron que
 # el oxalato/urato: en perro SANO no se tocan, solo se activan si la
 # patologia esta declarada. Los datos concretos viven en el propio
@@ -822,6 +860,16 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     # tiroides del animal pegada. TVT Merkblatt 181 (mayo 2025): con uso
     # regular, riesgo de hipertiroidismo exógeno. Bloqueo de nivel A, igual
     # que la borraja: no se topa por cantidad, se excluye del todo.
+    tox = [n for n in menu if _es(n, TOXICOS_FEDIAF_7_7)]
+    if tox:
+        problemas.append(
+            "%s está en la lista de alimentos humanos con toxicidad documentada "
+            "en el perro (FEDIAF, anexo 7.7). No hay una cantidad segura: la "
+            "propia fuente dice que en la uva y la pasa la gravedad no depende "
+            "de la dosis, y que en el chocolate dosis pequeñas repetidas "
+            "intoxican igual por acumulación. Fuera de la ración."
+            % ", ".join(tox))
+
     tir = [n for n in menu if _es(n, TIROIDES_EXCLUIR)]
     if tir:
         problemas.append(

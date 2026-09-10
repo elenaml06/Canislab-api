@@ -4495,3 +4495,171 @@ cita de este documento anterior al 10 de septiembre**, y las de
 sacada de un texto con las columnas pegadas puede decir algo que la fuente no
 dice, y esa es la peor clase de error que puede tener este repo: tiene forma de
 dato bueno y lleva comillas.
+
+---
+
+## FEDIAF, LEÍDO ENTERO Y BIEN — las 532 celdas y frases, con veredicto (10 de septiembre)
+
+Segunda pasada, ya sobre el texto con las columnas en orden. **El 100 % de las
+10.683 líneas está en una sección desglosada y las 532 cifras y frases tienen
+veredicto.** Lo vigila el BLOQUE 68, que además exige que la unión de las
+secciones sea el documento entero — sin eso, una auditoría que solo mira lo
+declarado premia declarar poco, que es como se pudo decir «FEDIAF leído entero»
+con dos tercios fuera.
+
+Lo que sigue es lo que apareció y no estaba en el repo.
+
+### F-15 · El anexo 7.7 entero: los alimentos humanos tóxicos ✅ APLICADO
+
+FEDIAF dedica un anexo a **uva, pasa, chocolate, cebolla y ajo**, con las dosis:
+
+> *«The lowest intake that has so far been reported to cause poisoning is around
+> **2,8 g of raisins per kg bodyweight** and **19,6 g of grapes per kg BW**; one
+> dog became ill after only eating 10 to 12 grapes… **The severity of the illness
+> does not seem to be dose-related**.»*
+
+Y del chocolate: la teobromina tiene una vida media de 17,5 h y recirculación
+enterohepática, así que *«repeated intakes of smaller (non-toxic) quantities may
+still cause intoxication»*.
+
+**No estaba en ninguna parte del repo.** Y el motivo por el que no se notó es el
+peor posible: **hoy no hay ninguno en el catálogo** —comprobado sobre las 163
+fichas—, así que su ausencia no daba error, no daba aviso y no cambiaba ningún
+menú. Es el patrón del óxido de cobre otra vez: una regla que hoy no muerde y
+que el día que muerda ya no habrá nadie mirando.
+
+**Aplicado:** `TOXICOS_FEDIAF_7_7` en `seguridad.py`, filtrado en el solver
+junto a la borraja y el tejido tiroideo, con aviso propio, y **BLOQUE 82** que
+comprueba las tres puertas. Sin tope numérico a propósito: la propia fuente dice
+que la gravedad no depende de la dosis y que dosis pequeñas repetidas intoxican
+igual. Poner un número aquí sería inventarse una seguridad que la fuente niega.
+
+### F-16 · El puente de 4 kcal/g de materia seca es una asunción, y FEDIAF manda corregirla
+
+Dos frases de §3.2.1, y las dos tocan a **todo** el repo:
+
+> *«These conversions assume an energy density of 16,7 kJ (4,0 kcal) ME/g DM.
+> **For foods with energy densities different from this value, the
+> recommendations should be corrected for energy density.**»*
+
+> *«Legal maxima in EU legislation are expressed on 12 % moisture content and
+> **they do not account for energy density**. Therefore in these guidelines they
+> are only provided on a dry matter basis.»*
+
+El ×2,5 con el que pasamos **cada** cifra de %MS a por-1000-kcal —las 92 de
+patología, las 12 del libro, las de SACN5— sale de asumir 4,0 kcal/g MS. La
+fuente dice que hay que corregirlo si la densidad es otra, y una ración cruda,
+sin hidratos y con más grasa, no tiene por qué estar en 4,0.
+
+**Y hay una prueba de que FEDIAF sí corrige:** el techo de lisina del cachorro
+se convierte con **4156 kcal/kg**, la densidad del estudio del que sale, no con
+4000 (ver F-17).
+
+⚠️ **Lo que hace esto especialmente incómodo: no se puede ni medir.** Para saber
+la densidad energética en materia seca hace falta la **humedad de cada ficha**, y
+no está en ninguna (`CERRADO.md`, sección ABIERTO). Así que este hallazgo no
+cambia un número: sube de prioridad el dato que falta, y ahora se sabe
+exactamente para qué hace falta.
+
+Para el techo **legal** el efecto tiene signo conocido: si un menú tiene más de
+4,0 kcal/g MS, puede llevar más de lo que la ley permite **por kg de alimento**
+y aun así pasar nuestro control por 1000 kcal.
+
+### F-17 · El techo de lisina: contesta la pregunta P-04
+
+`PREGUNTAS_ABIERTAS.md` P-04 preguntaba **sobre qué proteína se mide** el techo
+de lisina. La respuesta estaba en §3.3.1 y no se mide sobre proteína:
+
+> *«Czarnecki et al. (1985) showed that excess dietary lysine (**4,91 % DM**
+> [basal diet 0,91 % + **4 % from a supplement**]) decreases weight gain in
+> puppies but not 2,91 % DM… the highest no-effect-level of lysine for puppies
+> was **2,91 % DM** (energy density **4156 kcal/kg**). This is equivalent to
+> **7,0 g/1000 kcal** or 2,8 % DM (at 4 kcal/g DM) and this is therefore the
+> FEDIAF maximum for puppy growth.»*
+
+Es **lisina total de la dieta**, y el daño se vio **añadiendo lisina libre** a
+una dieta basal, no comiendo más proteína. Eso importa para nuestra excepción:
+el motor no aplica ese techo porque **0 de 12 menús de cachorro caben debajo**
+(van de 8,24 a 11,48), y ahora se sabe que esos 8-11 g vienen de la proteína de
+la carne, no de un suplemento de lisina cristalina, que es lo que el estudio
+midió. **No cambia la decisión, pero la deja mucho mejor sostenida.**
+
+### F-18 · El gran danés tiene su propio techo de calcio
+
+> *«During later growth **up to 1,8 % DM can be fed to all breed dogs including
+> giant breeds with the exception of great Danes**. This breed may be more
+> susceptible and it is preferable to continue with a food containing a maximum
+> calcium content of **1,6 %**.»*
+
+1,6 % MS son 4000 mg/1000 kcal, contra los 4500 que el motor aplica en
+crecimiento. **Medido: hoy no cambia ningún menú**, porque el techo del libro
+para el cachorro de más de 25 kg de adulto (2750 mg, SACN5 Tabla 17-1 +
+Fascetti cap.10) ya es bastante más estricto que 4000, y un gran danés siempre
+pasa de 25 kg. Queda escrito porque **está cubierto por accidente**: si algún
+día ese techo del libro se moviera, el del gran danés no lo sostendría nadie.
+
+### F-19 · La vitamina D tiene tres máximos según el tamaño de la raza
+
+> *«Studies in Great Dane puppies showed that a dietary vitamin D level of **435
+> IU/100 g DM** can affect Ca absorption and may stimulate endochondral
+> ossification disturbances. Therefore, **320 IU per 100 g DM** should be the
+> nutritional maximum for growing **giant breed** dogs. Based on differences in
+> cholecalciferol metabolism between giant breed and small breed puppies, **425
+> IU/100 g DM** can be considered a safe nutritional maximum for **small breed**
+> puppies. Since there is no information on maximum safe intakes for adult dogs
+> and breeding bitches, FEDIAF recommends the **same nutritional maximum for
+> other life stages** as those indicated for puppies.»*
+
+Convertido: **20 µg/1000 kcal** en raza gigante y **26,6** en raza pequeña, y
+valen también para el adulto. El motor aplica **14,1875** a todos, que es el
+máximo **legal**. Y §3.1.3 dice que el legal **solo aplica si el nutriente se
+añade como aditivo**: en un menú cuya vitamina D venga solo de hígado, pescado o
+aceite de hígado de bacalao —materias primas— el que mandaría es el nutricional.
+
+**Medido sobre los 216 menús del catálogo:** la vitamina D va de 3,17 a 14,19
+µg/1000 kcal, mediana 5,71. Solo tres pasan de 13, y **el único que toca el techo
+(14,19) lleva un multivitamínico**, que es un aditivo, así que ahí el legal
+manda y nuestro número es el correcto.
+
+**No se aplica, y el motivo se escribe:** relajar hasta 26,6 cruzaría nuestro
+propio tope de seguridad crónica (20 µg), casi todos los menús llevan
+multivitamínico, y ningún menú se está quedando fuera por esto. Ser más estricto
+aquí no cuesta nada medible.
+
+### F-20 · Por qué FEDIAF descarta un techo de yodo más bajo
+
+> *«From studies by Castillo et al. (2001a,b) low nutritional maximum for iodine
+> in dogs (**0,4 mg/100 g DM**) was recommended. However in these studies puppies
+> were significantly **overfed (approx. 75 % above energy requirement)**… the food
+> was deficient in a number of key nutrients… Consequently, these results are
+> **irrelevant** for normal commercial nutritionally balanced foods, and the
+> existing legal maximum is safe for all dogs.»*
+
+0,4 mg/100 g MS son 1000 µg/1000 kcal — **más estricto que nuestro tope crónico
+de 1275**. FEDIAF lo descarta con un motivo concreto y comprobable. Es material
+directo para la pregunta abierta del yodo: no hay que subir el nuestro, pero sí
+hay que saber que la fuente más estricta que existe está desacreditada por la
+propia FEDIAF.
+
+### F-21 · Tercera fuente independiente para el ratio omega-6:omega-3
+
+> *«The effects of omega-3 fatty acids depend on the level **as well as on the
+> ratio of omega-6 to omega-3 fatty acids**. Very high levels of long chain
+> omega-3 fatty acids can decrease cellular immunity, particularly in the
+> presence of a low level of omega-6 fatty acids.»*
+
+Cris Carles lo señaló, el NRC 2006 lo menciona (y prefiere el
+linoleico:linolénico, que sí aplicamos), y **FEDIAF también lo dice**. Ninguna de
+las tres da una cifra para el perro sano. Lo que cambia es el peso de la
+pregunta: ya no es «una fuente lo pide», son tres.
+
+### F-22 · La ecuación de energía se queda corta con mucha fibra
+
+> *«In dog foods with **crude fibre content above 8 % in DM** and a high
+> percentage of fermentable NSP in the crude fibre fraction the predictive
+> equation **can underestimate the energy density**.»*
+
+Toca al **BLOQUE 71**, que compara las kcal de cada ficha del catálogo contra
+esa misma ecuación. Un alimento muy fibroso puede salir «alejado de la ecuación»
+sin que su dato esté mal. Hoy el bloque no distingue ese caso — y, como F-16, no
+se puede comprobar sin la humedad.

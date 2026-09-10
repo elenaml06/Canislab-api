@@ -10793,6 +10793,33 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 # sin veredicto, EXACTO, como el 78 hace con las tablas: solo baja cuando
 # alguien lee y resuelve, y lo baja en el mismo commit.
 print(f"\n{'='*60}")
+print("=== BLOQUE 82: los alimentos que FEDIAF declara toxicos ===")
+# ⚠️ POR QUE EXISTE (10 septiembre). El anexo 7.7 de FEDIAF -- «Risks of some
+# human foods regularly given to pets»: uva, pasa, chocolate, cebolla, ajo --
+# no estaba en NINGUNA parte del repo, y el motivo por el que no se noto es el
+# peor: hoy no hay ninguno en el catalogo, asi que su ausencia no daba error, no
+# daba aviso y no cambiaba ningun menu. Es el patron del oxido de cobre otra vez.
+#
+# Este bloque comprueba las tres puertas: que ninguna ficha del catalogo caiga en
+# la lista, que el solver los filtre si algun dia entra una, y que el aviso salga.
+from seguridad import TOXICOS_FEDIAF_7_7 as _TOX82, _es as _es82, revisar_seguridad as _rs82
+_en_catalogo82 = sorted(n for n in al if _es82(n, _TOX82))
+if _en_catalogo82:
+    fallos.append(f"BLOQUE82: el catalogo tiene fichas que FEDIAF declara toxicas para el perro "
+                  f"en su anexo 7.7: {_en_catalogo82}. No hay cantidad segura -- la fuente dice "
+                  f"que en la uva la gravedad no depende de la dosis y que el chocolate se "
+                  f"acumula --, asi que no pueden estar en el catalogo")
+# Con el fallo puesto: una ficha de uva inventada tiene que dar aviso.
+_falso82 = {"Uva de mesa": {"nutrientes": {}, "energia": 60, "categoria": "Verduras y frutas"}}
+_avisos82 = _rs82({"Uva de mesa": 100.0}, _falso82, 1000.0)
+if not any("7.7" in str(x) for x in _avisos82):
+    fallos.append("BLOQUE82: se mete una ficha de uva en la racion y `revisar_seguridad` no dice "
+                  "nada. Entonces la lista del anexo 7.7 no la mira nadie")
+print(f"  {len(_TOX82)} alimentos vetados · {len(_en_catalogo82)} en el catalogo (tienen que ser 0)")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+print(f"\n{'='*60}")
 print("=== BLOQUE 81: el texto de SACN5, elemento a elemento ===")
 _aud81 = _sp_b18.run([sys.executable, "leer_sacn5.py"], capture_output=True, text=True,
                      cwd=_os_b18.path.dirname(_os_b18.path.abspath(__file__)))
