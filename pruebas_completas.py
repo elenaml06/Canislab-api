@@ -10809,6 +10809,76 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 # sin veredicto, EXACTO, como el 78 hace con las tablas: solo baja cuando
 # alguien lee y resuelve, y lo baja en el mismo commit.
 print(f"\n{'='*60}")
+print("=== BLOQUE 83: el techo legal y el nutricional, servidos y distinguidos ===")
+# ⚠️ POR QUE EXISTE (10 septiembre). Elena: «¿cómo vas a gestionar lo del límite
+# legal y el nutricional?». Un maximo de FEDIAF viene de TRES sitios y no son lo
+# mismo, y hasta hoy la pantalla ensenaba un numero sin decir cual:
+#
+#   · (L) LEGAL, Reglamento (UE) 2017/1492. Y §3.1.3: solo aplica si el nutriente
+#     se ANADE como aditivo; si viene solo del alimento, manda el nutricional.
+#   · (N) NUTRICIONAL, criterio de FEDIAF, admite lectura profesional.
+#   · La nota c del sodio y el cloruro, que NO es un techo: es «el nivel mas alto
+#     con datos» -- «higher levels may still be safe, but no scientific data are
+#     available». No dice que por encima haga dano: dice que nadie lo ha mirado.
+#
+# MEDIDO sobre los 216 menus del catalogo: en 215 de 216 los ocho nutrientes con
+# techo llevan parte ANADIDA por un suplemento (yodo 91 % de mediana, vitamina D
+# 70 %, zinc 60 %). O sea que el legal es el que corresponde por la §3.1.3 en
+# casi todos, y aplicarlo tambien al que falta es MAS estricto, nunca menos.
+_r83 = _c.post("/formular/estado", json={
+    "gramos_por_alimento": {"Carcasa de pollo": 300.0, "Hígado de vaca": 30.0},
+    "der_objetivo": 800.0, "etapa_requisitos": "Adulto", "peso_perro_kg": 20.0})
+assert _r83.status_code == 200, _r83.status_code
+_techos83 = _r83.json().get("techos_de_fediaf") or []
+if not _techos83:
+    fallos.append("BLOQUE83: `/formular/estado` no sirve `techos_de_fediaf`. Sin eso, quien "
+                  "firma una pauta ve un maximo y no puede saber si es la ley -- que no mueve "
+                  "nadie -- o un criterio nutricional")
+_ORIG83 = {"legal_UE", "nutricional", "nota_c_nivel_mas_alto_con_datos"}
+_req83 = {r["nutriente"]: r for r in
+          _json_b12.load(open("requerimientos_v2_final.json", encoding="utf-8"))}
+for _t83 in _techos83:
+    _f83 = _req83.get(_t83["nutriente"]) or {}
+    if _t83.get("origen") not in _ORIG83:
+        fallos.append(f"BLOQUE83: se sirve el techo de {_t83['nutriente']} con "
+                      f"origen={_t83.get('origen')!r}, que no es ninguno de {sorted(_ORIG83)}")
+    if _t83.get("origen") != _f83.get("maximo_origen"):
+        fallos.append(f"BLOQUE83: la API dice que el techo de {_t83['nutriente']} es "
+                      f"{_t83.get('origen')!r} y el fichero que aplica el solver dice "
+                      f"{_f83.get('maximo_origen')!r}. Es la tercera copia de la misma tabla")
+    if _t83.get("maximo_por_1000kcal") != _f83.get("maxAdulto"):
+        fallos.append(f"BLOQUE83: la API sirve {_t83.get('maximo_por_1000kcal')} de techo para "
+                      f"{_t83['nutriente']} y el fichero dice {_f83.get('maxAdulto')}")
+
+# Y EL DE REPUESTO. La vitamina D es el unico nutriente del perfil canino con los
+# dos maximos publicados y el LEGAL por debajo: 14,1875 µg (227,00 (L)) y 20,0
+# (320,00 (N)). El motor aplica el legal; el nutricional tiene que estar servido
+# y guardado, porque es lo que gobernaria si la ley cambiara o si el menu no
+# llevara ese nutriente anadido (§3.1.3).
+_vd83 = next((x for x in _techos83 if x["nutriente"] == "Vitamina_D"), None)
+if not _vd83:
+    fallos.append("BLOQUE83: no se sirve el techo de vitamina D")
+else:
+    if abs((_vd83.get("maximo_por_1000kcal") or 0) - 14.1875) > 1e-9:
+        fallos.append(f"BLOQUE83: el techo de vitamina D servido son "
+                      f"{_vd83.get('maximo_por_1000kcal')} y el legal son 14,1875")
+    if abs((_vd83.get("maximo_nutricional_por_1000kcal") or 0) - 20.0) > 1e-9:
+        fallos.append(
+            f"BLOQUE83: el maximo NUTRICIONAL de la vitamina D servido es "
+            f"{_vd83.get('maximo_nutricional_por_1000kcal')} y son 20,0 µg/1000 kcal "
+            f"(«320.00 (N)» de la Tabla III-3a). Si ese numero se pierde, el dia que cambie "
+            f"la ley no hay de donde sacarlo -- y ademas es el que manda cuando el nutriente "
+            f"no va anadido como aditivo (§3.1.3)")
+    if _vd83.get("origen") != "legal_UE":
+        fallos.append("BLOQUE83: el techo de vitamina D que aplica el motor tiene que ser el "
+                      "LEGAL, que es el mas bajo de los dos")
+print(f"  {len(_techos83)} techos servidos con su procedencia · "
+      f"{sum(1 for x in _techos83 if x.get('origen') == 'legal_UE')} legales · "
+      f"{sum(1 for x in _techos83 if x.get('maximo_nutricional_por_1000kcal'))} con el otro numero al lado")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+print(f"\n{'='*60}")
 print("=== BLOQUE 82: los alimentos que FEDIAF declara toxicos ===")
 # ⚠️ POR QUE EXISTE (10 septiembre). El anexo 7.7 de FEDIAF -- «Risks of some
 # human foods regularly given to pets»: uva, pasa, chocolate, cebolla, ajo --

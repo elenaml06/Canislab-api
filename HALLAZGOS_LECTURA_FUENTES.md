@@ -4720,3 +4720,56 @@ exactamente el máximo que FEDIAF da al cachorro de **raza gigante** (320 IU/100
 MS, §3.3.1, por los estudios en gran danés de Tryfonidou 2002) **y** el tope de
 seguridad crónica que el motor ya aplicaba desde NRC 2006. Tres caminos
 independientes al mismo número.
+
+### F-24 · Cómo se gestiona el techo legal y el nutricional, medido
+
+**Pregunta de Elena:** *«¿cómo vas a gestionar lo del límite legal y el
+nutricional?»*. La respuesta necesitaba una medida antes que una opinión.
+
+**Hay tres procedencias, no dos, y no son lo mismo:**
+
+| | Qué es | Quién lo mueve |
+|---|---|---|
+| **(L) legal** | Reglamento (UE) 2017/1492 | Nadie… **pero solo aplica si el nutriente se añade como aditivo** (§3.1.3) |
+| **(N) nutricional** | Criterio de FEDIAF | Admite lectura profesional |
+| **Nota c** (sodio y cloruro) | «El nivel más alto con datos» | No dice que por encima haga daño: dice que **nadie lo ha mirado** |
+
+Esa tercera es fácil de citar mal. Literal: *«Scientific data show that sodium
+levels up to 1,5 % DM… are safe for healthy dogs. **Higher levels may still be
+safe, but no scientific data are available**»*.
+
+**La medida que decide la gestión.** Sobre los 216 menús del catálogo, qué parte
+de cada nutriente con techo viene de un **suplemento**, es decir, añadida:
+
+| Nutriente | Mediana | Máximo | Menús sin nada añadido |
+|---|---|---|---|
+| Yodo | 91,3 % | 97,8 % | 0 de 216 |
+| Vitamina D | 70,5 % | 100 % | 0 de 216 |
+| Zinc | 60,0 % | 82,4 % | 0 de 216 |
+| Manganeso | 56,1 % | 93,8 % | 0 de 216 |
+| Hierro | 48,2 % | 78,9 % | 0 de 216 |
+| Cobre | 40,3 % | 84,4 % | 0 de 216 |
+| Vitamina A | 21,8 % | 61,1 % | 0 de 216 |
+| Selenio | 13,5 % | 49,9 % | **1** de 216 |
+
+**En 215 de 216 menús los ocho nutrientes llevan parte añadida.** O sea que el
+techo legal es **el que corresponde por la §3.1.3** en casi todos los casos, no
+una precaución nuestra.
+
+**Cómo se gestiona, entonces:**
+
+1. **El motor sigue aplicando el más bajo, siempre.** Con un motivo medido: en
+   215 de 216 el legal es el que toca, y aplicarlo también al que falta es más
+   estricto que la norma, nunca menos.
+2. **Los dos números se guardan y se sirven**, con su etiqueta, en
+   `/formular/estado` → `techos_de_fediaf`. Quien firma ve el número aplicado,
+   de dónde sale, y el otro si existe. BLOQUE 83.
+3. **Cada fila con máximo dice su procedencia**, y el auditor falla si alguna se
+   queda sin ella. Cazó una nada más escribirlo:
+   `Calcio_LateGrowth_RazaGrande` no la tenía.
+4. **Lo que NO se hace solo, y por qué.** Aplicar la §3.1.3 al pie de la letra
+   —el nutricional cuando el nutriente no va añadido— necesitaría un campo por
+   ficha que diga **qué nutrientes aporta como aditivo declarado**. Eso es dato,
+   no código. Y para los seis oligoelementos sería además peligroso: FEDIAF **no
+   publica (N)** para ellos, así que relajar el legal los dejaría **sin ningún
+   techo**.

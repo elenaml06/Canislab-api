@@ -365,7 +365,7 @@ def auditar_maximos():
         return [], 0
     req = {r["nutriente"]: r for r in
            _json_3a.load(open(os.path.join(_AQUI, "requerimientos_v2_final.json"),
-                              encoding="utf-8"))}
+                              encoding="utf-8"))}   # {nutriente: fila}
     problemas, hechas = [], 0
 
     def _mira(mapa):
@@ -406,6 +406,28 @@ def auditar_maximos():
 
     _mira(MAXIMOS_3A)
     _mira(NUTRICIONAL_3A)
+
+    # ⚠️ Y NINGUNA FILA CON MAXIMO PUEDE QUEDARSE SIN DECIR DE DONDE SALE. Hay
+    # TRES procedencias y no son lo mismo: (L) legal del Reglamento (UE)
+    # 2017/1492, que solo aplica si el nutriente se anade como aditivo (§3.1.3);
+    # (N) nutricional, criterio de FEDIAF; y la nota c del sodio y el cloruro,
+    # que no es un techo sino «el nivel mas alto con datos» -- «higher levels may
+    # still be safe, but no scientific data are available». Quien firma una pauta
+    # necesita poder distinguirlas.
+    ORIGENES = {"legal_UE", "nutricional", "nota_c_nivel_mas_alto_con_datos"}
+    for clave, fila in sorted(req.items() if isinstance(req, dict)
+                              else ((r["nutriente"], r) for r in req)):
+        tiene = any(str(fila.get(c, "-")).replace(".", "", 1).replace("-", "").isdigit()
+                    for c in ("maxAdulto", "maxCachorroJoven", "maxCachorroCrecimiento"))
+        if not tiene:
+            continue
+        org = fila.get("maximo_origen")
+        if org not in ORIGENES:
+            problemas.append(
+                f"III-3a: la fila «{clave}» tiene maximo y su `maximo_origen` es {org!r}, que "
+                f"no es ninguno de {sorted(ORIGENES)}. Un techo sin procedencia no se puede "
+                f"leer: el legal no lo mueve nadie, el nutricional admite criterio, y la nota c "
+                f"ni siquiera dice que por encima haga dano -- dice que nadie lo ha mirado")
 
     # Y que la etiqueta escrita en el JSON sea la que pone el PDF.
     for (fila, etapa), (clave, columna, _f, _tag) in MAXIMOS_3A.items():

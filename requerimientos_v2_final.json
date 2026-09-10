@@ -229,7 +229,10 @@
     "maxCachorroCrecimiento": 3750.0,
     "maxAdulto": 3750.0,
     "nota_auditoria": "Nota c de la tabla: hasta 1.5% MS (3.75 g/1000 kcal) es seguro en perros sanos.",
-    "minAdulto110": 250.0
+    "minAdulto110": 250.0,
+    "maximo_origen": "nota_c_nivel_mas_alto_con_datos",
+    "maximo_en_la_fuente": "nota c: «up to 1.5 % DM (3.75 g/1000 kcal)» · Tabla III-3a",
+    "nota_maximo_origen": "⚠️ TERCERA PROCEDENCIA, Y NO ES NI (L) NI (N). El sodio y el cloruro NO tienen numero en la columna de maximo de la Tabla III-3a: llevan una «c» que remite a la nota, y la nota dice literal: «Scientific data show that sodium levels up to 1.5 % DM (3.75 g/1000 kcal or 0.89 g/MJ ME) and chloride levels up to 2.35 % DM (5.87 g/1000 kcal or 1.40 g/MJ ME) are safe for healthy dogs. HIGHER LEVELS MAY STILL BE SAFE, BUT NO SCIENTIFIC DATA ARE AVAILABLE». || Eso no es un techo: es el nivel mas alto con datos. La diferencia importa para quien firma una pauta -- no esta diciendo que por encima haga dano, esta diciendo que por encima nadie lo ha mirado. El motor lo aplica como maximo porque es el lado seguro y porque no hay nada mejor publicado."
   },
   {
     "nutriente": "Fósforo",
@@ -377,7 +380,10 @@
     "maxCachorroCrecimiento": 5870.0,
     "maxAdulto": 5870.0,
     "nota_auditoria": "Nota c de la tabla: hasta 2.35% MS (5.87 g/1000 kcal) es seguro en perros sanos.",
-    "minAdulto110": 380.0
+    "minAdulto110": 380.0,
+    "maximo_origen": "nota_c_nivel_mas_alto_con_datos",
+    "maximo_en_la_fuente": "nota c: «up to 2.35 % DM (5.87 g/1000 kcal)» · Tabla III-3a",
+    "nota_maximo_origen": "⚠️ TERCERA PROCEDENCIA, Y NO ES NI (L) NI (N). El sodio y el cloruro NO tienen numero en la columna de maximo de la Tabla III-3a: llevan una «c» que remite a la nota, y la nota dice literal: «Scientific data show that sodium levels up to 1.5 % DM (3.75 g/1000 kcal or 0.89 g/MJ ME) and chloride levels up to 2.35 % DM (5.87 g/1000 kcal or 1.40 g/MJ ME) are safe for healthy dogs. HIGHER LEVELS MAY STILL BE SAFE, BUT NO SCIENTIFIC DATA ARE AVAILABLE». || Eso no es un techo: es el nivel mas alto con datos. La diferencia importa para quien firma una pauta -- no esta diciendo que por encima haga dano, esta diciendo que por encima nadie lo ha mirado. El motor lo aplica como maximo porque es el lado seguro y porque no hay nada mejor publicado."
   },
   {
     "nutriente": "Calcio_LateGrowth_RazaGrande",
@@ -389,7 +395,10 @@
     "maxCachorroCrecimiento": 4500,
     "maxAdulto": "-",
     "nota_auditoria": "El tope estaba en la columna 'maxAdulto', que NO se consulta para un cachorro: era papel mojado. Movido a maxCachorroCrecimiento/Joven. Además el motor no tenía este nutriente en su MAPA, así que lo ignoraba por completo. En razas grandes el exceso de calcio durante el crecimiento causa osteocondrosis: no pueden regular su absorción como los adultos. ⚠️ AÑADIDO maxRatioCaP=1.6 (8 sep 2026): la MISMA nota b de FEDIAF 2025 que manda subir el mínimo de calcio manda también APRETAR el techo del ratio Ca:P, y esa mitad no se aplicaba. Leído del PDF renderizado como imagen (pág. 21), literal: «For puppies of breeds with adult body weight over 15 kg, until the age of about 6 months. Only after that time, calcium can be reduced to 0.8 % DM (2 g/1000 kcal or 0.48 g/MJ) and the calcium-phosphorus ratio can be increased to 1.8/1». Y la Tabla III-3b lo pone en la propia fila del ratio: «Late growth: 1.8/1a (N) or 1.6/1b (N)». O sea que 1.8 es el techo del cachorro de raza PEQUEÑA (nota a) y 1.6 el de la grande. El motor aplicaba 1.8 a todos: no había un número mal puesto, no había número. Se aplica a TODA la fase de crecimiento y no solo hasta los 6 meses, igual que el mínimo de calcio: el motor no distingue esa sub-fase y quedarse con el más estricto es el lado seguro. MEDIDO antes de ponerlo: 0 de 32 menús de cachorro de raza grande caían entre 1,6 y 1,8 (el peor, 1,49), o sea que el agujero era real en las reglas y no estaba dando menús malos.",
-    "maxRatioCaP": 1.6
+    "maxRatioCaP": 1.6,
+    "maximo_origen": "nutricional",
+    "maximo_en_la_fuente": "Late growth: 1.80 (N) g/100 g MS · Tabla III-3a. Es el MISMO maximo de calcio de late growth: la nota b del cachorro de raza grande sube el MINIMO y aprieta el techo del ratio Ca:P, no baja este techo. ⚠️ Y hay una cifra por RAZA que FEDIAF da en §3.3.1 y esta fila no recoge: «During later growth up to 1.8 % DM can be fed to all breed dogs including giant breeds WITH THE EXCEPTION OF GREAT DANES... a maximum calcium content of 1.6 %» (= 4000 mg/1000 kcal). Hoy no cambia ningun menu porque el techo del libro para el cachorro de mas de 25 kg de adulto (2750, SACN5 Tabla 17-1 + Fascetti cap.10) ya es mas estricto. Ver HALLAZGOS_LECTURA_FUENTES.md F-18.",
+    "nota_maximo_origen": "⚠️ ESTE CAMPO EXISTE PORQUE UN MAXIMO PUEDE VENIR DE DOS SITIOS Y NO ES LO MISMO (10-sep-2026, a peticion de Elena: «aunque el legal sea mas bajo debes dejar anotado el limite nutricional tambien porque lo legal podria cambiar»). Y hay una razon mas fuerte todavia, que es de la propia FEDIAF §3.1.3: «A legal maximum only applies when the particular trace element or vitamin is ADDED to the recipe as an additive. If the nutrient comes exclusively from feed materials, the legal maximum does not apply, instead the nutritional maximum applies». O sea que en una racion cruda sin aditivo de ese nutriente, el que manda es el nutricional -- y hasta hoy ese numero no estaba en ninguna parte que se pudiera leer."
   },
   {
     "nutriente": "Fibra",

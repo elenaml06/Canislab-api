@@ -4477,7 +4477,7 @@ SELLOS_DE_LOS_DATOS = {
         # 8 sep (5): ACTUALIZADO POR UN SELLO QUE LLEVABA ROTO DESDE EL COMMIT 19e8358 DE ESTA MISMA RAMA. Ese commit anadio la fila "Omega3_total" (seis campos a "-", mismo patron que Fibra/Taurina/L_carnitina/EPA: no exige ni limita nada a un perro sano, existe para que verificar.MAPA pueda leer la clave y una patologia pueda ponerle un suelo con fuente) y "EPA", y NO toco este sello. La bateria lo habria dicho en el BLOQUE 12; no se ejecuto entera despues de aquel commit -- se ejecuto tres minutos ANTES. Asi que el fallo no es del sello, que hizo su trabajo: es de haber empujado sin correr la bateria. El contenido esta comprobado fila a fila por auditar_fediaf.py (248 comprobaciones, 0 discrepancias) antes de mover este numero.
         # 8 sep (6): DEVUELTO EL MAXIMO DE FOSFORO EN ADULTO (4000 mg/1000 kcal). Se habia quitado el 7 de septiembre escribiendo que «ni FEDIAF ni NRC ni Dobenecker dan un maximo» y que la Tabla III-3a/b solo traia la nota h informativa. La parte de NRC y Dobenecker es CIERTA (hablan del SUL toxicologico, que no existe); la de FEDIAF es FALSA: su maximo NUTRICIONAL de 4 g/1000 kcal esta en la Tabla III-3b («Adult: 4.00 (N)»), en la III-3a («Adult: 1.60 (N)» g/100 g MS, que por 2,5 son 4,00) y en el texto de 3.3.1 con todas las letras. Se colo porque en el texto extraido del PDF la columna de maximos cae visualmente sobre la fila ANTERIOR: leyendo linea a linea, el calcio parece tener cuatro maximos y el fosforo ninguno. Entre el 7 y el 8 de septiembre el motor NO TUVO techo de fosforo en adulto y el catalogo precalculado llego a tener un menu con 4124 mg, por encima del maximo de FEDIAF. auditar_fediaf.py corregido a la vez, y ademas ahora comprueba que una etapa SIN maximo en FEDIAF lleve «-» en el JSON -- antes ni la miraba, que es el mismo agujero.
         # 10 sep: DOS MAXIMOS DONDE FEDIAF PUBLICA DOS, y la etiqueta de cual es cual en las trece filas que tienen maximo. Ningun numero que aplique el motor cambia. Lo que se anade es (a) `maximo_origen`: si ese techo es LEGAL (L) o NUTRICIONAL (N), que NO es lo mismo -- §3.1.3 dice que el legal solo aplica si el nutriente se ANADE como aditivo, y si viene solo del alimento manda el nutricional; y (b) el maximo NUTRICIONAL de la vitamina D (20,0 µg/1000 kcal, «320.00 (N)» en la Tabla III-3a), que es el unico nutriente del perfil canino con los dos publicados y con el legal por debajo. Hasta hoy ese numero vivia solo en prosa dentro de una `nota_auditoria`, asi que el dia que cambie la ley no habria de donde sacarlo. Pedido por Elena: «aunque el legal sea mas bajo debes dejar anotado el limite nutricional tambien porque lo legal podria cambiar». Y desde hoy `auditar_transcripcion_fediaf.py` REHACE los 18 maximos desde `fediaf_tabla_III_3a.txt` -- la columna de maximos no la comprobaba NADIE, y es justo la que se rompio el 7 de septiembre cuando el motor se quedo un dia sin techo de fosforo en adulto.
-        "requerimientos_v2_final.json": "4b1a7a94536478b9",
+        "requerimientos_v2_final.json": "e5296f4f1c6928fe",
         # 6 sep (2): nota_auditoria de los 12 aminoacidos corregida -- decia "el motor todavia no lo verifica porque ningun alimento tiene aminograma", que era cierto ANTES del 28 de agosto y llevaba mas de una semana desactualizado (los 12 SI estan en verificar.MAPA desde entonces, 94/159 fichas con aminograma). Ningun numero cambia, solo el texto de 12 filas.
         # 6 sep: VITAMINA D AL TECHO LEGAL. Es el UNICO nutriente del perfil canino con techo legal (UE) por debajo del nutricional -- 227.00 UI (L) frente a 320.00 UI (N) en la Tabla III-3a, confirmado dos veces en el PDF de FEDIAF. El max de antes (20 ug = 800 UI) era el nutricional; el que manda por ser mas estricto es el legal, 227 x 2.5 = 567.5 UI = 14.1875 ug/1000kcal. auditar_fediaf.py actualizado a la vez para no comparar contra el numero equivocado. Ver PENDIENTE_NUTRICION.md.
         # 28 ago: EL ANCLA DE 110. Cada nutriente lleva ahora `minAdulto110`, la columna de DER 110 de la Tabla III-3b, sacada de NUESTRA transcripcion auditada del PDF y no de fuera. Con las dos anclas se puede aplicar la ecuacion del apartado 7.2.5: cuando el perro come menos, el minimo por 1000 kcal sube. Los 38 cuadraron con el minAdulto de siempre sin una discrepancia, o sea que nuestra columna ES la de 95. Ver el BLOQUE 34
@@ -4729,6 +4729,64 @@ def _estado_de_la_racion(datos):
                                      _peso_de_referencia(datos)[0]),
         peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None))
     salida["huecos"] = _huecos_en_cristiano(salida["ficha"])
+    # ⚠️ DE DONDE SALE CADA TECHO DE FEDIAF, Y CUAL ES EL OTRO (10 septiembre).
+    #
+    # Un maximo de FEDIAF puede venir de dos sitios que NO son lo mismo, y hasta
+    # hoy la pantalla ensenaba un solo numero sin decir cual:
+    #
+    #   (L) LEGAL, del Reglamento (UE) 2017/1492. Y §3.1.3: «A legal maximum only
+    #       applies when the particular trace element or vitamin is ADDED to the
+    #       recipe as an additive. If the nutrient comes exclusively from feed
+    #       materials, the legal maximum does not apply, instead the nutritional
+    #       maximum applies».
+    #   (N) NUTRICIONAL, que es criterio de FEDIAF y admite lectura profesional.
+    #
+    # MEDIDO sobre los 216 menus del catalogo (10-sep-2026): en 215 de 216 los
+    # ocho nutrientes con techo llevan parte ANADIDA por un suplemento -- el yodo
+    # un 91 % de mediana, la vitamina D un 70 %, el zinc un 60 %. O sea que el
+    # techo legal es el que corresponde por la §3.1.3 en casi todos los menus, y
+    # aplicarlo tambien al que falta es mas estricto que la norma, nunca menos.
+    # Por eso el motor sigue aplicando SIEMPRE el mas bajo, y aqui se dice cual
+    # es y cual seria el otro, en vez de esconderlo.
+    salida["techos_de_fediaf"] = _techos_de_fediaf(req, datos.etapa_requisitos)
+    return salida
+
+
+def _techos_de_fediaf(req, etapa):
+    """Los maximos de FEDIAF con su procedencia, para la pantalla del profesional.
+
+    No calcula nada: lee lo que ya esta en `requerimientos_v2_final.json`, que es
+    la Tabla III-3a/b transcrita y auditada contra el PDF celda a celda
+    (`auditar_transcripcion_fediaf.py`, BLOQUE 77). Calcularlo aqui seria la
+    tercera copia de la misma tabla.
+    """
+    from verificar import MAPA, maximo_de, EQUIVALENCIA, SUFIJO
+    etapa_req = SUFIJO.get(EQUIVALENCIA.get(etapa, etapa), "Adulto")
+    # `req` llega como un dict {nombre del requisito: fila}, que es la forma que
+    # devuelve `cargar_v2()`. Se recorre por el MAPA para no depender de eso.
+    salida = []
+    for nombre, fila in sorted((req or {}).items()):
+        if not isinstance(fila, dict):
+            continue
+        clave = MAPA.get(nombre)
+        tope = maximo_de(fila, nombre, etapa_req)
+        if tope is None:
+            continue
+        salida.append({
+            "nutriente": nombre,
+            "clave": clave,
+            "unidad": fila.get("unidad"),
+            "maximo_por_1000kcal": tope,
+            # «legal_UE» o «nutricional». Es la diferencia que decide si un
+            # profesional puede leerlo con criterio o no lo mueve nadie.
+            "origen": fila.get("maximo_origen"),
+            "en_la_fuente": fila.get("maximo_en_la_fuente"),
+            # El otro numero, donde FEDIAF publica los dos. Hoy solo la
+            # vitamina D: 14,1875 el legal y 20,0 el nutricional.
+            "maximo_nutricional_por_1000kcal": fila.get("maximo_nutricional_por_1000kcal"),
+            "maximo_nutricional_en_la_fuente": fila.get("maximo_nutricional_en_la_fuente"),
+        })
+    salida.sort(key=lambda x: (x["origen"] != "legal_UE", x["nutriente"]))
     return salida
 
 
