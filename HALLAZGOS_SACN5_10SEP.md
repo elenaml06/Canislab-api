@@ -368,3 +368,43 @@ que hace el motor, con el número por encima del umbral que ella misma marca.
 
 Queda escrito porque es la primera pregunta que va a hacer quien revise, y ahora
 la respuesta tiene tres estudios detrás en vez de una frase.
+
+### S-10 · Ninguna dieta renal de las que alargan la vida cabe dentro de FEDIAF
+
+El capítulo 37 (enfermedad renal crónica) trae la composición de **los alimentos
+renales terapéuticos de los estudios de supervivencia**, que son los que
+demostraron alargar la vida del perro. Puestos al lado del mínimo de FEDIAF para
+un perro **sano**:
+
+| | Fósforo (mg/1000 kcal) | Proteína (g/1000 kcal) |
+|---|---|---|
+| **Mínimo de FEDIAF, perro adulto** | **1160** | **52,1** |
+| Tope renal que aplica el motor | ≤1200 | — |
+| Estudio de restricción de fósforo | **1100** | 42,5 |
+| Estudio 2 (supervivencia) | **700** | 35 |
+| Estudio 1 (supervivencia) | **675 – 1050** | 55 – 60 |
+| Rango recomendado por SACN5 para el perro con ERC | — | **35 – 50** |
+| Un pienso renal del capítulo | — | **20,5** |
+
+**Todas están por debajo del mínimo de FEDIAF.** Las de fósforo y, salvo una, las
+de proteína. Y el rango que el propio libro recomienda —*«14 to 20 % DM protein
+for dogs»*— cae **entero** por debajo de los 52,1 g/1000 kcal del perro sano.
+
+**Esto no es un fallo del motor: es la medida exacta de por qué existe la fase 4
+de `VETERINARIOS.md`.** El tope renal del motor (1200) deja **40 mg** de sitio
+sobre el mínimo de FEDIAF, un 3,4 %. Con eso se puede apretar un poco; no se
+puede formular la dieta que alargó la vida en esos estudios. Por eso
+`renal_avanzada` está bloqueada, y ahora se sabe **cuánto** hay que bajar de
+FEDIAF para tratar de verdad: entre un 5 y un 42 % en fósforo.
+
+**Y dos cosas más del mismo capítulo:**
+
+- **El estadio IRIS está tabulado con su creatinina**, y es el dato que decide el
+  techo de fósforo. La app **no lo pregunta** y sigue ofreciendo `renal` al dueño
+  con menú automático — uno de los once casos de `FRONTEND_VS_MOTOR.md`.
+- **La creatinina no se sale de su rango hasta que la función renal ya ha caído
+  mucho**, así que un perro puede tener enfermedad renal con la analítica normal.
+  Es el argumento de fondo de que esta patología sea `solo_veterinario`.
+
+Y una a favor del formato, que también hay que decirla: en enfermedad renal **se
+prefieren los alimentos húmedos**, y una ración cruda lo es.
