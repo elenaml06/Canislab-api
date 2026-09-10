@@ -1567,3 +1567,90 @@ mismo documento cita en la tanda del capítulo 18.
 Así que el filtro se prueba ahora sobre **las dos formas** de cada frase, la
 original y la de-guionada. Eso solo puede **ensanchar**, que es el lado seguro de
 un filtro cuyo punto ciego se cuenta.
+
+---
+
+## Decimotercera tanda (10 de septiembre, noche) — el capítulo 40 entero: el oxalato cálcico
+
+Los 57 elementos con veredicto. **Es el primer capítulo de patología que no deja
+ningún hueco**: los cinco límites de `oxalato` salen de su Tabla 40-5, y las tres
+cifras que el motor NO aplica ya estaban escritas como no aplicadas, con su
+motivo. Nada nuevo que aplicar — y eso, después de doce capítulos, también es un
+resultado.
+
+| | La fuente (Tabla 40-5) | Por 1000 kcal | Lo que aplica el motor |
+|---|---|---|---|
+| Vitamina D | 500–1500 UI/kg MS | 3,125 – 9,375 µg | **8,75** (la de Fascetti, más estricta) |
+| Sodio | (el techo de los premios, 0,3 % MS) | 750 | **750** ✅ |
+| Fósforo | 0,3–0,6 % MS | 750 – 1500 | **1500** (extremo alto) |
+| Magnesio | 0,04–0,15 % MS | 100 – 375 | **375** (extremo alto) |
+| **Ca:P** | **1,1:1 a 2:1** | | **1,1 – 2,0** ✅ exacto |
+
+El ratio es el que estrenó **la cuarta clase de límite del motor** el 10 de
+septiembre, y ésta es su tabla.
+
+Y las tres que no se aplican, ya escritas en
+`limites_escritos_que_el_solver_no_aplica`: la proteína (10-18 % MS = 25-45
+g/1000 kcal, por debajo del mínimo de FEDIAF de 52,1), el suelo de fósforo (750) y
+el suelo de magnesio (100), los dos también por debajo del mínimo.
+
+### S-39 · ⚠️ El propio capítulo se desmarca de su propia tabla en el calcio, y a nuestro favor
+
+La Tabla 40-5 pide **bajar el calcio a 0,4-0,7 % MS**. El motor **no lo hace**, y
+la razón escrita es un conflicto de fuentes resuelto a favor de la más reciente:
+Today's Veterinary Practice 2025, citando a Carr 2020, invierte esa recomendación
+porque el calcio intestinal secuestra el oxalato y bajarlo empeora el problema.
+
+Leyendo el capítulo entero aparece que **SACN5 dice lo mismo, en su propio
+texto**, tres párrafos después de su tabla:
+
+> *«Although there is agreement that excessive consumption of calcium and oxalic
+> acid should be avoided, **the consensus of urologists is that it is inadvisable
+> to restrict dietary calcium unless persistent absorptive hypercalciuria has been
+> documented**.»*
+
+Y añade el aviso que protege de su propia cifra:
+
+> *«**Caution: severe calcium restriction should be avoided to prevent negative
+> calcium balance.**»*
+
+O sea que la decisión que se tomó el 7 de septiembre con una fuente de 2025 tiene
+detrás, sin que nadie lo supiera, **la misma fuente de 2010 que parecía
+contradecirla**. Eso no cambia ningún número: cambia que ahora se puede defender
+con la fuente propia.
+
+### La lista de alimentos bajos en calcio y en oxalato, que la fuente da hecha
+
+La Tabla 40-6 tiene dos columnas, «Low-calcium foods» y «Low-oxalate foods», y
+entre las dos nombra: huevo, ternera, pollo, cordero, cerdo, pescado y marisco,
+col, coliflor, champiñones, guisantes, rábanos y patata.
+
+⚠️ **No va entrecomillado a propósito**: la tabla va a dos columnas y en el texto
+extraído sus celdas quedan intercaladas —`Low-calcium`, `Low-oxalate`, `foods`,
+`foods`, `Meats and eggs`, `Eggs`, `Beef`…—, así que **cualquier frase corrida que yo
+escribiera de ahí sería una frase que la fuente no dice**. Es exactamente el fallo
+que este documento lleva toda la noche corrigiendo, y lo cazó el propio auditor de
+citas al añadirlo.
+
+**Casi todos están en el catálogo.** Es la misma vía que **S-37** —excluir en vez
+de apretar un número por debajo del mínimo— y aquí la fuente da la lista hecha. Va
+como propuesta junto con la del cobre.
+
+### Y una frase del libro escrita al revés
+
+> *«A deficiency of pyridoxine should be avoided **because vitamin B6 promotes
+> endogenous production of oxalic acid**.»*
+
+Tal cual está, el motivo contradice la recomendación: si la B6 produjera oxalato,
+habría que dar menos. Lo que quiere decir es que **la deficiencia** de B6 promueve
+la producción endógena de oxalato. La recomendación es correcta y el porqué está
+mal redactado. No se toma nada de esa frase, solo el número de la de al lado
+(mínimo 1,5 mg/kg MS, más flojo que el de FEDIAF).
+
+### Y dos cosas a favor de una ración cruda, dichas por la fuente
+
+- *«**Moist food will increase water consumption and formation of less
+  concentrated urine**»*, con el objetivo de una densidad urinaria **<1,020**. Una
+  ración cruda es húmeda por construcción.
+- Y las tomas: *«specific amounts (meal fed) should be fed two to three times per
+  day rather than free-choice feeding»*. La app ya reparte el menú en tomas.

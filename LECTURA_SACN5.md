@@ -69,6 +69,7 @@ están en `HALLAZGOS_SACN5_10SEP.md` con la medida delante:
 | **27** · obesidad | 155 | **S-32**, y refuerza **S-11** con una segunda aparición del selenio |
 | **18** · perro de trabajo | 133 | **S-33** y **S-34**; S-33 es el **primer contrapeso** a S-12 |
 | **68** · hepatobiliar | 131 | **S-35** a **S-37**; S-37 es la primera vía para desbloquear una patología **sin tocar ningún límite** |
+| **40** · oxalato cálcico | 57 | **S-39**; es el primer capítulo de patología que **no deja ningún hueco** |
 
 ⚠️ **Lo de abajo se escribió ANTES de esa pasada**, leyendo el capítulo de
 corrido. No es falso, pero no es completo: la pasada elemento a elemento
