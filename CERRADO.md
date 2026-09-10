@@ -217,6 +217,50 @@ crecimiento pasa a la regla de SACN5 por edad.
 
 ---
 
+## CERRADO · La conversión de cada cifra de patología (10 de septiembre de 2026)
+
+Las 88 cifras numéricas de `patologias.json` vienen de tablas que las publican en
+**% de materia seca**, y el motor trabaja **por 1000 kcal**. Esa conversión
+estaba hecha una vez y **contada en prosa** dentro del campo `por_que`.
+
+| | Dónde se cumple |
+|---|---|
+| 1 · Vive en el repo | El bloque `conversion` de cada cifra, en `patologias.json` |
+| 2 · Tiene fuente | Cada bloque lleva la **cita literal de la fila** (tabla, nota al pie y extremo del rango que se usa) |
+| 3 · Ficha de permisos | La de la propia patología, sin cambios: esto no mueve ningún límite, describe de dónde salió |
+| 4 · Test que falla si se rompe | **BLOQUE 72**, que rehace la cuenta de las 88. Una cifra sin bloque `conversion` también falla |
+| 5 · Decisión escrita, con fecha y motivo | `HECHO.md`, 9-10 de septiembre, con el caso que lo motivó |
+| 6 · Sin preguntas sin dueño | La única que quedaba —¿3,5 o 4,0 kcal/g?— está **resuelta con la fuente**, no aplazada |
+
+**La densidad es 4,0 y está probado, no supuesto.** De las 24 tablas de SACN5 que
+cita el fichero, **una sola declara densidad** —la 13-3: «Concentrations presume
+an energy density of 4.0 kcal/g»—, el cap.34 usa 4,0 para convertir la
+glucosamina, FEDIAF declara la misma en su Tabla III-2, y a 4,0 las cifras del
+motor se reproducen exactas desde las filas de sus tablas: 84 de 88 exactas y 4
+con un ajuste declarado.
+
+⚠️ **Y se cerró desmintiendo lo que se había escrito antes.** Quedaba anotado que
+SACN5 declara 3,5 kcal/g y que por tanto 68 cifras estaban un 14 % apretadas de
+más. Era falso. Es un cierre por la razón 3 de la lista de arriba —un test
+demuestra que está mal—, aplicada a la nota, no al motor.
+
+## CERRADO · El suelo de DHA de crecimiento y reproducción (10 de septiembre)
+
+| | Dónde se cumple |
+|---|---|
+| 1 · Vive en el repo | `requisitos_condicionales.json`, regla `dha_en_crecimiento_y_reproduccion` |
+| 2 · Tiene fuente | SACN5 Tablas **15-5, 17-1 (sus dos columnas) y 33-5**, y el texto de los caps. 15 y 33 que las deriva, citando NRC 2006 |
+| 3 · Ficha de permisos | No aplica: es un mínimo de etapa, no un límite de patología |
+| 4 · Test que falla si se rompe | **BLOQUE 73**: la cifra en las cinco etapas y en ninguna más, y seis menús resueltos en vivo que lo cumplen |
+| 5 · Decisión escrita | `HECHO.md` y `PARA_EL_NUTRICIONISTA.md` §5, con la medida previa |
+| 6 · Sin preguntas sin dueño | Ninguna: la fuente da la cifra, la derivación y la etapa |
+
+**Medido antes de aplicarlo**: 0 de 10 menús por debajo, el más justo a 1,47
+veces el suelo, el DHA entre el 57 % y el 75 % del EPA+DHA. No cambia ni un menú
+de hoy, y ese es el motivo de ponerlo ahora y no cuando muerda.
+
+---
+
 ## ABIERTO · Lo que no está cerrado, y por qué
 
 | | Qué falta |
@@ -226,6 +270,9 @@ crecimiento pasa a la regla de SACN5 por edad.
 | **Los siete márgenes interpretados** | Donde la fuente da un solo número y el otro extremo lo pusimos nosotros. `PREGUNTAS_ABIERTAS.md` P-02 |
 | **Qué ve el dueño** | `visible_para` es lo único de la ficha que no se deriva, porque es criterio de producto. Hoy está puesto con un reparto por defecto que hay que revisar |
 | **El techo del Reglamento europeo en el rango** | La ficha deriva el rango de FEDIAF. Donde el Reglamento (UE) 2020/354 pone un techo adicional —renal 1420, cardíaco 739— está escrito en el `por_que` pero no entra en `rango_permitido` |
+| **El BCS ideal: ¿punto 5 o rango 4-5?** | Tensión DENTRO de FEDIAF: la §7.1.1 no distingue dirección y la §7.1.3 dice «the ideal BCS should therefore be between 4/9 and 5/9». Hoy un perro en BCS 4 recibe un **8,2 % más de kcal**. Medido por BCS en `PENDIENTE_DECISIONES.md` §4 |
+| **La forma química de las vitaminas y los minerales** | Las tablas de conversión están en el repo (`fediaf_conversiones_vitaminas.json` y `sacn5_fuentes_de_minerales.json`) y **ninguna ficha declara en qué forma viene cada nutriente**. Con el peor factor, el ácido pantoténico caería bajo el mínimo de FEDIAF. `DATOS_QUE_FALTAN.md` |
+| **El frío** | SACN5 Tabla 5-3 da las cifras (+95 % en pelo corto), y la ficha no pregunta dónde duerme el perro. Falta la pregunta, no el número |
 
 ---
 
