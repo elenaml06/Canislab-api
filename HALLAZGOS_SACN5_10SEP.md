@@ -407,3 +407,156 @@ FEDIAF para tratar de verdad: entre un 5 y un 42 % en fósforo.
 
 Y una a favor del formato, que también hay que decirla: en enfermedad renal **se
 prefieren los alimentos húmedos**, y una ración cruda lo es.
+
+---
+
+## Tercera tanda (10 de septiembre, noche) — el capítulo 13 entero: el adulto joven
+
+**Los 88 elementos del capítulo tienen veredicto**, uno a uno, en
+`lecturas_sacn5.json`. Es el capítulo que describe **la población central de este
+motor**: el perro adulto sano. De ahí salen seis cosas, y **dos de ellas
+confirman números que ya aplicamos** — que es el resultado que más tranquiliza y
+el que menos se cuenta.
+
+### S-11 · ⚠️ El selenio: lo que recomienda SACN5 EMPIEZA en el máximo de FEDIAF y lo dobla
+
+> *«For improved antioxidant performance, foods for mature dogs should contain at
+> least 400 IU vitamin E/kg (DM) (Jewell et al, 2000), at least 100 mg vitamin
+> C/kg (DM) and **0.5 to 1.3 mg selenium/kg (DM)**.»* (Tabla 13-4 y el texto)
+
+A 4,0 kcal/g de materia seca eso son **125 a 325 µg/1000 kcal**.
+
+| | µg/1000 kcal |
+|---|---|
+| Mínimo de FEDIAF, que aplicamos | 67,5 |
+| **Máximo de FEDIAF, que aplicamos como restricción dura** | **142** |
+| Rango que recomienda SACN5 | **125 – 325** |
+| Nuestros 12 menús de adulto y senior | 85,5 – 141,3 |
+
+O sea que **el 56 % superior del rango de SACN5 está por encima de un techo que
+el motor no deja pasar**, y nuestros menús ya viven pegados a ese techo: el más
+alto está en 141,3 con el máximo en 142.
+
+**No se cambia nada, y esa es la decisión.** Un máximo de FEDIAF es un máximo, y
+el propio SACN5 lo dice tres párrafos más abajo: *«There are no data to base a
+safe upper limit of selenium for dogs, but for regulatory purposes, a maximum
+standard of 2.0 mg/kg (DM) has been set for dog foods in the U.S. (AAFCO,
+2007)»*. Recomendar 325 sin poder decir dónde está el techo no es motivo para
+subir el nuestro. Queda escrito para que nadie lo redescubra y para que el
+nutricionista lo vea.
+
+### S-12 · La vitamina E: quinto capítulo que lo dice, y ahora con la medida del menú
+
+> *«**at least 400 IU vitamin E/kg (DM)**»*, y el estudio de biomarcadores
+> *«at least 500 IU vitamin E/kg (DM)»*, y la recomendación prudente repetida
+> *«foods for young adult dogs should contain at least 400 IU vitamin E/kg (DM)»*.
+
+400 UI/kg MS = 100 UI/1000 kcal = **67 mg/1000 kcal** de tocoferol natural.
+
+| | mg/1000 kcal |
+|---|---|
+| Mínimo de FEDIAF, que aplicamos | 6,968 |
+| Requisito del NRC 2006 que cita el propio capítulo | 7,5 |
+| **Lo que recomienda SACN5** | **67** |
+| Nuestros 12 menús | 13,6 – 71,4 (mediana **27,4**) |
+
+**Once de los doce están por debajo.** Y hay un detalle que no esperaba: los
+**senior** van muy por encima de los **adultos** (36 a 71 contra 13 a 18), o sea
+que el motor ya llega a la cifra del libro cuando la etapa aprieta y no cuando
+no. FEDIAF **no pone máximo** de vitamina E en adulto, así que subir esto no
+choca con nada — y el propio capítulo trae el techo que faltaría: *«An upper
+limit of 1,000 to 2,000 IU/kg food (DM) has been suggested for dogs»*, que son
+167 a 335 mg/1000 kcal, muy por encima de donde estamos.
+
+Es la misma cifra que ya salió en los capítulos 1, 7, 34, 35 y 47. **Sigue sin
+aplicarse**, y la razón sigue siendo la misma: subir un mínimo diez veces cambia
+qué alimentos entran en todos los menús, y eso lo decide el nutricionista.
+
+### S-13 · Grasa y proteína: nuestros menús están por encima del rango del libro, los dos
+
+| | Rango de SACN5 (% MS) | Por 1000 kcal | Nuestros 12 menús |
+|---|---|---|---|
+| Grasa | 10 – 20 | 25 – 50 g | **61,2 – 69,7** |
+| Proteína bruta | 15 – 30 | 37,5 – 75 g | **81,7 – 102,4** |
+
+**Los doce, por encima, en los dos.** No incumple nada: FEDIAF no pone máximo ni
+de grasa ni de proteína en el adulto, y es la naturaleza de una ración de carne
+cruda. Pero el capítulo ata explícitamente la proteína alta a dos cosas:
+
+> *«In addition to any potential aggravating effects excess dietary protein may
+> have on subclinical kidney disease, **foods high in protein also tend to
+> contain high levels of phosphorus**.»*
+
+> *«**up to 25% of the young adult dog population may already be affected by
+> subclinical kidney disease**»*
+
+**La palanca concreta de esas dos frases ya está aplicada**: el techo de fósforo
+del perro sano, 2000 mg/1000 kcal, que vive en `recomendaciones_libro.json` desde
+el 8 de septiembre. Y sobre la proteína en sí, el propio libro dice que el asunto
+*«has yet to be resolved»*. Va como pregunta al nutricionista, no como número.
+
+⚠️ Y una cifra suelta que conviene tener vista: el **mínimo** de grasa que
+recomienda SACN5 es **8,5 % MS = 21,25 g/1000 kcal**, y el mínimo de FEDIAF que
+aplicamos es **13,75** — un 35 % más bajo. No cambia ningún menú (vamos por 61 a
+70), pero es una fuente pidiendo más que FEDIAF en un suelo.
+
+### S-14 · ✅ El escalón de edad, confirmado por cuarta vez
+
+La Tabla 13-2 del capítulo:
+
+| Edad | kcal/BWkg^0,75 | Lo que aplicamos (Tabla VII-6 de FEDIAF) |
+|---|---|---|
+| 1-2 años | 120 – 140 | **130** |
+| 3-7 años | 100 – 130 | **110** |
+| >7 años | 80 – 120 | **95** |
+
+Los tres caen dentro de los tres rangos. Y la nota al pie de la tabla dice
+*«Most pet dogs are minimally active and have a DER of approximately 95
+kcal/BWkg 0.75 or 1.2 to 1.4 x RER»*, que es nuestro escalón bajo de actividad.
+
+### S-15 · ⚠️ El Terranova: dos fuentes, dos números, y seguimos al menos estricto
+
+> *«**Newfoundland dogs have energy requirements about 20% less than average**
+> (Kienzle and Rainbird, 1991), whereas **Great Danes and Dalmatians may have
+> energy requirements up to 60% higher than average**»*
+
+| | Media | Terranova | Gran Danés |
+|---|---|---|---|
+| SACN5 cap.13 | 110 | **≈88** (−20 %) | hasta 176 (+60 %) |
+| FEDIAF Tabla VII-7, que es lo que aplicamos | 110 | **105** (−4,5 %) | **200** (+82 %) |
+
+En el Gran Danés FEDIAF es **más generosa** que SACN5 y aplicamos la de FEDIAF.
+En el **Terranova** aplicamos **un 19 % más de lo que dice SACN5** — y en una
+raza gigante, dar de más no es el lado seguro. Las dos fuentes citan al mismo
+grupo (Kienzle y Rainbird), así que no es que una sea vieja.
+
+**Y el DALMATA no tiene fila en FEDIAF**, así que hoy recibe el factor genérico
+aunque SACN5 lo nombre junto al Gran Danés. Va como pregunta.
+
+### S-16 · La fibra: la única cifra que el libro da, y dos menús se pasan
+
+> *«It is difficult to determine the optimal concentration of crude fiber in a
+> complete food for dogs; however, **up to 5% DM seems adequate**.»*
+
+5 % MS = **≤12,5 g/1000 kcal**. Medido sobre los doce menús de adulto y senior:
+diez van por debajo de 2,3, y **dos están en 21,3 y 26,1**.
+
+No se aplica: la propia frase dice que es difícil de determinar, FEDIAF **no da
+ni mínimo ni máximo** de fibra, y nuestra fila `Fibra` existe precisamente sin
+números para eso. Queda escrito con la medida delante, que es lo que faltaba para
+poder decidirlo.
+
+### Y lo que el capítulo NO cambia, dicho para no volver a mirarlo
+
+- **RER = 70 × BWkg^0,75** — es exactamente `der.py`.
+- **Los mínimos de fósforo (0,3 % MS), sodio (0,08 % MS), proteína (10 % MS) y
+  selenio (0,10 mg/kg MS)** que cita del NRC son todos **más flojos** que los de
+  FEDIAF que ya aplicamos. Manda el nuestro.
+- **La densidad energética 3,5-4,5 kcal/g MS** no se puede comprobar: nuestro
+  catálogo no declara humedad. Es el hueco de la humedad, ya abierto y con dueño.
+- **Los premios** (un puñado puede ser el 40 % del DER de un perro pequeño; un
+  premio dental con 426 mg de calcio) son producto, no motor: la app no los
+  pregunta y el catálogo no los tiene.
+- **La vitamina C ≥100 mg/kg MS** no es un requisito (el perro la sintetiza y
+  FEDIAF no le da fila) y **ninguna ficha del catálogo la declara**. Queda como
+  dato que falta, no como límite.
