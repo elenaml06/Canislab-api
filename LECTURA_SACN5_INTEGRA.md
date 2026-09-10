@@ -1335,3 +1335,137 @@ caninos y no tienen equivalente felino. Y la contrapartida, que si es comun a la
 especies y describe una racion BARF mal hecha: «**Calcium deficiency coupled with
 phosphorus excess occurs most commonly in kittens fed unsupplemented all-meat
 diets**».
+
+---
+
+## Los capítulos de CLÍNICA (25 en adelante)
+
+Aquí empieza la mitad clínica del libro. La regla de lectura no cambia, pero sí
+cambia qué se busca: de aquí salen (o no salen) las cifras de `patologias.json`.
+
+### cap.25 — Critical Care Nutrition and Enteral-Assisted Feeding (3.664 lineas, LEIDO ENTERO)
+
+**Casi todo es alimentación por sonda y no toca al motor**, que formula raciones
+para un perro que come solo. Lo que sí cruza:
+
+1. **La Tabla 25-5 confirma DOS suelos del motor por una vía distinta.** Está en
+   **unidades por 100 kcal**, no en %MS —el propio capítulo explica por qué: «in
+   critical care nutrition, nutrient requirements are conventionally expressed on an
+   energy rather than on a DM basis»—, así que se compara directo con lo nuestro
+   multiplicando por 10:
+   · **Arginina ≥146 mg/100 kcal para el perro** = **1,46 g/1000 kcal**. El motor
+     aplica 1,51 en adulto (FEDIAF). El nuestro es el estricto.
+   · **Proteína 5,0-12,0 g/100 kcal para el perro** = 50-120 g/1000 kcal. Un BARF
+     típico va por 105, o sea **dentro del rango del paciente crítico**, cerca del
+     techo. No es un límite del perro sano y no se aplica; queda apuntado porque es
+     la primera vez que aparece un TECHO de proteína expresado en la unidad del
+     motor.
+   Y una tercera que **no tiene equivalente en FEDIAF**: **glutamina ≥500 mg/100
+   kcal** = 5 g/1000 kcal. La glutamina no es esencial y no está en la Tabla III-3b,
+   así que no hay nada que aplicar.
+
+2. **El ratio omega-6:omega-3, cuarta fuente y cuarto rango distinto.** El capítulo:
+   «the dietary dose that favors a less inflammatory cascade during a disease process
+   is still not standardized across veterinary patients, but is suggested as an
+   **omega-6:omega-3 fatty acid ratio ranging between 5:1 to 1:1**, depending on
+   patient assessment». Es exactamente lo que dice `CLAUDE.md` de por qué ese ratio
+   sigue sin aplicarse: **cada fuente da uno distinto y la elección es clínica**.
+   Ahora hay una cuarta cifra y sigue sin haber una sola.
+
+3. **El agua, otra vez y con la misma regla**: «The water requirements in ml for
+   normal healthy animals approximate their daily energy requirement (DER) in kcal».
+
+4. **Y una cifra de seguridad que sí es del perro sano**, aunque venga de un capítulo
+   de UCI: la capacidad gástrica. «**Gastric capacities for cats and dogs are typically
+   5 to 10 ml/kg body weight during initial food reintroduction**» y «**Maximum
+   capacities as high as 45 to 90 ml/kg body weight have been measured in cats and
+   dogs when fully re-alimented**». Los 45-90 ml/kg son la hermana líquida de los
+   **30-35 g de materia seca por kg** del cap.12, y apuntan al mismo hueco: **el
+   motor no comprueba en ninguna parte que la ración quepa en el perro**. Sigue
+   siendo decisión de Elena.
+
+### cap.26 — Parenteral-Assisted Feeding (2.056 lineas, LEIDO ENTERO)
+
+**Nada aplicable, y hay que poder decirlo.** El capítulo entero va de soluciones
+intravenosas: dextrosa al 50 %, lípido al 20 %, aminoácidos al 8,5 %, osmolaridades,
+catéteres y compatibilidad de fármacos. No hay ni un requisito de un alimento.
+Lo único que roza el catálogo es una advertencia de dosis de traza que el motor ya
+cubre por otra vía: «PN solutions containing **2 mg zinc and 0.2 mg copper/100 kcal**
+RER approximate the patient's needs» — 20 mg de zinc y 2 de cobre por 1000 kcal, que
+está en el orden de los mínimos de FEDIAF y muy por debajo de sus máximos.
+
+### cap.27 — Obesity (5.024 lineas, LEIDO ENTERO)
+
+**El capítulo más largo del libro hasta aquí, y su relación con el motor es indirecta
+pero real: Rawku pregunta el `peso_objetivo_kg` y escala los mínimos con él.**
+
+1. **DE DÓNDE SALE UN «PESO OBJETIVO», con la fórmula.** El motor pide ese campo y
+   `verificar.minimo_de()` escala con él, pero el repo no dice en ninguna parte cómo
+   se calcula. SACN5 lo da entero (Box 27-3, Tabla 3): **«Ideal weight = current
+   weight x (100 - percent body fat [%BF]) ÷ 0.80»**, con el %BF estimado de la
+   condición corporal — «**%BF changes by roughly 10 % for each change in BCS on a
+   5-point scale**», con el 3/5 en 20 %, el 4/5 en 30 % y el 5/5 en 40 % o más. La
+   Tabla 27-3 es esa cuenta ya hecha, de 2 a 73 kg. **No es una cifra que el motor
+   deba aplicar** —el peso objetivo lo pone quien rellena la ficha—, pero es la
+   respuesta a «¿y ese número de dónde lo saco?», y hoy la app no la da. **Decisión
+   de producto, de Elena**, y va a `PENDIENTE_PRODUCTO.md`.
+
+2. **La velocidad segura de adelgazar, que el motor YA dice en un aviso.**
+   `patologias.json` lleva un aviso suelto de «un perro adelgaza 1-2 % a la semana»
+   que vigila el BLOQUE 64. Confirmado literal y con su porqué: «**Studies in people
+   indicate that loss of more than 2 % of body weight per week is unhealthy**» y «**A
+   greater proportion of lean body mass is lost when more than 2 % of body weight is
+   lost per week**». Y el otro extremo, que el aviso no dice: «a rate of loss of at
+   least **0.5 % of the initial body weight per week** is needed to maintain owner
+   interest and complete the weight-reduction program within a reasonable period».
+   El rango del libro para el perro es **1 a 2 % semanal**, con el 0,5 % como suelo
+   aceptable.
+
+3. **⚠️ Y LA VITAMINA E OTRA VEZ, QUE ES EL QUINTO SITIO.** `HALLAZGOS_SACN5_10SEP.md`
+   ya dice que SACN5 pide cuatro veces la vitamina E que damos al perro sano, en
+   cinco capítulos distintos. Este es uno de ellos, con su cifra propia: los alimentos
+   de adelgazamiento del perro deben llevar **≥400 UI/kg MS** = 100 UI/1000 kcal =
+   **67,1 mg/1000 kcal** al factor 0,671 del tocoferol natural. El mínimo de FEDIAF
+   para el adulto son **6,968**. Diez veces. Y la fila de al lado repite el selenio
+   **0,5-1,3 mg/kg MS** (125-325 µg/1000 kcal), que se sale por arriba del **máximo
+   legal de 142** que aplica el motor — el mismo choque que ya está escrito en
+   `requisitos_condicionales.json` para el perro de trabajo y en
+   `PARA_EL_NUTRICIONISTA.md` como una sola pregunta.
+
+4. **Las dos cifras del perro sano que SÍ coinciden con lo que ya aplicamos.**
+   Tabla 27-4, alimentos de adelgazamiento para perro: **sodio 0,2-0,4 %MS** =
+   500-1000 mg/1000 kcal y **fósforo 0,4-0,8 %MS** = 1000-2000 mg/1000 kcal. Los dos
+   techos —1000 de sodio y 2000 de fósforo— son **exactamente** los que
+   `recomendaciones_libro.json` aplica al adulto sano desde el 8 de septiembre,
+   sacados de las Tablas 13-3 y 14-2. Que el capítulo de la obesidad llegue al mismo
+   número por su cuenta, y con su propio motivo escrito («because they may be fed
+   weight-management foods for extended periods of time, and subclinical renal
+   disease is relatively common»), es la confirmación que faltaba.
+
+5. **Lo demás del capítulo NO se puede aplicar a un BARF, y conviene decir por qué**:
+   las cifras de adelgazamiento del perro son **fibra 12-25 %MS**, **hidratos ≤40 %**
+   y **grasa ≤9 %**. Una ración cruda no lleva ni fibra ni hidratos en esas
+   cantidades, y su grasa está muy por encima. El mecanismo que persiguen esas tres
+   cifras —diluir calorías y dar saciedad— **no es un requisito nutricional**: es una
+   forma de fabricar pienso. Lo que sí es traspasable es el principio, y el libro lo
+   dice claro: «**The goal of a weight-management food should be to restrict only
+   energy, not other nutrients**» — que es literalmente lo que hace este motor cuando
+   se le baja el DER, porque los mínimos escalan hacia arriba.
+   Y una que **no se aplica y es interesante**: **lisina ≥1,7 %MS** = 4,25 g/1000 kcal
+   en alimentos de adelgazamiento, contra el mínimo de FEDIAF de 1,22 en adulto. El
+   motivo es proteger la masa magra, y el libro lo mide: los perros con la lisina
+   optimizada perdieron más peso (-2,1 kg contra -1,3) y **ganaron masa magra en vez
+   de perderla** (+0,3 kg contra -1,1). Un BARF va muy por encima de 4,25 sin
+   proponérselo, así que aplicarlo no cambiaría nada — pero queda medido.
+   · **L-carnitina ≥300 ppm MS** (75 mg/1000 kcal) para el perro: no está en FEDIAF,
+     no está en el catálogo y no se puede aplicar sin dato.
+
+6. **Y el dato que más pesa para el producto, porque cambia el mensaje y no el
+   número**: «**In a lifelong study of two groups of Labrador retriever dogs, the
+   treatment group was fed 25 % less than the control group**», y el de control acabo
+   con sobrepeso moderado: «**The median lifespan of the leaner group was 13.0 years
+   compared to 11.2 years for the moderately overweight dogs**». Y de la artrosis:
+   «**the mean age at which 50 % of dogs required long-term treatment for
+   osteoarthritis was significantly younger (10.3 years)**» que en los de condicion
+   normal, donde fueron 13,3 años.
+   Casi dos años de vida y tres de articulaciones sanas, por un sobrepeso **moderado**.
