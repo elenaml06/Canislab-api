@@ -479,9 +479,15 @@ qué alimentos entran en todos los menús, y eso lo decide el nutricionista.
 | Grasa | 10 – 20 | 25 – 50 g | **61,2 – 69,7** |
 | Proteína bruta | 15 – 30 | 37,5 – 75 g | **81,7 – 102,4** |
 
-**Los doce, por encima, en los dos.** No incumple nada: FEDIAF no pone máximo ni
-de grasa ni de proteína en el adulto, y es la naturaleza de una ración de carne
-cruda. Pero el capítulo ata explícitamente la proteína alta a dos cosas:
+**Los doce, por encima, en los dos.** FEDIAF no pone máximo ni de grasa ni de
+proteína en el adulto, y es la naturaleza de una ración de carne cruda.
+
+⚠️ **CORREGIDO la misma noche, al completar el capítulo 5:** «no incumple nada»
+era falso. **SACN5 sí pone un techo de proteína al adulto sano** —«should not
+exceed 30% DM protein», o sea 75 g/1000 kcal— y los doce menús se lo saltan. Lo
+que pasa es que el argumento de la fuente es de **coste**, no de daño, y viene en
+un párrafo que discute la premisa misma de una ración cruda. Detalle, con el
+párrafo entero: **S-28**. Pero el capítulo ata explícitamente la proteína alta a dos cosas:
 
 > *«In addition to any potential aggravating effects excess dietary protein may
 > have on subclinical kidney disease, **foods high in protein also tend to
@@ -978,3 +984,74 @@ kcal y no por porcentaje:** cambiar a un alimento de menor densidad con el
 más gramos para las mismas kilocalorías. El capítulo lo cuantifica con un
 rottweiler de 15 semanas: 5,4 g de calcio contra 6,7 g, sin que el porcentaje de
 la etiqueta cambie.
+
+---
+
+## Séptima tanda (10 de septiembre, noche) — el capítulo 5, ya completo
+
+Al capítulo 5 le faltaban **62 elementos** de la primera pasada. Ya están los 158.
+Y entre los que faltaban está el techo que corrige lo que escribí en **S-13**.
+
+### S-28 · ⚠️ SACN5 SÍ pone techo de proteína al adulto sano — y hay que leer el párrafo entero antes de tocar nada
+
+> *«Thus, dog foods for adult maintenance **should not exceed 30% DM protein**.»*
+
+30 % MS = **75 g/1000 kcal**. Los doce menús de adulto y senior del catálogo van
+de **81,7 a 102,4**: los doce por encima, el peor un 37 % por encima.
+
+⚠️ Esto **corrige S-13**, donde escribí que «FEDIAF no pone máximo de proteína en
+adulto, así que no se incumple nada». Lo primero sigue siendo verdad; lo segundo
+no: **SACN5 sí lo pone**, y es del perro sano, que es la clase de
+`recomendaciones_libro.json`.
+
+**Y aquí está la parte que decide qué hacer, que es el párrafo entero:**
+
+> *«Excess protein adds unnecessary cost to foods. Excess protein is used for
+> energy. As an energy source, protein is no better than digestible carbohydrate;
+> however, protein is a more expensive energy source… **There are no nutritional
+> reasons that support providing excessive amounts of dietary protein.** After the
+> protein/amino acid requirements are met, additional protein provides no
+> additional benefits. Thus, dog foods for adult maintenance should not exceed 30%
+> DM protein.»*
+
+El argumento de la fuente es **el coste y la ausencia de beneficio**, no el daño.
+Y el párrafo que va justo antes dice esto:
+
+> *«…the myth that dogs are carnivores and that meat-based, high-protein foods are
+> more natural and thus better than lower protein foods that contain both animal
+> and plant sources of protein.»*
+
+O sea que este techo sale de un capítulo que discute **la premisa misma de una
+ración de carne cruda**, y lo hace por economía de un pienso comercial. **No es un
+límite de seguridad.**
+
+Frente a eso, la vía que sí es de salud está en el capítulo 13 y **ya está
+aplicada**: la proteína alta arrastra fósforo alto, y el techo de fósforo del
+perro sano (2000 mg/1000 kcal) lleva puesto desde el 8 de septiembre.
+
+**Decisión: no se aplica, y se pregunta.** Aplicar 75 g/1000 kcal cambiaría los
+doce menús de adulto por un argumento de coste de pienso. Es exactamente el tipo
+de cosa que no decido yo.
+
+### Lo demás del capítulo, que es respaldo y un par de avisos
+
+- **La fibra otra vez en <5 % MS** para el perro sano (*«a small amount of fiber
+  (<5%)… is recommended in foods for healthy pets»*), que es el mismo ≤12,5
+  g/1000 kcal de S-16, dicho desde otro capítulo.
+- **Los ácidos grasos de cadena corta dan menos del 5 % de la energía del perro**,
+  frente al 75 % del rumiante. Descarta contar la fermentación de la fibra como
+  energía.
+- **Un techo de omega-3 que la fuente demuestra que no hace falta**: perros
+  adultos sanos con **7 % MS de omega-3** de aceite de pescado durante dos meses,
+  sin problemas de coagulación ni de agregación plaquetaria. 7 % MS son 17,5
+  g/1000 kcal, muy por encima de cualquier suelo que aplique el motor.
+- **Y un dato que suma al aviso de taurina que ya damos al profesional**: un
+  alimento alto en grasa (**24 % MS**) baja la taurina en plasma de forma
+  significativa. Nuestros menús de adulto van por 61-70 g/1000 kcal, que es mucho
+  más del 24 % MS.
+- **Por qué el motor verifica los doce aminoácidos y no solo la proteína**, dicho
+  por la fuente: *«animals do not have a requirement for protein per se but have
+  an amino acid requirement»*.
+- **Y una trampa para el día que alguien proponga aceite de cártamo**: va de ~80 %
+  de linoleico a ~80 % de oleico **según la variedad**. Una ficha sacada de la
+  fuente equivocada estaría completamente mal, y no hay cártamo en el catálogo.

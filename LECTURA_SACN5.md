@@ -63,6 +63,7 @@ están en `HALLAZGOS_SACN5_10SEP.md` con la medida delante:
 | **15** · gestación y lactancia | 79 | **S-22** a **S-24** |
 | **17** · crecimiento | 51 | **S-17** a **S-21** |
 | **33** · cachorro de raza grande | 90 | **S-25** a **S-27**, y **S-26** es el más duro de la noche |
+| **5** · macronutrientes y energía | 158 | **S-28** (los 62 que faltaban de la primera pasada) |
 
 ⚠️ **Lo de abajo se escribió ANTES de esa pasada**, leyendo el capítulo de
 corrido. No es falso, pero no es completo: la pasada elemento a elemento
