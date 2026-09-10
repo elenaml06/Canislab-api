@@ -49,8 +49,8 @@ RUTAS_SACN5 = [
     os.path.join(RAIZ, "fuentes", "sacn5"),
 ]
 
-VEREDICTOS = ("aplicada", "citada_en_el_repo", "leida_y_no_aplica", "felina",
-              "lista_de_productos", "pendiente")
+VEREDICTOS = ("aplicada", "citada_en_el_repo", "leida_y_no_aplica", "leida_con_hallazgo",
+              "felina", "lista_de_productos", "pendiente")
 
 
 def carpeta_de_textos():

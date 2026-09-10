@@ -10340,12 +10340,13 @@ print("\n=== BLOQUE 78: ninguna tabla de SACN5 sin veredicto ===")
 
 import json as _json78
 
-_PENDIENTES_78 = 299       # ← bajalo cuando resuelvas tablas. Solo puede bajar.
+_PENDIENTES_78 = 286       # ← bajalo cuando resuelvas tablas. Solo puede bajar.
+_CON_HALLAZGO_78 = 3       # tablas leidas que traen una cifra que el motor NO aplica
 _TOTAL_78 = 474
 
 _inv78 = _json78.loads((_raiz_b24 / "sacn5_tablas.json").read_text(encoding="utf-8"))["tablas"]
-_VEREDICTOS_78 = ("aplicada", "citada_en_el_repo", "leida_y_no_aplica", "felina",
-                  "lista_de_productos", "pendiente")
+_VEREDICTOS_78 = ("aplicada", "citada_en_el_repo", "leida_y_no_aplica",
+                  "leida_con_hallazgo", "felina", "lista_de_productos", "pendiente")
 
 for _t78, _f78 in sorted(_inv78.items()):
     if _f78.get("veredicto") not in _VEREDICTOS_78:
@@ -10356,6 +10357,17 @@ for _t78, _f78 in sorted(_inv78.items()):
                       f"Un veredicto sin motivo es una firma en blanco")
 
 _pend78 = sum(1 for _f in _inv78.values() if _f["veredicto"] == "pendiente")
+# ⚠️ Las «leida_con_hallazgo» se cuentan APARTE y tambien exacto. Son las que ya
+# se han leido y traen una cifra canina que el motor no aplica: si se mezclaran
+# con las pendientes, el unico numero que baja al trabajar taparia al que sube
+# al encontrar algo. Son dos cosas distintas y las dos tienen que verse.
+_hall78 = sum(1 for _f in _inv78.values() if _f["veredicto"] == "leida_con_hallazgo")
+if _hall78 != _CON_HALLAZGO_78:
+    fallos.append(
+        f"BLOQUE78: hay {_hall78} tablas leidas con un hallazgo sin aplicar y aqui pone "
+        f"{_CON_HALLAZGO_78}. Cada una tiene que estar medida y escrita en "
+        f"HALLAZGOS_SACN5_10SEP.md antes de contarla, y salir de la cuenta cuando se aplique o "
+        f"se descarte con motivo")
 if len(_inv78) != _TOTAL_78:
     fallos.append(f"BLOQUE78: el inventario tiene {len(_inv78)} tablas y aqui pone {_TOTAL_78}. "
                   f"Si SACN5 no ha cambiado, es que el extractor si -- y entonces lo que hay que "
