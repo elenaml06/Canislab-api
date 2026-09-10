@@ -808,6 +808,15 @@ está apuntada.
 
 ### S-24 · Los hidratos de la reproductora: cuatro cifras de la misma fuente, y nuestro suelo aguanta
 
+> ⚠️ **AMPLIADO LA MISMA NOCHE, y ya no es teórico: hay una consecuencia medida.**
+> *«When lactating bitches are fed foods without digestible carbohydrates, the
+> **lactose level in the milk may decrease to about 2%** vs. the normal range of 3
+> to 3.5%.»* Sin hidratos, la leche de la perra pierde **entre un tercio y un
+> 43 %** de su lactosa. Es la primera consecuencia cuantificada del hueco de los
+> hidratos en cualquiera de las cuatro poblaciones, y la proteína **no la
+> sustituye**: la lactosa se hace de glucosa. Esa frase la tiraba el filtro por un
+> guion — ver **S-38**.
+
 Es el bloque más importante del capítulo para este motor, porque **una ración
 cruda no lleva hidratos digestibles y esta etapa los pide como factor clave**.
 
@@ -1505,3 +1514,56 @@ mismo capítulo dice:
 30 % MS son **75 g/1000 kcal**, muy por encima del mínimo de FEDIAF. O sea que
 para la hepatopatía **por cobre** —que es la que tiene cifra de cobre— la proteína
 no sería el obstáculo. Solo lo sería el cobre, y para ése está la vía de S-37.
+
+
+---
+
+## S-38 · ⚠️ El filtro de lectura tenía un agujero, y lo encontró una pregunta de Elena
+
+Elena, el 10 de septiembre de noche: *«cuando dices leído elemento a elemento
+estás teniendo cuidado con las columnas para leerlo bien, leyendo cada frase y
+cada tabla?»*.
+
+Fui a comprobarlo en vez de contestar, y **había un agujero**.
+
+El PDF parte palabras al final de línea. Al juntar el texto queda «sele- nium»,
+«phos- phorus», «vita- min» — y la lista de nutrientes del filtro busca
+«selenium». **La frase entera se descartaba.**
+
+Se vio mirando lo que el filtro tiraba en un capítulo **ya declarado leído**: de
+las 463 frases descartadas del capítulo 13, cuatro llevaban cifra con unidad, y
+una era
+
+> *«Therefore, for increased antioxidant benefits, the recommended range of
+> **sele- nium** for adult dog foods is 0.5 to 1.3 mg/kg (DM).»*
+
+que es **justo la cifra del hallazgo S-11**, dicha en prosa y para el perro adulto
+sano sin más. La tenía por la Tabla 13-4, así que el hallazgo no se perdió — pero
+se perdió por poco, y solo porque esa cifra sale en dos sitios.
+
+Es **la misma familia que el fallo de las dos columnas**: un artefacto del PDF
+cambiando en silencio lo que se lee.
+
+### Lo que costó, medido
+
+| | |
+|---|---|
+| Frases que el filtro tiraba solo por el guion, en todo el libro | **196** |
+| Elementos nuevos que entran al arreglarlo | **55** (de 2.944 a 2.999) |
+| De ésos, en capítulos que yo había dado por leídos | **19** |
+
+Los 19 ya tienen veredicto. Y entre ellos salió **la consecuencia medida de los
+hidratos** (la lactosa de la leche), **dos apariciones más del selenio** y el
+aviso de que en el perro renal hay que evitar el pescado y el hígado de vacuno —
+que son dos alimentos del catálogo.
+
+### Y el arreglo tuvo su propio efecto lateral, cazado antes de entregarlo
+
+De-guionar a secas arreglaba 51 frases **y tiraba otras tres**: «non-nutritional»
+pasa a «nonnutritional» y «deficien- cy» a «deficiency», que es donde enganchaba
+el detector de normas. Una de las tres era el aviso de calcio y zinc que este
+mismo documento cita en la tanda del capítulo 18.
+
+Así que el filtro se prueba ahora sobre **las dos formas** de cada frase, la
+original y la de-guionada. Eso solo puede **ensanchar**, que es el lado seguro de
+un filtro cuyo punto ciego se cuenta.

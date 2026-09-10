@@ -131,6 +131,11 @@ def _frases(texto):
     return trozos
 
 
+# El guion de corte de linea del PDF: «sele- nium» es «selenium». Ver el
+# comentario largo dentro de `extraer`.
+_SIN_GUION = re.compile(r"-\s+")
+
+
 def _clave(tipo, valor, n=None):
     v = " ".join(str(valor).split())[:130]
     return f"{tipo}#{n}:{v}" if n is not None else f"{tipo}:{v}"
@@ -141,18 +146,47 @@ def extraer(ruta, con_descartadas=False):
     t = " ".join(open(ruta, encoding="utf-8", errors="ignore").read().split())
     items, descartadas = {}, 0
     for i, fr in enumerate(_frases(t)):
-        if not _ES_NUT.search(fr):
+        # ⚠️ EL FILTRO SE PRUEBA SOBRE LA FRASE SIN EL GUION DE CORTE DE LINEA,
+        # Y ESTO NO ES COSMETICO (10 de septiembre, de noche, preguntandolo Elena:
+        # «cuando dices leido elemento a elemento estas teniendo cuidado con las
+        # columnas para leerlo bien, leyendo cada frase y cada tabla?»).
+        #
+        # El PDF parte palabras al final de linea, y al juntar el texto queda
+        # «sele- nium», «phos- phorus», «vita- min». La lista de nutrientes busca
+        # «selenium», asi que NO LO ENCONTRABA y la frase se descartaba entera.
+        #
+        # Encontrado mirando lo que el filtro tiraba en un capitulo YA LEIDO: de
+        # 463 frases descartadas del cap.13, cuatro llevaban cifra con unidad, y
+        # una era «the recommended range of sele- nium for adult dog foods is 0.5
+        # to 1.3 mg/kg (DM)» -- justo la cifra del hallazgo S-11, tirada por un
+        # guion. Medido en todo el libro: **196 frases**.
+        #
+        # Es la MISMA familia que el fallo de las dos columnas: un artefacto del
+        # PDF cambiando en silencio lo que se lee. La CLAVE se sigue construyendo
+        # con el texto original -- si no, los veredictos ya escritos perderian su
+        # clave --; lo unico que se de-guiona es la copia con la que se decide.
+        # ⚠️ Y SE PRUEBA SOBRE LAS DOS FORMAS, no solo sobre la de-guionada.
+        # Quitar el guion arregla «sele- nium» y ROMPE «non-nutritional» ->
+        # «nonnutritional» y «deficien- cy» -> «deficiency», que es donde
+        # enganchaba `_OLOR`. Medido: de-guionando a secas entraban 51 frases
+        # nuevas y se CAIAN tres, y una de las tres era el aviso de calcio y zinc
+        # que este repo ya cita. Probar las dos formas solo puede ENSANCHAR, que
+        # es el lado seguro de un filtro cuyo punto ciego se cuenta.
+        _dos = (fr, _SIN_GUION.sub("", fr))
+        _hay = lambda _rx: any(_rx.search(_x) for _x in _dos)
+        _olor_ok = _hay(_OLOR) and _hay(_COMIDA) and len(fr) > 60
+        if not _hay(_ES_NUT):
             # ni siquiera nombra un nutriente: solo entra si huele a norma
-            if _OLOR.search(fr) and _COMIDA.search(fr) and len(fr) > 60:
+            if _olor_ok:
                 items[_clave("olor", fr[:150], i)] = None
             else:
                 descartadas += 1
             continue
-        if _CIFRA.search(fr):
+        if _hay(_CIFRA):
             items[_clave("cifra", fr[:150], i)] = None
-        elif _RECO.search(fr):
+        elif _hay(_RECO):
             items[_clave("reco", fr[:150], i)] = None
-        elif _OLOR.search(fr) and _COMIDA.search(fr) and len(fr) > 60:
+        elif _olor_ok:
             items[_clave("olor", fr[:150], i)] = None
         else:
             descartadas += 1
