@@ -1303,3 +1303,104 @@ cifra con la de un libro.
   se cumple sin hacer nada.
 - **Vitamina C ≥100 mg/kg MS**: tercera vez que sale y tercera vez que no podemos
   — no está en FEDIAF ni en ninguna ficha del catálogo.
+
+---
+
+## Undécima tanda (10 de septiembre, noche) — el capítulo 18 entero: el perro de trabajo
+
+Los 133 elementos con veredicto. Trae **el primer contrapeso serio a S-12** y una
+cifra física que no teníamos.
+
+### S-33 · ⚠️ Más vitamina E no siempre es mejor, y aquí está medido dónde empieza a doler
+
+Toda la lectura de esta noche ha ido en una dirección: SACN5 pide, en seis
+capítulos, mucha más vitamina E de la que damos (**S-12**). Este capítulo trae la
+otra mitad, y **es la primera vez en todo el libro que una dosis alta hace daño**:
+
+> *«When racing greyhounds were supplemented with high doses (1 g/day) of vitamin
+> C, they ran slower (Marshall et al, 2002).»*
+
+> *«Racing greyhounds also ran slower when supplemented with **high doses of
+> vitamin E (1,000 IU/day) but not lower doses (100 IU/day)** (Hill et al, 2001).»*
+
+La dosis que separa importa. Un galgo de carreras de unos 30 kg tiene un DER del
+orden de 1.500 kcal, así que **1.000 UI/día son unas 667 UI/1000 kcal ≈ 447 mg**, y
+**100 UI/día son unas 67 UI/1000 kcal ≈ 45 mg**. Puesto al lado de lo demás:
+
+| | mg/1000 kcal |
+|---|---|
+| Mínimo de FEDIAF, que aplicamos | 6,968 |
+| Nuestros menús reales | 13,6 – 71,4 |
+| Lo que recomienda SACN5 al perro sano (**S-12**) | 67 |
+| Dosis que **no** hizo daño al galgo | ≈45 |
+| **Dosis que sí lo hizo** | **≈447** |
+
+O sea que el «higher is better» que repiten los otros capítulos tiene techo, y el
+techo está **muy por encima** de lo que recomiendan — pero existe, y ahora está
+medido. Refuerza la decisión de no subir la vitamina E sin que lo decida el
+nutricionista, y le da el otro extremo del rango para decidirlo.
+
+⚠️ Estas cifras por 1000 kcal son **mías, estimando el DER del galgo**: la fuente
+da la dosis por día, no por energía. La conversión es del orden de magnitud
+correcto, no exacta.
+
+### S-34 · Cuánto cabe físicamente en un perro, y nuestro tope es más laxo
+
+> *«the total daily DM intake is limited to about **3.5% of body weight**»*
+> (dicho dos veces en el capítulo)
+
+Es **materia seca**. Nuestro tope de volumen (`TOPE_GRAMOS_SOBRE_PESO`) es el
+**25 % del peso en gramos tal cual se dan**. Con una ración cruda en torno al 70 %
+de agua, ese 3,5 % de materia seca serían unos **11,7 % del peso en fresco**, así
+que el nuestro es **más laxo** — que es exactamente como se puso: *«casi el doble
+del peor caso legítimo»*, y el peor caso legítimo medido era el 13 %.
+
+No hay contradicción, pero sí una diferencia que conviene saber: **la nuestra es
+una red de seguridad y la suya es un límite fisiológico**. Y la conversión depende
+del agua de la ración, que es **el dato que el catálogo no tiene**.
+
+### Los hidratos, por tercera vez, y ahora en el perro de trabajo
+
+> *«Studies involving sled dogs fed 0 or 17% of their kcal as carbohydrate showed
+> that dogs were more susceptible to developing "stress" diarrhea when fed foods
+> devoid of carbohydrate»*
+
+Es la misma familia que **S-21** (cachorro) y **S-24** (reproductora). Tres
+poblaciones distintas, tres veces el mismo hueco, y una ración cruda no lleva
+hidratos digestibles en ninguna de las tres.
+
+### Lo que este capítulo desmonta, y conviene poder citar
+
+> *«The protein requirement for exercise is only mildly increased (**5 to 15%**)
+> regardless of exercise type.»*
+
+> *«Note that for endurance exercise, **energy requirement increases up to
+> 11-fold**, whereas protein requirements increase much less (5 to 15%).»*
+
+> *«**The idea that athletic dogs require markedly more protein than nonworking
+> dogs is inaccurate.**»*
+
+Lo que cambia con el trabajo son **las kilocalorías**, no el perfil. Es
+exactamente lo que hace el motor: sube el DER por el escalón de actividad y deja
+los requisitos por 1000 kcal donde estaban.
+
+### Y lo que confirma
+
+- **El suelo de vitamina E del perro de trabajo que ya aplicamos**: *«dog foods
+  should contain at least 500 IU/kg of DM vitamin E»* = 125 UI/1000 kcal = **83,75
+  mg** de tocoferol natural, que es el **83,9** de `requisitos_condicionales.json`.
+- **El selenio, por tercera vez sin techo**: *«There are no data to base a safe
+  upper limit of selenium for dogs or cats»*. Capítulos 13, 27 y 18. **S-11** se
+  sostiene con tres apariciones.
+- **El calcio del perro de trabajo cabe entero en FEDIAF**: 1,2-2,0 % MS =
+  3000-5000 mg/1000 kcal contra nuestro máximo de 6250. Nada que cambiar.
+- **Y el aviso de calcio alto que el motor estrenó hoy**, dicho por la fuente:
+  *«Excessive calcium supplementation may also predispose a dog to zinc deficiency
+  by inhibiting absorption of this nutrient.»*
+
+### Dos cifras que la ficha no pregunta y podrían afinar el DER
+
+- **30 kcal por kilómetro** para un perro de 30 kg en llano, corra o ande. Nuestro
+  DER va por escalones de actividad, no por distancia.
+- **El DER del atleta intermedio va de 2 a 5 × RER**, muy por encima de nuestros
+  escalones. No es nuestro público, pero marca dónde acaba lo que el motor cubre.
