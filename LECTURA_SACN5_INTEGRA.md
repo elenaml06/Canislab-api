@@ -1179,3 +1179,159 @@ Confirmada literal, celda a celda, y con el texto que la deriva.**
    termina «dogs and for the dogs themselves», que va aqui sin comillas porque el salto
    de pagina mete en medio la cabecera del libro. Y el caso 18-1 lo aterriza en una racion que es un BARF
    de galgo. Es el mismo pendiente de producto que dejo el cap.11: **decirlo**.
+
+---
+
+## Los seis capitulos FELINOS (19 a 24), leidos enteros a proposito
+
+**POR QUE SE LEEN SI RAWKU ES DE PERROS.** Porque el repo ya tiene su propia
+leccion sobre esto: `sacn5_tablas.json` aparta 44 tablas «felinas» **por su propio
+titulo**, y la razon de que ese campo se llame `veredicto_por` es que una vez se
+descarto como «celda felina» la nota d del selenio, **que es un techo del PERRO**.
+Un capitulo entero titulado «Feeding Normal Cats» no es lo mismo que una celda de
+una tabla mixta, pero la unica forma de que «no habia nada del perro aqui» sea
+comprobable es haberlo leido. **Y habia**: la Tabla 19-6 del capitulo del gato trae
+una columna entera de cachorro de PERRO.
+
+Los seis van declarados en `lecturas_sacn5.json` con su `lectura_integra` como
+cualquier otro, porque se han leido igual.
+
+### cap.19 — Introduction to Feeding Normal Cats (1.299 lineas, LEIDO ENTERO)
+
+1. **⚠️ LA TABLA 19-6 ES CANINA A MEDIAS, Y CONFIRMA TRECE MINIMOS DEL MOTOR.** Se
+   titula «Comparison of minimal protein and amino acid requirements for growth in
+   kittens and puppies» y su segunda columna es **«Recommended allowance for
+   puppies», del NRC 2006, en %MS y con la nota al pie «Based on a dietary energy
+   content of 4.0 kcal/g dry matter»**. O sea: es una transcripcion INDEPENDIENTE de
+   las mismas cifras del NRC que FEDIAF publica en su Tabla III-3b, en un libro
+   distinto. Convertida con el ×2,5 de siempre y comparada contra lo que el motor
+   aplica hoy en `CachorroCrecimiento` (g/1000 kcal):
+
+   | Aminoacido | SACN5 T19-6 (%MS) | ×2,5 | FEDIAF, aplicado |
+   |---|---|---|---|
+   | Proteina | 17,5 | 43,75 | **50** |
+   | Arginina | 0,66 | 1,65 | **1,84** |
+   | Histidina | 0,25 | 0,625 | 0,63 |
+   | Isoleucina | 0,50 | 1,25 | 1,25 |
+   | Leucina | 0,82 | 2,05 | **2,00** |
+   | Lisina | 0,70 | 1,75 | 1,75 |
+   | Metionina | 0,26 | 0,65 | 0,65 |
+   | Metionina+cistina | 0,53 | 1,325 | 1,33 |
+   | Fenilalanina | 0,50 | 1,25 | 1,25 |
+   | Fenilalanina+tirosina | 1,00 | 2,50 | 2,50 |
+   | Treonina | 0,63 | 1,575 | 1,60 |
+   | Triptofano | 0,18 | 0,45 | **0,53** |
+   | Valina | 0,56 | 1,40 | 1,40 |
+
+   **Doce de trece cuadran o van por el lado seguro** (FEDIAF pide igual o mas). La
+   unica en la que FEDIAF va por DEBAJO es la **leucina**: 2,00 contra 2,05, un
+   2,4 %. Es demasiado poco para ser un error de transcripcion de nadie y demasiado
+   poco para cambiar un menu, pero queda apuntado porque es lo unico que no cuadra y
+   porque **manda FEDIAF**, que es la regla de este repo. Esto no es una fuente
+   nueva: es la comprobacion de que la cadena PDF → `auditar_fediaf.py` →
+   `requerimientos_v2_final.json` da el mismo numero que dio otro equipo leyendo el
+   mismo NRC.
+
+2. **Y la nota al pie de esa tabla dice la regla de la arginina otra vez**, ahora en
+   la columna del GATO: «Arginine requirement increases in kittens with increased
+   dietary protein; approximately 2 g/kg should be added for each 10 % increase in
+   crude protein above the minimum allowance (22.5 %)». En %MS eso es 0,2 puntos de
+   arginina por cada 10 de proteina = **0,02 por punto**, o sea **el doble del 0,01
+   del perro**. Confirma que el coeficiente que aplicamos es el canino y no el
+   felino, que es justo la confusion que podia colarse.
+
+3. **La Tabla 19-5 pone las dos especies una al lado de otra**, y explica de paso por
+   que el perro no es un gato: el perro necesita **12 % MS de proteina para crecer y
+   4 % para mantenimiento** con proteina ideal (18 y 8 con el minimo del NRC), y el
+   gato 29 y 19. La frase: «**The protein requirement for growth in kittens is only
+   50 % higher than that of puppies, whereas the protein requirement for feline
+   maintenance is twice that of adult dogs**».
+
+4. **La Tabla 19-3 repite el dato anatomico del cap.12**: la relacion intestino
+   delgado : longitud del cuerpo es **4:1 en el gato, 6:1 en el perro**, 10:1 en el
+   conejo y 14:1 en el cerdo. Y el texto dice del perro: «**dogs can more efficiently
+   use a variety of foods, some of which may require more digestion than animal
+   tissues**».
+
+5. **El Box 19-3 habla de huesos y de carne cruda, y aunque va de gatos las dos
+   frases no llevan especie dentro.** «**Bones with jagged or sharp points are often
+   to blame for oral trauma and can become esophageal foreign bodies. Bone feeding is
+   also associated with colitis and constipation in small animals**» — «small
+   animals» es perro y gato. Y de la carne cruda: «**Raw meat, even when "flash
+   frozen," may contain harmful bacteria (e.g., Salmonella spp. and Escherichia coli)
+   and parasites**» y «**Unless supplemented with vitamins and minerals, raw meat is
+   nutritionally incomplete and can lead to nutritional secondary
+   hyperparathyroidism, iodine deficiency or both**». Es el mismo pendiente de
+   producto del cap.11 y del cap.18, dicho por tercera vez.
+
+6. **La cebolla, con la cifra del gato para comparar con la del perro**: en el gato
+   «**Subsequent studies have demonstrated toxic effects at levels of 2.5 % dry
+   matter**». El cap.11 daba 5-10 g/kg de peso para el perro. Dos poblaciones, dos
+   formas de medir; ninguna cambia el BLOQUE 82, que no admite cantidad segura.
+
+### cap.20 — Feeding Young Adult Cats (2.053 lineas, LEIDO ENTERO)
+
+**Nada aplicable al motor**, y eso hay que poder afirmarlo: el capitulo entero gira
+sobre pH urinario, magnesio y estruvita, que son problemas felinos. Lo unico que
+cruza con el perro:
+
+· **El techo de selenio de AAFCO, otra vez, y dicho como prestado**: «There are no
+  data on which to base a safe upper limit of selenium for cats, but for regulatory
+  purposes, a **maximum of 2 mg/kg DM has been set for dog foods** in the United
+  States (AAFCO, 2007)». Son 500 µg/1000 kcal, muy por encima del maximo que aplica
+  el motor (142 µg, de FEDIAF). El nuestro es el estricto; no cambia nada.
+· **La misma tabla de antioxidantes que el perro de trabajo**, con las mismas cifras
+  para el gato adulto (vitamina E ≥500 UI/kg MS, C 100-200 mg/kg, Se 0,5-1,3 mg/kg).
+  Que las cuatro columnas del perro de trabajo y la del gato sano den lo mismo dice
+  que **ese 500 no es una cifra del ejercicio: es la cifra de «rendimiento
+  antioxidante» de este libro**, y viene del mismo estudio (Jewell et al, 2000). Lo
+  apunto porque afina el alcance de lo que aplicamos: `requisitos_condicionales.json`
+  lo aplica **solo al perro de trabajo**, que es lo conservador.
+
+### cap.21 — Feeding Mature Adult Cats (1.676 lineas, LEIDO ENTERO)
+
+**Nada aplicable.** Una frase que si vale como argumento general, y que es la hermana
+felina de la que ya esta apuntada del cap.14: «**Reducing caloric intake by 20 to
+30 % of normal, while meeting essential nutrient needs, slows the aging process and
+decreases susceptibility to cancer, renal disease, arthritis and immune-mediated
+diseases in animal models studied**», seguida de «**This level of caloric restriction
+is difficult to achieve in the long term and has not been incorporated into
+mainstream nutritional advice**».
+
+### cap.22 — Feeding Reproducing Cats (1.494 lineas, LEIDO ENTERO)
+
+**Nada aplicable**, pero el capitulo es el espejo del 15 y sirve para leer bien aquel:
+· El gato **si** tiene un suelo de hidratos en lactancia y por el mismo motivo que la
+  perra: «**at least 10 % DM digestible carbohydrate should be included in foods for
+  lactating queens**» (el perro, 23 %). Y el mecanismo escrito es el mismo:
+  «Digestible carbohydrates spare protein necessary to sustain blood glucose
+  concentrations in queens and provide a substrate for lactose during milk
+  production».
+· El DHA de reproduccion, en su version felina: **≥0,004 %MS** (contra ≥0,02 % del
+  perro), derivado igual: «**the minimum recommended allowance of DHA plus
+  eicosapentaenoic acid (EPA) is at least 0.01 % DM**» y «**DHA needs to be at least
+  40 % of the total DHA plus EPA, or ≥0.004 % DM**». Los dos porcentajes son distintos y
+  **la regla del 40 % es la misma**, que es exactamente lo que aplica
+  `requisitos_condicionales.json` con la cifra canina.
+· Y la eclampsia otra vez, con el mismo mecanismo del Box 15-2: «**High calcium
+  intake may down-regulate parathyroid gland secretion and impair normal mobilization
+  of calcium from skeletal stores**». Que la misma frase aparezca en el capitulo del
+  perro y en el del gato refuerza el hallazgo del cap.15: **el techo de calcio de la
+  gestacion no es una preferencia de formulacion, es prevencion de una enfermedad**.
+
+### cap.23 — Feeding Nursing and Orphaned Kittens (1.633 lineas, LEIDO ENTERO)
+
+**Nada aplicable** — el motor no formula para lactantes. La Tabla 23-3 trae la leche
+de perra al lado de la de gata para comparar, con las mismas cifras que la 15-3 y la
+16-4, y ahi cierra el circulo de los tres capitulos.
+
+### cap.24 — Feeding Growing Kittens: Postweaning (872 lineas, LEIDO ENTERO)
+
+**Nada aplicable**, y una diferencia entre especies que conviene tener escrita para no
+mezclarlas nunca: «**Unlike the situation with puppies, calcium excess in kittens is
+not associated with developmental orthopedic disease**». O sea que los techos de
+calcio del cachorro de la Tabla 17-1 —que el motor SI aplica— son especificamente
+caninos y no tienen equivalente felino. Y la contrapartida, que si es comun a las dos
+especies y describe una racion BARF mal hecha: «**Calcium deficiency coupled with
+phosphorus excess occurs most commonly in kittens fed unsupplemented all-meat
+diets**».
