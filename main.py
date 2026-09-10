@@ -69,11 +69,18 @@ from seguridad import avisos_rotacion as avisos_rotacion_v2
 # mensaje enseña la clave interna al veterinario.
 _NOMBRE_NUTRIENTE = {}
 _UNIDAD_DE = {}
+# ⚠️ LA TABLA DE FEDIAF, CARGADA UNA VEZ AL ARRANCAR Y COMPARTIDA (10 sep). Ya se
+# leia aqui para el nombre y la unidad de cada nutriente; ahora tambien la usa
+# `_seguridad_completa` para saber el maximo de calcio sin volver a cargar el
+# fichero en cada peticion ni tener una segunda copia. Si la carga falla, se
+# queda en None y el aviso que depende de ella simplemente no sale.
+_REQ_FEDIAF = None
 try:
     from verificar import MAPA as _MAPA_NUTRIENTES
     # `cargar_v2()` devuelve los requisitos como dict indexado por el nombre
     # de FEDIAF, que es la misma clave que usa el MAPA del verificador.
     _, _req_unidades = cargar_v2()
+    _REQ_FEDIAF = _req_unidades
     for _fediaf, _clave in _MAPA_NUTRIENTES.items():
         _NOMBRE_NUTRIENTE[_clave] = _fediaf.replace("_", " ").lower()
         _u = (_req_unidades.get(_fediaf) or {}).get("unidad") or ""
@@ -127,7 +134,8 @@ def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=N
     # semaforo y los topes de patologia rotos, no esta lista.
     _problemas, _avisos = revisar_seguridad_v2(gramos, al, der, etapa, patologias,
                                                peso_perro_kg=peso_perro_kg,
-                                               devolver_avisos=True)
+                                               devolver_avisos=True,
+                                               requerimientos=_REQ_FEDIAF)
     problemas = list(_problemas or []) + list(_avisos or [])
     problemas += list(avisos_rotacion_v2(gramos, al) or [])
     # ⚠️ AÑADIDO (25 agosto) — CASO REAL ENCONTRADO: un cachorro con

@@ -10987,8 +10987,25 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 print("\n=== BLOQUE 84: los avisos llegan a la app, y sin duplicados ===")
 
 from seguridad import revisar_seguridad as _rs84_fn
+from verificar import maximo_de as _maximo_de84
 
 _al84, _req84 = cargar()
+
+
+def _menus_del_catalogo84(o):
+    """Los menus del catalogo precalculado, vengan a la profundidad que vengan."""
+    if isinstance(o, dict):
+        if isinstance(o.get("gramos"), dict):
+            yield o
+        for _v in o.values():
+            yield from _menus_del_catalogo84(_v)
+    elif isinstance(o, list):
+        for _v in o:
+            yield from _menus_del_catalogo84(_v)
+
+
+_CAT84 = list(_menus_del_catalogo84(
+    _json_b12.load(open("catalogo_menus.json", encoding="utf-8"))))
 _cord84 = [n for n in _al84 if "cordero" in n.lower()]
 _pez84 = [n for n in _al84 if n.lower() in ("atún", "atun", "caballa", "sardina")]
 if not _cord84 or not _pez84:
@@ -11022,6 +11039,44 @@ else:
         if _n84 > 1:
             fallos.append(f"BLOQUE84: {_n84} avisos hablan de {_clave84}. Duplicado -- un aviso "
                           f"que sale dos veces deja de leerse: {[x[:60] for x in _sal84]}")
+    # ⚠️ Y EL AVISO DEL CALCIO ALTO (10 septiembre). FEDIAF lo pide DOS VECES y
+    # las dos SIN CIFRA -- §3.3.1 «as the calcium level approaches the stated
+    # nutritional maximum, it may be necessary to INCREASE zinc and copper» y la
+    # nota g --, y SACN5 cap.6 le pone numero al punto donde empieza: subir el
+    # calcio de 1,0 a 1,5 % de materia seca ya empeora el aprovechamiento del
+    # zinc. Una racion BARF cierra el calcio con hueso, asi que va alta por
+    # construccion: medido, 7 de los 216 menus del catalogo llegan al 85 % de su
+    # techo y el peor lo toca entero.
+    #
+    # No se sube ningun minimo -- ninguna fuente dice cuanto --: se DICE.
+    _menu_ca84 = None
+    for _m84 in _CAT84:
+        _g84 = _m84.get("gramos") or {}
+        _et84 = str(_m84.get("etapa") or "Adulto")
+        if _et84 not in ("Adulto", "CachorroJoven", "CachorroCrecimiento", "Senior"):
+            _et84 = "Adulto"
+        _k84 = sum((_al84.get(x, {}).get("energia", 0) or 0) * y / 100.0
+                   for x, y in _g84.items() if x in _al84)
+        if not _k84:
+            continue
+        _ca84 = sum((_al84[x]["nutrientes"].get("calcio") or 0) * y / 100.0
+                    for x, y in _g84.items() if x in _al84)
+        _mx84 = _maximo_de84(_req84["Calcio"], "Calcio", _et84)
+        if _mx84 and 100.0 * (_ca84 / _k84 * 1000) / _mx84 >= 85:
+            _menu_ca84 = (_g84, _et84, _k84)
+            break
+    if _menu_ca84 is None:
+        fallos.append("BLOQUE84: ningun menu del catalogo llega al 85 % del techo de calcio, asi "
+                      "que este control no ha probado nada. O cambio el catalogo o cambio el "
+                      "techo -- se remide y se ajusta el caso")
+    else:
+        _g84, _et84, _k84 = _menu_ca84
+        _sal_ca84 = _api._seguridad_completa(_g84, _al84, _k84, _et84)
+        if not any("calcio" in x.lower() and "zinc" in x.lower() for x in _sal_ca84):
+            fallos.append("BLOQUE84: un menu con el calcio al 85 % o mas de su techo no avisa de "
+                          f"que puede hacer falta mas zinc y cobre. FEDIAF lo pide en §3.3.1 y en "
+                          f"la nota g. Sale: {_sal_ca84}")
+
     # Y que no salten en un menu que no lleva ni cordero ni pescado azul.
     _otros84 = [n for n in _al84 if _al84[n].get("categoria") == "Verdura"][:1]
     if _otros84:
@@ -11030,6 +11085,10 @@ else:
             fallos.append(f"BLOQUE84: avisa de taurina o histamina en un menu que no lleva ni "
                           f"cordero ni pescado azul ({_otros84[0]}). Un aviso que sale siempre "
                           "deja de leerse")
+        if any("calcio" in x.lower() and "zinc" in x.lower() for x in _sal84b):
+            fallos.append(f"BLOQUE84: avisa del calcio alto en un menu de verdura sola "
+                          f"({_otros84[0]}), que no tiene calcio. Un aviso que sale siempre deja "
+                          "de leerse")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

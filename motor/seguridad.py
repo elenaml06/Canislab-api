@@ -708,7 +708,7 @@ def _es(nombre, conjunto):
 
 
 def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
-                      devolver_avisos=False, peso_perro_kg=None):
+                      devolver_avisos=False, peso_perro_kg=None, requerimientos=None):
     """
     Devuelve lista de problemas de SEGURIDAD. Vacia = todo bien.
 
@@ -999,6 +999,52 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     #    salia de la API: `main._seguridad_completa` llamaba a esta funcion sin
     #    `devolver_avisos=True`, asi que todo lo de aqui abajo se construia y se
     #    tiraba. Arreglado alli.
+
+    # 3. EL CALCIO CERCA DE SU TECHO SE LLEVA POR DELANTE EL ZINC Y EL COBRE
+    #    (10 septiembre). FEDIAF lo dice DOS VECES y las dos sin cifra:
+    #
+    #      §3.3.1, «Calcium (Adult dogs)»: «As the calcium level approaches the
+    #      stated nutritional maximum, IT MAY BE NECESSARY TO INCREASE the
+    #      levels of certain trace elements such as ZINC and COPPER.»
+    #
+    #      nota g de las tablas: «The bioavailability of minerals should be
+    #      carefully considered in diet formulas where the concentration of
+    #      these nutrients is close to the recommended amounts.»
+    #
+    #    Y SACN5 cap.6 SI le pone numero al punto donde empieza: «as calcium
+    #    levels increased FROM 1.0 TO 1.5 %, zinc usage (as measured by changes
+    #    in plasma zinc) decreased» en cachorros, y de 1,2 a 3,2 % baja la
+    #    retencion de zinc segun la forma quimica del zinc.
+    #
+    #    NOS TOCA DE LLENO: una racion BARF cierra el calcio con hueso, asi que
+    #    va alta por construccion.
+    #
+    #    LO QUE NO SE HACE, y es a proposito: no se sube el minimo de zinc ni el
+    #    de cobre. Ninguna de las dos fuentes dice CUANTO, y subir un minimo a
+    #    ojo es inventarse la cifra -- ademas de que el zinc tiene techo legal y
+    #    apretarlo por abajo cierra la ventana. Lo que se hace es DECIRLO,
+    #    cuando de verdad esta cerca: a partir del 85 % de su maximo.
+    # ⚠️ El maximo se PIDE, no se carga aqui: la tabla de FEDIAF se lee en un
+    # solo sitio y quien llama ya la tiene. Si no lo pasan, no se avisa -- antes
+    # callarse que inventarse el techo.
+    _max_ca = None
+    if requerimientos:
+        from verificar import maximo_de as _max_de_ca
+        _fila_ca = requerimientos.get("Calcio")
+        if _fila_ca:
+            _max_ca = _max_de_ca(_fila_ca, "Calcio", etapa)
+    if _max_ca and der:
+        _ca = sum((alimentos.get(n, {}).get("nutrientes", {}).get("calcio") or 0) * g / 100.0
+                  for n, g in menu.items())
+        _ca_1000 = _ca / der * 1000.0
+        if _ca_1000 >= _max_ca * 0.85:
+            avisos.append(
+                "El calcio de esta ración va al %.0f %% de su máximo (%.0f de %.0f mg por "
+                "1000 kcal). No se pasa, pero FEDIAF avisa de que con el calcio alto puede "
+                "hacer falta más zinc y más cobre, porque se absorben peor. Es normal en una "
+                "ración con hueso; si el perro es de los que se le nota en la piel o el pelo, "
+                "es algo que comentar con el veterinario."
+                % (100.0 * _ca_1000 / _max_ca, _ca_1000, _max_ca))
 
     if len(fuentes_a) >= 3:
         avisos.append(
