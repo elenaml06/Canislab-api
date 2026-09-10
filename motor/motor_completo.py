@@ -1382,7 +1382,38 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             lo = max(lo_exacto * 1.015, lo_exacto + PASO_DE_REDONDEO_G * mas_concentrada)
         else:
             lo = -np.inf
-        hi = mx * der / 1000.0 if mx is not None else np.inf
+        # ⚠️ Y EL TECHO, MEDIO PASO POR DEBAJO, POR LA MISMA RAZON QUE EL SUELO
+        # (10 de septiembre). Aqui habia escrito, y firmado, que los maximos de
+        # FEDIAF no necesitaban margen porque «pasarse una millonesima del maximo
+        # de un nutriente no tiene consecuencia». Es falso, y lo demuestra la
+        # bateria:
+        #
+        #   BLOQUE 1, CachorroJoven de 1,5 kg -> semaforo ROJO por Selenio.
+        #   Reproducido con el reloj apretado: vitamina D con 2,699 sobre un
+        #   techo de 2,692 -- un exceso del 0,291 % --, y `verificar()` lo pone
+        #   rojo porque su tolerancia es del 0,1 %. Un menu rojo NO SE ENTREGA
+        #   (regla 1), asi que la consecuencia no es «una millonesima de mas»:
+        #   es que la usuaria se queda sin menu, sin patron visible y solo a
+        #   veces. Verde en GitHub Actions y rojo aqui con el mismo commit.
+        #
+        # La causa es la de siempre: el solver resuelve EXACTO en el limite y
+        # luego los gramos se redondean a 2 decimales para enseñarlos. El error
+        # del redondeo es ABSOLUTO (hasta medio paso por alimento), no
+        # porcentual, asi que el margen tiene que ser absoluto tambien -- el
+        # mismo argumento, palabra por palabra, que el del suelo de aqui arriba
+        # y que el de la dosis del fabricante en `comprobar_menu`.
+        #
+        # Se resta medio paso por las tres fuentes que pueden coincidir, con el
+        # VECTOR DEL TECHO (el del hueco imputado), que es contra el que mide el
+        # semaforo. Medido en el caso rojo: exceso 0,0078 y margen 0,0178, o sea
+        # que cabe con casi el doble de sitio.
+        if mx is not None:
+            hi_exacto = mx * der / 1000.0
+            _por_gramo_techo = sorted(fila_max if hay_hueco else fila, reverse=True)
+            mas_concentrada_techo = sum(_por_gramo_techo[:FUENTES_QUE_PUEDEN_COINCIDIR])
+            hi = hi_exacto - PASO_DE_REDONDEO_G * mas_concentrada_techo
+        else:
+            hi = np.inf
         # ⚠️ CADA COTA CON SU VECTOR, Y NUNCA AL REVÉS (28 agosto).
         #   suelo  -> el valor PLAUSIBLE del dato dudoso, y el hueco a CERO
         #   techo  -> el valor DECLARADO, y el hueco IMPUTADO a su familia
