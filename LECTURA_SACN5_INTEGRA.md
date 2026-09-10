@@ -662,3 +662,520 @@ limites diciendo lo que dice de la dieta que calculamos, y **tiene que estar en
 · **Salmon crudo**: la enfermedad del salmon, *Neorickettsia helminthoeca*, por
   ingerir salmon crudo con el trematodo *Nanophyetus salmincola*; sin tratamiento a
   tiempo, «mortality can reach 50 to 90%». El catalogo tiene salmon.
+
+### cap.12 — Introduction to Feeding Normal Dogs (619 lineas, LEIDO ENTERO)
+
+Capitulo corto de contexto: el perro es omnivoro, no carnivoro, y por que.
+Tres cosas que sirven.
+
+1. **⚠️ UN LIMITE FISICO QUE EL MOTOR NO TIENE Y PODRIA TENER.** Literal: «On
+   average, a medium-sized, adult domestic dog has the capacity to ingest **30 to
+   35 g of dry matter per kg body weight per day**», y el estomago «can hold 1 to 9
+   liters depending on the breed». Para un perro de 20 kg son **600-700 g de materia
+   seca al dia**; a la humedad de un BARF (~70 %, cap.10) eso son unos **2 kg de
+   comida fresca**. El motor no comprueba en ninguna parte que la racion QUEPA en el
+   perro. Y ya ha hecho falta: el 8 de septiembre una regeneracion del catalogo sin
+   `margenes_categoria` saco menus de **25,8 kg de comida al dia** y los 216 salieron
+   **en verde**, porque lo que se habia apagado era la forma y la forma no la mira el
+   semaforo. Esta cifra es una segunda red, independiente de las proporciones BARF, y
+   viene de la fuente. **Es candidata a comprobacion nueva** — decision de Elena.
+
+2. **La Tabla 12-5 es la demostracion numerica de por que existe este motor**: un
+   perro de 10 kg alimentado SOLO con carne picada de vaca, en la cantidad que cubre
+   sus kcal (482 g), recibe: proteina **341 % del recomendado**, grasa **1.204 %**,
+   calcio **5 %**, fosforo 128 %, **ratio Ca:P de 1:20**, cobre 24 %, **yodo 10 %**,
+   zinc 70 %. El libro concluye: «This comparison confirms that an all-meat food
+   would be unbalanced for dogs». Es el mismo cuadro que sale al analizar una dieta
+   casera en `/analizar`.
+
+3. **El perro es omnivoro y el libro lo argumenta con anatomia**: la relacion entre
+   longitud del tubo digestivo y longitud del cuerpo es **6:1 en el perro**, 4:1 en
+   el gato, 10:1 en el conejo y hasta 20:1 en algunos herbivoros; el intestino
+   delgado es el 23 % del volumen digestivo del perro contra el 15 % del gato; y «Dogs
+   digest starch effectively via pancreatic enzymes and mucosal disaccharidases».
+   Tambien: en la presa, «Viscera are typically consumed; therefore, partially
+   digested vegetable material is a normal part of the wolf's diet».
+
+### cap.13 — Feeding Young Adult Dogs: Before Middle Age (1.993 lineas, LEIDO ENTERO)
+
+**El capitulo de referencia del perro adulto sano, y la Tabla 13-3 es LA tabla de la
+que sale `recomendaciones_libro.json`.** Confirmado literal al pie de la tabla:
+«*Dry matter basis. **Concentrations presume an energy density of 4.0 kcal/g.**
+Levels should be corrected for foods with higher energy densities.» — que es
+exactamente lo que `auditar_conversiones.py` dice, esta vez leido en su sitio.
+
+**LA TABLA 13-3 ENTERA, en % de materia seca a 4,0 kcal/g** (columna normal /
+columna inactivo-propenso a obesidad), con lo que dan por 1000 kcal:
+
+| Factor | Normal | Inactivo | Por 1000 kcal |
+|---|---|---|---|
+| Densidad energetica (kcal EM/g MS) | 3,5-4,5 | 3,0-3,5 | — |
+| Grasa y acidos grasos esenciales | 10-20 % | 7-10 % | 25-50 g |
+| Fibra bruta | ≤5 % | ≥10 % | — |
+| Proteina | 15-30 % | 15-30 % | 37,5-75 g |
+| **Fosforo** | **0,4-0,8 %** | 0,4-0,8 % | **1000-2000 mg** |
+| **Sodio** | **0,2-0,4 %** | 0,2-0,4 % | **500-1000 mg** |
+| Cloruro | 1,5 x Na | 1,5 x Na | — |
+| **Vitamina E** | **≥400 UI/kg** | ≥400 | **≥100 UI** |
+| **Vitamina C** | **≥100 mg/kg** | ≥100 | **≥25 mg** |
+| **Selenio** | **0,5-1,3 mg/kg** | 0,5-1,3 | **125-325 µg** |
+| Textura (sello VOHC) | placa | placa | — |
+
+✅ **Los dos techos de `recomendaciones_libro.json` cuadran clavados**: fosforo
+0,8 % MS ÷ 4,0 = **2000 mg/1000 kcal** y sodio 0,4 % ÷ 4,0 = **1000 mg/1000 kcal**.
+Son el **tope del rango** de esta tabla, no una cifra suelta. Queda comprobado en
+la fuente y no de oidas.
+
+**⚠️ Y TRES FILAS DE ESA MISMA TABLA QUE EL MOTOR NO APLICA**, y que son de la
+misma tabla y con la misma autoridad que las dos que si:
+· **Vitamina E ≥400 UI/kg MS** = ≥100 UI/1000 kcal. El requisito del NRC son
+  **30 mg/kg MS**, o sea que la tabla pide **mas de diez veces el requisito**. El
+  texto lo explica: «Research indicates that a level of vitamin E much higher than
+  the requirement confers specific biologic benefits», con un estudio de
+  biomarcadores que pide 500 UI/kg y otro donde 2.010 UI/kg mejoro la funcion
+  inmunitaria en perros mayores durante un año sin problemas de seguridad. El techo
+  sugerido: «An upper limit of 1,000 to 2,000 IU/kg food (DM) has been suggested for
+  dogs». Es el hallazgo S-12/S-33, ahora con la cifra de la tabla y no solo del texto.
+· **Selenio 0,5-1,3 mg/kg MS** = 125-325 µg/1000 kcal, con el requisito minimo en
+  **0,10 mg/kg** y el maximo de AAFCO en **2,0 mg/kg**. El rango entero cabe. Es
+  S-11.
+· **Vitamina C ≥100 mg/kg MS**, aunque el perro la sintetiza — «dogs (and cats) have
+  from one-quarter to one-tenth the ability to synthesize vitamin C as other
+  mammals». ⚠️ Ojo: el cap.40 nos dice lo contrario para el oxalato calcico («excessive
+  quantities of vitamin C should be avoided»), y **ninguna ficha del catalogo declara
+  vitamina C**, asi que el motor no podria aplicarlo ni queriendo.
+
+**EL PORQUE DEL TECHO DE FOSFORO, con cifras**: «up to **25%** of the young adult
+dog population may already be affected by subclinical kidney disease» y «**22.4%**
+of all dogs over five years of age examined at a European veterinary teaching
+hospital … had abnormally elevated kidney function tests». Y: «Excess dietary
+phosphorus can accelerate progression of chronic renal disease». Es el argumento
+entero de por que existe `recomendaciones_libro.json`, en la fuente.
+
+**LA PROTEINA, con tres formas de decirlo y una que va por 100 kcal**:
+· minimo teorico «1.7 g metabolizable protein/BWkg^0.75 for an ideal protein»;
+· con proteina media (valor biologico ~70), 2,1-2,5 g digestible/BWkg^0.75;
+· y el recomendado: «A daily protein intake for adult maintenance of 4.3 to 5.0 g
+  digestible protein/BWkg^0.75 (biologic value = 70) or **4.0 to 6.5 g digestible
+  protein/100 kcal ME** is recommended» → **40-65 g/1000 kcal**.
+⚠️ Un BARF tipico de este motor lleva **~105 g/1000 kcal**. Eso es entre **1,6 y 2,6
+veces** el rango recomendado, y por encima del techo del 30 % MS (= 75 g/1000 kcal).
+El propio libro dice que el exceso «is not stored as protein, but rather is
+deaminated by the liver» y que «foods high in protein also tend to contain high
+levels of phosphorus» — que es justo el nutriente al que le pone techo. Los dos
+numeros estan unidos y hay que llevarlos juntos a la revision.
+
+**LA GRASA Y LOS OMEGA-3, con dos cifras nuevas**: minimo del NRC **8,5 % MS de
+grasa** con al menos **1 % de acido linoleico**; y — esta si es nueva —
+«The minimum recommended allowance for dietary **eicosapentaenoic plus
+docosahexaenoic acids is 0.044% DM** (NRC, 2006)», que a 4,0 kcal/g son
+**110 mg de EPA+DHA por 1000 kcal**. ⚠️ Cruzar con el minimo de `epa_dha` del motor.
+Y el matiz sobre el omega-3: «Whether omega-3 fatty acids are essential is less
+certain … Nevertheless, a source of dietary omega-3 fatty acids is recommended».
+
+**EL DER POR EDAD (Tabla 13-2)**, que es una tercera version de los multiplicadores
+y **no coincide con ninguna de las dos anteriores**:
+
+| Edad | kcal EM/BWkg^0.75 | x RER |
+|---|---|---|
+| 1-2 años | 120-140 | 1,7-2,0 |
+| 3-7 años | 100-130 | 1,4-1,9 |
+| >7 años | 80-120 | 1,1-1,7 |
+
+Con la nota al pie: «Most pet dogs are minimally active and have a DER of
+approximately **95 kcal/BWkg^0.75 or 1.2 to 1.4 x RER**». Y el Cuadro 13-6 vuelve a
+dar los de siempre: castrado 1,6 · entero 1,8 · inactivo 1,2-1,4 · trabajo 2,0-8,0.
+Ya van **tres tablas del mismo libro** con multiplicadores distintos (cap.1, cap.5 y
+esta). Citar una sin decir cual es citar mal.
+
+**Y LO QUE ANADE SOBRE EL PERRO CONCRETO**:
+· **Castrar**: «Obesity occurs twice as often in neutered dogs than in
+  reproductively intact dogs», y la causa parece ser mas comida, no menos gasto:
+  SACN5 cap.13: «**Neutering does not appear to have a marked impact on the resting
+  energy expenditure of female dogs**»; lo que si sube, dice la misma frase, es la
+  ingesta.
+  El motor ya pregunta por la esterilizacion.
+· **Sexo**: «One study showed that female dogs had an average of **16% more body
+  fat** than male dogs», y no hay estudios controlados de requisitos por sexo.
+· **Raza**: Terranova **~20 % menos** de energia que la media; **gran danes y
+  dalmata hasta un 60 % mas**. El motor no pregunta la raza para las kcal.
+· **Frio**: hasta un **10-90 % mas** de energia fuera en invierno; temperatura
+  critica inferior 15-20 °C en pelo largo, 20-25 °C en pelo corto, 10-15 °C en
+  razas articas. Y calor: mas AGUA y poca mas energia — en desierto, «the water
+  required for cooling a 15-kg dog may equal **2,5 % of its body mass per hour**».
+· **Premios**: «<10% of the total diet on a volume, weight or calorie basis», con
+  el ejemplo que duele: **diez premios de hueso al dia le subieron el calcio a un
+  pastor aleman de 5 meses un 80 %** por encima de un alimento de cachorro grande, y
+  eso «increases the risk of developmental orthopedic disease». El motor calcula el
+  calcio del cachorro grande al miligramo y no dice nada de los premios.
+· **Revision**: perro sano cada seis a doce meses, y **mas a menudo si come casero**
+  — «Because few if any homemade recipes have been tested according to prescribed
+  feeding protocols».
+· Y el criterio de que va bien: «alert, have an ideal BCS (2.5/5 to 3.5/5) with a
+  stable, normal body weight and a healthy coat. Stools should be firm, well formed
+  and medium to dark brown.»
+
+### cap.14 — Feeding Mature Adult Dogs: Middle Aged and Older (1.087 lineas, LEIDO ENTERO)
+
+**De aqui sale el 1750 del fosforo senior.** La Tabla 14-2, en % de materia seca:
+
+| Factor | Normal | Inactivo | Por 1000 kcal (a 4,0) |
+|---|---|---|---|
+| Densidad energetica | 3,0-4,0 | 3,0-3,5 | — |
+| Grasa bruta | 10-15 % | 7-10 % | 25-37,5 g |
+| Fibra bruta | ≥2 % | ≥10 % | — |
+| Proteina | **15-23 %** | 15-23 % | **37,5-57,5 g** |
+| **Fosforo** | **0,3-0,7 %** | 0,3-0,7 % | **750-1750 mg** |
+| Sodio | 0,15-0,4 % | 0,15-0,4 % | 375-1000 mg |
+| Cloruro | 1,5 x Na | 1,5 x Na | — |
+| Vitamina E | 400 UI/kg | 400 | 100 UI |
+| Vitamina C | ≥100 mg/kg | ≥100 | ≥25 mg |
+| Selenio | 0,5-1,3 mg/kg | 0,5-1,3 | 125-325 µg |
+
+✅ **El 1750 cuadra**: 0,7 % MS ÷ 4,0 = 1750 mg/1000 kcal, tope del rango.
+
+⚠️ **PERO HAY UN DETALLE DE AUDITORIA QUE HAY QUE MIRAR**: al pie de la **Tabla
+14-2 NO se declara la densidad**. Dice solo «*All foods expressed on a dry matter
+basis unless otherwise noted. If the caloric density of the food is different, the
+nutrient content in the dry matter must be adapted accordingly (Chapter 1).» —
+**«different» de que, no lo dice**. La que declara 4,0 es su hermana, la Tabla 13-3
+del adulto joven. O sea que **nuestra conversion del fosforo senior se apoya en la
+densidad declarada por OTRA tabla**. La conclusion sigue pareciendo la buena (las
+dos tablas son de la misma serie y del mismo capitulo doble), pero **el bloque
+`conversion` de `recomendaciones_libro.json` tiene que citar de donde saca el 4,0
+para esta fila, y decir que no es del pie de su propia tabla**. Hay que abrirlo.
+
+**Y TRES COSAS NUEVAS QUE EL MOTOR NO TIENE**
+
+1. **⚠️ UN TECHO DE CALCIO PARA EL ADULTO, QUE NO TENIAMOS**: «Foods with **0.4 to
+   0.8% DM calcium** are recommended for mature dogs. The **calcium-phosphorus ratio
+   should not be less than 1:1**.» El 0,8 % MS son **2000 mg/1000 kcal**. Hoy el
+   motor solo pone techo de calcio en crecimiento (4250 / 2750 segun el peso adulto)
+   y en adulto se queda con el maximo de FEDIAF. Es exactamente la misma forma que
+   el fosforo y el sodio de `recomendaciones_libro.json`: un techo del libro para el
+   perro **sano**. **Candidato claro a cuarta cifra de ese fichero** — decision de
+   Elena, y hay que medir antes si cabe.
+2. **El techo de proteina del maduro baja a 23 % MS** (frente al 30 % del adulto
+   joven) = **57,5 g/1000 kcal**. Un BARF de ~105 g/1000 kcal esta a casi el doble.
+   El libro lo justifica con estudios: «foods with **18% DM protein** are adequate to
+   maintain immunocompetence in older dogs» y «foods with **16 to 20% DM protein**
+   are sufficient to maintain nitrogen balance and protein stores in older dogs». Y
+   el matiz honesto: «High protein intake has **not** been shown to contribute to the
+   development of kidney disease in healthy animals. However, after kidney function
+   is impaired, protein may play a role in progression of renal disease» — con el
+   estudio de cuatro años en perros con un solo riñon donde 34 % contra 18 % **no
+   cambio la funcion renal** pero si aumento la matriz mesangial y la fibrosis.
+3. **La unica intervencion nutricional que alarga la vida, con cifra**: «The only
+   nutritional modification known to slow aging and increase the lifespan
+   consistently in multiple species is caloric restriction. **Reducing caloric intake
+   by 20 to 30% of normal**, while meeting essential nutrient needs, slows the aging
+   process and reduces the risk for cancer, renal disease, arthritis and
+   immune-mediated diseases». Y reconoce que «This level of restriction seems
+   difficult to achieve in the long term».
+
+**Lo demas que sirve**
+· **Cuando empieza «maduro», con cifra y criterio**: «a food change should be
+  considered around the age of **five years for large- and giant-breed dogs** and
+  around **seven years for small dogs**», porque se considera mayor al llegar a la
+  mitad de su esperanza de vida. Cruzar con como resuelve la etapa `requisitos.py`.
+· **La caida del DER con la edad**: «a **12 to 13% decrease** in daily energy
+  requirement by around seven years of age», y el punto de partida «1.4 x resting
+  energy requirement (100 kcal ME/BWkg^0.75)».
+· **Supervivencia por tamaño** (Tabla 14-1): a los 10 años sobrevive el **38 %** de
+  los perros pequeños y el **13 %** de los grandes; a los 15, el **7,0 %** y el
+  **0,1 %**.
+· **Disfuncion cognitiva**: afecta al **28 %** de los perros de 11-12 años y al
+  **68 %** de los de 15-16.
+· Y la frase que explica por que al mayor se le aprieta el rango por arriba:
+  «mature animals may no longer be able to cope with excesses, borderline
+  deficiencies or changes in nutrient intake and quality. Therefore, foods for
+  mature dogs should meet allowances more rigorously and consistently because of
+  lack of reserve capacity».
+
+### cap.15 — Feeding Reproducing Dogs (1.573 lineas, LEIDO ENTERO)
+
+**El capitulo de gestacion y lactancia, y trae la SEGUNDA fuente independiente del
+suelo de proteina que el motor ya aplica a la dieta sin hidratos.**
+
+1. **LA DIETA SIN HIDRATOS, CONFIRMADA POR TERCERA VIA.** `requisitos_condicionales.json`
+   aplica desde el 8 de septiembre un suelo de **125 g de proteina/1000 kcal** en
+   gestacion y lactancia cuando la dieta no lleva hidratos, sacado del «may be
+   double» de FEDIAF §3.3.1 sobre los 62,5 de la Tabla III-3b. SACN5 cap.15 lo dice
+   con **otras dos formas del mismo numero**, y las dos apuntan al mismo sitio o mas
+   arriba:
+   · «If no carbohydrate is given, protein intake must almost be doubled; the food
+     must provide **at least 12 to 13 g digestible protein/BWkg 0.75**».
+   · Y el Box 15-1: «If a carbohydrate-free food is fed, gluconeogenic precursors
+     such as protein should be **increased by at least 50 % when energy requirements
+     are moderate and may have to be doubled if the energy requirement of the dam is
+     high**».
+   Y la Tabla 15-1 de SACN5 pone el desenlace en la columna de al lado, con nombre
+   propio: la fila «Carbohydrate-free food» tiene enfrente, en la columna
+   «Reproductive and health consequences», bajo peso al nacer, mas morbilidad y
+   mortalidad neonatal y mas nacidos muertos. (Es una **fila de tabla**, no una frase:
+   va descrita y no entrecomillada, porque las celdas de una tabla salen del PDF en
+   lineas sueltas y pegarlas seria escribir una frase que el libro no dice.)
+   No hay que cambiar nada: el x2
+   que aplicamos es el extremo alto de esa horquilla, o sea el lado seguro. Queda
+   escrito **porque una cifra con tres fuentes independientes no se vuelve a
+   discutir**.
+
+2. **⚠️ EL HUECO REAL DEL CAPITULO: NO HAY NINGUN TECHO EN GESTACION NI EN
+   LACTANCIA, Y LA TABLA 15-5 DA CUATRO.** `recomendaciones_libro.json` tiene hoy
+   adulto (fosforo y sodio), senior (fosforo) y crecimiento (calcio y fosforo, en
+   sus dos columnas). **Gestacion y lactancia no tienen ninguno.** La Tabla 15-5
+   («Key nutritional factors for reproducing dogs») da, en materia seca y con la
+   densidad de 4,0 kcal/g que el propio capitulo exige («the food should be high in
+   energy density (≥4.0 kcal/g)»):
+   · **Calcio 1,0-1,7 %** → **2500-4250 mg/1000 kcal**
+   · **Fosforo 0,7-1,3 %** → **1750-3250 mg/1000 kcal**
+   · **Proteina 25-35 %** → 62,5-87,5 g/1000 kcal
+   · **Grasa ≥20 %** → ≥50 g/1000 kcal
+   Y el techo de calcio **no es cosmetico, tiene mecanismo clinico escrito**. SACN5 cap.15,
+   con la comparacion con la vaca lechera delante: «**excessive calcium intake during
+   pregnancy may decrease activity of the parathyroid glands and predispose the bitch
+   to eclampsia during lactation**», y por eso se recomienda para casi todas las razas
+   un alimento que «**avoids large excesses of calcium (1.0 to 1.7% DM)**».
+   El Box 15-2 entero es esa enfermedad, y señala a la dieta casera de carne:
+   «**toy breeds tend to receive more meat-based homemade foods, which are low in
+   calcium**» — un BARF mal formulado esta en las dos puntas del problema a la vez.
+   **Es candidata a cifra nueva en `recomendaciones_libro.json` y es decision de
+   Elena**, con la medida por delante: hay que resolver menus de Gestante,
+   GestanteTardia y Lactante y ver donde cae hoy el calcio, exactamente como se hizo
+   con los techos de adulto y de cachorro.
+
+3. **UNA DISCREPANCIA DENTRO DEL PROPIO CAPITULO, apuntada para no copiarla mal.**
+   La Tabla 15-5 pone el ratio Ca:P de gestacion/lactancia en **«1:1-2:1»** y el
+   texto de la seccion de calcio dice dos veces **«1.1:1 to 2:1»**. No cambia lo que
+   hace el motor (aplicamos el 1,0-2,0 de FEDIAF, que es el mismo techo y un suelo
+   mas bajo), pero si alguien cita esta tabla algun dia, **la tabla y el texto no
+   dicen lo mismo** y hay que decir cual de los dos se esta citando.
+
+4. **La energia de la gestacion, para cruzar con `der.py` y `der.js`.** Tabla 15-10:
+   SACN5 Tabla 15-10: «**Gestation = 1.8 to 2.0 x RER for the first four weeks, then
+   2.2 to 3.5 x RER for the last five weeks**» y «**Lactation = 4.0 to 8.0 x RER**»,
+   con el pico de lactancia en 2,1 x RER mas un 25 % por cachorro. Y la Tabla 15-6 lo
+   da en incremento sobre el DER:
+   semana 5 «DER + 18 kcal ME/kg BW», semanas 6-8 «DER + 36», semana 9 «DER + 18».
+   El motor no calcula el DER (lo manda el frontend), asi que esto **no es un
+   requisito nutricional**, pero es la referencia contra la que se compara si algun
+   dia se revisa la curva de reproduccion. Es el mismo tipo de cruce que dejo la
+   Tabla 33-8 sin hacer.
+
+5. **Cifras minimas del capitulo que ya cubre FEDIAF o que no aplican**: hierro
+   ≥70 mg/kg MS, zinc ≥96, cobre ≥12,4, fenilalanina ≥0,83 % MS, fenilalanina+
+   tirosina ≥1,23 % MS (todas «NRC, 2006», para gestacion tardia y pico de
+   lactancia). **Y una que si toca el catalogo**: «**Oxides of iron should not be
+   used as an iron source because they are poorly available**» y «oxides of copper
+   should not be used because they are poorly available» — que es exactamente lo que
+   ya vive en `sacn5_fuentes_de_minerales.json` con sus dos ceros, ahora confirmado
+   en un segundo capitulo.
+
+6. **El DHA de reproduccion, confirmado literal** en el sitio del que salio:
+   «Foods for late gestation and peak lactation should contain the minimum
+   recommended allowance of DHA plus eicosapentaenoic acid (EPA) of at least 0.05 %
+   (DM) (NRC, 2006). Therefore, DHA needs to be at least 40 % of the total DHA plus
+   EPA, or 0.02 % DM». Es la cita que ya lleva `requisitos_condicionales.json`, leida
+   ahora en su parrafo entero y no en la fila de la tabla.
+
+7. **El agua**, otra vez y con cifra de trabajo: «Water requirements in ml are
+   roughly equal to energy requirements in kcal. A 35-kg bitch nursing a large litter
+   may require **five to six liters of water per day** at peak lactation».
+
+### cap.16 — Feeding Nursing and Orphaned Puppies from Birth to Weaning (2.148 lineas, LEIDO ENTERO)
+
+**Casi todo el capitulo esta fuera del alcance del motor** — el lactante mama, no
+come raciones —, pero deja tres cosas que si sirven.
+
+1. **LA ARGININA: LA MISMA REGLA QUE APLICAMOS, DICHA EN LA OTRA UNIDAD, Y CUADRA.**
+   `requisitos_condicionales.json` aplica «+0,01 g de arginina por cada gramo de
+   proteina sobre el requisito» con anclas por etapa, y su campo `por_que` ya explica
+   que el 0,01 sale igual en las dos unidades. SACN5 cap.16 lo enuncia **en la unidad
+   de %MS**: «For four- to 14-week-old puppies, **0.01 g of arginine should be added
+   for every 1 % of crude protein in excess of 22.5 %** (NRC, 2006)». Y ese 22,5 %MS
+   es exactamente el ancla que ya usamos para crecimiento temprano y reproduccion
+   (22,5 %MS × 2,5 = 56,25 g/1000 kcal). O sea que **la conversion que hicimos el 9
+   de septiembre esta confirmada contra una fuente distinta**, no solo contra la
+   aritmetica.
+
+2. **La leche de perra como referencia** (Tabla 16-4, en %MS): proteina 33, grasa
+   41,8, linoleico 4,9, calcio 1,06, fosforo 0,79, **6,43 kcal/g MS**, digestibilidad
+   >95 %. El capitulo hace el ajuste que hay que hacer y que nosotros hacemos todo el
+   rato: «Bitch's milk has an energy density of 6.43 kcal/g (DM). **Converting this
+   amount of linoleic acid to a 4 kcal/g basis results in a linoleic acid equivalent
+   of 3.0 % (DM)**» — o sea que el libro tampoco compara %MS entre alimentos de
+   densidades distintas sin convertir. Es la misma cuenta que rehace
+   `auditar_conversiones.py`.
+
+3. **Cuando empieza a comer solido**, que es cuando empieza a existir para este
+   motor: «Most puppies will start eating solid food **between three and four weeks
+   of age**» y «Weaning should be effectively completed **between six and seven weeks
+   of age**». Y el alimento del destete, en el mismo capitulo de SACN5: «**contain at
+   least 25 to 30 % protein and have an energy content of at least 4.0 kcal (16.7 kJ)
+   metabolizable energy/g (dry matter)**».
+
+### cap.17 — Feeding Growing Puppies: Postweaning to Adulthood (910 lineas, LEIDO ENTERO)
+
+**La Tabla 17-1 es la que ya aplica `recomendaciones_libro.json` para el cachorro.
+Confirmada literal, celda a celda, y con el texto que la deriva.**
+
+1. **Las dos columnas, confirmadas.** Tabla 17-1, «Recommended levels in food (DM)»,
+   «Puppies with an adult BW <25 kg» / «>25 kg»: calcio **0,7-1,7 / 0,7-1,2**,
+   fosforo **0,6-1,3 / 0,6-1,1**, Ca:P **1:1-1.8:1 / 1:1-1.5:1**, proteina 22-32 %,
+   grasa 10-25 %, DHA ≥0,02 %, densidad 3,5-4,5 kcal/g. Y el texto lo repite fuera de
+   la tabla: «Foods for large- and giant-breed puppies should contain **0.7 to 1.2 %
+   DM calcium (0.6 to 1.1 % phosphorus)**» y «**Because small- to medium-sized breeds
+   are less sensitive to slightly overfeeding or underfeeding calcium**» —la fuente
+   mete aqui su cita bibliografica— «**the level of calcium in foods for these puppies
+   can range from 0.7 to 1.7% DM, (0.6 to 1.3% phosphorus) without risk**». Los techos que aplicamos hoy (4250 y 3250 al pequeño;
+   2750 y 2750 al grande) salen de aqui, con el calcio del grande **apretado al 1,1 %
+   por Fascetti cap.10** en vez del 1,2 % de esta tabla, o sea por el lado seguro.
+
+2. **⚠️ UN TECHO DE ESTA TABLA QUE NO APLICAMOS, Y ES EL RATIO.** SACN5 pone el Ca:P
+   del cachorro de **mas de 25 kg de adulto en 1,5:1 como maximo**. El motor aplica
+   hoy el de FEDIAF: 1,8 en crecimiento tardio y **1,6** cuando el peso adulto llega
+   a `RAZA_GRANDE_O_GIGANTE_KG` (15 kg, nota b de la Tabla III-3a). O sea que para un
+   cachorro que vaya a pesar mas de 25 kg **damos 1,6 donde la fuente canina dice
+   1,5**. Es poco margen y por eso mismo es facil que nadie lo mire. **No se toca
+   ahora**: el cap.33 (Tabla 33-5) es el capitulo especifico de raza grande y hay que
+   leerlo entero antes de decidir, que es el metodo de este documento. Queda apuntado
+   con los dos umbrales al lado, que ya se confundieron una vez: **25 kg es de SACN5
+   y 15 kg es de FEDIAF, y deciden cosas distintas**.
+
+3. **Por que hay techo de calcio en el cachorro y no en el adulto**, con el mecanismo
+   escrito. SACN5 cap.17: «**intestinal absorption of calcium never decreases below
+   approximately 40 %, even if they receive high levels of calcium in foods**», la
+   retencion sube con la ingesta, y —dos frases mas abajo, en el mismo parrafo—
+   «**Absorption of calcium gradually is more regulated after puppies are about 10
+   months old**». Un cachorro no se defiende del exceso; un
+   adulto si. Eso es exactamente por que el techo del adulto es una recomendacion y el
+   del cachorro cubre un hueco de seguridad.
+
+4. **El minimo de fosforo del cachorro, que es mas bajo de lo que parece**: «The
+   phosphorus intake is less critical than the calcium intake, **provided the minimum
+   requirements of 0.35 % DM are met** and the calcium-phosphorus ratio is between 1:1
+   and 1.8:1». Y mas arriba, en el mismo capitulo de SACN5, se citan cachorros
+   criados con exito con «**0.37 to 0.6% DM calcium and 0.33% DM phosphorus**».
+
+5. **La energia del crecimiento** (Tabla 17-2), para el mismo cruce pendiente que la
+   Tabla 33-8. Sus tres filas, leidas (es una **tabla**, asi que va descrita y no
+   entrecomillada): del destete al 50 % del peso adulto, **3 x RER** = 210 kcal/BWkg^0,75;
+   del 50 al 80 %, **2,5 x RER** = 175; a partir del 80 %, **1,8-2,0 x RER** = 125-140.
+   Y el Gran Danes en la nota al pie, esa si literal: «**Great Dane puppies may need
+   25% more energy during the first two months after weaning = 250 kcal or 1,050
+   kJ/BWkg**».
+
+6. **⚠️ UNA ERRATA DE LA FUENTE, apuntada para que nadie la copie.** El capitulo dice
+   «The recommended minimum allowance for copper in growing puppies is **1.1 % DM**
+   (NRC, 2006)». Eso son 11.000 mg/kg de materia seca, que es absurdo: el NRC pide
+   **11 mg/kg MS**. Es un error de unidad del libro, no una cifra a aplicar. Lo apunto
+   porque este repo tiene ya un caso de un x10 escrito con forma de dato bueno
+   (`auditar_conversiones.py`, 8 de septiembre) y la unica defensa es leerlo y decirlo.
+
+7. **Y una frase que vale para todo el producto**: «**Underfeeding through the growth
+   phase is healthier than overfeeding and results in the same mature size**»
+   (Tabla 17-3, punto 7).
+
+### cap.18 — Feeding Working and Sporting Dogs (4.061 lineas, LEIDO ENTERO)
+
+**De aqui sale la vitamina E del perro de trabajo que ya aplica
+`requisitos_condicionales.json`. Confirmada, y con las otras dos de su fila.**
+
+1. **La Tabla 18-9, confirmada literal en sus cuatro columnas** (sprint · intermedio
+   de duracion/frecuencia baja o moderada · intermedio de duracion/frecuencia alta ·
+   resistencia). Los tres antioxidantes valen **lo mismo en las cuatro**:
+   · **Vitamina E ≥500 IU/kg MS** — la cifra que aplicamos.
+   · **Vitamina C 150-250 mg/kg MS**.
+   · **Selenio 0,5-1,3 mg/kg MS**.
+   Y el texto da el porque de cada una. De la E: «Based on antioxidant biomarker
+   studies in non-exercising dogs, for improved antioxidant performance, dog foods
+   should contain at least 500 IU/kg of DM vitamin E». Del selenio: «The minimum
+   requirement for selenium in foods for dogs is 0.10 mg/kg (DM)… Therefore, for
+   increased antioxidant benefits, the recommended range of selenium for dog foods is
+   0.5 to 1.3 mg/kg (DM)».
+
+2. **⚠️ Y TRAE EL LIMITE POR ARRIBA, QUE ES LO QUE FALTABA PARA PODER DECIDIR.** El
+   capitulo dice explicitamente que pasarse **empeora el rendimiento, con las dos
+   medidas. SACN5 cap.18: «**When racing greyhounds were supplemented with high doses
+   (1 g/day) of vitamin C, they ran slower**» y «**Racing greyhounds also ran slower
+   when supplemented with high doses of vitamin E (1,000 IU/day) but not lower doses
+   (100 IU/day)**». Y el mecanismo: «**Single antioxidant supplementation can have a
+   pro-oxidant effect**… If co-antioxidants are absent or decreased, the α-tocopherol
+   radical can exhibit pro-oxidant activity», y «**High doses of vitamin C and
+   selenium may act as pro-oxidants**». O sea que estas tres cifras **no son «cuanto
+   mas mejor»**, y si alguna vez se aplican las tres hay que aplicarlas juntas: el
+   propio libro dice que «**Multi-nutrient antioxidant supplementation using lower
+   doses is a better approach**». Eso responde media pregunta abierta de Elena sobre
+   el selenio.
+   El techo regulatorio del selenio, para el cruce con `seguridad.py`: «There are no
+   data to base a safe upper limit of selenium for dogs or cats, but for regulatory
+   purposes, a **maximum standard of 2.0 mg/kg (DM)** has been set for dog foods in
+   the United States (AAFCO, 2007)».
+
+3. **⚠️ EL CALCIO DEL PERRO QUE COME CARNE, QUE ES EL NUESTRO.** Box 18-6, literal y
+   entero, porque describe una racion BARF sin nombrarla: «Canine athletes fed
+   high-fat foods or those whose food is supplemented with meat (as is common with
+   greyhounds and sled dogs) **may require additional calcium**. The high level of fat
+   in performance foods **enhances the formation of insoluble calcium soaps, thus
+   rendering a portion of the ingested calcium unavailable**. Additionally, **red meat
+   is rich in phosphorus and nearly devoid of calcium**. Meat supplementation may thus
+   require calcium supplementation to maintain a normal calcium content and
+   calcium-phosphorus ratio in the diet. **Dietary calcium levels of 1.2 to 2.0 % of a
+   food's DM have been successfully fed to working dogs**. Very high-fat foods with
+   lower calcium concentrations may be deficient in available calcium. **Excessive
+   calcium supplementation may also predispose a dog to zinc deficiency by inhibiting
+   absorption of this nutrient**».
+   Tres cosas, y ninguna se aplica hoy: (a) el motor cuenta el calcio del menu como si
+   estuviera todo disponible, y con mucha grasa **no lo esta**; (b) por eso el rango
+   que el libro da al perro de trabajo empieza en **1,2 %MS = 3000 mg/1000 kcal**, muy
+   por encima del minimo de FEDIAF; (c) y el aviso de zinc es el mismo que ya vive en
+   `requisitos_condicionales.json` como `zinc_y_cobre_cuando_el_calcio_esta_alto`,
+   `documentado_sin_cifra` — **sigue sin cifra tambien aqui**, asi que sigue inerte con
+   razon. Lo de los jabones calcicos **no es cuantificable con lo que dice el libro**
+   («a portion»), asi que tampoco se puede aplicar; queda escrito como lo que es: una
+   razon medida para NO apurar el calcio por abajo en un menu muy graso.
+
+4. **El magnesio del galgo**, que es la unica cifra de mineral con nombre propio del
+   capitulo, en SACN5 cap.18: «**Foods containing low levels of magnesium (but at levels
+   above the minimum Association of American Feed Control Official's allowance)
+   resulted in clinical signs of magnesium deficiency in greyhound dogs**» y «**These
+   signs were alleviated when foods containing magnesium at 0.12 % of the dry matter
+   (DM) were fed**» — 300 mg/1000 kcal. Es un caso de «cumplir el
+   minimo no basto», que es el mismo argumento de los techos del libro pero por el
+   otro lado. Sin etapa ni poblacion definida mas alla de «galgo de carreras», asi que
+   **no es aplicable**; queda apuntado.
+
+5. **El perro de trabajo NO necesita mas proteina de lo que parece, y el libro lo
+   dice con numeros**: «The protein requirement for exercise is only **mildly
+   increased (5 to 15 %)** regardless of exercise type… **Dietary protein should be at
+   least 24 % of kcal**», y para el de resistencia «**16 % of the ME as protein should
+   be viewed as an absolute minimum**». El estudio detras: los perros de trineo con
+   solo el 16 % de la energia como proteina «suffered significantly more injuries and
+   had a significant decline in VO2 max» frente a los del 24, 32 y 40 %. Un BARF va
+   muy por encima de todo esto.
+
+6. **Los hidratos, y por que aqui no son un requisito**: «Provided sufficient
+   gluconeogenic precursors are available, **dogs have no dietary requirement for
+   carbohydrates except during gestation and neonatal development**». Es la frase que
+   sostiene que una racion sin hidratos sea legitima en adulto **y que no lo sea en
+   gestacion**, que es justo lo que separa el suelo condicional del punto 1 del cap.15.
+   Con un matiz medido: «Studies involving sled dogs fed 0 or 17 % of their kcal as
+   carbohydrate showed that dogs were **more susceptible to developing "stress"
+   diarrhea when fed foods devoid of carbohydrate**».
+
+7. **La grasa por tipo de ejercicio** (Tabla 18-9), por si algun dia hay un modo
+   «perro de trabajo»: sprint 8-10 %MS · intermedio bajo 15-30 · intermedio alto 25-40
+   · resistencia >50 %MS. Y densidad: 3,5-4,0 · 4,0-5,0 · 4,5-5,5 · >6,0 kcal/g MS.
+   Con el aviso de que **la grasa insaturada no es libre**: «>60 % unsaturated fatty
+   acids to optimize olfaction» en los dos intermedios, pero «large intakes of
+   unsaturated fatty acids may increase the risk of oxidative damage to membrane
+   lipids», que es precisamente por que la fila de al lado pide los tres antioxidantes.
+
+8. **Seguridad alimentaria, otra vez y en un capitulo distinto.** SACN5 cap.18, sobre
+   el galgo y el perro de trineo alimentados con carne casera de calidad variable:
+   «**the safety of these foods should always be evaluated**», «**Some raw meat sources
+   contain abundant bacteria and bacterial toxins**» y «**Raw foods may pose a health
+   hazard for people who care for these**» — la frase sigue en la pagina siguiente y
+   termina «dogs and for the dogs themselves», que va aqui sin comillas porque el salto
+   de pagina mete en medio la cabecera del libro. Y el caso 18-1 lo aterriza en una racion que es un BARF
+   de galgo. Es el mismo pendiente de producto que dejo el cap.11: **decirlo**.
