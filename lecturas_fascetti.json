@@ -4,11 +4,11 @@
     "metodo": "El de `LECTURA_SACN5.md`: leer todo, apuntar todo, y aplicar solo al final. Un veredicto «por: regla_del_capitulo» solo vale si se ha comprobado elemento a elemento que ninguno se sale de la regla -- es la leccion de los 442 de SACN5, donde TRES de los resueltos por capitulo felino si hablaban del perro.",
     "como_se_comprueba": "`leer_fascetti.py`, que rehace los recuentos y exige que la lectura integra declare el numero de lineas real del .txt.",
     "total_declarado": 657,
-    "pendientes_declarados": 81,
+    "pendientes_declarados": 0,
     "descartadas_declaradas": 17537,
-    "capitulos_leidos_declarados": 17,
-    "medido": "11 de septiembre de 2026 (caps. 1-13 leidos; quedan 14-21)",
-    "como_van_los_capitulos": "1-6 leidos el 11-sep por la manana. 7, 8 y 9 leidos el mismo dia y con sus veredictos escritos por la tarde -- estaban LEIDOS en `LECTURA_FASCETTI.md` y sin veredicto aqui, que es justo el agujero que este fichero existe para cerrar. 10 a 13, leidos y juzgados esa misma tarde. Quedan 14 a 21."
+    "capitulos_leidos_declarados": 21,
+    "medido": "11 de septiembre de 2026, noche: los 21 capitulos cerrados, 0 pendientes",
+    "como_van_los_capitulos": "LOS 21 CERRADOS. 1-6 la mañana del 11-sep; 7-13 la tarde; 14-21 la noche, a peticion de Elena: «cierralos y cierra todos los demas, o sea, todos los capitulos tienen que estar leidos y cerrados». || ⚠️ Y LOS OCHO ULTIMOS SALIERON DEL BLOQUE 96, que es lo que hay que leer aqui: hasta esa noche el motor APLICABA cifras del cap.14 (cuatro) y del cap.16 (una) sin que ninguno de los 75 elementos de esos dos capitulos tuviera veredicto. O sea que se habia leido una FRASE y no un CAPITULO, y de ahi salieron los tres fallos de esa semana. Cerrarlos saco cosas que la lectura por frases no habia visto: el techo de EPA+DHA (F-13, que SI aprieta), el techo de vitamina E del perro (F-14), el fosforo del oxalato (F-15), el minimo de proteina del NRC a 2,6 veces del de FEDIAF, y que el techo de sodio del renal no tiene ensayo detras. Nueve hallazgos en ocho capitulos que se daban por vistos."
   },
   "capitulos": {
     "cap05": {
@@ -2486,6 +2486,370 @@
         "reco#372:Oral products containing high concentrations of vitamin D, such as organ meats, some fish oils, and certain supplements, should be": {
           "veredicto": "leido_coincide",
           "por": "⚠️ «Oral products containing high concentrations of vitamin D, such as ORGAN MEATS, some FISH OILS, and certain supplements, should be avoided» -- y eso son tres categorías enteras de una ración BARF. El motor ya lo tiene por el lado que importa: la vitamina D lleva tope de seguridad crónica DURO dentro del solver (`TOPE_VITD_KCAL`), que es más fuerte que evitar un ingrediente, porque limita el aporte venga de donde venga. La frase es de hipercalcemia felina, pero el mecanismo es el mismo."
+        }
+      }
+    },
+    "cap18": {
+      "titulo": "Nutritional Management of Cardiovascular Diseases",
+      "regla_del_capitulo": "Leido ENTERO el 11-sep-2026. Cuatro hallazgos, y el primero es de una clase que no habia salido en toda la lectura: (1) hay un punto en el que bajar el sodio es MALO -- «Severe sodium restriction (<50 mg/100 kcal) is not recommended as this can cause early and prolonged activation of the renin-angiotensin-aldosterone system» --, y el motor aplica 480 al estadio ACVIM D, por debajo de esa linea; es el parrafo FELINO y el canino dice que 400 funciono, asi que no se cambia nada, pero es la unica frase de toda la lectura que dice que un tope puede ser DEMASIADO BAJO, y el motor no sabe expresar eso: sus topes solo aprietan. (2) La cifra canina del estadio C es <800 mg/1000 kcal y el motor aplica 625, mas estricto. (3) Las vitaminas del grupo B suben con los diureticos, sin cifra. (4) El 57 %% de los perros cardiopatas reciben la medicacion escondida en comida rica en SODIO, que es una via que la cuenta de premios no ve porque solo cuenta kcal. El resto es de gato, dosis de suplemento por toma, y manejo.",
+      "lectura_integra": {
+        "lineas": 221,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "cifra#33:Mild sodium restriction (<100 mg/100 kcal) is recommended, although further research is needed to determine the optimal dose and t": {
+          "veredicto": "hallazgo_sin_aplicar",
+          "por": "⚠️ EL SUELO QUE NO TENEMOS: HAY UN PUNTO EN EL QUE BAJAR EL SODIO ES MALO. Literal, del apartado felino: «Mild sodium restriction (<100 mg/100 kcal) is recommended», y en la frase siguiente «Severe sodium restriction (<50 mg/100 kcal) is not recommended as this can cause early and prolonged activation of the renin-angiotensin-aldosterone (RAA) system». || Esos 50 mg/100 kcal son 500 mg/1000 kcal, y el motor aplica al estadio ACVIM D un techo de 480 -- por DEBAJO de esa línea. || ⚠️ PERO ES EL PÁRRAFO DEL GATO, y el del perro dice otra cosa: «one study showed that a low-sodium diet (40 mg/100 kcal) reduced cardiac size in dogs with CHF compared to a diet containing 70 mg/100 kcal», o sea que 400 mg/1000 kcal funcionó en perro. NO SE CAMBIA NADA: el 480 sale del consenso ACVIM 2019, que es canino y es la fuente de esta patología, y el aviso de la RAA es felino. Se apunta porque es la única frase de toda la lectura que dice que un tope PUEDE SER DEMASIADO BAJO, y el motor no tiene forma de expresar eso hoy: sus topes solo aprietan. Es decisión clínica."
+        },
+        "cifra#34:Severe sodium restriction (<50 mg/100 kcal) is not recommended as this can cause early and prolonged activation of the renin‐angio": {
+          "veredicto": "hallazgo_sin_aplicar",
+          "por": "Es la segunda mitad de la frase de la línea 33, la del <50 mg/100 kcal. Mismo veredicto."
+        },
+        "cifra#36:When cats with HCM develop mild–moderate CHF, moderate sodium restriction (i.e. <80 mg Na/100 kcal) is indicated in conjunction wi": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO (miocardiopatía hipertrófica felina, o taurina del gato, que en él sí es esencial). Rawku es de perros: sin tabla ni catálogo felinos, aplicarlo sería inventarse un requisito."
+        },
+        "cifra#56:One human study reported that 33% of CHF patients were thiamine deficient (Hanninen et al. 2006).": {
+          "veredicto": "leido_no_aplica",
+          "por": "33 % de los humanos con insuficiencia cardíaca tienen déficit de tiamina. Es humano, y es el contexto de la frase siguiente."
+        },
+        "olor#58:Therefore, animals with cardiac disease (at least those receiving diuretics) may have higher dietary B vitamin requirements.": {
+          "veredicto": "hallazgo_sin_aplicar",
+          "por": "⚠️ «animals with cardiac disease (at least those receiving diuretics) may have higher dietary B vitamin requirements». Es un requisito CONDICIONAL -- sube con el fármaco, no con la dieta -- y la fuente NO da cifra, así que aplicarlo sería inventársela. Es la misma forma que las tres `documentado_sin_cifra` de `requisitos_condicionales.json`. || Y hay un dato del motor que lo tranquiliza: medido, la B6 real de los menús va de tres a doce veces el mínimo de FEDIAF, y una ración BARF con vísceras va sobrada de grupo B. Se apunta por si algún día aparece la cifra."
+        },
+        "cifra#78:One study, for example, found that two commercial vegetarian diets that claimed to be complete and balanced contained only 18–24% ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO (miocardiopatía hipertrófica felina, o taurina del gato, que en él sí es esencial). Rawku es de perros: sin tabla ni catálogo felinos, aplicarlo sería inventarse un requisito."
+        },
+        "cifra#79:Cats with DCM should have plasma and whole blood taurine concentrations analyzed as part of the diagnostic workup and taurine shou": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO (miocardiopatía hipertrófica felina, o taurina del gato, que en él sí es esencial). Rawku es de perros: sin tabla ni catálogo felinos, aplicarlo sería inventarse un requisito."
+        },
+        "cifra#124:Because of the potential detrimental effects and lack of documented benefits of severe sodium restriction in asymptomatic disease,": {
+          "veredicto": "leido_coincide",
+          "por": "No restringir el sodio de forma severa en la enfermedad asintomática. El motor coincide y por construcción: los estadios ACVIM A y B1 no aplican NINGÚN tope de sodio, y el B2 aplica 738,6 -- que es el techo legal del Reglamento UE, no una restricción clínica. La restricción real empieza en el C. Medido y vigilado por el BLOQUE 90."
+        },
+        "cifra#170:Smaller, more frequent meals also may increase food intake, as can flavor enhancers (i.e. foods added to the dog food to increase ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Comidas pequeñas y frecuentes, y potenciadores del sabor, para que el perro cardiópata coma. Es manejo: el motor calcula gramos al día, no el reparto en tomas."
+        },
+        "cifra#186:For example, one study of 37 over‐the‐counter senior dog foods found sodium levels ranging from 33 to 412 mg/100 kcal (Hutchinson ": {
+          "veredicto": "leido_no_aplica",
+          "por": "37 piensos sénior comerciales con el sodio entre 33 y 412 mg/100 kcal. Es variabilidad del mercado, no una recomendación. Sirve para saber que el rango comercial es enorme."
+        },
+        "cifra#187:Unless indicated for concurrent disease, dietary protein for dogs should at least meet the AAFCO minimum of 4.5 g/100 kcal, althou": {
+          "veredicto": "leido_coincide",
+          "por": "«dietary protein for dogs should at least meet the AAFCO minimum of 4.5 g/100 kcal» -- son 45 g/1000 kcal, y el mínimo de FEDIAF en adulto son 52,1, o sea más estricto. Manda FEDIAF y además va por el lado seguro: el motor nunca baja de 52,1 sin la vía firmada. Sin conflicto."
+        },
+        "cifra#200:Although an optimal dose of n‐3 fatty acids has not been determined, the authors currently recommend a dosage of fish oil to provi": {
+          "veredicto": "leido_no_aplica",
+          "por": "La dosis de omega-3 que recomiendan los autores va por kilo de perro y por cápsula, no por 1000 kcal. El motor no tiene ninguna cifra de omega-3 para la cardiopatía; las que tiene (artrosis, cáncer, renal, atopia) vienen de SACN5 y sí están en su unidad."
+        },
+        "olor#201:Unless the diet is one of a few specially designed therapeutic diets, supplementation will be necessary to achieve this n‐3 fatty ": {
+          "veredicto": "leido_coincide",
+          "por": "Sin una dieta terapéutica específica hace falta suplementar para llegar al omega-3 objetivo. En el motor el aceite de pescado entra dentro del MILP con sus kcal contadas, que es la forma de no pasarse sin darse cuenta."
+        },
+        "cifra#203:The most common formulation of fish oil, however, is 1 g capsules that contain approximately 180 mg EPA and 120 mg DHA.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es una dosis de SUPLEMENTO o de fármaco por perro y por toma (taurina cada 8-12 h, L-carnitina por kilo cada 8 h, coenzima Q10 dos veces al día). El motor formula una ración por 1000 kcal: no receta, y esa decisión es de quien firma."
+        },
+        "cifra#204:At this concentration, fish oil can be administered at a dose of 1 capsule/4.5 kg (10 lb) of body weight to achieve the authors' r": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es una dosis de SUPLEMENTO o de fármaco por perro y por toma (taurina cada 8-12 h, L-carnitina por kilo cada 8 h, coenzima Q10 dos veces al día). El motor formula una ración por 1000 kcal: no receta, y esa decisión es de quien firma."
+        },
+        "cifra#211:While there have been no studies documenting the benefit of sodium restriction on survival or quality of life in dogs with CHF, on": {
+          "veredicto": "leido_coincide",
+          "por": "«there have been no studies documenting the benefit of sodium restriction on survival or quality of life in dogs with CHF». Es el mismo aviso que da el capítulo 15 sobre el sodio del renal, y va escrito allí como hallazgo. El motor restringe igual porque lo hace su fuente (consenso ACVIM) y porque apretar el sodio no deja al perro sin nutriente. Queda dicho."
+        },
+        "cifra#212:In dogs with ACVIM Stage C, the authors recommend moderate sodium restriction (i.e. <80 mg/100 kcal).": {
+          "veredicto": "hallazgo_sin_aplicar",
+          "por": "⚠️ LA CIFRA CANINA DEL ESTADIO C, Y EL MOTOR ES MÁS ESTRICTO. «In dogs with ACVIM Stage C, the authors recommend moderate sodium restriction (i.e. <80 mg/100 kcal)», o sea <800 mg/1000 kcal. El motor aplica 625 al `cardiopatia_c`. || No es conflicto: 625 cabe dentro de 800 y los topes solo aprietan. Se apunta porque es la segunda fuente canina que da número para ese estadio, y las dos cifras -- 800 y 625 -- convendría que las viera quien firma."
+        },
+        "olor#232:Supplemental antioxidants are included in many commercial veterinary diets, including at least one cardiac diet, and can increase ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Los antioxidantes suben la concentración circulante y bajan la oxidación, pero la propia frase del capítulo dice que falta investigación sobre cuáles, a qué dosis y cuándo. Sin cifra que aplicar."
+        },
+        "olor#247:In this stage, greater restriction of dietary sodium may be beneficial, but this must be balanced with ensuring adequate calorie a": {
+          "veredicto": "leido_coincide",
+          "por": "En la insuficiencia grave se puede restringir más el sodio, «but this must be balanced with ensuring adequate calorie [intake]». El motor ya lo equilibra por construcción: si el tope no deja cerrar la ración, no hay menú, y lo dice."
+        },
+        "cifra#274:The optimal dose of taurine for correcting a deficiency in dogs with DCM has not been determined, although a dose of 250–1000 mg q": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es una dosis de SUPLEMENTO o de fármaco por perro y por toma (taurina cada 8-12 h, L-carnitina por kilo cada 8 h, coenzima Q10 dos veces al día). El motor formula una ración por 1000 kcal: no receta, y esa decisión es de quien firma."
+        },
+        "cifra#287:The minimum or optimal dose of L‐carnitine necessary to replete a dog with low myocardial carnitine concentrations is not known, b": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es una dosis de SUPLEMENTO o de fármaco por perro y por toma (taurina cada 8-12 h, L-carnitina por kilo cada 8 h, coenzima Q10 dos veces al día). El motor formula una ración por 1000 kcal: no receta, y esa decisión es de quien firma."
+        },
+        "olor#294:Controlled prospective studies will be necessary to accurately judge the efficacy of this supplement.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Hacen falta estudios controlados para juzgar la coenzima Q10. No hay cifra, y ese compuesto no es ninguno de los 41 nutrientes ni una clave del catálogo."
+        },
+        "olor#319:Finally, owner expectations and individual animal taste preferences will affect the diet that will be optimal for a given animal.": {
+          "veredicto": "leido_coincide",
+          "por": "Las preferencias del perro y las expectativas del dueño afectan a qué dieta es óptima. El motor ya deja elegir a mano por categorías (regla 5) y excluir lo que sea."
+        },
+        "olor#324:All dietary changes should be done gradually over a period of at least 3–5 days.": {
+          "veredicto": "aplicado",
+          "por": "«All dietary changes should be done gradually over a period of at least 3-5 days». El motor tiene `transicion.py` y el endpoint `/transicion`, que es literalmente esto."
+        },
+        "cifra#334:Some 57% of dogs with cardiac disease are administered their medications or dietary supplements in food, mostly high‐sodium foods ": {
+          "veredicto": "leido_coincide",
+          "por": "⚠️ El 57 % de los perros cardiópatas reciben su medicación escondida en comida, «mostly high-sodium foods» -- queso, embutido. Es una vía de sodio que no está en la ración y que puede tirar por tierra el tope. El motor ya cuenta lo que el perro come fuera de la ración desde el 11-sep (`kcal_de_premios`, regla 3-bis), pero SOLO las kcal: de lo que lleva dentro no sabe nada, y aquí el problema no son las kcal sino el sodio. Queda escrito."
+        },
+        "cifra#335:The percentage of cats with cardiac disease whose medications are administered in foods is lower (34%), but this can still be a si": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO (miocardiopatía hipertrófica felina, o taurina del gato, que en él sí es esencial). Rawku es de perros: sin tabla ni catálogo felinos, aplicarlo sería inventarse un requisito."
+        }
+      }
+    },
+    "cap19": {
+      "titulo": "Nutritional Management of Oncologic Diseases",
+      "regla_del_capitulo": "Leido ENTERO el 11-sep-2026. Sin hallazgos nuevos, y eso es informacion: las dos cifras de macros que da el capitulo CONFIRMAN las que el motor ya aplica al `cancer_soporte`, por un camino distinto -- la grasa «60-65 %% de las kcal» (66,7-72,2 g/1000 kcal) queda por encima del techo de 62,5 que aplica el motor, y la proteina «30-35 %% de las kcal» (75-87,5) cruza EXACTAMENTE en el 75 que aplica el motor. SACN5 lo dio por tabla y Fascetti por porcentaje de kcal. El resto del capitulo es alimentacion asistida (sonda y via intravenosa), estimulantes del apetito, glutamina sin dosis definida, y bibliografia.",
+      "lectura_integra": {
+        "lineas": 336,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "olor#115:Regardless of the ration chosen, water intake and fluid balance must be monitored carefully; supplements to correct specific nutri": {
+          "veredicto": "leido_coincide",
+          "por": "Vigilar el agua y corregir carencias concretas con suplementos. El motor cierra los 43 requisitos con suplementos dentro del propio MILP; el agua la pone el dueño."
+        },
+        "olor#141:Each animal must be carefully and individually evaluated, and those that are already maintaining good body condition on a high‐qua": {
+          "veredicto": "leido_coincide",
+          "por": "Cada animal hay que evaluarlo por separado, y al que ya está bien con su dieta no hay que cambiársela. Es la razón de `objetivos_del_profesional` y de que `/analizar` exista: mirar lo que ya come antes de tocarlo."
+        },
+        "cifra#147:The commercial rations often recommended for cats and dogs with neoplastic disease and normal liver and kidney function deliver 30": {
+          "veredicto": "leido_no_aplica",
+          "por": "Describe qué reparto de macros traen las dietas comerciales que se recomiendan en cáncer. Es el mercado, no una recomendación con cifra propia; las cifras que sí lo son están en las líneas 154 y 176."
+        },
+        "cifra#151:Fat provides more calories per gram (8.5–9 kcal/g) than protein (3.5–4 kcal/g) or carbohydrate (3.5–4 kcal/g).": {
+          "veredicto": "leido_no_aplica",
+          "por": "La grasa da 8,5-9 kcal/g y la proteína y el hidrato 3,5-4. Es la aritmética de Atwater, que el motor ya usa para pasar de porcentaje de kcal a gramos por 1000 kcal. No es un requisito."
+        },
+        "cifra#154:Most cats and dogs can tolerate as much as 60–65% of their total energy requirement as fat, especially if they are permitted a per": {
+          "veredicto": "leido_coincide",
+          "por": "«Most cats and dogs can tolerate as much as 60-65% of their total energy requirement as fat». A 9 kcal/g son 66,7-72,2 g/1000 kcal. El motor aplica al `cancer_soporte` un TECHO de grasa de 62,5 g/1000 kcal (SACN5 cap.30), o sea un 56 % de las kcal: por debajo de lo que esta fuente dice que se tolera, así que no hay conflicto -- el motor aprieta más y el mínimo de FEDIAF sigue debajo."
+        },
+        "olor#164:Carbohydrate calories can be substituted in any of these situations where protein or fat intake must be restricted, although it ma": {
+          "veredicto": "leido_no_aplica",
+          "por": "Sustituir kcal por hidratos cuando hay que restringir proteína o grasa. Una ración BARF no lleva hidratos de esa clase y el catálogo no tiene ningún cereal ni almidón; la verdura que hay entra por fibra y micros."
+        },
+        "cifra#176:As described previously, providing protein at 30–35% of total calories will achieve this goal in most animals; repeated nutritiona": {
+          "veredicto": "leido_coincide",
+          "por": "⚠️ «providing protein at 30-35% of total calories will achieve this goal in most animals». A 4 kcal/g son 75-87,5 g/1000 kcal. El motor aplica al `cancer_soporte` un TECHO de proteína de 75 (SACN5 cap.30), que es EXACTAMENTE el extremo bajo de esta horquilla. Dos fuentes independientes que se cruzan en el mismo número: SACN5 por tabla y Fascetti por porcentaje de kcal. Confirma el valor que ya está puesto."
+        },
+        "olor#205:However, for this approach to be successful, the animal's caloric requirement must be calculated, and the daily quantity of food c": {
+          "veredicto": "leido_coincide",
+          "por": "Hay que calcular las kcal que necesita el animal y medir lo que come de verdad. Es lo que hace el motor con el DER, y desde el 11-sep también cuenta lo que come FUERA de la ración (regla 3-bis)."
+        },
+        "olor#228:It seems likely that this is related at least in part to the compromised gut function that can occur during parenteral feeding.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Por qué la nutrición parenteral compromete la función intestinal. Es de la vía intravenosa, que no es lo que formula el motor."
+        },
+        "olor#335:Ultimately, the following four basic questions must be answered in every case: Does the product or practice work? To answer this q": {
+          "veredicto": "leido_coincide",
+          "por": "Las cuatro preguntas que hay que hacerle a cualquier producto o práctica: ¿funciona?, ¿es seguro?, ¿de dónde sale la evidencia?, ¿quién lo dice? Es la norma que este repo aplica a cada cifra -- fuente escrita, conversión rehecha por `auditar_conversiones.py`, cita comprobada por `auditar_citas.py` y capítulo cerrado por el BLOQUE 96."
+        },
+        "cifra#929:Serum 25‐hydroxyvitamin D concentrations ≥40 ng/mL are associated with >65% lower cancer risk: pooled analysis of randomized trial": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es el título de una referencia de la bibliografía (vitamina D 25-OH ≥40 ng/mL y riesgo de cáncer, en HUMANOS). Entra en el filtro porque el título lleva cifra y nutriente. No es una recomendación del capítulo."
+        }
+      }
+    },
+    "cap20": {
+      "titulo": "Enteral Nutrition and Tube Feeding",
+      "regla_del_capitulo": "Leido ENTERO el 11-sep-2026. CERO hallazgos, y esta vez la razon es de alcance y no de descuido: el capitulo entero es alimentacion por SONDA -- colocacion del tubo, cuidado del estoma, dietas liquidas comerciales, como desatascarlo, aritmetica de volumen. El motor calcula una racion de comida fresca para un perro que come por la boca. Se ha revisado elemento a elemento para poder afirmarlo: de los 13, ninguno da una cifra de concentracion de nutriente aplicable a una racion oral. Dos si dejan algo util aunque no sea una cifra: que siete dietas enterales analizadas se desviaban de lo que declaraban (la leccion de `dato_dudoso`), y que la dieta la manda el paciente concreto.",
+      "lectura_integra": {
+        "lineas": 341,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "olor#34:The use of most types of enteral feeding devices allows for care to continue at home even on a long‐term basis, compared to parent": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es alimentación por SONDA: colocación del tubo, cuidado del estoma, dietas líquidas comerciales, cómo desatascarlo. El motor calcula una ración de comida fresca para un perro que come por la boca; nada de esto tiene forma de requisito nutricional que aplicar."
+        },
+        "olor#36:Most people have at least a general awareness, if not first‐ or second‐hand experience, of feeding tube use in human medicine.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es alimentación por SONDA: colocación del tubo, cuidado del estoma, dietas líquidas comerciales, cómo desatascarlo. El motor calcula una ración de comida fresca para un perro que come por la boca; nada de esto tiene forma de requisito nutricional que aplicar."
+        },
+        "olor#37:In most cases, clients will be aware of feeding tube use for people in vegetative states or for end‐of‐life situations.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es alimentación por SONDA: colocación del tubo, cuidado del estoma, dietas líquidas comerciales, cómo desatascarlo. El motor calcula una ración de comida fresca para un perro que come por la boca; nada de esto tiene forma de requisito nutricional que aplicar."
+        },
+        "olor#104:Figure 20.7 The area around the stoma for a feeding tube must be kept clean and dry to reduce local skin irritation and prevent ce": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es alimentación por SONDA: colocación del tubo, cuidado del estoma, dietas líquidas comerciales, cómo desatascarlo. El motor calcula una ración de comida fresca para un perro que come por la boca; nada de esto tiene forma de requisito nutricional que aplicar."
+        },
+        "olor#179:Beginning Enteral Feeding An initial first meal for veterinary patients with an enteral feeding device will be a liquid diet or a ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es alimentación por SONDA: colocación del tubo, cuidado del estoma, dietas líquidas comerciales, cómo desatascarlo. El motor calcula una ración de comida fresca para un perro que come por la boca; nada de esto tiene forma de requisito nutricional que aplicar."
+        },
+        "olor#231:One study found that of seven feline enteral diets analyzed for a limited number of nutrients using laboratory methods, all were f": {
+          "veredicto": "leido_coincide",
+          "por": "Siete dietas enterales felinas analizadas en laboratorio y todas se desviaban de lo que declaraban. Es la misma lección que el repo aplica a su catálogo con `dato_dudoso` y con las tres bases de datos: lo declarado y lo medido no son lo mismo. Sin cifra que aplicar."
+        },
+        "cifra#235:In order to provide a reasonable caloric density, liquid veterinary diets are generally high in fat (up to 51% of calories).": {
+          "veredicto": "leido_no_aplica",
+          "por": "Las dietas líquidas veterinarias llegan al 51 % de las kcal en grasa para tener densidad calórica. Es una propiedad de esos productos, no una recomendación para una ración oral."
+        },
+        "cifra#249:Feline adult allowance Canine adult allowance Ensure Original Shake a Vivonex Plus b Royal Canin Veterinary Health Nutrition Recov": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es una tabla comparando productos comerciales (Ensure, Vivonex, Royal Canin) contra las asignaciones de adulto. Son productos humanos y veterinarios de sonda: ninguno está ni puede estar en el catálogo."
+        },
+        "cifra#255:Feline adult allowance Canine adult allowance Hill's Prescription Diet a/d canine/feline a Royal Canin Veterinary Health Nutrition": {
+          "veredicto": "leido_no_aplica",
+          "por": "Ídem: otra tabla de productos comerciales de cuidados intensivos."
+        },
+        "reco#268:However, in patients with renal or hepatic disease, it must be considered that additional glutamine at sometimes pharmacologic dos": {
+          "veredicto": "leido_no_aplica",
+          "por": "Glutamina a dosis farmacológica en pacientes renales o hepáticos. Es un suplemento por vía de sonda y a dosis de fármaco; la glutamina no es ninguno de los 41 nutrientes ni una clave del catálogo."
+        },
+        "cifra#306:20 kg canine patient with esophagostomy tube RER = 200.75 × 70 = 662 kcal/d Desired diet provides 1.25 kcal/ml when adequately ble": {
+          "veredicto": "leido_no_aplica",
+          "por": "Ejemplo numérico de cómo calcular el volumen de dieta líquida para un perro de 20 kg con sonda de esofagostomía. Es aritmética de sonda."
+        },
+        "cifra#317:When tested with simulated clogs with critical care diets, the most successful solution was a combination of 0.25 tsp pancreatic e": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cómo desatascar una sonda (pancreatina y bicarbonato). Manejo del dispositivo."
+        },
+        "olor#421:Of course, for many situations the diet choice will be driven by the needs of the specific patient.": {
+          "veredicto": "leido_coincide",
+          "por": "La elección de dieta la manda el paciente concreto. Es lo mismo que dice el capítulo 15 y lo que justifica `objetivos_del_profesional`."
+        }
+      }
+    },
+    "cap21": {
+      "titulo": "Parenteral Nutrition",
+      "regla_del_capitulo": "Leido ENTERO el 11-sep-2026. CERO hallazgos aplicables, y el motivo lo da la propia fuente en su linea 130: «Because parenterally administered amino acids are essentially 100%% bioavailable, protein requirements that are established [for oral feeding]...». Una cifra intravenosa y una oral no son comparables, y mezclarlas seria un error de categoria. Se ha revisado elemento a elemento para poder afirmarlo -- los 31 son soluciones de aminoacidos, dextrosa, emulsiones lipidicas, osmolaridad y velocidad de infusion. DOS si dejan algo: la linea 160 separa las dos vias con todas las letras («fat restriction is recommended for ORAL feeding in patients with pancreatitis, intravenous fat does not stimulate...»), lo que confirma el tope de grasa oral que el motor aplica a la pancreatitis; y la 150 avisa de no pasarse de proteina, que coincide con el techo del cancer.",
+      "lectura_integra": {
+        "lineas": 333,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "cifra#5:However, the dogs in this study were also shown to be in a negative energy balance during the majority of the time of hospitalizat": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#17:One of the first reports of intravenous injection of a fat emulsion was in 1915, when a 3% emulsion of lard was administered to tw": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "olor#62:When a patient has two or more high‐risk factors for malnutrition, it is likely that that the patient is already in a malnourished": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#127:Parenteral Nutrition Components Protein Protein needs for patients receiving PN are provided by amino acid solutions, which are us": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#128:Amino acid solutions with a concentration of 8.5% have an energy density of 0.34 kcal/ml and osmolarity of 706–880 mOsmol/l.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#130:Because parenterally administered amino acids are essentially 100% bioavailable, protein requirements that are established for ora": {
+          "veredicto": "leido_no_aplica",
+          "por": "⚠️ Y AQUÍ ESTÁ EL MOTIVO POR EL QUE TODO ESTE CAPÍTULO SE APARTA, dicho por la propia fuente: «Because parenterally administered amino acids are essentially 100% bioavailable, protein requirements that are established [for oral feeding] ...». Una cifra intravenosa y una oral no son comparables, y mezclarlas sería exactamente la clase de error que este repo persigue."
+        },
+        "cifra#132:A control group received crystalloid fluids only, and the remaining three groups received infusions of 0, 1.36, or 2.04 g amino ac": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#134:All dogs had negative nitrogen balance, and calculations based on a linear relationship between nitrogen balance and amino acid ad": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#135:The dogs in this study averaged approximately 10 kg in body weight, with a calculated MER of 766 kcal/d.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#136:Therefore, this minimum protein requirement is equivalent to 3.0 g/100 kcal (12% protein on a metabolizable energy [ME] basis).": {
+          "veredicto": "leido_no_aplica",
+          "por": "El requerimiento mínimo de proteína que sale de ese estudio: «3.0 g/100 kcal (12% protein on a metabolizable energy [ME] basis)», o sea 30 g/1000 kcal. Es INTRAVENOSO y con biodisponibilidad del 100 %, así que no se puede comparar con los 52,1 de FEDIAF ni usarse para justificar bajar la proteína de una ración. La propia frase siguiente lo dice."
+        },
+        "cifra#137:This is lower than guidance established by the Association of American Feed Control Officials (AAFCO) for commercial diets formula": {
+          "veredicto": "leido_coincide",
+          "por": "«This is lower than guidance established by AAFCO for commercial diets» -- la fuente misma marca que su cifra intravenosa queda por debajo de lo que se pide a una dieta oral. Confirma que no son comparables."
+        },
+        "cifra#147:Ingredient Energy density and key nutrient contents Osmolarity Amino acid solutions Travasol 8.5%a 0.34 kcal/ml 880 mOsmol/l Trava": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#148:The standard recommendation for protein concentrations in PN formulations is 4–5 g/100 kcal (16–20% protein on an ME basis) for do": {
+          "veredicto": "leido_no_aplica",
+          "por": "La recomendación estándar para la proteína en una fórmula parenteral: 4-5 g/100 kcal (16-20 % de las kcal). Intravenoso, mismo motivo."
+        },
+        "reco#150:Like energy, excessive protein should be avoided, as attempts to promote tissue anabolism through high‐energy/high‐protein PN admi": {
+          "veredicto": "leido_coincide",
+          "por": "No pasarse de proteína, porque forzar el anabolismo con dietas muy energéticas y muy proteicas no funciona. Coincide con lo que dice el capítulo 19 del cáncer y con que el motor tenga TECHO de proteína en esa patología."
+        },
+        "cifra#154:The most commonly utilized lipid emulsions are 20% solutions, providing 2 kcal/ml with an osmolarity of 260 mOsmol/l.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#156:Recommended fat levels in PN formulations range from 30% to 80% of total calories (Remillard 2000; Delaney et al. 2006; Freeman an": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#157:Higher fat levels (60–90% of nonprotein calories) have been reported to be well tolerated clinically in over 500 patients over a f": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "reco#160:Although fat restriction is recommended for oral feeding in patients with pancreatitis, intravenous fat does not stimulate exocrin": {
+          "veredicto": "leido_coincide",
+          "por": "⚠️ «Although fat restriction is recommended for oral feeding in patients with pancreatitis, intravenous fat does not stimulate [pancreatic secretion]». Es la frase que separa las dos vías con todas las letras: por BOCA la pancreatitis lleva restricción de grasa -- que es lo que aplica el motor, 37,5 g/1000 kcal, o 25 si además hay hiperlipidemia u obesidad -- y por vena no. Confirma el tope oral y explica por qué este capítulo no lo toca."
+        },
+        "cifra#182:Carbohydrate Dextrose solutions, ranging in concentrations from 5% to 70%, are utilized in PN solutions to provide carbohydrate ca": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#183:One of the most commonly used concentrations for CPN formulation is 50% dextrose, providing 1.7 kcal/ml, with an osmolarity of 252": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#184:For PPN formulations, 5% dextrose is commonly substituted, providing a 10‐fold lower osmolarity of 253 Osmol/l, and a correspondin": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#186:Recommended carbohydrate levels for PN solutions range from 20% to 50% on an ME basis (Delaney et al. 2006; Queau et al. 2011).": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#190:Dextrose provides 0.034 kcal/mg; therefore, 4 mg/kg/min is equivalent to 0.136 kcal from dextrose/min/kg.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#191:For a 10 kg animal receiving resting energy requirement (RER; 393 kcal/day) over a 24‐hour period, total kcal/min administration w": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#199:For patients that are normokalemic, potassium phosphate should be added to provide 20–30 mEq K+/l (Remillard 2000).": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#227:Box 21.1 Step‐by‐Step Calculations for Parenteral Formulations Step 1 Determine energy requirement kcal/day Resting energy require": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#318:Start parenteral nutrition (PN) administration at 25% of the goal rate (determined by patient's daily resting energy requirement [": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#363:This study evaluated a lipid‐free ready‐made PN solution that included 20 mEq/l potassium.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#377:Carbohydrate concentrations that resulted in the complications seen in human studies are higher than those generally used in veter": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "reco#378:Although evaluations have not yet been made in dogs and cats, overfeeding and high‐carbohydrate solutions should be avoided in pat": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
+        },
+        "cifra#602:The effects on beagles of long‐term administration of 20% Travamulsion fat emulsion.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es nutrición PARENTERAL, o sea por vía intravenosa: soluciones de aminoácidos, dextrosa, emulsiones lipídicas, osmolaridad, velocidad de infusión. El motor formula comida que se come. Ninguna de estas cifras tiene forma de requisito de una ración oral, y aplicarlas sería un error de categoría -- la biodisponibilidad intravenosa es del 100 % y la de un alimento no."
         }
       }
     }
