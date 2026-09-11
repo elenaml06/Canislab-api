@@ -640,7 +640,7 @@ def _peso_de_referencia(datos):
 
 
 def _avisos_para_el_profesional(gramos, al, der, etapa, patologias=None,
-                                peso_perro_kg=None):
+                                peso_perro_kg=None, actividad=None):
     """Las notas que solo tienen sentido para quien sabe interpretarlas.
 
     ⚠️ POR QUE ESTAN SEPARADAS (10 septiembre). `revisar_seguridad` devuelve dos
@@ -666,10 +666,52 @@ def _avisos_para_el_profesional(gramos, al, der, etapa, patologias=None,
                                          peso_perro_kg=peso_perro_kg,
                                          devolver_avisos=True,
                                          requerimientos=_REQ_FEDIAF)
-        return list(avisos or [])
+        avisos = list(avisos or [])
+        avisos += _aviso_del_perro_de_trabajo(etapa, actividad, der, peso_perro_kg)
+        return avisos
     except Exception as e:      # nunca puede tumbar la entrega de un menu
         print(f"[aviso] no se pudieron calcular los avisos del profesional: {e}")
         return []
+
+
+# Los dos escalones de actividad que las fuentes llaman «perro de trabajo».
+ACTIVIDADES_DE_TRABAJO = ("muy_activo", "trabajo")
+
+
+def _aviso_del_perro_de_trabajo(etapa, actividad, der, peso_perro_kg):
+    """La nota del perro de trabajo: su fuente le pide MÁS fósforo del que le
+    dejamos, y eso lo tiene que saber quien firma la pauta.
+
+    ⚠️ POR QUÉ EXISTE (11 septiembre). Elena: «pero nosotros si tenemos lo de
+    perro de trabajo no? no se puede aplicar?». Sí lo tenemos -- la ficha lo
+    pregunta -- y hasta hoy **no llegaba al motor**: la app lo usaba para
+    calcular las kcal y mandaba solo el número.
+
+    Lo que el motor SÍ hace ya sin este dato es apretar los topes crónicos por
+    peso metabólico, que es aritmética y va del lado seguro. Lo que NO puede
+    hacer solo es lo contrario: el techo de fósforo de 2000 mg/1000 kcal sale de
+    la Tabla 13-3 de SACN5, que es la del perro adulto JOVEN en mantenimiento, y
+    la Tabla 4.2 de Fascetti da al perro de resistencia **3 g/Mcal, o sea 3000**.
+    Un 50 % más.
+
+    Aflojar un techo es decisión clínica y no la toma el motor. Lo que sí puede
+    hacer es **decirlo**, que es para lo que existe este canal.
+    """
+    if actividad not in ACTIVIDADES_DE_TRABAJO:
+        return []
+    if etapa not in ("Adulto", "Senior"):
+        return []
+    return [
+        "PERRO DE TRABAJO. A este menú se le aplica el techo de fósforo del perro adulto sano "
+        "(2000 mg/1000 kcal en adulto, 1750 en sénior), que sale de SACN5 cap.13, Tabla 13-3 -- "
+        "la del perro en mantenimiento. La fuente del perro de trabajo propone MÁS: Fascetti & "
+        "Delaney 2ª ed., Tabla 4.2, da al perro de resistencia 3 g de fósforo por Mcal, o sea "
+        "3000 mg/1000 kcal, un 50 % por encima. El motor NO afloja ese techo solo: aflojarlo es "
+        "una decisión clínica. || Y en sentido contrario, el motor SÍ aprieta por su cuenta los "
+        "topes de seguridad crónica (yodo, selenio, mercurio, tiaminasa y vitamina D), porque un "
+        "tope por 1000 kcal deja pasar el doble a quien come el doble. NRC 2006 cap.11: «Safe "
+        "upper limits expressed relative to body weight will remain the same». Eso es aritmética "
+        "y va del lado seguro, así que no espera a que nadie lo decida."]
 
 
 def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
@@ -858,7 +900,8 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
     # pueda enseñarselas SOLO al veterinario. Al dueño no le sirven -- ninguna
     # se arregla cambiando el menu -- y algunas asustan sin motivo.
     respuesta["avisos_profesional"] = _avisos_para_el_profesional(
-        gramos, al, der, etapa, patologias, peso_perro_kg)
+        gramos, al, der, etapa, patologias, peso_perro_kg,
+        actividad=respuesta.get("actividad"))
     return respuesta
 
 
@@ -971,6 +1014,26 @@ class PeticionMenu(BaseModel):
     # El BCS de 9 puntos, para derivar el objetivo cuando no viene
     # declarado. Ver `_peso_de_referencia`.
     bcs: Optional[float] = None
+    # ⚠️ AÑADIDO (11 septiembre) — LA ACTIVIDAD, QUE LA APP YA SABE Y NO MANDABA.
+    #
+    # Elena: «pero nosotros si tenemos lo de perro de trabajo no? no se puede
+    # aplicar?». Sí lo tenemos: la ficha lo pregunta y la app lo usa para
+    # calcular el DER. Lo que pasaba es que **se quedaba ahí**: a este endpoint
+    # solo llegaban las kcal ya calculadas, así que el motor veía un número y no
+    # sabía si era un galgo de sofá o un perro de trineo.
+    #
+    # El motor puede DEDUCIRLO del cociente DER/peso^0,75 -- de ahí salen los
+    # topes crónicos por peso metabólico del 11 de septiembre, y esa deducción
+    # se queda como respaldo para cuando este campo no venga. Pero deducir un
+    # dato que existe es peor que recibirlo, y aquí se ve por qué: FEDIAF pone
+    # al Gran Danés en 200 kcal/kg^0,75 POR RAZA, no por actividad (§7.2.3.4:
+    # la cifra de raza va EN VEZ del nivel de actividad), así que por el
+    # cociente sale «perro de trabajo» un perro que está tumbado.
+    #
+    # Valores: los cinco de `der.ACTIVIDAD_KEY` -- sedentario, normal, activo,
+    # muy_activo, trabajo. Opcional a propósito: mientras el frontend no lo
+    # mande, el motor sigue deduciendo y NO cambia de comportamiento.
+    actividad: Optional[str] = None
     nombres_excluidos: Optional[list] = None
     patologias: Optional[list] = None
     # ⚠️ AÑADIDO (8 septiembre) — EL PELDAÑO DE LA ESCALERA, ELEGIDO.
@@ -1315,8 +1378,16 @@ def endpoint_menu_v2(datos: PeticionMenu):
     """
     observabilidad.etiquetar(endpoint="/menu/v2", etapa=datos.etapa_requisitos)
     try:
+        # ⚠️ LA ACTIVIDAD VIAJA CON LA RESPUESTA (11 septiembre), porque
+        # `_garantizar_verificado` es quien monta los avisos del profesional y
+        # necesita saber si es un perro de trabajo. Se pone ANTES de verificar,
+        # no después: si se pusiera después, un menú rechazado saldría sin el
+        # aviso y el único perro al que le importa es justo el que más come.
+        _interno_v2 = _resolver_menu_v2_interno(datos)
+        if isinstance(_interno_v2, dict) and datos.actividad:
+            _interno_v2["actividad"] = datos.actividad
         _resp_v2 = _garantizar_verificado(
-            _resolver_menu_v2_interno(datos),
+            _interno_v2,
             datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
             origen="/menu/v2", patologias=datos.patologias,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,

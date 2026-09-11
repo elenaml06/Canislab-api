@@ -11589,8 +11589,43 @@ else:
                 f"peso ({_tope_peso86:.0f}) aunque quepa bajo el de energía ({_tope_kcal86:.0f}). "
                 f"El filtro final no está mirando el gemelo por peso")
 
+# 5. Y LA ACTIVIDAD LLEGA AL MOTOR Y SE DICE. Hasta el 11 de septiembre la app
+#    sabía si era un perro de trabajo y NO lo mandaba: calculaba las kcal con
+#    ese dato y enviaba solo el número. Ahora `PeticionMenu` lo acepta, y el
+#    menú de un perro de trabajo lleva la nota que dice lo que el motor NO puede
+#    decidir solo: que su techo de fósforo sale de la tabla del perro en
+#    mantenimiento, y que su propia fuente propone un 50 % más.
+#
+#    Se exige en las dos direcciones: que salga cuando toca y que NO salga
+#    cuando no toca. Un aviso que sale siempre no lo lee nadie.
+_base86 = {"nombres_alimentos": [], "der_objetivo": 1955.0, "etapa_requisitos": "Adulto",
+           "peso_perro_kg": 25.0, "modo": "automatico"}
+for _act86, _debe86 in ((None, False), ("normal", False), ("activo", False),
+                        ("muy_activo", True), ("trabajo", True)):
+    _cuerpo86 = dict(_base86)
+    if _act86:
+        _cuerpo86["actividad"] = _act86
+    _r86 = _c.post("/menu/v2", json=_cuerpo86).json()
+    _hay86 = any("PERRO DE TRABAJO" in _a
+                 for _a in (_r86.get("avisos_profesional") or []))
+    if _hay86 != _debe86:
+        fallos.append(
+            f"BLOQUE86: con actividad={_act86!r} el menú {'no ' if not _hay86 else ''}lleva el "
+            f"aviso del perro de trabajo y tenía que {'llevarlo' if _debe86 else 'NO llevarlo'}. "
+            f"Si no llega, la app manda el dato y el motor lo tira; si sale siempre, nadie lo lee")
+    # Y la cifra tiene que ir DENTRO del aviso: uno truncado parece que está y
+    # no dice el número, que es la lección del BLOQUE 64.
+    if _debe86 and _hay86:
+        _texto86 = next(_a for _a in _r86["avisos_profesional"] if "PERRO DE TRABAJO" in _a)
+        for _cifra86 in ("2000", "3000", "Tabla 4.2"):
+            if _cifra86 not in _texto86:
+                fallos.append(f"BLOQUE86: el aviso del perro de trabajo ya no dice «{_cifra86}». "
+                              f"Sin las dos cifras y sin la tabla de la que salen, el aviso no "
+                              f"deja decidir nada")
+
 print(f"  cruce en 130 kcal/kg^0,75 · 4 topes con su gemelo · "
       f"yodo del perro de trabajo congelado en {_tope_peso86:.0f} µg")
+print("  la actividad llega al motor · el aviso sale en los dos escalones de trabajo y en nadie más")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 _hay_fuentes = _os_b18.path.isdir(_RUTA_FUENTES)
