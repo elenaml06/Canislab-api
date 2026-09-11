@@ -66,43 +66,65 @@ las tiene que tomar una persona, no yo.
       está arreglado — era el perro que se amolda, que heredaba el menú del
       primero y no su aviso.
 
-- [ ] **LAS OCHO PREGUNTAS QUE LA APP NO HACE, Y QUE DECIDEN UNA CIFRA**
-      (11 de septiembre). De las 47 patologías, **24 son `solo_veterinario`**
-      y en **ocho** la cifra que aplica el motor depende de un dato clínico
-      que la ficha no pregunta. Están en
-      `quien_formula_cada_patologia.json`, las sirve `GET /vocabulario` y
-      desde hoy la ficha del veterinario **las enseña** — pero enseñarlas no
-      es aplicarlas, y esa parte no la puedo decidir yo.
+- [ ] **LAS PREGUNTAS QUE ELIGEN LA CIFRA DE CADA PATOLOGÍA** (11 de
+      septiembre; el inventario entero, en `preguntas_por_patologia.json`).
 
-      Las tres que más mueven el número:
+      Elena: «tendrá que haber preguntas para cada patología preguntando
+      resultados de analíticas o lo que sea para que pueda coger según la
+      respuesta los límites para cada estadio o cada caso».
 
-      | Patología | De qué depende | Qué cambia |
+      ⚠️ **Y la mitad ya está hecha, que es lo que yo conté mal el 11 de
+      septiembre.** Escribí esto como si el motor aplicara una sola cifra por
+      patología, y no es verdad: la cardiopatía tiene **cinco claves con cinco
+      números** y la app **ya pregunta el estadio ACVIM**. Lo que decide el
+      sodio es eso:
+
+      | Respuesta | Clave del motor | Techo de sodio |
       |---|---|---|
-      | Renal | estadio IRIS, o la creatinina | por debajo del estadio 2 la fuente **no respalda** apretar el fósforo, y apretarlo tiene coste |
-      | Pancreatitis | triglicéridos en sangre | el techo de grasa es **37,5 o 25** |
-      | Cardiopatía | estadio ACVIM | el B2 se separa del B1 |
+      | No lo sé / sin estadiar | `cardiopatia` | 738,6 |
+      | A — predispuesta | `cardiopatia_a` | sin techo |
+      | B1 — soplo sin remodelado | `cardiopatia_b1` | sin techo |
+      | B2 — remodelado sin síntomas | `cardiopatia_b2` | 738,6 |
+      | C — insuficiencia | `cardiopatia_c` | **625** |
+      | D — refractaria | `cardiopatia_d` | **480** |
 
-      Hoy el motor aplica **una sola cifra por patología**, la más
-      estricta, así que un renal en estadio 1 recibe el tope del estadio 4.
-      Va al lado seguro y por eso no es un fallo, pero **es un coste real**:
-      apretar el fósforo estrecha la ventana y a veces deja sin menú.
+      Lo mismo con la hepatopatía (confirmada o solo predisposición de raza) y
+      con los cinco tipos de cálculo. **Cuatro de las diez preguntas ya están
+      aplicadas.** Lo que queda es esto, y sí necesita decisión:
 
-      Lo que hay que decidir, y es clínico:
-      1. ¿Se pregunta el estadio y el motor aplica una cifra por estadio? Eso
-         es ampliar `patologias.json` con una fila por escalón, y **las
-         cifras las tiene que dar la fuente**, no yo.
-      2. ¿O se deja una sola cifra y la ficha sigue diciendo que se ha
-         elegido la más estricta?
-      3. Y la de producto: **¿un dueño puede marcar una casilla
-         `solo_veterinario`?** Hoy puede, si es `segura: true`. La app
-         ofrece 24 casillas cuya cifra sale de un dato que el dueño no
-         tiene. No lo he cambiado porque quitarle 24 casillas a la app es
-         una decisión tuya, no mía.
+      1. **`renal` — la pregunta es más gruesa que la que pide la fuente.** La
+         app pregunta «leve-moderada o moderada-grave» y las dos respuestas
+         aplican **el mismo** techo de fósforo (1200): lo único que cambia es
+         que la segunda para en seco. Lo que dice la fuente es que **por debajo
+         del estadio IRIS 2 no respalda apretar el fósforo**, y apretarlo tiene
+         coste. Para eso haría falta una clave nueva con **su cifra sacada de
+         la fuente**, y esa no me la invento yo.
+      2. **`reaccion_adversa_alimento` — falta la cifra en el motor.** La
+         fuente limita el techo de proteína «(dermatologic cases only)» y en el
+         caso digestivo la misma página pide **más**. Hoy ese techo está
+         escrito y sin aplicar. Hacen falta dos claves, una por respuesta.
+      3. **`estruvita` — falta media pregunta.** La fuente distingue formular
+         para **prevenir** que vuelvan y para **disolver** uno que ya está, y
+         son dietas distintas. Hoy solo se pregunta el tipo de cálculo.
+      4. **`diabetes` — una excepción escrita que no se aplica.** La fuente
+         dice «except for diabetic dogs in **thin body condition**». La app
+         **ya sabe el BCS**, así que esto no necesita preguntar nada nuevo:
+         hace falta decidir **en qué BCS corta**.
+      5. **`pancreatitis` y `diabetes` — la cifra existe y la pantalla no lo
+         dice.** Marcar `obesidad` o `hiperlipidemia` ya baja la grasa de la
+         pancreatitis de 37,5 a 25, y quien lee la ficha ve 37,5 y cree que es
+         el único número. Eso es trabajo de pantalla, no decisión tuya.
+      6. **`shunt_sin_encefalopatia` — la pregunta no mueve ni una cifra.** Sus
+         dos respuestas aplican exactamente lo mismo (ninguna es formulable, y
+         ninguna lleva topes). Cambia el texto del aviso, que no es poco. Queda
+         declarado como tal.
 
-      ⚠️ **No se recoge la respuesta hasta que sirva para algo.** Preguntar
-      el estadio IRIS y guardarlo sin que llegue al motor sería pedir un
-      dato inútil, que es exactamente lo contrario de la regla que abrió
-      todo esto.
+      ⚠️ **Y de paso salió un fallo, ya arreglado**: el tope condicional de
+      grasa de la diabetes no se aplicaba **nunca** por su segunda puerta,
+      porque `requiere` decía `hipertrigliceridemia` y esa clave no existe
+      entre las 47 (la que hay es `hiperlipidemia`). El solver lo resuelve con
+      `any(otra in lista ...)`, así que un nombre que nadie puede marcar no
+      entra jamás y el menú sale verde igual. Lo vigila ahora el BLOQUE 90.
 
 - [ ] **La lista de las nueve `formulable: false`.** La necesita la fase 4:
       es la que define qué diagnósticos exigen firma de un veterinario,

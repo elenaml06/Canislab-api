@@ -12084,6 +12084,148 @@ print(f"  {len(_R89)} razas · {len(_razas89.TAMANOS)} tamaños · "
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
+# ============================================================
+# BLOQUE 90 — QUÉ PREGUNTA DECIDE LA CIFRA DE CADA PATOLOGÍA
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (11 septiembre). Elena:
+#
+#     «hay que ver luego con todos los rangos que tenemos para cada patologia
+#      en el motor como se va a aplicar. es decir, tendrá que haber preguntas
+#      para cada patologia preguntando resultados de analiticas o lo que sea
+#      para que pueda coger según la respuesta los limites para cada estadio o
+#      cada caso no? eso también hay que hacerlo»
+#
+# `preguntas_por_patologia.json` es ese inventario: qué pregunta decide la
+# cifra, qué respuestas tiene, y a qué clave del motor lleva cada una. No trae
+# ni un número escrito — los DERIVA de `patologias.json` —, y donde el motor no
+# tiene una clave por respuesta lo dice en vez de inventarla.
+#
+# Y aquí salió un fallo real que no buscaba nadie, en el punto 4: el tope
+# condicional de grasa de la diabetes **no se aplicaba nunca por su segunda
+# puerta**. `requiere` decía «hipertrigliceridemia», y esa clave NO EXISTE
+# entre las 47: la que hay es `hiperlipidemia`. El solver resuelve esto con
+# `any(otra in lista for otra in requiere)`, así que un nombre que nadie puede
+# marcar no entra jamás y no lo dice nadie.
+print("\n" + "=" * 60)
+print("=== BLOQUE 90: qué pregunta decide la cifra de cada patología ===")
+
+import json as _json90
+_preg90 = _json90.loads((_raiz_b24 / "preguntas_por_patologia.json").read_text(encoding="utf-8"))
+_P90 = _preg90["preguntas"]
+_ESTADOS90 = set(_preg90["_meta"]["los_cinco_estados"])
+_pat90 = _json90.loads((_raiz_b24 / "patologias.json").read_text(encoding="utf-8"))["patologias"]
+
+def _cifras90(clave):
+    """Las cifras VIVAS de esa clave, en la misma forma que el inventario."""
+    v = _pat90.get(clave) or {}
+    out = {}
+    for n, c in (v.get("topes_por_1000kcal") or {}).items():
+        out["max_" + n] = c.get("valor")
+    for n, c in (v.get("suelos_por_1000kcal") or {}).items():
+        out["min_" + n] = c.get("valor")
+    if not v.get("formulable"):
+        out["_no_formulable"] = True
+    return out
+
+# ── 1. Cada estado declarado es uno de los cinco ────────────────────────
+for _k90, _v90 in _P90.items():
+    if _v90.get("estado") not in _ESTADOS90:
+        fallos.append(f"BLOQUE90: «{_k90}» dice estado «{_v90.get('estado')}», que no es ninguno "
+                      f"de {sorted(_ESTADOS90)}. Un estado inventado no lo lee nadie")
+
+# ── 2. Cada respuesta lleva a una clave que EXISTE, con las cifras VIVAS ──
+#
+# ⚠️ Lo segundo es lo que importa: si las cifras se copiaran aquí, esto sería
+# la segunda copia de `patologias.json` y se desincronizaría igual que se
+# desincronizó la del `POST /menu` que se borró el 26 de agosto.
+for _k90, _v90 in _P90.items():
+    for _r90 in _v90.get("respuestas", []):
+        _cm90 = _r90.get("clave_motor")
+        if _cm90 not in _pat90:
+            fallos.append(f"BLOQUE90: «{_k90}» ofrece la respuesta «{_r90.get('label')}» que "
+                          f"lleva a «{_cm90}», y esa patología no existe. La app mandaría una "
+                          f"clave que el motor tira sin decir nada")
+            continue
+        if _r90.get("cifras_que_aplica") != _cifras90(_cm90):
+            fallos.append(f"BLOQUE90: las cifras de «{_cm90}» en el inventario no son las de "
+                          f"patologias.json. Tienen que LEERSE de allí, no copiarse: "
+                          f"{_r90.get('cifras_que_aplica')} vs {_cifras90(_cm90)}")
+
+# ── 3. Una pregunta «aplicada» tiene que decidir ALGO ───────────────────
+#
+# ⚠️ ESTE ES EL PUNTO DE TODO EL FICHERO. Una pregunta cuyas respuestas
+# aplican exactamente lo mismo no decide nada: se le pide un dato clínico a
+# quien firma y da igual lo que conteste. Pasa hoy con
+# `shunt_sin_encefalopatia`, y está declarado como tal.
+for _k90, _v90 in _P90.items():
+    _rs90 = _v90.get("respuestas", [])
+    if not _rs90:
+        continue
+    _distintas90 = {_json90.dumps(_r90.get("cifras_que_aplica"), sort_keys=True) for _r90 in _rs90}
+    _decide90 = len(_distintas90) > 1
+    if _v90.get("estado") == "aplicada" and not _decide90:
+        fallos.append(f"BLOQUE90: «{_k90}» se declara «aplicada» y sus {len(_rs90)} respuestas "
+                      f"aplican EXACTAMENTE lo mismo. Se le pide un dato clínico a quien firma "
+                      f"y da igual lo que conteste")
+    if _v90.get("estado") == "no_cambia_ninguna_cifra" and _decide90:
+        fallos.append(f"BLOQUE90: «{_k90}» se declara «no_cambia_ninguna_cifra» y sus respuestas "
+                      f"SÍ aplican cosas distintas. Bajar un estado sin motivo esconde una "
+                      f"pregunta que sí decide")
+
+# ── 4. Cada `requiere` de un tope condicional apunta a algo que existe ──
+#
+# El fallo del 11 de septiembre, con la prueba puesta para que no vuelva.
+for _k90, _v90 in _pat90.items():
+    _cond90 = _v90.get("max_pct_kcal_grasa_si_ademas")
+    _reqs90 = []
+    if _cond90:
+        _reqs90.append(("max_pct_kcal_grasa_si_ademas", _cond90.get("requiere") or []))
+    for _n90, _t90 in (_v90.get("topes_por_1000kcal_si_ademas") or {}).items():
+        _reqs90.append((f"topes_por_1000kcal_si_ademas.{_n90}", _t90.get("requiere") or []))
+    for _av90 in (_v90.get("aviso_si_ademas") or {},):
+        if _av90.get("requiere"):
+            _reqs90.append(("aviso_si_ademas", _av90["requiere"]))
+    for _donde90, _lista90 in _reqs90:
+        if not _lista90:
+            fallos.append(f"BLOQUE90: «{_k90}» tiene {_donde90} sin `requiere`. Un tope "
+                          f"condicional sin condición no se activa nunca")
+        for _r90 in _lista90:
+            if _r90 not in _pat90:
+                fallos.append(f"BLOQUE90: «{_k90}» condiciona {_donde90} a «{_r90}», que NO es "
+                              f"ninguna de las {len(_pat90)} patologías. El solver lo resuelve "
+                              f"con `any(otra in lista ...)`, así que esa puerta no se abre "
+                              f"NUNCA y no lo dice nadie")
+
+# ── 5. `/vocabulario` lo sirve, y sirve lo VIVO ─────────────────────────
+_v90e = _c.get("/vocabulario")
+if _v90e.status_code != 200:
+    fallos.append(f"BLOQUE90: GET /vocabulario devuelve {_v90e.status_code}")
+else:
+    _pp90 = _v90e.json().get("preguntas_por_patologia", {})
+    if _pp90.get("que_decide_cada_respuesta") != _P90:
+        fallos.append("BLOQUE90: /vocabulario no sirve el inventario de preguntas tal cual está "
+                      "en el fichero. La app tiene que leer el valor VIVO")
+    if set(_pp90.get("como_leerlo") or {}) != _ESTADOS90:
+        fallos.append("BLOQUE90: /vocabulario no sirve los estados con los que se lee esto. Sin "
+                      "ellos la app no sabe distinguir «aplicada» de «falta la cifra»")
+
+# ── 6. Y las que el otro fichero dice que faltan, están aquí ────────────
+with open("quien_formula_cada_patologia.json", encoding="utf-8") as _f90:
+    _der90 = _json90.load(_f90)["patologias"]
+for _k90, _v90 in _der90.items():
+    if _v90.get("pregunta_que_falta") and _k90 not in _P90:
+        fallos.append(f"BLOQUE90: `quien_formula_cada_patologia.json` dice que a «{_k90}» le "
+                      f"falta una pregunta y el inventario no la tiene. Dos ficheros sobre lo "
+                      f"mismo y ninguno comprueba al otro es como se desincronizan")
+
+_cuenta90 = {}
+for _v90 in _P90.values():
+    _cuenta90[_v90["estado"]] = _cuenta90.get(_v90["estado"], 0) + 1
+print(f"  {len(_P90)} preguntas · " + " · ".join(f"{v} {k}" for k, v in sorted(_cuenta90.items())))
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
 _hay_fuentes = _os_b18.path.isdir(_RUTA_FUENTES)
 
 print(f"\n{'='*60}")

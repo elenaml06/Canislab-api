@@ -5557,6 +5557,18 @@ with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
                         "quien_formula_cada_patologia.json"), encoding="utf-8") as _f:
     _DERIVACION = _json.load(_f)["patologias"]
 
+# Que pregunta decide la cifra de cada patologia, que respuestas tiene, y a que
+# clave del motor lleva cada respuesta.
+#
+# ⚠️ Elena, 11-sep-2026: «tendra que haber preguntas para cada patologia
+# preguntando resultados de analiticas o lo que sea para que pueda coger segun
+# la respuesta los limites para cada estadio o cada caso». Aqui no hay ni una
+# cifra escrita: el fichero las DERIVA de `patologias.json`, y donde el motor no
+# tiene una clave por respuesta lo dice en vez de inventarla.
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                        "preguntas_por_patologia.json"), encoding="utf-8") as _f:
+    _PREGUNTAS_PAT = _json.load(_f)
+
 
 def _rango_de_tamano(tamano):
     """El rango de peso adulto que de verdad tienen las razas de ese tamaño.
@@ -5782,6 +5794,12 @@ def endpoint_vocabulario():
                     "poder marcarse desde la app del dueño."),
             "cuantas_sin_preguntar": sum(1 for v in _DERIVACION.values()
                                          if v.get("pregunta_que_falta")),
+            # ⚠️ Y LO QUE DECIDE CADA RESPUESTA, que es la otra mitad
+            # (11-sep). Saber que falta una pregunta no sirve de nada si no se
+            # sabe a que cifra lleva cada respuesta. Las cifras se LEEN de
+            # `patologias.json`: aqui no hay copia.
+            "que_decide_cada_respuesta": _PREGUNTAS_PAT["preguntas"],
+            "como_leerlo": _PREGUNTAS_PAT["_meta"]["los_cinco_estados"],
             "por_patologia": {k: {"nombre": v.get("nombre"),
                                   "quien_puede_marcarla": v.get("quien_puede_marcarla"),
                                   "necesita_dato_clinico": v.get("necesita_dato_clinico"),
