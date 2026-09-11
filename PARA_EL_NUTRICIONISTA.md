@@ -1165,7 +1165,7 @@ Tabla 17-1 de arriba, que están por encima de ese mínimo.
 > suelo de sodio por encima del mínimo de FEDIAF (290) en un perro sano no lo
 > pide nadie. Si eso es leerlo mal, es una línea de cambio.
 
-## 8 · Las patologías: 47 perfiles, 74 límites numéricos y 4 ratios
+## 8 · Las patologías: 47 perfiles, 75 límites numéricos y 4 ratios
 
 Los topes por patología **son más estrictos que FEDIAF** y se miden sobre las
 **kcal reales del menú**, no las pedidas — el menú puede salir un 3 % por
@@ -1267,6 +1267,7 @@ moverse sin que salte.
 | Hepatopatía por acúmulo de cobre | cobre | ≤ | **2.4 mg** | 2.08 | 7 | Center SA et al., «Lower risk for liver copper accumulation in dogs fed copper-restricted diets versus those fed copper-replete diets», JAVMA 264(2), 2026 (doi javma.25.05.0295). VERIFICADO 8-sep-2026. Confirmado ademas contra SACN5 cap.68, Tabla 68-8, y contra el Reglamento (UE) 2020/354, entrada 28 |
 | Hepatopatía por acúmulo de cobre | sodio | ≤ | **625.0 mg** | 290 | 3750 | SACN5 cap.68 «Hepatobiliary Disease», Tabla 68-8 |
 | Hepatopatía por acúmulo de cobre | hierro | ≥ | **20.0 mg** | 10.4 | 170.45 | SACN5 cap.68 «Hepatobiliary Disease», Tabla 68-8 |
+| Hepatopatía por acúmulo de cobre | hierro | ≤ | **35.0 mg** | 10.4 | 170.45 | SACN5 cap.68 «Hepatobiliary Disease», Tabla 68-8, extremo ALTO de la misma fila. AÑADIDO 11-sep-2026: la fila es un rango («Iron (mg/kg) 80 to 140») y solo se aplicaba su suelo; el techo tiene mecanismo escrito (el hierro se acumula en el hígado y cataliza la peroxidación). Medido: solo 3 de los 216 menús del catálogo se pasan de 35, y los tres son de crecimiento o gestación |
 | Hepatopatía por acúmulo de cobre | taurina | ≥ | **250.0 mg** | — | sin máximo | SACN5 cap.68 «Hepatobiliary Disease», Tabla 68-8 |
 | Hepatopatía por acúmulo de cobre | vitE | ≥ | **67.1 mg** | 6.968 | sin máximo | SACN5 Tabla 68-8 |
 | Hepatopatía por acúmulo de cobre | zinc | ≥ | **50.0 mg** | 20.8 | 56.75 | SACN5 cap.68 «Hepatobiliary Disease», Tabla 68-8 |

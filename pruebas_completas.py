@@ -1578,6 +1578,18 @@ _CIFRAS_CON_FUENTE = [
      "SACN5 Tabla 68-8, perros: «Zinc (mg/kg) >200». Maximo LEGAL de FEDIAF 56,75: solo 6,75 de margen"),
     ("hepatopatia", "suelos_por_1000kcal", "hierro", 20.0, ("mgkg_ms", 80),
      "SACN5 Tabla 68-8, perros: «Iron (mg/kg) 80 to 140», extremo bajo"),
+    ("enteropatia_cronica", "limites_escritos_que_el_solver_no_aplica", "omega3_total", None, ("directo", None),
+     "SACN5 cap.57, TEXTO y no la Tabla 57-1: «A reasonable starting dose estimated from human and animal "
+     "trials is approximately 175 mg (range 50 to 300 mg) omega-3 fatty acids/kg body weight/day». SIN CIFRA "
+     "A PROPOSITO, y el motivo lo da la propia fuente en el mismo parrafo: «there is no well-established "
+     "effective dose for dogs and cats». Ademas iria por kilo de PERRO y no por 1000 kcal, que es una forma "
+     "que hoy no usa ninguna patologia. ANADIDO 11-sep al releer el cap.57 entero"),
+    ("hepatopatia", "topes_por_1000kcal", "hierro", 35.0, ("mgkg_ms", 140),
+     "SACN5 Tabla 68-8, perros: «Iron (mg/kg) 80 to 140», extremo ALTO. ANADIDO 11-sep: la fila es un rango y "
+     "solo se aplicaba su suelo. El techo tiene mecanismo escrito («Iron is a potent catalyst of oxidative "
+     "processes (Fenton reaction)») y es el mismo criterio que el potasio de la enteropatia, donde ya se toma "
+     "el techo. Medido: solo 3 de los 216 menus del catalogo se pasan de 35, y los tres son de crecimiento o "
+     "gestacion"),
     ("hepatopatia", "topes_por_1000kcal", "sodio", 625.0, ("pct_ms", 0.25),
      "SACN5 Tabla 68-8, perros: «Sodium (%) 0.08 to 0.25», techo del rango"),
     ("hepatopatia", "suelos_por_1000kcal", "taurina", 250.0, ("pct_ms", 0.1),

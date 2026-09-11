@@ -467,7 +467,8 @@
       "quien_puede_marcarla": "dueno_con_diagnostico",
       "pregunta_que_falta": null,
       "pistas_automaticas": [],
-      "nota": "DERIVADO: Se diagnostica con TLI serica, pero una vez diagnosticada los topes de grasa y fibra son fijos."
+      "nota": "DERIVADO: Se diagnostica con TLI serica, pero una vez diagnosticada los topes de grasa y fibra son fijos.",
+      "menciona_dato_clinico_pero_no_condiciona": "Su ficha nombra una analitica desde el 11-sep-2026, y es la de la B12: «Eso lo pide y lo ajusta tu veterinario; este menu no lo sustituye», sobre una deficiencia de cobalamina que la fuente cifra en el 82 % de los perros con EPI. Es una inyeccion que va aparte del menu, igual que en la enteropatia cronica: ninguna de las dos cifras que aplica esta patologia -- grasa 37,5 y fibra 12,5, las dos de la Tabla 66-1 -- depende de ese valor. La derivacion de `necesita_dato_clinico: false` sigue siendo correcta."
     },
     "intestino_irritable": {
       "nombre": "Síndrome de intestino irritable",

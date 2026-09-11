@@ -497,6 +497,25 @@
             "techo_de_donde": "maximo_fediaf:Sodio",
             "bajo_el_suelo_necesita_firma": true
           }
+        },
+        "hierro": {
+          "valor": 35.0,
+          "fuente": "SACN5 5a ed., cap.68 «Hepatobiliary Disease», Tabla 68-8, releida entera 11-sep-2026",
+          "por_que": "ANADIDO 11-sep-2026 al releer el cap.68 entero. La Tabla 68-8 da un RANGO —«Iron (mg/kg) 80 to 140»— y desde el 8 de septiembre el motor aplicaba solo el extremo bajo, como suelo. El extremo alto no es el borde de un rango cualquiera: es un TECHO con mecanismo escrito, y el capitulo le dedica una seccion propia. Literal: «Iron is a potent catalyst of oxidative processes (Fenton reaction) and iron-associated hepatic injury may involve lipid peroxidation of membranes and damage to organelles»; «Foods for dogs with chronic hepatitis and those with secondary hemosiderosis documented by evaluation of liver biopsy specimens should avoid excessive iron levels»; y la frase que fija el rango entero, «Iron levels of 80 to 140 mg/kg DM meet the dietary allowance without providing excessive intake. This range is recommended for patients with liver disease». Remata con «Injectable or oral supplements containing iron should be avoided in these patients». || COHERENCIA CON EL RESTO DEL FICHERO: es el mismo criterio que ya se aplico al potasio de la enteropatia cronica, donde la Tabla 57-1 daba «0.8 to 1.1 %» y se tomo el TECHO porque el riesgo que describe la fuente es el exceso. Aqui el riesgo tambien es el exceso —acumulacion hepatica de hierro— y faltaba el techo. || MEDIDO ANTES DE APLICARLO, sobre los 216 menus del catalogo regenerado, recalculando el hierro de cada menu guardado y dividiendo por su DER: minimo 18,4, mediana 25,6, maximo 37,4 mg/1000 kcal. Se pasan de 35 solo TRES de 216 (1,4 %) y los tres son de crecimiento o gestacion —Gigante_GestanteTardia 37,4, Mini_CachorroCrecimiento#3 36,8 y Toy_CachorroJoven 35,4—, que es donde sube el minimo de hierro; en adulto no se pasa ninguno. La ventana que queda con el suelo de la misma fila es 20-35. || Por encima del minimo de FEDIAF (10,4) y muy por debajo de su maximo (170,45).",
+          "conversion": {
+            "valor_en_la_fuente": 140,
+            "unidad_en_la_fuente": "mg/kg MS",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "SACN5 Tabla 68-8 «Key nutritional factors for dogs and cats with [hepatobiliary disease]», nota «*Nutrients expressed on a dry matter basis». Releida entera 11-sep-2026, fila «Iron (mg/kg) 80 to 140», extremo alto"
+          },
+          "margen_profesional": {
+            "sentido_de_la_cifra": "max",
+            "suelo": 10.4,
+            "suelo_de_donde": "minimo_fediaf:Hierro",
+            "techo": 170.45,
+            "techo_de_donde": "maximo_fediaf:Hierro",
+            "bajo_el_suelo_necesita_firma": true
+          }
         }
       },
       "sin_dieta_automatica": true,
@@ -1292,7 +1311,7 @@
         }
       },
       "avisos": {
-        "general": "El tratamiento de la EPI es la suplementación con enzimas pancreáticas en cada comida: eso lo pauta y lo ajusta tu veterinario, y este menú no lo sustituye. Se ha bajado algo la grasa como apoyo. También ayuda una digestibilidad alta (carnes magras, poco tejido conectivo) y evitar dar la ración en una sola toma grande."
+        "general": "El tratamiento de la EPI es la suplementación con enzimas pancreáticas en cada comida: eso lo pauta y lo ajusta tu veterinario, y este menú no lo sustituye. Se ha bajado algo la grasa como apoyo. También ayuda una digestibilidad alta (carnes magras, poco tejido conectivo) y evitar dar la ración en una sola toma grande. || ⚠️ LA VITAMINA B12, que en esta enfermedad es lo más frecuente de todo: «Reports have identified cobalamin deficiency in 82% of dogs» con EPI, y «Cobalamin deficiency has been associated with poor outcomes in canine EPI». **No se repone comiendo**: el problema es de absorción, y la pauta de la fuente es inyectable o a dosis altas, semanal durante seis semanas, con analítica. Eso lo pide y lo ajusta tu veterinario; este menú no lo sustituye. || Y UNA COSA QUE SOLO PUEDE HACER UNA DIETA CRUDA, y que conviene que sepas aunque hoy Rawku no la ofrezca: la fuente acepta **páncreas crudo** como alternativa a las enzimas en polvo — «If available, raw bovine, porcine or ovine pancreas can be effective», con dosis de «30 to 90 g (1 to 3 oz.) of freshly thawed, chopped pancreas» para el perro, y se puede congelar en dosis («Raw pancreas can be frozen in individual doses for several months without losing enzyme activity»). Es además la salida que da el propio capítulo cuando el polvo irrita la boca. ⚠️ **No está en el catálogo de Rawku**, así que el menú no lo incluye ni cuenta con él: es información para que la converses con tu veterinario, no una instrucción de este menú. || Fuente: SACN5 5ª ed., cap.66 «Exocrine Pancreatic Insufficiency»."
       },
       "formulable_por_profesional": true
     },
@@ -1370,6 +1389,14 @@
             "techo_de_donde": "sin_techo",
             "bajo_el_suelo_necesita_firma": true
           }
+        }
+      },
+      "limites_escritos_que_el_solver_no_aplica": {
+        "omega3_total": {
+          "valor": null,
+          "fuente": "SACN5 5a ed., cap.57 «Inflammatory Bowel Disease», TEXTO (no la Tabla 57-1), releido entero 11-sep-2026",
+          "aplicado_por_el_solver": false,
+          "por_que": "ANADIDO 11-sep-2026 al releer el cap.57 entero. La dosis esta en el TEXTO y NO en la Tabla 57-1, que es por lo que no la encontro el trabajo de transcribir tablas: «A reasonable starting dose estimated from human and animal trials is approximately 175 mg (range 50 to 300 mg) omega-3 fatty acids/kg body weight/day». Para un perro de 22 kg son 3,85 g de omega-3 al dia. || NO SE APLICA, y el motivo lo da la propia fuente en el mismo parrafo, asi que no es una decision que quede pendiente: «To date, there are no published therapeutic trials investigating the efficacy of omega-3 fatty acid supplementation in dogs or cats with IBD» y «there is no well-established effective dose for dogs and cats». Una cifra que su autor declara no establecida en el perro no puede ser un suelo del solver. || Ademas va POR KILO DE PERRO y no por 1000 kcal, como el mercurio del atun: seria la segunda cifra del fichero con esa forma, y hoy ninguna patologia la usa. || Es el mismo caso que el omega-3 del cancer y el de la artrosis, que ya viven en este mismo bloque. Queda escrito para que no se «descubra» otra vez dentro de seis meses."
         }
       }
     },
@@ -2141,7 +2168,7 @@
         }
       },
       "avisos": {
-        "general": "Se ha subido la fibra al nivel que recomienda la literatura para el estreñimiento crónico. La comida cruda ya juega a favor aquí: lleva mucha más agua que un pienso, y el agua de la comida es el otro factor que la fuente pide. Si el estreñimiento es reciente o el perro hace fuerza sin resultado, eso no es dietético: llévalo al veterinario."
+        "general": "Se ha subido la fibra al nivel que recomienda la literatura para el estreñimiento crónico. || ⚠️ Y HAY QUE DECIR LAS DOS MITADES, porque la comida cruda juega a favor en una y en contra en la otra. A FAVOR: lleva mucha más agua que un pienso, y el agua es el otro factor que pide la fuente (Tabla 64-2, «Water >75%»). EN CONTRA, y esto es del mismo capítulo: «In addition, consumption of bones and raw foods has been associated with constipation and obstipation in dogs», y lo repite señalando la causa — «Constipation and obstipation have been reported to occur in dogs consuming bones and raw food diets due to the large contribution bones make to such foods». O sea: **el hueso**. Una ración como ésta lleva entre un 20 y un 60 % de hueso carnoso, porque es de donde sale el calcio. Si tu perro se estriñe con este menú, lo primero que hay que mirar con tu veterinario es bajar la proporción de hueso, no subir más la fibra. || Y EL TIPO DE FIBRA IMPORTA, aunque este motor no sepa distinguirlo: la fuente pide insoluble o mixta («Fiber sources should be insoluble or mixed. Increased levels of soluble fiber are not recommended») y avisa de que la soluble no pase del 5 % del alimento, porque «soluble fibers can significantly reduce the availability of minerals, including zinc, calcium, iron and phosphorus». El motor sube la fibra BRUTA sin saber de qué tipo es, porque el catálogo no trae ese dato. || ⚠️ OJO CON EL MEGACOLON, que es lo contrario: si el intestino ya no se mueve nada, la fibra **empeora** — «fiber-enhanced foods and fiber supplements are no longer effective stimulants of colonic motility and, worse, can contribute to obstipation» — y la misma tabla pide entonces ≤5 % de materia seca. Distinguir un estreñimiento de un megacolon es un diagnóstico, no una casilla: si tu perro lleva días sin defecar o hace fuerza sin resultado, eso no es dietético, es para el veterinario HOY. || Fuente: SACN5 5ª ed., cap.64 «Constipation/Obstipation/Megacolon», Tabla 64-2 y su texto."
       }
     },
     "flatulencia": {
