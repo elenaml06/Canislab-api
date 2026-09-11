@@ -11628,6 +11628,111 @@ print(f"  cruce en 130 kcal/kg^0,75 · 4 topes con su gemelo · "
 print("  la actividad llega al motor · el aviso sale en los dos escalones de trabajo y en nadie más")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
+# ============================================================
+# BLOQUE 87 — TODO DATO QUE PIDE LA FICHA TIENE QUE LLEGAR AL MOTOR
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (11 septiembre). Elena: «ten en cuenta que TODOS LOS DATOS
+# QUE RECOJA LA APP TIENEN QUE LLEGAR DE ALGUNA MANERA AL MOTOR, SI NO SON DATOS
+# INUTILES Y CUANDO SE PIDEN ES SIEMPRE POR ALGO».
+#
+# Y tiene un caso del mismo día que lo justifica solo: la ficha pregunta la
+# ACTIVIDAD desde siempre, la app la usaba para calcular las kcal y mandaba solo
+# el número. El motor veía 1955 kcal y no sabía si era un galgo de sofá o un
+# perro de trineo -- y eso decide si se le aprietan los topes crónicos. El dato
+# existía, se pedía por un motivo, y no llegaba.
+#
+# LO QUE SE EXIGE. Cada campo de la ficha está declarado en
+# `datos_de_la_ficha.json` con UNA de estas tres formas, y ninguna admite
+# quedarse muda:
+#   · «campo»         -> viaja suelto. El campo tiene que EXISTIR en PeticionMenu.
+#   · «dentro_de»     -> viaja cocinado en otro. Tiene que decir dentro de cuál
+#                        Y qué se pierde por ir así, porque un dato cocinado no
+#                        se puede deshacer.
+#   · «no_hace_falta» -> no llega, y tiene que decir POR QUÉ. Un motivo, no una
+#                        excusa.
+#
+# NO comprueba que la app mande el campo -- eso es del repo de al lado, y su
+# sitio es `tests/ficha-ida-y-vuelta.spec.js`. Aquí se comprueba que el motor
+# SEPA recibirlo y que nadie pueda añadir una pregunta a la ficha sin decir a
+# dónde va.
+print("\n" + "=" * 60)
+print("=== BLOQUE 87: todo dato de la ficha llega al motor ===")
+
+import json as _json87
+
+_ficha87 = _json87.loads((_raiz_b24 / "datos_de_la_ficha.json").read_text(encoding="utf-8"))
+_campos87 = _ficha87["campos"]
+
+# Los 20 campos de la ficha, copiados de `tests/ficha-ida-y-vuelta.spec.js` del
+# repo de la app. Si allí se añade uno y aquí no, este bloque lo dice.
+_DE_LA_FICHA_87 = [
+    "nombre", "peso_actual", "fecha_nacimiento", "castrado", "actividad",
+    "condicion_idx", "bcs", "tutor_nombre", "tutor_contacto", "sexo", "tamano",
+    "dieta_actual", "alergia_si", "alergias", "otros_evitar_si", "otros_evitar",
+    "categorias_excluidas_si", "categorias_excluidas", "patologia_si", "patologias",
+]
+_FORMAS_87 = ("campo", "dentro_de", "no_hace_falta")
+
+for _c87 in _DE_LA_FICHA_87:
+    if _c87 not in _campos87:
+        fallos.append(f"BLOQUE87: la ficha pregunta «{_c87}» y `datos_de_la_ficha.json` no dice "
+                      f"a dónde va. Si se pide, es por algo: o llega al motor o está escrito por "
+                      f"qué no hace falta")
+for _c87 in _campos87:
+    if _c87 not in _DE_LA_FICHA_87:
+        fallos.append(f"BLOQUE87: `datos_de_la_ficha.json` declara «{_c87}» y la ficha ya no lo "
+                      f"pregunta. Una declaración que no vigila nada no avisa a nadie: o vuelve "
+                      f"el campo o se quita de aquí")
+
+# Lo que PeticionMenu sabe recibir de verdad, leído del modelo vivo.
+_recibe87 = set(_api.PeticionMenu.model_fields.keys())
+
+for _c87, _f87 in sorted(_campos87.items()):
+    _forma87 = _f87.get("forma")
+    if _forma87 not in _FORMAS_87:
+        fallos.append(f"BLOQUE87: el campo «{_c87}» dice forma «{_forma87}», que no es ninguna de "
+                      f"{_FORMAS_87}")
+        continue
+    if _forma87 == "campo":
+        _destino87 = _f87.get("llega_como")
+        if not _destino87:
+            fallos.append(f"BLOQUE87: «{_c87}» dice que viaja suelto y no dice con qué nombre")
+        elif _destino87 not in _recibe87:
+            fallos.append(f"BLOQUE87: «{_c87}» dice que llega como «{_destino87}» y PeticionMenu "
+                          f"NO tiene ese campo. O la declaración está caducada o el motor dejó de "
+                          f"saber recibirlo -- y en los dos casos el dato se pierde en silencio")
+        if not (_f87.get("para_que") or "").strip():
+            fallos.append(f"BLOQUE87: «{_c87}» llega al motor y no dice PARA QUÉ. Un dato que "
+                          f"viaja sin decir qué decide no se puede revisar")
+    elif _forma87 == "dentro_de":
+        if not (_f87.get("va_dentro_de") or "").strip():
+            fallos.append(f"BLOQUE87: «{_c87}» dice que viaja cocinado y no dice dentro de qué")
+        # ⚠️ Lo que de verdad importa de un dato cocinado: QUÉ SE PIERDE. Un dato
+        # así no se puede deshacer, así que el motor solo puede usarlo para
+        # aquello para lo que ya viene cocinado. Si nadie escribe ese límite,
+        # nadie se acuerda de él el día que haga falta -- que es exactamente lo
+        # que pasó con la actividad.
+        if not (_f87.get("riesgo_de_ir_cocinado") or "").strip():
+            fallos.append(f"BLOQUE87: «{_c87}» viaja cocinado dentro de otro dato y no dice qué "
+                          f"se pierde por ir así. Eso es lo que le pasó a la actividad")
+    else:
+        if not (_f87.get("por_que_no") or "").strip():
+            fallos.append(f"BLOQUE87: «{_c87}» no llega al motor y no dice por qué. «No hace "
+                          f"falta» sin motivo es una firma en blanco")
+
+# Y el caso que motivó todo esto tiene que seguir resuelto por el lado del motor.
+if "actividad" not in _recibe87:
+    fallos.append("BLOQUE87: PeticionMenu ha dejado de aceptar `actividad`. Es el campo que "
+                  "decide si a un perro se le aprietan los topes crónicos por peso metabólico y "
+                  "si su menú lleva el aviso del perro de trabajo")
+
+print(f"  {len(_DE_LA_FICHA_87)} campos de la ficha · "
+      f"{sum(1 for v in _campos87.values() if v['forma'] == 'campo')} llegan sueltos · "
+      f"{sum(1 for v in _campos87.values() if v['forma'] == 'dentro_de')} cocinados · "
+      f"{sum(1 for v in _campos87.values() if v['forma'] == 'no_hace_falta')} no hacen falta")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
 _hay_fuentes = _os_b18.path.isdir(_RUTA_FUENTES)
 
 print(f"\n{'='*60}")
