@@ -71,7 +71,11 @@ DOCUMENTOS = ["PATOLOGIAS.md", "LECTURA_SACN5.md", "HALLAZGOS_LECTURA_FUENTES.md
     # el mismo commit que nace, por lo mismo que su hermano del dia 10: son
     # citas literales de SACN5 y este es el sitio donde una mal copiada pasa
     # desapercibida.
-    "HALLAZGOS_SACN5_11SEP.md"]
+    "HALLAZGOS_SACN5_11SEP.md",
+    # El registro de la lectura de Fascetti (11 septiembre), en el mismo commit
+    # en que nace. Va lleno de citas literales, que es el material que este
+    # auditor existe para vigilar.
+    "LECTURA_FASCETTI.md"]
 JSONS = ["patologias.json", "recomendaciones_libro.json", "requisitos_condicionales.json",
          "requerimientos_v2_final.json", "sacn5_fuentes_de_minerales.json",
          "fediaf_conversiones_vitaminas.json"]
@@ -237,8 +241,16 @@ def textos():
 # una de estas y no aparece, es que hay que mirarla. Si dice venir de otra
 # (Merck, el consenso ACVIM, Today's Veterinary Practice, Purina), no se puede
 # comprobar aqui -- y eso se DICE, no se da por bueno.
+# ⚠️ AMPLIADA EL 11 DE SEPTIEMBRE, en el mismo commit en que esas fuentes pasan
+# a tener texto. Hasta hoy seis de ellas solo estaban en PDF, asi que una cita
+# suya no se podia comprobar Y NO SALTABA: caia en «no dice de donde sale», que
+# es la casilla que menos se mira. Ahora que el texto esta, una cita de
+# Dobenecker, Heer o Ishii que no aparezca literal TIENE que salir por la casilla
+# de las que hay que mirar. La lista y el texto van juntos o no sirve ninguno.
 _EN_EL_REPO = ("fediaf", "sacn5", "small animal clinical nutrition", "nrc",
-               "fascetti", "köber", "kober", "reglamento", "iris", "aaha", "tvt")
+               "fascetti", "köber", "kober", "reglamento", "iris", "aaha", "tvt",
+               "dobenecker", "hofmann", "heer", "ishii", "malandain", "sturmer",
+               "stürmer", "hervera")
 _FUERA = ("acvim", "merck", "purina", "today's veterinary", "cavanaugh", "center",
           "consenso")
 
