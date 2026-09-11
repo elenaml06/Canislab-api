@@ -19,6 +19,25 @@ levantando la app de verdad contra la API de verdad
 
 ## 1 · Diez patologías que el motor tiene y la app no ofrece a nadie
 
+> ### ⚠️ RESUELTO EL 11 DE SEPTIEMBRE DE 2026 — y lo que sigue es el registro
+>
+> Medido ese día: la app ofrece **las 47 patologías del motor, ni una más ni una
+> menos**. Las diez de la tabla de abajo tienen casilla, las cinco de la
+> cardiopatía dentro de la pregunta del estadio ACVIM. Lo clava
+> `tests/vocabulario.spec.js` en `canislab-web`, **en las dos direcciones**: una
+> patología del motor sin casilla, y una clave que la app manda y el motor no
+> conoce (ésa se tira sin decir nada y el menú sale verde igual).
+>
+> Y hay una regla nueva encima, de Elena el mismo día: «un dueño, obviamente, no
+> puede marcar casillas de veterinario, ni siquiera le deberían salir». De las 37
+> casillas que veía el dueño, **quince eran `solo_veterinario`** y ya no le
+> salen. La lista no se opina: sale de la cita de la fuente de cada patología, en
+> `quien_formula_cada_patologia.json`.
+>
+> El texto original se deja intacto, porque es el registro de lo que se midió el
+> 10 de septiembre.
+
+
 Ni al dueño ni al veterinario: **no están en la lista `PATOLOGIAS` de
 `App.jsx`**, así que no hay casilla que marcar. **Siete de las diez** son
 `formulable: true`, o sea que el motor les daría menú hoy mismo.
