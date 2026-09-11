@@ -4882,6 +4882,19 @@ class PeticionFormular(BaseModel):
     # salía, decía que no. O sea que el veterinario tenía menos margen que un
     # tutor, al que el motor sí le baja de peldaño solo. Ahora lo elige él.
     peldano: Optional[str] = None
+    # ⚠️ AÑADIDO (11 septiembre) — LOS OBJETIVOS QUE PONE ÉL.
+    #
+    # Elena: «el veterinario debe poder decidir en que porcentaje quiere dejar
+    # la grasa, la proteina, lo que sea [...] y no solo para patologias, igual
+    # en un menu normal el veterinario quiere tener control sobre eso».
+    #
+    # {clave_de_nutriente: {"min": x, "max": y}}, en la unidad del motor (g o mg
+    # por 1000 kcal) — la misma en la que ya lee todos los demás límites en
+    # `GET /patologias`, para que en su pantalla no haya dos unidades.
+    #
+    # Solo pueden APRETAR: `_objetivos_dentro_de_fediaf` los recorta contra
+    # FEDIAF antes de llegar al solver, y lo dice.
+    objetivos_del_profesional: Optional[dict] = None
 
 
 def _estado_de_la_racion(datos):
@@ -5046,6 +5059,99 @@ def formular_estado(datos: PeticionFormular):
     return _estado_de_la_racion(datos)
 
 
+# ─── LOS OBJETIVOS QUE PONE EL PROFESIONAL ───────────────────────────────
+#
+# ⚠️ Elena, 11 de septiembre de 2026: «para ciertas patologias el veterinario
+# debe poder decidir en que porcentaje quiere dejar la grasa, la proteina, lo
+# que sea [...] y no solo para patologias, igual en un menu normal el
+# veterinario quiere tener control sobre eso».
+#
+# Y la regla que los limita, del mismo dia y de ella: «los requisitos se
+# respetan SIEMPRE, eso no se negocia. a no ser que un veterinario si que pueda
+# saltarse esos requisitos que no lo se, pero yo diria que no».
+#
+# Asi que un objetivo del profesional SOLO PUEDE APRETAR:
+#
+#   · un techo suyo por debajo del maximo de FEDIAF ....... se aplica
+#   · un techo suyo por ENCIMA del maximo de FEDIAF ....... manda FEDIAF
+#   · un suelo suyo por encima del minimo de FEDIAF ....... se aplica
+#   · un suelo suyo por DEBAJO del minimo de FEDIAF ....... manda FEDIAF
+#   · un techo suyo por debajo del MINIMO de FEDIAF ....... imposible, y se dice
+#
+# ⚠️ Y SE DICE SIEMPRE QUE SE RECORTE. Aplicar el numero de FEDIAF en lugar del
+# suyo sin decirlo dejaria al profesional creyendo que ha formulado lo que
+# escribio -- que es la familia de fallos que persigue este proyecto entero. El
+# recorte va en la respuesta, no en un log.
+def _objetivos_dentro_de_fediaf(objetivos, req, etapa, der_efectiva=None):
+    """(objetivos aplicables, lista de ajustes) recortados contra FEDIAF.
+
+    `objetivos` llega como {clave_de_nutriente: {"min": x, "max": y}} en la
+    unidad del motor (g o mg por 1000 kcal), que es la misma en la que el
+    profesional ya lee todos los demas limites en `GET /patologias`.
+    """
+    from verificar import MAPA as _MAPA_OBJ, minimo_de as _min_fediaf, maximo_de as _max_fediaf
+    por_clave = {v: k for k, v in _MAPA_OBJ.items()}
+    limpios, ajustes = {}, []
+    for clave, lim in (objetivos or {}).items():
+        nombre_req = por_clave.get(clave)
+        if not nombre_req:
+            ajustes.append({"nutriente": clave, "que_ha_pasado": "no_es_un_requisito",
+                            "explicacion": f"«{clave}» no es ninguno de los 43 requisitos que "
+                                           f"verifica el motor, asi que no se puede fijar."})
+            continue
+        # `req` viene indexado por el NOMBRE del requisito, no como lista.
+        fila = req.get(nombre_req)
+        if fila is None:
+            continue
+        mn_f = _min_fediaf(fila, nombre_req, etapa, der_efectiva)
+        mx_f = _max_fediaf(fila, nombre_req, etapa)
+        suyo_min = lim.get("min") if isinstance(lim, dict) else None
+        suyo_max = lim.get("max") if isinstance(lim, dict) else None
+        salida = {}
+
+        if suyo_max is not None:
+            suyo_max = float(suyo_max)
+            if mn_f is not None and suyo_max < mn_f:
+                # Un techo por debajo del MINIMO no es apretar: es pedir una
+                # racion que ningun perro sano puede comer. No se aplica nada.
+                ajustes.append({"nutriente": nombre_req, "que_ha_pasado": "techo_bajo_el_minimo",
+                                "tuyo": suyo_max, "de_fediaf": mn_f,
+                                "explicacion": f"Has puesto un techo de {suyo_max} y el MINIMO de "
+                                               f"FEDIAF para esta etapa es {mn_f}. Por debajo de "
+                                               f"ahi no es apretar una racion: es dejarla "
+                                               f"incompleta, y eso el motor no lo hace."})
+            elif mx_f is not None and suyo_max > mx_f:
+                salida["max"] = mx_f
+                ajustes.append({"nutriente": nombre_req, "que_ha_pasado": "techo_recortado",
+                                "tuyo": suyo_max, "de_fediaf": mx_f,
+                                "explicacion": f"Tu techo de {suyo_max} queda por encima del "
+                                               f"maximo de FEDIAF ({mx_f}), asi que manda FEDIAF."})
+            else:
+                salida["max"] = suyo_max
+
+        if suyo_min is not None:
+            suyo_min = float(suyo_min)
+            if mx_f is not None and suyo_min > mx_f:
+                ajustes.append({"nutriente": nombre_req, "que_ha_pasado": "suelo_sobre_el_maximo",
+                                "tuyo": suyo_min, "de_fediaf": mx_f,
+                                "explicacion": f"Has puesto un suelo de {suyo_min} y el MAXIMO de "
+                                               f"FEDIAF es {mx_f}. No hay racion que cumpla las "
+                                               f"dos cosas."})
+            elif mn_f is not None and suyo_min < mn_f:
+                salida["min"] = mn_f
+                ajustes.append({"nutriente": nombre_req, "que_ha_pasado": "suelo_subido",
+                                "tuyo": suyo_min, "de_fediaf": mn_f,
+                                "explicacion": f"Tu suelo de {suyo_min} queda por debajo del "
+                                               f"minimo de FEDIAF ({mn_f}), asi que manda FEDIAF. "
+                                               f"Los requisitos no se negocian."})
+            else:
+                salida["min"] = suyo_min
+
+        if salida:
+            limpios[clave] = salida
+    return limpios, ajustes
+
+
 @app.post("/formular/autocompletar")
 def formular_autocompletar(datos: PeticionFormular):
     """Cierra lo que falta SIN tocar lo que el veterinario ya ha puesto.
@@ -5100,6 +5206,13 @@ def formular_autocompletar(datos: PeticionFormular):
         _escalones_f = [(m, sup, k or PELDANO_ESTRICTO)
                         for m, sup, k in _escalera_de_relajacion(_hay_comida_f)]
 
+    # Los objetivos del profesional, recortados contra FEDIAF ANTES de
+    # formular. Lo que se recorte se dice en la respuesta.
+    _objetivos_f, _ajustes_f = _objetivos_dentro_de_fediaf(
+        datos.objetivos_del_profesional, req, datos.etapa_requisitos,
+        der_efectiva_de(datos.der_objetivo, _peso_de_referencia(datos)[0]
+                        or datos.peso_perro_kg))
+
     ok, gramos = False, None
     _peldano_usado_f = datos.peldano or PELDANO_ESTRICTO
     for _margenes_f, _supl_f, _clave_f in _escalones_f:
@@ -5114,6 +5227,7 @@ def formular_autocompletar(datos: PeticionFormular):
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
             peso_objetivo_kg=_peso_de_referencia(datos)[0],
             categorias_excluidas=datos.categorias_excluidas,
+            objetivos_del_profesional=_objetivos_f or None,
         )
         _peldano_usado_f = _clave_f
         if ok:
@@ -5139,7 +5253,8 @@ def formular_autocompletar(datos: PeticionFormular):
                         # han probado los seis sería mandar al veterinario a
                         # bajar un peldaño que ya está probado.
                         "peldano": _peldano_usado_f,
-                        "peldanos_probados": [k for _m, _s, k in _escalones_f]}
+                        "peldanos_probados": [k for _m, _s, k in _escalones_f],
+                        "objetivos_ajustados": _ajustes_f}
         # ⚠️ "NO SE PUEDE" A SECAS NO LE SIRVE A NADIE (29 agosto). Cuando no
         # sale, la pregunta del veterinario es "¿es POR LOS ALIMENTOS o por
         # LAS CANTIDADES?", y eso se puede contestar midiéndolo en vez de
@@ -5203,6 +5318,10 @@ def formular_autocompletar(datos: PeticionFormular):
     # necesita poder afirmar lo segundo. Es la misma regla que `/menu/v2`.
     respuesta = {"factible": True, "menu": gramos, "gramos_fijos_movidos": movidos,
                  "peldano": _peldano_usado_f,
+                 # Lo que se haya recortado contra FEDIAF. Va SIEMPRE, tambien
+                 # cuando sale: el profesional tiene que poder ver que el numero
+                 # que aplico no es el que escribio.
+                 "objetivos_ajustados": _ajustes_f,
                  "se_bajo_de_peldano": bool(not datos.peldano
                                             and _peldano_usado_f != PELDANO_ESTRICTO)}
     respuesta = _garantizar_verificado(

@@ -472,7 +472,8 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             evitar_especies=None, restringir_a_elegidos=None, categorias_excluidas=None,
             presupuesto_semanal_restante=None, diagnostico=None,
             peso_objetivo_kg=None, gramos_fijos=None,
-            soltar_limites_patologia=None, estado_del_solver=None):
+            soltar_limites_patologia=None, estado_del_solver=None,
+            objetivos_del_profesional=None):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -1045,6 +1046,40 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
         _actual_c2 = suelos_patologia.get(_clave_c2)
         suelos_patologia[_clave_c2] = (_valor_c2 if _actual_c2 is None
                                        else max(_actual_c2, _valor_c2))
+
+    # ⚠️ LOS OBJETIVOS QUE PONE EL PROFESIONAL (11 de septiembre de 2026).
+    #
+    # Elena: «para ciertas patologias el veterinario debe poder decidir en que
+    # porcentaje quiere dejar la grasa, la proteina, lo que sea... y eso hay que
+    # aplicarlo tambien. que segun los porcentajes que ponga el veterinario se
+    # genere el menu. y no solo para patologias, igual en un menu normal el
+    # veterinario quiere tener control sobre eso».
+    #
+    # Entran por el MISMO cajon que los topes y suelos de patologia, y con el
+    # MISMO `min()` y `max()`. Eso no es comodidad: es lo que garantiza que solo
+    # puedan APRETAR. Un objetivo del profesional nunca ensancha la ventana --
+    # ni la de FEDIAF ni la de una patologia que ya este puesta --, asi que
+    # poner un techo de grasa mas alto que el de la pancreatitis no hace nada, y
+    # poner uno mas bajo, si.
+    #
+    # ⚠️ Y NUNCA POR DEBAJO DE FEDIAF. Elena, el mismo dia: «los requisitos se
+    # respetan SIEMPRE, eso no se negocia». Quien recorta el numero contra
+    # FEDIAF es `main._objetivos_dentro_de_fediaf`, ANTES de llamar aqui, y lo
+    # DICE en la respuesta -- recortarlo en silencio seria dejar al profesional
+    # creyendo que ha formulado lo que escribio. Aqui llega ya recortado, y este
+    # `min()`/`max()` es la segunda red: aunque llegara uno flojo, no aflojaria
+    # nada.
+    for _clave_o, _lim_o in (objetivos_del_profesional or {}).items():
+        _max_o = _lim_o.get("max") if isinstance(_lim_o, dict) else None
+        _min_o = _lim_o.get("min") if isinstance(_lim_o, dict) else None
+        if _max_o is not None:
+            _actual_o = topes_patologia.get(_clave_o)
+            topes_patologia[_clave_o] = (float(_max_o) if _actual_o is None
+                                         else min(_actual_o, float(_max_o)))
+        if _min_o is not None:
+            _actual_o = suelos_patologia.get(_clave_o)
+            suelos_patologia[_clave_o] = (float(_min_o) if _actual_o is None
+                                          else max(_actual_o, float(_min_o)))
 
     # ⚠️ `soltar_limites_patologia` NO ES UNA PUERTA TRASERA (8 septiembre).
     #

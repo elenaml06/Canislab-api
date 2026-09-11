@@ -12369,6 +12369,145 @@ print(f"  {len(_P90)} preguntas · " + " · ".join(f"{v} {k}" for k, v in sorted
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
+# ============================================================
+# BLOQUE 91 — LOS OBJETIVOS QUE PONE EL PROFESIONAL SOLO PUEDEN APRETAR
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (11 septiembre). Elena:
+#
+#     «para ciertas patologias el veterinario debe poder decidir en que
+#      porcentaje quiere dejar la grasa, la proteina, lo que sea... y eso hay
+#      que aplicarlo tambien. que segun los porcentajes que ponga el
+#      veterinario se genere el menú»
+#
+# y, el mismo día, la regla que los limita:
+#
+#     «los requisitos se respetan SIEMPRE, eso no se negocia»
+#
+# Así que esto vigila las DOS mitades. Que el número del profesional se aplique
+# de verdad -- si se guarda y no cambia el menú, es peor que no ofrecerlo -- y
+# que NUNCA afloje: ni por debajo del mínimo de FEDIAF, ni por encima de su
+# máximo, ni relajando un tope de patología que ya estaba puesto.
+#
+# ⚠️ Y QUE SE DIGA CUANDO SE RECORTA. Aplicar el número de FEDIAF en lugar del
+# suyo sin decirlo dejaría al profesional creyendo que ha formulado lo que
+# escribió, con su nombre y su número de colegiado debajo. Es la misma familia
+# de fallos que el `gramos_fijos_movidos` del 29 de agosto.
+print("\n" + "=" * 60)
+print("=== BLOQUE 91: los objetivos del profesional solo aprietan ===")
+
+_BASE91 = {"gramos_por_alimento": {}, "der_objetivo": 1211.0, "peso_perro_kg": 22.0,
+           "etapa_requisitos": "Adulto"}
+
+def _por1000_91(g, clave):
+    _kc = sum(al[n]["energia"] * gr / 100 for n, gr in g.items())
+    _v = sum(al[n]["nutrientes"].get(clave, 0) * gr / 100 for n, gr in g.items())
+    return (_v / _kc * 1000) if _kc else None
+
+# ── 1. El número del profesional se aplica de verdad ────────────────────
+_libre91 = _c.post("/formular/autocompletar", json=dict(_BASE91)).json()
+if not _libre91.get("factible"):
+    fallos.append("BLOQUE91: no sale ración sin objetivos, así que no se puede medir nada")
+else:
+    _grasa_libre91 = _por1000_91(_libre91["menu"], "grasa")
+    # Un techo POR DEBAJO de lo que sale solo: tiene que morder.
+    _techo91 = round(_grasa_libre91 * 0.55, 1)
+    _con91 = _c.post("/formular/autocompletar",
+                     json={**_BASE91,
+                           "objetivos_del_profesional": {"grasa": {"max": _techo91}}}).json()
+    if not _con91.get("factible"):
+        fallos.append(f"BLOQUE91: con un techo de grasa de {_techo91} (la ración libre sale a "
+                      f"{_grasa_libre91:.1f}) no hay forma. Si de verdad no cabe hay que remedirlo, "
+                      f"pero lo normal es que el objetivo no esté llegando al solver")
+    else:
+        _grasa91 = _por1000_91(_con91["menu"], "grasa")
+        if _grasa91 > _techo91 + 0.5:
+            fallos.append(f"BLOQUE91: el profesional pone un techo de grasa de {_techo91} y la "
+                          f"ración sale a {_grasa91:.1f}. El número se guarda y no cambia el menú, "
+                          f"que es peor que no ofrecerlo")
+        if _con91.get("objetivos_ajustados"):
+            fallos.append(f"BLOQUE91: un techo que cabe de sobra dentro de FEDIAF se ha anunciado "
+                          f"como recortado: {_con91['objetivos_ajustados']}")
+        if _con91.get("ficha", {}).get("semaforo") != "verde":
+            fallos.append("BLOQUE91: la ración con el techo del profesional no sale verde. Un "
+                          "objetivo suyo aprieta la FORMA de la ración, nunca los requisitos")
+
+# ── 2. Un suelo por DEBAJO del mínimo de FEDIAF: manda FEDIAF, y se dice ──
+_bajo91 = _c.post("/formular/autocompletar",
+                  json={**_BASE91,
+                        "objetivos_del_profesional": {"proteina": {"min": 5.0}}}).json()
+_aj91 = {a["nutriente"]: a for a in (_bajo91.get("objetivos_ajustados") or [])}
+if "Proteína_total" not in _aj91:
+    fallos.append("BLOQUE91: se pide un suelo de proteína de 5 g/1000 kcal -- muy por debajo del "
+                  "mínimo de FEDIAF -- y no se avisa de que se ha recortado. Aplicar el número de "
+                  "FEDIAF en lugar del suyo sin decirlo le deja creyendo que ha formulado lo que "
+                  "escribió, y lo firma")
+elif _aj91["Proteína_total"]["que_ha_pasado"] != "suelo_subido":
+    fallos.append(f"BLOQUE91: el aviso del suelo de proteína dice "
+                  f"«{_aj91['Proteína_total']['que_ha_pasado']}» y tenía que decir «suelo_subido»")
+if _bajo91.get("factible"):
+    _prot91 = _por1000_91(_bajo91["menu"], "proteina")
+    from verificar import minimo_de as _min91
+    _minf91 = _min91(req["Proteína_total"], "Proteína_total", "Adulto",
+                     _api.der_efectiva_de(1211.0, 22.0))
+    if _prot91 < _minf91 - 0.5:
+        fallos.append(f"BLOQUE91: la ración sale con {_prot91:.1f} g de proteína/1000 kcal y el "
+                      f"mínimo de FEDIAF es {_minf91}. El objetivo del profesional ha AFLOJADO un "
+                      f"requisito, y eso no se negocia")
+
+# ── 3. Un techo por debajo del MÍNIMO no se aplica: no es apretar ───────
+_imposible91 = _c.post("/formular/autocompletar",
+                       json={**_BASE91,
+                             "objetivos_del_profesional": {"calcio": {"max": 100.0}}}).json()
+_aj91b = {a["nutriente"]: a for a in (_imposible91.get("objetivos_ajustados") or [])}
+if _aj91b.get("Calcio", {}).get("que_ha_pasado") != "techo_bajo_el_minimo":
+    fallos.append("BLOQUE91: un techo de calcio de 100 mg/1000 kcal está por debajo del MÍNIMO de "
+                  "FEDIAF. No es apretar una ración: es dejarla incompleta, y hay que decirlo en "
+                  "vez de intentarlo")
+
+# ── 4. NO PUEDE AFLOJAR UN TOPE DE PATOLOGÍA QUE YA ESTÁ PUESTO ─────────
+#
+# ⚠️ Esta es la que de verdad protege. El renal aprieta el fósforo a 1200; si
+# el profesional pone 3000 «porque quiere más margen», el `min()` tiene que
+# seguir dando 1200. Sin esto, un objetivo suyo sería una puerta trasera a los
+# topes de patología -- que son restricciones duras por la regla 2.
+_renal91 = _c.post("/formular/autocompletar",
+                   json={**_BASE91, "patologias": ["renal"],
+                         "objetivos_del_profesional": {"fosforo": {"max": 3000.0}}}).json()
+# ⚠️ Y SE EXIGE QUE SALGA, no solo que no se pase. Si el objetivo flojo
+# llegara al solver, el motor construiría una ración con 3000 de fósforo y la
+# tiraría `_garantizar_verificado` -- o sea que el filtro final taparía el
+# agujero y este bloque saldría verde sin haber comprobado nada. Es justo el
+# fallo que describe `CLAUDE.md` en el `POST /menu` borrado: «ese camino
+# construía menús que el filtro final iba a tirar».
+if not _renal91.get("factible"):
+    fallos.append("BLOQUE91: el perro RENAL con un techo de fósforo de 3000 del profesional no "
+                  "saca ración. Con el `min()` bien puesto ese objetivo no hace nada y la ración "
+                  "es la de siempre; si no sale, el objetivo flojo ha llegado al solver y lo que "
+                  "lo ha parado es el filtro final -- que es taparlo, no evitarlo")
+else:
+    _p91 = _por1000_91(_renal91["menu"], "fosforo")
+    if _p91 > 1200.5:
+        fallos.append(f"BLOQUE91: un perro RENAL sale con {_p91:.0f} mg de fósforo/1000 kcal "
+                      f"porque el profesional pidió un techo de 3000. El tope de la patología es "
+                      f"1200 y es una restricción DURA: un objetivo suyo no puede aflojarlo")
+
+# ── 5. Y el objetivo viaja también cuando hay gramos fijos ──────────────
+_fijos91 = _c.post("/formular/autocompletar",
+                   json={**_BASE91,
+                         "gramos_por_alimento": {"Pollo con piel (sin hueso)": 300.0},
+                         "objetivos_del_profesional": {"grasa": {"max": 35.0}}}).json()
+if _fijos91.get("factible"):
+    _g91 = _por1000_91(_fijos91["menu"], "grasa")
+    if _g91 > 35.5:
+        fallos.append(f"BLOQUE91: con gramos fijos, el techo de grasa del profesional no se "
+                      f"aplica: sale a {_g91:.1f} con el techo en 35")
+
+print(f"  techo aplicado · suelo recortado contra FEDIAF y dicho · "
+      f"no afloja el tope del renal")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
 _hay_fuentes = _os_b18.path.isdir(_RUTA_FUENTES)
 
 print(f"\n{'='*60}")
