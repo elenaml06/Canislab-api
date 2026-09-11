@@ -7914,50 +7914,58 @@ for _et57, _f57 in (_CRUDO_B57.get("por_etapa") or {}).items():
                 fallos.append(f"BLOQUE57: la clave '{_n57}' NO esta en verificar.MAPA -- el "
                               f"solver nunca la mirara y el menu saldra verde igual")
 
-# 5.2. HOY NO SE APLICA NINGUN SUELO DEL LIBRO, Y ESO ES LO CORRECTO.
+# 5.2. EL SUELO DE VITAMINA E ESTA ENCENDIDO, Y TIENE QUE ESTARLO.
 #
-#      ⚠️ LA VITAMINA E ESTA ESCRITA Y APAGADA, con `aplicado_por_el_solver:
-#      false`. Se encendio la manana del 11 de septiembre y esta bateria la tiro
-#      en una tanda LIMPIA, sin nada mas compitiendo por la CPU: seis fallos en
-#      tres bloques que estaban verdes sin ella. El 9 (un adulto de 20 kg con ocho
-#      especies excluidas se queda SIN MENU), el 15 dos veces (en varios perros le
-#      mete al segundo alimentos que nadie pidio y sin avisar, que es la regla 5)
-#      y el 43 tres veces (al toy de 1,5 kg adulto con DER 200 y un segundo de
-#      solver no le sale menu en ocho intentos).
+#      ⚠️ DECISION DE ELENA, 11 de septiembre de 2026, y cambia el criterio de
+#      todo este fichero:
 #
-#      El perro NORMAL si la cumple: medido, 77,1 / 79,4 / 68,2 mg en 3, 22 y 28
-#      kg, los tres en peldano estricto, y 15 de 15 casos con alergias o
-#      categorias fuera. Lo que no cabe es el perro PEQUENO, y la causa esta
-#      medida: en el catalogo NO HAY UN SUPLEMENTO DE VITAMINA E SUELTO -- solo
-#      los nueve multivitaminicos, y el motor deja meter dos.
+#          «si hay algo de la documentacion que fija ese suelo de vitamina E, se
+#           tiene que aplicar. Si los menus no entran, es problema de los menus,
+#           no de la norma, o sea, la norma es la norma, y luego se hara lo que
+#           se tenga que hacer con los menus»
 #
-#      La regla del CLAUDE.md para esto es que la cifra NO se baja: se deja
-#      escrita con su medida y se pregunta. Por eso sigue auditada aqui y en
-#      `auditar_conversiones.py`, y por eso este bloque exige que NO se aplique
-#      mientras la marca diga que no.
-for _et57 in ("Adulto", "Senior", "CachorroJoven", "CachorroCrecimiento",
-              "GestanteTemprana", "GestanteTardia", "Lactante"):
-    if _suelos_b57(_et57, req):
-        fallos.append(f"BLOQUE57: la etapa {_et57} esta aplicando un SUELO del libro "
-                      f"({_suelos_b57(_et57, req)}) y hoy no tendria que aplicarse ninguno. "
-                      f"Si se ha encendido uno a proposito, este bloque tiene que saberlo: "
-                      f"quita `aplicado_por_el_solver: false` Y actualiza este bloque en el "
-                      f"MISMO commit, habiendo medido antes que cabe en el toy de 1,5 kg y "
-                      f"con el catalogo recortado -- que es lo que tiro la bateria")
+#      Lo que costo sigue escrito en el `por_que` de la cifra y NO se borra: al
+#      encenderlo por la manana esta bateria dio seis fallos en tres bloques. Eso
+#      es el registro de lo que cuesta aplicarlo, no un argumento para no hacerlo.
+#      Lo que cambio es quien decide.
+#
+#      DONDE SI Y DONDE NO. El libro da esta cifra para el ADULTO (cap.13) y el
+#      MADURO (cap.14), asi que se aplica en Adulto y Senior y NO en crecimiento,
+#      gestacion ni lactancia -- ahi no hay cifra de la fuente, y aplicarla seria
+#      inventarsela, que es justo lo contrario de «la norma es la norma».
+for _et57 in ("Adulto", "Senior"):
+    _vs57 = _suelos_b57(_et57, req)
+    if abs((_vs57 or {}).get("vitE", 0.0) - 67.1) > 1e-9:
+        fallos.append(f"BLOQUE57: la etapa {_et57} tendria que aplicar el suelo de vitamina E "
+                      f"de 67,1 mg/1000 kcal y devuelve {_vs57}. Es una decision escrita de "
+                      f"Elena del 11 de septiembre: la norma se aplica, y el menu que no quepa "
+                      f"se queda sin salir DICIENDOLO")
+for _et57 in ("CachorroJoven", "CachorroCrecimiento", "GestanteTemprana",
+              "GestanteTardia", "Lactante"):
+    if (_suelos_b57(_et57, req) or {}).get("vitE"):
+        fallos.append(f"BLOQUE57: la etapa {_et57} esta aplicando el suelo de vitamina E y la "
+                      f"fuente NO da esa cifra para ella: SACN5 la da para el adulto (cap.13) y "
+                      f"el maduro (cap.14). Aplicar una cifra donde la fuente no la da es "
+                      f"inventarsela")
 
-# 5.2-bis. Y LA MARCA TIENE QUE SEGUIR ESCRITA, CON SU MOTIVO. Un suelo sin marca
-#          se aplicaria sin que nadie lo decidiera, y uno apagado sin decir por
-#          que se vuelve a encender sin saber lo que costo.
+# 5.2-bis. LA MARCA TIENE QUE DECIR QUE SI, Y EL `por_que` TIENE QUE SEGUIR
+#          CONTANDO LO QUE COSTO. Un suelo encendido cuyo motivo se borra es un
+#          suelo que el dia que vuelva a estorbar se apaga sin saber la historia:
+#          los seis fallos, la medida del perro normal y el hueco del catalogo.
 for _et57, _nut57 in (("Adulto", "vitE"), ("Senior", "vitE")):
     _f57 = ((_CRUDO_B57["por_etapa"].get(_et57) or {}).get("suelos_por_1000kcal") or {}).get(_nut57)
-    if _f57 is None or _f57.get("aplicado_por_el_solver") is not False:
-        fallos.append(f"BLOQUE57: el suelo {_et57}.{_nut57} ya no lleva "
-                      f"`aplicado_por_el_solver: false`. Si se ha encendido, mide antes que "
-                      f"cabe en el toy de 1,5 kg y con el catalogo recortado")
-    elif "ESCRITO Y NO APLICADO" not in (_f57.get("por_que") or ""):
-        fallos.append(f"BLOQUE57: el suelo {_et57}.{_nut57} esta apagado y su `por_que` ya no "
-                      f"explica por que ni con que medida. Un limite apagado sin motivo "
-                      f"escrito se vuelve a encender a ciegas")
+    if _f57 is None or _f57.get("aplicado_por_el_solver") is not True:
+        fallos.append(f"BLOQUE57: el suelo {_et57}.{_nut57} tiene que llevar "
+                      f"`aplicado_por_el_solver: true`. Si se ha vuelto a apagar, tiene que ser "
+                      f"una decision escrita y este bloque tiene que saberlo en el MISMO commit")
+    else:
+        _pq57 = _f57.get("por_que") or ""
+        for _marca57 in ("ENCENDIDO EL 11-sep-2026", "seis fallos",
+                         "NO HAY UN SUPLEMENTO DE VITAMINA E SUELTO"):
+            if _marca57 not in _pq57:
+                fallos.append(f"BLOQUE57: el `por_que` del suelo {_et57}.{_nut57} ya no dice "
+                              f"«{_marca57}». Lo que costo aplicarlo es parte de la decision y "
+                              f"no se borra al aplicarla")
 
 # 5.3. Y AQUI MANDA FEDIAF. Un suelo del libro que se pasara del MAXIMO de
 #      FEDIAF tiene que caerse. Hoy no se dispara con ninguna cifra escrita --la
@@ -7990,10 +7998,11 @@ finally:
     else:
         _recom_b57.POR_ETAPA["Adulto"]["suelos_por_1000kcal"] = _guardado_b57
 
-# 5.4. QUE LA MAQUINARIA DE LOS SUELOS FUNCIONE, aunque hoy no haya ninguno
-#      encendido. Se enciende la vitamina E A MANO y SOLO AQUI, para el perro de
-#      referencia y con tiempo de sobra, y se exige las dos cosas: que el SOLVER
-#      la aplique y que el FILTRO FINAL cace un menu que no la cumpla.
+# 5.4. QUE LA MAQUINARIA DE LOS SUELOS FUNCIONE DE VERDAD, no solo que la cifra
+#      este escrita. Se fija la vitamina E A MANO aqui -- con el mismo valor que
+#      ya esta encendido, para que esta comprobacion no dependa de lo que diga el
+#      fichero -- y se exige las dos cosas: que el SOLVER la aplique y que el
+#      FILTRO FINAL cace un menu que no la cumpla.
 #
 #      ⚠️ POR QUE NO BASTA CON COMPROBAR QUE ESTA APAGADA. Un mecanismo que nadie
 #      ejercita se pudre sin avisar: el dia que alguien encienda un suelo -- o que
@@ -8078,9 +8087,11 @@ finally:
     else:
         _recom_b57e.POR_ETAPA["Adulto"]["suelos_por_1000kcal"] = _guardado_e
 
-# 5.5. Y CON EL SUELO APAGADO, las cuatro patologias que piden la misma cifra
-#      siguen pidiendola. Que el libro no lo aplique no puede aflojar un suelo de
-#      patologia: se combinan con max(), y una patologia marcada manda igual.
+# 5.5. Y LAS CUATRO PATOLOGIAS QUE PIDEN LA MISMA CIFRA SIGUEN PIDIENDOLA POR SU
+#      CUENTA. El suelo del libro y el de patologia son dos cajones distintos que
+#      se combinan con max(): encender uno no puede sustituir al otro, ni
+#      apagarlo aflojaria al otro. Se comprueba que el efectivo son 67,1 por los
+#      dos caminos.
 from motor_completo import topes_de_patologias as _topes_pat_b57b
 for _patE in ("renal", "hepatopatia", "obesidad", "artrosis"):
     _t, _p, _a, _sE = _topes_pat_b57b([_patE], "Adulto")
