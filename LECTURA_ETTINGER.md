@@ -313,3 +313,29 @@ nutrición: es manipulación. Pero **es información que quien usa la app tiene
 derecho a tener**, y hoy no se la damos. Va a `PENDIENTE_PRODUCTO.md` como
 decisión de Elena, no mía: qué se le cuenta al dueño sobre el riesgo bacteriano y
 sobre el manejo, y con qué palabras.
+
+### Cap. 192 — coda: la salmonela NO es lo del cerdo
+
+Pregunta de Elena: «¿lo de la salmonela viene del cerdo? Nosotros no tenemos
+nada de cerdo». Comprobado en el texto, y no:
+
+- **Los casos del capítulo son de VACUNO.** Los dos gatos («una dieta cruda a
+  base de carne de vacuno», uno muerto) y el brote del criadero de galgos, con
+  el serotipo en el **75 %** de las muestras de carne cruda. La postura de la FDA
+  que cita habla de «carne, aves de corral o mariscos».
+- **Y el catálogo está lleno de los reservorios clásicos**: 10 fichas de pollo,
+  10 de ternera, 8 de pavo, 7 de vaca.
+
+**Lo que SÍ es del cerdo está en otro capítulo y es peor.** La enfermedad de
+Aujeszky o pseudorrabia: *«poco frecuente pero mortal […] Se cree que la mayoría
+de los casos en perros son el resultado de la ingestión de carne de cerdo cruda
+infectada»*.
+
+**Consecuencia para nosotros, y son dos:**
+
+1. **No tener cerdo está bien, ahora por dos motivos de fuente**: el cobre del
+   hígado de cerdo con disponibilidad cero (SACN5 cap.6) y esto, que es mortal.
+   Va a `DATOS_QUE_FALTAN.md` para el día que alguien proponga una ficha.
+2. ⚠️ **El aviso al usuario no puede ser «cuidado con el cerdo»**, que es lo que
+   la gente cree. Tiene que ser sobre el manejo del **pollo y la ternera** que sí
+   le estamos dando.
