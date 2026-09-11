@@ -471,3 +471,102 @@ hasta regenerar el catálogo con `regenerar_catalogo.py`. No es que la cifra no
 quepa —bajar EPA+DHA es quitar pescado, y la mediana está seis veces por debajo
 del techo—: es que hay que rehacer los 216 y volver a pasar la batería entera.
 Queda escrito con su medida, que es la regla, y es lo siguiente que toca de aquí.
+
+## F-14. El techo de vitamina E del perro, que no teníamos porque FEDIAF no lo pone
+
+Capítulo 14, última línea del bloque de vitamina E. Salió al **cerrar** el
+capítulo, no al leerlo por encima: es el hallazgo que justifica el BLOQUE 96.
+
+> «In dogs, a tentative upper limit of 75 IU/kg/day (or 1000–2000 IU/kg diet)
+> has been suggested (NRC 2006).»
+
+La primera forma va por kilo de perro y el motor no la sabe usar. **La segunda
+sí es una concentración de la dieta**, que es justo la forma del motor:
+
+| | |
+|---|---|
+| 1000 UI/kg MS, a 4000 kcal EM/kg MS | 250 UI/1000 kcal |
+| × 0,671 mg/UI (FEDIAF Tabla VII-14, d-alfa-tocoferol) | **167,75 mg/1000 kcal** |
+| extremo laxo (2000 UI/kg MS) | 335,5 mg/1000 kcal |
+
+⚠️ **FEDIAF no pone máximo de vitamina E en ninguna etapa** — las tres columnas
+de máximo de esa fila están vacías —, así que este sería el único techo que
+tendría el nutriente.
+
+**Medido sobre los 216 menús del catálogo:**
+
+| | vitamina E por 1000 kcal |
+|---|---|
+| mínimo | 10,05 |
+| mediana | 26,86 |
+| máximo | 89,28 |
+| **por encima del techo estricto (167,75)** | **0 de 216** |
+
+No aprieta hoy. Se apunta igual porque lo que lo tapa es una propiedad del
+catálogo de hoy y no una garantía — el mismo motivo por el que se aplicó el Ca:P
+del fosfato cálcico aunque ninguno de los cinco menús lo cruzara.
+
+**Y da el dato que le faltaba a la decisión de Elena sobre el SUELO de vitamina
+E**, la que se encendió por la mañana y se apagó por la tarde del 11 de
+septiembre: el suelo de SACN5 (67,1 mg/1000 kcal) y este techo (167,75) dejan una
+ventana de **2,5 veces**, así que el suelo que está escrito y apagado **no choca
+con el límite superior seguro** de la otra fuente. Lo que lo hacía caro es otra
+cosa, y también está medido: **189 de los 216 menús están por debajo de ese
+suelo**, porque en el catálogo no hay un suplemento de vitamina E suelto.
+
+## F-15. El fósforo del oxalato: las dos fuentes van en direcciones contrarias
+
+Capítulo 16, y salió al **cerrarlo**. El motor le aplicaba a este capítulo una
+cifra (la vitamina D del oxalato) sin que ninguno de sus 36 elementos tuviera
+veredicto — es el segundo caso que cazó el BLOQUE 96.
+
+> «Dietary phosphorus **should not be restricted** with calcium oxalate
+> urolithiasis. **Low dietary phosphorus is a risk factor** for calcium oxalate
+> urolith formation in cats and dogs.»
+>
+> «Diets formulated for oxalate prevention in cats and dogs contain phosphorus
+> from 0.3 to 2.1 g/Mcal. Concentrations from approximately **1.5 to 2.0
+> g/Mcal** have been recommended.»
+
+Y el motor le aplica al oxalato un **techo** de 1500 mg/1000 kcal, de la Tabla
+40-5 de SACN5. O sea 1,5 g/Mcal: el extremo **bajo** de lo que Fascetti
+recomienda, y **sin ningún suelo debajo**. El mínimo de FEDIAF son 1160, así que
+sobre el papel el motor podía entregar un menú de oxalato entre 1160 y 1500, que
+es justo donde Fascetti dice que está el riesgo de formar la piedra que se
+intenta prevenir.
+
+**Medido el 11-sep, tres perros adultos por la API en peldaño estricto:**
+
+| Peso | Fósforo por 1000 kcal | Magnesio |
+|---|---|---|
+| 10 kg | 1498,7 | 206,6 |
+| 22 kg | 1498,6 | 206,7 |
+| 30 kg | 1498,4 | 214,6 |
+
+Los tres salen **pegados al techo**: una ración BARF va sobrada de fósforo y el
+solver sube hasta donde le dejan. En la práctica el menú cae en el número que
+las dos fuentes comparten.
+
+⚠️ **Y por eso NO se pone un suelo, aunque parezca lo obvio.** Los dos números
+son 1500 por los dos lados y el motor solo llega a 1498,7: un suelo de 1500
+dejaría al oxalato **sin menú**. Lo que hoy salva la situación es una propiedad
+del catálogo, no una garantía — el mismo argumento que llevó a aplicar el Ca:P
+del fosfato cálcico aunque ninguno de los cinco menús lo cruzara, pero aquí con
+el signo cambiado. Es decisión clínica.
+
+**El magnesio, en cambio, sí coincide.** Fascetti sugiere «from 0.08 to 0.10 %
+dry matter or approximately 200 mg magnesium/Mcal» y avisa de que no se restrinja
+mucho; el motor aplica techo de 375 y el mínimo de FEDIAF son 200, así que la
+ventana es 200-375 y los tres menús salen en 206-215. Dentro y en la zona que la
+fuente llama prudente.
+
+**Dos huecos de DATO que deja el capítulo:**
+
+- **Hidroxiprolina** (`<4,4 g/Mcal` en dietas de prevención de oxalato). No es
+  ninguno de los 41 nutrientes de FEDIAF ni una clave de ninguna ficha, así que
+  el catálogo no lo tiene. Importa porque está sobre todo en **hueso y colágeno**,
+  que es lo que más lleva una ración BARF. La cifra es de gato; el día que haya
+  dato canino, esto es aplicable. Va a `DATOS_QUE_FALTAN.md`.
+- **Purinas**: el libro dice que el dato exacto «can be challenging» de conseguir
+  y que a menudo hay que usar la proteína total como indicador. Aquí vamos por
+  delante: cada ficha del catálogo trae `purinas_bases` y `purinas_fuente`.

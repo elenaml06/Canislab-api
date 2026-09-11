@@ -4,9 +4,9 @@
     "metodo": "El de `LECTURA_SACN5.md`: leer todo, apuntar todo, y aplicar solo al final. Un veredicto «por: regla_del_capitulo» solo vale si se ha comprobado elemento a elemento que ninguno se sale de la regla -- es la leccion de los 442 de SACN5, donde TRES de los resueltos por capitulo felino si hablaban del perro.",
     "como_se_comprueba": "`leer_fascetti.py`, que rehace los recuentos y exige que la lectura integra declare el numero de lineas real del .txt.",
     "total_declarado": 657,
-    "pendientes_declarados": 213,
+    "pendientes_declarados": 138,
     "descartadas_declaradas": 17537,
-    "capitulos_leidos_declarados": 13,
+    "capitulos_leidos_declarados": 15,
     "medido": "11 de septiembre de 2026 (caps. 1-13 leidos; quedan 14-21)",
     "como_van_los_capitulos": "1-6 leidos el 11-sep por la manana. 7, 8 y 9 leidos el mismo dia y con sus veredictos escritos por la tarde -- estaban LEIDOS en `LECTURA_FASCETTI.md` y sin veredicto aqui, que es justo el agujero que este fichero existe para cerrar. 10 a 13, leidos y juzgados esa misma tarde. Quedan 14 a 21."
   },
@@ -1918,6 +1918,326 @@
         "cifra#367:Spironolactone, administered at 1–2 mg/kg PO twice daily, is the diuretic of choice since it blocks the action of aldosterone at t": {
           "veredicto": "leido_no_aplica",
           "por": "Dosis de farmaco o de suplemento por kg de peso vivo (vitamina C, E, K1, cinc, cobalamina, D-penicilamina, espironolactona, lactulosa). El motor formula raciones: no receta ni ajusta dosis por kilo. Y lo que si es un SUELO de la dieta -- el cinc y la vitamina E de la hepatopatia por cobre -- ya esta aplicado en `patologias.json` (zinc 50, vitE 67,1 por 1000 kcal)."
+        }
+      }
+    },
+    "cap14": {
+      "titulo": "Nutritional Management of Skin Diseases",
+      "regla_del_capitulo": "Leido ENTERO el 11-sep-2026, y es el capitulo que motivo el BLOQUE 96: de el se habian aplicado dos cifras sin haberle dado veredicto a ninguno de sus 39 elementos. De la lectura completa salen DOS hallazgos que la lectura por frases no habia visto: el techo de EPA+DHA de 2,8 g/1000 kcal (F-13, SI aprieta: 5 de 216 menus se pasan) y el techo de vitamina E del perro, 1000-2000 UI/kg MS (F-14, no aprieta hoy pero es el unico que habria, porque FEDIAF no pone maximo). El resto es de gato o de otra especie, semiologia de la piel, dosis terapeutica por kilo de perro, o manejo de la prueba de eliminacion.",
+      "lectura_integra": {
+        "lineas": 243,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "olor#10:It is important to emphasize that all items consumed by a veterinary patient (including the main diet, treats, table scraps, suppl": {
+          "veredicto": "aplicado",
+          "por": "⚠️ ES LA FUENTE DE LOS PREMIOS, y ya está aplicada desde el 11-sep-2026. «all items consumed by a veterinary patient (including the main diet, treats, table scraps, supplements, flavored medications...)». El motor descuenta esas kcal con `kcal_de_premios`/`premios_nivel` y le sigue exigiendo a la ración EL DÍA ENTERO de nutrientes. Ver la regla 3-bis de CLAUDE.md y el BLOQUE 95."
+        },
+        "cifra#18:For example, if greater than 90% of total daily calories are provided by complete and balanced diets and the pet consumes at least": {
+          "veredicto": "aplicado",
+          "por": "El 90 % de las kcal del día en dieta completa y equilibrada: es la otra mitad de la misma regla, y es de donde sale el techo del 10 % de premios que aplica el motor. Coincide con el cap.7 de este mismo libro y con Ettinger cap.192 y 175."
+        },
+        "cifra#29:These situations affect the skin in particular due to its high requirements for protein and energy: hair is 95% protein and hair g": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es semiología o fisiopatología de la piel -- qué lesión sale con qué carencia, cómo se diagnostica, qué histología tiene. Explica el POR QUÉ del capítulo y no trae ninguna cifra que el motor pueda aplicar a una ración."
+        },
+        "cifra#63:Minimum requirement (assumes complete bioavailability) Recommended allowance (RA) (daily intake should typically be ≥ RA) Adult ca": {
+          "veredicto": "leido_no_aplica",
+          "por": "La RA de proteína del NRC en g × peso^0,75 al DÍA (2,62 mínimo y 3,28 recomendado en perro adulto). Es otro eje: el motor formula POR 1000 KCAL, que es como publica FEDIAF, y mezclar los dos ejes es exactamente cómo se cuela un requisito equivocado. Además manda FEDIAF. Queda anotado por si algún día hace falta contrastar."
+        },
+        "olor#65:These EFAs in dogs and cats are polyunsaturated fatty acids (PUFA) omega 6 (n‐6) and omega 3 (n‐3), which must be acquired from th": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es semiología o fisiopatología de la piel -- qué lesión sale con qué carencia, cómo se diagnostica, qué histología tiene. Explica el POR QUÉ del capítulo y no trae ninguna cifra que el motor pueda aplicar a una ración."
+        },
+        "cifra#87:A ratio of 2.6 : 26 of LA : ALA (2.6 : 16 in gestation/lactation) is considered safe in dogs, along with a safe upper limit for LA": {
+          "veredicto": "aplicado_en_parte",
+          "por": "⚠️ LA FRASE CON TRES CIFRAS, Y LA QUE DIO NOMBRE AL BLOQUE 96. «A ratio of 2.6 : 26 of LA : ALA (2.6 : 16 in gestation/lactation) is considered safe in dogs, along with a safe upper limit for LA and EPA + DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». APLICADAS DOS: el ratio linoleico:linolénico vive en `requisitos_condicionales.json` y el techo de linoleico de 16,3 en `recomendaciones_libro.json` (medido: no aprieta nunca, los 216 menús van de 3,20 a 10,50). SIN APLICAR LA TERCERA: el techo de EPA+DHA de 2,8, que es la única que SÍ aprieta -- medido, 5 de los 216 menús se pasan y llegan a 3,00, y FEDIAF no pone máximo de EPA+DHA en ninguna etapa, así que el semáforo no puede verlo. Está en HALLAZGOS_FASCETTI.md F-13 con su medida; encenderlo obliga a regenerar el catálogo."
+        },
+        "cifra#95:Arachidonic acid is a fundamental component of skin, comprising 20–25% of its total cell membrane fatty acids.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es semiología o fisiopatología de la piel -- qué lesión sale con qué carencia, cómo se diagnostica, qué histología tiene. Explica el POR QUÉ del capítulo y no trae ninguna cifra que el motor pueda aplicar a una ración."
+        },
+        "cifra#120:The skin contains approximately 20% of the total body zinc stores, and the highest concentrations are found in the keratinized tis": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es semiología o fisiopatología de la piel -- qué lesión sale con qué carencia, cómo se diagnostica, qué histología tiene. Explica el POR QUÉ del capítulo y no trae ninguna cifra que el motor pueda aplicar a una ración."
+        },
+        "cifra#163:Therapy requires zinc supplementation with a recommended dosage of 2–3 mg/kg/body weight (BW) of elemental zinc in the form of zin": {
+          "veredicto": "leido_no_aplica",
+          "por": "⚠️ MIRADO CONTRA `dermatosis_zinc`, QUE EL MOTOR SÍ TIENE. Son 2-3 mg/kg de peso al día de zinc elemental, o sea una dosis de tratamiento por kilo de perro, y el motor aplica a esa patología un SUELO de 25 mg/1000 kcal (SACN5 Tabla 32-1), que es una concentración de la dieta. No son la misma magnitud y no se pueden comparar sin el peso y las kcal del perro delante. Lo que sí trae la frase y el motor NO puede usar es la forma química: «Zinc oxide should not be used as it is not very bioavailable» -- eso ya está recogido en `sacn5_fuentes_de_minerales.json`, que da al óxido de zinc su factor."
+        },
+        "reco#170:Dietary mineral supplements that could interfere with zinc absorption should be avoided.": {
+          "veredicto": "leido_coincide",
+          "por": "«Dietary mineral supplements that could interfere with zinc absorption should be avoided». El motor no lo puede aplicar como cifra, pero no lo contradice: los antagonistas que nombra el capítulo (calcio, hierro, cobre en exceso) ya llevan techo propio por FEDIAF y por `recomendaciones_libro.json`."
+        },
+        "olor#234:Retinol is highly susceptible to oxidation and therefore must be in an esterified (palmitate or acetate) form in pet food to prote": {
+          "veredicto": "leido_no_aplica",
+          "por": "La vitamina A hay que darla esterificada (palmitato o acetato) porque el retinol se oxida. Es de FABRICACIÓN de pienso, no de formulación de una ración fresca. Relacionado con `fediaf_conversiones_vitaminas.json`, que es donde vive qué forma química aporta cuánto."
+        },
+        "cifra#241:Therapy should consist of supplementation (intramuscular injections: 2000 IU/kg in reptiles and 5000–20 000 IU/kg in birds), as we": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO o de otra especie (hurón, cobaya, reptil, ave). Rawku es de perros y el motor no tiene ni tabla ni catálogo para otra especie, así que aplicarlo sería inventarse un requisito. Se lee y se descarta por especie, no por falta de interés."
+        },
+        "reco#251:Even though supplementation with other antioxidants can help rescue or prevent signs of vitamin E deficiency, oversupplementation ": {
+          "veredicto": "leido_coincide",
+          "por": "No sobresuplementar vitamina C porque sube el requerimiento de vitamina E. El motor no mete vitamina C: no es un requisito del perro (la sintetiza), y no hay ninguna ficha del catálogo que la declare como suplemento. Sin conflicto."
+        },
+        "cifra#267:Correcting the dietary deficiency with vitamin E supplementation (10 mg/kg/day, 1 mg = 1 IU) will improve clinical signs (Watson 1": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO o de otra especie (hurón, cobaya, reptil, ave). Rawku es de perros y el motor no tiene ni tabla ni catálogo para otra especie, así que aplicarlo sería inventarse un requisito. Se lee y se descarta por especie, no por falta de interés."
+        },
+        "reco#278:There is a large margin of safety with the ingestion of B vitamins, however, so pre‐emptive supplementation is recommended if ther": {
+          "veredicto": "leido_coincide",
+          "por": "«There is a large margin of safety with the ingestion of B vitamins». Coincide con lo medido en el repo: la B6 real de los menús va de tres a doce veces el mínimo de FEDIAF, y por eso el requisito condicional de B6 está escrito como `documentado_sin_cifra`."
+        },
+        "cifra#303:Although B vitamin supplementation has a large margin of safety, hypervitaminosis can occur with excessive supplementation (e.g. 1": {
+          "veredicto": "leido_no_aplica",
+          "por": "Hipervitaminosis de niacina a 133-145 mg/kg de perro al día. Es una dosis tóxica por kilo de peso, no una concentración de la dieta, y está órdenes de magnitud por encima de cualquier ración: el máximo de niacina de FEDIAF es el que aplica el motor. Anotado por si algún día entra un suplemento de niacina suelto al catálogo."
+        },
+        "reco#323:Oversupplementation with excessively high doses of vitamin C should be avoided due to potential side effects or undesired interact": {
+          "veredicto": "leido_coincide",
+          "por": "Ídem que la línea 251: el motor no mete vitamina C."
+        },
+        "olor#426:This is generally recommended, as most elimination diet trials will take a minimum of 8–12 weeks to complete, and sometimes more t": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es manejo de la prueba de eliminación -- cuánto dura, qué no puede comer el perro mientras, cómo se almacena la comida. El motor ya excluye ingredientes por alergia (regla 4) y el aviso de `reaccion_adversa_alimento` ya dice lo de la proteína novel; el resto es consulta, no formulación."
+        },
+        "cifra#428:Additionally, taurine should be added at 125–250 mg/kg BW for cats.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO o de otra especie (hurón, cobaya, reptil, ave). Rawku es de perros y el motor no tiene ni tabla ni catálogo para otra especie, así que aplicarlo sería inventarse un requisito. Se lee y se descarta por especie, no por falta de interés."
+        },
+        "olor#432:If chosen for long‐term management of CAFR, the home‐cooked diet must be balanced by a veterinary nutritionist or with commerciall": {
+          "veredicto": "leido_coincide",
+          "por": "«the home-cooked diet must be balanced by a veterinary nutritionist or with commercially available software with appropriate nutritional supplements». Es literalmente lo que hace este motor, y es la razón de la regla 1: ningún menú sale sin verificar contra los 43 requisitos."
+        },
+        "cifra#445:The individual diets currently available provide proteins anywhere from 0 to 88% as single amino acids, 78–95% below 1 kDa, and 1–": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cuánto están hidrolizadas las proteínas de las dietas comerciales hidrolizadas (kDa, porcentaje de aminoácidos libres). El motor formula con alimento fresco: no hay hidrolizados en el catálogo y no hay forma de expresar esto como requisito."
+        },
+        "olor#464:Since ingestion of even small quantities of other foods could impair success of an elimination diet trial, it is important to disc": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es manejo de la prueba de eliminación -- cuánto dura, qué no puede comer el perro mientras, cómo se almacena la comida. El motor ya excluye ingredientes por alergia (regla 4) y el aviso de `reaccion_adversa_alimento` ya dice lo de la proteína novel; el resto es consulta, no formulación."
+        },
+        "olor#475:A review indicates that in order to diagnose CAFR in more than 90% of dogs and cats, an elimination diet trial should last for a m": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es manejo de la prueba de eliminación -- cuánto dura, qué no puede comer el perro mientras, cómo se almacena la comida. El motor ya excluye ingredientes por alergia (regla 4) y el aviso de `reaccion_adversa_alimento` ya dice lo de la proteína novel; el resto es consulta, no formulación."
+        },
+        "reco#503:The feeding of a low‐fat diet, as well as identification and correction of the underlying disturbance in lipid metabolism, is reco": {
+          "veredicto": "leido_coincide",
+          "por": "Dieta baja en grasa para el xantoma cutáneo, que es secundario a dislipemia o diabetes. El motor ya aprieta la grasa en `hiperlipidemia` (30 g/1000 kcal) y en `diabetes` cuando coinciden (30 % de las kcal). No hace falta patología nueva: la causa sí la tiene."
+        },
+        "cifra#525:Total amino acid concentrations documented in dogs with SND are approximately 30% of the concentrations documented in healthy dogs": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es semiología o fisiopatología de la piel -- qué lesión sale con qué carencia, cómo se diagnostica, qué histología tiene. Explica el POR QUÉ del capítulo y no trae ninguna cifra que el motor pueda aplicar a una ración."
+        },
+        "cifra#613:However, 20% of the dogs in a study were maintained for 12 months or more with oral protein hyperalimentation and periodic parente": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es el resultado de un estudio concreto (qué dosis se usó, qué porcentaje mejoró), no una recomendación de formulación. Sirve para entender de dónde sale la cifra que sí se aplica, no para aplicarse él."
+        },
+        "cifra#645:When directly comparing the dosing of EPA + DHA to ALA in a crossover study in pruritic dogs, greater improvement was seen in prur": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es el resultado de un estudio concreto (qué dosis se usó, qué porcentaje mejoró), no una recomendación de formulación. Sirve para entender de dónde sale la cifra que sí se aplica, no para aplicarse él."
+        },
+        "cifra#648:It is worthwhile noting, however, that the doses used in that study (17 mg EPA + 5 mg DHA + 35 mg ALA/kg BW) resulted in much lowe": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es el resultado de un estudio concreto (qué dosis se usó, qué porcentaje mejoró), no una recomendación de formulación. Sirve para entender de dónde sale la cifra que sí se aplica, no para aplicarse él."
+        },
+        "cifra#650:Based on a cumulative review of the better‐designed studies supporting use of fish oil supplementation in dogs for inflammatory an": {
+          "veredicto": "leido_no_aplica",
+          "por": "La dosis mediana eficaz de EPA+DHA en dermatología: 125 mg × peso^0,75, o ~700 mg/10 kg. Otra vez por PESO y no por 1000 kcal, y además es dosis terapéutica. El motor aplica a `dermatitis_atopica` un suelo de omega-3 totales de 0,875 g/1000 kcal (SACN5 Tabla 32-6), que es la forma que sí sabe usar. Las dos no se pueden comparar sin el perro delante."
+        },
+        "reco#653:A balanced intake of n‐6 : n‐3 fatty acids is recommended, with supplementation of n‐3 PUFAs (especially EPA + DHA) in dermatologi": {
+          "veredicto": "leido_no_aplica",
+          "por": "«A balanced intake of n-6 : n-3 fatty acids is recommended» -- sin cifra. Es exactamente el ratio omega-6:omega-3 que el motor sabe aplicar por patología desde el 10-sep y que sigue sin número: sus fuentes van de 1:1 (cáncer, artrosis) a 7:1 (renal). Es la PREGUNTA 40 y la contesta quien firma. Aquí la fuente tampoco la contesta."
+        },
+        "olor#674:The appropriate level of additional supplementation will then be tailored to provide at least the desired total daily intake, with": {
+          "veredicto": "leido_coincide",
+          "por": "Hay que mirar lo que ya trae la dieta base antes de suplementar, y no pasarse del límite superior seguro. Es justo lo que hace el motor: el suplemento entra dentro del MILP con el resto de la ración, no encima. Y el límite superior seguro del que habla es el 2,8 de la línea 87, que es el que falta."
+        },
+        "olor#677:Conversely, if intake is already sufficient, blindly adding more fish oil to the diet could result in overconsumption of calories,": {
+          "veredicto": "leido_coincide",
+          "por": "Añadir aceite de pescado a ciegas puede pasarse del límite superior seguro de EPA+DHA y meter kcal de más. En el motor las kcal de un suplemento cuentan como las de cualquier alimento; lo que falta es el techo, que es la línea 87."
+        },
+        "cifra#695:In dogs, the median dosing required for EPA + DHA appears to be 125 mg × BW(kg)0.75 (or ~700 mg/10 kg), meaning that more or less ": {
+          "veredicto": "leido_no_aplica",
+          "por": "El límite superior seguro de EPA+DHA en su OTRA forma: <370 mg × peso^0,75 al día. Es la misma norma que la línea 87 expresada por peso metabólico en vez de por 1000 kcal, y el motor solo sabe la segunda. Se anota porque confirma que el 2,8 g/1000 kcal no es un número suelto: la fuente lo dice dos veces y de dos maneras."
+        },
+        "cifra#700:The combination of zinc (100 mg/1000 kcal) and linoleic acid (15 g/1000 kcal) produced statistically significant improvements in c": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es el resultado de un estudio concreto (qué dosis se usó, qué porcentaje mejoró), no una recomendación de formulación. Sirve para entender de dónde sale la cifra que sí se aplica, no para aplicarse él."
+        },
+        "cifra#710:Despite being fed a nutritionally balanced diet, these dogs require supraphysiologic supplementation with oral vitamin A at 600–80": {
+          "veredicto": "leido_no_aplica",
+          "por": "Vitamina A a 600-800 UI/kg de perro al día para la dermatosis que responde a vitamina A, que es una enfermedad de cocker que el motor NO tiene entre sus 47 patologías. Dosis terapéutica por peso, además. Si algún día se añadiera esa patología, esta es su cifra y está aquí."
+        },
+        "cifra#719:Vitamin E–Responsive Skin Diseases Vitamin E at supraphysiologic doses (200–400 IU/dog twice daily) has been used to treat canine ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Vitamina E a 200-400 UI por perro dos veces al día para lupus discoide, dermatomiositis y acantosis nigricans -- tres enfermedades que el motor no tiene, y a dosis suprafisiológica que la propia fuente dice que NO es por carencia dietética."
+        },
+        "olor#724:No safe upper limit has been established in cats; however, cats given a salmon‐ and tuna‐based diet overly fortified with vitamin ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO o de otra especie (hurón, cobaya, reptil, ave). Rawku es de perros y el motor no tiene ni tabla ni catálogo para otra especie, así que aplicarlo sería inventarse un requisito. Se lee y se descarta por especie, no por falta de interés."
+        },
+        "cifra#725:Mortality in kittens was also dose related to vitamin E, with death in all at doses of 1000 mg/kg/day and significant mortality at": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO o de otra especie (hurón, cobaya, reptil, ave). Rawku es de perros y el motor no tiene ni tabla ni catálogo para otra especie, así que aplicarlo sería inventarse un requisito. Se lee y se descarta por especie, no por falta de interés."
+        },
+        "olor#726:In dogs, a tentative upper limit of 75 IU/kg/day (or 1000–2000 IU/kg diet) has been suggested (NRC 2006).": {
+          "veredicto": "hallazgo_sin_aplicar",
+          "por": "⚠️ EL TECHO DE VITAMINA E DEL PERRO, Y NO LO TENÍAMOS. «In dogs, a tentative upper limit of 75 IU/kg/day (or 1000-2000 IU/kg diet) has been suggested (NRC 2006)». La segunda forma SÍ es una concentración de la dieta y el motor la sabe usar: 1000 UI/kg MS a 4000 kcal/kg MS son 250 UI/1000 kcal, y a 0,671 mg/UI (FEDIAF Tabla VII-14) salen 167,75 mg/1000 kcal en el extremo estricto (335,5 en el laxo). || FEDIAF NO PONE MÁXIMO DE VITAMINA E EN NINGUNA ETAPA -- las tres columnas están vacías --, así que sería el único techo que tendría. || MEDIDO el 11-sep sobre los 216 menús del catálogo: van de 10,05 a 89,28 mg/1000 kcal con mediana 26,86, o sea CERO por encima del techo estricto. No aprieta hoy. || Y da un dato que hacía falta para la decisión de Elena sobre el SUELO de vitamina E: el suelo de SACN5 (67,1) y este techo (167,75) dejan una ventana real de 2,5 veces, así que el suelo que está escrito y apagado NO choca con el límite superior seguro. De los 216 menús, 189 están por debajo de ese suelo, que es por lo que encenderlo costaba tanto. Va a HALLAZGOS_FASCETTI.md como F-14."
+        }
+      }
+    },
+    "cap16": {
+      "titulo": "Nutritional Management of Lower Urinary Tract Disease",
+      "regla_del_capitulo": "Leido ENTERO el 11-sep-2026. Es el segundo capitulo que cazo el BLOQUE 96: el motor le aplicaba la vitamina D del oxalato sin que ninguno de sus 36 elementos tuviera veredicto. De la lectura completa sale un hallazgo que la lectura por frases no habia visto -- el FOSFORO del oxalato, que Fascetti dice que NO hay que restringir y que el motor limita por arriba sin suelo por debajo (F-15) -- y dos cosas que faltan de datos: la hidroxiprolina, que no esta en el catalogo y va justo en el hueso, y la confirmacion de que los campos `purinas_bases`/`purinas_fuente` resuelven un problema que el libro describe como dificil. El resto es de gato (mas de la mitad del capitulo), epidemiologia del urolito, dosis de farmaco por kilo de perro, o protocolos de disolucion con seguimiento radiografico, que no son formulacion.",
+      "lectura_integra": {
+        "lineas": 296,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "cifra#9:There are many minerals that may precipitate in the urinary tract to form crystals and uroliths (aka stones); however, more than 8": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es epidemiología o historia natural del urolito -- qué porcentaje recidiva, a qué edad aparece, qué raza lo hace más. Sirve para saber a quién vigilar, no para formular una ración: no trae ninguna cifra de dieta."
+        },
+        "cifra#22:Hydroxyproline induces oxalate excretion in cats, and therefore preventive diets for calcium oxalate should contain less than 1 g ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Hidroxiprolina <1 g/MJ (<4,4 g/Mcal) en dietas de prevención de oxalato. ⚠️ Es de GATO («induces oxalate excretion in cats») y además el catálogo NO TIENE el dato: la hidroxiprolina no es ninguno de los 41 nutrientes de la tabla de FEDIAF ni una clave de ninguna ficha. Se apunta porque está en hueso y colágeno -- que es justo lo que más lleva una ración BARF -- y porque el día que hubiera dato canino esto sería una cifra aplicable. Va a DATOS_QUE_FALTAN.md."
+        },
+        "cifra#28:In cats with calcium oxalate uroliths, hypercalcemia was observed in 35% of cases (Bartges 2001).": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO. Rawku es de perros: el motor no tiene ni tabla de requisitos ni catálogo felino, así que aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#30:In dogs with calcium oxalate uroliths, hypercalcemia has been observed to occur in approximately 5%; usually these dogs have prima": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es epidemiología o historia natural del urolito -- qué porcentaje recidiva, a qué edad aparece, qué raza lo hace más. Sirve para saber a quién vigilar, no para formular una ración: no trae ninguna cifra de dieta."
+        },
+        "cifra#68:However, calcium oxalate crystalluria is present in fewer than 50% of feline and canine cases at time of diagnosis of urolithiasis": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es epidemiología o historia natural del urolito -- qué porcentaje recidiva, a qué edad aparece, qué raza lo hace más. Sirve para saber a quién vigilar, no para formular una ración: no trae ninguna cifra de dieta."
+        },
+        "cifra#81:The example demonstrates how much water is needed to achieve an overall desired moisture of 85%: Current Food Moisture % or “C” = ": {
+          "veredicto": "leido_no_aplica",
+          "por": "La fórmula para calcular cuánta agua añadir a la comida hasta una humedad objetivo. El motor no formula agua: calcula gramos de alimento, y el agua la pone el dueño. Es consejo de manejo, no un requisito."
+        },
+        "cifra#84:Studies in healthy cats and dogs did not find increased urine calcium excretion in response to high dietary salt intake (minimal 1": {
+          "veredicto": "leido_no_aplica",
+          "por": "Estudios de excreción urinaria de calcio con sal alta, en perros y gatos SANOS. Es el razonamiento de por qué el sodio se debate, no una cifra que aplicar."
+        },
+        "cifra#91:As a result, recommended concentrations of sodium in foods for cats and dogs predisposed to calcium oxalate formation is debated, ": {
+          "veredicto": "leido_coincide",
+          "por": "«recommended concentrations of sodium in foods for cats and dogs predisposed to calcium oxalate formation is debated, as diets containing as low as 0.4 g/Mcal sodium and as high as 3.5 g/Mcal sodium are available commercially». El motor aplica al oxalato un TECHO de sodio de 750 mg/1000 kcal (SACN5 Tabla 40-5), que cae dentro de ese rango de 400 a 3500. La fuente no da un número propio -- dice explícitamente que está debatido --, así que no hay nada que contradiga ni que aplicar."
+        },
+        "cifra#106:A 55% decrease in urinary calcium concentration was reported in urolith‐forming dogs that were treated with hydrochlorothiazide at": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es una dosis de FÁRMACO por kilo de perro (alopurinol, hidroclorotiazida, citrato potásico, 2-MPG, penicilamina). El motor formula comida: no receta medicación, y esa decisión es de quien firma. Queda leído y apartado por la forma de la cifra."
+        },
+        "cifra#107:A 65% decrease in urinary calcium oxalate‐relative supersaturation was reported in clinically normal cats receiving hydrochlorothi": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es una dosis de FÁRMACO por kilo de perro (alopurinol, hidroclorotiazida, citrato potásico, 2-MPG, penicilamina). El motor formula comida: no receta medicación, y esa decisión es de quien firma. Queda leído y apartado por la forma de la cifra."
+        },
+        "olor#114:Excess intake of vitamin C, a metabolic oxalate precursor, should similarly be avoided (Kirk et al. 2003).": {
+          "veredicto": "leido_coincide",
+          "por": "Evitar el exceso de vitamina C, que es precursora del oxalato. El motor no mete vitamina C: no es requisito del perro y no hay ninguna ficha del catálogo que la declare. Sin conflicto y sin nada que aplicar."
+        },
+        "reco#116:Because cats and dogs do not have a dietary vitamin C requirement, supplementation should be avoided.": {
+          "veredicto": "leido_coincide",
+          "por": "Ídem que la línea 114."
+        },
+        "cifra#125:Potassium citrate may be supplemented at an initial dosage of 75 mg/kg by mouth q 12 h, with adjustment of dosage to achieve a uri": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es una dosis de FÁRMACO por kilo de perro (alopurinol, hidroclorotiazida, citrato potásico, 2-MPG, penicilamina). El motor formula comida: no receta medicación, y esa decisión es de quien firma. Queda leído y apartado por la forma de la cifra."
+        },
+        "cifra#134:Diets formulated for oxalate prevention in cats and dogs contain phosphorus from 0.3 to 2.1 g/Mcal.": {
+          "veredicto": "hallazgo_sin_aplicar",
+          "por": "⚠️ EL FÓSFORO DEL OXALATO, Y VA EN DIRECCIÓN CONTRARIA A LO QUE APLICA EL MOTOR. Literal: «Dietary phosphorus should not be restricted with calcium oxalate urolithiasis. Low dietary phosphorus is a risk factor for calcium oxalate urolith formation in cats and dogs». Y da rango: «Diets formulated for oxalate prevention in cats and dogs contain phosphorus from 0.3 to 2.1 g/Mcal. Concentrations from approximately 1.5 to 2.0 g/Mcal have been recommended». || El motor aplica al `oxalato` un TECHO de 1500 mg/1000 kcal (SACN5 Tabla 40-5), o sea 1,5 g/Mcal: justo el extremo BAJO de lo que Fascetti recomienda, y sin ningún suelo debajo -- el mínimo de FEDIAF son 1160, así que sobre el papel el motor podía entregar un menú de oxalato entre 1160 y 1500, que es donde Fascetti dice que está el riesgo. || MEDIDO el 11-sep en tres perros (10, 22 y 30 kg): los tres salen a 1498,7 / 1498,6 / 1498,4, o sea PEGADOS al techo. Una ración BARF va sobrada de fósforo y el solver sube hasta donde le dejan. || ⚠️ Y POR ESO NO SE PONE SUELO: los dos números son 1500 por los dos lados y el motor solo llega a 1498,7, así que un suelo de 1500 dejaría al oxalato SIN MENÚ. Lo que hoy lo salva es una propiedad del catálogo, no una garantía. Va a HALLAZGOS_FASCETTI.md como F-15 y es decisión clínica, no mía."
+        },
+        "cifra#136:In cats that have developed hypercalcemia due to chronic kidney disease and are on a phosphorus‐restricted renal diet (e.g. <1.0 g": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO. Rawku es de perros: el motor no tiene ni tabla de requisitos ni catálogo felino, así que aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#144:Prudent concentrations of dietary magnesium have been suggested from 0.08 to 0.10% dry matter or approximately 200 mg magnesium/Mc": {
+          "veredicto": "leido_coincide",
+          "por": "«Prudent concentrations of dietary magnesium have been suggested from 0.08 to 0.10% dry matter or approximately 200 mg magnesium/Mcal», y antes: «magnesium should not be highly restricted». El motor aplica un TECHO de magnesio de 375 mg/1000 kcal al oxalato y el mínimo de FEDIAF son 200, así que la ventana es 200-375 y la cifra prudente de Fascetti cae justo en el suelo. MEDIDO: los tres perros salen a 206,6 / 206,7 / 214,6 mg/1000 kcal, o sea dentro y en la zona que la fuente llama prudente. Sin conflicto."
+        },
+        "cifra#148:Protein concentrations between 80 and 90 g protein/Mcal appeared most protective in cats.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO. Rawku es de perros: el motor no tiene ni tabla de requisitos ni catálogo felino, así que aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#149:In another study of healthy cats, consumption of a diet containing 35% crude protein (dry matter) from a high‐quality protein was ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO. Rawku es de perros: el motor no tiene ni tabla de requisitos ni catálogo felino, así que aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "reco#150:Excessive concentrations of vitamin D (which promotes intestinal absorption of calcium) and vitamin C (which is a precursor of oxa": {
+          "veredicto": "aplicado",
+          "por": "«Excessive concentrations of vitamin D ... and vitamin C ... should be avoided». La mitad de la vitamina D es la que el motor YA aplica (línea 151). La de la vitamina C no tiene nada que aplicar: el perro no la necesita y el catálogo no la trae."
+        },
+        "cifra#151:Diets with vitamin D between 250 and 350 IU/Mcal kcal should suffice.": {
+          "veredicto": "aplicado",
+          "por": "⚠️ ES LA CIFRA QUE EL MOTOR YA APLICA, y la que hizo saltar el BLOQUE 96 con este capítulo -- estaba aplicada sin que ninguno de los 36 elementos del capítulo tuviera veredicto. «Diets with vitamin D between 250 and 350 IU/Mcal kcal should suffice» (el libro imprime las dos unidades seguidas; es errata suya y se cita tal cual). 350 UI/Mcal = 350 UI/1000 kcal, y a 0,025 µg/UI son 8,75 µg/1000 kcal, que es el techo de vitD de `oxalato`."
+        },
+        "cifra#170:Calcium oxalate uroliths are recurrent, with an approximate 36% recurrence rate within one year if preventive measures are not und": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es epidemiología o historia natural del urolito -- qué porcentaje recidiva, a qué edad aparece, qué raza lo hace más. Sirve para saber a quién vigilar, no para formular una ración: no trae ninguna cifra de dieta."
+        },
+        "cifra#188:Experimentally, magnesium phosphate and struvite uroliths formed in healthy cats that consumed calculogenic diets containing 0.15–": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO. Rawku es de perros: el motor no tiene ni tabla de requisitos ni catálogo felino, así que aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#198:The cats were fed a high‐moisture (canned/retorted), calorically dense diet containing 0.058% magnesium (dry matter basis) and inc": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO. Rawku es de perros: el motor no tiene ni tabla de requisitos ni catálogo felino, así que aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#203:Other considerations for attempting dietary versus surgical intervention can include whether other concurrent disease(s) prevent t": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cuándo elegir cirugía en vez de dieta, y un aviso de que algunas dietas comerciales de disolución llevan más del 45 % de las kcal en grasa. Es elección de tratamiento, no formulación; y el motor ya tiene techo de grasa propio donde hace falta."
+        },
+        "cifra#226:Purine accounted for 7.6% from 1999 to 2000 and 5.1% from 2002 to 2009 of feline and canine uroliths submitted to the Minnesota Ur": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es epidemiología o historia natural del urolito -- qué porcentaje recidiva, a qué edad aparece, qué raza lo hace más. Sirve para saber a quién vigilar, no para formular una ración: no trae ninguna cifra de dieta."
+        },
+        "cifra#245:The authors have occasionally been successful in medically dissolving urate uroliths in dogs with portal vascular anomalies by dec": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es una dosis de FÁRMACO por kilo de perro (alopurinol, hidroclorotiazida, citrato potásico, 2-MPG, penicilamina). El motor formula comida: no receta medicación, y esa decisión es de quien firma. Queda leído y apartado por la forma de la cifra."
+        },
+        "cifra#246:Medical dissolution of ammonium urate uroliths in dogs without portovascular anomalies is possible by feeding a diet that is prote": {
+          "veredicto": "leido_coincide",
+          "por": "Disolución del urato: dieta restringida en proteína y purinas, «approximately 35-50 g protein/Mcal», más alopurinol. Esos 35-50 g/1000 kcal están POR DEBAJO del mínimo de FEDIAF en adulto (52,1), que es exactamente por lo que `urato` está marcado `formulable: false` en el motor. La fuente confirma la decisión que ya estaba tomada."
+        },
+        "olor#247:It should be noted that getting exact purine concentration data for some commercial foods can be challenging, and often foods must": {
+          "veredicto": "hallazgo_sin_aplicar",
+          "por": "⚠️ EL DATO DE PURINAS ES DIFÍCIL DE CONSEGUIR, Y AQUÍ TAMBIÉN. «getting exact purine concentration data for some commercial foods can be challenging, and often foods must be selected based on total dietary protein and the protein-rich food sources (e.g. plant- and egg-based proteins) used as indicators». El catálogo SÍ trae `purinas_bases` y `purinas_fuente` en cada ficha, así que aquí vamos por delante de lo que describe el libro. Se anota porque justifica ese campo y porque dice qué hacer cuando falta: usar la proteína total y el origen de la proteína como indicador."
+        },
+        "cifra#265:Although no studies have been performed that evaluate the efficacy or safety of medical dissolution of urate uroliths in cats with": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO. Rawku es de perros: el motor no tiene ni tabla de requisitos ni catálogo felino, así que aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#268:Feeding diets formulated for “renal failure” in cats or diets that are restricted in purines to dogs are effective in >90% of case": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO. Rawku es de perros: el motor no tiene ni tabla de requisitos ni catálogo felino, así que aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#270:Administration of an alkalinizing agent (potassium citrate at 75 mg/kg PO q 12 h) may be required to achieve a urine pH >7.0. In d": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es una dosis de FÁRMACO por kilo de perro (alopurinol, hidroclorotiazida, citrato potásico, 2-MPG, penicilamina). El motor formula comida: no receta medicación, y esa decisión es de quien firma. Queda leído y apartado por la forma de la cifra."
+        },
+        "cifra#289:Prevention involves feeding a diet containing approximately 50–65 g/Mcal of protein that induces alkaluria.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Prevención de la XANTINA: «a diet containing approximately 50-65 g/Mcal of protein that induces alkaluria». El motor NO TIENE patología de xantina entre las 47 -- y la xantina se forma sobre todo por dar alopurinol sin restringir purinas, o sea es yatrogénica. Si algún día se añadiera, esta es su cifra: 50-65 g/1000 kcal, que cae por encima del mínimo de FEDIAF (52,1) en su mitad alta, así que sería formulable en parte."
+        },
+        "olor#291:In 10 cats that consumed a protein‐restricted alkalinizing diet and were followed for at least two years, only one had a recurrenc": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO. Rawku es de perros: el motor no tiene ni tabla de requisitos ni catálogo felino, así que aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#293:Cystine accounts for less than 1% of feline and canine uroliths.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es epidemiología o historia natural del urolito -- qué porcentaje recidiva, a qué edad aparece, qué raza lo hace más. Sirve para saber a quién vigilar, no para formular una ración: no trae ninguna cifra de dieta."
+        },
+        "cifra#304:Figure 16.15 Cystine urocystoliths removed from the dog in Figure 16.14. Figure 16.16 Cystine crystals from the dog in Figure 16.1": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es el pie de dos figuras (urocistolitos y cristales de cistina de un bulldog). No trae ninguna cifra de dieta; entra en el filtro por el número de la figura."
+        },
+        "cifra#310:If necessary, or if dietary modification cannot be done, potassium citrate (initial dose 75 mg/kg PO q 12 h; titrate to urine pH o": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es una dosis de FÁRMACO por kilo de perro (alopurinol, hidroclorotiazida, citrato potásico, 2-MPG, penicilamina). El motor formula comida: no receta medicación, y esa decisión es de quien firma. Queda leído y apartado por la forma de la cifra."
         }
       }
     }
