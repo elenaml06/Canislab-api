@@ -144,6 +144,67 @@ TOPE_VITD_KG075 = 2.6      # µg por kg de peso^0.75 -- Lenox & Bauer 2013
 TOPE_VITD_KCAL = 20.0      # µg por 1000 kcal -- NRC 2006
 
 # ---------------------------------------------------------------------------
+# 1c-bis. EL PERRO DE TRABAJO: LOS CINCO TOPES, TAMBIEN POR PESO METABOLICO
+# ---------------------------------------------------------------------------
+#
+# ⚠️ POR QUE EXISTE (11 de septiembre de 2026). Elena, al leerle que la Tabla
+# 4.2 de Fascetti pide al perro de trabajo mas fosforo del que el motor le deja:
+# «y como que el motor no distingue al perro de trabajo, deberia».
+#
+# EL PROBLEMA, Y ES ARITMETICA. Un tope por 1000 kcal deja pasar el DOBLE a
+# quien come el doble. Un perro de caza come 240 kcal/kg^0,75 y uno de
+# mantenimiento 130: con el mismo tope por energia, el de caza recibe un 85 %
+# mas de yodo, de selenio y de mercurio EN ABSOLUTO, todos los dias. Y estos
+# cinco no son requisitos que escalen con el gasto: son toxicos que se acumulan.
+#
+# LO DICE NRC 2006 cap.11, literal, y dice tambien cual es la solucion:
+#
+#     «safe upper limits (SULs) expressed relative to DM and ME should be
+#      decreased eightfold in diets intended for sled dogs running in a cold
+#      environment and halved in diets for working dogs. Safe upper limits
+#      expressed relative to body weight will remain the same unless increased
+#      exercise has been shown to modify the requirement»
+#
+# O sea: **el tope por PESO es el invariante**, y el tope por energia es el que
+# hay que corregir. Un tope por kg^0,75 hace eso solo, sin escalones y sin
+# preguntarle nada a nadie.
+#
+# Y LOS NUMEROS DE NRC CUADRAN CON LOS DE FASCETTI, que es lo que convence de
+# que esto no es una interpretacion: la Tabla 4.1 de Fascetti da 1050
+# kcal/kg^0,75 al perro de trineo y 130 al de mantenimiento -- 1050/130 = 8,1,
+# el «eightfold» de NRC -- y 240 al de caza -- 240/130 = 1,85, el «halved».
+# Las dos frases de NRC son el cociente de energias, no una regla aparte.
+#
+# DE DONDE SALE EL 130. De la pareja que YA existe y que lleva meses aplicada:
+# TOPE_VITD_KG075 / TOPE_VITD_KCAL = 2,6 / 20,0 = 0,130, o sea 130 kcal por
+# kg^0,75. Y el 2,6 no se dedujo: es de Lenox & Bauer 2013, una fuente
+# independiente. O sea que la calibracion del motor y la de la fuente coinciden,
+# y el 130 cae donde tiene que caer -- entre «activo» (125) y «muy activo» (150)
+# de la tabla de FEDIAF que aplica `der.py`.
+#
+# QUE HACE ESTO AL PERRO NORMAL: **nada**. A 110 kcal/kg^0,75 el tope por
+# energia ya es mas estricto que el de peso, asi que el `min()` no lo toca. Solo
+# muerde por encima de 130, que es exactamente el perro del que hablan las dos
+# fuentes.
+#
+# MEDIDO ANTES DE PONERLO, con el catalogo real y un perro de 25 kg: a 175
+# kcal/kg^0,75 el menu trae 64 µg/kg^0,75 de yodo (tope 166), 23 de selenio
+# (tope 74) y 1,31 de vitamina D (tope 2,6). O sea que **hoy no aprieta a nadie**
+# y es red de seguridad, no un cambio de menus. Lo que evita es el menu
+# personalizado del perro de trabajo cargado de kelp o de pescado.
+_KCAL_POR_KG075_MANTENIMIENTO = 130.0
+
+def _por_peso(tope_por_1000kcal):
+    """El gemelo por kg^0,75 de un tope por 1000 kcal, al perro de mantenimiento."""
+    return tope_por_1000kcal * _KCAL_POR_KG075_MANTENIMIENTO / 1000.0
+
+TOPE_YODO_KG075 = _por_peso(1275.0)          # 165,75 µg por kg^0,75
+TOPE_SELENIO_KG075 = _por_peso(570.0)        # 74,1 µg por kg^0,75
+TOPE_MERCURIO_KG075 = _por_peso(0.10)        # 0,013 mg por kg^0,75
+TOPE_TIAMINASA_KG075 = _por_peso(0.10)       # 0,013 g por kg^0,75
+TOPE_EPA_DHA_SEMANAL_KG075 = _por_peso(2.8)  # 0,364 g por kg^0,75, promedio semanal
+
+# ---------------------------------------------------------------------------
 # 1d. YODO (kelp, suplementos, pescado)
 # ---------------------------------------------------------------------------
 # El yodo en exceso, dado de forma repetida, puede alterar la función
@@ -779,6 +840,11 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     yodo_ug = sum(alimentos.get(n, {}).get("nutrientes", {}).get("yodo", 0) * g / 100.0
                  for n, g in menu.items())
     tope_yodo = TOPE_YODO_KCAL * der / 1000.0
+    # ⚠️ EL PERRO DE TRABAJO (11 septiembre): igual que la vitamina D de arriba.
+    # El semáforo tiene que mirar lo mismo que el solver, o construiríamos menús
+    # que el propio semáforo rechaza. Derivación en el bloque 1c-bis.
+    if peso_perro_kg and peso_perro_kg > 0:
+        tope_yodo = min(tope_yodo, TOPE_YODO_KG075 * (peso_perro_kg ** 0.75))
     hay_kelp = any(_es(n, {"kelp", "seaweed", "algas"}) for n in menu)
     if hay_kelp:
         tope_yodo /= MARGEN_EXTRA_YODO_KELP
@@ -793,6 +859,8 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     selenio_ug = sum(alimentos.get(n, {}).get("nutrientes", {}).get("selenio", 0) * g / 100.0
                      for n, g in menu.items())
     tope_selenio = TOPE_SELENIO_KCAL * der / 1000.0
+    if peso_perro_kg and peso_perro_kg > 0:
+        tope_selenio = min(tope_selenio, TOPE_SELENIO_KG075 * (peso_perro_kg ** 0.75))
     if der and selenio_ug > tope_selenio:
         problemas.append(
             "El selenio de este menú llega a %.0f µg, por encima del límite "

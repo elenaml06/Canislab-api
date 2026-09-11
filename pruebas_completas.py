@@ -11506,6 +11506,93 @@ _BLOQUES_QUE_NECESITAN_FUENTES = [
     "81 (el texto de SACN5, elemento a elemento)",
     "85 (cada cita, contra el texto de su fuente)",
 ]
+# ============================================================
+# BLOQUE 86 — EL PERRO DE TRABAJO: LOS TOPES CRÓNICOS, TAMBIÉN POR PESO
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (11 septiembre). Elena, al leer que la Tabla 4.2 de Fascetti
+# pide al perro de trabajo más fósforo del que el motor le deja: «y como que el
+# motor no distingue al perro de trabajo, debería».
+#
+# Un tope por 1000 kcal deja pasar el DOBLE a quien come el doble, y los cinco
+# topes crónicos no son requisitos que escalen con el gasto: son tóxicos que se
+# acumulan. La vitamina D ya tenía su gemelo por kg^0,75 desde hace meses; el
+# yodo y el selenio no lo tenían, y ese hueco es el que este bloque vigila.
+#
+# LO QUE SE EXIGE, y son cuatro cosas distintas:
+#   1. Que la derivación cuadre: cada gemelo es su tope por energía al perro de
+#      mantenimiento (130 kcal/kg^0,75).
+#   2. Que ese 130 salga de la pareja de la vitamina D, que es la que ya existía
+#      y la única con fuente propia (Lenox & Bauer 2013).
+#   3. Que el cruce caiga entre «activo» (125) y «muy activo» (150): al perro
+#      normal no le cambia nada.
+#   4. Y el fallo puesto: un menú que pasa el tope por energía y NO el de peso
+#      tiene que ser rechazado por el filtro final.
+print("\n" + "=" * 60)
+print("=== BLOQUE 86: el perro de trabajo, topes crónicos por peso ===")
+
+import seguridad as _sg86
+import main as _main86
+
+_MANT_86 = 130.0
+for _nut86, _kcal86, _peso86 in (("yodo", _sg86.TOPE_YODO_KCAL, _sg86.TOPE_YODO_KG075),
+                                 ("selenio", _sg86.TOPE_SELENIO_KCAL, _sg86.TOPE_SELENIO_KG075),
+                                 ("mercurio", _sg86.TOPE_MERCURIO_KCAL, _sg86.TOPE_MERCURIO_KG075),
+                                 ("tiaminasa", _sg86.TOPE_TIAMINASA_KCAL, _sg86.TOPE_TIAMINASA_KG075)):
+    _esperado86 = _kcal86 * _MANT_86 / 1000.0
+    if abs(_peso86 - _esperado86) > 1e-9:
+        fallos.append(f"BLOQUE86: el tope de {_nut86} por kg^0,75 es {_peso86} y su gemelo por "
+                      f"energía ({_kcal86}) daría {_esperado86:.4f} al perro de mantenimiento "
+                      f"(130 kcal/kg^0,75). Los dos tienen que moverse juntos")
+
+_coef86 = _sg86.TOPE_VITD_KG075 / _sg86.TOPE_VITD_KCAL * 1000.0
+if abs(_coef86 - _MANT_86) > 1.0:
+    fallos.append(f"BLOQUE86: la pareja de la vitamina D ({_sg86.TOPE_VITD_KG075} por kg^0,75 y "
+                  f"{_sg86.TOPE_VITD_KCAL} por 1000 kcal) está calibrada a {_coef86:.0f} "
+                  f"kcal/kg^0,75 y las otras cuatro se derivan de 130. De ahí sale el número: si "
+                  f"esa pareja cambia, hay que rehacer las otras cuatro en el mismo commit")
+
+_peso86_kg = 25.0
+_m86 = _peso86_kg ** 0.75
+for _etq86, _k86, _quien86 in (("normal", 110, "energia"), ("activo", 125, "energia"),
+                               ("muy_activo", 150, "peso"), ("trabajo", 175, "peso")):
+    _der86 = _k86 * _m86
+    _por_kcal86 = _sg86.TOPE_YODO_KCAL * _der86 / 1000.0
+    _por_peso86 = _sg86.TOPE_YODO_KG075 * _m86
+    _manda86 = "peso" if _por_peso86 < _por_kcal86 else "energia"
+    if _manda86 != _quien86:
+        fallos.append(f"BLOQUE86: a {_k86} kcal/kg^0,75 manda el tope por {_manda86} y tenía que "
+                      f"mandar el de {_quien86}. El cruce va en 130 kcal/kg^0,75, que es donde "
+                      f"está calibrada la pareja de la vitamina D")
+
+_der86_trabajo = 175 * _m86
+_tope_peso86 = _sg86.TOPE_YODO_KG075 * _m86
+_tope_kcal86 = _sg86.TOPE_YODO_KCAL * _der86_trabajo / 1000.0
+if _tope_peso86 >= _tope_kcal86:
+    fallos.append("BLOQUE86: a 175 kcal/kg^0,75 el tope por peso no es el más estricto, así que "
+                  "esta comprobación no demuestra nada. Mira la derivación")
+else:
+    _yodo86 = [((valor_nutriente(_a["nutrientes"], "yodo") or 0), _n) for _n, _a in al.items()]
+    _yodo86 = [(v, n) for v, n in _yodo86 if v > 0]
+    if not _yodo86:
+        fallos.append("BLOQUE86: no hay en el catálogo ni un alimento con yodo, así que no se "
+                      "puede fabricar el menú que cruza el tope")
+    else:
+        _vmax86, _quien_yodo86 = max(_yodo86)
+        _objetivo86 = (_tope_peso86 + _tope_kcal86) / 2.0
+        _menu86 = {_quien_yodo86: _objetivo86 / _vmax86 * 100.0}
+        if _main86._menu_precalculado_es_seguro(_menu86, al, _der86_trabajo,
+                                                peso_perro_kg=_peso86_kg):
+            fallos.append(
+                f"BLOQUE86: un menú con {_objetivo86:.0f} µg de yodo para un perro de 25 kg a 175 "
+                f"kcal/kg^0,75 pasa el filtro final, y no debería: está por encima del tope por "
+                f"peso ({_tope_peso86:.0f}) aunque quepa bajo el de energía ({_tope_kcal86:.0f}). "
+                f"El filtro final no está mirando el gemelo por peso")
+
+print(f"  cruce en 130 kcal/kg^0,75 · 4 topes con su gemelo · "
+      f"yodo del perro de trabajo congelado en {_tope_peso86:.0f} µg")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
 _hay_fuentes = _os_b18.path.isdir(_RUTA_FUENTES)
 
 print(f"\n{'='*60}")

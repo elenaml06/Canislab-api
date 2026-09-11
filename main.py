@@ -167,7 +167,8 @@ def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=N
 def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
     from seguridad import (
         TIAMINASA, MERCURIO_ALTO, TOPE_TIAMINASA_KCAL, TOPE_MERCURIO_KCAL,
-        TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL, TOPE_SELENIO_KCAL, _es,
+        TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL, TOPE_SELENIO_KCAL,
+        TOPE_YODO_KG075, TOPE_SELENIO_KG075, _es,
     )
     if not der:
         return True  # sin DER no se puede evaluar nada -- no bloquear por falta de dato
@@ -189,7 +190,16 @@ def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
         return False
 
     yodo_ug = sum(al.get(n, {}).get("nutrientes", {}).get("yodo", 0) * g / 100.0 for n, g in gramos.items())
-    if yodo_ug > TOPE_YODO_KCAL * der / 1000.0:
+    # ⚠️ EL PERRO DE TRABAJO (11 septiembre): el yodo y el selenio se topan
+    # también por PESO METABÓLICO, igual que la vitamina D dos bloques arriba.
+    # Un tope por energía deja pasar el doble a quien come el doble, y NRC 2006
+    # cap.11 dice que el invariante es el de peso. El filtro final tiene que
+    # mirar lo mismo que el solver o construiría menús que él mismo rechaza --
+    # que es la lección del 8 de septiembre con los suelos de patología.
+    tope_yodo = TOPE_YODO_KCAL * der / 1000.0
+    if peso_perro_kg and peso_perro_kg > 0:
+        tope_yodo = min(tope_yodo, TOPE_YODO_KG075 * (peso_perro_kg ** 0.75))
+    if yodo_ug > tope_yodo:
         return False
 
     # ⚠️ El selenio se topa POR ENERGÍA y no por peso de comida. Antes iba
@@ -198,7 +208,10 @@ def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
     # eso dejaba pasar entre tres y cuatro veces el límite real. Ver
     # TOPE_SELENIO_KCAL en seguridad.py.
     selenio_ug = sum(al.get(n, {}).get("nutrientes", {}).get("selenio", 0) * g / 100.0 for n, g in gramos.items())
-    if selenio_ug > TOPE_SELENIO_KCAL * der / 1000.0:
+    tope_selenio = TOPE_SELENIO_KCAL * der / 1000.0
+    if peso_perro_kg and peso_perro_kg > 0:
+        tope_selenio = min(tope_selenio, TOPE_SELENIO_KG075 * (peso_perro_kg ** 0.75))
+    if selenio_ug > tope_selenio:
         return False
 
     return True

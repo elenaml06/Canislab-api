@@ -1151,7 +1151,7 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # estricto de los dos como techo REAL del solver, no solo el de
     # FEDIAF. Ver seguridad.py para el porqué de cada cifra.
     from seguridad import (TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL,
-                           TOPE_SELENIO_KCAL)
+                           TOPE_SELENIO_KCAL, TOPE_YODO_KG075, TOPE_SELENIO_KG075)
     # ⚠️ CORREGIDO (5 agosto, madrugada) — BUG REAL Y GRAVE ENCONTRADO,
     # pedido expreso: "si edito un menú, ¿sigue teniendo en cuenta los
     # límites semanales?" -- investigando eso se encontró un bug de
@@ -1215,6 +1215,28 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
                          # depende del agua de la ración. Ver el bloque de
                          # TOPE_SELENIO_KCAL en seguridad.py.
                          "selenio": TOPE_SELENIO_KCAL * MARGEN_REDONDEO_SEGURIDAD}
+    # ⚠️ EL PERRO DE TRABAJO (11 septiembre) — EL YODO Y EL SELENIO, TAMBIÉN POR
+    # PESO METABÓLICO, igual que la vitamina D tres líneas más arriba.
+    #
+    # Elena: «y como que el motor no distingue al perro de trabajo, debería».
+    # Un tope por 1000 kcal deja pasar el DOBLE a quien come el doble, y estos
+    # no son requisitos que escalen con el gasto: son tóxicos que se acumulan.
+    # NRC 2006 cap.11 lo dice y da la solución: «Safe upper limits expressed
+    # relative to body weight will remain the same». El tope por PESO es el
+    # invariante; el de energía es el que hay que corregir.
+    #
+    # No hace falta preguntarle la actividad a nadie: el solver ya tiene el DER
+    # y el peso, y el cociente ES la actividad. Al perro normal no le toca nada
+    # -- a 110 kcal/kg^0,75 el tope por energía ya es el más estricto.
+    # La derivación del 130 y las medidas, en `seguridad.py`.
+    if peso_perro_kg and peso_perro_kg > 0 and der:
+        _kg075 = peso_perro_kg ** 0.75
+        for _clave_pt, _tope_pt in (("yodo", TOPE_YODO_KG075),
+                                    ("selenio", TOPE_SELENIO_KG075)):
+            _por_peso_en_kcal = _tope_pt * _kg075 / der * 1000.0
+            TOPE_CRONICO_KCAL[_clave_pt] = min(
+                TOPE_CRONICO_KCAL[_clave_pt],
+                _por_peso_en_kcal * MARGEN_REDONDEO_SEGURIDAD)
     # ⚠️ EPA+DHA SOLO SI VIENE PRESUPUESTO (26 agosto). No se siembra con un
     # valor por defecto a propósito: un menú suelto (/menu/v2) NO lleva techo
     # de EPA+DHA, porque los 2800 mg son el límite de la dieta habitual y no
