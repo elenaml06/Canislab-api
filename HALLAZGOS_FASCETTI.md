@@ -429,3 +429,45 @@ Las tres van por encima del rango de Fascetti en los perros grandes. Gana FEDIAF
 —es la fuente de la fórmula— y en lactancia, además, quedarse corto es el riesgo
 de verdad. Apuntado con las dos cifras.
 
+
+## F-13. El techo de EPA+DHA del NRC, que sale de la misma frase que el linoleico que sí aplicamos
+
+Capítulo 14, leído entero el 11 de septiembre de 2026. La frase:
+
+> «A ratio of 2.6 : 26 of LA : ALA (2.6 : 16 in gestation/lactation) is
+> considered safe in dogs, along with a safe upper limit for LA and EPA + DHA of
+> 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006).»
+
+De esa frase el motor aplica **dos de sus tres cifras** y no la tercera:
+
+| Cifra | Estado | Qué pasa hoy |
+|---|---|---|
+| Ratio LA:ALA 2,6-26 (2,6-16 en reproducción) | ✅ aplicado, `requisitos_condicionales.json` | — |
+| Techo de LA 16,3 g/1000 kcal | ✅ aplicado el 11-sep, `recomendaciones_libro.json` | **no aprieta nunca**: medido sobre los 216 menús del catálogo, van de 3,20 a 10,50 |
+| **Techo de EPA+DHA 2,8 g/1000 kcal** | ❌ **NO aplicado** | **sí aprieta** |
+
+**Y no es teórico. Medido el 11-sep sobre los 216 menús del catálogo:**
+
+| | EPA+DHA por 1000 kcal |
+|---|---|
+| mínimo | 0,11 |
+| mediana | 0,46 |
+| máximo | **3,00** |
+| **por encima de 2,8** | **5 de 216** |
+
+Los cinco: `Toy_Adulto#3` (3,00), `Mini_Adulto#1` (2,92), `Mediano_Adulto#1`
+(2,91), `Pequeño_Senior#1` (2,83), `Gigante_Senior#1` (2,81).
+
+⚠️ **Y FEDIAF no pone máximo de EPA+DHA en ninguna etapa** — las tres columnas de
+máximo de esa fila están vacías —, así que el semáforo no puede verlo: es la
+familia de siempre, un menú por encima de lo que la fuente llama límite superior
+seguro sale **en verde**, porque el semáforo mide los requisitos de un perro
+SANO y ahí no hay techo que medir.
+
+**Lo que cuesta aplicarlo, y por qué no se aplicó en la misma pasada que el
+linoleico:** el techo del libro se comprueba también en `_garantizar_verificado`,
+así que encenderlo deja **esos cinco menús precalculados sin poder entregarse**
+hasta regenerar el catálogo con `regenerar_catalogo.py`. No es que la cifra no
+quepa —bajar EPA+DHA es quitar pescado, y la mediana está seis veces por debajo
+del techo—: es que hay que rehacer los 216 y volver a pasar la batería entera.
+Queda escrito con su medida, que es la regla, y es lo siguiente que toca de aquí.
