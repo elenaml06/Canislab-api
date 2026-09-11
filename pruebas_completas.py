@@ -13131,6 +13131,31 @@ def _cifras90(clave):
         out["_no_formulable"] = True
     return out
 
+# La funcion que llama el solver de verdad. Se importa aqui arriba porque la
+# usan ya el punto 3 (que mide la COMBINACION de dos patologias) y el 8.
+from motor_completo import topes_de_patologias as _topes90
+
+
+def _cifras_de_la_combinacion90(lista):
+    """Lo que el SOLVER aplica a esa combinacion, en la forma del inventario.
+
+    ⚠️ Se le pregunta a `topes_de_patologias` y no se lee de `patologias.json`
+    a mano, por lo mismo de siempre: leerlo a mano seria una segunda copia de
+    la logica de combinacion (`min()` para techos, `max()` para suelos, mas los
+    condicionales `si_ademas`), y esa copia se desincroniza. Aqui la respuesta
+    de una pregunta de analitica dice lo que el perro va a comer DE VERDAD, que
+    no es lo que dice ninguna de las dos patologias por separado.
+    """
+    t, pct, av, su = _topes90(list(lista), "Adulto")
+    out = {}
+    for n_, v_ in (t or {}).items():
+        out["max_" + n_] = v_
+    for n_, v_ in (su or {}).items():
+        out["min_" + n_] = v_
+    if pct is not None:
+        out["max_pct_kcal_grasa"] = pct
+    return out
+
 # ── 1. Cada estado declarado es uno de los cinco ────────────────────────
 for _k90, _v90 in _P90.items():
     if _v90.get("estado") not in _ESTADOS90:
@@ -13142,13 +13167,46 @@ for _k90, _v90 in _P90.items():
 # ⚠️ Lo segundo es lo que importa: si las cifras se copiaran aquí, esto sería
 # la segunda copia de `patologias.json` y se desincronizaría igual que se
 # desincronizó la del `POST /menu` que se borró el 26 de agosto.
+#
+# ⚠️ Y DOS FORMAS DE APLICAR UNA RESPUESTA, declaradas y no deducidas
+# (11 septiembre, noche). `sustituye_a_la_cabecera` son las cinco preguntas de
+# subtipo: la respuesta es una clave HERMANA y echa a la cabecera del array.
+# `anade_otra_patologia` son las dos de analítica: la respuesta SUMA una
+# segunda patología y la cabecera se queda. Se aplican al revés, y confundirlas
+# dejaría al perro sin su pancreatitis, así que la forma va escrita en el
+# fichero -- mirando la respuesta no se puede saber: `hiperlipidemia` es una
+# patología de pleno derecho igual que `cardiopatia_c`.
+_FORMAS90 = {"sustituye_a_la_cabecera", "anade_otra_patologia"}
 for _k90, _v90 in _P90.items():
+    _forma90 = _v90.get("como_se_aplica", "sustituye_a_la_cabecera")
+    if _forma90 not in _FORMAS90:
+        fallos.append(f"BLOQUE90: «{_k90}» dice `como_se_aplica: {_forma90}`, que no es ninguna "
+                      f"de {sorted(_FORMAS90)}")
     for _r90 in _v90.get("respuestas", []):
         _cm90 = _r90.get("clave_motor")
+        # En la forma que SUMA, una respuesta puede no añadir nada («no los
+        # tiene altos»), y entonces no lleva clave. Es el caso bueno, no un
+        # hueco: lo que decide es la OTRA.
+        if _cm90 is None and _forma90 == "anade_otra_patologia":
+            continue
         if _cm90 not in _pat90:
             fallos.append(f"BLOQUE90: «{_k90}» ofrece la respuesta «{_r90.get('label')}» que "
                           f"lleva a «{_cm90}», y esa patología no existe. La app mandaría una "
                           f"clave que el motor tira sin decir nada")
+            continue
+        # ⚠️ En la forma que SUMA, las cifras de la respuesta NO son las de su
+        # clave suelta: son las de la COMBINACIÓN con la cabecera, que es lo
+        # que de verdad se le aplica al perro. Comprobarlas contra la clave
+        # suelta diría que `hiperlipidemia` aporta su propio techo de grasa (30)
+        # y se perdería lo único que importa aquí: que junto a la pancreatitis
+        # el techo baja a 25.
+        if _forma90 == "anade_otra_patologia":
+            _esp90c = _cifras_de_la_combinacion90([_k90, _cm90])
+            if _r90.get("cifras_que_aplica") != _esp90c:
+                fallos.append(f"BLOQUE90: «{_k90}» + «{_cm90}» aplica {_esp90c} y el inventario "
+                              f"dice {_r90.get('cifras_que_aplica')}. En esta forma la respuesta "
+                              f"tiene que decir lo que come el perro DE VERDAD, que no es lo que "
+                              f"dice ninguna de las dos patologias por separado")
             continue
         if _r90.get("cifras_que_aplica") != _cifras90(_cm90):
             fallos.append(f"BLOQUE90: las cifras de «{_cm90}» en el inventario no son las de "
@@ -13165,8 +13223,21 @@ for _k90, _v90 in _P90.items():
     _rs90 = _v90.get("respuestas", [])
     if not _rs90:
         continue
-    _distintas90 = {_json90.dumps(_r90.get("cifras_que_aplica"), sort_keys=True) for _r90 in _rs90}
-    _decide90 = len(_distintas90) > 1
+    # En la forma que SUMA, lo que decide no son las cifras escritas en la
+    # respuesta sino lo que aplica el motor a la COMBINACIÓN. Se le pregunta a
+    # `topes_de_patologias`, que es la función que llama el solver.
+    if _v90.get("como_se_aplica") == "anade_otra_patologia":
+        _combis90 = set()
+        for _r90 in _rs90:
+            _lista90 = [_k90] + ([_r90["clave_motor"]] if _r90.get("clave_motor") else [])
+            _t90c, _pct90c, _av90c, _s90c = _topes90(_lista90, "Adulto")
+            _combis90.add(_json90.dumps(
+                {"topes": _t90c, "pct_kcal_grasa": _pct90c, "suelos": _s90c}, sort_keys=True))
+        _decide90 = len(_combis90) > 1
+    else:
+        _distintas90 = {_json90.dumps(_r90.get("cifras_que_aplica"), sort_keys=True)
+                        for _r90 in _rs90}
+        _decide90 = len(_distintas90) > 1
     if _v90.get("estado") == "aplicada" and not _decide90:
         fallos.append(f"BLOQUE90: «{_k90}» se declara «aplicada» y sus {len(_rs90)} respuestas "
                       f"aplican EXACTAMENTE lo mismo. Se le pide un dato clínico a quien firma "
@@ -13288,7 +13359,7 @@ for _k90 in sorted(x for x in _ofrecidas90 if x):
 # Lo segundo es lo que de verdad protege. El solver podría ignorar el tope y el
 # menú saldría igual de verde para el semáforo de FEDIAF, que mide contra el
 # perro SANO — que es exactamente lo que ya pasó con el fósforo del renal.
-from motor_completo import topes_de_patologias as _topes90
+# (`_topes90` ya esta importado arriba, junto a `_cifras90`.)
 
 _ESTADIOS90 = {"cardiopatia_a": None, "cardiopatia_b1": None, "cardiopatia_b2": 738.6,
                "cardiopatia_c": 625.0, "cardiopatia_d": 480.0}
@@ -13320,16 +13391,31 @@ for _k90, _esp90 in _ESTADIOS90.items():
 # la función que llama el solver de verdad.
 _comprobadas90 = 0
 for _k90, _v90 in _P90.items():
+    _suma90 = _v90.get("como_se_aplica") == "anade_otra_patologia"
     for _r90 in _v90.get("respuestas", []):
         _cm90 = _r90.get("clave_motor")
-        if not _cm90 or _cm90 not in _pat90:
+        if _suma90:
+            # La lista que de verdad viaja al motor: la cabecera SIEMPRE, mas
+            # lo que anada la respuesta (que puede no anadir nada).
+            _lista90b = [_k90] + ([_cm90] if _cm90 else [])
+        elif not _cm90 or _cm90 not in _pat90:
             continue
-        _t90b, _pg90b, _av90b, _su90b = _topes90([_cm90], "Adulto")
+        else:
+            _lista90b = [_cm90]
+        _t90b, _pg90b, _av90b, _su90b = _topes90(_lista90b, "Adulto")
         for _cl90, _esp90b in (_r90.get("cifras_que_aplica") or {}).items():
             if _cl90 == "_no_formulable":
                 continue
-            _cual90, _nut90 = _cl90.split("_", 1)
-            _visto90b = (_t90b if _cual90 == "max" else _su90b).get(_nut90)
+            # ⚠️ El porcentaje de kcal de grasa NO vive en el diccionario de
+            # topes: es el SEGUNDO valor que devuelve `topes_de_patologias`,
+            # porque no es una concentracion por 1000 kcal sino una fraccion de
+            # la energia. Buscarlo entre los topes da None y acusa al solver de
+            # no aplicar lo que si aplica.
+            if _cl90 == "max_pct_kcal_grasa":
+                _visto90b = _pg90b
+            else:
+                _cual90, _nut90 = _cl90.split("_", 1)
+                _visto90b = (_t90b if _cual90 == "max" else _su90b).get(_nut90)
             _comprobadas90 += 1
             if _visto90b is None or abs(_visto90b - _esp90b) > 1e-6:
                 fallos.append(
@@ -13342,6 +13428,8 @@ for _k90, _v90 in _P90.items():
         # no ve, y que puede dejar al perro sin menú sin que se sepa por qué.
         _dice90 = set(_r90.get("cifras_que_aplica") or {})
         _aplica90 = {"max_" + n for n in _t90b} | {"min_" + n for n in _su90b}
+        if _pg90b is not None:
+            _aplica90.add("max_pct_kcal_grasa")
         if _aplica90 - _dice90 - {"_no_formulable"}:
             fallos.append(f"BLOQUE90: contestar «{_r90.get('label')}» en «{_k90}» hace que el "
                           f"solver aplique {sorted(_aplica90 - _dice90)}, que la respuesta no "

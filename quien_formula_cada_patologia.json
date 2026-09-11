@@ -263,7 +263,7 @@
       "que_dato": "si ademas hay pancreatitis o hipertrigliceridemia",
       "cita_que_lo_condiciona": "Su tope de grasa por porcentaje de kcal solo se aplica «si ademas» hay pancreatitis o hipertrigliceridemia (`max_pct_kcal_grasa_si_ademas` en patologias.json).",
       "quien_puede_marcarla": "solo_veterinario",
-      "pregunta_que_falta": "Ninguna nueva: se resuelve marcando tambien la otra patologia. Lo que falta es que la pantalla DIGA que marcarla cambia el tope de grasa.",
+      "pregunta_que_falta": "YA SE PREGUNTA: los trigliceridos de la ultima analitica, desde el 11-sep-2026 por la noche, y aqui pesa mas que en la pancreatitis -- medido, la diabetes SOLA no tiene ningun techo de grasa, y la respuesta enciende los dos (30 g/1000 kcal y el 30 % de las kcal). FALTA: la EXCEPCION que escribe la fuente y el motor no aplica, «except for diabetic dogs in thin body condition». La app ya sabe el BCS, asi que es implementable sin preguntar nada nuevo; falta decidir en que punto de BCS corta, y eso es clinico.",
       "pistas_automaticas": [
         "triglic"
       ],
@@ -557,7 +557,7 @@
       "que_dato": "trigliceridos en sangre (y el BCS, que ya se pregunta)",
       "cita_que_lo_condiciona": "SACN5 Tabla 67-3 gradua la grasa en dos niveles: «<=15% for non-obese and non-hypertriglyceridemic dogs» y «<=10% for obese and/or hypertriglyceridemic dogs», o sea 37,5 y 25 g/1000 kcal.",
       "quien_puede_marcarla": "solo_veterinario",
-      "pregunta_que_falta": "¿Tiene los trigliceridos altos? La obesidad ya la sabe la app por el BCS, pero la hipertrigliceridemia solo se sabe con una analitica -- y de ella depende que el tope sea 37,5 o 25.",
+      "pregunta_que_falta": "YA SE PREGUNTA: los trigliceridos de la ultima analitica, desde el 11-sep-2026 por la noche. La respuesta anade `hiperlipidemia` y el techo de grasa baja de 37,5 a 25 (medido). La obesidad ya la sabe la app por el BCS y entra por el mismo `requiere`. FALTA: nada para elegir la cifra.",
       "pistas_automaticas": [
         "triglic"
       ],
