@@ -181,7 +181,7 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 92 bloques, ~40 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `pruebas_completas.py` | **La batería.** Los 94 bloques, ~40 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
 | `datos_de_la_ficha.json` | **Los 21 campos que la ficha pregunta, y CÓMO llega cada uno al motor** (11 de septiembre). Nació de una frase de Elena: «TODOS LOS DATOS QUE RECOJA LA APP TIENEN QUE LLEGAR DE ALGUNA MANERA AL MOTOR, SI NO SON DATOS INUTILES Y CUANDO SE PIDEN ES SIEMPRE POR ALGO». Y tiene un caso que lo justifica solo, del mismo día: la ficha pregunta la **actividad** desde siempre, la app la usaba para calcular las kcal y mandaba solo el número — el motor veía 1955 kcal y no sabía si era un galgo de sofá o un perro de trineo, que es justo lo que decide si se le aprietan los topes crónicos por peso metabólico. Hay tres formas de llegar: `campo` (viaja suelto), `dentro_de` (va cocinado dentro de un número que sí viaja, y entonces **hay que escribir qué se pierde por ir así**) y `no_hace_falta` (con su motivo, que tiene que ser un motivo y no una excusa). Lo vigila el BLOQUE 87. ⚠️ Eran 20 y faltaba `raza`: la lista se copió a mano de `tests/ficha-ida-y-vuelta.spec.js`… donde `raza` tampoco estaba, porque su perro de ejemplo era un mestizo y `null` vuelve como `null` aunque se pierda. Dos inventarios copiados a mano, el mismo hueco en los dos |
 | `niveles_de_actividad.json` | **La Tabla VII-7 de FEDIAF fila por fila**, con lo que hace el motor y lo que ofrece la app (11 de septiembre). Cinco filas emparejadas, una **partida por nosotros** (el rango «High activity 150-175» es UNA fila de la fuente y el motor la parte en dos niveles), una fuera a propósito (los perros de trineo, 860-1240) y un **HUECO** declarado: «Obese prone adults ≤ 90» no está ni en el motor ni en la app. Lo vigila el BLOQUE 88 |
 | `preguntas_por_patologia.json` | **Qué pregunta decide la cifra de cada patología, qué respuestas tiene, y a qué clave del motor lleva cada una** (11 de septiembre). Nació de una frase de Elena: «tendrá que haber preguntas para cada patología preguntando resultados de analíticas o lo que sea para que pueda coger según la respuesta los límites para cada estadio o cada caso». ⚠️ **Y lo primero que hay que saber al abrirlo es que la mitad ya estaba hecha**: la cardiopatía tiene **cinco claves con cinco techos de sodio** (`cardiopatia_c` 625, `cardiopatia_d` 480) y la app **ya pregunta el estadio ACVIM**. Cuatro de las diez están `aplicada`. Aquí no hay ni un número escrito: se **derivan** de `patologias.json`, y donde el motor no tiene una clave por respuesta se dice en vez de inventarla. Cinco estados, y el que importa es **`no_cambia_ninguna_cifra`**: una pregunta cuyas respuestas aplican exactamente lo mismo no decide nada — se le pide un dato clínico a quien firma y da igual lo que conteste. Hoy le pasa a `shunt_sin_encefalopatia`. Lo vigila el BLOQUE 90, que además exige que **cada `requiere` de un tope condicional apunte a una patología que exista**: el de la diabetes decía `hipertrigliceridemia`, que no es ninguna de las 47, así que ese techo **no se aplicaba nunca** por esa puerta — el solver lo resuelve con `any(otra in lista ...)` y un nombre que nadie puede marcar no entra jamás, con el menú saliendo verde igual |
@@ -318,13 +318,71 @@ firma necesita poder afirmar lo segundo.
 `/der`, `/transicion` y `/perro/{perro_id}/menus`. Se dejan a propósito: no
 duplican nada, son funciones que existen y que la app puede volver a usar.
 Pero nadie los prueba usando la app, así que si algo se rompe ahí solo lo
-ve la batería.
+ve la batería. **Y se rompen de verdad**: `/der` llevaba desde el 28 de
+agosto devolviendo 500 en TODAS las llamadas — se le pasaba un
+`peso_objetivo_kg=` que `calcular_der()` no tiene — y no lo vio nadie en
+dos semanas, porque la app calcula el DER por su cuenta y el BLOQUE 23
+prueba la función por dentro, nunca la puerta. Arreglado el 11 de
+septiembre, y ahora el BLOQUE 93 llama al endpoint.
 `/perro/{perro_id}/menus` **era el único agujero de la regla 1** hasta el 7
 de septiembre, y no por descuido: la tabla `menus` guardaba nombre, gramos
 y kcal, así que un menú guardado no se podía verificar ni en principio.
 Ahora `guardar_menu` escribe el contexto (etapa, DER, pesos, patologías)
 junto al menú y el endpoint lo verifica al leerlo — o dice que no puede,
 si es una fila anterior a ese cambio. Lo vigila el BLOQUE 47.
+**Y desde el 11 de septiembre pide credencial**: era un GET con el id del
+perro en la dirección y nada más, y los ids van 1, 2, 3 — contarlos hacia
+arriba enseñaba el historial de comida de los perros de todo el mundo. La
+regla 1 mira que el MENÚ cumpla, no que sea tuyo; eso son dos preguntas.
+
+### Las puertas: quién puede pedir qué
+
+Escrito el 11 de septiembre, porque hasta ese día no había ninguna y los
+92 bloques de la batería vigilaban qué SALE, nunca quién PIDE. Seis
+agujeros, ninguno de ellos daba error ni se veía en pantalla, y los cuatro
+primeros llegaban a datos de otra persona. Lo vigila entero el BLOQUE 93.
+
+1. **La consulta a Stripe se montaba con un f-string.** Una comilla simple
+   dentro del `user_id` — que llega en el cuerpo de `/stripe/checkout`, que
+   no autentica a nadie — la convertía en la consulta que quisiera quien
+   llamara, y devolvía las suscripciones de otra gente. Ahora ese campo
+   pasa por `_user_id_limpio()`, y sin id válido **no se hace la consulta**.
+2. **`/stripe/portal` abría el portal del `stripe_customer_id` que le
+   mandaran.** Un identificador no es una credencial, que es exactamente lo
+   que ya estaba escrito el 29 de agosto en `_es_profesional_acreditado` y
+   este endpoint no seguía. Ahora pide el token de sesión y el cliente sale
+   de la suscripción de ESE uid. `/stripe/checkout` tampoco devuelve ya una
+   URL de portal: sabiendo el uid de otro — un UUID, que no es secreto —
+   daba la puerta a su facturación.
+3. **El token de sesión se iba entero a Sentry.** `observabilidad.py`
+   comparaba nombres de clave EXACTOS, su lista decía `token`, y el campo
+   se llama `token_usuario`. Ahora se compara por trozo y además se tacha
+   por FORMA (`_JWT`, y los prefijos `sb_secret_` / `sk_live_` / `whsec_`),
+   porque Sentry adjunta las variables locales y ahí el token viaja dentro
+   de un texto donde ninguna limpieza por nombre puede verlo.
+4. **El sello de una pauta firmada era un SHA-256 sin clave**, o sea una
+   receta pública: se cambiaba el menú y el número de colegiado, se
+   recalculaba, y `/pauta/comprobar` decía «es exactamente el que se
+   firmó». Ahora es HMAC con `SELLO_SECRETO`, **y sin esa variable no se
+   firma** (503). `/pauta/comprobar` sigue reconociendo los sellos
+   anteriores, pero los llama por su nombre y dice que hay que volver a
+   firmar.
+5. **El CORS estaba en `*`** con el comentario «en produccion, poner aqui
+   el dominio real» puesto desde el primer día. Hoy no daba acceso a la
+   cuenta de nadie — para eso hace falta el token —, pero deja de ser
+   inofensivo en cuanto un endpoint se fíe de una cookie, y ese día nadie
+   iba a volver aquí.
+6. **`/der` cogía el índice de actividad sin mirarlo.** Un `-1` no
+   revienta: en Python cuenta desde el final y elige «trabajo», el que más
+   kcal da. De ese DER salen las kcal del menú y el semáforo verifica
+   CONTRA ESE DER, así que sale verde — es la familia de fallo de
+   `radiografia.py`.
+
+**Lo que sigue sin puerta, y es a propósito**: `/menu/v2`, `/analizar`,
+`/alimentos` y los demás del motor. No dan acceso a datos de nadie: se les
+manda un perro y devuelven un menú. Y el premium lo sigue tapando el
+frontend, que es un `blur` de CSS. Ver `VETERINARIOS.md` §10 para lo que
+queda y por qué la fase 4 no se despliega sin ello.
 
 `POST /menu` **ya no existe** (26 de agosto). Era el motor anterior al MILP
 y arrastraba su propia tabla de patologías, desincronizada de la buena:
@@ -608,7 +666,7 @@ se comprueba entero en cada batería.
 python3 pruebas_completas.py     # ~40 min, tiene que salir TODO EN VERDE
 ```
 
-Los 92 bloques tardan unos **40 minutos** (2.387 s en la última medida; el
+Los 94 bloques tardan unos **40 minutos** (2.387 s en la última medida; el
 «~25 min» que ponía aquí se quedó corto igual que antes se quedó corto el
 «~10 min», y antes el «~2 min»: cada vez que un bloque nuevo resuelve menús de
 verdad, esta cifra sube. Si vuelve a bajar sin motivo, es que algo no se está
@@ -770,6 +828,7 @@ Contra eso hay tres cosas, y las tres hay que mantenerlas:
 | `STRIPE_PRICE_MENSUAL` / `_ANUAL` | Precios de prueba. Sin ellas, los de producción |
 | `SUPABASE_URL` / `SUPABASE_SERVICE_KEY` | Activar el premium. Hace falta la **secreta**, no la pública |
 | `STRIPE_PRUEBA` / `SENTRY_PRUEBA` | Endpoints de prueba. Se borran al terminar |
+| `SELLO_SECRETO` | La clave con la que se sellan las pautas firmadas. **Sin ella `/pauta/firmar` devuelve 503 a propósito**: un sello sin clave lo recalcula cualquiera y no prueba quién firmó. `/verificar` dice si está puesta |
 
 ## Trampas conocidas
 

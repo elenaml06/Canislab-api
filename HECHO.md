@@ -138,6 +138,63 @@ tienen veredicto y los pendientes son **2.675**: se había escrito el total en e
 sitio del pendiente. Corregido, y la batería lo encontró sola.
 
 ---
+## Las puertas de la API — hecho el 11 de septiembre
+
+Hasta este día ningún bloque de la batería se preguntaba **quién** estaba
+pidiendo. Los 92 vigilaban qué SALE: que el menú cumpla los 43 requisitos,
+que no se pase de los topes, que las kcal sean las de este perro. Quién lo
+pedía no lo miraba nadie, y esa pregunta tiene sus propias formas de salir
+mal — ninguna da error, ninguna se ve en pantalla, y el menú sale verde
+igual. Es la familia de «fallos que no puede encontrar la usuaria» del
+`CLAUDE.md`, aplicada al acceso en vez de a los datos.
+
+Seis, encontrados de una sentada auditando. Los cuatro primeros llegaban a
+datos de otra persona:
+
+1. **La consulta a Stripe se montaba con un f-string.** Una comilla simple
+   en el `user_id` —que llega en el cuerpo de `/stripe/checkout`, que no
+   autentica a nadie— la reescribía entera:
+   `{"user_id": "x' OR status:'active"}` devolvía las suscripciones de todo
+   el mundo, y `/stripe/checkout` contestaba con la URL del portal de
+   facturación del primero: sus facturas, su tarjeta y su botón de cancelar.
+2. **`/stripe/portal` abría el portal del `stripe_customer_id` que le
+   mandaran**, sin pedir nada más. La regla que lo prohíbe estaba escrita
+   desde el 29 de agosto en `_es_profesional_acreditado` —«un UUID no es una
+   credencial; mandar el id de otro no puede darte sus permisos»— y este
+   endpoint no la seguía. Tapar solo la inyección no habría bastado: con el
+   uid de verdad, que es un UUID y no un secreto, la puerta seguía abierta
+   desde `/stripe/checkout`.
+3. **`/perro/{perro_id}/menus` servía el historial de comida de cualquier
+   perro a cualquiera**, con ids que van 1, 2, 3. Hacía falta una columna
+   que no existía: de quién es el perro. Mismo patrón que la columna
+   `contexto` del 7 de septiembre — no faltaba código, faltaba el dato.
+4. **El token de sesión de Supabase se iba entero a Sentry.** La limpieza
+   comparaba nombres de clave EXACTOS, la lista decía `token`, y el campo
+   se llama `token_usuario`. Con ese JWT se es esa persona ante Supabase
+   hasta que caduca.
+5. **El sello de una pauta firmada era un SHA-256 sin clave**, o sea una
+   receta pública: se cambiaba el menú y el número de colegiado, se
+   recalculaba, y `/pauta/comprobar` decía «El documento es exactamente el
+   que se firmó». Ahora es HMAC con `SELLO_SECRETO`, y **sin esa variable no
+   se firma**: preferimos no dar el papel a darlo sin que pruebe nada.
+6. **El `CORS` estaba en `*`**, con el comentario «en produccion, poner aqui
+   el dominio real de la app» puesto desde el primer día.
+
+Y una séptima que no es de seguridad pero salió del mismo tirón: **`/der`
+llevaba desde el 28 de agosto devolviendo 500 en TODAS las llamadas**, por
+un `peso_objetivo_kg=` que `calcular_der()` no tiene. Dos semanas sin que
+saltara nada, porque a ese endpoint no lo llama la app —el DER lo calcula
+el frontend— y el BLOQUE 23 prueba la función por dentro, nunca la puerta.
+
+Todo lo vigila el **BLOQUE 93**, y cada prueba se comprobó al revés: se
+volvió a meter el fallo, uno a uno, y se exigió que saltara. Detalle
+completo en «Las puertas: quién puede pedir qué» del `CLAUDE.md`.
+
+**Lo que NO se cerró, a propósito**: los endpoints del motor (`/menu/v2`,
+`/analizar`, `/formular/*`) siguen sin puerta. No dan acceso a datos de
+nadie: se les manda un perro y devuelven un menú. Lo que falta para la
+fase 4 de veterinarios está en `VETERINARIOS.md` §10, ya actualizado con
+que la pieza (`_uid_del_token`) existe y está probada.
 
 ## Hecho el 20 de agosto
 

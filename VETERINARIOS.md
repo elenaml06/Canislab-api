@@ -563,16 +563,33 @@ Reglas de lo que una prescripción puede hacer:
 
 ### El agujero que hay que tapar antes: la API no tiene puerta
 
-**Hoy esta API no autentica nada.** `CORS` está en `*`, no hay ningún
-`Depends`, ningún token, ninguna cabecera. Cualquiera puede llamar a
-`/menu/v2` desde una terminal. El premium tampoco se comprueba aquí: lo
-tapa el frontend con `PremiumGate`, que es un `blur` de CSS.
+**⚠️ ESTO ESTÁ A MEDIAS DESDE EL 11 DE SEPTIEMBRE.** Lo que decía entero
+aquí —«esta API no autentica nada, `CORS` está en `*`, no hay ningún token,
+ninguna cabecera»— era cierto y dejó de serlo a medias. Lo que cambió, y
+por qué importa aquí: los caminos que llegaban a datos de UNA PERSONA ya
+piden credencial. `/stripe/portal` y `/perro/{perro_id}/menus` piden el
+token de sesión de Supabase, el `CORS` está acotado a rawku.app y las
+vistas previas, y la pauta firmada se sella con clave (HMAC) en vez de con
+un SHA-256 que podía recalcular cualquiera. El detalle está en «Las
+puertas: quién puede pedir qué» del `CLAUDE.md`, y lo vigila el BLOQUE 93.
+
+**Lo que sigue igual, y es lo que bloquea la fase 4**: los endpoints del
+motor (`/menu/v2`, `/formular/*`, `/pauta/firmar`) siguen sin puerta.
+Cualquiera puede llamarlos desde una terminal. El premium tampoco se
+comprueba aquí: lo tapa el frontend con `PremiumGate`, que es un `blur` de
+CSS.
 
 Para las fases 0 a 3 eso da igual —el acceso a los datos lo protege la
-seguridad por fila de Supabase, no la API—. **Para la fase 4 no**: «solo
-un veterinario acreditado puede prescribir» comprobado en el frontend no
-es una regla, es una sugerencia. Cualquiera podría mandar una
+seguridad por fila de Supabase, no la API, y esos endpoints no devuelven
+nada de nadie: se les manda un perro y contestan un menú—. **Para la fase 4
+no**: «solo un veterinario acreditado puede prescribir» comprobado en el
+frontend no es una regla, es una sugerencia. Cualquiera podría mandar una
 `prescripcion` con el fósforo a 300 y la API la aplicaría.
+
+La pieza que hace falta **ya existe y está probada**: `_uid_del_token()` en
+`main.py` es el «¿de quién es este token?», y `_es_profesional_acreditado()`
+le añade el rol. La fase 4 no tiene que inventar la puerta, solo ponerla en
+el camino que levanta un mínimo.
 
 Así que la fase 4 empieza por lo aburrido: **la API tiene que validar el
 JWT de Supabase** y mirar ella misma que `rol = 'profesional'` y
