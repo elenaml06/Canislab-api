@@ -13832,6 +13832,58 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 98 — LAS DIEZ FICHAS DE HUESO, CONTRA LA TABLA DE KÖBER
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE, y es el fallo más gordo de la noche del 11 de septiembre.
+# Salió de leer entera una fuente que llevaba desde agosto «verificada»:
+#
+#     Tres fichas del catálogo tenían el calcio y el fósforo DIEZ VECES POR
+#     DEBAJO de lo que midió el estudio. La peor, «Pecho de ternera con hueso»,
+#     estaba en 93 de los 216 menús del catálogo, y con el valor real de la
+#     fuente 55 de esos menús SE PASAN del máximo de calcio de FEDIAF -- el
+#     peor, un cachorro en crecimiento con 9408 mg/1000 kcal contra un máximo
+#     de 4500. El semáforo los daba VERDES porque medía el número equivocado.
+#
+# Y las dos razones por las que sobrevivió meses:
+#
+#   1. La Tabla 1 mezcla DOS SISTEMAS DE UNIDADES y su cabecera solo declara
+#      uno: dice «(g/kg wet weight)», que vale para el calcio y el fósforo,
+#      pero la materia seca, la proteína, la grasa y las cenizas van en POR
+#      CIENTO. Con dos unidades en una tabla, un factor 10 tiene dónde
+#      esconderse.
+#   2. El RATIO Ca:P SOBREVIVE al error -- 427/199 da 2,15 exactamente igual
+#      que 4270/1990 --, y la comprobación que se hizo en su día fue
+#      precisamente esa. Una comprobación de PROPORCIÓN no caza un error de
+#      ESCALA.
+#
+# Es la misma familia que `auditar_transcripcion_fediaf.py`: entre la fuente y
+# el catálogo hay un paso a mano, y lo que no se rehace no se audita.
+print("\n" + "=" * 60)
+print("=== BLOQUE 98: las fichas de hueso contra la tabla de Köber ===")
+import os as _os98
+import subprocess as _sub98
+if not _os98.path.exists(_os98.path.join(str(_raiz_b24), "auditar_kober.py")):
+    fallos.append("BLOQUE98: falta `auditar_kober.py`. Sin él, el calcio de los huesos -- que "
+                  "es el nutriente que más pesa en una ración BARF -- vuelve a no tener quien "
+                  "lo rehaga contra la fuente")
+else:
+    _r98 = _sub98.run([sys.executable, "auditar_kober.py"], capture_output=True, text=True,
+                      cwd=str(_raiz_b24))
+    _salida98 = (_r98.stdout or "") + (_r98.stderr or "")
+    if _r98.returncode != 0:
+        _cola98 = "\n      ".join(l.strip() for l in _salida98.splitlines()
+                                  if l.strip().startswith("❌"))
+        fallos.append(f"BLOQUE98: una ficha de hueso no cuadra con la Tabla 1 de Köber:"
+                      f"\n      {_cola98}")
+    for _l98 in _salida98.strip().splitlines():
+        if _l98.strip().startswith(("Discrepancias", "❌")) or not _l98.strip():
+            continue
+        print(f"  {_l98.rstrip()}")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # BLOQUE 97 — NINGUNA FUENTE DECIDE UNA CIFRA SIN ESTAR DECLARADA
 # ============================================================
 #
