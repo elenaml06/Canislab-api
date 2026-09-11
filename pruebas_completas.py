@@ -11772,6 +11772,34 @@ else:
     if _d88["niveles_de_actividad"]["cuantos"] != len(_ACT88):
         fallos.append("BLOQUE88: el recuento de niveles de actividad no cuadra con la lista")
 
+    # 1-bis. LAS DOS FORMAS DE DECIRLO, y las dos tienen que estar.
+    #
+    # ⚠️ Elena: «el vocabulario que usa la app en modo usuario tiene que ser
+    # entendible para el usuario y el que se usa en modo veterinario tiene que
+    # ser mas tecnico». Las dos etiquetas viven en el motor A PROPOSITO: si
+    # vivieran copiadas en la app, el dia que el motor anada un nivel la app se
+    # queda con su lista vieja y el usuario elige algo que el motor no sabe
+    # recibir. Es el fallo de las categorias y el de las patologias otra vez.
+    for _n88 in _d88["niveles_de_actividad"]["niveles"]:
+        for _quien88 in ("dueno", "veterinario"):
+            _e88 = _n88.get(_quien88) or {}
+            if not (_e88.get("titulo") or "").strip() or not (_e88.get("detalle") or "").strip():
+                fallos.append(f"BLOQUE88: el nivel «{_n88['clave']}» no tiene etiqueta de "
+                              f"{_quien88} con título y detalle. Sin ella la app tendría que "
+                              f"inventársela, que es como se desincroniza una lista")
+        if _n88["dueno"]["titulo"] == _n88["veterinario"]["titulo"]:
+            fallos.append(f"BLOQUE88: el nivel «{_n88['clave']}» dice lo mismo al dueño y al "
+                          f"veterinario. Si fueran iguales sobraría una de las dos, y la de la "
+                          f"ficha clínica tiene que poder citar la tabla de la fuente")
+    # Y los dos niveles que salen de la MISMA fila de FEDIAF tienen que decirlo
+    # en el vocabulario del veterinario, que es quien firma citando la tabla.
+    for _k88 in ("muy_activo", "trabajo"):
+        _e88 = next(x for x in _d88["niveles_de_actividad"]["niveles"] if x["clave"] == _k88)
+        if "150" not in _e88["veterinario"]["detalle"] or "175" not in _e88["veterinario"]["detalle"]:
+            fallos.append(f"BLOQUE88: el nivel «{_k88}» no dice al veterinario que FEDIAF da "
+                          f"150-175 en UNA sola fila y que nosotros la partimos en dos. Separarse "
+                          f"de la fuente sin decirlo es lo que este bloque existe para impedir")
+
     # 2. Las dos razas con cifra propia.
     _rz88 = {x["nombre"]: x["kcal_kg075"] for x in _d88["razas_con_cifra_propia"]["razas"]}
     if _rz88 != {k: v[0] for k, v in _RAZ88.items()}:

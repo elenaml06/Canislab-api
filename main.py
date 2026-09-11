@@ -5437,6 +5437,66 @@ def pauta_comprobar(documento: dict):
 # NO sustituye a `GET /patologias` ni a `GET /relajacion`, que sirven la tabla
 # ENTERA con sus cifras y sus fuentes. Esto es el vocabulario: los nombres y
 # cuantos hay.
+
+# =====================================================================
+# LAS DOS FORMAS DE DECIR LO MISMO: AL DUEÑO Y AL VETERINARIO
+# =====================================================================
+#
+# ⚠️ POR QUE VIVEN AQUI Y NO EN LA APP (11 de septiembre de 2026). Elena:
+#
+#     «aunque coja los datos directos del motor, el vocabulario que usa la app
+#      en modo usuario tiene que ser entendible para el usuario y el que se usa
+#      en modo veterinario tiene que ser mas tecnico»
+#
+# Y tiene razon en las dos mitades. Lo que NO puede pasar es que esas etiquetas
+# vivan copiadas en la app: el dia que el motor anada un nivel -- o que la fuente
+# parta uno en dos -- la app se queda con su lista vieja y el usuario elige algo
+# que el motor no sabe recibir, o al reves. Es el mismo fallo que ya tuvimos con
+# las categorias y con las patologias, y el que acabamos de encontrar con los
+# cinco niveles contra los tres de la base de datos.
+#
+# Asi que la CLAVE y las DOS etiquetas salen del mismo sitio: de aqui.
+#
+#   · `dueno`       — como se lo decimos a quien quiere alimentar bien a su
+#                     perro. Sin jerga y con un ejemplo de lo que hace el perro.
+#   · `veterinario` — la fila de la fuente, con sus palabras y sus horas. Quien
+#                     firma una pauta necesita poder citar la tabla.
+ETIQUETAS_ACTIVIDAD = {
+    "sedentario": {
+        "dueno": {"titulo": "Sedentario", "detalle": "Paseos cortos, se mueve poco"},
+        "veterinario": {"titulo": "Actividad baja",
+                        "detalle": "Menos de 1 h/día, p. ej. paseo con correa (FEDIAF VII-7)"},
+    },
+    "normal": {
+        "dueno": {"titulo": "Normal", "detalle": "Paseos diarios de siempre"},
+        "veterinario": {"titulo": "Actividad moderada, bajo impacto",
+                        "detalle": "1 a 3 h/día de bajo impacto (FEDIAF VII-7)"},
+    },
+    "activo": {
+        "dueno": {"titulo": "Activo", "detalle": "Paseos largos, juega bastante"},
+        "veterinario": {"titulo": "Actividad moderada, alto impacto",
+                        "detalle": "1 a 3 h/día de alto impacto (FEDIAF VII-7)"},
+    },
+    # ⚠️ LOS DOS DE ABAJO SON LA MISMA FILA DE LA FUENTE, y el vocabulario del
+    # veterinario tiene que decirlo: FEDIAF da «High activity (3 – 6 h/day)
+    # (working dogs, e.g. sheep dogs) 150 - 175» en UNA sola fila con un rango, y
+    # el motor la parte en dos. Al dueño se le dan dos casillas porque son dos
+    # perros distintos de reconocer; a quien firma se le dice de qué fila salen
+    # y en qué punto del rango cae. Escrito en `niveles_de_actividad.json`.
+    "muy_activo": {
+        "dueno": {"titulo": "Muy activo", "detalle": "Corre, hace deporte, no para"},
+        "veterinario": {"titulo": "Actividad alta (extremo bajo del rango)",
+                        "detalle": "3 a 6 h/día; FEDIAF VII-7 da 150-175 en una sola fila y aquí "
+                                   "se aplica 150"},
+    },
+    "trabajo": {
+        "dueno": {"titulo": "Trabajo", "detalle": "Pastoreo, guarda, o similar"},
+        "veterinario": {"titulo": "Actividad alta (extremo alto del rango)",
+                        "detalle": "3 a 6 h/día, perro de trabajo; FEDIAF VII-7 da 150-175 en una "
+                                   "sola fila y aquí se aplica 175"},
+    },
+}
+
 @app.get("/vocabulario")
 def endpoint_vocabulario():
     from der import BASE_ACTIVIDAD, RAZAS_CIFRA_FEDIAF
@@ -5453,7 +5513,8 @@ def endpoint_vocabulario():
         "niveles_de_actividad": {
             "de_donde": "FEDIAF 2025, Tabla VII-7 «Recommendations for DER in relation to activity»",
             "cuantos": len(BASE_ACTIVIDAD),
-            "niveles": [{"clave": k, "kcal_kg075": v} for k, v in BASE_ACTIVIDAD.items()],
+            "niveles": [dict({"clave": k, "kcal_kg075": v}, **ETIQUETAS_ACTIVIDAD[k])
+                        for k, v in BASE_ACTIVIDAD.items()],
             "ojo": ("⚠️ La Tabla VII-7 tiene CUATRO filas de actividad para el perro normal (95, "
                     "110, 125 y un rango de 150-175), y el motor parte la cuarta en DOS niveles. "
                     "Eso es decision nuestra y esta escrita en `niveles_de_actividad.json`. "
