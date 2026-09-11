@@ -1044,3 +1044,42 @@ vive en la etiqueta, no en ninguna base de composición, y sin él no se puede n
 aplicar el techo ni descartarlo.
 
 Detalle y la medida completa: **F-28** en `HALLAZGOS_LECTURA_FUENTES.md`.
+
+## La energía del hueso carnoso crudo (11 de septiembre de 2026)
+
+**Qué falta**: una energía metabolizable **medida** del hueso carnoso crudo, o la
+digestibilidad de su proteína. Cualquiera de las dos vale.
+
+**Por qué hace falta.** Las nueve fichas de «Hueso carnoso» calculan su `energia`
+como 4×proteína + 9×grasa, que son los factores de Atwater, y NRC 2006 cap.3
+excluye el hueso de esos factores con esas palabras: *«meat, offal (except bones
+and bone meal), poultry, fish…»*. Ese campo no es decorativo: es la fila de
+energía del MILP y el divisor con el que se calculan **todos** los límites del
+motor, que van «por 1000 kcal».
+
+**Cuánto pesa, ya medido** (no hace falta remedirlo): el factor en duda es el de
+la proteína, que aporta el **13,1 %** de las kcal del menú mediano (7,8 a 30,2 %
+sobre los 216 del catálogo). Aunque el colágeno se digiriera al 60 % en vez del
+90 % que Atwater supone, las kcal bajarían un 2,6-10,1 %. Es un error de un
+dígito por ciento, en la dirección de **infravalorar** la concentración del menú.
+
+**Dónde se ha buscado y no está**:
+
+· **Köber 2017**, que es la fuente de los macros de estas nueve fichas
+  (comprobado celda a celda): da materia seca, proteína bruta, grasa bruta,
+  cenizas, calcio y fósforo. **No da energía.**
+· **NRC 2006 cap.13**: la harina de hueso aparece una sola vez con cifras, en la
+  Tabla 13-8, que es *«Composition of Selected Inorganic Macro-mineral Sources
+  Used in Petfood»* — calcio, fósforo y sodio, **sin columna de energía**.
+· **NRC 2006, el libro entero**: «collagen» sale en el metabolismo de la vitamina
+  C, en la lisina, en el sodio y en una frase sobre el triptófano, y **en ninguna
+  con un coeficiente de digestibilidad**.
+
+**Lo que NO se hace mientras tanto**: poner un factor estimado. Un 0,75 o un 0,60
+porque suenan razonables sería un número con forma de dato bueno que nadie puede
+rehacer, que es exactamente lo que este repo tiene prohibido.
+
+**Y si aparece la cifra**: corregir la energía de las nueve fichas cambia todos
+los menús del catálogo y el DER efectivo de todas las raciones, así que hay que
+regenerar con `regenerar_catalogo.py`. Detalle completo y la tabla de
+sensibilidad: `PENDIENTE_NUTRICION.md`.

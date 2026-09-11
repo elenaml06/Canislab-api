@@ -9,6 +9,59 @@ Este archivo no se lee solo: se abre cuando hace falta el detalle de algo
 que ya se resolvió — por qué se decidió así, qué se midió, qué PR lo trajo.
 Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 
+## La vitamina E del perro sano, y el fichero del libro aprende a guardar suelos — 11 de septiembre de 2026
+
+Encargo de Elena, literal: *«si lo dice el manual se meten claro que si»*.
+
+**El desajuste.** SACN5 pide **≥400 UI de vitamina E por kg de materia seca**
+(67,1 mg/1000 kcal) en **cinco capítulos distintos** — 13 adulto joven, 14
+maduro, 34 artrosis, 37 renal crónico y 47 salud oral —, todos citando el mismo
+estudio de biomarcadores. El motor lo exigía en **cuatro patologías** y **no** al
+perro que no tiene nada, así que el mismo perro pasaba de 7 a 67 mg por marcar
+«artrosis». Es exactamente el desajuste que tenía el fósforo antes del 8 de
+septiembre, un nutriente más allá.
+
+**Por qué no estaba puesto.** No era una decisión: era que **no tenía dónde
+vivir**. `recomendaciones_libro.json` solo sabía guardar **techos**, y esto es un
+suelo. Ahora guarda las dos mitades, con `max()` para los suelos igual que `min()`
+para los techos, y el solver y el filtro final lo aplican con la misma función —
+que es la regla 2 del `CLAUDE.md`.
+
+**Y con ello entra la regla de Elena en el código**, no solo en un documento: si
+un suelo del libro se pasara del **máximo de FEDIAF** de ese nutriente, el suelo
+se cae y manda FEDIAF. Hoy no se dispara (FEDIAF no pone máximo de vitamina E) y
+el mecanismo está puesto igual, con el fallo probado en el BLOQUE 57 usando una
+cifra inventada a propósito — si no estuviera, esa comprobación pasaría igual y
+no demostraría nada.
+
+**Medido antes y después**, con menús reales de la API y sin patologías:
+
+| Perro | Antes | Después |
+|---|---|---|
+| Adulto 3 kg | 23,9 | 77,1 |
+| Adulto 10 kg | 14,5 | — |
+| Adulto 22 kg | 14,6 | 79,4 |
+| Adulto 40 kg | 15,4 | — |
+| Sénior 8 kg | 40,8 | — |
+| Sénior 28 kg | 62,2 | 68,2 |
+
+Cero de seis llegaban; el mejor se quedaba a un 7 %. Los tres remedidos salen en
+el peldaño **estricto**, sin soltar ninguna proporción de BARF.
+
+**Y el mismo día, dos hallazgos de NRC 2006 que NO se aplican, medidos y
+escritos**: la fibra del catálogo es **dietética total** y las ocho cifras de
+fibra del motor están en **fibra bruta** (no hay factor: la Tabla 5-9 de SACN5 da
+del 0 % al 82 % según el ingrediente), y las kcal del hueso salen de unos factores
+que NRC excluye para el hueso (acotado: el error es de un dígito por ciento, y la
+cifra que haría falta no existe en ninguna fuente del repo). Los dos con su
+medida en `PENDIENTE_NUTRICION.md`.
+
+**Y un documento nuevo**: `FEDIAF_CONTRA_OTRAS_FUENTES.md`, donde las fuentes no
+dicen lo mismo y qué aplica el motor, para el documento que lee el
+nutricionista.
+
+---
+
 ## Cerrar FEDIAF: las 783 citas, contra el texto de su fuente — 10 de septiembre de 2026 (noche)
 
 Encargo de Elena, literal: *«FEDIAF LO QUIERO YA TODO COMPROBADO Y CERRADO. OJO

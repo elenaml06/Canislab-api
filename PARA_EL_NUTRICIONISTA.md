@@ -604,15 +604,21 @@ del adulto:
 > entera.** «Key nutritional factors for foods for mature dogs» da, literal, tres
 > antioxidantes con cifra: **Vitamin E 400 IU/kg · Vitamin C ≥100 mg/kg · Selenium
 > 0.5 to 1.3 mg/kg** de materia seca. Convertidos (÷4): **67,1 mg · 25 mg · 125-325
-> µg por 1000 kcal**. Ninguno se aplica hoy al senior. Los mismos 400 UI de vitamina E
-> ya se aplican a la obesidad, así que la cifra no es nueva en el motor.
+> µg por 1000 kcal**. ⚠️ **La vitamina E YA SE APLICA desde el 11 de septiembre**,
+> y no solo al sénior: es el suelo de 67,1 mg/1000 kcal del apartado 7-bis, puesto
+> a **cualquier perro sano** de adulto y sénior, porque el libro lo dice en cinco
+> capítulos y el motor ya se lo exigía a cuatro patologías. Siguen **sin
+> aplicarse** los otros dos: la **vitamina C** (el perro la sintetiza, FEDIAF no le
+> pone requisito y el catálogo no la lleva como nutriente — sería un dato nuevo en
+> 163 fichas) y el **selenio** (ver el aviso de abajo).
 > **Y contesta la otra mitad en contra**: la proteína **no** sube. Su rango es
 > *«Protein (%) 15-23»* = 37,5-57,5 g/1000 kcal, y el extremo bajo queda **por debajo**
 > del mínimo de FEDIAF (52,10) que ya aplicamos.
 > ⚠️ El extremo alto del selenio (325 µg) **supera el máximo legal de FEDIAF**
 > (142 µg), así que ese rango no se puede aplicar entero: mandaría el legal.
-> Lo que queda por decidir es tuyo: **¿se aplican los tres al senior, sabiendo que
-> son de una tabla de alimentos comerciales, o alguno sobra en una ración cruda?**
+> Lo que queda por decidir es tuyo, ya solo de dos: **¿hace falta la vitamina C en
+> una ración cruda, sabiendo que el perro la sintetiza y que habría que conseguir el
+> dato en 163 fichas? ¿Y el selenio, cuyo rango entero no cabe dentro de FEDIAF?**
 
 ---
 
@@ -1078,7 +1084,7 @@ danés**, al que FEDIAF le da 200. Ahí el que protege es el nuestro (2,60 contr
 
 ---
 
-## 7-bis · Los techos del perro SANO
+## 7-bis · Los límites del LIBRO para el perro SANO
 
 **Es la tercera clase de límite del motor, y hasta el 8 de septiembre no
 existía.** Los de FEDIAF valen para cualquier perro. Los de patología, solo si
@@ -1091,6 +1097,50 @@ esa patología está marcada. Estos valen para el perro que **no tiene nada**:
 | Crecimiento, hasta 25 kg de adulto esperado | Calcio ≤ **4250** · fósforo ≤ **3250** | SACN5 Tabla 17-1, columna *«Puppies with an adult BW <25 kg»* |
 | Crecimiento, **más de 25 kg** de adulto esperado | Calcio ≤ **2750** · fósforo ≤ **2750** | SACN5 Tablas 17-1 (segunda columna) y 33-5 · Fascetti cap.10 |
 | Gestación y lactancia | — | No hay |
+
+**Y desde el 11 de septiembre hay también un SUELO**, que es la otra mitad que
+faltaba: hasta ese día este fichero solo sabía guardar máximos, así que una
+recomendación del libro que fuera un mínimo no tenía dónde vivir.
+
+| Etapa | Suelo | Fuente |
+|---|---|---|
+| Adulto | Vitamina E ≥ **67,1** mg/1000 kcal | SACN5 Tabla 13-3, *«Vitamin E (IU) ≥400»* · texto del cap.13: *«A prudent recommendation is that foods for young adult dogs should contain at least 400 IU vitamin E/kg (DM)»* |
+| Senior | Vitamina E ≥ **67,1** mg/1000 kcal | SACN5 Tabla 14-2, *«Vitamin E (IU) 400»* · texto del cap.14: *«For improved antioxidant performance, foods for mature dogs should contain at least 400 IU vitamin E/kg (DM)»* |
+| Crecimiento, gestación y lactancia | — | Sus tablas no lo dan |
+
+**Por qué entró.** SACN5 pide ≥400 UI/kg de materia seca en **cinco capítulos
+distintos** (13 adulto joven, 14 maduro, 34 artrosis, 37 renal crónico y 47
+salud oral), todos citando el mismo estudio de biomarcadores. El motor ya lo
+exigía en **cuatro patologías** —renal, hepatopatía, obesidad y artrosis, las
+cuatro con la misma cifra— y **no** al perro que no tiene nada, así que el mismo
+perro pasaba de 7 a 67 mg por marcar «artrosis». Es exactamente el desajuste que
+tenía el fósforo antes del 8 de septiembre.
+
+**Medido antes de aplicarlo**, con menús reales del motor y sin patologías:
+3 kg → 23,9 mg · 10 kg → 14,5 · 22 kg → 14,6 · 40 kg → 15,4 · senior 8 kg → 40,8
+· senior 28 kg → 62,2. **Cero de seis llegaban**, y el mejor se quedaba a un 7 %.
+Con el suelo puesto salen los tres medidos de nuevo en 68-79 mg y en el peldaño
+**estricto**, sin soltar ninguna proporción de BARF.
+
+**Lo que la propia fuente dice de su cifra, sin adornarlo**: el requisito es otra
+cosa y mucho menor —*«The requirement for vitamin E for foods (DM) for adult dogs
+is 30 mg/kg (NRC, 2006)»*— y estos 400 UI son *«for improved antioxidant
+performance»*. El mismo párrafo apunta más arriba todavía: *«One antioxidant
+biomarker study in dogs indicated that for improved antioxidant performance, dog
+foods should contain at least 500 IU vitamin E/kg (DM)»*. Se aplica el 400, que
+es el número que el libro pone en su tabla y repite en otros cuatro capítulos.
+
+**Y no choca con FEDIAF, que es la regla que decide**: FEDIAF **no pone máximo de
+vitamina E** en ninguna etapa (las tres celdas de máximo de la Tabla III-3b están
+vacías), así que este suelo sube el mínimo *dentro* de la ventana de FEDIAF. El
+motor lleva escrito el mecanismo para el caso contrario —si un suelo del libro se
+pasara de un máximo de FEDIAF, **el suelo se cae y manda FEDIAF**— y hoy no se
+dispara con ninguna cifra escrita.
+
+⚠️ **La trampa de esta cifra son las unidades.** La tabla da **UI** y el catálogo
+mide **miligramos**: 400 UI/kg MS a 4000 kcal/kg MS son 100 UI/1000 kcal, y
+1 UI = 0,671 mg de d-α-tocoferol (FEDIAF Tabla VII-14). El 8 de septiembre esto
+se escribió una vez tratando las UI como mg y la artrosis dejó de dar menú.
 
 **Los cuatro de crecimiento son del 9 de septiembre** y se aplican a las dos
 etapas de cachorro. Existen porque hasta ese día un cachorro de raza grande

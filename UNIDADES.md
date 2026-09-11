@@ -88,9 +88,25 @@ Y cuatro campos más que no son requisitos de FEDIAF:
 | Taurina | `taurina` | **mg** por 100 g |
 | L-carnitina | `lcarnitina` | **mg** por 100 g |
 
-La fibra se guarda pero **no se verifica**: ni FEDIAF, ni AAFCO, ni el NRC
-fijan un mínimo para perros. Ver la sección de fibra del documento de
-consultoría.
+La fibra se guarda pero **no la verifica FEDIAF**: ni FEDIAF, ni AAFCO, ni el
+NRC fijan un mínimo para perros. Ver la sección de fibra del documento de
+consultoría. Sí la usan **ocho patologías**, con suelo o con techo.
+
+⚠️ **Y es FIBRA DIETÉTICA TOTAL, no fibra bruta** (escrito el 11 de septiembre de
+2026, y es la cuarta trampa de este fichero con la misma forma que el
+linoleico/linolénico: dos cosas distintas con el mismo nombre y ningún aviso si se
+confunden). El campo `fibra` sale de BEDCA, CIQUAL y USDA, que publican **fibra
+dietética total** —dos fichas lo dicen literal en su `nota_datos`—, mientras que
+las tablas de SACN5 de las que salen los ocho límites están en **fibra bruta**, que
+es lo que declara la etiqueta de un pienso. NRC 2006 cap.4: *«The crude fiber
+method accounts for only 5 to 20 percent of the total fiber in a food»*, y la Tabla
+5-9 de SACN5 enseña que la proporción va del 0 % (fibra soluble) al 82 %
+(celulosa). Medido, con la pregunta abierta y sin tocar ninguna cifra:
+`PENDIENTE_NUTRICION.md`.
+
+**Si algún día se añade un campo de fibra bruta al catálogo, no puede llamarse
+`fibra`**: tiene que ser una clave nueva, o pasará exactamente lo que este aviso
+existe para evitar.
 
 **Taurina y L-carnitina (7 de septiembre)** tampoco son requisitos de
 FEDIAF para perros (sí lo es la taurina para gatos, Tabla III-4c), así que

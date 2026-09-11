@@ -374,13 +374,26 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto",
             total += valor_nutriente(al.get(n, {}).get("nutrientes", {}), clave) / 100.0 * g
         return total / kcal * 1000.0
 
+    # ⚠️ Y LOS SUELOS DEL LIBRO PARA EL PERRO SANO (11 septiembre), con el
+    # mismo `max()` y la misma función que usa el solver. La vitamina E que
+    # SACN5 pide a CUALQUIER adulto es un límite duro desde hoy, así que tiene
+    # que comprobarse también aquí: la regla 2 no distingue entre un tope y un
+    # suelo, distingue entre «lo mira el filtro final» y «no lo mira nadie».
+    from recomendaciones import suelos_de_la_etapa as _suelos_libro
+    _del_libro_suelo = set()
+    for _clave_r3, _valor_r3 in _suelos_libro(etapa, req,
+                                              peso_adulto_esperado_kg).items():
+        _actual_r3 = suelos.get(_clave_r3)
+        if _actual_r3 is None or _valor_r3 > _actual_r3:
+            suelos[_clave_r3] = _valor_r3
+            _del_libro_suelo.add(_clave_r3)
+
     # ⚠️ Y LOS SUELOS CONDICIONALES (8 septiembre, noche), con el mismo `max()`
     # que usa el solver: la proteína de gestación y lactancia, que FEDIAF calcula
     # suponiendo hidratos que una ración BARF no lleva. Si el solver lo exige y
     # este filtro no lo mirara, el hueco sería justo el de la regla 2 -- un menú
     # construido bien que nadie vuelve a comprobar.
     from condicionales import suelos_de_la_etapa as _suelos_cond
-    _del_libro_suelo = set()
     for _clave_c, _valor_c in _suelos_cond(etapa).items():
         _actual_c = suelos.get(_clave_c)
         if _actual_c is None or _valor_c > _actual_c:

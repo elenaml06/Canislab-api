@@ -7559,7 +7559,7 @@ for _f in _fichas56:
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
-# BLOQUE 57 — LOS TECHOS DEL PERRO ADULTO SANO
+# BLOQUE 57 — LOS LIMITES DEL LIBRO PARA EL PERRO SANO (techos Y suelos)
 # ============================================================
 #
 # POR QUÉ EXISTE (8 septiembre)
@@ -7581,7 +7581,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 #   4. Que NO se aplique en crecimiento, donde el mínimo de FEDIAF (2250) está
 #      POR ENCIMA del techo del adulto (2000) y aplicarlo sería dejar al
 #      cachorro sin menú.
-print("\n=== BLOQUE 57: los techos del perro adulto sano ===")
+print("\n=== BLOQUE 57: los limites del libro para el perro sano ===")
 
 import json as _json_b57
 from recomendaciones import topes_de_la_etapa as _topes_b57, CRUDO as _CRUDO_B57
@@ -7840,6 +7840,189 @@ for _pat57, _esperado57 in (("renal", 1200.0), ("artrosis", 1750.0)):
     if abs(_efectivo - _esperado57) > 1e-9:
         fallos.append(f"BLOQUE57: con {_pat57} el fosforo efectivo son {_efectivo} y tenian que "
                       f"ser {_esperado57}. Los topes se combinan con min(): el del libro nunca "
+                      f"puede relajar el de una patologia, ni al reves.")
+
+# ============================================================
+# 5. LOS SUELOS DEL LIBRO (11 septiembre). Este fichero no era solo de techos.
+# ============================================================
+#
+# POR QUE EXISTE ESTA MITAD. Hasta hoy `recomendaciones_libro.json` solo sabia
+# guardar maximos, y eso dejaba fuera una clase entera de cifra: la que el libro
+# recomienda como MINIMO al perro sano. El caso es la vitamina E -- SACN5 la
+# pide en >=400 UI/kg MS en CINCO capitulos (13, 14, 34, 37 y 47) -- y el motor
+# la exigia en cuatro PATOLOGIAS (renal, hepatopatia, obesidad, artrosis) y no
+# al perro que no tiene nada. O sea el mismo desajuste que tenia el fosforo
+# antes del 8 de septiembre: el mismo perro pasaba de 7 a 67 mg por marcar
+# «artrosis».
+#
+# Se vigilan las mismas cuatro cosas que los techos, con el signo cambiado.
+from recomendaciones import (suelos_de_la_etapa as _suelos_b57,
+                             cedidos_ante_fediaf_por_arriba as _cedidos_arriba_b57)
+
+# (etapa, peso adulto, nutriente, valor, valor en la fuente, unidad, factor, cita)
+_SUELOS_B57 = [
+    ("Adulto", None, "vitE", 67.1, 400.0, "UI/kg MS", 0.671,
+     "SACN5 Tabla 13-3, bloque «Antioxidants (amount/kg food)», fila «Vitamin E "
+     "(IU) >=400» en las dos columnas, y el texto del cap.13: «A prudent "
+     "recommendation is that foods for young adult dogs should contain at least "
+     "400 IU vitamin E/kg (DM)». Suelo"),
+    ("Senior", None, "vitE", 67.1, 400.0, "UI/kg MS", 0.671,
+     "SACN5 Tabla 14-2, fila «Vitamin E (IU) 400» en las dos columnas, y el "
+     "texto del cap.14: «For improved antioxidant performance, foods for mature "
+     "dogs should contain at least 400 IU vitamin E/kg (DM)». Suelo. Coincide "
+     "con el del adulto joven por la fuente, no por herencia: son dos tablas"),
+]
+
+# 5.1. La conversion, rehecha aqui. La trampa de esta cifra es que la tabla da
+#      UI y el catalogo mide MILIGRAMOS: 400 UI/kg MS a 4000 kcal/kg MS son
+#      100 UI/1000 kcal, y 1 UI = 0,671 mg de d-alfa-tocoferol (FEDIAF Tabla
+#      VII-14). El 8-sep-2026 esto se escribio una vez tratando las UI como mg
+#      y la artrosis dejo de dar menu.
+for _et57, _padu57, _nut57, _val57, _fuente57, _uni57, _fac57, _cita57 in _SUELOS_B57:
+    _calc57 = _fuente57 / 4.0 * _fac57
+    if abs(_calc57 - _val57) > 0.01:
+        fallos.append(f"BLOQUE57 conversion (suelo): {_et57}.{_nut57} esta escrito como "
+                      f"{_val57} y su fuente da {_fuente57} {_uni57}, que a 4000 kcal/kg MS "
+                      f"y con el factor {_fac57} son {_calc57:.3f}. Uno de los dos esta mal "
+                      f"- {_cita57}")
+    _real57 = _suelos_b57(_et57, req, _padu57).get(_nut57)
+    if _real57 is None:
+        fallos.append(f"BLOQUE57: el SUELO {_et57}.{_nut57} ha DESAPARECIDO de "
+                      f"recomendaciones_libro.json. Lo pedia: {_cita57}")
+    elif abs(_real57 - _val57) > 1e-9:
+        fallos.append(f"BLOQUE57: el suelo {_et57}.{_nut57} vale {_real57} y su fuente dice "
+                      f"{_val57} - {_cita57}")
+
+_suelos_declarados_b57 = {(a, b, c) for a, b, c, _, _, _, _, _ in _SUELOS_B57}
+for _et57, _f57 in (_CRUDO_B57.get("por_etapa") or {}).items():
+    for _seccion57, _padu57 in ((_f57, None),
+                                (_f57.get("si_peso_adulto_esperado_supera_kg") or {},
+                                 (_f57.get("si_peso_adulto_esperado_supera_kg") or {}).get("umbral_kg"))):
+        for _n57, _s57 in (_seccion57.get("suelos_por_1000kcal") or {}).items():
+            if (_et57, _padu57, _n57) not in _suelos_declarados_b57:
+                fallos.append(f"BLOQUE57: el SUELO {_et57}.{_n57} (peso adulto {_padu57}) es una "
+                              f"cifra NUEVA que no esta en la lista de este bloque. Anadela con "
+                              f"la cita literal de su fuente")
+            if not _s57.get("fuente") or not _s57.get("por_que"):
+                fallos.append(f"BLOQUE57: el suelo {_et57}.{_n57} no trae fuente o no trae por_que")
+            if _n57 not in set(_MAPA_B57.values()):
+                fallos.append(f"BLOQUE57: la clave '{_n57}' NO esta en verificar.MAPA -- el "
+                              f"solver nunca la mirara y el menu saldra verde igual")
+
+# 5.2. Las etapas que NO lo tienen siguen sin tenerlo. Crecimiento, gestacion y
+#      lactancia no llevan suelo de vitamina E porque sus tablas (17-1, 33-5 y
+#      15-5) no lo dan; que salga vacio tiene que ser visible, no un olvido.
+for _et57 in ("CachorroJoven", "CachorroCrecimiento", "GestanteTemprana",
+              "GestanteTardia", "Lactante"):
+    if _suelos_b57(_et57, req):
+        fallos.append(f"BLOQUE57: la etapa {_et57} ha ganado un SUELO del libro. Si se ha "
+                      f"transcrito la tabla que lo da, este bloque tiene que saberlo; si es "
+                      f"que se le esta aplicando el de otra etapa, es un fallo")
+
+# 5.3. Y AQUI MANDA FEDIAF. Un suelo del libro que se pasara del MAXIMO de
+#      FEDIAF tiene que caerse. Hoy no se dispara con ninguna cifra escrita --la
+#      vitamina E no tiene maximo en la Tabla III-3b--, asi que se comprueba con
+#      una cifra inventada A PROPOSITO: si este mecanismo no estuviera, esta
+#      comprobacion pasaria igual y no demostraria nada.
+if _cedidos_arriba_b57("Adulto", req):
+    fallos.append(f"BLOQUE57: hay suelos del libro cediendo ante el maximo de FEDIAF y hoy no "
+                  f"tendria que ceder ninguno: {_cedidos_arriba_b57('Adulto', req)}")
+import recomendaciones as _recom_b57
+_guardado_b57 = _recom_b57.POR_ETAPA["Adulto"].get("suelos_por_1000kcal")
+try:
+    # sodio: FEDIAF pone maximo en adulto (3750). Un suelo del libro de 9999 se
+    # pasaria, y tiene que caerse entero.
+    _recom_b57.POR_ETAPA["Adulto"]["suelos_por_1000kcal"] = {
+        "sodio": {"valor": 9999.0, "fuente": "inventada por el BLOQUE 57",
+                  "por_que": "no existe: solo para comprobar que FEDIAF gana"}}
+    if "sodio" in _suelos_b57("Adulto", req):
+        fallos.append("BLOQUE57: un suelo del libro de 9999 mg de sodio se pasa del maximo de "
+                      "FEDIAF (3750) y NO se ha caido. La regla es que manda FEDIAF: una "
+                      "recomendacion de un libro no puede sacar al perro de la ventana de la "
+                      "norma")
+    if not any(c["clave"] == "sodio" for c in _cedidos_arriba_b57("Adulto", req)):
+        fallos.append("BLOQUE57: el suelo inventado se cae pero `cedidos_ante_fediaf_por_arriba` "
+                      "no lo cuenta. Un limite que deja de aplicarse y no se puede decir es un "
+                      "cambio en silencio (regla 5)")
+finally:
+    if _guardado_b57 is None:
+        _recom_b57.POR_ETAPA["Adulto"].pop("suelos_por_1000kcal", None)
+    else:
+        _recom_b57.POR_ETAPA["Adulto"]["suelos_por_1000kcal"] = _guardado_b57
+
+# 5.4. Que el SOLVER lo aplique y que el FILTRO FINAL lo vea, con un menu de
+#      verdad. Y el test con el fallo puesto: el mismo menu DILUIDO hasta bajar
+#      del suelo tiene que ser rechazado.
+#
+#      ⚠️ La dilucion SE CALCULA, no se fija a ojo. Es la leccion de los bloques
+#      57 (el hueso x4), 58 (los 40 g de aceite) y 60 (la arginina): el menu que
+#      devuelve el solver cambia entre ejecuciones, asi que una prueba solo puede
+#      afirmar de el lo que sea verdad de CUALQUIER menu valido. Anadiendo `g`
+#      gramos de un alimento con `ve` mg de vitamina E y `ef` kcal por 100 g:
+#
+#          (V + ve*g/100) / (E + ef*g/100) * 1000 <= objetivo
+#          g = 100 * (1000*V - objetivo*E) / (objetivo*ef - 1000*ve)
+_okE, _gE = False, None
+_derE = 70 * 22 ** 0.75 * 1.6
+_t0_E = time.time()
+while time.time() - _t0_E < 25:
+    _okE, _gE = resolver(_derE, "Adulto", al, req, 22, dosis_maxima_fabricante)
+    if _okE:
+        break
+if not _okE:
+    fallos.append("BLOQUE57: un adulto sano de 22 kg no obtiene menu con el suelo de vitamina "
+                  "E puesto. Si la cifra de la fuente no cabe, no se baja: se mueve a "
+                  "`limites_escritos_que_el_solver_no_aplica` con su medida y se pregunta.")
+else:
+    _kcalE = sum(al[_n]["energia"] * _g / 100.0 for _n, _g in _gE.items())
+    _VE = sum((valor_nutriente(al[_n]["nutrientes"], "vitE") or 0) * _g / 100.0
+              for _n, _g in _gE.items())
+    _vE = _VE / _kcalE * 1000.0
+    if _vE < 67.1 * 0.995:
+        fallos.append(f"BLOQUE57: el menu de un adulto sano trae {_vE:.1f} mg de vitamina "
+                      f"E/1000 kcal y el suelo son 67,1. El solver NO lo esta aplicando.")
+    if __import__("main")._tope_patologia_roto(_gE, al, [], "Adulto"):
+        fallos.append(f"BLOQUE57: el menu que da el solver no pasa su propio filtro final: "
+                      f"{__import__('main')._tope_patologia_roto(_gE, al, [], 'Adulto')}")
+    _OBJE = 67.1 * 0.90          # con margen, para no quedarse en el borde
+    _candE = []
+    for _nE in al:
+        _efE = al[_nE].get("energia") or 0
+        _veE = valor_nutriente(al[_nE]["nutrientes"], "vitE") or 0
+        if _efE > 0 and (_OBJE * _efE - 1000.0 * _veE) > 0:
+            _candE.append((_veE / _efE, _nE, _veE, _efE))
+    if not _candE:
+        fallos.append("BLOQUE57: no hay en el catalogo ni un alimento con menos vitamina E por "
+                      "kcal que el suelo del perro sano, asi que no se puede fabricar un menu "
+                      "que baje de el. Sin poder bajarlo, esta comprobacion no demuestra nada.")
+    else:
+        _, _quienE, _veE, _efE = min(_candE)
+        _gEanadir = 100.0 * (1000.0 * _VE - _OBJE * _kcalE) / (_OBJE * _efE - 1000.0 * _veE)
+        _diluido = dict(_gE)
+        _diluido[_quienE] = _diluido.get(_quienE, 0.0) + max(_gEanadir, 1.0) * 1.10
+        _kcalD = sum(al[_n]["energia"] * _g / 100.0 for _n, _g in _diluido.items())
+        _vD = sum((valor_nutriente(al[_n]["nutrientes"], "vitE") or 0) * _g / 100.0
+                  for _n, _g in _diluido.items()) / _kcalD * 1000.0
+        if _vD >= 67.1:
+            fallos.append(f"BLOQUE57: al anadir {_gEanadir:.0f} g de «{_quienE}» la vitamina E "
+                          f"se queda en {_vD:.1f} mg/1000 kcal, por encima del suelo de 67,1. "
+                          f"La cuenta de este bloque esta mal; el filtro final no tiene la culpa.")
+        elif not __import__("main")._tope_patologia_roto(_diluido, al, [], "Adulto"):
+            fallos.append(f"BLOQUE57: el menu con {_gEanadir:.0f} g de «{_quienE}» de mas trae "
+                          f"{_vD:.1f} mg de vitamina E/1000 kcal --por debajo del suelo de 67,1 "
+                          f"del perro sano-- y el filtro final no dice nada. Entonces no esta "
+                          f"comprobando ese suelo.")
+
+# 5.5. Una patologia que aprieta MAS tiene que ganar, y ninguna puede relajarlo.
+#      Las cuatro que ya llevan esta cifra piden exactamente la misma (67,1), asi
+#      que el efectivo tiene que seguir siendo 67,1 con ellas y sin ellas.
+from motor_completo import topes_de_patologias as _topes_pat_b57b
+for _patE in ("renal", "hepatopatia", "obesidad", "artrosis"):
+    _t, _p, _a, _sE = _topes_pat_b57b([_patE], "Adulto")
+    _efectivoE = max(_sE.get("vitE", 0.0), _suelos_b57("Adulto", req).get("vitE", 0.0))
+    if abs(_efectivoE - 67.1) > 1e-9:
+        fallos.append(f"BLOQUE57: con {_patE} la vitamina E efectiva son {_efectivoE} y tenian "
+                      f"que ser 67,1. Los suelos se combinan con max(): el del libro nunca "
                       f"puede relajar el de una patologia, ni al reves.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
@@ -9128,6 +9311,14 @@ if _doc65 is not None:
         ("el techo del perro sano senior, fosforo",
          r"\| Senior \| Fósforo ≤ \*\*([\d.,]+)\*\*",
          _reco65["Senior"]["topes_por_1000kcal"]["fosforo"]["valor"], "recomendaciones_libro.json"),
+        ("el suelo de vitamina E del perro sano adulto",
+         r"\| Adulto \| Vitamina E ≥ \*\*([\d.,]+)\*\*",
+         _reco65["Adulto"]["suelos_por_1000kcal"]["vitE"]["valor"],
+         "recomendaciones_libro.json"),
+        ("el suelo de vitamina E del perro sano senior",
+         r"\| Senior \| Vitamina E ≥ \*\*([\d.,]+)\*\*",
+         _reco65["Senior"]["suelos_por_1000kcal"]["vitE"]["valor"],
+         "recomendaciones_libro.json"),
         ("el techo de calcio del cachorro de hasta 25 kg de adulto",
          r"Crecimiento, hasta 25 kg de adulto esperado \| Calcio ≤ \*\*([\d.,]+)\*\*",
          _reco65["CachorroJoven"]["topes_por_1000kcal"]["calcio"]["valor"],
@@ -10970,9 +11161,19 @@ for _l81 in _aud81.stdout.strip().splitlines()[:1]:
 # texto a los dos lados de cuatro o mas espacios en una linea larga -- sobre los
 # dos ficheros de los que se lee.
 import re as _re81
+#
+# ⚠️ Y DESDE EL 11 DE SEPTIEMBRE SE MIRAN LOS CUATRO, NO DOS. Aqui solo estaban
+# SACN5 y FEDIAF, que son los dos a los que les paso. Pero el mismo dia en que
+# se empezo a leer NRC 2006 y a citarlo, **nadie habia comprobado que su texto
+# no tuviera el mismo problema** -- y NRC es la fuente de los cinco topes de
+# seguridad cronica. Medido al anadirlo: NRC 0,08 % y Fascetti 0,00 %, o sea
+# limpios; pero «esta limpio» y «se comprueba que esta limpio» no son lo mismo,
+# que es la leccion entera de este bloque.
 for _nom81, _ruta81 in (
         ("SACN5", _os_b18.path.join("..", "canislab-fuentes", "sacn5")),
-        ("FEDIAF", _os_b18.path.join("..", "canislab-fuentes", "FEDIAF"))):
+        ("FEDIAF", _os_b18.path.join("..", "canislab-fuentes", "FEDIAF")),
+        ("NRC2006", _os_b18.path.join("..", "canislab-fuentes", "NRC2006")),
+        ("Fascetti", _os_b18.path.join("..", "canislab-fuentes", "fascetti"))):
     if not _os_b18.path.isdir(_ruta81):
         print(f"  ({_nom81}: no esta el texto, no se puede comprobar el mezclado)")
         continue

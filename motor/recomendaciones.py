@@ -159,6 +159,105 @@ def topes_de_la_etapa(etapa, req=None, der_efectiva=None,
     return salida
 
 
+def _suelos_crudos(etapa, peso_adulto_esperado_kg=None):
+    """Los suelos escritos para esta etapa, combinados con los de raza grande.
+
+    Mismo esquema que `_topes_crudos`, con el signo cambiado: un suelo de la
+    columna de raza grande solo entra si APRIETA, o sea si es MAYOR.
+    """
+    ficha = POR_ETAPA.get(etapa) or {}
+    salida = dict(ficha.get("suelos_por_1000kcal") or {})
+    grande = ficha.get("si_peso_adulto_esperado_supera_kg") or {}
+    umbral = grande.get("umbral_kg")
+    if (umbral is not None and peso_adulto_esperado_kg
+            and peso_adulto_esperado_kg >= umbral):
+        for clave, s in (grande.get("suelos_por_1000kcal") or {}).items():
+            actual = salida.get(clave)
+            if actual is None or s["valor"] > actual["valor"]:
+                salida[clave] = s
+    return salida
+
+
+def suelos_de_la_etapa(etapa, req=None, peso_adulto_esperado_kg=None):
+    """Los SUELOS que el libro recomienda para esta etapa, para el solver.
+
+    Devuelve `{clave_nutriente: valor}`, o `{}` si la etapa no tiene ninguno.
+
+    ⚠️ ESTE FICHERO NO ERA SOLO DE TECHOS DESDE EL 11 DE SEPTIEMBRE DE 2026.
+    Hasta entonces `recomendaciones_libro.json` solo guardaba máximos, y eso
+    tenía una consecuencia que no se veía: **una recomendación del libro que
+    fuera un MÍNIMO no tenía dónde vivir**. La vitamina E del perro sano es el
+    caso: SACN5 la pide en ≥400 UI/kg MS en cinco capítulos distintos, y el
+    motor la aplicaba en cuatro PATOLOGÍAS y no al perro que no tiene nada. O
+    sea el mismo desajuste que tenía el fósforo antes del 8 de septiembre --
+    el mismo perro pasaba de 7 a 67 mg por marcar «artrosis».
+
+    ⚠️ Y AQUÍ MANDA FEDIAF, QUE ES LA REGLA.
+
+    Un suelo del libro solo puede subir el mínimo DENTRO de la ventana de
+    FEDIAF. Si el suelo que recomienda un libro se pasara del MÁXIMO de FEDIAF
+    de ese mismo nutriente, el suelo **se cae** y se aplica FEDIAF: un máximo de
+    FEDIAF es un requisito y esto es la recomendación de un libro de texto.
+    Es la imagen en espejo de lo que ya hacía `topes_de_la_etapa` con el mínimo
+    de FEDIAF, y está escrito aquí aunque hoy no se dispare con ninguna cifra
+    --la vitamina E no tiene máximo en la Tabla III-3b-- porque el día que
+    entre una que sí choque, la decisión no puede depender de que alguien se
+    acuerde. `cedidos_ante_fediaf_por_arriba` lo cuenta para poder DECIRLO.
+
+    ⚠️ Y AL REVÉS QUE LOS TECHOS, UN SUELO NO CEDE ANTE LA DER.
+    Un techo del libro se cae cuando el mínimo de FEDIAF escalado lo supera,
+    porque el perro que come poco necesita más concentración y el requisito
+    manda. Un suelo no tiene ese problema: cuando el perro come menos, el
+    mínimo de FEDIAF sube y este suelo se queda donde está, así que la
+    combinación `max()` sigue siendo válida sin tocar nada. Por eso esta
+    función no pide `der_efectiva` y la de los techos sí.
+    """
+    salida = {}
+    for clave, s in _suelos_crudos(etapa, peso_adulto_esperado_kg).items():
+        valor = s["valor"]
+        if req is not None:
+            maximo = _maximo_de_fediaf(req, clave, etapa)
+            if maximo is not None and maximo < valor:
+                continue
+        salida[clave] = valor
+    return salida
+
+
+def cedidos_ante_fediaf_por_arriba(etapa, req, peso_adulto_esperado_kg=None):
+    """Los suelos del libro que se han caído por pasarse del máximo de FEDIAF.
+
+    Devuelve `[{clave, suelo, maximo_de_fediaf}]`. Hoy sale siempre vacío, y
+    eso es lo que tiene que salir: ninguna de las cifras escritas choca. Existe
+    por lo mismo que su hermana de los techos -- para que el día que una choque
+    se pueda decir, en vez de que desaparezca en silencio.
+    """
+    fuera = []
+    for clave, s in _suelos_crudos(etapa, peso_adulto_esperado_kg).items():
+        maximo = _maximo_de_fediaf(req, clave, etapa)
+        if maximo is not None and maximo < s["valor"]:
+            fuera.append({"clave": clave, "suelo": s["valor"],
+                          "maximo_de_fediaf": round(maximo, 1)})
+    return fuera
+
+
+def _maximo_de_fediaf(req, clave, etapa):
+    """El máximo de FEDIAF de este nutriente, o None si no pone ninguno.
+
+    Se pregunta a `verificar.maximo_de`, que es el único sitio que sabe de
+    máximos --y el único que conoce `MAXIMOS_NO_APLICADOS`--, por lo mismo que
+    `_minimo_de_fediaf` pregunta a `minimo_de`: repetir la lógica es como el
+    motor y el analizador acabaron discrepando por la fibra.
+    """
+    from verificar import MAPA, maximo_de
+    nombre = next((n for n, c in MAPA.items() if c == clave), None)
+    if not nombre:
+        return None
+    fila = (req or {}).get(nombre)
+    if not fila:
+        return None
+    return maximo_de(fila, nombre, etapa)
+
+
 def cedidos_ante_fediaf(etapa, req, der_efectiva, peso_adulto_esperado_kg=None):
     """Los techos que se han caído por cruzarse con el mínimo de FEDIAF.
 
@@ -201,12 +300,20 @@ def con_procedencia(etapa, peso_adulto_esperado_kg=None):
     perro, es la recomendación del libro para cualquier adulto», que es la
     diferencia entre un límite y una pared.
     """
+    nombre = ("Recomendación del libro para el perro sano"
+              if etapa in ("CachorroJoven", "CachorroCrecimiento")
+              else "Recomendación para el perro adulto sano")
     fuera = []
     for clave, t in _topes_crudos(etapa, peso_adulto_esperado_kg).items():
         fuera.append({"tipo": "tope", "clave": clave, "valor": t["valor"],
-                      "patologia": None,
-                      "nombre_patologia": ("Recomendación del libro para el perro sano"
-                                           if etapa in ("CachorroJoven", "CachorroCrecimiento")
-                                           else "Recomendación para el perro adulto sano"),
+                      "patologia": None, "nombre_patologia": nombre,
                       "fuente": t.get("fuente"), "por_que": t.get("por_que")})
+    # ⚠️ Y LOS SUELOS (11 septiembre). Si esta función solo listara los techos,
+    # quien pregunta «¿qué me está bloqueando?» recibiría la lista incompleta y
+    # el diagnóstico culparía a otra restricción -- que es peor que no decir
+    # nada, porque manda a mirar la fila equivocada.
+    for clave, s in _suelos_crudos(etapa, peso_adulto_esperado_kg).items():
+        fuera.append({"tipo": "suelo", "clave": clave, "valor": s["valor"],
+                      "patologia": None, "nombre_patologia": nombre,
+                      "fuente": s.get("fuente"), "por_que": s.get("por_que")})
     return fuera

@@ -1415,3 +1415,256 @@ No es un número del motor: es una frase que le falta a un aviso.
 La **lactosa** salió otra vez al releer el cap.55, y ya está recogida más arriba
 en este mismo fichero, en la sección «La lactosa del yogur griego…», con la
 cuenta hecha y los dos pasos que faltan. No se duplica.
+
+---
+
+## ⚠️ Las kcal del hueso se calculan con unos factores que NRC excluye para el hueso (11 de septiembre de 2026)
+
+De leer entero el capítulo 3 de NRC 2006. **Es el hallazgo más gordo de esta
+lectura y no se puede resolver con lo que hay en el repo**, así que se escribe
+entero aquí.
+
+### Qué dice la fuente
+
+NRC explica de dónde salen los factores de Atwater (4 kcal/g de proteína, 9 de
+grasa, 4 de hidratos) y para qué alimentos valen, nombrando la excepción:
+
+> *«The resulting Atwater factors of 4 for protein, 9 for fat, and 4 kcal·g–1 for
+> carbohydrate (nitrogen-free extract; NFE) still work amazingly well for
+> ingredients in homemade diets for dogs: meat, offal **(except bones and bone
+> meal)**, poultry, fish, highly purified starch products, milk products, and
+> even chocolate»*
+
+Y la Tabla 3-1 pone la misma frontera en su columna «Application».
+
+⚠️ **Y hay que decir la otra mitad, porque juega a favor**: NRC *recomienda*
+Atwater justo para lo que hace Rawku — *«For dogs, Atwater factors are still
+recommended for use for table food if no other data are available»*. El hueso es
+una excepción **dentro** de una recomendación que por lo demás encaja.
+
+### Qué hace el motor, comprobado
+
+Las nueve fichas de «Hueso carnoso» tienen su `energia` **exactamente igual** a
+4×proteína + 9×grasa, hasta el decimal, y sus notas lo dicen: «Energia calculada
+de sus macros».
+
+| Ficha | `energia` | 4×prot + 9×grasa |
+|---|---|---|
+| Carcasa de pollo | 240,2 | 240,2 |
+| Cuello de pavo | 132,4 | 132,4 |
+| Cuello de pato | 318,8 | 318,8 |
+| Carcasa de conejo | 158,5 | 158,5 |
+| Costillas de cordero | 185,9 | 185,9 |
+| Carcasa de pato | 229,9 | 229,9 |
+
+Y ese `energia` **no es decorativo**: es la fila de energía del MILP
+(`motor_completo.py`) y el divisor con el que `verificar.py` calcula las kcal del
+menú.
+
+### Cuánto pesa, medido sobre los 216 menús del catálogo
+
+| | % de las kcal del menú que vienen del hueso carnoso |
+|---|---|
+| mínimo | 16,6 |
+| mediana | **34,8** |
+| máximo | 56,7 |
+| menús sin hueso | **0 de 216** |
+
+O sea que **en el menú mediano, un tercio del denominador de todos los límites
+del motor** —los 43 de FEDIAF, los cinco de seguridad crónica, los 12 del libro y
+los 75 de patología, que van todos «por 1000 kcal»— sale del único ingrediente
+que la fuente nombra como excepción.
+
+### La DIRECCIÓN se sabe, y el TAMAÑO está ACOTADO Y MEDIDO (11 de septiembre, tarde)
+
+Esto decía «ni el tamaño ni la dirección». Ya no: los dos se pueden deducir de lo
+que la propia fuente dice, sin inventarse ninguna cifra.
+
+**La dirección.** Los factores de Atwater llevan dentro una digestibilidad
+supuesta, y NRC la escribe: *«Atwater factors include a digestibility of 98
+percent for carbohydrate, 96 percent for fat, and 90 percent for protein»*. La
+proteína del hueso carnoso es en buena parte colágeno. Si el colágeno se digiere
+**por debajo** del 90 %, la energía real es **menor** que la calculada. Y como
+todos los límites del motor van «por 1000 kcal», un denominador inflado hace que
+el menú esté **más concentrado** de lo que el motor cree. Así que el riesgo no
+está repartido: está **todo en los TECHOS**, y ninguno en los mínimos, donde el
+error juega a favor.
+
+**El tamaño.** El factor de proteína de Atwater es `(5,7 GE − 1,25 de pérdida
+urinaria) × digestibilidad`, que a 0,90 da exactamente el 4,005 de Atwater. Con
+otra digestibilidad sale otro factor, y basta con ver cuánta de la energía del
+menú pasa por ahí. Medido sobre los 216 menús del catálogo:
+
+| | % de las kcal del menú |
+|---|---|
+| que vienen del hueso carnoso (todo) | 19,1 · **mediana 36,8** · 56,7 |
+| que vienen de la **proteína** del hueso | 7,8 · **mediana 13,1** · 30,2 |
+
+La segunda fila es la que importa, porque el factor que está en duda es el de la
+proteína. Aunque el colágeno se digiriera al **60 %** en vez del 90 % —que es un
+supuesto deliberadamente brutal, no una medida—, las kcal del menú bajarían entre
+un **2,6 % y un 10,1 %, mediana 4,4 %**.
+
+**Y qué mueve eso en la práctica.** Resolviendo seis menús reales con la API y
+recalculando su fósforo sobre las kcal corregidas:
+
+| Perro | kcal | Fósforo hoy | Con la proteína del hueso al 75 % | Al 60 % |
+|---|---|---|---|---|
+| Adulto 3 kg | 325 | 1969 | 2019 | **2070** |
+| Adulto 10 kg | 699 | 1753 | 1785 | 1819 |
+| Adulto 22 kg | 1166 | 1610 | 1641 | 1674 |
+| Adulto 40 kg | 1698 | 1609 | 1643 | 1678 |
+| Senior 28 kg | 1213 | 1633 | 1667 | 1702 |
+| Cachorro 25 kg | 1552 | 2616 | 2669 | 2723 |
+
+O sea: **el error existe, va en la dirección mala y es de un dígito por ciento**.
+Contra el máximo de FEDIAF (4000 en adulto) no lo acerca ni de lejos. Contra el
+**techo del libro (2000)** sí muerde en un caso y solo en uno: el adulto pequeño,
+que hoy sale a 1969 y en el supuesto más duro cruzaría a 2070. Es un margen del
+1,5 %, así que ese perro ya estaba en el borde por su cuenta.
+
+### Lo que NO se hace, y por qué
+
+**No se corrige la energía de las nueve fichas.** Para corregirla haría falta un
+número, y en el repo no hay ninguno:
+
+· **Köber 2017**, que es la fuente de estas fichas (comprobado: sus macros
+  coinciden celda a celda), **no da energía**. Solo materia seca, proteína bruta,
+  grasa bruta, cenizas, calcio y fósforo.
+· **NRC cap.13 no trae energía del hueso.** Buscado: la harina de hueso aparece
+  una sola vez con cifras, en la **Tabla 13-8**, que es *«Composition of Selected
+  Inorganic Macro-mineral Sources Used in Petfood»*, con calcio, fósforo y sodio
+  y **ninguna columna de energía**. Que NRC la clasifique entre las fuentes
+  **inorgánicas** de mineral y no entre los ingredientes energéticos es coherente
+  con excluirla de Atwater, pero no es un número que se pueda aplicar.
+· **NRC cap.6 no da digestibilidad del colágeno.** Buscado «collagen» en el libro
+  entero: sale en el metabolismo de la vitamina C, en la lisina, en el sodio y en
+  una frase sobre el triptófano —*«tryptophan may be limiting when corn and
+  high-collagen diets are used as protein sources»*—, y en ninguna con un
+  coeficiente de digestibilidad.
+
+Poner un 0,75 o un 0,60 porque suena razonable sería exactamente lo que este repo
+tiene prohibido: un número con forma de dato bueno que nadie puede rehacer. El
+supuesto del 60 % de arriba es una **cota**, y está escrito como cota.
+
+⚠️ **Y NRC dice cuál es el método bueno para este caso**, que no es Atwater ni una
+corrección inventada, sino ir por ingrediente: *«Either the energy content of
+digestible nutrients (i.e., heat of combustion of nutrient × digestibility) is
+summed with the aforementioned subtraction for digestible protein, or ME is taken
+directly from the table for each ingredient and summed»*, y añade que *«it has
+been used successfully for homemade and semi-purified experimental diets»* — que
+es exactamente lo que formula Rawku. Para usarlo hace falta el mismo dato que
+falta: la digestibilidad de la proteína del hueso carnoso, o su EM medida.
+
+### Lo que falta, y es DATO, no código
+
+**Una energía metabolizable medida del hueso carnoso crudo, o la digestibilidad
+de su proteína.** Va a `DATOS_QUE_FALTAN.md`. Mientras no exista, el motor se
+queda como está y esta página dice el tamaño del error, que es lo honesto.
+
+Y si algún día aparece: corregir la energía de las nueve fichas **cambia todos
+los menús del catálogo y el DER efectivo de todas las raciones**, así que no se
+toca sin la medida y sin regenerar con `regenerar_catalogo.py`.
+
+⚠️ **Nota de honestidad sobre este punto.** En la sesión del 11 de septiembre
+afirmé este hallazgo **antes** de haber leído el capítulo, con una cifra
+inventada. Eso fue un error y quedó corregido en el momento. Lo de arriba está
+leído, citado literal y comprobado contra el catálogo; la medida del 34,8 % se
+hizo después de leer, no antes.
+
+---
+
+## ⚠️ La fibra del catálogo y la fibra de las tablas no son la misma fibra (11 de septiembre de 2026)
+
+De leer entero el capítulo 4 de NRC 2006. **Las dos mitades están comprobadas
+contra su fuente**, así que esto no es una sospecha.
+
+### Las dos mitades
+
+**Las tablas están en fibra BRUTA.** Ocho patologías del motor ponen un suelo o
+un techo de fibra, y las ocho cifras salen de tablas de SACN5. Tres lo dicen con
+esas palabras en la propia fila —«Crude fiber ≤5%» (58-1), «Crude fiber ≥8%»
+(63-3), «≥7% crude fiber» (64-2)— y el pie de la 63-3 explica por qué las demás
+también: *«Crude fiber is the only fiber value readily available for pet
+foods»*. El cap.5 del mismo libro dice de dónde viene esa costumbre —*«regulations
+require that the maximum amount of crude fiber be listed on the label of all pet
+foods»*— y lo que vale ese número: *«Because the crude fiber analysis
+underestimates fermentable fiber, it does not accurately represent the total fiber
+in a pet food»*.
+
+**El catálogo está en fibra dietética TOTAL.** Dos fichas lo dicen literal en su
+propia `nota_datos` —«BEDCA, "Coles de Bruselas" — fibra dietética total 4,3
+g/100 g» y la misma frase en el puré de tomate—, y es lo que publican las tres
+bases de `Bases.md`. El propio SACN5 lo sitúa en el otro lado: *«This analysis is
+used to determine total fiber and is commonly used for measuring fiber content of
+human foods»*.
+
+### Cuánto separa a las dos
+
+NRC lo cuantifica: *«The crude fiber method accounts for only 5 to 20 percent of
+the total fiber in a food and, as such, underestimates the true DF
+concentration»*. Y la Tabla 5-9 de SACN5 lo enseña con las dos columnas al lado,
+ingrediente a ingrediente: la proporción va del **0 %** (pectina de manzana, goma
+guar, goma arábiga: fibra bruta **cero** con 81-95 % de fibra total) al **82 %**
+(celulosa). No es una constante, así que **no hay factor de conversión que
+aplicar**.
+
+### Medido
+
+Perro de referencia (20 kg, DER 950, adulto), pidiendo el menú a la API con cada
+patología marcada:
+
+| Patología | Límite | Fibra total | En % MS | Fibra bruta real (5-20 %) | Pide la fuente |
+|---|---|---|---|---|---|
+| Obesidad | suelo 30 | 45,35 | 18,14 % | 0,91 a 3,63 % | 12 % |
+| Hiperlipidemia | suelo 25 | 38,88 | 15,55 % | 0,78 a 3,11 % | 10 % |
+| Estreñimiento | suelo 17,5 | 26,73 | 10,69 % | 0,53 a 2,14 % | 7 % |
+| Diabetes | suelo 17,5 | 25,89 | 10,35 % | 0,52 a 2,07 % | 7 % |
+| Intestino irritable | suelo 20 | 20,02 | 8,01 % | 0,40 a 1,60 % | 8 % |
+| Flatulencia | techo 12,5 | 0,43 | 0,17 % | 0,01 a 0,03 % | ≤5 % |
+| Insuf. pancreática exocrina | techo 12,5 | 2,54 | 1,02 % | 0,05 a 0,20 % | ≤5 % |
+| Linfangiectasia (PLE) | techo 12,5 | 2,13 | 0,85 % | 0,04 a 0,17 % | ≤5 % |
+
+**Ninguno de los cinco suelos se cumple en la unidad de su propia fuente**, ni en
+el extremo más favorable del rango. Y **los tres techos no aprietan a nadie**: una
+ración BARF sale con 0,2-1 % de fibra bruta de materia seca, diez veces por debajo
+del techo, así que ahí el error de unidad no le quita el menú a ningún perro.
+
+### Lo que se ha corregido ya
+
+El `por_que` de `intestino_irritable` decía que se usaba la fila de fibra bruta
+«porque es la unica que el catalogo sabe medir». **Era falso y está corregido**:
+esa nota al pie de SACN5 habla de **piensos**, cuya etiqueta solo declara la
+bruta; el catálogo de Rawku es el único de los dos que sí tiene la fibra
+dietética total. Y `UNIDADES.md` no decía qué método mide el campo `fibra`;
+ahora lo dice.
+
+### Lo que NO se toca, y por qué
+
+**Las ocho cifras se quedan como están.** Para cambiarlas haría falta una de dos
+cosas, y ninguna existe:
+
+1. Un factor bruta↔total. NRC da un rango de **cuatro veces** y la Tabla 5-9
+   enseña que dentro de ese rango depende del ingrediente, con el **0** para la
+   fibra soluble — que es justo la del psyllium del catálogo.
+2. Elegir, en la Tabla 63-3, una de sus tres filas en términos de fibra dietética
+   (soluble 1-5 %, mixta 5-10 %, insoluble 10-15 %). Pero el propio pie dice que
+   eso es **clínico**: *«Any one of the three types of fiber listed at the
+   recommended levels can be effective, depending on patient response»*.
+
+### La pregunta para el nutricionista
+
+Los cinco suelos de fibra están escritos en fibra bruta y se comprueban contra
+fibra dietética total, así que el perro recibe **bastante menos** fibra bruta de
+la que su fuente pide. ¿Se sube el suelo para compensar —y con qué criterio, si
+la fuente da un rango de 4×—, se reescriben en la unidad del catálogo usando las
+filas de tipo de fibra de la Tabla 63-3, o se dejan como están y se dice en la
+pauta?
+
+⚠️ **NRC además desmiente el mecanismo en un caso concreto, el de la diabetes**:
+*«No relationship was found between crude fiber content of the diet and blood
+glucose or insulin»*, y la explicación es justo esta — *«This was attributed to
+the inability of the crude fiber analysis to recover soluble dietary fibers, which
+can play a key role in mediating postprandial hyperglycemia»*. O sea que la unidad
+en la que está escrito nuestro suelo de diabetes es la que la fuente dice que no
+sirve para lo que ese suelo quiere conseguir.

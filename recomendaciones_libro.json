@@ -33,6 +33,21 @@
             "cita": "SACN5 5a ed., Tabla 13-3, fila «Sodium (%)», extremo ALTO de «0.2 to 0.4 %» (igual en las dos columnas). Leida literal 8-sep-2026"
           }
         }
+      },
+      "suelos_por_1000kcal": {
+        "vitE": {
+          "valor": 67.1,
+          "fuente": "SACN5 5a ed., cap.13 «Feeding Young Adult Dogs», Tabla 13-3, verificado literal 11-sep-2026",
+          "por_que": "APLICADO 11-sep-2026. Es el PRIMER SUELO de este fichero: hasta hoy solo traia techos. Tabla 13-3, bloque «Antioxidants (amount/kg food)», fila «Vitamin E (IU)»: >=400 en las dos columnas («Normal weight and body condition» e «Inactive/obese prone»). Y el texto del mismo capitulo lo dice con todas las letras: «A prudent recommendation is that foods for young adult dogs should contain at least 400 IU vitamin E/kg (DM)». || POR QUE NO CHOCA CON FEDIAF, que es la regla que decide: FEDIAF NO PONE MAXIMO DE VITAMINA E en ninguna etapa (Tabla III-3b, las tres celdas de maximo vacias), asi que este suelo no saca al perro de la ventana de FEDIAF -- solo sube el suelo por encima del minimo de FEDIAF (6,968 mg/1000 kcal), que es lo que un suelo del libro puede hacer. Donde una fuente SI contradiga a FEDIAF, manda FEDIAF y se anota. || LO QUE DICE LA PROPIA FUENTE DE SU CIFRA, sin adornarlo: el requisito es otra cosa y mucho menor -- «The requirement for vitamin E for foods (DM) for adult dogs is 30 mg/kg (NRC, 2006)» --, y estos 400 UI son «for improved antioxidant performance», del estudio de biomarcadores de Jewell et al. 2000, que ademas apunta mas arriba: «One antioxidant biomarker study in dogs indicated that for improved antioxidant performance, dog foods should contain at least 500 IU vitamin E/kg (DM)». Se aplica el 400, que es el numero que el libro pone en su tabla y el que repite en otros cuatro capitulos. || LO DICE EN CINCO CAPITULOS DISTINTOS, que es por lo que no es una frase suelta: 13 (adulto joven), 14 (maduro), 34 (artrosis), 37 (renal cronico) y 47 (salud oral). Y por eso el motor ya lo aplicaba por la puerta de atras en cuatro patologias --renal, hepatopatia, obesidad y artrosis, las cuatro con 67,1-- mientras el perro SIN NADA se quedaba en el minimo de FEDIAF. El resultado era el mismo desajuste que tenia el fosforo antes del 8 de septiembre: el mismo perro pasaba de 7 a 67 por marcar «artrosis». || MEDIDO ANTES DE APLICARLO. Menus reales del motor, perro sano sin patologias, por la API: 3 kg -> 23,9 mg; 10 kg -> 14,5; 22 kg -> 14,6; 40 kg -> 15,4; senior 8 kg -> 40,8; senior 28 kg -> 62,2. CERO de seis llegan a 67,1, y el mejor se queda a un 7 %. O sea que este suelo SI cambia los menus, al reves que el sodio. Que cabe no es una suposicion: las cuatro patologias de arriba ya lo exigen y las cuatro dan menu verde (BLOQUE 61). || CONVERSION, y aqui esta la trampa: la tabla da UI y el catalogo mide MILIGRAMOS. 400 UI/kg MS a 4000 kcal/kg MS son 100 UI/1000 kcal; FEDIAF Tabla VII-14 da d-alfa-tocoferol 1 mg = 1,49 UI, luego 1 UI = 0,671 mg, y 100 x 0,671 = 67,1 mg/1000 kcal. Es EXACTAMENTE el mismo factor que ya usan las cuatro patologias, a proposito: dos conversiones distintas del mismo numero serian dos numeros. El 8-sep-2026 esto se escribio una vez tratando las UI como mg y la artrosis dejo de dar menu.",
+          "conversion": {
+            "valor_en_la_fuente": 400,
+            "unidad_en_la_fuente": "UI/kg MS",
+            "factor_a_la_unidad_del_motor": 0.671,
+            "por_que_el_factor": "El catalogo mide mg de d-alfa-tocoferol natural y la tabla da UI. FEDIAF Tabla VII-14: d-alfa-tocoferol 1 mg = 1,49 UI, luego 1 UI = 0,671 mg. Mismo factor que las cuatro patologias que ya aplican esta misma cifra.",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "SACN5 5a ed., Tabla 13-3 «Key nutritional factors for foods for young adult dogs», bloque «Antioxidants (amount/kg food)», fila «Vitamin E (IU)», >=400 en las dos columnas. Y el texto del capitulo: «A prudent recommendation is that foods for young adult dogs should contain at least 400 IU vitamin E/kg (DM)». Leidos literales 11-sep-2026"
+          }
+        }
       }
     },
     "Senior": {
@@ -58,6 +73,21 @@
             "unidad_en_la_fuente": "%MS->mg",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "SACN5 5a ed., Tabla 14-2, fila «Sodium (%)», extremo ALTO de «0.15 to 0.4 %». Leida literal 8-sep-2026"
+          }
+        }
+      },
+      "suelos_por_1000kcal": {
+        "vitE": {
+          "valor": 67.1,
+          "fuente": "SACN5 5a ed., cap.14 «Feeding Mature Adult Dogs», Tabla 14-2, verificado literal 11-sep-2026",
+          "por_que": "APLICADO 11-sep-2026, la misma cifra que el adulto joven y por su propia tabla, no por herencia. Tabla 14-2, bloque «Antioxidants (amount/kg food)», fila «Vitamin E (IU)»: 400 en las dos columnas. Y el texto del capitulo: «For improved antioxidant performance, foods for mature dogs should contain at least 400 IU vitamin E/kg (DM)». || Se escribe aparte y no se hereda del Adulto porque son dos tablas distintas de dos capitulos distintos, igual que el fosforo (que si cambia: 2000 en adulto y 1750 en senior). Que aqui coincidan es un hecho de la fuente, no una simplificacion nuestra. || Conversion identica a la del adulto: 400 UI/kg MS = 100 UI/1000 kcal x 0,671 mg/UI = 67,1 mg/1000 kcal. || Medido antes de aplicarlo: senior de 8 kg -> 40,8 mg y de 28 kg -> 62,2. Ninguno llega.",
+          "conversion": {
+            "valor_en_la_fuente": 400,
+            "unidad_en_la_fuente": "UI/kg MS",
+            "factor_a_la_unidad_del_motor": 0.671,
+            "por_que_el_factor": "El catalogo mide mg de d-alfa-tocoferol natural y la tabla da UI. FEDIAF Tabla VII-14: d-alfa-tocoferol 1 mg = 1,49 UI, luego 1 UI = 0,671 mg. Mismo factor que las cuatro patologias que ya aplican esta misma cifra.",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "SACN5 5a ed., Tabla 14-2 «Key nutritional factors for foods for mature dogs», bloque «Antioxidants (amount/kg food)», fila «Vitamin E (IU)», 400 en las dos columnas. Y el texto del capitulo: «For improved antioxidant performance, foods for mature dogs should contain at least 400 IU vitamin E/kg (DM)». Leidos literales 11-sep-2026"
           }
         }
       }

@@ -187,7 +187,13 @@ def auditar():
     return fallos
 
 
-# ⚠️ AÑADIDO (10 septiembre) — LOS TECHOS DEL LIBRO PARA EL PERRO SANO.
+# ⚠️ AÑADIDO (10 septiembre) — LAS CIFRAS DEL LIBRO PARA EL PERRO SANO.
+#
+# (Se llamaban «los techos» aquí y en el print hasta el 11 de septiembre, y
+# dejó de ser verdad ese día: `recomendaciones_libro.json` guarda desde
+# entonces también SUELOS -- el primero, la vitamina E que SACN5 pide a
+# cualquier perro adulto sano. Un recuento que se llama «techos» y cuenta
+# suelos es la clase de etiqueta que hace que nadie mire el número.)
 #
 # `recomendaciones_libro.json` es la TERCERA clase de límite del motor -- ni
 # FEDIAF ni patología: lo que el libro recomienda al perro que no tiene nada --
@@ -250,7 +256,7 @@ def auditar_recomendaciones():
 
     for etapa, ficha in sorted(tabla.items()):
         recorrer(ficha, etapa)
-    print(f"  {revisadas} techos del libro · {comprobadas} con la conversión rehecha y "
+    print(f"  {revisadas} cifras del libro · {comprobadas} con la conversión rehecha y "
           f"correcta · {sin_bloque} sin declarar de dónde salen")
     return fallos
 

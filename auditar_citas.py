@@ -58,7 +58,15 @@ DOCUMENTOS = ["PATOLOGIAS.md", "LECTURA_SACN5.md", "HALLAZGOS_LECTURA_FUENTES.md
               # citas literales, que es exactamente el material que este auditor
               # existe para vigilar. Dejarlo fuera seria abrir una puerta nueva por
               # la que puede colarse una cita que el libro no dice.
-              "LECTURA_SACN5_INTEGRA.md"]
+              "LECTURA_SACN5_INTEGRA.md",
+              # NRC 2006, desde el 11 de septiembre. Su texto vive en
+              # `canislab-fuentes/NRC2006/nrc2006.txt` y este auditor ya lo indexa,
+              # porque recorre TODOS los .txt del repo de fuentes.
+              "LECTURA_NRC2006.md",
+    # El registro de donde las fuentes no dicen lo mismo, para el documento
+    # que lee el nutricionista (11 septiembre). Va aqui por lo mismo que los
+    # demas: es el sitio del repo donde mas facil es citar de memoria.
+    "FEDIAF_CONTRA_OTRAS_FUENTES.md"]
 JSONS = ["patologias.json", "recomendaciones_libro.json", "requisitos_condicionales.json",
          "requerimientos_v2_final.json", "sacn5_fuentes_de_minerales.json",
          "fediaf_conversiones_vitaminas.json"]

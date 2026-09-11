@@ -44,10 +44,19 @@ O sea que el perro sano recibe **la cuarta parte** de lo que su fuente
 recomienda, y aplicarlo obligaría a meter un suplemento de vitamina E en
 **todos** los menús.
 
-> **DECISIÓN.** No es un requisito: SACN5 lo llama «for improved antioxidant
+> ~~**DECISIÓN.** No es un requisito: SACN5 lo llama «for improved antioxidant
 > performance», y FEDIAF no pone máximo de vitamina E, así que aritméticamente
 > cabe. Pero cambia todos los menús y mete un suplemento nuevo. ¿Se aplica al
-> perro sano, se aplica solo al senior (cap.14), o se queda escrito?
+> perro sano, se aplica solo al senior (cap.14), o se queda escrito?~~
+>
+> ✅ **RESUELTA Y APLICADA el 11 de septiembre de 2026.** Elena: «si lo dice el
+> manual se meten claro que si». Se aplica **al perro sano**, adulto y sénior, como
+> suelo de **67,1 mg/1000 kcal** en `recomendaciones_libro.json` — que para poder
+> guardarlo tuvo que aprender a guardar suelos, porque hasta ese día solo tenía
+> techos. Medido después: los menús salen en **68-79 mg** y en el peldaño
+> **estricto**, sin soltar ninguna proporción de BARF. Lo vigila el BLOQUE 57, con
+> el fallo puesto. No entra en crecimiento, gestación ni lactancia: sus tablas no
+> dan la cifra. Y no choca con FEDIAF, que no pone máximo de vitamina E.
 
 ### 1.1 · Y con ella van dos más, del mismo párrafo
 

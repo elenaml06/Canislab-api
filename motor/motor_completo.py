@@ -1017,6 +1017,29 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # recoge más abajo) y con el mismo `max()`, así que a partir de aquí el
     # solver, `_tope_patologia_roto` y el diagnóstico de choques los tratan
     # igual, sin ninguna rama nueva.
+    # ⚠️ AÑADIDO (11 septiembre) — LOS SUELOS DEL LIBRO PARA EL PERRO SANO.
+    # Hermano del `topes_de_la_etapa` de arriba, con el signo cambiado y el
+    # mismo `max()` que los suelos de patología. El primero es la vitamina E:
+    # SACN5 la pide en >=400 UI/kg MS (67,1 mg/1000 kcal) en cinco capítulos, y
+    # hasta hoy el motor solo se la exigía a cuatro PATOLOGÍAS -- así que el
+    # mismo perro pasaba de 7 a 67 por marcar «artrosis» y el perro sin nada se
+    # quedaba en el mínimo de FEDIAF. Es el mismo desajuste que tenía el fósforo
+    # antes del 8 de septiembre, un nutriente más allá.
+    #
+    # Se le pasa `req` para que pueda ceder ante FEDIAF: si un suelo del libro
+    # se pasara del MÁXIMO de FEDIAF, manda FEDIAF. Hoy no se dispara (la
+    # vitamina E no tiene máximo en la Tabla III-3b) y está puesto igual.
+    #
+    # NO se le pasa `der_efectiva`, al revés que a los techos, y eso no es un
+    # olvido: un techo cede cuando el mínimo escalado lo supera; un suelo no
+    # tiene ese cruce. El porqué largo está en `suelos_de_la_etapa`.
+    from recomendaciones import suelos_de_la_etapa as _suelos_del_libro
+    for _clave_r2, _valor_r2 in _suelos_del_libro(
+            etapa, req, peso_adulto_esperado_kg).items():
+        _actual_r2 = suelos_patologia.get(_clave_r2)
+        suelos_patologia[_clave_r2] = (_valor_r2 if _actual_r2 is None
+                                       else max(_actual_r2, _valor_r2))
+
     from condicionales import suelos_de_la_etapa as _suelos_condicionales
     for _clave_c2, _valor_c2 in _suelos_condicionales(etapa).items():
         _actual_c2 = suelos_patologia.get(_clave_c2)
