@@ -10,6 +10,88 @@ hemos decidido algo sin fuente, lo dice también y lo marca.
 
 ---
 
+## Lo primero, y en números: contra qué se compara esto
+
+Antes de entrar en nada, la pregunta que un nutricionista se hace con razón al
+oír «dieta casera para perros»: **¿no salen casi todas mal?**
+
+Sí. Y la literatura lo tiene medido. Ettinger, Feldman y Côté, *Tratado de
+Medicina Interna Veterinaria*, 8.ª ed., cap. 192 «Dietas no convencionales
+(caseras, vegetarianas y crudas)», reúne estos estudios:
+
+| Qué se evaluó | Qué se encontró |
+|---|---|
+| **200 recetas** de libros de texto veterinarios, manuales para propietarios y webs | **95 %** con al menos un nutriente esencial fuera de NRC/AAFCO · **83,5 %** con varios · **92 %** con instrucciones vagas o incompletas · **89,5 %** sin instrucciones de cómo darlo |
+| **85 dietas caseras** publicadas (49 de mantenimiento, 36 de crecimiento) | **86 %** con minerales inadecuados · **62 %** con vitaminas · **55 %** con proteína o aminoácidos |
+| **5 dietas crudas** (2 comerciales, 3 caseras) | **todas** con algún nutriente esencial por debajo del mínimo de AAFCO. Las tres caseras con Ca:P mal equilibrado, dos con exceso de vitamina D y una con exceso de vitamina E |
+
+Y el mismo capítulo nombra **cuáles fallan más**: *«Las carencias de nutrientes
+más comunes fueron el cinc, la colina, el cobre, la combinación de ácido
+eicosapentaenoico (EPA) más ácido docosahexaenoico (DHA), el Ca, la vitamina D y
+la vitamina E.»* De esas 200 recetas, **nueve superaban el límite máximo seguro
+de vitamina D** y **seis el de EPA+DHA**.
+
+### Dónde cae este motor en esa lista
+
+Esas siete son exactamente la prueba que hay que pasar. Medido el 11 de
+septiembre de 2026 sobre **menús resueltos de verdad por el motor**, no sobre
+recetas fijas, en **porcentaje del mínimo de FEDIAF ya escalado** (100 % = justo
+el mínimo):
+
+| Perro | cinc | colina | cobre | EPA+DHA | calcio | vit. D | vit. E |
+|---|---|---|---|---|---|---|---|
+| Toy, 3 kg | 108 % | 173 % | 107 % | 641 % | 181 % | 327 % | 165 % |
+| Adulto, 10 kg | 106 % | 132 % | 150 % | 680 % | 142 % | 112 % | 214 % |
+| Adulto, 22 kg | 135 % | 136 % | 126 % | 586 % | 126 % | 105 % | 282 % |
+| Adulto, 40 kg | 125 % | 147 % | 104 % | 179 % | 167 % | 103 % | 250 % |
+| Cachorro, 10 kg | 149 % | 180 % | 126 % | 101 % | 174 % | 177 % | 872 % |
+
+**Las siete por encima del mínimo en los cinco perros.** El peor caso de cada una
+va del 101 % al 165 %.
+
+Que varias vayan **justas por encima** no es un descuido: el motor resuelve un
+problema de optimización y se para donde el requisito se cumple. Si le sobrara
+margen en todo, estaría metiendo comida que nadie necesita.
+
+### Y los tres excesos, que es la otra mitad
+
+Los tres que ese capítulo denuncia —**vitamina D**, **EPA+DHA** y el **Ca:P mal
+equilibrado**— no son avisos en este motor: son **restricciones dentro del solver**. Un menú
+que se pase no se entrega con una advertencia; **no se construye**. Pero los tres
+no funcionan igual, y la diferencia importa:
+
+| Exceso | Cómo lo trata el motor |
+|---|---|
+| **Vitamina D** | Uno de los **cinco topes de seguridad crónica**, 20 µg/1000 kcal (§7). Restricción dura, por ración |
+| **EPA+DHA** | ⚠️ **Techo SEMANAL**, 2,8 g/1000 kcal **de promedio de la semana**, no por ración. FEDIAF **no pone máximo** (la columna *Maximum* de su Tabla III-3b está vacía), así que esta cifra no es suya |
+| **Ca:P** | Restricción simultánea desde el primer día (§5), con el techo de 1,6 de la nota b para el cachorro de raza grande |
+
+Que el de EPA+DHA sea **semanal y no diario** es deliberado: 18 de los 20 pescados
+del catálogo pasan solos el límite por ración, así que aplicarlo por ración
+dejaría casi todo el pescado fuera del menú. Se aplica sobre el promedio de la
+semana, que es como se acumula.
+
+### Lo que esto NO demuestra
+
+Tres cosas, y conviene decirlas antes de que las pregunte:
+
+1. **Que el catálogo sea correcto.** Todo esto se apoya en los valores
+   nutricionales de 163 fichas de alimento. Si una ficha miente, el menú sale
+   verde igual. Los huecos conocidos y los datos dudosos están declarados en
+   §11 y en `DATOS_QUE_FALTAN.md`.
+2. **Que el dueño lo dé bien.** El mismo cap. 192 avisa de que *«los alimentos y
+   premios desequilibrados no se deben proporcionar en más de un 10 % de la
+   ingesta calórica diaria total»*, porque diluyen la ración. **Hoy la app no
+   dice eso y tampoco pregunta qué premios le da**, y eso está abierto.
+3. **Nada sobre el riesgo bacteriano.** Ese capítulo no recomienda el crudo, y
+   sus motivos no son nutricionales sino de manipulación: patógenos,
+   contaminación ambiental y obstrucción por huesos. El motor no toca eso. Es
+   una decisión de producto y está señalada como tal.
+
+---
+
+---
+
 ## 0 · Qué es esto y qué se pide
 
 **Qué es Rawku.** Una app que calcula raciones BARF (comida cruda) para

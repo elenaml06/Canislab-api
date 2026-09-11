@@ -10142,6 +10142,43 @@ if _doc65 is not None:
                       "meses. FEDIAF titula sus columnas «Early Growth (< 14 weeks)»; el corte son "
                       "14 semanas y lo aplica `canislab-web/src/der.js`")
 
+    # ⚠️ LA APERTURA DEL DOCUMENTO, QUE ES UNA AFIRMACION FUERTE (11 septiembre).
+    #
+    # Desde hoy el documento ABRE comparando el motor contra la lista de
+    # carencias mas frecuentes en dietas caseras que da Ettinger cap.192 --cinc,
+    # colina, cobre, EPA+DHA, calcio, vitamina D y vitamina E-- y afirma dos
+    # cosas: que el motor aplica un MINIMO a las siete, y que dos de los tres
+    # excesos que ese capitulo denuncia (vitamina D y EPA+DHA) son TOPES DUROS
+    # del solver y no avisos.
+    #
+    # Los porcentajes medidos NO se pueden anclar: el menu que devuelve el solver
+    # cambia entre ejecuciones, y anclar una cifra concreta de un menu es el
+    # error de los bloques 57, 58 y 60. Lo que si se ancla es lo que tiene que
+    # ser verdad de CUALQUIER ejecucion: que esos siete requisitos existan con
+    # minimo, y que esos dos topes sigan siendo duros. Si alguien quita uno, el
+    # documento que va a revision pasa a afirmar algo falso.
+    _SIETE_65 = ["Zinc", "Colina", "Cobre", "EPA_DHA_total", "Calcio",
+                 "Vitamina_D", "Vitamina_E"]
+    for _n65 in _SIETE_65:
+        _fila65 = req.get(_n65) if isinstance(req, dict) else None
+        if _fila65 is None:
+            fallos.append(f"BLOQUE65: PARA_EL_NUTRICIONISTA.md abre diciendo que el motor cubre "
+                          f"«{_n65}», una de las siete carencias mas frecuentes segun Ettinger "
+                          f"cap.192, y esa fila ya no esta en requerimientos_v2_final.json")
+            continue
+        if _num65(_fila65.get("minAdulto")) is None:
+            fallos.append(f"BLOQUE65: «{_n65}» ya no tiene minimo de adulto. El documento afirma "
+                          f"que el motor lo exige, y es una de las siete que la literatura dice "
+                          f"que fallan mas en dietas caseras")
+    import seguridad as _seg65b
+    for _atr65, _que65b in (("TOPE_VITD_KCAL", "la vitamina D"),
+                            ("TOPE_EPA_DHA_SEMANAL_KCAL", "el EPA+DHA")):
+        if not hasattr(_seg65b, _atr65):
+            fallos.append(f"BLOQUE65: ha desaparecido `seguridad.{_atr65}`. El documento abre "
+                          f"diciendo que {_que65b} es un TOPE DURO del solver y no un aviso -- que "
+                          f"es justo uno de los tres excesos que Ettinger cap.192 denuncia en las "
+                          f"dietas caseras")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
