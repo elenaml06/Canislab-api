@@ -364,9 +364,24 @@ primeros llegaban a datos de otra persona. Lo vigila entero el BLOQUE 93.
    receta pública: se cambiaba el menú y el número de colegiado, se
    recalculaba, y `/pauta/comprobar` decía «es exactamente el que se
    firmó». Ahora es HMAC con `SELLO_SECRETO`, **y sin esa variable no se
-   firma** (503). `/pauta/comprobar` sigue reconociendo los sellos
-   anteriores, pero los llama por su nombre y dice que hay que volver a
-   firmar.
+   firma ni se comprueba** (503). `/pauta/comprobar` sigue reconociendo los
+   sellos anteriores, pero los llama por su nombre y dice que hay que volver
+   a firmar.
+   ⚠️ **Lo del «ni se comprueba» costó una segunda pasada, y se cazó CONTRA
+   PRODUCCIÓN media hora después de desplegar la primera.** `/pauta/firmar`
+   fallaba cerrado sin la clave y `/pauta/comprobar` no: seguía calculando el
+   SHA-256 de siempre, así que la pauta fabricada de cero **seguía pasando
+   por buena**. Y era peor que antes del arreglo, no igual — la respuesta
+   decía además `sello_con_clave: true`, afirmando sobre un papel que
+   cualquiera escribe que lleva una clave que el servidor no tiene. Un fallo
+   que miente en la dirección tranquilizadora. La causa de fondo es que son
+   dos preguntas distintas: «¿el documento cuadra consigo mismo?» la
+   contesta cualquiera, y «¿lo firmó este servidor?» solo quien tenga la
+   clave; sin clave, contestar la primera en lugar de la segunda es
+   exactamente lo que había que dejar de hacer. Y la lección de método: un
+   arreglo de seguridad no está comprobado hasta que se le tira el ataque
+   **a lo desplegado**, porque la batería corría con la clave puesta —se la
+   fabrica ella— y ese camino no lo pisaba nadie.
 5. **El CORS estaba en `*`** con el comentario «en produccion, poner aqui
    el dominio real» puesto desde el primer día. Hoy no daba acceso a la
    cuenta de nadie — para eso hace falta el token —, pero deja de ser
