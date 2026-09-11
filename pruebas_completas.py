@@ -13832,6 +13832,53 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 97 — NINGUNA FUENTE DECIDE UNA CIFRA SIN ESTAR DECLARADA
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (11 septiembre, de noche). Elena, después de que se cerrara
+# Fascetti: «tienes que seguir leyendo todo lo que no esté cerrado fuente a
+# fuente».
+#
+# Al medirlo salió que la frase «cerrado fuente a fuente» era verdad de CUATRO
+# fuentes y de ninguna más: FEDIAF, SACN5, NRC 2006 y Fascetti tenían contador;
+# había ONCE MÁS que deciden cifras que el motor aplica y no tenían ninguno. Un
+# contador en rojo se ve; un contador que no existe, no.
+#
+# Y la forma del problema es la misma que costó los ocho últimos capítulos de
+# Fascetti: esas once se buscaron para CONFIRMAR UNA CIFRA que ya teníamos --
+# abrir el PDF, encontrar el número, cerrarlo --, que es leer una FRASE y no un
+# DOCUMENTO.
+#
+# ⚠️ LO QUE ESTE BLOQUE **NO** DICE, escrito aquí para que nadie lo lea como más
+# de lo que es: no dice que las once estén leídas. Dice que están DECLARADAS y
+# con qué estado. `verificada_la_cifra` es un rojo suave y significa
+# literalmente «se confirmó el número, no se leyó el documento». Subirlas es
+# trabajo de lectura, no de código.
+print("\n" + "=" * 60)
+print("=== BLOQUE 97: ninguna fuente decide una cifra sin estar declarada ===")
+import os as _os97
+import subprocess as _sub97
+if not _os97.path.exists(_os97.path.join(str(_raiz_b24), "auditar_fuentes.py")):
+    fallos.append("BLOQUE97: falta `auditar_fuentes.py`. Sin él, una fuente nueva puede entrar "
+                  "por la puerta de atrás -- alguien añade una ficha citando un artículo -- y "
+                  "nadie sabe si ese documento se ha leído")
+else:
+    _r97 = _sub97.run([sys.executable, "auditar_fuentes.py"], capture_output=True, text=True,
+                      cwd=str(_raiz_b24))
+    _salida97 = (_r97.stdout or "") + (_r97.stderr or "")
+    if _r97.returncode != 0:
+        _cola97 = "\n      ".join(l.strip() for l in _salida97.splitlines()
+                                  if l.strip().startswith("❌"))
+        fallos.append(f"BLOQUE97: el inventario de fuentes no cuadra con las citas vivas:"
+                      f"\n      {_cola97}")
+    for _l97 in _salida97.strip().splitlines():
+        if _l97.strip().startswith(("Discrepancias", "❌")) or not _l97.strip():
+            continue
+        print(f"  {_l97.rstrip()}")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # BLOQUE 96 — NO SE APLICA UNA CIFRA DE UN CAPÍTULO SIN CERRAR
 # ============================================================
 #

@@ -1,0 +1,145 @@
+{
+  "_meta": {
+    "que_es": "Todas las fuentes que deciden una cifra que el motor APLICA, una por una, con lo que deciden, si estan en el repo y si estan LEIDAS ENTERAS.",
+    "por_que_existe": "Elena, 11-sep-2026 de noche, despues de cerrar Fascetti: «tienes que seguir leyendo todo lo que no este cerrado fuente a fuente». Al medirlo salio que solo CUATRO fuentes tenian contador -- FEDIAF, SACN5, NRC 2006 y Fascetti -- y que ONCE MAS deciden cifras aplicadas sin tener ninguno. Un contador que no existe es peor que uno en rojo: no se ve.",
+    "la_diferencia_que_importa": "«Verificada» y «leida» NO son lo mismo, y es exactamente el fallo que costo los ocho capitulos de Fascetti. Casi todas estas fuentes se buscaron para CONFIRMAR UN NUMERO que ya teniamos -- se abrio el PDF, se busco la cifra, se confirmo y se cerro --, que es leer una FRASE y no un DOCUMENTO. El BLOQUE 96 impide eso para los cuatro libros grandes; aqui se declara donde sigue pasando.",
+    "los_estados": {
+      "leida_entera": "Tiene registro de lectura con veredicto elemento a elemento, como los cuatro libros. Hoy: cuatro.",
+      "verificada_la_cifra": "Se abrio y se confirmo el numero concreto que el motor usa, no el documento entero. Es el estado de la mayoria, y es el que hay que subir.",
+      "no_esta_en_el_repo": "El motor cita una cifra suya y el documento no esta aqui, asi que no se puede comprobar nada -- ni la cita ni el contexto.",
+      "inventariada": "No es prosa que se lea: es una tabla que ya vive convertida en un JSON del motor, con su propio auditor."
+    },
+    "medido": "11 de septiembre de 2026, contando las citas vivas de los ocho ficheros de datos del motor."
+  },
+  "fuentes": {
+    "FEDIAF": {
+      "estado": "leida_entera",
+      "donde": "canislab-fuentes/FEDIAF",
+      "registro": "lecturas_fuentes.json",
+      "contador": "leer_fuente.py (BLOQUE 68)",
+      "que_decide": "Los 43 requisitos, los maximos legales, la ecuacion de escalado, las tablas de energia y las conversiones de vitaminas.",
+      "nota": "Manda sobre todas las demas. Su registro va por SECCIONES numeradas, no por capitulos, por eso no entra en `auditar_fuente_cerrada.py` y si en su propio contador."
+    },
+    "SACN5": {
+      "estado": "leida_entera",
+      "donde": "canislab-fuentes/sacn5",
+      "registro": "lecturas_sacn5.json + sacn5_tablas.json",
+      "contador": "leer_sacn5.py (BLOQUE 81) y auditar_sacn5_tablas.py (BLOQUE 78)",
+      "que_decide": "La mayoria de los topes de patologia: 108 citas, mas que ninguna otra fuente."
+    },
+    "NRC2006": {
+      "estado": "leida_entera",
+      "donde": "canislab-fuentes/NRC2006",
+      "registro": "lecturas_nrc2006.json",
+      "contador": "leer_nrc2006.py (BLOQUE 94)",
+      "que_decide": "El ratio linoleico:linolenico, los limites superiores seguros de linoleico, EPA+DHA y vitamina E, y el minimo de proteina que documenta el suelo de la via firmada."
+    },
+    "Fascetti": {
+      "estado": "leida_entera",
+      "donde": "canislab-fuentes/fascetti",
+      "registro": "lecturas_fascetti.json",
+      "contador": "leer_fascetti.py (BLOQUE 94) y auditar_fuente_cerrada.py (BLOQUE 96)",
+      "que_decide": "El calcio del cachorro de raza grande, la vitamina D de crecimiento y del oxalato, y los tres techos del cap.14.",
+      "nota": "Cerrada el 11-sep-2026. Sus ultimos ocho capitulos salieron del BLOQUE 96 y dieron nueve hallazgos."
+    },
+    "Spitze_2003": {
+      "estado": "no_esta_en_el_repo",
+      "donde": null,
+      "registro": null,
+      "contador": null,
+      "citas_vivas": 89,
+      "que_decide": "LA TAURINA DE 89 FICHAS DEL CATALOGO, casi todas las que la declaran.",
+      "nota": "⚠️ ES LA SEGUNDA FUENTE MAS CITADA DEL MOTOR Y NO ESTA AQUI. Spitze AR, Wong DL, Rogers QR, Fascetti AJ (2003), «Taurine concentrations in animal feed ingredients; cooking influences taurine content», J Anim Physiol Anim Nutr 87:251-262. Sin el documento no se puede comprobar ni la cifra ni si el corte del catalogo es el que midio el estudio -- varias fichas ya declaran confianza MEDIA porque usan otro corte del mismo animal. Es lo primero que hay que conseguir."
+    },
+    "Kober_2017": {
+      "estado": "verificada_la_cifra",
+      "donde": "canislab-fuentes/Kober_2017",
+      "registro": null,
+      "contador": null,
+      "citas_vivas": 10,
+      "que_decide": "El calcio y el fosforo REALES de los diez huesos carnosos del catalogo, medidos en pieza entera.",
+      "nota": "Es un resumen de congreso (ESVCN 2017) con una tabla, no un libro: leerlo entero es cuestion de una sesion. Decide el nutriente que mas pesa en una racion BARF."
+    },
+    "Dobenecker_Hofmann": {
+      "estado": "verificada_la_cifra",
+      "donde": "canislab-fuentes/Dobenecker_Hofmann_fosforo_calcio",
+      "registro": null,
+      "contador": null,
+      "citas_vivas": 10,
+      "que_decide": "La distincion entre fosforo organico e inorganico, que es la que dice cual de los dos hace dano.",
+      "nota": "Dos articulos (Dobenecker 2021 PLOS ONE y Hofmann 2025 JAPAN). Los dos estan en texto."
+    },
+    "Today_s_Veterinary_Practice": {
+      "estado": "verificada_la_cifra",
+      "donde": "canislab-fuentes/Today_s_Veterinary_Practice",
+      "registro": null,
+      "contador": null,
+      "citas_vivas": 6,
+      "que_decide": "El rango numerico de sodio por estadio ACVIM: 625 en el C y 480 en el D.",
+      "nota": "⚠️ En la carpeta solo hay UN articulo, y es de oxalato calcico -- el que da los numeros de sodio NO esta. Esas dos cifras deciden lo que come un perro en insuficiencia cardiaca y hoy no se pueden comprobar aqui. Relacionado con la P-10."
+    },
+    "Reglamento_UE_2020_354": {
+      "estado": "inventariada",
+      "donde": "canislab-fuentes/Reglamento_UE_2020_354",
+      "registro": "limites_legales_ue_2020_354.json",
+      "contador": "auditar_margen_profesional.py (BLOQUE 80)",
+      "citas_vivas": 5,
+      "que_decide": "Los techos LEGALES: es la unica fuente del repo que es ley, y por tanto la unica de la que no se sale nadie.",
+      "nota": "Sus 20 entradas caninas estan volcadas una a una y el auditor rehace las 79 ventanas contra ellas. No es prosa que contar."
+    },
+    "ACVIM": {
+      "estado": "verificada_la_cifra",
+      "donde": "canislab-fuentes/ACVIM_consenso",
+      "registro": null,
+      "contador": null,
+      "citas_vivas": 4,
+      "que_decide": "Los cinco estadios de la cardiopatia y el umbral de UPC 0,5 de la proteinuria renal.",
+      "nota": "Esta el consenso de Keene 2019 sobre MMVD en texto. El de proteinuria (2013) no esta."
+    },
+    "IRIS": {
+      "estado": "verificada_la_cifra",
+      "donde": "canislab-fuentes/IRIS_Guidelines y IRIS_Guidelines_2026",
+      "registro": null,
+      "contador": null,
+      "citas_vivas": 2,
+      "que_decide": "El estadiaje renal, que es lo que pide la revision de Cris para poder bajar la proteina por estadio.",
+      "nota": "Estan las guias de 2026 completas en texto -- estadiaje, tratamiento y la guia de bolsillo. Es la fuente que hay que leer entera para contestar lo del IRIS 4."
+    },
+    "WSAVA": {
+      "estado": "verificada_la_cifra",
+      "donde": "canislab-fuentes/WSAVA",
+      "registro": null,
+      "contador": null,
+      "citas_vivas": 2,
+      "que_decide": "La escala de condicion corporal y la de condicion muscular.",
+      "nota": "Hay 17 documentos en texto, entre ellos la guia de premios para perros y la de dietas crudas, que tocan de lleno lo que hace este motor y no se han leido."
+    },
+    "Ettinger": {
+      "estado": "verificada_la_cifra",
+      "donde": "canislab-fuentes/Ettinger_Feldman",
+      "registro": null,
+      "contador": null,
+      "citas_vivas": 1,
+      "que_decide": "La regla de los premios: no mas del 10 % de las kcal del dia, y la dilucion de nutrientes que produce pasarse.",
+      "nota": "Son dos tomos enteros en texto. Es la fuente mas grande sin contador."
+    },
+    "Merck": {
+      "estado": "no_esta_en_el_repo",
+      "donde": null,
+      "registro": null,
+      "contador": null,
+      "citas_vivas": 1,
+      "que_decide": "Nada que se aplique: se cita como referencia MAS estricta de la grasa en pancreatitis (<20 g/1000 kcal) y el motor aplica el 37,5 de SACN5.",
+      "nota": "Queda declarada porque `auditar_citas.py` ya la lista entre las que no se pueden comprobar aqui."
+    },
+    "Purina": {
+      "estado": "no_esta_en_el_repo",
+      "donde": null,
+      "registro": null,
+      "contador": null,
+      "citas_vivas": 1,
+      "que_decide": "Una referencia suelta, sin cifra aplicada.",
+      "nota": "Igual que Merck: declarada para que no parezca que nadie la ha mirado."
+    }
+  }
+}
