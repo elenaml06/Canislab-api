@@ -1,0 +1,125 @@
+{
+  "_meta": {
+    "que_es": "Los campos que la app recoge en la ficha del perro, y COMO llega cada uno al motor.",
+    "por_que_existe": "Elena, 11-sep-2026: «ten en cuenta que TODOS LOS DATOS QUE RECOJA LA APP TIENEN QUE LLEGAR DE ALGUNA MANERA AL MOTOR, SI NO SON DATOS INUTILES Y CUANDO SE PIDEN ES SIEMPRE POR ALGO». || Y tiene un caso que lo justifica solo, del mismo dia: la ficha pregunta la ACTIVIDAD desde siempre, la app la usaba para calcular las kcal y mandaba solo el numero. El motor veia 1955 kcal y no sabia si era un galgo de sofa o un perro de trineo -- y eso decide si se le aprietan los topes de seguridad cronica. El dato existia, se pedia por un motivo, y no llegaba.",
+    "las_tres_formas_de_llegar": {
+      "campo": "Viaja como campo propio en el cuerpo que recibe el motor. `llega_como` dice cual, y el auditor comprueba que ese campo EXISTE en PeticionMenu.",
+      "dentro_de": "No viaja suelto: va cocinado dentro de un numero que si viaja. `va_dentro_de` dice dentro de cual. ⚠️ Esta forma es la peligrosa: el dato llega SIN PODER DESHACERSE, asi que el motor solo puede usarlo para lo que ya esta cocinado. Si algun dia hace falta para otra cosa, hay que sacarlo.",
+      "no_hace_falta": "No llega, y esta bien que no llegue. `por_que_no` tiene que decirlo, y tiene que ser un motivo, no una excusa."
+    },
+    "como_se_comprueba": "El BLOQUE 87 de `pruebas_completas.py`: que los 21 campos esten declarados, que los que dicen `campo` existan de verdad en `PeticionMenu`, y que ninguno se quede sin motivo. La lista de campos sale de `tests/ficha-ida-y-vuelta.spec.js` del repo de la app, que es la que ya vigila que no se pierdan al guardar.",
+    "medido": "11 de septiembre de 2026, contra `src/App.jsx` de canislab-web (el cuerpo que monta para /menu/v2 y /menu/revalidar) y `PeticionMenu` de main.py."
+  },
+  "campos": {
+    "nombre": {
+      "forma": "no_hace_falta",
+      "por_que_no": "Es identidad, no nutricion. El motor no formula distinto para un perro que se llame Ruffo."
+    },
+    "peso_actual": {
+      "forma": "campo",
+      "llega_como": "peso_perro_kg",
+      "para_que": "Escala los minimos de FEDIAF (ecuacion 7.2.5), decide el tope de vitamina D por peso metabolico y, desde el 11 de septiembre, los de yodo, selenio, mercurio y tiaminasa."
+    },
+    "fecha_nacimiento": {
+      "forma": "dentro_de",
+      "va_dentro_de": "etapa_requisitos (la etapa) y der_objetivo (el escalon de edad)",
+      "para_que": "De la etapa salen los 43 requisitos. El escalon de edad de la Tabla VII-6 de FEDIAF (130 de 1 a 2 anos, 110 de 3 a 7, 95 a partir de 7) va cocinado en las kcal.",
+      "riesgo_de_ir_cocinado": "El motor no puede distinguir un adulto de ano y medio de uno de cinco mas alla de sus kcal. Hoy no hace falta: FEDIAF no le da requisitos distintos. Si algun dia se los diera, hay que sacar la edad."
+    },
+    "castrado": {
+      "forma": "dentro_de",
+      "va_dentro_de": "der_objetivo",
+      "para_que": "Cambia las kcal (x1,6 castrado frente a x1,8 entero).",
+      "riesgo_de_ir_cocinado": "FEDIAF solo lo usa para energia, asi que hoy no se pierde nada."
+    },
+    "actividad": {
+      "forma": "campo",
+      "llega_como": "actividad",
+      "para_que": "⚠️ ESTE ES EL CASO QUE MOTIVO ESTE FICHERO. Iba solo cocinado en las kcal hasta el 11 de septiembre. Decide si es un perro de trabajo, y eso cambia DOS cosas: los topes de seguridad cronica se aprietan por peso metabolico (aritmetica, la hace el motor solo), y el techo de fosforo del perro sano queda por debajo de lo que su propia fuente le pide (Fascetti Tabla 4.2: 3000 frente a 2000), que es decision clinica y por eso se DICE en `avisos_profesional`.",
+      "falta_el_otro_lado": "El motor ya lo acepta. Falta que `canislab-web` lo mande en el cuerpo de /menu/v2 y /menu/revalidar. Mientras no llegue, el motor lo deduce del cociente DER/peso^0,75 -- que funciona pero confunde al Gran Danes, cuyo 200 kcal/kg^0,75 es POR RAZA y no por actividad."
+    },
+    "condicion_idx": {
+      "forma": "campo",
+      "llega_como": "peso_objetivo_kg",
+      "para_que": "De la condicion corporal sale el peso objetivo, y sobre ese peso se escalan los minimos -- no sobre el real, que en un perro con sobrepeso daria una racion pensada para otro perro."
+    },
+    "bcs": {
+      "forma": "campo",
+      "llega_como": "bcs",
+      "para_que": "El BCS exacto del veterinario. Viaja ADEMAS del peso objetivo y no en su lugar: es la red por debajo, para que una ficha sin objetivo no acabe dando por bueno el peso de un perro obeso."
+    },
+    "tutor_nombre": {
+      "forma": "no_hace_falta",
+      "por_que_no": "Es para la pauta firmada, no para formular. Va por `/pauta/*`, que lo guarda congelado con el menu."
+    },
+    "tutor_contacto": {
+      "forma": "no_hace_falta",
+      "por_que_no": "Igual que el nombre del tutor: identifica a quien se le dio la pauta, no cambia ni un gramo."
+    },
+    "sexo": {
+      "forma": "dentro_de",
+      "va_dentro_de": "der_objetivo y etapa_requisitos",
+      "para_que": "Un macho entero necesita mas kcal. Y en la hembra, la etapa de gestacion o lactancia es la que cambia los requisitos, y esa si viaja como etapa.",
+      "riesgo_de_ir_cocinado": "FEDIAF no da requisitos distintos por sexo fuera de la reproduccion, y la reproduccion ya viaja como etapa. Hoy no se pierde nada."
+    },
+    "raza": {
+      "forma": "dentro_de",
+      "va_dentro_de": "peso_adulto_esperado, tamano y der_objetivo",
+      "riesgo_de_ir_cocinado": "El motor recibe el peso adulto ya estimado y NO sabe de que raza salio. Eso le deja sin poder comprobar dos cosas que decide la raza: (1) que el peso adulto este dentro del rango de esa raza -- `razas.json` trae pesoMin y pesoMax y el motor no los ve --, y (2) que a un Gran Danes o a un Terranova se les haya aplicado su cifra de energia propia de FEDIAF (200 y 105 kcal/kg^0,75, Tabla VII-7), que va EN VEZ del nivel de actividad y no sumada. Hoy eso lo hace `der.js` en el navegador y aqui llega solo el resultado. ⚠️ Y el nombre viaja LITERAL: `der.RAZAS_CIFRA_FEDIAF`, `RAZAS_MAS_GASTO` y `RAZAS_MENOS_GASTO` reconocen la raza por su nombre exacto, asi que una tilde o una mayuscula distinta y la cifra especial no se aplica NUNCA, sin error y con el menu saliendo verde. Ya paso: el Supabase de mentira sembraba «Pastor alemán» con a minuscula, que no existe en la lista, y todas las pruebas que usaban ese perro corrian contra un mestizo con nombre de raza.",
+      "nota": "Las 255 razas viven desde el 11-sep-2026 en `razas.json` del motor y se sirven por `GET /vocabulario`. Antes vivian SOLO en `src/App.jsx`."
+    },
+    "tamano": {
+      "forma": "campo",
+      "llega_como": "tamano",
+      "para_que": "En un mestizo, de aqui sale el peso adulto esperado, que decide el tope de calcio del cachorro de raza grande (2750 por encima de 25 kg de adulto) y el minimo reforzado de la nota b de FEDIAF (por encima de 15 kg)."
+    },
+    "dieta_actual": {
+      "forma": "no_hace_falta",
+      "por_que_no": "No cambia el menu: cambia el PLAN DE CAMBIO. Va por `/transicion`, que es otro endpoint con su propia peticion."
+    },
+    "alergia_si": {
+      "forma": "dentro_de",
+      "va_dentro_de": "especies_excluidas",
+      "para_que": "Es la casilla de si/no que decide si se manda la lista. Si esta en no, la lista va vacia.",
+      "riesgo_de_ir_cocinado": "Ninguno: una lista vacia y un «no tiene alergias» son lo mismo para el motor."
+    },
+    "alergias": {
+      "forma": "campo",
+      "llega_como": "especies_excluidas",
+      "para_que": "Regla 4 del CLAUDE.md: las alergias no se tocan jamas, ni bajando de peldano. Pueden ser medicas."
+    },
+    "otros_evitar_si": {
+      "forma": "dentro_de",
+      "va_dentro_de": "nombres_excluidos",
+      "para_que": "La casilla de si/no de la lista de abajo.",
+      "riesgo_de_ir_cocinado": "Ninguno, por lo mismo que la de alergias."
+    },
+    "otros_evitar": {
+      "forma": "campo",
+      "llega_como": "nombres_excluidos",
+      "para_que": "Lo que la dueña no quiere darle, alimento a alimento. Tampoco se toca al bajar de peldaño."
+    },
+    "categorias_excluidas_si": {
+      "forma": "dentro_de",
+      "va_dentro_de": "categorias_excluidas",
+      "para_que": "La casilla de si/no de la lista de abajo.",
+      "riesgo_de_ir_cocinado": "Ninguno, por lo mismo."
+    },
+    "categorias_excluidas": {
+      "forma": "campo",
+      "llega_como": "categorias_excluidas",
+      "para_que": "Un perro sin dientes no puede masticar hueso. Es criterio del dueño y el motor lo respeta entero."
+    },
+    "patologia_si": {
+      "forma": "dentro_de",
+      "va_dentro_de": "patologias",
+      "para_que": "La casilla de si/no de la lista de abajo.",
+      "riesgo_de_ir_cocinado": "Ninguno."
+    },
+    "patologias": {
+      "forma": "campo",
+      "llega_como": "patologias",
+      "para_que": "Los topes por patologia, sus suelos y sus ratios. Es el campo que mas cambia un menu."
+    }
+  }
+}

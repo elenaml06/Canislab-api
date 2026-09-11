@@ -1,0 +1,80 @@
+{
+  "_meta": {
+    "que_es": "Las filas de la Tabla VII-7 de FEDIAF («Recommendations for DER in relation to activity»), una por una, con lo que hace el motor y lo que ofrece la app.",
+    "por_que_existe": "Elena, 11-sep-2026: «a ver no hay que hacer que el motor coincida con lo de la app. hay que hacer que la app coincida con lo del motor, es decir, cuantos niveles de actividad tenemos segun fediaf o nrc o lo que sea. pues la app tiene que ofrecer esos niveles de actividad y tiene que estar emparejado con lo que tenemos nosotros en el motor». || Es la direccion correcta y yo la tenia al reves: habia ampliado la base de datos de la app para que cupieran los cinco niveles que la app ya ofrecia, en vez de preguntar primero cuantos niveles tiene LA FUENTE.",
+    "la_cadena": "FUENTE manda -> MOTOR la implementa -> APP la ofrece. Los tres tienen que decir lo mismo, y donde el motor se separe de la fuente tiene que estar escrito POR QUE.",
+    "cita_literal_de_la_tabla": "Table VII-7. Recommendations for DER in relation to activity Activity level kcal ME per kg BW0.75 kJ ME per kg BW0.75 Low activity (< 1 h/day) (e.g. walking on the lead) 95 398 Moderate activity (1 – 3 h/day) (low impact activity) 110 460 Moderate activity (1 – 3 h/day) (high impact activity) 125 523 High activity (3 – 6 h/day) (working dogs, e.g. sheep dogs) 150 - 175 628 - 732 High activity under extreme conditions (racing sled dogs 168 km/d in extreme cold) 860 - 1240 3600 - 5190 Obese prone adults ≤ 90 ≤ 377 Breed specific differences: Great Danes 200 (200 - 250) 837 (837 - 1046) Newfoundlands 105 (80 - 132) 439 (335 - 550)",
+    "como_se_comprueba": "El BLOQUE 88 de `pruebas_completas.py`: que cada fila de la tabla este declarada, que las cifras del motor sean las de la fuente, y que la app ofrezca exactamente las que el motor declara ofrecibles. El lado de la app lo vigila ademas `tests/vocabulario.spec.js` en canislab-web.",
+    "medido": "11 de septiembre de 2026, contra `fediaf_2025.txt` (Tabla VII-7 literal), `der.py` (BASE_ACTIVIDAD y RAZAS_CIFRA_FEDIAF) y `src/App.jsx` (NIVELES)."
+  },
+  "filas": [
+    {
+      "fuente": "Low activity (< 1 h/day) (e.g. walking on the lead)",
+      "kcal_kg075_fuente": "95",
+      "motor": "sedentario",
+      "kcal_kg075_motor": 95,
+      "app": "Sedentario",
+      "estado": "emparejado"
+    },
+    {
+      "fuente": "Moderate activity (1 – 3 h/day) (low impact activity)",
+      "kcal_kg075_fuente": "110",
+      "motor": "normal",
+      "kcal_kg075_motor": 110,
+      "app": "Normal",
+      "estado": "emparejado"
+    },
+    {
+      "fuente": "Moderate activity (1 – 3 h/day) (high impact activity)",
+      "kcal_kg075_fuente": "125",
+      "motor": "activo",
+      "kcal_kg075_motor": 125,
+      "app": "Activo",
+      "estado": "emparejado"
+    },
+    {
+      "fuente": "High activity (3 – 6 h/day) (working dogs, e.g. sheep dogs)",
+      "kcal_kg075_fuente": "150 - 175",
+      "motor": "muy_activo + trabajo",
+      "kcal_kg075_motor": [150, 175],
+      "app": "Muy activo + Trabajo",
+      "estado": "partido_por_nosotros",
+      "por_que": "⚠️ AQUI EL MOTOR SE SEPARA DE LA FUENTE, Y HAY QUE DECIRLO. La Tabla VII-7 tiene UNA fila para esto, con un RANGO de 150 a 175. El motor la parte en DOS niveles y la app los ofrece como dos casillas distintas, «Muy activo» y «Trabajo», cuando la fuente llama a los dos «High activity (working dogs)». || No es un error de cifra: los dos extremos son los de la fuente y nadie recibe kcal que FEDIAF no publique. Es una decision de PRODUCTO -- dar dos escalones donde la fuente da un rango -- que hasta hoy no estaba escrita en ninguna parte. || Queda para decidir: o se declara como decision (y se dice en la app que los dos son «alta actividad», con el rango), o se junta en una sola casilla con el 150-175 y se elige dentro. Va a PENDIENTE_DECISIONES.md."
+    },
+    {
+      "fuente": "High activity under extreme conditions (racing sled dogs 168 km/d in extreme cold)",
+      "kcal_kg075_fuente": "860 - 1240",
+      "motor": null,
+      "kcal_kg075_motor": null,
+      "app": null,
+      "estado": "fuera_a_proposito",
+      "por_que": "Nueve a trece veces el mantenimiento. Eso no lo pauta una app: lo pauta un veterinario, y ademas NRC 2006 cap.11 dice que a ese perro hay que dividir por OCHO los limites de seguridad. Declarado fuera en `der.py` con esas palabras desde el 6 de septiembre."
+    },
+    {
+      "fuente": "Obese prone adults",
+      "kcal_kg075_fuente": "≤ 90",
+      "motor": null,
+      "kcal_kg075_motor": null,
+      "app": null,
+      "estado": "HUECO",
+      "por_que": "⚠️ ESTA FILA DE LA FUENTE NO ESTA NI EN EL MOTOR NI EN LA APP, y es un hueco de verdad. FEDIAF la pone en paralelo con los niveles de actividad -- «for specific BREEDS and for obese prone adults», tres clases de fila a la vez -- o sea que es una ALTERNATIVA al nivel de actividad, igual que lo son las dos razas, que esas si estan. || El motor si ajusta al perro con sobrepeso, pero por otro camino: baja las kcal al PESO OBJETIVO (`peso_objetivo_kg`), que sale del BCS. Eso no es lo mismo que este ≤90: uno cambia el peso sobre el que se calcula y el otro cambia el coeficiente. Un perro propenso a engordar que ya esta en su peso no recibe ninguno de los dos. || Hay que medir cuanto se separan los dos caminos antes de decidir. Va a PENDIENTE_NUTRICION.md."
+    },
+    {
+      "fuente": "Breed specific differences: Great Danes",
+      "kcal_kg075_fuente": "200 (200 - 250)",
+      "motor": "RAZAS_CIFRA_FEDIAF['Gran Danés']",
+      "kcal_kg075_motor": 200,
+      "app": "se deduce de la raza, no es una casilla de actividad",
+      "estado": "emparejado",
+      "por_que": "La cifra de raza va EN VEZ del nivel de actividad, y lo dice la propia guia (§7.2.3.4: la diferencia de raza YA CONTIENE la de actividad). Antes de aplicarlo, un Gran Danes de 67,5 kg marcado como «normal» recibia 2590 kcal donde FEDIAF dice 4710: el 55 %."
+    },
+    {
+      "fuente": "Breed specific differences: Newfoundlands",
+      "kcal_kg075_fuente": "105 (80 - 132)",
+      "motor": "RAZAS_CIFRA_FEDIAF['Terranova']",
+      "kcal_kg075_motor": 105,
+      "app": "se deduce de la raza, no es una casilla de actividad",
+      "estado": "emparejado"
+    }
+  ]
+}

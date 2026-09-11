@@ -183,6 +183,22 @@ for nombre_json, (clave, factor) in EQUIV.items():
 # ══════════════════════════════════════════════════════════════════════
 MAXIMOS = {
  "Calcio":     {"Adulto": 6250, "CachorroJoven": 4000, "CachorroCrecimiento": 4500},
+ # ⚠️ DEVUELTO 8-sep-2026 (noche). El 7 de septiembre se quito de aqui y se
+ # metio en SIN_MAXIMO diciendo que FEDIAF no daba cifra. Es FALSO y esta dos
+ # veces en el mismo documento: la Tabla III-3b trae «Adult: 4.00 (N)» en la
+ # columna de maximos (y la III-3a el mismo valor como 1.60 g/100 g MS), y el
+ # texto de 3.3.1 lo dice con todas las letras: «AAFCO introduced a nutritional
+ # maximum for both Ca (6.25 g/1000 kcal) and P (4 g/1000 kcal)... FEDIAF
+ # adopted the same nutritional maximums for both Ca and P».
+ #
+ # POR QUE SE COLO, que es lo que hay que recordar: en el texto extraido del PDF
+ # la columna de maximos cae visualmente sobre la fila ANTERIOR. Leyendo linea a
+ # linea, el calcio parece tener CUATRO maximos y el fosforo NINGUNO. El calcio
+ # tiene tres; el cuarto es del fosforo. Se caza contando los maximos de cada
+ # fila contra los que ya estan en el JSON, no leyendo hacia abajo.
+ #
+ # Solo ADULTO: en crecimiento FEDIAF no da maximo de fosforo.
+ "Fósforo":    {"Adulto": 4000},
  "Cobre":      {"todas": 2.80 * 2.5},
  "Yodo":       {"todas": 1.10 * 2.5 * 1000},
  "Hierro":     {"todas": 68.18 * 2.5},
@@ -206,21 +222,20 @@ MAXIMOS = {
 # Nutrientes que NO tienen maximo en FEDIAF: que el JSON ponga "-" es lo
 # correcto, y ponerle un numero seria inventarselo. La vitamina E es uno.
 #
-# ⚠️ "Fósforo" se une a la lista el 7 de septiembre (2026), tras QUITAR un
-# maxAdulto=4000 que llevaba desde el primer PR del repo sin fuente. Ni
-# FEDIAF (Tabla III-3a/III-3b: solo la nota "h", informativa, sin cifra) ni
-# NRC 2006 ("There are insufficient data on which to base an SUL for P in
-# dogs") ni Dobenecker et al. 2021 (PLOS ONE, el estudio mas centrado en
-# toxicidad de fosforo en perros adultos sanos: "no-effect-levels can be
-# defined" -- todavia no hay ninguno) dan un maximo. El numero recortaba de
-# verdad el menu automatico estandar de un adulto contra un limite sin
-# origen. Si algun dia una fuente real da un numero, va aqui documentado
-# con su cita -- nunca inventado, igual que Vitamina_E o cualquier otro de
-# esta lista.
+# ⚠️ AQUI ESTUVO "Fósforo" DURANTE UN DIA, Y FUE UN ERROR. El 7 de septiembre
+# se quito su maxAdulto=4000 y se metio en esta lista con el argumento de que
+# «ni FEDIAF (Tabla III-3a/III-3b: solo la nota h, informativa, sin cifra) ni
+# NRC 2006 ni Dobenecker et al. 2021 dan un maximo». La parte de NRC y
+# Dobenecker es CIERTA -- hablan del SUL toxicologico, que no existe. La de
+# FEDIAF es FALSA: su maximo NUTRICIONAL de 4 g/1000 kcal esta en la tabla y
+# en el texto de 3.3.1. Son dos cosas distintas y se mezclaron.
+#
+# Se devolvio el 8 de septiembre por la noche, leyendo el documento entero en
+# vez de la fila. La leccion no es el numero: es que «esta fuente no lo dice»
+# hay que comprobarlo en el TEXTO del documento, no solo en su tabla.
 SIN_MAXIMO = ("Proteína_total", "Grasa_total", "Vitamina_E", "Tiamina",
               "Riboflavina", "Acido_pantotenico", "Vitamina_B6", "Vitamina_B12",
               "Niacina", "Folato", "Colina", "Potasio", "Magnesio",
-              "Fósforo",
               "Linolénico", "EPA_DHA_total", "Araquidónico",
               "Arginina", "Histidina", "Isoleucina", "Leucina", "Metionina",
               "Metionina_cistina", "Fenilalanina", "Fenilalanina_tirosina",
@@ -232,7 +247,20 @@ for nut, topes in MAXIMOS.items():
         problemas.append(("FALTA", nut, "no está en el JSON")); continue
     for etapa in ("Adulto", "CachorroJoven", "CachorroCrecimiento"):
         esperado = topes.get(etapa, topes.get("todas"))
-        if esperado is None: continue
+        if esperado is None:
+            # ⚠️ AÑADIDO 8-sep-2026 (noche). Una etapa que NO está en MAXIMOS
+            # tiene que llevar "-" en el JSON, y eso hay que comprobarlo: antes
+            # este `continue` la dejaba pasar sin mirar, así que un número
+            # inventado en la etapa que no toca no lo cazaba nadie. Es el mismo
+            # agujero por el que el máximo de fósforo estuvo un día fuera: el
+            # auditor solo miraba lo que ya sabía que existía.
+            if num(r.get("max" + etapa)) is not None:
+                problemas.append(("MÁXIMO INVENTADO", nut,
+                                  f"{etapa}: el JSON pone un máximo y FEDIAF no da "
+                                  f"ninguno para esta etapa"))
+            else:
+                ok_n += 1
+            continue
         actual = num(r.get("max" + etapa))
         if actual is None:
             problemas.append(("SIN MÁXIMO", nut,
@@ -324,7 +352,14 @@ NO_SON_NUTRIENTES_DE_LA_TABLA = {
     "Relacion_Ca_P",
     # Caso especial derivado: el calcio de cachorros de raza grande en
     # crecimiento tardío. No es una fila propia de la tabla III-3b; el motor
-    # lo aplica aparte, solo si el peso adulto esperado es >= 25 kg.
+    # lo aplica aparte, solo si el peso adulto esperado es >= 15 kg (el
+    # umbral vive en `motor_completo.RAZA_GRANDE_O_GIGANTE_KG`).
+    # ⚠️ Este comentario decía «>= 25 kg» hasta el 8 de septiembre, cuando el
+    # código ya usaba 15 desde el día 7. Un comentario caducado sobre un
+    # umbral clínico es exactamente lo que hace que el siguiente lo "corrija"
+    # al revés.
+    # Sus DOS valores (el mínimo de calcio y `maxRatioCaP`) se comprueban
+    # abajo, en NOTAS_AL_PIE.
     "Calcio_LateGrowth_RazaGrande",
     # ⚠️ AÑADIDO (7 septiembre) — LA MISMA "FIBRA" DEL CASO REAL DE ARRIBA,
     # de vuelta a propósito y con la lección aprendida. FEDIAF no le da
@@ -345,7 +380,87 @@ NO_SON_NUTRIENTES_DE_LA_TABLA = {
     # `topes_de_patologias()` pueda ponerles un suelo por patología con
     # fuente real -- primer uso: dcm_taurina_respondedora, SACN5 cap.36.
     "Taurina", "L_carnitina",
+    # ⚠️ AÑADIDA (8 septiembre) -- MISMO CASO QUE LAS TRES DE ARRIBA. FEDIAF
+    # no pide EPA por separado en el perro: la Tabla III-3b solo trae la suma
+    # EPA+DHA, así que no hay fila del PDF contra la que comparar "EPA" sola.
+    # Existe para corregir un fallo concreto: `artrosis` ponía su suelo sobre
+    # la SUMA cuando SACN5 cap.34 Tabla 34-2 pide EPA sola. Ver PATOLOGIAS.md §1.3.
+    "EPA",
+    # ⚠️ AÑADIDA (8 septiembre) -- ídem: FEDIAF no pide omega-3 totales en el
+    # perro, solo EPA+DHA. La piden SACN5 (dos tablas) y el Reglamento UE.
+    "Omega3_total",
 }
+# ══════════════════════════════════════════════════════════════════════
+# LO QUE VIVE EN LAS NOTAS AL PIE, Y QUE NADIE COMPROBABA
+# ══════════════════════════════════════════════════════════════════════
+#
+# ⚠️ AÑADIDO (8 septiembre) — TRES HUECOS ENCONTRADOS AL LEER EL PDF ENTERO.
+#
+# `NO_SON_NUTRIENTES_DE_LA_TABLA` libra a una fila de compararse contra las
+# columnas de la III-3b. Pero librarla de la COMPARACIÓN la libraba también
+# de TODA comprobación, y tres cifras que sí salen de FEDIAF -- de sus notas
+# al pie y de la propia fila del ratio -- no las miraba nadie:
+#
+#   · `Relacion_Ca_P`  — está en la III-3b, en su propia fila, con sus tres
+#     máximos escritos. Estaba exenta entera por «no ser un nutriente».
+#   · `Sodio` y `Cloruro`, máximos — no están en la columna Maximum: están
+#     en la NOTA c. No estaban ni en MAXIMOS ni en SIN_MAXIMO, así que
+#     caían por el hueco entre las dos listas y no se comprobaban nunca.
+#
+# Todas transcritas del PDF de FEDIAF 2025 leído a mano el 8 de septiembre.
+NOTAS_AL_PIE = {
+    # Fila «Ca / P ratio» de la Tabla III-3b, columna Maximum, literal:
+    #     Adult:                   2/1 (N)
+    #     Early growth & reprod.:  1.6/1 (N)
+    #     Late growth:             1.8/1a (N) or 1.6/1b (N)
+    # El mínimo es 1/1 en las tres etapas (una sola celda centrada).
+    ("Relacion_Ca_P", "minAdulto"): 1,
+    ("Relacion_Ca_P", "minCachorroJoven"): 1,
+    ("Relacion_Ca_P", "minCachorroCrecimiento"): 1,
+    ("Relacion_Ca_P", "maxAdulto"): 2,
+    ("Relacion_Ca_P", "maxCachorroJoven"): 1.6,
+    # 1.8 es el «1.8/1a», o sea el de la nota a: cachorro de raza PEQUEÑA
+    # (peso adulto hasta 15 kg). El de la nota b -- raza grande -- es 1.6, y
+    # vive en `Calcio_LateGrowth_RazaGrande.maxRatioCaP`, aquí abajo.
+    ("Relacion_Ca_P", "maxCachorroCrecimiento"): 1.8,
+    # Nota c, literal: «Scientific data show that sodium levels up to 1.5 %
+    # DM (3.75 g/1000 kcal or 0.89 g/MJ ME) and chloride levels up to 2.35 %
+    # DM (5.87 g/1000 kcal or 1.40 g/MJ ME) are safe for healthy dogs.
+    # Higher levels may still be safe, but no scientific data are available.»
+    # ⚠️ OJO CON QUÉ ES ESTO: FEDIAF no lo llama máximo, ni (N) ni (L). Es un
+    # nivel del que hay datos de seguridad, y dice expresamente que por
+    # encima «puede que también sea seguro». Usarlo como techo duro es
+    # CRITERIO NUESTRO, del lado prudente, y está bien -- pero es una
+    # decisión nuestra, no un límite de FEDIAF, y tiene que poder leerse así.
+    ("Sodio", "maxAdulto"): 3750.0,
+    ("Sodio", "maxCachorroJoven"): 3750.0,
+    ("Sodio", "maxCachorroCrecimiento"): 3750.0,
+    ("Cloruro", "maxAdulto"): 5870.0,
+    ("Cloruro", "maxCachorroJoven"): 5870.0,
+    ("Cloruro", "maxCachorroCrecimiento"): 5870.0,
+    # Notas a y b de la III-3b, para el cachorro de raza grande (>15 kg de
+    # peso adulto). La nota b manda DOS cosas y hasta el 8 de septiembre solo
+    # se aplicaba una. Literal: «... calcium can be reduced to 0.8 % DM
+    # (2 g/1000 kcal or 0.48 g/MJ) and the calcium-phosphorus ratio can be
+    # increased to 1.8/1» -- o sea que ANTES de ese momento el techo del
+    # ratio es 1.6 y el mínimo de calcio 2.50 g/1000 kcal (1.00 % DM).
+    ("Calcio_LateGrowth_RazaGrande", "minCachorroCrecimiento"): 2500,
+    ("Calcio_LateGrowth_RazaGrande", "maxRatioCaP"): 1.6,
+}
+for (_nut_n, _campo_n), _esperado_n in NOTAS_AL_PIE.items():
+    _fila_n = req.get(_nut_n)
+    if not _fila_n:
+        problemas.append(("FALTA", _nut_n, "no está en el JSON")); continue
+    _actual_n = num(_fila_n.get(_campo_n))
+    if _actual_n is None:
+        problemas.append(("FALTA UNA CIFRA DE FEDIAF", _nut_n,
+                          f"{_campo_n}: el PDF da {_esperado_n} y el JSON no trae nada"))
+    elif abs(_actual_n - _esperado_n) > max(abs(_esperado_n) * 0.01, 1e-9):
+        problemas.append(("NO CUADRA CON EL PDF", _nut_n,
+                          f"{_campo_n}: JSON={_actual_n}, FEDIAF={_esperado_n}"))
+    else:
+        ok_n += 1
+
 _cubiertos = set(EQUIV) | set(MAXIMOS) | set(SIN_MAXIMO) | NO_SON_NUTRIENTES_DE_LA_TABLA
 for _n in req:
     if _n in _cubiertos:

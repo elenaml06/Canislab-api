@@ -9,6 +9,12 @@ partida; lo que se puede defender ante un veterinario es ESTO: "cubre 26 de
 import sys, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from constructor import perfil_nutricional, tabla_imputacion_maximos, valor_nutriente
+# ⚠️ Los requisitos que NO son un número fijo (9 septiembre). El semáforo y el
+# solver llaman a LAS MISMAS funciones de este módulo: si cada uno hiciera su
+# propia cuenta acabarían discrepando, que es exactamente lo que pasó con los
+# suelos de patología el 8 de septiembre y costó dos rondas de depuración.
+from condicionales import (suelo_relativo_de as _suelo_relativo_de,
+                           ratios_de_la_etapa as _ratios_de_la_etapa)
 
 # Nombre del requisito -> clave en los nutrientes de cada alimento
 MAPA = {
@@ -104,6 +110,25 @@ MAPA = {
     # PENDIENTE_NUTRICION.md §8 y VETERINARIOS.md "Los suelos por
     # patología".
     "Taurina": "taurina", "L_carnitina": "lcarnitina",
+    # ⚠️ "EPA" -- AÑADIDA (8 septiembre), MISMO PATRÓN QUE LAS TRES DE
+    # ARRIBA, y por un fallo concreto: `artrosis` ponía su suelo sobre
+    # `epa_dha` (la SUMA) cuando su fuente pide EPA SOLA. SACN5 5ª ed.,
+    # cap.34, Tabla 34-2, literal: «Eicosapentaenoic acid 0.4 to 1.1%»
+    # (materia seca) = 1,0-2,75 g/1000kcal. Exigir que la suma llegue a 1,0
+    # es MÁS LAXO que exigir que el EPA llegue a 1,0: un menú con 0,3 de EPA
+    # y 0,7 de DHA pasaba el filtro y no cumplía la fuente. No era un número
+    # mal copiado, era el nutriente equivocado. FEDIAF no pide EPA por
+    # separado (solo EPA+DHA, Tabla III-3b), así que su fila en
+    # requerimientos_v2_final.json lleva "-" en los seis campos: no exige ni
+    # limita nada a un perro sano. Detalle: PATOLOGIAS.md §1.3.
+    "EPA": "epa",
+    # ⚠️ "Omega3_total" -- AÑADIDA (8 septiembre), mismo patrón. FEDIAF no pide
+    # omega-3 totales en el perro (solo EPA+DHA en crecimiento y reproducción),
+    # así que su fila lleva "-" en los seis campos. Existe porque SACN5 la pide
+    # en DOS tablas (34-2 artrosis, 35-3 disfunción cognitiva) y el Reglamento
+    # (UE) 2020/354 entrada 27 pide casi el mismo número para la artrosis. Se
+    # calcula como linolénico + EPA + DHA en `NUTRIENTES_COMPUESTOS`.
+    "Omega3_total": "omega3_total",
 }
 # ⚠️ EL ÚNICO MÁXIMO DE FEDIAF QUE NO SE APLICA, Y AQUÍ ESTÁ POR QUÉ
 # (28 agosto). La Tabla III-3b pone un solo máximo a un aminoácido: lisina
@@ -281,32 +306,122 @@ BCS_MAXIMO_PUBLICADO = 9.0
 BCS_ESCALA_SATURADA = 9.0    # a partir de aqui la estimacion es una cota inferior
 PCT_POR_PUNTO_BCS = 0.10
 
+# ⚠️ Y LA TABLA VII-2 DE FEDIAF, QUE CONFIRMA LA REGLA EN OCHO PUNTOS DE NUEVE
+# Y LA CORRIGE EN EL NOVENO (9 de septiembre de 2026).
+#
+# El anexo 7.1 de FEDIAF trae la tabla entera, con la columna «% BW below or
+# above BCS 5» para el perro. Puesta al lado de nuestro 10 % por punto:
+#
+#     BCS 1  -≥40 %      nuestra regla: -40      ✓ (extremo bajo del rango)
+#     BCS 2  -30 a 40 %                  -30      ✓
+#     BCS 3  -20 a 30 %                  -20      ✓
+#     BCS 4  -10 a 15 %                  -10      ✓
+#     BCS 5    0 %                         0      ✓
+#     BCS 6  +10 a 15 %                  +10      ✓
+#     BCS 7  +20 a 30 %                  +20      ✓
+#     BCS 8  +30 a 45 %                  +30      ✓
+#     BCS 9  >45 %                       +40      ✗  ← el unico que no cuadra
+#
+# O sea que la regla lineal del 10 % por punto ES el extremo bajo de cada rango
+# de FEDIAF -- el mas conservador, el que menos exceso estima y por tanto el que
+# menos aprieta la racion -- en los ocho primeros. En el noveno la escala deja de
+# ser lineal: FEDIAF dice MAS del 45 % y la recta da 40.
+#
+# Se pasa a 45, que es la frontera de «>45 %» y sigue siendo el extremo bajo de
+# lo que dice la fuente. Y esto convierte en NUMERO CON FUENTE lo que hasta hoy
+# era un razonamiento nuestro: aqui abajo ya estaba escrito que en BCS 9 la
+# estimacion es una COTA INFERIOR porque Broome et al. (2023) ven perros que
+# «exceed the description for score 9». FEDIAF dice lo mismo con una cifra.
+EXCESO_BCS_9 = 0.45          # FEDIAF 2025, Anexo 7.1, Tabla VII-2, fila «9. Grossly Obese»
+
+# ⚠️ Y POR DEBAJO DE BCS 5 AHORA SI SE ESTIMA, tambien por FEDIAF.
+#
+# Hasta hoy esta funcion devolvia None por debajo de 5, con el argumento de que
+# «la Tabla 1 de AAHA empieza en BCS 4 y no tiene columna de % underweight». Eso
+# es cierto de AAHA y falso del conjunto: **FEDIAF si tiene esas cuatro filas**,
+# y su §7.1.1 dice que la energia se calcula sobre el peso OPTIMO -- «Energy
+# requirements should be based on optimal body weight» --, sin distinguir si el
+# perro esta por encima o por debajo.
+#
+# ⚠️ Y HABIA UNA SEGUNDA COPIA QUE YA LO HACIA. `der.peso_ideal_desde_condicion`
+# estima en las dos direcciones desde siempre, con el mismo 10 % por punto. O
+# sea que el repo tenia dos reglas de BCS que discrepaban justo por debajo de 5:
+# una devolvia None y la otra un numero. Es la familia de fallos de siempre --
+# dos sitios que calculan lo mismo de dos maneras -- y se cierra aqui.
+#
+# El TOPE del 20 % hacia arriba se copia de alli, con su motivo, que sigue
+# siendo bueno: un perro muy delgado suele estarlo por una ENFERMEDAD, y pasarlo
+# de golpe a la racion de un peso un 43 % mayor es mala idea.
+TOPE_CORRECCION_AL_ALZA = 1.20
+
 
 def peso_objetivo_desde_bcs(peso_actual_kg, bcs):
     """El peso objetivo estimado desde el BCS, o None si no se puede.
 
-    Devuelve None -y hay que usar el peso real- por debajo o en BCS 5: la
-    regla no existe hacia abajo y AAHA 2021 dice expresamente que en un
-    perro delgado se alimenta sobre el peso ACTUAL.
+    Devuelve None solo EN BCS 5 (ya esta en su peso, no hay nada que estimar) y
+    con datos que no son numeros.
 
-    En BCS 9 devuelve numero, pero es una COTA INFERIOR del exceso: la
-    escala se satura ahi. Quien llame tiene que decirlo (ver
-    `_peso_de_referencia` en main.py).
+    ⚠️ POR DEBAJO DE 5 SI ESTIMA DESDE EL 9 DE SEPTIEMBRE, y hacia ARRIBA: el
+    peso optimo de un perro delgado es mayor que el suyo. Antes devolvia None
+    apoyandose en AAHA 2021 («base feeding calculations on current weight if
+    ideal or underweight»), pero **FEDIAF tiene las cuatro filas de BCS 1 a 4 en
+    su Tabla VII-2** y su §7.1.1 dice que la energia se calcula sobre el peso
+    optimo sin distinguir direccion. Manda FEDIAF.
+
+    La correccion al alza se topa en +20 % (`TOPE_CORRECCION_AL_ALZA`), que es
+    criterio nuestro y esta explicado alli.
+
+    En BCS 9 el exceso es 45 % y no 40: FEDIAF dice «>45 %» y la recta del 10 %
+    por punto se queda corta justo ahi. Sigue siendo una COTA INFERIOR -- Broome
+    et al. (2023) ven perros por encima de esa descripcion -- y quien llame tiene
+    que poder decirlo (ver `_peso_de_referencia` en main.py).
     """
     try:
         p = float(peso_actual_kg)
         b = float(bcs)
     except (TypeError, ValueError):
         return None
-    if p <= 0 or b <= BCS_NEUTRO or b > BCS_MAXIMO_PUBLICADO:
+    if p <= 0 or b <= 0 or b > BCS_MAXIMO_PUBLICADO:
         return None
-    exceso = PCT_POR_PUNTO_BCS * (b - BCS_NEUTRO)
-    # SE DIVIDE: el exceso esta medido SOBRE EL IDEAL, no sobre el actual.
-    return round(p / (1.0 + exceso), 3)
+    if b == BCS_NEUTRO:
+        return None                       # ya esta en su peso: no hay nada que estimar
+    if b >= BCS_ESCALA_SATURADA:
+        # FEDIAF Tabla VII-2: «>45 %». La recta daria 40 y se queda corta.
+        exceso = EXCESO_BCS_9
+    else:
+        exceso = PCT_POR_PUNTO_BCS * (b - BCS_NEUTRO)
+    # SE DIVIDE: el desvio esta medido SOBRE EL IDEAL, no sobre el actual.
+    ideal = p / (1.0 + exceso)
+    # Y hacia arriba, el tope del 20 %: ver `TOPE_CORRECCION_AL_ALZA`.
+    if ideal > p * TOPE_CORRECCION_AL_ALZA:
+        ideal = p * TOPE_CORRECCION_AL_ALZA
+    return round(ideal, 3)
+
+
+def _factor_condicional(nombre_req, etapa):
+    """El factor de `condicionales.py` que aplica a este requisito, o 1.0.
+
+    Se importa dentro de la función a propósito: `condicionales` lee un JSON al
+    cargarse y `verificar` es el módulo más bajo del motor. Importarlo arriba
+    haría que cualquier cosa que toque el semáforo arrastre el fichero.
+    """
+    try:
+        from condicionales import factor_sobre_el_minimo
+    except ImportError:
+        return 1.0
+    return factor_sobre_el_minimo(nombre_req, etapa)
 
 
 def minimo_de(r, nombre_req, etapa, der_efectiva=None):
     """El mínimo de FEDIAF de un requisito, escalado por la DER efectiva.
+
+    ⚠️ Y DESDE EL 9 DE SEPTIEMBRE, POR EL FACTOR CONDICIONAL DE FEDIAF §3.2.1:
+    los doce aminoácidos esenciales van un 10 % por encima del publicado, porque
+    la guía entera supone ≥80 % de digestibilidad proteica (§2.2) y nosotros no
+    la podemos garantizar — el catálogo no tiene esa columna. La cifra y la cita
+    viven en `requisitos_condicionales.json`; aquí solo se aplica, y se aplica
+    AQUÍ porque este es el único sitio que escala mínimos: si se hiciera en el
+    solver, el semáforo mediría contra otro número.
 
     ES EL ÚNICO SITIO que sabe escalar. El solver y el semáforo leen el
     mínimo por aquí, igual que leen el máximo por `maximo_de()`: si cada
@@ -317,11 +432,35 @@ def minimo_de(r, nombre_req, etapa, der_efectiva=None):
     Sin ella (o fuera de adulto) se devuelve el mínimo publicado tal cual.
     """
     mn = _num(r.get(f"min{etapa}"))
-    if mn is None or der_efectiva is None or etapa != "Adulto":
+    if mn is None:
+        return None
+    # El factor condicional se aplica SIEMPRE y ANTES que el escalado por DER:
+    # es una corrección del mínimo publicado, no del consumo del perro. Se
+    # multiplica también `minAdulto110` unas líneas más abajo, o el escalado
+    # mezclaría un ancla corregida con otra que no lo está.
+    _f = _factor_condicional(nombre_req, etapa)
+    mn = mn * _f
+    # ⚠️ Y EL SUELO DEL PERRO QUE TRABAJA (9 septiembre). La DER efectiva ya
+    # está aquí porque es lo que dispara el escalado, y resulta que es también
+    # el nivel de actividad: 150 kcal/kg^0,75 es el «muy activo» de `der.py`,
+    # descrito allí como «perro de trabajo, pastoreo». La Tabla 18-9 de SACN5
+    # le pide 12 veces la vitamina E del perro de mantenimiento, y hasta hoy
+    # recibía la del perro de mantenimiento y salía verde. Va con `max()`: un
+    # suelo condicional solo puede SUBIR el publicado.
+    try:
+        from condicionales import suelo_por_der_efectiva
+        _suelo_act = suelo_por_der_efectiva(nombre_req, etapa, der_efectiva)
+    except ImportError:
+        _suelo_act = None
+    if _suelo_act is not None:
+        mn = max(mn, _suelo_act)
+    if der_efectiva is None or etapa != "Adulto":
         return mn
     if nombre_req in NO_SE_ESCALAN:
         return mn
     v110 = _num(r.get("minAdulto110"))
+    if v110 is not None:
+        v110 = v110 * _f
     if v110 is None:
         # Sin las dos anclas no se escala: son los tres que FEDIAF no da
         # para adulto (EPA+DHA, linolénico, araquidónico) y el ratio Ca:P.
@@ -379,6 +518,13 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
     A diferencia del LP, esto NUNCA falla: siempre dice que hay y que falta.
     Los requisitos de FEDIAF van POR 1000 kcal, asi que se escalan al DER.
     """
+    # ⚠️ La etapa SIN colapsar hace falta (9 septiembre). `EQUIVALENCIA` manda
+    # Gestante y Lactante a la columna de cachorro de FEDIAF, que es correcto
+    # para la Tabla III-3b -- FEDIAF las agrupa en «Growth and Reproduction» --
+    # pero las reglas de `condicionales.py` SÍ las distinguen: el ratio
+    # linoleico:linolénico del NRC es 2,6-26 en crecimiento y 2,6-16 en
+    # gestación y lactancia, y colapsarlas antes perdería justo esa diferencia.
+    etapa_pedida = etapa
     etapa = EQUIVALENCIA.get(etapa, etapa)
     if etapa not in SUFIJO:
         raise ValueError(
@@ -435,6 +581,20 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
         tiene_min = perfil_min.get(clave, 0.0)     # con los dudosos a su valor plausible
         minimo = minimo_de(r, nombre, etapa, _der_ef)
         maximo = maximo_de(r, nombre, etapa)
+
+        # ⚠️ AÑADIDO (9 septiembre) — LA ARGININA SUBE CON LA PROTEÍNA DEL MENÚ.
+        # Tabla VII-13 y Anexo 7.4 de FEDIAF 2025, que publican una tabla entera
+        # para esto y que no aplicábamos. Ver `requisitos_condicionales.json`.
+        # Se compone con un `max()`: nunca baja el mínimo de la Tabla III-3b,
+        # solo lo sube cuando la proteína del menú lo pide. El solver mete la
+        # misma regla como fila lineal -- y llama a la MISMA función, que es
+        # justo lo que evita el desalineo que costó dos rondas con los suelos
+        # de patología el 8 de septiembre.
+        if minimo is not None:
+            _rel = _suelo_relativo_de(etapa_pedida, clave,
+                                      perfil_min.get("proteina", 0.0) / escala if escala else 0.0)
+            if _rel is not None:
+                minimo = max(minimo, _rel)
 
         if minimo is not None:
             objetivo = minimo * escala
@@ -533,6 +693,70 @@ def verificar(menu, alimentos, req, der, etapa="Adulto", peso_referencia_kg=None
                            "tiene": round(ratio, 2), "minimo": mn, "maximo": mx,
                            "cubre_pct": round(ratio / mn * 100) if mn else None,
                            "del_maximo_pct": round(ratio / mx * 100) if mx else None})
+
+    # ==================================================================
+    # LA RELACION LINOLEICO : LINOLENICO  (omega-6 : omega-3 de 18 carbonos)
+    # ==================================================================
+    # ⚠️ AÑADIDO EL 9 DE SEPTIEMBRE DE 2026, leyendo el capítulo 5 del NRC
+    # entero. Es la pregunta que hizo la nutricionista, y la respuesta de la
+    # fuente no es la que uno espera: el NRC dice que el ratio de omega-6
+    # TOTALES a omega-3 TOTALES «is not helpful», y recomienda en su lugar el
+    # de los dos de 18 carbonos. Rango: 2,6 a 26 en adulto y crecimiento,
+    # 2,6 a 16 en gestación y lactancia. La cita entera y el porqué del suelo
+    # están en `requisitos_condicionales.json`.
+    #
+    # POR QUÉ EL MOTOR NO LO TENÍA: FEDIAF no da mínimo de linolénico en
+    # adulto (la fila lleva «-»), así que nada impedía que el omega-3 cayera a
+    # cero mientras el omega-6 subía. MEDIDO: 15 de los 216 menús del catálogo
+    # precalculado se pasaban de 26, y uno llegaba a 109:1.
+    #
+    # Se mide con `perfil` (los valores declarados) y no con `perfil_min`,
+    # porque es una RELACIÓN: sustituir un lado por su valor plausible y el
+    # otro no distorsionaría el cociente en una dirección arbitraria.
+    for _rt in _ratios_de_la_etapa(etapa_pedida):
+        _num_v = perfil.get(_rt["numerador"], 0.0)
+        _den_v = perfil.get(_rt["denominador"], 0.0)
+        if _den_v <= 0:
+            # Sin denominador no hay cociente. Y no es un caso raro que se
+            # pueda ignorar: es EL caso peligroso -- omega-3 a cero --, así
+            # que se cuenta como que se pasa del techo, no como «no aplica».
+            if _rt.get("max") is not None and _num_v > 0:
+                se_pasa.append({
+                    "nutriente": "Relación linoleico:linolénico",
+                    "clave": "_ratio_la_ala", "tiene": None,
+                    "maximo": _rt["max"], "critico": True,
+                    "explicacion": ("Este menú no lleva nada de omega-3 vegetal (linolénico) "
+                                    "y sí lleva omega-6. Los dos compiten por la misma enzima, "
+                                    "así que el omega-6 solo bloquea el poco omega-3 que hubiera. "
+                                    "Se arregla con aceite de lino, semillas o pescado azul.")})
+            continue
+        _r = _num_v / _den_v
+        _mn, _mx = _rt.get("min"), _rt.get("max")
+        if _mn is not None and _r < _mn * 0.995:
+            faltan.append({
+                "nutriente": "Relación linoleico:linolénico", "clave": "_ratio_la_ala",
+                "tiene": round(_r, 2), "necesita": _mn,
+                "cubre_pct": round(_r / _mn * 100), "falta": 0.0, "critico": True,
+                "explicacion": (f"Hay demasiado omega-3 para el omega-6 que lleva "
+                                f"({_r:.1f}:1, y el mínimo es {_mn}:1). Se arregla con "
+                                f"más grasa de ave o aceite de girasol, no con suplementos.")})
+        elif _mx is not None and _r > _mx * 1.005:
+            se_pasa.append({
+                "nutriente": "Relación linoleico:linolénico", "clave": "_ratio_la_ala",
+                "tiene": round(_r, 2), "maximo": _mx,
+                "veces": round(_r / _mx, 2), "critico": True,
+                "explicacion": (f"Demasiado omega-6 para el omega-3 que lleva ({_r:.1f}:1, "
+                                f"y el máximo es {_mx}:1). Los dos compiten por la misma "
+                                f"enzima, así que un omega-6 alto deja el poco omega-3 sin "
+                                f"convertir. Se arregla con aceite de lino, semillas o "
+                                f"pescado azul.")})
+        else:
+            correctos.append("Relación linoleico:linolénico")
+            dentro.append({"nutriente": "Relación linoleico:linolénico",
+                           "clave": "ratio_la_ala", "tiene": round(_r, 2),
+                           "minimo": _mn, "maximo": _mx,
+                           "cubre_pct": round(_r / _mn * 100) if _mn else None,
+                           "del_maximo_pct": round(_r / _mx * 100) if _mx else None})
 
     # ==================================================================
     # SEMAFORO -- no todos los huecos son iguales de graves

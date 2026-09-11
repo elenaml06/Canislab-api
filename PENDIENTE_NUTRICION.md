@@ -732,6 +732,14 @@ entrada que **hoy no existe en ningún sitio** — ni en el schema de la API
   campo que preguntar cuántas kcal vienen de fuera de la ración. Añadirlo
   necesita una pantalla nueva en la app y una decisión de producto sobre
   dónde se pregunta, no solo un parámetro nuevo en el backend.
+
+  ⚠️ **Y ya van CUATRO fuentes** (actualizado el 9 de septiembre de 2026, de
+  leer capítulos enteros de SACN5): FEDIAF §4.1, SACN5 cap.17, SACN5 cap.1
+  (*«Intakes of treats and nutritional supplements should be recorded»*) y
+  SACN5 cap.47, que es la única que da **la misma cifra que Hervera**:
+  *«Generally, feeding excessive amounts (**>10 % of the total food intake** on
+  a volume or calorie basis) of any treat is not recommended»*. El 10 % ya no
+  es de una sola fuente. Lo que sigue sin existir es el campo.
 - **La reformulación de adelgazamiento** (proteína≥25%MS, grasa≤9%MS,
   L-carnitina, fibra — Tabla 27-4 de SACN5). Hoy adelgazar solo baja las
   kcal (vía RER en `der.py`); no hay un perfil de macros dedicado. Además
@@ -955,7 +963,24 @@ combinaciones de patologías. De los sesenta cruces, **el único que no da menú
 en ninguno de los cinco tamaños** (3, 12, 30, 55 y 20 kg) es
 `renal + pancreatitis`.
 
-**Es coherente con los topes**, no un fallo del solver: la combinación deja
+⚠️ **RESUELTO EL 8 DE SEPTIEMBRE DE 2026, y no como se esperaba.** Lo que
+sigue debajo describe el estado hasta esa fecha; se deja porque el diagnóstico
+era correcto y el desenlace enseña algo.
+
+**No había incompatibilidad clínica entre las dos patologías: había un número
+que no era el de la fuente que manda.** La grasa de pancreatitis estaba en 20
+g/1000 kcal (Merck) cuando por la regla del propio proyecto —FEDIAF, y donde
+FEDIAF no llega, SACN5— debía ser **37,5** (Tabla 67-3). Con 37,5, `renal +
+pancreatitis` **sale verde**: peldaño 5, grasa 37,5 y fósforo 1198,8. Ver
+`PATOLOGIAS.md` §1.5 y `PREGUNTAS_ABIERTAS.md` P-01, ya cerrada.
+
+**Y el mensaje también se arregló**, por otro camino: desde ese día el motor
+nombra los dos límites que chocan con su fuente en vez de pedir que se quite
+una restricción (BLOQUE 52).
+
+---
+
+**Era coherente con los topes**, no un fallo del solver: la combinación dejaba
 fósforo ≤ 1200 mg/1000 kcal (con el mínimo de FEDIAF en 1160 — un 3,4 % de
 sitio), grasa ≤ 20 g/1000 kcal y proteína ≤ 75 g/1000 kcal **a la vez**, y
 con esa ventana no hay ración BARF que cuadre. La escalera de relajación se
@@ -981,3 +1006,553 @@ el perro.
 Mismo caso, más suave, en `mastín 55 kg + renal_proteinuria + artrosis`: sale
 unas veces sí y otras no según lo cargada que vaya la máquina — ahí es el
 presupuesto de tiempo del solver, no la nutrición.
+
+---
+
+## 14. Lo que abrió la cuarta pasada (8 de septiembre, tarde)
+
+Detalle completo en `VERIFICACION_FILA_A_FILA.md` §cuarta pasada. Aquí solo lo
+que queda **por hacer**, con dueño.
+
+### 14.1 · Una fuente concentrada de EPA+DHA en el catálogo — **falta un dato**
+
+La Tabla 30-5 pide para el cáncer **omega-3 > 5 % MS = 12,5 g/1000 kcal** y el
+catálogo no llega: el techo medido está entre **11,5 y 12,0**. La fuente más
+concentrada que hay es el aceite de linaza (62,5 g/1000 kcal), que además es ALA
+y no EPA/DHA.
+
+SACN5 enseña en su propia Tabla 30-6 que sí se alcanza: la Hill's n/d —el
+alimento de los ensayos de Ogilvie en linfoma canino— trae **7,29 % MS**.
+
+**Lo que falta es un producto real con su etiqueta**: un concentrado de EPA+DHA
+(aceite de pescado de alta concentración) con los gramos por 100 g y la dosis
+máxima del fabricante. Va en `DATOS_QUE_FALTAN.md` — **no lo rellena el
+asistente**.
+
+Mientras tanto la cifra está escrita en `patologias.json` bajo
+`limites_escritos_que_el_solver_no_aplica`, con la medida y el motivo, y el menú
+de cáncer lo dice en un aviso: lleva todo el omega-3 que se puede dar y no llega
+a lo que pide la literatura.
+
+### 14.2 · El ratio omega-6:omega-3 y el techo de carbohidrato — **falta motor**
+
+La misma Tabla 30-5 pide «an omega-6:omega-3 ratio approximating 1:1» y «NFE
+≤25 % DM».
+
+- El **ratio**: ✅ **el motor está, desde el 10 de septiembre.** Se hizo por el
+  otro extremo —el `ratio_ca_p` de los urolitos de calcio, que llevaba dos días
+  escrito con `aplicado_por_el_solver: false`— y salió genérico: el bloque
+  `ratios` de `patologias.json` admite cualquier par de nutrientes. **Para el
+  omega-6:omega-3 ya no falta código: falta el número**, y ahí las fuentes van de
+  <1:1 (artrosis) a 7:1 (renal). Es PREGUNTA 40 y la decide quien firma.
+- El **NFE** no se puede calcular con lo que hay: haría falta el extracto libre
+  de nitrógeno de cada ficha. Una ración BARF con la verdura topada al 10 % queda
+  muy por debajo del 25 % por construcción, así que el riesgo real es bajo.
+
+### 14.3 · El fósforo del perro sano — ✅ RESUELTO el mismo día, aplicándolo
+
+> **⚠️ Esto se escribió como una pregunta para el nutricionista y no lo era.**
+> «Si lo dice el manual, aplícalo» — y el manual lo dice. Se midió, cabe, y está
+> aplicado desde el 8 de septiembre por la noche: `recomendaciones_libro.json`,
+> `motor/recomendaciones.py`, BLOQUE 57, y `DECISIONES.md` **D-15** con las
+> medidas. Los cuatro pesos probados salen en el peldaño 0 y en verde, y el de
+> 3 kg pasa de ámbar a verde. Se deja el texto de abajo porque explica de dónde
+> venía el problema, que sigue siendo lo que hay que entender.
+
+Esta es la que más pesa de las tres, y sale de comparar tablas que hasta ahora no
+se habían mirado juntas:
+
+| Tabla | Para quién | Fósforo | Sodio |
+|---|---|---|---|
+| 13-3 | Perro adulto joven **sano** | 0,4-0,8 % MS = **1000-2000** mg/1000 kcal | 0,2-0,4 % = 500-1000 |
+| 14-2 | Perro maduro **sano** | 0,3-0,7 % MS = **750-1750** | 0,15-0,4 % = 375-1000 |
+| 34-2 | Artrosis | 0,3-0,7 % = **750-1750** (aplicado: techo 1750) | 0,2-0,4 % (aplicado: 1000) |
+| 31-3 | Reacción adversa al alimento | 0,4-0,8 % = **1000-2000** (aplicado: 2000) | 0,2-0,4 % (aplicado: 1000) |
+
+Las dos filas de patología **son las del perro sano**, repetidas. Sus notas lo
+dicen: la 34-2 porque «dogs with osteoarthritis are often in age groups at risk
+for kidney and/or heart disease», la 31-3 porque «phosphorus and sodium are
+considered key nutritional factors for apparently healthy adult dogs… for
+purposes of ameliorating or slowing the progression of subclinical kidney
+disease».
+
+Y el número que importa: **una ración BARF normal de este motor ronda los 4.000
+mg de fósforo por 1000 kcal** (medido: 3.933 a 4.115 en menús verdes de adulto
+sano). El doble del techo que SACN5 recomienda a **cualquier** perro adulto.
+
+⚠️ **CORREGIDO EL 9 DE SEPTIEMBRE.** Aquí ponía «FEDIAF no pone máximo de
+fósforo», y es falso: **sí lo pone en adulto, 4,00 g/1000 kcal** (Tabla III-3b,
+«Adult: 4.00 (N)», nota h, y el texto de la sección 3.3.1). Se borró por error el
+7 de septiembre y se devolvió la noche del 8. Lo que no tiene máximo es el
+**crecimiento**.
+
+Así que el problema no era que faltara el techo: es que **la ración BARF salía
+pegada al máximo de seguridad de FEDIAF** y SACN5 recomienda la mitad. Antes de
+aplicar el techo del libro, el motor solo apretaba el fósforo por debajo de 4.000
+en las patologías cuya tabla lo repite, y eso sí era incoherente: **el mismo
+perro pasaba de 4.000 a 1.750 por marcar «artrosis», y de 4.000 a 2.000 por
+marcar «alergia alimentaria», sin que ninguna de las dos cosas tenga que ver con
+el fósforo.**
+
+(Lo que sí sigue en pie del párrafo viejo: NRC 2006 dice que no hay datos para
+fijar un **SUL toxicológico** y Dobenecker 2021 que no se puede definir un
+no-effect-level. Eso es otra cosa que el máximo **nutricional**, que sí existe.)
+
+Las tres salidas posibles, y **ninguna la decide el asistente**:
+
+1. **Dejarlo como está**: FEDIAF manda en el perro sano, y la patología aplica lo
+   que dice su tabla. Es lo que hay hoy.
+2. **Quitar esas dos filas de las patologías**, por ser recomendaciones del perro
+   sano y no de la enfermedad. Deja artrosis y reacción adversa sin techo de
+   fósforo.
+3. **Aplicar el techo a todos los adultos**. Es el cambio grande: afecta a todos
+   los menús, y hay que medir antes cuántos siguen saliendo.
+
+Es decisión de nutrición. Apuntada también en `PENDIENTE_DECISIONES.md`.
+
+### 14.4 · Al toy de 1,5 kg le cuesta más sacar menú con el techo de fósforo — ✅ **NO le pasa al dueño; queda un coste de tiempo**
+
+> **⚠️ REMEDIDO EL 10 DE SEPTIEMBRE, POR LA VÍA DE LA API, QUE ES LA QUE USA LA
+> APP.** El mismo toy de 1,5 kg y DER 200, 20 peticiones:
+>
+> | Presupuesto | Sin menú | En qué peldaño sale |
+> |---|---|---|
+> | 24 s (lo normal) | **0 de 20** | los 20 en **estricto** |
+> | 3 s (imitando a Render lento) | **0 de 20** | 7 estrictos, 13 un peldaño más abajo, **y lo dice** |
+>
+> O sea que **hoy el dueño tiene su menú siempre**, y cuando se baja de peldaño
+> se avisa, que es la regla 5. Lo arregló el reparto de tiempo del 8 de
+> septiembre (`tiempo_de_un_intento()`: ninguna llamada se lleva más del 40 % del
+> presupuesto, así que siempre queda para bajar de peldaño). Lo que queda escrito
+> abajo es el **coste**: al perro pequeño le cuesta más, y con el presupuesto
+> apretado paga bajando de peldaño.
+
+
+Desde que existe el techo del perro adulto sano (2000 mg/1000 kcal, `DECISIONES.md`
+D-15), **al perro más pequeño le cuesta más sacar menú**. Medido, toy de 1,5 kg
+con DER 200, peldaño 0, dos suplementos, una semilla por intento y 1 s de solver:
+
+```
+con el techo .....  12 sin menú de 30
+sin el techo .....   0 sin menú de 30
+```
+
+**El menú existe en las 30**: reintentar con otra semilla lo encuentra, y con 30
+segundos de reloj salen las 30 (ver la corrección de abajo). En Render el
+presupuesto de tiempo es real, así que el coste se paga en segundos o en bajar de
+peldaño. En los perros de 3, 10, 22 y 40 kg no pasa: los cuatro salen en el
+peldaño 0 a la primera.
+
+### ⚠️ CORREGIDO EL 10 DE SEPTIEMBRE: LA CAUSA ESCRITA AQUÍ ERA FALSA
+
+Aquí ponía: *«`elegir_alimentos` sortea candidatos por categoría sin saber qué
+límites hay puestos»*, y de ahí salía un plan —sesgar el sorteo hacia los huesos
+de mejor Ca:P— que **habría sido trabajo tirado**, porque arreglaba una función
+que no interviene.
+
+**`elegir_alimentos` no está en el camino vivo.** De todo `motor/modos.py`, el
+motor importa **una sola cosa**: el diccionario `CUANTOS_MAX`
+(`motor_completo.py:531`). Ni `elegir_alimentos`, ni `cambiar`, ni `quitar`, ni
+`anadir` los llama nadie —ni la API, ni la batería—: los endpoints
+`/menu/cambiar`, `/menu/quitar` y `/menu/anadir` tienen su propia implementación
+en `main.py`. **No hay sorteo de candidatos**: `resolver()` recibe *todos* los
+accesibles de cada categoría y **es el MILP quien elige**.
+
+Lo único aleatorio es un ruido pequeño en el **objetivo** (0 a 0,4 sobre el coste
+de usar cada alimento, más la penalización del pescado la mitad de las veces), y
+**un objetivo no puede volver infactible un problema factible**: solo cambia por
+dónde busca el solver y, por tanto, **cuánto tarda**.
+
+**La causa real es el `time_limit`.** Medido el 10 de septiembre, el mismo toy de
+1,5 kg con DER 200, peldaño 0, dos suplementos, 30 semillas fijas:
+
+| `time_limit` | Sin menú | Semillas que fallan |
+|---|---|---|
+| 1 s | **11 de 30** | 0, 4, 7, 9, 12, 13, 19, 23… |
+| 5 s | **6 de 30** | 4, 12, 23, 25, 27, 29 |
+| **30 s** | **0 de 30** | ninguna |
+
+Con 30 segundos **no falla ninguna**, así que las 30 son factibles y lo que
+faltaba era tiempo para encontrar la primera solución entera. Y no es que se
+tirara una solución ya encontrada: eso se arregló el 29 de agosto (se acepta el
+incumbente cuando salta el `time_limit`). Aquí HiGHS **no llega a tener
+ninguna** en un segundo.
+
+**Y por eso el arreglo bueno ya estaba puesto, en otro sitio.**
+`tiempo_de_un_intento()` (8 de septiembre) impide que una sola llamada se lleve
+más del 40 % del presupuesto, así que siempre queda tiempo para **bajar de
+peldaño** — y con cuatro huecos de suplemento el motor puede meter cáscara de
+huevo (Ca:P de 370:1, o sea calcio sin fósforo) y el techo deja de apretar. Es
+exactamente para lo que existe la escalera, y es lo que hace que la medida por la
+vía de la API dé 0 sin menú de 20 arriba. El diagnóstico correcto llevaba desde
+ese día escrito en el docstring de esa función; lo que no se actualizó fue este
+punto.
+
+**Y queda una pregunta pequeña de limpieza**: `motor/modos.py` son 190 líneas de
+las que se usa un diccionario. Código muerto que *parece* vivo es justo lo que
+mandó a este punto a diagnosticar la función equivocada.
+
+⚠️ **Medido y descartado como atajo**: subir `max_suplementos` a 3 **no** lo
+arregla (5 sin menú de 10 en la misma prueba). Más huecos hacen el MILP más
+grande, no más fácil. El problema es qué entra en el sorteo, no cuántos huecos
+hay.
+
+---
+
+## La disponibilidad del calcio del hueso molido no está medida (9 de septiembre de 2026)
+
+Fascetti & Delaney 2ª ed., cap.8, literal:
+
+> *«Grinding bones may help reduce the risk of trauma and obstruction, but **the
+> availability of the calcium from these sources is unknown**.»*
+
+**Qué usamos hoy.** El calcio del hueso carnoso sale de **Köber 2017** (abstract
+del ESVCN 2017, Tabla 1: Ca, P y Ca:P de 15 huesos y cartílagos), que es la
+fuente que `Bases.md` fija para el hueso precisamente porque BEDCA no lo trae. Y
+el motor lo cuenta como calcio **disponible**, igual que el de cualquier otra
+ficha.
+
+**Qué falta.** Köber da el CONTENIDO. La frase de arriba dice que la ABSORCIÓN
+del hueso molido no está cuantificada. No es un error de dato: es una
+incertidumbre conocida sobre un número que decide menús — y el calcio es de los
+que más deciden, porque tiene mínimo, máximo, la nota b de raza grande y el ratio
+Ca:P encima.
+
+**Lo que juega a favor, y por qué esto no es urgente.** El cap.10 del mismo libro
+(Hazewinkel, que es quien hizo los estudios de absorción de calcio con trazador
+⁴⁵Ca en gran danés y poodle) dice:
+
+> *«The source of calcium – **bone meal, fresh bones**, or dairy products – **does
+> not make a lot of difference**; it is the amount of calcium eaten and absorbed
+> that counts.»*
+
+O sea que las dos frases no se contradicen: la primera dice que para hueso
+**molido** no hay cifra publicada; la segunda que en la práctica la fuente del
+calcio importa poco frente a la cantidad. Y la absorción que sí está medida —27 %
+en poodle a las 24 semanas, 53 % en beagle, 60 % en gran danés; ~13-20 % en
+adulto— es de dietas normales, con el calcio de sales o de harina de hueso.
+
+**Lo que NO se puede hacer**: inventarse un factor de disponibilidad para el
+hueso. Sería exactamente lo que `CERRADO.md` prohíbe.
+
+**Lo que sí se puede, si algún día hace falta**: buscar si hay balance de calcio
+publicado con ración BARF real (no con sales), que es lo que cerraría esto. Y
+mientras tanto, tener presente que **el margen de error del calcio del hueso es
+mayor que el de los demás nutrientes del catálogo**, lo que es un argumento más
+para no formular pegados al techo — ver `HALLAZGOS_LECTURA_FUENTES.md` §F-1, que
+es justo lo que estamos haciendo hoy en los cachorros de raza grande.
+
+---
+
+## El techo de Ca:P del cachorro de raza grande: SACN5 dice 1,5 y aplicamos 1,6 (9 de septiembre de 2026)
+
+**No es urgente y no está dando menús malos hoy, pero es una cifra de una
+fuente que no se aplica, así que se escribe en vez de olvidarse.**
+
+Al transcribir la Tabla 17-1 de SACN5 para los techos de calcio y fósforo del
+cachorro (ver `DECISIONES.md` D-16) salió una tercera fila de la misma tabla:
+
+| | cachorro <25 kg de adulto | cachorro >25 kg de adulto |
+|---|---|---|
+| Ca:P ratio (Tabla 17-1) | 1:1 a **1,8**:1 | 1:1 a **1,5**:1 |
+| Ca:P ratio (Tabla 33-5) | — | 1,1:1 a 2:1, «the lower end of range is preferred» |
+
+Y lo que aplica el motor hoy es la nota b de FEDIAF: **1,6** para el cachorro
+de más de **15 kg** de adulto, 1,8 para el resto.
+
+Hay dos discrepancias, y ninguna es un error de nadie:
+
+1. **El umbral.** FEDIAF corta en 15 kg y SACN5 en 25. Son dos poblaciones
+   distintas (la nota b de FEDIAF, y la enfermedad ortopédica del desarrollo de
+   SACN5), así que los dos números pueden ser correctos a la vez.
+2. **El número.** Para el cachorro de más de 25 kg, SACN5 pide 1,5 y FEDIAF
+   1,6. La propia Tabla 33-5 del mismo libro dice 1,1-2:1 con el matiz de que
+   se prefiere la parte baja, así que **el libro no se pone de acuerdo consigo
+   mismo**: la 17-1 da 1,5 y la 33-5 da 2,0.
+
+**Medido, para saber si esto cuesta algo:** los cachorros de raza grande que
+saca el motor hoy salen con el ratio entre **1,03 y 1,29** (labrador temprano
+1,03, gran danés tardío 1,11, labrador tardío 1,23, pastor alemán 1,26). O sea
+que **aplicar 1,5 hoy no cambiaría ni un menú** — y por eso mismo no corre
+prisa.
+
+**Lo que haría falta para aplicarlo:** `recomendaciones.py` sabe de techos por
+nutriente, no de ratios. El ratio Ca:P se aplica hoy desde
+`requerimientos_v2_final.json` (`maxRatioCaP` en la fila
+`Calcio_LateGrowth_RazaGrande`) y desde `_ratio_cap_raza_grande_roto` en
+`main.py`, y ahí no se puede meter un número de SACN5: ese fichero **es** la
+Tabla III-3b de FEDIAF y `auditar_fediaf.py` lo audita celda a celda. Haría
+falta un mecanismo de ratio en `recomendaciones_libro.json`, con su fila en el
+solver y su espejo en el filtro final.
+
+**Pregunta abierta para el nutricionista** (no la decide el asistente): con la
+17-1 diciendo 1,5 y la 33-5 diciendo 2,0 para el mismo perro, ¿cuál manda? Lo
+seguro sería 1,5, y hoy sale gratis.
+
+---
+
+## La lactosa del yogur griego no está medida, y SACN5 da el umbral (9 de septiembre de 2026)
+
+**De leer entero el capítulo 55 de SACN5.** Recuadro 55-3, literal: *«In one
+study, **dogs developed diarrhea while consuming more than 1 g of lactose/kg body
+weight**»*. El perro adulto tiene poca lactasa; lo que no se hidroliza llega al
+colon y arrastra agua.
+
+**Lo que hay en el catálogo:** un lácteo, «Yogur griego», en la categoría Extras.
+
+**Lo medido hoy:** de los 216 menús del catálogo regenerado, **0 lo usan**. Hoy
+no aprieta a nadie.
+
+**Por qué sigue siendo un pendiente y no un no-problema:** Extras va **siempre
+libre** (regla 5 del `CLAUDE.md`), así que un menú personalizado o una
+formulación del veterinario sí puede meterlo, y no hay nada que lo tope por este
+motivo. Los cinco topes de seguridad crónica no incluyen la lactosa.
+
+**Por qué no se aplica hoy:** la lactosa **no es uno de los 41 nutrientes** del
+catálogo, así que el motor no sabe cuánta lleva la ficha. Aplicarlo pide un dato
+nuevo, y los datos del catálogo no los rellena el asistente.
+
+**La cuenta, hecha, para cuando el dato exista:** el yogur griego natural va por
+los 3-4 g de lactosa por 100 g. Con 4 g/100 g y el umbral de 1 g/kg, el tope
+sale en **25 g de yogur por kg de peso**: 75 g para un perro de 3 kg, 250 g para
+uno de 10, 1 kg para uno de 40. Los perros pequeños son los que quedan cerca.
+
+**Lo que falta**, en este orden:
+1. La lactosa del «Yogur griego» de BEDCA o USDA, con su fuente, en la ficha
+   (`DATOS_QUE_FALTAN.md`).
+2. Decidir si es un **tope de seguridad más** (como el mercurio del atún, que
+   también se mide por peso del perro) o solo un **aviso**. Es criterio, no
+   aritmética: el mercurio se acumula y una diarrea no.
+
+---
+
+## Lo que dejó la relectura íntegra de SACN5, caps. 50 al 70 (11 de septiembre de 2026)
+
+De leer enteros los capítulos de digestivo, hígado y farmacología. **El cotejo
+tabla por tabla salió limpio**: las Tablas 57-1, 58-1, 60-1, 62-1, 63-3, 64-2,
+65-1, 66-1 y 67-3 están aplicadas enteras en sus ocho patologías digestivas, y
+la 68-8 en seis de sus diez filas. Lo que queda son estos tres puntos. Ninguno
+está aplicado; los tres son decisión tuya.
+
+### 1 · El TECHO de hierro de la hepatopatía, que hoy solo usa el suelo
+
+`hepatopatia` aplica `hierro` como **suelo** de 20 mg/1000 kcal, tomando el
+extremo bajo de la Tabla 68-8 («*Iron (mg/kg) 80 to 140*»). El extremo alto no
+se aplica, y **no es el borde de un rango cualquiera: es un techo con mecanismo
+escrito**. El capítulo lo desarrolla en su propia sección:
+
+> *«Iron is a potent catalyst of oxidative processes (Fenton reaction) and
+> iron-associated hepatic injury may involve lipid peroxidation of membranes and
+> damage to organelles»*
+
+> *«Iron levels of 80 to 140 mg/kg DM meet the dietary allowance without
+> providing excessive intake. This range is recommended for patients with liver
+> disease»*
+
+Y remata con *«Injectable or oral supplements containing iron should be avoided
+in these patients»*.
+
+**Por qué llama la atención:** para el potasio de la enteropatía crónica se tomó
+la decisión **contraria** y está escrita — la Tabla 57-1 daba «0.8 to 1.1 %» y
+se aplicó el **techo**, con el motivo de que el riesgo es el exceso. Aquí el
+riesgo que la fuente describe también es el exceso (acumulación hepática) y se
+aplicó el suelo.
+
+**MEDIDO** sobre los 216 menús del catálogo regenerado, recalculando el hierro
+de cada menú guardado con `valor_nutriente` y dividiendo por su DER:
+
+| | mg de hierro / 1000 kcal |
+|---|---|
+| mínimo | 18,4 |
+| mediana | 25,6 |
+| máximo | 37,4 |
+| por encima del techo de 35 | **3 de 216 (1,4 %)** |
+
+Los tres que se pasan son `Gigante_GestanteTardia` (37,4),
+`Mini_CachorroCrecimiento#3` (36,8) y `Toy_CachorroJoven` (35,4) — **los tres de
+crecimiento o gestación**, que es donde sube el mínimo de hierro. En adulto no
+se pasa ninguno. `hepatopatia` es además `formulable: false` y
+`formulable_por_profesional: true`, así que solo entra por la puerta del
+veterinario. La ventana quedaría en **20-35** y el margen del profesional en
+10,4 (mínimo FEDIAF) a 35. El máximo de FEDIAF, 170,45, queda muy por encima.
+
+**Decisión:** aplicarlo o dejarlo escrito sin aplicar. Cabe holgado.
+
+### 2 · La dosis de omega-3 de la enteropatía crónica, que es del TEXTO y no de la tabla
+
+El cap.57 la da y la Tabla 57-1 no, que es justo por lo que no la encontró el
+trabajo de transcribir tablas:
+
+> *«A reasonable starting dose estimated from human and animal trials is
+> approximately 175 mg (range 50 to 300 mg) omega-3 fatty acids/kg body
+> weight/day»*
+
+Para un perro de 22 kg son 3,85 g de omega-3 al día. **No está en
+`patologias.json` ni en su bloque de límites escritos sin aplicar.**
+
+⚠️ Y el propio capítulo dice por qué no se puede aplicar tal cual: *«To date,
+there are no published therapeutic trials investigating the efficacy of omega-3
+fatty acid supplementation in dogs or cats with IBD»* y *«there is no
+well-established effective dose for dogs and cats»*. Es el mismo caso que el
+omega-3 del cáncer y el de la artrosis, que ya viven en
+`limites_escritos_que_el_solver_no_aplica` con su medida. **Su sitio es ese**, y
+hoy no está escrito en ninguna parte. El hueco es de registro, no de motor.
+
+### 3 · La B12 de la insuficiencia pancreática exocrina
+
+El aviso de `enteropatia_cronica` lleva la advertencia de la vitamina B12 con su
+pauta. El de `insuficiencia_pancreatica_exocrina` **no la lleva**, teniendo la
+cifra más alta de las dos:
+
+> *«Reports have identified cobalamin deficiency in 82% of dogs»*
+
+y, en la misma frase tras la cita del estudio, 60 % de los gatos. Además:
+*«Cobalamin deficiency has been associated with poor outcomes in canine EPI»*.
+No es un número del motor: es una frase que le falta a un aviso.
+
+### Y una que ya tenía dueño
+
+La **lactosa** salió otra vez al releer el cap.55, y ya está recogida más arriba
+en este mismo fichero, en la sección «La lactosa del yogur griego…», con la
+cuenta hecha y los dos pasos que faltan. No se duplica.
+
+---
+
+## ⚠️ Las kcal del hueso se calculan con unos factores que NRC excluye para el hueso (11 de septiembre de 2026)
+
+De leer entero el capítulo 3 de NRC 2006. **Es el hallazgo más gordo de esta
+lectura y no se puede resolver con lo que hay en el repo**, así que se escribe
+entero aquí.
+
+### Qué dice la fuente
+
+NRC explica de dónde salen los factores de Atwater (4 kcal/g de proteína, 9 de
+grasa, 4 de hidratos) y para qué alimentos valen, nombrando la excepción:
+
+> *«The resulting Atwater factors of 4 for protein, 9 for fat, and 4 kcal·g–1 for
+> carbohydrate (nitrogen-free extract; NFE) still work amazingly well for
+> ingredients in homemade diets for dogs: meat, offal **(except bones and bone
+> meal)**, poultry, fish, highly purified starch products, milk products, and
+> even chocolate»*
+
+Y la Tabla 3-1 pone la misma frontera en su columna «Application».
+
+⚠️ **Y hay que decir la otra mitad, porque juega a favor**: NRC *recomienda*
+Atwater justo para lo que hace Rawku — *«For dogs, Atwater factors are still
+recommended for use for table food if no other data are available»*. El hueso es
+una excepción **dentro** de una recomendación que por lo demás encaja.
+
+### Qué hace el motor, comprobado
+
+Las nueve fichas de «Hueso carnoso» tienen su `energia` **exactamente igual** a
+4×proteína + 9×grasa, hasta el decimal, y sus notas lo dicen: «Energia calculada
+de sus macros».
+
+| Ficha | `energia` | 4×prot + 9×grasa |
+|---|---|---|
+| Carcasa de pollo | 240,2 | 240,2 |
+| Cuello de pavo | 132,4 | 132,4 |
+| Cuello de pato | 318,8 | 318,8 |
+| Carcasa de conejo | 158,5 | 158,5 |
+| Costillas de cordero | 185,9 | 185,9 |
+| Carcasa de pato | 229,9 | 229,9 |
+
+Y ese `energia` **no es decorativo**: es la fila de energía del MILP
+(`motor_completo.py`) y el divisor con el que `verificar.py` calcula las kcal del
+menú.
+
+### Cuánto pesa, medido sobre los 216 menús del catálogo
+
+| | % de las kcal del menú que vienen del hueso carnoso |
+|---|---|
+| mínimo | 16,6 |
+| mediana | **34,8** |
+| máximo | 56,7 |
+| menús sin hueso | **0 de 216** |
+
+O sea que **en el menú mediano, un tercio del denominador de todos los límites
+del motor** —los 43 de FEDIAF, los cinco de seguridad crónica, los 12 del libro y
+los 75 de patología, que van todos «por 1000 kcal»— sale del único ingrediente
+que la fuente nombra como excepción.
+
+### La DIRECCIÓN se sabe, y el TAMAÑO está ACOTADO Y MEDIDO (11 de septiembre, tarde)
+
+Esto decía «ni el tamaño ni la dirección». Ya no: los dos se pueden deducir de lo
+que la propia fuente dice, sin inventarse ninguna cifra.
+
+**La dirección.** Los factores de Atwater llevan dentro una digestibilidad
+supuesta, y NRC la escribe: *«Atwater factors include a digestibility of 98
+percent for carbohydrate, 96 percent for fat, and 90 percent for protein»*. La
+proteína del hueso carnoso es en buena parte colágeno. Si el colágeno se digiere
+**por debajo** del 90 %, la energía real es **menor** que la calculada. Y como
+todos los límites del motor van «por 1000 kcal», un denominador inflado hace que
+el menú esté **más concentrado** de lo que el motor cree. Así que el riesgo no
+está repartido: está **todo en los TECHOS**, y ninguno en los mínimos, donde el
+error juega a favor.
+
+**El tamaño.** El factor de proteína de Atwater es `(5,7 GE − 1,25 de pérdida
+urinaria) × digestibilidad`, que a 0,90 da exactamente el 4,005 de Atwater. Con
+otra digestibilidad sale otro factor, y basta con ver cuánta de la energía del
+menú pasa por ahí. Medido sobre los 216 menús del catálogo:
+
+| | % de las kcal del menú |
+|---|---|
+| que vienen del hueso carnoso (todo) | 19,1 · **mediana 36,8** · 56,7 |
+| que vienen de la **proteína** del hueso | 7,8 · **mediana 13,1** · 30,2 |
+
+La segunda fila es la que importa, porque el factor que está en duda es el de la
+proteína. Aunque el colágeno se digiriera al **60 %** en vez del 90 % —que es un
+supuesto deliberadamente brutal, no una medida—, las kcal del menú bajarían entre
+un **2,6 % y un 10,1 %, mediana 4,4 %**.
+
+**Y qué mueve eso en la práctica.** Resolviendo seis menús reales con la API y
+recalculando su fósforo sobre las kcal corregidas:
+
+| Perro | kcal | Fósforo hoy | Con la proteína del hueso al 75 % | Al 60 % |
+|---|---|---|---|---|
+| Adulto 3 kg | 325 | 1969 | 2019 | **2070** |
+| Adulto 10 kg | 699 | 1753 | 1785 | 1819 |
+| Adulto 22 kg | 1166 | 1610 | 1641 | 1674 |
+| Adulto 40 kg | 1698 | 1609 | 1643 | 1678 |
+| Senior 28 kg | 1213 | 1633 | 1667 | 1702 |
+| Cachorro 25 kg | 1552 | 2616 | 2669 | 2723 |
+
+O sea: **el error existe, va en la dirección mala y es de un dígito por ciento**.
+Contra el máximo de FEDIAF (4000 en adulto) no lo acerca ni de lejos. Contra el
+**techo del libro (2000)** sí muerde en un caso y solo en uno: el adulto pequeño,
+que hoy sale a 1969 y en el supuesto más duro cruzaría a 2070. Es un margen del
+1,5 %, así que ese perro ya estaba en el borde por su cuenta.
+
+### Lo que NO se hace, y por qué
+
+**No se corrige la energía de las nueve fichas.** Para corregirla haría falta un
+número, y en el repo no hay ninguno:
+
+· **Köber 2017**, que es la fuente de estas fichas (comprobado: sus macros
+  coinciden celda a celda), **no da energía**. Solo materia seca, proteína bruta,
+  grasa bruta, cenizas, calcio y fósforo.
+· 🔴 **RETIRADO EL 11 DE SEPTIEMBRE: la cifra de 3,61 kcal/g NO ESTÁ EN EL TEXTO
+  DE NRC QUE TENEMOS, y yo la di por buena.** Aquí ponía que la Tabla 13-1 trae
+  *«Meal, with bone, rendered»* con 3,61 kcal/g para el perro, y que eso invertía
+  la dirección del problema. **Es falso, y lo encontró el contador de NRC** al
+  montarlo: el capítulo 13 del `.txt` son **177 líneas** y contiene solo los
+  TÍTULOS y las NOTAS AL PIE de sus nueve tablas. Donde iría el cuerpo de la
+  Tabla 13-1 hay dos números de página sueltos, «667 668»: esas páginas no se
+  extrajeron. Buscado literal en las 43.556 líneas: «Meal, with bone», «with
+  bone, rendered» y «5-00-388» **no aparecen ninguna de las tres**.
+
+  Cómo se coló: el auditor de citas solo comprueba las de **más de 40
+  caracteres**, y *«Meal, with bone, rendered»* tiene 26. Una cifra atribuida a
+  una tabla, con su número de tabla y su código de ingrediente, y ningún
+  mecanismo mirándola.
+
+  **Lo que sí está comprobado, y es lo que queda en pie**, del capítulo 3 y
+  literal: «Atwater factors of 4 for protein, 9 for fat, and 4 kcal·g–1 for carbohydrate (nitrogen-free extract; NFE) still work amazingly well for ingredients in homemade diets for dogs: meat, offal (except bones and bone meal), poultry, fish, highly purified starch products, milk products, and even chocolate». O sea: NRC dice que los factores
+  de Atwater funcionan muy bien para una ración casera de perro **salvo para el
+  hueso y la harina de hueso**, y no da número de recambio en el texto que
+  tenemos.
+
+  **Conclusión buena: la dirección del error del hueso SIGUE SIN ESTABLECERSE**, y
+  no por lo que yo dije. No es que la Tabla 13-1 diga algo más alto: es que **no
+  podemos leer la Tabla 13-1**. Falta ese dato, y ahora se sabe exactamente qué
+  falta: las páginas 667-668 del PDF de NRC.

@@ -197,7 +197,7 @@ la otra, el usuario verá unas kcal y el motor cumplirá los requisitos sobre
 otras, y no dará ningún error — que es exactamente la familia de fallos
 descrita en «Fallos que no puede encontrar la usuaria» en `CLAUDE.md`.
 
-**Cómo se vigila desde el 26 de agosto**: `der_casos.json`, 85 casos con
+**Cómo se vigila desde el 26 de agosto**: `der_casos.json`, 124 casos con
 sus kcal, **el mismo archivo en los dos repos**. Cada lado comprueba su
 implementación contra esos números sin necesitar al otro — el BLOQUE 23
 aquí, `tests/der-contrato.spec.js` allí. Si tocas la fórmula de un lado, la

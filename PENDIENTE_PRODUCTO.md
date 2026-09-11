@@ -219,3 +219,573 @@ menús comparados no tienen sentido sin él.
       Lo vigila el BLOQUE 47, que planta medio kilo de pollo sin hueso y
       exige que vuelva rechazado.
 
+
+---
+
+## 7. Dos cosas que dice Fascetti y que son de producto, no de nutrición
+
+Escritas el 9 de septiembre de 2026 leyendo Fascetti & Delaney 2ª ed. entera.
+Ninguna de las dos cambia un número del motor: las dos cambian **si el menú
+sirve de algo una vez que sale de la pantalla**.
+
+### 7.1 · El «diet drift»: a los pocos años, solo el 13 % sigue la receta
+
+Fascetti, cap.15, literal:
+
+> *«owners are likely to substitute or delete some ingredients or supplements,
+> unbalancing the diet in a process referred to as **“diet drift”**… only **13%
+> of dog owners** that were provided a homemade diet recommendation at a
+> veterinary teaching hospital were strictly adhering to the recipe a few years
+> later (Johnson et al. 2016).»*
+
+**Trece por ciento**, y eso en pacientes de un hospital universitario, que son
+los más motivados que hay. Nuestro producto es exactamente una receta casera:
+todo el trabajo de cumplir los 43 requisitos vale cero si a los seis meses el
+dueño ha quitado el suplemento porque se acabó y no lo ha repuesto.
+
+Lo que se puede hacer, y no está hecho:
+
+- **Avisar de qué se rompe si quitas algo.** El motor ya sabe decirlo: quitar un
+  alimento y revalidar es `/menu/quitar` + `_garantizar_verificado()`. Falta que
+  la app lo ofrezca como pregunta normal («se me ha acabado el aceite de salmón,
+  ¿qué hago?») en vez de como una operación de edición.
+- **Distinguir lo que se puede sustituir de lo que no.** Hoy todos los alimentos
+  de un menú parecen igual de opcionales en pantalla. La verdura no lo es igual
+  que el suplemento que cierra el yodo.
+- **Recordar la reposición de suplementos**, que son los que se acaban y los que
+  más pesan en el semáforo.
+
+#### ⚠️ Y SACN5 lo mide por el otro lado, con más números (9 de septiembre)
+
+Leyendo entero el **cap.3** de SACN5 —alfabetización sanitaria y cumplimiento—
+aparecen las cifras del **AAHA Compliance Study**, que es el estudio más grande
+que hay de esto en veterinaria. Lo que dicen, y va todo en la misma dirección
+que el 13 % de Fascetti:
+
+> «**55%** of pet owners who fed a therapeutic food also supplemented the
+> recommended food with other foods or treats. **The primary reason cited by
+> clients was that they didn't know not to.**»
+
+| Dato | Cifra |
+|---|---|
+| Cumplimiento de dieta terapéutica, perro | **19 %** |
+| Ídem contando todos los que se beneficiarían | **5-7 %** |
+| Dueños que quieren instrucciones habladas **y** escritas | casi **80 %** |
+| Dueños que agradecerían **varios recordatorios** | **65 %** |
+| Dueños que querrían una llamada si van con retraso | **72 %** |
+| Dueños que abandonaron la dieta **por precio** | **4 %** |
+| Veterinarios que creen que la barrera es el precio | **60 %** |
+
+**Tres consecuencias, y las tres son de producto:**
+
+1. **El aviso de «no le añadas nada» es lo primero que hay que decir, no una
+   nota al pie.** Aplicado el 9 de septiembre: `canislab-web` pinta un recuadro
+   propio, el primero de «Cómo darlo», y lo vigila `menu-dos-pestanas.spec.js`
+   comprobando también que va POR ENCIMA del de congelación — el mismo capítulo
+   mide que el dueño recuerda «as little as half» de lo que se le cuenta, así
+   que lo que va al final no se lee.
+2. **Los recordatorios son la única palanca con evidencia.** En el estudio, el
+   servicio con más cumplimiento (vacunas, 87 %) es el único para el que
+   prácticamente todas las clínicas mandan recordatorio, y el 65 % de los dueños
+   los pide. Eso respalda directamente el tercer punto de arriba —recordar la
+   reposición de suplementos— y le pone número.
+3. **El precio no es la barrera, aunque lo parezca.** Solo el 4 % abandonó por
+   coste y el 60 % de los veterinarios cree que es el motivo principal. Si algún
+   día se recorta una funcionalidad «porque la gente no va a pagar», este es el
+   dato que dice que el problema estaba en otro sitio.
+
+Y el capítulo trae además la medida que justifica los dibujos: el recuerdo de
+instrucciones habladas pasa de **14 % a 85 %** cuando van con pictogramas (Houts
+et al. 1998, p<0,0001). Eso es de la §7.2 de aquí abajo, que va justo de eso.
+
+### 7.2 · El dueño puntúa mal la condición corporal, y de ahí sale TODO
+
+Fascetti, cap.9, dos medidas:
+
+> *«A study involving 201 dogs found that while the expert scored **79% of the
+> dogs as overweight or obese, only 28% of the caregivers** scored their dogs
+> above ideal (Singh et al. 2002).»*
+>
+> *«approximately 28% of the canine and feline patients were scored as
+> overweight or obese, but **only 2% had weight recorded as an issue** (Lund et
+> al. 1999).»*
+
+Por qué nos importa más que a un pienso: del BCS sale el **peso objetivo**, del
+peso objetivo sale el **DER**, y del DER salen **los 43 mínimos escalados**
+(`minimo_de()`). Un BCS mal puesto no da error en ningún sitio: da un menú
+verde para un perro que no es el tuyo. Es la familia de fallos de la sección
+«Fallos que no puede encontrar la usuaria» del `CLAUDE.md`, y `radiografia.py`
+existe justo para verlo por dentro.
+
+Lo que se puede hacer:
+
+- **Enseñar las ilustraciones de las nueve categorías** (Purina, las que
+  reproduce Fascetti en las Figuras 9.1 y 9.2), no solo el número. La validación
+  del sistema de 9 puntos es *con* la descripción y el dibujo, no con la cifra
+  sola.
+- **Preguntar por palpación, no por aspecto**: la escala se aplica tocando las
+  costillas, y esa es la pregunta que distingue un 5 de un 7.
+- **Y contrastar**: si el dueño dice 5 y el peso declarado está muy por encima
+  del estándar de la raza, decirlo. Hoy no se dice nada.
+
+### 7.3 · Lo que la fuente dice del crudo, y que la app no dice
+
+Fascetti & Delaney 2ª ed., cap.8, leído entero el 9 de septiembre de 2026. Es el
+capítulo que habla de BARF por su nombre, y trae cosas incómodas que **usamos
+como fuente para otros números**, así que no se pueden citar solo cuando
+convienen:
+
+> *«**There is no documented evidence that feeding raw meat has any health or
+> nutritional advantages over cooked foods.** The FDA **does not advocate the
+> feeding of raw meat**, poultry, or seafood to pets.»*
+>
+> *«while many animals never become ill…, they **still pose a risk to humans and
+> other animals through environmental shedding**… **Those greatest at risk are
+> the very young and old, in addition to the immunocompromised.**»*
+>
+> *«**simple routine washing may not be enough** to eliminate potential
+> food-borne pathogens in the animal companion's food bowl and environment.»*
+>
+> *«The use of raw bones (compared to cooked) **may reduce the risk of
+> splintering and tooth fractures, but sharp fragments can still occur** and
+> puncture the mucosa.»*
+
+**Ninguna de las cuatro se puede meter en el solver**: no son números. Las
+cuatro son información que quien usa la app no tiene y que le afecta a ella y a
+quien viva en su casa. Dos cosas concretas, y **las dos las decides tú, no yo**,
+porque son de tono de producto:
+
+1. **Una sección de manipulación segura**, dicha una vez y bien: tabla y cuchillo
+   aparte, lavar el comedero con algo más que agua, y el aviso explícito de que
+   en una casa con bebés, personas mayores o alguien inmunodeprimido **el riesgo
+   no es del perro, es de las personas**.
+2. **El hueso**: ya avisamos de lo que no se puede pesar (BLOQUE 14), pero no del
+   riesgo de fragmento. El propio texto reconoce que el crudo es mejor que el
+   cocido en esto — es la única ventaja documentada que le concede, y decirlo así
+   es más creíble que no decir nada.
+
+Y la parte que juega a nuestro favor, que también hay que decir: de 200 recetas
+caseras publicadas, **190 tenían al menos un nutriente esencial por debajo** del
+mínimo de NRC o AAFCO y 167 tenían varios; de las cinco dietas crudas analizadas
+(dos comerciales y tres caseras), **las cinco** tenían nutrientes por debajo del
+mínimo, y las caseras además vitamina D y E altas y el Ca:P mal. **Eso es
+exactamente lo que este motor comprueba en cada menú antes de entregarlo.** El
+argumento de venta no es «BARF es mejor»: es «este BARF está calculado y
+verificado, y el 95 % de las recetas que hay por ahí no lo están».
+
+---
+
+## Siete patologías digestivas y esofágicas que la fuente declara y no ofrecemos (9 de septiembre de 2026)
+
+**Decisión de producto, no de fuentes** (`CERRADO.md`: «añadir una patología es
+decisión de producto»). Salen de leer enteros los capítulos de SACN5 que no
+tenían ni una cita en el repo, y **están todas transcritas y convertidas** en
+`HALLAZGOS_LECTURA_FUENTES.md`. Lo que falta es decidir si se ofrecen.
+
+### Las cinco digestivas comparten un núcleo, así que son una decisión y no cinco
+
+Gastritis y úlcera (52-2), motilidad gástrica (54-2), gastroenteritis aguda
+(56-2), intestino corto (59-1) y colitis (62-1). Cuatro de las cinco piden los
+mismos tres **suelos** de electrolitos, y SACN5 lo dice explícitamente: por
+encima de los mínimos del perro sano.
+
+| | Por 1000 kcal | Mínimo de FEDIAF |
+|---|---|---|
+| Potasio | 2000-2750 mg | 1450 |
+| Cloruro | 1250-3250 mg | 430 |
+| Sodio | 750-1250 mg | 290 |
+
+Más grasa ≤37,5 g/1000 kcal y fibra ≤12,5 g (enfoque muy digestible) o ≥17,5 g
+(enfoque enriquecido en fibra).
+
+**Lo que hay que decidir:** si se ofrecen como cinco patologías separadas, como
+una sola («apoyo digestivo») con variantes, o ninguna. Y quién las marca: son
+diagnósticos, no observaciones del dueño.
+
+### Las dos esofágicas van en direcciones opuestas
+
+Disfagia obstructiva (50-3) pide grasa **≥62,5 g**/1000 kcal; esofagitis y
+reflujo (50-4) la pide **≤37,5 g**. La fuente explica el porqué: la grasa alta
+retrasa el vaciamiento gástrico y baja la presión del esfínter esofágico, o sea
+favorece el reflujo. Las dos suben la proteína a ≥62,5 g, y también con motivo:
+la proteína sube la presión de ese esfínter.
+
+**Ninguna de las dos se puede marcar sin diagnóstico.**
+
+### ⚠️ Y el barrido está ahora COMPLETO — 10 de septiembre de 2026
+
+Al leer SACN5 entera (los 70 capítulos) se contaron **476 tablas** y **121 «Key
+nutritional factors»**, sin cortar la salida. De ellas, las que son
+**recomendación canina** están todas mapeadas contra `patologias.json` menos las
+nueve de esta sección — y **dos de las nueve resultan estar cerradas**:
+
+- **Tabla 53-2 (dilatación-vólvulo gástrico).** Su único factor nutricional es el
+  tamaño del bocado: «**The only key nutritional factor** … >30 mm was protective
+  against GDV in giant-breed dogs». Ni un nutriente. Es exactamente lo que ya
+  dice el aviso de `riesgo_gdv`, así que **no falta nada**.
+- **Tabla 47-4 (enfermedad periodontal).** Sus cifras de fósforo (0,4-0,8 % MS) y
+  sodio (0,2-0,4 %) son **las mismas** que las del perro adulto sano de la Tabla
+  13-3, que ya se aplican a todo perro desde el 8 de septiembre. Y su único
+  factor propio es la textura con sello VOHC, que es de pienso seco. **Tampoco
+  falta nada.**
+
+Las siete de arriba quedan **confirmadas fila a fila** contra el PDF esa misma
+noche: los números de esta sección son los de la fuente.
+
+---
+
+## Sugerir patologías por raza (9 de septiembre de 2026)
+
+Los capítulos 49, 51 y 61 de SACN5 traen **tablas de trastornos asociados a
+raza**, y la app ya sabe la raza (la usa para el DER).
+
+| Trastorno | Razas |
+|---|---|
+| Dilatación-vólvulo gástrico | basset hound, dóberman, setter gordon, gran danés, setter irlandés, san bernardo, weimaraner |
+| Colitis ulcerativa | bóxer, bulldog francés |
+| Gastroenteritis hemorrágica | teckel, schnauzer miniatura, caniche toy |
+| Neoplasia oral | cocker, pastor alemán, braco alemán de pelo corto, golden retriever, weimaraner |
+
+Rawku **ya tiene `riesgo_gdv`** con un aviso muy completo, pero **lo tiene que
+marcar el dueño**, y el dueño de un gran danés no tiene por qué saber que existe.
+
+**Lo que se propone:** que la app lo **sugiera** —nunca que lo marque sola— a las
+razas que la fuente nombra. «Tu raza está en la lista de riesgo de X: ¿lo
+marcamos?». Es un cambio de pantalla, no de motor.
+
+### ⚠️ Y AHORA HAY DOS TABLAS MÁS, DE PATOLOGÍAS QUE EL MOTOR YA APLICA
+
+Añadidas el mismo día, de leer enteros los capítulos 38 y 55.
+
+**Tabla 38-11** (urolitos) es la más valiosa de las tres, porque **las seis
+patologías de urolito ya existen en `patologias.json`** — aquí no hay que
+construir nada nuevo en el motor, solo la pregunta:
+
+| Piedra | Razas | Sexo | Edad típica |
+|---|---|---|---|
+| Estruvita | schnauzer miniatura, caniche miniatura, bichón frisé, cocker spaniel | hembras (>80 %) | 2-9 años |
+| Oxalato cálcico | schnauzer miniatura y estándar, lhasa apso, yorkshire, caniche miniatura, shih tzu, bichón frisé | machos (>70 %) | 5-12 años |
+| Urato | **dálmata**, bulldog inglés, schnauzer miniatura, yorkshire, shih tzu | machos (>90 %) | 1-5 años |
+| Fosfato cálcico | yorkshire, schnauzer miniatura, shih tzu | machos (>55 %) | <1 año y 6-10 |
+| Cistina | bulldog inglés, teckel, basset hound, terranova | machos (>98 %) | 1-7 años |
+| Sílice | pastor alemán, golden retriever, labrador, schnauzer miniatura, cavalier | machos (95 %) | 3-10 años |
+
+**Tabla 55-3** (intestino delgado): gastroenteritis eosinofílica (pastor alemán,
+setter irlandés), enteritis linfoplasmocítica (pastor alemán, shar-pei,
+soft-coated wheaten terrier), sobrecrecimiento bacteriano (pastor alemán,
+beagle), linfangiectasia (yorkshire, golden, teckel, basenji), enteropatía
+sensible al trigo (setter irlandés).
+
+**Y la app tiene además el sexo y la edad**, que estas tablas también dan. Una
+sugerencia que cruza raza, sexo y edad acierta mucho más que una que solo mira la
+raza: el dálmata macho joven es el 90 % de los uratos.
+
+⚠️ **El límite sigue siendo el mismo, y es lo importante**: una predisposición de
+raza **no es un diagnóstico**. Marcarla sola sería decidir por criterio clínico
+sin que nadie lo haya pedido, y eso no lo hace ni el motor ni la app. Se sugiere
+la pregunta, la marca la persona.
+
+Detalle y citas literales: `HALLAZGOS_LECTURA_FUENTES.md`, capítulos 38 y 55.
+
+---
+
+## ⚠️ Los ocho `avisos_extra` de patología no los pinta nadie (9 de septiembre de 2026)
+
+**Medido hoy**, contando el JSON y buscando en el front:
+
+| | |
+|---|---|
+| Avisos `avisos_extra` en `patologias.json` | **8**, en 4 patologías |
+| Sitios de `canislab-web` que los pintan | **0** |
+
+Los ocho son: `epilepsia_idiopatica` (hipertrigliceridemia, y el nuevo
+`bromuro_y_cloro`), `cushing` (`mitotano_con_comida`), `cancer_soporte` (dos) y
+`reaccion_adversa_alimento` (tres: una o dos proteínas, fase de diagnóstico,
+aminas vasoactivas).
+
+**La API sí los sirve**, y por dos caminos: `patologias.py` los mete en la
+respuesta del menú y `GET /patologias` los sirve al elegir la patología, que es
+lo que se construyó el 8 de septiembre justamente para que quien firma una pauta
+los leyera antes de decidir. Lo que no existe es el sitio donde se ven.
+
+Lo que el dueño ve hoy con cualquier patología marcada es **un solo aviso
+genérico**: «Este menú TIENE que aprobarlo tu veterinario … enséñale este menú
+antes de empezar». Es correcto y no basta: los ocho dicen cosas que ese texto no
+dice.
+
+**Por qué esto importa más desde hoy.** Los dos avisos nuevos son de FÁRMACO, y
+los dos describen algo que pasa **por culpa del cambio de dieta que hace esta
+app**:
+
+- Un perro con bromuro potásico que pasa a esta ración baja su carga de cloro a
+  la mitad, y el bromo sérico sube. Hay que medirlo.
+- Un perro con mitotano tiene que tomar la pastilla **con** la comida: en ayunas
+  la absorción cae de 13,0 a 0,4 mg/l.
+
+Un aviso que vive en un JSON y no llega a ninguna pantalla es, para quien usa la
+app, un aviso que no existe. Es la misma familia que el `null` puesto a mano en
+la pantalla de varios perros, y la misma que el fallo de `guardarPerro`: nada da
+error, nada se ve, y solo aparece usándolo.
+
+**Lo que hace falta**, y es de pantalla, no de motor:
+1. Que `VistaMenus` pinte `avisos_extra` debajo del aviso genérico de patología,
+   uno por línea.
+2. Que la pantalla de elegir patologías pinte los de `GET /patologias` **antes**
+   de marcar, que es cuando se decide.
+3. Un test como los de `ficha-ida-y-vuelta`: marcar una patología que tenga
+   `avisos_extra` y exigir que su texto esté en pantalla. Sin él vuelve a
+   perderse en el siguiente refactor.
+
+Fuente de los dos nuevos: SACN5 5ª ed., cap.69, casos 69-1 y 69-2. Detalle en
+`HALLAZGOS_LECTURA_FUENTES.md`.
+
+---
+
+## La app no dice que un perro que come crudo EXCRETA más patógenos (9 de septiembre de 2026)
+
+**De leer entero el capítulo 56 de SACN5.** Literal: *«**Dogs consuming such
+foods shed bacterial pathogens at a much higher rate than those consuming
+conventionally cooked commercial foods**» (Weese and Armstrong, 2006)*, y los
+patógenos cultivados en comida cruda casera y comercial: *Salmonella*,
+*Campylobacter*, *Escherichia*, *Yersinia* (Weese, 2006; Strohmeyer et al, 2006).
+
+**Lo que Rawku dice hoy, comprobado:**
+
+| Dónde | Qué dice |
+|---|---|
+| `instrucciones.js` (panel de Congelación) | Tiempos: una semana, dos el pescado, tres días descongelado |
+| `instrucciones.js` (Pescados y mariscos) | Qué va crudo y qué cocinado, y por qué |
+| `patologias.json` → `inmunosupresion` | El riesgo de patógenos **para el perro** con las defensas bajas |
+
+O sea: **manipulación del alimento, sí; higiene de la casa, en ninguna parte**.
+Y son dos cosas distintas. Congelar bien protege al perro de los parásitos; no
+impide que el perro excrete salmonela y que la toque un niño de dos años.
+
+**Lo que se propuso**, y es de texto, no de motor:
+1. ~~Una línea en el panel que ya existe~~ — **HECHO el 10 de septiembre.** Es
+   un panel propio, «Higiene en casa», pegado al de Congelación en la pestaña
+   «Cómo darlo»: lavarse las manos después de dar de comer y de recoger las
+   heces, limpiar el cuenco y la superficie, y no dejar que el perro lama la
+   cara justo después de comer. Nombra además a los grupos sensibles (bebés,
+   embarazadas, mayores, defensas bajas) para que quien esté en esa situación
+   se dé por aludido sin que la app tenga que preguntárselo. Lo vigila
+   `tests/menu-dos-pestanas.spec.js`, y comprobado que falla si el panel se
+   rompe.
+2. **Sigue pendiente: un aviso propio si en casa hay alguien de riesgo** — niños
+   pequeños, embarazadas, mayores, personas inmunodeprimidas. La app no pregunta
+   eso hoy. Es una pregunta de una casilla y cambia lo que hay que decir: hoy el
+   panel los NOMBRA, que es lo máximo que se puede hacer sin preguntar, pero no
+   es lo mismo que decírselo a quien le toca.
+
+⚠️ **Esto no es un argumento contra el crudo ni cambia ningún menú.** Es
+información que la fuente da, que quien elige alimentar así tiene derecho a
+tener, y que hoy no está.
+
+Cita completa y contexto: `HALLAZGOS_LECTURA_FUENTES.md`, capítulo 56.
+
+## Dos preguntas que la ficha no hace y que FEDIAF cuantifica (9 de septiembre de 2026)
+
+Las dos salen de leer **enteras** dos secciones de FEDIAF que estaban sin leer.
+Las dos son de producto y no de nutrición: la cifra existe, lo que no existe es
+la pregunta. Por eso están aquí y no aplicadas.
+
+### 1 · ¿Duerme fuera? — hasta un 90 % más de calorías en invierno
+
+FEDIAF §7.2.3.5, literal:
+
+> «When kept outside in winter, dogs may need **10 to 90 % more calories** than
+> during summer.»
+
+Y en la misma sección, el mecanismo con su cifra: por debajo de la zona
+termoneutra el gasto sube **2-5 kcal/kg^0,75 por cada grado**, y la zona
+termoneutra depende del pelo — 15-20 °C en razas de pelo largo, 20-25 °C en
+pelo corto, 10-15 °C en un husky de Alaska.
+
+**Qué recibe hoy un mastín que duerme en el patio en enero:** exactamente la
+misma ración que un perro de piso. La app no pregunta dónde vive.
+
+**⚠️ Y LA CIFRA EXISTE — corregido el 9 de septiembre por la noche.** Cuando se
+escribió este punto decía que «no hay una cifra, hay un rango de 1 a 9». Eso era
+verdad de FEDIAF y falso del conjunto de las fuentes: **SACN5 cap.5, Tabla 5-3**
+lo publica por tipo de pelo y por salto de temperatura concreto.
+
+| Perro | Aumento del DER | De | A |
+|---|---|---|---|
+| Labrador retriever y beagle | **+25 %** (12-43) | 15 °C | 8,5 °C |
+| Gran Danés | **+22 %** | verano | invierno |
+| Pelo **corto** | **+95 %** | 25 °C | 7,6 °C |
+| Pelo **largo** | **+59,5 %** | 25 °C | 7,6 °C |
+| Beagle | +70,5 % | 17 °C | −17 °C |
+| Perro de trineo de Alaska | +61,5 % | 17 °C | −17 °C |
+
+(Blaza 1982, Zentek y Meyer 1992, Meyer 1990.) Ojo al sentido: el de **pelo
+corto necesita más** que el de pelo largo, porque aísla peor.
+
+**Así que lo que falta no es la cifra: es la pregunta.** La ficha no sabe dónde
+duerme el perro ni a qué temperatura, y sin eso no hay a qué fila ir. Lo que hay
+que decidir es (a) si se pregunta, (b) qué se pregunta exactamente — ¿duerme
+fuera? ¿a cuántos grados? ¿pelo corto o largo, que la app ya podría deducir de la
+raza? — y (c) qué se hace con un perro que duerme fuera solo en invierno. Las dos
+citas están en `der.py`, junto a `BASE_ACTIVIDAD`.
+
+### 2 · La masa muscular, que es la Tabla VII-3 y no es el BCS
+
+FEDIAF §7.1.3, sobre nuestra propia escala:
+
+> «scores at the lower end of the BCS are **confounded by muscle atrophy**»
+
+y publica una segunda escala para eso, la **Tabla VII-3**, de 0 a 3, que se mide
+**palpando** espina, escápulas, cráneo y alas del ilion.
+
+**Ya aplicado, el 9 de septiembre:** la salvedad. `salvedadDelBcs()` en
+`src/bcs.js` avisa en la parte baja de la escala de que el peso objetivo puede
+quedarse corto si lo que falta es músculo y no grasa — el BCS 9 ya llevaba la
+suya («la escala se satura») y faltaba la del otro extremo. Lo vigila
+`tests/bcs.spec.js`.
+
+**Lo que sigue pendiente:** la escala entera, que es una pantalla nueva y de
+palpación. Importa sobre todo en la ficha del veterinario: un perro puede estar
+**obeso y sarcopénico a la vez**, y eso es justo lo que hay que ver en el
+senior, en el oncológico y en la caquexia. Hoy la ficha tiene BCS y no tiene
+esto.
+
+## Las ocho preguntas que faltan para elegir bien el tope de una patología (10 de septiembre de 2026)
+
+Derivadas de la fuente de cada patología, no opinadas — el porqué y el reparto
+completo están en `HECHO.md` y en `quien_formula_cada_patologia.json`. Aquí solo
+queda el trabajo de construirlas en la app.
+
+**Las que cambian una cifra del menú:**
+
+- [ ] **Pancreatitis: ¿triglicéridos altos?** De eso depende que el tope de
+      grasa sea 37,5 o 25 (SACN5 Tabla 67-3). La obesidad ya la sabe la app por
+      el BCS; la hipertrigliceridemia solo se sabe con analítica. **Hoy el perro
+      que necesita 25 recibe 37,5 y sale en verde.**
+- [ ] **Renal: ¿estadio IRIS, o la última creatinina?** Por debajo del estadio 2
+      la fuente no respalda apretar el fósforo, y apretarlo tiene coste.
+- [ ] **Cardiopatía: ¿estadio ACVIM?** El motor tiene los cinco (sodio 739 /
+      625 / 480 y dos sin restricción) y la app manda la clave genérica, o sea
+      el tope del B2 para todos. Es la decisión 1 de `FRONTEND_VS_MOTOR.md`.
+- [ ] **Reacción adversa: ¿piel o intestino? ¿diagnóstico o confirmada?** Dos
+      preguntas y las dos cambian lo que hace el motor: el techo de proteína es
+      «dermatologic cases only» —en las digestivas la misma página pide **más**
+      proteína— y en fase de diagnóstico subir el omega-3 puede tapar el
+      resultado de la dieta de eliminación.
+- [ ] **Cálculos: ¿de qué tipo, y para prevenir o para disolver?** Hoy una sola
+      casilla manda `estruvita` aunque el perro tenga urato o cistina. Es la
+      decisión 3 de `FRONTEND_VS_MOTOR.md`.
+
+**Las que no cambian ninguna cifra pero sí lo que hay que hacer:**
+
+- [ ] **Diabetes: decirlo en la pantalla.** No hace falta pregunta nueva —se
+      resuelve marcando también la otra patología—, pero nadie dice que marcarla
+      cambia el tope de grasa.
+- [ ] **Epilepsia: ¿toma bromuro potásico?** Cambiar la dieta le cambia el nivel
+      del fármaco en sangre y hay que remedirlo. Hoy eso vive solo en un
+      `aviso_extra`, que además **no lo pinta nadie** (ver el punto de los ocho
+      avisos, más arriba).
+- [ ] **`urolitos_fosfato_calcico`**: no necesita pregunta —sus cinco topes y su
+      Ca:P son fijos—, necesita existir en alguna pantalla. Decisión 2 de
+      `FRONTEND_VS_MOTOR.md`.
+
+Mientras no se construyan, las once patologías afectadas están declaradas con su
+pregunta en `SIN_LA_PREGUNTA_QUE_DECIDE_LA_CIFRA`
+(`tests/patologias-app-y-motor.spec.js`, en `canislab-web`), y esa lista **solo
+puede encoger**.
+
+---
+
+## El hueso: cuarto daño documentado, y un aviso del motor que cuenta media verdad (11 de septiembre de 2026)
+
+De leer enteros los capítulos 50 al 70 de SACN5. Los tres primeros daños ya
+estaban escritos —las fracturas dentales del cap.19, los patógenos del cap.11 y
+la carne cruda como causa de diarrea aguda del cap.55—. Salen dos más, y el
+primero **contradice a medias una frase que el motor le dice hoy al dueño**.
+
+### 1 · ⚠️ El aviso del estreñimiento crónico dice que el crudo juega a favor, y no nombra el hueso
+
+El aviso `general` de `estrenimiento_cronico` dice hoy, en resumen, que la
+comida cruda ya juega a favor porque lleva mucha más agua que un pienso. **La
+parte del agua es cierta** y está en la Tabla 64-2, que pide agua >75 %.
+
+Pero el cap.64 dice **dos veces**, en dos sitios distintos del capítulo, lo
+contrario sobre la otra mitad de la ración:
+
+> *«In addition, consumption of bones and raw foods has been associated with
+> constipation and obstipation in dogs»*
+
+> *«Constipation and obstipation have been reported to occur in dogs consuming
+> bones and raw food diets due to the large contribution bones make to such
+> foods»*
+
+La causa que nombra la fuente —**la cantidad de hueso**— es exactamente lo que
+este motor pone en todos los menús: la regla de forma pide **20-60 % de hueso
+carnoso**, y es la fuente de calcio del BARF.
+
+O sea que un perro que consulta **precisamente por estreñimiento crónico**
+recibe un aviso que le dice que su dieta juega a favor, sin nombrarle lo único
+que la fuente señala como causa.
+
+**No lo he cambiado yo**: es texto que va al dueño sobre tu producto, y la regla
+del proyecto es que eso no se decide en silencio. Pero no es una preferencia de
+producto: es una frase del motor que la fuente contradice a medias.
+
+**Dos cosas más del mismo capítulo, que el aviso tampoco dice:**
+- El tipo de fibra importa y el motor no puede expresarlo: *«Fiber sources should
+  be insoluble or mixed. Increased levels of soluble fiber are not recommended»*,
+  y la soluble no debe pasar del 5 % del alimento porque *«soluble fibers can
+  significantly reduce the availability of minerals, including zinc, calcium,
+  iron and phosphorus»*. El motor sube la **fibra bruta** sin distinguir tipo,
+  porque el catálogo no lo trae.
+- En el **megacolon** —estreñimiento sin motilidad ninguna— la fibra **empeora**:
+  *«fiber-enhanced foods and fiber supplements are no longer effective stimulants
+  of colonic motility and, worse, can contribute to obstipation»*, y la Tabla
+  64-2 pide ≤5 % MS. El motor tiene **una sola** patología de estreñimiento y le
+  sube la fibra siempre. Distinguir los dos cuadros es diagnóstico veterinario,
+  no de ficha; lo que sí cabe es decirlo.
+
+### 2 · El hueso como cuerpo extraño esofágico, con la cifra más dura de las cuatro
+
+Cap.50, sobre cuerpos extraños del esófago en el perro:
+
+> *«In a recent retrospective review, 46 of 60 esophageal foreign bodies removed
+> from dogs were bones»*
+
+Setenta y siete de cada cien. Y el capítulo manda preguntar en la anamnesis por
+exactamente lo que este motor formula: *«Owners of pets presenting for suspected
+pharyngeal and esophageal disorders should be asked about feeding dental chew
+treats»* y, tras la cita del estudio que va en medio, *«bones or bone and raw
+food diets, which can result in esophageal foreign bodies»*.
+
+Va al mismo sitio que los otros tres: es un **aviso**, no un nutriente. La
+decisión de si Rawku lo dice, y dónde, sigue siendo tuya — ahora con cuatro
+daños distintos medidos en vez de tres.
+
+---
+
+## El páncreas CRUDO es tratamiento de la EPI, y no está en el catálogo (11 de septiembre de 2026)
+
+Del cap.66. El tratamiento de la insuficiencia pancreática exocrina es la enzima
+pancreática en polvo, y eso el aviso ya lo dice. Lo que no dice es que la fuente
+ofrece una alternativa **con dosis** que solo puede dar una dieta cruda:
+
+> *«If available, raw bovine, porcine or ovine pancreas can be effective»*
+
+> *«Dogs should receive 30 to 90 g (1 to 3 oz.) of freshly thawed, chopped
+> pancreas»*
+
+> *«Raw pancreas can be frozen in individual doses for several months without
+> losing enzyme activity»*
+
+Y cuando el polvo irrita la boca —efecto adverso que el propio capítulo
+describe—, la salida que da es esa misma: *«If not, feeding raw pancreas should
+be considered»*.
+
+**Comprobado contra el catálogo: no hay ninguna ficha de páncreas** (163
+revisadas). Es de las poquísimas veces en todo el libro en que la fuente
+recomienda algo que **solo** puede hacer una dieta cruda, y hoy Rawku ni lo
+ofrece ni lo menciona.
+
+**Decisión, y son dos:** si entra una ficha de páncreas en el catálogo —con el
+trabajo de datos que eso lleva— y si el aviso de la EPI lo nombra aunque la
+ficha no exista. Lo segundo no depende de lo primero.

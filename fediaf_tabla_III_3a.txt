@@ -1,0 +1,380 @@
+FEDIAF  Nutritional Guidelines  |  Publication September 2025
+15 of 98
+Page
+3.2.2.  Recommended nutrient levels for complete dog food
+TABLE III-3a. Unit per 100 g dry matter (DM)
+Nutrient
+UNIT
+Minimum Recommended Level
+Maximum
+Adult - based on MER of
+Early Growth
+(< 14 weeks) &
+Reproduction
+Late Growth
+(≥ 14 weeks)
+(L) = EU legal limit 
+(N) = nutritional
+95 kcal/kg0.75
+110 kcal/kg0.75
+Protein*
+g
+21.00
+18.00
+25.00
+20.00
+-
+Arginine*
+g
+0.60
+0.52
+0.82
+0.74
+-
+Histidine
+g
+0.27
+0.23
+0.39
+0.25
+-
+Isoleucine
+g
+0.53
+0.46
+0.65
+0.50
+-
+Leucine
+g
+0.95
+0.82
+1.29
+0.80
+-
+Lysine*
+g
+0.46
+0.42
+0.88
+0.70 
+Growth:	
+	
+2.80 (N)
+Methionine*
+g
+0.46
+0.40
+0.35
+0.26
+-
+Methionine + cystine*
+g
+0.88
+0.76
+0.70
+0.53
+-
+Phenylalanine
+g
+0.63
+0.54
+0.65
+0.50
+-
+Phenylalanine + tyrosine*
+g
+1.03
+0.89
+1.30
+1.00
+-
+Threonine
+g
+0.60
+0.52
+0.81
+0.64
+-
+Tryptophan
+g
+0.20
+0.17
+0.23
+0.21
+-
+Valine
+g
+0.68
+0.59
+0.68
+0.56
+-
+Fat*
+g 
+5.50
+5.50
+8.50
+8.50
+-
+Linoleic acid (ω-6)*
+g 
+1.53
+1.32
+1.30
+1.30
+Early Growth:	
+6.50 (N)
+Arachidonic acid (ω-6)*
+mg
+-
+-
+30.00
+ 30.00
+-
+Alpha-linolenic acid (ω-3)*
+g
+-
+-
+0.08
+0.08
+-
+EPA + DHA (ω-3)* 
+g
+-
+-
+0.05
+0.05
+-
+Minerals
+Calcium*
+g
+0.58
+0.50
+1.00
+0.80a
+1.00b
+Adult:	
+	
+2.50 (N)
+Early growth:	
+1.60 (N)
+Late growth:	
+1.80 (N)
+Phosphorus*
+g
+0.46
+0.40
+0.90
+0.70
+Adult:	
+	
+1.60 (N)
+
+h
+Ca / P ratio
+1/1
+Adult:	
+	
+2/1 (N)
+Early growth & reprod.: 	 1.6/1 (N)
+Late growth:	
+1.8/1a (N) or
+	
+	
+1.6/1b (N)
+Potassium
+g
+0.58
+0.50
+0.44
+0.44
+-
+Sodium*
+g
+0.12
+0.10
+0.22
+0.22
+c 	
+	
+Chloride
+g
+0.17
+0.15
+0.33
+0.33
+c	
+	
+Magnesium
+g
+0.08
+0.07
+0.04
+0.04
+-
+Trace elements*
+	
+	
+Copper*
+mg
+0.83
+0.72
+1.10
+1.10
+	
+	
+  2.80 (L)
+Iodine*
+mg
+0.12
+0.11
+0.15
+0.15
+	
+	
+  1.10 (L)
+Iron*
+mg
+4.17
+3.60
+8.80
+8.80
+	
+                         68.18 (L)
+Manganese
+mg
+0.67
+0.58
+0.56
+0.56
+	
+	
+17.00 (L)
+Selenium* (wet diets)
+µg
+27.00
+23.00
+40.00
+40.00
+	
+	
+56.80 (L)d
+Selenium* (dry diets)
+µg
+22.00
+18.00
+40.00
+40.00
+	
+	
+56.80 (L)d
+Zinc*
+mg
+8.34
+7.20
+10.00
+10.00
+	
+	
+22.70 (L)
+Vitamins
+                               
+Vitamin A*
+IU
+702.00
+606.00
+500.00
+500.00
+	
+                      40 000 (N)
+Vitamin D*
+IU
+63.90
+55.20
+55.20
+50.00
+	
+                      227.00  (L) 
+	
+                      320.00 (N) 
+Vitamin E*
+IU
+4.17
+3.60
+5.00
+5.00
+	
+ 
+Vitamin B1 (Thiamine)*
+mg
+0.25
+0.21
+0.18
+0.18
+-
+Vitamin B2 (Riboflavin)*
+mg
+0.69
+0.60
+0.42
+0.42
+-
+Vitamin B5 (Pantothenic acid)*
+mg
+1.64
+1.42
+1.20
+1.20
+-
+Vitamin B6 (Pyridoxine)*
+mg
+0.17
+0.15
+0.12
+0.12
+-
+Vitamin B12 (Cyanocobalamin)*
+µg
+3.87
+3.35
+2.80
+2.80
+-
+Vitamin B3 (Niacin)*
+mg
+1.89
+1.64
+1.36
+1.36
+-
+Vitamin B9 (Folic acid)*
+µg
+29.90
+25.80
+21.60
+21.60
+-
+Vitamin B7 (Biotin)*
+µg
+-
+-
+-
+-
+-
+Choline
+mg
+189.00
+164.00
+170.00
+170.00
+-
+Vitamin K*
+µg
+-
+-
+-
+-
+-
+When a nutrient has an asterisk (*), additional information and substantiation references are available in Chapter 3.3.1. 
+and 3.3.2. Footnotes a-h are summarised below Table III-4c.

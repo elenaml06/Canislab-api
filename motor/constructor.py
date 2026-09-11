@@ -370,6 +370,19 @@ NUTRIENTES_COMPUESTOS = {
     "epa_dha": ("epa", "dha"),
     "metionina_cistina": ("metionina", "cistina"),
     "fenilalanina_tirosina": ("fenilalanina", "tirosina"),
+    # ⚠️ AÑADIDO (8 septiembre) — OMEGA-3 TOTALES. Es el alfa-linolénico más
+    # los dos de cadena larga, que es como lo cuentan las dos fuentes que lo
+    # piden: SACN5 cap.34 Tabla 34-2 («Total omega-3 fatty acids 3.5 to 4.0%»
+    # de materia seca = 8,75-10 g/1000 kcal) y cap.35 Tabla 35-3 («Total
+    # omegas-3 >1%» = 2,5 g). Y el Reglamento (UE) 2020/354, entrada 27, pide
+    # para la misma indicación «Total omega-3 fatty acids >= 29 g per kg» al
+    # 12 % de humedad = 8,24 g/1000 kcal: dos fuentes independientes y una
+    # norma legal piden casi el mismo número, y el motor no pedía ninguno.
+    #
+    # NO incluye el araquidónico, que es omega-6, ni el linoleico. La trampa de
+    # `UNIDADES.md` sigue viva: `linolenico` es el omega-3 y `linoleico` el
+    # omega-6, se diferencian en una letra y son cosas opuestas.
+    "omega3_total": ("linolenico", "epa", "dha"),
 }
 
 

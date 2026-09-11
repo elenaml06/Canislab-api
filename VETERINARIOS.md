@@ -571,7 +571,7 @@ piden credencial. `/stripe/portal` y `/perro/{perro_id}/menus` piden el
 token de sesión de Supabase, el `CORS` está acotado a rawku.app y las
 vistas previas, y la pauta firmada se sella con clave (HMAC) en vez de con
 un SHA-256 que podía recalcular cualquiera. El detalle está en «Las
-puertas: quién puede pedir qué» del `CLAUDE.md`, y lo vigila el BLOQUE 51.
+puertas: quién puede pedir qué» del `CLAUDE.md`, y lo vigila el BLOQUE 93.
 
 **Lo que sigue igual, y es lo que bloquea la fase 4**: los endpoints del
 motor (`/menu/v2`, `/formular/*`, `/pauta/firmar`) siguen sin puerta.

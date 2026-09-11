@@ -138,6 +138,46 @@ def auditar(crudo=None, req=None):
                     f"Ninguna combinación de alimentos puede cumplir un suelo por encima del "
                     f"techo: o se baja el número, o la patología pasa a `formulable: false`.")
 
+        # 4-quater. LOS RATIOS (10 septiembre). Un ratio entre dos nutrientes
+        #    es un límite como cualquier otro y tiene las mismas obligaciones,
+        #    más tres suyas:
+        #
+        #      · las DOS claves del par tienen que existir en el MAPA, porque un
+        #        cociente con un denominador que el motor no mira nunca no se
+        #        aplica a nada -- el fallo de la fibra, elevado al cuadrado;
+        #      · el `sentido` tiene que ser "min" o "max", porque de él depende
+        #        si el número aprieta por arriba o por abajo, y un typo lo
+        #        convertiría en silencio en lo contrario de lo que dice la
+        #        fuente;
+        #      · y `aplicado_por_el_solver` tiene que ser TRUE. En `ratios` solo
+        #        va lo que se aplica; lo escrito y no aplicado vive en
+        #        `limites_escritos_que_el_solver_no_aplica`, como el
+        #        omega-6:omega-3. Una celda aquí que dijera `false` sería un
+        #        límite que parece un límite y no hace nada, que es exactamente
+        #        lo que estos dos Ca:P fueron durante dos días.
+        for clave, r in (p.get("ratios") or {}).items():
+            valor = _num(r.get("valor"))
+            if not (r.get("fuente") or "").strip():
+                problemas.append(f"{nombre_pat}/{clave}: el ratio {valor} no tiene FUENTE.")
+            if not (r.get("por_que") or "").strip():
+                problemas.append(f"{nombre_pat}/{clave}: el ratio {valor} no dice POR QUÉ es ese "
+                                 f"número y no otro.")
+            if r.get("sentido") not in ("min", "max"):
+                problemas.append(f"{nombre_pat}/{clave}: `sentido` es {r.get('sentido')!r} y tiene "
+                                 f"que ser 'min' o 'max'. De eso depende si el número aprieta por "
+                                 f"arriba o por abajo.")
+            if not r.get("aplicado_por_el_solver"):
+                problemas.append(f"{nombre_pat}/{clave}: está en `ratios` con "
+                                 f"`aplicado_por_el_solver` en falso. En `ratios` solo va lo que "
+                                 f"se aplica: lo que está escrito y no se aplica va a "
+                                 f"`limites_escritos_que_el_solver_no_aplica`, o si no es un "
+                                 f"límite que parece un límite y no hace nada.")
+            for extremo in ("numerador", "denominador"):
+                if r.get(extremo) not in por_clave:
+                    problemas.append(f"{nombre_pat}/{clave}: el {extremo} '{r.get(extremo)}' NO "
+                                     f"está en el MAPA del verificador, así que este ratio no se "
+                                     f"aplica a nada. Claves válidas: {sorted(por_clave)}")
+
         # 4-ter. EL AVISO POR COMBINACIÓN (7 septiembre) — mismo patrón que
         #    `max_pct_kcal_grasa_si_ademas`: fuente obligatoria, y cada
         #    clave que exige tiene que ser una patología que exista de
@@ -179,8 +219,9 @@ if __name__ == "__main__":
     fallos = auditar(crudo)
     n_topes = sum(len(p.get("topes_por_1000kcal") or {}) for p in crudo["patologias"].values())
     n_suelos = sum(len(p.get("suelos_por_1000kcal") or {}) for p in crudo["patologias"].values())
-    print("%d patologías, %d topes numéricos, %d suelos numéricos"
-          % (len(crudo["patologias"]), n_topes, n_suelos))
+    n_ratios = sum(len(p.get("ratios") or {}) for p in crudo["patologias"].values())
+    print("%d patologías, %d topes numéricos, %d suelos numéricos, %d ratios"
+          % (len(crudo["patologias"]), n_topes, n_suelos, n_ratios))
     print("─" * 60)
     if fallos:
         print("\n%d PROBLEMAS:\n" % len(fallos))

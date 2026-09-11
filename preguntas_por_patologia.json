@@ -1,0 +1,251 @@
+{
+  "_meta": {
+    "que_es": "Que pregunta decide la cifra de cada patologia, que respuestas tiene, y a que clave del motor lleva cada respuesta.",
+    "por_que_existe": "Elena, 11-sep-2026: «hay que ver luego con todos los rangos que tenemos para cada patologia en el motor como se va a aplicar. es decir, tendra que haber preguntas para cada patologia preguntando resultados de analiticas o lo que sea para que pueda coger segun la respuesta los limites para cada estadio o cada caso no? eso tambien hay que hacerlo». || Y antes, el mismo dia: «Un dueño, obviamente, no puede marcar casillas de veterinario, ni siquiera le deberian salir».",
+    "la_cadena": "FUENTE manda -> MOTOR la implementa -> APP la ofrece. Aqui no se inventa ninguna cifra: las que salen se LEEN de `patologias.json`, y donde el motor no tiene una clave por respuesta se dice y se deja pendiente.",
+    "los_cinco_estados": {
+      "aplicada": "La app pregunta y cada respuesta lleva a una clave del motor con cifras DISTINTAS. Es el caso bueno.",
+      "no_cambia_ninguna_cifra": "La app pregunta y todas las respuestas aplican lo mismo. La pregunta puede seguir valiendo por el AVISO, pero no mueve el menu.",
+      "media": "La cifra por respuesta YA existe en el motor y lo que falta es que la pantalla lo diga, o un dato que la app ya tiene y no se usa.",
+      "sin_cifra_en_el_motor": "La fuente condiciona el numero a un dato y el motor no tiene una clave por respuesta. Hace falta la cifra DE LA FUENTE.",
+      "no_hace_falta": "No hay nada que preguntar para elegir el numero."
+    },
+    "como_se_comprueba": "El BLOQUE 90 de `pruebas_completas.py`: que cada `clave_motor` exista de verdad en `patologias.json`, que las cifras servidas sean las VIVAS y no una copia, que una pregunta marcada `aplicada` tenga de verdad respuestas con cifras distintas -- una pregunta cuyas respuestas aplican lo mismo no decide nada --, y que cada `requiere` de un tope condicional apunte a una patologia que exista. El lado de la app lo vigila `tests/vocabulario.spec.js` en canislab-web.",
+    "medido": "11 de septiembre de 2026, contra `patologias.json`, `quien_formula_cada_patologia.json` y `FAMILIAS_PATOLOGIA` de `src/App.jsx`.",
+    "cuantas_preguntas": 10
+  },
+  "preguntas": {
+    "cardiopatia": {
+      "pregunta": "¿Sabes el estadio ACVIM?",
+      "la_hace_la_app": true,
+      "quien_la_contesta": "solo_veterinario",
+      "que_dato_pide": "estadio ACVIM",
+      "estado": "aplicada",
+      "respuestas": [
+        {
+          "label": "No lo sé / sin estadiar",
+          "clave_motor": "cardiopatia",
+          "cifras_que_aplica": {
+            "max_sodio": 738.6
+          }
+        },
+        {
+          "label": "A — predispuesta, sin enfermedad todavía",
+          "clave_motor": "cardiopatia_a",
+          "cifras_que_aplica": {}
+        },
+        {
+          "label": "B1 — soplo, sin remodelado",
+          "clave_motor": "cardiopatia_b1",
+          "cifras_que_aplica": {}
+        },
+        {
+          "label": "B2 — remodelado, sin síntomas",
+          "clave_motor": "cardiopatia_b2",
+          "cifras_que_aplica": {
+            "max_sodio": 738.6
+          }
+        },
+        {
+          "label": "C — insuficiencia cardíaca, actual o pasada",
+          "clave_motor": "cardiopatia_c",
+          "cifras_que_aplica": {
+            "max_sodio": 625.0
+          }
+        },
+        {
+          "label": "D — insuficiencia cardíaca refractaria",
+          "clave_motor": "cardiopatia_d",
+          "cifras_que_aplica": {
+            "max_sodio": 480.0
+          }
+        }
+      ]
+    },
+    "renal": {
+      "pregunta": "¿Tu veterinario ha dicho si es leve-moderada o moderada-grave?",
+      "la_hace_la_app": true,
+      "quien_la_contesta": "solo_veterinario",
+      "que_dato_pide": "estadio IRIS, o la creatinina serica",
+      "estado": "aplicada",
+      "respuestas": [
+        {
+          "label": "No lo sé / leve-moderada",
+          "clave_motor": "renal",
+          "cifras_que_aplica": {
+            "max_cloruro": 1125.0,
+            "max_fosforo": 1200.0,
+            "max_potasio": 2000.0,
+            "max_proteina": 62.5,
+            "max_sodio": 750.0,
+            "min_omega3_total": 1.0,
+            "min_vitE": 67.1
+          }
+        },
+        {
+          "label": "Moderada-grave (creatinina/SDMA claramente altos)",
+          "clave_motor": "renal_avanzada",
+          "cifras_que_aplica": {
+            "max_fosforo": 1200.0,
+            "_no_formulable": true
+          }
+        }
+      ],
+      "nota": "⚠️ Esta pregunta es MAS GRUESA que la que pide la fuente. Lo que decide el numero es el ESTADIO IRIS (o la creatinina), y la app pregunta «leve-moderada o moderada-grave». Las dos respuestas aplican el MISMO techo de fosforo (1200): lo que cambia es que `renal_avanzada` no es formulable, o sea que se para en seco en vez de dar menu. Falta lo que dice `quien_formula_cada_patologia.json`: por debajo del estadio 2 la fuente NO respalda apretar el fosforo, y para eso haria falta una clave `renal_iris1` con su cifra SACADA DE LA FUENTE. No se inventa aqui."
+    },
+    "hepatopatia": {
+      "pregunta": "¿Está confirmado con biopsia o analítica de cobre, o es solo predisposición de raza?",
+      "la_hace_la_app": true,
+      "quien_la_contesta": "solo_veterinario",
+      "que_dato_pide": "biopsia hepatica o diagnostico por imagen, segun el caso",
+      "estado": "aplicada",
+      "respuestas": [
+        {
+          "label": "Confirmado",
+          "clave_motor": "hepatopatia",
+          "cifras_que_aplica": {
+            "max_cobre": 2.4,
+            "max_hierro": 35.0,
+            "max_sodio": 625.0,
+            "min_hierro": 20.0,
+            "min_taurina": 250.0,
+            "min_vitE": 67.1,
+            "min_zinc": 50.0,
+            "_no_formulable": true
+          }
+        },
+        {
+          "label": "Solo predisposición de raza (sin diagnóstico)",
+          "clave_motor": "raza_predispuesta_cobre",
+          "cifras_que_aplica": {}
+        }
+      ]
+    },
+    "shunt_sin_encefalopatia": {
+      "pregunta": "¿Hay signos neurológicos activos ahora mismo?",
+      "la_hace_la_app": true,
+      "quien_la_contesta": "solo_veterinario",
+      "que_dato_pide": "biopsia hepatica o diagnostico por imagen, segun el caso",
+      "estado": "no_cambia_ninguna_cifra",
+      "respuestas": [
+        {
+          "label": "No",
+          "clave_motor": "shunt_sin_encefalopatia",
+          "cifras_que_aplica": {
+            "_no_formulable": true
+          }
+        },
+        {
+          "label": "Sí, hay signos neurológicos ahora",
+          "clave_motor": "encefalopatia_hepatica",
+          "cifras_que_aplica": {
+            "_no_formulable": true
+          }
+        }
+      ],
+      "nota": "⚠️ Las DOS respuestas aplican exactamente lo mismo en el motor: las dos son `formulable: false` y ninguna lleva topes ni suelos. Lo unico que cambia es el TEXTO del aviso, y no es poco -- con signos neurologicos activos la fuente lo trata como urgencia --, pero la pregunta hoy no mueve ni una cifra. Si algun dia se le ponen cifras a alguna de las dos, este campo tiene que pasar a `aplicada`."
+    },
+    "estruvita": {
+      "pregunta": "¿Qué tipo de cálculo, si se sabe?",
+      "la_hace_la_app": true,
+      "quien_la_contesta": "solo_veterinario",
+      "que_dato_pide": "pH urinario",
+      "estado": "aplicada",
+      "respuestas": [
+        {
+          "label": "Estruvita (o no lo sé)",
+          "clave_motor": "estruvita",
+          "cifras_que_aplica": {
+            "max_fosforo": 1500.0,
+            "max_magnesio": 250.0,
+            "max_proteina": 62.5
+          }
+        },
+        {
+          "label": "Urato (dálmata, shunt hepático)",
+          "clave_motor": "urato",
+          "cifras_que_aplica": {
+            "_no_formulable": true
+          }
+        },
+        {
+          "label": "Cistina",
+          "clave_motor": "cistina",
+          "cifras_que_aplica": {
+            "max_sodio": 750.0,
+            "_no_formulable": true
+          }
+        },
+        {
+          "label": "Fosfato cálcico",
+          "clave_motor": "urolitos_fosfato_calcico",
+          "cifras_que_aplica": {
+            "max_fosforo": 1500.0,
+            "max_magnesio": 375.0,
+            "max_proteina": 62.5,
+            "max_sodio": 750.0,
+            "max_vitD": 9.375
+          }
+        },
+        {
+          "label": "Sílice",
+          "clave_motor": "urolitos_silice",
+          "cifras_que_aplica": {
+            "_no_formulable": true
+          }
+        }
+      ],
+      "nota": "⚠️ Falta la segunda mitad de la pregunta. La fuente distingue formular para PREVENIR que vuelvan y para DISOLVER uno que ya esta, y son dietas distintas. Hoy solo se pregunta el tipo de calculo."
+    },
+    "pancreatitis": {
+      "pregunta": "¿Tiene los trigliceridos altos, o sobrepeso?",
+      "la_hace_la_app": false,
+      "quien_la_contesta": "solo_veterinario",
+      "que_dato_pide": "trigliceridos en sangre (y el BCS, que ya se pregunta)",
+      "que_decide": "el techo de grasa: 37,5 o 25 g/1000 kcal",
+      "estado": "media",
+      "respuestas": [],
+      "nota": "⚠️ ESTA YA SE PUEDE CONTESTAR SIN PREGUNTAR NADA NUEVO, y ahi esta la gracia. El motor tiene el segundo escalon en `topes_por_1000kcal_si_ademas` con `requiere: ['obesidad', 'hiperlipidemia']`, o sea que baja a 25 en cuanto se marca cualquiera de esas dos patologias. Lo que falta NO es una cifra: es que la pantalla DIGA que marcarlas cambia el techo de grasa, porque hoy quien lee la ficha ve 37,5 y cree que es el unico numero."
+    },
+    "diabetes": {
+      "pregunta": "¿Tiene ademas pancreatitis cronica o los trigliceridos altos? ¿Y esta delgado?",
+      "la_hace_la_app": false,
+      "quien_la_contesta": "solo_veterinario",
+      "que_dato_pide": "si ademas hay pancreatitis o hipertrigliceridemia",
+      "que_decide": "si se restringe la grasa al 30 % de las kcal",
+      "estado": "media",
+      "respuestas": [],
+      "nota": "⚠️ DOS MITADES, Y LAS DOS SON DE HOY. La primera ya la resuelve marcar la otra patologia (`max_pct_kcal_grasa_si_ademas`, `requiere: ['pancreatitis', 'hiperlipidemia']`) -- pero hasta el 11-sep-2026 decia «hipertrigliceridemia», una clave que NO EXISTE, asi que por esa puerta no entraba nunca. La segunda es la EXCEPCION que la fuente escribe y el motor NO aplica: «except for diabetic dogs in thin body condition». La app YA SABE el BCS, asi que esto es implementable sin preguntar nada nuevo: hace falta decidir en que BCS corta."
+    },
+    "reaccion_adversa_alimento": {
+      "pregunta": "¿La reaccion es por la PIEL o por el INTESTINO? ¿Y estais en fase de diagnostico o ya confirmada?",
+      "la_hace_la_app": false,
+      "quien_la_contesta": "solo_veterinario",
+      "que_dato_pide": "si la reaccion es DERMATOLOGICA o DIGESTIVA, y en que fase esta (diagnostico o confirmada)",
+      "que_decide": "si se aplica el techo de proteina, o lo contrario",
+      "estado": "sin_cifra_en_el_motor",
+      "respuestas": [],
+      "nota": "La fuente limita el techo de proteina «(dermatologic cases only)» y en el caso digestivo la misma pagina pide MAS proteina. El motor no sabe cual de los dos es, asi que ese techo esta escrito y NO aplicado (`limites_escritos_que_el_solver_no_aplica`). Para aplicarlo hacen falta dos claves, una por respuesta, con las cifras de la fuente."
+    },
+    "epilepsia_idiopatica": {
+      "pregunta": "¿Toma bromuro potasico?",
+      "la_hace_la_app": false,
+      "quien_la_contesta": "solo_veterinario",
+      "que_dato_pide": "que farmaco antiepileptico toma (bromuro potasico), y los trigliceridos si hay sospecha",
+      "que_decide": "nada del menu; es un aviso que hay que leer",
+      "estado": "no_cambia_ninguna_cifra",
+      "respuestas": [],
+      "nota": "No cambia ninguna cifra: cambiar la dieta le cambia al perro el nivel del farmaco en sangre y hay que remedirlo. Hoy eso vive en un aviso que hay que leer, y la pregunta serviria para enseñarlo solo a quien le toca."
+    },
+    "urolitos_fosfato_calcico": {
+      "pregunta": null,
+      "la_hace_la_app": false,
+      "quien_la_contesta": "solo_veterinario",
+      "que_dato_pide": "pH urinario",
+      "que_decide": null,
+      "estado": "no_hace_falta",
+      "respuestas": [],
+      "nota": "No necesita ninguna pregunta para elegir la cifra: sus cinco topes y su ratio Ca:P son fijos. Lo que falta es de producto y ya no: la app SI la ofrece, dentro de la familia de `estruvita`."
+    }
+  }
+}
