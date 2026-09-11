@@ -12717,9 +12717,83 @@ if _niv88:
         fallos.append("BLOQUE88: el techo de los premios que se sirve no es el que aplica el "
                       "motor")
 
+# ── LOS NUTRIENTES A LOS QUE SE LE PUEDE PONER UN OBJETIVO ──────────────
+#
+# ⚠️ AÑADIDO (11 de septiembre de 2026, noche). La pantalla de objetivos del
+# veterinario ofrecía OCHO nutrientes, escritos a mano dentro de
+# `formulador.jsx`. El motor acepta los CUARENTA Y SEIS que verifica: el
+# objetivo viaja con la clave tal cual y `_objetivos_dentro_de_fediaf` la
+# busca en `verificar.MAPA`. O sea que los otros 38 no faltaban por el motor,
+# faltaban porque la lista la decidía la app -- que es el fallo de las
+# categorías y el de los niveles de actividad otra vez.
+#
+# Y la comprobación que de verdad importa es la última: que cada nutriente
+# SERVIDO se pueda usar de objetivo de verdad. Uno sin fila en la tabla de
+# FEDIAF lo descarta `_objetivos_dentro_de_fediaf` por `fila is None`, EN
+# SILENCIO y sin recorte que decir -- el profesional lo escribiría, no
+# pasaría nada, y el menú saldría verde igual.
+_obj88 = _d88.get("objetivos_del_profesional") or {}
+_lista88 = _obj88.get("nutrientes") or []
+if not _lista88:
+    fallos.append("BLOQUE88: /vocabulario no sirve los nutrientes a los que un profesional "
+                  "puede ponerle un objetivo. Sin ellos la app se los escribe a mano, que es "
+                  "de donde venimos")
+else:
+    from verificar import MAPA as _MAPA88
+    from requisitos import cargar_requerimientos as _creq88
+    _filas88 = {r.get("nutriente"): r for r in _creq88()}
+    _esperados88 = {c for n, c in _MAPA88.items() if n in _filas88}
+    _servidos88 = {n.get("clave") for n in _lista88}
+    if _servidos88 != _esperados88:
+        fallos.append(f"BLOQUE88: /vocabulario sirve {len(_servidos88)} nutrientes para objetivos "
+                      f"y el motor acepta {len(_esperados88)}. Faltan "
+                      f"{sorted(_esperados88 - _servidos88)} y sobran "
+                      f"{sorted(_servidos88 - _esperados88)}")
+    if _obj88.get("cuantos") != len(_lista88):
+        fallos.append("BLOQUE88: el recuento de nutrientes para objetivos no cuadra con la "
+                      "lista servida. Un recuento escrito aparte puede mentir sobre la lista "
+                      "que va justo debajo")
+    for _n88 in _lista88:
+        if not ((_n88.get("veterinario") or {}).get("titulo") or "").strip():
+            fallos.append(f"BLOQUE88: el nutriente «{_n88.get('clave')}» se sirve sin etiqueta "
+                          f"de veterinario. Esta pantalla la firma un profesional")
+        # La UNIDAD tiene que ser la del fichero que audita `auditar_fediaf.py`,
+        # y tiene que ir en el título: el objetivo viaja por 1000 kcal, y quien
+        # escriba 2 creyendo que son gramos cuando son miligramos aprieta mil
+        # veces de más.
+        _fila88 = _filas88.get(_n88.get("nombre_del_requisito")) or {}
+        if _n88.get("unidad") != _fila88.get("unidad"):
+            fallos.append(f"BLOQUE88: «{_n88.get('clave')}» se sirve en "
+                          f"{_n88.get('unidad')} y `requerimientos_v2_final.json` dice "
+                          f"{_fila88.get('unidad')}")
+        if f"{_n88.get('unidad')}/1000 kcal" not in ((_n88.get("veterinario") or {}).get("titulo") or ""):
+            fallos.append(f"BLOQUE88: el título de «{_n88.get('clave')}» no lleva su unidad por "
+                          f"1000 kcal dentro. Sin ella se escribe el número de otra unidad")
+
+    # ⚠️ Y QUE SE PUEDA USAR DE VERDAD, uno por uno. No basta con servirlo.
+    #
+    # Hoy NO hay ninguno que caiga aquí, y eso es lo que se está vigilando: las
+    # 46 claves del MAPA tienen fila. La comprobación existe para el día que
+    # entre una que no -- una clave en el MAPA sin fila en la tabla la descarta
+    # `_objetivos_dentro_de_fediaf` por `fila is None`, sin ajuste que devolver.
+    # Una clave que NO está en el MAPA sí se dice («no_es_un_requisito»); es
+    # esta otra la que se va callando.
+    _req_obj88 = _api.cargar_v2()[1]
+    _sueltos88 = []
+    for _n88 in _lista88:
+        _limpios88, _aj88 = _api._objetivos_dentro_de_fediaf(
+            {_n88["clave"]: {"min": 0.0}}, _req_obj88, "Adulto")
+        if not _limpios88 and not _aj88:
+            _sueltos88.append(_n88["clave"])
+    if _sueltos88:
+        fallos.append(f"BLOQUE88: {_sueltos88} se sirven como objetivo y el motor los descarta "
+                      f"EN SILENCIO (`fila is None`): el profesional escribiría el número, no "
+                      f"pasaría nada, no habría recorte que decir y el menú saldría verde igual")
+
 print(f"  {sum(1 for _k in _d88 if isinstance(_d88[_k], dict))} listas servidas · "
       f"{len(_ACT88)} niveles de actividad · "
       f"{len(_api.CATEGORIAS_QUE_ELIGE_EL_USUARIO)} categorías · "
+      f"{len(_lista88)} nutrientes para objetivos · "
       f"{len(_api.PELDANOS_EN_CRISTIANO)} peldaños")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

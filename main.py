@@ -6452,6 +6452,129 @@ with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
     _PREGUNTAS_PAT = _json.load(_f)
 
 
+
+# ── LOS NUTRIENTES A LOS QUE UN PROFESIONAL PUEDE PONERLE UN OBJETIVO ─────
+#
+# ⚠️ ESCRITO EL 11 DE SEPTIEMBRE DE 2026, Y NO ES COSMETICA. La pantalla de
+# objetivos de `formulador.jsx` ofrecia OCHO nutrientes, elegidos a mano
+# dentro del JavaScript. El motor acepta los CUARENTA Y SEIS: el objetivo
+# viaja con la clave tal cual y `_objetivos_dentro_de_fediaf` la busca en
+# `verificar.MAPA`. O sea que la limitacion no era del motor sino de la app,
+# que es exactamente la forma de fallo que este endpoint existe para impedir
+# -- la cadena es FUENTE manda, MOTOR la implementa, APP la ofrece, y aqui
+# iba al reves.
+#
+# El `dueno` va a None en la mayoria A PROPOSITO y no por pereza: esta
+# pantalla la firma un profesional, y ponerle a un tutor una casilla para
+# fijarle la treonina a su perro no es hablarle claro, es darle un mando que
+# no deberia tocar. Donde el tutor SI reconoce la palabra -- proteina, grasa,
+# calcio, fibra, las vitaminas -- se escribe, porque la misma lista sirve
+# para poner nombre a un nutriente en cualquier otra pantalla.
+NOMBRE_LLANO_DEL_NUTRIENTE = {
+    "proteina": ("Proteína", "La carne, el pescado y el huevo"),
+    "grasa": ("Grasa", "La grasa de la carne y los aceites"),
+    "fibra": ("Fibra", "La parte de la verdura que no se digiere"),
+    "calcio": ("Calcio", "Sobre todo del hueso carnoso"),
+    "fosforo": ("Fósforo", "Va con la carne y con el hueso"),
+    "sodio": ("Sodio", "La sal"),
+    "potasio": ("Potasio", None),
+    "magnesio": ("Magnesio", None),
+    "hierro": ("Hierro", None),
+    "zinc": ("Zinc", None),
+    "cobre": ("Cobre", None),
+    "yodo": ("Yodo", None),
+    "vitA": ("Vitamina A", None),
+    "vitD": ("Vitamina D", None),
+    "vitE": ("Vitamina E", None),
+    "linoleico": ("Omega-6", "El ácido linoleico"),
+    "linolenico": ("Omega-3 de origen vegetal", "El ácido linolénico"),
+    "epa_dha": ("Omega-3 del pescado", "EPA y DHA"),
+    "taurina": ("Taurina", None),
+}
+
+_COLUMNAS_DE_LA_TABLA = ("minAdulto", "minCachorroJoven", "minCachorroCrecimiento",
+                         "maxAdulto", "maxCachorroJoven", "maxCachorroCrecimiento")
+
+
+def _es_fila_de_fediaf(fila):
+    """Si esa fila trae cifra de FEDIAF o es de las cinco que no la tienen.
+
+    ⚠️ SE DERIVA, NO SE COPIA. La lista de las que no son de la Tabla III-3b
+    -- Fibra, Taurina, L_carnitina, EPA y Omega3_total -- ya vive en
+    `NO_SON_NUTRIENTES_DE_LA_TABLA` de `auditar_fediaf.py`, y escribirla
+    aqui otra vez seria una segunda copia de una tabla: exactamente como se
+    desincronizo la de patologias del `POST /menu`. Y no hace falta, porque
+    la distincion esta en el propio dato: esas cinco filas tienen las SEIS
+    columnas a «-» y estan ahi solo para que una patologia o un profesional
+    puedan ponerles una cifra con su fuente. Si alguna dejara de estarlo,
+    dejaria de ser esa excepcion -- que es justo lo que ya comprueba
+    `auditar_fediaf.py` (BLOQUE 18).
+    """
+    return any(fila.get(c) not in (None, "-", "") for c in _COLUMNAS_DE_LA_TABLA)
+
+
+# La palabra de la FUENTE, que es la que lee el veterinario: el nombre de la
+# fila de la Tabla III-3b tal cual, sin el guion bajo con el que se indexa.
+# Siete se escriben aparte porque quitarles el guion bajo las deja mal («EPA
+# DHA total», «L carnitina», «Metionina cistina»): son sumas y nombres
+# compuestos, y en la fuente llevan un «+», un guion o una tilde.
+COMO_LO_ESCRIBE_LA_FUENTE = {
+    "Acido_pantotenico": "Ácido pantoténico",
+    "EPA_DHA_total": "EPA + DHA",
+    "Metionina_cistina": "Metionina + cistina",
+    "Fenilalanina_tirosina": "Fenilalanina + tirosina",
+    "Triptofano": "Triptófano",
+    "L_carnitina": "L-carnitina",
+    "Omega3_total": "Omega-3 totales",
+}
+
+
+def _nombre_de_la_fuente(nombre_req):
+    return COMO_LO_ESCRIBE_LA_FUENTE.get(nombre_req, nombre_req.replace("_", " "))
+
+
+def _nutrientes_para_objetivos():
+    """Los nutrientes a los que `objetivos_del_profesional` le puede poner cifra.
+
+    Se MIDEN, no se escriben: la lista sale de `verificar.MAPA` (que es la
+    misma que recorre `_objetivos_dentro_de_fediaf`) cruzada con la columna
+    `unidad` de `requerimientos_v2_final.json`. Si manana entra un requisito
+    nuevo en el MAPA, aparece aqui solo; si se escribiera a mano, la app se
+    quedaria con la lista vieja y nadie se enteraria -- que es lo que llevaba
+    pasando con los ocho de `formulador.jsx`.
+
+    ⚠️ Un nutriente del MAPA sin fila en la tabla de FEDIAF NO se sirve: el
+    profesional podria escribirle un numero y `_objetivos_dentro_de_fediaf`
+    lo descartaria por `fila is None`, en silencio y sin recorte que decir.
+    """
+    from verificar import MAPA as _MAPA_N
+    from requisitos import cargar_requerimientos as _cargar_req
+    _filas = {r.get("nutriente"): r for r in _cargar_req()}
+    salida = []
+    for nombre_req, clave in _MAPA_N.items():
+        fila = _filas.get(nombre_req)
+        if fila is None:
+            continue
+        unidad = fila.get("unidad")
+        llano, detalle = NOMBRE_LLANO_DEL_NUTRIENTE.get(clave, (None, None))
+        salida.append({
+            "clave": clave,
+            "nombre_del_requisito": nombre_req,
+            "unidad": unidad,
+            "por": "1000 kcal",
+            "de_la_tabla_III_3b": _es_fila_de_fediaf(fila),
+            "dueno": ({"titulo": llano, "detalle": detalle} if llano else None),
+            "veterinario": {
+                "titulo": f"{_nombre_de_la_fuente(nombre_req)} ({unidad}/1000 kcal)",
+                "detalle": ("Tabla III-3b de FEDIAF"
+                            if _es_fila_de_fediaf(fila)
+                            else "FEDIAF no le da cifra al perro. La fila existe para que una "
+                                 "patologia o un profesional puedan ponerle la suya, y el motor "
+                                 "la verifica igual"),
+            },
+        })
+    return salida
+
 def _rango_de_tamano(tamano):
     """El rango de peso adulto que de verdad tienen las razas de ese tamaño.
 
@@ -6598,6 +6721,10 @@ def endpoint_vocabulario():
 
     al_v, _req_v = cargar_v2()
     _pat_v = (cargar_crudo() or {}).get("patologias") or {}
+    # Se calcula UNA vez: el recuento y la lista tienen que salir de lo mismo.
+    # Un `cuantos` escrito aparte es un numero que puede mentir sobre la lista
+    # que va justo debajo.
+    _nutrientes_objetivos = _nutrientes_para_objetivos()
 
     return {
         "que_es": ("Todo lo que el motor enumera. La app tiene que ofrecer ESTO, ni mas ni menos: "
@@ -6640,6 +6767,40 @@ def endpoint_vocabulario():
                               "rango_observado_kg": _rango_de_tamano(t)},
                              **_etiqueta_tamano(t))
                         for t in _TAMANOS],
+        },
+        # ── LOS NUTRIENTES A LOS QUE SE LE PUEDE PONER UN OBJETIVO ───────
+        #
+        # ⚠️ AÑADIDO (11 de septiembre de 2026, noche). Elena: «el veterinario
+        # debe poder decidir en qué porcentaje quiere dejar la grasa, la
+        # proteína, LO QUE SEA», y la regla de arriba: «si el motor dice que hay
+        # dieciocho niveles de actividad, la app tiene que tener 18».
+        #
+        # El motor acepta CUALQUIERA de los 43: `objetivos_del_profesional`
+        # viaja con la clave tal cual y `_objetivos_dentro_de_fediaf` la busca
+        # en `verificar.MAPA`. La app ofrecía OCHO, elegidos a mano dentro de
+        # `formulador.jsx`. No era una limitación del motor: era una lista que
+        # decidía la app, que es exactamente lo que este endpoint existe para
+        # impedir.
+        #
+        # Se sirven los 43 con su clave, su UNIDAD y sus dos registros. La
+        # unidad importa más de lo que parece: el objetivo viaja «por 1000
+        # kcal» en la unidad del motor, y un veterinario que escriba 2 creyendo
+        # que son gramos cuando son miligramos aprieta mil veces de más -- el
+        # motor lo recortaría contra FEDIAF y lo diría, pero habría pedido otra
+        # cosa. Por eso la unidad sale de `requerimientos_v2_final.json`, que
+        # es el fichero que la audita, y no de una tabla escrita aquí.
+        "objetivos_del_profesional": {
+            "de_donde": ("`verificar.MAPA` (los 43 requisitos que el motor comprueba) y la "
+                         "columna `unidad` de `requerimientos_v2_final.json`"),
+            "que_es": ("Los nutrientes a los que un profesional puede ponerle un mínimo o un "
+                       "máximo propio en `POST /formular/*`. Van SIEMPRE por 1000 kcal y en la "
+                       "unidad que se dice aquí."),
+            "ojo": ("Un objetivo solo puede APRETAR: entra por el mismo cajón que los topes y "
+                    "suelos de patología, y `_objetivos_dentro_de_fediaf` lo recorta contra "
+                    "FEDIAF antes de llegar al solver. Todo recorte se dice en "
+                    "`objetivos_ajustados`, salga o no salga el menú."),
+            "cuantos": len(_nutrientes_objetivos),
+            "nutrientes": _nutrientes_objetivos,
         },
         # ── LOS PREMIOS ──────────────────────────────────────────────────
         # La pregunta que la ficha todavia NO hace, servida ya con sus dos

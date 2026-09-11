@@ -266,7 +266,8 @@ el número.
 `GET /vocabulario` (11 de septiembre) sirve **todo lo que el motor enumera**,
 para que la app lo lea en vez de copiárselo: los cinco niveles de actividad con
 su cifra de FEDIAF, las 255 razas, los seis tamaños, las etapas, los nueve
-puntos de BCS, las patologías, las categorías y los peldaños Y desde ese mismo
+puntos de BCS, las patologías, las categorías, los peldaños y **los 46
+nutrientes a los que un profesional puede ponerle un objetivo** Y desde ese mismo
 día **la pregunta de los premios con sus cuatro respuestas** —la única de las
 listas que trae además CÓMO se pregunta, en los dos registros, porque es una
 pregunta que la ficha todavía no hace y la app tiene que poder montarla entera
@@ -306,6 +307,20 @@ suelos de patología y con el mismo `min()`/`max()`, y antes de llegar al solver
 profesional por encima del máximo de FEDIAF no hace nada; un suelo suyo por
 debajo del mínimo se sube al de FEDIAF; y un techo **por debajo del mínimo** no
 se intenta siquiera, porque no es apretar una ración sino dejarla incompleta.
+⚠️ **Y la lista de nutrientes que se ofrecen la sirve `GET /vocabulario`, no la
+app** (11 de septiembre, por la noche). La pantalla del formulador tenía **ocho**
+escritos a mano dentro de `formulador.jsx` y el motor acepta los **46** que
+verifica: la clave viaja tal cual y `_objetivos_dentro_de_fediaf` la busca en
+`verificar.MAPA`. O sea que los otros 38 no faltaban por el motor — faltaban
+porque la lista la decidía la app, que es el fallo de las categorías y el de los
+niveles de actividad otra vez. Se sirven con su **unidad dentro del título del
+veterinario**, porque quien escriba 2 creyendo que son gramos cuando son
+miligramos aprieta mil veces de más. Los ocho se quedan de **respaldo** para
+cuando Render duerme, y que el respaldo no esté tapando la petición lo comprueba
+`tests/formulador.spec.js` sembrando **nombres inventados**. Lo vigila el BLOQUE
+88, que además exige que cada nutriente servido se pueda usar **de verdad**: uno
+servido y descartado por el motor sería un objetivo que el profesional escribe,
+que no hace nada, y que no aparece en ningún recorte.
 ⚠️ **Todo recorte se dice** en `objetivos_ajustados`, salga o no salga el menú:
 aplicar el número de FEDIAF en lugar del suyo en silencio dejaría al profesional
 firmando algo que no es lo que escribió. Lo vigila el BLOQUE 91, y su prueba más
