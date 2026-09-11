@@ -389,9 +389,27 @@ Medido contra lo que aplica el motor (curva de Klein, vía FEDIAF):
 
 Coincide bien en el cachorro pequeño y joven, y **se separa justo en el cachorro
 grande en pleno crecimiento**, que es la población donde el exceso de energía hace
-daño de verdad. Ya van **cuatro fuentes y cuatro curvas**: Klein (FEDIAF, la que
-aplicamos), SACN5 Tabla 33-8 (hasta un 28 % por encima de Klein), Fascetti («2,5
-veces mantenimiento al destete») y esta.
+daño de verdad.
+
+**⚠️ Y AQUÍ ESTÁ LO QUE CIERRA LA DECISIÓN: las cuatro curvas NO APUNTAN EN LA
+MISMA DIRECCIÓN.** Pregunta de Elena: si esto no va en contra de FEDIAF, SACN5 ni
+NRC, ¿se puede aplicar? **No**, y por dos motivos:
+
+1. **Las cuatro son respuestas a la misma pregunta**, no cosas distintas que se
+   sumen. Aplicar cualquier otra es **sustituir** la curva de FEDIAF, o sea
+   contradecirla. No es como un tope de patología, que aprieta dentro.
+2. **Y estamos en medio**, que es el argumento más fuerte para no movernos:
+
+| Fuente | Respecto a lo que da el motor |
+|---|---|
+| SACN5, Tabla 33-8 (de NRC 2006) | hasta **+28 %** |
+| **FEDIAF (curva de Klein) — lo que aplicamos** | **—** |
+| Ettinger cap. 171 (3× / 2× RER) | hasta **−43 %** en el cachorro grande |
+| Fascetti («2,5 × mantenimiento al destete») | del mismo orden que Klein |
+
+No es «todas menos FEDIAF dicen X»: es que **discrepan entre ellas**, una por
+arriba y otra por abajo. Elegir una sería quedarse con un extremo sin criterio
+para hacerlo. Se queda FEDIAF y las cuatro cifras van al nutricionista.
 
 **Y el propio capítulo dice por qué importa**: «Los excesos de nutrientes con
 efectos en el desarrollo esquelético (**calcio, vitamina D, vitamina A**) se
@@ -504,9 +522,14 @@ Los tres números, sobre el peso ideal:
 
 **Y por eso la regla de la jerarquía no decide aquí.** FEDIAF pone un techo y
 estamos por debajo, así que no hay conflicto con ella; el desacuerdo es entre dos
-libros de clínica del mismo nivel. Se queda como está —con SACN5, que es la fuente
-de la que sale casi todo lo demás del motor— y **va al nutricionista como
-discrepancia, no como error**.
+libros de clínica del mismo nivel.
+
+✅ **DECIDIDO el 11 de septiembre, por Elena: se queda con SACN5**, que es la
+fuente de la que sale casi todo lo demás del motor, y que además coincide
+exactamente con lo que el motor ya hacía. **No es un pendiente**: va al documento
+del nutricionista como **discrepancia apuntada**, con las tres cifras, para que la
+juzgue si quiere. Reabrirlo solo vale por una de las cuatro razones de
+`CERRADO.md`.
 
 **El ritmo de pérdida coincide en las tres**: SACN5 pide 1-2 % del peso inicial
 por semana, con el 0,5 % como mínimo y el 2 % como máximo, y Ettinger 0,5-2 %. El
