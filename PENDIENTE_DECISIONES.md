@@ -31,6 +31,44 @@ las tiene que tomar una persona, no yo.
          protege nada y no se puede seguir con el resto del plan. El
          comando exacto está al final del archivo .sql.
 
+- [ ] **LAS OCHO PREGUNTAS QUE LA APP NO HACE, Y QUE DECIDEN UNA CIFRA**
+      (11 de septiembre). De las 47 patologías, **24 son `solo_veterinario`**
+      y en **ocho** la cifra que aplica el motor depende de un dato clínico
+      que la ficha no pregunta. Están en
+      `quien_formula_cada_patologia.json`, las sirve `GET /vocabulario` y
+      desde hoy la ficha del veterinario **las enseña** — pero enseñarlas no
+      es aplicarlas, y esa parte no la puedo decidir yo.
+
+      Las tres que más mueven el número:
+
+      | Patología | De qué depende | Qué cambia |
+      |---|---|---|
+      | Renal | estadio IRIS, o la creatinina | por debajo del estadio 2 la fuente **no respalda** apretar el fósforo, y apretarlo tiene coste |
+      | Pancreatitis | triglicéridos en sangre | el techo de grasa es **37,5 o 25** |
+      | Cardiopatía | estadio ACVIM | el B2 se separa del B1 |
+
+      Hoy el motor aplica **una sola cifra por patología**, la más
+      estricta, así que un renal en estadio 1 recibe el tope del estadio 4.
+      Va al lado seguro y por eso no es un fallo, pero **es un coste real**:
+      apretar el fósforo estrecha la ventana y a veces deja sin menú.
+
+      Lo que hay que decidir, y es clínico:
+      1. ¿Se pregunta el estadio y el motor aplica una cifra por estadio? Eso
+         es ampliar `patologias.json` con una fila por escalón, y **las
+         cifras las tiene que dar la fuente**, no yo.
+      2. ¿O se deja una sola cifra y la ficha sigue diciendo que se ha
+         elegido la más estricta?
+      3. Y la de producto: **¿un dueño puede marcar una casilla
+         `solo_veterinario`?** Hoy puede, si es `segura: true`. La app
+         ofrece 24 casillas cuya cifra sale de un dato que el dueño no
+         tiene. No lo he cambiado porque quitarle 24 casillas a la app es
+         una decisión tuya, no mía.
+
+      ⚠️ **No se recoge la respuesta hasta que sirva para algo.** Preguntar
+      el estadio IRIS y guardarlo sin que llegue al motor sería pedir un
+      dato inútil, que es exactamente lo contrario de la regla que abrió
+      todo esto.
+
 - [ ] **La lista de las nueve `formulable: false`.** La necesita la fase 4:
       es la que define qué diagnósticos exigen firma de un veterinario,
       porque son los que piden bajar de los mínimos de FEDIAF. **No está en

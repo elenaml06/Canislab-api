@@ -11862,7 +11862,8 @@ else:
                       f"el motor tiene {sorted(_ACT88)}. Cada nivel del motor tiene que salir de "
                       f"una fila de la fuente, o estar declarado como decisión nuestra")
 
-print(f"  7 listas servidas · {len(_ACT88)} niveles de actividad · "
+print(f"  {sum(1 for _k in _d88 if isinstance(_d88[_k], dict))} listas servidas · "
+      f"{len(_ACT88)} niveles de actividad · "
       f"{len(_api.CATEGORIAS_QUE_ELIGE_EL_USUARIO)} categorías · "
       f"{len(_api.PELDANOS_EN_CRISTIANO)} peldaños")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
