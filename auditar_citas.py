@@ -130,6 +130,17 @@ SIN_TEXTO_DECLARADAS = 10         # citan una fuente que no esta en el repo.
                                   # aqui-- y Purina. Siguen sin poder
                                   # comprobarse, y se DICE.
 
+# ⚠️ ESTE NUMERO DEPENDE DE OTRO REPO, Y ESO YA COSTO UN ROJO (11 de septiembre).
+# `SIN_TEXTO_DECLARADAS` cuenta las citas cuya fuente NO ESTA, asi que se mueve
+# solo cuando `canislab-fuentes` cambia -- y ese repo tiene su propia rama por
+# defecto y su propio ritmo. Ese dia se bajaron cuatro fuentes, el numero bajo de
+# 24 a 10 en local, se clavo el 10... y LA CI SEGUIA VIENDO 24, porque trae las
+# fuentes con un `sparse-checkout` de `main` y alli las fuentes nuevas todavia
+# estaban en una rama. Verde aqui y rojo alli, sin que nada del motor estuviera
+# mal. La regla que sale de ahi: **una fuente nueva se fusiona en su repo ANTES
+# de clavar el recuento aqui**, y los dos commits van juntos o no va ninguno.
+# Es la misma regla que ya tenia `der_casos.json`, que vive en dos repos.
+
 PENDIENTES_DECLARADAS = 0         # 10 de septiembre de 2026, noche: no queda
                                   # ninguna. Las 31 que quedaban se abrieron una
                                   # a una contra su fuente; las 31 estaban en el
