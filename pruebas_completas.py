@@ -11671,6 +11671,7 @@ _BLOQUES_QUE_NECESITAN_FUENTES = [
     "78 (ninguna tabla de SACN5 sin veredicto)",
     "81 (el texto de SACN5, elemento a elemento)",
     "85 (cada cita, contra el texto de su fuente)",
+    "93 (los contadores de NRC 2006 y de Fascetti)",
 ]
 # ============================================================
 # BLOQUE 86 — EL PERRO DE TRABAJO: LOS TOPES CRÓNICOS, TAMBIÉN POR PESO
@@ -12727,6 +12728,58 @@ if _restante92["yodo"] >= _pres92["yodo"]:
 
 print(f"  presupuesto semanal de yodo {_pres92['yodo']:.0f} µg · "
       f"una ración cara se lleva {_yodo92(_CARA92):.0f} µg/día")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 93 — LOS CONTADORES QUE NADIE EJECUTABA: NRC 2006 Y FASCETTI
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (11 septiembre). Elena: «arregla lo de nrc sin leer».
+#
+# Y lo primero que hay que decir es que NRC 2006 **sí está leído**: 1.194
+# elementos nutricionales, los 15 capítulos, 0 pendientes. Lo que pasaba es otra
+# cosa y es peor: **nadie ejecutaba su contador**. FEDIAF tiene el BLOQUE 68, las
+# tablas de SACN5 el 78 y su texto el 81; `leer_nrc2006.py` y `leer_fascetti.py`
+# existían y no los llamaba nada.
+#
+# Un contador que nadie ejecuta es exactamente lo mismo que no tener contador.
+# Sirve el día que se escribe y deja de servir al siguiente: si alguien vuelve a
+# extraer el texto, o toca el filtro compartido de `leer_sacn5.extraer`, los dos
+# recuentos se mueven y **la batería sale verde igual**. Es la misma forma del
+# fallo que motivó `auditar_fediaf_tablas.py`: «me lo he leído» no se puede
+# comprobar y un inventario sí -- pero solo si alguien lo mira.
+#
+# ⚠️ Y LOS NÚMEROS SE CLAVAN EXACTOS, no «al menos tantos». Los dos scripts ya
+# fallan solos si lo declarado no cuadra con lo vivo; lo que se añade aquí es que
+# eso se ejecute en cada batería, y que los pendientes se impriman para que se
+# vean subir cuando alguien amplía el filtro y bajar cuando alguien lee.
+print("\n" + "=" * 60)
+print("=== BLOQUE 93: los contadores de NRC 2006 y de Fascetti ===")
+import subprocess as _sub93
+for _quien93, _script93 in (("NRC 2006", "leer_nrc2006.py"),
+                            ("Fascetti", "leer_fascetti.py")):
+    if not _os_b18.path.exists(_os_b18.path.join(str(_raiz_b24), _script93)):
+        fallos.append(f"BLOQUE93: falta `{_script93}`. El contador de {_quien93} tiene que "
+                      f"existir y tiene que ejecutarse: sin él, «leído» vuelve a ser una "
+                      f"palabra que nadie puede comprobar")
+        continue
+    _r93 = _sub93.run([sys.executable, _script93], capture_output=True, text=True,
+                      cwd=str(_raiz_b24))
+    _salida93 = (_r93.stdout or "") + (_r93.stderr or "")
+    if _r93.returncode != 0:
+        _cola93 = "\n      ".join(_salida93.strip().splitlines()[-8:])
+        fallos.append(f"BLOQUE93: el contador de {_quien93} no cuadra:\n      {_cola93}")
+    elif "no está el texto" in _salida93 or "no se puede contar" in _salida93:
+        # Sin el repo de fuentes al lado no hay nada que contar, y se DICE en vez
+        # de dar el bloque por bueno.
+        print(f"  {_quien93}: no está el texto al lado, no se ha contado nada")
+        continue
+    for _l93 in _salida93.strip().splitlines():
+        if _l93.startswith("-"):
+            break
+        if _l93.strip():
+            print(f"  {_quien93}: {_l93.strip()}")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
