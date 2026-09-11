@@ -5064,24 +5064,66 @@ def formular_autocompletar(datos: PeticionFormular):
         raise HTTPException(400, "No tenemos datos de: " + ", ".join(desconocidos))
 
     excluidos = list(datos.especies_excluidas or []) + list(datos.nombres_excluidos or [])
-    # El peldaño que haya elegido. Sin él, el primero: exactamente lo que
-    # hacía antes. Ver `_peldanos_publicos`.
-    _peldano_f = _peldano_por_clave(
-        datos.peldano, _hay_comida_de_verdad(al, excluidos, datos.categorias_excluidas))
-    _margenes_f = _peldano_f[0] if _peldano_f else MARGENES_V2
-    _supl_f = _peldano_f[1] if _peldano_f else 2
-    ok, gramos = resolver_v2(
-        datos.der_objetivo, datos.etapa_requisitos, al, req,
-        datos.peso_perro_kg, dosis_maxima_fabricante,
-        excluidos=excluidos or None,
-        margenes_categoria=_margenes_f, max_suplementos=_supl_f, time_limit=20.0,
-        forzar=list(fijos) or None,
-        gramos_fijos=fijos or None,
-        patologias=datos.patologias,
-        peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
-        peso_objetivo_kg=_peso_de_referencia(datos)[0],
-        categorias_excluidas=datos.categorias_excluidas,
-    )
+    _hay_comida_f = _hay_comida_de_verdad(al, excluidos, datos.categorias_excluidas)
+
+    # ⚠️ AUTOCOMPLETAR RECORRE LA ESCALERA (11 de septiembre de 2026), COMO
+    #     HACE `/menu/v2` DESDE SIEMPRE.
+    #
+    # CASO REAL, medido ese dia contra este mismo endpoint. Un adulto de 22 kg
+    # y estas cantidades, que son lo que escribe un veterinario cualquiera:
+    #
+    #     Conejo 400 g + Espinazo de conejo 150 g
+    #
+    #     peldano 0 (estricto) ................... no sale
+    #     peldano 1 .............................. no sale
+    #     peldano 2 .............................. no sale
+    #     peldano 3 .............................. SALE
+    #
+    # Y esto probaba UN peldano y se rendia. Medido sobre seis entradas
+    # realistas: CERO salian. La pantalla, mientras tanto, prometia «el motor
+    # completa alrededor» -- Elena: «hay un aviso que dice que se autocompleta
+    # el menu con los gramos que ya ha puesto y en la mayoria de casos no
+    # pasa».
+    #
+    # No es relajar nada: la escalera solo suelta las proporciones de BARF, que
+    # son criterio NUESTRO (regla 3), y cada intento vuelve a pasar por los 43
+    # requisitos, el ratio Ca:P y los topes de seguridad y de patologia. Es lo
+    # mismo que ya hacia el generador del dueño; lo raro era que aqui no.
+    #
+    # ⚠️ Y SI EL VETERINARIO HA ELEGIDO PELDAÑO, NO SE BAJA. Esa es la regla
+    # escrita en CLAUDE.md para `/menu/v2` y vale igual aqui: bajar seria
+    # cambiarle la decision a quien la ha tomado, que es lo contrario de por
+    # que se puede elegir. Con peldaño elegido se prueba ese y solo ese.
+    if datos.peldano and _peldano_por_clave(datos.peldano, _hay_comida_f):
+        _escalones_f = [(_peldano_por_clave(datos.peldano, _hay_comida_f) + (datos.peldano,))]
+    else:
+        _escalones_f = [(m, sup, k or PELDANO_ESTRICTO)
+                        for m, sup, k in _escalera_de_relajacion(_hay_comida_f)]
+
+    ok, gramos = False, None
+    _peldano_usado_f = datos.peldano or PELDANO_ESTRICTO
+    for _margenes_f, _supl_f, _clave_f in _escalones_f:
+        ok, gramos = resolver_v2(
+            datos.der_objetivo, datos.etapa_requisitos, al, req,
+            datos.peso_perro_kg, dosis_maxima_fabricante,
+            excluidos=excluidos or None,
+            margenes_categoria=_margenes_f, max_suplementos=_supl_f, time_limit=20.0,
+            forzar=list(fijos) or None,
+            gramos_fijos=fijos or None,
+            patologias=datos.patologias,
+            peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
+            peso_objetivo_kg=_peso_de_referencia(datos)[0],
+            categorias_excluidas=datos.categorias_excluidas,
+        )
+        _peldano_usado_f = _clave_f
+        if ok:
+            break
+        # ⚠️ Si es imposible POR ARITMETICA, bajar de peldaño no puede
+        # arreglarlo: no hay combinacion de proporciones que cambie que un
+        # minimo esté por encima de un maximo. Se para y se dice, como en
+        # `/menu/v2`.
+        if isinstance(gramos, dict) and gramos.get("_imposible"):
+            break
     if not ok:
         _imp = (gramos or {}).get("_imposible") if isinstance(gramos, dict) else None
         respuesta_no = {"factible": False,
@@ -5090,7 +5132,14 @@ def formular_autocompletar(datos: PeticionFormular):
                         "imposible_por_aritmetica": bool(_imp),
                         # En qué peldaño no ha salido. Sin esto, "no sale" no
                         # dice si queda algo que probar o no queda nada.
-                        "peldano": datos.peldano or PELDANO_ESTRICTO}
+                        #
+                        # ⚠️ Desde el 11 de septiembre es el ÚLTIMO que se
+                        # probó, no el primero: ahora se recorre la escalera
+                        # entera, así que decir «no sale en estricto» cuando se
+                        # han probado los seis sería mandar al veterinario a
+                        # bajar un peldaño que ya está probado.
+                        "peldano": _peldano_usado_f,
+                        "peldanos_probados": [k for _m, _s, k in _escalones_f]}
         # ⚠️ "NO SE PUEDE" A SECAS NO LE SIRVE A NADIE (29 agosto). Cuando no
         # sale, la pregunta del veterinario es "¿es POR LOS ALIMENTOS o por
         # LAS CANTIDADES?", y eso se puede contestar midiéndolo en vez de
@@ -5149,8 +5198,13 @@ def formular_autocompletar(datos: PeticionFormular):
                 "gramos_fijos_movidos": movidos,
                 "alternativa": gramos}
 
+    # ⚠️ Y SE DICE EN QUÉ PELDAÑO SALIÓ, siempre — no solo cuando hubo que
+    # bajar. «No dice nada» y «estricto» se leían igual, y quien firma
+    # necesita poder afirmar lo segundo. Es la misma regla que `/menu/v2`.
     respuesta = {"factible": True, "menu": gramos, "gramos_fijos_movidos": movidos,
-                 "peldano": datos.peldano or PELDANO_ESTRICTO}
+                 "peldano": _peldano_usado_f,
+                 "se_bajo_de_peldano": bool(not datos.peldano
+                                            and _peldano_usado_f != PELDANO_ESTRICTO)}
     respuesta = _garantizar_verificado(
         respuesta, datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
         origen="formulador del veterinario", patologias=datos.patologias,

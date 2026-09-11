@@ -6230,26 +6230,64 @@ if not _raro45.get("factible"):
     fallos.append("BLOQUE45: una clave de peldano desconocida deja sin menu. Tiene que caer en "
                   "la escalera normal, no en un error.")
 
-# e) Y el formulador del veterinario, que es donde de verdad se usa: hasta
-#    hoy NO recorria la escalera nunca, asi que un profesional tenia MENOS
-#    margen que un tutor.
+# e) Y el formulador del veterinario, que es donde de verdad se usa.
+#
+# ⚠️ ESTE TROZO CAMBIO EL 11 DE SEPTIEMBRE, y hay que decir por que para que
+# nadie lo devuelva a como estaba. Aqui se exigia que autocompletar SIN elegir
+# peldano NO diera racion para este caso, y que dijera «estricto». Eso fijaba
+# el comportamiento viejo, que era el fallo que reporto Elena: «hay un aviso
+# que dice que se autocompleta el menu con los gramos que ya ha puesto y en la
+# mayoria de casos no pasa».
+#
+# Medido ese dia, adulto de 22 kg con seis entradas realistas de un
+# veterinario (400 g de conejo + 150 g de espinazo, 800 g de pollo, 150 g de
+# higado...): CERO salian. El endpoint probaba UN peldano y se rendia mientras
+# `/menu/v2` recorria la escalera entera. Con la escalera, 4 de 6.
+#
+# Lo que se exige ahora son las dos mitades del trato:
+#   · SIN peldano elegido, recorre la escalera y DICE donde salio
+#   · CON peldano elegido, prueba ese y solo ese -- bajar seria cambiarle la
+#     decision a quien la ha tomado (CLAUDE.md, `GET /relajacion`)
 _form45 = {"gramos_por_alimento": {}, "der_objetivo": 1040.0, "peso_perro_kg": 25.0,
            "etapa_requisitos": "Adulto", "patologias": ["pancreatitis"]}
-_auto_estricto45 = _c.post("/formular/autocompletar", json=dict(_form45)).json()
+_ULTIMO45 = "tope_maximo_de_visceras_higado_y_verdura"
+_auto_libre45 = _c.post("/formular/autocompletar", json=dict(_form45)).json()
+_auto_estricto45 = _c.post("/formular/autocompletar",
+                           json={**_form45, "peldano": "estricto"}).json()
 _auto_ultimo45 = _c.post("/formular/autocompletar",
-                         json={**_form45,
-                               "peldano": "tope_maximo_de_visceras_higado_y_verdura"}).json()
+                         json={**_form45, "peldano": _ULTIMO45}).json()
+
+if not _auto_libre45.get("factible"):
+    fallos.append("BLOQUE45: autocompletar SIN peldano elegido no saca racion para la "
+                  "pancreatitis de 25 kg, y bajando de peldano si sale. Probar uno y rendirse es "
+                  "lo que dejaba al veterinario con menos margen que al tutor.")
+else:
+    if _auto_libre45.get("peldano") == "estricto":
+        fallos.append("BLOQUE45: autocompletar dice haber salido en «estricto» y ese caso no "
+                      "tiene solucion ahi. O no esta diciendo donde salio de verdad.")
+    if not _auto_libre45.get("se_bajo_de_peldano"):
+        fallos.append("BLOQUE45: autocompletar ha bajado de peldano y no lo dice. Cambiarle las "
+                      "proporciones al veterinario en silencio es la regla 3 al reves, y quien "
+                      "firma tiene que poder decir con cuales salio.")
+
+# Con el estricto ELEGIDO a mano no se baja: la decision es suya.
 if _auto_estricto45.get("factible"):
-    fallos.append("BLOQUE45: autocompletar saca racion para la pancreatitis de 25 kg con las "
-                  "proporciones completas. Ese caso no tiene solucion ahi.")
+    fallos.append("BLOQUE45: con «estricto» elegido a mano, autocompletar saca racion para la "
+                  "pancreatitis de 25 kg. Ese caso no tiene solucion ahi, asi que o esta bajando "
+                  "de peldano por su cuenta -- cambiandole la decision a quien la tomo -- o la "
+                  "medida de este caso ha dejado de valer.")
 elif _auto_estricto45.get("peldano") != "estricto":
     fallos.append("BLOQUE45: autocompletar no dice en que peldano NO ha salido. 'No se puede' a "
                   "secas no le dice a nadie si queda algo que probar.")
+
 if not _auto_ultimo45.get("factible"):
     fallos.append("BLOQUE45: autocompletar no saca racion ni eligiendo el ultimo peldano, y el "
                   "generador si. El veterinario no puede tener menos margen que el tutor.")
-elif _auto_ultimo45.get("peldano") != "tope_maximo_de_visceras_higado_y_verdura":
+elif _auto_ultimo45.get("peldano") != _ULTIMO45:
     fallos.append("BLOQUE45: autocompletar no devuelve el peldano con el que ha formulado.")
+elif _auto_ultimo45.get("se_bajo_de_peldano"):
+    fallos.append("BLOQUE45: autocompletar dice haber BAJADO de peldano cuando el veterinario "
+                  "eligio ese mismo. Bajar y obedecer no se leen igual.")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
