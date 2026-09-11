@@ -729,9 +729,30 @@ ETIQUETAS_PREMIOS = {
 }
 
 PREGUNTA_DE_LOS_PREMIOS = {
-    "dueno": "¿Le das premios, chuches o algo de tu comida, además de su ración?",
+    # ⚠️ LAS DOS PREGUNTAS CRECEN EL 11 DE SEPTIEMBRE DE 2026, y no es estilo:
+    # les faltaba una categoría entera que DOS fuentes independientes nombran.
+    #
+    # La WSAVA define «treat» en su «Guide to Treats for Dogs» como «any food
+    # items that are given to your dog in addition to a complete and balanced
+    # diet», y su lista incluye literalmente «foods used to administer
+    # medication». O sea: el trozo de queso con el que se da la pastilla ES un
+    # premio, y nadie lo llama así ni lo cuenta.
+    #
+    # Y Fascetti & Delaney cap.18 lo MIDE, justo en la población donde más
+    # duele: el 57 % de los perros cardiópatas reciben su medicación escondida
+    # en comida, «mostly high-sodium foods». Un perro en estadio ACVIM D lleva
+    # un techo de sodio de 480 mg/1000 kcal y se le está dando la pastilla en
+    # queso.
+    #
+    # El motor solo cuenta las KCAL de lo que entra fuera de la ración -- de lo
+    # que lleva dentro no sabe nada, y eso está en la regla 3-bis --, así que
+    # preguntarlo no arregla el sodio. Pero NO preguntarlo garantiza que esas
+    # kcal no se cuenten siquiera.
+    "dueno": "¿Le das premios, chuches, algo de tu comida, o le escondes las pastillas en "
+             "comida, además de su ración?",
     "veterinario": "Aporte calórico extraración (premios, sobras de mesa, suplementos no "
-                   "formulados): ¿qué fracción de la ingesta diaria representa?",
+                   "formulados, y el vehículo con el que se administra la medicación): ¿qué "
+                   "fracción de la ingesta diaria representa?",
 }
 
 

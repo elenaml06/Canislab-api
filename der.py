@@ -185,7 +185,9 @@ BASE_ACTIVIDAD = {
 # un -6,4 %, cuando FEDIAF dice -13,6 % y SACN5 cap.5 dice, aparte, «dogs over
 # seven years of age required 10 to 20% less energy» y recomienda «foods providing
 # a 15 to 20% caloric reduction». Las dos fuentes coincidian y nosotras ibamos por
-# menos de la mitad. Lo vigila ahora `fediaf_tablas.json` + BLOQUE 67.
+# menos de la mitad. Lo unico que lo evita es LEER EL CAPITULO ENTERO y
+# anotar lo que se aplica y lo que no, que es la regla desde el 11-sep-2026:
+# ver `LECTURAS.md`.
 #
 # ⚠️ Y CRUZAR EDAD CON ACTIVIDAD ES LO QUE PIDE LA FUENTE, aunque la VII-6 y la
 # VII-7 sean alternativas entre si. FEDIAF, justo encima de la VII-6: «some young

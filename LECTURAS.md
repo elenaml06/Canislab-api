@@ -1,0 +1,462 @@
+# Lo que hemos leído, y qué decidimos con cada cosa
+
+⚠️ **Escrito el 11 de septiembre de 2026 de noche, sustituyendo a toda la
+maquinaria de contadores de lectura.** Elena, y tenía razón:
+
+> «no sé por qué tienes que leer con un script. lee, y según vayas leyendo vas
+> anotando, y luego de lo que hayas anotado dices: ¿esto hay que aplicarlo?
+> [...] quiero que leas todo bien, frase a frase, letra a letra, y que anotes
+> todo lo interesante y que luego decidamos si se aplica o no se aplica»
+
+**Y es la ley para todos los documentos, no solo para los que faltan.**
+
+## Por qué se fueron los contadores
+
+Había cuatro scripts que partían cada libro en frases, filtraban las que
+«parecían nutricionales» y exigían un veredicto por frase. Sonaba a rigor y era
+lo contrario, por tres razones medidas:
+
+1. **No encontraban nada.** Los tres hallazgos de verdad de esa noche —la
+   tercera cifra de la frase del EPA+DHA, el calcio de Köber diez veces por
+   debajo, y la rama estricta del «Or» del Reglamento— **no los encontró ningún
+   script**. Los encontré leyendo el texto. Los scripts solo decían dónde no
+   había leído.
+2. **Cortar en frases pierde la estructura.** Una entrada del Reglamento con dos
+   ramas unidas por «Or» no es una frase: es una unidad. Partirla es exactamente
+   cómo se perdió la mitad que contestaba la pregunta.
+3. **«Cerrado» acabó significando «tiene una nota».** Y eso permitió decir tres
+   veces que algo estaba cerrado y que luego saliera algo esperando.
+
+**Lo que NO se fue**, porque sí caza errores: los auditores que **rehacen un
+número** contra la fuente. `auditar_citas.py` cazó una cita que el libro no
+decía; `auditar_conversiones.py` cazó un ×25; `auditar_kober.py` cazó el ×10 de
+las fichas de hueso; `auditar_transcripcion_fediaf.py` rehace las 164 celdas de
+la tabla. Esos se quedan y se quedan todos.
+
+## Cómo se lee, a partir de ahora
+
+1. Se lee el documento **entero**, seguido, sin filtro.
+2. Se va **anotando aquí** todo lo interesante, con su cita literal.
+3. Al terminar, se repasa la lista punto por punto y se decide **una de tres**:
+   **aplicado**, **no se aplica porque…**, o **pendiente de decidir**.
+4. Lo que quede pendiente de decidir va también a `PREGUNTAS_ABIERTAS.md` con
+   dueño.
+
+---
+
+## Estado de las fuentes
+
+| Fuente | Leída | Notas |
+|---|---|---|
+| FEDIAF | sí | Es la que manda. Sus cifras las rehace `auditar_fediaf.py` y `auditar_transcripcion_fediaf.py` |
+| SACN5 | sí | 22 tablas con hallazgo sin aplicar, abajo |
+| NRC 2006 | sí | |
+| Fascetti & Delaney | sí, los 21 capítulos (11-sep) | 42 notas, abajo |
+| Reglamento (UE) 2020/354 | sí | Volcado entero en `limites_legales_ue_2020_354.json` |
+| Köber 2017 | sí (11-sep) | Cazó tres fichas con el calcio ×10 bajo |
+| WSAVA — dietas crudas y premios | sí (11-sep) | Abajo |
+| **Spitze 2003** | **no está en el repo** | Decide la taurina de 89 fichas |
+| Ettinger & Feldman | no | Dos tomos |
+| Dobenecker / Hofmann | no | |
+| ACVIM (Keene 2019) | no | |
+| IRIS 2026 | no | Es la que contesta lo del IRIS 4 |
+| AAHA 2021 | no | |
+| Today's Veterinary Practice | no, y el artículo que da el sodio por estadio **no está** | |
+
+---
+
+## WSAVA — «Raw Meat Based Diets For Pets» · leído entero el 11-sep-2026
+
+| Lo que dice | Decisión |
+|---|---|
+| *«Bones ... can result in broken teeth, intestinal or oesophageal obstruction, and constipation»* | **APLICADO**: va en la instrucción de «Hueso carnoso» |
+| *«Feeding bones does not reduce the risk of plaque or tooth loss due to periodontitis»* | **APLICADO**: la creencia de que el hueso limpia los dientes es una razón por la que se da BARF, y la fuente dice que no. Aquí el hueso está por el calcio |
+| Riesgo bacteriano, y que congelar no mata todas las bacterias | **Ya estaba** (aviso de higiene del 10-sep, de otra fuente) |
+| *«Home prepared ... diets may have important nutrient deficiencies and excesses»*, y que en cachorros da problemas esqueléticos | **No se aplica**: es la razón de ser de este motor, no una cifra |
+| *«High fat, low fibre diets ... may be well tolerated by many pets, but others will show ... diarrhoea, or even pancreatitis»* | **No se aplica**: el motor no puede saber qué perro. Ya hay plan de transición y topes de pancreatitis |
+| *«It is important for the practitioner to know when their patients are fed raw»* | **No se aplica**: es para la consulta |
+
+## WSAVA — «Guide to Treats for Dogs» · leído entero el 11-sep-2026
+
+| Lo que dice | Decisión |
+|---|---|
+| *«Treats should always make up less than 10% of a dog's daily calorie intake»* | **Ya aplicado**. Es la **sexta** fuente con la misma cifra |
+| Define «treat» incluyendo *«foods used to administer medication»* | **APLICADO**: la pregunta de los premios no lo decía. Y Fascetti cap.18 lo mide: el 57 % de los cardiópatas toman la pastilla escondida en comida rica en sodio |
+| Lista de tóxicos: macadamia, **xilitol**, alcohol y masa de levadura cruda, cafeína | **APLICADO**: las cuatro faltaban en `TOXICOS_FEDIAF_7_7`. El xilitol lo señalan **dos** fuentes, y su puerta de entrada es un suplemento de fibra, categoría que el catálogo sí tiene |
+| *«Treats should never replace a meal»* | **No se aplica**: no hay cifra |
+| *«Excessively hard chews ... antlers and hooves ... should be avoided»* | **No se aplica**: no hay ninguno en el catálogo |
+| La tabla de kcal de premios por peso | **No se usa**: la extracción del PDF sale corrupta (repite 32 y acaba en 146). Si hiciera falta, hay que releerla del PDF |
+
+---
+
+## Lo leído y NO aplicado, que sigue esperando decisión
+
+
+Son **64**, y cada una dice por qué.
+
+
+### Fascetti cap02
+
+- **Recommended amounts of EPA plus DHA use MBW multiplied by factors ranging from 115 to 310 (Table 2.1).**
+
+  
+
+- **Disorder Dosage Idiopathic hyperlipidemia 120 mg/kg0.75 Kidney disease 140 mg/kg0.75 Cardiovascular disorders 115 mg/kg0.75 Osteoa**
+
+  
+
+
+### Fascetti cap03
+
+- **The NRC uses the following equation to predict MER for kennel dogs or active pet dogs (NRC 2006): Equations using different multip**
+
+  
+
+- **Predicted energy requirements are approximately 2.5 times maintenance requirements at weaning and requirements decrease to approxi**
+
+  
+
+- **At this time, and until parturition, energy requirements will increase by 25% to over 60% depending on the size of the bitch (the**
+
+  
+
+- **Energy requirements during lactation in bitches may be calculated using the following equation (NRC 2006): where: kg BW = body wei**
+
+  
+
+
+### Fascetti cap04
+
+- **The adequate intake for both sodium and potassium recommended by the NRC for exercising dogs is 1 g/Mcal.**
+
+  
+
+- **One recent study suggested that 1.2 g of sodium/Mcal may be ideal in sled dogs undergoing a 1600 km race (Ermon et al. 2014).**
+
+  
+
+
+### Fascetti cap07
+
+- **Energy requirements for gestation peak anywhere between 30% and 60% of the pre‐breeding requirements depending upon the litter siz**
+
+  DISCREPANCIA MEDIDA, y gana FEDIAF. «Energy requirements for gestation peak anywhere between 30% and 60% of the pre-breeding requirements.» El motor aplica la formula de FEDIAF (132 kcal/kg^0,75 + 26 kcal/kg de peso vivo desde la semana 5) y eso da +62 % en un perro de 10 kg, +73 % en uno de 25 y +79 % en uno de 40: POR ENCIMA del rango de Fascetti en los tres. Se apunta en FEDIAF_CONTRA_OTRAS_FUENTES.md con las dos cifras. || Y una segunda diferencia en el mismo parrafo: Fascetti dice que la necesidad no sube hasta el ULTIMO TERCIO y FEDIAF la sube desde la semana 5 de 9. Tambien gana FEDIAF, y va en el mismo sitio.
+
+- **The recommendations from that study are that diets for lactation provide at least 10–20% of the energy from digestible carbohydrat**
+
+  HALLAZGO QUE NO SE APLICA, y hay que preguntarlo. «The recommendations from that study are that diets for lactation provide at least 10-20% of the energy from digestible carbohydrates (Kienzle et al. 1985)», porque la lactosa de la leche sale mas alta con algo de hidrato. Una racion BARF lleva ~0 %. NO se aplica por tres razones escritas: (1) el propio parrafo dice que sin hidratos las camadas, los pesos al nacer y la supervivencia fueron COMPARABLES; (2) ni FEDIAF ni NRC ponen requisito de hidratos, y el cap. 8 de este mismo libro dice «Carbohydrates are not required in dogs and cats (NRC 2006)»; (3) el catalogo no tiene ni un cereal, asi que aplicarlo no seria apretar una racion sino cambi
+
+- **The investigators of this study found that older dogs required up to 50% more protein than young dogs to maintain labile protein.**
+
+  LA PROTEINA DEL SENIOR, leida entera y SIN CIFRA QUE APLICAR: el propio parrafo se frena en «neither of these studies provides definitive recommendations for protein requirements in older dogs». Medido sobre menus reales del motor: 105,1 / 95,7 / 101,9 g por 1000 kcal en senior de 8, 20 y 35 kg, o sea 122-134 % de los 78,2 que saldrian del «+50 %» del estudio. No hay riesgo y no hay nada que aplicar. Detalle en LECTURA_FASCETTI.md.
+
+- **A more recent study examined 8‐year‐old pointers fed either 16.5% or 45% protein calories over a two‐year period (Kealy 1999).**
+
+  LA PROTEINA DEL SENIOR, leida entera y SIN CIFRA QUE APLICAR: el propio parrafo se frena en «neither of these studies provides definitive recommendations for protein requirements in older dogs». Medido sobre menus reales del motor: 105,1 / 95,7 / 101,9 g por 1000 kcal en senior de 8, 20 y 35 kg, o sea 122-134 % de los 78,2 que saldrian del «+50 %» del estudio. No hay riesgo y no hay nada que aplicar. Detalle en LECTURA_FASCETTI.md.
+
+- **Even the group consuming a higher percentage of their calories from protein lost 3.5% of their lean body mass.**
+
+  LA PROTEINA DEL SENIOR, leida entera y SIN CIFRA QUE APLICAR: el propio parrafo se frena en «neither of these studies provides definitive recommendations for protein requirements in older dogs». Medido sobre menus reales del motor: 105,1 / 95,7 / 101,9 g por 1000 kcal en senior de 8, 20 y 35 kg, o sea 122-134 % de los 78,2 que saldrian del «+50 %» del estudio. No hay riesgo y no hay nada que aplicar. Detalle en LECTURA_FASCETTI.md.
+
+
+### Fascetti cap08
+
+- **Assessment while on a Home‐Prepared Diet It is recommended that any animal receiving a home‐prepared diet be checked by a veterina**
+
+  HALLAZGO QUE NOS TOCA DE LLENO Y QUE LA APP NO DICE. «It is recommended that any animal receiving a home-prepared diet be checked by a veterinarian AT LEAST EVERY SIX MONTHS» (cada tres meses o menos si hay una enfermedad de por medio), con peso, condicion corporal y, si procede, analitica. Rawku formula dietas caseras y no dice esto en ninguna parte. || Y el mismo parrafo trae el nombre de un fallo que si podemos vigilar: el «DIET DRIFT», que el dueno vaya sustituyendo ingredientes por su cuenta. Va a PENDIENTE_PRODUCTO.md.
+
+
+### Fascetti cap09
+
+- **Each increment in BCS is approximately equivalent to 10–15% additional weight due to body fat.**
+
+  EL ESCALON DEL BCS, y el motor esta en el extremo BAJO del rango. «Each increment in BCS is approximately equivalent to 10-15% additional weight due to body fat.» El motor aplica 10 % por punto (`der.BCS_PCT_POR_PUNTO`), que sale de la Tabla VII-2 de FEDIAF. Con 15 % el peso objetivo de un perro con BCS 7 saldria mas bajo y comeria menos; con el 10 % sale mas alto y come un poco mas, o sea que adelgaza mas despacio pero no se queda corto de nutrientes -- los minimos se escalan sobre ese mismo peso. Gana FEDIAF y la diferencia queda escrita con las dos cifras.
+
+- **A score of 4–5 is considered optimal for dogs and reflects a body fat level of 15–20%.**
+
+  «A score of 4-5 is considered optimal for DOGS.» El motor ancla el ideal en BCS 5 (`BCS_NEUTRO`), que es lo que dice la Tabla VII-2 de FEDIAF («% BW below or above BCS 5»). Si el ideal fuera 4, un perro en 5 ya estaria ligeramente por encima y su peso objetivo bajaria un 10 %. Gana FEDIAF; apuntado con las dos cifras.
+
+
+### Fascetti cap10
+
+- **A large‐breed food for growing dogs with a level of 0.8% calcium (per 4200 ME kcal/kg) has been both calculated and proven to be s**
+
+  EL AUTOR PIDE MENOS CALCIO DEL QUE APLICAMOS, y no se puede aplicar. «A large-breed food for growing dogs with a level of 0.8% calcium (per 4200 ME kcal/kg) has been both calculated and PROVEN to be safe for raising large- and giant-breed pups throughout the growth period (Nap et al. 2000).» 0,8 % por 4200 kcal/kg = 1905 mg/1000 kcal. El motor aplica 2750. Pero el MINIMO de FEDIAF para el cachorro de raza grande en late growth son 2500 (fila `Calcio_LateGrowth_RazaGrande`), asi que 1905 deja al cachorro POR DEBAJO del minimo: gana FEDIAF y la cifra queda escrita. Va a FEDIAF_CONTRA_OTRAS_FUENTES.md como conflicto de los que sacan al perro FUERA de la ventana.
+
+- **As a result, the available diets for companion animals can have a vitamin D content exceeding recommended levels (Table 10.7) (Wei**
+
+  «As a result, the available diets for companion animals can have a vitamin D content EXCEEDING RECOMMENDED LEVELS (Table 10.7).» Es el aviso que acompana a la cifra de `cifra#530`, y en nuestro catalogo el mecanismo es el mismo: la vitamina D de una racion BARF entra por los multivitaminicos y por el aceite de higado de bacalao, que es justo donde se concentra.
+
+- **In general, in foods with a protein content of high biological value, the calcium content should be between 0.8% and 1.0% on a dry**
+
+  La misma discrepancia dicha como rango: «In general, in foods with a protein content of high biological value, the calcium content should be between 0.8% and 1.0% on a dry matter basis (for a food with 4200 ME kcal/kg diet) (Nap et al. 2000).» = 1905 a 2381 mg/1000 kcal. El motor aplica 2750 y el minimo de FEDIAF son 2500: el rango ENTERO queda por debajo del minimo de FEDIAF. Gana FEDIAF. Y ojo al matiz, que es nuestro caso: «a protein content of HIGH BIOLOGICAL VALUE» -- una racion BARF lo es.
+
+- **Taken together, the author recommends the following: restricted feeding of a puppy food with a calcium and vitamin D content not t**
+
+  LA RECOMENDACION FINAL DEL AUTOR, con dos cifras: «restricted feeding of a puppy food with a calcium and vitamin D content not to exceed [...] calcium ~1.0% dm, VITAMIN D CONTENT 12.5-25 ug/kg diet». El calcio es la discrepancia de arriba. La vitamina D es NUEVA: 12,5-25 ug/kg MS = 500-1000 UI/kg, o sea 3,125 a 6,25 ug/1000 kcal a 4000 kcal/kg. El motor no tiene techo de vitamina D en crecimiento mas alla del maximo LEGAL de FEDIAF (14,19) y del tope cronico por peso metabolico. MEDIDO el 11-sep-2026 sobre los 12 menus de cachorro del catalogo: van de 3,14 a 8,96 ug/1000 kcal, mediana 6,07, y SEIS DE LOS DOCE pasan de 6,25. Cabe dentro de la ventana de FEDIAF, asi que se PUEDE aplicar -- y p
+
+- **In 36 dogs with elbow OA due to ED, a double‐blind efficacy study was performed by feeding an increased omega‐3 content (omega‐3 o**
+
+  SEGUNDA FUENTE para el omega-3 de la artrosis, que el motor tiene ESCRITO Y SIN APLICAR. Estudio doble ciego en 36 perros con artrosis de codo: omega-3 al 4 % y omega-6 al 20 % frente a omega-3 al 0,8 % y omega-6 al 38 %. Subio el LTB5 en plasma y la cojera medida por plataforma de fuerzas NO cambio. O sea que esta fuente sostiene el mecanismo y NO demuestra el efecto clinico, que es precisamente el motivo por el que el omega-3 de la artrosis vive en `limites_escritos_que_el_solver_no_aplica`.
+
+- **A clinical trial including force‐plate analysis performed in two groups of dogs fed either a control food or an EPA‐supplemented d**
+
+  Y el estudio que SI ve efecto: con dieta suplementada con EPA durante 90 dias mejoro el apoyo del peso el 82 % de los perros frente al 31 % de los controles (Schoenherr 2005). Va con el de arriba: las dos medidas juntas son lo que hay que ponerle delante a quien decida si se enciende el omega-3 de la artrosis. No se aplica hoy.
+
+
+### Fascetti cap11
+
+- **An empirical recommendation is to select diets that contain less than 8% total dietary fiber or less than 5% crude fiber.**
+
+  UN TECHO DE FIBRA QUE EL MOTOR NO TIENE. «An empirical recommendation is to select diets that contain LESS THAN 8% TOTAL DIETARY FIBER or less than 5% crude fiber» en enteropatia cronica. 8 % MS a 4000 kcal/kg = 20 g/1000 kcal. FEDIAF no pone requisito de fibra -- y ojo, que en agosto se colo aqui una fila «Fibra» inventada --, asi que esto solo podria vivir como tope de la patologia `enteropatia_cronica`. MEDIDO sobre los 36 menus del catalogo: mediana 1,2 g/1000 kcal, pero OCHO de los 36 pasan de 20 (hasta 31,1), o sea que el tope SI haria algo. No se aplica en esta pasada: su propia fuente lo llama «empirical recommendation» y la tabla de SACN5 que ya usa esa patologia manda. Se escribe y
+
+- **Although it appears that a “natural” diet protects against, or at least minimizes, the development of calculus, it does little to**
+
+  LO QUE UNA DIETA CRUDA NO HACE, dicho por esta fuente: «Although it appears that a NATURAL diet protects against, or at least minimizes, the development of calculus, it does little to...». Es de los pocos sitios donde el libro habla de la dieta cruda y del sarro. No cambia ninguna cifra del motor, y queda escrito porque la app no promete nada dental y esta fuente marca hasta donde llega.
+
+- **Dietary fat restriction is particularly important in patients diagnosed with lymphangiectasia, with many patients needing restrict**
+
+  ⚠️ EL MISMO «15 %» QUE APLICA EL MOTOR, PERO EN OTRA UNIDAD, Y NO CABE. Fascetti: «Dietary fat restriction is particularly important in patients diagnosed with lymphangiectasia, with many patients needing restriction to less than 15% FAT kJ or kcal» -- el 15 % de la ENERGIA, o sea <=16,7 g/1000 kcal. El motor aplica 37,5 g/1000 kcal a `ple_linfangiectasia`, que sale de la Tabla 58-1 de SACN5, donde el mismo 15 % es de MATERIA SECA. Dos fuentes, el mismo numero, dos unidades, y un factor de 2,2 entre las dos. MEDIDO el 11-sep-2026 preguntandole al solver con 40 s en perros de 10, 20 y 35 kg: con 37,5 sale menu en los tres; con 20,0 y con 16,7 NO SALE EN NINGUNO. Asi que la cifra de Fascetti n
+
+- **Unfortunately, there are few commercial veterinary diets available that contain less than 15% fat kJ or kcal.**
+
+  La otra mitad de la misma frase: «there are FEW COMMERCIAL VETERINARY DIETS available that contain less than 15% fat kJ or kcal». O sea que la propia fuente dice que casi ningun producto del mercado llega a esa cifra. Va con `cifra#700`.
+
+
+### Fascetti cap12
+
+- **For most of the population eating commercial diets, a diet that has less than 20% fat on an ME basis will be considered low fat, b**
+
+  EL UMBRAL DE «BAJA EN GRASA» DE ESTA FUENTE, en la unidad que importa: «a diet that has LESS THAN 20% FAT ON AN ME BASIS will be considered low fat». 20 % de las kcal = 22,2 g/1000 kcal. El motor aplica a la pancreatitis 37,5 g/1000 kcal (y 25,0 si ademas hay obesidad o hiperlipidemia), que salen de la Tabla 67-3 de SACN5 en % de MATERIA SECA. Es la MISMA confusion de unidades que el 15 % de la linfangiectasia del cap. 11, y otra vez la lectura en kcal es mas estricta. MEDIDO el 11-sep-2026 con el solver y 40 s en 10, 20 y 35 kg: con 20,0 g/1000 kcal no sale menu en ninguno. Se escribe con su medida.
+
+
+### Fascetti cap13
+
+- **These formulations differ from those prescribed for patients with renal disease in that the hepatic formulas are generally less pr**
+
+  LAS DIETAS HEPATICAS DEL MERCADO VAN POR DEBAJO DEL MINIMO DE FEDIAF. «The hepatic formulas are generally less protein restricted (14-15.5% PROTEIN ON AN ME BASIS) than most renal diets»: 14-15,5 % de las kcal = 35 a 38,75 g/1000 kcal, y el minimo de FEDIAF para el adulto son 52,1. El motor NO PUEDE bajar ahi y no lo hace: formular por debajo de FEDIAF es la fase 4 de `VETERINARIOS.md`, que exige una prescripcion declarada que viaje con el menu, y todavia no existe. Queda escrito con las dos cifras. || Y el resto de la frase describe lo que el motor SI aplica ya a la hepatopatia por cobre: cobre restringido (2,4), cinc alto (suelo 50), sodio controlado (625) y antioxidantes (vitamina E 67,1)
+
+
+### Fascetti cap14
+
+- **A ratio of 2.6 : 26 of LA : ALA (2.6 : 16 in gestation/lactation) is considered safe in dogs, along with a safe upper limit for LA**
+
+  ⚠️ LA FRASE CON TRES CIFRAS, Y LA QUE DIO NOMBRE AL BLOQUE 96. «A ratio of 2.6 : 26 of LA : ALA (2.6 : 16 in gestation/lactation) is considered safe in dogs, along with a safe upper limit for LA and EPA + DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». APLICADAS DOS: el ratio linoleico:linolénico vive en `requisitos_condicionales.json` y el techo de linoleico de 16,3 en `recomendaciones_libro.json` (medido: no aprieta nunca, los 216 menús van de 3,20 a 10,50). SIN APLICAR LA TERCERA: el techo de EPA+DHA de 2,8, que es la única que SÍ aprieta -- medido, 5 de los 216 menús se pasan y llegan a 3,00, y FEDIAF no pone máximo de EPA+DHA en ninguna etapa, así que el semáforo no puede ver
+
+- **In dogs, a tentative upper limit of 75 IU/kg/day (or 1000–2000 IU/kg diet) has been suggested (NRC 2006).**
+
+  ⚠️ EL TECHO DE VITAMINA E DEL PERRO, Y NO LO TENÍAMOS. «In dogs, a tentative upper limit of 75 IU/kg/day (or 1000-2000 IU/kg diet) has been suggested (NRC 2006)». La segunda forma SÍ es una concentración de la dieta y el motor la sabe usar: 1000 UI/kg MS a 4000 kcal/kg MS son 250 UI/1000 kcal, y a 0,671 mg/UI (FEDIAF Tabla VII-14) salen 167,75 mg/1000 kcal en el extremo estricto (335,5 en el laxo). || FEDIAF NO PONE MÁXIMO DE VITAMINA E EN NINGUNA ETAPA -- las tres columnas están vacías --, así que sería el único techo que tendría. || MEDIDO el 11-sep sobre los 216 menús del catálogo: van de 10,05 a 89,28 mg/1000 kcal con mediana 26,86, o sea CERO por encima del techo estricto. No aprieta ho
+
+
+### Fascetti cap15
+
+- **The minimal dietary protein requirements of cats and dogs with CKD are not known, but have been presumed to be similar to the mini**
+
+  ⚠️ EL MÍNIMO DE PROTEÍNA DEL NRC, Y ESTÁ A 2,6 VECES DEL DE FEDIAF. Literal: «The minimal dietary protein requirements of cats and dogs with CKD are not known, but have been presumed to be similar to the minimal protein requirements of healthy animals: for cats, 3.97 g/kg BW0.67 or 40 g/Mcal; and for dogs, 2.62 g/kg BW0.75 or 20 g/Mcal (NRC 2006)». || Son 20 g/1000 kcal para el perro. El mínimo de FEDIAF en adulto son 52,1. || IMPORTA PORQUE ES EXACTAMENTE EL NÚMERO QUE BLOQUEA EL IRIS 4: la revisión de Cris Carles pide bajar al 15 % de materia seca (37,5 g/1000 kcal), que está POR DEBAJO de los 52,1 de FEDIAF y POR ENCIMA de los 20 del NRC. || GANA FEDIAF, que es la regla del repo, y además
+
+- **In healthy cats and dogs, dietary sodium intake up to 3.1 g/Mcal in cats and 4.1 g/Mcal in dogs does not affect blood pressure or**
+
+  ⚠️ EL SODIO DEL RENAL NO TIENE EVIDENCIA, Y EL MOTOR LO RESTRINGE. Literal del capítulo: «there is currently no evidence to suggest that lowering dietary sodium will reduce blood pressure in cats or dogs with CKD», y en perro sano «dietary sodium intake up to ... 4.1 g/Mcal in dogs does not affect blood pressure or renal or cardiac functions». El motor aplica al `renal` un techo de sodio de 750 mg/1000 kcal, o sea 0,75 g/Mcal -- cinco veces por debajo de lo que esta fuente dice que ya es inocuo. || NO SE QUITA, y por dos motivos escritos: la propia fuente sigue diciendo en el mismo párrafo que «moderately sodium-restricted therapeutic diets for the nutritional management of renal disease rem
+
+- **Stage I Stage II Stage III Stage IV Hydration Fresh water at all times Protein modification Dogs: UPC >2 Cats: UPC >0.4 Dogs: UPC**
+
+  ⚠️ LA TABLA 15.2, QUE ES LA QUE PEDÍA CRIS POR ESTADIOS -- Y NO DA NÚMEROS DE PROTEÍNA. La fila «Protein modification» dice, para perro, «UPC >2» en estadio I y «UPC >0.5» en estadio II; en III y IV dice «Appropriate dietary protein reduction to control uremia and hyperphosphatemia», sin cifra. || O sea que el estadiaje que esta fuente da NO es un tope de proteína por estadio: es un CRITERIO ANALÍTICO para decidir cuándo tocarla, y el dato es el UPC. || Y el motor ya lo tiene: `renal_proteinuria` se llama literalmente «Proteinuria renal (UPC > 0,5)», que es el umbral del estadio II de esta tabla. Esa patología NO APLICA NINGUNA CIFRA a propósito, y su aviso explica por qué: el consenso ACVIM
+
+
+### Fascetti cap16
+
+- **Diets formulated for oxalate prevention in cats and dogs contain phosphorus from 0.3 to 2.1 g/Mcal.**
+
+  ⚠️ EL FÓSFORO DEL OXALATO, Y VA EN DIRECCIÓN CONTRARIA A LO QUE APLICA EL MOTOR. Literal: «Dietary phosphorus should not be restricted with calcium oxalate urolithiasis. Low dietary phosphorus is a risk factor for calcium oxalate urolith formation in cats and dogs». Y da rango: «Diets formulated for oxalate prevention in cats and dogs contain phosphorus from 0.3 to 2.1 g/Mcal. Concentrations from approximately 1.5 to 2.0 g/Mcal have been recommended». || El motor aplica al `oxalato` un TECHO de 1500 mg/1000 kcal (SACN5 Tabla 40-5), o sea 1,5 g/Mcal: justo el extremo BAJO de lo que Fascetti recomienda, y sin ningún suelo debajo -- el mínimo de FEDIAF son 1160, así que sobre el papel el motor 
+
+- **It should be noted that getting exact purine concentration data for some commercial foods can be challenging, and often foods must**
+
+  ⚠️ EL DATO DE PURINAS ES DIFÍCIL DE CONSEGUIR, Y AQUÍ TAMBIÉN. «getting exact purine concentration data for some commercial foods can be challenging, and often foods must be selected based on total dietary protein and the protein-rich food sources (e.g. plant- and egg-based proteins) used as indicators». El catálogo SÍ trae `purinas_bases` y `purinas_fuente` en cada ficha, así que aquí vamos por delante de lo que describe el libro. Se anota porque justifica ese campo y porque dice qué hacer cuando falta: usar la proteína total y el origen de la proteína como indicador.
+
+
+### Fascetti cap17
+
+- **Most recommendations in the literature suggest feeding a diet that provides 20% of the calories or less from fat on a metabolizabl**
+
+  ⚠️ EL TECHO DE GRASA DE LA HIPERLIPIDEMIA, Y FASCETTI ES MÁS ESTRICTO QUE EL MOTOR. Literal: «Most recommendations in the literature suggest feeding a diet that provides 20% of the calories or less from fat on a metabolizable energy (ME) basis». || 20 % de las kcal, a 9 kcal/g de grasa, son 22,2 g/1000 kcal. El motor aplica a la `hiperlipidemia` un techo de 30 (SACN5 Tabla 28-2), o sea un 27 % de las kcal. || ⚠️ Y HAY UNA CIFRA EN LA MISMA UNIDAD DEL MOTOR QUE VA AL REVÉS, en la línea 247: «Dogs were fed low- or moderate-fat diets (24 or 33 g/1000 kcal, respectively), and cholesterol and triglycerides were satisfactorily controlled in BOTH groups» -- con aceite de pescado. O sea que 33 funci
+
+- **However, in many patients more severe restriction is often indicated, sometimes as low as 10% fat ME or less.**
+
+  La otra mitad de la misma frase: «in many patients more severe restriction is often indicated, sometimes as low as 10% fat ME or less», o sea 11,1 g/1000 kcal. Eso está POR DEBAJO del mínimo de grasa de FEDIAF en adulto (13,75), así que el motor no puede llegar ahí ni con un objetivo del profesional: es la vía firmada de VETERINARIOS.md, la misma frontera que el IRIS 4. Medido el 11-sep en pancreatitis: 20 g/1000 kcal sí sale, 17,5 ya no.
+
+- **Dogs were fed low‐ or moderate‐fat diets (24 or 33 g/1000 kcal, respectively), and cholesterol and triglycerides were satisfactori**
+
+  Ver la línea 232: es la cifra del mismo hallazgo, «24 or 33 g/1000 kcal», en la unidad del motor.
+
+
+### Fascetti cap18
+
+- **Mild sodium restriction (<100 mg/100 kcal) is recommended, although further research is needed to determine the optimal dose and t**
+
+  ⚠️ EL SUELO QUE NO TENEMOS: HAY UN PUNTO EN EL QUE BAJAR EL SODIO ES MALO. Literal, del apartado felino: «Mild sodium restriction (<100 mg/100 kcal) is recommended», y en la frase siguiente «Severe sodium restriction (<50 mg/100 kcal) is not recommended as this can cause early and prolonged activation of the renin-angiotensin-aldosterone (RAA) system». || Esos 50 mg/100 kcal son 500 mg/1000 kcal, y el motor aplica al estadio ACVIM D un techo de 480 -- por DEBAJO de esa línea. || ⚠️ PERO ES EL PÁRRAFO DEL GATO, y el del perro dice otra cosa: «one study showed that a low-sodium diet (40 mg/100 kcal) reduced cardiac size in dogs with CHF compared to a diet containing 70 mg/100 kcal», o sea que 
+
+- **Severe sodium restriction (<50 mg/100 kcal) is not recommended as this can cause early and prolonged activation of the renin‐angio**
+
+  Es la segunda mitad de la frase de la línea 33, la del <50 mg/100 kcal. Mismo veredicto.
+
+- **Therefore, animals with cardiac disease (at least those receiving diuretics) may have higher dietary B vitamin requirements.**
+
+  ⚠️ «animals with cardiac disease (at least those receiving diuretics) may have higher dietary B vitamin requirements». Es un requisito CONDICIONAL -- sube con el fármaco, no con la dieta -- y la fuente NO da cifra, así que aplicarlo sería inventársela. Es la misma forma que las tres `documentado_sin_cifra` de `requisitos_condicionales.json`. || Y hay un dato del motor que lo tranquiliza: medido, la B6 real de los menús va de tres a doce veces el mínimo de FEDIAF, y una ración BARF con vísceras va sobrada de grupo B. Se apunta por si algún día aparece la cifra.
+
+- **In dogs with ACVIM Stage C, the authors recommend moderate sodium restriction (i.e. <80 mg/100 kcal).**
+
+  ⚠️ LA CIFRA CANINA DEL ESTADIO C, Y EL MOTOR ES MÁS ESTRICTO. «In dogs with ACVIM Stage C, the authors recommend moderate sodium restriction (i.e. <80 mg/100 kcal)», o sea <800 mg/1000 kcal. El motor aplica 625 al `cardiopatia_c`. || No es conflicto: 625 cabe dentro de 800 y los topes solo aprietan. Se apunta porque es la segunda fuente canina que da número para ese estadio, y las dos cifras -- 800 y 625 -- convendría que las viera quien firma.
+
+
+### SACN5 tabla 14-3
+
+- **Comparison of recommended levels of key nutritional factors for foods for mature adult dogs with levels in selected**
+
+  LEIDA 10-sep-2026. Es una comparativa: una fila «Recommended levels» y debajo la composicion de piensos comerciales para perro maduro. Lo aplicable no esta en la tabla sino en el parrafo que la introduce (cap.14): «foods for mature dogs should contain at least 400 IU vitamin E/kg (DM) (Jewell et al, 2000), at least 100 mg vitamin C/kg (DM) and 0.5 to 1.3 mg selenium/kg (DM)». Ver HALLAZGOS_SACN5_10SEP.md: las tres estan medidas y NINGUNA se aplica todavia.
+
+
+### SACN5 tabla 18-10
+
+- **Effect of nutrient profile on stamina.***
+
+  Efecto del perfil de nutrientes sobre la resistencia en el PERRO: pasando la grasa de 12,8 a 33,1 % de materia seca el tiempo de carrera sube de 103,7 a 137,6 minutos. Es la cara opuesta del techo de grasa, y toca al perro de trabajo.
+
+
+### SACN5 tabla 18-6
+
+- **) and a distance of 167 km. Assuming all dogs pull equally, the weight pulled by this dog is 15 kg (total sled weight**
+
+  Coste calorico de correr 1 km segun el peso: 1,77 kcal/kg en un perro de 5 kg y 0,76 en uno de 70. La ficha pregunta por la actividad en escalones y no por la distancia; esta tabla la cuantifica.
+
+
+### SACN5 tabla 19-4
+
+- **). This lack of adaptability has been noted in other al, 1993, 2001; Gruffydd-Jones et al, 1998). Interestingly, the**
+
+  Composicion del cuerpo entero de la rata, que es la referencia de PRESA ENTERA: 5,7 kcal/g de EM, calcio 1,15 % y fosforo 0,98 % (Ca:P de 1,17), linoleico 9,1 %. Es el patron natural contra el que se puede leer una racion BARF, y el repo no lo tiene escrito.
+
+
+### SACN5 tabla 19-5
+
+- **Comparison of dietary protein requirements during**
+
+  Proteina de crecimiento frente a mantenimiento en el PERRO, con dos lecturas de la misma fuente: 12 % / 4 % y 18 % / 8 % de materia seca. El motor aplica los minimos de FEDIAF, que son mas altos; queda como contraste para la pregunta de la proteina del senior.
+
+
+### SACN5 tabla 19-6
+
+- **Comparison of minimal protein and amino acid**
+
+  Proteina y aminoacidos MINIMOS de crecimiento del CACHORRO en % de materia seca: proteina 17,5 · arginina 0,66 · histidina 0,25 · isoleucina 0,50 · leucina 0,82 · lisina 0,70. Comparable celda a celda con la Tabla III-3b de FEDIAF, y nadie lo ha cruzado.
+
+
+### SACN5 tabla 27-12
+
+- **) but requires a few simple Although the lean body mass of an overweight patient is**
+
+  Metodo del PESO IDEAL para fijar las kcal de adelgazamiento, que es el que usa el motor (las kcal se calculan sobre `peso_objetivo_kg`). Queda escrito para que la eleccion entre los cuatro metodos de este capitulo sea una decision y no un accidente.
+
+
+### SACN5 tabla 27-13
+
+- **Two alternative methods for estimating resting Table 27-15. Using obese body weight and desired rate of**
+
+  Los numeros del adelgazamiento: el RER tiene que ser el 70-80 % del DER al peso optimo, o el 60-70 % al peso obeso, para perder 1-2 % de peso a la semana. El motor baja las kcal al peso objetivo y no comprueba que caigan en esa ventana.
+
+
+### SACN5 tabla 29-4
+
+- **Effect of feeding insoluble dietary fiber to dogs and cats with diabetes mellitus.***
+
+  Fibra insoluble en el PERRO diabetico, con cifras: pasando de 1 % a 12 % de fibra de materia seca la glucosa media en sangre baja y la dosis de insulina tambien. Es la unica cifra canina de fibra con resultado medido, y cae justo dentro de la pregunta abierta de que fibra mide el catalogo.
+
+
+### SACN5 tabla 33-3
+
+- **and ed by the parathyroid gland and the C-cells of the thyroid**
+
+  Composicion del hueso, y trae el numero que el motor necesitaba tener escrito: el calcio y el fosforo de la hidroxiapatita van en un ratio Ca:P de 2,15:1 EN PESO (1,67:1 molar). O sea que una racion con mucho hueso tira el Ca:P hacia arriba por quimica, no por casualidad, y el rango 1,0-2,0 de FEDIAF se come por arriba con el hueso.
+
+
+### SACN5 tabla 33-6
+
+- **Recommended levels of key nutrients for dogs at risk for developmental orthopedic disease compared to levels in selected**
+
+  LEIDA 10-sep-2026, Y TRAE DOS COSAS. Su fila «Recommended levels» para el cachorro en riesgo de enfermedad ortopedica del desarrollo dice: densidad 3,2-4,1 kcal/g MS · GRASA 8,5-17 % MS · DHA >=0,02 % · calcio 0,8-1,2 % · Ca:P 1,1:1-2:1 con la nota «the lower end of the range is preferred». (1) El techo de GRASA (17 % MS = 42,5 g/1000 kcal) el motor no lo aplica. (2) El Ca:P 1,1-2,0 es el CUARTO sitio de SACN5 donde aparece ese mismo rango, y aqui en CRECIMIENTO: el motor aplica el 1,0-1,6 de FEDIAF para raza grande, o sea que el suelo de la fuente (1,1) es mas estricto. Ver HALLAZGOS_SACN5_10SEP.md.
+
+
+### SACN5 tabla 33-8
+
+- **) (NRC, 2006). Great Dane puppies are the exception to the previous recom-**
+
+  LEIDA 10-sep-2026. «A method for estimating daily energy requirement (DER) for growth of puppies after weaning», adaptada de NRC 2006. Da el DER del cachorro por FRACCION DEL PESO ADULTO, con siete escalones: 15 % -> x2,5 · 30 % -> x2,1 · 43 % -> x1,9 · 60 % -> x1,6 · 71 % -> x1,4 · 80 % -> x1,3 · 100 % -> x1,0, sobre MER = 130 x BW^0,75. Trae ejemplo trabajado. || HALLAZGO: el motor usa la curva de KLEIN 2019 que publica FEDIAF (Tabla VII-8b), y las dos fuentes NO dan lo mismo: medido, el motor queda entre un 14 % y un 28 % POR DEBAJO de esta tabla, y la diferencia es mayor cuanto mas joven el cachorro. No es un fallo -- FEDIAF manda -- pero es una discrepancia de fuentes de hasta el 28 % e
+
+
+### SACN5 tabla 34-3
+
+- **Nutrient comparison of control and test foods.***
+
+  El alimento de prueba de la artrosis, con su ratio omega-6:omega-3 de 0,7 frente al 22,8 del control, y omega-3 totales del 3,48 % de materia seca. El repo dice que al ratio omega-6:omega-3 «le falta el numero» (PREGUNTA 40): aqui hay uno, publicado y canino.
+
+
+### SACN5 tabla 36-10
+
+- **Taurine concentrations (mg/kg dry matter)**
+
+  Taurina de las fuentes naturales en mg/kg de materia seca: musculo de vaca 1.200, de cordero 1.600, de pollo 1.100, bacalao 1.000, raton entero 7.000. El catalogo no tiene el dato de taurina en ninguna de sus 163 fichas, y la taurina es la cifra que decide en la cardiomiopatia dilatada.
+
+
+### SACN5 tabla 36-9
+
+- **Daily sodium intake for a dog and a cat**
+
+  Ingesta diaria de sodio de un perro de 15 kg que come 935 kcal, alimento por alimento: el cardiaco seco da 159 mg/dia, que son 170 mg/1000 kcal. El motor aplica 739 mg/1000 kcal en la cardiopatia B2, cuatro veces mas. Hay que cruzarlo con la Tabla 36-6 y con el techo legal del Reglamento (UE) 2020/354.
+
+
+### SACN5 tabla 5-13
+
+- **Small intestinal and total tract crude protein and small intestinal amino acid digestibility of dog foods containing animal protein sources.***
+
+  Digestibilidad de la proteina y de los aminoacidos de alimentos CANINOS con proteina animal. «Beef and bone meal» da 68,3 % de digestibilidad ileal de proteina frente a 80,4 % de «Beef, fresh». Toca de lleno la pregunta abierta del HUESO: el motor cuenta la proteina del hueso como si se digiriera igual que la de la carne.
+
+
+### SACN5 tabla 5-16
+
+- **Ideal amino acid profiles (relative to lysine) for size each protein must be present. The amino acid in shortest**
+
+  Perfil ideal de aminoacidos relativo a la lisina, con columna de PERRO: metionina+cistina 0,64 · triptofano 0,22 · treonina 0,67 · arginina 0,71 · leucina 1,00 · fenilalanina+tirosina 1,00. El motor exige cada aminoacido por separado contra FEDIAF y no mira el perfil. Es la otra forma de la pregunta del techo de lisina.
+
+
+### SACN5 tabla 5-21
+
+- **shows the fatty acid compositions of different fat 6 family in fish and shellfish, whereas polyunsaturated fatty**
+
+  Composicion de acidos grasos de las grasas y aceites comerciales, g/100 g: el aceite de pescado da 14,1 de EPA y 11,9 de DHA, el de girasol 62,3 de linoleico y el de soja 7,3 de linolenico. Es dato de contraste para las fichas de aceite del catalogo, que es donde vive `dato_dudoso`.
+
+
+### SACN5 tabla 5-8
+
+- **). It is not clear what factors in fiber are responsible determine total fiber and is commonly used for measuring**
+
+  Disponibilidad del zinc, el calcio, el hierro y el fosforo segun la FUENTE de fibra, al 5 % de fibra dietetica total. Con pulpa de remolacha el zinc baja al 24 % y el calcio al 44 %. El motor no modela disponibilidad: suma el nutriente de la ficha. Los ingredientes de la tabla son de pienso y no del catalogo, pero el mecanismo es el mismo y se suma a la pregunta abierta de la fibra.
+
+
+### SACN5 tabla 58-2
+
+- **). MCT are water-soluble, ticularly low fat content (Tams and Twedt, 1981; Erickson,**
+
+  Triglicéridos de cadena media frente a los de cadena larga: los de cadena media se hidrolizan mas rapido y no necesitan quilomicrones. Es el mecanismo detras del techo de grasa de la linfangiectasia, que el motor aplica sin distinguir el tipo de grasa.
+
+
+### SACN5 tabla 6-5
+
+- **lists normal plasma levels of pantothenic acid in foods and foodstuffs. Thus, hydrolytic**
+
+  Las nueve vitaminas del grupo B con la asignacion de AAFCO y la de NRC PARA EL PERRO, su nivel en sangre normal y la prueba con que se mide. Colina 1.700 mg/kg MS (NRC), que a 4,0 kcal/g son 425 mg/1000 kcal: la misma cifra baja que ya salio de NRC 2006 cap.8 y que los 36 menus del catalogo superan. Y da el nivel en sangre, que es lo que falta para poder contestar la pregunta de las formas quimicas del grupo B.
+
+
+### SACN5 tabla 8-1
+
+- **) (Kallfelz and Dzanis, 1989). In dogs, aver- tive, less costly and safer approach is to simply exchange the**
+
+  Ingesta diaria REAL de calcio, fosforo, vitamina A y vitamina D de un perro adulto con pienso seco tipico frente a su minimo: calcio 74 mg/kg/dia contra un minimo de 25, fosforo 54 contra 19, vitamina D 11 UI contra 2,3. Casi tres veces el minimo, cuatro en la D. Es la medida de por que existen los techos del libro para el perro sano.

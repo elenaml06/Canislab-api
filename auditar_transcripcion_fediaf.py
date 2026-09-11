@@ -22,7 +22,7 @@ AMINOACIDOS ENTEROS, que estaban en la tabla desde siempre entre "Protein" y
 "Fat". El motor decia cubrir "todo FEDIAF" con 29 de los 41 nutrientes que la
 tabla pide. Lo encontro contar las filas a mano el 26 de agosto, no una prueba.
 
-Lo que faltaba era exactamente lo mismo que `leer_fuente.py` hace con las
+Lo que faltaba era exactamente lo mismo que la lectura anotada hace con las
 secciones de texto y `auditar_conversiones.py` con las cifras de patologia:
 volver a la fuente y REHACER, en vez de confiar en que alguien lo copio bien.
 `fediaf_tabla_III_3b.txt` es la tabla tal cual sale del PDF -- ni una palabra
