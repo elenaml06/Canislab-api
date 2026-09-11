@@ -604,10 +604,13 @@ del adulto:
 > entera.** «Key nutritional factors for foods for mature dogs» da, literal, tres
 > antioxidantes con cifra: **Vitamin E 400 IU/kg · Vitamin C ≥100 mg/kg · Selenium
 > 0.5 to 1.3 mg/kg** de materia seca. Convertidos (÷4): **67,1 mg · 25 mg · 125-325
-> µg por 1000 kcal**. ⚠️ **La vitamina E YA SE APLICA desde el 11 de septiembre**,
-> y no solo al sénior: es el suelo de 67,1 mg/1000 kcal del apartado 7-bis, puesto
-> a **cualquier perro sano** de adulto y sénior, porque el libro lo dice en cinco
-> capítulos y el motor ya se lo exigía a cuatro patologías. Siguen **sin
+> µg por 1000 kcal**. ⚠️ **La vitamina E está ESCRITA y NO APLICADA**: es el suelo
+> de 67,1 mg/1000 kcal del apartado 7-bis, que se encendió la mañana del 11 de
+> septiembre para adulto y sénior —el libro lo dice en cinco capítulos y el motor ya
+> se lo exigía a cuatro patologías— y se volvió a apagar esa misma tarde porque deja
+> sin menú al perro con ocho especies fuera. La causa está medida y es de dato: **no
+> hay un suplemento de vitamina E suelto en el catálogo**. La cifra no se ha bajado,
+> y la pregunta sigue abierta. Siguen **sin
 > aplicarse** los otros dos: la **vitamina C** (el perro la sintetiza, FEDIAF no le
 > pone requisito y el catálogo no la lleva como nutriente — sería un dato nuevo en
 > 163 fichas) y el **selenio** (ver el aviso de abajo).
@@ -1124,6 +1127,17 @@ tenía el fósforo antes del 8 de septiembre.
 ⚠️ **Y POR QUÉ ESTÁ ESCRITO Y APAGADO.** Se encendió la mañana del 11 de septiembre
 y la batería lo tiró, en una tanda limpia: **seis fallos en tres bloques** que
 estaban verdes sin él.
+
+Ese día se tomaron **dos** decisiones sobre esta cifra y las dos se dejan escritas,
+porque la segunda no anula a la primera. Por la mañana, encenderlo: *«la norma es la
+norma»*, si la fuente lo dice, se aplica, y el menú que no quepa se queda sin salir
+diciéndolo. Por la tarde, apagarlo: *«apágalo y fusiona todo, ya preguntaremos lo de
+la vitamina E»*. Lo segundo es el **orden** y no la norma: con el suelo encendido la
+batería sale roja, nada se entrega en rojo, y este suelo estaba reteniendo 150
+commits que no tienen nada que ver con él. **La cifra no se ha bajado.** Vuelve a
+encenderse el día que entre en el catálogo una ficha de vitamina E suelta, y
+entonces la batería tiene que salir verde: esa es la comprobación de que el problema
+era el catálogo y no la cifra.
 
 | Bloque | Qué pasó |
 |---|---|

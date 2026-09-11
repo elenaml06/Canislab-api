@@ -31,10 +31,16 @@ las tiene que tomar una persona, no yo.
          protege nada y no se puede seguir con el resto del plan. El
          comando exacto está al final del archivo .sql.
 
-- [ ] 🔴 **EL SUELO DE VITAMINA E ESTÁ ENCENDIDO Y DEJA PERROS SIN MENÚ**
-      (medido el 11 de septiembre). Lo encendiste tú, con la regla correcta
-      («la norma es la norma»: si la fuente lo dice, se aplica). Aquí está lo
-      que cuesta, que es lo que hacía falta para decidir:
+- [ ] 🟡 **EL SUELO DE VITAMINA E, APAGADO DE MOMENTO Y CON LA PREGUNTA ABIERTA**
+      (medido el 11 de septiembre). Ese día se tomaron **dos** decisiones tuyas,
+      y las dos se quedan escritas porque la segunda no anula a la primera. Por
+      la mañana, encenderlo: «la norma es la norma», si la fuente lo dice, se
+      aplica. Por la tarde, apagarlo: «apágalo y fusiona todo, ya preguntaremos
+      lo de la vitamina E». Lo segundo es el **orden**, no la norma: con el
+      suelo encendido la batería sale roja en los BLOQUES 9 y 43, nada se
+      entrega en rojo, y este suelo estaba reteniendo 150 commits que no tienen
+      nada que ver con él. **La cifra no se ha bajado**: sigue escrita con su
+      fuente y su conversión, y esto es lo que cuesta encenderla:
 
       | | Con el suelo | Sin el suelo |
       |---|---|---|
@@ -70,12 +76,23 @@ las tiene que tomar una persona, no yo.
       3. **Dejarlo encendido** y aceptar que el perro con ocho especies fuera
          se quede sin menú, y que la batería salga roja en los BLOQUES 9 y 43.
 
-      ⚠️ **Mientras siga encendido la batería sale ROJA**, así que `main` no
-      puede recibir esto tal cual. Lo que está rojo es exactamente eso y nada
-      más: los tres fallos de los bloques 9 y 43. El cuarto que salía (BLOQUE
-      15, «le metió comida sin pedirlo y sin avisar») **no era del suelo** y
-      está arreglado — era el perro que se amolda, que heredaba el menú del
-      primero y no su aviso.
+      ✅ **Hoy está tomada la 2, y es temporal**: `aplicado_por_el_solver:
+      false` en Adulto y en Senior, con las dos decisiones escritas en el
+      `por_que` de la cifra y vigiladas por el BLOQUE 57. Lo que sigue abierto
+      es la **1**, que es la única que no cede en nada: **conseguir la ficha de
+      un suplemento de vitamina E suelto**. El día que entre en el catálogo,
+      esto se vuelve a poner a `true` y la batería tiene que salir verde — y esa
+      es justamente la comprobación de que el problema era el catálogo y no la
+      cifra.
+
+      ⚠️ **Y la pregunta al nutricionista sigue viva**, con la trampa del
+      factor de conversión de arriba: si la forma del suplemento resulta ser el
+      acetato sintético, el suelo son **100 mg/1000 kcal** y no 67,1.
+
+      Nota para no repetir una confusión: de los cuatro fallos que daba el
+      suelo, el del BLOQUE 15 («le metió comida sin pedirlo y sin avisar»)
+      **no era suyo** y está arreglado — era el perro que se amolda, que
+      heredaba el menú del primero y no su aviso.
 
 - [ ] **LAS PREGUNTAS QUE ELIGEN LA CIFRA DE CADA PATOLOGÍA** (11 de
       septiembre; el inventario entero, en `preguntas_por_patologia.json`).

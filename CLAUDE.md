@@ -63,11 +63,16 @@ con alguna, casi siempre el error está en el cambio.
    septiembre esa clase tiene **las dos mitades**: también suelos, con `max()`.
    Y ahí vale la regla de siempre: **si una fuente contradice a FEDIAF, gana
    FEDIAF**, así que un suelo del libro que se pasara de un máximo de FEDIAF se
-   cae y se dice. ⚠️ **Hay un suelo encendido y cuesta menús.** El único escrito es
-   la vitamina E del perro sano (67,1 mg/1000 kcal), y está **ENCENDIDO** por
-   decisión de Elena («la norma es la norma»: si la fuente lo dice, se aplica, y
-   los menús que no quepan son problema de los menús). Lo que cuesta está
-   **medido el 11 de septiembre** y hay que leerlo antes de tocar nada:
+   cae y se dice. ⚠️ **Hoy no hay ningún suelo encendido, y el único escrito
+   lleva DOS decisiones del mismo día.** Es la vitamina E del perro sano (67,1
+   mg/1000 kcal). Por la mañana del 11 de septiembre Elena lo encendió con la
+   regla correcta —«la norma es la norma»: si la fuente lo dice, se aplica— y por
+   la tarde lo apagó para poder entregar: «apágalo y fusiona todo, ya
+   preguntaremos lo de la vitamina E». Lo segundo es el **orden**, no la norma:
+   con el suelo encendido la batería sale roja en los BLOQUES 9 y 43, nada se
+   entrega en rojo, y este suelo estaba reteniendo 150 commits que no tienen nada
+   que ver con él. Lo que cuesta está **medido** y hay que leerlo antes de tocar
+   nada:
 
    | | Con el suelo | Sin el suelo |
    |---|---|---|
@@ -79,11 +84,13 @@ con alguna, casi siempre el error está en el cambio.
    O sea: a quien usa la app solo le falta el menú si excluye ocho especies; el
    toy lo salva la escalera. La causa está medida y es de DATOS: **en el catálogo
    no hay un suplemento de vitamina E suelto**, solo los nueve multivitamínicos, y
-   el motor deja meter dos. La cifra no se baja — se queda escrita con su medida y
-   se pregunta, que es la regla. Mientras siga encendido, **la batería sale roja
-   en los BLOQUES 9 y 43** y eso es la consecuencia de la decisión, no un fallo
-   suelto: está en `PENDIENTE_DECISIONES.md`. En adulto son
-   dos (fósforo 2000 y sodio 1000 por 1000 kcal; 1750 el fósforo en senior).
+   el motor deja meter dos. **La cifra NO se ha bajado** — se queda escrita con su
+   fuente, su conversión y su medida, y se pregunta, que es la regla. El día que
+   entre en el catálogo una ficha de vitamina E suelta se vuelve a poner a `true`
+   y la batería tiene que salir verde: esa es la comprobación de que el problema
+   era el catálogo y no la cifra. Está en `PENDIENTE_DECISIONES.md`, y el BLOQUE
+   57 vigila las dos mitades — que siga apagado y que el `por_que` siga contando
+   las dos decisiones. En adulto son
    Existen porque una ración BARF de este motor salía **pegada al máximo de
    FEDIAF** (~4000 mg/1000 kcal, y un menú del catálogo llegó a 4124, por
    encima), y el libro recomienda **la mitad** para cualquier perro adulto
@@ -158,7 +165,7 @@ jubilado — que desde fuera se parecen mucho.
 | `exclusiones.py` | Alergias por palabras y familias de especie. Excluir «pollo» quita también «gallina» |
 | `accesibles.py`, `modos.py` | Qué alimentos entran según el modo (automático / personalizar / aprovechar). ⚠️ **De `modos.py` el motor usa UNA sola cosa**, el diccionario `CUANTOS_MAX`: `elegir_alimentos`, `cambiar`, `quitar` y `anadir` no los llama nadie —los tres endpoints tienen su propia implementación en `main.py`— y **no hay ningún sorteo de candidatos**: `resolver()` ve todos los accesibles y elige el MILP. Está escrito aquí porque el 10 de septiembre un pendiente llevaba días culpando a `elegir_alimentos` de que al toy de 1,5 kg le costara sacar menú, y la causa era el `time_limit` |
 | `condicionales.py` | Lee `requisitos_condicionales.json`: **los requisitos que NO son un número fijo porque dependen de la propia dieta**. Son **seis** desde el 9 de septiembre: **tres que se aplican** y **tres escritas sin cifra**, porque FEDIAF las enuncia y no las cuantifica para el perro. (1) La proteína de **gestación y lactancia**, que FEDIAF calcula suponiendo que la dieta lleva hidratos — y una ración BARF no lleva; NRC trae el experimento: con la dieta sin hidratos y la proteína baja, la **mortalidad perinatal subió un 75 %**. (2) La **arginina que sube con la proteína**: FEDIAF publica una tabla entera para esto (Anexo 7.4 y Tabla VII-13, «+0,01 g de arginina por cada gramo de proteína sobre el requisito, en todas las etapas») y no la aplicábamos — con los 105 g/1000 kcal de proteína que lleva un BARF típico, la tabla pide 1,90 g de arginina y el motor exigía 1,51. (3) El **ratio linoleico:linolénico**, 2,6-26 en adulto y crecimiento y 2,6-16 en gestación y lactancia (NRC 2006 cap.5) — que es lo que el NRC recomienda **en lugar** del ratio omega-6:omega-3 totales, del que dice literalmente que «is not helpful». Ninguno de los tres tiene forma de fila, así que ninguno lo encontró el trabajo de transcribir tablas. || Y las **tres que NO se aplican**, con `tipo: documentado_sin_cifra`: la **vitamina E sube con los PUFA**, la **B6 sube con la proteína** y la **K en dietas con mucho pescado**. Las tres las nombra FEDIAF en su sección 3.3 y de las tres da número solo para el GATO o para ninguno, así que aplicarlas sería inventarse la cifra. Están escritas para que se puedan auditar y para no volver a «descubrirlas» dentro de seis meses; el BLOQUE 60 vigila que sigan inertes. Medido: por la relación clásica de vitamina E:PUFA (≥0,6 mg/g) vamos holgados —0 de 216 menús por debajo, el peor a 1,53— y la B6 real va de tres a doce veces el mínimo de FEDIAF. **El solver y el semáforo llaman a las mismas funciones de este módulo**, y eso no es elegancia: es la lección del 8 de septiembre, cuando cada uno aplicaba los suelos de patología a su manera y el motor construía menús enteros para que el filtro final los tirara |
-| `recomendaciones.py` | Lee `recomendaciones_libro.json`: **lo que el libro recomienda al perro SANO**, por etapa. Es la tercera clase de límite del motor, y no existía hasta el 8 de septiembre: los de FEDIAF valen para cualquier perro, los de patología solo si está marcada, y estos valen para el perro que **no tiene nada**. Empezó con dos techos de adulto (fósforo y sodio) y el 9 de septiembre entraron los de **crecimiento** — calcio y fósforo, con **dos columnas** según el cachorro vaya a pesar más o menos de 25 kg de adulto. ⚠️ **Y el 11 de septiembre dejó de ser solo de techos**: guarda también **suelos**, con `max()`, porque una recomendación del libro que fuera un mínimo no tenía dónde vivir. El único escrito es la **vitamina E** del perro sano, que SACN5 pide en ≥400 UI/kg MS (67,1 mg/1000 kcal) en **cinco capítulos** y que el motor exige a cuatro PATOLOGÍAS y no al perro sin nada. **Está ENCENDIDA** (`aplicado_por_el_solver: true`) por decisión de Elena, y cuesta menús: los tres perros con ocho especies fuera se quedan sin ninguno, y al toy de 1,5 kg le cuesta tanto que el solver no lo saca en 1 s ni en 20 intentos (sin el suelo, 12 de 20). Por la API, con la escalera, el toy sí sale 10 de 10. Las medidas completas están arriba, en la regla 2. La causa es de DATOS: **no hay un suplemento de vitamina E suelto en el catálogo**, solo los nueve multivitamínicos y el motor deja meter dos. La cifra NO se baja — se queda escrita con su medida y se pregunta. ⚠️ Y **tres de los seis fallos que dio al encenderla no eran suyos**: el motor metía comida que nadie pidió sin avisar en la pantalla de varios perros, y eso era un fallo de verdad (el perro que se amolda heredaba el menú del primero y no su aviso), arreglado el 11 de septiembre. **Y aquí manda FEDIAF**: si un suelo del libro se pasara del máximo de FEDIAF, el suelo se cae. El BLOQUE 57 vigila las dos cosas: que siga apagada con su motivo escrito, y que la maquinaria funcione (la enciende a mano y exige que solver y filtro final la apliquen) |
+| `recomendaciones.py` | Lee `recomendaciones_libro.json`: **lo que el libro recomienda al perro SANO**, por etapa. Es la tercera clase de límite del motor, y no existía hasta el 8 de septiembre: los de FEDIAF valen para cualquier perro, los de patología solo si está marcada, y estos valen para el perro que **no tiene nada**. Empezó con dos techos de adulto (fósforo y sodio) y el 9 de septiembre entraron los de **crecimiento** — calcio y fósforo, con **dos columnas** según el cachorro vaya a pesar más o menos de 25 kg de adulto. ⚠️ **Y el 11 de septiembre dejó de ser solo de techos**: guarda también **suelos**, con `max()`, porque una recomendación del libro que fuera un mínimo no tenía dónde vivir. El único escrito es la **vitamina E** del perro sano, que SACN5 pide en ≥400 UI/kg MS (67,1 mg/1000 kcal) en **cinco capítulos** y que el motor exige a cuatro PATOLOGÍAS y no al perro sin nada. **Está ESCRITA y APAGADA** (`aplicado_por_el_solver: false`), y lleva **dos decisiones de Elena del mismo día**: encenderla por la mañana («la norma es la norma») y apagarla por la tarde («apágalo y fusiona todo, ya preguntaremos lo de la vitamina E»). Lo segundo es el ORDEN y no la norma: encendida pone roja la batería en los BLOQUES 9 y 43, y estaba reteniendo 150 commits que no tienen nada que ver con ella. Lo que cuesta: los tres perros con ocho especies fuera se quedan sin ninguno, y al toy de 1,5 kg le cuesta tanto que el solver no lo saca en 1 s ni en 20 intentos (sin el suelo, 12 de 20). Por la API, con la escalera, el toy sí sale 10 de 10. Las medidas completas están arriba, en la regla 2. La causa es de DATOS: **no hay un suplemento de vitamina E suelto en el catálogo**, solo los nueve multivitamínicos y el motor deja meter dos. La cifra NO se baja — se queda escrita con su medida y se pregunta. ⚠️ Y **tres de los seis fallos que dio al encenderla no eran suyos**: el motor metía comida que nadie pidió sin avisar en la pantalla de varios perros, y eso era un fallo de verdad (el perro que se amolda heredaba el menú del primero y no su aviso), arreglado el 11 de septiembre. **Y aquí manda FEDIAF**: si un suelo del libro se pasara del máximo de FEDIAF, el suelo se cae. El BLOQUE 57 vigila las dos cosas: que siga apagada con su motivo escrito, y que la maquinaria funcione (la enciende a mano y exige que solver y filtro final la apliquen) |
 | `patologias.py` | Lee `patologias.json` y lo pasa a la forma que espera el solver. **Aquí no hay ni una cifra**: hasta el 28 de agosto la tabla eran 200 líneas de `dict` dentro de `motor_completo.py`, mezclando números, motivo clínico, textos y lógica de crecimiento. Se sacó por lo mismo que el catálogo y la tabla de FEDIAF: un número que decide si un menú se entrega tiene que poder auditarse, y no se audita lo que está enterrado entre `if`s |
 | `catalogo_menus.py` | Carga los menús precalculados de la vista previa. Los datos están en `catalogo_menus.json`, en la raíz con los demás: aquí solo quedan 55 líneas de código |
 
@@ -174,7 +181,7 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 91 bloques, ~40 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `pruebas_completas.py` | **La batería.** Los 92 bloques, ~40 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
 | `datos_de_la_ficha.json` | **Los 21 campos que la ficha pregunta, y CÓMO llega cada uno al motor** (11 de septiembre). Nació de una frase de Elena: «TODOS LOS DATOS QUE RECOJA LA APP TIENEN QUE LLEGAR DE ALGUNA MANERA AL MOTOR, SI NO SON DATOS INUTILES Y CUANDO SE PIDEN ES SIEMPRE POR ALGO». Y tiene un caso que lo justifica solo, del mismo día: la ficha pregunta la **actividad** desde siempre, la app la usaba para calcular las kcal y mandaba solo el número — el motor veía 1955 kcal y no sabía si era un galgo de sofá o un perro de trineo, que es justo lo que decide si se le aprietan los topes crónicos por peso metabólico. Hay tres formas de llegar: `campo` (viaja suelto), `dentro_de` (va cocinado dentro de un número que sí viaja, y entonces **hay que escribir qué se pierde por ir así**) y `no_hace_falta` (con su motivo, que tiene que ser un motivo y no una excusa). Lo vigila el BLOQUE 87. ⚠️ Eran 20 y faltaba `raza`: la lista se copió a mano de `tests/ficha-ida-y-vuelta.spec.js`… donde `raza` tampoco estaba, porque su perro de ejemplo era un mestizo y `null` vuelve como `null` aunque se pierda. Dos inventarios copiados a mano, el mismo hueco en los dos |
 | `niveles_de_actividad.json` | **La Tabla VII-7 de FEDIAF fila por fila**, con lo que hace el motor y lo que ofrece la app (11 de septiembre). Cinco filas emparejadas, una **partida por nosotros** (el rango «High activity 150-175» es UNA fila de la fuente y el motor la parte en dos niveles), una fuera a propósito (los perros de trineo, 860-1240) y un **HUECO** declarado: «Obese prone adults ≤ 90» no está ni en el motor ni en la app. Lo vigila el BLOQUE 88 |
 | `preguntas_por_patologia.json` | **Qué pregunta decide la cifra de cada patología, qué respuestas tiene, y a qué clave del motor lleva cada una** (11 de septiembre). Nació de una frase de Elena: «tendrá que haber preguntas para cada patología preguntando resultados de analíticas o lo que sea para que pueda coger según la respuesta los límites para cada estadio o cada caso». ⚠️ **Y lo primero que hay que saber al abrirlo es que la mitad ya estaba hecha**: la cardiopatía tiene **cinco claves con cinco techos de sodio** (`cardiopatia_c` 625, `cardiopatia_d` 480) y la app **ya pregunta el estadio ACVIM**. Cuatro de las diez están `aplicada`. Aquí no hay ni un número escrito: se **derivan** de `patologias.json`, y donde el motor no tiene una clave por respuesta se dice en vez de inventarla. Cinco estados, y el que importa es **`no_cambia_ninguna_cifra`**: una pregunta cuyas respuestas aplican exactamente lo mismo no decide nada — se le pide un dato clínico a quien firma y da igual lo que conteste. Hoy le pasa a `shunt_sin_encefalopatia`. Lo vigila el BLOQUE 90, que además exige que **cada `requiere` de un tope condicional apunte a una patología que exista**: el de la diabetes decía `hipertrigliceridemia`, que no es ninguna de las 47, así que ese techo **no se aplicaba nunca** por esa puerta — el solver lo resuelve con `any(otra in lista ...)` y un nombre que nadie puede marcar no entra jamás, con el menú saliendo verde igual |
@@ -279,6 +286,21 @@ importante es la cuarta: un perro renal con un techo de fósforo de 3000 puesto
 por el profesional tiene que seguir saliendo a 1200 **y seguir saliendo** — si
 deja de salir, es que el objetivo flojo llegó al solver y lo paró el filtro
 final, que es taparlo y no evitarlo.
+
+**Y la semana del profesional tiene presupuesto, como la del dueño** (11 de
+septiembre). El generador del tutor reparte el presupuesto semanal de seguridad
+crónica entre los siete días desde el 25 de agosto: `/menu/semana` genera la
+semana entera en UNA llamada para que el servidor pueda ir restando y pasarlo a
+`resolver()` como restricción DURA. El formulador del veterinario no lo hacía, así
+que cada ración se formulaba como si fuera la semana entera y **quien firma tenía
+menos protección que el tutor** justo en los cinco topes que son crónicos. Ahora
+`/formular/autocompletar` acepta `raciones_ya_puestas` (las que ya ha decidido,
+con sus días) y `dias_de_esta_racion`, y **la resta la hace el servidor**: el
+profesional construye sus raciones de una en una y no puede mandarlas todas de
+golpe, pero dejarle la cuenta a la app sería volver al aviso que se puede ignorar.
+Medido: con seis días de una ración de 6844 µg de yodo al día contra un
+presupuesto de 8106, la del séptimo no sale; desconectando el presupuesto del
+solver sale con 524 µg como si nada. Lo vigila el BLOQUE 92.
 
 `GET /relajacion` (8 de septiembre) sirve los peldaños de la escalera con su
 nombre y qué suelta cada uno, y `/menu/v2` y `/formular/autocompletar`
@@ -586,7 +608,7 @@ se comprueba entero en cada batería.
 python3 pruebas_completas.py     # ~40 min, tiene que salir TODO EN VERDE
 ```
 
-Los 91 bloques tardan unos **40 minutos** (2.387 s en la última medida; el
+Los 92 bloques tardan unos **40 minutos** (2.387 s en la última medida; el
 «~25 min» que ponía aquí se quedó corto igual que antes se quedó corto el
 «~10 min», y antes el «~2 min»: cada vez que un bloque nuevo resuelve menús de
 verdad, esta cifra sube. Si vuelve a bajar sin motivo, es que algo no se está

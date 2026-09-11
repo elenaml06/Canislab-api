@@ -7952,58 +7952,63 @@ for _et57, _f57 in (_CRUDO_B57.get("por_etapa") or {}).items():
                 fallos.append(f"BLOQUE57: la clave '{_n57}' NO esta en verificar.MAPA -- el "
                               f"solver nunca la mirara y el menu saldra verde igual")
 
-# 5.2. EL SUELO DE VITAMINA E ESTA ENCENDIDO, Y TIENE QUE ESTARLO.
+# 5.2. EL SUELO DE VITAMINA E ESTA APAGADO, Y TIENE QUE ESTARLO.
 #
-#      ⚠️ DECISION DE ELENA, 11 de septiembre de 2026, y cambia el criterio de
-#      todo este fichero:
+#      ⚠️ LAS DOS DECISIONES DE ELENA DEL 11 DE SEPTIEMBRE, EN ESE ORDEN, Y LAS
+#      DOS SE ESCRIBEN PORQUE LA SEGUNDA NO ANULA A LA PRIMERA.
+#
+#      Por la manana, encenderlo:
 #
 #          «si hay algo de la documentacion que fija ese suelo de vitamina E, se
 #           tiene que aplicar. Si los menus no entran, es problema de los menus,
-#           no de la norma, o sea, la norma es la norma, y luego se hara lo que
-#           se tenga que hacer con los menus»
+#           no de la norma, o sea, la norma es la norma»
 #
-#      Lo que costo sigue escrito en el `por_que` de la cifra y NO se borra: al
-#      encenderlo por la manana esta bateria dio seis fallos en tres bloques. Eso
-#      es el registro de lo que cuesta aplicarlo, no un argumento para no hacerlo.
-#      Lo que cambio es quien decide.
+#      Y por la tarde, apagarlo:
 #
-#      DONDE SI Y DONDE NO. El libro da esta cifra para el ADULTO (cap.13) y el
-#      MADURO (cap.14), asi que se aplica en Adulto y Senior y NO en crecimiento,
-#      gestacion ni lactancia -- ahi no hay cifra de la fuente, y aplicarla seria
-#      inventarsela, que es justo lo contrario de «la norma es la norma».
-for _et57 in ("Adulto", "Senior"):
-    _vs57 = _suelos_b57(_et57, req)
-    if abs((_vs57 or {}).get("vitE", 0.0) - 67.1) > 1e-9:
-        fallos.append(f"BLOQUE57: la etapa {_et57} tendria que aplicar el suelo de vitamina E "
-                      f"de 67,1 mg/1000 kcal y devuelve {_vs57}. Es una decision escrita de "
-                      f"Elena del 11 de septiembre: la norma se aplica, y el menu que no quepa "
-                      f"se queda sin salir DICIENDOLO")
-for _et57 in ("CachorroJoven", "CachorroCrecimiento", "GestanteTemprana",
-              "GestanteTardia", "Lactante"):
+#          «apágalo y fusiona todo, ya preguntaremos lo de la vitamina E»
+#
+#      Lo segundo no es cambiar de idea sobre la norma: es el ORDEN. Con el suelo
+#      encendido esta bateria sale roja en los BLOQUES 9 y 43, la regla del repo
+#      es que nada se entrega en rojo, y este suelo estaba reteniendo en una rama
+#      CIENTO CINCUENTA commits que no tienen nada que ver con el. Un pendiente de
+#      DATO -- no hay un suplemento de vitamina E suelto en el catalogo -- no
+#      puede bloquear todo lo demas.
+#
+#      LO QUE NO CAMBIA, y es lo que vigila este bloque: la cifra sigue escrita
+#      con su fuente, su conversion y sus medidas (eso lo comprueba el 5.1), la
+#      maquinaria sigue funcionando (el 5.4 la enciende a mano y exige menu), y
+#      la pregunta sigue abierta. Bajarla NO es una opcion: una cifra que no cabe
+#      se deja escrita y se pregunta.
+for _et57 in ("Adulto", "Senior", "CachorroJoven", "CachorroCrecimiento",
+              "GestanteTemprana", "GestanteTardia", "Lactante"):
     if (_suelos_b57(_et57, req) or {}).get("vitE"):
-        fallos.append(f"BLOQUE57: la etapa {_et57} esta aplicando el suelo de vitamina E y la "
-                      f"fuente NO da esa cifra para ella: SACN5 la da para el adulto (cap.13) y "
-                      f"el maduro (cap.14). Aplicar una cifra donde la fuente no la da es "
-                      f"inventarsela")
+        fallos.append(f"BLOQUE57: la etapa {_et57} esta aplicando el suelo de vitamina E y hoy "
+                      f"tiene que estar APAGADO en todas. Si se ha vuelto a encender, tiene que "
+                      f"ser una decision escrita y este bloque tiene que saberlo en el MISMO "
+                      f"commit -- y entonces los BLOQUES 9 y 43 se ponen rojos, que es lo que "
+                      f"cuesta y esta medido en el `por_que` de la cifra")
 
-# 5.2-bis. LA MARCA TIENE QUE DECIR QUE SI, Y EL `por_que` TIENE QUE SEGUIR
-#          CONTANDO LO QUE COSTO. Un suelo encendido cuyo motivo se borra es un
-#          suelo que el dia que vuelva a estorbar se apaga sin saber la historia:
-#          los seis fallos, la medida del perro normal y el hueco del catalogo.
+# 5.2-bis. LA MARCA TIENE QUE DECIR QUE NO, Y EL `por_que` TIENE QUE SEGUIR
+#          CONTANDO LAS DOS DECISIONES. Un suelo apagado cuyo motivo se borra es
+#          una cifra que nadie sabe por que esta ahi, y la proxima vez que alguien
+#          la mire no tendra ni lo que cuesta encenderla (los seis fallos, el
+#          perro normal que si la cumple) ni por que se apago (el orden, no la
+#          norma). Las dos mitades o ninguna.
 for _et57, _nut57 in (("Adulto", "vitE"), ("Senior", "vitE")):
     _f57 = ((_CRUDO_B57["por_etapa"].get(_et57) or {}).get("suelos_por_1000kcal") or {}).get(_nut57)
-    if _f57 is None or _f57.get("aplicado_por_el_solver") is not True:
+    if _f57 is None or _f57.get("aplicado_por_el_solver") is not False:
         fallos.append(f"BLOQUE57: el suelo {_et57}.{_nut57} tiene que llevar "
-                      f"`aplicado_por_el_solver: true`. Si se ha vuelto a apagar, tiene que ser "
-                      f"una decision escrita y este bloque tiene que saberlo en el MISMO commit")
+                      f"`aplicado_por_el_solver: false`. Si se ha vuelto a encender, tiene que "
+                      f"ser una decision escrita y este bloque tiene que saberlo en el MISMO "
+                      f"commit")
     else:
         _pq57 = _f57.get("por_que") or ""
-        for _marca57 in ("ENCENDIDO EL 11-sep-2026", "seis fallos",
-                         "NO HAY UN SUPLEMENTO DE VITAMINA E SUELTO"):
+        for _marca57 in ("ENCENDIDO EL 11-sep-2026", "APAGADO OTRA VEZ EL 11-sep-2026",
+                         "seis fallos", "NO HAY UN SUPLEMENTO DE VITAMINA E SUELTO"):
             if _marca57 not in _pq57:
                 fallos.append(f"BLOQUE57: el `por_que` del suelo {_et57}.{_nut57} ya no dice "
-                              f"«{_marca57}». Lo que costo aplicarlo es parte de la decision y "
-                              f"no se borra al aplicarla")
+                              f"«{_marca57}». Lo que costo aplicarlo y por que se apago son las "
+                              f"dos mitades de la decision, y no se borra ninguna")
 
 # 5.3. Y AQUI MANDA FEDIAF. Un suelo del libro que se pasara del MAXIMO de
 #      FEDIAF tiene que caerse. Hoy no se dispara con ninguna cifra escrita --la
