@@ -1,7 +1,7 @@
 # Rawku — lo que queda por hacer (índice)
 
 Lista viva. Se actualiza al terminar cada cosa, no al final.
-Última revisión: 7 de septiembre de 2026.
+Última revisión: 11 de septiembre de 2026.
 
 **Desde el 6 de septiembre esto es solo el índice.** Cada punto vive en uno
 de cuatro archivos, por tema — ábrelos según lo que toque la tarea, no
@@ -48,9 +48,12 @@ que tomar una persona, no yo.
 - [x] `/menu/varios-perros` devolvía 1 menú en vez de 3 — ARREGLADO 7 sep: decidía si seguir con el TOPE de cada rodaja (peor caso 10 s) en vez de con lo que había costado de verdad la ronda anterior. Ahora se mide. Con el presupuesto apretado a 14 s: antes [2,1,1,1,2], ahora [3,3,2,3,3]. BLOQUE 48
 - [x] Los 0,99 g de salmón — CERRADO 7 sep: el suelo de «esto se puede pesar» se recortaba contra el techo del propio alimento (`min(porcion, techos[i])`) y podía quedarse por debajo del gramo. Ahora nunca baja de 1 g y el MILP deja fuera solo al alimento del que no cabe ni un gramo
 - [ ] Nadie debería poder suscribirse dos veces
+- [x] Seis agujeros de seguridad — CERRADOS 11 sep: la consulta a Stripe se podía reescribir con una comilla en el `user_id` y devolvía las suscripciones de otra gente; `/stripe/portal` abría el portal del `stripe_customer_id` que le mandaran; `/perro/{id}/menus` servía el historial de cualquier perro; el token de sesión se iba entero a Sentry; el sello de una pauta firmada no llevaba clave; el `CORS` estaba en `*`. BLOQUE 51. Ver `HECHO.md`
 - [x] El yodo de los perros pequeños — ARREGLADO 7 sep, y era peor de lo apuntado: el margen del suelo era un 1,5 % fijo cuando lo que tiene que cubrir es el error ABSOLUTO del redondeo. Medido en 60 menús de perros de 1,5-4,5 kg: antes el yodo bajaba al 82 % y 3 menús se caían; ahora mínimo 100 % y ninguno. BLOQUE 49
 - [ ] `profiles` es una frontera de autorización y no está en el repo (RLS sin versionar)
 - [ ] Comprobar que la cancelación quita el premium
+- [ ] **La app tiene que atender `ya_suscrito`** — `suscripcion.jsx` solo mira `data.url`, así que a quien ya tiene suscripción le dice «No se pudo iniciar el pago». Desde el 11 de septiembre `/stripe/checkout` ya no devuelve ahí la URL del portal (la daba a quien supiera el uid de otro, que es un UUID y no un secreto): para gestionarla se llama a `/stripe/portal` **con el token de sesión de Supabase**, que es lo que prueba quién eres. Hoy no se nota porque el cobro va en modo demo
+- [ ] **Poner `SELLO_SECRETO` en Render** — desde el 11 de septiembre `/pauta/firmar` devuelve 503 sin ella, a propósito: el sello de una pauta firmada es HMAC y sin clave no probaría quién firmó. Cualquier cadena larga y aleatoria vale, y **no se cambia nunca** (cambiarla invalida los sellos ya emitidos). `/verificar` dice si está puesta
 - [ ] Verificar el negocio en Stripe, crear productos/precios/webhook reales, quitar `STRIPE_PRUEBA`, primer cobro real
 - [ ] Páginas legales que no existen (privacidad, condiciones, reembolso)
 

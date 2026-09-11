@@ -101,7 +101,7 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 50 bloques, ~10 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `pruebas_completas.py` | **La batería.** Los 51 bloques, ~10 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
 | `auditar_patologias.py` | Cada cifra de `patologias.json` contra `requerimientos_v2_final.json`: que ninguna patología formulable tenga un tope por debajo del mínimo de FEDIAF, y que la clave del nutriente exista en el `MAPA`. Lo ejecuta el BLOQUE 32 |
 | `radiografia.py` | Imprime los números que **ENTRAN** al motor, para comparar `main` con una rama a golpe de `diff`. No lo ejecuta la batería: se corre a mano. Existe porque el semáforo comprueba el menú contra las kcal que le dieron — si las kcal ya venían mal, el menú sale VERDE para un perro que no es el tuyo, y eso solo se ve en la entrada |
 | `auditar_catalogo.py` | Huecos y datos raros del catálogo, y quién se queda sin aminograma. Lo ejecuta el BLOQUE 19 |
@@ -140,13 +140,71 @@ firma necesita poder afirmar lo segundo.
 `/der`, `/transicion` y `/perro/{perro_id}/menus`. Se dejan a propósito: no
 duplican nada, son funciones que existen y que la app puede volver a usar.
 Pero nadie los prueba usando la app, así que si algo se rompe ahí solo lo
-ve la batería.
+ve la batería. **Y se rompen de verdad**: `/der` llevaba desde el 28 de
+agosto devolviendo 500 en TODAS las llamadas — se le pasaba un
+`peso_objetivo_kg=` que `calcular_der()` no tiene — y no lo vio nadie en
+dos semanas, porque la app calcula el DER por su cuenta y el BLOQUE 23
+prueba la función por dentro, nunca la puerta. Arreglado el 11 de
+septiembre, y ahora el BLOQUE 51 llama al endpoint.
 `/perro/{perro_id}/menus` **era el único agujero de la regla 1** hasta el 7
 de septiembre, y no por descuido: la tabla `menus` guardaba nombre, gramos
 y kcal, así que un menú guardado no se podía verificar ni en principio.
 Ahora `guardar_menu` escribe el contexto (etapa, DER, pesos, patologías)
 junto al menú y el endpoint lo verifica al leerlo — o dice que no puede,
 si es una fila anterior a ese cambio. Lo vigila el BLOQUE 47.
+**Y desde el 11 de septiembre pide credencial**: era un GET con el id del
+perro en la dirección y nada más, y los ids van 1, 2, 3 — contarlos hacia
+arriba enseñaba el historial de comida de los perros de todo el mundo. La
+regla 1 mira que el MENÚ cumpla, no que sea tuyo; eso son dos preguntas.
+
+### Las puertas: quién puede pedir qué
+
+Escrito el 11 de septiembre, porque hasta ese día no había ninguna y los
+50 bloques de la batería vigilaban qué SALE, nunca quién PIDE. Seis
+agujeros, ninguno de ellos daba error ni se veía en pantalla, y los cuatro
+primeros llegaban a datos de otra persona. Lo vigila entero el BLOQUE 51.
+
+1. **La consulta a Stripe se montaba con un f-string.** Una comilla simple
+   dentro del `user_id` — que llega en el cuerpo de `/stripe/checkout`, que
+   no autentica a nadie — la convertía en la consulta que quisiera quien
+   llamara, y devolvía las suscripciones de otra gente. Ahora ese campo
+   pasa por `_user_id_limpio()`, y sin id válido **no se hace la consulta**.
+2. **`/stripe/portal` abría el portal del `stripe_customer_id` que le
+   mandaran.** Un identificador no es una credencial, que es exactamente lo
+   que ya estaba escrito el 29 de agosto en `_es_profesional_acreditado` y
+   este endpoint no seguía. Ahora pide el token de sesión y el cliente sale
+   de la suscripción de ESE uid. `/stripe/checkout` tampoco devuelve ya una
+   URL de portal: sabiendo el uid de otro — un UUID, que no es secreto —
+   daba la puerta a su facturación.
+3. **El token de sesión se iba entero a Sentry.** `observabilidad.py`
+   comparaba nombres de clave EXACTOS, su lista decía `token`, y el campo
+   se llama `token_usuario`. Ahora se compara por trozo y además se tacha
+   por FORMA (`_JWT`, y los prefijos `sb_secret_` / `sk_live_` / `whsec_`),
+   porque Sentry adjunta las variables locales y ahí el token viaja dentro
+   de un texto donde ninguna limpieza por nombre puede verlo.
+4. **El sello de una pauta firmada era un SHA-256 sin clave**, o sea una
+   receta pública: se cambiaba el menú y el número de colegiado, se
+   recalculaba, y `/pauta/comprobar` decía «es exactamente el que se
+   firmó». Ahora es HMAC con `SELLO_SECRETO`, **y sin esa variable no se
+   firma** (503). `/pauta/comprobar` sigue reconociendo los sellos
+   anteriores, pero los llama por su nombre y dice que hay que volver a
+   firmar.
+5. **El CORS estaba en `*`** con el comentario «en produccion, poner aqui
+   el dominio real» puesto desde el primer día. Hoy no daba acceso a la
+   cuenta de nadie — para eso hace falta el token —, pero deja de ser
+   inofensivo en cuanto un endpoint se fíe de una cookie, y ese día nadie
+   iba a volver aquí.
+6. **`/der` cogía el índice de actividad sin mirarlo.** Un `-1` no
+   revienta: en Python cuenta desde el final y elige «trabajo», el que más
+   kcal da. De ese DER salen las kcal del menú y el semáforo verifica
+   CONTRA ESE DER, así que sale verde — es la familia de fallo de
+   `radiografia.py`.
+
+**Lo que sigue sin puerta, y es a propósito**: `/menu/v2`, `/analizar`,
+`/alimentos` y los demás del motor. No dan acceso a datos de nadie: se les
+manda un perro y devuelven un menú. Y el premium lo sigue tapando el
+frontend, que es un `blur` de CSS. Ver `VETERINARIOS.md` §10 para lo que
+queda y por qué la fase 4 no se despliega sin ello.
 
 `POST /menu` **ya no existe** (26 de agosto). Era el motor anterior al MILP
 y arrastraba su propia tabla de patologías, desincronizada de la buena:
@@ -304,8 +362,10 @@ se comprueba entero en cada batería.
 python3 pruebas_completas.py     # ~10 min, tiene que salir TODO EN VERDE
 ```
 
-Los 50 bloques tardan unos **10 minutos** (559 s, 590 s y 593 s en las
-tres últimas medidas apuntadas en los commits; el «~2 min» que ponía aquí
+Los 51 bloques tardan unos **10 minutos** (559 s, 590 s y 593 s en las
+tres medidas anteriores apuntadas en los commits; 942 s el 11 de
+septiembre, pero en un contenedor de los lentos — la cifra no es
+comparable con las otras tres, que salieron de otra máquina; el «~2 min» que ponía aquí
 llevaba meses caducado). No necesita red ni claves de verdad: se fabrica
 su propio Stripe y su propio Supabase de mentira, así que corre igual en
 cualquier máquina y sin conexión.
@@ -404,6 +464,7 @@ Contra eso hay tres cosas, y las tres hay que mantenerlas:
 | `STRIPE_PRICE_MENSUAL` / `_ANUAL` | Precios de prueba. Sin ellas, los de producción |
 | `SUPABASE_URL` / `SUPABASE_SERVICE_KEY` | Activar el premium. Hace falta la **secreta**, no la pública |
 | `STRIPE_PRUEBA` / `SENTRY_PRUEBA` | Endpoints de prueba. Se borran al terminar |
+| `SELLO_SECRETO` | La clave con la que se sellan las pautas firmadas. **Sin ella `/pauta/firmar` devuelve 503 a propósito**: un sello sin clave lo recalcula cualquiera y no prueba quién firmó. `/verificar` dice si está puesta |
 
 ## Trampas conocidas
 

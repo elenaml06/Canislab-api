@@ -19,6 +19,13 @@ def crear_tablas(ruta_db=RUTA_DB):
     cur.executescript("""
     CREATE TABLE IF NOT EXISTS perros (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
+        -- ⚠️ AÑADIDA EL 11 DE SEPTIEMBRE. De quién es este perro: el uid de
+        -- Supabase de su dueño. Sin esta columna no había forma NI EN
+        -- PRINCIPIO de saber si quien pide los menús de un perro tiene algo
+        -- que ver con él -- y `/perro/{id}/menus` los servía a quien los
+        -- pidiera, con ids que van 1, 2, 3. Es el mismo agujero que tenía
+        -- la columna `contexto`: no faltaba código, faltaba el dato.
+        usuario_id TEXT,
         nombre TEXT NOT NULL,
         sexo TEXT,
         raza TEXT,
@@ -75,6 +82,10 @@ def crear_tablas(ruta_db=RUTA_DB):
     cur.execute("PRAGMA table_info(menus)")
     if "contexto" not in {fila[1] for fila in cur.fetchall()}:
         cur.execute("ALTER TABLE menus ADD COLUMN contexto TEXT")
+    # Misma migración a mano, y por lo mismo, para el dueño del perro.
+    cur.execute("PRAGMA table_info(perros)")
+    if "usuario_id" not in {fila[1] for fila in cur.fetchall()}:
+        cur.execute("ALTER TABLE perros ADD COLUMN usuario_id TEXT")
     con.commit()
     con.close()
 
@@ -83,11 +94,13 @@ def guardar_perro(datos: dict, ruta_db=RUTA_DB) -> int:
     con = sqlite3.connect(ruta_db)
     cur = con.cursor()
     cur.execute("""
-        INSERT INTO perros (nombre, sexo, raza, tamano, peso_adulto_esperado_kg,
+        INSERT INTO perros (usuario_id, nombre, sexo, raza, tamano,
+                             peso_adulto_esperado_kg,
                              fecha_nacimiento, esterilizado, actividad,
                              especies_excluidas, patologias)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
+        datos.get("usuario_id"),
         datos["nombre"], datos.get("sexo"), datos.get("raza"), datos.get("tamano"),
         datos.get("peso_adulto_esperado_kg"), datos.get("fecha_nacimiento"),
         int(datos.get("esterilizado", False)), datos.get("actividad"),
@@ -98,6 +111,22 @@ def guardar_perro(datos: dict, ruta_db=RUTA_DB) -> int:
     con.commit()
     con.close()
     return perro_id
+
+
+def dueno_de(perro_id: int, ruta_db=RUTA_DB):
+    """El uid de Supabase del dueño de este perro. None si no consta.
+
+    ⚠️ None NO ES "PUES QUE PASE". Es "no se sabe de quién es", y de lo que
+    no se sabe de quién es no se entregan los menús -- ver
+    `endpoint_obtener_menus` en main.py. Las filas guardadas antes del 11
+    de septiembre caen todas aquí, y es lo correcto: preferimos que su
+    dueño tenga que volver a guardarlas a servírselas a cualquiera."""
+    con = sqlite3.connect(ruta_db)
+    cur = con.cursor()
+    cur.execute("SELECT usuario_id FROM perros WHERE id=?", (perro_id,))
+    fila = cur.fetchone()
+    con.close()
+    return (fila[0] or None) if fila else None
 
 
 def registrar_peso(perro_id: int, peso_kg: float, condicion_corporal: str = None,
