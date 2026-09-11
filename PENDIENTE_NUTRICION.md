@@ -1705,6 +1705,85 @@ sirve para lo que ese suelo quiere conseguir.
 
 ---
 
+## 🔴 La densidad con la que convertimos las cifras de SACN5 no es la de nuestra comida
+
+**11 de septiembre de 2026.** Elena, al no cuadrarle que el suelo de vitamina E
+fuera diez veces el mínimo de FEDIAF: «mira a ver bien, Fediaf, y si la
+conversión la estamos haciendo bien, y luego mira bien NRC».
+
+**Las dos conversiones están bien, y la diferencia de diez veces es real** — la
+propia SACN5 dice que pide «much higher than the requirement». Pero al
+comprobarlo salió otra cosa, y es de las gordas.
+
+### El puente
+
+Las cifras de SACN5 vienen en **porcentaje de materia seca** y el motor trabaja
+**por 1000 kcal**. Para cruzar hace falta saber cuántas kcal tiene un gramo de
+materia seca, y ahí usamos **4,0** en las 94 cifras.
+
+- **SACN5 dice que sus valores caninos están hechos a 3,5**, no a 4,0. Literal
+  (Box 1-2): «recommended nutrient values for canine and feline foods are based
+  on an energy den-sity of 3.5 and 4.0 kcal ME/g (14.64 and 16.74 kJ ME/g) of
+  food dry matter, respectively». El 4,0 es el del **gato**.
+- Y lo que de verdad importa: **la densidad de NUESTRA comida no es ninguna de
+  las dos**.
+
+### Medido sobre los 216 menús del catálogo
+
+| | kcal por gramo de materia seca |
+|---|---|
+| Nuestros menús, mínimo | 3,94 |
+| Nuestros menús, **mediana** | **4,88** |
+| Nuestros menús, máximo | 6,01 |
+| Referencia de SACN5 para el perro | 3,50 |
+| La que usamos | 4,00 |
+
+Una ración BARF es densa porque **casi no lleva hidratos**: su materia seca es
+proteína y grasa. Un pienso lleva 40-60 % de hidratos en materia seca y eso
+diluye. Por eso la referencia del libro es baja y la nuestra no.
+
+⚠️ La materia seca está **estimada** (proteína + grasa + fibra + ceniza deducida
+de los minerales), porque ninguna ficha tiene la humedad. Es indicativo, no
+exacto.
+
+### Qué significa, y la dirección importa
+
+Usar una densidad **más baja** que la real infla la cifra por 1000 kcal. En un
+**techo** eso lo afloja; en un **suelo**, lo aprieta.
+
+| | Aplicamos | La fuente, para nuestra comida | |
+|---|---|---|---|
+| Vitamina E, suelo del perro sano | 67,1 | 55,0 | 22 % más estricto |
+| Fósforo, techo del adulto sano | 2.000 | 1.639 | 22 % más laxo |
+| Sodio, techo del adulto sano | 1.000 | 820 | 22 % más laxo |
+| Calcio, techo del cachorro de raza grande | 2.750 | 2.254 | 22 % más laxo |
+
+- **57 techos de SACN5 están ~22 % más flojos de lo que la fuente quiere.** Ésa
+  es la dirección que importa: un techo flojo deja pasar lo que debería parar.
+- **37 suelos están ~22 % más apretados.** Lado seguro, pero es lo que está
+  dejando sin menú al perro pequeño con el suelo de vitamina E encendido.
+
+### Lo que NO se ha hecho, y por qué
+
+**No se ha cambiado el 4,0 por el 3,5.** Habría movido 94 cifras en la dirección
+equivocada: 3,5 está aún más lejos de nuestra comida que 4,0.
+
+**Tampoco se ha puesto el 4,88**, porque es una estimación y 94 cifras no se
+mueven sobre una estimación.
+
+### Lo que hace falta
+
+**La humedad de cada ficha**, que lleva pendiente desde el 9 de septiembre y
+ahora tiene un segundo motivo. Con ella la materia seca sale exacta y la
+conversión se hace como manda la propia fuente: con la densidad real del
+alimento, no con una de referencia. SACN5 trae hasta la tabla de cómo hacerlo
+(Box 1-2, «How to convert to the same energy density», multiplicador
+`densidad_del_alimento / densidad_del_requisito`), y FEDIAF dice lo mismo:
+«should be corrected for energy density».
+
+Es dato, no código. Y hasta que esté, cualquier discusión sobre si una cifra de
+SACN5 «cabe» está discutiendo un número que no es el de la fuente.
+
 ## Lo que dejó cerrar SACN5 entera, el 11 de septiembre
 
 Las 474 tablas y los 2.999 elementos de texto quedan con veredicto, los dos
