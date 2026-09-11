@@ -1,7 +1,7 @@
 # Rawku — lo que queda por hacer (índice)
 
 Lista viva. Se actualiza al terminar cada cosa, no al final.
-Última revisión: 10 de septiembre de 2026.
+Última revisión: 11 de septiembre de 2026.
 
 **Desde el 6 de septiembre esto es solo el índice.** Cada punto vive en uno
 de cuatro archivos, por tema — ábrelos según lo que toque la tarea, no
@@ -72,6 +72,9 @@ que tomar una persona, no yo.
 
 ## `PENDIENTE_PRODUCTO.md` — funcionalidades nuevas y deuda técnica
 
+- [ ] 🔴 **El aviso del estreñimiento crónico cuenta media verdad** (11 sep, cap.64): dice que la comida cruda juega a favor por el agua —cierto— y no nombra el hueso. El capítulo dice DOS VECES que las dietas de hueso y carne cruda causan estreñimiento y obstipación «due to the large contribution bones make to such foods», y la regla de forma del motor pide 20-60 % de hueso. Es el aviso que recibe justo el perro que consulta por eso
+- [ ] **El hueso, cuarto daño documentado** (11 sep, cap.50): **46 de 60 cuerpos extraños esofágicos** retirados a perros eran hueso. Se suma a las fracturas dentales, los patógenos y la diarrea aguda
+- [ ] **El páncreas CRUDO es tratamiento de la EPI y no está en el catálogo** (11 sep, cap.66): la fuente lo recomienda con dosis (30-90 g) y es de las poquísimas cosas del libro que SOLO puede hacer una dieta cruda. Ninguna de las 163 fichas es páncreas. Son dos decisiones: si entra la ficha, y si el aviso lo nombra aunque no entre
 - [x] **Los tres ficheros de cifras, con su conversión rehecha** — HECHO 10 sep. Los doce techos del libro y los cuatro requisitos condicionales (donde están **las dos conversiones a la vez**: la vitamina E del perro de trabajo, «≥500 IU/kg MS» a mg de tocoferol natural, que es el fallo del 8 sep exacto). En cada batería se rehacen 92 + 12 + 4. Detalle: `recomendaciones_libro.json` tenía la cuenta contada en prosa dentro de `por_que`, igual que tenían las 88 de patología antes del ×25. Ahora `auditar_conversiones.py` las rehace (12 de 12 exactas) y el BLOQUE 72 las mira. Deciden el techo de calcio del cachorro de raza grande y el **único** techo de fósforo que hay en crecimiento
 - [x] **El perro pequeño con patología ya no se queda sin menú por el reloj** — HECHO 10 sep: la API reintentaba hasta dos veces cada peldaño que HiGHS ya había demostrado imposible (status 2), y reintentar eso no puede cambiar nada porque el ruido del motor va en el OBJETIVO. Chihuahua de 3 kg con renal: **23,6 s y 16 llamadas → 9,3 s y 6**, mismo menú y mismo peldaño; y dos cruces del BLOQUE 50 pasan a dar menú. BLOQUE 76 y `HECHO.md`
 - [ ] **¿Se borra lo muerto de `motor/modos.py`?** Son 190 líneas de las que el motor usa **un diccionario** (`CUANTOS_MAX`): `elegir_alimentos`, `cambiar`, `quitar` y `anadir` no los llama nadie. No es urgente, pero código muerto que parece vivo ya costó un diagnóstico equivocado el 10 sep (`HECHO.md`)
@@ -100,6 +103,9 @@ que tomar una persona, no yo.
 
 ## `PENDIENTE_NUTRICION.md` — auditado contra el PDF oficial
 
+- [ ] ⚠️ **El TECHO de hierro de la hepatopatía** (11 sep, caps.50-70 de SACN5): la Tabla 68-8 da un rango, «80 to 140 mg/kg», y el motor aplica solo el suelo (20 mg/1000 kcal). El extremo alto tiene mecanismo escrito —el hierro se acumula en el hígado y cataliza la peroxidación— y para el potasio de la enteropatía se tomó la decisión CONTRARIA, aplicando el techo. **Medido: el techo de 35 lo cruzan 3 de los 216 menús (1,4 %), los tres de crecimiento o gestación**; en adulto, ninguno
+- [ ] **La dosis de omega-3 de la enteropatía crónica** (11 sep): 175 mg/kg/día, rango 50-300. Es del TEXTO del cap.57 y no de su tabla, que es por lo que no la encontró el trabajo de transcribir tablas. La propia fuente dice que no hay ensayo en perro, así que su sitio es `limites_escritos_que_el_solver_no_aplica` — y hoy no está escrita en ninguna parte
+- [ ] **La B12 le falta al aviso de la insuficiencia pancreática** (11 sep): el de `enteropatia_cronica` sí la lleva; la EPI tiene la cifra más alta de las dos (82 % de los perros) y no la menciona
 - [ ] **La forma química de las vitaminas B, ficha por ficha** (Tabla VII-14 de FEDIAF). Medido: con el peor factor de la tabla el ácido pantoténico caería POR DEBAJO del mínimo de FEDIAF con el menú en verde, y la tiamina aguanta por un 2 %. Las conversiones de UI sí están comprobadas (BLOQUE 70)
 - [ ] **La lactosa del «Yogur griego»**: SACN5 da el umbral (1 g/kg de peso) y el catálogo no tiene el dato. 0 de 216 menús lo usan hoy, pero Extras va siempre libre
 - [x] Contrastar con la ficha original de USDA — RESUELTO 7 sep: testículos de cordero ya no existe en el catálogo, timo de ternera ya cita FDC 170194 directo, y el acceso a USDA (`DEMO_KEY`) sí funciona (usado para el linoleico de abajo)

@@ -1323,3 +1323,95 @@ uno de 10, 1 kg para uno de 40. Los perros pequeños son los que quedan cerca.
 2. Decidir si es un **tope de seguridad más** (como el mercurio del atún, que
    también se mide por peso del perro) o solo un **aviso**. Es criterio, no
    aritmética: el mercurio se acumula y una diarrea no.
+
+---
+
+## Lo que dejó la relectura íntegra de SACN5, caps. 50 al 70 (11 de septiembre de 2026)
+
+De leer enteros los capítulos de digestivo, hígado y farmacología. **El cotejo
+tabla por tabla salió limpio**: las Tablas 57-1, 58-1, 60-1, 62-1, 63-3, 64-2,
+65-1, 66-1 y 67-3 están aplicadas enteras en sus ocho patologías digestivas, y
+la 68-8 en seis de sus diez filas. Lo que queda son estos tres puntos. Ninguno
+está aplicado; los tres son decisión tuya.
+
+### 1 · El TECHO de hierro de la hepatopatía, que hoy solo usa el suelo
+
+`hepatopatia` aplica `hierro` como **suelo** de 20 mg/1000 kcal, tomando el
+extremo bajo de la Tabla 68-8 («*Iron (mg/kg) 80 to 140*»). El extremo alto no
+se aplica, y **no es el borde de un rango cualquiera: es un techo con mecanismo
+escrito**. El capítulo lo desarrolla en su propia sección:
+
+> *«Iron is a potent catalyst of oxidative processes (Fenton reaction) and
+> iron-associated hepatic injury may involve lipid peroxidation of membranes and
+> damage to organelles»*
+
+> *«Iron levels of 80 to 140 mg/kg DM meet the dietary allowance without
+> providing excessive intake. This range is recommended for patients with liver
+> disease»*
+
+Y remata con *«Injectable or oral supplements containing iron should be avoided
+in these patients»*.
+
+**Por qué llama la atención:** para el potasio de la enteropatía crónica se tomó
+la decisión **contraria** y está escrita — la Tabla 57-1 daba «0.8 to 1.1 %» y
+se aplicó el **techo**, con el motivo de que el riesgo es el exceso. Aquí el
+riesgo que la fuente describe también es el exceso (acumulación hepática) y se
+aplicó el suelo.
+
+**MEDIDO** sobre los 216 menús del catálogo regenerado, recalculando el hierro
+de cada menú guardado con `valor_nutriente` y dividiendo por su DER:
+
+| | mg de hierro / 1000 kcal |
+|---|---|
+| mínimo | 18,4 |
+| mediana | 25,6 |
+| máximo | 37,4 |
+| por encima del techo de 35 | **3 de 216 (1,4 %)** |
+
+Los tres que se pasan son `Gigante_GestanteTardia` (37,4),
+`Mini_CachorroCrecimiento#3` (36,8) y `Toy_CachorroJoven` (35,4) — **los tres de
+crecimiento o gestación**, que es donde sube el mínimo de hierro. En adulto no
+se pasa ninguno. `hepatopatia` es además `formulable: false` y
+`formulable_por_profesional: true`, así que solo entra por la puerta del
+veterinario. La ventana quedaría en **20-35** y el margen del profesional en
+10,4 (mínimo FEDIAF) a 35. El máximo de FEDIAF, 170,45, queda muy por encima.
+
+**Decisión:** aplicarlo o dejarlo escrito sin aplicar. Cabe holgado.
+
+### 2 · La dosis de omega-3 de la enteropatía crónica, que es del TEXTO y no de la tabla
+
+El cap.57 la da y la Tabla 57-1 no, que es justo por lo que no la encontró el
+trabajo de transcribir tablas:
+
+> *«A reasonable starting dose estimated from human and animal trials is
+> approximately 175 mg (range 50 to 300 mg) omega-3 fatty acids/kg body
+> weight/day»*
+
+Para un perro de 22 kg son 3,85 g de omega-3 al día. **No está en
+`patologias.json` ni en su bloque de límites escritos sin aplicar.**
+
+⚠️ Y el propio capítulo dice por qué no se puede aplicar tal cual: *«To date,
+there are no published therapeutic trials investigating the efficacy of omega-3
+fatty acid supplementation in dogs or cats with IBD»* y *«there is no
+well-established effective dose for dogs and cats»*. Es el mismo caso que el
+omega-3 del cáncer y el de la artrosis, que ya viven en
+`limites_escritos_que_el_solver_no_aplica` con su medida. **Su sitio es ese**, y
+hoy no está escrito en ninguna parte. El hueco es de registro, no de motor.
+
+### 3 · La B12 de la insuficiencia pancreática exocrina
+
+El aviso de `enteropatia_cronica` lleva la advertencia de la vitamina B12 con su
+pauta. El de `insuficiencia_pancreatica_exocrina` **no la lleva**, teniendo la
+cifra más alta de las dos:
+
+> *«Reports have identified cobalamin deficiency in 82% of dogs»*
+
+y, en la misma frase tras la cita del estudio, 60 % de los gatos. Además:
+*«Cobalamin deficiency has been associated with poor outcomes in canine EPI»*.
+No es un número del motor: es una frase que le falta a un aviso.
+
+### Y una que ya tenía dueño
+
+La **lactosa** salió otra vez al releer el cap.55, y ya está recogida más arriba
+en este mismo fichero, en la sección «La lactosa del yogur griego…», con la
+cuenta hecha y los dos pasos que faltan. No se duplica.

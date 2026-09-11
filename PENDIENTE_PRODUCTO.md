@@ -692,3 +692,100 @@ Mientras no se construyan, las once patologías afectadas están declaradas con 
 pregunta en `SIN_LA_PREGUNTA_QUE_DECIDE_LA_CIFRA`
 (`tests/patologias-app-y-motor.spec.js`, en `canislab-web`), y esa lista **solo
 puede encoger**.
+
+---
+
+## El hueso: cuarto daño documentado, y un aviso del motor que cuenta media verdad (11 de septiembre de 2026)
+
+De leer enteros los capítulos 50 al 70 de SACN5. Los tres primeros daños ya
+estaban escritos —las fracturas dentales del cap.19, los patógenos del cap.11 y
+la carne cruda como causa de diarrea aguda del cap.55—. Salen dos más, y el
+primero **contradice a medias una frase que el motor le dice hoy al dueño**.
+
+### 1 · ⚠️ El aviso del estreñimiento crónico dice que el crudo juega a favor, y no nombra el hueso
+
+El aviso `general` de `estrenimiento_cronico` dice hoy, en resumen, que la
+comida cruda ya juega a favor porque lleva mucha más agua que un pienso. **La
+parte del agua es cierta** y está en la Tabla 64-2, que pide agua >75 %.
+
+Pero el cap.64 dice **dos veces**, en dos sitios distintos del capítulo, lo
+contrario sobre la otra mitad de la ración:
+
+> *«In addition, consumption of bones and raw foods has been associated with
+> constipation and obstipation in dogs»*
+
+> *«Constipation and obstipation have been reported to occur in dogs consuming
+> bones and raw food diets due to the large contribution bones make to such
+> foods»*
+
+La causa que nombra la fuente —**la cantidad de hueso**— es exactamente lo que
+este motor pone en todos los menús: la regla de forma pide **20-60 % de hueso
+carnoso**, y es la fuente de calcio del BARF.
+
+O sea que un perro que consulta **precisamente por estreñimiento crónico**
+recibe un aviso que le dice que su dieta juega a favor, sin nombrarle lo único
+que la fuente señala como causa.
+
+**No lo he cambiado yo**: es texto que va al dueño sobre tu producto, y la regla
+del proyecto es que eso no se decide en silencio. Pero no es una preferencia de
+producto: es una frase del motor que la fuente contradice a medias.
+
+**Dos cosas más del mismo capítulo, que el aviso tampoco dice:**
+- El tipo de fibra importa y el motor no puede expresarlo: *«Fiber sources should
+  be insoluble or mixed. Increased levels of soluble fiber are not recommended»*,
+  y la soluble no debe pasar del 5 % del alimento porque *«soluble fibers can
+  significantly reduce the availability of minerals, including zinc, calcium,
+  iron and phosphorus»*. El motor sube la **fibra bruta** sin distinguir tipo,
+  porque el catálogo no lo trae.
+- En el **megacolon** —estreñimiento sin motilidad ninguna— la fibra **empeora**:
+  *«fiber-enhanced foods and fiber supplements are no longer effective stimulants
+  of colonic motility and, worse, can contribute to obstipation»*, y la Tabla
+  64-2 pide ≤5 % MS. El motor tiene **una sola** patología de estreñimiento y le
+  sube la fibra siempre. Distinguir los dos cuadros es diagnóstico veterinario,
+  no de ficha; lo que sí cabe es decirlo.
+
+### 2 · El hueso como cuerpo extraño esofágico, con la cifra más dura de las cuatro
+
+Cap.50, sobre cuerpos extraños del esófago en el perro:
+
+> *«In a recent retrospective review, 46 of 60 esophageal foreign bodies removed
+> from dogs were bones»*
+
+Setenta y siete de cada cien. Y el capítulo manda preguntar en la anamnesis por
+exactamente lo que este motor formula: *«Owners of pets presenting for suspected
+pharyngeal and esophageal disorders should be asked about feeding dental chew
+treats»* y, tras la cita del estudio que va en medio, *«bones or bone and raw
+food diets, which can result in esophageal foreign bodies»*.
+
+Va al mismo sitio que los otros tres: es un **aviso**, no un nutriente. La
+decisión de si Rawku lo dice, y dónde, sigue siendo tuya — ahora con cuatro
+daños distintos medidos en vez de tres.
+
+---
+
+## El páncreas CRUDO es tratamiento de la EPI, y no está en el catálogo (11 de septiembre de 2026)
+
+Del cap.66. El tratamiento de la insuficiencia pancreática exocrina es la enzima
+pancreática en polvo, y eso el aviso ya lo dice. Lo que no dice es que la fuente
+ofrece una alternativa **con dosis** que solo puede dar una dieta cruda:
+
+> *«If available, raw bovine, porcine or ovine pancreas can be effective»*
+
+> *«Dogs should receive 30 to 90 g (1 to 3 oz.) of freshly thawed, chopped
+> pancreas»*
+
+> *«Raw pancreas can be frozen in individual doses for several months without
+> losing enzyme activity»*
+
+Y cuando el polvo irrita la boca —efecto adverso que el propio capítulo
+describe—, la salida que da es esa misma: *«If not, feeding raw pancreas should
+be considered»*.
+
+**Comprobado contra el catálogo: no hay ninguna ficha de páncreas** (163
+revisadas). Es de las poquísimas veces en todo el libro en que la fuente
+recomienda algo que **solo** puede hacer una dieta cruda, y hoy Rawku ni lo
+ofrece ni lo menciona.
+
+**Decisión, y son dos:** si entra una ficha de páncreas en el catálogo —con el
+trabajo de datos que eso lleva— y si el aviso de la EPI lo nombra aunque la
+ficha no exista. Lo segundo no depende de lo primero.
