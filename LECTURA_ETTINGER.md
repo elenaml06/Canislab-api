@@ -186,3 +186,130 @@ a descubrirla.
   carbohidratos o fibra.» Confirma por qué la fila «Fibra» de
   `requerimientos_v2_final.json` está con los seis campos a «-» y solo existe para
   que una patología pueda ponerle un suelo.
+
+---
+
+## Cap. 192 — Dietas no convencionales: caseras, vegetarianas y crudas · LEÍDO ENTERO
+### (Sally C. Perea y Sean J. Delaney)
+
+**Este es EL capítulo.** Habla literalmente de lo que hace Rawku, y hay que
+leerlo entero y sin filtrarlo, porque en su mayor parte es una **crítica** de las
+dietas caseras y crudas. Eso no lo invalida: lo hace más útil, porque describe
+con precisión el modo de fallo que este motor existe para evitar.
+
+### Lo que dice de las dietas caseras, y es duro
+
+Los estudios que cita, con sus números:
+
+| Estudio | Qué encontró |
+|---|---|
+| 85 dietas caseras publicadas (49 mantenimiento, 36 crecimiento) | **86 %** con minerales inadecuados · **62 %** con vitaminas · **55 %** con proteína o aminoácidos |
+| 5 dietas crudas (2 comerciales, 3 caseras) | **todas** con algún nutriente esencial por debajo del mínimo de AAFCO. Las 3 caseras con Ca:P mal equilibrado, 2 con exceso de vitamina D y 1 con exceso de vitamina E |
+| 200 recetas de libros, manuales y webs | **95 %** con al menos un nutriente esencial fuera de NRC/AAFCO · **83,5 %** con varios · **92 %** con instrucciones vagas · **89,5 %** sin instrucciones de cómo darlo |
+
+Y nombra **cuáles fallan más**: «cinc, colina, cobre, EPA+DHA, Ca, vitamina D y
+vitamina E». Nueve de esas 200 recetas **pasaban el límite máximo seguro de
+vitamina D** y seis el de EPA+DHA.
+
+### ⚠️ El motor contra esa lista, medido
+
+Es la prueba que este capítulo pide a gritos: si esas siete son las que fallan,
+¿qué hace el nuestro? Medido sobre menús resueltos de verdad, en % del mínimo de
+FEDIAF **ya escalado**:
+
+| Perro | cinc | colina | cobre | EPA+DHA | calcio | vit D | vit E |
+|---|---|---|---|---|---|---|---|
+| toy 3 kg | 108 % | 173 % | 107 % | 641 % | 181 % | 327 % | 165 % |
+| adulto 10 kg | 106 % | 132 % | 150 % | 680 % | 142 % | 112 % | 214 % |
+| adulto 22 kg | 135 % | 136 % | 126 % | 586 % | 126 % | 105 % | 282 % |
+| adulto 40 kg | 125 % | 147 % | 104 % | 179 % | 167 % | 103 % | 250 % |
+| cachorro 10 kg | 149 % | 180 % | 126 % | 101 % | 174 % | 177 % | 872 % |
+
+**Las siete por encima del mínimo en los cinco menús.** El peor caso de cada una
+va del 101 % (EPA+DHA en el cachorro) al 165 % (vitamina E). Que varias vayan
+justas no es un defecto: el solver minimiza, así que se para donde el requisito
+se cumple.
+
+⚠️ **Y por eso importa que el motor mire también los MÁXIMOS.** Dos de los tres
+excesos que el capítulo denuncia —vitamina D y EPA+DHA— son justamente topes
+crónicos duros del solver, no avisos. El tercero, el Ca:P mal equilibrado, es una
+restricción simultánea desde el primer día.
+
+### Lo que sí se aplica, o se tiene que aplicar
+
+**1. El 10 % de los alimentos desequilibrados.** Cifra literal y directa:
+
+> «Los alimentos y premios desequilibrados no se deben proporcionar en más de un
+> **10 % de la ingesta calórica diaria total**. Cuando se agregan alimentos
+> desequilibrados a una dieta completa y equilibrada, se produce una dilución de
+> nutrientes, y los nutrientes esenciales pueden quedar por debajo de los
+> requerimientos mínimos.»
+
+Y el mecanismo, con dos ejemplos que son exactamente los nuestros: **la carne
+suelta desequilibra el Ca:P** porque lleva mucho fósforo, y **el hígado puede
+pasar el máximo de vitamina A**. La app no dice esto en ninguna parte, y es
+justo lo que hace un dueño que sigue el menú al gramo y luego da premios. **Esto
+hay que decirlo**, y se junta con el hallazgo del cap. 170: la ficha tampoco
+pregunta qué premios le da.
+
+**2. La proteína, al menos un tercio del volumen.** «En general, las proteínas
+han de constituir al menos un tercio del volumen de la dieta.» Es una proporción
+de una fuente publicada, que es lo que a las nuestras les falta (regla 3: las
+proporciones de BARF son criterio nuestro). **Medido: nuestros menús van del 88,5
+al 93,5 % del peso en fuentes de proteína**, o sea muy por encima. Se cumple con
+margen enorme, pero ahora la cifra tiene una fuente detrás.
+
+**3. La harina de huesos, y por qué nuestro calcio no es esa.**
+
+> «La harina de huesos generalmente se consigue con facilidad, pero **se ha
+> dejado de usar debido a la preocupación por la contaminación por plomo**.»
+
+El catálogo **no la tiene**: nuestras dos fichas de calcio son **cáscara de
+huevo**, que es carbonato cálcico, una de las formas que el propio capítulo
+acepta («carbonato de Ca, citrato de Ca o una combinación de Ca y P como CaP
+dibásico o tribásico»). Queda escrito para que nadie la proponga sin saber esto.
+
+**4. La sal yodada, y los sustitutos que no llevan yodo.** «Las sales se pueden
+usar en dietas caseras para proporcionar sodio, cloruro, potasio y yoduro,
+incluida la sal yodada común. **Los sustitutos de la sal (mezclas de cloruro de
+potasio) no proporcionan yodo.**» El catálogo tiene sal y dos fichas de yodo;
+esto confirma la elección y avisa del sustituto.
+
+**5. La colina y la metionina.** «Los niveles de metionina en la dieta por encima
+de los requerimientos necesarios pueden servir para satisfacer una parte del
+requerimiento de colina. Sin embargo, debido a que la metionina es un aminoácido
+limitante, especialmente en dietas bajas en proteínas, **generalmente se
+recomienda la suplementación de colina**.» El motor exige las dos por separado,
+que es lo conservador. Y enlaza con el pendiente de la ficha de L-metionina que
+la nutricionista pidió.
+
+**6. ⚠️ Y la que explica el hueco de la vitamina E suelta:**
+
+> «Debido a que la suplementación de una mayor cantidad de vitaminas y minerales
+> puede provocar el **exceso de otros nutrientes** más allá de los límites
+> seguros, puede ser necesario **suplementar de forma separada** los nutrientes
+> limitantes claves.»
+
+Es exactamente el problema del suelo de vitamina E: para llegar a 67,1 mg hay que
+meter más multivitamínico, y eso arrastra todo lo demás hacia sus topes. La
+fuente dice que la salida es un suplemento **suelto**, que es justo lo que falta
+en el catálogo. Ya no es una intuición nuestra: está escrito.
+
+### Lo que dice del CRUDO, y hay que decirlo entero
+
+El capítulo no recomienda el crudo. Nombra tres riesgos —bacterias patógenas,
+contaminación ambiental y obstrucción por huesos— y trae los casos: dos gatos con
+salmonelosis por carne cruda de vacuno, uno muerto; y un brote en un criadero de
+galgos donde **S. enterica salió en 88 de 133 muestras**, el 93 % de las fecales
+y el **75 % de la carne cruda**, y también del suelo, los comederos, el fregadero
+y las moscas. Cita la postura de la FDA: «La FDA no aboga por una dieta cruda de
+carne, de aves de corral o mariscos en mascotas».
+
+Y señala el riesgo para las personas: las mascotas que no enferman **excretan el
+patógeno igual**, con más riesgo para niños, mayores e inmunodeprimidos.
+
+**Qué se hace con esto.** No cambia ni una cifra del motor, porque no es
+nutrición: es manipulación. Pero **es información que quien usa la app tiene
+derecho a tener**, y hoy no se la damos. Va a `PENDIENTE_PRODUCTO.md` como
+decisión de Elena, no mía: qué se le cuenta al dueño sobre el riesgo bacteriano y
+sobre el manejo, y con qué palabras.
