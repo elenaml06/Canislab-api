@@ -88,6 +88,8 @@ crítica (`fracaso_renal_agudo`, `encefalopatia_hepatica`, `cancer_soporte`,
 `inmunosupresion`, `pancreatitis`) -- ver PENDIENTE_NUTRICION.md.
 """
 
+import math
+
 # =============================================================================
 # ADULTOS — base por actividad (kcal por kg de peso metabólico)
 # =============================================================================
@@ -528,8 +530,74 @@ def _coef_adulto(actividad, edad_grupo, convivencia, macho_entero, raza):
 # El propio perro da mejor informacion que la tabla: si con 5 meses ya pesa
 # 18 kg, va camino de mas de 26.
 #
-# % DEL PESO ADULTO POR EDAD Y TAMANO. Derivado de las curvas de crecimiento
-# tipo WALTHAM (Salt, German et al. 2017, PLOS ONE, >6 millones de perros).
+# ⚠️ 11 SEP: MANDA FEDIAF, Y HASTA HOY NO SE USABA SU ECUACION.
+# La Tabla VII-8a de FEDIAF publica esta misma curva como CINCO ECUACIONES,
+# validas «from weaning age (8 weeks) to 1 year», y aqui habia una tabla cuyo
+# propio comentario decia que venia de «reproducciones divulgativas» de las
+# curvas WALTHAM y NO del texto del estudio. Una fuente publicada gana a una
+# reproduccion divulgativa, que es la regla de siempre.
+#
+# ⚠️ CASO REAL ENCONTRADO, y va en la direccion mala: MEDIDO entre los 2 y los
+# 12 meses, en perros pequenos la diferencia iba de -1,5 a +3,2 puntos, pero en
+# los grandes la tabla vieja iba SISTEMATICAMENTE POR DEBAJO -- un cachorro de
+# mas de 47,5 kg de adulto, a los 6 meses, para FEDIAF va por el 57,0 % de su
+# peso adulto y la tabla vieja decia 45,0 %. Menos porcentaje supone un peso
+# adulto estimado MAYOR, que en la ecuacion de Klein sube el coeficiente: para
+# un cachorro de 30 kg a los 6 meses son 2479 kcal con la tabla vieja contra
+# 2271 con la de FEDIAF, un 9 % DE MAS, justo en la poblacion en la que la
+# propia FEDIAF avisa de que sobrealimentar «can result in skeletal deformities
+# especially in large and giant breeds».
+#
+# ⚠️ Y ESTA TABLA HAY QUE LEERLA DEL PDF, NO DEL TEXTO EXTRAIDO. Las cinco
+# bandas y las cinco ecuaciones salen en dos columnas cruzadas y el orden NO es
+# el que parece: la banda >15-27,5 lleva -60,70 y la >27,5-47,5 lleva -56,18, o
+# sea que el termino independiente NO es monotono y emparejarlas «de menor a
+# mayor» las cruza. Las cinco parejas de abajo estan leidas del PDF por
+# coordenadas (pagina 56, y=345 a y=405).
+#
+# FEDIAF 2025, Tabla VII-8a:
+#     % del peso adulto esperado = a x Ln(edad en semanas) - b
+CURVA_FEDIAF_VII_8A = (
+    #  peso adulto esperado hasta (kg),    a,       b
+    (7.0,                                36.92,   43.57),
+    (15.0,                               36.86,   48.22),
+    (27.5,                               39.88,   60.70),
+    (47.5,                               36.96,   56.18),
+    (float("inf"),                       36.61,   62.39),
+)
+
+# La ecuacion de FEDIAF vale de las 8 semanas al ano, y ella misma lo dice. Por
+# encima del ano sigue subiendo y pasa del 100 %, asi que ahi NO se usa: se
+# vuelve a la tabla de abajo, que es la unica que tiene el tramo de los 12 a los
+# 24 meses (el del gigante, que a los 12 meses todavia no ha terminado).
+CURVA_FEDIAF_MESES_MIN = 2.0     # 8 semanas = 1,84 meses; se redondea al primer
+CURVA_FEDIAF_MESES_MAX = 12.0    # escalon que la tabla de respaldo ya tenia
+
+SEMANAS_POR_MES = 365.25 / 12.0 / 7.0    # 4,348
+
+
+def _pct_peso_adulto_fediaf(meses, peso_adulto_estimado):
+    """
+    % del peso adulto que le toca a esa edad, por la Tabla VII-8a de FEDIAF.
+
+    Devuelve None fuera del rango de validez que la propia FEDIAF declara
+    (8 semanas a 1 ano), para que el llamador use el respaldo.
+    """
+    if meses is None or meses < CURVA_FEDIAF_MESES_MIN or meses > CURVA_FEDIAF_MESES_MAX:
+        return None
+    for tope, a, b in CURVA_FEDIAF_VII_8A:
+        if peso_adulto_estimado <= tope:
+            break
+    semanas = meses * SEMANAS_POR_MES
+    pct = (a * math.log(semanas) - b) / 100.0
+    # La ecuacion es un ajuste: a los 12 meses el perro pequeno ya la pasa de
+    # 100 %. Nunca puede decir que pesa mas de lo que va a pesar de adulto.
+    return min(max(pct, 0.01), 1.0)
+
+
+# RESPALDO, y solo para lo que FEDIAF no cubre: por debajo de los 2 meses y por
+# encima de los 12. Derivado de las curvas de crecimiento tipo WALTHAM (Salt,
+# German et al. 2017, PLOS ONE, >6 millones de perros).
 # ⚠️ Los porcentajes concretos vienen de reproducciones divulgativas de esas
 # curvas, NO del texto del estudio: usar como estimacion, no como dato duro.
 CURVA_CRECIMIENTO = {
@@ -580,16 +648,19 @@ def peso_adulto_desde_curva(peso_actual_kg, meses, peso_medio_raza=None,
     estimado = peso_medio_raza or peso_actual_kg * 2
 
     for _ in range(4):
-        col = _columna_tamano(estimado)
-        # interpolar entre las dos edades mas cercanas
-        antes = max([e for e in edades if e <= meses], default=edades[0])
-        despues = min([e for e in edades if e >= meses], default=edades[-1])
-        p1 = CURVA_CRECIMIENTO[antes][col]
-        p2 = CURVA_CRECIMIENTO[despues][col]
-        if despues == antes:
-            pct = p1
-        else:
-            pct = p1 + (p2 - p1) * (meses - antes) / (despues - antes)
+        # FEDIAF primero, en el tramo en que FEDIAF dice que vale
+        pct = _pct_peso_adulto_fediaf(meses, estimado)
+        if pct is None:
+            col = _columna_tamano(estimado)
+            # interpolar entre las dos edades mas cercanas
+            antes = max([e for e in edades if e <= meses], default=edades[0])
+            despues = min([e for e in edades if e >= meses], default=edades[-1])
+            p1 = CURVA_CRECIMIENTO[antes][col]
+            p2 = CURVA_CRECIMIENTO[despues][col]
+            if despues == antes:
+                pct = p1
+            else:
+                pct = p1 + (p2 - p1) * (meses - antes) / (despues - antes)
         if pct <= 0:
             return estimado
         nuevo = peso_actual_kg / pct

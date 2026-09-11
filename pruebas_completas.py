@@ -13711,6 +13711,117 @@ if "kcal_de_premios" not in _pers95.CLAVES_CONTEXTO:
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
+# ============================================================
+# BLOQUE 96 — LA CURVA DE CRECIMIENTO ES LA ECUACIÓN DE FEDIAF, NO UNA COPIA
+# ============================================================
+print("=== BLOQUE 96: la curva de crecimiento es la ecuación de FEDIAF, no una copia ===")
+
+# ⚠️ POR QUE EXISTE ESTE BLOQUE (11 sep). Hasta hoy `der.py` estimaba el peso
+# adulto de un cachorro con una tabla cuyo propio comentario decia que venia de
+# «reproducciones divulgativas» de las curvas WALTHAM y NO del texto del
+# estudio. FEDIAF publica esa misma curva como CINCO ECUACIONES en su Tabla
+# VII-8a, y no coincidian: un cachorro de mas de 47,5 kg de adulto, a los 6
+# meses, iba por el 45,0 % del peso adulto en la tabla vieja y por el 57,0 % en
+# FEDIAF, y eso son ~9 % de kcal DE MAS justo en la poblacion en la que la
+# propia FEDIAF avisa de deformidades esqueleticas por sobrealimentar.
+#
+# ⚠️ Y LA TRAMPA QUE VIGILA ESTE BLOQUE NO ES ESA, ES EL EMPAREJAMIENTO. En el
+# texto extraido del PDF las cinco bandas y las cinco ecuaciones salen en dos
+# columnas cruzadas, y el termino independiente NO ES MONOTONO: la banda
+# >15-27,5 lleva -60,70 y la >27,5-47,5 lleva -56,18. Quien las empareje «de
+# menor a mayor», que es lo natural, las cruza -- y el resultado sigue teniendo
+# forma de dato bueno y el menu sale verde igual. Las cinco parejas de abajo
+# son una SEGUNDA copia, independiente de `der.py`, leida del PDF por
+# coordenadas (pagina 56, y=345 a y=405).
+
+import math as _math96
+import der as _der96
+
+# Tabla VII-8a de FEDIAF 2025, tal cual: (peso adulto esperado hasta, a, b)
+_VII_8A_96 = ((7.0, 36.92, 43.57), (15.0, 36.86, 48.22), (27.5, 39.88, 60.70),
+              (47.5, 36.96, 56.18), (float("inf"), 36.61, 62.39))
+
+# 1. Las cinco parejas, una a una y en su banda
+if len(_der96.CURVA_FEDIAF_VII_8A) != len(_VII_8A_96):
+    fallos.append("BLOQUE96: la Tabla VII-8a de FEDIAF tiene cinco filas y `der.py` tiene "
+                  f"{len(_der96.CURVA_FEDIAF_VII_8A)}")
+else:
+    for (_t96, _a96, _b96), (_te96, _ae96, _be96) in zip(_der96.CURVA_FEDIAF_VII_8A, _VII_8A_96):
+        if abs(_t96 - _te96) > 1e-9 if _te96 != float("inf") else _t96 != float("inf"):
+            fallos.append(f"BLOQUE96: banda de la Tabla VII-8a mal: {_t96} donde FEDIAF pone {_te96}")
+        if abs(_a96 - _ae96) > 1e-9 or abs(_b96 - _be96) > 1e-9:
+            fallos.append(
+                f"BLOQUE96: la ecuación de la banda ≤{_te96} kg es {_a96}·Ln(sem)−{_b96} y "
+                f"FEDIAF pone {_ae96}·Ln(sem)−{_be96}")
+
+# 2. LA TRAMPA, dicha aparte y a proposito: el termino independiente NO es
+#    monotono. Si alguien reordena las ecuaciones «de menor a mayor», esto salta.
+_b_15_27 = [b for t, a, b in _der96.CURVA_FEDIAF_VII_8A if t == 27.5]
+_b_27_47 = [b for t, a, b in _der96.CURVA_FEDIAF_VII_8A if t == 47.5]
+if not _b_15_27 or not _b_27_47:
+    fallos.append("BLOQUE96: faltan las bandas de 27,5 y 47,5 kg de la Tabla VII-8a")
+elif not _b_15_27[0] > _b_27_47[0]:
+    fallos.append(
+        "BLOQUE96: la banda >15-27,5 kg tiene que llevar el término independiente MAYOR "
+        f"(60,70) que la >27,5-47,5 (56,18), y lleva {_b_15_27[0]} contra {_b_27_47[0]}. "
+        "Están cruzadas: es exactamente lo que pasa al emparejar las cinco ecuaciones "
+        "con las cinco bandas «de menor a mayor» desde el texto a dos columnas del PDF")
+
+# 3. La cuenta, rehecha aqui para siete perros y siete edades
+for _pa96, _mes96 in ((4.0, 3), (8.0, 4), (20.0, 9), (20.0, 6), (35.0, 6),
+                      (55.0, 6), (55.0, 12)):
+    for _t96, _a96, _b96 in _VII_8A_96:
+        if _pa96 <= _t96:
+            break
+    _sem96 = _mes96 * 365.25 / 12.0 / 7.0
+    _esp96 = min(max((_a96 * _math96.log(_sem96) - _b96) / 100.0, 0.01), 1.0)
+    _hay96 = _der96._pct_peso_adulto_fediaf(_mes96, _pa96)
+    if _hay96 is None or abs(_hay96 - _esp96) > 1e-9:
+        fallos.append(f"BLOQUE96: a los {_mes96} meses y {_pa96} kg de adulto, FEDIAF da "
+                      f"{_esp96:.4f} del peso adulto y `der.py` da {_hay96}")
+
+# 4. El rango de validez lo declara la propia FEDIAF: 8 semanas a 1 año.
+#    Fuera, tiene que devolver None para que el llamador use el respaldo.
+for _mes96 in (0.5, 1.0, 1.9, 12.1, 18.0, 24.0):
+    if _der96._pct_peso_adulto_fediaf(_mes96, 20.0) is not None:
+        fallos.append(f"BLOQUE96: a los {_mes96} meses la ecuación de FEDIAF está fuera de su "
+                      "rango de validez («from weaning age (8 weeks) to 1 year») y aun así "
+                      "devuelve un número")
+
+# 5. Nunca puede decir que un cachorro pesa MAS de lo que va a pesar de adulto
+for _mes96 in (10, 11, 12):
+    for _pa96 in (3.0, 5.0, 7.0):
+        _v96 = _der96._pct_peso_adulto_fediaf(_mes96, _pa96)
+        if _v96 is not None and _v96 > 1.0:
+            fallos.append(f"BLOQUE96: a los {_mes96} meses un perro de {_pa96} kg de adulto sale "
+                          f"al {_v96*100:.1f} % de su peso adulto, que es más del 100 %")
+
+# 6. Y QUE SE USE DE VERDAD. Sin esto el bloque comprobaria una constante que
+#    no lee nadie. El cachorro de 30 kg a los 6 meses: con la ecuacion de
+#    FEDIAF el peso adulto estimado sale ~52,6 kg; con la tabla WALTHAM vieja
+#    salia ~66,7. Si alguien devuelve el respaldo al tramo de FEDIAF, salta.
+_pa_est96 = _der96.peso_adulto_desde_curva(30.0, 6)
+if _pa_est96 is None or abs(_pa_est96 - 52.6) > 1.0:
+    fallos.append(f"BLOQUE96: un cachorro de 30 kg a los 6 meses tiene que estimar ~52,6 kg de "
+                  f"adulto por la Tabla VII-8a de FEDIAF, y estima {_pa_est96}. Con la tabla "
+                  "divulgativa vieja salían ~66,7, que son ~9 % de kcal de más")
+
+_der96_kcal = _der96.calcular_der(30.0, "cachorro_crecimiento", meses=6)
+if not _der96_kcal or abs(_der96_kcal["der"] - 2269.4) > 15:
+    fallos.append(f"BLOQUE96: el DER del cachorro de 30 kg a los 6 meses sin peso adulto "
+                  f"declarado tiene que salir ~2269 kcal y sale {_der96_kcal}")
+
+# 7. El respaldo sigue ahi para lo que FEDIAF no cubre (>12 meses), que es el
+#    unico tramo donde un gigante todavia no ha terminado de crecer.
+if _der96.peso_adulto_desde_curva(50.0, 18) is None:
+    fallos.append("BLOQUE96: por encima del año FEDIAF no da ecuación y hace falta el respaldo "
+                  "WALTHAM. Se ha quedado sin ninguno de los dos")
+for _mes96 in (2, 3, 4, 6, 9, 12, 15, 18, 24):
+    if _mes96 not in _der96.CURVA_CRECIMIENTO:
+        fallos.append(f"BLOQUE96: falta el escalón de {_mes96} meses en la curva de respaldo")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
 _hay_fuentes = _os_b18.path.isdir(_RUTA_FUENTES)
 
 print(f"\n{'='*60}")

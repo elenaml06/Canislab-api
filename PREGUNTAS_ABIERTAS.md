@@ -692,6 +692,173 @@ probablemente subir antes el techo.
 
 **La pregunta:** ¿se queda el fósforo del oxalato solo con techo, o lleva suelo?
 
+### P-14 · FEDIAF publica la curva de crecimiento como ecuación, y el motor usa una copia divulgativa
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (toca los dos repos y el contrato del DER) |
+| **Bloquea** | No, pero sobrealimenta al cachorro de raza grande |
+| **Abierta desde** | 11 de septiembre de 2026, releyendo FEDIAF entera |
+
+`der.py` estima el peso adulto de un cachorro con `CURVA_CRECIMIENTO`, una tabla
+cuyo propio comentario dice que sale de *«reproducciones divulgativas»* de las
+curvas WALTHAM y **no** del texto del estudio. FEDIAF publica la ecuación exacta
+en su **Tabla VII-8a**, válida de las 8 semanas al año:
+
+| Peso adulto esperado | % del peso adulto |
+|---|---|
+| ≤ 7 kg | 36,92 · Ln(semanas) − 43,57 |
+| > 7 - 15 kg | 36,86 · Ln(semanas) − 48,22 |
+| > 15 - 27,5 kg | 39,88 · Ln(semanas) − 60,70 |
+| > 27,5 - 47,5 kg | 36,96 · Ln(semanas) − 56,18 |
+| > 47,5 kg | 36,61 · Ln(semanas) − 62,39 |
+
+**Medido, dentro del rango de validez (2 a 12 meses):** en perros pequeños la
+diferencia va de −1,5 a +3,2 puntos, pero en los grandes el motor va
+**sistemáticamente por debajo**. Un cachorro de más de 47,5 kg de adulto, a los
+6 meses, para FEDIAF va por el **57,0 %** y para nosotros por el **45,0 %**.
+
+**Y va en la dirección mala:** menos porcentaje supone un peso adulto estimado
+mayor, que en la ecuación de Klein sube el coeficiente. Para un cachorro de
+30 kg a los 6 meses son **2479 kcal con nuestra tabla contra 2271 con la de
+FEDIAF, un 9 % de más**, justo en la población donde la propia FEDIAF dice que
+sobrealimentar *«can result in skeletal deformities especially in large and
+giant breeds»*.
+
+**Dos matices antes de tocarlo:**
+
+1. El frontend, que es el que manda, **no tiene esta curva**: si no sabe el peso
+   adulto usa los dos escalones de SACN5 por edad. O sea que la Tabla VII-8a no
+   solo corregiría `der.py`, **llenaría el hueco que el frontend tapa con otra
+   fuente**.
+2. ⚠️ **Esta tabla hay que leerla del PDF, no del texto extraído.** Las cinco
+   bandas y las cinco ecuaciones salen en dos columnas cruzadas y el orden no es
+   el que parece: la banda >15-27,5 lleva −60,70 y la >27,5-47,5 lleva −56,18,
+   que **no es monótono**. Las cinco parejas de arriba están leídas del PDF por
+   coordenadas.
+
+**APLICADA LA MITAD, el 11 de septiembre**: `der.py` usa ya las cinco
+ecuaciones entre los 2 y los 12 meses, y conserva la tabla WALTHAM solo para lo
+que FEDIAF no cubre (por debajo de las 8 semanas y por encima del año, donde su
+ecuación pasa del 100 %). **No cambia ningún caso del contrato**: los siete
+casos de cachorro de `der_casos.json` o traen `pesoAdultoKg` o no traen edad, así
+que ninguno ejercía esta curva. Medido después del cambio: el cachorro de 30 kg
+a los 6 meses pasa de 2479 a **2269 kcal**.
+
+**La pregunta que queda, y es la mitad que importa:** ¿se lleva también al
+frontend? Allí no hay curva ninguna — si no sabe el peso adulto, `calcularDER`
+cae a los dos escalones de SACN5 por edad (3 × RER hasta los 4 meses, 2 × RER
+después), que es una fuente distinta y más gruesa. Con la Tabla VII-8a, un
+cachorro **mestizo** (los de raza sí traen el peso de `razas.json`) usaría la
+ecuación de Klein como todos los demás. Eso **sí** cambia las kcal de usuarios
+reales y hay que regenerar `der_casos.json` en los dos repos.
+
+---
+
+### P-15 · FEDIAF dice dos veces que el BCS ideal es 4-5, y el motor toma 5
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** |
+| **Bloquea** | No |
+| **Abierta desde** | 11 de septiembre de 2026, releyendo FEDIAF entera |
+
+`verificar.BCS_NEUTRO = 5.0`: un perro en BCS 4 se considera **por debajo** del
+ideal y se le sube el peso objetivo. FEDIAF lo dice dos veces al revés:
+
+> §7.1.3: *«The ideal BCS should therefore be between 4/9 and 5/9.»*
+> §7.2.4.1: *«it is recommended that dogs should be fed to maintain a body
+> condition score (BCS) between 4 and 5 on the 9-point BCS.»*
+
+Y no es una opinión suelta: se apoya en Kealy 2002, el estudio de catorce años
+con labradores en el que la restricción alargó la vida mediana y retrasó la
+enfermedad crónica, con los perros restringidos entre 4/9 y 5/9.
+
+**La pregunta:** ¿el 4/9 es ideal, y entonces no hay que subirle el objetivo, o
+se deja el 5 como neutro porque es el lado prudente?
+
+---
+
+### P-16 · La tabla de FEDIAF vale para ingredientes de digestibilidad normal, y no sabemos la nuestra
+
+| | |
+|---|---|
+| **Dueño** | **una fuente** (BEDCA/CIQUAL/USDA no la publican) y **Cris Carles** |
+| **Bloquea** | No |
+| **Abierta desde** | 11 de septiembre de 2026, releyendo FEDIAF entera |
+
+§2.2, declarando el alcance: *«These guidelines relate to dog and cat foods
+manufactured from ingredients with normal digestibility (i.e. **≥ 70 % DM
+digestibility; ≥ 80 % protein digestibility**) and average bioavailability.»*
+
+Es la **condición de validez de toda la tabla** y nunca la hemos mirado: el
+catálogo no tiene campo de digestibilidad en ninguna de sus 163 fichas. La carne
+cruda va sobrada; el hueso molido, el cartílago y la laringe de vacuno no está
+claro que lleguen. Si un menú se apoya mucho en ellos, los mínimos de FEDIAF se
+están aplicando fuera de su rango declarado de validez.
+
+**La pregunta:** ¿hace falta el dato por ficha, o basta con un aviso cuando un
+menú se apoya por encima de cierto porcentaje en hueso y cartílago?
+
+---
+
+### P-17 · Dos datos que la ficha no pregunta y que mueven la ración
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (producto) |
+| **Bloquea** | No |
+| **Abierta desde** | 11 de septiembre de 2026, releyendo FEDIAF entera |
+
+Los dos salen de la misma regla suya: «TODOS LOS DATOS QUE RECOJA LA APP TIENEN
+QUE LLEGAR DE ALGUNA MANERA AL MOTOR». Aquí es al revés — son datos que el motor
+necesita y la app **no recoge**.
+
+1. **La temperatura a la que vive el perro.** §7.2.4.1: fuera de su zona
+   termoneutra la MER sube **2-5 kcal por kg^0,75 y por cada grado**, y
+   *«when kept outside in winter, dogs may need 10 to 90 % more calories than
+   during summer»*. Es más de lo que mueve el nivel de actividad, que sí
+   preguntamos. La zona termoneutra que da FEDIAF: 15-20 °C en perros de pelo
+   largo, 20-25 °C en pelo corto, 10-15 °C en el husky de Alaska.
+2. **La masa muscular** (Tabla VII-3, escala de 4 puntos). La propia fuente
+   reconoce que la parte baja del BCS *«[is] confounded by muscle atrophy»*: el
+   motor no sabe distinguir un perro delgado de uno atrofiado, y son dos
+   raciones distintas. Es un dato que un veterinario tiene y el dueño no.
+
+**La pregunta:** ¿se preguntan, y en qué pantalla?
+
+---
+
+### P-18 · El cordero, la metionina y la taurina
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles**, y una fuente que no está (**Spitze 2003**) |
+| **Bloquea** | No |
+| **Abierta desde** | 11 de septiembre de 2026, releyendo FEDIAF entera |
+
+Tres frases de FEDIAF que apuntan al mismo sitio y ninguna trae cifra:
+
+- §3.3.1: *«Methionine In the case of lamb and rice foods, the methionine level
+  may have to be increased.»* No hay arroz en el catálogo; **cordero sí**.
+- §7.3.3: *«Feeding certain lamb and rice foods may increase the risk of a
+  low-taurine status, because of lower bioavailability of sulphur-containing
+  amino acids and increased faecal losses of taurine.»*
+- §7.3.3: los **Terranova** sintetizan menos taurine, y el Terranova está en
+  `razas.json`.
+
+Y una cuarta que explica por qué el mínimo que aplicamos es el del caso peor:
+*«The recommended values [de metionina-cistina] are based on a dog food
+containing a very low taurine content, i.e. <100 mg/kg dry matter.»* Una ración
+BARF con carne y corazón lleva taurina de sobra, así que FEDIAF dice que ahí la
+RA de aminoácidos azufrados **podría ser menor**. No se baja —gana FEDIAF, y
+bajar un mínimo no es apretar— pero es justo la mecánica por la que a Cris «le
+sale carente de metionina» al restringir la proteína en el IRIS 4.
+
+**La pregunta:** ¿se avisa cuando un menú se apoya en cordero, o se espera a
+tener la taurina medida (Spitze 2003, que decide el dato de 89 fichas)?
+
+
 ---
 
 ## Cerradas

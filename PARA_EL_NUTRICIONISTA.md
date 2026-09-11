@@ -1662,6 +1662,24 @@ conviene que veas porque son las que sostienen todo lo demás:
 - **Un techo terapéutico no autoriza a bajar de los mínimos de FEDIAF** — nota al
   pie (11): *«The minimum recommendations according to the FEDIAF Nutritional
   Guidelines for all essential fatty acids shall be met in the daily ration.»*
+  ⚠️ **Y conviene leer esa nota con lo que dice la propia FEDIAF al lado**
+  (11-sep-2026, releyéndola entera). Su §2.2 **excluye de su alcance** a las
+  dietas clínicas: *«Excluded from the FEDIAF's Nutritional Guidelines are pet
+  foods for particular nutritional purposes … Therefore specific products may
+  have nutrient levels that are different from those stated in these
+  guidelines»*. O sea que la nota (11) del reglamento **no es redundante**: es
+  la que devuelve los mínimos de FEDIAF al terreno del que FEDIAF se había
+  salido, y lo hace **solo para los ácidos grasos esenciales**. Para el resto
+  de nutrientes, en una dieta para un propósito particular, quien pone el suelo
+  es el reglamento. **Este motor los respeta todos igualmente**, por decisión
+  escrita («los requisitos se respetan SIEMPRE»), y esa es una decisión nuestra
+  y no una obligación de la fuente. Hay tres frases más de FEDIAF en la misma
+  dirección, y la tercera trae la condición que te interesa: *«If formulating
+  below the recommended minimum for total protein it is particularly important
+  to ensure that the amino acid profile meets FEDIAF guidelines for adult
+  maintenance»* (§3.3.1) — el motor verifica los **12 aminoácidos esenciales
+  uno a uno**, así que esa condición ya se cumple. Todas las citas y su lugar:
+  `FEDIAF_CONTRA_OTRAS_FUENTES.md` y `LECTURAS.md`.
 - **Con dos patologías se cumplen los dos topes** — parte A, punto 7: *«it shall
   comply with each respective entry in Part B»*. No se promedian ni se elige el
   menos malo: por eso renal + pancreatitis, cuando no caben juntos, **dice qué

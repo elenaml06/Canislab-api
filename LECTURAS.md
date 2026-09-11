@@ -48,7 +48,7 @@ la tabla. Esos se quedan y se quedan todos.
 
 | Fuente | Leída | Notas |
 |---|---|---|
-| FEDIAF | sí | Es la que manda. Sus cifras las rehace `auditar_fediaf.py` y `auditar_transcripcion_fediaf.py` |
+| FEDIAF | **releída entera con el método nuevo (11-sep)** | Abajo, punto por punto. Salieron 7 cosas que decidir, 2 frases falsas en la documentación y 186 celdas cruzadas por primera vez |
 | SACN5 | sí | 22 tablas con hallazgo sin aplicar, abajo |
 | NRC 2006 | sí | |
 | Fascetti & Delaney | sí, los 21 capítulos (11-sep) | 42 notas, abajo |
@@ -62,6 +62,203 @@ la tabla. Esos se quedan y se quedan todos.
 | IRIS 2026 | no | Es la que contesta lo del IRIS 4 |
 | AAHA 2021 | no | |
 | Today's Veterinary Practice | no, y el artículo que da el sodio por estadio **no está** | |
+
+---
+
+## FEDIAF 2025 — «Nutritional Guidelines» · releída entera el 11-sep-2026 con el método nuevo
+
+98 páginas, 10.682 líneas. Ya estaba marcada «leída» desde agosto, y por eso se
+relee: lo que había era un inventario de tablas y un contador de frases, no una
+lectura. Esto es la lectura, seguida, de la primera línea a la última, con la
+decisión al lado de cada cosa.
+
+**Lo que ha salido**: 5 cosas nuevas que aplicar o decidir, 1 frase de
+`CLAUDE.md` que hay que corregir porque es falsa, y 186 celdas de la tabla de
+requisitos cruzadas por primera vez contra la SEGUNDA copia que la propia
+FEDIAF publica de ella.
+
+### §1 Glosario
+
+| Lo que dice | Decisión |
+|---|---|
+| *«Minimum recommended level … it is recommended that the nutrient levels are at or above the levels listed in the tables and do not exceed the nutritional or legal maximum»* | **Ya aplicado**: es el semáforo, las dos direcciones |
+| *«Nutritional maximum limit … Levels exceeding the nutritional maximum may still be safe, however, no scientific data are currently known to FEDIAF»* | **No cambia ninguna cifra**, pero cambia cómo se lee un techo. Un máximo (N) no es un daño demostrado: es el final de lo que hay medido. Un máximo (L) es ley. Eso ya lo separa `maximo_origen`, y esta frase es la que lo justifica |
+| *«Daily ration. The average total quantity of feeding stuffs, calculated on a moisture content of 12%»* | **Ya aplicado**: es de donde sale el divisor 3,52 con el que se convierten las cifras del Reglamento (UE) 2020/354 |
+
+### §2.2 Alcance — aquí están tres de los hallazgos
+
+| Lo que dice | Decisión |
+|---|---|
+| *«These guidelines relate to dog and cat foods manufactured from ingredients with normal digestibility (i.e. ≥ 70% DM digestibility; ≥ 80% protein digestibility) and average bioavailability»* | **PENDIENTE DE DECIDIR.** Es la condición de validez de toda la tabla y nunca la hemos mirado: el catálogo **no tiene campo de digestibilidad**. La carne cruda va sobrada; el hueso molido, el cartílago y la laringe de vacuno no está claro que lleguen. Si un menú se apoya mucho en ellos, los mínimos de FEDIAF se están aplicando fuera de su rango de validez |
+| *«Pet foods can be adequate and safe when nutrient levels are outside the recommendations in this guide, based on the manufacturer's substantiation of nutritional adequacy and safety»* | **Anotado, no aplicado.** Es la **tercera** frase del repo que dice que se puede salir de FEDIAF con prueba (las otras dos: §3.1.b aquí mismo, y el Reglamento (UE) 2020/354). No cambia la regla de Elena —«los requisitos se respetan SIEMPRE»— pero sí cambia lo que se puede afirmar en el documento que lee el nutricionista |
+| *«**Excluded from the FEDIAF's Nutritional Guidelines are pet foods for particular nutritional purposes** and some other specialised foods such as for sporting dogs etc. Therefore specific products may have nutrient levels that are different from those stated in these guidelines»* | **HALLAZGO. FEDIAF se excluye a sí misma de las dietas clínicas.** Una dieta para una patología es, literalmente, un «pet food for a particular nutritional purpose» —así lo llama el Reglamento (UE) 2020/354—, y FEDIAF dice que sus tablas no la cubren. O sea: «gana FEDIAF» es verdad para el perro SANO, y para el perro enfermo quien pone el suelo es la ley, no FEDIAF. Contesta la pregunta de Cris sobre el IRIS 4 y la que hizo Elena sobre si un veterinario puede bajar de los mínimos. **No cambia el motor** (Elena decidió que los requisitos se respetan siempre) pero **sí hay que escribirlo** en `FEDIAF_CONTRA_OTRAS_FUENTES.md` y en `PARA_EL_NUTRICIONISTA.md`, porque hoy los dos afirman algo más fuerte de lo que la fuente dice |
+
+### §3.1 Guía general
+
+| Lo que dice | Decisión |
+|---|---|
+| Un alimento completo sin etapa declarada *«should be formulated according to the levels recommended for early growth and reproduction»* | **No se aplica**: el motor siempre sabe la etapa. Se anota porque es la regla del caso peor, y es la que usaríamos si algún día hubiera un menú sin etapa |
+| §3.1.b *«If certain nutrient levels are outside the values stated in this guide, manufacturers should be able to prove that the product provides adequate and safe intakes»* | Misma familia que la anterior |
+| §3.1.3 *«A legal maximum only applies when the particular trace element or vitamin is **added** to the recipe as an additive … If the nutrient comes exclusively from feed materials, the legal maximum does not apply»* | **Ya anotado el 10-sep y sigue PENDIENTE.** El motor aplica **siempre** el techo legal, que es el lado estricto; en la vitamina D eso son 14,19 µg/1000 kcal cuando el nutricional es 20,0. La razón por la que no se ha cambiado está medida y escrita en el propio JSON: seis nutrientes (hierro, zinc, cobre, yodo, selenio, manganeso) **no tienen máximo nutricional publicado**, así que la lectura literal los dejaría sin ningún techo |
+| §3.1.4-3.1.6 validación, repetición de análisis e instrucciones de uso | **No se aplican**: son obligaciones de un fabricante que pone un producto en el mercado |
+
+### §3.2.1 Cómo se leen las tablas
+
+| Lo que dice | Decisión |
+|---|---|
+| *«Legal maxima in EU legislation are expressed on 12% moisture content and they do not account for energy density. Therefore in these guidelines they are only provided on a dry matter basis»* | **Medido, y hoy es benigno por coincidencia.** Convertimos ×2,5, que supone 4000 kcal/kg de materia seca. Una ración BARF de este motor mide **4040 kcal/kg MS** al 35 % de materia seca: un 1 % de diferencia. Pero el catálogo **no guarda la materia seca de ninguna de sus 163 fichas**, así que eso no se puede recalcular, solo estimar |
+
+### §3.3.1 Sustanciación (perro) — de dónde sale cada número
+
+| Lo que dice | Decisión |
+|---|---|
+| Proteína adulto: la RA del NRC (25 g/1000 kcal) ajustada por digestibilidad aparente del 80 %, menor ingesta energética y los requisitos del perro viejo | Contexto de la cifra que ya aplicamos |
+| *«If formulating below the recommended minimum for total protein it is particularly important to ensure that the amino acid profile meets FEDIAF guidelines for adult maintenance»* | **HALLAZGO, y es el que contesta a Cris.** Es la **cuarta** fuente que contempla formular por debajo del mínimo de proteína, y la única que dice **la condición**: que el perfil de aminoácidos siga cumpliendo. El motor ya verifica los **12 aminoácidos por separado**, así que esa condición se cumple por construcción — no hay nada que construir, hay que **decir** que está cumplida |
+| Proteína en reproducción: *«If carbohydrate is absent or at a very low level, the protein requirement is much higher, and may be double»* | **Ya aplicado** (`requisitos_condicionales.json`) |
+| Proteína en crecimiento: 25 % MS recién destetados, 20 % MS a partir de las 14 semanas | **Ya en la tabla** |
+| Arginina: *«For every gram of crude protein above the stated values, an additional 0.01 g of arginine is required»* | **Ya aplicado.** Y esta lectura rehace la cuenta: el Anexo 7.4 lo enuncia **por cada 1 % de proteína en materia seca** y §3.3.1 **por cada gramo**, que parecen dos reglas distintas. Convertido: 0,01 g/100 g MS = 0,025 g/1000 kcal, y 1 % MS = 2,5 g/1000 kcal → 0,01 g de arginina por gramo de proteína. **Coinciden**; no había error |
+| Lisina, techo del cachorro: 2,91 % MS a 4156 kcal/kg = 7,0 g/1000 kcal | **Ya es la única excepción escrita** (`MAXIMOS_NO_APLICADOS`) |
+| Metionina-cistina adulto: *«The recommended values are based on a dog food containing a very low taurine content, i.e. <100 mg/kg dry matter … For products containing higher levels of taurine the RA for sulphur amino acids can be **lower** than the values quoted in the table»* | **No se aplica, y el motivo importa.** Bajar un mínimo no es apretar, y gana FEDIAF. Pero explica por qué el mínimo de metionina+cistina que aplicamos es el del **caso peor** (una dieta sin taurina) cuando una ración BARF con carne y corazón lleva taurina de sobra — y por qué a Cris «le sale carente de metionina» al bajar la proteína en el IRIS 4. Refuerza la ficha de **L-metionina** que falta en el catálogo |
+| *«Methionine In the case of lamb and rice foods, the methionine level may have to be increased»* | **PENDIENTE DE DECIDIR**: no hay arroz en el catálogo, pero **sí hay cordero**. Sin cifra en la fuente |
+| Tirosina: *«For maximisation of black hair colour, the tyrosine content may need to be 1.5 to 2 times higher»* | **No se aplica**: es cosmético, no es un requisito de salud |
+| Grasa: *«Fat per se is not essential … Therefore the minimum recommendation for total fat in adult dogs with a MER of 95 kcal/kg BW0.75 has not been adjusted»* | **Ya aplicado**: es justo por esto que la grasa no escala en `minimo_de()` |
+| Omega-3 y 6 en crecimiento y reproducción: el DHA y el araquidónico se acumulan en cerebro y retina, y suplementar a la madre con ALA y linoleico *«is an ineffective means of increasing the milk content of DHA and AA»* | **Ya aplicado**: son las filas de EPA+DHA (0,13 g) y araquidónico (75 mg) de crecimiento y reproducción |
+| *«Omega-3 fatty acids (Adult dogs) … the current information is insufficient to recommend a specific level of omega-3 fatty acids for adult dogs»* | **Ya anotado**: nuestro mínimo de adulto (0,11 g) es del NRC 2006 y se adopta a propósito, con la nota puesta en el JSON |
+| **§3.3.1 «Omega-3 vs. 6 FA (Adult dogs)»**: *«The effects of omega-3 fatty acids depend on the level as well as on the ratio of omega-6 to omega-3 fatty acids. Very high levels of long chain omega-3 fatty acids can decrease cellular immunity, particularly in the presence of a low level of omega-6 fatty acids»* | **HALLAZGO, y es el lipidograma de Cris.** La frase que llevamos repitiendo —«FEDIAF no se moja con el omega-6:omega-3»— **es media verdad**: FEDIAF dice que el ratio importa, dice **en qué dirección está el daño** (omega-3 alto con omega-6 bajo) y no da número. Es la **cuarta** fuente que lo pide y ninguna da cifra para el perro sano. Sigue **pendiente de decidir**, pero ya no por falta de respaldo: por falta de cifra |
+| Calcio adulto: *«As the calcium level approaches the stated nutritional maximum, it may be necessary to increase the levels of certain trace elements such as zinc and copper»* | **PENDIENTE DE DECIDIR.** El motor no sube el zinc ni el cobre cuando el calcio se acerca a 6250 mg/1000 kcal. Es medible sobre los 216 menús del catálogo, y no está medido |
+| Calcio del cachorro: ≥1 % MS en crecimiento temprano; razas grandes y gigantes siguen con ≥1 % hasta los ~6 meses; pequeñas y medianas pueden bajar a 0,8 % MS y subir el Ca:P a 1,8/1 | **Ya aplicado** (notas a y b de la tabla) |
+| Máximo de calcio del cachorro: 1,6 % MS desde las 9 semanas no da efectos; hasta 1,8 % MS en crecimiento tardío en todas las razas *«with the exception of great Danes. This breed may be more susceptible and it is preferable to continue with a food containing a maximum calcium content of 1.6%»* | **No hace falta aplicarlo, y está medido por qué.** FEDIAF nombra **una raza** por su nombre y el motor no la distingue — pero al cachorro de más de 25 kg de adulto ya le aplicamos **2750 mg/1000 kcal**, que son **1,10 % MS**: por debajo tanto del 1,6 como del 1,8. La excepción del Gran Danés queda cubierta por una regla más estricta que ya está puesta |
+| Sodio: 45,4 mg/MJ (0,19 g/1000 kcal) es adecuado en todas las etapas; 2 % MS puede dar balance negativo de potasio | Contexto. El mínimo que aplicamos (250-290 mg) es el de la tabla, más alto que el de la sustanciación |
+| Fósforo: AAFCO introdujo los máximos nutricionales de Ca (6,25) y P (4,0 g/1000 kcal) en 1992 y *«FEDIAF adopted the same nutritional maximums»*; el exceso de P daña sobre todo con Ca:P ≤0,4:1; Stockman 2017 toleró 7,1 g Ca y 4,5 g P (Ca:P 1,6) durante 40 semanas | **Ya aplicado**, y es la cita que devolvió el techo de 4000 la noche del 8-sep |
+| Oligoelementos: la biodisponibilidad baja con calcio alto, con zinc alto (que baja el cobre) y con fitatos | Misma familia que el calcio de arriba. **Pendiente** |
+| Cobre: *«Owing to its low availability copper oxide should not be considered as a copper source»* | **Ya aplicado** (9-sep, desde SACN5). FEDIAF es la **segunda** fuente que lo dice |
+| Hierro: *«iron from oxide or carbonate salts that are added to the diet should not be considered sources contributing to the minimum nutrient level»* | **Ya aplicado para el óxido** (desde SACN5). **El carbonato es nuevo**: FEDIAF lo iguala al óxido y SACN5 solo hablaba del óxido. Hoy no afecta —no hay ninguna ficha de carbonato de hierro en el catálogo— y queda escrito para el día que alguien proponga una |
+| Yodo: FEDIAF **descarta** el máximo bajo de Castillo (0,4 mg/100 g MS) porque los cachorros del estudio estaban sobrealimentados un ~75 % y la comida era deficiente en Ca, P y K, y concluye que *«the existing legal maximum is safe for all dogs»* | **Conflicto confirmado con la cita.** Nuestro tope crónico de yodo son 1275 µg/1000 kcal (NRC 2006 / Belshaw) y el legal de FEDIAF son 2750. Ya está en `FEDIAF_CONTRA_OTRAS_FUENTES.md` como uno de los cinco; ahora tiene la frase literal de FEDIAF al lado |
+| Selenio en crecimiento: el requisito medido son 0,21 mg/kg MS y se añade margen por la baja disponibilidad en pienso | Contexto |
+| Zinc en crecimiento: 5 mg/100 g MS basta con dieta purificada y *«doubling the minimum recommended level may be considered safe»* | Contexto de la cifra de la tabla |
+| Vitamina A: el máximo de FEDIAF es el **80 %** de la dosis que «se acerca a desafiar la homeostasis» y ~45 % del no-adverse-effect de un año; Hathcock dio **tres veces** el máximo de FEDIAF durante diez meses sin efectos | **No cambia nada**, pero es exactamente el tipo de dato que necesita `margen_profesional`: dice cuánto colchón hay por encima del techo |
+| Vitamina D: 435 IU/100 g MS afectó la absorción de calcio en cachorros de Gran Danés; **320 IU/100 g MS para gigantes en crecimiento** y **425 para cachorros de raza pequeña**; para las demás etapas, el mismo que el del cachorro | **No se aplica la distinción por tamaño**: el motor pone 320 (nutricional) a todos, y encima aplica el legal (227), que es más bajo todavía. Lado estricto, y con el mismo número para todos |
+| Vitamina E: *«An increased level of vitamin E may be required if the intake of PUFA is high, particularly from fish oil»* | **Ya documentado** como `tipo: documentado_sin_cifra` — FEDIAF lo enuncia y no lo cuantifica para el perro |
+| Vitaminas B: el mínimo es el AI del NRC, *«based on bioavailable forms coming from a **vitamin premix** at the point of consumption»* | **Refuerza un hueco que ya está abierto.** Los mínimos de las B suponen la forma de un premezclado, y ninguna ficha del catálogo dice en qué forma química vienen sus vitaminas B. Está en `DATOS_QUE_FALTAN.md` |
+| Riboflavina: 66,8 µg/kg PV/día con dieta semipurificada → 0,6 mg/100 g MS con un 25 % de margen | Contexto |
+| Biotina y vitamina K: *«does not need to be added to the food unless the food contains antimicrobial or **anti-vitamin** compounds»* | **Ya aplicado por las dos puntas.** Las dos filas están fuera de la tabla a propósito, y la condición que FEDIAF pone —que haya antivitaminas— la cubren ya dos topes de `seguridad.py`: la **tiaminasa** del pescado crudo (antitiamina) y la **avidina** de la clara cruda (antibiotina, tope del 20 % del peso, Am J Vet Res 1984). FEDIAF es la segunda fuente de la regla |
+
+### §4 Alimento complementario — y aquí hay una frase de `CLAUDE.md` que es falsa
+
+| Lo que dice | Decisión |
+|---|---|
+| §4.1 *«The total daily ration should match the recommended allowances and nutritional and legal maximum values listed in the tables for complete pet food»* | **CORRIGE LA DOCUMENTACIÓN.** La regla 3-bis de `CLAUDE.md` dice que **«FEDIAF no dice nada de esto»** sobre los premios. **Sí dice**, y dice justo lo que hacemos: el día **entero** —ración más premios— tiene que cumplir los mínimos. Y dice una cosa más que nosotros no afirmábamos: que los **máximos** también se miden sobre el día entero. El motor no los escala (a propósito: de lo que lleva dentro un premio no sabemos nada), así que seguimos por el lado seguro, pero la frase hay que cambiarla |
+| Los premios *«may be given in quantities that impact total energy intake. The feeding instructions should give clear recommendations on how not to overfeed»* | **Ya aplicado**: es la pregunta de los premios |
+| La clasificación en tres categorías (a: aportan energía; b: aportan nutrientes; c: para entretener, como los masticables) | **No se aplica**: el motor no clasifica premios, cuenta sus kcal |
+
+### §5 Métodos analíticos y §6 Protocolos de ensayo
+
+| Lo que dice | Decisión |
+|---|---|
+| La Tabla V-1 con el método de laboratorio de cada nutriente, y los dos protocolos de digestibilidad (indicador y colección cuantitativa) | **No se aplican**: son de laboratorio y de fabricante. Se anotan para que no se vuelvan a «descubrir» dentro de seis meses |
+| *«Vitamin D analysis of pet foods containing levels … between 500 and 1000 IU/kg DM is difficult and unreliable. The detection limit for HPLC methods is approximately 3000 to 5000 IU/kg»* | **No se aplica**: es una limitación analítica, no un requisito |
+
+### Anexo 7.1 — Body Condition Score
+
+| Lo que dice | Decisión |
+|---|---|
+| La Tabla VII-2, con el % de peso por encima o por debajo del BCS 5 en cada uno de los nueve puntos | **Ya aplicado**: es `peso_objetivo_desde_bcs()` |
+| *«The ideal BCS should therefore be between 4/9 and 5/9»* y *«dogs should be fed to maintain a body condition score (BCS) between 4 and 5»* | **PENDIENTE DE DECIDIR.** El motor toma `BCS_NEUTRO = 5.0`: un perro en BCS 4 se considera **por debajo** del ideal y se le sube el objetivo. FEDIAF dice dos veces que el ideal es **4 a 5**, no 5. Apoyado en Kealy 2002, el estudio de 14 años con labradores donde la restricción alargó la vida |
+| La Tabla VII-3, escala de masa muscular de 4 puntos | **PENDIENTE DE DECIDIR.** No se ofrece en ninguna pantalla. La propia fuente reconoce que la parte baja del BCS *«[is] confounded by muscle atrophy»* — o sea que el motor no sabe distinguir un perro delgado de uno atrofiado, y son dos raciones distintas. Es un dato que un veterinario tiene |
+
+### Anexo 7.2 — Energía
+
+| Lo que dice | Decisión |
+|---|---|
+| §7.2.2.2 b) La ME de *«products of vegetable or animal origin, in their natural state, fresh or preserved, such as meat, offal, milk products»* se predice con **kcal ME = 4 × %proteína + 9 × %grasa + 4 × %NFE** | **COMPROBADO, y coincide.** Es la ecuación que FEDIAF manda usar para un catálogo como el nuestro, que es carne cruda. Rehecha contra las 140 fichas con energía declarada, sin el término NFE (que el catálogo no guarda): **mediana de desviación 1,3 % en carne muscular, 0,0 % en hueso carnoso, 1,4 % en pescado, 2,7 % en vísceras**. Los únicos por encima del 10 % son los hígados (glucógeno), las semillas, el yogur y la fruta y la verdura — todos con hidratos que el término que falta explicaría. O sea: las kcal del catálogo son las que FEDIAF calcularía. **No hay nada que cambiar, y ahora está medido** |
+| Tabla VII-5, energías brutas (proteína 5,7 · grasa 9,4 · NFE+fibra 4,1 kcal/g) | **No se usa**: no calculamos energía bruta |
+| Tabla VII-6, MER por edad: 1-2 años **130**, 3-7 años **110**, >7 años **95** kcal/kg^0,75 | **Conflicto ya anotado** (la edad del sénior), en `FEDIAF_CONTRA_OTRAS_FUENTES.md` |
+| Tabla VII-7, DER por actividad, con el Gran Danés (200) y el Terranova (105) | **Ya aplicada**, con el hueco de «Obese prone adults ≤ 90» declarado en `niveles_de_actividad.json` |
+| **Tabla VII-8a, las cinco ecuaciones de la curva de crecimiento**, válidas de las 8 semanas al año: `% del peso adulto = a·Ln(semanas) − b`, con (a, b) = (36,92 · 43,57) para ≤7 kg, (36,86 · 48,22) para >7-15, (39,88 · 60,70) para >15-27,5, (36,96 · 56,18) para >27,5-47,5 y (36,61 · 62,39) para >47,5 | **HALLAZGO Y PENDIENTE DE DECIDIR — es el más gordo de esta lectura.** El motor estima el peso adulto con `CURVA_CRECIMIENTO` de `der.py`, una tabla cuyo propio comentario dice que viene de *«reproducciones divulgativas»* de las curvas WALTHAM y *«NO del texto del estudio»*. FEDIAF publica **la ecuación exacta**, y no coinciden. **Medido, dentro del rango de validez (2 a 12 meses)**: en perros pequeños la diferencia va de −1,5 a +3,2 puntos, pero en los grandes el motor va **sistemáticamente por debajo** — un cachorro de más de 47,5 kg de adulto, a los 6 meses, para FEDIAF va por el **57,0 %** de su peso adulto y para nosotros por el **45,0 %**, 12 puntos. Y eso **sobrealimenta**: menos % supone un peso adulto estimado mayor, que en la ecuación de Klein sube el coeficiente. Para un cachorro de 30 kg a los 6 meses son **2479 kcal con nuestra tabla contra 2271 con la ecuación de FEDIAF, un 9 % de más** — justo en la población en la que la propia FEDIAF dice que sobrealimentar *«can result in skeletal deformities especially in large and giant breeds»*. ⚠️ **Y hay que leer la tabla del PDF, no del texto extraído**: en el `.txt` las cinco bandas y las cinco ecuaciones salen en dos columnas cruzadas y **el orden no es el que parece** (la banda >15-27,5 lleva −60,70 y la >27,5-47,5 lleva −56,18, que no es monótono). Las cinco parejas de arriba están leídas del PDF por coordenadas |
+| Tabla VII-8b, gestación (132 · kg^0,75, y +26 · kg en las últimas 5 semanas) y lactancia (145 · kg^0,75 + el extra por camada y semana) | **Ya aplicadas**, en los dos repos |
+| *«puppies should never be fed ad libitum»* | **No se aplica**: no es una cifra, y el motor da una ración |
+| Fuera de la zona termoneutra, la MER sube **2-5 kcal por kg^0,75 y por cada grado**; un perro que vive fuera en invierno puede necesitar **10 a 90 % más** | **PENDIENTE DE DECIDIR.** La ficha no pregunta dónde vive el perro ni con qué clima, y esto mueve las kcal más que casi cualquier otra cosa que sí preguntamos. Es la familia del nivel de actividad: un dato que el dueño sabe y el motor no recibe |
+| Tabla VII-11, los requisitos por kg de peso metabólico | **Ya aplicada**: es la base de la ecuación de §7.2.5 |
+| §7.2.5, `Units/1000 kcal = requisito por kg PM × 1000 / DER por kg PM` | **Ya aplicado**: es `minimo_de()`, y solo hacia arriba |
+
+### Anexos 7.3 a 7.7
+
+| Lo que dice | Decisión |
+|---|---|
+| 7.3 Taurina: en el perro no es esencial; *«low plasma levels of taurine (< 40 µmol/L) may also predispose to dilated cardiomyopathy»*; los **Terranova** sintetizan menos; *«Feeding certain lamb and rice foods may increase the risk of a low-taurine status»* | **PENDIENTE DE DECIDIR.** Hay cordero en el catálogo y el Terranova está en `razas.json`. La cifra que decide (la taurina de 89 fichas) depende de **Spitze 2003**, que no está en el repo |
+| 7.4 Tabla VII-13, arginina por contenido de proteína | **Ya aplicada** |
+| 7.5 Tabla VII-14, factores de conversión de cada forma química | **Ya aplicada y auditada** (`fediaf_conversiones_vitaminas.json`, rehecha por `auditar_transcripcion_fediaf.py`) |
+| 7.6 Reacción adversa: el prurito es el signo en casi el 100 % de los casos; los alérgenos más citados son leche, vaca, huevo y cereales, y los estudios controlados señalan trigo, soja, **pollo** y maíz | **Ya cubierto** por el aviso de proteína novel de la patología. No hay cifra que aplicar |
+| 7.7 Tóxicos, **con sus dosis**: uva 19,6 g/kg PV, pasa 2,8 g/kg PV, teobromina 90-115 mg/kg PV en los casos letales, cacao en polvo ~4 g/kg PV, cebolla fresca 5-10 g/kg PV, ajo 5 g/kg PV (= 1,25 ml de extracto) | **No se aplican las dosis, y a propósito**: el motor **prohíbe el alimento entero**, que es más estricto que cualquier umbral. Se anotan porque son las cifras que habría que usar el día que alguien quiera avisar en vez de prohibir |
+| 7.7 *«Wild onions and wild garlic … are potentially toxic for dogs and cats as well»*, y que el gato es más sensible | **Ya cubierto**: `TOXICOS_FEDIAF_7_7` filtra por palabra |
+
+### Anexo 7.8 — las tablas VII-17a-d, y el cruce que nadie había hecho
+
+FEDIAF publica **dos veces** la misma tabla de requisitos: como Tablas III-3a-c
+(por etapa) y como Tablas VII-17a-d (por etapa y por MER). `auditar_fediaf.py` y
+`auditar_transcripcion_fediaf.py` comprueban la primera copia contra el PDF.
+**La segunda no la miraba nadie**, y una discrepancia entre las dos sería un
+error interno de FEDIAF que ningún auditor nuestro podría ver.
+
+Cruzadas ahora, extrayendo las cuatro tablas del `.txt` y comparándolas contra
+`requerimientos_v2_final.json` columna por columna:
+
+| | |
+|---|---|
+| Celdas que coinciden exactas | **186** |
+| Diferencias por unidad (calcio, potasio y magnesio en g contra mg; vitamina E en UI contra mg con el ×0,671 de la Tabla VII-14) | 17, todas correctas |
+| Diferencias reales | **1**, y está documentada: el mínimo de EPA+DHA en adulto. VII-17c y VII-17d lo dejan en «-» y nosotros ponemos 0,11 g. **Es a propósito**: viene del NRC 2006 y su `nota_auditoria` ya lo dice |
+| Filas donde las dos copias dicen «-» para el perro (biotina, vitamina K) | Coinciden |
+| Fósforo de adulto (que se cayó una vez): VII-17c min 1,00 / VII-17d min 1,16 / máximo 4,00 (N) en las dos | Coinciden con 1000, 1160 y 4000 |
+| Colina: 425 en crecimiento y reproducción, 409 con MER 110, 474 con MER 95 | Coinciden |
+
+**Las dos copias de FEDIAF dicen lo mismo, y las dos dicen lo que aplica el motor.**
+
+### §8 Registro de cambios de FEDIAF
+
+No es normativo, pero sirve de comprobación cruzada de los techos legales, que
+son los que cambian con la ley. Los dos que se pueden verificar contra nuestro
+JSON **cuadran**: el máximo legal de **zinc** bajó de 28,40 a **22,70** mg/100 g
+MS en 2017 (nuestro `maxAdulto` es 56,75 = 22,70 × 2,5) y el de **hierro** de
+142,00 a **68,18** en 2020 (el nuestro es 170,45 = 68,18 × 2,5).
+
+---
+
+### Lo que sale de esta lectura, en una lista
+
+**Para aplicar o decidir (7):**
+
+1. **La curva de crecimiento de la Tabla VII-8a.** FEDIAF publica cinco
+   ecuaciones y usábamos una tabla divulgativa. Medido: hasta 12 puntos de
+   diferencia y ~9 % de kcal de más en el cachorro de raza gigante.
+   **APLICADA en `der.py` el mismo día**; queda decidir si se lleva también al
+   frontend, donde hoy no hay curva ninguna. Ver P-14.
+2. **El BCS ideal es 4-5, no 5.** `BCS_NEUTRO = 5.0`.
+3. **La digestibilidad mínima (≥70 % MS, ≥80 % proteína)** es la condición de
+   validez de toda la tabla y el catálogo no tiene ese campo.
+4. **El zinc y el cobre cuando el calcio se acerca al máximo.** Sin medir.
+5. **La escala de masa muscular** (Tabla VII-3), que separa delgado de
+   atrofiado.
+6. **La temperatura ambiente**, que la ficha no pregunta y vale entre un 10 y
+   un 90 % de las kcal.
+7. **El cordero y la taurina** (y el Terranova), bloqueado por Spitze 2003.
+
+**Para corregir en la documentación (2):**
+
+8. La regla 3-bis de `CLAUDE.md` dice que **«FEDIAF no dice nada»** de los
+   premios. **§4.1 sí dice**, y dice lo mismo que hacemos.
+9. `FEDIAF_CONTRA_OTRAS_FUENTES.md` y `PARA_EL_NUTRICIONISTA.md` afirman que
+   FEDIAF manda siempre. **§2.2 excluye a las dietas para un propósito
+   nutricional particular**, o sea a las patologías.
+
+**Confirmado y medido, sin cambio (3):**
+
+10. Las kcal del catálogo coinciden con la ecuación que FEDIAF manda usar para
+    carne cruda (mediana del 1,3 %).
+11. Las dos copias que FEDIAF publica de su tabla de requisitos coinciden entre
+    sí y con el motor (186 celdas).
+12. El techo de calcio del Gran Danés ya está cubierto por una regla más
+    estricta que aplicamos (1,10 % MS contra el 1,6 % de FEDIAF).
 
 ---
 

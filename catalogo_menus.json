@@ -6,15 +6,15 @@
    "peso_kg": 1.35,
    "der": 260,
    "gramos": {
-    "Corazón de pollo": 47.88,
-    "Lengua de ternera": 59.55,
-    "Costillas de cordero": 42.06,
+    "Corazón de pollo": 89.46,
+    "Costillas de cordero": 39.71,
+    "Dorada": 31.9,
     "Riñón de cordero": 8.0,
-    "Hígado de vaca": 5.46,
-    "Nabo pelado": 17.9,
-    "Aceite de Salmón Natural Greatness": 0.19,
-    "Aceite de girasol": 1.19,
-    "Homemadekun (multivitamínico completo)": 3.07
+    "Hígado de conejo": 8.04,
+    "Albahaca": 19.46,
+    "Aceite de sésamo": 1.0,
+    "Homemadekun (multivitamínico completo)": 1.81,
+    "Yoduro potásico (comprimidos 200 µg)": 0.06
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -26,15 +26,15 @@
    "peso_kg": 2.33,
    "der": 288,
    "gramos": {
-    "Corazón de pollo": 87.44,
-    "Carcasa de pato": 42.28,
-    "Dorada": 25.92,
-    "Riñón de ternera": 8.0,
-    "Hígado de pato": 5.0,
-    "Albahaca": 15.0,
-    "Aceite de girasol": 1.68,
-    "Yoduro potásico (comprimidos 200 µg)": 0.04,
-    "V-INTEGRA Cachorro": 2.1
+    "Pollo con piel (sin hueso)": 40.89,
+    "Corazón de pollo": 66.51,
+    "Costillas de cordero": 47.04,
+    "Pescadilla": 25.92,
+    "Riñón de cordero": 9.41,
+    "Hígado de vaca": 10.82,
+    "Canónigos": 22.04,
+    "AniForte Seaweed Meal": 0.04,
+    "Homemadekun (multivitamínico completo)": 2.36
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -46,13 +46,13 @@
    "peso_kg": 3,
    "der": 251,
    "gramos": {
-    "Pollo con piel (sin hueso)": 70.32,
-    "Pecho de ternera con hueso": 30.61,
+    "Lengua de buey": 62.72,
+    "Espinazo de conejo": 37.27,
     "Pescadilla": 22.59,
-    "Riñón de cordero": 8.0,
-    "Hígado de pavo": 5.0,
-    "Rucula": 15.0,
-    "Homemadekun (multivitamínico completo)": 0.56,
+    "Riñón de cordero": 8.93,
+    "Hígado de conejo": 5.0,
+    "Plátano": 15.0,
+    "Pipa de calabaza": 2.16,
     "V-INTEGRA Perro Adulto": 1.2
    },
    "semaforo": "verde",
@@ -65,13 +65,16 @@
    "peso_kg": 3,
    "der": 235,
    "gramos": {
-    "Corazón de pavo": 40.24,
-    "Pecho de ternera con hueso": 33.03,
-    "Pescadilla": 51.5,
-    "Timo de vaca": 8.0,
-    "Hígado de vaca": 5.0,
-    "Espinaca": 15.0,
-    "V-INTEGRA Senior": 1.2
+    "Molleja de pavo": 21.32,
+    "Lengua de buey": 41.63,
+    "Lengua de cordero": 27.05,
+    "Espinazo de conejo": 30.72,
+    "Pulmón de cordero": 10.8,
+    "Hígado de pavo": 5.0,
+    "Acelga": 15.0,
+    "Aceite de Salmón Natural Greatness": 0.23,
+    "Aceite de girasol": 1.0,
+    "V-INTEGRA Senior": 1.16
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -83,14 +86,14 @@
    "peso_kg": 3,
    "der": 379,
    "gramos": {
-    "Pollo con piel (sin hueso)": 61.16,
-    "Lomo de ternera con grasa": 85.02,
-    "Costillas de cordero": 63.14,
-    "Pescadilla": 55.76,
-    "Páncreas de vaca": 8.0,
-    "Hígado de vaca": 6.26,
-    "Nabo pelado": 30.69,
-    "Homemadekun (multivitamínico completo)": 4.77
+    "Pollo con piel (sin hueso)": 68.52,
+    "Ternera solomillo sin grasa": 96.66,
+    "Costillas de cordero": 65.08,
+    "Pulmón de vaca": 14.67,
+    "Hígado de conejo": 5.62,
+    "Canónigos": 27.53,
+    "Aceite de Salmón Natural Greatness": 1.31,
+    "Homemadekun (multivitamínico completo)": 4.63
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -102,15 +105,14 @@
    "peso_kg": 3,
    "der": 647,
    "gramos": {
-    "Pollo con piel (sin hueso)": 93.1,
-    "Pavo pechuga sin piel": 61.93,
-    "Corazón de pollo": 117.7,
-    "Costillas de cordero": 112.07,
-    "Riñón de ternera": 9.27,
-    "Hígado de vaca": 19.6,
-    "Canónigos": 45.45,
-    "AniForte Aceite de Salmón": 0.47,
-    "Homemadekun (multivitamínico completo)": 7.69
+    "Lengua de ternera": 261.65,
+    "Costillas de cordero": 111.69,
+    "Dorada": 40.97,
+    "Pulmón de cordero": 14.38,
+    "Hígado de vaca": 9.73,
+    "Albahaca": 43.12,
+    "Aceite de cacahuete": 1.59,
+    "Homemadekun (multivitamínico completo)": 7.21
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -122,15 +124,15 @@
    "peso_kg": 2.63,
    "der": 441,
    "gramos": {
-    "Corazón de pollo": 163.89,
-    "Costillas de cordero": 67.08,
+    "Corazón de pollo": 130.16,
+    "Corazón de pavo": 53.2,
+    "Costillas de cordero": 68.76,
     "Dorada": 39.69,
-    "Riñón de cordero": 8.83,
-    "Hígado de pavo": 19.73,
-    "Albahaca": 32.88,
-    "Aceite de girasol": 1.28,
-    "Homemadekun (multivitamínico completo)": 3.31,
-    "Yoduro potásico (comprimidos 200 µg)": 0.08
+    "Riñón de cordero": 8.0,
+    "Hígado de pato": 6.88,
+    "Albahaca": 33.7,
+    "Homemadekun (multivitamínico completo)": 1.56,
+    "Yoduro potásico (comprimidos 200 µg)": 0.15
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -142,14 +144,15 @@
    "peso_kg": 4.66,
    "der": 508,
    "gramos": {
-    "Lengua de ternera": 193.1,
-    "Costillas de cordero": 92.94,
-    "Riñón de cordero": 8.0,
-    "Hígado de conejo": 6.74,
-    "Acelga": 33.05,
-    "Pets Purest Aceite de Salmón Escocés": 0.47,
-    "Aceite de sésamo": 5.0,
-    "Homemadekun (multivitamínico completo)": 6.12
+    "Pollo con piel (sin hueso)": 50.99,
+    "Lengua de ternera": 160.88,
+    "Carcasa de pato": 72.05,
+    "Pescadilla": 42.56,
+    "Pulmón de vaca": 8.0,
+    "Hígado de vaca": 7.21,
+    "Canónigos": 15.0,
+    "Yoduro potásico (comprimidos 200 µg)": 0.05,
+    "V-INTEGRA Cachorro": 3.4
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -161,14 +164,14 @@
    "peso_kg": 6,
    "der": 422,
    "gramos": {
-    "Corazón de pollo": 59.58,
-    "Corazón de pavo": 83.27,
-    "Pecho de ternera con hueso": 51.55,
+    "Corazón de pavo": 37.98,
+    "Lengua de cordero": 91.85,
+    "Espinazo de conejo": 54.14,
+    "Salmón": 44.11,
     "Timo de vaca": 8.0,
-    "Hígado de pollo": 14.29,
-    "Espinaca": 23.81,
-    "Aceite de Salmón Natural Greatness": 0.31,
-    "V-INTEGRA Perro Adulto": 2.4
+    "Hígado de pavo": 5.41,
+    "Espinaca": 26.53,
+    "V-INTEGRA Perro Adulto": 2.01
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -180,13 +183,13 @@
    "peso_kg": 6,
    "der": 395,
    "gramos": {
-    "Lengua de ternera": 66.78,
-    "Pecho de ternera con hueso": 52.82,
-    "Dorada": 99.4,
-    "Timo de vaca": 10.53,
-    "Hígado de pavo": 6.09,
-    "Plátano": 25.89,
-    "V-INTEGRA Senior": 2.4
+    "Lengua de cordero": 113.15,
+    "Espinazo de conejo": 41.16,
+    "Timo de vaca": 24.21,
+    "Hígado de pavo": 10.24,
+    "Acelga": 15.0,
+    "Pets Purest Aceite de Salmón Escocés": 3.62,
+    "V-INTEGRA Senior": 2.34
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -198,14 +201,14 @@
    "peso_kg": 6,
    "der": 662,
    "gramos": {
-    "Pollo con piel (sin hueso)": 97.17,
-    "Ternera solomillo sin grasa": 199.85,
-    "Costillas de cordero": 116.5,
-    "Riñón de cordero": 10.1,
-    "Hígado de vaca": 26.91,
-    "Canónigos": 49.5,
-    "Aceite de hígado de bacalao": 1.64,
-    "Homemadekun (multivitamínico completo)": 7.54
+    "Pollo con piel (sin hueso)": 140.04,
+    "Ternera solomillo sin grasa": 147.2,
+    "Costillas de cordero": 109.2,
+    "Pulmón de cordero": 12.12,
+    "Hígado de vaca": 27.14,
+    "Espinaca": 47.87,
+    "AniForte Aceite de Salmón": 0.39,
+    "Homemadekun (multivitamínico completo)": 8.4
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -217,14 +220,14 @@
    "peso_kg": 6,
    "der": 1190,
    "gramos": {
-    "Lengua de ternera": 374.07,
-    "Costillas de cordero": 210.5,
-    "Trucha": 210.18,
-    "Páncreas de vaca": 19.38,
-    "Hígado de vaca": 50.23,
-    "Espinaca": 94.98,
-    "Homemadekun (multivitamínico completo)": 5.3,
-    "Yoduro potásico (comprimidos 200 µg)": 0.3
+    "Lengua de ternera": 481.25,
+    "Costillas de cordero": 186.66,
+    "Dorada": 140.59,
+    "Páncreas de vaca": 18.79,
+    "Hígado de vaca": 18.23,
+    "Espinaca": 57.11,
+    "Homemadekun (multivitamínico completo)": 5.96,
+    "V-INTEGRA Cachorro": 5.4
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -236,15 +239,15 @@
    "peso_kg": 4.6,
    "der": 692,
    "gramos": {
-    "Pollo con piel (sin hueso)": 104.75,
-    "Corazón de pollo": 148.48,
-    "Costillas de cordero": 118.77,
-    "Pescadilla": 40.0,
-    "Riñón de cordero": 30.86,
-    "Hígado de vaca": 10.16,
-    "Albahaca": 49.78,
-    "AniForte Seaweed Meal": 0.1,
-    "Homemadekun (multivitamínico completo)": 6.03
+    "Corazón de pollo": 185.6,
+    "Corazón de pavo": 109.47,
+    "Costillas de cordero": 119.88,
+    "Riñón de cordero": 32.15,
+    "Hígado de pollo": 10.25,
+    "Espinaca": 50.25,
+    "AniForte Seaweed Meal": 0.18,
+    "Aceite de hígado de bacalao": 1.0,
+    "V-INTEGRA Cachorro": 3.06
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -256,14 +259,15 @@
    "peso_kg": 9.32,
    "der": 876,
    "gramos": {
-    "Pollo con piel (sin hueso)": 166.75,
-    "Corazón de pollo": 173.88,
-    "Carcasa de pollo": 116.79,
-    "Riñón de cordero": 35.64,
-    "Hígado de pollo": 27.86,
-    "Canónigos": 57.24,
-    "AniForte Aceite de Salmón": 1.04,
-    "V-INTEGRA Cachorro": 7.84
+    "Lengua de ternera": 332.57,
+    "Costillas de cordero": 158.31,
+    "Pescadilla": 51.38,
+    "Riñón de cordero": 13.29,
+    "Hígado de vaca": 37.42,
+    "Canónigos": 65.15,
+    "AniForte Seaweed Meal": 0.08,
+    "Aceite de cacahuete": 3.02,
+    "Homemadekun (multivitamínico completo)": 6.98
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -275,13 +279,13 @@
    "peso_kg": 12,
    "der": 709,
    "gramos": {
-    "Pollo con piel (sin hueso)": 221.98,
-    "Pecho de ternera con hueso": 80.85,
-    "Páncreas de vaca": 21.74,
-    "Hígado de pavo": 12.14,
-    "Albahaca": 37.0,
-    "Aceite de Salmón Natural Greatness": 0.56,
-    "V-INTEGRA Perro Adulto": 4.8
+    "Ternera con grasa": 134.4,
+    "Espinazo de conejo": 90.72,
+    "Dorada": 118.18,
+    "Páncreas de vaca": 46.7,
+    "Hígado de pavo": 18.13,
+    "Albahaca": 40.97,
+    "V-INTEGRA Perro Adulto": 3.87
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -293,13 +297,14 @@
    "peso_kg": 12,
    "der": 664,
    "gramos": {
-    "Pollo con piel (sin hueso)": 151.51,
-    "Pecho de ternera con hueso": 73.85,
-    "Pescadilla": 40.0,
-    "Timo de vaca": 41.2,
-    "Hígado de pavo": 7.03,
-    "Acelga": 34.46,
-    "V-INTEGRA Senior": 4.14
+    "Pollo con piel (sin hueso)": 58.62,
+    "Lengua de buey": 166.76,
+    "Espinazo de conejo": 76.64,
+    "Riñón de cordero": 17.3,
+    "Hígado de conejo": 22.54,
+    "Acelga": 37.56,
+    "Pets Purest Aceite de Salmón Escocés": 3.14,
+    "V-INTEGRA Senior": 4.8
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -311,14 +316,14 @@
    "peso_kg": 12,
    "der": 1163,
    "gramos": {
-    "Pollo con piel (sin hueso)": 278.82,
-    "Ternera solomillo sin grasa": 230.61,
-    "Costillas de cordero": 190.9,
-    "Pulmón de cordero": 55.06,
-    "Hígado de vaca": 17.32,
-    "Albahaca": 84.9,
-    "AniForte Aceite de Salmón": 0.98,
-    "Homemadekun (multivitamínico completo)": 14.63
+    "Pollo con piel (sin hueso)": 326.61,
+    "Pavo pechuga sin piel": 161.92,
+    "Costillas de cordero": 172.34,
+    "Bacalao": 55.36,
+    "Pulmón de vaca": 16.61,
+    "Hígado de cordero": 16.61,
+    "Frambuesa": 72.98,
+    "V-INTEGRA Cachorro": 9.29
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -330,15 +335,14 @@
    "peso_kg": 12,
    "der": 2202,
    "gramos": {
-    "Pato (carne sin hueso)": 111.89,
-    "Corazón de pollo": 454.95,
-    "Costillas de cordero": 392.54,
-    "Dorada": 673.2,
-    "Riñón de cordero": 37.64,
-    "Hígado de vaca": 37.4,
-    "Albahaca": 143.66,
-    "Yoduro potásico (comprimidos 200 µg)": 0.53,
-    "V-INTEGRA Cachorro": 9.06
+    "Lengua de ternera": 811.84,
+    "Costillas de cordero": 360.53,
+    "Dorada": 363.64,
+    "Pulmón de cordero": 36.05,
+    "Hígado de vaca": 36.05,
+    "Espinaca": 176.7,
+    "Homemadekun (multivitamínico completo)": 12.64,
+    "Yoduro potásico (comprimidos 200 µg)": 0.41
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -350,14 +354,14 @@
    "peso_kg": 7.5,
    "der": 1029,
    "gramos": {
-    "Corazón de pollo": 267.33,
-    "Carcasa de pollo": 158.2,
-    "Dorada": 152.35,
-    "Riñón de cordero": 14.06,
-    "Hígado de pavo": 36.01,
-    "Espinaca": 68.26,
-    "Aceite de cacahuete": 3.78,
-    "Yoduro potásico (comprimidos 200 µg)": 0.13,
+    "Pollo con piel (sin hueso)": 119.2,
+    "Corazón de pollo": 314.93,
+    "Espinazo de conejo": 154.3,
+    "Caballa": 40.0,
+    "Riñón de cordero": 29.39,
+    "Hígado de pollo": 14.92,
+    "Espinaca": 65.72,
+    "Yoduro potásico (comprimidos 200 µg)": 0.12,
     "V-INTEGRA Cachorro": 6.75
    },
    "semaforo": "verde",
@@ -370,14 +374,14 @@
    "peso_kg": 17.09,
    "der": 1303,
    "gramos": {
-    "Pollo con piel (sin hueso)": 186.87,
-    "Pavo pechuga sin piel": 222.63,
-    "Pecho de ternera con hueso": 190.96,
-    "Riñón de cordero": 45.8,
-    "Hígado de pollo": 14.82,
-    "Espinaca": 72.64,
-    "Oleum Canis Aceite de Salmón": 2.04,
-    "V-INTEGRA Cachorro": 13.28
+    "Pollo con piel (sin hueso)": 85.45,
+    "Lengua de ternera": 463.11,
+    "Carcasa de pollo": 186.55,
+    "Trucha": 67.89,
+    "Riñón de cordero": 21.3,
+    "Hígado de pollo": 18.65,
+    "Espinaca": 80.55,
+    "V-INTEGRA Cachorro": 12.12
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -389,13 +393,13 @@
    "peso_kg": 22,
    "der": 1117,
    "gramos": {
-    "Pollo con piel (sin hueso)": 347.35,
-    "Pecho de ternera con hueso": 130.1,
-    "Bazo de vaca": 37.61,
-    "Hígado de pavo": 11.81,
-    "Albahaca": 57.89,
-    "AniForte Aceite de Salmón": 1.29,
-    "V-INTEGRA Perro Adulto": 6.96
+    "Lengua de cordero": 318.62,
+    "Carcasa de pato": 119.34,
+    "Páncreas de vaca": 63.72,
+    "Hígado de pavo": 10.84,
+    "Champiñón": 23.88,
+    "AniForte Aceite de Salmón": 10.12,
+    "V-INTEGRA Perro Adulto": 6.99
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -407,13 +411,13 @@
    "peso_kg": 22,
    "der": 1046,
    "gramos": {
-    "Conejo": 317.65,
-    "Pecho de ternera con hueso": 122.95,
-    "Timo de vaca": 63.53,
-    "Hígado de pollo": 10.8,
-    "Rucula": 19.83,
-    "Oleum Canis Aceite de Salmón": 7.07,
-    "V-INTEGRA Senior": 8.8
+    "Lengua de cordero": 299.64,
+    "Espinazo de conejo": 109.82,
+    "Páncreas de vaca": 64.58,
+    "Hígado de vaca": 32.29,
+    "Acelga": 37.31,
+    "Oleum Canis Aceite de Salmón": 8.47,
+    "V-INTEGRA Senior": 6.13
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -425,14 +429,14 @@
    "peso_kg": 22,
    "der": 1913,
    "gramos": {
-    "Pollo con piel (sin hueso)": 271.01,
-    "Corazón de pollo": 528.24,
-    "Espinazo de conejo": 281.66,
-    "Dorada": 132.92,
-    "Timo de vaca": 28.17,
-    "Hígado de pato": 60.58,
-    "Canónigos": 91.76,
-    "V-INTEGRA Cachorro": 19.8
+    "Pollo con piel (sin hueso)": 297.9,
+    "Pato (carne sin hueso)": 481.27,
+    "Costillas de cordero": 318.76,
+    "Pulmón de vaca": 29.46,
+    "Hígado de vaca": 54.49,
+    "Acelga": 129.86,
+    "Aceite de hígado de bacalao": 1.0,
+    "Homemadekun (multivitamínico completo)": 24.22
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -444,15 +448,15 @@
    "peso_kg": 22,
    "der": 3796,
    "gramos": {
-    "Corazón de pollo": 40.0,
-    "Lengua de ternera": 1477.4,
-    "Costillas de cordero": 611.59,
-    "Dorada": 447.04,
-    "Páncreas de vaca": 67.91,
-    "Hígado de pato": 99.23,
-    "Espinaca": 284.52,
-    "AniForte Seaweed Meal": 0.78,
-    "Homemadekun (multivitamínico completo)": 20.99
+    "Pollo con piel (sin hueso)": 555.69,
+    "Pato (carne sin hueso)": 902.71,
+    "Costillas de cordero": 707.74,
+    "Riñón de ternera": 59.98,
+    "Hígado de vaca": 151.04,
+    "Acelga": 261.2,
+    "AniForte Seaweed Meal": 1.09,
+    "Aceite de hígado de bacalao": 1.0,
+    "V-INTEGRA Cachorro": 15.85
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -464,15 +468,16 @@
    "peso_kg": 9.63,
    "der": 1278,
    "gramos": {
-    "Pollo con piel (sin hueso)": 141.61,
-    "Corazón de pollo": 404.91,
-    "Espinazo de conejo": 195.0,
-    "Caballa": 44.08,
-    "Riñón de cordero": 36.27,
-    "Hígado de pavo": 18.59,
-    "Albahaca": 79.62,
-    "Yoduro potásico (comprimidos 200 µg)": 0.15,
-    "V-INTEGRA Cachorro": 8.5
+    "Pollo con piel (sin hueso)": 187.23,
+    "Corazón de pollo": 356.56,
+    "Costillas de cordero": 58.57,
+    "Espinazo de conejo": 132.73,
+    "Riñón de cordero": 44.38,
+    "Hígado de vaca": 45.47,
+    "Albahaca": 90.53,
+    "Aceite de hígado de bacalao": 1.0,
+    "Yoduro potásico (comprimidos 200 µg)": 0.28,
+    "V-INTEGRA Cachorro": 6.22
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -484,13 +489,15 @@
    "peso_kg": 24.86,
    "der": 1773,
    "gramos": {
-    "Pollo con piel (sin hueso)": 273.89,
-    "Pecho de ternera con hueso": 252.37,
-    "Pescadilla": 537.01,
-    "Riñón de cordero": 37.15,
-    "Hígado de pavo": 25.24,
-    "Albahaca": 123.69,
-    "V-INTEGRA Cachorro": 17.11
+    "Pollo con piel (sin hueso)": 197.75,
+    "Ternera con grasa": 381.2,
+    "Espinazo de conejo": 198.28,
+    "Riñón de cordero": 58.77,
+    "Hígado de pollo": 48.43,
+    "Piña": 97.18,
+    "AniForte Aceite de Salmón": 2.27,
+    "Sal común (cloruro sódico)": 1.0,
+    "V-INTEGRA Cachorro": 17.45
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -502,13 +509,13 @@
    "peso_kg": 32,
    "der": 1480,
    "gramos": {
-    "Corazón de pavo": 295.09,
-    "Pecho de ternera con hueso": 228.02,
-    "Pescadilla": 282.46,
-    "Páncreas de vaca": 17.32,
-    "Hígado de pavo": 17.32,
-    "Plátano": 17.32,
-    "V-INTEGRA Perro Adulto": 9.89
+    "Lengua de cordero": 423.96,
+    "Carcasa de pato": 149.58,
+    "Timo de vaca": 84.79,
+    "Hígado de pavo": 34.49,
+    "Coles de Bruselas": 20.91,
+    "Oleum Canis Aceite de Salmón": 12.56,
+    "V-INTEGRA Perro Adulto": 8.88
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -520,13 +527,13 @@
    "peso_kg": 32,
    "der": 1386,
    "gramos": {
-    "Pollo con piel (sin hueso)": 443.87,
-    "Pecho de ternera con hueso": 150.95,
-    "Pescadilla": 48.27,
-    "Pulmón de vaca": 15.09,
-    "Hígado de pollo": 15.09,
-    "Rucula": 73.98,
-    "V-INTEGRA Senior": 8.77
+    "Lengua de cordero": 397.03,
+    "Espinazo de conejo": 149.96,
+    "Páncreas de vaca": 88.19,
+    "Hígado de pavo": 40.77,
+    "Espinaca": 66.41,
+    "AniForte Aceite de Salmón": 10.02,
+    "V-INTEGRA Senior": 8.1
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -538,14 +545,14 @@
    "peso_kg": 32,
    "der": 2608,
    "gramos": {
-    "Pollo con piel (sin hueso)": 340.83,
-    "Lengua de ternera": 786.51,
-    "Costillas de cordero": 398.55,
-    "Dorada": 107.42,
-    "Páncreas de vaca": 38.34,
-    "Hígado de vaca": 38.34,
-    "Acelga": 187.89,
-    "Homemadekun (multivitamínico completo)": 29.58
+    "Pollo con piel (sin hueso)": 697.44,
+    "Corazón de pollo": 419.16,
+    "Espinazo de conejo": 398.26,
+    "Bacalao": 153.95,
+    "Pulmón de vaca": 40.17,
+    "Hígado de pollo": 37.97,
+    "Albahaca": 132.85,
+    "V-INTEGRA Cachorro": 22.92
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -557,15 +564,15 @@
    "peso_kg": 32,
    "der": 5330,
    "gramos": {
-    "Pollo con piel (sin hueso)": 1061.99,
-    "Pato (carne sin hueso)": 921.92,
-    "Costillas de cordero": 988.22,
-    "Riñón de cordero": 148.83,
-    "Hígado de vaca": 218.83,
-    "Acelga": 366.97,
-    "Aceite de hígado de bacalao": 1.0,
-    "Yoduro potásico (comprimidos 200 µg)": 1.43,
-    "V-INTEGRA Cachorro": 22.74
+    "Pollo con piel (sin hueso)": 888.67,
+    "Lomo de ternera con grasa": 1310.05,
+    "Carcasa de pato": 820.64,
+    "Pescadilla": 786.62,
+    "Pulmón de cordero": 82.06,
+    "Hígado de pato": 92.45,
+    "Albahaca": 82.06,
+    "AniForte Seaweed Meal": 1.22,
+    "V-INTEGRA Cachorro": 28.8
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -577,15 +584,15 @@
    "peso_kg": 13.34,
    "der": 1632,
    "gramos": {
-    "Pollo con piel (sin hueso)": 383.1,
-    "Carcasa de pato": 86.08,
-    "Pecho de ternera con hueso": 141.38,
-    "Pescadilla": 373.92,
-    "Riñón de ternera": 27.48,
-    "Hígado de vaca": 42.8,
-    "Espinaca": 71.29,
-    "Yoduro potásico (comprimidos 200 µg)": 0.15,
-    "V-INTEGRA Cachorro": 12.01
+    "Pollo con piel (sin hueso)": 177.88,
+    "Corazón de pollo": 531.32,
+    "Espinazo de conejo": 249.1,
+    "Riñón de cordero": 46.52,
+    "Hígado de pollo": 70.92,
+    "Frambuesa": 118.2,
+    "Aceite de hígado de bacalao": 1.19,
+    "Yoduro potásico (comprimidos 200 µg)": 0.23,
+    "V-INTEGRA Cachorro": 10.57
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -597,13 +604,16 @@
    "peso_kg": 42.73,
    "der": 2575,
    "gramos": {
-    "Pollo con piel (sin hueso)": 454.58,
-    "Pecho de ternera con hueso": 368.63,
-    "Pescadilla": 747.31,
-    "Riñón de ternera": 36.86,
-    "Hígado de vaca": 36.86,
-    "Espinaca": 180.67,
-    "V-INTEGRA Cachorro": 24.39
+    "Pollo con piel (sin hueso)": 199.55,
+    "Ternera con grasa": 460.89,
+    "Pato (carne sin hueso)": 203.83,
+    "Espinazo de conejo": 303.17,
+    "Riñón de cordero": 57.09,
+    "Hígado de conejo": 86.43,
+    "Nabo pelado": 144.04,
+    "Oleum Canis Aceite de Salmón": 16.19,
+    "Sal común (cloruro sódico)": 1.0,
+    "V-INTEGRA Cachorro": 24.41
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -615,13 +625,13 @@
    "peso_kg": 55,
    "der": 2222,
    "gramos": {
-    "Pollo con piel (sin hueso)": 438.98,
-    "Pecho de ternera con hueso": 353.11,
-    "Riñón de cordero": 123.49,
-    "Hígado de pavo": 21.0,
-    "Coles de Bruselas": 102.91,
-    "AniForte Aceite de Salmón": 2.52,
-    "V-INTEGRA Perro Adulto": 19.93
+    "Lengua de cordero": 636.51,
+    "Espinazo de conejo": 308.25,
+    "Timo de vaca": 151.47,
+    "Hígado de vaca": 52.58,
+    "Canónigos": 126.23,
+    "Oleum Canis Aceite de Salmón": 6.15,
+    "V-INTEGRA Perro Adulto": 13.33
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -633,13 +643,13 @@
    "peso_kg": 55,
    "der": 2080,
    "gramos": {
-    "Pollo con piel (sin hueso)": 560.94,
-    "Pecho de ternera con hueso": 292.27,
-    "Riñón de ternera": 19.08,
-    "Hígado de pavo": 19.08,
-    "Espinaca": 52.98,
-    "Aceite de Salmón Natural Greatness": 1.73,
-    "V-INTEGRA Senior": 22.0
+    "Lengua de cordero": 595.83,
+    "Espinazo de conejo": 237.94,
+    "Pulmón de vaca": 135.78,
+    "Hígado de pavo": 60.25,
+    "Plátano": 113.15,
+    "AniForte Aceite de Salmón": 25.3,
+    "V-INTEGRA Senior": 13.56
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -651,14 +661,14 @@
    "peso_kg": 55,
    "der": 4096,
    "gramos": {
-    "Pato (carne sin hueso)": 238.93,
-    "Corazón de pollo": 1249.14,
-    "Espinazo de conejo": 625.67,
-    "Dorada": 642.04,
-    "Timo de vaca": 173.04,
-    "Hígado de pollo": 62.08,
-    "Acelga": 82.39,
-    "V-INTEGRA Cachorro": 37.99
+    "Pollo con piel (sin hueso)": 1158.53,
+    "Pavo pechuga sin piel": 549.8,
+    "Costillas de cordero": 586.48,
+    "Bacalao": 179.3,
+    "Riñón de cordero": 59.05,
+    "Hígado de conejo": 58.09,
+    "Canónigos": 284.72,
+    "V-INTEGRA Cachorro": 30.56
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -670,16 +680,16 @@
    "peso_kg": 55,
    "der": 8482,
    "gramos": {
-    "Pollo con piel (sin hueso)": 1253.54,
-    "Ternera solomillo sin grasa": 2321.5,
-    "Carcasa de pollo": 1019.34,
-    "Carcasa de pato": 274.85,
-    "Riñón de ternera": 280.61,
-    "Hígado de vaca": 344.14,
-    "Espinaca": 524.6,
-    "AniForte Seaweed Meal": 1.5,
-    "Aceite de hígado de bacalao": 3.47,
-    "V-INTEGRA Cachorro": 49.5
+    "Pollo con piel (sin hueso)": 1289.01,
+    "Ternera solomillo sin grasa": 2323.35,
+    "Carcasa de pato": 1304.38,
+    "Riñón de ternera": 167.17,
+    "Bazo de cordero": 77.04,
+    "Hígado de vaca": 361.24,
+    "Albahaca": 559.22,
+    "AniForte Seaweed Meal": 2.48,
+    "Aceite de hígado de bacalao": 4.68,
+    "V-INTEGRA Cachorro": 31.5
    },
    "semaforo": "verde",
    "correctos": 48,
@@ -691,57 +701,56 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Corazón de pollo": 87.72,
-     "Costillas de cordero": 40.45,
-     "Dorada": 32.8,
-     "Riñón de cordero": 8.0,
-     "Hígado de pollo": 11.47,
-     "Albahaca": 19.83,
-     "AniForte Seaweed Meal": 0.07,
-     "Pipa de calabaza": 1.92,
+     "Corazón de pollo": 90.55,
+     "Costillas de cordero": 38.97,
+     "Trucha": 23.4,
+     "Riñón de ternera": 15.71,
+     "Hígado de pavo": 6.06,
+     "Piña": 18.22,
+     "Aceite de girasol": 1.0,
+     "Yoduro potásico (comprimidos 200 µg)": 0.07,
      "V-INTEGRA Cachorro": 1.22
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Ternera solomillo sin grasa": 101.31,
-     "Costillas de cordero": 42.29,
-     "Trucha": 31.96,
-     "Riñón de cordero": 8.07,
-     "Hígado de vaca": 5.0,
-     "Albahaca": 20.73,
-     "AniForte Seaweed Meal": 0.07,
-     "Aceite de cacahuete": 2.45,
-     "Homemadekun (multivitamínico completo)": 1.63
+     "Lomo de ternera con grasa": 109.85,
+     "Costillas de cordero": 43.96,
+     "Dorada": 23.4,
+     "Riñón de ternera": 8.12,
+     "Hígado de vaca": 10.77,
+     "Albahaca": 21.55,
+     "Aceite de girasol": 1.0,
+     "Homemadekun (multivitamínico completo)": 1.17,
+     "Yoduro potásico (comprimidos 200 µg)": 0.08
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 45.16,
-     "Costillas de cordero": 43.21,
-     "Trucha": 23.4,
-     "Pescadilla": 44.94,
-     "Riñón de ternera": 8.0,
-     "Hígado de vaca": 5.0,
-     "Albahaca": 18.65,
-     "Aceite de oliva": 3.96,
-     "Semilla de sésamo": 3.56,
+     "Conejo": 80.03,
+     "Costillas de cordero": 39.06,
+     "Pescadilla": 44.8,
+     "Pulmón de cordero": 8.0,
+     "Hígado de cordero": 5.0,
+     "Albahaca": 16.5,
+     "Aceite de girasol": 1.74,
+     "Semilla de sésamo": 5.0,
      "Yoduro potásico (comprimidos 200 µg)": 0.07,
-     "V-INTEGRA Cachorro": 1.13
+     "V-INTEGRA Cachorro": 1.22
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Corazón de pollo": 56.34,
-     "Lengua de ternera": 44.57,
-     "Costillas de cordero": 45.24,
+     "Corazón de pollo": 55.22,
+     "Lengua de ternera": 44.87,
+     "Costillas de cordero": 45.23,
      "Riñón de cordero": 8.0,
      "Hígado de conejo": 5.0,
-     "Canónigos": 17.49,
-     "Pets Purest Aceite de Salmón Escocés": 0.11,
+     "Canónigos": 17.17,
+     "Oleum Canis Aceite de Salmón": 0.27,
      "Aceite de girasol": 1.54,
      "Homemadekun (multivitamínico completo)": 3.05
     }
@@ -749,15 +758,17 @@
    {
     "proteina": "Merluza",
     "gramos": {
-     "Corazón de pollo": 49.22,
-     "Lengua de ternera": 57.52,
-     "Costillas de cordero": 45.08,
+     "Ternera solomillo sin grasa": 49.91,
+     "Corazón de pollo": 53.69,
+     "Costillas de cordero": 39.15,
      "Riñón de cordero": 8.0,
-     "Hígado de vaca": 5.0,
-     "Nabo pelado": 18.11,
-     "Oleum Canis Aceite de Salmón": 0.27,
-     "Aceite de girasol": 1.21,
-     "Homemadekun (multivitamínico completo)": 3.08
+     "Hígado de pollo": 6.39,
+     "Canónigos": 17.27,
+     "AniForte Aceite de Salmón": 0.32,
+     "Semilla de lino": 1.0,
+     "Pipa de girasol": 2.1,
+     "Semilla de sésamo": 2.57,
+     "Homemadekun (multivitamínico completo)": 3.19
     }
    }
   ],
@@ -765,74 +776,74 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Corazón de pollo": 75.35,
-     "Costillas de cordero": 47.17,
-     "Trucha": 25.92,
-     "Riñón de cordero": 13.23,
-     "Hígado de pavo": 5.0,
-     "Espinaca": 18.31,
-     "Aceite de oliva": 5.0,
-     "Yoduro potásico (comprimidos 200 µg)": 0.04,
-     "V-INTEGRA Cachorro": 2.1
+     "Corazón de pollo": 71.34,
+     "Costillas de cordero": 48.24,
+     "Pescadilla": 55.65,
+     "Riñón de cordero": 8.0,
+     "Hígado de conejo": 5.0,
+     "Canónigos": 20.68,
+     "Aceite de girasol": 4.02,
+     "Aceite de linaza": 1.0,
+     "Homemadekun (multivitamínico completo)": 3.36
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Ternera solomillo sin grasa": 31.05,
-     "Lengua de ternera": 65.76,
-     "Costillas de cordero": 50.95,
+     "Ternera solomillo sin grasa": 116.56,
+     "Costillas de cordero": 42.1,
      "Riñón de cordero": 8.0,
-     "Hígado de vaca": 5.0,
-     "Acelga": 17.66,
-     "Pets Purest Aceite de Salmón Escocés": 2.45,
-     "Aceite de girasol": 3.3,
-     "Homemadekun (multivitamínico completo)": 3.64
+     "Hígado de vaca": 10.14,
+     "Canónigos": 19.43,
+     "Aceite de Salmón Natural Greatness": 0.18,
+     "Aceite de girasol": 5.0,
+     "Aceite de linaza": 1.0,
+     "Homemadekun (multivitamínico completo)": 3.53
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 29.34,
+     "Conejo": 72.93,
      "Carcasa de pato": 25.0,
-     "Pecho de ternera con hueso": 36.11,
-     "Dorada": 33.76,
-     "Riñón de cordero": 8.0,
-     "Hígado de pato": 5.0,
-     "Albahaca": 15.0,
+     "Costillas de cordero": 25.0,
+     "Pescadilla": 25.92,
+     "Riñón de ternera": 8.0,
+     "Hígado de vaca": 5.72,
+     "Acelga": 16.9,
      "AniForte Seaweed Meal": 0.06,
-     "Aceite de sésamo": 2.5,
-     "Sal común (cloruro sódico)": 1.0,
-     "V-INTEGRA Cachorro": 1.82
+     "Aceite de sésamo": 3.26,
+     "Semilla de lino": 1.0,
+     "Semilla de sésamo": 3.37,
+     "V-INTEGRA Cachorro": 1.75
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Corazón de pollo": 48.4,
-     "Lengua de ternera": 58.24,
-     "Costillas de cordero": 50.62,
+     "Corazón de pollo": 38.41,
+     "Lengua de ternera": 75.31,
+     "Costillas de cordero": 49.73,
      "Riñón de cordero": 8.0,
-     "Hígado de pavo": 5.0,
-     "Nabo pelado": 18.71,
-     "Oleum Canis Aceite de Salmón": 0.32,
-     "Aceite de girasol": 1.42,
-     "Semilla de sésamo": 3.22,
-     "Homemadekun (multivitamínico completo)": 3.44
+     "Hígado de vaca": 5.0,
+     "Espinaca": 15.0,
+     "Aceite de Salmón Natural Greatness": 0.21,
+     "Aceite de girasol": 1.59,
+     "Homemadekun (multivitamínico completo)": 3.49
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Corazón de pollo": 37.32,
-     "Lengua de ternera": 73.45,
-     "Costillas de cordero": 44.09,
-     "Riñón de cordero": 8.68,
+     "Corazón de pollo": 45.56,
+     "Lengua de ternera": 72.55,
+     "Costillas de cordero": 48.01,
+     "Riñón de cordero": 8.03,
      "Hígado de vaca": 5.0,
-     "Espinaca": 17.93,
-     "AniForte Aceite de Salmón": 0.33,
-     "Aceite de oliva": 4.26,
-     "Homemadekun (multivitamínico completo)": 3.5
+     "Piña": 19.68,
+     "Pets Purest Aceite de Salmón Escocés": 0.13,
+     "Aceite de girasol": 1.13,
+     "Homemadekun (multivitamínico completo)": 3.47
     }
    }
   ],
@@ -840,65 +851,69 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 55.3,
-     "Pecho de ternera con hueso": 31.92,
-     "Pescadilla": 36.3,
-     "Páncreas de vaca": 8.0,
-     "Hígado de vaca": 5.0,
-     "Mandarina": 15.0,
-     "Homemadekun (multivitamínico completo)": 0.44,
-     "V-INTEGRA Perro Adulto": 1.2
+     "Corazón de pollo": 72.95,
+     "Espinazo de conejo": 33.89,
+     "Salmón": 30.66,
+     "Riñón de cordero": 8.0,
+     "Hígado de pavo": 5.0,
+     "Acelga": 15.0,
+     "Aceite de cacahuete": 1.48,
+     "V-INTEGRA Perro Adulto": 1.16
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 48.98,
-     "Pecho de ternera con hueso": 33.25,
-     "Dorada": 48.31,
-     "Páncreas de vaca": 12.1,
-     "Hígado de pavo": 5.66,
-     "Albahaca": 16.29,
+     "Lengua de ternera": 80.77,
+     "Espinazo de conejo": 33.62,
+     "Dorada": 22.59,
+     "Páncreas de vaca": 8.0,
+     "Hígado de conejo": 5.0,
+     "Acelga": 16.48,
+     "Aceite de girasol": 4.37,
      "V-INTEGRA Perro Adulto": 1.2
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 48.28,
-     "Pecho de ternera con hueso": 33.69,
-     "Dorada": 32.28,
-     "Timo de vaca": 18.11,
-     "Hígado de cordero": 5.0,
-     "Espinaca": 15.09,
-     "V-INTEGRA Perro Adulto": 1.2,
-     "Yoduro potásico (comprimidos 200 µg)": 0.03
+     "Conejo": 50.43,
+     "Espinazo de conejo": 30.82,
+     "Trucha": 37.29,
+     "Timo de vaca": 12.98,
+     "Hígado de pavo": 5.0,
+     "Piña": 15.0,
+     "Aceite de girasol": 1.34,
+     "Grasa de pollo": 4.96,
+     "astoral MultiVital BARF": 0.15,
+     "V-INTEGRA Perro Adulto": 1.2
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Lengua de cordero": 70.37,
-     "Espinazo de conejo": 30.62,
-     "Salmón": 22.59,
-     "Bazo de vaca": 8.0,
-     "Hígado de conejo": 5.0,
-     "Plátano": 15.0,
-     "Pipa de girasol": 1.2,
-     "V-INTEGRA Perro Adulto": 1.14
+     "Molleja de pavo": 30.71,
+     "Lengua de cordero": 62.29,
+     "Espinazo de conejo": 31.72,
+     "Timo de vaca": 8.0,
+     "Hígado de vaca": 9.33,
+     "Canónigos": 15.0,
+     "AniForte Aceite de Salmón": 0.27,
+     "Pipa de girasol": 1.83,
+     "V-INTEGRA Perro Adulto": 1.2
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 44.1,
-     "Ternera solomillo sin grasa": 42.27,
-     "Pecho de ternera con hueso": 30.61,
-     "Riñón de ternera": 10.54,
-     "Hígado de pollo": 9.0,
-     "Acelga": 15.0,
-     "Aceite de hígado de bacalao": 1.0,
-     "napfcheck Novomineral proLEBER": 0.16,
+     "Ternera solomillo sin grasa": 41.54,
+     "Lengua de buey": 36.77,
+     "Espinazo de conejo": 32.17,
+     "Timo de vaca": 18.0,
+     "Hígado de pollo": 8.03,
+     "Canónigos": 15.0,
+     "AniForte Aceite de Salmón": 1.38,
+     "Semilla de sésamo": 3.25,
      "V-INTEGRA Perro Adulto": 1.2
     }
    }
@@ -907,27 +922,34 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo ala con piel (sin hueso)": 22.35,
-     "Pecho de ternera con hueso": 30.61,
-     "Dorada": 67.84,
-     "Timo de vaca": 10.28,
-     "Hígado de conejo": 5.43,
-     "Acelga": 15.0,
-     "V-INTEGRA Senior": 1.19
+     "Corazón de pollo": 70.09,
+     "Espinazo de conejo": 32.27,
+     "Bacalao": 21.15,
+     "Pulmón de vaca": 8.0,
+     "Hígado de pavo": 5.0,
+     "Rucula": 15.0,
+     "Aceite de girasol": 1.23,
+     "Aceite de linaza": 1.0,
+     "Pipa de girasol": 4.09,
+     "NEKTON Dog Easy-BARF (multivitamínico)": 0.78,
+     "astoral MultiVital BARF": 0.15
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 80.37,
-     "Espinazo de conejo": 22.0,
-     "Pecho de ternera con hueso": 21.15,
-     "Pulmón de vaca": 8.0,
-     "Hígado de pavo": 5.0,
-     "Acelga": 15.0,
-     "Pets Purest Aceite de Salmón Escocés": 0.15,
-     "Pipa de girasol": 1.55,
-     "V-INTEGRA Senior": 1.2
+     "Ternera solomillo sin grasa": 22.81,
+     "Ternera con grasa": 29.3,
+     "Espinazo de conejo": 30.61,
+     "Pescadilla": 40.81,
+     "Pulmón de cordero": 8.0,
+     "Hígado de conejo": 5.0,
+     "Plátano": 15.0,
+     "Aceite de girasol": 2.74,
+     "Huevo de codorniz": 1.0,
+     "Semilla de lino": 2.55,
+     "NEKTON Dog Easy-BARF (multivitamínico)": 1.34,
+     "astoral MultiVital BARF": 0.15
     }
    },
    {
@@ -945,34 +967,33 @@
    {
     "proteina": "Salmón",
     "gramos": {
-     "Ternera solomillo sin grasa": 59.44,
-     "Molleja de pollo": 21.78,
-     "Espinazo de conejo": 21.15,
-     "Pecho de ternera con hueso": 21.15,
-     "Riñón de cordero": 8.0,
+     "Molleja de pollo": 33.38,
+     "Lengua de buey": 56.62,
+     "Espinazo de conejo": 30.61,
+     "Pulmón de vaca": 10.91,
      "Hígado de pollo": 5.0,
-     "Col lombarda": 15.0,
-     "Aceite de hígado de bacalao": 1.0,
-     "Aceite de sésamo": 1.59,
-     "Semilla de lino": 1.0,
-     "Semilla de sésamo": 1.21,
-     "astoral MultiVital BARF": 0.15,
-     "V-INTEGRA Senior": 0.76
+     "Acelga": 15.0,
+     "Pets Purest Aceite de Salmón Escocés": 0.14,
+     "Aceite de sésamo": 1.0,
+     "Semilla de lino": 1.32,
+     "V-INTEGRA Senior": 1.2
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Molleja de pavo": 36.2,
-     "Lengua de ternera": 44.73,
-     "Espinazo de conejo": 21.43,
-     "Pecho de ternera con hueso": 21.15,
-     "Páncreas de vaca": 8.0,
-     "Hígado de pavo": 5.0,
+     "Corazón de pollo": 47.7,
+     "Molleja de pavo": 21.15,
+     "Lengua de buey": 21.15,
+     "Espinazo de conejo": 31.07,
+     "Riñón de cordero": 8.0,
+     "Hígado de pollo": 7.44,
      "Acelga": 15.0,
-     "Pets Purest Aceite de Salmón Escocés": 0.13,
-     "Pipa de girasol": 1.0,
-     "V-INTEGRA Senior": 1.2
+     "AniForte Seaweed Meal": 0.29,
+     "Aceite de girasol": 1.0,
+     "Aceite de hígado de bacalao": 1.0,
+     "Semilla de sésamo": 2.5,
+     "V-INTEGRA Senior": 0.63
     }
    }
   ],
@@ -980,69 +1001,69 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Corazón de pollo": 59.43,
-     "Costillas de cordero": 64.38,
-     "Trucha": 149.5,
-     "Bazo de cordero": 8.0,
-     "Hígado de vaca": 6.44,
-     "Albahaca": 30.96,
-     "Yoduro potásico (comprimidos 200 µg)": 0.11,
-     "V-INTEGRA Cachorro": 1.56
+     "Pollo con piel (sin hueso)": 124.82,
+     "Costillas de cordero": 56.64,
+     "Trucha": 37.7,
+     "Pulmón de vaca": 19.43,
+     "Hígado de vaca": 14.05,
+     "Espinaca": 27.76,
+     "AniForte Seaweed Meal": 0.13,
+     "V-INTEGRA Cachorro": 2.3
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Ternera solomillo sin grasa": 147.1,
-     "Costillas de cordero": 62.04,
-     "Dorada": 34.11,
-     "Timo de vaca": 21.02,
-     "Hígado de conejo": 6.06,
-     "Espinaca": 29.7,
-     "Aceite de girasol": 1.17,
-     "Homemadekun (multivitamínico completo)": 4.79
+     "Ternera solomillo sin grasa": 159.67,
+     "Costillas de cordero": 59.75,
+     "Riñón de cordero": 8.41,
+     "Hígado de vaca": 14.36,
+     "Albahaca": 26.61,
+     "AniForte Aceite de Salmón": 0.33,
+     "Aceite de linaza": 1.0,
+     "Aceite de sésamo": 4.01,
+     "Homemadekun (multivitamínico completo)": 4.83
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 150.49,
-     "Costillas de cordero": 64.12,
-     "Pulmón de cordero": 11.83,
-     "Hígado de vaca": 5.19,
-     "Canónigos": 25.45,
-     "Pets Purest Aceite de Salmón Escocés": 0.15,
-     "Aceite de oliva virgen extra": 2.07,
-     "Aceite de girasol": 1.0,
-     "Aceite de linaza": 1.0,
-     "Homemadekun (multivitamínico completo)": 4.69,
-     "Sal común (cloruro sódico)": 1.0
+     "Conejo": 120.94,
+     "Costillas de cordero": 56.2,
+     "Trucha": 34.11,
+     "Timo de vaca": 27.65,
+     "Hígado de conejo": 11.79,
+     "Albahaca": 27.55,
+     "Sal común (cloruro sódico)": 1.0,
+     "Yoduro potásico (comprimidos 200 µg)": 0.06,
+     "V-INTEGRA Cachorro": 2.69
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 62.64,
-     "Ternera solomillo sin grasa": 108.12,
-     "Costillas de cordero": 61.85,
-     "Bazo de cordero": 11.06,
-     "Hígado de vaca": 15.35,
-     "Espinaca": 28.46,
-     "Pets Purest Aceite de Salmón Escocés": 0.11,
-     "Homemadekun (multivitamínico completo)": 4.9
+     "Pollo con piel (sin hueso)": 47.17,
+     "Ternera solomillo sin grasa": 117.35,
+     "Costillas de cordero": 62.84,
+     "Timo de vaca": 9.56,
+     "Hígado de conejo": 12.63,
+     "Zanahoria": 27.42,
+     "Pets Purest Aceite de Salmón Escocés": 0.13,
+     "Homemadekun (multivitamínico completo)": 4.93
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 46.71,
-     "Lomo de ternera con grasa": 126.27,
-     "Costillas de cordero": 63.51,
-     "Páncreas de vaca": 10.9,
-     "Hígado de vaca": 14.99,
-     "Acelga": 28.83,
-     "Pets Purest Aceite de Salmón Escocés": 0.12,
-     "Homemadekun (multivitamínico completo)": 4.85
+     "Pollo con piel (sin hueso)": 75.43,
+     "Pavo pechuga sin piel": 77.38,
+     "Costillas de cordero": 72.96,
+     "Bazo de cordero": 8.0,
+     "Hígado de conejo": 5.2,
+     "Espinaca": 18.28,
+     "AniForte Seaweed Meal": 0.08,
+     "Aceite de hígado de bacalao": 1.0,
+     "Homemadekun (multivitamínico completo)": 2.82
     }
    }
   ],
@@ -1050,70 +1071,69 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 194.04,
-     "Costillas de cordero": 103.36,
-     "Pescadilla": 158.01,
-     "Bazo de cordero": 10.34,
-     "Hígado de vaca": 10.34,
-     "Piña": 35.6,
-     "Homemadekun (multivitamínico completo)": 5.4,
+     "Pollo con piel (sin hueso)": 190.87,
+     "Costillas de cordero": 116.47,
+     "Pescadilla": 140.61,
+     "Bazo de cordero": 10.19,
+     "Hígado de vaca": 10.19,
+     "Albahaca": 36.03,
+     "Homemadekun (multivitamínico completo)": 5.51,
      "Yoduro potásico (comprimidos 200 µg)": 0.09
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Ternera solomillo sin grasa": 266.76,
-     "Costillas de cordero": 106.8,
-     "Riñón de cordero": 9.12,
-     "Hígado de conejo": 21.95,
-     "Boniato": 44.46,
-     "AniForte Aceite de Salmón": 1.38,
-     "Aceite de linaza": 1.0,
-     "Aceite de sésamo": 3.55,
-     "Homemadekun (multivitamínico completo)": 8.12
+     "Ternera solomillo sin grasa": 277.52,
+     "Costillas de cordero": 111.99,
+     "Riñón de cordero": 11.74,
+     "Hígado de conejo": 19.7,
+     "Piña": 46.25,
+     "Oleum Canis Aceite de Salmón": 1.38,
+     "Aceite de linaza": 1.76,
+     "Aceite de cacahuete": 5.0,
+     "Homemadekun (multivitamínico completo)": 7.98
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 250.28,
-     "Costillas de cordero": 118.63,
-     "Bazo de cordero": 9.07,
-     "Hígado de vaca": 26.68,
-     "Albahaca": 44.46,
-     "Aceite de girasol": 1.12,
-     "Aceite de hígado de bacalao": 1.0,
-     "Semilla de lino": 1.0,
-     "Homemadekun (multivitamínico completo)": 4.69,
-     "Sal común (cloruro sódico)": 1.0,
-     "Yoduro potásico (comprimidos 200 µg)": 0.13
+     "Conejo": 258.16,
+     "Costillas de cordero": 111.15,
+     "Pulmón de cordero": 16.88,
+     "Hígado de vaca": 13.74,
+     "Canónigos": 43.94,
+     "Pets Purest Aceite de Salmón Escocés": 0.22,
+     "Aceite de girasol": 5.0,
+     "Aceite de linaza": 1.41,
+     "Homemadekun (multivitamínico completo)": 7.78,
+     "Sal común (cloruro sódico)": 1.0
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 68.25,
-     "Lengua de ternera": 208.78,
-     "Costillas de cordero": 111.0,
-     "Bazo de cordero": 11.58,
-     "Hígado de vaca": 20.59,
-     "Espinaca": 46.17,
-     "Pets Purest Aceite de Salmón Escocés": 0.22,
-     "Homemadekun (multivitamínico completo)": 7.5,
-     "Sal común (cloruro sódico)": 1.0
+     "Pollo con piel (sin hueso)": 44.9,
+     "Lengua de ternera": 235.72,
+     "Costillas de cordero": 107.32,
+     "Timo de ternera": 13.66,
+     "Hígado de vaca": 24.05,
+     "Acelga": 46.77,
+     "AniForte Aceite de Salmón": 0.52,
+     "Homemadekun (multivitamínico completo)": 7.38
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 86.22,
-     "Ternera solomillo sin grasa": 202.08,
-     "Costillas de cordero": 112.86,
+     "Pollo con piel (sin hueso)": 85.65,
+     "Ternera solomillo sin grasa": 202.54,
+     "Costillas de cordero": 112.87,
      "Riñón de cordero": 9.8,
-     "Hígado de vaca": 26.34,
-     "Canónigos": 48.05,
-     "Pets Purest Aceite de Salmón Escocés": 2.59,
+     "Hígado de vaca": 26.28,
+     "Canónigos": 48.03,
+     "AniForte Aceite de Salmón": 0.39,
+     "Aceite de girasol": 1.7,
      "Homemadekun (multivitamínico completo)": 7.59
     }
    }
@@ -1122,71 +1142,70 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Corazón de pollo": 154.16,
-     "Costillas de cordero": 32.16,
-     "Pecho de ternera con hueso": 25.0,
-     "Riñón de cordero": 18.24,
-     "Hígado de pollo": 16.2,
-     "Canónigos": 27.0,
-     "Pets Purest Aceite de Salmón Escocés": 0.2,
-     "Aceite de girasol": 2.1,
-     "Semilla de lino": 1.0,
-     "Homemadekun (multivitamínico completo)": 5.17
+     "Corazón de pollo": 130.48,
+     "Carcasa de pollo": 78.79,
+     "Riñón de cordero": 16.92,
+     "Hígado de pato": 5.86,
+     "Canónigos": 25.5,
+     "Pets Purest Aceite de Salmón Escocés": 0.33,
+     "Aceite de girasol": 2.25,
+     "Semilla de lino": 1.08,
+     "Homemadekun (multivitamínico completo)": 5.1
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Ternera solomillo sin grasa": 104.28,
-     "Lengua de ternera": 72.1,
-     "Costillas de cordero": 73.85,
-     "Riñón de cordero": 11.31,
-     "Hígado de conejo": 6.0,
-     "Espinaca": 29.4,
-     "Pets Purest Aceite de Salmón Escocés": 3.71,
-     "Aceite de girasol": 3.72,
-     "Homemadekun (multivitamínico completo)": 5.37
+     "Lengua de ternera": 169.67,
+     "Costillas de cordero": 66.59,
+     "Pescadilla": 48.75,
+     "Timo de vaca": 9.33,
+     "Hígado de conejo": 6.66,
+     "Albahaca": 28.65,
+     "Aceite de girasol": 1.0,
+     "Homemadekun (multivitamínico completo)": 3.12,
+     "Yoduro potásico (comprimidos 200 µg)": 0.07
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 170.64,
-     "Costillas de cordero": 71.32,
-     "Pescadilla": 39.69,
-     "Bazo de cordero": 8.0,
-     "Hígado de vaca": 19.08,
-     "Albahaca": 33.58,
-     "Aceite de girasol": 2.4,
-     "Homemadekun (multivitamínico completo)": 2.8,
+     "Conejo": 161.95,
+     "Carcasa de pato": 34.09,
+     "Costillas de cordero": 42.32,
+     "Dorada": 39.69,
+     "Timo de vaca": 8.69,
+     "Hígado de pato": 10.07,
+     "Espinaca": 23.37,
      "Sal común (cloruro sódico)": 1.0,
-     "Yoduro potásico (comprimidos 200 µg)": 0.1
+     "Yoduro potásico (comprimidos 200 µg)": 0.11,
+     "V-INTEGRA Cachorro": 2.2
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Lengua de ternera": 175.59,
-     "Costillas de cordero": 76.7,
+     "Lengua de ternera": 170.7,
+     "Costillas de cordero": 76.93,
      "Riñón de cordero": 8.0,
-     "Hígado de vaca": 6.05,
-     "Acelga": 29.26,
-     "Pets Purest Aceite de Salmón Escocés": 0.2,
-     "Aceite de sésamo": 3.99,
-     "Homemadekun (multivitamínico completo)": 5.24
+     "Hígado de vaca": 8.18,
+     "Acelga": 28.99,
+     "Pets Purest Aceite de Salmón Escocés": 3.54,
+     "Aceite de cacahuete": 1.0,
+     "Homemadekun (multivitamínico completo)": 5.19
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Lengua de cordero": 126.33,
-     "Costillas de cordero": 73.59,
-     "Riñón de cordero": 9.88,
-     "Hígado de pato": 7.44,
-     "Albahaca": 15.0,
-     "AniForte Aceite de Salmón": 0.54,
-     "Aceite de girasol": 2.34,
-     "Homemadekun (multivitamínico completo)": 5.3,
+     "Lengua de ternera": 173.41,
+     "Costillas de cordero": 75.72,
+     "Riñón de ternera": 8.0,
+     "Hígado de vaca": 5.91,
+     "Albahaca": 28.9,
+     "AniForte Aceite de Salmón": 0.49,
+     "Aceite de cacahuete": 4.15,
+     "Homemadekun (multivitamínico completo)": 5.08,
      "Sal común (cloruro sódico)": 1.0
     }
    }
@@ -1195,72 +1214,68 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo muslo con piel": 97.28,
-     "Carcasa de pollo": 97.42,
-     "Riñón de cordero": 8.0,
-     "Hígado de pato": 11.64,
-     "Canónigos": 23.55,
-     "Pets Purest Aceite de Salmón Escocés": 0.39,
-     "Aceite de girasol": 2.7,
-     "Semilla de lino": 1.0,
-     "Homemadekun (multivitamínico completo)": 6.05,
-     "Sal común (cloruro sódico)": 1.0
+     "Pollo con piel (sin hueso)": 97.9,
+     "Corazón de pollo": 97.32,
+     "Costillas de cordero": 73.08,
+     "Pescadilla": 40.0,
+     "Riñón de ternera": 10.36,
+     "Hígado de vaca": 7.31,
+     "Espinaca": 35.82,
+     "AniForte Seaweed Meal": 0.08,
+     "V-INTEGRA Cachorro": 3.44
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 202.41,
-     "Costillas de cordero": 82.04,
-     "Dorada": 55.43,
-     "Páncreas de vaca": 8.2,
-     "Hígado de vaca": 17.84,
-     "Espinaca": 40.21,
-     "Homemadekun (multivitamínico completo)": 2.39,
-     "Yoduro potásico (comprimidos 200 µg)": 0.12
+     "Lengua de ternera": 203.35,
+     "Costillas de cordero": 81.77,
+     "Dorada": 53.41,
+     "Timo de vaca": 8.18,
+     "Hígado de vaca": 18.02,
+     "Albahaca": 40.07,
+     "AniForte Seaweed Meal": 0.13,
+     "Homemadekun (multivitamínico completo)": 2.45
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 46.38,
-     "Costillas de cordero": 75.62,
-     "Pecho de ternera con hueso": 69.24,
-     "Riñón de cordero": 21.27,
-     "Hígado de vaca": 7.22,
-     "Espinaca": 24.14,
-     "Pets Purest Aceite de Salmón Escocés": 0.22,
-     "Aceite de cacahuete": 3.14,
-     "Semilla de lino": 1.0,
-     "Homemadekun (multivitamínico completo)": 6.53,
-     "Sal común (cloruro sódico)": 1.0
+     "Conejo": 204.38,
+     "Costillas de cordero": 82.55,
+     "Pescadilla": 51.62,
+     "Páncreas de vaca": 8.1,
+     "Hígado de pato": 14.64,
+     "Espinaca": 39.7,
+     "AniForte Seaweed Meal": 0.47,
+     "Aceite de girasol": 2.23,
+     "Homemadekun (multivitamínico completo)": 3.44
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Lengua de ternera": 193.1,
+     "Lengua de ternera": 192.86,
      "Costillas de cordero": 92.94,
      "Riñón de cordero": 8.0,
-     "Hígado de conejo": 6.74,
-     "Acelga": 33.05,
-     "Oleum Canis Aceite de Salmón": 0.82,
-     "Aceite de cacahuete": 4.65,
-     "Homemadekun (multivitamínico completo)": 6.12
+     "Hígado de conejo": 6.73,
+     "Acelga": 32.82,
+     "Oleum Canis Aceite de Salmón": 0.52,
+     "Aceite de girasol": 5.0,
+     "Homemadekun (multivitamínico completo)": 6.13
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 42.14,
-     "Lengua de ternera": 162.57,
-     "Costillas de cordero": 88.73,
+     "Lengua de ternera": 193.05,
+     "Costillas de cordero": 93.18,
      "Riñón de cordero": 8.0,
-     "Hígado de vaca": 9.07,
-     "Canónigos": 34.12,
-     "Pets Purest Aceite de Salmón Escocés": 2.97,
-     "Homemadekun (multivitamínico completo)": 5.58,
-     "Sal común (cloruro sódico)": 1.0
+     "Hígado de conejo": 6.75,
+     "Acelga": 33.07,
+     "AniForte Aceite de Salmón": 0.51,
+     "Aceite de girasol": 5.0,
+     "Homemadekun (multivitamínico completo)": 6.12
     }
    }
   ],
@@ -1268,62 +1283,66 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo muslo con piel": 37.98,
-     "Pecho de ternera con hueso": 50.5,
-     "Dorada": 108.68,
-     "Timo de vaca": 23.03,
-     "Hígado de conejo": 14.81,
-     "Albahaca": 15.0,
-     "V-INTEGRA Perro Adulto": 2.16
+     "Pollo con piel (sin hueso)": 53.03,
+     "Pollo ala con piel (sin hueso)": 69.9,
+     "Carcasa de pato": 43.58,
+     "Páncreas de vaca": 23.18,
+     "Hígado de conejo": 11.06,
+     "Plátano": 15.0,
+     "AniForte Aceite de Salmón": 0.5,
+     "V-INTEGRA Perro Adulto": 2.4
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Ternera solomillo sin grasa": 139.27,
-     "Pecho de ternera con hueso": 52.7,
-     "Timo de vaca": 21.06,
-     "Hígado de pollo": 15.04,
-     "Albahaca": 25.06,
-     "Aceite de girasol": 1.9,
-     "Aceite de hígado de bacalao": 1.0,
-     "V-INTEGRA Perro Adulto": 2.15
+     "Lengua de ternera": 164.8,
+     "Espinazo de conejo": 56.04,
+     "Páncreas de vaca": 15.21,
+     "Hígado de pavo": 16.48,
+     "Acelga": 24.91,
+     "Pets Purest Aceite de Salmón Escocés": 5.0,
+     "V-INTEGRA Perro Adulto": 2.38
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 100.16,
-     "Pecho de ternera con hueso": 51.16,
-     "Dorada": 50.64,
-     "Páncreas de vaca": 30.09,
-     "Hígado de vaca": 6.21,
-     "Piña": 15.0,
-     "V-INTEGRA Perro Adulto": 2.37
+     "Conejo": 151.42,
+     "Espinazo de conejo": 51.62,
+     "Pulmón de cordero": 22.32,
+     "Hígado de conejo": 15.18,
+     "Plátano": 15.0,
+     "Pets Purest Aceite de Salmón Escocés": 4.76,
+     "Aceite de girasol": 5.0,
+     "Semilla de lino": 1.0,
+     "V-INTEGRA Perro Adulto": 2.4
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 129.85,
-     "Pecho de ternera con hueso": 46.76,
-     "Riñón de cordero": 21.98,
-     "Hígado de vaca": 5.0,
-     "Plátano": 22.37,
-     "Aceite de hígado de bacalao": 1.0,
-     "V-INTEGRA Perro Adulto": 2.4
+     "Pollo ala con piel (sin hueso)": 63.75,
+     "Corazón de pavo": 63.48,
+     "Carcasa de pollo": 43.27,
+     "Timo de vaca": 18.19,
+     "Hígado de pollo": 5.17,
+     "Acelga": 20.34,
+     "Oleum Canis Aceite de Salmón": 2.76,
+     "V-INTEGRA Perro Adulto": 2.22
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 136.76,
-     "Pecho de ternera con hueso": 46.51,
-     "Riñón de ternera": 10.5,
-     "Hígado de pavo": 13.68,
-     "Acelga": 22.79,
-     "AniForte Aceite de Salmón": 0.4,
-     "V-INTEGRA Perro Adulto": 2.4
+     "Corazón de pavo": 40.03,
+     "Lengua de cordero": 94.62,
+     "Carcasa de pollo": 45.79,
+     "Riñón de ternera": 10.47,
+     "Hígado de pavo": 13.46,
+     "Canónigos": 22.31,
+     "Pets Purest Aceite de Salmón Escocés": 4.97,
+     "V-INTEGRA Perro Adulto": 2.01
     }
    }
   ],
@@ -1331,26 +1350,29 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 126.97,
-     "Pecho de ternera con hueso": 47.33,
-     "Riñón de ternera": 17.6,
-     "Hígado de pavo": 5.0,
-     "Acelga": 21.63,
-     "Oleum Canis Aceite de Salmón": 0.42,
+     "Pollo muslo con piel": 102.96,
+     "Espinazo de conejo": 39.76,
+     "Páncreas de vaca": 23.39,
+     "Hígado de pavo": 11.69,
+     "Acelga": 19.05,
+     "AniForte Aceite de Salmón": 0.54,
+     "Semilla de lino": 2.06,
+     "Pipa de calabaza": 5.0,
      "V-INTEGRA Senior": 2.4
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Ternera solomillo sin grasa": 119.14,
-     "Pecho de ternera con hueso": 44.67,
-     "Páncreas de vaca": 26.27,
-     "Hígado de pavo": 9.17,
-     "Acelga": 21.89,
-     "Pets Purest Aceite de Salmón Escocés": 0.24,
-     "Aceite de girasol": 2.01,
-     "V-INTEGRA Senior": 2.36
+     "Ternera con grasa": 85.2,
+     "Espinazo de conejo": 41.95,
+     "Perca": 35.55,
+     "Páncreas de vaca": 9.84,
+     "Hígado de conejo": 5.84,
+     "Acelga": 19.6,
+     "Aceite de linaza": 1.0,
+     "Pipa de girasol": 5.0,
+     "V-INTEGRA Senior": 2.14
     }
    },
    {
@@ -1368,24 +1390,26 @@
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 124.01,
-     "Pecho de ternera con hueso": 44.38,
-     "Bazo de vaca": 9.4,
-     "Hígado de pavo": 10.31,
-     "Acelga": 20.67,
-     "Pets Purest Aceite de Salmón Escocés": 0.18,
-     "V-INTEGRA Senior": 2.4
+     "Pollo muslo con piel": 36.5,
+     "Lengua de cordero": 101.9,
+     "Espinazo de conejo": 47.07,
+     "Pulmón de vaca": 14.24,
+     "Hígado de pavo": 13.84,
+     "Coles de Bruselas": 19.46,
+     "Oleum Canis Aceite de Salmón": 0.52,
+     "Pipa de girasol": 2.0,
+     "V-INTEGRA Senior": 2.0
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 129.11,
-     "Pecho de ternera con hueso": 47.49,
-     "Riñón de ternera": 15.55,
-     "Hígado de pavo": 5.0,
-     "Acelga": 21.66,
-     "Pets Purest Aceite de Salmón Escocés": 0.18,
+     "Lengua de cordero": 113.15,
+     "Espinazo de conejo": 46.63,
+     "Páncreas de vaca": 24.68,
+     "Hígado de pavo": 7.21,
+     "Albahaca": 16.05,
+     "Pets Purest Aceite de Salmón Escocés": 3.91,
      "V-INTEGRA Senior": 2.4
     }
    }
@@ -1394,69 +1418,69 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 159.83,
-     "Corazón de pollo": 85.95,
-     "Costillas de cordero": 108.36,
-     "Pescadilla": 82.3,
-     "Pulmón de ternera": 15.8,
-     "Hígado de conejo": 9.63,
-     "Espinaca": 15.0,
-     "Homemadekun (multivitamínico completo)": 8.66
+     "Pollo con piel (sin hueso)": 122.54,
+     "Corazón de pollo": 164.61,
+     "Espinazo de conejo": 100.85,
+     "Bazo de cordero": 21.98,
+     "Hígado de pollo": 25.58,
+     "Acelga": 47.86,
+     "Aceite de hígado de bacalao": 1.0,
+     "Homemadekun (multivitamínico completo)": 1.51,
+     "V-INTEGRA Cachorro": 5.4
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Ternera solomillo sin grasa": 146.47,
-     "Lengua de ternera": 129.77,
-     "Costillas de cordero": 102.43,
-     "Páncreas de vaca": 46.35,
-     "Hígado de conejo": 9.39,
-     "Acelga": 30.63,
-     "Pets Purest Aceite de Salmón Escocés": 0.32,
-     "Aceite de cacahuete": 1.5,
-     "Homemadekun (multivitamínico completo)": 7.87
+     "Ternera solomillo sin grasa": 103.98,
+     "Lengua de ternera": 189.73,
+     "Espinazo de conejo": 100.85,
+     "Páncreas de vaca": 38.5,
+     "Hígado de vaca": 25.13,
+     "Espinaca": 41.08,
+     "Aceite de hígado de bacalao": 1.15,
+     "Yoduro potásico (comprimidos 200 µg)": 0.06,
+     "V-INTEGRA Cachorro": 4.66
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 235.44,
-     "Costillas de cordero": 95.36,
-     "Salmón": 40.0,
-     "Páncreas de vaca": 30.75,
-     "Hígado de conejo": 23.8,
-     "Albahaca": 46.71,
+     "Conejo": 226.98,
+     "Costillas de cordero": 95.96,
+     "Dorada": 40.0,
+     "Páncreas de vaca": 53.91,
+     "Hígado de vaca": 11.17,
+     "Albahaca": 47.03,
+     "AniForte Seaweed Meal": 0.08,
      "Sal común (cloruro sódico)": 1.0,
-     "Yoduro potásico (comprimidos 200 µg)": 0.06,
-     "V-INTEGRA Cachorro": 5.0
+     "V-INTEGRA Cachorro": 4.94
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 99.55,
-     "Pavo pechuga sin piel": 175.93,
-     "Costillas de cordero": 115.16,
-     "Bazo de vaca": 9.37,
-     "Hígado de vaca": 27.55,
-     "Canónigos": 36.21,
-     "AniForte Seaweed Meal": 0.16,
-     "Aceite de hígado de bacalao": 1.0,
-     "V-INTEGRA Cachorro": 3.25
+     "Pollo con piel (sin hueso)": 127.43,
+     "Ternera solomillo sin grasa": 158.94,
+     "Costillas de cordero": 110.47,
+     "Pulmón de vaca": 28.77,
+     "Hígado de vaca": 9.76,
+     "Canónigos": 47.84,
+     "Aceite de Salmón Natural Greatness": 0.43,
+     "Homemadekun (multivitamínico completo)": 7.88
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 132.13,
-     "Ternera solomillo sin grasa": 153.11,
-     "Costillas de cordero": 109.42,
-     "Pulmón de vaca": 15.89,
-     "Hígado de vaca": 26.05,
-     "Albahaca": 43.6,
-     "Aceite de hígado de bacalao": 1.0,
-     "Homemadekun (multivitamínico completo)": 8.28
+     "Pollo con piel (sin hueso)": 203.46,
+     "Lomo de ternera con grasa": 69.34,
+     "Costillas de cordero": 104.81,
+     "Pulmón de cordero": 26.9,
+     "Hígado de conejo": 9.28,
+     "Acelga": 45.47,
+     "Pets Purest Aceite de Salmón Escocés": 0.23,
+     "Homemadekun (multivitamínico completo)": 8.51
     }
    }
   ],
@@ -1464,68 +1488,69 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 314.7,
-     "Costillas de cordero": 218.05,
-     "Pescadilla": 330.39,
-     "Bazo de cordero": 19.93,
-     "Hígado de conejo": 19.93,
-     "Espinaca": 83.73,
-     "AniForte Seaweed Meal": 0.23,
-     "Homemadekun (multivitamínico completo)": 8.46
+     "Pollo con piel (sin hueso)": 231.13,
+     "Corazón de pollo": 40.0,
+     "Costillas de cordero": 213.0,
+     "Pescadilla": 408.18,
+     "Bazo de cordero": 20.94,
+     "Hígado de vaca": 20.94,
+     "Frambuesa": 102.65,
+     "AniForte Seaweed Meal": 0.18,
+     "Homemadekun (multivitamínico completo)": 9.24
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 419.53,
-     "Costillas de cordero": 190.69,
-     "Trucha": 195.2,
-     "Timo de vaca": 19.07,
-     "Hígado de conejo": 26.07,
-     "Espinaca": 93.46,
-     "AniForte Seaweed Meal": 0.26,
-     "Homemadekun (multivitamínico completo)": 6.68
+     "Lengua de ternera": 389.58,
+     "Costillas de cordero": 229.93,
+     "Dorada": 214.17,
+     "Pulmón de ternera": 19.48,
+     "Hígado de vaca": 19.48,
+     "Albahaca": 91.55,
+     "Homemadekun (multivitamínico completo)": 7.52,
+     "Yoduro potásico (comprimidos 200 µg)": 0.21
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 418.26,
-     "Costillas de cordero": 227.22,
-     "Dorada": 79.23,
-     "Páncreas de vaca": 36.55,
-     "Hígado de pato": 34.67,
-     "Espinaca": 87.45,
-     "AniForte Seaweed Meal": 0.26,
-     "Homemadekun (multivitamínico completo)": 8.11,
-     "Sal común (cloruro sódico)": 1.0
+     "Conejo": 495.83,
+     "Costillas de cordero": 177.37,
+     "Trucha": 50.91,
+     "Páncreas de vaca": 38.2,
+     "Hígado de pato": 30.28,
+     "Albahaca": 85.49,
+     "Homemadekun (multivitamínico completo)": 7.94,
+     "Sal común (cloruro sódico)": 1.0,
+     "Yoduro potásico (comprimidos 200 µg)": 0.26
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 161.31,
-     "Pato (carne sin hueso)": 319.63,
-     "Costillas de cordero": 206.8,
-     "Riñón de cordero": 56.63,
-     "Hígado de vaca": 48.09,
-     "Albahaca": 17.2,
-     "AniForte Seaweed Meal": 0.38,
-     "Aceite de hígado de bacalao": 1.0,
-     "V-INTEGRA Cachorro": 4.2
+     "Pato (carne sin hueso)": 338.73,
+     "Corazón de pavo": 188.93,
+     "Costillas de cordero": 183.63,
+     "Salmón": 44.94,
+     "Riñón de ternera": 18.12,
+     "Hígado de vaca": 26.01,
+     "Acelga": 87.94,
+     "AniForte Seaweed Meal": 0.45,
+     "V-INTEGRA Cachorro": 3.64
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 180.14,
-     "Pavo pechuga sin piel": 362.34,
-     "Costillas de cordero": 218.92,
-     "Bazo de vaca": 19.47,
-     "Hígado de vaca": 41.98,
-     "Nabo pelado": 90.41,
+     "Pollo con piel (sin hueso)": 167.99,
+     "Pato (carne sin hueso)": 321.47,
+     "Costillas de cordero": 219.47,
+     "Riñón de cordero": 56.14,
+     "Hígado de conejo": 21.21,
+     "Apio": 37.72,
+     "AniForte Seaweed Meal": 0.32,
      "Aceite de hígado de bacalao": 1.0,
-     "Yoduro potásico (comprimidos 200 µg)": 0.29,
      "V-INTEGRA Cachorro": 5.4
     }
    }
@@ -1534,71 +1559,72 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Corazón de pollo": 237.52,
-     "Costillas de cordero": 106.33,
-     "Dorada": 58.16,
-     "Riñón de ternera": 19.8,
-     "Hígado de vaca": 19.21,
-     "Albahaca": 46.31,
-     "AniForte Seaweed Meal": 0.12,
-     "Aceite de girasol": 2.44,
+     "Pollo con piel (sin hueso)": 84.56,
+     "Corazón de pollo": 189.59,
+     "Costillas de cordero": 110.65,
+     "Dorada": 40.0,
+     "Riñón de ternera": 16.99,
+     "Hígado de vaca": 10.13,
+     "Albahaca": 49.66,
+     "AniForte Seaweed Meal": 0.43,
      "V-INTEGRA Cachorro": 4.14
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 278.12,
-     "Costillas de cordero": 111.4,
-     "Dorada": 72.94,
-     "Timo de vaca": 11.14,
-     "Hígado de vaca": 23.29,
-     "Albahaca": 54.6,
-     "Homemadekun (multivitamínico completo)": 3.38,
-     "Yoduro potásico (comprimidos 200 µg)": 0.16
+     "Lengua de ternera": 240.02,
+     "Carcasa de pollo": 113.29,
+     "Riñón de ternera": 8.29,
+     "Hígado de vaca": 8.29,
+     "Albahaca": 40.64,
+     "Pets Purest Aceite de Salmón Escocés": 2.27,
+     "Aceite de girasol": 5.0,
+     "Homemadekun (multivitamínico completo)": 7.71,
+     "Sal común (cloruro sódico)": 1.0
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 164.65,
-     "Costillas de cordero": 112.95,
-     "Pecho de ternera con hueso": 25.0,
-     "Pescadilla": 156.48,
-     "Páncreas de vaca": 13.46,
-     "Hígado de pato": 19.85,
-     "Espinaca": 49.76,
-     "Aceite de girasol": 4.23,
-     "Homemadekun (multivitamínico completo)": 5.17,
-     "Yoduro potásico (comprimidos 200 µg)": 0.12
+     "Conejo": 288.33,
+     "Carcasa de pato": 48.38,
+     "Costillas de cordero": 56.19,
+     "Dorada": 46.32,
+     "Páncreas de vaca": 14.16,
+     "Hígado de pato": 13.46,
+     "Espinaca": 35.01,
+     "AniForte Seaweed Meal": 0.14,
+     "Sal común (cloruro sódico)": 1.0,
+     "V-INTEGRA Cachorro": 3.95
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Corazón de pollo": 206.99,
-     "Lengua de ternera": 76.41,
-     "Costillas de cordero": 107.36,
-     "Riñón de cordero": 10.77,
-     "Hígado de pollo": 28.34,
-     "Acelga": 47.23,
-     "Oleum Canis Aceite de Salmón": 0.55,
-     "Aceite de girasol": 5.0,
-     "Homemadekun (multivitamínico completo)": 8.28
+     "Corazón de pollo": 257.16,
+     "Costillas de cordero": 120.3,
+     "Riñón de cordero": 16.13,
+     "Hígado de pollo": 27.78,
+     "Canónigos": 46.3,
+     "AniForte Aceite de Salmón": 0.52,
+     "Aceite de linaza": 1.0,
+     "Aceite de sésamo": 4.02,
+     "Homemadekun (multivitamínico completo)": 8.06
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 42.37,
-     "Lengua de ternera": 235.41,
-     "Costillas de cordero": 125.1,
-     "Riñón de ternera": 9.45,
-     "Hígado de conejo": 9.45,
-     "Canónigos": 45.87,
-     "Pets Purest Aceite de Salmón Escocés": 4.5,
-     "Homemadekun (multivitamínico completo)": 7.46,
-     "Sal común (cloruro sódico)": 1.0
+     "Corazón de pollo": 187.37,
+     "Corazón de pavo": 112.67,
+     "Costillas de cordero": 111.86,
+     "Riñón de cordero": 19.42,
+     "Hígado de conejo": 23.8,
+     "Espinaca": 50.01,
+     "AniForte Seaweed Meal": 0.46,
+     "Aceite de hígado de bacalao": 1.0,
+     "V-INTEGRA Cachorro": 2.46
     }
    }
   ],
@@ -1606,66 +1632,67 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 124.73,
-     "Corazón de pollo": 216.55,
-     "Carcasa de pato": 135.79,
-     "Riñón de cordero": 29.85,
-     "Hígado de pollo": 11.61,
-     "Canónigos": 56.02,
-     "AniForte Aceite de Salmón": 1.29,
-     "V-INTEGRA Cachorro": 7.94
+     "Pollo con piel (sin hueso)": 136.9,
+     "Pollo ala con piel (sin hueso)": 97.02,
+     "Carcasa de pollo": 124.25,
+     "Pescadilla": 176.05,
+     "Riñón de ternera": 13.96,
+     "Hígado de pavo": 12.42,
+     "Albahaca": 54.48,
+     "V-INTEGRA Cachorro": 8.27
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 341.78,
-     "Costillas de cordero": 140.35,
-     "Dorada": 92.98,
-     "Timo de vaca": 14.03,
-     "Hígado de vaca": 36.86,
-     "Albahaca": 68.78,
-     "AniForte Seaweed Meal": 0.22,
-     "Homemadekun (multivitamínico completo)": 4.1
+     "Lengua de ternera": 294.22,
+     "Carcasa de pollo": 126.28,
+     "Pescadilla": 122.74,
+     "Timo de vaca": 12.63,
+     "Hígado de pavo": 12.63,
+     "Albahaca": 56.66,
+     "Aceite de girasol": 2.22,
+     "V-INTEGRA Cachorro": 7.65
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 350.03,
-     "Costillas de cordero": 140.28,
-     "Pescadilla": 102.55,
-     "Bazo de cordero": 14.03,
-     "Hígado de vaca": 18.82,
-     "Espinaca": 68.75,
-     "Aceite de girasol": 4.78,
-     "Homemadekun (multivitamínico completo)": 6.07,
-     "Yoduro potásico (comprimidos 200 µg)": 0.17
+     "Conejo": 365.0,
+     "Carcasa de pato": 48.59,
+     "Costillas de cordero": 82.43,
+     "Dorada": 69.56,
+     "Páncreas de vaca": 13.02,
+     "Hígado de pato": 12.98,
+     "Piña": 51.14,
+     "Sal común (cloruro sódico)": 1.0,
+     "Yoduro potásico (comprimidos 200 µg)": 0.11,
+     "V-INTEGRA Cachorro": 6.1
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 100.31,
-     "Corazón de pollo": 251.99,
-     "Costillas de cordero": 119.81,
-     "Riñón de cordero": 52.25,
-     "Hígado de conejo": 22.89,
-     "Espinaca": 45.85,
-     "Oleum Canis Aceite de Salmón": 2.68,
-     "V-INTEGRA Cachorro": 8.37
+     "Pollo con piel (sin hueso)": 115.11,
+     "Corazón de pollo": 241.32,
+     "Costillas de cordero": 121.21,
+     "Riñón de cordero": 36.75,
+     "Hígado de vaca": 26.25,
+     "Canónigos": 59.4,
+     "Pets Purest Aceite de Salmón Escocés": 2.66,
+     "V-INTEGRA Cachorro": 7.9
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 114.88,
-     "Pavo pechuga sin piel": 183.6,
-     "Pecho de ternera con hueso": 126.2,
-     "Riñón de ternera": 17.91,
-     "Hígado de conejo": 10.15,
-     "Canónigos": 49.75,
-     "AniForte Aceite de Salmón": 3.03,
+     "Pollo con piel (sin hueso)": 128.78,
+     "Corazón de pollo": 191.18,
+     "Carcasa de pollo": 127.95,
+     "Riñón de cordero": 39.53,
+     "Hígado de pavo": 10.88,
+     "Albahaca": 40.34,
+     "Aceite de Salmón Natural Greatness": 0.93,
      "V-INTEGRA Cachorro": 8.3
     }
    }
@@ -1674,61 +1701,64 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 229.63,
-     "Pecho de ternera con hueso": 79.93,
-     "Riñón de cordero": 38.96,
-     "Hígado de pavo": 7.99,
-     "Naranja": 39.17,
-     "Aceite de hígado de bacalao": 1.0,
-     "V-INTEGRA Perro Adulto": 4.47
+     "Pollo con piel (sin hueso)": 110.59,
+     "Pollo ala con piel (sin hueso)": 148.97,
+     "Espinazo de conejo": 88.27,
+     "Bacalao": 40.0,
+     "Riñón de ternera": 8.83,
+     "Hígado de pavo": 8.83,
+     "Coles de Bruselas": 31.49,
+     "V-INTEGRA Perro Adulto": 4.61
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Ternera con grasa": 124.27,
-     "Espinazo de conejo": 90.34,
-     "Dorada": 129.75,
-     "Páncreas de vaca": 42.29,
-     "Hígado de pavo": 16.31,
-     "Plátano": 44.28,
-     "V-INTEGRA Perro Adulto": 4.48
+     "Ternera con grasa": 134.35,
+     "Espinazo de conejo": 92.15,
+     "Dorada": 118.61,
+     "Timo de vaca": 49.79,
+     "Hígado de pato": 9.06,
+     "Acelga": 44.39,
+     "V-INTEGRA Perro Adulto": 3.46
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 176.86,
-     "Pecho de ternera con hueso": 84.79,
-     "Dorada": 86.3,
-     "Páncreas de vaca": 48.32,
-     "Hígado de pollo": 8.48,
-     "Plátano": 15.0,
-     "V-INTEGRA Perro Adulto": 4.72
+     "Conejo": 221.81,
+     "Espinazo de conejo": 80.09,
+     "Páncreas de vaca": 47.1,
+     "Hígado de pavo": 8.24,
+     "Plátano": 39.25,
+     "AniForte Aceite de Salmón": 3.73,
+     "Aceite de oliva virgen extra": 5.0,
+     "Aceite de coco": 5.0,
+     "V-INTEGRA Perro Adulto": 4.8
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 214.66,
-     "Pecho de ternera con hueso": 81.85,
-     "Riñón de cordero": 21.79,
-     "Hígado de pavo": 7.3,
-     "Acelga": 35.78,
-     "Aceite de hígado de bacalao": 1.0,
-     "V-INTEGRA Perro Adulto": 4.8
+     "Lengua de cordero": 203.1,
+     "Carcasa de pato": 70.43,
+     "Timo de vaca": 41.19,
+     "Hígado de pavo": 17.0,
+     "Plátano": 15.0,
+     "AniForte Aceite de Salmón": 5.12,
+     "V-INTEGRA Perro Adulto": 4.22
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Lengua de cordero": 203.1,
-     "Carcasa de pato": 72.49,
-     "Páncreas de vaca": 41.55,
-     "Hígado de pavo": 17.61,
-     "Rucula": 15.0,
+     "Lengua de cordero": 202.79,
+     "Carcasa de pollo": 70.19,
+     "Páncreas de vaca": 41.28,
+     "Hígado de pavo": 18.21,
+     "Acelga": 15.0,
      "AniForte Aceite de Salmón": 5.52,
-     "V-INTEGRA Perro Adulto": 4.21
+     "V-INTEGRA Perro Adulto": 4.2
     }
    }
   ],
@@ -1736,61 +1766,70 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 203.48,
-     "Pecho de ternera con hueso": 76.8,
-     "Riñón de ternera": 21.44,
-     "Hígado de pavo": 6.92,
-     "Acelga": 33.91,
-     "Pets Purest Aceite de Salmón Escocés": 0.3,
-     "V-INTEGRA Senior": 4.8
+     "Pollo muslo con piel": 168.59,
+     "Espinazo de conejo": 72.8,
+     "Salmón": 71.39,
+     "Riñón de cordero": 8.0,
+     "Hígado de conejo": 7.28,
+     "Acelga": 32.34,
+     "Aceite de girasol": 3.13,
+     "V-INTEGRA Senior": 4.68
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 132.38,
-     "Pecho de ternera con hueso": 90.54,
-     "Dorada": 179.83,
-     "Timo de vaca": 11.56,
-     "Hígado de pollo": 9.05,
-     "Piña": 24.87,
-     "V-INTEGRA Senior": 4.8
+     "Ternera con grasa": 115.36,
+     "Espinazo de conejo": 70.29,
+     "Salmón": 87.34,
+     "Riñón de ternera": 24.63,
+     "Hígado de pato": 6.79,
+     "Acelga": 31.79,
+     "Oleum Canis Aceite de Salmón": 4.36,
+     "Pipa de calabaza": 5.0,
+     "V-INTEGRA Senior": 3.3
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 206.7,
-     "Pecho de ternera con hueso": 70.29,
-     "Páncreas de vaca": 41.34,
-     "Hígado de pavo": 7.03,
-     "Espinaca": 22.62,
-     "Oleum Canis Aceite de Salmón": 4.39,
-     "V-INTEGRA Senior": 4.8
+     "Conejo": 157.16,
+     "Espinazo de conejo": 74.92,
+     "Salmón": 75.8,
+     "Pulmón de cordero": 8.0,
+     "Hígado de conejo": 18.29,
+     "Boniato": 20.07,
+     "Piña": 16.64,
+     "Aceite de oliva": 5.0,
+     "Aceite de oliva virgen extra": 5.0,
+     "Aceite de girasol": 5.0,
+     "Aceite de cacahuete": 1.77,
+     "napfcheck Novomineral proLEBER": 2.15,
+     "astoral MultiVital BARF": 0.6
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 202.55,
-     "Pecho de ternera con hueso": 76.21,
-     "Timo de vaca": 25.43,
-     "Hígado de pollo": 6.89,
-     "Albahaca": 29.91,
-     "AniForte Aceite de Salmón": 0.76,
-     "V-INTEGRA Senior": 4.8
+     "Lengua de cordero": 190.21,
+     "Espinazo de conejo": 71.84,
+     "Páncreas de vaca": 42.25,
+     "Hígado de pavo": 19.53,
+     "Espinaca": 31.82,
+     "AniForte Aceite de Salmón": 4.8,
+     "V-INTEGRA Senior": 3.88
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Conejo": 208.24,
-     "Pecho de ternera con hueso": 72.75,
-     "Páncreas de vaca": 42.79,
-     "Hígado de pavo": 21.39,
-     "Espinaca": 15.0,
-     "Oleum Canis Aceite de Salmón": 2.98,
-     "V-INTEGRA Senior": 4.77
+     "Lengua de cordero": 190.21,
+     "Espinazo de conejo": 72.34,
+     "Páncreas de vaca": 41.23,
+     "Hígado de pollo": 8.92,
+     "Plátano": 34.36,
+     "AniForte Aceite de Salmón": 3.96,
+     "V-INTEGRA Senior": 4.53
     }
    }
   ],
@@ -1798,67 +1837,67 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 306.68,
-     "Corazón de pollo": 191.38,
-     "Espinazo de conejo": 169.37,
-     "Pulmón de cordero": 52.0,
-     "Hígado de pollo": 47.96,
-     "Canónigos": 71.09,
-     "Aceite de hígado de bacalao": 1.0,
-     "V-INTEGRA Cachorro": 10.69
+     "Pollo con piel (sin hueso)": 302.17,
+     "Costillas de cordero": 210.55,
+     "Pescadilla": 249.91,
+     "Bazo de cordero": 18.2,
+     "Hígado de vaca": 43.06,
+     "Albahaca": 76.97,
+     "Homemadekun (multivitamínico completo)": 7.93,
+     "Yoduro potásico (comprimidos 200 µg)": 0.23
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lomo de ternera con grasa": 312.75,
-     "Carcasa de pollo": 190.04,
-     "Dorada": 259.75,
-     "Timo de vaca": 52.29,
-     "Hígado de vaca": 32.82,
-     "Espinaca": 93.14,
-     "AniForte Seaweed Meal": 0.54,
-     "V-INTEGRA Cachorro": 7.19
+     "Lengua de ternera": 413.72,
+     "Costillas de cordero": 101.66,
+     "Espinazo de conejo": 101.11,
+     "Pescadilla": 183.35,
+     "Timo de vaca": 66.37,
+     "Hígado de vaca": 19.87,
+     "Canónigos": 97.36,
+     "V-INTEGRA Cachorro": 10.8
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 450.16,
-     "Costillas de cordero": 166.83,
-     "Salmón": 54.54,
-     "Timo de vaca": 48.4,
-     "Hígado de pato": 32.35,
-     "Piña": 73.6,
-     "AniForte Seaweed Meal": 0.2,
-     "Homemadekun (multivitamínico completo)": 8.96,
-     "Sal común (cloruro sódico)": 1.0
+     "Conejo": 408.04,
+     "Costillas de cordero": 216.53,
+     "Trucha": 40.0,
+     "Timo de vaca": 53.34,
+     "Hígado de pato": 29.88,
+     "Piña": 56.32,
+     "Homemadekun (multivitamínico completo)": 10.79,
+     "Sal común (cloruro sódico)": 1.0,
+     "Yoduro potásico (comprimidos 200 µg)": 0.14
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 274.96,
-     "Corazón de pollo": 193.79,
-     "Espinazo de conejo": 162.26,
-     "Salmón": 80.71,
-     "Riñón de ternera": 16.23,
-     "Hígado de pollo": 16.23,
-     "Albahaca": 59.09,
-     "V-INTEGRA Cachorro": 10.8
+     "Pollo con piel (sin hueso)": 107.83,
+     "Ternera solomillo sin grasa": 358.45,
+     "Costillas de cordero": 190.44,
+     "Páncreas de vaca": 66.09,
+     "Hígado de conejo": 16.2,
+     "Acelga": 62.82,
+     "Oleum Canis Aceite de Salmón": 1.2,
+     "Homemadekun (multivitamínico completo)": 14.46
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 181.91,
-     "Ternera solomillo sin grasa": 349.11,
-     "Costillas de cordero": 205.05,
-     "Merluza": 53.39,
-     "Bazo de vaca": 18.53,
-     "Hígado de vaca": 18.53,
-     "Canónigos": 90.82,
-     "Homemadekun (multivitamínico completo)": 12.96
+     "Corazón de pollo": 111.55,
+     "Lengua de ternera": 407.75,
+     "Espinazo de conejo": 177.42,
+     "Páncreas de vaca": 63.24,
+     "Hígado de pollo": 27.73,
+     "Espinaca": 86.55,
+     "Pets Purest Aceite de Salmón Escocés": 0.74,
+     "V-INTEGRA Cachorro": 10.13
     }
    }
   ],
@@ -1866,70 +1905,71 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 470.13,
-     "Corazón de pollo": 245.96,
-     "Costillas de cordero": 417.18,
-     "Pescadilla": 351.61,
-     "Bazo de cordero": 34.37,
-     "Hígado de conejo": 34.37,
-     "Albahaca": 147.72,
-     "AniForte Seaweed Meal": 0.47,
-     "Homemadekun (multivitamínico completo)": 14.51
+     "Pollo con piel (sin hueso)": 597.07,
+     "Costillas de cordero": 417.66,
+     "Pescadilla": 424.15,
+     "Riñón de cordero": 19.09,
+     "Bazo de vaca": 20.75,
+     "Hígado de vaca": 89.71,
+     "Espinaca": 142.38,
+     "AniForte Seaweed Meal": 0.46,
+     "Homemadekun (multivitamínico completo)": 14.92
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 638.01,
-     "Costillas de cordero": 437.24,
-     "Dorada": 388.7,
-     "Timo de vaca": 35.59,
-     "Hígado de vaca": 87.93,
-     "Albahaca": 174.43,
-     "Homemadekun (multivitamínico completo)": 11.47,
-     "Yoduro potásico (comprimidos 200 µg)": 0.49
+     "Lengua de ternera": 890.51,
+     "Costillas de cordero": 342.13,
+     "Dorada": 240.18,
+     "Timo de vaca": 40.54,
+     "Hígado de vaca": 33.98,
+     "Espinaca": 134.87,
+     "Homemadekun (multivitamínico completo)": 16.35,
+     "Yoduro potásico (comprimidos 200 µg)": 0.27
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 863.1,
-     "Carcasa de pato": 55.18,
-     "Costillas de cordero": 310.08,
-     "Trucha": 311.68,
-     "Pulmón de vaca": 42.87,
-     "Hígado de vaca": 46.29,
-     "Albahaca": 179.01,
-     "AniForte Seaweed Meal": 0.75,
+     "Conejo": 899.87,
+     "Carcasa de pato": 78.14,
+     "Costillas de cordero": 297.53,
+     "Dorada": 232.03,
+     "Pulmón de cordero": 64.54,
+     "Hígado de vaca": 49.12,
+     "Albahaca": 178.14,
+     "Yoduro potásico (comprimidos 200 µg)": 0.49,
      "V-INTEGRA Cachorro": 10.8
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Ternera solomillo sin grasa": 724.73,
-     "Corazón de pavo": 358.65,
-     "Costillas de cordero": 369.69,
-     "Salmón": 40.0,
-     "Pulmón de vaca": 62.0,
-     "Hígado de pollo": 94.63,
-     "Albahaca": 180.46,
-     "AniForte Seaweed Meal": 0.69,
-     "V-INTEGRA Cachorro": 10.8
+     "Pavo pechuga sin piel": 190.7,
+     "Pato (carne sin hueso)": 429.82,
+     "Corazón de pavo": 333.76,
+     "Costillas de cordero": 371.25,
+     "Timo de vaca": 32.6,
+     "Hígado de pollo": 95.86,
+     "Acelga": 159.76,
+     "Aceite de hígado de bacalao": 1.0,
+     "Yoduro potásico (comprimidos 200 µg)": 0.56,
+     "V-INTEGRA Cachorro": 10.32
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 312.36,
-     "Lomo de ternera con grasa": 679.14,
-     "Costillas de cordero": 383.6,
-     "Merluza": 71.31,
-     "Riñón de cordero": 55.3,
-     "Hígado de vaca": 100.19,
-     "Espinaca": 176.01,
-     "Homemadekun (multivitamínico completo)": 13.88,
-     "Yoduro potásico (comprimidos 200 µg)": 0.46
+     "Pollo con piel (sin hueso)": 299.45,
+     "Pato (carne sin hueso)": 489.86,
+     "Costillas de cordero": 406.2,
+     "Merluza": 40.0,
+     "Riñón de cordero": 98.18,
+     "Hígado de vaca": 89.26,
+     "Zanahoria": 104.94,
+     "Yoduro potásico (comprimidos 200 µg)": 0.54,
+     "V-INTEGRA Cachorro": 10.0
     }
    }
   ],
@@ -1937,72 +1977,74 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Corazón de pollo": 382.4,
-     "Espinazo de conejo": 156.94,
-     "Trucha": 110.88,
-     "Riñón de ternera": 15.84,
-     "Hígado de pato": 42.34,
-     "Espinaca": 68.54,
-     "Aceite de girasol": 5.0,
-     "Yoduro potásico (comprimidos 200 µg)": 0.18,
-     "V-INTEGRA Cachorro": 5.91
+     "Corazón de pollo": 289.08,
+     "Carcasa de pollo": 164.53,
+     "Trucha": 101.89,
+     "Riñón de ternera": 51.97,
+     "Hígado de pavo": 13.88,
+     "Albahaca": 65.73,
+     "AniForte Seaweed Meal": 0.14,
+     "Aceite de girasol": 3.63,
+     "V-INTEGRA Cachorro": 6.75
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 416.14,
-     "Costillas de cordero": 172.7,
-     "Riñón de cordero": 32.08,
-     "Hígado de vaca": 43.82,
-     "Albahaca": 73.04,
-     "Aceite de girasol": 1.97,
-     "Aceite de hígado de bacalao": 1.0,
-     "Homemadekun (multivitamínico completo)": 5.64,
-     "Yoduro potásico (comprimidos 200 µg)": 0.21
+     "Lengua de ternera": 415.45,
+     "Costillas de cordero": 201.11,
+     "Riñón de cordero": 34.62,
+     "Hígado de conejo": 14.93,
+     "Albahaca": 73.19,
+     "AniForte Seaweed Meal": 0.18,
+     "Aceite de girasol": 4.4,
+     "Aceite de hígado de bacalao": 1.47,
+     "Homemadekun (multivitamínico completo)": 6.68
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 428.75,
-     "Costillas de cordero": 171.6,
-     "Dorada": 47.52,
-     "Páncreas de vaca": 15.57,
-     "Hígado de pato": 25.47,
-     "Albahaca": 75.7,
-     "Aceite de linaza": 1.45,
-     "Homemadekun (multivitamínico completo)": 7.38,
+     "Conejo": 399.75,
+     "Carcasa de pato": 54.47,
+     "Costillas de cordero": 132.06,
+     "Páncreas de vaca": 14.95,
+     "Hígado de pato": 23.53,
+     "Piña": 68.65,
+     "AniForte Seaweed Meal": 0.25,
+     "Aceite de girasol": 5.0,
+     "Aceite de hígado de bacalao": 1.0,
      "Sal común (cloruro sódico)": 1.0,
-     "Yoduro potásico (comprimidos 200 µg)": 0.2
+     "V-INTEGRA Cachorro": 5.02
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Corazón de pollo": 288.75,
-     "Corazón de pavo": 162.27,
-     "Costillas de cordero": 170.76,
-     "Riñón de cordero": 47.9,
-     "Hígado de pollo": 15.34,
-     "Espinaca": 74.28,
-     "Aceite de hígado de bacalao": 1.0,
-     "Yoduro potásico (comprimidos 200 µg)": 0.25,
-     "V-INTEGRA Cachorro": 4.44
+     "Pollo con piel (sin hueso)": 77.71,
+     "Lengua de ternera": 355.3,
+     "Costillas de cordero": 174.33,
+     "Riñón de cordero": 34.74,
+     "Hígado de vaca": 14.73,
+     "Albahaca": 72.17,
+     "AniForte Seaweed Meal": 0.62,
+     "Aceite de hígado de bacalao": 1.07,
+     "Homemadekun (multivitamínico completo)": 6.65
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 112.7,
-     "Lengua de ternera": 333.74,
-     "Costillas de cordero": 170.91,
-     "Riñón de cordero": 15.18,
-     "Hígado de vaca": 44.64,
-     "Espinaca": 74.41,
-     "AniForte Seaweed Meal": 0.24,
-     "Aceite de hígado de bacalao": 1.0,
-     "Homemadekun (multivitamínico completo)": 5.33
+     "Pollo con piel (sin hueso)": 89.71,
+     "Pavo": 55.07,
+     "Lengua de ternera": 283.9,
+     "Costillas de cordero": 162.61,
+     "Riñón de ternera": 44.37,
+     "Hígado de vaca": 14.58,
+     "Espinaca": 71.45,
+     "AniForte Seaweed Meal": 0.27,
+     "Aceite de hígado de bacalao": 1.5,
+     "V-INTEGRA Cachorro": 3.75
     }
    }
   ],
@@ -2010,66 +2052,69 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 203.31,
-     "Pecho de ternera con hueso": 196.92,
-     "Pescadilla": 438.74,
-     "Riñón de ternera": 19.69,
-     "Hígado de pavo": 19.69,
-     "Albahaca": 96.51,
-     "V-INTEGRA Cachorro": 11.82
+     "Pollo con piel (sin hueso)": 210.54,
+     "Corazón de pollo": 234.61,
+     "Carcasa de pollo": 187.24,
+     "Pescadilla": 153.4,
+     "Riñón de cordero": 17.96,
+     "Hígado de conejo": 17.96,
+     "Albahaca": 67.63,
+     "V-INTEGRA Cachorro": 11.98
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 526.95,
-     "Carcasa de pollo": 203.15,
-     "Riñón de cordero": 23.69,
-     "Hígado de pollo": 48.05,
-     "Espinaca": 88.1,
-     "AniForte Aceite de Salmón": 1.8,
-     "Aceite de girasol": 2.56,
-     "V-INTEGRA Cachorro": 11.43
+     "Lengua de ternera": 524.01,
+     "Costillas de cordero": 210.49,
+     "Dorada": 142.96,
+     "Páncreas de vaca": 21.05,
+     "Hígado de vaca": 40.36,
+     "Espinaca": 103.16,
+     "Homemadekun (multivitamínico completo)": 6.29,
+     "Yoduro potásico (comprimidos 200 µg)": 0.29
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 487.52,
-     "Carcasa de pato": 190.11,
-     "Timo de vaca": 16.58,
-     "Hígado de vaca": 45.28,
-     "Boniato": 81.25,
-     "Oleum Canis Aceite de Salmón": 7.76,
-     "Aceite de linaza": 1.0,
+     "Conejo": 467.97,
+     "Carcasa de pato": 193.9,
+     "Timo de vaca": 18.18,
+     "Hígado de vaca": 29.78,
+     "Plátano": 77.99,
+     "Oleum Canis Aceite de Salmón": 7.86,
+     "Aceite de linaza": 1.81,
      "Sal común (cloruro sódico)": 1.0,
-     "V-INTEGRA Cachorro": 12.74
+     "V-INTEGRA Cachorro": 12.73
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 195.4,
-     "Corazón de pollo": 291.21,
-     "Carcasa de pollo": 201.79,
-     "Riñón de ternera": 38.61,
-     "Hígado de pollo": 39.08,
-     "Canónigos": 84.18,
-     "Pets Purest Aceite de Salmón Escocés": 0.69,
-     "V-INTEGRA Cachorro": 11.8
+     "Pollo con piel (sin hueso)": 249.9,
+     "Lomo de ternera con grasa": 246.73,
+     "Carcasa de pollo": 189.12,
+     "Riñón de cordero": 50.67,
+     "Hígado de conejo": 16.89,
+     "Espinaca": 82.77,
+     "Aceite de Salmón Natural Greatness": 7.4,
+     "Sal común (cloruro sódico)": 1.0,
+     "V-INTEGRA Cachorro": 12.36
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 208.76,
-     "Corazón de pollo": 268.47,
-     "Carcasa de pato": 199.53,
-     "Riñón de cordero": 46.94,
-     "Hígado de vaca": 16.6,
-     "Nabo pelado": 81.34,
-     "AniForte Aceite de Salmón": 1.88,
-     "V-INTEGRA Cachorro": 12.07
+     "Pollo con piel (sin hueso)": 171.27,
+     "Pavo pechuga sin piel": 86.78,
+     "Lengua de cordero": 193.25,
+     "Carcasa de pollo": 200.14,
+     "Riñón de ternera": 15.35,
+     "Hígado de conejo": 17.76,
+     "Acelga": 75.22,
+     "Aceite de Salmón Natural Greatness": 1.41,
+     "V-INTEGRA Cachorro": 12.08
     }
    }
   ],
@@ -2077,61 +2122,65 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 351.21,
-     "Pecho de ternera con hueso": 119.99,
-     "Sardina": 40.0,
-     "Páncreas de vaca": 12.0,
-     "Hígado de pavo": 12.0,
-     "Judía verde": 58.81,
-     "V-INTEGRA Perro Adulto": 8.8
+     "Pollo con piel (sin hueso)": 167.22,
+     "Pollo ala con piel (sin hueso)": 232.87,
+     "Espinazo de conejo": 165.86,
+     "Riñón de cordero": 24.68,
+     "Hígado de pollo": 16.23,
+     "Canónigos": 66.68,
+     "Aceite de Salmón Natural Greatness": 4.28,
+     "V-INTEGRA Perro Adulto": 8.47
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 318.11,
-     "Pecho de ternera con hueso": 116.43,
-     "Timo de vaca": 68.47,
-     "Hígado de conejo": 16.45,
-     "Plátano": 56.92,
-     "AniForte Aceite de Salmón": 8.96,
-     "V-INTEGRA Perro Adulto": 8.8
+     "Lengua de ternera": 409.89,
+     "Espinazo de conejo": 139.45,
+     "Páncreas de vaca": 82.02,
+     "Hígado de pato": 13.95,
+     "Albahaca": 45.06,
+     "Oleum Canis Aceite de Salmón": 10.12,
+     "Aceite de sésamo": 5.0,
+     "V-INTEGRA Perro Adulto": 8.16
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 350.45,
-     "Pecho de ternera con hueso": 119.18,
-     "Páncreas de vaca": 70.09,
-     "Hígado de pollo": 14.03,
-     "Manzana": 36.24,
-     "Oleum Canis Aceite de Salmón": 7.65,
-     "V-INTEGRA Perro Adulto": 7.37
+     "Conejo": 366.18,
+     "Espinazo de conejo": 133.97,
+     "Páncreas de vaca": 78.79,
+     "Hígado de conejo": 18.61,
+     "Plátano": 65.66,
+     "Oleum Canis Aceite de Salmón": 9.15,
+     "Aceite de linaza": 5.0,
+     "Aceite de cacahuete": 5.0,
+     "V-INTEGRA Perro Adulto": 6.85
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 357.33,
-     "Pecho de ternera con hueso": 136.8,
-     "Riñón de ternera": 12.15,
-     "Hígado de pavo": 35.73,
-     "Albahaca": 59.56,
-     "Oleum Canis Aceite de Salmón": 1.07,
-     "V-INTEGRA Perro Adulto": 7.69
+     "Lengua de cordero": 319.97,
+     "Carcasa de pato": 112.86,
+     "Timo de vaca": 63.99,
+     "Hígado de pavo": 26.06,
+     "Coles de Bruselas": 15.79,
+     "Oleum Canis Aceite de Salmón": 9.48,
+     "V-INTEGRA Perro Adulto": 6.7
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 264.55,
-     "Pecho de ternera con hueso": 161.89,
-     "Pulmón de vaca": 46.6,
-     "Hígado de pollo": 10.85,
-     "Coles de Bruselas": 53.17,
-     "Aceite de hígado de bacalao": 1.0,
-     "V-INTEGRA Perro Adulto": 8.8
+     "Lengua de cordero": 319.72,
+     "Carcasa de pato": 108.73,
+     "Timo de vaca": 62.17,
+     "Hígado de pollo": 31.97,
+     "Canónigos": 15.66,
+     "AniForte Aceite de Salmón": 9.3,
+     "V-INTEGRA Perro Adulto": 7.21
     }
    }
   ],
@@ -2139,61 +2188,72 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 333.67,
-     "Pecho de ternera con hueso": 113.47,
-     "Riñón de cordero": 47.63,
-     "Hígado de pollo": 11.35,
-     "Boniato": 55.61,
-     "AniForte Aceite de Salmón": 1.02,
-     "V-INTEGRA Senior": 8.8
+     "Pollo con piel (sin hueso)": 69.37,
+     "Pollo ala con piel (sin hueso)": 248.16,
+     "Espinazo de conejo": 114.54,
+     "Páncreas de vaca": 67.36,
+     "Hígado de pavo": 11.45,
+     "Acelga": 56.13,
+     "Oleum Canis Aceite de Salmón": 4.55,
+     "V-INTEGRA Senior": 8.24
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 313.89,
-     "Pecho de ternera con hueso": 113.22,
-     "Timo de vaca": 66.59,
-     "Hígado de pavo": 11.32,
-     "Acelga": 55.49,
-     "AniForte Aceite de Salmón": 7.35,
-     "V-INTEGRA Senior": 8.8
+     "Ternera con grasa": 225.61,
+     "Lengua de ternera": 109.43,
+     "Espinazo de conejo": 113.93,
+     "Pulmón de cordero": 38.79,
+     "Hígado de pollo": 32.32,
+     "Albahaca": 43.95,
+     "Aceite de girasol": 5.0,
+     "Aceite de hígado de bacalao": 1.0,
+     "astoral MultiVital BARF": 1.1,
+     "V-INTEGRA Senior": 6.16
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 276.48,
-     "Pecho de ternera con hueso": 125.14,
-     "Dorada": 118.96,
-     "Páncreas de vaca": 71.41,
-     "Hígado de pollo": 12.51,
-     "Coles de Bruselas": 15.0,
-     "V-INTEGRA Senior": 7.15
+     "Conejo": 241.96,
+     "Espinazo de conejo": 115.87,
+     "Salmón": 116.39,
+     "Pulmón de cordero": 11.59,
+     "Hígado de conejo": 31.02,
+     "Boniato": 56.79,
+     "Aceite de oliva": 5.0,
+     "Aceite de oliva virgen extra": 5.0,
+     "Aceite de coco": 5.0,
+     "Aceite de sésamo": 4.85,
+     "Grasa de pollo": 5.0,
+     "Semilla de sésamo": 1.0,
+     "napfcheck Novomineral proLEBER": 3.35,
+     "astoral MultiVital BARF": 0.99
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Corazón de pavo": 217.24,
-     "Pecho de ternera con hueso": 147.21,
-     "Salmón": 91.29,
-     "Riñón de ternera": 11.95,
-     "Hígado de pollo": 10.73,
-     "Acelga": 52.57,
-     "V-INTEGRA Senior": 8.8
+     "Lengua de cordero": 299.64,
+     "Espinazo de conejo": 113.89,
+     "Páncreas de vaca": 66.98,
+     "Hígado de conejo": 33.49,
+     "Acelga": 49.82,
+     "Oleum Canis Aceite de Salmón": 6.78,
+     "V-INTEGRA Senior": 6.11
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Conejo": 338.87,
-     "Pecho de ternera con hueso": 115.24,
-     "Páncreas de vaca": 67.77,
-     "Hígado de pollo": 11.52,
-     "Albahaca": 37.08,
-     "AniForte Aceite de Salmón": 5.67,
-     "V-INTEGRA Senior": 6.78
+     "Lengua de cordero": 299.64,
+     "Espinazo de conejo": 107.61,
+     "Timo de vaca": 61.98,
+     "Hígado de pavo": 10.76,
+     "Plátano": 52.74,
+     "AniForte Aceite de Salmón": 8.3,
+     "V-INTEGRA Senior": 7.47
     }
    }
   ],
@@ -2201,68 +2261,68 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 511.66,
-     "Corazón de pollo": 310.95,
-     "Espinazo de conejo": 284.09,
-     "Pescadilla": 158.04,
-     "Timo de vaca": 28.41,
-     "Hígado de pollo": 42.96,
-     "Piña": 70.27,
-     "V-INTEGRA Cachorro": 19.8
+     "Pollo con piel (sin hueso)": 630.03,
+     "Costillas de cordero": 303.14,
+     "Pescadilla": 378.27,
+     "Pulmón de cordero": 30.31,
+     "Hígado de pato": 44.81,
+     "Albahaca": 114.12,
+     "Homemadekun (multivitamínico completo)": 14.87,
+     "Yoduro potásico (comprimidos 200 µg)": 0.31
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Ternera solomillo sin grasa": 493.73,
-     "Lengua de ternera": 400.07,
-     "Carcasa de pato": 42.42,
+     "Ternera solomillo sin grasa": 436.27,
+     "Lengua de ternera": 422.51,
      "Espinazo de conejo": 292.04,
-     "Timo de vaca": 109.51,
-     "Hígado de pavo": 30.4,
-     "Albahaca": 136.55,
-     "Oleum Canis Aceite de Salmón": 3.23,
-     "V-INTEGRA Cachorro": 18.21
+     "Timo de vaca": 139.25,
+     "Hígado de vaca": 60.67,
+     "Espinaca": 95.02,
+     "AniForte Aceite de Salmón": 2.73,
+     "V-INTEGRA Cachorro": 19.8
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 764.41,
-     "Costillas de cordero": 267.76,
-     "Trucha": 49.97,
-     "Timo de vaca": 128.68,
-     "Hígado de vaca": 26.78,
-     "Espinaca": 87.94,
-     "Homemadekun (multivitamínico completo)": 8.7,
+     "Conejo": 740.36,
+     "Costillas de cordero": 269.84,
+     "Salmón": 71.59,
+     "Páncreas de vaca": 99.24,
+     "Hígado de vaca": 26.98,
+     "Piña": 127.83,
      "Sal común (cloruro sódico)": 1.0,
-     "V-INTEGRA Cachorro": 11.9
+     "Yoduro potásico (comprimidos 200 µg)": 0.08,
+     "V-INTEGRA Cachorro": 16.36
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 492.17,
-     "Pavo pechuga sin piel": 251.88,
-     "Costillas de cordero": 253.03,
-     "Salmón": 117.21,
-     "Páncreas de vaca": 25.3,
-     "Hígado de vaca": 25.3,
-     "Nabo pelado": 87.71,
-     "V-INTEGRA Cachorro": 17.92
+     "Pollo con piel (sin hueso)": 580.07,
+     "Pavo pechuga sin piel": 184.24,
+     "Costillas de cordero": 294.47,
+     "Timo de vaca": 25.99,
+     "Hígado de vaca": 74.56,
+     "Apio": 127.39,
+     "AniForte Seaweed Meal": 0.25,
+     "Aceite de hígado de bacalao": 1.0,
+     "V-INTEGRA Cachorro": 14.05
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 107.34,
-     "Ternera solomillo sin grasa": 751.44,
-     "Espinazo de conejo": 292.04,
-     "Timo de vaca": 133.31,
-     "Hígado de conejo": 59.56,
-     "Albahaca": 102.06,
-     "AniForte Aceite de Salmón": 6.76,
-     "V-INTEGRA Cachorro": 19.01
+     "Pavo pechuga sin piel": 411.19,
+     "Lengua de ternera": 349.9,
+     "Costillas de cordero": 258.82,
+     "Páncreas de vaca": 139.9,
+     "Hígado de pavo": 48.97,
+     "Canónigos": 72.51,
+     "Oleum Canis Aceite de Salmón": 9.69,
+     "V-INTEGRA Cachorro": 17.96
     }
    }
   ],
@@ -2270,72 +2330,70 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 295.39,
-     "Corazón de pollo": 888.93,
-     "Costillas de cordero": 604.79,
-     "Dorada": 656.83,
-     "Riñón de ternera": 131.91,
-     "Hígado de vaca": 119.76,
-     "Espinaca": 296.41,
-     "AniForte Seaweed Meal": 0.77,
+     "Pollo con piel (sin hueso)": 600.93,
+     "Corazón de pollo": 745.9,
+     "Costillas de cordero": 589.92,
+     "Dorada": 405.02,
+     "Riñón de cordero": 163.05,
+     "Hígado de vaca": 126.48,
+     "Albahaca": 289.12,
+     "Yoduro potásico (comprimidos 200 µg)": 0.76,
      "V-INTEGRA Cachorro": 19.8
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 1371.03,
-     "Costillas de cordero": 675.07,
-     "Dorada": 498.44,
-     "Timo de vaca": 59.7,
-     "Hígado de conejo": 59.7,
-     "Espinaca": 291.74,
-     "Homemadekun (multivitamínico completo)": 22.82,
-     "Yoduro potásico (comprimidos 200 µg)": 0.69
+     "Lengua de ternera": 1535.15,
+     "Costillas de cordero": 601.64,
+     "Dorada": 334.75,
+     "Timo de vaca": 89.33,
+     "Hígado de vaca": 122.68,
+     "Espinaca": 294.86,
+     "AniForte Seaweed Meal": 0.86,
+     "Homemadekun (multivitamínico completo)": 18.88
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 1577.41,
-     "Carcasa de pato": 235.2,
-     "Costillas de cordero": 330.59,
-     "Trucha": 291.96,
-     "Páncreas de vaca": 85.18,
-     "Hígado de pato": 81.33,
-     "Piña": 199.26,
-     "AniForte Seaweed Meal": 0.85,
-     "Sal común (cloruro sódico)": 1.13,
-     "V-INTEGRA Cachorro": 19.8
+     "Conejo": 1581.67,
+     "Costillas de cordero": 691.7,
+     "Dorada": 192.65,
+     "Timo de vaca": 80.34,
+     "Hígado de pato": 95.28,
+     "Albahaca": 290.26,
+     "AniForte Seaweed Meal": 0.82,
+     "Homemadekun (multivitamínico completo)": 26.21,
+     "Sal común (cloruro sódico)": 1.0
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 522.33,
-     "Pato (carne sin hueso)": 975.53,
-     "Costillas de cordero": 608.0,
-     "Riñón de ternera": 168.57,
-     "Hígado de vaca": 148.14,
-     "Albahaca": 266.19,
-     "AniForte Seaweed Meal": 1.48,
-     "Aceite de hígado de bacalao": 1.0,
-     "V-INTEGRA Cachorro": 12.16
+     "Pollo con piel (sin hueso)": 521.52,
+     "Pato (carne sin hueso)": 1008.89,
+     "Costillas de cordero": 692.91,
+     "Salmón": 40.0,
+     "Riñón de cordero": 205.77,
+     "Hígado de vaca": 53.03,
+     "Espinaca": 103.13,
+     "Yoduro potásico (comprimidos 200 µg)": 1.02,
+     "V-INTEGRA Cachorro": 15.82
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pavo pechuga sin piel": 305.57,
-     "Ternera solomillo sin grasa": 811.98,
-     "Corazón de pavo": 584.66,
-     "Costillas de cordero": 760.56,
-     "Merluza": 59.02,
-     "Timo de vaca": 59.19,
-     "Hígado de vaca": 59.19,
-     "Acelga": 290.1,
-     "Homemadekun (multivitamínico completo)": 22.53,
-     "Yoduro potásico (comprimidos 200 µg)": 0.92
+     "Pollo con piel (sin hueso)": 545.28,
+     "Lomo de ternera con grasa": 1274.21,
+     "Costillas de cordero": 623.08,
+     "Merluza": 91.52,
+     "Riñón de cordero": 106.81,
+     "Hígado de vaca": 138.28,
+     "Espinaca": 305.37,
+     "Homemadekun (multivitamínico completo)": 24.8,
+     "Yoduro potásico (comprimidos 200 µg)": 0.76
     }
    }
   ],
@@ -2343,77 +2401,81 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 315.62,
-     "Corazón de pollo": 247.34,
-     "Espinazo de conejo": 193.59,
-     "Pescadilla": 54.6,
-     "Riñón de cordero": 23.62,
-     "Hígado de pavo": 19.14,
-     "Albahaca": 93.83,
-     "AniForte Seaweed Meal": 0.18,
-     "V-INTEGRA Cachorro": 8.67
+     "Pollo con piel (sin hueso)": 150.78,
+     "Corazón de pollo": 393.48,
+     "Carcasa de pato": 37.18,
+     "Espinazo de conejo": 168.87,
+     "Riñón de ternera": 33.01,
+     "Hígado de pollo": 42.23,
+     "Canónigos": 90.71,
+     "Aceite de hígado de bacalao": 1.0,
+     "Yoduro potásico (comprimidos 200 µg)": 0.19,
+     "V-INTEGRA Cachorro": 7.23
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 516.28,
-     "Costillas de cordero": 133.08,
-     "Espinazo de conejo": 64.06,
-     "Dorada": 97.02,
-     "Timo de vaca": 22.35,
-     "Hígado de vaca": 52.74,
-     "Albahaca": 39.59,
-     "Piña": 50.83,
-     "AniForte Seaweed Meal": 0.72,
-     "Homemadekun (multivitamínico completo)": 6.78
+     "Lengua de ternera": 516.84,
+     "Carcasa de pato": 92.17,
+     "Espinazo de conejo": 94.0,
+     "Pescadilla": 76.89,
+     "Pulmón de cordero": 18.62,
+     "Hígado de vaca": 50.98,
+     "Frambuesa": 72.17,
+     "Aceite de girasol": 3.51,
+     "Yoduro potásico (comprimidos 200 µg)": 0.25,
+     "V-INTEGRA Cachorro": 5.61
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 519.97,
-     "Costillas de cordero": 109.75,
-     "Pecho de ternera con hueso": 71.63,
-     "Trucha": 40.0,
-     "Páncreas de vaca": 17.68,
-     "Hígado de pato": 29.67,
-     "Albahaca": 86.66,
-     "AniForte Seaweed Meal": 0.24,
-     "Aceite de girasol": 3.34,
-     "Homemadekun (multivitamínico completo)": 9.83,
-     "Sal común (cloruro sódico)": 1.0
+     "Conejo": 476.64,
+     "Carcasa de pato": 69.13,
+     "Espinazo de conejo": 92.96,
+     "Caballa": 40.0,
+     "Timo de vaca": 20.09,
+     "Hígado de pato": 25.86,
+     "Piña": 77.74,
+     "AniForte Seaweed Meal": 0.19,
+     "Aceite de oliva virgen extra": 5.0,
+     "Aceite de girasol": 5.0,
+     "Aceite de linaza": 2.99,
+     "Aceite de cacahuete": 5.0,
+     "Sal común (cloruro sódico)": 1.0,
+     "V-INTEGRA Cachorro": 8.24
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Corazón de pollo": 373.73,
-     "Corazón de pavo": 177.19,
-     "Costillas de cordero": 78.12,
-     "Espinazo de conejo": 109.23,
-     "Salmón": 44.78,
-     "Riñón de cordero": 18.74,
-     "Hígado de conejo": 38.62,
-     "Espinaca": 87.08,
-     "Yoduro potásico (comprimidos 200 µg)": 0.3,
-     "V-INTEGRA Cachorro": 5.6
+     "Pollo con piel (sin hueso)": 106.04,
+     "Pato (carne sin hueso)": 40.0,
+     "Lengua de cordero": 343.81,
+     "Espinazo de conejo": 193.62,
+     "Riñón de ternera": 16.66,
+     "Hígado de vaca": 42.89,
+     "Albahaca": 81.64,
+     "AniForte Seaweed Meal": 0.69,
+     "Aceite de hígado de bacalao": 1.0,
+     "Sal común (cloruro sódico)": 1.0,
+     "V-INTEGRA Cachorro": 7.87
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pato (carne sin hueso)": 240.19,
-     "Corazón de pavo": 233.72,
-     "Costillas de cordero": 123.34,
-     "Pecho de ternera con hueso": 89.36,
-     "Riñón de cordero": 16.12,
-     "Hígado de vaca": 16.12,
-     "Nabo pelado": 78.98,
+     "Pollo con piel (sin hueso)": 157.74,
+     "Corazón de pollo": 363.43,
+     "Carcasa de pato": 53.6,
+     "Espinazo de conejo": 126.36,
+     "Riñón de cordero": 37.28,
+     "Hígado de pollo": 52.12,
+     "Piña": 86.86,
      "Aceite de hígado de bacalao": 1.0,
-     "Sal común (cloruro sódico)": 1.0,
-     "Yoduro potásico (comprimidos 200 µg)": 0.34,
-     "V-INTEGRA Cachorro": 5.06
+     "Yoduro potásico (comprimidos 200 µg)": 0.2,
+     "V-INTEGRA Cachorro": 7.74
     }
    }
   ],
@@ -2421,67 +2483,76 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 287.09,
-     "Pecho de ternera con hueso": 255.25,
-     "Pescadilla": 543.59,
-     "Riñón de ternera": 27.05,
-     "Hígado de pato": 25.52,
-     "Albahaca": 125.1,
-     "V-INTEGRA Cachorro": 17.01
+     "Pollo con piel (sin hueso)": 136.85,
+     "Pollo ala con piel (sin hueso)": 449.38,
+     "Espinazo de conejo": 208.65,
+     "Riñón de cordero": 35.73,
+     "Hígado de vaca": 58.61,
+     "Piña": 97.71,
+     "Oleum Canis Aceite de Salmón": 11.44,
+     "Sal común (cloruro sódico)": 1.0,
+     "V-INTEGRA Cachorro": 16.92
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 508.29,
-     "Espinazo de conejo": 104.66,
-     "Pecho de ternera con hueso": 164.79,
-     "Pescadilla": 392.08,
-     "Páncreas de vaca": 26.94,
-     "Hígado de pavo": 26.94,
-     "Piña": 110.2,
-     "Aceite de girasol": 5.0,
-     "V-INTEGRA Cachorro": 16.48
+     "Ternera con grasa": 100.12,
+     "Lengua de ternera": 687.36,
+     "Espinazo de conejo": 270.65,
+     "Dorada": 89.48,
+     "Timo de vaca": 32.52,
+     "Hígado de vaca": 27.06,
+     "Albahaca": 132.64,
+     "AniForte Seaweed Meal": 1.17,
+     "V-INTEGRA Cachorro": 12.5
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 601.61,
-     "Pecho de ternera con hueso": 219.74,
-     "Dorada": 114.82,
-     "Riñón de ternera": 21.97,
-     "Hígado de pollo": 21.97,
-     "Albahaca": 107.69,
-     "Aceite de girasol": 5.0,
+     "Conejo": 738.75,
+     "Costillas de cordero": 70.23,
+     "Espinazo de conejo": 181.0,
+     "Trucha": 75.26,
+     "Páncreas de vaca": 30.2,
+     "Hígado de pato": 25.12,
+     "Boniato": 123.13,
+     "Aceite de oliva": 5.0,
+     "Aceite de sésamo": 5.0,
+     "Semilla de lino": 2.7,
+     "astoral MultiVital BARF": 1.24,
      "Sal común (cloruro sódico)": 1.0,
-     "V-INTEGRA Cachorro": 20.08
+     "V-INTEGRA Cachorro": 10.81
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 193.89,
-     "Pavo pechuga sin piel": 358.1,
-     "Pecho de ternera con hueso": 252.33,
-     "Riñón de cordero": 57.26,
-     "Hígado de conejo": 18.77,
-     "Albahaca": 48.93,
-     "Oleum Canis Aceite de Salmón": 11.44,
-     "V-INTEGRA Cachorro": 18.6
+     "Pollo con piel (sin hueso)": 203.83,
+     "Corazón de pollo": 533.06,
+     "Costillas de cordero": 27.88,
+     "Espinazo de conejo": 228.56,
+     "Riñón de cordero": 50.72,
+     "Hígado de pollo": 73.69,
+     "Piña": 122.82,
+     "Aceite de hígado de bacalao": 1.0,
+     "Yoduro potásico (comprimidos 200 µg)": 0.22,
+     "V-INTEGRA Cachorro": 11.97
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 194.6,
-     "Pavo pechuga sin piel": 330.49,
-     "Pecho de ternera con hueso": 256.98,
-     "Riñón de cordero": 61.76,
-     "Hígado de pavo": 19.35,
-     "Zanahoria": 94.85,
-     "Oleum Canis Aceite de Salmón": 10.26,
-     "V-INTEGRA Cachorro": 18.75
+     "Pollo con piel (sin hueso)": 116.8,
+     "Lengua de cordero": 507.89,
+     "Espinazo de conejo": 232.98,
+     "Riñón de cordero": 27.42,
+     "Hígado de vaca": 62.47,
+     "Piña": 104.12,
+     "AniForte Aceite de Salmón": 11.05,
+     "Sal común (cloruro sódico)": 1.0,
+     "V-INTEGRA Cachorro": 15.87
     }
    }
   ],
@@ -2489,61 +2560,65 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 427.12,
-     "Pecho de ternera con hueso": 193.43,
-     "Riñón de cordero": 14.52,
-     "Hígado de pollo": 14.52,
-     "Albahaca": 69.45,
-     "Pets Purest Aceite de Salmón Escocés": 0.69,
-     "V-INTEGRA Perro Adulto": 12.8
+     "Pollo con piel (sin hueso)": 200.96,
+     "Pollo ala con piel (sin hueso)": 237.22,
+     "Carcasa de pato": 149.01,
+     "Páncreas de vaca": 62.55,
+     "Hígado de pavo": 14.9,
+     "Boniato": 73.03,
+     "Oleum Canis Aceite de Salmón": 2.88,
+     "V-INTEGRA Perro Adulto": 9.54
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Ternera solomillo sin grasa": 239.11,
-     "Pecho de ternera con hueso": 195.55,
-     "Dorada": 424.24,
-     "Páncreas de vaca": 70.06,
-     "Hígado de pavo": 19.56,
-     "Boniato": 19.56,
-     "V-INTEGRA Perro Adulto": 9.53
+     "Lengua de ternera": 554.84,
+     "Espinazo de conejo": 188.68,
+     "Timo de vaca": 86.94,
+     "Hígado de pavo": 18.87,
+     "Acelga": 84.74,
+     "AniForte Aceite de Salmón": 14.72,
+     "Aceite de cacahuete": 5.0,
+     "V-INTEGRA Perro Adulto": 9.16
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 479.32,
-     "Pecho de ternera con hueso": 163.0,
-     "Timo de vaca": 95.86,
-     "Hígado de vaca": 26.6,
-     "Canónigos": 42.15,
-     "AniForte Aceite de Salmón": 6.58,
-     "V-INTEGRA Perro Adulto": 9.08
+     "Conejo": 444.76,
+     "Espinazo de conejo": 172.51,
+     "Páncreas de vaca": 101.45,
+     "Hígado de conejo": 50.73,
+     "Plátano": 84.54,
+     "Aceite de Salmón Natural Greatness": 14.16,
+     "Aceite de coco": 5.0,
+     "Aceite de sésamo": 5.0,
+     "V-INTEGRA Perro Adulto": 8.58
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 425.61,
-     "Pecho de ternera con hueso": 185.11,
-     "Riñón de cordero": 14.47,
-     "Hígado de pollo": 42.56,
-     "Albahaca": 48.76,
-     "Aceite de hígado de bacalao": 1.0,
-     "V-INTEGRA Perro Adulto": 12.8
+     "Lengua de cordero": 423.82,
+     "Carcasa de pato": 144.13,
+     "Timo de vaca": 84.76,
+     "Hígado de pavo": 38.79,
+     "Plátano": 22.0,
+     "Oleum Canis Aceite de Salmón": 12.23,
+     "V-INTEGRA Perro Adulto": 8.75
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
      "Lengua de cordero": 423.96,
-     "Espinazo de conejo": 229.84,
-     "Páncreas de vaca": 104.86,
-     "Hígado de pavo": 36.64,
-     "Albahaca": 87.39,
-     "Pets Purest Aceite de Salmón Escocés": 5.0,
-     "V-INTEGRA Perro Adulto": 8.79
+     "Carcasa de pato": 147.78,
+     "Páncreas de vaca": 86.91,
+     "Hígado de pavo": 17.98,
+     "Albahaca": 54.97,
+     "Oleum Canis Aceite de Salmón": 14.72,
+     "V-INTEGRA Perro Adulto": 9.18
     }
    }
   ],
@@ -2551,61 +2626,74 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 395.72,
-     "Pecho de ternera con hueso": 177.61,
-     "Páncreas de vaca": 13.46,
-     "Hígado de pavo": 13.46,
-     "Espinaca": 65.95,
-     "AniForte Aceite de Salmón": 1.64,
-     "V-INTEGRA Senior": 12.18
+     "Pollo con piel (sin hueso)": 73.5,
+     "Pollo ala con piel (sin hueso)": 311.42,
+     "Espinazo de conejo": 143.38,
+     "Páncreas de vaca": 84.33,
+     "Hígado de conejo": 26.91,
+     "Acelga": 70.27,
+     "Oleum Canis Aceite de Salmón": 9.84,
+     "V-INTEGRA Senior": 11.66
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 377.89,
-     "Pecho de ternera con hueso": 138.36,
-     "Páncreas de vaca": 80.49,
-     "Hígado de pavo": 13.69,
-     "Acelga": 67.07,
-     "Oleum Canis Aceite de Salmón": 14.72,
-     "V-INTEGRA Senior": 12.59
+     "Ternera con grasa": 183.03,
+     "Lengua de ternera": 240.41,
+     "Espinazo de conejo": 152.74,
+     "Páncreas de vaca": 89.83,
+     "Hígado de pavo": 15.27,
+     "Plátano": 74.86,
+     "Aceite de hígado de bacalao": 1.0,
+     "Pipa de girasol": 5.0,
+     "astoral MultiVital BARF": 1.53,
+     "V-INTEGRA Senior": 6.58
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 422.68,
-     "Pecho de ternera con hueso": 143.74,
-     "Páncreas de vaca": 84.54,
-     "Hígado de pollo": 42.27,
-     "Albahaca": 18.36,
-     "Oleum Canis Aceite de Salmón": 9.38,
-     "V-INTEGRA Senior": 11.1
+     "Conejo": 491.44,
+     "Carcasa de pollo": 35.6,
+     "Espinazo de conejo": 131.52,
+     "Pulmón de cordero": 64.39,
+     "Hígado de conejo": 22.48,
+     "Plátano": 81.91,
+     "Aceite de oliva": 5.0,
+     "Aceite de oliva virgen extra": 5.0,
+     "Aceite de girasol": 5.0,
+     "Aceite de linaza": 1.76,
+     "Aceite de hígado de bacalao": 3.51,
+     "Grasa de pollo": 5.0,
+     "Manteca": 5.0,
+     "Pipa de girasol": 5.0,
+     "NEKTON Dog Easy-BARF (multivitamínico)": 6.03,
+     "astoral MultiVital BARF": 1.6
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Conejo": 446.63,
-     "Pecho de ternera con hueso": 151.88,
-     "Timo de vaca": 89.33,
-     "Hígado de pollo": 15.19,
-     "Rucula": 48.87,
-     "Oleum Canis Aceite de Salmón": 7.59,
-     "V-INTEGRA Senior": 10.16
+     "Lengua de cordero": 397.03,
+     "Espinazo de conejo": 151.3,
+     "Páncreas de vaca": 83.27,
+     "Hígado de pollo": 14.16,
+     "Rucula": 55.19,
+     "AniForte Aceite de Salmón": 14.72,
+     "V-INTEGRA Senior": 9.7
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 409.17,
-     "Pecho de ternera con hueso": 172.16,
-     "Riñón de cordero": 13.91,
-     "Hígado de pollo": 25.4,
-     "Canónigos": 68.2,
-     "AniForte Aceite de Salmón": 1.4,
-     "V-INTEGRA Senior": 12.8
+     "Lengua de cordero": 397.03,
+     "Espinazo de conejo": 149.46,
+     "Timo de vaca": 83.96,
+     "Hígado de pavo": 14.28,
+     "Albahaca": 62.02,
+     "AniForte Aceite de Salmón": 14.72,
+     "V-INTEGRA Senior": 8.68
     }
    }
   ],
@@ -2613,68 +2701,66 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 466.56,
-     "Corazón de pollo": 674.26,
+     "Corazón de pollo": 932.78,
      "Espinazo de conejo": 398.26,
-     "Pulmón de vaca": 98.45,
-     "Hígado de pollo": 92.9,
-     "Acelga": 190.14,
-     "Aceite de hígado de bacalao": 1.1,
-     "V-INTEGRA Cachorro": 28.8
+     "Dorada": 408.43,
+     "Timo de vaca": 112.78,
+     "Hígado de pato": 39.68,
+     "Espinaca": 72.66,
+     "V-INTEGRA Cachorro": 28.65
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
      "Lengua de ternera": 1054.71,
-     "Costillas de cordero": 145.85,
-     "Espinazo de conejo": 375.47,
-     "Páncreas de vaca": 104.31,
-     "Hígado de pollo": 41.01,
-     "Canónigos": 186.36,
-     "AniForte Aceite de Salmón": 3.7,
-     "Sal común (cloruro sódico)": 1.0,
-     "V-INTEGRA Cachorro": 25.97
+     "Costillas de cordero": 151.93,
+     "Espinazo de conejo": 361.08,
+     "Riñón de ternera": 20.9,
+     "Pulmón de cordero": 74.89,
+     "Hígado de vaca": 37.7,
+     "Albahaca": 165.01,
+     "AniForte Aceite de Salmón": 12.84,
+     "V-INTEGRA Cachorro": 23.24
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 888.0,
-     "Costillas de cordero": 475.4,
-     "Dorada": 150.31,
-     "Timo de vaca": 90.98,
-     "Hígado de pato": 74.48,
-     "Espinaca": 184.5,
-     "Homemadekun (multivitamínico completo)": 19.23,
-     "Sal común (cloruro sódico)": 1.0,
-     "Yoduro potásico (comprimidos 200 µg)": 0.49
+     "Conejo": 1086.67,
+     "Costillas de cordero": 423.96,
+     "Dorada": 267.42,
+     "Pulmón de cordero": 103.99,
+     "Hígado de vaca": 40.21,
+     "Piña": 68.18,
+     "astoral MultiVital BARF": 1.6,
+     "V-INTEGRA Cachorro": 16.59
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 618.03,
-     "Corazón de pollo": 521.3,
-     "Espinazo de conejo": 398.26,
-     "Pulmón de cordero": 76.65,
-     "Hígado de pollo": 113.93,
-     "Acelga": 189.89,
-     "AniForte Aceite de Salmón": 2.67,
-     "V-INTEGRA Cachorro": 28.8
+     "Pollo con piel (sin hueso)": 337.71,
+     "Ternera solomillo sin grasa": 849.72,
+     "Costillas de cordero": 403.8,
+     "Salmón": 142.59,
+     "Timo de vaca": 40.38,
+     "Hígado de vaca": 40.38,
+     "Canónigos": 184.46,
+     "Homemadekun (multivitamínico completo)": 28.77
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Corazón de pollo": 328.91,
-     "Lengua de ternera": 833.6,
-     "Espinazo de conejo": 398.26,
-     "Páncreas de vaca": 111.37,
-     "Hígado de pollo": 91.19,
-     "Albahaca": 193.75,
-     "Oleum Canis Aceite de Salmón": 3.67,
-     "V-INTEGRA Cachorro": 22.79
+     "Pollo con piel (sin hueso)": 503.56,
+     "Ternera solomillo sin grasa": 646.26,
+     "Costillas de cordero": 455.75,
+     "Pulmón de cordero": 122.68,
+     "Hígado de conejo": 39.1,
+     "Canónigos": 168.36,
+     "AniForte Aceite de Salmón": 2.23,
+     "Homemadekun (multivitamínico completo)": 30.58
     }
    }
   ],
@@ -2682,70 +2768,71 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 1186.43,
-     "Corazón de pollo": 705.82,
-     "Costillas de cordero": 840.72,
-     "Pescadilla": 600.33,
-     "Riñón de ternera": 231.35,
-     "Hígado de vaca": 185.29,
-     "Espinaca": 412.04,
-     "AniForte Seaweed Meal": 1.07,
+     "Pollo con piel (sin hueso)": 423.7,
+     "Corazón de pollo": 1411.11,
+     "Costillas de cordero": 885.97,
+     "Dorada": 751.51,
+     "Riñón de ternera": 244.79,
+     "Hígado de vaca": 85.25,
+     "Espinaca": 417.79,
+     "AniForte Seaweed Meal": 1.03,
      "V-INTEGRA Cachorro": 28.8
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 2129.3,
-     "Costillas de cordero": 877.46,
-     "Dorada": 603.92,
-     "Timo de vaca": 86.11,
-     "Hígado de pato": 143.93,
-     "Espinaca": 422.01,
-     "AniForte Seaweed Meal": 1.14,
-     "Homemadekun (multivitamínico completo)": 28.28
+     "Lengua de ternera": 2078.58,
+     "Costillas de cordero": 853.62,
+     "Dorada": 533.21,
+     "Páncreas de vaca": 106.16,
+     "Hígado de vaca": 235.92,
+     "Espinaca": 418.36,
+     "Homemadekun (multivitamínico completo)": 23.37,
+     "Yoduro potásico (comprimidos 200 µg)": 1.27
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
      "Conejo": 2220.83,
-     "Carcasa de pato": 175.1,
-     "Costillas de cordero": 705.19,
-     "Dorada": 600.31,
-     "Pulmón de cordero": 97.67,
-     "Hígado de vaca": 100.01,
-     "Albahaca": 428.43,
-     "AniForte Seaweed Meal": 1.11,
+     "Carcasa de pato": 354.48,
+     "Costillas de cordero": 447.12,
+     "Trucha": 467.57,
+     "Timo de vaca": 88.96,
+     "Hígado de pato": 110.74,
+     "Espinaca": 278.64,
+     "AniForte Seaweed Meal": 1.15,
+     "Sal común (cloruro sódico)": 1.1,
      "V-INTEGRA Cachorro": 28.8
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 1487.71,
-     "Pavo pechuga sin piel": 469.67,
-     "Costillas de cordero": 913.88,
-     "Salmón": 44.48,
-     "Riñón de cordero": 198.11,
-     "Hígado de vaca": 212.31,
-     "Albahaca": 248.07,
-     "Yoduro potásico (comprimidos 200 µg)": 1.14,
-     "V-INTEGRA Cachorro": 28.8
+     "Pollo con piel (sin hueso)": 406.8,
+     "Lengua de ternera": 1948.81,
+     "Costillas de cordero": 898.13,
+     "Pulmón de cordero": 102.63,
+     "Hígado de vaca": 216.71,
+     "Albahaca": 392.6,
+     "AniForte Seaweed Meal": 1.39,
+     "Aceite de hígado de bacalao": 1.37,
+     "Homemadekun (multivitamínico completo)": 27.01
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 743.58,
-     "Ternera solomillo sin grasa": 1448.57,
-     "Costillas de cordero": 1049.92,
-     "Merluza": 105.11,
-     "Riñón de ternera": 161.48,
-     "Hígado de vaca": 236.16,
-     "Albahaca": 411.47,
-     "AniForte Seaweed Meal": 1.36,
-     "Homemadekun (multivitamínico completo)": 30.14
+     "Pollo con piel (sin hueso)": 729.87,
+     "Pato (carne sin hueso)": 1221.3,
+     "Costillas de cordero": 1022.21,
+     "Riñón de ternera": 291.29,
+     "Hígado de vaca": 121.43,
+     "Espinaca": 362.15,
+     "Aceite de hígado de bacalao": 1.19,
+     "Yoduro potásico (comprimidos 200 µg)": 1.64,
+     "V-INTEGRA Cachorro": 18.25
     }
    }
   ],
@@ -2753,79 +2840,82 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 222.88,
-     "Corazón de pollo": 481.64,
-     "Costillas de cordero": 25.43,
-     "Espinazo de conejo": 249.1,
-     "Riñón de ternera": 53.92,
-     "Hígado de pato": 35.67,
-     "Albahaca": 117.42,
-     "AniForte Seaweed Meal": 0.33,
-     "Aceite de hígado de bacalao": 1.0,
-     "V-INTEGRA Cachorro": 8.76
+     "Pollo con piel (sin hueso)": 185.69,
+     "Corazón de pollo": 489.45,
+     "Espinazo de conejo": 232.92,
+     "Caballa": 49.68,
+     "Riñón de cordero": 45.42,
+     "Hígado de vaca": 51.72,
+     "Albahaca": 98.19,
+     "Yoduro potásico (comprimidos 200 µg)": 0.21,
+     "V-INTEGRA Cachorro": 10.36
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 649.31,
-     "Costillas de cordero": 185.67,
-     "Pecho de ternera con hueso": 62.9,
-     "Riñón de cordero": 22.08,
-     "Hígado de conejo": 64.93,
-     "Albahaca": 108.22,
-     "Aceite de girasol": 3.71,
-     "Aceite de hígado de bacalao": 2.21,
-     "Homemadekun (multivitamínico completo)": 10.12,
-     "Sal común (cloruro sódico)": 1.0,
-     "Yoduro potásico (comprimidos 200 µg)": 0.28
+     "Ternera solomillo sin grasa": 315.98,
+     "Lengua de ternera": 429.92,
+     "Costillas de cordero": 92.81,
+     "Espinazo de conejo": 235.02,
+     "Bazo de vaca": 25.79,
+     "Hígado de vaca": 31.88,
+     "Piña": 124.32,
+     "AniForte Seaweed Meal": 0.84,
+     "Aceite de girasol": 4.8,
+     "Aceite de hígado de bacalao": 1.0,
+     "Homemadekun (multivitamínico completo)": 9.75
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 612.97,
-     "Espinazo de conejo": 115.8,
-     "Pecho de ternera con hueso": 152.71,
-     "Riñón de ternera": 21.67,
-     "Hígado de vaca": 26.62,
-     "Piña": 102.16,
-     "Aceite de girasol": 2.48,
-     "Aceite de hígado de bacalao": 1.0,
-     "Semilla de lino": 1.0,
-     "napfcheck Novomineral proLEBER": 2.83,
+     "Conejo": 630.67,
+     "Costillas de cordero": 25.0,
+     "Espinazo de conejo": 210.29,
+     "Caballa": 40.95,
+     "Bazo de cordero": 21.45,
+     "Hígado de vaca": 28.27,
+     "Piña": 105.11,
+     "Aceite de oliva": 5.0,
+     "Aceite de oliva virgen extra": 5.0,
+     "Aceite de girasol": 5.0,
+     "Aceite de linaza": 4.03,
+     "Aceite de cacahuete": 5.0,
+     "Aceite de sésamo": 5.0,
+     "astoral MultiVital BARF": 0.67,
      "Sal común (cloruro sódico)": 1.0,
-     "V-INTEGRA Cachorro": 11.85
+     "V-INTEGRA Cachorro": 11.87
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 265.42,
-     "Pavo pechuga sin piel": 315.54,
-     "Carcasa de pollo": 118.97,
-     "Pecho de ternera con hueso": 136.36,
-     "Riñón de cordero": 19.79,
-     "Hígado de pato": 26.83,
-     "Acelga": 97.01,
-     "Aceite de hígado de bacalao": 1.0,
-     "Yoduro potásico (comprimidos 200 µg)": 0.27,
-     "V-INTEGRA Cachorro": 10.14
+     "Pollo con piel (sin hueso)": 174.81,
+     "Corazón de pollo": 527.25,
+     "Carcasa de pato": 41.77,
+     "Espinazo de conejo": 226.2,
+     "Riñón de cordero": 47.59,
+     "Hígado de pavo": 47.29,
+     "Canónigos": 117.01,
+     "Aceite de hígado de bacalao": 1.26,
+     "Yoduro potásico (comprimidos 200 µg)": 0.23,
+     "V-INTEGRA Cachorro": 9.37
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 304.41,
-     "Corazón de pollo": 380.13,
-     "Costillas de cordero": 25.32,
-     "Espinazo de conejo": 248.77,
-     "Riñón de ternera": 33.95,
-     "Hígado de pollo": 69.62,
-     "Albahaca": 109.87,
-     "AniForte Seaweed Meal": 0.34,
+     "Pollo con piel (sin hueso)": 274.51,
+     "Corazón de pollo": 419.62,
+     "Carcasa de pollo": 25.0,
+     "Espinazo de conejo": 244.27,
+     "Riñón de ternera": 44.6,
+     "Hígado de pollo": 49.04,
+     "Albahaca": 111.53,
+     "AniForte Seaweed Meal": 0.97,
      "Aceite de hígado de bacalao": 1.0,
-     "V-INTEGRA Cachorro": 8.9
+     "V-INTEGRA Cachorro": 9.15
     }
    }
   ],
@@ -2833,67 +2923,77 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 415.58,
-     "Pecho de ternera con hueso": 363.26,
-     "Pescadilla": 768.15,
-     "Riñón de cordero": 36.31,
-     "Hígado de vaca": 36.31,
-     "Albahaca": 177.96,
-     "V-INTEGRA Cachorro": 24.98
+     "Pollo con piel (sin hueso)": 188.92,
+     "Pollo ala con piel (sin hueso)": 652.65,
+     "Espinazo de conejo": 303.46,
+     "Riñón de cordero": 57.72,
+     "Hígado de vaca": 73.77,
+     "Piña": 140.26,
+     "AniForte Aceite de Salmón": 19.66,
+     "Sal común (cloruro sódico)": 1.1,
+     "V-INTEGRA Cachorro": 24.57
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 997.3,
-     "Espinazo de conejo": 253.27,
-     "Pecho de ternera con hueso": 152.62,
-     "Timo de vaca": 45.95,
-     "Hígado de pavo": 63.59,
-     "Espinaca": 166.22,
-     "Oleum Canis Aceite de Salmón": 10.43,
-     "Sal común (cloruro sódico)": 1.0,
-     "V-INTEGRA Cachorro": 22.19
+     "Lomo de ternera con grasa": 182.37,
+     "Lengua de ternera": 1022.5,
+     "Carcasa de pollo": 45.67,
+     "Espinazo de conejo": 364.07,
+     "Dorada": 96.58,
+     "Timo de vaca": 58.69,
+     "Hígado de vaca": 57.71,
+     "Espinaca": 200.81,
+     "AniForte Seaweed Meal": 0.3,
+     "V-INTEGRA Cachorro": 15.65
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 822.71,
-     "Pecho de ternera con hueso": 285.19,
-     "Riñón de cordero": 57.74,
-     "Hígado de conejo": 82.27,
-     "Piña": 137.12,
-     "Oleum Canis Aceite de Salmón": 19.66,
+     "Conejo": 1072.92,
+     "Carcasa de pollo": 149.64,
+     "Espinazo de conejo": 220.87,
+     "Pescadilla": 99.65,
+     "Pulmón de cordero": 18.81,
+     "Timo de vaca": 49.0,
+     "Hígado de pato": 50.33,
+     "Boniato": 173.0,
      "Aceite de linaza": 5.0,
-     "Sal común (cloruro sódico)": 1.27,
-     "V-INTEGRA Cachorro": 28.98
+     "astoral MultiVital BARF": 2.14,
+     "Sal común (cloruro sódico)": 1.0,
+     "V-INTEGRA Cachorro": 13.51
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 239.38,
-     "Pavo pechuga sin piel": 552.55,
-     "Pecho de ternera con hueso": 371.27,
-     "Riñón de cordero": 80.4,
-     "Hígado de conejo": 26.93,
-     "Canónigos": 62.69,
-     "AniForte Aceite de Salmón": 19.66,
-     "V-INTEGRA Cachorro": 27.5
+     "Pollo con piel (sin hueso)": 168.86,
+     "Lengua de cordero": 700.54,
+     "Costillas de cordero": 141.77,
+     "Espinazo de conejo": 248.81,
+     "Salmón": 74.85,
+     "Riñón de ternera": 32.26,
+     "Hígado de conejo": 92.91,
+     "Acelga": 137.18,
+     "astoral MultiVital BARF": 1.83,
+     "V-INTEGRA Cachorro": 13.17
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 392.55,
-     "Pavo pechuga sin piel": 322.68,
-     "Pecho de ternera con hueso": 401.49,
-     "Riñón de cordero": 92.83,
-     "Hígado de pollo": 27.74,
-     "Acelga": 135.95,
-     "Pets Purest Aceite de Salmón Escocés": 1.58,
-     "V-INTEGRA Cachorro": 26.3
+     "Pollo con piel (sin hueso)": 368.48,
+     "Corazón de pollo": 623.16,
+     "Carcasa de pato": 246.13,
+     "Espinazo de conejo": 116.67,
+     "Riñón de cordero": 65.13,
+     "Hígado de pato": 84.58,
+     "Acelga": 165.27,
+     "AniForte Seaweed Meal": 0.76,
+     "Aceite de hígado de bacalao": 1.49,
+     "napfcheck Novomineral proLEBER": 6.95
     }
    }
   ],
@@ -2901,61 +3001,64 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Corazón de pollo": 137.64,
-     "Pecho de ternera con hueso": 322.37,
-     "Dorada": 631.55,
-     "Páncreas de vaca": 108.75,
-     "Hígado de pavo": 27.53,
-     "Plátano": 134.91,
-     "V-INTEGRA Perro Adulto": 13.36
+     "Pollo con piel (sin hueso)": 452.76,
+     "Pollo ala con piel (sin hueso)": 299.87,
+     "Espinazo de conejo": 293.12,
+     "Timo de vaca": 70.27,
+     "Hígado de pavo": 25.59,
+     "Plátano": 125.44,
+     "Aceite de hígado de bacalao": 1.0,
+     "V-INTEGRA Perro Adulto": 14.68
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 641.88,
-     "Pecho de ternera con hueso": 218.28,
-     "Timo de vaca": 128.38,
-     "Hígado de pavo": 21.83,
-     "Apio": 70.24,
-     "Oleum Canis Aceite de Salmón": 20.92,
-     "V-INTEGRA Perro Adulto": 20.0
+     "Ternera con grasa": 421.91,
+     "Espinazo de conejo": 284.18,
+     "Dorada": 371.44,
+     "Páncreas de vaca": 146.38,
+     "Hígado de pavo": 55.92,
+     "Albahaca": 126.99,
+     "V-INTEGRA Perro Adulto": 12.18
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 659.91,
-     "Pecho de ternera con hueso": 246.43,
-     "Páncreas de vaca": 144.26,
-     "Hígado de vaca": 48.56,
-     "Espinaca": 120.77,
-     "Oleum Canis Aceite de Salmón": 15.1,
-     "napfcheck Novomineral proLEBER": 16.5
+     "Conejo": 683.02,
+     "Espinazo de conejo": 264.92,
+     "Páncreas de vaca": 155.8,
+     "Hígado de conejo": 77.9,
+     "Plátano": 129.84,
+     "Oleum Canis Aceite de Salmón": 25.3,
+     "Aceite de linaza": 5.0,
+     "Grasa de pollo": 5.0,
+     "V-INTEGRA Perro Adulto": 12.58
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Corazón de pavo": 397.6,
-     "Pecho de ternera con hueso": 333.16,
-     "Salmón": 258.1,
-     "Riñón de cordero": 52.83,
-     "Hígado de pollo": 23.89,
-     "Espinaca": 117.08,
-     "V-INTEGRA Perro Adulto": 14.83
+     "Lengua de buey": 558.04,
+     "Espinazo de conejo": 370.06,
+     "Riñón de ternera": 63.03,
+     "Hígado de pavo": 69.95,
+     "Nabo pelado": 116.59,
+     "Oleum Canis Aceite de Salmón": 24.58,
+     "V-INTEGRA Perro Adulto": 21.3
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 663.69,
-     "Pecho de ternera con hueso": 302.66,
-     "Páncreas de vaca": 22.68,
-     "Hígado de pavo": 22.68,
-     "Rucula": 111.17,
-     "Aceite de Salmón Natural Greatness": 1.83,
-     "V-INTEGRA Perro Adulto": 17.18
+     "Lengua de cordero": 636.51,
+     "Espinazo de conejo": 321.32,
+     "Timo de vaca": 144.52,
+     "Hígado de pollo": 24.57,
+     "Boniato": 89.57,
+     "Oleum Canis Aceite de Salmón": 7.8,
+     "V-INTEGRA Perro Adulto": 16.95
     }
    }
   ],
@@ -2963,61 +3066,76 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 586.5,
-     "Pecho de ternera con hueso": 261.84,
-     "Páncreas de vaca": 33.54,
-     "Hígado de pollo": 25.08,
-     "Nabo pelado": 80.42,
-     "Pets Purest Aceite de Salmón Escocés": 0.97,
-     "V-INTEGRA Senior": 20.42
+     "Pollo con piel (sin hueso)": 134.65,
+     "Pollo ala con piel (sin hueso)": 493.75,
+     "Espinazo de conejo": 213.7,
+     "Páncreas de vaca": 76.07,
+     "Hígado de pavo": 35.01,
+     "Plátano": 104.73,
+     "Oleum Canis Aceite de Salmón": 17.44,
+     "V-INTEGRA Senior": 21.62
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 479.62,
-     "Pecho de ternera con hueso": 259.43,
-     "Dorada": 389.3,
-     "Timo de vaca": 99.67,
-     "Hígado de conejo": 30.34,
-     "Piña": 25.94,
-     "V-INTEGRA Senior": 18.13
+     "Ternera con grasa": 305.63,
+     "Lengua de ternera": 378.64,
+     "Espinazo de conejo": 232.7,
+     "Páncreas de vaca": 114.3,
+     "Hígado de conejo": 32.65,
+     "Acelga": 88.05,
+     "Aceite de girasol": 5.0,
+     "Aceite de hígado de bacalao": 1.07,
+     "astoral MultiVital BARF": 2.34,
+     "V-INTEGRA Senior": 9.2
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 450.08,
-     "Pecho de ternera con hueso": 256.7,
-     "Trucha": 369.48,
-     "Timo de vaca": 93.37,
-     "Hígado de pavo": 75.48,
-     "Brócoli": 25.67,
-     "V-INTEGRA Senior": 15.28
+     "Conejo": 657.38,
+     "Espinazo de conejo": 253.11,
+     "Salmón": 118.73,
+     "Páncreas de vaca": 25.31,
+     "Hígado de vaca": 74.43,
+     "Acelga": 40.91,
+     "Plátano": 83.14,
+     "Aceite de oliva": 3.03,
+     "Aceite de girasol": 5.0,
+     "Aceite de linaza": 5.0,
+     "Aceite de cacahuete": 5.0,
+     "Aceite de coco": 5.0,
+     "Aceite de hígado de bacalao": 5.0,
+     "Aceite de sésamo": 5.0,
+     "Grasa de pollo": 5.0,
+     "Manteca": 5.0,
+     "NEKTON Dog Easy-BARF (multivitamínico)": 7.3,
+     "astoral MultiVital BARF": 2.64
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 581.52,
-     "Pecho de ternera con hueso": 263.23,
-     "Pulmón de vaca": 94.69,
-     "Hígado de pavo": 19.78,
-     "Albahaca": 19.78,
-     "AniForte Aceite de Salmón": 2.47,
-     "V-INTEGRA Senior": 19.42
+     "Lengua de cordero": 595.83,
+     "Espinazo de conejo": 224.51,
+     "Timo de vaca": 126.13,
+     "Hígado de pavo": 21.45,
+     "Albahaca": 93.78,
+     "AniForte Aceite de Salmón": 22.0,
+     "V-INTEGRA Senior": 12.98
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Lengua de ternera": 575.69,
-     "Pecho de ternera con hueso": 203.86,
-     "Páncreas de vaca": 119.89,
-     "Hígado de pollo": 20.39,
-     "Espinaca": 89.37,
-     "Oleum Canis Aceite de Salmón": 22.87,
-     "V-INTEGRA Senior": 22.0
+     "Lengua de cordero": 595.83,
+     "Espinazo de conejo": 223.3,
+     "Páncreas de vaca": 131.33,
+     "Hígado de conejo": 46.75,
+     "Albaricoque": 108.23,
+     "AniForte Aceite de Salmón": 21.81,
+     "V-INTEGRA Senior": 16.15
     }
    }
   ],
@@ -3025,66 +3143,67 @@
    {
     "proteina": "Pollo",
     "gramos": {
-     "Pollo con piel (sin hueso)": 1063.09,
-     "Corazón de pollo": 691.13,
-     "Espinazo de conejo": 625.67,
-     "Pulmón de cordero": 140.68,
-     "Hígado de pavo": 140.29,
-     "Espinaca": 292.37,
-     "Aceite de hígado de bacalao": 1.81,
-     "V-INTEGRA Cachorro": 39.73
+     "Pollo con piel (sin hueso)": 871.69,
+     "Corazón de pollo": 877.51,
+     "Espinazo de conejo": 625.24,
+     "Pulmón de vaca": 210.7,
+     "Hígado de pavo": 68.11,
+     "Col rizada": 291.53,
+     "AniForte Aceite de Salmón": 5.83,
+     "V-INTEGRA Cachorro": 39.71
     }
    },
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lomo de ternera con grasa": 1317.77,
-     "Costillas de cordero": 704.83,
-     "Dorada": 808.16,
-     "Timo de vaca": 207.46,
-     "Hígado de conejo": 105.6,
-     "Albahaca": 345.44,
-     "napfcheck Novomineral proLEBER": 16.5,
-     "Yoduro potásico (comprimidos 200 µg)": 0.78
+     "Ternera solomillo sin grasa": 857.46,
+     "Lengua de ternera": 969.83,
+     "Espinazo de conejo": 625.67,
+     "Timo de vaca": 255.24,
+     "Hígado de vaca": 126.66,
+     "Espinaca": 241.39,
+     "Oleum Canis Aceite de Salmón": 9.88,
+     "V-INTEGRA Cachorro": 45.16
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 1415.65,
-     "Costillas de cordero": 678.17,
-     "Salmón": 181.6,
-     "Timo de vaca": 193.36,
-     "Hígado de vaca": 146.48,
-     "Acelga": 287.36,
-     "astoral MultiVital BARF": 2.75,
-     "V-INTEGRA Cachorro": 24.44
+     "Conejo": 1534.34,
+     "Costillas de cordero": 584.48,
+     "Trucha": 107.79,
+     "Timo de vaca": 234.4,
+     "Hígado de vaca": 153.08,
+     "Canónigos": 279.36,
+     "Homemadekun (multivitamínico completo)": 16.84,
+     "Sal común (cloruro sódico)": 1.61,
+     "V-INTEGRA Cachorro": 24.48
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 1235.86,
-     "Corazón de pollo": 478.99,
+     "Pollo con piel (sin hueso)": 695.85,
+     "Pato (carne sin hueso)": 992.28,
      "Espinazo de conejo": 625.67,
-     "Pulmón de cordero": 165.53,
-     "Hígado de conejo": 95.1,
-     "Espinaca": 285.81,
-     "Oleum Canis Aceite de Salmón": 7.23,
-     "V-INTEGRA Cachorro": 40.19
+     "Timo de vaca": 131.21,
+     "Hígado de vaca": 115.61,
+     "Acelga": 281.36,
+     "Aceite de Salmón Natural Greatness": 13.49,
+     "V-INTEGRA Cachorro": 40.89
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Ternera solomillo sin grasa": 615.39,
-     "Lengua de ternera": 1224.46,
-     "Espinazo de conejo": 625.67,
-     "Timo de vaca": 240.6,
-     "Hígado de vaca": 141.67,
-     "Espinaca": 249.59,
-     "Pets Purest Aceite de Salmón Escocés": 2.38,
-     "V-INTEGRA Cachorro": 36.09
+     "Pato (carne sin hueso)": 496.12,
+     "Lengua de ternera": 1250.0,
+     "Espinazo de conejo": 606.18,
+     "Páncreas de vaca": 251.5,
+     "Hígado de vaca": 59.38,
+     "Acelga": 276.41,
+     "Aceite de Salmón Natural Greatness": 10.88,
+     "V-INTEGRA Cachorro": 36.69
     }
    }
   ],
@@ -3107,64 +3226,63 @@
    {
     "proteina": "Ternera",
     "gramos": {
-     "Lengua de ternera": 3301.09,
-     "Carcasa de pato": 726.68,
+     "Lengua de ternera": 3358.13,
+     "Carcasa de pato": 699.03,
      "Costillas de cordero": 602.78,
-     "Dorada": 1159.5,
-     "Bazo de cordero": 128.99,
-     "Hígado de vaca": 128.99,
-     "Espinaca": 337.57,
-     "AniForte Seaweed Meal": 1.57,
-     "Aceite de girasol": 4.01,
-     "V-INTEGRA Cachorro": 39.81
+     "Dorada": 1112.87,
+     "Bazo de cordero": 130.18,
+     "Hígado de vaca": 130.18,
+     "Espinaca": 411.42,
+     "AniForte Seaweed Meal": 1.95,
+     "Aceite de girasol": 4.38,
+     "V-INTEGRA Cachorro": 32.19
     }
    },
    {
     "proteina": "Conejo",
     "gramos": {
-     "Conejo": 3534.17,
-     "Carcasa de pato": 942.26,
-     "Costillas de cordero": 447.84,
-     "Dorada": 332.18,
-     "Páncreas de vaca": 123.95,
-     "Hígado de pato": 150.8,
-     "Acelga": 605.08,
-     "AniForte Seaweed Meal": 1.62,
-     "Aceite de cacahuete": 5.0,
-     "Aceite de hígado de bacalao": 1.46,
-     "Semilla de lino": 1.47,
+     "Conejo": 3245.53,
+     "Carcasa de pato": 1085.18,
+     "Costillas de cordero": 405.22,
+     "Dorada": 569.29,
+     "Bazo de cordero": 122.19,
+     "Hígado de vaca": 122.19,
+     "Acelga": 499.49,
+     "AniForte Seaweed Meal": 1.83,
+     "Aceite de girasol": 5.0,
+     "Aceite de linaza": 4.23,
      "Pipa de girasol": 5.0,
-     "V-INTEGRA Cachorro": 49.5
+     "V-INTEGRA Cachorro": 45.15
     }
    },
    {
     "proteina": "Salmón",
     "gramos": {
-     "Pollo con piel (sin hueso)": 1527.09,
-     "Lomo de ternera con grasa": 2069.7,
-     "Carcasa de pato": 818.88,
-     "Costillas de cordero": 598.66,
-     "Riñón de ternera": 319.09,
-     "Hígado de vaca": 122.32,
-     "Acelga": 599.46,
-     "Aceite de hígado de bacalao": 3.47,
-     "Yoduro potásico (comprimidos 200 µg)": 1.59,
-     "V-INTEGRA Cachorro": 47.69
+     "Pollo con piel (sin hueso)": 1235.74,
+     "Ternera solomillo sin grasa": 2369.53,
+     "Carcasa de pato": 1156.27,
+     "Carcasa de conejo": 243.49,
+     "Riñón de cordero": 156.57,
+     "Hígado de vaca": 337.29,
+     "Albahaca": 570.59,
+     "Aceite de hígado de bacalao": 3.58,
+     "Yoduro potásico (comprimidos 200 µg)": 1.5,
+     "V-INTEGRA Cachorro": 49.5
     }
    },
    {
     "proteina": "Merluza",
     "gramos": {
-     "Pollo con piel (sin hueso)": 1326.03,
-     "Lomo de ternera con grasa": 2299.4,
-     "Carcasa de pato": 861.81,
+     "Pollo con piel (sin hueso)": 1755.64,
+     "Lomo de ternera con grasa": 1833.46,
+     "Carcasa de pato": 760.01,
      "Costillas de cordero": 602.78,
-     "Riñón de cordero": 285.87,
-     "Hígado de conejo": 123.29,
-     "Acelga": 604.24,
-     "AniForte Seaweed Meal": 1.59,
-     "Aceite de hígado de bacalao": 3.58,
-     "V-INTEGRA Cachorro": 48.85
+     "Riñón de cordero": 148.32,
+     "Hígado de conejo": 343.87,
+     "Acelga": 598.18,
+     "Aceite de hígado de bacalao": 2.63,
+     "Yoduro potásico (comprimidos 200 µg)": 1.52,
+     "V-INTEGRA Cachorro": 49.5
     }
    }
   ]

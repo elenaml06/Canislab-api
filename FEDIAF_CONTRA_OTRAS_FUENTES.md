@@ -21,6 +21,44 @@ solo pueden apretar.
 Hay conflicto **solo** cuando la otra fuente sacaría al perro **fuera** de la
 ventana de FEDIAF. Ahí es donde manda FEDIAF, y de eso va la primera tabla.
 
+## Y un límite de la regla que pone la propia FEDIAF (11 de septiembre, releyéndola entera)
+
+«Gana FEDIAF» es verdad **para el perro sano**, y hay que decirlo así porque
+FEDIAF **se excluye a sí misma** del otro caso. Su §2.2, al declarar el alcance:
+
+> *«Excluded from the FEDIAF's Nutritional Guidelines are pet foods for
+> particular nutritional purposes and some other specialised foods such as for
+> sporting dogs etc. Therefore specific products may have nutrient levels that
+> are different from those stated in these guidelines.»*
+
+Una dieta para una patología es exactamente un «pet food for a particular
+nutritional purpose» — así la llama el Reglamento (UE) 2020/354, que es quien
+las regula. O sea que en una dieta clínica **quien pone el suelo es la ley, no
+FEDIAF**, y la ley sí permite bajar de algunos mínimos de FEDIAF para objetivos
+concretos (urato 36,9 y cistina 45,5 g/1000 kcal de proteína, con cuatro
+condiciones escritas; están en `limites_legales_ue_2020_354.json`).
+
+Y no es la única frase de FEDIAF en esa dirección. Hay **tres** más, y la
+tercera trae la condición:
+
+- §2.2: *«Pet foods can be adequate and safe when nutrient levels are outside
+  the recommendations in this guide, based on the manufacturer's substantiation
+  of nutritional adequacy and safety.»*
+- §3.1.b: *«If certain nutrient levels are outside the values stated in this
+  guide, manufacturers should be able to prove that the product provides
+  adequate and safe intakes of all required nutrients.»*
+- §3.3.1, proteína: *«If formulating below the recommended minimum for total
+  protein it is particularly important to ensure that the amino acid profile
+  meets FEDIAF guidelines for adult maintenance.»* — que es justo lo que pide
+  Cris Carles para el IRIS 4, y la condición **ya se cumple** en este motor:
+  los 12 aminoácidos esenciales se verifican uno a uno desde el 28 de agosto.
+
+**Qué cambia esto en el motor: nada.** Elena lo decidió y la decisión sigue:
+«los requisitos se respetan SIEMPRE, eso no se negocia». Lo que cambia es lo
+que se puede **afirmar**: hasta hoy este documento decía que FEDIAF manda en
+todos los casos, y la propia FEDIAF dice que en las dietas clínicas no. Quien
+firma una pauta tiene derecho a saberlo, que es la razón de ser de este fichero.
+
 ---
 
 ## 1 · Conflictos de verdad: la otra fuente se sale de FEDIAF y NO se aplica
