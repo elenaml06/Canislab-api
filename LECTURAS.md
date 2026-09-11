@@ -49,8 +49,8 @@ la tabla. Esos se quedan y se quedan todos.
 | Fuente | Leída | Notas |
 |---|---|---|
 | FEDIAF | **releída entera con el método nuevo (11-sep)** | Abajo, punto por punto. Salieron 7 cosas que decidir, 2 frases falsas en la documentación y 186 celdas cruzadas por primera vez |
-| SACN5 | sí | 22 tablas con hallazgo sin aplicar, abajo |
-| NRC 2006 | sí | |
+| SACN5 | leída, pero **NO con este método** | 124.310 líneas. Su lectura vieja dejó 22 tablas con hallazgo sin aplicar (abajo) y ese registro se conserva, pero no ha pasado por el repaso punto por punto. Mientras no pase, «leída» aquí significa menos que en la fila de FEDIAF |
+| NRC 2006 | leída, pero **NO con este método** | 43.556 líneas. Igual que SACN5: tiene lectura previa y no tiene repaso punto por punto |
 | Fascetti & Delaney | sí, los 21 capítulos (11-sep) | 42 notas, abajo |
 | Reglamento (UE) 2020/354 | sí | Volcado entero en `limites_legales_ue_2020_354.json` |
 | Köber 2017 | sí (11-sep) | Cazó tres fichas con el calcio ×10 bajo |
