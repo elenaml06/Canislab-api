@@ -8294,6 +8294,129 @@ elif not _nombres58[0].get("fuente"):
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
+# BLOQUE 51 — UNA CONSTANTE POR FAMILIA NO ES UNA MEDIDA
+#
+# ⚠️ CASO REAL ENCONTRADO (8 de septiembre). El catálogo declaraba el cobre
+# de 21 pescados con solo CUATRO valores distintos en todo el grupo: 0,08 en
+# siete blancos, 0,72 en cinco cefalópodos, 0,1 en cinco y 0,05 en dos. Y
+# seis huesos carnosos de especies distintas -- conejo, pato, pollo, cordero --
+# declaraban la MISMA vitamina A (0,01), la misma vitamina D (0,01) y la
+# misma riboflavina (0,2). Eso no es que coincidan: es que alguien puso una
+# cifra de familia donde no había medida individual.
+#
+# POR QUÉ IMPORTA Y NO ES COSMÉTICO. Un valor declarado cuenta como MEDIDO,
+# y contra un techo un cero medido defiende. El cobre tiene el tope de la
+# hepatopatía encima. Al pasar a `sin_dato` esos 16 cobres de pescado suben
+# de 0,08 a 0,41 imputado (percentil 90 de su familia), que es justo lo que
+# hace `constructor.valor_para_maximo`. Se midió antes de entregarlo: ninguna
+# familia baja de los 3 donantes de MINIMO_FAMILIA y CERO fichas empeoran.
+#
+# Y LA SEGUNDA MITAD DEL BLOQUE es la trampa contraria, la de aflojar. La
+# misma rama de la que salieron esas 86 casillas traía un campo `trazas` que
+# sacaba de `sin_dato` la vitamina A y D de diez pescados, leyendo el código
+# `TR` de BEDCA como "trazas". `TR` con la celda VACÍA significa NO HAY
+# CIFRA. Comprobado contra BEDCA ficha a ficha el 8 de septiembre. Aplicarlo
+# habría convertido catorce huecos bien declarados en ceros medidos falsos y
+# habría aflojado el techo crónico de la vitamina D. Ver Ya_probado.md.
+# ============================================================
+print("=== BLOQUE 51: una constante por familia no es una medida ===")
+_CAT51 = json.load(open("alimentos_v3_final.json", encoding="utf-8"))
+
+# ⚠️ LO QUE AQUÍ NO SE PRUEBA, Y POR QUÉ. Se intentó primero la regla
+# general -- "ninguna cifra repetida exactamente en 4+ fichas de una
+# categoría sin declarar" -- y disparaba 87 veces sobre el catálogo YA
+# ARREGLADO: la L-carnitina de siete carnes musculares vale 10,0 porque es
+# la cifra que publica Spitze 2003 para todas ellas, y la colina de nueve
+# vale 65 por lo mismo. Repetirse no es la prueba del delito; repetirse SIN
+# que la fuente lo repita, sí. Eso no lo puede decidir una prueba, así que
+# vive en `auditar_catalogo.py` como aviso para quien mira, junto a
+# `[SOSPECHOSO]`, y aquí se comprueba lo que sí es blanco o negro.
+
+# ── 1. Las 86 que ya se cerraron siguen cerradas.
+_MUESTRA51 = [("Atún", "cobre"), ("Pulpo", "cobre"), ("Bacalao", "cobre"),
+              ("Carcasa de conejo", "vitD"), ("Carcasa de pollo", "vitA"),
+              ("Costillas de cordero", "riboflavina"),
+              # 0,035 era el manganeso del CALAMAR en USDA, puesto en ocho
+              # pescados blancos. USDA da 0,011 al eglefino y 0,7 a la perca.
+              ("Merluza", "manganeso"), ("Besugo", "manganeso"),
+              ("Perca", "manganeso")]
+_ficha51 = {a["nombre"]: a for a in _CAT51}
+for _n51, _k51 in _MUESTRA51:
+    _f51 = _ficha51.get(_n51)
+    if _f51 is None:
+        continue
+    if _k51 not in set(_f51.get("sin_dato") or []):
+        fallos.append(f"BLOQUE51: «{_n51}» vuelve a declarar {_k51} como valor medido. "
+                      f"No tiene procedencia individual: va en `sin_dato`.")
+    elif _f51["nutrientes"].get(_k51):
+        fallos.append(f"BLOQUE51: «{_n51}» tiene {_k51} en `sin_dato` pero con valor "
+                      f"{_f51['nutrientes'][_k51]}. Un hueco vale 0.")
+
+# ── 2. Y el `TR` de BEDCA no vuelve a leerse como "trazas".
+_TR51 = [("Merluza", "vitA"), ("Merluza", "vitD"), ("Bacaladilla", "vitA"),
+         ("Bacaladilla", "vitD"), ("Lubina", "vitA"), ("Lubina", "vitD"),
+         ("Lenguado", "vitA"), ("Lenguado", "vitD"), ("Calamar", "vitD"),
+         ("Pulpo", "vitD"), ("Sepia", "vitD"), ("Gamba roja", "vitD"),
+         ("Bacalao", "vitD"), ("Pollo con piel (sin hueso)", "vitD")]
+for _n51, _k51 in _TR51:
+    _f51 = _ficha51.get(_n51)
+    if _f51 is None:
+        fallos.append(f"BLOQUE51: falta la ficha «{_n51}», que vigila la trampa del TR.")
+        continue
+    if _k51 not in set(_f51.get("sin_dato") or []):
+        fallos.append(
+            f"BLOQUE51: «{_n51}» ha sacado {_k51} de `sin_dato`. BEDCA la da como `TR` con "
+            f"la celda VACÍA, que es NO HAY CIFRA, no «trazas» -- comprobado contra la fuente "
+            f"el 8 de septiembre. Sacarla de ahí afloja el techo crónico de la vitamina D. "
+            f"Ver Ya_probado.md.")
+if any("trazas" in a for a in _CAT51):
+    fallos.append("BLOQUE51: ha vuelto el campo `trazas` al catálogo. Es la lectura "
+                  "equivocada del `TR` de BEDCA. Ver Ya_probado.md.")
+
+# ── 3. El índice de fuentes, y la ficha que ya se cargó mal una vez.
+#
+# ⚠️ `fuentes_id` es ÍNDICE, NO DATO: dice de qué fila de qué base salió la
+# ficha, y por eso ponerlo no movió ni una casilla. Lo que se vigila aquí no
+# es que estén todos -- 38 fichas no tienen fuente y es correcto (16
+# suplementos de marca con datos de etiqueta, la sal, el yoduro potásico y 9
+# huesos carnosos, que vienen de Köber 2017) -- sino que los que hay no se
+# crucen de especie.
+#
+# ⚠️ CASO REAL: «Cerebro de vaca» llevaba 17 celdas copiadas del registro de
+# TERNERA, y hubo que rehacer la ficha entera el 8 de septiembre. La huella
+# numérica NO los separa -- proteína, grasa y agua se parecen -- así que
+# `fijar_identificadores.py` propuso BEDCA 1047 («Sesos de ternera») y
+# CIQUAL 40006 («Cervelle, veau») para la ficha de VACA, y las dos cuadraban.
+# Lo único que las tumbó fue mirar el nombre. Si alguien quita esa guarda,
+# esto lo dice.
+_ESPECIE51 = [("Cerebro de vaca", "usda", "168622", "vaca"),
+              ("Cerebro de ternera", "usda", "174351", "ternera"),
+              ("Timo de vaca", "usda", "170194", "vaca"),
+              ("Pulmón de ternera", "usda", "174361", "ternera")]
+for _n51, _f51, _esperado51, _quien51 in _ESPECIE51:
+    _fi51 = _ficha51.get(_n51)
+    if _fi51 is None:
+        fallos.append(f"BLOQUE51: falta la ficha «{_n51}».")
+        continue
+    _puesto51 = (_fi51.get("fuentes_id") or {}).get(_f51)
+    if _puesto51 and _puesto51 != _esperado51:
+        fallos.append(
+            f"BLOQUE51: «{_n51}» apunta a {_f51} {_puesto51} y le toca {_esperado51}. "
+            f"Es una ficha de {_quien51}: vaca y ternera se parecen en proteina, grasa y "
+            f"agua, asi que un cruce de especie NO lo caza la huella numerica -- solo el "
+            f"nombre. Ya paso una vez y hubo que rehacer la ficha entera.")
+
+_con_id51 = sum(1 for _a51 in _CAT51 if _a51.get("fuentes_id"))
+if _con_id51 < 95:
+    fallos.append(f"BLOQUE51: solo {_con_id51} fichas tienen `fuentes_id` y habia 99. "
+                  f"Sin identificador el catalogo deja de ser auditable entero y hay que "
+                  f"volver a buscar por nombre, que es como se llego a comprobarlo seis "
+                  f"veces sin cerrarlo. Ver PENDIENTE_NUTRICION.md apartado 14.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # RESUMEN FINAL
 # ============================================================
 # BLOQUE 59 — EL TECHO DE YODO ES UN TECHO, NO LA DOSIS QUE HACE DANO
