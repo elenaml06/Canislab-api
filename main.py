@@ -5404,6 +5404,99 @@ def pauta_comprobar(documento: dict):
 # no tiene sitio donde moverse, y saberlo ANTES de formular es la diferencia
 # entre entender por que no sale menu y creer que la app esta rota.
 # =====================================================================
+
+# =====================================================================
+# GET /vocabulario — TODO LO QUE EL MOTOR ENUMERA, PARA QUE LA APP LO REFLEJE
+# =====================================================================
+#
+# ⚠️ POR QUE EXISTE (11 de septiembre de 2026). Elena, despues de encontrar que
+# la app ofrecia cinco niveles de actividad y la base de datos guardaba tres:
+#
+#     «no hay que hacer que el motor coincida con lo de la app. hay que hacer
+#      que la app coincida con lo del motor [...] si el motor dice que hay
+#      dieciocho niveles de actividad, la app tiene que tener 18 niveles de
+#      actividad porque si no no sirve de nada, y asi con todo»
+#
+# Y tiene razon en la direccion: la FUENTE manda, el MOTOR la implementa y la
+# APP la ofrece. Cuando la app se copia una lista a mano, esa copia se
+# desincroniza y nadie se entera -- ya paso tres veces documentadas:
+#
+#   · `CATEGORIAS_QUE_ELIGE_EL_USUARIO` contra `CATEGORIAS` de App.jsx: durante
+#     tres semanas se respetaban tres de las seis, y 15 de cada 36 menus
+#     personalizados metian algo que nadie habia pedido, callando.
+#   · Las patologias: el motor tiene 47 y la app ofrece 37. Diez no se pueden
+#     marcar, siete de ellas formulables (`FRONTEND_VS_MOTOR.md` §1).
+#   · Los niveles de actividad: cinco en la pantalla, tres en la base de datos.
+#     Un perro de trabajo volvia como «normal» y recibia un 37 % menos de comida.
+#
+# LA IDEA: que la app deje de copiar y LEA. Este endpoint sirve las siete listas
+# que el motor enumera, cada una con lo que hace falta para pintarla. El que la
+# app siga teniendo su copia es ahora comprobable: `tests/vocabulario.spec.js`
+# en `canislab-web` compara las dos.
+#
+# NO sustituye a `GET /patologias` ni a `GET /relajacion`, que sirven la tabla
+# ENTERA con sus cifras y sus fuentes. Esto es el vocabulario: los nombres y
+# cuantos hay.
+@app.get("/vocabulario")
+def endpoint_vocabulario():
+    from der import BASE_ACTIVIDAD, RAZAS_CIFRA_FEDIAF
+    from requisitos import ETAPAS_VALIDAS, EQUIVALENCIA_ETAPAS
+
+    from motor.patologias import cargar_crudo
+
+    al_v, _req_v = cargar_v2()
+    _pat_v = (cargar_crudo() or {}).get("patologias") or {}
+
+    return {
+        "que_es": ("Todo lo que el motor enumera. La app tiene que ofrecer ESTO, ni mas ni menos: "
+                   "una lista que la app se copia a mano se desincroniza y nadie se entera."),
+        "niveles_de_actividad": {
+            "de_donde": "FEDIAF 2025, Tabla VII-7 «Recommendations for DER in relation to activity»",
+            "cuantos": len(BASE_ACTIVIDAD),
+            "niveles": [{"clave": k, "kcal_kg075": v} for k, v in BASE_ACTIVIDAD.items()],
+            "ojo": ("⚠️ La Tabla VII-7 tiene CUATRO filas de actividad para el perro normal (95, "
+                    "110, 125 y un rango de 150-175), y el motor parte la cuarta en DOS niveles. "
+                    "Eso es decision nuestra y esta escrita en `niveles_de_actividad.json`. "
+                    "Y falta una fila de la fuente que no esta ni aqui ni en la app: «Obese prone "
+                    "adults ≤ 90»."),
+        },
+        "razas_con_cifra_propia": {
+            "de_donde": "FEDIAF 2025, Tabla VII-7, fila «Breed specific differences»",
+            "ojo": "La cifra de raza va EN VEZ del nivel de actividad, no sumada (§7.2.3.4).",
+            "razas": [{"nombre": k, "kcal_kg075": v[0], "rango": [v[1], v[2]]}
+                      for k, v in RAZAS_CIFRA_FEDIAF.items()],
+        },
+        "etapas": {
+            "de_donde": "requerimientos_v2_final.json (Tabla III-3b de FEDIAF) y sus equivalencias",
+            "con_tabla_propia": sorted(ETAPAS_VALIDAS),
+            "equivalencias": {k: v for k, v in EQUIVALENCIA_ETAPAS.items()},
+        },
+        "patologias": {
+            "cuantas": len(_pat_v),
+            "formulables": sorted(k for k, v in _pat_v.items() if v.get("formulable")),
+            "no_formulables": sorted(k for k, v in _pat_v.items() if not v.get("formulable")),
+            "ojo": ("La tabla entera, con sus topes y sus fuentes, va por `GET /patologias`. "
+                    "Quien puede marcar cada una esta en `quien_formula_cada_patologia.json`."),
+        },
+        "categorias_que_elige_el_usuario": {
+            "de_donde": "main.CATEGORIAS_QUE_ELIGE_EL_USUARIO",
+            "ojo": ("Tiene que coincidir con `CATEGORIAS` de App.jsx. El dia que dejen de "
+                    "coincidir, elegir en las que sobran no hara nada y el menu saldra verde "
+                    "igual."),
+            "categorias": list(CATEGORIAS_QUE_ELIGE_EL_USUARIO),
+        },
+        "categorias_del_catalogo": {
+            "ojo": ("Las que NO estan en la lista de arriba (Suplementos y Extras) van siempre "
+                    "libres: son la herramienta con la que el motor cierra los 43 requisitos."),
+            "categorias": sorted({a.get("categoria") for a in al_v.values() if a.get("categoria")}),
+        },
+        "peldanos_de_la_escalera": {
+            "de_donde": "main.PELDANOS_EN_CRISTIANO, y los recorre `_escalera_de_relajacion`",
+            "ojo": "Lo que suelta cada uno va por `GET /relajacion`.",
+            "peldanos": list(PELDANOS_EN_CRISTIANO),
+        },
+    }
+
 @app.get("/patologias")
 def listar_patologias():
     """Los topes por patologia con su fuente, su motivo y su margen.

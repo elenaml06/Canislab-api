@@ -11733,6 +11733,103 @@ print(f"  {len(_DE_LA_FICHA_87)} campos de la ficha · "
       f"{sum(1 for v in _campos87.values() if v['forma'] == 'no_hace_falta')} no hacen falta")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
+# ============================================================
+# BLOQUE 88 — EL VOCABULARIO QUE LA APP TIENE QUE REFLEJAR
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (11 septiembre). Elena, después de encontrar que la app
+# ofrecía cinco niveles de actividad y la base de datos guardaba tres:
+#
+#     «no hay que hacer que el motor coincida con lo de la app. hay que hacer
+#      que la app coincida con lo del motor [...] si el motor dice que hay
+#      dieciocho niveles de actividad, la app tiene que tener 18 niveles de
+#      actividad porque si no no sirve de nada, y así con todo»
+#
+# `GET /vocabulario` sirve las siete listas que el motor enumera, para que la
+# app las LEA en vez de copiárselas. Este bloque exige que lo servido sean los
+# valores VIVOS, no una copia: una copia dentro del propio endpoint sería el
+# mismo fallo con un paso más, que es exactamente cómo se desincronizó la tabla
+# de patologías del `POST /menu` que se borró el 26 de agosto.
+print("\n" + "=" * 60)
+print("=== BLOQUE 88: el vocabulario que la app tiene que reflejar ===")
+
+import json as _json88
+from der import BASE_ACTIVIDAD as _ACT88, RAZAS_CIFRA_FEDIAF as _RAZ88
+
+_v88 = _c.get("/vocabulario")
+if _v88.status_code != 200:
+    fallos.append(f"BLOQUE88: GET /vocabulario devuelve {_v88.status_code}. Sin él la app no "
+                  f"tiene de dónde leer lo que el motor enumera")
+else:
+    _d88 = _v88.json()
+
+    # 1. La actividad, clave a clave y cifra a cifra contra `der.py`.
+    _serv88 = {x["clave"]: x["kcal_kg075"] for x in _d88["niveles_de_actividad"]["niveles"]}
+    if _serv88 != dict(_ACT88):
+        fallos.append(f"BLOQUE88: /vocabulario sirve {_serv88} de actividad y `der.BASE_ACTIVIDAD` "
+                      f"dice {dict(_ACT88)}. El endpoint tiene que servir el valor VIVO, no una "
+                      f"copia -- una copia es cómo se desincronizó la tabla del POST /menu")
+    if _d88["niveles_de_actividad"]["cuantos"] != len(_ACT88):
+        fallos.append("BLOQUE88: el recuento de niveles de actividad no cuadra con la lista")
+
+    # 2. Las dos razas con cifra propia.
+    _rz88 = {x["nombre"]: x["kcal_kg075"] for x in _d88["razas_con_cifra_propia"]["razas"]}
+    if _rz88 != {k: v[0] for k, v in _RAZ88.items()}:
+        fallos.append(f"BLOQUE88: /vocabulario sirve {_rz88} de razas y `der.RAZAS_CIFRA_FEDIAF` "
+                      f"dice otra cosa")
+
+    # 3. Las categorías que elige el usuario. Esta es la que ya falló una vez:
+    #    durante tres semanas se respetaban tres de las seis y 15 de cada 36
+    #    menús personalizados metían algo que nadie pidió, en silencio.
+    if list(_d88["categorias_que_elige_el_usuario"]["categorias"]) != list(
+            _api.CATEGORIAS_QUE_ELIGE_EL_USUARIO):
+        fallos.append("BLOQUE88: las categorías que sirve /vocabulario no son las de "
+                      "`CATEGORIAS_QUE_ELIGE_EL_USUARIO`. Es la lista que ya se desincronizó una "
+                      "vez de la de App.jsx, y el menú salía verde igual")
+
+    # 4. Los peldaños, contra los que recorre la escalera de verdad.
+    if list(_d88["peldanos_de_la_escalera"]["peldanos"]) != list(_api.PELDANOS_EN_CRISTIANO):
+        fallos.append("BLOQUE88: los peldaños servidos no son los de `PELDANOS_EN_CRISTIANO`")
+
+    # 5. Las patologías, contra el fichero que lee el solver.
+    _pat88 = _json88.loads((_raiz_b24 / "patologias.json").read_text(encoding="utf-8"))
+    _pat88 = _pat88.get("patologias") or _pat88
+    _form88 = sorted(k for k, v in _pat88.items() if v.get("formulable"))
+    if sorted(_d88["patologias"]["formulables"]) != _form88:
+        fallos.append(f"BLOQUE88: /vocabulario dice que hay {len(_d88['patologias']['formulables'])} "
+                      f"patologías formulables y `patologias.json` tiene {len(_form88)}")
+    if _d88["patologias"]["cuantas"] != len(_pat88):
+        fallos.append("BLOQUE88: el recuento de patologías servido no es el del fichero")
+
+    # 6. Y el inventario de la Tabla VII-7 tiene que seguir cuadrando con el
+    #    motor: es donde está escrito que partimos una fila de la fuente en dos
+    #    niveles, y que falta la de «obese prone adults ≤ 90».
+    _inv88 = _json88.loads((_raiz_b24 / "niveles_de_actividad.json").read_text(encoding="utf-8"))
+    _claves88 = set()
+    for _f88 in _inv88["filas"]:
+        if _f88["estado"] in ("HUECO", "fuera_a_proposito"):
+            if not (_f88.get("por_que") or "").strip():
+                fallos.append(f"BLOQUE88: la fila «{_f88['fuente'][:40]}» de la Tabla VII-7 está "
+                              f"declarada «{_f88['estado']}» y no dice por qué")
+            continue
+        if _f88["estado"] == "partido_por_nosotros" and not (_f88.get("por_que") or "").strip():
+            fallos.append("BLOQUE88: la fila de «High activity» está partida en dos niveles por "
+                          "nosotros y no dice por qué. Separarse de la fuente sin decirlo es "
+                          "exactamente lo que este fichero existe para impedir")
+        for _k88 in str(_f88.get("motor") or "").split(" + "):
+            _k88 = _k88.strip()
+            if _k88 in _ACT88:
+                _claves88.add(_k88)
+    if _claves88 != set(_ACT88):
+        fallos.append(f"BLOQUE88: el inventario de la Tabla VII-7 empareja {sorted(_claves88)} y "
+                      f"el motor tiene {sorted(_ACT88)}. Cada nivel del motor tiene que salir de "
+                      f"una fila de la fuente, o estar declarado como decisión nuestra")
+
+print(f"  7 listas servidas · {len(_ACT88)} niveles de actividad · "
+      f"{len(_api.CATEGORIAS_QUE_ELIGE_EL_USUARIO)} categorías · "
+      f"{len(_api.PELDANOS_EN_CRISTIANO)} peldaños")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
 _hay_fuentes = _os_b18.path.isdir(_RUTA_FUENTES)
 
 print(f"\n{'='*60}")
