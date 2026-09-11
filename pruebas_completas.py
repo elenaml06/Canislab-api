@@ -7841,6 +7841,49 @@ _CIFRAS_B57 = [
     ("CachorroCrecimiento", None, "linoleico", 16.3, 16.3,
      "Fascetti & Delaney 2a ed., cap.14, «safe upper limit ... 16.3 ... g/1000 "
      "kcal (NRC 2006)»", "por 1000 kcal"),
+    # --- la TERCERA cifra de esa misma frase, y la unica que aprieta ---------
+    #
+    # ⚠️ ENTRO EL 11-sep POR LA NOCHE, MEDIO DIA DESPUES QUE EL LINOLEICO, y de
+    # la MISMA frase. Se quedo fuera porque se habia leido la frase y no el
+    # capitulo; aparecio al cerrar el cap.14 entero, y es el caso que motivo el
+    # BLOQUE 96. Medido antes de aplicarla: de los 216 menus del catalogo, CINCO
+    # se pasaban de 2,8 (hasta 3,00) -- el linoleico, en cambio, no aprieta
+    # nunca (los 216 van de 3,20 a 10,50 contra 16,3).
+    ("Adulto", None, "epa_dha", 2.8, 2.8,
+     "Fascetti & Delaney 2a ed., cap.14: «a safe upper limit for LA and EPA + "
+     "DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». Techo, y es el "
+     "UNICO que tiene el EPA+DHA: FEDIAF no le da maximo en ninguna etapa",
+     "por 1000 kcal"),
+    ("Senior", None, "epa_dha", 2.8, 2.8,
+     "Fascetti & Delaney 2a ed., cap.14, «safe upper limit ... 2.8 g/1000 kcal "
+     "(NRC 2006)». La fuente no distingue etapa: dice «in dogs»", "por 1000 kcal"),
+    ("CachorroJoven", None, "epa_dha", 2.8, 2.8,
+     "Fascetti & Delaney 2a ed., cap.14, «safe upper limit ... 2.8 g/1000 kcal "
+     "(NRC 2006)»", "por 1000 kcal"),
+    ("CachorroCrecimiento", None, "epa_dha", 2.8, 2.8,
+     "Fascetti & Delaney 2a ed., cap.14, «safe upper limit ... 2.8 g/1000 kcal "
+     "(NRC 2006)»", "por 1000 kcal"),
+    # --- y el techo de vitamina E, que tampoco teniamos ---------------------
+    #
+    # ⚠️ TRES CONVERSIONES SEGUIDAS Y LA DE ENMEDIO ES LA QUE MATA: 1000 UI/kg
+    # MS -> /4 -> 250 UI/1000 kcal -> x0,671 mg/UI -> 167,75 mg/1000 kcal. Ese
+    # 0,671 es la UI de d-alfa-tocoferol de la Tabla VII-14 de FEDIAF, y es
+    # exactamente donde se fallo el 8-sep-2026 tratando las UI como mg. Por eso
+    # la fila lleva su factor aparte y el test lo rehace.
+    ("Adulto", None, "vitE", 167.75, 1000.0,
+     "Fascetti & Delaney 2a ed., cap.14: «In dogs, a tentative upper limit of 75 "
+     "IU/kg/day (or 1000-2000 IU/kg diet) has been suggested (NRC 2006)». Extremo "
+     "ESTRICTO, porque es un techo. UNICO techo de vitamina E que hay: FEDIAF no "
+     "le da maximo en ninguna etapa", "UI/kg MS", 0.671),
+    ("Senior", None, "vitE", 167.75, 1000.0,
+     "Fascetti & Delaney 2a ed., cap.14, «1000-2000 IU/kg diet», extremo estricto",
+     "UI/kg MS", 0.671),
+    ("CachorroJoven", None, "vitE", 167.75, 1000.0,
+     "Fascetti & Delaney 2a ed., cap.14, «1000-2000 IU/kg diet», extremo estricto",
+     "UI/kg MS", 0.671),
+    ("CachorroCrecimiento", None, "vitE", 167.75, 1000.0,
+     "Fascetti & Delaney 2a ed., cap.14, «1000-2000 IU/kg diet», extremo estricto",
+     "UI/kg MS", 0.671),
 ]
 
 # Cuantas kcal metabolizables tiene un kilo de materia seca, que es la densidad
@@ -7848,7 +7891,7 @@ _CIFRAS_B57 = [
 _DENSIDAD_B57 = 4000.0
 
 
-def _a_por_1000kcal_b57(valor, unidad):
+def _a_por_1000kcal_b57(valor, unidad, factor=1.0):
     """Lo que dice la fuente, pasado a la unidad del motor.
 
     Tres unidades y tres cuentas distintas, porque las fuentes no se ponen de
@@ -7863,6 +7906,12 @@ def _a_por_1000kcal_b57(valor, unidad):
         return valor / (_DENSIDAD_B57 / 1000.0)
     if unidad == "por 1000 kcal":
         return valor
+    # ⚠️ «UI/kg MS» lleva DOS pasos, no uno: pasar a por-1000-kcal y ADEMAS de
+    # unidades internacionales a miligramos. Tratarlas como si fueran mg es el
+    # fallo del 8-sep-2026, que dejo a la artrosis sin menu. El factor viene en
+    # la propia fila para que se pueda rehacer.
+    if unidad == "UI/kg MS":
+        return valor / (_DENSIDAD_B57 / 1000.0) * factor
     raise ValueError(f"BLOQUE57: unidad de fuente desconocida: {unidad}")
 
 
@@ -7870,7 +7919,8 @@ def _a_por_1000kcal_b57(valor, unidad):
 for _fila57 in _CIFRAS_B57:
     _et, _padu57, _nut, _val, _pct, _cita = _fila57[:6]
     _uni_b57 = _fila57[6] if len(_fila57) > 6 else "%MS"
-    _calc = _a_por_1000kcal_b57(_pct, _uni_b57)
+    _fac_b57 = _fila57[7] if len(_fila57) > 7 else 1.0
+    _calc = _a_por_1000kcal_b57(_pct, _uni_b57, _fac_b57)
     if abs(_calc - _val) > 0.01:
         fallos.append(f"BLOQUE57 conversion: {_et}.{_nut} esta escrito como {_val} pero su "
                       f"fuente da {_pct} {_uni_b57}, que a 4000 kcal/kg MS son {_calc}. "

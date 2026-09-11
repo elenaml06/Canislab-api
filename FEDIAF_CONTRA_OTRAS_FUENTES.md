@@ -71,8 +71,56 @@ dentro de la ventana de FEDIAF y la estrechan.
 | **Taurina y L-carnitina** | no son requisito para el perro (sí la taurina para el gato) | suelos reales en `dcm_taurina_respondedora`, de SACN5 Tabla 36-4 |
 | **Vitamina K** | no la publica para el perro | el NRC sí, y el catálogo **no la tiene en ninguna ficha**. Pendiente de dato, no de código |
 | **Ratio linoleico:linolénico** | lo enuncia y no lo cuantifica | 2,6-26 en adulto y crecimiento, de NRC 2006 cap.5, **aplicado**. NRC dice además que el ratio omega-6:omega-3 totales *«is not helpful»* |
-| **Máximo de vitamina E** | ninguno en ninguna etapa | SACN5 cap.13 recoge que *«An upper limit of 1,000 to 2,000 IU/kg food (DM) has been suggested for dogs»* (AAFCO 1985, NRC 1985). **Escrito y no aplicado**: es un rango sugerido, no un máximo, y los menús con el suelo nuevo salen en 68-79 mg/1000 kcal, muy por debajo del extremo bajo (167,75 mg) |
+| **Máximo de vitamina E** | ninguno en ninguna etapa | **APLICADO el 11-sep-2026 por la noche: 167,75 mg/1000 kcal**, el extremo estricto. ⚠️ **Y lo que lo desbloqueó fue la SEGUNDA fuente**: SACN5 cap.13 ya recogía *«An upper limit of 1,000 to 2,000 IU/kg food (DM) has been suggested for dogs»* (AAFCO 1985, NRC 1985) y se había dejado sin aplicar por ser «un rango sugerido»; al cerrar el cap.14 de Fascetti apareció la misma horquilla citando **NRC 2006**, o sea la edición vigente. Dos fuentes independientes y la misma cifra deja de ser una sugerencia suelta. Medido antes de aplicarlo: los 216 menús del catálogo van de 10,05 a 89,28 mg/1000 kcal, **0 por encima** |
+| **Máximo de EPA+DHA** | ninguno en ninguna etapa | **APLICADO el 11-sep-2026 por la noche: 2,8 g/1000 kcal** (Fascetti cap.14 citando NRC 2006, y la fuente lo repite por peso metabólico: *«<370 mg × BW(kg)0.75»*). ⚠️ Es el único de los tres techos de esa frase que **sí aprieta**: medido antes de aplicarlo, **5 de los 216 menús** se pasaban, hasta 3,00. Obligó a regenerar el catálogo |
+| **Mínimo de proteína del perro** | 52,1 g/1000 kcal en adulto | **NRC 2006 dice 20** (*«2.62 g/kg BW0.75 or 20 g/Mcal»*, citado por Fascetti cap.15). ⚠️ **Gana FEDIAF y el motor no baja de 52,1**, y además las dos cifras no miden lo mismo: la del NRC es un requerimiento mínimo suponiendo biodisponibilidad del 100 % y la de FEDIAF una recomendación para una dieta completa. Se apunta porque **es el número que bloquea el IRIS 4** que pide la revisión de Cris (15 % MS = 37,5 g/1000 kcal, entre los dos). Bajar el mínimo general NO es la solución: la solución es la vía firmada de `VETERINARIOS.md`, donde una prescripción por debajo de FEDIAF viaja con su propio juego de requisitos |
 | **Energía del hueso carnoso** | no se pronuncia | NRC excluye el hueso de los factores de Atwater, que es lo que usa el catálogo. Medido: el error está acotado en un dígito por ciento y no hay cifra que aplicar. `PENDIENTE_NUTRICION.md` |
+
+---
+
+## 3-bis · Donde discrepan dos fuentes ENTRE SÍ, y FEDIAF no entra
+
+⚠️ Apartado añadido el 11 de septiembre de 2026, al cerrar los capítulos de
+Fascetti. Hasta entonces esta lista solo miraba «FEDIAF contra otra fuente», y
+hay un caso que no cabía en ninguna de las tres secciones: **dos fuentes que se
+contradicen en un nutriente que FEDIAF no restringe para esa patología**. Ahí no
+hay regla que aplicar —FEDIAF no se pronuncia— y la elección es de criterio, así
+que tiene que estar escrita.
+
+### El fósforo del oxalato cálcico
+
+| | Qué dice | En la unidad del motor |
+|---|---|---|
+| **SACN5 cap.40, Tabla 40-5** (lo que aplica el motor) | *«Dietary phosphorus should be in the range of 0.3 to 0.6% DM»* | **750 a 1500** mg/1000 kcal |
+| **Fascetti cap.16** | *«Dietary phosphorus should not be restricted with calcium oxalate urolithiasis. Low dietary phosphorus is a risk factor for calcium oxalate urolith formation»*, y recomienda *«approximately 1.5 to 2.0 g/Mcal»* | **1500 a 2000** mg/1000 kcal |
+| Mínimo de FEDIAF en adulto | — | 1160 |
+
+**Los dos rangos solo se tocan en un punto, y es 1500** — que es exactamente el
+número que aplica el motor, tomando el techo de SACN5. No hay ninguna otra cifra
+que las dos fuentes acepten.
+
+**Medido el 11-sep, tres perros adultos por la API en peldaño estricto:** los
+menús salen a 1498,7 / 1498,6 / 1498,4 mg/1000 kcal, o sea **pegados al techo**.
+Una ración BARF va sobrada de fósforo y el solver sube hasta donde le dejan.
+
+⚠️ **Y por eso no se le pone un suelo de 1500, aunque sea lo que pide Fascetti:**
+el motor solo llega a 1498,7, así que ese suelo dejaría al oxalato **sin menú**.
+Lo que hoy evita el problema es una propiedad del catálogo, no una garantía.
+Decisión clínica pendiente, en `PREGUNTAS_ABIERTAS.md`.
+
+### Y una forma de límite que el motor tiene y esta patología no usa
+
+Fascetti cap.18 trae la única frase de toda la lectura que dice que **un tope
+puede ser demasiado BAJO**: *«Severe sodium restriction (<50 mg/100 kcal) is not
+recommended as this can cause early and prolonged activation of the
+renin-angiotensin-aldosterone (RAA) system»*. Son 500 mg/1000 kcal, y el motor
+aplica **480** al estadio ACVIM D.
+
+El mecanismo para expresar eso **existe**: son los `suelos_por_1000kcal`, que ya
+usan 16 patologías. Lo que no hay es la cifra, y no se pone sola por dos motivos:
+la frase es del párrafo **felino**, y el estudio **canino** del mismo capítulo
+usó 400 mg/1000 kcal con beneficio medido. Decisión clínica, en
+`PREGUNTAS_ABIERTAS.md`.
 
 ---
 

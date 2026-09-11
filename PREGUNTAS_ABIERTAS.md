@@ -626,6 +626,74 @@ PDF es respaldo.
 
 ---
 
+### P-10 · ¿Hay un punto en el que bajar el sodio de un cardiópata sea malo?
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (o quien firme la pauta) |
+| **Bloquea** | No: hoy el motor entrega menú. Pero si la respuesta es sí, hoy lo entrega **por debajo** de donde la fuente avisa |
+| **Abierta desde** | 11 de septiembre de 2026, al cerrar el cap.18 de Fascetti |
+
+Es **la única frase de toda la lectura de las cuatro fuentes que dice que un
+tope puede ser demasiado BAJO**. Todo lo demás son techos que aprietan y suelos
+que exigen; esto es un techo con fondo.
+
+> «Severe sodium restriction (<50 mg/100 kcal) is not recommended as this can
+> cause early and prolonged activation of the renin-angiotensin-aldosterone (RAA)
+> system.»
+> — Fascetti & Delaney 2ª ed., cap.18
+
+**Los números, todos en mg/1000 kcal:**
+
+| | |
+|---|---|
+| Línea que la fuente llama «restricción severa, no recomendada» | **500** |
+| Lo que el motor aplica al **estadio ACVIM D** | **480** |
+| Lo que el motor aplica al **estadio C** | 625 |
+| Estudio **canino** del mismo capítulo, con beneficio medido | 400 |
+| Lo que recomienda Fascetti para el estadio C canino | <800 |
+
+**Los dos matices que impiden aplicarlo solo**, y por eso es pregunta y no
+cambio: la frase del <500 está en el apartado **felino** (miocardiopatía
+hipertrófica), y el estudio **canino** que cita el mismo capítulo usó 400 y
+redujo el tamaño cardíaco. Nuestro 480 sale del consenso ACVIM 2019, que es
+canino y es la fuente de esa patología.
+
+⚠️ **El mecanismo para arreglarlo ya existe y no hay que programar nada**: son
+los `suelos_por_1000kcal`, que ya usan 16 patologías y se combinan con `max()`.
+Lo único que falta es la cifra.
+
+**La pregunta:** ¿lleva la cardiopatía un suelo de sodio? ¿Y en qué estadios?
+
+---
+
+### P-11 · ¿Lleva el oxalato cálcico un suelo de fósforo?
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (o quien firme la pauta) |
+| **Bloquea** | No |
+| **Abierta desde** | 11 de septiembre de 2026, al cerrar el cap.16 de Fascetti |
+
+Dos fuentes que se contradicen, y FEDIAF no entra:
+
+| | Qué dice | mg/1000 kcal |
+|---|---|---|
+| **SACN5 cap.40, Tabla 40-5** (lo que aplica el motor) | *«Dietary phosphorus should be in the range of 0.3 to 0.6% DM»* | **750-1500** |
+| **Fascetti cap.16** | *«Dietary phosphorus should not be restricted... Low dietary phosphorus is a risk factor»*, recomendado *«1.5 to 2.0 g/Mcal»* | **1500-2000** |
+
+Los dos rangos **solo se tocan en 1500**, que es el número que aplica el motor.
+
+⚠️ **Y hay una medida que condiciona la respuesta:** los menús reales salen a
+**1498,7 / 1498,6 / 1498,4** (perros de 10, 22 y 30 kg), o sea pegados al techo
+pero sin llegar. **Un suelo de 1500 dejaría al oxalato sin menú.** Si la
+respuesta es que hace falta suelo, hay que decidir también en qué cifra, y
+probablemente subir antes el techo.
+
+**La pregunta:** ¿se queda el fósforo del oxalato solo con techo, o lleva suelo?
+
+---
+
 ## Cerradas
 
 *(Cuando una pregunta se contesta, se mueve aquí con la respuesta, la fecha y

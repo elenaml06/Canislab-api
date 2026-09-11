@@ -5,7 +5,8 @@
     "por_que_existe_este_fichero": "Porque no cabe en ninguno de los dos que ya hay, y meterlo a la fuerza en cualquiera de ellos rompería lo que ese fichero significa. En `requerimientos_v2_final.json` no, porque ese fichero ES la Tabla III-3b de FEDIAF y `auditar_fediaf.py` comprueba sus 43 filas contra el PDF celda a celda: meter ahí un número de un libro de texto es exactamente cómo se coló en agosto una fila «Fibra» con mínimo y máximo inventados que el analizador exigía. En `patologias.json` tampoco, porque esto no es una patología: se aplica al perro que no tiene ninguna. Así que va aparte, con la misma forma que patologias.json (valor + fuente + por_que) para que se audite igual.",
     "que_NO_es": "No es un límite de seguridad crónica (esos viven en seguridad.py y salen de NRC 2006). No es un requisito de FEDIAF. Es la recomendación de un libro de texto veterinario para el alimento de un perro adulto sano, aplicada como techo duro porque se ha medido que cabe.",
     "verificado": "8 de septiembre de 2026 las dos tablas del adulto (13-3 y 14-2); 9 de septiembre de 2026 las de crecimiento (17-1 y 33-5) y la frase de Fascetti cap.10, leidas literales en el texto de las fuentes.",
-    "por_que_ya_no_se_llama_recomendaciones_adulto": "Se llamaba `recomendaciones_adulto.json` porque el 8 de septiembre solo traia las dos cifras del perro adulto (fosforo y sodio). El 9 de septiembre entraron los techos de CRECIMIENTO de las Tablas 17-1 y 33-5 de SACN5, y un fichero que se llama «adulto» y decide el calcio de un cachorro es exactamente la clase de trampa silenciosa que este repo tiene documentada tres veces. Renombrado a `recomendaciones_libro.json`, que es lo que es: los techos del libro, para cualquier etapa."
+    "por_que_ya_no_se_llama_recomendaciones_adulto": "Se llamaba `recomendaciones_adulto.json` porque el 8 de septiembre solo traia las dos cifras del perro adulto (fosforo y sodio). El 9 de septiembre entraron los techos de CRECIMIENTO de las Tablas 17-1 y 33-5 de SACN5, y un fichero que se llama «adulto» y decide el calcio de un cachorro es exactamente la clase de trampa silenciosa que este repo tiene documentada tres veces. Renombrado a `recomendaciones_libro.json`, que es lo que es: los techos del libro, para cualquier etapa.",
+    "gestacion_y_lactancia_siguen_sin_techos": "⚠️ MEDIDO EL 11-sep-2026, AL APLICAR LOS TECHOS DE EPA+DHA Y VITAMINA E. Este fichero solo tiene cuatro etapas -- Adulto, Senior, CachorroJoven y CachorroCrecimiento -- y gestacion y lactancia no estan, lo que ya declaraba el BLOQUE 57 en su punto 2: SACN5 les da su propia tabla (la 15-5) y no se ha transcrito. || LO QUE ESO CUESTA, AHORA CON NUMERO: regenerado el catalogo con el techo de EPA+DHA de 2,8 g/1000 kcal, de los 216 menus queda UNO por encima, y es `Toy_GestanteTardia#0` con 5,05 -- 1,8 veces el techo. Los demas, los de las cuatro etapas que si tienen techo, bajaron de un maximo de 3,00 a 2,41. || NO SE EXTIENDE EL TECHO A GESTACION Y LACTANCIA A LA LIGERA, aunque la frase de Fascetti diga «in dogs» sin distinguir etapa: una perra lactando tiene requisitos propios, SACN5 tiene una tabla para ella sin transcribir, y aplicarle un limite superior derivado del adulto sin haber leido esa tabla seria exactamente el patron de error que el BLOQUE 96 viene a impedir -- coger una frase sin el contexto. || Queda MEDIDO y ESCRITO para que la decision se tome con el numero delante, no para que se olvide."
   },
   "por_etapa": {
     "Adulto": {
@@ -42,6 +43,30 @@
             "unidad_en_la_fuente": "por 1000 kcal",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "Fascetti & Delaney 2a ed., cap.14: «a safe upper limit for LA and EPA + DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». Leido literal 11-sep-2026"
+          }
+        },
+        "epa_dha": {
+          "valor": 2.8,
+          "fuente": "Fascetti & Delaney 2a ed., cap.14 «Nutritional Management of Skin Diseases»: «A ratio of 2.6 : 26 of LA : ALA (2.6 : 16 in gestation/lactation) is considered safe in dogs, along with a safe upper limit for LA and EPA + DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». Leido literal 11-sep-2026",
+          "por_que": "APLICADO EL 11-sep-2026 POR LA NOCHE, y sale de la MISMA FRASE de la que ya se aplicaban dos cifras -- el ratio linoleico:linolenico y el techo de linoleico de 16,3 -- desde esa misma tarde. La tercera se quedo fuera porque se habia leido la FRASE y no el CAPITULO, y aparecio al cerrar el cap.14 entero. Es el caso que motivo el BLOQUE 96. || ⚠️ Y ES LA UNICA DE LAS TRES QUE APRIETA. Medido sobre los 216 menus del catalogo antes de aplicarla: van de 0,11 a 3,00 g/1000 kcal con mediana 0,46, y CINCO se pasan de 2,8 (Toy_Adulto#3 a 3,00, Mini_Adulto#1 a 2,92, Mediano_Adulto#1 a 2,91, Pequeno_Senior#1 a 2,83, Gigante_Senior#1 a 2,81). El techo de linoleico, en cambio, no aprieta nunca: los 216 van de 3,20 a 10,50 contra un techo de 16,3. || FEDIAF NO PONE MAXIMO DE EPA+DHA EN NINGUNA ETAPA -- las tres columnas de maximo de esa fila estan vacias --, asi que este es el unico techo que tiene el nutriente y el semaforo no podia verlo: un menu por encima de lo que la fuente llama limite superior seguro salia EN VERDE, porque el semaforo mide los requisitos de un perro SANO y ahi no hay techo que medir. || Se aplica a las CUATRO etapas porque la fuente no distingue ninguna: dice «in dogs». || La fuente lo dice DOS VECES y de dos maneras -- en el cap.14 tambien esta la forma por peso metabolico, «the safe upper limit for dosing in dogs is <370 mg x BW(kg)0.75» --, asi que no es un numero suelto. El motor solo sabe la forma por 1000 kcal. || Aplicarlo obliga a regenerar `catalogo_menus.json`: esos cinco menus precalculados dejarian de poder entregarse, porque los techos del libro se comprueban tambien en `_garantizar_verificado`.",
+          "conversion": {
+            "valor_en_la_fuente": 2.8,
+            "unidad_en_la_fuente": "por 1000 kcal",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "Fascetti & Delaney 2a ed., cap.14 «Nutritional Management of Skin Diseases»: «A ratio of 2.6 : 26 of LA : ALA (2.6 : 16 in gestation/lactation) is considered safe in dogs, along with a safe upper limit for LA and EPA + DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». Leido literal 11-sep-2026"
+          }
+        },
+        "vitE": {
+          "valor": 167.75,
+          "fuente": "Fascetti & Delaney 2a ed., cap.14 «Nutritional Management of Skin Diseases»: «In dogs, a tentative upper limit of 75 IU/kg/day (or 1000-2000 IU/kg diet) has been suggested (NRC 2006)». Leido literal 11-sep-2026",
+          "por_que": "APLICADO EL 11-sep-2026 POR LA NOCHE, al cerrar el cap.14 entero. Literal: «In dogs, a tentative upper limit of 75 IU/kg/day (or 1000-2000 IU/kg diet) has been suggested (NRC 2006)». La primera forma va por kilo de perro y el motor no la sabe usar; la segunda SI es una concentracion de la dieta. || Se usa el extremo ESTRICTO (1000 UI/kg MS) porque es un techo y ahi lo estricto es lo bajo: 1000 UI/kg MS a 4000 kcal/kg MS son 250 UI/1000 kcal, y a 0,671 mg/UI de d-alfa-tocoferol (FEDIAF Tabla VII-14) salen 167,75 mg/1000 kcal. El extremo laxo serian 335,5. || ⚠️ FEDIAF NO PONE MAXIMO DE VITAMINA E EN NINGUNA ETAPA, asi que este es el unico techo que tiene el nutriente. || MEDIDO antes de aplicarlo sobre los 216 menus del catalogo: van de 10,05 a 89,28 mg/1000 kcal con mediana 26,86, o sea CERO por encima. No aprieta hoy, y se aplica igual porque lo que lo tapa es una propiedad del catalogo de hoy y no una garantia -- el mismo motivo por el que se aplico el Ca:P del fosfato calcico aunque ninguno de los cinco menus lo cruzara. || Y DA EL DATO QUE LE FALTABA A LA DECISION DEL SUELO de vitamina E (el de 67,1 que esta escrito y apagado): el suelo y este techo dejan una ventana de 2,5 veces, asi que el suelo NO choca con el limite superior seguro de la otra fuente. Lo que lo hace caro es otra cosa y tambien esta medido: 189 de los 216 menus estan por debajo de ese suelo, porque en el catalogo no hay un suplemento de vitamina E suelto. || Se aplica a las CUATRO etapas porque la fuente no distingue ninguna: dice «in dogs».",
+          "conversion": {
+            "valor_en_la_fuente": 1000.0,
+            "unidad_en_la_fuente": "UI/kg MS",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "Fascetti & Delaney 2a ed., cap.14, extremo ESTRICTO de «1000-2000 IU/kg diet». 1 UI = 0,671 mg de d-alfa-tocoferol, FEDIAF Tabla VII-14",
+            "factor_a_la_unidad_del_motor": 0.671,
+            "por_que_el_factor": "La fuente da UNIDADES INTERNACIONALES y el catalogo mide MILIGRAMOS de tocoferol. 1 UI = 0,671 mg de d-alfa-tocoferol natural, FEDIAF Tabla VII-14 (la misma tabla que rehace `auditar_transcripcion_fediaf.py`). Es la conversion en la que se fallo el 8-sep-2026 tratando las UI como mg, y aquel dia la artrosis se quedo sin menu."
           }
         }
       },
@@ -96,6 +121,30 @@
             "unidad_en_la_fuente": "por 1000 kcal",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "Fascetti & Delaney 2a ed., cap.14: «a safe upper limit for LA and EPA + DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». Leido literal 11-sep-2026"
+          }
+        },
+        "epa_dha": {
+          "valor": 2.8,
+          "fuente": "Fascetti & Delaney 2a ed., cap.14 «Nutritional Management of Skin Diseases»: «A ratio of 2.6 : 26 of LA : ALA (2.6 : 16 in gestation/lactation) is considered safe in dogs, along with a safe upper limit for LA and EPA + DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». Leido literal 11-sep-2026",
+          "por_que": "APLICADO EL 11-sep-2026 POR LA NOCHE, y sale de la MISMA FRASE de la que ya se aplicaban dos cifras -- el ratio linoleico:linolenico y el techo de linoleico de 16,3 -- desde esa misma tarde. La tercera se quedo fuera porque se habia leido la FRASE y no el CAPITULO, y aparecio al cerrar el cap.14 entero. Es el caso que motivo el BLOQUE 96. || ⚠️ Y ES LA UNICA DE LAS TRES QUE APRIETA. Medido sobre los 216 menus del catalogo antes de aplicarla: van de 0,11 a 3,00 g/1000 kcal con mediana 0,46, y CINCO se pasan de 2,8 (Toy_Adulto#3 a 3,00, Mini_Adulto#1 a 2,92, Mediano_Adulto#1 a 2,91, Pequeno_Senior#1 a 2,83, Gigante_Senior#1 a 2,81). El techo de linoleico, en cambio, no aprieta nunca: los 216 van de 3,20 a 10,50 contra un techo de 16,3. || FEDIAF NO PONE MAXIMO DE EPA+DHA EN NINGUNA ETAPA -- las tres columnas de maximo de esa fila estan vacias --, asi que este es el unico techo que tiene el nutriente y el semaforo no podia verlo: un menu por encima de lo que la fuente llama limite superior seguro salia EN VERDE, porque el semaforo mide los requisitos de un perro SANO y ahi no hay techo que medir. || Se aplica a las CUATRO etapas porque la fuente no distingue ninguna: dice «in dogs». || La fuente lo dice DOS VECES y de dos maneras -- en el cap.14 tambien esta la forma por peso metabolico, «the safe upper limit for dosing in dogs is <370 mg x BW(kg)0.75» --, asi que no es un numero suelto. El motor solo sabe la forma por 1000 kcal. || Aplicarlo obliga a regenerar `catalogo_menus.json`: esos cinco menus precalculados dejarian de poder entregarse, porque los techos del libro se comprueban tambien en `_garantizar_verificado`.",
+          "conversion": {
+            "valor_en_la_fuente": 2.8,
+            "unidad_en_la_fuente": "por 1000 kcal",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "Fascetti & Delaney 2a ed., cap.14 «Nutritional Management of Skin Diseases»: «A ratio of 2.6 : 26 of LA : ALA (2.6 : 16 in gestation/lactation) is considered safe in dogs, along with a safe upper limit for LA and EPA + DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». Leido literal 11-sep-2026"
+          }
+        },
+        "vitE": {
+          "valor": 167.75,
+          "fuente": "Fascetti & Delaney 2a ed., cap.14 «Nutritional Management of Skin Diseases»: «In dogs, a tentative upper limit of 75 IU/kg/day (or 1000-2000 IU/kg diet) has been suggested (NRC 2006)». Leido literal 11-sep-2026",
+          "por_que": "APLICADO EL 11-sep-2026 POR LA NOCHE, al cerrar el cap.14 entero. Literal: «In dogs, a tentative upper limit of 75 IU/kg/day (or 1000-2000 IU/kg diet) has been suggested (NRC 2006)». La primera forma va por kilo de perro y el motor no la sabe usar; la segunda SI es una concentracion de la dieta. || Se usa el extremo ESTRICTO (1000 UI/kg MS) porque es un techo y ahi lo estricto es lo bajo: 1000 UI/kg MS a 4000 kcal/kg MS son 250 UI/1000 kcal, y a 0,671 mg/UI de d-alfa-tocoferol (FEDIAF Tabla VII-14) salen 167,75 mg/1000 kcal. El extremo laxo serian 335,5. || ⚠️ FEDIAF NO PONE MAXIMO DE VITAMINA E EN NINGUNA ETAPA, asi que este es el unico techo que tiene el nutriente. || MEDIDO antes de aplicarlo sobre los 216 menus del catalogo: van de 10,05 a 89,28 mg/1000 kcal con mediana 26,86, o sea CERO por encima. No aprieta hoy, y se aplica igual porque lo que lo tapa es una propiedad del catalogo de hoy y no una garantia -- el mismo motivo por el que se aplico el Ca:P del fosfato calcico aunque ninguno de los cinco menus lo cruzara. || Y DA EL DATO QUE LE FALTABA A LA DECISION DEL SUELO de vitamina E (el de 67,1 que esta escrito y apagado): el suelo y este techo dejan una ventana de 2,5 veces, asi que el suelo NO choca con el limite superior seguro de la otra fuente. Lo que lo hace caro es otra cosa y tambien esta medido: 189 de los 216 menus estan por debajo de ese suelo, porque en el catalogo no hay un suplemento de vitamina E suelto. || Se aplica a las CUATRO etapas porque la fuente no distingue ninguna: dice «in dogs».",
+          "conversion": {
+            "valor_en_la_fuente": 1000.0,
+            "unidad_en_la_fuente": "UI/kg MS",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "Fascetti & Delaney 2a ed., cap.14, extremo ESTRICTO de «1000-2000 IU/kg diet». 1 UI = 0,671 mg de d-alfa-tocoferol, FEDIAF Tabla VII-14",
+            "factor_a_la_unidad_del_motor": 0.671,
+            "por_que_el_factor": "La fuente da UNIDADES INTERNACIONALES y el catalogo mide MILIGRAMOS de tocoferol. 1 UI = 0,671 mg de d-alfa-tocoferol natural, FEDIAF Tabla VII-14 (la misma tabla que rehace `auditar_transcripcion_fediaf.py`). Es la conversion en la que se fallo el 8-sep-2026 tratando las UI como mg, y aquel dia la artrosis se quedo sin menu."
           }
         }
       },
@@ -161,6 +210,30 @@
             "unidad_en_la_fuente": "por 1000 kcal",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "Fascetti & Delaney 2a ed., cap.14: «a safe upper limit for LA and EPA + DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». Leido literal 11-sep-2026"
+          }
+        },
+        "epa_dha": {
+          "valor": 2.8,
+          "fuente": "Fascetti & Delaney 2a ed., cap.14 «Nutritional Management of Skin Diseases»: «A ratio of 2.6 : 26 of LA : ALA (2.6 : 16 in gestation/lactation) is considered safe in dogs, along with a safe upper limit for LA and EPA + DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». Leido literal 11-sep-2026",
+          "por_que": "APLICADO EL 11-sep-2026 POR LA NOCHE, y sale de la MISMA FRASE de la que ya se aplicaban dos cifras -- el ratio linoleico:linolenico y el techo de linoleico de 16,3 -- desde esa misma tarde. La tercera se quedo fuera porque se habia leido la FRASE y no el CAPITULO, y aparecio al cerrar el cap.14 entero. Es el caso que motivo el BLOQUE 96. || ⚠️ Y ES LA UNICA DE LAS TRES QUE APRIETA. Medido sobre los 216 menus del catalogo antes de aplicarla: van de 0,11 a 3,00 g/1000 kcal con mediana 0,46, y CINCO se pasan de 2,8 (Toy_Adulto#3 a 3,00, Mini_Adulto#1 a 2,92, Mediano_Adulto#1 a 2,91, Pequeno_Senior#1 a 2,83, Gigante_Senior#1 a 2,81). El techo de linoleico, en cambio, no aprieta nunca: los 216 van de 3,20 a 10,50 contra un techo de 16,3. || FEDIAF NO PONE MAXIMO DE EPA+DHA EN NINGUNA ETAPA -- las tres columnas de maximo de esa fila estan vacias --, asi que este es el unico techo que tiene el nutriente y el semaforo no podia verlo: un menu por encima de lo que la fuente llama limite superior seguro salia EN VERDE, porque el semaforo mide los requisitos de un perro SANO y ahi no hay techo que medir. || Se aplica a las CUATRO etapas porque la fuente no distingue ninguna: dice «in dogs». || La fuente lo dice DOS VECES y de dos maneras -- en el cap.14 tambien esta la forma por peso metabolico, «the safe upper limit for dosing in dogs is <370 mg x BW(kg)0.75» --, asi que no es un numero suelto. El motor solo sabe la forma por 1000 kcal. || Aplicarlo obliga a regenerar `catalogo_menus.json`: esos cinco menus precalculados dejarian de poder entregarse, porque los techos del libro se comprueban tambien en `_garantizar_verificado`.",
+          "conversion": {
+            "valor_en_la_fuente": 2.8,
+            "unidad_en_la_fuente": "por 1000 kcal",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "Fascetti & Delaney 2a ed., cap.14 «Nutritional Management of Skin Diseases»: «A ratio of 2.6 : 26 of LA : ALA (2.6 : 16 in gestation/lactation) is considered safe in dogs, along with a safe upper limit for LA and EPA + DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». Leido literal 11-sep-2026"
+          }
+        },
+        "vitE": {
+          "valor": 167.75,
+          "fuente": "Fascetti & Delaney 2a ed., cap.14 «Nutritional Management of Skin Diseases»: «In dogs, a tentative upper limit of 75 IU/kg/day (or 1000-2000 IU/kg diet) has been suggested (NRC 2006)». Leido literal 11-sep-2026",
+          "por_que": "APLICADO EL 11-sep-2026 POR LA NOCHE, al cerrar el cap.14 entero. Literal: «In dogs, a tentative upper limit of 75 IU/kg/day (or 1000-2000 IU/kg diet) has been suggested (NRC 2006)». La primera forma va por kilo de perro y el motor no la sabe usar; la segunda SI es una concentracion de la dieta. || Se usa el extremo ESTRICTO (1000 UI/kg MS) porque es un techo y ahi lo estricto es lo bajo: 1000 UI/kg MS a 4000 kcal/kg MS son 250 UI/1000 kcal, y a 0,671 mg/UI de d-alfa-tocoferol (FEDIAF Tabla VII-14) salen 167,75 mg/1000 kcal. El extremo laxo serian 335,5. || ⚠️ FEDIAF NO PONE MAXIMO DE VITAMINA E EN NINGUNA ETAPA, asi que este es el unico techo que tiene el nutriente. || MEDIDO antes de aplicarlo sobre los 216 menus del catalogo: van de 10,05 a 89,28 mg/1000 kcal con mediana 26,86, o sea CERO por encima. No aprieta hoy, y se aplica igual porque lo que lo tapa es una propiedad del catalogo de hoy y no una garantia -- el mismo motivo por el que se aplico el Ca:P del fosfato calcico aunque ninguno de los cinco menus lo cruzara. || Y DA EL DATO QUE LE FALTABA A LA DECISION DEL SUELO de vitamina E (el de 67,1 que esta escrito y apagado): el suelo y este techo dejan una ventana de 2,5 veces, asi que el suelo NO choca con el limite superior seguro de la otra fuente. Lo que lo hace caro es otra cosa y tambien esta medido: 189 de los 216 menus estan por debajo de ese suelo, porque en el catalogo no hay un suplemento de vitamina E suelto. || Se aplica a las CUATRO etapas porque la fuente no distingue ninguna: dice «in dogs».",
+          "conversion": {
+            "valor_en_la_fuente": 1000.0,
+            "unidad_en_la_fuente": "UI/kg MS",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "Fascetti & Delaney 2a ed., cap.14, extremo ESTRICTO de «1000-2000 IU/kg diet». 1 UI = 0,671 mg de d-alfa-tocoferol, FEDIAF Tabla VII-14",
+            "factor_a_la_unidad_del_motor": 0.671,
+            "por_que_el_factor": "La fuente da UNIDADES INTERNACIONALES y el catalogo mide MILIGRAMOS de tocoferol. 1 UI = 0,671 mg de d-alfa-tocoferol natural, FEDIAF Tabla VII-14 (la misma tabla que rehace `auditar_transcripcion_fediaf.py`). Es la conversion en la que se fallo el 8-sep-2026 tratando las UI como mg, y aquel dia la artrosis se quedo sin menu."
           }
         }
       },
@@ -239,6 +312,30 @@
             "unidad_en_la_fuente": "por 1000 kcal",
             "densidad_kcal_por_g_MS": 4.0,
             "cita": "Fascetti & Delaney 2a ed., cap.14: «a safe upper limit for LA and EPA + DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». Leido literal 11-sep-2026"
+          }
+        },
+        "epa_dha": {
+          "valor": 2.8,
+          "fuente": "Fascetti & Delaney 2a ed., cap.14 «Nutritional Management of Skin Diseases»: «A ratio of 2.6 : 26 of LA : ALA (2.6 : 16 in gestation/lactation) is considered safe in dogs, along with a safe upper limit for LA and EPA + DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». Leido literal 11-sep-2026",
+          "por_que": "APLICADO EL 11-sep-2026 POR LA NOCHE, y sale de la MISMA FRASE de la que ya se aplicaban dos cifras -- el ratio linoleico:linolenico y el techo de linoleico de 16,3 -- desde esa misma tarde. La tercera se quedo fuera porque se habia leido la FRASE y no el CAPITULO, y aparecio al cerrar el cap.14 entero. Es el caso que motivo el BLOQUE 96. || ⚠️ Y ES LA UNICA DE LAS TRES QUE APRIETA. Medido sobre los 216 menus del catalogo antes de aplicarla: van de 0,11 a 3,00 g/1000 kcal con mediana 0,46, y CINCO se pasan de 2,8 (Toy_Adulto#3 a 3,00, Mini_Adulto#1 a 2,92, Mediano_Adulto#1 a 2,91, Pequeno_Senior#1 a 2,83, Gigante_Senior#1 a 2,81). El techo de linoleico, en cambio, no aprieta nunca: los 216 van de 3,20 a 10,50 contra un techo de 16,3. || FEDIAF NO PONE MAXIMO DE EPA+DHA EN NINGUNA ETAPA -- las tres columnas de maximo de esa fila estan vacias --, asi que este es el unico techo que tiene el nutriente y el semaforo no podia verlo: un menu por encima de lo que la fuente llama limite superior seguro salia EN VERDE, porque el semaforo mide los requisitos de un perro SANO y ahi no hay techo que medir. || Se aplica a las CUATRO etapas porque la fuente no distingue ninguna: dice «in dogs». || La fuente lo dice DOS VECES y de dos maneras -- en el cap.14 tambien esta la forma por peso metabolico, «the safe upper limit for dosing in dogs is <370 mg x BW(kg)0.75» --, asi que no es un numero suelto. El motor solo sabe la forma por 1000 kcal. || Aplicarlo obliga a regenerar `catalogo_menus.json`: esos cinco menus precalculados dejarian de poder entregarse, porque los techos del libro se comprueban tambien en `_garantizar_verificado`.",
+          "conversion": {
+            "valor_en_la_fuente": 2.8,
+            "unidad_en_la_fuente": "por 1000 kcal",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "Fascetti & Delaney 2a ed., cap.14 «Nutritional Management of Skin Diseases»: «A ratio of 2.6 : 26 of LA : ALA (2.6 : 16 in gestation/lactation) is considered safe in dogs, along with a safe upper limit for LA and EPA + DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». Leido literal 11-sep-2026"
+          }
+        },
+        "vitE": {
+          "valor": 167.75,
+          "fuente": "Fascetti & Delaney 2a ed., cap.14 «Nutritional Management of Skin Diseases»: «In dogs, a tentative upper limit of 75 IU/kg/day (or 1000-2000 IU/kg diet) has been suggested (NRC 2006)». Leido literal 11-sep-2026",
+          "por_que": "APLICADO EL 11-sep-2026 POR LA NOCHE, al cerrar el cap.14 entero. Literal: «In dogs, a tentative upper limit of 75 IU/kg/day (or 1000-2000 IU/kg diet) has been suggested (NRC 2006)». La primera forma va por kilo de perro y el motor no la sabe usar; la segunda SI es una concentracion de la dieta. || Se usa el extremo ESTRICTO (1000 UI/kg MS) porque es un techo y ahi lo estricto es lo bajo: 1000 UI/kg MS a 4000 kcal/kg MS son 250 UI/1000 kcal, y a 0,671 mg/UI de d-alfa-tocoferol (FEDIAF Tabla VII-14) salen 167,75 mg/1000 kcal. El extremo laxo serian 335,5. || ⚠️ FEDIAF NO PONE MAXIMO DE VITAMINA E EN NINGUNA ETAPA, asi que este es el unico techo que tiene el nutriente. || MEDIDO antes de aplicarlo sobre los 216 menus del catalogo: van de 10,05 a 89,28 mg/1000 kcal con mediana 26,86, o sea CERO por encima. No aprieta hoy, y se aplica igual porque lo que lo tapa es una propiedad del catalogo de hoy y no una garantia -- el mismo motivo por el que se aplico el Ca:P del fosfato calcico aunque ninguno de los cinco menus lo cruzara. || Y DA EL DATO QUE LE FALTABA A LA DECISION DEL SUELO de vitamina E (el de 67,1 que esta escrito y apagado): el suelo y este techo dejan una ventana de 2,5 veces, asi que el suelo NO choca con el limite superior seguro de la otra fuente. Lo que lo hace caro es otra cosa y tambien esta medido: 189 de los 216 menus estan por debajo de ese suelo, porque en el catalogo no hay un suplemento de vitamina E suelto. || Se aplica a las CUATRO etapas porque la fuente no distingue ninguna: dice «in dogs».",
+          "conversion": {
+            "valor_en_la_fuente": 1000.0,
+            "unidad_en_la_fuente": "UI/kg MS",
+            "densidad_kcal_por_g_MS": 4.0,
+            "cita": "Fascetti & Delaney 2a ed., cap.14, extremo ESTRICTO de «1000-2000 IU/kg diet». 1 UI = 0,671 mg de d-alfa-tocoferol, FEDIAF Tabla VII-14",
+            "factor_a_la_unidad_del_motor": 0.671,
+            "por_que_el_factor": "La fuente da UNIDADES INTERNACIONALES y el catalogo mide MILIGRAMOS de tocoferol. 1 UI = 0,671 mg de d-alfa-tocoferol natural, FEDIAF Tabla VII-14 (la misma tabla que rehace `auditar_transcripcion_fediaf.py`). Es la conversion en la que se fallo el 8-sep-2026 tratando las UI como mg, y aquel dia la artrosis se quedo sin menu."
           }
         }
       },

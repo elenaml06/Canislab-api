@@ -1973,6 +1973,15 @@
             "bajo_el_suelo_necesita_firma": true
           }
         }
+      },
+      "suelo_absoluto_de_la_via_firmada": {
+        "nutriente": "proteina",
+        "valor": 20.0,
+        "unidad": "g/1000 kcal",
+        "aplicado_por_el_solver": false,
+        "fuente": "NRC 2006, citado literal por Fascetti & Delaney 2a ed., cap.15 «Nutritional Management of Kidney Disease»: «The minimal dietary protein requirements of cats and dogs with CKD are not known, but have been presumed to be similar to the minimal protein requirements of healthy animals: for cats, 3.97 g/kg BW0.67 or 40 g/Mcal; and for dogs, 2.62 g/kg BW0.75 or 20 g/Mcal (NRC 2006)». Leido literal 11-sep-2026 al cerrar el capitulo",
+        "que_es": "EL SUELO POR DEBAJO DEL CUAL NO BAJA NADIE, ni con firma. No es un requisito que el motor aplique hoy: es la mitad que le faltaba al contrato de la via firmada de VETERINARIOS.md.",
+        "por_que": "⚠️ ESCRITO EL 11-sep-2026 POR LA NOCHE, y lo pidio Elena con la correccion bien hecha: «lo del minimo de proteina tiene que ir con el IRIS 4. no tiene que dejar sin menu a un perro sano porque no es un requisito para todos los perros, es un condicional de una patologia». Tenia razon y yo lo habia planteado mal: nadie propone bajarle el minimo al perro sano. || EL CONTRATO QUE LE FALTABA A ESTA PATOLOGIA. `renal_avanzada` ya declaraba `nutriente_frontera: proteina` y `objetivo_terapeutico_por_1000kcal: 42,5` -- o sea A DONDE hay que llegar -- y no decia HASTA DONDE se puede bajar. Un objetivo terapeutico sin suelo es media receta: el dia que se construya la via firmada, el que la use necesita las dos cifras. || LAS TRES CIFRAS, todas en g/1000 kcal: 52,1 es el minimo de FEDIAF y el motor no baja de ahi por ningun camino de hoy; 35-50 es el objetivo terapeutico de SACN5 Tabla 37-9 para IRIS 3-4; 20 es el minimo del NRC, el suelo fisiologico. Cris Carles pide el 15 %% de materia seca, que son 37,5, y cae dentro del rango terapeutico y muy por encima de este suelo. || POR QUE NO SE APLICA HOY: no es que falte la cifra, es que NO EXISTE NINGUN CAMINO en el motor que formule por debajo del minimo de FEDIAF, y eso es deliberado -- la regla de Elena, «los requisitos se respetan SIEMPRE, eso no se negocia». Desbloquearlo es la fase 4 de VETERINARIOS.md: una prescripcion por debajo de FEDIAF que se verifica igual, contra un juego de requisitos PROPIO y escrito que viaja con el menu. Esta cifra es el extremo bajo de ese juego. || ⚠️ Y LAS DOS CIFRAS NO MIDEN LO MISMO, que hay que decirlo: la del NRC es un requerimiento minimo suponiendo biodisponibilidad del 100 %%, y la de FEDIAF una recomendacion para una dieta completa con su margen. Por eso este numero NO sirve para discutirle el minimo a FEDIAF: sirve para saber donde esta el fondo cuando alguien con firma decide bajar. || Va tambien a FEDIAF_CONTRA_OTRAS_FUENTES.md y a VETERINARIOS.md."
       }
     },
     "urolitos_fosfato_calcico": {

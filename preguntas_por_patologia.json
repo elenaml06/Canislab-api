@@ -292,6 +292,33 @@
       "estado": "no_hace_falta",
       "respuestas": [],
       "nota": "No necesita ninguna pregunta para elegir la cifra: sus cinco topes y su ratio Ca:P son fijos. Lo que falta es de producto y ya no: la app SI la ofrece, dentro de la familia de `estruvita`."
+    },
+    "renal_proteinuria": {
+      "pregunta": "¿La última analítica de orina dio el cociente proteína:creatinina (UPC) por encima de 0,5?",
+      "la_hace_la_app": true,
+      "quien_la_contesta": "solo_veterinario",
+      "que_dato_pide": "cociente proteina:creatinina en orina (UPC)",
+      "que_decide": "si se marca la proteinuria renal, que NO cambia ninguna cifra y SI enciende el aviso del consenso ACVIM",
+      "estado": "no_cambia_ninguna_cifra",
+      "como_se_aplica": "anade_otra_patologia",
+      "respuestas": [
+        {
+          "label": "No lo sé / no está medido",
+          "clave_motor": null,
+          "cifras_que_aplica": {}
+        },
+        {
+          "label": "No, 0,5 o menos",
+          "clave_motor": null,
+          "cifras_que_aplica": {}
+        },
+        {
+          "label": "Sí, por encima de 0,5",
+          "clave_motor": "renal_proteinuria",
+          "cifras_que_aplica": {}
+        }
+      ],
+      "nota": "⚠️ SE DECLARA `no_cambia_ninguna_cifra` A PROPOSITO, Y NO ES UN HUECO. Contestar que si anade `renal_proteinuria`, que NO aplica ningun tope ni suelo -- comprobado: `topes_de_patologias(['renal_proteinuria'])` devuelve vacio. Y esta bien que sea asi: el consenso ACVIM 2013 recomienda bajar la proteina un 25-50 %% RESPECTO A LO QUE EL PERRO COMIA ANTES, o sea una cifra RELATIVA a la ingesta previa de ese perro, y el motor no tiene ese dato de partida. Inventarse un numero absoluto seria peor que no poner ninguno. || ENTONCES, ¿PARA QUE PREGUNTARLO? Por el AVISO, que es justo el caso que el fichero contempla en este estado: marcar la patologia hace que llegue el texto que explica el 25-50 %% y que hay que combinarla con `renal` para el tope de fosforo. Sin la pregunta, ese aviso solo lo ve quien ya sabe que existe la casilla. || EL UMBRAL SALE DE DOS FUENTES QUE COINCIDEN: el consenso ACVIM (que da nombre a la patologia, «UPC > 0,5») y la Tabla 15.2 de Fascetti cap.15 «Nutritional Management of Kidney Disease», fila «Protein modification», que para PERRO dice «UPC >0.5» en estadio II. || ⚠️ LO QUE SIGUE SIN ESTAR: el umbral del estadio I, que esa misma tabla pone en «UPC >2» para perro. Hoy la pregunta es de si/no sobre 0,5 y no distingue los dos escalones, porque el motor solo tiene una clave. Escrito para no volver a descubrirlo."
     }
   }
 }
