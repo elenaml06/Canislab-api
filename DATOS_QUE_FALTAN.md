@@ -1134,3 +1134,43 @@ asistente.**
 de vitamina E por 100 g, **qué forma química** (d-α-tocoferol natural, dl-α-tocoferol
 o el acetato — cambian el factor de UI a mg, FEDIAF Tabla VII-14), y la dosis máxima
 que marca el fabricante. **No lo rellena el asistente.**
+
+---
+
+## ⚠️ NO es un dato que falte: por qué el cerdo NO entra en el catálogo (11 de septiembre de 2026)
+
+Esto va aquí porque es donde alguien mirará el día que proponga añadirlo, y
+porque **es la decisión contraria a las demás de este documento**: no falta un
+dato, sobra una idea.
+
+**Hoy el catálogo no tiene ninguna ficha de cerdo**, y hay **dos motivos de
+fuente** para que siga así:
+
+**1. El cobre del hígado de cerdo no llega al perro.** SACN5 cap. 6: su
+disponibilidad es esencialmente cero, mientras que los de vaca, cordero y pavo
+—tres de los seis hígados del catálogo— la misma fuente los nombra como *«highly
+available»*. Una ficha de hígado de cerdo declararía cobre que el perro no
+absorbe, y eso **no lo caza el semáforo**: es un valor con forma de dato bueno.
+
+**2. Y el que de verdad cierra la puerta: la pseudorrabia.** Ettinger, Feldman y
+Côté, 8.ª ed., cap. sobre pseudorrabia (enfermedad de Aujeszky):
+
+> «La pseudorrabia es una enfermedad de los perros **poco frecuente pero
+> mortal** […] Se cree que la mayoría de los casos en perros son el resultado de
+> la **ingestión de carne de cerdo cruda infectada**.»
+
+El perro es huésped final y **la enfermedad es mortal**. Este motor calcula
+raciones **crudas**. Meter cerdo sería ofrecer, en crudo, el alimento cuya vía de
+contagio principal es exactamente esa.
+
+**Qué haría falta para reabrirlo** (las cuatro razones de `CERRADO.md`): una
+fuente que diga que el riesgo es despreciable con carne de origen controlado, o
+que el producto se ofrezca **cocinado**, que es otro motor. Mientras tanto, no es
+un hueco: es una exclusión con dos fuentes.
+
+⚠️ **Y el corolario para la app, que es lo que más se confunde**: el aviso sobre
+la ración cruda **no puede ser «cuidado con el cerdo»**, que es lo que la gente
+cree. Los casos de salmonelosis que documenta Ettinger cap. 192 son de **vacuno**,
+y el catálogo está lleno de los reservorios clásicos: 10 fichas de pollo, 10 de
+ternera, 8 de pavo, 7 de vaca. El aviso tiene que ser sobre el manejo de **lo que
+sí le estamos dando**.
