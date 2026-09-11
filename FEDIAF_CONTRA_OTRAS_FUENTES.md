@@ -31,9 +31,9 @@ FEDIAF **se excluye a sí misma** del otro caso. Su §2.2, al declarar el alcanc
 > sporting dogs etc. Therefore specific products may have nutrient levels that
 > are different from those stated in these guidelines.»*
 
-Una dieta para una patología es exactamente un «pet food for a particular
-nutritional purpose» — así la llama el Reglamento (UE) 2020/354, que es quien
-las regula. O sea que en una dieta clínica **quien pone el suelo es la ley, no
+Una dieta para una patología es exactamente uno de esos alimentos: el
+Reglamento (UE) 2020/354, que es quien las regula, las define como alimentos
+*«intended for particular nutritional purposes»*. O sea que en una dieta clínica **quien pone el suelo es la ley, no
 FEDIAF**, y la ley sí permite bajar de algunos mínimos de FEDIAF para objetivos
 concretos (urato 36,9 y cistina 45,5 g/1000 kcal de proteína, con cuatro
 condiciones escritas; están en `limites_legales_ue_2020_354.json`).

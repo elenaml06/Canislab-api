@@ -7044,36 +7044,41 @@ if _r52.get("factible"):
     print("  ⚠️ renal+pancreatitis YA DA MENÚ — revisar si este bloque sigue teniendo sentido")
 else:
     _choque52 = _r52.get("choque_de_patologias") or []
-    if len(_choque52) < 2:
-        fallos.append("BLOQUE52: renal+pancreatitis no da menú y el motor NO dice qué dos "
-                      "límites chocan. Es el mensaje genérico otra vez.")
+    if not _choque52:
+        fallos.append("BLOQUE52: renal+pancreatitis no da menú y el motor NO dice qué límite lo "
+                      "bloquea. Es el mensaje genérico otra vez, que es justo lo que este "
+                      "bloque existe para impedir.")
     else:
         _pares52 = {(x.get("patologia"), x.get("nutriente")) for x in _choque52}
-        # ⚠️ REMEDIDO EL 9 DE SEPTIEMBRE, Y EL CULPABLE RENAL HA CAMBIADO.
+        # ⚠️ REMEDIDO EL 11 DE SEPTIEMBRE, Y AHORA EL CULPABLE ES UNO SOLO.
         #
         # El 8 de septiembre el choque era («renal», FOSFORO) contra
-        # («pancreatitis», grasa). Hoy es («renal», POTASIO) contra la misma
-        # grasa, y no es que el diagnóstico se haya estropeado: es que el
-        # problema es otro. Al aplicar el +10 % de FEDIAF §3.2.1 sobre los
-        # aminoácidos, el solver necesita fuentes de proteína más densas, que
-        # traen más potasio -- así que soltar solo el fósforo YA NO desbloquea
-        # y soltar el potasio sí.
+        # («pancreatitis», grasa). El 9 pasó a («renal», POTASIO) contra la
+        # misma grasa, al aplicar el +10 % de FEDIAF §3.2.1 sobre los
+        # aminoácidos. Hoy, de los DIEZ límites activos, el único que al
+        # soltarlo desbloquea es la grasa de la pancreatitis: el modelo se ha
+        # ido apretando y soltar el potasio ya no basta.
         #
-        # `diagnosticar_choque_de_patologias` devuelve TODOS los límites cuya
-        # suelta desbloquea (no los dos primeros), así que la lista de hoy es
-        # completa: el fósforo ya no está porque ya no basta.
+        # ⚠️ Y ESO ROMPIÓ EL DIAGNÓSTICO SIN QUE NADIE LO PIDIERA. La regla
+        # vieja era «con menos de dos culpables, no digas nada», así que pasar
+        # de dos a uno convertía un diagnóstico útil en el mensaje genérico del
+        # dueño. Arreglado el mismo día: un culpable también se dice, y con
+        # OTRA frase, porque un límite solo no «choca» con nada.
+        #
+        # MEDIDO antes de cambiarlo, y NO es el catálogo: con las tres fichas
+        # de hueso en su valor antiguo (el calcio y el fósforo diez veces por
+        # debajo) sale exactamente el mismo culpable único.
         #
         # Esto se actualiza en vez de relajarse a propósito. Un test que
-        # aceptara «cualquier límite renal» dejaría de vigilar lo único que
-        # importa aquí: que el motor sepa nombrar el choque en vez de soltar el
-        # mensaje genérico.
-        _esperados52 = {("renal", "potasio"), ("pancreatitis", "grasa")}
-        if not _esperados52 <= _pares52:
-            fallos.append(f"BLOQUE52: el choque señalado es {sorted(_pares52)}, y lo remedido "
-                          f"el 9 de septiembre es {sorted(_esperados52)} (soltando cualquiera "
-                          f"de los dos SÍ sale menú). El 8 de septiembre era el fosforo renal, y "
-                          f"cambió al aplicar el +10 % de los aminoacidos: si vuelve a moverse, "
-                          f"mira qué restricción nueva ha entrado antes de tocar este número")
+        # aceptara «cualquier límite» dejaría de vigilar lo único que importa
+        # aquí: que el motor sepa NOMBRAR lo que bloquea.
+        _esperados52 = {("pancreatitis", "grasa")}
+        if _esperados52 != _pares52:
+            fallos.append(f"BLOQUE52: el motor señala {sorted(_pares52)} y lo remedido el 11 de "
+                          f"septiembre es {sorted(_esperados52)} -- el único de los diez límites "
+                          f"activos que al soltarlo SÍ da menú. Si ha vuelto a moverse, mira qué "
+                          f"restricción nueva ha entrado antes de tocar este número; y si ahora "
+                          f"son dos o más, es una noticia buena que hay que escribir, no tapar")
         for _x52 in _choque52:
             # Sin fuente, un veterinario no puede ir a comprobarlo, y entonces
             # el mensaje vuelve a ser una afirmación de la app sin respaldo.
@@ -7084,6 +7089,24 @@ else:
                 fallos.append(f"BLOQUE52: {_x52.get('nutriente')} se dice sin unidad "
                               f"({_x52.get('unidad')!r}). Tres convenciones conviven en el repo "
                               f"(g/1000kcal, % materia seca, % EM): un número desnudo se lee mal")
+
+        # 1-bis. LAS DOS FRASES NO SON LA MISMA, y con un solo culpable no se
+        #        puede decir «chocan». Decirlo sería afirmar algo falso sobre
+        #        la ración justo en el texto que lee quien firma.
+        _m52 = _r52.get("motivo") or ""
+        if len(_choque52) == 1:
+            if "el único que no deja margen" not in _m52:
+                fallos.append(f"BLOQUE52: hay UN solo límite culpable y el mensaje no lo dice "
+                              f"así. Texto servido: {_m52[:160]!r}")
+            if "a la vez" in _m52 or "juntas no queda margen" in _m52:
+                fallos.append("BLOQUE52: hay UN solo límite culpable y el mensaje habla de un "
+                              "choque entre varios. Un límite solo no choca con nada, y esa "
+                              "frase la lee quien firma la pauta")
+        else:
+            if "a la vez" not in _m52:
+                fallos.append(f"BLOQUE52: hay {len(_choque52)} límites culpables y el mensaje no "
+                              f"dice que el problema es cumplirlos a la vez. Texto: {_m52[:160]!r}")
+
         _motivo52 = _r52.get("motivo") or ""
         if "decisión clínica" not in _motivo52:
             fallos.append("BLOQUE52: el mensaje no dice que elegir cuál cede es una decisión "
@@ -7842,28 +7865,26 @@ _CIFRAS_B57 = [
     ("CachorroCrecimiento", None, "linoleico", 16.3, 16.3,
      "Fascetti & Delaney 2a ed., cap.14, «safe upper limit ... 16.3 ... g/1000 "
      "kcal (NRC 2006)»", "por 1000 kcal"),
-    # --- la TERCERA cifra de esa misma frase, y la unica que aprieta ---------
+    # --- la TERCERA cifra de esa misma frase NO VA AQUI, y eso se comprueba ---
     #
-    # ⚠️ ENTRO EL 11-sep POR LA NOCHE, MEDIO DIA DESPUES QUE EL LINOLEICO, y de
-    # la MISMA frase. Se quedo fuera porque se habia leido la frase y no el
-    # capitulo; aparecio al cerrar el cap.14 entero, y es el caso que motivo el
-    # BLOQUE 96. Medido antes de aplicarla: de los 216 menus del catalogo, CINCO
-    # se pasaban de 2,8 (hasta 3,00) -- el linoleico, en cambio, no aprieta
-    # nunca (los 216 van de 3,20 a 10,50 contra 16,3).
-    ("Adulto", None, "epa_dha", 2.8, 2.8,
-     "Fascetti & Delaney 2a ed., cap.14: «a safe upper limit for LA and EPA + "
-     "DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». Techo, y es el "
-     "UNICO que tiene el EPA+DHA: FEDIAF no le da maximo en ninguna etapa",
-     "por 1000 kcal"),
-    ("Senior", None, "epa_dha", 2.8, 2.8,
-     "Fascetti & Delaney 2a ed., cap.14, «safe upper limit ... 2.8 g/1000 kcal "
-     "(NRC 2006)». La fuente no distingue etapa: dice «in dogs»", "por 1000 kcal"),
-    ("CachorroJoven", None, "epa_dha", 2.8, 2.8,
-     "Fascetti & Delaney 2a ed., cap.14, «safe upper limit ... 2.8 g/1000 kcal "
-     "(NRC 2006)»", "por 1000 kcal"),
-    ("CachorroCrecimiento", None, "epa_dha", 2.8, 2.8,
-     "Fascetti & Delaney 2a ed., cap.14, «safe upper limit ... 2.8 g/1000 kcal "
-     "(NRC 2006)»", "por 1000 kcal"),
+    # ⚠️ CASO REAL ENCONTRADO, 11-sep-2026 por la noche. Al cerrar el cap.14 de
+    # Fascetti sali de UNA SOLA FRASE con TRES cifras -- el ratio LA:ALA, el
+    # techo de linoleico (16,3) y el de EPA+DHA (2,8 g/1000 kcal) -- y meti las
+    # tres. Las dos primeras bien; la tercera puso roja la bateria en GitHub
+    # Actions: BLOQUE 9, «adulto 20kg / 8 especies fuera: se quedo sin menu».
+    #
+    # El numero no estaba mal y la fuente es buena. Lo que estaba mal es la
+    # FORMA: los 2,8 g/1000 kcal son el SUL del NRC, una concentracion de la
+    # DIETA HABITUAL CRONICA, no el tope de un plato -- y POR ESO YA ESTABA
+    # APLICADO, y bien, como `TOPE_EPA_DHA_SEMANAL_KCAL` en `seguridad.py`, con
+    # su presupuesto semanal repartido entre los siete dias. Ponerlo tambien
+    # aqui lo aplicaba DOS VECES y la segunda menu a menu, que es lo que se
+    # quito el 26 de agosto con su medida al lado: 18 de los 20 pescados del
+    # catalogo pasan de 2800 mg/1000 kcal ellos solos (el boqueron llega a
+    # ~11.000). Un tope por menu borra el pescado azul entero del catalogo.
+    #
+    # Asi que el inventario de abajo NO lleva epa_dha, y estas dos
+    # comprobaciones son las que impiden que vuelva a entrar por esta puerta.
     # --- y el techo de vitamina E, que tampoco teniamos ---------------------
     #
     # ⚠️ TRES CONVERSIONES SEGUIDAS Y LA DE ENMEDIO ES LA QUE MATA: 1000 UI/kg
@@ -7968,6 +7989,31 @@ for _et57, _f57 in (_CRUDO_B57.get("por_etapa") or {}).items():
                 fallos.append(f"BLOQUE57: el techo de raza grande de {_et57}.{_nut57} "
                               f"({_t57['valor']}) AFLOJA el general ({_gen57}). Estos topes se "
                               f"combinan con min(): solo pueden apretar")
+
+# 1-bis. EL TECHO DE EPA+DHA NO PUEDE VIVIR AQUI, y esto lo comprueba por las
+#        dos puntas. Ver el comentario largo de arriba: la cifra (2,8 g/1000
+#        kcal, Fascetti cap.14 citando al NRC) es buena, pero es el SUL de una
+#        DIETA HABITUAL, no el tope de un plato. Aqui se aplicaria menu a menu
+#        y borra el pescado azul del catalogo -- 18 de los 20 pescados pasan de
+#        2800 mg/1000 kcal ellos solos. Donde va es en el promedio semanal.
+for _et57 in ("Adulto", "Senior", "CachorroJoven", "CachorroCrecimiento"):
+    if _topes_b57(_et57).get("epa_dha") is not None:
+        fallos.append(
+            f"BLOQUE57: {_et57} ha ganado un techo de EPA+DHA por 1000 kcal. Esa cifra ya "
+            f"está aplicada, y en la forma que dice la fuente: `TOPE_EPA_DHA_SEMANAL_KCAL` "
+            f"en seguridad.py, como promedio de la SEMANA con presupuesto repartido. Puesta "
+            f"aquí se aplica dos veces y la segunda menú a menú, que es lo que se quitó el 26 "
+            f"de agosto: 18 de los 20 pescados del catálogo pasan de 2800 mg/1000 kcal ellos "
+            f"solos (el boquerón llega a ~11.000). Pasó el 11 de septiembre y lo cazó el "
+            f"BLOQUE 9 en GitHub Actions: el adulto de 20 kg con ocho especies fuera se quedó "
+            f"sin menú")
+import motor.seguridad as _seg57
+if abs(getattr(_seg57, "TOPE_EPA_DHA_SEMANAL_KCAL", 0) - 2.8) > 1e-9:
+    fallos.append(
+        "BLOQUE57: `TOPE_EPA_DHA_SEMANAL_KCAL` ya no vale 2,8 g/1000 kcal. Es el único sitio "
+        "donde vive el límite superior seguro de EPA+DHA (Fascetti cap.14 citando NRC 2006), y "
+        "si desaparece de ahí el nutriente se queda sin ningún techo: FEDIAF deja vacías sus "
+        "tres columnas de máximo")
 
 # 2. Gestacion y lactancia siguen sin ninguno, y NO es un olvido: SACN5 les da
 #    su propia tabla (la 15-5) que todavia no se ha transcrito. Que devuelvan

@@ -326,15 +326,34 @@ def diagnosticar_choque_de_patologias(patologias, etapa, intentar,
         if intentar({(lim["tipo"], lim["clave"])}):
             culpables.append(lim)
 
-    if len(culpables) < 2:
-        # O no es un choque entre límites de patología (puede ser el
-        # catálogo, las exclusiones o los propios requisitos de FEDIAF), o
-        # solo hay un culpable y soltarlo no es una opción que ofrecer.
-        # En los dos casos se prefiere no decir nada a decir algo falso.
+    if not culpables:
+        # No es un choque entre límites de patología: puede ser el catálogo,
+        # las exclusiones o los propios requisitos de FEDIAF. Aquí se prefiere
+        # no decir nada a decir algo falso.
         return None
 
+    # ⚠️ UN SOLO CULPABLE TAMBIÉN SE DICE (11 septiembre). Hasta hoy esto era
+    # `if len(culpables) < 2: return None`, con el motivo escrito de que «solo
+    # hay un culpable y soltarlo no es una opción que ofrecer». Y es media
+    # verdad: no es una opción que ofrecer, pero SÍ es la respuesta a la
+    # pregunta que trae aquí a quien firma -- ¿qué está bloqueando?
+    #
+    # CASO REAL MEDIDO ESE DÍA: renal + pancreatitis en un adulto de 25 kg
+    # sigue sin dar menú, y de los DIEZ límites activos el único que al
+    # soltarlo desbloquea es la grasa de la pancreatitis (37,5 g/1000 kcal).
+    # El 9 de septiembre eran dos (el potasio renal y esa grasa) y el modelo se
+    # ha ido apretando desde entonces. Con la regla vieja, pasar de dos
+    # culpables a uno convertía un diagnóstico útil en el mensaje genérico
+    # «quita alguna restricción y vuelve a probar» -- que es exactamente lo que
+    # este diagnóstico existe para no decirle a un veterinario.
+    #
+    # Se marca cuál de los dos casos es, porque NO se pueden contar igual: con
+    # dos o más hay un choque entre límites y quien firma elige cuál cede; con
+    # uno solo no hay choque que elegir, hay un límite que no deja margen.
+    # Decir «chocan» de un solo límite sería afirmar algo falso.
     return {"limites_que_chocan": culpables,
-            "todos_los_limites_activos": limites}
+            "todos_los_limites_activos": limites,
+            "es_un_solo_limite": len(culpables) == 1}
 
 
 # ⚠️ EL UMBRAL DE «RAZA GRANDE», EN UN SOLO SITIO (8 septiembre).
