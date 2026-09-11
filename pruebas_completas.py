@@ -11664,13 +11664,22 @@ import json as _json87
 _ficha87 = _json87.loads((_raiz_b24 / "datos_de_la_ficha.json").read_text(encoding="utf-8"))
 _campos87 = _ficha87["campos"]
 
-# Los 20 campos de la ficha, copiados de `tests/ficha-ida-y-vuelta.spec.js` del
+# Los 21 campos de la ficha, copiados de `tests/ficha-ida-y-vuelta.spec.js` del
 # repo de la app. Si allí se añade uno y aquí no, este bloque lo dice.
+#
+# ⚠️ ERAN 20 Y FALTABA `raza` (11 septiembre). Se copió a mano de la lista
+# `CAMPOS` de aquel archivo... y allí `raza` tampoco estaba: la ficha la
+# pregunta y la guarda, pero la prueba de ida y vuelta no la miraba, porque su
+# perro de ejemplo era un mestizo (`raza: null`) y null vuelve como null aunque
+# se pierda. Dos inventarios copiados a mano, el mismo hueco en los dos. De la
+# raza salen el peso adulto esperado -- y de ahí las kcal y la etapa -- y las
+# dos cifras de energía propias de FEDIAF.
 _DE_LA_FICHA_87 = [
     "nombre", "peso_actual", "fecha_nacimiento", "castrado", "actividad",
-    "condicion_idx", "bcs", "tutor_nombre", "tutor_contacto", "sexo", "tamano",
-    "dieta_actual", "alergia_si", "alergias", "otros_evitar_si", "otros_evitar",
-    "categorias_excluidas_si", "categorias_excluidas", "patologia_si", "patologias",
+    "condicion_idx", "bcs", "tutor_nombre", "tutor_contacto", "sexo", "raza",
+    "tamano", "dieta_actual", "alergia_si", "alergias", "otros_evitar_si",
+    "otros_evitar", "categorias_excluidas_si", "categorias_excluidas",
+    "patologia_si", "patologias",
 ]
 _FORMAS_87 = ("campo", "dentro_de", "no_hace_falta")
 
@@ -11857,6 +11866,222 @@ print(f"  7 listas servidas · {len(_ACT88)} niveles de actividad · "
       f"{len(_api.CATEGORIAS_QUE_ELIGE_EL_USUARIO)} categorías · "
       f"{len(_api.PELDANOS_EN_CRISTIANO)} peldaños")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
+# BLOQUE 89 — RAZAS, TAMAÑOS, ETAPAS Y CONDICIÓN CORPORAL
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (11 septiembre). Elena, justo después del BLOQUE 88:
+#
+#     «esto tiene que ser para TODO, razas, tamaño, etapa, actividad,
+#      preguntas para las patologias de veterinarios, todo....»
+#
+# El 88 dejó emparejados los cinco niveles de actividad. Esto hace lo mismo con
+# las otras cuatro cosas que la ficha ENUMERA, y con las preguntas que la app
+# todavía no hace.
+#
+# Y aquí salió un fallo real que no buscaba nadie, en el punto 3: **gestación y
+# lactancia iban a la columna equivocada de FEDIAF**. `requisitos.py` las
+# mandaba a `CachorroCrecimiento` (Late Growth) y `verificar.py` a
+# `CachorroJoven` (Early Growth & Reproduction, que es la buena: la cabecera de
+# la Tabla III-3b lo dice literal). Dos tablas para lo mismo, en dos módulos, y
+# ninguna comprobaba a la otra. Lo sufría `/analizar`, que es el único que llama
+# a `resolver_etapa`: la dieta de una perra preñada se comparaba contra
+# requisitos hasta un **38 % más bajos** (leucina 3,23 → 2,00) y salía EN VERDE.
+print("\n" + "=" * 60)
+print("=== BLOQUE 89: razas, tamaños, etapas y condición corporal ===")
+
+import json as _json89
+from catalogo_menus import CATALOGO as _CAT89
+from der import (RAZAS_CIFRA_FEDIAF as _RFED89, RAZAS_MAS_GASTO as _RMAS89,
+                 RAZAS_MENOS_GASTO as _RMEN89, BCS_DESDE_CONDICION as _BCSC89)
+import razas as _razas89
+import requisitos as _req89
+from verificar import EQUIVALENCIA as _EQV89
+
+# ── 1. El fichero de razas se sostiene solo ──────────────────────────────
+_R89 = _razas89.RAZAS
+if len(_R89) < 200:
+    fallos.append(f"BLOQUE89: razas.json tiene {len(_R89)} razas. Eran 255 al moverlas desde "
+                  f"App.jsx: si han bajado de golpe, algo se ha comido la lista")
+_nom89 = [r["nombre"] for r in _R89]
+_dup89 = {n for n in _nom89 if _nom89.count(n) > 1}
+if _dup89:
+    fallos.append(f"BLOQUE89: razas repetidas en razas.json: {sorted(_dup89)}. Con dos filas del "
+                  f"mismo nombre, cuál gana depende del orden y eso cambia el peso adulto")
+for _r89 in _R89:
+    if not (_r89["pesoMin"] <= _r89["pesoMedio"] <= _r89["pesoMax"]):
+        fallos.append(f"BLOQUE89: «{_r89['nombre']}» tiene el peso medio ({_r89['pesoMedio']}) "
+                      f"fuera de su propio rango ({_r89['pesoMin']}-{_r89['pesoMax']}). De ese "
+                      f"medio sale el peso adulto estimado, y de ahí las kcal y la etapa")
+    if _r89["tamano"] not in _razas89.TAMANOS:
+        fallos.append(f"BLOQUE89: «{_r89['nombre']}» tiene tamaño «{_r89['tamano']}», que no es "
+                      f"uno de los seis. El catálogo indexa con `{{tamano}}_{{etapa}}`: con un "
+                      f"séptimo, la clave no existe y la vista previa se queda sin menú")
+
+# ── 1-bis. Los seis tamaños SON los del catálogo de menús ────────────────
+_tcat89 = sorted({k.split("_")[0] for k in _CAT89})
+if sorted(_razas89.TAMANOS) != _tcat89:
+    fallos.append(f"BLOQUE89: razas.json declara los tamaños {sorted(_razas89.TAMANOS)} y "
+                  f"catalogo_menus.json usa {_tcat89}. Tienen que ser los mismos seis")
+
+# ── 2. Los nombres de `der.py` existen tal cual en razas.json ────────────
+#
+# ⚠️ ESTO ES LO QUE MÁS CALLA SI SE ROMPE. `der.py` reconoce tres listas de
+# razas POR SU NOMBRE EXACTO: las dos con cifra propia de FEDIAF (Gran Danés
+# 200 y Terranova 105 kcal/kg^0,75) y las de más y menos gasto. Una tilde
+# distinta y el Gran Danés recibe la cifra genérica en vez de la suya -- sin
+# error, sin aviso y con el menú saliendo verde igual.
+_setn89 = set(_nom89)
+for _quien89, _lista89 in (("RAZAS_CIFRA_FEDIAF", set(_RFED89)),
+                           ("RAZAS_MAS_GASTO", set(_RMAS89)),
+                           ("RAZAS_MENOS_GASTO", set(_RMEN89))):
+    _fuera89 = sorted(_lista89 - _setn89)
+    if _fuera89:
+        fallos.append(f"BLOQUE89: `der.{_quien89}` nombra razas que no están en razas.json: "
+                      f"{_fuera89}. La ficha nunca mandará ese nombre, así que su cifra especial "
+                      f"no se aplica NUNCA y no lo dice nadie")
+
+# ── 3. Las DOS tablas de equivalencia de etapas dicen lo mismo ──────────
+#
+# El fallo del 11 de septiembre, con la prueba puesta para que no vuelva.
+for _k89 in sorted(set(_req89.EQUIVALENCIA_ETAPAS) | set(_EQV89)):
+    _a89 = _req89.EQUIVALENCIA_ETAPAS.get(_k89)
+    _b89 = _EQV89.get(_k89)
+    if _a89 is not None and _b89 is not None and _a89 != _b89:
+        fallos.append(f"BLOQUE89: la etapa «{_k89}» va a «{_a89}» en requisitos.py y a «{_b89}» "
+                      f"en verificar.py. El semáforo y `/analizar` estarían midiendo el mismo "
+                      f"perro contra columnas distintas de FEDIAF")
+# Y la que más da: gestación y lactancia son la columna «Early Growth &
+# Reproduction», que es la de CACHORRO JOVEN. Lo dice la cabecera de la tabla.
+for _k89 in ("Gestante", "GestanteTardia", "Lactante"):
+    if _req89.EQUIVALENCIA_ETAPAS.get(_k89) != "CachorroJoven":
+        fallos.append(f"BLOQUE89: «{_k89}» no va a CachorroJoven en requisitos.py. La cabecera "
+                      f"de la Tabla III-3b es «Early Growth (< 14 weeks) & Reproduction»: "
+                      f"mandarla a Late Growth le baja 16 requisitos, hasta un 38 %")
+
+# ── 4. `/vocabulario` sirve las cuatro listas nuevas ─────────────────────
+_v89 = _c.get("/vocabulario")
+if _v89.status_code != 200:
+    fallos.append(f"BLOQUE89: GET /vocabulario devuelve {_v89.status_code}")
+else:
+    _d89 = _v89.json()
+
+    for _sec89 in ("razas", "tamanos", "etapas", "condicion_corporal",
+                   "preguntas_por_patologia"):
+        if _sec89 not in _d89:
+            fallos.append(f"BLOQUE89: /vocabulario no sirve «{_sec89}». La app tendrá que "
+                          f"copiárselo, que es exactamente lo que esto viene a evitar")
+
+    # 4a. Las razas servidas son las del fichero, fila a fila.
+    if _d89.get("razas", {}).get("cuantas") != len(_R89):
+        fallos.append("BLOQUE89: el recuento de razas servido no cuadra con razas.json")
+    if _d89.get("razas", {}).get("razas") != _R89:
+        fallos.append("BLOQUE89: /vocabulario sirve una lista de razas distinta de la de "
+                      "razas.json. Tiene que servir el valor VIVO, no una copia")
+
+    # 4b. Los seis tamaños, con los dos registros y con el rango MEDIDO.
+    _ts89 = _d89.get("tamanos", {}).get("tamanos", [])
+    if [t["clave"] for t in _ts89] != _razas89.TAMANOS:
+        fallos.append(f"BLOQUE89: /vocabulario sirve los tamaños "
+                      f"{[t.get('clave') for t in _ts89]} y el motor tiene {_razas89.TAMANOS}")
+    for _t89 in _ts89:
+        _rg89 = _t89.get("rango_observado_kg") or {}
+        _propias89 = [r["pesoMedio"] for r in _R89 if r["tamano"] == _t89["clave"]]
+        if _propias89 and (_rg89.get("peso_medio_min") != min(_propias89)
+                           or _rg89.get("peso_medio_max") != max(_propias89)):
+            fallos.append(f"BLOQUE89: el rango servido de «{_t89['clave']}» no es el que de "
+                          f"verdad tienen sus razas. Un corte escrito a mano es un número que la "
+                          f"tabla no dice: los seis tamaños SE SOLAPAN")
+        if (_CAT89.get(f"{_t89['clave']}_Adulto") or {}).get("peso_kg") \
+                != _t89.get("peso_kg_del_menu_de_muestra"):
+            fallos.append(f"BLOQUE89: el peso de muestra de «{_t89['clave']}» no es el de su "
+                          f"menú del catálogo")
+
+    # 4c. La condición corporal: nueve puntos, y los cinco del dueño son los
+    #     MISMOS valores de BCS que usa el veterinario. Si cada pantalla
+    #     tuviera su escala, el mismo perro tendría dos pesos objetivo.
+    _cc89 = _d89.get("condicion_corporal", {})
+    _pts89 = _cc89.get("puntos", [])
+    if [p["bcs"] for p in _pts89] != list(range(1, 10)):
+        fallos.append(f"BLOQUE89: la escala de condición corporal servida es "
+                      f"{[p.get('bcs') for p in _pts89]} y el BCS va de 1 a 9")
+    _esc89 = {int(k): v for k, v in (_cc89.get("escalones_del_dueno") or {}).items()}
+    if _esc89 != dict(_BCSC89):
+        fallos.append(f"BLOQUE89: los escalones del dueño servidos son {_esc89} y "
+                      f"`der.BCS_DESDE_CONDICION` dice {dict(_BCSC89)}. Son el MISMO número: si "
+                      f"se separan, el mismo perro tiene dos pesos objetivo según quién mire")
+    _ofr89 = {p["bcs"] for p in _pts89 if p.get("ofrecido_al_dueno")}
+    if _ofr89 != set(_BCSC89.values()):
+        fallos.append(f"BLOQUE89: los BCS marcados como ofrecidos al dueño son {sorted(_ofr89)} "
+                      f"y los escalones son {sorted(set(_BCSC89.values()))}")
+    if str(_cc89.get("pct_por_punto")) not in ("0.1",):
+        fallos.append(f"BLOQUE89: el % por punto de BCS servido es {_cc89.get('pct_por_punto')} "
+                      f"y `der.BCS_PCT_POR_PUNTO` es 0.10")
+
+    # 4d. Los DOS registros, en todo lo que se sirve con etiquetas.
+    #
+    # Mismo criterio que el BLOQUE 88: si las dos dijeran lo mismo sobraría
+    # una, y la de la ficha clínica tiene que poder citar la tabla.
+    for _sec89, _lista89, _clave89 in (
+            ("tamanos", _ts89, "clave"),
+            ("etapas", _d89.get("etapas", {}).get("etapas", []), "clave"),
+            ("condicion_corporal", [p for p in _pts89 if p.get("ofrecido_al_dueno")], "bcs")):
+        for _x89 in _lista89:
+            for _quien89 in ("dueno", "veterinario"):
+                _e89 = _x89.get(_quien89) or {}
+                if not (_e89.get("titulo") or "").strip():
+                    fallos.append(f"BLOQUE89: «{_x89.get(_clave89)}» de {_sec89} no tiene título "
+                                  f"de {_quien89}. Sin él la app se lo inventa")
+                if not (_e89.get("detalle") or "").strip():
+                    fallos.append(f"BLOQUE89: «{_x89.get(_clave89)}» de {_sec89} no tiene "
+                                  f"detalle de {_quien89}")
+            if (_x89.get("dueno") or {}).get("titulo") == (_x89.get("veterinario") or {}).get("titulo") \
+                    and _sec89 != "tamanos":
+                fallos.append(f"BLOQUE89: «{_x89.get(_clave89)}» de {_sec89} dice lo mismo al "
+                              f"dueño y al veterinario")
+    # Y los nueve puntos de BCS, los cinco del dueño y los cuatro de en medio,
+    # tienen que llevar SIEMPRE la etiqueta del veterinario: la ficha clínica
+    # los ofrece todos.
+    for _p89 in _pts89:
+        if not ((_p89.get("veterinario") or {}).get("titulo") or "").strip():
+            fallos.append(f"BLOQUE89: el BCS {_p89.get('bcs')} no tiene etiqueta de veterinario, "
+                          f"y la ficha clínica ofrece los nueve")
+
+    # 4e. Las preguntas que la app NO hace, una por una contra el fichero.
+    #
+    # ⚠️ Esto es lo que pidió Elena con «preguntas para las patologias de
+    # veterinarios». Cada una sale de la CITA de la fuente de esa patología: si
+    # su tabla condiciona la cifra a un dato clínico (el estadio IRIS que
+    # decide el techo de fósforo, los triglicéridos que bajan la grasa de 37,5
+    # a 25), la cifra se elige a ciegas mientras la app no pregunte.
+    with open("quien_formula_cada_patologia.json", encoding="utf-8") as _f89:
+        _der89 = _json89.load(_f89)["patologias"]
+    _pp89 = _d89.get("preguntas_por_patologia", {})
+    _esperadas89 = sum(1 for v in _der89.values() if v.get("pregunta_que_falta"))
+    if _pp89.get("cuantas_sin_preguntar") != _esperadas89:
+        fallos.append(f"BLOQUE89: /vocabulario dice {_pp89.get('cuantas_sin_preguntar')} "
+                      f"preguntas sin hacer y el fichero tiene {_esperadas89}")
+    if _esperadas89 == 0:
+        fallos.append("BLOQUE89: no queda ninguna pregunta sin hacer. Si es verdad, hay que "
+                      "bajarlo aquí en el mismo commit; si no, el recuento se ha roto")
+    for _k89, _v89f in _der89.items():
+        _s89 = (_pp89.get("por_patologia") or {}).get(_k89)
+        if _s89 is None:
+            fallos.append(f"BLOQUE89: /vocabulario no sirve la derivación de «{_k89}». Sin ella "
+                          f"la app no sabe si esa casilla la puede marcar un dueño")
+            continue
+        for _campo89 in ("quien_puede_marcarla", "necesita_dato_clinico", "que_dato",
+                         "pregunta_que_falta"):
+            if _s89.get(_campo89) != _v89f.get(_campo89):
+                fallos.append(f"BLOQUE89: «{_k89}» sirve {_campo89}={_s89.get(_campo89)!r} y el "
+                              f"fichero dice {_v89f.get(_campo89)!r}")
+
+print(f"  {len(_R89)} razas · {len(_razas89.TAMANOS)} tamaños · "
+      f"{len(_d89.get('etapas', {}).get('etapas', []))} etapas · "
+      f"9 puntos de BCS · {_esperadas89} preguntas que la app no hace")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
 
 _hay_fuentes = _os_b18.path.isdir(_RUTA_FUENTES)
 

@@ -158,11 +158,14 @@ jubilado — que desde fuera se parecen mucho.
 | `requerimientos_v2_final.json` | Los requisitos de FEDIAF. **43 filas, y desde el 28 de agosto se verifican las 43**: los 41 nutrientes de la Tabla III-3b (los 12 aminoácidos incluidos), el ratio Ca:P y el calcio de raza grande. Con **una** excepción escrita y probada: el techo de lisina — ver abajo |
 | `requisitos.py` | Cargar la tabla de FEDIAF, resolver la etapa y la dosis máxima que marca el fabricante de cada suplemento. Era `optimizador.py`, 1.124 líneas donde esto convivía con el motor anterior al MILP y con una copia desincronizada de la tabla de patologías. El motor viejo se borró el 26 de agosto; quedan 121 líneas |
 | `der.py` | Cálculo de las kcal. ⚠️ Ver «la duplicación que hay que vigilar (DER)», abajo |
-| `analizador.py` | `/analizar`: la dieta que ya le da el dueño. Comparte `MAPA` con el semáforo a propósito — discreparon una vez por la fibra |
+| `analizador.py` | `/analizar`: la dieta que ya le da el dueño. Comparte `MAPA` con el semáforo a propósito — discreparon una vez por la fibra. ⚠️ **Y volvieron a discrepar el 11 de septiembre, en la etapa**: es el único que llama a `requisitos.resolver_etapa`, que mandaba gestación y lactancia a `CachorroCrecimiento` (Late Growth) mientras `verificar.EQUIVALENCIA` las mandaba a `CachorroJoven`. La buena es la segunda: la cabecera de la Tabla III-3b dice literal «Early Growth (< 14 weeks) **& Reproduction**». O sea que la dieta de una perra preñada se comparaba contra requisitos hasta un **38 %** más bajos (leucina 3,23 → 2,00, fósforo 2250 → 1750, proteína 62,5 → 50) y salía **en verde**. Dos tablas para lo mismo, en dos módulos, y ninguna comprobaba a la otra. Lo vigila ahora el BLOQUE 89, clave a clave |
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 85 bloques, ~40 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `pruebas_completas.py` | **La batería.** Los 89 bloques, ~40 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `datos_de_la_ficha.json` | **Los 21 campos que la ficha pregunta, y CÓMO llega cada uno al motor** (11 de septiembre). Nació de una frase de Elena: «TODOS LOS DATOS QUE RECOJA LA APP TIENEN QUE LLEGAR DE ALGUNA MANERA AL MOTOR, SI NO SON DATOS INUTILES Y CUANDO SE PIDEN ES SIEMPRE POR ALGO». Y tiene un caso que lo justifica solo, del mismo día: la ficha pregunta la **actividad** desde siempre, la app la usaba para calcular las kcal y mandaba solo el número — el motor veía 1955 kcal y no sabía si era un galgo de sofá o un perro de trineo, que es justo lo que decide si se le aprietan los topes crónicos por peso metabólico. Hay tres formas de llegar: `campo` (viaja suelto), `dentro_de` (va cocinado dentro de un número que sí viaja, y entonces **hay que escribir qué se pierde por ir así**) y `no_hace_falta` (con su motivo, que tiene que ser un motivo y no una excusa). Lo vigila el BLOQUE 87. ⚠️ Eran 20 y faltaba `raza`: la lista se copió a mano de `tests/ficha-ida-y-vuelta.spec.js`… donde `raza` tampoco estaba, porque su perro de ejemplo era un mestizo y `null` vuelve como `null` aunque se pierda. Dos inventarios copiados a mano, el mismo hueco en los dos |
+| `niveles_de_actividad.json` | **La Tabla VII-7 de FEDIAF fila por fila**, con lo que hace el motor y lo que ofrece la app (11 de septiembre). Cinco filas emparejadas, una **partida por nosotros** (el rango «High activity 150-175» es UNA fila de la fuente y el motor la parte en dos niveles), una fuera a propósito (los perros de trineo, 860-1240) y un **HUECO** declarado: «Obese prone adults ≤ 90» no está ni en el motor ni en la app. Lo vigila el BLOQUE 88 |
+| `razas.json` + `razas.py` | **Las 255 razas que ofrece la ficha**, con su tamaño y su rango de peso adulto (11 de septiembre). Hasta ese día vivían **solo en `src/App.jsx`** del repo de la app: 255 filas dentro del JavaScript, sin nadie que las mirara. El motor no las tenía, así que no podía comprobar ni lo más básico — que el tamaño que manda la app sea uno de los **seis** con los que `catalogo_menus.json` indexa sus menús, o que las tres listas de razas de `der.py` escriban los nombres **exactamente** como los escribe la app. ⚠️ Eso último es lo que más calla: `der.py` reconoce al Gran Danés y al Terranova **por su nombre literal** para darles su cifra propia de FEDIAF (200 y 105 kcal/kg^0,75, que van EN VEZ del nivel de actividad), y una tilde distinta y esa cifra no se aplica nunca, sin error y con el menú en verde. Ya pasó en el otro repo: el Supabase de mentira sembraba «Pastor alemán» con a minúscula, que no existe en la lista, así que durante meses todas las pruebas que usaban ese perro corrieron contra un mestizo con nombre de raza. ⚠️ **Estas cifras no tienen fuente publicada** —ninguna de las cuatro fuentes del motor trae una tabla de peso por raza— y eso va escrito en su `_meta` y en `DATOS_QUE_FALTAN.md`. Lo vigila el BLOQUE 89 |
 | `auditar_patologias.py` | Cada cifra de `patologias.json` contra `requerimientos_v2_final.json`: que ninguna patología formulable tenga un tope por debajo del mínimo de FEDIAF, y que la clave del nutriente exista en el `MAPA`. Lo ejecuta el BLOQUE 32 |
 | `quien_formula_cada_patologia.json` | **Quién puede marcar cada una de las 47, y qué falta preguntar** (10 de septiembre). No es una opinión de producto: cada línea sale de la **cita de la propia fuente de esa patología**. Si su tabla condiciona la cifra a un dato clínico —el estadio IRIS que decide el techo de fósforo, los triglicéridos que bajan la grasa de 37,5 a 25, la taurina en sangre—, entonces **no la puede marcar quien no tiene ese dato**, y la pregunta que falta en la ficha es la que hace falta para elegir el número. Salen **24 `solo_veterinario`**, 18 `dueno_con_diagnostico`, 5 `dueno` y **8 preguntas que la app no hace**. Lo vigila el BLOQUE 79, que además exige que una patología declarada sin dato clínico no tenga marcadores de analítica en su propio JSON — y cazó tres contradicciones mías nada más escribirlo |
 | `limites_legales_ue_2020_354.json` + `auditar_margen_profesional.py` | **Hasta dónde puede mover un veterinario cada cifra, y hasta dónde no** (10 de septiembre). La respuesta ya estaba escrita y ese era el problema: en **prosa**, dentro del campo `por_que` de cada cifra («Margen del profesional: 13,75 a 37,5») y en el §2 de `PATOLOGIAS.md`. Una frase no se ejecuta — la lección de `auditar_conversiones.py` otra vez —, y las dos que había ya estaban caducadas: la de la pancreatitis citaba el margen de antes del tope condicional, y **el sodio cardíaco aplicaba 739 con su propia celda citando el techo LEGAL en 738,6**. Ahora cada una de las **79 cifras** lleva un bloque `margen_profesional` con su suelo, su techo y **de dónde sale cada uno** —una clave de procedencia, no un número copiado: `minimo_fediaf:Fósforo`, `legal_ue:24_cardiaca:sodio`, `seguridad:TOPE_VITD_KCAL`, `sin_techo`—, y el auditor **rehace las 79 ventanas** contra la fuente viva. El JSON nuevo son **las 20 entradas caninas del Reglamento (UE) 2020/354**, que es la única fuente del repo que es **ley** y por tanto la única que pone un techo del que no se sale nadie. ⚠️ Y hay que citarlo con cuidado: el Reglamento **no da un rango de maniobra por nutriente** —da un techo o un suelo por objetivo—, y su ±15 % es **tolerancia analítica de etiquetado**, no margen clínico. Lo ejecuta el BLOQUE 80, que además exige que `GET /patologias` sirva las 79 ventanas |
@@ -197,7 +200,7 @@ omega-3 del cáncer y el de la artrosis— y se pregunta. Detalle: `PATOLOGIAS.m
 Los que llama el frontend hoy: `/menu/v2`, `/menu/semana`,
 `/menu/varios-perros`, `/menu/anadir`, `/menu/cambiar`, `/menu/quitar`,
 `/menu/revalidar`, `/analizar`, `/alimentos`, `/formular/*`, `/pauta/*`,
-`/patologias`, `/relajacion`, y los de Stripe.
+`/patologias`, `/relajacion`, `/vocabulario`, y los de Stripe.
 
 `GET /patologias` (7 de septiembre) sirve la tabla de `patologias.json` con
 los topes, su fuente, su motivo y **el margen contra el límite de FEDIAF del
@@ -217,6 +220,31 @@ no los miraba: los vigila el **BLOQUE 64** (9 de septiembre), que exige que
 lleguen **por las dos puertas** —`GET /patologias` y la tabla que lee el solver—
 y que sigan llevando su cifra dentro. Un aviso truncado parece que está y no dice
 el número.
+
+`GET /vocabulario` (11 de septiembre) sirve **todo lo que el motor enumera**,
+para que la app lo lea en vez de copiárselo: los cinco niveles de actividad con
+su cifra de FEDIAF, las 255 razas, los seis tamaños, las etapas, los nueve
+puntos de BCS, las patologías, las categorías y los peldaños. Existe por una
+frase de Elena: «si el motor dice que hay dieciocho niveles de actividad, la app
+tiene que tener 18 niveles de actividad porque si no no sirve de nada, y así con
+todo». La cadena es **FUENTE manda → MOTOR la implementa → APP la ofrece**,
+nunca al revés — y eso último hay que decirlo porque yo lo hice al revés una vez
+ese mismo día: amplié la base de datos de la app para que cupieran los cinco
+niveles que la app ya ofrecía, en vez de preguntar primero cuántos tiene la
+fuente.
+Cada cosa se sirve con **dos registros**: `dueno` (sin jerga, con un ejemplo de
+lo que se ve o se toca) y `veterinario` (la palabra de la fuente, con su tabla y
+sus horas). Los dos viven en el motor a propósito: si la técnica viviera copiada
+en la app, el día que el motor añada un nivel la app se queda con su lista vieja
+y el usuario elige algo que el motor no sabe recibir. Lo vigilan los BLOQUES 88
+y 89 aquí, y `tests/vocabulario.spec.js` en `canislab-web` — que además no se
+conforma con ver la palabra correcta en pantalla: siembra palabras **inventadas**,
+porque «la app lo ha leído del motor» y «la app está pintando su respaldo» se ven
+exactamente igual, y una prueba con las palabras de verdad pasaría en verde con
+la petición entera comentada.
+⚠️ **Lo que NO se puede servir por aquí son las cifras que ya viajan dentro del
+menú** — los topes de patología van por `GET /patologias` y los peldaños por
+`GET /relajacion`. Tres sitios y una sola copia de cada cosa.
 
 `GET /relajacion` (8 de septiembre) sirve los peldaños de la escalera con su
 nombre y qué suelta cada uno, y `/menu/v2` y `/formular/autocompletar`
@@ -454,7 +482,7 @@ coinciden 153 de 156 celdas. Y BEDCA distingue «midieron 0» (`value_type`
 al volcarla a un CSV y que convierte huecos en ceros mudos. Detalle y las
 medidas: `PENDIENTE_NUTRICION.md` §5-quater.
 
-En la raíz, los ocho: `alimentos_v3_final.json` (el catálogo),
+En la raíz, los nueve: `alimentos_v3_final.json` (el catálogo),
 `requerimientos_v2_final.json` (la tabla de FEDIAF), `catalogo_menus.json`
 (los 36 menús precalculados de la vista previa y sus 180 variantes),
 `der_casos.json` (el contrato del DER, ver arriba),
@@ -462,7 +490,19 @@ En la raíz, los ocho: `alimentos_v3_final.json` (el catálogo),
 `requisitos_condicionales.json` (los requisitos que dependen de la propia
 dieta), `fediaf_conversiones_vitaminas.json` (la Tabla VII-14: cuántos
 microgramos de cada fuente hacen una UI) y `sacn5_fuentes_de_minerales.json` (su
-hermana para los minerales, del capítulo 6 de SACN5).
+hermana para los minerales, del capítulo 6 de SACN5) y `razas.json` (las 255
+razas que ofrece la ficha, con su tamaño y su rango de peso adulto).
+
+**El noveno es del 11 de septiembre y no trae ni un número nuevo: trae 255
+números que ya existían y vivían donde nadie podía mirarlos.** Es la tabla de
+razas, que estaba dentro de `src/App.jsx`. Se mueve tal cual, sin tocar una
+cifra, por lo mismo que se movieron el catálogo y la tabla de patologías: un
+número que decide si un menú se entrega tiene que poder auditarse. Y aquí
+decide tres — el peso adulto esperado (y de ahí las kcal y la etapa), el techo
+de calcio del cachorro de raza grande, y si a ese perro le toca la cifra de
+energía propia que FEDIAF le da a dos razas. ⚠️ **No tiene fuente publicada**, y
+eso está escrito en su `_meta`: ninguna de las cuatro fuentes del motor trae
+una tabla de peso por raza.
 
 **El octavo es de la noche del 9 de septiembre y trae algo que la tabla de
 vitaminas no tiene: dos ceros.** El problema de base es el mismo —la etiqueta
@@ -512,7 +552,7 @@ se comprueba entero en cada batería.
 python3 pruebas_completas.py     # ~40 min, tiene que salir TODO EN VERDE
 ```
 
-Los 85 bloques tardan unos **40 minutos** (2.387 s en la última medida; el
+Los 89 bloques tardan unos **40 minutos** (2.387 s en la última medida; el
 «~25 min» que ponía aquí se quedó corto igual que antes se quedó corto el
 «~10 min», y antes el «~2 min»: cada vez que un bloque nuevo resuelve menús de
 verdad, esta cifra sube. Si vuelve a bajar sin motivo, es que algo no se está

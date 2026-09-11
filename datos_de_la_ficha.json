@@ -7,7 +7,7 @@
       "dentro_de": "No viaja suelto: va cocinado dentro de un numero que si viaja. `va_dentro_de` dice dentro de cual. ⚠️ Esta forma es la peligrosa: el dato llega SIN PODER DESHACERSE, asi que el motor solo puede usarlo para lo que ya esta cocinado. Si algun dia hace falta para otra cosa, hay que sacarlo.",
       "no_hace_falta": "No llega, y esta bien que no llegue. `por_que_no` tiene que decirlo, y tiene que ser un motivo, no una excusa."
     },
-    "como_se_comprueba": "El BLOQUE 87 de `pruebas_completas.py`: que los 20 campos esten declarados, que los que dicen `campo` existan de verdad en `PeticionMenu`, y que ninguno se quede sin motivo. La lista de campos sale de `tests/ficha-ida-y-vuelta.spec.js` del repo de la app, que es la que ya vigila que no se pierdan al guardar.",
+    "como_se_comprueba": "El BLOQUE 87 de `pruebas_completas.py`: que los 21 campos esten declarados, que los que dicen `campo` existan de verdad en `PeticionMenu`, y que ninguno se quede sin motivo. La lista de campos sale de `tests/ficha-ida-y-vuelta.spec.js` del repo de la app, que es la que ya vigila que no se pierdan al guardar.",
     "medido": "11 de septiembre de 2026, contra `src/App.jsx` de canislab-web (el cuerpo que monta para /menu/v2 y /menu/revalidar) y `PeticionMenu` de main.py."
   },
   "campos": {
@@ -61,6 +61,12 @@
       "va_dentro_de": "der_objetivo y etapa_requisitos",
       "para_que": "Un macho entero necesita mas kcal. Y en la hembra, la etapa de gestacion o lactancia es la que cambia los requisitos, y esa si viaja como etapa.",
       "riesgo_de_ir_cocinado": "FEDIAF no da requisitos distintos por sexo fuera de la reproduccion, y la reproduccion ya viaja como etapa. Hoy no se pierde nada."
+    },
+    "raza": {
+      "forma": "dentro_de",
+      "va_dentro_de": "peso_adulto_esperado, tamano y der_objetivo",
+      "riesgo_de_ir_cocinado": "El motor recibe el peso adulto ya estimado y NO sabe de que raza salio. Eso le deja sin poder comprobar dos cosas que decide la raza: (1) que el peso adulto este dentro del rango de esa raza -- `razas.json` trae pesoMin y pesoMax y el motor no los ve --, y (2) que a un Gran Danes o a un Terranova se les haya aplicado su cifra de energia propia de FEDIAF (200 y 105 kcal/kg^0,75, Tabla VII-7), que va EN VEZ del nivel de actividad y no sumada. Hoy eso lo hace `der.js` en el navegador y aqui llega solo el resultado. ⚠️ Y el nombre viaja LITERAL: `der.RAZAS_CIFRA_FEDIAF`, `RAZAS_MAS_GASTO` y `RAZAS_MENOS_GASTO` reconocen la raza por su nombre exacto, asi que una tilde o una mayuscula distinta y la cifra especial no se aplica NUNCA, sin error y con el menu saliendo verde. Ya paso: el Supabase de mentira sembraba «Pastor alemán» con a minuscula, que no existe en la lista, y todas las pruebas que usaban ese perro corrian contra un mestizo con nombre de raza.",
+      "nota": "Las 255 razas viven desde el 11-sep-2026 en `razas.json` del motor y se sirven por `GET /vocabulario`. Antes vivian SOLO en `src/App.jsx`."
     },
     "tamano": {
       "forma": "campo",

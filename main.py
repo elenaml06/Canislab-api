@@ -5497,12 +5497,184 @@ ETIQUETAS_ACTIVIDAD = {
     },
 }
 
+# ─────────────────────────────────────────────────────────────────────────────
+# LOS DOS REGISTROS, PARA TODO LO DEMAS (11 de septiembre de 2026)
+#
+# Elena, el mismo dia que lo de la actividad: «esto tiene que ser para TODO,
+# razas, tamaño, etapa, actividad, preguntas para las patologias de
+# veterinarios, todo».
+#
+# Asi que lo que se hizo con los cinco niveles de actividad se hace aqui con lo
+# demas que la ficha ENUMERA. La regla es la misma y no cambia:
+#
+#   · `dueno`       — sin jerga, con un ejemplo de lo que se ve o se toca.
+#   · `veterinario` — la palabra de la fuente, con su tabla y su cifra.
+#
+# Lo que NO se duplica: el numero. Los escalones del dueño son los MISMOS
+# valores de BCS que usa el veterinario (1, 3, 5, 7 y 9); si cada pantalla
+# tuviera su escala, el mismo perro tendria dos pesos objetivo y dos DER segun
+# quien abriera la ficha. Eso ya esta resuelto en `der.BCS_DESDE_CONDICION` y
+# aqui solo se ETIQUETA.
+# Las 255 razas y los seis tamaños, de `razas.json`. Se cargan una vez al
+# arrancar, como el catalogo: son datos, no calculo.
+import json as _json
+import os as _os
+from razas import RAZAS as _RAZAS, TAMANOS as _TAMANOS, cargar_crudo as _cargar_razas
+from der import BCS_DESDE_CONDICION, BCS_PCT_POR_PUNTO as der_BCS_PCT_POR_PUNTO
+
+_RAZAS_META = _cargar_razas().get("_meta", {})
+
+# Quien puede marcar cada patologia y que pregunta falta en la ficha. Se lee del
+# fichero y no se copia aqui: seria la segunda copia de una tabla que ya tiene
+# su auditor (BLOQUE 79).
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                        "quien_formula_cada_patologia.json"), encoding="utf-8") as _f:
+    _DERIVACION = _json.load(_f)["patologias"]
+
+
+def _rango_de_tamano(tamano):
+    """El rango de peso adulto que de verdad tienen las razas de ese tamaño.
+
+    Se MIDE sobre `razas.json` en vez de escribirse: los seis tamaños se
+    solapan (Pequeño llega a 18,5 kg de peso medio y Mediano empieza en 15) y
+    un corte escrito a mano seria un numero que la tabla no dice.
+    """
+    medios = [r["pesoMedio"] for r in _RAZAS if r["tamano"] == tamano]
+    if not medios:
+        return None
+    propias = [r for r in _RAZAS if r["tamano"] == tamano]
+    return {"peso_medio_min": min(medios), "peso_medio_max": max(medios),
+            # ⚠️ Y EL RANGO ANCHO, que es el que hay que ENSEÑAR a quien elige
+            # tamaño sin saber la raza: va del perro mas ligero de la raza mas
+            # ligera al mas pesado de la mas pesada. La app lo tenia escrito a
+            # mano («Toy: 1,5-6kg») y cuatro de los seis ya estaban caducados,
+            # porque la lista de razas creció debajo y la tabla no.
+            "peso_min": min(r["pesoMin"] for r in propias),
+            "peso_max": max(r["pesoMax"] for r in propias),
+            "cuantas_razas": len(medios)}
+
+
+def _etiqueta_tamano(tamano):
+    """Las dos etiquetas de un tamaño, con el detalle clinico ya relleno."""
+    import copy
+    e = copy.deepcopy(ETIQUETAS_TAMANO[tamano])
+    rango = _rango_de_tamano(tamano)
+    if rango and e.get("veterinario") is not None:
+        e["veterinario"]["detalle"] = (
+            f"{rango['cuantas_razas']} razas del catalogo, de {rango['peso_medio_min']} a "
+            f"{rango['peso_medio_max']} kg de peso adulto medio")
+    return e
+
+
+ETIQUETAS_CONDICION = {
+    1: {"dueno": {"titulo": "Muy flaquito", "detalle": "Costillas muy marcadas, sin nada de grasa"},
+        "veterinario": {"titulo": "BCS 1/9 — Emaciado",
+                        "detalle": "≥40 % por debajo del ideal (FEDIAF Tabla VII-2)"}},
+    2: {"dueno": None,
+        "veterinario": {"titulo": "BCS 2/9 — Muy delgado",
+                        "detalle": "30 a 40 % por debajo del ideal (FEDIAF Tabla VII-2)"}},
+    3: {"dueno": {"titulo": "Flaquito", "detalle": "Costillas se notan facil al tacto"},
+        "veterinario": {"titulo": "BCS 3/9 — Delgado",
+                        "detalle": "20 a 30 % por debajo del ideal (FEDIAF Tabla VII-2)"}},
+    4: {"dueno": None,
+        "veterinario": {"titulo": "BCS 4/9 — Por debajo del ideal",
+                        "detalle": "10 a 15 % por debajo del ideal (FEDIAF Tabla VII-2)"}},
+    5: {"dueno": {"titulo": "Ideal", "detalle": "Costillas se palpan, cintura visible desde arriba"},
+        "veterinario": {"titulo": "BCS 5/9 — Ideal",
+                        "detalle": "En su peso; la racion se calcula sobre el peso actual"}},
+    6: {"dueno": None,
+        "veterinario": {"titulo": "BCS 6/9 — Por encima del ideal",
+                        "detalle": "10 a 15 % por encima del ideal (FEDIAF Tabla VII-2)"}},
+    7: {"dueno": {"titulo": "Rellenito", "detalle": "Cuesta notar las costillas, poca cintura"},
+        "veterinario": {"titulo": "BCS 7/9 — Sobrepeso",
+                        "detalle": "20 a 30 % por encima del ideal (FEDIAF Tabla VII-2)"}},
+    8: {"dueno": None,
+        "veterinario": {"titulo": "BCS 8/9 — Obeso",
+                        "detalle": "30 a 45 % por encima del ideal (FEDIAF Tabla VII-2)"}},
+    9: {"dueno": {"titulo": "Muy gordete", "detalle": "No se notan las costillas, sin cintura"},
+        "veterinario": {"titulo": "BCS 9/9 — Obesidad morbida",
+                        "detalle": "Mas del 45 % por encima del ideal; la estimacion es una COTA "
+                                   "INFERIOR (FEDIAF Tabla VII-2, fila «9. Grossly Obese»)"}},
+}
+
+# Los seis tamaños. La cifra de referencia de cada uno NO se inventa aqui: es el
+# peso con el que esta calculado su menu de la vista previa en
+# `catalogo_menus.json`, o sea el que el motor ya usa.
+ETIQUETAS_TAMANO = {
+    "Toy":     {"dueno": {"titulo": "Toy", "detalle": "Cabe en brazos"},
+                "veterinario": {"titulo": "Toy", "detalle": None}},
+    "Mini":    {"dueno": {"titulo": "Mini", "detalle": "Pequeñito, de bolso"},
+                "veterinario": {"titulo": "Miniatura", "detalle": None}},
+    "Pequeño": {"dueno": {"titulo": "Pequeño", "detalle": "Se coge en brazos sin esfuerzo"},
+                "veterinario": {"titulo": "Pequeño", "detalle": None}},
+    "Mediano": {"dueno": {"titulo": "Mediano", "detalle": "Ni pequeño ni grande"},
+                "veterinario": {"titulo": "Mediano", "detalle": None}},
+    "Grande":  {"dueno": {"titulo": "Grande", "detalle": "Cuesta cogerlo en brazos"},
+                "veterinario": {"titulo": "Grande", "detalle": None}},
+    "Gigante": {"dueno": {"titulo": "Gigante", "detalle": "De los mas grandes que hay"},
+                "veterinario": {"titulo": "Gigante", "detalle": None}},
+}
+# ⚠️ EL `detalle` DEL VETERINARIO VA A None A PROPOSITO Y LO RELLENA EL
+# ENDPOINT, con el rango que de verdad tienen las razas de ese tamaño en
+# `razas.json` y con el peso con el que esta calculado su menu de la vista
+# previa. La primera version de esto llevaba los kilos escritos a mano («8 a 15
+# kg» para Pequeño) y eran FALSOS: medido sobre las 255 razas, Pequeño llega a
+# 18,5 kg de peso medio y Mediano empieza en 15, o sea que los tamaños se
+# SOLAPAN -- son etiquetas de raza, no cortes de peso. Escribir un corte que la
+# tabla no tiene es inventarse un dato con forma de dato bueno, que es justo lo
+# que este fichero viene a evitar.
+
+# Las etapas, que es lo unico de esta lista que NO elige quien rellena la ficha:
+# sale de la fecha de nacimiento, del sexo y de si esta gestante o lactando. Se
+# sirven igual porque la app las ESCRIBE en pantalla y porque el veterinario
+# necesita saber a que tabla de FEDIAF corresponde la suya.
+ETIQUETAS_ETAPA = {
+    "CachorroJoven": {
+        "dueno": {"titulo": "Cachorro", "detalle": "Menos de 14 semanas"},
+        "veterinario": {"titulo": "Early Growth (< 14 weeks) & Reproduction",
+                        "detalle": "Tabla III-3b de FEDIAF, tercera columna. Es TAMBIEN la de "
+                                   "gestacion y lactancia: la cabecera dice «& Reproduction»"}},
+    "CachorroCrecimiento": {
+        "dueno": {"titulo": "Cachorro mayor", "detalle": "Desde las 14 semanas hasta que termina "
+                                                         "de crecer"},
+        "veterinario": {"titulo": "Late Growth (≥ 14 weeks)",
+                        "detalle": "Tabla III-3b de FEDIAF, cuarta columna"}},
+    "Adulto": {
+        "dueno": {"titulo": "Adulto", "detalle": "Ya ha terminado de crecer"},
+        "veterinario": {"titulo": "Adult maintenance",
+                        "detalle": "Tabla III-3b de FEDIAF, columnas de 95 y 110 kcal/kg^0,75"}},
+    "Senior": {
+        "dueno": {"titulo": "Senior", "detalle": "Perro mayor"},
+        "veterinario": {"titulo": "Senior (sin columna propia en FEDIAF)",
+                        "detalle": "Usa la de adulto, con la proteina subida a 45 g/1000 kcal "
+                                   "(`requisitos.SENIOR_PROTEINA_MINIMA`) y el techo de fosforo "
+                                   "de 1750 mg/1000 kcal"}},
+    "GestanteTardia": {
+        "dueno": {"titulo": "Embarazada", "detalle": "Ultimas semanas de la gestacion"},
+        "veterinario": {"titulo": "Late gestation",
+                        "detalle": "Va a la columna «Early Growth & Reproduction», mas el "
+                                   "requisito condicional de proteina de "
+                                   "`requisitos_condicionales.json`"}},
+    "Lactante": {
+        "dueno": {"titulo": "Dando de mamar", "detalle": "Con la camada"},
+        "veterinario": {"titulo": "Lactation",
+                        "detalle": "Va a la columna «Early Growth & Reproduction», mas el "
+                                   "requisito condicional de proteina"}},
+}
+# ⚠️ LA ETAPA NO LA CALCULA EL MOTOR, Y ESO HAY QUE SABERLO PARA LEER ESTO.
+# La decide la app a partir de la fecha de nacimiento (`determinarEtapa` en
+# `src/der.js`, que corta Early Growth en 98 dias = 14 semanas) y llega ya hecha
+# en `etapa_requisitos`. O sea que el motor no puede comprobar que la etapa que
+# recibe sea la que le toca a ese perro: solo que EXISTA. Es la misma
+# duplicacion que el DER, y esta apuntada igual.
+
 @app.get("/vocabulario")
 def endpoint_vocabulario():
     from der import BASE_ACTIVIDAD, RAZAS_CIFRA_FEDIAF
     from requisitos import ETAPAS_VALIDAS, EQUIVALENCIA_ETAPAS
 
     from motor.patologias import cargar_crudo
+    from catalogo_menus import CATALOGO
 
     al_v, _req_v = cargar_v2()
     _pat_v = (cargar_crudo() or {}).get("patologias") or {}
@@ -5521,6 +5693,76 @@ def endpoint_vocabulario():
                     "Y falta una fila de la fuente que no esta ni aqui ni en la app: «Obese prone "
                     "adults ≤ 90»."),
         },
+        # ── LAS 255 RAZAS ────────────────────────────────────────────────
+        # Vivian SOLO en `src/App.jsx`. Ahora viven en `razas.json` y la app se
+        # las pide aqui: una lista que la app se copia a mano se desincroniza y
+        # nadie se entera. ⚠️ Estas cifras NO tienen fuente publicada -- ninguna
+        # de las cuatro fuentes del motor trae una tabla de peso por raza --, y
+        # eso esta escrito en el `_meta` del fichero y en `DATOS_QUE_FALTAN.md`.
+        "razas": {
+            "de_donde": "razas.json (movidas desde src/App.jsx el 11-sep-2026)",
+            "ojo": _RAZAS_META.get("de_donde_salen_estas_cifras"),
+            "cuantas": len(_RAZAS),
+            "razas": _RAZAS,
+        },
+        # ── LOS SEIS TAMAÑOS ─────────────────────────────────────────────
+        "tamanos": {
+            "de_donde": ("Las seis claves con las que `catalogo_menus.json` indexa sus menus "
+                         "precalculados (`{tamano}_{etapa}`). Si la app mandara un septimo, la "
+                         "clave no existiria y la vista previa se quedaria sin menu."),
+            "ojo": ("Son etiquetas de RAZA, no cortes de peso: medido sobre las 255 razas, "
+                    "«Pequeño» llega a 18,5 kg de peso medio y «Mediano» empieza en 15. Se "
+                    "solapan a proposito. El rango que se sirve aqui es el OBSERVADO en "
+                    "`razas.json`, no un corte inventado."),
+            "tamanos": [dict({"clave": t,
+                              "peso_kg_del_menu_de_muestra": (
+                                  CATALOGO.get(f"{t}_Adulto") or {}).get("peso_kg"),
+                              "rango_observado_kg": _rango_de_tamano(t)},
+                             **_etiqueta_tamano(t))
+                        for t in _TAMANOS],
+        },
+        # ── LA CONDICION CORPORAL ────────────────────────────────────────
+        # Es UN SOLO numero y UNA SOLA formula: los cinco escalones del dueño
+        # son cinco valores del BCS (1, 3, 5, 7 y 9). Si cada pantalla tuviera
+        # su escala, el mismo perro tendria dos pesos objetivo y dos DER.
+        "condicion_corporal": {
+            "de_donde": "FEDIAF 2025, Anexo 7.1, Tabla VII-2 («% BW below or above BCS 5»)",
+            "escala": "1 a 9",
+            "ideal": BCS_NEUTRO_MAIN,
+            "pct_por_punto": der_BCS_PCT_POR_PUNTO,
+            "ojo": ("El BCS 9 NO sigue la recta del 10 % por punto: FEDIAF dice «>45 %» y la "
+                    "recta da 40. Se aplica 45 y la estimacion es una COTA INFERIOR. || Los "
+                    "cinco escalones del dueño son los BCS de `der.BCS_DESDE_CONDICION`; el "
+                    "veterinario pone el BCS exacto, que es el que manda para calcular."),
+            "escalones_del_dueno": {str(i): b for i, b in sorted(BCS_DESDE_CONDICION.items())},
+            "puntos": [dict({"bcs": b,
+                             "ofrecido_al_dueno": b in set(BCS_DESDE_CONDICION.values())},
+                            **ETIQUETAS_CONDICION[b])
+                       for b in sorted(ETIQUETAS_CONDICION)],
+        },
+        # ── LAS PREGUNTAS QUE LA APP TIENE QUE HACER ─────────────────────
+        # ⚠️ Elena, 11-sep-2026: «preguntas para las patologias de
+        # veterinarios». No es opinion de producto: cada linea sale de la CITA
+        # de la fuente de esa patologia. Si su tabla condiciona la cifra a un
+        # dato clinico -- el estadio IRIS que decide el techo de fosforo, los
+        # trigliceridos que bajan la grasa de 37,5 a 25 --, entonces no la puede
+        # marcar quien no tiene ese dato, y la pregunta que falta en la ficha es
+        # la que hace falta para ELEGIR EL NUMERO.
+        "preguntas_por_patologia": {
+            "de_donde": "quien_formula_cada_patologia.json",
+            "ojo": ("`quien_puede_marcarla` dice quien puede tocar la casilla; "
+                    "`pregunta_que_falta` es lo que la app NO pregunta todavia y sin lo cual la "
+                    "cifra se elige a ciegas. Una patologia con pregunta sin hacer no deberia "
+                    "poder marcarse desde la app del dueño."),
+            "cuantas_sin_preguntar": sum(1 for v in _DERIVACION.values()
+                                         if v.get("pregunta_que_falta")),
+            "por_patologia": {k: {"nombre": v.get("nombre"),
+                                  "quien_puede_marcarla": v.get("quien_puede_marcarla"),
+                                  "necesita_dato_clinico": v.get("necesita_dato_clinico"),
+                                  "que_dato": v.get("que_dato"),
+                                  "pregunta_que_falta": v.get("pregunta_que_falta")}
+                              for k, v in sorted(_DERIVACION.items())},
+        },
         "razas_con_cifra_propia": {
             "de_donde": "FEDIAF 2025, Tabla VII-7, fila «Breed specific differences»",
             "ojo": "La cifra de raza va EN VEZ del nivel de actividad, no sumada (§7.2.3.4).",
@@ -5531,6 +5773,13 @@ def endpoint_vocabulario():
             "de_donde": "requerimientos_v2_final.json (Tabla III-3b de FEDIAF) y sus equivalencias",
             "con_tabla_propia": sorted(ETAPAS_VALIDAS),
             "equivalencias": {k: v for k, v in EQUIVALENCIA_ETAPAS.items()},
+            # ⚠️ La etapa NO la calcula el motor: la decide la app desde la
+            # fecha de nacimiento y llega ya hecha en `etapa_requisitos`. El
+            # motor solo puede comprobar que EXISTA. Misma duplicacion que el
+            # DER, y apuntada igual.
+            "quien_la_calcula": ("La app (`determinarEtapa` en src/der.js), que corta Early "
+                                 "Growth en 98 dias = 14 semanas. El motor la recibe hecha."),
+            "etapas": [dict({"clave": k}, **v) for k, v in ETIQUETAS_ETAPA.items()],
         },
         "patologias": {
             "cuantas": len(_pat_v),
