@@ -13832,6 +13832,60 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 99 — CUÁNTO HEMOS LEÍDO Y NO APLICADO
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (11 septiembre, de noche). Elena, y tenía toda la razón:
+#
+#     «antes me habías dicho que SACN5 está cerrado y ahora dices que gestación
+#      y lactancia tienen una tabla propia que no está transcrita [...] no estás
+#      planteando bien la manera de estudiar los documentos»
+#
+# EL DIAGNÓSTICO, y es de método. En este repo «cerrado» significaba UNA cosa:
+# que cada elemento de la fuente tiene VEREDICTO. No significaba que no quedara
+# nada por aplicar. La Tabla 15-5 de gestación TIENE veredicto -- «leída, no
+# aplicada» --, así que el contador marca cero pendientes y a la vez hay algo
+# esperando. Las dos cosas eran verdad y se contaban como una sola.
+#
+# Faltaba el SEGUNDO NÚMERO: cuántas cosas se han leído, se ha decidido no
+# aplicarlas, y siguen esperando. Vivía desperdigado en cinco ficheros y nadie
+# lo sumaba, así que nadie podía ver que no estaba vacío. Hoy son 92.
+#
+# ⚠️ Y AL CONSTRUIRLO SALIÓ EL FALLO DE RAÍZ: los tres registros de lectura
+# usan TRES VOCABULARIOS DISTINTOS. El de Fascetti guarda {veredicto, por} con
+# una lista cerrada de valores, así que se puede contar; los de SACN5, NRC 2006
+# y FEDIAF guardan el veredicto como TEXTO LIBRE. De esos tres se puede afirmar
+# que cada elemento tiene una nota, y NO se puede afirmar por máquina si esa
+# nota dice «aplicado», «no aplica» o «encontrado algo y aparcado». Su «0
+# pendientes» significa «0 SIN NOTA», que es menos de lo que parecía.
+#
+# Este bloque no arregla eso: lo DECLARA, que es el primer paso para que deje
+# de poder pasar. Un contador cuyo punto ciego está escrito vale; uno que calla
+# es el que nos trajo hasta aquí.
+print("\n" + "=" * 60)
+print("=== BLOQUE 99: cuánto hemos leído y no aplicado ===")
+import os as _os99
+import subprocess as _sub99
+if not _os99.path.exists(_os99.path.join(str(_raiz_b24), "auditar_pendiente_de_aplicar.py")):
+    fallos.append("BLOQUE99: falta `auditar_pendiente_de_aplicar.py`. Sin él, «cerrado» vuelve a "
+                  "significar solo «todo tiene veredicto», y lo que queda por aplicar deja de "
+                  "tener número")
+else:
+    _r99 = _sub99.run([sys.executable, "auditar_pendiente_de_aplicar.py"],
+                      capture_output=True, text=True, cwd=str(_raiz_b24))
+    _salida99 = (_r99.stdout or "") + (_r99.stderr or "")
+    if _r99.returncode != 0:
+        _cola99 = "\n      ".join(l.strip() for l in _salida99.splitlines()
+                                  if l.strip().startswith("❌"))
+        fallos.append(f"BLOQUE99: un veredicto se ha salido del vocabulario:\n      {_cola99}")
+    for _l99 in _salida99.strip().splitlines():
+        if _l99.strip().startswith(("Discrepancias", "❌")) or not _l99.strip():
+            continue
+        print(f"  {_l99.rstrip()}")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # BLOQUE 98 — LAS DIEZ FICHAS DE HUESO, CONTRA LA TABLA DE KÖBER
 # ============================================================
 #

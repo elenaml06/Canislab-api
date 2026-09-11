@@ -702,6 +702,53 @@ propósito — un menú del catálogo corrupto lo rechaza
 `_garantizar_verificado()` igual que cualquier otro, y el contrato del DER
 se comprueba entero en cada batería.
 
+## «Cerrado» son DOS números, no uno
+
+Escrito el 11 de septiembre de 2026 de noche, porque hasta ese día era uno y
+por eso se pudo decir tres veces que algo estaba cerrado y que luego saliera
+algo esperando. Elena: «me dices que algo está cerrado y siempre sale algo que
+demuestra que no lo está, y eso no puede ser».
+
+**El primero es el que ya había: cada elemento de la fuente tiene VEREDICTO.**
+Lo cuentan `leer_fuente.py`, `leer_sacn5.py`, `leer_nrc2006.py` y
+`leer_fascetti.py`, y hoy los cuatro están a cero pendientes. Eso significa
+«nadie ha pasado por encima de nada», y no significa nada más.
+
+**El segundo es nuevo y es el que faltaba: cuántas cosas hemos leído, hemos
+decidido NO aplicar, y siguen esperando.** Lo cuenta
+`auditar_pendiente_de_aplicar.py` (BLOQUE 99) y **hoy son 92**:
+
+| | Dónde |
+|---|---|
+| 41 | `lecturas_fascetti.json`, veredictos de hallazgo sin aplicar |
+| 22 | `sacn5_tablas.json`, tablas leídas CON hallazgo |
+| 20 | `patologias.json`, `limites_escritos_que_el_solver_no_aplica` |
+| 7 | `requisitos_condicionales.json`, documentados sin cifra |
+| 2 | `recomendaciones_libro.json`, apagados |
+
+Los dos números son verdad a la vez, y contarlos como uno es exactamente lo que
+hacía que «cerrado» sonara a «terminado». La tabla 15-5 de gestación de SACN5
+**tiene** veredicto —leída, no aplicada— así que no cuenta como pendiente en el
+primer número y sí en el segundo.
+
+⚠️ **Y el punto ciego del segundo número está declarado dentro del propio
+auditor, porque es grande**: los tres registros de lectura usan **tres
+vocabularios distintos**. El de Fascetti guarda `{veredicto, por}` con una lista
+cerrada de valores, así que se puede contar. Los de **SACN5, NRC 2006 y FEDIAF
+guardan el veredicto como TEXTO LIBRE**. De esos tres se puede afirmar que cada
+elemento tiene una nota, y **no** se puede afirmar por máquina si esa nota dice
+«aplicado», «no aplica» o «encontrado algo y aparcado». Su «0 pendientes»
+significa **«0 sin nota»**, que es menos de lo que parece. Darles vocabulario es
+el trabajo que queda, y son 6.562 elementos.
+
+**Y una tercera cosa que tampoco es lo mismo: que la fuente esté LEÍDA.**
+`fuentes_del_motor.json` (BLOQUE 97) cuenta las 15 fuentes que deciden una cifra
+que el motor aplica, y hoy solo **cuatro** están leídas enteras. Las otras once
+están `verificada_la_cifra`, que significa literalmente «se confirmó el número,
+no se leyó el documento» — y eso es leer una frase y no un documento, que es el
+fallo que costó los ocho últimos capítulos de Fascetti y las tres fichas de
+hueso con el calcio diez veces por debajo.
+
 ## Cómo se prueba
 
 ```bash
