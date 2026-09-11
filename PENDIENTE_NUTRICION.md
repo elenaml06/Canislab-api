@@ -1705,6 +1705,41 @@ sirve para lo que ese suelo quiere conseguir.
 
 ---
 
+## Lo que dejó cerrar SACN5 entera, el 11 de septiembre
+
+Las 474 tablas y los 2.999 elementos de texto quedan con veredicto, los dos
+contadores en 0. Salen **28 hallazgos**, medidos en `HALLAZGOS_SACN5_11SEP.md`.
+Los que piden una decisión, por orden de lo que cambiarían:
+
+- 🔴 **El techo de calcio del perro sénior no está, y estaba en la fila de al
+  lado.** «Foods with 0.4 to 0.8% DM calcium are recommended for mature dogs»
+  (cap.14). El 0,8 % son **2000 mg/1000 kcal** y el motor le deja el máximo de
+  FEDIAF, **6250**. El techo de fósforo del sénior salió de esa misma tabla el
+  8 de septiembre. Hay que medir si cabe antes de aplicarlo.
+- 🟠 **La proteína y el calcio en orina, en el perro.** A 31 % de materia seca
+  de proteína la excreción urinaria de calcio casi se dobla frente a 10 %
+  (cap.46), y el cap.41 lo repite con 40 %. Una ración BARF va por encima del
+  31 %. `urolitos_oxalato_calcico` no tiene tope de proteína.
+- 🟠 **El urato tiene una segunda palanca sin usar**: proteína por encima del
+  20 % de MS (cap.39, dos veces). `urolitos_urato` no aplica hoy ninguna cifra;
+  el filtro es solo por purinas.
+- 🟠 **La cistina, proteína 10-18 % de MS** (cap.42). El extremo alto son 45
+  g/1000 kcal, clavado el mínimo de FEDIAF: la ventana sería de un punto.
+- 🟠 **EPA y DHA del cachorro posdestete**: «EPA should not exceed 60% of the
+  total amount of DHA plus EPA» (cap.16). El motor solo mira la suma, así que
+  un menú con todo EPA y nada de DHA sale verde. El mecanismo de ratio existe
+  desde el 10 de septiembre.
+- **El techo de vitamina E que FEDIAF no tiene**: 1.000 UI/kg MS (cap.7).
+  Confirma además que el suelo escrito y apagado (400) cabe holgado debajo.
+- **El selenio, tres cifras y las tres por encima de FEDIAF** (cap.7): rango
+  protector 125-325 µg/1000 kcal y techo de AAFCO 500, contra el máximo de
+  FEDIAF de 142. Gana FEDIAF; ya estaba escrito, lo nuevo es que son tres.
+- **Dato que falta**: taurina (ninguna de las 163 fichas la tiene, y decide en
+  la cardiomiopatía dilatada), yodo de la sal yodada (66,7 µg/g), aceite MCT
+  para la linfangiectasia, y páncreas crudo para la insuficiencia pancreática.
+- **Aviso que falta**: el calcio de una ración cruda quela ciertos antibióticos
+  (cap.69). No cambia una cifra, cambia un texto.
+
 ## Lo que dejó la lectura íntegra de NRC 2006 (11 de septiembre de 2026)
 
 Los 15 capítulos, con registro en `LECTURA_NRC2006.md`. Cuatro cosas quedan

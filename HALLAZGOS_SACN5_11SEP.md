@@ -161,3 +161,120 @@ y el resto son **preguntas para el nutricionista**. Los 19 están en
 recuento en **22** —los 3 del día 10 más estos 19— exacto y por separado del de
 pendientes: el número que baja al trabajar no puede tapar al que sube al
 encontrar algo.
+
+---
+
+# Segunda parte: lo que salió del TEXTO
+
+Las tablas eran la mitad. La otra mitad eran **1.687 frases sin veredicto**, y de
+leerlas salen **nueve cifras caninas más** que el motor no aplica. Con esto el
+contador del texto queda también en **0 de 2.999**.
+
+## 12 · El calcio del perro sénior, que estaba en la fila de al lado
+
+Es el que más duele de los nueve. El 8 de septiembre se aplicó el techo de
+fósforo del sénior (1750 mg/1000 kcal) leyendo la Tabla 14-2 del capítulo 14.
+La fila siguiente de esa misma tabla dice, literal:
+
+> «Foods with 0.4 to 0.8% DM calcium are recommended for mature dogs»
+
+El 0,8 % son **2000 mg/1000 kcal**. El motor **no tiene techo de calcio para el
+sénior**: le deja el máximo de FEDIAF, que son 6250. Se leyó una fila y no la de
+al lado. Es exactamente la clase de hueco que este contador existe para
+encontrar, y por eso la lectura por elementos no sobra aunque el capítulo esté
+leído entero.
+
+## 13 · La proteína y el calcio en orina, en dos capítulos y en el perro
+
+En el capítulo 46, que es **felino**, hay una frase del **perro**:
+
+> «The 24-hour urinary calcium excretion almost doubled when dogs were fed a food
+> containing 31% DM protein compared with calcium excretion for dogs fed a food
+> containing 10% DM protein (Bartges et al, 1995)»
+
+Y el capítulo 41 lo repite: «Hypercalciuria occurs in normal dogs fed
+high-protein foods (40% dry matter [DM])». Una ración BARF va por encima del
+31 %. El motor tiene `urolitos_oxalato_calcico` con su ratio Ca:P y **sin tope de
+proteína**. La propia fuente avisa de que el tipo de proteína, la duración y el
+fósforo cambian el efecto, así que es decisión clínica y no se aplica sola.
+
+## 14 · El urato tiene una segunda palanca y el motor solo usa una
+
+El motor filtra el urato por **purinas** (`purinas_fuente`, ficha a ficha). El
+capítulo 39 dice dos veces que los dálmatas que comen alimentos con **más del
+20 % de materia seca de proteína** forman más urato. Son 50 g/1000 kcal contra
+los ~105 de un BARF. `urolitos_urato` no aplica hoy **ninguna** cifra.
+
+## 15 · La cistina, con una ventana de un punto
+
+> «Protein levels in foods for dogs with cystine urolithiasis should be between 10 to 18% dry matter (DM).»
+
+Son 25-45 g/1000 kcal, y **45 es clavado el mínimo de FEDIAF**. El motor aplica a
+`cistina` un solo tope, el de sodio. El de proteína no está, y si se aplicara la
+ventana sería de un punto. Hay que preguntar antes de tocarlo.
+
+## 16 · El techo de vitamina E que FEDIAF no tiene
+
+FEDIAF deja el máximo de vitamina E del adulto **vacío**. El capítulo 7 propone
+uno:
+
+> «an upper limit of toxicity has not been documented, a level of 1,000 IU/kg DM
+> of food, or 45 IU/ kg of body weight, has been suggested (NRC, 2006)»
+
+Sirve para dos cosas. Da un techo donde no había ninguno, y confirma que el
+**suelo** de 400 UI/kg MS que llevamos escrito y apagado cabe holgado debajo.
+
+## 17 · El selenio, tres cifras en el mismo capítulo y las tres por encima
+
+El capítulo 7 da el rango protector («0.50 to 1.3 mg selenium/kg food DM for dogs
+and cats», que son 125-325 µg/1000 kcal) y además el techo de seguridad de AAFCO
+(«a safe upper limit of 2 mg selenium/kg diet for dogs», 500 µg/1000 kcal). El
+máximo de FEDIAF es **142**. Gana FEDIAF, y la discrepancia ya estaba escrita;
+lo nuevo es que ahora se ve que son tres cifras y no una.
+
+## 18 · El EPA y el DHA del cachorro, que el motor solo mira sumados
+
+Del capítulo 16, y es **posdestete**, o sea nuestra etapa de crecimiento:
+
+> «At this level, EPA should not exceed 60% of the total amount of DHA plus EPA
+> (NRC, 2006)»
+
+El motor verifica `epa_dha` como **suma**. Un menú con todo EPA y nada de DHA sale
+verde hoy. El mecanismo de ratio existe desde el 10 de septiembre, así que lo que
+falta no es motor: es la decisión.
+
+## 19 · El yodo de la sal yodada, que es una ficha del catálogo
+
+> «It is difficult to meet the iodine requirement without using the iodized form
+> (400 µg of iodine/6 g [1 tsp]»
+
+Son 66,7 µg de yodo por gramo. El catálogo tiene una ficha de sal común que está
+en `DATOS_QUE_FALTAN.md`, y el yodo es uno de los cinco topes de seguridad
+crónica. Es una cifra concreta contra la que contrastar la etiqueta.
+
+## 20 · El calcio de la ración cruda quela antibióticos
+
+Del capítulo 69: las sales de calcio y los alimentos ricos en calcio quelan
+ciertos antibióticos. Una ración BARF lleva mucho calcio, de hueso o de
+carbonato, así que esto toca justo a nuestros perros. No cambia una cifra: cambia
+un aviso, el día que la ficha pregunte qué toma el perro.
+
+## 21 · Los triglicéridos de cadena media, que no están en el catálogo
+
+El capítulo 58 los recomienda para la linfangiectasia y dice de dónde salen
+(aceite de coco). Ninguna de las 163 fichas es aceite de coco ni MCT, y la
+linfangiectasia es justo donde servirían. Es dato que falta, no código.
+
+---
+
+## Y lo que confirmó que lo aplicado está bien
+
+No todo lo que sale de una lectura es un agujero. Estas frases dicen, con su
+número, que el motor acierta: el techo de fósforo del sénior (1750), el de sodio
+del perro sano (1000, y lo dicen **tres** capítulos), el tope de grasa de las tres
+patologías digestivas (15 % de materia seca), la proteína de la pancreatitis
+(30 % de MS), la de la flatulencia (30 %), el potasio de la enteropatía (1,1 %),
+el suelo de proteína de la linfangiectasia (25 %), el techo de calcio del cachorro
+de raza grande (1,2 % de MS, tercera fuente que lo dice) y **la arginina que sube
+con la proteína**, que aquí la pide una segunda fuente independiente de FEDIAF con
+la misma cifra: 0,01 g por cada 1 % de proteína bruta.
