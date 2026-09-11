@@ -45,13 +45,59 @@ from motor_completo import resolver as resolver_v2, especie_de
 # PATOLOGIAS: los topes por patología, para poder comprobarlos también
 # en la puerta de verificación (ver _tope_patologia_roto).
 from constructor import tabla_imputacion_maximos, valor_para_maximo, valor_nutriente
-from motor_completo import PATOLOGIAS, topes_de_patologias
+from motor_completo import PATOLOGIAS, topes_de_patologias, RAZA_GRANDE_O_GIGANTE_KG
 from exclusiones import filtrar as filtrar_exclusiones
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
 from verificar import verificar as verificar_v2
-from verificar import peso_objetivo_desde_bcs, BCS_ESCALA_SATURADA
+from verificar import (peso_objetivo_desde_bcs, BCS_ESCALA_SATURADA,
+                       BCS_NEUTRO as BCS_NEUTRO_MAIN)
+# ⚠️ El DER por kg de peso metabólico, que es lo que dispara el escalado de los
+# mínimos. Se importa de `verificar` y no se recalcula aquí: es el único sitio
+# que sabe hacerlo, y dos copias de esta cuenta serían dos criterios.
+from verificar import der_efectiva_de
 from seguridad import revisar_seguridad as revisar_seguridad_v2
 from seguridad import avisos_rotacion as avisos_rotacion_v2
+
+# ⚠️ CÓMO SE ESCRIBE UN NUTRIENTE EN UN MENSAJE (8 septiembre).
+#
+# Lo necesita el diagnóstico de choque entre patologías, que tiene que
+# escribir «el fósforo de la renal, 1200 mg por cada 1000 kcal» a partir de
+# la clave interna `fosforo`. Se DERIVA del `MAPA` del verificador y de la
+# tabla de FEDIAF, nunca se escribe a mano: una lista de nombres copiada es
+# exactamente el fallo del que avisa la regla 5 del CLAUDE.md -- el día que
+# se añada un nutriente, una lista a mano se queda corta EN SILENCIO y el
+# mensaje enseña la clave interna al veterinario.
+_NOMBRE_NUTRIENTE = {}
+_UNIDAD_DE = {}
+# ⚠️ LA TABLA DE FEDIAF, CARGADA UNA VEZ AL ARRANCAR Y COMPARTIDA (10 sep). Ya se
+# leia aqui para el nombre y la unidad de cada nutriente; ahora tambien la usa
+# `_seguridad_completa` para saber el maximo de calcio sin volver a cargar el
+# fichero en cada peticion ni tener una segunda copia. Si la carga falla, se
+# queda en None y el aviso que depende de ella simplemente no sale.
+_REQ_FEDIAF = None
+try:
+    from verificar import MAPA as _MAPA_NUTRIENTES
+    # `cargar_v2()` devuelve los requisitos como dict indexado por el nombre
+    # de FEDIAF, que es la misma clave que usa el MAPA del verificador.
+    _, _req_unidades = cargar_v2()
+    _REQ_FEDIAF = _req_unidades
+    for _fediaf, _clave in _MAPA_NUTRIENTES.items():
+        _NOMBRE_NUTRIENTE[_clave] = _fediaf.replace("_", " ").lower()
+        _u = (_req_unidades.get(_fediaf) or {}).get("unidad") or ""
+        _UNIDAD_DE[_clave] = "" if _u == "ratio" else _u
+except Exception as _e:   # nunca puede impedir que arranque la API
+    print(f"[aviso] no se pudo montar el nombre legible de los nutrientes: {_e}")
+
+
+def _num_bonito(v):
+    """1200.0 -> «1200»; 14.1875 -> «14,19». Para texto, no para cálculo."""
+    try:
+        f = float(v)
+    except (TypeError, ValueError):
+        return str(v)
+    if abs(f - round(f)) < 1e-9:
+        return str(int(round(f)))
+    return f"{f:.2f}".replace(".", ",")
 
 # ⚠️ AÑADIDO (5 agosto, madrugada) — DOS CASOS REALES ENCONTRADOS
 # AUDITANDO: (1) avisos_rotacion() ya existía en seguridad.py, con
@@ -64,6 +110,20 @@ from seguridad import avisos_rotacion as avisos_rotacion_v2
 # vez. Esta función combina ambas cosas en un solo sitio, para usarla
 # en TODOS los puntos donde se devuelve un menú (generación Y edición).
 def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=None):
+    # ⚠️ AQUI SOLO VA LO QUE TIENE QUE VER EL DUEÑO (10 septiembre, corregido el
+    # mismo dia). Esta lista sale por `problemas_seguridad`, y la app la pinta
+    # en las DOS vistas -- la del dueño y la del profesional --, asi que lo que
+    # se meta aqui lo lee todo el mundo.
+    #
+    # La SEGUNDA lista que devuelve `revisar_seguridad` (`avisos`) NO va aqui:
+    # son notas de interpretacion clinica -- «puede hacer falta mas zinc»,
+    # «conviene mirar la taurina en sangre» -- y decirle eso a alguien que solo
+    # quiere alimentar bien a su perro es ruido que ademas asusta. Elena, hoy:
+    # «esos avisos nunca tiene que verlos un usuario, solo un veterinario».
+    #
+    # Van por `avisos_profesional`, y se ponen en UN SOLO SITIO: dentro de
+    # `_garantizar_verificado`, que es por donde pasa TODO menu antes de salir
+    # (regla 1). Asi no hay once sitios que acordarse de tocar.
     problemas = list(revisar_seguridad_v2(gramos, al, der, etapa, patologias,
                                           peso_perro_kg=peso_perro_kg) or [])
     problemas += list(avisos_rotacion_v2(gramos, al) or [])
@@ -107,7 +167,8 @@ def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=N
 def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
     from seguridad import (
         TIAMINASA, MERCURIO_ALTO, TOPE_TIAMINASA_KCAL, TOPE_MERCURIO_KCAL,
-        TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL, TOPE_SELENIO_KCAL, _es,
+        TOPE_VITD_KCAL, TOPE_VITD_KG075, TOPE_YODO_KCAL, TOPE_SELENIO_KCAL,
+        TOPE_YODO_KG075, TOPE_SELENIO_KG075, _es,
     )
     if not der:
         return True  # sin DER no se puede evaluar nada -- no bloquear por falta de dato
@@ -129,7 +190,16 @@ def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
         return False
 
     yodo_ug = sum(al.get(n, {}).get("nutrientes", {}).get("yodo", 0) * g / 100.0 for n, g in gramos.items())
-    if yodo_ug > TOPE_YODO_KCAL * der / 1000.0:
+    # ⚠️ EL PERRO DE TRABAJO (11 septiembre): el yodo y el selenio se topan
+    # también por PESO METABÓLICO, igual que la vitamina D dos bloques arriba.
+    # Un tope por energía deja pasar el doble a quien come el doble, y NRC 2006
+    # cap.11 dice que el invariante es el de peso. El filtro final tiene que
+    # mirar lo mismo que el solver o construiría menús que él mismo rechaza --
+    # que es la lección del 8 de septiembre con los suelos de patología.
+    tope_yodo = TOPE_YODO_KCAL * der / 1000.0
+    if peso_perro_kg and peso_perro_kg > 0:
+        tope_yodo = min(tope_yodo, TOPE_YODO_KG075 * (peso_perro_kg ** 0.75))
+    if yodo_ug > tope_yodo:
         return False
 
     # ⚠️ El selenio se topa POR ENERGÍA y no por peso de comida. Antes iba
@@ -138,7 +208,10 @@ def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
     # eso dejaba pasar entre tres y cuatro veces el límite real. Ver
     # TOPE_SELENIO_KCAL en seguridad.py.
     selenio_ug = sum(al.get(n, {}).get("nutrientes", {}).get("selenio", 0) * g / 100.0 for n, g in gramos.items())
-    if selenio_ug > TOPE_SELENIO_KCAL * der / 1000.0:
+    tope_selenio = TOPE_SELENIO_KCAL * der / 1000.0
+    if peso_perro_kg and peso_perro_kg > 0:
+        tope_selenio = min(tope_selenio, TOPE_SELENIO_KG075 * (peso_perro_kg ** 0.75))
+    if selenio_ug > tope_selenio:
         return False
 
     return True
@@ -208,7 +281,9 @@ def _valor_num(v):
         return None
 
 
-def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto"):
+def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto",
+                         req=None, der_efectiva=None,
+                         peso_adulto_esperado_kg=None):
     """¿Este menú se pasa de algún tope por patología? Devuelve la lista de
     los que se pasa, vacía si está bien.
 
@@ -227,8 +302,14 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto"):
 
     Se mide sobre las kcal REALES del menú, no sobre las pedidas: es como se
     definen los topes y como se lo va a comer el perro.
+
+    ⚠️ AMPLIADO (8 septiembre) — TAMBIÉN COMPRUEBA LOS TECHOS DEL PERRO ADULTO
+    SANO (`motor/recomendaciones.py`): el fósforo y el sodio que SACN5
+    recomienda para CUALQUIER adulto, tenga lo que tenga. Por eso ya no vale
+    salirse cuando no hay ninguna patología marcada: el perro sin nada es
+    justamente al que se le aplican.
     """
-    if not patologias or not gramos:
+    if not gramos:
         return []
     kcal = sum((al.get(n, {}).get("energia", 0) or 0) / 100.0 * g
                for n, g in gramos.items())
@@ -258,10 +339,39 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto"):
     # comprobación y la restricción podrían decir cosas distintas -- que es
     # exactamente lo que pasó entre el analizador y el semáforo con la fibra.
     topes, pct, _, suelos = topes_de_patologias(patologias, etapa)
+    # ⚠️ Y LOS DEL PERRO SANO, con el mismo `min()` que usa el solver (8
+    # septiembre). Tienen que resolverse EXACTAMENTE igual que allí o esta
+    # comprobación y la restricción dirían cosas distintas, que es el fallo
+    # que este bloque entero existe para no repetir.
+    # ⚠️ CON `req` Y `der_efectiva` EL TECHO DEL LIBRO PUEDE CEDER, exactamente
+    # igual que en el solver. Tienen que decidirlo con el MISMO criterio o esta
+    # comprobación tiraría menús que el solver construyó bien: a DER 49 el
+    # mínimo de fósforo de FEDIAF (2249) supera al techo del libro (2000), el
+    # solver deja de aplicarlo y el menú sale con 2216 -- correcto. Sin
+    # pasarle `req` aquí, este filtro lo rechazaría por «pasarse» de un techo
+    # que ya no está puesto.
+    # ⚠️ Y CON EL PESO ADULTO ESPERADO (9 septiembre), por lo mismo: los techos
+    # de crecimiento tienen dos columnas segun el perro pase o no de 25 kg de
+    # adulto. Si el solver aplica el de 2750 y este filtro midiera contra el de
+    # 4250, el filtro dejaria pasar menus que el solver no habria construido --
+    # y al reves, que es peor: tiraria menus buenos.
+    from recomendaciones import topes_de_la_etapa as _topes_etapa
+    _del_libro = set()
+    for _clave_r, _valor_r in _topes_etapa(etapa, req, der_efectiva,
+                                           peso_adulto_esperado_kg).items():
+        _actual_r = topes.get(_clave_r)
+        if _actual_r is None or _valor_r < _actual_r:
+            topes[_clave_r] = _valor_r
+            # Quién manda en este nutriente, para poder decirlo bien más abajo:
+            # «por patología» sobre un techo que viene del libro sería mentira, y
+            # a quien lo lee le mandaría a mirar la patología equivocada.
+            _del_libro.add(_clave_r)
     for clave, tope in topes.items():
         v = por_1000(clave)
         if v > tope * MARGEN:
-            rotos.append(f"{clave} {v:.1f} (tope {tope:.1f} por patología)")
+            _de = ("recomendado para el perro adulto sano" if clave in _del_libro
+                   else "por patología")
+            rotos.append(f"{clave} {v:.1f} (tope {tope:.1f} {_de})")
 
     # ⚠️ AÑADIDO (7 septiembre) — EL ESPEJO DEL CHEQUEO DE ARRIBA, PARA LOS
     # SUELOS. Sin margen de redondeo A FAVOR (al revés que el tope: aquí lo
@@ -277,11 +387,69 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto"):
             total += valor_nutriente(al.get(n, {}).get("nutrientes", {}), clave) / 100.0 * g
         return total / kcal * 1000.0
 
+    # ⚠️ Y LOS SUELOS DEL LIBRO PARA EL PERRO SANO (11 septiembre), con el
+    # mismo `max()` y la misma función que usa el solver. La vitamina E que
+    # SACN5 pide a CUALQUIER adulto es un límite duro desde hoy, así que tiene
+    # que comprobarse también aquí: la regla 2 no distingue entre un tope y un
+    # suelo, distingue entre «lo mira el filtro final» y «no lo mira nadie».
+    from recomendaciones import suelos_de_la_etapa as _suelos_libro
+    _del_libro_suelo = set()
+    for _clave_r3, _valor_r3 in _suelos_libro(etapa, req,
+                                              peso_adulto_esperado_kg).items():
+        _actual_r3 = suelos.get(_clave_r3)
+        if _actual_r3 is None or _valor_r3 > _actual_r3:
+            suelos[_clave_r3] = _valor_r3
+            _del_libro_suelo.add(_clave_r3)
+
+    # ⚠️ Y LOS SUELOS CONDICIONALES (8 septiembre, noche), con el mismo `max()`
+    # que usa el solver: la proteína de gestación y lactancia, que FEDIAF calcula
+    # suponiendo hidratos que una ración BARF no lleva. Si el solver lo exige y
+    # este filtro no lo mirara, el hueco sería justo el de la regla 2 -- un menú
+    # construido bien que nadie vuelve a comprobar.
+    from condicionales import suelos_de_la_etapa as _suelos_cond
+    for _clave_c, _valor_c in _suelos_cond(etapa).items():
+        _actual_c = suelos.get(_clave_c)
+        if _actual_c is None or _valor_c > _actual_c:
+            suelos[_clave_c] = _valor_c
+            _del_libro_suelo.add(_clave_c)
+
     MARGEN_SUELO = 0.995
     for clave, suelo in suelos.items():
         v = _por_1000_min(clave)
         if v < suelo * MARGEN_SUELO:
-            rotos.append(f"{clave} {v:.1f} (suelo {suelo:.1f} por patología)")
+            _de_s = ("exigido por la etapa, no por una patología"
+                     if clave in _del_libro_suelo else "por patología")
+            rotos.append(f"{clave} {v:.1f} (suelo {suelo:.1f} {_de_s})")
+    # ⚠️ AÑADIDO (10 septiembre) — LOS RATIOS QUE PIDE UNA PATOLOGÍA.
+    #
+    # Es el mismo agujero de siempre visto en un cociente: el semáforo comprueba
+    # el Ca:P contra el rango de FEDIAF, que en adulto es 1,0-2,0, y la Tabla
+    # 40-5 del oxalato pide 1,1-2,0. Un menú con 1,06 sale VERDE y está por
+    # debajo de lo que pide la fuente para ese perro. Medido: pasaba en el perro
+    # de 30 kg.
+    #
+    # Se mide con `valor_nutriente` -- el valor DECLARADO, sin imputar huecos --
+    # y con el mismo 0,5 % de margen que usa el semáforo para este mismo ratio,
+    # porque el solver construye su fila con exactamente estos números. Si aquí
+    # se imputaran los huecos y allí no, este filtro tiraría menús que el solver
+    # construyó bien: es la lección del 8 de septiembre, y en un cociente pesa el
+    # doble porque el hueco puede caer en el numerador o en el denominador.
+    from motor_completo import ratios_de_patologias as _ratios_pat
+    for (_n_r, _d_r), _cotas_r in _ratios_pat(patologias, etapa).items():
+        _tot_n = sum(valor_nutriente(al.get(n, {}).get("nutrientes", {}), _n_r) / 100.0 * g
+                     for n, g in gramos.items())
+        _tot_d = sum(valor_nutriente(al.get(n, {}).get("nutrientes", {}), _d_r) / 100.0 * g
+                     for n, g in gramos.items())
+        if _tot_d <= 0:
+            continue
+        _ratio_real = _tot_n / _tot_d
+        if _cotas_r.get("min") is not None and _ratio_real < _cotas_r["min"] * 0.995:
+            rotos.append(f"{_n_r}:{_d_r} {_ratio_real:.2f} "
+                         f"(mínimo {_cotas_r['min']:.2f} por patología)")
+        if _cotas_r.get("max") is not None and _ratio_real > _cotas_r["max"] * MARGEN:
+            rotos.append(f"{_n_r}:{_d_r} {_ratio_real:.2f} "
+                         f"(máximo {_cotas_r['max']:.2f} por patología)")
+
     if pct is not None:
         grasa_g = sum((_valor_num(al.get(n, {}).get("nutrientes", {}).get("grasa")) or 0.0) / 100.0 * g
                       for n, g in gramos.items())
@@ -330,7 +498,6 @@ def _minimo_calcio_raza_grande_roto(gramos, al, req, etapa, peso_adulto_esperado
     la cita literal de la footnote "b" de la Tabla III-3b de FEDIAF 2025
     (página 21 del PDF, leída a mano, no de memoria).
     """
-    RAZA_GRANDE_O_GIGANTE_KG = 15
     if not gramos or not peso_adulto_esperado_kg:
         return None
     if peso_adulto_esperado_kg < RAZA_GRANDE_O_GIGANTE_KG:
@@ -355,6 +522,65 @@ def _minimo_calcio_raza_grande_roto(gramos, al, req, etapa, peso_adulto_esperado
     if tasa < minimo * 0.995:
         return (f"calcio {tasa:.0f} mg/1000 kcal (mínimo {minimo:.0f} en raza "
                 f"grande en crecimiento)")
+    return None
+
+
+# ⚠️ AÑADIDO (8 septiembre) — LA OTRA MITAD DE LA MISMA NOTA b.
+#
+# La nota b de la Tabla III-3b de FEDIAF 2025 manda DOS cosas para el cachorro
+# de raza grande, y hasta hoy solo se aplicaba una. Literal, del PDF (pág. 21),
+# leído a mano:
+#
+#   «For puppies of breeds with adult body weight over 15 kg, until the age of
+#    about 6 months. Only after that time, calcium can be reduced to 0.8 % DM
+#    (2 g/1000 kcal or 0.48 g/MJ) AND THE CALCIUM-PHOSPHORUS RATIO CAN BE
+#    INCREASED TO 1.8/1.»
+#
+# Y la propia fila del ratio en la III-3b: «Late growth: 1.8/1a (N) or 1.6/1b
+# (N)». O sea: 1,8 es el techo del cachorro de raza PEQUEÑA y 1,6 el de la
+# grande. El motor aplicaba 1,8 a los dos, así que un cachorro de raza grande
+# podía recibir un menú con el ratio entre 1,6 y 1,8 -- por encima del techo
+# que su propia fuente le pone-- y salir VERDE, porque el semáforo mide contra
+# la fila genérica.
+#
+# Es el mismo agujero que ya se cerró con el mínimo de calcio y por el mismo
+# motivo: `verificar()` no sabe qué raza es el perro. Y aquí importa más que
+# allí, porque el mínimo reforzado de calcio EMPUJA EL RATIO HACIA ARRIBA: las
+# dos mitades de la nota b tiran en sentidos opuestos y aplicar solo una deja
+# al perro justo del lado malo.
+#
+# ⚠️ MEDIDO ANTES DE PONERLO: 0 de 32 menús de cachorro de raza grande caían
+# entre 1,6 y 1,8, así que el agujero era real en las reglas y no estaba dando
+# menús malos hoy. Se cierra igual: lo que lo tapaba es una propiedad del
+# catálogo de hoy, no una garantía.
+def _ratio_cap_raza_grande_roto(gramos, al, req, etapa, peso_adulto_esperado_kg):
+    """¿Este menú se pasa del techo de Ca:P REFORZADO de las razas grandes en
+    crecimiento? Devuelve el texto del fallo, o None.
+
+    Mismo umbral y misma fila de la tabla que usa el solver: si se leyera aquí
+    de otra manera, la comprobación y la restricción podrían discrepar.
+    """
+    if not gramos or not peso_adulto_esperado_kg:
+        return None
+    if peso_adulto_esperado_kg < RAZA_GRANDE_O_GIGANTE_KG:
+        return None
+    if etapa not in ("CachorroJoven", "CachorroCrecimiento"):
+        return None
+    fila = (req or {}).get("Calcio_LateGrowth_RazaGrande")
+    techo = _valor_num((fila or {}).get("maxRatioCaP"))
+    if not techo:
+        return None
+    ca = sum((_valor_num(al.get(n, {}).get("nutrientes", {}).get("calcio")) or 0.0) / 100.0 * g
+             for n, g in gramos.items())
+    p = sum((_valor_num(al.get(n, {}).get("nutrientes", {}).get("fosforo")) or 0.0) / 100.0 * g
+            for n, g in gramos.items())
+    if p <= 0:
+        return None
+    ratio = ca / p
+    # El mismo 0,5 % de margen por redondeo que usa el semáforo para el ratio.
+    if ratio > techo * 1.005:
+        return (f"ratio Ca:P {ratio:.2f}:1 (máximo {techo}:1 en raza grande en "
+                f"crecimiento, nota b de FEDIAF)")
     return None
 # ⚠️ LA ESCALERA DEL PESO DE REFERENCIA (28 agosto). UN SOLO SITIO.
 #
@@ -393,13 +619,99 @@ def _peso_de_referencia(datos):
             # nada- pero quien lea la respuesta tiene que poder verlo.
             if float(bcs) >= BCS_ESCALA_SATURADA:
                 return derivado, "derivado_del_bcs_cota_inferior"
+            # ⚠️ Y POR DEBAJO DE 5 TAMBIEN SE ESTIMA DESDE EL 9 DE SEPTIEMBRE,
+            # hacia ARRIBA: el peso óptimo de un perro delgado es mayor que el
+            # suyo. Aquí ponía que «la regla no existe hacia abajo», apoyándose
+            # en AAHA 2021 -- y era verdad de AAHA y falso del conjunto: FEDIAF
+            # tiene las cuatro filas de BCS 1 a 4 en su Tabla VII-2, y su §7.1.1
+            # dice que la energía se calcula sobre el peso óptimo sin distinguir
+            # dirección. Manda FEDIAF.
+            #
+            # Se devuelve con procedencia propia porque la corrección al alza va
+            # topada al 20 % (un perro muy delgado suele estarlo por una
+            # enfermedad), así que en BCS 1, 2 y 3 el número es el tope y no la
+            # estimación.
+            if float(bcs) < BCS_NEUTRO_MAIN:
+                return derivado, "derivado_del_bcs_por_debajo_del_ideal"
             return derivado, "derivado_del_bcs"
-        # Por debajo de BCS 5 no se estima: la regla no existe hacia abajo
-        # y AAHA 2021 dice lo contrario -«base feeding calculations on
-        # current weight if ideal or underweight»-. Se usa el peso real.
     if actual:
         return float(actual), "peso_real_sin_objetivo"
     return None, "sin_peso"
+
+
+def _avisos_para_el_profesional(gramos, al, der, etapa, patologias=None,
+                                peso_perro_kg=None, actividad=None):
+    """Las notas que solo tienen sentido para quien sabe interpretarlas.
+
+    ⚠️ POR QUE ESTAN SEPARADAS (10 septiembre). `revisar_seguridad` devuelve dos
+    listas: `problemas`, que son cosas que el dueño tiene que hacer o saber
+    ("compra el pescado bien frio", "la uva no se da"), y `avisos`, que son
+    lecturas del menu que solo sirven si se sabe que hacer con ellas:
+
+      · la vitamina A viene de tres fuentes a la vez, y el total esta dentro
+      · el calcio va al 99 % de su techo, y FEDIAF avisa de que con el calcio
+        alto puede hacer falta mas zinc y mas cobre
+      · el menu lleva cordero, y FEDIAF relaciona el cordero con la taurina baja
+        en las razas que la sintetizan peor
+
+    Ninguna de las tres es un incumplimiento y ninguna se arregla cambiando el
+    menu. A un dueño le sobran; a un veterinario le dicen exactamente que mirar.
+
+    Y hasta hoy NO SALIAN DE LA API: `_seguridad_completa` llamaba a
+    `revisar_seguridad` sin `devolver_avisos=True`, asi que la segunda lista se
+    construia y se tiraba. Llevaba asi desde agosto.
+    """
+    try:
+        _, avisos = revisar_seguridad_v2(gramos, al, der, etapa, patologias,
+                                         peso_perro_kg=peso_perro_kg,
+                                         devolver_avisos=True,
+                                         requerimientos=_REQ_FEDIAF)
+        avisos = list(avisos or [])
+        avisos += _aviso_del_perro_de_trabajo(etapa, actividad, der, peso_perro_kg)
+        return avisos
+    except Exception as e:      # nunca puede tumbar la entrega de un menu
+        print(f"[aviso] no se pudieron calcular los avisos del profesional: {e}")
+        return []
+
+
+# Los dos escalones de actividad que las fuentes llaman «perro de trabajo».
+ACTIVIDADES_DE_TRABAJO = ("muy_activo", "trabajo")
+
+
+def _aviso_del_perro_de_trabajo(etapa, actividad, der, peso_perro_kg):
+    """La nota del perro de trabajo: su fuente le pide MÁS fósforo del que le
+    dejamos, y eso lo tiene que saber quien firma la pauta.
+
+    ⚠️ POR QUÉ EXISTE (11 septiembre). Elena: «pero nosotros si tenemos lo de
+    perro de trabajo no? no se puede aplicar?». Sí lo tenemos -- la ficha lo
+    pregunta -- y hasta hoy **no llegaba al motor**: la app lo usaba para
+    calcular las kcal y mandaba solo el número.
+
+    Lo que el motor SÍ hace ya sin este dato es apretar los topes crónicos por
+    peso metabólico, que es aritmética y va del lado seguro. Lo que NO puede
+    hacer solo es lo contrario: el techo de fósforo de 2000 mg/1000 kcal sale de
+    la Tabla 13-3 de SACN5, que es la del perro adulto JOVEN en mantenimiento, y
+    la Tabla 4.2 de Fascetti da al perro de resistencia **3 g/Mcal, o sea 3000**.
+    Un 50 % más.
+
+    Aflojar un techo es decisión clínica y no la toma el motor. Lo que sí puede
+    hacer es **decirlo**, que es para lo que existe este canal.
+    """
+    if actividad not in ACTIVIDADES_DE_TRABAJO:
+        return []
+    if etapa not in ("Adulto", "Senior"):
+        return []
+    return [
+        "PERRO DE TRABAJO. A este menú se le aplica el techo de fósforo del perro adulto sano "
+        "(2000 mg/1000 kcal en adulto, 1750 en sénior), que sale de SACN5 cap.13, Tabla 13-3 -- "
+        "la del perro en mantenimiento. La fuente del perro de trabajo propone MÁS: Fascetti & "
+        "Delaney 2ª ed., Tabla 4.2, da al perro de resistencia 3 g de fósforo por Mcal, o sea "
+        "3000 mg/1000 kcal, un 50 % por encima. El motor NO afloja ese techo solo: aflojarlo es "
+        "una decisión clínica. || Y en sentido contrario, el motor SÍ aprieta por su cuenta los "
+        "topes de seguridad crónica (yodo, selenio, mercurio, tiaminasa y vitamina D), porque un "
+        "tope por 1000 kcal deja pasar el doble a quien come el doble. NRC 2006 cap.11: «Safe "
+        "upper limits expressed relative to body weight will remain the same». Eso es aritmética "
+        "y va del lado seguro, así que no espera a que nadie lo decida."]
 
 
 def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
@@ -431,9 +743,14 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
     ficha = verificar_v2(gramos, al, req, der, etapa,
                          peso_referencia_kg=(peso_objetivo_kg or peso_perro_kg))
     seguro = _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg)
-    topes_rotos = _tope_patologia_roto(gramos, al, patologias, etapa)
+    topes_rotos = _tope_patologia_roto(
+        gramos, al, patologias, etapa, req=req,
+        der_efectiva=der_efectiva_de(der, peso_objetivo_kg or peso_perro_kg),
+        peso_adulto_esperado_kg=peso_adulto_esperado_kg)
     calcio_corto = _minimo_calcio_raza_grande_roto(gramos, al, req, etapa,
                                                    peso_adulto_esperado_kg)
+    ratio_pasado = _ratio_cap_raza_grande_roto(gramos, al, req, etapa,
+                                               peso_adulto_esperado_kg)
 
     # ¿es dable? Ver TOPE_GRAMOS_SOBRE_PESO, arriba.
     total_g = sum(gramos.values())
@@ -458,6 +775,25 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
             },
         }
 
+    # ⚠️ CADA RECHAZO DICE **TODOS** LOS MOTIVOS, NO SOLO EL PRIMERO (9
+    # septiembre). Los cuatro `if` de abajo devuelven en cuanto encuentran lo
+    # suyo, así que un menú que rompía tres cosas contaba una: arreglabas esa y
+    # aparecía la siguiente, y desde fuera parecía que el arreglo no había
+    # servido de nada.
+    #
+    # CASO REAL, y lo cazó el BLOQUE 53 al aplicar el techo de calcio del
+    # cachorro de raza grande: un menú con el ratio Ca:P a 1,79 lo empezó a
+    # parar el techo de calcio -- que va antes-- en vez de la guardia del ratio,
+    # y el test que comprueba que esa guardia sigue enchufada se quedó sin ver
+    # su motivo. El menú se paraba igual; lo que se perdía era saber por qué.
+    _todos_los_motivos = {}
+    if topes_rotos:
+        _todos_los_motivos["topes_de_patologia_rotos"] = topes_rotos
+    if calcio_corto:
+        _todos_los_motivos["minimo_calcio_raza_grande_roto"] = calcio_corto
+    if ratio_pasado:
+        _todos_los_motivos["ratio_cap_raza_grande_roto"] = ratio_pasado
+
     if topes_rotos:
         # Que esto salte significa que algún camino ha construido un menú
         # saltándose un tope por patología. No se entrega, y va a Sentry:
@@ -473,7 +809,7 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
             "motivo": ("El menú que salía se pasa de los límites de la patología "
                        "de este perro, así que no te lo damos. Prueba a cambiar "
                        "algún alimento o a quitar alguna restricción."),
-            "verificacion": {"topes_de_patologia_rotos": topes_rotos},
+            "verificacion": dict(_todos_los_motivos),
         }
 
     if calcio_corto:
@@ -493,7 +829,27 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
                        "de raza grande, que necesita más que uno pequeño mientras "
                        "crece. No te lo damos. Prueba a cambiar algún alimento o a "
                        "quitar alguna restricción."),
-            "verificacion": {"minimo_calcio_raza_grande_roto": calcio_corto},
+            "verificacion": dict(_todos_los_motivos),
+        }
+
+    if ratio_pasado:
+        # La otra mitad de la nota b de FEDIAF, mismo trato que el mínimo de
+        # calcio: es un fallo del motor, no de lo que haya pedido nadie.
+        observabilidad.capturar(
+            RuntimeError(f"Menu por encima del techo de Ca:P de raza grande "
+                         f"bloqueado en {origen}: {ratio_pasado}"),
+            endpoint=origen, etapa=etapa, der_objetivo=der,
+            peso_perro_kg=peso_perro_kg,
+            peso_adulto_esperado_kg=peso_adulto_esperado_kg,
+            ratio_pasado=ratio_pasado, n_alimentos=len(gramos))
+        return {
+            "factible": False,
+            "motivo": ("El menú que salía lleva demasiado calcio para el fósforo "
+                       "que tiene. En un cachorro de raza grande ese margen es más "
+                       "estrecho que en uno pequeño, porque un exceso durante el "
+                       "crecimiento afecta al hueso. No te lo damos. Prueba a "
+                       "cambiar algún alimento o a quitar alguna restricción."),
+            "verificacion": dict(_todos_los_motivos),
         }
 
     if ficha["semaforo"] != "verde" or not seguro:
@@ -533,6 +889,19 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
         "de": ficha["total"],
         "ratio_ca_p": ficha.get("ratio_ca_p"),
     }
+    # ⚠️ LAS NOTAS DEL PROFESIONAL SE PONEN AQUI Y EN NINGUN OTRO SITIO
+    # (10 septiembre). Este filtro es por donde pasa TODO menu antes de salir
+    # -- la regla 1 --, asi que poniendolas aqui salen en los once caminos sin
+    # que nadie tenga que acordarse de anadir la clave en cada uno. Es
+    # exactamente el motivo por el que la ficha tambien se calcula aqui y no en
+    # cada endpoint.
+    #
+    # Son NOTAS, no incumplimientos: van en su propia clave para que la app
+    # pueda enseñarselas SOLO al veterinario. Al dueño no le sirven -- ninguna
+    # se arregla cambiando el menu -- y algunas asustan sin motivo.
+    respuesta["avisos_profesional"] = _avisos_para_el_profesional(
+        gramos, al, der, etapa, patologias, peso_perro_kg,
+        actividad=respuesta.get("actividad"))
     return respuesta
 
 
@@ -645,6 +1014,26 @@ class PeticionMenu(BaseModel):
     # El BCS de 9 puntos, para derivar el objetivo cuando no viene
     # declarado. Ver `_peso_de_referencia`.
     bcs: Optional[float] = None
+    # ⚠️ AÑADIDO (11 septiembre) — LA ACTIVIDAD, QUE LA APP YA SABE Y NO MANDABA.
+    #
+    # Elena: «pero nosotros si tenemos lo de perro de trabajo no? no se puede
+    # aplicar?». Sí lo tenemos: la ficha lo pregunta y la app lo usa para
+    # calcular el DER. Lo que pasaba es que **se quedaba ahí**: a este endpoint
+    # solo llegaban las kcal ya calculadas, así que el motor veía un número y no
+    # sabía si era un galgo de sofá o un perro de trineo.
+    #
+    # El motor puede DEDUCIRLO del cociente DER/peso^0,75 -- de ahí salen los
+    # topes crónicos por peso metabólico del 11 de septiembre, y esa deducción
+    # se queda como respaldo para cuando este campo no venga. Pero deducir un
+    # dato que existe es peor que recibirlo, y aquí se ve por qué: FEDIAF pone
+    # al Gran Danés en 200 kcal/kg^0,75 POR RAZA, no por actividad (§7.2.3.4:
+    # la cifra de raza va EN VEZ del nivel de actividad), así que por el
+    # cociente sale «perro de trabajo» un perro que está tumbado.
+    #
+    # Valores: los cinco de `der.ACTIVIDAD_KEY` -- sedentario, normal, activo,
+    # muy_activo, trabajo. Opcional a propósito: mientras el frontend no lo
+    # mande, el motor sigue deduciendo y NO cambia de comportamiento.
+    actividad: Optional[str] = None
     nombres_excluidos: Optional[list] = None
     patologias: Optional[list] = None
     # ⚠️ AÑADIDO (8 septiembre) — EL PELDAÑO DE LA ESCALERA, ELEGIDO.
@@ -948,9 +1337,18 @@ def endpoint_catalogo(tamano: str, etapa: str, der_objetivo: float = None, peso_
         # por peso, puede quedarse CORTO en nutrientes sin superar ningún
         # tope -- y se servía igual. Ahora se verifica de verdad contra
         # los 30 requisitos por el mismo filtro que el resto.
+        # ⚠️ Y CON EL PESO ADULTO ESPERADO DEL TAMAÑO (9 septiembre). Este
+        # endpoint no recibe el peso adulto del perro -- solo su tamaño --,
+        # pero el tamaño ES eso: la entrada `<tamaño>_Adulto` del catálogo
+        # dice cuánto pesa de adulto un perro de ese grupo. Sin pasarlo, un
+        # menú de cachorro «Gigante» se comprobaría contra el techo de calcio
+        # del cachorro pequeño (4250 en vez de 2750) y este endpoint sería el
+        # agujero de la regla 1 para justo el perro al que más le importa.
+        _padu_cat = (CATALOGO.get(f"{tamano}_Adulto") or {}).get("peso_kg")
         verificado = _garantizar_verificado(
             {"factible": True, "gramos": gramos_escalados},
-            der_objetivo, etapa, peso_perro_kg, origen="/catalogo", al=al, req=_req_cat)
+            der_objetivo, etapa, peso_perro_kg, origen="/catalogo", al=al, req=_req_cat,
+            peso_adulto_esperado_kg=_padu_cat)
         if not verificado.get("factible"):
             return {"encontrado": False,
                     "motivo": "El menú de catálogo para este tamaño/etapa, reescalado a "
@@ -980,8 +1378,16 @@ def endpoint_menu_v2(datos: PeticionMenu):
     """
     observabilidad.etiquetar(endpoint="/menu/v2", etapa=datos.etapa_requisitos)
     try:
+        # ⚠️ LA ACTIVIDAD VIAJA CON LA RESPUESTA (11 septiembre), porque
+        # `_garantizar_verificado` es quien monta los avisos del profesional y
+        # necesita saber si es un perro de trabajo. Se pone ANTES de verificar,
+        # no después: si se pusiera después, un menú rechazado saldría sin el
+        # aviso y el único perro al que le importa es justo el que más come.
+        _interno_v2 = _resolver_menu_v2_interno(datos)
+        if isinstance(_interno_v2, dict) and datos.actividad:
+            _interno_v2["actividad"] = datos.actividad
         _resp_v2 = _garantizar_verificado(
-            _resolver_menu_v2_interno(datos),
+            _interno_v2,
             datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
             origen="/menu/v2", patologias=datos.patologias,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -1733,6 +2139,51 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         """
         return max(1.0, PRESUPUESTO_SEGUNDOS - (time.time() - t_inicio_total))
 
+    def tiempo_de_un_intento():
+        """Lo que se le da a UNA llamada del solver, que NO es todo lo que
+        queda.
+
+        ⚠️ AÑADIDO (8 septiembre, noche) — CASO REAL MEDIDO, y el fallo era de
+        REPARTO, no del motor.
+
+        Al poner el techo de fósforo del perro adulto sano (2000 mg/1000 kcal,
+        SACN5 Tabla 13-3), el toy de 1,5 kg empezó a quedarse sin menú 1 de cada
+        3 veces con el presupuesto apretado a 3 s -- que es como el BLOQUE 43
+        imita a Render, que va 6-10 veces más lento que este equipo.
+
+        Diagnosticado, y no era infactibilidad:
+
+            sin el techo, 1 s ....  0 sin menú de 15
+            con el techo, 1 s ....  3 de 15        (el problema es MÁS LENTO)
+            con el techo, 8 s ....  0 de 15        (con tiempo, sale siempre)
+
+        Y aflojar la exigencia de optimalidad NO lo arregla (`mip_rel_gap` a
+        0,30 / 0,50 / 0,80 falla igual, 2-6 de 15): lo que le cuesta a HiGHS no
+        es demostrar el óptimo, es encontrar la primera solución entera.
+
+        Lo que SÍ lo arregla es **bajar de peldaño**:
+
+            peldaño 0 (2 suplementos), 3 s ....  3 sin menú de 15
+            peldaño 4 (4 suplementos), 3 s ....  0 de 15
+
+        Con cuatro huecos de suplemento el motor puede meter cáscara de huevo
+        --calcio con un Ca:P de 370:1, o sea calcio sin fósforo-- y el techo
+        deja de apretar. Es exactamente para lo que existe la escalera.
+
+        **El problema era que nunca llegaba a bajar.** `time_limit` era
+        `tiempo_restante()`, o sea TODO el presupuesto: con 3 s, la primera
+        llamada se los comía enteros, los dos reintentos recibían el mínimo de
+        1 s cada uno (y ya está medido que reintentar el mismo peldaño no
+        ayuda), y el bucle de la escalera se encontraba con `tiempo_restante()
+        <= 1.5` y se rompía sin pisar un solo peldaño.
+
+        Ahora una llamada nunca se lleva más del 40 % del presupuesto, así que
+        siempre queda para bajar. Con 24 s (lo normal) son 9,6 s a la primera,
+        de sobra para cualquier caso medido; con 3 s son 1,2 s y quedan casi 2
+        para la escalera, que es donde está la solución.
+        """
+        return max(1.0, min(tiempo_restante(), PRESUPUESTO_SEGUNDOS * 0.4))
+
     excluidos = list(datos.especies_excluidas or []) + list(datos.nombres_excluidos or [])
 
     # ⚠️ CONECTADO (5 agosto, noche): las patologías existían en el modelo
@@ -1937,7 +2388,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 ok_rapido, gramos_rapido = resolver_v2(
                     datos.der_objetivo, datos.etapa_requisitos, al, req,
                     datos.peso_perro_kg, dosis_maxima_fabricante,
-                    margenes_categoria=MARGENES_V2, max_suplementos=2, forzar=base, time_limit=tiempo_restante(),
+                    margenes_categoria=MARGENES_V2, max_suplementos=2, forzar=base, time_limit=tiempo_de_un_intento(),
                     presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
                     # ⚠️ AÑADIDO (28 agosto): esta vía era la única de las
                     # cuatro que llaman al motor que NO le pasaba el peso
@@ -1992,17 +2443,29 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
     # menú se siga generando igual (con aviso), en vez de fallar del
     # todo.
     def _intentar_generacion(forzar_este, restringir_a_elegidos_este,
-                             margenes=None, max_supl=None):
+                             margenes=None, max_supl=None, soltar=None):
         """Un intento completo: llamada + reintentos para mejorar a
         verde mientras quede presupuesto de tiempo -- misma lógica que
-        ya existía, solo que reutilizable para los tres niveles."""
+        ya existía, solo que reutilizable para los tres niveles.
+
+        `soltar` SOLO lo usa el diagnóstico de choque entre patologías, que
+        tira los menús que construye y se queda con el texto. Ningún camino
+        que entregue un menú lo pasa nunca: lo comprueba el BLOQUE 52."""
+        # ⚠️ EL ESTADO DEL SOLVER, PARA NO REINTENTAR LO IMPOSIBLE (10
+        # septiembre). Ver el comentario largo del bucle de reintentos de más
+        # abajo: distinguir «HiGHS ha PROBADO que no hay» de «se le acabó el
+        # reloj» es lo que ahorra 10 de las 16 llamadas al solver del perro
+        # pequeño con patología. El diccionario se reutiliza en cada llamada:
+        # siempre vale lo que dijo la ÚLTIMA.
+        _estado_solver = {}
         ok_i, gramos_i = resolver_v2(
             datos.der_objetivo, datos.etapa_requisitos, al, req,
             datos.peso_perro_kg, dosis_maxima_fabricante,
             excluidos=excluidos or None,
             margenes_categoria=(margenes if margenes is not None else _margenes_base),
             max_suplementos=(max_supl if max_supl is not None else _supl_base),
-            time_limit=tiempo_restante(),
+            time_limit=tiempo_de_un_intento(),
+            estado_del_solver=_estado_solver,
             forzar=forzar_este, preferir=preferir,
             patologias=datos.patologias, restringir_especie=datos.restringir_especie,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -2011,6 +2474,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             restringir_a_elegidos=restringir_a_elegidos_este,
             categorias_excluidas=datos.categorias_excluidas,
             presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
+            soltar_limites_patologia=soltar,
         )
         # ⚠️ VERIFICAR CUESTA 1,6 ms: NO SE PUEDE QUEDAR SIN TIEMPO (29 agosto).
         #
@@ -2036,7 +2500,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 datos.peso_perro_kg, dosis_maxima_fabricante,
                 excluidos=excluidos or None,
                 margenes_categoria=(margenes if margenes is not None else MARGENES_V2),
-                max_suplementos=max_supl, time_limit=tiempo_restante(),
+                max_suplementos=max_supl, time_limit=tiempo_de_un_intento(),
                 forzar=forzar_este, preferir=preferir,
                 patologias=datos.patologias, restringir_especie=datos.restringir_especie,
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -2069,8 +2533,30 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         # como el bucle de arriba) porque aquí cada intento es una llamada
         # entera al solver, no un ajuste rápido -- si el caso es de verdad
         # irresoluble, más vueltas solo queman el presupuesto de Render.
+        #
+        # ⚠️ Y NO SE REINTENTA LO QUE ESTÁ DEMOSTRADO IMPOSIBLE (10 septiembre).
+        #
+        # Este bucle se puso porque «el motor lleva aleatoriedad a propósito» y
+        # la misma petición sale casi siempre a la segunda. Es verdad cuando lo
+        # que pasó fue que se acabó el reloj -- ahí otra semilla llega antes --,
+        # y es FALSO cuando HiGHS ha demostrado que no hay solución: lo único
+        # que cambia entre llamadas es el ruido del OBJETIVO, y un objetivo no
+        # vuelve factible un problema infactible.
+        #
+        # CASO REAL MEDIDO: chihuahua de 3 kg (DER 260) con `renal`. La API
+        # tardaba 21-24 s y hacía 16 llamadas al solver; DIEZ eran reintentos de
+        # peldaños que ya habían salido `status 2` (infactible demostrado), con
+        # las tres semillas probadas dando lo mismo en los cinco primeros
+        # peldaños y menú siempre en el sexto. La escalera sola tarda 7,2 s. En
+        # Render, 6-10 veces más lento, eso es la diferencia entre dar menú y
+        # contestar «está tardando más de lo normal» -- que es lo que pasaba.
+        #
+        # Se mira SOLO el status 2. Si el solver devolvió una solución que
+        # rechazó la red de seguridad de las categorías (status 0 y `ok_i`
+        # falso), reintentar SÍ sirve: ahí otra semilla da otro menú.
         _reintentos_infactible = 0
         while (not ok_i and _reintentos_infactible < 2
+               and not _estado_solver.get("infactible_demostrado")
                and time.time() - t_inicio_total < PRESUPUESTO_SEGUNDOS):
             _reintentos_infactible += 1
             ok_i, gramos_i = resolver_v2(
@@ -2078,7 +2564,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 datos.peso_perro_kg, dosis_maxima_fabricante,
                 excluidos=excluidos or None,
                 margenes_categoria=(margenes if margenes is not None else MARGENES_V2),
-                max_suplementos=max_supl, time_limit=tiempo_restante(),
+                max_suplementos=max_supl, time_limit=tiempo_de_un_intento(),
                 forzar=forzar_este, preferir=preferir,
                 patologias=datos.patologias, restringir_especie=datos.restringir_especie,
                 peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -2087,6 +2573,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 restringir_a_elegidos=restringir_a_elegidos_este,
                 categorias_excluidas=datos.categorias_excluidas,
                 presupuesto_semanal_restante=datos.presupuesto_semanal_restante,
+                estado_del_solver=_estado_solver,
             )
             ficha_i = (verificar_v2(gramos_i, al, req, datos.der_objetivo, datos.etapa_requisitos)
                        if ok_i else None)
@@ -2170,7 +2657,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             datos.peso_perro_kg, dosis_maxima_fabricante,
             excluidos=excluidos or None,
             margenes_categoria=_margenes_base, max_suplementos=_supl_base,
-            time_limit=tiempo_restante(),
+            time_limit=tiempo_de_un_intento(),
             patologias=datos.patologias,
             categorias_excluidas=datos.categorias_excluidas,
             peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
@@ -2253,6 +2740,90 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         # sobre el DER -- un número escrito en dos sitios se separa, y el
         # que está en un texto no lo cubre ninguna prueba.
         # Encontrado pidiendo un menú de hepatopatía contra producción.
+        # ⚠️ ANTES DE RENDIRSE, DECIR QUÉ CHOCA (8 septiembre).
+        #
+        # CASO REAL MEDIDO: un adulto de 25 kg con `renal` + `pancreatitis`
+        # no obtiene menú en ninguno de los seis peldaños -- y cada patología
+        # POR SEPARADO sí lo obtiene. Lo único que se decía era el texto de
+        # abajo, «quita alguna restricción y vuelve a probar», que está
+        # escrito para un dueño. A un veterinario no le sirve: no hay ninguna
+        # restricción que él pueda quitar, y sin saber cuál es el choque
+        # tampoco puede decidir cuál cedería.
+        #
+        # `diagnosticar_choque_de_patologias` lo averigua por eliminación:
+        # vuelve a resolver soltando UN límite cada vez y el que desbloquea
+        # es culpable. En el caso medido tarda 2,2 s y contesta «el fósforo
+        # de la renal (≤1200) contra la grasa de la pancreatitis (≤20)».
+        #
+        # ⚠️ NO ENTREGA NINGÚN MENÚ. Los menús que construye para preguntar
+        # se tiran: de aquí solo sale texto, y el tope se sigue aplicando
+        # igual. Lo vigila el BLOQUE 52.
+        _choque = None
+        if datos.patologias and tiempo_restante() > 3.0:
+            try:
+                from motor_completo import diagnosticar_choque_de_patologias
+                _choque = diagnosticar_choque_de_patologias(
+                    datos.patologias, datos.etapa_requisitos,
+                    lambda soltar: _intentar_generacion(
+                        forzar, None,
+                        margenes=_escalera_de_relajacion(hay_comida)[-1][0],
+                        max_supl=_escalera_de_relajacion(hay_comida)[-1][1],
+                        soltar=soltar)[0],
+                    peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg)
+            except Exception as e:   # el diagnóstico NUNCA puede tumbar la respuesta
+                observabilidad.capturar(e, endpoint="/menu/v2",
+                                        nota="diagnostico de choque de patologias")
+                _choque = None
+
+        if _choque:
+            _l = _choque["limites_que_chocan"]
+
+            # ⚠️ UN RATIO NO SE DICE IGUAL QUE UN TOPE (10 septiembre). Su clave
+            # es «calcio:fosforo:min», no un nutriente, y no va «por cada 1000
+            # kcal» porque es adimensional. Sin esta rama la frase salía «exige
+            # como mucho 1,1 de calcio:fosforo:min por cada 1000 kcal», que está
+            # mal en las tres cosas: el sentido, la unidad y el nombre. Y este
+            # texto es justo el que lee alguien que tiene que decidir qué límite
+            # cede.
+            def _frase_de_limite(x):
+                if x["tipo"] == "ratio":
+                    _n_r, _d_r, _s_r = x["clave"].split(":")
+                    return (f"{x['nombre_patologia']} exige una relación "
+                            f"{_NOMBRE_NUTRIENTE.get(_n_r, _n_r)}:"
+                            f"{_NOMBRE_NUTRIENTE.get(_d_r, _d_r)} de "
+                            f"{'al menos' if _s_r == 'min' else 'como mucho'} "
+                            f"{_num_bonito(x['valor'])}:1")
+                return (f"{x['nombre_patologia']} exige "
+                        f"{'como mucho' if x['tipo'] != 'suelo' else 'al menos'} "
+                        f"{_num_bonito(x['valor'])} {_UNIDAD_DE.get(x['clave'], '')} "
+                        f"de {_NOMBRE_NUTRIENTE.get(x['clave'], x['clave'])} "
+                        f"por cada 1000 kcal").strip()
+
+            _texto = " y ".join(_frase_de_limite(x) for x in _l)
+            return {
+                "factible": False,
+                "motivo": (
+                    "No hay ninguna ración que cumpla a la vez los límites de las "
+                    "patologías marcadas: " + _texto + ". Cada una por separado sí "
+                    "tiene menú; juntas no queda margen. Elegir cuál de los dos "
+                    "límites cede es una decisión clínica, así que no la toma la app."),
+                "choque_de_patologias": [
+                    {"patologia": x["patologia"],
+                     "nombre_patologia": x["nombre_patologia"],
+                     "nutriente": (x["clave"].rsplit(":", 1)[0] if x["tipo"] == "ratio"
+                                   else x["clave"]),
+                     "nombre_nutriente": _NOMBRE_NUTRIENTE.get(x["clave"], x["clave"]),
+                     "tipo": x["tipo"],
+                     "valor": x["valor"],
+                     # Un ratio es adimensional: decir «/1000 kcal» de un
+                     # cociente sería inventarse una unidad que no existe.
+                     "unidad": ("ratio" if x["tipo"] == "ratio"
+                                else ((_UNIDAD_DE.get(x["clave"]) or "") + "/1000 kcal").lstrip("/")),
+                     "fuente": x["fuente"],
+                     "por_que": x["por_que"]}
+                    for x in _l],
+                "se_intento_relajando": [p[2] for p in _escalera_de_relajacion(hay_comida)[1:]]}
+
         return {"factible": False,
                 "motivo": "No existe ninguna combinación de alimentos accesibles "
                           "que cumpla todos los requisitos para este perro, ni "
@@ -2797,8 +3368,34 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
             por_perro[i_base]["menus"].append({**base, "dias": dias_por_menu[j]})
             anotar_consumo(i_base, j, gramos_base)
 
+            # ⚠️ EL AVISO DEL PERRO BASE VIAJA CON SU MENU (11 de septiembre).
+            #
+            # CASO REAL ENCONTRADO por el BLOQUE 15, y es la regla 5 otra vez:
+            # «lo que eliges a mano se respeta [...] y si con lo elegido no hay
+            # menu posible, se baja de peldano y SE DICE — nunca se cambia en
+            # silencio. Eso incluye la pantalla de varios perros».
+            #
+            # Medido: en las tres tiradas del caso del BLOQUE 15, el menu de
+            # Rufo (la base) llevaba «Pollo con piel» y «Pecho de ternera con
+            # hueso» sin que nadie los eligiera, y lo DECIA. El de Cairo llevaba
+            # exactamente los mismos dos y su `aviso` venia a `None`, las tres
+            # veces. No es aleatorio: para el perro que se amolda, esos dos
+            # alimentos entran por `forzar_presencia`, asi que desde dentro de
+            # `_resolver_menu_v2_interno` son «lo que se pidio» y no hay nada
+            # que avisar. El aviso se pierde justo en la costura.
+            #
+            # Y no se puede arreglar volviendo a aplicarle su propia eleccion al
+            # que se amolda -- eso pisaria el amoldado, y esta escrito arriba --,
+            # asi que lo que viaja es el aviso.
+            _aviso_base = (base.get("aviso") or "").strip()
+
             for i in orden[1:]:
                 r = generar(i, j, forzar_estos=list(gramos_base))
+                if r.get("factible") and _aviso_base:
+                    _suyo = (r.get("aviso") or "").strip()
+                    _heredado = (f"Este menu se ha hecho para parecerse al de {nombres[i_base]}, "
+                                 f"y aquel necesito alimentos que no elegiste. " + _aviso_base)
+                    r["aviso"] = (_suyo + " " + _heredado).strip() if _suyo else _heredado
                 if not r.get("factible"):
                     # Amoldarse no puede costarle a nadie quedarse sin menú:
                     # antes de rendirse, se le hace el suyo libremente.
@@ -4057,14 +4654,36 @@ SELLOS_DE_LOS_DATOS = {
         # 7 sep (2): linoleico de "Grasa de pollo" (19,5 g/100g) -- USDA FDC 173564 "Fat, chicken", cuya proteina (0) y grasa (99,8) ya coincidian exactas con esta ficha. Cierra el hueco que quedaba en PENDIENTE_NUTRICION.md desde el 25 de agosto.
         # 7 sep: 4 visceras (Bazo de vaca, Pancreas de vaca, Bazo de cordero, Cerebro de ternera) con `sin_dato` incompleto -- sus propias notas ya decian que faltaban ciertos minerales/vitaminas ("sin dato fiable... se dejan en 0"), pero el campo estructurado no los tenia, asi que contra un maximo contaban como cero MEDIDO en vez de hueco. Encontrado auditando alimentos_v3_final.json de verdad (comparando texto contra estructura), no solo comprobando formato. Ningun valor numerico cambia, solo que estas claves antes contadas como "0 real" pasan a "no lo sabemos".
         # 7 sep (5): NUEVO ALIMENTO -- "Pets Purest Aceite de Salmón Escocés" (160ª ficha), añadido a petición explícita de la usuaria con foto de la etiqueta real. Mismo patrón que los otros dos aceites de salmón del catálogo: grasa/proteína/fibra de la propia etiqueta, EPA/DHA en el extremo bajo de los rangos declarados, linoleico = omega-6 total (aproximación ya usada en esta familia de productos), vitamina E en sin_dato pese a que la etiqueta menciona "0,5% tocoferoles" en INGREDIENTES -- no es una cifra analítica, mismo criterio que ya se aplicó a los otros dos. Sin dosis de fabricante (no se pudo determinar el volumen de una pulsación en ml). Detalle completo en su nota_datos.
-        "alimentos_v3_final.json":      "de79e5d5033cdbcd",   # 8 sep (2): 159 -> 163 fichas, dos trabajos que se hicieron a la vez y aqui se juntan. DEL PR #87: "Pets Purest Aceite de Salmon Escoces", con la foto de la etiqueta fisica del bote. DE ESTE: tres piezas que llevaban nombre de TERNERA y datos de VACA (timo, pulmon y cerebro -- coincidian celda a celda con los registros de vaca de USDA y no con los de ternera), partidas en dos para que cada especie tenga SUS datos; el timo de vaca tiene 236 kcal y 20,35 g de grasa y el de ternera 101 y 3,07. Mas las 52 celdas cerradas contra BEDCA/CIQUAL/USDA en el orden de Bases.md, ninguna de las cuales era un numero mal copiado: las 52 eran CEROS. auditar_catalogo.py y auditar_fediaf.py re-ejecutados, pruebas_completas.py entero.
+        # 8 sep (4): "Atun" y "Caballa" ganan `restricciones_patologia` para la patologia nueva `reaccion_adversa_alimento` -- SACN5 5a ed., cap.31, Tabla 31-3: «Vasoactive amines -- Avoid foods that contain certain fish ingredients (e.g., tuna, mackerel, skipjack, bonito)». Ningun valor nutricional cambia: es el mismo mecanismo por el que el Platano no entra en un menu de diabetes. El "bonito" y el "listado" (skipjack) no estan en el catalogo. Sello recalculado a proposito.
+        # 8 sep (3): SIN CAMBIOS, y hubo que REVERTIR un cambio equivocado del mismo dia. Se puso aqui "20a15984bafa669f" creyendo que el sello estaba roto en main -- NO lo estaba: estos sellos NO son el SHA del fichero crudo sino el del CONTENIDO CANONICO (json.dumps con sort_keys y ensure_ascii), a proposito, para que reordenar claves o cambiar la indentacion no dispare una falsa alarma. Se comparo contra el crudo, que da otro hash, y de ahi salio una "correccion" que rompio el sello de verdad. El BLOQUE 12 la cazo. La leccion no es el numero: es que el metodo de comprobacion hay que leerlo antes de usarlo.
+        "alimentos_v3_final.json":      "2172e3d9b8e29346",   # ver la nota (4), justo arriba
         # 6 sep: nota_datos de los 4 alimentos excluidos por tejido tiroideo (Cuello de pavo/pato/ternera, Laringe de vacuno) documenta el bloqueo -- ver seguridad.TIROIDES_EXCLUIR.
         # 28 ago (2): EL HIGADO Y EL CORAZON DE PAVO, resembrados desde el pollo del USDA -- su aminograma venia del pavo del USDA, que tiene la isoleucina y la valina un 40% bajas (Leu/Ile 2,52 contra 1,47-1,98 del resto). Reescalados a NUESTRA proteina. Las otras cinco fichas de pavo NO se cargan: traian histidina = isoleucina = valina exactos, y eso es una copia, no una medida. Ver el BLOQUE 27. // 28 ago: PURINAS DE CUATRO VISCERAS con cifra publicada (timo 525, bazo de cordero 322, bazo de vaca 185, pulmon de ternera 117). NO se uso la banda generica 84-243 que se habia propuesto: para el timo habria declarado ~160 cuando la cifra son 525, un factor de 3 a 4 POR ABAJO, y es el alimento solido con mas purinas de las tablas. Pancreas, testiculos y pulmon de cordero se quedan como hueco: no hay dato. Ver el BLOQUE 33
         # 7 sep (2): nueva fila "Fibra", con los seis campos (minAdulto..maxCachorroCrecimiento) a "-" -- FEDIAF no da minimo ni maximo de fibra en la Tabla III-3b, asi que esta fila NO es un requisito nuevo: no exige ni limita nada a un perro sano. Existe para que verificar.MAPA pueda leer la clave "fibra" y topes_de_patologias() pueda ponerle un suelo por patologia con fuente real (primer uso: hiperlipidemia, SACN5 cap.28). auditar_fediaf.py la lista en NO_SON_NUTRIENTES_DE_LA_TABLA y ademas comprueba que nunca lleve un numero, para que no repita el fallo del 25 de agosto (fila "Fibra" con minimo/maximo inventados que el analizador exigia). Ver PENDIENTE_NUTRICION.md.
         # 7 sep: nota_auditoria de Vitamina_E ampliada con la cita exacta de FEDIAF (Tabla VII-14, "Conversion factors - Vitamin source to activity") tras la pregunta que dejo abierta Fascetti & Delaney 2a ed. -- CONFIRMA el x0.67 ya usado (tocoferol NATURAL de alimentos frescos, no el acetato SINTETICO de suplemento que cita Fascetti, que da un numero distinto). Ningun numero cambia, solo el texto de una fila.
         # 7 sep (4): QUITADO el maxAdulto=4000 de Fosforo -- no tenia fuente, llevaba asi desde el primer PR del repo. Investigado a fondo antes de quitarlo: FEDIAF no da numero (solo nota "h" informativa), NRC 2006 dice explicitamente que no hay datos para fijar un SUL de fosforo en perros, y Dobenecker et al. 2021 (PLOS ONE, el estudio mas centrado en el tema) concluye que todavia no se puede definir un no-effect-level. El numero recortaba de verdad el menu automatico estandar de un adulto (justo en el limite) contra un maximo sin origen -- encontrado revisando la Tabla III-3b entera del PDF contra la transcripcion de auditar_fediaf.py, celda a celda. Fosforo pasa a SIN_MAXIMO, igual que Vitamina_E.
         # 7 sep (3): dos filas nuevas, "Taurina" y "L_carnitina", MISMO PATRON que "Fibra" -- las seis columnas a "-", no exigen ni limitan nada a un perro sano. Existen para que verificar.MAPA pueda leer las claves y topes_de_patologias() pueda ponerles un suelo por patologia con fuente real -- primer uso: dcm_taurina_respondedora (250/50 mg/1000kcal, SACN5 cap.36 Tabla 36-4). auditar_fediaf.py las lista en NO_SON_NUTRIENTES_DE_LA_TABLA y comprueba que nunca lleven un numero, igual que Fibra.
-        "requerimientos_v2_final.json": "7492f93f5fa76d86",
+        # 8 sep (5): ACTUALIZADO POR UN SELLO QUE LLEVABA ROTO DESDE EL COMMIT 19e8358 DE ESTA MISMA RAMA. Ese commit anadio la fila "Omega3_total" (seis campos a "-", mismo patron que Fibra/Taurina/L_carnitina/EPA: no exige ni limita nada a un perro sano, existe para que verificar.MAPA pueda leer la clave y una patologia pueda ponerle un suelo con fuente) y "EPA", y NO toco este sello. La bateria lo habria dicho en el BLOQUE 12; no se ejecuto entera despues de aquel commit -- se ejecuto tres minutos ANTES. Asi que el fallo no es del sello, que hizo su trabajo: es de haber empujado sin correr la bateria. El contenido esta comprobado fila a fila por auditar_fediaf.py (248 comprobaciones, 0 discrepancias) antes de mover este numero.
+        # 8 sep (6): DEVUELTO EL MAXIMO DE FOSFORO EN ADULTO (4000 mg/1000 kcal). Se habia quitado el 7 de septiembre escribiendo que «ni FEDIAF ni NRC ni Dobenecker dan un maximo» y que la Tabla III-3a/b solo traia la nota h informativa. La parte de NRC y Dobenecker es CIERTA (hablan del SUL toxicologico, que no existe); la de FEDIAF es FALSA: su maximo NUTRICIONAL de 4 g/1000 kcal esta en la Tabla III-3b («Adult: 4.00 (N)»), en la III-3a («Adult: 1.60 (N)» g/100 g MS, que por 2,5 son 4,00) y en el texto de 3.3.1 con todas las letras. Se colo porque en el texto extraido del PDF la columna de maximos cae visualmente sobre la fila ANTERIOR: leyendo linea a linea, el calcio parece tener cuatro maximos y el fosforo ninguno. Entre el 7 y el 8 de septiembre el motor NO TUVO techo de fosforo en adulto y el catalogo precalculado llego a tener un menu con 4124 mg, por encima del maximo de FEDIAF. auditar_fediaf.py corregido a la vez, y ademas ahora comprueba que una etapa SIN maximo en FEDIAF lleve «-» en el JSON -- antes ni la miraba, que es el mismo agujero.
+        # 10 sep: DOS MAXIMOS DONDE FEDIAF PUBLICA DOS, y la etiqueta de cual es cual en las trece filas que tienen maximo. Ningun numero que aplique el motor cambia. Lo que se anade es (a) `maximo_origen`: si ese techo es LEGAL (L) o NUTRICIONAL (N), que NO es lo mismo -- §3.1.3 dice que el legal solo aplica si el nutriente se ANADE como aditivo, y si viene solo del alimento manda el nutricional; y (b) el maximo NUTRICIONAL de la vitamina D (20,0 µg/1000 kcal, «320.00 (N)» en la Tabla III-3a), que es el unico nutriente del perfil canino con los dos publicados y con el legal por debajo. Hasta hoy ese numero vivia solo en prosa dentro de una `nota_auditoria`, asi que el dia que cambie la ley no habria de donde sacarlo. Pedido por Elena: «aunque el legal sea mas bajo debes dejar anotado el limite nutricional tambien porque lo legal podria cambiar». Y desde hoy `auditar_transcripcion_fediaf.py` REHACE los 18 maximos desde `fediaf_tabla_III_3a.txt` -- la columna de maximos no la comprobaba NADIE, y es justo la que se rompio el 7 de septiembre cuando el motor se quedo un dia sin techo de fosforo en adulto.
+        # 10 sep (2): SOLO TEXTO. La regla del maximo LEGAL que llevan citada las
+        # 14 filas con techo legal (`nota_maximo_origen`) estaba copiada mal: unia
+        # dos frases de FEDIAF sin marcar el corte y remataba con «instead the
+        # nutritional maximum applies», cuando la fuente dice «instead the
+        # nutritional maximum, WHEN INCLUDED IN THE RELEVANT TABLES, should be
+        # taken into account» -- que es una condicion, y la habiamos borrado.
+        # Y en la misma pasada, la cita del maximo nutricional de Ca y P
+        # («AAFCO introduced a nutritional maximum...») unia dos frases sin
+        # marcar el corte donde va «(Dzanis DA, 1994)».
+        # Ningun numero cambia; lo caza `auditar_citas.py` (BLOQUE 85).
+        # ⚠️ Y AQUI SE VOLVIO A CAER EN LA MISMA TRAMPA QUE EL 8 DE SEPTIEMBRE,
+        # con la advertencia escrita cuatro lineas mas arriba: el sello se
+        # calculo con `ensure_ascii=False` y `/verificar` lo calcula con
+        # `ensure_ascii=True`. Da otro hash, tiene la misma pinta, y el numero
+        # equivocado no lo caza nadie salvo el BLOQUE 12 -- que lo cazo. La
+        # forma de sacarlo sin equivocarse no es repetir la cuenta a mano: es
+        # leer lo que devuelve `/verificar` en `encontrado`.
+        "requerimientos_v2_final.json": "d79627207a0231d2",
         # 6 sep (2): nota_auditoria de los 12 aminoacidos corregida -- decia "el motor todavia no lo verifica porque ningun alimento tiene aminograma", que era cierto ANTES del 28 de agosto y llevaba mas de una semana desactualizado (los 12 SI estan en verificar.MAPA desde entonces, 94/159 fichas con aminograma). Ningun numero cambia, solo el texto de 12 filas.
         # 6 sep: VITAMINA D AL TECHO LEGAL. Es el UNICO nutriente del perfil canino con techo legal (UE) por debajo del nutricional -- 227.00 UI (L) frente a 320.00 UI (N) en la Tabla III-3a, confirmado dos veces en el PDF de FEDIAF. El max de antes (20 ug = 800 UI) era el nutricional; el que manda por ser mas estricto es el legal, 227 x 2.5 = 567.5 UI = 14.1875 ug/1000kcal. auditar_fediaf.py actualizado a la vez para no comparar contra el numero equivocado. Ver PENDIENTE_NUTRICION.md.
         # 28 ago: EL ANCLA DE 110. Cada nutriente lleva ahora `minAdulto110`, la columna de DER 110 de la Tabla III-3b, sacada de NUESTRA transcripcion auditada del PDF y no de fuera. Con las dos anclas se puede aplicar la ecuacion del apartado 7.2.5: cuando el perro come menos, el minimo por 1000 kcal sube. Los 38 cuadraron con el minAdulto de siempre sin una discrepancia, o sea que nuestra columna ES la de 95. Ver el BLOQUE 34
@@ -4090,8 +4709,19 @@ def verificar():
     import hashlib, os, json
     SELLOS = SELLOS_DE_LOS_DATOS
     SELLOS_CRUDOS = {
-        "der.py": "4dbd7f93d9296bd9",   # 7 sep: documentado por que NO hay factor de enfermedad sobre el RER, verificado contra Fascetti & Delaney 2a ed. cap.3 (Ramsey) -- la fuente dice literal "target energy requirements... initially at RER" y "weight loss is never a goal during treatment and recovery from trauma and critical illness". Ningun numero ni comportamiento cambia, es documentacion de una decision que ya estaba tomada.
+        "der.py": "72c85a11b2289dec",   # 10 sep: la Tabla 5-3 de SACN5 da LA CIFRA del frio que FEDIAF deja como rango de 1 a 9 -- pelo corto +95 %, pelo largo +59,5 %, Labrador +25 %, Gran Danes +22 %, cada una con su salto de temperatura. El comentario decia que no hay cifra y era falso: lo era de FEDIAF, no del conjunto de las fuentes. Lo que falta sigue siendo la PREGUNTA en la ficha, que es producto. | 9 sep (3): la §7.2.3.5 de FEDIAF, leida entera, escrita en der.py -- las tres cosas que anade a la Tabla VII-7 y por que no se aplica ninguna: el frio (10-90 % mas de calorias durmiendo fuera en invierno; hueco real, falta la pregunta en la ficha), el suelo de 70 kcal/kg^0,75 de la literatura contra nuestros 95 de la recomendacion, y la termogenesis de la comida (~10 %, sube con proteina y con mas tomas, sin cifra para ninguna de las dos). | 9 sep (2): el escalon de edad pasa a ser el de la Tabla VII-6 de FEDIAF -- 130 (1-2 anos) / 110 (3-7) / 95 (>7), o sea +20 el joven y -15 el senior contra el +15/-7 de Thes 2014 que habia; nuestro -7 era un -6,4 % cuando FEDIAF dice -13,6 % y SACN5 cap.5 dice 10-20 %. Y el grupo "joven" era CODIGO MUERTO: existia en AJUSTE_EDAD y no se pasaba nunca, ni aqui ni en el front, asi que un perro de ano y medio recibia lo mismo que uno de cinco. | 9 sep: la cifra de raza de la Tabla VII-7 va EN VEZ del nivel de actividad, y lo dice la propia guia (la frase que presenta la tabla, y la seccion 7.2.3.4: la diferencia de raza YA CONTIENE la de actividad). Cierra PREGUNTAS_ABIERTAS.md P-11; lo separa de las lecturas «suelo» y «sumar» el BLOQUE 54 apartado 2-bis. | 8 sep: el DER verificado contra FEDIAF 2025 (Tablas VII-7 y VII-8b) y cerrado -- ver DECISIONES.md D-11. Cambian TRES cosas: se quita el tope de x6 RER en lactancia (no es de FEDIAF y recortaba hasta un 33 %), se adoptan las dos razas con cifra propia de FEDIAF (Gran Danes 200, Terranova 105; un Gran Danes recibia el 55 % de lo que le toca), y el respaldo de crecimiento pasa a la regla de SACN5 por edad (3 x RER hasta los 4 meses, 2 x RER despues) -- de sus tres escalones viejos, DOS eran codigo muerto. Lo vigila el BLOQUE 54.
         # 6 sep: 3 correcciones de cita en comentarios (VII-7 no VII-6, Thes 2015 no 2014, y el escalon 210/175/140 no es tabla de FEDIAF) -- ningun numero ni comportamiento cambia.
+        # ⚠️ 9 sep: SELLO MOVIDO, y solo cambia UN numero. El BCS 9 pasa de un
+        # exceso del 40 % a uno del 45 %, porque la Tabla VII-2 del Anexo 7.1 de
+        # FEDIAF dice «>45 %» y la recta del 10 % por punto se queda corta justo
+        # ahi. La misma tabla CONFIRMA la recta en los otros ocho puntos: nuestro
+        # 10 % lineal es el extremo bajo de cada uno de sus rangos, de BCS 1 a 8.
+        # || Ninguno de los 100 casos de `der_casos.json` usa `condicion_idx`, asi
+        # que el contrato del DER no se mueve y no hay que regenerarlo ni copiarlo
+        # al otro repo. Lo que SI hay que hacer alli es el mismo cambio en la copia
+        # de `src/der.js`: esta anotado en PENDIENTE_NUTRICION.md.
+        # || Lo vigila el BLOQUE 63, que compara la tabla de FEDIAF fila a fila y
+        # ademas las DOS copias de la regla de BCS que hay en este repo.
     }
     base = os.path.dirname(os.path.abspath(__file__))
     detalle, todo_ok = [], True
@@ -4252,6 +4882,46 @@ class PeticionFormular(BaseModel):
     # salía, decía que no. O sea que el veterinario tenía menos margen que un
     # tutor, al que el motor sí le baja de peldaño solo. Ahora lo elige él.
     peldano: Optional[str] = None
+    # ⚠️ AÑADIDO (11 septiembre) — LOS OBJETIVOS QUE PONE ÉL.
+    #
+    # Elena: «el veterinario debe poder decidir en que porcentaje quiere dejar
+    # la grasa, la proteina, lo que sea [...] y no solo para patologias, igual
+    # en un menu normal el veterinario quiere tener control sobre eso».
+    #
+    # {clave_de_nutriente: {"min": x, "max": y}}, en la unidad del motor (g o mg
+    # por 1000 kcal) — la misma en la que ya lee todos los demás límites en
+    # `GET /patologias`, para que en su pantalla no haya dos unidades.
+    #
+    # Solo pueden APRETAR: `_objetivos_dentro_de_fediaf` los recorta contra
+    # FEDIAF antes de llegar al solver, y lo dice.
+    objetivos_del_profesional: Optional[dict] = None
+    # ─── LA SEMANA DEL VETERINARIO (11 de septiembre de 2026) ─────────────
+    #
+    # ⚠️ Elena: «puede haber mas de un menu semanal, cosa que, por cierto, un
+    # veterinario no puede hacer: solo puede generar un menu para la semana y
+    # tendria que poder elegir también si quiere generar mas de uno».
+    #
+    # Y lo que de verdad importa de eso no es poder hacer varios: es que el
+    # PRESUPUESTO SEMANAL de seguridad cronica se reparta entre ellos. El
+    # generador del dueño lo hace desde siempre (`/menu/semana` genera la
+    # semana entera en UNA llamada para que el servidor pueda ir restando), y
+    # el formulador del profesional NO: cada racion se formulaba como si fuera
+    # la semana entera. Medido el 11-sep-2026: tres raciones seguidas suman
+    # 2282 ug de yodo contra un presupuesto semanal de 8106, asi que hoy no se
+    # pasa en el caso normal -- lo que faltaba no era el numero, era la
+    # GARANTIA.
+    #
+    # ⚠️ Y LA CUENTA LA HACE EL SERVIDOR, no la app. El veterinario construye
+    # sus raciones de una en una, asi que no puede mandarlas todas de golpe
+    # como hace `/menu/semana`; lo que manda son las que YA ha decidido para
+    # esa semana, y el servidor calcula lo que queda. Dejar la resta en la app
+    # seria volver al aviso que se puede ignorar, que es justo de lo que
+    # veniamos: «la responsabilidad de que esto no pase nunca es del sistema,
+    # no suya».
+    #
+    # `raciones_ya_puestas`: [{"gramos": {alimento: g}, "dias": n}, ...]
+    raciones_ya_puestas: Optional[list] = None
+    dias_de_esta_racion: Optional[int] = None
 
 
 def _estado_de_la_racion(datos):
@@ -4300,8 +4970,69 @@ def _estado_de_la_racion(datos):
     # sano. Es la regla 2, y se comprueba aquí por lo mismo que se comprueba
     # en `_garantizar_verificado`: porque el que se olvida no da error.
     salida["topes_de_patologia_rotos"] = _tope_patologia_roto(
-        gramos, al, datos.patologias, datos.etapa_requisitos)
+        gramos, al, datos.patologias, datos.etapa_requisitos, req=req,
+        der_efectiva=der_efectiva_de(datos.der_objetivo,
+                                     _peso_de_referencia(datos)[0]),
+        peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None))
     salida["huecos"] = _huecos_en_cristiano(salida["ficha"])
+    # ⚠️ DE DONDE SALE CADA TECHO DE FEDIAF, Y CUAL ES EL OTRO (10 septiembre).
+    #
+    # Un maximo de FEDIAF puede venir de dos sitios que NO son lo mismo, y hasta
+    # hoy la pantalla ensenaba un solo numero sin decir cual:
+    #
+    #   (L) LEGAL, del Reglamento (UE) 2017/1492. Y §3.1.3: «A legal maximum only
+    #       applies when the particular trace element or vitamin is ADDED to the
+    #       recipe as an additive. If the nutrient comes exclusively from feed
+    #       materials, the legal maximum does not apply, instead the nutritional
+    #       maximum applies».
+    #   (N) NUTRICIONAL, que es criterio de FEDIAF y admite lectura profesional.
+    #
+    # MEDIDO sobre los 216 menus del catalogo (10-sep-2026): en 215 de 216 los
+    # ocho nutrientes con techo llevan parte ANADIDA por un suplemento -- el yodo
+    # un 91 % de mediana, la vitamina D un 70 %, el zinc un 60 %. O sea que el
+    # techo legal es el que corresponde por la §3.1.3 en casi todos los menus, y
+    # aplicarlo tambien al que falta es mas estricto que la norma, nunca menos.
+    # Por eso el motor sigue aplicando SIEMPRE el mas bajo, y aqui se dice cual
+    # es y cual seria el otro, en vez de esconderlo.
+    salida["techos_de_fediaf"] = _techos_de_fediaf(req, datos.etapa_requisitos)
+    return salida
+
+
+def _techos_de_fediaf(req, etapa):
+    """Los maximos de FEDIAF con su procedencia, para la pantalla del profesional.
+
+    No calcula nada: lee lo que ya esta en `requerimientos_v2_final.json`, que es
+    la Tabla III-3a/b transcrita y auditada contra el PDF celda a celda
+    (`auditar_transcripcion_fediaf.py`, BLOQUE 77). Calcularlo aqui seria la
+    tercera copia de la misma tabla.
+    """
+    from verificar import MAPA, maximo_de, EQUIVALENCIA, SUFIJO
+    etapa_req = SUFIJO.get(EQUIVALENCIA.get(etapa, etapa), "Adulto")
+    # `req` llega como un dict {nombre del requisito: fila}, que es la forma que
+    # devuelve `cargar_v2()`. Se recorre por el MAPA para no depender de eso.
+    salida = []
+    for nombre, fila in sorted((req or {}).items()):
+        if not isinstance(fila, dict):
+            continue
+        clave = MAPA.get(nombre)
+        tope = maximo_de(fila, nombre, etapa_req)
+        if tope is None:
+            continue
+        salida.append({
+            "nutriente": nombre,
+            "clave": clave,
+            "unidad": fila.get("unidad"),
+            "maximo_por_1000kcal": tope,
+            # «legal_UE» o «nutricional». Es la diferencia que decide si un
+            # profesional puede leerlo con criterio o no lo mueve nadie.
+            "origen": fila.get("maximo_origen"),
+            "en_la_fuente": fila.get("maximo_en_la_fuente"),
+            # El otro numero, donde FEDIAF publica los dos. Hoy solo la
+            # vitamina D: 14,1875 el legal y 20,0 el nutricional.
+            "maximo_nutricional_por_1000kcal": fila.get("maximo_nutricional_por_1000kcal"),
+            "maximo_nutricional_en_la_fuente": fila.get("maximo_nutricional_en_la_fuente"),
+        })
+    salida.sort(key=lambda x: (x["origen"] != "legal_UE", x["nutriente"]))
     return salida
 
 
@@ -4355,6 +5086,99 @@ def formular_estado(datos: PeticionFormular):
     return _estado_de_la_racion(datos)
 
 
+# ─── LOS OBJETIVOS QUE PONE EL PROFESIONAL ───────────────────────────────
+#
+# ⚠️ Elena, 11 de septiembre de 2026: «para ciertas patologias el veterinario
+# debe poder decidir en que porcentaje quiere dejar la grasa, la proteina, lo
+# que sea [...] y no solo para patologias, igual en un menu normal el
+# veterinario quiere tener control sobre eso».
+#
+# Y la regla que los limita, del mismo dia y de ella: «los requisitos se
+# respetan SIEMPRE, eso no se negocia. a no ser que un veterinario si que pueda
+# saltarse esos requisitos que no lo se, pero yo diria que no».
+#
+# Asi que un objetivo del profesional SOLO PUEDE APRETAR:
+#
+#   · un techo suyo por debajo del maximo de FEDIAF ....... se aplica
+#   · un techo suyo por ENCIMA del maximo de FEDIAF ....... manda FEDIAF
+#   · un suelo suyo por encima del minimo de FEDIAF ....... se aplica
+#   · un suelo suyo por DEBAJO del minimo de FEDIAF ....... manda FEDIAF
+#   · un techo suyo por debajo del MINIMO de FEDIAF ....... imposible, y se dice
+#
+# ⚠️ Y SE DICE SIEMPRE QUE SE RECORTE. Aplicar el numero de FEDIAF en lugar del
+# suyo sin decirlo dejaria al profesional creyendo que ha formulado lo que
+# escribio -- que es la familia de fallos que persigue este proyecto entero. El
+# recorte va en la respuesta, no en un log.
+def _objetivos_dentro_de_fediaf(objetivos, req, etapa, der_efectiva=None):
+    """(objetivos aplicables, lista de ajustes) recortados contra FEDIAF.
+
+    `objetivos` llega como {clave_de_nutriente: {"min": x, "max": y}} en la
+    unidad del motor (g o mg por 1000 kcal), que es la misma en la que el
+    profesional ya lee todos los demas limites en `GET /patologias`.
+    """
+    from verificar import MAPA as _MAPA_OBJ, minimo_de as _min_fediaf, maximo_de as _max_fediaf
+    por_clave = {v: k for k, v in _MAPA_OBJ.items()}
+    limpios, ajustes = {}, []
+    for clave, lim in (objetivos or {}).items():
+        nombre_req = por_clave.get(clave)
+        if not nombre_req:
+            ajustes.append({"nutriente": clave, "que_ha_pasado": "no_es_un_requisito",
+                            "explicacion": f"«{clave}» no es ninguno de los 43 requisitos que "
+                                           f"verifica el motor, asi que no se puede fijar."})
+            continue
+        # `req` viene indexado por el NOMBRE del requisito, no como lista.
+        fila = req.get(nombre_req)
+        if fila is None:
+            continue
+        mn_f = _min_fediaf(fila, nombre_req, etapa, der_efectiva)
+        mx_f = _max_fediaf(fila, nombre_req, etapa)
+        suyo_min = lim.get("min") if isinstance(lim, dict) else None
+        suyo_max = lim.get("max") if isinstance(lim, dict) else None
+        salida = {}
+
+        if suyo_max is not None:
+            suyo_max = float(suyo_max)
+            if mn_f is not None and suyo_max < mn_f:
+                # Un techo por debajo del MINIMO no es apretar: es pedir una
+                # racion que ningun perro sano puede comer. No se aplica nada.
+                ajustes.append({"nutriente": nombre_req, "que_ha_pasado": "techo_bajo_el_minimo",
+                                "tuyo": suyo_max, "de_fediaf": mn_f,
+                                "explicacion": f"Has puesto un techo de {suyo_max} y el MINIMO de "
+                                               f"FEDIAF para esta etapa es {mn_f}. Por debajo de "
+                                               f"ahi no es apretar una racion: es dejarla "
+                                               f"incompleta, y eso el motor no lo hace."})
+            elif mx_f is not None and suyo_max > mx_f:
+                salida["max"] = mx_f
+                ajustes.append({"nutriente": nombre_req, "que_ha_pasado": "techo_recortado",
+                                "tuyo": suyo_max, "de_fediaf": mx_f,
+                                "explicacion": f"Tu techo de {suyo_max} queda por encima del "
+                                               f"maximo de FEDIAF ({mx_f}), asi que manda FEDIAF."})
+            else:
+                salida["max"] = suyo_max
+
+        if suyo_min is not None:
+            suyo_min = float(suyo_min)
+            if mx_f is not None and suyo_min > mx_f:
+                ajustes.append({"nutriente": nombre_req, "que_ha_pasado": "suelo_sobre_el_maximo",
+                                "tuyo": suyo_min, "de_fediaf": mx_f,
+                                "explicacion": f"Has puesto un suelo de {suyo_min} y el MAXIMO de "
+                                               f"FEDIAF es {mx_f}. No hay racion que cumpla las "
+                                               f"dos cosas."})
+            elif mn_f is not None and suyo_min < mn_f:
+                salida["min"] = mn_f
+                ajustes.append({"nutriente": nombre_req, "que_ha_pasado": "suelo_subido",
+                                "tuyo": suyo_min, "de_fediaf": mn_f,
+                                "explicacion": f"Tu suelo de {suyo_min} queda por debajo del "
+                                               f"minimo de FEDIAF ({mn_f}), asi que manda FEDIAF. "
+                                               f"Los requisitos no se negocian."})
+            else:
+                salida["min"] = suyo_min
+
+        if salida:
+            limpios[clave] = salida
+    return limpios, ajustes
+
+
 @app.post("/formular/autocompletar")
 def formular_autocompletar(datos: PeticionFormular):
     """Cierra lo que falta SIN tocar lo que el veterinario ya ha puesto.
@@ -4373,24 +5197,97 @@ def formular_autocompletar(datos: PeticionFormular):
         raise HTTPException(400, "No tenemos datos de: " + ", ".join(desconocidos))
 
     excluidos = list(datos.especies_excluidas or []) + list(datos.nombres_excluidos or [])
-    # El peldaño que haya elegido. Sin él, el primero: exactamente lo que
-    # hacía antes. Ver `_peldanos_publicos`.
-    _peldano_f = _peldano_por_clave(
-        datos.peldano, _hay_comida_de_verdad(al, excluidos, datos.categorias_excluidas))
-    _margenes_f = _peldano_f[0] if _peldano_f else MARGENES_V2
-    _supl_f = _peldano_f[1] if _peldano_f else 2
-    ok, gramos = resolver_v2(
-        datos.der_objetivo, datos.etapa_requisitos, al, req,
-        datos.peso_perro_kg, dosis_maxima_fabricante,
-        excluidos=excluidos or None,
-        margenes_categoria=_margenes_f, max_suplementos=_supl_f, time_limit=20.0,
-        forzar=list(fijos) or None,
-        gramos_fijos=fijos or None,
-        patologias=datos.patologias,
-        peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
-        peso_objetivo_kg=_peso_de_referencia(datos)[0],
-        categorias_excluidas=datos.categorias_excluidas,
-    )
+    _hay_comida_f = _hay_comida_de_verdad(al, excluidos, datos.categorias_excluidas)
+
+    # ⚠️ AUTOCOMPLETAR RECORRE LA ESCALERA (11 de septiembre de 2026), COMO
+    #     HACE `/menu/v2` DESDE SIEMPRE.
+    #
+    # CASO REAL, medido ese dia contra este mismo endpoint. Un adulto de 22 kg
+    # y estas cantidades, que son lo que escribe un veterinario cualquiera:
+    #
+    #     Conejo 400 g + Espinazo de conejo 150 g
+    #
+    #     peldano 0 (estricto) ................... no sale
+    #     peldano 1 .............................. no sale
+    #     peldano 2 .............................. no sale
+    #     peldano 3 .............................. SALE
+    #
+    # Y esto probaba UN peldano y se rendia. Medido sobre seis entradas
+    # realistas: CERO salian. La pantalla, mientras tanto, prometia «el motor
+    # completa alrededor» -- Elena: «hay un aviso que dice que se autocompleta
+    # el menu con los gramos que ya ha puesto y en la mayoria de casos no
+    # pasa».
+    #
+    # No es relajar nada: la escalera solo suelta las proporciones de BARF, que
+    # son criterio NUESTRO (regla 3), y cada intento vuelve a pasar por los 43
+    # requisitos, el ratio Ca:P y los topes de seguridad y de patologia. Es lo
+    # mismo que ya hacia el generador del dueño; lo raro era que aqui no.
+    #
+    # ⚠️ Y SI EL VETERINARIO HA ELEGIDO PELDAÑO, NO SE BAJA. Esa es la regla
+    # escrita en CLAUDE.md para `/menu/v2` y vale igual aqui: bajar seria
+    # cambiarle la decision a quien la ha tomado, que es lo contrario de por
+    # que se puede elegir. Con peldaño elegido se prueba ese y solo ese.
+    if datos.peldano and _peldano_por_clave(datos.peldano, _hay_comida_f):
+        _escalones_f = [(_peldano_por_clave(datos.peldano, _hay_comida_f) + (datos.peldano,))]
+    else:
+        _escalones_f = [(m, sup, k or PELDANO_ESTRICTO)
+                        for m, sup, k in _escalera_de_relajacion(_hay_comida_f)]
+
+    # Los objetivos del profesional, recortados contra FEDIAF ANTES de
+    # formular. Lo que se recorte se dice en la respuesta.
+    _objetivos_f, _ajustes_f = _objetivos_dentro_de_fediaf(
+        datos.objetivos_del_profesional, req, datos.etapa_requisitos,
+        der_efectiva_de(datos.der_objetivo, _peso_de_referencia(datos)[0]
+                        or datos.peso_perro_kg))
+
+    # ── EL PRESUPUESTO SEMANAL QUE LE QUEDA A ESTA RACIÓN ────────────────
+    #
+    # Se calcula AQUÍ, restando lo que ya se llevan las raciones que el
+    # profesional ha decidido para esta semana. Si no manda ninguna, es la
+    # semana entera para ella sola, que es exactamente lo que hacía antes: sin
+    # `raciones_ya_puestas` nada cambia.
+    _pres_f = None
+    _dias_f = max(1, int(datos.dias_de_esta_racion or 1))
+    if datos.raciones_ya_puestas:
+        _restante_f = _presupuesto_semanal_inicial(datos.der_objetivo)
+        _dias_gastados_f = 0
+        for _r_prev in datos.raciones_ya_puestas:
+            _g_prev = (_r_prev or {}).get("gramos") or {}
+            _d_prev = max(1, int((_r_prev or {}).get("dias") or 1))
+            if not _g_prev:
+                continue
+            _restante_f = _restar_del_presupuesto(
+                _restante_f, _consumo_real_menu(_g_prev, al, datos.der_objetivo), _d_prev)
+            _dias_gastados_f += _d_prev
+        _pres_f = _presupuesto_para_menu_actual(
+            _restante_f, max(1, 7 - _dias_gastados_f))
+
+    ok, gramos = False, None
+    _peldano_usado_f = datos.peldano or PELDANO_ESTRICTO
+    for _margenes_f, _supl_f, _clave_f in _escalones_f:
+        ok, gramos = resolver_v2(
+            datos.der_objetivo, datos.etapa_requisitos, al, req,
+            datos.peso_perro_kg, dosis_maxima_fabricante,
+            excluidos=excluidos or None,
+            margenes_categoria=_margenes_f, max_suplementos=_supl_f, time_limit=20.0,
+            forzar=list(fijos) or None,
+            gramos_fijos=fijos or None,
+            patologias=datos.patologias,
+            peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
+            peso_objetivo_kg=_peso_de_referencia(datos)[0],
+            categorias_excluidas=datos.categorias_excluidas,
+            objetivos_del_profesional=_objetivos_f or None,
+            presupuesto_semanal_restante=_pres_f,
+        )
+        _peldano_usado_f = _clave_f
+        if ok:
+            break
+        # ⚠️ Si es imposible POR ARITMETICA, bajar de peldaño no puede
+        # arreglarlo: no hay combinacion de proporciones que cambie que un
+        # minimo esté por encima de un maximo. Se para y se dice, como en
+        # `/menu/v2`.
+        if isinstance(gramos, dict) and gramos.get("_imposible"):
+            break
     if not ok:
         _imp = (gramos or {}).get("_imposible") if isinstance(gramos, dict) else None
         respuesta_no = {"factible": False,
@@ -4399,7 +5296,15 @@ def formular_autocompletar(datos: PeticionFormular):
                         "imposible_por_aritmetica": bool(_imp),
                         # En qué peldaño no ha salido. Sin esto, "no sale" no
                         # dice si queda algo que probar o no queda nada.
-                        "peldano": datos.peldano or PELDANO_ESTRICTO}
+                        #
+                        # ⚠️ Desde el 11 de septiembre es el ÚLTIMO que se
+                        # probó, no el primero: ahora se recorre la escalera
+                        # entera, así que decir «no sale en estricto» cuando se
+                        # han probado los seis sería mandar al veterinario a
+                        # bajar un peldaño que ya está probado.
+                        "peldano": _peldano_usado_f,
+                        "peldanos_probados": [k for _m, _s, k in _escalones_f],
+                        "objetivos_ajustados": _ajustes_f}
         # ⚠️ "NO SE PUEDE" A SECAS NO LE SIRVE A NADIE (29 agosto). Cuando no
         # sale, la pregunta del veterinario es "¿es POR LOS ALIMENTOS o por
         # LAS CANTIDADES?", y eso se puede contestar midiéndolo en vez de
@@ -4458,8 +5363,17 @@ def formular_autocompletar(datos: PeticionFormular):
                 "gramos_fijos_movidos": movidos,
                 "alternativa": gramos}
 
+    # ⚠️ Y SE DICE EN QUÉ PELDAÑO SALIÓ, siempre — no solo cuando hubo que
+    # bajar. «No dice nada» y «estricto» se leían igual, y quien firma
+    # necesita poder afirmar lo segundo. Es la misma regla que `/menu/v2`.
     respuesta = {"factible": True, "menu": gramos, "gramos_fijos_movidos": movidos,
-                 "peldano": datos.peldano or PELDANO_ESTRICTO}
+                 "peldano": _peldano_usado_f,
+                 # Lo que se haya recortado contra FEDIAF. Va SIEMPRE, tambien
+                 # cuando sale: el profesional tiene que poder ver que el numero
+                 # que aplico no es el que escribio.
+                 "objetivos_ajustados": _ajustes_f,
+                 "se_bajo_de_peldano": bool(not datos.peldano
+                                            and _peldano_usado_f != PELDANO_ESTRICTO)}
     respuesta = _garantizar_verificado(
         respuesta, datos.der_objetivo, datos.etapa_requisitos, datos.peso_perro_kg,
         origen="formulador del veterinario", patologias=datos.patologias,
@@ -4607,7 +5521,10 @@ def pauta_firmar(datos: PeticionFirmar):
                          peso_referencia_kg=peso_ref)
     problemas = _seguridad_completa(gramos, al, datos.der_objetivo, datos.etapa_requisitos,
                                     datos.patologias, peso_perro_kg=datos.peso_perro_kg)
-    topes_rotos = _tope_patologia_roto(gramos, al, datos.patologias, datos.etapa_requisitos)
+    topes_rotos = _tope_patologia_roto(
+        gramos, al, datos.patologias, datos.etapa_requisitos, req=req,
+        der_efectiva=der_efectiva_de(datos.der_objetivo, peso_ref),
+        peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None))
 
     # ⚠️ NO SE FIRMA LO QUE NO ESTÁ VERDE. Es la regla 1 leída donde más
     # importa: "ningún menú sale sin verificar, y si no está verde no se
@@ -4736,6 +5653,427 @@ def pauta_comprobar(documento: dict):
 # no tiene sitio donde moverse, y saberlo ANTES de formular es la diferencia
 # entre entender por que no sale menu y creer que la app esta rota.
 # =====================================================================
+
+# =====================================================================
+# GET /vocabulario — TODO LO QUE EL MOTOR ENUMERA, PARA QUE LA APP LO REFLEJE
+# =====================================================================
+#
+# ⚠️ POR QUE EXISTE (11 de septiembre de 2026). Elena, despues de encontrar que
+# la app ofrecia cinco niveles de actividad y la base de datos guardaba tres:
+#
+#     «no hay que hacer que el motor coincida con lo de la app. hay que hacer
+#      que la app coincida con lo del motor [...] si el motor dice que hay
+#      dieciocho niveles de actividad, la app tiene que tener 18 niveles de
+#      actividad porque si no no sirve de nada, y asi con todo»
+#
+# Y tiene razon en la direccion: la FUENTE manda, el MOTOR la implementa y la
+# APP la ofrece. Cuando la app se copia una lista a mano, esa copia se
+# desincroniza y nadie se entera -- ya paso tres veces documentadas:
+#
+#   · `CATEGORIAS_QUE_ELIGE_EL_USUARIO` contra `CATEGORIAS` de App.jsx: durante
+#     tres semanas se respetaban tres de las seis, y 15 de cada 36 menus
+#     personalizados metian algo que nadie habia pedido, callando.
+#   · Las patologias: el motor tiene 47 y la app ofrece 37. Diez no se pueden
+#     marcar, siete de ellas formulables (`FRONTEND_VS_MOTOR.md` §1).
+#   · Los niveles de actividad: cinco en la pantalla, tres en la base de datos.
+#     Un perro de trabajo volvia como «normal» y recibia un 37 % menos de comida.
+#
+# LA IDEA: que la app deje de copiar y LEA. Este endpoint sirve las siete listas
+# que el motor enumera, cada una con lo que hace falta para pintarla. El que la
+# app siga teniendo su copia es ahora comprobable: `tests/vocabulario.spec.js`
+# en `canislab-web` compara las dos.
+#
+# NO sustituye a `GET /patologias` ni a `GET /relajacion`, que sirven la tabla
+# ENTERA con sus cifras y sus fuentes. Esto es el vocabulario: los nombres y
+# cuantos hay.
+
+# =====================================================================
+# LAS DOS FORMAS DE DECIR LO MISMO: AL DUEÑO Y AL VETERINARIO
+# =====================================================================
+#
+# ⚠️ POR QUE VIVEN AQUI Y NO EN LA APP (11 de septiembre de 2026). Elena:
+#
+#     «aunque coja los datos directos del motor, el vocabulario que usa la app
+#      en modo usuario tiene que ser entendible para el usuario y el que se usa
+#      en modo veterinario tiene que ser mas tecnico»
+#
+# Y tiene razon en las dos mitades. Lo que NO puede pasar es que esas etiquetas
+# vivan copiadas en la app: el dia que el motor anada un nivel -- o que la fuente
+# parta uno en dos -- la app se queda con su lista vieja y el usuario elige algo
+# que el motor no sabe recibir, o al reves. Es el mismo fallo que ya tuvimos con
+# las categorias y con las patologias, y el que acabamos de encontrar con los
+# cinco niveles contra los tres de la base de datos.
+#
+# Asi que la CLAVE y las DOS etiquetas salen del mismo sitio: de aqui.
+#
+#   · `dueno`       — como se lo decimos a quien quiere alimentar bien a su
+#                     perro. Sin jerga y con un ejemplo de lo que hace el perro.
+#   · `veterinario` — la fila de la fuente, con sus palabras y sus horas. Quien
+#                     firma una pauta necesita poder citar la tabla.
+ETIQUETAS_ACTIVIDAD = {
+    "sedentario": {
+        "dueno": {"titulo": "Sedentario", "detalle": "Paseos cortos, se mueve poco"},
+        "veterinario": {"titulo": "Actividad baja",
+                        "detalle": "Menos de 1 h/día, p. ej. paseo con correa (FEDIAF VII-7)"},
+    },
+    "normal": {
+        "dueno": {"titulo": "Normal", "detalle": "Paseos diarios de siempre"},
+        "veterinario": {"titulo": "Actividad moderada, bajo impacto",
+                        "detalle": "1 a 3 h/día de bajo impacto (FEDIAF VII-7)"},
+    },
+    "activo": {
+        "dueno": {"titulo": "Activo", "detalle": "Paseos largos, juega bastante"},
+        "veterinario": {"titulo": "Actividad moderada, alto impacto",
+                        "detalle": "1 a 3 h/día de alto impacto (FEDIAF VII-7)"},
+    },
+    # ⚠️ LOS DOS DE ABAJO SON LA MISMA FILA DE LA FUENTE, y el vocabulario del
+    # veterinario tiene que decirlo: FEDIAF da «High activity (3 – 6 h/day)
+    # (working dogs, e.g. sheep dogs) 150 - 175» en UNA sola fila con un rango, y
+    # el motor la parte en dos. Al dueño se le dan dos casillas porque son dos
+    # perros distintos de reconocer; a quien firma se le dice de qué fila salen
+    # y en qué punto del rango cae. Escrito en `niveles_de_actividad.json`.
+    "muy_activo": {
+        "dueno": {"titulo": "Muy activo", "detalle": "Corre, hace deporte, no para"},
+        "veterinario": {"titulo": "Actividad alta (extremo bajo del rango)",
+                        "detalle": "3 a 6 h/día; FEDIAF VII-7 da 150-175 en una sola fila y aquí "
+                                   "se aplica 150"},
+    },
+    "trabajo": {
+        "dueno": {"titulo": "Trabajo", "detalle": "Pastoreo, guarda, o similar"},
+        "veterinario": {"titulo": "Actividad alta (extremo alto del rango)",
+                        "detalle": "3 a 6 h/día, perro de trabajo; FEDIAF VII-7 da 150-175 en una "
+                                   "sola fila y aquí se aplica 175"},
+    },
+}
+
+# ─────────────────────────────────────────────────────────────────────────────
+# LOS DOS REGISTROS, PARA TODO LO DEMAS (11 de septiembre de 2026)
+#
+# Elena, el mismo dia que lo de la actividad: «esto tiene que ser para TODO,
+# razas, tamaño, etapa, actividad, preguntas para las patologias de
+# veterinarios, todo».
+#
+# Asi que lo que se hizo con los cinco niveles de actividad se hace aqui con lo
+# demas que la ficha ENUMERA. La regla es la misma y no cambia:
+#
+#   · `dueno`       — sin jerga, con un ejemplo de lo que se ve o se toca.
+#   · `veterinario` — la palabra de la fuente, con su tabla y su cifra.
+#
+# Lo que NO se duplica: el numero. Los escalones del dueño son los MISMOS
+# valores de BCS que usa el veterinario (1, 3, 5, 7 y 9); si cada pantalla
+# tuviera su escala, el mismo perro tendria dos pesos objetivo y dos DER segun
+# quien abriera la ficha. Eso ya esta resuelto en `der.BCS_DESDE_CONDICION` y
+# aqui solo se ETIQUETA.
+# Las 255 razas y los seis tamaños, de `razas.json`. Se cargan una vez al
+# arrancar, como el catalogo: son datos, no calculo.
+import json as _json
+import os as _os
+from razas import RAZAS as _RAZAS, TAMANOS as _TAMANOS, cargar_crudo as _cargar_razas
+from der import BCS_DESDE_CONDICION, BCS_PCT_POR_PUNTO as der_BCS_PCT_POR_PUNTO
+
+_RAZAS_META = _cargar_razas().get("_meta", {})
+
+# Quien puede marcar cada patologia y que pregunta falta en la ficha. Se lee del
+# fichero y no se copia aqui: seria la segunda copia de una tabla que ya tiene
+# su auditor (BLOQUE 79).
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                        "quien_formula_cada_patologia.json"), encoding="utf-8") as _f:
+    _DERIVACION = _json.load(_f)["patologias"]
+
+# Que pregunta decide la cifra de cada patologia, que respuestas tiene, y a que
+# clave del motor lleva cada respuesta.
+#
+# ⚠️ Elena, 11-sep-2026: «tendra que haber preguntas para cada patologia
+# preguntando resultados de analiticas o lo que sea para que pueda coger segun
+# la respuesta los limites para cada estadio o cada caso». Aqui no hay ni una
+# cifra escrita: el fichero las DERIVA de `patologias.json`, y donde el motor no
+# tiene una clave por respuesta lo dice en vez de inventarla.
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                        "preguntas_por_patologia.json"), encoding="utf-8") as _f:
+    _PREGUNTAS_PAT = _json.load(_f)
+
+
+def _rango_de_tamano(tamano):
+    """El rango de peso adulto que de verdad tienen las razas de ese tamaño.
+
+    Se MIDE sobre `razas.json` en vez de escribirse: los seis tamaños se
+    solapan (Pequeño llega a 18,5 kg de peso medio y Mediano empieza en 15) y
+    un corte escrito a mano seria un numero que la tabla no dice.
+    """
+    medios = [r["pesoMedio"] for r in _RAZAS if r["tamano"] == tamano]
+    if not medios:
+        return None
+    propias = [r for r in _RAZAS if r["tamano"] == tamano]
+    return {"peso_medio_min": min(medios), "peso_medio_max": max(medios),
+            # ⚠️ Y EL RANGO ANCHO, que es el que hay que ENSEÑAR a quien elige
+            # tamaño sin saber la raza: va del perro mas ligero de la raza mas
+            # ligera al mas pesado de la mas pesada. La app lo tenia escrito a
+            # mano («Toy: 1,5-6kg») y cuatro de los seis ya estaban caducados,
+            # porque la lista de razas creció debajo y la tabla no.
+            "peso_min": min(r["pesoMin"] for r in propias),
+            "peso_max": max(r["pesoMax"] for r in propias),
+            "cuantas_razas": len(medios)}
+
+
+def _etiqueta_tamano(tamano):
+    """Las dos etiquetas de un tamaño, con el detalle clinico ya relleno."""
+    import copy
+    e = copy.deepcopy(ETIQUETAS_TAMANO[tamano])
+    rango = _rango_de_tamano(tamano)
+    if rango and e.get("veterinario") is not None:
+        e["veterinario"]["detalle"] = (
+            f"{rango['cuantas_razas']} razas del catalogo, de {rango['peso_medio_min']} a "
+            f"{rango['peso_medio_max']} kg de peso adulto medio")
+    return e
+
+
+ETIQUETAS_CONDICION = {
+    1: {"dueno": {"titulo": "Muy flaquito", "detalle": "Costillas muy marcadas, sin nada de grasa"},
+        "veterinario": {"titulo": "BCS 1/9 — Emaciado",
+                        "detalle": "≥40 % por debajo del ideal (FEDIAF Tabla VII-2)"}},
+    2: {"dueno": None,
+        "veterinario": {"titulo": "BCS 2/9 — Muy delgado",
+                        "detalle": "30 a 40 % por debajo del ideal (FEDIAF Tabla VII-2)"}},
+    3: {"dueno": {"titulo": "Flaquito", "detalle": "Costillas se notan facil al tacto"},
+        "veterinario": {"titulo": "BCS 3/9 — Delgado",
+                        "detalle": "20 a 30 % por debajo del ideal (FEDIAF Tabla VII-2)"}},
+    4: {"dueno": None,
+        "veterinario": {"titulo": "BCS 4/9 — Por debajo del ideal",
+                        "detalle": "10 a 15 % por debajo del ideal (FEDIAF Tabla VII-2)"}},
+    5: {"dueno": {"titulo": "Ideal", "detalle": "Costillas se palpan, cintura visible desde arriba"},
+        "veterinario": {"titulo": "BCS 5/9 — Ideal",
+                        "detalle": "En su peso; la racion se calcula sobre el peso actual"}},
+    6: {"dueno": None,
+        "veterinario": {"titulo": "BCS 6/9 — Por encima del ideal",
+                        "detalle": "10 a 15 % por encima del ideal (FEDIAF Tabla VII-2)"}},
+    7: {"dueno": {"titulo": "Rellenito", "detalle": "Cuesta notar las costillas, poca cintura"},
+        "veterinario": {"titulo": "BCS 7/9 — Sobrepeso",
+                        "detalle": "20 a 30 % por encima del ideal (FEDIAF Tabla VII-2)"}},
+    8: {"dueno": None,
+        "veterinario": {"titulo": "BCS 8/9 — Obeso",
+                        "detalle": "30 a 45 % por encima del ideal (FEDIAF Tabla VII-2)"}},
+    9: {"dueno": {"titulo": "Muy gordete", "detalle": "No se notan las costillas, sin cintura"},
+        "veterinario": {"titulo": "BCS 9/9 — Obesidad morbida",
+                        "detalle": "Mas del 45 % por encima del ideal; la estimacion es una COTA "
+                                   "INFERIOR (FEDIAF Tabla VII-2, fila «9. Grossly Obese»)"}},
+}
+
+# Los seis tamaños. La cifra de referencia de cada uno NO se inventa aqui: es el
+# peso con el que esta calculado su menu de la vista previa en
+# `catalogo_menus.json`, o sea el que el motor ya usa.
+ETIQUETAS_TAMANO = {
+    "Toy":     {"dueno": {"titulo": "Toy", "detalle": "Cabe en brazos"},
+                "veterinario": {"titulo": "Toy", "detalle": None}},
+    "Mini":    {"dueno": {"titulo": "Mini", "detalle": "Pequeñito, de bolso"},
+                "veterinario": {"titulo": "Miniatura", "detalle": None}},
+    "Pequeño": {"dueno": {"titulo": "Pequeño", "detalle": "Se coge en brazos sin esfuerzo"},
+                "veterinario": {"titulo": "Pequeño", "detalle": None}},
+    "Mediano": {"dueno": {"titulo": "Mediano", "detalle": "Ni pequeño ni grande"},
+                "veterinario": {"titulo": "Mediano", "detalle": None}},
+    "Grande":  {"dueno": {"titulo": "Grande", "detalle": "Cuesta cogerlo en brazos"},
+                "veterinario": {"titulo": "Grande", "detalle": None}},
+    "Gigante": {"dueno": {"titulo": "Gigante", "detalle": "De los mas grandes que hay"},
+                "veterinario": {"titulo": "Gigante", "detalle": None}},
+}
+# ⚠️ EL `detalle` DEL VETERINARIO VA A None A PROPOSITO Y LO RELLENA EL
+# ENDPOINT, con el rango que de verdad tienen las razas de ese tamaño en
+# `razas.json` y con el peso con el que esta calculado su menu de la vista
+# previa. La primera version de esto llevaba los kilos escritos a mano («8 a 15
+# kg» para Pequeño) y eran FALSOS: medido sobre las 255 razas, Pequeño llega a
+# 18,5 kg de peso medio y Mediano empieza en 15, o sea que los tamaños se
+# SOLAPAN -- son etiquetas de raza, no cortes de peso. Escribir un corte que la
+# tabla no tiene es inventarse un dato con forma de dato bueno, que es justo lo
+# que este fichero viene a evitar.
+
+# Las etapas, que es lo unico de esta lista que NO elige quien rellena la ficha:
+# sale de la fecha de nacimiento, del sexo y de si esta gestante o lactando. Se
+# sirven igual porque la app las ESCRIBE en pantalla y porque el veterinario
+# necesita saber a que tabla de FEDIAF corresponde la suya.
+ETIQUETAS_ETAPA = {
+    "CachorroJoven": {
+        "dueno": {"titulo": "Cachorro", "detalle": "Menos de 14 semanas"},
+        "veterinario": {"titulo": "Early Growth (< 14 weeks) & Reproduction",
+                        "detalle": "Tabla III-3b de FEDIAF, tercera columna. Es TAMBIEN la de "
+                                   "gestacion y lactancia: la cabecera dice «& Reproduction»"}},
+    "CachorroCrecimiento": {
+        "dueno": {"titulo": "Cachorro mayor", "detalle": "Desde las 14 semanas hasta que termina "
+                                                         "de crecer"},
+        "veterinario": {"titulo": "Late Growth (≥ 14 weeks)",
+                        "detalle": "Tabla III-3b de FEDIAF, cuarta columna"}},
+    "Adulto": {
+        "dueno": {"titulo": "Adulto", "detalle": "Ya ha terminado de crecer"},
+        "veterinario": {"titulo": "Adult maintenance",
+                        "detalle": "Tabla III-3b de FEDIAF, columnas de 95 y 110 kcal/kg^0,75"}},
+    "Senior": {
+        "dueno": {"titulo": "Senior", "detalle": "Perro mayor"},
+        "veterinario": {"titulo": "Senior (sin columna propia en FEDIAF)",
+                        "detalle": "Usa la de adulto, con la proteina subida a 45 g/1000 kcal "
+                                   "(`requisitos.SENIOR_PROTEINA_MINIMA`) y el techo de fosforo "
+                                   "de 1750 mg/1000 kcal"}},
+    "GestanteTardia": {
+        "dueno": {"titulo": "Embarazada", "detalle": "Ultimas semanas de la gestacion"},
+        "veterinario": {"titulo": "Late gestation",
+                        "detalle": "Va a la columna «Early Growth & Reproduction», mas el "
+                                   "requisito condicional de proteina de "
+                                   "`requisitos_condicionales.json`"}},
+    "Lactante": {
+        "dueno": {"titulo": "Dando de mamar", "detalle": "Con la camada"},
+        "veterinario": {"titulo": "Lactation",
+                        "detalle": "Va a la columna «Early Growth & Reproduction», mas el "
+                                   "requisito condicional de proteina"}},
+}
+# ⚠️ LA ETAPA NO LA CALCULA EL MOTOR, Y ESO HAY QUE SABERLO PARA LEER ESTO.
+# La decide la app a partir de la fecha de nacimiento (`determinarEtapa` en
+# `src/der.js`, que corta Early Growth en 98 dias = 14 semanas) y llega ya hecha
+# en `etapa_requisitos`. O sea que el motor no puede comprobar que la etapa que
+# recibe sea la que le toca a ese perro: solo que EXISTA. Es la misma
+# duplicacion que el DER, y esta apuntada igual.
+
+@app.get("/vocabulario")
+def endpoint_vocabulario():
+    from der import BASE_ACTIVIDAD, RAZAS_CIFRA_FEDIAF
+    from requisitos import ETAPAS_VALIDAS, EQUIVALENCIA_ETAPAS
+
+    from motor.patologias import cargar_crudo
+    from catalogo_menus import CATALOGO
+
+    al_v, _req_v = cargar_v2()
+    _pat_v = (cargar_crudo() or {}).get("patologias") or {}
+
+    return {
+        "que_es": ("Todo lo que el motor enumera. La app tiene que ofrecer ESTO, ni mas ni menos: "
+                   "una lista que la app se copia a mano se desincroniza y nadie se entera."),
+        "niveles_de_actividad": {
+            "de_donde": "FEDIAF 2025, Tabla VII-7 «Recommendations for DER in relation to activity»",
+            "cuantos": len(BASE_ACTIVIDAD),
+            "niveles": [dict({"clave": k, "kcal_kg075": v}, **ETIQUETAS_ACTIVIDAD[k])
+                        for k, v in BASE_ACTIVIDAD.items()],
+            "ojo": ("⚠️ La Tabla VII-7 tiene CUATRO filas de actividad para el perro normal (95, "
+                    "110, 125 y un rango de 150-175), y el motor parte la cuarta en DOS niveles. "
+                    "Eso es decision nuestra y esta escrita en `niveles_de_actividad.json`. "
+                    "Y falta una fila de la fuente que no esta ni aqui ni en la app: «Obese prone "
+                    "adults ≤ 90»."),
+        },
+        # ── LAS 255 RAZAS ────────────────────────────────────────────────
+        # Vivian SOLO en `src/App.jsx`. Ahora viven en `razas.json` y la app se
+        # las pide aqui: una lista que la app se copia a mano se desincroniza y
+        # nadie se entera. ⚠️ Estas cifras NO tienen fuente publicada -- ninguna
+        # de las cuatro fuentes del motor trae una tabla de peso por raza --, y
+        # eso esta escrito en el `_meta` del fichero y en `DATOS_QUE_FALTAN.md`.
+        "razas": {
+            "de_donde": "razas.json (movidas desde src/App.jsx el 11-sep-2026)",
+            "ojo": _RAZAS_META.get("de_donde_salen_estas_cifras"),
+            "cuantas": len(_RAZAS),
+            "razas": _RAZAS,
+        },
+        # ── LOS SEIS TAMAÑOS ─────────────────────────────────────────────
+        "tamanos": {
+            "de_donde": ("Las seis claves con las que `catalogo_menus.json` indexa sus menus "
+                         "precalculados (`{tamano}_{etapa}`). Si la app mandara un septimo, la "
+                         "clave no existiria y la vista previa se quedaria sin menu."),
+            "ojo": ("Son etiquetas de RAZA, no cortes de peso: medido sobre las 255 razas, "
+                    "«Pequeño» llega a 18,5 kg de peso medio y «Mediano» empieza en 15. Se "
+                    "solapan a proposito. El rango que se sirve aqui es el OBSERVADO en "
+                    "`razas.json`, no un corte inventado."),
+            "tamanos": [dict({"clave": t,
+                              "peso_kg_del_menu_de_muestra": (
+                                  CATALOGO.get(f"{t}_Adulto") or {}).get("peso_kg"),
+                              "rango_observado_kg": _rango_de_tamano(t)},
+                             **_etiqueta_tamano(t))
+                        for t in _TAMANOS],
+        },
+        # ── LA CONDICION CORPORAL ────────────────────────────────────────
+        # Es UN SOLO numero y UNA SOLA formula: los cinco escalones del dueño
+        # son cinco valores del BCS (1, 3, 5, 7 y 9). Si cada pantalla tuviera
+        # su escala, el mismo perro tendria dos pesos objetivo y dos DER.
+        "condicion_corporal": {
+            "de_donde": "FEDIAF 2025, Anexo 7.1, Tabla VII-2 («% BW below or above BCS 5»)",
+            "escala": "1 a 9",
+            "ideal": BCS_NEUTRO_MAIN,
+            "pct_por_punto": der_BCS_PCT_POR_PUNTO,
+            "ojo": ("El BCS 9 NO sigue la recta del 10 % por punto: FEDIAF dice «>45 %» y la "
+                    "recta da 40. Se aplica 45 y la estimacion es una COTA INFERIOR. || Los "
+                    "cinco escalones del dueño son los BCS de `der.BCS_DESDE_CONDICION`; el "
+                    "veterinario pone el BCS exacto, que es el que manda para calcular."),
+            "escalones_del_dueno": {str(i): b for i, b in sorted(BCS_DESDE_CONDICION.items())},
+            "puntos": [dict({"bcs": b,
+                             "ofrecido_al_dueno": b in set(BCS_DESDE_CONDICION.values())},
+                            **ETIQUETAS_CONDICION[b])
+                       for b in sorted(ETIQUETAS_CONDICION)],
+        },
+        # ── LAS PREGUNTAS QUE LA APP TIENE QUE HACER ─────────────────────
+        # ⚠️ Elena, 11-sep-2026: «preguntas para las patologias de
+        # veterinarios». No es opinion de producto: cada linea sale de la CITA
+        # de la fuente de esa patologia. Si su tabla condiciona la cifra a un
+        # dato clinico -- el estadio IRIS que decide el techo de fosforo, los
+        # trigliceridos que bajan la grasa de 37,5 a 25 --, entonces no la puede
+        # marcar quien no tiene ese dato, y la pregunta que falta en la ficha es
+        # la que hace falta para ELEGIR EL NUMERO.
+        "preguntas_por_patologia": {
+            "de_donde": "quien_formula_cada_patologia.json",
+            "ojo": ("`quien_puede_marcarla` dice quien puede tocar la casilla; "
+                    "`pregunta_que_falta` es lo que la app NO pregunta todavia y sin lo cual la "
+                    "cifra se elige a ciegas. Una patologia con pregunta sin hacer no deberia "
+                    "poder marcarse desde la app del dueño."),
+            "cuantas_sin_preguntar": sum(1 for v in _DERIVACION.values()
+                                         if v.get("pregunta_que_falta")),
+            # ⚠️ Y LO QUE DECIDE CADA RESPUESTA, que es la otra mitad
+            # (11-sep). Saber que falta una pregunta no sirve de nada si no se
+            # sabe a que cifra lleva cada respuesta. Las cifras se LEEN de
+            # `patologias.json`: aqui no hay copia.
+            "que_decide_cada_respuesta": _PREGUNTAS_PAT["preguntas"],
+            "como_leerlo": _PREGUNTAS_PAT["_meta"]["los_cinco_estados"],
+            "por_patologia": {k: {"nombre": v.get("nombre"),
+                                  "quien_puede_marcarla": v.get("quien_puede_marcarla"),
+                                  "necesita_dato_clinico": v.get("necesita_dato_clinico"),
+                                  "que_dato": v.get("que_dato"),
+                                  "pregunta_que_falta": v.get("pregunta_que_falta")}
+                              for k, v in sorted(_DERIVACION.items())},
+        },
+        "razas_con_cifra_propia": {
+            "de_donde": "FEDIAF 2025, Tabla VII-7, fila «Breed specific differences»",
+            "ojo": "La cifra de raza va EN VEZ del nivel de actividad, no sumada (§7.2.3.4).",
+            "razas": [{"nombre": k, "kcal_kg075": v[0], "rango": [v[1], v[2]]}
+                      for k, v in RAZAS_CIFRA_FEDIAF.items()],
+        },
+        "etapas": {
+            "de_donde": "requerimientos_v2_final.json (Tabla III-3b de FEDIAF) y sus equivalencias",
+            "con_tabla_propia": sorted(ETAPAS_VALIDAS),
+            "equivalencias": {k: v for k, v in EQUIVALENCIA_ETAPAS.items()},
+            # ⚠️ La etapa NO la calcula el motor: la decide la app desde la
+            # fecha de nacimiento y llega ya hecha en `etapa_requisitos`. El
+            # motor solo puede comprobar que EXISTA. Misma duplicacion que el
+            # DER, y apuntada igual.
+            "quien_la_calcula": ("La app (`determinarEtapa` en src/der.js), que corta Early "
+                                 "Growth en 98 dias = 14 semanas. El motor la recibe hecha."),
+            "etapas": [dict({"clave": k}, **v) for k, v in ETIQUETAS_ETAPA.items()],
+        },
+        "patologias": {
+            "cuantas": len(_pat_v),
+            "formulables": sorted(k for k, v in _pat_v.items() if v.get("formulable")),
+            "no_formulables": sorted(k for k, v in _pat_v.items() if not v.get("formulable")),
+            "ojo": ("La tabla entera, con sus topes y sus fuentes, va por `GET /patologias`. "
+                    "Quien puede marcar cada una esta en `quien_formula_cada_patologia.json`."),
+        },
+        "categorias_que_elige_el_usuario": {
+            "de_donde": "main.CATEGORIAS_QUE_ELIGE_EL_USUARIO",
+            "ojo": ("Tiene que coincidir con `CATEGORIAS` de App.jsx. El dia que dejen de "
+                    "coincidir, elegir en las que sobran no hara nada y el menu saldra verde "
+                    "igual."),
+            "categorias": list(CATEGORIAS_QUE_ELIGE_EL_USUARIO),
+        },
+        "categorias_del_catalogo": {
+            "ojo": ("Las que NO estan en la lista de arriba (Suplementos y Extras) van siempre "
+                    "libres: son la herramienta con la que el motor cierra los 43 requisitos."),
+            "categorias": sorted({a.get("categoria") for a in al_v.values() if a.get("categoria")}),
+        },
+        "peldanos_de_la_escalera": {
+            "de_donde": "main.PELDANOS_EN_CRISTIANO, y los recorre `_escalera_de_relajacion`",
+            "ojo": "Lo que suelta cada uno va por `GET /relajacion`.",
+            "peldanos": list(PELDANOS_EN_CRISTIANO),
+        },
+    }
+
 @app.get("/patologias")
 def listar_patologias():
     """Los topes por patologia con su fuente, su motivo y su margen.
@@ -4804,10 +6142,59 @@ def listar_patologias():
                 # queda enfrente. Negativo = por debajo del minimo, o sea una
                 # dieta de prescripcion: eso solo lo firma un profesional.
                 "margen_pct": margen,
+                # ⚠️ AÑADIDO (10 septiembre) — HASTA DONDE PUEDE MOVERLA EL
+                # PROFESIONAL, Y HASTA DONDE NO. `margen_pct` de arriba dice
+                # cuanta holgura hay contra UN limite de FEDIAF; esto dice la
+                # ventana entera con su procedencia: el suelo (bajo el cual hace
+                # falta firma), el techo (que puede ser LEGAL, y entonces no se
+                # sale nadie) y de donde sale cada uno. Vive en el fichero y no
+                # se calcula aqui a proposito: si la app o esta funcion lo
+                # recalcularan por su cuenta, seria la tercera copia de la misma
+                # tabla -- que es exactamente como se desincronizo la del
+                # POST /menu. Lo rehace `auditar_margen_profesional.py` contra
+                # la fuente viva, en el BLOQUE 80.
+                "margen_profesional": t.get("margen_profesional"),
                 "fuente": t.get("fuente"),
                 "por_que": t.get("por_que"),
             })
         salida.sort(key=lambda x: x["nutriente"])
+        return salida
+
+    def _ratios_servidos(bloque):
+        """Los ratios de la patologia, con el de FEDIAF del mismo par al lado."""
+        # El unico ratio que FEDIAF pone es el Ca:P, y esta en su propia fila de
+        # la tabla (no en `MAPA`, porque no es un nutriente). Se lee de ahi y no
+        # se escribe a mano: una segunda copia del 1,0-2,0 es exactamente como
+        # se desincronizo la tabla de patologias del POST /menu.
+        _fediaf_por_par = {}
+        for fila in reqs:
+            if fila.get("nutriente") == "Relacion_Ca_P":
+                _fediaf_por_par[("calcio", "fosforo")] = (_num(fila.get("minAdulto")),
+                                                          _num(fila.get("maxAdulto")))
+        salida = []
+        for clave, r in (bloque or {}).items():
+            _par = (r.get("numerador"), r.get("denominador"))
+            _f_min, _f_max = _fediaf_por_par.get(_par, (None, None))
+            _valor = _num(r.get("valor"))
+            _referencia = _f_min if r.get("sentido") == "min" else _f_max
+            _margen = None
+            if _valor is not None and _referencia:
+                _margen = round((_valor - _referencia) / _referencia * 100, 1)
+            salida.append({
+                "clave": clave,
+                "numerador": r.get("numerador"),
+                "denominador": r.get("denominador"),
+                "sentido": r.get("sentido"),
+                "valor": _valor,
+                "minimo_fediaf_adulto": _f_min,
+                "maximo_fediaf_adulto": _f_max,
+                "margen_pct": _margen,
+                "margen_profesional": r.get("margen_profesional"),
+                "aplicado_por_el_solver": bool(r.get("aplicado_por_el_solver")),
+                "fuente": r.get("fuente"),
+                "por_que": r.get("por_que"),
+            })
+        salida.sort(key=lambda x: x["clave"])
         return salida
 
     crudo = cargar_crudo()
@@ -4829,12 +6216,51 @@ def listar_patologias():
             "nota": p.get("nota"),
             "topes": _limites(p.get("topes_por_1000kcal"), es_tope=True),
             "suelos": _limites(p.get("suelos_por_1000kcal"), es_tope=False),
+            # ⚠️ AÑADIDO (10 septiembre) — LOS TOPES QUE SOLO APLICAN CON OTRA
+            # PATOLOGIA MARCADA. Existen desde el 8 de septiembre (la grasa de
+            # la pancreatitis baja de 37,5 a 25 si ademas hay obesidad o
+            # hipertrigliceridemia) y este endpoint no los servia, asi que quien
+            # leia la ficha veia 37,5 y no sabia que hay un segundo escalon. Es
+            # el mismo hueco de los `avisos_extra`: escrito, aplicado, y sin
+            # llegar a ninguna pantalla.
+            "topes_si_ademas": [
+                dict(t, requiere=list((p.get("topes_por_1000kcal_si_ademas") or {})
+                                      .get(t["nutriente"], {}).get("requiere") or []))
+                for t in _limites(p.get("topes_por_1000kcal_si_ademas"), es_tope=True)],
+            # ⚠️ AÑADIDO (10 septiembre) — LOS RATIOS QUE PIDE LA PATOLOGIA.
+            # Se sirven con el limite de FEDIAF del MISMO ratio al lado, que es
+            # el sentido entero de este endpoint: el oxalato pide Ca:P >= 1,1 y
+            # FEDIAF pide >= 1,0 en adulto, o sea que aprieta un 10 %. Sin ese
+            # numero enfrente, «1,1» no dice si es un limite estrecho o un
+            # adorno. Van con `aplicado_por_el_solver` explicito porque hasta
+            # hoy estos dos estaban escritos y NO se aplicaban.
+            "ratios": _ratios_servidos(p.get("ratios")),
             # El aviso que ya le llega dentro del menu, aqui tambien: al
             # ELEGIR la patologia, que es cuando decide, no despues de
             # formular.
             "aviso_profesional": avisos.get("profesional"),
             "aviso_profesional_crecimiento": avisos.get("profesional_crecimiento"),
             "aviso_general": avisos.get("general"),
+            # ⚠️ AÑADIDO (8 septiembre) — los avisos que no son ninguno de los
+            # cuatro con nombre propio. Ver `avisos_extra` en patologias.py:
+            # antes se cargaban del JSON y no llegaban a ningún sitio. Aquí
+            # importan más que en el menú: son las frases donde la fuente pide
+            # algo que el motor NO puede hacer solo (una o dos proteínas y
+            # novel, no formular durante la fase de diagnóstico), y quien firma
+            # una pauta necesita leerlas antes de elegir la patología.
+            "avisos_extra": [avisos[k] for k in sorted(avisos)
+                             if k not in ("general", "crecimiento", "profesional",
+                                          "profesional_crecimiento") and avisos[k]],
+            # ⚠️ Y LO QUE ESTÁ ESCRITO PERO NO SE APLICA, DICIENDO QUE NO SE
+            # APLICA. Una cifra de la fuente que el motor no puede imponer
+            # (porque no cabe, o porque depende de un dato clínico que no
+            # tenemos) se guarda igual con su fuente para no perderla -- pero
+            # servirla sin la etiqueta sería peor que no servirla: parecería un
+            # límite. Mismo criterio que `aplicado_por_el_solver`, que desde el
+            # 10 de septiembre viaja también con cada ratio: los dos Ca:P de los
+            # urolitos de calcio eran el ejemplo de aquí y ya SÍ se aplican.
+            "limites_escritos_que_el_solver_no_aplica":
+                p.get("limites_escritos_que_el_solver_no_aplica"),
         }
     return {"unidad": crudo["_meta"]["unidad"], "patologias": salida}
 

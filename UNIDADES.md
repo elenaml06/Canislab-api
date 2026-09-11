@@ -88,9 +88,25 @@ Y cuatro campos más que no son requisitos de FEDIAF:
 | Taurina | `taurina` | **mg** por 100 g |
 | L-carnitina | `lcarnitina` | **mg** por 100 g |
 
-La fibra se guarda pero **no se verifica**: ni FEDIAF, ni AAFCO, ni el NRC
-fijan un mínimo para perros. Ver la sección de fibra del documento de
-consultoría.
+La fibra se guarda pero **no la verifica FEDIAF**: ni FEDIAF, ni AAFCO, ni el
+NRC fijan un mínimo para perros. Ver la sección de fibra del documento de
+consultoría. Sí la usan **ocho patologías**, con suelo o con techo.
+
+⚠️ **Y es FIBRA DIETÉTICA TOTAL, no fibra bruta** (escrito el 11 de septiembre de
+2026, y es la cuarta trampa de este fichero con la misma forma que el
+linoleico/linolénico: dos cosas distintas con el mismo nombre y ningún aviso si se
+confunden). El campo `fibra` sale de BEDCA, CIQUAL y USDA, que publican **fibra
+dietética total** —dos fichas lo dicen literal en su `nota_datos`—, mientras que
+las tablas de SACN5 de las que salen los ocho límites están en **fibra bruta**, que
+es lo que declara la etiqueta de un pienso. NRC 2006 cap.4: *«The crude fiber
+method accounts for only 5 to 20 percent of the total fiber in a food»*, y la Tabla
+5-9 de SACN5 enseña que la proporción va del 0 % (fibra soluble) al 82 %
+(celulosa). Medido, con la pregunta abierta y sin tocar ninguna cifra:
+`PENDIENTE_NUTRICION.md`.
+
+**Si algún día se añade un campo de fibra bruta al catálogo, no puede llamarse
+`fibra`**: tiene que ser una clave nueva, o pasará exactamente lo que este aviso
+existe para evitar.
 
 **Taurina y L-carnitina (7 de septiembre)** tampoco son requisitos de
 FEDIAF para perros (sí lo es la taurina para gatos, Tabla III-4c), así que
@@ -162,6 +178,70 @@ porque casi todas las tablas los dan en mg. La sardina lleva
 
 **Vitaminas A y D en microgramos, no en UI.** Si la fuente da UI:
 vitamina A ÷ 3,33 y vitamina D ÷ 40.
+
+**⚠️ Y LA VITAMINA A TIENE UNA TRAMPA MÁS, DESCUBIERTA EL 9 DE SEPTIEMBRE
+DE 2026: no se sabe qué son esos microgramos.** Pueden ser tres cosas
+distintas y no está escrito cuál:
+
+| Convenio | Qué cuenta | Factor del β-caroteno |
+|---|---|---|
+| Retinol | Solo el retinol preformado (vísceras, huevo, suplementos) | no lo cuenta |
+| Equivalentes de retinol (europeo clásico, BEDCA) | Retinol + caroteno | **6 a 1** |
+| RAE (americano, USDA) | Retinol + caroteno | **12 a 1** |
+
+**⚠️ Y HAY UN CUARTO CONVENIO, QUE ES EL QUE MANDA AQUÍ Y SE ME PASÓ:
+FEDIAF LO DEFINE, para el perro, con nombre y apellidos.** Tabla VII-14
+(«Conversion factors – Vitamin source to activity»), fila literal:
+
+> Provitamin A (β-carotene) **(dogs)** — 1.0 mg = **833 IU**
+
+Y en la misma tabla, retinol: 0,3 µg = 1 IU. Así que **1 mg de β-caroteno =
+833 × 0,3 = 250 µg de equivalentes de retinol**, o sea un factor de **4 a 1**
+en peso — más generoso que el 6:1 europeo y que el 12:1 americano, y muy
+lejos del 21:1 humano.
+
+Es la fuente cuyo mínimo estamos comprobando, así que es el factor que
+tenemos que usar. **Lo escribí al revés el 9 de septiembre por la mañana**,
+apoyándome solo en el NRC 2006, que dice literal que *«Even though dogs
+appear to utilize β-carotene from carrots efficiently, a retinol equivalency
+has not been defined»*. Las dos frases pueden convivir —el NRC habla de que
+no hay un estudio de equivalencia y FEDIAF publica un factor de conversión
+reglamentario— pero la conclusión práctica cambia entera: **sí hay factor, y
+es 4:1.**
+
+El NRC además confirma la parte cualitativa, y eso no cambia: *«only dogs
+have the ability to use carotenoid precursors of vitamin A»* (los gatos no,
+y el hurón lo hace quince veces peor), y cita a Turner (1934), que dio 150 g
+de zanahoria fresca a perros y les subió la vitamina A del hígado igual que
+el aceite de hígado de bacalao.
+
+**Las fichas del catálogo mezclan convenios.** Contrastado con USDA:
+zanahoria 1.346 (= β-caroteno ÷ 6), boniato 667 (= RAE), rúcula 596 (que
+no es ni lo uno ni lo otro: RAE sería 119 y ÷6 sería 237).
+
+**Por qué importa, con la medida hecha.** En los 216 menús del catálogo
+precalculado, **el 83 % de la vitamina A viene de verduras y frutas** —o
+sea de caroteno, no de retinol— y **103 de los 216 no llegarían al mínimo
+de FEDIAF (526,2 µg/1000 kcal) si el caroteno no contara**. El peor, un
+menú de lactancia, declara 11.191 µg y solo **29** son retinol de verdad.
+
+**Y con el factor de FEDIAF en la mano, el problema es otro y más
+concreto**: no es que no sepamos si el caroteno cuenta —cuenta, 4 a 1—, es
+que las fichas están calculadas con factores ajenos (6:1, 12:1, o ninguno
+reconocible), así que **ninguna de las tres columnas es la que FEDIAF pide**.
+Una ficha con β-caroteno ÷ 6 declara un 33 % MENOS de lo que FEDIAF le
+contaría, y una con RAE (÷ 12), un 67 % menos.
+
+Para arreglarlo hace falta lo que no tenemos: **el retinol y el β-caroteno
+por separado** en cada ficha, para poder calcular `retinol + β-caroteno / 4`.
+Está en `DATOS_QUE_FALTAN.md`.
+
+Contra el TECHO esto va del lado seguro (se cuenta de menos, y además el
+β-caroteno no es tóxico: la toxicidad de la vitamina A es del retinol
+preformado). Contra el SUELO va del lado peligroso, y el semáforo no lo ve
+porque comprueba contra estos mismos números. Detalle y medidas:
+`HALLAZGOS_LECTURA_FUENTES.md` §N-19. Pregunta abierta:
+`PREGUNTAS_PARA_ELENA.md` §4.
 
 **El araquidónico va en mg** aunque los demás ácidos grasos vayan en
 gramos. No es un descuido: es como lo da FEDIAF.

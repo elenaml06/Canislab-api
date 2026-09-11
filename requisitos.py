@@ -47,9 +47,41 @@ def cargar_requerimientos(path="requerimientos_v2_final.json"):
 #     particularidad documentada es subir la proteina para cubrir a los
 #     perros mayores (FEDIAF eleva la RA de 40 a 45 g/1000kcal por este
 #     motivo), lo que se aplica abajo con SENIOR_PROTEINA_MINIMA.
+#
+# ⚠️ CASO REAL ENCONTRADO (11 de septiembre de 2026) — GESTACION Y LACTANCIA
+#     IBAN A LA COLUMNA EQUIVOCADA, Y ERAN LAS DOS QUE MAS DA.
+#
+# Aqui ponia "CachorroCrecimiento" para las dos, con el comentario «Growth and
+# Reproduction» al lado. El comentario tenia razon en el concepto y la clave
+# estaba mal: la columna que FEDIAF titula con «Reproduction» es la OTRA. Su
+# cabecera, literal, de `fediaf_tabla_III_3b.txt`:
+#
+#     Early Growth (< 14 weeks) & Reproduction   |   Late Growth (≥ 14 weeks)
+#
+# O sea que una perra gestante o lactante estaba pasando por la columna de
+# cachorro MAYOR, que es la mas floja de las dos. Medido sobre las 48 filas del
+# JSON, 16 cambian de valor y hasta un 38 % a la baja:
+#
+#     Leucina        3,23 -> 2,00  (-38 %)        Fosforo   2250 -> 1750  (-22 %)
+#     Histidina      0,98 -> 0,63  (-36 %)        Proteina  62,5 -> 50,0  (-20 %)
+#     Metionina      0,88 -> 0,65  (-26 %)        Calcio    2500 -> 2000  (-20 %)
+#
+# Quien lo sufria es `/analizar`, que es el unico que llama a `resolver_etapa`:
+# la dieta que ya le da el dueño a una perra preñada se comparaba contra
+# requisitos hasta un 38 % mas bajos y salia EN VERDE. El semaforo del motor no
+# lo cazaba porque `verificar.EQUIVALENCIA` -- otra tabla, en otro fichero --
+# SI mandaba las dos a "CachorroJoven", que es lo correcto. Dos tablas para lo
+# mismo, en dos modulos, y ninguna comprobaba a la otra: exactamente el fallo
+# que ya esta escrito en `CLAUDE.md` sobre esta pareja de ficheros («comparte
+# MAPA con el semaforo a proposito -- discreparon una vez por la fibra»).
+#
+# Lo vigila el BLOQUE 89, que compara las dos tablas clave a clave.
 EQUIVALENCIA_ETAPAS = {
-    "Gestante": "CachorroCrecimiento",   # Growth and Reproduction
-    "Lactante": "CachorroCrecimiento",   # Growth and Reproduction
+    # La columna literal es «Early Growth (< 14 weeks) & Reproduction».
+    "Gestante": "CachorroJoven",
+    "GestanteTemprana": "CachorroJoven",
+    "GestanteTardia": "CachorroJoven",
+    "Lactante": "CachorroJoven",
     "Senior": "Adulto",                  # sin tabla propia en FEDIAF
 }
 # FEDIAF sube la proteina recomendada para perros mayores (40 -> 45

@@ -9,6 +9,25 @@ contra la fecha de hoy, en que dia/semana esta el perro. Decide:
 """
 from datetime import date, timedelta
 
+# ⚠️ ESTO TIENE FUENTE, y hasta el 9 de septiembre figuraba como «criterio
+# nuestro, declarado». No lo es: es literalmente el calendario LARGO del perro de
+# SACN5 5a ed., cap.1, Tabla 1-1 «Recommended short- and long-term food transition
+# schedules for dogs and cats»:
+#
+#     Long schedule, dogs        Comida anterior   Comida nueva
+#         dias 1-3                    75 %             25 %
+#         dias 4-6                    50 %             50 %
+#         dias 7-9                    25 %             75 %
+#         dia  10                      0 %            100 %
+#
+# Que son exactamente estos cuatro tramos. Y el largo es el que la fuente
+# recomienda, literal, «for situations in which the food change is known to be
+# significant, the dog or cat has demonstrated low tolerance to such changes in
+# the past or food refusal is anticipated». Pasar de pienso a racion cruda es un
+# cambio significativo, asi que el largo es el que toca y no el corto (7 dias).
+#
+# El corto de la misma tabla, por si algun dia hace falta: 75/25 los dias 1-2,
+# 50/50 los 3-4, 25/75 los 5-6 y 100 % el dia 7.
 TRAMOS = [
     {"dias_desde": 0, "dias_hasta": 3, "barf_pct": 25},
     {"dias_desde": 3, "dias_hasta": 6, "barf_pct": 50},

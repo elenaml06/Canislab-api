@@ -31,6 +31,129 @@ las tiene que tomar una persona, no yo.
          protege nada y no se puede seguir con el resto del plan. El
          comando exacto está al final del archivo .sql.
 
+- [ ] 🟡 **EL SUELO DE VITAMINA E, APAGADO DE MOMENTO Y CON LA PREGUNTA ABIERTA**
+      (medido el 11 de septiembre). Ese día se tomaron **dos** decisiones tuyas,
+      y las dos se quedan escritas porque la segunda no anula a la primera. Por
+      la mañana, encenderlo: «la norma es la norma», si la fuente lo dice, se
+      aplica. Por la tarde, apagarlo: «apágalo y fusiona todo, ya preguntaremos
+      lo de la vitamina E». Lo segundo es el **orden**, no la norma: con el
+      suelo encendido la batería sale roja en los BLOQUES 9 y 43, nada se
+      entrega en rojo, y este suelo estaba reteniendo 150 commits que no tienen
+      nada que ver con él. **La cifra no se ha bajado**: sigue escrita con su
+      fuente y su conversión, y esto es lo que cuesta encenderla:
+
+      | | Con el suelo | Sin el suelo |
+      |---|---|---|
+      | Perro con **ocho especies fuera** (adulto 20 kg, cachorro 10 kg, toy 3 kg) | **sin menú los tres** | con menú los tres |
+      | Las otras 15 combinaciones de alergias y exclusiones | con menú | con menú |
+      | Toy 1,5 kg **por la API**, con escalera y presupuesto real | 10 de 10 con menú | — |
+      | Toy 1,5 kg **preguntando al solver con 1 s** | 20 de 20 sin menú | 12 de 20 sin menú |
+
+      **La causa está medida y es de DATOS, no de código**: en el catálogo no
+      hay un suplemento de **vitamina E suelto**, solo los nueve
+      multivitamínicos, y el motor deja meter dos. Con eso no se llega a 67,1
+      mg/1000 kcal cuando además faltan ocho especies.
+
+      Las tres salidas, y ninguna la puedo elegir yo:
+      1. **Conseguir la ficha de un suplemento de vitamina E suelto.** Es la
+         única que no cede en la cifra. Va en `DATOS_QUE_FALTAN.md` y el dato
+         no lo relleno yo.
+
+         ⚠️ **Y hay algo más que hace falta antes de decidir, medido el 11 de
+         septiembre**: los 67,1 mg salen de convertir los 400 UI con el factor
+         del **d-α-tocoferol natural**, que es **el más permisivo de los siete**
+         de la Tabla VII-14 de FEDIAF. Con el sintético (el acetato, que es lo
+         que suele llevar un suplemento comercial) el mismo requisito serían
+         **100 mg/1000 kcal**. Y en el catálogo **solo dos alimentos llevan
+         vitamina E y ninguno de los dos dice qué forma es**. O sea que la cifra
+         que hoy deja a un perro sin menú descansa en una suposición sobre un
+         dato que no está, y la suposición va al lado **menos** exigente: si
+         resultara ser el acetato, el suelo sería más alto, no más bajo.
+      2. **Apagarlo** (`aplicado_por_el_solver: false`) con esta medida escrita
+         al lado, que es el procedimiento que ya está en `CLAUDE.md` para una
+         cifra de la fuente que no cabe: se mueve a escrita-y-no-aplicada y se
+         pregunta al nutricionista.
+      3. **Dejarlo encendido** y aceptar que el perro con ocho especies fuera
+         se quede sin menú, y que la batería salga roja en los BLOQUES 9 y 43.
+
+      ✅ **Hoy está tomada la 2, y es temporal**: `aplicado_por_el_solver:
+      false` en Adulto y en Senior, con las dos decisiones escritas en el
+      `por_que` de la cifra y vigiladas por el BLOQUE 57. Lo que sigue abierto
+      es la **1**, que es la única que no cede en nada: **conseguir la ficha de
+      un suplemento de vitamina E suelto**. El día que entre en el catálogo,
+      esto se vuelve a poner a `true` y la batería tiene que salir verde — y esa
+      es justamente la comprobación de que el problema era el catálogo y no la
+      cifra.
+
+      ⚠️ **Y la pregunta al nutricionista sigue viva**, con la trampa del
+      factor de conversión de arriba: si la forma del suplemento resulta ser el
+      acetato sintético, el suelo son **100 mg/1000 kcal** y no 67,1.
+
+      Nota para no repetir una confusión: de los cuatro fallos que daba el
+      suelo, el del BLOQUE 15 («le metió comida sin pedirlo y sin avisar»)
+      **no era suyo** y está arreglado — era el perro que se amolda, que
+      heredaba el menú del primero y no su aviso.
+
+- [ ] **LAS PREGUNTAS QUE ELIGEN LA CIFRA DE CADA PATOLOGÍA** (11 de
+      septiembre; el inventario entero, en `preguntas_por_patologia.json`).
+
+      Elena: «tendrá que haber preguntas para cada patología preguntando
+      resultados de analíticas o lo que sea para que pueda coger según la
+      respuesta los límites para cada estadio o cada caso».
+
+      ⚠️ **Y la mitad ya está hecha, que es lo que yo conté mal el 11 de
+      septiembre.** Escribí esto como si el motor aplicara una sola cifra por
+      patología, y no es verdad: la cardiopatía tiene **cinco claves con cinco
+      números** y la app **ya pregunta el estadio ACVIM**. Lo que decide el
+      sodio es eso:
+
+      | Respuesta | Clave del motor | Techo de sodio |
+      |---|---|---|
+      | No lo sé / sin estadiar | `cardiopatia` | 738,6 |
+      | A — predispuesta | `cardiopatia_a` | sin techo |
+      | B1 — soplo sin remodelado | `cardiopatia_b1` | sin techo |
+      | B2 — remodelado sin síntomas | `cardiopatia_b2` | 738,6 |
+      | C — insuficiencia | `cardiopatia_c` | **625** |
+      | D — refractaria | `cardiopatia_d` | **480** |
+
+      Lo mismo con la hepatopatía (confirmada o solo predisposición de raza) y
+      con los cinco tipos de cálculo. **Cuatro de las diez preguntas ya están
+      aplicadas.** Lo que queda es esto, y sí necesita decisión:
+
+      1. **`renal` — la pregunta es más gruesa que la que pide la fuente.** La
+         app pregunta «leve-moderada o moderada-grave» y las dos respuestas
+         aplican **el mismo** techo de fósforo (1200): lo único que cambia es
+         que la segunda para en seco. Lo que dice la fuente es que **por debajo
+         del estadio IRIS 2 no respalda apretar el fósforo**, y apretarlo tiene
+         coste. Para eso haría falta una clave nueva con **su cifra sacada de
+         la fuente**, y esa no me la invento yo.
+      2. **`reaccion_adversa_alimento` — falta la cifra en el motor.** La
+         fuente limita el techo de proteína «(dermatologic cases only)» y en el
+         caso digestivo la misma página pide **más**. Hoy ese techo está
+         escrito y sin aplicar. Hacen falta dos claves, una por respuesta.
+      3. **`estruvita` — falta media pregunta.** La fuente distingue formular
+         para **prevenir** que vuelvan y para **disolver** uno que ya está, y
+         son dietas distintas. Hoy solo se pregunta el tipo de cálculo.
+      4. **`diabetes` — una excepción escrita que no se aplica.** La fuente
+         dice «except for diabetic dogs in **thin body condition**». La app
+         **ya sabe el BCS**, así que esto no necesita preguntar nada nuevo:
+         hace falta decidir **en qué BCS corta**.
+      5. **`pancreatitis` y `diabetes` — la cifra existe y la pantalla no lo
+         dice.** Marcar `obesidad` o `hiperlipidemia` ya baja la grasa de la
+         pancreatitis de 37,5 a 25, y quien lee la ficha ve 37,5 y cree que es
+         el único número. Eso es trabajo de pantalla, no decisión tuya.
+      6. **`shunt_sin_encefalopatia` — la pregunta no mueve ni una cifra.** Sus
+         dos respuestas aplican exactamente lo mismo (ninguna es formulable, y
+         ninguna lleva topes). Cambia el texto del aviso, que no es poco. Queda
+         declarado como tal.
+
+      ⚠️ **Y de paso salió un fallo, ya arreglado**: el tope condicional de
+      grasa de la diabetes no se aplicaba **nunca** por su segunda puerta,
+      porque `requiere` decía `hipertrigliceridemia` y esa clave no existe
+      entre las 47 (la que hay es `hiperlipidemia`). El solver lo resuelve con
+      `any(otra in lista ...)`, así que un nombre que nadie puede marcar no
+      entra jamás y el menú sale verde igual. Lo vigila ahora el BLOQUE 90.
+
 - [ ] **La lista de las nueve `formulable: false`.** La necesita la fase 4:
       es la que define qué diagnósticos exigen firma de un veterinario,
       porque son los que piden bajar de los mínimos de FEDIAF. **No está en
@@ -189,11 +312,17 @@ las tiene que tomar una persona, no yo.
          sugiere ≥75 g. Es un cambio grande: afectaría a todos los seniors.
       2. **¿Distinguir el estadio ACVIM en cardiopatía (B2/C/D)? RESUELTO
          (6-7 de septiembre).** Se añadieron `cardiopatia_a/_b1/_b2/_c/_d`
-         (sodio 900/900/790/480 según estadio, ACVIM 2019 Keene et al.),
+         (sodio 739/739/625/480 según estadio -- ⚠️ CORREGIDO el 8 de
+         septiembre: eran 900/900/790/480 y se atribuían a «ACVIM 2019
+         Keene et al.», pero al abrir el consenso resultó que NO da ninguna
+         cifra de sodio: es cualitativo en las cuatro etapas. Las cifras son
+         de Cavanaugh, Veterinary Practice News 2020, y tres de las cuatro
+         superaban el techo legal europeo de 739 mg. Ver `PATOLOGIAS.md`
+         §1.1 y §1.4),
          cruzadas además contra SACN5 cap.36 Tabla 36-4 (confirma el patrón,
          no cambia los números -- framework ISACHC distinto del ACVIM). La
          app ya pregunta el estadio (familia "cardiopatia" en
-         `VETERINARIOS.md` §12-quinquies). La genérica `cardiopatia` (900,
+         `VETERINARIOS.md` §12-quinquies). La genérica `cardiopatia` (739,
          sin estadio) se queda para quien no lo sepa.
       3. **Cachorro con pancreatitis: ¿solo aviso, o bloquear?** Hoy avisa
          y genera el menú sin bajar la grasa, porque el mínimo de grasa que
@@ -348,3 +477,135 @@ las tiene que tomar una persona, no yo.
       borrador puede salir de ahí — datos reales, no plantilla — pero es
       un texto legal y necesita revisión de quien sepa antes de publicarse.
 
+
+---
+
+## Lo que dejó abierto la cuarta pasada (8 de septiembre, tarde)
+
+- [x] **El fósforo del perro sano.** ✅ RESUELTO el 8 de septiembre por la
+  noche, y no era una decisión tuya: lo dice SACN5 (Tabla 13-3 para el adulto,
+  14-2 para el maduro) y se midió que cabe. Aplicado como techo duro, 2000 en
+  adulto y 1750 en senior, con el sodio a 1000. Los cuatro pesos probados salen
+  en el peldaño 0 y en verde, y el perro de 3 kg pasa de ámbar a verde. Costó
+  regenerar los 216 menús precalculados de la vista previa. Ver `DECISIONES.md`
+  D-15.
+
+- [ ] **En crecimiento, ¿los suelos de una patología también se caen?** Hoy sí:
+  `solo_en_adulto` se salta la patología **entera**, topes y suelos. Para la
+  artrosis eso significa que un cachorro con displasia no recibe el refuerzo de
+  omega-3 ni el de vitamina E, que no tienen nada de peligroso a esa edad. El
+  motivo de que se caigan es el **techo** de fósforo (2000 cae bajo el mínimo de
+  un cachorro, 2250), no el suelo. Separar las dos cosas es cinco líneas de
+  código; **si se debe hacer es criterio clínico.** El aviso de crecimiento de la
+  artrosis, mientras tanto, dice la verdad: no se aplica nada.
+
+- [ ] **La proteína de la reacción adversa al alimento (≤55 g/1000 kcal).** La
+  fuente la pide «(dermatologic cases only)» y el motor no sabe si este perro
+  reacciona por la piel o por el intestino — y en el segundo caso la misma página
+  pide **más** proteína, no menos. Está escrita y **no** aplicada. Se resuelve o
+  bien preguntando en la ficha cómo se manifiesta, o bien con la pantalla de
+  objetivos por nutriente, donde un profesional la fijaría a mano.
+
+## Lo que dejó abierto leer SACN5 entera (10 de septiembre de 2026)
+
+Tres decisiones, las tres con los números ya delante. **Ninguna es de fuentes:**
+la fuente ya dijo lo que dice, y lo que falta es criterio de producto.
+
+### 1 · ¿Se pregunta dónde duerme el perro?
+
+FEDIAF §7.2.3.5 dice que un perro que vive fuera en invierno puede necesitar de
+un **10 a un 90 %** más de calorías. Ese rango era la razón por la que esto
+estaba parado. **SACN5 Tabla 5-3 da las cifras concretas:**
+
+| Perro | Aumento del DER | De | A |
+|---|---|---|---|
+| Labrador retriever y beagle | +25 % (12-43) | 15 °C | 8,5 °C |
+| Gran Danés | +22 % | verano | invierno |
+| Pelo **corto** | **+95 %** | 25 °C | 7,6 °C |
+| Pelo **largo** | +59,5 % | 25 °C | 7,6 °C |
+| Beagle | +70,5 % | 17 °C | −17 °C |
+| Perro de trineo | +61,5 % | 17 °C | −17 °C |
+
+Lo que hay que decidir: **(a)** si se pregunta; **(b)** qué se pregunta
+exactamente —¿duerme fuera? ¿a cuántos grados? el tipo de pelo la app podría
+deducirlo de la raza—; **(c)** qué se hace con un perro que duerme fuera solo
+parte del año. Hoy ese perro recibe la misma ración que uno de piso.
+
+### 2 · La densidad con la que se leen las cifras de obesidad
+
+Todas las tablas de SACN5 se convierten a 4,0 kcal/g de materia seca, y eso está
+probado (ver `HECHO.md` del 9-10 de septiembre). **La Tabla 27-4 es la única de
+las 24 que propone otra cosa** — pero para el propio alimento, no como base de
+conversión: «Foods for weight loss … should contain **≤3,4 kcal ME/g**».
+
+No dice que sus otras filas estén expresadas a esa densidad; ninguna tabla lo
+dice salvo la 13-3, que dice 4,0. Pero si lo estuvieran, **sus cifras subirían un
+18 %**. Se ha dejado en 4,0 por ser la lectura literal. Es una pregunta para la
+nutricionista, no una decisión de código.
+
+### 3 · La energía del cachorro: ¿por edad o por fracción de peso adulto?
+
+SACN5 da la misma regla de dos maneras y el motor usa la del capítulo 5:
+
+| Fuente | Cómo la parte | Escalones |
+|---|---|---|
+| Cap. 5 (lo que aplica el motor) | por **edad** | 3 × RER hasta los 4 meses, 2 × RER después |
+| **Tabla 17-2** (capítulo de crecimiento) | por **fracción del peso adulto** | 3 × RER hasta el 50 %, 2,5 × del 50 al 80 %, 1,8-2,0 × por encima del 80 % |
+
+No se contradicen: dicen lo mismo con variables distintas. Pero la del capítulo
+de crecimiento es **más fina** (tres escalones en vez de dos) y **la app ya
+pregunta el peso adulto estimado**, así que tiene el dato. Cambiarla movería la
+ración de los cachorros que están entre el 50 y el 80 % de su peso adulto.
+
+Y trae aparte al Gran Danés otra vez: «may need **25 % more energy** during the
+first two months after weaning = **250 kcal/BWkg^0,75**», y «may not grow when
+daily energy intake is less than 175 kcal ME/BWkg^0,75».
+
+### 4 · ⚠️ Un perro en BCS 4 recibe hoy un 8 % más de comida, y FEDIAF dice que BCS 4 ya es ideal
+
+**Encontrado el 10 de septiembre con `radiografia.py`**, comparando lo que ENTRA
+al motor contra `main`. Es la clase de fallo que la batería no puede ver: el menú
+sale verde porque cuadra con las kcal que le dieron, y lo que cambia es el peso
+con el que se calcularon esas kcal.
+
+**Lo que hace el motor hoy** (perro de 30 kg reales, peso que usa para escalar):
+
+| BCS | Peso de referencia | Cambio | Efecto en las kcal |
+|---|---|---|---|
+| 1, 2, 3 | 36,00 kg | +20,0 % | **+14,7 %** |
+| **4** | **33,33 kg** | **+11,1 %** | **+8,2 %** |
+| 5 | (no deriva) | — | — |
+| 6 | 27,27 kg | −9,1 % | −6,9 % |
+| 7 | 25,00 kg | −16,7 % | −12,8 % |
+| 8 | 23,08 kg | −23,1 % | −17,9 % |
+| 9 | 20,69 kg | −31,0 % | −24,3 % |
+
+**La tensión, y está dentro de FEDIAF, no entre FEDIAF y otra fuente:**
+
+- La **§7.1.1** dice que la energía se calcula sobre el peso óptimo y **no
+  distingue dirección**. Es la lectura con la que se aplicó el 9 de septiembre:
+  si el perro está por debajo de 5, se deriva hacia arriba.
+- La **§7.1.3** dice, literal: *«**The ideal BCS should therefore be between 4/9
+  and 5/9**»*, y la **§7.2.4.1** lo repite citando a Kealy 2002 — el estudio de
+  los catorce años en labradores, que es justo el que enseña que el perro más
+  delgado vive más.
+
+Si el ideal es el **rango 4-5** y no el punto 5, un perro en BCS 4 **ya está en
+su peso**, y darle un 8 % más de comida es empujarlo fuera del rango que la
+propia fuente asocia con vivir más.
+
+**Qué hay que decidir**, y es de criterio, no de lectura:
+
+1. ¿`BCS_NEUTRO` sigue siendo el **punto 5**, o pasa a ser el **rango 4-5**?
+2. Si pasa a ser rango: ¿el BCS 4 deja de derivar peso objetivo (lo más simple),
+   o deriva hacia el punto medio del rango?
+3. Y lo mismo por arriba: hoy el BCS 6 baja un 6,9 % las kcal. Si el ideal llega
+   hasta 5, el 6 sí está por encima y eso se queda como está.
+
+⚠️ **Toca a todo perro marcado como «delgado» en la pantalla del dueño**, porque
+el escalón 1 de los cinco del dueño mapea a BCS 3 — y a cualquiera al que un
+veterinario le ponga un 4. No es un caso raro.
+
+Las dos citas y la medida están aquí; el cambio, en `main._peso_de_referencia` y
+en `verificar.peso_objetivo_desde_bcs`, que son **dos copias** de la misma regla
+y tendrían que moverse juntas.

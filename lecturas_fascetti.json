@@ -1,0 +1,254 @@
+{
+  "_meta": {
+    "que_es": "El registro de la lectura de Fascetti & Delaney, «Applied Veterinary Clinical Nutrition», capitulo a capitulo: cada elemento nutricional con su veredicto.",
+    "metodo": "El de `LECTURA_SACN5.md`: leer todo, apuntar todo, y aplicar solo al final. Un veredicto «por: regla_del_capitulo» solo vale si se ha comprobado elemento a elemento que ninguno se sale de la regla -- es la leccion de los 442 de SACN5, donde TRES de los resueltos por capitulo felino si hablaban del perro.",
+    "como_se_comprueba": "`leer_fascetti.py`, que rehace los recuentos y exige que la lectura integra declare el numero de lineas real del .txt.",
+    "total_declarado": 657,
+    "pendientes_declarados": 603,
+    "descartadas_declaradas": 17537,
+    "capitulos_leidos_declarados": 2,
+    "medido": "11 de septiembre de 2026"
+  },
+  "capitulos": {
+    "cap05": {
+      "titulo": "Pet Food and Supplement Regulations: Practical Implications",
+      "regla_del_capitulo": "Regulacion de piensos comerciales (AAFCO, FDA y el Reglamento de la UE): que puede poner una etiqueta, que reclamos estan permitidos y como se declara un pienso terapeutico. NADA de esto aplica a este motor: no fabricamos ni etiquetamos pienso, calculamos una racion casera. Leidos los 26 elementos uno a uno y ninguno trae una cifra nutricional canina: son porcentajes de inclusion de ingrediente, umbrales de «low calorie» para producto comercial y definiciones legales de la UE. Los dos que rozan algo nuestro son los Reglamentos de propositos nutricionales particulares, y esos ya viven en `limites_legales_ue_2020_354.json` con su auditor (BLOQUE 80).",
+      "lectura_integra": {
+        "lineas": 398,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "olor#45:Importantly, it must be noted that AAFCO does not regulate, inspect, test, approve, or certify pet food in any way, and the AAFCO ": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#50:For example, “Chicken” requires 95% inclusion of the named ingredient (excluding water for processing), while “Chicken Recipe” and": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#57:Ingredient Declaration Both FDA and AAFCO regulations require that each ingredient (with some exceptions for incidental additives,": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#67:Although a complete and balanced product making a general claim for vitamin and mineral content does not need to guarantee individ": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#70:It is anticipated that “crude fiber” will be replaced with “dietary fiber,” a more nutritionally meaningful value equivalent to th": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#75:In addition, this information must be presented in terms of kcal per unit of product consistent with the feeding directions (e.g. ": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#76:The method used to determine calorie content must be specified: “calculated” for estimates derived from employment of the modified": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#99:For products that do not meet that burden, the claim must be further qualified to adequately inform the consumer of the presence o": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "reco#102:Descriptive Terms AAFCO requires that a dog or cat food labeled as “lite,” “low calorie,” or by words of similar intent should not": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#103:For example, a “low calorie” dry dog food cannot exceed 3100 kcal ME/kg as is, whereas a canned cat food must contain no more than": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#104:Products that fail to meet that restriction may still make a comparative claim, e.g. “XX% less calories than [product of compariso": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#116:To help remedy this conundrum, AAFCO has been working with another facet of USDA (the Agricultural Marketing Service, AMS) to esta": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#200:Under this guidance, mitigation of the risk of enforcement action by CVM or states stipulates that the therapeutic pet food must b": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#206:Finally, the therapeutic diet must be otherwise compliant with all labeling and other regulatory requirements for pet food.": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#230:Compound feed: a mixture of at least two feed materials, whether or not containing feed additives, for oral animal feeding in the ": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#231:Daily ration: the average total quantity of feedingstuffs, calculated on a moisture content of 12%, required daily by an animal of": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#241:Mineral feed: complementary feed containing at least 40% crude ash.": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#273:Complementary Pet Food: Composition, Uses, and Labeling The term “compound feed” has been defined as a mixture of at least two fee": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#279:These products can have a high energy value, but in fact their function is not strictly nutritional, although it can have an impac": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#285:To be classified as mineral pet food it must contain at least 40% of crude ash.": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#287:Feed Additives Feed additives must be authorized before use and there must be a regulation that sets the characteristics of the ad": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#304:Regarding the declarations of analytical components, Table 5.3 indicates the values that must be declared in pet food (complete or": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#307:Feed Analytical constituents Target species Complete feed Crude protein Crude fibers Crude oils and fats Crude ash Moisture if >14": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#335:Particular nutritional purpose Essential nutritional characteristics (GP1) Species or category of animal Support of renal function": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#336:Low levels of magnesium, calcium, and phosphorus The inclusion of other electrolyte salts is optional Equines Support of energy me": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#337:The exceptions are for “Support of lipid metabolism in the case of hyperlipidaemia” (based on a diet with a dry matter energy dens": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        }
+      }
+    },
+    "cap06": {
+      "titulo": "Using Pet Food Labels and Product Guides",
+      "regla_del_capitulo": "Como se lee una etiqueta de pienso y como se convierten sus cifras. Igual que el 5, no aplica: no leemos etiquetas de pienso. ⚠️ PERO DOS ELEMENTOS SI DICEN ALGO NUESTRO y van con veredicto propio: los factores de conversion de UI a masa de las vitaminas A, D y E. Confirman los que ya aplica el motor.",
+      "lectura_integra": {
+        "lineas": 82,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "olor#8:In the rest of this section on pet food labels, the rules that will be covered apply to those established by AAFCO.": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#17:Products that have meat and just enough minerals and vitamins to be complete and balanced typically fall under the 95% rule.": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#18:If the 95% rule is used, then all 95% of the ingredients listed must be from an animal; therefore, a food labeled as \"95% lamb & r": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#20:Most pet foods fall under the 25% rule, which states that at least 25% of the food must be made up of the indicated ingredients, w": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#23:Therefore, \"lamb & rice dinner\" could be used and would mean that at least 25% of the food is lamb and rice and that the lamb is e": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#24:There is also a \"with\" or \"3% rule,\" which means that any food \"with\" a separately identified ingredient (outside of the ingredien": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#27:This rule does not apply to added minerals, vitamins, and trace nutrients that may appear in support of a food that is stating tha": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#38:If a food is not complete and balanced, it must be labeled as a treat, snack, or supplement, or state that it is for \"intermittent": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#39:Ingredient Declaration Ingredients used in a food must be listed on the packaging and in descending order of inclusion before any ": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#51:(Proposed 1988, Adopted 1992.) Also, references \"to the quality, nature, form, or other attributes of an ingredient shall be allow": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#53:The absence of at least one of these two nutrients makes calculating the calorie content of a food more challenging and less preci": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#54:All guarantees must be for a nutrient, although a frequent exception is for \"direct-fed microbials\" or probiotics, which are curre": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#64:Feeding Directions or Guidelines Feeding guidelines must be provided on packaging and must include at least \"feed (weight/unit of ": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#72:By subtracting the crude protein minimum percentage (CP %), crude fat minimum percentage (CF %), crude fiber maximum percentage (F": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#76:By adding the Calories from protein, fat, and carbohydrate, one can estimate the total Calories available in 100 g of food as fed.": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#82:To calculate the Calories from protein, fat, or carbohydrate as determined earlier, one divides one of these values by the Total C": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#88:Typically, the nutrients are provided in these guides on both a dry matter (dm) basis and a per 100 kcal or per 1000 kcal or Mcal ": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#92:This can be best illustrated with the example in Box 6.1. Box 6.1 Increasing Comparison Accuracy Using an Energy Instead of Dry Ma": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#93:However, patients eat to meet their energy requirement (see Chapter 2); therefore, let us say the patient consumes 1000 kcal/day.": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#94:On the first food, the patient will get 3.3 g calcium/day: 1% x 1000 g/kg = 10 g calcium/kg 10 g /3000 kcal/kg = 0.0033 g/kcal 0.0": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#97:For example, for a food with 25% protein as fed and 10% moisture, the equation and the result would be: Since most dry foods have ": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#98:Converting Nutrient Concentrations to an Energy Basis To convert or calculate the amount of a nutrient on an energy basis (typical": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "olor#99:If the nutrient is provided as a percentage, it will need first to be converted to a mass (gram is the easiest and the most common": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#100:For example, if the food has 2% calcium, one can divide the percentage by 100 and then multiply the result by 1000 to get the gram": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#101:Thus, (2/100) x 1000 = 20 g calcium/kg of food as fed.": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#102:With the kcal/kg as fed value and the mass of nutrient per kg as fed, one simply divides the nutrient mass by the kcal/kg value an": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        },
+        "cifra#103:For example, if one wishes to convert 50 IU of vitamin A to micrograms of retinol, one can perform this conversion by knowing that": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "leido",
+          "cita": "1 IU vitamin A = 0.3 ug retinol",
+          "que_hace_el_motor": "`fediaf_conversiones_vitaminas.json` aplica exactamente 0,3 ug/UI para el retinol. Segunda fuente independiente del mismo factor; FEDIAF Tabla VII-14 era la primera."
+        },
+        "cifra#105:Other encountered conversions are 40 IU vitamin D3 = 1 ug cholecalciferol; 1 IU vitamin E = 1 mg all-rac-alpha-tocopheryl acetate;": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "leido",
+          "cita": "40 IU vitamin D3 = 1 ug cholecalciferol; 1 IU vitamin E = 1 mg all-rac-alpha-tocopheryl acetate",
+          "que_hace_el_motor": "La D cuadra clavada: el motor aplica 0,025 ug/UI, que es 1 ug = 40 UI. || ⚠️ Y LA E ES UN HALLAZGO, no una confirmacion comoda. Fascetti da el factor del all-rac (= dl-alfa-tocoferil acetato, el sintetico): 1 UI = 1 mg. El motor convierte el suelo de vitamina E del perro sano con el factor del NATURAL (d-alfa-tocoferol, 1,49 UI/mg -> 1 UI = 0,671 mg), que es el MAS PERMISIVO de los siete de la Tabla VII-14. De ahi salen los 67,1 mg/1000 kcal. Con el sintetico serian 100, o sea un 49 % mas alto. Y medido el 11-sep-2026: en el catalogo solo DOS suplementos llevan vitamina E y NINGUNO DE LOS DOS DECLARA LA FORMA QUIMICA. O sea que la cifra que hoy deja sin menu al perro con ocho especies fuera descansa en una suposicion sobre un dato que no esta. Va a `DATOS_QUE_FALTAN.md`. No se cambia nada: se mide y se dice."
+        }
+      }
+    }
+  }
+}

@@ -144,6 +144,67 @@ TOPE_VITD_KG075 = 2.6      # µg por kg de peso^0.75 -- Lenox & Bauer 2013
 TOPE_VITD_KCAL = 20.0      # µg por 1000 kcal -- NRC 2006
 
 # ---------------------------------------------------------------------------
+# 1c-bis. EL PERRO DE TRABAJO: LOS CINCO TOPES, TAMBIEN POR PESO METABOLICO
+# ---------------------------------------------------------------------------
+#
+# ⚠️ POR QUE EXISTE (11 de septiembre de 2026). Elena, al leerle que la Tabla
+# 4.2 de Fascetti pide al perro de trabajo mas fosforo del que el motor le deja:
+# «y como que el motor no distingue al perro de trabajo, deberia».
+#
+# EL PROBLEMA, Y ES ARITMETICA. Un tope por 1000 kcal deja pasar el DOBLE a
+# quien come el doble. Un perro de caza come 240 kcal/kg^0,75 y uno de
+# mantenimiento 130: con el mismo tope por energia, el de caza recibe un 85 %
+# mas de yodo, de selenio y de mercurio EN ABSOLUTO, todos los dias. Y estos
+# cinco no son requisitos que escalen con el gasto: son toxicos que se acumulan.
+#
+# LO DICE NRC 2006 cap.11, literal, y dice tambien cual es la solucion:
+#
+#     «safe upper limits (SULs) expressed relative to DM and ME should be
+#      decreased eightfold in diets intended for sled dogs running in a cold
+#      environment and halved in diets for working dogs. Safe upper limits
+#      expressed relative to body weight will remain the same unless increased
+#      exercise has been shown to modify the requirement»
+#
+# O sea: **el tope por PESO es el invariante**, y el tope por energia es el que
+# hay que corregir. Un tope por kg^0,75 hace eso solo, sin escalones y sin
+# preguntarle nada a nadie.
+#
+# Y LOS NUMEROS DE NRC CUADRAN CON LOS DE FASCETTI, que es lo que convence de
+# que esto no es una interpretacion: la Tabla 4.1 de Fascetti da 1050
+# kcal/kg^0,75 al perro de trineo y 130 al de mantenimiento -- 1050/130 = 8,1,
+# el «eightfold» de NRC -- y 240 al de caza -- 240/130 = 1,85, el «halved».
+# Las dos frases de NRC son el cociente de energias, no una regla aparte.
+#
+# DE DONDE SALE EL 130. De la pareja que YA existe y que lleva meses aplicada:
+# TOPE_VITD_KG075 / TOPE_VITD_KCAL = 2,6 / 20,0 = 0,130, o sea 130 kcal por
+# kg^0,75. Y el 2,6 no se dedujo: es de Lenox & Bauer 2013, una fuente
+# independiente. O sea que la calibracion del motor y la de la fuente coinciden,
+# y el 130 cae donde tiene que caer -- entre «activo» (125) y «muy activo» (150)
+# de la tabla de FEDIAF que aplica `der.py`.
+#
+# QUE HACE ESTO AL PERRO NORMAL: **nada**. A 110 kcal/kg^0,75 el tope por
+# energia ya es mas estricto que el de peso, asi que el `min()` no lo toca. Solo
+# muerde por encima de 130, que es exactamente el perro del que hablan las dos
+# fuentes.
+#
+# MEDIDO ANTES DE PONERLO, con el catalogo real y un perro de 25 kg: a 175
+# kcal/kg^0,75 el menu trae 64 µg/kg^0,75 de yodo (tope 166), 23 de selenio
+# (tope 74) y 1,31 de vitamina D (tope 2,6). O sea que **hoy no aprieta a nadie**
+# y es red de seguridad, no un cambio de menus. Lo que evita es el menu
+# personalizado del perro de trabajo cargado de kelp o de pescado.
+_KCAL_POR_KG075_MANTENIMIENTO = 130.0
+
+def _por_peso(tope_por_1000kcal):
+    """El gemelo por kg^0,75 de un tope por 1000 kcal, al perro de mantenimiento."""
+    return tope_por_1000kcal * _KCAL_POR_KG075_MANTENIMIENTO / 1000.0
+
+TOPE_YODO_KG075 = _por_peso(1275.0)          # 165,75 µg por kg^0,75
+TOPE_SELENIO_KG075 = _por_peso(570.0)        # 74,1 µg por kg^0,75
+TOPE_MERCURIO_KG075 = _por_peso(0.10)        # 0,013 mg por kg^0,75
+TOPE_TIAMINASA_KG075 = _por_peso(0.10)       # 0,013 g por kg^0,75
+TOPE_EPA_DHA_SEMANAL_KG075 = _por_peso(2.8)  # 0,364 g por kg^0,75, promedio semanal
+
+# ---------------------------------------------------------------------------
 # 1d. YODO (kelp, suplementos, pescado)
 # ---------------------------------------------------------------------------
 # El yodo en exceso, dado de forma repetida, puede alterar la función
@@ -154,13 +215,83 @@ TOPE_VITD_KCAL = 20.0      # µg por 1000 kcal -- NRC 2006
 # FUENTE DEL MECANISMO (con caso real documentado): tirotoxicosis por
 # exceso de yodo en perros, Veterinary Record 2017; caso similar más
 # detallado en Isidori, Corbee & Kooistra, Vet Rec Case Rep 2024;12:e975.
-# El NRC (2006) fija el límite superior seguro en 1.400 µg por cada 1000
-# kcal de dieta.
+#
+# ⚠️⚠️ CORREGIDO EL 9 DE SEPTIEMBRE DE 2026, Y EL ERROR ERA SERIO.
+#
+# Aquí ponía 1.400 µg/1000 kcal, y el comentario decía: «El NRC (2006) fija
+# el límite superior seguro en 1.400 µg por cada 1000 kcal de dieta».
+#
+# **EL NRC DICE LO CONTRARIO.** Literal, cap.8, «Safe Upper Limit of Iodine
+# for Dogs»:
+#
+#   «Castillo et al. (2001a) reported evidence of DEPRESSED THYROID GLAND
+#    FUNCTION, evidenced by reduced plasma concentrations of thyroid hormones
+#    AND BONE ABNORMALITIES, IN PUPPIES FED DIETS CONTAINING an estimated
+#    maximum I content of 1,400 μg I per 1,000 kcal ME, providing an
+#    estimated 250 μg I·kg BW-1·d-1. Based on this information AN ABSOLUTE
+#    FIGURE FOR A SUL OF DIETARY I CANNOT BE PREDICTED for adult dogs.»
+#
+# O sea que los 1.400 son **la concentración a la que se observó el daño**, y
+# el NRC dice expresamente que **no puede fijar un límite superior seguro**.
+# Teníamos el techo puesto justo en la dosis que hace daño. Un techo ahí no
+# es un techo.
+#
+# Es la misma familia de fallo que el máximo de fósforo borrado el 7 de
+# septiembre: leer una línea de una fuente y aplicarla al revés.
+#
+# EL NUEVO NÚMERO SALE DE LA MISMA PÁGINA, no de mi criterio. El NRC cita a
+# Belshaw (1975), que midió el yodo de varias marcas comerciales de pienso:
+#
+#   «The results corresponded to concentrations ranging, at a minimum, from
+#    400 to 1,275 μg I per 1,000 kcal ME … APPARENTLY THESE FOODS WERE FED
+#    WITHOUT ANY CLINICAL ABNORMALITIES in dogs consuming them.»
+#
+# Así que 1.275 es lo más alto que la fuente documenta como comido sin
+# problemas, y por debajo de donde se vio el daño.
+#
+# ⚠️ MEDIDO ANTES DE BAJARLO, sobre los 216 menús del catálogo precalculado:
+#       peor menú ......... 1.038 µg/1000 kcal
+#       mediana ...........   418
+#       por encima de 1.275 ...... 0 de 216
+#       por encima de 1.000 ...... 2 de 216
+# O sea que el cambio NO quita ni un menú: solo saca el techo del sitio donde
+# hay daño documentado.
+#
+# ⚠️ LA PREGUNTA QUE HABÍA ABIERTA AQUÍ (PREGUNTAS_PARA_ELENA.md §1) LA
+# CONTESTA FEDIAF, Y NO LA HABÍAMOS MIRADO (9 de septiembre).
+#
+# Era: «1.275 está a un 9 % de la cifra que hizo daño, y esa cifra es de
+# CACHORROS; ¿bajamos más?». La respuesta está en FEDIAF 2025, sección 3.3.1,
+# apartado «Iodine», y habla justo del estudio del que sale nuestro número.
+# Literal:
+#
+#   «From studies by Castillo et al. (2001a, b) low nutritional maximum for
+#    iodine in dogs (0.4 mg/100 g DM) was recommended. However in these studies
+#    PUPPIES WERE SIGNIFICANTLY OVERFED (approx. 75 % above energy requirement)
+#    which resulted in a substantially increased intake of iodine. Furthermore
+#    the food was DEFICIENT IN A NUMBER OF KEY NUTRIENTS, e.g. Ca, P and K, and
+#    therefore inappropriate for puppies. Consequently, THESE RESULTS ARE
+#    IRRELEVANT for normal commercial nutritionally balanced foods, and THE
+#    EXISTING LEGAL MAXIMUM IS SAFE FOR ALL DOGS.»
+#
+# O sea que el organismo que fija los requisitos ya evaluó ese estudio, explica
+# por qué no aplica a una dieta equilibrada, y declara seguro el máximo legal
+# entero: 2.750 µg/1000 kcal (Tabla III-3a, 1,10 mg/100 g MS x 2,5).
+#
+# NO SE CAMBIA NADA, y ahora se sabe por qué: nuestro 1.275 es **2,2 veces más
+# estricto** que lo que FEDIAF considera seguro, y no cuesta ni un menú (el peor
+# real va a 1.038). Bajarlo más tampoco haría falta -- no hay daño documentado
+# en este rango para una dieta equilibrada --, y subirlo hasta el legal sería
+# soltar un margen que hoy sale gratis. Se queda donde está, a propósito.
+#
+# La referencia del propio NRC para perro adulto son 220 µg/1000 kcal, así que
+# incluso este techo es casi seis veces la recomendación.
+#
 # ⚠️ Por la enorme variabilidad del kelp, se aplica un margen de seguridad
 # extra del 50% cuando el yodo del menú viene, en parte, de kelp -- para no
 # confiar en una cifra de producto que en la práctica puede estar muy lejos
 # de la real.
-TOPE_YODO_KCAL = 1400.0    # µg por 1000 kcal -- NRC 2006
+TOPE_YODO_KCAL = 1275.0    # µg por 1000 kcal -- NRC 2006, Belshaw 1975
 MARGEN_EXTRA_YODO_KELP = 1.5  # +50% de margen si el yodo viene de kelp
 
 # ---------------------------------------------------------------------------
@@ -238,7 +369,62 @@ TOPE_CLARA_PESO = 0.05
 # evitarlos en perros con antecedente de urolitos de oxalato calcico. Ahi el
 # tope es 0 y eso si esta fundado.
 # Las hojas de ruibarbo son el mayor riesgo agudo (oxalato muy alto).
-OXALATO_ALTO = {"espinaca", "acelga", "ruibarbo", "remolacha"}
+# ⚠️ AMPLIADA (8 septiembre) — LA LISTA ERA DE CUATRO Y LA FUENTE MARCA
+# CATORCE QUE TENEMOS. Hasta hoy esto eran "espinaca, acelga, ruibarbo,
+# remolacha": conocimiento general, sin una tabla detrás, y de esas cuatro
+# solo dos existen en el catálogo (ruibarbo y remolacha no están).
+#
+# SACN5 5ª ed., cap.40, Tabla 40-3 «Selected human foods to limit or avoid
+# feeding to dogs with calcium oxalate uroliths», columna «Moderate/high-
+# oxalate foods», tiene la lista de verdad y la gradúa: (H) = «high; avoid
+# feeding», (M) = «moderate; feed in limited amounts». Se excluyen SOLO las
+# (H), que es lo que la fuente manda evitar. Verificado literal el 8-sep-2026.
+#
+# Las (M) NO se excluyen a propósito, y una de ellas conviene conocerla: la
+# SARDINA es «Sardines (M)», la única de la lista que no es verdura ni fruta.
+# Las otras (M) del catálogo son brócoli, espárrago, lechuga, pera, piña,
+# tomate, zanahoria y naranja.
+#
+# La ACELGA y el RUIBARBO se quedan aunque NO estén en la Tabla 40-3: son
+# los dos casos clásicos de oxalato alto y estaban aquí antes con criterio
+# clínico general. Se marcan como tales para que se sepa cuáles vienen de la
+# tabla y cuáles no -- que es justo lo que faltaba en la versión de cuatro.
+#
+# ⚠️ Y ESTO ES LO ÚNICO que excluye alimentos por oxalato. Cuando el 8 de
+# septiembre se escribió que «el oxalato no ajusta nada», era verdad solo a
+# medias: no aplicaba ningún tope NUMÉRICO (sodio, fósforo, magnesio se
+# añadieron ese día), pero la exclusión de alimentos sí existía desde el 5 de
+# agosto. Ver PATOLOGIAS.md §1.2.
+_OXALATO_TABLA_40_3 = {
+    # Verduras marcadas (H) en la Tabla 40-3
+    "apio",           # Celery (H)
+    "berenjena",      # Eggplant (H)
+    "boniato",        # Sweet potatoes (H)
+    "calabacin",      # Summer squash (H)
+    "espinaca",       # Spinach (H)
+    "judia verde",    # Green beans (H)
+    "pepino",         # Cucumber (H)
+    "pimiento",       # Green peppers (H)
+    # Frutas marcadas (H)
+    "albaricoque",    # Apricots (H)
+    "arandano",       # Most berries (H)
+    "frambuesa",      # Most berries (H)
+    "fresa",          # Most berries (H)
+    "mandarina",      # Tangerine (H)
+    "manzana",        # Apples (H)
+    # Frutos secos marcados (H)
+    "cacahuete",      # Peanuts (H)
+    "soja",           # Soybeans (H)
+    "tofu",           # Tofu (H)
+}
+_OXALATO_CRITERIO_CLINICO = {
+    # No están en la Tabla 40-3, pero son los dos casos clásicos y estaban
+    # aquí desde antes. Se conservan; queda escrito que no vienen de la tabla.
+    "acelga",
+    "ruibarbo",
+    "remolacha",
+}
+OXALATO_ALTO = _OXALATO_TABLA_40_3 | _OXALATO_CRITERIO_CLINICO
 
 # ⚠️ URATO — vísceras metabólicas y marisco/cefalópodos son altos en
 # purinas. En perro sano no hay problema (el hígado ya elimina el urato
@@ -338,6 +524,91 @@ HUESO_RIESGO_DENTAL = set()
 # hueso estrecho que puede encajarse entre los molares.
 HUESO_RIESGO_ASTILLADO = {"costillas de cordero"}
 
+# ⚠️ LA HISTAMINA DEL PESCADO MAL CONSERVADO (9 de septiembre de 2026, leyendo
+#     ENTERA la §7.6 de FEDIAF, que hasta ese día estaba sin leer).
+#
+# FEDIAF §7.6.2.4, literal, en el apartado que se titula «All individuals
+# susceptible if sufficient quantity eaten»:
+#
+#   «Pharmacologic reaction — Adverse reaction to a food as result of a
+#    naturally derived or added chemical producing a drug-like or
+#    pharmacological effect in the host such as methylxanthines in chocolate
+#    or **pseudo-allergic reactions caused by high histamine levels in not
+#    well-preserved scombroid fish (e.g. tuna)**»
+#
+# POR QUÉ ESTO ES NUESTRO Y NO DE OTRO. Servimos pescado CRUDO, y cuatro de las
+# especies del catálogo son de las que forman histamina: Atún y Caballa
+# (Scombridae), Sardina (Clupeidae) y Boquerón (Engraulidae). No es una lista
+# nuestra: son tres de las seis familias que nombra el Reglamento (CE) 2073/2005
+# al fijar el límite de histamina «productos de la pesca de especies de peces
+# asociadas a un alto contenido de histidina».
+#
+# Y POR QUÉ NO ES LO MISMO QUE LO QUE YA HABÍA, que es la pregunta que hay que
+# hacerse antes de añadir un aviso más:
+#   · El tope de MERCURIO (atún) es un metal que se acumula. Otro mecanismo.
+#   · El aviso de aminas vasoactivas de `reaccion_adversa_alimento` (SACN5
+#     cap.31) sale SOLO si esa patología está marcada, y habla de bajar el
+#     umbral de un perro YA sensible.
+#   · Esto es de FEDIAF, va en el apartado «TODOS los individuos son
+#     susceptibles si comen cantidad suficiente», y no depende de que el perro
+#     tenga nada: depende de cómo se haya conservado el pescado. Un perro sano
+#     con una caballa que rompió la cadena de frío tiene el mismo problema.
+#
+# LO QUE NO SE HACE, y es a propósito: no se topa la cantidad ni se saca el
+# pescado del catálogo. La histamina no la genera el pez, la genera la mala
+# conservación, y es TERMORRESISTENTE — cocinar y congelar no la destruyen una
+# vez formada, así que un tope en gramos no arregla nada y un pescado bien
+# conservado no tiene ningún problema. Lo que hay que decir es cuándo se forma.
+PESCADO_HISTAMINA = {"atun", "caballa", "sardina", "boqueron"}
+
+# ⚠️ Y LA CIFRA QUE FALTABA AQUÍ, DE SACN5 cap.50 (9 de septiembre de 2026).
+#
+# Estas dos listas son POR CORTE: dicen qué hueso concreto tiene qué riesgo. Lo
+# que no había era la magnitud del riesgo general de dar hueso, y existe
+# publicada. SACN5 cap.50, literal, citando a Rousseau et al. (2007):
+#
+#   «In a recent retrospective review, **46 of 60 esophageal foreign bodies
+#    removed from dogs were bones»
+#
+# Cuarenta y seis de sesenta. No es un argumento contra el hueso carnoso —una
+# ración BARF lleva entre un 20 y un 60 % y es su fuente de calcio— pero sí es
+# el número que hay que tener delante al decidir qué cortes se ofrecen y con qué
+# aviso, y al contestar a un dueño que pregunta si es peligroso. La respuesta
+# honesta no es «no», es «el hueso es la primera causa de cuerpo extraño
+# esofágico en el perro, y por eso estos dos conjuntos existen».
+#
+# ⚠️ Y EL SEGUNDO NÚMERO, DE SACN5 cap.47 (mismo día, leído entero).
+#
+# El capítulo de enfermedad periodontal trae el recuadro 47-6, «Natural Food
+# Sources and Periodontal Disease», con el estudio de **67 foxhounds ingleses**
+# de uno a nueve años alimentados de rutina con carcasas crudas —esqueleto,
+# músculo y tejidos asociados—: «Oral examinations revealed that **all dogs had
+# varying signs of periodontal disease as well as a high prevalence of tooth
+# fractures**».
+#
+# Y el caso 47-1 va directo al argumento del hueso carnoso crudo: «there are **no
+# reliable, published studies showing dental benefits derived from bone
+# chewing** … anecdotal reports suggest the health concerns presented with cooked
+# bones **also occur commonly with raw, meaty bones** … The safety and efficacy of
+# feeding bones, regardless of type, remain undetermined».
+#
+# LO QUE ESTO CAMBIA AQUÍ: nada del motor, y a propósito. El hueso carnoso está
+# en el catálogo porque es la fuente de calcio de una ración BARF, no por los
+# dientes, y este capítulo no toca esa razón. Lo que desmonta es un beneficio que
+# Rawku **nunca ha prometido**: se comprobó `instrucciones.js` de `canislab-web`
+# entero el 9 de septiembre y no hay ni una afirmación dental — lo que dice del
+# hueso carnoso es crudo siempre, entero o en trozos grandes, que lo roa y no lo
+# trague, supervisado, y esperar a las 14 semanas para los duros.
+#
+# Se escribe aquí para que la cautela esté CITADA y para que, si algún día se
+# escribe en la app que el hueso limpia los dientes, alguien encuentre esto
+# antes.
+#
+# El mismo capítulo trae la otra mitad, que es la que hace que el riesgo importe
+# poco o mucho según el corte: los cuerpos extraños esofágicos son de los que se
+# tragan enteros. Un hueso que el perro roe y muele no es el mismo problema que
+# uno que le cabe en la garganta de una pieza.
+
 # ⚠️ BORRAJA — ALCALOIDES PIRROLIZIDÍNICOS (PA) HEPATOTÓXICOS. La HOJA (que
 # es lo que se da en BARF) contiene PA hepatotoxicos y carcinogenicos
 # (amabilina, licopsamina). EFSA fijo niveles maximos y la UK FSA
@@ -397,6 +668,44 @@ BORRAJA_EXCLUIR = {"borraja"}
 # despues, aparte.
 TIROIDES_EXCLUIR = {"cuello", "laringe", "traquea", "esofago", "garganta"}
 
+# ⚠️ LOS ALIMENTOS HUMANOS QUE FEDIAF DECLARA TOXICOS (10 septiembre de 2026).
+#
+# Salen del ANEXO 7.7 de FEDIAF, «Risks of some human foods regularly given to
+# pets», leido entero hoy. Hasta hoy ese anexo no estaba en ninguna parte del
+# repo, y el motivo por el que no se noto es el peor posible: **hoy no hay
+# ninguno en el catalogo** -- comprobado sobre las 163 fichas --, asi que la
+# ausencia de la lista no daba error, no daba aviso y no cambiaba ningun menu.
+#
+# Es exactamente el patron del oxido de cobre y del oxido de hierro: una regla
+# de la fuente que hoy no muerde y que el dia que muerda ya no habra nadie
+# mirando. El coste de escribirla es cero y el de no escribirla es una ficha de
+# uva o de cebolla entrando sin que salte nada.
+#
+# LAS CIFRAS, literales del anexo:
+#
+#   · Uva y pasa: «The lowest intake that has so far been reported to cause
+#     poisoning is around 2.8 g of raisins per kg bodyweight (BW) and 19.6 g of
+#     grapes per kg BW; one dog became ill after only eating 10 to 12 grapes».
+#     Y ademas: «The severity of the illness does not seem to be dose-related»
+#     -- o sea que no hay una dosis segura de la que fiarse. Solo el perro se ve
+#     afectado; el extracto de uva no, tiene que comerse la fruta.
+#   · Chocolate y cacao: el toxico es la teobromina, «particularly toxic to
+#     dogs, because its elimination is very slow», vida media ~17,5 h y
+#     recirculacion enterohepatica -- «repeated intakes of smaller (non-toxic)
+#     quantities may still cause intoxication». Tampoco hay dosis segura por
+#     acumulacion.
+#   · Cebolla, ajo y el resto del genero Allium: el anexo los nombra en su
+#     entrada («raisins, grapes, onions, garlic and chocolate»).
+#
+# NO SE PONE UNA DOSIS MAXIMA A PROPOSITO. La propia fuente dice de los dos
+# primeros que la gravedad no depende de la dosis y que dosis pequenas repetidas
+# intoxican igual. Un tope numerico aqui seria inventarse una seguridad que la
+# fuente niega: van fuera, en cualquier cantidad, como la borraja y el tiroides.
+TOXICOS_FEDIAF_7_7 = {
+    "uva", "uvas", "pasa", "pasas", "sultana", "chocolate", "cacao",
+    "cebolla", "cebolleta", "ajo", "puerro", "chalota", "cebollino",
+}
+
 # ⚠️ RESTRICCIONES POR PATOLOGIA — investigadas 4 agosto, mismo patron que
 # el oxalato/urato: en perro SANO no se tocan, solo se activan si la
 # patologia esta declarada. Los datos concretos viven en el propio
@@ -434,9 +743,14 @@ TIROIDES_EXCLUIR = {"cuello", "laringe", "traquea", "esofago", "garganta"}
 #   Calcio de cachorro de raza grande, 2500-4500 mg/1000 kcal
 #       Correcto. Hazewinkel; Dobenecker et al. 2006 (JAPN).
 #
-#   Corte de etapa cachorro a los 4 meses
-#       Correcto y conservador a propósito: FEDIAF usa 14 semanas. El margen
-#       extra es deliberado.
+#   Corte de etapa cachorro: 14 SEMANAS
+#       Correcto -- y es el de FEDIAF, literal: sus tablas de requisitos
+#       titulan las dos columnas «Early Growth (< 14 weeks)» y «Late Growth
+#       (>= 14 weeks)». Aquí ponía «4 meses» (unas 17 semanas) y se defendía
+#       como margen conservador deliberado, que es otra forma de decir que nos
+#       inventábamos un umbral existiendo el de la fuente. Cambiado el 9 de
+#       septiembre en `canislab-web/src/der.js`, que es donde se decide la
+#       etapa; lo vigila `tests/der-contrato.spec.js`.
 #
 #   Ratio Ca:P — adulto 1,0-2,0 · crecimiento tardío 1,0-1,8
 #       Correctos. FEDIAF.
@@ -455,7 +769,7 @@ def _es(nombre, conjunto):
 
 
 def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
-                      devolver_avisos=False, peso_perro_kg=None):
+                      devolver_avisos=False, peso_perro_kg=None, requerimientos=None):
     """
     Devuelve lista de problemas de SEGURIDAD. Vacia = todo bien.
 
@@ -526,6 +840,11 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     yodo_ug = sum(alimentos.get(n, {}).get("nutrientes", {}).get("yodo", 0) * g / 100.0
                  for n, g in menu.items())
     tope_yodo = TOPE_YODO_KCAL * der / 1000.0
+    # ⚠️ EL PERRO DE TRABAJO (11 septiembre): igual que la vitamina D de arriba.
+    # El semáforo tiene que mirar lo mismo que el solver, o construiríamos menús
+    # que el propio semáforo rechaza. Derivación en el bloque 1c-bis.
+    if peso_perro_kg and peso_perro_kg > 0:
+        tope_yodo = min(tope_yodo, TOPE_YODO_KG075 * (peso_perro_kg ** 0.75))
     hay_kelp = any(_es(n, {"kelp", "seaweed", "algas"}) for n in menu)
     if hay_kelp:
         tope_yodo /= MARGEN_EXTRA_YODO_KELP
@@ -540,6 +859,8 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     selenio_ug = sum(alimentos.get(n, {}).get("nutrientes", {}).get("selenio", 0) * g / 100.0
                      for n, g in menu.items())
     tope_selenio = TOPE_SELENIO_KCAL * der / 1000.0
+    if peso_perro_kg and peso_perro_kg > 0:
+        tope_selenio = min(tope_selenio, TOPE_SELENIO_KG075 * (peso_perro_kg ** 0.75))
     if der and selenio_ug > tope_selenio:
         problemas.append(
             "El selenio de este menú llega a %.0f µg, por encima del límite "
@@ -607,6 +928,16 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     # tiroides del animal pegada. TVT Merkblatt 181 (mayo 2025): con uso
     # regular, riesgo de hipertiroidismo exógeno. Bloqueo de nivel A, igual
     # que la borraja: no se topa por cantidad, se excluye del todo.
+    tox = [n for n in menu if _es(n, TOXICOS_FEDIAF_7_7)]
+    if tox:
+        problemas.append(
+            "%s está en la lista de alimentos humanos con toxicidad documentada "
+            "en el perro (FEDIAF, anexo 7.7). No hay una cantidad segura: la "
+            "propia fuente dice que en la uva y la pasa la gravedad no depende "
+            "de la dosis, y que en el chocolate dosis pequeñas repetidas "
+            "intoxican igual por acumulación. Fuera de la ración."
+            % ", ".join(tox))
+
     tir = [n for n in menu if _es(n, TIROIDES_EXCLUIR)]
     if tir:
         problemas.append(
@@ -689,6 +1020,100 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     # eso ya se encarga `verificar()`. Se devuelve aparte para que no bloquee
     # un menú que está bien.
     avisos = []
+
+    # ⚠️ DOS AVISOS DE FEDIAF QUE ESTABAN LEIDOS Y NO SE DECIAN (10 septiembre).
+    #
+    # Los dos salen de leer FEDIAF 2025 entera, y los dos son AVISO y no cifra
+    # a proposito: la fuente describe el riesgo y NO da un numero, asi que
+    # ponerle un tope seria inventarselo -- y callarse tampoco vale, porque el
+    # motor construye justo las raciones donde el riesgo aparece.
+
+    # 1. CORDERO Y TAURINA (Anexo 7.3.3, «Dog»). «Feeding certain LAMB and rice
+    #    foods MAY INCREASE THE RISK OF A LOW-TAURINE STATUS, because of lower
+    #    bioavailability of sulphur-containing amino acids and increased faecal
+    #    losses of taurine». Y en la misma pagina: «some breeds seem to be more
+    #    sensitive... particularly NEWFOUNDLAND DOGS, in which the rate of
+    #    taurine synthesis is decreased».
+    #    La taurina NO esta entre los 43 requisitos porque el perro sano la
+    #    sintetiza de metionina y cisteina -- lo dice la propia FEDIAF --, asi
+    #    que un menu de cordero sale VERDE y nadie ve el riesgo. El objetivo que
+    #    da la fuente es de analitica (>40 µmol/L en plasma), no de receta.
+    cordero = [n for n in menu if _es(n, {"cordero", "ovino", "oveja", "borrego"})]
+    if cordero:
+        avisos.append(
+            "Este menú lleva cordero (%s). FEDIAF (anexo 7.3.3) relaciona las "
+            "dietas de cordero con un riesgo mayor de taurina baja, porque sus "
+            "aminoácidos azufrados se aprovechan peor. El perro sano fabrica su "
+            "propia taurina y no hace falta añadirla, pero hay razas que la "
+            "sintetizan peor —FEDIAF nombra al Terranova— y en ellas conviene "
+            "que el veterinario mire la taurina en sangre. No es un problema "
+            "del menú: es algo que preguntar si el perro es de esas razas."
+            % ", ".join(cordero))
+
+    # 2. LA HISTAMINA DEL PESCADO ESCOMBROIDE YA ESTABA, Y AQUI LA PUSE
+    #    DUPLICADA (10 septiembre, y lo cazo la propia prueba de extremo a
+    #    extremo). Leyendo §1.1 de FEDIAF -- la definicion de «pharmacologic
+    #    reaction», que nombra la histamina del escombroide mal conservado --
+    #    escribi un aviso nuevo, y resulta que el mismo pasaje de FEDIAF ya
+    #    estaba aplicado desde antes en `avisos_rotacion()`, con mejor
+    #    redaccion y con el razonamiento escrito de por que no es lo mismo que
+    #    el mercurio ni que las aminas vasoactivas de la reaccion adversa.
+    #
+    #    Se quita el mio. Dos avisos diciendo lo mismo es peor que uno: «un
+    #    aviso que sale siempre deja de leerse», que es la regla con la que se
+    #    decidio no meter mas ruido en esa lista.
+    #
+    #    Lo que si faltaba, y era el fallo de verdad, es que ESTA LISTA no
+    #    salia de la API: `main._seguridad_completa` llamaba a esta funcion sin
+    #    `devolver_avisos=True`, asi que todo lo de aqui abajo se construia y se
+    #    tiraba. Arreglado alli.
+
+    # 3. EL CALCIO CERCA DE SU TECHO SE LLEVA POR DELANTE EL ZINC Y EL COBRE
+    #    (10 septiembre). FEDIAF lo dice DOS VECES y las dos sin cifra:
+    #
+    #      §3.3.1, «Calcium (Adult dogs)»: «As the calcium level approaches the
+    #      stated nutritional maximum, IT MAY BE NECESSARY TO INCREASE the
+    #      levels of certain trace elements such as ZINC and COPPER.»
+    #
+    #      nota g de las tablas: «The bioavailability of minerals should be
+    #      carefully considered in diet formulas where the concentration of
+    #      these nutrients is close to the recommended amounts.»
+    #
+    #    Y SACN5 cap.6 SI le pone numero al punto donde empieza: «as calcium
+    #    levels increased FROM 1.0 TO 1.5 %, zinc usage (as measured by changes
+    #    in plasma zinc) decreased» en cachorros, y de 1,2 a 3,2 % baja la
+    #    retencion de zinc segun la forma quimica del zinc.
+    #
+    #    NOS TOCA DE LLENO: una racion BARF cierra el calcio con hueso, asi que
+    #    va alta por construccion.
+    #
+    #    LO QUE NO SE HACE, y es a proposito: no se sube el minimo de zinc ni el
+    #    de cobre. Ninguna de las dos fuentes dice CUANTO, y subir un minimo a
+    #    ojo es inventarse la cifra -- ademas de que el zinc tiene techo legal y
+    #    apretarlo por abajo cierra la ventana. Lo que se hace es DECIRLO,
+    #    cuando de verdad esta cerca: a partir del 85 % de su maximo.
+    # ⚠️ El maximo se PIDE, no se carga aqui: la tabla de FEDIAF se lee en un
+    # solo sitio y quien llama ya la tiene. Si no lo pasan, no se avisa -- antes
+    # callarse que inventarse el techo.
+    _max_ca = None
+    if requerimientos:
+        from verificar import maximo_de as _max_de_ca
+        _fila_ca = requerimientos.get("Calcio")
+        if _fila_ca:
+            _max_ca = _max_de_ca(_fila_ca, "Calcio", etapa)
+    if _max_ca and der:
+        _ca = sum((alimentos.get(n, {}).get("nutrientes", {}).get("calcio") or 0) * g / 100.0
+                  for n, g in menu.items())
+        _ca_1000 = _ca / der * 1000.0
+        if _ca_1000 >= _max_ca * 0.85:
+            avisos.append(
+                "El calcio de esta ración va al %.0f %% de su máximo (%.0f de %.0f mg por "
+                "1000 kcal). No se pasa, pero FEDIAF avisa de que con el calcio alto puede "
+                "hacer falta más zinc y más cobre, porque se absorben peor. Es normal en una "
+                "ración con hueso; si el perro es de los que se le nota en la piel o el pelo, "
+                "es algo que comentar con el veterinario."
+                % (100.0 * _ca_1000 / _max_ca, _ca_1000, _max_ca))
+
     if len(fuentes_a) >= 3:
         avisos.append(
             "La vitamina A viene de %d fuentes a la vez (%s). Se suman, pero "
@@ -731,6 +1156,15 @@ def avisos_rotacion(menu, alimentos):
                 avisos.append(
                     "%s: acumula cadmio y cobre (misma familia que el "
                     "mejillón). Servir sin cabeza/vísceras y no a diario." % n)
+            if _es(n, PESCADO_HISTAMINA):
+                avisos.append(
+                    "%s: es de las especies que acumulan histamina si se rompe "
+                    "la cadena de frío. Compralo bien frío y dalo el mismo día "
+                    "que lo descongeles; si huele fuerte o pica en la lengua, "
+                    "tíralo. La histamina no se va ni congelando ni cocinando "
+                    "una vez formada, y puede dar una reacción parecida a una "
+                    "alergia en cualquier perro, no solo en uno alérgico "
+                    "(FEDIAF 2025, §7.6.2.4)." % n)
             # ⚠️ QUITADO (5 agosto, madrugada) — pedido expreso: este aviso
             # ("congelar antes de dar") era redundante con la instrucción
             # general de la categoría "Pescados y mariscos" en el

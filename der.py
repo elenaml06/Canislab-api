@@ -108,13 +108,101 @@ BASE_ACTIVIDAD = {
     # lo cubre esta app y tendria que pautarlo un veterinario.
 }
 
+# ⚠️ LO QUE LA §7.2.3.5 DE FEDIAF ANADE A ESTA TABLA, Y QUE NO SE APLICA
+#     (9 de septiembre de 2026, leyendo esa seccion entera; hasta ese dia
+#     estaba sin leer).
+#
+# La tabla de arriba es la VII-7, o sea la RECOMENDACION PRACTICA de FEDIAF. La
+# §7.2.3.5 es su revision de literatura, y trae tres cosas que la tabla no dice.
+# Ninguna se aplica, y cada una por un motivo distinto -- escritas aqui para que
+# no haya que volver a descubrirlas:
+#
+# 1. EL FRIO, QUE ES UN HUECO DE VERDAD. Literal: «When kept outside in winter,
+#    dogs may need 10 to 90 % MORE CALORIES than during summer». Diez a noventa
+#    por ciento. Y esta app NO PREGUNTA DONDE VIVE EL PERRO: un mastin que duerme
+#    fuera en enero recibe hoy la misma racion que un perro de piso.
+#    ⚠️ Y LA CIFRA EXISTE, aunque no la de FEDIAF: la trae SACN5 cap.5, Tabla 5-3
+#    («Influence of low environmental temperatures on daily energy requirement»),
+#    por TIPO DE PELO y por salto de temperatura concreto:
+#
+#        Labrador y beagle ...... +25 %   (12-43)   de 15 C a 8,5 C
+#        Gran Danes ............. +22 %             de verano a invierno
+#        Perro de pelo CORTO .... +95 %             de 25 C a 7,6 C
+#        Perro de pelo LARGO .... +59,5 %           de 25 C a 7,6 C
+#        Beagle ................. +70,5 %           de 17 C a -17 C
+#        Perro de trineo ........ +61,5 %           de 17 C a -17 C
+#
+#    Ojo al sentido, que es el contrario del que uno diria de memoria: el de pelo
+#    CORTO necesita mas subida que el de pelo largo, porque aisla peor.
+#
+#    ASI QUE LO QUE FALTA NO ES LA CIFRA: ES LA PREGUNTA. La ficha no sabe donde
+#    duerme el perro ni a que temperatura, y sin eso no hay a que fila ir. Anadir
+#    esa pregunta es una decision de producto (que se pregunta exactamente, y con
+#    que palabras), no de lectura, y por eso no se aplica sola. Esta en
+#    PENDIENTE_PRODUCTO.md con las dos citas -- la de FEDIAF y esta -- para que se
+#    decida con los numeros delante. Lo que SI se puede decir mientras tanto es lo que ya dice la
+#    §7.2.4 de FEDIAF y la app repite: la racion es un punto de partida y se
+#    ajusta viendo si el perro engorda o adelgaza.
+#
+# 2. EL SUELO DE 95 NO ES EL SUELO DE LA LITERATURA. Literal: «Individually housed
+#    dogs, with little opportunity to move, may have daily energy requirements
+#    (DER) AS LOW AS 70 kcal ME/kg0.75». Nuestro «sedentario» son 95, o sea que a
+#    un perro de verdad muy quieto podemos darle hasta un 36 % de mas.
+#    NO SE BAJA A PROPOSITO: 95 es lo que FEDIAF RECOMIENDA en su Tabla VII-7, y
+#    70 es lo que documenta su revision de literatura para perros enjaulados. Son
+#    dos cosas distintas y la que manda es la recomendacion. Ademas el error va
+#    del lado que se corrige solo -- el dueño ve que engorda y baja la racion --,
+#    y el contrario no. El otro extremo de la misma frase, «over 144 kcal
+#    ME/kg0.75» para perros en jauria con mucha interaccion, SI cae dentro de
+#    nuestra tabla (entre «activo» y «muy_activo»), asi que ahi no falta nada.
+#
+# 3. LA TERMOGENESIS DE LA PROPIA COMIDA, que nos toca mas que a un pienso.
+#    Literal: «Diet-induced thermogenesis plays a small role; it represents about
+#    10 % of the daily energy expenditure in dogs. It INCREASES WITH DIETS RICH IN
+#    PROTEIN and is greater in dogs fed FOUR MEALS PER DAY than in dogs fed once
+#    daily». Una racion BARF es rica en proteina por construccion y la app
+#    reparte en 2-3 tomas, o sea que caemos en el lado alto de las dos.
+#    NO SE APLICA porque FEDIAF da el total («about 10 %») y NO da cuanto sube
+#    con la proteina ni cuanto con el numero de tomas. Sin esas dos cifras,
+#    aplicarlo seria inventarselas.
+
 # Ajustes ADITIVOS, en kcal/kg^0.75. Solo se aplican a adulto y senior.
+# ⚠️ EL ESCALON DE EDAD ES EL DE FEDIAF, TABLA VII-6 (9 septiembre 2026).
+#
+# «Practical recommendations for MER in dogs at different ages»:
+#
+#     1-2 anos ................ 130 (125-140) kcal ME/kg BW^0,75
+#     3-7 anos ................ 110  (95-130)
+#     > 7 anos (senior) ....... 95   (80-120)
+#
+# O sea +20 el joven y -15 el senior sobre la banda de 3-7. Aqui ponia +15 y -7,
+# que venian de Thes 2014 (100 kcal/kg^0,75 en jovenes contra 93 en mayores de 7).
+#
+# ⚠️ CASO REAL: esta tabla SE HABIA LEIDO. El comentario de arriba, del 6 de
+# septiembre, dice «no la VII-6 (esa es solo por EDAD, sin actividad -- confirmado
+# literal en fediaf_2025.txt)». Se abrio, se confirmo, se clasifico bien y se
+# aparto -- y nadie cruzo su escalon de edad contra el que aplicabamos. El -7 era
+# un -6,4 %, cuando FEDIAF dice -13,6 % y SACN5 cap.5 dice, aparte, «dogs over
+# seven years of age required 10 to 20% less energy» y recomienda «foods providing
+# a 15 to 20% caloric reduction». Las dos fuentes coincidian y nosotras ibamos por
+# menos de la mitad. Lo vigila ahora `fediaf_tablas.json` + BLOQUE 67.
+#
+# ⚠️ Y CRUZAR EDAD CON ACTIVIDAD ES LO QUE PIDE LA FUENTE, aunque la VII-6 y la
+# VII-7 sean alternativas entre si. FEDIAF, justo encima de la VII-6: «some young
+# adult dogs may have a sedentary lifestyle and need fewer calories than the
+# average shown in table VII-6, whereas older dogs (> 7 years of age) which are
+# still playing and running will need more energy than indicated». Lo que no era
+# de la fuente era el TAMAÑO del escalon.
 AJUSTE_EDAD = {
-    "joven":   +15,   # 1 a 2 años
-    "adulto":    0,   # 2 a 7 años
-    "senior":   -7,   # Thes et al. 2014: 100 kcal/kg^0.75 en jovenes vs 93 en
-                      # mayores de 7 anos -> -7 (antes teniamos -5)
+    "joven":   +20,   # 1 a 2 años  -- FEDIAF VII-6: 130 contra 110
+    "adulto":    0,   # 2 a 7 años  -- la banda de referencia, 110
+    "senior":   -15,  # > 7 años    -- FEDIAF VII-6: 95 contra 110
 }
+# La banda de 1-2 anos de la Tabla VII-6. Un perro es "adulto joven" mientras no
+# cumpla los dos anos; por debajo del fin de su crecimiento ni siquiera llega aqui,
+# porque manda la etapa de cachorro.
+ADULTO_JOVEN_HASTA_MESES = 24.0
+
 AJUSTE_CONVIVENCIA = {"solo": 0, "con_otros_perros": +10}
 AJUSTE_MACHO_ENTERO = +10
 
@@ -140,6 +228,61 @@ RAZAS_MENOS_GASTO = {
 }
 AJUSTE_RAZA = 15
 
+# ⚠️ AÑADIDO (8 septiembre) — LAS DOS RAZAS A LAS QUE FEDIAF LES DA CIFRA
+# PROPIA, Y QUE EL MOTOR IGNORABA.
+#
+# La Tabla VII-7 de FEDIAF 2025, la misma de la que salen los cinco escalones
+# de actividad, termina con una seccion "Breed specific differences":
+#
+#     Great Danes      200 (200 - 250) kcal ME per kg BW^0.75
+#     Newfoundlands    105 (80 - 132)
+#
+# Las dos razas estan en la lista de 136 de la app y no se usaban. MEDIDO
+# antes de arreglarlo: un Gran Danes de 67,5 kg marcado como "normal" recibia
+# 2590 kcal/dia donde FEDIAF dice 4710. EL 55 %. Un perro asi adelgaza.
+#
+# Y 200 no es un valor extremo: SACN5 cap.5 dice que las estimaciones de DER
+# en perro "range between 95 to 200 kcal ... per (BWkg)0.75 per day", o sea
+# que es el extremo alto del rango publicado, no un caso raro.
+#
+# ⚠️ CÓMO SE APLICA: LA CIFRA DE RAZA VA EN VEZ DEL NIVEL DE ACTIVIDAD.
+# No es un suelo sobre el que se aplique la actividad, ni un ajuste que se
+# sume. Lo dice la propia guia dos veces (leido entero el 9 de septiembre, al
+# cerrar PREGUNTAS_ABIERTAS.md P-11):
+#
+#   · La frase que presenta la tabla: "Table VII-7 provides examples of daily
+#     energy requirements of dogs at different activity levels, FOR SPECIFIC
+#     BREEDS and for obese prone adults". Tres clases de fila en paralelo, la
+#     misma columna y el mismo coeficiente: la fila de raza es ALTERNATIVA a
+#     la de actividad, igual que "obese prone adults <=90" es una alternativa
+#     y no un descuento sobre el 95 del sedentario.
+#   · Y la seccion 7.2.3.4 "Breed & type", que dice de que esta hecha esa
+#     diferencia: "Breed-specific needs probably reflect differences in
+#     temperament, RESULTING IN HIGHER OR LOWER ACTIVITY, as well as variation
+#     in stature or insulation capacity of skin and hair coat". O sea que la
+#     diferencia de raza YA CONTIENE la de actividad: sumar un nivel encima
+#     seria contar dos veces lo mismo.
+#
+# ⚠️ LO UNICO QUE SIGUE SIENDO INTERPRETACION NUESTRA es donde caer DENTRO del
+# rango publicado, porque FEDIAF da 200 (200-250) y 105 (80-132) y ninguna
+# regla para colocarse. Lo que se hace:
+#   · el valor central sustituye a la base de "normal";
+#   · el nivel de actividad coloca dentro del rango moviendo lo mismo que
+#     movia (su diferencia contra "normal");
+#   · y el resultado se RECORTA al rango que publica la propia FEDIAF, para
+#     no salirse de la fuente por interpretar de mas.
+# Consecuencia: para el Gran Danes "en vez de" y "suelo" acaban coincidiendo,
+# porque 200 es a la vez el centro y el extremo bajo de su rango, y ningun
+# ajuste a la baja (sedentario, senior) puede pasar de ahi. Para el Terranova
+# no coinciden, porque su rango abre a los dos lados: 90 sedentario, 132
+# trabajo. Ese es el caso que separa las tres lecturas, y por eso lo fija el
+# BLOQUE 54 apartado 2-bis.
+RAZAS_CIFRA_FEDIAF = {
+    # raza -> (central, minimo, maximo) en kcal/kg^0.75
+    "Gran Danés": (200.0, 200.0, 250.0),
+    "Terranova":  (105.0,  80.0, 132.0),
+}
+
 # =============================================================================
 # CRECIMIENTO (FEDIAF) — por % del peso ADULTO esperado, no por edad
 # =============================================================================
@@ -163,11 +306,31 @@ MJ_A_KCAL = 239.0
 # convención clínica genérica RER x3.0/2.5/2.0 (la que traía el motor
 # ANTES de adoptar Klein, ver CLAUDE.md); se conserva solo como respaldo
 # prudente si no hay peso adulto esperado, no como cifra de FEDIAF.
-CRECIMIENTO = [
-    (0.50, 210),   # hasta el 50% del peso final   (= RER x 3.0)
-    (0.80, 175),   # del 50 al 80%                 (= RER x 2.5)
-    (None, 140),   # del 80% en adelante           (= RER x 2.0)
-]
+# ⚠️ REESCRITO (8 septiembre) — ERAN TRES ESCALONES Y SOLO SE USABA UNO.
+#
+# Aqui habia una tabla de tres filas por % del peso adulto (210 / 175 / 140),
+# y `_coef_crecimiento` leia SIEMPRE la ultima -- las otras dos eran codigo
+# muerto, en los dos repos. O sea que un cachorro de dos meses sin peso adulto
+# esperado recibia 140 (= 2 x RER), que es lo que SACN5 da para DESPUES de los
+# cuatro meses. Un 33 % menos de lo que le toca.
+#
+# FEDIAF no cubre este caso: su ecuacion de crecimiento (Tabla VII-8b, la de
+# Klein) NECESITA el peso adulto esperado. Donde FEDIAF no llega se tira de
+# SACN5, y SACN5 lo dice sin rodeos (Tabla 5-2, parte 2 canina):
+#
+#     "Daily energy intake for growing puppies should be 3 x RER from weaning
+#      until four months of age. At four months of age energy intake should be
+#      reduced to 2 x RER until the puppy reaches adult size."
+#
+# 3 x RER = 210 kcal/kg^0.75  ·  2 x RER = 140. Son DOS escalones y cortan por
+# EDAD, no por % del peso adulto -- que era ademas el otro problema de la
+# tabla vieja: para aplicar un corte por % del peso adulto hace falta el peso
+# adulto, que es justo el dato que no hay cuando se llega aqui.
+#
+# Sin edad tampoco, se queda en 140, que es el lado prudente.
+CRECIMIENTO_SACN5_MESES = 4.0
+CRECIMIENTO_ANTES_4M = 210.0   # 3 x RER
+CRECIMIENTO_DESDE_4M = 140.0   # 2 x RER
 
 # =============================================================================
 # GESTACIÓN y LACTANCIA (FEDIAF)
@@ -179,15 +342,41 @@ LACTANCIA_BASE = 145              # kcal/kg^0.75
 # Factores de semana de lactancia del NRC 2006: 0.75 / 0.95 / 1.1 / 1.2.
 # Antes teniamos 1.40 en la semana 4, que venia de la fuente secundaria.
 LACTANCIA_PESO_SEMANA = [0.75, 0.95, 1.10, 1.20]
-# TOPE DE SEGURIDAD. El termino extra de la lactancia escala con el PESO VIVO
-# (24 x n x peso), asi que en perros grandes se dispara muy por encima de lo
-# que da la tabla clinica (Small Animal Clinical Nutrition), cuyo maximo es
-# x6 del RER incluso con camadas de 9 o mas cachorros. Como la formula de
-# lactancia viene de una fuente SECUNDARIA y no se ha podido contrastar con
-# el texto original de FEDIAF, se limita al maximo de la tabla clinica.
-# Es la parte menos verificada de todo el DER: la lactancia SIEMPRE deberia
-# pautarla un veterinario, y ademas hay que recalcular cada semana.
-LACTANCIA_TOPE_RER = 6.0
+# ⚠️ QUITADO EL TOPE DE x6 RER (8 de septiembre). FEDIAF NO PONE NINGUNO.
+#
+# Aqui habia un `LACTANCIA_TOPE_RER = 6.0` que recortaba la formula, y el
+# comentario que lo justificaba decia dos cosas, las dos falsas:
+#
+# 1. Que la formula de lactancia "viene de una fuente SECUNDARIA y no se ha
+#    podido contrastar con el texto original de FEDIAF". SI SE PUEDE, y cuadra
+#    letra por letra. FEDIAF 2025, Tabla VII-8b ("Average energy requirements
+#    during growth and reproduction in dogs"):
+#
+#        1 to 4 puppies:  145 x kg BW^0.75 + 24 n x kg BW x L
+#        5 to 8 puppies:  145 x kg BW^0.75 + [96 + 12 (n-4)] x kg BW x L
+#        n = number of puppies; L = 0.75 sem 1; 0.95 sem 2; 1.1 sem 3; 1.2 sem 4
+#
+#    Que es exactamente lo que hace `calcular_der`, con los mismos 145, los
+#    mismos 24n / 96+12(n-4) y los mismos cuatro factores L.
+#
+# 2. Que el x6 era "el maximo de la tabla clinica". Leida esa tabla (Small
+#    Animal Clinical Nutrition 5a ed., Tabla 5-2, parte 2 canina), el x6 NO es
+#    un techo general: es la FILA de camadas de 9 o mas cachorros. Se estaba
+#    usando una fila de una tabla indexada por tamaño de camada como si fuera
+#    un limite universal.
+#
+# ⚠️ Y RECORTABA DE VERDAD. Medido el 8 de septiembre, en semana 4:
+#     25 kg, 6 cachorros:  FEDIAF 5221 kcal -> recortado a 4696  (-10 %)
+#     40 kg, 8 cachorros:  FEDIAF 9218 kcal -> recortado a 6680  (-28 %)
+#     60 kg, 8 cachorros:  FEDIAF 13494 kcal -> recortado a 9054 (-33 %)
+#
+# Una perra de 60 kg con 8 cachorros recibia un tercio menos de lo que dice
+# FEDIAF, por un techo que no era de FEDIAF y cuya justificacion escrita era
+# incorrecta. Se quita: manda FEDIAF.
+#
+# Lo que sigue siendo verdad del comentario viejo: la lactancia deberia
+# pautarla un veterinario, y hay que recalcular cada semana. Eso es un aviso,
+# no un recorte de kcal.
 
 # =============================================================================
 # PESO CORPORAL — manda sobre todo lo demás
@@ -195,13 +384,37 @@ LACTANCIA_TOPE_RER = 6.0
 RER_COEF = 70                     # RER = 70 x peso^0.75
 
 # ESCALA DE CONDICION CORPORAL. La app usa 5 niveles; la escala validada
-# (Laflamme 1997, contrastada con DEXA) es de 9 puntos. Equivalencia:
-#   0 Muy delgado -> BCS 2   ·   1 Delgado -> BCS 4   ·   2 Ideal -> BCS 5
-#   3 Sobrepeso   -> BCS 7   ·   4 Obeso   -> BCS 9
-BCS_DESDE_CONDICION = {0: 2, 1: 4, 2: 5, 3: 7, 4: 9}
+# (Laflamme 1997, contrastada con DEXA) es de 9 puntos.
+#
+# ⚠️ CORREGIDA (9 septiembre 2026) — LA CORRESPONDENCIA LA PUBLICA FEDIAF Y NO
+# ERA LA NUESTRA. Aqui ponia {0:2, 1:4, 2:5, 3:7, 4:9}, que era criterio propio.
+# Al leer entera la seccion 7.1 resulta que las Tablas VII-1 y VII-2 traen una
+# COLUMNA 2 DE CINCO PUNTOS al lado de la de nueve, y su correspondencia es:
+#
+#     5 puntos    1     2     3     4     5
+#     9 puntos    1     3     5     7     9
+#
+# En los tres escalones de arriba coincidiamos. En los dos de perro delgado
+# eramos MENOS severas: el escalon 0 iba a BCS 2 (-30 %) donde FEDIAF pone BCS 1
+# (->=40 %), y el 1 iba a BCS 4 (-10 %) donde pone BCS 3 (-20 %).
+#
+# MEDIDO, y se mueve menos de lo que parece porque el tope de subida del 20 %
+# absorbe casi todo: el escalon 0 se topaba antes y se topa ahora (sin cambio), y
+# el UNICO que se mueve es el 1, de x1,111 a x1,20 -- un 8 % mas de racion para
+# un perro delgado, que es la direccion correcta.
+#
+# ⚠️ TIENE QUE SEGUIR SIENDO IDENTICO A `BCS_DESDE_CONDICION` de `src/bcs.js`.
+BCS_DESDE_CONDICION = {0: 1, 1: 3, 2: 5, 3: 7, 4: 9}
 # Regla practica aceptada: cada punto de BCS por encima de 5 equivale a un
 # 10% de exceso de peso corporal (y por debajo, a un 10% de defecto).
+#
+# ⚠️ Y LA TABLA VII-2 DE FEDIAF LA CONFIRMA EN OCHO PUNTOS DE NUEVE (9 de
+# septiembre de 2026). Su columna «% BW below or above BCS 5» da un RANGO por
+# punto, y este 10 % lineal es exactamente el extremo bajo de cada uno -- el mas
+# conservador -- de BCS 1 a BCS 8. El unico que no cuadra es el 9: FEDIAF dice
+# «>45 %» y la recta da 40. Ver el comentario largo de `verificar.py`.
 BCS_PCT_POR_PUNTO = 0.10
+EXCESO_BCS_9 = 0.45          # FEDIAF 2025, Tabla VII-2, fila «9. Grossly Obese»
 SOBREPESO_UMBRAL = 1.10           # >=10% por encima del ideal
 INFRAPESO_UMBRAL = 0.90           # >=10% por debajo
 INFRAPESO_AUMENTO = 1.20          # +20%
@@ -231,7 +444,14 @@ def peso_ideal_desde_condicion(peso_actual_kg: float, condicion_idx: int) -> flo
     bcs = BCS_DESDE_CONDICION.get(condicion_idx)
     if bcs is None:
         return None
-    desvio = (bcs - 5) * BCS_PCT_POR_PUNTO      # +0.2 si BCS 7, -0.3 si BCS 2
+    # ⚠️ El 9 va aparte: FEDIAF dice «>45 %» y la recta se queda en 40. Tiene que
+    # decir lo mismo que `verificar.peso_objetivo_desde_bcs`, que es la copia que
+    # sí usa la API -- este modulo solo corre si alguien llama a `/der`. Dos
+    # sitios que calculan lo mismo, y por eso el BLOQUE 63 los compara.
+    if bcs >= 9:
+        desvio = EXCESO_BCS_9
+    else:
+        desvio = (bcs - 5) * BCS_PCT_POR_PUNTO  # +0.2 si BCS 7, -0.3 si BCS 2
     ideal = peso_actual_kg / (1 + desvio)
     # TOPE DE SEGURIDAD hacia arriba. Un perro muy delgado (BCS 2) daria un
     # objetivo un 43% por encima de su peso actual, y pasar de golpe a esa
@@ -243,14 +463,19 @@ def peso_ideal_desde_condicion(peso_actual_kg: float, condicion_idx: int) -> flo
     return round(ideal, 2)
 
 
-def _coef_crecimiento(peso_actual: float, peso_adulto: float) -> float:
+def _coef_crecimiento(peso_actual: float, peso_adulto: float,
+                      meses: float = None) -> float:
     """
     Devuelve el coeficiente en kcal/kg^0.75 para un cachorro.
     Con peso adulto conocido usa KLEIN 2019 (curva continua medida en 493
-    cachorros de compania). Sin el, cae al escalon mas prudente de FEDIAF.
+    cachorros de compania), que es la que publica FEDIAF en su Tabla VII-8b.
+    Sin el, cae a la regla de SACN5 por edad -- ver el comentario de
+    CRECIMIENTO_ANTES_4M.
     """
     if not peso_adulto or peso_adulto <= 0:
-        return CRECIMIENTO[-1][1]     # sin peso adulto, lo prudente
+        if meses is not None and meses < CRECIMIENTO_SACN5_MESES:
+            return CRECIMIENTO_ANTES_4M
+        return CRECIMIENTO_DESDE_4M
     frac = peso_actual / peso_adulto
     if frac > 1.0:
         frac = 1.0                    # ya llego a su peso adulto
@@ -263,11 +488,26 @@ def _coef_crecimiento(peso_actual: float, peso_adulto: float) -> float:
 def _coef_adulto(actividad, edad_grupo, convivencia, macho_entero, raza):
     if actividad not in BASE_ACTIVIDAD:
         raise ValueError(f"Actividad '{actividad}' no reconocida")
-    k = BASE_ACTIVIDAD[actividad]
+    # ⚠️ LAS DOS RAZAS CON CIFRA PROPIA DE FEDIAF MANDAN SOBRE LA BASE.
+    # Ver RAZAS_CIFRA_FEDIAF, arriba, para el porque y para que parte de esto
+    # es interpretacion nuestra. El nivel de actividad sigue moviendo lo mismo
+    # que movia: se aplica su diferencia contra "normal".
+    propia = RAZAS_CIFRA_FEDIAF.get(raza)
+    if propia:
+        central, minimo, maximo = propia
+        k = central + (BASE_ACTIVIDAD[actividad] - BASE_ACTIVIDAD["normal"])
+    else:
+        k = BASE_ACTIVIDAD[actividad]
     k += AJUSTE_EDAD.get(edad_grupo, 0)
     k += AJUSTE_CONVIVENCIA.get(convivencia, 0)
     if macho_entero:
         k += AJUSTE_MACHO_ENTERO
+    if propia:
+        # El +-15 de Thes 2014 NO se aplica encima: es un ajuste sobre la media
+        # de 586 perros, y estas dos razas ya tienen su propia cifra medida.
+        # Y se recorta al rango que publica FEDIAF, para no salirse de la
+        # fuente por interpretar de mas.
+        return max(minimo, min(maximo, k))
     if raza in RAZAS_MAS_GASTO:
         k += AJUSTE_RAZA
     elif raza in RAZAS_MENOS_GASTO:
@@ -426,7 +666,7 @@ def calcular_der(peso_actual_kg: float, etapa: str, actividad: str = None,
 
     # --- coeficiente según la etapa ---
     if en_crecimiento:
-        coef = _coef_crecimiento(peso_actual_kg, peso_adulto_esperado_kg)
+        coef = _coef_crecimiento(peso_actual_kg, peso_adulto_esperado_kg, meses)
         der = coef * peso_actual_kg ** 0.75
     elif etapa in ("gestante_temprana", "gestante_tardia"):
         coef = GESTACION_BASE
@@ -443,13 +683,23 @@ def calcular_der(peso_actual_kg: float, etapa: str, actividad: str = None,
         # 24x4 = 96, y 96 + 12x0 = 96. Se usa la continua.
         extra = (24 * n * peso_calculo) if n <= 4 else ((96 + 12 * (n - 4)) * peso_calculo)
         sem = min(max(semana_lactancia or 3, 1), 4)
+        # ⚠️ SIN TOPE. Ver el comentario largo de arriba: el x6 que habia aqui
+        # no era de FEDIAF y recortaba hasta un 33 %.
         der = coef * peso_calculo ** 0.75 + extra * LACTANCIA_PESO_SEMANA[sem - 1]
-        tope = LACTANCIA_TOPE_RER * calcular_rer(peso_calculo)
-        topada = der > tope
-        if topada:
-            der = tope
     elif etapa in ("adulto", "senior"):
-        grupo = "senior" if etapa == "senior" else "adulto"
+        # ⚠️ EL GRUPO «joven» EXISTIA Y NO SE USABA NUNCA (9 septiembre 2026).
+        # `AJUSTE_EDAD` tenia una entrada "joven" desde que se escribio esto, y
+        # aqui solo se pasaba "senior" o "adulto": codigo muerto que PARECIA
+        # aplicado. Es el mismo fallo que los tres escalones de crecimiento, de
+        # los que dos no se leian nunca.
+        # FEDIAF VII-6 da 130 kcal/kg^0,75 al perro de 1-2 anos contra 110 al de
+        # 3-7: un 18 % mas, y la app sabe la fecha de nacimiento. Ahora se aplica.
+        if etapa == "senior":
+            grupo = "senior"
+        elif meses is not None and meses < ADULTO_JOVEN_HASTA_MESES:
+            grupo = "joven"
+        else:
+            grupo = "adulto"
         coef = _coef_adulto(actividad or "normal", grupo, convivencia,
                             macho_entero, raza)
         der = coef * peso_calculo ** 0.75
@@ -476,8 +726,7 @@ def calcular_der(peso_actual_kg: float, etapa: str, actividad: str = None,
             "La lactancia es la etapa de mayor demanda de toda la vida de una "
             "perra y la que peor se estima con una fórmula. Este número es "
             "solo un punto de partida: pésala cada semana, ajusta según su "
-            "condición corporal, y que lo supervise tu veterinario."
-            + (" (Se ha aplicado el tope de seguridad.)" if locals().get("topada") else ""))
+            "condición corporal, y que lo supervise tu veterinario.")
     return resultado
 
 
