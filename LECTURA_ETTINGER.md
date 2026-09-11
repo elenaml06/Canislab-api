@@ -426,3 +426,42 @@ anaeróbico corto) y queda **por debajo** de lo que ya da un BARF de este motor
 **La grasa**: «en torno al **55-70 % de EM** en forma de grasa» para resistencia,
 y hay que introducirla **gradualmente, 8-12 semanas antes** de la competición.
 Eso último es manejo, no formulación, pero es lo que un dueño necesitaría saber.
+
+---
+
+## Cap. 176 — Obesidad · LEÍDO ENTERO
+
+**Confirma el BCS.** «Cada punto arriba o abajo representa una ganancia o pérdida
+de peso de aproximadamente un **10-15 %**», sobre la escala de 9 validada con DXA.
+El motor aplica un **45 %** de exceso al BCS 9 (cuatro puntos sobre el 5), que cae
+dentro del 40-60 % que sale de esa regla. Y define obeso como **15-20 % por
+encima del peso óptimo**.
+
+**⚠️ Y una divergencia real en el adelgazamiento, que es clínica.**
+
+> «Generalmente es de alrededor del **80 % del requerimiento de energía en reposo
+> (RER), basado en el peso ideal** de la mascota, con controles cada 2-4 semanas.
+> Algunos estudios recomiendan mayores restricciones en el RER (**60 %**).»
+> RER = 70 × (peso ideal en kg)^0,75
+
+Medido contra lo que da el motor cuando se le pasa el peso ideal:
+
+| Peso real | Peso ideal | Motor | 80 % RER | 60 % RER | Motor vs 80 % |
+|---|---|---|---|---|---|
+| 20 kg | 15 kg | 534 | 427 | 320 | **+25 %** |
+| 35 kg | 25 kg | 783 | 626 | 470 | +25 % |
+| 45 kg | 30 kg | 897 | 718 | 538 | +25 % |
+
+El motor da **el RER entero del peso ideal**; la fuente pide el **80 %**. Un 25 %
+más de comida en el perro que está a dieta, consistente en todos los pesos. Eso
+no es un matiz: puede ser la diferencia entre adelgazar y no adelgazar. **Va al
+nutricionista con las dos cifras.**
+
+**Y el ritmo, que casi coincide.** «La pérdida de peso debe progresar lentamente
+(**0,5-2 % por semana**)». El aviso del motor dice **1-2 % a la semana**, o sea
+una banda más estrecha dentro de la suya. La fuente admite bajar hasta el 0,5 %.
+
+**Lo demás, leído:** dieta alta en proteína y baja en hidratos porque la tasa de
+utilización energética de la proteína (77 %) es menor que la de la grasa (94 %);
+la fibra, sin acuerdo universal sobre su eficacia; y la L-carnitina, que el motor
+ya tiene como clave y solo aplica como suelo de patología.
