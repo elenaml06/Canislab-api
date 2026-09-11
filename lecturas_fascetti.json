@@ -4,9 +4,9 @@
     "metodo": "El de `LECTURA_SACN5.md`: leer todo, apuntar todo, y aplicar solo al final. Un veredicto «por: regla_del_capitulo» solo vale si se ha comprobado elemento a elemento que ninguno se sale de la regla -- es la leccion de los 442 de SACN5, donde TRES de los resueltos por capitulo felino si hablaban del perro.",
     "como_se_comprueba": "`leer_fascetti.py`, que rehace los recuentos y exige que la lectura integra declare el numero de lineas real del .txt.",
     "total_declarado": 657,
-    "pendientes_declarados": 138,
+    "pendientes_declarados": 81,
     "descartadas_declaradas": 17537,
-    "capitulos_leidos_declarados": 15,
+    "capitulos_leidos_declarados": 17,
     "medido": "11 de septiembre de 2026 (caps. 1-13 leidos; quedan 14-21)",
     "como_van_los_capitulos": "1-6 leidos el 11-sep por la manana. 7, 8 y 9 leidos el mismo dia y con sus veredictos escritos por la tarde -- estaban LEIDOS en `LECTURA_FASCETTI.md` y sin veredicto aqui, que es justo el agujero que este fichero existe para cerrar. 10 a 13, leidos y juzgados esa misma tarde. Quedan 14 a 21."
   },
@@ -2238,6 +2238,254 @@
         "cifra#310:If necessary, or if dietary modification cannot be done, potassium citrate (initial dose 75 mg/kg PO q 12 h; titrate to urine pH o": {
           "veredicto": "leido_no_aplica",
           "por": "Es una dosis de FÁRMACO por kilo de perro (alopurinol, hidroclorotiazida, citrato potásico, 2-MPG, penicilamina). El motor formula comida: no receta medicación, y esa decisión es de quien firma. Queda leído y apartado por la forma de la cifra."
+        }
+      }
+    },
+    "cap15": {
+      "titulo": "Nutritional Management of Kidney Disease",
+      "regla_del_capitulo": "Leido ENTERO el 11-sep-2026. El motor no aplicaba ninguna cifra de aqui, asi que el BLOQUE 96 no lo acusaba: se lee porque Elena pidio cerrar TODOS los capitulos, y ha salido lo mas gordo de la tanda. Tres hallazgos: (1) el minimo de proteina del NRC para el perro son 20 g/1000 kcal y el de FEDIAF 52,1 -- 2,6 veces, y es justo el numero que bloquea el IRIS 4 que pide la revision de Cris; (2) el techo de sodio que el motor aplica al renal no tiene ensayo detras, y la fuente lo dice con todas las letras; (3) la Tabla 15.2, que es el estadiaje que se pedia, NO da topes de proteina por estadio: da el UPC como criterio analitico, y el motor ya tiene esa patologia -- lo que falta es que la app pregunte el dato. Confirma ademas, en PERRO y por otro camino, el tope de fosforo del renal. El resto es de gato, dosis de farmaco por kilo, o la evidencia de la que salen las cifras.",
+      "lectura_integra": {
+        "lineas": 302,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "cifra#5:An increase in water turnover can be achieved by feeding diets that contain ≥70% moisture (retorted can/pouch/tray, commercially f": {
+          "veredicto": "leido_no_aplica",
+          "por": "Dietas con ≥70 % de humedad para subir la renovación de agua. El motor formula GRAMOS de alimento fresco -- una ración BARF ya va por encima de ese 70 % por construcción -- y el agua la pone el dueño. No hay nada que aplicar ni nada que contradecir."
+        },
+        "cifra#14:Chronic administration of lactated Ringer's solution (LRS; 130 mEq/l) or normal saline (154 mEq/l) can cause hypernatremia if suff": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es una dosis de FÁRMACO o de fluidoterapia por kilo de perro (quelantes del fósforo, sales de potasio, Ringer lactato). El motor formula comida y no receta medicación: esa decisión es de quien firma."
+        },
+        "cifra#15:Conversely, 5% dextrose in water can cause cellulitis and abscess formation and should not be administered subcutaneously.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es una dosis de FÁRMACO o de fluidoterapia por kilo de perro (quelantes del fósforo, sales de potasio, Ringer lactato). El motor formula comida y no receta medicación: esa decisión es de quien firma."
+        },
+        "cifra#44:Initial studies in feline remnant kidney models suggested a beneficial effect of protein restriction (28% vs. 52% dry matter [dm])": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es la EVIDENCIA de la que salen las cifras -- qué estudio comparó qué dieta y qué supervivencia dio --, no una recomendación de formulación. Sirve para saber de dónde viene el número que sí se aplica."
+        },
+        "cifra#48:However, in studies using the remnant kidney model, there was no detrimental effect of feeding higher‐protein diets (31–54% dm) co": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es la EVIDENCIA de la que salen las cifras -- qué estudio comparó qué dieta y qué supervivencia dio --, no una recomendación de formulación. Sirve para saber de dónde viene el número que sí se aplica."
+        },
+        "cifra#57:The minimal dietary protein requirements of cats and dogs with CKD are not known, but have been presumed to be similar to the mini": {
+          "veredicto": "hallazgo_sin_aplicar",
+          "por": "⚠️ EL MÍNIMO DE PROTEÍNA DEL NRC, Y ESTÁ A 2,6 VECES DEL DE FEDIAF. Literal: «The minimal dietary protein requirements of cats and dogs with CKD are not known, but have been presumed to be similar to the minimal protein requirements of healthy animals: for cats, 3.97 g/kg BW0.67 or 40 g/Mcal; and for dogs, 2.62 g/kg BW0.75 or 20 g/Mcal (NRC 2006)». || Son 20 g/1000 kcal para el perro. El mínimo de FEDIAF en adulto son 52,1. || IMPORTA PORQUE ES EXACTAMENTE EL NÚMERO QUE BLOQUEA EL IRIS 4: la revisión de Cris Carles pide bajar al 15 % de materia seca (37,5 g/1000 kcal), que está POR DEBAJO de los 52,1 de FEDIAF y POR ENCIMA de los 20 del NRC. || GANA FEDIAF, que es la regla del repo, y además las dos cifras no son lo mismo: la del NRC es un requerimiento mínimo suponiendo biodisponibilidad completa y la de FEDIAF es una recomendación para una dieta completa. Pero la discrepancia se apunta con las dos cifras porque quien firma una pauta tiene derecho a saberla. Va a FEDIAF_CONTRA_OTRAS_FUENTES.md."
+        },
+        "cifra#62:Likewise, lean body mass assessed by DEXA was maintained in older cats with early CKD (IRIS I/II) fed their maintenance energy nee": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO. Rawku es de perros: sin tabla de requisitos ni catálogo felino, aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#63:In cats with naturally occurring CKD, there was also no apparent negative effect of feeding a protein‐restricted diet (23% ME) on ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO. Rawku es de perros: sin tabla de requisitos ni catálogo felino, aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#84:In one study of dogs with surgically induced reduced renal function, dogs fed a low‐phosphorus diet (0.44% dm) for 24 months had a": {
+          "veredicto": "leido_coincide",
+          "por": "⚠️ ES LA EVIDENCIA DEL TOPE DE FÓSFORO QUE EL MOTOR YA APLICA, y en perro: dieta baja en fósforo (0,44 % MS) contra alta (1,44 % MS) durante 24 meses dio 75 % de supervivencia contra 33 %. Ese 0,44 % MS son 1100 mg/1000 kcal a 4000 kcal/kg MS, y el motor aplica 1200 al `renal` (SACN5 cap.35). Mismo orden y misma dirección: la fuente confirma el número que ya está puesto, por otro camino."
+        },
+        "cifra#86:Ross et al. reported that cats with laboratory‐induced reduced renal mass that were fed a phosphorus‐restricted diet (0.24% dm) sh": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO. Rawku es de perros: sin tabla de requisitos ni catálogo felino, aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#105:Aluminum hydroxide 60–90 mg/kg/day Calcium acetate 60–90 mg/kg/day Calcium carbonate 60–90 mg/kg/day Calcium carbonate + chitosan ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es una dosis de FÁRMACO o de fluidoterapia por kilo de perro (quelantes del fósforo, sales de potasio, Ringer lactato). El motor formula comida y no receta medicación: esa decisión es de quien firma."
+        },
+        "cifra#121:In healthy cats and dogs, dietary sodium intake up to 3.1 g/Mcal in cats and 4.1 g/Mcal in dogs does not affect blood pressure or ": {
+          "veredicto": "hallazgo_sin_aplicar",
+          "por": "⚠️ EL SODIO DEL RENAL NO TIENE EVIDENCIA, Y EL MOTOR LO RESTRINGE. Literal del capítulo: «there is currently no evidence to suggest that lowering dietary sodium will reduce blood pressure in cats or dogs with CKD», y en perro sano «dietary sodium intake up to ... 4.1 g/Mcal in dogs does not affect blood pressure or renal or cardiac functions». El motor aplica al `renal` un techo de sodio de 750 mg/1000 kcal, o sea 0,75 g/Mcal -- cinco veces por debajo de lo que esta fuente dice que ya es inocuo. || NO SE QUITA, y por dos motivos escritos: la propia fuente sigue diciendo en el mismo párrafo que «moderately sodium-restricted therapeutic diets for the nutritional management of renal disease remain common and recommended», y el tope viene de SACN5, que es la fuente de esta patología. Apretar de más no deja al perro sin nutriente: el mínimo de FEDIAF sigue debajo. Se apunta porque quien firma tiene derecho a saber que este tope concreto no tiene ensayo detrás."
+        },
+        "cifra#122:Altering sodium intake from 0.5 to 3.25 g Na/Mcal did not influence the development of hypertension nor affect GFR in dogs with su": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es la EVIDENCIA de la que salen las cifras -- qué estudio comparó qué dieta y qué supervivencia dio --, no una recomendación de formulación. Sirve para saber de dónde viene el número que sí se aplica."
+        },
+        "cifra#123:A study in cats with surgically induced kidney disease reported that sodium restriction (0.6–0.7 g/Mcal) activated the renin‐angio": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO. Rawku es de perros: sin tabla de requisitos ni catálogo felino, aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#133:Hypokalemia occurs in about 20% of cats with CKD, although this number may underestimate the true prevalence of whole‐body potassi": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO. Rawku es de perros: sin tabla de requisitos ni catálogo felino, aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#146:Potassium supplementation is indicated when the serum potassium concentration is less than 4 mEq/l (4 mmol/l) (Sparkes et al. 2016": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es una dosis de FÁRMACO o de fluidoterapia por kilo de perro (quelantes del fósforo, sales de potasio, Ringer lactato). El motor formula comida y no receta medicación: esa decisión es de quien firma."
+        },
+        "cifra#147:This may be achieved by oral potassium gluconate or potassium citrate supplementation (1–4 mEq per cat every [q]12 h) (Sieberg and": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO. Rawku es de perros: sin tabla de requisitos ni catálogo felino, aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#156:Segev et al. (2010) reported that 71 of 152 (41%) of dogs with naturally occurring CKD had at least one reported episode of hyperk": {
+          "veredicto": "leido_coincide",
+          "por": "41 % de los perros con ERC hacen al menos un episodio de HIPERpotasemia. Es justo la dirección del techo de potasio de 2000 mg/1000 kcal que el motor aplica al `renal`: la fuente dice «identify and implement a dietary regime that would provide less dietary potassium». Confirma el sentido del tope, sin dar cifra propia."
+        },
+        "cifra#157:Furthermore, 16% of dogs had at least one episode in which the serum potassium concentration was >6.5 mmol/l.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es prevalencia o manejo clínico (qué porcentaje de perros hace hiperpotasemia, cuándo poner sonda, qué bicarbonato mantener). No hay cifra de dieta que aplicar."
+        },
+        "olor#178:Factors to consider include the effect on palatability when added to the diet, the presence of hypokalemia (where potassium salts ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es una dosis de FÁRMACO o de fluidoterapia por kilo de perro (quelantes del fósforo, sales de potasio, Ringer lactato). El motor formula comida y no receta medicación: esa decisión es de quien firma."
+        },
+        "olor#271:In addition, the diet must be palatable enough to help overcome a potentially reduced sense of smell and taste.": {
+          "veredicto": "leido_no_aplica",
+          "por": "La dieta tiene que ser palatable porque el perro urémico tiene el olfato y el gusto tocados. Es real y el motor no lo puede medir: no hay dato de palatabilidad en ninguna ficha."
+        },
+        "olor#299:Another study confirmed the important variability in the nutrient content of rations prepared according to recipes, and reported d": {
+          "veredicto": "leido_coincide",
+          "por": "«the important variability in the nutrient content of rations prepared according to recipes» -- las recetas caseras publicadas varían mucho y muchas no cubren. Es literalmente la razón de existir de este motor y de la regla 1: ningún menú sale sin verificarse contra los 43 requisitos."
+        },
+        "reco#334:Excessive energy intake should be avoided, particularly in animals with compromised respiratory function, as the increased carbohy": {
+          "veredicto": "leido_coincide",
+          "por": "No pasarse de kcal. El motor formula CONTRA el DER pedido con una tolerancia estrecha, así que no hay forma de que se pase por su cuenta."
+        },
+        "reco#338:Potassium and phosphorus intake should be restricted to prevent accumulation of these minerals; however, intakes must be modified ": {
+          "veredicto": "leido_coincide",
+          "por": "«Potassium and phosphorus intake should be restricted ... however, intakes must be modified according to the clinical status of the patient». Las dos mitades ya están: el motor aplica los dos topes al `renal`, y la segunda mitad -- que se ajusten al paciente -- es exactamente para lo que existe `objetivos_del_profesional` desde el 11-sep."
+        },
+        "cifra#366:However, Burkholder et al. (2004) reported that the magnitude of proteinuria increased when dogs with X‐linked hereditary nephropa": {
+          "veredicto": "leido_no_aplica",
+          "por": "Proteinuria que aumenta en perros con nefropatía hereditaria ligada al X alimentados con más proteína. Es una raza y un modelo concretos; el motor ya tiene `renal_proteinuria`, cuyo criterio es el UPC."
+        },
+        "olor#395:Regardless of the disease, the diet must be tailored to the individual needs of the patient, and adjustments are to be expected th": {
+          "veredicto": "leido_coincide",
+          "por": "«Regardless of the disease, the diet must be tailored to the individual needs of the patient, and adjustments are to be expected throughout the course of treatment». Es la frase que justifica `objetivos_del_profesional`, construido el 11-sep: el veterinario puede ponerle a cualquiera de los 46 nutrientes su propio mínimo o máximo, y solo puede apretar."
+        },
+        "cifra#398:Stage I Stage II Stage III Stage IV Hydration Fresh water at all times Protein modification Dogs: UPC >2 Cats: UPC >0.4 Dogs: UPC ": {
+          "veredicto": "hallazgo_sin_aplicar",
+          "por": "⚠️ LA TABLA 15.2, QUE ES LA QUE PEDÍA CRIS POR ESTADIOS -- Y NO DA NÚMEROS DE PROTEÍNA. La fila «Protein modification» dice, para perro, «UPC >2» en estadio I y «UPC >0.5» en estadio II; en III y IV dice «Appropriate dietary protein reduction to control uremia and hyperphosphatemia», sin cifra. || O sea que el estadiaje que esta fuente da NO es un tope de proteína por estadio: es un CRITERIO ANALÍTICO para decidir cuándo tocarla, y el dato es el UPC. || Y el motor ya lo tiene: `renal_proteinuria` se llama literalmente «Proteinuria renal (UPC > 0,5)», que es el umbral del estadio II de esta tabla. Esa patología NO APLICA NINGUNA CIFRA a propósito, y su aviso explica por qué: el consenso ACVIM recomienda bajar la proteína un 25-50 % RESPECTO A LO QUE EL PERRO COMÍA ANTES, y ese dato el motor no lo tiene. || LO QUE FALTA, y es de producto: la app no pregunta el UPC, así que hoy esa casilla la marca quien ya sabe el dato. El umbral del estadio I (UPC >2) no está en ninguna parte. Las otras tres filas de la tabla -- fosfato por estadio, bicarbonato y potasio -- son objetivos de ANALÍTICA en sangre, no de dieta, así que no tienen forma de requisito."
+        },
+        "cifra#720:Effects of phosphorus/calcium‐restricted and phosphorus/calcium‐replete 32% protein diets in dogs with chronic renal failure.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es la EVIDENCIA de la que salen las cifras -- qué estudio comparó qué dieta y qué supervivencia dio --, no una recomendación de formulación. Sirve para saber de dónde viene el número que sí se aplica."
+        },
+        "cifra#1129:Long‐term renal responses to high dietary protein in dogs with 75% nephrectomy.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es la EVIDENCIA de la que salen las cifras -- qué estudio comparó qué dieta y qué supervivencia dio --, no una recomendación de formulación. Sirve para saber de dónde viene el número que sí se aplica."
+        }
+      }
+    },
+    "cap17": {
+      "titulo": "Nutritional Management of Endocrine Diseases",
+      "regla_del_capitulo": "Leido ENTERO el 11-sep-2026. Dos hallazgos y una confirmacion que importa mas que los dos. (1) El techo de grasa de la hiperlipidemia: Fascetti recomienda 20 % de las kcal (22,2 g/1000 kcal) y el motor aplica 30, pero en el mismo capitulo hay un estudio donde 33 funciono con aceite de pescado -- la horquilla publicada va de 22 a 33 y el motor cae en medio. (2) El 10 % de grasa ME que la fuente menciona para los casos graves cae por debajo del minimo de FEDIAF, o sea la misma frontera que el IRIS 4. || Y LA CONFIRMACION: el apartado de hipertiroidismo dietetico describe brotes reales por tejido tiroideo en la comida -- «Schlundfleisch», carne de cabeza, y ocho de doce perros comiendo «only raw food and bones» --, mas la regulacion USDA 9 CFR 310.15 que prohibe glandula tiroides Y musculo laringeo en comida humana. El motor ya bloquea las cuatro fichas de esa zona anatomica desde el 6-sep (`TIROIDES_EXCLUIR`) con otra fuente (TVT Merkblatt 181). Esta es la segunda, independiente, y nombra la laringe explicitamente. El resto es de gato, estudios de fibra y de almidon, y dosis de farmaco.",
+      "lectura_integra": {
+        "lineas": 209,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "olor#32:For the purposes of this discussion, dietary fiber will be classified into two broad categories: insoluble and soluble.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Define fibra soluble contra insoluble. El catálogo tiene UNA clave de fibra, sin separar tipos, así que la distinción no se puede expresar. Se anota porque es la razón de que el suelo de fibra de la diabetes sea un número solo."
+        },
+        "cifra#39:In one study, dogs with experimentally induced diabetes had significant reductions in 24‐hour blood glucose fluctuations when fed ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es el resultado de un estudio concreto -- qué fibra o qué almidón se probó y qué glucemia dio --, no una recomendación de formulación. Sirve para saber de dónde sale la cifra que sí se aplica."
+        },
+        "cifra#41:A second study assessed dogs with DM fed a canned diet supplemented with either 20 g of wheat bran (insoluble fiber) or 20 g of gu": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es el resultado de un estudio concreto -- qué fibra o qué almidón se probó y qué glucemia dio --, no una recomendación de formulación. Sirve para saber de dónde sale la cifra que sí se aplica."
+        },
+        "cifra#45:Dogs were fed canned diets with either 11% or 23% total dietary fiber on a dry matter basis.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es el resultado de un estudio concreto -- qué fibra o qué almidón se probó y qué glucemia dio --, no una recomendación de formulación. Sirve para saber de dónde sale la cifra que sí se aplica."
+        },
+        "cifra#53:One diet was a low‐fiber diet (total dietary fiber not reported), a second diet was a high‐fiber diet containing only insoluble fi": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es el resultado de un estudio concreto -- qué fibra o qué almidón se probó y qué glucemia dio --, no una recomendación de formulación. Sirve para saber de dónde sale la cifra que sí se aplica."
+        },
+        "cifra#62:Finally, a study in 12 dogs with stable DM compared two commercially available diets that differed in fat content, but that both h": {
+          "veredicto": "leido_coincide",
+          "por": "Estudio de Fleeman 2009 en 12 perros diabéticos: fibra total de 50 g/1000 kcal contra 35 g/1000 kcal, y SIN diferencia en las necesidades de insulina. Son cifras en la unidad del motor. El motor aplica a la `diabetes` un SUELO de fibra de 17,5 g/1000 kcal (SACN5), o sea la mitad de la más baja de las dos: no choca con nada, y el propio capítulo cierra el tema diciendo que la fibra levanta más preguntas que respuestas."
+        },
+        "cifra#64:When the dogs were fed the higher‐fiber diet with lower energy density, lower fat, and higher protein, statistically significant w": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es el resultado de un estudio concreto -- qué fibra o qué almidón se probó y qué glucemia dio --, no una recomendación de formulación. Sirve para saber de dónde sale la cifra que sí se aplica."
+        },
+        "cifra#69:A randomized crossover study in cats with DM compared the effect of the same canned diet mixed with either insoluble fiber (cellul": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO (hipertiroidismo felino, hipercalcemia idiopática del gato, o un estudio de diabetes en gatos). Rawku es de perros: sin tabla felina ni catálogo felino, aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#71:The higher carbohydrate content in the low‐fiber diet may have impacted glycemic control in the participants in this study; howeve": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO (hipertiroidismo felino, hipercalcemia idiopática del gato, o un estudio de diabetes en gatos). Rawku es de perros: sin tabla felina ni catálogo felino, aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#73:While cats in both groups were able to discontinue insulin and reverted to a nondiabetic state during the 16‐week trial, this was ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO (hipertiroidismo felino, hipercalcemia idiopática del gato, o un estudio de diabetes en gatos). Rawku es de perros: sin tabla felina ni catálogo felino, aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "reco#88:Fat should be restricted in patients with these problems.": {
+          "veredicto": "leido_coincide",
+          "por": "«Fat should be restricted in patients with these problems» -- los diabéticos con hipertrigliceridemia o pancreatitis concurrente. Es EXACTAMENTE el tope condicional que el motor aplica: `max_pct_kcal_grasa_si_ademas` al 30 % de las kcal cuando además hay `pancreatitis` o `hiperlipidemia`. Y el capítulo añade la mitad que el motor no puede hacer solo: «The degree of fat restriction is dependent on the patient's diet history», que es para lo que existe `objetivos_del_profesional`."
+        },
+        "cifra#99:One study in healthy dogs looked at the glycemic response of five different starch sources: corn, wheat, barley, rice, and sorghum": {
+          "veredicto": "leido_no_aplica",
+          "por": "Índice glucémico de cinco almidones (maíz, trigo, cebada, arroz, sorgo). Una ración BARF no lleva cereal y el catálogo no tiene ninguno de los cinco, así que no hay nada que elegir ni que limitar."
+        },
+        "reco#166:Be aware that some fiber sources contain artificial sweeteners such as xylitol and should be avoided; others include sucrose and a": {
+          "veredicto": "leido_coincide",
+          "por": "⚠️ «some fiber sources contain artificial sweeteners such as XYLITOL and should be avoided». El xilitol no está en el catálogo -- comprobado -- y el motor ya tiene la lista de tóxicos humanos de FEDIAF (Anexo 7.7) en `seguridad.py`. Se anota porque el xilitol NO está en esa lista y llega por una puerta que sí es de este proyecto: un suplemento de fibra. Es el mismo patrón del óxido de cobre -- hoy no muerde, y el día que entre una ficha de suplemento de fibra edulcorado habría que mirarlo."
+        },
+        "reco#173:Minimizing or avoiding treats high in digestible carbohydrates and fat is recommended.": {
+          "veredicto": "leido_coincide",
+          "por": "Minimizar premios con hidratos y grasa en el perro diabético. El motor cuenta las kcal de los premios y le exige a la ración el día entero de nutrientes desde el 11-sep (regla 3-bis); qué premio se da concretamente no lo puede saber."
+        },
+        "cifra#190:However, even when a high‐fat diet is consumed, serum triglycerides are not expected to exceed 500 mg/dl in a normal animal.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Triglicéridos que no deberían pasar de 500 mg/dl tras comer en un animal normal. Es un valor de ANALÍTICA en sangre, no de dieta. Es además el dato que decide la pregunta que la app hace desde hoy en pancreatitis y diabetes."
+        },
+        "cifra#232:Most recommendations in the literature suggest feeding a diet that provides 20% of the calories or less from fat on a metabolizabl": {
+          "veredicto": "hallazgo_sin_aplicar",
+          "por": "⚠️ EL TECHO DE GRASA DE LA HIPERLIPIDEMIA, Y FASCETTI ES MÁS ESTRICTO QUE EL MOTOR. Literal: «Most recommendations in the literature suggest feeding a diet that provides 20% of the calories or less from fat on a metabolizable energy (ME) basis». || 20 % de las kcal, a 9 kcal/g de grasa, son 22,2 g/1000 kcal. El motor aplica a la `hiperlipidemia` un techo de 30 (SACN5 Tabla 28-2), o sea un 27 % de las kcal. || ⚠️ Y HAY UNA CIFRA EN LA MISMA UNIDAD DEL MOTOR QUE VA AL REVÉS, en la línea 247: «Dogs were fed low- or moderate-fat diets (24 or 33 g/1000 kcal, respectively), and cholesterol and triglycerides were satisfactorily controlled in BOTH groups» -- con aceite de pescado. O sea que 33 funcionó en ese estudio, por encima de los 30 del motor. || NO SE CAMBIA NADA: son una recomendación general (22,2) y un estudio con suplemento (33), y el número que aplica el motor cae entre los dos y viene de la fuente de esa patología. Se apunta porque quien firma tiene derecho a saber que la horquilla publicada va de 22 a 33, y porque desde el 11-sep puede apretarla él mismo con `objetivos_del_profesional`."
+        },
+        "cifra#233:However, in many patients more severe restriction is often indicated, sometimes as low as 10% fat ME or less.": {
+          "veredicto": "hallazgo_sin_aplicar",
+          "por": "La otra mitad de la misma frase: «in many patients more severe restriction is often indicated, sometimes as low as 10% fat ME or less», o sea 11,1 g/1000 kcal. Eso está POR DEBAJO del mínimo de grasa de FEDIAF en adulto (13,75), así que el motor no puede llegar ahí ni con un objetivo del profesional: es la vía firmada de VETERINARIOS.md, la misma frontera que el IRIS 4. Medido el 11-sep en pancreatitis: 20 g/1000 kcal sí sale, 17,5 ya no."
+        },
+        "cifra#235:For example, if the patient is currently consuming a diet that contains 25% of the calories from fat, restricting to 20% fat calor": {
+          "veredicto": "leido_coincide",
+          "por": "El grado de restricción depende de lo que el perro comía antes. El motor no tiene ese dato de partida -- es lo mismo que pasa con `renal_proteinuria` y el consenso ACVIM --, y para eso está `/analizar`, que sí mira la dieta actual."
+        },
+        "reco#236:Treats should be restricted to low‐fat treats as well.": {
+          "veredicto": "leido_coincide",
+          "por": "Premios bajos en grasa. Cubierto por la regla 3-bis: las kcal de premios se descuentan de la ración y el día entero de nutrientes se le sigue exigiendo a lo que sí formula el motor."
+        },
+        "olor#239:Caloric restriction is also indicated in overweight patients, as excess dietary energy increases VLDL production.": {
+          "veredicto": "leido_coincide",
+          "por": "Restringir kcal en el perro con sobrepeso porque el exceso de energía sube la producción de VLDL. El motor formula contra el DER pedido, y la `obesidad` ya tiene sus propios topes."
+        },
+        "cifra#247:Dogs were fed low‐ or moderate‐fat diets (24 or 33 g/1000 kcal, respectively), and cholesterol and triglycerides were satisfactori": {
+          "veredicto": "hallazgo_sin_aplicar",
+          "por": "Ver la línea 232: es la cifra del mismo hallazgo, «24 or 33 g/1000 kcal», en la unidad del motor."
+        },
+        "olor#249:It is important to remember that the administration of fish oil will increase intake of both fat and calories, which must be consi": {
+          "veredicto": "leido_coincide",
+          "por": "«the administration of fish oil will increase intake of both fat and calories, which must be considered when assessing total dietary fat intake». En el motor eso es automático: el aceite de pescado entra DENTRO del MILP con su grasa y sus kcal contadas, no encima del menú. Es la diferencia entre formular y suplementar a ojo."
+        },
+        "cifra#251:Niacin has been used in dogs (25–100 mg/d) to reduce triglyceride concentrations (Bauer 1995).": {
+          "veredicto": "leido_no_aplica",
+          "por": "Niacina a 25-100 mg/día para bajar triglicéridos. Es una dosis de FÁRMACO por perro y día -- con efectos adversos descritos en la misma frase, hasta convulsiones y muerte --, no una concentración de la dieta. El motor aplica el máximo de niacina de FEDIAF y no receta."
+        },
+        "cifra#290:Energy from treats should be included in the dog's total calorie count and should not exceed 10% of the total daily calories.": {
+          "veredicto": "aplicado",
+          "por": "⚠️ LA QUINTA FUENTE CON LA MISMA CIFRA DE PREMIOS. «Energy from treats should be included in the dog's total calorie count and should not exceed 10% of the total daily calories». El motor lo aplica desde el 11-sep con `FRACCION_MAXIMA_DE_PREMIOS = 0.10`, y las otras cuatro son Ettinger cap.192 y 175, Fascetti cap.7 y Fascetti cap.14. Las cinco dicen 10 %."
+        },
+        "cifra#333:Although a recent study found no effect of iodine intake on total thyroxine (TT4) and total triiodothyronine (TT3) concentrations ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO (hipertiroidismo felino, hipercalcemia idiopática del gato, o un estudio de diabetes en gatos). Rawku es de perros: sin tabla felina ni catálogo felino, aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "reco#369:A home‐prepared diet is recommended if a reduction in dietary calcium below the concentrations in commercial diets is necessary.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO (hipertiroidismo felino, hipercalcemia idiopática del gato, o un estudio de diabetes en gatos). Rawku es de perros: sin tabla felina ni catálogo felino, aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "cifra#371:The authors have had success in controlling hypercalcemia in cats with customized home‐prepared diets containing approximately 0.6": {
+          "veredicto": "leido_no_aplica",
+          "por": "Es de GATO (hipertiroidismo felino, hipercalcemia idiopática del gato, o un estudio de diabetes en gatos). Rawku es de perros: sin tabla felina ni catálogo felino, aplicarlo sería inventarse un requisito para una especie que no atiende."
+        },
+        "reco#372:Oral products containing high concentrations of vitamin D, such as organ meats, some fish oils, and certain supplements, should be": {
+          "veredicto": "leido_coincide",
+          "por": "⚠️ «Oral products containing high concentrations of vitamin D, such as ORGAN MEATS, some FISH OILS, and certain supplements, should be avoided» -- y eso son tres categorías enteras de una ración BARF. El motor ya lo tiene por el lado que importa: la vitamina D lleva tope de seguridad crónica DURO dentro del solver (`TOPE_VITD_KCAL`), que es más fuerte que evitar un ingrediente, porque limita el aporte venga de donde venga. La frase es de hipercalcemia felina, pero el mecanismo es el mismo."
         }
       }
     }
