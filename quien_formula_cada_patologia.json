@@ -728,11 +728,11 @@
       "que_dato": "pH urinario",
       "cita_que_lo_condiciona": "Su tabla (SACN5 41-6) da un pH urinario objetivo, y el aviso general lo dice: «Depende ademas del pH urinario, que esta app no puede ver».",
       "quien_puede_marcarla": "solo_veterinario",
-      "pregunta_que_falta": "Ninguna adicional para elegir la cifra -- los cinco topes y el Ca:P son fijos --, pero la app NO OFRECE esta patologia todavia (ver FRONTEND_VS_MOTOR.md §1).",
+      "pregunta_que_falta": "Ninguna. Los cinco topes y el Ca:P son fijos, asi que no hay cifra que elegir con una pregunta. CORREGIDO el 11-sep-2026: aqui ponia que la app no la ofrecia todavia, y SI la ofrece -- es una de las cinco respuestas de la pregunta de `estruvita`. Un fichero que dice que falta algo ya hecho manda a buscar lo que ya esta y hace dudar de los otros seis, que si faltan: es la misma linea que hubo que corregir en la cardiopatia. Lo vigila ahora el BLOQUE 90.",
       "pistas_automaticas": [
         "ph urinario"
       ],
-      "nota": "DERIVADO: las cifras no dependen de ningun valor, pero el pH que decide si la dieta va en la direccion buena solo esta en un informe. Y hoy no hay casilla para marcarla."
+      "nota": "DERIVADO: las cifras no dependen de ningun valor, pero el pH que decide si la dieta va en la direccion buena solo esta en un informe. Casilla SI tiene: es una de las cinco respuestas de la pregunta de `estruvita`."
     },
     "urolitos_silice": {
       "nombre": "Urolitos de sílice",

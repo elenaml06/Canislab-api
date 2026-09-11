@@ -13172,6 +13172,32 @@ for _k90, _v90 in _P90.items():
                       f"que parte. Un fichero que manda a buscar lo que ya esta hecho hace dudar "
                       f"de los que si faltan")
 
+# ── 7-bis. NI UNA CASILLA QUE EXISTE PUEDE FIGURAR COMO QUE NO EXISTE ───
+#
+# ⚠️ CASO REAL ENCONTRADO (11 septiembre, noche). El punto 7 mira la PREGUNTA
+# de la cabecera; esto mira las RESPUESTAS. `quien_formula_cada_patologia.json`
+# decía de `urolitos_fosfato_calcico` que «la app NO OFRECE esta patologia
+# todavia», y la app la ofrece desde el 8 de septiembre: es una de las cinco
+# respuestas de la pregunta de `estruvita`. Es el mismo fallo de la cardiopatía
+# con otra forma, y el punto 7 no podía verlo porque esa patología no tiene
+# pregunta propia (`la_hace_la_app: false`, y con razón: no hay cifra que
+# elegir).
+#
+# La regla: si una clave es respuesta de una pregunta que la app SÍ hace,
+# entonces la app la ofrece, y ningún fichero puede decir lo contrario.
+_ofrecidas90 = {_r90.get("clave_motor")
+                for _v90 in _P90.values() if _v90.get("la_hace_la_app")
+                for _r90 in _v90.get("respuestas", [])}
+for _k90 in sorted(x for x in _ofrecidas90 if x):
+    _texto90 = " ".join(str((_der90.get(_k90) or {}).get(_c90) or "")
+                        for _c90 in ("pregunta_que_falta", "nota"))
+    if "NO OFRECE" in _texto90 or "no hay casilla" in _texto90:
+        fallos.append(f"BLOQUE90: «{_k90}» es una de las respuestas de una pregunta que la app "
+                      f"SÍ hace, o sea que tiene casilla, y "
+                      f"`quien_formula_cada_patologia.json` sigue diciendo que no la ofrece. Un "
+                      f"fichero que manda a buscar lo que ya está hecho hace dudar de los que sí "
+                      f"faltan -- es el fallo de la cardiopatía otra vez")
+
 # ── 8. Y CONTESTAR LA PREGUNTA TIENE QUE CAMBIAR EL MENÚ DE VERDAD ─────
 #
 # ⚠️ ESTO ES LO QUE PREGUNTÓ ELENA (11 septiembre): «¿se aplican los valores
@@ -13200,6 +13226,53 @@ for _k90, _esp90 in _ESTADIOS90.items():
         fallos.append(f"BLOQUE90: contestar «{_k90}» hace que el solver aplique un techo de "
                       f"sodio de {_visto90} y su fila de `patologias.json` dice {_esp90}. La "
                       f"pregunta se hace, se guarda, y no cambia lo que come el perro")
+
+# ── 8-bis. Y LO MISMO CON **TODAS** LAS RESPUESTAS, NO SOLO LA CARDIOPATÍA ──
+#
+# ⚠️ AÑADIDO EL 11 DE SEPTIEMBRE POR LA NOCHE, a petición de Elena: «revisa que
+# todas las preguntas que has metido donde veterinario realmente funcionan,
+# devuelve lo que debe, y da los valores que debe PARA CADA RESPUESTA».
+#
+# Lo de arriba mide la cardiopatía y solo la cardiopatía, porque es la que
+# tiene cinco respuestas y cinco techos. Pero la app hace CINCO preguntas
+# (cardiopatía, renal, hepatopatía, shunt y urolitos) con 19 respuestas entre
+# todas, y de 14 de ellas nadie comprobaba que contestar una cosa u otra
+# cambiara lo que el solver aplica. Un inventario que cuadra consigo mismo y un
+# motor que aplica otra cosa se ven exactamente igual desde fuera: el menú sale
+# verde en los dos casos, porque el semáforo de FEDIAF mide el perro SANO.
+#
+# Se comprueba CIFRA A CIFRA y por las dos mitades -- techos con `min()` y
+# suelos con `max()` --, contra lo que devuelve `topes_de_patologias`, que es
+# la función que llama el solver de verdad.
+_comprobadas90 = 0
+for _k90, _v90 in _P90.items():
+    for _r90 in _v90.get("respuestas", []):
+        _cm90 = _r90.get("clave_motor")
+        if not _cm90 or _cm90 not in _pat90:
+            continue
+        _t90b, _pg90b, _av90b, _su90b = _topes90([_cm90], "Adulto")
+        for _cl90, _esp90b in (_r90.get("cifras_que_aplica") or {}).items():
+            if _cl90 == "_no_formulable":
+                continue
+            _cual90, _nut90 = _cl90.split("_", 1)
+            _visto90b = (_t90b if _cual90 == "max" else _su90b).get(_nut90)
+            _comprobadas90 += 1
+            if _visto90b is None or abs(_visto90b - _esp90b) > 1e-6:
+                fallos.append(
+                    f"BLOQUE90: contestar «{_r90.get('label')}» en la pregunta de «{_k90}» "
+                    f"tendría que aplicar {_cl90}={_esp90b} y el solver aplica {_visto90b}. La "
+                    f"pregunta se hace, se guarda, y el perro come otra cosa -- y el menú sale "
+                    f"verde igual, porque el semáforo mide contra el perro SANO")
+        # Y la otra mitad: lo que el solver aplica y la respuesta NO dice. Un
+        # tope de más tampoco es inocente -- es una restricción que quien firma
+        # no ve, y que puede dejar al perro sin menú sin que se sepa por qué.
+        _dice90 = set(_r90.get("cifras_que_aplica") or {})
+        _aplica90 = {"max_" + n for n in _t90b} | {"min_" + n for n in _su90b}
+        if _aplica90 - _dice90 - {"_no_formulable"}:
+            fallos.append(f"BLOQUE90: contestar «{_r90.get('label')}» en «{_k90}» hace que el "
+                          f"solver aplique {sorted(_aplica90 - _dice90)}, que la respuesta no "
+                          f"dice. Un tope que quien firma no ve puede dejar al perro sin menú "
+                          f"sin que se sepa por qué")
 
 # Y el filtro final: se le AÑADE al menú el alimento de más sodio por kcal del
 # catálogo, en la cantidad calculada para cruzar el techo del estadio D. No se
@@ -13256,7 +13329,8 @@ else:
 _cuenta90 = {}
 for _v90 in _P90.values():
     _cuenta90[_v90["estado"]] = _cuenta90.get(_v90["estado"], 0) + 1
-print(f"  {len(_P90)} preguntas · " + " · ".join(f"{v} {k}" for k, v in sorted(_cuenta90.items())))
+print(f"  {len(_P90)} preguntas · {_comprobadas90} cifras comprobadas contra el solver · "
+      + " · ".join(f"{v} {k}" for k, v in sorted(_cuenta90.items())))
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
