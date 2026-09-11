@@ -4,9 +4,9 @@
     "metodo": "El de `LECTURA_SACN5.md`: leer todo, apuntar todo, y aplicar solo al final. Un veredicto «por: regla_del_capitulo» solo vale si se ha comprobado elemento a elemento que ninguno se sale de la regla -- es la leccion de los 442 de SACN5, donde TRES de los resueltos por capitulo felino si hablaban del perro.",
     "como_se_comprueba": "`leer_fascetti.py`, que rehace los recuentos y exige que la lectura integra declare el numero de lineas real del .txt.",
     "total_declarado": 657,
-    "pendientes_declarados": 603,
+    "pendientes_declarados": 574,
     "descartadas_declaradas": 17537,
-    "capitulos_leidos_declarados": 2,
+    "capitulos_leidos_declarados": 4,
     "medido": "11 de septiembre de 2026"
   },
   "capitulos": {
@@ -247,6 +247,142 @@
           "por": "leido",
           "cita": "40 IU vitamin D3 = 1 ug cholecalciferol; 1 IU vitamin E = 1 mg all-rac-alpha-tocopheryl acetate",
           "que_hace_el_motor": "La D cuadra clavada: el motor aplica 0,025 ug/UI, que es 1 ug = 40 UI. || ⚠️ Y LA E ES UN HALLAZGO, no una confirmacion comoda. Fascetti da el factor del all-rac (= dl-alfa-tocoferil acetato, el sintetico): 1 UI = 1 mg. El motor convierte el suelo de vitamina E del perro sano con el factor del NATURAL (d-alfa-tocoferol, 1,49 UI/mg -> 1 UI = 0,671 mg), que es el MAS PERMISIVO de los siete de la Tabla VII-14. De ahi salen los 67,1 mg/1000 kcal. Con el sintetico serian 100, o sea un 49 % mas alto. Y medido el 11-sep-2026: en el catalogo solo DOS suplementos llevan vitamina E y NINGUNO DE LOS DOS DECLARA LA FORMA QUIMICA. O sea que la cifra que hoy deja sin menu al perro con ocho especies fuera descansa en una suposicion sobre un dato que no esta. Va a `DATOS_QUE_FALTAN.md`. No se cambia nada: se mide y se dice."
+        }
+      }
+    },
+    "cap01": {
+      "titulo": "Integration of Nutrition into Clinical Practice",
+      "regla_del_capitulo": "La ECONOMIA de una clinica veterinaria: cuanto factura una consulta de nutricion, que margen deja vender pienso terapeutico, como cobrar el tiempo de asesoramiento y cuando derivar a un diplomado. NADA de esto aplica a este motor, que calcula una racion. Leido entero: el filtro nutricional saca UN solo elemento de sus 52 lineas, y es una frase sobre por que el veterinario cede el terreno de la nutricion, no una cifra. Lo unico que roza el repo es la definicion de las dos especialidades (ACVIM Nutrition y ECVCN), que ya se cita en VETERINARIOS.md al decidir quien firma una pauta.",
+      "lectura_integra": {
+        "lineas": 52,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "olor#91:Thus, a climate exists where veterinarians acquiesce in the nutritional management of their patient, or at least fail to take a ve": {
+          "veredicto": "no_aplica",
+          "por": "regla_del_capitulo"
+        }
+      }
+    },
+    "cap02": {
+      "titulo": "Basic Nutrition Overview",
+      "regla_del_capitulo": null,
+      "lectura_integra": {
+        "lineas": 321,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "cifra#6:Currently the most commonly used unit for measuring energy is the pre‐International System (SI) metric unit, kilocalories (kcal), ": {
+          "veredicto": "no_aplica",
+          "nota": "Define la kcal como unidad. Contexto."
+        },
+        "cifra#7:The less commonly used SI unit for energy, kiloJoule (kJ), is converted from kilocalorie or Calorie by multiplying by 4.185 (1 kca": {
+          "veredicto": "no_aplica",
+          "nota": "1 kcal = 4,185 kJ. El motor trabaja en kcal de punta a punta y no publica kJ."
+        },
+        "cifra#11:For pet foods, the energy conversion factors that are used are referred to as modified Atwater factors: 3.5, 8.5, and 3.5 kcal/g f": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Factores de Atwater MODIFICADOS para pienso: 3,5 / 8,5 / 3,5 kcal/g. El motor NO los usa: las kcal de cada ficha son las de la fuente y el BLOQUE 71 las contrasta contra la ecuacion de FEDIAF para las 73 fichas de origen animal. Se anota porque explica el aviso que ya tiene el catalogo sobre seis fichas de hueso cuya energia cumple 4*prot+9*grasa al decimal, o sea Atwater HUMANO aplicado a una pieza con hueso."
+        },
+        "cifra#12:These values are slightly lower than those used for human foods (i.e. 4 kcal/g for protein, 9 kcal/g for fat, and 4 kcal/g for car": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Los factores humanos, 4 / 9 / 4. Misma nota que el anterior: es el numero que delata una energia calculada en vez de medida."
+        },
+        "cifra#45:Thus, directly including cysteine in the diet decreases by up to 50% the amount of methionine needed in the diets of both dogs and": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "nota": "«directly including cysteine in the diet decreases by up to 50% the amount of methionine needed». El motor trata `metionina_cistina` como una SUMA calculada por `valor_nutriente`, no como dos claves sueltas, que es justo lo que esta frase justifica."
+        },
+        "cifra#68:However, D‐methionine can be used to meet up to 50% of the methionine requirement.": {
+          "veredicto": "no_aplica",
+          "nota": "D-metionina sintetica hasta el 50 % del requisito. Forma quimica de suplemento; el catalogo no tiene ninguna ficha de metionina suelta (esta en REVISION_NUTRICIONISTA.md)."
+        },
+        "cifra#76:Box 2.1 List of Essential Nutrients for Dogs and Cats by Group Protein Amino acids Arginine Histidine Isoleucine Leucine Lysine Me": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "nota": "El Box 2.1, la lista de nutrientes esenciales por grupo. Cuadra con los 41 de la Tabla III-3b que verifica el motor; no añade ninguno."
+        },
+        "cifra#78:In fact, crude protein does not even represent protein content directly, but rather nitrogen content times 6.25 (assuming that all": {
+          "veredicto": "no_aplica",
+          "nota": "Proteina bruta = nitrogeno x 6,25. El catalogo anota proteina de la fuente, no la calcula."
+        },
+        "cifra#82:Biological value (BV) is the mass of nitrogen incorporated into the subject's body divided by the mass of nitrogen from protein in": {
+          "veredicto": "no_aplica",
+          "nota": "Valor biologico. No es un requisito ni un limite."
+        },
+        "cifra#84:Protein digestibility corrected amino acid score (PDCAAS) is mg of limiting amino acid (for humans) in 1 g of test protein/mg of t": {
+          "veredicto": "no_aplica",
+          "nota": "PDCAAS, que ademas esta definido para humanos."
+        },
+        "cifra#139:Cat foods rich in fish (>25% fish on a dry matter basis) are currently required by states that adopt Association of American Feed ": {
+          "veredicto": "no_aplica",
+          "nota": "Piensos de GATO con mas del 25 % de pescado (AAFCO). Felino y de pienso comercial."
+        },
+        "cifra#200:Minerals Macrominerals (Typically Required at ≥100 mg/Mcal) Calcium In dogs and puppies, nutritional secondary hyperparathyroidism": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Macrominerales, «typically required at >=100 mg/Mcal», y el hiperparatiroidismo nutricional secundario por calcio bajo. Contexto: el motor ya aplica los minimos y maximos de calcio de FEDIAF y el techo del cachorro de raza grande."
+        },
+        "cifra#212:Microminerals (Typically Required at <100 mg/Mcal) Iron In dogs, microcytic hypochromic anemia and a low‐percentage saturation of ": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Microminerales, «<100 mg/Mcal», y la anemia microcitica por hierro. Contexto."
+        },
+        "olor#252:RECOMMENDED TESTING: Plasma choline and phosphatidylcholine; analyze diet sample for all methyl group donors (i.e. choline, betain": {
+          "veredicto": "no_aplica",
+          "nota": "Que analitica pedir para sospechar deficiencia de colina. Diagnostico, no formulacion."
+        },
+        "reco#264:Recommended amounts of EPA plus DHA use MBW multiplied by factors ranging from 115 to 310 (Table 2.1).": {
+          "veredicto": "hallazgo",
+          "nota": "«Recommended amounts of EPA plus DHA use MBW multiplied by factors ranging from 115 to 310 (Table 2.1).» Es la cabecera del hallazgo F-1: una segunda fuente del omega-3 terapeutico, dosificada por peso metabolico en vez de por 1000 kcal. Ver HALLAZGOS_FASCETTI.md."
+        },
+        "cifra#268:Disorder Dosage Idiopathic hyperlipidemia 120 mg/kg0.75 Kidney disease 140 mg/kg0.75 Cardiovascular disorders 115 mg/kg0.75 Osteoa": {
+          "veredicto": "hallazgo",
+          "nota": "LA TABLA 2.1 entera. Hiperlipidemia 120 · renal 140 · cardiovascular 115 · artrosis 310 · inflamatorio/inmune 125 · NRC recommended allowance 30 · NRC SAFE UPPER LIMIT 370, todos en mg de EPA+DHA/kg^0,75/dia. Convertida a 110 kcal/kg^0,75 pide MAS que dos suelos que el motor ya aplica (renal 1,27 contra 1,0 · atopia 1,14 contra 0,875) y trae un TECHO que el motor no tiene en ningun sitio. Medido y comparado en HALLAZGOS_FASCETTI.md §F-1. Decision clinica: va al nutricionista."
+        },
+        "cifra#270:Studies to date have fed dosages from 100 to 750 mg EPA + DHA/day.": {
+          "veredicto": "no_aplica",
+          "nota": "Dosis de 100 a 750 mg EPA+DHA/dia en GATOS."
+        },
+        "cifra#272:Therapeutic dosages in the order of those used for skin disorders of dogs (but using the cat exponent; i.e. 125 mg EPA + DHA/kg0.6": {
+          "veredicto": "no_aplica",
+          "nota": "Dosis felina con el exponente del gato (0,67). El motor solo formula para perro."
+        },
+        "cifra#273:Until further studies are conducted, long‐term daily dosages exceeding 75 mg EPA + DHA/kg0.67 should be monitored under veterinary": {
+          "veredicto": "no_aplica",
+          "nota": "Techo de vigilancia felino, 75 mg EPA+DHA/kg^0,67."
+        },
+        "cifra#290:With respect to DHA, subsequent studies employing either whole cell algae at 0.1% diet DHA (Hadley et al. 2017) or fish oil at 0.2": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Estudios de DHA al 0,1 % y 0,2 % de la dieta en envejecimiento cognitivo. El suelo de la disfuncion cognitiva del motor (2,5 g omega-3/1000 kcal) sale de SACN5 Tabla 35-3, que es una cifra de formulacion y no una dosis de estudio."
+        },
+        "cifra#292:In contrast, a placebo‐controlled study in older dogs that employed a diet rich in porcine sphingolipids and DHA (approx. 0.4% die": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Estudio con esfingolipidos porcinos y DHA al 0,4 %. Mismo motivo que el anterior."
+        },
+        "cifra#293:Finally, one investigation in middle‐aged and older cats compared diets with or without a blend of fish oil (0.28% diet DHA), B vi": {
+          "veredicto": "no_aplica",
+          "nota": "Estudio en gatos de mediana edad."
+        },
+        "olor#295:Further controlled dietary studies will be needed to better understand the interplay among the various dietary cofactors involved ": {
+          "veredicto": "no_aplica",
+          "nota": "«Further controlled dietary studies will be needed». No trae cifra."
+        },
+        "cifra#328:Nutrient requirements from AAFCO are provided as “minimum” and “maximum” levels for “growth and reproduction” and “adult maintenan": {
+          "veredicto": "leido_no_aplica",
+          "nota": "AAFCO da minimos y maximos para dos etapas, en materia seca y por 1000 kcal. El motor aplica FEDIAF, no AAFCO, y la regla del repo es que manda FEDIAF. Se lee y se anota."
+        },
+        "cifra#329:The nutrient profile on a dry matter basis presumes a specific energy density (i.e. 4000 kcal ME/kg food for AAFCO).": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "nota": "«The nutrient profile on a dry matter basis presumes a specific energy density (i.e. 4000 kcal ME/kg food for AAFCO).» Es EXACTAMENTE la densidad con la que `auditar_conversiones.py` rehace las 94 cifras de patologia, las 14 del libro y las 4 condicionales. La conversion del motor tiene ahora su frase de fuente."
+        },
+        "cifra#341:The MR is defined as “the minimal concentration or amount of a bioavailable nutrient that will support a defined physiological sta": {
+          "veredicto": "leido_no_aplica",
+          "nota": "La definicion de MR, y por extension la de AI y RA del NRC. Contexto para leer NRC 2006: el motor aplica los requisitos de FEDIAF, que son analogos al RA."
+        },
+        "olor#348:Key Clinical Nutritional Excesses and Signs Beyond calcium and vitamin D excess and related orthopedic or renal consequences (cove": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Cabecera de «Key Clinical Nutritional Excesses and Signs». Los excesos que nombra —calcio y vitamina D— ya son topes duros del motor."
+        },
+        "cifra#354:Thus, it is unlikely that cats eating natural prey would exceed the SUL for methionine.” The authors have not recognized methionin": {
+          "veredicto": "no_aplica",
+          "nota": "SUL de metionina en el GATO que come presa."
         }
       }
     }
