@@ -67,7 +67,25 @@ FICHEROS_CON_CIFRAS = [
 FUENTES = {
     "Fascetti": {"registro": "lecturas_fascetti.json", "lector": "leer_fascetti"},
     "SACN5": {"registro": "lecturas_sacn5.json", "lector": "leer_sacn5"},
+    # ⚠️ AÑADIDO EL MISMO DIA QUE SE ESCRIBIO ESTE FICHERO, y no era un detalle:
+    # con solo dos fuentes, una cifra que citara «NRC cap.5» quedaba FUERA de la
+    # regla de este auditor, o sea sin vigilar, y hoy hay una. Es el agujero de
+    # la propia herramienta contra el descuido, que es la peor clase.
+    # ⚠️ Su lector NO parte el libro en ficheros: `capitulos()` devuelve un
+    # {numero: (titulo, texto, ...)} porque NRC 2006 viene en un .txt unico. Por
+    # eso lleva `estilo: dict` y se recorre distinto. Dar por hecho que las tres
+    # fuentes se leen igual es lo que hizo que la primera version de esto
+    # reventara con un TypeError.
+    "NRC": {"registro": "lecturas_nrc2006.json", "lector": "leer_nrc2006",
+            "estilo": "dict"},
 }
+
+# ⚠️ FEDIAF NO ESTA AQUI, Y ES A PROPOSITO -- no un olvido. Su registro
+# (`lecturas_fuentes.json`) no va por CAPITULOS sino por SECCIONES numeradas
+# («3.3.1», «7.2.5»), asi que la regla «este capitulo esta cerrado» no tiene
+# donde apoyarse: no existe el capitulo. Lo que si vale para FEDIAF es el
+# contador entero, que esta a 0 pendientes y lo ejecuta el BLOQUE 68. Se dice
+# aqui para que nadie lea el silencio como cobertura.
 
 # ⚠️ «cap.10» no siempre es del libro que aparece primero en la frase. Hay citas
 # que nombran los dos: «Fascetti cap.10, dentro del 0,8-1,2 % de la Tabla 33-5
@@ -159,6 +177,14 @@ def pendientes_por_capitulo(fuente):
         return None, f"no se puede importar {info['lector']}: {e}"
     datos = json.load(io.open(ruta, encoding="utf-8"))
     salida = {}
+    if info.get("estilo") == "dict":
+        # Un solo .txt partido por cabeceras: la clave ES el numero.
+        for n_cap, trozo in (lector.capitulos() or {}).items():
+            texto = trozo[1]
+            elementos = lector.extraer_de_texto(texto)
+            ya = set((datos["capitulos"].get(f"cap{n_cap}") or {}).get("veredictos") or {})
+            salida[int(n_cap)] = sum(1 for e in elementos if e not in ya)
+        return salida, None
     for archivo in lector.capitulos():
         cap = os.path.basename(archivo).replace(".txt", "")
         n = _numero(cap)
