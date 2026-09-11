@@ -609,3 +609,51 @@ veterinario le ponga un 4. No es un caso raro.
 Las dos citas y la medida están aquí; el cambio, en `main._peso_de_referencia` y
 en `verificar.peso_objetivo_desde_bcs`, que son **dos copias** de la misma regla
 y tendrían que moverse juntas.
+
+---
+
+## Lo que dejó abierto leer Fascetti, capítulos 7 a 13 (11 de septiembre de 2026)
+
+Cinco decisiones. Ninguna se ha aplicado, las cinco están escritas con su fuente,
+su conversión y su medida en `HALLAZGOS_FASCETTI.md`, y las cinco necesitan que
+decida una persona.
+
+- [ ] **El techo de vitamina D del cachorro (F-8).** Fascetti cap. 10 recomienda
+      que un pienso de cachorro no pase de **12,5-25 µg/kg de dieta** = 3,125 a
+      **6,25 µg/1000 kcal**. Hoy el motor solo tiene ahí el máximo legal de
+      FEDIAF (14,19). **Medido: 6 de los 12 menús de cachorro del catálogo se
+      pasan**, hasta 8,96.
+      · A favor: el mecanismo está en el mismo capítulo y es serio —
+        osteocondrosis y radius curvus **sin signos de intoxicación clásica**.
+      · En contra: el propio capítulo dice que *«a true safe upper limit for
+        vitamin D intake […] is not currently known in dogs»*, así que lo que da
+        no es un límite de seguridad demostrado sino la concentración que
+        recomienda para un producto.
+      · Si se enciende, va a `recomendaciones_libro.json` (crecimiento), no a
+        `seguridad.py`, y hay que remedir los 216 menús del catálogo.
+
+- [ ] **En qué unidad va el «15 %» de la grasa en linfangiectasia (F-9).** SACN5
+      Tabla 58-1 lo da en **materia seca** (= 37,5 g/1000 kcal, lo que aplica el
+      motor) y Fascetti cap. 11 en **kcal** (= 16,7). **Medido: con 16,7 y con
+      20,0 no sale menú en perros de 10, 20 ni 35 kg**, preguntándole al solver
+      con 40 s. Así que la pregunta para el nutricionista no es qué número: es
+      **cuál de las dos lecturas es la buena**, y si la respuesta es «en kcal»,
+      entonces esta patología **no se puede formular con este catálogo** y hay
+      que decirlo en vez de dar un menú que incumple su propia fuente.
+
+- [ ] **El techo de fibra en enteropatía crónica (F-10).** *«Less than 8 % total
+      dietary fiber»* = 20 g/1000 kcal. **Medido: 8 de los 36 menús del catálogo
+      se pasarían**, hasta 31,1. Su propia fuente lo llama *«empirical
+      recommendation»* y la tabla de SACN5 que ya usa esa patología no lo trae.
+
+- [ ] **Una dieta casera hay que revisarla con un veterinario cada seis meses**
+      (cap. 8), o cada tres si hay enfermedad. La app no lo dice en ninguna
+      parte. Es decisión de producto: dónde se dice y con qué palabras.
+
+- [ ] **El omega-3 de la artrosis, que lleva escrito y sin aplicar desde el 8 de
+      septiembre.** Ahora hay segunda fuente y mide en las dos direcciones: un
+      ensayo doble ciego en 36 perros con artrosis de codo **no vio diferencia**
+      en la cojera medida por plataforma de fuerzas, y otro con EPA durante 90
+      días vio mejorar el apoyo en el **82 %** contra el **31 %** de los
+      controles. Con eso delante se puede decidir.
+

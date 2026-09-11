@@ -124,9 +124,10 @@ decisión es de Elena. **Lo que no se puede hacer es dejarlo sin escribir.**
 - **La suma metionina+cistina.** «directly including cysteine in the diet
   decreases by up to 50% the amount of methionine needed» (cap.2). El motor trata
   `metionina_cistina` como una suma calculada, no como dos claves sueltas.
-- **Los huecos de USDA.** «certain nutrients of interest such as taurine,
-  chloride, iodine, and vitamin D are typically or often not available […] this
-  can also be true of choline» (cap.2). Es palabra por palabra lo que dice
+- **Los huecos de USDA.** «However, certain nutrients of interest such as
+  taurine, chloride, iodine, and vitamin D are typically or often not available»
+  (cap.2) — y el mismo párrafo añade que lo que parezca una carencia puede ser
+  falta de dato, y que a la colina le pasa igual. Es palabra por palabra lo que dice
   `Bases.md` de por qué ninguna de las tres bases tiene los 41 nutrientes, y por
   qué casi todos los huecos del catálogo están donde ninguna llegaba.
 - **La vitamina K con mucho pescado.** «The recommendations for vitamin K are
@@ -202,14 +203,190 @@ FEDIAF, y la discrepancia se apunta con sus números.
 
 ---
 
-## F-6. Dos cifras de reproducción que la ficha no puede usar
+## F-6. Una cifra de reproducción que la ficha no puede usar (corregida el 11-sep por la tarde)
 
-Cap.3 da la subida de energía en **gestación** (*«energy requirements will
-increase by 25% to over 60% depending on the size of the litter»*) y la ecuación
-del NRC para la **lactancia**, que depende del **número de cachorros** y de la
-semana.
+Cap.3 da la subida de energía en **gestación** y la ecuación del NRC para la
+**lactancia**, que depende del **número de cachorros** y de la semana. La
+lactancia es la que la ficha no puede alimentar: **no pregunta cuántos cachorros
+hay**. No es que el motor decida ignorarlo — es un dato que la app no recoge, así
+que la cifra no tiene por dónde entrar. Va a la lista de preguntas que faltan.
 
-Las dos dependen del tamaño de la camada, y **la ficha no pregunta cuántos
-cachorros hay**. No es que el motor decida ignorarlo: es un dato que la app no
-recoge, así que la cifra no tiene por dónde entrar. Va a la lista de preguntas
-que faltan, con su fuente al lado para cuando se decida preguntarlo.
+⚠️ **Y aquí había una cita mal copiada, que cazó `auditar_citas.py` el mismo día
+al meter este fichero en su lista.** Decía *«depending on the size of the
+litter»* y el libro dice:
+
+> «At this time, and until parturition, energy requirements will increase by 25%
+> to over 60% depending on the size of the **bitch** (the percentage increase in
+> energy requirements during pregnancy tends to be greater for large-breed
+> bitches).»
+
+O sea **del tamaño de la PERRA, no de la camada** — y eso cambia la conclusión:
+para la gestación el dato que hace falta es el peso, que la ficha sí pregunta.
+Lo que sigue sin poder entrar es la ecuación de lactancia. Es exactamente el
+fallo que este auditor existe para cazar, y estuvo escrito unas horas.
+
+---
+
+# Segunda tanda — capítulos 7 a 13 (11 de septiembre de 2026, tarde)
+
+Los capítulos 7, 8 y 9 estaban **leídos en `LECTURA_FASCETTI.md` y sin un solo
+veredicto en `lecturas_fascetti.json`**, que es exactamente el agujero que ese
+fichero existe para cerrar: «leído» en un documento que nadie puede ejecutar.
+Ahora están los tres, más el 10, 11, 12 y 13. Quedan del 14 al 21.
+
+## F-7. ⚠️ El autor del capítulo del hueso pide MENOS calcio del que damos, y no se puede aplicar
+
+El techo de calcio del cachorro de raza grande del motor —**2750 mg/1000 kcal**,
+el 1,1 % de materia seca— sale de este mismo capítulo 10, escrito por Hazewinkel,
+que es quien hizo los experimentos. Leído entero, el capítulo dice **dos cosas
+más**, y las dos piden **menos**:
+
+> «A large-breed food for growing dogs with a level of **0.8 % calcium** (per
+> 4200 ME kcal/kg) has been both calculated and **proven to be safe** for raising
+> large- and giant-breed pups throughout the growth period (Nap et al. 2000).»
+
+> «In general, in foods with a protein content of **high biological value**, the
+> calcium content should be **between 0.8 % and 1.0 %** on a dry matter basis
+> (for a food with 4200 ME kcal/kg diet).»
+
+Y la recomendación final del autor: **calcio ~1,0 % MS**.
+
+| | % MS | Por 1000 kcal |
+|---|---|---|
+| Lo que aplica el motor (1,1 % a 4000 kcal/kg) | 1,1 | **2750** |
+| Fascetti, extremo bajo (0,8 % a 4200 kcal/kg) | 0,8 | 1905 |
+| Fascetti, extremo alto (1,0 % a 4200 kcal/kg) | 1,0 | 2381 |
+| **Mínimo de FEDIAF, cachorro de raza grande** | | **2500** |
+
+**El rango entero de Fascetti queda por debajo del mínimo de FEDIAF.** Aplicarlo
+dejaría al cachorro corto de calcio, así que **gana FEDIAF** y la cifra se apunta
+con sus dos números. Es uno de los pocos conflictos que sacan al perro **fuera**
+de la ventana de FEDIAF, y por eso va a `FEDIAF_CONTRA_OTRAS_FUENTES.md`.
+
+Ojo al matiz, que es el nuestro: *«a protein content of high biological value»*.
+Una ración BARF lo es.
+
+## F-8. ⚠️ Un techo de vitamina D en crecimiento que nadie tenía escrito
+
+La recomendación final del mismo autor lleva **dos** cifras, y la segunda es
+nueva:
+
+> «Taken together, the author recommends the following: restricted feeding of a
+> puppy food with a calcium and vitamin D content not to exceed the percentages
+> demonstrated in controlled studies to result in skeletal problems (i.e. calcium
+> ∼1.0% dm, **vitamin D content 12.5–25 μg/kg diet**), maintaining an optimal body
+> condition during growth, and activity adapted to the vulnerability of the
+> skeleton.»  *(Fascetti cap. 10)*
+
+12,5–25 µg/kg MS = 500–1000 UI/kg = **3,125 a 6,25 µg/1000 kcal** a 4000 kcal/kg.
+Hoy el motor solo tiene ahí el **máximo LEGAL de FEDIAF (14,19)** y el tope
+crónico por peso metabólico. **Medido sobre los 12 menús de cachorro del
+catálogo**:
+
+| | µg/1000 kcal |
+|---|---|
+| El más bajo (Mini_CachorroCrecimiento) | 3,14 |
+| Mediana | 6,07 |
+| El más alto (Grande_CachorroCrecimiento) | **8,96** |
+| **Se pasan de 6,25** | **6 de 12** |
+
+**Cabe dentro de la ventana de FEDIAF**, así que se *podría* aplicar — y por eso
+no se aplica en silencio. El mecanismo está en el mismo capítulo y es serio: los
+perros criados con exceso de vitamina D desarrollaron osteocondrosis y radius
+curvus **sin signos de intoxicación clásica** y sin que se moviera el calcio en
+plasma. Pero el propio capítulo avisa de lo contrario:
+
+> «A true safe upper limit for vitamin D intake, supported by clear scientific
+> evidence for reproduction/growth and for adult maintenance, **is not currently
+> known in dogs** (Wedner and Verbrugghe 2016).»  *(Fascetti cap. 10)*
+
+O sea que lo que da no es un límite de seguridad demostrado: es la concentración
+que recomienda para un pienso de cachorro. Es la diferencia entre las dos clases
+de límite que el motor ya separa — `seguridad.py` frente a
+`recomendaciones_libro.json` —, y por eso iría a la segunda. **Se pregunta.**
+
+## F-9. ⚠️ El mismo «15 %» en dos unidades, y un factor de 2,2 entre las dos
+
+El motor aplica a la linfangiectasia **grasa ≤ 37,5 g/1000 kcal**, leyendo la
+Tabla 58-1 de SACN5: *«Fat <15 % for dogs and cats»*, en **materia seca**.
+Fascetti cap. 11 dice el mismo 15 % **en kcal**:
+
+> «Dietary fat restriction is particularly important in patients diagnosed with
+> lymphangiectasia, with many patients needing restriction to **less than 15 %
+> fat kJ or kcal**.»
+
+15 % de las kcal = **16,7 g/1000 kcal**. Y el cap. 12 repite la jugada con el
+umbral de «baja en grasa»: *«less than 20 % fat on an ME basis»* = 22,2.
+
+**Medido el mismo día, preguntándole al solver con 40 s** (no a un endpoint con
+presupuesto, que es la lección del BLOQUE 43):
+
+| Tope de grasa | 10 kg | 20 kg | 35 kg |
+|---|---|---|---|
+| 37,5 g/1000 kcal (lo que aplica el motor) | sale | sale | sale |
+| 20,0 | **no** | **no** | **no** |
+| 16,7 (el 15 % de las kcal) | **no** | **no** | **no** |
+
+No cabe con este catálogo, y la razón es de la dieta y no del solver: una ración
+BARF es carne, la carne lleva grasa, y sin hidratos no hay con qué diluir las
+kcal. Se escribe con su medida y **se pregunta**; no se aplica.
+
+⚠️ Y lo que hay que decidir primero no es el número: es **qué unidad lleva el
+15 %**. Dos fuentes buenas, la misma cifra, dos unidades.
+
+## F-10. Un techo de fibra en enteropatía crónica que el motor no tiene
+
+> «An empirical recommendation is to select diets that contain **less than 8 %
+> total dietary fiber** or less than 5 % crude fiber.»
+
+8 % MS = **20 g/1000 kcal**. FEDIAF no pone requisito de fibra —y cuidado, que en
+agosto se coló aquí una fila «Fibra» con mínimo y máximo inventados—, así que
+esto solo podría vivir como tope de `enteropatia_cronica`. **Medido sobre los 36
+menús del catálogo**: mediana 1,2 g/1000 kcal, pero **8 de los 36 pasan de 20**,
+hasta 31,1. O sea que el tope **sí haría algo**. No se aplica en esta pasada: su
+propia fuente lo llama *«empirical recommendation»* y la tabla de SACN5 que ya usa
+esa patología manda. Se pregunta.
+
+## F-11. Lo que SÍ confirma, que también cuenta
+
+- **El 10 % de los premios sale SEIS veces** entre este libro y Ettinger, y el
+  cap. 9 añade el matiz que faltaba: es el 10 % de la ingesta **objetivo**, no de
+  lo que come hoy. El motor lo calcula sobre `der_objetivo`, que ya va sobre el
+  peso objetivo. Aplicado el 11 de septiembre.
+- **La proteína sin hidratos en gestación y lactancia**: *«although pregnant and
+  lactating bitches do not require a dietary source of carbohydrate, they have an
+  increased protein requirement when a carbohydrate-free diet is fed»*. Es
+  exactamente el requisito condicional que el motor ya aplica, y ahora tiene una
+  fuente más.
+- **El shunt sin encefalopatía no lleva restricción de proteína**: *«dietary
+  protein should not be restricted in animals with PSSs that are not
+  encephalopathic»*. El BLOQUE 90 tenía esa pregunta marcada como
+  `no_cambia_ninguna_cifra` —una pregunta cuyas respuestas aplican lo mismo— y
+  resulta que **eso es lo correcto**. Ahora hay fuente.
+- **La EPI**: esta fuente es **más permisiva** que el motor (*«a low-fat diet is
+  not necessary unless steatorrhea is uncontrollable»*, y otros autores llegan al
+  34-51 % de las kcal). El motor aplica 37,5 igualmente, que es el extremo alto de
+  la Tabla 66-1 de SACN5. Un tope que la fuente considera innecesario no hace
+  daño: solo aprieta.
+- **Las dietas hepáticas del mercado van por debajo del mínimo de FEDIAF**
+  (14-15,5 % de las kcal en proteína = 35-38,75 g/1000 kcal contra los 52,1 de
+  FEDIAF). El motor no puede bajar ahí, y eso es la fase 4 de `VETERINARIOS.md`.
+- **La segunda fuente del omega-3 de la artrosis**, con sus dos estudios midiendo
+  en direcciones distintas: uno no vio diferencia en la cojera medida por
+  plataforma de fuerzas, y el otro vio mejorar el apoyo en el 82 % contra el 31 %
+  de los controles. Sigue sin aplicarse, y ahora se sabe por qué cuesta decidirlo.
+- **Una dieta casera hay que revisarla con un veterinario al menos cada seis
+  meses** (cada tres si hay enfermedad). La app no lo dice en ninguna parte.
+
+## F-12. Dos discrepancias medidas de energía en reproducción, y gana FEDIAF
+
+| | Fascetti cap. 7 | El motor (FEDIAF) |
+|---|---|---|
+| Pico de gestación | +30 a 60 % sobre lo de antes de cruzar | **+62 % (10 kg), +73 % (25), +79 % (40)** |
+| Cuándo sube | el último tercio | desde la semana 5 de 9 |
+| Pico de lactancia | 2 a 4 veces el mantenimiento | 2,17-2,53 con dos cachorros · 3,45-4,34 con seis · **4,5-4,9 con ocho** |
+
+Las tres van por encima del rango de Fascetti en los perros grandes. Gana FEDIAF
+—es la fuente de la fórmula— y en lactancia, además, quedarse corto es el riesgo
+de verdad. Apuntado con las dos cifras.
+

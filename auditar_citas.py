@@ -75,7 +75,14 @@ DOCUMENTOS = ["PATOLOGIAS.md", "LECTURA_SACN5.md", "HALLAZGOS_LECTURA_FUENTES.md
     # El registro de la lectura de Fascetti (11 septiembre), en el mismo commit
     # en que nace. Va lleno de citas literales, que es el material que este
     # auditor existe para vigilar.
-    "LECTURA_FASCETTI.md"]
+    "LECTURA_FASCETTI.md",
+    # ⚠️ Y SUS HALLAZGOS, que se quedaron fuera al nacer (11 septiembre, tarde).
+    # `LECTURA_FASCETTI.md` entro aqui el mismo dia y su hermano no, y es el que
+    # mas citas literales lleva: las cifras que el motor NO aplica viven ahi con
+    # la frase de la fuente al lado, que es justo donde una cita mal copiada
+    # aguanta mas tiempo sin que nadie la abra. Al meterlo salieron 0 nuevas sin
+    # encontrar, o sea que las que habia estaban bien -- pero eso no se sabia.
+    "HALLAZGOS_FASCETTI.md"]
 JSONS = ["patologias.json", "recomendaciones_libro.json", "requisitos_condicionales.json",
          "requerimientos_v2_final.json", "sacn5_fuentes_de_minerales.json",
          "fediaf_conversiones_vitaminas.json"]

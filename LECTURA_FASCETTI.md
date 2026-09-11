@@ -99,3 +99,82 @@ would normally require to maintain its CURRENT weight**» — ojo, sobre el peso
 
 **El ritmo coincide una vez más**: 1-2 % del peso por semana. Y da la aritmética
 para estimar cuánto durará: **7.700 kcal por kilo** que haya que perder.
+
+---
+
+## Cap. 10 — Nutritional Management of Orthopedic Diseases (Hazewinkel) · LEÍDO
+
+**Es el capítulo del que ya sale una cifra del motor**: el techo de calcio del
+cachorro de raza grande, 1,1 % de materia seca = 2750 mg/1000 kcal. Leído entero,
+deja tres cosas más.
+
+**1. Su propio autor pide MENOS calcio, y no cabe.** Ver `HALLAZGOS_FASCETTI.md`
+F-7: el rango que recomienda (0,8-1,0 % por 4200 kcal/kg = 1905-2381 mg/1000 kcal)
+queda **entero por debajo del mínimo de FEDIAF** para ese mismo perro (2500). Gana
+FEDIAF.
+
+**2. Un techo de vitamina D en crecimiento que nadie tenía escrito**: 12,5-25
+µg/kg de dieta = 3,125-6,25 µg/1000 kcal. Cabe dentro de FEDIAF, y **6 de los 12
+menús de cachorro del catálogo se pasan** (hasta 8,96). No se aplica en esta
+pasada: se escribe con su medida y se pregunta (F-8).
+
+**3. La segunda fuente del omega-3 de la artrosis**, que el motor tiene escrito y
+sin aplicar — y ahora se ve por qué cuesta decidirlo: un estudio doble ciego en 36
+perros con artrosis de codo **no vio diferencia** en la cojera medida por
+plataforma de fuerzas, y otro con EPA durante 90 días vio mejorar el apoyo en el
+**82 %** contra el **31 %** de los controles.
+
+Lo demás del capítulo son los experimentos con los que se demostró el daño del
+exceso —Gran Danés con 3,3 % de calcio, 54.000 UI/kg de vitamina D— y la
+fisiología del hueso. Nada de eso es una cifra nueva: son la evidencia detrás del
+techo que ya se aplica.
+
+---
+
+## Cap. 11 — Nutritional Management of Gastrointestinal Diseases · LEÍDO
+
+**El hallazgo es de unidades, y es gordo.** El motor aplica a la linfangiectasia
+grasa ≤ 37,5 g/1000 kcal, leyendo *«Fat <15 % for dogs and cats»* de la Tabla 58-1
+de SACN5, que va en **materia seca**. Este capítulo dice el mismo 15 % **en
+kcal**, que son 16,7 g/1000 kcal — un factor de 2,2. Medido con el solver y 30-40
+s en perros de 10, 20 y 35 kg: con 37,5 sale menú en los tres, con 20,0 y con 16,7
+**no sale en ninguno**. Detalle y tabla en F-9.
+
+Y un **techo de fibra** que el motor no tiene: menos del 8 % de fibra total en
+enteropatía crónica = 20 g/1000 kcal. Ocho de los 36 menús del catálogo se
+pasarían. No se aplica; se pregunta (F-10).
+
+Mucho del capítulo es humano o felino y va marcado uno a uno.
+
+---
+
+## Cap. 12 — Nutritional Management of Exocrine Pancreatic Diseases · LEÍDO
+
+**Repite la confusión de unidades**: aquí el umbral de «baja en grasa» es *«less
+than 20 % fat on an ME basis»*, o sea de las kcal, y medido tampoco cabe.
+
+**Y en la EPI esta fuente es MÁS PERMISIVA que el motor**, lo que confirma que
+elegir el extremo alto de la Tabla 66-1 de SACN5 (37,5 g/1000 kcal) fue lo
+correcto: aquí se llega a decir que la dieta baja en grasa no hace falta salvo
+esteatorrea incontrolable, y que otros autores usan dietas al 34-51 % de las kcal
+en grasa.
+
+Vuelve a salir lo de los premios, ahora dentro de una patología.
+
+---
+
+## Cap. 13 — Nutritional Management of Hepatobiliary Diseases · LEÍDO
+
+Casi todo son dosis de fármaco por kg de peso, cifras de analítica o de biopsia, o
+hepatología humana y felina. Tres cosas tocan al motor, y las tres **confirman**:
+
+- **Por qué el shunt sin encefalopatía no lleva restricción de proteína.** El
+  BLOQUE 90 tenía esa pregunta marcada `no_cambia_ninguna_cifra` —una pregunta
+  cuyas respuestas aplican lo mismo—, y resulta que eso es lo correcto. Ahora hay
+  fuente.
+- **El sodio y el cobre de la hepatopatía ya están puestos** (625 y 2,4 por 1000
+  kcal), y el cinc y la vitamina E como suelos.
+- **Las dietas hepáticas del mercado van por debajo del mínimo de proteína de
+  FEDIAF** (14-15,5 % de las kcal = 35-38,75 g/1000 kcal contra 52,1). El motor no
+  puede bajar ahí: eso es la fase 4 de `VETERINARIOS.md`.
+

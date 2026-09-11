@@ -4,10 +4,11 @@
     "metodo": "El de `LECTURA_SACN5.md`: leer todo, apuntar todo, y aplicar solo al final. Un veredicto «por: regla_del_capitulo» solo vale si se ha comprobado elemento a elemento que ninguno se sale de la regla -- es la leccion de los 442 de SACN5, donde TRES de los resueltos por capitulo felino si hablaban del perro.",
     "como_se_comprueba": "`leer_fascetti.py`, que rehace los recuentos y exige que la lectura integra declare el numero de lineas real del .txt.",
     "total_declarado": 657,
-    "pendientes_declarados": 502,
+    "pendientes_declarados": 213,
     "descartadas_declaradas": 17537,
-    "capitulos_leidos_declarados": 6,
-    "medido": "11 de septiembre de 2026"
+    "capitulos_leidos_declarados": 13,
+    "medido": "11 de septiembre de 2026 (caps. 1-13 leidos; quedan 14-21)",
+    "como_van_los_capitulos": "1-6 leidos el 11-sep por la manana. 7, 8 y 9 leidos el mismo dia y con sus veredictos escritos por la tarde -- estaban LEIDOS en `LECTURA_FASCETTI.md` y sin veredicto aqui, que es justo el agujero que este fichero existe para cerrar. 10 a 13, leidos y juzgados esa misma tarde. Quedan 14 a 21."
   },
   "capitulos": {
     "cap05": {
@@ -691,6 +692,1232 @@
         "cifra#213:Two other reports support the potential benefit of daily L‐carnitine supplementation at a dose of 125 mg in trained sled dogs, wei": {
           "veredicto": "leido_no_aplica",
           "nota": "L-carnitina, 125 mg/dia en perro de trabajo. El motor tiene la clave `lcarnitina` en el MAPA y la usa solo como suelo de patologia (DCM que responde a taurina). Esto es una dosis diaria por perro, no una concentracion por 1000 kcal, y el catalogo no tiene ficha de L-carnitina suelta."
+        }
+      }
+    },
+    "cap07": {
+      "titulo": "Feeding the Healthy Dog and Cat",
+      "regla_del_capitulo": "Leido entero. Trata las dos especies: lo felino va marcado uno a uno, abriendo el parrafo y no solo la frase. Lo canino deja tres cosas -- el 10 % de los premios (aplicado el mismo dia), la segunda fuente del requisito condicional de proteina sin hidratos, y dos discrepancias de energia en gestacion y lactancia donde gana FEDIAF -- y un hallazgo que NO se aplica y se pregunta: el 10-20 % de hidratos en lactancia.",
+      "lectura_integra": {
+        "lineas": 322,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "olor#22:Vitamin A must be supplied pre‐formed in the diet, presumably because cats lack or have reduced activity of the enzyme β,β‐caroten": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO. El capitulo trata las dos especies y este parrafo habla de la gata o del gatito; comprobado abriendo el parrafo, no solo la frase."
+        },
+        "cifra#96:The authors recommend that the energy intake from snacks or treats not exceed 10% of the animal's total daily calories.": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "EL 10 % DE LOS PREMIOS, cuarta fuente y APLICADO el 11-sep-2026. «The authors recommend that the energy intake from snacks or treats not exceed 10% of the animal's total daily calories.» Ettinger caps. 175 y 192 dicen lo mismo y uno trae el mecanismo. El motor formula la racion con las kcal que quedan y le sigue exigiendo el dia entero de nutrientes; ver la regla 3-bis de CLAUDE.md y el BLOQUE 95."
+        },
+        "olor#106:It arguably may be even more important to primary care clinicians than the nutrient, ingredient, or diet aspects of nutrition, for": {
+          "veredicto": "leido_no_aplica",
+          "por": "Manejo de la conducta alimentaria (comer a lo bruto, la importancia de preguntar como come). No es una cifra ni un limite: no hay nada que el motor pueda aplicar."
+        },
+        "olor#115:Some dogs have retained the primeval feeding behavior of gorging (consuming large meals rapidly), which might promote excess weigh": {
+          "veredicto": "leido_no_aplica",
+          "por": "Manejo de la conducta alimentaria (comer a lo bruto, la importancia de preguntar como come). No es una cifra ni un limite: no hay nada que el motor pueda aplicar."
+        },
+        "cifra#205:It has been estimated that energy requirements increase approximately 25–50% above maintenance to between 90 and 100 kcal/kg body ": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO. El capitulo trata las dos especies y este parrafo habla de la gata o del gatito; comprobado abriendo el parrafo, no solo la frase."
+        },
+        "reco#215:Because cats begin to increase their energy intake shortly after conception, it is recommended that queens be fed a diet designed ": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO. El capitulo trata las dos especies y este parrafo habla de la gata o del gatito; comprobado abriendo el parrafo, no solo la frase."
+        },
+        "cifra#226:Energy requirements for gestation peak anywhere between 30% and 60% of the pre‐breeding requirements depending upon the litter siz": {
+          "veredicto": "hallazgo",
+          "por": "DISCREPANCIA MEDIDA, y gana FEDIAF. «Energy requirements for gestation peak anywhere between 30% and 60% of the pre-breeding requirements.» El motor aplica la formula de FEDIAF (132 kcal/kg^0,75 + 26 kcal/kg de peso vivo desde la semana 5) y eso da +62 % en un perro de 10 kg, +73 % en uno de 25 y +79 % en uno de 40: POR ENCIMA del rango de Fascetti en los tres. Se apunta en FEDIAF_CONTRA_OTRAS_FUENTES.md con las dos cifras. || Y una segunda diferencia en el mismo parrafo: Fascetti dice que la necesidad no sube hasta el ULTIMO TERCIO y FEDIAF la sube desde la semana 5 de 9. Tambien gana FEDIAF, y va en el mismo sitio."
+        },
+        "reco#236:During lactation, with the exception of when a bitch only has one or two surviving puppies, most dogs should be fed free choice or": {
+          "veredicto": "leido_no_aplica",
+          "por": "Manejo: darle a voluntad o en varias tomas durante la lactancia. El motor calcula CUANTO, no en cuantas tomas. Y el pico de 2 a 4 veces el mantenimiento que dice el parrafo siguiente esta MEDIDO contra el motor: 2,17-2,53 con dos cachorros y 3,45-4,34 con seis, dentro del rango; con OCHO cachorros sube a 4,5-4,9, por encima. Gana FEDIAF (que no pone tope) y va apuntado."
+        },
+        "cifra#240:Romsos et al. (1981) reported smaller litter sizes in beagles fed a diet containing 26% of the calories from protein and 74% from ": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "SEGUNDA FUENTE para el requisito condicional que el motor YA aplica: «although pregnant and lactating bitches do not require a dietary source of carbohydrate, they have an INCREASED PROTEIN REQUIREMENT when a carbohydrate-free diet is fed (NRC 2006)». Es exactamente la regla de `requisitos_condicionales.json` para gestacion y lactancia, que hasta hoy solo citaba a FEDIAF y al NRC. Los dos estudios son los que la sostienen: Romsos 1981 (26 % de las kcal de proteina, camadas mas pequenas) y Kienzle 1985 (42 % de proteina y sin hidratos, camadas comparables)."
+        },
+        "cifra#241:A second study fed a carbohydrate‐free diet containing 42% of the calories from protein and 58% from fat (Kienzle et al. 1985).": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "SEGUNDA FUENTE para el requisito condicional que el motor YA aplica: «although pregnant and lactating bitches do not require a dietary source of carbohydrate, they have an INCREASED PROTEIN REQUIREMENT when a carbohydrate-free diet is fed (NRC 2006)». Es exactamente la regla de `requisitos_condicionales.json` para gestacion y lactancia, que hasta hoy solo citaba a FEDIAF y al NRC. Los dos estudios son los que la sostienen: Romsos 1981 (26 % de las kcal de proteina, camadas mas pequenas) y Kienzle 1985 (42 % de proteina y sin hidratos, camadas comparables)."
+        },
+        "cifra#245:The recommendations from that study are that diets for lactation provide at least 10–20% of the energy from digestible carbohydrat": {
+          "veredicto": "hallazgo",
+          "por": "HALLAZGO QUE NO SE APLICA, y hay que preguntarlo. «The recommendations from that study are that diets for lactation provide at least 10-20% of the energy from digestible carbohydrates (Kienzle et al. 1985)», porque la lactosa de la leche sale mas alta con algo de hidrato. Una racion BARF lleva ~0 %. NO se aplica por tres razones escritas: (1) el propio parrafo dice que sin hidratos las camadas, los pesos al nacer y la supervivencia fueron COMPARABLES; (2) ni FEDIAF ni NRC ponen requisito de hidratos, y el cap. 8 de este mismo libro dice «Carbohydrates are not required in dogs and cats (NRC 2006)»; (3) el catalogo no tiene ni un cereal, asi que aplicarlo no seria apretar una racion sino cambiar que es esta dieta. Va a PREGUNTAS_ABIERTAS.md."
+        },
+        "olor#256:Growth Orphan Kittens and Puppies Ideally kittens and puppies will be raised uneventfully by their mother and weaned to an appropr": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cachorros huerfanos: leche maternizada comercial, 1 kcal/ml, 13-18 ml/100 g. El motor no formula biberones y el catalogo no tiene leche maternizada. Leido y apuntado por si algun dia se ofrece."
+        },
+        "reco#262:It is recommended that a commercial milk replacer be used, as many home‐prepared formulas are not adequate to meet the needs of a ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cachorros huerfanos: leche maternizada comercial, 1 kcal/ml, 13-18 ml/100 g. El motor no formula biberones y el catalogo no tiene leche maternizada. Leido y apuntado por si algun dia se ofrece."
+        },
+        "reco#264:Cow's and goat's milk does not contain as much fat, protein, or calories as milk from queens and bitches and therefore should be a": {
+          "veredicto": "leido_no_aplica",
+          "por": "«Cow's and goat's milk does not contain as much fat, protein, or calories as milk from queens and bitches and therefore should be avoided.» El catalogo no tiene leche de vaca ni de cabra, asi que hoy no hay nada que impedir. Queda escrito para el dia que alguien proponga anadirla."
+        },
+        "cifra#265:Most commercial formulas contain approximately 1 kcal/ml, although there is some variation, and dilution with water will reduce th": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cachorros huerfanos: leche maternizada comercial, 1 kcal/ml, 13-18 ml/100 g. El motor no formula biberones y el catalogo no tiene leche maternizada. Leido y apuntado por si algun dia se ofrece."
+        },
+        "cifra#266:Recommendations for feeding are variable, but range from 13 to 18 ml/100 g body weight (using a formula with a caloric density of ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cachorros huerfanos: leche maternizada comercial, 1 kcal/ml, 13-18 ml/100 g. El motor no formula biberones y el catalogo no tiene leche maternizada. Leido y apuntado por si algun dia se ofrece."
+        },
+        "reco#280:Kittens should be fed a diet that meets the nutrient and energy requirements for growth or all life stages.": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO. El capitulo trata las dos especies y este parrafo habla de la gata o del gatito; comprobado abriendo el parrafo, no solo la frase."
+        },
+        "olor#302:If owners are not aware of this change, and continue to feed their pet the same amount of food, excess weight gain will result.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Que el dueno siga dando la misma cantidad cuando cambia la necesidad. Es el argumento de por que se repregunta el peso, que la app ya hace en Evolucion."
+        },
+        "cifra#432:The investigators of this study found that older dogs required up to 50% more protein than young dogs to maintain labile protein.": {
+          "veredicto": "hallazgo",
+          "por": "LA PROTEINA DEL SENIOR, leida entera y SIN CIFRA QUE APLICAR: el propio parrafo se frena en «neither of these studies provides definitive recommendations for protein requirements in older dogs». Medido sobre menus reales del motor: 105,1 / 95,7 / 101,9 g por 1000 kcal en senior de 8, 20 y 35 kg, o sea 122-134 % de los 78,2 que saldrian del «+50 %» del estudio. No hay riesgo y no hay nada que aplicar. Detalle en LECTURA_FASCETTI.md."
+        },
+        "cifra#433:A more recent study examined 8‐year‐old pointers fed either 16.5% or 45% protein calories over a two‐year period (Kealy 1999).": {
+          "veredicto": "hallazgo",
+          "por": "LA PROTEINA DEL SENIOR, leida entera y SIN CIFRA QUE APLICAR: el propio parrafo se frena en «neither of these studies provides definitive recommendations for protein requirements in older dogs». Medido sobre menus reales del motor: 105,1 / 95,7 / 101,9 g por 1000 kcal en senior de 8, 20 y 35 kg, o sea 122-134 % de los 78,2 que saldrian del «+50 %» del estudio. No hay riesgo y no hay nada que aplicar. Detalle en LECTURA_FASCETTI.md."
+        },
+        "cifra#435:Even the group consuming a higher percentage of their calories from protein lost 3.5% of their lean body mass.": {
+          "veredicto": "hallazgo",
+          "por": "LA PROTEINA DEL SENIOR, leida entera y SIN CIFRA QUE APLICAR: el propio parrafo se frena en «neither of these studies provides definitive recommendations for protein requirements in older dogs». Medido sobre menus reales del motor: 105,1 / 95,7 / 101,9 g por 1000 kcal en senior de 8, 20 y 35 kg, o sea 122-134 % de los 78,2 que saldrian del «+50 %» del estudio. No hay riesgo y no hay nada que aplicar. Detalle en LECTURA_FASCETTI.md."
+        },
+        "cifra#438:One study reported maintenance of lean body mass in adult cats consuming 36% protein on a dry matter (DM) basis (Hannah and Laflam": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO. El capitulo trata las dos especies y este parrafo habla de la gata o del gatito; comprobado abriendo el parrafo, no solo la frase."
+        },
+        "cifra#439:Cats consuming lower amounts of protein (22% and 28% DM) maintained nitrogen balance but lost lean body mass (Hannah and Laflamme ": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO. El capitulo trata las dos especies y este parrafo habla de la gata o del gatito; comprobado abriendo el parrafo, no solo la frase."
+        },
+        "cifra#441:A second study looking at the impact of dietary protein concentrations on the preservation of lean body mass following neutering a": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO. El capitulo trata las dos especies y este parrafo habla de la gata o del gatito; comprobado abriendo el parrafo, no solo la frase."
+        },
+        "cifra#442:When the cats were fed 53% protein DM, they reported an average accumulation of 4.2% of lean body mass.": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO. El capitulo trata las dos especies y este parrafo habla de la gata o del gatito; comprobado abriendo el parrafo, no solo la frase."
+        },
+        "cifra#463:Dietary supplementation of vitamin E at 250 IU/kg in the diet stimulated lymphocyte genesis in young and old cats (Hayek et al. 20": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO. El capitulo trata las dos especies y este parrafo habla de la gata o del gatito; comprobado abriendo el parrafo, no solo la frase."
+        },
+        "olor#485:Elderly dogs or cats that are healthy, in a lean body condition, and eating an appropriate diet do not need to be changed to anoth": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "CONFIRMA LO QUE EL MOTOR NO HACE: «Elderly dogs or cats that are healthy [...] do not need to be changed to another diet simply based on their age», y en el mismo capitulo «there is no evidence that protein restriction is of any benefit to healthy older dogs and cats». El motor no restringe la proteina del senior: la sube (SENIOR_PROTEINA_MINIMA = 45)."
+        },
+        "olor#491:If a dietary change is necessary, it can be done gradually over a period of at least a week.": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "CONFIRMA `transicion.py`: «If a dietary change is necessary, it can be done gradually over a period of at least a week.» El plan de transicion del motor dura siete dias."
+        },
+        "cifra#525:The amount of energy provided from snacks and treats should never exceed more than 10% of the patient's daily calorie intake.": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "La misma regla del 10 %, repetida al final del capitulo («should never exceed more than 10% of the patient's daily calorie intake»). Aplicada el 11-sep-2026."
+        }
+      }
+    },
+    "cap08": {
+      "titulo": "Commercial and Home-Prepared Diets",
+      "regla_del_capitulo": "Leido entero. La mitad es fabricacion y etiquetado de pienso comercial y no aplica. Lo que si aplica son los estudios de dietas caseras -- 95 % de 200 recetas con al menos un nutriente esencial por debajo --, que son la razon de ser de la regla 1, y un hallazgo de producto: una dieta casera hay que revisarla con un veterinario al menos cada seis meses, y la app no lo dice.",
+      "lectura_integra": {
+        "lineas": 226,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "cifra#15:Dry pet foods on average contain between 3% and 11% moisture and more than 89% dry matter.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "cifra#22:Moist Foods Historically, moist diets were often referred to as “canned” products, and their moisture content ranges anywhere from": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "olor#23:The term “canned” may no longer be appropriate given the wide variety of products that now contain a similar water content, such a": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "reco#30:Moist foods also are recommended as a method to deliver more water to a patient with urinary tract health concerns.": {
+          "veredicto": "leido_no_aplica",
+          "por": "La comida humeda como forma de dar mas agua en problemas de vias urinarias. Una racion BARF ES humeda -- es la dieta que el motor formula siempre --, asi que esto no es una eleccion que haya que ofrecer. Y el agua de la racion ya cuenta en `verificar` a traves de la base «tal cual se da» del catalogo."
+        },
+        "olor#34:Many clients do not like the odor and messiness of moist products and unused food must be stored in the refrigerator or freezer.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "cifra#38:Semi‐Moist Foods Most semi‐moist foods contain 15–35% water.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "olor#109:Novelty can be a compelling marketing tool, but care must be taken to ascertain both the safety and the nutrient impact of any ing": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "olor#126:Relying on an ingredient being acceptable for use in human food is no guarantee that the same will be true for an animal companion": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "olor#154:Modeling for worst‐case nutrient concentrations (minimums and maximums) must be performed, as that can have a profound effect on i": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "olor#155:For instance, if data suggest a potential minimum concentration for a limiting nutrient that is 30% below the mean or average, one": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "olor#156:This means the real cost of the ingredient in this example would become at least 30% higher given the potential requirement to inc": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "olor#162:The COA will be used to verify that the limiting nutrient is within a pre‐defined specification.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "olor#164:Failure to develop reliable raw material rejection specifications and testing/assaying protocols of raw materials and finished pro": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "olor#209:Formulation Software Options There are hundreds of variables that must be calculated when formulating a commercially prepared food": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "olor#225:Equipment The processing equipment that will be used for a specific formulation must be known and its effects on ingredients, nutr": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "cifra#259:Guaranteed Analysis Target When formulating, one begins with the target percentages for the macronutrients, protein, fat, and carb": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "olor#300:Palatability Ultimately, commercially prepared food must be palatable to be viable as a product.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "olor#315:If a very narrow nutrient range must be hit, then key raw materials that provide that nutrient should be assayed for said nutrient": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "olor#326:Digestibility trials must await at least a pilot‐plant or test‐run food, and packaging artwork and printing plates cannot be final": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "olor#331:Do not assume that performance with a newer formulation in actual animals fed the food will be comparable to the previous version ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como se fabrica y como se etiqueta un PIENSO comercial: humedad, equipo de proceso, certificados de analisis de materia prima, software de formulacion, palatabilidad, ensayos de digestibilidad. Nosotros no fabricamos pienso ni lo formulamos: el motor reparte gramos de alimentos crudos de un catalogo. Leido y sin nada que aplicar."
+        },
+        "cifra#339:A telephone survey of 1104 dog and cat caretakers in the United States and Australia found that fewer than 3% of dogs and cats rec": {
+          "veredicto": "leido_no_aplica",
+          "por": "Epidemiologia de que come la gente a sus animales (encuesta de 1104 personas). No es un limite ni una cifra de formulacion."
+        },
+        "cifra#340:On the other hand, 30.6% of dogs and 13.1% of cats received “non‐commercial” foods (home‐prepared foods, leftovers, and table scra": {
+          "veredicto": "leido_no_aplica",
+          "por": "Epidemiologia de que come la gente a sus animales (encuesta de 1104 personas). No es un limite ni una cifra de formulacion."
+        },
+        "cifra#361:In one survey, 89% and 93% of home‐prepared elimination diets used for initial testing in dogs and cats, respectively, were not co": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "LO QUE LE PASA A UNA DIETA CASERA SIN MOTOR, y es la razon de ser de este proyecto. De 200 recetas caseras, 190 (95 %) dejaban al menos un nutriente esencial por debajo de NRC o AAFCO; 55 % fallaban en proteina o aminoacidos, 64 % en otra cosa; de las dietas de eliminacion caseras, solo el 65 % (perro) y el 46 % (gato) de las adecuadas se recomendaban para uso prolongado. Es la misma lista que mide `PARA_EL_NUTRICIONISTA.md` en su primera seccion contra los menus del motor, con POTASIO anadido -- comprobado: tambien sale por encima del minimo. La regla 1 del CLAUDE.md (ningun menu sale sin verificar) existe por esto."
+        },
+        "cifra#362:Nutritionally adequate home‐prepared elimination diets for long‐term use were only recommended 65% and 46% of the time in dogs and": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "LO QUE LE PASA A UNA DIETA CASERA SIN MOTOR, y es la razon de ser de este proyecto. De 200 recetas caseras, 190 (95 %) dejaban al menos un nutriente esencial por debajo de NRC o AAFCO; 55 % fallaban en proteina o aminoacidos, 64 % en otra cosa; de las dietas de eliminacion caseras, solo el 65 % (perro) y el 46 % (gato) de las adecuadas se recomendaban para uso prolongado. Es la misma lista que mide `PARA_EL_NUTRICIONISTA.md` en su primera seccion contra los menus del motor, con POTASIO anadido -- comprobado: tambien sale por encima del minimo. La regla 1 del CLAUDE.md (ningun menu sale sin verificar) existe por esto."
+        },
+        "cifra#369:Compared to AAFCO requirements for the respective life stage, 55% were found to be inadequate in protein or amino acids, 64% were ": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "LO QUE LE PASA A UNA DIETA CASERA SIN MOTOR, y es la razon de ser de este proyecto. De 200 recetas caseras, 190 (95 %) dejaban al menos un nutriente esencial por debajo de NRC o AAFCO; 55 % fallaban en proteina o aminoacidos, 64 % en otra cosa; de las dietas de eliminacion caseras, solo el 65 % (perro) y el 46 % (gato) de las adecuadas se recomendaban para uso prolongado. Es la misma lista que mide `PARA_EL_NUTRICIONISTA.md` en su primera seccion contra los menus del motor, con POTASIO anadido -- comprobado: tambien sale por encima del minimo. La regla 1 del CLAUDE.md (ningun menu sale sin verificar) existe por esto."
+        },
+        "cifra#371:In this case 34% were deficient in amino acids (taurine in all cases), 45% in vitamins, and 21% in minerals.": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "LO QUE LE PASA A UNA DIETA CASERA SIN MOTOR, y es la razon de ser de este proyecto. De 200 recetas caseras, 190 (95 %) dejaban al menos un nutriente esencial por debajo de NRC o AAFCO; 55 % fallaban en proteina o aminoacidos, 64 % en otra cosa; de las dietas de eliminacion caseras, solo el 65 % (perro) y el 46 % (gato) de las adecuadas se recomendaban para uso prolongado. Es la misma lista que mide `PARA_EL_NUTRICIONISTA.md` en su primera seccion contra los menus del motor, con POTASIO anadido -- comprobado: tambien sale por encima del minimo. La regla 1 del CLAUDE.md (ningun menu sale sin verificar) existe por esto."
+        },
+        "olor#376:Overall, most (190/200 [95%]) recipes resulted in at least 1 essential nutrient at concentrations that did not meet NRC or AAFCO g": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "LO QUE LE PASA A UNA DIETA CASERA SIN MOTOR, y es la razon de ser de este proyecto. De 200 recetas caseras, 190 (95 %) dejaban al menos un nutriente esencial por debajo de NRC o AAFCO; 55 % fallaban en proteina o aminoacidos, 64 % en otra cosa; de las dietas de eliminacion caseras, solo el 65 % (perro) y el 46 % (gato) de las adecuadas se recomendaban para uso prolongado. Es la misma lista que mide `PARA_EL_NUTRICIONISTA.md` en su primera seccion contra los menus del motor, con POTASIO anadido -- comprobado: tambien sale por encima del minimo. La regla 1 del CLAUDE.md (ningun menu sale sin verificar) existe por esto."
+        },
+        "cifra#393:The kittens were weaned onto a home‐prepared diet consisting of approximately 60% store‐bought ground meat (beef, chicken, or turk": {
+          "veredicto": "leido_no_aplica",
+          "por": "Los gatitos destetados a una dieta casera de carne picada del supermercado. Es del GATO -- comprobado abriendo el parrafo -- y ademas describe un caso clinico, no una cifra a aplicar."
+        },
+        "reco#421:If a client mentions that they are preparing food at home for their animal, it is recommended that a copy of the detailed recipe (": {
+          "veredicto": "leido_no_aplica",
+          "por": "Que el veterinario pida copia de la receta detallada. Es manejo de consulta; en Rawku la receta ES el menu y viaja entera con sus gramos, sus kcal y su ficha verificada."
+        },
+        "reco#433:Is the protein source of animal or plant origin? Animal‐based protein sources are recommended for both dogs and cats due to their ": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "«Animal-based protein sources are recommended for both dogs and cats due to their pattern of essential amino acids», y las proteinas vegetales suelen ir cortas de metionina, lisina y triptofano. El catalogo del motor es de base animal y los 12 aminoacidos esenciales se verifican desde el 28 de agosto. || Y una nota que NO se aplica y queda escrita: la taurina es «possibly a conditionally essential amino acid in dogs» segun estos autores. FEDIAF no le pone requisito al perro sano y el motor tampoco; si se la exige a las patologias que la piden."
+        },
+        "cifra#445:Despite a 15% increase in digestibility and a 40% increase in taurine content compared to the kibble diet, cats consuming the raw ": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO, y comprobado abriendo el parrafo entero: gatos con dieta cruda bajaron la taurina en plasma un 25 % en 12 dias PESE a comer un 40 % mas de taurina. El mecanismo no se conoce. No aplica al perro -- FEDIAF no le pone requisito de taurina al perro sano --, pero queda escrito aqui porque es lo mas cerca que esta este libro de decir algo contra el crudo, y porque el dato que faltaria para trasladarlo (taurina en plasma del perro) es justo el que `quien_formula_cada_patologia.json` ya exige para marcar la MCD por taurina."
+        },
+        "cifra#446:Although the plasma taurine concentrations were not below the point at which clinical taurine deficiency would be seen, they were ": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO, y comprobado abriendo el parrafo entero: gatos con dieta cruda bajaron la taurina en plasma un 25 % en 12 dias PESE a comer un 40 % mas de taurina. El mecanismo no se conoce. No aplica al perro -- FEDIAF no le pone requisito de taurina al perro sano --, pero queda escrito aqui porque es lo mas cerca que esta este libro de decir algo contra el crudo, y porque el dato que faltaria para trasladarlo (taurina en plasma del perro) es justo el que `quien_formula_cada_patologia.json` ya exige para marcar la MCD por taurina."
+        },
+        "olor#482:Such an approach is very difficult to do and can heighten the risk of a nutritional deficiency or excess in the diet.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Suplementar una dieta casera con un multivitaminico «todo en uno» frente a anadir cada mineral por separado, y que lo segundo hace falta cuando se necesita restringir mas. El motor hace lo segundo cuando el limite aprieta: los suplementos sueltos estan en el catalogo y el MILP elige. Lo que este parrafo describe como dificil es exactamente lo que resuelve el solver."
+        },
+        "olor#486:With this latter approach the number of ingredients that must be measured and added to the diet will increase significantly.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Suplementar una dieta casera con un multivitaminico «todo en uno» frente a anadir cada mineral por separado, y que lo segundo hace falta cuando se necesita restringir mas. El motor hace lo segundo cuando el limite aprieta: los suplementos sueltos estan en el catalogo y el MILP elige. Lo que este parrafo describe como dificil es exactamente lo que resuelve el solver."
+        },
+        "olor#488:In some cases, however, this latter approach must be used if additional nutrient restriction is required beyond what an all‐in‐one": {
+          "veredicto": "leido_no_aplica",
+          "por": "Suplementar una dieta casera con un multivitaminico «todo en uno» frente a anadir cada mineral por separado, y que lo segundo hace falta cuando se necesita restringir mas. El motor hace lo segundo cuando el limite aprieta: los suplementos sueltos estan en el catalogo y el MILP elige. Lo que este parrafo describe como dificil es exactamente lo que resuelve el solver."
+        },
+        "reco#520:Assessment while on a Home‐Prepared Diet It is recommended that any animal receiving a home‐prepared diet be checked by a veterina": {
+          "veredicto": "hallazgo",
+          "por": "HALLAZGO QUE NOS TOCA DE LLENO Y QUE LA APP NO DICE. «It is recommended that any animal receiving a home-prepared diet be checked by a veterinarian AT LEAST EVERY SIX MONTHS» (cada tres meses o menos si hay una enfermedad de por medio), con peso, condicion corporal y, si procede, analitica. Rawku formula dietas caseras y no dice esto en ninguna parte. || Y el mismo parrafo trae el nombre de un fallo que si podemos vigilar: el «DIET DRIFT», que el dueno vaya sustituyendo ingredientes por su cuenta. Va a PENDIENTE_PRODUCTO.md."
+        }
+      }
+    },
+    "cap09": {
+      "titulo": "Nutritional Management of Body Weight",
+      "regla_del_capitulo": "Leido entero. Trae la TERCERA fuente que confirma como calcula el motor las kcal del perro a dieta (RER sobre el peso OPTIMO, no el real), la QUINTA mencion del 10 % de los premios -- con el matiz de que es sobre el objetivo y no sobre lo que come hoy -- y dos diferencias medidas en el BCS donde gana FEDIAF.",
+      "lectura_integra": {
+        "lineas": 330,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "olor#4:However, even a modest chronic excess in caloric intake can result in significant weight gain over the long term.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Que un exceso pequeno y sostenido engorda (10 kcal/dia de mas en un gato = medio kilo de grasa al ano). Es el argumento de por que las kcal se calculan y no se estiman; no es una cifra que aplicar. Y el ejemplo es felino."
+        },
+        "cifra#5:For example, a cat that consumes a mere 10 kcal above its daily energy requirement every day will accumulate about a pound of adip": {
+          "veredicto": "leido_no_aplica",
+          "por": "Que un exceso pequeno y sostenido engorda (10 kcal/dia de mas en un gato = medio kilo de grasa al ano). Es el argumento de por que las kcal se calculan y no se estiman; no es una cifra que aplicar. Y el ejemplo es felino."
+        },
+        "cifra#65:Each increment in BCS is approximately equivalent to 10–15% additional weight due to body fat.": {
+          "veredicto": "hallazgo",
+          "por": "EL ESCALON DEL BCS, y el motor esta en el extremo BAJO del rango. «Each increment in BCS is approximately equivalent to 10-15% additional weight due to body fat.» El motor aplica 10 % por punto (`der.BCS_PCT_POR_PUNTO`), que sale de la Tabla VII-2 de FEDIAF. Con 15 % el peso objetivo de un perro con BCS 7 saldria mas bajo y comeria menos; con el 10 % sale mas alto y come un poco mas, o sea que adelgaza mas despacio pero no se queda corto de nutrientes -- los minimos se escalan sobre ese mismo peso. Gana FEDIAF y la diferencia queda escrita con las dos cifras."
+        },
+        "cifra#66:A score of 4–5 is considered optimal for dogs and reflects a body fat level of 15–20%.": {
+          "veredicto": "hallazgo",
+          "por": "«A score of 4-5 is considered optimal for DOGS.» El motor ancla el ideal en BCS 5 (`BCS_NEUTRO`), que es lo que dice la Tabla VII-2 de FEDIAF («% BW below or above BCS 5»). Si el ideal fuera 4, un perro en 5 ya estaria ligeramente por encima y su peso objetivo bajaria un 10 %. Gana FEDIAF; apuntado con las dos cifras."
+        },
+        "cifra#67:For cats, a BCS of 5 is considered optimal and in this species reflects a level of 25% body fat.": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO (BCS 5 = 25 % de grasa corporal). Comprobado en el parrafo: la frase anterior da la cifra del perro y esta la del gato."
+        },
+        "olor#116:Interestingly, with one exception, the studies that have looked at frequency of feeding (free choice vs. meal fed) have not found ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Frecuencia de las tomas (a voluntad frente a raciones) y su efecto sobre el peso: sin efecto significativo salvo una excepcion, y el estudio citado es en gatos. El motor calcula CUANTO, no en cuantas tomas."
+        },
+        "olor#159:However, discovering that such feeding practices exist in a household in advance will reveal the issues that must be addressed in ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Manejo de la casa con varios animales y de lo que no se puede medir (quien come de quien, raciones sin pesar). El motor da gramos exactos y la app ya tiene pantalla de varios perros; no hay cifra que aplicar."
+        },
+        "olor#168:However, if it is not possible to quantify an individual pet's caloric intake accurately because feeding portions are not measured": {
+          "veredicto": "leido_no_aplica",
+          "por": "Manejo de la casa con varios animales y de lo que no se puede medir (quien come de quien, raciones sin pesar). El motor da gramos exactos y la app ya tiene pantalla de varios perros; no hay cifra que aplicar."
+        },
+        "olor#187:The final step is to calculate a food dosage for the patient based on the pet foods that it will be receiving, so that the caregiv": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "«The final step is to calculate a food dosage for the patient [...] so that the caregiver knows how much to feed.» Es literalmente lo que entrega el motor: gramos por alimento, no porcentajes."
+        },
+        "cifra#215:Similarly, no significant effect on body weight was reported in young adult, sexually intact cats, free fed purified diets with si": {
+          "veredicto": "leido_no_aplica",
+          "por": "Frecuencia de las tomas (a voluntad frente a raciones) y su efecto sobre el peso: sin efecto significativo salvo una excepcion, y el estudio citado es en gatos. El motor calcula CUANTO, no en cuantas tomas."
+        },
+        "cifra#261:Box 9.4 Estimating Time Needed to Achieve a Weight‐Loss Goal The time it will take to achieve the weight‐loss goal can be estimate": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como estimar cuanto tardara en llegar al peso objetivo, dividiendo el exceso de grasa entre el deficit diario. Es una cuenta de seguimiento, no un limite de la racion. La app ya ensena la curva de peso en Evolucion. Apuntado por si se quiere dar el plazo estimado."
+        },
+        "cifra#262:Dividing the resulting number by the daily caloric deficit provides an estimate of how long it will take to lose the weight (e.g. ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como estimar cuanto tardara en llegar al peso objetivo, dividiendo el exceso de grasa entre el deficit diario. Es una cuenta de seguimiento, no un limite de la racion. La app ya ensena la curva de peso en Evolucion. Apuntado por si se quiere dar el plazo estimado."
+        },
+        "cifra#276:Investigations where overweight cats were restricted from 25% to 60% of normal maintenance energy requirement found that the cats ": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO: restricciones del 25 % al 60 % del mantenimiento en gatos con sobrepeso. Comprobado abriendo el parrafo."
+        },
+        "olor#301:Set the allowance at no more than 10% of the pet's targeted daily caloric intake, and provide caregivers with information about th": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "LA QUINTA VEZ QUE SALE EL 10 % DE LOS PREMIOS, y anade el matiz que faltaba: «Set the allowance at no more than 10% of the pet's TARGETED daily caloric intake» -- del objetivo, no de lo que come hoy. El motor lo hace asi por construccion: `kcal_de_premios` se calcula sobre `der_objetivo`, que ya va sobre el peso OBJETIVO y no el real (`peso_objetivo_kg`). Aplicado el 11-sep-2026; BLOQUE 95."
+        },
+        "olor#312:Sometimes feeding the pets in separate rooms will be the solution.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Manejo de la casa con varios animales y de lo que no se puede medir (quien come de quien, raciones sin pesar). El motor da gramos exactos y la app ya tiene pantalla de varios perros; no hay cifra que aplicar."
+        }
+      }
+    },
+    "cap10": {
+      "titulo": "Nutritional Management of Orthopedic Diseases (Herman Hazewinkel)",
+      "regla_del_capitulo": "Leido entero. Es el capitulo del que ya sale el techo de calcio del cachorro de raza grande (1,1 % MS = 2750 mg/1000 kcal) y trae TRES cosas mas: que su propio autor recomienda AUN MENOS calcio (0,8-1,0 % por 4200 kcal/kg = 1905-2381), que queda por debajo del minimo de FEDIAF y por tanto no se aplica; un techo de VITAMINA D en crecimiento que nadie tenia escrito (12,5-25 ug/kg MS = 3,125-6,25 ug/1000 kcal), que SI cabe dentro de FEDIAF y que seis de los doce menus de cachorro del catalogo se pasan; y la segunda fuente del omega-3 de la artrosis, con sus dos estudios midiendo en direcciones distintas.",
+      "lectura_integra": {
+        "lineas": 256,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "cifra#14:More than 98% of the body's calcium is stored in the skeleton as stable crystals (including hydroxyl apatite) and in labile calciu": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#16:Of the body's phosphorus, 80% is stored in the skeleton and is of major importance in the formation of calcium salts and thus mine": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#18:Calcium Phosphorus Magnesium % of adult body weight 1–1.5% 0.5–0.8% ∼0.25% % present in skeleton 98% 80% 50% Absorption Active (vi": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#20:The composition of an adult dog by weight includes 1–1.5% calcium, 0.5–0.8% phosphorus, and 0.25% magnesium, of which 98%, 80%, an": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#21:Whole bone, including marrow and periosteum, consists of 33% organic components (including 95% collagen, 5% glycoproteins and sulf": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#24:Trabecular bone has more water and less ash than cortical bone, and it has slightly less organic material, although this also can ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#27:The grams of calcium per cm3 of bone increases with advancing age: in beagles from 0.468 and 0.536 g at 6 weeks to 0.512 and 0.612": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#33:Chemical content of cartilage in the extracellular matrix Water 66–79% Collagen Mainly collagen II Also collagen XI, III, V, VI, X": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "olor#43:However, when excess vitamin D was given to Great Dane dogs starting at partial weaning (i.e. 10 or 100 times the recommended diet": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#50:The uncontrolled excretion of calcium via the glomerulus could be as high as 60% of the circulating calcium, being the ultrafilter": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#59:This linear segment includes at its midpoint the calcium concentration that inhibits 50% of the maximum value of PTH, defined as t": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#60:The relationship between plasma Ca2+ and plasma PTH concentration was determined in two groups of Great Dane dogs (both n = 9) rai": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#62:In a study in Great Dane pups (n = 7) from bitches either on a diet with 1.14 g Ca/100 g DM or on 3.27 g Ca/100 g dm during the se": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#79:Mean (± standard error of the mean, SEM) of plasma concentrations in nine Great Danes and eight miniature poodles, 3 months of age": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "olor#102:Magnesium absorption increases with increasing dietary vitamin D and decreases in cases of excess dietary calcium, phosphorus, or ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#113:Beagles raised from 6 to 25 weeks on a diet with 12% protein (as a percentage of metabolizable energy [ME]) never reached normal b": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#114:Great Danes raised from 7 to 20 weeks of age on a balanced food with 13% (ME) protein developed hypoalbuminemia and a lower body w": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#115:Research dogs raised on food with a calcium content of 3.11 g/100 g (DM (vs. 1.04 g for controls), starting at the time of partial": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#116:Adult mixed‐breed dogs fed the same food revealed a slight increase in plasma calcium concentration (2.70 vs. 2.63 mmol/l) without": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "olor#120:Excess energy intake is much more common in today's clinical practice.": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#121:Diets containing an excess of protein (>30 g/100 g DM) will be metabolized, although in some cases one can document an increase in": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#122:In a study in growing Great Danes, raised on a diet with 29% protein (ME), except for an increase in plasma albumin and blood urea": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "olor#123:Excess fat cannot only predispose an animal to excessive calorie consumption, thereby increasing body weight, but can also decreas": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#125:When the fat content of the food was increased from 8% to 24% of dry matter in a diet with 22% protein, 10% ash, and no fiber adde": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#126:This resulted in a higher percentage of body fat and an increase in body weight when fed free choice compared to control dogs rais": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "olor#129:Since excess minerals (Hazewinkel 1985; Schoenmakers et al. 2000) and vitamin D (Tryfonidou et al. 2003b), but not protein or carb": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#132:The calcium requirement for growing dogs ranges between 0.33% and 1.2% of calcium on a dry matter basis (Table 10.5).": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#134:In rapidly growing Great Danes, the daily calcium deposition in the skeleton can be as high as 225–900 mg Ca/kg BW, whereas in min": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#136:The apparent calcium digestibility did not differ from controls (32%), except for the dogs on the test diet at 8 weeks, which coin": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#137:In comparison with Labradors on 2.6% Ca dm (Stockman et al. 2017), these beagles consumed 50% more energy and had therefore a high": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#139:In pregnant Great Danes fed a control diet (Ca 1.14 and P 0.89 g/100 g dm) or a test diet (Ca 3.27 and P 1.11 g/100 g dm), the bas": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#143:Hedhammar et al. (1974) Lavelle (1989) Hazewinkel (1991) Nap et al. (1991) Nap et al. (1993b) Schoenmakers et al. (1999b) Tryfonid": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#144:3–17 weeks: Hypophosphatemic rickets 6–26 weeks: severe osteochondrosis and radius curvus 1.14 μg vitamin D/kg food: normal endoch": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#151:In a meta‐analysis of repetitive calcium balance studies in growing dogs of different breeds, apparent calcium absorption as the t": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#154:The model in which the two mechanisms can be discerned demonstrates that active calcium absorption (mainly present at low calcium ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#156:In a calcium study in two other breeds, young beagles and Labrador crossbred dogs received either 1.1 or 3.6 g Ca/100 g dm and app": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#158:Miniature poodles raised on a diet with 1.1% calcium on a dm basis revealed in calcium kinetic studies with use of the 45calcium i": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#161:These findings were supported by Stockman et al. (2017), who found no difference in calcium digestibility (approximately 20%) and ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "olor#165:Dietary calcium deficiency can be caused by feeding meat‐based, home‐prepared diets with insufficient supplementation of calcium s": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "«Dietary calcium deficiency can be caused by feeding meat-based, HOME-PREPARED DIETS with insufficient supplementation of calcium.» Es exactamente la dieta que formula este motor, y por eso el calcio es una restriccion dura del solver y no un aviso: la carne sola lleva muchisimo fosforo y poco calcio."
+        },
+        "cifra#186:Table 10.6 Plasma levels of calcium, phosphorus, and the major vitamin D metabolites in 3‐month‐old small‐breed dogs raised under ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#191:Normalization of the diet can be accomplished by changing the food to a complete and balanced diet and extra calcium carbonate (50": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#194:Therefore, calcium absorption is very efficient – that is, up to 100% of the amount of calcium in the food – and extra vitamin D i": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "olor#200:Due to the excess of dietary calcium, there is hypercalcemia with negative feedback on PTH synthesis and thus decreased 1,25(OH)2v": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "olor#209:Commercially available dog and cat food does not need any vitamin D supplementation, regardless of the season or the latitude, esp": {
+          "veredicto": "leido_no_aplica",
+          "por": "Que un pienso comercial no necesita suplemento de vitamina D sea cual sea la estacion o la latitud, porque el perro apenas la sintetiza en la piel. Confirma que la vitamina D tiene que venir de la dieta -- que es lo que hace el motor --, sin cifra nueva."
+        },
+        "cifra#211:(b) Cancellous bone in the corresponding area of a 6‐month‐old dog with nutritional secondary parathyroidism due to low calcium co": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#218:A Great Dane of 2 months raised on food with 3.3% calcium on a dry matter basis starting at 3 weeks of age with hypophosphatemia a": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#222:Vitamin D content per kg food (dry matter) National Research Council Nutrient requirements of dogs and cats (2006) 552 IUa (4000 k": {
+          "veredicto": "leido_no_aplica",
+          "por": "Tabla 10.7, «Vitamin D recommendations for growing dogs»: NRC 2006 552 UI/kg (a 4000 kcal/kg), Meyer 1983 500-1000 UI/kg, AAFCO 2022 500 UI/kg de minimo. 552 UI/kg = 13,8 ug/kg MS = 3,45 ug/1000 kcal, que es EXACTAMENTE el minimo de FEDIAF para CachorroJoven. Confirma el suelo; el techo del autor va en `cifra#530`."
+        },
+        "cifra#224:Dietary vitamin D is absorbed in the intestine by passive diffusion, transported in plasma bound to chylomicrons, lipoproteins, an": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#234:In cases where vitamin D deficiency is the only abnormality, vitamin D supplementation up to 500 IU/kg BW/d is sufficient.": {
+          "veredicto": "leido_no_aplica",
+          "por": "«In cases where vitamin D deficiency is the only abnormality, vitamin D supplementation up to 500 IU/kg BW/d is sufficient.» Es una DOSIS DE TRATAMIENTO por kg de peso vivo, no una concentracion de la dieta. El motor no receta farmacos."
+        },
+        "olor#240:Deficiency of Other Trace Minerals In an extreme situation, such as feeding a home‐prepared diet based solely on potatoes, milk pr": {
+          "veredicto": "leido_no_aplica",
+          "por": "Carencia de oligoelementos en una dieta casera extrema (solo patata, leche y carne). El motor no deja formular asi: los 41 nutrientes son restricciones simultaneas."
+        },
+        "reco#241:However, Stockman et al. (2017) could not demonstrate a consistent difference in phosphorus or magnesium digestibility in adult La": {
+          "veredicto": "leido_no_aplica",
+          "por": "Que no se encontro diferencia consistente en la digestibilidad del fosforo ni del magnesio en Labradores adultos (Stockman 2017). Fisiologia de la absorcion, sin cifra que aplicar."
+        },
+        "cifra#245:Meta‐analysis revealed that the relationship between true calcium absorption (as determined with the aid of calcium tracer studies": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "olor#246:Evolution of terrestrial mammals has been directed to a calcium‐deficient environment; young animals with a very functional parace": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "olor#248:Feeding an excess of calcium to young large‐breed dogs is common practice by many owners concerned about the skeletal diseases des": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "reco#252:In a study in dogs raised on food with triple the recommended amount of calcium and phosphorus, even more severe skeletal disturba": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#255:Feeding a 3‐month‐old fast‐growing dog an adult maintenance diet (320 kcal/100 g; 1.6% Ca dm) instead of a puppy diet (420 kcal/10": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "olor#256:Highly digestible food with high‐quality ingredients will result in a relatively higher degree of ME (= gross energy content minus": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#260:Calcium content above 2.5% in dry and canned mixed products is no exception (Kallfelz and Dzanis 1989).": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#262:Feeding a product that has been formulated to optimally meet the energy and calcium requirements at 10 kg to a growing dog with an": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#266:A large‐breed food for growing dogs with a level of 0.8% calcium (per 4200 ME kcal/kg) has been both calculated and proven to be s": {
+          "veredicto": "hallazgo",
+          "por": "EL AUTOR PIDE MENOS CALCIO DEL QUE APLICAMOS, y no se puede aplicar. «A large-breed food for growing dogs with a level of 0.8% calcium (per 4200 ME kcal/kg) has been both calculated and PROVEN to be safe for raising large- and giant-breed pups throughout the growth period (Nap et al. 2000).» 0,8 % por 4200 kcal/kg = 1905 mg/1000 kcal. El motor aplica 2750. Pero el MINIMO de FEDIAF para el cachorro de raza grande en late growth son 2500 (fila `Calcio_LateGrowth_RazaGrande`), asi que 1905 deja al cachorro POR DEBAJO del minimo: gana FEDIAF y la cifra queda escrita. Va a FEDIAF_CONTRA_OTRAS_FUENTES.md como conflicto de los que sacan al perro FUERA de la ventana."
+        },
+        "cifra#269:Great Dane puppies nourished by the bitch and given a high‐calcium diet (3.3% calcium dm) only between the ages of 3 and 6 weeks (": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#273:Two groups of Great Danes, raised on food (as a gruel from 3–6 weeks) only differing in its calcium content, i.e. 1.04 (n = 9, blu": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#282:In order to prevent panosteitis, a diet designed for young dogs of large breeds with a calcium content no greater than 1.1% dm sho": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "LA CIFRA QUE EL MOTOR YA APLICA, y aqui esta su frase entera: «In order to prevent panosteitis, a diet designed for young dogs of large breeds with a calcium content NO GREATER THAN 1.1% DM should be fed during the growth period, starting at partial weaning.» 1,1 % MS a 4000 kcal/kg = 2750 mg/1000 kcal, que es el techo de calcio del cachorro de mas de 25 kg de adulto en `recomendaciones_libro.json`."
+        },
+        "cifra#284:Great Danes provided free access to food (Table 10.5) (Hedhammar et al. 1974; Lavelle 1989) or limited intake of food but with a h": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "olor#294:In some cases, where Great Danes were raised on a diet with excess calcium, it was not the distal growth plate of the ulna that wa": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#296:In beagles and crossbred foxhounds, Dobenecker et al. (2006) could demonstrate a significantly higher calcium retention in the bea": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "olor#297:Figure 10.7 A 4‐month‐old Great Dane with radius curvus syndrome raised on a food with calcium excess, calcium and phosphorus exce": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "olor#299:In conclusion, a variety of skeletal abnormalities can develop in dogs when raised on excess food (Hedhammar et al. 1974), excess ": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#300:Calcium retention increases proportionally with the calcium content of the food and is in young dogs not less than 25–40% (Dobenec": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "reco#307:As a result, the available diets for companion animals can have a vitamin D content exceeding recommended levels (Table 10.7) (Wei": {
+          "veredicto": "hallazgo",
+          "por": "«As a result, the available diets for companion animals can have a vitamin D content EXCEEDING RECOMMENDED LEVELS (Table 10.7).» Es el aviso que acompana a la cifra de `cifra#530`, y en nuestro catalogo el mecanismo es el mismo: la vitamina D de una racion BARF entra por los multivitaminicos y por el aceite de higado de bacalao, que es justo donde se concentra."
+        },
+        "cifra#308:In a study focused on the development of the medial coronoid process (MCP) of the ulna, with two groups of Labrador puppies, offsp": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#313:Dogs raised on a diet containing a 135‐fold increase in the recommended dietary vitamin D content (54 000 vs. 4560 IU cholecalcife": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#322:Another difference between dogs and cats regarding vitamin A metabolism is in its inactivation: dogs, but not cats, can form retin": {
+          "veredicto": "no_aplica",
+          "por": "Diferencia entre perro y GATO en como inactivan la vitamina A (el perro forma retinil-esteres y el gato no). Explica por que el gato se intoxica antes; no cambia ninguna cifra del perro."
+        },
+        "cifra#325:No apparent deleterious effects were caused by high intakes of vitamin A alone: adult cats, even after a period of three years on ": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO: gatos adultos tres anos con vitamina A alta sin efectos aparentes."
+        },
+        "cifra#333:The level of vitamin A (50% of vitamin A content of beef liver), the calcium content of this food (much higher than beef liver), a": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO: comida de investigacion que imita una dieta de higado."
+        },
+        "olor#334:In kittens, teratogenic effects of high vitamin A intake by the queen (1–2 times the safe upper limit of vitamin A as given by NRC": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO: efectos teratogenos en gatitos por la vitamina A de la gata."
+        },
+        "cifra#338:Concentrations of vitamin A in plasma will exceed the normal ranges for dogs (i.e. 1800–18 000 IU/l) (Hayes 1971).": {
+          "veredicto": "leido_no_aplica",
+          "por": "Rango normal de vitamina A en plasma del perro (1800-18.000 UI/l). Es una analitica, no una cifra de la dieta."
+        },
+        "cifra#343:The recommended concentration of vitamin A in dog foods is 1515 μg or 5050 IU/kg dm with a safe upper limit 10 times this amount (": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "SEGUNDA FUENTE para un hallazgo que ya esta escrito. «The recommended concentration of vitamin A in dog foods is 1515 ug or 5050 IU/kg dm with a SAFE UPPER LIMIT 10 TIMES this amount (NRC 2006)»: 15.150 ug/kg MS = 3787 ug/1000 kcal a 4000 kcal/kg, muy por debajo del maximo de FEDIAF que aplica el motor. Es el mismo desajuste que ya midio la lectura de SACN5 (HALLAZGOS_SACN5_10SEP.md) con la perra lactante, y ahora lo dice tambien Fascetti. Sigue sin aplicarse y sigue escrito."
+        },
+        "cifra#346:In a study in adult cats, a 106 IU vitamin A/kg diet failed to produce the classic skeletal signs of hypervitaminosis A in three y": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO: 10^6 UI de vitamina A/kg de dieta durante tres anos."
+        },
+        "cifra#348:Laboratory investigation may reveal that retinol levels in the liver are increased, contrary to plasma retinol levels, which can b": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "olor#354:It may be better to have a board certified veterinary nutritionist® formulate a balanced homemade diet without vitamin A added to ": {
+          "veredicto": "leido_no_aplica",
+          "por": "«It may be better to have a board certified veterinary nutritionist formulate a balanced homemade diet WITHOUT VITAMIN A ADDED.» Es una decision clinica sobre un caso de hipervitaminosis A, no un limite de formulacion. El motor ya deja a un profesional apretar cualquier nutriente por `objetivos_del_profesional`, que es la forma que tiene esto de existir aqui."
+        },
+        "cifra#359:Endogenous fecal excretion (i.e. losses of calcium via bile or mucosal cells) is approximately 10–30 mg/kg and urinary losses appr": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#362:A study in adult dogs fed a lowered calcium intake (0.5 g/1000 kcal) for six months revealed no adjusted fractional calcium excret": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#364:Two groups of nine adult Labradors fed a high‐calcium diet (7.1 g/1000 kcal) or a test diet (1.7 g/1000 kcal) for 40 weeks did not": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#365:In a meta‐analysis including more than 400 individual digestion trials in dogs and 156 in cats, it was revealed that true absorpti": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "olor#366:A true safe upper limit for vitamin D intake, supported by clear scientific evidence for reproduction/growth and for adult mainten": {
+          "veredicto": "leido_no_aplica",
+          "por": "«A true safe upper limit for vitamin D intake, supported by clear scientific evidence for reproduction/growth and for adult maintenance, IS NOT CURRENTLY KNOWN IN DOGS.» Hay que leerlo junto a la cifra de `cifra#530`: lo que el autor da no es un limite de seguridad demostrado, es la concentracion que recomienda para un pienso de cachorro. Es la diferencia entre las dos clases de limite que el motor ya separa (maximo de seguridad frente a recomendacion del libro), y por eso la cifra iria a `recomendaciones_libro.json` y no a `seguridad.py`."
+        },
+        "reco#400:Couple this with the inherited developmental diseases such as hip and elbow dysplasia with a large degree of environmental influen": {
+          "veredicto": "leido_no_aplica",
+          "por": "Que hay que educar al criador y al dueno del cachorro de raza grande para que le den una dieta adaptada, «a calcium content at the lower end of the safety spectrum». Es la frase que introduce la cifra de `cifra#401`, y su cifra esta juzgada alli."
+        },
+        "cifra#401:In general, in foods with a protein content of high biological value, the calcium content should be between 0.8% and 1.0% on a dry": {
+          "veredicto": "hallazgo",
+          "por": "La misma discrepancia dicha como rango: «In general, in foods with a protein content of high biological value, the calcium content should be between 0.8% and 1.0% on a dry matter basis (for a food with 4200 ME kcal/kg diet) (Nap et al. 2000).» = 1905 a 2381 mg/1000 kcal. El motor aplica 2750 y el minimo de FEDIAF son 2500: el rango ENTERO queda por debajo del minimo de FEDIAF. Gana FEDIAF. Y ojo al matiz, que es nuestro caso: «a protein content of HIGH BIOLOGICAL VALUE» -- una racion BARF lo es."
+        },
+        "olor#423:INC due to a short radius is frequently seen in Bernese mountain dogs and in dogs raised on food supplemented with excess minerals": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#431:In a study in Great Danes raised on food with an increased calcium and phosphorus intake (3.3 and 3.0%, respectively, compared to ": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#476:Nap et al. (1993c) demonstrated that in Great Danes fed three levels of protein (31.6%, 23.1%, and 14.6% dm) in an isoenergetic, b": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "olor#506:Contrarily, high vitamin C intake has been reported to increase calcium absorption (Teare et al. 1979) and thereby increases the c": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#515:The energy requirements of healthy animals vary considerably between different stages of growth (more per kg metabolic body weight": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "olor#518:Since the driving force behind food intake is the animal's energy requirement, the ratio of the ingredients to the energy content ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#519:Calcium is >99% deposited in the skeleton and is related to actual body weight (Meyer and Zentek 2005), rather than the energy req": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del hueso y del cartilago, y como se regula el calcio en plasma (PTH, calcitonina, metabolitos de la vitamina D, absorcion activa frente a paracelular, retencion y excrecion). Es el POR QUE de todo lo demas del capitulo y no trae ninguna cifra que el motor pueda aplicar: son concentraciones en plasma, porcentajes de absorcion y composicion del esqueleto."
+        },
+        "cifra#525:The influence of nutrition during different stages of development can be well illustrated by a summary of the results of a study p": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#530:Taken together, the author recommends the following: restricted feeding of a puppy food with a calcium and vitamin D content not t": {
+          "veredicto": "hallazgo",
+          "por": "LA RECOMENDACION FINAL DEL AUTOR, con dos cifras: «restricted feeding of a puppy food with a calcium and vitamin D content not to exceed [...] calcium ~1.0% dm, VITAMIN D CONTENT 12.5-25 ug/kg diet». El calcio es la discrepancia de arriba. La vitamina D es NUEVA: 12,5-25 ug/kg MS = 500-1000 UI/kg, o sea 3,125 a 6,25 ug/1000 kcal a 4000 kcal/kg. El motor no tiene techo de vitamina D en crecimiento mas alla del maximo LEGAL de FEDIAF (14,19) y del tope cronico por peso metabolico. MEDIDO el 11-sep-2026 sobre los 12 menus de cachorro del catalogo: van de 3,14 a 8,96 ug/1000 kcal, mediana 6,07, y SEIS DE LOS DOCE pasan de 6,25. Cabe dentro de la ventana de FEDIAF, asi que se PUEDE aplicar -- y por eso no se aplica en silencio: se escribe con su conversion y su medida y se pregunta."
+        },
+        "cifra#552:Great Danes raised on diets with an increased calcium and phosphorus intake (3.3% Ca and 3.0% P vs. controls on 1.1% Ca and 0.9% P": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Uno de los experimentos con los que Hazewinkel demostro el dano del exceso -- Gran Danes y otras razas criados con calcio, fosforo o vitamina D muy por encima de lo recomendado, con osteocondrosis, radius curvus, panosteitis, raquitismo hipofosfatemico o sindrome del wobbler. Es la EVIDENCIA detras del techo de calcio del cachorro de raza grande que el motor SI aplica (2750 mg/1000 kcal), no una cifra nueva: las dosis de estos estudios (3,3 % de calcio en materia seca, 54.000 UI de vitamina D/kg) estan muy por encima de cualquier cosa que el motor deje salir."
+        },
+        "cifra#598:In a study in dogs with a CCL rupture as a model, it has been demonstrated that these dogs had less cartilage swelling, less total": {
+          "veredicto": "leido_no_aplica",
+          "por": "Modelo experimental de rotura del ligamento cruzado: menos hinchazon y menos dano del cartilago. No trae una cifra de dieta."
+        },
+        "cifra#612:In 36 dogs with elbow OA due to ED, a double‐blind efficacy study was performed by feeding an increased omega‐3 content (omega‐3 o": {
+          "veredicto": "hallazgo",
+          "por": "SEGUNDA FUENTE para el omega-3 de la artrosis, que el motor tiene ESCRITO Y SIN APLICAR. Estudio doble ciego en 36 perros con artrosis de codo: omega-3 al 4 % y omega-6 al 20 % frente a omega-3 al 0,8 % y omega-6 al 38 %. Subio el LTB5 en plasma y la cojera medida por plataforma de fuerzas NO cambio. O sea que esta fuente sostiene el mecanismo y NO demuestra el efecto clinico, que es precisamente el motivo por el que el omega-3 de la artrosis vive en `limites_escritos_que_el_solver_no_aplica`."
+        },
+        "cifra#614:A clinical trial including force‐plate analysis performed in two groups of dogs fed either a control food or an EPA‐supplemented d": {
+          "veredicto": "hallazgo",
+          "por": "Y el estudio que SI ve efecto: con dieta suplementada con EPA durante 90 dias mejoro el apoyo del peso el 82 % de los perros frente al 31 % de los controles (Schoenherr 2005). Va con el de arriba: las dos medidas juntas son lo que hay que ponerle delante a quien decida si se enciende el omega-3 de la artrosis. No se aplica hoy."
+        },
+        "cifra#651:Supplement Function Effect on joints Oral dose in dogs Glucosaminea Precursor of GAG Limits or delays OA in senior patients 0.02 m": {
+          "veredicto": "leido_no_aplica",
+          "por": "Tabla de suplementos articulares con su dosis oral en el perro (glucosamina, condroitina, mejillon de labio verde, colageno). Son SUPLEMENTOS CONDROPROTECTORES, no nutrientes de FEDIAF, y el catalogo no tiene ninguno. Queda escrito por si algun dia se ofrecen: entonces harian falta sus fichas y su dosis maxima de fabricante, como cualquier otro suplemento."
+        }
+      }
+    },
+    "cap11": {
+      "titulo": "Nutritional Management of Gastrointestinal Diseases",
+      "regla_del_capitulo": "Leido entero. Mucho de este capitulo es humano, felino o de manejo clinico y va marcado uno a uno. Lo que toca al motor son tres cosas: el «15 % de grasa» de la linfangiectasia, que aqui es de las KCAL y en SACN5 de la MATERIA SECA -- un factor de 2,2 -- y que medido NO CABE en ningun peso; un techo de fibra del 8 % MS en enteropatia cronica que el motor no tiene y que ocho de los 36 menus del catalogo se pasarian; y la confirmacion de la dilucion de nutrientes, que es la regla 1 dicha desde otro sitio.",
+      "lectura_integra": {
+        "lineas": 285,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "olor#70:Thus, a unifying definition of dietary fiber must be species specific and incorporate all compounds that share the biological char": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia y evidencia de fondo del capitulo: como fermenta la fibra, que hace la grasa mal absorbida en el colon, el tono del esfinter gastroesofagico, la osmolaridad de la comida, la permeabilidad intestinal. Explica el POR QUE de los limites que si se aplican; no trae cifra nueva."
+        },
+        "cifra#93:Wheat bran fiber (13.5–25 g/day for up to 12 months) can significantly lower both total and secondary (e.g. DCA) bile acid concent": {
+          "veredicto": "leido_no_aplica",
+          "por": "Salvado de trigo (13,5-25 g/dia) para bajar los acidos biliares. El catalogo no tiene cereales y el motor no formula con salvado."
+        },
+        "cifra#108:Utilization of even the most fermentable fiber is never 100%, and most natural dietary fiber sources contain a range of carbohydra": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia y evidencia de fondo del capitulo: como fermenta la fibra, que hace la grasa mal absorbida en el colon, el tono del esfinter gastroesofagico, la osmolaridad de la comida, la permeabilidad intestinal. Explica el POR QUE de los limites que si se aplican; no trae cifra nueva."
+        },
+        "cifra#138:Elimination of Clostridium difficile from the colonic flora within six days has been documented in mice by feeding a diet containi": {
+          "veredicto": "no_aplica",
+          "por": "Es en RATONES (eliminacion de Clostridium difficile en ratones alimentados con una dieta concreta)."
+        },
+        "olor#154:Caution must be taken to avoid essential nutrient dilution with their addition, and especially if overall dietary protein is reduc": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "«Caution must be taken to AVOID ESSENTIAL NUTRIENT DILUTION with their addition, and especially if overall dietary protein is reduced.» Es exactamente la regla 1 del motor dicha desde otro sitio: cualquier cosa que se anada a la racion diluye el resto, y por eso todo menu se verifica de cero contra los 43 requisitos. Y es la misma dilucion que describe Ettinger cap.192 con los premios, que el motor ya cuenta desde el 11-sep-2026."
+        },
+        "cifra#156:Source: Data from the United States Department of Agriculture Nutrient Database for Standard Reference, Release 18. Food source To": {
+          "veredicto": "leido_no_aplica",
+          "por": "Tabla de contenido en fibra de alimentos, sacada de la base de datos del USDA. Es una fuente de datos de composicion, no un limite; el catalogo del motor ya tiene su propio orden de fuentes en `Bases.md`."
+        },
+        "olor#271:Decreases Presence of Food Antigens At times, it will be suggested that feeding in the midst of generalized gastrointestinal infla": {
+          "veredicto": "leido_no_aplica",
+          "por": "Si conviene o no dejar de dar de comer en plena inflamacion intestinal. Es manejo clinico."
+        },
+        "olor#272:This theory is unproven, and as already noted enterocyte/gut health has been shown to be enhanced with intraluminal food, as will ": {
+          "veredicto": "leido_no_aplica",
+          "por": "La misma discusion: la comida dentro del intestino mejora la salud del enterocito. Manejo clinico."
+        },
+        "cifra#363:Therefore, if only 25% of the animal's resting energy requirement (RER) is fed as a highly digestible, low‐fat diet, mucosal recov": {
+          "veredicto": "leido_no_aplica",
+          "por": "«If only 25% of the animal's resting energy requirement (RER) is fed...»: es realimentacion de un paciente hospitalizado, cuanto se le ofrece el primer dia. El motor formula la racion del dia entero de un animal que come; la realimentacion progresiva es manejo clinico."
+        },
+        "cifra#374:An almost arbitrary cutoff of 20% of metabolizable energy (ME) could be made.": {
+          "veredicto": "leido_no_aplica",
+          "por": "«An almost ARBITRARY cutoff of 20% of metabolizable energy (ME) could be made» para la gastroenteritis aguda, y lo llama arbitrario el propio autor dos frases despues de decir que «no fat-titration studies have been performed to guide firm recommendations». 20 % de las kcal = 22,2 g/1000 kcal; medido, tampoco sale menu (ver `cifra#700`). No se aplica una cifra que su fuente llama arbitraria y que ademas no cabe."
+        },
+        "cifra#380:An empirical recommendation is to select diets that contain less than 8% total dietary fiber or less than 5% crude fiber.": {
+          "veredicto": "hallazgo",
+          "por": "UN TECHO DE FIBRA QUE EL MOTOR NO TIENE. «An empirical recommendation is to select diets that contain LESS THAN 8% TOTAL DIETARY FIBER or less than 5% crude fiber» en enteropatia cronica. 8 % MS a 4000 kcal/kg = 20 g/1000 kcal. FEDIAF no pone requisito de fibra -- y ojo, que en agosto se colo aqui una fila «Fibra» inventada --, asi que esto solo podria vivir como tope de la patologia `enteropatia_cronica`. MEDIDO sobre los 36 menus del catalogo: mediana 1,2 g/1000 kcal, pero OCHO de los 36 pasan de 20 (hasta 31,1), o sea que el tope SI haria algo. No se aplica en esta pasada: su propia fuente lo llama «empirical recommendation» y la tabla de SACN5 que ya usa esa patologia manda. Se escribe y se pregunta."
+        },
+        "cifra#389:Cottage cheese and rice Cottage cheese (1% milk fat) 1 unit Boiled white rice 1 unit ME density: 4.8 kJ/g or 1 kcal/g as fed Nutri": {
+          "veredicto": "leido_no_aplica",
+          "por": "Receta casera de corta duracion (requeson y arroz blanco) con su densidad energetica. Es una dieta de transicion de dias, explicitamente incompleta; el motor no entrega raciones incompletas (regla 1)."
+        },
+        "cifra#391:Most commercial diets provide significantly more fat (>25% of ME) but are complete and balanced.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Que la mayoria de los piensos llevan mas del 25 % de las kcal en grasa. Es una descripcion del mercado."
+        },
+        "cifra#392:In addition, when feeding as little as 25% of RER, it is unlikely that the fat content will be sufficient to exacerbate vomiting o": {
+          "veredicto": "leido_no_aplica",
+          "por": "La misma realimentacion al 25 % del RER: a esa cantidad la grasa no basta para provocar vomito. Manejo clinico, no formulacion."
+        },
+        "olor#433:Although it appears that a “natural” diet protects against, or at least minimizes, the development of calculus, it does little to ": {
+          "veredicto": "hallazgo",
+          "por": "LO QUE UNA DIETA CRUDA NO HACE, dicho por esta fuente: «Although it appears that a NATURAL diet protects against, or at least minimizes, the development of calculus, it does little to...». Es de los pocos sitios donde el libro habla de la dieta cruda y del sarro. No cambia ninguna cifra del motor, y queda escrito porque la app no promete nada dental y esta fuente marca hasta donde llega."
+        },
+        "cifra#496:The saliva secreted by such animals has a 50% reduction in protein content (Johnson 1984).": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO, y ademas es saliva: reduccion del 50 % del contenido proteico de la saliva."
+        },
+        "cifra#549:In experiments where GES tone has been measured following a meal in healthy humans, it appears that meal size (volume) has the mos": {
+          "veredicto": "no_aplica",
+          "por": "Es en HUMANOS sanos: tono del esfinter gastroesofagico tras la comida."
+        },
+        "cifra#553:Increasing the osmolarity of an ingested yogurt solution from 145 to 500 mOsm/l while maintaining the same volume and fat content ": {
+          "veredicto": "no_aplica",
+          "por": "Es en HUMANOS: yogur a distinta osmolaridad."
+        },
+        "reco#564:Until species‐specific research answers this question, it is recommended that efforts be directed toward increasing the frequency ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Que hasta que haya investigacion en perro y gato conviene aumentar la FRECUENCIA de las tomas. El motor calcula cuanto, no en cuantas tomas."
+        },
+        "cifra#587:Similar findings are reported in humans with IBD, with protein‐energy malnutrition documented to occur in 20–85% of IBD patients (": {
+          "veredicto": "no_aplica",
+          "por": "Es en HUMANOS con enfermedad inflamatoria intestinal (desnutricion proteico-energetica en el 20-85 %)."
+        },
+        "cifra#609:Oral supplementation is also effective (0.25–1 mg cyanocobalamin/day/dog and 0.25 mg/day/cat) (Chang et al. 2022; Toresson et al. ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Dosis de farmaco o de suplemento inyectable/oral para tratar la carencia (cobalamina, vitamina K1, cinc), no una concentracion de la dieta. El motor formula raciones, no receta."
+        },
+        "cifra#613:Coagulation tests normalized in all the cats reported that were treated with parenteral vitamin K1 (2.5–5 mg/cat, repeated two or ": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO: vitamina K1 parenteral en gatos con enteropatia cronica."
+        },
+        "cifra#624:In a study of CD patients with increased intestinal permeability, daily oral zinc supplementation improved symptoms and normalized": {
+          "veredicto": "no_aplica",
+          "por": "Es en HUMANOS con enfermedad de Crohn (cinc oral y permeabilidad intestinal)."
+        },
+        "olor#628:In a study of 16 feline cases of elimination challenge–proven dietary hypersensitivity with chronic gastrointestinal signs, all 16": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO: 16 casos felinos de hipersensibilidad alimentaria demostrada."
+        },
+        "cifra#700:Dietary fat restriction is particularly important in patients diagnosed with lymphangiectasia, with many patients needing restrict": {
+          "veredicto": "hallazgo",
+          "por": "⚠️ EL MISMO «15 %» QUE APLICA EL MOTOR, PERO EN OTRA UNIDAD, Y NO CABE. Fascetti: «Dietary fat restriction is particularly important in patients diagnosed with lymphangiectasia, with many patients needing restriction to less than 15% FAT kJ or kcal» -- el 15 % de la ENERGIA, o sea <=16,7 g/1000 kcal. El motor aplica 37,5 g/1000 kcal a `ple_linfangiectasia`, que sale de la Tabla 58-1 de SACN5, donde el mismo 15 % es de MATERIA SECA. Dos fuentes, el mismo numero, dos unidades, y un factor de 2,2 entre las dos. MEDIDO el 11-sep-2026 preguntandole al solver con 40 s en perros de 10, 20 y 35 kg: con 37,5 sale menu en los tres; con 20,0 y con 16,7 NO SALE EN NINGUNO. Asi que la cifra de Fascetti no se puede aplicar con este catalogo y se escribe con su medida, que es la regla. La razon de fondo es de la dieta: una racion BARF es carne, la carne lleva grasa, y sin hidratos no hay con que diluir las kcal."
+        },
+        "cifra#701:Unfortunately, there are few commercial veterinary diets available that contain less than 15% fat kJ or kcal.": {
+          "veredicto": "hallazgo",
+          "por": "La otra mitad de la misma frase: «there are FEW COMMERCIAL VETERINARY DIETS available that contain less than 15% fat kJ or kcal». O sea que la propia fuente dice que casi ningun producto del mercado llega a esa cifra. Va con `cifra#700`."
+        },
+        "cifra#706:They were fed either a high‐fat (23.2% dry matter [DM] basis) or a low‐fat (10.5% DM basis) diet for six weeks.": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO: 60 gatos con diarrea cronica y dietas al 23,2 % y 10,5 % de grasa en materia seca."
+        },
+        "olor#709:Thus this study emphasized the important role of dietary manipulation in chronic intestinal disease, and the lack of importance, a": {
+          "veredicto": "no_aplica",
+          "por": "La conclusion del mismo estudio felino: en el gato la malabsorcion de grasa importa mucho menos que en el perro. Confirma que el limite de grasa es cosa del PERRO, que es a quien formula el motor."
+        },
+        "cifra#739:However, a larger, randomized, double‐blind trial comprising 96 patients with UC failed to reveal any benefit in remission mainten": {
+          "veredicto": "no_aplica",
+          "por": "Es en HUMANOS con colitis ulcerosa (ensayo con 96 pacientes)."
+        }
+      }
+    },
+    "cap12": {
+      "titulo": "Nutritional Management of Exocrine Pancreatic Diseases",
+      "regla_del_capitulo": "Leido entero. Repite la confusion de unidades del cap. 11 -- aqui el umbral de «baja en grasa» es el 20 % de las KCAL y el motor aplica topes en % de materia seca de SACN5 --, y medido no cabe. En la EPI esta fuente es MAS PERMISIVA que el motor, lo que confirma que elegir el extremo alto de la Tabla 66-1 fue correcto. Y vuelve a salir lo de los premios, ahora en una patologia.",
+      "lectura_integra": {
+        "lineas": 229,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "cifra#98:The fat content of commercial canine and feline diets ranges from 20% to levels as high as 70% on an ME basis.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Descripcion del mercado: que porcentaje de grasa llevan los piensos comerciales y cuales son los productos veterinarios mas bajos en grasa, con marca y pais. No es un limite: es donde esta el estante. El motor no vende pienso."
+        },
+        "cifra#100:For most of the population eating commercial diets, a diet that has less than 20% fat on an ME basis will be considered low fat, b": {
+          "veredicto": "hallazgo",
+          "por": "EL UMBRAL DE «BAJA EN GRASA» DE ESTA FUENTE, en la unidad que importa: «a diet that has LESS THAN 20% FAT ON AN ME BASIS will be considered low fat». 20 % de las kcal = 22,2 g/1000 kcal. El motor aplica a la pancreatitis 37,5 g/1000 kcal (y 25,0 si ademas hay obesidad o hiperlipidemia), que salen de la Tabla 67-3 de SACN5 en % de MATERIA SECA. Es la MISMA confusion de unidades que el 15 % de la linfangiectasia del cap. 11, y otra vez la lectura en kcal es mas estricta. MEDIDO el 11-sep-2026 con el solver y 40 s en 10, 20 y 35 kg: con 20,0 g/1000 kcal no sale menu en ninguno. Se escribe con su medida."
+        },
+        "cifra#104:Some authors have recommended using highly digestible diets not restricted in fat (34–51% ME) unless there is evidence of hyperlip": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "Y esta fuente es mas PERMISIVA que el motor en la EPI: «Some authors have recommended using highly digestible diets NOT RESTRICTED IN FAT (34-51% ME) unless there is evidence of hyperlipidemia». El motor aplica 37,5 g/1000 kcal (33,8 % de las kcal) a la insuficiencia pancreatica exocrina, o sea justo en el extremo bajo de ese rango. Confirma que elegir el extremo ALTO de la Tabla 66-1 de SACN5 fue lo correcto."
+        },
+        "cifra#105:One study of 10 healthy dogs fed four diets differing in fat (16% vs. 38% ME, with or without digestive enzyme supplementation) in": {
+          "veredicto": "leido_no_aplica",
+          "por": "Estudio en 10 perros sanos con dietas al 16 % y al 38 % de las kcal en grasa, con y sin enzimas. Es evidencia de fondo del parrafo anterior; su conclusion esta juzgada en `cifra#104`."
+        },
+        "cifra#109:In the authors' experience, it is in many cases possible to meet energy requirements using highly digestible low‐fat diets (<20% M": {
+          "veredicto": "leido_no_aplica",
+          "por": "Que en la experiencia de los autores se pueden cubrir las necesidades con dietas muy digestibles y bajas en grasa (<20 % ME). Es la opinion que acompana a la cifra de `cifra#100`, ya medida alli."
+        },
+        "cifra#110:There is one liquid diet available (Royal Canin Veterinary Health Nutrition Canine Gastrointestinal Low Fat Liquid, Royal Canin, S": {
+          "veredicto": "leido_no_aplica",
+          "por": "Descripcion del mercado: que porcentaje de grasa llevan los piensos comerciales y cuales son los productos veterinarios mas bajos en grasa, con marca y pais. No es un limite: es donde esta el estante. El motor no vende pienso."
+        },
+        "reco#111:If energy needs can be met, the use of a low‐fat diet has no drawbacks and is recommended until more information is available.": {
+          "veredicto": "leido_no_aplica",
+          "por": "«If energy needs can be met, the use of a low-fat diet has no drawbacks and is recommended until more information is available.» La condicion es justo la que no se cumple aqui: medido, con este catalogo las necesidades NO se cubren por debajo de 22,2 g/1000 kcal."
+        },
+        "cifra#116:In the retrospective study cited earlier (Klaus et al. 2009), where 55 cats were fed via nasogastric feeding tubes, the diet used ": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO: 55 gatos alimentados por sonda nasogastrica."
+        },
+        "reco#128:Cats that have been anorectic for more than three days should be fed as soon as possible despite the presence or absence of clinic": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO: gatos anorexicos mas de tres dias."
+        },
+        "cifra#142:Gut atrophy has been proposed as a possible complication of parenteral nutrition in animal models (Frost and Bihari 1997; MacFie e": {
+          "veredicto": "no_aplica",
+          "por": "Es en MODELOS ANIMALES de laboratorio: atrofia intestinal con nutricion parenteral."
+        },
+        "cifra#151:A good starting point is a mixture of cottage cheese (2% milk fat) and cooked white rice (in a volume ratio of 1 : 1), which provi": {
+          "veredicto": "leido_no_aplica",
+          "por": "Receta casera de corta duracion para realimentar (requeson y arroz, pollo hervido y cereal de bebe, atun al natural). Son mezclas explicitamente incompletas para dias sueltos; el motor no entrega raciones incompletas -- regla 1 -- y el catalogo no tiene cereales ni requeson."
+        },
+        "cifra#157:For example, three‐eighths of a cup of cooked roasted chicken breast (skinless and boneless) plus three‐quarters of a cup of baby ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Receta casera de corta duracion para realimentar (requeson y arroz, pollo hervido y cereal de bebe, atun al natural). Son mezclas explicitamente incompletas para dias sueltos; el motor no entrega raciones incompletas -- regla 1 -- y el catalogo no tiene cereales ni requeson."
+        },
+        "cifra#158:Mixing 2 oz (56 g) of tuna in water (drained solids only) with seven‐eighths of a cup of baby rice cereal (measured dry before rec": {
+          "veredicto": "leido_no_aplica",
+          "por": "Receta casera de corta duracion para realimentar (requeson y arroz, pollo hervido y cereal de bebe, atun al natural). Son mezclas explicitamente incompletas para dias sueltos; el motor no entrega raciones incompletas -- regla 1 -- y el catalogo no tiene cereales ni requeson."
+        },
+        "cifra#177:If the original diet is higher in fat (i.e. >35–40% fat on an ME basis), commercial options that provide approximately 50% of that": {
+          "veredicto": "leido_no_aplica",
+          "por": "Como bajar la grasa a la mitad respecto a la dieta anterior del paciente. Es una regla RELATIVA a lo que ya comia, y el motor formula de cero: no hay dieta anterior contra la que medir. La app si tiene el dato («dieta_actual»), pero solo para decidir la transicion."
+        },
+        "cifra#180:These range from 16% to 22% fat on an ME basis, and an accurate diet history will need to be obtained to decide if any of these is": {
+          "veredicto": "leido_no_aplica",
+          "por": "Descripcion del mercado: que porcentaje de grasa llevan los piensos comerciales y cuales son los productos veterinarios mas bajos en grasa, con marca y pais. No es un limite: es donde esta el estante. El motor no vende pienso."
+        },
+        "cifra#181:Currently for cats, the lowest‐fat dry veterinary diets are Hill's Prescription Diet r/d Feline dry (24% on an ME basis in the Uni": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO, y ademas es un producto comercial con su marca."
+        },
+        "cifra#182:As is common, canned varieties are higher in fat (at least 31% on a ME basis).": {
+          "veredicto": "leido_no_aplica",
+          "por": "Descripcion del mercado: que porcentaje de grasa llevan los piensos comerciales y cuales son los productos veterinarios mas bajos en grasa, con marca y pais. No es un limite: es donde esta el estante. El motor no vende pienso."
+        },
+        "reco#200:In any case, a patient diagnosed with chronic pancreatitis should be fed complete and balanced diets, treats, and human foods that": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "«A patient diagnosed with chronic pancreatitis should be fed complete and balanced diets, TREATS, and human foods that...». Vuelve a salir el mismo asunto de los premios: en una pancreatitis cronica lo que se da fuera de la racion cuenta igual. El motor lo cuenta desde el 11-sep-2026 (`kcal_de_premios`)."
+        },
+        "reco#209:Fatty animal products Fatty fish Dairy Commercial treats Other Beef Salmon Cheese (non low fat), including spreadable cream cheese": {
+          "veredicto": "leido_no_aplica",
+          "por": "Lista de alimentos grasos que hay que evitar en pancreatitis (ternera grasa, salmon, quesos, premios comerciales). El motor ya lo resuelve por la via dura: el tope de grasa de la patologia se aplica al menu entero, asi que un alimento graso no entra si no cabe."
+        },
+        "cifra#243:In the first study, the effect of a low‐fat diet (13% on an ME basis) was compared to the dogs' original diet (which varied in fat": {
+          "veredicto": "leido_no_aplica",
+          "por": "Estudio con dieta baja en grasa al 13 % de las kcal frente a la dieta original del perro. Es una cifra de estudio, no una recomendacion; la recomendacion del capitulo esta en `cifra#100`."
+        },
+        "cifra#244:In the latter study, three diets were used: a high‐fat diet (51% on an ME basis), a high‐fiber, low‐fat diet (22% fat on an ME bas": {
+          "veredicto": "leido_no_aplica",
+          "por": "El otro estudio, con tres dietas (51 % de las kcal en grasa; 22 % con mucha fibra; y la tercera). Evidencia de fondo."
+        },
+        "cifra#248:The three dogs did well with the diet and the supplementation, even though the fat content of this diet was high (40.8% on an ME b": {
+          "veredicto": "leido_no_aplica",
+          "por": "Tres perros que fueron bien con una dieta al 40,8 % de las kcal en grasa. Va con `olor#250`."
+        },
+        "olor#250:Thus, current information indicates that a low‐fat diet is not necessary unless steatorrhea is uncontrollable, at least initially.": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "LA CONCLUSION DEL CAPITULO SOBRE LA EPI, y es mas permisiva que el motor: «current information indicates that a low-fat diet is NOT NECESSARY unless steatorrhea is uncontrollable, at least initially». El motor aplica igualmente 37,5 g/1000 kcal, que es el extremo alto de la Tabla 66-1 de SACN5 y el lado prudente. Un tope que la fuente considera innecesario no hace dano: solo aprieta."
+        },
+        "cifra#256:Rutz et al. (2004) studied the effect of three diets (containing 0%, 16%, or 35% of the total fat content as MCTs) in a randomized": {
+          "veredicto": "leido_no_aplica",
+          "por": "Triglicéridos de cadena media (0 %, 16 % y 35 % de la grasa total) en un ensayo aleatorizado. El catalogo no tiene aceite MCT, y el propio cap. 11 dice que su beneficio esta por demostrar en el perro."
+        },
+        "olor#266:An individual choice of diet should be made for each patient, and in many cases this process will be one characterized by trial an": {
+          "veredicto": "leido_no_aplica",
+          "por": "Que la dieta hay que elegirla caso por caso, a base de prueba y error. Es criterio clinico; el motor ofrece la puerta para eso con `objetivos_del_profesional`."
+        },
+        "cifra#278:In a retrospective study with 18 dogs with EPI and cobalamin deficiency, oral supplementation with 0.25–1.0 mg/d cobalamin resulte": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cobalamina oral 0,25-1,0 mg/dia en perros con EPI. Es dosis de suplemento, no concentracion de la dieta."
+        },
+        "cifra#279:A recent prospective clinical trial including 46 dogs with hypocobalaminemia caused by chronic enteropathy or EPI found that both ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Ensayo con 46 perros hipocobalaminemicos: dosis de cobalamina, no cifra de dieta."
+        },
+        "cifra#281:A study in Brazil (abstract only) noted that a highly digestible diet enriched in prebiotic fibers and in B12 (1.5 vs. 0.17 ppm) a": {
+          "veredicto": "leido_no_aplica",
+          "por": "Dieta enriquecida en fibra prebiotica y en B12 (1,5 frente a 0,17 ppm), de un resumen de congreso brasileno. Solo hay resumen, asi que no se puede verificar la cifra."
+        },
+        "cifra#283:One retrospective study by Xenoulis et al. (2016) noted that 77% of cats presented with hypocobalaminemia, and that vitamin B12 su": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO: el 77 % de los gatos con hipocobalaminemia."
+        },
+        "olor#287:Regarding feed management, ad libitum feeding is not an option in these patients, since pancreatic enzymes must be given with ever": {
+          "veredicto": "leido_no_aplica",
+          "por": "Que en la EPI no vale dar de comer a voluntad porque las enzimas van con cada toma. Manejo, no formulacion."
+        },
+        "olor#288:Also, it is important to avoid or at least minimize treats and to make sure that the patient does not have access to unmonitored f": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "SEXTA VEZ QUE SALE LO DE LOS PREMIOS, y aqui en una patologia: «it is important to AVOID OR AT LEAST MINIMIZE TREATS and to make sure that the patient does not have access to unmonitored food». El motor ya cuenta las kcal de premios y avisa cuando pasan del 10 %; en una EPI el aviso vale el doble porque la racion lleva el tope de grasa y lo de fuera no."
+        },
+        "olor#291:Fat is the most potent stimulator for pancreatic secretion, and its oral intake must be restricted during an episode of acute panc": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "«Fat is the most potent stimulator for pancreatic secretion, and its oral intake must be restricted during an episode of acute pancreatitis.» Es el motivo del tope de grasa de la pancreatitis que el motor aplica como restriccion DURA del solver, no como aviso."
+        }
+      }
+    },
+    "cap13": {
+      "titulo": "Nutritional Management of Hepatobiliary Diseases",
+      "regla_del_capitulo": "Leido entero. Casi todo son dosis de farmaco por kg de peso, cifras de analitica o de biopsia, o hepatologia humana y felina, y va marcado uno a uno. Lo que toca al motor son tres confirmaciones: por que el shunt SIN encefalopatia no lleva restriccion de proteina (y el BLOQUE 90 lo tenia marcado como pregunta que no decide nada), que el sodio y el cobre de la hepatopatia ya estan puestos, y que las dietas hepaticas del mercado van por DEBAJO del minimo de proteina de FEDIAF, donde el motor no puede bajar.",
+      "lectura_integra": {
+        "lineas": 308,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "cifra#11:After partial (70%) hepatectomy, compensatory hyperplasia begins within minutes of resection and is typically completed within two": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del higado y de lo que se rompe cuando falla (produccion de glucosa, sintesis de albumina, regeneracion tras hepatectomia, esteatorrea por falta de bilis). Es el POR QUE del capitulo; sin cifra de dieta que aplicar."
+        },
+        "olor#17:A combination of these alterations usually exists in patients with hepatic disease, and each must be given consideration before ap": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del higado y de lo que se rompe cuando falla (produccion de glucosa, sintesis de albumina, regeneracion tras hepatectomia, esteatorrea por falta de bilis). Es el POR QUE del capitulo; sin cifra de dieta que aplicar."
+        },
+        "cifra#20:Carbohydrate Metabolic Alterations In healthy individuals, the liver accounts for approximately 90% of endogenous glucose producti": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del higado y de lo que se rompe cuando falla (produccion de glucosa, sintesis de albumina, regeneracion tras hepatectomia, esteatorrea por falta de bilis). Es el POR QUE del capitulo; sin cifra de dieta que aplicar."
+        },
+        "cifra#38:The most abundant is albumin, which represents 55–60% of the total plasma protein pool (Center 1996c).": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del higado y de lo que se rompe cuando falla (produccion de glucosa, sintesis de albumina, regeneracion tras hepatectomia, esteatorrea por falta de bilis). Es el POR QUE del capitulo; sin cifra de dieta que aplicar."
+        },
+        "cifra#72:Vitamin B12 can be supplemented parenterally at a dose of 250 μg per cat subcutaneously (SQ) once weekly for six consecutive weeks": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO: 250 ug de B12 por gato, por via subcutanea."
+        },
+        "cifra#75:Vitamin C should thus be supplemented, and dogs will tolerate doses of 25 mg/kg body weight orally (PO) per day.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Dosis de farmaco o de suplemento por kg de peso vivo (vitamina C, E, K1, cinc, cobalamina, D-penicilamina, espironolactona, lactulosa). El motor formula raciones: no receta ni ajusta dosis por kilo. Y lo que si es un SUELO de la dieta -- el cinc y la vitamina E de la hepatopatia por cobre -- ya esta aplicado en `patologias.json` (zinc 50, vitE 67,1 por 1000 kcal)."
+        },
+        "cifra#81:Although 90% of human patients with advanced liver disease are deficient in vitamin D (Arteh et al. 2010), the status in dogs and ": {
+          "veredicto": "no_aplica",
+          "por": "Es en HUMANOS. El capitulo apoya sus argumentos en la hepatologia humana y lo dice; comprobado abriendo el parrafo."
+        },
+        "cifra#84:Vitamin E should be supplemented at doses of 10–15 IU/kg/day.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Dosis de farmaco o de suplemento por kg de peso vivo (vitamina C, E, K1, cinc, cobalamina, D-penicilamina, espironolactona, lactulosa). El motor formula raciones: no receta ni ajusta dosis por kilo. Y lo que si es un SUELO de la dieta -- el cinc y la vitamina E de la hepatopatia por cobre -- ya esta aplicado en `patologias.json` (zinc 50, vitE 67,1 por 1000 kcal)."
+        },
+        "cifra#86:One study showed that 25% of human patients with primary biliary cirrhosis had subnormal plasma vitamin K1 (phylloquinone) concent": {
+          "veredicto": "no_aplica",
+          "por": "Es en HUMANOS. El capitulo apoya sus argumentos en la hepatologia humana y lo dice; comprobado abriendo el parrafo."
+        },
+        "cifra#90:Normalization of prolonged clotting times after parenteral administration of vitamin K1 (0.5–1.0 mg/kg SQ) documents vitamin K def": {
+          "veredicto": "leido_no_aplica",
+          "por": "Dosis de farmaco o de suplemento por kg de peso vivo (vitamina C, E, K1, cinc, cobalamina, D-penicilamina, espironolactona, lactulosa). El motor formula raciones: no receta ni ajusta dosis por kilo. Y lo que si es un SUELO de la dieta -- el cinc y la vitamina E de la hepatopatia por cobre -- ya esta aplicado en `patologias.json` (zinc 50, vitE 67,1 por 1000 kcal)."
+        },
+        "cifra#95:Zinc should be orally supplemented as zinc gluconate or zinc citrate (5 mg/kg body weight/day).": {
+          "veredicto": "leido_no_aplica",
+          "por": "Dosis de farmaco o de suplemento por kg de peso vivo (vitamina C, E, K1, cinc, cobalamina, D-penicilamina, espironolactona, lactulosa). El motor formula raciones: no receta ni ajusta dosis por kilo. Y lo que si es un SUELO de la dieta -- el cinc y la vitamina E de la hepatopatia por cobre -- ya esta aplicado en `patologias.json` (zinc 50, vitE 67,1 por 1000 kcal)."
+        },
+        "cifra#101:Secondary copper accumulation rarely exceeds 2000 ppm (μg/g) dry weight (dw) in liver tissue; normal <400 ppm (μg/g) dw (Thornburg": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cifras de ANALITICA o de biopsia: cobre en tejido hepatico en ppm, cinc en suero, albumina en plasma. Son los datos que decide un clinico, no concentraciones de la dieta. El motor los usa por otra puerta: `quien_formula_cada_patologia.json` exige justo estos datos para poder marcar la patologia."
+        },
+        "cifra#104:Protein‐calorie malnutrition occurs in almost 40% of human patients with cirrhosis and progresses as liver function declines (Cheu": {
+          "veredicto": "no_aplica",
+          "por": "Es en HUMANOS. El capitulo apoya sus argumentos en la hepatologia humana y lo dice; comprobado abriendo el parrafo."
+        },
+        "cifra#109:Approximately 80% of humans with cirrhosis have depletion of visceral protein (Caregaro et al. 1996).": {
+          "veredicto": "no_aplica",
+          "por": "Es en HUMANOS. El capitulo apoya sus argumentos en la hepatologia humana y lo dice; comprobado abriendo el parrafo."
+        },
+        "cifra#112:The steatorrhea that occurs in approximately 40% of human patients with hepatic cirrhosis is related to decreased delivery of bile": {
+          "veredicto": "no_aplica",
+          "por": "Es en HUMANOS. El capitulo apoya sus argumentos en la hepatologia humana y lo dice; comprobado abriendo el parrafo."
+        },
+        "olor#116:Sufficient carbohydrate and fat must be provided in the diet to prevent protein catabolism for energy needs and consequent ammonia": {
+          "veredicto": "leido_no_aplica",
+          "por": "Fisiologia del higado y de lo que se rompe cuando falla (produccion de glucosa, sintesis de albumina, regeneracion tras hepatectomia, esteatorrea por falta de bilis). Es el POR QUE del capitulo; sin cifra de dieta que aplicar."
+        },
+        "cifra#149:The caloric density of most human and veterinary liquid enteral formulas varies from 1.0 to 2.0 kcal/ml.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Densidad calorica de las formulas liquidas enterales (1,0-2,0 kcal/ml). El motor no formula sondas."
+        },
+        "cifra#153:Mild hypokalemia can be treated with oral potassium chloride or potassium gluconate supplementation (5–10 mEq/day with meals; i.e.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Dosis de farmaco o de suplemento por kg de peso vivo (vitamina C, E, K1, cinc, cobalamina, D-penicilamina, espironolactona, lactulosa). El motor formula raciones: no receta ni ajusta dosis por kilo. Y lo que si es un SUELO de la dieta -- el cinc y la vitamina E de la hepatopatia por cobre -- ya esta aplicado en `patologias.json` (zinc 50, vitE 67,1 por 1000 kcal)."
+        },
+        "cifra#156:Commercial veterinary diets containing between 25% and 30% protein on a metabolizable energy (ME) basis and 60–68% fat on an ME ba": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO: dietas al 25-30 % de proteina y 60-68 % de grasa sobre las kcal, toleradas por gatos con lipidosis hepatica NO encefalopatica."
+        },
+        "cifra#163:Feeding should be initiated at 25% of the calculated RER and then slowly increased by 25% increments daily, depending on the anima": {
+          "veredicto": "leido_no_aplica",
+          "por": "Realimentacion progresiva desde el 25 % del RER. Manejo hospitalario, no formulacion."
+        },
+        "olor#165:The advantage of using a balanced commercial diet is that additional protein, minerals, and vitamins do not need to be added.": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "«The advantage of using a BALANCED commercial diet is that additional protein, minerals, and vitamins do not need to be added.» Es el argumento de la regla 1 aplicado al higado: una dieta completa no necesita parches. El motor entrega raciones completas o no entrega."
+        },
+        "cifra#177:Diets for cats with HL should be potassium replete (0.8–1% potassium on a dry matter basis, or 1.5 g/Mcal), or potassium can be or": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO: lipidosis hepatica felina, potasio al 0,8-1 % MS."
+        },
+        "cifra#188:Based on these findings, L‐carnitine has been recommended for the management of cats with HL at an oral dose of 250–500 mg L‐carni": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO: L-carnitina en la lipidosis hepatica felina."
+        },
+        "cifra#192:Other Nutrient Considerations Additional dietary supplements that are inconsistently used by some clinicians in cats with severe H": {
+          "veredicto": "no_aplica",
+          "por": "Es del GATO: suplementos que algunos clinicos usan en la lipidosis hepatica grave."
+        },
+        "cifra#200:In non‐hereditary, secondary copper storage disease, copper accumulation is mainly restricted to periportal areas and hepatic copp": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cifras de ANALITICA o de biopsia: cobre en tejido hepatico en ppm, cinc en suero, albumina en plasma. Son los datos que decide un clinico, no concentraciones de la dieta. El motor los usa por otra puerta: `quien_formula_cada_patologia.json` exige justo estos datos para poder marcar la patologia."
+        },
+        "cifra#201:In contrast, copper accumulation with primary hereditary copper storage disorders is always centrilobular, and hepatic copper conc": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cifras de ANALITICA o de biopsia: cobre en tejido hepatico en ppm, cinc en suero, albumina en plasma. Son los datos que decide un clinico, no concentraciones de la dieta. El motor los usa por otra puerta: `quien_formula_cada_patologia.json` exige justo estos datos para poder marcar la patologia."
+        },
+        "cifra#202:Normal hepatic copper concentrations are considered to be less than 400 ppm (μg/g) dw (Hoffmann et al. 2006; Spee et al. 2006).": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cifras de ANALITICA o de biopsia: cobre en tejido hepatico en ppm, cinc en suero, albumina en plasma. Son los datos que decide un clinico, no concentraciones de la dieta. El motor los usa por otra puerta: `quien_formula_cada_patologia.json` exige justo estos datos para poder marcar la patologia."
+        },
+        "cifra#203:Breed‐associated hepatic copper accumulation with reports of greater than 2000 ppm (μg/g) dw has been identified in Bedlington ter": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cifras de ANALITICA o de biopsia: cobre en tejido hepatico en ppm, cinc en suero, albumina en plasma. Son los datos que decide un clinico, no concentraciones de la dieta. El motor los usa por otra puerta: `quien_formula_cada_patologia.json` exige justo estos datos para poder marcar la patologia."
+        },
+        "cifra#223:These formulations differ from those prescribed for patients with renal disease in that the hepatic formulas are generally less pr": {
+          "veredicto": "hallazgo",
+          "por": "LAS DIETAS HEPATICAS DEL MERCADO VAN POR DEBAJO DEL MINIMO DE FEDIAF. «The hepatic formulas are generally less protein restricted (14-15.5% PROTEIN ON AN ME BASIS) than most renal diets»: 14-15,5 % de las kcal = 35 a 38,75 g/1000 kcal, y el minimo de FEDIAF para el adulto son 52,1. El motor NO PUEDE bajar ahi y no lo hace: formular por debajo de FEDIAF es la fase 4 de `VETERINARIOS.md`, que exige una prescripcion declarada que viaje con el menu, y todavia no existe. Queda escrito con las dos cifras. || Y el resto de la frase describe lo que el motor SI aplica ya a la hepatopatia por cobre: cobre restringido (2,4), cinc alto (suelo 50), sodio controlado (625) y antioxidantes (vitamina E 67,1)."
+        },
+        "cifra#229:In contrast, others advocate a lower dose of vitamin C supplementation (25 mg/kg body weight/day) because plasma ascorbic acid con": {
+          "veredicto": "leido_no_aplica",
+          "por": "Dosis de farmaco o de suplemento por kg de peso vivo (vitamina C, E, K1, cinc, cobalamina, D-penicilamina, espironolactona, lactulosa). El motor formula raciones: no receta ni ajusta dosis por kilo. Y lo que si es un SUELO de la dieta -- el cinc y la vitamina E de la hepatopatia por cobre -- ya esta aplicado en `patologias.json` (zinc 50, vitE 67,1 por 1000 kcal)."
+        },
+        "cifra#231:Hepatic copper concentrations >1000 ppm (μg/g) dw liver require therapy to be reduced.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cifras de ANALITICA o de biopsia: cobre en tejido hepatico en ppm, cinc en suero, albumina en plasma. Son los datos que decide un clinico, no concentraciones de la dieta. El motor los usa por otra puerta: `quien_formula_cada_patologia.json` exige justo estos datos para poder marcar la patologia."
+        },
+        "cifra#232:Animals with >2000 ppm (μg/g) dw copper content should all have chelator therapy for at least three months.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cifras de ANALITICA o de biopsia: cobre en tejido hepatico en ppm, cinc en suero, albumina en plasma. Son los datos que decide un clinico, no concentraciones de la dieta. El motor los usa por otra puerta: `quien_formula_cada_patologia.json` exige justo estos datos para poder marcar la patologia."
+        },
+        "cifra#239:An initial induction dose of 15 mg/kg body weight of elemental zinc given twice daily 1 h before meals is recommended.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Dosis de farmaco o de suplemento por kg de peso vivo (vitamina C, E, K1, cinc, cobalamina, D-penicilamina, espironolactona, lactulosa). El motor formula raciones: no receta ni ajusta dosis por kilo. Y lo que si es un SUELO de la dieta -- el cinc y la vitamina E de la hepatopatia por cobre -- ya esta aplicado en `patologias.json` (zinc 50, vitE 67,1 por 1000 kcal)."
+        },
+        "cifra#241:The goal is to maintain serum zinc concentrations between 200 and 500 μg/dl.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cifras de ANALITICA o de biopsia: cobre en tejido hepatico en ppm, cinc en suero, albumina en plasma. Son los datos que decide un clinico, no concentraciones de la dieta. El motor los usa por otra puerta: `quien_formula_cada_patologia.json` exige justo estos datos para poder marcar la patologia."
+        },
+        "cifra#243:Plasma zinc concentrations exceeding 1000 μg/dl may result in hemolysis, and therefore plasma zinc concentrations should be monito": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cifras de ANALITICA o de biopsia: cobre en tejido hepatico en ppm, cinc en suero, albumina en plasma. Son los datos que decide un clinico, no concentraciones de la dieta. El motor los usa por otra puerta: `quien_formula_cada_patologia.json` exige justo estos datos para poder marcar la patologia."
+        },
+        "cifra#245:D‐penicillamine (Cuprimine®, 250 mg capsules, Bausch Health, Bridgewater, NJ, USA), the most frequent copper chelator recommended ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Dosis de farmaco o de suplemento por kg de peso vivo (vitamina C, E, K1, cinc, cobalamina, D-penicilamina, espironolactona, lactulosa). El motor formula raciones: no receta ni ajusta dosis por kilo. Y lo que si es un SUELO de la dieta -- el cinc y la vitamina E de la hepatopatia por cobre -- ya esta aplicado en `patologias.json` (zinc 50, vitE 67,1 por 1000 kcal)."
+        },
+        "reco#253:Periodic liver biopsies are recommended with the use of copper chelators to monitor hepatic copper concentrations and need for ong": {
+          "veredicto": "leido_no_aplica",
+          "por": "Cifras de ANALITICA o de biopsia: cobre en tejido hepatico en ppm, cinc en suero, albumina en plasma. Son los datos que decide un clinico, no concentraciones de la dieta. El motor los usa por otra puerta: `quien_formula_cada_patologia.json` exige justo estos datos para poder marcar la patologia."
+        },
+        "cifra#261:Vitamin E protects against the effects of copper, bile acids, and other hepatotoxins, and is administered at 10–15 IU/kg/day.": {
+          "veredicto": "leido_no_aplica",
+          "por": "Dosis de farmaco o de suplemento por kg de peso vivo (vitamina C, E, K1, cinc, cobalamina, D-penicilamina, espironolactona, lactulosa). El motor formula raciones: no receta ni ajusta dosis por kilo. Y lo que si es un SUELO de la dieta -- el cinc y la vitamina E de la hepatopatia por cobre -- ya esta aplicado en `patologias.json` (zinc 50, vitE 67,1 por 1000 kcal)."
+        },
+        "reco#262:Because bile acids are required for fat‐soluble vitamin E absorption and may be reduced in cholestatic liver disease, a water‐solu": {
+          "veredicto": "leido_no_aplica",
+          "por": "Que en la colestasis conviene la vitamina E hidrosoluble porque la liposoluble necesita bilis. Es la FORMA QUIMICA del suplemento, y el catalogo no distingue formas de vitamina E -- eso es un hueco de datos ya declarado en `DATOS_QUE_FALTAN.md`, no una cifra nueva."
+        },
+        "reco#307:However, dietary protein should not be restricted in animals with PSSs that are not encephalopathic, and these animals should be f": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "LA FUENTE QUE FALTABA PARA UNA PREGUNTA QUE EL MOTOR TENIA MARCADA COMO RARA. «Dietary protein should NOT be restricted in animals with PSSs that are NOT encephalopathic, and these animals should be fed as much protein as they will tolerate without becoming clinically encephalopathic.» El BLOQUE 90 tiene `shunt_sin_encefalopatia` marcado `no_cambia_ninguna_cifra` -- una pregunta cuyas respuestas aplican lo mismo --, y resulta que eso es lo CORRECTO: sin encefalopatia no se restringe. Ni esa patologia ni `encefalopatia_hepatica` llevan ningun tope en `patologias.json`, y ahora hay una fuente que dice por que."
+        },
+        "cifra#308:A study showed that 2.1 g of crude protein/kg body weight/day with 80% or greater bioavailability was adequate at maintaining body": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "La cifra del mismo parrafo: «2.1 g of crude protein/kg body weight/day with 80% or greater bioavailability was adequate at maintaining body protein stores in dogs with PSSs, without causing HE (Laflamme et al. 1993)». Va por kg de PESO VIVO y no por 1000 kcal; para un perro de 20 kg son 42 g/dia, que con una racion de 1100 kcal son 38 g/1000 kcal -- por DEBAJO del minimo de FEDIAF (52,1). O sea que el motor ya da mas proteina que la que este estudio necesito, sin hacer nada."
+        },
+        "cifra#345:Lactulose is also highly effective when added to enema fluid (a ratio of 30% lactulose to 70% water) and given as a retention enem": {
+          "veredicto": "leido_no_aplica",
+          "por": "Dosis de farmaco o de suplemento por kg de peso vivo (vitamina C, E, K1, cinc, cobalamina, D-penicilamina, espironolactona, lactulosa). El motor formula raciones: no receta ni ajusta dosis por kilo. Y lo que si es un SUELO de la dieta -- el cinc y la vitamina E de la hepatopatia por cobre -- ya esta aplicado en `patologias.json` (zinc 50, vitE 67,1 por 1000 kcal)."
+        },
+        "cifra#362:Central parenteral administration to dogs and cats with chronic hepatitis and cholangitis was associated with a mortality rate of ": {
+          "veredicto": "leido_no_aplica",
+          "por": "Mortalidad asociada a la nutricion parenteral central. No es dieta."
+        },
+        "olor#364:Ascites should be managed by avoiding excess dietary sodium and judicious use of diuretics.": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "«Ascites should be managed by AVOIDING EXCESS DIETARY SODIUM.» El motor aplica un techo de sodio de 625 mg/1000 kcal a la hepatopatia."
+        },
+        "reco#365:Commercially available hepatic diets are controlled in sodium and are recommended.": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "por": "«Commercially available hepatic diets are CONTROLLED IN SODIUM and are recommended.» Lo mismo: el techo de sodio ya esta puesto."
+        },
+        "cifra#367:Spironolactone, administered at 1–2 mg/kg PO twice daily, is the diuretic of choice since it blocks the action of aldosterone at t": {
+          "veredicto": "leido_no_aplica",
+          "por": "Dosis de farmaco o de suplemento por kg de peso vivo (vitamina C, E, K1, cinc, cobalamina, D-penicilamina, espironolactona, lactulosa). El motor formula raciones: no receta ni ajusta dosis por kilo. Y lo que si es un SUELO de la dieta -- el cinc y la vitamina E de la hepatopatia por cobre -- ya esta aplicado en `patologias.json` (zinc 50, vitE 67,1 por 1000 kcal)."
         }
       }
     }
