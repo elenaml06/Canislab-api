@@ -12,6 +12,15 @@ miraron.
 su texto extraído. 360 capítulos, del 1 al 360, sin un hueco. Está **en español**:
 es la traducción de Grupo Asís (2021) de la 8.ª edición de Elsevier.
 
+**⚠️ Y LA REGLA QUE COSTÓ DOS CORRECCIONES EL MISMO DÍA.** Al leer una fuente
+nueva **no basta con comparar contra el motor**: hay que preguntarse **si alguna
+de las otras ya decía algo de esto**. Sin eso, una discrepancia entre dos libros
+del mismo nivel se apunta como si fuera un fallo nuestro. Pasó dos veces el 11 de
+septiembre —con la energía del perro a dieta (SACN5 dice lo que hace el motor) y
+con el exponente de la energía de mantenimiento (NRC usa el mismo 0,75 que
+nosotras)— y las dos las cazó Elena, no yo. El sitio donde mirar primero es
+`FEDIAF_CONTRA_OTRAS_FUENTES.md`.
+
 **Por dónde se va.** Los capítulos **170 a 194** del tomo 1 son una sección
 entera de nutrición, y es por donde se empieza. Después, los de patología que
 deciden algo que el motor ya aplica.
@@ -102,10 +111,29 @@ además cambian de signo. Medido:
 O sea: al perro **toy** le damos un 62 % más kcal de las que dice esta fuente, y
 al **gigante** un 32 % menos. El cruce está sobre los 12 kg.
 
-**Qué se hace con esto.** Nada todavía, y por la regla de siempre: **manda
-FEDIAF**, y la Tabla VII-7 es de FEDIAF. Pero esto no es un matiz: **las kcal
-deciden todo lo demás**, porque los 43 requisitos se miden por 1000 kcal. Una
-diferencia del 62 % en el perro pequeño mueve la ración entera.
+**⚠️ CORREGIDO, POR EL MISMO MOTIVO QUE EL CAP. 176.** Escrito así parecía que el
+exponente de Ettinger era «el bueno» y el nuestro el raro. **No es eso**, y basta
+mirar las otras fuentes que ya están leídas:
+
+| Fuente | Qué usa |
+|---|---|
+| **NRC 2006** | *«Average maintenance requirements **130 kcal × kg BW^0,75**»* — exponente **0,75** |
+| **FEDIAF**, Tabla VII-7 | 95 a 175 kcal/kg^**0,75** según actividad — exponente **0,75** |
+| **Ettinger** cap. 172 | un **metaanálisis posterior**: 81,5 × kg^0,93 y 62 × kg^0,97 |
+
+O sea que **dos de las tres usan 0,75**, y lo de Ettinger es un trabajo más
+reciente que ese capítulo recoge, no el consenso. La divergencia sigue siendo
+real y sigue mereciendo estar apuntada —las kcal deciden todo lo demás, porque
+los 43 requisitos se miden por 1000 kcal— pero es **una fuente contra dos**, no
+al revés.
+
+Y un detalle que sale de paso: el **130 del NRC** es bastante más alto que el
+**110** de FEDIAF para actividad moderada, y es **exactamente** el umbral en el
+que el motor cruza al perro de trabajo. Otra coincidencia que conviene tener
+apuntada.
+
+**Qué se hace.** Nada: se queda el 0,75 de FEDIAF, y la discrepancia va al
+documento del nutricionista con las tres cifras.
 
 Y hay que leerlo con cuidado, que es lo que impide sacar la conclusión fácil: el
 110 es un **escalón de actividad** de FEDIAF y el 62·kg^0,97 es la **media de un
