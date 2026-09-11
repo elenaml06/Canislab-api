@@ -339,3 +339,46 @@ infectada»*.
 2. ⚠️ **El aviso al usuario no puede ser «cuidado con el cerdo»**, que es lo que
    la gente cree. Tiene que ser sobre el manejo del **pollo y la ternera** que sí
    le estamos dando.
+
+---
+
+## Cap. 171 — Nutrición neonatal y pediátrica · LEÍDO ENTERO
+
+**⚠️ CUARTA curva para la energía del cachorro.** «Los requerimientos energéticos
+[…] para cachorros se pueden estimar en **3 veces el requerimiento de energía en
+reposo** (RER; 70 × PC^0,75) desde el destete hasta los 4 meses de edad y en **2 ×
+RER** para el resto del periodo de crecimiento.»
+
+Medido contra lo que aplica el motor (curva de Klein, vía FEDIAF):
+
+| Peso | Edad | Adulto esperado | Motor | Ettinger | Diferencia |
+|---|---|---|---|---|---|
+| 3 kg | 3 m | 5 kg | 441 | 479 | −8 % |
+| 10 kg | 3 m | 30 kg | 1.185 | 1.181 | **0 %** |
+| 10 kg | 8 m | 15 kg | 835 | 787 | +6 % |
+| 25 kg | 8 m | 35 kg | 1.815 | 1.565 | +16 % |
+| **30 kg** | **5 m** | **60 kg** | **2.564** | **1.795** | **+43 %** |
+
+Coincide bien en el cachorro pequeño y joven, y **se separa justo en el cachorro
+grande en pleno crecimiento**, que es la población donde el exceso de energía hace
+daño de verdad. Ya van **cuatro fuentes y cuatro curvas**: Klein (FEDIAF, la que
+aplicamos), SACN5 Tabla 33-8 (hasta un 28 % por encima de Klein), Fascetti («2,5
+veces mantenimiento al destete») y esta.
+
+**Y el propio capítulo dice por qué importa**: «Los excesos de nutrientes con
+efectos en el desarrollo esquelético (**calcio, vitamina D, vitamina A**) se
+pueden observar en mascotas en crecimiento alimentadas con una dieta comercial
+suplementada con calcio u otras vitaminas/minerales.» Los tres tienen tope en el
+motor; el del calcio del cachorro de raza grande es de SACN5 y Fascetti.
+
+**Lo demás, leído:**
+- «Las deficiencias y los excesos de nutrientes […] pueden observarse con dietas
+  caseras mal formuladas (o crudas); por lo tanto, **no son la mejor opción para
+  los animales en crecimiento y deben evitarse**.» Es la postura del libro sobre
+  formular en crecimiento, y va con lo del cap. 192.
+- La dieta de **lactancia** necesita **≥4 kcal EM por gramo de materia seca**, y
+  las de cachorro de raza grande **no valen** para reproducción por ser menos
+  densas.
+- EPA y DHA preformados de aceites marinos son más eficientes que su precursor:
+  «la capacidad de perros y gatos para biotransformarlo es limitada». Confirma por
+  qué el motor exige EPA+DHA y no linolénico a secas en crecimiento.
