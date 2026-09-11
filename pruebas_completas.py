@@ -13782,6 +13782,86 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
+# BLOQUE 96 — NO SE APLICA UNA CIFRA DE UN CAPÍTULO SIN CERRAR
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (11 septiembre, de noche). Elena, por enésima vez y con
+# razón:
+#
+#     «no puede ser que te tengas que leer un capítulo 18 veces y que siempre
+#      sigan saliendo cosas que se te han pasado, que no has apuntado, que no
+#      has aplicado. [...] lo que quiero es que propongas una solución que no
+#      falle»
+#
+# Y la solución no podía ser leer con más cuidado, porque eso es literalmente lo
+# que se dijo las veces anteriores. El diagnóstico, MEDIDO y no supuesto:
+#
+#     El repo ya CONTABA los elementos sin veredicto de cada capítulo -- el
+#     BLOQUE 94 ejecuta esos contadores y decían 213 pendientes --, y el
+#     contador funcionaba. Lo que NO había era nada que impidiera APLICAR una
+#     cifra sacada de un capítulo con pendientes. O sea: se leía una FRASE, no
+#     un CAPÍTULO.
+#
+# De ahí salen los tres fallos de esa semana, los tres con la misma forma: la
+# frase del cap.14 de Fascetti con tres cifras de las que se aplicaron dos; el
+# 8 % de fibra del cap.11 aplicado a la patología equivocada porque vivía en el
+# cuadro de al lado; y la cita que decía «size of the litter» cuando el libro
+# dice «of the bitch».
+#
+# ⚠️ Y LO QUE ESTE BLOQUE **NO** GARANTIZA, escrito aquí para que nadie lo lea
+# como más de lo que es:
+#
+#   · NO dice que el veredicto sea el bueno. Un «leido_no_aplica» puesto a la
+#     ligera esconde un hallazgo igual que antes. Eso lo persiguen
+#     `auditar_citas.py` (que la cita diga lo que dice la fuente) y
+#     `auditar_conversiones.py` (que la cuenta se rehaga).
+#   · NO ve los capítulos de los que NO se aplica nada. Un capítulo entero sin
+#     leer y sin ninguna cifra citada es invisible para ESTE auditor -- lo tapa
+#     el BLOQUE 94, que clava el recuento de pendientes exacto, y por eso los
+#     dos tienen que estar.
+#
+# Lo que sí garantiza, y es lo que faltaba: que no se pueda volver a aplicar
+# media frase de un capítulo que no se ha terminado de leer.
+print("\n" + "=" * 60)
+print("=== BLOQUE 96: no se aplica una cifra de un capítulo sin cerrar ===")
+import os as _os96
+import subprocess as _sub96
+_r96 = _sub96.run([sys.executable, "auditar_fuente_cerrada.py"],
+                  capture_output=True, text=True, cwd=str(_raiz_b24))
+_salida96 = (_r96.stdout or "") + (_r96.stderr or "")
+if not _os96.path.exists(_os96.path.join(str(_raiz_b24), "auditar_fuente_cerrada.py")):
+    fallos.append("BLOQUE96: falta `auditar_fuente_cerrada.py`. Sin él se puede volver a "
+                  "aplicar una cifra de un capítulo a medio leer, que es de donde salieron "
+                  "los tres fallos del 11 de septiembre")
+elif "no aparece en el registro" in _salida96:
+    # ⚠️ UN CAPÍTULO CITADO QUE EL REGISTRO NO CONOCE NO ES UN AVISO, ES UN
+    # AGUJERO: significa que hay una cifra aplicada cuya lectura nadie cuenta,
+    # o que la cita nombra un capítulo que no existe. Las dos cosas dejan la
+    # cifra fuera de la regla de este bloque, o sea sin vigilar.
+    fallos.append("BLOQUE96: hay capítulos citados por cifras que el motor aplica y que el "
+                  "registro de lectura no conoce. Esa cifra se queda FUERA de la regla de "
+                  "este bloque:\n      "
+                  + "\n      ".join(l.strip() for l in _salida96.splitlines()
+                                    if "no aparece en el registro" in l))
+elif _r96.returncode != 0:
+    _cola96 = "\n      ".join(l.strip() for l in _salida96.strip().splitlines()
+                             if l.strip().startswith("❌"))
+    fallos.append(f"BLOQUE96: se está aplicando una cifra de un capítulo sin cerrar. Primero "
+                  f"se cierra el capítulo entero, después se aplica:\n      {_cola96}")
+for _l96 in _salida96.strip().splitlines():
+    if _l96.strip().startswith(("Discrepancias", "❌")) or not _l96.strip():
+        continue
+    print(f"  {_l96.strip()}")
+
+# Y la otra mitad, que es la que hace que el rojo se pueda arreglar de una sola
+# forma: LEYENDO. Si alguien borrase la cifra aplicada en vez de cerrar el
+# capítulo, este bloque pasaría a verde -- y el capítulo seguiría sin leer.
+# Contra eso está el BLOQUE 94, que clava los pendientes exactos; aquí solo se
+# deja escrito que el atajo existe y cuál es.
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
 # BLOQUE 95 — LOS PREMIOS DILUYEN LA RACIÓN, Y EL MOTOR LO CUENTA
 # ============================================================
 #
