@@ -49,14 +49,27 @@ recomienda, y aplicarlo obligaría a meter un suplemento de vitamina E en
 > cabe. Pero cambia todos los menús y mete un suplemento nuevo. ¿Se aplica al
 > perro sano, se aplica solo al senior (cap.14), o se queda escrito?~~
 >
-> ✅ **RESUELTA Y APLICADA el 11 de septiembre de 2026.** Elena: «si lo dice el
-> manual se meten claro que si». Se aplica **al perro sano**, adulto y sénior, como
-> suelo de **67,1 mg/1000 kcal** en `recomendaciones_libro.json` — que para poder
-> guardarlo tuvo que aprender a guardar suelos, porque hasta ese día solo tenía
-> techos. Medido después: los menús salen en **68-79 mg** y en el peldaño
-> **estricto**, sin soltar ninguna proporción de BARF. Lo vigila el BLOQUE 57, con
-> el fallo puesto. No entra en crecimiento, gestación ni lactancia: sus tablas no
-> dan la cifra. Y no choca con FEDIAF, que no pone máximo de vitamina E.
+> ⚠️ **RESPONDIDA A MEDIAS el 11 de septiembre de 2026, y la otra mitad es dato.**
+> Elena: «si lo dice el manual se meten claro que si». Se intentó: se escribió como
+> suelo de **67,1 mg/1000 kcal** para el perro sano en `recomendaciones_libro.json`
+> —que para eso tuvo que aprender a guardar suelos, porque hasta ese día solo tenía
+> techos— y **la batería lo tiró**, en una tanda limpia y con seis fallos en tres
+> bloques: el toy de 1,5 kg se queda sin menú, el adulto con ocho especies fuera
+> también, y en varios perros el motor mete comida que nadie pidió **sin avisar**,
+> que es la regla 5.
+>
+> **El perro normal sí lo cumple**: 68-79 mg en peldaño **estricto**, y 15 de 15
+> casos con alergias o categorías excluidas. Lo que no cabe es el perro **pequeño**.
+>
+> **Y la causa está medida, y no es la cifra:** en el catálogo **no hay un
+> suplemento de vitamina E suelto**. Solo los nueve multivitamínicos llegan a 67,1,
+> y el motor deja meter dos. Con una ficha de vitamina E sola esto cabría.
+>
+> Así que la cifra **no se baja**: queda escrita con `aplicado_por_el_solver: false`,
+> con su conversión auditada y su medida, y el BLOQUE 57 vigila que siga apagada con
+> su motivo **y** que la maquinaria funcione. No entra en crecimiento, gestación ni
+> lactancia: sus tablas no dan la cifra. Y no choca con FEDIAF, que no pone máximo
+> de vitamina E — el problema no es normativo, es que falta una ficha.
 
 ### 1.1 · Y con ella van dos más, del mismo párrafo
 

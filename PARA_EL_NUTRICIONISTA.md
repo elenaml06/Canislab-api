@@ -1098,14 +1098,15 @@ esa patología está marcada. Estos valen para el perro que **no tiene nada**:
 | Crecimiento, **más de 25 kg** de adulto esperado | Calcio ≤ **2750** · fósforo ≤ **2750** | SACN5 Tablas 17-1 (segunda columna) y 33-5 · Fascetti cap.10 |
 | Gestación y lactancia | — | No hay |
 
-**Y desde el 11 de septiembre hay también un SUELO**, que es la otra mitad que
-faltaba: hasta ese día este fichero solo sabía guardar máximos, así que una
-recomendación del libro que fuera un mínimo no tenía dónde vivir.
+**Y desde el 11 de septiembre hay también un SUELO escrito**, que es la otra mitad
+que faltaba: hasta ese día este fichero solo sabía guardar máximos, así que una
+recomendación del libro que fuera un mínimo no tenía dónde vivir. ⚠️ **Está escrito
+y NO se aplica**, y el porqué está abajo con la medida.
 
 | Etapa | Suelo | Fuente |
 |---|---|---|
-| Adulto | Vitamina E ≥ **67,1** mg/1000 kcal | SACN5 Tabla 13-3, *«Vitamin E (IU) ≥400»* · texto del cap.13: *«A prudent recommendation is that foods for young adult dogs should contain at least 400 IU vitamin E/kg (DM)»* |
-| Senior | Vitamina E ≥ **67,1** mg/1000 kcal | SACN5 Tabla 14-2, *«Vitamin E (IU) 400»* · texto del cap.14: *«For improved antioxidant performance, foods for mature dogs should contain at least 400 IU vitamin E/kg (DM)»* |
+| Adulto | Vitamina E ≥ **67,1** mg/1000 kcal · *escrito y no aplicado* | SACN5 Tabla 13-3, *«Vitamin E (IU) ≥400»* · texto del cap.13: *«A prudent recommendation is that foods for young adult dogs should contain at least 400 IU vitamin E/kg (DM)»* |
+| Senior | Vitamina E ≥ **67,1** mg/1000 kcal · *escrito y no aplicado* | SACN5 Tabla 14-2, *«Vitamin E (IU) 400»* · texto del cap.14: *«For improved antioxidant performance, foods for mature dogs should contain at least 400 IU vitamin E/kg (DM)»* |
 | Crecimiento, gestación y lactancia | — | Sus tablas no lo dan |
 
 **Por qué entró.** SACN5 pide ≥400 UI/kg de materia seca en **cinco capítulos
@@ -1116,11 +1117,34 @@ cuatro con la misma cifra— y **no** al perro que no tiene nada, así que el mi
 perro pasaba de 7 a 67 mg por marcar «artrosis». Es exactamente el desajuste que
 tenía el fósforo antes del 8 de septiembre.
 
-**Medido antes de aplicarlo**, con menús reales del motor y sin patologías:
-3 kg → 23,9 mg · 10 kg → 14,5 · 22 kg → 14,6 · 40 kg → 15,4 · senior 8 kg → 40,8
-· senior 28 kg → 62,2. **Cero de seis llegaban**, y el mejor se quedaba a un 7 %.
-Con el suelo puesto salen los tres medidos de nuevo en 68-79 mg y en el peldaño
-**estricto**, sin soltar ninguna proporción de BARF.
+**Medido sin él**, con menús reales del motor y sin patologías: 3 kg → 23,9 mg ·
+10 kg → 14,5 · 22 kg → 14,6 · 40 kg → 15,4 · senior 8 kg → 40,8 · senior 28 kg →
+62,2. **Cero de seis llegaban**, y el mejor se quedaba a un 7 %.
+
+⚠️ **Y POR QUÉ ESTÁ ESCRITO Y APAGADO.** Se encendió la mañana del 11 de septiembre
+y la batería lo tiró, en una tanda limpia: **seis fallos en tres bloques** que
+estaban verdes sin él.
+
+| Bloque | Qué pasó |
+|---|---|
+| 9 | un adulto de 20 kg con **ocho especies excluidas** se queda **sin menú** |
+| 15 (×2) | en varios perros, al segundo le mete alimentos **que nadie pidió y sin avisar** |
+| 43 (×3) | al **toy de 1,5 kg** con DER 200 y un segundo de solver no le sale menú en ocho intentos |
+
+**El perro normal sí lo cumple**, y por eso la cifra no se toca: 3 kg → 77,1 mg,
+22 kg → 79,4 y sénior 28 kg → 68,2, los tres en peldaño **estricto**, y 15 de 15
+casos con alergias o categorías excluidas también salen. Lo que no cabe es el perro
+**pequeño** y el catálogo muy recortado.
+
+**Y la causa está medida, y es de dato:** en el catálogo **no hay un suplemento de
+vitamina E suelto**. Las únicas fuentes que llegan a 67,1 son los nueve
+multivitamínicos, y el motor solo deja meter dos. Con una ficha de vitamina E sola
+esto cabría sin apretar nada.
+
+**Lo que NO se hace es bajar la cifra.** Es una recomendación del libro «for
+improved antioxidant performance», no un requisito, y el mínimo de FEDIAF (6,968
+mg/1000 kcal) sigue puesto y se cumple. Preferir la recomendación sería dejar sin
+comida a un perro pequeño para cumplir un consejo.
 
 **Lo que la propia fuente dice de su cifra, sin adornarlo**: el requisito es otra
 cosa y mucho menor —*«The requirement for vitamin E for foods (DM) for adult dogs

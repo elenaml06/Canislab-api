@@ -7885,13 +7885,18 @@ for _et57, _padu57, _nut57, _val57, _fuente57, _uni57, _fac57, _cita57 in _SUELO
                       f"{_val57} y su fuente da {_fuente57} {_uni57}, que a 4000 kcal/kg MS "
                       f"y con el factor {_fac57} son {_calc57:.3f}. Uno de los dos esta mal "
                       f"- {_cita57}")
-    _real57 = _suelos_b57(_et57, req, _padu57).get(_nut57)
-    if _real57 is None:
+    # ⚠️ Se lee del JSON y NO de `suelos_de_la_etapa`, que filtra los que llevan
+    #    `aplicado_por_el_solver: false`. La cifra tiene que seguir escrita y
+    #    auditada aunque el motor no la aplique: es justo para eso que existe la
+    #    marca, y es lo contrario de borrarla.
+    _ficha57 = ((_CRUDO_B57["por_etapa"].get(_et57) or {}).get("suelos_por_1000kcal")
+                or {}).get(_nut57)
+    if _ficha57 is None:
         fallos.append(f"BLOQUE57: el SUELO {_et57}.{_nut57} ha DESAPARECIDO de "
                       f"recomendaciones_libro.json. Lo pedia: {_cita57}")
-    elif abs(_real57 - _val57) > 1e-9:
-        fallos.append(f"BLOQUE57: el suelo {_et57}.{_nut57} vale {_real57} y su fuente dice "
-                      f"{_val57} - {_cita57}")
+    elif abs(_ficha57["valor"] - _val57) > 1e-9:
+        fallos.append(f"BLOQUE57: el suelo {_et57}.{_nut57} vale {_ficha57['valor']} y su "
+                      f"fuente dice {_val57} - {_cita57}")
 
 _suelos_declarados_b57 = {(a, b, c) for a, b, c, _, _, _, _, _ in _SUELOS_B57}
 for _et57, _f57 in (_CRUDO_B57.get("por_etapa") or {}).items():
@@ -7909,15 +7914,50 @@ for _et57, _f57 in (_CRUDO_B57.get("por_etapa") or {}).items():
                 fallos.append(f"BLOQUE57: la clave '{_n57}' NO esta en verificar.MAPA -- el "
                               f"solver nunca la mirara y el menu saldra verde igual")
 
-# 5.2. Las etapas que NO lo tienen siguen sin tenerlo. Crecimiento, gestacion y
-#      lactancia no llevan suelo de vitamina E porque sus tablas (17-1, 33-5 y
-#      15-5) no lo dan; que salga vacio tiene que ser visible, no un olvido.
-for _et57 in ("CachorroJoven", "CachorroCrecimiento", "GestanteTemprana",
-              "GestanteTardia", "Lactante"):
+# 5.2. HOY NO SE APLICA NINGUN SUELO DEL LIBRO, Y ESO ES LO CORRECTO.
+#
+#      ⚠️ LA VITAMINA E ESTA ESCRITA Y APAGADA, con `aplicado_por_el_solver:
+#      false`. Se encendio la manana del 11 de septiembre y esta bateria la tiro
+#      en una tanda LIMPIA, sin nada mas compitiendo por la CPU: seis fallos en
+#      tres bloques que estaban verdes sin ella. El 9 (un adulto de 20 kg con ocho
+#      especies excluidas se queda SIN MENU), el 15 dos veces (en varios perros le
+#      mete al segundo alimentos que nadie pidio y sin avisar, que es la regla 5)
+#      y el 43 tres veces (al toy de 1,5 kg adulto con DER 200 y un segundo de
+#      solver no le sale menu en ocho intentos).
+#
+#      El perro NORMAL si la cumple: medido, 77,1 / 79,4 / 68,2 mg en 3, 22 y 28
+#      kg, los tres en peldano estricto, y 15 de 15 casos con alergias o
+#      categorias fuera. Lo que no cabe es el perro PEQUENO, y la causa esta
+#      medida: en el catalogo NO HAY UN SUPLEMENTO DE VITAMINA E SUELTO -- solo
+#      los nueve multivitaminicos, y el motor deja meter dos.
+#
+#      La regla del CLAUDE.md para esto es que la cifra NO se baja: se deja
+#      escrita con su medida y se pregunta. Por eso sigue auditada aqui y en
+#      `auditar_conversiones.py`, y por eso este bloque exige que NO se aplique
+#      mientras la marca diga que no.
+for _et57 in ("Adulto", "Senior", "CachorroJoven", "CachorroCrecimiento",
+              "GestanteTemprana", "GestanteTardia", "Lactante"):
     if _suelos_b57(_et57, req):
-        fallos.append(f"BLOQUE57: la etapa {_et57} ha ganado un SUELO del libro. Si se ha "
-                      f"transcrito la tabla que lo da, este bloque tiene que saberlo; si es "
-                      f"que se le esta aplicando el de otra etapa, es un fallo")
+        fallos.append(f"BLOQUE57: la etapa {_et57} esta aplicando un SUELO del libro "
+                      f"({_suelos_b57(_et57, req)}) y hoy no tendria que aplicarse ninguno. "
+                      f"Si se ha encendido uno a proposito, este bloque tiene que saberlo: "
+                      f"quita `aplicado_por_el_solver: false` Y actualiza este bloque en el "
+                      f"MISMO commit, habiendo medido antes que cabe en el toy de 1,5 kg y "
+                      f"con el catalogo recortado -- que es lo que tiro la bateria")
+
+# 5.2-bis. Y LA MARCA TIENE QUE SEGUIR ESCRITA, CON SU MOTIVO. Un suelo sin marca
+#          se aplicaria sin que nadie lo decidiera, y uno apagado sin decir por
+#          que se vuelve a encender sin saber lo que costo.
+for _et57, _nut57 in (("Adulto", "vitE"), ("Senior", "vitE")):
+    _f57 = ((_CRUDO_B57["por_etapa"].get(_et57) or {}).get("suelos_por_1000kcal") or {}).get(_nut57)
+    if _f57 is None or _f57.get("aplicado_por_el_solver") is not False:
+        fallos.append(f"BLOQUE57: el suelo {_et57}.{_nut57} ya no lleva "
+                      f"`aplicado_por_el_solver: false`. Si se ha encendido, mide antes que "
+                      f"cabe en el toy de 1,5 kg y con el catalogo recortado")
+    elif "ESCRITO Y NO APLICADO" not in (_f57.get("por_que") or ""):
+        fallos.append(f"BLOQUE57: el suelo {_et57}.{_nut57} esta apagado y su `por_que` ya no "
+                      f"explica por que ni con que medida. Un limite apagado sin motivo "
+                      f"escrito se vuelve a encender a ciegas")
 
 # 5.3. Y AQUI MANDA FEDIAF. Un suelo del libro que se pasara del MAXIMO de
 #      FEDIAF tiene que caerse. Hoy no se dispara con ninguna cifra escrita --la
@@ -7950,80 +7990,105 @@ finally:
     else:
         _recom_b57.POR_ETAPA["Adulto"]["suelos_por_1000kcal"] = _guardado_b57
 
-# 5.4. Que el SOLVER lo aplique y que el FILTRO FINAL lo vea, con un menu de
-#      verdad. Y el test con el fallo puesto: el mismo menu DILUIDO hasta bajar
-#      del suelo tiene que ser rechazado.
+# 5.4. QUE LA MAQUINARIA DE LOS SUELOS FUNCIONE, aunque hoy no haya ninguno
+#      encendido. Se enciende la vitamina E A MANO y SOLO AQUI, para el perro de
+#      referencia y con tiempo de sobra, y se exige las dos cosas: que el SOLVER
+#      la aplique y que el FILTRO FINAL cace un menu que no la cumpla.
 #
-#      ⚠️ La dilucion SE CALCULA, no se fija a ojo. Es la leccion de los bloques
-#      57 (el hueso x4), 58 (los 40 g de aceite) y 60 (la arginina): el menu que
-#      devuelve el solver cambia entre ejecuciones, asi que una prueba solo puede
-#      afirmar de el lo que sea verdad de CUALQUIER menu valido. Anadiendo `g`
-#      gramos de un alimento con `ve` mg de vitamina E y `ef` kcal por 100 g:
-#
-#          (V + ve*g/100) / (E + ef*g/100) * 1000 <= objetivo
-#          g = 100 * (1000*V - objetivo*E) / (objetivo*ef - 1000*ve)
-_okE, _gE = False, None
-_derE = 70 * 22 ** 0.75 * 1.6
-_t0_E = time.time()
-while time.time() - _t0_E < 25:
-    _okE, _gE = resolver(_derE, "Adulto", al, req, 22, dosis_maxima_fabricante)
-    if _okE:
-        break
-if not _okE:
-    fallos.append("BLOQUE57: un adulto sano de 22 kg no obtiene menu con el suelo de vitamina "
-                  "E puesto. Si la cifra de la fuente no cabe, no se baja: se mueve a "
-                  "`limites_escritos_que_el_solver_no_aplica` con su medida y se pregunta.")
-else:
-    _kcalE = sum(al[_n]["energia"] * _g / 100.0 for _n, _g in _gE.items())
-    _VE = sum((valor_nutriente(al[_n]["nutrientes"], "vitE") or 0) * _g / 100.0
-              for _n, _g in _gE.items())
-    _vE = _VE / _kcalE * 1000.0
-    if _vE < 67.1 * 0.995:
-        fallos.append(f"BLOQUE57: el menu de un adulto sano trae {_vE:.1f} mg de vitamina "
-                      f"E/1000 kcal y el suelo son 67,1. El solver NO lo esta aplicando.")
-    if __import__("main")._tope_patologia_roto(_gE, al, [], "Adulto"):
-        fallos.append(f"BLOQUE57: el menu que da el solver no pasa su propio filtro final: "
-                      f"{__import__('main')._tope_patologia_roto(_gE, al, [], 'Adulto')}")
-    _OBJE = 67.1 * 0.90          # con margen, para no quedarse en el borde
-    _candE = []
-    for _nE in al:
-        _efE = al[_nE].get("energia") or 0
-        _veE = valor_nutriente(al[_nE]["nutrientes"], "vitE") or 0
-        if _efE > 0 and (_OBJE * _efE - 1000.0 * _veE) > 0:
-            _candE.append((_veE / _efE, _nE, _veE, _efE))
-    if not _candE:
-        fallos.append("BLOQUE57: no hay en el catalogo ni un alimento con menos vitamina E por "
-                      "kcal que el suelo del perro sano, asi que no se puede fabricar un menu "
-                      "que baje de el. Sin poder bajarlo, esta comprobacion no demuestra nada.")
+#      ⚠️ POR QUE NO BASTA CON COMPROBAR QUE ESTA APAGADA. Un mecanismo que nadie
+#      ejercita se pudre sin avisar: el dia que alguien encienda un suelo -- o que
+#      entre uno nuevo de otra tabla -- tiene que funcionar, y eso no se sabe si
+#      nunca se ha probado. Es la misma idea que el fallo puesto de los techos.
+#      Y de paso deja MEDIDO que para el perro normal la cifra SI cabe, que es la
+#      mitad de la decision de tenerla escrita.
+import recomendaciones as _recom_b57e
+_guardado_e = _recom_b57e.POR_ETAPA["Adulto"].get("suelos_por_1000kcal")
+try:
+    _recom_b57e.POR_ETAPA["Adulto"]["suelos_por_1000kcal"] = {
+        "vitE": {"valor": 67.1, "aplicado_por_el_solver": True,
+                 "fuente": "encendida a mano por el BLOQUE 57",
+                 "por_que": "solo para ejercitar el mecanismo"}}
+    if _suelos_b57("Adulto", req).get("vitE") != 67.1:
+        fallos.append("BLOQUE57: encendiendo el suelo a mano, `suelos_de_la_etapa` sigue sin "
+                      "devolverlo. La marca `aplicado_por_el_solver` no esta filtrando bien, o "
+                      "el mecanismo de suelos del libro se ha roto")
+    _okE, _gE = False, None
+    _derE = 70 * 22 ** 0.75 * 1.6
+    _t0_E = time.time()
+    while time.time() - _t0_E < 40:
+        _okE, _gE = resolver(_derE, "Adulto", al, req, 22, dosis_maxima_fabricante)
+        if _okE:
+            break
+    if not _okE:
+        fallos.append("BLOQUE57: con el suelo de vitamina E encendido a mano, un adulto sano "
+                      "de 22 kg no obtiene menu ni en 40 s. Eso NO es lo medido el 11 de "
+                      "septiembre (salia en peldano estricto), asi que o el catalogo ha "
+                      "cambiado o el mecanismo esta roto")
     else:
-        _, _quienE, _veE, _efE = min(_candE)
-        _gEanadir = 100.0 * (1000.0 * _VE - _OBJE * _kcalE) / (_OBJE * _efE - 1000.0 * _veE)
-        _diluido = dict(_gE)
-        _diluido[_quienE] = _diluido.get(_quienE, 0.0) + max(_gEanadir, 1.0) * 1.10
-        _kcalD = sum(al[_n]["energia"] * _g / 100.0 for _n, _g in _diluido.items())
-        _vD = sum((valor_nutriente(al[_n]["nutrientes"], "vitE") or 0) * _g / 100.0
-                  for _n, _g in _diluido.items()) / _kcalD * 1000.0
-        if _vD >= 67.1:
-            fallos.append(f"BLOQUE57: al anadir {_gEanadir:.0f} g de «{_quienE}» la vitamina E "
-                          f"se queda en {_vD:.1f} mg/1000 kcal, por encima del suelo de 67,1. "
-                          f"La cuenta de este bloque esta mal; el filtro final no tiene la culpa.")
-        elif not __import__("main")._tope_patologia_roto(_diluido, al, [], "Adulto"):
-            fallos.append(f"BLOQUE57: el menu con {_gEanadir:.0f} g de «{_quienE}» de mas trae "
-                          f"{_vD:.1f} mg de vitamina E/1000 kcal --por debajo del suelo de 67,1 "
-                          f"del perro sano-- y el filtro final no dice nada. Entonces no esta "
-                          f"comprobando ese suelo.")
+        _kcalE = sum(al[_n]["energia"] * _g / 100.0 for _n, _g in _gE.items())
+        _VE = sum((valor_nutriente(al[_n]["nutrientes"], "vitE") or 0) * _g / 100.0
+                  for _n, _g in _gE.items())
+        _vE = _VE / _kcalE * 1000.0
+        if _vE < 67.1 * 0.995:
+            fallos.append(f"BLOQUE57: con el suelo encendido, el menu trae {_vE:.1f} mg de "
+                          f"vitamina E/1000 kcal y el suelo son 67,1. El SOLVER no lo aplica")
+        if __import__("main")._tope_patologia_roto(_gE, al, [], "Adulto"):
+            fallos.append(f"BLOQUE57: el menu que da el solver con el suelo encendido no pasa "
+                          f"su propio filtro final: "
+                          f"{__import__('main')._tope_patologia_roto(_gE, al, [], 'Adulto')}")
+        # Y EL FALLO PUESTO: el mismo menu DILUIDO hasta bajar del suelo tiene que
+        # ser rechazado. La dilucion SE CALCULA, no se fija a ojo -- leccion de los
+        # bloques 57 (el hueso x4), 58 (los 40 g de aceite) y 60 (la arginina): el
+        # menu que devuelve el solver cambia entre ejecuciones, asi que una prueba
+        # solo puede afirmar de el lo que sea verdad de CUALQUIER menu valido.
+        # Anadiendo `g` gramos de un alimento con `ve` mg de vitamina E y `ef` kcal
+        # por 100 g:
+        #     (V + ve*g/100) / (E + ef*g/100) * 1000 <= objetivo
+        #     g = 100 * (1000*V - objetivo*E) / (objetivo*ef - 1000*ve)
+        _OBJE = 67.1 * 0.90
+        _candE = []
+        for _nE in al:
+            _efE = al[_nE].get("energia") or 0
+            _veE = valor_nutriente(al[_nE]["nutrientes"], "vitE") or 0
+            if _efE > 0 and (_OBJE * _efE - 1000.0 * _veE) > 0:
+                _candE.append((_veE / _efE, _nE, _veE, _efE))
+        if not _candE:
+            fallos.append("BLOQUE57: no hay en el catalogo ni un alimento con menos vitamina E "
+                          "por kcal que el suelo, asi que no se puede fabricar un menu que baje "
+                          "de el. Sin poder bajarlo, esta comprobacion no demuestra nada")
+        else:
+            _, _quienE, _veE, _efE = min(_candE)
+            _gEanadir = 100.0 * (1000.0 * _VE - _OBJE * _kcalE) / (_OBJE * _efE - 1000.0 * _veE)
+            _diluido = dict(_gE)
+            _diluido[_quienE] = _diluido.get(_quienE, 0.0) + max(_gEanadir, 1.0) * 1.10
+            _kcalD = sum(al[_n]["energia"] * _g / 100.0 for _n, _g in _diluido.items())
+            _vD = sum((valor_nutriente(al[_n]["nutrientes"], "vitE") or 0) * _g / 100.0
+                      for _n, _g in _diluido.items()) / _kcalD * 1000.0
+            if _vD >= 67.1:
+                fallos.append(f"BLOQUE57: al anadir {_gEanadir:.0f} g de «{_quienE}» la vitamina "
+                              f"E se queda en {_vD:.1f} mg/1000 kcal, por encima del suelo. La "
+                              f"cuenta de este bloque esta mal; el filtro final no tiene la culpa")
+            elif not __import__("main")._tope_patologia_roto(_diluido, al, [], "Adulto"):
+                fallos.append(f"BLOQUE57: el menu con {_gEanadir:.0f} g de «{_quienE}» de mas "
+                              f"trae {_vD:.1f} mg de vitamina E/1000 kcal --por debajo del suelo "
+                              f"de 67,1 que esta encendido-- y el FILTRO FINAL no dice nada")
+finally:
+    if _guardado_e is None:
+        _recom_b57e.POR_ETAPA["Adulto"].pop("suelos_por_1000kcal", None)
+    else:
+        _recom_b57e.POR_ETAPA["Adulto"]["suelos_por_1000kcal"] = _guardado_e
 
-# 5.5. Una patologia que aprieta MAS tiene que ganar, y ninguna puede relajarlo.
-#      Las cuatro que ya llevan esta cifra piden exactamente la misma (67,1), asi
-#      que el efectivo tiene que seguir siendo 67,1 con ellas y sin ellas.
+# 5.5. Y CON EL SUELO APAGADO, las cuatro patologias que piden la misma cifra
+#      siguen pidiendola. Que el libro no lo aplique no puede aflojar un suelo de
+#      patologia: se combinan con max(), y una patologia marcada manda igual.
 from motor_completo import topes_de_patologias as _topes_pat_b57b
 for _patE in ("renal", "hepatopatia", "obesidad", "artrosis"):
     _t, _p, _a, _sE = _topes_pat_b57b([_patE], "Adulto")
     _efectivoE = max(_sE.get("vitE", 0.0), _suelos_b57("Adulto", req).get("vitE", 0.0))
     if abs(_efectivoE - 67.1) > 1e-9:
         fallos.append(f"BLOQUE57: con {_patE} la vitamina E efectiva son {_efectivoE} y tenian "
-                      f"que ser 67,1. Los suelos se combinan con max(): el del libro nunca "
-                      f"puede relajar el de una patologia, ni al reves.")
+                      f"que ser 67,1. Apagar el suelo del LIBRO no puede tocar el de una "
+                      f"PATOLOGIA: son dos cajones distintos y se combinan con max()")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

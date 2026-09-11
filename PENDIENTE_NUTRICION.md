@@ -1531,12 +1531,46 @@ número, y en el repo no hay ninguno:
 · **Köber 2017**, que es la fuente de estas fichas (comprobado: sus macros
   coinciden celda a celda), **no da energía**. Solo materia seca, proteína bruta,
   grasa bruta, cenizas, calcio y fósforo.
-· **NRC cap.13 no trae energía del hueso.** Buscado: la harina de hueso aparece
-  una sola vez con cifras, en la **Tabla 13-8**, que es *«Composition of Selected
-  Inorganic Macro-mineral Sources Used in Petfood»*, con calcio, fósforo y sodio
-  y **ninguna columna de energía**. Que NRC la clasifique entre las fuentes
-  **inorgánicas** de mineral y no entre los ingredientes energéticos es coherente
-  con excluirla de Atwater, pero no es un número que se pueda aplicar.
+· ⚠️ **CORREGIDO LA MISMA TARDE: NRC cap.13 SÍ trae energía de un ingrediente CON
+  HUESO, y va en la dirección contraria a la que yo supuse.** Lo que escribí aquí
+  primero —«NRC cap.13 no trae energía del hueso»— era **falso**, y salió de mirar
+  solo la Tabla 13-8 (que es la de fuentes **inorgánicas** de mineral, sin columna
+  de energía) y no la **Tabla 13-1**, que es la de análisis proximal y **sí tiene
+  columna de EM para el perro**. En ella está *«Meal, with bone, rendered»* (IFN
+  5-00-388), con **3,61 kcal/g para el perro**.
+
+  Y lo que dice esa fila desmonta mi hipótesis:
+
+  | | kcal/g |
+  |---|---|
+  | EM que publica NRC | **3,61** |
+  | 4×proteína + 9×grasa, que es lo que hace Rawku | 2,92 (**NRC un 24 % MÁS**) |
+  | + 4×ELN, que es como salen las demás filas de esa tabla | 3,37 (**NRC un 7 % MÁS**) |
+
+  **Y el método de la tabla está comprobado**: en las seis filas de ingrediente
+  animal SIN hueso, la EM que publica NRC coincide con 4×proteína + 9×grasa +
+  4×ELN dentro del **1,3 %** (corazón 1,13 contra 1,13; hígado 1,38 contra 1,38;
+  riñón 1,03 contra 1,03; callos 0,94 contra 0,93; pollo con piel 2,53 contra
+  2,50; hígado de pollo 1,20 contra 1,20). O sea que la tabla **aplica Atwater al
+  ingrediente con hueso**, y le sale un número más alto que el nuestro.
+
+  **Por qué esto cambia la conclusión de arriba, y no un poco.** Yo había deducido
+  que si el colágeno se digiere mal la energía real es MENOR y los menús están más
+  concentrados de lo que el motor cree. Esta fila no lo apoya: la única EM
+  publicada de un ingrediente con hueso es **más alta** que nuestro cálculo, no más
+  baja. Y hay un motivo mecánico: **nuestras fichas no llevan el término del ELN**
+  que sí lleva el método de NRC.
+
+  **Lo que sigue siendo verdad**: NRC excluye el hueso de Atwater en el cap.3, con
+  esas palabras. Lo que ya NO se puede afirmar es la DIRECCIÓN del error. Las dos
+  cosas caben, y la tabla de sensibilidad de arriba hay que leerla como una de las
+  dos mitades, no como la respuesta.
+
+  **Y lo que sigue faltando es lo mismo**: esa fila es harina de carne y hueso
+  **rendida y seca** (94 % de materia seca, 19 % de cenizas, 51 % de proteína), no
+  hueso carnoso crudo. La propia tabla avisa de cómo usarla: *«Users should examine
+  the standard deviation and N before using the mean value as an estimate of the
+  nutritional content of a specific feed ingredient»*.
 · **NRC cap.6 no da digestibilidad del colágeno.** Buscado «collagen» en el libro
   entero: sale en el metabolismo de la vitamina C, en la lisina, en el sodio y en
   una frase sobre el triptófano —*«tryptophan may be limiting when corn and
@@ -1668,3 +1702,102 @@ the inability of the crude fiber analysis to recover soluble dietary fibers, whi
 can play a key role in mediating postprandial hyperglycemia»*. O sea que la unidad
 en la que está escrito nuestro suelo de diabetes es la que la fuente dice que no
 sirve para lo que ese suelo quiere conseguir.
+
+---
+
+## Lo que dejó la lectura íntegra de NRC 2006 (11 de septiembre de 2026)
+
+Los 15 capítulos, con registro en `LECTURA_NRC2006.md`. Cuatro cosas quedan
+**medidas y sin aplicar**, y cada una por un motivo distinto.
+
+### 1 · Dos techos que FEDIAF no tiene y que caben de sobra (cap.5)
+
+NRC da para el perro adulto un **límite superior seguro de grasa total de 82,5
+g/1000 kcal** («approximately 70 percent ME or 82.5 g per 1,000 kcal ME») y de
+**linoleico de 16,3 g/1000 kcal**. FEDIAF pone mínimo de grasa (13,75) y **ningún
+máximo**, ni de grasa ni de linoleico.
+
+| | mínimo | mediana | máximo | se pasan |
+|---|---|---|---|---|
+| Grasa (techo 82,5) | 44,91 | 61,22 | 76,07 | **0 de 36** |
+| Linoleico (techo 16,3) | 3,20 | 3,53 | 7,23 | **0 de 36** |
+
+**Cabe sin apretar nada**, que es la misma situación del techo de sodio del perro
+sano. Y el de la grasa no es un número arbitrario: sale de un experimento que
+**indujo pancreatitis** con unos 92 g/1000 kcal, menos un margen del 10 %.
+
+**Qué falta para aplicarlo**: medirlo con el solver, no solo contra el catálogo
+—la lección del 11 de septiembre por la mañana—, y decidir si un techo que hoy no
+aprieta a nadie merece entrar. Yo diría que sí, por lo mismo que el sodio: seguirá
+ahí el día que el catálogo cambie.
+
+### 2 · Dos techos de vitamina A, y el del cachorro es ocho veces el de FEDIAF (cap.8)
+
+| | NRC | FEDIAF | nuestro máximo |
+|---|---|---|---|
+| Cachorro y reproductora | **3.750 µg/1000 kcal** | 30.000 | 3.236 (0 de 12) |
+| Adulto no reproductor | **16.000 µg/1000 kcal** | 30.000 | 5.052 (0 de 24) |
+
+El del cachorro deja solo un **14 % de margen** sobre nuestro peor menú, así que
+este **hay que medirlo con el solver sí o sí** antes de tocarlo: un techo al 86 %
+de lo que el motor entrega puede quitarle el menú a un cachorro.
+
+### 3 · ⚠️ La colina se pasa en los 36 menús (cap.8)
+
+NRC: «A presumed safe maximum intake of 2,000 mg choline·kg–1 diet is proposed» =
+**500 mg/1000 kcal**. FEDIAF no pone máximo. Nuestros menús: **1.071 a 1.125**, o
+sea más del doble, y **36 de 36**.
+
+**No se aplica, y no por comodidad.** Lo que la propia fuente dice de ese número lo
+debilita: es un «presumed safe maximum» que sale de donde pararon los estudios
+(McKibbin dio 1.500 y 2.000 mg/kg de **suplemento** sin problema), el único trabajo
+que vio anemia lo critica NRC en la misma página por no tener controles, nuestra
+colina es **de alimento** y no cloruro de colina, y el propio capítulo avisa de que
+«dietary requirements for choline are not fixed but will respond to other components
+of the diet that are potential methyl donors, particularly methionine» — y una
+ración BARF va cargada de metionina.
+
+**La pregunta para el nutricionista**: ¿1.100 mg de colina por 1000 kcal, toda de
+alimento y con metionina de sobra, es un problema?
+
+### 4 · ⚠️ Los topes de seguridad deberían APRETARSE en el perro de trabajo (cap.11)
+
+> «safe upper limits (SULs) expressed relative to DM and ME should be decreased
+> eightfold in diets intended for sled dogs running in a cold environment and
+> halved in diets for working dogs»
+
+Es aritmética: un tope «por 1000 kcal» deja pasar el doble de microgramos a un perro
+que come el doble, y para la vitamina D y el yodo lo que hace daño es la cantidad
+absoluta. **El motor no lo hace**, y **ya tiene el disparador**: la vitamina E del
+perro de trabajo se aplica desde DER efectiva ≥150 kcal/kg^0,75.
+
+| Tope crónico | Hoy | A la mitad | Máximo de FEDIAF | ¿Mordería? |
+|---|---|---|---|---|
+| Vitamina D | 20 µg | **10** | 14,1875 | **Sí** |
+| Yodo | 1.275 µg | **637,5** | 2.750 | **Sí** |
+| Selenio | 570 µg | 285 | 142 | No, FEDIAF ya aprieta más |
+
+**Qué falta**: comprobar con el solver que un perro de trabajo sigue teniendo menú
+con la vitamina D a 10 µg/1000 kcal. Es el nutriente que más aprieta cuando entra
+un multivitamínico, así que no se puede dar por hecho.
+
+⚠️ Y al aplicarlo hay que respetar que la regla de NRC habla de **SULs**, no de las
+celdas de la Tabla III-3b: se apretarían los topes crónicos del motor, no los
+máximos de FEDIAF.
+
+### Y lo que NRC deja CONFIRMADO, que también cuenta
+
+· El **tope de vitamina D del motor (20 µg/1000 kcal)** es literal de NRC, palabra
+  por palabra y en la misma unidad.
+· El **tope de yodo (1.275)** es la cifra más alta que NRC documenta como dada sin
+  problema, y a 1.400 hubo función tiroidea deprimida en cachorros.
+· El **máximo de calcio de crecimiento de FEDIAF (4.500)** y el **de sodio (3.750)**
+  coinciden clavados con los SUL que da NRC.
+· La **arginina que sube con la proteína** (+0,01 g por g) sale igual en NRC y en la
+  Tabla VII-13 de FEDIAF, por caminos distintos.
+· El **suelo de taurina de la DCM (250 mg/1000 kcal)** es el mismo número que da NRC
+  para dietas bajas en proteína.
+· La **densidad de 4.000 kcal/kg MS** con la que este repo convierte sus 110 cifras
+  es la que NRC declara en el cap.15.
+· Y **once de los doce minerales no tienen techo publicado para el perro**: el hueco
+  no es nuestro, es de la literatura.

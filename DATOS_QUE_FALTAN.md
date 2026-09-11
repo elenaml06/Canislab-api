@@ -1068,9 +1068,14 @@ dígito por ciento, en la dirección de **infravalorar** la concentración del m
 · **Köber 2017**, que es la fuente de los macros de estas nueve fichas
   (comprobado celda a celda): da materia seca, proteína bruta, grasa bruta,
   cenizas, calcio y fósforo. **No da energía.**
-· **NRC 2006 cap.13**: la harina de hueso aparece una sola vez con cifras, en la
-  Tabla 13-8, que es *«Composition of Selected Inorganic Macro-mineral Sources
-  Used in Petfood»* — calcio, fósforo y sodio, **sin columna de energía**.
+· ⚠️ **NRC 2006 cap.13, CORREGIDO**: aquí ponía que no traía energía del hueso y
+  **era falso** — se había mirado solo la Tabla 13-8, que es la de fuentes
+  inorgánicas de mineral. La **Tabla 13-1** sí tiene columna de EM para el perro, y
+  en ella está *«Meal, with bone, rendered»* con **3,61 kcal/g**. No sirve para
+  corregir nuestras fichas (es harina rendida y seca, 94 % de materia seca y 19 %
+  de cenizas, no hueso carnoso crudo), pero **sí cambia la dirección del problema**:
+  esa EM es un 24 % MÁS ALTA que 4×proteína + 9×grasa, no más baja. Detalle en
+  `PENDIENTE_NUTRICION.md`.
 · **NRC 2006, el libro entero**: «collagen» sale en el metabolismo de la vitamina
   C, en la lisina, en el sodio y en una frase sobre el triptófano, y **en ninguna
   con un coeficiente de digestibilidad**.
@@ -1083,3 +1088,32 @@ rehacer, que es exactamente lo que este repo tiene prohibido.
 los menús del catálogo y el DER efectivo de todas las raciones, así que hay que
 regenerar con `regenerar_catalogo.py`. Detalle completo y la tabla de
 sensibilidad: `PENDIENTE_NUTRICION.md`.
+
+## Un suplemento de vitamina E suelto (11 de septiembre de 2026)
+
+**Qué falta**: una ficha de catálogo de un producto que sea **solo vitamina E**
+(α-tocoferol), con su etiqueta real, su dosis de fabricante y su forma química.
+
+**Por qué hace falta, medido.** SACN5 pide **≥400 UI de vitamina E por kg de materia
+seca** —67,1 mg/1000 kcal— en cinco capítulos distintos, y el motor ya lo exige en
+cuatro patologías (renal, hepatopatía, obesidad y artrosis). Al aplicarlo también al
+perro **sano**, la batería dio **seis fallos**: el toy de 1,5 kg se queda sin menú,
+el adulto de 20 kg con ocho especies excluidas también, y en varios perros el motor
+mete alimentos que nadie pidió sin avisar.
+
+**La causa no es la cifra, es el catálogo.** Las únicas fuentes que llegan a 67,1
+mg/1000 kcal son los **nueve multivitamínicos** (200 a 670 mg/100 g y 0 kcal), y el
+motor solo deja meter **dos suplementos** por menú. Lo siguiente es el aceite de
+girasol, con 63 mg/1000 kcal, que además está limitado por las proporciones de BARF.
+Para un perro de 1,5 kg con 200 kcal, llegar a 13,4 mg de vitamina E total sin gastar
+las dos plazas de suplemento en ello es lo que no sale.
+
+**Qué se desbloquea con esa ficha**: encender el suelo del perro sano, que hoy vive
+en `recomendaciones_libro.json` con `aplicado_por_el_solver: false` y su medida
+escrita. Y de paso deja de depender de un multivitamínico completo el cumplir una
+recomendación de un solo nutriente.
+
+**Lo que hace falta de la etiqueta**, igual que con cualquier otra ficha: miligramos
+de vitamina E por 100 g, **qué forma química** (d-α-tocoferol natural, dl-α-tocoferol
+o el acetato — cambian el factor de UI a mg, FEDIAF Tabla VII-14), y la dosis máxima
+que marca el fabricante. **No lo rellena el asistente.**

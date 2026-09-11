@@ -175,7 +175,19 @@ def _suelos_crudos(etapa, peso_adulto_esperado_kg=None):
             actual = salida.get(clave)
             if actual is None or s["valor"] > actual["valor"]:
                 salida[clave] = s
-    return salida
+    # ⚠️ `aplicado_por_el_solver: false` — LA CIFRA ESTÁ ESCRITA Y EL MOTOR NO LA
+    # APLICA, A PROPÓSITO. Es el mismo mecanismo con el que el Ca:P de los
+    # urolitos estuvo dos días escrito antes de poder aplicarse, y existe para
+    # que una cifra que HOY no cabe siga auditada —su conversión se rehace, su
+    # cita se comprueba, el BLOQUE 57 la vigila— en vez de desaparecer del repo
+    # y tener que volver a descubrirla dentro de seis meses.
+    #
+    # Hoy hay una: la vitamina E del perro sano (67,1 mg/1000 kcal). Cabe en el
+    # perro normal y NO cabe en el pequeño ni con el catálogo muy recortado,
+    # porque en el catálogo no hay un suplemento de vitamina E suelto. El porqué
+    # entero, con los seis fallos que provocó y la medida, está en su `por_que`.
+    return {c: s for c, s in salida.items()
+            if s.get("aplicado_por_el_solver", True)}
 
 
 def suelos_de_la_etapa(etapa, req=None, peso_adulto_esperado_kg=None):
