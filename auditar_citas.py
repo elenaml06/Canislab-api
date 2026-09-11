@@ -113,10 +113,22 @@ _LARGO_MINIMO = 25
 # applies» cuando la fuente dice «instead the nutritional maximum, WHEN INCLUDED
 # IN THE RELEVANT TABLES, should be taken into account». Una condicion borrada.
 SIN_DECIR_DECLARADAS = 0          # citas que no dicen de que fuente salen
-SIN_TEXTO_DECLARADAS = 24         # citan una fuente que no esta en el repo
-                                  # (Merck, el consenso ACVIM, IRIS en PDF,
-                                  # Purina, Today's Veterinary Practice). Estas
-                                  # no se pueden comprobar aqui, y se DICE.
+SIN_TEXTO_DECLARADAS = 10         # citan una fuente que no esta en el repo.
+                                  # ⚠️ ERAN 24 HASTA EL 11 DE SEPTIEMBRE y ese
+                                  # dia BAJARON A 10, porque se consiguieron
+                                  # cuatro de las fuentes que faltaban: WSAVA
+                                  # (sus guias y las graficas de condicion
+                                  # corporal y masa muscular), IRIS 2026
+                                  # (estadificacion y recomendaciones del
+                                  # perro), el consenso ACVIM de Keene 2019 por
+                                  # PubMed Central, y el articulo de Today's
+                                  # Veterinary Practice sobre oxalato calcico.
+                                  # CATORCE citas que no se podian comprobar
+                                  # ahora se encuentran LITERALES en su fuente.
+                                  # Las 10 que quedan son de Merck, dvm360
+                                  # --que devuelve 403 a la lectura desde
+                                  # aqui-- y Purina. Siguen sin poder
+                                  # comprobarse, y se DICE.
 
 PENDIENTES_DECLARADAS = 0         # 10 de septiembre de 2026, noche: no queda
                                   # ninguna. Las 31 que quedaban se abrieron una

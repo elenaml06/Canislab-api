@@ -5848,6 +5848,17 @@ _CASOS_43 = [
 # accidente afortunado. Con tres tiradas por caso la probabilidad de que se
 # escape pasa de 96 % a 88 %, y sobre todo el fallo queda ANCLADO -- si
 # alguien vuelve a bajar ese margen, esto se cae mucho antes.
+# ⚠️ EL CONTADOR QUE IMPIDE QUE ESTE BLOQUE SE AFLOJE (11 septiembre). Al dejar
+# de contar como fallo el «no salió en 1 s» hacía falta algo que siguiera
+# vigilando LA PROPIEDAD: si el motor volviera a TIRAR la solución guardada
+# cuando salta el límite, entonces con 1 s no saldría NINGÚN menú en ninguno de
+# los tres perfiles ni en ninguna vuelta, y este bloque se quedaría imprimiendo
+# «es el reloj» tan tranquilo. Por eso se cuenta: al menos uno tiene que salir.
+# Un segundo es MENOS de lo que tarda este equipo en demostrar el óptimo (2-6 s),
+# así que todo menú que salga aquí es, por construcción, una solución aceptada
+# CON EL LÍMITE YA SALTADO.
+_salieron_con_reloj_43 = 0
+
 for _etq43, _der43, _etapa43, _peso43, _adulto43 in _CASOS_43:
     # Un segundo es MENOS de lo que tarda este equipo en demostrar el óptimo
     # (2-6 s), así que aquí siempre salta el límite: es imitar a Render sin
@@ -5913,11 +5924,55 @@ for _etq43, _der43, _etapa43, _peso43, _adulto43 in _CASOS_43:
                                        margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
                                        time_limit=1.0, peso_adulto_esperado_kg=_adulto43)
             if _ok43:
+                _salieron_con_reloj_43 += 1
                 break
         if not _ok43:
-            fallos.append(f"BLOQUE43 {_etq43}: con el tiempo justo no sale menú en OCHO intentos. "
-                          f"La solución factible ya está calculada dentro del solver: tirarla es "
-                          f"decirle a la usuaria que no existe un menú que sí existe.")
+            # ⚠️ NO SALIR CON EL RELOJ APRETADO **NO ES UN FALLO**, Y ESTO SE
+            # REESCRIBIO EL 11 DE SEPTIEMBRE PORQUE LO ERA (11 septiembre).
+            #
+            # Lo que este bloque afirma es que una solucion YA CALCULADA dentro
+            # del solver no se tira porque saltara el limite. Que en 1 s no haya
+            # llegado a encontrar la PRIMERA solucion entera es otra cosa
+            # distinta, y contarlo como fallo es medir la maquina -- la leccion
+            # del BLOQUE 75 el 10 de septiembre, y la del 57 esa misma noche.
+            #
+            # ⚠️ Y AQUI ESE DESLIZ COSTO UN ROJO DE VERDAD. Al fusionar la rama
+            # del catalogo direccionable, 95 casillas sin procedencia individual
+            # pasaron a HUECO DECLARADO -- que es lo correcto --, y un hueco no
+            # cuenta como cero medido contra un techo: se imputa al percentil 90
+            # de su familia. Eso aprieta, y al perro con la ventana mas estrecha
+            # le aprieta mas. MEDIDO el 11 de septiembre, toy de 1,5 kg con DER
+            # 200 y 1 s de solver, 30 vueltas, maquina quieta:
+            #
+            #     catalogo de main (antes de la fusion) ..... 12 sin menu de 30
+            #     catalogo fusionado ........................ 22 sin menu de 30
+            #
+            # Con 8 intentos eso es un 8 % de probabilidad de rojo por perfil y
+            # por vuelta, sin que nada este mal.
+            #
+            # ⚠️ Y AL QUE USA LA APP NO LE LLEGA, que es lo que decide si esto se
+            # entrega. Medido el mismo dia por la via de la API, con la escalera
+            # y el presupuesto de verdad: **0 sin menu de 20**, y 18 de los 20 en
+            # peldaño ESTRICTO. La escalera lo cubre, y bajar de peldaño
+            # diciendolo es la regla 3.
+            #
+            # Asi que lo que se exige aqui es lo que se puede afirmar de
+            # CUALQUIER ejecucion: (1) que el problema sea factible cuando se le
+            # da tiempo, y (2) que de las que SI salen con el reloj apretado, no
+            # haya ni una en rojo. Lo segundo es la propiedad de verdad.
+            _ok43b, _g43b = _resolver_43(_der43, _etapa43, al, req, _peso43,
+                                         dosis_maxima_fabricante,
+                                         margenes_categoria=_api.MARGENES_V2,
+                                         max_suplementos=2, time_limit=30.0,
+                                         peso_adulto_esperado_kg=_adulto43)
+            if not _ok43b:
+                fallos.append(f"BLOQUE43 {_etq43}: no sale menú NI CON 30 s de solver. Aquí ya "
+                              f"no es el reloj: o el catálogo ha dejado de poder alimentar a "
+                              f"este perro, o un límite nuevo ha cerrado su ventana. Hay que "
+                              f"medirlo antes de entregar nada.")
+            else:
+                print(f"  {_etq43}: con 1 s no salió en ocho intentos, con 30 s sí. Es el "
+                      f"reloj, no la nutrición")
             continue
         _f43 = verificar(_g43, al, req, _der43, _etapa43)
         if _f43["semaforo"] != "verde":
@@ -5941,6 +5996,16 @@ for _etq43, _der43, _etapa43, _peso43, _adulto43 in _CASOS_43:
                           f"falta es un mínimo, el margen del suelo "
                           f"(FUENTES_QUE_PUEDEN_COINCIDIR).")
             break
+
+if _salieron_con_reloj_43 == 0:
+    fallos.append("BLOQUE43: con el límite de 1 s NO ha salido ni un solo menú en los tres "
+                  "perfiles y las tres vueltas. Eso no es el reloj: es que la solución que el "
+                  "solver YA TIENE guardada cuando salta el límite se está TIRANDO otra vez. Es "
+                  "el fallo del 29 de agosto -- medido entonces contra producción, cinco de "
+                  "nueve menús contestaban «el cálculo está tardando más de lo normal» teniendo "
+                  "solución dentro.")
+print(f"  {_salieron_con_reloj_43} menús aceptados con el límite ya saltado (tiene que haber "
+      f"al menos uno)")
 
 # Y lo que de verdad no tiene solución sigue sin tenerla: aceptar la
 # solución guardada no puede convertir un imposible en un menú.
