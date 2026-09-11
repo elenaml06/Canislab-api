@@ -18,7 +18,7 @@ Para desplegarlo de verdad (gratis o muy barato), opciones sencillas:
     - Fly.io (capa gratuita)
 Cualquiera de las tres funciona con este mismo archivo sin cambios.
 """
-from fastapi import FastAPI, HTTPException, Request
+from fastapi import FastAPI, HTTPException, Request, Header
 from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -604,7 +604,13 @@ def _peso_de_referencia(datos):
     obj = getattr(datos, "peso_objetivo_kg", None)
     if obj:
         return float(obj), "declarado"
-    actual = getattr(datos, "peso_perro_kg", None)
+    # ⚠️ EL PESO REAL SE LLAMA DE DOS FORMAS (11 septiembre). En las
+    # peticiones de menú es `peso_perro_kg`; en `PeticionDER` es
+    # `peso_actual_kg`. Mirando solo la primera, una petición a /der con
+    # BCS y sin objetivo declarado caía siempre en "sin_peso" y el BCS no
+    # servía para nada -- callando, que es como no se encuentra.
+    actual = (getattr(datos, "peso_perro_kg", None)
+              or getattr(datos, "peso_actual_kg", None))
     bcs = getattr(datos, "bcs", None)
     if actual and bcs is not None:
         derivado = peso_objetivo_desde_bcs(actual, bcs)
@@ -928,11 +934,45 @@ observabilidad.iniciar_sentry()
 
 app = FastAPI(title="Rawku API")
 
-# permite que la app (en el navegador) pueda llamar a esta API
+# =====================================================================
+# QUIEN PUEDE LLAMAR A ESTA API DESDE UN NAVEGADOR
+#
+# ⚠️ CERRADO EL 11 DE SEPTIEMBRE. Aquí ponía `allow_origins=["*"]` con un
+# comentario que decía «en produccion, poner aqui el dominio real de la
+# app». Llevaba puesto desde el primer día y nadie volvió.
+#
+# Qué abría de verdad, para no exagerarlo ni quitarle importancia: con
+# `*` y SIN credenciales, cualquier página web del mundo podía hacer que
+# el navegador de quien la visitara llamara a esta API y LEER la
+# respuesta. No da acceso a la cuenta de nadie -- para eso hace falta el
+# token, que una página ajena no tiene. Lo que sí da es el motor entero
+# gratis a cualquiera que quiera montarlo en su web, y un sitio desde el
+# que hacerle gastar CPU al solver con el navegador de otra persona.
+#
+# Y sobre todo: `*` deja de ser inofensivo en cuanto un endpoint empiece a
+# fiarse de una cookie. Hoy no lo hace ninguno. El día que uno lo haga,
+# nadie va a acordarse de volver aquí -- que es literalmente lo que pasó
+# con el comentario anterior.
+#
+# Se admiten los despliegues de vista previa de Vercel (`*.vercel.app`)
+# porque es donde se prueba la app antes de fusionar, y localhost para
+# desarrollar. Si algún día el dominio cambia, se cambia AQUÍ y se nota
+# enseguida: la app deja de poder llamar, que es un fallo ruidoso y no
+# uno callado.
+ORIGENES_PERMITIDOS = [
+    "https://rawku.app",
+    "https://www.rawku.app",
+    "http://localhost:5173",   # Vite en desarrollo
+    "http://localhost:3000",
+    "http://127.0.0.1:5173",
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # en produccion, poner aqui el dominio real de la app
-    allow_methods=["*"],
+    allow_origins=ORIGENES_PERMITIDOS,
+    # Las vistas previas de Vercel: canislab-web-<lo-que-sea>.vercel.app
+    allow_origin_regex=r"https://[a-z0-9-]+\.vercel\.app",
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -1255,12 +1295,50 @@ class PeticionTransicion(BaseModel):
 @app.post("/der")
 def endpoint_der(datos: PeticionDER):
     ACTIVIDAD_KEY = ["sedentario", "normal", "activo", "muy_activo", "trabajo"]
+    # ⚠️ EL ÍNDICE SE COMPRUEBA (11 septiembre). Esto era
+    # `ACTIVIDAD_KEY[datos.actividad_idx]` a pelo, con `actividad_idx: int`
+    # sin tope en el modelo. Dos desenlaces, y el malo es el segundo:
+    #   · un 5 o un 99 revienta con IndexError -> 500 sin explicación
+    #   · un -1 NO revienta: en Python cuenta desde el final, así que
+    #     elige "trabajo" -- el que más kcal da -- y devuelve un DER que
+    #     parece bueno para una actividad que nadie pidió. De ese DER
+    #     salen las kcal del menú, y el semáforo lo verifica CONTRA ESE
+    #     DER, así que sale verde. Es la familia de fallo de
+    #     `radiografia.py`: si las kcal ya vienen mal, el menú cumple los
+    #     requisitos de un perro que no es el tuyo.
+    if datos.etapa in ("adulto", "senior") and not (
+            0 <= datos.actividad_idx < len(ACTIVIDAD_KEY)):
+        raise HTTPException(
+            400, f"El nivel de actividad no es válido. Tiene que ser un número "
+                 f"entre 0 y {len(ACTIVIDAD_KEY) - 1}.")
     actividad = ACTIVIDAD_KEY[datos.actividad_idx] if datos.etapa in ("adulto", "senior") else None
+    # ⚠️ /der DEVOLVÍA 500 EN TODAS LAS LLAMADAS (arreglado el 11 de
+    # septiembre, encontrado probando otra cosa). El 28 de agosto se añadió
+    # aquí `peso_objetivo_kg=...` -- con la sangría torcida que delata la
+    # prisa -- y `calcular_der()` NO tiene ese parámetro: el suyo se llama
+    # `peso_ideal_kg`. O sea un TypeError garantizado, en cada llamada,
+    # desde aquel día.
+    #
+    # Por qué estuvo dos semanas sin que saltara nada: a /der no lo llama
+    # nadie. El DER que usa la app lo calcula el frontend (`src/der.js`) y
+    # llega en `der_objetivo` -- es la duplicación que avisa el CLAUDE.md.
+    # Y el BLOQUE 23 prueba `calcular_der()` por dentro contra
+    # `der_casos.json`, nunca el endpoint, así que la batería tampoco lo
+    # veía. Un endpoint que nadie llama y que ninguna prueba toca puede
+    # estar roto indefinidamente; ahora el BLOQUE 93 lo llama.
+    #
+    # El peso de referencia va donde `calcular_der` lo espera. Y solo si
+    # lo hay DE VERDAD -- declarado o derivado del BCS --, porque si no
+    # pisaría el `peso_ideal_kg` que mande quien llama con el peso real, y
+    # eso apagaría el cálculo sobre el peso ideal en vez de arreglarlo.
+    _ref_der, _origen_der = _peso_de_referencia(datos)
+    _peso_ideal_der = (_ref_der if _origen_der in
+                       ("declarado", "derivado_del_bcs", "derivado_del_bcs_cota_inferior")
+                       else datos.peso_ideal_kg)
     resultado = calcular_der(
         datos.peso_actual_kg, datos.etapa, actividad, datos.esterilizado,
         peso_adulto_esperado_kg=datos.peso_adulto_esperado_kg,
-            peso_objetivo_kg=_peso_de_referencia(datos)[0],
-        peso_ideal_kg=datos.peso_ideal_kg,
+        peso_ideal_kg=_peso_ideal_der,
         convivencia=datos.convivencia,
         macho_entero=datos.macho_entero,
         raza=datos.raza,
@@ -3884,7 +3962,14 @@ def endpoint_revalidar(datos: PeticionRevalidar):
 
 
 @app.get("/perro/{perro_id}/menus")
-def endpoint_obtener_menus(perro_id: int):
+def endpoint_obtener_menus(
+        perro_id: int,
+        # ⚠️ EN CABECERA, NO EN LA DIRECCIÓN. Un token en la URL se queda
+        # escrito en los registros de Render, en el historial del navegador
+        # y en la cabecera `Referer` de cualquier enlace que se pulse
+        # después. Los demás endpoints lo reciben en el cuerpo porque son
+        # POST; este es un GET y no tiene cuerpo, así que va aquí.
+        token_usuario: str = Header(None, alias="X-Token-Usuario")):
     """
     ⚠️ ARREGLADO EL 7 DE SEPTIEMBRE — ERA EL ÚNICO CAMINO QUE ENTREGABA
     MENÚS SIN PASAR POR `_garantizar_verificado()`, o sea el único agujero
@@ -3917,7 +4002,32 @@ def endpoint_obtener_menus(perro_id: int):
     guardó, y sigue cumpliendo con el catálogo de hoy?". Si el perro ha
     crecido o ha cambiado de etapa, la pregunta es otra y la contesta
     /menu/revalidar.
+
+    ⚠️ Y ADEMÁS, DESDE EL 11 DE SEPTIEMBRE, PIDE CREDENCIAL. Esto era un
+    GET con el id del perro en la dirección y nada más -- y los ids van 1,
+    2, 3, así que contarlos hacia arriba enseñaba el historial de comida de
+    los perros de todo el mundo. Se verificaba el menú pero no a quien lo
+    pedía: la regla 1 mira que el menú cumpla, no que sea tuyo.
+
+    Se pide el TOKEN de sesión, no un `usuario_id`, por lo mismo que está
+    escrito en `_es_profesional_acreditado`: un uid es un identificador y
+    se puede copiar; mandar el de otro no puede darte lo suyo.
     """
+    # Falla cerrado en los tres casos: sin token, con un token que Supabase
+    # no reconoce, y con un perro cuyo dueño no consta (las filas anteriores
+    # a este cambio). Que su dueño tenga que volver a guardarlas es una
+    # molestia; servírselas a cualquiera es otra cosa.
+    uid = _uid_del_token(token_usuario)
+    if not uid:
+        raise HTTPException(
+            401, "Para ver los menús guardados de un perro tienes que haber iniciado "
+                 "sesión. Cierra sesión, vuelve a entrar e inténtalo otra vez.")
+    if persistencia.dueno_de(perro_id) != uid:
+        # El mismo 404 tanto si el perro no existe como si es de otra
+        # persona: un 403 distinguiría los dos casos, y eso ya es contar
+        # cuántos perros hay y cuáles.
+        raise HTTPException(404, "No hemos encontrado ese perro en tu cuenta.")
+
     menus = persistencia.obtener_menus(perro_id)
     if not menus:
         return menus
@@ -3962,6 +4072,7 @@ def raiz():
 # STRIPE — pagos y suscripciones
 # =====================================================================
 import os
+import re
 import stripe
 
 stripe.api_key = os.environ.get("STRIPE_SECRET_KEY")
@@ -4034,6 +4145,57 @@ URL_BASE      = os.environ.get("URL_BASE") or "https://rawku.app"
 PLANES = {"mensual": PRICE_MENSUAL, "anual": PRICE_ANUAL}
 
 
+# =====================================================================
+# EL user_id NO PUEDE LLEVAR CUALQUIER COSA DENTRO
+#
+# ⚠️ AGUJERO REAL, ENCONTRADO AUDITANDO (11 septiembre). Con el cobro
+# todavía sin conectar a la app, así que no llegó a explotarse -- pero el
+# día que se conecte, nadie va a volver a mirar esto.
+#
+# `_suscripciones_vivas` le pregunta a Stripe con una consulta montada a
+# mano:
+#
+#     query=f"metadata['user_id']:'{user_id}'"
+#
+# Y el `user_id` llega en el CUERPO de /stripe/checkout, que no autentica
+# a nadie. El lenguaje de búsqueda de Stripe entiende comillas simples y
+# entiende `OR`, así que una comilla cierra el literal y lo que venga
+# detrás es consulta:
+#
+#     {"user_id": "x' OR status:'active", ...}
+#     -> metadata['user_id']:'x' OR status:'active'
+#
+# Eso devuelve suscripciones de OTRA GENTE. Y /stripe/checkout, al ver que
+# "ya hay una viva", coge `vivas[0]["customer"]` y contesta con la URL del
+# portal de facturación de esa persona: sus facturas, su tarjeta y el botón
+# de cancelar, a quien lo pidió. Sin credencial ninguna.
+#
+# POR QUÉ SE VALIDA Y NO SE ESCAPA. Escapar comillas es apostar a que el
+# lenguaje de consulta de Stripe se escapa como uno cree, y esa apuesta se
+# pierde callando. Un id de usuario de Supabase es un UUID; aquí se admite
+# el juego de caracteres de un UUID y poco más, que es todo lo que puede
+# necesitar un identificador legítimo. Cualquier otra cosa -- comillas,
+# espacios, dos puntos, barras, `&` -- no es un id: es alguien probando.
+#
+# Y de paso tapa lo mismo en el otro sitio donde este valor se pega a un
+# texto sin mirarlo: la URL de Supabase de `_actualizar_perfil`.
+# Sin ^ ni $: se usa `fullmatch`. Con `match` y `$`, un "u1\n" colaría --
+# `$` en Python también casa justo antes de un salto de línea final -- y un
+# salto de línea metido en una cabecera es media inyección.
+_USER_ID_VALIDO = re.compile(r"[A-Za-z0-9_-]{1,64}")
+
+
+def _user_id_limpio(user_id):
+    """El user_id si puede serlo de verdad; None si no.
+
+    None NO significa "sigue sin filtro": significa que no se hace la
+    consulta. Falla cerrado, como `_es_profesional_acreditado`."""
+    if not isinstance(user_id, str):
+        return None
+    user_id = user_id.strip()
+    return user_id if _USER_ID_VALIDO.fullmatch(user_id) else None
+
+
 class PeticionCheckout(BaseModel):
     user_id: str
     email: str
@@ -4047,6 +4209,15 @@ def crear_checkout(datos: PeticionCheckout):
     if not price_id:
         raise HTTPException(400, f"Plan '{datos.plan}' no válido. "
                                  f"Usa uno de: {sorted(PLANES)}")
+
+    # ⚠️ EL user_id SE MIRA ANTES DE TOCAR STRIPE (11 septiembre). Ver
+    # `_user_id_limpio` para el agujero que tapa. El mensaje no dice qué
+    # forma tiene que tener: quien lo manda bien nunca ve esto, y a quien
+    # lo manda mal a propósito no se le da el molde.
+    if not _user_id_limpio(datos.user_id):
+        raise HTTPException(400, "La cuenta con la que intentas pagar no es válida. "
+                                 "Cierra sesión, vuelve a entrar e inténtalo otra vez. "
+                                 "No se te ha cobrado nada.")
 
     # ⚠️ AÑADIDO (20 agosto) — LA RED: cobrar de verdad con un precio de
     # sandbox no da un error entendible, da un "resource_missing" de la
@@ -4069,17 +4240,22 @@ def crear_checkout(datos: PeticionCheckout):
     # _suscripciones_vivas() para el caso real que lo motivó.
     vivas, se_pudo = _suscripciones_vivas(datos.user_id)
     if vivas:
-        cliente = vivas[0].get("customer")
-        url_portal = None
-        try:
-            url_portal = stripe.billing_portal.Session.create(
-                customer=cliente, return_url=URL_BASE).url
-        except Exception as e:
-            observabilidad.capturar(e, endpoint="/stripe/checkout",
-                                    paso="portal para quien ya está suscrito")
-        return {"ya_suscrito": True, "url": url_portal,
-                "motivo": ("Ya tienes una suscripción activa. Desde aquí puedes "
-                           "cambiarla o cancelarla, pero no hace falta pagar otra vez.")}
+        # ⚠️ AQUÍ YA NO SE ABRE EL PORTAL DE NADIE (11 septiembre). Esto
+        # cogía `vivas[0]["customer"]` y devolvía la URL de su portal de
+        # facturación -- desde un endpoint que no autentica, con un
+        # `user_id` que manda quien llame. O sea: sabiendo el id de otra
+        # persona (un UUID, que se ve en la app y no es un secreto) se
+        # recibía la puerta a sus facturas, su tarjeta y su botón de
+        # cancelar. Tapar la inyección de `_suscripciones_vivas` no bastaba:
+        # con el id de verdad la puerta seguía abierta.
+        #
+        # Se dice lo que hace falta saber -- que no hay que volver a pagar --
+        # y para gestionarla se pasa por /stripe/portal, que sí pide el
+        # token de sesión. Un identificador no abre nada.
+        return {"ya_suscrito": True, "url": None,
+                "motivo": ("Ya tienes una suscripción activa, así que no hace falta "
+                           "pagar otra vez. Para cambiarla o cancelarla, entra en tu "
+                           "cuenta y abre la gestión de la suscripción.")}
     if not se_pudo:
         # Stripe no contesta: no sabemos si ya tiene una. Ante la duda, NO
         # se cobra -- es reintentable, y un cobro duplicado no.
@@ -4116,7 +4292,13 @@ def crear_checkout(datos: PeticionCheckout):
 
 
 class PeticionPortal(BaseModel):
-    stripe_customer_id: str
+    # ⚠️ EL TOKEN, NO EL id DE CLIENTE (11 septiembre). Ver `portal_cliente`.
+    token_usuario: Optional[str] = None
+    # Se sigue aceptando por compatibilidad con lo que mandaba la app, pero
+    # YA NO SE USA para decidir de quién es el portal: se ignora. Se deja
+    # declarado para que una petición antigua reciba un 401 explicativo en
+    # vez de un 422 de Pydantic, que no dice nada.
+    stripe_customer_id: Optional[str] = None
 
 
 # =====================================================================
@@ -4158,6 +4340,10 @@ def stripe_prueba(user_id: str = None, plan: str = "mensual"):
             400, "Falta el user_id del perfil. Añádelo a la dirección así: "
                  "/stripe/prueba?user_id=EL-ID-DE-TU-PERFIL — lo encuentras en "
                  "Supabase, tabla profiles, columna id.")
+    # Misma puerta que /stripe/checkout: este id acaba en la metadata de
+    # la suscripción, y de ahí en la consulta de `_suscripciones_vivas`.
+    if not _user_id_limpio(user_id):
+        raise HTTPException(400, "Ese user_id no tiene forma de id de Supabase.")
 
     price_id = PLANES.get((plan or "").strip().lower())
     if not price_id:
@@ -4185,10 +4371,55 @@ def stripe_prueba(user_id: str = None, plan: str = "mensual"):
 
 @app.post("/stripe/portal")
 def portal_cliente(datos: PeticionPortal):
-    """Abre el portal de Stripe para gestionar la suscripción."""
+    """Abre el portal de Stripe para gestionar la suscripción.
+
+    ⚠️ AGUJERO REAL, TAPADO EL 11 DE SEPTIEMBRE. Esto recibía un
+    `stripe_customer_id` y le abría SU portal, sin preguntar nada más. Un
+    id de cliente de Stripe no es una credencial: es un identificador, y
+    quien tenga uno ajeno --se copia, se filtra en un correo reenviado, o
+    salía de la inyección de `_suscripciones_vivas`-- entraba en la
+    facturación de esa persona: sus facturas, los últimos cuatro dígitos
+    de su tarjeta, y el botón de cancelar la suscripción.
+
+    Es EXACTAMENTE lo que ya estaba escrito en `_es_profesional_acreditado`
+    el 29 de agosto -- «un UUID no es una credencial; mandar el id de otro
+    no puede darte sus permisos» -- aplicado a la parte del dinero, que es
+    donde más caro sale. La regla estaba; este endpoint no la seguía.
+
+    Ahora la app manda su TOKEN de sesión de Supabase, Supabase dice de
+    quién es, y el cliente de Stripe se busca por ESE uid en la metadata de
+    la suscripción. El cliente ya no lo elige quien llama.
+
+    POR QUÉ SE PUEDE HACER HOY SIN ROMPER NADA: el cobro todavía no está
+    conectado en la app (la usuaria sigue con el motor), así que no hay
+    ningún botón que se quede sin funcionar. Cerrarlo después habría
+    costado una versión de la app; ahora no cuesta nada.
+    """
+    uid = _uid_del_token(datos.token_usuario)
+    if not uid:
+        # Falla cerrado, y se dice en cristiano: quien lea esto es alguien
+        # con la sesión caducada, no un atacante.
+        raise HTTPException(
+            status_code=401,
+            detail="Para gestionar tu suscripción tienes que haber iniciado sesión. "
+                   "Cierra sesión, vuelve a entrar e inténtalo otra vez.")
+
+    vivas, se_pudo = _suscripciones_vivas(uid)
+    if not se_pudo:
+        raise HTTPException(
+            status_code=503,
+            detail="No hemos podido consultar tu suscripción ahora mismo. "
+                   "Inténtalo en un minuto.")
+    cliente = next((s.get("customer") for s in vivas if s.get("customer")), None)
+    if not cliente:
+        raise HTTPException(
+            status_code=404,
+            detail="No encontramos ninguna suscripción a tu nombre, así que no hay "
+                   "nada que gestionar.")
+
     try:
         session = stripe.billing_portal.Session.create(
-            customer=datos.stripe_customer_id,
+            customer=cliente,
             return_url=URL_BASE,
         )
         return {"url": session.url}
@@ -4258,9 +4489,40 @@ def portal_cliente(datos: PeticionPortal):
 # red caida o con cualquier excepcion, devuelve False -- y False es el
 # comportamiento del dueño, que nunca es peligroso. Lo contrario seria que
 # una caida de red abriera la puerta.
+def _uid_del_token(token_usuario):
+    """De quien es este token, segun Supabase. None si no se sabe.
+
+    ⚠️ SEPARADO DE `_es_profesional_acreditado` EL 11 DE SEPTIEMBRE, sin
+    cambiarle una linea al comportamiento: hacia falta el mismo "¿de quien
+    es este token?" en /stripe/portal, y la alternativa era una segunda
+    copia del viaje a Supabase. De copias de una frontera de autorizacion
+    ya sabemos como acaban: es la tabla de patologias que se desincronizo.
+
+    None NO es "pues adelante": es que no se sabe, y no saberlo es lo
+    mismo que un no. Falla cerrado -- sin Supabase configurado, con el
+    token caducado, con la red caida o con cualquier excepcion."""
+    if not token_usuario:
+        return None
+    url = (os.environ.get("SUPABASE_URL") or "").rstrip("/")
+    clave = (os.environ.get("SUPABASE_SERVICE_KEY") or "").strip()
+    if not url or not clave:
+        return None
+    try:
+        import requests
+        # ¿De quien es este token? Lo dice Supabase, no el cliente.
+        r = requests.get(f"{url}/auth/v1/user", timeout=6, headers={
+            "apikey": clave, "Authorization": f"Bearer {str(token_usuario).strip()}"})
+        if r.status_code != 200:
+            return None
+        return (r.json() or {}).get("id") or None
+    except Exception:
+        return None
+
+
 def _es_profesional_acreditado(token_usuario):
     """True solo si el token es de una cuenta con el rol verificado."""
-    if not token_usuario:
+    uid = _uid_del_token(token_usuario)
+    if not uid:
         return False
     url = (os.environ.get("SUPABASE_URL") or "").rstrip("/")
     clave = (os.environ.get("SUPABASE_SERVICE_KEY") or "").strip()
@@ -4268,15 +4530,7 @@ def _es_profesional_acreditado(token_usuario):
         return False
     try:
         import requests
-        # (1) ¿De quien es este token? Lo dice Supabase, no el cliente.
-        r = requests.get(f"{url}/auth/v1/user", timeout=6, headers={
-            "apikey": clave, "Authorization": f"Bearer {str(token_usuario).strip()}"})
-        if r.status_code != 200:
-            return False
-        uid = (r.json() or {}).get("id")
-        if not uid:
-            return False
-        # (2) Y ahora si, su fila de `profiles`, con la clave de servicio.
+        # Su fila de `profiles`, con la clave de servicio.
         cab = _cabeceras_supabase(clave)
         cab.pop("Prefer", None)
         r2 = requests.get(f"{url}/rest/v1/profiles",
@@ -4388,9 +4642,18 @@ def _suscripciones_vivas(user_id, excluir_id=None):
     que llevaría a cobrar dos veces. Quien llama decide qué hacer con la
     duda, y aquí la duda nunca se resuelve a favor de cobrar.
     """
+    # ⚠️ NI UNA CONSULTA CON UN id QUE NO LO ES (11 septiembre). Ver
+    # `_user_id_limpio`: una comilla simple aquí dentro convierte esta
+    # búsqueda en la que quiera quien llame, y lo que vuelve son las
+    # suscripciones de otra gente. Se devuelve (vacío, NO se pudo
+    # comprobar), que es la misma respuesta que si Stripe no contestara:
+    # quien llama ya sabe que con esa duda no se cobra.
+    limpio = _user_id_limpio(user_id)
+    if not limpio:
+        return [], False
     try:
         res = stripe.Subscription.search(
-            query=f"metadata['user_id']:'{user_id}'", limit=100)
+            query=f"metadata['user_id']:'{limpio}'", limit=100)
         datos = res["data"] if isinstance(res, dict) else list(res)
     except Exception as e:
         observabilidad.capturar(e, endpoint="_suscripciones_vivas",
@@ -4447,9 +4710,21 @@ def _actualizar_perfil(user_id, campos, evento):
             RuntimeError("Webhook de Stripe sin SUPABASE_URL/SUPABASE_SERVICE_KEY"),
             endpoint="/stripe/webhook", evento=evento)
         return False
+    # ⚠️ EL id SE PEGA A UNA URL, ASÍ QUE SE MIRA ANTES (11 septiembre).
+    # Este valor sale de la metadata de la suscripción, que la puso
+    # /stripe/checkout con lo que le mandaran. Un `&` o un `?` aquí dentro
+    # no es parte del id: es otro parámetro de PostgREST, y esto es un
+    # PATCH con la clave de servicio, que se salta la seguridad por fila.
+    # Ver `_user_id_limpio`.
+    limpio = _user_id_limpio(user_id)
+    if not limpio:
+        observabilidad.capturar(
+            RuntimeError("Webhook de Stripe con un user_id que no tiene forma de id"),
+            endpoint="/stripe/webhook", evento=evento)
+        return False
     try:
         r = httpx.patch(
-            f"{supabase_url}/rest/v1/profiles?id=eq.{user_id}",
+            f"{supabase_url}/rest/v1/profiles?id=eq.{limpio}",
             headers=_cabeceras_supabase(supabase_key),
             json=campos,
             timeout=20.0,
@@ -4815,6 +5090,16 @@ def verificar():
         "supabase": {
             "url_configurada": bool(os.environ.get("SUPABASE_URL")),
             "clave": _tipo_de_clave_supabase(),
+        },
+        # ⚠️ AÑADIDO (11 septiembre) — mismo motivo que los dos de arriba:
+        # poder ver desde el móvil, sin terminal y sin enseñar la clave, si
+        # este despliegue puede firmar pautas. Sin SELLO_SECRETO,
+        # /pauta/firmar devuelve 503 a propósito (ver `_sello_de`), y eso
+        # tiene que poder saberse ANTES de que un veterinario se quede
+        # mirando un error.
+        "firma_de_pautas": {
+            "clave_configurada": bool(_clave_del_sello()),
+            "se_puede_firmar": bool(_clave_del_sello()),
         },
     }
 
@@ -5444,8 +5729,45 @@ class PeticionFirmar(BaseModel):
     indicaciones: str = ""
 
 
-def _sello_de(documento):
-    """El sello de lo firmado: SHA-256 de la copia canónica, 16 hex.
+# =====================================================================
+# EL SELLO DE UNA PAUTA FIRMADA LLEVA CLAVE
+#
+# ⚠️ CORREGIDO EL 11 DE SEPTIEMBRE. Hasta hoy el sello era un SHA-256 a
+# secas de la copia canónica. Eso detecta que un documento ha cambiado POR
+# ACCIDENTE -- un guardado a medias, un número que se movió al copiarlo --
+# y para eso servía bien. Lo que NO puede hacer, y es justo lo que
+# /pauta/comprobar afirmaba, es decir que el documento «es exactamente el
+# que se firmó»: la receta del sello está en este archivo, que es público,
+# así que cualquiera podía cambiar el menú, cambiar el nombre y el número
+# de colegiado del firmante, recalcular el SHA-256 y presentar el
+# resultado. /pauta/comprobar lo daba por bueno, con esas palabras.
+#
+# Una pauta sale firmada con nombre y número de colegiado de una persona
+# real. Es el documento que más caro sale falsificar y el único de aquí
+# que alguien podría tener que defender delante de un colegio profesional.
+#
+# Con clave (HMAC) la receta ya no basta: hace falta el secreto, que vive
+# en el servidor y no viaja con el documento. Se puede seguir comprobando
+# un papel de hace un año, porque comprobar es volver a pasarlo por aquí,
+# que es lo que /pauta/comprobar ya hacía.
+#
+# SIN LA VARIABLE PUESTA NO SE FIRMA. Es la regla 1 leída donde más
+# importa: preferimos no dar documento a dar uno que no prueba lo que
+# dice. Un sello sin clave, hoy, sería un aviso -- y un aviso se puede
+# ignorar.
+def _clave_del_sello():
+    """El secreto con el que se sella. Cadena vacía si no está puesto."""
+    return (os.environ.get("SELLO_SECRETO") or "").strip()
+
+
+def _sello_de(documento, clave=None):
+    """El sello de lo firmado: HMAC-SHA256 de la copia canónica, 16 hex.
+
+    Con `clave=""` vuelve al SHA-256 sin clave de antes del 11 de
+    septiembre. Eso NO es una puerta de atrás para firmar sin secreto --
+    `/pauta/firmar` no llama así -- sino lo que le hace falta a
+    `/pauta/comprobar` para poder seguir leyendo un documento sellado
+    antes de ese día, y decir que lo es.
 
     Mismo criterio que el sello de los datos en `/verificar`: se hashea el
     CONTENIDO -- json ordenado, sin espacios -- y no el texto, para que
@@ -5458,7 +5780,10 @@ def _sello_de(documento):
     se separen el sello seguiría cuadrando consigo mismo sin decir nada. Es
     la misma familia de fallo que la duplicación del DER.
     """
-    import hashlib, json as _json
+    import hashlib, hmac as _hmac, json as _json
+
+    if clave is None:
+        clave = _clave_del_sello()
 
     # ⚠️ 5.0 Y 5 SON EL MISMO NÚMERO, Y EL SELLO TIENE QUE VERLO ASÍ.
     #
@@ -5487,10 +5812,18 @@ def _sello_de(documento):
             return [_numeros_comparables(x) for x in v]
         return v
 
-    copia = _numeros_comparables({k: v for k, v in documento.items() if k != "sello"})
+    # `sello_con_clave` también se excluye: lo escribe /pauta/firmar DESPUÉS
+    # de sellar, para que quien lea el papel sepa de qué tipo es sin tener
+    # que preguntárselo a la API. Si entrara en la copia canónica, el sello
+    # dependería de un campo que se añade después de calcularlo.
+    copia = _numeros_comparables({k: v for k, v in documento.items()
+                                  if k not in ("sello", "sello_con_clave")})
     canonico = _json.dumps(copia, sort_keys=True, ensure_ascii=False,
-                           separators=(",", ":"))
-    return hashlib.sha256(canonico.encode("utf-8")).hexdigest()[:16]
+                           separators=(",", ":")).encode("utf-8")
+    if clave:
+        return _hmac.new(clave.encode("utf-8"), canonico,
+                         hashlib.sha256).hexdigest()[:16]
+    return hashlib.sha256(canonico).hexdigest()[:16]
 
 
 @app.post("/pauta/firmar")
@@ -5507,6 +5840,16 @@ def pauta_firmar(datos: PeticionFirmar):
     bastar y hay que validar el JWT aquí.
     """
     observabilidad.etiquetar(endpoint="/pauta/firmar", etapa=datos.etapa_requisitos)
+    # ⚠️ SIN CLAVE NO SE FIRMA (11 septiembre). Ver `_sello_de`: un sello
+    # sin clave lo recalcula cualquiera, así que no distingue el documento
+    # que salió de aquí de uno que alguien escribió. No se entrega un papel
+    # que no prueba lo que dice.
+    if not _clave_del_sello():
+        raise HTTPException(
+            503,
+            "Ahora mismo no se pueden firmar pautas: al servidor le falta la clave con "
+            "la que se sellan (SELLO_SECRETO). Sin ella el sello no probaría quién firmó, "
+            "y preferimos no dar el documento a darlo sin que valga.")
     al, req = cargar_v2()
     gramos = {n: float(g) for n, g in (datos.gramos_por_alimento or {}).items()
               if _num_positivo(g)}
@@ -5599,6 +5942,9 @@ def pauta_firmar(datos: PeticionFirmar):
                    "main.py": _sello_de_main_py()},
     }
     documento["sello"] = _sello_de(documento)
+    # Que el papel diga de qué tipo es su propio sello, para que leerlo
+    # dentro de un año no dependa de acordarse de este cambio.
+    documento["sello_con_clave"] = True
     return {"factible": True, "documento": documento}
 
 
@@ -5609,17 +5955,53 @@ def pauta_comprobar(documento: dict):
     Se recalcula el sello sobre lo que llega y se compara con el que trae.
     Sirve un año después, con el catálogo y el motor ya cambiados, porque no
     vuelve a calcular la ración: comprueba el documento consigo mismo."""
+    import hmac as _hmac
     esperado = documento.get("sello")
     if not esperado:
         raise HTTPException(400, "Este documento no lleva sello.")
+
+    # ⚠️ SE COMPARA EN TIEMPO CONSTANTE (11 septiembre). Un `==` de cadenas
+    # se para en la primera letra distinta, y ese tiempo se mide: con
+    # suficientes intentos se adivina un sello letra a letra sin conocer la
+    # clave. `compare_digest` tarda lo mismo acierte o falle.
     real = _sello_de(documento)
+    if _hmac.compare_digest(real, str(esperado)):
+        return {
+            "coincide": True,
+            "sello_con_clave": True,
+            "sello_del_documento": esperado,
+            "sello_recalculado": real,
+            "explicacion": "El documento es exactamente el que se firmó.",
+        }
+
+    # ⚠️ Y AHORA EL SELLO DE ANTES DEL 11 DE SEPTIEMBRE, que no llevaba
+    # clave. Un documento así no se puede llamar auténtico -- cualquiera
+    # puede fabricar uno con el mismo sello, porque la receta está en este
+    # archivo y no hace falta ningún secreto para seguirla. Lo único que
+    # prueba es que no ha cambiado por accidente desde que se escribió.
+    # Se dice las dos cosas en vez de escoger una: `coincide` sigue siendo
+    # false, porque la pregunta que contesta es "¿es el que se firmó?", y
+    # de ese no se sabe. Y se explica que hay que volver a firmarlo.
+    antiguo = _sello_de(documento, clave="")
+    if _hmac.compare_digest(antiguo, str(esperado)):
+        return {
+            "coincide": False,
+            "sello_con_clave": False,
+            "sello_del_documento": esperado,
+            "sello_recalculado": real,
+            "explicacion": ("Este documento se selló antes de que el sello llevara clave. "
+                            "Cuadra consigo mismo, así que no ha cambiado por accidente, "
+                            "pero un sello sin clave lo puede recalcular cualquiera: no "
+                            "prueba quién lo firmó. Hay que volver a firmarlo para que lo "
+                            "pruebe."),
+        }
+
     return {
-        "coincide": real == esperado,
+        "coincide": False,
+        "sello_con_clave": bool(documento.get("sello_con_clave")),
         "sello_del_documento": esperado,
         "sello_recalculado": real,
-        "explicacion": ("El documento es exactamente el que se firmó."
-                        if real == esperado else
-                        "Este documento NO es el que se firmó: algo ha cambiado desde entonces."),
+        "explicacion": "Este documento NO es el que se firmó: algo ha cambiado desde entonces.",
     }
 
 

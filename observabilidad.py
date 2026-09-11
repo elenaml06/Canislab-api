@@ -46,22 +46,71 @@ import re
 _ACTIVO = False
 
 # Rutas cuyo CUERPO de peticion nunca debe salir del servidor: /stripe/*
-# recibe email del usuario, user_id y el id de cliente de Stripe. El resto
-# de endpoints (menus, DER, analisis) solo manejan datos del perro -- peso,
-# etapa, alimentos -- que si son utiles para reproducir un fallo.
+# recibe email del usuario, user_id y el id de cliente de Stripe.
+#
+# ⚠️ EL RESTO DE ENDPOINTS NO ESTAN LIMPIOS POR SER DE PERRO (11
+# septiembre). Durante un tiempo este comentario decia que los demas
+# "solo manejan datos del perro -- peso, etapa, alimentos", y dejo de ser
+# cierto el 29 de agosto, cuando /menu/* y /formular/* empezaron a recibir
+# `token_usuario`, que es la sesion de Supabase de quien pide el menu. Lo
+# que los mantiene limpios no es su contenido: es el tachado por nombre de
+# clave y por forma (ver CLAVES_SENSIBLES, _JWT). Si algun dia un endpoint
+# de estos recibe algo que ninguna de las dos cosas sepa reconocer, su ruta
+# tiene que entrar aqui.
 RUTAS_SIN_CUERPO = ("/stripe",)
 
-# Claves que se borran de cualquier sitio del evento, aunque lleguen por
-# una via que no habiamos previsto.
+# Trozos de nombre de clave que se borran de cualquier sitio del evento,
+# aunque lleguen por una via que no habiamos previsto.
+#
+# ⚠️ SON TROZOS, NO NOMBRES ENTEROS (11 septiembre) — CASO REAL, y el
+# agujero estuvo abierto desde el 29 de agosto. Esto se comparaba con
+# `k.lower() in CLAVES_SENSIBLES`, o sea IGUALDAD EXACTA. La lista tenia
+# "token"... y el campo por el que viaja la sesion de Supabase se llama
+# `token_usuario`. No es "token", asi que no se tachaba.
+#
+# Y el cuerpo de la peticion solo se borra entero en las rutas de /stripe
+# (ver RUTAS_SIN_CUERPO), asi que cualquier error en /menu/v2,
+# /menu/cambiar, /menu/varios-perros o /formular/autocompletar mandaba a
+# Sentry el JWT de sesion de quien pedia el menu, vivo y entero. Con ese
+# token se es esa persona ante Supabase hasta que caduca.
+#
+# Comparar por trozo tacha de mas, y eso es justo lo que se quiere: el
+# coste de borrar un campo que no hacia falta es no poder reproducir un
+# fallo; el de dejar pasar uno que si, es una credencial en un panel de
+# terceros.
 CLAVES_SENSIBLES = (
-    "email", "customer_email", "user_id", "stripe_customer_id",
-    "stripe-signature", "authorization", "cookie", "apikey", "api_key",
-    "token", "password", "secret",
+    "email", "user_id", "customer", "signature", "authorization",
+    "cookie", "apikey", "api_key", "token", "password", "secret",
+    "clave", "jwt", "bearer",
 )
 
 # Cualquier cosa con forma de email se tacha, este donde este dentro del
 # evento -- incluidas las variables locales que Sentry adjunta a la traza.
 _EMAIL = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}")
+
+# ⚠️ Y CUALQUIER COSA CON FORMA DE JWT (11 septiembre). Borrar por nombre
+# de clave no basta: Sentry adjunta las VARIABLES LOCALES de cada linea de
+# la traza, y ahi el token no viaja como campo sino dentro de un texto ya
+# montado, tipo
+#     datos = PeticionMenu(token_usuario='eyJhbGciOi...', peso_perro_kg=20.0)
+# Eso es un string, no un dict, y ninguna limpieza por clave puede verlo.
+# Un JWT son tres trozos de base64url separados por puntos, y el primero
+# empieza siempre por "eyJ" ({" en base64). Se tacha este donde este.
+_JWT = re.compile(r"eyJ[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]+")
+
+# Las claves de servicio del formato nuevo de Supabase y las de Stripe no
+# son JWT y no llevan puntos: se reconocen por el prefijo.
+_CLAVES_CON_PREFIJO = re.compile(
+    r"\b(?:sb_secret_|sb_publishable_|sk_live_|sk_test_|rk_live_|rk_test_|whsec_)"
+    r"[A-Za-z0-9_-]{6,}")
+
+
+def _es_clave_sensible(clave):
+    """True si el NOMBRE del campo dice que su valor no puede salir de aqui."""
+    if not isinstance(clave, str):
+        return False
+    bajo = clave.lower()
+    return any(trozo in bajo for trozo in CLAVES_SENSIBLES)
 
 
 def _tasa(nombre, por_defecto):
@@ -90,7 +139,7 @@ def _limpiar_datos(valor, profundidad=0):
     if isinstance(valor, dict):
         limpio = {}
         for k, v in valor.items():
-            if isinstance(k, str) and k.lower() in CLAVES_SENSIBLES:
+            if _es_clave_sensible(k):
                 limpio[k] = "[borrado]"
             else:
                 limpio[k] = _limpiar_datos(v, profundidad + 1)
@@ -98,7 +147,9 @@ def _limpiar_datos(valor, profundidad=0):
     if isinstance(valor, (list, tuple)):
         return [_limpiar_datos(v, profundidad + 1) for v in valor]
     if isinstance(valor, str):
-        return _EMAIL.sub("[email borrado]", valor)
+        limpio = _EMAIL.sub("[email borrado]", valor)
+        limpio = _JWT.sub("[token borrado]", limpio)
+        return _CLAVES_CON_PREFIJO.sub("[clave borrada]", limpio)
     return valor
 
 

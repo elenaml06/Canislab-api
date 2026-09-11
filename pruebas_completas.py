@@ -20,6 +20,7 @@ final dice "TODO EN VERDE", se puede entregar el archivo. Si dice que hay
 fallos, se arreglan ANTES de entregar nada, no después.
 """
 import sys, time, json
+import os as _os_entorno
 
 # ⚠️ LO PRIMERO DE TODO: BORRAR EL BYTECODE CACHEADO (9 septiembre).
 #
@@ -45,6 +46,15 @@ for _pyc in _pl_cache.Path(".").rglob("__pycache__"):
 
 sys.path.insert(0, '.')
 sys.path.insert(0, './motor')
+
+# ⚠️ LA CLAVE CON LA QUE SE SELLAN LAS PAUTAS, FABRICADA AQUÍ (11
+# septiembre). Desde hoy `/pauta/firmar` devuelve 503 sin ella, a
+# propósito: un sello sin clave lo recalcula cualquiera y no prueba quién
+# firmó (ver `_sello_de` en main.py). La batería se fabrica la suya, como
+# ya se fabrica su Stripe y su Supabase, para seguir corriendo sin red y
+# sin secretos de verdad. Se pone ANTES de importar main.py: `_sello_de`
+# la lee en cada llamada, pero /verificar la mira al arrancar.
+_os_entorno.environ.setdefault("SELLO_SECRETO", "sello-de-pruebas-no-es-el-de-produccion")
 
 from motor_completo import resolver, patologias_bloquean, especie_de
 from exclusiones import _palabras as _palabras_b11
@@ -6432,7 +6442,14 @@ import persistencia as _pers_b47
 
 _db_b47 = _os_b47.path.join(_tmp_b47.mkdtemp(), "b45.db")
 _pers_b47.crear_tablas(_db_b47)
-_pid_b47 = _pers_b47.guardar_perro({"nombre": "B45", "tamano": "mediano"}, ruta_db=_db_b47)
+# ⚠️ EL PERRO TIENE DUEÑO DESDE EL 11 DE SEPTIEMBRE. El endpoint ya no
+# sirve los menús de un perro a quien los pida: pide el token de sesión y
+# comprueba que el perro es de esa cuenta. Ver el BLOQUE 93, que es el que
+# vigila la puerta; aquí solo hace falta llamar con la llave puesta para
+# poder seguir comprobando lo de siempre -- que lo que sale está verificado.
+_UID_B47 = "duenyo-de-b47"
+_pid_b47 = _pers_b47.guardar_perro({"nombre": "B45", "tamano": "mediano",
+                                    "usuario_id": _UID_B47}, ruta_db=_db_b47)
 
 _r_b47 = _c.post("/menu/v2", json={"nombres_alimentos": [], "modo": "automatico",
                                    "der_objetivo": 1100, "peso_perro_kg": 20,
@@ -6454,11 +6471,19 @@ else:
                            contexto=_ctx_b47, ruta_db=_db_b47)
 
     _real_b47 = _pers_b47.obtener_menus
+    _real_dueno_b47 = _pers_b47.dueno_de
+    _real_uid_b47 = _api._uid_del_token
     _pers_b47.obtener_menus = lambda _p, ruta_db=_db_b47: _real_b47(_p, ruta_db=_db_b47)
+    _pers_b47.dueno_de = lambda _p, ruta_db=_db_b47: _real_dueno_b47(_p, ruta_db=_db_b47)
+    # Supabase de mentira: este token es de este dueño y de nadie más.
+    _api._uid_del_token = lambda t: _UID_B47 if t == "token-bueno-b47" else None
     try:
-        _por_nombre_b47 = {m["nombre"]: m for m in _api.endpoint_obtener_menus(_pid_b47)}
+        _por_nombre_b47 = {m["nombre"]: m for m in
+                           _api.endpoint_obtener_menus(_pid_b47, token_usuario="token-bueno-b47")}
     finally:
         _pers_b47.obtener_menus = _real_b47
+        _pers_b47.dueno_de = _real_dueno_b47
+        _api._uid_del_token = _real_uid_b47
 
     _bueno_b47 = _por_nombre_b47.get("bueno") or {}
     if _bueno_b47.get("verificado") is not True or not _bueno_b47.get("ficha"):
@@ -8292,6 +8317,437 @@ elif not _nombres58[0].get("fuente"):
     fallos.append("BLOQUE58: el suelo de proteina de la lactancia se nombra sin fuente")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
+# BLOQUE 93 — LAS PUERTAS: QUIEN PUEDE PEDIR QUE
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (11 septiembre). Los 92 bloques de arriba vigilan que
+# lo que sale sea correcto: que el menú cumpla los 43 requisitos, que no se
+# pase de los topes, que las kcal sean las de este perro. Ninguno se
+# preguntaba nunca QUIÉN estaba pidiendo, y esa pregunta tiene sus propias
+# formas de salir mal:
+#
+#   · La consulta a Stripe se montaba con un f-string. Una comilla simple
+#     dentro del `user_id` -- que llega en el cuerpo de un endpoint que no
+#     autentica -- la convertía en la consulta que quisiera quien llamara,
+#     y lo que volvía eran las suscripciones de otra gente.
+#   · /stripe/portal abría el portal de facturación del `stripe_customer_id`
+#     que le mandaran. Un identificador no es una credencial.
+#   · /perro/{id}/menus servía el historial de comida de cualquier perro a
+#     cualquiera, con ids que van 1, 2, 3.
+#   · El sello de una pauta firmada era un SHA-256 sin clave, o sea una
+#     receta pública: se cambiaba el menú, se recalculaba, y /pauta/comprobar
+#     decía «es exactamente el que se firmó».
+#   · El token de sesión de Supabase se iba entero a Sentry, porque la
+#     limpieza comparaba nombres de clave EXACTOS y el campo se llama
+#     `token_usuario`, no `token`.
+#
+# Todas son de la familia que describe el CLAUDE.md en «fallos que no puede
+# encontrar la usuaria»: no dan error, no se ven en pantalla y el menú sale
+# verde igual. Este bloque planta cada una de las cinco y exige que salte.
+print("=== BLOQUE 93: las puertas -- quién puede pedir qué ===")
+
+import stripe as _stripe_b93
+import observabilidad as _obs_b93
+import persistencia as _pers_b93
+import tempfile as _tmp_b93, os as _os_b93
+
+# ── 1. LA CONSULTA A STRIPE NO SE DEJA ESCRIBIR DESDE FUERA ──────────
+#
+# EL FALLO PLANTADO: el user_id que usaría alguien que quiere leer las
+# suscripciones de los demás. Si `_suscripciones_vivas` llega a preguntarle
+# esto a Stripe, la comilla ya ha hecho su trabajo.
+_CONSULTAS_B93 = []
+_SUBS_B93 = [{"id": "s_victima", "status": "active", "customer": "cus_VICTIMA",
+              "metadata": {"user_id": "otra-persona"}}]
+
+def _buscar_b93(query=None, limit=None):
+    _CONSULTAS_B93.append(query)
+    return {"data": list(_SUBS_B93)}
+
+_search_real_b93 = _stripe_b93.Subscription.search
+_checkout_real_b93 = _stripe_b93.checkout.Session.create
+_portal_real_b93 = _stripe_b93.billing_portal.Session.create
+_clave_real_b93 = _stripe_b93.api_key
+_CHECKOUTS_B93, _PORTALES_B93 = [], []
+
+class _UrlB51:
+    url = "https://portal.de.mentira"
+
+_stripe_b93.Subscription.search = _buscar_b93
+_stripe_b93.checkout.Session.create = lambda **kw: (_CHECKOUTS_B93.append(kw), _UrlB51())[1]
+_stripe_b93.billing_portal.Session.create = lambda **kw: (_PORTALES_B93.append(kw), _UrlB51())[1]
+_stripe_b93.api_key = "sk_test_b93"
+
+_INYECCIONES_B93 = [
+    "x' OR status:'active",          # la de verdad: devuelve las de todo el mundo
+    "x' OR metadata['user_id']:'u",
+    "u1' OR '1",
+    "a b",                            # un espacio ya parte la consulta
+    "u1&select=*",                    # y esto es para la URL de Supabase
+    "../../otro",
+    "u1\nX-Algo: lo-que-sea",          # un salto de línea en medio
+    "",
+    "x" * 65,                         # más largo que cualquier uid real
+]
+# Un espacio o un salto SUELTOS a los lados sí se recortan y el id vale: lo
+# que queda después de recortar es un id legítimo, y es el recortado -- no el
+# original -- el que va a la consulta. Se comprueba aparte para que quede
+# escrito que eso es a propósito y no un hueco.
+if _api._user_id_limpio("  3f2b9c10-7a44-4e21-9b0e-51d2c8a77e01\n") != \
+        "3f2b9c10-7a44-4e21-9b0e-51d2c8a77e01":
+    fallos.append("BLOQUE93: un uid con espacios alrededor no se recorta y se rechaza. "
+                  "Lo que va a la consulta es el recortado, así que recortar es seguro.")
+
+try:
+    for _mala_b93 in _INYECCIONES_B93:
+        _CONSULTAS_B93.clear()
+        _vivas_b93, _se_pudo_b93 = _api._suscripciones_vivas(_mala_b93)
+        if _CONSULTAS_B93:
+            fallos.append(
+                f"BLOQUE93: con user_id={_mala_b93!r} se le ha preguntado a Stripe "
+                f"igualmente ({_CONSULTAS_B93[0]!r}). Una comilla ahí dentro devuelve "
+                f"las suscripciones de otra gente, y de ahí sale su portal de pago.")
+        if _vivas_b93 or _se_pudo_b93:
+            fallos.append(
+                f"BLOQUE93: con user_id={_mala_b93!r} se ha contestado "
+                f"({len(_vivas_b93)} vivas, se_pudo={_se_pudo_b93}). Tenía que ser "
+                f"([], False): no se sabe, y con esa duda no se cobra.")
+
+    # y un id legítimo SÍ tiene que llegar a Stripe, entero y entre comillas
+    _CONSULTAS_B93.clear()
+    _api._suscripciones_vivas("3f2b9c10-7a44-4e21-9b0e-51d2c8a77e01")
+    if not _CONSULTAS_B93:
+        fallos.append("BLOQUE93: un UUID normal y corriente no llega a Stripe. La "
+                      "validación se ha pasado de estricta y nadie podría suscribirse.")
+    elif "3f2b9c10-7a44-4e21-9b0e-51d2c8a77e01" not in (_CONSULTAS_B93[0] or ""):
+        fallos.append(f"BLOQUE93: la consulta a Stripe no lleva el id: {_CONSULTAS_B93[0]!r}")
+
+    # el mismo filtro, por la puerta de /stripe/checkout
+    for _mala_b93 in _INYECCIONES_B93[:3]:
+        _CHECKOUTS_B93.clear()
+        _r_b93 = _c.post("/stripe/checkout", json={"user_id": _mala_b93,
+                                                   "email": "a@b.com", "plan": "mensual"})
+        if _CHECKOUTS_B93:
+            fallos.append(f"BLOQUE93: /stripe/checkout ha creado un cobro con "
+                          f"user_id={_mala_b93!r}")
+        if _r_b93.status_code != 400:
+            fallos.append(f"BLOQUE93: /stripe/checkout con user_id={_mala_b93!r} ha "
+                          f"devuelto {_r_b93.status_code}, esperaba 400")
+
+    # ── 2. NI EL CHECKOUT NI EL PORTAL REGALAN LA FACTURACIÓN DE OTRO ──
+    #
+    # EL FALLO PLANTADO: pedir el portal con el id de cliente de la víctima,
+    # que es lo que hacía falta antes y era todo lo que hacía falta.
+    _PORTALES_B93.clear()
+    _r_b93 = _c.post("/stripe/portal", json={"stripe_customer_id": "cus_VICTIMA"})
+    if _r_b93.status_code != 401 or _PORTALES_B93:
+        fallos.append(
+            f"BLOQUE93: /stripe/portal ha abierto un portal con solo el id de cliente "
+            f"(HTTP {_r_b93.status_code}, {len(_PORTALES_B93)} portales creados). Ese id no "
+            f"es una credencial: con él se ven las facturas, la tarjeta y el botón de "
+            f"cancelar de otra persona.")
+
+    # con un token que Supabase no reconoce, tampoco
+    _real_uid_b93 = _api._uid_del_token
+    _api._uid_del_token = lambda t: "el-de-verdad" if t == "token-bueno" else None
+    try:
+        _PORTALES_B93.clear()
+        _r_b93 = _c.post("/stripe/portal", json={"token_usuario": "token-inventado",
+                                                 "stripe_customer_id": "cus_VICTIMA"})
+        if _r_b93.status_code != 401 or _PORTALES_B93:
+            fallos.append(f"BLOQUE93: /stripe/portal con un token que Supabase no reconoce "
+                          f"ha devuelto {_r_b93.status_code}. Tenía que fallar cerrado.")
+
+        # con un token bueno, el cliente sale de la suscripción de ESE uid,
+        # nunca del cuerpo de la petición
+        _SUBS_B93[:] = [{"id": "s_mia", "status": "active", "customer": "cus_MIA",
+                         "metadata": {"user_id": "el-de-verdad"}}]
+        _PORTALES_B93.clear()
+        _r_b93 = _c.post("/stripe/portal", json={"token_usuario": "token-bueno",
+                                                 "stripe_customer_id": "cus_VICTIMA"})
+        if _r_b93.status_code != 200:
+            fallos.append(f"BLOQUE93: /stripe/portal con un token bueno ha devuelto "
+                          f"{_r_b93.status_code}; quien paga no puede gestionar su suscripción")
+        elif not _PORTALES_B93 or _PORTALES_B93[0].get("customer") != "cus_MIA":
+            fallos.append(
+                f"BLOQUE93: el portal se ha abierto para "
+                f"{(_PORTALES_B93 or [{}])[0].get('customer')!r}. Tenía que ser 'cus_MIA', el "
+                f"de la suscripción de quien manda el token -- el `stripe_customer_id` del "
+                f"cuerpo no puede decidir de quién es el portal.")
+    finally:
+        _api._uid_del_token = _real_uid_b93
+        _SUBS_B93[:] = [{"id": "s_victima", "status": "active", "customer": "cus_VICTIMA",
+                         "metadata": {"user_id": "otra-persona"}}]
+
+    # y el checkout tampoco: sabiendo el uid de otro (un UUID, que no es un
+    # secreto) devolvía la URL de su portal sin pedir nada más
+    _r_b93 = _c.post("/stripe/checkout", json={"user_id": "otra-persona",
+                                               "email": "a@b.com", "plan": "mensual"})
+    _j_b93 = _r_b93.json()
+    if not _j_b93.get("ya_suscrito"):
+        fallos.append("BLOQUE93: /stripe/checkout no avisa de que ya hay suscripción")
+    if _j_b93.get("url"):
+        fallos.append(
+            f"BLOQUE93: /stripe/checkout ha devuelto una URL ({_j_b93.get('url')!r}) a quien "
+            f"solo sabía el uid de otra persona. Eso es la puerta a su facturación: para "
+            f"gestionarla se pasa por /stripe/portal, que pide el token.")
+finally:
+    _stripe_b93.Subscription.search = _search_real_b93
+    _stripe_b93.checkout.Session.create = _checkout_real_b93
+    _stripe_b93.billing_portal.Session.create = _portal_real_b93
+    _stripe_b93.api_key = _clave_real_b93
+
+# ── 3. EL TOKEN DE SESIÓN NO SALE DE ESTE SERVIDOR ───────────────────
+#
+# EL FALLO PLANTADO: un JWT de verdad, en los dos sitios por los que se
+# escapaba -- como campo del cuerpo (`token_usuario`, que no es "token") y
+# dentro del texto de una variable local, que es como Sentry adjunta la
+# traza y donde ninguna limpieza por nombre de clave puede verlo.
+_JWT_B93 = ("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9"
+            ".eyJzdWIiOiIxMjM0NTY3ODkwIiwicm9sZSI6ImF1dGhlbnRpY2F0ZWQifQ"
+            ".dBjftJeZ4CVPmB92K27uhbUJU1p1r_wW1gFWFOEjXk")
+
+_LIMPIO_B93 = _obs_b93._limpiar_datos({
+    "token_usuario": _JWT_B93,
+    "etapa_requisitos": "Adulto",
+    "traza": f"datos = PeticionMenu(token_usuario='{_JWT_B93}', peso_perro_kg=20.0)",
+    "anidado": [{"Authorization": f"Bearer {_JWT_B93}"}],
+})
+_TEXTO_B93 = json.dumps(_LIMPIO_B93, ensure_ascii=False)
+if _JWT_B93 in _TEXTO_B93 or "eyJhbGciOi" in _TEXTO_B93:
+    fallos.append(
+        "BLOQUE93: el token de sesión de Supabase sigue saliendo entero hacia Sentry. "
+        "Con ese JWT se es esa persona ante Supabase hasta que caduque, y el panel de "
+        "errores no es sitio para eso. Se tacha por nombre de clave (por TROZO, que el "
+        "campo se llama `token_usuario`) y por forma (_JWT).")
+# ⚠️ Y LO MISMO CON UN TOKEN QUE NO TENGA FORMA DE JWT. Hay dos redes
+# puestas -- el nombre del campo y la forma del valor -- y con las dos, quitar
+# una sola no deja escapar nada, así que la prueba de arriba no basta para
+# vigilarlas por separado. Esta mira la del NOMBRE: un valor que ninguna
+# forma reconoce solo se tacha si el campo se llama como se llama. Es el
+# fallo exacto que estuvo abierto: la lista decía "token" y el campo es
+# `token_usuario`.
+_LIMPIO_NOMBRE_B93 = _obs_b93._limpiar_datos({"token_usuario": "una-sesion-cualquiera-12345"})
+if "una-sesion-cualquiera-12345" in json.dumps(_LIMPIO_NOMBRE_B93):
+    fallos.append(
+        "BLOQUE93: un `token_usuario` que no tiene forma de JWT viaja entero a Sentry. "
+        "Se compara el nombre del campo por TROZO, no por igualdad: la lista dice "
+        "'token' y el campo se llama 'token_usuario'.")
+
+if _LIMPIO_B93.get("etapa_requisitos") != "Adulto":
+    fallos.append("BLOQUE93: la limpieza se ha llevado por delante datos del perro. "
+                  "Sin ellos no se puede reproducir un fallo del motor.")
+for _clave_b93 in ("sb_secret_AbCdEf123456", "sk_live_51AbCdEf123456", "whsec_AbCdEf123456"):
+    if _clave_b93 in json.dumps(_obs_b93._limpiar_datos(f"algo salio mal con {_clave_b93}")):
+        fallos.append(f"BLOQUE93: una clave de servicio ({_clave_b93[:12]}...) viaja a Sentry "
+                      f"dentro de un texto. No son JWT: se reconocen por el prefijo.")
+
+# ── 4. LOS MENÚS GUARDADOS DE UN PERRO SON DE SU DUEÑO ───────────────
+#
+# EL FALLO PLANTADO: pedir el perro número 1 sin ser nadie, que es lo que
+# hacía falta antes. Los ids van 1, 2, 3: contarlos hacia arriba enseñaba
+# el historial de comida de los perros de todo el mundo.
+_db_b93 = _os_b93.path.join(_tmp_b93.mkdtemp(), "b51.db")
+_pers_b93.crear_tablas(_db_b93)
+_pid_mio_b93 = _pers_b93.guardar_perro({"nombre": "Mío", "usuario_id": "uid-mio"},
+                                       ruta_db=_db_b93)
+_pid_otro_b93 = _pers_b93.guardar_perro({"nombre": "De otro", "usuario_id": "uid-otro"},
+                                        ruta_db=_db_b93)
+# una fila de las de antes del 11 de septiembre: sin dueño que conste
+_pid_huerfano_b93 = _pers_b93.guardar_perro({"nombre": "Sin dueño"}, ruta_db=_db_b93)
+
+_real_menus_b93 = _pers_b93.obtener_menus
+_real_dueno_b93 = _pers_b93.dueno_de
+_real_uid_b93 = _api._uid_del_token
+_pers_b93.obtener_menus = lambda _p, ruta_db=_db_b93: _real_menus_b93(_p, ruta_db=_db_b93)
+_pers_b93.dueno_de = lambda _p, ruta_db=_db_b93: _real_dueno_b93(_p, ruta_db=_db_b93)
+_api._uid_del_token = lambda t: {"token-mio": "uid-mio", "token-otro": "uid-otro"}.get(t)
+
+
+def _estado_menus_b93(perro_id, token):
+    try:
+        _api.endpoint_obtener_menus(perro_id, token_usuario=token)
+        return 200
+    except _api.HTTPException as e:
+        return e.status_code
+
+
+try:
+    _pers_b93.guardar_menu(_pid_mio_b93, "uno", {"gramos": {"Pollo con piel (sin hueso)": 100},
+                                                 "kcal_total": 200}, ruta_db=_db_b93)
+    _casos_b93 = [
+        (_pid_mio_b93, None, 401, "sin token ninguno"),
+        (_pid_mio_b93, "token-inventado", 401, "con un token que Supabase no reconoce"),
+        (_pid_mio_b93, "token-otro", 404, "con el token de OTRA persona"),
+        (_pid_huerfano_b93, "token-mio", 404, "con un perro cuyo dueño no consta"),
+        (_pid_otro_b93, "token-mio", 404, "pidiendo el perro de otro"),
+        (_pid_mio_b93, "token-mio", 200, "siendo su dueño"),
+    ]
+    for _pid_b93, _tok_b93, _esperado_b93, _que_b93 in _casos_b93:
+        _real_b93 = _estado_menus_b93(_pid_b93, _tok_b93)
+        if _real_b93 != _esperado_b93:
+            fallos.append(
+                f"BLOQUE93: /perro/{{id}}/menus {_que_b93} ha devuelto {_real_b93}, "
+                f"esperaba {_esperado_b93}. "
+                + ("El historial de comida de un perro es de su dueño, y los ids van "
+                   "1, 2, 3." if _esperado_b93 != 200
+                   else "Su dueño tiene que poder ver sus menús."))
+    # y por la puerta de verdad: el token va en CABECERA, nunca en la
+    # dirección. Una URL con el token dentro se queda escrita en los
+    # registros de Render y en el historial del navegador.
+    _r_b93 = _c.get(f"/perro/{_pid_mio_b93}/menus",
+                    headers={"X-Token-Usuario": "token-mio"})
+    if _r_b93.status_code != 200:
+        fallos.append(f"BLOQUE93: con la cabecera X-Token-Usuario, su dueño recibe "
+                      f"{_r_b93.status_code}")
+    if _c.get(f"/perro/{_pid_mio_b93}/menus").status_code != 401:
+        fallos.append("BLOQUE93: sin cabecera ninguna, /perro/{id}/menus contesta igual")
+    # el token NO puede colarse por la dirección: ahí se queda escrito
+    if _c.get(f"/perro/{_pid_mio_b93}/menus?token_usuario=token-mio").status_code == 200:
+        fallos.append("BLOQUE93: el token se acepta en la URL. Ahí acaba en los "
+                      "registros de Render, en el historial y en el Referer.")
+finally:
+    _pers_b93.obtener_menus = _real_menus_b93
+    _pers_b93.dueno_de = _real_dueno_b93
+    _api._uid_del_token = _real_uid_b93
+
+# ── 5. UNA PAUTA FIRMADA NO SE PUEDE REESCRIBIR ──────────────────────
+#
+# EL FALLO PLANTADO: cambiar el menú y el número de colegiado de un
+# documento firmado y volver a sellarlo con la receta pública (SHA-256 de
+# la copia canónica). Antes del 11 de septiembre eso pasaba por bueno, con
+# estas palabras: «El documento es exactamente el que se firmó».
+_BASE_B93 = {"gramos_por_alimento": {"Cuello de pollo": 300.0,
+                                     "Pollo con piel (sin hueso)": 300.0,
+                                     "Hígado de pollo": 40.0},
+             "der_objetivo": 1100.0, "etapa_requisitos": "Adulto", "peso_perro_kg": 20.0,
+             "firmante": {"nombre": "Ana", "num_colegiado": "COL-1"}}
+_r_b93 = _c.post("/pauta/firmar", json=_BASE_B93).json()
+
+if not _r_b93.get("factible"):
+    # no siempre hay ración verde a la primera; se prueba con lo que da el motor
+    _menu_b93 = _c.post("/menu/v2", json={"nombres_alimentos": [], "modo": "automatico",
+                                          "der_objetivo": 1100.0, "peso_perro_kg": 20.0,
+                                          "etapa_requisitos": "Adulto"}).json()
+    if _menu_b93.get("factible"):
+        _BASE_B93["gramos_por_alimento"] = _menu_b93["menu"]
+        _r_b93 = _c.post("/pauta/firmar", json=_BASE_B93).json()
+
+if not _r_b93.get("factible"):
+    fallos.append("BLOQUE93: no se ha podido firmar ninguna pauta para probar el sello. "
+                  "Sin documento no se comprueba nada -- mira si /pauta/firmar sigue en pie.")
+else:
+    _doc_b93 = _r_b93["documento"]
+    if not _doc_b93.get("sello_con_clave"):
+        fallos.append("BLOQUE93: el documento firmado no dice que su sello lleve clave. "
+                      "Dentro de un año, quien lo lea no podrá saberlo.")
+    if not _c.post("/pauta/comprobar", json=_doc_b93).json().get("coincide"):
+        fallos.append("BLOQUE93: un documento recién firmado no se reconoce a sí mismo.")
+
+    # LA FALSIFICACIÓN: se cambia lo que importa y se vuelve a sellar con la
+    # receta que está escrita en main.py, que es pública.
+    import hashlib as _hash_b93
+    _falso_b93 = json.loads(json.dumps(_doc_b93))
+    _falso_b93["firmante"] = {"nombre": "Quien sea", "num_colegiado": "COL-INVENTADO"}
+    _falso_b93["menu"] = {k: v * 2 for k, v in _falso_b93["menu"].items()}
+    _falso_b93["sello"] = _api._sello_de(_falso_b93, clave="")  # sin clave: la receta pública
+    _v_b93 = _c.post("/pauta/comprobar", json=_falso_b93).json()
+    if _v_b93.get("coincide"):
+        fallos.append(
+            "BLOQUE93: se ha dado por AUTÉNTICA una pauta reescrita -- otro menú, otro "
+            "número de colegiado -- resellada con la receta pública. El sello tiene que "
+            "llevar clave (HMAC): si no, no prueba quién firmó, solo que el archivo no se "
+            "estropeó por el camino.")
+    if _v_b93.get("sello_con_clave"):
+        fallos.append("BLOQUE93: un sello sin clave se ha presentado como que la lleva.")
+
+    # y cambiar un gramo de un documento bien sellado tiene que saltar igual
+    _tocado_b93 = json.loads(json.dumps(_doc_b93))
+    _primero_b93 = sorted(_tocado_b93["menu"])[0]
+    _tocado_b93["menu"][_primero_b93] = _tocado_b93["menu"][_primero_b93] + 7
+    if _c.post("/pauta/comprobar", json=_tocado_b93).json().get("coincide"):
+        fallos.append("BLOQUE93: se han movido 7 g de un documento firmado y el sello "
+                      "sigue cuadrando.")
+
+# sin la clave puesta no se firma: se prefiere no dar el papel a darlo sin que valga
+_guardada_b93 = _os_b93.environ.pop("SELLO_SECRETO", None)
+try:
+    _r_b93 = _c.post("/pauta/firmar", json=_BASE_B93)
+    if _r_b93.status_code != 503:
+        fallos.append(f"BLOQUE93: sin SELLO_SECRETO se ha firmado igual "
+                      f"(HTTP {_r_b93.status_code}). Un sello sin clave lo recalcula "
+                      f"cualquiera; firmar con él es entregar un papel que no prueba nada.")
+finally:
+    if _guardada_b93 is not None:
+        _os_b93.environ["SELLO_SECRETO"] = _guardada_b93
+
+# ── 6. LAS DOS PEQUEÑAS ──────────────────────────────────────────────
+#
+# El índice de actividad: un -1 NO reventaba, elegía "trabajo" -- el que más
+# kcal da -- y devolvía un DER que parece bueno para una actividad que nadie
+# pidió. De ahí salen las kcal del menú, y el semáforo lo verifica CONTRA
+# ESE DER, así que sale verde. Es lo que vigila `radiografia.py`: si las
+# kcal ya vienen mal, el menú cumple los requisitos de otro perro.
+for _idx_b93 in (-1, -5, 5, 99):
+    _r_b93 = _c.post("/der", json={"peso_actual_kg": 20.0, "etapa": "adulto",
+                                   "actividad_idx": _idx_b93, "esterilizado": False})
+    if _r_b93.status_code != 400:
+        fallos.append(f"BLOQUE93: /der con actividad_idx={_idx_b93} ha devuelto "
+                      f"{_r_b93.status_code} en vez de 400. Un índice negativo cuenta "
+                      f"desde el final y elige otra actividad sin decir nada.")
+#
+# Y de paso, que /der CONTESTE. Devolvía 500 en todas las llamadas desde el
+# 28 de agosto -- `peso_objetivo_kg=` a un `calcular_der()` que no tiene ese
+# parámetro -- y no lo vio nadie en dos semanas porque a este endpoint no lo
+# llama la app y el BLOQUE 23 prueba la función por dentro, nunca la puerta.
+_ders_b93 = {}
+for _idx_b93 in range(5):
+    _r_b93 = _c.post("/der", json={"peso_actual_kg": 20.0, "etapa": "adulto",
+                                   "actividad_idx": _idx_b93, "esterilizado": False})
+    if _r_b93.status_code != 200:
+        fallos.append(f"BLOQUE93: /der con actividad_idx={_idx_b93} (que es válido) "
+                      f"ha devuelto {_r_b93.status_code}: {_r_b93.text[:200]}")
+        continue
+    _ders_b93[_idx_b93] = (_r_b93.json() or {}).get("der")
+    if not _ders_b93[_idx_b93]:
+        fallos.append(f"BLOQUE93: /der con actividad_idx={_idx_b93} ha contestado 200 "
+                      f"pero sin DER: {_r_b93.text[:200]}")
+if len(_ders_b93) == 5 and not (_ders_b93[0] < _ders_b93[2] < _ders_b93[4]):
+    fallos.append(f"BLOQUE93: el DER no sube con la actividad ({_ders_b93}). O el índice "
+                  f"ya no dice lo que dice ACTIVIDAD_KEY, o se está ignorando.")
+
+# el peso de referencia tiene que llegar a `calcular_der`, que lo llama
+# `peso_ideal_kg`. Un perro de 26 kg cuyo objetivo son 20 no come para 26.
+_gordo_b93 = _c.post("/der", json={"peso_actual_kg": 26.0, "peso_objetivo_kg": 20.0,
+                                   "etapa": "adulto", "actividad_idx": 1,
+                                   "esterilizado": False})
+if _gordo_b93.status_code != 200:
+    fallos.append(f"BLOQUE93: /der con peso objetivo ha devuelto {_gordo_b93.status_code}")
+elif _ders_b93.get(1) and (_gordo_b93.json() or {}).get("der", 0) > _ders_b93[1] * 1.2:
+    fallos.append(f"BLOQUE93: un perro de 26 kg con objetivo 20 recibe "
+                  f"{_gordo_b93.json().get('der')} kcal, más que uno que ya pesa 20 "
+                  f"({_ders_b93[1]}). El peso objetivo no está llegando al cálculo.")
+
+# Y el CORS: `*` dejaba a cualquier web del mundo llamar a esta API desde el
+# navegador de quien la visitara y leer la respuesta. Hoy no da acceso a la
+# cuenta de nadie -- para eso hace falta el token --, pero deja de ser
+# inofensivo en cuanto un endpoint se fíe de una cookie, y ese día nadie
+# volverá a mirar aquí.
+if "*" in _api.ORIGENES_PERMITIDOS:
+    fallos.append("BLOQUE93: el CORS vuelve a estar abierto a cualquier origen.")
+_r_b93 = _c.get("/", headers={"Origin": "https://sitio-cualquiera.example"})
+if _r_b93.headers.get("access-control-allow-origin"):
+    fallos.append(f"BLOQUE93: un origen desconocido recibe permiso de CORS "
+                  f"({_r_b93.headers.get('access-control-allow-origin')!r}).")
+_r_b93 = _c.get("/", headers={"Origin": "https://rawku.app"})
+if _r_b93.headers.get("access-control-allow-origin") != "https://rawku.app":
+    fallos.append("BLOQUE93: rawku.app NO recibe permiso de CORS. La app se quedaría "
+                  "sin poder llamar a la API.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
 
 # ============================================================
 # RESUMEN FINAL
