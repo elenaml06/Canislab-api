@@ -12243,6 +12243,87 @@ for _k90, _v90 in _P90.items():
                       f"que parte. Un fichero que manda a buscar lo que ya esta hecho hace dudar "
                       f"de los que si faltan")
 
+# ── 8. Y CONTESTAR LA PREGUNTA TIENE QUE CAMBIAR EL MENÚ DE VERDAD ─────
+#
+# ⚠️ ESTO ES LO QUE PREGUNTÓ ELENA (11 septiembre): «¿se aplican los valores
+# correctos según lo que se conteste?». Los puntos 1-7 comprueban el
+# INVENTARIO: que la tabla diga la verdad sobre sí misma. Esto comprueba el
+# MOTOR: que responder «estadio D» de verdad le baje el sodio al perro.
+#
+# Se hace con la cardiopatía porque es la única con cinco respuestas y cinco
+# cifras, y por las dos puertas:
+#
+#   · el solver: `topes_de_patologias` devuelve el techo de ESA respuesta
+#   · el filtro final: un menú que se pasa del techo de su estadio se rechaza
+#
+# Lo segundo es lo que de verdad protege. El solver podría ignorar el tope y el
+# menú saldría igual de verde para el semáforo de FEDIAF, que mide contra el
+# perro SANO — que es exactamente lo que ya pasó con el fósforo del renal.
+from motor_completo import topes_de_patologias as _topes90
+
+_ESTADIOS90 = {"cardiopatia_a": None, "cardiopatia_b1": None, "cardiopatia_b2": 738.6,
+               "cardiopatia_c": 625.0, "cardiopatia_d": 480.0}
+for _k90, _esp90 in _ESTADIOS90.items():
+    _t90, _p90, _a90, _s90 = _topes90([_k90], "Adulto")
+    _visto90 = _t90.get("sodio")
+    if (_visto90 is None) != (_esp90 is None) or (
+            _visto90 is not None and abs(_visto90 - _esp90) > 1e-6):
+        fallos.append(f"BLOQUE90: contestar «{_k90}» hace que el solver aplique un techo de "
+                      f"sodio de {_visto90} y su fila de `patologias.json` dice {_esp90}. La "
+                      f"pregunta se hace, se guarda, y no cambia lo que come el perro")
+
+# Y el filtro final: se le AÑADE al menú el alimento de más sodio por kcal del
+# catálogo, en la cantidad calculada para cruzar el techo del estadio D. No se
+# toca el menú que devolvió el solver — multiplicarlo cambia también las kcal,
+# que es la trampa que ya se documentó en el BLOQUE 57.
+_r90d = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1211.0,
+                                  "etapa_requisitos": "Adulto", "peso_perro_kg": 22.0,
+                                  "modo": "automatico", "patologias": ["cardiopatia_d"]}).json()
+if not _r90d.get("factible"):
+    fallos.append("BLOQUE90: el perro de 22 kg en estadio ACVIM D no saca menú. Una patología "
+                  "formulable tiene que formular")
+else:
+    _g90 = dict(_r90d["menu"])
+    def _por1000_90(g, clave):
+        _kc = sum(al[n]["energia"] * gr / 100 for n, gr in g.items())
+        _v = sum(al[n]["nutrientes"].get(clave, 0) * gr / 100 for n, gr in g.items())
+        return (_v / _kc * 1000) if _kc else None
+    _na90 = _por1000_90(_g90, "sodio")
+    if _na90 is not None and _na90 > 480.5:
+        fallos.append(f"BLOQUE90: el menú del estadio D sale con {_na90:.1f} mg de sodio/1000 "
+                      f"kcal y su techo es 480. El tope de la respuesta no se está aplicando")
+    # El más salado por kcal, de entre los que aportan energía.
+    _sal90 = sorted(((n, a["nutrientes"].get("sodio", 0) / a["energia"])
+                     for n, a in al.items() if a.get("energia")),
+                    key=lambda x: -x[1])
+    if _sal90 and _na90 is not None:
+        _nom90, _ratio90 = _sal90[0]
+        # Cuántos gramos hacen falta para cruzar 480 con margen.
+        _kc90 = sum(al[n]["energia"] * gr / 100 for n, gr in _g90.items())
+        _na_abs90 = _na90 * _kc90 / 1000.0
+        _g_extra90 = 0.0
+        for _paso90 in range(1, 4001):
+            _gx = _paso90 * 5.0
+            _kc2 = _kc90 + al[_nom90]["energia"] * _gx / 100
+            _na2 = _na_abs90 + al[_nom90]["nutrientes"].get("sodio", 0) * _gx / 100
+            if _kc2 and _na2 / _kc2 * 1000 > 490:
+                _g_extra90 = _gx
+                break
+        if not _g_extra90:
+            fallos.append("BLOQUE90: no se ha podido construir un menú que se pase del techo de "
+                          "sodio del estadio D. Sin poder pasarse, esto no comprueba nada")
+        else:
+            _g90[_nom90] = _g90.get(_nom90, 0) + _g_extra90
+            _res90 = _api._garantizar_verificado(
+                {"factible": True, "menu": _g90, "ficha": {}}, 1211.0, "Adulto", 22.0,
+                origen="BLOQUE90", al=al, req=req, patologias=["cardiopatia_d"])
+            if _res90.get("factible"):
+                fallos.append(f"BLOQUE90: un menú con {_por1000_90(_g90, 'sodio'):.0f} mg de "
+                              f"sodio/1000 kcal se ENTREGA a un perro en estadio ACVIM D, cuyo "
+                              f"techo es 480. El filtro final no mira el tope del estadio, y el "
+                              f"semáforo de FEDIAF no puede verlo: mide contra el perro SANO. Es "
+                              f"el fallo del fósforo del renal otra vez")
+
 _cuenta90 = {}
 for _v90 in _P90.values():
     _cuenta90[_v90["estado"]] = _cuenta90.get(_v90["estado"], 0) + 1
