@@ -1632,6 +1632,21 @@ _CIFRAS_CON_FUENTE = [
      "A PROPOSITO, y el motivo lo da la propia fuente en el mismo parrafo: «there is no well-established "
      "effective dose for dogs and cats». Ademas iria por kilo de PERRO y no por 1000 kcal, que es una forma "
      "que hoy no usa ninguna patologia. ANADIDO 11-sep al releer el cap.57 entero"),
+    # ⚠️ RETIRADA EL MISMO DIA QUE SE ESCRIBIO (11 septiembre), y por eso se
+    # queda anotada. La frase de Fascetti cap.11 es real y su conversion
+    # tambien -- «less than 8% total dietary fiber» son 20 g/1000 kcal --, pero
+    # vive dentro del apartado «Recommendations» del bloque de GASTROENTERITIS
+    # AGUDA, no en el de enteropatia cronica: dos cuadros distintos del mismo
+    # capitulo. Se llego a aplicar aqui y se quito antes de entregarlo, al
+    # abrir el contexto entero en vez de la frase suelta. Se queda escrita SIN
+    # cifra para que nadie la vuelva a «descubrir» dentro de seis meses y la
+    # aplique a la patologia equivocada.
+    ("enteropatia_cronica", "limites_escritos_que_el_solver_no_aplica", "fibra", None, ("directo", None),
+     "Fascetti & Delaney 2a ed., cap.11: «An empirical recommendation is to select diets that "
+     "contain less than 8% total dietary fiber or less than 5% crude fiber». SIN CIFRA A "
+     "PROPOSITO: la frase es del apartado de GASTROENTERITIS AGUDA y el motor no tiene esa "
+     "patologia -- lo que ese apartado describe es realimentar al 25 % del RER, o sea una dieta "
+     "deliberadamente INCOMPLETA, y el motor entrega raciones completas"),
     ("hepatopatia", "topes_por_1000kcal", "hierro", 35.0, ("mgkg_ms", 140),
      "SACN5 Tabla 68-8, perros: «Iron (mg/kg) 80 to 140», extremo ALTO. ANADIDO 11-sep: la fila es un rango y "
      "solo se aplicaba su suelo. El techo tiene mecanismo escrito («Iron is a potent catalyst of oxidative "
@@ -7792,14 +7807,73 @@ _CIFRAS_B57 = [
      "0,8-1,2 % de la Tabla 33-5 de SACN5"),
     ("CachorroCrecimiento", 25.0, "fosforo", 2750.0, 1.1,
      "SACN5 Tabla 17-1, «Phosphorus (%) 0.6-1.1», columna «>25 kg»"),
+    # --- de Fascetti cap.10 y cap.14 (11 septiembre) -----------------------
+    #
+    # ⚠️ Y ESTAS DOS NO VIENEN EN % DE MATERIA SECA, que es lo que este bloque
+    # daba por hecho hasta hoy. La vitamina D viene en µg/kg de materia seca y
+    # el linoleico viene ya POR 1000 KCAL. Tratar cualquiera de las dos como un
+    # porcentaje da un numero absurdo -- el linoleico saldria 40.750 en vez de
+    # 16,3 --, asi que la unidad va escrita en la propia fila y la cuenta se
+    # rehace con ella. Es la lección de `auditar_conversiones.py`: lo que no se
+    # puede rehacer no se puede auditar, y una conversion con la unidad supuesta
+    # se rehace mal con toda la confianza del mundo.
+    ("CachorroJoven", None, "vitD", 6.25, 25.0,
+     "Fascetti & Delaney 2a ed., cap.10, extremo ALTO de «vitamin D content "
+     "12.5-25 μg/kg diet». Techo de crecimiento", "ug/kg MS"),
+    ("CachorroCrecimiento", None, "vitD", 6.25, 25.0,
+     "Fascetti & Delaney 2a ed., cap.10, extremo ALTO de «vitamin D content "
+     "12.5-25 μg/kg diet». Techo de crecimiento, el mismo que el del cachorro "
+     "joven: la fuente no distingue las dos mitades del crecimiento", "ug/kg MS"),
+    ("Adulto", None, "linoleico", 16.3, 16.3,
+     "Fascetti & Delaney 2a ed., cap.14: «a safe upper limit for LA and EPA + "
+     "DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». Techo, y es el "
+     "UNICO que tiene el linoleico en adulto: FEDIAF no le da maximo",
+     "por 1000 kcal"),
+    ("Senior", None, "linoleico", 16.3, 16.3,
+     "Fascetti & Delaney 2a ed., cap.14, «safe upper limit ... 16.3 ... g/1000 "
+     "kcal (NRC 2006)». El mismo que en adulto: la fuente no separa al senior",
+     "por 1000 kcal"),
+    ("CachorroJoven", None, "linoleico", 16.3, 16.3,
+     "Fascetti & Delaney 2a ed., cap.14, «safe upper limit ... 16.3 ... g/1000 "
+     "kcal (NRC 2006)». En crecimiento FEDIAF SI da maximo (16,25), asi que "
+     "aqui los dos casi coinciden y manda el mas estricto, que es el de FEDIAF",
+     "por 1000 kcal"),
+    ("CachorroCrecimiento", None, "linoleico", 16.3, 16.3,
+     "Fascetti & Delaney 2a ed., cap.14, «safe upper limit ... 16.3 ... g/1000 "
+     "kcal (NRC 2006)»", "por 1000 kcal"),
 ]
 
-# 1. La conversión, rehecha por el test. Todos van en mg, así que %MS x 2500.
-for _et, _padu57, _nut, _val, _pct, _cita in _CIFRAS_B57:
-    _calc = _pct * 2500.0
+# Cuantas kcal metabolizables tiene un kilo de materia seca, que es la densidad
+# de referencia de todo el repo. Escrita una vez y no tres.
+_DENSIDAD_B57 = 4000.0
+
+
+def _a_por_1000kcal_b57(valor, unidad):
+    """Lo que dice la fuente, pasado a la unidad del motor.
+
+    Tres unidades y tres cuentas distintas, porque las fuentes no se ponen de
+    acuerdo ni dentro del mismo libro:
+      · «%MS»          -> x 2500  (1 % de un kilo son 10.000 mg / 4 Mcal)
+      · «ug/kg MS»     -> / 4     (un kilo de MS son 4000 kcal)
+      · «por 1000 kcal» -> tal cual, que ya es la del motor
+    """
+    if unidad == "%MS":
+        return valor * 10000.0 / (_DENSIDAD_B57 / 1000.0)
+    if unidad == "ug/kg MS":
+        return valor / (_DENSIDAD_B57 / 1000.0)
+    if unidad == "por 1000 kcal":
+        return valor
+    raise ValueError(f"BLOQUE57: unidad de fuente desconocida: {unidad}")
+
+
+# 1. La conversión, rehecha por el test, CON LA UNIDAD DE CADA FILA.
+for _fila57 in _CIFRAS_B57:
+    _et, _padu57, _nut, _val, _pct, _cita = _fila57[:6]
+    _uni_b57 = _fila57[6] if len(_fila57) > 6 else "%MS"
+    _calc = _a_por_1000kcal_b57(_pct, _uni_b57)
     if abs(_calc - _val) > 0.01:
         fallos.append(f"BLOQUE57 conversion: {_et}.{_nut} esta escrito como {_val} pero su "
-                      f"fuente da {_pct} % de materia seca, que a 4000 kcal/kg son {_calc}. "
+                      f"fuente da {_pct} {_uni_b57}, que a 4000 kcal/kg MS son {_calc}. "
                       f"Uno de los dos esta mal - {_cita}")
     _real = _topes_b57(_et, peso_adulto_esperado_kg=_padu57).get(_nut)
     if _real is None:
@@ -7812,7 +7886,7 @@ for _et, _padu57, _nut, _val, _pct, _cita in _CIFRAS_B57:
 # y al revés: ninguna cifra nueva sin pasar por esta lista. Se recorren las dos
 # secciones -- la general y la de raza grande --, porque una cifra escondida en
 # la segunda decide el calcio de un cachorro de gran danes.
-_declaradas_b57 = {(a, b, c) for a, b, c, _, _, _ in _CIFRAS_B57}
+_declaradas_b57 = {(f[0], f[1], f[2]) for f in _CIFRAS_B57}
 
 
 def _revisar_seccion_b57(etapa, seccion, peso_adulto):
