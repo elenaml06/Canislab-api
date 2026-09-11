@@ -12508,6 +12508,100 @@ print(f"  techo aplicado · suelo recortado contra FEDIAF y dicho · "
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
+# ============================================================
+# BLOQUE 92 — LA SEMANA DEL VETERINARIO TIENE PRESUPUESTO, COMO LA DEL DUEÑO
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (11 septiembre). Elena:
+#
+#     «puede haber mas de un menu semanal, cosa que, por cierto, un
+#      veterinario no puede hacer: solo puede generar un menu para la semana y
+#      tendria que poder elegir también si quiere generar mas de uno»
+#
+# Y lo que de verdad importaba de eso no era poder hacer varios: era que el
+# PRESUPUESTO SEMANAL de seguridad crónica se repartiera entre ellos. El
+# generador del dueño lo hace desde el 25 de agosto -- `/menu/semana` genera la
+# semana entera en UNA llamada para que el servidor pueda ir restando y pasarlo
+# a `resolver()` como restricción DURA -- y el formulador del profesional NO:
+# cada ración se formulaba como si fuera la semana entera.
+#
+# Medido ese día: tres raciones seguidas suman 2282 µg de yodo contra un
+# presupuesto semanal de 8106, así que en el caso normal no se pasaba. Lo que
+# faltaba no era el número: era la GARANTÍA. El profesional tenía menos
+# protección que el tutor justo en los cinco topes que son crónicos.
+#
+# ⚠️ Y LA CUENTA LA HACE EL SERVIDOR. El veterinario construye sus raciones de
+# una en una, así que no puede mandarlas todas de golpe; manda las que YA ha
+# decidido y el servidor resta. Dejar la resta en la app sería volver al aviso
+# que se puede ignorar: «la responsabilidad de que esto no pase nunca es del
+# sistema, no suya».
+print("\n" + "=" * 60)
+print("=== BLOQUE 92: la semana del veterinario tiene presupuesto ===")
+
+_DER92 = 1211.0
+_BASE92 = {"gramos_por_alimento": {}, "der_objetivo": _DER92, "peso_perro_kg": 22.0,
+           "etapa_requisitos": "Adulto"}
+
+def _yodo92(g):
+    return sum(al[n]["nutrientes"].get("yodo", 0) * gr / 100 for n, gr in g.items())
+
+_pres92 = _api._presupuesto_semanal_inicial(_DER92)
+
+# ── 1. Sin semana puesta, nada cambia ───────────────────────────────────
+#
+# Es la mitad que protege lo que ya funcionaba: quien no mande
+# `raciones_ya_puestas` tiene que recibir exactamente lo de antes.
+_sola92 = _c.post("/formular/autocompletar", json=dict(_BASE92)).json()
+if not _sola92.get("factible"):
+    fallos.append("BLOQUE92: una ración suelta, sin semana puesta, ha dejado de salir. El "
+                  "presupuesto semanal no puede apretar a quien no manda semana")
+
+# ── 2. Con la semana casi gastada, APRIETA ──────────────────────────────
+#
+# Una ración cara en yodo (9 g de alga = ~6844 µg) puesta seis días se lleva
+# 41.000 µg contra un presupuesto de 8.106. La del séptimo día no puede salir
+# como si nada.
+_CARA92 = {"AniForte Seaweed Meal": 9.0, "Pollo con piel (sin hueso)": 400.0}
+if "AniForte Seaweed Meal" not in al:
+    fallos.append("BLOQUE92: no está «AniForte Seaweed Meal» en el catálogo, que es la fuente de "
+                  "yodo con la que se mide esto. Hay que elegir otra y volver a medir")
+else:
+    _con92 = _c.post("/formular/autocompletar",
+                     json={**_BASE92, "dias_de_esta_racion": 1,
+                           "raciones_ya_puestas": [{"gramos": _CARA92, "dias": 6}]}).json()
+    if _con92.get("factible"):
+        _y92 = _yodo92(_con92["menu"])
+        # Si sale, tiene que ser MUY por debajo de lo que sale sin semana: el
+        # presupuesto que queda es negativo, así que lo único admisible es casi
+        # cero yodo.
+        _y_solo92 = _yodo92(_sola92.get("menu") or {})
+        if _y92 > max(50.0, _y_solo92 * 0.25):
+            fallos.append(f"BLOQUE92: con seis días de una ración que se lleva {_yodo92(_CARA92):.0f} "
+                          f"µg de yodo al día -- contra un presupuesto semanal de "
+                          f"{_pres92['yodo']:.0f} --, la ración del séptimo sale con {_y92:.0f} µg, "
+                          f"casi lo mismo que sin semana puesta ({_y_solo92:.0f}). El presupuesto "
+                          f"semanal NO está llegando al solver: el profesional tiene menos "
+                          f"protección que el tutor en los topes que son crónicos")
+    # Que NO salga también es correcto y es lo normal aquí: el presupuesto está
+    # gastado. Lo que no puede pasar es que salga como si nada.
+
+# ── 3. Y lo que se resta es lo que de verdad llevan esas raciones ───────
+#
+# Si `raciones_ya_puestas` se ignorara en silencio, el punto 2 pasaría igual el
+# día que el catálogo cambie y esa alga deje de ser tan cara. Esto lo ancla
+# contra la aritmética, no contra el resultado.
+_restante92 = _api._presupuesto_semanal_inicial(_DER92)
+_restante92 = _api._restar_del_presupuesto(
+    _restante92, _api._consumo_real_menu(_CARA92, al, _DER92), 6)
+if _restante92["yodo"] >= _pres92["yodo"]:
+    fallos.append("BLOQUE92: restar seis días de una ración con 9 g de alga no baja el "
+                  "presupuesto de yodo. La resta que hace el servidor no está haciendo nada")
+
+print(f"  presupuesto semanal de yodo {_pres92['yodo']:.0f} µg · "
+      f"una ración cara se lleva {_yodo92(_CARA92):.0f} µg/día")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
 _hay_fuentes = _os_b18.path.isdir(_RUTA_FUENTES)
 
 print(f"\n{'='*60}")

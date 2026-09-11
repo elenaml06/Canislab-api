@@ -4895,6 +4895,33 @@ class PeticionFormular(BaseModel):
     # Solo pueden APRETAR: `_objetivos_dentro_de_fediaf` los recorta contra
     # FEDIAF antes de llegar al solver, y lo dice.
     objetivos_del_profesional: Optional[dict] = None
+    # ─── LA SEMANA DEL VETERINARIO (11 de septiembre de 2026) ─────────────
+    #
+    # ⚠️ Elena: «puede haber mas de un menu semanal, cosa que, por cierto, un
+    # veterinario no puede hacer: solo puede generar un menu para la semana y
+    # tendria que poder elegir también si quiere generar mas de uno».
+    #
+    # Y lo que de verdad importa de eso no es poder hacer varios: es que el
+    # PRESUPUESTO SEMANAL de seguridad cronica se reparta entre ellos. El
+    # generador del dueño lo hace desde siempre (`/menu/semana` genera la
+    # semana entera en UNA llamada para que el servidor pueda ir restando), y
+    # el formulador del profesional NO: cada racion se formulaba como si fuera
+    # la semana entera. Medido el 11-sep-2026: tres raciones seguidas suman
+    # 2282 ug de yodo contra un presupuesto semanal de 8106, asi que hoy no se
+    # pasa en el caso normal -- lo que faltaba no era el numero, era la
+    # GARANTIA.
+    #
+    # ⚠️ Y LA CUENTA LA HACE EL SERVIDOR, no la app. El veterinario construye
+    # sus raciones de una en una, asi que no puede mandarlas todas de golpe
+    # como hace `/menu/semana`; lo que manda son las que YA ha decidido para
+    # esa semana, y el servidor calcula lo que queda. Dejar la resta en la app
+    # seria volver al aviso que se puede ignorar, que es justo de lo que
+    # veniamos: «la responsabilidad de que esto no pase nunca es del sistema,
+    # no suya».
+    #
+    # `raciones_ya_puestas`: [{"gramos": {alimento: g}, "dias": n}, ...]
+    raciones_ya_puestas: Optional[list] = None
+    dias_de_esta_racion: Optional[int] = None
 
 
 def _estado_de_la_racion(datos):
@@ -5213,6 +5240,28 @@ def formular_autocompletar(datos: PeticionFormular):
         der_efectiva_de(datos.der_objetivo, _peso_de_referencia(datos)[0]
                         or datos.peso_perro_kg))
 
+    # ── EL PRESUPUESTO SEMANAL QUE LE QUEDA A ESTA RACIÓN ────────────────
+    #
+    # Se calcula AQUÍ, restando lo que ya se llevan las raciones que el
+    # profesional ha decidido para esta semana. Si no manda ninguna, es la
+    # semana entera para ella sola, que es exactamente lo que hacía antes: sin
+    # `raciones_ya_puestas` nada cambia.
+    _pres_f = None
+    _dias_f = max(1, int(datos.dias_de_esta_racion or 1))
+    if datos.raciones_ya_puestas:
+        _restante_f = _presupuesto_semanal_inicial(datos.der_objetivo)
+        _dias_gastados_f = 0
+        for _r_prev in datos.raciones_ya_puestas:
+            _g_prev = (_r_prev or {}).get("gramos") or {}
+            _d_prev = max(1, int((_r_prev or {}).get("dias") or 1))
+            if not _g_prev:
+                continue
+            _restante_f = _restar_del_presupuesto(
+                _restante_f, _consumo_real_menu(_g_prev, al, datos.der_objetivo), _d_prev)
+            _dias_gastados_f += _d_prev
+        _pres_f = _presupuesto_para_menu_actual(
+            _restante_f, max(1, 7 - _dias_gastados_f))
+
     ok, gramos = False, None
     _peldano_usado_f = datos.peldano or PELDANO_ESTRICTO
     for _margenes_f, _supl_f, _clave_f in _escalones_f:
@@ -5228,6 +5277,7 @@ def formular_autocompletar(datos: PeticionFormular):
             peso_objetivo_kg=_peso_de_referencia(datos)[0],
             categorias_excluidas=datos.categorias_excluidas,
             objetivos_del_profesional=_objetivos_f or None,
+            presupuesto_semanal_restante=_pres_f,
         )
         _peldano_usado_f = _clave_f
         if ok:
