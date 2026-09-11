@@ -10861,8 +10861,8 @@ print("\n=== BLOQUE 78: ninguna tabla de SACN5 sin veredicto ===")
 
 import json as _json78
 
-_PENDIENTES_78 = 286       # ← bajalo cuando resuelvas tablas. Solo puede bajar.
-_CON_HALLAZGO_78 = 3       # tablas leidas que traen una cifra que el motor NO aplica
+_PENDIENTES_78 = 0         # ← 11-sep-2026: las 474 con veredicto. Solo puede bajar.
+_CON_HALLAZGO_78 = 22      # tablas leidas que traen una cifra que el motor NO aplica
 _TOTAL_78 = 474
 
 _inv78 = _json78.loads((_raiz_b24 / "sacn5_tablas.json").read_text(encoding="utf-8"))["tablas"]
@@ -10887,7 +10887,7 @@ if _hall78 != _CON_HALLAZGO_78:
     fallos.append(
         f"BLOQUE78: hay {_hall78} tablas leidas con un hallazgo sin aplicar y aqui pone "
         f"{_CON_HALLAZGO_78}. Cada una tiene que estar medida y escrita en "
-        f"HALLAZGOS_SACN5_10SEP.md antes de contarla, y salir de la cuenta cuando se aplique o "
+        f"HALLAZGOS_SACN5_11SEP.md antes de contarla, y salir de la cuenta cuando se aplique o "
         f"se descarte con motivo")
 if len(_inv78) != _TOTAL_78:
     fallos.append(f"BLOQUE78: el inventario tiene {len(_inv78)} tablas y aqui pone {_TOTAL_78}. "

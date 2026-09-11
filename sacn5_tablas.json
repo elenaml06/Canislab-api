@@ -13,7 +13,9 @@
     },
     "como_se_comprueba": "`auditar_sacn5_tablas.py`, que recorre los 70 textos de capitulo y exige que toda tabla que encuentre este aqui con un veredicto. Lo ejecuta el BLOQUE 78.",
     "de_donde_sale_el_texto": "El repo de fuentes `elenaml06/canislab-fuentes`, carpeta `sacn5/`, un .txt por capitulo (70 ficheros, cap1..cap70 con cap50a).",
-    "que_significa_veredicto_por": "De que evidencia sale el veredicto. «el titulo de la tabla» quiere decir que se ha clasificado leyendo SU TITULO, no la tabla entera -- que basta para apartar una tabla felina o un listado de productos, y NO basta para nada mas. Sin este campo, «leida» y «apartada por el titulo» se leerian igual, que es como se acaba diciendo «esta todo leido»."
+    "que_significa_veredicto_por": "De que evidencia sale el veredicto. «el titulo de la tabla» quiere decir que se ha clasificado leyendo SU TITULO, no la tabla entera -- que basta para apartar una tabla felina o un listado de productos, y NO basta para nada mas. Sin este campo, «leida» y «apartada por el titulo» se leerian igual, que es como se acaba diciendo «esta todo leido».",
+    "cerrado_el_11sep": "11 de septiembre de 2026. Elena: «como que sacn cinco a medias? Me dijiste que ya estaba. Venga, pues terminalo». Y tenia razon en la queja: `LECTURA_SACN5_INTEGRA.md` decia verdad -- los 70 capitulos leidos enteros -- y este contador decia otra cosa, 286 tablas sin veredicto, porque son dos preguntas distintas: «lo he leido» y «alguien ha dicho que hace el motor con ESTA tabla». La segunda es la unica que se puede comprobar, asi que manda ella. || Se han leido las 286 contra el texto de su capitulo y se ha dado veredicto a las 286: 22 tenian rastro en el repo que este fichero no veia (su campo `donde` se calculo UNA VEZ, al construir el inventario, y los documentos posteriores no lo refrescaron), 25 son felinas, 13 son listados de productos o de farmacos, 206 se leyeron y no hay nada que aplicar, 1 resulto estar APLICADA entera (la 6-2 ES `sacn5_fuentes_de_minerales.json`) y 19 traen un hallazgo, medidos en `HALLAZGOS_SACN5_11SEP.md`. Quedan 0 pendientes.",
+    "por_que_no_bastaba_el_titulo": "Las 206 de «leida_y_no_aplica» NO se apartaron por el titulo: se abrio el cuerpo de cada una en el .txt de su capitulo. El campo `veredicto_por` lo dice tabla a tabla, y el motivo va por familias que dicen POR QUE no aplica (clinica, pienso comercial, humana, otra especie, fisiologia, receta casera cocinada, neonato, procedimiento, resumen del plan). Un motivo generico seria una firma en blanco, que es justo lo que el auditor prohibe."
   },
   "tablas": {
     "1-1": {
@@ -36,9 +38,10 @@
         "1"
       ],
       "titulo": "",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "2-1": {
       "capitulos": [
@@ -58,45 +61,53 @@
         "3"
       ],
       "titulo": "Problems caused by inadequate health literacy.* is needed for personal and community empowerment",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_NRC2006.md",
+        "PENDIENTE_NUTRICION.md"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_NRC2006.md, PENDIENTE_NUTRICION.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "3-2": {
       "capitulos": [
         "3"
       ],
       "titulo": "Examples of skills needed for health.* assessment skills of health care professionals. Furthermore,",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla sobre PERSONAS, no sobre el perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "3-3": {
       "capitulos": [
         "3"
       ],
       "titulo": "Additional resources for improving health literacy and",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla sobre PERSONAS, no sobre el perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "4-1": {
       "capitulos": [
         "4"
       ],
       "titulo": "Glossary of nutritional genomics terminology",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-1": {
       "capitulos": [
         "5"
       ],
       "titulo": "Commonly used measurements of energy. lactation or growth. DER equals RER plus energy needed for",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-2": {
       "capitulos": [
@@ -144,27 +155,30 @@
         "5"
       ],
       "titulo": "). Fibers differ from starches in rupted by other sugars (e.g., galactose, arabinose and rhamnose)",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-5": {
       "capitulos": [
         "5"
       ],
       "titulo": ") is a fraction of starch found in foods that",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-6": {
       "capitulos": [
         "5"
       ],
       "titulo": "Sources of dietary carbohydrates. dogs and cats. Most starches from grains are easily digested in",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-7": {
       "capitulos": [
@@ -172,72 +186,87 @@
         "6"
       ],
       "titulo": "summarizes the benefits attributed to probiotics",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-8": {
       "capitulos": [
         "5"
       ],
       "titulo": "). It is not clear what factors in fiber are responsible determine total fiber and is commonly used for measuring",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Disponibilidad del zinc, el calcio, el hierro y el fosforo segun la FUENTE de fibra, al 5 % de fibra dietetica total. Con pulpa de remolacha el zinc baja al 24 % y el calcio al 44 %. El motor no modela disponibilidad: suma el nutriente de la ficha. Los ingredientes de la tabla son de pienso y no del catalogo, pero el mecanismo es el mismo y se suma a la pregunta abierta de la fibra.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-9": {
       "capitulos": [
         "5"
       ],
       "titulo": "lists common fiber ingredients with fiber con-",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "HECHO.md",
+        "LECTURA_NRC2006.md",
+        "PENDIENTE.md",
+        "PENDIENTE_NUTRICION.md",
+        "UNIDADES.md",
+        "patologias.json"
+      ],
+      "nota": "Ha dejado rastro: la citan HECHO.md, LECTURA_NRC2006.md, PENDIENTE.md, PENDIENTE_NUTRICION.md, UNIDADES.md, patologias.json. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "5-10": {
       "capitulos": [
         "5"
       ],
       "titulo": "). Although hundreds of",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-11": {
       "capitulos": [
         "5"
       ],
       "titulo": "Glucogenic and ketogenic amino acids. degradation and synthesis cycles of specific proteins, a measure",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-12": {
       "capitulos": [
         "5"
       ],
       "titulo": "Factors for converting nitrogen to crude protein",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-13": {
       "capitulos": [
         "5"
       ],
       "titulo": "Small intestinal and total tract crude protein and small intestinal amino acid digestibility of dog foods containing animal protein sources.*",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Digestibilidad de la proteina y de los aminoacidos de alimentos CANINOS con proteina animal. «Beef and bone meal» da 68,3 % de digestibilidad ileal de proteina frente a 80,4 % de «Beef, fresh». Toca de lleno la pregunta abierta del HUESO: el motor cuenta la proteina del hueso como si se digiriera igual que la de la carne.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-14": {
       "capitulos": [
         "5"
       ],
       "titulo": "Small intestinal and total tract crude protein and small intestinal amino acid digestibility of dog foods containing plant protein sources.*",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-15": {
       "capitulos": [
@@ -254,54 +283,60 @@
         "5"
       ],
       "titulo": "Ideal amino acid profiles (relative to lysine) for size each protein must be present. The amino acid in shortest",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Perfil ideal de aminoacidos relativo a la lisina, con columna de PERRO: metionina+cistina 0,64 · triptofano 0,22 · treonina 0,67 · arginina 0,71 · leucina 1,00 · fenilalanina+tirosina 1,00. El motor exige cada aminoacido por separado contra FEDIAF y no mira el perfil. Es la otra forma de la pregunta del techo de lisina.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-17": {
       "capitulos": [
         "5"
       ],
       "titulo": "Summary of protein quality of common pet food ingredients",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-18": {
       "capitulos": [
         "5"
       ],
       "titulo": "Classification, structure and function of general lipids",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-19": {
       "capitulos": [
         "5"
       ],
       "titulo": "Essentiality and biologic function of common fatty acids",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-20": {
       "capitulos": [
         "5"
       ],
       "titulo": "Composition of general lipoprotein classes in",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "5-21": {
       "capitulos": [
         "5"
       ],
       "titulo": "shows the fatty acid compositions of different fat 6 family in fish and shellfish, whereas polyunsaturated fatty",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Composicion de acidos grasos de las grasas y aceites comerciales, g/100 g: el aceite de pescado da 14,1 de EPA y 11,9 de DHA, el de girasol 62,3 de linoleico y el de soja 7,3 de linolenico. Es dato de contraste para las fichas de aceite del catalogo, que es donde vive `dato_dudoso`.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "6-1": {
       "capitulos": [
@@ -321,54 +356,64 @@
         "6"
       ],
       "titulo": ") are used in pet foods, including calcium",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "aplicada",
+      "donde": [
+        "sacn5_fuentes_de_minerales.json"
+      ],
+      "nota": "APLICADA, y es el fichero entero: `sacn5_fuentes_de_minerales.json` ES esta tabla. Da el porcentaje de mineral ELEMENTAL de cada sal -- oxido de zinc 72,0 % Zn, carbonato calcico 39 % Ca, yoduro potasico 76,4 % I -- que es lo que hace falta para no anotar la sal como si fuera el elemento. Y trae los dos ceros que la tabla de vitaminas de FEDIAF no tiene: el oxido de hierro y el oxido de cobre, cuyo mineral se analiza y no llega al perro.",
+      "veredicto_por": "leida entera y aplicada al repo, el 11 de septiembre de 2026"
     },
     "6-3": {
       "capitulos": [
         "6"
       ],
       "titulo": "Summary of names, functions and clinical syndromes associated with deficiency and toxicity of vitamins",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "6-4": {
       "capitulos": [
         "6"
       ],
       "titulo": "Examples of vitamin-vitamin interactions.* mal’s vitamin requirement for a given lifestage, overcome pro-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "6-5": {
       "capitulos": [
         "6"
       ],
       "titulo": "lists normal plasma levels of pantothenic acid in foods and foodstuffs. Thus, hydrolytic",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Las nueve vitaminas del grupo B con la asignacion de AAFCO y la de NRC PARA EL PERRO, su nivel en sangre normal y la prueba con que se mide. Colina 1.700 mg/kg MS (NRC), que a 4,0 kcal/g son 425 mg/1000 kcal: la misma cifra baja que ya salio de NRC 2006 cap.8 y que los 36 menus del catalogo superan. Y da el nivel en sangre, que es lo que falta para poder contestar la pregunta de las formas quimicas del grupo B.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "6-6": {
       "capitulos": [
         "6"
       ],
       "titulo": "Thiaminase activity in fish products.*",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_SACN5_INTEGRA.md"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_SACN5_INTEGRA.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "7-1": {
       "capitulos": [
         "7"
       ],
       "titulo": "). The 1969). From published research, the National Research",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "7-2": {
       "capitulos": [
@@ -385,252 +430,284 @@
         "8"
       ],
       "titulo": ") (Kallfelz and Dzanis, 1989). In dogs, aver- tive, less costly and safer approach is to simply exchange the",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Ingesta diaria REAL de calcio, fosforo, vitamina A y vitamina D de un perro adulto con pienso seco tipico frente a su minimo: calcio 74 mg/kg/dia contra un minimo de 25, fosforo 54 contra 19, vitamina D 11 UI contra 2,3. Casi tres veces el minimo, cuatro en la D. Es la medida de por que existen los techos del libro para el perro sano.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "8-2": {
       "capitulos": [
         "8"
       ],
       "titulo": "Examples of signs and disorders often managed",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "8-3": {
       "capitulos": [
         "8"
       ],
       "titulo": "Taste chemosensory neural groups identified in Assuming consumption is stable after Day 3, the data col-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "8-4": {
       "capitulos": [
         "8"
       ],
       "titulo": "(Box 8-5). ic acid content, then corn would be the prime choice as the car-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "8-5": {
       "capitulos": [
         "8"
       ],
       "titulo": "Dry protein sources used in commercial pet foods poultry by-product meal. Because it contains viscera, it provides",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "8-6": {
       "capitulos": [
         "8"
       ],
       "titulo": ") than poultry by-prod- feed your family” or similar claims are false and misleading unless",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "8-7": {
       "capitulos": [
         "8"
       ],
       "titulo": "Wet protein sources used in commercial pet foods",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_SACN5_INTEGRA.md"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_SACN5_INTEGRA.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "8-8": {
       "capitulos": [
         "8"
       ],
       "titulo": "lists fiber ingredients typically used in pet foods",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "8-9": {
       "capitulos": [
         "8"
       ],
       "titulo": "lists common antioxidants used in pet The oxidation cascade not only creates rancidity with its",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "8-10": {
       "capitulos": [
         "8"
       ],
       "titulo": "Relationship between water activity and the effect of aw upon microbial growth",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "8-11": {
       "capitulos": [
         "8"
       ],
       "titulo": "Standard accelerated stability tests and their conditions.* (breeder, veterinarian, other pet owners) for informa-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "9-1": {
       "capitulos": [
         "9"
       ],
       "titulo": "Major governing agencies and organizations for commercial pet food manufacturers",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "9-2": {
       "capitulos": [
         "9"
       ],
       "titulo": "). The following discussion will ingredients. Percentage rules are important; beef ingredients",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "9-3": {
       "capitulos": [
         "9"
       ],
       "titulo": "Examples of words used on bursts and flags on pet ucts, formula or ingredient changes and improvements in taste",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "9-4": {
       "capitulos": [
         "9"
       ],
       "titulo": "). NRC nutrient standards, these claims refer to the formula-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "9-5": {
       "capitulos": [
         "9"
       ],
       "titulo": "Guaranteed or typical analysis from the same dry",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "9-6": {
       "capitulos": [
         "9"
       ],
       "titulo": "). product) is formulated to meet the nutritional levels established",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "9-7": {
       "capitulos": [
         "9"
       ],
       "titulo": "National member organizations of FEDIAF",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "9-8": {
       "capitulos": [
         "9"
       ],
       "titulo": "Product descriptors used in Europe. ALIMENTAIRES DE L’UE",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "9-9": {
       "capitulos": [
         "9"
       ],
       "titulo": "Information found in the statutory statements of",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "9-10": {
       "capitulos": [
         "9"
       ],
       "titulo": "Common ingredient categories found on European",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "9-11": {
       "capitulos": [
         "9"
       ],
       "titulo": "Indications permitted for dietetic pet foods in Europe. consumer receives the full amount purchased. The net weight",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_SACN5_INTEGRA.md"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_SACN5_INTEGRA.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "9-12": {
       "capitulos": [
         "9"
       ],
       "titulo": "Required information on labels of dietetic pet foods labels of dietetic pet foods. The Commission Directives publish",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "10-1": {
       "capitulos": [
         "10"
       ],
       "titulo": "). In many cases it is possible to address “natural,” most respondents mentioned freedom from various",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Receta casera COCINADA y con cereal (arroz, pan, All Bran). El motor formula racion cruda y calcula el suyo con el MILP: la receta no es un requisito, es un ejemplo de otra forma de alimentar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "10-2": {
       "capitulos": [
         "10"
       ],
       "titulo": "contains recipes for reduced protein/low-phospho- Fat (g) 3 5 8",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Receta casera COCINADA y con cereal (arroz, pan, All Bran). El motor formula racion cruda y calcula el suyo con el MILP: la receta no es un requisito, es un ejemplo de otra forma de alimentar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "10-3": {
       "capitulos": [
         "10"
       ],
       "titulo": "Balanced low-fat homemade formulas for may not consume adequate quantities of the food to support",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Receta casera COCINADA y con cereal (arroz, pan, All Bran). El motor formula racion cruda y calcula el suyo con el MILP: la receta no es un requisito, es un ejemplo de otra forma de alimentar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "10-4": {
       "capitulos": [
         "10"
       ],
       "titulo": "contains recipes for low-sodium/low-min- The Bibliography for Box 10-2 can be found at",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Receta casera COCINADA y con cereal (arroz, pan, All Bran). El motor formula racion cruda y calcula el suyo con el MILP: la receta no es un requisito, es un ejemplo de otra forma de alimentar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "10-5": {
       "capitulos": [
         "10"
       ],
       "titulo": "Balanced low-protein/low-purine homemade owners through veterinarians and nutritionists",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Receta casera COCINADA y con cereal (arroz, pan, All Bran). El motor formula racion cruda y calcula el suyo con el MILP: la receta no es un requisito, es un ejemplo de otra forma de alimentar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "10-6": {
       "capitulos": [
@@ -638,126 +715,142 @@
         "57"
       ],
       "titulo": "A balanced low-residue homemade formula for such as fat trimmings, bones, vegetable skins, crusts and condi-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Receta casera COCINADA y con cereal (arroz, pan, All Bran). El motor formula racion cruda y calcula el suyo con el MILP: la receta no es un requisito, es un ejemplo de otra forma de alimentar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "10-7": {
       "capitulos": [
         "10"
       ],
       "titulo": "Balanced generic homemade daily formulation for a",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Receta casera COCINADA y con cereal (arroz, pan, All Bran). El motor formula racion cruda y calcula el suyo con el MILP: la receta no es un requisito, es un ejemplo de otra forma de alimentar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "10-8": {
       "capitulos": [
         "10"
       ],
       "titulo": "Balanced generic homemade daily formulation for a Minerals Provided?",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Receta casera COCINADA y con cereal (arroz, pan, All Bran). El motor formula racion cruda y calcula el suyo con el MILP: la receta no es un requisito, es un ejemplo de otra forma de alimentar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "10-9": {
       "capitulos": [
         "10"
       ],
       "titulo": "Nutrient profiles of cooked grains and vegetables for homemade foods",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Receta casera COCINADA y con cereal (arroz, pan, All Bran). El motor formula racion cruda y calcula el suyo con el MILP: la receta no es un requisito, es un ejemplo de otra forma de alimentar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "10-10": {
       "capitulos": [
         "10"
       ],
       "titulo": ") and 2) determine the appro- cut of meat is regular (typical), lean or extra lean (Table 2). See",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Receta casera COCINADA y con cereal (arroz, pan, All Bran). El motor formula racion cruda y calcula el suyo con el MILP: la receta no es un requisito, es un ejemplo de otra forma de alimentar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "11-1": {
       "capitulos": [
         "11"
       ],
       "titulo": ") (Hornfeldt and Murphy, 1998). However, food- The use levels established for veterinary drugs prevent exces-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "11-2": {
       "capitulos": [
         "11"
       ],
       "titulo": "Clinical signs of selected foodborne illnesses. reports of affected dogs (Derezynski et al, 2006; Stenske et al,",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "11-3": {
       "capitulos": [
         "11"
       ],
       "titulo": "Procedures for the collection, transfer and",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "11-4": {
       "capitulos": [
         "11"
       ],
       "titulo": "Sampling procedures for foodborne illnesses",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "11-5": {
       "capitulos": [
         "11"
       ],
       "titulo": "Prevention of foodborne illness in animals",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_SACN5_INTEGRA.md"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_SACN5_INTEGRA.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "12-1": {
       "capitulos": [
         "12"
       ],
       "titulo": "Comparisons of dog populations in of the four groups had similar geographic origins, morphol-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla sobre PERSONAS, no sobre el perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "12-2": {
       "capitulos": [
         "12"
       ],
       "titulo": "Ten most popular dog breeds registered by species including people (Swanson et al, 2003). Because dogs",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla sobre PERSONAS, no sobre el perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "12-3": {
       "capitulos": [
         "12"
       ],
       "titulo": "Examples of various functions dogs perform",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla sobre PERSONAS, no sobre el perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "12-4": {
       "capitulos": [
         "12"
       ],
       "titulo": "Taxonomy and natural feeding behavior of the order Carnivora.*",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "12-5": {
       "capitulos": [
@@ -776,9 +869,15 @@
         "14"
       ],
       "titulo": "). Moreover, older animals seldom suffer from a sin- about seven to eight years of age (Head et al, 2000).a",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "DATOS_QUE_FALTAN.md",
+        "LECTURA_NRC2006.md",
+        "PENDIENTE.md",
+        "PENDIENTE_NUTRICION.md"
+      ],
+      "nota": "Ha dejado rastro: la citan DATOS_QUE_FALTAN.md, LECTURA_NRC2006.md, PENDIENTE.md, PENDIENTE_NUTRICION.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "13-2": {
       "capitulos": [
@@ -786,9 +885,13 @@
         "14"
       ],
       "titulo": ") (Kienzle and Rainbird, 1991). For maintained between preventing obesity and providing suffi-",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "HALLAZGOS_SACN5_10SEP.md",
+        "LECTURA_SACN5_INTEGRA.md"
+      ],
+      "nota": "Ha dejado rastro: la citan HALLAZGOS_SACN5_10SEP.md, LECTURA_SACN5_INTEGRA.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "13-3": {
       "capitulos": [
@@ -823,27 +926,32 @@
         "15"
       ],
       "titulo": "provides a brief review of these feeding Finally, owners are often concerned about alternative eating",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "13-6": {
       "capitulos": [
         "13"
       ],
       "titulo": "Feeding plan summary for young adult dogs",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "«Feeding plan summary»: el resumen de los pasos del capitulo, que remite a la tabla de factores nutricionales clave de al lado. Las cifras estan alli.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "14-1": {
       "capitulos": [
         "14"
       ],
       "titulo": "Percent survival rates of mature dogs.* body condition in mature dogs is important because these",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_SACN5_INTEGRA.md"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_SACN5_INTEGRA.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "14-2": {
       "capitulos": [
@@ -875,27 +983,32 @@
         "14"
       ],
       "titulo": "Feeding plan summary for mature dogs",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "«Feeding plan summary»: el resumen de los pasos del capitulo, que remite a la tabla de factores nutricionales clave de al lado. Las cifras estan alli.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "15-1": {
       "capitulos": [
         "15"
       ],
       "titulo": ") (Ontko and Phillips, 1958). foods fed during gestation and lactation. Furthermore, the",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_SACN5_INTEGRA.md"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_SACN5_INTEGRA.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "15-2": {
       "capitulos": [
         "15"
       ],
       "titulo": "Distribution of the accretion of the bitch’s body",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "15-3": {
       "capitulos": [
@@ -903,9 +1016,10 @@
         "16"
       ],
       "titulo": "). Bitch’s milk also provides high levels of arginine,",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de cachorro lactante o huerfano, una etapa que la app no ofrece: Rawku empieza en el cachorro destetado.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "15-4": {
       "capitulos": [
@@ -913,9 +1027,12 @@
         "16"
       ],
       "titulo": "). Bitch’s milk is higher in energy, protein and min- Shetland sheepdog 4-5 260",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "HALLAZGOS_SACN5_10SEP.md"
+      ],
+      "nota": "Ha dejado rastro: la citan HALLAZGOS_SACN5_10SEP.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "15-5": {
       "capitulos": [
@@ -960,9 +1077,10 @@
         "15"
       ],
       "titulo": "Calculation of milk production in bitches.* Fat provides essential fatty acids and enhances absorption of",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "15-9": {
       "capitulos": [
@@ -979,99 +1097,114 @@
         "15"
       ],
       "titulo": "Feeding plan summary for reproducing dogs",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_SACN5_INTEGRA.md"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_SACN5_INTEGRA.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "16-1": {
       "capitulos": [
         "16"
       ],
       "titulo": "lists normal physiologic values dehydration and congenital defects. The nutritional and hydra-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de cachorro lactante o huerfano, una etapa que la app no ofrece: Rawku empieza en el cachorro destetado.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "16-2": {
       "capitulos": [
         "16"
       ],
       "titulo": "Average litter size and birth weight of dogs.*",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de cachorro lactante o huerfano, una etapa que la app no ofrece: Rawku empieza en el cachorro destetado.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "16-3": {
       "capitulos": [
         "16"
       ],
       "titulo": "). It is applied. Orphaned puppies are at greater risk for infectious dis-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de cachorro lactante o huerfano, una etapa que la app no ofrece: Rawku empieza en el cachorro destetado.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "16-4": {
       "capitulos": [
         "16"
       ],
       "titulo": "). Bitch’s milk has an energy density of 6.43 Lactose, a disaccharide, is absorbed after digestion into its con-",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_SACN5_INTEGRA.md"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_SACN5_INTEGRA.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "16-5": {
       "capitulos": [
         "16"
       ],
       "titulo": "summarizes the estimated energy requirements of",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de cachorro lactante o huerfano, una etapa que la app no ofrece: Rawku empieza en el cachorro destetado.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "16-6": {
       "capitulos": [
         "16"
       ],
       "titulo": "Feeding plan summary for nursing puppies",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de cachorro lactante o huerfano, una etapa que la app no ofrece: Rawku empieza en el cachorro destetado.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "16-7": {
       "capitulos": [
         "16"
       ],
       "titulo": "Feeding plan summary for orphaned puppies. hyperosmolar diarrhea and potentiate dehydration. High",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de cachorro lactante o huerfano, una etapa que la app no ofrece: Rawku empieza en el cachorro destetado.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "16-8": {
       "capitulos": [
         "16"
       ],
       "titulo": "lists commercial milk replacers and com- should be encouraged to nurse at least three to four times daily",
-      "veredicto": "pendiente",
+      "veredicto": "lista_de_productos",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es una lista de sustitutos comerciales de la leche de perra, marca a marca. No es una cifra de requisito ni un dato de composicion que el catalogo pueda usar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "16-9": {
       "capitulos": [
         "16"
       ],
       "titulo": "provides three homemade milk replacer that all puppies receive sufficient amounts of colostrum within",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de cachorro lactante o huerfano, una etapa que la app no ofrece: Rawku empieza en el cachorro destetado.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "16-10": {
       "capitulos": [
         "16"
       ],
       "titulo": "compares these recipes’ nutrient pro- 24 hours of birth, when puppies are able to absorb intact pro-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de cachorro lactante o huerfano, una etapa que la app no ofrece: Rawku empieza en el cachorro destetado.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "17-1": {
       "capitulos": [
@@ -1107,9 +1240,12 @@
         "17"
       ],
       "titulo": "summarizes the the total amount of food fed. Treats given in large amounts may",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_SACN5_INTEGRA.md"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_SACN5_INTEGRA.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "17-4": {
       "capitulos": [
@@ -1127,9 +1263,10 @@
         "17"
       ],
       "titulo": ") or obtained directly from Table 5-2 or the food above, young Great Dane puppies may not grow when daily",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "18-1": {
       "capitulos": [
@@ -1149,63 +1286,70 @@
         "18"
       ],
       "titulo": "Popular books about training scent-detection dogs. level of training. The feeding goals for sporting and working",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla sobre PERSONAS, no sobre el perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "18-3": {
       "capitulos": [
         "18"
       ],
       "titulo": "Various scent-detection activities conducted by",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla sobre PERSONAS, no sobre el perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "18-4": {
       "capitulos": [
         "18"
       ],
       "titulo": "Percent fast twitch fibers (Type II) by selected",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "18-5": {
       "capitulos": [
         "18"
       ],
       "titulo": "Metabolism, use and storage sites of isoleucine and valine (Miller and Massaro, 1989; Blomstrand et",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "18-6": {
       "capitulos": [
         "18"
       ],
       "titulo": ") and a distance of 167 km. Assuming all dogs pull equally, the weight pulled by this dog is 15 kg (total sled weight",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Coste calorico de correr 1 km segun el peso: 1,77 kcal/kg en un perro de 5 kg y 0,76 en uno de 70. La ficha pregunta por la actividad en escalones y no por la distancia; esta tabla la cuantifica.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "18-7": {
       "capitulos": [
         "18"
       ],
       "titulo": "Disorders affecting olfaction in people.*",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla sobre PERSONAS, no sobre el perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "18-8": {
       "capitulos": [
         "18"
       ],
       "titulo": "Drugs that can cause changes in the sense of",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "18-9": {
       "capitulos": [
@@ -1227,18 +1371,20 @@
         "18"
       ],
       "titulo": "Effect of nutrient profile on stamina.*",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Efecto del perfil de nutrientes sobre la resistencia en el PERRO: pasando la grasa de 12,8 a 33,1 % de materia seca el tiempo de carrera sube de 103,7 a 137,6 minutos. Es la cara opuesta del techo de grasa, y toca al perro de trabajo.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "18-11": {
       "capitulos": [
         "18"
       ],
       "titulo": "Saturated and unsaturated fatty acid content of",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "18-12": {
       "capitulos": [
@@ -1255,9 +1401,10 @@
         "18"
       ],
       "titulo": "summarizes the feeding plans for sprint-, inter-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "«Feeding plan summary»: el resumen de los pasos del capitulo, que remite a la tabla de factores nutricionales clave de al lado. Las cifras estan alli.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "19-1": {
       "capitulos": [
@@ -1294,27 +1441,30 @@
         "19"
       ],
       "titulo": "). This lack of adaptability has been noted in other al, 1993, 2001; Gruffydd-Jones et al, 1998). Interestingly, the",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Composicion del cuerpo entero de la rata, que es la referencia de PRESA ENTERA: 5,7 kcal/g de EM, calcio 1,15 % y fosforo 0,98 % (Ca:P de 1,17), linoleico 9,1 %. Es el patron natural contra el que se puede leer una racion BARF, y el repo no lo tiene escrito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "19-5": {
       "capitulos": [
         "19"
       ],
       "titulo": "Comparison of dietary protein requirements during",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Proteina de crecimiento frente a mantenimiento en el PERRO, con dos lecturas de la misma fuente: 12 % / 4 % y 18 % / 8 % de materia seca. El motor aplica los minimos de FEDIAF, que son mas altos; queda como contraste para la pregunta de la proteina del senior.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "19-6": {
       "capitulos": [
         "19"
       ],
       "titulo": "Comparison of minimal protein and amino acid",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Proteina y aminoacidos MINIMOS de crecimiento del CACHORRO en % de materia seca: proteina 17,5 · arginina 0,66 · histidina 0,25 · isoleucina 0,50 · leucina 0,82 · lisina 0,70. Comparable celda a celda con la Tabla III-3b de FEDIAF, y nadie lo ha cruzado.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "20-1": {
       "capitulos": [
@@ -1322,18 +1472,20 @@
         "21"
       ],
       "titulo": "). Therefore, in addition to having passed by non-nutritional factors (i.e., food type, owner preference,",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es enfermedades del GATO adulto con relacion nutricional. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "20-2": {
       "capitulos": [
         "20"
       ],
       "titulo": "). Information from If the dietary history is perceived to be incomplete, it may",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es historia dietetica del GATO. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "20-3": {
       "capitulos": [
@@ -1383,27 +1535,30 @@
         "21"
       ],
       "titulo": ") (Harper, 1996; Markham and • Maintenance of optimal nutrition (i.e., maintenance of",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es cambios del envejecimiento en el GATO. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "21-2": {
       "capitulos": [
         "21"
       ],
       "titulo": "sum- However, studies reveal the prevalence of obesity plateaus and",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es factores nutricionales clave para el GATO mayor. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "21-3": {
       "capitulos": [
         "21"
       ],
       "titulo": ") (MAF, 1998). Renal deterioration of renal function. Because many apparently",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es causas de muerte en el GATO. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "21-4": {
       "capitulos": [
@@ -1430,27 +1585,30 @@
         "22"
       ],
       "titulo": "summarizes key nutritional factors for repro-",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es factores nutricionales clave para la GATA reproductora. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "22-2": {
       "capitulos": [
         "22"
       ],
       "titulo": "Energy requirements of pregnant queens.*",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es requerimiento energetico de la GATA gestante. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "22-3": {
       "capitulos": [
         "22"
       ],
       "titulo": "Daily energy requirements of lactating queens over",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es requerimiento energetico de la GATA lactante. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "22-4": {
       "capitulos": [
@@ -1487,18 +1645,22 @@
         "23"
       ],
       "titulo": "). It is ease; thus, sanitary husbandry practices are important. To reduce",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es temperatura ambiente del GATITO huerfano. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "23-3": {
       "capitulos": [
         "23"
       ],
       "titulo": "Nutrient comparison among queen’s colostrum, queen’s milk and milk of selected species",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_SACN5_INTEGRA.md"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_SACN5_INTEGRA.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "23-4": {
       "capitulos": [
@@ -1535,27 +1697,30 @@
         "23"
       ],
       "titulo": "lists commercial milk replacers and compares them to queen’s milk; Table 23-8 provides two homemade formulas and Table",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es sustitutos de la leche frente a la leche de GATA. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "23-8": {
       "capitulos": [
         "23"
       ],
       "titulo": ") compared to key nutritional factor content",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es formulas caseras para GATITO huerfano. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "23-9": {
       "capitulos": [
         "23"
       ],
       "titulo": "Key nutritional factor content of homemade orphan",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es factores nutricionales clave de las formulas caseras de GATITO. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "24-1": {
       "capitulos": [
@@ -1592,45 +1757,50 @@
         "24"
       ],
       "titulo": ", divided by the caloric content of the food. Normal stools are firm, well formed and medium to dark brown",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es requerimiento energetico del GATITO en crecimiento. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "25-1": {
       "capitulos": [
         "25"
       ],
       "titulo": "Disorders and drugs that affect taste and smell in people.*",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla sobre PERSONAS, no sobre el perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "25-2": {
       "capitulos": [
         "25"
       ],
       "titulo": "). Subsequently, hyperglycemia is a com-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "25-3": {
       "capitulos": [
         "25"
       ],
       "titulo": "Examples of hospital feeding orders",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "25-4": {
       "capitulos": [
         "25"
       ],
       "titulo": "Laboratory data of a dog after four months",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "25-5": {
       "capitulos": [
@@ -1649,18 +1819,20 @@
         "25"
       ],
       "titulo": "Pharmacologic appetite stimulants.*",
-      "veredicto": "pendiente",
+      "veredicto": "lista_de_productos",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es una lista de estimulantes del apetito, con su dosis: son farmacos. No es una cifra de requisito ni un dato de composicion que el catalogo pueda usar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "25-7": {
       "capitulos": [
         "25"
       ],
       "titulo": "provides an example of using ventral meatus, ensuring passage of the tube into the oropharynx",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "25-8": {
       "capitulos": [
@@ -1687,9 +1859,10 @@
         "25"
       ],
       "titulo": "Modules for augmenting foods. size syringe to the end of the feeding tube. Gently aspirate",
-      "veredicto": "pendiente",
+      "veredicto": "lista_de_productos",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es una lista de modulos comerciales para enriquecer alimentos. No es una cifra de requisito ni un dato de composicion que el catalogo pueda usar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "25-11": {
       "capitulos": [
@@ -1706,18 +1879,20 @@
         "26"
       ],
       "titulo": "Patient criteria for administration of parenteral",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "26-2": {
       "capitulos": [
         "26"
       ],
       "titulo": "). Alternatively, crystal- dextrose and lipid. Several companies manufacture dextrose",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "26-3": {
       "capitulos": [
@@ -1734,63 +1909,70 @@
         "26"
       ],
       "titulo": "Advantages to administering a high fat total nutrient admixture (TNA) solution",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "26-5": {
       "capitulos": [
         "26"
       ],
       "titulo": "Drug incompatibility with B-complex vitamins.* methods or with the administration of glucose or insulin",
-      "veredicto": "pendiente",
+      "veredicto": "lista_de_productos",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es una lista de farmacos incompatibles con las vitaminas del grupo B en la mezcla parenteral. No es una cifra de requisito ni un dato de composicion que el catalogo pueda usar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "26-6": {
       "capitulos": [
         "26"
       ],
       "titulo": "lists drugs of most interest to veterinarians that can",
-      "veredicto": "pendiente",
+      "veredicto": "lista_de_productos",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es una lista de farmacos compatibles con la mezcla parenteral. No es una cifra de requisito ni un dato de composicion que el catalogo pueda usar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "26-7": {
       "capitulos": [
         "26"
       ],
       "titulo": "Summary of catheter placement sites for parenteral nutrition administration in small animals",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "26-8": {
       "capitulos": [
         "26"
       ],
       "titulo": "Metabolic complications of parenteral-nutrition administration, treatment and potential patient considerations",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "27-1": {
       "capitulos": [
         "27"
       ],
       "titulo": "lists abnormalities associated with or exacer- tissue may play a direct role in blood pressure regulation",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "27-2": {
       "capitulos": [
         "27"
       ],
       "titulo": ") (Trayhurn, 2006; Gayet et al, for osteoarthritis was significantly younger (10.3 years) in mod-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "27-3": {
       "capitulos": [
@@ -1798,9 +1980,12 @@
         "34"
       ],
       "titulo": "Relationships between body condition score (BCS; 5-point system) and actual body weight, ideal body weight, resting",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_SACN5_INTEGRA.md"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_SACN5_INTEGRA.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "27-4": {
       "capitulos": [
@@ -1822,9 +2007,10 @@
         "27"
       ],
       "titulo": "",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es factores nutricionales clave de alimentos de adelgazamiento para GATO. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "27-6": {
       "capitulos": [
@@ -1882,45 +2068,50 @@
         "27"
       ],
       "titulo": "Methods for determining ideal/optimal body",
-      "veredicto": "pendiente",
+      "veredicto": "lista_de_productos",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es una lista de alimentos comerciales de adelgazamiento, marca a marca. No es una cifra de requisito ni un dato de composicion que el catalogo pueda usar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "27-12": {
       "capitulos": [
         "27"
       ],
       "titulo": ") but requires a few simple Although the lean body mass of an overweight patient is",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Metodo del PESO IDEAL para fijar las kcal de adelgazamiento, que es el que usa el motor (las kcal se calculan sobre `peso_objetivo_kg`). Queda escrito para que la eleccion entre los cuatro metodos de este capitulo sea una decision y no un accidente.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "27-13": {
       "capitulos": [
         "27"
       ],
       "titulo": "Two alternative methods for estimating resting Table 27-15. Using obese body weight and desired rate of",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Los numeros del adelgazamiento: el RER tiene que ser el 70-80 % del DER al peso optimo, o el 60-70 % al peso obeso, para perder 1-2 % de peso a la semana. El motor baja las kcal al peso objetivo y no comprueba que caigan en esa ventana.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "27-14": {
       "capitulos": [
         "27"
       ],
       "titulo": "Using the food history to determine the initial food number of calories to feed per day",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "27-15": {
       "capitulos": [
         "27"
       ],
       "titulo": "",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "27-16": {
       "capitulos": [
@@ -1947,18 +2138,20 @@
         "27"
       ],
       "titulo": "Using number of calories fed for weight loss to determine the initial amount of food to feed for target weight maintenance",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "28-1": {
       "capitulos": [
         "28"
       ],
       "titulo": "lists the clinical signs associated with hypertriglyc-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "28-2": {
       "capitulos": [
@@ -2000,18 +2193,20 @@
         "29"
       ],
       "titulo": "Possible causes of diabetes mellitus in insulin, insulin dosage and ease of diabetic regulation",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "29-2": {
       "capitulos": [
         "29"
       ],
       "titulo": "). A thorough assessment may help identify the interpretation of serum thyroxine (T4) concentrations in sick",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "29-3": {
       "capitulos": [
@@ -2033,9 +2228,10 @@
         "29"
       ],
       "titulo": "Effect of feeding insoluble dietary fiber to dogs and cats with diabetes mellitus.*",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Fibra insoluble en el PERRO diabetico, con cifras: pasando de 1 % a 12 % de fibra de materia seca la glucosa media en sangre baja y la dosis de insulina tambien. Es la unica cifra canina de fibra con resultado medido, y cae justo dentro de la pregunta abierta de que fibra mide el catalogo.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "29-5": {
       "capitulos": [
@@ -2072,18 +2268,20 @@
         "29"
       ],
       "titulo": "). Polyphagia is due to increased cellular create a diagnostic dilemma, especially when clinical signs sug-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "29-9": {
       "capitulos": [
         "29"
       ],
       "titulo": "), hyperthyroidism should be suspected in any (i.e., free T4) in the circulation, the T3 suppression test, sodium",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "29-10": {
       "capitulos": [
@@ -2100,9 +2298,12 @@
         "29"
       ],
       "titulo": "Goitrogenic factors in foods and the environment.*",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_SACN5_INTEGRA.md"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_SACN5_INTEGRA.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "29-12": {
       "capitulos": [
@@ -2129,27 +2330,30 @@
         "30"
       ],
       "titulo": "Effects of surgery that may have nutritional",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "30-3": {
       "capitulos": [
         "30"
       ],
       "titulo": "Effects of chemotherapy that may have nutritional",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "30-4": {
       "capitulos": [
         "30"
       ],
       "titulo": "Effects of radiation therapy that may have nutritional",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "30-5": {
       "capitulos": [
@@ -2195,18 +2399,20 @@
         "31"
       ],
       "titulo": "Gastrointestinal barriers to ingested food antigens",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "31-2": {
       "capitulos": [
         "31"
       ],
       "titulo": "Ingredients commonly associated with adverse",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "31-3": {
       "capitulos": [
@@ -2228,9 +2434,10 @@
         "31"
       ],
       "titulo": "). These include azo dyes, non-azo Several companies manufacture a variety of foods with lim-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "31-5": {
       "capitulos": [
@@ -2280,36 +2487,42 @@
         "32"
       ],
       "titulo": "Breed predilection for non-neoplastic skin diseases",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "32-3": {
       "capitulos": [
         "32"
       ],
       "titulo": "). commercial foods containing adequate levels of zinc. Lesions",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "32-4": {
       "capitulos": [
         "32"
       ],
       "titulo": "Risk factors for zinc-related skin disease in dogs. ment of clinical signs of EFA deficiency; conversely, supple-",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_SACN5_INTEGRA.md"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_SACN5_INTEGRA.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "32-5": {
       "capitulos": [
         "32"
       ],
       "titulo": "Indications and dosages for retinoids in primary",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "32-6": {
       "capitulos": [
@@ -2330,9 +2543,10 @@
         "32"
       ],
       "titulo": "Fatty acids found in pet food ingredients and",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de la industria del alimento comercial: etiquetado, ingredientes de pienso, procesado o conservacion. El motor formula con alimento crudo del catalogo y no lee etiquetas.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "32-8": {
       "capitulos": [
@@ -2359,9 +2573,12 @@
         "32"
       ],
       "titulo": "Summary of randomized, masked clinical studies using fatty acid supplements or fatty acid-enhanced foods in dogs with",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_SACN5_INTEGRA.md"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_SACN5_INTEGRA.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "32-11": {
       "capitulos": [
@@ -2378,27 +2595,30 @@
         "33"
       ],
       "titulo": "Parathyroid hormone (PTH), ionized calcium and 1,25-dihydroxyvitamin D3 concentrations in different physiologic/disease states.*",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "33-2": {
       "capitulos": [
         "33"
       ],
       "titulo": "), which stimulates calcium and phosphorus resorp- its energy requirement. If the DM calcium levels are similar",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "33-3": {
       "capitulos": [
         "33"
       ],
       "titulo": "and ed by the parathyroid gland and the C-cells of the thyroid",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Composicion del hueso, y trae el numero que el motor necesitaba tener escrito: el calcio y el fosforo de la hidroxiapatita van en un ratio Ca:P de 2,15:1 EN PESO (1,67:1 molar). O sea que una racion con mucho hueso tira el Ca:P hacia arriba por quimica, no por casualidad, y el rango 1,0-2,0 de FEDIAF se come por arriba con el hueso.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "33-4": {
       "capitulos": [
@@ -2444,9 +2664,10 @@
         "33"
       ],
       "titulo": "Worksheet for determining the daily amount to feed",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "33-8": {
       "capitulos": [
@@ -2463,18 +2684,20 @@
         "33"
       ],
       "titulo": "Example calculation for converting estimated daily",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "34-1": {
       "capitulos": [
         "34"
       ],
       "titulo": "Common clinical signs of osteoarthritis (OA).*",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "34-2": {
       "capitulos": [
@@ -2496,18 +2719,20 @@
         "34"
       ],
       "titulo": "Nutrient comparison of control and test foods.*",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "El alimento de prueba de la artrosis, con su ratio omega-6:omega-3 de 0,7 frente al 22,8 del control, y omega-3 totales del 3,48 % de materia seca. El repo dice que al ratio omega-6:omega-3 «le falta el numero» (PREGUNTA 40): aqui hay uno, publicado y canino.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "34-4": {
       "capitulos": [
         "34"
       ],
       "titulo": "Fatty acid concentration of a therapeutic food vs. supplements for a 27-kg dog",
-      "veredicto": "pendiente",
+      "veredicto": "lista_de_productos",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es una lista de suplementos comerciales de acidos grasos para un perro de 27 kg. No es una cifra de requisito ni un dato de composicion que el catalogo pueda usar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "34-5": {
       "capitulos": [
@@ -2534,9 +2759,10 @@
         "35"
       ],
       "titulo": "Laboratory deficits and tentative clinical correlates",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "35-3": {
       "capitulos": [
@@ -2558,36 +2784,44 @@
         "35"
       ],
       "titulo": "Recommended levels of key nutritional factors compared to the nutrient profile of a dry commercial food for canine cognitive",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_SACN5_INTEGRA.md",
+        "patologias.json",
+        "pruebas_completas.py"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_SACN5_INTEGRA.md, patologias.json, pruebas_completas.py. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "36-1": {
       "capitulos": [
         "36"
       ],
       "titulo": ") (ISACHC, piratory distress and mild to moderate ascites. Hypoperfusion at",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "36-2": {
       "capitulos": [
         "36"
       ],
       "titulo": "), including the sympathetic nervous system, es renal perfusion pressure, which triggers renin release from",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "36-3": {
       "capitulos": [
         "36"
       ],
       "titulo": ") (Alexander, 1986; ditures of the increased work of respiration and elevated heart",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "36-4": {
       "capitulos": [
@@ -2630,9 +2864,10 @@
         "36"
       ],
       "titulo": "). Some commercial rawhide chews do not con- rigorous assessment of evidence for or against particular man-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla sobre PERSONAS, no sobre el perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "36-8": {
       "capitulos": [
@@ -2649,90 +2884,100 @@
         "36"
       ],
       "titulo": "Daily sodium intake for a dog and a cat",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Ingesta diaria de sodio de un perro de 15 kg que come 935 kcal, alimento por alimento: el cardiaco seco da 159 mg/dia, que son 170 mg/1000 kcal. El motor aplica 739 mg/1000 kcal en la cardiopatia B2, cuatro veces mas. Hay que cruzarlo con la Tabla 36-6 y con el techo legal del Reglamento (UE) 2020/354.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "36-10": {
       "capitulos": [
         "36"
       ],
       "titulo": "Taurine concentrations (mg/kg dry matter)",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Taurina de las fuentes naturales en mg/kg de materia seca: musculo de vaca 1.200, de cordero 1.600, de pollo 1.100, bacalao 1.000, raton entero 7.000. El catalogo no tiene el dato de taurina en ninguna de sus 163 fichas, y la taurina es la cifra que decide en la cardiomiopatia dilatada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "37-1": {
       "capitulos": [
         "37"
       ],
       "titulo": "). Studies in dogs and cats with CKD indicate that may indicate kidney dysfunction. Abnormalities in tubular",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "37-2": {
       "capitulos": [
         "37"
       ],
       "titulo": "Kidney diseases suspected or confirmed to be inherited in dogs and cats",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "37-3": {
       "capitulos": [
         "37"
       ],
       "titulo": "Elements of the physical examination that cause nephrotoxicosis include antimicrobials (aminoglyco-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "37-4": {
       "capitulos": [
         "37"
       ],
       "titulo": "lists diagnostic tests that are rec- matic arches. The most striking radiographic finding is dem-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "37-5": {
       "capitulos": [
         "37"
       ],
       "titulo": "Standard protocol for measuring blood pressure in",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "37-6": {
       "capitulos": [
         "37"
       ],
       "titulo": "Distinguishing between acute and chronic kidney disease in dogs and cats on the basis of clinical and laboratory findings.*",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "37-7": {
       "capitulos": [
         "37"
       ],
       "titulo": "Potential mechanisms in the pathogenesis of ring CKD (Table 37-7). In addition, sequelae of CKD (e.g.,",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "37-8": {
       "capitulos": [
         "37"
       ],
       "titulo": "). In addition, the use of foods contain increased potassium to help prevent hypokal-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "37-9": {
       "capitulos": [
@@ -2787,63 +3032,70 @@
         "37"
       ],
       "titulo": "Serial evaluation of appropriate laborato- Regardless of the effects of the above treatments on appetite, it",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "38-1": {
       "capitulos": [
         "38"
       ],
       "titulo": "Clinical importance of urolithiasis. This theory is based on the assumption that preformed organ-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "38-2": {
       "capitulos": [
         "38"
       ],
       "titulo": "Clinical signs of uroliths that may be associated",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "38-3": {
       "capitulos": [
         "38"
       ],
       "titulo": "dogs are marginally radiodense. This finding may be related to",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "38-4": {
       "capitulos": [
         "38"
       ],
       "titulo": "Advantages and disadvantages of survey radiography, double-contrast radiography and ultrasonography in",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "38-5": {
       "capitulos": [
         "38"
       ],
       "titulo": "lists relative densities of common uroliths based",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "38-6": {
       "capitulos": [
         "38"
       ],
       "titulo": "Protocol for measuring 24-hour urinary excretion of various substances associated with urolithiasis",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "38-7": {
       "capitulos": [
@@ -2857,9 +3109,10 @@
         "45"
       ],
       "titulo": ") or by aspiration through a urinary catheter (Figure 38-6). Medical therapy of patients",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Hoja de calculo o protocolo de procedimiento clinico (sondas, nutricion parenteral, recogida de muestras). No es una cifra de requisito.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "38-8": {
       "capitulos": [
@@ -2890,18 +3143,20 @@
         "44"
       ],
       "titulo": "Mineral composition of 5,050 canine nephroliths and ureteroliths evaluated at the Minnesota Urolith Center by quantitative",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "38-10": {
       "capitulos": [
         "38"
       ],
       "titulo": "Problem-specific and therapeutic-specific database for diagnosis and management of urolithiasis",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "38-11": {
       "capitulos": [
@@ -2921,27 +3176,32 @@
         "39"
       ],
       "titulo": "). However, the physical appearance of mal tubules actively reabsorb approximately 99% of filtered uric",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "39-2": {
       "capitulos": [
         "39"
       ],
       "titulo": "Some potential risk factors for canine purine uroliths",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "39-3": {
       "capitulos": [
         "39"
       ],
       "titulo": "). cial veterinary therapeutic foods used for urate urolith dissolu-",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "LECTURA_SACN5_INTEGRA.md"
+      ],
+      "nota": "Ha dejado rastro: la citan LECTURA_SACN5_INTEGRA.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "39-4": {
       "capitulos": [
@@ -2960,9 +3220,10 @@
         "39"
       ],
       "titulo": "Summary of recommendations for dietary and medical dissolution and prevention of canine purine uroliths",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "39-6": {
       "capitulos": [
@@ -2979,36 +3240,40 @@
         "39"
       ],
       "titulo": "). It is more difficult to monitor Although urine urate-to-creatinine ratios decrease significantly",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "39-8": {
       "capitulos": [
         "39"
       ],
       "titulo": "). uroliths. As a first choice, urate litholytic foods that are restrict-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "40-1": {
       "capitulos": [
         "40"
       ],
       "titulo": "Common characteristics of canine calcium",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "40-2": {
       "capitulos": [
         "40"
       ],
       "titulo": "). Results of epidemiologic studies performed brown. Calcium oxalate dihydrate uroliths are usually white or",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "40-3": {
       "capitulos": [
@@ -3030,9 +3295,10 @@
         "40"
       ],
       "titulo": "). Absorptive hypercalciuria is characterized by calciuria have high serum PTH concentrations. Increasing",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "40-5": {
       "capitulos": [
@@ -3054,18 +3320,22 @@
         "40"
       ],
       "titulo": "Selected human foods with minimal calcium or",
-      "veredicto": "pendiente",
-      "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "veredicto": "citada_en_el_repo",
+      "donde": [
+        "HALLAZGOS_SACN5_10SEP.md"
+      ],
+      "nota": "Ha dejado rastro: la citan HALLAZGOS_SACN5_10SEP.md. El inventario no lo veia porque su campo `donde` se calculo UNA VEZ, al construirlo, y los documentos posteriores no lo actualizaron. Eso prueba que se leyo y que alguien decidio algo con ella; NO prueba que se aplique.",
+      "veredicto_por": "rastro en el repo, refrescado el 11 de septiembre de 2026"
     },
     "40-7": {
       "capitulos": [
         "40"
       ],
       "titulo": "). Medications that have the potential to induce",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "40-8": {
       "capitulos": [
@@ -3082,63 +3352,70 @@
         "40"
       ],
       "titulo": "). Strive to achieve urine specific gravity values less",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "40-10": {
       "capitulos": [
         "40"
       ],
       "titulo": "Managing highly recurrent calcium oxalate uroliths",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "41-1": {
       "capitulos": [
         "41"
       ],
       "titulo": "). The most common form characteristic shape",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "41-2": {
       "capitulos": [
         "41"
       ],
       "titulo": ") (Menon et al, et al, 1998). Hypercalciuria and hyperphosphaturia tend to",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "41-3": {
       "capitulos": [
         "41"
       ],
       "titulo": "). Hypercalcemia results from PTH-induced (Broadus, 1980). This abnormality may explain, at least in part,",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "41-4": {
       "capitulos": [
         "41"
       ],
       "titulo": "Diagnostic characteristics of disorders that predispose to calcium phosphate uroliths",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "41-5": {
       "capitulos": [
         "41"
       ],
       "titulo": "presents a problem-specific database for dogs sus- benefit. Enhancing urine volume by feeding a moist food may",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "41-6": {
       "capitulos": [
@@ -3160,9 +3437,10 @@
         "41"
       ],
       "titulo": "Summary of recommendations for managing canine calcium phosphate uroliths",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "41-8": {
       "capitulos": [
@@ -3204,45 +3482,50 @@
         "42"
       ],
       "titulo": "Summary of recommendations for combined dietary and medical/surgical treatment and prevention of",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "42-4": {
       "capitulos": [
         "42"
       ],
       "titulo": "Expected changes associated with combined dietary",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "42-5": {
       "capitulos": [
         "42"
       ],
       "titulo": "Managing cystine uroliths refractory to complete dissolution",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "43-1": {
       "capitulos": [
         "43"
       ],
       "titulo": "Common characteristics of canine struvite uroliths",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "43-2": {
       "capitulos": [
         "43"
       ],
       "titulo": "). One goal of dietary management for vite uroliths, phosphorus levels should be less than 0.6% DM",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "43-3": {
       "capitulos": [
@@ -3264,9 +3547,10 @@
         "43"
       ],
       "titulo": "Summary of recommendations for dietary and medical dissolution of canine struvite uroliths",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "43-5": {
       "capitulos": [
@@ -3283,27 +3567,30 @@
         "43"
       ],
       "titulo": "Characteristic clinical findings before and after initiation of dietary and medical therapy, or dietary therapy alone, to dissolve",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "43-7": {
       "capitulos": [
         "43"
       ],
       "titulo": "Mean times for struvite urolith dissolution",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "43-8": {
       "capitulos": [
         "43"
       ],
       "titulo": "Managing magnesium ammonium phosphate uroliths refractory to complete dissolution",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "43-9": {
       "capitulos": [
@@ -3333,18 +3620,20 @@
         "44"
       ],
       "titulo": "lists selected veteri- free bouillon) can be added to water sources to increase con-",
-      "veredicto": "pendiente",
+      "veredicto": "lista_de_productos",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es una lista de alimentos comerciales para el urolito de silice, marca a marca. No es una cifra de requisito ni un dato de composicion que el catalogo pueda usar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "44-3": {
       "capitulos": [
         "44"
       ],
       "titulo": "Summary of recommendations for prevention of REASSESSMENT",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "46-1": {
       "capitulos": [
@@ -3391,9 +3680,10 @@
         "46"
       ],
       "titulo": ") (Houston et al,",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es composicion de los tapones uretrales del GATO. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "46-6": {
       "capitulos": [
@@ -3410,9 +3700,10 @@
         "46"
       ],
       "titulo": "). Struvite and calcium oxalate uroliths Ultrasonography is a rapid, safe, noninvasive imaging tech-",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es hallazgos clinicos de los urolitos del GATO. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "46-8": {
       "capitulos": [
@@ -3469,9 +3760,10 @@
         "46"
       ],
       "titulo": "Key nutritional factors for preventing uncommon other lower urinary tract disorders (e.g., uroliths)",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es factores nutricionales clave de los urolitos poco comunes del GATO. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "46-14": {
       "capitulos": [
@@ -3488,27 +3780,30 @@
         "46"
       ],
       "titulo": ") should be avoided in Broccoli, cooked 1 large stalk 88",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es alimentos ricos en calcio a evitar en el GATO con oxalato. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "46-16": {
       "capitulos": [
         "46"
       ],
       "titulo": ") (Halperin and Jungas, 1983). potential acid or base sources. Oxides and carbonates are alka-",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es ingredientes acidificantes y alcalinizantes de la orina del GATO. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "46-17": {
       "capitulos": [
         "46"
       ],
       "titulo": "Effect of urinary pH on urine saturation values in",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es efecto del pH urinario sobre la saturacion en GATOS sanos. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "46-18": {
       "capitulos": [
@@ -3536,18 +3831,20 @@
         "46"
       ],
       "titulo": "Descriptions of grades used to classify evidence",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es grados de evidencia de los tratamientos del tracto urinario FELINO. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "46-21": {
       "capitulos": [
         "46"
       ],
       "titulo": "Summary of evidence for treatments used to",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es resumen de evidencia en el GATO con cistitis idiopatica. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "46-22": {
       "capitulos": [
@@ -3564,9 +3861,10 @@
         "46"
       ],
       "titulo": "). In addition, owners ease (uroliths and urethral plugs) and calcium oxalate uroliths",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es como hacer que un GATO beba mas. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "46-24": {
       "capitulos": [
@@ -3603,36 +3901,40 @@
         "46"
       ],
       "titulo": "Stepwise approach for management of calcium",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es manejo de la urolitiasis por oxalato en el GATO. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "47-1": {
       "capitulos": [
         "47"
       ],
       "titulo": "Conditions affecting the oral cavity. Box 47-1. Compliance and Dental",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "47-2": {
       "capitulos": [
         "47"
       ],
       "titulo": "and Figure 47-4) (Wiggs and Lobprise,",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "47-3": {
       "capitulos": [
         "47"
       ],
       "titulo": "Clinical signs associated with periodontal disease. Table 47-4. Key nutritional factors for foods for dogs and cats",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "47-4": {
       "capitulos": [
@@ -3674,18 +3976,20 @@
         "48"
       ],
       "titulo": "). Altering food ingredients, mary gastric, intestinal and exocrine pancreatic diseases), small",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "48-2": {
       "capitulos": [
         "48"
       ],
       "titulo": "Potential dietary influences on the diverse nature of GI and exocrine pancreatic disorders, a num-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "49-1": {
       "capitulos": [
@@ -3716,18 +4020,20 @@
         "50a"
       ],
       "titulo": "Breed-associated disorders of the pharynx and",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "50-2": {
       "capitulos": [
         "50a"
       ],
       "titulo": "Mechanisms of pharyngeal and esophageal",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "50-3": {
       "capitulos": [
@@ -3793,18 +4099,20 @@
         "52"
       ],
       "titulo": "Pharmacologic agents useful in managing gastritis, gastroduodenal ulceration and gastric motility/emptying disorders",
-      "veredicto": "pendiente",
+      "veredicto": "lista_de_productos",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es una lista de farmacos para la gastritis y la ulcera gastroduodenal. No es una cifra de requisito ni un dato de composicion que el catalogo pueda usar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "52-1": {
       "capitulos": [
         "52"
       ],
       "titulo": "). inflammatory conditions. The actual incidence of gastroduode-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "52-2": {
       "capitulos": [
@@ -3868,18 +4176,20 @@
         "53"
       ],
       "titulo": "along with their typical kibble dimensions. GDV. Feeding a mixture of moist and dry food appears to",
-      "veredicto": "pendiente",
+      "veredicto": "lista_de_productos",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es una lista de tamano de croqueta de piensos comerciales. No es una cifra de requisito ni un dato de composicion que el catalogo pueda usar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "54-1": {
       "capitulos": [
         "54"
       ],
       "titulo": "). The most common of increased levels of dietary fat adversely affect gastric emptying",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "54-2": {
       "capitulos": [
@@ -3932,9 +4242,10 @@
         "55"
       ],
       "titulo": "Potential causes of chronic small bowel diarrhea in dogs and cats",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "55-3": {
       "capitulos": [
@@ -3957,9 +4268,10 @@
         "61"
       ],
       "titulo": "). Occasionally, patients may present with signs in poorly controlled environments have higher risk for exposure",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "56-1": {
       "capitulos": [
@@ -3967,9 +4279,10 @@
         "62"
       ],
       "titulo": "Clinical signs associated with life-threatening these dogs may be more susceptible to develop a number of",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "56-2": {
       "capitulos": [
@@ -3988,9 +4301,10 @@
         "56"
       ],
       "titulo": "). Such solutions are most useful in secreto- tying and therefore should usually be avoided. When feeding",
-      "veredicto": "pendiente",
+      "veredicto": "lista_de_productos",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es una lista de soluciones comerciales de rehidratacion oral. No es una cifra de requisito ni un dato de composicion que el catalogo pueda usar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "56-4": {
       "capitulos": [
@@ -4052,9 +4366,10 @@
         "57"
       ],
       "titulo": "Potential causes of zinc deficiency in patients",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "57-3": {
       "capitulos": [
@@ -4116,9 +4431,10 @@
         "58"
       ],
       "titulo": "). MCT are water-soluble, ticularly low fat content (Tams and Twedt, 1981; Erickson,",
-      "veredicto": "pendiente",
+      "veredicto": "leida_con_hallazgo",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Triglicéridos de cadena media frente a los de cadena larga: los de cadena media se hidrolizan mas rapido y no necesitan quilomicrones. Es el mecanismo detras del techo de grasa de la linfangiectasia, que el motor aplica sin distinguir el tipo de grasa.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "58-3": {
       "capitulos": [
@@ -4212,18 +4528,20 @@
         "61"
       ],
       "titulo": "Potential causes of acute large bowel diarrhea",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "61-2": {
       "capitulos": [
         "61"
       ],
       "titulo": "Potential causes of chronic large bowel diarrhea Table 61-3. Breed-associated colonic disorders",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "61-3": {
       "capitulos": [
@@ -4297,18 +4615,20 @@
         "63"
       ],
       "titulo": "Diagnostic criteria for the irritable bowel In IBS, colonic dysfunction exists in the absence of structural,",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla sobre PERSONAS, no sobre el perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "63-2": {
       "capitulos": [
         "63"
       ],
       "titulo": "Myoelectric and motility abnormalities prominent in In people, IBS occurs three times as commonly in women than",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla sobre PERSONAS, no sobre el perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "63-3": {
       "capitulos": [
@@ -4340,9 +4660,10 @@
         "64"
       ],
       "titulo": "). In addition, consumption of bones and raw foods ger an episode. Constipation and obstipation have been report-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "64-2": {
       "capitulos": [
@@ -4373,9 +4694,10 @@
         "64"
       ],
       "titulo": "",
-      "veredicto": "pendiente",
+      "veredicto": "felina",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es alimentos terapeuticos para el GATO con estrenimiento. El motor es de perro, asi que no hay nada que aplicar. Leida igual, para que apartarla sea una decision escrita.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "64-5": {
       "capitulos": [
@@ -4392,9 +4714,10 @@
         "64"
       ],
       "titulo": ") and colonic motility modifiers (e.g., cis-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "65-1": {
       "capitulos": [
@@ -4435,9 +4758,10 @@
         "65"
       ],
       "titulo": "Feeding plan summary for patients with excessive flatulence",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "«Feeding plan summary»: el resumen de los pasos del capitulo, que remite a la tabla de factores nutricionales clave de al lado. Las cifras estan alli.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "66-1": {
       "capitulos": [
@@ -4479,27 +4803,30 @@
         "66"
       ],
       "titulo": "Enzyme preparations used in patients with exocrine pancreatic insufficiency.*",
-      "veredicto": "pendiente",
+      "veredicto": "lista_de_productos",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es una lista de preparados enzimaticos comerciales para la insuficiencia pancreatica. No es una cifra de requisito ni un dato de composicion que el catalogo pueda usar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "67-1": {
       "capitulos": [
         "67"
       ],
       "titulo": "Risk factors for pancreatitis in dogs and cats",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "67-2": {
       "capitulos": [
         "67"
       ],
       "titulo": "Protection against pancreatic autodigestion",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "67-3": {
       "capitulos": [
@@ -4561,54 +4888,60 @@
         "68"
       ],
       "titulo": "lists the most important hepatic functions. severe before clinical signs occur. As a result, the patient may be",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "68-2": {
       "capitulos": [
         "68"
       ],
       "titulo": "Diseases of the liver and biliary tract commonly Table 68-3. Frequency distribution of liver diseases in dogs",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "68-3": {
       "capitulos": [
         "68"
       ],
       "titulo": "lists the frequency distribution of liver dis-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "68-4": {
       "capitulos": [
         "68"
       ],
       "titulo": "lists the most important clinical signs and the fre-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "68-5": {
       "capitulos": [
         "68"
       ],
       "titulo": "Causes of extrahepatic bile duct obstruction.* cholangitis (Center, 1996)",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "68-6": {
       "capitulos": [
         "68"
       ],
       "titulo": "). Changes in protein, carbohydrate and fat metab-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "68-7": {
       "capitulos": [
@@ -4650,9 +4983,10 @@
         "68"
       ],
       "titulo": "). In acute hepatic failure, correction of fluid and foods still exceed minimum requirements. Thus, these foods",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla clinica: signos, causas, diagnostico diferencial o protocolo de manejo. No lleva ninguna cifra de nutriente que el motor pueda aplicar; las cifras de esta patologia viven en su tabla de «Key nutritional factors», que ya esta inventariada.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "68-11": {
       "capitulos": [
@@ -4679,108 +5013,120 @@
         "69"
       ],
       "titulo": "Factors affecting the disposition of drugs that can changes in functional morphology or pathology due to specific",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "69-2": {
       "capitulos": [
         "69"
       ],
       "titulo": "Selected factors that can determine the effects of if target cell receptor numbers or affinity are suppressed or",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "69-3": {
       "capitulos": [
         "69"
       ],
       "titulo": "Recommendations for administering medications with or without food.*",
-      "veredicto": "pendiente",
+      "veredicto": "lista_de_productos",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Es una lista de que farmacos se dan con comida y cuales no. No es una cifra de requisito ni un dato de composicion que el catalogo pueda usar.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "69-4": {
       "capitulos": [
         "69"
       ],
       "titulo": "Dietary factors that may affect drug metabolism By affecting the food’s acidification potential, dietary cation-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "69-5": {
       "capitulos": [
         "69"
       ],
       "titulo": "). For example, food clearance of cloxacillin, streptomycin, sulfamethoxazole, sulfa-",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de fisiologia o de bioquimica descriptiva: explica un mecanismo y no da ninguna cifra de requisito ni de alimento.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "70-1": {
       "capitulos": [
         "70"
       ],
       "titulo": "Average daily metabolizable energy (ME) intakes for",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de otra especie (huron, conejo o roedor). El motor es solo de perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "70-2": {
       "capitulos": [
         "70"
       ],
       "titulo": ") Figure 70-4. The gastric trichobezoar removed in pieces from the",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de otra especie (huron, conejo o roedor). El motor es solo de perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "70-3": {
       "capitulos": [
         "70"
       ],
       "titulo": "). Excess dietary fat may indigestible and fermentable fiber are critical to optimal rabbit",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de otra especie (huron, conejo o roedor). El motor es solo de perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "70-4": {
       "capitulos": [
         "70"
       ],
       "titulo": "Protein and fiber contents (dry matter basis) of forages commonly fed to rabbits.*",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de otra especie (huron, conejo o roedor). El motor es solo de perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "70-5": {
       "capitulos": [
         "70"
       ],
       "titulo": "Calcium, phosphorus and vitamin D2 contents (dry",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de otra especie (huron, conejo o roedor). El motor es solo de perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "70-6": {
       "capitulos": [
         "70"
       ],
       "titulo": "Energy and nutrient contents of foods commonly fed as snacks to rabbits and rodents.*",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de otra especie (huron, conejo o roedor). El motor es solo de perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     },
     "70-7": {
       "capitulos": [
         "70"
       ],
       "titulo": "Estimated nutrient requirements of laboratory rodents.* Some of these values were determined by rigorous comparative",
-      "veredicto": "pendiente",
+      "veredicto": "leida_y_no_aplica",
       "donde": [],
-      "nota": "Sin veredicto todavia: nadie ha dicho que hace el motor con esta tabla."
+      "nota": "Tabla de otra especie (huron, conejo o roedor). El motor es solo de perro.",
+      "veredicto_por": "leida entera contra el texto de su capitulo, el 11 de septiembre de 2026"
     }
   }
 }

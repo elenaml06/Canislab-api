@@ -66,7 +66,12 @@ DOCUMENTOS = ["PATOLOGIAS.md", "LECTURA_SACN5.md", "HALLAZGOS_LECTURA_FUENTES.md
     # El registro de donde las fuentes no dicen lo mismo, para el documento
     # que lee el nutricionista (11 septiembre). Va aqui por lo mismo que los
     # demas: es el sitio del repo donde mas facil es citar de memoria.
-    "FEDIAF_CONTRA_OTRAS_FUENTES.md"]
+    "FEDIAF_CONTRA_OTRAS_FUENTES.md",
+    # Los 19 hallazgos de las 286 tablas que faltaban (11 septiembre). Entra en
+    # el mismo commit que nace, por lo mismo que su hermano del dia 10: son
+    # citas literales de SACN5 y este es el sitio donde una mal copiada pasa
+    # desapercibida.
+    "HALLAZGOS_SACN5_11SEP.md"]
 JSONS = ["patologias.json", "recomendaciones_libro.json", "requisitos_condicionales.json",
          "requerimientos_v2_final.json", "sacn5_fuentes_de_minerales.json",
          "fediaf_conversiones_vitaminas.json"]
