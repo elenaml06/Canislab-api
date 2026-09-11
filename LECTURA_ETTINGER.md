@@ -520,3 +520,77 @@ una banda más estrecha dentro de la suya. La fuente admite bajar hasta el 0,5 %
 utilización energética de la proteína (77 %) es menor que la de la grasa (94 %);
 la fibra, sin acuerdo universal sobre su eficacia; y la L-carnitina, que el motor
 ya tiene como clave y solo aplica como suelo de patología.
+
+---
+
+## Caps. 175, 177, 179, 180, 183, 184 y 185 · LEÍDOS
+
+Leídos en bloque, apuntando solo lo que toca al motor. Cada cifra comparada
+contra lo que aplicamos **y contra las otras fuentes**, que es la regla de arriba.
+
+### Cap. 175 — Geriátricos sanos
+- **Repite el 10 % de los premios**, y lo define mejor que el cap. 192: «se
+  recomienda que un **máximo del 10 % de las calorías diarias** se destinen a
+  alimentos poco nutritivos (como **premios, sobras de la mesa, suplementos**)».
+  Segunda fuente para el mismo pendiente.
+- Sénior: el último **25 %** de la esperanza de vida de su raza. Nuestro corte es
+  por edad absoluta (>7 años). Apuntado; ya está en la lista de discrepancias.
+- **No restringir proteína al sénior sano**: «menos del 20 y 30 % de calorías
+  proteicas» solo si hay enfermedad renal. El motor **no** restringe proteína al
+  sénior. Confirma.
+
+### Cap. 177 — Caquexia y sarcopenia
+Sin cifras que aplicar. Confirma por tercera vez el hueco de la **masa muscular**:
+la pérdida de masa magra se da en más del 50 % de los perros con insuficiencia
+cardíaca congestiva y el peso puede **subir** enmascarándola.
+
+### Cap. 179 — Enfermedad pancreática
+- **Grasa en pancreatitis: «menos de un 15 % […] en base a MS»** para perro. Al
+  convertir con la densidad de siempre: 15 × 2,5 = **37,5 g/1000 kcal**, que es
+  **exactamente** lo que aplica el motor desde SACN5 Tabla 67-3. Dos fuentes, el
+  mismo número.
+- ⚠️ **Y contradice lo que mucha gente cree sobre la IPE**: «Anteriormente se
+  recomendaba la restricción de grasas en la dieta para el [tratamiento de la
+  IPE]», y los estudios que cita comparan dietas con 51 %, 40,8 %, 30 % y 22 % de
+  grasa sobre EM **sin encontrar beneficio en restringir**. Comprobado: el motor
+  **no** restringe grasa en la insuficiencia pancreática exocrina. Correcto.
+
+### Cap. 180 — Enfermedad hepática
+- **⚠️ Cobre, y aquí sí manda FEDIAF.** «Las dietas restringidas en Cu pueden
+  contener **tan solo 3 ppm de Cu en base a materia seca**» = **0,75 mg/1000
+  kcal**. Pero el **mínimo de FEDIAF para el adulto son 2,08**, así que esa cifra
+  **no la puede alcanzar una ración completa**: bajar ahí deja al perro
+  deficiente. El motor aplica **2,4**, que es lo más apretado que cabe sobre el
+  mínimo, con un 15 % de sitio. **Caso de manual de la regla: la fuente clínica
+  pide menos que el mínimo nutricional y gana FEDIAF.**
+- **No restringir proteína a todos**: «la restricción de proteínas […] no se
+  recomienda para todos, ni incluso [en la mayoría]». El motor no la restringe en
+  hepatopatía salvo encefalopatía. Confirma.
+
+### Cap. 183 — Enfermedad cardíaca
+- **«La restricción de proteínas debe evitarse en perros y gatos con»**
+  cardiopatía, y las dietas renales o sénior «no se recomiendan a menos que exista
+  una disfunción renal grave». Comprobado: el motor **solo** toca el sodio en
+  cardiopatía. Confirma.
+- **El sodio de las dietas comerciales va «entre 33 y 412 mg/100 kcal»** = 330 a
+  4.120 mg/1000 kcal. Los tres topes del motor (738,6 en B2, 625 en C, 480 en D)
+  caen dentro de la mitad baja. Sin conflicto.
+- **L-carnitina 50-100 mg/kg**, que es dosis por perro y no concentración.
+- Magnesio de las dietas bajas en sodio: 10-50 mg/100 kcal, con mínimo AAFCO de
+  11 mg/100 kcal.
+
+### Cap. 184 — Enfermedad renal
+- Sodio: llama «baja» a una dieta de **1,0 g/Mcal** (= 1.000 mg/1000 kcal) y
+  «alta» a **3,1**. El motor no topa sodio en renal, solo fósforo. Apuntado.
+- Grasa hasta el **30 % en base a MS**; las de aceite de pescado al 15 %.
+- **El cloruro de K no se recomienda** por palatabilidad.
+- ⚠️ **Y avisa contra restringir sodio a lo bruto**: en gatos con ERC inducida «la
+  restricción de Na se asoció con hipopotasemia». Va contra la idea intuitiva.
+
+### Cap. 185 — Tracto urinario inferior
+- Las dietas secas comerciales que estudia llevan **sodio por encima de 2,5
+  g/1000 kcal**, y hasta 2,9.
+- **El sodio alto aumenta la excreción urinaria de calcio**, que es lo que importa
+  en el oxalato cálcico.
+- Acidificantes y alcalinizantes nombrados uno a uno (metionina, sulfato de calcio
+  o sodio, cloruro de calcio o amonio · carbonato de calcio o sodio).
