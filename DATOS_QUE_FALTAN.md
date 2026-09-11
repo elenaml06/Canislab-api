@@ -1068,14 +1068,7 @@ dígito por ciento, en la dirección de **infravalorar** la concentración del m
 · **Köber 2017**, que es la fuente de los macros de estas nueve fichas
   (comprobado celda a celda): da materia seca, proteína bruta, grasa bruta,
   cenizas, calcio y fósforo. **No da energía.**
-· ⚠️ **NRC 2006 cap.13, CORREGIDO**: aquí ponía que no traía energía del hueso y
-  **era falso** — se había mirado solo la Tabla 13-8, que es la de fuentes
-  inorgánicas de mineral. La **Tabla 13-1** sí tiene columna de EM para el perro, y
-  en ella está *«Meal, with bone, rendered»* con **3,61 kcal/g**. No sirve para
-  corregir nuestras fichas (es harina rendida y seca, 94 % de materia seca y 19 %
-  de cenizas, no hueso carnoso crudo), pero **sí cambia la dirección del problema**:
-  esa EM es un 24 % MÁS ALTA que 4×proteína + 9×grasa, no más baja. Detalle en
-  `PENDIENTE_NUTRICION.md`.
+· 🔴 **RETIRADO 11-sep-2026**: aquí se dijo que la Tabla 13-1 de NRC trae *«Meal, with bone, rendered»* con 3,61 kcal/g y que eso invertía la dirección del problema. **Es falso.** El cuerpo de esa tabla NO está en el `.txt` de NRC (el capítulo 13 son 177 líneas con solo títulos y notas al pie; donde iría la tabla hay dos números de página, «667 668»), y las tres cadenas «Meal, with bone», «with bone, rendered» y «5-00-388» no aparecen en las 43.556 líneas. Lo encontró el contador de NRC al montarlo. Detalle y qué queda en pie: `PENDIENTE_NUTRICION.md`.
 · **NRC 2006, el libro entero**: «collagen» sale en el metabolismo de la vitamina
   C, en la lisina, en el sodio y en una frase sobre el triptófano, y **en ninguna
   con un coeficiente de digestibilidad**.

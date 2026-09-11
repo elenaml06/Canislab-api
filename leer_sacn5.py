@@ -143,7 +143,23 @@ def _clave(tipo, valor, n=None):
 
 def extraer(ruta, con_descartadas=False):
     """Los elementos NUTRICIONALES de un capítulo, UNA CLAVE POR APARICION."""
-    t = " ".join(open(ruta, encoding="utf-8", errors="ignore").read().split())
+    return extraer_de_texto(open(ruta, encoding="utf-8", errors="ignore").read(),
+                            con_descartadas=con_descartadas)
+
+
+def extraer_de_texto(crudo, con_descartadas=False):
+    """El mismo filtro, sobre un texto ya cargado.
+
+    ⚠️ SE PARTE EN DOS EL 11 DE SEPTIEMBRE porque NRC 2006 viene en UN SOLO .txt
+    de 43.556 líneas y hay que contarlo por capítulos, que se cortan en memoria.
+    `leer_nrc2006.py` y `leer_fascetti.py` llaman aquí **a propósito**: un filtro,
+    una definición. Dos filtros parecidos en dos ficheros son dos filtros que se
+    separan, y entonces «elemento nutricional» significa una cosa en un libro y
+    otra en el de al lado, sin que nadie lo vea. Si el filtro cambia, cambian los
+    tres recuentos a la vez, que es lo que hace falta para que un número clavado
+    signifique algo.
+    """
+    t = " ".join(crudo.split())
     items, descartadas = {}, 0
     for i, fr in enumerate(_frases(t)):
         # ⚠️ EL FILTRO SE PRUEBA SOBRE LA FRASE SIN EL GUION DE CORTE DE LINEA,

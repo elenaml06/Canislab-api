@@ -81,7 +81,26 @@ JSONS = ["patologias.json", "recomendaciones_libro.json", "requisitos_condiciona
          "fediaf_conversiones_vitaminas.json"]
 
 _CITA = re.compile(r"«([^»]{40,})»")
-_LARGO_MINIMO = 40
+# ⚠️ BAJADO DE 40 A 25 EL 11 DE SEPTIEMBRE, y por un fallo mio concreto.
+#
+# El 10 de septiembre escribi en CUATRO documentos que la Tabla 13-1 de NRC 2006
+# publica «Meal, with bone, rendered» con 3,61 kcal/g para el perro, y lo use
+# para DESMENTIR una afirmacion anterior. Es falso: el cuerpo de esa tabla no
+# esta en el .txt de NRC -- el capitulo 13 son 177 lineas con solo titulos y
+# notas al pie, y donde iria la tabla hay dos numeros de pagina, «667 668» --, y
+# las cadenas «Meal, with bone», «with bone, rendered» y «5-00-388» no aparecen
+# en las 43.556 lineas.
+#
+# Este auditor no lo vio porque la cita tiene **26 caracteres** y el umbral eran
+# 40. Una cifra atribuida a una tabla, con su numero de tabla y su codigo de
+# ingrediente, y nada mirandola. Lo cazó el contador de NRC al montarlo, que es
+# otra forma de decir que lo cazo la suerte.
+#
+# Medido antes de bajarlo: con 30, 25 y 20 no aparece ni una cita nueva sin
+# encontrar. O sea que el umbral estaba alto sin ganar nada. Se deja en 25 -- por
+# debajo se empiezan a recoger nombres propios y fragmentos de dos palabras que
+# no son citas de verdad.
+_LARGO_MINIMO = 25
 
 # Cuantas citas quedan por comprobar contra una fuente que SI esta en el repo.
 # Se pone a mano y se compara exacto. Ver el comentario del final de `auditar`.

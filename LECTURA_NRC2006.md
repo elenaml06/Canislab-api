@@ -820,37 +820,32 @@ quietos del mismo sitio salieron a 0,49.
 
 ## caps. 10, 12, 13, 14 y 15 (LEÍDOS ENTEROS)
 
-### ⚠️ cap.13 — Y aquí está la corrección del día sobre el hueso
+### 🔴 cap.13 — RETIRADO: la cifra que puse aquí no está en el texto
 
-La Tabla 13-1, *«Proximate Analysis of Selected Feed Ingredients»*, **tiene columna
-de energía metabolizable para el perro**, y en ella hay un ingrediente CON HUESO:
-*«Meal, with bone, rendered»* (IFN 5-00-388), con **3,61 kcal/g**.
+El 11 de septiembre, al montar el contador de NRC, salió esto: **el capítulo 13
+del `.txt` son 177 líneas y contiene solo los TÍTULOS y las NOTAS AL PIE de sus
+nueve tablas.** Donde iría el cuerpo de la Tabla 13-1 hay dos números de página
+sueltos, «667 668». Esas páginas no se extrajeron.
 
-Por la mañana escribí que NRC cap.13 no daba energía del hueso. **Era falso**: había
-mirado la Tabla 13-8, que es la de fuentes **inorgánicas** de mineral y no tiene
-columna de energía, y no la 13-1.
+O sea que lo que escribí aquí —que la Tabla 13-1 trae *«Meal, with bone,
+rendered»* con 3,61 kcal/g para el perro, y que eso invertía la dirección del
+problema del hueso— **no se puede sostener con el texto que tenemos**. Buscadas
+literal en las 43.556 líneas, «Meal, with bone», «with bone, rendered» y
+«5-00-388» no aparecen ninguna de las tres.
 
-**Y lo que dice esa fila va en contra de lo que yo había supuesto:**
+**Por qué no saltó antes.** `auditar_citas.py` solo comprueba las citas de más de
+40 caracteres, y *«Meal, with bone, rendered»* tiene 26. Una cifra atribuida a una
+tabla, con su número y su código de ingrediente, sin nada mirándola.
 
-| | kcal/g |
-|---|---|
-| EM que publica NRC | **3,61** |
-| 4×proteína + 9×grasa, que es lo que hace Rawku | 2,92 → NRC un **24 % más** |
-| 4×proteína + 9×grasa + 4×ELN, el método de esa tabla | 3,37 → NRC un **7 % más** |
+**Lo que queda en pie**, del capítulo 3 y comprobado literal: «The resulting Atwater factors of 4 for
+protein, 9 for fat, and 4 kcal·g–1 for carbohydrate (nitrogen-free extract; NFE)
+still work amazingly well for ingredients in homemade diets for dogs: meat, offal
+(except bones and bone meal), poultry, fish, highly purified starch products, milk
+products, and even chocolate».
 
-**El método está comprobado contra las filas sin hueso de la misma tabla**, y cuadra
-dentro del 1,3 %: corazón de vaca crudo 1,13 contra 1,13 · hígado de vaca 1,38
-contra 1,38 · riñón 1,03 contra 1,03 · callos 0,94 contra 0,93 · pollo con piel
-2,53 contra 2,50 · hígado de pollo 1,20 contra 1,20.
-
-O sea que la tabla de ingredientes de NRC **aplica Atwater al ingrediente con
-hueso** —pese a lo que dice su propio cap.3— y le sale un número **más alto** que el
-nuestro. El motivo mecánico es que nuestras fichas no llevan el término del **ELN**
-(extracto libre de nitrógeno) que sí lleva el método de esa tabla.
-
-**Conclusión honesta**: la exclusión del cap.3 sigue en pie, pero **la dirección del
-error ya no se puede afirmar**. Corregido en `PENDIENTE_NUTRICION.md`,
-`DATOS_QUE_FALTAN.md` y `PENDIENTE.md` el mismo día.
+**Y la conclusión buena:** la dirección del error del hueso sigue sin
+establecerse, y no porque NRC diga algo más alto, sino porque **no podemos leer
+esa tabla**. Ahora se sabe qué falta exactamente: las páginas 667-668 del PDF.
 
 ### cap.15 — Confirma la densidad de referencia con la que este repo convierte TODO
 
