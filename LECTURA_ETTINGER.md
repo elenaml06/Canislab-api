@@ -452,10 +452,37 @@ Medido contra lo que da el motor cuando se le pasa el peso ideal:
 | 35 kg | 25 kg | 783 | 626 | 470 | +25 % |
 | 45 kg | 30 kg | 897 | 718 | 538 | +25 % |
 
-El motor da **el RER entero del peso ideal**; la fuente pide el **80 %**. Un 25 %
-más de comida en el perro que está a dieta, consistente en todos los pesos. Eso
-no es un matiz: puede ser la diferencia entre adelgazar y no adelgazar. **Va al
-nutricionista con las dos cifras.**
+El motor da **el RER entero del peso ideal**; esta fuente pide el **80 %**.
+
+⚠️ **CORREGIDO EL MISMO DÍA, y la corrección la provocó Elena** («pero SACN5
+también hablaba de eso»). Escrito así, esto parecía que dábamos de más que la
+literatura. **No es eso: son DOS FUENTES CLÍNICAS QUE NO COINCIDEN**, y la
+nuestra es la de SACN5. Su cap. 27 dice, literal:
+
+> «Determine RER for ideal weight (also from Table 27-3, immediately below ideal
+> weight) **= initial estimated daily energy intake**.»
+
+O sea **exactamente lo que hace el motor**. Y añade el marco: «RER should provide
+approximately 70 to 80 % of DER for optimal weight or 60 to 70 % of DER for obese
+weight».
+
+Los tres números, sobre el peso ideal:
+
+| | kcal/kg^0,75 |
+|---|---|
+| FEDIAF, «Obese prone adults **≤ 90**» (Tabla VII-7) — es un **techo** | ≤ 90 |
+| **SACN5 cap. 27 y el motor** | **70** (el RER entero) |
+| Ettinger cap. 176 | 56 (el 80 % del RER) |
+
+**Y por eso la regla de la jerarquía no decide aquí.** FEDIAF pone un techo y
+estamos por debajo, así que no hay conflicto con ella; el desacuerdo es entre dos
+libros de clínica del mismo nivel. Se queda como está —con SACN5, que es la fuente
+de la que sale casi todo lo demás del motor— y **va al nutricionista como
+discrepancia, no como error**.
+
+**El ritmo de pérdida coincide en las tres**: SACN5 pide 1-2 % del peso inicial
+por semana, con el 0,5 % como mínimo y el 2 % como máximo, y Ettinger 0,5-2 %. El
+aviso del motor dice 1-2 %.
 
 **Y el ritmo, que casi coincide.** «La pérdida de peso debe progresar lentamente
 (**0,5-2 % por semana**)». El aviso del motor dice **1-2 % a la semana**, o sea
