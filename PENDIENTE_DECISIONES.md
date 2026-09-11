@@ -52,6 +52,17 @@ las tiene que tomar una persona, no yo.
       1. **Conseguir la ficha de un suplemento de vitamina E suelto.** Es la
          única que no cede en la cifra. Va en `DATOS_QUE_FALTAN.md` y el dato
          no lo relleno yo.
+
+         ⚠️ **Y hay algo más que hace falta antes de decidir, medido el 11 de
+         septiembre**: los 67,1 mg salen de convertir los 400 UI con el factor
+         del **d-α-tocoferol natural**, que es **el más permisivo de los siete**
+         de la Tabla VII-14 de FEDIAF. Con el sintético (el acetato, que es lo
+         que suele llevar un suplemento comercial) el mismo requisito serían
+         **100 mg/1000 kcal**. Y en el catálogo **solo dos alimentos llevan
+         vitamina E y ninguno de los dos dice qué forma es**. O sea que la cifra
+         que hoy deja a un perro sin menú descansa en una suposición sobre un
+         dato que no está, y la suposición va al lado **menos** exigente: si
+         resultara ser el acetato, el suelo sería más alto, no más bajo.
       2. **Apagarlo** (`aplicado_por_el_solver: false`) con esta medida escrita
          al lado, que es el procedimiento que ya está en `CLAUDE.md` para una
          cifra de la fuente que no cabe: se mueve a escrita-y-no-aplicada y se

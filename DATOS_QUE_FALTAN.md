@@ -1101,10 +1101,34 @@ girasol, con 63 mg/1000 kcal, que además está limitado por las proporciones de
 Para un perro de 1,5 kg con 200 kcal, llegar a 13,4 mg de vitamina E total sin gastar
 las dos plazas de suplemento en ello es lo que no sale.
 
-**Qué se desbloquea con esa ficha**: encender el suelo del perro sano, que hoy vive
-en `recomendaciones_libro.json` con `aplicado_por_el_solver: false` y su medida
-escrita. Y de paso deja de depender de un multivitamínico completo el cumplir una
-recomendación de un solo nutriente.
+**Qué se desbloquea con esa ficha**: que el suelo del perro sano deje de costar
+menús. Está **ENCENDIDO** desde el 11 de septiembre por decisión de Elena, y con la
+batería en rojo mientras siga así: el perro con ocho especies fuera se queda sin menú
+(adulto, cachorro y toy), y al toy de 1,5 kg le cuesta tanto que el solver no lo saca
+en 1 s ni en 20 intentos. Las otras 15 combinaciones de alergias y exclusiones siguen
+saliendo, y al toy lo salva la escalera por la vía de la API. Y de paso deja de
+depender de un multivitamínico completo el cumplir una recomendación de un solo
+nutriente.
+
+### ⚠️ Y HAY UNA SEGUNDA COSA QUE FALTA, MEDIDA EL 11 DE SEPTIEMBRE: LA FORMA DE LA QUE YA HAY
+
+Los 67,1 mg salen de convertir los 400 UI con el factor del **d-α-tocoferol natural**
+(1,49 UI/mg → 1 UI = 0,671 mg), que es **el más permisivo de los siete** de la Tabla
+VII-14 de FEDIAF. Con el sintético (dl-α-tocoferil acetato, 1 UI = 1 mg) el mismo
+requisito serían **100 mg/1000 kcal**, un 49 % más alto. Y Fascetti cap.6 lo confirma
+por su lado: «40 IU vitamin D3 = 1 ug cholecalciferol; **1 IU vitamin E = 1 mg
+all-rac-alpha-tocopheryl acetate**».
+
+Medido ese día: en el catálogo **solo dos alimentos llevan vitamina E declarada** —
+Homemadekun (625 mg/100 g) y NEKTON Dog Easy-BARF (200) — y **ninguno de los dos dice
+qué forma es**. O sea que la cifra que hoy deja a un perro sin menú descansa en una
+suposición sobre un dato que no está en ninguna ficha, y la suposición va al lado
+**menos** exigente. Si resultara ser el acetato, el suelo real sería más alto, no más
+bajo.
+
+Es el mismo patrón que la forma química de las vitaminas del grupo B y la del selenio:
+el dato vive en la etiqueta del fabricante y no en el catálogo. **No lo rellena el
+asistente.**
 
 **Lo que hace falta de la etiqueta**, igual que con cualquier otra ficha: miligramos
 de vitamina E por 100 g, **qué forma química** (d-α-tocoferol natural, dl-α-tocoferol
