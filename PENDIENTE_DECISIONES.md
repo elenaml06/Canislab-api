@@ -31,6 +31,41 @@ las tiene que tomar una persona, no yo.
          protege nada y no se puede seguir con el resto del plan. El
          comando exacto está al final del archivo .sql.
 
+- [ ] 🔴 **EL SUELO DE VITAMINA E ESTÁ ENCENDIDO Y DEJA PERROS SIN MENÚ**
+      (medido el 11 de septiembre). Lo encendiste tú, con la regla correcta
+      («la norma es la norma»: si la fuente lo dice, se aplica). Aquí está lo
+      que cuesta, que es lo que hacía falta para decidir:
+
+      | | Con el suelo | Sin el suelo |
+      |---|---|---|
+      | Perro con **ocho especies fuera** (adulto 20 kg, cachorro 10 kg, toy 3 kg) | **sin menú los tres** | con menú los tres |
+      | Las otras 15 combinaciones de alergias y exclusiones | con menú | con menú |
+      | Toy 1,5 kg **por la API**, con escalera y presupuesto real | 10 de 10 con menú | — |
+      | Toy 1,5 kg **preguntando al solver con 1 s** | 20 de 20 sin menú | 12 de 20 sin menú |
+
+      **La causa está medida y es de DATOS, no de código**: en el catálogo no
+      hay un suplemento de **vitamina E suelto**, solo los nueve
+      multivitamínicos, y el motor deja meter dos. Con eso no se llega a 67,1
+      mg/1000 kcal cuando además faltan ocho especies.
+
+      Las tres salidas, y ninguna la puedo elegir yo:
+      1. **Conseguir la ficha de un suplemento de vitamina E suelto.** Es la
+         única que no cede en la cifra. Va en `DATOS_QUE_FALTAN.md` y el dato
+         no lo relleno yo.
+      2. **Apagarlo** (`aplicado_por_el_solver: false`) con esta medida escrita
+         al lado, que es el procedimiento que ya está en `CLAUDE.md` para una
+         cifra de la fuente que no cabe: se mueve a escrita-y-no-aplicada y se
+         pregunta al nutricionista.
+      3. **Dejarlo encendido** y aceptar que el perro con ocho especies fuera
+         se quede sin menú, y que la batería salga roja en los BLOQUES 9 y 43.
+
+      ⚠️ **Mientras siga encendido la batería sale ROJA**, así que `main` no
+      puede recibir esto tal cual. Lo que está rojo es exactamente eso y nada
+      más: los tres fallos de los bloques 9 y 43. El cuarto que salía (BLOQUE
+      15, «le metió comida sin pedirlo y sin avisar») **no era del suelo** y
+      está arreglado — era el perro que se amolda, que heredaba el menú del
+      primero y no su aviso.
+
 - [ ] **LAS OCHO PREGUNTAS QUE LA APP NO HACE, Y QUE DECIDEN UNA CIFRA**
       (11 de septiembre). De las 47 patologías, **24 son `solo_veterinario`**
       y en **ocho** la cifra que aplica el motor depende de un dato clínico

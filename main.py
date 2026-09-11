@@ -3368,8 +3368,34 @@ def endpoint_varios_perros(datos: PeticionVariosPerros):
             por_perro[i_base]["menus"].append({**base, "dias": dias_por_menu[j]})
             anotar_consumo(i_base, j, gramos_base)
 
+            # ⚠️ EL AVISO DEL PERRO BASE VIAJA CON SU MENU (11 de septiembre).
+            #
+            # CASO REAL ENCONTRADO por el BLOQUE 15, y es la regla 5 otra vez:
+            # «lo que eliges a mano se respeta [...] y si con lo elegido no hay
+            # menu posible, se baja de peldano y SE DICE — nunca se cambia en
+            # silencio. Eso incluye la pantalla de varios perros».
+            #
+            # Medido: en las tres tiradas del caso del BLOQUE 15, el menu de
+            # Rufo (la base) llevaba «Pollo con piel» y «Pecho de ternera con
+            # hueso» sin que nadie los eligiera, y lo DECIA. El de Cairo llevaba
+            # exactamente los mismos dos y su `aviso` venia a `None`, las tres
+            # veces. No es aleatorio: para el perro que se amolda, esos dos
+            # alimentos entran por `forzar_presencia`, asi que desde dentro de
+            # `_resolver_menu_v2_interno` son «lo que se pidio» y no hay nada
+            # que avisar. El aviso se pierde justo en la costura.
+            #
+            # Y no se puede arreglar volviendo a aplicarle su propia eleccion al
+            # que se amolda -- eso pisaria el amoldado, y esta escrito arriba --,
+            # asi que lo que viaja es el aviso.
+            _aviso_base = (base.get("aviso") or "").strip()
+
             for i in orden[1:]:
                 r = generar(i, j, forzar_estos=list(gramos_base))
+                if r.get("factible") and _aviso_base:
+                    _suyo = (r.get("aviso") or "").strip()
+                    _heredado = (f"Este menu se ha hecho para parecerse al de {nombres[i_base]}, "
+                                 f"y aquel necesito alimentos que no elegiste. " + _aviso_base)
+                    r["aviso"] = (_suyo + " " + _heredado).strip() if _suyo else _heredado
                 if not r.get("factible"):
                     # Amoldarse no puede costarle a nadie quedarse sin menú:
                     # antes de rendirse, se le hace el suyo libremente.
