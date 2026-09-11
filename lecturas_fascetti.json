@@ -4,9 +4,9 @@
     "metodo": "El de `LECTURA_SACN5.md`: leer todo, apuntar todo, y aplicar solo al final. Un veredicto «por: regla_del_capitulo» solo vale si se ha comprobado elemento a elemento que ninguno se sale de la regla -- es la leccion de los 442 de SACN5, donde TRES de los resueltos por capitulo felino si hablaban del perro.",
     "como_se_comprueba": "`leer_fascetti.py`, que rehace los recuentos y exige que la lectura integra declare el numero de lineas real del .txt.",
     "total_declarado": 657,
-    "pendientes_declarados": 574,
+    "pendientes_declarados": 502,
     "descartadas_declaradas": 17537,
-    "capitulos_leidos_declarados": 4,
+    "capitulos_leidos_declarados": 6,
     "medido": "11 de septiembre de 2026"
   },
   "capitulos": {
@@ -383,6 +383,314 @@
         "cifra#354:Thus, it is unlikely that cats eating natural prey would exceed the SUL for methionine.” The authors have not recognized methionin": {
           "veredicto": "no_aplica",
           "nota": "SUL de metionina en el GATO que come presa."
+        }
+      }
+    },
+    "cap03": {
+      "titulo": "Energy: How Much Do Dogs and Cats Need?",
+      "regla_del_capitulo": null,
+      "lectura_integra": {
+        "lineas": 467,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "cifra#15:The kilocalorie is the energy unit primarily used in dog and cat nutrition, although the mega‐calorie (Mcal), equivalent to 1 000 ": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "cifra#17:Conversion between calories and joules can easily be accomplished using the following equation: A joule (J) is a small amount of e": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "cifra#48:Resting energy expenditure is typically the largest component of total energy expenditure and frequently accounts for greater than": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "cifra#66:Heat increment is responsible for 10–15% of total daily energy expenditure in many simple‐stomached animals (Blaxter 1989), and it": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "olor#128:The animal is adapted to the diet and the environment where the experiment will be completed.": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "olor#129:In the AAFCO protocol (AAFCO 2022), the animal is fed the diet for at least five days prior to the start of feces (and possibly ur": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "cifra#136:FI = food intake (g) GEfood = gross energy of the diet/food (kcal/g) F = amount of feces collected (g) GEfeces = gross energy of f": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "cifra#141:The following example demonstrates the use of this equation: FI = 1000 g GEfood = 4.2 kcal/g F = 410 g GEfeces = 1.8 kcal/g Pfood ": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "cifra#149:For this purpose, a diet with the following nutrient composition will be used: Crude Fat = 12.0% Crude Protein = 22.0% Carbohydrat": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "cifra#150:The GE values for triglycerides range from 6.5 to 9.9 kcal/g (depending on fatty acid chain length and degree of unsaturation), pr": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "cifra#153:The GE of a diet can be estimated using the following equation: Using values from the sample diet the following result is obtained": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "cifra#166:Thus, if a correction factor of 1.25 kcal/g of protein is used for loss of energy in urine, then the GE value of protein becomes 4": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "cifra#167:The corrected protein GE of 4.40 kcal/g is routinely used for both dogs and cats, even though the actual value for protein in cat ": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "cifra#177:It is as follows: Using values from a diet containing 12% crude fat, 22% crude protein, and 46% nitrogen‐free extract, the followi": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "cifra#183:It has been reported that differences between measured nutrient composition and guaranteed analysis of pet foods result in an aver": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "olor#184:Thus, it is important to keep in mind that the ME value obtained using the guaranteed analysis from the pet food label will likely": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "cifra#187:Ash values of 2.5% for canned and 8% for dried diets may be used to provide a rough estimate of carbohydrate.": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "cifra#232:The following values are standard numbers used for RQ and heat equivalents of oxygen and carbon dioxide (Blaxter 1989): Lipids = 0": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "cifra#140:This factor is 1.25 kcal/g of protein for dogs and 0.86 kcal/g of protein for cats (AAFCO 2022).": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Factor de correccion urinaria, 1,25 kcal/g de proteina en perro. Metodologia de como se MIDE la energia de un alimento (bomba calorimetrica, ensayo de digestibilidad, ecuaciones de Atwater). El motor no mide energia: la toma de la fuente de cada ficha, y el BLOQUE 71 la contrasta contra la ecuacion de FEDIAF."
+        },
+        "cifra#179:The modified Atwater equation is as follows: Using values from a diet containing 12% crude fat, 22% crude protein, and 46% nitroge": {
+          "veredicto": "leido_no_aplica",
+          "nota": "La ecuacion de Atwater MODIFICADA otra vez (3,5/8,5/3,5). Ya anotada en el cap.2: es el numero que delata una energia calculada en vez de medida, y el catalogo tiene seis fichas de hueso con ese patron."
+        },
+        "cifra#200:The equation for dog food is: Step 1: GE (kcal) = (5.7 × g protein) + (9.4 × g fat) + [4.1 × (g nitrogen‐free extract + g fiber)] ": {
+          "veredicto": "leido_no_aplica",
+          "nota": "La ecuacion de la energia del pienso de perro paso a paso. El motor usa la de FEDIAF, que es la que audita el BLOQUE 71."
+        },
+        "cifra#257:For example, a rat weighing 1 lb will eat 72 kcal/day.": {
+          "veredicto": "no_aplica",
+          "nota": "Una rata de una libra come 72 kcal/dia. Es el ejemplo de por que NO se extrapola energia entre especies por peso lineal."
+        },
+        "cifra#258:If this same energy intake were directly extrapolated to an 80 lb dog, the dog would consume 5760 kcal per day! The relationship b": {
+          "veredicto": "no_aplica",
+          "nota": "La misma extrapolacion, llevada al absurdo: 5760 kcal para un perro de 80 libras."
+        },
+        "cifra#262:Rubner (1883) proposed that energy expenditure is constant at 1000 kcal/m2 body surface area, and other studies have suggested tha": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Rubner 1883, 1000 kcal/m2 de superficie corporal. Historia de por que se acabo usando el exponente 0,75, que es el que aplica el motor."
+        },
+        "cifra#268:Energy Requirements for Maintenance It has been common to assume that resting energy expenditure is responsible for 50% of total e": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Que parte del gasto total es el gasto en reposo. Contexto."
+        },
+        "cifra#291:Source: Adapted from Thatcher et al. 2010. Example Calculation What would be the predicted MER for a neutered, adult cat with a bo": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Ejemplo de calculo de MER para un perro castrado. El DER del motor sale de la Tabla VII-7 de FEDIAF, no de aqui, y la regla es que manda FEDIAF. Anotado por si alguna vez se comparan las dos escalas."
+        },
+        "reco#301:The NRC uses the following equation to predict MER for kennel dogs or active pet dogs (NRC 2006): Equations using different multip": {
+          "veredicto": "hallazgo",
+          "nota": "La ecuacion del NRC 2006 para MER de perro de perrera o perro activo. NO se aplica: el motor usa los escalones de la Tabla VII-7 de FEDIAF, y `niveles_de_actividad.json` los tiene fila por fila con lo que ofrece la app. Queda anotado porque es una SEGUNDA fuente para el mismo numero y ninguna de las dos esta comparada con la otra en el repo. Ver `FEDIAF_CONTRA_OTRAS_FUENTES.md`."
+        },
+        "cifra#303:The following linear equation is provided by the NRC and gives results comparable to the previous equation using W0.75 for dogs we": {
+          "veredicto": "leido_no_aplica",
+          "nota": "La version lineal de la ecuacion anterior, que el NRC da como equivalente. Mismo veredicto que el 27."
+        },
+        "cifra#309:There is considerable variation in energy requirements between animals, and the true energy requirements of an individual animal m": {
+          "veredicto": "leido_no_aplica",
+          "nota": "«There is considerable variation in energy requirements between animals». Es exactamente por lo que la app pide el peso real y recalcula, y por lo que el DER es un punto de partida y no una verdad."
+        },
+        "cifra#323:Predicted energy requirements are approximately 2.5 times maintenance requirements at weaning and requirements decrease to approxi": {
+          "veredicto": "hallazgo",
+          "nota": "«Predicted energy requirements are approximately 2.5 times maintenance requirements at weaning». Es del mismo orden que la curva de Klein que publica FEDIAF y que el motor aplica, pero NO es la misma cifra. Ya hay un hallazgo abierto del mismo tema: la Tabla 33-8 de SACN5 va hasta un 28 % por encima de Klein. Tres fuentes y tres curvas para la energia del cachorro. Va al documento de la nutricionista."
+        },
+        "cifra#329:Example Calculation What is the daily energy requirement for a 3‐month‐old golden retriever puppy that weighs 11 kg and has an exp": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Ejemplo de calculo para un golden retriever de 3 meses. Ilustra el 30."
+        },
+        "reco#334:Labrador puppies also appear to require less energy (kcal/kg body weight) than briard puppies (Legrand‐Defretin 1994), and this fu": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Los cachorros de labrador necesitan menos energia por kg que los de briard. Es variacion POR RAZA en crecimiento, y el motor no la aplica: usa la curva de Klein por peso adulto esperado. Sin cifra que aplicar."
+        },
+        "cifra#340:At this time, and until parturition, energy requirements will increase by 25% to over 60% depending on the size of the bitch (the ": {
+          "veredicto": "hallazgo",
+          "nota": "«energy requirements will increase by 25% to over 60% depending on the size of the litter» en gestacion. El motor no sube las kcal por tamaño de camada porque la ficha NO PREGUNTA cuantos cachorros hay -- y eso es un dato que la app no recoge. Va a las preguntas que faltan."
+        },
+        "cifra#343:In general queens gain in a linear fashion, and energy requirements increase by approximately 40% during pregnancy.": {
+          "veredicto": "no_aplica",
+          "nota": "Gestacion en la GATA, +40 %."
+        },
+        "olor#346:It can often be difficult for the female to consume enough energy to meet this great demand, and thus it is common practice to all": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Que a la hembra le cuesta comer bastante en lactancia. Sin cifra."
+        },
+        "cifra#350:Energy requirements during lactation in bitches may be calculated using the following equation (NRC 2006): where: kg BW = body wei": {
+          "veredicto": "hallazgo",
+          "nota": "La ecuacion del NRC para la energia en LACTANCIA de la perra, que depende del numero de cachorros y de la semana. Misma puerta cerrada que el 33: la ficha no pregunta la camada. Anotado con su cifra para cuando se decida preguntarla."
+        },
+        "cifra#353:In the third trimester, bitches are often free fed to support lactational needs or initially three times their RER: 6‐month‐old, i": {
+          "veredicto": "leido_no_aplica",
+          "nota": "En el tercer tercio se suele dar a voluntad. Es manejo, no formulacion."
+        },
+        "cifra#355:8‐year‐old overweight female spayed dog, 7 kg, BCS, 8/9, with uroliths For an obese animal the initial multiplier if current intak": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Ejemplo de un perro obeso con urolitos y el multiplicador inicial. El motor calcula sobre `peso_objetivo_kg` y no sobre el real, que es la misma idea."
+        },
+        "cifra#394:The following equations have been proposed for predicting energy requirements in injured or ill dog and cats (Remillard and Thatch": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Ecuaciones para el perro enfermo u operado. El motor no formula para el paciente hospitalizado."
+        },
+        "cifra#402:The modified Atwater equation (crude protein = 3.5 kcal/g; crude fat = 8.5 kcal/g; carbohydrate = 3.5 kcal/g) is commonly used in ": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Atwater modificada por tercera vez en el capitulo. Mismo veredicto."
+        }
+      }
+    },
+    "cap04": {
+      "titulo": "Nutritional and Energy Requirements for Performance",
+      "regla_del_capitulo": null,
+      "lectura_integra": {
+        "lineas": 158,
+        "fecha": "11-sep-2026"
+      },
+      "veredictos": {
+        "cifra#12:Interestingly, in this same breed the consumption of a lower‐fat (14% fat calories) diet compared to a higher‐fat diet (41% fat ca": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#17:REE calculated in this way is less than the value obtained by averaging reported values for basal metabolic rate in dogs shown in ": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#19:When BW increased 20% and fat mass increased from 17% to 20% in beagles, water loss increased 50% during a 50‐minute run on a trea": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#32:In addition, energy expenditure increases 50% when an animal stands.": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#34:Energy is expended to support horizontal motion, but this energy expenditure for horizontal movement is proportional to distance t": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#35:Thus, an average 30 kg dog with a basal metabolic rate of 41 kcal/h (970 kcal daily) will require an additional 20 kcal/h when it ": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#36:Surprisingly, however, an average 30 kg dog that stands and runs at twice the rate at 6 km/h over those 3 km, and thus completes t": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#39:Thus, a greyhound requires three times as much energy for acceleration during the first few seconds of a race than it does while m": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#40:This latter value of 1 kcal/kg BW is the same amount of energy required by dogs of similar BW that run more slowly (NRC 2006).": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#45:The energy required by dogs to overcome gravity on a slope of up to 20% has been variously measured to be between 5 and 14 kcal/kg": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#47:If muscle were perfectly efficient, then dogs would be able to recoup all the extra energy for climbing when they ran downhill aga": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#48:Dogs are even less efficient at recouping potential energy when running down a steep slope (20% or more), so the increase in energ": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#50:For a dog carrying a load, energy expenditure increases in proportion to the increase in body mass, so that a load that increases ": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#51:The energy required for pulling a load has not been measured, but is probably three times the work of traction, as muscle is 30% e": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#66:Such dogs require little more than basal amounts of energy plus energy for the assimilation of food (approximately 10% increase) f": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#117:Untrained dogs have a 30% lower VO2 max and produce more lactic acid, which limits the use of fat as an energy source and increase": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "olor#122:To determine the minimum requirement, performance, health, or some other suitable measure of well‐being must be measured as the am": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "olor#178:Urine production also increases as food intake increases to support the energy needs of exercise in proportion to the amount of sa": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "olor#203:It is unlikely, therefore, that B vitamins will be deficient in most commercial diets, and supplementation with these vitamins abo": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "olor#205:Thus, on the contrary, there is a potential for excess intake of calcium and trace minerals by dogs that take in large amounts of ": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#218:In one relevant diet study, supplementation after a first pull series with 5% dextrose, 32.4% maltodextrin, and 16% whey/soya prot": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#219:In another study, feeding dogs a supplemental “bar” with 37.4% of the rapidly digestible carbohydrates, maltodextrin plus dextrin,": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Biomecanica y fisiologia del ejercicio: cuanta energia cuesta correr, subir una cuesta, llevar carga o acelerar. El motor no formula por kilometro: recibe las kcal ya calculadas y lo que le llega del ejercicio es el NIVEL DE ACTIVIDAD, que desde el 11 de septiembre viaja suelto y aprieta los topes cronicos por peso metabolico (BLOQUE 86)."
+        },
+        "cifra#16:Table 4.1 Approximate daily metabolizable energy (ME) requirements of exercising dogs expressed relative to metabolic body weighta": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "nota": "La Tabla 4.1, energia del perro que hace ejercicio en multiplos del mantenimiento. Es la fuente que ya sostiene el escalon del perro de TRABAJO del motor, y el BLOQUE 86 la vigila."
+        },
+        "cifra#31:This basal energy (76 kcal/kg BW0.75 daily or 13 kcal/kg BW0.75 hourly for an average dog; NRC 2006) is also required to maintain ": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "nota": "«76 kcal/kg BW0.75 daily» de energia basal (NRC 2006). Encaja con el suelo de la escala de actividad que aplica el motor y confirma el exponente 0,75."
+        },
+        "cifra#131:Nutrient Long‐distance aerobic Short‐distance mostly anaerobic Protein 90 g/Mcal (40% as isb) 60 g/Mcal (27% as is) Fat 59 g/Mcal ": {
+          "veredicto": "confirma_lo_que_ya_aplica",
+          "nota": "La Tabla 4.2: proteina 90 g/Mcal en aerobico de larga distancia y 60 en anaerobico de corta. Es la tabla que ya se leyo el 11 de septiembre y de la que salio el BLOQUE 86."
+        },
+        "cifra#140:In trained dogs only running at 12.5 km/h for 30 min on a 2.5% inclined treadmill, the addition of 53.9 g corn oil/Mcal (corn oil ": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Un estudio con proteina añadida en cinta rodante. Es dosis de estudio, no formulacion."
+        },
+        "cifra#142:One pilot study has shown a reduced marker for inflammation in a subset of dogs from one single sled dog team fed 8% krill meal, r": {
+          "veredicto": "leido_no_aplica",
+          "nota": "Marcador de inflamacion en un equipo de trineo. Sin cifra que aplicar."
+        },
+        "reco#153:Such dogs should be fed a high‐protein, high‐fat canned/retorted diet.": {
+          "veredicto": "leido_no_aplica",
+          "nota": "«high-protein, high-fat canned/retorted diet». Es pienso enlatado; la racion de este motor es cruda."
+        },
+        "cifra#164:Currently, a diet is recommended that contains only typical maintenance amounts of protein (60–70 g protein/Mcal ME) and fat (36–5": {
+          "veredicto": "leido_no_aplica",
+          "nota": "«only typical maintenance amounts of protein (60-70 g protein/...)» para cierto tipo de perro de trabajo. Cae DENTRO de lo que ya da un BARF de este motor, que ronda los 105 g/1000 kcal."
+        },
+        "cifra#191:The adequate intake for both sodium and potassium recommended by the NRC for exercising dogs is 1 g/Mcal.": {
+          "veredicto": "hallazgo",
+          "nota": "⚠️ «The adequate intake for both sodium and potassium recommended by the NRC for exercising dogs is 1 g/Mcal.» Son 1000 mg/1000 kcal, que es EXACTAMENTE el TECHO de sodio que el motor aplica al perro adulto sano (`recomendaciones_libro.json`, de SACN5 Tabla 13-3). O sea que la ingesta ADECUADA del perro que hace ejercicio coincide con nuestro techo, sin margen ninguno. No choca con FEDIAF --su maximo son 3750-- pero si choca con una recomendacion nuestra, y justo en el perro que el motor ya sabe distinguir. Ver HALLAZGOS_FASCETTI.md §F-4."
+        },
+        "cifra#192:One recent study suggested that 1.2 g of sodium/Mcal may be ideal in sled dogs undergoing a 1600 km race (Ermon et al. 2014).": {
+          "veredicto": "hallazgo",
+          "nota": "Y la otra mitad del mismo hallazgo: «1.2 g of sodium/Mcal may be ideal in sled dogs undergoing a 1600 km race (Ermon et al. 2014)». 1200 mg/1000 kcal, o sea POR ENCIMA de nuestro techo de 1000. Un perro de trineo formulado con el techo del adulto sano recibiria menos sodio del que esa fuente considera ideal."
+        },
+        "cifra#213:Two other reports support the potential benefit of daily L‐carnitine supplementation at a dose of 125 mg in trained sled dogs, wei": {
+          "veredicto": "leido_no_aplica",
+          "nota": "L-carnitina, 125 mg/dia en perro de trabajo. El motor tiene la clave `lcarnitina` en el MAPA y la usa solo como suelo de patologia (DCM que responde a taurina). Esto es una dosis diaria por perro, no una concentracion por 1000 kcal, y el catalogo no tiene ficha de L-carnitina suelta."
         }
       }
     }

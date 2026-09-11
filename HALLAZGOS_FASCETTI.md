@@ -138,3 +138,78 @@ decisión es de Elena. **Lo que no se puede hacer es dejarlo sin escribir.**
   one where only EPA and DHA is used» (cap.2). Es el fundamento de lo que NRC
   2006 dice más seco («is not helpful») y de por qué el motor aplica el
   linoleico:linolénico y **no** un omega-6:omega-3 total.
+
+
+---
+
+## F-4. El sodio del perro que trabaja choca con nuestro techo del perro sano
+
+**Dónde.** Cap.4 «Nutritional and Energy Requirements for Performance», sección de
+hidratación y electrolitos:
+
+> «The adequate intake for both sodium and potassium recommended by the NRC for
+> exercising dogs is 1 g/Mcal. One recent study suggested that 1.2 g of
+> sodium/Mcal may be ideal in sled dogs undergoing a 1600 km race (Ermon et al.
+> 2014).»
+
+**Qué significa en nuestra unidad.** 1 g/Mcal son **1000 mg por 1000 kcal**. Y
+ese número es, exactamente, el **techo de sodio que el motor aplica a cualquier
+adulto sano** desde el 8 de septiembre, que sale de la Tabla 13-3 de SACN5 y vive
+en `recomendaciones_libro.json`.
+
+| | mg de sodio/1000 kcal |
+|---|---|
+| Techo del motor, perro adulto sano | **1000** |
+| Ingesta adecuada del NRC, perro que hace ejercicio | **1000** |
+| Sugerido para perro de trineo en 1600 km (Ermon 2014) | **1200** |
+| Máximo de FEDIAF, adulto | 3750 |
+
+**Por qué importa.** No hay conflicto con FEDIAF: los tres números caben de sobra
+bajo su máximo. El conflicto es con **una recomendación nuestra**, y cae justo
+sobre el perro que el motor **ya sabe distinguir** — el nivel de actividad viaja
+suelto desde el 11 de septiembre y aprieta los topes crónicos por peso
+metabólico, que es lo que vigila el BLOQUE 86.
+
+Dicho de otra forma: un perro de trineo formulado con el techo del adulto sano
+recibe **menos sodio del que su fuente considera ideal**, y la ingesta adecuada
+del perro que hace ejercicio se queda **pegada al techo, sin un miligramo de
+margen**.
+
+⚠️ **Y el techo no es caprichoso**, que es lo que complica la decisión. Su
+`por_que` dice de dónde sale y para qué: la Tabla 47-4 del mismo SACN5 lo repite
+y añade el motivo — *«Phosphorus and sodium are considered key nutritional
+factors for apparently healthy adult dogs and cats for purposes of ameliorating
+or slowing the progression of subclinical kidney disease and/or hypertension»*.
+O sea que es prevención renal y cardiovascular para el perro sin nada
+diagnosticado. Levantarlo para el perro de trabajo no es aflojar un número
+suelto: es decidir que en ese perro pesa más el electrolito que la prevención.
+
+**Eso es criterio clínico y no lo decide el motor.** Queda escrito con las dos
+cifras, que es la regla.
+
+---
+
+## F-5. Tres fuentes y tres curvas para la energía del cachorro
+
+Cap.3: *«Predicted energy requirements are approximately 2.5 times maintenance
+requirements at weaning»*. No es la curva de Klein que publica FEDIAF y que el
+motor aplica, y tampoco es la Tabla 33-8 de SACN5, que ya está anotada como
+hallazgo por ir hasta un **28 % por encima** de Klein.
+
+Son **tres fuentes publicadas y tres curvas** para las kcal de un animal en
+crecimiento, que es donde una cifra de más o de menos se paga en hueso. Manda
+FEDIAF, y la discrepancia se apunta con sus números.
+
+---
+
+## F-6. Dos cifras de reproducción que la ficha no puede usar
+
+Cap.3 da la subida de energía en **gestación** (*«energy requirements will
+increase by 25% to over 60% depending on the size of the litter»*) y la ecuación
+del NRC para la **lactancia**, que depende del **número de cachorros** y de la
+semana.
+
+Las dos dependen del tamaño de la camada, y **la ficha no pregunta cuántos
+cachorros hay**. No es que el motor decida ignorarlo: es un dato que la app no
+recoge, así que la cifra no tiene por dónde entrar. Va a la lista de preguntas
+que faltan, con su fuente al lado para cuando se decida preguntarlo.
