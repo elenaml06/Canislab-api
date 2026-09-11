@@ -12219,6 +12219,30 @@ for _k90, _v90 in _der90.items():
                       f"falta una pregunta y el inventario no la tiene. Dos ficheros sobre lo "
                       f"mismo y ninguno comprueba al otro es como se desincronizan")
 
+# ── 7. Y una pregunta HECHA no puede seguir figurando como que falta ────
+#
+# ⚠️ CASO REAL ENCONTRADO (11 septiembre). `quien_formula_cada_patologia.json`
+# decia que a la CARDIOPATIA le faltaba preguntar el estadio ACVIM, y la app
+# lleva preguntandolo con sus cinco casillas y sus cinco techos de sodio. Se
+# escribio antes de hacerlo y se quedo ahi. Un fichero que dice que falta algo
+# ya hecho manda a buscar lo que ya esta -- y, peor, hace dudar de los otros
+# siete, que si faltan. Lo mismo con media fila de `estruvita`.
+#
+# La regla: si el inventario dice `la_hace_la_app`, la pregunta que falta tiene
+# que ser OTRA (la parte que siga sin hacerse) o ninguna, y decirlo.
+for _k90, _v90 in _P90.items():
+    if not _v90.get("la_hace_la_app"):
+        continue
+    _falta90 = (_der90.get(_k90) or {}).get("pregunta_que_falta")
+    # La convención está escrita en el `_meta` de ese fichero: si la app ya
+    # pregunta PARTE, la fila empieza por «YA SE PREGUNTA: ...» y sigue con
+    # «FALTA: ...». Así se distingue «esto está hecho» de «esto está a medias».
+    if _falta90 and not _falta90.startswith("YA SE PREGUNTA:"):
+        fallos.append(f"BLOQUE90: el inventario dice que la app YA pregunta lo de «{_k90}» y "
+                      f"`quien_formula_cada_patologia.json` sigue diciendo que falta, sin decir "
+                      f"que parte. Un fichero que manda a buscar lo que ya esta hecho hace dudar "
+                      f"de los que si faltan")
+
 _cuenta90 = {}
 for _v90 in _P90.values():
     _cuenta90[_v90["estado"]] = _cuenta90.get(_v90["estado"], 0) + 1

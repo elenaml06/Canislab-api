@@ -13,7 +13,8 @@
       "pistas_automaticas": "Palabras del texto de su ficha que sugieren un dato clinico. Son PISTAS para no saltarse ninguna, no el veredicto.",
       "menciona_dato_clinico_pero_no_condiciona": "Solo cuando la ficha de la patologia NOMBRA una analitica o un estadio y aun asi `necesita_dato_clinico` es false. Hay que escribir la frase y por que no condiciona ninguna cifra. Sin este campo el BLOQUE 79 falla, a proposito: la alternativa seria relajar el patron que busca los marcadores, y un patron relajado deja de cazar lo de verdad."
     },
-    "como_se_comprueba": "El BLOQUE 79 exige que las 47 esten aqui y que el numero de «pendiente» sea exacto, para que baje solo cuando alguien deriva una y lo baje en el mismo commit."
+    "como_se_comprueba": "El BLOQUE 79 exige que las 47 esten aqui y que el numero de «pendiente» sea exacto, para que baje solo cuando alguien deriva una y lo baje en el mismo commit.",
+    "convencion_pregunta_que_falta": "Si la app ya pregunta PARTE de lo que hace falta, la fila empieza por «YA SE PREGUNTA: ...» y luego dice «FALTA: ...». Sin eso, un fichero que dice que falta algo ya hecho manda a buscar lo que ya esta y hace dudar de los que si faltan -- paso con la cardiopatia, que llevaba escrito «¿En que estadio ACVIM esta?» con la app preguntandolo desde hacia dias. Lo exige el BLOQUE 90 contra `preguntas_por_patologia.json`."
   },
   "patologias": {
     "addison": {
@@ -68,12 +69,12 @@
       "que_dato": "estadio ACVIM",
       "cita_que_lo_condiciona": "Keene BW et al., ACVIM consensus, JVIM 2019;33:1127-1140. La guia da UNA cifra de sodio POR ESTADIO, y en los dos primeros dice literalmente «no drug or dietary treatment is recommended».",
       "quien_puede_marcarla": "solo_veterinario",
-      "pregunta_que_falta": "¿En que estadio ACVIM esta? (A: raza predispuesta sin soplo · B1: soplo sin agrandamiento · B2: agrandamiento sin sintomas · C: insuficiencia cardiaca actual o pasada · D: refractaria). El estadio B2 se separa del B1 por ECOCARDIOGRAFIA o radiografia, asi que no lo puede saber quien no tiene el informe.",
+      "pregunta_que_falta": null,
       "pistas_automaticas": [
         "acvim",
         "estadio"
       ],
-      "nota": "DERIVADO: la fuente da una cifra distinta por estadio (739 / 625 / 480, y NINGUNA restriccion en A y B1), y separar B1 de B2 exige ecocardiografia o radiografia. Asi que la casilla generica que hay hoy en la app aplica el numero del B2 a todos: al de estadio C le queda flojo (deberia ser 625) y al de estadio A le pone un tope que su fuente NO pide. No es criterio nuestro: es que sin el estadio no se puede elegir la cifra."
+      "nota": "DERIVADO: la fuente da una cifra distinta por estadio (739 / 625 / 480, y NINGUNA restriccion en A y B1), y separar B1 de B2 exige ecocardiografia o radiografia. Asi que la casilla generica que hay hoy en la app aplica el numero del B2 a todos: al de estadio C le queda flojo (deberia ser 625) y al de estadio A le pone un tope que su fuente NO pide. No es criterio nuestro: es que sin el estadio no se puede elegir la cifra. || ⚠️ YA NO FALTA NINGUNA PREGUNTA (11-sep-2026). Aqui ponia «¿En que estadio ACVIM esta?» y la app YA lo pregunta: ofrece los cinco estadios y cada uno lleva a su clave del motor, con su techo de sodio (A y B1 sin techo, B2 738,6, C 625, D 480). Se quedo escrito despues de hacerse, y un fichero que dice que falta algo hecho manda a buscar lo que ya esta. Lo que si sigue siendo verdad es quien puede contestarla, y eso vive en `que_dato`: el B2 se separa del B1 por ecocardiografia, asi que no lo sabe quien no tiene el informe. El inventario de preguntas es `preguntas_por_patologia.json` y el BLOQUE 90 exige que los dos digan lo mismo."
     },
     "cardiopatia_a": {
       "nombre": "Cardiopatía, estadio ACVIM A (predispuesto, sin enfermedad todavía)",
@@ -356,7 +357,7 @@
       "que_dato": "pH urinario",
       "cita_que_lo_condiciona": "Su aviso profesional: «Lo que decide en estruvita es el pH urinario y el manejo de la infeccion, y eso la app no lo ve ni lo ajusta» (SACN5 cap.43).",
       "quien_puede_marcarla": "solo_veterinario",
-      "pregunta_que_falta": "¿De que tipo es el calculo? Hoy la app tiene UNA casilla que manda `estruvita` aunque el perro tenga urato o cistina, y esas dos ni siquiera son formulables. Y ademas: ¿es para PREVENIR que vuelvan o para DISOLVER uno que ya esta? La fuente separa las dos cosas y el motor solo hace la primera.",
+      "pregunta_que_falta": "YA SE PREGUNTA: el tipo de calculo (los cinco -- estruvita, urato, cistina, fosfato calcico y silice --, cada uno a su clave). FALTA: ¿es para PREVENIR que vuelvan o para DISOLVER uno que ya esta? La fuente separa las dos cosas y el motor solo hace la primera.",
       "pistas_automaticas": [
         "analitic",
         "ph urinario"
@@ -616,7 +617,7 @@
       "que_dato": "estadio IRIS, o la creatinina serica",
       "cita_que_lo_condiciona": "SACN5 cap.37, citado en el aviso `cuando_empieza_esta_dieta` de esta patologia: «nutritional management should be considered by stage 2 CKD and is clearly indicated when serum creatinine exceeds 2 mg/dl (179 µmol/l)».",
       "quien_puede_marcarla": "solo_veterinario",
-      "pregunta_que_falta": "¿En que estadio IRIS esta, o cual fue la ultima creatinina serica? Por debajo del estadio 2 la fuente NO respalda apretar el fosforo, y apretarlo tiene coste.",
+      "pregunta_que_falta": "YA SE PREGUNTA: si es leve-moderada o moderada-grave (dos casillas, `renal` y `renal_avanzada`). FALTA: el ESTADIO IRIS, o la ultima creatinina serica. Las dos casillas de hoy aplican el MISMO techo de fosforo (1200) -- lo unico que cambia es que la segunda no es formulable y para en seco --, y lo que dice la fuente es que por debajo del estadio 2 NO respalda apretar el fosforo, y apretarlo tiene coste. Para eso hace falta una clave nueva con su cifra SACADA DE LA FUENTE.",
       "pistas_automaticas": [
         "en sangre",
         "iris",
