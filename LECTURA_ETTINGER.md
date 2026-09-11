@@ -382,3 +382,47 @@ motor; el del calcio del cachorro de raza grande es de SACN5 y Fascetti.
 - EPA y DHA preformados de aceites marinos son más eficientes que su precursor:
   «la capacidad de perros y gatos para biotransformarlo es limitada». Confirma por
   qué el motor exige EPA+DHA y no linolénico a secas en crecimiento.
+
+---
+
+## Cap. 173 — Manejo nutricional del perro deportista · LEÍDO ENTERO
+
+**Confirma dos cifras del motor, y las dos importan:**
+
+- **«Los perros domésticos activos precisan […] aproximadamente 130 × (peso
+  corporal metabólico en kg)^0,75.»** Es **exactamente** el umbral en el que el
+  motor cruza al perro de trabajo y le apreta los topes crónicos por peso
+  metabólico (BLOQUE 86). Ahora esa cifra tiene una segunda fuente.
+- **Los perros de trineo «consumen aproximadamente 1.000 kcal/kg^0,75 al día»**
+  (un perro de 25 kg, unas 10.000 kcal/día). `niveles_de_actividad.json` declara
+  la fila de FEDIAF de los perros de trineo (860-1240) como **fuera a propósito**,
+  y esta cifra cae dentro. La decisión de dejarlos fuera se sostiene.
+- Los **galgos**, 150-160 kcal/kg^0,75, caen dentro del escalón más alto que sí
+  ofrece el motor.
+
+**⚠️ Y un conflicto real con la ración cruda, que hay que decir:**
+
+> «debe encontrarse **carbohidrato digerible en la dieta al menos en un 50 % de
+> la energía metabolizable (EM)** para su uso en perros de carreras y entre el 15
+> y el 30 %» para el resto.
+
+**Una ración BARF de este motor no lleva prácticamente hidratos.** Para el perro
+de carreras esto no es un matiz: la fuente dice que la mitad de su energía debería
+venir de algo que nosotros no le damos. No es un límite nutricional que se pueda
+apretar — es que el motor **no formula para ese perro**. Va a
+`PENDIENTE_PRODUCTO.md`: hay que decidir si se avisa, o si el perro de carreras
+queda declarado fuera del alcance como ya lo está el de trineo.
+
+**La proteína del perro de competición**, para tener la banda:
+- Trineo: «aproximadamente el **30 % de la EM** diaria (**70-80 g de
+  proteína/Mcal**) […] de origen animal altamente digestibles».
+- Carreras: **24 % de la EM o superior** es la recomendación general.
+- Los perros de detección de olores rindieron bien con solo **18 % de EM**.
+
+Encaja con la Tabla 4.2 de Fascetti (90 g/Mcal aeróbico de larga distancia, 60
+anaeróbico corto) y queda **por debajo** de lo que ya da un BARF de este motor
+(~105 g/1000 kcal), así que no aprieta nada.
+
+**La grasa**: «en torno al **55-70 % de EM** en forma de grasa» para resistencia,
+y hay que introducirla **gradualmente, 8-12 semanas antes** de la competición.
+Eso último es manejo, no formulación, pero es lo que un dueño necesitaría saber.
