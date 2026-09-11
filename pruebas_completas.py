@@ -74,6 +74,44 @@ VINTEGRA = {"V-INTEGRA Cachorro", "V-INTEGRA Perro Adulto", "V-INTEGRA Senior",
 fallos = []
 t_total = time.time()
 
+# ─── CUÁNTO TARDA CADA BLOQUE ────────────────────────────────────────────────
+#
+# ⚠️ AÑADIDO EL 11 DE SEPTIEMBRE DE 2026, y por un motivo de Elena: «tengo la
+# sensación de que cada vez vamos más lento y es por las putas baterías que
+# tardan horas y ralentizan todo. ¿Se puede hacer algo al respecto?».
+#
+# Lo primero que hace falta para contestar a eso es SABER DÓNDE SE VA EL TIEMPO,
+# y hasta hoy la batería solo decía el total. Optimizar sin medir es exactamente
+# lo que este repo no hace con los nutrientes y tampoco debería hacer consigo
+# mismo: la última cifra escrita («~40 min») es un total, y un total no dice si
+# son 95 bloques de 20 s o tres de diez minutos.
+#
+# No cuesta nada: se envuelve `print` y se mira si la línea empieza por
+# «=== BLOQUE». Ningún bloque tiene que acordarse de nada, que es la única forma
+# de que esto siga funcionando cuando se añada el 96.
+#
+# Al final se imprimen los diez más caros. Con eso se puede decidir en qué vale
+# la pena tocar -- y si algún día un bloque se dispara, se ve en el acto.
+_tiempos_por_bloque = []
+_bloque_en_curso = [None, time.time()]
+_print_de_verdad = print
+
+
+def print(*args, **kwargs):          # noqa: A001 — a propósito, envuelve al de serie
+    if args and isinstance(args[0], str) and args[0].lstrip().startswith("=== BLOQUE"):
+        _ahora = time.time()
+        if _bloque_en_curso[0] is not None:
+            _tiempos_por_bloque.append((_ahora - _bloque_en_curso[1], _bloque_en_curso[0]))
+        _bloque_en_curso[0] = args[0].strip()
+        _bloque_en_curso[1] = _ahora
+    return _print_de_verdad(*args, **kwargs)
+
+
+def _cerrar_el_ultimo_bloque():
+    if _bloque_en_curso[0] is not None:
+        _tiempos_por_bloque.append((time.time() - _bloque_en_curso[1], _bloque_en_curso[0]))
+        _bloque_en_curso[0] = None
+
 
 def der_de(peso, etapa):
     mult = 2.0 if "Cachorro" in etapa else (1.6 if etapa in ("Adulto", "Senior") else 1.8)
@@ -13702,6 +13740,15 @@ if not _hay_fuentes:
     print("   `canislab-fuentes` junto a este repo (en la CI, ver `.github/workflows/")
     print("   bateria.yml`, el paso que trae las fuentes con el secreto FUENTES_TOKEN).")
     print(f"{'='*60}")
+
+_cerrar_el_ultimo_bloque()
+_tiempos_por_bloque.sort(reverse=True)
+_gastado = sum(t for t, _ in _tiempos_por_bloque)
+print("\nDÓNDE SE VA EL TIEMPO — los diez bloques más caros:")
+for _t, _nombre in _tiempos_por_bloque[:10]:
+    print(f"  {_t:6.0f}s  {100*_t/_gastado:4.1f}%  {_nombre[4:70]}")
+print(f"  (los otros {max(0, len(_tiempos_por_bloque)-10)} bloques suman "
+      f"{sum(t for t, _ in _tiempos_por_bloque[10:]):.0f}s)")
 
 print(f"TOTAL: {time.time()-t_total:.0f}s de pruebas")
 if fallos:

@@ -327,12 +327,51 @@ presupuesto, que es la lección del BLOQUE 43):
 | 20,0 | **no** | **no** | **no** |
 | 16,7 (el 15 % de las kcal) | **no** | **no** | **no** |
 
-No cabe con este catálogo, y la razón es de la dieta y no del solver: una ración
-BARF es carne, la carne lleva grasa, y sin hidratos no hay con qué diluir las
-kcal. Se escribe con su medida y **se pregunta**; no se aplica.
+### Por qué no entra, medido peldaño a peldaño (11 de septiembre, tarde)
 
-⚠️ Y lo que hay que decidir primero no es el número: es **qué unidad lleva el
-15 %**. Dos fuentes buenas, la misma cifra, dos unidades.
+Elena: *«mira a ver por qué no entra»*. La respuesta es que **no lo impide la
+nutrición: lo impide la forma de una ración BARF**. Bisecando el techo de grasa
+con el solver a 30 s, perro adulto de 20 kg y 1100 kcal:
+
+| Dónde se pregunta | Grasa mínima alcanzable |
+|---|---|
+| Peldaño 0, estricto | **34,9** g/1000 kcal |
+| Peldaño 1, sin mínimo de vísceras/hígado/verdura | 34,9 |
+| Peldaño 2, sin ningún mínimo de categoría | 23,6 |
+| Peldaño 3, con un suplemento más | 23,1 |
+| Peldaño 4, con dos suplementos más | 23,1 |
+| Peldaño 5, el último, sin tope de secundarias | **18,1** |
+| Fuera de la escalera, sin ninguna proporción de BARF | **14,1** |
+| **Lo que pide Fascetti (15 % de las kcal)** | **16,7** |
+| Mínimo de grasa de FEDIAF | 13,75 |
+
+Lo que esto dice, en orden:
+
+1. **El 16,7 queda por debajo del último peldaño de la escalera** (18,1), así que
+   por los caminos que el motor recorre hoy no se alcanza nunca. No es que el
+   solver no lo encuentre: es que no existe dentro de esas proporciones.
+2. **Nutricionalmente sí existe**, a 14,1 — justo por encima del mínimo de grasa
+   de FEDIAF (13,75). Lo que se agota ahí son la propia grasa y el **linoleico**
+   (3,82 contra un mínimo de 3,82), que es omega-6 y viene *dentro* de la grasa.
+3. **Pero el menú que lo consigue no es comida para un perro**: 1.592 g de
+   frambuesa, 601 g de judía verde y 441 g de dorada. Es el solver sin ninguna
+   proporción, que es justo lo que el 9 de septiembre produjo raciones de 25 kg
+   con un 91 % de verdura, todas verdes.
+4. **Y en el último peldaño, lo que baja la grasa es el boniato**: 560 g de los
+   1.018 g del menú. Es decir, el motor llega a 18,1 metiendo el único hidrato
+   que tiene a mano — que es exactamente lo que hace una dieta veterinaria baja
+   en grasa, y lo que una ración BARF no tiene.
+
+O sea: la cifra de Fascetti describe **un producto que no es esto**. Con este
+catálogo, para bajar la grasa hay que sustituir calorías de grasa por calorías
+de hidrato, y el catálogo tiene un hidrato (boniato) topado por las proporciones
+de BARF. No es una limitación del solver ni del reloj.
+
+⚠️ Y lo que hay que decidir primero sigue sin ser el número: es **qué unidad
+lleva el 15 %**. Dos fuentes buenas, la misma cifra, dos unidades. Si la
+respuesta es «en kcal», entonces **esta patología no se puede formular con este
+catálogo** y hay que decirlo en vez de dar un menú que incumple su propia
+fuente.
 
 ## F-10. Un techo de fibra en enteropatía crónica que el motor no tiene
 
