@@ -126,6 +126,28 @@ con alguna, casi siempre el error está en el cambio.
    existe menú, se sueltan las proporciones de BARF (hueso 20-60 %, etc.),
    que son criterio nuestro y no de FEDIAF. Nunca los requisitos ni la
    seguridad. Ver `_escalera_de_relajacion()`.
+3-bis. **Lo que el perro come fuera de la ración se cuenta, no se ignora**
+   (11 de septiembre). Los premios, las sobras de la mesa y los suplementos
+   que da el dueño por su cuenta llegan por `kcal_de_premios` (el número) o
+   `premios_nivel` (la respuesta elegida), y el motor **formula la ración con
+   las kcal que quedan y le sigue exigiendo EL DÍA ENTERO de nutrientes**. No
+   es simetría: de lo que lleva dentro un premio no sabemos nada, así que
+   contar con él para cubrir un requisito sería darlo por cubierto sin
+   saberlo. En números, los mínimos por 1000 kcal de la ración suben por
+   DER/(DER − premios) y los máximos NO, que es exactamente la «dilución de
+   nutrientes» que describe la fuente. **Cuidado con las dos medidas de kcal
+   que conviven desde aquí**: `der` es el día entero y decide CUÁNTO
+   nutriente hace falta; `der_racion` son las kcal de la ración y es contra lo
+   que se escribe cada fila del solver. Escalar el suelo y usar `der` sería
+   contarlo dos veces. Lo piden cuatro fuentes con la misma cifra —no más del
+   10 % del día— y **FEDIAF no dice nada de esto**, así que no hay conflicto
+   con la regla de que manda FEDIAF: no hay nada a lo que contradecir. La
+   pregunta y sus cuatro respuestas las sirve `GET /vocabulario` con los dos
+   registros, y **de las cuatro cifras solo el 10 % es de la fuente**: el 5 %
+   y el 20 % son nuestros y van marcados como tales. Lo vigilan los BLOQUES
+   88, 87 y 95. ⚠️ **La ficha todavía no hace la pregunta**, y eso está
+   declarado en `lo_que_la_ficha_todavia_no_pregunta` de
+   `datos_de_la_ficha.json`.
 4. **Las alergias y las categorías excluidas a mano no se tocan jamás.**
    Pueden ser médicas.
 5. **Lo que eliges a mano se respeta, con un perro o con cinco.** Si la
@@ -181,7 +203,7 @@ jubilado — que desde fuera se parecen mucho.
 | `especies.py`, `accesibles.py` | Qué especie es cada alimento |
 | `transicion.py` | Plan de cambio gradual de dieta |
 | `persistencia.py`, `observabilidad.py` | Supabase y Sentry |
-| `pruebas_completas.py` | **La batería.** Los 94 bloques, ~40 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
+| `pruebas_completas.py` | **La batería.** Los 95 bloques, ~40 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
 | `datos_de_la_ficha.json` | **Los 21 campos que la ficha pregunta, y CÓMO llega cada uno al motor** (11 de septiembre). Nació de una frase de Elena: «TODOS LOS DATOS QUE RECOJA LA APP TIENEN QUE LLEGAR DE ALGUNA MANERA AL MOTOR, SI NO SON DATOS INUTILES Y CUANDO SE PIDEN ES SIEMPRE POR ALGO». Y tiene un caso que lo justifica solo, del mismo día: la ficha pregunta la **actividad** desde siempre, la app la usaba para calcular las kcal y mandaba solo el número — el motor veía 1955 kcal y no sabía si era un galgo de sofá o un perro de trineo, que es justo lo que decide si se le aprietan los topes crónicos por peso metabólico. Hay tres formas de llegar: `campo` (viaja suelto), `dentro_de` (va cocinado dentro de un número que sí viaja, y entonces **hay que escribir qué se pierde por ir así**) y `no_hace_falta` (con su motivo, que tiene que ser un motivo y no una excusa). Lo vigila el BLOQUE 87. ⚠️ Eran 20 y faltaba `raza`: la lista se copió a mano de `tests/ficha-ida-y-vuelta.spec.js`… donde `raza` tampoco estaba, porque su perro de ejemplo era un mestizo y `null` vuelve como `null` aunque se pierda. Dos inventarios copiados a mano, el mismo hueco en los dos |
 | `niveles_de_actividad.json` | **La Tabla VII-7 de FEDIAF fila por fila**, con lo que hace el motor y lo que ofrece la app (11 de septiembre). Cinco filas emparejadas, una **partida por nosotros** (el rango «High activity 150-175» es UNA fila de la fuente y el motor la parte en dos niveles), una fuera a propósito (los perros de trineo, 860-1240) y un **HUECO** declarado: «Obese prone adults ≤ 90» no está ni en el motor ni en la app. Lo vigila el BLOQUE 88 |
 | `preguntas_por_patologia.json` | **Qué pregunta decide la cifra de cada patología, qué respuestas tiene, y a qué clave del motor lleva cada una** (11 de septiembre). Nació de una frase de Elena: «tendrá que haber preguntas para cada patología preguntando resultados de analíticas o lo que sea para que pueda coger según la respuesta los límites para cada estadio o cada caso». ⚠️ **Y lo primero que hay que saber al abrirlo es que la mitad ya estaba hecha**: la cardiopatía tiene **cinco claves con cinco techos de sodio** (`cardiopatia_c` 625, `cardiopatia_d` 480) y la app **ya pregunta el estadio ACVIM**. Cuatro de las diez están `aplicada`. Aquí no hay ni un número escrito: se **derivan** de `patologias.json`, y donde el motor no tiene una clave por respuesta se dice en vez de inventarla. Cinco estados, y el que importa es **`no_cambia_ninguna_cifra`**: una pregunta cuyas respuestas aplican exactamente lo mismo no decide nada — se le pide un dato clínico a quien firma y da igual lo que conteste. Hoy le pasa a `shunt_sin_encefalopatia`. Lo vigila el BLOQUE 90, que además exige que **cada `requiere` de un tope condicional apunte a una patología que exista**: el de la diabetes decía `hipertrigliceridemia`, que no es ninguna de las 47, así que ese techo **no se aplicaba nunca** por esa puerta — el solver lo resuelve con `any(otra in lista ...)` y un nombre que nadie puede marcar no entra jamás, con el menú saliendo verde igual |
@@ -244,7 +266,12 @@ el número.
 `GET /vocabulario` (11 de septiembre) sirve **todo lo que el motor enumera**,
 para que la app lo lea en vez de copiárselo: los cinco niveles de actividad con
 su cifra de FEDIAF, las 255 razas, los seis tamaños, las etapas, los nueve
-puntos de BCS, las patologías, las categorías y los peldaños. Existe por una
+puntos de BCS, las patologías, las categorías y los peldaños Y desde ese mismo
+día **la pregunta de los premios con sus cuatro respuestas** —la única de las
+listas que trae además CÓMO se pregunta, en los dos registros, porque es una
+pregunta que la ficha todavía no hace y la app tiene que poder montarla entera
+leyendo de aquí. De sus cuatro cifras **solo el 10 % es de la fuente**; el 5 %
+y el 20 % son nuestros y su etiqueta de veterinario lo dice. Existe por una
 frase de Elena: «si el motor dice que hay dieciocho niveles de actividad, la app
 tiene que tener 18 niveles de actividad porque si no no sirve de nada, y así con
 todo». La cadena es **FUENTE manda → MOTOR la implementa → APP la ofrece**,
@@ -666,7 +693,7 @@ se comprueba entero en cada batería.
 python3 pruebas_completas.py     # ~40 min, tiene que salir TODO EN VERDE
 ```
 
-Los 94 bloques tardan unos **40 minutos** (2.387 s en la última medida; el
+Los 95 bloques tardan unos **40 minutos** (2.387 s en la última medida; el
 «~25 min» que ponía aquí se quedó corto igual que antes se quedó corto el
 «~10 min», y antes el «~2 min»: cada vez que un bloque nuevo resuelve menús de
 verdad, esta cifra sube. Si vuelve a bajar sin motivo, es que algo no se está

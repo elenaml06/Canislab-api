@@ -81,8 +81,20 @@ Tres cosas, y conviene decirlas antes de que las pregunte:
    §11 y en `DATOS_QUE_FALTAN.md`.
 2. **Que el dueño lo dé bien.** El mismo cap. 192 avisa de que *«los alimentos y
    premios desequilibrados no se deben proporcionar en más de un 10 % de la
-   ingesta calórica diaria total»*, porque diluyen la ración. **Hoy la app no
-   dice eso y tampoco pregunta qué premios le da**, y eso está abierto.
+   ingesta calórica diaria total»*, porque diluyen la ración.
+   **Desde el 11 de septiembre el motor lo cuenta**: la ficha pregunta cuánto
+   come el perro fuera de su ración —cuatro respuestas, en porcentaje de las
+   calorías del día, que es la unidad en la que habla la fuente—, y el motor
+   **formula la ración con las kcal que quedan y le sigue exigiendo el día
+   entero de nutrientes**. O sea que los mínimos por 1000 kcal de la ración
+   suben por DER/(DER − premios) y los máximos no. Si se pasan del 10 %, el
+   menú lo dice y dice a cuánto bajarlos.
+   Lo que **sigue sin poder comprobarse** es lo otro que dice la misma frase:
+   de lo que lleva dentro el premio no hay dato, así que si es carne sola
+   desequilibra el Ca:P y si es hígado cuenta para el máximo de vitamina A. Eso
+   se avisa, no se corrige. Y de las cuatro cifras que se ofrecen, **solo el
+   10 % es de la fuente**: el 5 % y el 20 % son nuestros, y van marcados como
+   tales en la etiqueta que lee el profesional.
 3. **Nada sobre el riesgo bacteriano.** Ese capítulo no recomienda el crudo, y
    sus motivos no son nutricionales sino de manipulación: patógenos,
    contaminación ambiental y obstrucción por huesos. El motor no toca eso. Es

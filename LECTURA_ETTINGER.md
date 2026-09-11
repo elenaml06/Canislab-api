@@ -265,7 +265,7 @@ restricción simultánea desde el primer día.
 
 ### Lo que sí se aplica, o se tiene que aplicar
 
-**1. El 10 % de los alimentos desequilibrados.** Cifra literal y directa:
+**1. El 10 % de los alimentos desequilibrados.** ✅ **APLICADO EL 11 DE SEPTIEMBRE.** Cifra literal y directa:
 
 > «Los alimentos y premios desequilibrados no se deben proporcionar en más de un
 > **10 % de la ingesta calórica diaria total**. Cuando se agregan alimentos
@@ -279,6 +279,27 @@ pasar el máximo de vitamina A**. La app no dice esto en ninguna parte, y es
 justo lo que hace un dueño que sigue el menú al gramo y luego da premios. **Esto
 hay que decirlo**, y se junta con el hallazgo del cap. 170: la ficha tampoco
 pregunta qué premios le da.
+
+**Y lo que se hizo con ello, el mismo día.** No se quedó en un aviso: el motor
+**cuenta** los premios. `resolver(kcal_de_premios=...)` formula la ración con
+las kcal que quedan y le sigue exigiendo **el día entero de nutrientes**, así
+que la dilución que describe la frase no puede pasar. Lo que el motor NO puede
+saber es lo otro que dice la misma frase —si el premio desequilibra el Ca:P o si
+es hígado— porque de lo que lleva dentro no hay dato, y por eso eso **se dice**.
+
+Medido el mismo día, perro adulto de 20 kg y 1100 kcal:
+
+| | ración | requisitos del día |
+|---|---|---|
+| sin premios | 1133 kcal | 48/48, verde |
+| con 110 kcal de premios (10 %) | 1020 kcal | 48/48, verde |
+| con 220 kcal de premios (20 %) | 854 kcal | 48/48, verde |
+| **el fallo puesto**: 880 kcal sin subir los mínimos | 880 kcal | **rojo, 4-8 nutrientes por debajo** (cinco semillas) |
+
+La última fila es la que importa: restar las calorías **sin** subir los mínimos
+—que es lo que saldría de "simplificar" esto— deja el menú corto de cobre,
+linoleico, vitamina D y magnesio. La regla y sus dos medidas de kcal están en
+`CLAUDE.md` regla 3-bis; lo vigila el BLOQUE 95.
 
 **2. La proteína, al menos un tercio del volumen.** «En general, las proteínas
 han de constituir al menos un tercio del volumen de la dieta.» Es una proporción

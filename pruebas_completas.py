@@ -12461,6 +12461,50 @@ if "actividad" not in _recibe87:
                   "decide si a un perro se le aprietan los topes crónicos por peso metabólico y "
                   "si su menú lleva el aviso del perro de trabajo")
 
+# ⚠️ Y EL INVENTARIO CONTRARIO (11 septiembre): LO QUE LA FICHA NO PREGUNTA
+# TODAVÍA. Este fichero nació para que ningún dato que la app recoge se pierda
+# por el camino, y tiene un punto ciego por construcción: el dato que el MOTOR
+# ya sabe recibir y que NADIE le manda no aparece en ningún inventario. No está
+# en `campos`, porque la ficha no lo pregunta; y no está en ningún pendiente,
+# porque por el lado del motor ya está hecho.
+#
+# El caso que lo abrió son los PREMIOS: cuatro fuentes piden lo mismo (no más
+# del 10 % de las kcal del día), el motor ya formula la ración con las calorías
+# que quedan y ya lo avisa -- y la ficha no pregunta cuántas son, así que el
+# campo llega vacío SIEMPRE y el menú sale igual que si el perro no comiera
+# nada más. Un hueco declarado se puede cerrar; uno sin declarar se vuelve a
+# descubrir dentro de seis meses.
+_huecos87 = _ficha87.get("lo_que_la_ficha_todavia_no_pregunta")
+if not isinstance(_huecos87, dict) or len(_huecos87) <= 1:
+    fallos.append("BLOQUE87: `datos_de_la_ficha.json` ya no declara "
+                  "`lo_que_la_ficha_todavia_no_pregunta`. Sin ese bloque, un dato que el motor "
+                  "acepta y que nadie le manda no sale en ningún inventario")
+else:
+    for _h87, _v87 in _huecos87.items():
+        if _h87.startswith("_"):
+            continue
+        for _clave87 in ("llega_como", "quien_lo_pide", "que_hace_el_motor_ya", "que_falta"):
+            if not (_v87.get(_clave87) or "").strip():
+                fallos.append(f"BLOQUE87: el hueco «{_h87}» no dice «{_clave87}». Un hueco sin "
+                              f"fuente, sin campo o sin qué falta no es un hueco declarado: es "
+                              f"una nota")
+        _destino87 = _v87.get("llega_como")
+        if _destino87 and _destino87 not in _recibe87:
+            fallos.append(f"BLOQUE87: el hueco «{_h87}» dice que entraría por «{_destino87}» y "
+                          f"PeticionMenu no tiene ese campo. Entonces el hueco no es de la ficha: "
+                          f"es del motor, y esto lo está tapando")
+
+# El de los premios, con nombre y apellidos: es el que abrió el bloque, y lo
+# que hace el motor con él tiene que seguir enchufado.
+if "premios" not in (_huecos87 or {}):
+    fallos.append("BLOQUE87: ha desaparecido el hueco de los premios. Lo piden CUATRO fuentes "
+                  "(Ettinger caps. 175 y 192, Fascetti cap. 7) y la ficha sigue sin preguntarlo: "
+                  "mientras siga así, el hueco tiene que estar escrito")
+if "kcal_de_premios" not in _recibe87:
+    fallos.append("BLOQUE87: PeticionMenu ha dejado de aceptar `kcal_de_premios`. Sin ese campo "
+                  "la ración se formula con el día entero de calorías y los premios se suman por "
+                  "encima, que es la dilución que describe Ettinger cap.192")
+
 print(f"  {len(_DE_LA_FICHA_87)} campos de la ficha · "
       f"{sum(1 for v in _campos87.values() if v['forma'] == 'campo')} llegan sueltos · "
       f"{sum(1 for v in _campos87.values() if v['forma'] == 'dentro_de')} cocinados · "
@@ -12586,6 +12630,54 @@ else:
         fallos.append(f"BLOQUE88: el inventario de la Tabla VII-7 empareja {sorted(_claves88)} y "
                       f"el motor tiene {sorted(_ACT88)}. Cada nivel del motor tiene que salir de "
                       f"una fila de la fuente, o estar declarado como decisión nuestra")
+
+# ── LOS PREMIOS: LA PREGUNTA, SUS RESPUESTAS Y SUS DOS REGISTROS ──
+#
+# ⚠️ Elena, 11 septiembre: «ahora hay que hacer preguntas sobre eso y marcar
+# unas respuestas que el usuario pueda seleccionar o el veterinario [...] y
+# dependiendo de las respuestas se tiene que poder adaptar a lo que hace el
+# motor para poder calcular las nuevas kilocalorías que necesita».
+#
+# Lo que se exige aquí es lo mismo que a la actividad: que las respuestas
+# que la app ofrece salgan de AQUÍ, que cada una traiga sus DOS registros, y
+# -- lo que no tiene la actividad-- que se vea cuál de las cifras es de la
+# fuente y cuál la ponemos nosotros. Un 5 % nuestro con pinta de cifra de
+# libro es exactamente el fallo que `auditar_conversiones.py` existe para
+# cazar, con otro disfraz.
+_prem88 = (_d88 if "_d88" in dir() else {}).get("premios") or {}
+_niv88 = {n["clave"]: n for n in (_prem88.get("niveles") or [])}
+if set(_niv88) != set(_api.NIVELES_DE_PREMIOS):
+    fallos.append(f"BLOQUE88: /vocabulario sirve los niveles de premios {sorted(_niv88)} y el "
+                  f"motor aplica {sorted(_api.NIVELES_DE_PREMIOS)}. Si la app ofrece una "
+                  f"respuesta que el motor no sabe recibir, la petición se cae con un 422")
+for _k88, _n88 in _niv88.items():
+    if _n88.get("fraccion_del_dia") != _api.NIVELES_DE_PREMIOS.get(_k88):
+        fallos.append(f"BLOQUE88: el nivel de premios «{_k88}» se sirve con "
+                      f"{_n88.get('fraccion_del_dia')} y el motor aplica "
+                      f"{_api.NIVELES_DE_PREMIOS.get(_k88)}. La cifra servida es la que el "
+                      f"usuario cree estar eligiendo")
+    for _reg88 in ("dueno", "veterinario"):
+        if not ((_n88.get(_reg88) or {}).get("titulo") or "").strip():
+            fallos.append(f"BLOQUE88: el nivel de premios «{_k88}» no tiene registro «{_reg88}». "
+                          f"Los dos viven en el motor a propósito: copiados en la app se "
+                          f"desincronizan")
+    # La cifra que NO es de la fuente tiene que decirlo, y decirlo donde lo lee
+    # quien firma: en la etiqueta del veterinario.
+    if not _n88.get("de_la_fuente"):
+        _det88 = ((_n88.get("veterinario") or {}).get("detalle") or "")
+        if "NUESTRO" not in _det88:
+            fallos.append(f"BLOQUE88: el nivel de premios «{_k88}» aplica una cifra que no es de "
+                          f"ninguna fuente y su etiqueta de veterinario no lo dice. Una cifra "
+                          f"nuestra con pinta de cifra de libro es lo peor de los dos mundos")
+if _niv88:
+    for _reg88 in ("dueno", "veterinario"):
+        if not ((_prem88.get("pregunta") or {}).get(_reg88) or "").strip():
+            fallos.append(f"BLOQUE88: los premios se sirven sin la pregunta en registro "
+                          f"«{_reg88}». La app tiene que poder leer también CÓMO se pregunta, no "
+                          f"solo qué se responde")
+    if _prem88.get("techo_recomendado_pct") != round(_api.FRACCION_MAXIMA_DE_PREMIOS * 100):
+        fallos.append("BLOQUE88: el techo de los premios que se sirve no es el que aplica el "
+                      "motor")
 
 print(f"  {sum(1 for _k in _d88 if isinstance(_d88[_k], dict))} listas servidas · "
       f"{len(_ACT88)} niveles de actividad · "
@@ -13338,6 +13430,263 @@ for _quien94, _script94 in (("NRC 2006", "leer_nrc2006.py"),
             break
         if _l94.strip():
             print(f"  {_quien94}: {_l94.strip()}")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 95 — LOS PREMIOS DILUYEN LA RACIÓN, Y EL MOTOR LO CUENTA
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (11 septiembre). Elena, al leer lo que decían las fuentes:
+# «pues habrá que preguntar por los premios y tenerlo en cuenta».
+#
+# CUATRO fuentes piden lo mismo -- que los premios y las sobras no pasen del
+# 10 % de las calorías del día -- y una trae el mecanismo:
+#
+#     «Los alimentos y premios desequilibrados no se deben proporcionar en más
+#      de un 10 % de la ingesta calórica diaria total. Cuando se agregan
+#      alimentos desequilibrados a una dieta completa y equilibrada, SE PRODUCE
+#      UNA DILUCIÓN DE NUTRIENTES, y los nutrientes esenciales pueden quedar POR
+#      DEBAJO DE LOS REQUERIMIENTOS MÍNIMOS.»   (Ettinger 8ª ed., cap. 192)
+#
+# LO QUE HACE EL MOTOR, Y LO QUE ESTE BLOQUE EXIGE. La ración se formula con
+# las kcal QUE QUEDAN y se le sigue pidiendo EL DÍA ENTERO de nutrientes: de lo
+# que lleva dentro un premio no sabemos nada, así que contar con él para cubrir
+# un requisito sería darlo por cubierto sin saberlo. En números: los mínimos por
+# 1000 kcal de la RACIÓN suben por el factor DER/(DER - premios), y las cotas
+# absolutas se escriben sobre las kcal de la ración. Los máximos NO suben: son
+# concentración, no cantidad.
+#
+# ⚠️ Y LA PRUEBA QUE IMPORTA ES LA SEGUNDA, la del fallo puesto: formular la
+# ración con menos calorías y NO subir los mínimos -- que es lo que saldría si
+# alguien "simplificara" esto restando las kcal y ya-- tiene que dejar el menú
+# CORTO contra los requisitos del día. Sin esa mitad, la primera prueba pasaría
+# igual con el motor sin tocar.
+print("\n" + "=" * 60)
+print("=== BLOQUE 95: los premios diluyen la ración ===")
+
+from motor.motor_completo import resolver as _res95
+from motor.verificar import verificar as _ver95
+from constructor import cargar as _cargar95, MARGENES as _MARG95
+from requisitos import dosis_maxima_fabricante as _dosis95
+
+_al95, _req95 = _cargar95()
+_DER95, _PESO95 = 1100.0, 20.0
+
+# 1. CON PREMIOS: la ración pesa menos en calorías y sigue llevando el día
+#    entero de nutrientes.
+for _p95 in (110.0, 220.0):
+    _ok95, _g95 = _res95(_DER95, "Adulto", _al95, _req95, _PESO95, _dosis95,
+                         margenes_categoria=_MARG95, max_suplementos=2,
+                         time_limit=30, semilla_aleatoria=7, kcal_de_premios=_p95)
+    if not _ok95 or not isinstance(_g95, dict) or "_imposible" in _g95:
+        fallos.append(f"BLOQUE95: con {_p95:.0f} kcal de premios el motor no saca menú para un "
+                      f"perro de 20 kg y {_DER95:.0f} kcal. Descontar premios no puede dejar sin "
+                      f"menú a un perro que sí lo tenía")
+        continue
+    _f95 = _ver95(_g95, _al95, _req95, _DER95, "Adulto", peso_referencia_kg=_PESO95)
+    _kcal95 = _f95["kcal"]
+    _esperadas95 = _DER95 - _p95
+    if abs(_kcal95 - _esperadas95) > _esperadas95 * 0.05:
+        fallos.append(f"BLOQUE95: con {_p95:.0f} kcal de premios la ración sale de {_kcal95:.0f} "
+                      f"kcal y tendría que rondar {_esperadas95:.0f}. Si la ración lleva el día "
+                      f"entero de calorías, los premios se suman POR ENCIMA y el perro come de más")
+    if _f95["semaforo"] != "verde" or _f95["faltan"]:
+        _cortos95 = ", ".join(x["nutriente"] for x in _f95["faltan"][:4])
+        fallos.append(f"BLOQUE95: con {_p95:.0f} kcal de premios el menú NO cubre el día entero "
+                      f"({_f95['semaforo']}, se queda corto de {_cortos95}). El motor tiene que "
+                      f"subir los mínimos por el factor de dilución, no solo restar las calorías")
+    print(f"  premios {_p95:5.0f} kcal -> ración de {_kcal95:6.1f} kcal, "
+          f"{_f95['correctos']}/{_f95['total']} requisitos, {_f95['semaforo']}")
+
+# 2. EL FALLO PUESTO: la misma ración de menos calorías, SIN subir los mínimos.
+#    Medido el 11 de septiembre con cinco semillas distintas: rojo las cinco
+#    veces, con entre 4 y 8 nutrientes por debajo. Aquí se exige solo que falte
+#    UNO, que es la afirmación que vale para cualquier menú que devuelva el
+#    solver -- la regla de no dar por hecha una cifra concreta del menú.
+_ok95f, _g95f = _res95(_DER95 - 220.0, "Adulto", _al95, _req95, _PESO95, _dosis95,
+                       margenes_categoria=_MARG95, max_suplementos=2,
+                       time_limit=30, semilla_aleatoria=7)
+if not _ok95f or not isinstance(_g95f, dict) or "_imposible" in _g95f:
+    fallos.append("BLOQUE95: no se ha podido montar el caso del fallo puesto (el solver no saca "
+                  "menú para 880 kcal). Sin él, la prueba de arriba no demuestra nada")
+else:
+    _f95f = _ver95(_g95f, _al95, _req95, _DER95, "Adulto", peso_referencia_kg=_PESO95)
+    if not _f95f["faltan"]:
+        fallos.append("BLOQUE95: con el fallo puesto -- ración de 880 kcal formulada SIN subir "
+                      "los mínimos-- el menú cubre igual los requisitos de 1100 kcal. Entonces la "
+                      "prueba de arriba pasa con el motor sin tocar y no vigila nada")
+    else:
+        print(f"  fallo puesto (restar kcal sin subir mínimos) -> "
+              f"{len(_f95f['faltan'])} nutrientes por debajo, {_f95f['semaforo']}")
+
+# 3. LOS MÁXIMOS NO SE AFLOJAN. Un menú con premios sigue pasando el filtro
+#    final, que es quien mira los topes de patología y de seguridad crónica
+#    sobre las kcal REALES de la ración.
+_r95 = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": _DER95,
+                                 "etapa_requisitos": "Adulto", "peso_perro_kg": _PESO95,
+                                 "modo": "automatico", "kcal_de_premios": 88.0}).json()
+if not _r95.get("factible"):
+    fallos.append(f"BLOQUE95: /menu/v2 con 88 kcal de premios (el 8 %, dentro de lo que "
+                  f"recomiendan las fuentes) no devuelve menú: {_r95.get('motivo')}")
+else:
+    _avisos95 = " || ".join(_r95.get("problemas_seguridad") or [])
+    if "PREMIOS" not in _avisos95:
+        fallos.append("BLOQUE95: /menu/v2 acepta las kcal de premios y NO lo dice. El dueño tiene "
+                      "que saber que su menú está calculado contando con ellos, y que el motor no "
+                      "sabe qué llevan dentro")
+    if "demasiadas" in _avisos95:
+        fallos.append("BLOQUE95: 88 kcal sobre 1100 son el 8 % y el aviso las llama demasiadas. "
+                      "El límite de las cuatro fuentes es el 10 %")
+
+# 4. POR ENCIMA DEL 10 %, SE DICE QUE SON DEMASIADAS -- y se dice a cuánto hay
+#    que bajarlas, que es lo único accionable.
+_r95b = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": _DER95,
+                                  "etapa_requisitos": "Adulto", "peso_perro_kg": _PESO95,
+                                  "modo": "automatico", "kcal_de_premios": 300.0}).json()
+if not _r95b.get("factible"):
+    fallos.append(f"BLOQUE95: /menu/v2 con 300 kcal de premios no devuelve menú. Pasarse del 10 % "
+                  f"se AVISA, no deja al perro sin comer: {_r95b.get('motivo')}")
+else:
+    _avisos95b = " || ".join(_r95b.get("problemas_seguridad") or [])
+    if "demasiadas" not in _avisos95b:
+        fallos.append("BLOQUE95: 300 kcal sobre 1100 son el 27 % y el menú sale sin decir que se "
+                      "pasa del 10 % que piden Ettinger caps. 175 y 192 y Fascetti cap. 7")
+    if "110 kcal" not in _avisos95b:
+        fallos.append("BLOQUE95: el aviso de pasarse no dice a cuánto hay que bajar los premios. "
+                      "Un aviso sin el número no se puede cumplir")
+
+# 5. EL DATO TIENE QUE VIAJAR POR TODOS LOS CAMINOS, no solo al generar. Un
+#    menú editado o revalidado sin las kcal de premios se recalcularía con el
+#    día entero de calorías, que es justo lo que este bloque impide arriba.
+for _modelo95 in ("PeticionMenu", "PeticionCambiarAlimento", "PeticionAnadirQuitarAlimento",
+                  "PeticionRevalidar", "PeticionFormular"):
+    for _campo95 in ("kcal_de_premios", "premios_nivel"):
+        if _campo95 not in getattr(_api, _modelo95).model_fields:
+            fallos.append(f"BLOQUE95: {_modelo95} no acepta `{_campo95}`. Por ese camino el menú "
+                          f"se recalcula con el día entero de calorías y la dilución se pierde")
+
+# 6. Y EL CONTEXTO QUE SE GUARDA CON EL MENÚ tiene que llevarlas: un menú
+#    guardado se vuelve a verificar al leerlo (regla 1), y sin este dato se
+#    verifica contra un perro que no es el mismo.
+# 7. LA PREGUNTA CONTESTADA: el nivel que elige el usuario se convierte a kcal
+#    con el DER de ESTE perro. Es lo que pidió Elena -- «dependiendo de las
+#    respuestas se tiene que poder adaptar a lo que hace el motor para poder
+#    calcular las nuevas kilocalorías que necesita»-- y es la única forma
+#    honesta de preguntarlo: nadie sabe las calorías de la galleta que da.
+for _niv95, _frac95 in _api.NIVELES_DE_PREMIOS.items():
+    _r95n = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": _DER95,
+                                      "etapa_requisitos": "Adulto", "peso_perro_kg": _PESO95,
+                                      "modo": "automatico", "premios_nivel": _niv95})
+    if _r95n.status_code != 200:
+        fallos.append(f"BLOQUE95: /menu/v2 rechaza el nivel de premios «{_niv95}», que es uno de "
+                      f"los que sirve /vocabulario. La app ofrecería una respuesta que el motor "
+                      f"no sabe recibir")
+        continue
+    _d95n = _r95n.json()
+    if not _d95n.get("factible"):
+        fallos.append(f"BLOQUE95: con premios «{_niv95}» no sale menú: {_d95n.get('motivo')}")
+        continue
+    _esperadas95n = _DER95 * (1 - _frac95)
+    _kcal95n = _d95n.get("kcal_total") or 0.0
+    if abs(_kcal95n - _esperadas95n) > _esperadas95n * 0.06:
+        fallos.append(f"BLOQUE95: con premios «{_niv95}» ({_frac95*100:.0f} % del día) la ración "
+                      f"sale de {_kcal95n:.0f} kcal y tendría que rondar {_esperadas95n:.0f}. La "
+                      f"respuesta no se está convirtiendo a calorías")
+    _av95n = " || ".join(_d95n.get("problemas_seguridad") or [])
+    if _frac95 > 0 and "PREMIOS" not in _av95n:
+        fallos.append(f"BLOQUE95: con premios «{_niv95}» el menú sale sin decirlo")
+    if _frac95 == 0 and "PREMIOS" in _av95n:
+        fallos.append("BLOQUE95: el menú de un perro que no toma premios lleva el aviso de los "
+                      "premios. Un aviso que sale siempre deja de leerse")
+
+# 7-bis. Y LA RACION SIGUE PESANDO LO QUE TIENE QUE PESAR AUNQUE SE PIDA EN LAS
+#    CONDICIONES DE LAS VIAS RAPIDAS. `/menu/v2` tiene dos atajos que cogen un
+#    menú YA CALCULADO del catálogo y lo REESCALAN a las kcal del perro, sin
+#    resolver nada. Eso no vale aquí: la ración tiene que pesar `DER - premios`
+#    kcal Y llevar el día entero de nutrientes, y una multiplicación no hace las
+#    dos cosas a la vez -- al DER entero el perro come de más, y a las kcal de
+#    la ración se queda corto de todo. Por eso los dos atajos se saltan cuando
+#    hay premios y se resuelve de verdad.
+#
+#    ⚠️ LO QUE ESTA PRUEBA AFIRMA, Y LO QUE NO. Afirma el INVARIANTE: se pide en
+#    las condiciones que encienden los atajos -- con `tamano`, y con `tamano` +
+#    `evitar_especies`, que es la otra puerta-- y el menú entregado tiene que
+#    pesar `DER - premios`. NO afirma por qué camino salió: medido el 11 de
+#    septiembre, en estos cuatro casos contesta antes la vía rápida del catálogo,
+#    que resuelve con el MILP y ya cuenta los premios. Decir aquí que se ha
+#    probado el atajo sería decir algo que no se ha probado.
+for _tam95, _peso95b, _der95b, _evitar95 in (
+        ("Mediano", 20.0, 1100.0, None),
+        ("Grande", 35.0, 1700.0, None),
+        ("Mediano", 20.0, 1100.0, ["pollo"]),
+        ("Grande", 35.0, 1700.0, ["vacuno"])):
+    _cuerpo95 = {"nombres_alimentos": [], "der_objetivo": _der95b,
+                 "etapa_requisitos": "Adulto", "peso_perro_kg": _peso95b,
+                 "modo": "automatico", "tamano": _tam95,
+                 "premios_nivel": "mas_del_maximo"}
+    if _evitar95:
+        _cuerpo95["evitar_especies"] = _evitar95
+    _r95v = _c.post("/menu/v2", json=_cuerpo95).json()
+    if not _r95v.get("factible"):
+        fallos.append(f"BLOQUE95: /menu/v2 con tamaño «{_tam95}», premios y "
+                      f"evitar={_evitar95} no devuelve menú: {_r95v.get('motivo')}")
+        continue
+    _esp95v = _der95b * 0.8
+    _kcal95v = _r95v.get("kcal_total") or 0.0
+    if abs(_kcal95v - _esp95v) > _esp95v * 0.06:
+        fallos.append(f"BLOQUE95: con tamaño «{_tam95}», evitar={_evitar95} y un 20 % de premios "
+                      f"el menú sale de {_kcal95v:.0f} kcal y tendría que rondar {_esp95v:.0f}. "
+                      f"Algo está sirviendo un menú de catálogo reescalado al DER entero: el "
+                      f"perro come su ración completa MÁS los premios, y el semáforo sale verde "
+                      f"igual porque los mínimos se miden contra el DER")
+
+# 8. Y UNA RESPUESTA QUE EL MOTOR NO CONOCE SE RECHAZA, NO SE IGNORA. Ignorarla
+#    sería lo peor: el usuario contesta, la app manda su respuesta, y el menú
+#    sale calculado como si el perro no tomara nada -- en verde y sin que nadie
+#    lo sepa. Es el fallo de `guardarPerro` leyendo campos que no existen.
+_r95x = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": _DER95,
+                                  "etapa_requisitos": "Adulto", "peso_perro_kg": _PESO95,
+                                  "modo": "automatico", "premios_nivel": "muchisimos"})
+if _r95x.status_code == 200:
+    fallos.append("BLOQUE95: /menu/v2 acepta un nivel de premios inventado y devuelve menú. Ese "
+                  "menú está calculado como si el perro no tomara nada, y sale en verde")
+
+# 9. Y EL PAPEL FIRMADO TIENE QUE DECIRLO. Una pauta de un perro que toma
+#    premios enseña unas kcal reales muy por debajo del DER: sin la línea de los
+#    premios, eso parece una ración mal calculada, y quien la lea dentro de un
+#    año no tendrá a nadie al lado que se lo explique.
+_r95p = _c.post("/formular/autocompletar", json={
+    "gramos_por_alimento": {}, "der_objetivo": _DER95, "etapa_requisitos": "Adulto",
+    "peso_perro_kg": _PESO95, "premios_nivel": "hasta_el_maximo"}).json()
+if not _r95p.get("factible"):
+    fallos.append(f"BLOQUE95: /formular/autocompletar con premios no saca ración: "
+                  f"{_r95p.get('motivo')}")
+else:
+    _gr95 = _r95p.get("menu") or _r95p.get("gramos_por_alimento") or {}
+    _f95p = _c.post("/pauta/firmar", json={
+        "gramos_por_alimento": _gr95, "der_objetivo": _DER95, "etapa_requisitos": "Adulto",
+        "peso_perro_kg": _PESO95, "premios_nivel": "hasta_el_maximo",
+        "firmante": {"nombre": "Prueba", "num_colegiado": "0000"}}).json()
+    if not _f95p.get("factible"):
+        fallos.append(f"BLOQUE95: no se puede firmar una ración formulada con premios: "
+                      f"{_f95p.get('motivo')}")
+    else:
+        _ctx95 = (_f95p.get("documento") or {}).get("contexto") or {}
+        if not _ctx95.get("kcal_de_premios"):
+            fallos.append("BLOQUE95: el documento firmado no dice las kcal de premios. Enseña "
+                          "unas kcal reales un 10 % por debajo del DER y parece una ración mal "
+                          "calculada, sin nada que lo explique")
+        if _ctx95.get("premios_nivel") != "hasta_el_maximo":
+            fallos.append("BLOQUE95: el documento firmado no dice qué contestó el dueño sobre los "
+                          "premios. La cifra sin la respuesta no se puede revisar")
+
+import persistencia as _pers95
+if "kcal_de_premios" not in _pers95.CLAVES_CONTEXTO:
+    fallos.append("BLOQUE95: el contexto que se guarda con cada menú no incluye "
+                  "`kcal_de_premios`. Al releerlo se pierde el aviso del 10 %, que es lo único "
+                  "que el dueño tiene que hacer con ese dato")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 

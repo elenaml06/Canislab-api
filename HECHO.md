@@ -9,6 +9,73 @@ Este archivo no se lee solo: se abre cuando hace falta el detalle de algo
 que ya se resolvió — por qué se decidió así, qué se midió, qué PR lo trajo.
 Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 
+## Los premios diluyen la ración, y hasta hoy no se contaban — 11 de septiembre de 2026
+
+Encargo de Elena, al leer lo que decían las fuentes: *«pues habrá que preguntar
+por los premios y tenerlo en cuenta»*.
+
+**El desajuste.** Cuatro fuentes piden lo mismo y una trae el mecanismo:
+
+> «Los alimentos y premios desequilibrados no se deben proporcionar en más de un
+> **10 % de la ingesta calórica diaria total**. Cuando se agregan alimentos
+> desequilibrados a una dieta completa y equilibrada, **se produce una dilución
+> de nutrientes**, y los nutrientes esenciales pueden quedar **por debajo de los
+> requerimientos mínimos**.»  (Ettinger 8ª ed., cap. 192)
+
+Lo repiten el cap. 175 del mismo libro —que además los define: «premios, sobras
+de la mesa, suplementos»— y Fascetti & Delaney 2ª ed. cap. 7. O sea que **un
+dueño que sigue el menú al gramo y luego da premios no está dando el menú que le
+calculamos**, y el motor no tenía forma de saberlo.
+
+**Qué hace ahora, y por qué así.** La ración se formula con **las kcal que
+quedan** y se le sigue exigiendo **el día entero de nutrientes**: de lo que lleva
+dentro un premio no sabemos nada, así que contar con él para cubrir un requisito
+sería darlo por cubierto sin saberlo. En números, los mínimos por 1000 kcal de la
+ración suben por `DER/(DER − premios)` y los máximos **no** —son concentración,
+no cantidad—, que es exactamente la dilución que describe la fuente.
+
+⚠️ **Lo que más cuidado pide son las unidades**, y está escrito en el código: a
+partir de ese punto conviven `der` (el día entero, que decide cuánto nutriente
+hace falta y es lo que ve `verificar()`) y `der_racion` (las kcal de la ración,
+que es contra lo que se escribe cada fila del solver). Escalar el suelo **y**
+usar `der` sería contarlo dos veces.
+
+**Medido**, perro adulto de 20 kg y 1100 kcal:
+
+| | ración | contra los requisitos del día |
+|---|---|---|
+| sin premios | 1133 kcal | 48/48, verde |
+| 110 kcal de premios (10 %) | 1020 kcal | 48/48, verde |
+| 220 kcal de premios (20 %) | 854 kcal | 48/48, verde |
+| **el fallo puesto**: 880 kcal sin subir los mínimos | 880 kcal | **rojo, 4-8 nutrientes por debajo** (cinco semillas) |
+
+La última fila es la que importa: restar las calorías **sin** subir los mínimos
+—que es lo que saldría de «simplificar» esto— deja el menú corto de cobre,
+linoleico, vitamina D y magnesio.
+
+**Y se pregunta, que era la otra mitad.** Elena, el mismo día: *«ahora hay que
+hacer preguntas sobre eso y marcar unas respuestas que el usuario pueda
+seleccionar o el veterinario […] y dependiendo de las respuestas se tiene que
+poder adaptar a lo que hace el motor para poder calcular las nuevas
+kilocalorías»*. La pregunta y sus **cuatro respuestas** las sirve
+`GET /vocabulario` con los **dos registros**, para que la app no se invente ni
+las opciones ni las cifras. Va en **porcentaje y no en kcal** a propósito: nadie
+sabe las calorías de la galleta que le da a su perro, y la fuente habla justo en
+esa unidad. ⚠️ **De las cuatro cifras, solo el 10 % es de la fuente**: el 5 % y
+el 20 % son nuestros —son la forma de ponerle un número a «alguno» y a
+«muchos»— y van marcados como tales en la etiqueta que lee el profesional.
+
+**Lo que se tocó además, y no era evidente.** Las dos **vías rápidas** de
+`/menu/v2` cogen un menú ya calculado del catálogo y lo **reescalan**: eso no
+vale aquí, porque una multiplicación no puede a la vez pesar `DER − premios` y
+llevar el día entero de nutrientes. Con premios se saltan y se resuelve de
+verdad. Y el **papel firmado** lo dice: sin esa línea, una pauta enseñaría unas
+kcal reales un 20 % por debajo del DER y parecería una ración mal calculada.
+
+Lo vigila el **BLOQUE 95**, con el fallo puesto. En la app va en el paso 5 del
+asistente y en la ficha clínica, se guarda en `perros.premios_nivel` y viaja en
+los cinco cuerpos de petición; lo vigila `premios-en-cada-peticion.spec.js`.
+
 ## La vitamina E del perro sano, y el fichero del libro aprende a guardar suelos — 11 de septiembre de 2026
 
 Encargo de Elena, literal: *«si lo dice el manual se meten claro que si»*.

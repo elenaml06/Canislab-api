@@ -16,7 +16,7 @@ hallazgos en `HALLAZGOS_FASCETTI.md`.
 
 ## Cap. 7 — Feeding the Healthy Dog and Cat · LEÍDO
 
-**⚠️ CUARTA fuente para el 10 % de los premios**, y esta lo dice como
+**⚠️ CUARTA fuente para el 10 % de los premios** — ✅ **APLICADO EL 11 DE SEPTIEMBRE** (ver abajo) —, y esta lo dice como
 recomendación propia de los autores:
 
 > «The authors recommend that the **energy intake from snacks or treats not
@@ -80,7 +80,14 @@ al cap. 173 de Ettinger, que **sí** pide hidratos al perro de carreras.
 **⚠️ TERCERA fuente sobre la energía del perro a dieta, y está con nosotras:**
 
 > «The patient's **resting energy requirement (RER) should be calculated using an
-> estimate of its optimal body weight** (RER = 70 × BW^0,75).»
+> estimate of its optimal body weight** (RER = 70 × BWkg0.75).»
+
+⚠️ La fórmula va citada **tal cual la escribe el libro**, `BWkg0.75`, que es como
+sale del PDF: en el papel el `kg` es un subíndice y el `0.75` un exponente. Aquí
+estaba escrita `BW^0,75` —nuestra notación y nuestra coma decimal— **dentro de
+las comillas**, y así la cazó el BLOQUE 85: una cita entrecomillada tiene que
+decir lo que dice la fuente, y arreglar la tipografía por dentro ya es no
+decirlo. Lo nuestro va fuera: es RER = 70 × peso^0,75.
 
 Es lo mismo que dice SACN5 cap. 27 y lo mismo que hace el motor. Con esto el
 recuento queda **SACN5 + Fascetti a favor, Ettinger en contra**, y la decisión de

@@ -727,11 +727,18 @@ Tres piezas de la auditoría del 6 de septiembre necesitan un campo de
 entrada que **hoy no existe en ningún sitio** — ni en el schema de la API
 (los `Peticion*` de `main.py`), ni en la ficha del perro de `canislab-web`:
 
-- **El 10% de calorías para premios/complementos** (Hervera, Clinnutrivet
-  17). No hay ningún concepto de "premio" o "snack" en la API: no hay
-  campo que preguntar cuántas kcal vienen de fuera de la ración. Añadirlo
-  necesita una pantalla nueva en la app y una decisión de producto sobre
-  dónde se pregunta, no solo un parámetro nuevo en el backend.
+- ~~**El 10% de calorías para premios/complementos**~~ → **HECHO EN EL MOTOR
+  el 11 de septiembre de 2026; falta la pantalla.** El motor tiene ya
+  `kcal_de_premios` y `premios_nivel` en los cinco modelos que formulan, y hace
+  lo que pide la fuente: **formula la ración con las kcal que quedan y le sigue
+  exigiendo el día entero de nutrientes**, así que la dilución no puede pasar.
+  Si los premios se pasan del 10 %, lo dice en `problemas_seguridad` y dice a
+  cuánto hay que bajarlos. `GET /vocabulario` sirve **la pregunta y sus cuatro
+  respuestas**, con los dos registros, para que la app no se invente ni las
+  opciones ni las cifras; de las cuatro, **solo el 10 % es de la fuente** y las
+  otras dos van marcadas como nuestras. Lo vigilan los BLOQUES 88, 87 y 95.
+  **Lo que queda es de la app**: hacer la pregunta y mandar la respuesta.
+  Mientras no llegue, el campo vale 0 y el menú sale como hasta hoy.
 
   ⚠️ **Y ya van CUATRO fuentes** (actualizado el 9 de septiembre de 2026, de
   leer capítulos enteros de SACN5): FEDIAF §4.1, SACN5 cap.17, SACN5 cap.1
