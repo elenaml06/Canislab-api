@@ -594,3 +594,71 @@ cardíaca congestiva y el peso puede **subir** enmascarándola.
   en el oxalato cálcico.
 - Acidificantes y alcalinizantes nombrados uno a uno (metionina, sulfato de calcio
   o sodio, cloruro de calcio o amonio · carbonato de calcio o sodio).
+
+---
+
+## Caps. 178, 181, 182, 186, 187, 188, 190, 191 y 194 · LEÍDOS
+
+### Cap. 178 — Enfermedades gastrointestinales
+**Grasa: «menos de 3-4 g/100 kcal»** = **30-40 g/1000 kcal** en dieta baja en
+grasa y muy digestible. El motor topa la enteropatía crónica en **37,5**, que cae
+**dentro** de esa banda. Confirma, y con otra fuente distinta de la que la puso.
+El objetivo energético en el paciente GI es el **RER**, y evitar ayunos de más de
+48 h.
+
+### Cap. 181 — Enfermedades endocrinas
+Fibra alta **56-61 g de fibra dietética total/Mcal** contra baja **11-24**. Casi
+todos los estudios que cita son en gato. El motor pone suelo de fibra en diabetes
+(17,5) e hiperlipidemia (25), los dos por debajo de esa «alta». Apuntado; la
+unidad es la misma (por Mcal = por 1000 kcal) pero la población no.
+
+### Cap. 182 — Hiperlipidemia
+La dieta baja en grasa **sigue siendo el tratamiento**. Llama «alta» a 47 g de
+grasa/Mcal y a un 60 % de grasa sobre EM. El motor topa la hiperlipidemia en
+**30 g/1000 kcal**, o sea en el extremo estricto. Sin conflicto.
+
+### Cap. 186 — Enfermedades de la piel
+- **Las dietas caseras «generalmente no se recomiendan» para la dieta de
+  eliminación**, y las que se usan «deben suplementarse para que sean completas».
+  Es una opinión sobre lo que hacemos, y va con el cap. 192.
+- ⚠️ **Una interacción que el motor no vigila**: «deficiencia de cinc después de
+  una **suplementación excesiva de calcio**». El motor topa el calcio y exige el
+  cinc por separado, pero **no modela que el uno bloquee al otro**. Ya había un
+  aviso parecido en SACN5 cap. 32 («el calcio que estorba al zinc»). **Segunda
+  fuente para lo mismo**, y sigue sin aplicarse.
+
+### Cap. 187 — Alteraciones esqueléticas por nutrición
+- El tratamiento del exceso es **reducir la ingesta de calcio** y **no añadir
+  suplementos vitamínicos o minerales a un alimento de crecimiento ya adecuado**.
+  Es exactamente el techo de calcio del cachorro de raza grande que el motor
+  aplica desde SACN5 y Fascetti.
+- Cuenta el calcio y la vitamina D **de alimentos, premios y suplementos juntos**,
+  que es otra vez el problema de los premios.
+- Hipervitaminosis A: dieta baja en vitamina A durante semanas.
+
+### Cap. 188 — Cáncer
+«Las dietas altas en grasas para el cáncer pueden ser apropiadas», y recomienda
+n-3. El motor pone suelo de grasa (62,5) y de proteína (75) en cáncer, que es la
+misma dirección. Su omega-3 de 12,5 sigue escrito y sin aplicar por no caber.
+
+### Caps. 190 y 191 — Fibra y reacciones adversas a los alimentos
+- Fibra: el capítulo insiste en que no es una sustancia única sino un **término
+  global**, que es por lo que la fila «Fibra» del motor no tiene cifra de FEDIAF.
+- Reacción adversa: **la prueba de eliminación dura de 2 a 4 semanas**, y hasta 8
+  en algunos casos; el dueño tiene que eliminar **todo** lo demás. Va con el aviso
+  que el motor ya da para esa patología.
+
+### Cap. 194 — Inmunología y nutrición
+**⚠️ Un techo de EPA que el motor supera en estrictez, y conviene tenerlo:**
+
+> «La dosis total recomendada de aceite de pescado es de un 0,2 a un 2 % de la
+> dieta por peso al día, o un **máximo de 0,4 g de EPA/100 kcal, incluido el
+> contenido de n-3 de la dieta**.»
+
+Son **4,0 g de EPA por 1000 kcal**. El tope crónico del motor son **2,8 g de
+EPA+DHA juntos** por 1000 kcal de promedio semanal, o sea **más estricto** por
+partida doble: menos cantidad y contando los dos ácidos, no solo el EPA. Sin
+conflicto.
+
+También: **la proporción EPA:DHA del aceite de pescado varía entre 1:1 y 3,5:1**,
+que es un dato útil para leer las fichas del catálogo.
