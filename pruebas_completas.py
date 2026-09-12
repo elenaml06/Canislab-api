@@ -9093,7 +9093,17 @@ else:
         fallos.append("BLOQUE93: se han movido 7 g de un documento firmado y el sello "
                       "sigue cuadrando.")
 
-# sin la clave puesta no se firma: se prefiere no dar el papel a darlo sin que valga
+# ⚠️ SIN LA CLAVE PUESTA NO SE FIRMA **NI SE COMPRUEBA**.
+#
+# Lo segundo se aprendió CONTRA PRODUCCIÓN, media hora después de desplegar
+# el HMAC: `/pauta/firmar` fallaba cerrado y `/pauta/comprobar` no, así que
+# una pauta fabricada de cero seguía pasando por buena -- y encima la
+# respuesta decía `sello_con_clave: true`, afirmando sobre un papel que
+# cualquiera escribe que lleva una clave que el servidor no tiene.
+#
+# EL FALLO PLANTADO: se quita la variable y se presenta el mismo documento
+# falsificado de antes. Si algo de esto contesta 200 diciendo que cuadra,
+# el agujero está abierto.
 _guardada_b93 = _os_b93.environ.pop("SELLO_SECRETO", None)
 try:
     _r_b93 = _c.post("/pauta/firmar", json=_BASE_B93)
@@ -9101,9 +9111,36 @@ try:
         fallos.append(f"BLOQUE93: sin SELLO_SECRETO se ha firmado igual "
                       f"(HTTP {_r_b93.status_code}). Un sello sin clave lo recalcula "
                       f"cualquiera; firmar con él es entregar un papel que no prueba nada.")
+
+    _inventado_b93 = {"version": 1,
+                      "firmante": {"nombre": "Nadie", "num_colegiado": "COL-000000"},
+                      "menu": {"Pollo con piel (sin hueso)": 999},
+                      "indicaciones": "esto no lo ha firmado nadie"}
+    _inventado_b93["sello"] = _api._sello_de(_inventado_b93, clave="")
+    _r_b93 = _c.post("/pauta/comprobar", json=_inventado_b93)
+    if _r_b93.status_code != 503:
+        _j_b93 = _r_b93.json()
+        fallos.append(
+            f"BLOQUE93: sin SELLO_SECRETO, /pauta/comprobar ha contestado "
+            f"{_r_b93.status_code} (coincide={_j_b93.get('coincide')!r}, "
+            f"sello_con_clave={_j_b93.get('sello_con_clave')!r}) sobre una pauta "
+            f"inventada de cero. Sin clave solo se puede decir que el papel cuadra "
+            f"consigo mismo, y eso lo fabrica cualquiera: no es la pregunta.")
 finally:
     if _guardada_b93 is not None:
         _os_b93.environ["SELLO_SECRETO"] = _guardada_b93
+
+# Y un documento que no cuadra de ninguna forma no puede acreditarse a sí
+# mismo: `sello_con_clave` sale de lo que hizo el servidor, nunca del campo
+# que trae el papel, que lo escribe quien lo manda.
+_mentiroso_b93 = {"version": 1, "menu": {"Pollo con piel (sin hueso)": 100},
+                  "sello": "0000000000000000", "sello_con_clave": True}
+_j_b93 = _c.post("/pauta/comprobar", json=_mentiroso_b93).json()
+if _j_b93.get("coincide") or _j_b93.get("sello_con_clave") is not None:
+    fallos.append(f"BLOQUE93: un documento con el sello inventado ha vuelto con "
+                  f"coincide={_j_b93.get('coincide')!r} y "
+                  f"sello_con_clave={_j_b93.get('sello_con_clave')!r}. Ese campo lo "
+                  f"escribe quien manda el papel: no puede servir de respuesta.")
 
 # ── 6. LAS DOS PEQUEÑAS ──────────────────────────────────────────────
 #

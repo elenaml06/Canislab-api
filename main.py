@@ -6287,6 +6287,33 @@ def pauta_comprobar(documento: dict):
     if not esperado:
         raise HTTPException(400, "Este documento no lleva sello.")
 
+    # ⚠️ SIN CLAVE NO SE COMPRUEBA, IGUAL QUE NO SE FIRMA.
+    #
+    # CASO REAL, cazado CONTRA PRODUCCIÓN media hora después de desplegar el
+    # cambio que puso el HMAC (11 de septiembre). `/pauta/firmar` fallaba
+    # cerrado sin `SELLO_SECRETO` -- 503, como debe -- y esto NO: se quedaba
+    # calculando el SHA-256 sin clave de siempre, que es la receta pública.
+    # O sea que una pauta fabricada de cero, con un número de colegiado
+    # inventado, seguía pasando por buena.
+    #
+    # Y era PEOR que antes del arreglo, no igual: la respuesta decía además
+    # `sello_con_clave: true`. El endpoint afirmaba, sobre un papel que
+    # cualquiera puede escribir, que lleva una clave que el servidor no
+    # tiene. Un fallo que miente en la dirección tranquilizadora.
+    #
+    # La causa de fondo es que estas dos preguntas no son la misma:
+    # «¿coincide el documento consigo mismo?» la puede contestar cualquiera,
+    # y «¿lo firmó este servidor?» solo quien tenga la clave. Sin clave, la
+    # segunda no se puede contestar, y contestar la primera en su lugar es
+    # exactamente lo que había que dejar de hacer.
+    if not _clave_del_sello():
+        raise HTTPException(
+            503,
+            "Ahora mismo no se puede comprobar ninguna pauta: al servidor le falta la "
+            "clave con la que se sellan (SELLO_SECRETO). Sin ella solo se podría decir "
+            "que el documento cuadra consigo mismo, que es algo que cualquiera puede "
+            "fabricar, y eso no es lo que preguntas.")
+
     # ⚠️ SE COMPARA EN TIEMPO CONSTANTE (11 septiembre). Un `==` de cadenas
     # se para en la primera letra distinta, y ese tiempo se mide: con
     # suficientes intentos se adivina un sello letra a letra sin conocer la
@@ -6323,9 +6350,14 @@ def pauta_comprobar(documento: dict):
                             "pruebe."),
         }
 
+    # ⚠️ `sello_con_clave: None`, y no lo que diga el papel. Aquí el sello no
+    # cuadra de ninguna de las dos formas, así que no se sabe con qué se
+    # selló -- y `documento.get("sello_con_clave")`, que es lo que había,
+    # es un campo que escribe quien manda el documento: contestar con eso
+    # es dejar que el papel se acredite a sí mismo.
     return {
         "coincide": False,
-        "sello_con_clave": bool(documento.get("sello_con_clave")),
+        "sello_con_clave": None,
         "sello_del_documento": esperado,
         "sello_recalculado": real,
         "explicacion": "Este documento NO es el que se firmó: algo ha cambiado desde entonces.",
