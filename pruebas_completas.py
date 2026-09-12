@@ -12926,6 +12926,126 @@ def _kgs_de_la_cita89(cita):
             fuera.append(float(r.group(1).replace(",", ".")))
     return fuera
 
+# ── El peso POR SEXO, rehecho desde la misma cita ────────────────────────
+#
+# ⚠️ AÑADIDO LA NOCHE DEL 12 DE SEPTIEMBRE. La FCI y el BOE dan machos y hembras
+# por separado en la mitad de sus textos -- el Kuvasz son 48-62 en machos y
+# 37-50 en hembras -- y aquí se guardaba solo la unión, 37-62 para los dos. Lo
+# hacen así los dos referentes que se miraron antes de tocarlo: MyVetDiet llama
+# a los suyos «pesos indicativos diferenciados para machos y hembras», y las
+# curvas de WALTHAM son gráficas distintas por sexo.
+#
+# Esto REHACE el reparto desde la cita, y no es formalismo: al escribirlo se
+# falló de las dos formas posibles y las dos con citas de verdad.
+#   · «30 a 40 kg en los machos, 27 a 35 kg en las hembras» (Boyero de Flandes)
+#     pone el sexo DESPUÉS del número, así que «lo que va detrás de machos» no
+#     tenía ni un kg y la raza se quedaba sin separar.
+#   · El Ca de Bestiar del BOE da primero los dos SUELOS y luego los dos TECHOS
+#     («de menos de 30 kg en los machos y de menos de 25 en las hembras.
+#     Ejemplares de más de 50 kg en los machos y de más de 45 en las hembras»),
+#     así que ese mismo atajo le daba al macho 25-50 y a la hembra 45-50: los
+#     dos números del sexo equivocado, y con forma de dato bueno.
+def _kgs_del_trozo89(trozo):
+    _n = r"\d+(?:[.,]\d+)?"
+    fuera = []
+    for m in _re_b65.finditer(r"[kK][gG]\b", trozo):
+        atras = trozo[max(0, m.start() - 60):m.start()]
+        corte = max(atras.rfind("cm"), atras.rfind("CM"))
+        if corte >= 0:
+            atras = atras[corte + 2:]
+        atras = atras.rstrip()
+        r = _re_b65.search(r"(%s)\s*(?:[-\u2013\u2014]|a|hasta|to|y)\s*(%s)$" % (_n, _n), atras)
+        if r:
+            fuera += [float(r.group(1).replace(",", ".")), float(r.group(2).replace(",", "."))]
+            continue
+        r = _re_b65.search(r"(%s)$" % _n, atras)
+        if r:
+            fuera.append(float(r.group(1).replace(",", ".")))
+    return fuera
+
+_MACHO89 = _re_b65.compile(r"\b(?:machos?|perros?)\b", _re_b65.I)
+_HEMBRA89 = _re_b65.compile(r"\b(?:hembras?|perras?)\b", _re_b65.I)
+
+def _por_sexo89(cita):
+    t = cita.strip("\u00ab\u00bb")
+    t = _re_b65.sub(r"(?<=\d),(?=\d)", "\x00", t)
+    t = _re_b65.sub(r"(?<=\d)\s+y\s+(?=\d)", "\x01", t)
+    trozos = []
+    for c in _re_b65.split(r"[.;]|,| y ", t):
+        cortes = sorted(m.start() for m in list(_MACHO89.finditer(c)) + list(_HEMBRA89.finditer(c)))
+        if len(cortes) > 1:
+            bordes = [0] + [x for x in cortes if x > 0]
+            trozos += [c[a:b] for a, b in zip(bordes, bordes[1:] + [len(c)])]
+        else:
+            trozos.append(c)
+    fuera, ultimo = {"macho": [], "hembra": []}, None
+    for c in trozos:
+        c = c.replace("\x00", ",").replace("\x01", " y ")
+        if not c.strip():
+            continue
+        kgs = _kgs_del_trozo89(c)
+        pm, ph = _MACHO89.search(c), _HEMBRA89.search(c)
+        quien = None
+        if kgs:
+            _pk = _re_b65.search(r"[kK][gG]\b", c).start()
+            antes = [(x.start(), k) for x, k in ((pm, "macho"), (ph, "hembra"))
+                     if x and x.start() < _pk]
+            if antes:
+                quien = max(antes)[1]
+            else:
+                desp = [(x.start(), k) for x, k in ((pm, "macho"), (ph, "hembra"))
+                        if x and x.start() > _pk]
+                quien = min(desp)[1] if desp else ultimo
+        elif pm or ph:
+            quien = "macho" if (pm and (not ph or pm.start() < ph.start())) else "hembra"
+        if quien:
+            ultimo = quien
+            fuera[quien] += kgs
+    if not fuera["macho"] or not fuera["hembra"]:
+        return None
+    return {k: (min(v), max(v)) for k, v in fuera.items()}
+
+_consexo89 = [r for r in _R89 if r.get("porSexo")]
+if len(_consexo89) < 40:
+    fallos.append(f"BLOQUE89: solo {len(_consexo89)} razas traen el peso por sexo, y eran 44 el 12 "
+                  f"de septiembre. Es la mitad de lo que hacen MyVetDiet y WALTHAM, y sin ella a "
+                  f"un Kuvasz hembra se le enseña la horquilla del macho")
+for _r89 in _R89:
+    _ps89 = _r89.get("porSexo")
+    _calc89 = _por_sexo89(_r89["cita"]) if _r89.get("cita") else None
+    _vale89 = bool(_calc89 and _calc89["macho"][0] < _calc89["macho"][1]
+                   and _calc89["hembra"][0] < _calc89["hembra"][1]
+                   and abs(min(_calc89["macho"][0], _calc89["hembra"][0]) - _r89["pesoMin"]) < 0.01
+                   and abs(max(_calc89["macho"][1], _calc89["hembra"][1]) - _r89["pesoMax"]) < 0.01)
+    if _ps89 and not _vale89:
+        fallos.append(f"BLOQUE89: «{_r89['nombre']}» trae peso por sexo y su cita no lo sostiene "
+                      f"({_calc89}). O la fuente no separa los sexos, o lo que da no es un "
+                      f"intervalo para cada uno, y de un punto no se inventa una horquilla")
+        continue
+    if _vale89 and not _ps89:
+        fallos.append(f"BLOQUE89: la cita de «{_r89['nombre']}» SÍ separa machos y hembras "
+                      f"({_calc89}) y la fila no lo guarda. Esa raza enseña la unión de los dos")
+        continue
+    if not _ps89:
+        continue
+    for _sx89 in ("macho", "hembra"):
+        _a89, _b89 = _ps89[_sx89]["pesoMin"], _ps89[_sx89]["pesoMax"]
+        if abs(_a89 - _calc89[_sx89][0]) > 0.01 or abs(_b89 - _calc89[_sx89][1]) > 0.01:
+            fallos.append(f"BLOQUE89: «{_r89['nombre']}» dice que el {_sx89} pesa {_a89}-{_b89} y "
+                          f"su cita dice {_calc89[_sx89]}")
+        if not (_ps89[_sx89]["pesoMin"] <= _ps89[_sx89]["pesoMedio"] <= _ps89[_sx89]["pesoMax"]):
+            fallos.append(f"BLOQUE89: el peso medio del {_sx89} de «{_r89['nombre']}» se sale de "
+                          f"su propio rango")
+    # ⚠️ Y LA UNION TIENE QUE SEGUIR SIENDO LA FILA: `pesoMin`/`pesoMax` son lo
+    # que se usa cuando no se sabe el sexo, asi que no pueden empezar a
+    # significar otra cosa por haber añadido esto.
+    _u189 = min(_ps89["macho"]["pesoMin"], _ps89["hembra"]["pesoMin"])
+    _u289 = max(_ps89["macho"]["pesoMax"], _ps89["hembra"]["pesoMax"])
+    if abs(_u189 - _r89["pesoMin"]) > 0.01 or abs(_u289 - _r89["pesoMax"]) > 0.01:
+        fallos.append(f"BLOQUE89: «{_r89['nombre']}» dice {_r89['pesoMin']}-{_r89['pesoMax']} y la "
+                      f"unión de sus dos sexos es {_u189}-{_u289}. La fila tiene que seguir siendo "
+                      f"exactamente los dos sexos juntos: es lo que se usa sin saber el sexo")
+
 _FORMAS89 = {"rango", "punto", "punto_sexo", "minimos", "maximo", "solo_machos"}
 _fci89 = [r for r in _con_fuente89 if "Cynologique" in r["fuente"]]
 if not _fci89:
