@@ -599,8 +599,8 @@ escribiendo aquí en formato de manual.
 día: su suposición escrita era que «las fuentes están todas en inglés», y el LÉEME
 de esta fuente lo había dejado apuntado «para decidirlo».
 
-**Hasta dónde va la lectura.** Leídos enteros los capítulos **167, 170 a 173 y 175
-y 176**. Faltan **177 a 194** (y el 174, que es felino), y falta el resto del
+**Hasta dónde va la lectura.** Leídos enteros los capítulos **167, 170 a 173, 175,
+176 y 177**. Faltan **178 a 194** (y el 174, que es felino), y falta el resto del
 tratado (los otros 332 capítulos), que no se ha abierto. Se dice así para que se
 pueda continuar.
 
@@ -706,6 +706,15 @@ que **las dos** fuentes contienen, y se anota la discrepancia.
 | cap.176: *«Es necesario limitar estos premios a menos del 10 % de las calorías totales»* | **Ya aplicado**. Con esta y la del cap.175 van **once** apariciones del 10 % en las fuentes del repo |
 | cap.176: se considera obeso al perro cuyo exceso de grasa supera el peso óptimo en un **15-20 %** | **No se aplica**: el motor no clasifica, calcula. Se anota porque es la frontera con la que un clínico leería nuestro peso objetivo |
 | cap.175: los triglicéridos de cadena media para la disfunción cognitiva, «se propone que los cuerpos cetónicos obtenidos del metabolismo de los MCT proporcionan fuentes alternativas de energía para el cerebro envejecido» | **No se aplica: no hay dosis**, igual que los MCT de la epilepsia que pedía AAHA. Son ya **dos** patologías del motor a las que dos fuentes les piden MCT sin decir cuánto. Se suma a la P-21 |
+
+### cap.177, Lisa Freeman — el hallazgo que toca una cifra viva del motor
+
+| Lo que dice | Decisión |
+|---|---|
+| ⚠️ *«El objetivo del BCS en un perro o gato sano es de 4-5 sobre 9 en la escala de BCS de 9 puntos. Sin embargo, en ciertas enfermedades (p. ej., ICC, ERC), puede ser beneficioso un BCS ligeramente más alto (es decir, un BCS de 6-7/9), aunque se requiere más investigación para hacer recomendaciones concretas. A pesar de ello, se ha de evitar la obesidad (BCS >7/9) en animales con estas enfermedades»* | **PENDIENTE DE DECIDIR, y es clínico.** `peso_objetivo_desde_bcs()` **no recibe las patologías**: aplica la regla del perro sano a cualquier perro. Medido con la función del motor, a un perro de 30 kg con BCS 7 le calcula 25 kg de peso objetivo, o sea **un 12,8 % menos de kcal**; con BCS 6, un 6,9 % menos. En dos enfermedades donde lo que mata es la caquexia. A la **P-28** |
+| *«La mayor reserva de MMC en la obesidad proporciona una mayor reserva durante el estado catabólico de la ICC»*, y del cap.176: *«Los perros con insuficiencia cardiaca que aumentaron de peso tuvieron una supervivencia significativamente más larga que aquellos cuyo peso se mantuvo estable o disminuyó»* | Es el respaldo de lo anterior, y es lo que convierte la paradoja en un dato y no en una impresión |
+| Que la pérdida de masa magra **precede** a la de peso: *«Es importante para el diagnóstico de la caquexia y la sarcopenia no depender de la pérdida de peso, ya que la pérdida de MMC se da antes de la pérdida de peso»* | **No se aplica: el motor no ve al perro.** Es el argumento más fuerte que he encontrado para la P-17, que pide preguntar la masa muscular en la ficha: el peso y el BCS juntos pueden no moverse mientras el perro pierde músculo |
+| Que el BCS y el índice de condición muscular «no están directamente relacionados porque un animal puede ser obeso pero tener una pérdida sustancial de músculo» | **Ya recogido** de AAHA y de la WSAVA, y con esta van tres |
 
 ### Y la cuarta fuente que desaconseja lo que hacemos
 

@@ -1344,6 +1344,66 @@ fuentes más se separan y donde además el motor ya tiene problemas conocidos (a
 toy le cuesta salir menú, y el gigante es el que más lejos está de la curva de
 crecimiento)?
 
+---
+
+### P-28 · Al cardíaco y al renal con sobrepeso el motor les quita kcal, y esta fuente dice que ese sobrepeso puede protegerles
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es criterio clínico puro) |
+| **Bloquea** | No da error, y por eso preocupa |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo el capítulo 177 de Ettinger |
+
+El capítulo 177 del tratado de Ettinger —*Caquexia y sarcopenia*, de **Lisa M.
+Freeman**, que es también la autora del capítulo de nutrición cardíaca— dice:
+
+> *«El objetivo del BCS en un perro o gato sano es de 4-5 sobre 9 en la escala de
+> BCS de 9 puntos. Sin embargo, en ciertas enfermedades (p. ej., ICC, ERC), puede
+> ser beneficioso un BCS ligeramente más alto (es decir, un BCS de 6-7/9), aunque
+> se requiere más investigación para hacer recomendaciones concretas. A pesar de
+> ello, se ha de evitar la obesidad (BCS >7/9) en animales con estas
+> enfermedades.»*
+
+Es la **paradoja de la obesidad**, y el capítulo la explica: en insuficiencia
+cardíaca y en enfermedad renal crónica lo que mata es la **caquexia**, la pérdida
+de masa magra, y *«La mayor reserva de MMC en la obesidad proporciona una mayor
+reserva durante el estado catabólico»*. El capítulo 176 lo respalda con datos:
+*«Los perros con insuficiencia cardiaca que aumentaron de peso tuvieron una
+supervivencia significativamente más larga que aquellos cuyo peso se mantuvo
+estable o disminuyó»*, y en renal *«los perros con bajo peso tenían un tiempo de
+supervivencia significativamente más corto»*.
+
+**Qué hace el motor hoy.** `peso_objetivo_desde_bcs()` en `motor/verificar.py`
+**no recibe las patologías**: aplica la regla del perro sano a cualquier perro. Un
+BCS por encima de 5 baja el peso de referencia, y el DER se calcula sobre ese peso.
+
+**MEDIDO el 12-sep** con la función del motor:
+
+| BCS | Peso objetivo de un perro de 30 kg | kcal respecto a su peso real |
+|---|---|---|
+| 5 | 30,00 kg | 100 % |
+| 6 | 27,27 kg | **93,1 %** |
+| 7 | 25,00 kg | **87,2 %** |
+
+O sea que a un cardíaco o a un renal con BCS 7 el motor le da **un 12,8 % menos de
+kcal** que si se calculara sobre su peso real — en dos enfermedades donde esta
+fuente dice que ese BCS «puede ser beneficioso» y donde el peligro documentado es
+adelgazar.
+
+**Por qué no lo toco.** Son tres decisiones clínicas encadenadas y ninguna es mía:
+si la banda ideal cambia con la patología, cuáles (la fuente nombra insuficiencia
+cardíaca congestiva y enfermedad renal crónica, no «cardiopatía» y «renal» sin
+más), y qué se hace con el «se requiere más investigación para hacer
+recomendaciones concretas» que la propia fuente añade.
+
+**La pregunta:** con `cardiopatia` o `renal` marcadas y un BCS de 6 o 7, ¿el motor
+debería usar el peso **real** en vez del objetivo? Y si la respuesta es sí, ¿hasta
+qué BCS — la fuente corta en >7/9 — y se le dice a quien firma?
+
+⚠️ Es la misma familia que la P-19: el motor aplica al enfermo la regla del perro
+sano y **sale verde**, porque el semáforo mira el menú y no el peso con el que se
+calculó.
+
 
 ---
 
