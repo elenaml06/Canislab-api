@@ -1572,8 +1572,17 @@ _CIFRAS_CON_FUENTE = [
      "SACN5 Tabla 28-2: «Restrict dietary fat (<12% dry matter)»"),
     ("hiperlipidemia", "suelos_por_1000kcal", "fibra", 25.0, ("pct_ms", 10),
      "SACN5 Tabla 28-2: «Increase dietary fiber: Dogs: >=10% DM»"),
-    ("obesidad", "topes_por_1000kcal", "grasa", 30.0, ("directo", None),
-     "SACN5 Tabla 27-4 dice «<=9%» (22,5) pero no resuelve con el catalogo real; 30 cae en la franja de «prevention of weight regain» («<=14%» = 35)"),
+    # ⚠️ 12-sep-2026: PASA DE 30 A 22,5, que es lo que dice la fuente. El 30 era
+    # nuestro y el motivo escrito era que 22,5 «no resuelve con el catalogo
+    # real» -- una medida del 6 de septiembre que decia «27 falla 0/5, 28
+    # resuelve 5/5» SIN decir con que perro, con que peso ni con que peldaño.
+    # Remedida con las condiciones por delante (adulto con obesidad, catalogo
+    # entero, 3/10/22/40 kg, cinco techos, 3 intentos, 20 s): en el peldaño
+    # estricto NO sale ninguno de los cinco, tampoco el 30 que se aplicaba, y
+    # con la escalera salen los cinco 3 de 3 en los cuatro pesos. O sea que el
+    # 22,5 no cuesta ni un menu.
+    ("obesidad", "topes_por_1000kcal", "grasa", 22.5, ("pct_ms", 9),
+     "SACN5 Tabla 27-4: «Foods for weight loss should contain <=9%» de grasa"),
     ("obesidad", "suelos_por_1000kcal", "proteina", 62.5, ("pct_ms", 25),
      "SACN5 Tabla 27-4: «Foods for weight loss should contain >=25%»"),
     ("dcm_taurina_respondedora", "suelos_por_1000kcal", "taurina", 250.0, ("pct_ms", 0.1),
@@ -10523,6 +10532,32 @@ def _preguntas_del_documento_66(texto):
             _visto.add(_n); _orden.append((_n, _e))
     return dict(_orden)
 
+# ⚠️ Y LA NUMERACIÓN PROPIA DEL REGISTRO, QUE NO LA MIRABA NADIE (12 de
+# septiembre de 2026). Lo de abajo compara el ÍNDICE contra
+# `PARA_EL_NUTRICIONISTA.md`, o sea la numeración `PREGUNTA n`. Las `P-nn` --
+# que son las preguntas propias de este fichero -- no las comprobaba nada, y
+# así llevaba días habiendo DOS «P-10»: el tope que recorta la fórmula de
+# lactancia y el suelo de sodio del cardiópata, dos preguntas distintas con el
+# mismo número.
+#
+# En un registro cuya razón de existir es que ninguna pregunta se pierda, un
+# número repetido tapa una de las dos: quien busca la P-10 encuentra la primera
+# y se va. No da error y no se ve.
+try:
+    _pn66 = open("PREGUNTAS_ABIERTAS.md", encoding="utf-8").read()
+except OSError:
+    _pn66 = ""
+_nums66 = _re_b65.findall(r"^### (P-\d+) ·", _pn66, _re_b65.M if hasattr(_re_b65, "M") else 0)
+_rep66 = sorted({n for n in _nums66 if _nums66.count(n) > 1})
+if _rep66:
+    fallos.append(f"BLOQUE66: PREGUNTAS_ABIERTAS.md tiene numeros repetidos: {_rep66}. Dos "
+                  f"preguntas distintas con el mismo numero: quien busque ese numero encuentra "
+                  f"la primera y se va, y la otra queda tapada sin que salte nada")
+if _nums66 and len(_nums66) < 5:
+    fallos.append(f"BLOQUE66: solo se han encontrado {len(_nums66)} preguntas `P-nn` en el "
+                  f"registro. O ha cambiado el formato de los titulos o se ha perdido media lista, "
+                  f"y en los dos casos este guardia deja de vigilar")
+
 try:
     _reg66 = open("PREGUNTAS_ABIERTAS.md", encoding="utf-8").read()
 except OSError:
@@ -12724,6 +12759,55 @@ for _r89 in _R89:
         fallos.append(f"BLOQUE89: «{_r89['nombre']}» tiene tamaño «{_r89['tamano']}», que no es "
                       f"uno de los seis. El catálogo indexa con `{{tamano}}_{{etapa}}`: con un "
                       f"séptimo, la clave no existe y la vista previa se queda sin menú")
+
+# ── 1-ter. Las razas con FUENTE: la cifra se rehace contra su cita ───────
+#
+# ⚠️ AÑADIDO EL 12 DE SEPTIEMBRE DE 2026. Hasta hoy las 255 razas NO tenían
+# fuente: venían escritas en `App.jsx` desde antes de que hubiera repo de
+# fuentes, y el historial de git no puede decir de dónde salieron -- el primer
+# commit de ese repo ya las trae dentro. Comprobado contra la tabla de pesos de
+# la AKC, que era la sospecha obvia: de 35 razas emparejadas solo 15 cuadran
+# dentro de un 8 %, así que tampoco es de ahí.
+#
+# Las ESPAÑOLAS sí tienen fuente, y además legal: sus prototipos raciales se
+# publican en el BOE (Real Decreto 558/2001, anexo «Razas caninas españolas»).
+# Esas filas llevan `fuente` y la `cita` literal de su prototipo, y esto REHACE
+# la cifra contra la cita -- el mismo criterio que `auditar_conversiones.py`:
+# una cifra contada en prosa no se ejecuta, y lo que no se puede rehacer no se
+# puede auditar.
+_con_fuente89 = [r for r in _R89 if r.get("fuente")]
+if not _con_fuente89:
+    fallos.append("BLOQUE89: ni una sola raza tiene `fuente`. Las españolas la tienen desde el "
+                  "12 de septiembre (BOE, RD 558/2001): si han desaparecido, se ha perdido la "
+                  "única parte de esta tabla que está respaldada por un documento")
+for _r89 in _con_fuente89:
+    _cita89 = _r89.get("cita") or ""
+    if not _cita89.strip():
+        fallos.append(f"BLOQUE89: «{_r89['nombre']}» dice tener fuente y no trae la cita. Una "
+                      f"fuente sin cita no se puede comprobar")
+        continue
+    if "558/2001" not in _r89["fuente"]:
+        continue
+    # ⚠️ LAS TOLERANCIAS SE RESUELVEN, no se leen como dos números sueltos. El
+    # Podenco Andaluz tiene TRES tallas escritas como «27 kg + - 6 kg», y leer
+    # el 6 como un peso daba un mínimo de 3 que la fuente no dice. Se convierte
+    # cada «X + - Y» en sus dos extremos antes de mirar nada.
+    _texto89 = _cita89
+    for _c89, _t89 in _re_b65.findall(r"(\d+(?:[.,]\d+)?)\s*kg\s*\+\s*-\s*(\d+(?:[.,]\d+)?)\s*kg",
+                                      _cita89, _re_b65.I if hasattr(_re_b65, "I") else 0):
+        _cc89 = float(_c89.replace(",", ".")); _tt89 = float(_t89.replace(",", "."))
+        _texto89 += f" {_cc89 - _tt89} kg {_cc89 + _tt89} kg"
+    _kgs89 = [float(x.replace(",", ".")) for x in _re_b65.findall(r"(\d+(?:[.,]\d+)?)", _texto89)]
+    if not _kgs89:
+        fallos.append(f"BLOQUE89: la cita de «{_r89['nombre']}» no trae ni un número: "
+                      f"«{_cita89[:60]}»")
+        continue
+    # El rango del fichero tiene que caber dentro de lo que dice el prototipo.
+    if _r89["pesoMin"] < min(_kgs89) - 0.01 or _r89["pesoMax"] > max(_kgs89) + 0.01:
+        fallos.append(f"BLOQUE89: «{_r89['nombre']}» dice {_r89['pesoMin']}-{_r89['pesoMax']} kg y "
+                      f"su prototipo oficial nombra de {min(_kgs89)} a {max(_kgs89)}. El rango del "
+                      f"fichero se sale de la cita: o la cifra está mal copiada o la cita no es "
+                      f"la suya")
 
 # ── 1-bis. Los seis tamaños SON los del catálogo de menús ────────────────
 _tcat89 = sorted({k.split("_")[0] for k in _CAT89})

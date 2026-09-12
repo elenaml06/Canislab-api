@@ -134,7 +134,21 @@ _LARGO_MINIMO = 25
 # applies» cuando la fuente dice «instead the nutritional maximum, WHEN INCLUDED
 # IN THE RELEVANT TABLES, should be taken into account». Una condicion borrada.
 SIN_DECIR_DECLARADAS = 0          # citas que no dicen de que fuente salen
-SIN_TEXTO_DECLARADAS = 11         # citan una fuente que no esta en el repo.
+SIN_TEXTO_DECLARADAS = 12         # citan una fuente que no esta en el repo.
+                                  # ⚠️ SUBE A 12 EL 12 DE SEPTIEMBRE POR LA
+                                  # TARDE, y es una sola cita nueva: el TITULO
+                                  # del articulo de Cavanaugh 2020 en
+                                  # `Veterinary Practice News`, que pasa a tener
+                                  # fila propia en `LECTURAS.md`. Hasta ese dia
+                                  # estaba metido en la fila de `Today's
+                                  # Veterinary Practice`, que es OTRA revista y
+                                  # SI esta en el repo -- asi que el registro
+                                  # decia «leida entera» y «no esta» de lo que
+                                  # parecia la misma fuente. De ese articulo
+                                  # sale el rango de sodio de cuatro claves
+                                  # cardiacas, asi que la fila tiene que
+                                  # existir aunque su cita no se pueda
+                                  # comprobar aqui.
                                   # ⚠️ SUBE A 11 EL 12 DE SEPTIEMBRE, y no porque
                                   # se haya perdido ninguna fuente: es que entra a
                                   # esta auditoria `PREGUNTAS_ABIERTAS.md`, que
@@ -608,6 +622,9 @@ def auditar(mostrar_todas=False):
     # imprimirla y luego triarla desde ahi es medir otra cosa: lo hice, y un
     # trozo de 110 caracteres «coincidia al 100 %» mientras la cita entera no
     # aparecia. El informe corta; el fichero no.
+    if os.environ.get("CITAS_FUERA"):
+        for f, c, (_, q) in fuera_:
+            print(f"    fuera [{q}] {f}: {' '.join(c.split())[:110]}")
     if os.environ.get("CITAS_A"):
         json.dump([{"fichero": f, "quien": q, "cita": c}
                    for f, c, (_, q) in dentro],

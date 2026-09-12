@@ -1231,3 +1231,38 @@ cree. Los casos de salmonelosis que documenta Ettinger cap. 192 son de **vacuno*
 y el catálogo está lleno de los reservorios clásicos: 10 fichas de pollo, 10 de
 ternera, 8 de pavo, 7 de vaca. El aviso tiene que ser sobre el manejo de **lo que
 sí le estamos dando**.
+
+---
+
+## Las razas españolas que el BOE nombra y no describe (12 de septiembre de 2026)
+
+El anexo del Real Decreto 558/2001 nombra **33 razas caninas españolas** y da
+prototipo racial a unas 26. De esas, **15 traen un peso explícito en kg** y el
+resto solo da **alzada a la cruz**, que es como se escribe un estándar de raza
+— y por eso la FCI tampoco servía.
+
+**Siete aparecen solo como nombre, sin prototipo** en el texto consolidado:
+
+| Raza | Qué falta |
+|---|---|
+| Pachón Navarro | prototipo y peso |
+| Perro de Agua del Cantábrico | prototipo y peso |
+| Perro Leonés de Pastor | prototipo y peso |
+| Podenco Paternino | prototipo y peso |
+| Podenco Valenciano | prototipo y peso |
+| Valdueza | prototipo y peso |
+| Villano de las Encartaciones | prototipo y peso |
+
+**No se añaden a `razas.json`**, y el motivo es la regla de siempre: meterlas
+exigiría inventarles el peso, y de ese peso salen las kcal del cachorro y el
+techo de calcio de la raza grande. ⚠️ **Esto no lo rellena el asistente.**
+
+Y hay ocho más que tienen prototipo pero **solo con alzada**: Ca Eivissenc
+(Podenco Ibicenco), Galgo Español, Mastín Español, Mastín del Pirineo,
+Perdigueiro Galego, Perdiguero de Burgos, Podenco Canario y Sabueso Español.
+Cuatro de ellas ya están en la ficha con un peso **sin fuente**, el que traían
+de origen. Que el prototipo oficial no dé peso no hace bueno el que tenemos.
+
+⚠️ **El Mastín del Pirineo sigue sin estar en la ficha**, y es gigante: es justo
+donde el peso adulto decide el techo de calcio del cachorro. Entra en cuanto
+haya una fuente para su peso.
