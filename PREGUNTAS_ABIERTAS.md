@@ -921,6 +921,41 @@ Las tres salidas posibles, para que la decisión se tome con ellas delante:
 dado que «severe concurrent renal failure» es justamente lo que separa nuestras
 dos claves renales?
 
+⚠️ **TERCERA FUENTE, Y LA PRIMERA QUE PONE UNA CIFRA** (12 de septiembre, leyendo
+el capítulo 183 de Ettinger, de Lisa Freeman y John Rush, que es el de nutrición
+cardíaca):
+
+> *«La restricción de proteínas debe evitarse en perros y gatos con enfermedades
+> cardiacas porque estos pacientes están predispuestos a la pérdida de masa
+> muscular corporal. Las dietas bajas en proteínas, incluso si están diseñadas
+> como dietas cardiacas, dietas diseñadas para enfermedades renales y «dietas
+> sénior», no se recomiendan a menos que exista una disfunción renal grave. De lo
+> contrario, se recomienda un alimento nutricionalmente equilibrado de buena
+> calidad que proporcione al menos los niveles mínimos de proteína canina (4,5
+> g/100 kcal)»*
+
+Dice lo mismo que el consenso ACVIM, **con la misma excepción** («a menos que
+exista una disfunción renal grave» = «unless severe concurrent renal failure is
+present»), y añade el número que faltaba: **al menos 4,5 g/100 kcal = 45 g/1000
+kcal**, el mínimo de la AAFCO.
+
+**Y con ese número, el techo del motor queda por encima de las tres fronteras que
+nombran las fuentes:**
+
+| | g/1000 kcal | % de las kcal |
+|---|---|---|
+| Suelo que nombra Freeman (mínimo AAFCO) | 45 | 18 % |
+| Mínimo de FEDIAF, perro adulto | 52,1 | 21 % |
+| Frontera de «restricción» del cap.175 del mismo libro | 50 | 20 % |
+| **Techo del renal que aplica el motor** | **62,5** | **25 %** |
+
+Eso **estrecha la pregunta y no la cierra**. Las tres fuentes siguen diciendo
+«evitar dietas bajas en proteína» y un techo sigue siendo un techo — pero ya no se
+puede afirmar que el motor le ponga al cardíaco una **dieta baja en proteína**,
+porque por el número que da la única fuente que da uno, no lo es. La pregunta que
+queda es más fina: **¿basta con estar por encima de 45, o el problema es tener un
+techo puesto por una enfermedad que este perro quizá no tiene en grado grave?**
+
 ⚠️ **SEGUNDA FUENTE, 12 de septiembre, leyendo AAHA 2021 entera.** Ya no es un
 consenso contra un reglamento: AAHA lo dice también, y para las **tres**
 cardiopatías que lista. Su Tabla 8, bloque «Cardiovascular disease», pone en
@@ -1396,13 +1431,85 @@ cardíaca congestiva y enfermedad renal crónica, no «cardiopatía» y «renal�
 más), y qué se hace con el «se requiere más investigación para hacer
 recomendaciones concretas» que la propia fuente añade.
 
-**La pregunta:** con `cardiopatia` o `renal` marcadas y un BCS de 6 o 7, ¿el motor
-debería usar el peso **real** en vez del objetivo? Y si la respuesta es sí, ¿hasta
-qué BCS — la fuente corta en >7/9 — y se le dice a quien firma?
+⚠️ **Y EL CAPÍTULO 183 DEL MISMO LIBRO DA LA FORMA EXACTA DE LA RESPUESTA**, leído
+el mismo día. Lisa Freeman lo escribe distinguiendo el estadio:
+
+> *«Los autores apuntan a un BCS de 4-5/9 para animales sanos y aquellos con
+> enfermedad cardiaca asintomática, y un BCS de 6-7/9 para aquellos con ICC. Un
+> BCS por encima de 7/9 puede tener efectos perjudiciales, por lo que se debe
+> evitar la obesidad, aunque los autores generalmente no intentarán iniciar un
+> plan de pérdida de peso en perros o gatos después de la aparición de la ICC»*
+
+O sea que **no es «con cardiopatía, otra banda»**: es la cardiopatía
+**asintomática** con la banda de siempre (4-5) y la **insuficiencia cardíaca
+congestiva** con la otra (6-7). Y el motor **ya tiene esa distinción hecha**: son
+sus cinco claves por estadio ACVIM —`cardiopatia_a`, `b1` y `b2` son la
+asintomática, y `cardiopatia_c` y `d` la ICC— y **la app ya pregunta el estadio**.
+Si se decide aplicarlo, no hay que preguntar nada nuevo.
+
+**La pregunta, entonces, es más concreta de lo que estaba:**
+
+1. Con `cardiopatia_c` o `cardiopatia_d` marcadas, ¿el motor debe dejar de bajar el
+   peso de referencia mientras el BCS esté entre 6 y 7, y seguir bajándolo a partir
+   de 8?
+2. Y en el renal, ¿con cuál de las dos claves —`renal` o `renal_avanzada`—, dado
+   que la fuente habla de «ERC» sin estadificar y el motor sí estadifica?
+3. ¿Se le dice a quien firma? Mi opinión: sí, y con la frase de la fuente, porque
+   es exactamente el tipo de decisión que un dueño no puede tomar solo.
 
 ⚠️ Es la misma familia que la P-19: el motor aplica al enfermo la regla del perro
 sano y **sale verde**, porque el semáforo mira el menú y no el peso con el que se
 calculó.
+
+---
+
+### P-29 · Tres fuentes piden omega-3 al cardíaco y el motor no le pone ninguno
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (la dosis viene por kg de peso y condicionada a un dato clínico) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo el capítulo 183 de Ettinger |
+
+Las cinco claves de cardiopatía del motor —`cardiopatia` y los cuatro estadios
+ACVIM— **solo llevan un techo de sodio**. Ningún suelo. Y tres fuentes piden
+omega-3:
+
+- **AAHA 2021**, Tabla 8: «High EPA/DHA» en las tres cardiopatías que lista.
+- **Ettinger cap.183** (Freeman y Rush): *«Los autores recomiendan una dosis de EPA
+  de 40 mg/kg y de 25 mg/kg para el DHA en perros y gatos con una ingesta
+  reducida/alterada de alimentos o caquexia»*, y *«la ingesta de ácidos grasos n-3
+  se ha asociado con una mayor supervivencia en perros con ICC»*.
+- **El mismo capítulo**, sobre el mecanismo: la suplementación con aceite de
+  pescado *«puede disminuir la producción de citocinas en perros con ICC y mejorar
+  la caquexia»*.
+
+**MEDIDO el 12-sep**, pasando la dosis de Freeman a la unidad del motor:
+
+| Perro | kcal/día aprox. | EPA+DHA que sale |
+|---|---|---|
+| 10 kg | 619 | **1,05 g/1000 kcal** |
+| 30 kg | 1.410 | **1,38 g/1000 kcal** |
+
+Para comparar: el mínimo general de EPA+DHA del motor es **0,11 g/1000 kcal**, y el
+suelo de EPA que la artrosis ya aplica es **1,0 g/1000 kcal**. La cifra está en el
+mismo orden que un suelo que el motor sabe aplicar hoy.
+
+**Por qué no lo pongo yo.** Dos cosas, y las dos son de las que este repo no
+decide solo:
+
+1. **La dosis está dada por kg de peso corporal, no por 1000 kcal.** Convertirla
+   exige fijar las kcal del perro, y las kcal son justo lo que el motor recibe de
+   fuera. Las dos cifras de la tabla de arriba salen de suponer una actividad
+   normal; con otra actividad, el mismo perro da otro número.
+2. **La fuente la condiciona**: *«en perros y gatos con una ingesta
+   reducida/alterada de alimentos o caquexia»*. Eso es un dato clínico —apetito y
+   masa muscular— que la ficha **no pregunta** (es la P-17).
+
+**La pregunta:** ¿se le pone un suelo de EPA+DHA a la cardiopatía? Y si sí, ¿a
+todas las claves o solo a los estadios C y D, que son la ICC de la que habla la
+fuente? ¿Y con qué cifra, dado que la de la fuente depende del peso y la del motor
+tiene que ser por 1000 kcal?
 
 
 ---

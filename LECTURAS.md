@@ -600,9 +600,9 @@ día: su suposición escrita era que «las fuentes están todas en inglés», y 
 de esta fuente lo había dejado apuntado «para decidirlo».
 
 **Hasta dónde va la lectura.** Leídos enteros los capítulos **167, 170 a 173, 175,
-176 y 177**. Faltan **178 a 194** (y el 174, que es felino), y falta el resto del
-tratado (los otros 332 capítulos), que no se ha abierto. Se dice así para que se
-pueda continuar.
+176, 177 y 183**. Faltan **178 a 182 y 184 a 194** (y el 174, que es felino), y
+falta el resto del tratado (los otros 332 capítulos), que no se ha abierto. Se dice
+así para que se pueda continuar.
 
 ### cap.172, Martha Cline — las ecuaciones de energía, y no son las nuestras
 
@@ -715,6 +715,110 @@ que **las dos** fuentes contienen, y se anota la discrepancia.
 | *«La mayor reserva de MMC en la obesidad proporciona una mayor reserva durante el estado catabólico de la ICC»*, y del cap.176: *«Los perros con insuficiencia cardiaca que aumentaron de peso tuvieron una supervivencia significativamente más larga que aquellos cuyo peso se mantuvo estable o disminuyó»* | Es el respaldo de lo anterior, y es lo que convierte la paradoja en un dato y no en una impresión |
 | Que la pérdida de masa magra **precede** a la de peso: *«Es importante para el diagnóstico de la caquexia y la sarcopenia no depender de la pérdida de peso, ya que la pérdida de MMC se da antes de la pérdida de peso»* | **No se aplica: el motor no ve al perro.** Es el argumento más fuerte que he encontrado para la P-17, que pide preguntar la masa muscular en la ficha: el peso y el BCS juntos pueden no moverse mientras el perro pierde músculo |
 | Que el BCS y el índice de condición muscular «no están directamente relacionados porque un animal puede ser obeso pero tener una pérdida sustancial de músculo» | **Ya recogido** de AAHA y de la WSAVA, y con esta van tres |
+
+### cap.183, Freeman y Rush — el capítulo que más toca al motor de todo lo leído hoy
+
+*Manejo nutricional de la enfermedad cardiaca.* Contesta en parte la P-19, abre la
+forma exacta que tiene que tener la respuesta a la P-28, y señala una ficha del
+catálogo.
+
+#### Lo que ESTRECHA la P-19, y hay que leerlo con el número delante
+
+> *«La restricción de proteínas debe evitarse en perros y gatos con enfermedades
+> cardiacas porque estos pacientes están predispuestos a la pérdida de masa
+> muscular corporal. Las dietas bajas en proteínas, incluso si están diseñadas
+> como dietas cardiacas, dietas diseñadas para enfermedades renales y «dietas
+> sénior», no se recomiendan a menos que exista una disfunción renal grave. De lo
+> contrario, se recomienda un alimento nutricionalmente equilibrado de buena
+> calidad que proporcione al menos los niveles mínimos de proteína canina (4,5
+> g/100 kcal)»*
+
+Es la **tercera** fuente que lo dice —después del consenso ACVIM y de la Tabla 8
+de AAHA— y la **primera que pone una cifra**: al menos **4,5 g/100 kcal**, o sea
+**45 g/1000 kcal**, que es el mínimo de la AAFCO.
+
+Y esa cifra cambia la pregunta, porque el techo de proteína que el motor aplica al
+renal es **62,5 g/1000 kcal**:
+
+| | g/1000 kcal | % de las kcal |
+|---|---|---|
+| Suelo que nombra esta fuente (mínimo AAFCO) | 45 | 18 % |
+| Mínimo de FEDIAF, perro adulto | 52,1 | 21 % |
+| Frontera de «restricción» del cap.175 del mismo libro | 50 | 20 % |
+| **Techo del renal que aplica el motor** | **62,5** | **25 %** |
+
+O sea que **el techo del motor está por encima de las tres fronteras** que las
+fuentes nombran. La P-19 no desaparece —las tres fuentes dicen «evitar dietas
+bajas en proteína» y un techo de 62,5 sigue siendo un techo— pero deja de poder
+decirse que el motor le pone al cardíaco una dieta baja en proteína: por el número
+que da esta fuente, no lo es. Queda anotado en la P-19.
+
+#### Y la forma exacta que tiene que tener la respuesta a la P-28
+
+> *«Los autores apuntan a un BCS de 4-5/9 para animales sanos y aquellos con
+> enfermedad cardiaca asintomática, y un BCS de 6-7/9 para aquellos con ICC. Un
+> BCS por encima de 7/9 puede tener efectos perjudiciales, por lo que se debe
+> evitar la obesidad, aunque los autores generalmente no intentarán iniciar un
+> plan de pérdida de peso en perros o gatos después de la aparición de la ICC»*
+
+⚠️ **Esto no es «con cardiopatía, otra banda»: distingue la cardiopatía
+ASINTOMÁTICA de la insuficiencia cardíaca congestiva**, y el motor **ya tiene esa
+distinción hecha** — son sus cinco claves por estadio ACVIM, y la app ya pregunta
+el estadio. `cardiopatia_a`, `b1` y `b2` son la asintomática (banda 4-5, la de
+siempre) y `cardiopatia_c` y `d` son la ICC (banda 6-7). O sea que si se decide
+aplicarlo, **no hace falta preguntar nada nuevo**. Va a la P-28.
+
+#### Lo que el motor NO hace y tres fuentes piden
+
+`cardiopatia` y sus cinco claves por estadio **solo llevan un techo de sodio** —
+ningún suelo. Y tres fuentes piden omega-3:
+
+- AAHA 2021, Tabla 8: «High EPA/DHA» en las tres cardiopatías que lista.
+- Este capítulo: *«Los autores recomiendan una dosis de EPA de 40 mg/kg y de 25
+  mg/kg para el DHA en perros y gatos con una ingesta reducida/alterada de
+  alimentos o caquexia»*, y *«la ingesta de ácidos grasos n-3 se ha asociado con
+  una mayor supervivencia en perros con ICC»*.
+- Y el mismo capítulo: la suplementación con aceite de pescado *«puede disminuir
+  la producción de citocinas en perros con ICC y mejorar la caquexia»*.
+
+**MEDIDO el 12-sep**, pasando esa dosis a la unidad del motor: para un perro de 10
+kg (unas 619 kcal) son **1,05 g de EPA+DHA/1000 kcal**, y para uno de 30 kg (unas
+1.410 kcal), **1,38 g**. Para comparar, el mínimo general de EPA+DHA del motor es
+**0,11 g/1000 kcal** y el suelo de EPA que ya aplica la artrosis es **1,0 g**. O
+sea que la cifra cabe en el mismo orden de magnitud que un suelo que el motor ya
+sabe aplicar.
+
+**No lo aplico**, y por dos motivos escritos: la dosis está dada **por kg de peso**
+y no por 1000 kcal, así que convertirla exige fijar las kcal del perro y eso es
+justo lo que el motor recibe de fuera; y la fuente la condiciona a *«perros y gatos
+con una ingesta reducida/alterada de alimentos o caquexia»*, que es un dato clínico
+que la ficha no pregunta. Va a `PREGUNTAS_ABIERTAS.md` con la medida.
+
+#### Y una ficha del catálogo, señalada con nombre
+
+> *«El aceite de hígado de bacalao y el aceite de linaza no deben usarse como
+> fuentes de ácidos grasos n-3.»*
+
+Las dos están en el catálogo, en Extras. Comprobado el 12-sep:
+
+- **Aceite de linaza**: EPA 0, DHA 0, linolénico 55,47 g/100 g. El motor **no puede**
+  usarlo como fuente de EPA+DHA aunque quisiera, porque su EPA y su DHA son cero.
+  Coincide con la fuente sin que haya que tocar nada.
+- **Aceite de hígado de bacalao**: EPA 8,39 y DHA 11,4 g/100 g, **y además vitamina
+  A 20.000 µg y vitamina D 210 µg por 100 g**. Ahí sí es una fuente de omega-3 que
+  el solver puede elegir, y el motivo por el que la fuente lo desaconseja es
+  exactamente esa carga de vitaminas. **El motor ya la topa por otro lado** —el
+  máximo de vitamina A de FEDIAF y el tope crónico de vitamina D son restricciones
+  duras del solver—, así que el riesgo está cubierto por la puerta de la seguridad
+  y no por la del ingrediente. Queda escrito porque es la primera vez que una
+  fuente nombra una ficha nuestra y dice «esta no»
+
+| Lo demás del capítulo | Decisión |
+|---|---|
+| Sodio: *«los autores recomiendan solo una restricción leve de sodio (<100 mg/100 kcal) en cardiopatías asintomáticas»* y *«Cuando comienzan los primeros signos de la ICC, se recomienda realizar una restricción adicional de sodio (<80 mg de sodio/100 kcal)»* | **El motor ya está por debajo de las dos**: 738,6 mg/1000 kcal en `cardiopatia`, 625 en el estadio C y 480 en el D, contra los 1.000 y 800 de esta fuente. ⚠️ Pero ojo con la dirección: la fuente **avisa de restringir de más** en la asintomática, porque activa el sistema renina-angiotensina-aldosterona, y nuestra `cardiopatia` genérica aprieta a 738,6 donde ellos empezarían en 1.000 |
+| Taurina: la deficiencia canina se ha asociado *«a dietas bajas en proteínas, dietas de cordero y arroz, y algunas dietas ricas en fibra con la deficiencia de taurina, así como las dietas bajas en metionina»* | **Tercera fuente que nombra el cordero**, tras FEDIAF y AAHA. Refuerza la P-18, que sigue parada porque Spitze 2003 no está en el repo. Y nombra además la **fibra alta** y la **metionina baja**, que el motor no cruza con nada |
+| Que en el perro *«se cree que los perros son capaces de sintetizar cantidades adecuadas de taurina, por ello no se considera un requisito en las dietas caninas»* | **Ya cubierto**: por eso la taurina no está entre los 43 requisitos y sí como suelo de `dcm_taurina_respondedora` |
+| Que las deficiencias nutricionales hoy son raras *«a menos que los propietarios usen dietas caseras, vegetarianas o cualquier forma de nutrición desequilibrada»* | Es la **quinta** aparición del aviso sobre la comida casera y cruda. A la P-20 |
 
 ### Y la cuarta fuente que desaconseja lo que hacemos
 
