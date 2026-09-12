@@ -51,7 +51,9 @@ from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
 from verificar import verificar as verificar_v2
 from verificar import (peso_objetivo_desde_bcs, BCS_ESCALA_SATURADA,
                        BCS_NEUTRO as BCS_NEUTRO_MAIN,
-                       BCS_IDEAL_MIN as BCS_IDEAL_MIN_MAIN)
+                       BCS_IDEAL_MIN as BCS_IDEAL_MIN_MAIN,
+                       EXCESO_BCS_9 as EXCESO_BCS_9_MAIN,
+                       TOPE_CORRECCION_AL_ALZA as TOPE_AL_ALZA_MAIN)
 # ⚠️ El DER por kg de peso metabólico, que es lo que dispara el escalado de los
 # mínimos. Se importa de `verificar` y no se recalcula aquí: es el único sitio
 # que sabe hacerlo, y dos copias de esta cuenta serían dos criterios.
@@ -6934,8 +6936,37 @@ def endpoint_vocabulario():
             "escala": "1 a 9",
             "ideal": BCS_NEUTRO_MAIN,
             "pct_por_punto": der_BCS_PCT_POR_PUNTO,
+            # ⚠️ LAS CINCO CIFRAS QUE DECIDEN EL PESO, SERVIDAS COMO NUMEROS
+            # (12 de septiembre). Antes aqui solo viajaban `ideal` y
+            # `pct_por_punto`, y las otras tres estaban CONTADAS EN PROSA en el
+            # campo `ojo` de aqui abajo -- «FEDIAF dice >45 %». Una frase no se
+            # lee desde JavaScript, asi que la app se hizo su propia copia en
+            # `src/bcs.js`: `EXCESO_BCS_9 = 0.45`, `BCS_ESCALA_SATURADA = 9` y
+            # la banda ideal. Dos copias de los numeros que deciden cuanto come
+            # un perro con sobrepeso.
+            #
+            # Elena, el mismo dia: «te dije que la app no puede tener datos
+            # sueltos, todo le tiene que llegar del motor».
+            #
+            # Y no es hipotetico: las dos copias YA se habian separado. La
+            # prueba de punta a punta esperaba 21,43 kg para un perro de 30 kg
+            # con BCS 9 -- la recta del 10 % por punto, 30/1,40 -- y el motor
+            # devuelve 20,69, que es el «>45 %» de la Tabla VII-2 de FEDIAF
+            # (30/1,45). El numero del motor es el bueno; lo que se habia
+            # quedado atras era la copia. Se vio al arreglar el CORS, porque
+            # esa prueba llevaba un dia sin poder hablar con la API.
+            #
+            # La cadena es FUENTE manda -> MOTOR la implementa -> APP la ofrece.
+            # Aqui se cierra el ultimo tramo: la app ya no tiene que saberselas.
+            "ideal_min": BCS_IDEAL_MIN_MAIN,
+            "escala_saturada": BCS_ESCALA_SATURADA,
+            "exceso_en_escala_saturada": EXCESO_BCS_9_MAIN,
+            "tope_correccion_al_alza": TOPE_AL_ALZA_MAIN,
             "ojo": ("El BCS 9 NO sigue la recta del 10 % por punto: FEDIAF dice «>45 %» y la "
-                    "recta da 40. Se aplica 45 y la estimacion es una COTA INFERIOR. || Los "
+                    "recta da 40. Se aplica `exceso_en_escala_saturada` (0,45) y la estimacion "
+                    "es una COTA INFERIOR. || La banda ideal es de `ideal_min` a `ideal` (4 a 5) "
+                    "y dentro de ella NO se corrige el peso. || La correccion hacia arriba, en "
+                    "el perro delgado, se topa en `tope_correccion_al_alza`. || Los "
                     "cinco escalones del dueño son los BCS de `der.BCS_DESDE_CONDICION`; el "
                     "veterinario pone el BCS exacto, que es el que manda para calcular."),
             "escalones_del_dueno": {str(i): b for i, b in sorted(BCS_DESDE_CONDICION.items())},

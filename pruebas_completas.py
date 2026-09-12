@@ -12693,6 +12693,13 @@ import json as _json89
 from catalogo_menus import CATALOGO as _CAT89
 from der import (RAZAS_CIFRA_FEDIAF as _RFED89, RAZAS_MAS_GASTO as _RMAS89,
                  RAZAS_MENOS_GASTO as _RMEN89, BCS_DESDE_CONDICION as _BCSC89)
+# Las constantes VIVAS del BCS, para comparar contra ellas lo que se sirve.
+# Se importan del motor y no se escriben aqui: un numero escrito en la prueba
+# seria una TERCERA copia, y el fallo que esto vigila es justo tener dos.
+from verificar import (BCS_IDEAL_MIN as _BCS_IDEAL_MIN_89,
+                       BCS_ESCALA_SATURADA as _BCS_SATURADA_89,
+                       EXCESO_BCS_9 as _EXCESO_BCS9_89,
+                       TOPE_CORRECCION_AL_ALZA as _TOPE_ALZA_89)
 import razas as _razas89
 import requisitos as _req89
 from verificar import EQUIVALENCIA as _EQV89
@@ -12816,6 +12823,41 @@ else:
     if str(_cc89.get("pct_por_punto")) not in ("0.1",):
         fallos.append(f"BLOQUE89: el % por punto de BCS servido es {_cc89.get('pct_por_punto')} "
                       f"y `der.BCS_PCT_POR_PUNTO` es 0.10")
+
+    # 4c-bis. ⚠️ LAS CINCO CIFRAS QUE DECIDEN EL PESO, SERVIDAS COMO NUMEROS
+    # (12 de septiembre). Hasta hoy `/vocabulario` servia dos —`ideal` y
+    # `pct_por_punto`— y las otras tres estaban CONTADAS EN PROSA dentro del
+    # campo `ojo` («FEDIAF dice >45 %»). Una frase no se lee desde JavaScript,
+    # asi que la app se hizo su propia copia en `src/bcs.js`.
+    #
+    # Y las dos copias YA se habian separado: la prueba de punta a punta del
+    # otro repo esperaba 21,43 kg para un perro de 30 kg con BCS 9 —la recta
+    # del 10 % por punto— y el motor devuelve 20,69, que es el «>45 %» de la
+    # Tabla VII-2. El motor tenia razon; lo que se habia quedado atras era la
+    # copia. Se vio al arreglar el CORS, porque esa prueba llevaba un dia sin
+    # poder hablar con la API.
+    #
+    # Elena: «te dije que la app no puede tener datos sueltos, todo le tiene que
+    # llegar del motor». Esto comprueba que llegan, y que llegan IGUALES: se
+    # compara contra la constante VIVA del motor, no contra un numero escrito
+    # aqui, que seria una tercera copia.
+    for _clave89, _vivo89, _que89 in (
+            ("ideal_min", _BCS_IDEAL_MIN_89, "el borde delgado de la banda ideal"),
+            ("escala_saturada", _BCS_SATURADA_89, "el BCS en el que la recta deja de valer"),
+            ("exceso_en_escala_saturada", _EXCESO_BCS9_89, "el «>45 %» de la Tabla VII-2"),
+            ("tope_correccion_al_alza", _TOPE_ALZA_89, "el tope de la correccion al alza")):
+        _serv89 = _cc89.get(_clave89)
+        if _serv89 is None:
+            fallos.append(
+                f"BLOQUE89: `/vocabulario` no sirve «{_clave89}» ({_que89}). Si el motor no lo "
+                f"sirve, la app se lo guarda a mano -- y esa copia se separa: paso con el BCS 9, "
+                f"donde la app se quedo en el 40 % de la recta y el motor ya aplicaba el 45 % de "
+                f"FEDIAF")
+        elif abs(float(_serv89) - float(_vivo89)) > 1e-9:
+            fallos.append(
+                f"BLOQUE89: `/vocabulario` sirve {_clave89}={_serv89} y el motor aplica "
+                f"{_vivo89}. Es el mismo numero: si se separan, el mismo perro tiene dos pesos "
+                f"objetivo segun quien mire")
 
     # 4d. Los DOS registros, en todo lo que se sirve con etiquetas.
     #
