@@ -1167,19 +1167,60 @@ app = FastAPI(title="Rawku API")
 # desarrollar. Si algún día el dominio cambia, se cambia AQUÍ y se nota
 # enseguida: la app deja de poder llamar, que es un fallo ruidoso y no
 # uno callado.
+# ⚠️ Y LOS PUERTOS DE DESARROLLO NO SE ESCRIBEN A MANO (12 septiembre).
+#
+# CASO REAL, y el fallo fue de quien cerró el CORS el día anterior: la lista
+# decía `localhost:5173`, `localhost:3000` y `127.0.0.1:5173`, y ya está.
+# Medido contra producción, cinco de siete orígenes de desarrollo quedaban
+# fuera:
+#
+#     127.0.0.1:5179   BLOQUEADO   <- playwright.real.config.js
+#     127.0.0.1:5178   BLOQUEADO   <- playwright.config.js
+#     localhost:5174   BLOQUEADO   <- Vite, cuando el 5173 está ocupado
+#     localhost:4173   BLOQUEADO   <- `vite preview`
+#     127.0.0.1:3000   BLOQUEADO   <- estaba `localhost:3000`, no la IP
+#
+# Los dos primeros son los que duelen: `playwright.real.config.js` sirve la
+# app en el 5179 y levanta ESTA API en el 8012, y es la única suite que
+# comprueba que la app y el motor hablan del mismo perro. La había dejado
+# sin poder llamar.
+#
+# Y UN BLOQUEO DE CORS NO SE VE, que es lo que lo hace tan caro: el navegador
+# ni siquiera deja leer la respuesta, `fetch` revienta con un `ERR_FAILED`
+# sin cuerpo y sin código, y `fetchConTimeout` no puede distinguirlo de un
+# servidor caído. La app dice «Error de conexión. Inténtalo de nuevo.» — o
+# sea que un fallo de configuración se disfraza de problema de red, y se
+# busca donde no está.
+#
+# Así que la lista enumera solo lo que es FIJO (el dominio de producción) y
+# lo variable va por patrón. Enumerar puertos es apostar a acertar la lista
+# entera, y esa apuesta ya se perdió una vez.
+#
+# ¿Por qué es seguro abrir localhost a cualquier puerto? Porque el CORS
+# protege de que UNA WEB CUALQUIERA haga que el navegador de quien la visita
+# llame aquí y lea la respuesta, y el origen de esa web es su dominio, nunca
+# el localhost de la víctima. Para servir algo desde el localhost de otra
+# persona hay que estar ya dentro de su ordenador, y entonces el CORS es el
+# último de sus problemas. Lo que NO se abre es `http://` en un dominio de
+# verdad, que sí sería un descuido.
 ORIGENES_PERMITIDOS = [
     "https://rawku.app",
     "https://www.rawku.app",
-    "http://localhost:5173",   # Vite en desarrollo
-    "http://localhost:3000",
-    "http://127.0.0.1:5173",
 ]
+
+# Un solo patrón, porque `CORSMiddleware` solo acepta uno. Dos alternativas:
+#   · las vistas previas de Vercel: canislab-web-<lo-que-sea>.vercel.app
+#   · desarrollo en la máquina de uno, con CUALQUIER puerto, en las tres
+#     formas que manda un navegador: localhost, 127.0.0.1 y [::1]
+ORIGENES_POR_PATRON = (
+    r"https://[a-z0-9-]+\.vercel\.app"
+    r"|http://(?:localhost|127\.0\.0\.1|\[::1\])(?::\d{1,5})?"
+)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ORIGENES_PERMITIDOS,
-    # Las vistas previas de Vercel: canislab-web-<lo-que-sea>.vercel.app
-    allow_origin_regex=r"https://[a-z0-9-]+\.vercel\.app",
+    allow_origin_regex=ORIGENES_POR_PATRON,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
@@ -5415,6 +5456,28 @@ def verificar():
         "firma_de_pautas": {
             "clave_configurada": bool(_clave_del_sello()),
             "se_puede_firmar": bool(_clave_del_sello()),
+        },
+        # ⚠️ AÑADIDO (12 septiembre) — PORQUE UN BLOQUEO DE CORS NO SE VE.
+        #
+        # El navegador no deja leer la respuesta de un origen que no está
+        # permitido: `fetch` revienta con un `ERR_FAILED` sin cuerpo ni
+        # código, indistinguible de un servidor caído, y la app acaba
+        # diciendo «Error de conexión». O sea que un fallo de configuración
+        # se disfraza de problema de red y se busca donde no está. Pasó el
+        # 11 de septiembre: la lista se escribió a mano y dejó fuera los dos
+        # puertos de Playwright.
+        #
+        # Esto no arregla el bloqueo, lo hace VISIBLE: abres /verificar en el
+        # móvil y ves en diez segundos si tu origen cabe, en vez de buscar
+        # una caída que no existe. Es el mismo motivo por el que existe el
+        # resto de este endpoint.
+        "cors": {
+            "origenes_fijos": ORIGENES_PERMITIDOS,
+            "patron": ORIGENES_POR_PATRON,
+            "en_cristiano": ("rawku.app y sus vistas previas de Vercel, más "
+                             "localhost/127.0.0.1/[::1] con cualquier puerto para "
+                             "desarrollo. Cualquier otro origen se bloquea, y el "
+                             "navegador lo cuenta como un error de red."),
         },
     }
 

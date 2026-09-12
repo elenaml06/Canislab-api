@@ -419,6 +419,33 @@ primeros llegaban a datos de otra persona. Lo vigila entero el BLOQUE 93.
    cuenta de nadie — para eso hace falta el token —, pero deja de ser
    inofensivo en cuanto un endpoint se fíe de una cookie, y ese día nadie
    iba a volver aquí.
+   ⚠️ **Y al cerrarlo se rompió, por escribir los puertos a mano** (arreglado
+   el 12 de septiembre). La lista decía `localhost:5173`, `localhost:3000` y
+   `127.0.0.1:5173`. Medido contra producción, **cinco de siete orígenes de
+   desarrollo quedaban fuera**, y los dos que más dolían eran los de
+   Playwright: `playwright.real.config.js` sirve la app en el **5179** y
+   levanta esta API en el 8012, o sea la única suite que comprueba que la app
+   y el motor hablan del mismo perro. También faltaban el 5174 (Vite cuando
+   el 5173 está ocupado), el 4173 (`vite preview`) y `127.0.0.1:3000`, porque
+   estaba puesta la forma con nombre y no la de IP.
+   **Y un bloqueo de CORS no se ve**, que es lo que lo hace caro: el
+   navegador no deja leer la respuesta, `fetch` revienta con un `ERR_FAILED`
+   sin cuerpo ni código, `fetchConTimeout` no lo distingue de un servidor
+   caído, y la app dice «Error de conexión». Un fallo de configuración
+   disfrazado de problema de red se busca donde no está.
+   Ahora la lista enumera solo lo FIJO (el dominio de producción) y lo
+   variable va por patrón: las vistas previas de Vercel, y
+   localhost/127.0.0.1/`[::1]` con **cualquier** puerto. Abrir localhost es
+   seguro porque el CORS protege de que una web cualquiera haga que tu
+   navegador llame aquí, y el origen de esa web es su dominio, nunca tu
+   localhost. Se sirve además en `/verificar` → `cors`, para poder ver desde
+   el móvil si tu origen cabe en vez de buscar una caída que no existe.
+   La prueba vieja miraba un origen bueno y uno malo, **ninguno de
+   desarrollo**, así que confirmó lo que su autor ya creía. Ahora el BLOQUE 93
+   prueba los puertos reales de los dos ficheros de Playwright, uno
+   cualquiera, y cinco impostores (`localhost.malicioso.com`,
+   `127.0.0.1.evil.com`, `rawku.app.evil.com`…) que un patrón escrito de más
+   dejaría entrar.
 6. **`/der` cogía el índice de actividad sin mirarlo.** Un `-1` no
    revienta: en Python cuenta desde el final y elige «trabajo», el que más
    kcal da. De ese DER salen las kcal del menú y el semáforo verifica

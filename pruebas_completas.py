@@ -9168,6 +9168,57 @@ if _r_b93.headers.get("access-control-allow-origin") != "https://rawku.app":
     fallos.append("BLOQUE93: rawku.app NO recibe permiso de CORS. La app se quedaría "
                   "sin poder llamar a la API.")
 
+# ⚠️ Y AQUÍ ESTABA EL HUECO DE VERDAD (12 septiembre). Esta prueba miraba UN
+# origen bueno y UNO malo, y ninguno de desarrollo — así que no vio que la
+# lista, escrita a mano el día anterior, dejaba fuera cinco de siete. Los dos
+# que más dolían son los de Playwright: `playwright.real.config.js` sirve la
+# app en el 5179 y levanta ESTA API, y es la única suite que comprueba que la
+# app y el motor hablan del mismo perro.
+#
+# Un test que solo prueba el caso que el autor tenía en la cabeza confirma lo
+# que el autor ya creía. Ahora se prueban los puertos REALES de los ficheros
+# de configuración, y uno cualquiera, para que enumerar vuelva a fallar.
+_DESARROLLO_B93 = [
+    ("http://127.0.0.1:5179", "el de playwright.real.config.js, que llama a esta API"),
+    ("http://127.0.0.1:5178", "el de playwright.config.js"),
+    ("http://localhost:5173", "Vite por defecto"),
+    ("http://localhost:5174", "Vite cuando el 5173 está ocupado"),
+    ("http://localhost:4173", "`vite preview`"),
+    ("http://127.0.0.1:3000", "la forma con IP, que faltaba"),
+    ("http://localhost:61234", "un puerto cualquiera: enumerar no puede volver a valer"),
+    ("http://[::1]:5173", "localhost en IPv6, que es lo que manda algún navegador"),
+]
+for _origen_b93, _por_que_b93 in _DESARROLLO_B93:
+    _r_b93 = _c.get("/", headers={"Origin": _origen_b93})
+    if _r_b93.headers.get("access-control-allow-origin") != _origen_b93:
+        fallos.append(
+            f"BLOQUE93: {_origen_b93} ({_por_que_b93}) NO recibe permiso de CORS. "
+            f"Y un bloqueo de CORS no se ve: `fetch` revienta con ERR_FAILED sin "
+            f"cuerpo, así que la app lo cuenta como «error de conexión» y el fallo "
+            f"se busca en la red en vez de aquí.")
+
+# Una vista previa de Vercel sí, y un impostor que se le parece NO. Los tres
+# impostores son los que rompería un patrón escrito de más: un dominio que
+# ACABA en algo permitido no es ese algo.
+if _c.get("/", headers={"Origin": "https://canislab-web-abc123.vercel.app"}
+          ).headers.get("access-control-allow-origin") != "https://canislab-web-abc123.vercel.app":
+    fallos.append("BLOQUE93: una vista previa de Vercel no recibe permiso de CORS.")
+for _impostor_b93 in ("http://localhost.malicioso.com", "http://127.0.0.1.evil.com",
+                      "https://rawku.app.evil.com", "https://evil-vercel.app",
+                      "http://rawku.app"):
+    if _c.get("/", headers={"Origin": _impostor_b93}
+              ).headers.get("access-control-allow-origin"):
+        fallos.append(f"BLOQUE93: {_impostor_b93} recibe permiso de CORS. El patrón "
+                      f"está escrito de más y se le cuela un impostor.")
+
+# Y que la lista de fijos no vuelva a llevar puertos dentro: si alguien añade
+# uno a mano, el problema del 11 de septiembre está de vuelta.
+for _fijo_b93 in _api.ORIGENES_PERMITIDOS:
+    if "localhost" in _fijo_b93 or "127.0.0.1" in _fijo_b93:
+        fallos.append(f"BLOQUE93: {_fijo_b93} está enumerado a mano en "
+                      f"ORIGENES_PERMITIDOS. Los puertos de desarrollo van por "
+                      f"patrón: enumerarlos ya dejó fuera cinco de siete.")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
