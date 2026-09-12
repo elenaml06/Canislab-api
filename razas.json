@@ -6,7 +6,7 @@
   "de_donde_salen_estas_cifras": "⚠️ LAS 255 DE ORIGEN NO TIENEN FUENTE PUBLICADA, y eso sigue siendo verdad para la mayoria. Venian escritas en `src/App.jsx` desde antes de que hubiera repo de fuentes, y el historial de git NO puede decir de donde salieron: el primer commit de ese repo (8-sep-2026) ya las trae dentro. || ⚠️ COMPROBADO EL 12-sep-2026 CONTRA LA AKC, Y NO ES DE AHI: emparejadas 35 razas que estan en las dos listas, solo 15 cuadran dentro de un 8 % en los dos extremos (el Airedale es 22,7-31,8 en la AKC y 19-25 aqui). Las primeras que se miraron coincidian porque eran las famosas; con la muestra entera se cae. || Ninguna de las cuatro fuentes del motor (FEDIAF, SACN5, NRC 2006, Fascetti) publica una tabla de peso por raza: FEDIAF solo nombra DOS razas con cifra de energia propia (Gran Danes y Terranova, Tabla VII-7) y esas dos estan en `der.RAZAS_CIFRA_FEDIAF`.",
   "para_que_las_usa_el_motor": "Hoy para nada directamente: el peso adulto esperado lo calcula la app (`der.js`) y lo manda en `peso_adulto_esperado`. Estan aqui para poder COMPROBAR ese numero y para que la app pueda servirse de `GET /vocabulario` en vez de su copia.",
   "como_se_comprueba": "El BLOQUE 89 de `pruebas_completas.py`: que los seis tamaños sean los seis del catalogo de menus, que ningun peso medio se salga de su propio rango, que no haya nombres repetidos, y que las dos razas con cifra propia de FEDIAF esten aqui con ese nombre exacto. El lado de la app lo vigila `tests/vocabulario.spec.js` en canislab-web, que compara fila a fila.",
-  "cuantas": 266,
+  "cuantas": 268,
   "tamanos": [
    "Toy",
    "Mini",
@@ -16,7 +16,7 @@
    "Gigante"
   ],
   "medido": "11 de septiembre de 2026, extraidas de `const RAZAS` de `src/App.jsx`. Ampliadas y corregidas contra el BOE el 12 de septiembre.",
-  "las_espanolas_si_tienen_fuente": "⚠️ 12-sep-2026, y es la unica parte de esta tabla que hoy tiene fuente, ademas LEGAL. Los prototipos raciales de las razas caninas españolas se publican en el BOE: Real Decreto 558/2001, anexo «Razas caninas españolas» (texto consolidado BOE-A-2001-11347), leido entero. Es la misma clase de fuente que el Reglamento (UE) 2020/354 -- ley --, y las filas que salen de ahi llevan su `fuente` y su `cita` literal. || MEDIDO: el anexo nombra 33 razas españolas y da prototipo a unas 26; de esas, **15 traen un peso explicito en kg** y el resto solo da ALZADA A LA CRUZ, que es como se escribe un estandar de raza y por eso la FCI tampoco servia. || Siete no tienen ni prototipo en el consolidado, solo el nombre: Pachon Navarro, Perro de Agua del Cantabrico, Perro Leones de Pastor, Podenco Paternino, Podenco Valenciano, Valdueza y Villano de las Encartaciones. Esas NO se añaden: meterlas exigiria inventarles el peso, y eso no lo hace el asistente.",
+  "las_espanolas_si_tienen_fuente": "⚠️ 12-sep-2026, y es la unica parte de esta tabla que hoy tiene fuente, ademas LEGAL. Los prototipos raciales de las razas caninas españolas se publican en el BOE: Real Decreto 558/2001, anexo «Razas caninas españolas» (texto consolidado BOE-A-2001-11347), leido entero. Es la misma clase de fuente que el Reglamento (UE) 2020/354 -- ley --, y las filas que salen de ahi llevan su `fuente` y su `cita` literal. || MEDIDO: el anexo nombra 33 razas españolas y da prototipo a unas 26; de esas, **15 traen un peso explicito en kg** y el resto solo da ALZADA A LA CRUZ, que es como se escribe un estandar de raza y por eso la FCI tampoco servia. || Siete no tienen ni prototipo en el consolidado, solo el nombre: Pachon Navarro, Perro de Agua del Cantabrico, Perro Leones de Pastor, Podenco Paternino, Podenco Valenciano, Valdueza y Villano de las Encartaciones. Esas NO se añaden: meterlas exigiria inventarles el peso, y eso no lo hace el asistente. || ⚠️ AMPLIADO EL 12-sep POR LA NOCHE: dos de las siete que el BOE nombraba SIN describir sí tienen estandar, pero publicado por su COMUNIDAD, no por el Estado -- el registro oficial del Ministerio (ARCA) dice cual aprueba el de cada raza. El Pachon Navarro lo aprueba Navarra (Orden Foral 270/2006) y el Perro Leones de Pastor Castilla y Leon (Orden AYG/1170/2018), y los dos dan peso en kg. Con eso las que se nombran sin describir bajan de siete a cinco. || Y el Mastin del Pirineo sigue SIN peso con fuente: su decreto de Aragon (BOA 124/2002) reconoce la raza y crea su libro genealogico pero no trae prototipo con pesos, y el estandar FCI n.o 92, leido entero, SOLO da alzada y dice que no hay limite maximo de talla. Los 80 kg que circulan son de paginas de criadores.",
   "lo_que_se_hizo_el_12sep2026": "· Se AÑADIERON 11 razas españolas que la ficha no ofrecia, cada una con su peso del BOE y su cita. En una app española, quien tenia un Ratonero Bodeguero, un Can de Palleiro o un Perro de Pastor Vasco tenia que marcar «mestizo». · Se CORRIGIERON dos que no cuadraban con su prototipo oficial: el Presa Canario tenia el maximo en 65 kg y el prototipo dice 57; el Podenco Andaluz empezaba en 16 kg y el prototipo tiene TRES tallas, y la chica baja a 5. · Se CONFIRMARON tres que cuadran al kilo con el BOE (Alano Español, Ca de Bou y Perro de Agua Español): no cambian de numero, ganan la cita que les faltaba."
  },
  "razas": [
@@ -1071,6 +1071,15 @@
    "pesoMedio": 41
   },
   {
+   "nombre": "Pachón Navarro",
+   "tamano": "Grande",
+   "pesoMin": 20,
+   "pesoMax": 30,
+   "pesoMedio": 25.0,
+   "fuente": "Orden Foral 270/2006, de 14 de agosto, del Consejero de Agricultura, Ganadería y Alimentación de Navarra, por la que se reconoce el estándar racial y funcional de la raza canina Pachón Navarro (BON n.º 115, 25-09-2006). Leída el 12-sep-2026.",
+   "cita": "«Entre 20 y 30 Kg.»"
+  },
+  {
    "nombre": "Papillón",
    "tamano": "Toy",
    "pesoMin": 3.5,
@@ -1239,6 +1248,15 @@
    "pesoMin": 15,
    "pesoMax": 24,
    "pesoMedio": 19.5
+  },
+  {
+   "nombre": "Perro Leonés de Pastor",
+   "tamano": "Mediano",
+   "pesoMin": 15,
+   "pesoMax": 21,
+   "pesoMedio": 18.0,
+   "fuente": "Orden AYG/1170/2018, de 16 de octubre, de la Junta de Castilla y León, por la que se aprueba el estándar racial de la raza Perro Leonés de Pastor (BOCYL, 05-11-2018). Leída el 12-sep-2026.",
+   "cita": "«En machos de 17 a 21 Kg y en hembras de 15 a 19 kg.»"
   },
   {
    "nombre": "Perro Lobo Checoslovaco",
