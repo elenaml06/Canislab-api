@@ -1511,6 +1511,63 @@ todas las claves o solo a los estadios C y D, que son la ICC de la que habla la
 fuente? ¿Y con qué cifra, dado que la de la fuente depende del peso y la del motor
 tiene que ser por 1000 kcal?
 
+---
+
+### P-30 · El renal pide un ratio calcio:fósforo de 1,1-1,3 y el motor tiene el mecanismo hecho sin usar
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es una restricción clínica nueva sobre una patología formulable) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo el capítulo 184 de Ettinger |
+
+El capítulo 184 del tratado de Ettinger —*Manejo nutricional de las afecciones
+renales*, de **Joseph W. Bartges**— da las dos cifras del fósforo renal en la misma
+frase:
+
+> *«El contenido de fósforo en la dieta para el manejo de la ERC debe ser del
+> 0,2-0,5 % (en base a materia seca) mientras se mantiene una relación de Ca:P de
+> 1,1-1,3:1»*
+
+**La primera mitad ya está aplicada y cuadra.** El 0,2-0,5 % de materia seca son
+**500 a 1.250 mg/1000 kcal** a la densidad de 4.000 kcal/kg MS con la que convierte
+todo el repo, y el techo de fósforo que el motor aplica al renal es **1.200**:
+dentro de la banda, en su extremo alto.
+
+**La segunda mitad no está aplicada, y el motor tiene el mecanismo hecho.** El
+bloque `ratios` de `patologias.json` existe desde el 10 de septiembre precisamente
+para esto —una patología que pide su propio cociente entre dos nutrientes— y se
+estrenó con el Ca:P de 1,1-2,0 del oxalato. `renal` no tiene ninguno.
+
+**MEDIDO el 12-sep** sobre los 216 menús del catálogo precalculado:
+
+| Ca:P | Menús |
+|---|---|
+| dentro de **1,1-1,3** | **130** |
+| por debajo de 1,1 | 58 |
+| por encima de 1,3 | 28 |
+
+O sea que **seis de cada diez menús ya cumplirían**, que es una situación muy
+distinta de la del ratio de la TVT (P-23), donde solo 25 de 216 caían dentro. Aquí
+la banda es estrecha por arriba y por abajo, así que apretar los dos lados a la vez
+puede dejar sin menú a perros concretos: eso hay que medirlo con el solver antes de
+encenderlo, como se hizo con la vitamina E.
+
+⚠️ **Y hay que mirarlo junto a los otros tres Ca:P que ya conviven en el repo**, que
+son cuatro bandas para la misma cosa:
+
+| Fuente | Banda | Estado |
+|---|---|---|
+| FEDIAF, perro sano | 1,0-2,0 | **aplicada** |
+| SACN5, urolitos de calcio | 1,1-2,0 | **aplicada** en `oxalato` |
+| Bartges, enfermedad renal crónica | **1,1-1,3** | **no aplicada** |
+| TVT, perro sano | 1,3-1,5 | **no aplicada** (P-23) |
+
+**La pregunta:** ¿se le pone a `renal` el ratio 1,1-1,3? Y antes de eso, la que
+hace falta para contestarla: ¿se mide con el solver cuántos perros se quedan sin
+menú al apretar la banda por los dos lados, como se hizo con el suelo de vitamina
+E?
+
 
 ---
 

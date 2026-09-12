@@ -600,9 +600,9 @@ día: su suposición escrita era que «las fuentes están todas en inglés», y 
 de esta fuente lo había dejado apuntado «para decidirlo».
 
 **Hasta dónde va la lectura.** Leídos enteros los capítulos **167, 170 a 173, 175,
-176, 177 y 183**. Faltan **178 a 182 y 184 a 194** (y el 174, que es felino), y
-falta el resto del tratado (los otros 332 capítulos), que no se ha abierto. Se dice
-así para que se pueda continuar.
+176, 177, 183 y 184**. Faltan **178 a 182 y 185 a 194** (y el 174, que es felino),
+y falta el resto del tratado (los otros 332 capítulos), que no se ha abierto. Se
+dice así para que se pueda continuar.
 
 ### cap.172, Martha Cline — las ecuaciones de energía, y no son las nuestras
 
@@ -819,6 +819,22 @@ Las dos están en el catálogo, en Extras. Comprobado el 12-sep:
 | Taurina: la deficiencia canina se ha asociado *«a dietas bajas en proteínas, dietas de cordero y arroz, y algunas dietas ricas en fibra con la deficiencia de taurina, así como las dietas bajas en metionina»* | **Tercera fuente que nombra el cordero**, tras FEDIAF y AAHA. Refuerza la P-18, que sigue parada porque Spitze 2003 no está en el repo. Y nombra además la **fibra alta** y la **metionina baja**, que el motor no cruza con nada |
 | Que en el perro *«se cree que los perros son capaces de sintetizar cantidades adecuadas de taurina, por ello no se considera un requisito en las dietas caninas»* | **Ya cubierto**: por eso la taurina no está entre los 43 requisitos y sí como suelo de `dcm_taurina_respondedora` |
 | Que las deficiencias nutricionales hoy son raras *«a menos que los propietarios usen dietas caseras, vegetarianas o cualquier forma de nutrición desequilibrada»* | Es la **quinta** aparición del aviso sobre la comida casera y cruda. A la P-20 |
+
+### cap.184, Joseph Bartges — el renal, y un ratio que el motor podría aplicar y no aplica
+
+*Manejo nutricional de las afecciones renales.* Trae las cifras con las que se
+formulan las dietas renales comerciales, y con ellas se puede por fin situar el
+techo de proteína del motor entre los demás números.
+
+| Lo que dice | Decisión |
+|---|---|
+| ⚠️ *«El contenido de fósforo en la dieta para el manejo de la ERC debe ser del 0,2-0,5 % (en base a materia seca) mientras se mantiene una relación de Ca:P de 1,1-1,3:1»* | **La mitad está aplicada y la otra mitad no.** El 0,2-0,5 % MS son **500 a 1.250 mg/1000 kcal** a 4.000 kcal/kg MS, y el techo de fósforo que el motor aplica al renal es **1.200** — dentro de la banda, en su extremo alto. ⚠️ Pero el **ratio Ca:P de 1,1-1,3** el motor **no lo aplica**, y tiene el mecanismo hecho desde el 10 de septiembre: es el bloque `ratios` de `patologias.json`, que se estrenó con el Ca:P del oxalato. Medido sobre los 216 menús del catálogo: **130 caen dentro de 1,1-1,3**, 58 por debajo y 28 por encima. Va a `PREGUNTAS_ABIERTAS.md` |
+| *«Las dietas formuladas para el manejo de perros con ERC suelen contener un 13-18 % de proteína (en base a materia seca)»* | **No se aplica, y sitúa por fin el techo del motor.** El 13-18 % MS son **32,5 a 45 g/1000 kcal**, o sea que las dietas renales reales bajan **por debajo del mínimo de FEDIAF** (52,1) y por debajo del suelo que Freeman nombra para el cardíaco (45). El techo del motor, 62,5, está por encima de las dos. Es exactamente la tensión de la P-19, ahora con los tres números puestos |
+| *«Los perros con ERC y mala condición corporal tienen una esperanza de vida más corta en comparación con los perros con ERC que están en condiciones óptimas o con sobrepeso»* | **Refuerza la P-28** desde el lado renal, con el mismo argumento que Freeman desde el cardíaco |
+| *«los perros con ERC en estadio I y proteinuria se benefician de la restricción de proteínas en la dieta»*, y que la restricción *«disminuye la excreción urinaria de proteínas y aumenta las concentraciones séricas de albúmina en perros azoémicos y no azoémicos con proteinuria»* | **Coincide con IRIS y con AAHA**: la restricción de proteína es de la **proteinuria**, no de la enfermedad renal sin más. El motor tiene las dos claves separadas (`renal` y `renal_proteinuria`) y es `renal` —la leve-moderada— la que lleva el techo |
+| Sobre el sodio: *«Existe controversia acerca de si el contenido de Na en la dieta debe restringirse con la ERC»*, y en gatos con ERC inducida *«la restricción de Na se asoció con hipopotasemia»* | **No se cambia nada** —el techo de sodio del renal (750 mg/1000 kcal) viene de su propia fuente y está auditado—, pero queda escrito que restringir el sodio en el renal tiene un riesgo documentado y que la propia literatura no lo da por cerrado |
+| Que las dietas renales llevan *«entre un 12 y un 30 % de grasa cruda (en base a materia seca)»* y más densidad calórica, porque *«las dietas que tienen una mayor densidad de calorías promueven una ingesta adecuada de energía sin requerir que el paciente ingiera un gran volumen»* | **No se aplica**: el motor no fija la densidad, la calcula. Se anota porque es la dirección contraria a la que uno esperaría de una dieta «restrictiva» |
+| *«No se conocen los requerimientos calóricos precisos para perros y gatos con ERC, pero probablemente sean similares a los de perros y gatos sanos»*, y *«los requerimientos calóricos diarios en reposo son solo estimaciones y la variabilidad individual puede ser significativa»* | **Ya aplicado**: el motor no cambia las kcal por ser renal. Y es la tercera vez en este mismo libro que aparece el aviso de la variabilidad (P-25) |
 
 ### Y la cuarta fuente que desaconseja lo que hacemos
 
