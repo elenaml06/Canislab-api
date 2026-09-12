@@ -1100,13 +1100,33 @@ productos está en `DATOS_QUE_FALTAN.md`.
 
 ---
 
-### P-23 · La TVT pide un ratio calcio:fósforo de 1,3-1,5 y el 87 % de nuestros menús está por debajo
+### ~~P-23 · La TVT pide un ratio calcio:fósforo de 1,3-1,5 y el 87 % de nuestros menús está por debajo~~ ✅ CERRADA
 
 | | |
 |---|---|
-| **Dueño** | **Cris Carles** (es criterio clínico: FEDIAF deja 1,0-2,0 y esta fuente aprieta dentro) |
-| **Bloquea** | No |
-| **Abierta desde** | 12 de septiembre de 2026, leyendo enteras las dos ediciones del Merkblatt 181 |
+| **Resuelta** | **12 de septiembre de 2026**, por Elena, con la regla de fuentes del propio proyecto |
+| **Decisión** | **No se aplica.** El motor sigue con el **1,0-2,0 de FEDIAF** |
+| **Sus palabras** | *«El ratio Ca:P viene de fediaf, ya sabes como va el orden de fuentes que mandan»* |
+| **Por qué** | El ratio calcio:fósforo del perro sano **lo fija FEDIAF**, que es la fuente que manda, y lo fija en 1,0-2,0. El 1,3-1,5 de la TVT no es un tope que apriete dentro de esa ventana por un lado: es **otra banda para la misma población**, con suelo y techo propios, de una fuente que va detrás. Cuando dos fuentes dan la misma cifra para el mismo perro, no se elige la más estricta: se aplica la que manda |
+| **Lo que NO cambia** | El **1,1-2,0 del `oxalato`** sigue aplicado, y no es una excepción a esto — ver abajo |
+| **Dónde** | `LECTURAS.md` (TVT), `FEDIAF_CONTRA_OTRAS_FUENTES.md` §4 |
+
+⚠️ **Por qué el ratio del oxalato sí sigue aplicado.** Son dos cosas distintas y
+conviene que quede escrito, porque desde fuera se parecen:
+
+| | TVT, perro sano | SACN5, oxalato |
+|---|---|---|
+| Banda | 1,3-**1,5** | 1,1-**2,0** |
+| Suelo | sube el de FEDIAF de 1,0 a 1,3 | sube el de FEDIAF de 1,0 a **1,1** |
+| Techo | **baja** el de FEDIAF de 2,0 a 1,5 | **el de FEDIAF, intacto** |
+| A quién | al perro que **no tiene nada**, que es justo de quien habla FEDIAF | a una **patología marcada** |
+| Forma | sustituye la ventana de FEDIAF por otra | **aprieta dentro** de la ventana de FEDIAF, con `max()` |
+
+O sea que el del oxalato es exactamente la regla 2 del proyecto —un límite de
+patología que solo puede apretar, y que no toca el techo de FEDIAF— y el de la
+TVT no. Lo que sigue debajo es la medida que se hizo antes de cerrarla, y se
+deja entera.
+
 
 El Merkblatt 181 de la TVT —la hoja de la asociación veterinaria alemana de
 protección animal dedicada al BARF— da el ratio calcio:fósforo **«optimal 1,3 –
@@ -1513,13 +1533,21 @@ tiene que ser por 1000 kcal?
 
 ---
 
-### P-30 · El renal pide un ratio calcio:fósforo de 1,1-1,3 y el motor tiene el mecanismo hecho sin usar
+### ~~P-30 · El renal pide un ratio calcio:fósforo de 1,1-1,3 y el motor tiene el mecanismo hecho sin usar~~ ✅ CERRADA
 
 | | |
 |---|---|
-| **Dueño** | **Cris Carles** (es una restricción clínica nueva sobre una patología formulable) |
-| **Bloquea** | No |
-| **Abierta desde** | 12 de septiembre de 2026, leyendo el capítulo 184 de Ettinger |
+| **Resuelta** | **12 de septiembre de 2026**, por Elena, el mismo día y con la misma frase que la P-23 |
+| **Decisión** | **No se aplica.** El `renal` sigue con el **1,0-2,0 de FEDIAF** |
+| **Sus palabras** | *«El ratio Ca:P viene de fediaf, ya sabes como va el orden de fuentes que mandan»* |
+| **Por qué** | Igual que la P-23: el ratio calcio:fósforo lo fija FEDIAF. Y aquí hay una razón más, que es del propio texto de Bartges: **su otra mitad ya está aplicada**. El techo de fósforo del renal es 1.200 mg/1000 kcal, dentro del 0,2-0,5 % MS que pide la misma frase, y el fósforo es el denominador del cociente — o sea que el motor ya aprieta ese ratio por donde la fuente dice que importa |
+| **Lo que NO cambia** | El techo de fósforo de 1.200 del `renal` sigue igual, y el `ratios` del `oxalato` también |
+| **Dónde** | `LECTURAS.md` cap.184, `FEDIAF_CONTRA_OTRAS_FUENTES.md` §4 |
+
+⚠️ **El mecanismo se queda, y no sobra.** El bloque `ratios` de `patologias.json`
+no se construyó para esto: se construyó para el oxalato, que sigue usándolo, y lo
+vigila el BLOQUE 75. Cerrar esta pregunta no lo deja huérfano.
+
 
 El capítulo 184 del tratado de Ettinger —*Manejo nutricional de las afecciones
 renales*, de **Joseph W. Bartges**— da las dos cifras del fósforo renal en la misma
@@ -1560,8 +1588,8 @@ son cuatro bandas para la misma cosa:
 |---|---|---|
 | FEDIAF, perro sano | 1,0-2,0 | **aplicada** |
 | SACN5, urolitos de calcio | 1,1-2,0 | **aplicada** en `oxalato` |
-| Bartges, enfermedad renal crónica | **1,1-1,3** | **no aplicada** |
-| TVT, perro sano | 1,3-1,5 | **no aplicada** (P-23) |
+| Bartges, enfermedad renal crónica | **1,1-1,3** | **no se aplica** — cerrada el 12-sep, manda FEDIAF |
+| TVT, perro sano | 1,3-1,5 | **no se aplica** — cerrada el 12-sep, manda FEDIAF (P-23) |
 
 **La pregunta:** ¿se le pone a `renal` el ratio 1,1-1,3? Y antes de eso, la que
 hace falta para contestarla: ¿se mide con el solver cuántos perros se quedan sin

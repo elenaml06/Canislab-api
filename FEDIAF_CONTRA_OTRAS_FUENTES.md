@@ -82,6 +82,40 @@ firma una pauta tiene derecho a saberlo, que es la razón de ser de este fichero
 
 ---
 
+## 1-bis · El ratio calcio:fósforo lo fija FEDIAF, y ninguna otra fuente se lo quita
+
+Escrito el **12 de septiembre de 2026**, decidido por Elena:
+
+> *«El ratio Ca:P viene de fediaf, ya sabes como va el orden de fuentes que
+> mandan»*
+
+Hacía falta una entrada propia porque el Ca:P es **la cifra del repo que más
+fuentes vuelven a dar**: cuatro bandas distintas para lo mismo, y dos de ellas
+caben enteras dentro de la de FEDIAF, así que no saltaban como conflicto.
+
+| Fuente | Banda | Qué le hace a la ventana de FEDIAF | Estado |
+|---|---|---|---|
+| **FEDIAF**, perro sano (Tabla III-3b) | **1,0-2,0** | es la ventana | **aplicada** |
+| **FEDIAF**, cachorro de raza grande (nota b) | techo **1,6** | la aprieta **FEDIAF a sí misma** | **aplicada** |
+| SACN5 Tablas 40-5 y 41-6, urolitos de calcio | 1,1-**2,0** | sube el suelo a 1,1 y **deja el techo de FEDIAF intacto** | **aplicada** en `oxalato` |
+| Bartges (Ettinger cap.184), enfermedad renal crónica | 1,1-**1,3** | sube el suelo **y baja el techo** | **no se aplica** — P-30 |
+| TVT Merkblatt 181, perro sano | 1,3-**1,5** | sube el suelo **y baja el techo** | **no se aplica** — P-23 |
+
+**La línea que las separa no es cuánto aprietan: es si sustituyen la ventana de
+FEDIAF o si aprietan dentro de ella.** El del oxalato solo mueve el suelo, con
+`max()`, y es un límite de una **patología marcada** — o sea la regla 2 del
+proyecto, la misma forma que tienen los otros 75. Los de la TVT y de Bartges
+traen suelo **y** techo propios, o sea una banda entera que ocuparía el sitio de
+la de FEDIAF; y el de la TVT además habla del perro **que no tiene nada**, que es
+exactamente de quien habla FEDIAF.
+
+Y en el renal hay un motivo más, que es de la propia frase de Bartges: su otra
+mitad —el fósforo al 0,2-0,5 % de materia seca— **ya está aplicada**, con el
+techo de 1.200 mg/1000 kcal. El fósforo es el denominador del cociente, así que
+el motor ya aprieta ese ratio por donde la fuente dice que importa.
+
+---
+
 ## 2 · Lo que otra fuente aprieta DENTRO de FEDIAF, y sí se aplica
 
 Esto no es conflicto. Son cifras de un libro o de una guía clínica que caen
@@ -153,7 +187,7 @@ motor no usa, y las dos son de FORMA o de recomendación, no de requisito:
 
 | Tema | FEDIAF | TVT | Qué hace el motor |
 |---|---|---|---|
-| **Ratio calcio:fósforo** | 1,0-2,0 | «optimal 1,3 – 1,5», igual en 2017 y en 2025 | **El de FEDIAF.** El de la TVT cabe dentro, así que es una recomendación que aprieta, no un conflicto. Medido: de 216 menús del catálogo, **188 están por debajo de 1,3**. No se aplica y se pregunta: P-23 |
+| **Ratio calcio:fósforo** | 1,0-2,0 | «optimal 1,3 – 1,5», igual en 2017 y en 2025 | **El de FEDIAF**, y desde el 12 de septiembre eso está **decidido, no pendiente**: el ratio Ca:P lo fija FEDIAF. Medido: de 216 menús del catálogo, **188 están por debajo de 1,3**. P-23 cerrada. Ver §1-bis |
 | **Proporciones clásicas del BARF** | no se pronuncia (no es nutrición) | 60-80 % carne · 10-30 % hueso carnoso · 10-25 % verdura y fruta | La plantilla del motor parte de **50 % de hueso** (margen 20-60 %) y 10 % de verdura (margen 2-10 %), o sea por encima del máximo de hueso y por debajo del mínimo de verdura que publica esta fuente. Es FORMA (regla 3) y lo que legitima la ración es la verificación contra FEDIAF, no la plantilla — pero es la primera fuente **veterinaria publicada** que da otras proporciones, y queda escrito |
 
 ---
