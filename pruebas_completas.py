@@ -10016,8 +10016,16 @@ _TABLA_VII2_B63 = [
     (9, +0.45, ">45 %",      "9. Grossly Obese -- LA RECTA SE QUEDA CORTA: daria 40"),
 ]
 _PESO_B63 = 20.0
+# ⚠️ EL DESVIO DE LA TABLA Y EL DESTINO SON DOS COSAS (12 septiembre). La
+# columna VII-2 mide contra el BCS 5 -- lo dice su cabecera, «% BW below or
+# above BCS 5» -- y eso no cambia. Lo que cambia es a donde se apunta: FEDIAF
+# dice DOS VECES que el ideal es la BANDA 4 a 5 (§7.1.3 y §7.2.4.1, las dos
+# sobre Kealy 2002), asi que dentro no se corrige nada y por debajo el destino
+# es el BCS 4, que es el borde que le queda mas cerca.
 for _bcs63, _desvio63, _rango63, _cita63 in _TABLA_VII2_B63:
-    _esperado63 = _PESO_B63 / (1.0 + _desvio63)
+    if 4 <= _bcs63 <= 5:
+        continue                        # dentro de la banda: se comprueba abajo
+    _esperado63 = (_PESO_B63 / (1.0 + _desvio63)) * (0.90 if _bcs63 < 4 else 1.0)
     # hacia arriba la corrección va topada al 20 %, que es criterio nuestro
     if _esperado63 > _PESO_B63 * 1.20:
         _esperado63 = _PESO_B63 * 1.20
@@ -10029,13 +10037,23 @@ for _bcs63, _desvio63, _rango63, _cita63 in _TABLA_VII2_B63:
         continue
     if abs(_real63 - _esperado63) > 0.01:
         fallos.append(f"BLOQUE63: en BCS {_bcs63} el peso objetivo de un perro de 20 kg sale "
-                      f"{_real63} y tenia que ser {_esperado63:.3f} (FEDIAF Tabla VII-2: "
-                      f"«{_rango63}», {_cita63})")
+                      f"{_real63} y tenia que ser {_esperado63:.3f} (FEDIAF Tabla VII-2 para el "
+                      f"desvio: «{_rango63}», {_cita63}; y el borde de la banda ideal como "
+                      f"destino)")
 
-# En BCS 5 no se estima: ya esta en su peso.
-if _bcs_b63(_PESO_B63, 5) is not None:
-    fallos.append("BLOQUE63: en BCS 5 se esta estimando un peso objetivo. Un perro en su peso "
-                  "ideal no tiene nada que corregir")
+# DENTRO DE LA BANDA (4 y 5) no se estima nada: el perro ya esta donde FEDIAF
+# lo quiere. Con el fallo puesto --tomar el 5 como unico ideal-- el BCS 4 daria
+# 22,22 kg para un perro de 20, un 11 % mas de peso objetivo y con el mas kcal.
+for _bcs63 in (4, 5):
+    if _bcs_b63(_PESO_B63, _bcs63) is not None:
+        fallos.append(f"BLOQUE63: en BCS {_bcs63} se esta estimando un peso objetivo. FEDIAF "
+                      f"dice dos veces que el ideal es la BANDA 4 a 5 (§7.1.3 y §7.2.4.1), asi "
+                      f"que ahi no hay nada que corregir")
+# Y que por debajo se apunte al 4 y no al 5: 20/0,8 = 25 en BCS 5, y el borde
+# de la banda son 22,5. Apuntar al 5 daria 25, que el tope dejaria en 24.
+if abs((_bcs_b63(_PESO_B63, 3) or 0) - 22.5) > 0.01:
+    fallos.append(f"BLOQUE63: un perro de 20 kg en BCS 3 tiene que apuntar al BCS 4 (22,5 kg) y "
+                  f"no al BCS 5 (25, topado en 24). Sale {_bcs_b63(_PESO_B63, 3)}")
 
 # ⚠️ Y LAS DOS COPIAS TIENEN QUE DECIR LO MISMO. `der.py` solo corre si alguien
 # llama a `/der` -- que no llama nadie -- pero es una segunda regla escrita, y

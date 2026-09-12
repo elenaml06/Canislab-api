@@ -392,8 +392,13 @@ DER  = (base por actividad + ajustes) × peso^0,75
 
 **Estado: los cinco escalones de actividad, VERIFICADOS** el 8 de septiembre
 contra la Tabla VII-7 de FEDIAF 2025 («Recommendations for DER in relation to
-activity»): 95 · 110 · 125 · 150-175, exactos. Y hay un contrato de **124 casos**
-con sus kcal esperadas, que se comprueba en cada batería.
+activity»): 95 · 110 · 125 · 150-175, exactos. Y hay un contrato de **137 casos**
+con sus kcal esperadas, que se comprueba en cada batería. ⚠️ Eran 124 hasta el
+12 de septiembre: entran 13 del cachorro **mestizo**, el que llega sin peso
+adulto de su raza, al aplicarle la Tabla VII-8a de FEDIAF. Hasta ese día el
+contrato declaraba que ese caso NO se podía probar en común porque el servidor y
+la app tomaban caminos distintos — y ese era justamente el hueco por el que la
+app se había quedado con una copia propia de la curva de crecimiento.
 
 ⚠️ **El escalón de edad cambió el 9 de septiembre y hay que decirlo**, porque la
 versión anterior de este documento daba +15/−7 (Thes et al. 2014). Al inventariar
@@ -470,7 +475,7 @@ estas dos: ya tienen cifra propia medida.
 
 **Lo que hay que saber:** el DER se calcula **en dos sitios** (servidor y
 app), y manda el de la app. Es una duplicación conocida, y por eso existe el
-contrato de 124 casos: los dos lados se comprueban contra el mismo fichero.
+contrato de 137 casos: los dos lados se comprueban contra el mismo fichero.
 
 > **PREGUNTA 4.** El ajuste por raza (±15 kcal/kg^0,75) sale de un solo
 > estudio de 586 perros y son 20 razas concretas. ¿Lo mantendrías, o es
