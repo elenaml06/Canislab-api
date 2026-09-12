@@ -96,7 +96,28 @@
           }
         }
       ],
-      "nota": "⚠️ Esta pregunta es MAS GRUESA que la que pide la fuente. Lo que decide el numero es el ESTADIO IRIS (o la creatinina), y la app pregunta «leve-moderada o moderada-grave». Las dos respuestas aplican el MISMO techo de fosforo (1200): lo que cambia es que `renal_avanzada` no es formulable, o sea que se para en seco en vez de dar menu. Falta lo que dice `quien_formula_cada_patologia.json`: por debajo del estadio 2 la fuente NO respalda apretar el fosforo, y para eso haria falta una clave `renal_iris1` con su cifra SACADA DE LA FUENTE. No se inventa aqui."
+      "nota": "⚠️ Esta pregunta es MAS GRUESA que la que pide la fuente. Lo que decide el numero es el ESTADIO IRIS (o la creatinina), y la app pregunta «leve-moderada o moderada-grave». Las dos respuestas aplican el MISMO techo de fosforo (1200): lo que cambia es que `renal_avanzada` no es formulable, o sea que se para en seco en vez de dar menu. Falta lo que dice `quien_formula_cada_patologia.json`: por debajo del estadio 2 la fuente NO respalda apretar el fosforo, y para eso haria falta una clave `renal_iris1` con su cifra SACADA DE LA FUENTE. No se inventa aqui.",
+      "umbrales_de_la_fuente": {
+        "_que_es": "Los numeros que DEFINEN la respuesta, para que quien contesta sepa contra que. No cambian ninguna cifra del motor: son los umbrales con los que un veterinario decide el estadio. Entran el 12-sep-2026, al leer enteras las IRIS Guidelines 2026 -- hasta ese dia la nota de abajo decia que el estadio lo decide la fuente y los umbrales no estaban escritos en ninguna parte del repo.",
+        "fuente": "IRIS Staging of CKD (Modified 2026), tabla de la seccion 1. Leida literal 12-sep-2026",
+        "perro": {
+          "creatinina_mg_dl": {
+            "estadio_1": "<1.4",
+            "estadio_2": "1.4-2.8",
+            "estadio_3": "2.9-5.0",
+            "estadio_4": ">5.0"
+          },
+          "sdma_ug_dl": {
+            "estadio_1": "<18",
+            "estadio_2": "18-35",
+            "estadio_3": "36-54",
+            "estadio_4": ">54"
+          }
+        },
+        "como_se_reparten_en_las_dos_respuestas": "«Leve-moderada» son los estadios 1 y 2; «moderada-grave» son el 3 y el 4. Es la misma linea que ya separaba las dos claves del motor, ahora con el numero detras.",
+        "ojo_con_el_galgo": "⚠️ IRIS lo dice expreso: «Healthy Birman cats and greyhound dogs have been found to have higher serum SDMA values than other breeds. Both these breeds also have higher serum creatinine values, taking some healthy individuals outside laboratory reference intervals». O sea que un GALGO SANO puede dar creatinina y SDMA de estadio 2. `razas.json` tiene galgos, asi que si algun dia la app pregunta el estadio con estos numeros delante, hay que decirlo. Esta en LECTURAS.md como pendiente.",
+        "lo_que_IRIS_NO_da": "⚠️ NI UNA CIFRA DIETETICA. Leidos los cuatro documentos enteros: cero apariciones de «g/1000 kcal», «% DM», «dry matter», «g/Mcal» o «mg/kg diet». Lo que IRIS da para la dieta es «feed a clinical kidney diet», y objetivos en SANGRE: fosfato plasmatico <1,5 mmol/l en estadios 1-2, <1,6 en el 3 y <1,9 en el 4, y nunca por debajo de 0,9 mmol/l. Asi que los topes que aplica el motor NO son de IRIS y no se pueden citar como suyos."
+      }
     },
     "hepatopatia": {
       "pregunta": "¿Está confirmado con biopsia o analítica de cobre, o es solo predisposición de raza?",
@@ -318,7 +339,17 @@
           "cifras_que_aplica": {}
         }
       ],
-      "nota": "⚠️ SE DECLARA `no_cambia_ninguna_cifra` A PROPOSITO, Y NO ES UN HUECO. Contestar que si anade `renal_proteinuria`, que NO aplica ningun tope ni suelo -- comprobado: `topes_de_patologias(['renal_proteinuria'])` devuelve vacio. Y esta bien que sea asi: el consenso ACVIM 2013 recomienda bajar la proteina un 25-50 %% RESPECTO A LO QUE EL PERRO COMIA ANTES, o sea una cifra RELATIVA a la ingesta previa de ese perro, y el motor no tiene ese dato de partida. Inventarse un numero absoluto seria peor que no poner ninguno. || ENTONCES, ¿PARA QUE PREGUNTARLO? Por el AVISO, que es justo el caso que el fichero contempla en este estado: marcar la patologia hace que llegue el texto que explica el 25-50 %% y que hay que combinarla con `renal` para el tope de fosforo. Sin la pregunta, ese aviso solo lo ve quien ya sabe que existe la casilla. || EL UMBRAL SALE DE DOS FUENTES QUE COINCIDEN: el consenso ACVIM (que da nombre a la patologia, «UPC > 0,5») y la Tabla 15.2 de Fascetti cap.15 «Nutritional Management of Kidney Disease», fila «Protein modification», que para PERRO dice «UPC >0.5» en estadio II. || ⚠️ LO QUE SIGUE SIN ESTAR: el umbral del estadio I, que esa misma tabla pone en «UPC >2» para perro. Hoy la pregunta es de si/no sobre 0,5 y no distingue los dos escalones, porque el motor solo tiene una clave. Escrito para no volver a descubrirlo."
+      "nota": "⚠️ SE DECLARA `no_cambia_ninguna_cifra` A PROPOSITO, Y NO ES UN HUECO. Contestar que si anade `renal_proteinuria`, que NO aplica ningun tope ni suelo -- comprobado: `topes_de_patologias(['renal_proteinuria'])` devuelve vacio. Y esta bien que sea asi: el consenso ACVIM 2013 recomienda bajar la proteina un 25-50 %% RESPECTO A LO QUE EL PERRO COMIA ANTES, o sea una cifra RELATIVA a la ingesta previa de ese perro, y el motor no tiene ese dato de partida. Inventarse un numero absoluto seria peor que no poner ninguno. || ENTONCES, ¿PARA QUE PREGUNTARLO? Por el AVISO, que es justo el caso que el fichero contempla en este estado: marcar la patologia hace que llegue el texto que explica el 25-50 %% y que hay que combinarla con `renal` para el tope de fosforo. Sin la pregunta, ese aviso solo lo ve quien ya sabe que existe la casilla. || EL UMBRAL SALE DE DOS FUENTES QUE COINCIDEN: el consenso ACVIM (que da nombre a la patologia, «UPC > 0,5») y la Tabla 15.2 de Fascetti cap.15 «Nutritional Management of Kidney Disease», fila «Protein modification», que para PERRO dice «UPC >0.5» en estadio II. || ⚠️ LO QUE SIGUE SIN ESTAR: el umbral del estadio I, que esa misma tabla pone en «UPC >2» para perro. Hoy la pregunta es de si/no sobre 0,5 y no distingue los dos escalones, porque el motor solo tiene una clave. Escrito para no volver a descubrirlo.",
+      "umbrales_de_la_fuente": {
+        "fuente": "IRIS Staging of CKD (Modified 2026), seccion 2a «Substaging by Proteinuria». Leida literal 12-sep-2026. Es la TERCERA fuente con el mismo 0,5, y la que ademas nombra la banda intermedia.",
+        "perro": {
+          "no_proteinurico": "<0.2",
+          "proteinuria_limite": "0.2-0.5",
+          "proteinurico": ">0.5"
+        },
+        "lo_que_anade_sobre_lo_que_ya_teniamos": "La banda LIMITE (0,2-0,5), que no estaba. IRIS dice de ella: «IRIS's recommendation is to continue to monitor this level of proteinuria in dogs» -- o sea vigilar, no tratar. La pregunta de la app tiene hoy tres respuestas y la de «0,5 o menos» mete en el mismo saco al no proteinurico y al limite. No cambia ninguna cifra del motor (esta patologia no aplica ninguna), asi que se deja como esta y queda escrito.",
+        "y_dos_cosas_mas_del_metodo": "«Ideally substaging should be done on the basis of at least two urine samples collected over a period of at least 2 weeks», y la tira reactiva no vale: «Standard urine dipsticks can be insensitive therefore practitioners should consider using a more reliable quantitative test». Las dos refuerzan que esto es `solo_veterinario`."
+      }
     }
   }
 }

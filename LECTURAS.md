@@ -59,9 +59,141 @@ la tabla. Esos se quedan y se quedan todos.
 | Ettinger & Feldman | no | Dos tomos |
 | Dobenecker / Hofmann | no | |
 | ACVIM (Keene 2019) | no | |
-| IRIS 2026 | no | Es la que contesta lo del IRIS 4 |
+| IRIS 2026 | **leída entera con este método (12-sep)** | Abajo. Contesta lo del IRIS 4, y la respuesta es que **IRIS no da ni una cifra dietética**: la restricción de proteína del estadio 4 no es suya, y lo único que dice de la proteína ahí es que hay que evitar que falte |
 | AAHA 2021 | no | |
 | Today's Veterinary Practice | no, y el artículo que da el sodio por estadio **no está** | |
+
+---
+
+## IRIS 2026 — «Guidelines» de la International Renal Interest Society · leída entera el 12-sep-2026
+
+Cuatro documentos, 2.262 líneas en total: estadificación, recomendaciones de
+tratamiento para perro, graduación del fracaso renal agudo y la guía de bolsillo.
+Leídos los cuatro, seguidos.
+
+**Se lee esta antes que ninguna otra de las que faltaban** porque es la que
+contesta lo que preguntó Cris Carles: si en un IRIS 4 hay que bajar la proteína
+hasta el 15 %.
+
+### El hallazgo que decide, y es lo que la fuente NO dice
+
+**IRIS 2026 no da ni una sola cifra dietética.** Ni de proteína, ni de fósforo,
+ni de sodio, ni de nada. Comprobado buscando en los cuatro documentos: cero
+apariciones de «g/1000 kcal», «% DM», «dry matter», «g/Mcal», «mg/kg diet» o
+«% of calories». Lo que dice de la dieta, las 33 veces que la nombra, es
+siempre la misma frase: *«feed a clinical kidney diet»* o *«dietary phosphate
+restriction (i.e., clinical kidney diet therapy)»*.
+
+Lo que sí da son **objetivos en SANGRE**, que es otra cosa:
+
+| Estadio | Fosfato en plasma |
+|---|---|
+| 1 y 2 | < 1,5 mmol/l (4,6 mg/dl) |
+| 3 | < 1,6 mmol/l (5,0 mg/dl) |
+| 4 | < 1,9 mmol/l (6,0 mg/dl) |
+
+Y con **suelo**: *«but not less than 0.9 mmol/l; > 2.7 mg/dl»*. O sea que la
+propia IRIS dice que bajar el fosfato **de más** también es malo — en sangre,
+no en el plato, pero es la misma forma que la pregunta P-11 sobre el suelo de
+fósforo del oxalato.
+
+### Y lo que dice del estadio 4 va en la dirección CONTRARIA
+
+Las «Further recommendations for Stage 4 patients» empiezan así, literal:
+
+> *«1. Intensify efforts to prevent protein / calorie malnutrition. Consider
+> feeding tube intervention (such as percutaneous esophagostomy or gastrostomy
+> tube).»*
+
+Es la **única** vez que la palabra «protein» aparece en todo el documento fuera
+de «urine protein to creatinine ratio». Y no pide restringir: pide **evitar la
+desnutrición proteico-calórica**, hasta el punto de poner una sonda.
+
+| | |
+|---|---|
+| Lo que se preguntó | ¿Hay que bajar la proteína al 15 % en un IRIS 4? |
+| Lo que dice IRIS | Nada de restringir. Lo único que dice de la proteína en estadio 4 es que hay que **evitar que le falte** |
+| Quién sí da la cifra | No IRIS. El techo de proteína que aplica el motor (62,5 g/1000 kcal) es del **Reglamento (UE) 2020/354**, entrada 10, que es ley |
+
+**Decisión: no se cambia nada del motor, y se corrige una cita.** El techo de
+proteína se queda donde está y con la fuente que de verdad lo dice. Lo que hay
+que arreglar es que `patologias.json` citaba «IRIS» como una de las fuentes del
+techo de FÓSFORO de 1200 mg/1000 kcal, y IRIS no da esa cifra ni ninguna otra
+dietética. La cifra no cambia —viene de Freeman 2009, WSAVA y la Tabla 37-9 de
+SACN5— pero IRIS deja de figurar como si la respaldara.
+
+⚠️ Es la misma familia de error que las dos columnas del PDF, con otra cara:
+`auditar_citas.py` comprueba lo que va **entrecomillado**, y esto era una
+atribución de fuente sin comillas. Ahí no llega ningún auditor.
+
+### El sodio: IRIS dice tres veces que no hay evidencia
+
+En los estadios 1, 2 y 3, con la misma frase cada vez:
+
+> *«Dietary sodium (Na) reduction – there is no evidence that lowering dietary
+> Na will reduce blood pressure. If dietary Na reduction is attempted, it
+> should be accomplished gradually and in combination with pharmacological
+> therapy.»*
+
+El motor aprieta el sodio del renal a **750 mg/1000 kcal**, y esa cifra es de la
+Tabla 37-9 de SACN5, no de IRIS. **No se toca** —SACN5 manda donde FEDIAF no
+llega y es un techo, o sea que solo aprieta— pero queda escrito que la sociedad
+que define la enfermedad dice que no hay evidencia de que eso baje la tensión,
+y que si se hace, que sea **gradual**. Lo segundo sí es accionable: el motor ya
+tiene plan de transición.
+
+### Lo que sí hay que llevarse: las cifras que deciden el estadio
+
+Esto es lo que le faltaba a `preguntas_por_patologia.json` para que la pregunta
+del estadio renal tenga umbrales con fuente. Perro:
+
+| | Estadio 1 | 2 | 3 | 4 |
+|---|---|---|---|---|
+| Creatinina (mg/dl) | < 1,4 | 1,4 - 2,8 | 2,9 - 5,0 | > 5,0 |
+| SDMA (µg/dl) | < 18 | 18 - 35 | 36 - 54 | > 54 |
+
+Y los dos subestadios, que son **dos preguntas más**:
+
+| UP/C (perro) | Subestadio |
+|---|---|
+| < 0,2 | No proteinúrico |
+| 0,2 - 0,5 | Proteinuria límite |
+| > 0,5 | Proteinúrico |
+
+| Presión sistólica (mmHg) | Subestadio |
+|---|---|
+| < 140 | Normotenso |
+| 140 - 159 | Prehipertenso |
+| 160 - 179 | Hipertenso |
+| ≥ 180 | Gravemente hipertenso |
+
+**Nuestra pregunta de UP/C ya usa el 0,5**, que coincide. Lo que no teníamos con
+fuente son los umbrales de creatinina y SDMA, y son los que deciden si un perro
+es `renal` o `renal_avanzada`.
+
+### Lo demás, punto por punto
+
+| Lo que dice | Decisión |
+|---|---|
+| *«an increased blood creatinine or SDMA concentration alone is not diagnostic of CKD»* | **Refuerza `quien_formula_cada_patologia.json`**: la renal es `solo_veterinario`, y esto dice por qué — ni siquiera una analítica alta basta para diagnosticarla |
+| El galgo (*greyhound*) tiene la creatinina y la SDMA **más altas** siendo sano, y los *sight hounds* la tensión más alta | **PENDIENTE DE DECIDIR, y es medible**: `razas.json` tiene los galgos. Si la app va a preguntar el estadio IRIS, un galgo sano puede salir estadio 2 por su raza |
+| Los ligantes de fosfato (30-60 mg/kg/día, hidróxido de aluminio, carbonato cálcico…) | **No se aplica**: es un fármaco, no un alimento. Y el motor no formula fármacos |
+| Toda la parte de hipertensión, anemia, acidosis, diálisis y sonda de alimentación | **No se aplica**: es tratamiento clínico |
+| El fracaso renal AGUDO tiene su propia graduación (documento aparte) y **no menciona la dieta ni una vez** | **Confirma lo que hace el motor**: `fracaso_renal_agudo` no lleva ningún tope propio |
+| *«Response to any treatment … should be monitored at intervals using UP/C»* | **No se aplica**: es seguimiento clínico |
+
+### Lo que sale de esta lectura
+
+1. **Corregir la fuente del fósforo renal** en `patologias.json`: IRIS no da esa
+   cifra. (Se hace ahora.)
+2. **Contestar a Cris**: IRIS no pide restringir proteína en el estadio 4; pide
+   lo contrario. Quien pone el suelo es el Reglamento europeo.
+3. **Los umbrales de estadificación** (creatinina, SDMA, UP/C) ya tienen fuente
+   y están escritos en `preguntas_por_patologia.json`, en un bloque
+   `umbrales_de_la_fuente` que **no cambia ninguna cifra del motor**: son los
+   números con los que un veterinario decide el estadio, y hasta hoy la propia
+   nota de esa pregunta decía que no estaban en ninguna parte del repo. (Hecho.)
+4. **Pendiente**: el galgo sano puede parecer un renal estadio 2.
 
 ---
 

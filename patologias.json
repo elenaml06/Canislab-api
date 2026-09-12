@@ -12,7 +12,7 @@
       "topes_por_1000kcal": {
         "fosforo": {
           "valor": 1200.0,
-          "fuente": "Freeman LM, dvm360 2009; WSAVA; IRIS. Confirmado 6-sep-2026 contra SACN5 5ª ed., cap.37 «Chronic Kidney Disease», Tabla 37-9",
+          "fuente": "Freeman LM, dvm360 2009; WSAVA. Confirmado 6-sep-2026 contra SACN5 5ª ed., cap.37 «Chronic Kidney Disease», Tabla 37-9. ⚠️ 12-sep-2026: SE QUITA «IRIS» DE ESTA LISTA. Leídas enteras las IRIS Guidelines 2026 (los cuatro documentos, 2.262 líneas), NO dan ni una sola cifra dietética -- ni de fósforo, ni de proteína, ni de nada: cero apariciones de «g/1000 kcal», «% DM», «dry matter» o «g/Mcal». Lo que IRIS da son objetivos en SANGRE (fosfato plasmático <1,5 mmol/l en estadios 1-2, <1,6 en el 3 y <1,9 en el 4, y NUNCA por debajo de 0,9) y, para la dieta, la frase «feed a clinical kidney diet». La cifra de 1200 no cambia porque no era suya: viene de las otras tres. Lo que se corrige es citarla como si la respaldara.",
           "por_que": "Las dietas renales comerciales aportan 480-1000 mg/1000 kcal. 1200 es lo más restrictivo que el solver puede aplicar sin romper el mínimo FEDIAF de adulto (1160 mg). IRIS da objetivos en SANGRE, no en la dieta, así que no sirve para poner este número. SACN5 Tabla 37-9 da «Phosphorus 0.2 to 0.5% in foods for dogs» (materia seca) = 500-1250 mg/1000kcal a 4000kcal/kgMS: 1200 cae justo dentro, en el extremo menos restrictivo del rango de la fuente.",
           "conversion": {
             "valor_en_la_fuente": 0.5,
