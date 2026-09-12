@@ -469,11 +469,21 @@ Ya estaba apuntada en `PENDIENTE_DECISIONES.md`. Aquí solo con dueño y fecha.
 **⚠️ CERRADA EL 10 DE SEPTIEMBRE, leyendo §3.3.1 de FEDIAF entera** (antes solo
 se había leído la fila de la tabla, y la explicación no está en la tabla):
 
-> *«Czarnecki et al. (1985) showed that excess dietary lysine (4,91 % DM [basal
-> diet 0,91 % + **4 % from a supplement**]) decreases weight gain in puppies but
-> not 2,91 % DM… the highest no-effect-level of lysine for puppies was 2,91 % DM
-> (energy density 4156 kcal/kg). This is equivalent to **7,0 g/1000 kcal**… and
-> this is therefore the FEDIAF maximum for puppy growth.»*
+> *«Czarnecki et al. (1985) showed that excess dietary lysine (4.91 % DM [basal
+> diet 0.91 % + 4 % from a supplement]) decreases weight gain in puppies but not
+> 2.91 % DM (basal diet and 2 % from a supplement).»*
+>
+> *«It was concluded that the highest no-effect-level of lysine for puppies was
+> 2.91 % DM (energy density 4156 kcal/kg or 17.39 MJ/kg). This is equivalent to
+> 7.0 g/1000 kcal (1.67 g/MJ) or 2.8 % DM (at 4 kcal/g DM) and this is therefore
+> the FEDIAF maximum for puppy growth.»*
+
+⚠️ **La cita estaba mal copiada hasta el 12 de septiembre**, y lo cazó
+`auditar_citas.py` al empezar a mirar este fichero: los decimales se habían
+pasado a coma española **dentro de las comillas** (4,91 en vez de 4.91), se había
+metido una negrita dentro de la cita y dos puntos suspensivos se comían la mitad
+de la frase. Ninguna de las tres cosas cambia el número ni la conclusión, y las
+tres son exactamente lo que este auditor existe para encontrar.
 
 **No se mide sobre la proteína: es lisina TOTAL de la dieta**, y el daño se vio
 **añadiendo lisina libre**, no comiendo más carne. Eso no cambia la decisión —el
@@ -911,7 +921,193 @@ Las tres salidas posibles, para que la decisión se tome con ellas delante:
 dado que «severe concurrent renal failure» es justamente lo que separa nuestras
 dos claves renales?
 
+⚠️ **SEGUNDA FUENTE, 12 de septiembre, leyendo AAHA 2021 entera.** Ya no es un
+consenso contra un reglamento: AAHA lo dice también, y para las **tres**
+cardiopatías que lista. Su Tabla 8, bloque «Cardiovascular disease», pone en
+«Nutrients of Concern» lo mismo en la enfermedad valvular degenerativa, en la
+miocardiopatía hipertrófica y en la dilatada: «Controlled sodium / High EPA/DHA /
+**Avoid low protein**». Y en el texto corrido, hablando de la miocardiopatía
+dilatada asociada a dieta: «Previously identified risk factors include lamb and
+rice diets, **low-protein diets**, and high-fiber diets».
+
+Eso cambia el peso de la pregunta en dos sitios. Primero, la salida 1 («la ley
+gana») deja al perro comiendo menos proteína de la que piden **dos** fuentes
+clínicas independientes, no una. Y segundo, «high-fiber diets» aparece en la
+misma lista de riesgo: la patología `obesidad` lleva un suelo de fibra de 30
+g/1000 kcal, así que un cardiópata obeso recibe hoy, a la vez, el suelo de fibra
+alto y —si además es renal— el techo de proteína bajo. **Eso no está medido**, y
+hay que medirlo antes de contestar.
+
 ---
+
+
+---
+
+### P-20 · AAHA no recomienda dar comida cruda, y esto es una app de comida cruda
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (es decisión de producto: qué se cuenta y dónde) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo entera AAHA 2021 |
+
+El motor usa números de AAHA 2021 en dos sitios que deciden raciones: la banda
+de BCS 4-5 (su Tabla 2, que es de donde salen `BCS_IDEAL_MIN = 4.0` y
+`PCT_POR_PUNTO_BCS = 0.10`) y el 10 % de los premios. Y la misma fuente dice:
+
+> *«AAHA does not advocate or endorse feeding pets any raw or dehydrated
+> nonsterilized foods, including treats that are of animal origin.»*
+
+Y su Tabla 4 pone «Unconventional diet (e.g., raw meat based, home prepared,
+vegetarian, vegan)» entre los factores de riesgo que obligan a una evaluación
+nutricional ampliada.
+
+No hay ninguna cifra que cambiar y no propongo cambiar nada del motor. La
+pregunta es **qué se hace con esto**, y son tres cosas distintas:
+
+1. ¿Va al documento que lee el nutricionista? Ahí ya está
+   `FEDIAF_CONTRA_OTRAS_FUENTES.md` para las discrepancias de cifras, pero esto
+   no es una cifra: es la postura de una fuente que sí usamos.
+2. ¿Se dice en la app? Hay ya un aviso de higiene de manipulación de carne cruda,
+   de WSAVA, del 10 de septiembre. Esto es de otra clase.
+3. ¿Cambia algo de cómo se cita AAHA? Mi opinión, y es solo eso: no. Usar la
+   tabla de BCS de una guía y no seguir su recomendación de producto es legítimo
+   **si se dice**, que es exactamente lo que hace esta ficha.
+
+Nota aparte, del mismo tipo que la que ya lleva ACVIM: la guía declara quién la
+paga — «These guidelines are supported by generous educational grants from
+Hill's Pet Nutrition, Inc., Purina Pro Plan Veterinary Diets, and Royal Canin».
+
+---
+
+### P-21 · Tres recomendaciones de AAHA que no traen número
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (las tres necesitan una cifra que la fuente no da) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo entera AAHA 2021 |
+
+La Tabla 8 de AAHA 2021 («Nutrients of Concern for Diseases and Select Specific
+Conditions») pide tres cosas que el motor hoy no hace, y **ninguna de las tres
+viene con cifra**. Escribirlas en el solver exigiría inventarse el número, que es
+lo que no se hace aquí. Van juntas porque la pregunta es la misma.
+
+| Patología | Lo que dice AAHA | Lo que hace el motor hoy | Lo que falta |
+|---|---|---|---|
+| `epilepsia_idiopatica` | «High medium-chain triglycerides» | Nada: un menú normal con avisos de fármaco | La cifra, y además el motor **no tiene clave** de triglicéridos de cadena media. El catálogo tendría que medirlos |
+| `diabetes` | «High protein (unless contraindicated, e.g., proteinuria)» | Suelo de fibra 17,5. **Ningún suelo de proteína** | Cuánta. Y la condición: «unless contraindicated» significa que en un diabético con proteinuria es al revés |
+| `renal_proteinuria` | «25-50% protein reduction from current intake · Meet essential amino acid requirements» | Solo avisos, **ninguna cifra** | Es una reducción **relativa a lo que el perro come hoy**, y el motor no sabe eso. O se convierte en un valor absoluto por 1000 kcal, o no es aplicable a este sistema |
+
+La última es la más importante de las tres: `renal_proteinuria` es una patología
+que un perro tiene de verdad y hoy no lleva ni un número.
+
+---
+
+### P-22 · Hasta el 40 % del fósforo de un menú sale de un bote, y no sabemos qué sal es
+
+| | |
+|---|---|
+| **Dueño** | **medible primero (Elena: hacen falta las etiquetas), y después Cris Carles** |
+| **Bloquea** | No hoy. Podría bloquear el día que se sepa la respuesta |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo enteros Dobenecker 2021 y Hofmann 2025 |
+
+Los dos estudios del grupo de Múnich que el repo cita 35 veces dicen lo mismo
+desde dos lados: **el daño del fósforo depende de la sal, no solo de la
+cantidad.**
+
+Dobenecker dio a ocho beagles cinco veces su requisito de fósforo cambiando solo
+la fuente:
+
+> *«Pi (KH2PO4, NaH2PO4) but not organic P caused an increased apparent P
+> digestibility and significantly influenced kinetics of serum FGF23,
+> parathyroid hormone, P, CrossLaps and bonespecific alkaline phosphatase,
+> demonstrating a disrupted calcium (Ca) and P homeostasis with potential harm
+> for renal, cardiovascular and skeletal health.»*
+
+Y Hofmann pone la frontera donde de verdad está, que **no** es orgánico contra
+inorgánico: *«CaHPO4*2H2O was used as inorganic P source because of its low
+solubility»* — el fosfato dicálcico es inorgánico y es el del lado bueno, 0 % de
+solubilidad al minuto y a los 90 minutos.
+
+**MEDIDO el mismo día sobre los 216 menús del catálogo precalculado:**
+
+| | % del fósforo del menú que aporta el multivitamínico |
+|---|---|
+| mínimo | 0,49 % |
+| mediana | **17,34 %** |
+| máximo | **39,58 %** |
+| menús donde aporta 0 % | **ninguno** |
+
+**Y la protección que uno supondría no protege.** Del mismo estudio: *«This
+implies that a mere increase of the Ca/P ratio in a product with considerable
+amounts of soluble Pi salts does not suffice to protect the user from a high P
+burden»*. El motor se defiende del fósforo con el techo por 1000 kcal y con el
+ratio calcio:fósforo, y la fuente dice que el segundo no sirve para esto.
+
+**Por qué no lo he decidido yo.** Hacen falta ocho datos que están en ocho
+etiquetas y que no puedo inventar, y según cuál sea la respuesta las dos fuentes
+dicen cosas opuestas **para el mismo número del catálogo**. La lista de los ocho
+productos está en `DATOS_QUE_FALTAN.md`.
+
+**La pregunta, en dos tiempos:**
+
+1. **Para Elena:** ¿se consiguen las ocho etiquetas? Es leer la línea de
+   composición o de aditivos del bote.
+2. **Para Cris, cuando estén:** si alguno lleva fosfato monosódico o
+   monopotásico, ¿qué se hace? Las salidas que se me ocurren son (a) nada, porque
+   la dosis del suplemento es de gramos y estos estudios dan cinco veces el
+   requisito; (b) marcar esas fichas y que el motor prefiera las otras; (c)
+   sacarlas del catálogo. La (a) necesita un número que no tengo: cuánto fósforo
+   soluble llega de verdad al perro con la dosis real, que es mucho menor que la
+   del estudio.
+
+---
+
+### P-23 · La TVT pide un ratio calcio:fósforo de 1,3-1,5 y el 87 % de nuestros menús está por debajo
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es criterio clínico: FEDIAF deja 1,0-2,0 y esta fuente aprieta dentro) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo enteras las dos ediciones del Merkblatt 181 |
+
+El Merkblatt 181 de la TVT —la hoja de la asociación veterinaria alemana de
+protección animal dedicada al BARF— da el ratio calcio:fósforo **«optimal 1,3 –
+1,5»**, y lo da **igual en sus dos ediciones**, la de julio de 2017 y la de mayo
+de 2025. Lo pone dentro de la lista de riesgos, junto a que un ratio inadecuado
+en cachorros puede dejar deformidades esqueléticas permanentes.
+
+El motor aplica el **1,0-2,0 de FEDIAF**. El 1,3-1,5 cabe dentro, así que no es
+un conflicto: es una recomendación que aprieta, o sea la clase de
+`recomendaciones_libro.json`.
+
+**MEDIDO el mismo día sobre los 216 menús del catálogo precalculado:**
+
+| | Ca:P |
+|---|---|
+| mínimo | 1,00 |
+| **mediana** | **1,16** |
+| máximo | 1,74 |
+| dentro del 1,3-1,5 de la TVT | **25 de 216** |
+| por debajo de 1,3 | **188** |
+| por encima de 1,5 | 3 |
+
+O sea que **no es un ajuste fino: aplicarlo como suelo cambiaría el 87 % de los
+menús**, y no está medido si con este catálogo siguen saliendo. Es la misma forma
+que tuvo el suelo de vitamina E: una cifra de una fuente que cabe en la ventana
+de FEDIAF y que al encenderla puede dejar a perros sin menú.
+
+**La pregunta:** ¿se aplica el 1,3 como suelo al perro sano? Y si se aplica, ¿al
+cachorro también, que es donde la fuente pone el riesgo grave, o solo ahí? Antes
+de encenderlo hay que medir cuántos perros se quedan sin menú, como se hizo con
+la vitamina E.
+
+⚠️ Y hay que mirarlo junto al **otro** ratio Ca:P que el motor ya aplica: el
+1,1-2,0 que pide `oxalato` desde el 10 de septiembre, de las Tablas 40-5 y 41-6
+de SACN5. Son tres fuentes con tres bandas para la misma cosa (1,0-2,0 FEDIAF ·
+1,1-2,0 SACN5 en oxalato · 1,3-1,5 TVT en el perro sano), y hoy la más estricta
+por abajo sería la de la TVT.
 
 
 ---

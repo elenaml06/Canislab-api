@@ -10189,6 +10189,23 @@ _CIFRAS_64 = [
     ("dcm_taurina_respondedora", "analitica_de_taurina", "200 µmol/L"),
     ("dcm_taurina_respondedora", "quien_sintetiza_menos", "NEWFOUNDLAND"),
     ("reaccion_adversa_alimento", "confirmar_con_reintroduccion", "CONFIRMED BY A CHALLENGE"),
+    # Y los tres del 12 de septiembre, de leer ENTERA la AAHA 2021 -- texto
+    # corrido, sus cinco tablas y su cuadro de energia. Los tres dicen algo que
+    # el motor NO puede hacer solo y que ninguna otra fuente del repo decia con
+    # estas palabras:
+    #   · las visceras, que una racion BARF lleva SIEMPRE y que la encefalopatia
+    #     hepatica es justo donde hay que quitar;
+    #   · que bajar las purinas del urato NO es bajar la proteina, que es el
+    #     error clasico de ese urolito y lo que el motor ya hace bien sin que
+    #     nadie lo dijera;
+    #   · la vitamina C y la densidad urinaria del oxalato: la primera es la
+    #     puerta por la que entraria un suplemento y la segunda es el numero
+    #     contra el que quien firma mide si el plan funciona.
+    ("encefalopatia_hepatica", "de_donde_viene_la_proteina", "Avoid organ meats"),
+    ("encefalopatia_hepatica", "de_donde_viene_la_proteina", "Consider vegetarian protein sources"),
+    ("urato", "profesional", "Does not necessarily mean low protein"),
+    ("oxalato", "vitamina_c_y_densidad_urinaria", "Avoid vitamin C supplementation"),
+    ("oxalato", "vitamina_c_y_densidad_urinaria", "USG ≤1.020"),
 ]
 for _pat64, _clave64, _trozo64 in _CIFRAS_64:
     _texto64 = ((_crudo64.get(_pat64) or {}).get("avisos") or {}).get(_clave64)

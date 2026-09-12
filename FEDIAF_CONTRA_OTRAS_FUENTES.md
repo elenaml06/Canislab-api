@@ -113,6 +113,57 @@ dentro de la ventana de FEDIAF y la estrechan.
 | **Máximo de EPA+DHA** | ninguno en ninguna etapa | **APLICADO el 11-sep-2026 por la noche: 2,8 g/1000 kcal** (Fascetti cap.14 citando NRC 2006, y la fuente lo repite por peso metabólico: *«<370 mg × BW(kg)0.75»*). ⚠️ Es el único de los tres techos de esa frase que **sí aprieta**: medido antes de aplicarlo, **5 de los 216 menús** se pasaban, hasta 3,00. Obligó a regenerar el catálogo |
 | **Mínimo de proteína del perro** | 52,1 g/1000 kcal en adulto | **NRC 2006 dice 20** (*«2.62 g/kg BW0.75 or 20 g/Mcal»*, citado por Fascetti cap.15). ⚠️ **Gana FEDIAF y el motor no baja de 52,1**, y además las dos cifras no miden lo mismo: la del NRC es un requerimiento mínimo suponiendo biodisponibilidad del 100 % y la de FEDIAF una recomendación para una dieta completa. Se apunta porque **es el número que bloquea el IRIS 4** que pide la revisión de Cris (15 % MS = 37,5 g/1000 kcal, entre los dos). Bajar el mínimo general NO es la solución: la solución es la vía firmada de `VETERINARIOS.md`, donde una prescripción por debajo de FEDIAF viaja con su propio juego de requisitos |
 | **Energía del hueso carnoso** | no se pronuncia | NRC excluye el hueso de los factores de Atwater, que es lo que usa el catálogo. Medido: el error está acotado en un dígito por ciento y no hay cifra que aplicar. `PENDIENTE_NUTRICION.md` |
+| **Triglicéridos de cadena media en la epilepsia** | no dice nada | AAHA 2021 Tabla 8 pide «High medium-chain triglycerides» y **no da cifra**. El motor no tiene clave para medirlos. No se aplica: P-21 |
+| **Proteína del diabético** | 52,1 g/1000 kcal de mínimo general, nada específico | AAHA 2021 Tabla 8 pide «High protein (unless contraindicated, e.g., proteinuria)» y **no da cifra**. `diabetes` lleva solo el suelo de fibra. No se aplica: P-21 |
+| **Proteína de la nefropatía con pérdida de proteínas** | nada | AAHA 2021 Tabla 8 da «25-50% protein reduction from current intake», que es **relativo a lo que el perro come hoy** y el motor no lo sabe. `renal_proteinuria` sigue sin ninguna cifra. P-21 |
+
+---
+
+## 3-bis-bis · TVT Merkblatt 181, leído entero el 12 de septiembre
+
+Es la única fuente del repo que trata **este producto**. Da dos cifras que el
+motor no usa, y las dos son de FORMA o de recomendación, no de requisito:
+
+| Tema | FEDIAF | TVT | Qué hace el motor |
+|---|---|---|---|
+| **Ratio calcio:fósforo** | 1,0-2,0 | «optimal 1,3 – 1,5», igual en 2017 y en 2025 | **El de FEDIAF.** El de la TVT cabe dentro, así que es una recomendación que aprieta, no un conflicto. Medido: de 216 menús del catálogo, **188 están por debajo de 1,3**. No se aplica y se pregunta: P-23 |
+| **Proporciones clásicas del BARF** | no se pronuncia (no es nutrición) | 60-80 % carne · 10-30 % hueso carnoso · 10-25 % verdura y fruta | La plantilla del motor parte de **50 % de hueso** (margen 20-60 %) y 10 % de verdura (margen 2-10 %), o sea por encima del máximo de hueso y por debajo del mínimo de verdura que publica esta fuente. Es FORMA (regla 3) y lo que legitima la ración es la verificación contra FEDIAF, no la plantilla — pero es la primera fuente **veterinaria publicada** que da otras proporciones, y queda escrito |
+
+---
+
+## 3-ter · AAHA 2021, leída entera el 12 de septiembre
+
+Es la fuente de la que salen la banda de BCS 4-5 y el 10 % de los premios, y se
+había citado 59 veces sin leerla. Al leerla entera aparecen tres cosas de esta
+lista.
+
+**Una donde manda FEDIAF y AAHA cabe dentro.** Su Cuadro 1 da los factores
+caninos sobre el RER (peso^0,75 × 70): adulto castrado 1,4-1,6, entero 1,6-1,8,
+inactivo/propenso a obesidad 1,0-1,2, crecimiento 3,0 antes de los 4 meses y 2,0
+después. El motor usa la Tabla VII-7 de FEDIAF y no cambia — pero la fila
+«inactivo/propenso a obesidad» da 70-84 kcal/kg^0,75, que **cabe dentro** del
+«Obese prone adults ≤ 90» de FEDIAF y lo confirma. Ese nivel sigue siendo el
+HUECO declarado de `niveles_de_actividad.json`, ahora con dos fuentes y no una.
+
+**Una donde AAHA es MENOS estricta que nosotros, y nos quedamos como estamos.**
+«For some large- and giant-breed dogs, skeletal maturity may not be achieved
+until closer to 15-16 mo». La app termina el crecimiento a los 15 meses con 25 kg
+de adulto y a los 20-24 meses con 45-70 kg, o sea más tarde. Más tiempo con
+requisitos de crecimiento es el lado estricto y ahí se queda.
+
+**Y una que es conflicto de verdad, y ya estaba abierta.** Su Tabla 8 pide «Avoid
+low protein» en las **tres** cardiopatías que lista, y el motor aplica al
+cardíaco con renal el techo de proteína de 62,5 g/1000 kcal que viene del
+Reglamento (UE) 2020/354. Es la P-19, que salió del consenso ACVIM el mismo día:
+ahora son **dos fuentes clínicas independientes** contra una entrada de la ley.
+No se resuelve aquí — es criterio clínico y tiene dueño.
+
+⚠️ **Y una cosa que no es una cifra y va escrita igual**: AAHA no recomienda dar
+comida cruda («AAHA does not advocate or endorse feeding pets any raw or
+dehydrated nonsterilized foods, including treats that are of animal origin»), y
+su Tabla 4 pone la dieta cruda entre los factores de riesgo que obligan a una
+evaluación ampliada. Usamos sus números y no seguimos su recomendación de
+producto. Eso es legítimo **si se dice**, y se dice: P-20.
 
 ---
 

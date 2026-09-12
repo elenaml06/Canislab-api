@@ -57,10 +57,12 @@ la tabla. Esos se quedan y se quedan todos.
 | WSAVA — dietas crudas y premios | sí (11-sep) | Abajo |
 | **Spitze 2003** | **no está en el repo** | Decide la taurina de 89 fichas |
 | Ettinger & Feldman | no | Dos tomos |
-| Dobenecker / Hofmann | no | |
+| Dobenecker / Hofmann | **los dos leídos enteros (12-sep)** | El de 2021 (PLOS ONE, 8 beagles) y el de 2025 (JAPAN, 8 foxhound). Abajo. Sale una cosa que el motor no puede ver y que vale hasta el **39,6 %** del fósforo de un menú: **en qué forma química viene el fósforo de los multivitamínicos**. Y una advertencia sobre nuestra propia protección: subir el ratio Ca:P NO protege de un fosfato soluble |
+| TVT Merkblatt 181 | **las DOS ediciones leídas enteras (12-sep)**, la de julio de 2017 y la de mayo de 2025 | Es la hoja de la asociación veterinaria alemana de protección animal **sobre el BARF**, o sea sobre esto. Está en alemán. Abajo. Lo suyo más duro ya estaba aplicado desde el 6 de septiembre (el bloqueo de los cortes con tiroides sale de aquí), y salen dos cifras que el motor no usa: el ratio Ca:P «óptimo» **1,3-1,5** y unas proporciones BARF clásicas distintas de las nuestras |
+| Ishii 2025 — purinas | **leído entero (12-sep)** | El único estudio que mide las purinas de la comida de perro por espectrometría de masas, y trae **la regla para convertir sus µmol/Mcal a nuestros mg/1000 kcal**. Confirma el objetivo de urato del motor (sus <630 µmol/Mcal son 82,5-95,8 mg/1000 kcal y tenemos escrito 90) y mide lo lejos que está una ración cruda: **1,5-1,8 veces el pienso más cargado que analizaron** |
 | ACVIM (Keene 2019) | **leído entero (12-sep)** | Igual: primero se buscó y luego se leyó. Lo que solo aparece leyendo va marcado abajo | Abajo. Cierra P-10 —el límite del sodio existe y es clínico, no una cifra— y saca un hallazgo nuevo: el motor aplica al cardíaco con renal justo la dieta baja en proteína que el consenso dice que hay que evitar |
 | IRIS 2026 | **leída entera (12-sep), los cuatro documentos** | ⚠️ Y en dos vueltas: la primera fue media lectura y medio `grep`, y Elena lo cazó. Lo que salió al leerla de verdad está abajo, marcado | Abajo. Contesta lo del IRIS 4, y la respuesta es que **IRIS no da ni una cifra dietética**: la restricción de proteína del estadio 4 no es suya, y lo único que dice de la proteína ahí es que hay que evitar que falte |
-| AAHA 2021 | no | |
+| AAHA 2021 | **leída entera (12-sep)**: texto corrido, las cinco tablas y el cuadro de energía | ⚠️ Sus tablas **no se pueden extraer del PDF** —están dibujadas como trazos vectoriales y la página de la Tabla 8 entera devuelve 194 caracteres—, así que se leyeron renderizando las páginas y están transcritas en `aaha_2021_tablas_transcritas.txt`, con el método escrito en su cabecera. Abajo, punto por punto. Confirma dos cosas que ya aplicamos (la banda de BCS 4-5 y el 10 % de los premios), da la segunda fuente independiente del conflicto cardíaco+renal, y trae tres cosas que el motor no decía |
 | Today's Veterinary Practice | **leída entera (12-sep)** | Igual. Y al leerla salió lo de las purinas, que ningún `grep` mío habría buscado | El artículo del oxalato, abajo: aguanta entera, todo lo suyo ya estaba aplicado. ⚠️ El que da el sodio cardíaco por estadio ACVIM sigue **sin estar** en el repo |
 
 ---
@@ -210,7 +212,7 @@ Lo que sí da son **objetivos en SANGRE**, que es otra cosa:
 | 3 | < 1,6 mmol/l (5,0 mg/dl) |
 | 4 | < 1,9 mmol/l (6,0 mg/dl) |
 
-Y con **suelo**: *«but not less than 0.9 mmol/l; > 2.7 mg/dl»*. O sea que la
+Y con **suelo**: *«but not less than 0.9 mmol/l; <4.6 mg/dl but >2.7 mg/dl»*. O sea que la
 propia IRIS dice que bajar el fosfato **de más** también es malo — en sangre,
 no en el plato, pero es la misma forma que la pregunta P-11 sobre el suelo de
 fósforo del oxalato.
@@ -293,7 +295,7 @@ es `renal` o `renal_avanzada`.
 
 | Lo que dice | Decisión |
 |---|---|
-| *«an increased blood creatinine or SDMA concentration alone is not diagnostic of CKD»* | **Refuerza `quien_formula_cada_patologia.json`**: la renal es `solo_veterinario`, y esto dice por qué — ni siquiera una analítica alta basta para diagnosticarla |
+| *«an increased blood creatinine or symmetric dimethylarginine (SDMA) concentration alone is not diagnostic of CKD»* | **Refuerza `quien_formula_cada_patologia.json`**: la renal es `solo_veterinario`, y esto dice por qué — ni siquiera una analítica alta basta para diagnosticarla |
 | El galgo (*greyhound*) tiene la creatinina y la SDMA **más altas** siendo sano, y los *sight hounds* la tensión más alta | **PENDIENTE DE DECIDIR, y es medible**: `razas.json` tiene los galgos. Si la app va a preguntar el estadio IRIS, un galgo sano puede salir estadio 2 por su raza |
 | Los ligantes de fosfato (30-60 mg/kg/día, hidróxido de aluminio, carbonato cálcico…) | **No se aplica**: es un fármaco, no un alimento. Y el motor no formula fármacos |
 | Toda la parte de hipertensión, anemia, acidosis, diálisis y sonda de alimentación | **No se aplica**: es tratamiento clínico |
@@ -455,7 +457,7 @@ FEDIAF publica de ella.
 | 7.5 Tabla VII-14, factores de conversión de cada forma química | **Ya aplicada y auditada** (`fediaf_conversiones_vitaminas.json`, rehecha por `auditar_transcripcion_fediaf.py`) |
 | 7.6 Reacción adversa: el prurito es el signo en casi el 100 % de los casos; los alérgenos más citados son leche, vaca, huevo y cereales, y los estudios controlados señalan trigo, soja, **pollo** y maíz | **Ya cubierto** por el aviso de proteína novel de la patología. No hay cifra que aplicar |
 | 7.7 Tóxicos, **con sus dosis**: uva 19,6 g/kg PV, pasa 2,8 g/kg PV, teobromina 90-115 mg/kg PV en los casos letales, cacao en polvo ~4 g/kg PV, cebolla fresca 5-10 g/kg PV, ajo 5 g/kg PV (= 1,25 ml de extracto) | **No se aplican las dosis, y a propósito**: el motor **prohíbe el alimento entero**, que es más estricto que cualquier umbral. Se anotan porque son las cifras que habría que usar el día que alguien quiera avisar en vez de prohibir |
-| 7.7 *«Wild onions and wild garlic … are potentially toxic for dogs and cats as well»*, y que el gato es más sensible | **Ya cubierto**: `TOXICOS_FEDIAF_7_7` filtra por palabra |
+| 7.7 *«Wild onions (A. validum & A. Canadense) and wild garlic (A. ursinum) have caused haemolytic anaemia in horses and ruminants (Lee K-W et al. 2000) and are potentially toxic for dogs and cats as well»*, y que el gato es más sensible | **Ya cubierto**: `TOXICOS_FEDIAF_7_7` filtra por palabra |
 
 ### Anexo 7.8 — las tablas VII-17a-d, y el cruce que nadie había hecho
 
@@ -527,6 +529,258 @@ MS en 2017 (nuestro `maxAdulto` es 56,75 = 22,70 × 2,5) y el de **hierro** de
 
 ---
 
+## TVT Merkblatt 181 «BARF» — las dos ediciones · leídas enteras el 12-sep-2026
+
+*Tierärztliche Vereinigung für Tierschutz e.V., Arbeitskreis Hunde und Katzen.*
+Julio de 2017 y mayo de 2025. Es la única fuente del repo que trata **este
+producto**: una hoja informativa de la asociación veterinaria alemana de
+protección animal dedicada entera a la alimentación cruda. Está en alemán, y hasta
+hoy solo se había leído su página 5 —de ahí salió el bloqueo de los cortes con
+tiroides el 6 de septiembre—. **Las dos ediciones dicen lo mismo en las dos cifras
+que importan**, comprobado: el ratio Ca:P y las proporciones clásicas.
+
+⚠️ Y como AAHA, **esta fuente no recomienda lo que hacemos**, y con más contundencia:
+«Die Ernährung von Hund und Katze mit einer inadäquaten BARF-Ration ist als
+tierschutzrelevant einzustufen» —una ración BARF inadecuada es un asunto de
+protección animal—, y «alle Vorteile des „Barfens“ auch durch die Verfütterung
+gekochter Rationen erreicht werden» —lo mismo se consigue cocinando—. Va a la
+misma pregunta que AAHA, la P-20.
+
+### Lo que ya está aplicado, y esta fuente confirma
+
+| Lo que dice | Decisión |
+|---|---|
+| «Verfütterung von Schlundfleisch und Hühnerhälsen: daran befindet sich in der Regel noch die Schilddrüse der geschlachteten Tiere, was bei regelmäßiger Verfütterung aufgrund des Gehaltes an Schilddrüsenhormonen zu einer Schilddrüsenüberfunktion (Hyperthyreose) bei Hunden führen kann» | **Ya aplicado** desde el 6 de septiembre: `TIROIDES_EXCLUIR` en `seguridad.py`, bloqueo de nivel A (no lo levanta ni un veterinario). Afecta a cuello de pavo, de pato, de ternera y laringe de vacuno. ⚠️ Y comprobado hoy: el catálogo precalculado ya **no tiene ninguna referencia** a esas cuatro fichas — el comentario del código decía que quedaban 56 y se limpiaron al regenerarlo |
+| «Die Verfütterung von Eiklar führt zur Bindung von Biotin, wodurch dieses nicht mehr resorbiert werden kann» y que la clara lleva inhibidores de tripsina | **Ya aplicado**: el tope de clara cruda de `seguridad.py`, con la avidina escrita al lado, y el huevo ENTERO sin topar porque la yema trae biotina |
+| «Bei einigen Fischarten führt die rohe Verfütterung zu einem Abbau von Thiamin (Vitamin B1), durch das im Fisch enthaltene, hitzelabile Enzym Thiaminase» | **Ya aplicado**: la tiaminasa es uno de los cinco topes crónicos del solver |
+| «Die Verfütterung von Knoblauch und Zwiebeln wird, obwohl für das Tier giftig, gerne und fälschlicherweise zur Verfütterung als „Antiparasitikum“ verwendet» | **Ya aplicado**: `TOXICOS_FEDIAF_7_7` filtra ajo y cebolla por palabra |
+| El riesgo bacteriano (Salmonella, Listeria, Campylobacter, E. coli, botulismo, H5N1 en gato), las resistencias a antibióticos y las aminas biógenas | **Ya cubierto** por el aviso de higiene del 10 de septiembre, de WSAVA. Esta fuente añade el H5N1 en pienso crudo congelado comercial y las **aminas biógenas** de la cadena de frío rota, que son nuevas y son de manipulación, no de fórmula |
+| Contraindicaciones: renal, hepático, urolitos, animal viejo, inmunodeprimido, cachorro, gestante/lactante | **Ya cubierto en seis de siete**: el motor tiene `renal`, `hepatopatia`, los cuatro urolitos e `inmunosupresion`, y los tres primeros no formulan menú automático o lo formulan con topes. La séptima, la gestante, es distinta: la fuente dice que **no hay estudios** de la flora de la perra preñada con BARF, así que no es un tope, es un hueco de la literatura |
+
+### Lo que NO se aplica, con el motivo
+
+| Lo que dice | Por qué no |
+|---|---|
+| ⚠️ El ratio calcio:fósforo **«optimal 1,3 – 1,5»**, igual en las dos ediciones | **NO se aplica, y hay que verlo medido antes de decidir.** FEDIAF pide 1,0-2,0 y es lo que aplica el motor. Medido el 12-sep sobre los 216 menús del catálogo: van de **1,00 a 1,74, mediana 1,16**, y solo **25 de 216** caen dentro del 1,3-1,5 que pide TVT — 188 están por debajo de 1,3. O sea que aplicarlo como suelo no es un ajuste: cambia el 87 % de los menús. Es la clase de `recomendaciones_libro.json` (una recomendación al perro sano que cabe dentro de FEDIAF), y va a `PREGUNTAS_ABIERTAS.md` con su medida |
+| Las proporciones clásicas del BARF según esta fuente: «„Klassische“ BARF-Rationen bestehen zu ca. 60 - 80 % aus Fleisch, 10 - 30% aus fleischigen Knochen, 10 - 25% aus Gemüse und Obst und etwas Pflanzenöl» | **No se aplica, y es FORMA (regla 3), no nutrición** — pero la diferencia es grande y se dice: nuestra plantilla parte de **50 % de hueso carnoso** con margen 20-60 %, o sea que el punto de partida está **por encima del máximo** que publica esta fuente (30 %), y nuestra verdura va de 2 a 10 % contra su 10-25 %. Nuestra plantilla está documentada como convención de divulgación (Billinghurst 1993) «sin estudio detrás», y se probaron cinco repartos sobre 300 menús cada uno con resultado casi idéntico. Lo que legitima la ración es la verificación contra FEDIAF, no la plantilla. Queda escrito porque es la primera fuente **veterinaria publicada** que da otras proporciones |
+| «Beliebte Schlachtabfälle wie Lunge und Euter sind bindegewebsreich und somit schwer verdaulich» | **No se aplica: no hay cifra y el motor no modela digestibilidad** (P-16). El catálogo tiene tres fichas de pulmón (vaca, cordero, ternera) y ninguna de ubre. Se anota porque el pulmón ya estaba marcado en el repo como caso debatido entre carne y víscera, y esta fuente da un motivo distinto para mirarlo |
+| El perro digiere el almidón mucho mejor que el lobo, y una dieta sin cereal solo tiene sentido en el poquísimo perro con sensibilidad al gluten; y que el lobo come un 10-21 % de su peso al día contra el 2-3 % del perro, así que con esa ración **no llegan los oligoelementos** sin suplementar | **No se aplica, y a la vez es el argumento de por qué existe este motor**: el suplemento no es opcional y por eso Suplementos y Extras van siempre libres (regla 5). No hay cifra que meter |
+| «Das sogenannte BARF-Profil aus einer Blutprobe kann nur sehr bedingt Aufschlüsse über eine Fehlernährung geben», con el ejemplo de que el calcio en sangre sigue normal con fracturas patológicas ya presentes | **No se aplica: no es una cifra de ración.** Pero es de lo más útil que dice para quien firma, porque es el contraargumento a «le hice una analítica y salió bien» |
+| Que la ración la calcule un veterinario con la especialidad de nutrición, y que en cachorro, geriátrico o enfermo crónico haya revisión periódica | **No se aplica** como regla del motor. Coincide con `quien_formula_cada_patologia.json`, donde 24 de las 47 son `solo_veterinario` |
+| Que no se debería dar crudo si en casa hay personas inmunodeprimidas, ancianas, embarazadas o niños pequeños, ni en perros de terapia ni en protectoras | **No se aplica: es del hogar, no del plato.** El motor no pregunta quién vive en la casa, y no propongo que lo pregunte. Queda escrito |
+
+---
+
+## Ishii CS et al. 2025 — las purinas de la comida de perro, medidas · leído entero el 12-sep-2026
+
+*BMC Veterinary Research 21:626.* Nueve metabolitos de purina medidos por
+cromatografía líquida y espectrometría de masas en tres lotes de cada una de 24
+dietas comerciales (14 secas, 10 húmedas) de los tres fabricantes grandes. Es la
+fuente que el repo tenía apuntada como «Purinas (Malandain/Ishii)» y no había
+leído.
+
+| Lo que dice | Decisión |
+|---|---|
+| ⚠️ **LA REGLA DE CONVERSIÓN, que es lo que más falta hacía**: *«The weight of purines from previous reports can be converted to millimoles by dividing the weight of purine (mg) by the molecular mass of the nuclear bases (131–152 mg/mmol), whereas millimoles can be converted to mg Eq UA by multiplying by the molar mass of UA (168 mg/mmol)»* | **APLICADA para poder comparar**. El motor trabaja en mg/1000 kcal y esta fuente publica en µmol/Mcal; sin esta frase las dos cifras no se pueden mirar juntas, que es exactamente el fallo de unidades que ya costó un error en este repo |
+| El umbral de dieta baja en purinas: *«All dry Rx diets, except for one LoPr diet, contained less than 630 μmol of total purines per Mcal ME, previously reported to decrease urinary UA and allantoin concentrations in healthy dogs»* | **CONFIRMA el número que el motor ya tenía escrito.** 630 µmol/Mcal son **82,5-95,8 mg/1000 kcal** con la conversión de arriba, y el `objetivo_terapeutico_por_1000kcal` de `urato` es **90**. Cae dentro de la banda, y viene de una fuente distinta y de un método distinto |
+| Las medias por categoría: receta 736 µmol/Mcal (IC 475-1053) contra mantenimiento **2459** (1866-3133); seco 464 contra húmedo **1704**; y el peor grupo, mantenimiento en lata, **3218** | **Sirve para medir lo lejos que estamos.** Ver abajo |
+| *«Hypoxanthine was the most abundant purine in most foods»* (30 % de la mediana) y es la que más sube el ácido úrico en orina; *«hypoxanthine has been reported to constitute more than 50% of the purines in animal meats and offal, whereas more than 60% of the purines in vegetables are composed of other purines such as adenine and guanine»* | **No se aplica: el catálogo no separa las purinas por tipo.** Sus valores son el total del USDA/ODS. Se anota porque es la razón por la que «bajar purinas» no es lo mismo en un pienso vegetal que en carne |
+| *«Inosine was the predominant purine in frozen stored raw fish»*, y la hipoxantina alta de los piensos se explica porque cocinar por encima de 100 ℃ degrada el IMP y la inosina a hipoxantina | **No se aplica, y es el mayor límite de esta comparación**: sus 24 dietas están **cocinadas** y una ración BARF no. El reparto por tipo de purina de un alimento crudo y congelado no es el de esta tabla |
+| Ishii: *«these results suggest that dry food may offer an advantage in preventing urate urolithiasis especially if dry food is moistened before feeding»* | **No se aplica**: no formulamos pienso. Refuerza el aviso que ya tiene `urato`, que manda a dieta terapéutica |
+| *«the ratio of total purine (μmol) to protein (g) varied several fold between diets within some categories»*, contra la idea de que las purinas van con la proteína | **Ya recogido** el 12-sep en el aviso de `urato`, con la frase de AAHA. Esta fuente lo **mide**: de 1 a 38 µmol/g en los secos |
+| Ishii, sobre su propio método: *«there is no standard method of measuring purine content or quality control to ensure results are comparable among different laboratories»*, y que sus valores salieron un 30 % de los de estudios previos | **Es el aviso de cómo leer todo lo anterior.** Va escrito para que la coincidencia del 90 no se lea como más precisa de lo que es |
+
+### Lo MEDIDO con esto delante, el 12-sep-2026
+
+Sobre los 216 menús del catálogo precalculado, con las purinas de las 163 fichas
+(todas las tienen) y la conversión de la propia fuente:
+
+| | mg/1000 kcal | µmol/Mcal (masa molar 131-152) |
+|---|---|---|
+| menú del catálogo, mínimo | 382 | 2.500-2.900 |
+| menú del catálogo, **mediana** | **756** | **5.000-5.800** |
+| menú del catálogo, máximo | 1.363 | 9.000-10.400 |
+| objetivo de `urato` del motor | 90 | 590-690 |
+| umbral de dieta baja en purinas (Ishii) | 82,5-95,8 | < 630 |
+| el pienso **más** cargado que midió Ishii (mantenimiento en lata) | 422-489 | 3.218 |
+
+O sea: **la ración BARF mediana lleva entre 1,5 y 1,8 veces las purinas del
+pienso comercial más cargado que este estudio encontró**, y entre 8 y 9 veces el
+umbral de una dieta baja en purinas. Eso **confirma con una fuente nueva** la
+decisión que ya estaba tomada —`urato` no formula menú automático— y ahora tiene
+un número comparable contra alimentos reales, no solo contra un objetivo.
+
+⚠️ **Y lo que esta comparación NO demuestra**, porque hay que decirlo: sus 24
+dietas están cocinadas y medidas sin hidrólisis ácida (9 metabolitos por
+separado), y nuestras fichas traen el total del USDA/ODS, que se mide **tras**
+hidrólisis. Los propios autores dicen que sus cifras salieron un 30 % de las de
+estudios previos. La comparación vale para el orden de magnitud, que es
+aplastante, no para el dígito.
+
+---
+
+## Dobenecker 2021 y Hofmann 2025 — el fósforo según de dónde venga · leídos enteros el 12-sep-2026
+
+Son dos estudios del mismo grupo (Cátedra de Nutrición Animal, LMU Múnich), y
+hay que leerlos juntos porque el segundo matiza al primero. El repo los cita 35
+veces y no se habían leído.
+
+**Dobenecker B, Reese S, Herbst S (2021), PLOS ONE 16(2):e0246950.** Ocho beagles
+sanos, cuatro dietas consecutivas: una control que cubre justo el requisito de
+fósforo y tres con **cinco veces** ese fósforo, cambiando solo la fuente —harina
+de canal de ave (orgánico), NaH₂PO₄ y KH₂PO₄ (los dos inorgánicos y muy
+solubles)—. Sangre a 8 tiempos en 7 horas.
+
+| Lo que dice | Decisión |
+|---|---|
+| *«Pi (KH2PO4, NaH2PO4) but not organic P caused an increased apparent P digestibility and significantly influenced kinetics of serum FGF23, parathyroid hormone, P, CrossLaps and bonespecific alkaline phosphatase, demonstrating a disrupted calcium (Ca) and P homeostasis with potential harm for renal, cardiovascular and skeletal health»* | **Pendiente de decidir, y bloqueado por un dato.** Ver abajo: el motor no sabe en qué forma química viene el fósforo de sus fichas |
+| *«The use of Pi in food can therefore not be considered as safe»* | Es la conclusión del resumen, y va entera porque es la frase que decide lo demás |
+| La digestibilidad aparente del fósforo cambia con la fuente: orgánico **22 %** contra control 54 %, NaH₂PO₄ 53 % y KH₂PO₄ 48 % | **No se aplica**: el motor no modela digestibilidad, y eso ya está declarado como hueco (P-16). Se anota porque es la medida de cuánto se separan las dos fuentes: el mismo fósforo en el plato, más del doble absorbido |
+| Con los dos fosfatos inorgánicos, el producto calcio×fósforo en suero superó el umbral de 55 mg²/dl² **desde la primera hora** y llegó a 180, y el FGF23 llegó a 1655 pg/ml —*«which is otherwise found in dogs with IRIS stage 3»*— en perros **sanos** | **No se aplica: son cifras de sangre, no de ración.** Van escritas porque son el número contra el que un veterinario mediría si esto le preocupa |
+| ⚠️ *«This implies that a mere increase of the Ca/P ratio in a product with considerable amounts of soluble Pi salts does not suffice to protect the user from a high P burden»* | **ESTO SÍ NOS TOCA, y no es una cifra: es un límite de nuestra protección.** El motor se defiende del fósforo con dos cosas, el techo por 1000 kcal y el ratio Ca:P, y la fuente dice que la segunda **no protege** si el fósforo viene de una sal soluble. Subir el ratio de 1,4 a 1,9 no evitó ni la subida del fósforo en suero ni la del producto Ca×P |
+| *«given the fact that most dogs receive multiple meals per day, the possibly threatening impact on parameters of P homeostasis might exist permanently»* | **No se aplica**: el motor da la ración del día y no decide en cuántas tomas. Se anota porque es lo que convierte un pico de 7 horas en algo permanente |
+
+**Hofmann C, Dobenecker B, Kienzle E (2025), J Anim Physiol Anim Nutr
+109:124-129.** Ocho foxhound cruzados, dos dietas que solo se diferencian en la
+solubilidad del calcio y del fósforo del corrector mineral.
+
+| Lo que dice | Decisión |
+|---|---|
+| ⚠️ **La frontera NO es «orgánico contra inorgánico»: es SOLUBLE contra INSOLUBLE.** En este estudio el fosfato inorgánico insoluble es el **CaHPO₄·2H₂O**, o sea el fosfato dicálcico, y es el del lado bueno: *«CaHPO4*2H2O was used as inorganic P source because of its low solubility»*, con solubilidad **0 %** al minuto y a los 90 minutos | **Cambia la pregunta que hay que hacer.** No vale saber si el fósforo de un suplemento es «inorgánico»: hay que saber **qué sal es**, porque el fosfato dicálcico —que es el vehículo habitual de estos correctores— es el insoluble |
+| Digestibilidad aparente del fósforo: **20 %** con la fuente insoluble contra **26 %** con la soluble, y fósforo en orina más alto con la soluble | **No se aplica**: otra vez digestibilidad. La diferencia aquí es mucho menor que en el estudio de 2021, y los propios autores lo explican: el premix soluble perdió solubilidad con el tiempo (98 % al minuto, 43 % a los 90) formando complejos insolubles |
+| La digestibilidad del **calcio** no depende de la fuente —salió negativa en los dos grupos— y en el perro el sitio principal de absorción parece ser el intestino grueso | **No se aplica, y es tranquilizador**: el catálogo tiene dos fuentes de calcio y las dos son cáscara de huevo (carbonato). Esta fuente dice que ahí la forma da igual |
+| El cloruro cálcico acidifica la orina (pH 5,2-4,9 contra 5,8-5,4) y con pH por debajo de 5 sube la excreción de calcio | **No se aplica**: no hay cloruro cálcico en el catálogo. Se anota porque toca los urolitos, donde el pH urinario decide |
+
+### Lo que sale de los dos, y está BLOQUEADO POR UN DATO
+
+El motor mide el fósforo **total** y el ratio calcio:fósforo. No ve la forma
+química, y estas dos fuentes dicen que la forma química decide. Así que la
+pregunta es: **¿de dónde sale el fósforo de nuestros menús?**
+
+**MEDIDO el 12-sep-2026 sobre los 216 menús del catálogo precalculado**, repartiendo
+el fósforo de cada menú entre sus alimentos:
+
+| | % del fósforo del menú que aporta el multivitamínico |
+|---|---|
+| mínimo | 0,49 % |
+| mediana | **17,34 %** |
+| máximo | **39,58 %** |
+| menús con 0 % | **ninguno de los 216** |
+
+O sea que **hasta cuatro de cada diez miligramos de fósforo de una ración salen
+de un bote**, y de ese fósforo no sabemos la sal. Siete de los diez
+multivitamínicos del catálogo declaran fósforo, de 100 a 9.200 mg/100 g, y
+ninguna ficha dice en qué forma viene. Es exactamente el mismo hueco que ya está
+escrito para las vitaminas del grupo B.
+
+**No se aplica nada, y el motivo es que no se puede sin inventarse el dato.** Si
+es fosfato dicálcico, Hofmann dice que es el insoluble y no pasa nada; si es
+monosódico o monopotásico, Dobenecker dice que no se puede considerar seguro. Son
+conclusiones opuestas para el mismo número del catálogo. Va a
+`DATOS_QUE_FALTAN.md` —que no rellena el asistente— y la pregunta a
+`PREGUNTAS_ABIERTAS.md` con dueño.
+
+---
+
+## AAHA 2021 — «Nutrition and Weight Management Guidelines for Dogs and Cats» · leída entera el 12-sep-2026
+
+1.547 líneas de texto corrido, más **cinco tablas y un cuadro que el PDF no
+suelta**. Es la fuente de la que sale la regla del BCS, y la que el repo cita 59
+veces sin haberla leído nunca entera.
+
+⚠️ **LO PRIMERO, PORQUE CAMBIA CÓMO SE CITA ESTA FUENTE.** Sus tablas están
+dibujadas como trazos vectoriales, no como texto: `page.get_text()` de la página
+164 —que es la Tabla 8 entera, la de los nutrientes de cada enfermedad— devuelve
+**194 caracteres**, el título y el pie de página, y `get_images()` devuelve 0. No
+es el problema de las dos columnas de SACN5 y FEDIAF, donde el texto estaba y
+salía desordenado: aquí **no está**. Se leyeron renderizando cada página a 200
+ppp y mirándolas, y la transcripción vive en `aaha_2021_tablas_transcritas.txt`,
+en este repo, con su método escrito en la cabecera y con lo que la separa de
+`fediaf_tabla_III_3b.txt`: aquella se puede rehacer con un script contra el PDF y
+esta **no**. `auditar_citas.py` la indexa, así que una cita de la Tabla 8 se
+comprueba contra ella y no cae en «fuente que no está en el repo».
+
+⚠️ **Y HAY UN SEGUNDO DEFECTO, en el texto que SÍ se extrae, y es de la familia
+del de las dos columnas.** El PDF devuelve los cuatro signos de desigualdad como
+signos de puntuación corrientes: `<` sale **coma**, `>` sale **punto**, `≥` sale
+`$` y `≤` sale `#`. Comprobado letra a letra contra la página renderizada a 400
+ppp. Importa porque las desigualdades de AAHA son justo donde están sus cifras, y
+al corromperse **no parecen rotas**: «A BCS ,4/9 or .5/9» se lee como una
+enumeración y «treats and other food items make up #10%» parece una nota al pie.
+Las ocho frases afectadas están escritas con sus signos buenos en
+`aaha_2021_tablas_transcritas.txt`, y una de ellas trae una **discrepancia de la
+propia fuente**: el texto dice «each BCS ≥5/9 is equivalent to being 10%
+overweight» y su Tabla 2 pone «-» en el BCS 5 y empieza el 10 % en el 6. Manda la
+tabla, que es la que trae los números y la que cuadra con la banda 4-5 — y es la
+que aplica el motor.
+
+⚠️ **Y LO SEGUNDO: esta fuente no recomienda lo que hace este producto.** «AAHA
+does not advocate or endorse feeding pets any raw or dehydrated nonsterilized
+foods, including treats that are of animal origin», y su Tabla 4 pone «Unconventional
+diet (e.g., raw meat based, home prepared, vegetarian, vegan)» entre los factores
+de riesgo que obligan a una evaluación ampliada. No es una cifra y no cambia
+ninguna, pero **queda escrito**: usamos sus números para el BCS y para los
+premios, y hay que decir dónde nos contradice. Va a `PREGUNTAS_ABIERTAS.md` con
+dueño, porque qué se cuenta de esto en la app es decisión de producto, no mía.
+Y como en ACVIM, la fuente declara quién la paga: «These guidelines are supported
+by generous educational grants from Hill's Pet Nutrition, Inc., Purina Pro Plan
+Veterinary Diets, and Royal Canin».
+
+### Lo que CONFIRMA de lo que ya hace el motor
+
+| Lo que dice | Decisión |
+|---|---|
+| Tabla 2: BCS 4/9 es «Ideal» y BCS 5/9 sale como «-» (no aplica). De 6 en adelante, 10 % de sobrepeso por punto: 6 → 10 %, 7 → 20 %, 8 → 30 %, 9 → 40 % | **Ya aplicado, y es la fuente exacta**. `BCS_IDEAL_MIN = 4.0` y `PCT_POR_PUNTO_BCS = 0.10` en `motor/verificar.py`. Los dos números salen clavados de esta tabla, que hasta hoy nadie había abierto |
+| *«A BCS <4/9 or >5/9, MCS with any degree of loss, and unexplained weight change from the pet's previous assessment should prompt an extended assessment»* | **Ya aplicado**: es la banda 4-5 que se encendió el 12-sep. Segunda frase de la misma fuente que dice lo mismo que su Tabla 2 |
+| *«Noncomplete or unbalanced food calories at >10% of a patient's daily caloric intake dilute essential nutrients and provide excess calories»* | **Ya aplicado** (regla 3-bis). Es la **séptima** fuente con el 10 %, y la que mejor dice POR QUÉ: «dilute essential nutrients», que es exactamente lo que hace el motor al escalar los mínimos por DER/(DER − premios) |
+| *«Base these calculations on ideal weight»* para el plan de adelgazamiento, y en hospitalizados «base feeding calculations on current weight if ideal or underweight or on ideal BW if overweight or obese» | **Ya aplicado**: es `peso_objetivo_kg` y su regla de que sin ese campo se usa el real (lado seguro) |
+| Tabla 8, oxalato cálcico: «Controlled calcium with appropriate calcium to phosphorus ratio» | **Ya aplicado**: es el ratio Ca:P 1,1-2,0 del bloque `ratios` de `oxalato`, del 10-sep. Segunda fuente independiente |
+| Tabla 8, hepatopatía por cobre: «Low copper / Added zinc» | **Ya aplicado**: `hepatopatia` tiene techo de cobre 2,4 y **suelo de zinc 50** |
+| Tabla 8, obesidad: «High protein / Moderate to high fiber / Low energy density / Increased nutrient to calorie ratio / Moderate to low fat» | **Ya aplicado**: `obesidad` lleva suelo de proteína 62,5 y de fibra 30 y techo de grasa 30 |
+| Tabla 8, cistina: «Controlled cystine / Controlled methionine» | **Ya escrito**: `cistina` tiene `nutriente_frontera: metionina_cistina`, y no formula porque eso exige bajar del mínimo de FEDIAF |
+| Tabla 8, artrosis: «High EPA/DHA ... Low energy density if overweight/obese» | **Ya aplicado**: el suelo de EPA de la artrosis, de SACN5 Tabla 34-2 |
+| Tabla 8, dermatitis: «High n-3 fatty acids · Consider n-6:n-3 ratio» | **Ya escrito, y sin aplicar el ratio**: es la **tercera** fuente que pide el omega-6:omega-3 y ninguna da la cifra para el perro. Sigue en `requisitos_condicionales.json` y en la revisión de Cris |
+| Tabla 8, enfermedad renal crónica: «Low phosphorus / ± potassium supplementation / High EPA/DHA», **y ni una palabra de bajar la proteína** | **Coincide con IRIS**: la restricción de proteína no es de la ERC sin más. Ver abajo, que aquí hay un conflicto |
+
+### Lo que el motor NO decía, y se APLICA
+
+| Lo que dice | Qué se hace |
+|---|---|
+| Tabla 8, encefalopatía hepática: «Low protein / ± B12 supplementation», y en las notas **«Avoid organ meats»** y **«Consider vegetarian protein sources»** | **APLICADO**: aviso nuevo en `encefalopatia_hepatica`. Importa porque una ración BARF lleva vísceras SIEMPRE —son la categoría con la que el motor cierra media tabla de vitaminas— y esta patología no formula, así que lo único que puede hacer el motor es decirlo. Ninguna de las fuentes que ya teníamos lo decía con esas palabras |
+| Tabla 8, urato: «Low purines · **Does not necessarily mean low protein**» | **APLICADO al aviso profesional de `urato`, y con su matiz**, porque aquí AAHA y SACN5 **no dicen lo mismo**: la Tabla 39-4 de SACN5, que ya estaba citada en ese mismo aviso, sí pide «Restrict dietary protein to 10 to 18% dry matter». No hace falta resolverlo —esta patología no formula— y van las dos. ⚠️ Y hay que leer la frase de AAHA con cuidado: se cita a menudo como «las purinas están en las vísceras, no en la proteína», y **con este catálogo eso es falso**: quitando hígado y corazón la ración sigue en casi cinco veces el objetivo, porque la mayor parte viene de la **carne muscular**. En un pienso vegetal se pueden separar las dos cosas; en BARF no |
+| Tabla 8, oxalato cálcico: «Avoid vitamin C supplementation», «Added water», y en las notas «Aim for USG ≤1.020 (dogs)» | **APLICADO como aviso**. La vitamina C no es requisito de FEDIAF para el perro y el catálogo **no tiene ninguna ficha de vitamina C** (comprobado: no existe la clave), así que hoy no hay nada que topar — pero es la puerta por la que entraría el día que alguien añada un suplemento, y la densidad urinaria es el número contra el que quien firma mide si el plan funciona |
+
+### Lo que sale y NO se aplica, con el motivo
+
+| Lo que dice | Por qué no |
+|---|---|
+| Cuadro 1, factores caninos sobre el RER (= peso^0,75 × 70): adulto castrado 1,4-1,6 · entero 1,6-1,8 · **inactivo/propenso a obesidad 1,0-1,2** · pérdida de peso 1,0 · gestación 3,0 (últimos 21 días) · lactancia 3,0 a ≥6,0 · crecimiento <4 meses 3,0 y ≥4 meses 2,0 · trabajo ligero 1,6-2,0, moderado 2,0-5,0, intenso 5,0-11,0 | **No se aplica: manda FEDIAF**, que publica su propia Tabla VII-7 y es la que usa el motor. Se anota entero porque el «inactivo/propenso a obesidad» es el **HUECO declarado** de `niveles_de_actividad.json` («Obese prone adults ≤ 90») y ahora tiene una segunda fuente que lo cifra: 1,0-1,2 × 70 = **70-84 kcal/kg^0,75**, coherente con el ≤ 90 de FEDIAF |
+| *«Recent data suggest mean caloric intake for weight loss over a 12 wk period is»* 63 ± 10,2 kcal/kg^0,75 en el perro (el ± sale como un «6» al extraer el PDF, así que la cifra va fuera de las comillas) | **No se aplica**: el motor no formula dietas de adelgazamiento por kcal, recibe el DER de fuera. Se anota porque es la cifra medida contra la que se lee un plan de pérdida de peso, y el Cuadro 1 da 70 para lo mismo |
+| Tabla 8, nefropatía con pérdida de proteínas: «25-50% protein reduction from current intake · Meet essential amino acid requirements» | **No se puede aplicar como está**: es una reducción **relativa a lo que el perro come hoy**, y el motor no sabe eso. Queda escrito porque `renal_proteinuria` hoy no lleva ninguna cifra, solo avisos, y esta es la única que hay en las fuentes leídas |
+| Tabla 8, epilepsia idiopática: «High medium-chain triglycerides» | **No se aplica: no hay cifra**. AAHA no dice cuánto, y el motor no tiene clave de triglicéridos de cadena media. Es el mismo caso que los tres `documentado_sin_cifra` de `requisitos_condicionales.json`. A `PREGUNTAS_ABIERTAS.md` |
+| Tabla 8, diabetes: «High soluble and insoluble fiber» y «High protein (unless contraindicated, e.g., proteinuria)» | **La fibra ya está** (suelo 17,5 en `diabetes`). **La proteína no, y no hay cifra**: «high» sin número no se puede escribir en el solver. A `PREGUNTAS_ABIERTAS.md` |
+| *«For some large- and giant-breed dogs, skeletal maturity may not be achieved until closer to 15-16 mo»* | **No cambia nada, y va por el lado seguro**: la app termina el crecimiento a los 15 meses en un perro de 25 kg de adulto y a los 20-24 en los de 45-70 kg, o sea **más tarde** que AAHA. Requisitos de crecimiento durante más tiempo es el lado estricto |
+| *«there are no specific nutritional requirements set by AAFCO for mature, senior, or geriatric pets»* y que no hay que cambiar de dieta por cumplir años | **No se aplica**: el motor sí distingue sénior, pero por la Tabla VII-6 de FEDIAF, que es energía y no requisitos. Coincide: nuestros 43 requisitos tampoco cambian por ser sénior |
+| Riesgos de MCD asociada a dieta: *«Previously identified risk factors include lamb and rice diets, low-protein diets, and high-fiber diets»*, y «the most conservative approach is to avoid feeding grain-free diets or diets high in legumes» | **Lo de las legumbres ya está medido y contestado** en `dcm_asociada_a_dieta`. Lo del **cordero** es nuevo por esta puerta y refuerza la P-18, que está parada porque Spitze 2003 no está en el repo. Lo de «low-protein» y «high-fiber» entra en el conflicto de abajo |
+| Todo el bloque de comunicación con el cliente, el equipo de la clínica, el microbioma y los pacientes hospitalizados (unas 700 líneas) | **No se aplica**: no hay ninguna cifra de ración. Se leyó entero y se dice que se leyó |
+
+### El conflicto, que es el mismo de siempre y ahora tiene dos fuentes
+
+La Tabla 8 dice, para las **tres** cardiopatías que lista —enfermedad valvular
+degenerativa, miocardiopatía hipertrófica y miocardiopatía dilatada—:
+«Controlled sodium / High EPA/DHA / **Avoid low protein**». Y en el texto, entre
+los factores de riesgo de la miocardiopatía dilatada asociada a dieta,
+«low-protein diets».
+
+El motor, a un perro con `cardiopatia` **y** `renal` a la vez, le aplica el techo
+de proteína de la renal: **62,5 g/1000 kcal**. Eso es exactamente «low protein».
+Es la P-19, que salió leyendo el consenso ACVIM el mismo día, y ahora la dicen
+**dos fuentes independientes**. No la resuelvo yo: cuál de las dos manda en un
+perro que tiene las dos cosas es criterio clínico. Está en
+`PREGUNTAS_ABIERTAS.md` con dueño.
+
+---
+
 ## WSAVA — «Raw Meat Based Diets For Pets» · leído entero el 11-sep-2026
 
 | Lo que dice | Decisión |
@@ -535,7 +789,7 @@ MS en 2017 (nuestro `maxAdulto` es 56,75 = 22,70 × 2,5) y el de **hierro** de
 | *«Feeding bones does not reduce the risk of plaque or tooth loss due to periodontitis»* | **APLICADO**: la creencia de que el hueso limpia los dientes es una razón por la que se da BARF, y la fuente dice que no. Aquí el hueso está por el calcio |
 | Riesgo bacteriano, y que congelar no mata todas las bacterias | **Ya estaba** (aviso de higiene del 10-sep, de otra fuente) |
 | *«Home prepared ... diets may have important nutrient deficiencies and excesses»*, y que en cachorros da problemas esqueléticos | **No se aplica**: es la razón de ser de este motor, no una cifra |
-| *«High fat, low fibre diets ... may be well tolerated by many pets, but others will show ... diarrhoea, or even pancreatitis»* | **No se aplica**: el motor no puede saber qué perro. Ya hay plan de transición y topes de pancreatitis |
+| *«High fat, low fiber diets (raw, but also cooked) may be well tolerated by many pets, but others will show gastrointestinal problems, such as diarrhoea, or even pancreatitis»* | **No se aplica**: el motor no puede saber qué perro. Ya hay plan de transición y topes de pancreatitis |
 | *«It is important for the practitioner to know when their patients are fed raw»* | **No se aplica**: es para la consulta |
 
 ## WSAVA — «Guide to Treats for Dogs» · leído entero el 11-sep-2026
@@ -655,7 +909,7 @@ Son **64**, y cada una dice por qué.
 
 - **Taken together, the author recommends the following: restricted feeding of a puppy food with a calcium and vitamin D content not t**
 
-  LA RECOMENDACION FINAL DEL AUTOR, con dos cifras: «restricted feeding of a puppy food with a calcium and vitamin D content not to exceed [...] calcium ~1.0% dm, VITAMIN D CONTENT 12.5-25 ug/kg diet». El calcio es la discrepancia de arriba. La vitamina D es NUEVA: 12,5-25 ug/kg MS = 500-1000 UI/kg, o sea 3,125 a 6,25 ug/1000 kcal a 4000 kcal/kg. El motor no tiene techo de vitamina D en crecimiento mas alla del maximo LEGAL de FEDIAF (14,19) y del tope cronico por peso metabolico. MEDIDO el 11-sep-2026 sobre los 12 menus de cachorro del catalogo: van de 3,14 a 8,96 ug/1000 kcal, mediana 6,07, y SEIS DE LOS DOCE pasan de 6,25. Cabe dentro de la ventana de FEDIAF, asi que se PUEDE aplicar -- y p
+  LA RECOMENDACION FINAL DEL AUTOR, con dos cifras: «restricted feeding of a puppy food with a calcium and vitamin D content not to exceed the percentages demonstrated in controlled studies to result in skeletal problems (i.e. calcium ∼1.0% dm, vitamin D content 12.5–25 μg/kg diet)». El calcio es la discrepancia de arriba. La vitamina D es NUEVA: 12,5-25 ug/kg MS = 500-1000 UI/kg, o sea 3,125 a 6,25 ug/1000 kcal a 4000 kcal/kg. El motor no tiene techo de vitamina D en crecimiento mas alla del maximo LEGAL de FEDIAF (14,19) y del tope cronico por peso metabolico. MEDIDO el 11-sep-2026 sobre los 12 menus de cachorro del catalogo: van de 3,14 a 8,96 ug/1000 kcal, mediana 6,07, y SEIS DE LOS DOCE pasan de 6,25. Cabe dentro de la ventana de FEDIAF, asi que se PUEDE aplicar -- y p
 
 - **In 36 dogs with elbow OA due to ED, a double‐blind efficacy study was performed by feeding an increased omega‐3 content (omega‐3 o**
 
@@ -674,7 +928,7 @@ Son **64**, y cada una dice por qué.
 
 - **Although it appears that a “natural” diet protects against, or at least minimizes, the development of calculus, it does little to**
 
-  LO QUE UNA DIETA CRUDA NO HACE, dicho por esta fuente: «Although it appears that a NATURAL diet protects against, or at least minimizes, the development of calculus, it does little to...». Es de los pocos sitios donde el libro habla de la dieta cruda y del sarro. No cambia ninguna cifra del motor, y queda escrito porque la app no promete nada dental y esta fuente marca hasta donde llega.
+  LO QUE UNA DIETA CRUDA NO HACE, dicho por esta fuente: «Although it appears that a “natural” diet protects against, or at least minimizes, the development of calculus, it does little to protect against the development of periodontitis and tooth loss, in either cats or dogs». Es de los pocos sitios donde el libro habla de la dieta cruda y del sarro. No cambia ninguna cifra del motor, y queda escrito porque la app no promete nada dental y esta fuente marca hasta donde llega.
 
 - **Dietary fat restriction is particularly important in patients diagnosed with lymphangiectasia, with many patients needing restrict**
 
@@ -718,7 +972,7 @@ Son **64**, y cada una dice por qué.
 
 - **In healthy cats and dogs, dietary sodium intake up to 3.1 g/Mcal in cats and 4.1 g/Mcal in dogs does not affect blood pressure or**
 
-  ⚠️ EL SODIO DEL RENAL NO TIENE EVIDENCIA, Y EL MOTOR LO RESTRINGE. Literal del capítulo: «there is currently no evidence to suggest that lowering dietary sodium will reduce blood pressure in cats or dogs with CKD», y en perro sano «dietary sodium intake up to ... 4.1 g/Mcal in dogs does not affect blood pressure or renal or cardiac functions». El motor aplica al `renal` un techo de sodio de 750 mg/1000 kcal, o sea 0,75 g/Mcal -- cinco veces por debajo de lo que esta fuente dice que ya es inocuo. || NO SE QUITA, y por dos motivos escritos: la propia fuente sigue diciendo en el mismo párrafo que «moderately sodium-restricted therapeutic diets for the nutritional management of renal disease rem
+  ⚠️ EL SODIO DEL RENAL NO TIENE EVIDENCIA, Y EL MOTOR LO RESTRINGE. Literal del capítulo: «there is currently no evidence to suggest that lowering dietary sodium will reduce blood pressure in cats or dogs with CKD», y en perro sano «dietary sodium intake up to ... 4.1 g/Mcal in dogs does not affect blood pressure or renal or cardiac functions». El motor aplica al `renal` un techo de sodio de 750 mg/1000 kcal, o sea 0,75 g/Mcal -- cinco veces por debajo de lo que esta fuente dice que ya es inocuo. || NO SE QUITA, y por dos motivos escritos: la propia fuente sigue diciendo en el mismo párrafo que «moderately sodium‐restricted therapeutic diets for the nutritional management of renal disease remain common and recommended»
 
 - **Stage I Stage II Stage III Stage IV Hydration Fresh water at all times Protein modification Dogs: UPC >2 Cats: UPC >0.4 Dogs: UPC**
 

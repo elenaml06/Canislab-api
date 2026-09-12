@@ -922,8 +922,8 @@ en el tolerable del estudio. El dato que lo motiva: **35 de 91 perros (38 %)**
 con dieta comercial normal tenían rodanina positiva, y 20 (22 %) superaban el
 límite de referencia de 400 µg/g de hígado seco.
 
-**Y en la diabetes hay una excepción que el motor no aplica.** La frase de Purina
-completa es: *«Dietary fat restriction (<30% of metabolizable energy) is
+**Y en la diabetes hay una excepción que el motor no aplica.** La frase del Purina
+Institute completa es: *«Dietary fat restriction (<30% of metabolizable energy) is
 recommended for diabetic dogs with concurrent chronic pancreatitis or persistent
 hypertriglyceridemia, **except for diabetic dogs in thin body condition**»*.
 
