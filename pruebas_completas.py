@@ -3783,6 +3783,66 @@ _n_var_b25 = sum(len(_v) for _v in _VAR_B25.values())
 if _n_var_b25 != 180:
     fallos.append(f"BLOQUE25: hay {_n_var_b25} variantes en total y eran 180.")
 
+# ── Y LOS 216 TIENEN QUE SEGUIR EN VERDE HOY ─────────────────────────────
+#
+# ⚠️ AÑADIDO EL 12 DE SEPTIEMBRE DE 2026, y encontró 38 rotos al escribirlo.
+#
+# Este bloque comprobaba que el catálogo tuviera 36 menús y 180 variantes, y
+# que sus proporciones fueran de comida de verdad. NO comprobaba que siguieran
+# CUMPLIENDO. Y el catálogo se generó con unos requisitos y los requisitos
+# cambian debajo: los doce aminoácidos entraron el 28 de agosto, los techos del
+# perro sano el 8 de septiembre, los del cachorro el 9...
+#
+# Medido antes de arreglarlo: **38 de los 216 ya no salían en verde** -- 37 en
+# ámbar por un 1 % de cloruro, manganeso o linoleico, y uno en ROJO (la
+# variante de conejo del Toy sénior).
+#
+# ⚠️ NINGUNO LLEGABA AL PERRO, y eso hay que decirlo: la vía rápida reescala el
+# menú a las kcal del perro y lo verifica otra vez; si no sale verde se cae al
+# camino normal y el motor resuelve de verdad. La regla 1 se estaba cumpliendo.
+# Lo que eran es PESO MUERTO: se comprueban, se descartan, y hay que resolver
+# igual. Por eso de siete menús de una semana solo dos salían del catálogo, y
+# la semana entera tardaba 50 s en la API desplegada.
+#
+# O sea que esto no es solo corrección: es lo que hace que el atajo sirva de
+# algo.
+_PESO_B25 = {"Toy": 3, "Mini": 6, "Pequeño": 12, "Mediano": 22, "Grande": 32, "Gigante": 55}
+_no_verdes_b25, _inseguros_b25, _mirados_b25 = [], [], 0
+for _grupo_b25, _datos_b25 in (("menú", _CAT_B25), ("variante", _VAR_B25)):
+    for _k_b25, _v_b25 in _datos_b25.items():
+        _tam_b25, _etapa_b25 = _k_b25.split("_", 1)
+        for _m_b25 in (_v_b25 if isinstance(_v_b25, list) else [_v_b25]):
+            _g_b25 = (_m_b25 or {}).get("gramos")
+            if not _g_b25:
+                continue
+            _der_b25 = sum(al[_n]["energia"] * _gr / 100.0
+                           for _n, _gr in _g_b25.items() if _n in al)
+            if not _der_b25:
+                continue
+            _mirados_b25 += 1
+            _quien_b25 = f"{_grupo_b25} {_k_b25}" + (
+                f" ({_m_b25.get('proteina')})" if _m_b25.get("proteina") else "")
+            _f_b25 = verificar(_g_b25, al, req, _der_b25, _etapa_b25)
+            if _f_b25["semaforo"] != "verde":
+                _no_verdes_b25.append((_quien_b25, _f_b25["semaforo"]))
+            elif not _api._menu_precalculado_es_seguro(_g_b25, al, _der_b25,
+                                                       _PESO_B25.get(_tam_b25)):
+                _inseguros_b25.append(_quien_b25)
+if _mirados_b25 != 216:
+    fallos.append(f"BLOQUE25: se han mirado {_mirados_b25} menús precalculados y son 216. "
+                  f"Si el recuento baja, hay entradas sin gramos y nadie las comprueba")
+if _no_verdes_b25:
+    fallos.append(f"BLOQUE25: {len(_no_verdes_b25)} de los {_mirados_b25} menús precalculados "
+                  f"YA NO ESTAN EN VERDE contra los requisitos de hoy "
+                  f"({', '.join(f'{a} [{b}]' for a, b in _no_verdes_b25[:5])}"
+                  f"{'...' if len(_no_verdes_b25) > 5 else ''}). No llegan al perro -- la vía "
+                  f"rápida los verifica otra vez y se cae al camino normal --, pero son peso "
+                  f"muerto: se comprueban, se descartan y hay que resolver igual. Se arregla "
+                  f"con `python3 regenerar_catalogo.py`")
+if _inseguros_b25:
+    fallos.append(f"BLOQUE25: {len(_inseguros_b25)} menús precalculados se saltan un tope de "
+                  f"seguridad crónica ({', '.join(_inseguros_b25[:4])})")
+
 # cada entrada tiene que traer lo que /catalogo necesita para reescalar
 for _k25, _e25 in _CAT_B25.items():
     _faltan25 = [_c for _c in ("gramos", "der", "peso_kg", "tamano", "etapa") if _c not in _e25]

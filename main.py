@@ -171,6 +171,44 @@ def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=N
 # mismas constantes que dentro de resolver() -- sin resolver nada, solo
 # calculando), para poder descartarlo y caer al solver en vivo si ya
 # no es seguro según las reglas actuales, en vez de servirlo ciego.
+def _menu_precalculado_cabe_en_el_presupuesto(gramos, al, presupuesto):
+    """¿Cabe este menú YA CALCULADO en lo que queda del presupuesto semanal?
+
+    ⚠️ AÑADIDO EL 12 DE SEPTIEMBRE DE 2026, Y ERA UN AGUJERO REAL.
+
+    Las vías rápidas del catálogo sirven un menú ya calculado y lo comprueban
+    con `_menu_precalculado_es_seguro`, que mira los topes DIARIOS de seguridad
+    cronica. Lo que NO miraban es el presupuesto SEMANAL, que es mas estricto:
+    para vitD y yodo el reparto es `tope diario x 7 x 0,75` entre los dias, o
+    sea un 25 % por debajo del tope diario.
+
+    Con eso, un menu del catalogo podia gastar mas de lo que le tocaba de la
+    semana y la frase de `_presupuesto_semanal_inicial` -- «es matematicamente
+    imposible que la SUMA de una semana entera supere el limite seguro» --
+    dejaba de ser verdad en cuanto el menu venia enlatado.
+
+    Medido antes de arreglarlo: una semana de 7 menus de un adulto de 22 kg se
+    queda en el 40-47 % del presupuesto, asi que HOY no se pasaba. Pero eso era
+    suerte del catalogo, no una restriccion: bastaba una variante con mas
+    pescado azul o mas higado para romperlo, sin que nada lo dijera.
+
+    Si no cabe se devuelve False y quien llama se baja al camino normal, que
+    resuelve de verdad pasandole el presupuesto al solver.
+    """
+    if not presupuesto:
+        return True
+    def _suma(clave):
+        return sum(al.get(n, {}).get("nutrientes", {}).get(clave, 0) * g / 100.0
+                   for n, g in gramos.items())
+    for clave in ("vitD", "yodo", "selenio"):
+        tope = presupuesto.get(clave)
+        if tope is None:
+            continue
+        if _suma(clave) > tope + 1e-9:
+            return False
+    return True
+
+
 def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
     from seguridad import (
         TIAMINASA, MERCURIO_ALTO, TOPE_TIAMINASA_KCAL, TOPE_MERCURIO_KCAL,
@@ -2687,8 +2725,12 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                     else:
                         gramos_r[n] = round(g * factor, 2)
                 ficha_r = verificar_v2(gramos_r, al, req, datos.der_objetivo, datos.etapa_requisitos)
-                if ficha_r["semaforo"] == "verde" and _menu_precalculado_es_seguro(
-                        gramos_r, al, datos.der_objetivo, datos.peso_perro_kg):
+                if (ficha_r["semaforo"] == "verde"
+                        and _menu_precalculado_es_seguro(gramos_r, al, datos.der_objetivo,
+                                                         datos.peso_perro_kg)
+                        # ⚠️ Y QUE QUEPA EN LO QUE QUEDA DE LA SEMANA (12-sep).
+                        and _menu_precalculado_cabe_en_el_presupuesto(
+                            gramos_r, al, datos.presupuesto_semanal_restante)):
                     problemas_r = _seguridad_completa(gramos_r, al, datos.der_objetivo,
                                                        datos.etapa_requisitos, datos.patologias,
                                                        peso_perro_kg=datos.peso_perro_kg)
@@ -2767,8 +2809,12 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 else:
                     gramos_reescalados[n] = round(g * factor, 2)
             ficha_variante = verificar_v2(gramos_reescalados, al, req, datos.der_objetivo, datos.etapa_requisitos)
-            if ficha_variante["semaforo"] == "verde" and _menu_precalculado_es_seguro(
-                    gramos_reescalados, al, datos.der_objetivo, datos.peso_perro_kg):
+            if (ficha_variante["semaforo"] == "verde"
+                    and _menu_precalculado_es_seguro(gramos_reescalados, al, datos.der_objetivo,
+                                                     datos.peso_perro_kg)
+                    # ⚠️ Y QUE QUEPA EN LO QUE QUEDA DE LA SEMANA (12-sep).
+                    and _menu_precalculado_cabe_en_el_presupuesto(
+                        gramos_reescalados, al, datos.presupuesto_semanal_restante)):
                 problemas_variante = _seguridad_completa(gramos_reescalados, al, datos.der_objetivo,
                                                           datos.etapa_requisitos, datos.patologias,
                                                           peso_perro_kg=datos.peso_perro_kg)
