@@ -1170,16 +1170,50 @@ app = FastAPI(title="Rawku API")
 ORIGENES_PERMITIDOS = [
     "https://rawku.app",
     "https://www.rawku.app",
-    "http://localhost:5173",   # Vite en desarrollo
-    "http://localhost:3000",
-    "http://127.0.0.1:5173",
 ]
+
+# ⚠️ CASO REAL ENCONTRADO (12 de septiembre): LA LISTA DE ARRIBA LLEVABA LOS
+# PUERTOS DE DESARROLLO ESCRITOS A MANO -- 5173 y 3000 -- Y ESO ROMPIÓ EL
+# GENERADOR DE MENÚS ENTERO FUERA DE ESOS DOS PUERTOS.
+#
+# Lo que se ve cuando pasa: la app dice «Uno de los menús no se pudo calcular
+# por un problema de conexión», en automático, en personalizar Y en el
+# formulador del veterinario. O sea que parece que se ha roto el motor, y el
+# motor está perfecto: el navegador ni llega a mandar la petición. En la
+# consola es un `net::ERR_FAILED` sin más, que es como se ve un bloqueo de
+# CORS desde JavaScript -- `fetch` no puede decirte que fue CORS, por diseño.
+#
+# Y no era un caso raro. Con la lista a mano quedaban fuera:
+#   · `npx vite` cuando el 5173 está ocupado y se va solo al 5174;
+#   · **la prueba de punta a punta de este mismo proyecto**, que levanta la
+#     app en el 5179 a propósito «para poder correr las dos a la vez»
+#     (`playwright.real.config.js`). O sea que el cambio del 11 de septiembre
+#     dejó ciega a la única prueba que mira la costura app↔motor, que es
+#     justo la que habría cazado esto;
+#   · abrir la app desde el móvil contra el portátil (`http://192.168.1.x`),
+#     que es como se prueba en una pantalla de verdad.
+#
+# LA REGLA, y por qué es segura: se admite CUALQUIER PUERTO de `localhost` y
+# de `127.0.0.1`. Un origen `localhost` es la máquina de quien está
+# desarrollando -- para que sirva de algo a un atacante tendría que estar ya
+# dentro de ese ordenador, y entonces CORS es el menor de los problemas. Lo
+# que cierra esta lista sigue cerrado: ninguna página de internet puede
+# llamar a esta API desde el navegador de nadie, que era el agujero real que
+# se tapó el 11 de septiembre.
+#
+# Lo vigila el BLOQUE 97, con los puertos que usan las dos configuraciones de
+# Playwright del otro repo escritos uno a uno.
+_ORIGENES_REGEX = (
+    # Vistas previas de Vercel: canislab-web-<lo-que-sea>.vercel.app
+    r"https://[a-z0-9-]+\.vercel\.app"
+    # Desarrollo, en cualquier puerto: http://localhost:5179, 127.0.0.1:5178...
+    r"|http://(?:localhost|127\.0\.0\.1)(?::\d+)?"
+)
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ORIGENES_PERMITIDOS,
-    # Las vistas previas de Vercel: canislab-web-<lo-que-sea>.vercel.app
-    allow_origin_regex=r"https://[a-z0-9-]+\.vercel\.app",
+    allow_origin_regex=_ORIGENES_REGEX,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )

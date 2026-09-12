@@ -13976,6 +13976,77 @@ if len(set(_semillas96)) != 1:
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
+# ============================================================
+# BLOQUE 97 — QUIÉN PUEDE LLAMAR DESDE UN NAVEGADOR
+# ============================================================
+#
+# ⚠️ POR QUÉ (12 de septiembre). El 11 se cerró el CORS, que estaba en `*`, y
+# la lista nueva llevaba los puertos de desarrollo ESCRITOS A MANO: 5173 y
+# 3000. Al día siguiente el generador de menús no funcionaba «ni en
+# automático, ni en personalizar, ni en veterinario» -- los tres, que es lo
+# que hace pensar que se ha roto el motor.
+#
+# El motor estaba perfecto. Medido: la misma app y la misma API, servidas en
+# el 5173, sacan el menú («SEMANA DE NALA, 48/48 OK»); en el 5179 no sale
+# ninguno y la app dice «un problema de conexión». Lo único que cambia es el
+# puerto desde el que llama el navegador.
+#
+# Y lo que más duele: **el 5179 es el de la prueba de punta a punta de este
+# proyecto**, la única que mira la costura app↔motor. O sea que el cambio dejó
+# ciega justo a la prueba que lo habría cazado, y por eso llegó a producción.
+#
+# Este bloque comprueba la puerta con los orígenes de verdad, uno a uno. No
+# mira la lista ni la expresión regular: se lo PREGUNTA al middleware con una
+# petición de sondeo, que es lo que hace el navegador.
+print("\n=== BLOQUE 97: quién puede llamar a la API desde un navegador ===")
+
+_PERMITIDOS_97 = [
+    ("https://rawku.app", "la app en producción"),
+    ("https://www.rawku.app", "la app con www"),
+    ("https://canislab-web.vercel.app", "el despliegue de Vercel"),
+    ("https://canislab-web-git-main-elenaml06s-projects.vercel.app", "una vista previa de Vercel"),
+    ("http://localhost:5173", "Vite en su puerto de siempre"),
+    ("http://localhost:5174", "Vite cuando el 5173 esta ocupado"),
+    ("http://127.0.0.1:5178", "playwright.config.js, la bateria de la app"),
+    ("http://127.0.0.1:5179", "playwright.real.config.js, la de punta a punta"),
+    ("http://localhost:3000", "otro servidor de desarrollo"),
+]
+# Y los que NO pueden: una pagina cualquiera de internet. Esto es lo que se
+# cerro el 11 de septiembre y no se puede volver a abrir sin querer.
+_PROHIBIDOS_97 = [
+    ("https://ejemplo.com", "una web cualquiera"),
+    ("https://rawku.app.malicioso.com", "un dominio que EMPIEZA por el nuestro"),
+    ("https://canislab-web.vercel.app.malicioso.com", "lo mismo con Vercel"),
+    ("http://localhost.malicioso.com", "un dominio que empieza por localhost"),
+]
+
+def _permite_el_origen_97(origen):
+    """Lo que contestaria el navegador: ¿viene la cabecera que lo permite?"""
+    r = _c.options("/menu/v2", headers={
+        "Origin": origen,
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "content-type",
+    })
+    return r.headers.get("access-control-allow-origin") is not None
+
+for _o97, _que97 in _PERMITIDOS_97:
+    if not _permite_el_origen_97(_o97):
+        fallos.append(
+            f"BLOQUE97: el navegador NO puede llamar desde «{_o97}» ({_que97}). Eso no da "
+            f"un error que se vea: `fetch` falla con ERR_FAILED y la app dice «un problema "
+            f"de conexion», asi que parece que se ha roto el motor. Es el fallo del 11 de "
+            f"septiembre otra vez")
+
+for _o97, _que97 in _PROHIBIDOS_97:
+    if _permite_el_origen_97(_o97):
+        fallos.append(
+            f"BLOQUE97: el navegador SI puede llamar desde «{_o97}» ({_que97}), y no deberia. "
+            f"Eso es volver al `allow_origins=['*']` que se cerro el 11 de septiembre: "
+            f"cualquier pagina del mundo usando el motor con el navegador de otra persona")
+
+print(f"  {len(_PERMITIDOS_97)} origenes que tienen que poder · {len(_PROHIBIDOS_97)} que no")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
 _hay_fuentes = _os_b18.path.isdir(_RUTA_FUENTES)
 
 print(f"\n{'='*60}")
