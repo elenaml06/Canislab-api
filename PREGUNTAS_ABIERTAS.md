@@ -1568,6 +1568,42 @@ hace falta para contestarla: ¿se mide con el solver cuántos perros se quedan s
 menú al apretar la banda por los dos lados, como se hizo con el suelo de vitamina
 E?
 
+---
+
+### P-31 · La dieta que trata la cistinuria puede causar la miocardiopatía que el motor sabe prevenir
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo el capítulo 185 de Ettinger |
+
+El capítulo 185 —*Manejo nutricional de la enfermedad del tracto urinario
+inferior*, de Yann Queau y Vincent C. Biourge— cierra su apartado de cistina así:
+
+> *«En perros con cistinuria se han visto deficiencias de carnitina y de taurina, y
+> se recomienda la taurina y la carnitina para prevenir la cardiomiopatía dilatada,
+> especialmente si el animal está siendo alimentado con una dieta restringida en su
+> precursor, la metionina»*
+
+Es un enlace directo entre dos patologías que el motor ya tiene:
+
+- `cistina` lleva hoy un **techo de sodio y nada más**. Su tratamiento real es
+  bajar la metionina y la cistina **por debajo del mínimo de FEDIAF**, que el motor
+  no hace y por eso no formula menú automático.
+- `dcm_taurina_respondedora` ya aplica **suelos de taurina (250 mg/1000 kcal) y de
+  L-carnitina (50)**, de la Tabla 36-4 de SACN5.
+
+O sea que el motor **tiene las dos cifras** y no las cruza. Y el cruce importa
+justo donde el motor se retira: la ración que trata la cistinuria es la que crea el
+riesgo.
+
+**La pregunta:** cuando un profesional formule para `cistina` por la vía firmada
+—que es la única que puede bajar de FEDIAF—, ¿deben entrar automáticamente los
+suelos de taurina y L-carnitina? ¿Y debe decirlo el aviso de `cistina` aunque hoy
+esa patología no genere menú, para que quien la marque sepa que la dieta que va a
+pautar tiene ese efecto?
+
 
 ---
 

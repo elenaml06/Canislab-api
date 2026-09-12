@@ -119,6 +119,33 @@ dentro de la ventana de FEDIAF y la estrechan.
 
 ---
 
+## 3-quater · Ettinger cap.185 contra SACN5, en el oxalato — y es sobre una patología que el motor SÍ formula
+
+⚠️ Añadido el 12 de septiembre. FEDIAF no entra aquí: no da topes por patología.
+Son **dos fuentes clínicas que apuntan en direcciones contrarias** sobre los mismos
+tres nutrientes.
+
+| | Lo que dice | Lo que hace el motor |
+|---|---|---|
+| **SACN5**, Tablas 40-5 y 41-6 | Recomendaciones de formulación para el perro que ya forma cálculos de oxalato: bajar sodio, fósforo y magnesio | **Aplicado**: techos de 750, 1.500 y 375 mg/1000 kcal en `oxalato` |
+| **Ettinger cap.185** (Queau y Biourge) | *«En perros alimentados con dietas secas y húmedas, el riesgo de urolitiasis por CaOx fue mayor para perros que consumieron dietas con los niveles más bajos de proteína, sodio, potasio, calcio, fósforo y magnesio»*. Y usa el sodio **a propósito** para provocar diuresis, por encima de **2,5 g/1000 kcal** | — |
+
+O sea que el motor **baja** tres de los seis nutrientes que la segunda fuente asocia
+a **más** riesgo en el perro, y su cifra de sodio para diuresis es más de **tres
+veces** nuestro techo.
+
+**No se cambia nada, y por qué**: lo de SACN5 son recomendaciones de formulación
+para el perro enfermo y lo de Ettinger es un estudio epidemiológico retrospectivo
+sobre dietas comerciales — dos clases de dato distintas. Y el propio capítulo lo
+relativiza: *«Se conoce poco sobre el papel que desempeñan los precursores
+dietéticos en la fisiopatología del CaOx»*.
+
+Pero queda escrito, porque es **la primera vez que dos fuentes del repo se
+contradicen sobre una patología que el motor sí formula**, y quien firme una pauta
+de oxalato tiene derecho a saberlo.
+
+---
+
 ## 3-bis-bis · TVT Merkblatt 181, leído entero el 12 de septiembre
 
 Es la única fuente del repo que trata **este producto**. Da dos cifras que el

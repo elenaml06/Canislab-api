@@ -600,9 +600,9 @@ día: su suposición escrita era que «las fuentes están todas en inglés», y 
 de esta fuente lo había dejado apuntado «para decidirlo».
 
 **Hasta dónde va la lectura.** Leídos enteros los capítulos **167, 170 a 173, 175,
-176, 177, 183 y 184**. Faltan **178 a 182 y 185 a 194** (y el 174, que es felino),
-y falta el resto del tratado (los otros 332 capítulos), que no se ha abierto. Se
-dice así para que se pueda continuar.
+176, 177, 183, 184 y 185**. Faltan **178 a 182 y 186 a 194** (y el 174, que es
+felino), y falta el resto del tratado (los otros 332 capítulos), que no se ha
+abierto. Se dice así para que se pueda continuar.
 
 ### cap.172, Martha Cline — las ecuaciones de energía, y no son las nuestras
 
@@ -835,6 +835,53 @@ techo de proteína del motor entre los demás números.
 | Sobre el sodio: *«Existe controversia acerca de si el contenido de Na en la dieta debe restringirse con la ERC»*, y en gatos con ERC inducida *«la restricción de Na se asoció con hipopotasemia»* | **No se cambia nada** —el techo de sodio del renal (750 mg/1000 kcal) viene de su propia fuente y está auditado—, pero queda escrito que restringir el sodio en el renal tiene un riesgo documentado y que la propia literatura no lo da por cerrado |
 | Que las dietas renales llevan *«entre un 12 y un 30 % de grasa cruda (en base a materia seca)»* y más densidad calórica, porque *«las dietas que tienen una mayor densidad de calorías promueven una ingesta adecuada de energía sin requerir que el paciente ingiera un gran volumen»* | **No se aplica**: el motor no fija la densidad, la calcula. Se anota porque es la dirección contraria a la que uno esperaría de una dieta «restrictiva» |
 | *«No se conocen los requerimientos calóricos precisos para perros y gatos con ERC, pero probablemente sean similares a los de perros y gatos sanos»*, y *«los requerimientos calóricos diarios en reposo son solo estimaciones y la variabilidad individual puede ser significativa»* | **Ya aplicado**: el motor no cambia las kcal por ser renal. Y es la tercera vez en este mismo libro que aparece el aviso de la variabilidad (P-25) |
+
+### cap.185, Queau y Biourge — los urolitos, y una tensión de frente con lo que aplica el motor
+
+*Manejo nutricional de la enfermedad del tracto urinario inferior.* Es el capítulo
+que más de cerca toca las cuatro patologías de urolito del motor, y trae una cosa
+que **apunta en dirección contraria** a lo que el motor hace hoy con el oxalato.
+
+#### ⚠️ La tensión, y hay que ponerla con los topes delante
+
+> *«En perros alimentados con dietas secas y húmedas, el riesgo de urolitiasis por
+> CaOx fue mayor para perros que consumieron dietas con los niveles más bajos de
+> proteína, sodio, potasio, calcio, fósforo y magnesio»*
+
+Y sobre el sodio, hablando de cómo se provoca la diuresis a propósito: *«los gatos
+y los perros tuvieron una mayor ingesta de agua y volumen de orina, y en la mayoría
+de los casos una menor DEO, cuando se alimentaron con dietas comerciales secas con
+contenidos de sodio por encima de 2,5 g/1.000 kcal»*.
+
+Lo que aplica hoy el motor a `oxalato`: **techo de sodio 750 mg/1000 kcal, de
+fósforo 1.500 y de magnesio 375**. O sea que el motor **baja** tres de los seis
+nutrientes que esta fuente asocia, en el perro, a **más** riesgo — y su cifra de
+sodio para provocar diuresis (2.500) es más de **tres veces** nuestro techo.
+
+**No se cambia nada**, y los motivos van escritos:
+
+- Nuestros topes vienen de las Tablas 40-5 y 41-6 de SACN5, que son
+  **recomendaciones de formulación** para el perro que ya forma cálculos; lo de
+  este capítulo es un **estudio epidemiológico retrospectivo** sobre dietas
+  comerciales, que es otra clase de dato.
+- Y el propio capítulo lo relativiza: *«Se conoce poco sobre el papel que
+  desempeñan los precursores dietéticos en la fisiopatología del CaOx»*.
+- Pero **queda escrito**, porque es la primera vez que una fuente del repo apunta
+  en dirección contraria sobre una patología que el motor **sí formula**, y quien
+  firme una pauta de oxalato tiene derecho a saberlo.
+
+#### Lo que confirma, y lo que falta
+
+| Lo que dice | Decisión |
+|---|---|
+| *«A menudo se recomienda mantener una DEO inferior a 1,030 en gatos e inferior a 1,020 en perros en pacientes de riesgo»* | **Ya aplicado**: es la densidad urinaria que entró el 12-sep en el aviso de `oxalato` desde AAHA. **Segunda fuente, misma cifra** |
+| ⚠️ Cistina: *«En perros con cistinuria se han visto deficiencias de carnitina y de taurina, y se recomienda la taurina y la carnitina para prevenir la cardiomiopatía dilatada, especialmente si el animal está siendo alimentado con una dieta restringida en su precursor, la metionina»* | **PENDIENTE, y el motor tiene las dos cifras a mano.** `cistina` lleva hoy un techo de sodio y nada más, y `dcm_taurina_respondedora` ya aplica suelos de taurina (250) y L-carnitina (50 mg/1000 kcal). La fuente enlaza las dos patologías: la dieta que trata la cistinuria puede causar la miocardiopatía que el motor sabe prevenir. A `PREGUNTAS_ABIERTAS.md` |
+| Urato: *«el contenido de purina de las proteínas varía (p. ej., es alto en vísceras y pescado)»* y *«Mediante la selección de las fuentes de proteína de la dieta, no es necesario una restricción severa para lograr concentraciones bajas de urato en la orina»* | **Coincide con lo que ya está escrito** en el aviso de `urato` y lo matiza bien: se puede bajar el urato eligiendo fuentes, sin restringir la proteína. Lo que nuestro catálogo mide es que **con alimentos frescos** esa selección no alcanza, porque la carne muscular sola ya deja la ración en casi cinco veces el objetivo |
+| Urato: *«Los cristales de urato son ligeramente menos solubles en orina ácida. Por lo tanto, la dieta no debe provocar la acidificación de la orina»*; estruvita: el objetivo de pH urinario es **6,0-6,3**; cistina: *«La solubilidad de la cistina depende en gran medida del pH, con una mayor solubilidad para pH por encima de 7,2»* | **No se aplica, y son las tres dianas que darían sentido a la P-24**: si el motor dijera hacia dónde empuja la ración, serviría para la estruvita (ácida), el urato y la cistina (alcalina). Y **para el oxalato no**, porque el mismo capítulo concluye que *«la importancia del pH de la orina para manejar el CaOx aún no se ha definido»* |
+| Sílice: *«evitar dietas ricas en ingredientes vegetales con alto contenido de sílice (p. ej., arroz integral o cáscaras de soja)»* | **No se aplica**: `urolitos_silice` no formula, y el catálogo no tiene arroz integral ni cáscara de soja. Queda escrito por si entran |
+| Fosfato cálcico: la dieta *«ha de promover la dilución de la orina, contener una cantidad controlada de calcio, fósforo y vitamina D, e inducir un pH urinario moderadamente ácido»* | **Ya aplicado en tres de cuatro**: `urolitos_fosfato_calcico` topa fósforo, magnesio, sodio, proteína y vitamina D. El calcio no se topa, y el pH no lo ve el motor |
+| Estruvita: *«La alimentación con varias dosis pequeñas de alimento a lo largo del día en lugar de 1 o 2 comidas grandes atenúa la alcalinización posprandial y se asocia con una producción de orina más ácida»* | **No se aplica**: el motor da la ración del día y no decide las tomas. Es la segunda vez hoy que el número de comidas cambia algo (la otra era el fósforo de Dobenecker) |
+| *«Los premios no deben exceder el 10 % de las calorías diarias, y no han de interferir con la estrategia dietética»* | **Ya aplicado.** Docena de apariciones |
 
 ### Y la cuarta fuente que desaconseja lo que hacemos
 
