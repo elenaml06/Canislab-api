@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-CANISLAB — CORRER **UNOS POCOS** BLOQUES DE LA BATERIA, NO LOS 97.
+CANISLAB — CORRER **UNOS POCOS** BLOQUES DE LA BATERIA, NO LOS 98.
 
 ⚠️ POR QUE EXISTE (11 de septiembre de 2026). Elena: «pero ¿de verdad cada vez
 que se hace un bloque es necesario lanzar toda la bateria????».
@@ -14,7 +14,7 @@ tres veces seguidas.
 
 COMO FUNCIONA, Y POR QUE ASI. `pruebas_completas.py` es UN solo fichero de
 codigo de arriba abajo: no hay funciones por bloque que se puedan llamar
-sueltas. Partirlo en 97 modulos seria un cambio grande y arriesgado en el unico
+sueltas. Partirlo en 98 modulos seria un cambio grande y arriesgado en el unico
 sitio del repo que no se puede permitir un fallo silencioso.
 
 Asi que esto no lo parte: lo RECORTA. Lee el fichero, encuentra los `# BLOQUE N`

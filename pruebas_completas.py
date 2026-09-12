@@ -14154,6 +14154,159 @@ print(f"  {len(_PERMITIDOS_97)} origenes que tienen que poder · {len(_PROHIBIDO
       f"y `/verificar` dice lo mismo que la puerta en los {len(_PERMITIDOS_97)+len(_PROHIBIDOS_97)}")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
+# ============================================================
+# BLOQUE 98 — LAS PATOLOGÍAS LAS ENUMERA EL MOTOR, NO LA APP
+# ============================================================
+#
+# ⚠️ POR QUÉ (12 de septiembre). Elena: «COMPRUEBA TODO PARA QUE NINGUN DATO LO
+# MANDE LA APP, TODO TIENE QUE VENIR DEL MOTOR». Hasta ese día las 47
+# etiquetas de patología y los nueve grupos por aparato vivían dentro de
+# `src/App.jsx`, escritos a mano. Es la misma forma de fallo que ya costó tres
+# veces: las seis categorías de Personalizar (tres semanas respetando tres de
+# seis, con el menú saliendo verde igual), los cinco niveles de actividad
+# contra los tres de la base de datos, y las diez patologías que el motor tenía
+# y la app no ofrecía a nadie.
+#
+# Lo que vigila este bloque es que la lista NO SE PUEDA DESINCRONIZAR: una
+# patología nueva en `patologias.json` tiene que aparecer aquí o la batería se
+# pone roja. Y que ni un campo servido sea una copia: el nombre técnico, el
+# `formulable`, quién puede marcarla y el aviso salen de los ficheros que ya
+# tienen su auditor, y de la presentación solo salen dos cosas que no existían
+# en ningún otro sitio -- cómo se le dice al dueño y en qué aparato va.
+print("\n=== BLOQUE 98: las patologías las enumera el motor, no la app ===")
+
+import json as _json98
+with open("patologias_como_se_presentan.json", encoding="utf-8") as _f98:
+    _PRES98 = _json98.load(_f98)
+with open("patologias.json", encoding="utf-8") as _f98:
+    _PAT98 = _json98.load(_f98)["patologias"]
+with open("quien_formula_cada_patologia.json", encoding="utf-8") as _f98:
+    _QUIEN98 = _json98.load(_f98)["patologias"]
+with open("preguntas_por_patologia.json", encoding="utf-8") as _f98:
+    _PREG98 = _json98.load(_f98)["preguntas"]
+
+# ── 1. Están las 47 y ni una más ─────────────────────────────────────────
+_faltan98 = sorted(set(_PAT98) - set(_PRES98["patologias"]))
+_sobran98 = sorted(set(_PRES98["patologias"]) - set(_PAT98))
+if _faltan98:
+    fallos.append(f"BLOQUE98: {len(_faltan98)} patologías del motor no tienen cómo enseñarse "
+                  f"({', '.join(_faltan98)}). Sin etiqueta y sin aparato no salen en ninguna "
+                  f"pantalla, y no salta nada: el menú sigue saliendo verde")
+if _sobran98:
+    fallos.append(f"BLOQUE98: `patologias_como_se_presentan.json` presenta {_sobran98}, que no "
+                  f"existen en `patologias.json`. Una casilla que manda una clave que el motor "
+                  f"no conoce se tira sin decir nada")
+
+_APARATOS98 = {a["clave"]: a for a in _PRES98["_meta"]["aparatos"]}
+for _k98, _p98 in sorted(_PRES98["patologias"].items()):
+    if _p98.get("aparato") not in _APARATOS98:
+        fallos.append(f"BLOQUE98: «{_k98}» dice ir en el aparato «{_p98.get('aparato')}», que no "
+                      f"está en `_meta.aparatos`. Caería en un grupo que no se pinta")
+    if not (_p98.get("dueno") or "").strip():
+        fallos.append(f"BLOQUE98: «{_k98}» no tiene etiqueta para el dueño")
+
+_usados98 = {v["aparato"] for v in _PRES98["patologias"].values()}
+_vacios98 = [a for a in _APARATOS98 if a not in _usados98]
+if _vacios98:
+    fallos.append(f"BLOQUE98: los aparatos {_vacios98} no tienen ninguna patología. Serían un "
+                  f"desplegable vacío en la ficha")
+
+# ── 2. `/vocabulario` sirve las 47, y cada campo desde su fichero ────────
+_v98 = _c.get("/vocabulario")
+if _v98.status_code != 200:
+    fallos.append(f"BLOQUE98: GET /vocabulario devuelve {_v98.status_code}")
+else:
+    _pat_v98 = _v98.json().get("patologias") or {}
+    _lista98 = {p["clave"]: p for p in (_pat_v98.get("lista") or [])}
+    if set(_lista98) != set(_PAT98):
+        fallos.append(f"BLOQUE98: /vocabulario sirve {len(_lista98)} patologías y el motor tiene "
+                      f"{len(_PAT98)}. La app pinta lo que llega aquí")
+    for _k98, _servida98 in sorted(_lista98.items()):
+        _fuente98 = _PAT98[_k98]
+        # El nombre técnico NO se copia: es el `nombre` de `patologias.json`.
+        if _servida98["veterinario"]["titulo"] != _fuente98["nombre"]:
+            fallos.append(f"BLOQUE98: el registro de veterinario de «{_k98}» dice "
+                          f"«{_servida98['veterinario']['titulo']}» y `patologias.json` dice "
+                          f"«{_fuente98['nombre']}». Son dos copias del mismo nombre")
+        if _servida98["formulable"] != bool(_fuente98.get("formulable")):
+            fallos.append(f"BLOQUE98: /vocabulario dice que «{_k98}» es "
+                          f"formulable={_servida98['formulable']} y el motor dice lo contrario. "
+                          f"La app deriva de aquí si hay que bloquear el menú")
+        _quien98 = (_QUIEN98.get(_k98) or {}).get("quien_puede_marcarla")
+        if _servida98["quien_puede_marcarla"] != _quien98:
+            fallos.append(f"BLOQUE98: quién puede marcar «{_k98}» se sirve como "
+                          f"«{_servida98['quien_puede_marcarla']}» y "
+                          f"`quien_formula_cada_patologia.json` dice «{_quien98}»")
+        _aviso98 = (_fuente98.get("avisos") or {}).get("general")
+        if _servida98["aviso"] != _aviso98:
+            fallos.append(f"BLOQUE98: el aviso de «{_k98}» no es el `avisos.general` de "
+                          f"`patologias.json`. Un aviso reescrito es un aviso que se desincroniza")
+        if not _servida98["formulable"] and not (_servida98["aviso"] or "").strip():
+            fallos.append(f"BLOQUE98: «{_k98}» no es formulable y se sirve sin aviso. Quien la "
+                          f"marque vería que no sale menú y no sabría por qué")
+
+    # ── 3. Las que se eligen DENTRO de la pregunta de otra ───────────────
+    #
+    # No se escriben en ningún sitio: se derivan de las familias que SUSTITUYEN
+    # a su cabecera. Las que SUMAN (`anade_otra_patologia`) no entran, porque
+    # su respuesta añade una patología que tiene casilla propia -- esconderla
+    # dejaría al dueño sin poder marcar su hiperlipidemia.
+    _esperado98 = {}
+    for _cab98, _info98 in _PREG98.items():
+        if not _info98.get("la_hace_la_app"):
+            continue
+        if _info98.get("como_se_aplica") == "anade_otra_patologia":
+            continue
+        for _r98 in _info98.get("respuestas") or []:
+            if _r98.get("clave_motor") and _r98["clave_motor"] != _cab98:
+                _esperado98[_r98["clave_motor"]] = _cab98
+    _servido98 = {k: v["dentro_de_la_pregunta_de"] for k, v in _lista98.items()
+                  if v.get("dentro_de_la_pregunta_de")}
+    if _servido98 != _esperado98:
+        fallos.append(f"BLOQUE98: las que se eligen dentro de otra pregunta no salen de las "
+                      f"familias: servido {sorted(_servido98)} contra {sorted(_esperado98)}. "
+                      f"Una de más deja una patología sin forma de marcarse; una de menos la "
+                      f"pone dos veces en la misma pantalla")
+    for _k98, _cab98 in sorted(_servido98.items()):
+        if _cab98 not in _lista98:
+            fallos.append(f"BLOQUE98: «{_k98}» dice elegirse dentro de «{_cab98}», que no es "
+                          f"ninguna de las 47")
+
+    # ── 4. Los grupos cubren las 47 exactamente una vez ──────────────────
+    _grupos98 = _pat_v98.get("por_aparato") or []
+    _en_grupos98 = [k for g in _grupos98 for k in g["patologias"]]
+    if sorted(_en_grupos98) != sorted(_lista98):
+        _repes98 = sorted({k for k in _en_grupos98 if _en_grupos98.count(k) > 1})
+        fallos.append(f"BLOQUE98: los grupos por aparato no cubren las 47 exactamente una vez "
+                      f"(repetidas: {_repes98}; sin grupo: "
+                      f"{sorted(set(_lista98) - set(_en_grupos98))})")
+    _orden98 = [a["clave"] for a in _PRES98["_meta"]["aparatos"] if a["clave"] in _usados98]
+    if [g["clave"] for g in _grupos98] != _orden98:
+        fallos.append(f"BLOQUE98: los grupos se sirven en otro orden que el del fichero: "
+                      f"{[g['clave'] for g in _grupos98]} contra {_orden98}. El orden es el de "
+                      f"la pantalla")
+    for _g98 in _grupos98:
+        for _reg98 in ("dueno", "veterinario"):
+            if not (_g98.get(_reg98, {}).get("titulo") or "").strip():
+                fallos.append(f"BLOQUE98: el grupo «{_g98['clave']}» no tiene título en el "
+                              f"registro «{_reg98}»")
+
+# ── 5. Con el fallo puesto ───────────────────────────────────────────────
+#
+# Una patología nueva que nadie presente tiene que salir roja. Se comprueba
+# sobre una COPIA en memoria, sin tocar el fichero.
+_copia98 = dict(_PRES98["patologias"])
+_copia98.pop("artrosis", None)
+if not (set(_PAT98) - set(_copia98)):
+    fallos.append("BLOQUE98: la comprobación de cobertura no detecta una patología sin "
+                  "presentar. Un test que pasa con el fallo puesto no sirve")
+
+print(f"  {len(_PRES98['patologias'])} patologías presentadas · "
+      f"{len(_APARATOS98)} aparatos · {len(_esperado98) if _v98.status_code == 200 else '?'} "
+      f"se eligen dentro de la pregunta de otra")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
 _hay_fuentes = _os_b18.path.isdir(_RUTA_FUENTES)
 
 print(f"\n{'='*60}")
