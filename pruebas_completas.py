@@ -12696,6 +12696,7 @@ from der import (RAZAS_CIFRA_FEDIAF as _RFED89, RAZAS_MAS_GASTO as _RMAS89,
 # Las constantes VIVAS del BCS, para comparar contra ellas lo que se sirve.
 # Se importan del motor y no se escriben aqui: un numero escrito en la prueba
 # seria una TERCERA copia, y el fallo que esto vigila es justo tener dos.
+from constructor import CAT_SUPLEMENTO as _CAT_SUP_89
 from verificar import (BCS_IDEAL_MIN as _BCS_IDEAL_MIN_89,
                        BCS_ESCALA_SATURADA as _BCS_SATURADA_89,
                        EXCESO_BCS_9 as _EXCESO_BCS9_89,
@@ -12820,6 +12821,43 @@ else:
     if _ofr89 != set(_BCSC89.values()):
         fallos.append(f"BLOQUE89: los BCS marcados como ofrecidos al dueño son {sorted(_ofr89)} "
                       f"y los escalones son {sorted(set(_BCSC89.values()))}")
+    # 4c-ter. ⚠️ LAS CATEGORIAS, AGRUPADAS (12 de septiembre). Elena, mirando la
+    # lista de alimentos del veterinario: «todos los suplementos estan sueltos,
+    # tienen que estar dentro de la categoria suplementos y luego dentro de
+    # subcategorias». La lista existia (`constructor.CAT_SUPLEMENTO`) y lo unico
+    # que llegaba a la app eran las 14 categorias EN PLANO, con las siete de
+    # suplemento al mismo nivel que «Carne muscular». La agrupacion estaba
+    # contada en prosa, y una frase no se lee desde JavaScript.
+    _cat89 = _d89.get("categorias_del_catalogo", {})
+    _grupos89 = _cat89.get("grupos") or []
+    if not _grupos89:
+        fallos.append("BLOQUE89: `/vocabulario` no sirve los grupos de categorias. Sin ellos la "
+                      "app pinta las 14 en plano y los siete suplementos salen sueltos, que es "
+                      "lo que se pidio arreglar")
+    else:
+        _sup89 = next((g["categorias"] for g in _grupos89 if g.get("clave") == "suplementos"), [])
+        if sorted(_sup89) != sorted(_CAT_SUP_89):
+            fallos.append(
+                f"BLOQUE89: el grupo «suplementos» servido es {sorted(_sup89)} y el motor trata "
+                f"como suplemento {sorted(_CAT_SUP_89)} (`constructor.CAT_SUPLEMENTO`). Si se "
+                f"separan, la app agrupa una cosa y el solver dosifica otra")
+        # Y los grupos tienen que cubrir TODAS las categorias, una sola vez: una
+        # categoria que no este en ningun grupo no se pinta, y no da error.
+        _todas89 = set(_cat89.get("categorias") or [])
+        _agrupadas89 = [c for g in _grupos89 for c in g.get("categorias", [])]
+        if sorted(_agrupadas89) != sorted(_todas89):
+            _falta89 = _todas89 - set(_agrupadas89)
+            _sobra89 = [c for c in _agrupadas89 if _agrupadas89.count(c) > 1]
+            fallos.append(
+                f"BLOQUE89: los grupos no cubren las categorias exactamente una vez. Sin grupo: "
+                f"{sorted(_falta89)}. En dos grupos: {sorted(set(_sobra89))}. Una categoria sin "
+                f"grupo no se pinta en la app y no da ningun error")
+        for _g89 in _grupos89:
+            for _reg89 in ("dueno", "veterinario"):
+                if not (_g89.get(_reg89) or {}).get("titulo"):
+                    fallos.append(f"BLOQUE89: el grupo «{_g89.get('clave')}» no trae el registro "
+                                  f"«{_reg89}». Los dos registros son la regla de este endpoint")
+
     if str(_cc89.get("pct_por_punto")) not in ("0.1",):
         fallos.append(f"BLOQUE89: el % por punto de BCS servido es {_cc89.get('pct_por_punto')} "
                       f"y `der.BCS_PCT_POR_PUNTO` es 0.10")

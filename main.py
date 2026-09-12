@@ -45,6 +45,10 @@ from motor_completo import resolver as resolver_v2, especie_de
 # PATOLOGIAS: los topes por patología, para poder comprobarlos también
 # en la puerta de verificación (ver _tope_patologia_roto).
 from constructor import tabla_imputacion_maximos, valor_para_maximo, valor_nutriente
+# ⚠️ LAS SIETE CATEGORIAS QUE SON SUPLEMENTO, IMPORTADAS Y NO COPIADAS (12 de
+# septiembre). En este archivo habia CINCO copias escritas a mano de esa misma
+# tupla. Se usa la de `constructor`, que es la que aplica el motor.
+from constructor import CAT_SUPLEMENTO
 from motor_completo import PATOLOGIAS, topes_de_patologias, RAZA_GRANDE_O_GIGANTE_KG
 from exclusiones import filtrar as filtrar_exclusiones
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
@@ -1742,8 +1746,7 @@ def endpoint_catalogo(tamano: str, etapa: str, der_objetivo: float = None, peso_
         return {"encontrado": False}
 
     if der_objetivo and peso_perro_kg:
-        SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
-                           "Calcio", "Hierro", "Vitamina B")
+        SUP_COMERCIALES = CAT_SUPLEMENTO   # la del motor, no una copia
         factor = der_objetivo / entrada["der"]
         gramos_escalados = {}
         for n, g in entrada["gramos"].items():
@@ -2672,8 +2675,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             coincide = next((v for v in variantes
                              if v["proteina"].strip().lower() == especie_pedida.strip().lower()), None)
             if coincide:
-                SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
-                                   "Calcio", "Hierro", "Vitamina B")
+                SUP_COMERCIALES = CAT_SUPLEMENTO   # la del motor, no una copia
                 der_base = sum(al[n]["energia"] * g / 100 for n, g in coincide["gramos"].items())
                 factor = datos.der_objetivo / der_base if der_base else 1.0
                 gramos_r = {}
@@ -2753,8 +2755,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             elegida = next((v for v in variantes if v["proteina"].strip().lower() not in evitar_lower), None)
             if elegida is None:
                 elegida = variantes[0]  # si ya se evitaron todas, se repite alguna antes que fallar
-            SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
-                               "Calcio", "Hierro", "Vitamina B")
+            SUP_COMERCIALES = CAT_SUPLEMENTO   # la del motor, no una copia
             der_base = sum(al[n]["energia"] * g / 100 for n, g in elegida["gramos"].items())
             factor = datos.der_objetivo / der_base if der_base else 1.0
             gramos_reescalados = {}
@@ -2795,8 +2796,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         # sigue abajo con la búsqueda libre de siempre -- nunca se entrega
         # un menú que no esté en verde de verdad.
         from catalogo_menus import CATALOGO
-        SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
-                           "Calcio", "Hierro", "Vitamina B")
+        SUP_COMERCIALES = CAT_SUPLEMENTO   # la del motor, no una copia
         # ⚠️ CORREGIDO (5 agosto, madrugada) — FALLO GRAVE ENCONTRADO,
         # confirmado con datos reales: esta vía fuerza SIEMPRE la MISMA
         # base fija (la que se guardó una vez, hace días) -- no tiene en
@@ -4110,8 +4110,7 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
         # propio nombre, como la sal o un aceite específico. Esos
         # merecen el mismo trato que la carne o la verdura: se intenta
         # preservarlos, y si no se puede, se avisa de que se perdieron.
-        SUP_CATS = ("Multivitamínico", "Omega-3", "Yodo", "Fibra", "Calcio",
-                   "Hierro", "Vitamina B")
+        SUP_CATS = CAT_SUPLEMENTO   # la del motor, no una copia
         nombres_excl_actuales = nombres_excl | set(forzar or [])
         a_preservar = [n for n in menu_actual
                       if n not in nombres_excl_actuales
@@ -7112,6 +7111,49 @@ def endpoint_vocabulario():
             "ojo": ("Las que NO estan en la lista de arriba (Suplementos y Extras) van siempre "
                     "libres: son la herramienta con la que el motor cierra los 43 requisitos."),
             "categorias": sorted({a.get("categoria") for a in al_v.values() if a.get("categoria")}),
+            # ⚠️ Y AGRUPADAS, QUE ES LO QUE FALTABA (12 de septiembre).
+            #
+            # Elena, mirando la lista de alimentos del veterinario: «todos los
+            # suplementos estan sueltos, tienen que estar dentro de la categoria
+            # suplementos y luego dentro de subcategorias, ya tenemos una lista
+            # de eso solo tienes que reusarla».
+            #
+            # La lista existia —`constructor.CAT_SUPLEMENTO`, las siete que el
+            # motor trata como producto comercial con dosis de etiqueta— y lo
+            # unico que llegaba a la app era la lista PLANA de 14 categorias,
+            # con las siete al mismo nivel que «Carne muscular». La agrupacion
+            # estaba contada en PROSA en el campo `ojo` de aqui al lado, y una
+            # frase no se lee desde JavaScript: es el mismo fallo que las cifras
+            # del BCS, el mismo dia.
+            #
+            # Se sirven los tres grupos con sus DOS REGISTROS, como todo lo
+            # demas de este endpoint. El orden es el de la pantalla: primero la
+            # comida, que es de lo que se compone una racion, y los suplementos
+            # al final, que es lo que se añade cuando falta algo.
+            "grupos": [
+                {"clave": "comida",
+                 "dueno": {"titulo": "Comida",
+                           "detalle": "Lo que compone la racion: carne, hueso, visceras, verdura"},
+                 "veterinario": {"titulo": "Ingredientes",
+                                 "detalle": "Alimentos frescos, sin dosis de fabricante"},
+                 "categorias": sorted(c for c in {a.get("categoria") for a in al_v.values()
+                                                  if a.get("categoria")}
+                                      if c not in CAT_SUPLEMENTO and c != "Extras")},
+                {"clave": "extras",
+                 "dueno": {"titulo": "Extras",
+                           "detalle": "Aceites, semillas, huevo, sal: comida, pero muy densa"},
+                 "veterinario": {"titulo": "Extras",
+                                 "detalle": "Comida de alta densidad energetica; se topan por "
+                                            "energia y no por peso"},
+                 "categorias": ["Extras"]},
+                {"clave": "suplementos",
+                 "dueno": {"titulo": "Suplementos",
+                           "detalle": "Botes y polvos con su dosis en la etiqueta"},
+                 "veterinario": {"titulo": "Suplementos comerciales",
+                                 "detalle": "Producto con dosis maxima de fabricante "
+                                            "(`constructor.CAT_SUPLEMENTO`)"},
+                 "categorias": sorted(CAT_SUPLEMENTO)},
+            ],
         },
         "peldanos_de_la_escalera": {
             "de_donde": "main.PELDANOS_EN_CRISTIANO, y los recorre `_escalera_de_relajacion`",
