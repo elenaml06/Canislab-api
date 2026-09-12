@@ -636,7 +636,15 @@ PDF es respaldo.
 
 ---
 
-### P-10 · ¿Hay un punto en el que bajar el sodio de un cardiópata sea malo?
+### P-35 · ¿Hay un punto en el que bajar el sodio de un cardiópata sea malo?
+
+> ⚠️ **ERA UNA SEGUNDA «P-10», y estuvo así días sin que saltara nada** (renumerada el 12 de
+> septiembre de 2026). Había dos preguntas distintas con el mismo número: el tope que recorta la
+> fórmula de lactancia y ésta. En un registro cuya razón de existir es que ninguna pregunta se
+> pierda, un número repetido tapa una de las dos: quien busque la P-10 encuentra la primera y se
+> va. Y el BLOQUE 66, que vigila este fichero, comparaba el ÍNDICE contra
+> `PARA_EL_NUTRICIONISTA.md` -- o sea la numeración `PREGUNTA n` --, y a la numeración PROPIA del
+> registro, las `P-nn`, no la miraba nadie. Desde hoy sí: ver el BLOQUE 66.
 
 | | |
 |---|---|

@@ -493,7 +493,7 @@ completo y las medidas: `HISTORIA_TECNICA.md`.
 El DER se calcula dos veces: `der.py` aquí y `calcularDER()`/`src/der.js` en
 `canislab-web` — y **manda el del frontend**, que se envía en
 `der_objetivo`; `der.py` solo corre si alguien llama a `/der`, que no llama
-nadie. Se vigilan por separado contra `der_casos.json` (124 casos, **el
+nadie. Se vigilan por separado contra `der_casos.json` (137 casos, **el
 mismo archivo en los dos repos**): BLOQUE 23 aquí, `der-contrato.spec.js`
 allí. Si tocas la fórmula de un lado, regenera esperados y copia
 `der_casos.json` a los dos repos — los dos commits, o ninguno. Detalle

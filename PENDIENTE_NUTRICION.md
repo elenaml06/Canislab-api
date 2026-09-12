@@ -796,7 +796,7 @@ con SACN5 para confirmarlo o para documentar un conflicto):
 
 **23 patologías nuevas, con topes numéricos reales donde el número era
 alcanzable con el catálogo** (`hiperlipidemia` grasa≤30, `obesidad`
-grasa≤30 — SACN5 pide 22,5 pero NO es alcanzable con el catálogo real, se
+grasa≤22,5 (⚠️ CORREGIDO 12-sep-2026: estuvo en 30 con el motivo de que 22,5 «no es alcanzable», y remedido con las condiciones escritas SÍ sale menú en los cuatro pesos recorriendo la escalera — y el 30 tampoco salía en el peldaño estricto, así que no costaba ni un menú), se
 probó contra el solver: 27 falla 0/5 intentos, 28 resuelve 5/5, se dejó en
 30 con margen —, `ple_linfangiectasia` grasa≤37,5, `insuficiencia_
 pancreatica_exocrina` grasa≤37,5) o bloqueadas por Razón A cuando el
