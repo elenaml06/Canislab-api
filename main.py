@@ -6489,8 +6489,11 @@ def pauta_comprobar(documento: dict):
 #   · `CATEGORIAS_QUE_ELIGE_EL_USUARIO` contra `CATEGORIAS` de App.jsx: durante
 #     tres semanas se respetaban tres de las seis, y 15 de cada 36 menus
 #     personalizados metian algo que nadie habia pedido, callando.
-#   · Las patologias: el motor tiene 47 y la app ofrece 37. Diez no se pueden
-#     marcar, siete de ellas formulables (`FRONTEND_VS_MOTOR.md` §1).
+#   · Las patologias: el motor tenia 47 y la app ofrecia 37. Diez no se podian
+#     marcar, siete de ellas formulables (`FRONTEND_VS_MOTOR.md` §1). RESUELTO
+#     el 11 de septiembre -- las diez se eligen dentro de la pregunta de su
+#     cabecera --, y desde el 12 la lista entera, sus etiquetas y sus nueve
+#     aparatos los sirve este endpoint: la app no escribe ya ninguna.
 #   · Los niveles de actividad: cinco en la pantalla, tres en la base de datos.
 #     Un perro de trabajo volvia como «normal» y recibia un 37 % menos de comida.
 #
@@ -6607,6 +6610,100 @@ with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
 with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
                         "preguntas_por_patologia.json"), encoding="utf-8") as _f:
     _PREGUNTAS_PAT = _json.load(_f)
+
+# Como se le ENSEÑA cada patologia a quien la marca: en que aparato va y como se
+# llama sin jerga. Nada mas -- ni cifras, ni el nombre tecnico (ese es el
+# `nombre` de `patologias.json`), ni quien puede marcarla.
+#
+# ⚠️ Elena, 12-sep-2026: «COMPRUEBA TODO PARA QUE NINGUN DATO LO MANDE LA APP,
+# TODO TIENE QUE VENIR DEL MOTOR». Hasta ese dia las 47 etiquetas y los nueve
+# grupos vivian dentro de `src/App.jsx`, que es la misma forma de fallo que las
+# seis categorias de Personalizar y que los cinco niveles de actividad contra
+# los tres de la base de datos: una patologia nueva en `patologias.json` no
+# aparecia en ninguna pantalla y no saltaba nada.
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                        "patologias_como_se_presentan.json"), encoding="utf-8") as _f:
+    _PRESENTACION_PAT = _json.load(_f)
+
+
+# Las claves que NO son una casilla propia porque se eligen DENTRO de la
+# pregunta de otra: los cinco estadios ACVIM, la renal avanzada, la
+# predisposicion al cobre, la encefalopatia y los cuatro urolitos que no son
+# estruvita. No se escriben: se DERIVAN de las familias que SUSTITUYEN a su
+# cabecera en `preguntas_por_patologia.json`.
+#
+# ⚠️ Las que SUMAN (`anade_otra_patologia`) no entran: su respuesta añade una
+# patologia que tiene casilla propia -- `hiperlipidemia`, `renal_proteinuria`
+# --, y esconderla dejaria al dueño sin poder marcarla por su cuenta.
+def _dentro_de_que_pregunta():
+    salida = {}
+    for cabecera, info in _PREGUNTAS_PAT["preguntas"].items():
+        if not info.get("la_hace_la_app"):
+            continue
+        if info.get("como_se_aplica") == "anade_otra_patologia":
+            continue
+        for r in info.get("respuestas") or []:
+            clave = r.get("clave_motor")
+            if clave and clave != cabecera:
+                salida[clave] = cabecera
+    return salida
+
+
+def _lista_de_patologias(pat):
+    """Las 47, con lo que hace falta para pintarlas. Ni un dato copiado.
+
+    ⚠️ CADA CAMPO VIENE DE SU SITIO, y por eso no hay aqui ninguna tabla:
+    `veterinario` es el `nombre` de `patologias.json` (el mismo que audita el
+    BLOQUE 44), `formulable` tambien; `quien_puede_marcarla` sale de
+    `quien_formula_cada_patologia.json` (BLOQUE 79); el `aviso` es el
+    `avisos.general` que ya sirve `GET /patologias`; y de
+    `patologias_como_se_presentan.json` solo salen dos cosas que no existian en
+    ningun sitio: como se le dice al dueño y en que aparato va.
+    """
+    dentro = _dentro_de_que_pregunta()
+    pres = _PRESENTACION_PAT["patologias"]
+    salida = []
+    for clave in sorted(pat):
+        v = pat[clave] or {}
+        p = pres.get(clave) or {}
+        salida.append({
+            "clave": clave,
+            "dueno": {"titulo": p.get("dueno") or v.get("nombre")},
+            "veterinario": {"titulo": v.get("nombre")},
+            "aparato": p.get("aparato") or "otras",
+            "formulable": bool(v.get("formulable")),
+            "quien_puede_marcarla": (_DERIVACION.get(clave) or {}).get("quien_puede_marcarla"),
+            # El aviso que hay que enseñar AL MARCARLA, no despues de recorrer
+            # el generador para que al final no salga menu.
+            "aviso": (v.get("avisos") or {}).get("general"),
+            # Si sale de la pregunta de otra, la app no le pone casilla propia:
+            # la ofrece como respuesta. Hoy son doce.
+            "dentro_de_la_pregunta_de": dentro.get(clave),
+        })
+    return salida
+
+
+def _patologias_por_aparato(pat):
+    """Los nueve grupos, en su orden, con las claves que van en cada uno.
+
+    Las claves no se repiten aqui: van los grupos y, dentro, la lista de
+    claves. La app pinta con `lista`. Un aparato sin ninguna patologia no se
+    sirve -- seria un desplegable vacio en la ficha.
+    """
+    por_clave = {p["clave"]: p for p in _lista_de_patologias(pat)}
+    grupos = []
+    # El orden DENTRO de cada grupo es el del fichero, no el alfabetico: ahi
+    # esta escrito en el orden en que se leen en una consulta (la renal, la
+    # renal avanzada, la proteinuria, el fracaso agudo, y luego los calculos).
+    # Alfabeticamente el fracaso agudo se cuela entre medias.
+    for ap in _PRESENTACION_PAT["_meta"]["aparatos"]:
+        claves = [c for c in _PRESENTACION_PAT["patologias"]
+                  if c in por_clave and por_clave[c]["aparato"] == ap["clave"]]
+        if claves:
+            grupos.append({"clave": ap["clave"], "dueno": {"titulo": ap["dueno"]},
+                           "veterinario": {"titulo": ap["veterinario"]},
+                           "patologias": claves})
+    return grupos
 
 
 
@@ -7099,6 +7196,14 @@ def endpoint_vocabulario():
             "no_formulables": sorted(k for k, v in _pat_v.items() if not v.get("formulable")),
             "ojo": ("La tabla entera, con sus topes y sus fuentes, va por `GET /patologias`. "
                     "Quien puede marcar cada una esta en `quien_formula_cada_patologia.json`."),
+            # ⚠️ 12-sep-2026: LA LISTA Y SUS GRUPOS, que hasta hoy los escribia
+            # la app. Cada campo se LEE de donde ya vivia -- el nombre tecnico
+            # de `patologias.json`, quien puede marcarla de
+            # `quien_formula_cada_patologia.json`, el aviso de `avisos.general`
+            # -- y lo unico nuevo es la etiqueta del dueño y el aparato.
+            "aparatos": _PRESENTACION_PAT["_meta"]["aparatos"],
+            "lista": _lista_de_patologias(_pat_v),
+            "por_aparato": _patologias_por_aparato(_pat_v),
         },
         "categorias_que_elige_el_usuario": {
             "de_donde": "main.CATEGORIAS_QUE_ELIGE_EL_USUARIO",
