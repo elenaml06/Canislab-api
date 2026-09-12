@@ -599,9 +599,10 @@ escribiendo aquí en formato de manual.
 día: su suposición escrita era que «las fuentes están todas en inglés», y el LÉEME
 de esta fuente lo había dejado apuntado «para decidirlo».
 
-**Hasta dónde va la lectura.** Leídos enteros los capítulos **167 y 170 a 173**.
-Faltan **174 a 194**, y falta el resto del tratado (los otros 332 capítulos), que
-no se ha abierto. Se dice así para que se pueda continuar.
+**Hasta dónde va la lectura.** Leídos enteros los capítulos **167, 170 a 173 y 175
+y 176**. Faltan **177 a 194** (y el 174, que es felino), y falta el resto del
+tratado (los otros 332 capítulos), que no se ha abierto. Se dice así para que se
+pueda continuar.
 
 ### cap.172, Martha Cline — las ecuaciones de energía, y no son las nuestras
 
@@ -670,6 +671,41 @@ fórmulas deben usarse solo como punto de partida»*. El ±55,3 sobre 142,8 es u
 | cap.172: los perros necesitan «alrededor del 1-2 % de las calorías totales como ácido linoleico» para no tener signos de deficiencia | **No se aplica**: es un mínimo de deficiencia, no una recomendación, y queda muy por debajo del mínimo de FEDIAF que ya aplica el motor |
 | cap.167 (Eirmann): el método **PETS** para evaluar un suplemento —calidad del Producto, Eficacia, Tolerancia y Seguridad— y que la etiqueta debe traer lista de ingredientes, uso previsto, lote, caducidad y fabricante | **No se aplica como cifra**, pero es exactamente la ficha que le falta a los diez multivitamínicos del catálogo, empezando por la que pide la P-22: qué sal de fósforo llevan |
 | cap.170 (Michel): el contenido del historial dietético, que incluye «Alimentos usados para la administración de la medicación del paciente» y «Acceso de mascotas a la basura» | **Ya cubierto** por la pregunta de los premios, que desde WSAVA incluye la comida con la que se dan las pastillas |
+
+### cap.175 y 176 — y aquí el propio libro no se pone de acuerdo consigo mismo
+
+⚠️ **El BCS: dos capítulos del mismo tratado dan dos cosas distintas.** El 171 y el
+175 (Cecilia Villaverde) dicen que el objetivo es **4-5/9**, como AAHA y la WSAVA.
+El 176 (Juan José Ramos-Plá) dice dos veces que *«el BCS de 1-9 puntos tiene como
+condición óptima el «5», y cada subida de puntuación indica una subida del 10-15 %
+del peso corporal por encima del ideal»*.
+
+Eso toca dos cifras vivas del motor y hay que decirlo con los números:
+
+| | Lo que aplica el motor | AAHA 2021, Tabla 2 | Ettinger cap.176 |
+|---|---|---|---|
+| Banda ideal | 4-5 | 4 «Ideal», 5 «—» | **5** |
+| Peso de más por punto | **10 %** | 10 % (6→10, 7→20, 8→30, 9→40) | **10-15 %** |
+
+**No se cambia nada**, y el motivo va escrito: nuestro 10 % es el extremo **bajo**
+de la horquilla de Ettinger, o sea que el motor calcula un peso objetivo **más
+alto** y por tanto **más kcal**. Para un motor que formula raciones, equivocarse
+hacia arriba en el peso objetivo es dar de comer de más a un perro gordo, que es
+malo; pero el alternativo —usar el 15 %— es apretar la ración de un perro con una
+cifra que solo da una de las tres fuentes. Se queda el 10 %, que es el único valor
+que **las dos** fuentes contienen, y se anota la discrepancia.
+
+| Lo demás | Decisión |
+|---|---|
+| cap.175 (Villaverde): sobre las fórmulas de energía, *«el error asociado a ellas se estima en un 50 %»* | **No se aplica: refuerza la P-25.** Es una banda **más ancha** todavía que el ±30 % de la WSAVA, y sale del mismo grupo de autores |
+| cap.175: *«ni el Consejo Nacional de Investigación (NRC)»* ni la AAFCO *«han establecido requerimientos específicos para las mascotas mayores»* | **Ya cubierto**: el motor no cambia ningún requisito por ser sénior, solo la energía (Tabla VII-6 de FEDIAF). Coincide |
+| cap.175: en el perro mayor, la restricción de proteína *«(menos del 20 y 30 % de calorías proteicas para perros y gatos, respectivamente) no proporciona ningún beneficio y es potencialmente problemática»* | **Se anota, y toca la P-19**: el 20 % de las kcal son 50 g/1000 kcal, justo por debajo del mínimo de FEDIAF (52,1), y el techo de proteína del renal del motor (62,5) es el 25 % — por encima de esa frontera. O sea que el techo renal no cae en la zona que esta fuente llama problemática |
+| cap.176: la energía para adelgazar es *«alrededor del 80 % del requerimiento de energía en reposo (RER), basado en el peso ideal»*, y algunos estudios bajan al 60 % | **No se aplica** (el motor recibe el DER de fuera). Se anota porque es la **tercera** cifra distinta para lo mismo: AAHA da 1,0 × RER (70 kcal/kg^0,75) y mide 63 ± 10,2; esta da 0,8 × RER (56) |
+| cap.176: *«La pérdida de peso debe progresar lentamente (0,5-2 % por semana)»* | ⚠️ **Discrepa con lo que dice hoy el aviso de `obesidad`**, que cita a SACN5: «1 to 4%, more typically 1 to 2%, of their body weight per week». Las dos horquillas se solapan en el 1-2 %, que es donde las dos dicen «lo típico». **No se cambia el aviso** —lleva su cita literal y su fuente— y se anota que otra fuente pone el techo en 2 y no en 4 |
+| cap.176: la L-carnitina en la pérdida de peso, «lo que aumenta la masa de tejido magro y reduce la cantidad total de grasa corporal» | **Ya aplicado**: el suelo de L-carnitina de 75 mg/1000 kcal de `obesidad` |
+| cap.176: *«Es necesario limitar estos premios a menos del 10 % de las calorías totales»* | **Ya aplicado**. Con esta y la del cap.175 van **once** apariciones del 10 % en las fuentes del repo |
+| cap.176: se considera obeso al perro cuyo exceso de grasa supera el peso óptimo en un **15-20 %** | **No se aplica**: el motor no clasifica, calcula. Se anota porque es la frontera con la que un clínico leería nuestro peso objetivo |
+| cap.175: los triglicéridos de cadena media para la disfunción cognitiva, «se propone que los cuerpos cetónicos obtenidos del metabolismo de los MCT proporcionan fuentes alternativas de energía para el cerebro envejecido» | **No se aplica: no hay dosis**, igual que los MCT de la epilepsia que pedía AAHA. Son ya **dos** patologías del motor a las que dos fuentes les piden MCT sin decir cuánto. Se suma a la P-21 |
 
 ### Y la cuarta fuente que desaconseja lo que hacemos
 

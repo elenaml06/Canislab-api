@@ -998,6 +998,7 @@ lo que no se hace aquí. Van juntas porque la pregunta es la misma.
 | `epilepsia_idiopatica` | «High medium-chain triglycerides» | Nada: un menú normal con avisos de fármaco | La cifra, y además el motor **no tiene clave** de triglicéridos de cadena media. El catálogo tendría que medirlos |
 | `diabetes` | «High protein (unless contraindicated, e.g., proteinuria)» | Suelo de fibra 17,5. **Ningún suelo de proteína** | Cuánta. Y la condición: «unless contraindicated» significa que en un diabético con proteinuria es al revés |
 | `renal_proteinuria` | «25-50% protein reduction from current intake · Meet essential amino acid requirements» | Solo avisos, **ninguna cifra** | Es una reducción **relativa a lo que el perro come hoy**, y el motor no sabe eso. O se convierte en un valor absoluto por 1000 kcal, o no es aplicable a este sistema |
+| `disfuncion_cognitiva` | Ettinger cap.175 pide también triglicéridos de cadena media: «se propone que los cuerpos cetónicos obtenidos del metabolismo de los MCT proporcionan fuentes alternativas de energía para el cerebro envejecido» | Suelo de vitamina E | Otra vez la dosis. Son ya **dos** patologías del motor —esta y la epilepsia— a las que **dos** fuentes distintas les piden MCT sin decir cuánto, y el catálogo no los mide |
 
 La última es la más importante de las tres: `renal_proteinuria` es una patología
 que un perro tiene de verdad y hoy no lleva ni un número.
