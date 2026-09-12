@@ -82,15 +82,26 @@ firma una pauta tiene derecho a saberlo, que es la razón de ser de este fichero
 
 ---
 
-## 1-bis · El ratio calcio:fósforo lo fija FEDIAF, y ninguna otra fuente se lo quita
+## 1-bis · El REQUISITO de calcio:fósforo lo fija FEDIAF; lo que pida una patología es otra cosa
 
-Escrito el **12 de septiembre de 2026**, decidido por Elena:
+Escrito el **12 de septiembre de 2026**, decidido por Elena en dos mensajes del
+mismo día. El primero:
 
 > *«El ratio Ca:P viene de fediaf, ya sabes como va el orden de fuentes que
 > mandan»*
 
+Y el segundo, acotando el alcance —porque yo había aplicado el primero de más y
+había cerrado con él también la pregunta del renal:
+
+> *«Lo que te decia del ratio me referia al requerimiento, si alguna patologia
+> necesita algo distinto es otra cosa»*
+
+O sea que la regla es sobre **el requisito**: el del perro que no tiene nada, que
+es el que FEDIAF publica. Una patología que pida su propio cociente se decide como
+cualquier otro de sus 79 límites — con su fuente, su conversión y su medida.
+
 Hacía falta una entrada propia porque el Ca:P es **la cifra del repo que más
-fuentes vuelven a dar**: cuatro bandas distintas para lo mismo, y dos de ellas
+fuentes vuelven a dar**: cinco bandas distintas para lo mismo, y dos de ellas
 caben enteras dentro de la de FEDIAF, así que no saltaban como conflicto.
 
 | Fuente | Banda | Qué le hace a la ventana de FEDIAF | Estado |
@@ -98,21 +109,20 @@ caben enteras dentro de la de FEDIAF, así que no saltaban como conflicto.
 | **FEDIAF**, perro sano (Tabla III-3b) | **1,0-2,0** | es la ventana | **aplicada** |
 | **FEDIAF**, cachorro de raza grande (nota b) | techo **1,6** | la aprieta **FEDIAF a sí misma** | **aplicada** |
 | SACN5 Tablas 40-5 y 41-6, urolitos de calcio | 1,1-**2,0** | sube el suelo a 1,1 y **deja el techo de FEDIAF intacto** | **aplicada** en `oxalato` |
-| Bartges (Ettinger cap.184), enfermedad renal crónica | 1,1-**1,3** | sube el suelo **y baja el techo** | **no se aplica** — P-30 |
-| TVT Merkblatt 181, perro sano | 1,3-**1,5** | sube el suelo **y baja el techo** | **no se aplica** — P-23 |
+| Bartges (Ettinger cap.184), enfermedad renal crónica | 1,1-**1,3** | sube el suelo **y baja el techo** | **no aplicada, y la pregunta sigue abierta** — es de una patología, o sea «otra cosa». P-30 |
+| TVT Merkblatt 181, perro sano | 1,3-**1,5** | sube el suelo **y baja el techo** | **no se aplica** — es un requisito rival del de FEDIAF. P-23, cerrada |
 
-**La línea que las separa no es cuánto aprietan: es si sustituyen la ventana de
-FEDIAF o si aprietan dentro de ella.** El del oxalato solo mueve el suelo, con
-`max()`, y es un límite de una **patología marcada** — o sea la regla 2 del
-proyecto, la misma forma que tienen los otros 75. Los de la TVT y de Bartges
-traen suelo **y** techo propios, o sea una banda entera que ocuparía el sitio de
-la de FEDIAF; y el de la TVT además habla del perro **que no tiene nada**, que es
-exactamente de quien habla FEDIAF.
+**La línea que las separa es a QUIÉN se lo piden.** El de la TVT habla del perro
+**que no tiene nada**, que es exactamente de quien habla FEDIAF: es un requisito
+rival, y ahí manda FEDIAF y se acabó. Los del oxalato y del renal los pide una
+**patología marcada**, que es la regla 2 del proyecto y la misma forma que tienen
+los otros 79 límites: uno está aplicado y el otro está por decidir, cada uno por
+su cuenta.
 
-Y en el renal hay un motivo más, que es de la propia frase de Bartges: su otra
-mitad —el fósforo al 0,2-0,5 % de materia seca— **ya está aplicada**, con el
-techo de 1.200 mg/1000 kcal. El fósforo es el denominador del cociente, así que
-el motor ya aprieta ese ratio por donde la fuente dice que importa.
+Y en el renal hay un dato que conviene tener delante al decidirlo, y es de la
+propia frase de Bartges: su otra mitad —el fósforo al 0,2-0,5 % de materia seca—
+**ya está aplicada**, con el techo de 1.200 mg/1000 kcal. El fósforo es el
+denominador del cociente, así que el motor ya aprieta ese ratio por un lado.
 
 ---
 
