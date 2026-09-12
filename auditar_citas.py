@@ -356,10 +356,23 @@ def textos():
 # es la casilla que menos se mira. Ahora que el texto esta, una cita de
 # Dobenecker, Heer o Ishii que no aparezca literal TIENE que salir por la casilla
 # de las que hay que mirar. La lista y el texto van juntos o no sirve ninguno.
+# ⚠️ LAS FUENTES QUE ESTAN EN ESPAÑOL (12 de septiembre). Hasta hoy no habia
+# ninguna, y por eso `_parece_de_fuente` podia dar por prosa nuestra cualquier
+# cita en español. Dejo de ser verdad con Ettinger & Feldman, que son 255.458
+# lineas en castellano — su propio LEEME lo dejo anotado «para decidirlo».
+#
+# La regla es ESTRECHA a proposito: una cita en español se audita solo si su
+# parrafo nombra una de ESTAS fuentes. Si se auditaran todas las citas españolas
+# cuyo parrafo nombra cualquier fuente, saldrian acusadas una detras de otra las
+# frases de Elena y nuestra propia prosa entrecomillada, que llevan meses escritas
+# asi en media docena de documentos — y una auditoria que acusa a quien no ha
+# hecho nada se deja de mirar, que es el fallo que este fichero mas repite.
+_FUENTES_EN_ESPANOL = ("ettinger", "feldman", "côté", "cote", "hervera")
+
 _EN_EL_REPO = ("fediaf", "sacn5", "small animal clinical nutrition", "nrc",
                "fascetti", "köber", "kober", "reglamento", "iris", "aaha", "tvt",
                "dobenecker", "hofmann", "heer", "ishii", "malandain", "sturmer",
-               "stürmer", "hervera")
+               "stürmer", "hervera", "ettinger", "feldman", "côté", "cote")
 # ⚠️ «purina institute» Y NO «purina» A SECAS (12 de septiembre). La marca se
 # llama igual que el nutriente en español y en ingles («purinas», «purine»), asi
 # que con la clave corta cualquier parrafo sobre purinas se atribuia a la marca y
@@ -412,7 +425,17 @@ def recoger():
         t = open(p, encoding="utf-8").read()
         for m in _CITA.finditer(t):
             c = m.group(1)
-            if _parece_de_fuente(c):
+            # ⚠️ EL CONTEXTO SE CALCULA ANTES DE DECIDIR SI LA CITA ES DE FUENTE
+            # (12 de septiembre). Hasta hoy se decidia solo por el idioma, y eso
+            # daba por prosa nuestra CUALQUIER cita en español. Era verdad
+            # mientras todas las fuentes estaban en ingles, y dejo de serlo el
+            # dia que entro Ettinger & Feldman, que son 255.458 lineas EN
+            # ESPAÑOL. Su propio LEEME lo dejo anotado «para decidirlo», y esto
+            # es la decision: una cita española cuyo parrafo NOMBRA una fuente
+            # que esta en el repo se audita como cualquier otra.
+            ini = t.rfind("\n\n", 0, m.start())
+            ctx = t[ini + 2 if ini >= 0 else 0:m.end() + 200]
+            if _parece_de_fuente(c) or _quien_dice(ctx)[1] in _FUENTES_EN_ESPANOL:
                 # el contexto es el PARRAFO de la cita, no un trozo fijo de
                 # caracteres: con 400 hacia atras se pegaba la fuente de la cita
                 # de al lado, y una cita de Today's Veterinary Practice salia
@@ -422,8 +445,7 @@ def recoger():
                 # porque el manual no esta en el repo -- salia acusada de ser de
                 # FEDIAF y no aparecer. El parrafo es el trozo que de verdad
                 # comparte fuente.
-                ini = t.rfind("\n\n", 0, m.start())
-                fuera.append((f, c, t[ini + 2 if ini >= 0 else 0:m.end() + 200]))
+                fuera.append((f, c, ctx))
     for f in JSONS:
         p = os.path.join(RAIZ, f)
         if not os.path.exists(p):

@@ -54,7 +54,7 @@ tercera trae la condición:
   los 12 aminoácidos esenciales se verifican uno a uno desde el 28 de agosto.
 
 **Qué cambia esto en el motor: nada.** Elena lo decidió y la decisión sigue:
-«los requisitos se respetan SIEMPRE, eso no se negocia». Lo que cambia es lo
+*los requisitos se respetan SIEMPRE, eso no se negocia*. Lo que cambia es lo
 que se puede **afirmar**: hasta hoy este documento decía que FEDIAF manda en
 todos los casos, y la propia FEDIAF dice que en las dietas clínicas no. Quien
 firma una pauta tiene derecho a saberlo, que es la razón de ser de este fichero.

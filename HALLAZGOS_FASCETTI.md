@@ -105,8 +105,8 @@ de límite: el Ca:P, el linoleico:linolénico y el bloque `ratios` de
 ⚠️ **Y esto es lo incómodo, y hay que decirlo:** SACN5 figura hoy con **0
 pendientes**. Eso es verdad **para el filtro tal como está escrito**, y deja de
 serlo si el filtro cuenta los ratios: serían **198 frases nuevas sin veredicto**.
-O sea que «SACN5 cerrado» significa hoy «cerrado bajo esta definición de elemento
-nutricional», no «cerrado en absoluto».
+O sea que *SACN5 cerrado* significa hoy *cerrado bajo esta definición de elemento
+nutricional*, no *cerrado en absoluto*.
 
 **No se toca el filtro sin decidirlo**, porque es el mismo para los tres libros a
 propósito —un filtro, una definición— y moverlo mueve los tres recuentos y pone

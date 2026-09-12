@@ -306,7 +306,7 @@ Medido en semana 4:
 | 60 kg | 8 | 13 494 kcal | 9054 | **−33 %** |
 
 ⚠️ **Y el comentario del código decía que esta parte venía de una fuente
-secundaria «que no se ha podido contrastar con el texto original de FEDIAF».**
+secundaria *que no se ha podido contrastar con el texto original de FEDIAF*.**
 Sí se puede, y cuadra. Ese comentario es lo que hizo que nadie volviera a
 mirarlo, y además se usó para justificar el recorte. Ya está corregido en
 `der.py`.
