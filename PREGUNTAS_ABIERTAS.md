@@ -1234,6 +1234,57 @@ contra un rango. Es una cuestión de **qué se dice**.
    motor tiene que saber contra qué incertidumbre se está comparando todo lo
    demás.
 
+---
+
+### P-26 · Los estándares de la FCI no dan el peso de la mayoría de las razas
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (decide si se sigue por esta vía o por otra) |
+| **Bloquea** | No. Pero `razas.json` sigue sin fuente, y de ahí salen las kcal, la etapa y el techo de calcio del cachorro de raza grande |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo los estándares descargados |
+
+`razas.json` lleva escrito en su `_meta` que **sus 255 pesos adultos no tienen
+fuente publicada**. El 11 de septiembre se empezó a resolver bajando los
+estándares oficiales de la FCI, que son públicos y gratis. El plan era el
+correcto y está a medias:
+
+- Descargados: **33 estándares de 255 razas**.
+- El lector que el LÉEME de esa carpeta dice que debe vivir en el repo de la API
+  (`leer_estandares_fci.py`) **no existe**.
+
+**Y medido hoy sobre esos 33, la vía no da lo que se esperaba:**
+
+| | |
+|---|---|
+| estándares con un peso en kg | **9** |
+| estándares sin peso en kg | **24** |
+
+Un estándar de raza describe la **altura a la cruz**, que es lo que se mide en un
+concurso. El peso lo dan solo algunas razas. El del pointer inglés tiene el
+apartado «SIZE AND WEIGHT» y dentro solo pone la altura; igual el airedale
+terrier, el setter inglés, el bull terrier o el bobtail.
+
+O sea que bajar los 222 que faltan daría fuente a **algo más de una cuarta parte**
+de las razas, y el resto seguiría igual que hoy. Convertir altura en peso no vale:
+no hay una conversión publicada para el perro, y sería inventar el número, que es
+justo lo que `razas.json` declara que no hace.
+
+**La pregunta, en dos:**
+
+1. ¿Se terminan de bajar los 222 que faltan aun sabiendo que solo cubren una
+   cuarta parte? Mi opinión: sí, porque una cuarta parte con fuente es mejor que
+   ninguna, y el fichero puede decir cuáles la tienen y cuáles no — que es más
+   honesto que la frase de hoy, que dice que no la tiene ninguna.
+2. ¿De dónde salen los otros tres cuartos? Aquí no tengo propuesta buena. Las
+   cuatro fuentes del motor no traen tabla de peso por raza, y las que circulan
+   son de clubes y de webs divulgativas.
+
+⚠️ **Y una cosa de proceso**: esto llevaba un día hecho a medias y no estaba
+escrito en ninguna parte de este repo. La descarga vive en el otro repo y el
+lector que tenía que auditarla aquí no llegó a existir. Si nadie lo lee, en un
+mes alguien vuelve a empezar.
+
 
 ---
 

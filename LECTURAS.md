@@ -58,6 +58,7 @@ la tabla. Esos se quedan y se quedan todos.
 | **Spitze 2003** | **no está en el repo** | Decide la taurina de 89 fichas |
 | Ettinger & Feldman | no | Dos tomos |
 | Dobenecker / Hofmann | **los dos leídos enteros (12-sep)** | El de 2021 (PLOS ONE, 8 beagles) y el de 2025 (JAPAN, 8 foxhound). Abajo. Sale una cosa que el motor no puede ver y que vale hasta el **39,6 %** del fósforo de un menú: **en qué forma química viene el fósforo de los multivitamínicos**. Y una advertencia sobre nuestra propia protección: subir el ratio Ca:P NO protege de un fosfato soluble |
+| FCI — estándares de raza | **leído lo que hay: 33 estándares de 255 razas (12-sep)** | Se bajaron el 11-sep para dar fuente a los 255 pesos adultos de `razas.json`, que no la tienen. ⚠️ **Medido hoy: solo 9 de los 33 traen un peso en kg.** Los demás dan **altura a la cruz y no peso**, que es como se escribe un estándar de raza. O sea que esta fuente contesta como mucho una cuarta parte de la pregunta. Abajo |
 | Heer 2017 | **leída entera (12-sep)** | Es la tesis que **contesta la P-24** y a la vez la deja abierta por otro motivo: trae la ecuación del perro que faltaba (Behnsen 1992) y, rehecha la cuenta, **esa ecuación no cuadra ni con los datos que la propia fuente cita en la misma frase ni con su propia Figura 4**. Abajo |
 | Stürmer 2005 | **leído entero (12-sep)** | Son 198 líneas: un **extracto ya seleccionado** de la tesis, no la tesis. Y es de **ponis**. Trae la fórmula del balance catión-anión (KAB) que el motor no calcula, y que decidiría si una ración acidifica o alcaliniza la orina — lo que los cuatro urolitos necesitan saber. Abajo |
 | Hervera 2021 | **leído entero (12-sep)** | La **octava** fuente con el 10 % de los premios, y la única en español. Trae además una tabla de kcal de los premios que la gente da de verdad, lista para la pregunta de los premios que la ficha todavía no hace. Abajo |
@@ -575,6 +576,38 @@ escrito porque es la única fuente que **pide** el 4 en vez de admitirlo.
 | *«the use of jerky and dried sweet potato treats has been associated with kidney disease in several parts of the world and is discouraged»* | **No se aplica: no hay ninguno en el catálogo** (no hay premios deshidratados). Va escrito para la pregunta de los premios, que es donde entraría |
 | Que un producto «intermittent», «complementary» o «short-term» solo debe darse *«as a small portion of the diet (10% or less)»* | **Ya aplicado**: es la misma regla del 10 %, dicha desde la etiqueta |
 | Los 12 documentos de gestión de clínica —los seis principios, los consejos de implantación, el procedimiento de traducción, los formularios de historia dietética y de paciente hospitalizado, la guía de etiquetas y la de internet para el dueño | **No se aplica: no hay ni una cifra de ración.** Se han leído enteros y se dice que se han leído |
+
+---
+
+## FCI — los estándares oficiales de raza · leído lo descargado el 12-sep-2026
+
+⚠️ **Lo primero: esto es un trabajo a medias que no estaba escrito en ningún sitio
+de este repo.** El 11 de septiembre se empezó a bajar los estándares de la FCI
+—`canislab-fuentes/FCI/`, con su `bajar_estandares.py`— para dar fuente a los 255
+pesos adultos de `razas.json`, que llevan en su `_meta` la frase «estas cifras no
+tienen fuente publicada». El propio LÉEME de esa carpeta dice que quien los lee es
+`leer_estandares_fci.py`, «en el repo de la API, porque su salida decide un número
+del motor y tiene que auditarse allí». **Ese fichero no existe**, y la descarga se
+quedó en **33 estándares de 255 razas**.
+
+Se ha leído lo que hay. Y lo que sale cambia el plan.
+
+| Lo que dice | Decisión |
+|---|---|
+| El estándar del pastor alemán (166) sí trae el peso: «Weight: 30 kg to 40 kg» en machos y «Weight: 22 kg to 32 kg» en hembras | Es el caso con el que se comprobó la idea antes de montarla, y funciona |
+| ⚠️ **Pero la mayoría de los estándares NO dan peso.** Medido sobre los 33 descargados: **9 traen un peso en kg y 24 no.** El del pointer inglés, por ejemplo, tiene el apartado «SIZE AND WEIGHT» y dentro solo pone «Height at the withers: Dogs: 63 - 69 cm. Bitches: 61 - 66 cm». Igual el airedale terrier, el setter inglés, el bull terrier, el bobtail… | **La fuente no contesta la pregunta para la que se bajó.** Un estándar de raza describe la **altura a la cruz**, que es lo que se mide en un concurso; el peso lo dan solo algunas razas. Sobre lo descargado, esto cubre el **27 %** |
+| Que la FCI publica los estándares en varios idiomas, y el español da el nombre oficial en castellano | **Sigue siendo útil por otra cosa**: `der.py` reconoce al «Gran Danés» y al «Terranova» por su nombre LITERAL para darles su cifra propia de FEDIAF, y una tilde distinta y esa cifra no se aplica nunca, sin error y con el menú en verde. Para eso sí vale, y no hace falta el peso |
+
+**Lo que se puede decir ahora y antes no**: bajar los 222 estándares que faltan
+**no va a dar fuente a los 255 pesos**. Va a dar fuente a una cuarta parte larga,
+y el resto seguirá sin ella. Convertir altura a la cruz en peso no vale: no hay
+una conversión publicada para el perro y sería inventarse el número, que es
+exactamente lo que `razas.json` declara que no hace.
+
+**No lo continúo aquí** porque los estándares viven en el otro repo y esta sesión
+no puede empujar allí, y bajar 222 en local dejaría el mismo agujero que ya costó
+un rojo con `SIN_TEXTO_DECLARADAS`: verde aquí y rojo en la CI. Va a
+`PREGUNTAS_ABIERTAS.md` con la medida delante.
 
 ---
 
