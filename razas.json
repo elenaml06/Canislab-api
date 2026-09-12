@@ -3,9 +3,9 @@
   "que_es": "Las 255 razas que ofrece la ficha, con su tamaño y su rango de peso adulto.",
   "por_que_existe": "Elena, 11-sep-2026: «esto tiene que ser para TODO, razas, tamaño, etapa, actividad, preguntas para las patologias de veterinarios, todo». || Hasta hoy esta tabla vivia SOLO en `src/App.jsx` del repo de la app, 255 filas escritas dentro del JavaScript. El motor no la tenia, asi que no podia comprobar nada de ella: ni que el tamaño que manda la app sea uno de los seis que el catalogo conoce, ni que el peso adulto que estima cuadre con el rango de la raza. Y de ese peso adulto salen las kcal, la etapa y el techo de calcio del cachorro de raza grande.",
   "la_cadena": "FUENTE manda -> MOTOR la implementa -> APP la ofrece.",
-  "de_donde_salen_estas_cifras": "⚠️ LAS 255 DE ORIGEN NO TIENEN FUENTE PUBLICADA, y eso sigue siendo verdad para la mayoria. Venian escritas en `src/App.jsx` desde antes de que hubiera repo de fuentes, y el historial de git NO puede decir de donde salieron: el primer commit de ese repo (8-sep-2026) ya las trae dentro. || ⚠️ COMPROBADO EL 12-sep-2026 CONTRA LA AKC, Y NO ES DE AHI: emparejadas 35 razas que estan en las dos listas, solo 15 cuadran dentro de un 8 % en los dos extremos (el Airedale es 22,7-31,8 en la AKC y 19-25 aqui). Las primeras que se miraron coincidian porque eran las famosas; con la muestra entera se cae. || Ninguna de las cuatro fuentes del motor (FEDIAF, SACN5, NRC 2006, Fascetti) publica una tabla de peso por raza: FEDIAF solo nombra DOS razas con cifra de energia propia (Gran Danes y Terranova, Tabla VII-7) y esas dos estan en `der.RAZAS_CIFRA_FEDIAF`.",
+  "de_donde_salen_estas_cifras": "⚠️ LAS 255 DE ORIGEN NO TIENEN FUENTE PUBLICADA. A 12-sep-2026 por la noche ya la tienen 85 de las 270 -- 20 del BOE y 65 del estandar de la FCI --, y las 185 restantes siguen sin ella. Venian escritas en `src/App.jsx` desde antes de que hubiera repo de fuentes, y el historial de git NO puede decir de donde salieron: el primer commit de ese repo (8-sep-2026) ya las trae dentro. || ⚠️ COMPROBADO EL 12-sep-2026 CONTRA LA AKC, Y NO ES DE AHI: emparejadas 35 razas que estan en las dos listas, solo 15 cuadran dentro de un 8 % en los dos extremos (el Airedale es 22,7-31,8 en la AKC y 19-25 aqui). Las primeras que se miraron coincidian porque eran las famosas; con la muestra entera se cae. || Ninguna de las cuatro fuentes del motor (FEDIAF, SACN5, NRC 2006, Fascetti) publica una tabla de peso por raza: FEDIAF solo nombra DOS razas con cifra de energia propia (Gran Danes y Terranova, Tabla VII-7) y esas dos estan en `der.RAZAS_CIFRA_FEDIAF`.",
   "para_que_las_usa_el_motor": "Hoy para nada directamente: el peso adulto esperado lo calcula la app (`der.js`) y lo manda en `peso_adulto_esperado`. Estan aqui para poder COMPROBAR ese numero y para que la app pueda servirse de `GET /vocabulario` en vez de su copia.",
-  "como_se_comprueba": "El BLOQUE 89 de `pruebas_completas.py`: que los seis tamaños sean los seis del catalogo de menus, que ningun peso medio se salga de su propio rango, que no haya nombres repetidos, y que las dos razas con cifra propia de FEDIAF esten aqui con ese nombre exacto. El lado de la app lo vigila `tests/vocabulario.spec.js` en canislab-web, que compara fila a fila.",
+  "como_se_comprueba": "El BLOQUE 89 de `pruebas_completas.py`: que los seis tamaños sean los seis del catalogo de menus, que ningun peso medio se salga de su propio rango, que no haya nombres repetidos, y que las dos razas con cifra propia de FEDIAF esten aqui con ese nombre exacto. El lado de la app lo vigila `tests/vocabulario.spec.js` en canislab-web, que compara fila a fila. || Y desde el 12-sep por la noche el BLOQUE 89 REHACE cada peso contra su cita: saca los kg de la cita literal -- sin cruzar un «cm» y sin tragarse las libras inglesas -- y exige que el rango de la fila salga de ahi con la regla que le toque a su `forma_de_la_fci` (un `punto` no puede haber cambiado la cifra; un `minimos` solo puede haber movido el suelo), y ademas que la cita este LITERAL en `fci_estandares_peso.txt`. Una cita que no cuadre con su numero falla, en el BOE y en la FCI igual.",
   "cuantas": 270,
   "tamanos": [
    "Toy",
@@ -17,15 +17,20 @@
   ],
   "medido": "11 de septiembre de 2026, extraidas de `const RAZAS` de `src/App.jsx`. Ampliadas y corregidas contra el BOE el 12 de septiembre.",
   "las_espanolas_si_tienen_fuente": "⚠️ 12-sep-2026, y es la unica parte de esta tabla que hoy tiene fuente, ademas LEGAL. Los prototipos raciales de las razas caninas españolas se publican en el BOE: Real Decreto 558/2001, anexo «Razas caninas españolas» (texto consolidado BOE-A-2001-11347), leido entero. Es la misma clase de fuente que el Reglamento (UE) 2020/354 -- ley --, y las filas que salen de ahi llevan su `fuente` y su `cita` literal. || MEDIDO: el anexo nombra 33 razas españolas y da prototipo a unas 26; de esas, **15 traen un peso explicito en kg** y el resto solo da ALZADA A LA CRUZ, que es como se escribe un estandar de raza y por eso la FCI tampoco servia. || Siete no tienen ni prototipo en el consolidado, solo el nombre: Pachon Navarro, Perro de Agua del Cantabrico, Perro Leones de Pastor, Podenco Paternino, Podenco Valenciano, Valdueza y Villano de las Encartaciones. Esas NO se añaden: meterlas exigiria inventarles el peso, y eso no lo hace el asistente. || ⚠️ AMPLIADO EL 12-sep POR LA NOCHE: dos de las siete que el BOE nombraba SIN describir sí tienen estandar, pero publicado por su COMUNIDAD, no por el Estado -- el registro oficial del Ministerio (ARCA) dice cual aprueba el de cada raza. El Pachon Navarro lo aprueba Navarra (Orden Foral 270/2006) y el Perro Leones de Pastor Castilla y Leon (Orden AYG/1170/2018), y los dos dan peso en kg. Con eso las que se nombran sin describir bajan de siete a cinco. || Y el Mastin del Pirineo sigue SIN peso con fuente: su decreto de Aragon (BOA 124/2002) reconoce la raza y crea su libro genealogico pero no trae prototipo con pesos, y el estandar FCI n.o 92, leido entero, SOLO da alzada y dice que no hay limite maximo de talla. Los 80 kg que circulan son de paginas de criadores.",
-  "lo_que_se_hizo_el_12sep2026": "· Se AÑADIERON 11 razas españolas que la ficha no ofrecia, cada una con su peso del BOE y su cita. En una app española, quien tenia un Ratonero Bodeguero, un Can de Palleiro o un Perro de Pastor Vasco tenia que marcar «mestizo». · Se CORRIGIERON dos que no cuadraban con su prototipo oficial: el Presa Canario tenia el maximo en 65 kg y el prototipo dice 57; el Podenco Andaluz empezaba en 16 kg y el prototipo tiene TRES tallas, y la chica baja a 5. · Se CONFIRMARON tres que cuadran al kilo con el BOE (Alano Español, Ca de Bou y Perro de Agua Español): no cambian de numero, ganan la cita que les faltaba."
+  "lo_que_se_hizo_el_12sep2026": "· Se AÑADIERON 11 razas españolas que la ficha no ofrecia, cada una con su peso del BOE y su cita. En una app española, quien tenia un Ratonero Bodeguero, un Can de Palleiro o un Perro de Pastor Vasco tenia que marcar «mestizo». · Se CORRIGIERON dos que no cuadraban con su prototipo oficial: el Presa Canario tenia el maximo en 65 kg y el prototipo dice 57; el Podenco Andaluz empezaba en 16 kg y el prototipo tiene TRES tallas, y la chica baja a 5. · Se CONFIRMARON tres que cuadran al kilo con el BOE (Alano Español, Ca de Bou y Perro de Agua Español): no cambian de numero, ganan la cita que les faltaba. || POR LA NOCHE, con la FCI: **20 filas cambian de cifra** y **45 se confirman sin cambiar** (que es la señal de que la lista de origen salia en buena parte de la FCI, aunque copiada sin decirlo). Las que mas se mueven: el Kuvasz pasa de 30-52 a **37-62** -- 10 kg mas de techo --, el Terrier Negro Ruso de 36-60 a 45-60, el Sabueso de San Huberto de 36-50 a 40-54 y el Corgi Pembroke de 10-14 a 9-12. Y el Fila Brasileño baja su minimo de 50 a **40**, que es el suelo que la FCI pone a las HEMBRAS: con 50 el motor no dejaba que la curva de crecimiento apuntara a una hembra de la raza, y eso es acotar por debajo a un perro que existe.",
+  "la_fci_es_la_otra_fuente": "⚠️ 12-sep-2026, por la noche. La Federation Cynologique Internationale publica el estandar oficial de cada raza, y su apartado TAMAÑO Y PESO es el unico documento que dice, raza por raza, lo que pesa. Se bajaron los 270 estandares en español de fci.be y se leyeron: **92 dan una cifra en kilos**, y de esos **70 son una raza que esta en la ficha** (los demas son razas que no ofrecemos). Cinco de esos 70 son españolas y ya vienen del BOE, que es LEY y manda sobre un estandar privado, asi que esas no se tocan; quedan **65 filas con fuente nueva**. || ⚠️ Y LA MITAD NO CASA POR NOMBRE: la FCI publica cada estandar con el nombre en el idioma del pais de origen (DEUTSCHER SCHÄFERHUND, CHIHUAHUEÑO, RIESENSCHNAUZER), asi que 43 de los 70 hubo que emparejarlos a mano. Eso es una lectura de nombres, no una cifra, y lo que no se reconocio con seguridad NO se emparejo. || El texto del apartado de peso de los 65 vive en `fci_estandares_peso.txt`, en la raiz, para que se pueda auditar.",
+  "lo_que_la_fci_dice_y_lo_que_no": "⚠️ NO TODO ESTANDAR DA UN RANGO, y darlo por hecho meteria en la ficha un techo que la FCI no pone. «Minimo, 40 kg para las hembras» (Fila Brasileño) y «Hembras: 40 – 50 kg» (Cane Corso) tienen los mismos digitos y no dicen lo mismo. Leidos uno a uno salen seis formas, y cada fila lleva la suya escrita en `forma_de_la_fci`: **rango** (un intervalo, de los dos sexos o uno por sexo), **punto** (un solo numero para los dos: «Aproximadamente 30 kg»), **punto_sexo** («En los machos debe ser de 29,5 kg»), **minimos** (suelos sin techo), **maximo** (techo sin suelo) y **solo_machos** (rango de machos y de las hembras «proporcionalmente menos», sin cifra). || SOLO EL RANGO SUSTITUYE A NUESTRA CIFRA. De un punto no se inventa una horquilla alrededor: es la misma regla que ya se aplico al Ca de Bestiar con el prototipo del BOE, y es la que deja al Setter Gordon en 20-36 aunque la FCI diga 29,5 en machos y 25,5 en hembras -- ese es el peso al que debe estar el ejemplar de concurso, no la horquilla de lo que pesa un perro de esa raza, y el motor usa el rango para ACOTAR el peso adulto que se le estima a un cachorro. De las otras formas se coge la mitad que la fuente si da (el suelo del Fila, el techo del Terrier Ruso) y la otra mitad se queda como estaba, dicho en su `ojo`."
  },
  "razas": [
   {
    "nombre": "Affenpinscher",
    "tamano": "Toy",
-   "pesoMin": 3,
+   "pesoMin": 4,
    "pesoMax": 6,
-   "pesoMedio": 4.5
+   "pesoMedio": 5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 186 (Affenpinscher), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos y hembras: de 4 hasta 6 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Airedale Terrier",
@@ -84,7 +89,10 @@
    "tamano": "Mediano",
    "pesoMin": 15,
    "pesoMax": 25,
-   "pesoMedio": 20
+   "pesoMedio": 20,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 307 (Azawakh), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 20 - 25 kg Hembras: 15 – 20 kg»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Barbet",
@@ -98,14 +106,21 @@
    "tamano": "Pequeño",
    "pesoMin": 9.5,
    "pesoMax": 11,
-   "pesoMedio": 10.2
+   "pesoMedio": 10.2,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 43 (Basenji), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso ideal: Machos 11 kg (24 libras inglesas), Hembras 9,5 kg (21 libras inglesas).»",
+   "forma_de_la_fci": "punto_sexo",
+   "ojo": "La FCI NO da un rango: da UN peso por sexo, que es el peso al que debe estar el ejemplar de concurso, no la horquilla de lo que pesa un perro de esa raza. La que usa el motor se queda como estaba y sigue sin fuente publicada."
   },
   {
    "nombre": "Basset Artesiano de Normandía",
    "tamano": "Mediano",
    "pesoMin": 15,
    "pesoMax": 20,
-   "pesoMedio": 17.5
+   "pesoMedio": 17.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 34 (Basset Artésien-Normand), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: 15 – 20 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Basset Azul de Gascuña",
@@ -147,21 +162,31 @@
    "tamano": "Pequeño",
    "pesoMin": 8,
    "pesoMax": 10,
-   "pesoMedio": 9.0
+   "pesoMedio": 9,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 9 (Bedlington Terrier), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: entre 8 kg a 10 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Bichón Boloñés",
    "tamano": "Toy",
    "pesoMin": 2.5,
    "pesoMax": 4,
-   "pesoMedio": 3.2
+   "pesoMedio": 3.2,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 196 (Bolognese), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: 2.5 – 4 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Bichón Frisé",
    "tamano": "Mini",
    "pesoMin": 5,
    "pesoMax": 8,
-   "pesoMedio": 6.5
+   "pesoMedio": 6.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 215 (Bichon À Poil Frisé), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Aproximadamente 5 kg, en proporción al tamaño.»",
+   "forma_de_la_fci": "punto",
+   "ojo": "La FCI NO da un rango: da UN solo peso para los dos sexos. De un punto no se inventa una horquilla alrededor, así que la que usa el motor se queda como estaba y sigue sin fuente publicada. Misma regla que con el Ca de Bestiar del BOE."
   },
   {
    "nombre": "Bichón Habanero",
@@ -175,7 +200,10 @@
    "tamano": "Toy",
    "pesoMin": 3,
    "pesoMax": 4,
-   "pesoMedio": 3.5
+   "pesoMedio": 3.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 65 (Maltese), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: De 3 a 4 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Bobtail (Old English Sheepdog)",
@@ -259,7 +287,10 @@
    "tamano": "Grande",
    "pesoMin": 27,
    "pesoMax": 40,
-   "pesoMedio": 33.5
+   "pesoMedio": 33.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 191 (Bouvier Des Flandres), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Aproximado: 30 a 40 kg en los machos, 27 a 35 kg en las hembras.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Braco Alemán de Pelo Corto",
@@ -294,7 +325,10 @@
    "tamano": "Grande",
    "pesoMin": 25,
    "pesoMax": 40,
-   "pesoMedio": 32.5
+   "pesoMedio": 32.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 202 (Bracco Italiano), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Entre 25 y 40 kg, dependiendo del tamaño.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Bretón",
@@ -315,7 +349,10 @@
    "tamano": "Gigante",
    "pesoMin": 40,
    "pesoMax": 70,
-   "pesoMedio": 55
+   "pesoMedio": 55,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 315 (Broholmer), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos entre 50 - 70 kg, Hembras entre 40 - 60 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Buhund Noruego",
@@ -350,14 +387,21 @@
    "tamano": "Mediano",
    "pesoMin": 23,
    "pesoMax": 25,
-   "pesoMedio": 24.0
+   "pesoMedio": 24,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 149 (Bulldog), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Machos: 25 kg Hembras: 23 kg»",
+   "forma_de_la_fci": "punto_sexo",
+   "ojo": "La FCI NO da un rango: da UN peso por sexo, que es el peso al que debe estar el ejemplar de concurso, no la horquilla de lo que pesa un perro de esa raza. La que usa el motor se queda como estaba y sigue sin fuente publicada."
   },
   {
    "nombre": "Bullmastiff",
    "tamano": "Gigante",
    "pesoMin": 41,
    "pesoMax": 59,
-   "pesoMedio": 50.0
+   "pesoMedio": 50,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 157 (Bullmastiff), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 50 - 59 kg Hembras: 41 - 50 kg»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Ca Mè Mallorquí",
@@ -379,13 +423,14 @@
   },
   {
    "nombre": "Ca de Bestiar (Pastor Mallorquín)",
-   "tamano": "Gigante",
-   "pesoMin": 40,
-   "pesoMax": 41,
-   "pesoMedio": 40.5,
+   "tamano": "Grande",
+   "pesoMin": 25,
+   "pesoMax": 50,
+   "pesoMedio": 37.5,
    "fuente": "Real Decreto 558/2001, anexo «Razas caninas españolas» (texto consolidado, BOE-A-2001-11347), prototipo racial oficial. Leído entero el 12-sep-2026.",
-   "cita": "«de peso mediano —en torno a 40 kg—» · «Medidas orientativas en un perro estándar: Peso: 41 kg.»",
-   "ojo": "El prototipo NO da un rango: da un peso central («en torno a 40 kg») y un peso orientativo (41 kg). Se escribe lo que dice la fuente y no un rango inventado alrededor. Es una raza que necesita su rango real y no lo publica el BOE."
+   "cita": "«de talla grande —sin ser exagerada—, de peso mediano —en torno a 40 kg—» · «Ejemplares de menos de 30 kg en los machos adultos y de menos de 25 kg en las hembras. Ejemplares de más de 50 kg en los machos y de más de 45 kg en las hembras.»",
+   "ojo": "El apartado «X. Peso» de este prototipo no da rango: da un peso descriptivo («en torno a 40 kg») y las mediciones de un ejemplar estándar (41 kg). El rango sale de las faltas eliminatorias, que es donde el BOE lo pone para esta raza y solo para esta.",
+   "corregido_12sep2026_noche": "Antes 40-41 kg, y estaba MAL POR DOS SITIOS. (1) La cifra: 40 es el peso que el prototipo da como descripción («en torno a 40 kg») y 41 el de la tabla de mediciones de UN ejemplar estándar -- los dos son puntos, no un rango, y con 40-41 el motor acotaba el peso adulto de un cachorro de esta raza a un kilo de horquilla. El prototipo SÍ da el rango, pero en el apartado de faltas ELIMINATORIAS y no en el de peso: descalifica por debajo de 30 (machos) y 25 (hembras) y por encima de 50 (machos) y 45 (hembras), o sea de 25 a 50 kg. (2) La cita: la mitad de la que había («Medidas orientativas en un perro estándar:») es la cabecera del prototipo del Ca de BOU, doce páginas más abajo -- dos líneas de dos razas distintas pegadas. Lo encontró `auditar_citas.py` el mismo día que se le metió `razas.json`, buscando la frase literal en el BOE. || Y CAMBIA DE BANDA, de «Gigante» a «Grande», por lo mismo: con 40-41 kg era la raza más ligera de Gigante y encajaba; con 25-50 su peso medio (37,5) es el más bajo de esa banda y su mínimo la estiraba hasta 25, así que a quien elige tamaño para un mestizo se le decía «gigante, de 25 a 110 kilos», que no orienta nada. La banda no se escribe a mano: `_rango_de_tamano` la MIDE sobre esta tabla, así que una raza mal colocada la mueve. Es la misma decisión que la del Podenco Andaluz de talla chica."
   },
   {
    "nombre": "Ca de Bou (Dogo Mallorquín)",
@@ -427,7 +472,10 @@
    "tamano": "Gigante",
    "pesoMin": 40,
    "pesoMax": 50,
-   "pesoMedio": 45.0
+   "pesoMedio": 45,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 343 (Cane Corso Italiano), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 45 - 50 kg. Hembras: 40 - 45 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Caniche Enano",
@@ -462,7 +510,10 @@
    "tamano": "Mini",
    "pesoMin": 6.3,
    "pesoMax": 8.1,
-   "pesoMedio": 7.2
+   "pesoMedio": 7.2,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 253 (Pug), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«peso ideal es entre 6,3 y 8,1 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Cavalier King Charles Spaniel",
@@ -482,15 +533,21 @@
    "nombre": "Chesapeake Bay Retriever",
    "tamano": "Grande",
    "pesoMin": 25,
-   "pesoMax": 36,
-   "pesoMedio": 30.5
+   "pesoMax": 36.5,
+   "pesoMedio": 30.75,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 263 (Chesapeake Bay Retriever), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Los machos deben pesar de 65 a 80 libras inglesas (29,5 - 36,5 kg) y las hembras de 55 a 70 libras inglesas (25-32 kg).»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Chihuahua",
    "tamano": "Toy",
-   "pesoMin": 1.5,
+   "pesoMin": 1,
    "pesoMax": 3,
-   "pesoMedio": 2.2
+   "pesoMedio": 2,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 218 (Chihuahueño), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«peso. Peso: El peso deberá ser entre 1 y 3 kg. El peso ideal es entre 1,5 kg y 2,5 kg. Serán descalificados los ejemplares cuyo peso sea menor a 1 kg o mayor a 3 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Chin Japonés",
@@ -510,8 +567,11 @@
    "nombre": "Cirneco del Etna",
    "tamano": "Pequeño",
    "pesoMin": 8,
-   "pesoMax": 12,
-   "pesoMedio": 10
+   "pesoMax": 13,
+   "pesoMedio": 10.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 199 (Cirneco Dell’Etna), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 10 – 13 kg. Hembras: 8 – 11 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Clumber Spaniel",
@@ -531,15 +591,21 @@
    "nombre": "Cocker Spaniel Inglés",
    "tamano": "Pequeño",
    "pesoMin": 13,
-   "pesoMax": 15,
-   "pesoMedio": 14.0
+   "pesoMax": 14.5,
+   "pesoMedio": 13.75,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 5 (English Cocker Spaniel), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso aproximado: Entre 13 - 14,5 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Collie de Pelo Corto",
    "tamano": "Grande",
    "pesoMin": 18,
-   "pesoMax": 30,
-   "pesoMedio": 24
+   "pesoMax": 29.5,
+   "pesoMedio": 23.75,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 296 (Collie Smooth), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos entre 20,5 y 29,5 kg. Hembras entre 18,0 y 25,0 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Collie de Pelo Largo",
@@ -553,7 +619,11 @@
    "tamano": "Mediano",
    "pesoMin": 22,
    "pesoMax": 30,
-   "pesoMedio": 26
+   "pesoMedio": 26,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 369 (Continental Bulldog), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 30 kg Hembras: 25 kg»",
+   "forma_de_la_fci": "punto_sexo",
+   "ojo": "La FCI NO da un rango: da UN peso por sexo, que es el peso al que debe estar el ejemplar de concurso, no la horquilla de lo que pesa un perro de esa raza. La que usa el motor se queda como estaba y sigue sin fuente publicada."
   },
   {
    "nombre": "Coonhound Negro y Fuego",
@@ -572,16 +642,22 @@
   {
    "nombre": "Corgi Galés Pembroke",
    "tamano": "Pequeño",
-   "pesoMin": 10,
-   "pesoMax": 14,
-   "pesoMedio": 12.0
+   "pesoMin": 9,
+   "pesoMax": 12,
+   "pesoMedio": 10.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 39 (Welsh Corgi Pembroke), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos entre 10 y 12 kg, Hembras entre 9 y 11 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Coton de Tuléar",
    "tamano": "Mini",
-   "pesoMin": 4,
+   "pesoMin": 3.5,
    "pesoMax": 6,
-   "pesoMedio": 5.0
+   "pesoMedio": 4.75,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 283 (Coton De Tuléar), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 4 kg, hasta un máximo de 6 kg. Hembras: 3,5 kg hasta un máximo de 5 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Dachshund Estándar",
@@ -637,14 +713,20 @@
    "tamano": "Grande",
    "pesoMin": 32,
    "pesoMax": 45,
-   "pesoMedio": 38.5
+   "pesoMedio": 38.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 143 (Dobermann), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos 40 - 45 kg Hembras 32 - 35 kg»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Eurasier",
    "tamano": "Mediano",
    "pesoMin": 18,
-   "pesoMax": 32,
-   "pesoMedio": 25
+   "pesoMax": 30,
+   "pesoMedio": 24,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 291 (Eurasier), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 22 - 30 kg, Hembras: 18 - 26 kg. El balance entre las proporciones es muy importante, sin embargo, los valores ideales por alcanzar son el peso y el tamaño medio. Altura y peso ideal: Machos: 56 cm/26 kg, Hembras: 52 cm/22 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Faraón (Pharaoh Hound)",
@@ -658,21 +740,31 @@
    "tamano": "Mediano",
    "pesoMin": 18,
    "pesoMax": 25,
-   "pesoMedio": 21.5
+   "pesoMedio": 21.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 123 (Field Spaniel), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos y hembras entre 18-25 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Fila Brasileño",
    "tamano": "Gigante",
-   "pesoMin": 50,
+   "pesoMin": 40,
    "pesoMax": 82,
-   "pesoMedio": 66.0
+   "pesoMedio": 61,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 225 (Fila Brasileiro), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Mínimo, 40 kg para las hembras. Mínimo, 50 kg para los machos.»",
+   "forma_de_la_fci": "minimos",
+   "ojo": "La FCI da SUELOS, no un rango: dice cuánto tiene que pesar como mínimo y no pone techo. El mínimo del motor sí sale de aquí; el máximo sigue sin fuente publicada."
   },
   {
    "nombre": "Flat Coated Retriever",
    "tamano": "Grande",
    "pesoMin": 25,
    "pesoMax": 36,
-   "pesoMedio": 30.5
+   "pesoMedio": 30.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 121 (Flat Coated Retriever), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso deseado en buena condición física: Machos: 27 - 36 kg (60-80 libras inglesas). Hembras: 25 - 32 kg (55-70 libras inglesas).»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Fox Terrier de Pelo Duro",
@@ -684,9 +776,12 @@
   {
    "nombre": "Fox Terrier de Pelo Liso",
    "tamano": "Mini",
-   "pesoMin": 6.8,
-   "pesoMax": 8.6,
-   "pesoMedio": 7.7
+   "pesoMin": 7,
+   "pesoMax": 8,
+   "pesoMedio": 7.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 12 (Fox Terrier (Smooth)), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 7,5 – 8 kg. Hembras: 7 - 7,5 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Foxhound Americano",
@@ -772,7 +867,11 @@
    "tamano": "Grande",
    "pesoMin": 25,
    "pesoMax": 32,
-   "pesoMedio": 28.5
+   "pesoMedio": 28.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 118 (Grosser Münsterländer Vorstehhund), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Aproximadamente 30 kg.»",
+   "forma_de_la_fci": "punto",
+   "ojo": "La FCI NO da un rango: da UN solo peso para los dos sexos. De un punto no se inventa una horquilla alrededor, así que la que usa el motor se queda como estaba y sigue sin fuente publicada. Misma regla que con el Ca de Bestiar del BOE."
   },
   {
    "nombre": "Gran Pirineo",
@@ -833,9 +932,12 @@
   {
    "nombre": "Husky Siberiano",
    "tamano": "Mediano",
-   "pesoMin": 16,
-   "pesoMax": 27,
-   "pesoMedio": 21.5
+   "pesoMin": 15.5,
+   "pesoMax": 28,
+   "pesoMedio": 21.75,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 270 (Siberian Husky), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 20,5 - 28 kg, Hembras: 15,5 - 23 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Irish Soft Coated Wheaten Terrier",
@@ -856,7 +958,10 @@
    "tamano": "Mediano",
    "pesoMin": 15,
    "pesoMax": 23,
-   "pesoMedio": 19
+   "pesoMedio": 19,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 334 (Korea Jindo Dog), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 18-23 kg. Hembras: 15-19 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Kai Ken",
@@ -884,14 +989,21 @@
    "tamano": "Mediano",
    "pesoMin": 15,
    "pesoMax": 18,
-   "pesoMedio": 16.5
+   "pesoMedio": 16.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 3 (Kerry Blue Terrier), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Para los machos de 15 a 18 kg (33 a 40 libras inglesas). Para las hembras proporcionalmente menos.»",
+   "forma_de_la_fci": "solo_machos",
+   "ojo": "La FCI da el rango de los MACHOS y de las hembras dice solo «proporcionalmente menos», sin cifra. El mínimo del motor no sale de aquí."
   },
   {
    "nombre": "King Charles Spaniel",
    "tamano": "Toy",
    "pesoMin": 3.6,
-   "pesoMax": 6.4,
-   "pesoMedio": 5
+   "pesoMax": 6.3,
+   "pesoMedio": 4.95,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 128 (King Charles Spaniel), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«De 3,6 a 6,3 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Kishu Ken",
@@ -903,9 +1015,12 @@
   {
    "nombre": "Komondor",
    "tamano": "Gigante",
-   "pesoMin": 36,
-   "pesoMax": 61,
-   "pesoMedio": 48.5
+   "pesoMin": 40,
+   "pesoMax": 60,
+   "pesoMedio": 50,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 53 (Komondor), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso Machos: 50 – 60 kg. Hembras: 40 – 50 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Kooikerhondje",
@@ -919,14 +1034,20 @@
    "tamano": "Pequeño",
    "pesoMin": 9,
    "pesoMax": 16,
-   "pesoMedio": 12.5
+   "pesoMedio": 12.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 192 (Kromfohrländer), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 11 - 16 kg, Hembras: 9 - 14 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Kuvasz",
    "tamano": "Grande",
-   "pesoMin": 30,
-   "pesoMax": 52,
-   "pesoMedio": 41.0
+   "pesoMin": 37,
+   "pesoMax": 62,
+   "pesoMedio": 49.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 54 (Kuvasz), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos 48-62 kg. Hembras 37-50 kg»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Labrador Retriever",
@@ -947,7 +1068,11 @@
    "tamano": "Pequeño",
    "pesoMin": 7,
    "pesoMax": 8,
-   "pesoMedio": 7.5
+   "pesoMedio": 7.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 70 (Lakeland Terrier), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Promedio: Machos: 17 libras inglesas (7,7 kg). Hembras: 15 libras inglesas (6,8 kg).»",
+   "forma_de_la_fci": "punto_sexo",
+   "ojo": "La FCI NO da un rango: da UN peso por sexo, que es el peso al que debe estar el ejemplar de concurso, no la horquilla de lo que pesa un perro de esa raza. La que usa el motor se queda como estaba y sigue sin fuente publicada."
   },
   {
    "nombre": "Landseer",
@@ -1098,7 +1223,10 @@
    "tamano": "Grande",
    "pesoMin": 22,
    "pesoMax": 40,
-   "pesoMedio": 31.0
+   "pesoMedio": 31,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 166 (Deutscher Schäferhund), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso Machos: Altura a la cruz: 60-65 cm Peso: 30-40 kg Hembras: Altura a la cruz: 55-60 cm Peso: 22-32 kg Faltas Cualquier desviación de los criterios antes mencionados se considera como falta y la gravedad de ésta se considera al grado de la desviación al estándar y de sus consecuencias sobre la salud y el bienestar del perro.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Pastor Australiano",
@@ -1126,7 +1254,10 @@
    "tamano": "Grande",
    "pesoMin": 25,
    "pesoMax": 40,
-   "pesoMedio": 32.5
+   "pesoMedio": 32.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 347 (Berger Blanc Suisse), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 30 – 40 kg. Hembras: aproximadamente 25 – 35 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Pastor Catalán",
@@ -1191,7 +1322,11 @@
    "tamano": "Gigante",
    "pesoMin": 45,
    "pesoMax": 100,
-   "pesoMedio": 72.5
+   "pesoMedio": 72.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 328 (Kavkazskaïa Ovtcharka), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: Mínimo 50 Kg Hembras: Mínimo 45 Kg.»",
+   "forma_de_la_fci": "minimos",
+   "ojo": "La FCI da SUELOS, no un rango: dice cuánto tiene que pesar como mínimo y no pone techo. El mínimo del motor sí sale de aquí; el máximo sigue sin fuente publicada."
   },
   {
    "nombre": "Pequeño Basset Grifón Vendeano",
@@ -1219,7 +1354,10 @@
    "tamano": "Mediano",
    "pesoMin": 16,
    "pesoMax": 27,
-   "pesoMedio": 21.5
+   "pesoMedio": 21.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 187 (Perdigueiro Português), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 20-27 Kg. Hembras: 16-22 Kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Perdiguero de Burgos",
@@ -1263,7 +1401,11 @@
    "tamano": "Mediano",
    "pesoMin": 20,
    "pesoMax": 26,
-   "pesoMedio": 23.0
+   "pesoMedio": 23,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 332 (Perro-Lobo Checoslovaco), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: por lo menos 26 kg, Hembras: por lo menos 20 kg.»",
+   "forma_de_la_fci": "minimos",
+   "ojo": "La FCI da SUELOS, no un rango: dice cuánto tiene que pesar como mínimo y no pone techo. El mínimo del motor sí sale de aquí; el máximo sigue sin fuente publicada."
   },
   {
    "nombre": "Perro Lobo de Saarloos",
@@ -1277,7 +1419,10 @@
    "tamano": "Gigante",
    "pesoMin": 40,
    "pesoMax": 60,
-   "pesoMedio": 50
+   "pesoMedio": 50,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 331 (Kangal Coban Köpegi), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos adultos 48 - 60 kg. Hembras adultas 40 - 50 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Perro de Agua Americano",
@@ -1315,14 +1460,20 @@
    "tamano": "Mediano",
    "pesoMin": 16,
    "pesoMax": 25,
-   "pesoMedio": 20.5
+   "pesoMedio": 20.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 37 (Cão De Agua Português), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: De 19 a 25 kg en los machos. De 16 a 22 kg en las hembras.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Perro de Canaan",
    "tamano": "Mediano",
-   "pesoMin": 15,
+   "pesoMin": 18,
    "pesoMax": 25,
-   "pesoMedio": 20
+   "pesoMedio": 21.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 273 (Canaan Dog), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Es de 18 a 25 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Perro de Castro Laboreiro",
@@ -1357,7 +1508,10 @@
    "tamano": "Grande",
    "pesoMin": 26,
    "pesoMax": 38,
-   "pesoMedio": 32
+   "pesoMedio": 32,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 194 (Cane Da Pastore Bergamasco), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 32 - 38 kg. Hembras: 26 -32 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Perro de Pastor Islandés",
@@ -1387,7 +1541,11 @@
    "tamano": "Gigante",
    "pesoMin": 40,
    "pesoMax": 79,
-   "pesoMedio": 59.5
+   "pesoMedio": 59.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 335 (Sredneasiatskaia Ovtcharka), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: Mínimo 50 Kg. Hembras: Mínimo 40 Kg-»",
+   "forma_de_la_fci": "minimos",
+   "ojo": "La FCI da SUELOS, no un rango: dice cuánto tiene que pesar como mínimo y no pone techo. El mínimo del motor sí sale de aquí; el máximo sigue sin fuente publicada."
   },
   {
    "nombre": "Perro de Pastor de Charplanina",
@@ -1418,7 +1576,10 @@
    "tamano": "Mediano",
    "pesoMin": 14,
    "pesoMax": 20,
-   "pesoMedio": 17
+   "pesoMedio": 17,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 184 (Deutscher Pinscher), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos y hembras: 14 hasta 20 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Pinscher Austríaco",
@@ -1521,21 +1682,30 @@
    "tamano": "Pequeño",
    "pesoMin": 10,
    "pesoMax": 15,
-   "pesoMedio": 12.5
+   "pesoMedio": 12.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 55 (Puli), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 13 – 15 kg. Hembras: 10 -13 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Pumi",
    "tamano": "Pequeño",
    "pesoMin": 8,
    "pesoMax": 15,
-   "pesoMedio": 11.5
+   "pesoMedio": 11.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 56 (Pumi), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 10 hasta 15 kg, peso ideal 12 hasta 13 kg. Hembras: 8 hasta 13 kg, peso ideal 10 hasta 11 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Rafeiro do Alentejo",
    "tamano": "Gigante",
    "pesoMin": 35,
    "pesoMax": 60,
-   "pesoMedio": 47.5
+   "pesoMedio": 47.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 96 (Rafeiro Do Alentejo), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 45 a 60 kg. Hembras: 35 a 50 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Ratonero Bodeguero Andaluz",
@@ -1551,7 +1721,10 @@
    "tamano": "Mediano",
    "pesoMin": 17,
    "pesoMax": 23,
-   "pesoMedio": 20
+   "pesoMedio": 20,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 312 (Nova Scotia Duck Tolling Retriever), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Debe ser en proporción con la altura y la estructura ósea del perro; de 20 a 23 kg para los machos adultos, y de 17 a 20 kg para las hembras adultas.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Retriever de Pelo Rizado",
@@ -1565,7 +1738,11 @@
    "tamano": "Grande",
    "pesoMin": 32,
    "pesoMax": 36,
-   "pesoMedio": 34.0
+   "pesoMedio": 34,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 146 (Rhodesian Ridgeback), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 36,5 kg Hembras: 32 kg»",
+   "forma_de_la_fci": "punto_sexo",
+   "ojo": "La FCI NO da un rango: da UN peso por sexo, que es el peso al que debe estar el ejemplar de concurso, no la horquilla de lo que pesa un perro de esa raza. La que usa el motor se queda como estaba y sigue sin fuente publicada."
   },
   {
    "nombre": "Rottweiler",
@@ -1584,9 +1761,12 @@
   {
    "nombre": "Sabueso de San Huberto (Bloodhound)",
    "tamano": "Grande",
-   "pesoMin": 36,
-   "pesoMax": 50,
-   "pesoMedio": 43
+   "pesoMin": 40,
+   "pesoMax": 54,
+   "pesoMedio": 47,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 84 (Chien De Saint- Hubert), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: En los machos, unos 46 - 54 kg, En las hembras, aproximadamente 40 - 48 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Saluki",
@@ -1628,14 +1808,20 @@
    "tamano": "Grande",
    "pesoMin": 35,
    "pesoMax": 47,
-   "pesoMedio": 41
+   "pesoMedio": 41,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 181 (Riesenschnauzer), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos y hembras: 35 hasta 47 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Schnauzer Miniatura",
    "tamano": "Mini",
-   "pesoMin": 5,
-   "pesoMax": 9,
-   "pesoMedio": 7.0
+   "pesoMin": 4,
+   "pesoMax": 8,
+   "pesoMedio": 6,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 183 (Zwergschnauzer), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos y hembras: desde 4 hasta 8 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Scottish Terrier",
@@ -1649,14 +1835,22 @@
    "tamano": "Pequeño",
    "pesoMin": 8,
    "pesoMax": 9,
-   "pesoMedio": 8.5
+   "pesoMedio": 8.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 74 (Sealyham Terrier), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso ideal: Machos aproximadamente 9 kg (20 libras inglesas). Hembras aproximadamente 8,2 kg (18 libras inglesas).»",
+   "forma_de_la_fci": "punto_sexo",
+   "ojo": "La FCI NO da un rango: da UN peso por sexo, que es el peso al que debe estar el ejemplar de concurso, no la horquilla de lo que pesa un perro de esa raza. La que usa el motor se queda como estaba y sigue sin fuente publicada."
   },
   {
    "nombre": "Setter Gordon",
    "tamano": "Grande",
    "pesoMin": 20,
    "pesoMax": 36,
-   "pesoMedio": 28.0
+   "pesoMedio": 28,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 6 (Gordon Setter), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: En los machos debe ser de 29,5 kg (65 libras inglesas). En las hembras debe ser de 25,5 kg (56 libras inglesas).»",
+   "forma_de_la_fci": "punto_sexo",
+   "ojo": "La FCI NO da un rango: da UN peso por sexo, que es el peso al que debe estar el ejemplar de concurso, no la horquilla de lo que pesa un perro de esa raza. La que usa el motor se queda como estaba y sigue sin fuente publicada."
   },
   {
    "nombre": "Setter Inglés",
@@ -1703,9 +1897,12 @@
   {
    "nombre": "Shih Tzu",
    "tamano": "Mini",
-   "pesoMin": 4,
-   "pesoMax": 7.2,
-   "pesoMedio": 5.6
+   "pesoMin": 4.5,
+   "pesoMax": 8,
+   "pesoMedio": 6.25,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 208 (Shih Tzu), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: De 4,5 a 8 kg. El peso ideal es entre 4,5 y 7,5 kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Shikoku",
@@ -1803,7 +2000,10 @@
    "tamano": "Pequeño",
    "pesoMin": 11,
    "pesoMax": 17,
-   "pesoMedio": 14.0
+   "pesoMedio": 14,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 76 (Staffordshire Bull Terrier), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«peso de los ejemplares. El peso de los machos debe ser de 28 a 38 libras inglesas (12,7 kg a 17 kg) y el de las hembras de 24 a 34 libras inglesas (11 a 15,4 kg).»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Sussex Spaniel",
@@ -1817,7 +2017,10 @@
    "tamano": "Grande",
    "pesoMin": 31,
    "pesoMax": 44,
-   "pesoMedio": 37.5
+   "pesoMedio": 37.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 142 (Slovenský Čuvač), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso 36 - 44 kg 31 - 37 kg Altura (de la cruz) 62 - 70 cm 59 - 65 cm Longitud de la cabeza 25 - 28 cm 23 - 26 cm Longitud del cráneo 13 - 15 cm 12 - 14 cm Longitud del hocico 12 - 14 cm 11 - 13 cm Altura del esternón 33 - 37 cm 30 - 35 cm Profundidad del pecho 30 - 34 cm 25 - 30 cm Longitud del cuerpo 69 - 76 cm 60 - 72 cm Longitud de la caja torácica 40 - 47 cm 37 - 44 cm Circunferencia del pecho detrás de los hombros 70 - 83 cm 68 - 72 cm Circunferencia a nivel de la última costilla falsa 60 - 70 cm 56 - 65 cm 9 Angulación de las articulaciones: Articulación del hombro 107 ° Articulación del codo 145 ° Articulación de la cadera 90° Articulación de la rodilla 110°»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Terranova",
@@ -1845,7 +2048,11 @@
    "tamano": "Pequeño",
    "pesoMin": 11,
    "pesoMax": 12,
-   "pesoMedio": 11.5
+   "pesoMedio": 11.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 139 (Irish Terrier), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Los machos 12,25 kg (27 libras inglesas, Las hembras 11,4 kg (25 libras inglesas)»",
+   "forma_de_la_fci": "punto_sexo",
+   "ojo": "La FCI NO da un rango: da UN peso por sexo, que es el peso al que debe estar el ejemplar de concurso, no la horquilla de lo que pesa un perro de esa raza. La que usa el motor se queda como estaba y sigue sin fuente publicada."
   },
   {
    "nombre": "Terrier Japonés",
@@ -1857,16 +2064,23 @@
   {
    "nombre": "Terrier Negro Ruso",
    "tamano": "Gigante",
-   "pesoMin": 36,
+   "pesoMin": 45,
    "pesoMax": 60,
-   "pesoMedio": 48.0
+   "pesoMedio": 52.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 327 (Russkiy Tchiorny Terrier), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos: 50 – 60 Kg. Hembras: 45 – 50 Kg.»",
+   "forma_de_la_fci": "rango"
   },
   {
    "nombre": "Terrier Ruso",
    "tamano": "Toy",
    "pesoMin": 2,
    "pesoMax": 3,
-   "pesoMedio": 2.5
+   "pesoMedio": 2.5,
+   "fuente": "Fédération Cynologique Internationale, estándar oficial nº 352 (Russkiy Toy), apartado TAMAÑO Y PESO. Versión en español publicada por la FCI, descargada y leída el 12-sep-2026.",
+   "cita": "«Peso: Machos y hembras: hasta 3 kg. El peso preferido es de: 2,3 kg.»",
+   "forma_de_la_fci": "maximo",
+   "ojo": "La FCI da un TECHO y ningún suelo. El máximo del motor sí sale de aquí; el mínimo sigue sin fuente publicada."
   },
   {
    "nombre": "Terrier Tibetano",

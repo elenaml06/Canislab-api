@@ -1,0 +1,215 @@
+TAMAÑO Y PESO DE LOS ESTÁNDARES DE LA FCI QUE CITA `razas.json`
+=================================================================
+
+Qué es esto: el apartado de peso, tal cual, de los 65 estándares oficiales de
+la Fédération Cynologique Internationale que dan una cifra en kilos y que
+corresponden a una raza de la ficha. Está aquí para que `auditar_citas.py`
+pueda comprobar que cada cita de `razas.json` dice lo que dice la fuente, y
+para que el BLOQUE 89 pueda REHACER cada peso contra su cita en vez de
+creérselo.
+
+De dónde sale: de los PDF públicos de los estándares de la FCI en español
+(fci.be), descargados el 12-sep-2026, con `page.get_text()`. NO es una
+transcripción a mano -- eso lo separa de `aaha_2021_tablas_transcritas.txt`,
+que no se puede rehacer: esto sí se rehace bajando otra vez los PDF. Lo único
+que se ha tocado es juntar los saltos de línea y quitar el pie de página
+(«FCI-St. N° 55 / 06.12.2013»), que se cuela en medio de la frase y trae
+números sueltos que no son pesos.
+
+Los PDF no se guardan en el repo: son 270 y el repo ya arrastra 286 MB de
+fuentes. Lo que decide una cifra es el texto, y el texto está aquí.
+
+=== FCI N 003 -- KERRY BLUE TERRIER  [la ficha la llama: Kerry Blue Terrier] ===
+Peso: Para los machos de 15 a 18 kg (33 a 40 libras inglesas). Para las hembras proporcionalmente menos.
+
+=== FCI N 005 -- ENGLISH COCKER SPANIEL  [la ficha la llama: Cocker Spaniel Inglés] ===
+Peso aproximado: Entre 13 - 14,5 kg.
+
+=== FCI N 006 -- GORDON SETTER  [la ficha la llama: Setter Gordon] ===
+Peso: En los machos debe ser de 29,5 kg (65 libras inglesas). En las hembras debe ser de 25,5 kg (56 libras inglesas).
+
+=== FCI N 009 -- BEDLINGTON TERRIER  [la ficha la llama: Bedlington Terrier] ===
+Peso: entre 8 kg a 10 kg.
+
+=== FCI N 012 -- FOX TERRIER (SMOOTH)  [la ficha la llama: Fox Terrier de Pelo Liso] ===
+Peso: Machos: 7,5 – 8 kg. Hembras: 7 - 7,5 kg.
+
+=== FCI N 034 -- BASSET ARTÉSIEN-NORMAND  [la ficha la llama: Basset Artesiano de Normandía] ===
+Peso: 15 – 20 kg.
+
+=== FCI N 037 -- CÃO DE AGUA PORTUGUÊS  [la ficha la llama: Perro de Agua Portugués] ===
+Peso: De 19 a 25 kg en los machos. De 16 a 22 kg en las hembras.
+
+=== FCI N 039 -- WELSH CORGI PEMBROKE  [la ficha la llama: Corgi Galés Pembroke] ===
+Peso: Machos entre 10 y 12 kg, Hembras entre 9 y 11 kg.
+
+=== FCI N 043 -- BASENJI  [la ficha la llama: Basenji] ===
+Peso ideal: Machos 11 kg (24 libras inglesas), Hembras 9,5 kg (21 libras inglesas).
+
+=== FCI N 053 -- KOMONDOR  [la ficha la llama: Komondor] ===
+Peso Machos: 50 – 60 kg. Hembras: 40 – 50 kg.
+
+=== FCI N 054 -- KUVASZ  [la ficha la llama: Kuvasz] ===
+Peso: Machos 48-62 kg. Hembras 37-50 kg
+
+=== FCI N 055 -- PULI  [la ficha la llama: Puli] ===
+Peso: Machos: 13 – 15 kg. Hembras: 10 -13 kg.
+
+=== FCI N 056 -- PUMI  [la ficha la llama: Pumi] ===
+Peso: Machos: 10 hasta 15 kg, peso ideal 12 hasta 13 kg. Hembras: 8 hasta 13 kg, peso ideal 10 hasta 11 kg.
+
+=== FCI N 065 -- MALTESE  [la ficha la llama: Bichón Maltés] ===
+Peso: De 3 a 4 kg.
+
+=== FCI N 070 -- LAKELAND TERRIER  [la ficha la llama: Lakeland Terrier] ===
+Peso: Promedio: Machos: 17 libras inglesas (7,7 kg). Hembras: 15 libras inglesas (6,8 kg).
+
+=== FCI N 074 -- SEALYHAM TERRIER  [la ficha la llama: Sealyham Terrier] ===
+Peso ideal: Machos aproximadamente 9 kg (20 libras inglesas). Hembras aproximadamente 8,2 kg (18 libras inglesas).
+
+=== FCI N 076 -- STAFFORDSHIRE BULL TERRIER  [la ficha la llama: Staffordshire Bull Terrier] ===
+peso de los ejemplares. El peso de los machos debe ser de 28 a 38 libras inglesas (12,7 kg a 17 kg) y el de las hembras de 24 a 34 libras inglesas (11 a 15,4 kg).
+
+=== FCI N 084 -- CHIEN DE SAINT- HUBERT  [la ficha la llama: Sabueso de San Huberto (Bloodhound)] ===
+Peso: En los machos, unos 46 - 54 kg, En las hembras, aproximadamente 40 - 48 kg.
+
+=== FCI N 096 -- RAFEIRO DO ALENTEJO  [la ficha la llama: Rafeiro do Alentejo] ===
+Peso: Machos: 45 a 60 kg. Hembras: 35 a 50 kg.
+
+=== FCI N 118 -- GROSSER MÜNSTERLÄNDER VORSTEHHUND  [la ficha la llama: Gran Münsterländer] ===
+Peso: Aproximadamente 30 kg.
+
+=== FCI N 121 -- FLAT COATED RETRIEVER  [la ficha la llama: Flat Coated Retriever] ===
+Peso deseado en buena condición física: Machos: 27 - 36 kg (60-80 libras inglesas). Hembras: 25 - 32 kg (55-70 libras inglesas).
+
+=== FCI N 123 -- FIELD SPANIEL  [la ficha la llama: Field Spaniel] ===
+Peso: Machos y hembras entre 18-25 kg.
+
+=== FCI N 128 -- KING CHARLES SPANIEL  [la ficha la llama: King Charles Spaniel] ===
+De 3,6 a 6,3 kg.
+
+=== FCI N 139 -- IRISH TERRIER  [la ficha la llama: Terrier Irlandés] ===
+Peso: Los machos 12,25 kg (27 libras inglesas, Las hembras 11,4 kg (25 libras inglesas)
+
+=== FCI N 142 -- SLOVENSKÝ ČUVAČ  [la ficha la llama: Tchuvatch Eslovaco] ===
+Peso 36 - 44 kg 31 - 37 kg Altura (de la cruz) 62 - 70 cm 59 - 65 cm Longitud de la cabeza 25 - 28 cm 23 - 26 cm Longitud del cráneo 13 - 15 cm 12 - 14 cm Longitud del hocico 12 - 14 cm 11 - 13 cm Altura del esternón 33 - 37 cm 30 - 35 cm Profundidad del pecho 30 - 34 cm 25 - 30 cm Longitud del cuerpo 69 - 76 cm 60 - 72 cm Longitud de la caja torácica 40 - 47 cm 37 - 44 cm Circunferencia del pecho detrás de los hombros 70 - 83 cm 68 - 72 cm Circunferencia a nivel de la última costilla falsa 60 - 70 cm 56 - 65 cm 9 Angulación de las articulaciones: Articulación del hombro 107 ° Articulación del codo 145 ° Articulación de la cadera 90° Articulación de la rodilla 110°
+
+=== FCI N 143 -- DOBERMANN  [la ficha la llama: Dóberman] ===
+Peso: Machos 40 - 45 kg Hembras 32 - 35 kg
+
+=== FCI N 146 -- RHODESIAN RIDGEBACK  [la ficha la llama: Rhodesian Ridgeback] ===
+Peso: Machos: 36,5 kg Hembras: 32 kg
+
+=== FCI N 149 -- BULLDOG  [la ficha la llama: Bulldog Inglés] ===
+Machos: 25 kg Hembras: 23 kg
+
+=== FCI N 157 -- BULLMASTIFF  [la ficha la llama: Bullmastiff] ===
+Peso: Machos: 50 - 59 kg Hembras: 41 - 50 kg
+
+=== FCI N 166 -- DEUTSCHER SCHÄFERHUND  [la ficha la llama: Pastor Alemán] ===
+Peso Machos: Altura a la cruz: 60-65 cm Peso: 30-40 kg Hembras: Altura a la cruz: 55-60 cm Peso: 22-32 kg Faltas Cualquier desviación de los criterios antes mencionados se considera como falta y la gravedad de ésta se considera al grado de la desviación al estándar y de sus consecuencias sobre la salud y el bienestar del perro.
+
+=== FCI N 181 -- RIESENSCHNAUZER  [la ficha la llama: Schnauzer Gigante] ===
+Peso: Machos y hembras: 35 hasta 47 kg.
+
+=== FCI N 183 -- ZWERGSCHNAUZER  [la ficha la llama: Schnauzer Miniatura] ===
+Peso: Machos y hembras: desde 4 hasta 8 kg.
+
+=== FCI N 184 -- DEUTSCHER PINSCHER  [la ficha la llama: Pinscher Alemán] ===
+Peso: Machos y hembras: 14 hasta 20 kg.
+
+=== FCI N 186 -- AFFENPINSCHER  [la ficha la llama: Affenpinscher] ===
+Peso: Machos y hembras: de 4 hasta 6 kg.
+
+=== FCI N 187 -- PERDIGUEIRO PORTUGUÊS  [la ficha la llama: Perdiguero Portugués] ===
+Peso: Machos: 20-27 Kg. Hembras: 16-22 Kg.
+
+=== FCI N 191 -- BOUVIER DES FLANDRES  [la ficha la llama: Boyero de Flandes] ===
+Peso: Aproximado: 30 a 40 kg en los machos, 27 a 35 kg en las hembras.
+
+=== FCI N 192 -- KROMFOHRLÄNDER  [la ficha la llama: Kromfohrländer] ===
+Peso: Machos: 11 - 16 kg, Hembras: 9 - 14 kg.
+
+=== FCI N 194 -- CANE DA PASTORE BERGAMASCO  [la ficha la llama: Perro de Pastor Bergamasco] ===
+Peso: Machos: 32 - 38 kg. Hembras: 26 -32 kg.
+
+=== FCI N 196 -- BOLOGNESE  [la ficha la llama: Bichón Boloñés] ===
+Peso: 2.5 – 4 kg.
+
+=== FCI N 199 -- CIRNECO DELL’ETNA  [la ficha la llama: Cirneco del Etna] ===
+Peso: Machos: 10 – 13 kg. Hembras: 8 – 11 kg.
+
+=== FCI N 202 -- BRACCO ITALIANO  [la ficha la llama: Braco Italiano] ===
+Peso: Entre 25 y 40 kg, dependiendo del tamaño.
+
+=== FCI N 208 -- SHIH TZU  [la ficha la llama: Shih Tzu] ===
+Peso: De 4,5 a 8 kg. El peso ideal es entre 4,5 y 7,5 kg.
+
+=== FCI N 215 -- BICHON À POIL FRISÉ  [la ficha la llama: Bichón Frisé] ===
+Peso: Aproximadamente 5 kg, en proporción al tamaño.
+
+=== FCI N 218 -- CHIHUAHUEÑO  [la ficha la llama: Chihuahua] ===
+peso. Peso: El peso deberá ser entre 1 y 3 kg. El peso ideal es entre 1,5 kg y 2,5 kg. Serán descalificados los ejemplares cuyo peso sea menor a 1 kg o mayor a 3 kg.
+
+=== FCI N 225 -- FILA BRASILEIRO  [la ficha la llama: Fila Brasileño] ===
+Peso: Mínimo, 40 kg para las hembras. Mínimo, 50 kg para los machos.
+
+=== FCI N 253 -- PUG  [la ficha la llama: Carlino (Pug)] ===
+peso ideal es entre 6,3 y 8,1 kg.
+
+=== FCI N 263 -- CHESAPEAKE BAY RETRIEVER  [la ficha la llama: Chesapeake Bay Retriever] ===
+Peso: Los machos deben pesar de 65 a 80 libras inglesas (29,5 - 36,5 kg) y las hembras de 55 a 70 libras inglesas (25-32 kg).
+
+=== FCI N 270 -- SIBERIAN HUSKY  [la ficha la llama: Husky Siberiano] ===
+Peso: Machos: 20,5 - 28 kg, Hembras: 15,5 - 23 kg.
+
+=== FCI N 273 -- CANAAN DOG  [la ficha la llama: Perro de Canaan] ===
+Peso: Es de 18 a 25 kg.
+
+=== FCI N 283 -- COTON DE TULÉAR  [la ficha la llama: Coton de Tuléar] ===
+Peso: Machos: 4 kg, hasta un máximo de 6 kg. Hembras: 3,5 kg hasta un máximo de 5 kg.
+
+=== FCI N 291 -- EURASIER  [la ficha la llama: Eurasier] ===
+Peso: Machos: 22 - 30 kg, Hembras: 18 - 26 kg. El balance entre las proporciones es muy importante, sin embargo, los valores ideales por alcanzar son el peso y el tamaño medio. Altura y peso ideal: Machos: 56 cm/26 kg, Hembras: 52 cm/22 kg.
+
+=== FCI N 296 -- COLLIE SMOOTH  [la ficha la llama: Collie de Pelo Corto] ===
+Peso: Machos entre 20,5 y 29,5 kg. Hembras entre 18,0 y 25,0 kg.
+
+=== FCI N 307 -- AZAWAKH  [la ficha la llama: Azawakh] ===
+Peso: Machos: 20 - 25 kg Hembras: 15 – 20 kg
+
+=== FCI N 312 -- NOVA SCOTIA DUCK TOLLING RETRIEVER  [la ficha la llama: Retriever de Nueva Escocia] ===
+Peso: Debe ser en proporción con la altura y la estructura ósea del perro; de 20 a 23 kg para los machos adultos, y de 17 a 20 kg para las hembras adultas.
+
+=== FCI N 315 -- BROHOLMER  [la ficha la llama: Broholmer] ===
+Peso: Machos entre 50 - 70 kg, Hembras entre 40 - 60 kg.
+
+=== FCI N 327 -- RUSSKIY TCHIORNY TERRIER  [la ficha la llama: Terrier Negro Ruso] ===
+Peso: Machos: 50 – 60 Kg. Hembras: 45 – 50 Kg.
+
+=== FCI N 328 -- KAVKAZSKAÏA OVTCHARKA  [la ficha la llama: Pastor del Cáucaso] ===
+Peso: Machos: Mínimo 50 Kg Hembras: Mínimo 45 Kg.
+
+=== FCI N 331 -- KANGAL COBAN KÖPEGI  [la ficha la llama: Perro Pastor de Kangal] ===
+Peso: Machos adultos 48 - 60 kg. Hembras adultas 40 - 50 kg.
+
+=== FCI N 332 -- PERRO-LOBO CHECOSLOVACO  [la ficha la llama: Perro Lobo Checoslovaco] ===
+Peso: Machos: por lo menos 26 kg, Hembras: por lo menos 20 kg.
+
+=== FCI N 334 -- KOREA JINDO DOG  [la ficha la llama: Jindo Coreano] ===
+Peso: Machos: 18-23 kg. Hembras: 15-19 kg.
+
+=== FCI N 335 -- SREDNEASIATSKAIA OVTCHARKA  [la ficha la llama: Perro de Pastor de Asia Central] ===
+Peso: Machos: Mínimo 50 Kg. Hembras: Mínimo 40 Kg-
+
+=== FCI N 343 -- CANE CORSO ITALIANO  [la ficha la llama: Cane Corso] ===
+Peso: Machos: 45 - 50 kg. Hembras: 40 - 45 kg.
+
+=== FCI N 347 -- BERGER BLANC SUISSE  [la ficha la llama: Pastor Blanco Suizo] ===
+Peso: Machos: 30 – 40 kg. Hembras: aproximadamente 25 – 35 kg.
+
+=== FCI N 352 -- RUSSKIY TOY  [la ficha la llama: Terrier Ruso] ===
+Peso: Machos y hembras: hasta 3 kg. El peso preferido es de: 2,3 kg.
+
+=== FCI N 369 -- CONTINENTAL BULLDOG  [la ficha la llama: Continental Bulldog] ===
+Peso: Machos: 30 kg Hembras: 25 kg

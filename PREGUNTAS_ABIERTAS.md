@@ -1896,6 +1896,45 @@ dos y las dos son decisión de producto:
 el aviso?
 
 
+### P-36 · El rango de peso de la raza ACOTA el peso adulto que se le estima a un cachorro, y para 65 razas ese rango es ahora el del estándar de concurso
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (es producto: qué significa el rango que se le enseña al dueño) **y Cris Carles** (si acotar así es defendible) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, por la noche, al aplicar los estándares de la FCI |
+
+`pesoAdultoDesdeCurva` usa `pesoMin`/`pesoMax` de la raza para **acotar** el peso
+adulto que la curva de crecimiento le proyecta a un cachorro. Hasta hoy esos dos
+números no tenían fuente publicada; desde hoy, 65 razas los tienen —el estándar
+oficial de la FCI— y 20 de ellas han cambiado de cifra.
+
+Y ahí hay una pregunta que no es de dato sino de qué significa el número. **El
+estándar de la FCI es el peso al que debe estar un ejemplar de CONCURSO**, no la
+horquilla de lo que pesa un perro de esa raza que vive en un piso. Son dos cosas
+distintas y el motor las usa como si fueran una:
+
+- Donde la FCI da un rango de verdad, aplicarlo es lo correcto y además suele
+  ensanchar (el Kuvasz gana 10 kg de techo, y con el techo viejo a un macho se le
+  proyectaba de menos).
+- Pero donde da **un peso por sexo** —el Setter Gordon, «en los machos debe ser de
+  29,5 kg»— convertirlo en rango dejaría la horquilla en 25,5-29,5 y un Gordon de
+  33 kg, que existe, quedaría acotado a 29,5. Por eso **no se ha aplicado**: de un
+  punto no se inventa una horquilla alrededor. Esas filas se quedan con su cifra
+  vieja, sin fuente, y lo dicen en su `ojo`.
+
+**La pregunta tiene dos mitades.** (1) ¿El rango que acota tiene que ser el del
+estándar, o el rango real de la población, que ninguna de las cuatro fuentes del
+motor publica? (2) Y la de antes, que Elena ya planteó ese mismo día: *«¿y si solo
+metemos las razas y el peso estimado adulto se calcula con el resto de datos?»* —
+o sea quitar el acotado y dejar que decida la curva de FEDIAF, que es la que sí
+tiene fuente. Si se quita, esta tabla deja de decidir kcal y pasa a ser solo lo
+que se le enseña al dueño, y las dos mitades de la pregunta se caen solas.
+
+**Lo que NO cambia mientras tanto:** el menú sale verificado igual. Esto mueve las
+kcal que se le piden a un cachorro, no si el menú cumple.
+
+
 ---
 
 ## Cerradas

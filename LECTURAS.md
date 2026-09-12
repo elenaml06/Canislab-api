@@ -1062,8 +1062,8 @@ de este repo.** El 11 de septiembre se empezó a bajar los estándares de la FCI
 —`canislab-fuentes/FCI/`, con su `bajar_estandares.py`— para dar fuente a los 255
 pesos adultos de `razas.json`, que llevan en su `_meta` la frase «estas cifras no
 tienen fuente publicada». El propio LÉEME de esa carpeta dice que quien los lee es
-`leer_estandares_fci.py`, «en el repo de la API, porque su salida decide un número
-del motor y tiene que auditarse allí». **Ese fichero no existe**, y la descarga se
+`leer_estandares_fci.py`, y lo pone en el repo de la API porque su salida decide un
+número del motor y tiene que auditarse allí. **Ese fichero no existe**, y la descarga se
 quedó en **33 estándares de 255 razas**.
 
 Se ha leído lo que hay. Y lo que sale cambia el plan.
@@ -1085,7 +1085,57 @@ no puede empujar allí, y bajar 222 en local dejaría el mismo agujero que ya co
 un rojo con `SIN_TEXTO_DECLARADAS`: verde aquí y rojo en la CI. Va a
 `PREGUNTAS_ABIERTAS.md` con la medida delante.
 
+⚠️ **Y sí se continuó, esa misma noche** — sigue abajo. El agujero de «verde aquí
+y rojo allí» se cierra de otra manera: el texto que hace falta para auditar una
+cita es el APARTADO DE PESO, no el estándar entero, y eso cabe en un fichero de
+este repo (`fci_estandares_peso.txt`). Los 270 textos completos siguen debiéndose
+a `canislab-fuentes/FCI/`.
+
 ---
+
+### La misma noche: bajados los 270 y leídos enteros
+
+**Lo de arriba se quedó corto porque la muestra era corta.** Con 33 estándares
+se midió que solo el 27 % trae peso y se dio la fuente por insuficiente. Bajados
+los 270, la cuenta cambia lo bastante como para cambiar la decisión.
+
+**Qué es y por qué se lee.** La Fédération Cynologique Internationale publica el
+estándar oficial de cada raza, gratis y en PDF, y su apartado **TAMAÑO Y PESO**
+es el único documento que dice, raza por raza, lo que pesa. `razas.json` llevaba
+en su `_meta` una frase incómoda desde que nació: *estas cifras no tienen fuente
+publicada*, y son 270 pesos adultos que deciden las kcal de un cachorro, su
+etapa y el techo de calcio del cachorro de raza grande.
+
+**Lo que se leyó.** Los 270 estándares en español, enteros. **92 dan una cifra en
+kilos** (los demás solo dan alzada a la cruz, que es como se escribe un estándar
+de raza) y de esos **70 son una raza que la ficha ofrece**.
+
+| Lo que dice | Decisión |
+|---|---|
+| 65 estándares con peso de una raza nuestra que no es española | **APLICADO**: cada fila gana su `fuente` y su `cita` literal. **20 cambian de cifra y 45 se confirman sin cambiar**, que es la señal de que la lista de origen salía en buena parte de la FCI, copiada sin decirlo |
+| Los 5 que son de razas españolas (Ca de Bou, Ca de Bestiar, Perro de Agua Español, Presa Canario, Gos Rater Valencià) | **No se aplica, y no por descuido**: esas cinco ya vienen del **BOE**, que es ley, y una ley manda sobre el estándar de una asociación privada. Se comprobó que no se contradicen y se dejaron como estaban |
+| *«Peso: Machos 48-62 kg. Hembras 37-50 kg»* (Kuvasz, nº 54) | **APLICADO**: pasa de 30-52 a 37-62. Con el techo viejo, a un Kuvasz macho la curva de crecimiento le proyectaba **10 kg menos** de los que va a pesar |
+| *«Peso: Mínimo, 40 kg para las hembras. Mínimo, 50 kg para los machos.»* (Fila Brasileiro, nº 225) | **APLICADO A MEDIAS, y esto es la lección de esta lectura**: es un SUELO, no un rango. Se coge el suelo (el mínimo baja de 50 a 40, porque con 50 el motor acotaba por debajo a una hembra de la raza) y **el techo se queda como estaba**, porque la FCI no pone ninguno. Darlo por rango habría metido un techo de 50 kg que la fuente no dice |
+| *«Peso: En los machos debe ser de 29,5 kg (65 libras inglesas). En las hembras debe ser de 25,5 kg (56 libras inglesas).»* (Setter Gordon, nº 6) | **NO SE APLICA**: es un peso POR SEXO, no un rango, y además es el peso al que debe estar un ejemplar de **concurso**. Convertirlo en horquilla dejaría al Gordon en 25,5-29,5 y a un Gordon de 33 kg, que existe, acotado a 29,5. Se queda en 20-36, sin fuente, y lo dice su `ojo`. A `PREGUNTAS_ABIERTAS.md`, P-36 |
+| *«Peso: Aproximadamente 30 kg.»* (Gran Münsterländer, nº 118) y *«Peso: Aproximadamente 5 kg, en proporción al tamaño.»* (Bichón Frisé, nº 215) | **NO SE APLICA**: un punto no es un rango y de un punto no se inventa una horquilla alrededor. Es la misma regla que ya se aplicó al Ca de Bestiar con el prototipo del BOE |
+| *«Peso: Para los machos de 15 a 18 kg (33 a 40 libras inglesas). Para las hembras proporcionalmente menos.»* (Kerry Blue, nº 3) | **NO SE APLICA el mínimo**: la FCI da el rango de los machos y de las hembras no da cifra. Nuestro 15 es el mínimo de los MACHOS y se queda dicho en su `ojo` |
+| Los 22 estándares con peso cuya raza la ficha **no ofrece** (Schipperke, Chien d'Artois, Karjalankarhukoira, Segugio Italiano…) | **No se aplica**: no hay fila donde ponerlo. Se dice que se leyeron |
+
+**Y tres cosas que solo se ven leyendo, y que habrían metido cifras falsas:**
+
+1. **La mitad no casa por nombre.** La FCI publica cada estándar con el nombre del
+   país de origen (DEUTSCHER SCHÄFERHUND, CHIHUAHUEÑO, RIESENSCHNAUZER), así que
+   43 de los 70 hubo que emparejarlos a mano. Lo que no se reconoció con
+   seguridad **no se emparejó**.
+2. **El primer intento leyó solo la línea de los MACHOS** y dejó a tres razas
+   (Puli, Pumi y Rafeiro do Alentejo) marcadas como distintas de la fuente cuando
+   coinciden **exactamente**. Lo que hay que leer es el apartado entero, los dos
+   sexos.
+3. **Las libras inglesas y la alzada a la cruz.** El estándar pone la conversión
+   al lado (*«17 libras inglesas (7,7 kg)»*) y en el Pastor Alemán intercala la
+   altura con el peso en la misma frase (*«Altura a la cruz: 60-65 cm Peso: 30-40
+   kg»*). Sacar «todos los números» daba un Lakeland de 17 kg y un Pastor Alemán
+   con techo de 65. Se lee de cada «kg» hacia atrás, sin cruzar un «cm».
 
 ## Heer 2017 — el balance catión-anión y el pH urinario, comparando especies · leída entera el 12-sep-2026
 
@@ -1475,6 +1525,20 @@ perro que tiene las dos cosas es criterio clínico. Está en
 | La tabla de kcal de premios por peso | **No se usa**: la extracción del PDF sale corrupta (repite 32 y acaba en 146). Si hiciera falta, hay que releerla del PDF |
 
 ---
+
+## BOE — Real Decreto 558/2001, releído el 12-sep-2026 por la noche
+
+| Lo que dice | Decisión |
+|---|---|
+| Ca de Bestiar: *«Ejemplares de menos de 30 kg en los machos adultos y de menos de 25 kg en las hembras. Ejemplares de más de 50 kg en los machos y de más de 45 kg en las hembras.»* | **APLICADO, y corrige la cifra de esta mañana**: pasa de 40-41 a **25-50 kg**. El prototipo SÍ da el rango de esta raza, pero en las faltas **ELIMINATORIAS** y no en su apartado «X. Peso», que solo da un peso descriptivo («en torno a 40 kg») y las mediciones de un ejemplar (41 kg). Con 40-41 el motor acotaba el peso adulto de un cachorro a un kilo de horquilla. Y de paso cambia de banda: con 37,5 de media era la raza más ligera de «Gigante» y estiraba esa banda hasta 25 kg |
+| El resto de pesos del anexo, releídos uno a uno | **No cambia nada**: las otras 14 razas con peso lo dan en su apartado de peso y ya estaban bien. El Ca de Bestiar es el único con el rango escondido en las faltas |
+
+⚠️ **Cómo salió esto**: no leyendo otra vez, sino metiendo `razas.json` en
+`auditar_citas.py`. La cita que tenía el Ca de Bestiar pegaba dos líneas de **dos
+razas distintas** — la cabecera «Medidas orientativas en un perro estándar» es
+del Ca de **Bou**, doce páginas más abajo —, el auditor no encontró la frase
+literal en el BOE, y al abrir el prototipo entero apareció el rango de verdad.
+Es exactamente para lo que existe ese auditor.
 
 ## Lo leído y NO aplicado, que sigue esperando decisión
 

@@ -10332,6 +10332,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 print("\n=== BLOQUE 65: el documento para la nutricionista, contra el motor vivo ===")
 
 import re as _re_b65
+import os as _os_b65
 import motor.seguridad as _sg_b65
 import motor.verificar as _vf_b65
 from motor_completo import RAZA_GRANDE_O_GIGANTE_KG as _RG_B65
@@ -12868,6 +12869,107 @@ for _r89 in _con_fuente89:
                       f"su prototipo oficial nombra de {min(_kgs89)} a {max(_kgs89)}. El rango del "
                       f"fichero se sale de la cita: o la cifra está mal copiada o la cita no es "
                       f"la suya")
+
+# ── 1-quater. Las razas con estándar de la FCI: la cifra se rehace igual ─
+#
+# ⚠️ AÑADIDO LA NOCHE DEL 12 DE SEPTIEMBRE DE 2026. La FCI publica el estándar
+# oficial de cada raza y su apartado TAMAÑO Y PESO es el único documento que
+# dice, raza por raza, lo que pesa. 65 filas salen de ahí.
+#
+# ⚠️ Y NO TODO ESTÁNDAR DA UN RANGO, que es lo que este bloque vigila de
+# verdad: «Mínimo, 40 kg para las hembras» (Fila Brasileño) y «Hembras: 40 – 50
+# kg» (Cane Corso) tienen los mismos dígitos y no dicen lo mismo. Darlos por
+# iguales metería en la ficha un techo de 50 kg que la FCI no pone, y el rango
+# es lo que ACOTA el peso adulto que se le estima a un cachorro: con el techo
+# de más, a un Fila macho se le proyecta menos de lo que va a pesar. Por eso
+# cada fila lleva su `forma_de_la_fci` y aquí se le exige lo que le toca.
+_RUTA_FCI89 = _os_b65.path.join(_os_b65.path.dirname(_os_b65.path.abspath(__file__)),
+                                "fci_estandares_peso.txt")
+try:
+    _TXT_FCI89 = open(_RUTA_FCI89, encoding="utf-8").read()
+except OSError:
+    _TXT_FCI89 = None
+    fallos.append("BLOQUE89: falta `fci_estandares_peso.txt`. Es el texto del apartado de peso "
+                  "de los 65 estándares que cita razas.json: sin él ninguna de esas citas se "
+                  "puede comprobar, y una cita que no se puede comprobar es una cifra sin fuente")
+
+def _kgs_de_la_cita89(cita):
+    """Los kilos que nombra la cita, leidos como los escribe la fuente.
+
+    ⚠️ NO VALE SACAR TODOS LOS NUMEROS. Tres cosas lo rompen, y las tres salen
+    en citas de verdad:
+      · las LIBRAS inglesas, que el estándar pone al lado («17 libras inglesas
+        (7,7 kg)») -- leer el 17 triplica el peso del Lakeland;
+      · la ALTURA A LA CRUZ, que en el Pastor Alemán va intercalada con el peso
+        en la misma frase («Altura a la cruz: 60-65 cm Peso: 30-40 kg») -- leer
+        el 65 le pone un techo de 65 kg;
+      · la altura IDEAL del Eurasier, «56 cm/26 kg», que junta las dos.
+    Asi que se lee como se lee el apartado: de cada «kg» hacia atras, sin
+    cruzar un «cm». Es la misma regla con la que se sacaron las cifras, escrita
+    aparte y a proposito -- un auditor que copie el codigo del que audita no
+    audita nada.
+    """
+    fuera = []
+    for m in _re_b65.finditer(r"[kK][gG]\b", cita):
+        atras = cita[max(0, m.start() - 60):m.start()]
+        corte = max(atras.rfind("cm"), atras.rfind("CM"))
+        if corte >= 0:
+            atras = atras[corte + 2:]
+        atras = atras.rstrip()
+        _n = r"\d+(?:[.,]\d+)?"
+        r = _re_b65.search(r"(%s)\s*(?:[-\u2013\u2014]|a|hasta|to|y)\s*(%s)$" % (_n, _n), atras)
+        if r:
+            fuera += [float(r.group(1).replace(",", ".")), float(r.group(2).replace(",", "."))]
+            continue
+        r = _re_b65.search(r"(%s)$" % _n, atras)
+        if r:
+            fuera.append(float(r.group(1).replace(",", ".")))
+    return fuera
+
+_FORMAS89 = {"rango", "punto", "punto_sexo", "minimos", "maximo", "solo_machos"}
+_fci89 = [r for r in _con_fuente89 if "Cynologique" in r["fuente"]]
+if not _fci89:
+    fallos.append("BLOQUE89: ni una raza cita el estándar de la FCI. 65 lo hacen desde el 12 de "
+                  "septiembre: si han desaparecido, 65 razas han vuelto a no tener fuente")
+for _r89 in _fci89:
+    _cita89 = _r89.get("cita") or ""
+    _forma89 = _r89.get("forma_de_la_fci")
+    if _forma89 not in _FORMAS89:
+        fallos.append(f"BLOQUE89: «{_r89['nombre']}» cita a la FCI y no dice de qué forma "
+                      f"(`forma_de_la_fci` = {_forma89!r}). Sin eso no se sabe si su cita es un "
+                      f"rango o un suelo, y no se puede comprobar")
+        continue
+    # (a) la cita tiene que estar LITERAL en el texto de la fuente
+    if _TXT_FCI89 is not None and _cita89.strip("«»") not in _TXT_FCI89:
+        fallos.append(f"BLOQUE89: la cita de «{_r89['nombre']}» no aparece literal en "
+                      f"`fci_estandares_peso.txt`: «{_cita89[:70]}»")
+    # (b) la cifra se rehace, con la regla de su forma
+    _kgs89 = _kgs_de_la_cita89(_cita89)
+    if not _kgs89:
+        fallos.append(f"BLOQUE89: la cita de «{_r89['nombre']}» no trae ni un número: «{_cita89[:60]}»")
+        continue
+    _lo89, _hi89 = min(_kgs89), max(_kgs89)
+    if _forma89 == "rango":
+        if abs(_r89["pesoMin"] - _lo89) > 0.01 or abs(_r89["pesoMax"] - _hi89) > 0.01:
+            fallos.append(f"BLOQUE89: «{_r89['nombre']}» dice {_r89['pesoMin']}-{_r89['pesoMax']} kg "
+                          f"y su estándar de la FCI da el rango {_lo89}-{_hi89}. Con forma `rango` "
+                          f"la cifra ES la de la fuente: o está mal copiada o la forma está mal")
+    elif _forma89 == "minimos":
+        if abs(_r89["pesoMin"] - _lo89) > 0.01:
+            fallos.append(f"BLOQUE89: «{_r89['nombre']}» tiene el mínimo en {_r89['pesoMin']} y el "
+                          f"suelo que pone la FCI es {_lo89}")
+    elif _forma89 == "maximo":
+        if abs(_r89["pesoMax"] - _hi89) > 0.01:
+            fallos.append(f"BLOQUE89: «{_r89['nombre']}» tiene el máximo en {_r89['pesoMax']} y el "
+                          f"techo que pone la FCI es {_hi89}")
+    # (c) las formas que NO son un rango no pueden haber movido la cifra: de un
+    #     punto no se inventa una horquilla alrededor. Lo que se les exige es
+    #     que lo DIGAN, porque si no, la fila parece respaldada y no lo está.
+    if _forma89 in ("punto", "punto_sexo", "solo_machos", "minimos", "maximo"):
+        if not (_r89.get("ojo") or "").strip():
+            fallos.append(f"BLOQUE89: «{_r89['nombre']}» cita a la FCI con forma `{_forma89}`, que "
+                          f"no es un rango, y no trae `ojo` diciendo qué mitad de su horquilla "
+                          f"sigue sin fuente. Una fila así parece respaldada y no lo está")
 
 # ── 1-bis. Los seis tamaños SON los del catálogo de menús ────────────────
 _tcat89 = sorted({k.split("_")[0] for k in _CAT89})
