@@ -1348,8 +1348,14 @@ class PeticionDER(BaseModel):
     # apunta a 34kg de adulto, no a los 26kg de la media -- 192 kcal/día
     # de diferencia, confirmado.
     meses: Optional[float] = None
-    peso_min_raza: Optional[float] = None
-    peso_max_raza: Optional[float] = None
+    # ⚠️ AQUI HABIA `peso_min_raza` Y `peso_max_raza`, Y SE HAN QUITADO (12 de
+    # septiembre, noche). Servian para recortar el peso adulto estimado al
+    # rango de la raza, y ese recorte ya no existe: el peso adulto lo decide la
+    # trayectoria del propio cachorro con la Tabla VII-8a de FEDIAF, que es lo
+    # que hacen las curvas de WALTHAM y MyVetDiet. El motivo completo y la
+    # medida estan en `der.peso_adulto_desde_curva`. No se dejan aceptandose y
+    # sin usar a proposito: un campo que se manda y no hace nada es la clase de
+    # cosa que nadie descubre.
 
 
 # ⚠️ LOS PREMIOS, QUE DILUYEN LA RACION (11 septiembre). Van en una clase
@@ -1733,9 +1739,7 @@ def endpoint_der(datos: PeticionDER):
         semana_lactancia=datos.semana_lactancia,
         # ⚠️ AÑADIDO (5 agosto, noche): sin esto, la curva de crecimiento
         # real nunca se activaba -- ver nota en PeticionDER.
-        meses=datos.meses,
-        peso_min_raza=datos.peso_min_raza,
-        peso_max_raza=datos.peso_max_raza)
+        meses=datos.meses)
     return resultado
 
 

@@ -1934,6 +1934,47 @@ que se le enseña al dueño, y las dos mitades de la pregunta se caen solas.
 **Lo que NO cambia mientras tanto:** el menú sale verificado igual. Esto mueve las
 kcal que se le piden a un cachorro, no si el menú cumple.
 
+---
+
+### ⚠️ CONTESTADA LA MISMA NOCHE, y la segunda mitad está aplicada
+
+**Elena, 12 de septiembre de 2026:** *«Pues si esto es lo correcto hazlo sí»*.
+
+Antes de tocar nada se miró **cómo lo hacen los demás**, que es lo que convirtió
+esto de una opinión en una decisión con respaldo:
+
+| Quién | Cómo saca el peso adulto de un cachorro |
+|---|---|
+| Curvas de **WALTHAM** (50.000 perros; son las que publica Royal Canin para veterinarios) | Diez gráficas por **sexo** y por **banda** de peso adulto. El peso adulto sale de la trayectoria del propio cachorro. El estándar de raza se usa solo para ELEGIR la banda: *«the weight of the parents ... or via the breed standard»* |
+| **MyVetDiet** (software español de raciones) | Tiene tabla de más de 180 razas y la llama **«pesos indicativos»**. En cachorro, *«cálculo automático del peso adulto del cachorro»* con la curva del animal |
+| **Pet Diet Designer** | No usa la raza: pide *«current and full grown weights»*, los escribe la persona |
+| Calculadoras de consumo de «¿cuánto va a pesar mi cachorro?» | Sí usan tabla por raza, y son las menos rigurosas (±10-20 %) |
+
+O sea que **nadie usa el rango de la raza para acotar el número**, y nosotros sí.
+
+**MEDIDO antes de quitarlo**, sobre las 270 razas a 4, 6 y 9 meses: el recorte
+movía el peso adulto en **47 de 1620** casos, con **3,0 % de mediana** de kcal y
+**6,9 % el peor**. Y lo que importa no es el tamaño sino la dirección: casi todos
+son cachorros que apuntan por debajo del mínimo de su raza, y ahí el recorte les
+**sube** las kcal. Al Mastín Español de 9 meses le añadía **152 kcal al día**, y es
+un cachorro de raza gigante, justo donde FEDIAF avisa de deformidades
+esqueléticas por sobrealimentar.
+
+**Aplicado el 12 de septiembre por la noche**, en los dos repos: fuera las dos
+líneas y fuera los parámetros, que no se quedan aceptándose sin hacer nada. La
+tabla de razas sigue sirviendo para el peso de respaldo cuando no hay edad ni
+peso con los que calcular, y para lo que se le enseña al dueño. Lo vigilan el
+apartado 9 del BLOQUE 96 y `tests/der-contrato.spec.js`, los dos comprobados con
+el recorte devuelto.
+
+**LO QUE SIGUE ABIERTO es la otra mitad: el SEXO.** La tabla de MyVetDiet da
+«pesos indicativos diferenciados para machos y hembras», y la FCI publica machos
+y hembras por separado en **la mitad** de sus estándares —el Kuvasz son 48-62 en
+machos y 37-50 en hembras, y nosotros guardamos 37-62 para los dos—. La ficha ya
+pregunta el sexo. Con el recorte fuera esto ya no decide kcal, así que ha dejado
+de ser urgente, pero sí decide lo que se le enseña al dueño y la banda que le
+tocaría. **Dueño: Elena.**
+
 
 ---
 

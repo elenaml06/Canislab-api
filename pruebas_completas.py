@@ -14300,6 +14300,49 @@ if len(set(_semillas96)) != 1:
                   f"iterar la hace depender de por dónde se empiece -- y `der.js` empieza por "
                   f"otro sitio")
 
+# 9. Y EL PESO ADULTO NO SE RECORTA AL RANGO DE LA RAZA (12 sep, noche).
+#
+# ⚠️ AQUÍ HABÍA DOS LÍNEAS QUE LO ACOTABAN, con el motivo escrito de que «la
+# estimación es una estimación y no debe sacar a un perro de lo que su raza
+# puede pesar». Suena prudente y empuja hacia el lado malo justo donde más caro
+# sale. Lo que hacen los demás, mirado antes de tocarlo: las curvas de WALTHAM
+# -- 50.000 perros, las que publica Royal Canin para veterinarios -- sacan el
+# peso adulto de la trayectoria del PROPIO cachorro y usan el estándar de raza
+# solo para elegir la banda; MyVetDiet, con tabla de más de 180 razas, la llama
+# «pesos indicativos» y en cachorro calcula la curva del animal.
+#
+# MEDIDO antes de quitarlo, sobre las 270 razas a 4, 6 y 9 meses: movía el peso
+# adulto en 47 de 1620 casos, mediana 3,0 % de kcal y 6,9 % el peor, y casi
+# siempre hacia ARRIBA en cachorros que apuntan por debajo del mínimo de su
+# raza. Al Mastín Español de 9 meses le añadía 152 kcal al día, y es un cachorro
+# de raza gigante -- justo donde FEDIAF avisa de deformidades esqueléticas por
+# sobrealimentar.
+#
+# Se vigila por las DOS puntas y de las dos formas: que el número sea el de la
+# curva, y que los parámetros hayan DESAPARECIDO en vez de quedarse aceptándose
+# sin hacer nada, que es la clase de cosa que nadie descubre.
+for _quien96, _actual96, _mes96, _espera96 in (
+        ("por debajo del mínimo de su raza (Mastín Español, min 52)", 37.37, 9, 47.1),
+        ("por encima del máximo de su raza (Caniche Enano, max 7)", 6.43, 9, 7.4)):
+    # se le pasa ADEMAS el peso de la raza por el unico parametro que queda,
+    # porque ese sigue existiendo (es el respaldo cuando no hay con que
+    # calcular) y tiene que seguir sin tirar del resultado.
+    for _conraza96 in (None, 52.0, 3.0):
+        _v96 = _der96.peso_adulto_desde_curva(_actual96, _mes96, peso_medio_raza=_conraza96)
+        if _v96 is None or abs(_v96 - _espera96) > 0.15:
+            fallos.append(f"BLOQUE96: un cachorro de {_actual96} kg a los {_mes96} meses apunta a "
+                          f"{_espera96} kg por la Tabla VII-8a y el motor dice {_v96} "
+                          f"(con peso de raza {_conraza96}). Es el caso «{_quien96}»: si sale el "
+                          f"número de la raza, ha vuelto el recorte")
+try:
+    _der96.peso_adulto_desde_curva(37.37, 9, None, 52.0, 60.0)
+    fallos.append("BLOQUE96: `peso_adulto_desde_curva` sigue aceptando el rango de la raza. "
+                  "Se quitó el 12 de septiembre y los parámetros tienen que irse con él: uno "
+                  "que se acepta y no hace nada es peor que el recorte, porque quien lo pasa "
+                  "cree que sirve")
+except TypeError:
+    pass
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================

@@ -636,8 +636,7 @@ def _pct_peso_adulto_fediaf(meses, peso_adulto_estimado):
 # `mesesEdad` desde ese dia.
 
 
-def peso_adulto_desde_curva(peso_actual_kg, meses, peso_medio_raza=None,
-                            peso_min_raza=None, peso_max_raza=None):
+def peso_adulto_desde_curva(peso_actual_kg, meses, peso_medio_raza=None):
     """
     Estima el peso adulto a partir de lo que el perro pesa AHORA y su edad,
     con la Tabla VII-8a de FEDIAF.
@@ -652,8 +651,34 @@ def peso_adulto_desde_curva(peso_actual_kg, meses, peso_medio_raza=None,
     Es lo mismo que hace `der.js`, y por eso ahora los dos repos coinciden en
     todo el rango.
 
-    El resultado se limita al rango de la raza si se conoce: la estimacion es
-    una estimacion y no debe sacar a un perro de lo que su raza puede pesar.
+    ⚠️ EL RESULTADO YA NO SE RECORTA AL RANGO DE LA RAZA (12-sep-2026, noche).
+
+    Aqui habia dos lineas que lo acotaban entre `pesoMin` y `pesoMax` de la
+    raza, con el motivo escrito de que «la estimacion es una estimacion y no
+    debe sacar a un perro de lo que su raza puede pesar». Suena prudente y
+    empuja hacia el lado malo justo donde mas caro sale.
+
+    Lo que hacen los demas, mirado antes de tocarlo: las curvas de crecimiento
+    de WALTHAM -- 50.000 perros, las que publica Royal Canin para veterinarios
+    -- son diez graficas por SEXO y por BANDA de peso adulto, y el peso adulto
+    sale de la trayectoria del propio cachorro. El estandar de raza se usa solo
+    para ELEGIR la banda: «the weight of the parents ... or via the breed
+    standard». Y MyVetDiet, el software español de raciones, tiene tabla de mas
+    de 180 razas y la llama «pesos indicativos»: en cachorro calcula el peso
+    adulto con la curva del animal, no con la tabla.
+
+    MEDIDO antes de quitarlo, sobre las 270 razas a 4, 6 y 9 meses: el recorte
+    movia el peso adulto en 47 de 1620 casos, con una diferencia de kcal de un
+    3,0 % de mediana y un 6,9 % en el peor. Y lo que importa no es el tamaño
+    sino la DIRECCION: casi todos son cachorros que apuntan por debajo del
+    minimo de su raza, y ahi el recorte les SUBE el peso adulto y con el las
+    kcal. Al Mastin Español de 9 meses le añadia 152 kcal al dia -- un cachorro
+    de raza gigante, que es justo donde FEDIAF avisa de deformidades
+    esqueleticas por sobrealimentar.
+
+    La tabla de razas sigue sirviendo para lo que si sabe: el peso que se le
+    ENSEÑA al dueño, y el peso adulto de respaldo cuando no hay edad ni peso
+    actual con los que calcular nada.
     """
     if not peso_actual_kg or peso_actual_kg <= 0 or not meses:
         return peso_medio_raza
@@ -698,9 +723,6 @@ def peso_adulto_desde_curva(peso_actual_kg, meses, peso_medio_raza=None,
         # gigantes, y el recorte de la raza de abajo lo acota si se sabe.
         estimado = candidato
 
-    # no salirse de lo que la raza puede pesar
-    if peso_min_raza:  estimado = max(estimado, peso_min_raza)
-    if peso_max_raza:  estimado = min(estimado, peso_max_raza)
     return round(estimado, 1)
 
 
@@ -710,8 +732,7 @@ def calcular_der(peso_actual_kg: float, etapa: str, actividad: str = None,
                  macho_entero: bool = False, raza: str = None,
                  semana_gestacion: int = None, n_cachorros: int = None,
                  semana_lactancia: int = 3,
-                 meses: float = None, peso_min_raza: float = None,
-                 peso_max_raza: float = None) -> dict:
+                 meses: float = None) -> dict:
     """
     etapa: "cachorro_joven" | "cachorro_crecimiento" | "gestante_temprana"
            | "gestante_tardia" | "lactante" | "adulto" | "senior"
@@ -735,8 +756,7 @@ def calcular_der(peso_actual_kg: float, etapa: str, actividad: str = None,
     if meses and peso_actual_kg:
         peso_adulto_curva = peso_adulto_desde_curva(
             peso_actual_kg, meses,
-            peso_medio_raza=peso_adulto_esperado_kg,
-            peso_min_raza=peso_min_raza, peso_max_raza=peso_max_raza)
+            peso_medio_raza=peso_adulto_esperado_kg)
         if peso_adulto_curva:
             peso_adulto_esperado_kg = peso_adulto_curva
 
