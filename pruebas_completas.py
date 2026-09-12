@@ -5305,8 +5305,20 @@ if _pobj37(45, 8) is None or abs(_pobj37(45, 8) - 45 / 1.30) > 0.01:
 # Y de paso cierra una discrepancia que llevaba dentro del repo desde siempre:
 # `der.peso_ideal_desde_condicion` YA estimaba en las dos direcciones. Eran dos
 # reglas de BCS que decían cosas distintas justo por debajo de 5.
-for _b37, _desvio37 in ((1, -0.40), (2, -0.30), (3, -0.20), (4, -0.10)):
-    _esp_b37 = 20.0 / (1.0 + _desvio37)
+# ⚠️ REMEDIDO EL 12 DE SEPTIEMBRE: EL IDEAL DE FEDIAF ES UNA BANDA, 4 A 5.
+# Aqui se exigia que en BCS 4 SI se estimara, y era lo contrario de lo que dice
+# la fuente. FEDIAF lo escribe dos veces -- §7.1.3 «The ideal BCS should
+# therefore be between 4/9 and 5/9» y §7.2.4.1 «dogs should be fed to maintain a
+# body condition score (BCS) between 4 and 5» --, las dos sobre Kealy 2002. Un
+# perro en BCS 4 esta donde tiene que estar y subirle el objetivo un 11 % es
+# engordarlo. Y por debajo, el destino es el borde mas cercano de la banda, que
+# es el BCS 4 y no el 5.
+#
+# La Tabla VII-2 no cambia: sus desvios siguen midiendose contra el BCS 5, que
+# es lo que dice su cabecera. Lo que cambia es a donde se apunta.
+for _b37, _desvio37 in ((1, -0.40), (2, -0.30), (3, -0.20)):
+    # peso en BCS 5, y de ahi al borde de la banda (BCS 4, o sea x0,90)
+    _esp_b37 = (20.0 / (1.0 + _desvio37)) * 0.90
     if _esp_b37 > 20.0 * 1.20:
         _esp_b37 = 20.0 * 1.20          # el tope del +20 %
     _obt_b37 = _pobj37(20, _b37)
@@ -5316,11 +5328,24 @@ for _b37, _desvio37 in ((1, -0.40), (2, -0.30), (3, -0.20), (4, -0.10)):
                       f"ÓPTIMO, sin distinguir si el perro está por encima o por debajo")
     elif abs(_obt_b37 - _esp_b37) > 0.01:
         fallos.append(f"BLOQUE37: con BCS {_b37} el peso objetivo de un perro de 20 kg sale "
-                      f"{_obt_b37} y tenía que ser {_esp_b37:.3f} (FEDIAF Tabla VII-2, con el "
+                      f"{_obt_b37} y tenía que ser {_esp_b37:.3f} (FEDIAF Tabla VII-2 para el "
+                      f"desvío, y el borde de la banda ideal —el BCS 4— como destino, con el "
                       f"tope del +20 % en los muy delgados)")
-if _pobj37(20, 5) is not None:
-    fallos.append("BLOQUE37: en BCS 5 se está estimando un peso objetivo. Un perro que ya está "
-                  "en su peso ideal no tiene nada que corregir")
+# Y DENTRO DE LA BANDA NO SE CORRIGE NADA. Con el fallo puesto (tomar el 5 como
+# único ideal) el BCS 4 daría 22,22 kg para un perro de 20: un 11 % más de peso
+# objetivo, y con él más kcal, para un perro que la fuente dice que está bien.
+for _b37 in (4, 5):
+    if _pobj37(20, _b37) is not None:
+        fallos.append(f"BLOQUE37: en BCS {_b37} se está estimando un peso objetivo. FEDIAF dice "
+                      f"dos veces que el ideal es la BANDA 4 a 5 (§7.1.3 y §7.2.4.1, las dos "
+                      f"sobre Kealy 2002, catorce años de labradores), así que ahí no hay nada "
+                      f"que corregir")
+# Y que el de BCS 3 apunte al 4 y no al 5, que es lo que se acaba de cambiar:
+# 20/0,8 = 25 en BCS 5, y el borde de la banda son 22,5. Apuntar al 5 daría 25,
+# que el tope dejaría en 24.
+if abs((_pobj37(20, 3) or 0) - 22.5) > 0.01:
+    fallos.append(f"BLOQUE37: un perro de 20 kg en BCS 3 tiene que apuntar al BCS 4 (22,5 kg), "
+                  f"no al BCS 5 (25, topado en 24). Sale {_pobj37(20, 3)}")
 
 # (d) EL 9 SE ESTIMA, PERO ES UNA COTA INFERIOR. Tiene que salir con
 # procedencia propia, o la app no puede distinguirlo de una estimación normal.
@@ -13844,27 +13869,64 @@ for _mes96 in (10, 11, 12):
 
 # 6. Y QUE SE USE DE VERDAD. Sin esto el bloque comprobaria una constante que
 #    no lee nadie. El cachorro de 30 kg a los 6 meses: con la ecuacion de
-#    FEDIAF el peso adulto estimado sale ~52,6 kg; con la tabla WALTHAM vieja
+#    FEDIAF el peso adulto estimado sale 46,6 kg; con la tabla WALTHAM vieja
 #    salia ~66,7. Si alguien devuelve el respaldo al tramo de FEDIAF, salta.
+#    ⚠️ 46,6 Y NO 52,6, y la diferencia importa: los DOS son autoconsistentes
+#    (ver el apartado 8). 46,6 es el que sale de recorrer las bandas en orden,
+#    que es lo que hace el motor desde que se quito la iteracion; 52,6 era el
+#    que salia partiendo del doble del peso actual, o sea el que dependia de
+#    la semilla -- y por el que este repo y la app discrepaban.
 _pa_est96 = _der96.peso_adulto_desde_curva(30.0, 6)
-if _pa_est96 is None or abs(_pa_est96 - 52.6) > 1.0:
-    fallos.append(f"BLOQUE96: un cachorro de 30 kg a los 6 meses tiene que estimar ~52,6 kg de "
+if _pa_est96 is None or abs(_pa_est96 - 46.6) > 0.5:
+    fallos.append(f"BLOQUE96: un cachorro de 30 kg a los 6 meses tiene que estimar 46,6 kg de "
                   f"adulto por la Tabla VII-8a de FEDIAF, y estima {_pa_est96}. Con la tabla "
-                  "divulgativa vieja salían ~66,7, que son ~9 % de kcal de más")
+                  "divulgativa vieja salían ~66,7, que son ~16 % de kcal de más")
 
 _der96_kcal = _der96.calcular_der(30.0, "cachorro_crecimiento", meses=6)
-if not _der96_kcal or abs(_der96_kcal["der"] - 2269.4) > 15:
+if not _der96_kcal or abs(_der96_kcal["der"] - 2142.3) > 15:
     fallos.append(f"BLOQUE96: el DER del cachorro de 30 kg a los 6 meses sin peso adulto "
-                  f"declarado tiene que salir ~2269 kcal y sale {_der96_kcal}")
+                  f"declarado tiene que salir ~2142 kcal y sale {_der96_kcal}")
 
-# 7. El respaldo sigue ahi para lo que FEDIAF no cubre (>12 meses), que es el
-#    unico tramo donde un gigante todavia no ha terminado de crecer.
-if _der96.peso_adulto_desde_curva(50.0, 18) is None:
-    fallos.append("BLOQUE96: por encima del año FEDIAF no da ecuación y hace falta el respaldo "
-                  "WALTHAM. Se ha quedado sin ninguno de los dos")
-for _mes96 in (2, 3, 4, 6, 9, 12, 15, 18, 24):
-    if _mes96 not in _der96.CURVA_CRECIMIENTO:
-        fallos.append(f"BLOQUE96: falta el escalón de {_mes96} meses en la curva de respaldo")
+# 7. FUERA DEL RANGO DE FEDIAF NO SE ESTIMA PESO ADULTO, Y ESO ES A PROPOSITO.
+#    ⚠️ Aqui se exigia que la tabla WALTHAM siguiera cubriendo ese tramo, y esa
+#    tabla se BORRO el 12 de septiembre: era una cifra sin fuente decidiendo
+#    kcal de un cachorro, y ademas hacia que los dos repos divergieran, porque
+#    `der.js` no la tiene y cae a la regla de SACN5 por edad. Ahora `der.py`
+#    hace lo mismo: sin peso adulto, `_coef_crecimiento` aplica SACN5.
+if hasattr(_der96, "CURVA_CRECIMIENTO"):
+    fallos.append("BLOQUE96: ha vuelto la tabla WALTHAM a `der.py`. No tiene fuente publicada "
+                  "--su propio comentario decía que venía de «reproducciones divulgativas»-- y "
+                  "hace que este repo y `der.js` den pesos adultos distintos para el mismo perro")
+for _mes96 in (1.0, 1.5, 14.0, 18.0, 24.0):
+    if _der96.peso_adulto_desde_curva(50.0, _mes96) is not None:
+        fallos.append(f"BLOQUE96: a los {_mes96} meses, fuera del rango que FEDIAF declara, se "
+                      f"está estimando un peso adulto. Ahí no hay ecuación: lo que toca es caer "
+                      f"a la regla de SACN5 por edad, que es lo que hace `der.js`")
+# Y que ahi el DER sea exactamente el escalon de SACN5, que es lo que aplica el
+# otro repo. Si los dos no coinciden, el mismo perro come dos cosas distintas.
+for _peso96, _mes96, _coef96 in ((5.0, 1.5, 210.0), (8.0, 14.0, 140.0), (50.0, 18.0, 140.0)):
+    _esp96 = round(_coef96 * _peso96 ** 0.75, 1)
+    _hay96 = _der96.calcular_der(_peso96, "cachorro_crecimiento", actividad="normal",
+                                 meses=_mes96)["der"]
+    if abs(_hay96 - _esp96) > 1.0:
+        fallos.append(f"BLOQUE96: un cachorro de {_peso96} kg a los {_mes96} meses tiene que "
+                      f"recibir {_esp96} kcal (SACN5: {_coef96} kcal/kg^0,75) y recibe {_hay96}. "
+                      f"Es el tramo que FEDIAF no cubre, y `der.js` aplica ahí esa misma regla")
+
+# 8. Y LA BANDA NO PUEDE DEPENDER DE POR DONDE SE EMPIECE. La Tabla VII-8a es
+#    una funcion A TROZOS, asi que un bucle con semilla puede converger en
+#    sitios distintos: medido el 12 de septiembre, un mestizo de 30 kg a los 6
+#    meses daba 52,6 kg partiendo del doble de su peso y 46,6 partiendo de la
+#    media de su tamano, los dos autoconsistentes. `der.py` usaba una semilla y
+#    la app la otra: 209 kcal/dia para el mismo perro, y cada lado coherente
+#    consigo mismo, que es por lo que ninguna prueba lo veia.
+_semillas96 = [_der96.peso_adulto_desde_curva(30.0, 6, peso_medio_raza=_s)
+               for _s in (None, 20.0, 36.0, 60.0, 100.0)]
+if len(set(_semillas96)) != 1:
+    fallos.append(f"BLOQUE96: el peso adulto estimado depende de la semilla: {_semillas96}. La "
+                  f"Tabla VII-8a es una función a trozos y tiene más de un punto fijo, así que "
+                  f"iterar la hace depender de por dónde se empiece -- y `der.js` empieza por "
+                  f"otro sitio")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 

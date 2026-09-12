@@ -98,10 +98,26 @@ def _pedidos(argv):
 
 
 def _quien_define(nombre, trozos):
-    """En que bloque se asigna `nombre` por primera vez, si es que se asigna."""
-    patron = re.compile(r"^\s*" + re.escape(nombre) + r"\s*(?:,[^=]*)?=[^=]", re.M)
+    """En que bloque aparece `nombre` por primera vez, si es que aparece.
+
+    ⚠️ NO BASTA CON MIRAR LAS ASIGNACIONES, y esto costo una tirada perdida:
+    aqui solo se buscaba `nombre =`, y el BLOQUE 23 necesita `_os_b18`, que no
+    se asigna en ningun sitio -- se crea con `import os as _os_b18`. Asi que la
+    herramienta decia «no se ha encontrado quien lo define» de un nombre que
+    esta a la vista en el BLOQUE 18. Se buscan las cuatro formas en que un
+    bloque puede crear un nombre: asignarlo, importarlo con alias, importarlo
+    a secas, y definir una funcion o una clase con ese nombre.
+    """
+    n_ = re.escape(nombre)
+    patrones = [
+        re.compile(r"^\s*" + n_ + r"\s*(?:,[^=]*)?=[^=]", re.M),      # x = ...
+        re.compile(r"^\s*(?:import|from)\b.*\bas\s+" + n_ + r"\b", re.M),  # import y as x
+        re.compile(r"^\s*import\s+" + n_ + r"\b", re.M),              # import x
+        re.compile(r"^\s*from\b.*\bimport\b[^#]*\b" + n_ + r"\b", re.M),  # from y import x
+        re.compile(r"^\s*(?:def|class)\s+" + n_ + r"\b", re.M),       # def x(...)
+    ]
     for n in sorted(trozos):
-        if patron.search(trozos[n]):
+        if any(p.search(trozos[n]) for p in patrones):
             return n
     return None
 
@@ -139,36 +155,77 @@ sys.exit(0)
     # `/tmp/patologias.json` y darian un FileNotFoundError que no tiene nada
     # que ver con el bloque que se esta probando.
     falso_file = ("__file__ = %r\n" % os.path.join(RAIZ, "pruebas_completas.py"))
-    codigo = (falso_file + cabecera
-              + "".join(trozos[n] for n in sorted(set(quiero))) + final)
-    destino = os.path.join("/tmp", f"bloques_{'_'.join(map(str, sorted(set(quiero))))}.py")
-    open(destino, "w", encoding="utf-8").write(codigo)
-    print(f"  bloques {sorted(set(quiero))} · {codigo.count(chr(10))} lineas · {destino}\n")
-    # En un proceso aparte, con el mismo cwd: los bloques abren ficheros por
-    # ruta relativa igual que la bateria.
-    proceso = subprocess.run([sys.executable, destino], cwd=RAIZ,
-                             capture_output=True, text=True)
+
+    # ⚠️ LAS DEPENDENCIAS SE RESUELVEN SOLAS DESDE EL 12 DE SEPTIEMBRE, Y ESTE
+    # ES EL CAMBIO QUE HACE QUE LA HERRAMIENTA SE USE.
+    #
+    # Antes, cuando faltaba un nombre, esto decia quien lo definia y te pedia
+    # que volvieras a lanzarlo a mano. Suena a poco y no lo es: la noche del 11
+    # al 12 de septiembre paso CUATRO veces, y una de ellas en cadena -- pedir
+    # el 23 mandaba al 18, el 18 al 5 y el 5 al 1, o sea cuatro tiradas para
+    # probar un bloque. Con esa friccion lo que se acaba haciendo es lanzar la
+    # bateria entera, que son 40 minutos, que es exactamente lo que esta
+    # herramienta existe para evitar. Elena, viendome lanzarla cuatro veces
+    # seguidas: «dijimos que ibamos a hacer algo para no tener que lanzar las
+    # baterias completas cada vez».
+    #
+    # Asi que ahora el bucle lo hace ella: lanza, y si el NameError apunta a un
+    # bloque que puede anadir, lo anade y vuelve a lanzar. Se para cuando corre
+    # o cuando no hay nada mas que anadir -- nunca da vueltas infinitas, porque
+    # cada vuelta anade al menos un bloque y son finitos.
+    #
+    # LO QUE **NO** CAMBIA: los bloques que arrastra se DICEN, siempre. Que una
+    # herramienta anada medio fichero en silencio seria peor que el NameError,
+    # porque entonces «he probado el bloque 52» y «he probado media bateria»
+    # se leen igual. Y sigue sin sustituir a la bateria entera: lo dice al
+    # final de cada tirada.
+    arrastrados = []
+    intento = 0
+    while True:
+        intento += 1
+        bloques = sorted(set(quiero) | set(arrastrados))
+        codigo = (falso_file + cabecera
+                  + "".join(trozos[n] for n in bloques) + final)
+        destino = os.path.join("/tmp", f"bloques_{'_'.join(map(str, bloques))}.py")
+        open(destino, "w", encoding="utf-8").write(codigo)
+        if arrastrados:
+            print(f"  bloques {sorted(set(quiero))} + {sorted(set(arrastrados))} "
+                  f"(arrastrados por las variables que comparten) · "
+                  f"{codigo.count(chr(10))} lineas · {destino}\n")
+        else:
+            print(f"  bloques {bloques} · {codigo.count(chr(10))} lineas · {destino}\n")
+
+        # En un proceso aparte, con el mismo cwd: los bloques abren ficheros por
+        # ruta relativa igual que la bateria.
+        proceso = subprocess.run([sys.executable, destino], cwd=RAIZ,
+                                 capture_output=True, text=True)
+
+        m = re.search(r"NameError: name '([^']+)' is not defined", proceso.stderr or "")
+        if not m:
+            break
+        quien = _quien_define(m.group(1), trozos)
+        if quien is None or quien in bloques:
+            # O no se sabe quien lo define, o ya esta dentro y el problema es
+            # otro (un orden que no se puede arreglar anadiendo bloques).
+            sys.stdout.write(proceso.stdout)
+            sys.stderr.write(proceso.stderr)
+            print("\n" + "=" * 60)
+            if quien is None:
+                print(f"  Falta «{m.group(1)}» y no se ha encontrado quien lo define. "
+                      f"Puede venir de un import o de la cabecera.")
+            else:
+                print(f"  Falta «{m.group(1)}» y el BLOQUE {quien} que lo define YA esta "
+                      f"dentro. Entonces no es una dependencia que falte: mira el orden.")
+            sys.exit(proceso.returncode)
+        print(f"  falta «{m.group(1)}» · lo define el BLOQUE {quien} · lo anado y repito\n")
+        arrastrados.append(quien)
+
     sys.stdout.write(proceso.stdout)
     sys.stderr.write(proceso.stderr)
-
-    # ⚠️ Y SI FALTA UN NOMBRE, SE DICE QUIEN LO DEFINE. Un `NameError: '_c'` a
-    # secas obliga a abrir el fichero de 14.000 lineas y buscar a mano, que es
-    # justo el trabajo que esta herramienta existe para quitar. Se busca donde
-    # se asigna ese nombre y se dice en que bloque cae.
-    m = re.search(r"NameError: name '([^']+)' is not defined", proceso.stderr or "")
-    if m:
-        quien = _quien_define(m.group(1), trozos)
-        print("\n" + "=" * 60)
-        if quien is None:
-            print(f"  Falta «{m.group(1)}» y no se ha encontrado quien lo define. "
-                  f"Puede venir de un import o de la cabecera.")
-        else:
-            print(f"  Falta «{m.group(1)}», y lo define el BLOQUE {quien}. Prueba con:\n"
-                  f"      python3 probar_bloques.py {quien} "
-                  f"{' '.join(str(n) for n in sorted(set(quiero)))}")
-        print("  (esto es lo esperado: los bloques comparten variables y esta "
-              "herramienta\n   no adivina cuales -- adivinarlas seria arrastrar "
-              "medio fichero.)")
+    if arrastrados:
+        print(f"\n  (se han arrastrado los bloques {sorted(set(arrastrados))} porque los "
+              f"pedidos usan variables suyas.\n   Lo que se ha ejecutado son "
+              f"{len(bloques)} bloques, no {len(set(quiero))}.)")
     sys.exit(proceso.returncode)
 
 

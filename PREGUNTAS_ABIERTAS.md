@@ -743,7 +743,7 @@ que FEDIAF no cubre (por debajo de las 8 semanas y por encima del año, donde su
 ecuación pasa del 100 %). **No cambia ningún caso del contrato**: los siete
 casos de cachorro de `der_casos.json` o traen `pesoAdultoKg` o no traen edad, así
 que ninguno ejercía esta curva. Medido después del cambio: el cachorro de 30 kg
-a los 6 meses pasa de 2479 a **2269 kcal**.
+a los 6 meses pasa de 2479 a **2142 kcal**. ⚠️ Esa cifra se movió esa misma noche de 2269 a 2142 al quitar la iteración: la Tabla VII-8a es una función a trozos y el bucle tenía **dos puntos fijos** —52,6 kg partiendo del doble del peso y 46,6 partiendo de la media del tamaño, los dos autoconsistentes—, así que `der.py` y la app daban pesos adultos distintos para el mismo perro. Ahora se recorren las cinco bandas y se coge la primera que cae dentro de la suya: determinista, sin semilla, y es la solución más pequeña, que es menos kcal.
 
 **La pregunta que queda, y es la mitad que importa:** ¿se lleva también al
 frontend? Allí no hay curva ninguna — si no sabe el peso adulto, `calcularDER`

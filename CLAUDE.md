@@ -505,7 +505,7 @@ esta parte usa la **Tabla VII-8a de FEDIAF**, que publica la curva como cinco
 ecuaciones por banda de peso adulto; antes usaba una tabla sacada de
 reproducciones divulgativas de las curvas WALTHAM, y en el cachorro de raza
 gigante iba **12 puntos por debajo**, o sea **~9 % de kcal de más** (2479
-contra 2269 en un cachorro de 30 kg a los 6 meses) justo donde FEDIAF avisa de
+contra 2142 en un cachorro de 30 kg a los 6 meses) justo donde FEDIAF avisa de
 deformidades esqueléticas por sobrealimentar. **Ningún caso de `der_casos.json`
 la ejercía**, así que el contrato no cambió. Lo vigila el BLOQUE 96, incluido
 el emparejamiento banda↔ecuación, que es lo que el texto a dos columnas del PDF
