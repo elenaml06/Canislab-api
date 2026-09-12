@@ -75,7 +75,14 @@ DOCUMENTOS = ["PATOLOGIAS.md", "LECTURA_SACN5.md", "HALLAZGOS_LECTURA_FUENTES.md
     # El registro de la lectura de Fascetti (11 septiembre), en el mismo commit
     # en que nace. Va lleno de citas literales, que es el material que este
     # auditor existe para vigilar.
-    "LECTURA_FASCETTI.md"]
+    "LECTURA_FASCETTI.md",
+    # ⚠️ Y SUS HALLAZGOS, que se quedaron fuera al nacer (11 septiembre, tarde).
+    # `LECTURA_FASCETTI.md` entro aqui el mismo dia y su hermano no, y es el que
+    # mas citas literales lleva: las cifras que el motor NO aplica viven ahi con
+    # la frase de la fuente al lado, que es justo donde una cita mal copiada
+    # aguanta mas tiempo sin que nadie la abra. Al meterlo salieron 0 nuevas sin
+    # encontrar, o sea que las que habia estaban bien -- pero eso no se sabia.
+    "HALLAZGOS_FASCETTI.md"]
 JSONS = ["patologias.json", "recomendaciones_libro.json", "requisitos_condicionales.json",
          "requerimientos_v2_final.json", "sacn5_fuentes_de_minerales.json",
          "fediaf_conversiones_vitaminas.json"]
@@ -113,10 +120,33 @@ _LARGO_MINIMO = 25
 # applies» cuando la fuente dice «instead the nutritional maximum, WHEN INCLUDED
 # IN THE RELEVANT TABLES, should be taken into account». Una condicion borrada.
 SIN_DECIR_DECLARADAS = 0          # citas que no dicen de que fuente salen
-SIN_TEXTO_DECLARADAS = 24         # citan una fuente que no esta en el repo
-                                  # (Merck, el consenso ACVIM, IRIS en PDF,
-                                  # Purina, Today's Veterinary Practice). Estas
-                                  # no se pueden comprobar aqui, y se DICE.
+SIN_TEXTO_DECLARADAS = 10         # citan una fuente que no esta en el repo.
+                                  # ⚠️ ERAN 24 HASTA EL 11 DE SEPTIEMBRE y ese
+                                  # dia BAJARON A 10, porque se consiguieron
+                                  # cuatro de las fuentes que faltaban: WSAVA
+                                  # (sus guias y las graficas de condicion
+                                  # corporal y masa muscular), IRIS 2026
+                                  # (estadificacion y recomendaciones del
+                                  # perro), el consenso ACVIM de Keene 2019 por
+                                  # PubMed Central, y el articulo de Today's
+                                  # Veterinary Practice sobre oxalato calcico.
+                                  # CATORCE citas que no se podian comprobar
+                                  # ahora se encuentran LITERALES en su fuente.
+                                  # Las 10 que quedan son de Merck, dvm360
+                                  # --que devuelve 403 a la lectura desde
+                                  # aqui-- y Purina. Siguen sin poder
+                                  # comprobarse, y se DICE.
+
+# ⚠️ ESTE NUMERO DEPENDE DE OTRO REPO, Y ESO YA COSTO UN ROJO (11 de septiembre).
+# `SIN_TEXTO_DECLARADAS` cuenta las citas cuya fuente NO ESTA, asi que se mueve
+# solo cuando `canislab-fuentes` cambia -- y ese repo tiene su propia rama por
+# defecto y su propio ritmo. Ese dia se bajaron cuatro fuentes, el numero bajo de
+# 24 a 10 en local, se clavo el 10... y LA CI SEGUIA VIENDO 24, porque trae las
+# fuentes con un `sparse-checkout` de `main` y alli las fuentes nuevas todavia
+# estaban en una rama. Verde aqui y rojo alli, sin que nada del motor estuviera
+# mal. La regla que sale de ahi: **una fuente nueva se fusiona en su repo ANTES
+# de clavar el recuento aqui**, y los dos commits van juntos o no va ninguno.
+# Es la misma regla que ya tenia `der_casos.json`, que vive en dos repos.
 
 PENDIENTES_DECLARADAS = 0         # 10 de septiembre de 2026, noche: no queda
                                   # ninguna. Las 31 que quedaban se abrieron una

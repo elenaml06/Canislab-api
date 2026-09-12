@@ -106,6 +106,15 @@ def _convertir(valor, unidad, densidad, factor=1.0):
         return valor * 10.0
     if u == "mg/kg MS->ug":       # el catálogo mide µg (selenio, vitamina D)
         return valor * 1000.0 / densidad
+    # ⚠️ AÑADIDA EL 11 DE SEPTIEMBRE, y con su propia etiqueta a propósito. La
+    # aritmética es la misma que la de `mg/kg MS` -- dividir por la densidad --,
+    # así que la tentación era reutilizar aquella clave y ya. No: la etiqueta
+    # dice en qué unidad está escrita la FUENTE, y Fascetti cap.10 da la vitamina
+    # D del cachorro en µg/kg de dieta, no en mg. Poner «mg» donde la fuente dice
+    # «µg» es escribir un dato falso que da el número correcto, que es
+    # exactamente la clase de error que este auditor existe para cazar.
+    if u == "ug/kg MS":            # el catálogo mide µg y la fuente también
+        return valor / densidad
     if u == "g/kg al 12% humedad":
         # Los máximos LEGALES del Reglamento (UE) van sobre pienso completo al
         # 12 % de humedad, no sobre materia seca. Se pasa a MS dividiendo por

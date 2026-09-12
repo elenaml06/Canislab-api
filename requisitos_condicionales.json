@@ -1,269 +1,269 @@
 {
- "_meta": {
-  "que_es": "Requisitos que NO son un numero fijo: dependen de otra cosa de la propia dieta. Son los que un barrido de tablas no encuentra, porque no tienen forma de fila.",
-  "unidad": "por 1000 kcal de energia metabolizable, igual que requerimientos_v2_final.json",
-  "por_que_existe_este_fichero": "Porque el 8 de septiembre, al leer las fuentes ENTERAS en vez de sus tablas, aparecieron varios requisitos escritos como «el requisito de X depende del contenido de Y». Ninguno cabe en requerimientos_v2_final.json, que es una tabla de numeros fijos por etapa, ni en patologias.json, que es por enfermedad. Ver HALLAZGOS_LECTURA_FUENTES.md.",
-  "verificado": "8 de septiembre de 2026 (proteina de reproduccion), leyendo FEDIAF 2025 seccion 3.3.1 y NRC 2006 capitulo 5. AMPLIADO el 9 de septiembre de 2026 con la arginina de la Tabla VII-13 de FEDIAF y el ratio linoleico:linolenico del NRC 2006 capitulo 5, leyendo los dos documentos ENTEROS.",
-  "ampliado_9_sep_2026": "Anadidas TRES reglas condicionales mas, las tres nombradas por FEDIAF 2025 en su seccion 3.3 y las tres SIN CIFRA PARA EL PERRO. Van con tipo `documentado_sin_cifra`, que ninguna funcion de condicionales.py lee: estan escritas para que se puedan auditar y para que no se vuelvan a 'descubrir' dentro de seis meses, no para que el solver las aplique. Una regla sin numero no se puede aplicar sin inventarselo, y eso es lo que CERRADO.md prohibe.",
-  "ampliado_9_sep_2026_segunda": "Al leer ENTERA la §3.3.1 de FEDIAF -- no la fila del nutriente que se iba a buscar, sino la sección completa -- salieron TRES condicionales más que el motor no tenía. Los tres son `documentado_sin_cifra` porque FEDIAF los enuncia y no los cuantifica, que es exactamente el patrón de los que ya estaban.",
-  "medido_9_sep_2026": "Las tres reglas nuevas llevan campo `medido`, y las tres dicen lo mismo sobre el METODO porque es la correccion que hizo falta: NO se miden contra `catalogo_menus.json`. El catalogo se regenera, y una conclusion del tipo «hoy ningun menu hace X» se queda escrita en el fichero, deja de ser verdad y no la desmiente nadie -- es exactamente la forma de fallo que este repo lleva meses persiguiendo. Asi que aqui solo se escribe lo que no depende de ningun menu (la aritmetica de las tablas y como esta construida una racion cruda), y lo que si depende se vuelve a medir en cada bateria sobre menus resueltos EN VIVO, en el BLOQUE 69, que falla cuando la conclusion se da la vuelta.",
-  "ampliado_9_sep_2026_noche": "Anadida `dha_en_crecimiento_y_reproduccion`, la primera regla que sale de leer SACN5 ENTERO (los 70 capitulos) en vez de sus tablas sueltas. Es condicional en el sentido de este fichero -- no es una fila de la Tabla III-3b de FEDIAF, que no distingue EPA de DHA -- y se aplica, porque tiene cifra canina, repetida en tres tablas y derivada del NRC 2006."
- },
- "reglas": {
-  "proteina_en_reproduccion_sin_hidratos": {
-   "nombre": "La proteina de gestacion y lactancia, en una dieta sin hidratos",
-   "nutriente": "proteina",
-   "tipo": "suelo",
-   "valor": 125.0,
-   "aplica_a_etapas": [
-    "Gestante",
-    "GestanteTardia",
-    "Lactante"
-   ],
-   "fuente": "FEDIAF 2025, seccion 3.3.1 «Total protein (Reproduction)»; y NRC 2006 cap.5, «Effects on Reproductive Performance», que trae el experimento (Kienzle E et al. 1985, Romsos DR et al. 1981). Verificado literal 8-sep-2026",
-   "conversion": {
-    "valor_en_la_fuente": 62.5,
-    "unidad_en_la_fuente": "por 1000 kcal",
-    "densidad_kcal_por_g_MS": 4.0,
-    "factor_a_la_unidad_del_motor": 2.0,
-    "por_que_el_factor": "FEDIAF 2025, seccion 3.3.1 «Total protein (Reproduction)», literal: «If carbohydrate is absent or at a very low level, the protein requirement is much higher, AND MAY BE DOUBLE». El x2 es de la fuente, no una extrapolacion nuestra: se aplica sobre el minimo de reproduccion de la Tabla III-3b (62,50 g/1000 kcal, columna «Early Growth & Reproduction»).",
-    "cita": "FEDIAF 2025, Tabla III-3b, fila «Protein», columna «Early Growth (< 14 weeks) & Reproduction» = 62,50 g/1000 kcal, doblado por la frase de la seccion 3.3.1. Verificado literal 8-sep-2026"
-   },
-   "por_que": "⚠️ ES EL REQUISITO MAS SERIO QUE HA APARECIDO AL LEER EL TEXTO EN VEZ DE LAS TABLAS, y no estaba en ningun sitio del motor. || FEDIAF, literal: «The recommendation for protein assumes the diet contains SOME CARBOHYDRATE to decrease the risk of hypoglycaemia in the bitch and neonatal mortality. If carbohydrate is absent or at a very low level, the protein requirement is much higher, AND MAY BE DOUBLE». || Y NRC 2006 trae el experimento que hay detras, con las cifras: «In bitches fed the high-protein, carbohydrate-free diet (42 percent of calories from protein), litter size, birth weight, and puppy survival rate were comparable to those when bitches were fed a carbohydrate-containing control diet. In contrast, in bitches fed the low-protein, carbohydrate-free diet (20 percent of calories from protein), a reduction in birth weight (30 to 40 percent) and an increase in PERINATAL MORTALITY RATE (75 PERCENT) were observed». No es una recomendacion teorica: es mortalidad neonatal medida. || POR QUE NOS APLICA A NOSOTROS Y NO A UN PIENSO: una racion BARF es carne, hueso, viscera, higado y como mucho un 10 % de verdura. NO LLEVA CEREAL. Es exactamente «carbohydrate absent or at a very low level», por construccion -- no hace falta medirlo, y de hecho el catalogo no tiene clave de hidratos. || EL NUMERO: se toma la lectura MAS ESTRICTA de las dos que dan las fuentes. El «doble» de FEDIAF sobre el minimo de reproduccion (62,5) son 125. Los «42 % de las kcal» de Kienzle son 105 g a 4 kcal/g o 120 a 3,5; los dos por debajo de 125. Se aplica 125 porque cabe: MEDIDO en los nueve casos (5, 22 y 40 kg x gestante, gestante tardia y lactante), los nueve salen en el PELDANO 0 y en VERDE, con la proteina real entre 125,1 y 152,6. O sea que no cuesta ni un peldano. || Y ESTO ES LO QUE IMPORTA: antes de hoy, un menu de gestacion que hubiera salido con 70 g de proteina PASABA EL SEMAFORO, porque el minimo era 62,5. Habria estado a la mitad de lo que la fuente pide para una dieta sin hidratos, en el unico caso donde equivocarse se cobra en cachorros muertos. Los menus reales salian a 119-124, o sea que cumpliamos por casualidad y por los pelos, no por regla."
+  "_meta": {
+    "que_es": "Requisitos que NO son un numero fijo: dependen de otra cosa de la propia dieta. Son los que un barrido de tablas no encuentra, porque no tienen forma de fila.",
+    "unidad": "por 1000 kcal de energia metabolizable, igual que requerimientos_v2_final.json",
+    "por_que_existe_este_fichero": "Porque el 8 de septiembre, al leer las fuentes ENTERAS en vez de sus tablas, aparecieron varios requisitos escritos como «el requisito de X depende del contenido de Y». Ninguno cabe en requerimientos_v2_final.json, que es una tabla de numeros fijos por etapa, ni en patologias.json, que es por enfermedad. Ver HALLAZGOS_LECTURA_FUENTES.md.",
+    "verificado": "8 de septiembre de 2026 (proteina de reproduccion), leyendo FEDIAF 2025 seccion 3.3.1 y NRC 2006 capitulo 5. AMPLIADO el 9 de septiembre de 2026 con la arginina de la Tabla VII-13 de FEDIAF y el ratio linoleico:linolenico del NRC 2006 capitulo 5, leyendo los dos documentos ENTEROS.",
+    "ampliado_9_sep_2026": "Anadidas TRES reglas condicionales mas, las tres nombradas por FEDIAF 2025 en su seccion 3.3 y las tres SIN CIFRA PARA EL PERRO. Van con tipo `documentado_sin_cifra`, que ninguna funcion de condicionales.py lee: estan escritas para que se puedan auditar y para que no se vuelvan a 'descubrir' dentro de seis meses, no para que el solver las aplique. Una regla sin numero no se puede aplicar sin inventarselo, y eso es lo que CERRADO.md prohibe.",
+    "ampliado_9_sep_2026_segunda": "Al leer ENTERA la §3.3.1 de FEDIAF -- no la fila del nutriente que se iba a buscar, sino la sección completa -- salieron TRES condicionales más que el motor no tenía. Los tres son `documentado_sin_cifra` porque FEDIAF los enuncia y no los cuantifica, que es exactamente el patrón de los que ya estaban.",
+    "medido_9_sep_2026": "Las tres reglas nuevas llevan campo `medido`, y las tres dicen lo mismo sobre el METODO porque es la correccion que hizo falta: NO se miden contra `catalogo_menus.json`. El catalogo se regenera, y una conclusion del tipo «hoy ningun menu hace X» se queda escrita en el fichero, deja de ser verdad y no la desmiente nadie -- es exactamente la forma de fallo que este repo lleva meses persiguiendo. Asi que aqui solo se escribe lo que no depende de ningun menu (la aritmetica de las tablas y como esta construida una racion cruda), y lo que si depende se vuelve a medir en cada bateria sobre menus resueltos EN VIVO, en el BLOQUE 69, que falla cuando la conclusion se da la vuelta.",
+    "ampliado_9_sep_2026_noche": "Anadida `dha_en_crecimiento_y_reproduccion`, la primera regla que sale de leer SACN5 ENTERO (los 70 capitulos) en vez de sus tablas sueltas. Es condicional en el sentido de este fichero -- no es una fila de la Tabla III-3b de FEDIAF, que no distingue EPA de DHA -- y se aplica, porque tiene cifra canina, repetida en tres tablas y derivada del NRC 2006."
   },
-  "arginina_segun_proteina": {
-   "nombre": "La arginina sube con la proteina del menu",
-   "nutriente": "arginina",
-   "tipo": "suelo_relativo",
-   "depende_de": "proteina",
-   "coeficiente": 0.01,
-   "anclas_por_etapa": {
-    "Adulto": {
-     "proteina": 45.0,
-     "nutriente": 1.3
+  "reglas": {
+    "proteina_en_reproduccion_sin_hidratos": {
+      "nombre": "La proteina de gestacion y lactancia, en una dieta sin hidratos",
+      "nutriente": "proteina",
+      "tipo": "suelo",
+      "valor": 125.0,
+      "aplica_a_etapas": [
+        "Gestante",
+        "GestanteTardia",
+        "Lactante"
+      ],
+      "fuente": "FEDIAF 2025, seccion 3.3.1 «Total protein (Reproduction)»; y NRC 2006 cap.5, «Effects on Reproductive Performance», que trae el experimento (Kienzle E et al. 1985, Romsos DR et al. 1981). Verificado literal 8-sep-2026",
+      "conversion": {
+        "valor_en_la_fuente": 62.5,
+        "unidad_en_la_fuente": "por 1000 kcal",
+        "densidad_kcal_por_g_MS": 4.0,
+        "factor_a_la_unidad_del_motor": 2.0,
+        "por_que_el_factor": "FEDIAF 2025, seccion 3.3.1 «Total protein (Reproduction)», literal: «If carbohydrate is absent or at a very low level, the protein requirement is much higher, AND MAY BE DOUBLE». El x2 es de la fuente, no una extrapolacion nuestra: se aplica sobre el minimo de reproduccion de la Tabla III-3b (62,50 g/1000 kcal, columna «Early Growth & Reproduction»).",
+        "cita": "FEDIAF 2025, Tabla III-3b, fila «Protein», columna «Early Growth (< 14 weeks) & Reproduction» = 62,50 g/1000 kcal, doblado por la frase de la seccion 3.3.1. Verificado literal 8-sep-2026"
+      },
+      "por_que": "⚠️ ES EL REQUISITO MAS SERIO QUE HA APARECIDO AL LEER EL TEXTO EN VEZ DE LAS TABLAS, y no estaba en ningun sitio del motor. || FEDIAF, literal: «The recommendation for protein assumes the diet contains SOME CARBOHYDRATE to decrease the risk of hypoglycaemia in the bitch and neonatal mortality. If carbohydrate is absent or at a very low level, the protein requirement is much higher, AND MAY BE DOUBLE». || Y NRC 2006 trae el experimento que hay detras, con las cifras: «In bitches fed the high-protein, carbohydrate-free diet (42 percent of calories from protein), litter size, birth weight, and puppy survival rate were comparable to those when bitches were fed a carbohydrate-containing control diet. In contrast, in bitches fed the low-protein, carbohydrate-free diet (20 percent of calories from protein), a reduction in birth weight (30 to 40 percent) and an increase in PERINATAL MORTALITY RATE (75 PERCENT) were observed». No es una recomendacion teorica: es mortalidad neonatal medida. || POR QUE NOS APLICA A NOSOTROS Y NO A UN PIENSO: una racion BARF es carne, hueso, viscera, higado y como mucho un 10 % de verdura. NO LLEVA CEREAL. Es exactamente «carbohydrate absent or at a very low level», por construccion -- no hace falta medirlo, y de hecho el catalogo no tiene clave de hidratos. || EL NUMERO: se toma la lectura MAS ESTRICTA de las dos que dan las fuentes. El «doble» de FEDIAF sobre el minimo de reproduccion (62,5) son 125. Los «42 % de las kcal» de Kienzle son 105 g a 4 kcal/g o 120 a 3,5; los dos por debajo de 125. Se aplica 125 porque cabe: MEDIDO en los nueve casos (5, 22 y 40 kg x gestante, gestante tardia y lactante), los nueve salen en el PELDANO 0 y en VERDE, con la proteina real entre 125,1 y 152,6. O sea que no cuesta ni un peldano. || Y ESTO ES LO QUE IMPORTA: antes de hoy, un menu de gestacion que hubiera salido con 70 g de proteina PASABA EL SEMAFORO, porque el minimo era 62,5. Habria estado a la mitad de lo que la fuente pide para una dieta sin hidratos, en el unico caso donde equivocarse se cobra en cachorros muertos. Los menus reales salian a 119-124, o sea que cumpliamos por casualidad y por los pelos, no por regla."
     },
-    "Senior": {
-     "proteina": 45.0,
-     "nutriente": 1.3
+    "arginina_segun_proteina": {
+      "nombre": "La arginina sube con la proteina del menu",
+      "nutriente": "arginina",
+      "tipo": "suelo_relativo",
+      "depende_de": "proteina",
+      "coeficiente": 0.01,
+      "anclas_por_etapa": {
+        "Adulto": {
+          "proteina": 45.0,
+          "nutriente": 1.3
+        },
+        "Senior": {
+          "proteina": 45.0,
+          "nutriente": 1.3
+        },
+        "CachorroCrecimiento": {
+          "proteina": 50.0,
+          "nutriente": 1.725
+        },
+        "CachorroJoven": {
+          "proteina": 56.25,
+          "nutriente": 1.975
+        },
+        "Gestante": {
+          "proteina": 56.25,
+          "nutriente": 1.975
+        },
+        "GestanteTardia": {
+          "proteina": 56.25,
+          "nutriente": 1.975
+        },
+        "Lactante": {
+          "proteina": 56.25,
+          "nutriente": 1.975
+        }
+      },
+      "fuente": "FEDIAF 2025, ANEXO 7.4 y Tabla VII-13 «Increases in arginine requirement with increasing protein content»; el coeficiente lo toma FEDIAF del NRC 2006 cap.6. Verificado literal 9-sep-2026.",
+      "por_que": "⚠️ ESTO NO ES UNA EXTRAPOLACION NUESTRA NI DEL NRC: ES UNA TABLA QUE FEDIAF PUBLICA Y QUE NO APLICABAMOS. || FEDIAF 2025, seccion 3.3.1, literal: «Arginine (All life stages) The arginine requirement INCREASES WITH INCREASED PROTEIN CONTENT owing to its role as an intermediate in the urea cycle. For every gram of crude protein above the stated values, an additional 0.01 g of arginine is required (NRC 2006g). See ANNEX 7.4». Y el Anexo 7.4: «The NRC 2006 advises an extra 0.01 g arginine for every 1 % increase in protein (% DM) above the recommended allowance FOR ALL LIFE STAGES IN DOGS». || LAS ANCLAS son la primera fila de cada columna de la Tabla VII-13, convertidas con el x2.5 de siempre (%MS -> por 1000 kcal a 4000 kcal EM/kg MS): adulto 18 %MS de proteina con 0,52 g/100gMS de arginina = 45 y 1,30; crecimiento (columna Growth) 20 %MS con 0,69 = 50 y 1,725; crecimiento temprano y reproduccion (columnas Early growth y Reproduction) 22,5 %MS con 0,79 = 56,25 y 1,975. El coeficiente 0,01 sale igual en las dos unidades: 1 %MS de proteina son 2,5 g/1000 kcal y 0,01 g/100gMS de arginina son 0,025 g/1000 kcal, y 0,025/2,5 = 0,01. Comprobado contra la propia tabla: de 18 a 20 %MS la arginina de adulto va de 0,52 a 0,54, que son los 0,01 por punto. || SE COMPONE CON UN max() CONTRA EL MINIMO DE LA TABLA III-3b, nunca lo sustituye: por debajo de unos 66 g/1000 kcal de proteina manda el 1,51 de la III-3b y por encima manda esta regla. || POR QUE NOS IMPORTA A NOSOTROS MAS QUE A UN PIENSO: la tabla llega hasta 55 %MS de proteina y nuestros menus viven ahi. MEDIDO sobre los 216 menus del catalogo precalculado, la proteina mediana es 105 g/1000 kcal = 42 %MS, donde la tabla exige 1,90 g de arginina y el motor solo exigia 1,51 -- un 26 % menos. || ⚠️ MEDIDO ANTES DE APLICARLO, Y NO CUESTA NI UN MENU: la arginina real mediana de esos menus es 4,23 g/1000 kcal y el peor caso deja 1,06 g de margen sobre lo exigido. 0 de 216 se quedan cortos. Es lo que cabe esperar de una racion de carne: la carne va sobrada de arginina. Se aplica porque la regla faltaba, no porque estuviera dando menus malos hoy -- igual que la nota b del calcio de raza grande. || Y ES LA OTRA MITAD DEL TECHO DE LISINA (ver verificar.MAXIMOS_NO_APLICADOS y HALLAZGOS_LECTURA_FUENTES.md N-13): lo que enfermo a los cachorros de Czarnecki 1985 no fue la lisina alta, fue la arginina corta que la lisina alta provoco -- con 4 g de arginina/kg de dieta, o sea 1 g/1000 kcal, POR DEBAJO del minimo de FEDIAF de adulto. Anadir 4 g de arginina prevenia los signos. Techo de lisina y suelo de arginina son la misma restriccion vista por sus dos lados."
     },
-    "CachorroCrecimiento": {
-     "proteina": 50.0,
-     "nutriente": 1.725
+    "ratio_linoleico_linolenico": {
+      "nombre": "La relacion entre el omega-6 y el omega-3 de 18 carbonos",
+      "tipo": "ratio",
+      "numerador": "linoleico",
+      "denominador": "linolenico",
+      "rangos_por_etapa": {
+        "Adulto": {
+          "min": 2.6,
+          "max": 26.0
+        },
+        "Senior": {
+          "min": 2.6,
+          "max": 26.0
+        },
+        "CachorroCrecimiento": {
+          "min": 2.6,
+          "max": 26.0
+        },
+        "CachorroJoven": {
+          "min": 2.6,
+          "max": 26.0
+        },
+        "Gestante": {
+          "min": 2.6,
+          "max": 16.0
+        },
+        "GestanteTardia": {
+          "min": 2.6,
+          "max": 16.0
+        },
+        "Lactante": {
+          "min": 2.6,
+          "max": 16.0
+        }
+      },
+      "fuente": "NRC 2006, cap.5 «Fat and Fatty Acids», secciones «Adult Maintenance» y «Gestation and Lactation». Verificado literal 9-sep-2026.",
+      "por_que": "⚠️ ES LA PREGUNTA DE LA NUTRICIONISTA («falta el ratio omega-6:omega-3»), Y LA FUENTE DA UNA RESPUESTA QUE NO ES LA QUE UNO ESPERA. || El NRC dice que el ratio de omega-6 TOTALES a omega-3 TOTALES NO sirve: «The European expert committee also specifically concluded that the use of a TOTAL n-6:n-3 ratio IS NOT HELPFUL (de Deckere et al., 1998). The British Nutrition Foundation Task Force on Fatty Acids (BNF) has stated that attempts to explain data based on the total n-6:n-3 ratio MAY BE DISTORTED». El motivo esta escrito justo antes: unos estudios suman los derivados de cadena larga y otros no, y no son equivalentes porque «the long-chain metabolites are known to be more potent as substrates for eicosanoid production than their parent fatty acids». || LO QUE EL NRC SI RECOMIENDA es el ratio entre los DOS DE 18 CARBONOS, linoleico y linolenico. Adulto, literal: «A range for this ratio of 2.6 TO 26 is presumed safe based on evidence to date. It includes a margin of safety of approximately 10 percent at both extremes». Gestacion y lactancia: «Because of competition between LA and ALA for metabolism, the LA:ALA ratio should range BETWEEN 2.6 AND 16. This range is not as wide as that for maintenance, … thereby helping ensure the availability of 18-carbon n-3 ALA for subsequent elongation». Crecimiento: el NRC calcula 16,3 y lo describe como «less than 17», dentro del rango de adulto, asi que se le deja el de adulto. || EL MECANISMO, que es por que existe el suelo y no solo el techo: linoleico y linolenico compiten por la misma delta-6-desaturasa, y «high cellular LA will affect ALA conversion to a greater extent than high ALA at lower LA content». || POR QUE EL MOTOR NO LO TENIA, y no es un descuido de nadie: FEDIAF NO DA MINIMO DE LINOLENICO EN ADULTO (la fila lleva «-»), asi que en un menu de adulto no habia NADA que impidiera al omega-3 caer a cero mientras el omega-6 subia. Y una relacion entre dos nutrientes no cabe en una tabla de numeros fijos por etapa, asi que ningun barrido de tablas la encuentra. Es el mismo agujero que tenia el ratio Ca:P antes de ponerlo, por el mismo motivo. || ⚠️ MEDIDO ANTES DE APLICARLO, Y ESTE SI CUESTA MENUS: sobre los 216 del catalogo precalculado, la mediana es 7,79, pero 15 se pasan de 26 y uno llega a 109,14 (un senior mini con 1,53 g de linoleico contra 0,014 de linolenico). Uno se queda por debajo de 2,6. O sea que 16 de 216 tendrian que cambiar. Es lo que tiene tapar un agujero de verdad."
     },
-    "CachorroJoven": {
-     "proteina": 56.25,
-     "nutriente": 1.975
+    "vitamina_e_segun_pufa": {
+      "nombre": "La vitamina E sube con los acidos grasos poliinsaturados de la dieta",
+      "tipo": "documentado_sin_cifra",
+      "nutriente": "vitE",
+      "depende_de": "pufa_totales",
+      "aplicado_por_el_solver": false,
+      "fuente": "FEDIAF 2025, seccion 3.3 «Vitamin E»; y NRC 2006 cap.8 «Vitamin E - Requirements» (Hayes et al. 1969). Verificado literal 9-sep-2026",
+      "por_que": "FEDIAF, literal: «The vitamin E requirement DEPENDS ON THE INTAKE OF POLYUNSATURATED FATTY ACIDS (PUFA) and the presence of other antioxidants. An increased level of vitamin E may be required under conditions of high PUFA intake. FOR CAT FOOD, it is recommended to add 5 to 10 IU Vitamin E above minimum level per gram of fish oil added per kilogram of diet (Hendriks WH et al. 2002)». || ⚠️ LA CIFRA QUE DA ES SOLO PARA EL GATO. Para el perro FEDIAF enuncia la dependencia y no la cuantifica, asi que **no hay numero que aplicar** y ponerle el del gato seria inventarlo. || El NRC dice lo mismo y aporta el unico dato canino que hay: «A high intake of polyunsaturated fat requires a concomitant increase in vitamin E in the diet» (cap.8), y «Hayes et al. (1969) demonstrated that IN THE PRESENCE OF LARGE AMOUNTS OF PUFAs in the diet, 100 mg α-tocopherol·kg⁻¹ diet MAY BE INADEQUATE to prevent lipofuscin formation in dogs». 100 mg/kg de dieta son ~25 mg/1000 kcal a 4000 kcal/kg, o sea 3,6 veces el minimo de FEDIAF (6,97). || POR QUE NOS TOCA MAS QUE A UN PIENSO: una racion BARF lleva pescado azul y aceites por diseno -- son la herramienta con la que el motor cierra el EPA+DHA y ahora tambien el ratio linoleico:linolenico. || ⚠️ MEDIDO 9-sep-2026 sobre los 216 menus del catalogo precalculado (con el araquidonico convertido de mg a g, que es la trampa de UNIDADES.md y en la que cai al medirlo la primera vez):\n      PUFA totales ....... 3,7 a 10,2 g/1000 kcal   (mediana 5,0)\n      vitamina E ......... 11,2 a 93,2 mg/1000 kcal (mediana 26,4; minimo FEDIAF 6,97)\n      vitE : PUFA ........ 1,53 a 23,80 mg/g        (mediana 5,55)\n      por debajo de 0,6 mg de vitE por g de PUFA ....... 0 de 216\n      con la vitamina E por debajo de 25 mg/1000 kcal .. 97 de 216\nO sea: por la relacion clasica (>=0,6 mg de vitamina E por gramo de PUFA) vamos holgados, con el peor menu a 1,53 -- dos veces y media la referencia. Por la cifra absoluta de Hayes, casi la mitad de los menus quedan por debajo, pero esa cifra es de una dieta experimental con PUFA muy alto y no es un requisito. || Abierto en PREGUNTAS_PARA_ELENA.md §12."
     },
-    "Gestante": {
-     "proteina": 56.25,
-     "nutriente": 1.975
+    "vitamina_b6_segun_proteina": {
+      "nombre": "La vitamina B6 sube con la proteina de la dieta",
+      "tipo": "documentado_sin_cifra",
+      "nutriente": "vitB6",
+      "depende_de": "proteina",
+      "aplicado_por_el_solver": false,
+      "fuente": "FEDIAF 2025, seccion 3.3 «Vitamin B6 (Pyridoxine)» (Bai SC et al. 1989, 1991). Verificado literal 9-sep-2026",
+      "por_que": "FEDIAF, literal y entero -- son dos lineas y no hay mas: «Vitamin B6 (All life stages) REQUIREMENTS OF VITAMIN B6 INCREASE WITH INCREASING PROTEIN CONTENT OF THE FOOD (Bai SC et al. 1991, Bai SC et al. 1989)». || Es la MISMA forma que la arginina de la Tabla VII-13, que si se aplica desde hoy... con una diferencia decisiva: **para la arginina FEDIAF publica una tabla con el coeficiente (0,01 g por gramo de proteina) y para la B6 no publica nada**. Sin coeficiente no hay regla que aplicar. || POR QUE IMPORTA AQUI: una racion BARF va a 119 g/1000 kcal de proteina de mediana, contra los ~52 del minimo de FEDIAF -- mas del doble. Si el requisito de B6 sube con la proteina, nuestro perro esta en el extremo alto de esa dependencia siempre. || ⚠️ MEDIDO 9-sep-2026 sobre los 216 menus, y por eso esto no es urgente: la vitamina B6 real va de 1,37 a 4,95 mg/1000 kcal (mediana 2,75) contra un minimo de FEDIAF de 0,42 -- entre TRES Y DOCE VECES el minimo. La carne y la viscera van sobradas de B6, igual que de arginina y de carnitina. Habria que multiplicar el requisito por tres para que el menu mediano se quedara corto. || Abierto en PREGUNTAS_PARA_ELENA.md §12."
     },
-    "GestanteTardia": {
-     "proteina": 56.25,
-     "nutriente": 1.975
+    "vitamina_k_en_dietas_con_mucho_pescado": {
+      "nombre": "La vitamina K en dietas con mucho pescado",
+      "tipo": "documentado_sin_cifra",
+      "nutriente": "vitK",
+      "depende_de": "pescado",
+      "aplicado_por_el_solver": false,
+      "fuente": "FEDIAF 2025, seccion 3.3 «Vitamin K» (Kronfeld DS 1989c, NRC 2006j, Strieker MJ et al. 1996). Verificado literal 9-sep-2026",
+      "por_que": "FEDIAF, literal: «Usually vitamin K does not need to be added. However there is some indication that CANNED PET FOOD FOR CATS BEING HIGH IN FISH … may increase the risk of PROLONGED COAGULATION TIMES; therefore it has been suggested to supplement high fish diets with vitamin K». || TRES MOTIVOS PARA NO APLICARLO, y ninguno es comodidad: (1) el aviso es **para el gato** y para pienso enlatado, no para el perro; (2) **FEDIAF no da fila de vitamina K para el perro** -- no esta entre los 41 nutrientes de la Tabla III-3b -- porque la sintetiza la flora intestinal; y (3) **el catalogo no tiene columna de vitamina K**, asi que no hay nada que medir ni con que verificar. || SE ESCRIBE IGUAL PORQUE NOS SENALA: nuestros menus llevan pescado por diseno y en algunas variantes el pescado es el 45 % del peso de la comida, muy por encima de lo que lleva un pienso. Si algun dia hay que mirar esto, aqui esta por que y donde empieza. || Y hay un dato del mismo NRC que lo hace menos preocupante en crudo que en lata: el aviso se asocia al pescado PROCESADO y a la oxidacion, no al pescado fresco."
     },
-    "Lactante": {
-     "proteina": 56.25,
-     "nutriente": 1.975
+    "aminoacidos_si_no_se_garantiza_la_digestibilidad": {
+      "nombre": "Los aminoacidos esenciales, +10 %, porque no garantizamos la digestibilidad proteica",
+      "tipo": "factor_sobre_el_minimo",
+      "valor": 1.1,
+      "nutrientes": [
+        "Arginina",
+        "Histidina",
+        "Isoleucina",
+        "Leucina",
+        "Lisina",
+        "Metionina",
+        "Metionina_cistina",
+        "Fenilalanina",
+        "Fenilalanina_tirosina",
+        "Treonina",
+        "Triptofano",
+        "Valina"
+      ],
+      "aplica_a_etapas": [
+        "Adulto",
+        "Senior",
+        "CachorroJoven",
+        "CachorroCrecimiento",
+        "Gestante",
+        "GestanteTemprana",
+        "GestanteTardia",
+        "Lactante"
+      ],
+      "aplicado_por_el_solver": true,
+      "fuente": "FEDIAF 2025, seccion 3.2.1 «How to read the tables» y seccion 2.2 «Scope». Verificado literal 9-sep-2026",
+      "conversion": {
+        "valor_en_la_fuente": 1.1,
+        "unidad_en_la_fuente": "adimensional",
+        "densidad_kcal_por_g_MS": 4.0,
+        "cita": "FEDIAF 2025, seccion 3.2.1 «How to read the tables»: los minimos de aminoacidos de la Tabla III-3b suponen una digestibilidad proteica garantizada; si no se garantiza, hay que subirlos un 10 %. Es un factor, no una cifra convertida: no hay unidad que cambiar. Verificado literal 9-sep-2026"
+      },
+      "por_que": "APLICADO 9-sep-2026, Y SALIO DE LEER EL TEXTO, NO LA TABLA -- que es la tercera vez que pasa lo mismo (la arginina, el ratio linoleico:linolenico y la proteina de la lactancia fueron las otras dos). || FEDIAF §3.2.1, literal, en el recuadro que hay junto a la tabla de conversiones: «For commercial dog and cat foods it is recommended that the nutrient levels are at or above the levels listed in the tables and do not exceed the nutritional or legal maximum. **If the protein digestibility of ≥ 80% (mentioned under “2.2. Scope”) cannot be guaranteed, it is recommended to increase the essential amino acid levels by a minimum of 10%.**» || Y §2.2 «Scope» dice cual es la suposicion de la que cuelga TODA la guia: «These guidelines relate to dog and cat foods manufactured from ingredients with normal digestibility (i.e. >=70% DM digestibility; >=80% protein digestibility) and average bioavailability». || POR QUE NOS TOCA: **no podemos garantizar el 80 %**. El catalogo no tiene columna de digestibilidad -- ni una -- asi que no es que salgamos por debajo: es que no lo sabemos, y la regla de FEDIAF esta escrita justo para ese caso. Y hay motivo para no darlo por hecho: una racion BARF lleva entre un 20 y un 60 % de hueso carnoso, con colageno y tejido conectivo, que es lo menos digestible que hay en el plato. || MEDIDO ANTES DE APLICARLO, dos veces. (1) Sobre los 36 menus del catalogo, cuanto margen tienen hoy los doce sobre su minimo: TODOS por encima del 110 %, con la lisina a 358 % en el peor caso y la arginina a 263 %. El mas ajustado con diferencia es metionina+cistina: 112 % en el peor menu, 149 % en el percentil 10, 240 % de mediana. O sea que once de los doce sobran y uno va justo. (2) Con el +10 % puesto y por la via de la API: 12 perfiles (toy, mini, mediano, grande, gigante, senior, cachorro temprano y tardio, lactante, y adulto sin pollo, sin vacuno y sin pescado) dan menu LOS DOCE, en el peldano ESTRICTO. || ⚠️ Y HAY UNA SEGUNDA RAZON PARA QUE SEA METIONINA+CISTINA EL QUE VA JUSTO, y esta en el mismo documento: el Anexo 7.3 dice que el perro sintetiza la taurina a partir de los aminoacidos azufrados, que un estatus bajo de taurina «may also predispose to dilated cardiomyopathy», y que aparece precisamente «in dogs fed non-supplemented very low protein diets, or foods that are low in sulphur-containing amino acids or with poor availability of the sulphur-containing amino acids». Dos partes distintas de la misma guia apuntando al mismo nutriente. || DONDE SE APLICA: en `verificar.minimo_de()`, que es el unico sitio que escala minimos (regla del CLAUDE.md), asi que el solver y el semaforo lo reciben por la misma puerta y no pueden discrepar."
+    },
+    "antioxidantes_del_perro_de_trabajo": {
+      "nombre": "La vitamina E del perro de trabajo y de deporte",
+      "tipo": "suelo_si_der_efectiva_supera",
+      "nutriente": "Vitamina_E",
+      "valor": 83.9,
+      "umbral_der_efectiva": 150.0,
+      "aplica_a_etapas": [
+        "Adulto"
+      ],
+      "aplicado_por_el_solver": true,
+      "fuente": "SACN5 5a ed., cap.18 «Feeding Working and Sporting Dogs», Tabla 18-9, fila «Antioxidants / Vitamin E». Verificado literal 9-sep-2026",
+      "conversion": {
+        "valor_en_la_fuente": 500.0,
+        "unidad_en_la_fuente": "UI/kg MS",
+        "densidad_kcal_por_g_MS": 4.0,
+        "factor_a_la_unidad_del_motor": 0.671,
+        "por_que_el_factor": "1 UI de vitamina E son 0,671 mg de alfa-tocoferol NATURAL, que es lo que miden las tablas de composicion y por tanto el catalogo (FEDIAF Tabla VII-14; el 1 mg/UI vale solo para el acetato sintetico de los suplementos). Es el mismo factor que usa `auditar_fediaf.EQUIV` para la vitamina E, escrito alli como 0,67. ⚠️ Es exactamente la segunda conversion en la que se fallo el 8 de septiembre con la vitamina E de la artrosis, tratando las UI como si fueran mg.",
+        "cita": "SACN5 5a ed., cap.18 «Feeding Working and Sporting Dogs», Tabla 18-9, fila «Antioxidants / Vitamin E»: «>=500 IU vitamin E/kg food (DM)», igual en las cuatro columnas de actividad. Leida literal 9-sep-2026"
+      },
+      "por_que": "APLICADO 9-sep-2026. La Tabla 18-9 pide «>=500 IU vitamin E/kg food (DM)» en LAS CUATRO columnas de actividad -- sprint, intermedia baja, intermedia alta y resistencia -- o sea que no depende de cuanto trabaje el perro, solo de que trabaje. 500 UI/kg MS / 4 = 125 UI/1000 kcal, y a 0,671 mg/UI (tocoferol natural, conversion de FEDIAF Tabla VII-14) son 83,9 mg/1000 kcal. || POR QUE IMPORTA: el minimo de FEDIAF para el adulto son 6,968 mg/1000 kcal, asi que el perro de trabajo necesita DOCE VECES eso. Y medido sobre los 36 menus del catalogo, la vitamina E real va de 13,4 a 89,0 con MEDIANA 25,1: solo 3 de 36 llegarian al suelo. O sea que un perro de trabajo estaba recibiendo un tercio de lo que su fuente pide, y salia VERDE, porque el semaforo mide contra el minimo del perro de mantenimiento. || QUE LO DISPARA, Y POR QUE NO HACE FALTA UN CAMPO NUEVO: la DER efectiva en kcal por kg^0,75, que el motor YA calcula (`der_efectiva_de`) y que ES el nivel de actividad -- la tabla VII-7 de FEDIAF y `der.py` usan los mismos cinco escalones: 95 sedentario, 110 normal, 125 activo, 150 muy activo (que `der.py` describe literalmente como «perro de trabajo, pastoreo») y 175 trabajo. Se aplica desde 150. || DONDE ESTA LA LINEA, Y QUE ES INTERPRETACION NUESTRA: la Tabla 18-1 de SACN5 lista las actividades, y en la columna «intermediate» incluye «exercise with people (running, bicycling)», que podria ser tambien nuestro «activo» (125). Se aplica desde 150 y no desde 125 porque 150 cubre a los perros que la fuente nombra sin discusion (pastoreo, policia, rescate, caza, trineo) y no le pone un suelo nuevo a un perro que la fuente no cubre claramente. Bajarlo a 125 es una decision de nutricion, no de codigo, y esta anotada. || MEDIDO ANTES DE APLICARLO: diez perros de trabajo (8, 15, 25, 35 y 55 kg, a 150 y a 175 kcal/kg^0,75) dan menu LOS DIEZ en el peldano ESTRICTO, con la vitamina E real entre 82,7 y 87,8. || Y NO CHOCA CON NINGUN TECHO: FEDIAF no da maximo de vitamina E. El unico techo escrito para este nutriente es el que sugiere el NRC via SACN5 cap.7 -- 1.000 UI/kg MS = 167,75 mg/1000 kcal --, y 83,9 es la mitad."
+    },
+    "antioxidantes_del_perro_de_trabajo_sin_aplicar": {
+      "nombre": "La vitamina C y el selenio del perro de trabajo, escritos y sin aplicar",
+      "tipo": "documentado_sin_cifra",
+      "aplicado_por_el_solver": false,
+      "fuente": "SACN5 5a ed., cap.18, Tabla 18-9, filas «Vitamin C» y «Selenium». Verificado literal 9-sep-2026",
+      "por_que": "LA MISMA TABLA PIDE OTRAS DOS COSAS Y NINGUNA DE LAS DOS SE APLICA, cada una por un motivo distinto. || (1) VITAMINA C, «150 to 250 mg vitamin C/kg food (DM)» = 37,5-62,5 mg/1000 kcal. NO SE APLICA porque **el perro la sintetiza y FEDIAF no le pone requisito ninguno**: no hay fila de vitamina C en la Tabla III-3b. Poner un suelo de un nutriente que el organismo fabrica, y para el que no hay ni minimo ni maximo publicado, seria inventarse una regla. Y el propio cap.7 avisa de que suplementar antioxidantes no siempre suma: «oral vitamin C supplementation at 1 g/day may slow racing times in greyhounds». || (2) SELENIO, «0.5 to 1.3 mg/kg food (DM)» = 125-325 ug/1000 kcal. NO SE APLICA por lo mismo que en la disfuncion cognitiva: **el rango se sale por arriba del maximo LEGAL de FEDIAF** (142 ug/1000 kcal), asi que dos tercios de lo que la fuente recomienda no se puede dar, y su extremo bajo (125) obliga a vivir al 88 % de un techo de toxicidad cronica. Es el TERCER sitio donde aparece ese mismo rango -- Tabla 35-3, cap.7 y aqui --, asi que la pregunta para el nutricionista es una sola y ya esta escrita en PARA_EL_NUTRICIONISTA.md."
+    },
+    "zinc_y_cobre_cuando_el_calcio_esta_alto": {
+      "nombre": "El zinc y el cobre suben cuando el calcio se acerca a su máximo",
+      "tipo": "documentado_sin_cifra",
+      "nutriente": null,
+      "nutrientes": [
+        "zinc",
+        "cobre"
+      ],
+      "depende_de": "calcio",
+      "aplicado_por_el_solver": false,
+      "fuente": "FEDIAF 2025, §3.3.1, apartado «Calcium (Adult dogs)», y el apartado «General» de oligoelementos. Verificado literal 9-sep-2026 || TERCERA FUENTE, 11-sep-2026: Ettinger, Feldman y Côté, «Tratado de Medicina Interna Veterinaria» 8.ª ed., cap. 186 «Manejo nutricional de enfermedades [de la piel]»",
+      "por_que": "FEDIAF, literal: «As the calcium level approaches the stated nutritional maximum, it may be necessary to INCREASE THE LEVELS OF CERTAIN TRACE ELEMENTS SUCH AS ZINC AND COPPER». Y el apartado general de oligoelementos lo amplía: «the bioavailability of trace elements is REDUCED BY A HIGH CONTENT OF CERTAIN MINERALS (e.g. calcium), the level of other trace elements (e.g. high zinc decreases copper absorption) and sources of phytic acid». || POR QUÉ NOS TOCA DE LLENO: una ración BARF va cargada de hueso, o sea de calcio, y el motor no sube ni el zinc ni el cobre por eso. || POR QUÉ NO SE APLICA: falta EL FACTOR -- cuánto sube el requisito --, y no lo da ninguna de las dos fuentes. ⚠️ EL UMBRAL SÍ EXISTE, y no lo da FEDIAF sino SACN5: la Tabla 32-1, fila Zinc, dice «Higher levels of zinc are required in foods with calcium >1,5 % DM» = 3750 mg/1000 kcal, que es el 60 % del máximo de FEDIAF y no el 90 %. Cuando esta regla se escribió, el 9 de septiembre por la tarde, decía que «FEDIAF no da ni a partir de qué nivel de calcio empieza» -- y era verdad de FEDIAF y falso del conjunto de las fuentes. Se corrigió esa misma noche al leer entero el capítulo 32. Inventarse la cifra sería exactamente lo que este fichero existe para no hacer. || LO QUE SÍ SE PUEDE HACER, y es trabajo nuestro: medir cuánto calcio llevan los menús reales contra el máximo, y cuánto margen le queda al zinc contra su techo legal. Si el calcio va pegado al máximo y el zinc al mínimo, es una pregunta con datos para la nutricionista. || ⚠️ TERCERA FUENTE, Y ESTA LO CUENTA COMO UN CASO CLINICO, NO COMO UNA NOTA (11-sep-2026). Ettinger cap.186, hablando de lo que causa deficiencias cuando alguien suplementa por su cuenta, nombra literal la «deficiencia de cinc despues de una suplementacion excesiva de calcio». O sea que no es solo que el requisito suba en teoria: es un cuadro que se ve en la consulta, y en un capitulo de PIEL, que es donde la deficiencia de cinc se manifiesta. Siguen siendo tres fuentes SIN FACTOR: ninguna dice cuanto hay que subir el zinc, asi que sigue sin poder aplicarse. Lo que cambia es el peso de la pregunta para el nutricionista.",
+      "medido": "⚠️ ESTO NO SE MIDE CONTRA EL CATALOGO DE MENUS Y SE DICE POR QUE: el catalogo se regenera, y una frase del tipo «hoy ningun menu se acerca al maximo» se queda escrita, deja de ser verdad y NADIE SE ENTERA. Lo que se puede escribir aqui es lo que no cambia -- la aritmetica de las tablas -- y lo que cambia se vuelve a medir en cada bateria, sobre menus resueltos EN VIVO: BLOQUE 69. || LO PERMANENTE, que sale de la Tabla III-3b y del Reglamento (UE) 2016/1095 y no de ningun menu: el calcio de adulto va de 1450 a 6250 mg/1000 kcal (el techo es 4,31 veces el suelo); el ZINC de 20,8 a 56,75 (2,73 veces) y el COBRE de 2,08 a 7,0 (3,37 veces). O sea que subir el zinc y el cobre como pide FEDIAF SI cabe en principio -- hay entre dos y tres veces de recorrido --, y lo unico que impide aplicarlo es que FEDIAF NO DA EL FACTOR: ni cuanto sube el requisito ni desde que nivel de calcio empieza. || LO QUE MIDE EL BLOQUE 69, y por que ese y no otro: la condicion que enuncia FEDIAF es «as the calcium level APPROACHES the stated nutritional maximum». Mientras ningun menu se acerque, no aplicarla no cambia nada; el dia que uno se acerque, si. Asi que el bloque resuelve menus de verdad y FALLA si alguno pasa del 90 % del maximo de calcio, y al fallar dice cuanto recorrido le queda al zinc y al cobre contra su techo LEGAL en ese menu concreto. Eso convierte esto en una pregunta con datos para la nutricionista el dia que haga falta, en vez de en una frase vieja.",
+      "umbral_de_calcio_mg_por_1000kcal": 3750.0,
+      "fuente_del_umbral": "SACN5 5a ed., cap.32 «Skin and Hair Disorders», Tabla 32-1, fila «Zinc»: «Avoid excess calcium — … Higher levels of zinc are required in foods with calcium >1.5 % DM». Leida entera 9-sep-2026. A 4,0 kcal/g MS son 3750 mg/1000 kcal."
+    },
+    "biotina_y_vitamina_k_con_antivitaminas": {
+      "nombre": "La biotina y la vitamina K solo hacen falta si la dieta lleva antivitaminas, y la clara cruda lo es",
+      "tipo": "documentado_sin_cifra",
+      "nutriente": null,
+      "nutrientes": [
+        "biotina",
+        "vitK"
+      ],
+      "depende_de": "clara de huevo cruda",
+      "aplicado_por_el_solver": false,
+      "fuente": "FEDIAF 2025, §3.3.1, apartados «Vitamin B7 (Biotin)» y «Vitamin K» (Kronfeld DS 1989a/b/c, NRC 2006j). Verificado literal 9-sep-2026",
+      "por_que": "FEDIAF, literal: «For healthy dogs BIOTIN DOES NOT NEED TO BE ADDED to the food UNLESS THE FOOD CONTAINS ANTIMICROBIAL OR ANTI-VITAMIN COMPOUNDS», y lo mismo para la vitamina K. || ⚠️ Y NUESTRA CONDICIÓN SE CUMPLE: la clara de huevo cruda ES un compuesto antivitamínico -- la avidina secuestra la biotina --, y es EXACTAMENTE por eso que `seguridad.TOPE_CLARA_PESO` la topa al 5 % del peso. O sea que el motor ya conoce el mecanismo por un lado y no lo cruza con el requisito por el otro. || POR QUÉ NO SE APLICA: FEDIAF deja las dos filas VACÍAS para el perro en la Tabla III-3b (biotina y vitamina K, los seis campos a '-'), así que no hay cifra que subir ni desde dónde. La condición está enunciada y no cuantificada. || LO QUE SÍ SE PUEDE HACER: medir cuántos menús llevan clara cruda y cuánta biotina aportan, que el catálogo sí la trae.",
+      "medido": "⚠️ TAMPOCO SE MIDE CONTRA EL CATALOGO DE MENUS, por lo mismo: contar cuantos menus llevan clara hoy es una foto, y la foto caduca. || LO PERMANENTE Y LO QUE DE VERDAD IMPORTA: la clara de huevo ESTA en el catalogo, y va en una de las categorias que el motor maneja SIEMPRE libres (regla 5 de CLAUDE.md: Suplementos y Extras no se eligen en ninguna pantalla). O sea que el motor PUEDE meterla en cualquier menu, se lo pida nadie o se lo pida el usuario. La condicion que enuncia FEDIAF -- «unless the food contains antimicrobial or ANTI-VITAMIN compounds» -- no es que no se cumpla: es que se puede cumplir en cualquier momento y no lo estamos mirando. Que hoy salga en pocos menus o en ninguno no cambia eso, y escribirlo como si lo cambiara seria justo el error. || Y EL MOTOR YA CONOCE EL MECANISMO POR EL OTRO LADO: `seguridad.TOPE_CLARA_PESO` topa la clara cruda al 5 % del peso PORQUE la avidina secuestra la biotina. O sea que sabemos que es antivitaminica cuando limitamos la cantidad, y no lo sabemos cuando fijamos el requisito. || LO QUE FALTA PARA PODER APLICAR ALGO NO ES UNA MEDIDA NUESTRA: es una cifra de FEDIAF, y las dos filas de la Tabla III-3b (biotina y vitamina K) estan VACIAS para el perro, los seis campos a '-'. El BLOQUE 69 vigila que la premisa siga siendo cierta -- que la ficha de clara siga en el catalogo y siga siendo alcanzable por el motor --, porque el dia que deje de estarlo esta regla hablaria de algo que ya no existe."
+    },
+    "metionina_cistina_segun_la_taurina": {
+      "nombre": "La metionina+cistina de la tabla supone una dieta casi sin taurina",
+      "tipo": "documentado_sin_cifra",
+      "nutriente": "metionina_cistina",
+      "depende_de": "taurina",
+      "aplicado_por_el_solver": false,
+      "fuente": "FEDIAF 2025, §3.3.1, apartado «Methionine-Cystine (Adult dogs)» (Sanderson SL et al. 2001). Verificado literal 9-sep-2026",
+      "por_que": "FEDIAF, literal: «The recommended values are based on a dog food containing A VERY LOW TAURINE CONTENT, i.e. <100 mg/kg dry matter (Sanderson SL et al. 2001). For products containing HIGHER LEVELS OF TAURINE the RA for sulphur amino acids CAN BE LOWER than the values quoted in the table». || O sea que el mínimo de 2,21 g/1000 kcal que aplicamos está calculado sobre una dieta que NO se parece a la nuestra: una ración de carne cruda va muy por encima de 100 mg/kg de materia seca de taurina. || ⚠️ Y ESTO NO ES ACADÉMICO: `metionina_cistina` es el `nutriente_frontera` que hoy bloquea los UROLITOS DE CISTINA -- una patología que le decimos al dueño que no podemos formular porque su objetivo terapéutico cae por debajo del mínimo de FEDIAF. Si ese mínimo puede ser menor por llevar taurina, la frontera se mueve. || POR QUÉ NO SE APLICA: FEDIAF dice «can be lower» y NO DICE CUÁNTO. Bajar un mínimo sin cifra es justo lo que no se hace. || LO QUE SÍ SE PUEDE HACER, y es lo primero: medir la taurina real de nuestros menús. El catálogo tiene la fila, y el propio FEDIAF remite a su Anexo 7.3 para el detalle -- que es una de las secciones que todavía no está leída entera.",
+      "medido": "MEDIDO SOBRE MENUS RESUELTOS EN VIVO, no sobre el catalogo, y se vuelve a medir en cada bateria (BLOQUE 69). La taurina se pasa a mg/kg de MATERIA SECA con la densidad que declara el propio FEDIAF, 4,0 kcal EM por gramo de MS (1 kg MS = 4000 kcal), o sea mg/1000 kcal x 4 -- que es la unidad en la que FEDIAF pone su umbral, «<100 mg/kg dry matter». || LO PERMANENTE, y es lo que sostiene el hallazgo: la taurina de una racion cruda no viene de un suplemento, viene del musculo y sobre todo del CORAZON, que es una de las piezas que una racion BARF lleva por construccion. No es una casualidad de los menus de hoy. || LA MEDIDA, CORREGIDA EL 10-sep-2026 DE NOCHE, Y LA CORRECCION IMPORTA: el menu TIPICO si va un orden de magnitud por encima de los 100 mg/kg MS que FEDIAF supone -- los 36 menus precalculados del catalogo van de 202 a 3230, mediana 1525, y NINGUNO baja del umbral --, pero lo que se escribio el 9 de septiembre («el menu mas pobre por encima de 128») NO ERA VERDAD del perro pequeño. Medido en vivo esa noche, seis menus de 3 kg seguidos: 183 · 120 · 1883 · 1310 · 1181 · 135, y en una bateria uno salio en 0. El toy vive JUSTO EN EL BORDE, y no es raro: la taurina NO es un requisito del motor -- no tiene ni suelo ni techo --, asi que el solver no tiene ningun motivo para meterla y que un menu concreto la lleve es un sorteo. Lo permanente que si sostiene el hallazgo sigue en pie: la taurina de una racion cruda viene del musculo y sobre todo del CORAZON, que una racion BARF lleva por construccion; lo que cambia entre ejecuciones es si al perro de 3 kg le toca corazon o no. || EL BLOQUE 69 MIDE AHORA LA MEDIANA de seis menus resueltos en vivo, no el peor: falla si la mediana baja del umbral, que es lo unico que significaria que la premisa se ha dado la vuelta, y CUENTA Y DICE los menus sueltos que caen por debajo sin fallar por ellos. Un rojo que sale una vez de cada seis enseña a desconfiar de la bateria. || ⚠️ Y LO QUE HAY QUE TENER CLARO ANTES DE MIRAR NINGUN NUMERO: caiga del lado que caiga, el motor aplica el minimo de metionina+cistina de FEDIAF. Si el menu lleva MENOS de 100, la suposicion de FEDIAF ES la nuestra y su minimo es exacto; si lleva MAS, su minimo es CONSERVADOR. NO HAY CASO INSEGURO. Lo unico que decide esta medida es si la pregunta merece hacerse. || QUE HACER CON ESTO: nada por nuestra cuenta. FEDIAF dice «can be lower» y NO DICE CUANTO, y bajar un minimo sin cifra no se hace. Pero si ese minimo puede bajar, se mueve el `nutriente_frontera` que hoy deja los urolitos de cistina sin formular, y eso tiene destinatario."
+    },
+    "dha_en_crecimiento_y_reproduccion": {
+      "nombre": "El DHA tiene que ser al menos el 40 % del EPA+DHA en crecimiento y reproduccion",
+      "tipo": "suelo",
+      "nutriente": "dha",
+      "valor": 0.05,
+      "unidad": "g por 1000 kcal",
+      "aplica_a_etapas": [
+        "CachorroJoven",
+        "CachorroCrecimiento",
+        "Gestante",
+        "GestanteTardia",
+        "Lactante"
+      ],
+      "aplicado_por_el_solver": true,
+      "fuente": "SACN5 5a ed., Tablas 15-5 (reproduccion), 17-1 (crecimiento, SUS DOS COLUMNAS) y 33-5 (crecimiento de raza grande), y el texto de los caps. 15 y 33 que las deriva, citando a NRC 2006. Leidas enteras el 9 de septiembre de 2026",
+      "conversion": {
+        "valor_en_la_fuente": 0.02,
+        "unidad_en_la_fuente": "%MS",
+        "densidad_kcal_por_g_MS": 4.0,
+        "cita": "SACN5 5a ed., cap.15 (y el cap.33 lo repite): «the minimum recommended allowance of DHA plus eicosapentaenoic acid (EPA) of at least 0.05 % (DM) (NRC, 2006). Therefore, DHA needs to be at least 40 % of the total DHA plus EPA, or 0.02 % DM». Mismas cifras en las Tablas 15-5, 17-1 (sus dos columnas) y 33-5. Leidas enteras 9-sep-2026"
+      },
+      "medido": "MEDIDO EN VIVO ANTES DE APLICARLO, 9-sep-2026, sobre diez menus resueltos con el motor y el catalogo reales: tres de CachorroJoven (2, 8 y 25 kg), tres de CachorroCrecimiento (5, 15 y 35), uno de Gestante, uno de GestanteTardia y dos de Lactante. **Ninguno baja de 0,05 g/1000 kcal** -- el mas justo va a 0,073, o sea 1,47 veces el suelo -- y el DHA sale entre el **57 % y el 75 % del EPA+DHA**, siempre por encima del 40 % que pide la fuente. || O sea que aplicarlo NO cambia ni un menu de hoy, y eso es precisamente el motivo de aplicarlo ahora: el suelo no aprieta nada y cierra la puerta a que manana un menu cumpla los 0,125 g de EPA+DHA con EPA solo. Lo contrario -- esperar a que pase -- seria enterarse por un cachorro.",
+      "por_que": "⚠️ APARECE EN CUATRO SITIOS CON LA MISMA CIFRA, Y NO SE APLICABA EN NINGUNO. || SACN5, literal (cap.15, y el cap.33 lo repite): «Foods for late gestation and peak lactation should contain the minimum recommended allowance of DHA plus eicosapentaenoic acid (EPA) of at least 0,05 % (DM) (NRC, 2006). Therefore, **DHA needs to be at least 40 % of the total DHA plus EPA, or 0,02 % DM**». Y las tres tablas lo llevan como fila propia: la 15-5 «DHA (%) >=0,02», la 17-1 «DHA (%) 0,02» en LAS DOS columnas de peso adulto, y la 33-5 «Docosahexaneoic acid >0,02%». || CONVERSION: 0,02 % de materia seca a 4,0 kcal/g MS = 0,05 g/1000 kcal. || EL HUECO QUE CIERRA: el motor pide EPA+DHA >=0,125 g/1000 kcal (FEDIAF, misma cifra que el NRC) y NO pide reparto. O sea que hasta hoy un menu de cachorro o de perra gestante podia cumplir ese minimo **entero con EPA** y salir verde, con cero DHA. Y el DHA no es intercambiable: la 33-5 dice para que es («***For improved learning») y el cap.15 explica que «milk concentrations of DHA parallel dietary intake», o sea que lo que no lleva la racion no llega al cachorro. || POR QUE COMO SUELO ABSOLUTO Y NO COMO RATIO: la fuente da las dos formas y las hace equivalentes en la misma frase («at least 40 % of the total ... **or 0,02 % DM**»). El 40 % se calcula sobre el MINIMO recomendado, no sobre lo que lleve el menu, asi que el absoluto es la lectura literal y ademas la que no castiga a un menu que va sobrado de omega-3. || NO SE APLICA EN ADULTO a proposito: ninguna de las tres tablas es de adulto, y FEDIAF no pone requerimiento absoluto de EPA+DHA en adulto (la fila esta vacia). Inventarlo seria pasar una cifra de una etapa a otra, que es justo lo que este fichero existe para no hacer."
     }
-   },
-   "fuente": "FEDIAF 2025, ANEXO 7.4 y Tabla VII-13 «Increases in arginine requirement with increasing protein content»; el coeficiente lo toma FEDIAF del NRC 2006 cap.6. Verificado literal 9-sep-2026.",
-   "por_que": "⚠️ ESTO NO ES UNA EXTRAPOLACION NUESTRA NI DEL NRC: ES UNA TABLA QUE FEDIAF PUBLICA Y QUE NO APLICABAMOS. || FEDIAF 2025, seccion 3.3.1, literal: «Arginine (All life stages) The arginine requirement INCREASES WITH INCREASED PROTEIN CONTENT owing to its role as an intermediate in the urea cycle. For every gram of crude protein above the stated values, an additional 0.01 g of arginine is required (NRC 2006g). See ANNEX 7.4». Y el Anexo 7.4: «The NRC 2006 advises an extra 0.01 g arginine for every 1 % increase in protein (% DM) above the recommended allowance FOR ALL LIFE STAGES IN DOGS». || LAS ANCLAS son la primera fila de cada columna de la Tabla VII-13, convertidas con el x2.5 de siempre (%MS -> por 1000 kcal a 4000 kcal EM/kg MS): adulto 18 %MS de proteina con 0,52 g/100gMS de arginina = 45 y 1,30; crecimiento (columna Growth) 20 %MS con 0,69 = 50 y 1,725; crecimiento temprano y reproduccion (columnas Early growth y Reproduction) 22,5 %MS con 0,79 = 56,25 y 1,975. El coeficiente 0,01 sale igual en las dos unidades: 1 %MS de proteina son 2,5 g/1000 kcal y 0,01 g/100gMS de arginina son 0,025 g/1000 kcal, y 0,025/2,5 = 0,01. Comprobado contra la propia tabla: de 18 a 20 %MS la arginina de adulto va de 0,52 a 0,54, que son los 0,01 por punto. || SE COMPONE CON UN max() CONTRA EL MINIMO DE LA TABLA III-3b, nunca lo sustituye: por debajo de unos 66 g/1000 kcal de proteina manda el 1,51 de la III-3b y por encima manda esta regla. || POR QUE NOS IMPORTA A NOSOTROS MAS QUE A UN PIENSO: la tabla llega hasta 55 %MS de proteina y nuestros menus viven ahi. MEDIDO sobre los 216 menus del catalogo precalculado, la proteina mediana es 105 g/1000 kcal = 42 %MS, donde la tabla exige 1,90 g de arginina y el motor solo exigia 1,51 -- un 26 % menos. || ⚠️ MEDIDO ANTES DE APLICARLO, Y NO CUESTA NI UN MENU: la arginina real mediana de esos menus es 4,23 g/1000 kcal y el peor caso deja 1,06 g de margen sobre lo exigido. 0 de 216 se quedan cortos. Es lo que cabe esperar de una racion de carne: la carne va sobrada de arginina. Se aplica porque la regla faltaba, no porque estuviera dando menus malos hoy -- igual que la nota b del calcio de raza grande. || Y ES LA OTRA MITAD DEL TECHO DE LISINA (ver verificar.MAXIMOS_NO_APLICADOS y HALLAZGOS_LECTURA_FUENTES.md N-13): lo que enfermo a los cachorros de Czarnecki 1985 no fue la lisina alta, fue la arginina corta que la lisina alta provoco -- con 4 g de arginina/kg de dieta, o sea 1 g/1000 kcal, POR DEBAJO del minimo de FEDIAF de adulto. Anadir 4 g de arginina prevenia los signos. Techo de lisina y suelo de arginina son la misma restriccion vista por sus dos lados."
-  },
-  "ratio_linoleico_linolenico": {
-   "nombre": "La relacion entre el omega-6 y el omega-3 de 18 carbonos",
-   "tipo": "ratio",
-   "numerador": "linoleico",
-   "denominador": "linolenico",
-   "rangos_por_etapa": {
-    "Adulto": {
-     "min": 2.6,
-     "max": 26.0
-    },
-    "Senior": {
-     "min": 2.6,
-     "max": 26.0
-    },
-    "CachorroCrecimiento": {
-     "min": 2.6,
-     "max": 26.0
-    },
-    "CachorroJoven": {
-     "min": 2.6,
-     "max": 26.0
-    },
-    "Gestante": {
-     "min": 2.6,
-     "max": 16.0
-    },
-    "GestanteTardia": {
-     "min": 2.6,
-     "max": 16.0
-    },
-    "Lactante": {
-     "min": 2.6,
-     "max": 16.0
-    }
-   },
-   "fuente": "NRC 2006, cap.5 «Fat and Fatty Acids», secciones «Adult Maintenance» y «Gestation and Lactation». Verificado literal 9-sep-2026.",
-   "por_que": "⚠️ ES LA PREGUNTA DE LA NUTRICIONISTA («falta el ratio omega-6:omega-3»), Y LA FUENTE DA UNA RESPUESTA QUE NO ES LA QUE UNO ESPERA. || El NRC dice que el ratio de omega-6 TOTALES a omega-3 TOTALES NO sirve: «The European expert committee also specifically concluded that the use of a TOTAL n-6:n-3 ratio IS NOT HELPFUL (de Deckere et al., 1998). The British Nutrition Foundation Task Force on Fatty Acids (BNF) has stated that attempts to explain data based on the total n-6:n-3 ratio MAY BE DISTORTED». El motivo esta escrito justo antes: unos estudios suman los derivados de cadena larga y otros no, y no son equivalentes porque «the long-chain metabolites are known to be more potent as substrates for eicosanoid production than their parent fatty acids». || LO QUE EL NRC SI RECOMIENDA es el ratio entre los DOS DE 18 CARBONOS, linoleico y linolenico. Adulto, literal: «A range for this ratio of 2.6 TO 26 is presumed safe based on evidence to date. It includes a margin of safety of approximately 10 percent at both extremes». Gestacion y lactancia: «Because of competition between LA and ALA for metabolism, the LA:ALA ratio should range BETWEEN 2.6 AND 16. This range is not as wide as that for maintenance, … thereby helping ensure the availability of 18-carbon n-3 ALA for subsequent elongation». Crecimiento: el NRC calcula 16,3 y lo describe como «less than 17», dentro del rango de adulto, asi que se le deja el de adulto. || EL MECANISMO, que es por que existe el suelo y no solo el techo: linoleico y linolenico compiten por la misma delta-6-desaturasa, y «high cellular LA will affect ALA conversion to a greater extent than high ALA at lower LA content». || POR QUE EL MOTOR NO LO TENIA, y no es un descuido de nadie: FEDIAF NO DA MINIMO DE LINOLENICO EN ADULTO (la fila lleva «-»), asi que en un menu de adulto no habia NADA que impidiera al omega-3 caer a cero mientras el omega-6 subia. Y una relacion entre dos nutrientes no cabe en una tabla de numeros fijos por etapa, asi que ningun barrido de tablas la encuentra. Es el mismo agujero que tenia el ratio Ca:P antes de ponerlo, por el mismo motivo. || ⚠️ MEDIDO ANTES DE APLICARLO, Y ESTE SI CUESTA MENUS: sobre los 216 del catalogo precalculado, la mediana es 7,79, pero 15 se pasan de 26 y uno llega a 109,14 (un senior mini con 1,53 g de linoleico contra 0,014 de linolenico). Uno se queda por debajo de 2,6. O sea que 16 de 216 tendrian que cambiar. Es lo que tiene tapar un agujero de verdad."
-  },
-  "vitamina_e_segun_pufa": {
-   "nombre": "La vitamina E sube con los acidos grasos poliinsaturados de la dieta",
-   "tipo": "documentado_sin_cifra",
-   "nutriente": "vitE",
-   "depende_de": "pufa_totales",
-   "aplicado_por_el_solver": false,
-   "fuente": "FEDIAF 2025, seccion 3.3 «Vitamin E»; y NRC 2006 cap.8 «Vitamin E - Requirements» (Hayes et al. 1969). Verificado literal 9-sep-2026",
-   "por_que": "FEDIAF, literal: «The vitamin E requirement DEPENDS ON THE INTAKE OF POLYUNSATURATED FATTY ACIDS (PUFA) and the presence of other antioxidants. An increased level of vitamin E may be required under conditions of high PUFA intake. FOR CAT FOOD, it is recommended to add 5 to 10 IU Vitamin E above minimum level per gram of fish oil added per kilogram of diet (Hendriks WH et al. 2002)». || ⚠️ LA CIFRA QUE DA ES SOLO PARA EL GATO. Para el perro FEDIAF enuncia la dependencia y no la cuantifica, asi que **no hay numero que aplicar** y ponerle el del gato seria inventarlo. || El NRC dice lo mismo y aporta el unico dato canino que hay: «A high intake of polyunsaturated fat requires a concomitant increase in vitamin E in the diet» (cap.8), y «Hayes et al. (1969) demonstrated that IN THE PRESENCE OF LARGE AMOUNTS OF PUFAs in the diet, 100 mg α-tocopherol·kg⁻¹ diet MAY BE INADEQUATE to prevent lipofuscin formation in dogs». 100 mg/kg de dieta son ~25 mg/1000 kcal a 4000 kcal/kg, o sea 3,6 veces el minimo de FEDIAF (6,97). || POR QUE NOS TOCA MAS QUE A UN PIENSO: una racion BARF lleva pescado azul y aceites por diseno -- son la herramienta con la que el motor cierra el EPA+DHA y ahora tambien el ratio linoleico:linolenico. || ⚠️ MEDIDO 9-sep-2026 sobre los 216 menus del catalogo precalculado (con el araquidonico convertido de mg a g, que es la trampa de UNIDADES.md y en la que cai al medirlo la primera vez):\n      PUFA totales ....... 3,7 a 10,2 g/1000 kcal   (mediana 5,0)\n      vitamina E ......... 11,2 a 93,2 mg/1000 kcal (mediana 26,4; minimo FEDIAF 6,97)\n      vitE : PUFA ........ 1,53 a 23,80 mg/g        (mediana 5,55)\n      por debajo de 0,6 mg de vitE por g de PUFA ....... 0 de 216\n      con la vitamina E por debajo de 25 mg/1000 kcal .. 97 de 216\nO sea: por la relacion clasica (>=0,6 mg de vitamina E por gramo de PUFA) vamos holgados, con el peor menu a 1,53 -- dos veces y media la referencia. Por la cifra absoluta de Hayes, casi la mitad de los menus quedan por debajo, pero esa cifra es de una dieta experimental con PUFA muy alto y no es un requisito. || Abierto en PREGUNTAS_PARA_ELENA.md §12."
-  },
-  "vitamina_b6_segun_proteina": {
-   "nombre": "La vitamina B6 sube con la proteina de la dieta",
-   "tipo": "documentado_sin_cifra",
-   "nutriente": "vitB6",
-   "depende_de": "proteina",
-   "aplicado_por_el_solver": false,
-   "fuente": "FEDIAF 2025, seccion 3.3 «Vitamin B6 (Pyridoxine)» (Bai SC et al. 1989, 1991). Verificado literal 9-sep-2026",
-   "por_que": "FEDIAF, literal y entero -- son dos lineas y no hay mas: «Vitamin B6 (All life stages) REQUIREMENTS OF VITAMIN B6 INCREASE WITH INCREASING PROTEIN CONTENT OF THE FOOD (Bai SC et al. 1991, Bai SC et al. 1989)». || Es la MISMA forma que la arginina de la Tabla VII-13, que si se aplica desde hoy... con una diferencia decisiva: **para la arginina FEDIAF publica una tabla con el coeficiente (0,01 g por gramo de proteina) y para la B6 no publica nada**. Sin coeficiente no hay regla que aplicar. || POR QUE IMPORTA AQUI: una racion BARF va a 119 g/1000 kcal de proteina de mediana, contra los ~52 del minimo de FEDIAF -- mas del doble. Si el requisito de B6 sube con la proteina, nuestro perro esta en el extremo alto de esa dependencia siempre. || ⚠️ MEDIDO 9-sep-2026 sobre los 216 menus, y por eso esto no es urgente: la vitamina B6 real va de 1,37 a 4,95 mg/1000 kcal (mediana 2,75) contra un minimo de FEDIAF de 0,42 -- entre TRES Y DOCE VECES el minimo. La carne y la viscera van sobradas de B6, igual que de arginina y de carnitina. Habria que multiplicar el requisito por tres para que el menu mediano se quedara corto. || Abierto en PREGUNTAS_PARA_ELENA.md §12."
-  },
-  "vitamina_k_en_dietas_con_mucho_pescado": {
-   "nombre": "La vitamina K en dietas con mucho pescado",
-   "tipo": "documentado_sin_cifra",
-   "nutriente": "vitK",
-   "depende_de": "pescado",
-   "aplicado_por_el_solver": false,
-   "fuente": "FEDIAF 2025, seccion 3.3 «Vitamin K» (Kronfeld DS 1989c, NRC 2006j, Strieker MJ et al. 1996). Verificado literal 9-sep-2026",
-   "por_que": "FEDIAF, literal: «Usually vitamin K does not need to be added. However there is some indication that CANNED PET FOOD FOR CATS BEING HIGH IN FISH … may increase the risk of PROLONGED COAGULATION TIMES; therefore it has been suggested to supplement high fish diets with vitamin K». || TRES MOTIVOS PARA NO APLICARLO, y ninguno es comodidad: (1) el aviso es **para el gato** y para pienso enlatado, no para el perro; (2) **FEDIAF no da fila de vitamina K para el perro** -- no esta entre los 41 nutrientes de la Tabla III-3b -- porque la sintetiza la flora intestinal; y (3) **el catalogo no tiene columna de vitamina K**, asi que no hay nada que medir ni con que verificar. || SE ESCRIBE IGUAL PORQUE NOS SENALA: nuestros menus llevan pescado por diseno y en algunas variantes el pescado es el 45 % del peso de la comida, muy por encima de lo que lleva un pienso. Si algun dia hay que mirar esto, aqui esta por que y donde empieza. || Y hay un dato del mismo NRC que lo hace menos preocupante en crudo que en lata: el aviso se asocia al pescado PROCESADO y a la oxidacion, no al pescado fresco."
-  },
-  "aminoacidos_si_no_se_garantiza_la_digestibilidad": {
-   "nombre": "Los aminoacidos esenciales, +10 %, porque no garantizamos la digestibilidad proteica",
-   "tipo": "factor_sobre_el_minimo",
-   "valor": 1.1,
-   "nutrientes": [
-    "Arginina",
-    "Histidina",
-    "Isoleucina",
-    "Leucina",
-    "Lisina",
-    "Metionina",
-    "Metionina_cistina",
-    "Fenilalanina",
-    "Fenilalanina_tirosina",
-    "Treonina",
-    "Triptofano",
-    "Valina"
-   ],
-   "aplica_a_etapas": [
-    "Adulto",
-    "Senior",
-    "CachorroJoven",
-    "CachorroCrecimiento",
-    "Gestante",
-    "GestanteTemprana",
-    "GestanteTardia",
-    "Lactante"
-   ],
-   "aplicado_por_el_solver": true,
-   "fuente": "FEDIAF 2025, seccion 3.2.1 «How to read the tables» y seccion 2.2 «Scope». Verificado literal 9-sep-2026",
-   "conversion": {
-    "valor_en_la_fuente": 1.1,
-    "unidad_en_la_fuente": "adimensional",
-    "densidad_kcal_por_g_MS": 4.0,
-    "cita": "FEDIAF 2025, seccion 3.2.1 «How to read the tables»: los minimos de aminoacidos de la Tabla III-3b suponen una digestibilidad proteica garantizada; si no se garantiza, hay que subirlos un 10 %. Es un factor, no una cifra convertida: no hay unidad que cambiar. Verificado literal 9-sep-2026"
-   },
-   "por_que": "APLICADO 9-sep-2026, Y SALIO DE LEER EL TEXTO, NO LA TABLA -- que es la tercera vez que pasa lo mismo (la arginina, el ratio linoleico:linolenico y la proteina de la lactancia fueron las otras dos). || FEDIAF §3.2.1, literal, en el recuadro que hay junto a la tabla de conversiones: «For commercial dog and cat foods it is recommended that the nutrient levels are at or above the levels listed in the tables and do not exceed the nutritional or legal maximum. **If the protein digestibility of ≥ 80% (mentioned under “2.2. Scope”) cannot be guaranteed, it is recommended to increase the essential amino acid levels by a minimum of 10%.**» || Y §2.2 «Scope» dice cual es la suposicion de la que cuelga TODA la guia: «These guidelines relate to dog and cat foods manufactured from ingredients with normal digestibility (i.e. >=70% DM digestibility; >=80% protein digestibility) and average bioavailability». || POR QUE NOS TOCA: **no podemos garantizar el 80 %**. El catalogo no tiene columna de digestibilidad -- ni una -- asi que no es que salgamos por debajo: es que no lo sabemos, y la regla de FEDIAF esta escrita justo para ese caso. Y hay motivo para no darlo por hecho: una racion BARF lleva entre un 20 y un 60 % de hueso carnoso, con colageno y tejido conectivo, que es lo menos digestible que hay en el plato. || MEDIDO ANTES DE APLICARLO, dos veces. (1) Sobre los 36 menus del catalogo, cuanto margen tienen hoy los doce sobre su minimo: TODOS por encima del 110 %, con la lisina a 358 % en el peor caso y la arginina a 263 %. El mas ajustado con diferencia es metionina+cistina: 112 % en el peor menu, 149 % en el percentil 10, 240 % de mediana. O sea que once de los doce sobran y uno va justo. (2) Con el +10 % puesto y por la via de la API: 12 perfiles (toy, mini, mediano, grande, gigante, senior, cachorro temprano y tardio, lactante, y adulto sin pollo, sin vacuno y sin pescado) dan menu LOS DOCE, en el peldano ESTRICTO. || ⚠️ Y HAY UNA SEGUNDA RAZON PARA QUE SEA METIONINA+CISTINA EL QUE VA JUSTO, y esta en el mismo documento: el Anexo 7.3 dice que el perro sintetiza la taurina a partir de los aminoacidos azufrados, que un estatus bajo de taurina «may also predispose to dilated cardiomyopathy», y que aparece precisamente «in dogs fed non-supplemented very low protein diets, or foods that are low in sulphur-containing amino acids or with poor availability of the sulphur-containing amino acids». Dos partes distintas de la misma guia apuntando al mismo nutriente. || DONDE SE APLICA: en `verificar.minimo_de()`, que es el unico sitio que escala minimos (regla del CLAUDE.md), asi que el solver y el semaforo lo reciben por la misma puerta y no pueden discrepar."
-  },
-  "antioxidantes_del_perro_de_trabajo": {
-   "nombre": "La vitamina E del perro de trabajo y de deporte",
-   "tipo": "suelo_si_der_efectiva_supera",
-   "nutriente": "Vitamina_E",
-   "valor": 83.9,
-   "umbral_der_efectiva": 150.0,
-   "aplica_a_etapas": [
-    "Adulto"
-   ],
-   "aplicado_por_el_solver": true,
-   "fuente": "SACN5 5a ed., cap.18 «Feeding Working and Sporting Dogs», Tabla 18-9, fila «Antioxidants / Vitamin E». Verificado literal 9-sep-2026",
-   "conversion": {
-    "valor_en_la_fuente": 500.0,
-    "unidad_en_la_fuente": "UI/kg MS",
-    "densidad_kcal_por_g_MS": 4.0,
-    "factor_a_la_unidad_del_motor": 0.671,
-    "por_que_el_factor": "1 UI de vitamina E son 0,671 mg de alfa-tocoferol NATURAL, que es lo que miden las tablas de composicion y por tanto el catalogo (FEDIAF Tabla VII-14; el 1 mg/UI vale solo para el acetato sintetico de los suplementos). Es el mismo factor que usa `auditar_fediaf.EQUIV` para la vitamina E, escrito alli como 0,67. ⚠️ Es exactamente la segunda conversion en la que se fallo el 8 de septiembre con la vitamina E de la artrosis, tratando las UI como si fueran mg.",
-    "cita": "SACN5 5a ed., cap.18 «Feeding Working and Sporting Dogs», Tabla 18-9, fila «Antioxidants / Vitamin E»: «>=500 IU vitamin E/kg food (DM)», igual en las cuatro columnas de actividad. Leida literal 9-sep-2026"
-   },
-   "por_que": "APLICADO 9-sep-2026. La Tabla 18-9 pide «>=500 IU vitamin E/kg food (DM)» en LAS CUATRO columnas de actividad -- sprint, intermedia baja, intermedia alta y resistencia -- o sea que no depende de cuanto trabaje el perro, solo de que trabaje. 500 UI/kg MS / 4 = 125 UI/1000 kcal, y a 0,671 mg/UI (tocoferol natural, conversion de FEDIAF Tabla VII-14) son 83,9 mg/1000 kcal. || POR QUE IMPORTA: el minimo de FEDIAF para el adulto son 6,968 mg/1000 kcal, asi que el perro de trabajo necesita DOCE VECES eso. Y medido sobre los 36 menus del catalogo, la vitamina E real va de 13,4 a 89,0 con MEDIANA 25,1: solo 3 de 36 llegarian al suelo. O sea que un perro de trabajo estaba recibiendo un tercio de lo que su fuente pide, y salia VERDE, porque el semaforo mide contra el minimo del perro de mantenimiento. || QUE LO DISPARA, Y POR QUE NO HACE FALTA UN CAMPO NUEVO: la DER efectiva en kcal por kg^0,75, que el motor YA calcula (`der_efectiva_de`) y que ES el nivel de actividad -- la tabla VII-7 de FEDIAF y `der.py` usan los mismos cinco escalones: 95 sedentario, 110 normal, 125 activo, 150 muy activo (que `der.py` describe literalmente como «perro de trabajo, pastoreo») y 175 trabajo. Se aplica desde 150. || DONDE ESTA LA LINEA, Y QUE ES INTERPRETACION NUESTRA: la Tabla 18-1 de SACN5 lista las actividades, y en la columna «intermediate» incluye «exercise with people (running, bicycling)», que podria ser tambien nuestro «activo» (125). Se aplica desde 150 y no desde 125 porque 150 cubre a los perros que la fuente nombra sin discusion (pastoreo, policia, rescate, caza, trineo) y no le pone un suelo nuevo a un perro que la fuente no cubre claramente. Bajarlo a 125 es una decision de nutricion, no de codigo, y esta anotada. || MEDIDO ANTES DE APLICARLO: diez perros de trabajo (8, 15, 25, 35 y 55 kg, a 150 y a 175 kcal/kg^0,75) dan menu LOS DIEZ en el peldano ESTRICTO, con la vitamina E real entre 82,7 y 87,8. || Y NO CHOCA CON NINGUN TECHO: FEDIAF no da maximo de vitamina E. El unico techo escrito para este nutriente es el que sugiere el NRC via SACN5 cap.7 -- 1.000 UI/kg MS = 167,75 mg/1000 kcal --, y 83,9 es la mitad."
-  },
-  "antioxidantes_del_perro_de_trabajo_sin_aplicar": {
-   "nombre": "La vitamina C y el selenio del perro de trabajo, escritos y sin aplicar",
-   "tipo": "documentado_sin_cifra",
-   "aplicado_por_el_solver": false,
-   "fuente": "SACN5 5a ed., cap.18, Tabla 18-9, filas «Vitamin C» y «Selenium». Verificado literal 9-sep-2026",
-   "por_que": "LA MISMA TABLA PIDE OTRAS DOS COSAS Y NINGUNA DE LAS DOS SE APLICA, cada una por un motivo distinto. || (1) VITAMINA C, «150 to 250 mg vitamin C/kg food (DM)» = 37,5-62,5 mg/1000 kcal. NO SE APLICA porque **el perro la sintetiza y FEDIAF no le pone requisito ninguno**: no hay fila de vitamina C en la Tabla III-3b. Poner un suelo de un nutriente que el organismo fabrica, y para el que no hay ni minimo ni maximo publicado, seria inventarse una regla. Y el propio cap.7 avisa de que suplementar antioxidantes no siempre suma: «oral vitamin C supplementation at 1 g/day may slow racing times in greyhounds». || (2) SELENIO, «0.5 to 1.3 mg/kg food (DM)» = 125-325 ug/1000 kcal. NO SE APLICA por lo mismo que en la disfuncion cognitiva: **el rango se sale por arriba del maximo LEGAL de FEDIAF** (142 ug/1000 kcal), asi que dos tercios de lo que la fuente recomienda no se puede dar, y su extremo bajo (125) obliga a vivir al 88 % de un techo de toxicidad cronica. Es el TERCER sitio donde aparece ese mismo rango -- Tabla 35-3, cap.7 y aqui --, asi que la pregunta para el nutricionista es una sola y ya esta escrita en PARA_EL_NUTRICIONISTA.md."
-  },
-  "zinc_y_cobre_cuando_el_calcio_esta_alto": {
-   "nombre": "El zinc y el cobre suben cuando el calcio se acerca a su máximo",
-   "tipo": "documentado_sin_cifra",
-   "nutriente": null,
-   "nutrientes": [
-    "zinc",
-    "cobre"
-   ],
-   "depende_de": "calcio",
-   "aplicado_por_el_solver": false,
-   "fuente": "FEDIAF 2025, §3.3.1, apartado «Calcium (Adult dogs)», y el apartado «General» de oligoelementos. Verificado literal 9-sep-2026",
-   "por_que": "FEDIAF, literal: «As the calcium level approaches the stated nutritional maximum, it may be necessary to INCREASE THE LEVELS OF CERTAIN TRACE ELEMENTS SUCH AS ZINC AND COPPER». Y el apartado general de oligoelementos lo amplía: «the bioavailability of trace elements is REDUCED BY A HIGH CONTENT OF CERTAIN MINERALS (e.g. calcium), the level of other trace elements (e.g. high zinc decreases copper absorption) and sources of phytic acid». || POR QUÉ NOS TOCA DE LLENO: una ración BARF va cargada de hueso, o sea de calcio, y el motor no sube ni el zinc ni el cobre por eso. || POR QUÉ NO SE APLICA: falta EL FACTOR -- cuánto sube el requisito --, y no lo da ninguna de las dos fuentes. ⚠️ EL UMBRAL SÍ EXISTE, y no lo da FEDIAF sino SACN5: la Tabla 32-1, fila Zinc, dice «Higher levels of zinc are required in foods with calcium >1,5 % DM» = 3750 mg/1000 kcal, que es el 60 % del máximo de FEDIAF y no el 90 %. Cuando esta regla se escribió, el 9 de septiembre por la tarde, decía que «FEDIAF no da ni a partir de qué nivel de calcio empieza» -- y era verdad de FEDIAF y falso del conjunto de las fuentes. Se corrigió esa misma noche al leer entero el capítulo 32. Inventarse la cifra sería exactamente lo que este fichero existe para no hacer. || LO QUE SÍ SE PUEDE HACER, y es trabajo nuestro: medir cuánto calcio llevan los menús reales contra el máximo, y cuánto margen le queda al zinc contra su techo legal. Si el calcio va pegado al máximo y el zinc al mínimo, es una pregunta con datos para la nutricionista.",
-   "medido": "⚠️ ESTO NO SE MIDE CONTRA EL CATALOGO DE MENUS Y SE DICE POR QUE: el catalogo se regenera, y una frase del tipo «hoy ningun menu se acerca al maximo» se queda escrita, deja de ser verdad y NADIE SE ENTERA. Lo que se puede escribir aqui es lo que no cambia -- la aritmetica de las tablas -- y lo que cambia se vuelve a medir en cada bateria, sobre menus resueltos EN VIVO: BLOQUE 69. || LO PERMANENTE, que sale de la Tabla III-3b y del Reglamento (UE) 2016/1095 y no de ningun menu: el calcio de adulto va de 1450 a 6250 mg/1000 kcal (el techo es 4,31 veces el suelo); el ZINC de 20,8 a 56,75 (2,73 veces) y el COBRE de 2,08 a 7,0 (3,37 veces). O sea que subir el zinc y el cobre como pide FEDIAF SI cabe en principio -- hay entre dos y tres veces de recorrido --, y lo unico que impide aplicarlo es que FEDIAF NO DA EL FACTOR: ni cuanto sube el requisito ni desde que nivel de calcio empieza. || LO QUE MIDE EL BLOQUE 69, y por que ese y no otro: la condicion que enuncia FEDIAF es «as the calcium level APPROACHES the stated nutritional maximum». Mientras ningun menu se acerque, no aplicarla no cambia nada; el dia que uno se acerque, si. Asi que el bloque resuelve menus de verdad y FALLA si alguno pasa del 90 % del maximo de calcio, y al fallar dice cuanto recorrido le queda al zinc y al cobre contra su techo LEGAL en ese menu concreto. Eso convierte esto en una pregunta con datos para la nutricionista el dia que haga falta, en vez de en una frase vieja.",
-   "umbral_de_calcio_mg_por_1000kcal": 3750.0,
-   "fuente_del_umbral": "SACN5 5a ed., cap.32 «Skin and Hair Disorders», Tabla 32-1, fila «Zinc»: «Avoid excess calcium — … Higher levels of zinc are required in foods with calcium >1.5 % DM». Leida entera 9-sep-2026. A 4,0 kcal/g MS son 3750 mg/1000 kcal."
-  },
-  "biotina_y_vitamina_k_con_antivitaminas": {
-   "nombre": "La biotina y la vitamina K solo hacen falta si la dieta lleva antivitaminas, y la clara cruda lo es",
-   "tipo": "documentado_sin_cifra",
-   "nutriente": null,
-   "nutrientes": [
-    "biotina",
-    "vitK"
-   ],
-   "depende_de": "clara de huevo cruda",
-   "aplicado_por_el_solver": false,
-   "fuente": "FEDIAF 2025, §3.3.1, apartados «Vitamin B7 (Biotin)» y «Vitamin K» (Kronfeld DS 1989a/b/c, NRC 2006j). Verificado literal 9-sep-2026",
-   "por_que": "FEDIAF, literal: «For healthy dogs BIOTIN DOES NOT NEED TO BE ADDED to the food UNLESS THE FOOD CONTAINS ANTIMICROBIAL OR ANTI-VITAMIN COMPOUNDS», y lo mismo para la vitamina K. || ⚠️ Y NUESTRA CONDICIÓN SE CUMPLE: la clara de huevo cruda ES un compuesto antivitamínico -- la avidina secuestra la biotina --, y es EXACTAMENTE por eso que `seguridad.TOPE_CLARA_PESO` la topa al 5 % del peso. O sea que el motor ya conoce el mecanismo por un lado y no lo cruza con el requisito por el otro. || POR QUÉ NO SE APLICA: FEDIAF deja las dos filas VACÍAS para el perro en la Tabla III-3b (biotina y vitamina K, los seis campos a '-'), así que no hay cifra que subir ni desde dónde. La condición está enunciada y no cuantificada. || LO QUE SÍ SE PUEDE HACER: medir cuántos menús llevan clara cruda y cuánta biotina aportan, que el catálogo sí la trae.",
-   "medido": "⚠️ TAMPOCO SE MIDE CONTRA EL CATALOGO DE MENUS, por lo mismo: contar cuantos menus llevan clara hoy es una foto, y la foto caduca. || LO PERMANENTE Y LO QUE DE VERDAD IMPORTA: la clara de huevo ESTA en el catalogo, y va en una de las categorias que el motor maneja SIEMPRE libres (regla 5 de CLAUDE.md: Suplementos y Extras no se eligen en ninguna pantalla). O sea que el motor PUEDE meterla en cualquier menu, se lo pida nadie o se lo pida el usuario. La condicion que enuncia FEDIAF -- «unless the food contains antimicrobial or ANTI-VITAMIN compounds» -- no es que no se cumpla: es que se puede cumplir en cualquier momento y no lo estamos mirando. Que hoy salga en pocos menus o en ninguno no cambia eso, y escribirlo como si lo cambiara seria justo el error. || Y EL MOTOR YA CONOCE EL MECANISMO POR EL OTRO LADO: `seguridad.TOPE_CLARA_PESO` topa la clara cruda al 5 % del peso PORQUE la avidina secuestra la biotina. O sea que sabemos que es antivitaminica cuando limitamos la cantidad, y no lo sabemos cuando fijamos el requisito. || LO QUE FALTA PARA PODER APLICAR ALGO NO ES UNA MEDIDA NUESTRA: es una cifra de FEDIAF, y las dos filas de la Tabla III-3b (biotina y vitamina K) estan VACIAS para el perro, los seis campos a '-'. El BLOQUE 69 vigila que la premisa siga siendo cierta -- que la ficha de clara siga en el catalogo y siga siendo alcanzable por el motor --, porque el dia que deje de estarlo esta regla hablaria de algo que ya no existe."
-  },
-  "metionina_cistina_segun_la_taurina": {
-   "nombre": "La metionina+cistina de la tabla supone una dieta casi sin taurina",
-   "tipo": "documentado_sin_cifra",
-   "nutriente": "metionina_cistina",
-   "depende_de": "taurina",
-   "aplicado_por_el_solver": false,
-   "fuente": "FEDIAF 2025, §3.3.1, apartado «Methionine-Cystine (Adult dogs)» (Sanderson SL et al. 2001). Verificado literal 9-sep-2026",
-   "por_que": "FEDIAF, literal: «The recommended values are based on a dog food containing A VERY LOW TAURINE CONTENT, i.e. <100 mg/kg dry matter (Sanderson SL et al. 2001). For products containing HIGHER LEVELS OF TAURINE the RA for sulphur amino acids CAN BE LOWER than the values quoted in the table». || O sea que el mínimo de 2,21 g/1000 kcal que aplicamos está calculado sobre una dieta que NO se parece a la nuestra: una ración de carne cruda va muy por encima de 100 mg/kg de materia seca de taurina. || ⚠️ Y ESTO NO ES ACADÉMICO: `metionina_cistina` es el `nutriente_frontera` que hoy bloquea los UROLITOS DE CISTINA -- una patología que le decimos al dueño que no podemos formular porque su objetivo terapéutico cae por debajo del mínimo de FEDIAF. Si ese mínimo puede ser menor por llevar taurina, la frontera se mueve. || POR QUÉ NO SE APLICA: FEDIAF dice «can be lower» y NO DICE CUÁNTO. Bajar un mínimo sin cifra es justo lo que no se hace. || LO QUE SÍ SE PUEDE HACER, y es lo primero: medir la taurina real de nuestros menús. El catálogo tiene la fila, y el propio FEDIAF remite a su Anexo 7.3 para el detalle -- que es una de las secciones que todavía no está leída entera.",
-   "medido": "MEDIDO SOBRE MENUS RESUELTOS EN VIVO, no sobre el catalogo, y se vuelve a medir en cada bateria (BLOQUE 69). La taurina se pasa a mg/kg de MATERIA SECA con la densidad que declara el propio FEDIAF, 4,0 kcal EM por gramo de MS (1 kg MS = 4000 kcal), o sea mg/1000 kcal x 4 -- que es la unidad en la que FEDIAF pone su umbral, «<100 mg/kg dry matter». || LO PERMANENTE, y es lo que sostiene el hallazgo: la taurina de una racion cruda no viene de un suplemento, viene del musculo y sobre todo del CORAZON, que es una de las piezas que una racion BARF lleva por construccion. No es una casualidad de los menus de hoy. || LA MEDIDA, CORREGIDA EL 10-sep-2026 DE NOCHE, Y LA CORRECCION IMPORTA: el menu TIPICO si va un orden de magnitud por encima de los 100 mg/kg MS que FEDIAF supone -- los 36 menus precalculados del catalogo van de 202 a 3230, mediana 1525, y NINGUNO baja del umbral --, pero lo que se escribio el 9 de septiembre («el menu mas pobre por encima de 128») NO ERA VERDAD del perro pequeño. Medido en vivo esa noche, seis menus de 3 kg seguidos: 183 · 120 · 1883 · 1310 · 1181 · 135, y en una bateria uno salio en 0. El toy vive JUSTO EN EL BORDE, y no es raro: la taurina NO es un requisito del motor -- no tiene ni suelo ni techo --, asi que el solver no tiene ningun motivo para meterla y que un menu concreto la lleve es un sorteo. Lo permanente que si sostiene el hallazgo sigue en pie: la taurina de una racion cruda viene del musculo y sobre todo del CORAZON, que una racion BARF lleva por construccion; lo que cambia entre ejecuciones es si al perro de 3 kg le toca corazon o no. || EL BLOQUE 69 MIDE AHORA LA MEDIANA de seis menus resueltos en vivo, no el peor: falla si la mediana baja del umbral, que es lo unico que significaria que la premisa se ha dado la vuelta, y CUENTA Y DICE los menus sueltos que caen por debajo sin fallar por ellos. Un rojo que sale una vez de cada seis enseña a desconfiar de la bateria. || ⚠️ Y LO QUE HAY QUE TENER CLARO ANTES DE MIRAR NINGUN NUMERO: caiga del lado que caiga, el motor aplica el minimo de metionina+cistina de FEDIAF. Si el menu lleva MENOS de 100, la suposicion de FEDIAF ES la nuestra y su minimo es exacto; si lleva MAS, su minimo es CONSERVADOR. NO HAY CASO INSEGURO. Lo unico que decide esta medida es si la pregunta merece hacerse. || QUE HACER CON ESTO: nada por nuestra cuenta. FEDIAF dice «can be lower» y NO DICE CUANTO, y bajar un minimo sin cifra no se hace. Pero si ese minimo puede bajar, se mueve el `nutriente_frontera` que hoy deja los urolitos de cistina sin formular, y eso tiene destinatario."
-  },
-  "dha_en_crecimiento_y_reproduccion": {
-   "nombre": "El DHA tiene que ser al menos el 40 % del EPA+DHA en crecimiento y reproduccion",
-   "tipo": "suelo",
-   "nutriente": "dha",
-   "valor": 0.05,
-   "unidad": "g por 1000 kcal",
-   "aplica_a_etapas": [
-    "CachorroJoven",
-    "CachorroCrecimiento",
-    "Gestante",
-    "GestanteTardia",
-    "Lactante"
-   ],
-   "aplicado_por_el_solver": true,
-   "fuente": "SACN5 5a ed., Tablas 15-5 (reproduccion), 17-1 (crecimiento, SUS DOS COLUMNAS) y 33-5 (crecimiento de raza grande), y el texto de los caps. 15 y 33 que las deriva, citando a NRC 2006. Leidas enteras el 9 de septiembre de 2026",
-   "conversion": {
-    "valor_en_la_fuente": 0.02,
-    "unidad_en_la_fuente": "%MS",
-    "densidad_kcal_por_g_MS": 4.0,
-    "cita": "SACN5 5a ed., cap.15 (y el cap.33 lo repite): «the minimum recommended allowance of DHA plus eicosapentaenoic acid (EPA) of at least 0.05 % (DM) (NRC, 2006). Therefore, DHA needs to be at least 40 % of the total DHA plus EPA, or 0.02 % DM». Mismas cifras en las Tablas 15-5, 17-1 (sus dos columnas) y 33-5. Leidas enteras 9-sep-2026"
-   },
-   "medido": "MEDIDO EN VIVO ANTES DE APLICARLO, 9-sep-2026, sobre diez menus resueltos con el motor y el catalogo reales: tres de CachorroJoven (2, 8 y 25 kg), tres de CachorroCrecimiento (5, 15 y 35), uno de Gestante, uno de GestanteTardia y dos de Lactante. **Ninguno baja de 0,05 g/1000 kcal** -- el mas justo va a 0,073, o sea 1,47 veces el suelo -- y el DHA sale entre el **57 % y el 75 % del EPA+DHA**, siempre por encima del 40 % que pide la fuente. || O sea que aplicarlo NO cambia ni un menu de hoy, y eso es precisamente el motivo de aplicarlo ahora: el suelo no aprieta nada y cierra la puerta a que manana un menu cumpla los 0,125 g de EPA+DHA con EPA solo. Lo contrario -- esperar a que pase -- seria enterarse por un cachorro.",
-   "por_que": "⚠️ APARECE EN CUATRO SITIOS CON LA MISMA CIFRA, Y NO SE APLICABA EN NINGUNO. || SACN5, literal (cap.15, y el cap.33 lo repite): «Foods for late gestation and peak lactation should contain the minimum recommended allowance of DHA plus eicosapentaenoic acid (EPA) of at least 0,05 % (DM) (NRC, 2006). Therefore, **DHA needs to be at least 40 % of the total DHA plus EPA, or 0,02 % DM**». Y las tres tablas lo llevan como fila propia: la 15-5 «DHA (%) >=0,02», la 17-1 «DHA (%) 0,02» en LAS DOS columnas de peso adulto, y la 33-5 «Docosahexaneoic acid >0,02%». || CONVERSION: 0,02 % de materia seca a 4,0 kcal/g MS = 0,05 g/1000 kcal. || EL HUECO QUE CIERRA: el motor pide EPA+DHA >=0,125 g/1000 kcal (FEDIAF, misma cifra que el NRC) y NO pide reparto. O sea que hasta hoy un menu de cachorro o de perra gestante podia cumplir ese minimo **entero con EPA** y salir verde, con cero DHA. Y el DHA no es intercambiable: la 33-5 dice para que es («***For improved learning») y el cap.15 explica que «milk concentrations of DHA parallel dietary intake», o sea que lo que no lleva la racion no llega al cachorro. || POR QUE COMO SUELO ABSOLUTO Y NO COMO RATIO: la fuente da las dos formas y las hace equivalentes en la misma frase («at least 40 % of the total ... **or 0,02 % DM**»). El 40 % se calcula sobre el MINIMO recomendado, no sobre lo que lleve el menu, asi que el absoluto es la lectura literal y ademas la que no castiga a un menu que va sobrado de omega-3. || NO SE APLICA EN ADULTO a proposito: ninguna de las tres tablas es de adulto, y FEDIAF no pone requerimiento absoluto de EPA+DHA en adulto (la fila esta vacia). Inventarlo seria pasar una cifra de una etapa a otra, que es justo lo que este fichero existe para no hacer."
   }
- }
 }

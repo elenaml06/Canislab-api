@@ -88,6 +88,8 @@ crítica (`fracaso_renal_agudo`, `encefalopatia_hepatica`, `cancer_soporte`,
 `inmunosupresion`, `pancreatitis`) -- ver PENDIENTE_NUTRICION.md.
 """
 
+import math
+
 # =============================================================================
 # ADULTOS — base por actividad (kcal por kg de peso metabólico)
 # =============================================================================
@@ -185,7 +187,9 @@ BASE_ACTIVIDAD = {
 # un -6,4 %, cuando FEDIAF dice -13,6 % y SACN5 cap.5 dice, aparte, «dogs over
 # seven years of age required 10 to 20% less energy» y recomienda «foods providing
 # a 15 to 20% caloric reduction». Las dos fuentes coincidian y nosotras ibamos por
-# menos de la mitad. Lo vigila ahora `fediaf_tablas.json` + BLOQUE 67.
+# menos de la mitad. Lo unico que lo evita es LEER EL CAPITULO ENTERO y
+# anotar lo que se aplica y lo que no, que es la regla desde el 11-sep-2026:
+# ver `LECTURAS.md`.
 #
 # ⚠️ Y CRUZAR EDAD CON ACTIVIDAD ES LO QUE PIDE LA FUENTE, aunque la VII-6 y la
 # VII-7 sean alternativas entre si. FEDIAF, justo encima de la VII-6: «some young
@@ -415,6 +419,9 @@ BCS_DESDE_CONDICION = {0: 1, 1: 3, 2: 5, 3: 7, 4: 9}
 # «>45 %» y la recta da 40. Ver el comentario largo de `verificar.py`.
 BCS_PCT_POR_PUNTO = 0.10
 EXCESO_BCS_9 = 0.45          # FEDIAF 2025, Tabla VII-2, fila «9. Grossly Obese»
+# El ideal de FEDIAF es una BANDA, 4 a 5. Tiene que ser identico a
+# `verificar.BCS_IDEAL_MIN`, donde esta el motivo completo.
+BCS_IDEAL_MIN = 4.0
 SOBREPESO_UMBRAL = 1.10           # >=10% por encima del ideal
 INFRAPESO_UMBRAL = 0.90           # >=10% por debajo
 INFRAPESO_AUMENTO = 1.20          # +20%
@@ -448,11 +455,25 @@ def peso_ideal_desde_condicion(peso_actual_kg: float, condicion_idx: int) -> flo
     # decir lo mismo que `verificar.peso_objetivo_desde_bcs`, que es la copia que
     # sí usa la API -- este modulo solo corre si alguien llama a `/der`. Dos
     # sitios que calculan lo mismo, y por eso el BLOQUE 63 los compara.
+    # ⚠️ 11 sep: EL IDEAL DE FEDIAF ES UNA BANDA, 4 A 5, NO UN PUNTO. Su §7.1.3
+    # («The ideal BCS should therefore be between 4/9 and 5/9») y su §7.2.4.1
+    # («dogs should be fed to maintain a body condition score (BCS) between 4
+    # and 5»), las dos apoyadas en Kealy 2002, el estudio de catorce anos con
+    # labradores. Un perro en BCS 4 ya esta bien y no hay que engordarlo.
+    # El motivo largo y lo que cambia en cada punto: `verificar.BCS_IDEAL_MIN`,
+    # que es la copia que sI usa la API. Las dos tienen que decir lo mismo y el
+    # BLOQUE 37 las compara.
+    if BCS_IDEAL_MIN <= bcs <= 5:
+        return None
     if bcs >= 9:
         desvio = EXCESO_BCS_9
     else:
         desvio = (bcs - 5) * BCS_PCT_POR_PUNTO  # +0.2 si BCS 7, -0.3 si BCS 2
-    ideal = peso_actual_kg / (1 + desvio)
+    peso_en_bcs5 = peso_actual_kg / (1 + desvio)
+    # Al borde de la banda ideal que le queda mas cerca: el 5 por arriba, el 4
+    # por abajo.
+    bcs_objetivo = BCS_IDEAL_MIN if bcs < BCS_IDEAL_MIN else 5
+    ideal = peso_en_bcs5 * (1 + (bcs_objetivo - 5) * BCS_PCT_POR_PUNTO)
     # TOPE DE SEGURIDAD hacia arriba. Un perro muy delgado (BCS 2) daria un
     # objetivo un 43% por encima de su peso actual, y pasar de golpe a esa
     # racion es mala idea: se recupera peso poco a poco, y ademas un perro
@@ -526,75 +547,156 @@ def _coef_adulto(actividad, edad_grupo, convivencia, macho_entero, raza):
 # El propio perro da mejor informacion que la tabla: si con 5 meses ya pesa
 # 18 kg, va camino de mas de 26.
 #
-# % DEL PESO ADULTO POR EDAD Y TAMANO. Derivado de las curvas de crecimiento
-# tipo WALTHAM (Salt, German et al. 2017, PLOS ONE, >6 millones de perros).
-# ⚠️ Los porcentajes concretos vienen de reproducciones divulgativas de esas
-# curvas, NO del texto del estudio: usar como estimacion, no como dato duro.
-CURVA_CRECIMIENTO = {
-    # meses: (toy <5kg, pequeno 5-10, mediano 10-25, grande 25-45, gigante >45)
-     2: (0.35, 0.30, 0.25, 0.20, 0.15),
-     3: (0.50, 0.45, 0.40, 0.32, 0.25),
-     4: (0.65, 0.58, 0.52, 0.44, 0.35),
-     5: (0.75, 0.68, 0.60, 0.50, 0.40),
-     6: (0.80, 0.75, 0.65, 0.55, 0.45),
-     7: (0.85, 0.80, 0.72, 0.62, 0.52),
-     8: (0.90, 0.85, 0.78, 0.68, 0.58),
-     9: (0.94, 0.90, 0.84, 0.74, 0.64),
-    10: (0.97, 0.93, 0.88, 0.80, 0.70),
-    11: (0.99, 0.96, 0.92, 0.85, 0.75),
-    12: (1.00, 0.98, 0.95, 0.89, 0.80),
-    15: (1.00, 1.00, 0.99, 0.95, 0.88),
-    18: (1.00, 1.00, 1.00, 0.99, 0.94),
-    24: (1.00, 1.00, 1.00, 1.00, 1.00),
-}
+# ⚠️ 11 SEP: MANDA FEDIAF, Y HASTA HOY NO SE USABA SU ECUACION.
+# La Tabla VII-8a de FEDIAF publica esta misma curva como CINCO ECUACIONES,
+# validas «from weaning age (8 weeks) to 1 year», y aqui habia una tabla cuyo
+# propio comentario decia que venia de «reproducciones divulgativas» de las
+# curvas WALTHAM y NO del texto del estudio. Una fuente publicada gana a una
+# reproduccion divulgativa, que es la regla de siempre.
+#
+# ⚠️ CASO REAL ENCONTRADO, y va en la direccion mala: MEDIDO entre los 2 y los
+# 12 meses, en perros pequenos la diferencia iba de -1,5 a +3,2 puntos, pero en
+# los grandes la tabla vieja iba SISTEMATICAMENTE POR DEBAJO -- un cachorro de
+# mas de 47,5 kg de adulto, a los 6 meses, para FEDIAF va por el 57,0 % de su
+# peso adulto y la tabla vieja decia 45,0 %. Menos porcentaje supone un peso
+# adulto estimado MAYOR, que en la ecuacion de Klein sube el coeficiente: para
+# un cachorro de 30 kg a los 6 meses son 2479 kcal con la tabla vieja contra
+# 2271 con la de FEDIAF, un 9 % DE MAS, justo en la poblacion en la que la
+# propia FEDIAF avisa de que sobrealimentar «can result in skeletal deformities
+# especially in large and giant breeds».
+#
+# ⚠️ Y ESTA TABLA HAY QUE LEERLA DEL PDF, NO DEL TEXTO EXTRAIDO. Las cinco
+# bandas y las cinco ecuaciones salen en dos columnas cruzadas y el orden NO es
+# el que parece: la banda >15-27,5 lleva -60,70 y la >27,5-47,5 lleva -56,18, o
+# sea que el termino independiente NO es monotono y emparejarlas «de menor a
+# mayor» las cruza. Las cinco parejas de abajo estan leidas del PDF por
+# coordenadas (pagina 56, y=345 a y=405).
+#
+# FEDIAF 2025, Tabla VII-8a:
+#     % del peso adulto esperado = a x Ln(edad en semanas) - b
+CURVA_FEDIAF_VII_8A = (
+    #  peso adulto esperado hasta (kg),    a,       b
+    (7.0,                                36.92,   43.57),
+    (15.0,                               36.86,   48.22),
+    (27.5,                               39.88,   60.70),
+    (47.5,                               36.96,   56.18),
+    (float("inf"),                       36.61,   62.39),
+)
+
+# La ecuacion de FEDIAF vale de las 8 semanas al ano, y ella misma lo dice. Por
+# encima del ano sigue subiendo y pasa del 100 %, asi que ahi NO se usa: se
+# vuelve a la tabla de abajo, que es la unica que tiene el tramo de los 12 a los
+# 24 meses (el del gigante, que a los 12 meses todavia no ha terminado).
+CURVA_FEDIAF_MESES_MIN = 2.0     # 8 semanas = 1,84 meses; se redondea al primer
+CURVA_FEDIAF_MESES_MAX = 12.0    # escalon que la tabla de respaldo ya tenia
+
+SEMANAS_POR_MES = 365.25 / 12.0 / 7.0    # 4,348
 
 
-def _columna_tamano(peso_adulto_estimado):
-    if peso_adulto_estimado < 5:   return 0
-    if peso_adulto_estimado < 10:  return 1
-    if peso_adulto_estimado < 25:  return 2
-    if peso_adulto_estimado < 45:  return 3
-    return 4
+def _pct_peso_adulto_fediaf(meses, peso_adulto_estimado):
+    """
+    % del peso adulto que le toca a esa edad, por la Tabla VII-8a de FEDIAF.
+
+    Devuelve None fuera del rango de validez que la propia FEDIAF declara
+    (8 semanas a 1 ano), para que el llamador use el respaldo.
+    """
+    if meses is None or meses < CURVA_FEDIAF_MESES_MIN or meses > CURVA_FEDIAF_MESES_MAX:
+        return None
+    for tope, a, b in CURVA_FEDIAF_VII_8A:
+        if peso_adulto_estimado <= tope:
+            break
+    semanas = meses * SEMANAS_POR_MES
+    pct = (a * math.log(semanas) - b) / 100.0
+    # La ecuacion es un ajuste: a los 12 meses el perro pequeno ya la pasa de
+    # 100 %. Nunca puede decir que pesa mas de lo que va a pesar de adulto.
+    return min(max(pct, 0.01), 1.0)
+
+
+# ⚠️ AQUI VIVIA LA TABLA WALTHAM, Y SE BORRA EL 11 DE SEPTIEMBRE.
+#
+# Era `CURVA_CRECIMIENTO`, un diccionario de porcentajes por edad y tamano cuyo
+# propio comentario decia que venia de «reproducciones divulgativas» de las
+# curvas WALTHAM y **NO del texto del estudio**. Al aplicar la Tabla VII-8a de
+# FEDIAF se quedo cubriendo solo lo que esa ecuacion no cubre -- por debajo de
+# las 8 semanas y por encima del ano --, y ahi hacia dano de dos maneras:
+#
+#   1. Seguia siendo una cifra sin fuente decidiendo kcal de un cachorro.
+#   2. Y hacia que los DOS REPOS divergieran justo en ese tramo: `der.js` no
+#      tiene tabla ninguna y cae a la regla de SACN5 por edad (3 x RER hasta
+#      los cuatro meses, 2 x RER despues). O sea que un cachorro de 8 kg y 14
+#      meses recibia 574 kcal por esta puerta y 666 por la del frontend, que es
+#      el que manda. Dos numeros para el mismo perro, y ninguna prueba podia
+#      verlo porque el contrato compartido declaraba que `mesesEdad` no se
+#      podia probar -- precisamente porque los dos caminos eran distintos.
+#
+# Ahora fuera del rango de FEDIAF no se estima peso adulto: se devuelve lo que
+# hubiera (el peso de la raza) o nada, y `_coef_crecimiento` cae a la regla de
+# SACN5, que es exactamente lo que hace `der.js`. Los dos repos dicen lo mismo
+# en todo el rango, y `der_casos.json` lo comprueba con trece casos de
+# `mesesEdad` desde ese dia.
 
 
 def peso_adulto_desde_curva(peso_actual_kg, meses, peso_medio_raza=None,
                             peso_min_raza=None, peso_max_raza=None):
     """
-    Estima el peso adulto a partir de lo que el perro pesa AHORA y su edad.
+    Estima el peso adulto a partir de lo que el perro pesa AHORA y su edad,
+    con la Tabla VII-8a de FEDIAF.
 
-    Se itera porque la columna de la tabla depende del peso adulto, que es
-    justo lo que se busca: se parte de la media de la raza (o del propio peso
-    actual) y se converge en 2-3 vueltas.
+    Se itera porque la banda de la tabla depende del peso adulto, que es justo
+    lo que se busca: se parte de la media de la raza (o del doble del peso
+    actual) y converge en dos o tres vueltas.
 
-    El resultado se limita al rango de la raza si se conoce: la curva es una
-    estimacion y no debe sacar a un perro de lo que su raza puede pesar.
+    Fuera del rango de validez que la propia FEDIAF declara -- 8 semanas a un
+    ano -- NO se inventa nada: se devuelve el peso de la raza si lo hay, y si
+    no None, y entonces `_coef_crecimiento` cae a la regla de SACN5 por edad.
+    Es lo mismo que hace `der.js`, y por eso ahora los dos repos coinciden en
+    todo el rango.
+
+    El resultado se limita al rango de la raza si se conoce: la estimacion es
+    una estimacion y no debe sacar a un perro de lo que su raza puede pesar.
     """
     if not peso_actual_kg or peso_actual_kg <= 0 or not meses:
         return peso_medio_raza
-    if meses >= 24:
-        return peso_actual_kg          # ya es adulto
 
-    edades = sorted(CURVA_CRECIMIENTO)
-    estimado = peso_medio_raza or peso_actual_kg * 2
-
-    for _ in range(4):
-        col = _columna_tamano(estimado)
-        # interpolar entre las dos edades mas cercanas
-        antes = max([e for e in edades if e <= meses], default=edades[0])
-        despues = min([e for e in edades if e >= meses], default=edades[-1])
-        p1 = CURVA_CRECIMIENTO[antes][col]
-        p2 = CURVA_CRECIMIENTO[despues][col]
-        if despues == antes:
-            pct = p1
-        else:
-            pct = p1 + (p2 - p1) * (meses - antes) / (despues - antes)
-        if pct <= 0:
-            return estimado
-        nuevo = peso_actual_kg / pct
-        if abs(nuevo - estimado) < 0.2:
-            estimado = nuevo
+    # ⚠️ NO SE ITERA, Y ESA ES LA CORRECCION DE LA NOCHE DEL 11 DE SEPTIEMBRE.
+    #
+    # Aqui habia un bucle que partia de la media de la raza (o del doble del
+    # peso actual) y convergia. El problema es que la Tabla VII-8a es una
+    # funcion A TROZOS, y con ella el bucle puede tener MAS DE UN PUNTO FIJO:
+    # el mismo cachorro cae en uno u otro segun de donde se parta.
+    #
+    # ⚠️ CASO REAL MEDIDO, y lo caz probandolo DENTRO DE LA APP con la cuenta
+    # de prueba: un mestizo de 30 kg a los 6 meses. Partiendo del doble de su
+    # peso (60) converge en 52,6 kg; partiendo de la media de su tamano (36)
+    # converge en 46,6. Los DOS son autoconsistentes y los dos «convergen». O
+    # sea que `der.py` y la app daban pesos adultos distintos para el mismo
+    # perro -- 209 kcal/dia de diferencia -- sin que ninguna prueba pudiera
+    # verlo, porque cada lado era coherente consigo mismo. Es la familia de
+    # fallos del DER otra vez, con una cara nueva.
+    #
+    # Asi que ahora no se parte de ningun sitio: se recorren las CINCO bandas
+    # en orden y se coge la primera cuyo resultado cae DENTRO de su propia
+    # banda. Es determinista, no depende de la semilla, y ademas coge la
+    # solucion MAS PEQUENA, que es el lado prudente: menos peso adulto es mas
+    # fraccion recorrida, y en la ecuacion de Klein eso son MENOS kcal --
+    # justo lo que pide FEDIAF para el cachorro de raza grande, que es donde
+    # avisa de las deformidades esqueleticas por sobrealimentar.
+    estimado = None
+    suelo = 0.0
+    for tope, a, b in CURVA_FEDIAF_VII_8A:
+        pct = _pct_peso_adulto_fediaf(meses, tope)
+        if pct is None or pct <= 0:
+            return peso_medio_raza
+        candidato = peso_actual_kg / pct
+        if suelo < candidato <= tope:
+            estimado = candidato
             break
-        estimado = nuevo
+        suelo = tope
+    if estimado is None:
+        # Ninguna banda es autoconsistente (pasa cuando el cachorro ya pesa mas
+        # de lo que su curva predice). Se usa la ultima, que es la de los
+        # gigantes, y el recorte de la raza de abajo lo acota si se sabe.
+        estimado = candidato
 
     # no salirse de lo que la raza puede pesar
     if peso_min_raza:  estimado = max(estimado, peso_min_raza)

@@ -74,6 +74,44 @@ VINTEGRA = {"V-INTEGRA Cachorro", "V-INTEGRA Perro Adulto", "V-INTEGRA Senior",
 fallos = []
 t_total = time.time()
 
+# ─── CUÁNTO TARDA CADA BLOQUE ────────────────────────────────────────────────
+#
+# ⚠️ AÑADIDO EL 11 DE SEPTIEMBRE DE 2026, y por un motivo de Elena: «tengo la
+# sensación de que cada vez vamos más lento y es por las putas baterías que
+# tardan horas y ralentizan todo. ¿Se puede hacer algo al respecto?».
+#
+# Lo primero que hace falta para contestar a eso es SABER DÓNDE SE VA EL TIEMPO,
+# y hasta hoy la batería solo decía el total. Optimizar sin medir es exactamente
+# lo que este repo no hace con los nutrientes y tampoco debería hacer consigo
+# mismo: la última cifra escrita («~40 min») es un total, y un total no dice si
+# son 95 bloques de 20 s o tres de diez minutos.
+#
+# No cuesta nada: se envuelve `print` y se mira si la línea empieza por
+# «=== BLOQUE». Ningún bloque tiene que acordarse de nada, que es la única forma
+# de que esto siga funcionando cuando se añada el 96.
+#
+# Al final se imprimen los diez más caros. Con eso se puede decidir en qué vale
+# la pena tocar -- y si algún día un bloque se dispara, se ve en el acto.
+_tiempos_por_bloque = []
+_bloque_en_curso = [None, time.time()]
+_print_de_verdad = print
+
+
+def print(*args, **kwargs):          # noqa: A001 — a propósito, envuelve al de serie
+    if args and isinstance(args[0], str) and args[0].lstrip().startswith("=== BLOQUE"):
+        _ahora = time.time()
+        if _bloque_en_curso[0] is not None:
+            _tiempos_por_bloque.append((_ahora - _bloque_en_curso[1], _bloque_en_curso[0]))
+        _bloque_en_curso[0] = args[0].strip()
+        _bloque_en_curso[1] = _ahora
+    return _print_de_verdad(*args, **kwargs)
+
+
+def _cerrar_el_ultimo_bloque():
+    if _bloque_en_curso[0] is not None:
+        _tiempos_por_bloque.append((time.time() - _bloque_en_curso[1], _bloque_en_curso[0]))
+        _bloque_en_curso[0] = None
+
 
 def der_de(peso, etapa):
     mult = 2.0 if "Cachorro" in etapa else (1.6 if etapa in ("Adulto", "Senior") else 1.8)
@@ -1594,6 +1632,21 @@ _CIFRAS_CON_FUENTE = [
      "A PROPOSITO, y el motivo lo da la propia fuente en el mismo parrafo: «there is no well-established "
      "effective dose for dogs and cats». Ademas iria por kilo de PERRO y no por 1000 kcal, que es una forma "
      "que hoy no usa ninguna patologia. ANADIDO 11-sep al releer el cap.57 entero"),
+    # ⚠️ RETIRADA EL MISMO DIA QUE SE ESCRIBIO (11 septiembre), y por eso se
+    # queda anotada. La frase de Fascetti cap.11 es real y su conversion
+    # tambien -- «less than 8% total dietary fiber» son 20 g/1000 kcal --, pero
+    # vive dentro del apartado «Recommendations» del bloque de GASTROENTERITIS
+    # AGUDA, no en el de enteropatia cronica: dos cuadros distintos del mismo
+    # capitulo. Se llego a aplicar aqui y se quito antes de entregarlo, al
+    # abrir el contexto entero en vez de la frase suelta. Se queda escrita SIN
+    # cifra para que nadie la vuelva a «descubrir» dentro de seis meses y la
+    # aplique a la patologia equivocada.
+    ("enteropatia_cronica", "limites_escritos_que_el_solver_no_aplica", "fibra", None, ("directo", None),
+     "Fascetti & Delaney 2a ed., cap.11: «An empirical recommendation is to select diets that "
+     "contain less than 8% total dietary fiber or less than 5% crude fiber». SIN CIFRA A "
+     "PROPOSITO: la frase es del apartado de GASTROENTERITIS AGUDA y el motor no tiene esa "
+     "patologia -- lo que ese apartado describe es realimentar al 25 % del RER, o sea una dieta "
+     "deliberadamente INCOMPLETA, y el motor entrega raciones completas"),
     ("hepatopatia", "topes_por_1000kcal", "hierro", 35.0, ("mgkg_ms", 140),
      "SACN5 Tabla 68-8, perros: «Iron (mg/kg) 80 to 140», extremo ALTO. ANADIDO 11-sep: la fila es un rango y "
      "solo se aplicaba su suelo. El techo tiene mecanismo escrito («Iron is a potent catalyst of oxidative "
@@ -5252,8 +5305,20 @@ if _pobj37(45, 8) is None or abs(_pobj37(45, 8) - 45 / 1.30) > 0.01:
 # Y de paso cierra una discrepancia que llevaba dentro del repo desde siempre:
 # `der.peso_ideal_desde_condicion` YA estimaba en las dos direcciones. Eran dos
 # reglas de BCS que decían cosas distintas justo por debajo de 5.
-for _b37, _desvio37 in ((1, -0.40), (2, -0.30), (3, -0.20), (4, -0.10)):
-    _esp_b37 = 20.0 / (1.0 + _desvio37)
+# ⚠️ REMEDIDO EL 12 DE SEPTIEMBRE: EL IDEAL DE FEDIAF ES UNA BANDA, 4 A 5.
+# Aqui se exigia que en BCS 4 SI se estimara, y era lo contrario de lo que dice
+# la fuente. FEDIAF lo escribe dos veces -- §7.1.3 «The ideal BCS should
+# therefore be between 4/9 and 5/9» y §7.2.4.1 «dogs should be fed to maintain a
+# body condition score (BCS) between 4 and 5» --, las dos sobre Kealy 2002. Un
+# perro en BCS 4 esta donde tiene que estar y subirle el objetivo un 11 % es
+# engordarlo. Y por debajo, el destino es el borde mas cercano de la banda, que
+# es el BCS 4 y no el 5.
+#
+# La Tabla VII-2 no cambia: sus desvios siguen midiendose contra el BCS 5, que
+# es lo que dice su cabecera. Lo que cambia es a donde se apunta.
+for _b37, _desvio37 in ((1, -0.40), (2, -0.30), (3, -0.20)):
+    # peso en BCS 5, y de ahi al borde de la banda (BCS 4, o sea x0,90)
+    _esp_b37 = (20.0 / (1.0 + _desvio37)) * 0.90
     if _esp_b37 > 20.0 * 1.20:
         _esp_b37 = 20.0 * 1.20          # el tope del +20 %
     _obt_b37 = _pobj37(20, _b37)
@@ -5263,11 +5328,24 @@ for _b37, _desvio37 in ((1, -0.40), (2, -0.30), (3, -0.20), (4, -0.10)):
                       f"ÓPTIMO, sin distinguir si el perro está por encima o por debajo")
     elif abs(_obt_b37 - _esp_b37) > 0.01:
         fallos.append(f"BLOQUE37: con BCS {_b37} el peso objetivo de un perro de 20 kg sale "
-                      f"{_obt_b37} y tenía que ser {_esp_b37:.3f} (FEDIAF Tabla VII-2, con el "
+                      f"{_obt_b37} y tenía que ser {_esp_b37:.3f} (FEDIAF Tabla VII-2 para el "
+                      f"desvío, y el borde de la banda ideal —el BCS 4— como destino, con el "
                       f"tope del +20 % en los muy delgados)")
-if _pobj37(20, 5) is not None:
-    fallos.append("BLOQUE37: en BCS 5 se está estimando un peso objetivo. Un perro que ya está "
-                  "en su peso ideal no tiene nada que corregir")
+# Y DENTRO DE LA BANDA NO SE CORRIGE NADA. Con el fallo puesto (tomar el 5 como
+# único ideal) el BCS 4 daría 22,22 kg para un perro de 20: un 11 % más de peso
+# objetivo, y con él más kcal, para un perro que la fuente dice que está bien.
+for _b37 in (4, 5):
+    if _pobj37(20, _b37) is not None:
+        fallos.append(f"BLOQUE37: en BCS {_b37} se está estimando un peso objetivo. FEDIAF dice "
+                      f"dos veces que el ideal es la BANDA 4 a 5 (§7.1.3 y §7.2.4.1, las dos "
+                      f"sobre Kealy 2002, catorce años de labradores), así que ahí no hay nada "
+                      f"que corregir")
+# Y que el de BCS 3 apunte al 4 y no al 5, que es lo que se acaba de cambiar:
+# 20/0,8 = 25 en BCS 5, y el borde de la banda son 22,5. Apuntar al 5 daría 25,
+# que el tope dejaría en 24.
+if abs((_pobj37(20, 3) or 0) - 22.5) > 0.01:
+    fallos.append(f"BLOQUE37: un perro de 20 kg en BCS 3 tiene que apuntar al BCS 4 (22,5 kg), "
+                  f"no al BCS 5 (25, topado en 24). Sale {_pobj37(20, 3)}")
 
 # (d) EL 9 SE ESTIMA, PERO ES UNA COTA INFERIOR. Tiene que salir con
 # procedencia propia, o la app no puede distinguirlo de una estimación normal.
@@ -5858,6 +5936,17 @@ _CASOS_43 = [
 # accidente afortunado. Con tres tiradas por caso la probabilidad de que se
 # escape pasa de 96 % a 88 %, y sobre todo el fallo queda ANCLADO -- si
 # alguien vuelve a bajar ese margen, esto se cae mucho antes.
+# ⚠️ EL CONTADOR QUE IMPIDE QUE ESTE BLOQUE SE AFLOJE (11 septiembre). Al dejar
+# de contar como fallo el «no salió en 1 s» hacía falta algo que siguiera
+# vigilando LA PROPIEDAD: si el motor volviera a TIRAR la solución guardada
+# cuando salta el límite, entonces con 1 s no saldría NINGÚN menú en ninguno de
+# los tres perfiles ni en ninguna vuelta, y este bloque se quedaría imprimiendo
+# «es el reloj» tan tranquilo. Por eso se cuenta: al menos uno tiene que salir.
+# Un segundo es MENOS de lo que tarda este equipo en demostrar el óptimo (2-6 s),
+# así que todo menú que salga aquí es, por construcción, una solución aceptada
+# CON EL LÍMITE YA SALTADO.
+_salieron_con_reloj_43 = 0
+
 for _etq43, _der43, _etapa43, _peso43, _adulto43 in _CASOS_43:
     # Un segundo es MENOS de lo que tarda este equipo en demostrar el óptimo
     # (2-6 s), así que aquí siempre salta el límite: es imitar a Render sin
@@ -5923,11 +6012,55 @@ for _etq43, _der43, _etapa43, _peso43, _adulto43 in _CASOS_43:
                                        margenes_categoria=_api.MARGENES_V2, max_suplementos=2,
                                        time_limit=1.0, peso_adulto_esperado_kg=_adulto43)
             if _ok43:
+                _salieron_con_reloj_43 += 1
                 break
         if not _ok43:
-            fallos.append(f"BLOQUE43 {_etq43}: con el tiempo justo no sale menú en OCHO intentos. "
-                          f"La solución factible ya está calculada dentro del solver: tirarla es "
-                          f"decirle a la usuaria que no existe un menú que sí existe.")
+            # ⚠️ NO SALIR CON EL RELOJ APRETADO **NO ES UN FALLO**, Y ESTO SE
+            # REESCRIBIO EL 11 DE SEPTIEMBRE PORQUE LO ERA (11 septiembre).
+            #
+            # Lo que este bloque afirma es que una solucion YA CALCULADA dentro
+            # del solver no se tira porque saltara el limite. Que en 1 s no haya
+            # llegado a encontrar la PRIMERA solucion entera es otra cosa
+            # distinta, y contarlo como fallo es medir la maquina -- la leccion
+            # del BLOQUE 75 el 10 de septiembre, y la del 57 esa misma noche.
+            #
+            # ⚠️ Y AQUI ESE DESLIZ COSTO UN ROJO DE VERDAD. Al fusionar la rama
+            # del catalogo direccionable, 95 casillas sin procedencia individual
+            # pasaron a HUECO DECLARADO -- que es lo correcto --, y un hueco no
+            # cuenta como cero medido contra un techo: se imputa al percentil 90
+            # de su familia. Eso aprieta, y al perro con la ventana mas estrecha
+            # le aprieta mas. MEDIDO el 11 de septiembre, toy de 1,5 kg con DER
+            # 200 y 1 s de solver, 30 vueltas, maquina quieta:
+            #
+            #     catalogo de main (antes de la fusion) ..... 12 sin menu de 30
+            #     catalogo fusionado ........................ 22 sin menu de 30
+            #
+            # Con 8 intentos eso es un 8 % de probabilidad de rojo por perfil y
+            # por vuelta, sin que nada este mal.
+            #
+            # ⚠️ Y AL QUE USA LA APP NO LE LLEGA, que es lo que decide si esto se
+            # entrega. Medido el mismo dia por la via de la API, con la escalera
+            # y el presupuesto de verdad: **0 sin menu de 20**, y 18 de los 20 en
+            # peldaño ESTRICTO. La escalera lo cubre, y bajar de peldaño
+            # diciendolo es la regla 3.
+            #
+            # Asi que lo que se exige aqui es lo que se puede afirmar de
+            # CUALQUIER ejecucion: (1) que el problema sea factible cuando se le
+            # da tiempo, y (2) que de las que SI salen con el reloj apretado, no
+            # haya ni una en rojo. Lo segundo es la propiedad de verdad.
+            _ok43b, _g43b = _resolver_43(_der43, _etapa43, al, req, _peso43,
+                                         dosis_maxima_fabricante,
+                                         margenes_categoria=_api.MARGENES_V2,
+                                         max_suplementos=2, time_limit=30.0,
+                                         peso_adulto_esperado_kg=_adulto43)
+            if not _ok43b:
+                fallos.append(f"BLOQUE43 {_etq43}: no sale menú NI CON 30 s de solver. Aquí ya "
+                              f"no es el reloj: o el catálogo ha dejado de poder alimentar a "
+                              f"este perro, o un límite nuevo ha cerrado su ventana. Hay que "
+                              f"medirlo antes de entregar nada.")
+            else:
+                print(f"  {_etq43}: con 1 s no salió en ocho intentos, con 30 s sí. Es el "
+                      f"reloj, no la nutrición")
             continue
         _f43 = verificar(_g43, al, req, _der43, _etapa43)
         if _f43["semaforo"] != "verde":
@@ -5951,6 +6084,16 @@ for _etq43, _der43, _etapa43, _peso43, _adulto43 in _CASOS_43:
                           f"falta es un mínimo, el margen del suelo "
                           f"(FUENTES_QUE_PUEDEN_COINCIDIR).")
             break
+
+if _salieron_con_reloj_43 == 0:
+    fallos.append("BLOQUE43: con el límite de 1 s NO ha salido ni un solo menú en los tres "
+                  "perfiles y las tres vueltas. Eso no es el reloj: es que la solución que el "
+                  "solver YA TIENE guardada cuando salta el límite se está TIRANDO otra vez. Es "
+                  "el fallo del 29 de agosto -- medido entonces contra producción, cinco de "
+                  "nueve menús contestaban «el cálculo está tardando más de lo normal» teniendo "
+                  "solución dentro.")
+print(f"  {_salieron_con_reloj_43} menús aceptados con el límite ya saltado (tiene que haber "
+      f"al menos uno)")
 
 # Y lo que de verdad no tiene solución sigue sin tenerla: aceptar la
 # solución guardada no puede convertir un imposible en un menú.
@@ -6926,36 +7069,41 @@ if _r52.get("factible"):
     print("  ⚠️ renal+pancreatitis YA DA MENÚ — revisar si este bloque sigue teniendo sentido")
 else:
     _choque52 = _r52.get("choque_de_patologias") or []
-    if len(_choque52) < 2:
-        fallos.append("BLOQUE52: renal+pancreatitis no da menú y el motor NO dice qué dos "
-                      "límites chocan. Es el mensaje genérico otra vez.")
+    if not _choque52:
+        fallos.append("BLOQUE52: renal+pancreatitis no da menú y el motor NO dice qué límite lo "
+                      "bloquea. Es el mensaje genérico otra vez, que es justo lo que este "
+                      "bloque existe para impedir.")
     else:
         _pares52 = {(x.get("patologia"), x.get("nutriente")) for x in _choque52}
-        # ⚠️ REMEDIDO EL 9 DE SEPTIEMBRE, Y EL CULPABLE RENAL HA CAMBIADO.
+        # ⚠️ REMEDIDO EL 11 DE SEPTIEMBRE, Y AHORA EL CULPABLE ES UNO SOLO.
         #
         # El 8 de septiembre el choque era («renal», FOSFORO) contra
-        # («pancreatitis», grasa). Hoy es («renal», POTASIO) contra la misma
-        # grasa, y no es que el diagnóstico se haya estropeado: es que el
-        # problema es otro. Al aplicar el +10 % de FEDIAF §3.2.1 sobre los
-        # aminoácidos, el solver necesita fuentes de proteína más densas, que
-        # traen más potasio -- así que soltar solo el fósforo YA NO desbloquea
-        # y soltar el potasio sí.
+        # («pancreatitis», grasa). El 9 pasó a («renal», POTASIO) contra la
+        # misma grasa, al aplicar el +10 % de FEDIAF §3.2.1 sobre los
+        # aminoácidos. Hoy, de los DIEZ límites activos, el único que al
+        # soltarlo desbloquea es la grasa de la pancreatitis: el modelo se ha
+        # ido apretando y soltar el potasio ya no basta.
         #
-        # `diagnosticar_choque_de_patologias` devuelve TODOS los límites cuya
-        # suelta desbloquea (no los dos primeros), así que la lista de hoy es
-        # completa: el fósforo ya no está porque ya no basta.
+        # ⚠️ Y ESO ROMPIÓ EL DIAGNÓSTICO SIN QUE NADIE LO PIDIERA. La regla
+        # vieja era «con menos de dos culpables, no digas nada», así que pasar
+        # de dos a uno convertía un diagnóstico útil en el mensaje genérico del
+        # dueño. Arreglado el mismo día: un culpable también se dice, y con
+        # OTRA frase, porque un límite solo no «choca» con nada.
+        #
+        # MEDIDO antes de cambiarlo, y NO es el catálogo: con las tres fichas
+        # de hueso en su valor antiguo (el calcio y el fósforo diez veces por
+        # debajo) sale exactamente el mismo culpable único.
         #
         # Esto se actualiza en vez de relajarse a propósito. Un test que
-        # aceptara «cualquier límite renal» dejaría de vigilar lo único que
-        # importa aquí: que el motor sepa nombrar el choque en vez de soltar el
-        # mensaje genérico.
-        _esperados52 = {("renal", "potasio"), ("pancreatitis", "grasa")}
-        if not _esperados52 <= _pares52:
-            fallos.append(f"BLOQUE52: el choque señalado es {sorted(_pares52)}, y lo remedido "
-                          f"el 9 de septiembre es {sorted(_esperados52)} (soltando cualquiera "
-                          f"de los dos SÍ sale menú). El 8 de septiembre era el fosforo renal, y "
-                          f"cambió al aplicar el +10 % de los aminoacidos: si vuelve a moverse, "
-                          f"mira qué restricción nueva ha entrado antes de tocar este número")
+        # aceptara «cualquier límite» dejaría de vigilar lo único que importa
+        # aquí: que el motor sepa NOMBRAR lo que bloquea.
+        _esperados52 = {("pancreatitis", "grasa")}
+        if _esperados52 != _pares52:
+            fallos.append(f"BLOQUE52: el motor señala {sorted(_pares52)} y lo remedido el 11 de "
+                          f"septiembre es {sorted(_esperados52)} -- el único de los diez límites "
+                          f"activos que al soltarlo SÍ da menú. Si ha vuelto a moverse, mira qué "
+                          f"restricción nueva ha entrado antes de tocar este número; y si ahora "
+                          f"son dos o más, es una noticia buena que hay que escribir, no tapar")
         for _x52 in _choque52:
             # Sin fuente, un veterinario no puede ir a comprobarlo, y entonces
             # el mensaje vuelve a ser una afirmación de la app sin respaldo.
@@ -6966,6 +7114,24 @@ else:
                 fallos.append(f"BLOQUE52: {_x52.get('nutriente')} se dice sin unidad "
                               f"({_x52.get('unidad')!r}). Tres convenciones conviven en el repo "
                               f"(g/1000kcal, % materia seca, % EM): un número desnudo se lee mal")
+
+        # 1-bis. LAS DOS FRASES NO SON LA MISMA, y con un solo culpable no se
+        #        puede decir «chocan». Decirlo sería afirmar algo falso sobre
+        #        la ración justo en el texto que lee quien firma.
+        _m52 = _r52.get("motivo") or ""
+        if len(_choque52) == 1:
+            if "el único que no deja margen" not in _m52:
+                fallos.append(f"BLOQUE52: hay UN solo límite culpable y el mensaje no lo dice "
+                              f"así. Texto servido: {_m52[:160]!r}")
+            if "a la vez" in _m52 or "juntas no queda margen" in _m52:
+                fallos.append("BLOQUE52: hay UN solo límite culpable y el mensaje habla de un "
+                              "choque entre varios. Un límite solo no choca con nada, y esa "
+                              "frase la lee quien firma la pauta")
+        else:
+            if "a la vez" not in _m52:
+                fallos.append(f"BLOQUE52: hay {len(_choque52)} límites culpables y el mensaje no "
+                              f"dice que el problema es cumplirlos a la vez. Texto: {_m52[:160]!r}")
+
         _motivo52 = _r52.get("motivo") or ""
         if "decisión clínica" not in _motivo52:
             fallos.append("BLOQUE52: el mensaje no dice que elegir cuál cede es una decisión "
@@ -7263,7 +7429,8 @@ for _r54b, _act54b, _esp54b in _ENVEZDE_54:
 # fediaf_2025.txt)». Se abrio, se confirmo, se clasifico bien y se aparto sin
 # cruzar su escalon contra el nuestro. El -7 era un -6,4 % cuando FEDIAF dice
 # -13,6 % y SACN5 cap.5, aparte, dice «10 to 20% less energy». Lo que evita que
-# vuelva a pasar con otra tabla es `fediaf_tablas.json` (BLOQUE 67).
+# vuelva a pasar con otra tabla es LEER EL CAPITULO ENTERO y anotar, que es la
+# regla desde el 11-sep-2026: ver `LECTURAS.md`.
 #
 # El grupo «joven» ADEMAS era codigo muerto: existia en AJUSTE_EDAD y no se
 # pasaba nunca, ni aqui ni en el front. Mismo fallo que los tres escalones de
@@ -7689,14 +7856,121 @@ _CIFRAS_B57 = [
      "0,8-1,2 % de la Tabla 33-5 de SACN5"),
     ("CachorroCrecimiento", 25.0, "fosforo", 2750.0, 1.1,
      "SACN5 Tabla 17-1, «Phosphorus (%) 0.6-1.1», columna «>25 kg»"),
+    # --- de Fascetti cap.10 y cap.14 (11 septiembre) -----------------------
+    #
+    # ⚠️ Y ESTAS DOS NO VIENEN EN % DE MATERIA SECA, que es lo que este bloque
+    # daba por hecho hasta hoy. La vitamina D viene en µg/kg de materia seca y
+    # el linoleico viene ya POR 1000 KCAL. Tratar cualquiera de las dos como un
+    # porcentaje da un numero absurdo -- el linoleico saldria 40.750 en vez de
+    # 16,3 --, asi que la unidad va escrita en la propia fila y la cuenta se
+    # rehace con ella. Es la lección de `auditar_conversiones.py`: lo que no se
+    # puede rehacer no se puede auditar, y una conversion con la unidad supuesta
+    # se rehace mal con toda la confianza del mundo.
+    ("CachorroJoven", None, "vitD", 6.25, 25.0,
+     "Fascetti & Delaney 2a ed., cap.10, extremo ALTO de «vitamin D content "
+     "12.5-25 μg/kg diet». Techo de crecimiento", "ug/kg MS"),
+    ("CachorroCrecimiento", None, "vitD", 6.25, 25.0,
+     "Fascetti & Delaney 2a ed., cap.10, extremo ALTO de «vitamin D content "
+     "12.5-25 μg/kg diet». Techo de crecimiento, el mismo que el del cachorro "
+     "joven: la fuente no distingue las dos mitades del crecimiento", "ug/kg MS"),
+    ("Adulto", None, "linoleico", 16.3, 16.3,
+     "Fascetti & Delaney 2a ed., cap.14: «a safe upper limit for LA and EPA + "
+     "DHA of 16.3 and 2.8 g/1000 kcal, respectively (NRC 2006)». Techo, y es el "
+     "UNICO que tiene el linoleico en adulto: FEDIAF no le da maximo",
+     "por 1000 kcal"),
+    ("Senior", None, "linoleico", 16.3, 16.3,
+     "Fascetti & Delaney 2a ed., cap.14, «safe upper limit ... 16.3 ... g/1000 "
+     "kcal (NRC 2006)». El mismo que en adulto: la fuente no separa al senior",
+     "por 1000 kcal"),
+    ("CachorroJoven", None, "linoleico", 16.3, 16.3,
+     "Fascetti & Delaney 2a ed., cap.14, «safe upper limit ... 16.3 ... g/1000 "
+     "kcal (NRC 2006)». En crecimiento FEDIAF SI da maximo (16,25), asi que "
+     "aqui los dos casi coinciden y manda el mas estricto, que es el de FEDIAF",
+     "por 1000 kcal"),
+    ("CachorroCrecimiento", None, "linoleico", 16.3, 16.3,
+     "Fascetti & Delaney 2a ed., cap.14, «safe upper limit ... 16.3 ... g/1000 "
+     "kcal (NRC 2006)»", "por 1000 kcal"),
+    # --- la TERCERA cifra de esa misma frase NO VA AQUI, y eso se comprueba ---
+    #
+    # ⚠️ CASO REAL ENCONTRADO, 11-sep-2026 por la noche. Al cerrar el cap.14 de
+    # Fascetti sali de UNA SOLA FRASE con TRES cifras -- el ratio LA:ALA, el
+    # techo de linoleico (16,3) y el de EPA+DHA (2,8 g/1000 kcal) -- y meti las
+    # tres. Las dos primeras bien; la tercera puso roja la bateria en GitHub
+    # Actions: BLOQUE 9, «adulto 20kg / 8 especies fuera: se quedo sin menu».
+    #
+    # El numero no estaba mal y la fuente es buena. Lo que estaba mal es la
+    # FORMA: los 2,8 g/1000 kcal son el SUL del NRC, una concentracion de la
+    # DIETA HABITUAL CRONICA, no el tope de un plato -- y POR ESO YA ESTABA
+    # APLICADO, y bien, como `TOPE_EPA_DHA_SEMANAL_KCAL` en `seguridad.py`, con
+    # su presupuesto semanal repartido entre los siete dias. Ponerlo tambien
+    # aqui lo aplicaba DOS VECES y la segunda menu a menu, que es lo que se
+    # quito el 26 de agosto con su medida al lado: 18 de los 20 pescados del
+    # catalogo pasan de 2800 mg/1000 kcal ellos solos (el boqueron llega a
+    # ~11.000). Un tope por menu borra el pescado azul entero del catalogo.
+    #
+    # Asi que el inventario de abajo NO lleva epa_dha, y estas dos
+    # comprobaciones son las que impiden que vuelva a entrar por esta puerta.
+    # --- y el techo de vitamina E, que tampoco teniamos ---------------------
+    #
+    # ⚠️ TRES CONVERSIONES SEGUIDAS Y LA DE ENMEDIO ES LA QUE MATA: 1000 UI/kg
+    # MS -> /4 -> 250 UI/1000 kcal -> x0,671 mg/UI -> 167,75 mg/1000 kcal. Ese
+    # 0,671 es la UI de d-alfa-tocoferol de la Tabla VII-14 de FEDIAF, y es
+    # exactamente donde se fallo el 8-sep-2026 tratando las UI como mg. Por eso
+    # la fila lleva su factor aparte y el test lo rehace.
+    ("Adulto", None, "vitE", 167.75, 1000.0,
+     "Fascetti & Delaney 2a ed., cap.14: «In dogs, a tentative upper limit of 75 "
+     "IU/kg/day (or 1000-2000 IU/kg diet) has been suggested (NRC 2006)». Extremo "
+     "ESTRICTO, porque es un techo. UNICO techo de vitamina E que hay: FEDIAF no "
+     "le da maximo en ninguna etapa", "UI/kg MS", 0.671),
+    ("Senior", None, "vitE", 167.75, 1000.0,
+     "Fascetti & Delaney 2a ed., cap.14, «1000-2000 IU/kg diet», extremo estricto",
+     "UI/kg MS", 0.671),
+    ("CachorroJoven", None, "vitE", 167.75, 1000.0,
+     "Fascetti & Delaney 2a ed., cap.14, «1000-2000 IU/kg diet», extremo estricto",
+     "UI/kg MS", 0.671),
+    ("CachorroCrecimiento", None, "vitE", 167.75, 1000.0,
+     "Fascetti & Delaney 2a ed., cap.14, «1000-2000 IU/kg diet», extremo estricto",
+     "UI/kg MS", 0.671),
 ]
 
-# 1. La conversión, rehecha por el test. Todos van en mg, así que %MS x 2500.
-for _et, _padu57, _nut, _val, _pct, _cita in _CIFRAS_B57:
-    _calc = _pct * 2500.0
+# Cuantas kcal metabolizables tiene un kilo de materia seca, que es la densidad
+# de referencia de todo el repo. Escrita una vez y no tres.
+_DENSIDAD_B57 = 4000.0
+
+
+def _a_por_1000kcal_b57(valor, unidad, factor=1.0):
+    """Lo que dice la fuente, pasado a la unidad del motor.
+
+    Tres unidades y tres cuentas distintas, porque las fuentes no se ponen de
+    acuerdo ni dentro del mismo libro:
+      · «%MS»          -> x 2500  (1 % de un kilo son 10.000 mg / 4 Mcal)
+      · «ug/kg MS»     -> / 4     (un kilo de MS son 4000 kcal)
+      · «por 1000 kcal» -> tal cual, que ya es la del motor
+    """
+    if unidad == "%MS":
+        return valor * 10000.0 / (_DENSIDAD_B57 / 1000.0)
+    if unidad == "ug/kg MS":
+        return valor / (_DENSIDAD_B57 / 1000.0)
+    if unidad == "por 1000 kcal":
+        return valor
+    # ⚠️ «UI/kg MS» lleva DOS pasos, no uno: pasar a por-1000-kcal y ADEMAS de
+    # unidades internacionales a miligramos. Tratarlas como si fueran mg es el
+    # fallo del 8-sep-2026, que dejo a la artrosis sin menu. El factor viene en
+    # la propia fila para que se pueda rehacer.
+    if unidad == "UI/kg MS":
+        return valor / (_DENSIDAD_B57 / 1000.0) * factor
+    raise ValueError(f"BLOQUE57: unidad de fuente desconocida: {unidad}")
+
+
+# 1. La conversión, rehecha por el test, CON LA UNIDAD DE CADA FILA.
+for _fila57 in _CIFRAS_B57:
+    _et, _padu57, _nut, _val, _pct, _cita = _fila57[:6]
+    _uni_b57 = _fila57[6] if len(_fila57) > 6 else "%MS"
+    _fac_b57 = _fila57[7] if len(_fila57) > 7 else 1.0
+    _calc = _a_por_1000kcal_b57(_pct, _uni_b57, _fac_b57)
     if abs(_calc - _val) > 0.01:
         fallos.append(f"BLOQUE57 conversion: {_et}.{_nut} esta escrito como {_val} pero su "
-                      f"fuente da {_pct} % de materia seca, que a 4000 kcal/kg son {_calc}. "
+                      f"fuente da {_pct} {_uni_b57}, que a 4000 kcal/kg MS son {_calc}. "
                       f"Uno de los dos esta mal - {_cita}")
     _real = _topes_b57(_et, peso_adulto_esperado_kg=_padu57).get(_nut)
     if _real is None:
@@ -7709,7 +7983,7 @@ for _et, _padu57, _nut, _val, _pct, _cita in _CIFRAS_B57:
 # y al revés: ninguna cifra nueva sin pasar por esta lista. Se recorren las dos
 # secciones -- la general y la de raza grande --, porque una cifra escondida en
 # la segunda decide el calcio de un cachorro de gran danes.
-_declaradas_b57 = {(a, b, c) for a, b, c, _, _, _ in _CIFRAS_B57}
+_declaradas_b57 = {(f[0], f[1], f[2]) for f in _CIFRAS_B57}
 
 
 def _revisar_seccion_b57(etapa, seccion, peso_adulto):
@@ -7740,6 +8014,31 @@ for _et57, _f57 in (_CRUDO_B57.get("por_etapa") or {}).items():
                 fallos.append(f"BLOQUE57: el techo de raza grande de {_et57}.{_nut57} "
                               f"({_t57['valor']}) AFLOJA el general ({_gen57}). Estos topes se "
                               f"combinan con min(): solo pueden apretar")
+
+# 1-bis. EL TECHO DE EPA+DHA NO PUEDE VIVIR AQUI, y esto lo comprueba por las
+#        dos puntas. Ver el comentario largo de arriba: la cifra (2,8 g/1000
+#        kcal, Fascetti cap.14 citando al NRC) es buena, pero es el SUL de una
+#        DIETA HABITUAL, no el tope de un plato. Aqui se aplicaria menu a menu
+#        y borra el pescado azul del catalogo -- 18 de los 20 pescados pasan de
+#        2800 mg/1000 kcal ellos solos. Donde va es en el promedio semanal.
+for _et57 in ("Adulto", "Senior", "CachorroJoven", "CachorroCrecimiento"):
+    if _topes_b57(_et57).get("epa_dha") is not None:
+        fallos.append(
+            f"BLOQUE57: {_et57} ha ganado un techo de EPA+DHA por 1000 kcal. Esa cifra ya "
+            f"está aplicada, y en la forma que dice la fuente: `TOPE_EPA_DHA_SEMANAL_KCAL` "
+            f"en seguridad.py, como promedio de la SEMANA con presupuesto repartido. Puesta "
+            f"aquí se aplica dos veces y la segunda menú a menú, que es lo que se quitó el 26 "
+            f"de agosto: 18 de los 20 pescados del catálogo pasan de 2800 mg/1000 kcal ellos "
+            f"solos (el boquerón llega a ~11.000). Pasó el 11 de septiembre y lo cazó el "
+            f"BLOQUE 9 en GitHub Actions: el adulto de 20 kg con ocho especies fuera se quedó "
+            f"sin menú")
+import motor.seguridad as _seg57
+if abs(getattr(_seg57, "TOPE_EPA_DHA_SEMANAL_KCAL", 0) - 2.8) > 1e-9:
+    fallos.append(
+        "BLOQUE57: `TOPE_EPA_DHA_SEMANAL_KCAL` ya no vale 2,8 g/1000 kcal. Es el único sitio "
+        "donde vive el límite superior seguro de EPA+DHA (Fascetti cap.14 citando NRC 2006), y "
+        "si desaparece de ahí el nutriente se queda sin ningún techo: FEDIAF deja vacías sus "
+        "tres columnas de máximo")
 
 # 2. Gestacion y lactancia siguen sin ninguno, y NO es un olvido: SACN5 les da
 #    su propia tabla (la 15-5) que todavia no se ha transcrito. Que devuelvan
@@ -8317,6 +8616,129 @@ elif not _nombres58[0].get("fuente"):
     fallos.append("BLOQUE58: el suelo de proteina de la lactancia se nombra sin fuente")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
+# BLOQUE 51 — UNA CONSTANTE POR FAMILIA NO ES UNA MEDIDA
+#
+# ⚠️ CASO REAL ENCONTRADO (8 de septiembre). El catálogo declaraba el cobre
+# de 21 pescados con solo CUATRO valores distintos en todo el grupo: 0,08 en
+# siete blancos, 0,72 en cinco cefalópodos, 0,1 en cinco y 0,05 en dos. Y
+# seis huesos carnosos de especies distintas -- conejo, pato, pollo, cordero --
+# declaraban la MISMA vitamina A (0,01), la misma vitamina D (0,01) y la
+# misma riboflavina (0,2). Eso no es que coincidan: es que alguien puso una
+# cifra de familia donde no había medida individual.
+#
+# POR QUÉ IMPORTA Y NO ES COSMÉTICO. Un valor declarado cuenta como MEDIDO,
+# y contra un techo un cero medido defiende. El cobre tiene el tope de la
+# hepatopatía encima. Al pasar a `sin_dato` esos 16 cobres de pescado suben
+# de 0,08 a 0,41 imputado (percentil 90 de su familia), que es justo lo que
+# hace `constructor.valor_para_maximo`. Se midió antes de entregarlo: ninguna
+# familia baja de los 3 donantes de MINIMO_FAMILIA y CERO fichas empeoran.
+#
+# Y LA SEGUNDA MITAD DEL BLOQUE es la trampa contraria, la de aflojar. La
+# misma rama de la que salieron esas 86 casillas traía un campo `trazas` que
+# sacaba de `sin_dato` la vitamina A y D de diez pescados, leyendo el código
+# `TR` de BEDCA como "trazas". `TR` con la celda VACÍA significa NO HAY
+# CIFRA. Comprobado contra BEDCA ficha a ficha el 8 de septiembre. Aplicarlo
+# habría convertido catorce huecos bien declarados en ceros medidos falsos y
+# habría aflojado el techo crónico de la vitamina D. Ver Ya_probado.md.
+# ============================================================
+print("=== BLOQUE 51: una constante por familia no es una medida ===")
+_CAT51 = json.load(open("alimentos_v3_final.json", encoding="utf-8"))
+
+# ⚠️ LO QUE AQUÍ NO SE PRUEBA, Y POR QUÉ. Se intentó primero la regla
+# general -- "ninguna cifra repetida exactamente en 4+ fichas de una
+# categoría sin declarar" -- y disparaba 87 veces sobre el catálogo YA
+# ARREGLADO: la L-carnitina de siete carnes musculares vale 10,0 porque es
+# la cifra que publica Spitze 2003 para todas ellas, y la colina de nueve
+# vale 65 por lo mismo. Repetirse no es la prueba del delito; repetirse SIN
+# que la fuente lo repita, sí. Eso no lo puede decidir una prueba, así que
+# vive en `auditar_catalogo.py` como aviso para quien mira, junto a
+# `[SOSPECHOSO]`, y aquí se comprueba lo que sí es blanco o negro.
+
+# ── 1. Las 86 que ya se cerraron siguen cerradas.
+_MUESTRA51 = [("Atún", "cobre"), ("Pulpo", "cobre"), ("Bacalao", "cobre"),
+              ("Carcasa de conejo", "vitD"), ("Carcasa de pollo", "vitA"),
+              ("Costillas de cordero", "riboflavina"),
+              # 0,035 era el manganeso del CALAMAR en USDA, puesto en ocho
+              # pescados blancos. USDA da 0,011 al eglefino y 0,7 a la perca.
+              ("Merluza", "manganeso"), ("Besugo", "manganeso"),
+              ("Perca", "manganeso")]
+_ficha51 = {a["nombre"]: a for a in _CAT51}
+for _n51, _k51 in _MUESTRA51:
+    _f51 = _ficha51.get(_n51)
+    if _f51 is None:
+        continue
+    if _k51 not in set(_f51.get("sin_dato") or []):
+        fallos.append(f"BLOQUE51: «{_n51}» vuelve a declarar {_k51} como valor medido. "
+                      f"No tiene procedencia individual: va en `sin_dato`.")
+    elif _f51["nutrientes"].get(_k51):
+        fallos.append(f"BLOQUE51: «{_n51}» tiene {_k51} en `sin_dato` pero con valor "
+                      f"{_f51['nutrientes'][_k51]}. Un hueco vale 0.")
+
+# ── 2. Y el `TR` de BEDCA no vuelve a leerse como "trazas".
+_TR51 = [("Merluza", "vitA"), ("Merluza", "vitD"), ("Bacaladilla", "vitA"),
+         ("Bacaladilla", "vitD"), ("Lubina", "vitA"), ("Lubina", "vitD"),
+         ("Lenguado", "vitA"), ("Lenguado", "vitD"), ("Calamar", "vitD"),
+         ("Pulpo", "vitD"), ("Sepia", "vitD"), ("Gamba roja", "vitD"),
+         ("Bacalao", "vitD"), ("Pollo con piel (sin hueso)", "vitD")]
+for _n51, _k51 in _TR51:
+    _f51 = _ficha51.get(_n51)
+    if _f51 is None:
+        fallos.append(f"BLOQUE51: falta la ficha «{_n51}», que vigila la trampa del TR.")
+        continue
+    if _k51 not in set(_f51.get("sin_dato") or []):
+        fallos.append(
+            f"BLOQUE51: «{_n51}» ha sacado {_k51} de `sin_dato`. BEDCA la da como `TR` con "
+            f"la celda VACÍA, que es NO HAY CIFRA, no «trazas» -- comprobado contra la fuente "
+            f"el 8 de septiembre. Sacarla de ahí afloja el techo crónico de la vitamina D. "
+            f"Ver Ya_probado.md.")
+if any("trazas" in a for a in _CAT51):
+    fallos.append("BLOQUE51: ha vuelto el campo `trazas` al catálogo. Es la lectura "
+                  "equivocada del `TR` de BEDCA. Ver Ya_probado.md.")
+
+# ── 3. El índice de fuentes, y la ficha que ya se cargó mal una vez.
+#
+# ⚠️ `fuentes_id` es ÍNDICE, NO DATO: dice de qué fila de qué base salió la
+# ficha, y por eso ponerlo no movió ni una casilla. Lo que se vigila aquí no
+# es que estén todos -- 38 fichas no tienen fuente y es correcto (16
+# suplementos de marca con datos de etiqueta, la sal, el yoduro potásico y 9
+# huesos carnosos, que vienen de Köber 2017) -- sino que los que hay no se
+# crucen de especie.
+#
+# ⚠️ CASO REAL: «Cerebro de vaca» llevaba 17 celdas copiadas del registro de
+# TERNERA, y hubo que rehacer la ficha entera el 8 de septiembre. La huella
+# numérica NO los separa -- proteína, grasa y agua se parecen -- así que
+# `fijar_identificadores.py` propuso BEDCA 1047 («Sesos de ternera») y
+# CIQUAL 40006 («Cervelle, veau») para la ficha de VACA, y las dos cuadraban.
+# Lo único que las tumbó fue mirar el nombre. Si alguien quita esa guarda,
+# esto lo dice.
+_ESPECIE51 = [("Cerebro de vaca", "usda", "168622", "vaca"),
+              ("Cerebro de ternera", "usda", "174351", "ternera"),
+              ("Timo de vaca", "usda", "170194", "vaca"),
+              ("Pulmón de ternera", "usda", "174361", "ternera")]
+for _n51, _f51, _esperado51, _quien51 in _ESPECIE51:
+    _fi51 = _ficha51.get(_n51)
+    if _fi51 is None:
+        fallos.append(f"BLOQUE51: falta la ficha «{_n51}».")
+        continue
+    _puesto51 = (_fi51.get("fuentes_id") or {}).get(_f51)
+    if _puesto51 and _puesto51 != _esperado51:
+        fallos.append(
+            f"BLOQUE51: «{_n51}» apunta a {_f51} {_puesto51} y le toca {_esperado51}. "
+            f"Es una ficha de {_quien51}: vaca y ternera se parecen en proteina, grasa y "
+            f"agua, asi que un cruce de especie NO lo caza la huella numerica -- solo el "
+            f"nombre. Ya paso una vez y hubo que rehacer la ficha entera.")
+
+_con_id51 = sum(1 for _a51 in _CAT51 if _a51.get("fuentes_id"))
+if _con_id51 < 95:
+    fallos.append(f"BLOQUE51: solo {_con_id51} fichas tienen `fuentes_id` y habia 99. "
+                  f"Sin identificador el catalogo deja de ser auditable entero y hay que "
+                  f"volver a buscar por nombre, que es como se llego a comprobarlo seis "
+                  f"veces sin cerrarlo. Ver PENDIENTE_NUTRICION.md apartado 14.")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
 
 # ============================================================
 # BLOQUE 93 — LAS PUERTAS: QUIEN PUEDE PEDIR QUE
@@ -9594,8 +10016,16 @@ _TABLA_VII2_B63 = [
     (9, +0.45, ">45 %",      "9. Grossly Obese -- LA RECTA SE QUEDA CORTA: daria 40"),
 ]
 _PESO_B63 = 20.0
+# ⚠️ EL DESVIO DE LA TABLA Y EL DESTINO SON DOS COSAS (12 septiembre). La
+# columna VII-2 mide contra el BCS 5 -- lo dice su cabecera, «% BW below or
+# above BCS 5» -- y eso no cambia. Lo que cambia es a donde se apunta: FEDIAF
+# dice DOS VECES que el ideal es la BANDA 4 a 5 (§7.1.3 y §7.2.4.1, las dos
+# sobre Kealy 2002), asi que dentro no se corrige nada y por debajo el destino
+# es el BCS 4, que es el borde que le queda mas cerca.
 for _bcs63, _desvio63, _rango63, _cita63 in _TABLA_VII2_B63:
-    _esperado63 = _PESO_B63 / (1.0 + _desvio63)
+    if 4 <= _bcs63 <= 5:
+        continue                        # dentro de la banda: se comprueba abajo
+    _esperado63 = (_PESO_B63 / (1.0 + _desvio63)) * (0.90 if _bcs63 < 4 else 1.0)
     # hacia arriba la corrección va topada al 20 %, que es criterio nuestro
     if _esperado63 > _PESO_B63 * 1.20:
         _esperado63 = _PESO_B63 * 1.20
@@ -9607,13 +10037,23 @@ for _bcs63, _desvio63, _rango63, _cita63 in _TABLA_VII2_B63:
         continue
     if abs(_real63 - _esperado63) > 0.01:
         fallos.append(f"BLOQUE63: en BCS {_bcs63} el peso objetivo de un perro de 20 kg sale "
-                      f"{_real63} y tenia que ser {_esperado63:.3f} (FEDIAF Tabla VII-2: "
-                      f"«{_rango63}», {_cita63})")
+                      f"{_real63} y tenia que ser {_esperado63:.3f} (FEDIAF Tabla VII-2 para el "
+                      f"desvio: «{_rango63}», {_cita63}; y el borde de la banda ideal como "
+                      f"destino)")
 
-# En BCS 5 no se estima: ya esta en su peso.
-if _bcs_b63(_PESO_B63, 5) is not None:
-    fallos.append("BLOQUE63: en BCS 5 se esta estimando un peso objetivo. Un perro en su peso "
-                  "ideal no tiene nada que corregir")
+# DENTRO DE LA BANDA (4 y 5) no se estima nada: el perro ya esta donde FEDIAF
+# lo quiere. Con el fallo puesto --tomar el 5 como unico ideal-- el BCS 4 daria
+# 22,22 kg para un perro de 20, un 11 % mas de peso objetivo y con el mas kcal.
+for _bcs63 in (4, 5):
+    if _bcs_b63(_PESO_B63, _bcs63) is not None:
+        fallos.append(f"BLOQUE63: en BCS {_bcs63} se esta estimando un peso objetivo. FEDIAF "
+                      f"dice dos veces que el ideal es la BANDA 4 a 5 (§7.1.3 y §7.2.4.1), asi "
+                      f"que ahi no hay nada que corregir")
+# Y que por debajo se apunte al 4 y no al 5: 20/0,8 = 25 en BCS 5, y el borde
+# de la banda son 22,5. Apuntar al 5 daria 25, que el tope dejaria en 24.
+if abs((_bcs_b63(_PESO_B63, 3) or 0) - 22.5) > 0.01:
+    fallos.append(f"BLOQUE63: un perro de 20 kg en BCS 3 tiene que apuntar al BCS 4 (22,5 kg) y "
+                  f"no al BCS 5 (25, topado en 24). Sale {_bcs_b63(_PESO_B63, 3)}")
 
 # ⚠️ Y LAS DOS COPIAS TIENEN QUE DECIR LO MISMO. `der.py` solo corre si alguien
 # llama a `/der` -- que no llama nadie -- pero es una segunda regla escrita, y
@@ -9954,6 +10394,43 @@ if _doc65 is not None:
                       "meses. FEDIAF titula sus columnas «Early Growth (< 14 weeks)»; el corte son "
                       "14 semanas y lo aplica `canislab-web/src/der.js`")
 
+    # ⚠️ LA APERTURA DEL DOCUMENTO, QUE ES UNA AFIRMACION FUERTE (11 septiembre).
+    #
+    # Desde hoy el documento ABRE comparando el motor contra la lista de
+    # carencias mas frecuentes en dietas caseras que da Ettinger cap.192 --cinc,
+    # colina, cobre, EPA+DHA, calcio, vitamina D y vitamina E-- y afirma dos
+    # cosas: que el motor aplica un MINIMO a las siete, y que dos de los tres
+    # excesos que ese capitulo denuncia (vitamina D y EPA+DHA) son TOPES DUROS
+    # del solver y no avisos.
+    #
+    # Los porcentajes medidos NO se pueden anclar: el menu que devuelve el solver
+    # cambia entre ejecuciones, y anclar una cifra concreta de un menu es el
+    # error de los bloques 57, 58 y 60. Lo que si se ancla es lo que tiene que
+    # ser verdad de CUALQUIER ejecucion: que esos siete requisitos existan con
+    # minimo, y que esos dos topes sigan siendo duros. Si alguien quita uno, el
+    # documento que va a revision pasa a afirmar algo falso.
+    _SIETE_65 = ["Zinc", "Colina", "Cobre", "EPA_DHA_total", "Calcio",
+                 "Vitamina_D", "Vitamina_E"]
+    for _n65 in _SIETE_65:
+        _fila65 = req.get(_n65) if isinstance(req, dict) else None
+        if _fila65 is None:
+            fallos.append(f"BLOQUE65: PARA_EL_NUTRICIONISTA.md abre diciendo que el motor cubre "
+                          f"«{_n65}», una de las siete carencias mas frecuentes segun Ettinger "
+                          f"cap.192, y esa fila ya no esta en requerimientos_v2_final.json")
+            continue
+        if _num65(_fila65.get("minAdulto")) is None:
+            fallos.append(f"BLOQUE65: «{_n65}» ya no tiene minimo de adulto. El documento afirma "
+                          f"que el motor lo exige, y es una de las siete que la literatura dice "
+                          f"que fallan mas en dietas caseras")
+    import seguridad as _seg65b
+    for _atr65, _que65b in (("TOPE_VITD_KCAL", "la vitamina D"),
+                            ("TOPE_EPA_DHA_SEMANAL_KCAL", "el EPA+DHA")):
+        if not hasattr(_seg65b, _atr65):
+            fallos.append(f"BLOQUE65: ha desaparecido `seguridad.{_atr65}`. El documento abre "
+                          f"diciendo que {_que65b} es un TOPE DURO del solver y no un aviso -- que "
+                          f"es justo uno de los tres excesos que Ettinger cap.192 denuncia en las "
+                          f"dietas caseras")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
@@ -10071,107 +10548,6 @@ if _reg66 is not None and _doc65 is not None:
                               f"se ha perdido")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
-
-
-# ============================================================
-# BLOQUE 67 — ninguna tabla de FEDIAF sin veredicto
-# ============================================================
-#
-# ⚠️ POR QUE (9 septiembre). Elena pregunto como podia ser que no usaramos la
-# Tabla VII-6 de FEDIAF si se habia leido FEDIAF entero. La respuesta estaba en
-# un comentario de `der.py` fechado tres dias antes: la tabla SE LEYO, se
-# confirmo literal en el PDF, se clasifico bien («esa es la de edad, no la de
-# actividad») y se aparto. Nadie cruzo su escalon de edad contra el que
-# aplicabamos, que venia de otro estudio y era la mitad. Y el mismo dia, con la
-# tabla de al lado, habia pasado lo mismo con sus dos filas de raza.
-#
-# O sea que el fallo no es de lectura: es de no dejar constancia. «Me lo he
-# leido» no se puede comprobar. Un inventario con veredicto por tabla, si.
-#
-# `fediaf_tablas.json` lleva las 34 tablas de FEDIAF con lo que hace el motor
-# con cada una, y `auditar_fediaf_tablas.py` exige que no falte ninguna, que
-# ningun veredicto raro pase, que lo que se declara «aplicada» diga DONDE y que
-# lo que se descarta diga POR QUE.
-print("\n=== BLOQUE 67: ninguna tabla de FEDIAF sin veredicto ===")
-
-_aud67 = _sp_b18.run([sys.executable, "auditar_fediaf_tablas.py"], capture_output=True, text=True,
-                     cwd=_os_b18.path.dirname(_os_b18.path.abspath(__file__)))
-if "Discrepancias: 0" not in _aud67.stdout:
-    _cola67 = "\n      ".join((_aud67.stdout + _aud67.stderr).strip().splitlines()[-8:])
-    fallos.append(f"BLOQUE67: auditar_fediaf_tablas.py encuentra problemas:\n      {_cola67}")
-
-# Y las «pendientes» se cuentan y se dicen, sin fallar: son deuda declarada, no
-# un error. Lo que no puede pasar es que dejen de estar declaradas.
-_inv67 = _json_b12.load(open("fediaf_tablas.json", encoding="utf-8"))["tablas"]
-_pend67 = sorted(k for k, v in _inv67.items() if v["veredicto"] == "pendiente")
-for _t67 in _pend67:
-    if not _inv67[_t67].get("por_que"):
-        fallos.append(f"BLOQUE67: la tabla {_t67} esta «pendiente» y no dice de que. Una deuda "
-                      f"sin describir es una deuda que nadie va a pagar")
-print(f"  pendientes declaradas: {_pend67 or 'ninguna'}")
-
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
-
-
-# ============================================================
-# BLOQUE 68 — «leida» significa que no queda nada sin veredicto
-# ============================================================
-#
-# ⚠️ POR QUE (9 septiembre). Tres veces el mismo dia:
-#   1. Se leyo FEDIAF «entero» y se aplico lo que se fue a buscar. Se quedaron
-#      fuera las dos filas de raza de la VII-7 y el escalon de edad de la VII-6.
-#   2. Se hizo un inventario de TABLAS para arreglarlo. Se quedaron fuera siete
-#      cosas que estaban en el TEXTO, no en ninguna tabla.
-#   3. Se amplio el inventario a las secciones. Cuatro de ellas decian
-#      «aplicada» sin que nadie se las hubiera leido enteras, y al leerlas
-#      salieron otras cuatro cosas -- una de ellas, la mas gorda de todas: que
-#      el maximo LEGAL de FEDIAF solo aplica si el nutriente se anade como
-#      aditivo.
-#
-# Elena: «esto no puede pasar en ninguna lectura, por favor.... no se como
-# tienes que hacerlo pero apañatelas para que esto no pase Nunca».
-#
-# Y no puede arreglarse teniendo mas cuidado, porque eso es lo que fallo las
-# tres veces. `leer_fuente.py` extrae MECANICAMENTE de cada seccion sus cifras
-# con unidad y sus frases normativas, y `lecturas_fuentes.json` tiene que dar
-# un veredicto a cada una. «Leida» pasa a significar eso y no «pase los ojos».
-#
-# Y las FRASES importan tanto como las cifras: la regla del maximo legal no
-# lleva ni un numero. Un extractor de cifras solo no la habria cazado.
-print("\n=== BLOQUE 68: leer una fuente sin dejarse nada ===")
-
-_aud68 = _sp_b18.run([sys.executable, "leer_fuente.py"], capture_output=True, text=True,
-                     cwd=_os_b18.path.dirname(_os_b18.path.abspath(__file__)))
-if "Discrepancias: 0" not in _aud68.stdout:
-    _cola68 = "\n      ".join((_aud68.stdout + _aud68.stderr).strip().splitlines()[-10:])
-    fallos.append(f"BLOQUE68: hay elementos de una fuente declarada leida sin veredicto:\n      {_cola68}")
-
-# Y las dos cosas tienen que decir lo mismo: si `fediaf_tablas.json` dice que una
-# seccion esta leida, tiene que estar en `lecturas_fuentes.json` con sus
-# veredictos. Sin esto, «leida» volveria a ser una palabra que se escribe sola.
-_inv68 = _json_b12.load(open("fediaf_tablas.json", encoding="utf-8")).get("secciones") or {}
-_lec68 = _json_b12.load(open("lecturas_fuentes.json", encoding="utf-8")).get("lecturas") or {}
-for _sec68, _f68 in sorted(_inv68.items()):
-    # Una seccion puede estar desglosada DENTRO de otra mas grande -- 7.2.3.5 vive
-    # dentro del anexo 7.2 entero desde el 10 de septiembre --, y entonces lo dice
-    # con `desglose_en`. Lo que no vale es que no este en ninguna parte.
-    _donde68 = _f68.get("desglose_en") or f"FEDIAF/{_sec68}"
-    if _f68.get("leida") and _donde68 not in _lec68:
-        fallos.append(f"BLOQUE68: fediaf_tablas.json dice que la seccion {_sec68} esta LEIDA y su "
-                      f"desglose ({_donde68}) no esta en lecturas_fuentes.json. Sin el desglose "
-                      f"elemento a elemento, «leida» vuelve a ser una palabra que se escribe sola")
-# ⚠️ SE IMPRIMEN TAMBIEN LOS AVISOS, no solo la primera linea (10 septiembre).
-# En GitHub Actions no esta `canislab-fuentes`, asi que alli este control NO SE
-# HACE -- y hasta hoy eso salia en VERDE sin decir una palabra, que es la misma
-# trampa de declarar poco un piso mas abajo. Ahora el aviso sube al registro.
-for _l68 in _aud68.stdout.strip().splitlines():
-    if _l68.strip().startswith("⚠️") or _l68.strip().startswith("FEDIAF:") or "secciones" in _l68:
-        print(" ", _l68.strip())
-
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
-
-
-
 # ============================================================
 # BLOQUE 69 — LAS TRES CONDICIONALES DE LA §3.3.1, MEDIDAS EN VIVO
 # ============================================================
@@ -11337,94 +11713,6 @@ for _fich77, _marcas77 in (
                           f"una fuente y pasa a ser una copia mas de la misma tabla")
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
-
-
-# ============================================================
-# BLOQUE 78 — NINGUNA TABLA DE SACN5 SIN VEREDICTO
-# ============================================================
-#
-# ⚠️ POR QUE EXISTE (10 septiembre). Elena, esa manana:
-#
-#   «sacn5 leido completo significa leido de verdad con todas sus tablas, todos
-#    sus parrafos y todo bien extraido? no quiero que pase como paso con FEDIAF
-#    que estaba "todo leido" y luego resulta que seguian saliendo cosas que
-#    habias ignorado»
-#
-# La respuesta honesta era NO. FEDIAF tiene inventario de tablas con veredicto
-# (BLOQUE 67) y desglose de secciones (BLOQUE 68); SACN5 tenia un cuaderno de
-# lectura y ningun sitio donde COMPROBAR que no se hubiera saltado nada. Y ya
-# habia pasado: `VERIFICACION_FILA_A_FILA.md` deja escrito que un barrido de sus
-# tablas se corto solo con `sed` y reviso unas 40.
-#
-# `sacn5_tablas.json` es el inventario: las 474 tablas del libro, una por una.
-# Hoy: 64 con rastro en el repo, 44 felinas y 67 listados de productos comerciales
-# -- estas dos ultimas clasificadas POR SU PROPIO TITULO, y el campo
-# `veredicto_por` lo dice, porque «leida» y «apartada por el titulo» no pueden
-# leerse igual --, y 299 PENDIENTES. Pendiente es un veredicto honesto («nadie lo
-# ha mirado») y por eso se cuentan y se clavan aqui.
-#
-# EL NUMERO DE PENDIENTES SE COMPARA EXACTO, no «menor o igual». Si baja, hay
-# que bajarlo aqui a mano, y esa es la idea: cada tabla que se resuelve deja
-# constancia en el mismo commit. Si sube, es que el libro trae tablas nuevas sin
-# clasificar. Las dos cosas tienen que verse.
-print("\n=== BLOQUE 78: ninguna tabla de SACN5 sin veredicto ===")
-
-import json as _json78
-
-_PENDIENTES_78 = 0         # ← 11-sep-2026: las 474 con veredicto. Solo puede bajar.
-_CON_HALLAZGO_78 = 22      # tablas leidas que traen una cifra que el motor NO aplica
-_TOTAL_78 = 474
-
-_inv78 = _json78.loads((_raiz_b24 / "sacn5_tablas.json").read_text(encoding="utf-8"))["tablas"]
-_VEREDICTOS_78 = ("aplicada", "citada_en_el_repo", "leida_y_no_aplica",
-                  "leida_con_hallazgo", "felina", "lista_de_productos", "pendiente")
-
-for _t78, _f78 in sorted(_inv78.items()):
-    if _f78.get("veredicto") not in _VEREDICTOS_78:
-        fallos.append(f"BLOQUE78: la tabla {_t78} tiene el veredicto «{_f78.get('veredicto')}», "
-                      f"que no es ninguno de {_VEREDICTOS_78}")
-    if _f78.get("veredicto") != "pendiente" and not (_f78.get("nota") or "").strip():
-        fallos.append(f"BLOQUE78: la tabla {_t78} dice «{_f78['veredicto']}» y no dice POR QUE. "
-                      f"Un veredicto sin motivo es una firma en blanco")
-
-_pend78 = sum(1 for _f in _inv78.values() if _f["veredicto"] == "pendiente")
-# ⚠️ Las «leida_con_hallazgo» se cuentan APARTE y tambien exacto. Son las que ya
-# se han leido y traen una cifra canina que el motor no aplica: si se mezclaran
-# con las pendientes, el unico numero que baja al trabajar taparia al que sube
-# al encontrar algo. Son dos cosas distintas y las dos tienen que verse.
-_hall78 = sum(1 for _f in _inv78.values() if _f["veredicto"] == "leida_con_hallazgo")
-if _hall78 != _CON_HALLAZGO_78:
-    fallos.append(
-        f"BLOQUE78: hay {_hall78} tablas leidas con un hallazgo sin aplicar y aqui pone "
-        f"{_CON_HALLAZGO_78}. Cada una tiene que estar medida y escrita en "
-        f"HALLAZGOS_SACN5_11SEP.md antes de contarla, y salir de la cuenta cuando se aplique o "
-        f"se descarte con motivo")
-if len(_inv78) != _TOTAL_78:
-    fallos.append(f"BLOQUE78: el inventario tiene {len(_inv78)} tablas y aqui pone {_TOTAL_78}. "
-                  f"Si SACN5 no ha cambiado, es que el extractor si -- y entonces lo que hay que "
-                  f"mirar es que se ha dejado de ver")
-if _pend78 != _PENDIENTES_78:
-    fallos.append(
-        f"BLOQUE78: hay {_pend78} tablas de SACN5 sin veredicto y aqui pone {_PENDIENTES_78}. "
-        f"{'Si has resuelto tablas, baja el numero en este bloque: la cuenta va en el mismo commit que el veredicto.' if _pend78 < _PENDIENTES_78 else 'Han APARECIDO tablas sin clasificar, que es justo lo que este bloque existe para no dejar pasar.'}")
-
-# Y el cruce contra el texto del libro, cuando el repo de fuentes esta al lado.
-# En la CI no esta, asi que ahi este bloque comprueba el inventario y NO finge
-# haberlo cruzado: decirlo es parte de la prueba.
-import subprocess as _sub78
-_aud78 = _sub78.run([sys.executable, "auditar_sacn5_tablas.py"],
-                    capture_output=True, text=True, cwd=str(_raiz_b24))
-if _aud78.returncode != 0:
-    _cola78 = "\n      ".join((_aud78.stdout + _aud78.stderr).strip().splitlines()[-10:])
-    fallos.append(f"BLOQUE78: el inventario de SACN5 no cuadra con el texto del libro:"
-                  f"\n      {_cola78}")
-for _l78 in (_aud78.stdout.strip().splitlines() if _aud78.stdout.strip() else []):
-    if _l78.startswith("-"):
-        break
-    print(f"  {_l78.strip()}")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
-
-
 # ============================================================
 # BLOQUE 79 — QUIEN PUEDE MARCAR CADA PATOLOGIA, DERIVADO DE SU FUENTE
 # ============================================================
@@ -11588,191 +11876,6 @@ if _sin80:
                   f"pauta, que es para quien se escribio")
 print(f"  {_n80} margenes servidos por GET /patologias y comprobados contra el fichero")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
-
-
-# ============================================================
-# BLOQUE 81 — el TEXTO de SACN5, no solo sus tablas
-# ============================================================
-#
-# ⚠️ POR QUE EXISTE (10 septiembre). Elena, despues de que le dijera que SACN5
-# estaba «leido entero con tablas y texto»:
-#
-#     «te mandé leer sacn5 todo bien con tablas y texto, y ahora resulta que
-#      tampoco... ¿qué está fallando?»
-#
-# Fallaban DOS cosas, y la segunda es peor que la primera.
-#
-# 1. «Leido» significaba tres cosas -- sacado del PDF, con veredicto para cada
-#    tabla Y CADA FRASE, y aplicado -- y se usaban como una. De SACN5 habia
-#    contador para las TABLAS (`sacn5_tablas.json`, BLOQUE 78) y del TEXTO no
-#    habia ninguno. Sin contador, «leido entero» es una afirmacion mia, y de
-#    esas ya sabemos lo que valen.
-#
-# 2. ⚠️ LOS .txt ESTABAN MEZCLADOS. Se extrajeron conservando la DISPOSICION
-#    VISUAL de la pagina, y SACN5 va a DOS COLUMNAS: cada linea pegaba la de la
-#    columna izquierda con la de la derecha. **24.012 de 64.074 lineas, el
-#    37,5 %.** O sea que mas de un tercio de lo que se leia eran frases que el
-#    libro NO dice, como «Linoleic and α-linolenic acids are considered / DM fat
-#    should be restricted to between 7 to 10%», que son dos parrafos distintos.
-#    Y en FEDIAF era todavia peor: el 49,3 %.
-#
-#    Eso explica por que «leido entero» podia ser verdad en esfuerzo y falso en
-#    resultado. Se rehizo con `canislab-fuentes/sacn5/extraer_texto.py` y bajo a
-#    2 lineas de 123.191.
-#
-# Este bloque clava el numero de elementos nutricionales del texto que siguen
-# sin veredicto, EXACTO, como el 78 hace con las tablas: solo baja cuando
-# alguien lee y resuelve, y lo baja en el mismo commit.
-print(f"\n{'='*60}")
-print("=== BLOQUE 83: el techo legal y el nutricional, servidos y distinguidos ===")
-# ⚠️ POR QUE EXISTE (10 septiembre). Elena: «¿cómo vas a gestionar lo del límite
-# legal y el nutricional?». Un maximo de FEDIAF viene de TRES sitios y no son lo
-# mismo, y hasta hoy la pantalla ensenaba un numero sin decir cual:
-#
-#   · (L) LEGAL, Reglamento (UE) 2017/1492. Y §3.1.3: solo aplica si el nutriente
-#     se ANADE como aditivo; si viene solo del alimento, manda el nutricional.
-#   · (N) NUTRICIONAL, criterio de FEDIAF, admite lectura profesional.
-#   · La nota c del sodio y el cloruro, que NO es un techo: es «el nivel mas alto
-#     con datos» -- «higher levels may still be safe, but no scientific data are
-#     available». No dice que por encima haga dano: dice que nadie lo ha mirado.
-#
-# MEDIDO sobre los 216 menus del catalogo: en 215 de 216 los ocho nutrientes con
-# techo llevan parte ANADIDA por un suplemento (yodo 91 % de mediana, vitamina D
-# 70 %, zinc 60 %). O sea que el legal es el que corresponde por la §3.1.3 en
-# casi todos, y aplicarlo tambien al que falta es MAS estricto, nunca menos.
-_r83 = _c.post("/formular/estado", json={
-    "gramos_por_alimento": {"Carcasa de pollo": 300.0, "Hígado de vaca": 30.0},
-    "der_objetivo": 800.0, "etapa_requisitos": "Adulto", "peso_perro_kg": 20.0})
-assert _r83.status_code == 200, _r83.status_code
-_techos83 = _r83.json().get("techos_de_fediaf") or []
-if not _techos83:
-    fallos.append("BLOQUE83: `/formular/estado` no sirve `techos_de_fediaf`. Sin eso, quien "
-                  "firma una pauta ve un maximo y no puede saber si es la ley -- que no mueve "
-                  "nadie -- o un criterio nutricional")
-_ORIG83 = {"legal_UE", "nutricional", "nota_c_nivel_mas_alto_con_datos"}
-_req83 = {r["nutriente"]: r for r in
-          _json_b12.load(open("requerimientos_v2_final.json", encoding="utf-8"))}
-for _t83 in _techos83:
-    _f83 = _req83.get(_t83["nutriente"]) or {}
-    if _t83.get("origen") not in _ORIG83:
-        fallos.append(f"BLOQUE83: se sirve el techo de {_t83['nutriente']} con "
-                      f"origen={_t83.get('origen')!r}, que no es ninguno de {sorted(_ORIG83)}")
-    if _t83.get("origen") != _f83.get("maximo_origen"):
-        fallos.append(f"BLOQUE83: la API dice que el techo de {_t83['nutriente']} es "
-                      f"{_t83.get('origen')!r} y el fichero que aplica el solver dice "
-                      f"{_f83.get('maximo_origen')!r}. Es la tercera copia de la misma tabla")
-    if _t83.get("maximo_por_1000kcal") != _f83.get("maxAdulto"):
-        fallos.append(f"BLOQUE83: la API sirve {_t83.get('maximo_por_1000kcal')} de techo para "
-                      f"{_t83['nutriente']} y el fichero dice {_f83.get('maxAdulto')}")
-
-# Y EL DE REPUESTO. La vitamina D es el unico nutriente del perfil canino con los
-# dos maximos publicados y el LEGAL por debajo: 14,1875 µg (227,00 (L)) y 20,0
-# (320,00 (N)). El motor aplica el legal; el nutricional tiene que estar servido
-# y guardado, porque es lo que gobernaria si la ley cambiara o si el menu no
-# llevara ese nutriente anadido (§3.1.3).
-_vd83 = next((x for x in _techos83 if x["nutriente"] == "Vitamina_D"), None)
-if not _vd83:
-    fallos.append("BLOQUE83: no se sirve el techo de vitamina D")
-else:
-    if abs((_vd83.get("maximo_por_1000kcal") or 0) - 14.1875) > 1e-9:
-        fallos.append(f"BLOQUE83: el techo de vitamina D servido son "
-                      f"{_vd83.get('maximo_por_1000kcal')} y el legal son 14,1875")
-    if abs((_vd83.get("maximo_nutricional_por_1000kcal") or 0) - 20.0) > 1e-9:
-        fallos.append(
-            f"BLOQUE83: el maximo NUTRICIONAL de la vitamina D servido es "
-            f"{_vd83.get('maximo_nutricional_por_1000kcal')} y son 20,0 µg/1000 kcal "
-            f"(«320.00 (N)» de la Tabla III-3a). Si ese numero se pierde, el dia que cambie "
-            f"la ley no hay de donde sacarlo -- y ademas es el que manda cuando el nutriente "
-            f"no va anadido como aditivo (§3.1.3)")
-    if _vd83.get("origen") != "legal_UE":
-        fallos.append("BLOQUE83: el techo de vitamina D que aplica el motor tiene que ser el "
-                      "LEGAL, que es el mas bajo de los dos")
-print(f"  {len(_techos83)} techos servidos con su procedencia · "
-      f"{sum(1 for x in _techos83 if x.get('origen') == 'legal_UE')} legales · "
-      f"{sum(1 for x in _techos83 if x.get('maximo_nutricional_por_1000kcal'))} con el otro numero al lado")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
-
-
-print(f"\n{'='*60}")
-print("=== BLOQUE 82: los alimentos que FEDIAF declara toxicos ===")
-# ⚠️ POR QUE EXISTE (10 septiembre). El anexo 7.7 de FEDIAF -- «Risks of some
-# human foods regularly given to pets»: uva, pasa, chocolate, cebolla, ajo --
-# no estaba en NINGUNA parte del repo, y el motivo por el que no se noto es el
-# peor: hoy no hay ninguno en el catalogo, asi que su ausencia no daba error, no
-# daba aviso y no cambiaba ningun menu. Es el patron del oxido de cobre otra vez.
-#
-# Este bloque comprueba las tres puertas: que ninguna ficha del catalogo caiga en
-# la lista, que el solver los filtre si algun dia entra una, y que el aviso salga.
-from seguridad import TOXICOS_FEDIAF_7_7 as _TOX82, _es as _es82, revisar_seguridad as _rs82
-_en_catalogo82 = sorted(n for n in al if _es82(n, _TOX82))
-if _en_catalogo82:
-    fallos.append(f"BLOQUE82: el catalogo tiene fichas que FEDIAF declara toxicas para el perro "
-                  f"en su anexo 7.7: {_en_catalogo82}. No hay cantidad segura -- la fuente dice "
-                  f"que en la uva la gravedad no depende de la dosis y que el chocolate se "
-                  f"acumula --, asi que no pueden estar en el catalogo")
-# Con el fallo puesto: una ficha de uva inventada tiene que dar aviso.
-_falso82 = {"Uva de mesa": {"nutrientes": {}, "energia": 60, "categoria": "Verduras y frutas"}}
-_avisos82 = _rs82({"Uva de mesa": 100.0}, _falso82, 1000.0)
-if not any("7.7" in str(x) for x in _avisos82):
-    fallos.append("BLOQUE82: se mete una ficha de uva en la racion y `revisar_seguridad` no dice "
-                  "nada. Entonces la lista del anexo 7.7 no la mira nadie")
-print(f"  {len(_TOX82)} alimentos vetados · {len(_en_catalogo82)} en el catalogo (tienen que ser 0)")
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
-
-
-print(f"\n{'='*60}")
-print("=== BLOQUE 81: el texto de SACN5, elemento a elemento ===")
-_aud81 = _sp_b18.run([sys.executable, "leer_sacn5.py"], capture_output=True, text=True,
-                     cwd=_os_b18.path.dirname(_os_b18.path.abspath(__file__)))
-if "Discrepancias: 0" not in _aud81.stdout:
-    _cola81 = "\n      ".join((_aud81.stdout + _aud81.stderr).strip().splitlines()[-8:])
-    fallos.append(f"BLOQUE81: el recuento del texto de SACN5 no cuadra:\n      {_cola81}")
-for _l81 in _aud81.stdout.strip().splitlines()[:1]:
-    print(" ", _l81.strip())
-
-# Y QUE EL TEXTO NO VUELVA A ESTAR MEZCLADO. Es la comprobacion que importa: un
-# contador sobre un texto con las columnas pegadas cuenta frases que la fuente
-# no dice, y encima sale en verde. Se mide la senal con la que se descubrio --
-# texto a los dos lados de cuatro o mas espacios en una linea larga -- sobre los
-# dos ficheros de los que se lee.
-import re as _re81
-#
-# ⚠️ Y DESDE EL 11 DE SEPTIEMBRE SE MIRAN LOS CUATRO, NO DOS. Aqui solo estaban
-# SACN5 y FEDIAF, que son los dos a los que les paso. Pero el mismo dia en que
-# se empezo a leer NRC 2006 y a citarlo, **nadie habia comprobado que su texto
-# no tuviera el mismo problema** -- y NRC es la fuente de los cinco topes de
-# seguridad cronica. Medido al anadirlo: NRC 0,08 % y Fascetti 0,00 %, o sea
-# limpios; pero «esta limpio» y «se comprueba que esta limpio» no son lo mismo,
-# que es la leccion entera de este bloque.
-for _nom81, _ruta81 in (
-        ("SACN5", _os_b18.path.join("..", "canislab-fuentes", "sacn5")),
-        ("FEDIAF", _os_b18.path.join("..", "canislab-fuentes", "FEDIAF")),
-        ("NRC2006", _os_b18.path.join("..", "canislab-fuentes", "NRC2006")),
-        ("Fascetti", _os_b18.path.join("..", "canislab-fuentes", "fascetti"))):
-    if not _os_b18.path.isdir(_ruta81):
-        print(f"  ({_nom81}: no esta el texto, no se puede comprobar el mezclado)")
-        continue
-    import glob as _glob81
-    _malas81 = _tot81 = 0
-    for _f81 in _glob81.glob(_os_b18.path.join(_ruta81, "*.txt")):
-        for _l in open(_f81, encoding="utf-8", errors="ignore"):
-            if not _l.strip():
-                continue
-            _tot81 += 1
-            if len(_l.strip()) > 60 and _re81.search(r"\w\s{4,}\w", _l):
-                _malas81 += 1
-    _pct81 = 100.0 * _malas81 / _tot81 if _tot81 else 0.0
-    print(f"  {_nom81}: {_malas81} de {_tot81} lineas con las dos columnas pegadas ({_pct81:.1f} %)")
-    if _pct81 > 1.0:
-        fallos.append(
-            f"BLOQUE81: el texto de {_nom81} vuelve a tener las dos columnas pegadas en el "
-            f"{_pct81:.1f} % de sus lineas ({_malas81} de {_tot81}). Leerlo asi es leer frases "
-            f"que la fuente NO dice, y cualquier cita sacada de ahi puede ser falsa. Se rehace "
-            f"con `canislab-fuentes/sacn5/extraer_texto.py`")
-
-print(f"  hecho, {len(fallos)} fallos hasta ahora")
-
-
 # ============================================================
 # BLOQUE 85 — que cada cita entrecomillada diga lo que dice la fuente
 # ============================================================
@@ -12004,6 +12107,7 @@ _BLOQUES_QUE_NECESITAN_FUENTES = [
     "78 (ninguna tabla de SACN5 sin veredicto)",
     "81 (el texto de SACN5, elemento a elemento)",
     "85 (cada cita, contra el texto de su fuente)",
+    "94 (los contadores de NRC 2006 y de Fascetti)",
 ]
 # ============================================================
 # BLOQUE 86 — EL PERRO DE TRABAJO: LOS TOPES CRÓNICOS, TAMBIÉN POR PESO
@@ -12235,6 +12339,50 @@ if "actividad" not in _recibe87:
                   "decide si a un perro se le aprietan los topes crónicos por peso metabólico y "
                   "si su menú lleva el aviso del perro de trabajo")
 
+# ⚠️ Y EL INVENTARIO CONTRARIO (11 septiembre): LO QUE LA FICHA NO PREGUNTA
+# TODAVÍA. Este fichero nació para que ningún dato que la app recoge se pierda
+# por el camino, y tiene un punto ciego por construcción: el dato que el MOTOR
+# ya sabe recibir y que NADIE le manda no aparece en ningún inventario. No está
+# en `campos`, porque la ficha no lo pregunta; y no está en ningún pendiente,
+# porque por el lado del motor ya está hecho.
+#
+# El caso que lo abrió son los PREMIOS: cuatro fuentes piden lo mismo (no más
+# del 10 % de las kcal del día), el motor ya formula la ración con las calorías
+# que quedan y ya lo avisa -- y la ficha no pregunta cuántas son, así que el
+# campo llega vacío SIEMPRE y el menú sale igual que si el perro no comiera
+# nada más. Un hueco declarado se puede cerrar; uno sin declarar se vuelve a
+# descubrir dentro de seis meses.
+_huecos87 = _ficha87.get("lo_que_la_ficha_todavia_no_pregunta")
+if not isinstance(_huecos87, dict) or len(_huecos87) <= 1:
+    fallos.append("BLOQUE87: `datos_de_la_ficha.json` ya no declara "
+                  "`lo_que_la_ficha_todavia_no_pregunta`. Sin ese bloque, un dato que el motor "
+                  "acepta y que nadie le manda no sale en ningún inventario")
+else:
+    for _h87, _v87 in _huecos87.items():
+        if _h87.startswith("_"):
+            continue
+        for _clave87 in ("llega_como", "quien_lo_pide", "que_hace_el_motor_ya", "que_falta"):
+            if not (_v87.get(_clave87) or "").strip():
+                fallos.append(f"BLOQUE87: el hueco «{_h87}» no dice «{_clave87}». Un hueco sin "
+                              f"fuente, sin campo o sin qué falta no es un hueco declarado: es "
+                              f"una nota")
+        _destino87 = _v87.get("llega_como")
+        if _destino87 and _destino87 not in _recibe87:
+            fallos.append(f"BLOQUE87: el hueco «{_h87}» dice que entraría por «{_destino87}» y "
+                          f"PeticionMenu no tiene ese campo. Entonces el hueco no es de la ficha: "
+                          f"es del motor, y esto lo está tapando")
+
+# El de los premios, con nombre y apellidos: es el que abrió el bloque, y lo
+# que hace el motor con él tiene que seguir enchufado.
+if "premios" not in (_huecos87 or {}):
+    fallos.append("BLOQUE87: ha desaparecido el hueco de los premios. Lo piden CUATRO fuentes "
+                  "(Ettinger caps. 175 y 192, Fascetti cap. 7) y la ficha sigue sin preguntarlo: "
+                  "mientras siga así, el hueco tiene que estar escrito")
+if "kcal_de_premios" not in _recibe87:
+    fallos.append("BLOQUE87: PeticionMenu ha dejado de aceptar `kcal_de_premios`. Sin ese campo "
+                  "la ración se formula con el día entero de calorías y los premios se suman por "
+                  "encima, que es la dilución que describe Ettinger cap.192")
+
 print(f"  {len(_DE_LA_FICHA_87)} campos de la ficha · "
       f"{sum(1 for v in _campos87.values() if v['forma'] == 'campo')} llegan sueltos · "
       f"{sum(1 for v in _campos87.values() if v['forma'] == 'dentro_de')} cocinados · "
@@ -12361,9 +12509,131 @@ else:
                       f"el motor tiene {sorted(_ACT88)}. Cada nivel del motor tiene que salir de "
                       f"una fila de la fuente, o estar declarado como decisión nuestra")
 
+# ── LOS PREMIOS: LA PREGUNTA, SUS RESPUESTAS Y SUS DOS REGISTROS ──
+#
+# ⚠️ Elena, 11 septiembre: «ahora hay que hacer preguntas sobre eso y marcar
+# unas respuestas que el usuario pueda seleccionar o el veterinario [...] y
+# dependiendo de las respuestas se tiene que poder adaptar a lo que hace el
+# motor para poder calcular las nuevas kilocalorías que necesita».
+#
+# Lo que se exige aquí es lo mismo que a la actividad: que las respuestas
+# que la app ofrece salgan de AQUÍ, que cada una traiga sus DOS registros, y
+# -- lo que no tiene la actividad-- que se vea cuál de las cifras es de la
+# fuente y cuál la ponemos nosotros. Un 5 % nuestro con pinta de cifra de
+# libro es exactamente el fallo que `auditar_conversiones.py` existe para
+# cazar, con otro disfraz.
+_prem88 = (_d88 if "_d88" in dir() else {}).get("premios") or {}
+_niv88 = {n["clave"]: n for n in (_prem88.get("niveles") or [])}
+if set(_niv88) != set(_api.NIVELES_DE_PREMIOS):
+    fallos.append(f"BLOQUE88: /vocabulario sirve los niveles de premios {sorted(_niv88)} y el "
+                  f"motor aplica {sorted(_api.NIVELES_DE_PREMIOS)}. Si la app ofrece una "
+                  f"respuesta que el motor no sabe recibir, la petición se cae con un 422")
+for _k88, _n88 in _niv88.items():
+    if _n88.get("fraccion_del_dia") != _api.NIVELES_DE_PREMIOS.get(_k88):
+        fallos.append(f"BLOQUE88: el nivel de premios «{_k88}» se sirve con "
+                      f"{_n88.get('fraccion_del_dia')} y el motor aplica "
+                      f"{_api.NIVELES_DE_PREMIOS.get(_k88)}. La cifra servida es la que el "
+                      f"usuario cree estar eligiendo")
+    for _reg88 in ("dueno", "veterinario"):
+        if not ((_n88.get(_reg88) or {}).get("titulo") or "").strip():
+            fallos.append(f"BLOQUE88: el nivel de premios «{_k88}» no tiene registro «{_reg88}». "
+                          f"Los dos viven en el motor a propósito: copiados en la app se "
+                          f"desincronizan")
+    # La cifra que NO es de la fuente tiene que decirlo, y decirlo donde lo lee
+    # quien firma: en la etiqueta del veterinario.
+    if not _n88.get("de_la_fuente"):
+        _det88 = ((_n88.get("veterinario") or {}).get("detalle") or "")
+        if "NUESTRO" not in _det88:
+            fallos.append(f"BLOQUE88: el nivel de premios «{_k88}» aplica una cifra que no es de "
+                          f"ninguna fuente y su etiqueta de veterinario no lo dice. Una cifra "
+                          f"nuestra con pinta de cifra de libro es lo peor de los dos mundos")
+if _niv88:
+    for _reg88 in ("dueno", "veterinario"):
+        if not ((_prem88.get("pregunta") or {}).get(_reg88) or "").strip():
+            fallos.append(f"BLOQUE88: los premios se sirven sin la pregunta en registro "
+                          f"«{_reg88}». La app tiene que poder leer también CÓMO se pregunta, no "
+                          f"solo qué se responde")
+    if _prem88.get("techo_recomendado_pct") != round(_api.FRACCION_MAXIMA_DE_PREMIOS * 100):
+        fallos.append("BLOQUE88: el techo de los premios que se sirve no es el que aplica el "
+                      "motor")
+
+# ── LOS NUTRIENTES A LOS QUE SE LE PUEDE PONER UN OBJETIVO ──────────────
+#
+# ⚠️ AÑADIDO (11 de septiembre de 2026, noche). La pantalla de objetivos del
+# veterinario ofrecía OCHO nutrientes, escritos a mano dentro de
+# `formulador.jsx`. El motor acepta los CUARENTA Y SEIS que verifica: el
+# objetivo viaja con la clave tal cual y `_objetivos_dentro_de_fediaf` la
+# busca en `verificar.MAPA`. O sea que los otros 38 no faltaban por el motor,
+# faltaban porque la lista la decidía la app -- que es el fallo de las
+# categorías y el de los niveles de actividad otra vez.
+#
+# Y la comprobación que de verdad importa es la última: que cada nutriente
+# SERVIDO se pueda usar de objetivo de verdad. Uno sin fila en la tabla de
+# FEDIAF lo descarta `_objetivos_dentro_de_fediaf` por `fila is None`, EN
+# SILENCIO y sin recorte que decir -- el profesional lo escribiría, no
+# pasaría nada, y el menú saldría verde igual.
+_obj88 = _d88.get("objetivos_del_profesional") or {}
+_lista88 = _obj88.get("nutrientes") or []
+if not _lista88:
+    fallos.append("BLOQUE88: /vocabulario no sirve los nutrientes a los que un profesional "
+                  "puede ponerle un objetivo. Sin ellos la app se los escribe a mano, que es "
+                  "de donde venimos")
+else:
+    from verificar import MAPA as _MAPA88
+    from requisitos import cargar_requerimientos as _creq88
+    _filas88 = {r.get("nutriente"): r for r in _creq88()}
+    _esperados88 = {c for n, c in _MAPA88.items() if n in _filas88}
+    _servidos88 = {n.get("clave") for n in _lista88}
+    if _servidos88 != _esperados88:
+        fallos.append(f"BLOQUE88: /vocabulario sirve {len(_servidos88)} nutrientes para objetivos "
+                      f"y el motor acepta {len(_esperados88)}. Faltan "
+                      f"{sorted(_esperados88 - _servidos88)} y sobran "
+                      f"{sorted(_servidos88 - _esperados88)}")
+    if _obj88.get("cuantos") != len(_lista88):
+        fallos.append("BLOQUE88: el recuento de nutrientes para objetivos no cuadra con la "
+                      "lista servida. Un recuento escrito aparte puede mentir sobre la lista "
+                      "que va justo debajo")
+    for _n88 in _lista88:
+        if not ((_n88.get("veterinario") or {}).get("titulo") or "").strip():
+            fallos.append(f"BLOQUE88: el nutriente «{_n88.get('clave')}» se sirve sin etiqueta "
+                          f"de veterinario. Esta pantalla la firma un profesional")
+        # La UNIDAD tiene que ser la del fichero que audita `auditar_fediaf.py`,
+        # y tiene que ir en el título: el objetivo viaja por 1000 kcal, y quien
+        # escriba 2 creyendo que son gramos cuando son miligramos aprieta mil
+        # veces de más.
+        _fila88 = _filas88.get(_n88.get("nombre_del_requisito")) or {}
+        if _n88.get("unidad") != _fila88.get("unidad"):
+            fallos.append(f"BLOQUE88: «{_n88.get('clave')}» se sirve en "
+                          f"{_n88.get('unidad')} y `requerimientos_v2_final.json` dice "
+                          f"{_fila88.get('unidad')}")
+        if f"{_n88.get('unidad')}/1000 kcal" not in ((_n88.get("veterinario") or {}).get("titulo") or ""):
+            fallos.append(f"BLOQUE88: el título de «{_n88.get('clave')}» no lleva su unidad por "
+                          f"1000 kcal dentro. Sin ella se escribe el número de otra unidad")
+
+    # ⚠️ Y QUE SE PUEDA USAR DE VERDAD, uno por uno. No basta con servirlo.
+    #
+    # Hoy NO hay ninguno que caiga aquí, y eso es lo que se está vigilando: las
+    # 46 claves del MAPA tienen fila. La comprobación existe para el día que
+    # entre una que no -- una clave en el MAPA sin fila en la tabla la descarta
+    # `_objetivos_dentro_de_fediaf` por `fila is None`, sin ajuste que devolver.
+    # Una clave que NO está en el MAPA sí se dice («no_es_un_requisito»); es
+    # esta otra la que se va callando.
+    _req_obj88 = _api.cargar_v2()[1]
+    _sueltos88 = []
+    for _n88 in _lista88:
+        _limpios88, _aj88 = _api._objetivos_dentro_de_fediaf(
+            {_n88["clave"]: {"min": 0.0}}, _req_obj88, "Adulto")
+        if not _limpios88 and not _aj88:
+            _sueltos88.append(_n88["clave"])
+    if _sueltos88:
+        fallos.append(f"BLOQUE88: {_sueltos88} se sirven como objetivo y el motor los descarta "
+                      f"EN SILENCIO (`fila is None`): el profesional escribiría el número, no "
+                      f"pasaría nada, no habría recorte que decir y el menú saldría verde igual")
+
 print(f"  {sum(1 for _k in _d88 if isinstance(_d88[_k], dict))} listas servidas · "
       f"{len(_ACT88)} niveles de actividad · "
       f"{len(_api.CATEGORIAS_QUE_ELIGE_EL_USUARIO)} categorías · "
+      f"{len(_lista88)} nutrientes para objetivos · "
       f"{len(_api.PELDANOS_EN_CRISTIANO)} peldaños")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
@@ -12627,6 +12897,31 @@ def _cifras90(clave):
         out["_no_formulable"] = True
     return out
 
+# La funcion que llama el solver de verdad. Se importa aqui arriba porque la
+# usan ya el punto 3 (que mide la COMBINACION de dos patologias) y el 8.
+from motor_completo import topes_de_patologias as _topes90
+
+
+def _cifras_de_la_combinacion90(lista):
+    """Lo que el SOLVER aplica a esa combinacion, en la forma del inventario.
+
+    ⚠️ Se le pregunta a `topes_de_patologias` y no se lee de `patologias.json`
+    a mano, por lo mismo de siempre: leerlo a mano seria una segunda copia de
+    la logica de combinacion (`min()` para techos, `max()` para suelos, mas los
+    condicionales `si_ademas`), y esa copia se desincroniza. Aqui la respuesta
+    de una pregunta de analitica dice lo que el perro va a comer DE VERDAD, que
+    no es lo que dice ninguna de las dos patologias por separado.
+    """
+    t, pct, av, su = _topes90(list(lista), "Adulto")
+    out = {}
+    for n_, v_ in (t or {}).items():
+        out["max_" + n_] = v_
+    for n_, v_ in (su or {}).items():
+        out["min_" + n_] = v_
+    if pct is not None:
+        out["max_pct_kcal_grasa"] = pct
+    return out
+
 # ── 1. Cada estado declarado es uno de los cinco ────────────────────────
 for _k90, _v90 in _P90.items():
     if _v90.get("estado") not in _ESTADOS90:
@@ -12638,13 +12933,46 @@ for _k90, _v90 in _P90.items():
 # ⚠️ Lo segundo es lo que importa: si las cifras se copiaran aquí, esto sería
 # la segunda copia de `patologias.json` y se desincronizaría igual que se
 # desincronizó la del `POST /menu` que se borró el 26 de agosto.
+#
+# ⚠️ Y DOS FORMAS DE APLICAR UNA RESPUESTA, declaradas y no deducidas
+# (11 septiembre, noche). `sustituye_a_la_cabecera` son las cinco preguntas de
+# subtipo: la respuesta es una clave HERMANA y echa a la cabecera del array.
+# `anade_otra_patologia` son las dos de analítica: la respuesta SUMA una
+# segunda patología y la cabecera se queda. Se aplican al revés, y confundirlas
+# dejaría al perro sin su pancreatitis, así que la forma va escrita en el
+# fichero -- mirando la respuesta no se puede saber: `hiperlipidemia` es una
+# patología de pleno derecho igual que `cardiopatia_c`.
+_FORMAS90 = {"sustituye_a_la_cabecera", "anade_otra_patologia"}
 for _k90, _v90 in _P90.items():
+    _forma90 = _v90.get("como_se_aplica", "sustituye_a_la_cabecera")
+    if _forma90 not in _FORMAS90:
+        fallos.append(f"BLOQUE90: «{_k90}» dice `como_se_aplica: {_forma90}`, que no es ninguna "
+                      f"de {sorted(_FORMAS90)}")
     for _r90 in _v90.get("respuestas", []):
         _cm90 = _r90.get("clave_motor")
+        # En la forma que SUMA, una respuesta puede no añadir nada («no los
+        # tiene altos»), y entonces no lleva clave. Es el caso bueno, no un
+        # hueco: lo que decide es la OTRA.
+        if _cm90 is None and _forma90 == "anade_otra_patologia":
+            continue
         if _cm90 not in _pat90:
             fallos.append(f"BLOQUE90: «{_k90}» ofrece la respuesta «{_r90.get('label')}» que "
                           f"lleva a «{_cm90}», y esa patología no existe. La app mandaría una "
                           f"clave que el motor tira sin decir nada")
+            continue
+        # ⚠️ En la forma que SUMA, las cifras de la respuesta NO son las de su
+        # clave suelta: son las de la COMBINACIÓN con la cabecera, que es lo
+        # que de verdad se le aplica al perro. Comprobarlas contra la clave
+        # suelta diría que `hiperlipidemia` aporta su propio techo de grasa (30)
+        # y se perdería lo único que importa aquí: que junto a la pancreatitis
+        # el techo baja a 25.
+        if _forma90 == "anade_otra_patologia":
+            _esp90c = _cifras_de_la_combinacion90([_k90, _cm90])
+            if _r90.get("cifras_que_aplica") != _esp90c:
+                fallos.append(f"BLOQUE90: «{_k90}» + «{_cm90}» aplica {_esp90c} y el inventario "
+                              f"dice {_r90.get('cifras_que_aplica')}. En esta forma la respuesta "
+                              f"tiene que decir lo que come el perro DE VERDAD, que no es lo que "
+                              f"dice ninguna de las dos patologias por separado")
             continue
         if _r90.get("cifras_que_aplica") != _cifras90(_cm90):
             fallos.append(f"BLOQUE90: las cifras de «{_cm90}» en el inventario no son las de "
@@ -12661,8 +12989,21 @@ for _k90, _v90 in _P90.items():
     _rs90 = _v90.get("respuestas", [])
     if not _rs90:
         continue
-    _distintas90 = {_json90.dumps(_r90.get("cifras_que_aplica"), sort_keys=True) for _r90 in _rs90}
-    _decide90 = len(_distintas90) > 1
+    # En la forma que SUMA, lo que decide no son las cifras escritas en la
+    # respuesta sino lo que aplica el motor a la COMBINACIÓN. Se le pregunta a
+    # `topes_de_patologias`, que es la función que llama el solver.
+    if _v90.get("como_se_aplica") == "anade_otra_patologia":
+        _combis90 = set()
+        for _r90 in _rs90:
+            _lista90 = [_k90] + ([_r90["clave_motor"]] if _r90.get("clave_motor") else [])
+            _t90c, _pct90c, _av90c, _s90c = _topes90(_lista90, "Adulto")
+            _combis90.add(_json90.dumps(
+                {"topes": _t90c, "pct_kcal_grasa": _pct90c, "suelos": _s90c}, sort_keys=True))
+        _decide90 = len(_combis90) > 1
+    else:
+        _distintas90 = {_json90.dumps(_r90.get("cifras_que_aplica"), sort_keys=True)
+                        for _r90 in _rs90}
+        _decide90 = len(_distintas90) > 1
     if _v90.get("estado") == "aplicada" and not _decide90:
         fallos.append(f"BLOQUE90: «{_k90}» se declara «aplicada» y sus {len(_rs90)} respuestas "
                       f"aplican EXACTAMENTE lo mismo. Se le pide un dato clínico a quien firma "
@@ -12742,6 +13083,32 @@ for _k90, _v90 in _P90.items():
                       f"que parte. Un fichero que manda a buscar lo que ya esta hecho hace dudar "
                       f"de los que si faltan")
 
+# ── 7-bis. NI UNA CASILLA QUE EXISTE PUEDE FIGURAR COMO QUE NO EXISTE ───
+#
+# ⚠️ CASO REAL ENCONTRADO (11 septiembre, noche). El punto 7 mira la PREGUNTA
+# de la cabecera; esto mira las RESPUESTAS. `quien_formula_cada_patologia.json`
+# decía de `urolitos_fosfato_calcico` que «la app NO OFRECE esta patologia
+# todavia», y la app la ofrece desde el 8 de septiembre: es una de las cinco
+# respuestas de la pregunta de `estruvita`. Es el mismo fallo de la cardiopatía
+# con otra forma, y el punto 7 no podía verlo porque esa patología no tiene
+# pregunta propia (`la_hace_la_app: false`, y con razón: no hay cifra que
+# elegir).
+#
+# La regla: si una clave es respuesta de una pregunta que la app SÍ hace,
+# entonces la app la ofrece, y ningún fichero puede decir lo contrario.
+_ofrecidas90 = {_r90.get("clave_motor")
+                for _v90 in _P90.values() if _v90.get("la_hace_la_app")
+                for _r90 in _v90.get("respuestas", [])}
+for _k90 in sorted(x for x in _ofrecidas90 if x):
+    _texto90 = " ".join(str((_der90.get(_k90) or {}).get(_c90) or "")
+                        for _c90 in ("pregunta_que_falta", "nota"))
+    if "NO OFRECE" in _texto90 or "no hay casilla" in _texto90:
+        fallos.append(f"BLOQUE90: «{_k90}» es una de las respuestas de una pregunta que la app "
+                      f"SÍ hace, o sea que tiene casilla, y "
+                      f"`quien_formula_cada_patologia.json` sigue diciendo que no la ofrece. Un "
+                      f"fichero que manda a buscar lo que ya está hecho hace dudar de los que sí "
+                      f"faltan -- es el fallo de la cardiopatía otra vez")
+
 # ── 8. Y CONTESTAR LA PREGUNTA TIENE QUE CAMBIAR EL MENÚ DE VERDAD ─────
 #
 # ⚠️ ESTO ES LO QUE PREGUNTÓ ELENA (11 septiembre): «¿se aplican los valores
@@ -12758,7 +13125,7 @@ for _k90, _v90 in _P90.items():
 # Lo segundo es lo que de verdad protege. El solver podría ignorar el tope y el
 # menú saldría igual de verde para el semáforo de FEDIAF, que mide contra el
 # perro SANO — que es exactamente lo que ya pasó con el fósforo del renal.
-from motor_completo import topes_de_patologias as _topes90
+# (`_topes90` ya esta importado arriba, junto a `_cifras90`.)
 
 _ESTADIOS90 = {"cardiopatia_a": None, "cardiopatia_b1": None, "cardiopatia_b2": 738.6,
                "cardiopatia_c": 625.0, "cardiopatia_d": 480.0}
@@ -12770,6 +13137,70 @@ for _k90, _esp90 in _ESTADIOS90.items():
         fallos.append(f"BLOQUE90: contestar «{_k90}» hace que el solver aplique un techo de "
                       f"sodio de {_visto90} y su fila de `patologias.json` dice {_esp90}. La "
                       f"pregunta se hace, se guarda, y no cambia lo que come el perro")
+
+# ── 8-bis. Y LO MISMO CON **TODAS** LAS RESPUESTAS, NO SOLO LA CARDIOPATÍA ──
+#
+# ⚠️ AÑADIDO EL 11 DE SEPTIEMBRE POR LA NOCHE, a petición de Elena: «revisa que
+# todas las preguntas que has metido donde veterinario realmente funcionan,
+# devuelve lo que debe, y da los valores que debe PARA CADA RESPUESTA».
+#
+# Lo de arriba mide la cardiopatía y solo la cardiopatía, porque es la que
+# tiene cinco respuestas y cinco techos. Pero la app hace CINCO preguntas
+# (cardiopatía, renal, hepatopatía, shunt y urolitos) con 19 respuestas entre
+# todas, y de 14 de ellas nadie comprobaba que contestar una cosa u otra
+# cambiara lo que el solver aplica. Un inventario que cuadra consigo mismo y un
+# motor que aplica otra cosa se ven exactamente igual desde fuera: el menú sale
+# verde en los dos casos, porque el semáforo de FEDIAF mide el perro SANO.
+#
+# Se comprueba CIFRA A CIFRA y por las dos mitades -- techos con `min()` y
+# suelos con `max()` --, contra lo que devuelve `topes_de_patologias`, que es
+# la función que llama el solver de verdad.
+_comprobadas90 = 0
+for _k90, _v90 in _P90.items():
+    _suma90 = _v90.get("como_se_aplica") == "anade_otra_patologia"
+    for _r90 in _v90.get("respuestas", []):
+        _cm90 = _r90.get("clave_motor")
+        if _suma90:
+            # La lista que de verdad viaja al motor: la cabecera SIEMPRE, mas
+            # lo que anada la respuesta (que puede no anadir nada).
+            _lista90b = [_k90] + ([_cm90] if _cm90 else [])
+        elif not _cm90 or _cm90 not in _pat90:
+            continue
+        else:
+            _lista90b = [_cm90]
+        _t90b, _pg90b, _av90b, _su90b = _topes90(_lista90b, "Adulto")
+        for _cl90, _esp90b in (_r90.get("cifras_que_aplica") or {}).items():
+            if _cl90 == "_no_formulable":
+                continue
+            # ⚠️ El porcentaje de kcal de grasa NO vive en el diccionario de
+            # topes: es el SEGUNDO valor que devuelve `topes_de_patologias`,
+            # porque no es una concentracion por 1000 kcal sino una fraccion de
+            # la energia. Buscarlo entre los topes da None y acusa al solver de
+            # no aplicar lo que si aplica.
+            if _cl90 == "max_pct_kcal_grasa":
+                _visto90b = _pg90b
+            else:
+                _cual90, _nut90 = _cl90.split("_", 1)
+                _visto90b = (_t90b if _cual90 == "max" else _su90b).get(_nut90)
+            _comprobadas90 += 1
+            if _visto90b is None or abs(_visto90b - _esp90b) > 1e-6:
+                fallos.append(
+                    f"BLOQUE90: contestar «{_r90.get('label')}» en la pregunta de «{_k90}» "
+                    f"tendría que aplicar {_cl90}={_esp90b} y el solver aplica {_visto90b}. La "
+                    f"pregunta se hace, se guarda, y el perro come otra cosa -- y el menú sale "
+                    f"verde igual, porque el semáforo mide contra el perro SANO")
+        # Y la otra mitad: lo que el solver aplica y la respuesta NO dice. Un
+        # tope de más tampoco es inocente -- es una restricción que quien firma
+        # no ve, y que puede dejar al perro sin menú sin que se sepa por qué.
+        _dice90 = set(_r90.get("cifras_que_aplica") or {})
+        _aplica90 = {"max_" + n for n in _t90b} | {"min_" + n for n in _su90b}
+        if _pg90b is not None:
+            _aplica90.add("max_pct_kcal_grasa")
+        if _aplica90 - _dice90 - {"_no_formulable"}:
+            fallos.append(f"BLOQUE90: contestar «{_r90.get('label')}» en «{_k90}» hace que el "
+                          f"solver aplique {sorted(_aplica90 - _dice90)}, que la respuesta no "
+                          f"dice. Un tope que quien firma no ve puede dejar al perro sin menú "
+                          f"sin que se sepa por qué")
 
 # Y el filtro final: se le AÑADE al menú el alimento de más sodio por kcal del
 # catálogo, en la cantidad calculada para cruzar el techo del estadio D. No se
@@ -12826,7 +13257,8 @@ else:
 _cuenta90 = {}
 for _v90 in _P90.values():
     _cuenta90[_v90["estado"]] = _cuenta90.get(_v90["estado"], 0) + 1
-print(f"  {len(_P90)} preguntas · " + " · ".join(f"{v} {k}" for k, v in sorted(_cuenta90.items())))
+print(f"  {len(_P90)} preguntas · {_comprobadas90} cifras comprobadas contra el solver · "
+      + " · ".join(f"{v} {k}" for k, v in sorted(_cuenta90.items())))
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
@@ -13061,7 +13493,460 @@ if _restante92["yodo"] >= _pres92["yodo"]:
 print(f"  presupuesto semanal de yodo {_pres92['yodo']:.0f} µg · "
       f"una ración cara se lleva {_yodo92(_CARA92):.0f} µg/día")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
+# ============================================================
+# BLOQUE 98 — LAS DIEZ FICHAS DE HUESO, CONTRA LA TABLA DE KÖBER
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE, y es el fallo más gordo de la noche del 11 de septiembre.
+# Salió de leer entera una fuente que llevaba desde agosto «verificada»:
+#
+#     Tres fichas del catálogo tenían el calcio y el fósforo DIEZ VECES POR
+#     DEBAJO de lo que midió el estudio. La peor, «Pecho de ternera con hueso»,
+#     estaba en 93 de los 216 menús del catálogo, y con el valor real de la
+#     fuente 55 de esos menús SE PASAN del máximo de calcio de FEDIAF -- el
+#     peor, un cachorro en crecimiento con 9408 mg/1000 kcal contra un máximo
+#     de 4500. El semáforo los daba VERDES porque medía el número equivocado.
+#
+# Y las dos razones por las que sobrevivió meses:
+#
+#   1. La Tabla 1 mezcla DOS SISTEMAS DE UNIDADES y su cabecera solo declara
+#      uno: dice «(g/kg wet weight)», que vale para el calcio y el fósforo,
+#      pero la materia seca, la proteína, la grasa y las cenizas van en POR
+#      CIENTO. Con dos unidades en una tabla, un factor 10 tiene dónde
+#      esconderse.
+#   2. El RATIO Ca:P SOBREVIVE al error -- 427/199 da 2,15 exactamente igual
+#      que 4270/1990 --, y la comprobación que se hizo en su día fue
+#      precisamente esa. Una comprobación de PROPORCIÓN no caza un error de
+#      ESCALA.
+#
+# Es la misma familia que `auditar_transcripcion_fediaf.py`: entre la fuente y
+# el catálogo hay un paso a mano, y lo que no se rehace no se audita.
+print("\n" + "=" * 60)
+print("=== BLOQUE 98: las fichas de hueso contra la tabla de Köber ===")
+import os as _os98
+import subprocess as _sub98
+if not _os98.path.exists(_os98.path.join(str(_raiz_b24), "auditar_kober.py")):
+    fallos.append("BLOQUE98: falta `auditar_kober.py`. Sin él, el calcio de los huesos -- que "
+                  "es el nutriente que más pesa en una ración BARF -- vuelve a no tener quien "
+                  "lo rehaga contra la fuente")
+else:
+    _r98 = _sub98.run([sys.executable, "auditar_kober.py"], capture_output=True, text=True,
+                      cwd=str(_raiz_b24))
+    _salida98 = (_r98.stdout or "") + (_r98.stderr or "")
+    if _r98.returncode != 0:
+        _cola98 = "\n      ".join(l.strip() for l in _salida98.splitlines()
+                                  if l.strip().startswith("❌"))
+        fallos.append(f"BLOQUE98: una ficha de hueso no cuadra con la Tabla 1 de Köber:"
+                      f"\n      {_cola98}")
+    for _l98 in _salida98.strip().splitlines():
+        if _l98.strip().startswith(("Discrepancias", "❌")) or not _l98.strip():
+            continue
+        print(f"  {_l98.rstrip()}")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+# ============================================================
+# BLOQUE 95 — LOS PREMIOS DILUYEN LA RACIÓN, Y EL MOTOR LO CUENTA
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (11 septiembre). Elena, al leer lo que decían las fuentes:
+# «pues habrá que preguntar por los premios y tenerlo en cuenta».
+#
+# CUATRO fuentes piden lo mismo -- que los premios y las sobras no pasen del
+# 10 % de las calorías del día -- y una trae el mecanismo:
+#
+#     «Los alimentos y premios desequilibrados no se deben proporcionar en más
+#      de un 10 % de la ingesta calórica diaria total. Cuando se agregan
+#      alimentos desequilibrados a una dieta completa y equilibrada, SE PRODUCE
+#      UNA DILUCIÓN DE NUTRIENTES, y los nutrientes esenciales pueden quedar POR
+#      DEBAJO DE LOS REQUERIMIENTOS MÍNIMOS.»   (Ettinger 8ª ed., cap. 192)
+#
+# LO QUE HACE EL MOTOR, Y LO QUE ESTE BLOQUE EXIGE. La ración se formula con
+# las kcal QUE QUEDAN y se le sigue pidiendo EL DÍA ENTERO de nutrientes: de lo
+# que lleva dentro un premio no sabemos nada, así que contar con él para cubrir
+# un requisito sería darlo por cubierto sin saberlo. En números: los mínimos por
+# 1000 kcal de la RACIÓN suben por el factor DER/(DER - premios), y las cotas
+# absolutas se escriben sobre las kcal de la ración. Los máximos NO suben: son
+# concentración, no cantidad.
+#
+# ⚠️ Y LA PRUEBA QUE IMPORTA ES LA SEGUNDA, la del fallo puesto: formular la
+# ración con menos calorías y NO subir los mínimos -- que es lo que saldría si
+# alguien "simplificara" esto restando las kcal y ya-- tiene que dejar el menú
+# CORTO contra los requisitos del día. Sin esa mitad, la primera prueba pasaría
+# igual con el motor sin tocar.
+print("\n" + "=" * 60)
+print("=== BLOQUE 95: los premios diluyen la ración ===")
 
+from motor.motor_completo import resolver as _res95
+from motor.verificar import verificar as _ver95
+from constructor import cargar as _cargar95, MARGENES as _MARG95
+from requisitos import dosis_maxima_fabricante as _dosis95
+
+_al95, _req95 = _cargar95()
+_DER95, _PESO95 = 1100.0, 20.0
+
+# 1. CON PREMIOS: la ración pesa menos en calorías y sigue llevando el día
+#    entero de nutrientes.
+for _p95 in (110.0, 220.0):
+    _ok95, _g95 = _res95(_DER95, "Adulto", _al95, _req95, _PESO95, _dosis95,
+                         margenes_categoria=_MARG95, max_suplementos=2,
+                         time_limit=30, semilla_aleatoria=7, kcal_de_premios=_p95)
+    if not _ok95 or not isinstance(_g95, dict) or "_imposible" in _g95:
+        fallos.append(f"BLOQUE95: con {_p95:.0f} kcal de premios el motor no saca menú para un "
+                      f"perro de 20 kg y {_DER95:.0f} kcal. Descontar premios no puede dejar sin "
+                      f"menú a un perro que sí lo tenía")
+        continue
+    _f95 = _ver95(_g95, _al95, _req95, _DER95, "Adulto", peso_referencia_kg=_PESO95)
+    _kcal95 = _f95["kcal"]
+    _esperadas95 = _DER95 - _p95
+    if abs(_kcal95 - _esperadas95) > _esperadas95 * 0.05:
+        fallos.append(f"BLOQUE95: con {_p95:.0f} kcal de premios la ración sale de {_kcal95:.0f} "
+                      f"kcal y tendría que rondar {_esperadas95:.0f}. Si la ración lleva el día "
+                      f"entero de calorías, los premios se suman POR ENCIMA y el perro come de más")
+    if _f95["semaforo"] != "verde" or _f95["faltan"]:
+        _cortos95 = ", ".join(x["nutriente"] for x in _f95["faltan"][:4])
+        fallos.append(f"BLOQUE95: con {_p95:.0f} kcal de premios el menú NO cubre el día entero "
+                      f"({_f95['semaforo']}, se queda corto de {_cortos95}). El motor tiene que "
+                      f"subir los mínimos por el factor de dilución, no solo restar las calorías")
+    print(f"  premios {_p95:5.0f} kcal -> ración de {_kcal95:6.1f} kcal, "
+          f"{_f95['correctos']}/{_f95['total']} requisitos, {_f95['semaforo']}")
+
+# 2. EL FALLO PUESTO: la misma ración de menos calorías, SIN subir los mínimos.
+#    Medido el 11 de septiembre con cinco semillas distintas: rojo las cinco
+#    veces, con entre 4 y 8 nutrientes por debajo. Aquí se exige solo que falte
+#    UNO, que es la afirmación que vale para cualquier menú que devuelva el
+#    solver -- la regla de no dar por hecha una cifra concreta del menú.
+_ok95f, _g95f = _res95(_DER95 - 220.0, "Adulto", _al95, _req95, _PESO95, _dosis95,
+                       margenes_categoria=_MARG95, max_suplementos=2,
+                       time_limit=30, semilla_aleatoria=7)
+if not _ok95f or not isinstance(_g95f, dict) or "_imposible" in _g95f:
+    fallos.append("BLOQUE95: no se ha podido montar el caso del fallo puesto (el solver no saca "
+                  "menú para 880 kcal). Sin él, la prueba de arriba no demuestra nada")
+else:
+    _f95f = _ver95(_g95f, _al95, _req95, _DER95, "Adulto", peso_referencia_kg=_PESO95)
+    if not _f95f["faltan"]:
+        fallos.append("BLOQUE95: con el fallo puesto -- ración de 880 kcal formulada SIN subir "
+                      "los mínimos-- el menú cubre igual los requisitos de 1100 kcal. Entonces la "
+                      "prueba de arriba pasa con el motor sin tocar y no vigila nada")
+    else:
+        print(f"  fallo puesto (restar kcal sin subir mínimos) -> "
+              f"{len(_f95f['faltan'])} nutrientes por debajo, {_f95f['semaforo']}")
+
+# 3. LOS MÁXIMOS NO SE AFLOJAN. Un menú con premios sigue pasando el filtro
+#    final, que es quien mira los topes de patología y de seguridad crónica
+#    sobre las kcal REALES de la ración.
+_r95 = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": _DER95,
+                                 "etapa_requisitos": "Adulto", "peso_perro_kg": _PESO95,
+                                 "modo": "automatico", "kcal_de_premios": 88.0}).json()
+if not _r95.get("factible"):
+    fallos.append(f"BLOQUE95: /menu/v2 con 88 kcal de premios (el 8 %, dentro de lo que "
+                  f"recomiendan las fuentes) no devuelve menú: {_r95.get('motivo')}")
+else:
+    _avisos95 = " || ".join(_r95.get("problemas_seguridad") or [])
+    if "PREMIOS" not in _avisos95:
+        fallos.append("BLOQUE95: /menu/v2 acepta las kcal de premios y NO lo dice. El dueño tiene "
+                      "que saber que su menú está calculado contando con ellos, y que el motor no "
+                      "sabe qué llevan dentro")
+    if "demasiadas" in _avisos95:
+        fallos.append("BLOQUE95: 88 kcal sobre 1100 son el 8 % y el aviso las llama demasiadas. "
+                      "El límite de las cuatro fuentes es el 10 %")
+
+# 4. POR ENCIMA DEL 10 %, SE DICE QUE SON DEMASIADAS -- y se dice a cuánto hay
+#    que bajarlas, que es lo único accionable.
+_r95b = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": _DER95,
+                                  "etapa_requisitos": "Adulto", "peso_perro_kg": _PESO95,
+                                  "modo": "automatico", "kcal_de_premios": 300.0}).json()
+if not _r95b.get("factible"):
+    fallos.append(f"BLOQUE95: /menu/v2 con 300 kcal de premios no devuelve menú. Pasarse del 10 % "
+                  f"se AVISA, no deja al perro sin comer: {_r95b.get('motivo')}")
+else:
+    _avisos95b = " || ".join(_r95b.get("problemas_seguridad") or [])
+    if "demasiadas" not in _avisos95b:
+        fallos.append("BLOQUE95: 300 kcal sobre 1100 son el 27 % y el menú sale sin decir que se "
+                      "pasa del 10 % que piden Ettinger caps. 175 y 192 y Fascetti cap. 7")
+    if "110 kcal" not in _avisos95b:
+        fallos.append("BLOQUE95: el aviso de pasarse no dice a cuánto hay que bajar los premios. "
+                      "Un aviso sin el número no se puede cumplir")
+
+# 5. EL DATO TIENE QUE VIAJAR POR TODOS LOS CAMINOS, no solo al generar. Un
+#    menú editado o revalidado sin las kcal de premios se recalcularía con el
+#    día entero de calorías, que es justo lo que este bloque impide arriba.
+for _modelo95 in ("PeticionMenu", "PeticionCambiarAlimento", "PeticionAnadirQuitarAlimento",
+                  "PeticionRevalidar", "PeticionFormular"):
+    for _campo95 in ("kcal_de_premios", "premios_nivel"):
+        if _campo95 not in getattr(_api, _modelo95).model_fields:
+            fallos.append(f"BLOQUE95: {_modelo95} no acepta `{_campo95}`. Por ese camino el menú "
+                          f"se recalcula con el día entero de calorías y la dilución se pierde")
+
+# 6. Y EL CONTEXTO QUE SE GUARDA CON EL MENÚ tiene que llevarlas: un menú
+#    guardado se vuelve a verificar al leerlo (regla 1), y sin este dato se
+#    verifica contra un perro que no es el mismo.
+# 7. LA PREGUNTA CONTESTADA: el nivel que elige el usuario se convierte a kcal
+#    con el DER de ESTE perro. Es lo que pidió Elena -- «dependiendo de las
+#    respuestas se tiene que poder adaptar a lo que hace el motor para poder
+#    calcular las nuevas kilocalorías que necesita»-- y es la única forma
+#    honesta de preguntarlo: nadie sabe las calorías de la galleta que da.
+for _niv95, _frac95 in _api.NIVELES_DE_PREMIOS.items():
+    _r95n = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": _DER95,
+                                      "etapa_requisitos": "Adulto", "peso_perro_kg": _PESO95,
+                                      "modo": "automatico", "premios_nivel": _niv95})
+    if _r95n.status_code != 200:
+        fallos.append(f"BLOQUE95: /menu/v2 rechaza el nivel de premios «{_niv95}», que es uno de "
+                      f"los que sirve /vocabulario. La app ofrecería una respuesta que el motor "
+                      f"no sabe recibir")
+        continue
+    _d95n = _r95n.json()
+    if not _d95n.get("factible"):
+        fallos.append(f"BLOQUE95: con premios «{_niv95}» no sale menú: {_d95n.get('motivo')}")
+        continue
+    _esperadas95n = _DER95 * (1 - _frac95)
+    _kcal95n = _d95n.get("kcal_total") or 0.0
+    if abs(_kcal95n - _esperadas95n) > _esperadas95n * 0.06:
+        fallos.append(f"BLOQUE95: con premios «{_niv95}» ({_frac95*100:.0f} % del día) la ración "
+                      f"sale de {_kcal95n:.0f} kcal y tendría que rondar {_esperadas95n:.0f}. La "
+                      f"respuesta no se está convirtiendo a calorías")
+    _av95n = " || ".join(_d95n.get("problemas_seguridad") or [])
+    if _frac95 > 0 and "PREMIOS" not in _av95n:
+        fallos.append(f"BLOQUE95: con premios «{_niv95}» el menú sale sin decirlo")
+    if _frac95 == 0 and "PREMIOS" in _av95n:
+        fallos.append("BLOQUE95: el menú de un perro que no toma premios lleva el aviso de los "
+                      "premios. Un aviso que sale siempre deja de leerse")
+
+# 7-bis. Y LA RACION SIGUE PESANDO LO QUE TIENE QUE PESAR AUNQUE SE PIDA EN LAS
+#    CONDICIONES DE LAS VIAS RAPIDAS. `/menu/v2` tiene dos atajos que cogen un
+#    menú YA CALCULADO del catálogo y lo REESCALAN a las kcal del perro, sin
+#    resolver nada. Eso no vale aquí: la ración tiene que pesar `DER - premios`
+#    kcal Y llevar el día entero de nutrientes, y una multiplicación no hace las
+#    dos cosas a la vez -- al DER entero el perro come de más, y a las kcal de
+#    la ración se queda corto de todo. Por eso los dos atajos se saltan cuando
+#    hay premios y se resuelve de verdad.
+#
+#    ⚠️ LO QUE ESTA PRUEBA AFIRMA, Y LO QUE NO. Afirma el INVARIANTE: se pide en
+#    las condiciones que encienden los atajos -- con `tamano`, y con `tamano` +
+#    `evitar_especies`, que es la otra puerta-- y el menú entregado tiene que
+#    pesar `DER - premios`. NO afirma por qué camino salió: medido el 11 de
+#    septiembre, en estos cuatro casos contesta antes la vía rápida del catálogo,
+#    que resuelve con el MILP y ya cuenta los premios. Decir aquí que se ha
+#    probado el atajo sería decir algo que no se ha probado.
+for _tam95, _peso95b, _der95b, _evitar95 in (
+        ("Mediano", 20.0, 1100.0, None),
+        ("Grande", 35.0, 1700.0, None),
+        ("Mediano", 20.0, 1100.0, ["pollo"]),
+        ("Grande", 35.0, 1700.0, ["vacuno"])):
+    _cuerpo95 = {"nombres_alimentos": [], "der_objetivo": _der95b,
+                 "etapa_requisitos": "Adulto", "peso_perro_kg": _peso95b,
+                 "modo": "automatico", "tamano": _tam95,
+                 "premios_nivel": "mas_del_maximo"}
+    if _evitar95:
+        _cuerpo95["evitar_especies"] = _evitar95
+    _r95v = _c.post("/menu/v2", json=_cuerpo95).json()
+    if not _r95v.get("factible"):
+        fallos.append(f"BLOQUE95: /menu/v2 con tamaño «{_tam95}», premios y "
+                      f"evitar={_evitar95} no devuelve menú: {_r95v.get('motivo')}")
+        continue
+    _esp95v = _der95b * 0.8
+    _kcal95v = _r95v.get("kcal_total") or 0.0
+    if abs(_kcal95v - _esp95v) > _esp95v * 0.06:
+        fallos.append(f"BLOQUE95: con tamaño «{_tam95}», evitar={_evitar95} y un 20 % de premios "
+                      f"el menú sale de {_kcal95v:.0f} kcal y tendría que rondar {_esp95v:.0f}. "
+                      f"Algo está sirviendo un menú de catálogo reescalado al DER entero: el "
+                      f"perro come su ración completa MÁS los premios, y el semáforo sale verde "
+                      f"igual porque los mínimos se miden contra el DER")
+
+# 8. Y UNA RESPUESTA QUE EL MOTOR NO CONOCE SE RECHAZA, NO SE IGNORA. Ignorarla
+#    sería lo peor: el usuario contesta, la app manda su respuesta, y el menú
+#    sale calculado como si el perro no tomara nada -- en verde y sin que nadie
+#    lo sepa. Es el fallo de `guardarPerro` leyendo campos que no existen.
+_r95x = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": _DER95,
+                                  "etapa_requisitos": "Adulto", "peso_perro_kg": _PESO95,
+                                  "modo": "automatico", "premios_nivel": "muchisimos"})
+if _r95x.status_code == 200:
+    fallos.append("BLOQUE95: /menu/v2 acepta un nivel de premios inventado y devuelve menú. Ese "
+                  "menú está calculado como si el perro no tomara nada, y sale en verde")
+
+# 9. Y EL PAPEL FIRMADO TIENE QUE DECIRLO. Una pauta de un perro que toma
+#    premios enseña unas kcal reales muy por debajo del DER: sin la línea de los
+#    premios, eso parece una ración mal calculada, y quien la lea dentro de un
+#    año no tendrá a nadie al lado que se lo explique.
+_r95p = _c.post("/formular/autocompletar", json={
+    "gramos_por_alimento": {}, "der_objetivo": _DER95, "etapa_requisitos": "Adulto",
+    "peso_perro_kg": _PESO95, "premios_nivel": "hasta_el_maximo"}).json()
+if not _r95p.get("factible"):
+    fallos.append(f"BLOQUE95: /formular/autocompletar con premios no saca ración: "
+                  f"{_r95p.get('motivo')}")
+else:
+    _gr95 = _r95p.get("menu") or _r95p.get("gramos_por_alimento") or {}
+    _f95p = _c.post("/pauta/firmar", json={
+        "gramos_por_alimento": _gr95, "der_objetivo": _DER95, "etapa_requisitos": "Adulto",
+        "peso_perro_kg": _PESO95, "premios_nivel": "hasta_el_maximo",
+        "firmante": {"nombre": "Prueba", "num_colegiado": "0000"}}).json()
+    if not _f95p.get("factible"):
+        fallos.append(f"BLOQUE95: no se puede firmar una ración formulada con premios: "
+                      f"{_f95p.get('motivo')}")
+    else:
+        _ctx95 = (_f95p.get("documento") or {}).get("contexto") or {}
+        if not _ctx95.get("kcal_de_premios"):
+            fallos.append("BLOQUE95: el documento firmado no dice las kcal de premios. Enseña "
+                          "unas kcal reales un 10 % por debajo del DER y parece una ración mal "
+                          "calculada, sin nada que lo explique")
+        if _ctx95.get("premios_nivel") != "hasta_el_maximo":
+            fallos.append("BLOQUE95: el documento firmado no dice qué contestó el dueño sobre los "
+                          "premios. La cifra sin la respuesta no se puede revisar")
+
+import persistencia as _pers95
+if "kcal_de_premios" not in _pers95.CLAVES_CONTEXTO:
+    fallos.append("BLOQUE95: el contexto que se guarda con cada menú no incluye "
+                  "`kcal_de_premios`. Al releerlo se pierde el aviso del 10 %, que es lo único "
+                  "que el dueño tiene que hacer con ese dato")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 96 — LA CURVA DE CRECIMIENTO ES LA ECUACIÓN DE FEDIAF, NO UNA COPIA
+# ============================================================
+print("=== BLOQUE 96: la curva de crecimiento es la ecuación de FEDIAF, no una copia ===")
+
+# ⚠️ POR QUE EXISTE ESTE BLOQUE (11 sep). Hasta hoy `der.py` estimaba el peso
+# adulto de un cachorro con una tabla cuyo propio comentario decia que venia de
+# «reproducciones divulgativas» de las curvas WALTHAM y NO del texto del
+# estudio. FEDIAF publica esa misma curva como CINCO ECUACIONES en su Tabla
+# VII-8a, y no coincidian: un cachorro de mas de 47,5 kg de adulto, a los 6
+# meses, iba por el 45,0 % del peso adulto en la tabla vieja y por el 57,0 % en
+# FEDIAF, y eso son ~9 % de kcal DE MAS justo en la poblacion en la que la
+# propia FEDIAF avisa de deformidades esqueleticas por sobrealimentar.
+#
+# ⚠️ Y LA TRAMPA QUE VIGILA ESTE BLOQUE NO ES ESA, ES EL EMPAREJAMIENTO. En el
+# texto extraido del PDF las cinco bandas y las cinco ecuaciones salen en dos
+# columnas cruzadas, y el termino independiente NO ES MONOTONO: la banda
+# >15-27,5 lleva -60,70 y la >27,5-47,5 lleva -56,18. Quien las empareje «de
+# menor a mayor», que es lo natural, las cruza -- y el resultado sigue teniendo
+# forma de dato bueno y el menu sale verde igual. Las cinco parejas de abajo
+# son una SEGUNDA copia, independiente de `der.py`, leida del PDF por
+# coordenadas (pagina 56, y=345 a y=405).
+
+import math as _math96
+import der as _der96
+
+# Tabla VII-8a de FEDIAF 2025, tal cual: (peso adulto esperado hasta, a, b)
+_VII_8A_96 = ((7.0, 36.92, 43.57), (15.0, 36.86, 48.22), (27.5, 39.88, 60.70),
+              (47.5, 36.96, 56.18), (float("inf"), 36.61, 62.39))
+
+# 1. Las cinco parejas, una a una y en su banda
+if len(_der96.CURVA_FEDIAF_VII_8A) != len(_VII_8A_96):
+    fallos.append("BLOQUE96: la Tabla VII-8a de FEDIAF tiene cinco filas y `der.py` tiene "
+                  f"{len(_der96.CURVA_FEDIAF_VII_8A)}")
+else:
+    for (_t96, _a96, _b96), (_te96, _ae96, _be96) in zip(_der96.CURVA_FEDIAF_VII_8A, _VII_8A_96):
+        if abs(_t96 - _te96) > 1e-9 if _te96 != float("inf") else _t96 != float("inf"):
+            fallos.append(f"BLOQUE96: banda de la Tabla VII-8a mal: {_t96} donde FEDIAF pone {_te96}")
+        if abs(_a96 - _ae96) > 1e-9 or abs(_b96 - _be96) > 1e-9:
+            fallos.append(
+                f"BLOQUE96: la ecuación de la banda ≤{_te96} kg es {_a96}·Ln(sem)−{_b96} y "
+                f"FEDIAF pone {_ae96}·Ln(sem)−{_be96}")
+
+# 2. LA TRAMPA, dicha aparte y a proposito: el termino independiente NO es
+#    monotono. Si alguien reordena las ecuaciones «de menor a mayor», esto salta.
+_b_15_27 = [b for t, a, b in _der96.CURVA_FEDIAF_VII_8A if t == 27.5]
+_b_27_47 = [b for t, a, b in _der96.CURVA_FEDIAF_VII_8A if t == 47.5]
+if not _b_15_27 or not _b_27_47:
+    fallos.append("BLOQUE96: faltan las bandas de 27,5 y 47,5 kg de la Tabla VII-8a")
+elif not _b_15_27[0] > _b_27_47[0]:
+    fallos.append(
+        "BLOQUE96: la banda >15-27,5 kg tiene que llevar el término independiente MAYOR "
+        f"(60,70) que la >27,5-47,5 (56,18), y lleva {_b_15_27[0]} contra {_b_27_47[0]}. "
+        "Están cruzadas: es exactamente lo que pasa al emparejar las cinco ecuaciones "
+        "con las cinco bandas «de menor a mayor» desde el texto a dos columnas del PDF")
+
+# 3. La cuenta, rehecha aqui para siete perros y siete edades
+for _pa96, _mes96 in ((4.0, 3), (8.0, 4), (20.0, 9), (20.0, 6), (35.0, 6),
+                      (55.0, 6), (55.0, 12)):
+    for _t96, _a96, _b96 in _VII_8A_96:
+        if _pa96 <= _t96:
+            break
+    _sem96 = _mes96 * 365.25 / 12.0 / 7.0
+    _esp96 = min(max((_a96 * _math96.log(_sem96) - _b96) / 100.0, 0.01), 1.0)
+    _hay96 = _der96._pct_peso_adulto_fediaf(_mes96, _pa96)
+    if _hay96 is None or abs(_hay96 - _esp96) > 1e-9:
+        fallos.append(f"BLOQUE96: a los {_mes96} meses y {_pa96} kg de adulto, FEDIAF da "
+                      f"{_esp96:.4f} del peso adulto y `der.py` da {_hay96}")
+
+# 4. El rango de validez lo declara la propia FEDIAF: 8 semanas a 1 año.
+#    Fuera, tiene que devolver None para que el llamador use el respaldo.
+for _mes96 in (0.5, 1.0, 1.9, 12.1, 18.0, 24.0):
+    if _der96._pct_peso_adulto_fediaf(_mes96, 20.0) is not None:
+        fallos.append(f"BLOQUE96: a los {_mes96} meses la ecuación de FEDIAF está fuera de su "
+                      "rango de validez («from weaning age (8 weeks) to 1 year») y aun así "
+                      "devuelve un número")
+
+# 5. Nunca puede decir que un cachorro pesa MAS de lo que va a pesar de adulto
+for _mes96 in (10, 11, 12):
+    for _pa96 in (3.0, 5.0, 7.0):
+        _v96 = _der96._pct_peso_adulto_fediaf(_mes96, _pa96)
+        if _v96 is not None and _v96 > 1.0:
+            fallos.append(f"BLOQUE96: a los {_mes96} meses un perro de {_pa96} kg de adulto sale "
+                          f"al {_v96*100:.1f} % de su peso adulto, que es más del 100 %")
+
+# 6. Y QUE SE USE DE VERDAD. Sin esto el bloque comprobaria una constante que
+#    no lee nadie. El cachorro de 30 kg a los 6 meses: con la ecuacion de
+#    FEDIAF el peso adulto estimado sale 46,6 kg; con la tabla WALTHAM vieja
+#    salia ~66,7. Si alguien devuelve el respaldo al tramo de FEDIAF, salta.
+#    ⚠️ 46,6 Y NO 52,6, y la diferencia importa: los DOS son autoconsistentes
+#    (ver el apartado 8). 46,6 es el que sale de recorrer las bandas en orden,
+#    que es lo que hace el motor desde que se quito la iteracion; 52,6 era el
+#    que salia partiendo del doble del peso actual, o sea el que dependia de
+#    la semilla -- y por el que este repo y la app discrepaban.
+_pa_est96 = _der96.peso_adulto_desde_curva(30.0, 6)
+if _pa_est96 is None or abs(_pa_est96 - 46.6) > 0.5:
+    fallos.append(f"BLOQUE96: un cachorro de 30 kg a los 6 meses tiene que estimar 46,6 kg de "
+                  f"adulto por la Tabla VII-8a de FEDIAF, y estima {_pa_est96}. Con la tabla "
+                  "divulgativa vieja salían ~66,7, que son ~16 % de kcal de más")
+
+_der96_kcal = _der96.calcular_der(30.0, "cachorro_crecimiento", meses=6)
+if not _der96_kcal or abs(_der96_kcal["der"] - 2142.3) > 15:
+    fallos.append(f"BLOQUE96: el DER del cachorro de 30 kg a los 6 meses sin peso adulto "
+                  f"declarado tiene que salir ~2142 kcal y sale {_der96_kcal}")
+
+# 7. FUERA DEL RANGO DE FEDIAF NO SE ESTIMA PESO ADULTO, Y ESO ES A PROPOSITO.
+#    ⚠️ Aqui se exigia que la tabla WALTHAM siguiera cubriendo ese tramo, y esa
+#    tabla se BORRO el 12 de septiembre: era una cifra sin fuente decidiendo
+#    kcal de un cachorro, y ademas hacia que los dos repos divergieran, porque
+#    `der.js` no la tiene y cae a la regla de SACN5 por edad. Ahora `der.py`
+#    hace lo mismo: sin peso adulto, `_coef_crecimiento` aplica SACN5.
+if hasattr(_der96, "CURVA_CRECIMIENTO"):
+    fallos.append("BLOQUE96: ha vuelto la tabla WALTHAM a `der.py`. No tiene fuente publicada "
+                  "--su propio comentario decía que venía de «reproducciones divulgativas»-- y "
+                  "hace que este repo y `der.js` den pesos adultos distintos para el mismo perro")
+for _mes96 in (1.0, 1.5, 14.0, 18.0, 24.0):
+    if _der96.peso_adulto_desde_curva(50.0, _mes96) is not None:
+        fallos.append(f"BLOQUE96: a los {_mes96} meses, fuera del rango que FEDIAF declara, se "
+                      f"está estimando un peso adulto. Ahí no hay ecuación: lo que toca es caer "
+                      f"a la regla de SACN5 por edad, que es lo que hace `der.js`")
+# Y que ahi el DER sea exactamente el escalon de SACN5, que es lo que aplica el
+# otro repo. Si los dos no coinciden, el mismo perro come dos cosas distintas.
+for _peso96, _mes96, _coef96 in ((5.0, 1.5, 210.0), (8.0, 14.0, 140.0), (50.0, 18.0, 140.0)):
+    _esp96 = round(_coef96 * _peso96 ** 0.75, 1)
+    _hay96 = _der96.calcular_der(_peso96, "cachorro_crecimiento", actividad="normal",
+                                 meses=_mes96)["der"]
+    if abs(_hay96 - _esp96) > 1.0:
+        fallos.append(f"BLOQUE96: un cachorro de {_peso96} kg a los {_mes96} meses tiene que "
+                      f"recibir {_esp96} kcal (SACN5: {_coef96} kcal/kg^0,75) y recibe {_hay96}. "
+                      f"Es el tramo que FEDIAF no cubre, y `der.js` aplica ahí esa misma regla")
+
+# 8. Y LA BANDA NO PUEDE DEPENDER DE POR DONDE SE EMPIECE. La Tabla VII-8a es
+#    una funcion A TROZOS, asi que un bucle con semilla puede converger en
+#    sitios distintos: medido el 12 de septiembre, un mestizo de 30 kg a los 6
+#    meses daba 52,6 kg partiendo del doble de su peso y 46,6 partiendo de la
+#    media de su tamano, los dos autoconsistentes. `der.py` usaba una semilla y
+#    la app la otra: 209 kcal/dia para el mismo perro, y cada lado coherente
+#    consigo mismo, que es por lo que ninguna prueba lo veia.
+_semillas96 = [_der96.peso_adulto_desde_curva(30.0, 6, peso_medio_raza=_s)
+               for _s in (None, 20.0, 36.0, 60.0, 100.0)]
+if len(set(_semillas96)) != 1:
+    fallos.append(f"BLOQUE96: el peso adulto estimado depende de la semilla: {_semillas96}. La "
+                  f"Tabla VII-8a es una función a trozos y tiene más de un punto fijo, así que "
+                  f"iterar la hace depender de por dónde se empiece -- y `der.js` empieza por "
+                  f"otro sitio")
+
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 _hay_fuentes = _os_b18.path.isdir(_RUTA_FUENTES)
 
@@ -13075,6 +13960,15 @@ if not _hay_fuentes:
     print("   `canislab-fuentes` junto a este repo (en la CI, ver `.github/workflows/")
     print("   bateria.yml`, el paso que trae las fuentes con el secreto FUENTES_TOKEN).")
     print(f"{'='*60}")
+
+_cerrar_el_ultimo_bloque()
+_tiempos_por_bloque.sort(reverse=True)
+_gastado = sum(t for t, _ in _tiempos_por_bloque)
+print("\nDÓNDE SE VA EL TIEMPO — los diez bloques más caros:")
+for _t, _nombre in _tiempos_por_bloque[:10]:
+    print(f"  {_t:6.0f}s  {100*_t/_gastado:4.1f}%  {_nombre[4:70]}")
+print(f"  (los otros {max(0, len(_tiempos_por_bloque)-10)} bloques suman "
+      f"{sum(t for t, _ in _tiempos_por_bloque[10:]):.0f}s)")
 
 print(f"TOTAL: {time.time()-t_total:.0f}s de pruebas")
 if fallos:

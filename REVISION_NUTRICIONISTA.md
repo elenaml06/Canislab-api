@@ -99,11 +99,27 @@ El **8 %** al que ella baja son **20 g/1000 kcal**: por debajo de lo que da la
 fuente para cualquier perro, y eso es **una prescripción individual**, no un tope
 general. Es exactamente el caso de uso de la pantalla del punto 5.
 
+### ✅ Y DESDE EL 11 DE SEPTIEMBRE SE PUEDE HACER. Medido esa noche, perro
+adulto de 22 kg con `pancreatitis` marcada, por `POST /formular/autocompletar`
+con `objetivos_del_profesional`:
+
+| Techo de grasa que pone ella | | Resultado |
+|---|---|---|
+| 25 g/1000 kcal | 10 % MS | menú **verde**, grasa clavada en 25,0 |
+| **20 g/1000 kcal** | **8 % MS** | menú **verde**, grasa clavada en 20,0 |
+| 17,5 g/1000 kcal | 7 % MS | **sin menú** |
+
+O sea que sus dos cifras salen, y la siguiente ya no. El mínimo de FEDIAF para la
+grasa en adulto es **13,75**, así que el 8 % no lo bloquea FEDIAF: lo que se
+acaba a los 17,5 es el catálogo. Ninguno de los tres recortó nada
+(`objetivos_ajustados` vacío), que es como tiene que ser: 20 aprieta el 37,5 de
+la patología, y apretar es lo único que un objetivo puede hacer.
+
 ---
 
 ## 5 · «Decidir dónde dejas la proteína y cuánto subes los carbos es una decisión individual»
 
-### ❌ NO CUBIERTO — diseñado y medido, no construido
+### ✅ CUBIERTO EL 11 DE SEPTIEMBRE DE 2026 — con un límite, y hay que decirlo
 
 Es su petición de fondo, y es la buena.
 
@@ -119,10 +135,34 @@ real:
 | fósforo ≤1200 **y** sodio ≤739 | verde, 1165,2 y 453,0 |
 | «solo pavo, conejo y sardina» + grasa ≤40 | verde, grasa 40,0, y de carne solo entra conejo |
 
-**Lo que falta:** la pantalla donde pedirlo, el rol profesional que lo firma, y
-que el objetivo pedido y no cumplido haga que el menú **no salga** (regla 1) en
-vez de salir verde porque el semáforo solo mira FEDIAF. Está todo escrito en
-`PLAN_OBJETIVOS_PROFESIONAL.md`.
+**Lo que se construyó el 11 de septiembre:** `objetivos_del_profesional` en
+`POST /formular/*`, `{nutriente: {"min": x, "max": y}}` en la unidad del motor,
+con su pantalla dentro del formulador. Los objetivos entran por el mismo cajón
+que los topes y suelos de patología y con el mismo `min()`/`max()`, así que
+**solo pueden apretar**, y `_objetivos_dentro_de_fediaf` los recorta contra
+FEDIAF antes de llegar al solver. **Todo recorte se dice** en
+`objetivos_ajustados`, salga o no salga el menú: aplicar el número de FEDIAF en
+lugar del suyo en silencio dejaría al profesional firmando algo que no escribió.
+
+Y la noche del 11 la pantalla dejó de ofrecer **ocho** nutrientes elegidos a mano
+y pasó a ofrecer **los 46 que el motor verifica**, servidos por
+`GET /vocabulario` con su unidad dentro del título. Los ocho no faltaban por el
+motor: los otros 38 los decidía la app.
+
+**Lo que sigue sin estar, y es justo lo que ella pide en el punto 2:** un
+objetivo **no puede bajar del mínimo de FEDIAF**. Medido esa noche, renal de
+22 kg:
+
+| Techo de proteína | Resultado |
+|---|---|
+| 62,5 g/1000 kcal (el de la patología) | verde, proteína 62,4 |
+| 52,1 (el mínimo de FEDIAF, clavado) | **sin menú** |
+| 45,0 y 37,5 (IRIS 4) | el objetivo **se rechaza** con `techo_bajo_el_minimo` y el menú sale a 62,4 — diciéndolo |
+
+Eso es correcto por la regla que ella misma fijaría —«los requisitos se respetan
+SIEMPRE»— y es la frontera exacta del punto 2: **bajar de ahí necesita la vía
+firmada de `VETERINARIOS.md`**, con su juego de requisitos propio viajando con el
+menú. Esa sigue sin construirse.
 
 ---
 
@@ -203,8 +243,8 @@ agosto y anotado como excepción en `auditar_fediaf.py`.
 | 1 | Macros por patología | ✅ cubierto — 15 de 47 patologías |
 | 2 | Estadiaje renal e IRIS 4 | 🟡 dos escalones de cuatro; la frontera está marcada, no se formula por debajo |
 | 3 | L-metionina | ❌ se verifica, pero no hay ficha en el catálogo |
-| 4 | Pancreatitis al 8-10 % | 🟡 los dos niveles de la fuente están; el suyo es prescripción |
-| 5 | Objetivos de macros individuales | ❌ diseñado y medido, sin pantalla ni firma |
+| 4 | Pancreatitis al 8-10 % | ✅ 11-sep: medido, el 8 % sale verde; a 7 % ya no |
+| 5 | Objetivos de macros individuales | ✅ 11-sep: los 46 nutrientes, con pantalla — pero nunca por debajo de FEDIAF |
 | 6 | Ratio omega-6:omega-3 | 🟡 el motor está (10 sep); falta decidir el número |
 
 **Lo que hay que hacer, por orden de lo que desbloquea:**
@@ -214,8 +254,10 @@ agosto y anotado como excepción en `auditar_fediaf.py`.
    trabajo de programación. Lo que queda es **elegir el número**, y ahí las
    fuentes van de <1:1 (artrosis) a 7:1 (renal) y el NRC dice que ese ratio «is
    not helpful». Es PREGUNTA 40, y es de quien firma.
-2. **La pantalla de objetivos por nutriente y el rol que firma.** Es lo que
-   convierte «tres escalones de renal» en «el estadio que tú digas», y lo que
-   permite el 8 % de grasa de una pancreatitis aguda.
+2. ~~**La pantalla de objetivos por nutriente.**~~ **HECHA el 11 de septiembre**,
+   con los 46 nutrientes servidos por `GET /vocabulario`. Ya permite el 8 % de
+   grasa de una pancreatitis aguda (medido). Lo que NO permite, y sigue
+   pendiente, es **bajar del mínimo de FEDIAF**: eso es el rol que firma, y es
+   lo que convierte «dos escalones de renal» en «el IRIS que tú digas».
 3. **La ficha de L-metionina** en el catálogo. Es un dato, no código.
 4. **El estadiaje de IRIS** más fino, que depende de 2.

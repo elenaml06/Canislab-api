@@ -727,11 +727,18 @@ Tres piezas de la auditoría del 6 de septiembre necesitan un campo de
 entrada que **hoy no existe en ningún sitio** — ni en el schema de la API
 (los `Peticion*` de `main.py`), ni en la ficha del perro de `canislab-web`:
 
-- **El 10% de calorías para premios/complementos** (Hervera, Clinnutrivet
-  17). No hay ningún concepto de "premio" o "snack" en la API: no hay
-  campo que preguntar cuántas kcal vienen de fuera de la ración. Añadirlo
-  necesita una pantalla nueva en la app y una decisión de producto sobre
-  dónde se pregunta, no solo un parámetro nuevo en el backend.
+- ~~**El 10% de calorías para premios/complementos**~~ → **HECHO EN EL MOTOR
+  el 11 de septiembre de 2026; falta la pantalla.** El motor tiene ya
+  `kcal_de_premios` y `premios_nivel` en los cinco modelos que formulan, y hace
+  lo que pide la fuente: **formula la ración con las kcal que quedan y le sigue
+  exigiendo el día entero de nutrientes**, así que la dilución no puede pasar.
+  Si los premios se pasan del 10 %, lo dice en `problemas_seguridad` y dice a
+  cuánto hay que bajarlos. `GET /vocabulario` sirve **la pregunta y sus cuatro
+  respuestas**, con los dos registros, para que la app no se invente ni las
+  opciones ni las cifras; de las cuatro, **solo el 10 % es de la fuente** y las
+  otras dos van marcadas como nuestras. Lo vigilan los BLOQUES 88, 87 y 95.
+  **Lo que queda es de la app**: hacer la pregunta y mandar la respuesta.
+  Mientras no llegue, el campo vale 0 y el menú sale como hasta hoy.
 
   ⚠️ **Y ya van CUATRO fuentes** (actualizado el 9 de septiembre de 2026, de
   leer capítulos enteros de SACN5): FEDIAF §4.1, SACN5 cap.17, SACN5 cap.1
@@ -1556,3 +1563,63 @@ número, y en el repo no hay ninguno:
   no por lo que yo dije. No es que la Tabla 13-1 diga algo más alto: es que **no
   podemos leer la Tabla 13-1**. Falta ese dato, y ahora se sabe exactamente qué
   falta: las páginas 667-668 del PDF de NRC.
+
+---
+
+## 15. El catálogo, direccionable: las 26 fichas que faltan por identificar (8 de septiembre)
+
+**Por qué existe este apartado.** El catálogo se había revisado seis o siete
+veces y siempre se volvía a abrir. La causa no eran los datos: era que **no
+era direccionable**. 117 de las 163 fichas no tenían ningún identificador de
+fuente, y las otras 45 lo llevaban escrito en prosa dentro de `nota_datos`
+—«FDC 172343»—, donde ninguna herramienta puede leerlo. Sin identificador
+hay que buscar por nombre en cada pasada, y buscar por nombre falla: medido
+el mismo día, «Atún» devuelve *Atún en aceite de oliva*, «Salmón» devuelve
+*Queso para untar con salmón* y «Cardo» devuelve *Anacardo*. Como cada
+búsqueda cuesta y puede salir mal, cada revisión solo se permitía mirar unas
+docenas de celdas por un criterio distinto, y siempre quedaba un ángulo
+nuevo.
+
+Ahora **99 fichas llevan `fuentes_id`**, puesto por
+`fijar_identificadores.py`, que solo lo acepta si la fila candidata cuadra
+con la nuestra en proteína, grasa, agua y energía **y** el nombre es
+compatible en preparación y en especie. Ni un número del catálogo cambió al
+ponerlos: es índice, no dato.
+
+**No hace falta identificador en 38 fichas, y es correcto:** 16 suplementos
+y productos de marca (llevan datos de etiqueta, no están en ninguna base),
+la sal común y el yoduro potásico (productos químicos), y 9 huesos carnosos,
+que según `Bases.md` vienen de **Köber 2017** y no de las tres bases.
+
+### Lo que queda, y es esto y no más
+
+**Ocho aceites y grasas.** El nombre coincide exacto («Aceite de cacahuete»
+contra «Aceite de cacahuete»), pero un alimento que es casi todo grasa **no
+tiene huella**: proteína 0, grasa ~100 y agua 0 describen a todos por igual,
+así que la máquina no puede demostrar cuál es. Hay que aceptarlos a ojo:
+aceite de cacahuete, de coco, de sésamo, de hígado de bacalao, grasa de
+pollo, manteca y los tres aceites de salmón de marca. Ojo con «Aceite de
+oliva» y «Aceite de oliva virgen extra», que reciben el mismo candidato y
+son dos fichas distintas.
+
+**Cinco donde el candidato viene preparado y la ficha es cruda:** col
+lombarda (BEDCA solo la tiene hervida), coliflor y pescadilla (solo
+congeladas), gallina (USDA solo tiene *stewing*). Decidir si esa fila sirve
+o si la ficha se queda sin identificador.
+
+**Seis fruta y verdura** donde solo hay dos magnitudes que comparar porque
+les falta el agua: albaricoque, mandarina, pera, sandía. Se cierran solas en
+cuanto tengan `humedad_g_100g` (ver `UNIDADES.md`).
+
+**Y cuatro de verdad sin resolver:**
+- **Atún** — BEDCA solo devuelve conservas. Falta la fila del atún fresco.
+- **Piña** — no aparece en BEDCA; la búsqueda devuelve espinaca en conserva.
+- **Timo de ternera** — USDA solo publica el de vaca (170194) y la guarda de
+  especie lo rechaza, con razón: son 3 g de grasa contra 20.
+- **Dorada** — sale `NO` con las tres magnitudes comparables, y **eso
+  confirma por otro camino lo que ya sabíamos**: su fila de BEDCA mezcla dos
+  peces. Ya está marcada `dato_no_fiable`.
+
+El informe completo, ficha a ficha y con las cifras de cada comparación,
+está en `identificadores_informe.json`. **Se regenera con
+`python3 fijar_identificadores.py`** (unos 5 minutos, necesita red).

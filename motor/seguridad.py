@@ -704,6 +704,31 @@ TIROIDES_EXCLUIR = {"cuello", "laringe", "traquea", "esofago", "garganta"}
 TOXICOS_FEDIAF_7_7 = {
     "uva", "uvas", "pasa", "pasas", "sultana", "chocolate", "cacao",
     "cebolla", "cebolleta", "ajo", "puerro", "chalota", "cebollino",
+    # ⚠️ AMPLIADA EL 11 DE SEPTIEMBRE DE 2026, LEYENDO LA WSAVA. Su hoja
+    # «Guide to Treats for Dogs» da la lista de «Toxic food ingredients» y
+    # trae CUATRO FAMILIAS que el anexo 7.7 de FEDIAF no nombra:
+    #
+    #   · Macadamia
+    #   · Xilitol, el edulcorante
+    #   · Alcohol y masa de levadura CRUDA
+    #   · Cafeina -- cafe, te y bebidas energeticas
+    #
+    # Ninguna esta hoy en el catalogo, igual que no lo estaba ninguna de las
+    # trece de arriba, y por eso la ausencia no daba error ni cambiaba ningun
+    # menu. Se escriben por lo mismo que se escribieron aquellas: el coste de
+    # tenerlas es cero y el de no tenerlas es una ficha entrando sin que salte
+    # nada. Es el patron del oxido de cobre.
+    #
+    # ⚠️ Y EL XILITOL LO SEÑALAN DOS FUENTES INDEPENDIENTES, lo que lo saca de
+    # la categoria de «por si acaso»: Fascetti & Delaney cap.17 avisa de que
+    # «some fiber sources contain artificial sweeteners such as xylitol and
+    # should be avoided» -- o sea que la puerta por la que entraria no es una
+    # chuche, es un SUPLEMENTO DE FIBRA, que es una categoria que este
+    # catalogo si tiene.
+    "macadamia", "macadamias",
+    "xilitol", "xylitol",
+    "alcohol", "levadura cruda", "masa de levadura",
+    "cafeina", "cafe", "te verde", "te negro", "bebida energetica",
 }
 
 # ⚠️ RESTRICCIONES POR PATOLOGIA — investigadas 4 agosto, mismo patron que

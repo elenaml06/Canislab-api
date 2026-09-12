@@ -151,6 +151,32 @@ alimentos de la categoría tienen ese nutriente y este lo tiene a 0 sin
 declararlo, lo dice. Sin una forma de contestarle, volvería a preguntar lo
 mismo en cada pasada.
 
+## La humedad: la columna que no es un nutriente
+
+Añadida el 8 de septiembre, con procedencia, en **65 de las 163 fichas**.
+No es un requisito de FEDIAF ni entra en ningún cálculo del motor hoy: es
+el **prerrequisito** de los techos legales, que la UE expresa por materia
+seca. Con la densidad sobre producto fresco no se pueden calcular — es otra
+base y no sirve.
+
+| Campo | Qué es |
+|---|---|
+| `humedad_g_100g` | Agua en g por 100 g de alimento tal cual se da |
+| `humedad_fuente` | La descripción **exacta** de la fila de origen |
+| `humedad_fdc` | El `fdcId` del USDA, para poder volver a ella |
+
+Las 98 que no la llevan no están olvidadas, están declaradas: a las verduras
+les falta fijar el `fdcId` de la fila **cruda**, BEDCA no expone endpoint para
+los pescados, Köber 2017 publica calcio y fósforo del hueso pero no materia
+seca, y la humedad de los suplementos la declara el fabricante.
+
+⚠️ **Y hay tres que no cuadran y se dejan declaradas** (pavo 101,4 · ala de
+pollo 103,5 · cerebro 101,0): sumadas con nuestra proteína y grasa pasan de
+100 g por cada 100. Es el modo de fallo de la dorada — dos alimentos en una
+fila —, pero ahí el agua es el único dato de la fila con procedencia escrita,
+así que consta el número y consta que no cuadra. **El lenguado se quitó a
+propósito**: sumaba 102,4 y ese sí tenía alternativa.
+
 ## Qué publica cada base, y qué no
 
 Esto es lo que obliga a que el orden de `Bases.md` sea un orden y no una

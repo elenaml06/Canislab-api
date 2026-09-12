@@ -126,6 +126,35 @@ con alguna, casi siempre el error está en el cambio.
    existe menú, se sueltan las proporciones de BARF (hueso 20-60 %, etc.),
    que son criterio nuestro y no de FEDIAF. Nunca los requisitos ni la
    seguridad. Ver `_escalera_de_relajacion()`.
+3-bis. **Lo que el perro come fuera de la ración se cuenta, no se ignora**
+   (11 de septiembre). Los premios, las sobras de la mesa y los suplementos
+   que da el dueño por su cuenta llegan por `kcal_de_premios` (el número) o
+   `premios_nivel` (la respuesta elegida), y el motor **formula la ración con
+   las kcal que quedan y le sigue exigiendo EL DÍA ENTERO de nutrientes**. No
+   es simetría: de lo que lleva dentro un premio no sabemos nada, así que
+   contar con él para cubrir un requisito sería darlo por cubierto sin
+   saberlo. En números, los mínimos por 1000 kcal de la ración suben por
+   DER/(DER − premios) y los máximos NO, que es exactamente la «dilución de
+   nutrientes» que describe la fuente. **Cuidado con las dos medidas de kcal
+   que conviven desde aquí**: `der` es el día entero y decide CUÁNTO
+   nutriente hace falta; `der_racion` son las kcal de la ración y es contra lo
+   que se escribe cada fila del solver. Escalar el suelo y usar `der` sería
+   contarlo dos veces. Lo piden cuatro fuentes con la misma cifra —no más del
+   10 % del día— y **FEDIAF lo dice también**, en su §4.1, que hasta el 11 de
+   septiembre aquí ponía que no decía nada: «The total daily ration should
+   match the recommended allowances and nutritional and legal maximum values
+   listed in the tables for complete pet food». O sea que el día ENTERO
+   —ración más premios— tiene que cumplir, que es exactamente lo que hace el
+   motor. Y dice una cosa más que nosotros no afirmábamos: que **los máximos
+   también se miden sobre el día entero**. El motor no los escala a propósito,
+   porque de lo que lleva dentro un premio no sabemos nada, así que sigue por
+   el lado seguro — pero eso es una decisión nuestra, no un hueco de FEDIAF. La
+   pregunta y sus cuatro respuestas las sirve `GET /vocabulario` con los dos
+   registros, y **de las cuatro cifras solo el 10 % es de la fuente**: el 5 %
+   y el 20 % son nuestros y van marcados como tales. Lo vigilan los BLOQUES
+   88, 87 y 95. ⚠️ **La ficha todavía no hace la pregunta**, y eso está
+   declarado en `lo_que_la_ficha_todavia_no_pregunta` de
+   `datos_de_la_ficha.json`.
 4. **Las alergias y las categorías excluidas a mano no se tocan jamás.**
    Pueden ser médicas.
 5. **Lo que eliges a mano se respeta, con un perro o con cinco.** Si la
@@ -184,7 +213,7 @@ jubilado — que desde fuera se parecen mucho.
 | `pruebas_completas.py` | **La batería.** Los 93 bloques, ~40 min. Es lo que se ejecuta entero antes de entregar cualquier cambio (ver «Cómo se prueba») |
 | `datos_de_la_ficha.json` | **Los 21 campos que la ficha pregunta, y CÓMO llega cada uno al motor** (11 de septiembre). Nació de una frase de Elena: «TODOS LOS DATOS QUE RECOJA LA APP TIENEN QUE LLEGAR DE ALGUNA MANERA AL MOTOR, SI NO SON DATOS INUTILES Y CUANDO SE PIDEN ES SIEMPRE POR ALGO». Y tiene un caso que lo justifica solo, del mismo día: la ficha pregunta la **actividad** desde siempre, la app la usaba para calcular las kcal y mandaba solo el número — el motor veía 1955 kcal y no sabía si era un galgo de sofá o un perro de trineo, que es justo lo que decide si se le aprietan los topes crónicos por peso metabólico. Hay tres formas de llegar: `campo` (viaja suelto), `dentro_de` (va cocinado dentro de un número que sí viaja, y entonces **hay que escribir qué se pierde por ir así**) y `no_hace_falta` (con su motivo, que tiene que ser un motivo y no una excusa). Lo vigila el BLOQUE 87. ⚠️ Eran 20 y faltaba `raza`: la lista se copió a mano de `tests/ficha-ida-y-vuelta.spec.js`… donde `raza` tampoco estaba, porque su perro de ejemplo era un mestizo y `null` vuelve como `null` aunque se pierda. Dos inventarios copiados a mano, el mismo hueco en los dos |
 | `niveles_de_actividad.json` | **La Tabla VII-7 de FEDIAF fila por fila**, con lo que hace el motor y lo que ofrece la app (11 de septiembre). Cinco filas emparejadas, una **partida por nosotros** (el rango «High activity 150-175» es UNA fila de la fuente y el motor la parte en dos niveles), una fuera a propósito (los perros de trineo, 860-1240) y un **HUECO** declarado: «Obese prone adults ≤ 90» no está ni en el motor ni en la app. Lo vigila el BLOQUE 88 |
-| `preguntas_por_patologia.json` | **Qué pregunta decide la cifra de cada patología, qué respuestas tiene, y a qué clave del motor lleva cada una** (11 de septiembre). Nació de una frase de Elena: «tendrá que haber preguntas para cada patología preguntando resultados de analíticas o lo que sea para que pueda coger según la respuesta los límites para cada estadio o cada caso». ⚠️ **Y lo primero que hay que saber al abrirlo es que la mitad ya estaba hecha**: la cardiopatía tiene **cinco claves con cinco techos de sodio** (`cardiopatia_c` 625, `cardiopatia_d` 480) y la app **ya pregunta el estadio ACVIM**. Cuatro de las diez están `aplicada`. Aquí no hay ni un número escrito: se **derivan** de `patologias.json`, y donde el motor no tiene una clave por respuesta se dice en vez de inventarla. Cinco estados, y el que importa es **`no_cambia_ninguna_cifra`**: una pregunta cuyas respuestas aplican exactamente lo mismo no decide nada — se le pide un dato clínico a quien firma y da igual lo que conteste. Hoy le pasa a `shunt_sin_encefalopatia`. Lo vigila el BLOQUE 90, que además exige que **cada `requiere` de un tope condicional apunte a una patología que exista**: el de la diabetes decía `hipertrigliceridemia`, que no es ninguna de las 47, así que ese techo **no se aplicaba nunca** por esa puerta — el solver lo resuelve con `any(otra in lista ...)` y un nombre que nadie puede marcar no entra jamás, con el menú saliendo verde igual |
+| `preguntas_por_patologia.json` | **Qué pregunta decide la cifra de cada patología, qué respuestas tiene, y a qué clave del motor lleva cada una** (11 de septiembre). Nació de una frase de Elena: «tendrá que haber preguntas para cada patología preguntando resultados de analíticas o lo que sea para que pueda coger según la respuesta los límites para cada estadio o cada caso». ⚠️ **Y lo primero que hay que saber al abrirlo es que la mitad ya estaba hecha**: la cardiopatía tiene **cinco claves con cinco techos de sodio** (`cardiopatia_c` 625, `cardiopatia_d` 480) y la app **ya pregunta el estadio ACVIM**. Cuatro de las diez están `aplicada`. Aquí no hay ni un número escrito: se **derivan** de `patologias.json`, y donde el motor no tiene una clave por respuesta se dice en vez de inventarla. Cinco estados, y el que importa es **`no_cambia_ninguna_cifra`**: una pregunta cuyas respuestas aplican exactamente lo mismo no decide nada — se le pide un dato clínico a quien firma y da igual lo que conteste. Hoy le pasa a `shunt_sin_encefalopatia`. Lo vigila el BLOQUE 90, que además exige que **cada `requiere` de un tope condicional apunte a una patología que exista**: el de la diabetes decía `hipertrigliceridemia`, que no es ninguna de las 47, así que ese techo **no se aplicaba nunca** por esa puerta — el solver lo resuelve con `any(otra in lista ...)` y un nombre que nadie puede marcar no entra jamás, con el menú saliendo verde igual. ⚠️ **Y desde la noche del 11 comprueba las 19 respuestas, no solo las cinco de la cardiopatía**: cifra a cifra, techos con `min()` y suelos con `max()`, contra lo que devuelve `topes_de_patologias` — que es la función que llama el solver. Son 28 cifras, y de 14 de ellas nadie comprobaba que contestar una cosa u otra cambiara nada. Y las dos direcciones: un tope que el solver aplica y la respuesta no dice es una restricción que quien firma no ve, y que puede dejar al perro sin menú sin que se sepa por qué. ⚠️ **La lista la lee ahora la app de `GET /vocabulario`** y no de su propia `FAMILIAS_PATOLOGIA`, que queda de respaldo — y `segura` se deriva del `_no_formulable` que dice el motor, que era el riesgo escrito en `App.jsx` desde agosto. Lo vigila `tests/puerta-veterinario.spec.js` sembrando un estadio **inventado** |
 | `razas.json` + `razas.py` | **Las 255 razas que ofrece la ficha**, con su tamaño y su rango de peso adulto (11 de septiembre). Hasta ese día vivían **solo en `src/App.jsx`** del repo de la app: 255 filas dentro del JavaScript, sin nadie que las mirara. El motor no las tenía, así que no podía comprobar ni lo más básico — que el tamaño que manda la app sea uno de los **seis** con los que `catalogo_menus.json` indexa sus menús, o que las tres listas de razas de `der.py` escriban los nombres **exactamente** como los escribe la app. ⚠️ Eso último es lo que más calla: `der.py` reconoce al Gran Danés y al Terranova **por su nombre literal** para darles su cifra propia de FEDIAF (200 y 105 kcal/kg^0,75, que van EN VEZ del nivel de actividad), y una tilde distinta y esa cifra no se aplica nunca, sin error y con el menú en verde. Ya pasó en el otro repo: el Supabase de mentira sembraba «Pastor alemán» con a minúscula, que no existe en la lista, así que durante meses todas las pruebas que usaban ese perro corrieron contra un mestizo con nombre de raza. ⚠️ **Estas cifras no tienen fuente publicada** —ninguna de las cuatro fuentes del motor trae una tabla de peso por raza— y eso va escrito en su `_meta` y en `DATOS_QUE_FALTAN.md`. Lo vigila el BLOQUE 89 |
 | `auditar_patologias.py` | Cada cifra de `patologias.json` contra `requerimientos_v2_final.json`: que ninguna patología formulable tenga un tope por debajo del mínimo de FEDIAF, y que la clave del nutriente exista en el `MAPA`. Lo ejecuta el BLOQUE 32 |
 | `quien_formula_cada_patologia.json` | **Quién puede marcar cada una de las 47, y qué falta preguntar** (10 de septiembre). No es una opinión de producto: cada línea sale de la **cita de la propia fuente de esa patología**. Si su tabla condiciona la cifra a un dato clínico —el estadio IRIS que decide el techo de fósforo, los triglicéridos que bajan la grasa de 37,5 a 25, la taurina en sangre—, entonces **no la puede marcar quien no tiene ese dato**, y la pregunta que falta en la ficha es la que hace falta para elegir el número. Salen **24 `solo_veterinario`**, 18 `dueno_con_diagnostico`, 5 `dueno` y **8 preguntas que la app no hace**. Lo vigila el BLOQUE 79, que además exige que una patología declarada sin dato clínico no tenga marcadores de analítica en su propio JSON — y cazó tres contradicciones mías nada más escribirlo |
@@ -196,10 +225,8 @@ jubilado — que desde fuera se parecen mucho.
 | `auditar_fediaf.py` | Cada valor del JSON contra la tabla de FEDIAF. Lo ejecuta el BLOQUE 18. ⚠️ Su tabla de FEDIAF está **transcrita a mano dentro del propio archivo**, y quien la audita a ella es el de abajo |
 | `auditar_transcripcion_fediaf.py` + `fediaf_tabla_III_3b.txt` + `fediaf_tabla_VII_14.txt` | **Quién audita al auditor** (10 de septiembre). La cadena era: PDF → transcripción a mano dentro de `auditar_fediaf.py` → `requerimientos_v2_final.json`. El segundo tramo estaba vigilado desde el 25 de agosto y el primero no, que es el que decide todo: con un valor mal transcrito el JSON «cuadra», la batería sale verde y **todos** los menús cumplen bien un requisito equivocado — y el motor no tiene el PDF, así que no puede cazarlo. Ya pasó, y no con un dígito: la transcripción se había saltado **los doce aminoácidos enteros**. El `.txt` es la Tabla III-3b tal cual sale del PDF, sin tocar una palabra, y el script **rehace las 164 celdas**. Las cuatro filas que no se transcriben (selenio seco, biotina, vitamina K y el ratio Ca/P) van declaradas una a una con su motivo, para que saltarse una no pueda volver a ser invisible. **Y lo mismo con la Tabla VII-14**, la de las formas químicas: sus 27 factores se rehacen contra el texto del PDF, porque `fediaf_conversiones_vitaminas.json` existe precisamente para que nadie convierta la vitamina D con el factor de la A —×12 el aporte, y el semáforo callado— y ese fichero tampoco puede creerse a sí mismo. Lo ejecuta el BLOQUE 77 |
 | `auditar_conversiones.py` | **Que la conversión de cada cifra se rehaga en vez de creerse.** Las 88 cifras de `patologias.json` vienen de tablas publicadas en **% de materia seca** y el motor trabaja **por 1000 kcal**. Esa conversión estaba hecha una vez y **contada en prosa** dentro del campo `por_que`, y una frase no se ejecuta: el 8 de septiembre una se escribió ×25 en vez de ×2,5 —10 veces el valor bueno, con forma de dato bueno— y lo único que la cazó fue que alguien la leyó. Ahora cada cifra lleva un bloque `conversion` con el valor literal de la fuente, su unidad, la densidad de referencia y la cita, y este script **rehace la cuenta**. Una cifra sin ese bloque falla igual: lo que no se puede rehacer no se puede auditar. **Desde el 10 de septiembre rehace también los otros dos ficheros con cifras de una fuente**: las 12 de `recomendaciones_libro.json` —que estaban igual, con la conversión contada en prosa, y deciden el techo de calcio del cachorro de raza grande y el único techo de fósforo que hay en crecimiento— y las 4 de `requisitos_condicionales.json`, donde están **las dos conversiones a la vez**: la vitamina E del perro de trabajo sale de «≥500 IU/kg MS» y hay que pasarla además a mg de tocoferol natural, que es exactamente donde se falló el 8 de septiembre. Lo ejecuta el BLOQUE 72 |
-| `leer_fuente.py` + `lecturas_fuentes.json` | **Que una lectura no se deje nada.** «Leída» dejó de significar «he pasado los ojos» el 9 de septiembre, después de que la misma cosa fallara **tres veces el mismo día**: se leyó FEDIAF entero y se escaparon dos filas de raza y un escalón de edad; se hizo un inventario de tablas para arreglarlo y se escaparon siete cosas que estaban en el texto; se amplió a secciones y cuatro decían «aplicada» sin estar leídas — y al leerlas salió la más gorda de todas, que el máximo **legal** de FEDIAF solo aplica si el nutriente se **añade como aditivo**. El arreglo no podía ser tener más cuidado. `leer_fuente.py` extrae de cada sección **todas** sus cifras con unidad y **todas** sus frases normativas, y `lecturas_fuentes.json` tiene que dar veredicto a cada una. Las frases importan tanto como las cifras: la regla del máximo legal no lleva ni un número. Lo ejecuta el BLOQUE 68, que además exige que lo que `fediaf_tablas.json` declare «leído» tenga aquí su desglose |
-| `leer_sacn5.py` + `lecturas_sacn5.json` | **El mismo contador, para el TEXTO de SACN5** (10 de septiembre). Su hermano para las tablas es `sacn5_tablas.json`. No cuenta todo: SACN5 es un libro de clínica y la mayoría de sus cifras son epidemiología o dosis de fármaco, así que el filtro es **nutricional y está escrito** —una frase entra si lleva cifra con unidad **y** nombra un nutriente, o si es una recomendación dietética que nombra uno—. Salen **2.999** elementos y desde el 11 de septiembre los **2.999 tienen veredicto**: 0 pendientes. Ese número se compara **exacto** en el BLOQUE 81, igual que el 78 con las tablas, y si alguien relajara el filtro para que bajase solo, el total cambia y salta. ⚠️ **442 se resolvieron por CAPÍTULO** —los seis felinos y el de otras especies—, y eso solo vale porque se comprobó una a una que la frase no nombra al perro: de las 442, **tres lo hacían**, y una era un hallazgo canino escondido en un capítulo de gato. Las otras 1.245 se leyeron y se juzgaron una por una |
-| `canislab-fuentes/sacn5/extraer_texto.py` | ⚠️ **Y esto es lo que estaba fallando de verdad.** Los `.txt` de SACN5 y de FEDIAF se habían extraído **conservando la disposición visual**, y los dos libros van a **dos columnas**: cada línea pegaba la de la izquierda con la de la derecha. **El 37,5 % de las líneas de SACN5 y el 49,3 % de las de FEDIAF.** O sea que la mitad de lo que se leía eran frases que la fuente **no dice** —«Linoleic and α-linolenic acids are considered / DM fat should be restricted to between 7 to 10 %» son dos párrafos distintos—, y **cualquier cita sacada de ahí puede ser falsa**. Eso explica cómo «leído entero» podía ser verdad en esfuerzo y falso en resultado. Rehecho con `page.get_text()`, que sí lee las columnas en orden: quedan 2 líneas de 123.191. Lo vigila el BLOQUE 81, que falla si vuelve a pasar del 1 % |
-| `auditar_fediaf_tablas.py` | **Que ninguna tabla de FEDIAF se quede sin veredicto.** Recorre el PDF, encuentra cada «Table X-n» y exige que esté en `fediaf_tablas.json` diciendo qué hace el motor con ella. Nació el 9 de septiembre de una pregunta de Elena: cómo podía ser que no usáramos la Tabla VII-6 si se había leído FEDIAF entero. La respuesta estaba en un comentario de `der.py` de tres días antes — la tabla **se leyó**, se confirmó literal, se clasificó bien y se apartó, sin que nadie cruzara su escalón de edad contra el que aplicábamos, que era la mitad. Lo mismo había pasado con las dos filas de raza de la tabla de al lado. El fallo no es de lectura: es que «me lo he leído» no se puede comprobar y un inventario sí. Lo ejecuta el BLOQUE 67 |
+| `LECTURAS.md` | **Lo que hemos leído de cada fuente, y qué decidimos con cada cosa.** Sustituye a toda la maquinaria de contar lecturas que hubo entre el 9 y el 11 de septiembre —`leer_fuente.py`, `leer_sacn5.py`, `leer_nrc2006.py`, `leer_fascetti.py`, sus cuatro `lecturas_*.json`, los dos inventarios de tablas y tres auditores—, borrada por una frase de Elena: «no sé por qué tienes que leer con un script. Lee, y según vayas leyendo vas anotando, y luego de lo que hayas anotado dices: vale, ¿esto hay que aplicarlo?». Los contadores decían «0 pendientes» y seguían saliendo cosas, porque contaban **frases con nota**, no cosas decididas. ⚠️ **El método es ahora la ley para todos los documentos**: se lee entero y seguido, se anota aquí todo lo interesante con su cita literal, y al terminar se repasa punto por punto decidiendo una de tres — **aplicado**, **no se aplica porque…** o **pendiente de decidir** —, y lo que quede pendiente va a `PREGUNTAS_ABIERTAS.md` con dueño |
+| `canislab-fuentes/sacn5/extraer_texto.py` | ⚠️ **Y esto es lo que estaba fallando de verdad.** Los `.txt` de SACN5 y de FEDIAF se habían extraído **conservando la disposición visual**, y los dos libros van a **dos columnas**: cada línea pegaba la de la izquierda con la de la derecha. **El 37,5 % de las líneas de SACN5 y el 49,3 % de las de FEDIAF.** O sea que la mitad de lo que se leía eran frases que la fuente **no dice** —«Linoleic and α-linolenic acids are considered / DM fat should be restricted to between 7 to 10 %» son dos párrafos distintos—, y **cualquier cita sacada de ahí puede ser falsa**. Eso explica cómo «leído entero» podía ser verdad en esfuerzo y falso en resultado. Rehecho con `page.get_text()`, que sí lee las columnas en orden: quedan 2 líneas de 123.191. ⚠️ **Y por eso hay tablas que NO se pueden leer del `.txt`**: la VII-8a de FEDIAF, la de la curva de crecimiento, saca sus cinco bandas y sus cinco ecuaciones en dos columnas cruzadas y el emparejamiento que parece natural las cruza. Esa se leyó del PDF por coordenadas, y el BLOQUE 96 vigila que no se vuelva a cruzar |
 | `contrastar_fuentes.py` | Una ficha del catálogo contra **BEDCA, CIQUAL y USDA a la vez**, en el orden de `Bases.md`. **No lo ejecuta la batería** (necesita red y se baja 10 MB): es la herramienta de quien va a mirar una ficha. Trae dentro cómo se lee cada fuente — el XML de BEDCA hay que reconstruirlo de su `query.js`, y con la lista de atributos recortada devuelve el cuerpo vacío sin dar error |
 
 **Y una patología marcada `formulable: true` tiene que formular de verdad.**
@@ -244,7 +271,13 @@ el número.
 `GET /vocabulario` (11 de septiembre) sirve **todo lo que el motor enumera**,
 para que la app lo lea en vez de copiárselo: los cinco niveles de actividad con
 su cifra de FEDIAF, las 255 razas, los seis tamaños, las etapas, los nueve
-puntos de BCS, las patologías, las categorías y los peldaños. Existe por una
+puntos de BCS, las patologías, las categorías, los peldaños y **los 46
+nutrientes a los que un profesional puede ponerle un objetivo** Y desde ese mismo
+día **la pregunta de los premios con sus cuatro respuestas** —la única de las
+listas que trae además CÓMO se pregunta, en los dos registros, porque es una
+pregunta que la ficha todavía no hace y la app tiene que poder montarla entera
+leyendo de aquí. De sus cuatro cifras **solo el 10 % es de la fuente**; el 5 %
+y el 20 % son nuestros y su etiqueta de veterinario lo dice. Existe por una
 frase de Elena: «si el motor dice que hay dieciocho niveles de actividad, la app
 tiene que tener 18 niveles de actividad porque si no no sirve de nada, y así con
 todo». La cadena es **FUENTE manda → MOTOR la implementa → APP la ofrece**,
@@ -279,6 +312,20 @@ suelos de patología y con el mismo `min()`/`max()`, y antes de llegar al solver
 profesional por encima del máximo de FEDIAF no hace nada; un suelo suyo por
 debajo del mínimo se sube al de FEDIAF; y un techo **por debajo del mínimo** no
 se intenta siquiera, porque no es apretar una ración sino dejarla incompleta.
+⚠️ **Y la lista de nutrientes que se ofrecen la sirve `GET /vocabulario`, no la
+app** (11 de septiembre, por la noche). La pantalla del formulador tenía **ocho**
+escritos a mano dentro de `formulador.jsx` y el motor acepta los **46** que
+verifica: la clave viaja tal cual y `_objetivos_dentro_de_fediaf` la busca en
+`verificar.MAPA`. O sea que los otros 38 no faltaban por el motor — faltaban
+porque la lista la decidía la app, que es el fallo de las categorías y el de los
+niveles de actividad otra vez. Se sirven con su **unidad dentro del título del
+veterinario**, porque quien escriba 2 creyendo que son gramos cuando son
+miligramos aprieta mil veces de más. Los ocho se quedan de **respaldo** para
+cuando Render duerme, y que el respaldo no esté tapando la petición lo comprueba
+`tests/formulador.spec.js` sembrando **nombres inventados**. Lo vigila el BLOQUE
+88, que además exige que cada nutriente servido se pueda usar **de verdad**: uno
+servido y descartado por el motor sería un objetivo que el profesional escribe,
+que no hace nada, y que no aparece en ningún recorte.
 ⚠️ **Todo recorte se dice** en `objetivos_ajustados`, salga o no salga el menú:
 aplicar el número de FEDIAF en lugar del suyo en silencio dejaría al profesional
 firmando algo que no es lo que escribió. Lo vigila el BLOQUE 91, y su prueba más
@@ -450,6 +497,21 @@ allí. Si tocas la fórmula de un lado, regenera esperados y copia
 `der_casos.json` a los dos repos — los dos commits, o ninguno. Detalle
 completo: `HISTORIA_TECNICA.md`.
 
+⚠️ **Y hay un trozo que NO está duplicado, que es peor**: la estimación del
+peso adulto de un cachorro a partir de su edad. Aquí vive en
+`peso_adulto_desde_curva()`, y el frontend **no la tiene** — si no sabe el peso
+adulto cae a los dos escalones de SACN5 por edad. Desde el 11 de septiembre
+esta parte usa la **Tabla VII-8a de FEDIAF**, que publica la curva como cinco
+ecuaciones por banda de peso adulto; antes usaba una tabla sacada de
+reproducciones divulgativas de las curvas WALTHAM, y en el cachorro de raza
+gigante iba **12 puntos por debajo**, o sea **~9 % de kcal de más** (2479
+contra 2142 en un cachorro de 30 kg a los 6 meses) justo donde FEDIAF avisa de
+deformidades esqueléticas por sobrealimentar. **Ningún caso de `der_casos.json`
+la ejercía**, así que el contrato no cambió. Lo vigila el BLOQUE 96, incluido
+el emparejamiento banda↔ecuación, que es lo que el texto a dos columnas del PDF
+cruza. Si se lleva también al frontend, ahí sí hay que regenerar el contrato en
+los dos repos: está en `PREGUNTAS_ABIERTAS.md` P-14.
+
 ### Los documentos
 
 `CLAUDE.md` (esto) es la entrada. `HISTORIA_TECNICA.md` tiene el detalle
@@ -481,7 +543,7 @@ verificando cada cifra contra su fuente original, y encontró cinco errores y
 catorce patologías con factores de su propia fuente sin aplicar. Ábrelo antes de
 tocar `patologias.json`: los números siguen viviendo allí y este documento es su
 lectura, no una segunda copia — si discrepan, manda el JSON.
-`sacn5_tablas.json` + `auditar_sacn5_tablas.py` (10 de septiembre) son **el inventario de las 474 tablas de SACN5**, una por una, con lo que el motor hace con cada una. Nació de una pregunta de Elena: «¿leída completa significa leída de verdad, con todas sus tablas?». La respuesta era **no se puede comprobar**, que es justo lo que le había pasado a FEDIAF. Hoy: 64 con rastro en el repo, 44 felinas y 75 listados de productos —estas dos últimas apartadas **por su propio título**, y el campo `veredicto_por` lo dice—, **208 leídas y sin nada que aplicar**, **22 leídas CON hallazgo**, 1 aplicada entera (la 6-2 **es** `sacn5_fuentes_de_minerales.json`) y **0 sin veredicto** desde el 11 de septiembre. Los dos números —las pendientes y las que traen un hallazgo sin aplicar— los clava el BLOQUE 78 **exacto y por separado**: si se mezclaran, el que baja al trabajar taparía al que sube al encontrar algo. Los hallazgos van medidos en `HALLAZGOS_SACN5_10SEP.md` y en `HALLAZGOS_SACN5_11SEP.md` (los 19 de las tablas más los 9 del texto), y los dos más gordos del día 10 son que SACN5 pide **cuatro veces** la vitamina E que damos al perro sano —en cinco capítulos distintos— y que su tabla de energía del cachorro (33-8, de NRC 2006) va hasta un **28 % por encima** de la curva de Klein que publica FEDIAF y que aplicamos.
+Las **474 tablas de SACN5** se inventariaron el 10 de septiembre en `sacn5_tablas.json` y el fichero se **borró el 11** con el resto de contadores: 64 tenían rastro en el repo, 44 eran felinas, 75 eran listados de productos, 208 estaban leídas sin nada que aplicar, **22 leídas CON hallazgo** y 1 aplicada entera (la 6-2 **es** `sacn5_fuentes_de_minerales.json`). Lo que importaba de ese inventario **no se ha perdido**: las 22 con hallazgo están migradas una a una a `LECTURAS.md`, y las medidas completas siguen en `HALLAZGOS_SACN5_10SEP.md` y `HALLAZGOS_SACN5_11SEP.md` (los 19 de las tablas más los 9 del texto). Los dos más gordos: SACN5 pide **cuatro veces** la vitamina E que damos al perro sano —en cinco capítulos distintos— y su tabla de energía del cachorro (33-8, de NRC 2006) va hasta un **28 % por encima** de la curva de Klein que publica FEDIAF y que aplicamos.
 `LECTURA_SACN5.md` (10 de septiembre) es el **registro de la lectura íntegra de
 SACN5**, capítulo a capítulo, texto y tablas. Existe porque una lectura que no
 deja rastro no se puede comprobar ni continuar: dice de cada capítulo qué se
@@ -659,6 +721,52 @@ actualice el hash en `main.py`, la API lo dice. Los otros dos no, y es a
 propósito — un menú del catálogo corrupto lo rechaza
 `_garantizar_verificado()` igual que cualquier otro, y el contrato del DER
 se comprueba entero en cada batería.
+
+## «Cerrado» son DOS números, no uno — y desde el 11 de septiembre ninguno lo cuenta un script
+
+Escrito el 11 de septiembre de 2026 de noche, porque hasta ese día era uno y
+por eso se pudo decir tres veces que algo estaba cerrado y que luego saliera
+algo esperando. Elena: «me dices que algo está cerrado y siempre sale algo que
+demuestra que no lo está, y eso no puede ser».
+
+**El primero: cada elemento de la fuente tiene VEREDICTO.** Eso lo contaban
+cuatro scripts (`leer_fuente.py`, `leer_sacn5.py`, `leer_nrc2006.py`,
+`leer_fascetti.py`) y los cuatro decían **cero pendientes** — y seguían saliendo
+cosas. El punto ciego estaba declarado dentro del propio auditor: tres de los
+cuatro registros guardaban el veredicto como **texto libre**, así que su «0
+pendientes» significaba «0 sin nota», no «0 sin decidir». Un contador que
+cuenta frases con nota no cuenta lecturas.
+
+**El segundo: cuántas cosas hemos leído, hemos decidido NO aplicar, y siguen
+esperando.** Ese número, el 11 de septiembre, era **92**.
+
+⚠️ **Los cuatro scripts, sus cuatro JSON, los dos inventarios de tablas y los
+tres auditores que los vigilaban están BORRADOS** (`leer_*.py`,
+`lecturas_*.json`, `sacn5_tablas.json`, `fediaf_tablas.json`,
+`auditar_sacn5_tablas.py`, `auditar_fediaf_tablas.py`,
+`auditar_pendiente_de_aplicar.py`, `auditar_fuente_cerrada.py`,
+`auditar_fuentes.py`, `fuentes_del_motor.json`), con los ocho bloques que los
+ejecutaban. Elena, al ver que el problema no se arreglaba añadiendo contadores:
+
+> «todos los scripts de mierda que hayas hecho fuera no los quiero. quiero que
+> leas todo bien, frase a frase, letra a letra, y que anotes todo lo
+> interesante y que luego decidamos si se aplica o no se aplica»
+
+**Lo que hay en su lugar es `LECTURAS.md`**, y el método que describe es la ley
+para todos los documentos: leer entero y seguido, anotar según se lee con la
+cita literal, y al terminar repasar punto por punto decidiendo **aplicado**, **no
+se aplica porque…** o **pendiente de decidir**. Lo que quede pendiente va a
+`PREGUNTAS_ABIERTAS.md` con dueño. Los hallazgos que se quedan escritos y sin
+aplicar siguen viviendo donde ya vivían y ahí sí los cuenta la batería:
+`limites_escritos_que_el_solver_no_aplica` de `patologias.json`, los
+`documentado_sin_cifra` de `requisitos_condicionales.json` y los apagados de
+`recomendaciones_libro.json`.
+
+**Lo que SÍ se queda son los auditores que rehacen un NÚMERO contra la fuente**,
+que es otra cosa y sigue siendo la única forma de que una cifra no mienta:
+`auditar_fediaf.py`, `auditar_transcripcion_fediaf.py`, `auditar_conversiones.py`,
+`auditar_citas.py`, `auditar_patologias.py`, `auditar_margen_profesional.py`,
+`auditar_catalogo.py` y `auditar_kober.py`.
 
 ## Cómo se prueba
 

@@ -12,7 +12,12 @@
     },
     "como_se_comprueba": "El BLOQUE 90 de `pruebas_completas.py`: que cada `clave_motor` exista de verdad en `patologias.json`, que las cifras servidas sean las VIVAS y no una copia, que una pregunta marcada `aplicada` tenga de verdad respuestas con cifras distintas -- una pregunta cuyas respuestas aplican lo mismo no decide nada --, y que cada `requiere` de un tope condicional apunte a una patologia que exista. El lado de la app lo vigila `tests/vocabulario.spec.js` en canislab-web.",
     "medido": "11 de septiembre de 2026, contra `patologias.json`, `quien_formula_cada_patologia.json` y `FAMILIAS_PATOLOGIA` de `src/App.jsx`.",
-    "cuantas_preguntas": 10
+    "cuantas_preguntas": 10,
+    "las_dos_formas_de_aplicar_una_respuesta": {
+      "sustituye_a_la_cabecera": "Las cinco preguntas de subtipo (cardiopatia, renal, hepatopatia, shunt, urolitos). Cada respuesta es una clave HERMANA y sustituye a la cabecera y a cualquier otra de su familia: el array que ve el motor nunca lleva dos de la misma familia.",
+      "anade_otra_patologia": "Las dos de analitica (pancreatitis, diabetes). La respuesta NO sustituye nada: ANADE una segunda patologia al array, y la cabecera se queda. Confundir las dos formas dejaria al perro sin su pancreatitis.",
+      "por_que_va_escrito": "Porque no se puede deducir mirando la respuesta: `hiperlipidemia` es una patologia de pleno derecho con sus propias cifras, igual que `cardiopatia_c`. Lo que cambia es que aqui se SUMA y alli se SUSTITUYE, y eso solo lo sabe quien escribio la pregunta."
+    }
   },
   "preguntas": {
     "cardiopatia": {
@@ -91,7 +96,28 @@
           }
         }
       ],
-      "nota": "⚠️ Esta pregunta es MAS GRUESA que la que pide la fuente. Lo que decide el numero es el ESTADIO IRIS (o la creatinina), y la app pregunta «leve-moderada o moderada-grave». Las dos respuestas aplican el MISMO techo de fosforo (1200): lo que cambia es que `renal_avanzada` no es formulable, o sea que se para en seco en vez de dar menu. Falta lo que dice `quien_formula_cada_patologia.json`: por debajo del estadio 2 la fuente NO respalda apretar el fosforo, y para eso haria falta una clave `renal_iris1` con su cifra SACADA DE LA FUENTE. No se inventa aqui."
+      "nota": "⚠️ Esta pregunta es MAS GRUESA que la que pide la fuente. Lo que decide el numero es el ESTADIO IRIS (o la creatinina), y la app pregunta «leve-moderada o moderada-grave». Las dos respuestas aplican el MISMO techo de fosforo (1200): lo que cambia es que `renal_avanzada` no es formulable, o sea que se para en seco en vez de dar menu. Falta lo que dice `quien_formula_cada_patologia.json`: por debajo del estadio 2 la fuente NO respalda apretar el fosforo, y para eso haria falta una clave `renal_iris1` con su cifra SACADA DE LA FUENTE. No se inventa aqui.",
+      "umbrales_de_la_fuente": {
+        "_que_es": "Los numeros que DEFINEN la respuesta, para que quien contesta sepa contra que. No cambian ninguna cifra del motor: son los umbrales con los que un veterinario decide el estadio. Entran el 12-sep-2026, al leer enteras las IRIS Guidelines 2026 -- hasta ese dia la nota de abajo decia que el estadio lo decide la fuente y los umbrales no estaban escritos en ninguna parte del repo.",
+        "fuente": "IRIS Staging of CKD (Modified 2026), tabla de la seccion 1. Leida literal 12-sep-2026",
+        "perro": {
+          "creatinina_mg_dl": {
+            "estadio_1": "<1.4",
+            "estadio_2": "1.4-2.8",
+            "estadio_3": "2.9-5.0",
+            "estadio_4": ">5.0"
+          },
+          "sdma_ug_dl": {
+            "estadio_1": "<18",
+            "estadio_2": "18-35",
+            "estadio_3": "36-54",
+            "estadio_4": ">54"
+          }
+        },
+        "como_se_reparten_en_las_dos_respuestas": "«Leve-moderada» son los estadios 1 y 2; «moderada-grave» son el 3 y el 4. Es la misma linea que ya separaba las dos claves del motor, ahora con el numero detras.",
+        "ojo_con_el_galgo": "⚠️ IRIS lo dice expreso: «Healthy Birman cats and greyhound dogs have been found to have higher serum SDMA values than other breeds. Both these breeds also have higher serum creatinine values, taking some healthy individuals outside laboratory reference intervals». O sea que un GALGO SANO puede dar creatinina y SDMA de estadio 2. `razas.json` tiene galgos, asi que si algun dia la app pregunta el estadio con estos numeros delante, hay que decirlo. Esta en LECTURAS.md como pendiente.",
+        "lo_que_IRIS_NO_da": "⚠️ NI UNA CIFRA DIETETICA. Leidos los cuatro documentos enteros: cero apariciones de «g/1000 kcal», «% DM», «dry matter», «g/Mcal» o «mg/kg diet». Lo que IRIS da para la dieta es «feed a clinical kidney diet», y objetivos en SANGRE: fosfato plasmatico <1,5 mmol/l en estadios 1-2, <1,6 en el 3 y <1,9 en el 4, y nunca por debajo de 0,9 mmol/l. Asi que los topes que aplica el motor NO son de IRIS y no se pueden citar como suyos."
+      }
     },
     "hepatopatia": {
       "pregunta": "¿Está confirmado con biopsia o analítica de cobre, o es solo predisposición de raza?",
@@ -198,24 +224,65 @@
       "nota": "⚠️ Falta la segunda mitad de la pregunta. La fuente distingue formular para PREVENIR que vuelvan y para DISOLVER uno que ya esta, y son dietas distintas. Hoy solo se pregunta el tipo de calculo."
     },
     "pancreatitis": {
-      "pregunta": "¿Tiene los trigliceridos altos, o sobrepeso?",
-      "la_hace_la_app": false,
+      "pregunta": "¿La última analítica dio los triglicéridos altos?",
+      "la_hace_la_app": true,
       "quien_la_contesta": "solo_veterinario",
-      "que_dato_pide": "trigliceridos en sangre (y el BCS, que ya se pregunta)",
+      "que_dato_pide": "trigliceridos en sangre (el sobrepeso ya lo sabe la app por el BCS)",
       "que_decide": "el techo de grasa: 37,5 o 25 g/1000 kcal",
-      "estado": "media",
-      "respuestas": [],
-      "nota": "⚠️ ESTA YA SE PUEDE CONTESTAR SIN PREGUNTAR NADA NUEVO, y ahi esta la gracia. El motor tiene el segundo escalon en `topes_por_1000kcal_si_ademas` con `requiere: ['obesidad', 'hiperlipidemia']`, o sea que baja a 25 en cuanto se marca cualquiera de esas dos patologias. Lo que falta NO es una cifra: es que la pantalla DIGA que marcarlas cambia el techo de grasa, porque hoy quien lee la ficha ve 37,5 y cree que es el unico numero."
+      "estado": "aplicada",
+      "respuestas": [
+        {
+          "label": "No los tiene altos, o no lo sé",
+          "clave_motor": null,
+          "anade": null,
+          "cifras_que_aplica": {
+            "max_grasa": 37.5,
+            "max_proteina": 75.0
+          }
+        },
+        {
+          "label": "Sí, los triglicéridos están altos",
+          "clave_motor": "hiperlipidemia",
+          "anade": "hiperlipidemia",
+          "cifras_que_aplica": {
+            "max_grasa": 25.0,
+            "max_proteina": 75.0,
+            "min_fibra": 25.0
+          }
+        }
+      ],
+      "nota": "⚠️ LA APP LA HACE DESDE EL 11-sep-2026 POR LA NOCHE, y hasta ese dia no se preguntaba aunque la cifra llevaba semanas en el motor. El segundo escalon vive en `topes_por_1000kcal_si_ademas` con `requiere: ['obesidad', 'hiperlipidemia']`, asi que bajaba a 25 en cuanto se marcaba cualquiera de esas dos -- pero NADA en la pantalla decia que marcarlas cambia el techo de grasa. Quien leia la ficha veia 37,5 y creia que era el unico numero, y un perro con los trigliceridos altos se quedaba con un tercio mas de grasa de la que pide su propia fuente, con el menu en verde. || MEDIDO el 11-sep: pancreatitis sola da grasa 37,5; pancreatitis + hiperlipidemia da 25,0; pancreatitis + obesidad da 25,0. || ESTA PREGUNTA ES DE OTRA FORMA que las cinco de subtipo: su respuesta NO sustituye a la cabecera, ANADE otra patologia al array. Por eso lleva `como_se_aplica: anade_otra_patologia`, escrito y no deducido: las dos formas se aplican al reves y confundirlas dejaria al perro sin su pancreatitis.",
+      "como_se_aplica": "anade_otra_patologia"
     },
     "diabetes": {
-      "pregunta": "¿Tiene ademas pancreatitis cronica o los trigliceridos altos? ¿Y esta delgado?",
-      "la_hace_la_app": false,
+      "pregunta": "¿La última analítica dio los triglicéridos altos?",
+      "la_hace_la_app": true,
       "quien_la_contesta": "solo_veterinario",
-      "que_dato_pide": "si ademas hay pancreatitis o hipertrigliceridemia",
-      "que_decide": "si se restringe la grasa al 30 % de las kcal",
-      "estado": "media",
-      "respuestas": [],
-      "nota": "⚠️ DOS MITADES, Y LAS DOS SON DE HOY. La primera ya la resuelve marcar la otra patologia (`max_pct_kcal_grasa_si_ademas`, `requiere: ['pancreatitis', 'hiperlipidemia']`) -- pero hasta el 11-sep-2026 decia «hipertrigliceridemia», una clave que NO EXISTE, asi que por esa puerta no entraba nunca. La segunda es la EXCEPCION que la fuente escribe y el motor NO aplica: «except for diabetic dogs in thin body condition». La app YA SABE el BCS, asi que esto es implementable sin preguntar nada nuevo: hace falta decidir en que BCS corta."
+      "que_dato_pide": "trigliceridos en sangre",
+      "que_decide": "si se restringe la grasa al 30 % de las kcal -- el UNICO techo de grasa que tiene la diabetes",
+      "estado": "aplicada",
+      "respuestas": [
+        {
+          "label": "No los tiene altos, o no lo sé",
+          "clave_motor": null,
+          "anade": null,
+          "cifras_que_aplica": {
+            "min_fibra": 17.5
+          }
+        },
+        {
+          "label": "Sí, los triglicéridos están altos",
+          "clave_motor": "hiperlipidemia",
+          "anade": "hiperlipidemia",
+          "cifras_que_aplica": {
+            "max_grasa": 30.0,
+            "max_pct_kcal_grasa": 0.3,
+            "min_fibra": 25.0
+          }
+        }
+      ],
+      "nota": "⚠️ LA APP LA HACE DESDE EL 11-sep-2026 POR LA NOCHE. La cifra vive en `max_pct_kcal_grasa_si_ademas` con `requiere: ['pancreatitis', 'hiperlipidemia']`, y hasta el 11-sep decia «hipertrigliceridemia», una clave que NO EXISTE entre las 47, asi que por esa puerta no entraba nunca. || MEDIDO el 11-sep, y es mas gordo que en pancreatitis: diabetes SOLA no tiene ningun techo de grasa -- ni en g/1000 kcal ni en % de kcal --, y diabetes + hiperlipidemia enciende los dos (30,0 y el 30 % de las kcal). O sea que aqui la respuesta no aprieta un numero: crea el unico que hay. || LO QUE SIGUE SIN HACERSE es la EXCEPCION que escribe la fuente y el motor no aplica: «except for diabetic dogs in thin body condition». La app YA SABE el BCS, asi que es implementable sin preguntar nada nuevo; falta decidir en que punto de BCS corta, y eso es clinico. Va en PATOLOGIAS.md como hueco.",
+      "como_se_aplica": "anade_otra_patologia"
     },
     "reaccion_adversa_alimento": {
       "pregunta": "¿La reaccion es por la PIEL o por el INTESTINO? ¿Y estais en fase de diagnostico o ya confirmada?",
@@ -246,6 +313,43 @@
       "estado": "no_hace_falta",
       "respuestas": [],
       "nota": "No necesita ninguna pregunta para elegir la cifra: sus cinco topes y su ratio Ca:P son fijos. Lo que falta es de producto y ya no: la app SI la ofrece, dentro de la familia de `estruvita`."
+    },
+    "renal_proteinuria": {
+      "pregunta": "¿La última analítica de orina dio el cociente proteína:creatinina (UPC) por encima de 0,5?",
+      "la_hace_la_app": true,
+      "quien_la_contesta": "solo_veterinario",
+      "que_dato_pide": "cociente proteina:creatinina en orina (UPC)",
+      "que_decide": "si se marca la proteinuria renal, que NO cambia ninguna cifra y SI enciende el aviso del consenso ACVIM",
+      "estado": "no_cambia_ninguna_cifra",
+      "como_se_aplica": "anade_otra_patologia",
+      "respuestas": [
+        {
+          "label": "No lo sé / no está medido",
+          "clave_motor": null,
+          "cifras_que_aplica": {}
+        },
+        {
+          "label": "No, 0,5 o menos",
+          "clave_motor": null,
+          "cifras_que_aplica": {}
+        },
+        {
+          "label": "Sí, por encima de 0,5",
+          "clave_motor": "renal_proteinuria",
+          "cifras_que_aplica": {}
+        }
+      ],
+      "nota": "⚠️ SE DECLARA `no_cambia_ninguna_cifra` A PROPOSITO, Y NO ES UN HUECO. Contestar que si anade `renal_proteinuria`, que NO aplica ningun tope ni suelo -- comprobado: `topes_de_patologias(['renal_proteinuria'])` devuelve vacio. Y esta bien que sea asi: el consenso ACVIM 2013 recomienda bajar la proteina un 25-50 %% RESPECTO A LO QUE EL PERRO COMIA ANTES, o sea una cifra RELATIVA a la ingesta previa de ese perro, y el motor no tiene ese dato de partida. Inventarse un numero absoluto seria peor que no poner ninguno. || ENTONCES, ¿PARA QUE PREGUNTARLO? Por el AVISO, que es justo el caso que el fichero contempla en este estado: marcar la patologia hace que llegue el texto que explica el 25-50 %% y que hay que combinarla con `renal` para el tope de fosforo. Sin la pregunta, ese aviso solo lo ve quien ya sabe que existe la casilla. || EL UMBRAL SALE DE DOS FUENTES QUE COINCIDEN: el consenso ACVIM (que da nombre a la patologia, «UPC > 0,5») y la Tabla 15.2 de Fascetti cap.15 «Nutritional Management of Kidney Disease», fila «Protein modification», que para PERRO dice «UPC >0.5» en estadio II. || ⚠️ LO QUE SIGUE SIN ESTAR: el umbral del estadio I, que esa misma tabla pone en «UPC >2» para perro. Hoy la pregunta es de si/no sobre 0,5 y no distingue los dos escalones, porque el motor solo tiene una clave. Escrito para no volver a descubrirlo.",
+      "umbrales_de_la_fuente": {
+        "fuente": "IRIS Staging of CKD (Modified 2026), seccion 2a «Substaging by Proteinuria». Leida literal 12-sep-2026. Es la TERCERA fuente con el mismo 0,5, y la que ademas nombra la banda intermedia.",
+        "perro": {
+          "no_proteinurico": "<0.2",
+          "proteinuria_limite": "0.2-0.5",
+          "proteinurico": ">0.5"
+        },
+        "lo_que_anade_sobre_lo_que_ya_teniamos": "La banda LIMITE (0,2-0,5), que no estaba. IRIS dice de ella: «IRIS's recommendation is to continue to monitor this level of proteinuria in dogs» -- o sea vigilar, no tratar. La pregunta de la app tiene hoy tres respuestas y la de «0,5 o menos» mete en el mismo saco al no proteinurico y al limite. No cambia ninguna cifra del motor (esta patologia no aplica ninguna), asi que se deja como esta y queda escrito.",
+        "y_dos_cosas_mas_del_metodo": "«Ideally substaging should be done on the basis of at least two urine samples collected over a period of at least 2 weeks», y la tira reactiva no vale: «Standard urine dipsticks can be insensitive therefore practitioners should consider using a more reliable quantitative test». Las dos refuerzan que esto es `solo_veterinario`."
+      }
     }
   }
 }

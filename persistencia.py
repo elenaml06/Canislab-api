@@ -159,9 +159,17 @@ def obtener_historial_peso(perro_id: int, ruta_db=RUTA_DB) -> list:
 # guardado sigue teniendo que verificarse contra lo de ENTONCES para saber
 # si cumplía; contra lo de hoy es otra pregunta, y para eso está
 # /menu/revalidar.
+# ⚠️ `kcal_de_premios` ANADIDA EL 11 DE SEPTIEMBRE, y por la misma razon por la
+# que existe esta tupla: un menu guardado tiene que poder verificarse con los
+# MISMOS numeros con los que se formulo. Un menu calculado con 150 kcal de
+# premios lleva los nutrientes del dia entero en menos calorias; releerlo sin
+# ese dato no lo pone en rojo -- los minimos se miden contra el DER, que si
+# viaja--, pero se pierde el aviso del 10 %, que es justo lo que hay que
+# decirle al dueño. Una clave nueva aqui no rompe las filas viejas: `.get`
+# devuelve None y el motor lo trata como cero.
 CLAVES_CONTEXTO = ("etapa_requisitos", "der_objetivo", "peso_perro_kg",
                    "peso_objetivo_kg", "peso_adulto_esperado_kg",
-                   "tamano", "patologias")
+                   "tamano", "patologias", "kcal_de_premios")
 
 
 def guardar_menu(perro_id: int, nombre_menu: str, resultado_optimizador: dict,

@@ -10,6 +10,100 @@ hemos decidido algo sin fuente, lo dice también y lo marca.
 
 ---
 
+## Lo primero, y en números: contra qué se compara esto
+
+Antes de entrar en nada, la pregunta que un nutricionista se hace con razón al
+oír «dieta casera para perros»: **¿no salen casi todas mal?**
+
+Sí. Y la literatura lo tiene medido. Ettinger, Feldman y Côté, *Tratado de
+Medicina Interna Veterinaria*, 8.ª ed., cap. 192 «Dietas no convencionales
+(caseras, vegetarianas y crudas)», reúne estos estudios:
+
+| Qué se evaluó | Qué se encontró |
+|---|---|
+| **200 recetas** de libros de texto veterinarios, manuales para propietarios y webs | **95 %** con al menos un nutriente esencial fuera de NRC/AAFCO · **83,5 %** con varios · **92 %** con instrucciones vagas o incompletas · **89,5 %** sin instrucciones de cómo darlo |
+| **85 dietas caseras** publicadas (49 de mantenimiento, 36 de crecimiento) | **86 %** con minerales inadecuados · **62 %** con vitaminas · **55 %** con proteína o aminoácidos |
+| **5 dietas crudas** (2 comerciales, 3 caseras) | **todas** con algún nutriente esencial por debajo del mínimo de AAFCO. Las tres caseras con Ca:P mal equilibrado, dos con exceso de vitamina D y una con exceso de vitamina E |
+
+Y el mismo capítulo nombra **cuáles fallan más**: *«Las carencias de nutrientes
+más comunes fueron el cinc, la colina, el cobre, la combinación de ácido
+eicosapentaenoico (EPA) más ácido docosahexaenoico (DHA), el Ca, la vitamina D y
+la vitamina E.»* De esas 200 recetas, **nueve superaban el límite máximo seguro
+de vitamina D** y **seis el de EPA+DHA**.
+
+### Dónde cae este motor en esa lista
+
+Esas siete son exactamente la prueba que hay que pasar. Medido el 11 de
+septiembre de 2026 sobre **menús resueltos de verdad por el motor**, no sobre
+recetas fijas, en **porcentaje del mínimo de FEDIAF ya escalado** (100 % = justo
+el mínimo):
+
+| Perro | cinc | colina | cobre | EPA+DHA | calcio | vit. D | vit. E |
+|---|---|---|---|---|---|---|---|
+| Toy, 3 kg | 108 % | 173 % | 107 % | 641 % | 181 % | 327 % | 165 % |
+| Adulto, 10 kg | 106 % | 132 % | 150 % | 680 % | 142 % | 112 % | 214 % |
+| Adulto, 22 kg | 135 % | 136 % | 126 % | 586 % | 126 % | 105 % | 282 % |
+| Adulto, 40 kg | 125 % | 147 % | 104 % | 179 % | 167 % | 103 % | 250 % |
+| Cachorro, 10 kg | 149 % | 180 % | 126 % | 101 % | 174 % | 177 % | 872 % |
+
+**Las siete por encima del mínimo en los cinco perros.** El peor caso de cada una
+va del 101 % al 165 %.
+
+Que varias vayan **justas por encima** no es un descuido: el motor resuelve un
+problema de optimización y se para donde el requisito se cumple. Si le sobrara
+margen en todo, estaría metiendo comida que nadie necesita.
+
+### Y los tres excesos, que es la otra mitad
+
+Los tres que ese capítulo denuncia —**vitamina D**, **EPA+DHA** y el **Ca:P mal
+equilibrado**— no son avisos en este motor: son **restricciones dentro del solver**. Un menú
+que se pase no se entrega con una advertencia; **no se construye**. Pero los tres
+no funcionan igual, y la diferencia importa:
+
+| Exceso | Cómo lo trata el motor |
+|---|---|
+| **Vitamina D** | Uno de los **cinco topes de seguridad crónica**, 20 µg/1000 kcal (§7). Restricción dura, por ración |
+| **EPA+DHA** | ⚠️ **Techo SEMANAL**, 2,8 g/1000 kcal **de promedio de la semana**, no por ración. FEDIAF **no pone máximo** (la columna *Maximum* de su Tabla III-3b está vacía), así que esta cifra no es suya |
+| **Ca:P** | Restricción simultánea desde el primer día (§5), con el techo de 1,6 de la nota b para el cachorro de raza grande |
+
+Que el de EPA+DHA sea **semanal y no diario** es deliberado: 18 de los 20 pescados
+del catálogo pasan solos el límite por ración, así que aplicarlo por ración
+dejaría casi todo el pescado fuera del menú. Se aplica sobre el promedio de la
+semana, que es como se acumula.
+
+### Lo que esto NO demuestra
+
+Tres cosas, y conviene decirlas antes de que las pregunte:
+
+1. **Que el catálogo sea correcto.** Todo esto se apoya en los valores
+   nutricionales de 163 fichas de alimento. Si una ficha miente, el menú sale
+   verde igual. Los huecos conocidos y los datos dudosos están declarados en
+   §11 y en `DATOS_QUE_FALTAN.md`.
+2. **Que el dueño lo dé bien.** El mismo cap. 192 avisa de que *«los alimentos y
+   premios desequilibrados no se deben proporcionar en más de un 10 % de la
+   ingesta calórica diaria total»*, porque diluyen la ración.
+   **Desde el 11 de septiembre el motor lo cuenta**: la ficha pregunta cuánto
+   come el perro fuera de su ración —cuatro respuestas, en porcentaje de las
+   calorías del día, que es la unidad en la que habla la fuente—, y el motor
+   **formula la ración con las kcal que quedan y le sigue exigiendo el día
+   entero de nutrientes**. O sea que los mínimos por 1000 kcal de la ración
+   suben por DER/(DER − premios) y los máximos no. Si se pasan del 10 %, el
+   menú lo dice y dice a cuánto bajarlos.
+   Lo que **sigue sin poder comprobarse** es lo otro que dice la misma frase:
+   de lo que lleva dentro el premio no hay dato, así que si es carne sola
+   desequilibra el Ca:P y si es hígado cuenta para el máximo de vitamina A. Eso
+   se avisa, no se corrige. Y de las cuatro cifras que se ofrecen, **solo el
+   10 % es de la fuente**: el 5 % y el 20 % son nuestros, y van marcados como
+   tales en la etiqueta que lee el profesional.
+3. **Nada sobre el riesgo bacteriano.** Ese capítulo no recomienda el crudo, y
+   sus motivos no son nutricionales sino de manipulación: patógenos,
+   contaminación ambiental y obstrucción por huesos. El motor no toca eso. Es
+   una decisión de producto y está señalada como tal.
+
+---
+
+---
+
 ## 0 · Qué es esto y qué se pide
 
 **Qué es Rawku.** Una app que calcula raciones BARF (comida cruda) para
@@ -298,8 +392,13 @@ DER  = (base por actividad + ajustes) × peso^0,75
 
 **Estado: los cinco escalones de actividad, VERIFICADOS** el 8 de septiembre
 contra la Tabla VII-7 de FEDIAF 2025 («Recommendations for DER in relation to
-activity»): 95 · 110 · 125 · 150-175, exactos. Y hay un contrato de **124 casos**
-con sus kcal esperadas, que se comprueba en cada batería.
+activity»): 95 · 110 · 125 · 150-175, exactos. Y hay un contrato de **137 casos**
+con sus kcal esperadas, que se comprueba en cada batería. ⚠️ Eran 124 hasta el
+12 de septiembre: entran 13 del cachorro **mestizo**, el que llega sin peso
+adulto de su raza, al aplicarle la Tabla VII-8a de FEDIAF. Hasta ese día el
+contrato declaraba que ese caso NO se podía probar en común porque el servidor y
+la app tomaban caminos distintos — y ese era justamente el hueco por el que la
+app se había quedado con una copia propia de la curva de crecimiento.
 
 ⚠️ **El escalón de edad cambió el 9 de septiembre y hay que decirlo**, porque la
 versión anterior de este documento daba +15/−7 (Thes et al. 2014). Al inventariar
@@ -376,7 +475,7 @@ estas dos: ya tienen cifra propia medida.
 
 **Lo que hay que saber:** el DER se calcula **en dos sitios** (servidor y
 app), y manda el de la app. Es una duplicación conocida, y por eso existe el
-contrato de 124 casos: los dos lados se comprueban contra el mismo fichero.
+contrato de 137 casos: los dos lados se comprueban contra el mismo fichero.
 
 > **PREGUNTA 4.** El ajuste por raza (±15 kcal/kg^0,75) sale de un solo
 > estudio de 586 perros y son 20 razas concretas. ¿Lo mantendrías, o es
@@ -1568,6 +1667,24 @@ conviene que veas porque son las que sostienen todo lo demás:
 - **Un techo terapéutico no autoriza a bajar de los mínimos de FEDIAF** — nota al
   pie (11): *«The minimum recommendations according to the FEDIAF Nutritional
   Guidelines for all essential fatty acids shall be met in the daily ration.»*
+  ⚠️ **Y conviene leer esa nota con lo que dice la propia FEDIAF al lado**
+  (11-sep-2026, releyéndola entera). Su §2.2 **excluye de su alcance** a las
+  dietas clínicas: *«Excluded from the FEDIAF's Nutritional Guidelines are pet
+  foods for particular nutritional purposes … Therefore specific products may
+  have nutrient levels that are different from those stated in these
+  guidelines»*. O sea que la nota (11) del reglamento **no es redundante**: es
+  la que devuelve los mínimos de FEDIAF al terreno del que FEDIAF se había
+  salido, y lo hace **solo para los ácidos grasos esenciales**. Para el resto
+  de nutrientes, en una dieta para un propósito particular, quien pone el suelo
+  es el reglamento. **Este motor los respeta todos igualmente**, por decisión
+  escrita («los requisitos se respetan SIEMPRE»), y esa es una decisión nuestra
+  y no una obligación de la fuente. Hay tres frases más de FEDIAF en la misma
+  dirección, y la tercera trae la condición que te interesa: *«If formulating
+  below the recommended minimum for total protein it is particularly important
+  to ensure that the amino acid profile meets FEDIAF guidelines for adult
+  maintenance»* (§3.3.1) — el motor verifica los **12 aminoácidos esenciales
+  uno a uno**, así que esa condición ya se cumple. Todas las citas y su lugar:
+  `FEDIAF_CONTRA_OTRAS_FUENTES.md` y `LECTURAS.md`.
 - **Con dos patologías se cumplen los dos topes** — parte A, punto 7: *«it shall
   comply with each respective entry in Part B»*. No se promedian ni se elige el
   menos malo: por eso renal + pancreatitis, cuando no caben juntos, **dice qué
