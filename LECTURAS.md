@@ -58,6 +58,7 @@ la tabla. Esos se quedan y se quedan todos.
 | **Spitze 2003** | **no está en el repo** | Decide la taurina de 89 fichas |
 | Ettinger & Feldman | no | Dos tomos |
 | Dobenecker / Hofmann | **los dos leídos enteros (12-sep)** | El de 2021 (PLOS ONE, 8 beagles) y el de 2025 (JAPAN, 8 foxhound). Abajo. Sale una cosa que el motor no puede ver y que vale hasta el **39,6 %** del fósforo de un menú: **en qué forma química viene el fósforo de los multivitamínicos**. Y una advertencia sobre nuestra propia protección: subir el ratio Ca:P NO protege de un fosfato soluble |
+| Heer 2017 | **leída entera (12-sep)** | Es la tesis que **contesta la P-24** y a la vez la deja abierta por otro motivo: trae la ecuación del perro que faltaba (Behnsen 1992) y, rehecha la cuenta, **esa ecuación no cuadra ni con los datos que la propia fuente cita en la misma frase ni con su propia Figura 4**. Abajo |
 | Stürmer 2005 | **leído entero (12-sep)** | Son 198 líneas: un **extracto ya seleccionado** de la tesis, no la tesis. Y es de **ponis**. Trae la fórmula del balance catión-anión (KAB) que el motor no calcula, y que decidiría si una ración acidifica o alcaliniza la orina — lo que los cuatro urolitos necesitan saber. Abajo |
 | Hervera 2021 | **leído entero (12-sep)** | La **octava** fuente con el 10 % de los premios, y la única en español. Trae además una tabla de kcal de los premios que la gente da de verdad, lista para la pregunta de los premios que la ficha todavía no hace. Abajo |
 | TVT Merkblatt 181 | **las DOS ediciones leídas enteras (12-sep)**, la de julio de 2017 y la de mayo de 2025 | Es la hoja de la asociación veterinaria alemana de protección animal **sobre el BARF**, o sea sobre esto. Está en alemán. Abajo. Lo suyo más duro ya estaba aplicado desde el 6 de septiembre (el bloqueo de los cortes con tiroides sale de aquí), y salen dos cifras que el motor no usa: el ratio Ca:P «óptimo» **1,3-1,5** y unas proporciones BARF clásicas distintas de las nuestras |
@@ -574,6 +575,62 @@ escrito porque es la única fuente que **pide** el 4 en vez de admitirlo.
 | *«the use of jerky and dried sweet potato treats has been associated with kidney disease in several parts of the world and is discouraged»* | **No se aplica: no hay ninguno en el catálogo** (no hay premios deshidratados). Va escrito para la pregunta de los premios, que es donde entraría |
 | Que un producto «intermittent», «complementary» o «short-term» solo debe darse *«as a small portion of the diet (10% or less)»* | **Ya aplicado**: es la misma regla del 10 %, dicha desde la etiqueta |
 | Los 12 documentos de gestión de clínica —los seis principios, los consejos de implantación, el procedimiento de traducción, los formularios de historia dietética y de paciente hospitalizado, la guía de etiquetas y la de internet para el dueño | **No se aplica: no hay ni una cifra de ración.** Se han leído enteros y se dice que se han leído |
+
+---
+
+## Heer 2017 — el balance catión-anión y el pH urinario, comparando especies · leída entera el 12-sep-2026
+
+*Franziska Heer, tesis doctoral, LMU Múnich, 2017: «Einfluss der Kationen-Anionen-
+Bilanz im Futter auf den Urin-pH-Wert beim Kaninchen im tierartlichen
+Vergleich».* 2.876 líneas, en alemán, del mismo instituto que Stürmer, Dobenecker
+y Hofmann. El estudio es de **conejos**; lo que la hace relevante es el
+«tierartlichen Vergleich», la comparación entre especies, que recoge lo publicado
+en perro, gato, cerdo y caballo.
+
+**Se leyó porque la P-24 decía que faltaba la ecuación del perro. Está aquí.** Y
+lo que ha aparecido al comprobarla no es lo que esperaba.
+
+| Lo que dice | Decisión |
+|---|---|
+| La fórmula del balance catión-anión, la canónica de este grupo: «CAB (mmol/kg DM) = 49.9*Ca+ 82.3* Mg+ 43.5*Na+ 25.6*K– 59*P– 62.4* S– 28.2*Cl; minerals in g/kg DM» | **Confirma la de Stürmer**, con una diferencia que importa: esta usa **azufre total** y la de Stürmer usa **−13 × (metionina+cistina)** cuando el azufre no se midió. El catálogo tiene metionina y cistina y no tiene azufre total, así que la aplicable es la segunda. La sustitución cuadra: el azufre de esos dos aminoácidos es un 23 % de su masa, y 62,4 × 0,23 = 14,4, cerca del 13 |
+| ⚠️ **La ecuación del PERRO, que es lo que se venía a buscar**: «BEHNSEN (1992) stellte in ihren Studien einen deutlichen Zusammenhang zwischen der KAB im Futter und dem Urin-pH her (pH = 6,92 + 0,0073 * KAB; r = 0,96***; n = 12). Die KABs variierten hier von -349 mmol/kg TS bis 437 mmol/kg TS und produzierten Harn-pH-Werte von 5,94 ± 0,55 bis 7,78 ± 0,05» | **NO SE APLICA, y el motivo es el hallazgo**: la ecuación y el rango están en la misma frase y **no cuadran**. Ver abajo |
+| La otra ecuación canina, de Yamka y Mickelsen 2006, con dos versiones según sea pienso seco o húmedo: «Trockenfutter: Urin-pH = 8,09 - (1,15 * S) - (0,50 * P) - (0,16 * Methionin); Nassfutter: Urin-pH = 6,97 + (1,37 * Na) + (1,24 * K) - (0,98 * Cl) - (3,19 * S) - (0,58 * P) + (1,06 * Methionin) + (1,03 * Cystein)» | **No se aplica**: las dos piden **azufre total**, que el catálogo no tiene, y las dos están ajustadas sobre pienso —seco y húmedo—, no sobre carne cruda. La del húmedo sería la más cercana y sigue sin ser lo mismo |
+| Que en gato el efecto se satura: por debajo de cierta KAB el pH ya no baja más, «da die Säureausscheidungskapazität der Niere irgendwann erschöpft sein könnte», y por eso Wilms-Eilers y Jeremias ajustan ecuaciones **cuadráticas** y no rectas | **No se aplica, y es el aviso de cómo leer todo esto**: la relación no es una recta indefinida. Cualquier ecuación lineal solo vale dentro del rango en que se ajustó |
+| Que en el caballo la clorofila del forraje verde amortigua el efecto y la KAB deja de predecir el pH | **No se aplica** (no es perro). Se anota porque es el ejemplo de que la ración entera, y no solo sus minerales, decide |
+
+### El hallazgo: la ecuación del perro, tal como está publicada, no puede ser
+
+Behnsen 1992 aparece en esta tesis dos veces con la misma cifra —en el texto y en
+su Tabla 1— y comprobado contra el PDF, no es un fallo de extracción. Pero la
+misma frase que da la ecuación da el rango de los datos, y los dos no encajan:
+
+| | KAB | pH que da la ecuación publicada | pH que la fuente dice que se midió |
+|---|---|---|---|
+| extremo ácido | −349 | **4,37** | 5,94 ± 0,55 |
+| extremo alcalino | +437 | **10,11** | 7,78 ± 0,05 |
+
+Una recta con r = 0,96 no puede predecir un recorrido de 5,7 unidades de pH sobre
+unos datos que recorren 1,84. La pendiente que sale de los dos extremos que la
+propia fuente publica es **0,0023**, un tercio de la impresa — y ese número sí
+encaja con las demás especies de la misma tabla: el gato de Kienzle va con 0,0021
+y el de Wagner con 0,0023, y el cerdo de Beker con 0,0031.
+
+**Y lo confirma su propia Figura 4**, que es el diagrama que junta las cinco
+especies: la nube de puntos del perro (triángulos) va de una KAB de unos −200 a
+unos +500 con pH urinario entre ~5,5 y ~7,6. Ninguna especie del diagrama pasa de
+pH 9.
+
+**Medido con nuestros menús**, para que se vea qué pasaría si se aplicara tal
+cual. Los 216 menús del catálogo tienen una KAB de −87 a +527 mmol/kg MS (mediana
++57), o sea dentro de la zona donde viven los datos de perro de esa figura. Con
+la ecuación impresa salen pH de **6,29 a 10,77**, y un pH urinario de 10,8 no
+existe.
+
+**Conclusión: la P-24 sigue abierta, pero ya no por lo mismo.** No es que falte la
+ecuación: es que la que hay, en la única fuente del repo que la recoge, no se
+sostiene. No pongo yo una pendiente que he calculado a mano de dos extremos. Lo
+que sí se puede decir sin ninguna ecuación es **el signo**: 40 de los 216 menús
+tienen KAB negativa, o sea acidifican.
 
 ---
 

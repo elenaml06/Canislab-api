@@ -1146,18 +1146,52 @@ O sea que uno de cada cinco menús empuja la orina hacia ácida, que es lo que
 quiere la estruvita y lo que **no** quieren el urato ni la cistina, y hoy el menú
 sale igual y no lo dice nadie.
 
-**Lo que falta para pasar de aquí a una cifra**: la ecuación que traduce KAB a pH
-urinario **en el perro** es de Behnsen (1992), una tesis de Hannover que **no
-está en el repo**. Sin ella se puede decir la dirección («esta ración acidifica»)
-pero no el pH previsto.
+⚠️ **ACTUALIZADO EL MISMO DÍA, y la actualización cambia el bloqueo.** Escribí
+aquí que la ecuación del perro «no está en el repo». **Sí está**: la recoge la tesis de Heer
+2017, que se leyó unas horas después, en su Tabla 1 y en su texto. Es de Behnsen
+1992 y dice:
+
+> *«BEHNSEN (1992) stellte in ihren Studien einen deutlichen Zusammenhang
+> zwischen der KAB im Futter und dem Urin-pH her (pH = 6,92 + 0,0073 * KAB; r =
+> 0,96***; n = 12). Die KABs variierten hier von -349 mmol/kg TS bis 437
+> mmol/kg TS und produzierten Harn-pH-Werte von 5,94 ± 0,55 bis 7,78 ± 0,05.»*
+
+**Y esa ecuación, tal como está publicada, no puede ser.** La frase da la recta y
+el rango de los datos a la vez, y no encajan:
+
+| | KAB | pH según la ecuación | pH que se midió |
+|---|---|---|---|
+| extremo ácido | −349 | **4,37** | 5,94 ± 0,55 |
+| extremo alcalino | +437 | **10,11** | 7,78 ± 0,05 |
+
+Una recta con r = 0,96 no predice un recorrido de 5,7 unidades sobre datos que
+recorren 1,84. La pendiente que sale de los dos extremos publicados es **0,0023**,
+un tercio de la impresa, y ese número sí encaja con las demás especies de la
+misma tabla (gato 0,0021 y 0,0023; cerdo 0,0031) y con la **Figura 4** de la
+propia tesis, donde la nube del perro va de pH ~5,5 a ~7,6 y ninguna especie pasa
+de 9. Comprobado contra el PDF: no es un fallo de extracción, está impreso así.
+
+Aplicada tal cual a nuestros 216 menús daría pH urinarios de 6,29 a **10,77**, y
+un pH urinario de 10,8 no existe.
+
+**Así que el bloqueo ya no es «falta la ecuación», es «la que hay no se
+sostiene».** No voy a poner una pendiente que he calculado yo de dos extremos.
+Hace falta Behnsen 1992 —la tesis de Hannover— o alguna otra fuente con la
+ecuación del perro.
+
+**Lo que SÍ se puede decir sin ninguna ecuación es el signo**, y eso no depende
+de ninguna pendiente: 40 de los 216 menús tienen balance negativo, o sea
+acidifican.
 
 **La pregunta, en dos:**
 
 1. **Para Elena:** ¿vale la pena decir la dirección? Sería un dato más en el menú,
    solo con las patologías de urolito marcadas, del tipo «esta ración empuja la
    orina hacia ácida» — útil para la estruvita, contraproducente para el urato.
-2. **Y si vale:** ¿se consigue Behnsen 1992, o alguna fuente con la ecuación del
-   perro? Con ella esto deja de ser una dirección y pasa a ser un número.
+2. **Y si vale:** ¿se consigue Behnsen 1992, o alguna otra fuente con la
+   ecuación del perro? Con ella esto deja de ser una dirección y pasa a ser un
+   número. Y si se consigue, lo primero que hay que mirar es si su pendiente es
+   la 0,0073 que imprime Heer o la 0,0023 que sale de sus propios datos.
 
 ---
 
