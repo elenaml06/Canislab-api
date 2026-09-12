@@ -14052,6 +14052,14 @@ _PERMITIDOS_97 = [
     ("http://127.0.0.1:5178", "playwright.config.js, la bateria de la app"),
     ("http://127.0.0.1:5179", "playwright.real.config.js, la de punta a punta"),
     ("http://localhost:3000", "otro servidor de desarrollo"),
+    # ⚠️ Y LOS TRES QUE FALTABAN EN EL PRIMER ARREGLO (12 de septiembre, tarde).
+    # El comentario de `main.py` listaba «abrir la app desde el movil contra el
+    # portatil» entre los casos rotos, y el patron NO lo permitia: el comentario
+    # prometia un arreglo que el codigo no hacia, que es peor que no tenerlo.
+    ("http://[::1]:5174", "localhost en IPv6, que es a lo que resuelven algunos navegadores"),
+    ("http://192.168.1.50:5173", "el movil contra el portatil, por la red de casa"),
+    ("http://10.0.0.5:3000", "otra red privada"),
+    ("http://172.16.4.9:5173", "la tercera red privada"),
 ]
 # Y los que NO pueden: una pagina cualquiera de internet. Esto es lo que se
 # cerro el 11 de septiembre y no se puede volver a abrir sin querer.
@@ -14060,6 +14068,8 @@ _PROHIBIDOS_97 = [
     ("https://rawku.app.malicioso.com", "un dominio que EMPIEZA por el nuestro"),
     ("https://canislab-web.vercel.app.malicioso.com", "lo mismo con Vercel"),
     ("http://localhost.malicioso.com", "un dominio que empieza por localhost"),
+    ("http://192.168.1.50.malicioso.com", "un dominio que empieza por una IP privada"),
+    ("http://172.32.0.1", "una IP que NO es privada (el rango privado acaba en 172.31)"),
 ]
 
 def _permite_el_origen_97(origen):
@@ -14086,7 +14096,24 @@ for _o97, _que97 in _PROHIBIDOS_97:
             f"Eso es volver al `allow_origins=['*']` que se cerro el 11 de septiembre: "
             f"cualquier pagina del mundo usando el motor con el navegador de otra persona")
 
-print(f"  {len(_PERMITIDOS_97)} origenes que tienen que poder · {len(_PROHIBIDOS_97)} que no")
+# Y `/verificar` tiene que contestar LO MISMO que el middleware, porque para eso
+# esta: un bloqueo de CORS no da error legible -- `fetch` no puede decir que fue
+# CORS -- asi que la app dice «problema de conexion» y se busca una caida que no
+# existe. Se abre `/verificar` desde el sitio que falla y lo dice. Si contestara
+# distinto que la puerta de verdad seria peor que no contestar.
+for _o97, _que97 in _PERMITIDOS_97 + _PROHIBIDOS_97:
+    _esperado97 = _permite_el_origen_97(_o97)
+    _dicho97 = (_c.get("/verificar", headers={"Origin": _o97})
+                  .json().get("quien_puede_llamar", {}).get("tu_origen_puede_llamar"))
+    if _dicho97 != _esperado97:
+        fallos.append(
+            f"BLOQUE97: `/verificar` dice que «{_o97}» ({_que97}) puede llamar={_dicho97} y la "
+            f"puerta de verdad dice {_esperado97}. Esa respuesta existe para mirarla desde el "
+            f"movil cuando la app dice «problema de conexion»: si miente, manda a buscar el "
+            f"fallo al sitio equivocado")
+
+print(f"  {len(_PERMITIDOS_97)} origenes que tienen que poder · {len(_PROHIBIDOS_97)} que no · "
+      f"y `/verificar` dice lo mismo que la puerta en los {len(_PERMITIDOS_97)+len(_PROHIBIDOS_97)}")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 _hay_fuentes = _os_b18.path.isdir(_RUTA_FUENTES)

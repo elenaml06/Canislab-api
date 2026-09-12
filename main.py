@@ -1205,12 +1205,55 @@ ORIGENES_PERMITIDOS = [
 #
 # Lo vigila el BLOQUE 97, con los puertos que usan las dos configuraciones de
 # Playwright del otro repo escritos uno a uno.
+#
+# ⚠️ Y LA PRIMERA VERSION DE ESTE ARREGLO PROMETIA EN EL COMENTARIO ALGO QUE EL
+# CODIGO NO HACIA (12 de septiembre, por la tarde, revisando el propio arreglo).
+# El comentario de arriba listaba entre los casos rotos «abrir la app desde el
+# movil contra el portatil (http://192.168.1.x)» -- y el patron solo admitia
+# `localhost` y `127.0.0.1`, asi que ese caso seguia exactamente igual de roto.
+# Un comentario que dice que algo esta arreglado y no lo esta es peor que no
+# tenerlo: el siguiente que lo lea da por cerrado lo que sigue abierto.
+#
+# Se añaden las tres cosas que faltaban:
+#   · `[::1]`, que es localhost en IPv6. Hay navegadores y versiones de Node que
+#     resuelven `localhost` a esa forma, y entonces el Origin que llega lleva los
+#     corchetes y no casaba.
+#   · Las tres redes PRIVADAS (10.x, 172.16-31.x y 192.168.x), que es como se
+#     abre la app del portatil desde el movil. Sin esto no se puede probar en una
+#     pantalla de verdad, que es donde se usa.
+#   · Y el puerto es opcional en todas, porque el 80 no se escribe.
+#
+# HASTA DONDE ABRE ESTO, dicho sin adornar: una pagina servida DESDE LA MISMA RED
+# LOCAL podria llamar a esta API con el navegador de quien la visite. No da
+# acceso a la cuenta de nadie -- para eso hace falta el token, que una pagina
+# ajena no tiene -- y quien este en tu red ya tiene problemas mayores que este.
+# Lo que se cerro el 11 de septiembre sigue cerrado: ninguna pagina de INTERNET
+# puede hacerlo, que era el agujero real.
 _ORIGENES_REGEX = (
     # Vistas previas de Vercel: canislab-web-<lo-que-sea>.vercel.app
     r"https://[a-z0-9-]+\.vercel\.app"
     # Desarrollo, en cualquier puerto: http://localhost:5179, 127.0.0.1:5178...
-    r"|http://(?:localhost|127\.0\.0\.1)(?::\d+)?"
+    r"|http://(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?"
+    # Y desde el movil contra el portatil, por la red de casa.
+    r"|http://192\.168\.\d{1,3}\.\d{1,3}(?::\d+)?"
+    r"|http://10\.\d{1,3}\.\d{1,3}\.\d{1,3}(?::\d+)?"
+    r"|http://172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}(?::\d+)?"
 )
+
+def _origen_permitido(origen):
+    """¿Dejaría el middleware que este origen llamara? Contesta sí o no.
+
+    Usa LA MISMA lista y LA MISMA expresión que el middleware, a propósito: una
+    copia aquí diría que sí cuando el navegador dice que no, que es peor que no
+    contestar. Sin cabecera `Origin` devuelve None -- no es un navegador, es
+    curl, y CORS no le aplica.
+    """
+    if not origen:
+        return None
+    if origen in ORIGENES_PERMITIDOS:
+        return True
+    return re.fullmatch(_ORIGENES_REGEX, origen) is not None
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -5317,7 +5360,7 @@ SELLOS_DE_LOS_DATOS = {
 
 
 @app.get("/verificar")
-def verificar():
+def verificar(origin: Optional[str] = Header(default=None)):
     """
     ⚠️ CORREGIDO (5 agosto, madrugada) — FALLO DE DISEÑO ENCONTRADO: los
     JSON se comparaban por hash de los BYTES CRUDOS del archivo -- eso
@@ -5448,6 +5491,35 @@ def verificar():
         # /pauta/firmar devuelve 503 a propósito (ver `_sello_de`), y eso
         # tiene que poder saberse ANTES de que un veterinario se quede
         # mirando un error.
+        # ⚠️ AÑADIDO (12 de septiembre) — PARA QUE UN BLOQUEO DE CORS SE VEA.
+        #
+        # El 11 se cerró el CORS y al día siguiente el generador de menús no
+        # funcionaba en ningún modo. Un bloqueo de CORS no da error que se
+        # pueda leer: `fetch` no puede decir que fue CORS, por diseño, así que
+        # lo que llega a la app es un `net::ERR_FAILED` pelado y lo que se ve en
+        # pantalla es «un problema de conexión». O sea que se busca una caída
+        # del servidor que no existe — y el servidor está contestando
+        # perfectamente a quien sí puede llamarle.
+        #
+        # Esto lo hace mirable desde el móvil, sin terminal: se abre
+        # `/verificar` desde el MISMO sitio desde el que falla la app y
+        # `tu_origen_puede_llamar` dice sí o no. Si dice que no, el problema no
+        # es el motor.
+        #
+        # `tu_origen` es lo que manda el navegador en la cabecera `Origin`. Va
+        # tal cual y no se guarda en ningún sitio: es lo que ya viaja en cada
+        # petición.
+        "quien_puede_llamar": {
+            "por_que_esta_esto_aqui": ("Un bloqueo de CORS no da error legible: la app dice "
+                                       "«problema de conexión» y parece que el motor está caído. "
+                                       "Abre esto desde el mismo sitio desde el que falla."),
+            "tu_origen": origin,
+            "tu_origen_puede_llamar": _origen_permitido(origin),
+            "siempre": list(ORIGENES_PERMITIDOS),
+            "ademas": ["cualquier vista previa de Vercel (*.vercel.app)",
+                       "localhost y 127.0.0.1 y [::1], en cualquier puerto",
+                       "la red de casa: 192.168.x.x, 10.x.x.x y 172.16-31.x.x"],
+        },
         "firma_de_pautas": {
             "clave_configurada": bool(_clave_del_sello()),
             "se_puede_firmar": bool(_clave_del_sello()),
