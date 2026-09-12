@@ -6,7 +6,7 @@
   "de_donde_salen_estas_cifras": "⚠️ LAS 255 DE ORIGEN NO TIENEN FUENTE PUBLICADA, y eso sigue siendo verdad para la mayoria. Venian escritas en `src/App.jsx` desde antes de que hubiera repo de fuentes, y el historial de git NO puede decir de donde salieron: el primer commit de ese repo (8-sep-2026) ya las trae dentro. || ⚠️ COMPROBADO EL 12-sep-2026 CONTRA LA AKC, Y NO ES DE AHI: emparejadas 35 razas que estan en las dos listas, solo 15 cuadran dentro de un 8 % en los dos extremos (el Airedale es 22,7-31,8 en la AKC y 19-25 aqui). Las primeras que se miraron coincidian porque eran las famosas; con la muestra entera se cae. || Ninguna de las cuatro fuentes del motor (FEDIAF, SACN5, NRC 2006, Fascetti) publica una tabla de peso por raza: FEDIAF solo nombra DOS razas con cifra de energia propia (Gran Danes y Terranova, Tabla VII-7) y esas dos estan en `der.RAZAS_CIFRA_FEDIAF`.",
   "para_que_las_usa_el_motor": "Hoy para nada directamente: el peso adulto esperado lo calcula la app (`der.js`) y lo manda en `peso_adulto_esperado`. Estan aqui para poder COMPROBAR ese numero y para que la app pueda servirse de `GET /vocabulario` en vez de su copia.",
   "como_se_comprueba": "El BLOQUE 89 de `pruebas_completas.py`: que los seis tamaños sean los seis del catalogo de menus, que ningun peso medio se salga de su propio rango, que no haya nombres repetidos, y que las dos razas con cifra propia de FEDIAF esten aqui con ese nombre exacto. El lado de la app lo vigila `tests/vocabulario.spec.js` en canislab-web, que compara fila a fila.",
-  "cuantas": 268,
+  "cuantas": 270,
   "tamanos": [
    "Toy",
    "Mini",
@@ -1437,12 +1437,33 @@
   {
    "nombre": "Podenco Andaluz",
    "tamano": "Mediano",
-   "pesoMin": 5,
-   "pesoMax": 33,
-   "pesoMedio": 19.0,
+   "pesoMin": 10,
+   "pesoMax": 22,
+   "pesoMedio": 16.0,
    "fuente": "Real Decreto 558/2001, anexo «Razas caninas españolas» (texto consolidado, BOE-A-2001-11347), prototipo racial oficial. Leído entero el 12-sep-2026.",
    "cita": "«Peso: Talla grande: 27 kg + - 6 kg. Talla mediana: 16 kg + - 6 kg. Talla chica: 8 kg + - 3 kg.»",
-   "corregido_12sep2026": "antes 16-33 kg; el minimo estaba en 16 y el prototipo tiene TRES tallas: la chica baja a 5"
+   "corregido_12sep2026": "antes 16-33 kg; el minimo estaba en 16 y el prototipo tiene TRES tallas: la chica baja a 5",
+   "ojo": "El prototipo oficial da TRES tallas para esta raza, no un rango. Tenerlas en una sola fila de 5 a 33 kg dejaba la banda «Mediano» empezando en 5 kg, y a quien elige tamaño para un mestizo se le decía «mediano, de 5 a 34 kilos», que no orienta nada. La fila sin apellido es la talla MEDIANA, para que las fichas ya guardadas con «Podenco Andaluz» sigan resolviendo."
+  },
+  {
+   "nombre": "Podenco Andaluz (talla chica)",
+   "tamano": "Pequeño",
+   "pesoMin": 5,
+   "pesoMax": 11,
+   "pesoMedio": 8.0,
+   "fuente": "Real Decreto 558/2001, anexo «Razas caninas españolas» (texto consolidado, BOE-A-2001-11347), prototipo racial oficial. Leído entero el 12-sep-2026.",
+   "cita": "«Peso: Talla grande: 27 kg + - 6 kg. Talla mediana: 16 kg + - 6 kg. Talla chica: 8 kg + - 3 kg.»",
+   "ojo": "El prototipo oficial da TRES tallas para esta raza, no un rango. Tenerlas en una sola fila de 5 a 33 kg dejaba la banda «Mediano» empezando en 5 kg, y a quien elige tamaño para un mestizo se le decía «mediano, de 5 a 34 kilos», que no orienta nada. La fila sin apellido es la talla MEDIANA, para que las fichas ya guardadas con «Podenco Andaluz» sigan resolviendo. || Y va en «Pequeño» y no en «Mini» aunque su peso medio (8 kg) caiga justo en la frontera: con 5-11 kg encaja en la banda de Pequeño (5-20) y metida en Mini estiraba esa banda hasta 11, que es la mitad más de lo que era."
+  },
+  {
+   "nombre": "Podenco Andaluz (talla grande)",
+   "tamano": "Grande",
+   "pesoMin": 21,
+   "pesoMax": 33,
+   "pesoMedio": 27.0,
+   "fuente": "Real Decreto 558/2001, anexo «Razas caninas españolas» (texto consolidado, BOE-A-2001-11347), prototipo racial oficial. Leído entero el 12-sep-2026.",
+   "cita": "«Peso: Talla grande: 27 kg + - 6 kg. Talla mediana: 16 kg + - 6 kg. Talla chica: 8 kg + - 3 kg.»",
+   "ojo": "El prototipo oficial da TRES tallas para esta raza, no un rango. Tenerlas en una sola fila de 5 a 33 kg dejaba la banda «Mediano» empezando en 5 kg, y a quien elige tamaño para un mestizo se le decía «mediano, de 5 a 34 kilos», que no orienta nada. La fila sin apellido es la talla MEDIANA, para que las fichas ya guardadas con «Podenco Andaluz» sigan resolviendo."
   },
   {
    "nombre": "Podenco Canario",
