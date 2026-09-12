@@ -1109,6 +1109,97 @@ de SACN5. Son tres fuentes con tres bandas para la misma cosa (1,0-2,0 FEDIAF ·
 1,1-2,0 SACN5 en oxalato · 1,3-1,5 TVT en el perro sano), y hoy la más estricta
 por abajo sería la de la TVT.
 
+---
+
+### P-24 · El motor podría decir si la ración acidifica la orina, y no lo dice
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (es una capacidad nueva del producto) **y una fuente que falta** |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo entero el extracto de Stürmer 2005 |
+
+El motor tiene cuatro patologías de urolito —`estruvita`, `urato`, `oxalato` y
+`cistina`— y las cuatro dicen lo mismo: **el pH de la orina decide, y el motor no
+lo ve**. Tres de ellas ni siquiera formulan menú automático por eso.
+
+Pero el pH urinario no es un misterio: depende en buena parte del balance
+catión-anión de la ración, y la fórmula está publicada (Krohn 1993, que es la que
+usa Stürmer y una variante de la que usa Hofmann 2025):
+
+> *«KAB [mmol/kg TS] = 49,9\*Ca + 82,3\*Mg + 43,5\*Na + 25,6\*K – 59\*P – 13\*(Met+Cys) – 28,2\*Cl»*
+
+**El motor tiene los siete datos.** Calcio, magnesio, sodio, potasio, fósforo,
+metionina+cistina y cloruro están en las 163 fichas del catálogo, sin un solo
+hueco (comprobado).
+
+**MEDIDO el 12-sep-2026 sobre los 216 menús del catálogo:**
+
+| | KAB (mmol por 1000 kcal) |
+|---|---|
+| mínimo | −22 |
+| mediana | 14 |
+| máximo | 132 |
+| menús con KAB negativa (ración **acidificante**) | **40 de 216** |
+
+O sea que uno de cada cinco menús empuja la orina hacia ácida, que es lo que
+quiere la estruvita y lo que **no** quieren el urato ni la cistina, y hoy el menú
+sale igual y no lo dice nadie.
+
+**Lo que falta para pasar de aquí a una cifra**: la ecuación que traduce KAB a pH
+urinario **en el perro** es de Behnsen (1992), una tesis de Hannover que **no
+está en el repo**. Sin ella se puede decir la dirección («esta ración acidifica»)
+pero no el pH previsto.
+
+**La pregunta, en dos:**
+
+1. **Para Elena:** ¿vale la pena decir la dirección? Sería un dato más en el menú,
+   solo con las patologías de urolito marcadas, del tipo «esta ración empuja la
+   orina hacia ácida» — útil para la estruvita, contraproducente para el urato.
+2. **Y si vale:** ¿se consigue Behnsen 1992, o alguna fuente con la ecuación del
+   perro? Con ella esto deja de ser una dirección y pasa a ser un número.
+
+---
+
+### P-25 · El motor entrega las kcal como un número exacto, y dos fuentes dicen que la banda real es de ±30 %
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (qué se enseña y a quién) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo enteros los 18 documentos de la WSAVA |
+
+Las guías de evaluación nutricional de la WSAVA (JSAP 2011), hablando de cómo
+estimar las necesidades energéticas:
+
+> *«energy requirements can vary by 50% in either direction for cats, and by 30%
+> in either direction for dogs»*
+
+Y sus preguntas frecuentes lo repiten para el dueño: *«individual dogs or cats
+can vary up to 50% above or below these starting points»*.
+
+El motor recibe un DER y formula contra él. La app calcula ese DER y enseña un
+número: «1.955 kcal». No dice en ninguna parte que ese número tiene una banda de
+±30 % en el perro, y esa banda es **más ancha que la diferencia entre dos niveles
+de actividad** de la Tabla VII-7 de FEDIAF (95 a 175 kcal/kg^0,75 es un factor de
+1,84 entre los extremos; ±30 % sobre un mismo nivel ya es un factor de 1,86).
+
+Esto no es un fallo: ninguna fuente da otra cosa, y el motor no puede formular
+contra un rango. Es una cuestión de **qué se dice**.
+
+**La pregunta, en tres:**
+
+1. ¿Se dice, y dónde? Mi propuesta sería el registro de veterinario de
+   `GET /vocabulario`, junto a los cinco niveles de actividad, donde ya va la
+   cifra de FEDIAF de cada uno.
+2. ¿Se le dice también al dueño? Ahí no tengo opinión: «entre 1.370 y 2.540
+   kcal» puede ser más honesto y menos útil que «1.955 y ajusta según el peso»,
+   que es justo lo que recomiendan las mismas guías (revisar peso y condición
+   corporal cada dos semanas al principio).
+3. ¿Va a `PARA_EL_NUTRICIONISTA.md`? Ahí sí creo que sí, porque quien revisa el
+   motor tiene que saber contra qué incertidumbre se está comparando todo lo
+   demás.
+
 
 ---
 

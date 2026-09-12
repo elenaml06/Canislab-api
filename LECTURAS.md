@@ -54,10 +54,12 @@ la tabla. Esos se quedan y se quedan todos.
 | Fascetti & Delaney | sí, los 21 capítulos (11-sep) | 42 notas, abajo |
 | Reglamento (UE) 2020/354 | sí | Volcado entero en `limites_legales_ue_2020_354.json` |
 | Köber 2017 | sí (11-sep) | Cazó tres fichas con el calcio ×10 bajo |
-| WSAVA — dietas crudas y premios | sí (11-sep) | Abajo |
+| WSAVA — **los 18 documentos** | **leídos enteros (12-sep)** | Eran dos de 18. Los otros 16 confirman la banda de BCS 4-5 en **cinco** sitios distintos, dan la banda de incertidumbre del DER (**±30 % en el perro**) y confirman los 7-10 días de nuestro plan de transición. ⚠️ Y su tabla de kcal **no cuadra con su propia nota al pie**: los números salen de 84-105 kcal/kg^0,75 y la nota dice 95-130. Abajo |
 | **Spitze 2003** | **no está en el repo** | Decide la taurina de 89 fichas |
 | Ettinger & Feldman | no | Dos tomos |
 | Dobenecker / Hofmann | **los dos leídos enteros (12-sep)** | El de 2021 (PLOS ONE, 8 beagles) y el de 2025 (JAPAN, 8 foxhound). Abajo. Sale una cosa que el motor no puede ver y que vale hasta el **39,6 %** del fósforo de un menú: **en qué forma química viene el fósforo de los multivitamínicos**. Y una advertencia sobre nuestra propia protección: subir el ratio Ca:P NO protege de un fosfato soluble |
+| Stürmer 2005 | **leído entero (12-sep)** | Son 198 líneas: un **extracto ya seleccionado** de la tesis, no la tesis. Y es de **ponis**. Trae la fórmula del balance catión-anión (KAB) que el motor no calcula, y que decidiría si una ración acidifica o alcaliniza la orina — lo que los cuatro urolitos necesitan saber. Abajo |
+| Hervera 2021 | **leído entero (12-sep)** | La **octava** fuente con el 10 % de los premios, y la única en español. Trae además una tabla de kcal de los premios que la gente da de verdad, lista para la pregunta de los premios que la ficha todavía no hace. Abajo |
 | TVT Merkblatt 181 | **las DOS ediciones leídas enteras (12-sep)**, la de julio de 2017 y la de mayo de 2025 | Es la hoja de la asociación veterinaria alemana de protección animal **sobre el BARF**, o sea sobre esto. Está en alemán. Abajo. Lo suyo más duro ya estaba aplicado desde el 6 de septiembre (el bloqueo de los cortes con tiroides sale de aquí), y salen dos cifras que el motor no usa: el ratio Ca:P «óptimo» **1,3-1,5** y unas proporciones BARF clásicas distintas de las nuestras |
 | Ishii 2025 — purinas | **leído entero (12-sep)** | El único estudio que mide las purinas de la comida de perro por espectrometría de masas, y trae **la regla para convertir sus µmol/Mcal a nuestros mg/1000 kcal**. Confirma el objetivo de urato del motor (sus <630 µmol/Mcal son 82,5-95,8 mg/1000 kcal y tenemos escrito 90) y mide lo lejos que está una ración cruda: **1,5-1,8 veces el pienso más cargado que analizaron** |
 | ACVIM (Keene 2019) | **leído entero (12-sep)** | Igual: primero se buscó y luego se leyó. Lo que solo aparece leyendo va marcado abajo | Abajo. Cierra P-10 —el límite del sodio existe y es clínico, no una cifra— y saca un hallazgo nuevo: el motor aplica al cardíaco con renal justo la dieta baja en proteína que el consenso dice que hay que evitar |
@@ -526,6 +528,109 @@ MS en 2017 (nuestro `maxAdulto` es 56,75 = 22,70 × 2,5) y el de **hierro** de
     sí y con el motor (186 celdas).
 12. El techo de calcio del Gran Danés ya está cubierto por una regla más
     estricta que aplicamos (1,10 % MS contra el 1,6 % de FEDIAF).
+
+---
+
+## WSAVA — los 18 documentos del Global Nutrition Toolkit · leídos enteros el 12-sep-2026
+
+Eran **dos de 18**: el de dietas crudas y el de premios, leídos el 11 de
+septiembre. Hoy están los 18, que son 3.102 líneas entre guías, hojas de la
+clínica, formularios y material para el dueño.
+
+### Lo que CONFIRMA, y con cuánta insistencia
+
+⚠️ **La banda de BCS 4-5 sale en CINCO documentos distintos de esta misma
+fuente**, y por eso vale la pena contarlos: el motor la encendió el 12 de
+septiembre y no estaba apoyada en una frase suelta.
+
+| Dónde | Lo que dice |
+|---|---|
+| Guías de 2011 (JSAP) | *«The goal for most pets is a BCS of 4 to 5 of 9.»* Y añade: *«Disease risk associations with higher BCS in adult animals appear to increase above 6 of 9»* |
+| Lista de comprobación | *«Body condition score less than 4 or greater than 5 (on 9-pt scale)»*, entre los factores de riesgo que hacen **obligatoria** la evaluación ampliada |
+| Preguntas frecuentes | *«Body condition is scored on a 9-point scale with 4 to 5 out of 9 considered ideal with scores below 4 considered underweight and scores above 5 considered overweight»* |
+| Gráfica de BCS del perro | El propio dibujo marca «IDEAL» sobre el 4 y el 5 |
+| Gráfica de masa muscular | *«animals can have a low body condition score (< 4) but have minimal muscle loss»* |
+
+Y una cosa más, que es nueva y va en la dirección estricta: al cachorro de raza
+grande le pide BCS **4**, no 5 — *«large breed growing puppies, which need to be
+fed in a portion controlled manner to ensure a slow rate of weight gain and a
+body condition score of 4 out of 9 to avoid joint and skeletal problems
+associated with a fast rate of growth»*. El motor no cambia nada: en la banda
+4-5 usa el peso real, así que un cachorro en 4 ya se calcula sobre su peso. Queda
+escrito porque es la única fuente que **pide** el 4 en vez de admitirlo.
+
+| Lo demás que confirma | Decisión |
+|---|---|
+| *«Snacks, treats, table food > 10% of total calories»* como factor de riesgo obligatorio | **Ya aplicado** (regla 3-bis). **Novena** fuente con la misma cifra |
+| *«some appear to have fewer gastrointestinal issues if food is gradually changed over a 7-10 day period»*, y que *«no clear evidence showing any one method is superior»* | **Ya aplicado**: el plan de `transicion.py` son 9 días en tres tramos y el 100 % el día 10. Cae dentro de esa horquilla, y es más largo que los 4-7 días de AAHA y los «al menos 3» de las preguntas frecuentes de la propia WSAVA. Más largo es el lado prudente |
+| Los riesgos de la dieta cruda y que el hueso no mejora la enfermedad periodontal | **Ya recogido** el 11-sep del documento de dietas crudas |
+
+### Lo que sale nuevo
+
+| Lo que dice | Decisión |
+|---|---|
+| ⚠️ *«energy requirements can vary by 50% in either direction for cats, and by 30% in either direction for dogs»* | **No se aplica como cifra —el motor no puede dar un rango en vez de un número— y debería estar escrito donde se lee el DER.** Es la banda honesta de cualquier estimación de kcal, incluida la nuestra, y hoy el motor entrega un número sin decir su incertidumbre. Y las preguntas frecuentes de la misma fuente lo repiten: *«individual dogs or cats can vary up to 50% above or below these starting points»* |
+| ⚠️ **Su tabla de kcal no cuadra con su propia nota al pie.** La tabla «Calorie Ranges for an Average Healthy Adult Dog» dice al pie: *«Reference calculations used: 2006 NRC Daily Maintenance Energy Requirement for Dogs. Active Adult: 130 kcal x BWkg0.75 Inactive Adult: 95 kcal x BWkg0.75»* | **No se aplica, y se apunta el fallo.** Rehecha la cuenta fila a fila, los números de la tabla salen de coeficientes **84 y 105**, no de 95 y 130: 10 kg → 470-590 (84/105), no 534-731; 20 kg → 790-993 (84/105), no 898-1229; y lo mismo en 2, 5, 30, 40 y 49 kg. El 84 y el 105 son 70 × 1,2 y 70 × 1,5, o sea que la tabla está hecha sobre el RER y la nota cita el NRC. **La tabla queda un 12-20 % por debajo de su propia fórmula**, y es una hoja que se imprime y se usa en consulta |
+| *«the use of jerky and dried sweet potato treats has been associated with kidney disease in several parts of the world and is discouraged»* | **No se aplica: no hay ninguno en el catálogo** (no hay premios deshidratados). Va escrito para la pregunta de los premios, que es donde entraría |
+| Que un producto «intermittent», «complementary» o «short-term» solo debe darse *«as a small portion of the diet (10% or less)»* | **Ya aplicado**: es la misma regla del 10 %, dicha desde la etiqueta |
+| Los 12 documentos de gestión de clínica —los seis principios, los consejos de implantación, el procedimiento de traducción, los formularios de historia dietética y de paciente hospitalizado, la guía de etiquetas y la de internet para el dueño | **No se aplica: no hay ni una cifra de ración.** Se han leído enteros y se dice que se han leído |
+
+---
+
+## Stürmer 2005 — el balance catión-anión · leído entero el 12-sep-2026
+
+⚠️ **Lo primero, porque cambia lo que significa «leído»:** el fichero del repo son
+**198 líneas y no es la tesis**, es un extracto ya seleccionado de ella, con notas
+nuestras entre corchetes dentro. Se ha leído entero, y «entero» aquí quiere decir
+el extracto. Y es una tesis de **ponis** (*«Untersuchungen zum Einfluss der
+Fütterung auf den Säure-Basen-Haushalt bei Ponys»*), no de perros.
+
+| Lo que dice | Decisión |
+|---|---|
+| La fórmula del balance catión-anión de la ración (Krohn 1993): «KAB [mmol/kg TS] = 49,9*Ca + 82,3*Mg + 43,5*Na + 25,6*K – 59*P – 13*(Met+Cys) – 28,2*Cl» | **No se aplica: el motor no calcula esto.** Y podría, porque **tiene los siete datos** — calcio, magnesio, sodio, potasio, fósforo, metionina+cistina y cloruro están en las 163 fichas. Ver abajo |
+| Por qué el fósforo lleva coeficiente 1,8 y no 2: el fosfato orgánico se hidroliza a un 80 % secundario y un 20 % primario | **No se aplica**, pero explica por qué Hofmann 2025 usa −64,6 para el fósforo y esta fórmula −59: no es el mismo supuesto sobre la forma del fósforo. Dos fórmulas, dos coeficientes |
+| Que la relación entre la KAB y el pH está publicada «bei Katzen, Hunden und Schweinen» | ⚠️ **Y aquí está el hueco**: la ecuación del PERRO es de Behnsen (1992), una tesis de Hannover que **no está en el repo**. Sin ella se puede calcular la KAB pero no traducirla a un pH urinario previsto |
+
+### Lo MEDIDO, el 12-sep-2026
+
+Se ha calculado la KAB de los 216 menús del catálogo con la fórmula de Krohn tal
+cual, en la unidad del motor:
+
+| | KAB (mmol por 1000 kcal) |
+|---|---|
+| mínimo | −22 |
+| mediana | 14 |
+| máximo | 132 |
+| menús con KAB **negativa**, o sea ración acidificante | **40 de 216** |
+
+A unas 4.000 kcal/kg de materia seca eso son unos 56 mmol/kg MS de mediana, y de
+−88 a +528 en los extremos.
+
+**Por qué importa y por qué no lo decido yo.** El motor tiene cuatro patologías de
+urolito —`estruvita`, `urato`, `oxalato` y `cistina`— y las cuatro dicen, con
+razón, que el pH urinario es algo que el motor no puede ver, y por eso tres de
+ellas no formulan menú automático. La estruvita quiere orina ácida; el urato y la
+cistina la quieren alcalina. Una KAB negativa empuja hacia ácida. O sea que el
+motor podría al menos decir **hacia dónde empuja la ración**, que hoy no dice
+nada, y con los datos que ya tiene. Pero eso es una capacidad nueva del producto,
+no un límite de una fuente, y además falta la ecuación del perro. Va a
+`PREGUNTAS_ABIERTAS.md`.
+
+---
+
+## Hervera 2021 — «¿Están mis pacientes consumiendo un alimento completo?» · leído entero el 12-sep-2026
+
+*Marta Hervera Abad, Clinnutrivet nº 17, abril de 2021.* Artículo de formación, en
+español, sobre qué es un alimento completo y qué es uno complementario.
+
+| Lo que dice | Decisión |
+|---|---|
+| «Limitar el porcentaje de energía diaria administrado como alimento complementario... Este porcentaje no debe nunca superar el 10 %» | **Ya aplicado** (regla 3-bis). Es la **octava** fuente con la misma cifra, y la única en español. Lo que añade es que lo dice **en energía**, que es exactamente como lo mide el motor: `kcal_de_premios` sobre el DER |
+| El caso trabajado de «Chipi», mestiza de 12 kg: con una magdalena y media pechuga al día, el 27 % de sus kcal son complementarias, come un 60 % menos de la ración completa y **le faltan múltiples nutrientes esenciales** | **Ya aplicado, y es el mejor ejemplo que hemos encontrado de por qué**. Es literalmente lo que hace el motor: formular con las kcal que quedan y seguir exigiendo el día entero de nutrientes |
+| Su **Tabla 7**, kcal/100 g de los premios que la gente da de verdad: queso de Burgos 198, yogur desnatado 64, pan de molde 284, zanahorias 34, tostadas 305, pechuga de pollo cocida 146, salchicha de Frankfurt 288, manzana/pera/melocotón 55, plátano 90, sandía/melón 20, barritas cárnicas semihúmedas ~400 | ⚠️ **PENDIENTE DE DECIDIR, y está listo para aplicarse.** La pregunta de los premios ya la sirve `GET /vocabulario` con sus cuatro respuestas, y **la ficha todavía no la hace**. Esta tabla es justo lo que le falta a esa pregunta para que alguien pueda contestarla sin adivinar: «media manzana» no es una respuesta, 28 kcal sí. Tiene fuente (Villaverde y Hervera, *Manual práctico de nutrición clínica* 2ª ed., 2021) y está en español. **No la meto yo** porque cambia lo que la app enseña, que es decisión de producto |
+| Que la vitamina C no es esencial en perro y gato porque la sintetizan de la glucosa | **Ya cubierto**: es la razón por la que el motor no la mide, y por la que el aviso nuevo de `oxalato` habla de **suplementar** vitamina C y no de la que traen los alimentos |
+| La tabla de la proteína del perro adulto por fuente: NRC 2006 mínimo 20 g/Mcal, recomendado 25, FEDIAF 2020 45-52,1, y los productos comerciales «> 100 g/Mcal» | **Ya recogido** en `FEDIAF_CONTRA_OTRAS_FUENTES.md`. Lo que añade es el cuarto número, el de los piensos reales, que es el que explica por qué una ración BARF con 105 g/1000 kcal no es una rareza |
+| Las definiciones legales de alimento completo y complementario (R. 767/2009, art. 3.2) | **No se aplica**: el motor formula la ración entera, así que siempre está en el lado «completo». Se anota porque es la etiqueta que un dueño tiene que saber leer cuando compra el premio |
 
 ---
 
