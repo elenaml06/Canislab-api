@@ -1285,6 +1285,64 @@ escrito en ninguna parte de este repo. La descarga vive en el otro repo y el
 lector que tenía que auditarla aquí no llegó a existir. Si nadie lo lee, en un
 mes alguien vuelve a empezar.
 
+---
+
+### P-27 · Un metaanálisis de Ettinger calcula las kcal con otro exponente, y el desacuerdo va en las dos direcciones
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es criterio: dos fuentes con dos formas de escalar) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo la sección de nutrición de Ettinger |
+
+El capítulo 172 del tratado de Ettinger, Feldman y Côté —*Nutrición de perros
+adultos sanos*, escrito por **Martha G. Cline**, que es la primera autora de las
+guías AAHA 2021 que ya usamos— publica las ecuaciones de energía de un
+**metaanálisis**, y no usan el exponente 0,75:
+
+| | Fórmula |
+|---|---|
+| Mantenimiento, todos los perros | 81,5 × PC^0,93 |
+| Mantenimiento, **solo perros domésticos** | **62 × PC^0,97** |
+
+> *«El metaanálisis del REM de perros adultos demostró un REM promedio de 142,8 ±
+> 55,3 kcal/kg de PC0,75/día, con una ecuación alométrica estimada de 81,5 kcal/kg
+> de PC0,93/día»*
+
+> *«La ecuación recomendada para determinar el REM de los perros de compañía es
+> 62,5 kcal/kg de PC0,97/día»*
+
+⚠️ Dos avisos antes de discutirlo. **El texto dice 62,5 y su propio cuadro dice
+62**, en el mismo capítulo. Y como el exponente no es el mismo, **las dos curvas se
+cruzan**: no hay «un porcentaje» de diferencia.
+
+**MEDIDO el 12-sep**, la ecuación de perro doméstico contra lo que aplica el motor
+a un perro de actividad normal (110 × PC^0,75, Tabla VII-7 de FEDIAF):
+
+| Peso | Ettinger | Motor | Diferencia |
+|---|---|---|---|
+| 3 kg | 180 kcal | 251 kcal | **−28,2 %** |
+| 10 kg | 579 | 619 | −6,5 % |
+| 30 kg | 1.680 | 1.410 | **+19,1 %** |
+| 60 kg | 3.290 | 2.371 | **+38,7 %** |
+
+O sea que con el exponente 0,97 el perro grande necesitaría **un 39 % más** y el
+toy **un 28 % menos** de lo que el motor le da hoy. No es un desacuerdo de nivel:
+es de forma.
+
+**Por qué no lo cambio.** Manda FEDIAF, que publica su tabla en kcal/kg^0,75, y
+además el propio capítulo avisa de que *«Existe una gran variación en el intervalo
+de predicción del REM; por lo tanto, las fórmulas deben usarse solo como punto de
+partida»* — su ± 55,3 sobre 142,8 es un 39 %, la misma banda que abre la P-25. Con
+esa incertidumbre, las dos curvas caben una dentro de la otra en casi todo el
+rango.
+
+**La pregunta:** ¿hay que decirlo en el documento que va a revisión, y hay que
+mirar con lupa los dos extremos —el toy y el gigante—, que es donde las dos
+fuentes más se separan y donde además el motor ya tiene problemas conocidos (al
+toy le cuesta salir menú, y el gigante es el que más lejos está de la curva de
+crecimiento)?
+
 
 ---
 

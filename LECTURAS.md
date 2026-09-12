@@ -56,7 +56,7 @@ la tabla. Esos se quedan y se quedan todos.
 | Köber 2017 | sí (11-sep) | Cazó tres fichas con el calcio ×10 bajo |
 | WSAVA — **los 18 documentos** | **leídos enteros (12-sep)** | Eran dos de 18. Los otros 16 confirman la banda de BCS 4-5 en **cinco** sitios distintos, dan la banda de incertidumbre del DER (**±30 % en el perro**) y confirman los 7-10 días de nuestro plan de transición. ⚠️ Y su tabla de kcal **no cuadra con su propia nota al pie**: los números salen de 84-105 kcal/kg^0,75 y la nota dice 95-130. Abajo |
 | **Spitze 2003** | **no está en el repo** | Decide la taurina de 89 fichas |
-| Ettinger & Feldman | **no**, y es la única grande que sigue sin leer | 255.458 líneas en dos tomos, 42 menciones en el repo. Es un tratado de medicina interna, no de nutrición, así que la densidad de cifras de ración será mucho menor que en SACN5 — pero eso es una suposición mía y no una medida, y por eso no vale como excusa para no leerlo |
+| Ettinger & Feldman | **empezado el 12-sep: leída entera su sección de NUTRICIÓN** (capítulos 167 y 170-173 hasta ahora, de los 167-194 que la forman). El resto del tratado, no | 255.458 líneas en dos tomos, 42 menciones en el repo. ⚠️ Y la suposición con la que lo dejé ayer —«es medicina interna, la densidad de cifras será baja»— **era falsa**: tiene dentro un libro de nutrición entero, la sección XI, **28 capítulos (167-194)** escritos por Cline, Villaverde, Freeman, Bartges, Hill, Michel y Biourge, o sea los mismos nombres que firman AAHA, Ishii y media bibliografía del repo. Y **está en español**, que es lo que obligó a arreglar el auditor de citas el mismo día. Abajo |
 | Dobenecker / Hofmann | **los dos leídos enteros (12-sep)** | El de 2021 (PLOS ONE, 8 beagles) y el de 2025 (JAPAN, 8 foxhound). Abajo. Sale una cosa que el motor no puede ver y que vale hasta el **39,6 %** del fósforo de un menú: **en qué forma química viene el fósforo de los multivitamínicos**. Y una advertencia sobre nuestra propia protección: subir el ratio Ca:P NO protege de un fosfato soluble |
 | FCI — estándares de raza | **leído lo que hay: 33 estándares de 255 razas (12-sep)** | Se bajaron el 11-sep para dar fuente a los 255 pesos adultos de `razas.json`, que no la tienen. ⚠️ **Medido hoy: solo 9 de los 33 traen un peso en kg.** Los demás dan **altura a la cruz y no peso**, que es como se escribe un estándar de raza. O sea que esta fuente contesta como mucho una cuarta parte de la pregunta. Abajo |
 | Heer 2017 | **leída entera (12-sep)** | Es la tesis que **contesta la P-24** y a la vez la deja abierta por otro motivo: trae la ecuación del perro que faltaba (Behnsen 1992) y, rehecha la cuenta, **esa ecuación no cuadra ni con los datos que la propia fuente cita en la misma frase ni con su propia Figura 4**. Abajo |
@@ -576,6 +576,113 @@ escrito porque es la única fuente que **pide** el 4 en vez de admitirlo.
 | *«the use of jerky and dried sweet potato treats has been associated with kidney disease in several parts of the world and is discouraged»* | **No se aplica: no hay ninguno en el catálogo** (no hay premios deshidratados). Va escrito para la pregunta de los premios, que es donde entraría |
 | Que un producto «intermittent», «complementary» o «short-term» solo debe darse *«as a small portion of the diet (10% or less)»* | **Ya aplicado**: es la misma regla del 10 %, dicha desde la etiqueta |
 | Los 12 documentos de gestión de clínica —los seis principios, los consejos de implantación, el procedimiento de traducción, los formularios de historia dietética y de paciente hospitalizado, la guía de etiquetas y la de internet para el dueño | **No se aplica: no hay ni una cifra de ración.** Se han leído enteros y se dice que se han leído |
+
+---
+
+## Ettinger, Feldman y Côté, 8.ª ed. — su sección de NUTRICIÓN · empezada el 12-sep-2026
+
+*Tratado de Medicina Interna Veterinaria*, traducción española de Grupo Asís
+(2021) de la 8.ª edición de Elsevier (2017). 255.458 líneas en dos tomos, 360
+capítulos. Es la última fuente grande que quedaba sin leer.
+
+⚠️ **Lo primero es que la suposición con la que estaba archivada era falsa.** La
+fila de esta tabla decía «es un tratado de medicina interna, no de nutrición, así
+que la densidad de cifras de ración será mucho menor» — y tiene dentro **un libro
+de nutrición entero**: la sección XI, **28 capítulos (167 a 194)**, firmados por
+Martha Cline (la primera autora de las guías AAHA 2021), Cecilia Villaverde
+(coautora del manual español que cita Hervera), Lisa Freeman, Joseph Bartges,
+Kathryn Michel, Richard Hill (el autor sénior del estudio de purinas de Ishii) y
+Vincent Biourge. O sea los mismos nombres que firman media bibliografía del repo,
+escribiendo aquí en formato de manual.
+
+**Y está en español**, que es lo que obligó a arreglar `auditar_citas.py` el mismo
+día: su suposición escrita era que «las fuentes están todas en inglés», y el LÉEME
+de esta fuente lo había dejado apuntado «para decidirlo».
+
+**Hasta dónde va la lectura.** Leídos enteros los capítulos **167 y 170 a 173**.
+Faltan **174 a 194**, y falta el resto del tratado (los otros 332 capítulos), que
+no se ha abierto. Se dice así para que se pueda continuar.
+
+### cap.172, Martha Cline — las ecuaciones de energía, y no son las nuestras
+
+Es el hallazgo del día y hay que mirarlo con cuidado, porque **no usa el mismo
+exponente**. Su Cuadro 172.1:
+
+| | Fórmula |
+|---|---|
+| Energía en reposo (exponencial) | 70 × PC^0,75 |
+| Energía en reposo (lineal) | 70 × PC + 30 — «no se recomienda para su uso en perros <2 kg o >20 kg, ya que sobreestimará las necesidades energéticas» |
+| Mantenimiento, **todos** los perros | **81,5 × PC^0,93** |
+| Mantenimiento, **solo perros domésticos** | **62 × PC^0,97** |
+
+Y el texto: *«El metaanálisis del REM de perros adultos demostró un REM promedio
+de 142,8 ± 55,3 kcal/kg de PC0,75/día, con una ecuación alométrica estimada de
+81,5 kcal/kg de PC0,93/día»*, y *«La ecuación recomendada para determinar el REM
+de los perros de compañía es 62,5 kcal/kg de PC0,97/día»*.
+
+⚠️ Dos cosas antes de nada. **El texto dice 62,5 y su propio cuadro dice 62**, en
+el mismo capítulo. Y **el exponente no es 0,75 sino 0,93 y 0,97**, así que las dos
+curvas no se pueden comparar en un solo número: se cruzan.
+
+**MEDIDO el 12-sep**, comparando la ecuación de perro doméstico de este capítulo
+(62 × PC^0,97) con lo que aplica el motor para un perro de actividad normal
+(110 × PC^0,75, la Tabla VII-7 de FEDIAF):
+
+| Peso | Ettinger, perro doméstico | Motor, actividad normal | Diferencia |
+|---|---|---|---|
+| 3 kg | 180 kcal | 251 kcal | **−28,2 %** |
+| 10 kg | 579 | 619 | −6,5 % |
+| 30 kg | 1.680 | 1.410 | **+19,1 %** |
+| 60 kg | 3.290 | 2.371 | **+38,7 %** |
+
+O sea que **no es un desacuerdo de nivel, es un desacuerdo de forma**: con
+exponente 0,97 el perro grande necesita mucho más y el pequeño mucho menos que con
+0,75. **Manda FEDIAF y el motor no cambia** — pero esto no cabía en
+`FEDIAF_CONTRA_OTRAS_FUENTES.md` como una fila de «otra fuente aprieta dentro»,
+porque no aprieta: sale fuera por los dos lados. Va a `PREGUNTAS_ABIERTAS.md`.
+
+⚠️ Y el propio capítulo pone el aviso que hace falta para leer todo esto: *«Existe
+una gran variación en el intervalo de predicción del REM; por lo tanto, las
+fórmulas deben usarse solo como punto de partida»*. El ±55,3 sobre 142,8 es un
+39 %, que es la misma banda que da la WSAVA (±30 %) y que abre la P-25.
+
+### Lo que CONFIRMA, y con qué fuerza
+
+| Lo que dice | Decisión |
+|---|---|
+| cap.171 (Villaverde): la energía del cachorro es **3 × RER hasta los 4 meses y 2 × RER el resto del crecimiento** | **Ya aplicado**: es el respaldo de crecimiento del motor y el corte de 4 meses. Y coincide **clavado** con el Cuadro 1 de AAHA 2021 |
+| cap.171: el BCS objetivo del cachorro es **4-5/9, y «4 para cachorros de razas grandes»** | **Ya aplicado** (la banda 4-5). Es la **segunda** fuente que pide el 4 para el cachorro de raza grande, después de la WSAVA |
+| cap.171: las dietas de cachorro de raza grande llevan «niveles controlados de calcio (1-1,5 % de materia seca), debido a que estos cachorros tienen el sistema de regulación del calcio inmaduro y son más sensibles al exceso» | **Ya aplicado y CONFIRMA la cifra**: el techo de `recomendaciones_libro.json` para el cachorro de más de 25 kg de adulto son 2.750 mg/1000 kcal, que a 4.000 kcal/kg MS es **1,1 % de materia seca** — dentro de esa banda |
+| cap.171: la comida de cachorro se da «hasta que el animal haya alcanzado el PC adulto y las placas de crecimiento se hayan cerrado (12 meses para gatos y perros pequeños y medianos; 18-24 meses para perros de razas grandes y gigantes)» | **Ya aplicado, y el motor cae dentro**: la app termina el crecimiento a los 10-12 meses en el perro pequeño y a los 20-24 en el de 45-70 kg. AAHA decía 15-16 meses para el grande, así que las dos fuentes discrepan entre sí y nosotros estamos dentro de la más larga |
+| cap.173 (Wakshlag): el galgo de carreras gasta **150-160 kcal/kg^0,75**, el perro activo **130** (NRC) y el de trineo **~1.000** | **Ya aplicado**: nuestro `muy_activo` son 150 y el nivel de trineo está declarado fuera a propósito. Confirma los tres extremos de la Tabla VII-7 de FEDIAF |
+| cap.171: el DHA es esencial en crecimiento y darlo directo es más eficiente que dar su precursor, «ya que la capacidad de perros y gatos para biotransformarlo es limitada» | **Ya aplicado**: el suelo de EPA+DHA de crecimiento |
+| cap.172: la vitamina C no es esencial en el perro, «ya que la síntesis de novo se produce a partir de la glucosa mediante la vía del ácido glucurónico» | **Ya cubierto**: es por lo que el motor no la mide, y por lo que el aviso nuevo de `oxalato` habla de **suplementarla** y no de la que traen los alimentos |
+| cap.172: la vitamina E depende del total de PUFA de la dieta | **Ya escrito y sin cifra**: es uno de los tres `documentado_sin_cifra` de `requisitos_condicionales.json` |
+
+### Lo que sale NUEVO, y no se aplica
+
+| Lo que dice | Por qué no |
+|---|---|
+| ⚠️ cap.172: *«La biodisponibilidad de calcio, fósforo y magnesio de origen vegetal es significativamente menor que la que se encuentra en las sales minerales o en los huesos y debe reducirse en un 50 %. Además, la biodisponibilidad del cobre y del cinc de origen vegetal también está comprometida»* | **No se aplica, y es un hueco del motor que no estaba escrito.** El catálogo suma el calcio del hueso y el de la verdura como si fueran lo mismo, y esta fuente dice que el de origen vegetal vale **la mitad**. En una ración BARF la mayor parte del calcio viene del hueso, así que el error va por el lado seguro — pero no está medido. Es hermano del hallazgo del fósforo de Dobenecker: **la forma importa y el motor solo ve el total** |
+| cap.173: *«El exceso de grasa en la dieta puede requerir aumentos de nutrientes catiónicos divalentes en ella (calcio, hierro, cinc, cobre y manganeso), ya que los ácidos grasos libres pueden quelar estos nutrientes, lo que reduce su biodisponibilidad»* | **No se aplica: no hay cifra.** Toca de cerca, porque el motor deja que los Extras —aceites, semillas— lleguen al 12 % de las kcal |
+| cap.173: el galgo de carreras y el perro de velocidad rinden mejor con **BCS 3-4/9**, por debajo de la banda ideal | **No se aplica, y a propósito.** El motor trata el BCS por debajo de 4 como delgadez y sube el peso objetivo. Para un galgo de competición eso sería equivocado; para el perro que usa esta app, es el lado seguro. Queda escrito |
+| cap.172: la definición de dieta baja, moderada y alta en grasa por % de EM: moderada 25-35 %, baja <25 %, alta >35 %, muy baja <20 % | **No se aplica como límite** — el motor trabaja en g/1000 kcal — pero es la equivalencia que hace falta para leer cualquier recomendación de «dieta baja en grasa», que es como están escritas las de pancreatitis e hiperlipidemia |
+| cap.172: los perros necesitan «alrededor del 1-2 % de las calorías totales como ácido linoleico» para no tener signos de deficiencia | **No se aplica**: es un mínimo de deficiencia, no una recomendación, y queda muy por debajo del mínimo de FEDIAF que ya aplica el motor |
+| cap.167 (Eirmann): el método **PETS** para evaluar un suplemento —calidad del Producto, Eficacia, Tolerancia y Seguridad— y que la etiqueta debe traer lista de ingredientes, uso previsto, lote, caducidad y fabricante | **No se aplica como cifra**, pero es exactamente la ficha que le falta a los diez multivitamínicos del catálogo, empezando por la que pide la P-22: qué sal de fósforo llevan |
+| cap.170 (Michel): el contenido del historial dietético, que incluye «Alimentos usados para la administración de la medicación del paciente» y «Acceso de mascotas a la basura» | **Ya cubierto** por la pregunta de los premios, que desde WSAVA incluye la comida con la que se dan las pastillas |
+
+### Y la cuarta fuente que desaconseja lo que hacemos
+
+cap.171, sobre el crecimiento: *«Las deficiencias y los excesos de nutrientes son
+muy raros en los cachorros y gatitos alimentados con dietas comerciales de
+fabricantes de renombre, pero pueden observarse con dietas caseras mal formuladas
+(o crudas)»*, y por eso **no son la mejor opción para los animales en
+crecimiento**. Y cap.173: *«hay ciertos órganos gubernamentales que han
+establecido que algunos perros de trabajo no pueden ser alimentados con dietas
+crudas debido al riesgo zoonótico»*, que es lo mismo que decía AAHA de los perros
+de terapia en Estados Unidos.
+
+Con esta van **cuatro** —AAHA, WSAVA, la TVT y Ettinger—. Todas a la P-20.
 
 ---
 
