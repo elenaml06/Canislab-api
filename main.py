@@ -50,7 +50,8 @@ from exclusiones import filtrar as filtrar_exclusiones
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
 from verificar import verificar as verificar_v2
 from verificar import (peso_objetivo_desde_bcs, BCS_ESCALA_SATURADA,
-                       BCS_NEUTRO as BCS_NEUTRO_MAIN)
+                       BCS_NEUTRO as BCS_NEUTRO_MAIN,
+                       BCS_IDEAL_MIN as BCS_IDEAL_MIN_MAIN)
 # ⚠️ El DER por kg de peso metabólico, que es lo que dispara el escalado de los
 # mínimos. Se importa de `verificar` y no se recalcula aquí: es el único sitio
 # que sabe hacerlo, y dos copias de esta cuenta serían dos criterios.
@@ -637,9 +638,17 @@ def _peso_de_referencia(datos):
             # topada al 20 % (un perro muy delgado suele estarlo por una
             # enfermedad), así que en BCS 1, 2 y 3 el número es el tope y no la
             # estimación.
-            if float(bcs) < BCS_NEUTRO_MAIN:
+            if float(bcs) < BCS_IDEAL_MIN_MAIN:
                 return derivado, "derivado_del_bcs_por_debajo_del_ideal"
             return derivado, "derivado_del_bcs"
+        # ⚠️ Y SI EL BCS DICE QUE YA ESTA BIEN, SE DICE ASI (11 septiembre).
+        # `peso_objetivo_desde_bcs` devuelve None dentro de la banda ideal de
+        # FEDIAF (4 a 5), y sin esta rama eso caia en «peso_real_sin_objetivo»,
+        # que es el mismo texto que cuando nadie ha dicho el BCS. No es lo
+        # mismo: uno es «no lo sabemos» y el otro es «lo sabemos y esta bien».
+        # Quien lee la respuesta tiene que poder distinguirlos.
+        if BCS_IDEAL_MIN_MAIN <= float(bcs) <= BCS_NEUTRO_MAIN:
+            return float(actual), "peso_real_ya_en_la_banda_ideal"
     if actual:
         return float(actual), "peso_real_sin_objetivo"
     return None, "sin_peso"
@@ -6660,12 +6669,23 @@ ETIQUETAS_CONDICION = {
     3: {"dueno": {"titulo": "Flaquito", "detalle": "Costillas se notan facil al tacto"},
         "veterinario": {"titulo": "BCS 3/9 — Delgado",
                         "detalle": "20 a 30 % por debajo del ideal (FEDIAF Tabla VII-2)"}},
+    # ⚠️ EL 4 ES IDEAL TAMBIEN, Y AQUI PONIA «Por debajo del ideal» (11 sep).
+    # FEDIAF lo dice dos veces -- §7.1.3 «The ideal BCS should therefore be
+    # between 4/9 and 5/9» y §7.2.4.1 «dogs should be fed to maintain a body
+    # condition score (BCS) between 4 and 5» --, las dos apoyadas en Kealy 2002.
+    # El «10 a 15 % por debajo» de la Tabla VII-2 sigue siendo verdad y se
+    # queda: es el desvio contra el BCS 5, que es contra lo que esa tabla mide
+    # TODO. Lo que era falso es llamarlo «por debajo del ideal».
     4: {"dueno": None,
-        "veterinario": {"titulo": "BCS 4/9 — Por debajo del ideal",
-                        "detalle": "10 a 15 % por debajo del ideal (FEDIAF Tabla VII-2)"}},
+        "veterinario": {"titulo": "BCS 4/9 — Ideal (extremo delgado de la banda)",
+                        "detalle": "Dentro de la banda ideal de FEDIAF, que es 4 a 5 (§7.1.3 y "
+                                   "§7.2.4.1). Esta un 10 a 15 % por debajo del peso en BCS 5 "
+                                   "(Tabla VII-2), y eso NO se corrige: la racion se calcula "
+                                   "sobre su peso actual"}},
     5: {"dueno": {"titulo": "Ideal", "detalle": "Costillas se palpan, cintura visible desde arriba"},
         "veterinario": {"titulo": "BCS 5/9 — Ideal",
-                        "detalle": "En su peso; la racion se calcula sobre el peso actual"}},
+                        "detalle": "En su peso; la racion se calcula sobre el peso actual. Con el "
+                                   "4 forman la banda ideal de FEDIAF"}},
     6: {"dueno": None,
         "veterinario": {"titulo": "BCS 6/9 — Por encima del ideal",
                         "detalle": "10 a 15 % por encima del ideal (FEDIAF Tabla VII-2)"}},

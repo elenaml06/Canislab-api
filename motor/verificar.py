@@ -354,6 +354,37 @@ EXCESO_BCS_9 = 0.45          # FEDIAF 2025, Anexo 7.1, Tabla VII-2, fila «9. Gr
 # de golpe a la racion de un peso un 43 % mayor es mala idea.
 TOPE_CORRECCION_AL_ALZA = 1.20
 
+# ⚠️ EL IDEAL DE FEDIAF ES UNA BANDA, 4 A 5, Y NO UN PUNTO (11 de septiembre).
+#
+# Hasta hoy este modulo tomaba el 5 como el unico ideal, asi que a un perro en
+# BCS 4 le SUBIA el peso objetivo un 11 % -- y con el las kcal. FEDIAF dice dos
+# veces lo contrario, y en dos sitios distintos de la guia:
+#
+#   §7.1.3: «The ideal BCS should therefore be between 4/9 and 5/9.»
+#   §7.2.4.1: «it is recommended that dogs should be fed to maintain a body
+#              condition score (BCS) between 4 and 5 on the 9-point BCS.»
+#
+# Y no es una frase suelta: las dos se apoyan en Kealy RD et al. (2002), el
+# estudio de CATORCE anos con labradores en el que la restriccion alargo la vida
+# mediana y retraso la enfermedad cronica, con los perros restringidos «had a BCS
+# of 4/9 to 5/9». O sea que engordar a un perro que esta en 4 va contra lo unico
+# que hay medido a catorce anos.
+#
+# QUE CAMBIA, EXACTAMENTE:
+#   · BCS 4 y 5  -> no se corrige nada. El perro ya esta en la banda ideal.
+#   · BCS 6 a 9  -> igual que antes: el objetivo es el BCS 5, que es el borde
+#                   de la banda que le queda mas cerca.
+#   · BCS 1 a 3  -> el objetivo pasa a ser el BCS **4**, no el 5, por el mismo
+#                   motivo: es el borde de la banda que le queda mas cerca, y
+#                   ademas es el lado prudente (§7.2.3.2: «it may be better to
+#                   start from a lower calculated MER and add as needed»).
+#
+# ⚠️ LO QUE **NO** CAMBIA es la Tabla VII-2: sus desvios siguen midiendose
+# CONTRA EL BCS 5, que es lo que dice su propia cabecera («% BW below or above
+# BCS 5»). El 5 sigue siendo el cero de la regla; lo que deja de ser es el unico
+# destino.
+BCS_IDEAL_MIN = 4.0
+
 
 def peso_objetivo_desde_bcs(peso_actual_kg, bcs):
     """El peso objetivo estimado desde el BCS, o None si no se puede.
@@ -383,15 +414,23 @@ def peso_objetivo_desde_bcs(peso_actual_kg, bcs):
         return None
     if p <= 0 or b <= 0 or b > BCS_MAXIMO_PUBLICADO:
         return None
-    if b == BCS_NEUTRO:
-        return None                       # ya esta en su peso: no hay nada que estimar
+    if BCS_IDEAL_MIN <= b <= BCS_NEUTRO:
+        # Ya esta DENTRO de la banda ideal de FEDIAF (4 a 5): no hay nada que
+        # estimar, y estimarlo seria moverlo de donde la fuente lo quiere.
+        return None
     if b >= BCS_ESCALA_SATURADA:
         # FEDIAF Tabla VII-2: «>45 %». La recta daria 40 y se queda corta.
         exceso = EXCESO_BCS_9
     else:
         exceso = PCT_POR_PUNTO_BCS * (b - BCS_NEUTRO)
     # SE DIVIDE: el desvio esta medido SOBRE EL IDEAL, no sobre el actual.
-    ideal = p / (1.0 + exceso)
+    # Esto da el peso que tendria el perro en BCS 5, que es contra lo que la
+    # Tabla VII-2 mide todos sus desvios.
+    peso_en_bcs5 = p / (1.0 + exceso)
+    # Y de ahi al BORDE DE LA BANDA IDEAL que le queda mas cerca: el 5 si esta
+    # por encima, el 4 si esta por debajo. Ver `BCS_IDEAL_MIN`.
+    bcs_objetivo = BCS_IDEAL_MIN if b < BCS_IDEAL_MIN else BCS_NEUTRO
+    ideal = peso_en_bcs5 * (1.0 + PCT_POR_PUNTO_BCS * (bcs_objetivo - BCS_NEUTRO))
     # Y hacia arriba, el tope del 20 %: ver `TOPE_CORRECCION_AL_ALZA`.
     if ideal > p * TOPE_CORRECCION_AL_ALZA:
         ideal = p * TOPE_CORRECCION_AL_ALZA
