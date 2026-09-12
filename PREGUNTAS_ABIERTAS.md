@@ -859,6 +859,61 @@ sale carente de metionina» al restringir la proteína en el IRIS 4.
 tener la taurina medida (Spitze 2003, que decide el dato de 89 fichas)?
 
 
+### P-19 · El cardíaco con renal recibe la dieta baja en proteína que el consenso ACVIM dice que hay que evitar
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es criterio clínico: dos fuentes piden cosas opuestas) |
+| **Bloquea** | No, pero afecta a un perro que existe |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo entero el consenso ACVIM |
+
+Keene BW et al., ACVIM consensus (JVIM 2019;33:1127-1140), recomendaciones
+dietéticas del estadio C, con la fuerza más alta del documento — **Class I, LOE:
+moderate**:
+
+> *«Ensure adequate protein intake and **avoid low-protein diets designed to
+> treat chronic kidney disease, unless severe concurrent renal failure is
+> present**.»*
+
+**MEDIDO en el motor el mismo día**, combinando las dos patologías:
+
+| Marcado | Techo de proteína | Techo de sodio |
+|---|---|---|
+| `cardiopatia` sola | ninguno | 738,6 |
+| `renal` sola | **62,5** | 750,0 |
+| `cardiopatia` + `renal` | **62,5** | 738,6 |
+| `cardiopatia_c` + `renal` | **62,5** | 625,0 |
+| `cardiopatia_d` + `renal` | **62,5** | 480,0 |
+
+O sea que el motor le pone al cardíaco con renal exactamente el techo de
+proteína de la dieta renal, que es lo que el consenso dice que hay que evitar.
+Y en el caso que la frase nombra: nuestra clave `renal` **es** la leve-moderada
+(la grave es `renal_avanzada`, que no es formulable), así que no estamos en la
+excepción de «severe concurrent renal failure».
+
+**No es un fallo del mecanismo.** Los topes se combinan con `min()` y eso es lo
+correcto y lo que protege en todos los demás cruces. Lo que pasa aquí es que
+**las dos fuentes piden cosas opuestas**: el Reglamento (UE) 2020/354 entrada 10
+pone el techo de proteína de la dieta renal, y el consenso ACVIM dice que a un
+cardíaco no se le ponga salvo fallo renal grave.
+
+Las tres salidas posibles, para que la decisión se tome con ellas delante:
+
+1. **Dejarlo como está.** El techo de proteína es de la ley y la ley gana. El
+   perro come menos proteína de la que ACVIM querría.
+2. **Que la combinación no aplique el techo de proteína**, y avisar. Sería la
+   primera vez que una combinación AFLOJA algo, y eso rompe la regla de que
+   combinar solo puede apretar.
+3. **Que la combinación no sea formulable** y se diga por qué, como ya pasa con
+   renal + pancreatitis.
+
+**La pregunta:** ¿cuál de las tres? Y si es la 2, ¿bajo qué condición exacta,
+dado que «severe concurrent renal failure» es justamente lo que separa nuestras
+dos claves renales?
+
+---
+
+
 ---
 
 ## Cerradas

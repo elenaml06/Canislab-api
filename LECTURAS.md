@@ -58,10 +58,107 @@ la tabla. Esos se quedan y se quedan todos.
 | **Spitze 2003** | **no está en el repo** | Decide la taurina de 89 fichas |
 | Ettinger & Feldman | no | Dos tomos |
 | Dobenecker / Hofmann | no | |
-| ACVIM (Keene 2019) | no | |
+| ACVIM (Keene 2019) | **leído entero con este método (12-sep)** | Abajo. Cierra P-10 —el límite del sodio existe y es clínico, no una cifra— y saca un hallazgo nuevo: el motor aplica al cardíaco con renal justo la dieta baja en proteína que el consenso dice que hay que evitar |
 | IRIS 2026 | **leída entera con este método (12-sep)** | Abajo. Contesta lo del IRIS 4, y la respuesta es que **IRIS no da ni una cifra dietética**: la restricción de proteína del estadio 4 no es suya, y lo único que dice de la proteína ahí es que hay que evitar que falte |
 | AAHA 2021 | no | |
-| Today's Veterinary Practice | no, y el artículo que da el sodio por estadio **no está** | |
+| Today's Veterinary Practice | **leída entera con este método (12-sep)** | El artículo del oxalato, abajo: aguanta entera, todo lo suyo ya estaba aplicado. ⚠️ El que da el sodio cardíaco por estadio ACVIM sigue **sin estar** en el repo |
+
+---
+
+## ACVIM — Keene et al. 2019, consenso sobre la enfermedad mitral degenerativa · leído entero el 12-sep-2026
+
+440 líneas. Es la fuente que el repo cita para el sodio del cardiópata por
+estadio, y se lee entera para cerrar **P-10**: si hay un punto en el que bajar
+el sodio de un cardiópata sea malo.
+
+### P-10 queda contestada, y la respuesta no es un número
+
+Estadio D, literal:
+
+> *«In patients with refractory fluid accumulations, attempts should be made to
+> further decrease dietary sodium intake **if it can be done without
+> compromising appetite or renal function**.»* (Class IIa, LOE: expert opinion)
+
+O sea: **sí hay un límite, y es clínico, no una cifra.** Se baja más mientras no
+se estropee el apetito ni la función renal. Eso explica por qué ninguna fuente
+da un suelo de sodio: el suelo lo pone el perro, no la tabla.
+
+Y el mínimo de FEDIAF sigue estando debajo de todo (290 mg/1000 kcal a DER 95),
+que es lo que el motor ya respeta. Así que **no hay nada que cambiar**: la
+pregunta se cierra con «el límite existe y es clínico», y el motor no puede
+medir apetito ni creatinina.
+
+### El hallazgo de verdad: una interacción que el motor aplica al revés
+
+Estadio C, entre las recomendaciones dietéticas, con la fuerza más alta del
+documento (Class I, LOE: moderate):
+
+> *«Ensure adequate protein intake and **avoid low-protein diets designed to
+> treat chronic kidney disease, unless severe concurrent renal failure is
+> present**.»*
+
+**MEDIDO HOY**, combinando patologías en el motor:
+
+| Marcado | Techo de proteína | Techo de sodio |
+|---|---|---|
+| `cardiopatia` sola | ninguno | 738,6 |
+| `renal` sola | **62,5** | 750,0 |
+| `cardiopatia` + `renal` | **62,5** | 738,6 |
+| `cardiopatia_c` + `renal` | **62,5** | 625,0 |
+| `cardiopatia_d` + `renal` | **62,5** | 480,0 |
+
+O sea que un perro cardíaco al que además se le marca la renal recibe
+exactamente la dieta baja en proteína que el consenso dice que hay que evitar
+—y en el caso que nombra, porque nuestra clave `renal` **es** la leve-moderada;
+la grave es `renal_avanzada`, que no es formulable.
+
+No es un fallo del mecanismo: los topes se combinan con `min()` y eso es
+correcto. Es que **aquí las dos fuentes piden cosas opuestas**, y elegir cuál
+cede es criterio clínico. Va a `PREGUNTAS_ABIERTAS.md` como **P-19**, no se
+cambia sola.
+
+### Lo demás, punto por punto
+
+| Lo que dice | Decisión |
+|---|---|
+| El consenso **no da ni una cifra de sodio**: «mild» en B2, «modestly restrict» en C, «further decrease» en D. Comprobado: cero apariciones de «mg/100 kcal» en las 440 líneas | **Confirma que el repo ya lo dice bien.** `patologias.json` escribe que «las CIFRAS por estadio salen de» Cavanaugh (Veterinary Practice News 2020) y que el consenso es el marco. La atribución era correcta |
+| *«Modestly restrict sodium intake, taking into consideration sodium from all dietary sources (including dog food, **treats, table food, and foods used to administer medications**)»* | **Ya aplicado**: es la fuente primaria detrás del 57 % de Fascetti cap.18, y por eso la pregunta de los premios incluye la comida con la que se esconde la pastilla |
+| Caquexia cardíaca: *«maintenance calorie intake in Stage C should be approximately **60 kcal/kg BW**»* | **PENDIENTE DE DECIDIR.** Es una cifra de energía por kg de peso VIVO, no por peso metabólico, y el motor calcula por kg^0,75. Para un perro de 20 kg son 1200 kcal contra las ~1030 que da la tabla de actividad: la fuente pide **más**, no menos, para que no pierda masa. No se aplica sin decidirlo |
+| *«Consider supplementing with omega-3 fatty acids, especially in dogs with decreased appetite, muscle loss, or arrhythmia»* (Class IIa) | **No se aplica**: sin cifra |
+| Potasio: suplementar **solo** si hay hipopotasemia; evitar dietas altas si hay hiperpotasemia | **No se aplica**: las dos ramas dependen de una analítica, y el motor no la tiene. Refuerza que la cardiopatía sea `dueno_con_diagnostico` |
+| Magnesio: igual, solo si hay hipomagnesemia | Igual |
+| Todo lo demás —pimobendán, furosemida, espironolactona, IECA, oxígeno, toracocentesis, nitroprusiato— | **No se aplica**: son fármacos y manejo hospitalario |
+
+
+---
+
+## Today's Veterinary Practice — Cook & Atiee, oxalato cálcico canino · releída entera el 12-sep-2026
+
+Se lee entera porque es la que podía cerrar **P-11** (si el oxalato necesita un
+suelo de fósforo). **No lo cierra: no da ninguna cifra de fósforo.** La única
+vez que nombra el fosfato es como inhibidor endógeno —*«This is an inorganic
+phosphate found in blood and urine that reduces the crystallization of calcium
+salts»*—, que es fisiología, no una recomendación dietética. Así que P-11 sigue
+abierta y ahora se sabe que es una tercera fuente que no la contesta.
+
+**Y lo demás ya estaba aplicado, entero y bien.** Es la primera fuente que se
+relee con este método y aguanta sin sacar nada:
+
+| Lo que dice | Estado |
+|---|---|
+| *«Dietary calcium restriction does not appear to mitigate CaOx urolithiasis and is not recommended»* | **Ya aplicado** el 8-sep, y con el conflicto contra SACN5 (que pide restringirlo a 0,4-0,7 % MS) resuelto y escrito en `calcio_no_se_restringe` |
+| *«do not recommend feeding a diet with a sodium content >120 mg/100 kcal»* (= 1200 mg/1000 kcal) | **Ya anotado**, y se aplica la más estricta: los 750 de la Tabla 40-5 de SACN5. El margen del profesional (290 a 1200) ya lo tenía escrito |
+| Los cuatro altos en oxalato que nombra —cacahuete, tofu, espinaca, boniato— | **Los cuatro están** en `OXALATO_ALTO` de `seguridad.py`, que tiene 20 desde el 8-sep |
+| *«High-protein foods should be avoided»* | **No se aplica**: sin cifra. `urolitos_fosfato_calcico` sí tiene techo de proteína, y es del Reglamento |
+| El magnesio *«forms soluble complexes with oxalate … decreases the uptake of dietary oxalate»*, o sea protector | ⚠️ **Y el motor le pone un TECHO de 375 mg/1000 kcal**, que viene de la Tabla 40-5 de SACN5. Las dos fuentes no se contradicen del todo —una habla del magnesio urinario y la otra del aporte— pero conviene tenerlo delante: la más reciente dice que el magnesio ayuda |
+| Citrato potásico (75 mg/kg cada 12 h), hidroclorotiazida (2 mg/kg cada 12 h) | **No se aplica**: son fármacos |
+| *«a canned diet is always preferable to dry food»*, y trucos para que beba más | **No se aplica** como cifra, y la ración de este motor es húmeda por construcción |
+| La piridoxina no tiene respaldo en el perro con dieta equilibrada | **Confirma no hacer nada**, que es lo que se hace |
+
+**Decisión: no se cambia nada.** Queda una cosa para mirar con la nutricionista,
+que es el techo de magnesio: lo pide SACN5 y la fuente de 2025 describe el
+magnesio como inhibidor. No es contradicción demostrada y por eso no se toca.
+
 
 ---
 
