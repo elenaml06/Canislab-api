@@ -45,13 +45,19 @@ from motor_completo import resolver as resolver_v2, especie_de
 # PATOLOGIAS: los topes por patología, para poder comprobarlos también
 # en la puerta de verificación (ver _tope_patologia_roto).
 from constructor import tabla_imputacion_maximos, valor_para_maximo, valor_nutriente
+# ⚠️ LAS SIETE CATEGORIAS QUE SON SUPLEMENTO, IMPORTADAS Y NO COPIADAS (12 de
+# septiembre). En este archivo habia CINCO copias escritas a mano de esa misma
+# tupla. Se usa la de `constructor`, que es la que aplica el motor.
+from constructor import CAT_SUPLEMENTO
 from motor_completo import PATOLOGIAS, topes_de_patologias, RAZA_GRANDE_O_GIGANTE_KG
 from exclusiones import filtrar as filtrar_exclusiones
 from constructor import cargar as cargar_v2, MARGENES as MARGENES_V2
 from verificar import verificar as verificar_v2
 from verificar import (peso_objetivo_desde_bcs, BCS_ESCALA_SATURADA,
                        BCS_NEUTRO as BCS_NEUTRO_MAIN,
-                       BCS_IDEAL_MIN as BCS_IDEAL_MIN_MAIN)
+                       BCS_IDEAL_MIN as BCS_IDEAL_MIN_MAIN,
+                       EXCESO_BCS_9 as EXCESO_BCS_9_MAIN,
+                       TOPE_CORRECCION_AL_ALZA as TOPE_AL_ALZA_MAIN)
 # ⚠️ El DER por kg de peso metabólico, que es lo que dispara el escalado de los
 # mínimos. Se importa de `verificar` y no se recalcula aquí: es el único sitio
 # que sabe hacerlo, y dos copias de esta cuenta serían dos criterios.
@@ -1170,16 +1176,93 @@ app = FastAPI(title="Rawku API")
 ORIGENES_PERMITIDOS = [
     "https://rawku.app",
     "https://www.rawku.app",
-    "http://localhost:5173",   # Vite en desarrollo
-    "http://localhost:3000",
-    "http://127.0.0.1:5173",
 ]
+
+# ⚠️ CASO REAL ENCONTRADO (12 de septiembre): LA LISTA DE ARRIBA LLEVABA LOS
+# PUERTOS DE DESARROLLO ESCRITOS A MANO -- 5173 y 3000 -- Y ESO ROMPIÓ EL
+# GENERADOR DE MENÚS ENTERO FUERA DE ESOS DOS PUERTOS.
+#
+# Lo que se ve cuando pasa: la app dice «Uno de los menús no se pudo calcular
+# por un problema de conexión», en automático, en personalizar Y en el
+# formulador del veterinario. O sea que parece que se ha roto el motor, y el
+# motor está perfecto: el navegador ni llega a mandar la petición. En la
+# consola es un `net::ERR_FAILED` sin más, que es como se ve un bloqueo de
+# CORS desde JavaScript -- `fetch` no puede decirte que fue CORS, por diseño.
+#
+# Y no era un caso raro. Con la lista a mano quedaban fuera:
+#   · `npx vite` cuando el 5173 está ocupado y se va solo al 5174;
+#   · **la prueba de punta a punta de este mismo proyecto**, que levanta la
+#     app en el 5179 a propósito «para poder correr las dos a la vez»
+#     (`playwright.real.config.js`). O sea que el cambio del 11 de septiembre
+#     dejó ciega a la única prueba que mira la costura app↔motor, que es
+#     justo la que habría cazado esto;
+#   · abrir la app desde el móvil contra el portátil (`http://192.168.1.x`),
+#     que es como se prueba en una pantalla de verdad.
+#
+# LA REGLA, y por qué es segura: se admite CUALQUIER PUERTO de `localhost` y
+# de `127.0.0.1`. Un origen `localhost` es la máquina de quien está
+# desarrollando -- para que sirva de algo a un atacante tendría que estar ya
+# dentro de ese ordenador, y entonces CORS es el menor de los problemas. Lo
+# que cierra esta lista sigue cerrado: ninguna página de internet puede
+# llamar a esta API desde el navegador de nadie, que era el agujero real que
+# se tapó el 11 de septiembre.
+#
+# Lo vigila el BLOQUE 97, con los puertos que usan las dos configuraciones de
+# Playwright del otro repo escritos uno a uno.
+#
+# ⚠️ Y LA PRIMERA VERSION DE ESTE ARREGLO PROMETIA EN EL COMENTARIO ALGO QUE EL
+# CODIGO NO HACIA (12 de septiembre, por la tarde, revisando el propio arreglo).
+# El comentario de arriba listaba entre los casos rotos «abrir la app desde el
+# movil contra el portatil (http://192.168.1.x)» -- y el patron solo admitia
+# `localhost` y `127.0.0.1`, asi que ese caso seguia exactamente igual de roto.
+# Un comentario que dice que algo esta arreglado y no lo esta es peor que no
+# tenerlo: el siguiente que lo lea da por cerrado lo que sigue abierto.
+#
+# Se añaden las tres cosas que faltaban:
+#   · `[::1]`, que es localhost en IPv6. Hay navegadores y versiones de Node que
+#     resuelven `localhost` a esa forma, y entonces el Origin que llega lleva los
+#     corchetes y no casaba.
+#   · Las tres redes PRIVADAS (10.x, 172.16-31.x y 192.168.x), que es como se
+#     abre la app del portatil desde el movil. Sin esto no se puede probar en una
+#     pantalla de verdad, que es donde se usa.
+#   · Y el puerto es opcional en todas, porque el 80 no se escribe.
+#
+# HASTA DONDE ABRE ESTO, dicho sin adornar: una pagina servida DESDE LA MISMA RED
+# LOCAL podria llamar a esta API con el navegador de quien la visite. No da
+# acceso a la cuenta de nadie -- para eso hace falta el token, que una pagina
+# ajena no tiene -- y quien este en tu red ya tiene problemas mayores que este.
+# Lo que se cerro el 11 de septiembre sigue cerrado: ninguna pagina de INTERNET
+# puede hacerlo, que era el agujero real.
+_ORIGENES_REGEX = (
+    # Vistas previas de Vercel: canislab-web-<lo-que-sea>.vercel.app
+    r"https://[a-z0-9-]+\.vercel\.app"
+    # Desarrollo, en cualquier puerto: http://localhost:5179, 127.0.0.1:5178...
+    r"|http://(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?"
+    # Y desde el movil contra el portatil, por la red de casa.
+    r"|http://192\.168\.\d{1,3}\.\d{1,3}(?::\d+)?"
+    r"|http://10\.\d{1,3}\.\d{1,3}\.\d{1,3}(?::\d+)?"
+    r"|http://172\.(?:1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}(?::\d+)?"
+)
+
+def _origen_permitido(origen):
+    """¿Dejaría el middleware que este origen llamara? Contesta sí o no.
+
+    Usa LA MISMA lista y LA MISMA expresión que el middleware, a propósito: una
+    copia aquí diría que sí cuando el navegador dice que no, que es peor que no
+    contestar. Sin cabecera `Origin` devuelve None -- no es un navegador, es
+    curl, y CORS no le aplica.
+    """
+    if not origen:
+        return None
+    if origen in ORIGENES_PERMITIDOS:
+        return True
+    return re.fullmatch(_ORIGENES_REGEX, origen) is not None
+
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=ORIGENES_PERMITIDOS,
-    # Las vistas previas de Vercel: canislab-web-<lo-que-sea>.vercel.app
-    allow_origin_regex=r"https://[a-z0-9-]+\.vercel\.app",
+    allow_origin_regex=_ORIGENES_REGEX,
     allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
@@ -1663,8 +1746,7 @@ def endpoint_catalogo(tamano: str, etapa: str, der_objetivo: float = None, peso_
         return {"encontrado": False}
 
     if der_objetivo and peso_perro_kg:
-        SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
-                           "Calcio", "Hierro", "Vitamina B")
+        SUP_COMERCIALES = CAT_SUPLEMENTO   # la del motor, no una copia
         factor = der_objetivo / entrada["der"]
         gramos_escalados = {}
         for n, g in entrada["gramos"].items():
@@ -2593,8 +2675,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             coincide = next((v for v in variantes
                              if v["proteina"].strip().lower() == especie_pedida.strip().lower()), None)
             if coincide:
-                SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
-                                   "Calcio", "Hierro", "Vitamina B")
+                SUP_COMERCIALES = CAT_SUPLEMENTO   # la del motor, no una copia
                 der_base = sum(al[n]["energia"] * g / 100 for n, g in coincide["gramos"].items())
                 factor = datos.der_objetivo / der_base if der_base else 1.0
                 gramos_r = {}
@@ -2674,8 +2755,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
             elegida = next((v for v in variantes if v["proteina"].strip().lower() not in evitar_lower), None)
             if elegida is None:
                 elegida = variantes[0]  # si ya se evitaron todas, se repite alguna antes que fallar
-            SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
-                               "Calcio", "Hierro", "Vitamina B")
+            SUP_COMERCIALES = CAT_SUPLEMENTO   # la del motor, no una copia
             der_base = sum(al[n]["energia"] * g / 100 for n, g in elegida["gramos"].items())
             factor = datos.der_objetivo / der_base if der_base else 1.0
             gramos_reescalados = {}
@@ -2716,8 +2796,7 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
         # sigue abajo con la búsqueda libre de siempre -- nunca se entrega
         # un menú que no esté en verde de verdad.
         from catalogo_menus import CATALOGO
-        SUP_COMERCIALES = ("Multivitamínico", "Omega-3", "Yodo", "Fibra",
-                           "Calcio", "Hierro", "Vitamina B")
+        SUP_COMERCIALES = CAT_SUPLEMENTO   # la del motor, no una copia
         # ⚠️ CORREGIDO (5 agosto, madrugada) — FALLO GRAVE ENCONTRADO,
         # confirmado con datos reales: esta vía fuerza SIEMPRE la MISMA
         # base fija (la que se guardó una vez, hace días) -- no tiene en
@@ -4031,8 +4110,7 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
         # propio nombre, como la sal o un aceite específico. Esos
         # merecen el mismo trato que la carne o la verdura: se intenta
         # preservarlos, y si no se puede, se avisa de que se perdieron.
-        SUP_CATS = ("Multivitamínico", "Omega-3", "Yodo", "Fibra", "Calcio",
-                   "Hierro", "Vitamina B")
+        SUP_CATS = CAT_SUPLEMENTO   # la del motor, no una copia
         nombres_excl_actuales = nombres_excl | set(forzar or [])
         a_preservar = [n for n in menu_actual
                       if n not in nombres_excl_actuales
@@ -5281,7 +5359,7 @@ SELLOS_DE_LOS_DATOS = {
 
 
 @app.get("/verificar")
-def verificar():
+def verificar(origin: Optional[str] = Header(default=None)):
     """
     ⚠️ CORREGIDO (5 agosto, madrugada) — FALLO DE DISEÑO ENCONTRADO: los
     JSON se comparaban por hash de los BYTES CRUDOS del archivo -- eso
@@ -5412,6 +5490,35 @@ def verificar():
         # /pauta/firmar devuelve 503 a propósito (ver `_sello_de`), y eso
         # tiene que poder saberse ANTES de que un veterinario se quede
         # mirando un error.
+        # ⚠️ AÑADIDO (12 de septiembre) — PARA QUE UN BLOQUEO DE CORS SE VEA.
+        #
+        # El 11 se cerró el CORS y al día siguiente el generador de menús no
+        # funcionaba en ningún modo. Un bloqueo de CORS no da error que se
+        # pueda leer: `fetch` no puede decir que fue CORS, por diseño, así que
+        # lo que llega a la app es un `net::ERR_FAILED` pelado y lo que se ve en
+        # pantalla es «un problema de conexión». O sea que se busca una caída
+        # del servidor que no existe — y el servidor está contestando
+        # perfectamente a quien sí puede llamarle.
+        #
+        # Esto lo hace mirable desde el móvil, sin terminal: se abre
+        # `/verificar` desde el MISMO sitio desde el que falla la app y
+        # `tu_origen_puede_llamar` dice sí o no. Si dice que no, el problema no
+        # es el motor.
+        #
+        # `tu_origen` es lo que manda el navegador en la cabecera `Origin`. Va
+        # tal cual y no se guarda en ningún sitio: es lo que ya viaja en cada
+        # petición.
+        "quien_puede_llamar": {
+            "por_que_esta_esto_aqui": ("Un bloqueo de CORS no da error legible: la app dice "
+                                       "«problema de conexión» y parece que el motor está caído. "
+                                       "Abre esto desde el mismo sitio desde el que falla."),
+            "tu_origen": origin,
+            "tu_origen_puede_llamar": _origen_permitido(origin),
+            "siempre": list(ORIGENES_PERMITIDOS),
+            "ademas": ["cualquier vista previa de Vercel (*.vercel.app)",
+                       "localhost y 127.0.0.1 y [::1], en cualquier puerto",
+                       "la red de casa: 192.168.x.x, 10.x.x.x y 172.16-31.x.x"],
+        },
         "firma_de_pautas": {
             "clave_configurada": bool(_clave_del_sello()),
             "se_puede_firmar": bool(_clave_del_sello()),
@@ -6900,8 +7007,37 @@ def endpoint_vocabulario():
             "escala": "1 a 9",
             "ideal": BCS_NEUTRO_MAIN,
             "pct_por_punto": der_BCS_PCT_POR_PUNTO,
+            # ⚠️ LAS CINCO CIFRAS QUE DECIDEN EL PESO, SERVIDAS COMO NUMEROS
+            # (12 de septiembre). Antes aqui solo viajaban `ideal` y
+            # `pct_por_punto`, y las otras tres estaban CONTADAS EN PROSA en el
+            # campo `ojo` de aqui abajo -- «FEDIAF dice >45 %». Una frase no se
+            # lee desde JavaScript, asi que la app se hizo su propia copia en
+            # `src/bcs.js`: `EXCESO_BCS_9 = 0.45`, `BCS_ESCALA_SATURADA = 9` y
+            # la banda ideal. Dos copias de los numeros que deciden cuanto come
+            # un perro con sobrepeso.
+            #
+            # Elena, el mismo dia: «te dije que la app no puede tener datos
+            # sueltos, todo le tiene que llegar del motor».
+            #
+            # Y no es hipotetico: las dos copias YA se habian separado. La
+            # prueba de punta a punta esperaba 21,43 kg para un perro de 30 kg
+            # con BCS 9 -- la recta del 10 % por punto, 30/1,40 -- y el motor
+            # devuelve 20,69, que es el «>45 %» de la Tabla VII-2 de FEDIAF
+            # (30/1,45). El numero del motor es el bueno; lo que se habia
+            # quedado atras era la copia. Se vio al arreglar el CORS, porque
+            # esa prueba llevaba un dia sin poder hablar con la API.
+            #
+            # La cadena es FUENTE manda -> MOTOR la implementa -> APP la ofrece.
+            # Aqui se cierra el ultimo tramo: la app ya no tiene que saberselas.
+            "ideal_min": BCS_IDEAL_MIN_MAIN,
+            "escala_saturada": BCS_ESCALA_SATURADA,
+            "exceso_en_escala_saturada": EXCESO_BCS_9_MAIN,
+            "tope_correccion_al_alza": TOPE_AL_ALZA_MAIN,
             "ojo": ("El BCS 9 NO sigue la recta del 10 % por punto: FEDIAF dice «>45 %» y la "
-                    "recta da 40. Se aplica 45 y la estimacion es una COTA INFERIOR. || Los "
+                    "recta da 40. Se aplica `exceso_en_escala_saturada` (0,45) y la estimacion "
+                    "es una COTA INFERIOR. || La banda ideal es de `ideal_min` a `ideal` (4 a 5) "
+                    "y dentro de ella NO se corrige el peso. || La correccion hacia arriba, en "
+                    "el perro delgado, se topa en `tope_correccion_al_alza`. || Los "
                     "cinco escalones del dueño son los BCS de `der.BCS_DESDE_CONDICION`; el "
                     "veterinario pone el BCS exacto, que es el que manda para calcular."),
             "escalones_del_dueno": {str(i): b for i, b in sorted(BCS_DESDE_CONDICION.items())},
@@ -6975,6 +7111,49 @@ def endpoint_vocabulario():
             "ojo": ("Las que NO estan en la lista de arriba (Suplementos y Extras) van siempre "
                     "libres: son la herramienta con la que el motor cierra los 43 requisitos."),
             "categorias": sorted({a.get("categoria") for a in al_v.values() if a.get("categoria")}),
+            # ⚠️ Y AGRUPADAS, QUE ES LO QUE FALTABA (12 de septiembre).
+            #
+            # Elena, mirando la lista de alimentos del veterinario: «todos los
+            # suplementos estan sueltos, tienen que estar dentro de la categoria
+            # suplementos y luego dentro de subcategorias, ya tenemos una lista
+            # de eso solo tienes que reusarla».
+            #
+            # La lista existia —`constructor.CAT_SUPLEMENTO`, las siete que el
+            # motor trata como producto comercial con dosis de etiqueta— y lo
+            # unico que llegaba a la app era la lista PLANA de 14 categorias,
+            # con las siete al mismo nivel que «Carne muscular». La agrupacion
+            # estaba contada en PROSA en el campo `ojo` de aqui al lado, y una
+            # frase no se lee desde JavaScript: es el mismo fallo que las cifras
+            # del BCS, el mismo dia.
+            #
+            # Se sirven los tres grupos con sus DOS REGISTROS, como todo lo
+            # demas de este endpoint. El orden es el de la pantalla: primero la
+            # comida, que es de lo que se compone una racion, y los suplementos
+            # al final, que es lo que se añade cuando falta algo.
+            "grupos": [
+                {"clave": "comida",
+                 "dueno": {"titulo": "Comida",
+                           "detalle": "Lo que compone la racion: carne, hueso, visceras, verdura"},
+                 "veterinario": {"titulo": "Ingredientes",
+                                 "detalle": "Alimentos frescos, sin dosis de fabricante"},
+                 "categorias": sorted(c for c in {a.get("categoria") for a in al_v.values()
+                                                  if a.get("categoria")}
+                                      if c not in CAT_SUPLEMENTO and c != "Extras")},
+                {"clave": "extras",
+                 "dueno": {"titulo": "Extras",
+                           "detalle": "Aceites, semillas, huevo, sal: comida, pero muy densa"},
+                 "veterinario": {"titulo": "Extras",
+                                 "detalle": "Comida de alta densidad energetica; se topan por "
+                                            "energia y no por peso"},
+                 "categorias": ["Extras"]},
+                {"clave": "suplementos",
+                 "dueno": {"titulo": "Suplementos",
+                           "detalle": "Botes y polvos con su dosis en la etiqueta"},
+                 "veterinario": {"titulo": "Suplementos comerciales",
+                                 "detalle": "Producto con dosis maxima de fabricante "
+                                            "(`constructor.CAT_SUPLEMENTO`)"},
+                 "categorias": sorted(CAT_SUPLEMENTO)},
+            ],
         },
         "peldanos_de_la_escalera": {
             "de_donde": "main.PELDANOS_EN_CRISTIANO, y los recorre `_escalera_de_relajacion`",

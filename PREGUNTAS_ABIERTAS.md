@@ -306,7 +306,7 @@ Medido en semana 4:
 | 60 kg | 8 | 13 494 kcal | 9054 | **−33 %** |
 
 ⚠️ **Y el comentario del código decía que esta parte venía de una fuente
-secundaria «que no se ha podido contrastar con el texto original de FEDIAF».**
+secundaria *que no se ha podido contrastar con el texto original de FEDIAF*.**
 Sí se puede, y cuadra. Ese comentario es lo que hizo que nadie volviera a
 mirarlo, y además se usó para justificar el recorte. Ya está corregido en
 `der.py`.
@@ -469,11 +469,21 @@ Ya estaba apuntada en `PENDIENTE_DECISIONES.md`. Aquí solo con dueño y fecha.
 **⚠️ CERRADA EL 10 DE SEPTIEMBRE, leyendo §3.3.1 de FEDIAF entera** (antes solo
 se había leído la fila de la tabla, y la explicación no está en la tabla):
 
-> *«Czarnecki et al. (1985) showed that excess dietary lysine (4,91 % DM [basal
-> diet 0,91 % + **4 % from a supplement**]) decreases weight gain in puppies but
-> not 2,91 % DM… the highest no-effect-level of lysine for puppies was 2,91 % DM
-> (energy density 4156 kcal/kg). This is equivalent to **7,0 g/1000 kcal**… and
-> this is therefore the FEDIAF maximum for puppy growth.»*
+> *«Czarnecki et al. (1985) showed that excess dietary lysine (4.91 % DM [basal
+> diet 0.91 % + 4 % from a supplement]) decreases weight gain in puppies but not
+> 2.91 % DM (basal diet and 2 % from a supplement).»*
+>
+> *«It was concluded that the highest no-effect-level of lysine for puppies was
+> 2.91 % DM (energy density 4156 kcal/kg or 17.39 MJ/kg). This is equivalent to
+> 7.0 g/1000 kcal (1.67 g/MJ) or 2.8 % DM (at 4 kcal/g DM) and this is therefore
+> the FEDIAF maximum for puppy growth.»*
+
+⚠️ **La cita estaba mal copiada hasta el 12 de septiembre**, y lo cazó
+`auditar_citas.py` al empezar a mirar este fichero: los decimales se habían
+pasado a coma española **dentro de las comillas** (4,91 en vez de 4.91), se había
+metido una negrita dentro de la cita y dos puntos suspensivos se comían la mitad
+de la frase. Ninguna de las tres cosas cambia el número ni la conclusión, y las
+tres son exactamente lo que este auditor existe para encontrar.
 
 **No se mide sobre la proteína: es lisina TOTAL de la dieta**, y el daño se vio
 **añadiendo lisina libre**, no comiendo más carne. Eso no cambia la decisión —el
@@ -797,6 +807,18 @@ cruda va sobrada; el hueso molido, el cartílago y la laringe de vacuno no está
 claro que lleguen. Si un menú se apoya mucho en ellos, los mínimos de FEDIAF se
 están aplicando fuera de su rango declarado de validez.
 
+⚠️ **AMPLIADA EL 12 DE SEPTIEMBRE, leyendo el cap.178 de Ettinger (Debra Zoran), que
+trae la primera cifra concreta de todo el repo para esto.** Dice que un alimento de
+mantenimiento corriente tiene una digestibilidad de proteína e hidratos de entre el
+*«70 y el 85 %»* de materia seca, y que las dietas médicas digestivas *«idealmente
+deben tener una digestibilidad de CHO y proteínas de al menos un 88 % de MS»*.
+
+O sea que entre una dieta corriente y una entérica hay hasta **18 puntos**, y el
+motor **no ve ninguno de los dos**: suma los nutrientes que declara cada ficha como
+si llegaran enteros al perro. Y el umbral de validez de FEDIAF (≥70 % MS, ≥80 %
+proteína) cae **dentro** de la banda del alimento corriente, no por encima: no es un
+listón lejano, es la mitad baja de lo normal.
+
 **La pregunta:** ¿hace falta el dato por ficha, o basta con un aviso cuando un
 menú se apoya por encima de cierto porcentaje en hueso y cartílago?
 
@@ -911,7 +933,959 @@ Las tres salidas posibles, para que la decisión se tome con ellas delante:
 dado que «severe concurrent renal failure» es justamente lo que separa nuestras
 dos claves renales?
 
+⚠️ **TERCERA FUENTE, Y LA PRIMERA QUE PONE UNA CIFRA** (12 de septiembre, leyendo
+el capítulo 183 de Ettinger, de Lisa Freeman y John Rush, que es el de nutrición
+cardíaca):
+
+> *«La restricción de proteínas debe evitarse en perros y gatos con enfermedades
+> cardiacas porque estos pacientes están predispuestos a la pérdida de masa
+> muscular corporal. Las dietas bajas en proteínas, incluso si están diseñadas
+> como dietas cardiacas, dietas diseñadas para enfermedades renales y «dietas
+> sénior», no se recomiendan a menos que exista una disfunción renal grave. De lo
+> contrario, se recomienda un alimento nutricionalmente equilibrado de buena
+> calidad que proporcione al menos los niveles mínimos de proteína canina (4,5
+> g/100 kcal)»*
+
+Dice lo mismo que el consenso ACVIM, **con la misma excepción** («a menos que
+exista una disfunción renal grave» = «unless severe concurrent renal failure is
+present»), y añade el número que faltaba: **al menos 4,5 g/100 kcal = 45 g/1000
+kcal**, el mínimo de la AAFCO.
+
+**Y con ese número, el techo del motor queda por encima de las tres fronteras que
+nombran las fuentes:**
+
+| | g/1000 kcal | % de las kcal |
+|---|---|---|
+| Suelo que nombra Freeman (mínimo AAFCO) | 45 | 18 % |
+| Mínimo de FEDIAF, perro adulto | 52,1 | 21 % |
+| Frontera de «restricción» del cap.175 del mismo libro | 50 | 20 % |
+| **Techo del renal que aplica el motor** | **62,5** | **25 %** |
+
+Eso **estrecha la pregunta y no la cierra**. Las tres fuentes siguen diciendo
+«evitar dietas bajas en proteína» y un techo sigue siendo un techo — pero ya no se
+puede afirmar que el motor le ponga al cardíaco una **dieta baja en proteína**,
+porque por el número que da la única fuente que da uno, no lo es. La pregunta que
+queda es más fina: **¿basta con estar por encima de 45, o el problema es tener un
+techo puesto por una enfermedad que este perro quizá no tiene en grado grave?**
+
+⚠️ **SEGUNDA FUENTE, 12 de septiembre, leyendo AAHA 2021 entera.** Ya no es un
+consenso contra un reglamento: AAHA lo dice también, y para las **tres**
+cardiopatías que lista. Su Tabla 8, bloque «Cardiovascular disease», pone en
+«Nutrients of Concern» lo mismo en la enfermedad valvular degenerativa, en la
+miocardiopatía hipertrófica y en la dilatada: «Controlled sodium / High EPA/DHA /
+**Avoid low protein**». Y en el texto corrido, hablando de la miocardiopatía
+dilatada asociada a dieta: «Previously identified risk factors include lamb and
+rice diets, **low-protein diets**, and high-fiber diets».
+
+Eso cambia el peso de la pregunta en dos sitios. Primero, la salida 1 («la ley
+gana») deja al perro comiendo menos proteína de la que piden **dos** fuentes
+clínicas independientes, no una. Y segundo, «high-fiber diets» aparece en la
+misma lista de riesgo: la patología `obesidad` lleva un suelo de fibra de 30
+g/1000 kcal, así que un cardiópata obeso recibe hoy, a la vez, el suelo de fibra
+alto y —si además es renal— el techo de proteína bajo. **Eso no está medido**, y
+hay que medirlo antes de contestar.
+
 ---
+
+
+---
+
+### P-20 · AAHA no recomienda dar comida cruda, y esto es una app de comida cruda
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (es decisión de producto: qué se cuenta y dónde) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo entera AAHA 2021 |
+
+El motor usa números de AAHA 2021 en dos sitios que deciden raciones: la banda
+de BCS 4-5 (su Tabla 2, que es de donde salen `BCS_IDEAL_MIN = 4.0` y
+`PCT_POR_PUNTO_BCS = 0.10`) y el 10 % de los premios. Y la misma fuente dice:
+
+> *«AAHA does not advocate or endorse feeding pets any raw or dehydrated
+> nonsterilized foods, including treats that are of animal origin.»*
+
+Y su Tabla 4 pone «Unconventional diet (e.g., raw meat based, home prepared,
+vegetarian, vegan)» entre los factores de riesgo que obligan a una evaluación
+nutricional ampliada.
+
+No hay ninguna cifra que cambiar y no propongo cambiar nada del motor. La
+pregunta es **qué se hace con esto**, y son tres cosas distintas:
+
+1. ¿Va al documento que lee el nutricionista? Ahí ya está
+   `FEDIAF_CONTRA_OTRAS_FUENTES.md` para las discrepancias de cifras, pero esto
+   no es una cifra: es la postura de una fuente que sí usamos.
+2. ¿Se dice en la app? Hay ya un aviso de higiene de manipulación de carne cruda,
+   de WSAVA, del 10 de septiembre. Esto es de otra clase.
+3. ¿Cambia algo de cómo se cita AAHA? Mi opinión, y es solo eso: no. Usar la
+   tabla de BCS de una guía y no seguir su recomendación de producto es legítimo
+   **si se dice**, que es exactamente lo que hace esta ficha.
+
+Nota aparte, del mismo tipo que la que ya lleva ACVIM: la guía declara quién la
+paga — «These guidelines are supported by generous educational grants from
+Hill's Pet Nutrition, Inc., Purina Pro Plan Veterinary Diets, and Royal Canin».
+
+⚠️ **Y el 12 de septiembre por la tarde entró la QUINTA fuente, que es la que más
+pesa de las cinco, porque es la agencia reguladora.** Ettinger cap.192 (Perea y
+Delaney, el capítulo dedicado a las dietas caseras, vegetarianas y crudas) cita la
+postura de la FDA estadounidense: *«La FDA no aboga por una dieta cruda de carne, de
+aves de corral o mariscos en mascotas, pero está intensificando sus esfuerzos para
+minimizar el riesgo que estos alimentos puedan representar para la salud animal y
+humana porque entendemos que algunas personas prefieren alimentar a sus mascotas con
+este tipo de dietas»*.
+
+Y es el único de los cinco que dice **qué se rompe exactamente**. De cinco dietas
+crudas analizadas (dos comerciales y tres caseras), *«todas tenían nutrientes
+esenciales por debajo de los niveles mínimos recomendados por la AAFCO»*, y de las
+tres caseras, *«tenían proporciones mal equilibradas de calcio y fósforo (Ca, P), dos
+tenían niveles excesivos de vitamina D y una tenía niveles excesivos de vitamina E»*.
+
+**Eso cambia el tono de la respuesta, y conviene verlo.** Las tres cosas que esa
+fuente encuentra rotas en las dietas crudas caseras son exactamente tres de las que
+el motor comprueba de cero en cada menú: el ratio Ca:P es una restricción dura del
+solver, la vitamina D es uno de los cinco topes de seguridad crónica, y la vitamina E
+no tiene máximo en FEDIAF pero sí se mide. O sea que lo que estas cinco fuentes
+desaconsejan es **el crudo formulado a ojo**, que es justo lo que este motor existe
+para no hacer. La misma frase de la FDA reconoce que hay gente que va a dar crudo
+igual y que lo que procede entonces es reducir el riesgo. Sigue siendo una decisión
+de producto y no la tomo yo, pero la pregunta ya no es «¿cómo lo contamos?» sino
+«¿lo contamos con los tres números al lado?».
+
+---
+
+### P-21 · Tres recomendaciones de AAHA que no traen número
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (las tres necesitan una cifra que la fuente no da) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo entera AAHA 2021 |
+
+La Tabla 8 de AAHA 2021 («Nutrients of Concern for Diseases and Select Specific
+Conditions») pide tres cosas que el motor hoy no hace, y **ninguna de las tres
+viene con cifra**. Escribirlas en el solver exigiría inventarse el número, que es
+lo que no se hace aquí. Van juntas porque la pregunta es la misma.
+
+| Patología | Lo que dice AAHA | Lo que hace el motor hoy | Lo que falta |
+|---|---|---|---|
+| `epilepsia_idiopatica` | «High medium-chain triglycerides» | Nada: un menú normal con avisos de fármaco | La cifra, y además el motor **no tiene clave** de triglicéridos de cadena media. El catálogo tendría que medirlos |
+| `diabetes` | «High protein (unless contraindicated, e.g., proteinuria)» | Suelo de fibra 17,5. **Ningún suelo de proteína** | Cuánta. Y la condición: «unless contraindicated» significa que en un diabético con proteinuria es al revés |
+| `renal_proteinuria` | «25-50% protein reduction from current intake · Meet essential amino acid requirements» | Solo avisos, **ninguna cifra** | Es una reducción **relativa a lo que el perro come hoy**, y el motor no sabe eso. O se convierte en un valor absoluto por 1000 kcal, o no es aplicable a este sistema |
+| `disfuncion_cognitiva` | Ettinger cap.175 pide también triglicéridos de cadena media: «se propone que los cuerpos cetónicos obtenidos del metabolismo de los MCT proporcionan fuentes alternativas de energía para el cerebro envejecido» | Suelo de vitamina E | Otra vez la dosis. Son ya **dos** patologías del motor —esta y la epilepsia— a las que **dos** fuentes distintas les piden MCT sin decir cuánto, y el catálogo no los mide |
+
+La última es la más importante de las tres: `renal_proteinuria` es una patología
+que un perro tiene de verdad y hoy no lleva ni un número.
+
+---
+
+### P-22 · Hasta el 40 % del fósforo de un menú sale de un bote, y no sabemos qué sal es
+
+| | |
+|---|---|
+| **Dueño** | **medible primero (Elena: hacen falta las etiquetas), y después Cris Carles** |
+| **Bloquea** | No hoy. Podría bloquear el día que se sepa la respuesta |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo enteros Dobenecker 2021 y Hofmann 2025 |
+
+Los dos estudios del grupo de Múnich que el repo cita 35 veces dicen lo mismo
+desde dos lados: **el daño del fósforo depende de la sal, no solo de la
+cantidad.**
+
+Dobenecker dio a ocho beagles cinco veces su requisito de fósforo cambiando solo
+la fuente:
+
+> *«Pi (KH2PO4, NaH2PO4) but not organic P caused an increased apparent P
+> digestibility and significantly influenced kinetics of serum FGF23,
+> parathyroid hormone, P, CrossLaps and bonespecific alkaline phosphatase,
+> demonstrating a disrupted calcium (Ca) and P homeostasis with potential harm
+> for renal, cardiovascular and skeletal health.»*
+
+Y Hofmann pone la frontera donde de verdad está, que **no** es orgánico contra
+inorgánico: *«CaHPO4*2H2O was used as inorganic P source because of its low
+solubility»* — el fosfato dicálcico es inorgánico y es el del lado bueno, 0 % de
+solubilidad al minuto y a los 90 minutos.
+
+**MEDIDO el mismo día sobre los 216 menús del catálogo precalculado:**
+
+| | % del fósforo del menú que aporta el multivitamínico |
+|---|---|
+| mínimo | 0,49 % |
+| mediana | **17,34 %** |
+| máximo | **39,58 %** |
+| menús donde aporta 0 % | **ninguno** |
+
+**Y la protección que uno supondría no protege.** Del mismo estudio: *«This
+implies that a mere increase of the Ca/P ratio in a product with considerable
+amounts of soluble Pi salts does not suffice to protect the user from a high P
+burden»*. El motor se defiende del fósforo con el techo por 1000 kcal y con el
+ratio calcio:fósforo, y la fuente dice que el segundo no sirve para esto.
+
+**Por qué no lo he decidido yo.** Hacen falta ocho datos que están en ocho
+etiquetas y que no puedo inventar, y según cuál sea la respuesta las dos fuentes
+dicen cosas opuestas **para el mismo número del catálogo**. La lista de los ocho
+productos está en `DATOS_QUE_FALTAN.md`.
+
+**La pregunta, en dos tiempos:**
+
+1. **Para Elena:** ¿se consiguen las ocho etiquetas? Es leer la línea de
+   composición o de aditivos del bote.
+2. **Para Cris, cuando estén:** si alguno lleva fosfato monosódico o
+   monopotásico, ¿qué se hace? Las salidas que se me ocurren son (a) nada, porque
+   la dosis del suplemento es de gramos y estos estudios dan cinco veces el
+   requisito; (b) marcar esas fichas y que el motor prefiera las otras; (c)
+   sacarlas del catálogo. La (a) necesita un número que no tengo: cuánto fósforo
+   soluble llega de verdad al perro con la dosis real, que es mucho menor que la
+   del estudio.
+
+---
+
+### ~~P-23 · La TVT pide un ratio calcio:fósforo de 1,3-1,5 y el 87 % de nuestros menús está por debajo~~ ✅ CERRADA
+
+| | |
+|---|---|
+| **Resuelta** | **12 de septiembre de 2026**, por Elena, con la regla de fuentes del propio proyecto |
+| **Decisión** | **No se aplica.** El motor sigue con el **1,0-2,0 de FEDIAF** |
+| **Sus palabras** | *«El ratio Ca:P viene de fediaf, ya sabes como va el orden de fuentes que mandan»* |
+| **Por qué** | El ratio calcio:fósforo **es un REQUISITO**, y los requisitos los fija FEDIAF: 1,0-2,0. El 1,3-1,5 de la TVT no es un tope clínico sobre un perro enfermo — es **otra banda para el perro que no tiene nada**, con suelo y techo propios, o sea un requisito rival de una fuente que va detrás. Cuando dos fuentes dan el requisito del mismo perro sano, no se elige la más estricta: se aplica la que manda |
+| **El alcance, dicho por ella** | *«Lo que te decia del ratio me referia al requerimiento, si alguna patologia necesita algo distinto es otra cosa»*. Acotado el mismo día, porque yo había cerrado con esta regla también la P-30, que es de una patología. Esa está **reabierta** |
+| **Lo que NO cambia** | El **1,1-2,0 del `oxalato`** sigue aplicado, y con esto ya no necesita defensa: es una patología pidiendo lo suyo, que es «otra cosa» |
+| **Dónde** | `LECTURAS.md` (TVT), `FEDIAF_CONTRA_OTRAS_FUENTES.md` §4 |
+
+⚠️ **La línea que separa esto de los otros dos Ca:P del repo.** Desde fuera se
+parecen y no lo son:
+
+| | TVT, perro sano | SACN5, oxalato | Bartges, renal |
+|---|---|---|---|
+| Banda | 1,3-**1,5** | 1,1-**2,0** | 1,1-**1,3** |
+| A quién | al perro que **no tiene nada** | a una **patología marcada** | a una **patología marcada** |
+| Qué es | un **requisito** rival del de FEDIAF | un límite clínico | un límite clínico |
+| Estado | **no se aplica** (esta pregunta) | **aplicado** | **no aplicado, y sigue abierto** (P-30) |
+
+La distinción es la que puso Elena: la regla es sobre **el requisito**, y lo que
+pida una patología «es otra cosa». Los dos de la derecha se deciden como cualquier
+otro límite de patología, uno por uno y con quien sabe de esto. Lo que sigue debajo
+es la medida que se hizo antes de cerrar esta, y se deja entera.
+
+
+El Merkblatt 181 de la TVT —la hoja de la asociación veterinaria alemana de
+protección animal dedicada al BARF— da el ratio calcio:fósforo **«optimal 1,3 –
+1,5»**, y lo da **igual en sus dos ediciones**, la de julio de 2017 y la de mayo
+de 2025. Lo pone dentro de la lista de riesgos, junto a que un ratio inadecuado
+en cachorros puede dejar deformidades esqueléticas permanentes.
+
+El motor aplica el **1,0-2,0 de FEDIAF**. El 1,3-1,5 cabe dentro, así que no es
+un conflicto: es una recomendación que aprieta, o sea la clase de
+`recomendaciones_libro.json`.
+
+**MEDIDO el mismo día sobre los 216 menús del catálogo precalculado:**
+
+| | Ca:P |
+|---|---|
+| mínimo | 1,00 |
+| **mediana** | **1,16** |
+| máximo | 1,74 |
+| dentro del 1,3-1,5 de la TVT | **25 de 216** |
+| por debajo de 1,3 | **188** |
+| por encima de 1,5 | 3 |
+
+O sea que **no es un ajuste fino: aplicarlo como suelo cambiaría el 87 % de los
+menús**, y no está medido si con este catálogo siguen saliendo. Es la misma forma
+que tuvo el suelo de vitamina E: una cifra de una fuente que cabe en la ventana
+de FEDIAF y que al encenderla puede dejar a perros sin menú.
+
+**La pregunta:** ¿se aplica el 1,3 como suelo al perro sano? Y si se aplica, ¿al
+cachorro también, que es donde la fuente pone el riesgo grave, o solo ahí? Antes
+de encenderlo hay que medir cuántos perros se quedan sin menú, como se hizo con
+la vitamina E.
+
+⚠️ Y hay que mirarlo junto al **otro** ratio Ca:P que el motor ya aplica: el
+1,1-2,0 que pide `oxalato` desde el 10 de septiembre, de las Tablas 40-5 y 41-6
+de SACN5. Son tres fuentes con tres bandas para la misma cosa (1,0-2,0 FEDIAF ·
+1,1-2,0 SACN5 en oxalato · 1,3-1,5 TVT en el perro sano), y hoy la más estricta
+por abajo sería la de la TVT.
+
+---
+
+### P-24 · El motor podría decir si la ración acidifica la orina, y no lo dice
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (es una capacidad nueva del producto) **y una fuente que falta** |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo entero el extracto de Stürmer 2005 |
+
+El motor tiene cuatro patologías de urolito —`estruvita`, `urato`, `oxalato` y
+`cistina`— y las cuatro dicen lo mismo: **el pH de la orina decide, y el motor no
+lo ve**. Tres de ellas ni siquiera formulan menú automático por eso.
+
+Pero el pH urinario no es un misterio: depende en buena parte del balance
+catión-anión de la ración, y la fórmula está publicada (Krohn 1993, que es la que
+usa Stürmer y una variante de la que usa Hofmann 2025):
+
+> *«KAB [mmol/kg TS] = 49,9\*Ca + 82,3\*Mg + 43,5\*Na + 25,6\*K – 59\*P – 13\*(Met+Cys) – 28,2\*Cl»*
+
+**El motor tiene los siete datos.** Calcio, magnesio, sodio, potasio, fósforo,
+metionina+cistina y cloruro están en las 163 fichas del catálogo, sin un solo
+hueco (comprobado).
+
+**MEDIDO el 12-sep-2026 sobre los 216 menús del catálogo:**
+
+| | KAB (mmol por 1000 kcal) |
+|---|---|
+| mínimo | −22 |
+| mediana | 14 |
+| máximo | 132 |
+| menús con KAB negativa (ración **acidificante**) | **40 de 216** |
+
+O sea que uno de cada cinco menús empuja la orina hacia ácida, que es lo que
+quiere la estruvita y lo que **no** quieren el urato ni la cistina, y hoy el menú
+sale igual y no lo dice nadie.
+
+⚠️ **ACTUALIZADO EL MISMO DÍA, y la actualización cambia el bloqueo.** Escribí
+aquí que la ecuación del perro «no está en el repo». **Sí está**: la recoge la tesis de Heer
+2017, que se leyó unas horas después, en su Tabla 1 y en su texto. Es de Behnsen
+1992 y dice:
+
+> *«BEHNSEN (1992) stellte in ihren Studien einen deutlichen Zusammenhang
+> zwischen der KAB im Futter und dem Urin-pH her (pH = 6,92 + 0,0073 * KAB; r =
+> 0,96***; n = 12). Die KABs variierten hier von -349 mmol/kg TS bis 437
+> mmol/kg TS und produzierten Harn-pH-Werte von 5,94 ± 0,55 bis 7,78 ± 0,05.»*
+
+**Y esa ecuación, tal como está publicada, no puede ser.** La frase da la recta y
+el rango de los datos a la vez, y no encajan:
+
+| | KAB | pH según la ecuación | pH que se midió |
+|---|---|---|---|
+| extremo ácido | −349 | **4,37** | 5,94 ± 0,55 |
+| extremo alcalino | +437 | **10,11** | 7,78 ± 0,05 |
+
+Una recta con r = 0,96 no predice un recorrido de 5,7 unidades sobre datos que
+recorren 1,84. La pendiente que sale de los dos extremos publicados es **0,0023**,
+un tercio de la impresa, y ese número sí encaja con las demás especies de la
+misma tabla (gato 0,0021 y 0,0023; cerdo 0,0031) y con la **Figura 4** de la
+propia tesis, donde la nube del perro va de pH ~5,5 a ~7,6 y ninguna especie pasa
+de 9. Comprobado contra el PDF: no es un fallo de extracción, está impreso así.
+
+Aplicada tal cual a nuestros 216 menús daría pH urinarios de 6,29 a **10,77**, y
+un pH urinario de 10,8 no existe.
+
+**Así que el bloqueo ya no es «falta la ecuación», es «la que hay no se
+sostiene».** No voy a poner una pendiente que he calculado yo de dos extremos.
+Hace falta Behnsen 1992 —la tesis de Hannover— o alguna otra fuente con la
+ecuación del perro.
+
+**Lo que SÍ se puede decir sin ninguna ecuación es el signo**, y eso no depende
+de ninguna pendiente: 40 de los 216 menús tienen balance negativo, o sea
+acidifican.
+
+**La pregunta, en dos:**
+
+1. **Para Elena:** ¿vale la pena decir la dirección? Sería un dato más en el menú,
+   solo con las patologías de urolito marcadas, del tipo «esta ración empuja la
+   orina hacia ácida» — útil para la estruvita, contraproducente para el urato.
+2. **Y si vale:** ¿se consigue Behnsen 1992, o alguna otra fuente con la
+   ecuación del perro? Con ella esto deja de ser una dirección y pasa a ser un
+   número. Y si se consigue, lo primero que hay que mirar es si su pendiente es
+   la 0,0073 que imprime Heer o la 0,0023 que sale de sus propios datos.
+
+---
+
+### P-25 · El motor entrega las kcal como un número exacto, y dos fuentes dicen que la banda real es de ±30 %
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (qué se enseña y a quién) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo enteros los 18 documentos de la WSAVA |
+
+Las guías de evaluación nutricional de la WSAVA (JSAP 2011), hablando de cómo
+estimar las necesidades energéticas:
+
+> *«energy requirements can vary by 50% in either direction for cats, and by 30%
+> in either direction for dogs»*
+
+Y sus preguntas frecuentes lo repiten para el dueño: *«individual dogs or cats
+can vary up to 50% above or below these starting points»*.
+
+El motor recibe un DER y formula contra él. La app calcula ese DER y enseña un
+número: «1.955 kcal». No dice en ninguna parte que ese número tiene una banda de
+±30 % en el perro, y esa banda es **más ancha que la diferencia entre dos niveles
+de actividad** de la Tabla VII-7 de FEDIAF (95 a 175 kcal/kg^0,75 es un factor de
+1,84 entre los extremos; ±30 % sobre un mismo nivel ya es un factor de 1,86).
+
+Esto no es un fallo: ninguna fuente da otra cosa, y el motor no puede formular
+contra un rango. Es una cuestión de **qué se dice**.
+
+**La pregunta, en tres:**
+
+1. ¿Se dice, y dónde? Mi propuesta sería el registro de veterinario de
+   `GET /vocabulario`, junto a los cinco niveles de actividad, donde ya va la
+   cifra de FEDIAF de cada uno.
+2. ¿Se le dice también al dueño? Ahí no tengo opinión: «entre 1.370 y 2.540
+   kcal» puede ser más honesto y menos útil que «1.955 y ajusta según el peso»,
+   que es justo lo que recomiendan las mismas guías (revisar peso y condición
+   corporal cada dos semanas al principio).
+3. ¿Va a `PARA_EL_NUTRICIONISTA.md`? Ahí sí creo que sí, porque quien revisa el
+   motor tiene que saber contra qué incertidumbre se está comparando todo lo
+   demás.
+
+---
+
+### P-26 · Los estándares de la FCI no dan el peso de la mayoría de las razas
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (decide si se sigue por esta vía o por otra) |
+| **Bloquea** | No. Pero `razas.json` sigue sin fuente, y de ahí salen las kcal, la etapa y el techo de calcio del cachorro de raza grande |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo los estándares descargados |
+
+`razas.json` lleva escrito en su `_meta` que **sus 255 pesos adultos no tienen
+fuente publicada**. El 11 de septiembre se empezó a resolver bajando los
+estándares oficiales de la FCI, que son públicos y gratis. El plan era el
+correcto y está a medias:
+
+- Descargados: **33 estándares de 255 razas**.
+- El lector que el LÉEME de esa carpeta dice que debe vivir en el repo de la API
+  (`leer_estandares_fci.py`) **no existe**.
+
+**Y medido hoy sobre esos 33, la vía no da lo que se esperaba:**
+
+| | |
+|---|---|
+| estándares con un peso en kg | **9** |
+| estándares sin peso en kg | **24** |
+
+Un estándar de raza describe la **altura a la cruz**, que es lo que se mide en un
+concurso. El peso lo dan solo algunas razas. El del pointer inglés tiene el
+apartado «SIZE AND WEIGHT» y dentro solo pone la altura; igual el airedale
+terrier, el setter inglés, el bull terrier o el bobtail.
+
+O sea que bajar los 222 que faltan daría fuente a **algo más de una cuarta parte**
+de las razas, y el resto seguiría igual que hoy. Convertir altura en peso no vale:
+no hay una conversión publicada para el perro, y sería inventar el número, que es
+justo lo que `razas.json` declara que no hace.
+
+**La pregunta, en dos:**
+
+1. ¿Se terminan de bajar los 222 que faltan aun sabiendo que solo cubren una
+   cuarta parte? Mi opinión: sí, porque una cuarta parte con fuente es mejor que
+   ninguna, y el fichero puede decir cuáles la tienen y cuáles no — que es más
+   honesto que la frase de hoy, que dice que no la tiene ninguna.
+2. ¿De dónde salen los otros tres cuartos? Aquí no tengo propuesta buena. Las
+   cuatro fuentes del motor no traen tabla de peso por raza, y las que circulan
+   son de clubes y de webs divulgativas.
+
+⚠️ **Y una cosa de proceso**: esto llevaba un día hecho a medias y no estaba
+escrito en ninguna parte de este repo. La descarga vive en el otro repo y el
+lector que tenía que auditarla aquí no llegó a existir. Si nadie lo lee, en un
+mes alguien vuelve a empezar.
+
+---
+
+### P-27 · Un metaanálisis de Ettinger calcula las kcal con otro exponente, y el desacuerdo va en las dos direcciones
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es criterio: dos fuentes con dos formas de escalar) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo la sección de nutrición de Ettinger |
+
+El capítulo 172 del tratado de Ettinger, Feldman y Côté —*Nutrición de perros
+adultos sanos*, escrito por **Martha G. Cline**, que es la primera autora de las
+guías AAHA 2021 que ya usamos— publica las ecuaciones de energía de un
+**metaanálisis**, y no usan el exponente 0,75:
+
+| | Fórmula |
+|---|---|
+| Mantenimiento, todos los perros | 81,5 × PC^0,93 |
+| Mantenimiento, **solo perros domésticos** | **62 × PC^0,97** |
+
+> *«El metaanálisis del REM de perros adultos demostró un REM promedio de 142,8 ±
+> 55,3 kcal/kg de PC0,75/día, con una ecuación alométrica estimada de 81,5 kcal/kg
+> de PC0,93/día»*
+
+> *«La ecuación recomendada para determinar el REM de los perros de compañía es
+> 62,5 kcal/kg de PC0,97/día»*
+
+⚠️ Dos avisos antes de discutirlo. **El texto dice 62,5 y su propio cuadro dice
+62**, en el mismo capítulo. Y como el exponente no es el mismo, **las dos curvas se
+cruzan**: no hay «un porcentaje» de diferencia.
+
+**MEDIDO el 12-sep**, la ecuación de perro doméstico contra lo que aplica el motor
+a un perro de actividad normal (110 × PC^0,75, Tabla VII-7 de FEDIAF):
+
+| Peso | Ettinger | Motor | Diferencia |
+|---|---|---|---|
+| 3 kg | 180 kcal | 251 kcal | **−28,2 %** |
+| 10 kg | 579 | 619 | −6,5 % |
+| 30 kg | 1.680 | 1.410 | **+19,1 %** |
+| 60 kg | 3.290 | 2.371 | **+38,7 %** |
+
+O sea que con el exponente 0,97 el perro grande necesitaría **un 39 % más** y el
+toy **un 28 % menos** de lo que el motor le da hoy. No es un desacuerdo de nivel:
+es de forma.
+
+**Por qué no lo cambio.** Manda FEDIAF, que publica su tabla en kcal/kg^0,75, y
+además el propio capítulo avisa de que *«Existe una gran variación en el intervalo
+de predicción del REM; por lo tanto, las fórmulas deben usarse solo como punto de
+partida»* — su ± 55,3 sobre 142,8 es un 39 %, la misma banda que abre la P-25. Con
+esa incertidumbre, las dos curvas caben una dentro de la otra en casi todo el
+rango.
+
+**La pregunta:** ¿hay que decirlo en el documento que va a revisión, y hay que
+mirar con lupa los dos extremos —el toy y el gigante—, que es donde las dos
+fuentes más se separan y donde además el motor ya tiene problemas conocidos (al
+toy le cuesta salir menú, y el gigante es el que más lejos está de la curva de
+crecimiento)?
+
+---
+
+### P-28 · Al cardíaco y al renal con sobrepeso el motor les quita kcal, y esta fuente dice que ese sobrepeso puede protegerles
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es criterio clínico puro) |
+| **Bloquea** | No da error, y por eso preocupa |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo el capítulo 177 de Ettinger |
+
+El capítulo 177 del tratado de Ettinger —*Caquexia y sarcopenia*, de **Lisa M.
+Freeman**, que es también la autora del capítulo de nutrición cardíaca— dice:
+
+> *«El objetivo del BCS en un perro o gato sano es de 4-5 sobre 9 en la escala de
+> BCS de 9 puntos. Sin embargo, en ciertas enfermedades (p. ej., ICC, ERC), puede
+> ser beneficioso un BCS ligeramente más alto (es decir, un BCS de 6-7/9), aunque
+> se requiere más investigación para hacer recomendaciones concretas. A pesar de
+> ello, se ha de evitar la obesidad (BCS >7/9) en animales con estas
+> enfermedades.»*
+
+Es la **paradoja de la obesidad**, y el capítulo la explica: en insuficiencia
+cardíaca y en enfermedad renal crónica lo que mata es la **caquexia**, la pérdida
+de masa magra, y *«La mayor reserva de MMC en la obesidad proporciona una mayor
+reserva durante el estado catabólico»*. El capítulo 176 lo respalda con datos:
+*«Los perros con insuficiencia cardiaca que aumentaron de peso tuvieron una
+supervivencia significativamente más larga que aquellos cuyo peso se mantuvo
+estable o disminuyó»*, y en renal *«los perros con bajo peso tenían un tiempo de
+supervivencia significativamente más corto»*.
+
+**Qué hace el motor hoy.** `peso_objetivo_desde_bcs()` en `motor/verificar.py`
+**no recibe las patologías**: aplica la regla del perro sano a cualquier perro. Un
+BCS por encima de 5 baja el peso de referencia, y el DER se calcula sobre ese peso.
+
+**MEDIDO el 12-sep** con la función del motor:
+
+| BCS | Peso objetivo de un perro de 30 kg | kcal respecto a su peso real |
+|---|---|---|
+| 5 | 30,00 kg | 100 % |
+| 6 | 27,27 kg | **93,1 %** |
+| 7 | 25,00 kg | **87,2 %** |
+
+O sea que a un cardíaco o a un renal con BCS 7 el motor le da **un 12,8 % menos de
+kcal** que si se calculara sobre su peso real — en dos enfermedades donde esta
+fuente dice que ese BCS «puede ser beneficioso» y donde el peligro documentado es
+adelgazar.
+
+**Por qué no lo toco.** Son tres decisiones clínicas encadenadas y ninguna es mía:
+si la banda ideal cambia con la patología, cuáles (la fuente nombra insuficiencia
+cardíaca congestiva y enfermedad renal crónica, no «cardiopatía» y «renal» sin
+más), y qué se hace con el «se requiere más investigación para hacer
+recomendaciones concretas» que la propia fuente añade.
+
+⚠️ **Y EL CAPÍTULO 183 DEL MISMO LIBRO DA LA FORMA EXACTA DE LA RESPUESTA**, leído
+el mismo día. Lisa Freeman lo escribe distinguiendo el estadio:
+
+> *«Los autores apuntan a un BCS de 4-5/9 para animales sanos y aquellos con
+> enfermedad cardiaca asintomática, y un BCS de 6-7/9 para aquellos con ICC. Un
+> BCS por encima de 7/9 puede tener efectos perjudiciales, por lo que se debe
+> evitar la obesidad, aunque los autores generalmente no intentarán iniciar un
+> plan de pérdida de peso en perros o gatos después de la aparición de la ICC»*
+
+O sea que **no es «con cardiopatía, otra banda»**: es la cardiopatía
+**asintomática** con la banda de siempre (4-5) y la **insuficiencia cardíaca
+congestiva** con la otra (6-7). Y el motor **ya tiene esa distinción hecha**: son
+sus cinco claves por estadio ACVIM —`cardiopatia_a`, `b1` y `b2` son la
+asintomática, y `cardiopatia_c` y `d` la ICC— y **la app ya pregunta el estadio**.
+Si se decide aplicarlo, no hay que preguntar nada nuevo.
+
+**La pregunta, entonces, es más concreta de lo que estaba:**
+
+1. Con `cardiopatia_c` o `cardiopatia_d` marcadas, ¿el motor debe dejar de bajar el
+   peso de referencia mientras el BCS esté entre 6 y 7, y seguir bajándolo a partir
+   de 8?
+2. Y en el renal, ¿con cuál de las dos claves —`renal` o `renal_avanzada`—, dado
+   que la fuente habla de «ERC» sin estadificar y el motor sí estadifica?
+3. ¿Se le dice a quien firma? Mi opinión: sí, y con la frase de la fuente, porque
+   es exactamente el tipo de decisión que un dueño no puede tomar solo.
+
+⚠️ Es la misma familia que la P-19: el motor aplica al enfermo la regla del perro
+sano y **sale verde**, porque el semáforo mira el menú y no el peso con el que se
+calculó.
+
+---
+
+### P-29 · Tres fuentes piden omega-3 al cardíaco y el motor no le pone ninguno
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (la dosis viene por kg de peso y condicionada a un dato clínico) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo el capítulo 183 de Ettinger |
+
+Las cinco claves de cardiopatía del motor —`cardiopatia` y los cuatro estadios
+ACVIM— **solo llevan un techo de sodio**. Ningún suelo. Y tres fuentes piden
+omega-3:
+
+- **AAHA 2021**, Tabla 8: «High EPA/DHA» en las tres cardiopatías que lista.
+- **Ettinger cap.183** (Freeman y Rush): *«Los autores recomiendan una dosis de EPA
+  de 40 mg/kg y de 25 mg/kg para el DHA en perros y gatos con una ingesta
+  reducida/alterada de alimentos o caquexia»*, y *«la ingesta de ácidos grasos n-3
+  se ha asociado con una mayor supervivencia en perros con ICC»*.
+- **El mismo capítulo**, sobre el mecanismo: la suplementación con aceite de
+  pescado *«puede disminuir la producción de citocinas en perros con ICC y mejorar
+  la caquexia»*.
+
+**MEDIDO el 12-sep**, pasando la dosis de Freeman a la unidad del motor:
+
+| Perro | kcal/día aprox. | EPA+DHA que sale |
+|---|---|---|
+| 10 kg | 619 | **1,05 g/1000 kcal** |
+| 30 kg | 1.410 | **1,38 g/1000 kcal** |
+
+Para comparar: el mínimo general de EPA+DHA del motor es **0,11 g/1000 kcal**, y el
+suelo de EPA que la artrosis ya aplica es **1,0 g/1000 kcal**. La cifra está en el
+mismo orden que un suelo que el motor sabe aplicar hoy.
+
+**Por qué no lo pongo yo.** Dos cosas, y las dos son de las que este repo no
+decide solo:
+
+1. **La dosis está dada por kg de peso corporal, no por 1000 kcal.** Convertirla
+   exige fijar las kcal del perro, y las kcal son justo lo que el motor recibe de
+   fuera. Las dos cifras de la tabla de arriba salen de suponer una actividad
+   normal; con otra actividad, el mismo perro da otro número.
+2. **La fuente la condiciona**: *«en perros y gatos con una ingesta
+   reducida/alterada de alimentos o caquexia»*. Eso es un dato clínico —apetito y
+   masa muscular— que la ficha **no pregunta** (es la P-17).
+
+⚠️ **AMPLIADA LA MISMA TARDE, leyendo el cap.182 (Richard Hill), que quita la mitad
+del problema.** La objeción 1 —que la dosis venga por kg y no por 1000 kcal— deja de
+ser un obstáculo, porque ese capítulo da la conversión hecha **y dice que la buena es
+la nuestra**:
+
+> *«la recomendación estándar para perros es de 0,22 g de aceite de pescado que
+> contiene 66 mg de EPA + DHA/kg de PC/día. Esto es equivalente a aproximadamente 1
+> mg de EPA + DHA/kcal de EM, asumiendo que un perro de 10 kg consume
+> aproximadamente 120 kcal/kg0,75 diariamente»*
+
+Y, en la misma página: *«La dosificación basada en la EM es preferible a la
+dosificación por PC, que proporciona una cantidad desproporcionada de EPA y DHA en
+perros de razas grandes»*.
+
+**1 mg/kcal son 1.000 mg/1000 kcal**, que es exactamente el orden de las dos cifras
+medidas arriba (1,05 y 1,38 g/1000 kcal) y del suelo de EPA que la artrosis ya
+aplica. Tres cálculos por tres caminos distintos y el mismo número.
+
+Queda en pie la objeción 2, que es la que de verdad decide: la fuente cardíaca
+condiciona la dosis a un dato clínico que la ficha no pregunta.
+
+**La pregunta:** ¿se le pone un suelo de EPA+DHA a la cardiopatía? Y si sí, ¿a
+todas las claves o solo a los estadios C y D, que son la ICC de la que habla la
+fuente? La cifra ya no es un problema: **1.000 mg/1000 kcal**, que es lo que dice
+el cap.182 en la unidad del motor.
+
+---
+
+### P-30 · El renal pide un ratio calcio:fósforo de 1,1-1,3 y el motor tiene el mecanismo hecho sin usar
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es una restricción clínica nueva sobre una patología formulable) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo el capítulo 184 de Ettinger |
+
+⚠️ **CERRADA Y REABIERTA EL MISMO DÍA, y el motivo hay que leerlo porque separa dos
+cosas que se parecen.** Por la tarde la cerré junto con la P-23, aplicando a las dos
+la frase de Elena *«El ratio Ca:P viene de fediaf, ya sabes como va el orden de
+fuentes que mandan»*. Me pasé de alcance, y ella lo acotó en el acto:
+
+> *«Lo que te decia del ratio me referia al requerimiento, si alguna patologia
+> necesita algo distinto es otra cosa»*
+
+O sea que la regla es sobre **el REQUISITO**, que es el del perro sano y lo fija
+FEDIAF en 1,0-2,0. La **P-23 sigue cerrada**: el 1,3-1,5 de la TVT es otra banda
+para el perro que no tiene nada, o sea un requisito rival. Esta **no**: el 1,1-1,3
+de Bartges es de una PATOLOGÍA, y una patología pidiendo su propio límite es
+exactamente lo que hacen los otros 79 del motor. Vuelve a estar abierta, y se
+decide como cualquier otro límite de patología: con su fuente, su conversión, su
+medida y la firma de quien sabe de esto.
+
+
+El capítulo 184 del tratado de Ettinger —*Manejo nutricional de las afecciones
+renales*, de **Joseph W. Bartges**— da las dos cifras del fósforo renal en la misma
+frase:
+
+> *«El contenido de fósforo en la dieta para el manejo de la ERC debe ser del
+> 0,2-0,5 % (en base a materia seca) mientras se mantiene una relación de Ca:P de
+> 1,1-1,3:1»*
+
+**La primera mitad ya está aplicada y cuadra.** El 0,2-0,5 % de materia seca son
+**500 a 1.250 mg/1000 kcal** a la densidad de 4.000 kcal/kg MS con la que convierte
+todo el repo, y el techo de fósforo que el motor aplica al renal es **1.200**:
+dentro de la banda, en su extremo alto.
+
+**La segunda mitad no está aplicada, y el motor tiene el mecanismo hecho.** El
+bloque `ratios` de `patologias.json` existe desde el 10 de septiembre precisamente
+para esto —una patología que pide su propio cociente entre dos nutrientes— y se
+estrenó con el Ca:P de 1,1-2,0 del oxalato. `renal` no tiene ninguno.
+
+**MEDIDO el 12-sep** sobre los 216 menús del catálogo precalculado:
+
+| Ca:P | Menús |
+|---|---|
+| dentro de **1,1-1,3** | **130** |
+| por debajo de 1,1 | 58 |
+| por encima de 1,3 | 28 |
+
+O sea que **seis de cada diez menús ya cumplirían**, que es una situación muy
+distinta de la del ratio de la TVT (P-23), donde solo 25 de 216 caían dentro. Aquí
+la banda es estrecha por arriba y por abajo, así que apretar los dos lados a la vez
+puede dejar sin menú a perros concretos: eso hay que medirlo con el solver antes de
+encenderlo, como se hizo con la vitamina E.
+
+⚠️ **Y hay que mirarlo junto a los otros tres Ca:P que ya conviven en el repo**, que
+son cuatro bandas para la misma cosa:
+
+| Fuente | Banda | Estado |
+|---|---|---|
+| FEDIAF, perro sano | 1,0-2,0 | **aplicada** |
+| SACN5, urolitos de calcio | 1,1-2,0 | **aplicada** en `oxalato` |
+| Bartges, enfermedad renal crónica | **1,1-1,3** | **no aplicada** — es de una PATOLOGÍA, así que sigue abierta (esta pregunta) |
+| TVT, perro sano | 1,3-1,5 | **no se aplica** — el requisito del perro sano lo fija FEDIAF (P-23, cerrada el 12-sep) |
+
+**La pregunta:** ¿se le pone a `renal` el ratio 1,1-1,3? Y antes de eso, la que
+hace falta para contestarla: ¿se mide con el solver cuántos perros se quedan sin
+menú al apretar la banda por los dos lados, como se hizo con el suelo de vitamina
+E?
+
+---
+
+### P-31 · La dieta que trata la cistinuria puede causar la miocardiopatía que el motor sabe prevenir
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo el capítulo 185 de Ettinger |
+
+El capítulo 185 —*Manejo nutricional de la enfermedad del tracto urinario
+inferior*, de Yann Queau y Vincent C. Biourge— cierra su apartado de cistina así:
+
+> *«En perros con cistinuria se han visto deficiencias de carnitina y de taurina, y
+> se recomienda la taurina y la carnitina para prevenir la cardiomiopatía dilatada,
+> especialmente si el animal está siendo alimentado con una dieta restringida en su
+> precursor, la metionina»*
+
+Es un enlace directo entre dos patologías que el motor ya tiene:
+
+- `cistina` lleva hoy un **techo de sodio y nada más**. Su tratamiento real es
+  bajar la metionina y la cistina **por debajo del mínimo de FEDIAF**, que el motor
+  no hace y por eso no formula menú automático.
+- `dcm_taurina_respondedora` ya aplica **suelos de taurina (250 mg/1000 kcal) y de
+  L-carnitina (50)**, de la Tabla 36-4 de SACN5.
+
+O sea que el motor **tiene las dos cifras** y no las cruza. Y el cruce importa
+justo donde el motor se retira: la ración que trata la cistinuria es la que crea el
+riesgo.
+
+**La pregunta:** cuando un profesional formule para `cistina` por la vía firmada
+—que es la única que puede bajar de FEDIAF—, ¿deben entrar automáticamente los
+suelos de taurina y L-carnitina? ¿Y debe decirlo el aviso de `cistina` aunque hoy
+esa patología no genere menú, para que quien la marque sepa que la dieta que va a
+pautar tiene ese efecto?
+
+
+---
+
+### P-32 · Ettinger aprieta la grasa por debajo de SACN5 en tres patologías digestivas, y una de sus cifras no cabe
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es elegir entre dos fuentes clínicas para el mismo perro) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo enteros los capítulos 178 y 182 de Ettinger |
+
+Los capítulos **178** (Debra Zoran, enteropatías) y **182** (Richard Hill,
+hiperlipidemia) dan techos de grasa **más bajos** que los que el motor aplica hoy, y
+los tres techos de hoy salen de SACN5:
+
+| Patología | Techo de hoy | De dónde sale | Lo que pide Ettinger |
+|---|---|---|---|
+| `enteropatia_cronica` | 37,5 g/1000 kcal | SACN5 Tabla 57-1, «Fat 12 to 15% for dogs» | *«6-15 % de MS en perros o <3 g de grasa/100 kcal»* = **30** |
+| `ple_linfangiectasia` | 37,5 | SACN5 Tabla 58-1, «Fat <15%» | con albúmina <1,5 g/dl, *«concentraciones de grasa <3 g/100 kcal o <10 % de MS»* = **30** o **25** |
+| `hiperlipidemia` | 30 | SACN5 Tabla 28-2, 12 % MS | *«<25 g de grasa/Mcal en alimentos para perros»*, y en los casos que no responden, *«menos de 18 g de grasa/Mcal»* = **25** y **18** |
+
+⚠️ **Y esto no es nuevo: es la tercera cifra de una discrepancia que ya estaba
+abierta.** `FEDIAF_CONTRA_OTRAS_FUENTES.md` §1 tiene desde el 10 de septiembre el
+caso de la grasa en linfangiectasia, donde SACN5 (37,5, en materia seca) y Fascetti
+(16,7, en kcal) se llevan un factor de 2,2 por culpa de **qué unidad lleva el
+«15 %»**. Ettinger cae **en medio** de las dos y —esto es lo que aporta— da la cifra
+**en las dos unidades a la vez**, así que ya no es una pelea de unidades: es una
+pelea de números.
+
+**MEDIDO el 12-sep**, con el solver, 30 s por peldaño, adultos de 3, 10, 22 y 40 kg,
+recorriendo la escalera entera como hace la API. La celda dice **en qué peldaño sale
+el menú** (0 = estricto, 5 = el último):
+
+| | 3 kg | 10 kg | 22 kg | 40 kg |
+|---|---|---|---|---|
+| `enteropatia_cronica` 37,5 (**hoy**) | 2 | 1 | **0** | **0** |
+| `enteropatia_cronica` 30 | 2 | 2 | 2 | 2 |
+| `enteropatia_cronica` 25 | **5** | **5** | **5** | **5** |
+| `ple_linfangiectasia` 37,5 (**hoy**) | 2 | 1 | **0** | **0** |
+| `ple_linfangiectasia` 30 | 2 | 2 | 2 | 2 |
+| `ple_linfangiectasia` 25 | 2 | 2 | 2 | 2 |
+| `hiperlipidemia` 30 (**hoy**) | 2 | 2 | 2 | 2 |
+| `hiperlipidemia` 25 | **5** | 3 | 3 | 4 |
+| `hiperlipidemia` **18** | **sin menú** | **sin menú** | **sin menú** | **sin menú** |
+
+**Lo que sale de la medida, y es distinto para cada una:**
+
+1. **Los 30 de la enteropatía y de la linfangiectasia caben sin drama**: el menú
+   sigue saliendo en los cuatro pesos, en el peldaño 2. Cuesta uno o dos peldaños de
+   forma, que es exactamente lo que la regla 3 autoriza y lo que el motor dice.
+2. **Los 25 no son iguales en las dos**: la linfangiectasia los aguanta en el
+   peldaño 2 y la enteropatía se va al 5, el último. La diferencia no es la grasa:
+   es que `enteropatia_cronica` lleva **además** un techo de potasio (2.750) que la
+   otra no tiene.
+3. **Los 18 de la hiperlipidemia NO CABEN con este catálogo**, en ningún peldaño ni
+   en ningún peso. Y eso es un dato sobre el catálogo, no sobre la cifra: 18 g de
+   grasa por 1000 kcal es una ración casi sin grasa, y la fuente misma la describe
+   como una dieta casera formulada para los casos que no responden a nada.
+
+**La pregunta, que son tres:** ¿se bajan los dos techos de 37,5 a 30, que es lo que
+cuesta un peldaño? ¿Se baja el de la hiperlipidemia de 30 a 25, que cuesta tres?
+¿Y los 25 de la linfangiectasia se ponen como **tope condicional** —igual que la
+pancreatitis tiene el suyo— cuando el veterinario declare albúmina <1,5 g/dl, que es
+la condición exacta con la que la fuente lo pide? Los 18 no se proponen: no caben, y
+está medido.
+
+---
+
+### P-33 · El suelo de fibra de la diabetes está en una unidad y el número que decide está en otra
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es elegir cifra clínica) **y una fuente que no existe** (el factor entre las dos fibras) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo entero el capítulo 181 de Ettinger |
+
+`diabetes` aplica un **suelo de fibra de 17,5 g/1000 kcal**, que sale de convertir el
+extremo bajo de la Tabla 29-3 de SACN5 («Fiber 7 to 18%» de materia seca). El
+capítulo 181 de Ettinger (Jennifer Larsen) da el número para lo mismo y **en otra
+unidad**:
+
+> *«si se elige una dieta rica en fibra, parece que la concentración de esta debe
+> exceder los 55 g de FDT/Mcal, ya sea de una fuente de fibra insoluble o de una
+> mixta, para que proporcione un efecto beneficioso»*
+
+Y antes, describiendo el estudio que lo mide:
+
+> *«no se observó beneficio alguno en perros con DM alimentados con dietas que
+> contenían 18-20 g de FDT/Mcal cuando se compararon con dietas moderadamente bajas
+> en fibra con 14 g de FDT/Mcal»*
+
+⚠️ **FDT es fibra dietética TOTAL, que es exactamente lo que trae el campo `fibra`
+del catálogo** — BEDCA, CIQUAL y USDA publican fibra total. La cifra de SACN5 está
+en **fibra BRUTA**, que es otra cosa: el aviso de unidad lleva escrito en la ficha de
+`ple_linfangiectasia` desde el 11 de septiembre, con la frase del NRC 2006 («The
+crude fiber method accounts for only 5 to 20 percent of the total fiber in a food»),
+y nadie había puesto las dos cifras una al lado de la otra.
+
+Puestas: **el motor exige 17,5 g de fibra total y esta fuente mide 18-20 g de fibra
+total y lo llama «ningún beneficio»**. No es que el número esté mal convertido; es
+que el número convertido cae en la banda que el estudio usó como control.
+
+Y Ettinger añade una tercera fuente al mismo agujero, el cap.190 (Amy Farcas), que
+dice que ni siquiera la fibra «total» es total: su método *«no mide el componente de
+FDBPM»*, las fibras de bajo peso molecular.
+
+**MEDIDO el 12-sep**, mismo montaje que la P-32 (solver, 30 s por peldaño, escalera
+entera, adultos de 3, 10, 22 y 40 kg). La celda es el peldaño en el que sale el menú:
+
+| Suelo de fibra | 3 kg | 10 kg | 22 kg | 40 kg |
+|---|---|---|---|---|
+| **17,5 (hoy)** | **0** | **0** | **0** | **0** |
+| 35 | 2 | **0** | **0** | **0** |
+| 45 | 2 | 2 | 2 | 3 |
+| **55 (Ettinger)** | **5** | **5** | **5** | **5** |
+
+O sea: **los 55 caben, en los cuatro pesos, pero solo en el último peldaño** — el
+que suelta el techo del 10 % de verdura. Tiene sentido y es lo que hay que mirar
+antes de decidir: llegar a 55 g de fibra por 1000 kcal significa un menú con mucha
+más verdura de la que el criterio BARF de este motor considera normal. **Eso es
+FORMA, no nutrición**, así que la regla 3 lo permite y el menú lo diría — pero
+convertiría *todos* los menús de diabetes en menús del último peldaño, y eso es una
+decisión de producto además de clínica.
+
+**La pregunta:** ¿se sube el suelo de fibra de la diabetes? Y si sí, ¿hasta 55, que
+es lo que la fuente mide como umbral de beneficio y sale en el peldaño 5, o hasta
+45, que sale en el 2-3? Antes de eso hay una pregunta para la fuente que nadie ha
+podido contestar todavía: **cuántos gramos de fibra total son 7 g de fibra bruta**,
+que es el número que convertiría la cifra de SACN5 a la unidad del catálogo. La
+Tabla 5-9 de SACN5 dice que la proporción va del 0 % al 82 % según el ingrediente,
+así que ese factor único **no existe**.
+
+---
+
+### P-34 · El menú que el motor entrega no sirve para la fase de DIAGNÓSTICO de una alergia, y ahora lo dice
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (es producto: si hace falta un modo distinto) **y Cris Carles** (si ese modo es defendible) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo entero el capítulo 186 de Ettinger |
+
+El capítulo 186 (Manon Paradis) prohíbe durante la dieta de eliminación
+exactamente lo que este motor mete **siempre**:
+
+> *«No se deben administrar otras fuentes de alimento (no se permiten premios,
+> huesos, sobras de la mesa, juguetes para masticar con saborizantes; glucosamina,
+> vitaminas, ácidos grasos esenciales omega-3, antiparasitarios con sabor oral,
+> pasta de dientes con sabor»*
+
+Y, por si quedaba duda:
+
+> *«Por lo general, no se recomienda agregar suplementos (p. ej., ácidos grasos
+> esenciales [AGE], vitaminas, minerales) durante la prueba de eliminación, ya que
+> esta prueba tiene un tiempo limitado en el cual debe realizarse»*
+
+La regla 5 de `CLAUDE.md` deja **Suplementos y Extras siempre libres** —aceites,
+semillas, huevo, sal— porque son la herramienta con la que el solver cierra los 43
+requisitos. Un menú de `reaccion_adversa_alimento` lleva, casi siempre, aceite de
+salmón: o sea justo lo que la fuente dice que confunde la prueba. Eso ya estaba a
+medias en el aviso `fase_de_diagnostico`, que habla **solo** del omega-3 porque es
+lo que dice SACN5; esta fuente extiende la lista a todo.
+
+**Lo que se ha hecho el 12-sep**: se dice, en el aviso nuevo
+`lo_que_la_prueba_no_puede_llevar`, con las dos citas, con la frase de la propia
+fuente de que una dieta de prueba *«aunque incompletas y desequilibradas, se pueden
+utilizar de forma segura para la fase de diagnóstico»* en un adulto sano, y con las
+dos duraciones (8-10 semanas si hay síntomas de piel, 2-4 si solo son digestivos).
+Lo vigila el BLOQUE 64.
+
+**Lo que NO se ha hecho, y es la pregunta.** El motor **no puede** formular sin
+suplementos: sin ellos no cierra los 43 requisitos, y entregar un menú que no cumple
+choca de frente con la regla 1, que es la que no se toca. Así que las opciones son
+dos y las dos son decisión de producto:
+
+1. **Dejarlo como está**: el motor entrega el menú de comer y el aviso explica que
+   la fase de prueba es otra cosa y la lleva el veterinario.
+2. **Un modo «prueba de eliminación»** que formule sin Suplementos ni Extras,
+   entregue el menú **marcado como incompleto**, con la duración máxima escrita y
+   sin semáforo verde — porque no lo estaría. Eso sería la primera vez que este
+   motor entrega algo que no cumple FEDIAF, y por eso no lo hago solo. Tendría que
+   ir por la vía firmada de `VETERINARIOS.md`, como cualquier otra prescripción por
+   debajo del suelo.
+
+**La pregunta:** ¿se construye ese modo, y por la vía firmada? Y si no, ¿basta con
+el aviso?
 
 
 ---

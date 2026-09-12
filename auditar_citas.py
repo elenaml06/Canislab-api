@@ -39,6 +39,7 @@ CÓMO SE USA
     python3 auditar_citas.py --todas    # además, la lista entera
 """
 import glob
+import html
 import json
 import os
 import re
@@ -82,7 +83,20 @@ DOCUMENTOS = ["PATOLOGIAS.md", "LECTURA_SACN5.md", "HALLAZGOS_LECTURA_FUENTES.md
     # la frase de la fuente al lado, que es justo donde una cita mal copiada
     # aguanta mas tiempo sin que nadie la abra. Al meterlo salieron 0 nuevas sin
     # encontrar, o sea que las que habia estaban bien -- pero eso no se sabia.
-    "HALLAZGOS_FASCETTI.md"]
+    "HALLAZGOS_FASCETTI.md",
+    # ⚠️ EL REGISTRO DE LECTURAS, QUE ESTABA FUERA (12 de septiembre). `LECTURAS.md`
+    # nacio el 11 sustituyendo a los cuatro scripts de contar lecturas, y es hoy el
+    # sitio del repo donde MAS citas literales se escriben -- el metodo es leer y
+    # anotar la frase de la fuente al lado. Se quedo sin auditar por haber nacido
+    # despues de esta lista, que es exactamente como se cuela una cita que la
+    # fuente no dice.
+    "LECTURAS.md",
+    # ⚠️ Y EL REGISTRO DE PREGUNTAS (12 de septiembre). Cada pregunta se sostiene
+    # sobre la frase de la fuente que la abre -- P-19 entera es una cita del
+    # consenso ACVIM --, y son las citas que mas lejos llegan: este fichero lo lee
+    # quien va a contestar. Estaba fuera por lo mismo que `LECTURAS.md`: nacio
+    # despues de la lista.
+    "PREGUNTAS_ABIERTAS.md"]
 JSONS = ["patologias.json", "recomendaciones_libro.json", "requisitos_condicionales.json",
          "requerimientos_v2_final.json", "sacn5_fuentes_de_minerales.json",
          "fediaf_conversiones_vitaminas.json"]
@@ -120,7 +134,15 @@ _LARGO_MINIMO = 25
 # applies» cuando la fuente dice «instead the nutritional maximum, WHEN INCLUDED
 # IN THE RELEVANT TABLES, should be taken into account». Una condicion borrada.
 SIN_DECIR_DECLARADAS = 0          # citas que no dicen de que fuente salen
-SIN_TEXTO_DECLARADAS = 10         # citan una fuente que no esta en el repo.
+SIN_TEXTO_DECLARADAS = 11         # citan una fuente que no esta en el repo.
+                                  # ⚠️ SUBE A 11 EL 12 DE SEPTIEMBRE, y no porque
+                                  # se haya perdido ninguna fuente: es que entra a
+                                  # esta auditoria `PREGUNTAS_ABIERTAS.md`, que
+                                  # tenia una cita de Merck (la grasa de la
+                                  # pancreatitis) que nadie miraba. Es la MISMA
+                                  # frase que ya estaba declarada en PATOLOGIAS.md
+                                  # y en patologias.json: tres copias de una cita
+                                  # que sigue sin poderse comprobar aqui.
                                   # ⚠️ ERAN 24 HASTA EL 11 DE SEPTIEMBRE y ese
                                   # dia BAJARON A 10, porque se consiguieron
                                   # cuatro de las fuentes que faltaban: WSAVA
@@ -173,16 +195,34 @@ _ES_INGLES = re.compile(r"\b(?:the|of|and|is|are|be|should|shall|in|for|with|"
                         r"that|this|which|from|may|must|not|per|dogs?|cats?)\b", re.I)
 
 
+# ⚠️ Y EL ALEMAN (12 de septiembre). El Merkblatt 181 de la TVT —la fuente de la
+# que sale el bloqueo de los cortes con tiroides— esta en aleman, y una cita suya
+# no tiene palabras inglesas ni españolas: los dos contadores daban 0, «0 > 0» es
+# falso, y la cita se saltaba la auditoria SIN DECIRLO. Una cita que no se
+# comprueba y nadie sabe que no se comprueba es el peor de los tres estados.
+_ES_ALEMAN = re.compile(r"\b(?:der|die|das|und|nicht|bei|von|mit|auch|werden|"
+                        r"kann|zu|den|dem|ein|eine|ist|sind|aus|für|durch|"
+                        r"oder|wird|sich|bis|Hunde|Hunden|Katzen)\b")
+
+
 def _parece_de_fuente(c):
-    """Una cita en ingles. Las que estan en español son prosa nuestra."""
+    """Una cita en ingles o en aleman. Las que estan en español son prosa nuestra."""
     n_es = len(_ES_ESPANOL.findall(c))
     n_en = len(_ES_INGLES.findall(c))
-    return n_en > n_es
+    n_de = len(_ES_ALEMAN.findall(c))
+    return max(n_en, n_de) > n_es
 
 
 def _norm(t):
     """Espacios, comillas y guiones de corte de linea, todos iguales."""
     t = unicodedata.normalize("NFKC", t)
+    # ⚠️ EL GUION BLANDO (U+00AD), que no se ve y rompe la comparacion
+    # (12 de septiembre). El PDF de Ishii 2025 lo trae 100 veces: «prevent\u00ad\ning»
+    # es «preventing» a la vista y son dos cosas distintas al comparar. NFKC no
+    # lo toca, y la regla de abajo —quitar «guion + espacio»— tampoco, porque
+    # este guion no es ninguno de los ocho de la lista. Se borra entero: nunca
+    # significa nada, solo dice donde SE PODRIA partir la palabra.
+    t = t.replace("\u00ad", "")
     t = t.replace("’", "'").replace("‘", "'")
     t = t.replace("“", '"').replace("”", '"')
     # ⚠️ TODOS LOS GUIONES DE UNICODE, que son ocho y se parecen. El que se
@@ -212,6 +252,14 @@ def _norm(t):
     t = t.replace("≤", "<=").replace("≥", ">=")
     t = re.sub(r"-{2,}", "-", t)
     t = re.sub(r"\s+%", "%", t)
+    # ⚠️ PERO «[...]» NO ES UNA ACLARACION NUESTRA: es la marca de que la cita
+    # SALTA un trozo, y la regla de abajo se la comia (12 de septiembre). Con
+    # ella borrada, «de taurina[...] y se recomienda» quedaba «de taurina y se
+    # recomienda» y se buscaba entero en la fuente, que ahi tiene el numero de
+    # referencia bibliografica pegado («de taurina71, y se recomienda»). La cita
+    # era literal y salia acusada. Se convierte en «...», que es el separador
+    # que el troceado sí entiende.
+    t = t.replace("[...]", "...")
     t = re.sub(r"\[[^\]]{0,60}\]", " ", t)
     # ⚠️ EL SEPARADOR DE LOS NUMEROS, que es nuestro y no de la fuente. Al
     # transcribir a español se escribe «4,91 % DM» donde el original pone
@@ -276,11 +324,31 @@ def textos():
     numeros de pagina sueltos (ver `_PIE_DE_PAGINA`).
     """
     fuera, sin_pie = {}, {}
-    for ruta in sorted(glob.glob(os.path.join(FUENTES, "**", "*.txt"), recursive=True)):
+    # ⚠️ Y LOS TEXTOS DE FUENTE QUE VIVEN EN ESTE REPO, no en el de al lado
+    # (12 de septiembre). Hoy son tres: las dos tablas de FEDIAF transcritas del
+    # PDF para que `auditar_transcripcion_fediaf.py` las rehaga, y las tablas de
+    # AAHA 2021, que NO se pueden extraer del PDF porque estan dibujadas como
+    # trazos vectoriales -- la pagina de la Tabla 8 entera devuelve 194
+    # caracteres. Sin esto, una cita de la Tabla 8 de AAHA caia en «cita una
+    # fuente que no esta en el repo», que es justo la casilla que no se mira, y
+    # la fuente SI esta: esta transcrita, con su metodo escrito en la cabecera
+    # de `aaha_2021_tablas_transcritas.txt`.
+    rutas = sorted(glob.glob(os.path.join(FUENTES, "**", "*.txt"), recursive=True))
+    rutas += sorted(glob.glob(os.path.join(RAIZ, "*.txt")))
+    # ⚠️ Y LOS .XML (12 de septiembre). Hofmann 2025 -- uno de los dos estudios que
+    # el repo cita para el fosforo -- vive SOLO como XML de PubMed Central, sin
+    # .txt al lado. O sea que sus citas no se podian comprobar y NO SALTABA: caian
+    # en «cita una fuente que no esta en el repo» estando la fuente en el repo,
+    # que es la casilla que menos se mira. Se le quitan las etiquetas y se indexa
+    # como cualquier otro texto.
+    rutas += sorted(glob.glob(os.path.join(FUENTES, "**", "*.xml"), recursive=True))
+    for ruta in rutas:
         if os.path.getsize(ruta) < 1024:
             continue
-        nombre = os.path.relpath(ruta, FUENTES)
+        nombre = os.path.relpath(ruta, FUENTES if ruta.startswith(FUENTES) else RAIZ)
         crudo = open(ruta, encoding="utf-8", errors="ignore").read()
+        if ruta.endswith(".xml"):
+            crudo = html.unescape(re.sub(r"<[^>]+>", " ", crudo))
         fuera[nombre] = _norm(crudo)
         sin_pie[nombre] = _norm(_PIE_DE_PAGINA.sub("\n\n", crudo))
     return fuera, sin_pie
@@ -296,22 +364,58 @@ def textos():
 # es la casilla que menos se mira. Ahora que el texto esta, una cita de
 # Dobenecker, Heer o Ishii que no aparezca literal TIENE que salir por la casilla
 # de las que hay que mirar. La lista y el texto van juntos o no sirve ninguno.
+# ⚠️ LAS FUENTES QUE ESTAN EN ESPAÑOL (12 de septiembre). Hasta hoy no habia
+# ninguna, y por eso `_parece_de_fuente` podia dar por prosa nuestra cualquier
+# cita en español. Dejo de ser verdad con Ettinger & Feldman, que son 255.458
+# lineas en castellano — su propio LEEME lo dejo anotado «para decidirlo».
+#
+# La regla es ESTRECHA a proposito: una cita en español se audita solo si su
+# parrafo nombra una de ESTAS fuentes. Si se auditaran todas las citas españolas
+# cuyo parrafo nombra cualquier fuente, saldrian acusadas una detras de otra las
+# frases de Elena y nuestra propia prosa entrecomillada, que llevan meses escritas
+# asi en media docena de documentos — y una auditoria que acusa a quien no ha
+# hecho nada se deja de mirar, que es el fallo que este fichero mas repite.
+_FUENTES_EN_ESPANOL = ("ettinger", "feldman", "côté", "cote", "hervera")
+
 _EN_EL_REPO = ("fediaf", "sacn5", "small animal clinical nutrition", "nrc",
                "fascetti", "köber", "kober", "reglamento", "iris", "aaha", "tvt",
                "dobenecker", "hofmann", "heer", "ishii", "malandain", "sturmer",
-               "stürmer", "hervera")
-_FUERA = ("acvim", "merck", "purina", "today's veterinary", "cavanaugh", "center",
-          "consenso")
+               "stürmer", "hervera", "ettinger", "feldman", "côté", "cote")
+# ⚠️ «purina institute» Y NO «purina» A SECAS (12 de septiembre). La marca se
+# llama igual que el nutriente en español y en ingles («purinas», «purine»), asi
+# que con la clave corta cualquier parrafo sobre purinas se atribuia a la marca y
+# se iba a la casilla de «no se puede comprobar». Las cinco citas que de verdad
+# son suyas dicen «Purina Institute», asi que la clave larga las coge todas.
+_FUERA = ("acvim", "merck", "purina institute", "today's veterinary", "cavanaugh",
+          "center", "consenso")
+
+
+# ⚠️ SE BUSCA POR PALABRA ENTERA, Y NO ES COSMETICO (12 de septiembre). Antes se
+# buscaba por trozo, y «purina» -- la marca, que esta en la lista de fuentes que
+# NO estan en el repo -- casaba dentro de «purinas» y de «purine». O sea que
+# CUALQUIER frase que hablara de purinas se atribuia a Purina y se iba a la
+# casilla de «no se puede comprobar», que es la que menos se mira, estando su
+# fuente (Ishii 2025) en el repo. Paso con dos citas el dia que se leyo ese
+# estudio. Mismo riesgo con «center» dentro de «centered» o «nrc» dentro de otra
+# cosa: se arregla para todas a la vez.
+def _clave_en(claves, texto):
+    for k in claves:
+        if re.search(r"\b" + re.escape(k) + r"\b", texto):
+            return k
+    return None
 
 
 def _quien_dice(contexto):
-    c = contexto.lower()
-    for k in _FUERA:
-        if k in c:
-            return ("fuera", k)
-    for k in _EN_EL_REPO:
-        if k in c:
-            return ("dentro", k)
+    # ⚠️ CON LOS ESPACIOS APLASTADOS, porque una clave de dos palabras se parte
+    # con el salto de linea del Markdown: «Purina\nInstitute» no casaba con
+    # «purina institute» y la cita se quedaba sin fuente (12 de septiembre).
+    c = " ".join(contexto.lower().split())
+    k = _clave_en(_FUERA, c)
+    if k:
+        return ("fuera", k)
+    k = _clave_en(_EN_EL_REPO, c)
+    if k:
+        return ("dentro", k)
     return ("sin decir", "?")
 
 
@@ -329,7 +433,55 @@ def recoger():
         t = open(p, encoding="utf-8").read()
         for m in _CITA.finditer(t):
             c = m.group(1)
-            if _parece_de_fuente(c):
+            # ⚠️ EL CONTEXTO SE CALCULA ANTES DE DECIDIR SI LA CITA ES DE FUENTE
+            # (12 de septiembre). Hasta hoy se decidia solo por el idioma, y eso
+            # daba por prosa nuestra CUALQUIER cita en español. Era verdad
+            # mientras todas las fuentes estaban en ingles, y dejo de serlo el
+            # dia que entro Ettinger & Feldman, que son 255.458 lineas EN
+            # ESPAÑOL. Su propio LEEME lo dejo anotado «para decidirlo», y esto
+            # es la decision: una cita española cuyo parrafo NOMBRA una fuente
+            # que esta en el repo se audita como cualquier otra.
+            ini = t.rfind("\n\n", 0, m.start())
+            ctx = t[ini + 2 if ini >= 0 else 0:m.end() + 200]
+            # ⚠️ Y PARA DECIDIR SI ES ESPAÑOL DE FUENTE, EL PARRAFO NO BASTA (12
+            # de septiembre, por la tarde). La regla de arriba se estreno por la
+            # mañana y esa misma tarde entraron ~50 citas nuevas de Ettinger en
+            # `LECTURAS.md` y NO SE AUDITO NINGUNA: el metodo de lectura escribe
+            # los hallazgos en TABLAS de Markdown, y el parrafo de una fila de
+            # tabla es la tabla, que empieza en «| Lo que dice | Que hacemos |» y
+            # no nombra a nadie. Quien nombra la fuente es el TITULO que hay
+            # encima. Asi que para esta prueba -- y solo para esta -- se mira
+            # ademas el titulo Markdown mas cercano por arriba. No se toca el
+            # `ctx` con el que se CLASIFICA la cita, porque ahi el parrafo es lo
+            # correcto y meter el titulo volveria a pegar la fuente de al lado,
+            # que es el fallo que ese comentario de abajo explica.
+            # Se miran DOS titulos, no uno: el mas cercano de cualquier nivel y
+            # el `##` mas cercano. El `##` es el que nombra la fuente en
+            # `LECTURAS.md` («## Ettinger -- ...»), y el cercano suele ser el
+            # capitulo («### cap.178, Debra Zoran -- ...»), que NO la nombra.
+            # Con solo el cercano se auditaban 3 citas de 50.
+            ctx_titulo = ctx
+            for marca in ("\n#", "\n## "):
+                i = t.rfind(marca, 0, m.start())
+                if i >= 0:
+                    ctx_titulo = t[i:t.find("\n", i + 1)] + " " + ctx_titulo
+            # ⚠️ Y SE PREGUNTA SI APARECE ALGUNA FUENTE EN ESPAÑOL, no si la
+            # PRIMERA que aparece lo esta. `_quien_dice` devuelve una sola
+            # fuente, la primera de su lista que case, y un parrafo que compara
+            # dos fuentes nombra a las dos: la P-32 de `PREGUNTAS_ABIERTAS.md`
+            # enfrenta a SACN5 con Ettinger, salia «sacn5», y sus ocho citas de
+            # Ettinger EN ESPAÑOL no se auditaban. Esa es justo la forma que
+            # tiene una discrepancia, o sea la clase de parrafo donde mas
+            # importa que la cita sea literal.
+            esp = _clave_en(_FUENTES_EN_ESPANOL, " ".join(ctx_titulo.lower().split()))
+            if _parece_de_fuente(c) or esp:
+                # Y si el parrafo no nombra a NADIE, se guarda el contexto con
+                # titulo para clasificarla. Si no, una cita de Ettinger que no
+                # apareciera caia en «no dice de donde sale», que es la casilla
+                # tranquila, en vez de en «cita una fuente que SI esta y no
+                # aparece», que es la que hay que mirar. Paso con la primera.
+                if _quien_dice(ctx)[0] == "sin decir":
+                    ctx = ctx_titulo
                 # el contexto es el PARRAFO de la cita, no un trozo fijo de
                 # caracteres: con 400 hacia atras se pegaba la fuente de la cita
                 # de al lado, y una cita de Today's Veterinary Practice salia
@@ -339,8 +491,7 @@ def recoger():
                 # porque el manual no esta en el repo -- salia acusada de ser de
                 # FEDIAF y no aparecer. El parrafo es el trozo que de verdad
                 # comparte fuente.
-                ini = t.rfind("\n\n", 0, m.start())
-                fuera.append((f, c, t[ini + 2 if ini >= 0 else 0:m.end() + 200]))
+                fuera.append((f, c, ctx))
     for f in JSONS:
         p = os.path.join(RAIZ, f)
         if not os.path.exists(p):
@@ -391,7 +542,12 @@ def auditar(mostrar_todas=False):
         # otras siete palabras en medio. Salia «no encontrada» estando en cap27
         # palabra por palabra. Con 12 se comprueban los dos trozos por separado,
         # que es lo que significa una cita con puntos suspensivos.
-        trozos = [x for x in re.split(r"\s*(?:\.\.\.|…|\[\.\.\.\])\s*", n) if len(x) >= 12]
+        # El corchete va PRIMERO en la alternancia, que es el patron mas largo:
+        # las alternancias de Python se prueban en orden y `\.\.\.` casaria
+        # dentro de `[...]`, partiendo por el sitio equivocado. Hoy no llega
+        # ninguno -- `_norm` convierte «[...]» en «...» antes -- pero el orden
+        # bueno cuesta nada y el malo es invisible.
+        trozos = [x for x in re.split(r"\s*(?:\[\.\.\.\]|\.\.\.|…)\s*", n) if len(x) >= 12]
         if not trozos:
             trozos = [n]
         # ⚠️ EL PUNTO FINAL DE LA CITA, que casi nunca esta en la fuente. Citar

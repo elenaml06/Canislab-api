@@ -10189,6 +10189,34 @@ _CIFRAS_64 = [
     ("dcm_taurina_respondedora", "analitica_de_taurina", "200 µmol/L"),
     ("dcm_taurina_respondedora", "quien_sintetiza_menos", "NEWFOUNDLAND"),
     ("reaccion_adversa_alimento", "confirmar_con_reintroduccion", "CONFIRMED BY A CHALLENGE"),
+    # Y los tres del 12 de septiembre, de leer ENTERA la AAHA 2021 -- texto
+    # corrido, sus cinco tablas y su cuadro de energia. Los tres dicen algo que
+    # el motor NO puede hacer solo y que ninguna otra fuente del repo decia con
+    # estas palabras:
+    #   · las visceras, que una racion BARF lleva SIEMPRE y que la encefalopatia
+    #     hepatica es justo donde hay que quitar;
+    #   · que bajar las purinas del urato NO es bajar la proteina, que es el
+    #     error clasico de ese urolito y lo que el motor ya hace bien sin que
+    #     nadie lo dijera;
+    #   · la vitamina C y la densidad urinaria del oxalato: la primera es la
+    #     puerta por la que entraria un suplemento y la segunda es el numero
+    #     contra el que quien firma mide si el plan funciona.
+    ("encefalopatia_hepatica", "de_donde_viene_la_proteina", "Avoid organ meats"),
+    ("encefalopatia_hepatica", "de_donde_viene_la_proteina", "Consider vegetarian protein sources"),
+    ("urato", "profesional", "Does not necessarily mean low protein"),
+    ("oxalato", "vitamina_c_y_densidad_urinaria", "Avoid vitamin C supplementation"),
+    # Y el del 12 de septiembre por la tarde, de leer ENTERA la seccion XI de
+    # Ettinger (25 capitulos, del 170 al 194). Su cap.186 prohibe durante la
+    # dieta de eliminacion exactamente lo que este motor mete SIEMPRE por la
+    # regla 5 -- aceites, semillas, huevo, sal y casi siempre aceite de salmon --
+    # asi que el menu que sale de aqui sirve para COMER y no para DIAGNOSTICAR.
+    # El motor no puede arreglarlo (sin suplementos no cierra los 43 requisitos):
+    # lo que puede es decirlo, y las dos duraciones son lo que le falta al dueño
+    # para saber cuanto dura lo que esta haciendo.
+    ("reaccion_adversa_alimento", "lo_que_la_prueba_no_puede_llevar", "no se permiten premios, huesos, sobras de la mesa"),
+    ("reaccion_adversa_alimento", "lo_que_la_prueba_no_puede_llevar", "8 a 10 semanas"),
+    ("reaccion_adversa_alimento", "lo_que_la_prueba_no_puede_llevar", "2 a 4 semanas"),
+    ("oxalato", "vitamina_c_y_densidad_urinaria", "USG ≤1.020"),
 ]
 for _pat64, _clave64, _trozo64 in _CIFRAS_64:
     _texto64 = ((_crudo64.get(_pat64) or {}).get("avisos") or {}).get(_clave64)
@@ -12665,6 +12693,14 @@ import json as _json89
 from catalogo_menus import CATALOGO as _CAT89
 from der import (RAZAS_CIFRA_FEDIAF as _RFED89, RAZAS_MAS_GASTO as _RMAS89,
                  RAZAS_MENOS_GASTO as _RMEN89, BCS_DESDE_CONDICION as _BCSC89)
+# Las constantes VIVAS del BCS, para comparar contra ellas lo que se sirve.
+# Se importan del motor y no se escriben aqui: un numero escrito en la prueba
+# seria una TERCERA copia, y el fallo que esto vigila es justo tener dos.
+from constructor import CAT_SUPLEMENTO as _CAT_SUP_89
+from verificar import (BCS_IDEAL_MIN as _BCS_IDEAL_MIN_89,
+                       BCS_ESCALA_SATURADA as _BCS_SATURADA_89,
+                       EXCESO_BCS_9 as _EXCESO_BCS9_89,
+                       TOPE_CORRECCION_AL_ALZA as _TOPE_ALZA_89)
 import razas as _razas89
 import requisitos as _req89
 from verificar import EQUIVALENCIA as _EQV89
@@ -12785,9 +12821,81 @@ else:
     if _ofr89 != set(_BCSC89.values()):
         fallos.append(f"BLOQUE89: los BCS marcados como ofrecidos al dueño son {sorted(_ofr89)} "
                       f"y los escalones son {sorted(set(_BCSC89.values()))}")
+    # 4c-ter. ⚠️ LAS CATEGORIAS, AGRUPADAS (12 de septiembre). Elena, mirando la
+    # lista de alimentos del veterinario: «todos los suplementos estan sueltos,
+    # tienen que estar dentro de la categoria suplementos y luego dentro de
+    # subcategorias». La lista existia (`constructor.CAT_SUPLEMENTO`) y lo unico
+    # que llegaba a la app eran las 14 categorias EN PLANO, con las siete de
+    # suplemento al mismo nivel que «Carne muscular». La agrupacion estaba
+    # contada en prosa, y una frase no se lee desde JavaScript.
+    _cat89 = _d89.get("categorias_del_catalogo", {})
+    _grupos89 = _cat89.get("grupos") or []
+    if not _grupos89:
+        fallos.append("BLOQUE89: `/vocabulario` no sirve los grupos de categorias. Sin ellos la "
+                      "app pinta las 14 en plano y los siete suplementos salen sueltos, que es "
+                      "lo que se pidio arreglar")
+    else:
+        _sup89 = next((g["categorias"] for g in _grupos89 if g.get("clave") == "suplementos"), [])
+        if sorted(_sup89) != sorted(_CAT_SUP_89):
+            fallos.append(
+                f"BLOQUE89: el grupo «suplementos» servido es {sorted(_sup89)} y el motor trata "
+                f"como suplemento {sorted(_CAT_SUP_89)} (`constructor.CAT_SUPLEMENTO`). Si se "
+                f"separan, la app agrupa una cosa y el solver dosifica otra")
+        # Y los grupos tienen que cubrir TODAS las categorias, una sola vez: una
+        # categoria que no este en ningun grupo no se pinta, y no da error.
+        _todas89 = set(_cat89.get("categorias") or [])
+        _agrupadas89 = [c for g in _grupos89 for c in g.get("categorias", [])]
+        if sorted(_agrupadas89) != sorted(_todas89):
+            _falta89 = _todas89 - set(_agrupadas89)
+            _sobra89 = [c for c in _agrupadas89 if _agrupadas89.count(c) > 1]
+            fallos.append(
+                f"BLOQUE89: los grupos no cubren las categorias exactamente una vez. Sin grupo: "
+                f"{sorted(_falta89)}. En dos grupos: {sorted(set(_sobra89))}. Una categoria sin "
+                f"grupo no se pinta en la app y no da ningun error")
+        for _g89 in _grupos89:
+            for _reg89 in ("dueno", "veterinario"):
+                if not (_g89.get(_reg89) or {}).get("titulo"):
+                    fallos.append(f"BLOQUE89: el grupo «{_g89.get('clave')}» no trae el registro "
+                                  f"«{_reg89}». Los dos registros son la regla de este endpoint")
+
     if str(_cc89.get("pct_por_punto")) not in ("0.1",):
         fallos.append(f"BLOQUE89: el % por punto de BCS servido es {_cc89.get('pct_por_punto')} "
                       f"y `der.BCS_PCT_POR_PUNTO` es 0.10")
+
+    # 4c-bis. ⚠️ LAS CINCO CIFRAS QUE DECIDEN EL PESO, SERVIDAS COMO NUMEROS
+    # (12 de septiembre). Hasta hoy `/vocabulario` servia dos —`ideal` y
+    # `pct_por_punto`— y las otras tres estaban CONTADAS EN PROSA dentro del
+    # campo `ojo` («FEDIAF dice >45 %»). Una frase no se lee desde JavaScript,
+    # asi que la app se hizo su propia copia en `src/bcs.js`.
+    #
+    # Y las dos copias YA se habian separado: la prueba de punta a punta del
+    # otro repo esperaba 21,43 kg para un perro de 30 kg con BCS 9 —la recta
+    # del 10 % por punto— y el motor devuelve 20,69, que es el «>45 %» de la
+    # Tabla VII-2. El motor tenia razon; lo que se habia quedado atras era la
+    # copia. Se vio al arreglar el CORS, porque esa prueba llevaba un dia sin
+    # poder hablar con la API.
+    #
+    # Elena: «te dije que la app no puede tener datos sueltos, todo le tiene que
+    # llegar del motor». Esto comprueba que llegan, y que llegan IGUALES: se
+    # compara contra la constante VIVA del motor, no contra un numero escrito
+    # aqui, que seria una tercera copia.
+    for _clave89, _vivo89, _que89 in (
+            ("ideal_min", _BCS_IDEAL_MIN_89, "el borde delgado de la banda ideal"),
+            ("escala_saturada", _BCS_SATURADA_89, "el BCS en el que la recta deja de valer"),
+            ("exceso_en_escala_saturada", _EXCESO_BCS9_89, "el «>45 %» de la Tabla VII-2"),
+            ("tope_correccion_al_alza", _TOPE_ALZA_89, "el tope de la correccion al alza")):
+        _serv89 = _cc89.get(_clave89)
+        if _serv89 is None:
+            fallos.append(
+                f"BLOQUE89: `/vocabulario` no sirve «{_clave89}» ({_que89}). Si el motor no lo "
+                f"sirve, la app se lo guarda a mano -- y esa copia se separa: paso con el BCS 9, "
+                f"donde la app se quedo en el 40 % de la recta y el motor ya aplicaba el 45 % de "
+                f"FEDIAF")
+        elif abs(float(_serv89) - float(_vivo89)) > 1e-9:
+            fallos.append(
+                f"BLOQUE89: `/vocabulario` sirve {_clave89}={_serv89} y el motor aplica "
+                f"{_vivo89}. Es el mismo numero: si se separan, el mismo perro tiene dos pesos "
+                f"objetivo segun quien mire")
 
     # 4d. Los DOS registros, en todo lo que se sirve con etiquetas.
     #
@@ -13946,6 +14054,104 @@ if len(set(_semillas96)) != 1:
                   f"iterar la hace depender de por dónde se empiece -- y `der.js` empieza por "
                   f"otro sitio")
 
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
+# BLOQUE 97 — QUIÉN PUEDE LLAMAR DESDE UN NAVEGADOR
+# ============================================================
+#
+# ⚠️ POR QUÉ (12 de septiembre). El 11 se cerró el CORS, que estaba en `*`, y
+# la lista nueva llevaba los puertos de desarrollo ESCRITOS A MANO: 5173 y
+# 3000. Al día siguiente el generador de menús no funcionaba «ni en
+# automático, ni en personalizar, ni en veterinario» -- los tres, que es lo
+# que hace pensar que se ha roto el motor.
+#
+# El motor estaba perfecto. Medido: la misma app y la misma API, servidas en
+# el 5173, sacan el menú («SEMANA DE NALA, 48/48 OK»); en el 5179 no sale
+# ninguno y la app dice «un problema de conexión». Lo único que cambia es el
+# puerto desde el que llama el navegador.
+#
+# Y lo que más duele: **el 5179 es el de la prueba de punta a punta de este
+# proyecto**, la única que mira la costura app↔motor. O sea que el cambio dejó
+# ciega justo a la prueba que lo habría cazado, y por eso llegó a producción.
+#
+# Este bloque comprueba la puerta con los orígenes de verdad, uno a uno. No
+# mira la lista ni la expresión regular: se lo PREGUNTA al middleware con una
+# petición de sondeo, que es lo que hace el navegador.
+print("\n=== BLOQUE 97: quién puede llamar a la API desde un navegador ===")
+
+_PERMITIDOS_97 = [
+    ("https://rawku.app", "la app en producción"),
+    ("https://www.rawku.app", "la app con www"),
+    ("https://canislab-web.vercel.app", "el despliegue de Vercel"),
+    ("https://canislab-web-git-main-elenaml06s-projects.vercel.app", "una vista previa de Vercel"),
+    ("http://localhost:5173", "Vite en su puerto de siempre"),
+    ("http://localhost:5174", "Vite cuando el 5173 esta ocupado"),
+    ("http://127.0.0.1:5178", "playwright.config.js, la bateria de la app"),
+    ("http://127.0.0.1:5179", "playwright.real.config.js, la de punta a punta"),
+    ("http://localhost:3000", "otro servidor de desarrollo"),
+    # ⚠️ Y LOS TRES QUE FALTABAN EN EL PRIMER ARREGLO (12 de septiembre, tarde).
+    # El comentario de `main.py` listaba «abrir la app desde el movil contra el
+    # portatil» entre los casos rotos, y el patron NO lo permitia: el comentario
+    # prometia un arreglo que el codigo no hacia, que es peor que no tenerlo.
+    ("http://[::1]:5174", "localhost en IPv6, que es a lo que resuelven algunos navegadores"),
+    ("http://192.168.1.50:5173", "el movil contra el portatil, por la red de casa"),
+    ("http://10.0.0.5:3000", "otra red privada"),
+    ("http://172.16.4.9:5173", "la tercera red privada"),
+]
+# Y los que NO pueden: una pagina cualquiera de internet. Esto es lo que se
+# cerro el 11 de septiembre y no se puede volver a abrir sin querer.
+_PROHIBIDOS_97 = [
+    ("https://ejemplo.com", "una web cualquiera"),
+    ("https://rawku.app.malicioso.com", "un dominio que EMPIEZA por el nuestro"),
+    ("https://canislab-web.vercel.app.malicioso.com", "lo mismo con Vercel"),
+    ("http://localhost.malicioso.com", "un dominio que empieza por localhost"),
+    ("http://192.168.1.50.malicioso.com", "un dominio que empieza por una IP privada"),
+    ("http://172.32.0.1", "una IP que NO es privada (el rango privado acaba en 172.31)"),
+]
+
+def _permite_el_origen_97(origen):
+    """Lo que contestaria el navegador: ¿viene la cabecera que lo permite?"""
+    r = _c.options("/menu/v2", headers={
+        "Origin": origen,
+        "Access-Control-Request-Method": "POST",
+        "Access-Control-Request-Headers": "content-type",
+    })
+    return r.headers.get("access-control-allow-origin") is not None
+
+for _o97, _que97 in _PERMITIDOS_97:
+    if not _permite_el_origen_97(_o97):
+        fallos.append(
+            f"BLOQUE97: el navegador NO puede llamar desde «{_o97}» ({_que97}). Eso no da "
+            f"un error que se vea: `fetch` falla con ERR_FAILED y la app dice «un problema "
+            f"de conexion», asi que parece que se ha roto el motor. Es el fallo del 11 de "
+            f"septiembre otra vez")
+
+for _o97, _que97 in _PROHIBIDOS_97:
+    if _permite_el_origen_97(_o97):
+        fallos.append(
+            f"BLOQUE97: el navegador SI puede llamar desde «{_o97}» ({_que97}), y no deberia. "
+            f"Eso es volver al `allow_origins=['*']` que se cerro el 11 de septiembre: "
+            f"cualquier pagina del mundo usando el motor con el navegador de otra persona")
+
+# Y `/verificar` tiene que contestar LO MISMO que el middleware, porque para eso
+# esta: un bloqueo de CORS no da error legible -- `fetch` no puede decir que fue
+# CORS -- asi que la app dice «problema de conexion» y se busca una caida que no
+# existe. Se abre `/verificar` desde el sitio que falla y lo dice. Si contestara
+# distinto que la puerta de verdad seria peor que no contestar.
+for _o97, _que97 in _PERMITIDOS_97 + _PROHIBIDOS_97:
+    _esperado97 = _permite_el_origen_97(_o97)
+    _dicho97 = (_c.get("/verificar", headers={"Origin": _o97})
+                  .json().get("quien_puede_llamar", {}).get("tu_origen_puede_llamar"))
+    if _dicho97 != _esperado97:
+        fallos.append(
+            f"BLOQUE97: `/verificar` dice que «{_o97}» ({_que97}) puede llamar={_dicho97} y la "
+            f"puerta de verdad dice {_esperado97}. Esa respuesta existe para mirarla desde el "
+            f"movil cuando la app dice «problema de conexion»: si miente, manda a buscar el "
+            f"fallo al sitio equivocado")
+
+print(f"  {len(_PERMITIDOS_97)} origenes que tienen que poder · {len(_PROHIBIDOS_97)} que no · "
+      f"y `/verificar` dice lo mismo que la puerta en los {len(_PERMITIDOS_97)+len(_PROHIBIDOS_97)}")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 _hay_fuentes = _os_b18.path.isdir(_RUTA_FUENTES)

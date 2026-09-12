@@ -23,6 +23,63 @@
 
 
 
+## En qué forma química viene el fósforo de los suplementos  ·  _Multivitamínico, Calcio, Vitamina B, Hierro_
+
+**Añadido el 12 de septiembre de 2026, leyendo enteros Dobenecker 2021 (PLOS
+ONE) y Hofmann 2025 (JAPAN).** Los dos estudios miden lo mismo desde dos lados y
+llegan a la misma frontera: **lo que hace daño no es cuánto fósforo hay, es qué
+sal es y si se disuelve**.
+
+- Dobenecker dio a ocho beagles cinco veces su requisito de fósforo cambiando
+  solo la fuente. Con harina de canal de ave (orgánico) no pasó nada. Con
+  NaH₂PO₄ o KH₂PO₄ (inorgánicos solubles) subieron el fósforo en suero, la PTH,
+  el FGF23 y los dos marcadores de recambio óseo, y el producto Ca×P pasó de 55
+  mg²/dl² desde la primera hora. Su conclusión: *«The use of Pi in food can
+  therefore not be considered as safe.»*
+- Hofmann matiza y es lo que hace que esto sea una pregunta y no una alarma: el
+  fosfato **dicálcico** (CaHPO₄·2H₂O) es inorgánico y está en el lado bueno, con
+  solubilidad **0 %** al minuto y a los 90 minutos. La frontera es soluble contra
+  insoluble, no orgánico contra inorgánico.
+
+**MEDIDO sobre los 216 menús del catálogo precalculado:** el multivitamínico
+aporta de media el **17,3 %** del fósforo del menú, hasta un **39,6 %** en el
+peor, y **no hay ni un menú donde aporte 0 %**. O sea que hasta cuatro de cada
+diez miligramos de fósforo de una ración salen de un bote, y no sabemos la sal.
+
+⚠️ Y una cosa más, del mismo estudio, que quita la protección que uno supondría:
+*«a mere increase of the Ca/P ratio in a product with considerable amounts of
+soluble Pi salts does not suffice to protect the user from a high P burden»*.
+Subir el ratio calcio:fósforo de 1,4 a 1,9 no evitó nada. El motor aplica ese
+ratio y el techo de fósforo por 1000 kcal, y ninguno de los dos ve esto.
+
+**El dato que falta es uno por producto: la lista de ingredientes de la etiqueta,
+y de ahí qué compuesto de fósforo lleva.** Viene en el bote, en la línea de
+«composición» o «aditivos». Lo que hay que apuntar es el nombre de la sal
+(fosfato dicálcico / monocálcico / monosódico / monopotásico / trifosfato…), o
+«no lo declara» si la etiqueta no lo dice, que también es una respuesta.
+
+| Producto | Categoría | Fósforo declarado (mg/100 g) | Forma química |
+|---|---|---|---|
+| V-INTEGRA Cachorro | Multivitamínico | 9200 | |
+| V-INTEGRA Epato | Multivitamínico | 6900 | |
+| napfcheck Novomineral proLEBER | Multivitamínico | 6000 | |
+| Homemadekun (multivitamínico completo) | Multivitamínico | 5400 | |
+| V-INTEGRA Perro Adulto | Multivitamínico | 5200 | |
+| V-INTEGRA Senior | Multivitamínico | 5000 | |
+| astoral MultiVital BARF | Multivitamínico | 800 | |
+| NEKTON Dog Easy-BARF (multivitamínico) | Multivitamínico | 100 | |
+
+Los otros cinco que declaran fósforo **no hacen falta**, y se dice por qué para
+que nadie los busque: `GRAU Levadura de cerveza` (1400) y `PAWS & PATCH Levadura
+de cerveza` (1100) son levadura, o sea fósforo orgánico del propio alimento;
+`AniForte Beef Blood Powder` (300) es sangre; y las dos cáscaras de huevo (100 y
+90) son carbonato cálcico con el fósforo residual del propio huevo. Ninguno lleva
+fosfato añadido.
+
+**No lo rellena el asistente.** Cuando estén los ocho, la decisión de si hay que
+hacer algo va con las dos fuentes delante: está en `PREGUNTAS_ABIERTAS.md`.
+
+
 ## Peso del cacito de los suplementos en polvo
 
 **Añadido el 24 de agosto.** Midiendo las cantidades no medibles salieron
