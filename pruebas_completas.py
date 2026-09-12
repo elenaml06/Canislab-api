@@ -10205,6 +10205,17 @@ _CIFRAS_64 = [
     ("encefalopatia_hepatica", "de_donde_viene_la_proteina", "Consider vegetarian protein sources"),
     ("urato", "profesional", "Does not necessarily mean low protein"),
     ("oxalato", "vitamina_c_y_densidad_urinaria", "Avoid vitamin C supplementation"),
+    # Y el del 12 de septiembre por la tarde, de leer ENTERA la seccion XI de
+    # Ettinger (25 capitulos, del 170 al 194). Su cap.186 prohibe durante la
+    # dieta de eliminacion exactamente lo que este motor mete SIEMPRE por la
+    # regla 5 -- aceites, semillas, huevo, sal y casi siempre aceite de salmon --
+    # asi que el menu que sale de aqui sirve para COMER y no para DIAGNOSTICAR.
+    # El motor no puede arreglarlo (sin suplementos no cierra los 43 requisitos):
+    # lo que puede es decirlo, y las dos duraciones son lo que le falta al dueño
+    # para saber cuanto dura lo que esta haciendo.
+    ("reaccion_adversa_alimento", "lo_que_la_prueba_no_puede_llevar", "no se permiten premios, huesos, sobras de la mesa"),
+    ("reaccion_adversa_alimento", "lo_que_la_prueba_no_puede_llevar", "8 a 10 semanas"),
+    ("reaccion_adversa_alimento", "lo_que_la_prueba_no_puede_llevar", "2 a 4 semanas"),
     ("oxalato", "vitamina_c_y_densidad_urinaria", "USG ≤1.020"),
 ]
 for _pat64, _clave64, _trozo64 in _CIFRAS_64:

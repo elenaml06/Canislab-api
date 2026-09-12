@@ -56,7 +56,7 @@ la tabla. Esos se quedan y se quedan todos.
 | Köber 2017 | sí (11-sep) | Cazó tres fichas con el calcio ×10 bajo |
 | WSAVA — **los 18 documentos** | **leídos enteros (12-sep)** | Eran dos de 18. Los otros 16 confirman la banda de BCS 4-5 en **cinco** sitios distintos, dan la banda de incertidumbre del DER (**±30 % en el perro**) y confirman los 7-10 días de nuestro plan de transición. ⚠️ Y su tabla de kcal **no cuadra con su propia nota al pie**: los números salen de 84-105 kcal/kg^0,75 y la nota dice 95-130. Abajo |
 | **Spitze 2003** | **no está en el repo** | Decide la taurina de 89 fichas |
-| Ettinger & Feldman | **empezado el 12-sep: leída entera su sección de NUTRICIÓN** (capítulos 167 y 170-173 hasta ahora, de los 167-194 que la forman). El resto del tratado, no | 255.458 líneas en dos tomos, 42 menciones en el repo. ⚠️ Y la suposición con la que lo dejé ayer —«es medicina interna, la densidad de cifras será baja»— **era falsa**: tiene dentro un libro de nutrición entero, la sección XI, **28 capítulos (167-194)** escritos por Cline, Villaverde, Freeman, Bartges, Hill, Michel y Biourge, o sea los mismos nombres que firman AAHA, Ishii y media bibliografía del repo. Y **está en español**, que es lo que obligó a arreglar el auditor de citas el mismo día. Abajo |
+| Ettinger & Feldman | ✅ **su sección de NUTRICIÓN, leída ENTERA el 12-sep**: son **25 capítulos, del 170 al 194** (no 28 desde el 167 — la corrección está abajo), más el 167, 168 y 169, que son el final de la sección anterior. El resto del tratado, no | 255.458 líneas en dos tomos, 42 menciones en el repo. ⚠️ Y la suposición con la que lo dejé ayer —que es medicina interna y la densidad de cifras sería baja— **era falsa**: tiene dentro un libro de nutrición entero, la sección XI, escrita por Cline, Villaverde, Freeman, Bartges, Hill, Michel y Biourge, o sea los mismos nombres que firman AAHA, Ishii y media bibliografía del repo. Y **está en español**, que es lo que obligó a arreglar el auditor de citas el mismo día. Abajo |
 | Dobenecker / Hofmann | **los dos leídos enteros (12-sep)** | El de 2021 (PLOS ONE, 8 beagles) y el de 2025 (JAPAN, 8 foxhound). Abajo. Sale una cosa que el motor no puede ver y que vale hasta el **39,6 %** del fósforo de un menú: **en qué forma química viene el fósforo de los multivitamínicos**. Y una advertencia sobre nuestra propia protección: subir el ratio Ca:P NO protege de un fosfato soluble |
 | FCI — estándares de raza | **leído lo que hay: 33 estándares de 255 razas (12-sep)** | Se bajaron el 11-sep para dar fuente a los 255 pesos adultos de `razas.json`, que no la tienen. ⚠️ **Medido hoy: solo 9 de los 33 traen un peso en kg.** Los demás dan **altura a la cruz y no peso**, que es como se escribe un estándar de raza. O sea que esta fuente contesta como mucho una cuarta parte de la pregunta. Abajo |
 | Heer 2017 | **leída entera (12-sep)** | Es la tesis que **contesta la P-24** y a la vez la deja abierta por otro motivo: trae la ecuación del perro que faltaba (Behnsen 1992) y, rehecha la cuenta, **esa ecuación no cuadra ni con los datos que la propia fuente cita en la misma frase ni con su propia Figura 4**. Abajo |
@@ -586,8 +586,8 @@ escrito porque es la única fuente que **pide** el 4 en vez de admitirlo.
 capítulos. Es la última fuente grande que quedaba sin leer.
 
 ⚠️ **Lo primero es que la suposición con la que estaba archivada era falsa.** La
-fila de esta tabla decía «es un tratado de medicina interna, no de nutrición, así
-que la densidad de cifras de ración será mucho menor» — y tiene dentro **un libro
+fila de esta tabla decía que es un tratado de medicina interna y no de nutrición, así
+que la densidad de cifras de ración sería mucho menor — y tiene dentro **un libro
 de nutrición entero**: la sección XI, **28 capítulos (167 a 194)**, firmados por
 Martha Cline (la primera autora de las guías AAHA 2021), Cecilia Villaverde
 (coautora del manual español que cita Hervera), Lisa Freeman, Joseph Bartges,
@@ -599,9 +599,11 @@ escribiendo aquí en formato de manual.
 día: su suposición escrita era que «las fuentes están todas en inglés», y el LÉEME
 de esta fuente lo había dejado apuntado «para decidirlo».
 
-**Hasta dónde va la lectura.** Leídos enteros los capítulos **167, 170 a 173, 175,
-176, 177, 183, 184 y 185**. Faltan **178 a 182 y 186 a 194** (y el 174, que es
-felino), y falta el resto del tratado (los otros 332 capítulos), que no se ha
+**Hasta dónde va la lectura.** ✅ **La sección XI está leída ENTERA** — y son 25
+capítulos, del **170 al 194**, no 28 desde el 167: la corrección y las dos
+cabeceras de sección que la demuestran están abajo, en el apartado del 12-sep por
+la tarde. Leídos además el 167, el 168 y el 169, que son el final de la sección
+anterior. Falta el resto del tratado (los otros 335 capítulos), que no se ha
 abierto. Se dice así para que se pueda continuar.
 
 ### cap.172, Martha Cline — las ecuaciones de energía, y no son las nuestras
@@ -875,7 +877,7 @@ sodio para provocar diuresis (2.500) es más de **tres veces** nuestro techo.
 | Lo que dice | Decisión |
 |---|---|
 | *«A menudo se recomienda mantener una DEO inferior a 1,030 en gatos e inferior a 1,020 en perros en pacientes de riesgo»* | **Ya aplicado**: es la densidad urinaria que entró el 12-sep en el aviso de `oxalato` desde AAHA. **Segunda fuente, misma cifra** |
-| ⚠️ Cistina: *«En perros con cistinuria se han visto deficiencias de carnitina y de taurina, y se recomienda la taurina y la carnitina para prevenir la cardiomiopatía dilatada, especialmente si el animal está siendo alimentado con una dieta restringida en su precursor, la metionina»* | **PENDIENTE, y el motor tiene las dos cifras a mano.** `cistina` lleva hoy un techo de sodio y nada más, y `dcm_taurina_respondedora` ya aplica suelos de taurina (250) y L-carnitina (50 mg/1000 kcal). La fuente enlaza las dos patologías: la dieta que trata la cistinuria puede causar la miocardiopatía que el motor sabe prevenir. A `PREGUNTAS_ABIERTAS.md` |
+| ⚠️ Cistina: *«En perros con cistinuria se han visto deficiencias de carnitina y de taurina[...] y se recomienda la taurina y la carnitina para prevenir la cardiomiopatía dilatada, especialmente si el animal está siendo alimentado con una dieta restringida en su precursor, la metionina»* | **PENDIENTE, y el motor tiene las dos cifras a mano.** `cistina` lleva hoy un techo de sodio y nada más, y `dcm_taurina_respondedora` ya aplica suelos de taurina (250) y L-carnitina (50 mg/1000 kcal). La fuente enlaza las dos patologías: la dieta que trata la cistinuria puede causar la miocardiopatía que el motor sabe prevenir. A `PREGUNTAS_ABIERTAS.md` |
 | Urato: *«el contenido de purina de las proteínas varía (p. ej., es alto en vísceras y pescado)»* y *«Mediante la selección de las fuentes de proteína de la dieta, no es necesario una restricción severa para lograr concentraciones bajas de urato en la orina»* | **Coincide con lo que ya está escrito** en el aviso de `urato` y lo matiza bien: se puede bajar el urato eligiendo fuentes, sin restringir la proteína. Lo que nuestro catálogo mide es que **con alimentos frescos** esa selección no alcanza, porque la carne muscular sola ya deja la ración en casi cinco veces el objetivo |
 | Urato: *«Los cristales de urato son ligeramente menos solubles en orina ácida. Por lo tanto, la dieta no debe provocar la acidificación de la orina»*; estruvita: el objetivo de pH urinario es **6,0-6,3**; cistina: *«La solubilidad de la cistina depende en gran medida del pH, con una mayor solubilidad para pH por encima de 7,2»* | **No se aplica, y son las tres dianas que darían sentido a la P-24**: si el motor dijera hacia dónde empuja la ración, serviría para la estruvita (ácida), el urato y la cistina (alcalina). Y **para el oxalato no**, porque el mismo capítulo concluye que *«la importancia del pH de la orina para manejar el CaOx aún no se ha definido»* |
 | Sílice: *«evitar dietas ricas en ingredientes vegetales con alto contenido de sílice (p. ej., arroz integral o cáscaras de soja)»* | **No se aplica**: `urolitos_silice` no formula, y el catálogo no tiene arroz integral ni cáscara de soja. Queda escrito por si entran |
@@ -895,6 +897,159 @@ crudas debido al riesgo zoonótico»*, que es lo mismo que decía AAHA de los pe
 de terapia en Estados Unidos.
 
 Con esta van **cuatro** —AAHA, WSAVA, la TVT y Ettinger—. Todas a la P-20.
+
+---
+
+## Ettinger — el resto de su sección de nutrición, leída entera el 12-sep-2026
+
+⚠️ **Lo primero es una corrección de lo que puse esta misma mañana**: escribí que
+la sección XI son «28 capítulos (167 a 194)». **No.** El libro abre la SECCIÓN XI
+—*Consideraciones dietéticas de los problemas sistémicos*— justo antes del
+capítulo **170**, y la cierra al terminar el **194**: son **25 capítulos, del 170
+al 194**. Los 167, 168 y 169 son el final de la sección anterior. Se comprobó
+mirando las dos cabeceras de sección en el texto, no de memoria.
+
+**Con esto la sección XI queda LEÍDA ENTERA**, los 25 capítulos. Falta el resto
+del tratado (los otros 335), que sigue sin abrirse y se dice.
+
+### Los tres que no eran de nutrición, y el felino
+
+| Capítulo | Qué es | Veredicto |
+|---|---|---|
+| **168** (Johnson y Jordan) | Formulaciones magistrales: normativa de farmacia de EE.UU., estabilidad, fechas de uso | **No se aplica: no es nutrición.** Leído entero para poder decirlo |
+| **169** (Schwark) | Reacciones adversas a fármacos | **No se aplica.** Su única frase que roza el motor es que *«La obesidad o la conformación del cuerpo magro pueden afectar al volumen de distribución»* de un fármaco, que es farmacocinética y no ración |
+| **174** (Larsen) | Nutrición del gato adulto sano | **No se aplica: es felino.** Se leyó entero porque está dentro de la sección, y lo único que cruza de especie ya lo teníamos: que el historial dietético *«ha de incluir no solo la dieta principal utilizada, sino también las cantidades y tipos de golosinas y suplementos»* |
+| **189** (Chan) | Nutrición en cuidados intensivos: nutrición parenteral, catéteres, síndrome de realimentación | **No se aplica**: el motor formula una ración que se come por la boca. Su cifra de energía —*«RER = 70 × (peso corporal en kg)0,75»*— ya la teníamos por otras cuatro fuentes |
+| **193** (Dzanis) | Seguridad y normativa del alimento comercial | **No se aplica**: es la regulación de EE.UU. (FDA y AAFCO). La ley que manda aquí es el Reglamento (UE) 2020/354, que ya está en el repo y es la única fuente que es ley |
+
+### cap.178, Debra Zoran — la enteropatía, y un número de grasa más estricto que el nuestro
+
+| Lo que dice | Qué hacemos |
+|---|---|
+| ⚠️ *«por lo general, las dietas médicas para enfermedades gastrointestinales (p. ej., dietas muy digestibles o entéricas) idealmente deben tener una digestibilidad de CHO y proteínas de al menos un 88 % de MS»*, frente al *«70 y el 85 %»* de un alimento de mantenimiento corriente | **No se aplica, y es la primera cifra concreta que aparece para la P-16.** El motor **no mide digestibilidad**: suma los nutrientes que declara la ficha como si llegaran enteros al perro. Esta fuente dice que entre una dieta corriente y una entérica hay 18 puntos de diferencia, o sea que el mismo gramo de proteína no vale lo mismo. No hay forma de aplicarlo sin un dato por alimento que ninguna de las tres bases publica. Va a la P-16 con su cifra |
+| ⚠️ Para el perro con enteropatía, grasa *«6-15 % de MS en perros o <3 g de grasa/100 kcal»*; y en la linfangiectasia con albúmina <1,5 g/dl, *«concentraciones de grasa <3 g/100 kcal o <10 % de MS»* | ⚠️ **Es MÁS ESTRICTO que lo que aplica el motor y está en NUESTRA unidad.** 3 g/100 kcal son **30 g/1000 kcal** y el 10 % MS son **25**; el motor topa la grasa en **37,5** tanto en `enteropatia_cronica` como en `ple_linfangiectasia`, de las Tablas 57-1 y 58-1 de SACN5. O sea que es la **tercera** cifra para lo mismo, y cae **entre** las dos que ya estaban peleadas en `FEDIAF_CONTRA_OTRAS_FUENTES.md` §1 (SACN5 37,5 contra Fascetti 16,7). Medido antes de decidir: ver la P-32 |
+| Las dietas terapéuticas comerciales llevan *«una cantidad reducida de grasa, que varía del 4 al 12 % de MS, o menos de 3-4 g/100 kcal»* | Lo mismo, y sirve para leer la Tabla 178.1 |
+| La dieta de eliminación debe llevar *«una cantidad reducida de nuevas fuentes de proteínas o proteínas hidrolizadas»* y estar libre de aditivos | **Ya cubierto** por la forma en que el motor hace la reacción adversa: se elige la proteína en Personalizar y se excluye el resto en Alergias |
+| La deficiencia más común de la enteropatía grave son las vitaminas B *«especialmente cobalamina, y de algunas de las vitaminas liposolubles (E y K)»* | **Ya aplicado**: es lo que dice el aviso de `enteropatia_cronica`, que además trae la pauta inyectable |
+
+⚠️ **Y su Tabla 178.1 permite medir una cosa que el repo da por supuesta.** Publica
+**doce dietas** con la grasa en las dos unidades a la vez, g/100 kcal y % de materia
+seca, así que de cada una se puede despejar la densidad energética. Sale de **2.632
+a 4.149 kcal/kg de MS**, con la mediana en torno a **3.300**. El repo convierte
+TODO a la densidad de referencia de **4.000 kcal EM/kg MS**, que es la de FEDIAF.
+La consecuencia va por el lado bueno y conviene tenerla escrita: para un TECHO
+expresado en % de materia seca, convertir a 4.000 da un número **más bajo** —o sea
+más estricto— que convertir a la densidad real de esas dietas. No se cambia nada;
+queda medido.
+
+### cap.179, Marjorie Chandler — la pancreatitis, y confirma las dos cifras que ya aplicamos
+
+| Lo que dice | Qué hacemos |
+|---|---|
+| ⚠️ *«Se recomienda que los perros o gatos obesos o con pancreatitis hipertrigliceridémica se alimenten con dietas muy bajas en grasas, con un porcentaje de grasa en base a materia seca (MS) del 10 % o inferior para perros»*, y los no obesos y sin triglicéridos altos *«con menos de un 15»* | ⚠️ **Ya aplicado, y es la confirmación que le faltaba.** Son **25 y 37,5 g/1000 kcal** a 4.000 kcal/kg MS: exactamente el techo de `pancreatitis` (37,5) y exactamente el tope condicional que baja a 25. Hasta hoy esas dos cifras venían **solo** de la Tabla 67-3 de SACN5; ahora las dan **dos fuentes independientes con el mismo corte** (obeso o hipertrigliceridémico, sí o no) |
+| Y una tercera, ya en nuestra unidad: los perros con pancreatitis aguda *«son alimentados con dietas muy bajas en grasas (p. ej., menos de 25 g de grasa por 1.000 kcal)»* | **No se aplica al perro estable**: la frase es de la fase aguda hospitalaria, con sonda. Se anota porque es la **única cifra de grasa de todo el repo escrita directamente en g/1000 kcal**, sin conversión de por medio, y cuadra con el 10 % MS de arriba |
+| En la insuficiencia pancreática exocrina, *«Una dieta baja en grasas puede no ser necesaria a menos que la esteatorrea sea incontrolable»*, y una dieta más rica en grasa *«favorece la mejoría en la condición corporal, que a menudo es baja en animales con IPE»* | ⚠️ **Ya aplicado, y respalda una decisión que estaba escrita sin respaldo.** `insuficiencia_pancreatica_exocrina` usa el extremo ALTO de su rango (37,5) con el motivo escrito de que la dieta es un apoyo y apretar de más quita densidad energética a un perro que ya absorbe mal. Esta fuente dice justo eso, y con tres estudios |
+| La dosis de EPA+DHA *«(230 a 370 mg/kg0,75)»* no se ha estudiado en pancreatitis | **No se aplica**: es dosis por peso metabólico y el motor trabaja por 1000 kcal. Se anota junto a la del cap.182, que sí está en nuestra unidad |
+
+### cap.180, Craig Ruaux — la hepatopatía, y confirma que NO bajemos la proteína
+
+| Lo que dice | Qué hacemos |
+|---|---|
+| ⚠️ *«el uso de dietas «hepáticas» con un contenido de proteínas reducido no se recomienda para todos, ni incluso para la mayoría de animales con enfermedad hepática»*, porque *«La restricción de proteínas en la dieta en estos pacientes puede retardar la recuperación»* | ⚠️ **Ya aplicado, y era la pata que le faltaba a una decisión del 8-sep.** El motor **no baja la proteína** en `hepatopatia`: la cifra de Fascetti cap.13 (35-38,75 g/1000 kcal) queda entera por debajo del mínimo de FEDIAF y está en §1 de `FEDIAF_CONTRA_OTRAS_FUENTES.md` como no aplicada. Hasta hoy el motivo era formal —«está por debajo del suelo»—; ahora hay una fuente clínica que dice que además **sería equivocado** |
+| En la encefalopatía grave, *«La mayoría de los perros pueden manejarse con dietas que contengan de 3 a 4 g de proteína por cada 100 kcal de dieta»* | **No se aplica, y no se puede.** Son 30-40 g/1000 kcal, por debajo del mínimo de FEDIAF (52,1). Es exactamente por lo que `encefalopatia_hepatica` **no formula** menú automático. Confirma la decisión |
+| Las dietas de mantenimiento llevan *«un mínimo de 7,3 ppm de Cu, mientras que las dietas restringidas en Cu pueden contener tan solo 3 ppm de Cu en base a materia seca»* | **No se aplica: queda por debajo del suelo.** 3 ppm MS son 0,75 mg/1000 kcal y el mínimo de FEDIAF es 2,08. Es la **cuarta** cifra de cobre hepático del repo (Center 2,40 · SACN5 1,25 · Reglamento UE 2,50 · esta 0,75) y la tercera que cae bajo el suelo nutricional. Refuerza lo que ya dice la ficha: la hepatopatía por cobre real está por debajo de FEDIAF y eso es fase 4 |
+| El zinc se da *«en una dosis de carga de 100 mg de Zn elemental por vía oral dos veces por semana durante 3 semanas»* | **No se aplica: es un fármaco, no una ración.** Va entre comidas, a propósito, para bloquear el cobre en el enterocito. El menú no lo sustituye |
+
+### cap.181, Jennifer Larsen — la diabetes, y el hallazgo que toca una cifra viva
+
+| Lo que dice | Qué hacemos |
+|---|---|
+| ⚠️ *«si se elige una dieta rica en fibra, parece que la concentración de esta debe exceder los 55 g de FDT/Mcal, ya sea de una fuente de fibra insoluble o de una mixta, para que proporcione un efecto beneficioso»*. Y antes: *«no se observó beneficio alguno en perros con DM alimentados con dietas que contenían 18-20 g de FDT/Mcal cuando se compararon con dietas moderadamente bajas en fibra con 14 g de FDT/Mcal»* | ⚠️⚠️ **Esto cae justo encima del suelo de fibra de `diabetes`, que son 17,5 g/1000 kcal.** Y lo importante es la **unidad**: FDT es **fibra dietética total**, que es exactamente lo que trae el campo `fibra` del catálogo (BEDCA, CIQUAL y USDA publican fibra total). Los 17,5 del motor salen de convertir el «7 %» de la Tabla 29-3 de SACN5, que está en **fibra BRUTA** — el aviso de unidad ya estaba escrito en la ficha de `ple_linfangiectasia` desde el 11-sep, pero nadie había puesto las dos cifras una al lado de la otra. Puestas: el motor exige, en fibra total, un número que esta fuente mide y llama **sin efecto**. Medido y a la P-33 |
+| *«el uso de FC en lugar de FDT produjo una sobreestimación de carbohidratos de hasta un 93 %»* | **Refuerza lo anterior.** Es la segunda fuente que dice que las dos fibras no son intercambiables |
+| Para el diabético con intolerancia a la grasa, *«la experiencia clínica sugiere que es eficaz reducir la grasa de la dieta al menos un 50 % en base a la energía»* | **Ya aplicado por otro camino**: el tope condicional de `diabetes` baja la grasa al 30 % de las kcal si además hay pancreatitis o hiperlipidemia |
+| Todo el apartado de hipertiroidismo felino y yodo | **No se aplica: es felino** |
+
+### cap.182, Richard Hill — la hiperlipidemia, y el número que coincide con la vitamina E apagada
+
+| Lo que dice | Qué hacemos |
+|---|---|
+| *«Las dietas terapéuticas para perros disponibles comercialmente contienen la menor cantidad de grasa posible (<25 g de grasa/Mcal en alimentos para perros»*, y en algunos casos hace falta *«formular una dieta casera que contenga menos de 18 g de grasa/Mcal»* | **Se anota contra el techo de `hiperlipidemia`**, que hoy son 30 g/1000 kcal (12 % MS, Tabla 28-2 de SACN5). Esta fuente pide 25, y 18 en los rebeldes. Otra vez el patrón del cap.178: Ettinger aprieta por debajo de SACN5. Va a la misma P-32 |
+| El NRC *«sugirió una cantidad recomendada de 13,8 g de grasa/Mcal de EM»* para el perro adulto, con linoleico 2,8 y linolénico 0,11 g/Mcal | **Ya aplicado y clavado**: el mínimo de grasa de FEDIAF que usa el motor es **13,75**. Tres decimales de diferencia entre dos fuentes distintas |
+| ⚠️ Sobre la vitamina E, tras describir una dosis de 750 UI/Mcal como demasiado alta: *«Es probable que una dosis intermedia (100 UI/Mcal) inhiba la oxidación sin causar efectos secundarios indeseables»* | ⚠️ **Es EXACTAMENTE la cifra que está escrita y apagada.** 100 UI/Mcal de acetato de tocoferol son **67 mg/1000 kcal**, y el suelo de vitamina E del perro sano de `recomendaciones_libro.json` son **67,1**, sacados del «≥400 UI/kg MS» que SACN5 pide en cinco capítulos. Dos fuentes independientes, por dos caminos distintos (una por concentración en materia seca, la otra por dosis antioxidante), llegan al mismo número. **No lo enciende**: lo que lo tiene apagado no es la cifra, es que **el catálogo no tiene una ficha de vitamina E suelta**. Lo que hace es quitarle a esa pregunta el último «¿y si el número está mal?» |
+| La dosis de omega-3 *«para perros es de 0,22 g de aceite de pescado que contiene 66 mg de EPA + DHA/kg de PC/día. Esto es equivalente a aproximadamente 1 mg de EPA + DHA/kcal de EM»* | **Se anota para la P-29.** 1 mg/kcal son **1.000 mg/1000 kcal**, y es la primera dosis de omega-3 del repo escrita en la unidad del motor. La misma frase dice que **la dosificación por energía es preferible a la dosificación por peso**, *«que proporciona una cantidad desproporcionada de EPA y DHA en perros de razas grandes»* — que es justo por lo que el motor trabaja por 1000 kcal |
+| *«El aumento de calcio en las dietas del 1,1 al 3,6 % de materia seca, por ejemplo, puede inhibir la digestibilidad de las grasas en un 5 %»* | **No se aplica, y se anota porque nos toca**: una ración BARF va cargada de calcio del hueso. El efecto es del 5 % y el máximo de FEDIAF ya impide llegar al 3,6 % |
+
+### cap.186, Manon Paradis — la dermatología, y lo que el motor hace y NO debería durante la prueba
+
+| Lo que dice | Qué hacemos |
+|---|---|
+| ⚠️ Durante la prueba de eliminación, *«No se deben administrar otras fuentes de alimento (no se permiten premios, huesos, sobras de la mesa, juguetes para masticar con saborizantes; glucosamina, vitaminas, ácidos grasos esenciales omega-3, antiparasitarios con sabor oral, pasta de dientes con sabor»*, y *«Por lo general, no se recomienda agregar suplementos (p. ej., ácidos grasos esenciales [AGE], vitaminas, minerales) durante la prueba de eliminación, ya que esta prueba tiene un tiempo limitado» «y estos suplementos podrían ser fuentes potenciales de alérgenos (p. ej., aceite de pescado, cápsula de gelatina)»* | ⚠️ **APLICADO EL 12-sep como aviso**, porque es un choque de frente con cómo formula el motor y no estaba dicho en ninguna parte. La regla 5 deja **Suplementos y Extras siempre libres** —aceites, semillas, huevo, sal— porque son la herramienta con la que se cierran los 43 requisitos; o sea que un menú de `reaccion_adversa_alimento` lleva, casi seguro, aceite de salmón. Durante las 8-10 semanas de la PRUEBA eso es justo lo que la fuente prohíbe. No se toca el motor —quitarle los suplementos lo dejaría sin cerrar los requisitos, y la fuente misma admite que la dieta de prueba *«aunque incompletas y desequilibradas, se pueden utilizar de forma segura para la fase de diagnóstico»*, que es una decisión clínica y no de un solver—: se **dice**, que es lo que el motor puede hacer |
+| La prueba dura *«generalmente durante un periodo de 8 a 10 semanas»* con signos de piel, y en el cap.191, *«Si solo hay signos GI, la duración de la prueba suele ser de 2 a 4 semanas»* | **Aplicado en el mismo aviso.** Es el dato que le falta al dueño para saber cuánto dura lo que está haciendo |
+| Un *«exceso de suplementación imprudente (p. ej., deficiencia de cinc después de una suplementación excesiva de calcio)»* | **Ya cubierto por el máximo de calcio de FEDIAF**, que el motor aplica. Se anota porque nombra el mecanismo: en una ración con mucho hueso, el riesgo de zinc no es que falte en el catálogo sino que el calcio lo bloquee |
+| EPA de *«40-50 mg/kg»* al día para la dermatitis atópica | **No se aplica: es dosis por peso.** `dermatitis_atopica` lleva su suelo por 1000 kcal, que es la unidad del motor |
+| Vitamina A *«(800-1.000 UI/kg/día)»* para trastornos de cornificación | **No se aplica: es un fármaco.** Está muy por encima de cualquier techo de seguridad de una ración |
+
+### cap.187, Ronald Jan Corbee — el esqueleto, y la confirmación más limpia del día
+
+| Lo que dice | Qué hacemos |
+|---|---|
+| ⚠️ Para el cachorro de raza grande o gigante: *«las recomendaciones son más estrictas en cuanto a la densidad energética, la grasa dietética, el calcio y la relación calcio-fósforo (densidad energética = 3,5 a 4,1 kcal/g, grasa = 8,5 a 17 % de MS, calcio = 0,8 a 1,2 % de MS [o 2,0-3,0 g/1.000 kcal, o 0,5 a 0,7 g/MJ], Ca:P de 1,1:1 a 2:1, prefiriéndose el extremo inferior del intervalo [1,2:1])»* | ⚠️ **Confirma DOS cosas del motor a la vez, y una de ellas no la confirmaba nadie.** (1) El techo de calcio del cachorro de más de 25 kg de adulto son **2.750 mg/1000 kcal**, dentro de su banda 2.000-3.000; es la **tercera** fuente que lo pide (Fascetti cap.10, Tabla 17-1 de SACN5, y esta). (2) Y lo otro: **la fuente da la conversión hecha**. Dice que 0,8-1,2 % de MS «o 2,0-3,0 g/1.000 kcal», que solo cuadra si se convierte a **4.000 kcal EM/kg de MS** — que es la densidad de referencia con la que el repo convierte sus 104 cifras y que hasta hoy solo se apoyaba en FEDIAF. Dos fuentes, la misma constante |
+| El riesgo de enfermedad ortopédica del desarrollo es de las razas *«(>25 kg de peso adulto)»* | **Ya aplicado**: es el umbral con el que `recomendaciones_libro.json` parte el crecimiento en dos columnas, y es el de SACN5. Tercera fuente con el mismo corte. ⚠️ Y sigue sin ser el de la nota b de FEDIAF (15 kg), que decide otra cosa |
+| El Ca:P del cachorro, *«1,1:1 a 2:1»*, prefiriendo 1,2:1 | **No se aplica: el ratio Ca:P lo fija FEDIAF** (decisión de Elena del 12-sep, ver la P-23). Y esta misma fuente da el argumento de por qué eso no es grave: *«La cantidad total de calcio en el alimento es más importante que la relación calcio-fósforo en perros jóvenes en crecimiento»* — que es exactamente lo que el motor aprieta |
+| La panosteítis sale de que *«La ingesta en exceso de calcio en perros jóvenes conduce a una hiperplasia de las células productoras de calcitonina en la glándula tiroides»*, y *«Hasta el momento no se han demostrado otras causas distintas a la ingesta elevada de calcio»* | **Ya aplicado**: es el motivo escrito del techo de 1,1 % MS que cita Fascetti cap.10 |
+| Al cachorro grande *«se le debe alimentar para mantener un BCS entre 4/9 y 5/9»* | **Ya aplicado**: es la banda del motor, y van cuatro fuentes |
+| ⚠️ *«La suplementación de calcio como carbonato de calcio o lactato de calcio (y no fosfato de calcio o harina de huesos) a 50 mg de Ca/kg de peso corporal (PC) puede acelerar la mineralización»* | **Ya cumplido por el catálogo, y conviene que quede escrito porque fue suerte y no criterio**: las **dos** fichas de categoría Calcio son cáscara de huevo, que es carbonato cálcico. No hay ninguna ficha de fosfato cálcico ni de harina de hueso. El cap.192 da el motivo de la segunda mitad: la harina de huesos *«se ha dejado de usar debido a la preocupación por la contaminación por plomo»*. Queda escrito para el día que alguien proponga añadirlas |
+| Para la artrosis, el alimento *«debe proporcionar niveles de un 0,4 a un 1,1 % (MS) de ácido eicosapentaenoico (EPA)»* | ⚠️ **Es la misma cifra, palabra por palabra, que la Tabla 34-2 de SACN5** de la que sale el suelo de EPA de `artrosis` (1,0-2,75 g/1000 kcal). Dos fuentes idénticas. Sigue en `limites_escritos_que_el_solver_no_aplica` por lo que ya estaba medido, no por duda sobre el número |
+| El hiperparatiroidismo secundario nutricional sale de *«dietas caseras mal formuladas o con dietas basadas exclusivamente en carne»* | **Es la razón de ser del motor.** Se anota como tal |
+
+### cap.188, Glenna Mauldin — el cáncer
+
+| Lo que dice | Qué hacemos |
+|---|---|
+| Para el perro con cáncer y pérdida de peso, una dieta *«que proporcione entre el 40 y el 60 % de las calorías en forma de grasa»* y proteína *«(del 30 al 50 % de las calorías)»* | **No se aplica como límite.** Son 44-67 g de grasa y 75-125 g de proteína por 1000 kcal, o sea una banda muy ancha dentro de la que ya cae una ración BARF sin tocar nada. Y la propia fuente avisa de que *«un cambio de dieta no está necesariamente indicado cuando un animal con cáncer se alimenta con una dieta de buena calidad»* |
+| Usa *«REM = 110 (PCkg)3/4 en perros»* | **Ya aplicado**: es la ecuación del motor. ⚠️ Y choca con la del cap.172 del mismo libro (62 × PC^0,97), que ya está anotada esta mañana como contradicción interna |
+| De los omega-3 en la caquexia, *«se desconocen en ambas especies la dosis y el método de administración adecuados»* | **Confirma una decisión ya tomada**: el omega-3 del cáncer está en `limites_escritos_que_el_solver_no_aplica` precisamente por no tener dosis |
+
+### cap.190, Amy Farcas — la fibra, y por qué nuestra unidad no es la de las tablas
+
+| Lo que dice | Qué hacemos |
+|---|---|
+| ⚠️ *«El método de 200 años de antigüedad de fibra cruda (FC), sigue utilizándose para detectar las distintas porciones de FDI presentes en las muestras de alimentos»*, mientras que el de fibra dietética total *«mide tanto la FDI como las FDAPM»* pero *«no mide el componente de FDBPM»* | ⚠️ **Es la tercera fuente sobre el mismo agujero**, y añade algo: ni siquiera la fibra dietética «total» es total. El campo `fibra` del catálogo viene de bases humanas, que usan ese método; las tablas de patología de SACN5 están en fibra bruta. **No se corrige** porque sigue sin haber factor —la Tabla 5-9 de SACN5 lo mide entre 0 % y 82 % según el ingrediente—, pero ya no es un aviso suelto en una ficha: es lo que explica el hallazgo del cap.181 |
+| Todo lo demás del capítulo (efectos de cada fibra sobre heces, microbioma, tránsito, glucemia, lípidos e inmunidad) | **No se aplica: no hay cifras de ración.** Son tablas de «aumenta / disminuye / sin cambios» por tipo de fibra, y el motor no distingue tipos de fibra: tiene un solo campo |
+
+### cap.191, Jason Gagné — la reacción adversa al alimento
+
+| Lo que dice | Qué hacemos |
+|---|---|
+| ⚠️ *«Estudios han mostrado que más del 90 % de las recetas de dietas caseras no son completas, ni están formuladas de acuerdo con las recomendaciones de la Asociación Estadounidense de Funcionarios de Control de Alimentos»* | **Es la razón de ser del motor, dicha con número.** Se anota |
+| *«los alérgenos alimentarios más comunes son la carne de vacuno, los productos lácteos y el trigo»* | **Ya cubierto**: las alergias las elige quien usa la app y `exclusiones.py` arrastra la familia de especie |
+| *«Para el paciente con signos GI, se aconseja la restricción moderada de grasas y aportar una fuente de fibra fermentable»* | **Medio aplicado**: el techo de grasa está en `enteropatia_cronica`; la fibra fermentable no, y es de las que la Tabla 57-1 deja a criterio del veterinario por dar dos enfoques opuestos |
+| *«el 75 % de las dietas de venta libre con venado contenían aves de corral, soja y/o carne de vaca»* | **No se aplica al motor** —aquí los ingredientes los pone el dueño— pero es el argumento de por qué una dieta casera controlada puede ser MEJOR que una comercial en este caso concreto. Se anota |
+
+### cap.192, Perea y Delaney — las dietas caseras y crudas: la quinta fuente contra el crudo
+
+Es el capítulo que habla literalmente de lo que hace esta app, y hay que leerlo
+entero antes de citar media frase.
+
+| Lo que dice | Qué hacemos |
+|---|---|
+| ⚠️ De 200 recetas caseras publicadas, *«la mayoría de las recetas (95 %) tenían al menos un nutriente esencial en concentraciones que no cumplían con las pautas del Consejo Nacional de Investigación (NRC) o de la AAFCO, y muchas recetas (83,5 %) tenían múltiples deficiencias. Las carencias de nutrientes más comunes fueron el cinc, la colina, el cobre, la combinación de ácido eicosapentaenoico (EPA) más ácido docosahexaenoico (DHA), el Ca, la vitamina D y la vitamina E»* | ⚠️ **Es la lista de lo que el motor verifica, y coincide.** Los siete están entre los 43 requisitos y ninguno puede salir corto de `_garantizar_verificado`. Conviene mirarla al revés: esas siete son las que más fallan cuando se formula a mano, o sea las que justifican que exista el solver |
+| De cinco dietas crudas analizadas, *«todas tenían nutrientes esenciales por debajo de los niveles mínimos recomendados por la AAFCO»*, y las tres caseras *«tenían proporciones mal equilibradas de calcio y fósforo (Ca, P), dos tenían niveles excesivos de vitamina D y una tenía niveles excesivos de vitamina E»* | **Ya cubierto en las tres**: el Ca:P es una restricción dura, la vitamina D es uno de los cinco topes crónicos y la vitamina E no tiene máximo en FEDIAF. Es la **quinta** fuente sobre el riesgo del crudo, y la única que dice qué se rompe exactamente |
+| *«La FDA no aboga por una dieta cruda de carne, de aves de corral o mariscos en mascotas, pero está intensificando sus esfuerzos para minimizar el riesgo»* | **A la P-20**, con AAHA, WSAVA, la TVT y el cap.171 del mismo libro |
+| ⚠️ *«Los alimentos y premios desequilibrados no se deben proporcionar en más de un 10 % de la ingesta calórica diaria total. Cuando se agregan alimentos desequilibrados a una dieta completa y equilibrada, se produce una dilución de nutrientes, y los nutrientes esenciales pueden quedar por debajo de los requerimientos mínimos»* | ⚠️ **Ya aplicado, y es la frase que mejor describe la regla 3-bis del motor**, incluida la palabra: *dilución de nutrientes*. Con esta van **trece** apariciones del 10 % en las fuentes del repo |
+| *«la carne tiene un alto contenido de P y, cuando se agrega a una dieta completa y equilibrada, puede producir un desequilibrio en la proporción de Ca:P»*, y *«el hígado puede tener un alto contenido de algunas vitaminas y minerales, como la vitamina A»* | **Ya aplicado**: son las dos cosas que los premios del motor no pueden compensar, y por eso los mínimos se escalan y los máximos no |
+| El aceite de oliva *«tiene niveles bajos de ácido linoleico, lo que requiere de 4 a 5 veces la cantidad de aceite de oliva (en comparación con los aceites de maíz o nuez) para cumplir con los requerimientos mínimos, y esto aumenta significativamente el contenido de grasa»* | ⚠️ **Nos toca: el catálogo tiene DOS fichas de aceite de oliva** y ninguna de maíz o de nuez. No se aplica nada —el solver ya ve el linoleico de cada ficha y elige lo que cuadra— pero explica por qué al motor le cuesta cerrar el linoleico con lo que hay. **No va a `DATOS_QUE_FALTAN.md`**, que es para valores que le faltan a una ficha que existe: esto es una ficha que no está. Queda escrito aquí, con su cifra, para quien decida qué entra en el catálogo |
+| *«La sal ligera proporciona una mezcla 50:50 de sal yodada y un sustituto de la sal»*, y los sustitutos de sal *«no proporcionan yodo»* | **Ya correcto**: la ficha del catálogo es *Sal común (cloruro sódico)* y el yodo entra por sus dos fichas propias, no por la sal |
+| *«La mayoría de los suplementos multivitamínicos/multiminerales diseñados para personas están limitados en una o más vitaminas esenciales y oligoelementos necesarios para cumplir con las recomendaciones mínimas caninas y felinas»* | **Ya cubierto**: los diez multivitamínicos del catálogo son de perro, no humanos. Y es otra razón por la que hace falta la ficha de vitamina E suelta |
+
+### cap.194, Nick Cave — la inmunología, y la TERCERA fuente contra el ratio omega-6:omega-3
+
+| Lo que dice | Qué hacemos |
+|---|---|
+| ⚠️ *«la reducción de la descripción del contenido de grasa de una dieta a la simple proporción de PUFA n-6:n-3 aporta información muy limitada y potencialmente engañosa»* | ⚠️ **Es la tercera fuente que dice lo mismo**, después del NRC 2006 cap.5 (*«is not helpful»*) y de la propia FEDIAF, que no lo pide. Importa porque el ratio omega-6:omega-3 es uno de los tres puntos que `REVISION_NUTRICIONISTA.md` señala como «sigue sin estar», y porque la revisora de la app lo pidió literalmente. La respuesta ya no es «no tenemos cifra»: es que **tres fuentes independientes desaconsejan usar ese ratio** y las tres proponen lo mismo en su lugar, una dosis absoluta de omega-3 de cadena larga. Lo que el motor aplica —suelos de EPA y de EPA+DHA por 1000 kcal— es exactamente eso |
+| *«La dosis total recomendada de aceite de pescado es de un 0,2 a un 2 % de la dieta por peso al día, o un máximo de 0,4 g de EPA/100 kcal, incluido el contenido de n-3 de la dieta»* | **Ya cubierto, y por el lado estricto.** 0,4 g/100 kcal son **4.000 mg de EPA por 1000 kcal** como TECHO. El motor no pone máximo por menú a propósito —está escrito en la fila `EPA_DHA_total` y el motivo es que 18 de los 20 pescados del catálogo lo pasarían ellos solos— pero sí lo pone **en el promedio de la semana**, a 2.800 mg/1000 kcal, que es más estricto que este |
+| La deficiencia de vitamina E da *«Aumento de IgE, aumento de la producción de PGE2»* y *«¿Aumento de los signos de enfermedad atópica?»* | **Se anota junto al suelo de vitamina E apagado.** Es un tercer motivo clínico, no una cifra |
+| Todo lo demás (leptina, glutamina, genisteína, luteína, arginina en sepsis) | **No se aplica**: son mecanismos y dosis de cuidados intensivos, sin cifra de ración para el perro estable |
 
 ---
 

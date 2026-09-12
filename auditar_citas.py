@@ -252,6 +252,14 @@ def _norm(t):
     t = t.replace("≤", "<=").replace("≥", ">=")
     t = re.sub(r"-{2,}", "-", t)
     t = re.sub(r"\s+%", "%", t)
+    # ⚠️ PERO «[...]» NO ES UNA ACLARACION NUESTRA: es la marca de que la cita
+    # SALTA un trozo, y la regla de abajo se la comia (12 de septiembre). Con
+    # ella borrada, «de taurina[...] y se recomienda» quedaba «de taurina y se
+    # recomienda» y se buscaba entero en la fuente, que ahi tiene el numero de
+    # referencia bibliografica pegado («de taurina71, y se recomienda»). La cita
+    # era literal y salia acusada. Se convierte en «...», que es el separador
+    # que el troceado sí entiende.
+    t = t.replace("[...]", "...")
     t = re.sub(r"\[[^\]]{0,60}\]", " ", t)
     # ⚠️ EL SEPARADOR DE LOS NUMEROS, que es nuestro y no de la fuente. Al
     # transcribir a español se escribe «4,91 % DM» donde el original pone
@@ -435,7 +443,45 @@ def recoger():
             # que esta en el repo se audita como cualquier otra.
             ini = t.rfind("\n\n", 0, m.start())
             ctx = t[ini + 2 if ini >= 0 else 0:m.end() + 200]
-            if _parece_de_fuente(c) or _quien_dice(ctx)[1] in _FUENTES_EN_ESPANOL:
+            # ⚠️ Y PARA DECIDIR SI ES ESPAÑOL DE FUENTE, EL PARRAFO NO BASTA (12
+            # de septiembre, por la tarde). La regla de arriba se estreno por la
+            # mañana y esa misma tarde entraron ~50 citas nuevas de Ettinger en
+            # `LECTURAS.md` y NO SE AUDITO NINGUNA: el metodo de lectura escribe
+            # los hallazgos en TABLAS de Markdown, y el parrafo de una fila de
+            # tabla es la tabla, que empieza en «| Lo que dice | Que hacemos |» y
+            # no nombra a nadie. Quien nombra la fuente es el TITULO que hay
+            # encima. Asi que para esta prueba -- y solo para esta -- se mira
+            # ademas el titulo Markdown mas cercano por arriba. No se toca el
+            # `ctx` con el que se CLASIFICA la cita, porque ahi el parrafo es lo
+            # correcto y meter el titulo volveria a pegar la fuente de al lado,
+            # que es el fallo que ese comentario de abajo explica.
+            # Se miran DOS titulos, no uno: el mas cercano de cualquier nivel y
+            # el `##` mas cercano. El `##` es el que nombra la fuente en
+            # `LECTURAS.md` («## Ettinger -- ...»), y el cercano suele ser el
+            # capitulo («### cap.178, Debra Zoran -- ...»), que NO la nombra.
+            # Con solo el cercano se auditaban 3 citas de 50.
+            ctx_titulo = ctx
+            for marca in ("\n#", "\n## "):
+                i = t.rfind(marca, 0, m.start())
+                if i >= 0:
+                    ctx_titulo = t[i:t.find("\n", i + 1)] + " " + ctx_titulo
+            # ⚠️ Y SE PREGUNTA SI APARECE ALGUNA FUENTE EN ESPAÑOL, no si la
+            # PRIMERA que aparece lo esta. `_quien_dice` devuelve una sola
+            # fuente, la primera de su lista que case, y un parrafo que compara
+            # dos fuentes nombra a las dos: la P-32 de `PREGUNTAS_ABIERTAS.md`
+            # enfrenta a SACN5 con Ettinger, salia «sacn5», y sus ocho citas de
+            # Ettinger EN ESPAÑOL no se auditaban. Esa es justo la forma que
+            # tiene una discrepancia, o sea la clase de parrafo donde mas
+            # importa que la cita sea literal.
+            esp = _clave_en(_FUENTES_EN_ESPANOL, " ".join(ctx_titulo.lower().split()))
+            if _parece_de_fuente(c) or esp:
+                # Y si el parrafo no nombra a NADIE, se guarda el contexto con
+                # titulo para clasificarla. Si no, una cita de Ettinger que no
+                # apareciera caia en «no dice de donde sale», que es la casilla
+                # tranquila, en vez de en «cita una fuente que SI esta y no
+                # aparece», que es la que hay que mirar. Paso con la primera.
+                if _quien_dice(ctx)[0] == "sin decir":
+                    ctx = ctx_titulo
                 # el contexto es el PARRAFO de la cita, no un trozo fijo de
                 # caracteres: con 400 hacia atras se pegaba la fuente de la cita
                 # de al lado, y una cita de Today's Veterinary Practice salia
@@ -496,7 +542,12 @@ def auditar(mostrar_todas=False):
         # otras siete palabras en medio. Salia «no encontrada» estando en cap27
         # palabra por palabra. Con 12 se comprueban los dos trozos por separado,
         # que es lo que significa una cita con puntos suspensivos.
-        trozos = [x for x in re.split(r"\s*(?:\.\.\.|…|\[\.\.\.\])\s*", n) if len(x) >= 12]
+        # El corchete va PRIMERO en la alternancia, que es el patron mas largo:
+        # las alternancias de Python se prueban en orden y `\.\.\.` casaria
+        # dentro de `[...]`, partiendo por el sitio equivocado. Hoy no llega
+        # ninguno -- `_norm` convierte «[...]» en «...» antes -- pero el orden
+        # bueno cuesta nada y el malo es invisible.
+        trozos = [x for x in re.split(r"\s*(?:\[\.\.\.\]|\.\.\.|…)\s*", n) if len(x) >= 12]
         if not trozos:
             trozos = [n]
         # ⚠️ EL PUNTO FINAL DE LA CITA, que casi nunca esta en la fuente. Citar

@@ -272,6 +272,47 @@ la frase es del párrafo **felino**, y el estudio **canino** del mismo capítulo
 usó 400 mg/1000 kcal con beneficio medido. Decisión clínica, en
 `PREGUNTAS_ABIERTAS.md`.
 
+### La grasa de tres patologías digestivas: Ettinger aprieta por debajo de SACN5
+
+⚠️ Añadido el 12 de septiembre, al leer entera la sección XI de Ettinger. Es el
+mismo caso que el fósforo del oxalato —dos fuentes clínicas y FEDIAF sin
+pronunciarse, porque su único límite de grasa es un **mínimo** de 13,75— y toca
+tres patologías a la vez.
+
+| Patología | Lo que aplica el motor | De dónde sale | Lo que pide Ettinger |
+|---|---|---|---|
+| `enteropatia_cronica` | 37,5 g/1000 kcal | SACN5 Tabla 57-1 | cap.178: *«6-15 % de MS en perros o <3 g de grasa/100 kcal»* = **30** |
+| `ple_linfangiectasia` | 37,5 | SACN5 Tabla 58-1 | cap.178, con albúmina <1,5 g/dl: *«concentraciones de grasa <3 g/100 kcal o <10 % de MS»* = **30** o **25** |
+| `hiperlipidemia` | 30 | SACN5 Tabla 28-2 | cap.182: *«<25 g de grasa/Mcal en alimentos para perros»*, y en los rebeldes *«menos de 18 g de grasa/Mcal»* = **25** y **18** |
+
+**Y aporta algo que ninguna de las otras dos tenía: la cifra en las DOS unidades a
+la vez.** El caso de la linfangiectasia llevaba desde el 10 de septiembre en §1 de
+esta lista como una pelea de unidades —SACN5 daba el «15 %» en materia seca (37,5)
+y Fascetti el mismo «15 %» en kcal (16,7), un factor de 2,2—. Ettinger escribe las
+dos («6-15 % de MS **o** <3 g/100 kcal»), cae en medio, y convierte la pregunta en
+una de números y no de unidades.
+
+Medido con el solver, escalera entera, adultos de 3, 10, 22 y 40 kg: los **30**
+caben en los cuatro pesos (peldaño 2), los **25** también salvo en la enteropatía,
+que se va al último peldaño por su techo de potasio, y los **18** de la
+hiperlipidemia **no salen en ningún peldaño ni en ningún peso**. Las tres tablas
+completas y la decisión pendiente, en `PREGUNTAS_ABIERTAS.md` P-32.
+
+### La fibra de la diabetes: no es discrepancia de cifra, es de UNIDAD
+
+El motor exige un suelo de **17,5 g/1000 kcal**, convertido del «7 % de materia
+seca» de la Tabla 29-3 de SACN5, que está en **fibra bruta**. El cap.181 de
+Ettinger da el umbral de beneficio en **fibra dietética total**, que es la unidad
+del catálogo: *«la concentración de esta debe exceder los 55 g de FDT/Mcal»*, y
+mide que con *«18-20 g de FDT/Mcal»* no hubo beneficio ninguno.
+
+No es que una fuente pida más que la otra: es que **el número del motor está en la
+unidad equivocada** y nadie tiene el factor para pasarlo (la Tabla 5-9 de SACN5 lo
+mide entre el 0 % y el 82 % según el ingrediente). Detalle, medida y pregunta:
+`PREGUNTAS_ABIERTAS.md` P-33.
+
+---
+
 ---
 
 ## 4 · Lo que esta lista NO es

@@ -807,6 +807,18 @@ cruda va sobrada; el hueso molido, el cartílago y la laringe de vacuno no está
 claro que lleguen. Si un menú se apoya mucho en ellos, los mínimos de FEDIAF se
 están aplicando fuera de su rango declarado de validez.
 
+⚠️ **AMPLIADA EL 12 DE SEPTIEMBRE, leyendo el cap.178 de Ettinger (Debra Zoran), que
+trae la primera cifra concreta de todo el repo para esto.** Dice que un alimento de
+mantenimiento corriente tiene una digestibilidad de proteína e hidratos de entre el
+*«70 y el 85 %»* de materia seca, y que las dietas médicas digestivas *«idealmente
+deben tener una digestibilidad de CHO y proteínas de al menos un 88 % de MS»*.
+
+O sea que entre una dieta corriente y una entérica hay hasta **18 puntos**, y el
+motor **no ve ninguno de los dos**: suma los nutrientes que declara cada ficha como
+si llegaran enteros al perro. Y el umbral de validez de FEDIAF (≥70 % MS, ≥80 %
+proteína) cae **dentro** de la banda del alimento corriente, no por encima: no es un
+listón lejano, es la mitad baja de lo normal.
+
 **La pregunta:** ¿hace falta el dato por ficha, o basta con un aviso cuando un
 menú se apoya por encima de cierto porcentaje en hueso y cartílago?
 
@@ -1012,6 +1024,32 @@ pregunta es **qué se hace con esto**, y son tres cosas distintas:
 Nota aparte, del mismo tipo que la que ya lleva ACVIM: la guía declara quién la
 paga — «These guidelines are supported by generous educational grants from
 Hill's Pet Nutrition, Inc., Purina Pro Plan Veterinary Diets, and Royal Canin».
+
+⚠️ **Y el 12 de septiembre por la tarde entró la QUINTA fuente, que es la que más
+pesa de las cinco, porque es la agencia reguladora.** Ettinger cap.192 (Perea y
+Delaney, el capítulo dedicado a las dietas caseras, vegetarianas y crudas) cita la
+postura de la FDA estadounidense: *«La FDA no aboga por una dieta cruda de carne, de
+aves de corral o mariscos en mascotas, pero está intensificando sus esfuerzos para
+minimizar el riesgo que estos alimentos puedan representar para la salud animal y
+humana porque entendemos que algunas personas prefieren alimentar a sus mascotas con
+este tipo de dietas»*.
+
+Y es el único de los cinco que dice **qué se rompe exactamente**. De cinco dietas
+crudas analizadas (dos comerciales y tres caseras), *«todas tenían nutrientes
+esenciales por debajo de los niveles mínimos recomendados por la AAFCO»*, y de las
+tres caseras, *«tenían proporciones mal equilibradas de calcio y fósforo (Ca, P), dos
+tenían niveles excesivos de vitamina D y una tenía niveles excesivos de vitamina E»*.
+
+**Eso cambia el tono de la respuesta, y conviene verlo.** Las tres cosas que esa
+fuente encuentra rotas en las dietas crudas caseras son exactamente tres de las que
+el motor comprueba de cero en cada menú: el ratio Ca:P es una restricción dura del
+solver, la vitamina D es uno de los cinco topes de seguridad crónica, y la vitamina E
+no tiene máximo en FEDIAF pero sí se mide. O sea que lo que estas cinco fuentes
+desaconsejan es **el crudo formulado a ojo**, que es justo lo que este motor existe
+para no hacer. La misma frase de la FDA reconoce que hay gente que va a dar crudo
+igual y que lo que procede entonces es reducir el riesgo. Sigue siendo una decisión
+de producto y no la tomo yo, pero la pregunta ya no es «¿cómo lo contamos?» sino
+«¿lo contamos con los tres números al lado?».
 
 ---
 
@@ -1526,10 +1564,31 @@ decide solo:
    reducida/alterada de alimentos o caquexia»*. Eso es un dato clínico —apetito y
    masa muscular— que la ficha **no pregunta** (es la P-17).
 
+⚠️ **AMPLIADA LA MISMA TARDE, leyendo el cap.182 (Richard Hill), que quita la mitad
+del problema.** La objeción 1 —que la dosis venga por kg y no por 1000 kcal— deja de
+ser un obstáculo, porque ese capítulo da la conversión hecha **y dice que la buena es
+la nuestra**:
+
+> *«la recomendación estándar para perros es de 0,22 g de aceite de pescado que
+> contiene 66 mg de EPA + DHA/kg de PC/día. Esto es equivalente a aproximadamente 1
+> mg de EPA + DHA/kcal de EM, asumiendo que un perro de 10 kg consume
+> aproximadamente 120 kcal/kg0,75 diariamente»*
+
+Y, en la misma página: *«La dosificación basada en la EM es preferible a la
+dosificación por PC, que proporciona una cantidad desproporcionada de EPA y DHA en
+perros de razas grandes»*.
+
+**1 mg/kcal son 1.000 mg/1000 kcal**, que es exactamente el orden de las dos cifras
+medidas arriba (1,05 y 1,38 g/1000 kcal) y del suelo de EPA que la artrosis ya
+aplica. Tres cálculos por tres caminos distintos y el mismo número.
+
+Queda en pie la objeción 2, que es la que de verdad decide: la fuente cardíaca
+condiciona la dosis a un dato clínico que la ficha no pregunta.
+
 **La pregunta:** ¿se le pone un suelo de EPA+DHA a la cardiopatía? Y si sí, ¿a
 todas las claves o solo a los estadios C y D, que son la ICC de la que habla la
-fuente? ¿Y con qué cifra, dado que la de la fuente depende del peso y la del motor
-tiene que ser por 1000 kcal?
+fuente? La cifra ya no es un problema: **1.000 mg/1000 kcal**, que es lo que dice
+el cap.182 en la unidad del motor.
 
 ---
 
@@ -1631,6 +1690,193 @@ riesgo.
 suelos de taurina y L-carnitina? ¿Y debe decirlo el aviso de `cistina` aunque hoy
 esa patología no genere menú, para que quien la marque sepa que la dieta que va a
 pautar tiene ese efecto?
+
+
+---
+
+### P-32 · Ettinger aprieta la grasa por debajo de SACN5 en tres patologías digestivas, y una de sus cifras no cabe
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es elegir entre dos fuentes clínicas para el mismo perro) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo enteros los capítulos 178 y 182 de Ettinger |
+
+Los capítulos **178** (Debra Zoran, enteropatías) y **182** (Richard Hill,
+hiperlipidemia) dan techos de grasa **más bajos** que los que el motor aplica hoy, y
+los tres techos de hoy salen de SACN5:
+
+| Patología | Techo de hoy | De dónde sale | Lo que pide Ettinger |
+|---|---|---|---|
+| `enteropatia_cronica` | 37,5 g/1000 kcal | SACN5 Tabla 57-1, «Fat 12 to 15% for dogs» | *«6-15 % de MS en perros o <3 g de grasa/100 kcal»* = **30** |
+| `ple_linfangiectasia` | 37,5 | SACN5 Tabla 58-1, «Fat <15%» | con albúmina <1,5 g/dl, *«concentraciones de grasa <3 g/100 kcal o <10 % de MS»* = **30** o **25** |
+| `hiperlipidemia` | 30 | SACN5 Tabla 28-2, 12 % MS | *«<25 g de grasa/Mcal en alimentos para perros»*, y en los casos que no responden, *«menos de 18 g de grasa/Mcal»* = **25** y **18** |
+
+⚠️ **Y esto no es nuevo: es la tercera cifra de una discrepancia que ya estaba
+abierta.** `FEDIAF_CONTRA_OTRAS_FUENTES.md` §1 tiene desde el 10 de septiembre el
+caso de la grasa en linfangiectasia, donde SACN5 (37,5, en materia seca) y Fascetti
+(16,7, en kcal) se llevan un factor de 2,2 por culpa de **qué unidad lleva el
+«15 %»**. Ettinger cae **en medio** de las dos y —esto es lo que aporta— da la cifra
+**en las dos unidades a la vez**, así que ya no es una pelea de unidades: es una
+pelea de números.
+
+**MEDIDO el 12-sep**, con el solver, 30 s por peldaño, adultos de 3, 10, 22 y 40 kg,
+recorriendo la escalera entera como hace la API. La celda dice **en qué peldaño sale
+el menú** (0 = estricto, 5 = el último):
+
+| | 3 kg | 10 kg | 22 kg | 40 kg |
+|---|---|---|---|---|
+| `enteropatia_cronica` 37,5 (**hoy**) | 2 | 1 | **0** | **0** |
+| `enteropatia_cronica` 30 | 2 | 2 | 2 | 2 |
+| `enteropatia_cronica` 25 | **5** | **5** | **5** | **5** |
+| `ple_linfangiectasia` 37,5 (**hoy**) | 2 | 1 | **0** | **0** |
+| `ple_linfangiectasia` 30 | 2 | 2 | 2 | 2 |
+| `ple_linfangiectasia` 25 | 2 | 2 | 2 | 2 |
+| `hiperlipidemia` 30 (**hoy**) | 2 | 2 | 2 | 2 |
+| `hiperlipidemia` 25 | **5** | 3 | 3 | 4 |
+| `hiperlipidemia` **18** | **sin menú** | **sin menú** | **sin menú** | **sin menú** |
+
+**Lo que sale de la medida, y es distinto para cada una:**
+
+1. **Los 30 de la enteropatía y de la linfangiectasia caben sin drama**: el menú
+   sigue saliendo en los cuatro pesos, en el peldaño 2. Cuesta uno o dos peldaños de
+   forma, que es exactamente lo que la regla 3 autoriza y lo que el motor dice.
+2. **Los 25 no son iguales en las dos**: la linfangiectasia los aguanta en el
+   peldaño 2 y la enteropatía se va al 5, el último. La diferencia no es la grasa:
+   es que `enteropatia_cronica` lleva **además** un techo de potasio (2.750) que la
+   otra no tiene.
+3. **Los 18 de la hiperlipidemia NO CABEN con este catálogo**, en ningún peldaño ni
+   en ningún peso. Y eso es un dato sobre el catálogo, no sobre la cifra: 18 g de
+   grasa por 1000 kcal es una ración casi sin grasa, y la fuente misma la describe
+   como una dieta casera formulada para los casos que no responden a nada.
+
+**La pregunta, que son tres:** ¿se bajan los dos techos de 37,5 a 30, que es lo que
+cuesta un peldaño? ¿Se baja el de la hiperlipidemia de 30 a 25, que cuesta tres?
+¿Y los 25 de la linfangiectasia se ponen como **tope condicional** —igual que la
+pancreatitis tiene el suyo— cuando el veterinario declare albúmina <1,5 g/dl, que es
+la condición exacta con la que la fuente lo pide? Los 18 no se proponen: no caben, y
+está medido.
+
+---
+
+### P-33 · El suelo de fibra de la diabetes está en una unidad y el número que decide está en otra
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles** (es elegir cifra clínica) **y una fuente que no existe** (el factor entre las dos fibras) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo entero el capítulo 181 de Ettinger |
+
+`diabetes` aplica un **suelo de fibra de 17,5 g/1000 kcal**, que sale de convertir el
+extremo bajo de la Tabla 29-3 de SACN5 («Fiber 7 to 18%» de materia seca). El
+capítulo 181 de Ettinger (Jennifer Larsen) da el número para lo mismo y **en otra
+unidad**:
+
+> *«si se elige una dieta rica en fibra, parece que la concentración de esta debe
+> exceder los 55 g de FDT/Mcal, ya sea de una fuente de fibra insoluble o de una
+> mixta, para que proporcione un efecto beneficioso»*
+
+Y antes, describiendo el estudio que lo mide:
+
+> *«no se observó beneficio alguno en perros con DM alimentados con dietas que
+> contenían 18-20 g de FDT/Mcal cuando se compararon con dietas moderadamente bajas
+> en fibra con 14 g de FDT/Mcal»*
+
+⚠️ **FDT es fibra dietética TOTAL, que es exactamente lo que trae el campo `fibra`
+del catálogo** — BEDCA, CIQUAL y USDA publican fibra total. La cifra de SACN5 está
+en **fibra BRUTA**, que es otra cosa: el aviso de unidad lleva escrito en la ficha de
+`ple_linfangiectasia` desde el 11 de septiembre, con la frase del NRC 2006 («The
+crude fiber method accounts for only 5 to 20 percent of the total fiber in a food»),
+y nadie había puesto las dos cifras una al lado de la otra.
+
+Puestas: **el motor exige 17,5 g de fibra total y esta fuente mide 18-20 g de fibra
+total y lo llama «ningún beneficio»**. No es que el número esté mal convertido; es
+que el número convertido cae en la banda que el estudio usó como control.
+
+Y Ettinger añade una tercera fuente al mismo agujero, el cap.190 (Amy Farcas), que
+dice que ni siquiera la fibra «total» es total: su método *«no mide el componente de
+FDBPM»*, las fibras de bajo peso molecular.
+
+**MEDIDO el 12-sep**, mismo montaje que la P-32 (solver, 30 s por peldaño, escalera
+entera, adultos de 3, 10, 22 y 40 kg). La celda es el peldaño en el que sale el menú:
+
+| Suelo de fibra | 3 kg | 10 kg | 22 kg | 40 kg |
+|---|---|---|---|---|
+| **17,5 (hoy)** | **0** | **0** | **0** | **0** |
+| 35 | 2 | **0** | **0** | **0** |
+| 45 | 2 | 2 | 2 | 3 |
+| **55 (Ettinger)** | **5** | **5** | **5** | **5** |
+
+O sea: **los 55 caben, en los cuatro pesos, pero solo en el último peldaño** — el
+que suelta el techo del 10 % de verdura. Tiene sentido y es lo que hay que mirar
+antes de decidir: llegar a 55 g de fibra por 1000 kcal significa un menú con mucha
+más verdura de la que el criterio BARF de este motor considera normal. **Eso es
+FORMA, no nutrición**, así que la regla 3 lo permite y el menú lo diría — pero
+convertiría *todos* los menús de diabetes en menús del último peldaño, y eso es una
+decisión de producto además de clínica.
+
+**La pregunta:** ¿se sube el suelo de fibra de la diabetes? Y si sí, ¿hasta 55, que
+es lo que la fuente mide como umbral de beneficio y sale en el peldaño 5, o hasta
+45, que sale en el 2-3? Antes de eso hay una pregunta para la fuente que nadie ha
+podido contestar todavía: **cuántos gramos de fibra total son 7 g de fibra bruta**,
+que es el número que convertiría la cifra de SACN5 a la unidad del catálogo. La
+Tabla 5-9 de SACN5 dice que la proporción va del 0 % al 82 % según el ingrediente,
+así que ese factor único **no existe**.
+
+---
+
+### P-34 · El menú que el motor entrega no sirve para la fase de DIAGNÓSTICO de una alergia, y ahora lo dice
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (es producto: si hace falta un modo distinto) **y Cris Carles** (si ese modo es defendible) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, leyendo entero el capítulo 186 de Ettinger |
+
+El capítulo 186 (Manon Paradis) prohíbe durante la dieta de eliminación
+exactamente lo que este motor mete **siempre**:
+
+> *«No se deben administrar otras fuentes de alimento (no se permiten premios,
+> huesos, sobras de la mesa, juguetes para masticar con saborizantes; glucosamina,
+> vitaminas, ácidos grasos esenciales omega-3, antiparasitarios con sabor oral,
+> pasta de dientes con sabor»*
+
+Y, por si quedaba duda:
+
+> *«Por lo general, no se recomienda agregar suplementos (p. ej., ácidos grasos
+> esenciales [AGE], vitaminas, minerales) durante la prueba de eliminación, ya que
+> esta prueba tiene un tiempo limitado en el cual debe realizarse»*
+
+La regla 5 de `CLAUDE.md` deja **Suplementos y Extras siempre libres** —aceites,
+semillas, huevo, sal— porque son la herramienta con la que el solver cierra los 43
+requisitos. Un menú de `reaccion_adversa_alimento` lleva, casi siempre, aceite de
+salmón: o sea justo lo que la fuente dice que confunde la prueba. Eso ya estaba a
+medias en el aviso `fase_de_diagnostico`, que habla **solo** del omega-3 porque es
+lo que dice SACN5; esta fuente extiende la lista a todo.
+
+**Lo que se ha hecho el 12-sep**: se dice, en el aviso nuevo
+`lo_que_la_prueba_no_puede_llevar`, con las dos citas, con la frase de la propia
+fuente de que una dieta de prueba *«aunque incompletas y desequilibradas, se pueden
+utilizar de forma segura para la fase de diagnóstico»* en un adulto sano, y con las
+dos duraciones (8-10 semanas si hay síntomas de piel, 2-4 si solo son digestivos).
+Lo vigila el BLOQUE 64.
+
+**Lo que NO se ha hecho, y es la pregunta.** El motor **no puede** formular sin
+suplementos: sin ellos no cierra los 43 requisitos, y entregar un menú que no cumple
+choca de frente con la regla 1, que es la que no se toca. Así que las opciones son
+dos y las dos son decisión de producto:
+
+1. **Dejarlo como está**: el motor entrega el menú de comer y el aviso explica que
+   la fase de prueba es otra cosa y la lleva el veterinario.
+2. **Un modo «prueba de eliminación»** que formule sin Suplementos ni Extras,
+   entregue el menú **marcado como incompleto**, con la duración máxima escrita y
+   sin semáforo verde — porque no lo estaría. Eso sería la primera vez que este
+   motor entrega algo que no cumple FEDIAF, y por eso no lo hago solo. Tendría que
+   ir por la vía firmada de `VETERINARIOS.md`, como cualquier otra prescripción por
+   debajo del suelo.
+
+**La pregunta:** ¿se construye ese modo, y por la vía firmada? Y si no, ¿basta con
+el aviso?
 
 
 ---
