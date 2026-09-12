@@ -6,3 +6,9 @@ canislab.db
 # Los volcados de CIQUAL y USDA que se baja `contrastar_fuentes.py`: 10 MB
 # de tablas oficiales que se pueden volver a bajar en cualquier momento.
 .fuentes_cache/
+
+# La salida de `python3 pruebas_completas.py` cuando se redirige a un fichero
+# para poder seguirla mientras corre. Es un registro de UNA ejecución en UNA
+# máquina, de 40 minutos: no es contenido del repo, y dejarlo sin ignorar hace
+# que cada tanda de pruebas ensucie el árbol de trabajo.
+bateria*.txt
