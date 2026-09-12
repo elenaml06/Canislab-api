@@ -58,10 +58,10 @@ la tabla. Esos se quedan y se quedan todos.
 | **Spitze 2003** | **no está en el repo** | Decide la taurina de 89 fichas |
 | Ettinger & Feldman | no | Dos tomos |
 | Dobenecker / Hofmann | no | |
-| ACVIM (Keene 2019) | **leído entero con este método (12-sep)** | Abajo. Cierra P-10 —el límite del sodio existe y es clínico, no una cifra— y saca un hallazgo nuevo: el motor aplica al cardíaco con renal justo la dieta baja en proteína que el consenso dice que hay que evitar |
-| IRIS 2026 | **leída entera con este método (12-sep)** | Abajo. Contesta lo del IRIS 4, y la respuesta es que **IRIS no da ni una cifra dietética**: la restricción de proteína del estadio 4 no es suya, y lo único que dice de la proteína ahí es que hay que evitar que falte |
+| ACVIM (Keene 2019) | **leído entero (12-sep)** | Igual: primero se buscó y luego se leyó. Lo que solo aparece leyendo va marcado abajo | Abajo. Cierra P-10 —el límite del sodio existe y es clínico, no una cifra— y saca un hallazgo nuevo: el motor aplica al cardíaco con renal justo la dieta baja en proteína que el consenso dice que hay que evitar |
+| IRIS 2026 | **leída entera (12-sep), los cuatro documentos** | ⚠️ Y en dos vueltas: la primera fue media lectura y medio `grep`, y Elena lo cazó. Lo que salió al leerla de verdad está abajo, marcado | Abajo. Contesta lo del IRIS 4, y la respuesta es que **IRIS no da ni una cifra dietética**: la restricción de proteína del estadio 4 no es suya, y lo único que dice de la proteína ahí es que hay que evitar que falte |
 | AAHA 2021 | no | |
-| Today's Veterinary Practice | **leída entera con este método (12-sep)** | El artículo del oxalato, abajo: aguanta entera, todo lo suyo ya estaba aplicado. ⚠️ El que da el sodio cardíaco por estadio ACVIM sigue **sin estar** en el repo |
+| Today's Veterinary Practice | **leída entera (12-sep)** | Igual. Y al leerla salió lo de las purinas, que ningún `grep` mío habría buscado | El artículo del oxalato, abajo: aguanta entera, todo lo suyo ya estaba aplicado. ⚠️ El que da el sodio cardíaco por estadio ACVIM sigue **sin estar** en el repo |
 
 ---
 
@@ -117,6 +117,15 @@ correcto. Es que **aquí las dos fuentes piden cosas opuestas**, y elegir cuál
 cede es criterio clínico. Va a `PREGUNTAS_ABIERTAS.md` como **P-19**, no se
 cambia sola.
 
+### Lo que SOLO apareció al leerlo entero
+
+| Lo que dice | Decisión |
+|---|---|
+| Estadio A: *«**No dietary treatment recommended for any patient**»* (Class I) | **CONFIRMA EL MOTOR con cita**: `cardiopatia_a` no lleva ningún límite, y hasta hoy eso era una decisión sin frase detrás |
+| Estadio B1: *«**No drug or dietary treatment is recommended**»* (Class I) | Igual: `cardiopatia_b1` está vacía y ahora se sabe por qué |
+| Los cuatro criterios que definen el **B2**: soplo ≥3/6, cociente AI:Ao ≥1,6, diámetro ventricular normalizado (LVIDDN) ≥1,7 y VHS radiográfico >10,5 — y sin ecografía, VLAS ≥3 | **Anotados**, igual que los umbrales de IRIS: son los números con los que un veterinario elige el estadio, y la app pregunta el estadio ACVIM desde agosto sin tenerlos escritos en ninguna parte |
+| Los **diez** panelistas declaran haber asesorado a Boehringer Ingelheim (que fabrica el pimobendán) y/o a CEVA e IDEXX | **No cambia nada**, y se anota porque es un documento que recomienda el pimobendán como Class I / evidencia fuerte. Quien lo lea tiene derecho a saberlo |
+
 ### Lo demás, punto por punto
 
 | Lo que dice | Decisión |
@@ -155,8 +164,20 @@ relee con este método y aguanta sin sacar nada:
 | *«a canned diet is always preferable to dry food»*, y trucos para que beba más | **No se aplica** como cifra, y la ración de este motor es húmeda por construcción |
 | La piridoxina no tiene respaldo en el perro con dieta equilibrada | **Confirma no hacer nada**, que es lo que se hace |
 
-**Decisión: no se cambia nada.** Queda una cosa para mirar con la nutricionista,
-que es el techo de magnesio: lo pide SACN5 y la fuente de 2025 describe el
+### Lo que SOLO apareció al leerlo entero, y esto sí cambia el motor
+
+| Lo que dice | Decisión |
+|---|---|
+| *«High urine uric acid levels interfere with endogenous stone inhibitors and appear to promote CaOx urolithiasis»* y *«**Robust purine intake** leads to uric acid generation and supports an acidic urine pH»* | ⚠️ **LAS PURINAS IMPORTAN EN EL OXALATO, y el motor no lo sabía.** Los topes de `oxalato` son vitamina D, sodio, fósforo y magnesio: ninguno toca las purinas, y el catálogo SÍ tiene el dato (`purinas` y `purinas_fuente` en cada ficha). La fuente **no da cifra**, así que no se inventa una: **se aplica como aviso**, que es lo que la fuente respalda. Y no vale reusar el umbral del urato: `urato` no es formulable y no tiene ninguno |
+| *«cranberry extract has been shown to increase urinary oxalate … and should not be administered to CaOx stone–forming dogs»* | **Ya cubierto**: el arándano está en `OXALATO_ALTO` desde el 8-sep |
+| *«The following guidelines … are likely **not appropriate** for rare patients with hereditary CaOx urolithiasis type 2 (usually bulldogs, mastiffs, bassets, or beagles younger than 3 years)»* | ⚠️ **APLICADO como aviso**: hay un subgrupo, definido por raza y edad, al que TODO el consejo dietético de esta patología no le sirve. El motor no puede saberlo —hace falta el genotipo— pero quien firma sí |
+| Razas sobrerrepresentadas: schnauzer miniatura, bichón frisé, yorkshire; y en bóxer y bulldog inglés **más del 90 % de los afectados son machos** | **No se aplica**: es epidemiología, no una cifra de la ración. Las cuatro razas están en `razas.json` |
+| pH de orina objetivo **6,5 a 7,5** y densidad <1,020 | **No se aplica**: el motor no mide la orina |
+| El **calabacín** bajó la sobresaturación urinaria y subió el pH en un estudio en gatos, *«appears to be harmless»* | ⚠️ **Y el calabacín está en `OXALATO_ALTO`**, o sea excluido, porque la Tabla 40-3 de SACN5 lo marca alto en oxalato. **No se toca** —el estudio es en gatos y SACN5 es la fuente del filtro— pero queda escrito que las dos fuentes no dicen lo mismo de ese alimento |
+| Citrato potásico (75 mg/kg/12 h), hidroclorotiazida (2 mg/kg/12 h), vinagre de manzana, piridoxina | **No se aplican**: fármacos y suplementos con evidencia equívoca. La piridoxina la desaconseja la propia fuente en un perro con dieta equilibrada |
+
+**Decisión: se aplican DOS avisos** (las purinas y el subgrupo hereditario tipo 2)
+y queda una cosa para mirar con la nutricionista, que es el techo de magnesio: lo pide SACN5 y la fuente de 2025 describe el
 magnesio como inhibidor. No es contradicción demostrada y por eso no se toca.
 
 
@@ -278,6 +299,21 @@ es `renal` o `renal_avanzada`.
 | Toda la parte de hipertensión, anemia, acidosis, diálisis y sonda de alimentación | **No se aplica**: es tratamiento clínico |
 | El fracaso renal AGUDO tiene su propia graduación (documento aparte) y **no menciona la dieta ni una vez** | **Confirma lo que hace el motor**: `fracaso_renal_agudo` no lleva ningún tope propio |
 | *«Response to any treatment … should be monitored at intervals using UP/C»* | **No se aplica**: es seguimiento clínico |
+
+### Lo que SOLO apareció al leerla entera
+
+⚠️ La primera pasada fue media lectura y medio `grep`, y eso no es leer: buscar
+encuentra lo que ya sospechas. Estas seis no las habría encontrado ninguna
+búsqueda mía, porque no sabía que existían.
+
+| Lo que dice | Decisión |
+|---|---|
+| Estadio 2: *«If muscle loss is marked, consider staging based on serum SDMA concentration rather than creatinine»* | **Anotado, y es la SEGUNDA fuente que dice lo mismo**: la creatinina depende de la masa muscular, igual que FEDIAF dice que el BCS bajo se confunde con la atrofia (P-17). Dos fuentes independientes avisando de que la pérdida de músculo estropea una medida que usamos |
+| La guía de bolsillo: diagnosticar CKD en estadio 1 o 2 temprano pide **dos** hallazgos — SDMA persistente **>14 µg/dL** más uno de {imagen anormal, proteinuria renal, densidad urinaria <1,030 en perro} | ⚠️ **Y el 14 NO es el 18.** El >14 es para DIAGNOSTICAR y el >18 para ESTADIFICAR. Dos números parecidos para dos cosas distintas en el mismo documento: si algún día la app pregunta la SDMA, tiene que decir para qué |
+| *«If values are persistently discordant, consider assigning the patient to the higher stage»* | **Anotado**: la regla de desempate entre creatinina y SDMA es ir al estadio MÁS ALTO, que es el lado prudente |
+| La graduación del fracaso AGUDO usa creatinina con **umbrales distintos** de la estadificación crónica: I <1,6 · II 1,7-2,5 · III 2,6-5,0 · IV 5,1-10,0 · V >10,0, contra 1,4 / 2,8 / 5,0 de la CKD | ⚠️ **Dos escalas confundibles** con la misma unidad y el mismo analito. Si la ficha pregunta creatinina alguna vez, hay que decir cuál de las dos |
+| El documento del fracaso agudo **no menciona la dieta ni una vez** en sus 493 líneas | **Confirma** que `fracaso_renal_agudo` no lleve ningún tope. Ahora está comprobado leyéndolo, no suponiéndolo |
+| Estadio 3: si hay acidosis metabólica (bicarbonato <18 mmol/l), suplementar con **bicarbonato SÓDICO** oral hasta 18-24 | **No se aplica** (es un fármaco), pero se anota la tensión: la misma guía que sugiere bajar el sodio manda dar sodio por otra puerta en el estadio 3 |
 
 ### Lo que sale de esta lectura
 
