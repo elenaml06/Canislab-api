@@ -1572,8 +1572,17 @@ _CIFRAS_CON_FUENTE = [
      "SACN5 Tabla 28-2: «Restrict dietary fat (<12% dry matter)»"),
     ("hiperlipidemia", "suelos_por_1000kcal", "fibra", 25.0, ("pct_ms", 10),
      "SACN5 Tabla 28-2: «Increase dietary fiber: Dogs: >=10% DM»"),
-    ("obesidad", "topes_por_1000kcal", "grasa", 30.0, ("directo", None),
-     "SACN5 Tabla 27-4 dice «<=9%» (22,5) pero no resuelve con el catalogo real; 30 cae en la franja de «prevention of weight regain» («<=14%» = 35)"),
+    # ⚠️ 12-sep-2026: PASA DE 30 A 22,5, que es lo que dice la fuente. El 30 era
+    # nuestro y el motivo escrito era que 22,5 «no resuelve con el catalogo
+    # real» -- una medida del 6 de septiembre que decia «27 falla 0/5, 28
+    # resuelve 5/5» SIN decir con que perro, con que peso ni con que peldaño.
+    # Remedida con las condiciones por delante (adulto con obesidad, catalogo
+    # entero, 3/10/22/40 kg, cinco techos, 3 intentos, 20 s): en el peldaño
+    # estricto NO sale ninguno de los cinco, tampoco el 30 que se aplicaba, y
+    # con la escalera salen los cinco 3 de 3 en los cuatro pesos. O sea que el
+    # 22,5 no cuesta ni un menu.
+    ("obesidad", "topes_por_1000kcal", "grasa", 22.5, ("pct_ms", 9),
+     "SACN5 Tabla 27-4: «Foods for weight loss should contain <=9%» de grasa"),
     ("obesidad", "suelos_por_1000kcal", "proteina", 62.5, ("pct_ms", 25),
      "SACN5 Tabla 27-4: «Foods for weight loss should contain >=25%»"),
     ("dcm_taurina_respondedora", "suelos_por_1000kcal", "taurina", 250.0, ("pct_ms", 0.1),
