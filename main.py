@@ -7515,6 +7515,15 @@ with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
                         "alimentos_como_se_presentan.json"), encoding="utf-8") as _f:
     _PRESENTACION_AL = _json.load(_f)
 
+# Como se DA cada alimento: el trozo con el que se puede medir en casa, como se
+# sirve, y si viene en comprimidos. Vivia en `src/instrucciones.js` de la app,
+# indexado POR NOMBRE DE ALIMENTO -- o sea la lista que se desincroniza sola
+# cada vez que el catalogo cambia. Ver su `_meta`: tenia 12 entradas de
+# alimentos que el motor ya no tiene, la BORRAJA entre ellas.
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                        "como_se_da_cada_alimento.json"), encoding="utf-8") as _f:
+    _COMO_SE_DA = _json.load(_f)
+
 
 def _arbol_de_alimentos():
     """El catalogo tal y como se ENSEÑA: pantalla -> grupo -> alimentos.
@@ -7553,11 +7562,15 @@ def _arbol_de_alimentos():
             grupo = a["categoria"]
         else:
             grupo = grupos_extra.get(a["nombre"], "Otros")
-        salida.setdefault(p["clave"], {}).setdefault(grupo, []).append({
-            "nombre": a["nombre"],
-            "kcal_100g": a["energia"],
-            "categoria_del_motor": a["categoria"],
-        })
+        fila = {"nombre": a["nombre"], "kcal_100g": a["energia"],
+                "categoria_del_motor": a["categoria"]}
+        # ⚠️ COMO SE DA, JUNTO AL ALIMENTO Y NO EN OTRA LISTA. Iba aparte en la
+        # app, indexado por nombre, y por eso se desincronizaba: 77 entradas
+        # para 163 alimentos, 12 de ellas de comida que ya no existe.
+        comodar = _COMO_SE_DA["por_alimento"].get(a["nombre"])
+        if comodar:
+            fila["como_se_da"] = comodar
+        salida.setdefault(p["clave"], {}).setdefault(grupo, []).append(fila)
     for pant in salida.values():
         for lista in pant.values():
             lista.sort(key=lambda x: x["nombre"])
@@ -7597,6 +7610,9 @@ def listar_alimentos():
              "grupos": arbol.get(p["clave"], {})}
             for p in _PRESENTACION_AL["pantallas"]
         ],
+        # El texto general de cada pantalla, que la app enseña SIEMPRE, y el
+        # del alimento solo si existe. Los dos vivian en la app.
+        "como_se_da_por_categoria": _COMO_SE_DA["por_categoria"],
         # ⚠️ SE DICE, no se esconde: un alimento cuya categoria no esta
         # declarada no aparece en ninguna pantalla, y eso tiene que verse.
         "sin_pantalla": sorted(sueltos),

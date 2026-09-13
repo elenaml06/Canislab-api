@@ -14818,6 +14818,50 @@ if _cuantas99 != len(_vistos99):
     fallos.append(f"BLOQUE99: el arbol de /alimentos reparte {_cuantas99} entradas para "
                   f"{len(_vistos99)} alimentos distintos: alguno esta en dos pantallas")
 
+# ── COMO SE DA CADA ALIMENTO, que es la lista que mas se desincroniza ────
+#
+# ⚠️ Vivia en `src/instrucciones.js` de la app indexada POR NOMBRE DE ALIMENTO,
+# y al moverla al motor salio lo que tenia que salir: 77 entradas para 163
+# alimentos, y **12 de ellas de comida que el motor NO TIENE** -- ala de pollo,
+# carcasa de pavo, cabeza de conejo... y la BORRAJA, que se sacó del catalogo
+# entero y tiene el BLOQUE 31 vigilando que no vuelva, con sus instrucciones
+# todavia ahi.
+_COMO99 = _json_b99.load(open(_os_b65.path.join(
+    _os_b65.path.dirname(_os_b65.path.abspath(__file__)),
+    "como_se_da_cada_alimento.json"), encoding="utf-8"))
+_fantasma99 = sorted(set(_COMO99["por_alimento"]) - _todos99)
+if _fantasma99:
+    fallos.append(f"BLOQUE99: hay instrucciones para {len(_fantasma99)} alimentos que el catálogo "
+                  f"no tiene: {_fantasma99[:6]}. Es la lista que se desincroniza sola, y así es "
+                  f"como se quedaron dentro las de la borraja después de sacarla del catálogo")
+_pant99 = {p["clave"] for p in _al99["pantallas"]}
+_catfuera99 = sorted(set(_COMO99["por_categoria"]) - _pant99)
+if _catfuera99:
+    fallos.append(f"BLOQUE99: hay texto general para pantallas que no existen: {_catfuera99}")
+_sintexto99 = sorted(_pant99 - set(_COMO99["por_categoria"]))
+if _sintexto99:
+    fallos.append(f"BLOQUE99: estas pantallas no tienen texto de cómo se da su comida: "
+                  f"{_sintexto99}. Es el que la app enseña SIEMPRE, así que quedarían mudas")
+# ⚠️ Y LOS COMPRIMIDOS, que es lo unico de aqui que no es texto: con
+# `es_comprimido` la app convierte los gramos en «cuantos comprimidos», y sin el
+# enseña 0,25 g, que nadie puede pesar en casa.
+for _n99 in sorted(_todos99):
+    if not _re_b65.search(r"comprimido|c[áa]psula", _n99, _re_b65.I):
+        continue
+    _c99 = _COMO99["por_alimento"].get(_n99) or {}
+    if not _c99.get("es_comprimido") or not _c99.get("peso_comprimido_g"):
+        fallos.append(f"BLOQUE99: «{_n99}» se vende en comprimidos y no lo declara "
+                      f"(`es_comprimido` + `peso_comprimido_g`). La app enseñará gramos, y un "
+                      f"comprimido pesa una cuarta parte de uno: nadie puede pesar eso en casa")
+_servidas99 = sum(1 for p in _al99["pantallas"] for g in p["grupos"].values()
+                  for a in g if a.get("como_se_da"))
+if _servidas99 != len(_COMO99["por_alimento"]):
+    fallos.append(f"BLOQUE99: el fichero trae {len(_COMO99['por_alimento'])} instrucciones y "
+                  f"/alimentos sirve {_servidas99}. Las que no viajan no las ve nadie")
+if not _al99.get("como_se_da_por_categoria"):
+    fallos.append("BLOQUE99: /alimentos no manda el texto general de cada pantalla, que es el que "
+                  "la app enseña siempre")
+
 print(f"  {len(_listas99)} listas declaradas · {len(_vistos99)} alimentos en {len(_al99['pantallas'])} pantallas")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
