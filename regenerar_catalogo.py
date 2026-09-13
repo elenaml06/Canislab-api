@@ -64,6 +64,63 @@ CAT_DE = {"Salmón": "Pescados y mariscos", "Merluza": "Pescados y mariscos"}
 LLAMADA_COMO_LA_API = dict(margenes_categoria=MARGENES_V2, max_suplementos=2)
 
 
+# ⚠️ LOS MENÚS DE LA VISTA PREVIA SE HACEN CON LO BARATO Y LO ACCESIBLE
+# (13 de septiembre de 2026). Elena: «usa ingredientes que sean fáciles de
+# encontrar y baratos [...] lo que quiero es algo variado, barato y accesible».
+#
+# ⚠️ Y ESTO NO ES SOLO LA VISTA PREVIA, que es lo que hace que importe: los menús
+# de `CATALOGO_VARIANTES` son la VÍA RÁPIDA de `/menu/v2` -- se reescalan a las
+# kcal del perro y se entregan como menú de verdad. Así que lo que entre aquí es
+# lo que come mucha gente, no una foto de catálogo.
+#
+# DOS EJES, y mezclarlos daría lo contrario de lo que se pide (ver el `_meta` de
+# `donde_se_compra_cada_alimento.json`): un multivitamínico se pide por internet
+# y no es caro; una gamba roja está en cualquier supermercado y sí lo es.
+#
+#   · `premium`: fuera. Son 20 y los que de verdad mueven el catálogo son cuatro
+#     -- timo de vaca, solomillo de ternera, salmón y lomo con grasa.
+#   · `no_se_vende`: fuera, y no es precio: el cerebro de vaca es material
+#     especificado de riesgo (Reg. (CE) 999/2001 anexo V).
+#   · `especializada`: fuera SOLO en las categorías de comida. Los suplementos se
+#     piden por internet por definición y son la herramienta con la que el motor
+#     cierra los 43 requisitos -- quitarlos sería romper la regla 5.
+#
+# LO QUE NO SE TOCA: ningún requisito. Esto elige qué alimentos VE el solver, no
+# qué tiene que cumplir. Si con los accesibles no sale menú, el menú no sale y se
+# ve aquí -- que es mejor que entregar uno de gamba roja.
+CATEGORIAS_DE_COMIDA = ("Carne muscular", "Pescados y mariscos", "Hueso carnoso",
+                        "Vísceras", "Hígado", "Verduras y frutas")
+
+
+def solo_lo_accesible(al):
+    """El catálogo sin lo premium ni lo que no se puede comprar (ni dar).
+
+    Devuelve (alimentos, cuántos se han quitado). Si el fichero no está, no se
+    filtra nada y se dice: un regenerado silencioso con el filtro caído daría un
+    catálogo distinto sin que nadie lo notara.
+    """
+    import json as _j, os as _o
+    ruta = _o.path.join(_o.path.dirname(_o.path.abspath(__file__)),
+                        "donde_se_compra_cada_alimento.json")
+    if not _o.path.exists(ruta):
+        print("⚠️  no está `donde_se_compra_cada_alimento.json`: NO se filtra nada")
+        return al, 0
+    with open(ruta, encoding="utf-8") as f:
+        d = _j.load(f)
+    ficha = d["por_alimento"]
+    fuera = []
+    for n, a in list(al.items()):
+        x = ficha.get(n)
+        if not x:
+            continue          # sin ficha no se decide nada; lo caza el BLOQUE 100
+        if x["donde"] == "no_se_vende":
+            fuera.append(n)
+        elif a.get("categoria") in CATEGORIAS_DE_COMIDA and (
+                x["precio_orientativo"] == "premium" or x["donde"] == "especializada"):
+            fuera.append(n)
+    return {n: a for n, a in al.items() if n not in fuera}, len(fuera)
+
+
 def peso_adulto_de(d, tamano):
     """El peso ADULTO de ese tamaño, leído del propio catálogo.
 
@@ -171,6 +228,12 @@ def resolver_uno(al, req, der, etapa, peso, especie=None, proteina=None,
 
 def main_regenerar(solo_base=False, solo=None):
     al, req = cargar()
+    # ⚠️ EL SOLVER SOLO VE LO ACCESIBLE. Ver `solo_lo_accesible`: esto elige qué
+    # alimentos entran, no qué requisitos hay que cumplir. El filtro final y los
+    # 43 requisitos son exactamente los mismos.
+    al, _fuera = solo_lo_accesible(al)
+    print(f"catálogo para la vista previa: {len(al)} alimentos ({_fuera} fuera "
+          f"por premium, por tienda especializada o por no poderse dar)")
     d = json.load(io.open(RUTA, encoding="utf-8"))
     cambios, fallos = [], []
 
