@@ -5,10 +5,10 @@
   "por_que_existe_este_fichero": "Porque la ley ya se había dicho y se seguía rompiendo. Una frase no se ejecuta: es la misma lección de `auditar_conversiones.py`. Cinco veces el mismo fallo en dos semanas -- las seis categorías de Personalizar, los cinco niveles de actividad, las 47 patologías, las 255 razas y los 163 alimentos --, y las cinco se descubrieron por casualidad, porque una lista copiada a mano no da error: se queda parada y la pantalla se ve perfecta. || El caso que cerró la discusión: el aceite de salmón Pets Purest entró al catálogo del motor el 7 de septiembre con la foto de su etiqueta, el motor lo usa en 23 de los 216 menús precalculados, y en la app no aparecía. Elena lo dijo dos veces antes de que se mirara.",
   "como_se_comprueba": "Por las DOS puntas, porque cada una tapa un agujero distinto. (1) El BLOQUE 99 de `pruebas_completas.py` exige que el endpoint declarado sirva de verdad esa lista y que no venga vacía: un respaldo que tapa una petición rota se ve igual que una petición buena. (2) `tests/la-ley-del-motor.spec.js` en `canislab-web` recorre `src/` buscando constantes `*_RESPALDO` y exige que TODAS estén declaradas aquí. Una lista nueva escrita a mano en la app, sin motor detrás, falla -- que es el único momento en el que se puede cazar.",
   "lo_que_NO_cubre": "Esto vigila las LISTAS -- lo que el motor enumera --, no las cifras que viajan dentro de un menú ni el DER, que tiene su propio contrato en `der_casos.json`. Y no vigila que la app USE lo que lee: eso es de cada prueba, y la forma de hacerlo es sembrar nombres INVENTADOS, porque con los de verdad «la app lo ha leído» y «la app pinta su respaldo» se ven igual.",
-  "cuantas": 14,
-  "lo_que_todavia_no_sale_del_motor": "⚠️ 12-sep-2026, noche. La ley es para TODO, y hoy NO se cumple para todo. Medido recorriendo `src/` en busca de listas escritas a mano a nivel de modulo: hay 33, de las cuales 14 son respaldos declarados aqui y 19 no. De esas 19, 5 son legitimamente de la app -- iconos, nombres de los meses, cableado interno -- y las otras 14 son datos del motor copiados: cuatro copias mas de los niveles de actividad, las etapas, los nombres de los nutrientes, el peso adulto por tamaño, las categorias que se pueden excluir, y las dos mas gordas: `COMO_DAR_ALIMENTO` (91 entradas indexadas POR NOMBRE DE ALIMENTO) e `INSTRUCCIONES_POR_CATEGORIA` (47). Esas dos son el mismo riesgo que el aceite de salmon, con 91 entradas contra 163 alimentos del catalogo. || Estan CONTADAS y no escondidas: `estado` dice de cada una si ya sale del motor o si falta, y el guardian exige que cada lista de la app este en una de las dos casillas. Lo que no se puede es que aparezca una nueva sin decir nada.",
+  "cuantas": 22,
+  "lo_que_todavia_no_sale_del_motor": "⚠️ 12-sep-2026, remedido el 13. La ley es para TODO, y se esta cumpliendo por partes. Hoy son **18 listas que ya salen del motor**, 5 que son legitimamente de la app (iconos, meses, cableado) y **11 que faltan**, cada una con su riesgo escrito. || Las cuatro que se trajeron el 13 de septiembre eran las dos peores: `COMO_DAR_ALIMENTO`, indexada POR NOMBRE DE ALIMENTO -- al moverla se vio que tenia 77 entradas para 163 alimentos y 12 de comida que el motor ya no tiene, la BORRAJA incluida --, y `ACTIVIDAD_POR_INDICE`, que es la que decide con que nombre se GUARDA la actividad de un perro: si el motor cambiaba el orden, un perro volvia de la base de datos con otras kcal, sin error y con el menu en verde.",
   "cuantas_de_la_app": 5,
-  "cuantas_faltan": 15
+  "cuantas_faltan": 7
  },
  "listas": [
   {
@@ -108,6 +108,62 @@
    "endpoint": "/alimentos",
    "camino": "pantallas",
    "dato_del_motor": "alimentos_v3_final.json + alimentos_como_se_presentan.json"
+  },
+  {
+   "respaldo": "COMO_DAR_ALIMENTO_RESPALDO",
+   "que_es": "Cómo se da cada alimento: el trozo con el que se mide en casa, cómo se sirve, y si viene en comprimidos",
+   "endpoint": "/alimentos",
+   "camino": "pantallas",
+   "dato_del_motor": "como_se_da_cada_alimento.json (por_alimento)"
+  },
+  {
+   "respaldo": "INSTRUCCIONES_POR_CATEGORIA_RESPALDO",
+   "que_es": "El texto general de cada pantalla, que se enseña siempre",
+   "endpoint": "/alimentos",
+   "camino": "como_se_da_por_categoria",
+   "dato_del_motor": "como_se_da_cada_alimento.json (por_categoria)"
+  },
+  {
+   "respaldo": "ACTIVIDAD_API_RESPALDO",
+   "que_es": "Las cinco claves de actividad que viajan al motor, en su orden",
+   "endpoint": "/vocabulario",
+   "camino": "niveles_de_actividad.los_tres_nombres",
+   "dato_del_motor": "niveles_de_actividad.json (los_cinco_niveles)"
+  },
+  {
+   "respaldo": "ACTIVIDAD_EN_LA_BASE_DE_DATOS_RESPALDO",
+   "que_es": "Con qué nombre se GUARDA cada nivel de actividad en Supabase",
+   "endpoint": "/vocabulario",
+   "camino": "niveles_de_actividad.los_tres_nombres",
+   "dato_del_motor": "niveles_de_actividad.json (los_cinco_niveles)"
+  },
+  {
+   "respaldo": "CATEGORIAS_QUE_PUEDE_EXCLUIR_RESPALDO",
+   "que_es": "Las seis categorías en las que el dueño puede elegir a mano",
+   "endpoint": "/vocabulario",
+   "camino": "categorias_que_elige_el_usuario.categorias",
+   "dato_del_motor": "main.CATEGORIAS_QUE_ELIGE_EL_USUARIO (regla 5)"
+  },
+  {
+   "respaldo": "PESO_ADULTO_POR_TAMANO_RESPALDO",
+   "que_es": "El peso del perro de muestra de cada tamaño, para el mestizo sin raza",
+   "endpoint": "/vocabulario",
+   "camino": "tamanos.tamanos",
+   "dato_del_motor": "el mismo peso con el que se generan los menús precalculados"
+  },
+  {
+   "respaldo": "BCS_DESDE_CONDICION_RESPALDO",
+   "que_es": "De los cinco escalones que ve el dueño a los nueve puntos de BCS",
+   "endpoint": "/vocabulario",
+   "camino": "condicion_corporal.escalones_del_dueno",
+   "dato_del_motor": "main.py (FEDIAF §7.1.3 y Tabla VII-2)"
+  },
+  {
+   "respaldo": "NOMBRE_NUTRIENTE_RESPALDO",
+   "que_es": "Cómo se llama cada nutriente en pantalla",
+   "endpoint": "/vocabulario",
+   "camino": "objetivos_del_profesional.nutrientes",
+   "dato_del_motor": "verificar.MAPA (46 nutrientes)"
   }
  ],
  "de_la_app_a_proposito": [
@@ -134,58 +190,16 @@
  ],
  "faltan_por_traer_del_motor": [
   {
-   "nombre": "COMO_DAR_ALIMENTO",
-   "fichero": "instrucciones.js",
-   "entradas": 91,
-   "riesgo": "Indexada POR NOMBRE DE ALIMENTO, y el catalogo tiene 163. Es el mismo fallo que el aceite de salmon: un alimento nuevo no trae instrucciones y nadie se entera."
-  },
-  {
-   "nombre": "INSTRUCCIONES_POR_CATEGORIA",
-   "fichero": "instrucciones.js",
-   "entradas": 47,
-   "riesgo": "Indexada por categoria. El motor tiene 14 categorias y esto no las sigue."
-  },
-  {
-   "nombre": "NOMBRE_NUTRIENTE",
-   "fichero": "topespatologia.jsx",
-   "entradas": 32,
-   "riesgo": "Los nombres de los nutrientes ya viven en `verificar.MAPA`, que son 46. Esta lista tiene 32."
+   "nombre": "ACTIVIDAD_KEY",
+   "fichero": "der.js",
+   "entradas": 5,
+   "riesgo": "⚠️ ESTA VA CON `BASE_ACTIVIDAD` Y LAS DOS SON A PROPOSITO: son la parte de actividad del CALCULO DEL DER, que se hace en la app porque hacerlo en el motor seria una llamada de red por cada tecla. Es la duplicacion declarada de `der_casos.json`, el contrato de 137 casos que corren los dos repos, y ademas `tests/vocabulario.spec.js` compara `BASE_ACTIVIDAD` cifra a cifra contra lo que sirve el motor. Lo que SI se trajo el 13 de septiembre es la traduccion de nombres -- `ACTIVIDAD_API` y `ACTIVIDAD_EN_LA_BASE_DE_DATOS` --, que es lo que fallaba en silencio."
   },
   {
    "nombre": "BASE_ACTIVIDAD",
    "fichero": "der.js",
    "entradas": 5,
    "riesgo": "Cuarta copia de los niveles de actividad. Las otras tres ya estan declaradas."
-  },
-  {
-   "nombre": "ACTIVIDAD_KEY",
-   "fichero": "der.js",
-   "entradas": 5,
-   "riesgo": "Quinta copia."
-  },
-  {
-   "nombre": "ACTIVIDAD_POR_INDICE",
-   "fichero": "supabase.js",
-   "entradas": 5,
-   "riesgo": "Sexta copia, y es la que traduce lo GUARDADO. Si se desincroniza, un perro vuelve con otra actividad."
-  },
-  {
-   "nombre": "ACTIVIDAD_API",
-   "fichero": "vocabulario.js",
-   "entradas": 5,
-   "riesgo": "Septima copia."
-  },
-  {
-   "nombre": "PESO_ADULTO_POR_TAMANO",
-   "fichero": "App.jsx",
-   "entradas": 6,
-   "riesgo": "El motor lo MIDE sobre `razas.json` (`_rango_de_tamano`) y lo sirve; esto es una copia escrita."
-  },
-  {
-   "nombre": "CATEGORIAS_QUE_PUEDE_EXCLUIR",
-   "fichero": "App.jsx",
-   "entradas": 6,
-   "riesgo": "El motor las sirve en `categorias_que_elige_el_usuario`, y ya hubo tres semanas respetando tres de las seis."
   },
   {
    "nombre": "FAMILIAS_PATOLOGIA",
@@ -204,12 +218,6 @@
    "fichero": "bcs.js",
    "entradas": 12,
    "riesgo": "Los nueve puntos de BCS ya vienen del motor en `CONDICIONES_RESPALDO`; esta es una segunda copia con otra forma."
-  },
-  {
-   "nombre": "BCS_DESDE_CONDICION",
-   "fichero": "bcs.js",
-   "entradas": 5,
-   "riesgo": "Tercera copia del BCS."
   },
   {
    "nombre": "GRUPOS",

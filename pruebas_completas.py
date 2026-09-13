@@ -14756,6 +14756,7 @@ print("=== BLOQUE 99: nada de lo que pinta la app vive solo en la app ===")
 # en `canislab-web`, porque el codigo de la app no esta en este repo.
 import json as _json_b99
 import especies as _esp_b99
+import der as _der99
 _LEY99 = _json_b99.load(open(_os_b65.path.join(
     _os_b65.path.dirname(_os_b65.path.abspath(__file__)), "lo_que_la_app_pinta.json"),
     encoding="utf-8"))
@@ -14861,6 +14862,41 @@ if _servidas99 != len(_COMO99["por_alimento"]):
 if not _al99.get("como_se_da_por_categoria"):
     fallos.append("BLOQUE99: /alimentos no manda el texto general de cada pantalla, que es el que "
                   "la app enseña siempre")
+
+# ── LOS TRES NOMBRES DE CADA NIVEL DE ACTIVIDAD ─────────────────────────
+#
+# ⚠️ AÑADIDO EL 13 DE SEPTIEMBRE. Un nivel de actividad se llama de tres formas
+# y la traduccion entre ellas vivia SOLO en `ACTIVIDAD_POR_INDICE` de
+# `src/supabase.js`: el INDICE (0-4) que guarda la ficha, la CLAVE DEL MOTOR que
+# viaja en la peticion, y la CLAVE DE LA BASE DE DATOS que se escribe en
+# Supabase. Y son DISTINTAS -- `sedentario` se guarda como `baja`.
+#
+# Si el motor añade un nivel o cambia el orden, esa lista de la app sigue
+# traduciendo por el indice viejo y un perro vuelve de la base de datos con OTRA
+# actividad, o sea con otras kcal, sin dar ningun error y con el menu en verde.
+# Es la familia de `guardarPerro`: se ve bien en pantalla y esta mal guardado.
+_TRES99 = _pide99("/vocabulario")["niveles_de_actividad"]["los_tres_nombres"]
+if [x["indice"] for x in _TRES99] != list(range(len(_TRES99))):
+    fallos.append(f"BLOQUE99: los índices de los niveles de actividad no van 0,1,2… : "
+                  f"{[x['indice'] for x in _TRES99]}. La ficha guarda el índice, así que un hueco "
+                  f"ahí traduce mal")
+_claves99 = [x["clave_motor"] for x in _TRES99]
+if _claves99 != list(_der99.BASE_ACTIVIDAD):
+    fallos.append(f"BLOQUE99: las claves servidas {_claves99} no son las de `der.BASE_ACTIVIDAD` "
+                  f"{list(_der99.BASE_ACTIVIDAD)}, ni en contenido ni en ORDEN. El orden es lo que "
+                  f"traduce el índice que guarda la ficha")
+for _x99 in _TRES99:
+    if _der99.BASE_ACTIVIDAD.get(_x99["clave_motor"]) != _x99["kcal_kg075"]:
+        fallos.append(f"BLOQUE99: «{_x99['clave_motor']}» se sirve con {_x99['kcal_kg075']} "
+                      f"kcal/kg^0,75 y el motor aplica "
+                      f"{_der99.BASE_ACTIVIDAD.get(_x99['clave_motor'])}")
+    if not _x99.get("clave_base_de_datos"):
+        fallos.append(f"BLOQUE99: «{_x99['clave_motor']}» no dice con qué nombre se guarda en la "
+                      f"base de datos. Esa traducción es la que hace que un perro vuelva con la "
+                      f"actividad que tenía")
+if len({x["clave_base_de_datos"] for x in _TRES99}) != len(_TRES99):
+    fallos.append("BLOQUE99: dos niveles se guardan en la base de datos con el mismo nombre: al "
+                  "volver, uno de los dos se pierde")
 
 print(f"  {len(_listas99)} listas declaradas · {len(_vistos99)} alimentos en {len(_al99['pantallas'])} pantallas")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")

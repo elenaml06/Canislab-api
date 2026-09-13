@@ -7049,6 +7049,16 @@ def endpoint_vocabulario():
             "cuantos": len(BASE_ACTIVIDAD),
             "niveles": [dict({"clave": k, "kcal_kg075": v}, **ETIQUETAS_ACTIVIDAD[k])
                         for k, v in BASE_ACTIVIDAD.items()],
+            # ⚠️ LOS TRES NOMBRES DE CADA NIVEL (13-sep-2026). Un nivel se llama
+            # de tres formas y la traduccion entre ellas vivia SOLO en la app:
+            # el INDICE (0-4) que guarda la ficha, la CLAVE DEL MOTOR que viaja
+            # en la peticion, y la CLAVE DE LA BASE DE DATOS que se escribe en
+            # Supabase -- y son distintas, `sedentario` se guarda como `baja`.
+            # Estaba en `ACTIVIDAD_POR_INDICE` de `src/supabase.js` y en ningun
+            # sitio mas: si el motor añade un nivel o cambia el orden, esa lista
+            # traduce por el indice viejo y un perro vuelve de la base de datos
+            # con OTRA actividad, sin error y con el menu en verde.
+            "los_tres_nombres": _NIVELES_ACT["los_cinco_niveles"],
             "ojo": ("⚠️ La Tabla VII-7 tiene CUATRO filas de actividad para el perro normal (95, "
                     "110, 125 y un rango de 150-175), y el motor parte la cuarta en DOS niveles. "
                     "Eso es decision nuestra y esta escrita en `niveles_de_actividad.json`. "
@@ -7523,6 +7533,13 @@ with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
 with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
                         "como_se_da_cada_alimento.json"), encoding="utf-8") as _f:
     _COMO_SE_DA = _json.load(_f)
+
+# La Tabla VII-7 de FEDIAF fila por fila, y -- desde el 13 de septiembre -- los
+# TRES nombres de cada nivel: el indice que guarda la ficha, la clave que viaja
+# al motor y la clave que se escribe en la base de datos. Ver su `_meta`.
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                        "niveles_de_actividad.json"), encoding="utf-8") as _f:
+    _NIVELES_ACT = _json.load(_f)
 
 
 def _arbol_de_alimentos():
