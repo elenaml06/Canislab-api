@@ -1688,3 +1688,97 @@ recomienda en su lugar el de **linoleico:linolénico**, que el motor SÍ aplica
 desde `requisitos_condicionales.json` (2,6-26 en adulto). O sea que el motor ya
 tiene un ratio de grasas puesto, de la fuente que lo cuantifica mejor, y lo que
 se añade es la puerta para que un clínico ponga el otro si su caso lo pide.
+
+---
+
+## §21 · Las interacciones entre nutrientes son un AVISO, y un aviso se ignora
+
+**Elena, 13 de septiembre: «todo lo que has dicho que podías hacer tú para subir
+la nota, anótalo para hacerlo».** Esta es la primera de esa lista.
+
+FEDIAF dice que con el calcio alto puede hacer falta **más zinc y más cobre**, y
+hoy el motor lo saca por `avisos_profesional`: una lectura del menú, para que
+quien sepa interpretarla la interprete. Eso está bien para lo que no se puede
+arreglar cambiando el menú — y esto **sí** se puede arreglar cambiando el menú,
+que es justo la diferencia que separa un aviso de una restricción. La regla 2 de
+`CLAUDE.md` lo dice con otras palabras: «un aviso se puede ignorar; esto no».
+
+**Lo que hay que hacer:** leer la sección 3.3 de FEDIAF **entera y seguida**, con
+el método de `LECTURAS.md`, y sacar de ahí **todas** las interacciones que
+enuncia, no solo la del calcio. Las que traigan cifra pasan a
+`requisitos_condicionales.json` —que es donde ya viven los requisitos que
+dependen de la propia dieta, y el solver y el semáforo llaman a las mismas
+funciones— y las que no, se quedan con `tipo: documentado_sin_cifra`, como ya
+están la vitamina E con los PUFA, la B6 con la proteína y la K con el pescado.
+
+**Para darlo por hecho:** cada interacción con su cita literal auditada, un
+bloque de batería con el fallo puesto, y medido cuántos de los 216 menús se
+mueven. Si alguna deja una patología sin menú, se escribe y no se aplica — como
+el omega-3 de la artrosis.
+
+---
+
+## §22 · Cerrar el bucle del BCS: el peso adulto de la TRAYECTORIA, no de la tabla
+
+Con el historial de pesadas hecho (P-38), el ±10 % por condición corporal deja de
+poder ser lo que la fuente describe: SACN5 cap.17 pide reevaluar **cada dos
+semanas** y ajustar, y hoy el ±10 % se aplica una vez y no se acumula, porque el
+DER se recalcula de cero en cada pantalla.
+
+**Lo que hay que hacer, y son dos cosas distintas:**
+
+1. **El peso adulto sale de la trayectoria del propio cachorro** cuando hay dos o
+   más pesadas, que es lo que hacen las curvas de WALTHAM (50.000 perros) y
+   MyVetDiet. Eso mata el último uso serio de la tabla de razas —el tramo de 12 a
+   24 meses, hoy tapado con un suelo que es un parche bueno pero un parche— y deja
+   de importar que 185 de 270 razas no tengan fuente publicada.
+2. **Que el ±10 % se acumule.** Un cachorro en BCS 9 hoy recibe −10 % para
+   siempre; la fuente quiere −10 %, mirar a las dos semanas, y otro −10 % si sigue
+   igual. Con el historial se puede saber si el anterior ya se aplicó.
+
+⚠️ **Lo segundo hay que medirlo antes de aplicarlo**, y con cuidado: un ajuste que
+se acumula puede irse muy abajo si nadie corrige el BCS. Hace falta un tope, y el
+tope no está en la fuente — habrá que escribirlo como criterio nuestro y decirlo.
+
+**Para darlo por hecho:** casos nuevos en `der_casos.json` en los DOS repos, y una
+prueba que siembre un historial y exija que el peso adulto salga de él y no de la
+raza.
+
+---
+
+## §23 · Las tablas de alimentación ANIMAL, que es donde están los huecos que nos faltan
+
+**Elena, 13 de septiembre: «las tablas de alimentación animal, ¿a qué estamos
+esperando? hay un montón, Feedipedia, AFZ, FAO».**
+
+Y tiene razón en el diagnóstico: BEDCA, USDA, CIQUAL y Frida son bases de
+alimentación **HUMANA**, y por eso fallan justo donde nos falla el catálogo —
+vísceras, hueso, subproductos: cosas que la gente no come y que un perro sí.
+
+⚠️ **Y tiene razón también en la objeción que puso ella misma**: «dices que
+describen ingredientes de pienso, si esto es para una dieta cruda». Ese es el
+límite de verdad y hay que escribirlo antes de usar ni una cifra:
+
+**LA REGLA, y es estrecha a propósito.** De Feedipedia / INRA-CIRAD-AFZ se toma
+una cifra **solo si la ficha describe el ingrediente CRUDO Y FRESCO** — nunca una
+harina, un deshidratado, un rendido ni un subproducto procesado. «Harina de
+carne» y «carne» no son el mismo alimento aunque compartan nombre, y una cifra
+traída de la primera a la segunda es exactamente el fallo del catálogo que este
+repo lleva un mes persiguiendo.
+
+Y con dos condiciones más:
+- **Con su humedad declarada**, porque esas tablas dan casi todo en materia seca
+  y nuestro catálogo va sobre alimento tal cual se da. La conversión se rehace,
+  no se cree — la lección de `auditar_conversiones.py`.
+- **Por debajo de las humanas en la cadena de mandato** de `Bases.md`. No las
+  sustituye: entra donde ninguna llega.
+
+**Y hay que reconocer una cosa incómoda**: ya la hemos usado DOS VECES —el cobre
+del polvo de sangre y el del alga— sin que estuviera declarada en ninguna parte.
+O sea que el catálogo lleva cifras de una fuente que no está en la cadena. Eso
+se arregla al escribirla, y es el primer motivo para hacerlo.
+
+**Para darlo por hecho:** Feedipedia en `Bases.md` con su regla y su sitio en el
+orden; las dos celdas que ya la usan, declaradas; un barrido de los 436 huecos
+diciendo cuántos puede cerrar; y cada celda que entre, con su ficha, su humedad
+y su conversión rehecha por el auditor.
