@@ -1385,7 +1385,15 @@
     "Mirar qué cubre de verdad: yodo, colina, taurina, los 12 aminoácidos, los ácidos grasos uno a uno, y si distingue hueco de cero.",
     "Decidir dónde entra. La propuesta razonada sería mandato 4, POR DELANTE de USDA y por detrás de CIQUAL: europea, viva, con procedencia por valor y con aminoácidos. USDA pasaría a 5 y se quedaría para los cortes que solo ella tiene."
    ],
-   "donde_esta_la_pregunta": "PREGUNTAS_PARA_ELENA.md"
+   "donde_esta_la_pregunta": "PREGUNTAS_PARA_ELENA.md",
+   "decision_de_elena": "13 de septiembre de 2026: «Frida, mételo». APROBADA para entrar. Lo que falta NO es la decisión: es poder abrir el volcado.",
+   "donde_se_atasca_hoy": {
+    "la_buena_noticia": "⚠️ EL BLOQUEO ANTERIOR YA NO EXISTE, y conviene borrarlo de la cabeza: la nota vieja decía que su volcado lo servía «un S3 del DTU en el puerto 9000, que no sale de este entorno». Ese puerto sigue dando «connection reset», pero da igual: **Frida se ha MUDADO**. `frida.fooddata.dk` redirige con un 301 a **`fcdb.fooddata.dk`**, que responde 200 desde aquí sin problema. Empezar por ahí y no por la URL vieja.",
+    "lo_que_bloquea_ahora": "La web nueva es una aplicación Angular y los datos los sirve una API propia: `GET /api/food/{releaseId}`, con `releaseId` numérico. Esa API existe y contesta, pero pide un token antiforgery de ASP.NET y devuelve 400 «Antiforgery token validation failed». `GET /api/antiforgery` entrega la mitad del par -- la cookie `XSRF-TOKEN`, legible -- y se manda en la cabecera `X-XSRF-TOKEN`, que es la que usa su propio bundle. Pero la OTRA mitad, la cookie `HttpOnly` que ASP.NET compara contra ella, NO LLEGA NUNCA: ni pidiendo la portada antes, ni con `Referer` y `Origin`, ni con User-Agent de navegador. Sin las dos mitades no hay forma.",
+    "y_el_navegador_tampoco": "Se intentó con el Chromium de verdad que trae este entorno (Playwright), que es justo lo que tendría las dos cookies. No pasa del proxy: `ERR_CONNECTION_RESET` con el proxy puesto por `--proxy-server` y por la opción de Playwright. O sea que el bloqueo es de RED del entorno, no de Frida.",
+    "lo_que_haria_falta": "Una de dos, y las dos son de fuera: (1) que Elena abra `fcdb.fooddata.dk` en su navegador, baje el volcado y lo deje en `.fuentes_cache/`, igual que están CIQUAL y USDA; o (2) que el entorno deje salir al navegador. Con el fichero en disco, meterla es trabajo normal: darle su número de mandato, mapear sus columnas en `unidades.por_nutriente` y barrer con `auditar_composicion.py`.",
+    "por_que_merece_la_pena_insistir": "Es la única candidata que mide los aminoácidos de TODO alimento con proteína desde 2018, que es hoy lo único por lo que USDA es imprescindible -- y USDA SR Legacy está congelada en 2018 mientras Frida sigue viva. Y es europea."
+   }
   },
   "fineli": {
    "nombre": "Fineli — Finnish food composition database (THL)",
@@ -1454,7 +1462,9 @@
    "la_tercera_fuente_no_desempata": "CIQUAL 40104 «Foie, génisse, cru» da 6350, entre las dos. Y sus otras filas de hígado avisan de lo mucho que varía el órgano: ternera 13800, cerdo 10300, oca 20400, pollo 8490.",
    "por_que_importa": "El hígado de vaca entra en casi todo menú (la vitamina A y el cobre salen casi solo de ahí) y la vitamina A tiene MÁXIMO en FEDIAF. Con la cifra de BEDCA el motor cree que un gramo de hígado aporta el doble, así que mete la MITAD de hígado -- por el lado seguro del máximo, y por el lado malo de todo lo demás que el hígado aporta.",
    "que_se_ha_hecho": "Nada a la cifra: manda BEDCA, que es el mandato 1. Lo que se ha hecho es ESCRIBIR el id de BEDCA en la ficha, que no estaba -- declaraba solo el de USDA, así que esos 10250 no se comparaban con ninguna fuente que los publique y parecían no venir de ningún sitio.",
-   "quien_decide": "Elena / el nutricionista. Está en PREGUNTAS_PARA_ELENA.md"
+   "quien_decide": "DECIDIDO por Elena el 13 de septiembre de 2026: «siempre gana BEDCA».",
+   "decision": "SE QUEDAN LOS 10250 de BEDCA. No era una duda sobre el orden de mandato -- BEDCA es el 1 y lo era antes de esto --: era si un cociente de 2,06 entre dos fuentes honestas, en el mayor aportador de vitamina A de la ración y con máximo de FEDIAF encima, merecía reabrirlo. No lo merece. La discrepancia se queda ESCRITA, que es otra cosa: quien firma una pauta tiene derecho a saber que USDA da la mitad, y por eso no se borra al cerrarse la pregunta.",
+   "y_lo_que_esto_NO_decide": "⚠️ OJO, SON DOS EJES Y SOLO SE HA DECIDIDO UNO. «Gana BEDCA» dice de qué FUENTE sale el número. No dice en qué CONVENIO tiene que estar la columna, y ahí la regla de siempre es la contraria: si una fuente contradice a FEDIAF, gana FEDIAF. BEDCA cuenta el β-caroteno a 6:1 y FEDIAF lo define a 4:1 para el perro (Tabla VII-14), así que el conflicto de convenio de la vitamina A SIGUE ABIERTO y es independiente de esto. En el hígado no muerde -- no tiene caroteno, y con retinol puro los cuatro convenios dan el mismo número -- pero en verdura sí, y el 83 % de la vitamina A de los 216 menús viene de verdura y fruta."
   }
  },
  "fichas_con_numeros_de_otra_especie": {
@@ -1471,5 +1481,12 @@
    "esto_cierra_una_pregunta_escrita": "La propia ficha lo dejó apuntado el 8 de septiembre: «nuestras tres cifras coinciden EXACTAS con BEDCA 2300 “Pulmón, de TERNERA, crudo” … O la ficha se sembró de la fila de la especie equivocada, o es casualidad. El barrido contra la fila de vacuno lo dirá». No es casualidad: USDA, la fila de vacuno adulto, NO PUBLICA vitamina D del pulmón.",
    "y_lo_que_lo_hace_raro": "el catálogo tiene aparte una ficha «Pulmón de ternera» cuya vitamina D es un HUECO. O sea que la cifra de ternera está en la ficha de vaca y falta en la de ternera."
   }
+ },
+ "regla_cuando_dos_fuentes_discrepan": {
+  "la_regla": "Gana la de mandato más bajo que publique cifra. Donde BEDCA publica, manda BEDCA.",
+  "de_donde_sale": "Decisión de Elena, 13 de septiembre de 2026: «siempre gana BEDCA».",
+  "por_que_hacia_falta_escribirlo": "El orden de mandato ya decía que BEDCA es el 1, pero no decía qué hacer con una DISCREPANCIA: el barrido dejó 253 sin tocar con el motivo de que «cuál vale es un juicio, no una cuenta», y eso es verdad para la variación biológica y NO es una política. Ahora lo es.",
+  "lo_que_no_cambia": "Donde BEDCA no publica, la cadena sigue igual: Köber 2017 para el calcio y el fósforo del hueso, luego CIQUAL, luego USDA, luego la etiqueta. Y las excepciones por nutriente siguen mandando sobre el orden general (el yodo no puede venir de USDA porque no lo publica; los 12 aminoácidos y la colina SOLO los publica USDA; el cloruro solo CIQUAL).",
+  "y_el_limite_de_esta_regla": "⚠️ No decide los CONVENIOS. Que el número salga de BEDCA no dice en qué convenio tiene que estar la columna, y ahí manda FEDIAF. Los dos conflictos declarados -- la vitamina A (β-caroteno a 6:1 en BEDCA contra el 4:1 que FEDIAF define para el perro) y la niacina (BEDCA da equivalentes, USDA preformada) -- siguen abiertos."
  }
 }
