@@ -1976,13 +1976,16 @@ de ser urgente, pero sí decide lo que se le enseña al dueño y la banda que le
 tocaría. **Dueño: Elena.**
 
 
-### P-37 · La condición corporal de un cachorro no mueve NADA, y la fuente dice que es lo que más debería moverlo
+### ~~P-37 · La condición corporal de un cachorro no mueve NADA~~ · **REDUCIDA el mismo día: la fuente SÍ da la cifra**
 
 | | |
 |---|---|
-| **Dueño** | **Elena** (es producto: cada cuánto se le pide al dueño que lo mire) **y Cris Carles** (cuánto se corrige la ración por cada punto de BCS en crecimiento) |
+| **Dueño** | **Cris Carles**, y solo para lo que queda: si el ±10 % de escalón basta o hay que graduarlo |
 | **Bloquea** | No |
-| **Abierta desde** | 13 de septiembre de 2026 |
+| **Abierta desde** | 13 de septiembre de 2026 · **reducida ese mismo día** |
+| **Qué la redujo** | SACN5 cap.17, **Tabla 17-5, paso 5** — la buscamos en las demás fuentes y estaba en el mismo capítulo que ya habíamos leído: «This amount is only an estimate and is intended to be used as a starting point. The puppy's body condition should be monitored regularly (at least every two weeks) and **the amount fed should be increased or decreased by 10%**, depending on body condition score». El cap.27 repite la regla para mantenimiento: «increase or decrease the amount in 10% increments» |
+| **Qué se aplicó** | `ajuste_por_condicion_en_crecimiento` en `der.py` y `ajustePorCondicionEnCrecimiento` en `src/der.js`: **×1,1 por debajo de la banda ideal de FEDIAF (4-5), ×1,0 dentro, ×0,9 por encima**, y sin BCS no se toca nada. La app manda el BCS en `calcularDER`. Cinco casos nuevos en `der_casos.json`, en los dos repos |
+| **Qué queda** | Que un cachorro en BCS 6 y uno en BCS 9 reciban el MISMO −10 %. Es lo que dice la fuente —la regla es de escalón, no proporcional, y lo que cierra la diferencia es repetirla cada dos semanas— pero conviene que lo confirme quien firma |
 
 `der.py` aplica la corrección por peso ideal solo `if not en_crecimiento`. O sea
 que en un cachorro el BCS **no hace absolutamente nada**. Medido, el mismo
@@ -2022,13 +2025,16 @@ dividiendo por el exceso medido (Tabla VII-2 de FEDIAF), y esa tabla es de perro
 adulto: no hay base para aplicársela a un cachorro, que está creciendo.
 
 
-### P-38 · No se guarda ni una pesada, y «Evolución y crecimiento» pinta un solo punto
+### ~~P-38 · No se guarda ni una pesada~~ · **HECHA el mismo día, y falta ejecutar el SQL**
 
 | | |
 |---|---|
-| **Dueño** | **Elena** (es producto y es base de datos: hay que crear la tabla en Supabase) |
+| **Dueño** | **Elena**, y solo para una cosa: ejecutar `supabase/migracion-pesos.sql` en el SQL Editor |
 | **Bloquea** | No |
-| **Abierta desde** | 13 de septiembre de 2026 |
+| **Abierta desde** | 13 de septiembre de 2026 · **hecha ese mismo día** |
+| **Qué se hizo** | La tabla `pesos` con su RLS y **una pesada por perro y día**; `apuntarPesada` / `getPesadas`; lo mismo **sin cuenta** en `almacen.js`, porque ese es el camino por defecto y las semanas que más importan son las de un cachorro; que suban al crear la cuenta (`migrarLocalACuenta`), que es donde se perdían en silencio el peso objetivo y el nivel de premios; y `pesoRealDelMes()`, que pone cada pesada en **el mes que tenía el perro** y no en el del calendario. Tres pruebas en `tests/historial-de-pesadas.spec.js`, las tres comprobadas con el fallo puesto |
+| **Si no se ejecuta el SQL** | La app NO se rompe: `apuntarPesada` avisa por consola y devuelve `null`. Perder una pesada es molesto; no poder guardar la ficha es que la app no sirve — la misma decisión que ya había con las columnas nuevas |
+| **Lo que abre** | Con dos o más pesadas se puede estimar el peso adulto de la **trayectoria del propio cachorro**, que es lo que hacen WALTHAM y MyVetDiet. Eso cerraría el tramo de 12 a 24 meses sin depender de las 185 razas sin fuente. Hoy el tramo lo tapa el suelo de la Tabla VII-8a, que es un parche bueno pero un parche |
 
 Elena, ese día: *«como aún así se va a pesar al perro, cada dos semanas se va a
 ir actualizando»*. La mitad de eso ya pasa y la otra mitad no.

@@ -3624,7 +3624,12 @@ if _contrato_b23:
                 # ⚠️ AÑADIDO (9 sep): sin pasar la edad, el contrato no podia
                 # cubrir el ajuste de «adulto joven» de la Tabla VII-6, que hasta
                 # ese dia era codigo muerto en los dos repos.
-                meses=_op23.get("mesesEdad"))
+                meses=_op23.get("mesesEdad"),
+                # ⚠️ AÑADIDO (13 sep): sin pasar el BCS, el contrato no podia
+                # cubrir el ±10 % por condicion corporal de la Tabla 17-5 de
+                # SACN5, que hasta ese dia era un dato que en crecimiento no
+                # movia NADA en los dos repos.
+                bcs=_op23.get("bcs"))
             _obtenido23 = round(_r23["der"] if isinstance(_r23, dict) else _r23)
         except Exception as _e23:
             fallos.append(f"BLOQUE23: der.py revienta con {_c23['etapa']} de {_c23['peso']} kg "
@@ -14931,10 +14936,17 @@ if len({x["clave_base_de_datos"] for x in _TRES99}) != len(_TRES99):
 # la clave de la izquierda tiene que ser una que `calcular_der` acepte, y la de
 # la derecha una que la tabla de FEDIAF sepa indexar.
 _ETAPAS99 = _pide99("/vocabulario")["etapas"]
-import der as _der_e99
 import requisitos as _req_e99
-import inspect as _insp99
-_fuente_der99 = _insp99.getsource(_der_e99.calcular_der)
+# ⚠️ SE LEE EL FICHERO, NO `inspect.getsource` (13 de septiembre). Con
+# `getsource` esto se puso rojo por una razon que no tenia nada que ver con lo
+# que vigila: `inspect` va por el `linecache`, que guarda el fichero como estaba
+# al importarlo, y der.py se habia editado mientras la bateria corria -- asi que
+# devolvia el trozo equivocado y acusaba al motor de no conocer SUS PROPIAS
+# etapas. Un guardian que falla cuando el motor acierta es peor que no tenerlo:
+# ensena a desconfiar de la bateria.
+_fuente_der99 = open(_os_b65.path.join(
+    _os_b65.path.dirname(_os_b65.path.abspath(__file__)), "der.py"),
+    encoding="utf-8").read()
 for _e99 in _ETAPAS99["etapas"]:
     _ficha99 = _e99.get("clave_en_la_ficha")
     if not _ficha99:
