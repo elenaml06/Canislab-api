@@ -13163,7 +13163,10 @@ else:
     _req_obj88 = _api.cargar_v2()[1]
     _sueltos88 = []
     for _n88 in _lista88:
-        _limpios88, _aj88 = _api._objetivos_dentro_de_fediaf(
+        # ⚠️ TRES VALORES DESDE EL 13 DE SEPTIEMBRE: los objetivos escalares, los
+        # RATIOS y los ajustes. El ratio omega-6:omega-3 que elige el veterinario
+        # entra por la misma puerta, asi que la funcion devuelve uno mas.
+        _limpios88, _ratios88, _aj88 = _api._objetivos_dentro_de_fediaf(
             {_n88["clave"]: {"min": 0.0}}, _req_obj88, "Adulto")
         if not _limpios88 and not _aj88:
             _sueltos88.append(_n88["clave"])

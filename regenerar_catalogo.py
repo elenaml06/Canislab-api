@@ -149,7 +149,7 @@ def peso_adulto_de(d, tamano):
 SEGUNDOS_POR_MENU = int(os.environ.get("CANISLAB_SEGUNDOS_POR_MENU") or 45)
 
 
-def resolver_uno(al, req, der, etapa, peso, especie=None, proteina=None,
+def resolver_uno(al, req, der, etapa, peso, especie=None, proteina=None, al_completo=None,
                  segundos=None, peso_adulto=None):
     """Un menú verde para esa ficha, o el mejor que haya salido, o (None, None)."""
     if segundos is None:
@@ -213,7 +213,18 @@ def resolver_uno(al, req, der, etapa, peso, especie=None, proteina=None,
             # fuera del bucle habría medido el último peldaño con las kcal del
             # primero.
             der_real = sum(al[n]["energia"] * gr / 100.0 for n, gr in g.items() if n in al)
-            v = verificar(g, al, req, der_real or der, etapa)
+            # ⚠️ SE VERIFICA CON EL CATALOGO ENTERO, NO CON EL RECORTADO (13 de
+            # septiembre, noche). El solver solo ve lo accesible --143 de 162--
+            # pero el MOTOR sirve estos menus con los 162, y `verificar` imputa
+            # los huecos de cada nutriente con el PERCENTIL 90 DE SU FAMILIA,
+            # calculado sobre el catalogo que se le pasa. Con dos listas
+            # distintas salen dos imputaciones distintas, asi que el mismo menu
+            # puede ser verde aqui y rojo en el motor.
+            #
+            # Y paso: la variante Pequeño_CachorroJoven (Salmon) se guardaba
+            # «OK» y el BLOQUE 25 la encontraba ROJA por el selenio, 95,99 contra
+            # un maximo de 95,65. Dos verificadores que no miden igual, otra vez.
+            v = verificar(g, al_completo or al, req, der_real or der, etapa)
             # ⚠️ EL NOMBRE DEL PRIMER PELDAÑO NO ES `None`. La escalera lo da como
             # None, y `main.py` lo traduce a `PELDANO_ESTRICTO` antes de
             # responder, justo por esto: «"no dice nada" y "estricto" se leen
@@ -227,11 +238,19 @@ def resolver_uno(al, req, der, etapa, peso, especie=None, proteina=None,
 
 
 def main_regenerar(solo_base=False, solo=None):
-    al, req = cargar()
+    al_completo, req = cargar()
     # ⚠️ EL SOLVER SOLO VE LO ACCESIBLE. Ver `solo_lo_accesible`: esto elige qué
     # alimentos entran, no qué requisitos hay que cumplir. El filtro final y los
     # 43 requisitos son exactamente los mismos.
-    al, _fuera = solo_lo_accesible(al)
+    #
+    # ⚠️ PERO LA COMPROBACION FINAL SE HACE CON EL CATALOGO ENTERO (13 de
+    #    septiembre, noche). El motor sirve estos menus con los 162 alimentos, no
+    #    con los 143 accesibles, asi que comprobarlos con la lista recortada mide
+    #    otra cosa: un alimento que no este en ella cuenta CERO kcal y CERO
+    #    nutrientes, y el menu sale verde o rojo por un motivo que no es el suyo.
+    #    Se noto porque el regenerador decia «los 216 estan VERDES» y el BLOQUE
+    #    25 --que usa el catalogo entero, como el motor-- encontraba uno rojo.
+    al, _fuera = solo_lo_accesible(al_completo)
     print(f"catálogo para la vista previa: {len(al)} alimentos ({_fuera} fuera "
           f"por premium, por tienda especializada o por no poderse dar)")
     d = json.load(io.open(RUTA, encoding="utf-8"))
@@ -244,6 +263,7 @@ def main_regenerar(solo_base=False, solo=None):
         if not _toca(clave):
             continue
         g, v, peldano = resolver_uno(al, req, e["der"], e["etapa"], e["peso_kg"],
+                                     al_completo=al_completo,
                                      peso_adulto=peso_adulto_de(d, e["tamano"]))
         if g is None or v["semaforo"] != "verde":
             fallos.append(clave)
@@ -269,6 +289,7 @@ def main_regenerar(solo_base=False, solo=None):
                 cat = CAT_DE.get(p, "Carne muscular")
                 g, v, peldano = resolver_uno(al, req, ent["der"], ent["etapa"],
                                              ent["peso_kg"], cat, p,
+                                             al_completo=al_completo,
                                              peso_adulto=peso_adulto_de(d, ent["tamano"]))
                 if g is None or v["semaforo"] != "verde":
                     fallos.append("%s/%s" % (clave, p))
@@ -299,14 +320,36 @@ def main_regenerar(solo_base=False, solo=None):
     #
     # No se borran solas: un menú rojo en el fichero es un fallo que hay que ver y
     # arreglar resolviéndolo con más tiempo, no tapándolo.
+    # ⚠️ SE VERIFICA CONTRA LAS KCAL REALES DEL MENU GUARDADO, NO CONTRA LAS
+    #    PEDIDAS (13 de septiembre de 2026, por la noche). El aviso ya estaba
+    #    escrito cien lineas mas arriba -- «salian VERDES contra las kcal pedidas
+    #    y AMBAR contra las suyas» -- y esta comprobacion final seguia usando las
+    #    pedidas, asi que decia «los 216 estan VERDES» y el BLOQUE 25, que las
+    #    recalcula de los gramos, encontraba uno rojo.
+    #
+    #    Y la diferencia no es teorica: los gramos se guardan REDONDEADOS a dos
+    #    decimales, asi que las kcal del fichero no son exactamente las pedidas y
+    #    cada nutriente por 1000 kcal se mueve un pelo. Medido: la variante
+    #    Pequeño_CachorroJoven (Salmon) salia con el selenio en 95,99 contra un
+    #    maximo de 95,65 -- un 0,4 %, o sea redondeo, pero por encima del maximo.
+    #
+    #    Manda la real: es lo que se va a comer el perro, y es como lo mide el
+    #    filtro final. Dos verificadores que no miden igual es el fallo que este
+    #    repo lleva un dia entero persiguiendo.
+    def _der_real_de(gramos):
+        return sum(al_completo[n]["energia"] * g / 100.0
+                   for n, g in gramos.items() if n in al_completo)
+
     rojos = []
     for clave, e in d["CATALOGO"].items():
-        v = verificar(e["gramos"], al, req, e["der"], e["etapa"])
+        v = verificar(e["gramos"], al_completo, req,
+                      _der_real_de(e["gramos"]) or e["der"], e["etapa"])
         if v["semaforo"] != "verde":
             rojos.append("%s (%d/%d)" % (clave, v["correctos"],
                                          v["correctos"] + len(v["faltan"]) + len(v["se_pasa"])))
         for var in d["CATALOGO_VARIANTES"].get(clave, []):
-            v = verificar(var["gramos"], al, req, e["der"], e["etapa"])
+            v = verificar(var["gramos"], al_completo, req,
+                          _der_real_de(var["gramos"]) or e["der"], e["etapa"])
             if v["semaforo"] != "verde":
                 falta = ", ".join("%s al %d%%" % (f["nutriente"], f.get("cubre_pct", 0))
                                   for f in v["faltan"]) or "se pasa de algún máximo"
