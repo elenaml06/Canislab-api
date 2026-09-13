@@ -764,3 +764,122 @@ pienso.
 **Lo que te pregunto, si acaso:** ¿le pasas las tres al nutricionista? Son
 exactamente el tipo de pregunta que él puede cerrar en dos minutos y yo no puedo
 cerrar de ninguna manera, porque la respuesta es un número que la fuente no da.
+
+---
+
+# Sesión del 13 de septiembre de 2026 — el catálogo contra sus fuentes
+
+Salen de barrer las 163 fichas contra BEDCA, Köber, CIQUAL y USDA celda a celda.
+Las que he podido decidir con la fuente en la mano **no están aquí** — están hechas
+(318 celdas cerradas, 418 ceros declarados, 65 huecos declarados, cinco errores de
+dato corregidos y dos emparejamientos malos arreglados).
+
+## A · ¿Metemos Frida, la base danesa? Es la «que empieza por F»
+
+**De dónde sale.** Tú, ese día: «mira a ver cómo tiene que ser la prioridad
+realmente siendo para un motor nutricional español, igual CIQUAL y la otra que
+empieza por F valen más que USDA».
+
+**Tenías razón en empujar.** El orden se confirma —BEDCA 1, Köber 2, CIQUAL 3,
+USDA 4— pero los motivos que estaban escritos eran otros: BEDCA resulta ser **la
+que MENOS nutrientes publica** de las europeas (~40 de 968 alimentos, contra 65 de
+CIQUAL y 105 de Frida), y la comparativa de EuroFIR recomienda literalmente
+«expanding nutrients and foods». No manda por completa: manda por ser la española y
+por ser **la única que distingue un hueco de un cero**.
+
+**Y la «F» es Frida** (Dinamarca, DTU), versión 6.1 de mayo de 2026, CC BY 4.0.
+
+| A favor | En contra |
+|---|---|
+| ~105 componentes: la más completa de EuroFIR, «one of the most complete databases» | Es **danesa**: el pienso del ganado y el suelo no son los españoles — el mismo argumento que pone CIQUAL por detrás de BEDCA |
+| **Mide los aminoácidos de TODO alimento con proteína desde 2018**, que es lo único por lo que USDA es hoy imprescindible (13 de los 43 requisitos) | 1.170 alimentos, menos de la mitad que CIQUAL: faltarán cortes concretos |
+| Es **europea**, que es el criterio por el que CIQUAL ya va por delante de USDA | No se ha podido comprobar qué cubre (yodo, colina, taurina) porque no se abre |
+| Está **viva**: 6.1 es de junio de 2026. USDA SR Legacy está **congelada en 2018** | Meterla significa **reemparejar 163 alimentos** y volver a mirar cada celda que cambie: es un trabajo entero |
+| Trae la **referencia de cada valor**, que es la propiedad por la que BEDCA manda | |
+
+**Lo que lo bloquea hoy es material**: su volcado (12,6 MB) lo sirve figshare
+redirigiendo a un S3 del propio DTU en `s3q.ait.dtu.dk:9000`, y el puerto 9000 no
+sale de este entorno — cinco intentos con reanudación, corte del túnel en los
+cinco. Su web es una aplicación Angular que pide los datos a una API cuya dirección
+se inyecta en tiempo de ejecución. **Desde un navegador normal se baja sin
+problema.**
+
+**Mi propuesta, si dices que sí**: entra como mandato **4, por delante de USDA**
+(europea, viva, con procedencia por valor y con aminoácidos), y USDA baja a 5 para
+los cortes que solo ella tiene. Bájate el xlsx de `data.dtu.dk` y déjalo en
+`.fuentes_cache/`, y lo primero que hay que mirar es si publica yodo, colina y
+taurina.
+
+**Si dices que no**, no se pierde nada: está escrita entera con su medida en
+`candidatas_declaradas` de `fuentes_de_composicion.json`, que existe para que una
+fuente evaluada y descartada no se vuelva a descubrir dentro de seis meses.
+
+## B · La vitamina A: el dato que dábamos por imposible SÍ se puede conseguir
+
+**Qué sabíamos.** La columna `vitA` mezcla tres convenios del β-caroteno y
+**ninguno es el que FEDIAF define para el perro** (4:1, Tabla VII-14). `UNIDADES.md`
+decía que para arreglarlo «hace falta lo que no tenemos: el retinol y el β-caroteno
+por separado».
+
+**Qué hemos encontrado.** **Dos de las tres fuentes los publican en columnas
+separadas**: CIQUAL tiene «Rétinol» y «Beta-Carotène», y USDA tiene «Retinol» y
+«Carotene, beta».
+
+**Así que lo que falta no es el dato: es la decisión.** Y es de calado, porque
+recalcular la columna con el 4:1 de FEDIAF mueve la vitamina A de casi todas las
+fichas vegetales, y medido antes: el **83 %** de la vitamina A de los 216 menús del
+catálogo viene de verdura y fruta, o sea de caroteno. Una ficha con β-caroteno ÷6
+declara un **33 % menos** de lo que FEDIAF le contaría; una con RAE (÷12), un 67 %
+menos. **Contra el suelo eso va del lado peligroso**, y el semáforo no lo ve porque
+comprueba contra estos mismos números.
+
+**Lo que necesito de ti**: si esto lo decide el nutricionista (yo creo que sí) o si
+quieres que lo prepare ya con el 4:1 de FEDIAF y se revise después. No lo he tocado.
+
+## C · La niacina mezcla dos convenios, y el impacto es pequeño
+
+BEDCA publica «equivalentes de niacina totales» (incluyen lo que el animal fabrica
+del triptófano) y USDA y CIQUAL la **preformada**. 84 fichas llevan una y 63 la
+otra, contra el mismo mínimo de FEDIAF.
+
+**Medido: el impacto es pequeño.** Donde las dos fuentes publican, solo tres fichas
+se separan más del 1,5× (pepino ×2,3, manzana ×2,2, lengua de cordero ×1,6).
+
+**La pregunta es para el nutricionista, no para ti**: qué mide el mínimo de la Tabla
+III-3b. No he tocado nada, y lo he dejado declarado en
+`fuentes_de_composicion.json` para que no se descubra otra vez.
+
+## D · Las 259 discrepancias: ¿qué política quieres?
+
+Celdas donde tenemos cifra, la fuente tiene cifra, y se separan más del 25 %. **No
+son errores**: un alimento varía de verdad entre países. Están concentradas en
+vitaminas del grupo B y oligoelementos, que es donde más varía un análisis.
+
+Tres políticas, las tres defendibles:
+
+1. **Mandar siempre la fuente de mandato más alto.** Coherente con todo lo demás, y
+   el catálogo sería reproducible al 100 % desde las fuentes. Pero cambia ~259
+   celdas de golpe y algunas de nuestras cifras pueden ser mejores.
+2. **Quedarse con la más baja de las dos.** Lado seguro contra los máximos, lado
+   peligroso contra los mínimos — y eso es exactamente lo que `valor_plausible`
+   existe para no hacer a ciegas.
+3. **Mirarlas una a una.** Es lo correcto y son 259.
+
+**Hoy el catálogo se queda con lo que ya tenía y la lista está escrita.** Dime por
+dónde.
+
+## E · `Hígado de conejo` no tiene ninguna fuente, y ninguna base lo publica
+
+44 de sus nutrientes se presentan como medidas y no hay forma de saber de dónde
+salió ni uno: la ficha no lleva `fuente` ni `nota_datos`. Y no es que falte
+buscarlo — **ninguna de las cuatro fuentes publica hígado de conejo** (comprobado en
+las tres).
+
+Su hermana `Corazón de conejo` sí se declara PROXY («estimado a partir de corazón de
+cordero y de cerdo»), que es la salida honesta.
+
+**Lo que necesito**: o de dónde salieron esas cifras, o permiso para declararla
+PROXY de hígado de cordero o de pollo con la confianza escrita. **No he tocado
+ninguna cifra**: lo que falta no es un número, es saber de dónde viene, y eso no me
+lo puedo inventar.
+

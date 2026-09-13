@@ -1,0 +1,1406 @@
+{
+ "_meta": {
+  "que_es": "LA PRIORIDAD DE LAS FUENTES DE COMPOSICIÓN DEL CATÁLOGO, con número de mandato, y la unidad en que publica cada una cada nutriente.",
+  "escrito": "2026-09-13",
+  "por_que": "El orden estaba escrito en PROSA en `Bases.md` («BEDCA (primaria) → Köber 2017 para el hueso → CIQUAL → USDA») y CABLEADO en una tupla de `contrastar_fuentes.py` (`next(x for x in (b, c, u) ...)`). Una prosa no se ejecuta y una tupla no se lee: nadie podía comprobar que el orden que se aplica es el que se decidió, ni que la unidad de la fuente se convierte a la nuestra. La lección es la de `auditar_conversiones.py`, otra vez: lo que está contado en una frase no está auditado.",
+  "la_regla": "Se busca cada alimento en la fuente de mandato 1. Si esa fuente no publica la cifra, se baja a la 2, y así. SE ESCRIBE DE QUÉ FUENTE Y DE QUÉ FILA salió cada cifra. Si ninguna la publica, es un HUECO y va a `sin_dato` — NUNCA un 0. Un hueco no es un cero; solo un cero es un cero.",
+  "por_que_importa_la_unidad": "El catálogo va en las unidades de `UNIDADES.md` y los requisitos de FEDIAF en las MISMAS (comprobado clave a clave contra el campo `unidad` de `requerimientos_v2_final.json`). Si una cifra entra en la unidad de la fuente y no en la nuestra, el motor la compara contra un requisito en otra escala y NO SALTA NADA: el menú sale verde. Ya pasó con el selenio (cifra buena de la fuente, aplicada sobre peso fresco cuando la fuente la da en materia seca) y con el araquidónico (las tres fuentes lo dan en g y el catálogo en mg).",
+  "lo_vigila": "auditar_composicion.py, y el BLOQUE 99 de pruebas_completas.py",
+  "por_que_este_orden_y_no_otro": "⚠️ EL ORDEN SE VOLVIÓ A JUSTIFICAR EL 13 DE SEPTIEMBRE, a petición de Elena: «mira a ver cómo tiene que ser la prioridad realmente siendo para un motor nutricional español, igual CIQUAL y la otra que empieza por F valen más que USDA». Tenía razón en empujar, y el resultado es que el orden SE CONFIRMA pero por motivos distintos de los que estaban escritos, y aparece una base que no estaba mirada. Lo que dice la comparativa de las bases de EuroFIR (Zenodo 6323370, y la lista de EuroFIR): BEDCA publica unos 40 componentes de 968 alimentos y es LA QUE MENOS NUTRIENTES TIENE de las grandes europeas — la propia comparativa recomienda «expanding nutrients and foods» —; CIQUAL unos 65 de 3.185; Fineli 55 de 4.156; y Frida (Dinamarca) unos 105 de 1.170, «one of the most complete databases». O sea que BEDCA NO manda por ser la más completa: manda por ser la española y por ser la única que distingue un hueco de un cero. Y USDA va última sin que eso cambie casi nada, porque en los 13 nutrientes donde es la única que publica (los 12 aminoácidos y la colina) es la primera por defecto. Ver `frida` en `candidatas_declaradas`."
+ },
+ "orden_de_mandato": [
+  "bedca",
+  "kober2017",
+  "ciqual",
+  "usda",
+  "etiqueta_del_fabricante"
+ ],
+ "fuentes": {
+  "bedca": {
+   "mandato": 1,
+   "nombre": "BEDCA — Base de Datos Española de Composición de Alimentos",
+   "quien": "Red BEDCA, con la Agencia Española de Seguridad Alimentaria y Nutrición (AESAN) del Ministerio de Sanidad",
+   "url": "https://www.bedca.net",
+   "ambito": "todos los nutrientes que publica, de cualquier alimento",
+   "por_que_manda": [
+    "Es la base de composición NACIONAL ESPAÑOLA, y quien usa la app compra la comida en España. La composición de un alimento depende de la raza, del pienso del animal y del suelo: la tabla del país es la que describe lo que de verdad se mete en el plato.",
+    "⚠️ Y LA RAZÓN QUE MÁS PESA PARA ESTE TRABAJO: es la ÚNICA de las tres que distingue un cero medido de un hueco. Cada celda lleva un `value_type` (AR/BE = medida, aunque valga 0 · LZ = cero lógico, por composición no puede tenerlo · TR con la celda vacía = NO HAY CIFRA). CIQUAL y USDA dejan la celda vacía y punto, así que con ellas hay que deducirlo. Si la regla es «un hueco no es un cero», la fuente que sabe cuál es cuál manda.",
+    "Sigue el estándar EuroFIR: cada celda trae su método de análisis y su cita bibliográfica, así que una cifra se puede rastrear hasta el trabajo que la midió."
+   ],
+   "publica": [
+    "macros",
+    "minerales",
+    "yodo",
+    "vitaminas",
+    "agua",
+    "fibra dietética total"
+   ],
+   "no_publica": [
+    "los 12 aminoácidos",
+    "colina",
+    "cloruro",
+    "taurina",
+    "L-carnitina",
+    "purinas"
+   ],
+   "limitaciones_declaradas": [
+    "Es pequeña: unos mil alimentos públicos, así que muchos cortes concretos no están.",
+    "Los ácidos grasos uno a uno solo vienen en algunas fichas; en otras solo los totales (saturados / monoinsaturados / poliinsaturados), que no sirven para el linoleico ni el linolénico.",
+    "⚠️ Y CUANDO LOS TRAE, A VECES NO DECLARA EL ISÓMERO: la fila se llama «ácido graso 18:2» y «ácido graso 18:3», sin el «n-6» ni el «n-3». En tejido animal y vegetal el 18:2 es linoleico (ω-6) y el 18:3 es α-linolénico (ω-3) casi siempre, pero la fuente no lo dice. Es la trampa del `linoleico` contra el `linolenico` de `UNIDADES.md`: dos cosas opuestas que se diferencian en una letra y que, cambiadas, dejan el menú verde igual."
+   ],
+   "unidades": {
+    "como_se_leen": "El campo `v_unit` de cada celda. Leído de cinco fichas distintas (994 pollo, 2626 salmón, 2417 repollo, 2270 hígado de pollo, 2338 caviar) y es consistente.",
+    "energia": "kJ — ⚠️ SIEMPRE kJ, NUNCA kcal. Hay que dividir por 4,184.",
+    "minerales": "mg, salvo yodo y selenio en µg",
+    "vitaminas": "mg, salvo A, D, folato y B12 en µg",
+    "acidos_grasos": "g — incluido el araquidónico, que el catálogo guarda en mg (×1000)"
+   },
+   "value_type": {
+    "AR": "medida analítica — es un dato, aunque valga 0",
+    "BE": "valor calculado o estimado por BEDCA — es un dato",
+    "LZ": "cero lógico: por composición el alimento no puede tenerlo. Es un CERO de verdad",
+    "TR": "con la celda VACÍA: no hay cifra. Es un HUECO, y al volcarlo a una tabla se convierte en 0 y deja de verse. Seis de los huecos cerrados el 7 de septiembre eran exactamente esto"
+   },
+   "cobertura_medida": {
+    "componentes": "~40",
+    "alimentos": 968,
+    "de_donde": "Lista de bases de EuroFIR y la comparativa de Zenodo 6323370",
+    "que_significa_para_nosotros": "Es la que MENOS nutrientes publica de las grandes europeas, así que de nuestras 46 columnas puede contestar como mucho unas 30: no trae ni un aminoácido, ni colina, ni cloruro, ni taurina, ni L-carnitina, ni purinas, y los ácidos grasos uno a uno solo en parte de las fichas. Eso NO la descalifica como primera — manda en lo que publica — pero sí significa que el orden no es un adorno: para más de un tercio del catálogo la cifra la da por fuerza otra fuente."
+   }
+  },
+  "kober2017": {
+   "mandato": 2,
+   "nombre": "Köber N, Schmitt S, Kienzle E, Dobenecker B (2017), «Bones and gristle as a source of calcium in BARF-rations», 21st ESVCN Congress, Cirencester",
+   "quien": "Cátedra de Nutrición Animal y Dietética, Universidad de Múnich (LMU)",
+   "ambito": "SOLO el calcio y el fósforo de los cortes CON HUESO. Nada más.",
+   "manda_sobre": [
+    "bedca",
+    "ciqual",
+    "usda"
+   ],
+   "por_que_manda": [
+    "Dentro de su ámbito manda sobre la propia BEDCA, y el motivo es de método y no de preferencia: BEDCA, CIQUAL y USDA miden SIEMPRE carne deshuesada. Una fila de «costillas de cordero» de una base de composición humana trae el calcio de la carne, no el del hueso, porque nadie se come el hueso. El perro sí.",
+    "Es el único trabajo publicado que midió el calcio y el fósforo de las piezas con hueso tal cual se compran para BARF, pieza por pieza, quince filas."
+   ],
+   "publica": [
+    "calcio",
+    "fosforo",
+    "materia seca",
+    "proteina",
+    "grasa",
+    "cenizas"
+   ],
+   "no_publica": [
+    "todo lo demás — vitaminas, el resto de minerales, ácidos grasos, aminoácidos"
+   ],
+   "unidades": {
+    "calcio_y_fosforo": "g/kg de peso FRESCO → el catálogo va en mg/100 g: ×100",
+    "lo_demas": "⚠️ POR CIENTO, y la cabecera de la tabla NO LO DICE — declara «(g/kg wet weight)» para toda la tabla. Con dos sistemas de unidades en una tabla, un factor 10 tiene dónde esconderse: tres fichas del catálogo tuvieron el calcio y el fósforo DIEZ VECES POR DEBAJO durante meses, y el ratio Ca:P sobrevive al error (427/199 da 2,15 igual que 4270/1990), así que la comprobación que se hizo en su día no podía verlo. Una comprobación de PROPORCIÓN no caza un error de ESCALA."
+   },
+   "lo_vigila": "auditar_kober.py, que rehace las quince filas. Ese auditor es el que manda sobre estas diez fichas; el barrido de composición NO las toca en calcio ni en fósforo."
+  },
+  "ciqual": {
+   "mandato": 3,
+   "nombre": "CIQUAL — Table de composition nutritionnelle des aliments (edición 2020)",
+   "quien": "ANSES, la agencia sanitaria francesa",
+   "url": "https://ciqual.anses.fr",
+   "ambito": "todos los nutrientes que publica, de cualquier alimento",
+   "por_que_manda": [
+    "Es europea y de un país vecino: mismo marco legal de etiquetado (su columna de energía es literalmente «Règlement UE N° 1169/2011») y una cesta de la compra comparable a la española.",
+    "Es la única de las tres que trae TODOS los ácidos grasos uno a uno de forma sistemática, que es justo donde BEDCA se queda corta — y los ácidos grasos deciden cuatro requisitos de FEDIAF.",
+    "Va por detrás de BEDCA por una sola razón: es francesa, no española. No por calidad."
+   ],
+   "publica": [
+    "macros",
+    "minerales",
+    "yodo",
+    "CLORURO",
+    "vitaminas",
+    "todos los ácidos grasos uno a uno",
+    "agua",
+    "fibra",
+    "β-caroteno POR SEPARADO del retinol"
+   ],
+   "no_publica": [
+    "los 12 aminoácidos",
+    "colina",
+    "taurina",
+    "L-carnitina",
+    "purinas"
+   ],
+   "unidades": {
+    "como_se_leen": "La unidad va DENTRO del nombre de la columna: «Calcium (mg/100 g)», «Iode (µg/100 g)». La fuente se autodeclara, así que aquí no hay nada que adivinar.",
+    "energia": "publica las dos, kJ y kcal, en dos columnas con el nombre casi igual. Se usa la de kcal: «Energie, Règlement UE N° 1169/2011 (kcal/100 g)».",
+    "acidos_grasos": "g — araquidónico también (×1000 para el catálogo)"
+   },
+   "trampas": [
+    "⚠️ Publica DOS columnas de proteína: «Protéines, N x 6.25» y «Protéines, N x facteur de Jones». Se usa la de N×6,25, que es la que usan BEDCA y USDA y la que define FEDIAF. La de Jones da otro número para el mismo alimento.",
+    "⚠️ Y DOS de energía por cada unidad: la del Reglamento 1169/2011 y la «N x facteur Jones, avec fibres». Se usa la del Reglamento.",
+    "⚠️ Su columna de vitamina A es «Rétinol», RETINOL SOLO — no equivalentes. Para una verdura eso es 0, y no porque no tenga actividad de vitamina A sino porque toda la suya es β-caroteno, que va en otra columna. Comparar nuestra cifra (equivalentes) contra esta (retinol) acusa de error a todas las verduras. Ver `mandato_por_nutriente.vitA`."
+   ],
+   "cobertura_medida": {
+    "componentes": "~65",
+    "alimentos": 3185,
+    "edicion": "2020",
+    "por_que_por_delante_de_usda": "Tres razones medibles, no de gusto: (1) es europea, con la cesta de la compra y el marco de etiquetado que nos aplica; (2) publica YODO y CLORURO, y USDA no publica ninguno de los dos — el yodo es uno de los cinco topes duros de seguridad crónica; (3) su edición es de 2020 y la de USDA que usamos está CONGELADA en 2018."
+   }
+  },
+  "usda": {
+   "mandato": 4,
+   "nombre": "USDA FoodData Central — SR Legacy (volcado de abril de 2018)",
+   "quien": "Agricultural Research Service, Departamento de Agricultura de los Estados Unidos",
+   "url": "https://fdc.nal.usda.gov",
+   "ambito": "todos los nutrientes que publica, de cualquier alimento",
+   "por_que_manda": [
+    "Es la más completa por alimento de las tres, y la ÚNICA que publica los 12 aminoácidos y la colina, que son 13 de los 43 requisitos de FEDIAF. Sin ella esos 13 no se pueden verificar en ninguna ficha.",
+    "Tiene muchísimos más cortes concretos que las otras dos: «pechuga de pollo sin piel, solo carne, cruda» es una fila suya y no de BEDCA.",
+    "Va la última, y los motivos son dos y concretos: es de OTRO mercado — el pienso del ganado y el suelo americanos no son los europeos — y SR Legacy está CONGELADA desde 2018: no se actualiza, es un archivo histórico."
+   ],
+   "publica": [
+    "macros",
+    "minerales",
+    "vitaminas",
+    "ácidos grasos uno a uno",
+    "LOS 12 AMINOÁCIDOS",
+    "COLINA",
+    "agua",
+    "fibra",
+    "β-caroteno por separado"
+   ],
+   "no_publica": [
+    "YODO — y es grave: el yodo es uno de los cinco topes duros de seguridad crónica, así que un 0 puesto aquí por comodidad es peligroso de verdad",
+    "cloruro",
+    "taurina",
+    "L-carnitina",
+    "purinas"
+   ],
+   "unidades": {
+    "como_se_leen": "El campo `unit_name` de `nutrient.csv`. La fuente se autodeclara.",
+    "energia": "⚠️ DOS FILAS CON EL MISMO NOMBRE «Energy»: la 1008 en KCAL y la 1062 en kJ. Un diccionario por nombre se queda con la que llegue última, que es la de kJ — y entonces se compara 343 contra nuestros 82 y sale «discrepa −76 %» en TODA ficha con id de USDA. Se lee POR IDENTIFICADOR (1008), nunca por nombre. Es el único nombre duplicado con dos unidades entre los que usamos; comprobado sobre `nutrient.csv` entero.",
+    "acidos_grasos": "g — araquidónico también (×1000 para el catálogo)"
+   },
+   "trampas": [
+    "⚠️ DOS filas de araquidónico que NO son coherentes: «PUFA 20:4» (1271) y «PUFA 20:4 n-6» (1272 en otras ediciones). El corazón de pavo (FDC 171484) da 20:4 = 0,205 g y 20:4 n-6 = 0,009 g, veintitrés veces menos. En tejido animal casi todo el 20:4 ES el n-6, así que la fila pequeña es la anómala. Se usa «PUFA 20:4». Con la otra primero, esta herramienta señaló tres fichas de pavo como «20 veces el valor de USDA» y se llegaron a apuntar como error de dato. No lo eran: lo era la herramienta.",
+    "⚠️ Su vitamina A es «Vitamin A, RAE», el convenio americano, que cuenta el β-caroteno a 12:1. BEDCA usa el europeo, 6:1. Ninguno de los dos es el de FEDIAF. Ver `mandato_por_nutriente.vitA`."
+   ],
+   "lo_que_su_mandato_NO_significa": "⚠️ Que vaya cuarta no la hace marginal, y conviene no leerlo mal. En 13 de las 46 columnas — los 12 aminoácidos y la colina — es la ÚNICA de las cuatro que publica el dato, así que ahí es la primera por defecto y su número de mandato no decide nada. Su mandato 4 solo se nota en los nutrientes que también tienen BEDCA o CIQUAL, que es donde de verdad hay que preferir una fuente europea.",
+   "cobertura_medida": {
+    "edicion": "SR Legacy, volcado de abril de 2018",
+    "congelada": true,
+    "por_que_importa": "No se actualiza: es un archivo histórico. Una ficha suya no va a mejorar nunca."
+   }
+  },
+  "etiqueta_del_fabricante": {
+   "mandato": 5,
+   "nombre": "La etiqueta del producto, y la ficha técnica que publique el fabricante",
+   "ambito": "SOLO los suplementos y los productos de marca: los 10 multivitamínicos, los 4 aceites de salmón, los 2 de cáscara de huevo, los 2 de levadura de cerveza, el yoduro potásico, el alga, el psyllium y el polvo de sangre",
+   "por_que_manda": [
+    "No es que mande: es que NO HAY OTRA. Ninguna base de composición de alimentos tiene una fila para «NEKTON Dog Easy-BARF». El dato declarado por quien lo fabrica es el único que existe.",
+    "Y por eso es la fuente MENOS fiable de las cinco, y va la última a propósito: no la ha medido un laboratorio independiente, no lleva método ni cita, y nadie la ha contrastado. Los tres `dato_dudoso` del catálogo son de aquí: el cobre del polvo de sangre (150 veces lo que tiene la sangre bovina desecada), el omega-3 total de cuatro aceites de salmón guardado en `linolenico`, y el fósforo de las harinas de hueso."
+   ],
+   "unidades": {
+    "advertencia": "⚠️ La etiqueta de un suplemento declara a menudo LA SAL y no el elemento («óxido de zinc 100 mg» son 72 mg de zinc), y las vitaminas A, D y E en UI y no en peso. Las conversiones están en `fediaf_conversiones_vitaminas.json` (Tabla VII-14 de FEDIAF) y en `sacn5_fuentes_de_minerales.json`, y las rehace `auditar_conversiones.py`. Convertir la vitamina D con el factor de la A multiplica por DOCE el aporte, con el semáforo callado."
+   },
+   "fuera_del_barrido": "Estas fichas NO entran en el barrido contra las tres bases: no tienen fila que buscar. Lo que se les exige es otra cosa — que su cifra lleve escrita la etiqueta de donde sale, y que la conversión se pueda rehacer."
+  }
+ },
+ "mandato_por_nutriente": {
+  "_por_que": "El orden general no se puede aplicar a ciegas, porque NINGUNA de las fuentes tiene los 46 nutrientes. Bajar de la 1 a la 2 porque la 1 no publica ese nutriente es el orden funcionando; pero hay nutrientes donde la fuente que manda NO PUEDE ser la 1 nunca, y eso hay que declararlo o parecerá un despiste. Aquí van solo las EXCEPCIONES: lo que no esté listado sigue `orden_de_mandato`.",
+  "calcio": {
+   "orden": [
+    "kober2017",
+    "bedca",
+    "ciqual",
+    "usda"
+   ],
+   "solo_si": "la ficha es un corte CON HUESO (las 10 de `auditar_kober.py`)",
+   "por_que": "Las tres bases miden carne deshuesada. Para el resto de fichas el orden es el general."
+  },
+  "fosforo": {
+   "orden": [
+    "kober2017",
+    "bedca",
+    "ciqual",
+    "usda"
+   ],
+   "solo_si": "la ficha es un corte CON HUESO (las 10 de `auditar_kober.py`)",
+   "por_que": "Lo mismo que el calcio."
+  },
+  "yodo": {
+   "orden": [
+    "bedca",
+    "ciqual"
+   ],
+   "por_que": "USDA NO PUBLICA YODO, así que no puede entrar en el orden. Y el yodo es uno de los cinco topes duros de seguridad crónica: si BEDCA y CIQUAL no lo traen, va a `sin_dato` y se queda ahí. Poner un 0 para que la columna esté llena es exactamente el fallo que este fichero existe para impedir — un 0 contra un MÁXIMO significa «no aporta», y el motor se lo cree."
+  },
+  "cloruro": {
+   "orden": [
+    "ciqual"
+   ],
+   "por_que": "⚠️ CORREGIDO EL 13 DE SEPTIEMBRE. `contrastar_fuentes.py` tenía el cloruro en su lista `NO_LO_TIENE_NADIE` y no tenía entrada en el mapa de fuentes, así que un hueco de cloruro NO SE PODÍA CERRAR NUNCA con la herramienta. Y es falso: CIQUAL publica «Chlorure (mg/100 g)», y `UNIDADES.md` ya lo decía en otra sección («CIQUAL, que sí lo analiza, da 61 mg para el champiñón donde la derivación da 7,7»). Dos sitios del repo, dos afirmaciones contrarias, y la que mandaba era la del código.",
+   "ojo": "La columna `cloruro` del catálogo NO es una medida en 114 fichas: es `sodio` × 1,542, o sea el sodio reescrito suponiendo que todo viene de sal común. En vegetales eso es sistemáticamente falso. Que ahora se PUEDA leer de CIQUAL no autoriza a rellenar: cambiar la columna entera es una decisión, no un arreglo. Ver `UNIDADES.md`."
+  },
+  "colina": {
+   "orden": [
+    "usda"
+   ],
+   "por_que": "Solo USDA la publica, y es uno de los 43 requisitos de FEDIAF. Sin USDA no se puede verificar en ninguna ficha."
+  },
+  "arginina": {
+   "orden": [
+    "usda"
+   ],
+   "por_que": "Los 12 aminoácidos SOLO los publica USDA."
+  },
+  "histidina": {
+   "orden": [
+    "usda"
+   ],
+   "por_que": "Los 12 aminoácidos SOLO los publica USDA."
+  },
+  "isoleucina": {
+   "orden": [
+    "usda"
+   ],
+   "por_que": "Los 12 aminoácidos SOLO los publica USDA."
+  },
+  "leucina": {
+   "orden": [
+    "usda"
+   ],
+   "por_que": "Los 12 aminoácidos SOLO los publica USDA."
+  },
+  "lisina": {
+   "orden": [
+    "usda"
+   ],
+   "por_que": "Los 12 aminoácidos SOLO los publica USDA."
+  },
+  "metionina": {
+   "orden": [
+    "usda"
+   ],
+   "por_que": "Los 12 aminoácidos SOLO los publica USDA."
+  },
+  "cistina": {
+   "orden": [
+    "usda"
+   ],
+   "por_que": "Los 12 aminoácidos SOLO los publica USDA."
+  },
+  "fenilalanina": {
+   "orden": [
+    "usda"
+   ],
+   "por_que": "Los 12 aminoácidos SOLO los publica USDA."
+  },
+  "tirosina": {
+   "orden": [
+    "usda"
+   ],
+   "por_que": "Los 12 aminoácidos SOLO los publica USDA."
+  },
+  "treonina": {
+   "orden": [
+    "usda"
+   ],
+   "por_que": "Los 12 aminoácidos SOLO los publica USDA."
+  },
+  "triptofano": {
+   "orden": [
+    "usda"
+   ],
+   "por_que": "Los 12 aminoácidos SOLO los publica USDA. ⚠️ Y es el que tiene la trampa de unidades del catálogo — ver `HISTORIA_TECNICA.md`."
+  },
+  "valina": {
+   "orden": [
+    "usda"
+   ],
+   "por_que": "Los 12 aminoácidos SOLO los publica USDA."
+  },
+  "taurina": {
+   "orden": [],
+   "fuente_propia": "Spitze AR, Wong DL, Rogers QR, Fascetti AJ (2003), J. Anim. Physiol. Anim. Nutr. 87:251-262 — mide ~80 alimentos reales",
+   "por_que": "Ninguna de las tres bases publica taurina: no es un nutriente que se mida en composición para humanos. La procedencia de cada ficha vive en su `taurina_fuente`, con la confianza de la aproximación escrita."
+  },
+  "lcarnitina": {
+   "orden": [],
+   "fuente_propia": "literatura general por especie, sin distinguir corte ni tejido",
+   "por_que": "Ninguna de las tres la publica, y las fuentes que hay son más flojas que las de la taurina: por eso hay más `sin_dato` en L-carnitina (58 de 159) que en taurina (29 de 159). Cada ficha lo dice en su `lcarnitina_fuente`."
+  },
+  "purinas": {
+   "orden": [],
+   "fuente_propia": "las tablas de purinas de alimentos, con `purinas_bases` (adenina, guanina, hipoxantina, xantina) y `purinas_fuente` en cada ficha",
+   "por_que": "Ninguna de las tres la publica. No es un requisito de FEDIAF: la usan las patologías de urato."
+  },
+  "vitA": {
+   "orden": [
+    "bedca",
+    "ciqual",
+    "usda"
+   ],
+   "conflicto_declarado_sin_resolver": true,
+   "por_que": "⚠️ LAS TRES FUENTES USAN CONVENIOS DISTINTOS Y NINGUNO ES EL DE FEDIAF, así que el barrido NO puede decidir quién tiene razón aquí y se limita a DECIRLO. BEDCA publica «equivalentes de retinol» (convenio europeo, β-caroteno a 6:1). USDA publica «Vitamin A, RAE» (americano, 12:1). CIQUAL publica «Rétinol» A SECAS, que es retinol solo y para una verdura es 0. Y FEDIAF define el suyo para el PERRO en su Tabla VII-14: «Provitamin A (β-carotene) (dogs) — 1.0 mg = 833 IU», o sea 4:1 en peso. Comparar nuestra cifra contra cualquiera de las tres acusa de error a fichas que no lo tienen. Medido: el 83 % de la vitamina A de los 216 menús del catálogo viene de verdura y fruta, o sea de caroteno.",
+   "lo_que_haria_falta": "El retinol y el β-caroteno POR SEPARADO en cada ficha, para poder calcular `retinol + β-caroteno / 4`. ⚠️ Y EL 13 DE SEPTIEMBRE SE DESCUBRIÓ QUE DOS DE LAS TRES FUENTES LOS PUBLICAN ASÍ: CIQUAL tiene «Rétinol (µg/100 g)» y «Beta-Carotène (µg/100 g)» en columnas separadas, y USDA tiene «Retinol» y «Carotene, beta». O sea que el dato que `UNIDADES.md` y `DATOS_QUE_FALTAN.md` dan por inexistente SE PUEDE CONSEGUIR. Lo que falta no es el dato: es la DECISIÓN de cambiar el convenio de la columna, que es clínica y no la firma el software.",
+   "donde_esta_la_pregunta": "PREGUNTAS_PARA_ELENA.md §4 · DATOS_QUE_FALTAN.md · UNIDADES.md"
+  },
+  "linoleico": {
+   "orden": [
+    "bedca",
+    "ciqual",
+    "usda"
+   ],
+   "ojo": "⚠️ BEDCA a veces llama a la fila «ácido graso 18:2», SIN declarar el isómero. El catálogo necesita el n-6. Si la fila no dice «n-6», se acepta igual (en tejido animal y vegetal el 18:2 es linoleico casi siempre) pero el barrido lo MARCA, porque es la trampa del `linoleico` contra el `linolenico`: son cosas opuestas, se diferencian en una letra, y cambiadas dejan el menú verde."
+  },
+  "linolenico": {
+   "orden": [
+    "bedca",
+    "ciqual",
+    "usda"
+   ],
+   "ojo": "⚠️ Lo mismo: BEDCA a veces pone «ácido graso 18:3» sin el n-3. Y un tercer aviso: el omega-3 de cadena larga del pescado NO es este. El EPA y el DHA van en `epa` y `dha`, cada uno por su lado. Guardar el «omega-3 total» de una etiqueta en `linolenico` cuenta el EPA y el DHA dos veces — pasó con cuatro aceites de salmón y está en `dato_dudoso`."
+  },
+  "energia": {
+   "orden": [
+    "bedca",
+    "ciqual",
+    "usda"
+   ],
+   "no_es_requisito": "La energía no es una fila de FEDIAF: es el divisor. Todos los requisitos van por 1000 kcal, así que una energía mal leída desplaza los 43 a la vez.",
+   "ojo": "⚠️ ES LA COLUMNA CON MÁS TRAMPA DE UNIDAD DE TODAS. BEDCA la publica SOLO en kJ. USDA la publica DOS VECES con el mismo nombre, en kcal (1008) y en kJ (1062). CIQUAL la publica cuatro veces: dos unidades × dos métodos. El catálogo va en kcal."
+  },
+  "niacina": {
+   "orden": [
+    "bedca",
+    "ciqual",
+    "usda"
+   ],
+   "conflicto_de_convenio_declarado": true,
+   "por_que": "⚠️ LA COLUMNA `niacina` MEZCLA DOS CONVENIOS, y se deja dicho en vez de cambiarlo porque cuál vale es una decisión clínica. BEDCA publica «equivalentes de niacina, TOTALES», que incluyen la niacina que el animal puede fabricar a partir del triptófano de ese mismo alimento. USDA publica «Niacin», que es la PREFORMADA. CIQUAL publica «Vitamine B3 ou PP ou Niacine», también preformada. Son dos magnitudes distintas en la misma columna, igual que pasa con la vitamina A y sus tres factores de β-caroteno.",
+   "medido_el_13_de_septiembre": {
+    "fichas_con_la_cifra_de_bedca_equivalentes": 84,
+    "fichas_con_la_cifra_de_usda_preformada": 63,
+    "donde_las_dos_publican_y_se_separan_mas_de_1_5x": 3,
+    "los_tres": "Pepino (0,23 equiv contra 0,098 preformada, ×2,3) · Manzana (0,2 contra 0,091, ×2,2) · Lengua de cordero (7,467 contra 4,65, ×1,6)",
+    "lectura": "El impacto medido es PEQUEÑO -- en la mayoría de fichas las dos cifras casi coinciden, porque el triptófano aporta poco --, así que esto no es urgente. Pero la mezcla es real y el motor compara las dos contra el MISMO mínimo de FEDIAF."
+   },
+   "lo_que_falta_decidir": "Qué mide el mínimo de niacina de la Tabla III-3b de FEDIAF: niacina preformada o equivalentes. Hasta saberlo no se puede elegir columna, y elegir la equivocada mueve el mínimo de 84 o de 63 fichas a la vez. Lo decide el nutricionista, no el software.",
+   "donde_esta_la_pregunta": "PREGUNTAS_PARA_ELENA.md · PARA_EL_NUTRICIONISTA.md"
+  }
+ },
+ "unidades": {
+  "_por_que": "Este bloque es la defensa contra el fallo que no da error. La columna `catalogo` es la de `UNIDADES.md`; la columna `requisito` es el campo `unidad` de `requerimientos_v2_final.json`. LAS DOS TIENEN QUE COINCIDIR, porque el motor compara una contra la otra sin convertir nada. Y `factor` es lo que hay que multiplicar al valor de la fuente para llegar a la nuestra.",
+  "_lo_rehace": "auditar_composicion.py vuelve a leer la unidad declarada por cada fuente (el `v_unit` de BEDCA, el `unit_name` de `nutrient.csv` de USDA, y la unidad escrita dentro del nombre de columna de CIQUAL) y falla si no coincide con lo que dice este fichero. Una unidad declarada a mano que nadie rehace es una frase, y una frase no se ejecuta.",
+  "_factor_distinto_de_1": "Solo hay cuatro casos, y conviene tenerlos juntos: el araquidónico (las tres fuentes en g, el catálogo en mg → ×1000), la energía de BEDCA (kJ → ÷4,184), la energía de USDA (se lee la fila 1008, que ya viene en kcal) y el calcio y el fósforo de Köber (g/kg fresco → mg/100 g, ×100).",
+  "_comprobado": "Las 46 claves del catálogo tienen la MISMA unidad que su fila de `requerimientos_v2_final.json` (comprobado clave a clave el 13 de septiembre vía el `MAPA` de `verificar.py`: 46 de 46). Ese es el motivo de que el motor pueda comparar una contra otra sin convertir nada, y por eso la conversión tiene que estar hecha YA cuando el dato entra al catálogo.",
+  "por_nutriente": {
+   "proteina": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "bedca": {
+      "columna": "proteina, total",
+      "unidad_de_la_fuente": "g",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Protéines, N x 6.25 (g/100 g)",
+      "unidad_de_la_fuente": "g",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Protein",
+      "nutrient_id": "1003",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "grasa": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "bedca": {
+      "columna": "grasa, total (lipidos totales)",
+      "unidad_de_la_fuente": "g",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Lipides (g/100 g)",
+      "unidad_de_la_fuente": "g",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Total lipid (fat)",
+      "nutrient_id": "1004",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "linoleico": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "bedca": {
+      "columna": "ácido graso 18:2",
+      "unidad_de_la_fuente": "g",
+      "factor": 1.0,
+      "alias_aceptados": [
+       "ácido graso 18:2"
+      ]
+     },
+     "ciqual": {
+      "columna": "AG 18:2 9c,12c (n-6), linoléique (g/100 g)",
+      "unidad_de_la_fuente": "g",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "PUFA 18:2 n-6 c,c",
+      "nutrient_id": "1316",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": [
+       "PUFA 18:2"
+      ]
+     }
+    }
+   },
+   "linolenico": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "bedca": {
+      "columna": "ácido graso 18:3",
+      "unidad_de_la_fuente": "g",
+      "factor": 1.0,
+      "alias_aceptados": [
+       "ácido graso 18:3"
+      ]
+     },
+     "ciqual": {
+      "columna": "AG 18:3 c9,c12,c15 (n-3), alpha-linolénique (g/100 g)",
+      "unidad_de_la_fuente": "g",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "PUFA 18:3 n-3 c,c,c (ALA)",
+      "nutrient_id": "1404",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": [
+       "PUFA 18:3"
+      ]
+     }
+    }
+   },
+   "araquidonico": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "bedca": {
+      "columna": "ácido graso 20:4 n-6  (ácido araquidónico)",
+      "unidad_de_la_fuente": "g",
+      "factor": 1000.0,
+      "alias_aceptados": [
+       "ácido graso 20:4 n-6 (ácido araquidónico)",
+       "ácido graso 20:4"
+      ]
+     },
+     "ciqual": {
+      "columna": "AG 20:4 5c,8c,11c,14c (n-6), arachidonique (g/100 g)",
+      "unidad_de_la_fuente": "g",
+      "factor": 1000.0
+     },
+     "usda": {
+      "columna": "PUFA 20:4",
+      "nutrient_id": "1271",
+      "unidad_de_la_fuente": "G",
+      "factor": 1000.0,
+      "alias_aceptados": [
+       "PUFA 20:4 n-6"
+      ]
+     }
+    },
+    "ojo": "⚠️ Las tres fuentes lo dan en g y el catálogo en mg: ×1000. Y en USDA se usa «PUFA 20:4» y NO «PUFA 20:4 n-6»: el corazón de pavo (FDC 171484) da 0,205 g en la primera y 0,009 g en la segunda, 23 veces menos, y en tejido animal casi todo el 20:4 ES el n-6. Con la fila pequeña primero, la herramienta acusó a tres fichas de pavo de «20 veces el valor de USDA» y no lo eran."
+   },
+   "epa": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "bedca": {
+      "columna": "ácido graso 20:5 (ácido eicosapentaenóico)",
+      "unidad_de_la_fuente": "g",
+      "factor": 1.0,
+      "alias_aceptados": [
+       "ácido graso 20:5 (ácido eicosapentaenóico)",
+       "ácido graso 20:5"
+      ]
+     },
+     "ciqual": {
+      "columna": "AG 20:5 5c,8c,11c,14c,17c (n-3) EPA (g/100 g)",
+      "unidad_de_la_fuente": "g",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "PUFA 20:5 n-3 (EPA)",
+      "nutrient_id": "1278",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "dha": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "bedca": {
+      "columna": "ácido graso 22:6 n-3 (ácido docosahexaenóico)",
+      "unidad_de_la_fuente": "g",
+      "factor": 1.0,
+      "alias_aceptados": [
+       "ácido graso 22:6 (ácido docosahexaenóico)",
+       "ácido graso 22:6"
+      ]
+     },
+     "ciqual": {
+      "columna": "AG 22:6 4c,7c,10c,13c,16c,19c (n-3) DHA (g/100 g)",
+      "unidad_de_la_fuente": "g",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "PUFA 22:6 n-3 (DHA)",
+      "nutrient_id": "1272",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "calcio": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "bedca": {
+      "columna": "calcio",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Calcium (mg/100 g)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Calcium, Ca",
+      "nutrient_id": "1087",
+      "unidad_de_la_fuente": "MG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "fosforo": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "bedca": {
+      "columna": "fósforo",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Phosphore (mg/100 g)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Phosphorus, P",
+      "nutrient_id": "1091",
+      "unidad_de_la_fuente": "MG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "potasio": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "bedca": {
+      "columna": "potasio",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Potassium (mg/100 g)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Potassium, K",
+      "nutrient_id": "1092",
+      "unidad_de_la_fuente": "MG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "sodio": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "bedca": {
+      "columna": "sodio",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Sodium (mg/100 g)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Sodium, Na",
+      "nutrient_id": "1093",
+      "unidad_de_la_fuente": "MG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "cloruro": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "ciqual": {
+      "columna": "Chlorure (mg/100 g)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0,
+      "ojo": "⚠️ AÑADIDO EL 13 DE SEPTIEMBRE. `contrastar_fuentes.py` tenía el cloruro en `NO_LO_TIENE_NADIE` y sin entrada en el mapa, así que un hueco de cloruro no se podía cerrar nunca. CIQUAL lo publica, y `UNIDADES.md` ya lo decía en otra sección."
+     }
+    }
+   },
+   "magnesio": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "bedca": {
+      "columna": "magnesio",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Magnésium (mg/100 g)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Magnesium, Mg",
+      "nutrient_id": "1090",
+      "unidad_de_la_fuente": "MG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "hierro": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "bedca": {
+      "columna": "hierro, total",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Fer (mg/100 g)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Iron, Fe",
+      "nutrient_id": "1089",
+      "unidad_de_la_fuente": "MG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "cobre": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "bedca": {
+      "columna": "cobre",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Cuivre (mg/100 g)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Copper, Cu",
+      "nutrient_id": "1098",
+      "unidad_de_la_fuente": "MG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "manganeso": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "bedca": {
+      "columna": "manganeso",
+      "unidad_de_la_fuente": null,
+      "factor": null,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Manganèse (mg/100 g)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Manganese, Mn",
+      "nutrient_id": "1101",
+      "unidad_de_la_fuente": "MG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "zinc": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "bedca": {
+      "columna": "zinc (cinc)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Zinc (mg/100 g)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Zinc, Zn",
+      "nutrient_id": "1095",
+      "unidad_de_la_fuente": "MG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "yodo": {
+    "catalogo": "ug",
+    "requisito": "ug",
+    "por_fuente": {
+     "bedca": {
+      "columna": "ioduro",
+      "unidad_de_la_fuente": "ug",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Iode (µg/100 g)",
+      "unidad_de_la_fuente": "ug",
+      "factor": 1.0
+     }
+    }
+   },
+   "selenio": {
+    "catalogo": "ug",
+    "requisito": "ug",
+    "por_fuente": {
+     "bedca": {
+      "columna": "selenio, total",
+      "unidad_de_la_fuente": "ug",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Sélénium (µg/100 g)",
+      "unidad_de_la_fuente": "ug",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Selenium, Se",
+      "nutrient_id": "1103",
+      "unidad_de_la_fuente": "UG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "vitA": {
+    "catalogo": "ug",
+    "requisito": "ug",
+    "por_fuente": {
+     "bedca": {
+      "columna": "Vitamina A equivalentes de retinol de actividades de retinos y carotenoides",
+      "unidad_de_la_fuente": "ug",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Rétinol (µg/100 g)",
+      "unidad_de_la_fuente": "ug",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Vitamin A, RAE",
+      "nutrient_id": "1106",
+      "unidad_de_la_fuente": "UG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    },
+    "conflicto_de_convenio": true,
+    "ojo": "⚠️ NO SE COMPARA AUTOMÁTICAMENTE. Las tres fuentes usan convenios distintos del β-caroteno y ninguno es el de FEDIAF (4:1 para el perro, Tabla VII-14): BEDCA «equivalentes de retinol» (6:1), USDA «RAE» (12:1), CIQUAL «Rétinol» a secas (no cuenta el caroteno). El barrido lo informa aparte en vez de acusar a fichas que no tienen ningún error.",
+    "columnas_para_el_convenio_de_fediaf": {
+     "ciqual": {
+      "retinol": "Rétinol (µg/100 g)",
+      "beta_caroteno": "Beta-Carotène (µg/100 g)"
+     },
+     "usda": {
+      "retinol": "Retinol",
+      "beta_caroteno": "Carotene, beta"
+     },
+     "para_que": "Con el retinol y el β-caroteno por separado se puede calcular lo que FEDIAF cuenta: `retinol + β-caroteno / 4`. `UNIDADES.md` y `DATOS_QUE_FALTAN.md` dan este dato por inexistente y DOS DE LAS TRES FUENTES LO PUBLICAN. Lo que falta es la decisión, no el dato."
+    }
+   },
+   "vitD": {
+    "catalogo": "ug",
+    "requisito": "ug",
+    "por_fuente": {
+     "bedca": {
+      "columna": "Vitamina D",
+      "unidad_de_la_fuente": "ug",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Vitamine D (µg/100 g)",
+      "unidad_de_la_fuente": "ug",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Vitamin D (D2 + D3)",
+      "nutrient_id": "1114",
+      "unidad_de_la_fuente": "UG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "vitE": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "bedca": {
+      "columna": "Viamina E equivalentes de alfa tocoferol de actividades de vitámeros E",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Vitamine E (mg/100 g)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Vitamin E (alpha-tocopherol)",
+      "nutrient_id": "1109",
+      "unidad_de_la_fuente": "MG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "tiamina": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "bedca": {
+      "columna": "tiamina",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Vitamine B1 ou Thiamine (mg/100 g)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Thiamin",
+      "nutrient_id": "1165",
+      "unidad_de_la_fuente": "MG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "riboflavina": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "bedca": {
+      "columna": "riboflavina",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Vitamine B2 ou Riboflavine (mg/100 g)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Riboflavin",
+      "nutrient_id": "1166",
+      "unidad_de_la_fuente": "MG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "niacina": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "bedca": {
+      "columna": "equivalentes de niacina, totales",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Vitamine B3 ou PP ou Niacine (mg/100 g)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Niacin",
+      "nutrient_id": "1167",
+      "unidad_de_la_fuente": "MG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "acidoPantotenico": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "bedca": {
+      "columna": "ácido pantoténico (vitamina B5)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Vitamine B5 ou Acide pantothénique (mg/100 g)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Pantothenic acid",
+      "nutrient_id": "1170",
+      "unidad_de_la_fuente": "MG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "vitB6": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "bedca": {
+      "columna": "Vitamina B-6, Total",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Vitamine B6 (mg/100 g)",
+      "unidad_de_la_fuente": "mg",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Vitamin B-6",
+      "nutrient_id": "1175",
+      "unidad_de_la_fuente": "MG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "folato": {
+    "catalogo": "ug",
+    "requisito": "ug",
+    "por_fuente": {
+     "bedca": {
+      "columna": "folato, total",
+      "unidad_de_la_fuente": "ug",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Vitamine B9 ou Folates totaux (µg/100 g)",
+      "unidad_de_la_fuente": "ug",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Folate, total",
+      "nutrient_id": "1177",
+      "unidad_de_la_fuente": "UG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "vitB12": {
+    "catalogo": "ug",
+    "requisito": "ug",
+    "por_fuente": {
+     "bedca": {
+      "columna": "Vitamina B-12",
+      "unidad_de_la_fuente": "ug",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Vitamine B12 (µg/100 g)",
+      "unidad_de_la_fuente": "ug",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Vitamin B-12",
+      "nutrient_id": "1178",
+      "unidad_de_la_fuente": "UG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "colina": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {
+     "usda": {
+      "columna": "Choline, total",
+      "nutrient_id": "1180",
+      "unidad_de_la_fuente": "MG",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "energia": {
+    "catalogo": "kcal",
+    "requisito": "kcal",
+    "por_fuente": {
+     "bedca": {
+      "columna": "energía, total",
+      "unidad_de_la_fuente": "kJ",
+      "factor": 0.2390057361376673,
+      "ojo": "⚠️ BEDCA publica la energía SOLO en kJ. Sin dividir por 4,184 la cifra sale un 318 % alta."
+     },
+     "ciqual": {
+      "columna": "Energie, Règlement UE N° 1169/2011 (kcal/100 g)",
+      "unidad_de_la_fuente": "kcal",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Energy",
+      "nutrient_id": "1008",
+      "unidad_de_la_fuente": "kcal",
+      "factor": 1.0,
+      "SE_LEE_POR_IDENTIFICADOR": true,
+      "ojo": "⚠️ HAY DOS FILAS LLAMADAS «Energy»: la 1008 en kcal y la 1062 en kJ. Leída por NOMBRE se queda la última, que es la de kJ, y entonces el bacalao da 343 contra nuestros 83 y sale «discrepa -76 %» en TODA ficha con id de USDA. Se lee por `nutrient_id`, nunca por nombre. Comprobado sobre nutrient.csv entero: es el único nombre duplicado con dos unidades entre los que usamos."
+     }
+    }
+   },
+   "fibra": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "bedca": {
+      "columna": "fibra, dietetica total",
+      "unidad_de_la_fuente": "g",
+      "factor": 1.0,
+      "alias_aceptados": null
+     },
+     "ciqual": {
+      "columna": "Fibres alimentaires (g/100 g)",
+      "unidad_de_la_fuente": "g",
+      "factor": 1.0
+     },
+     "usda": {
+      "columna": "Fiber, total dietary",
+      "nutrient_id": "1079",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "taurina": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {},
+    "ninguna_de_las_bases_lo_publica": true,
+    "fuente_propia": "Spitze et al. 2003"
+   },
+   "lcarnitina": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {},
+    "ninguna_de_las_bases_lo_publica": true,
+    "fuente_propia": "literatura general por especie"
+   },
+   "purinas": {
+    "catalogo": "mg",
+    "requisito": "mg",
+    "por_fuente": {},
+    "ninguna_de_las_bases_lo_publica": true,
+    "fuente_propia": "tablas de purinas, con `purinas_bases` en cada ficha"
+   },
+   "arginina": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "usda": {
+      "columna": "Arginine",
+      "nutrient_id": "1220",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "histidina": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "usda": {
+      "columna": "Histidine",
+      "nutrient_id": "1221",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "isoleucina": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "usda": {
+      "columna": "Isoleucine",
+      "nutrient_id": "1212",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "leucina": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "usda": {
+      "columna": "Leucine",
+      "nutrient_id": "1213",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "lisina": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "usda": {
+      "columna": "Lysine",
+      "nutrient_id": "1214",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "metionina": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "usda": {
+      "columna": "Methionine",
+      "nutrient_id": "1215",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "cistina": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "usda": {
+      "columna": "Cystine",
+      "nutrient_id": "1216",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "fenilalanina": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "usda": {
+      "columna": "Phenylalanine",
+      "nutrient_id": "1217",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "tirosina": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "usda": {
+      "columna": "Tyrosine",
+      "nutrient_id": "1218",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "treonina": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "usda": {
+      "columna": "Threonine",
+      "nutrient_id": "1211",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "triptofano": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "usda": {
+      "columna": "Tryptophan",
+      "nutrient_id": "1210",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   },
+   "valina": {
+    "catalogo": "g",
+    "requisito": "g",
+    "por_fuente": {
+     "usda": {
+      "columna": "Valine",
+      "nutrient_id": "1219",
+      "unidad_de_la_fuente": "G",
+      "factor": 1.0,
+      "alias_aceptados": null
+     }
+    }
+   }
+  }
+ },
+ "candidatas_declaradas": {
+  "_por_que_esta_seccion": "Una fuente que se mira y se descarta sin dejar rastro se vuelve a descubrir dentro de seis meses. Aquí van las bases que se han evaluado y NO están en el orden de mandato, con el motivo y la medida.",
+  "frida": {
+   "nombre": "Frida — The Danish Food Composition Database, version 6.1 (mayo de 2026)",
+   "quien": "Marija Langwagen, Jette Jakobsen y Anders Poulsen · National Food Institute, Technical University of Denmark (DTU)",
+   "doi": "10.11583/DTU.32312844",
+   "licencia": "CC BY 4.0 — el volcado de datos es libre con atribución",
+   "estado": "EVALUADA Y NO APLICADA. La decisión de meter una quinta fuente es de Elena, no del software.",
+   "de_donde_sale": "Elena, 13 de septiembre de 2026: «igual CIQUAL y la otra que empieza por F valen más que USDA».",
+   "a_favor": [
+    "~105 componentes de 1.170 alimentos: la MÁS COMPLETA por alimento de las bases de EuroFIR, y la comparativa de Zenodo 6323370 la llama literalmente «one of the most complete databases».",
+    "⚠️ MIDE LOS AMINOÁCIDOS DE TODO ALIMENTO CON PROTEÍNA DESDE 2018, y desde la versión 4.1 publica además un parámetro «Protein from Amino acids». Eso es lo único por lo que USDA es hoy imprescindible: si Frida entra, los 12 aminoácidos y puede que la colina dejan de depender de una base americana congelada en 2018.",
+    "Es EUROPEA, que es el criterio por el que CIQUAL ya va por delante de USDA.",
+    "Está VIVA: la versión 6.1 se publicó el 9 de junio de 2026. USDA SR Legacy es de 2018 y CIQUAL de 2020.",
+    "Trae la procedencia POR VALOR: su hoja `Data_Normalised` lleva la referencia de cada cifra y hay una hoja `Source` con las citas. Es la propiedad por la que BEDCA manda, y Frida también la tiene.",
+    "Su hoja `Parameter` trae los códigos de EuroFIR y EFSA y los identificadores de otras bases, o sea que el emparejamiento con CIQUAL y BEDCA se puede hacer por código y no por nombre — que es justo donde falla todo esto."
+   ],
+   "en_contra": [
+    "Es danesa: el pienso del ganado y el suelo no son los españoles. Mismo argumento que nos hace poner CIQUAL por detrás de BEDCA, y aquí pesa igual.",
+    "1.170 alimentos, menos de la mitad que CIQUAL: muchos cortes concretos no van a estar.",
+    "No se ha comprobado si publica yodo, colina ni taurina, porque no se ha podido abrir el fichero (ver abajo). Mientras eso no se mire, no se puede escribir lo que cubre."
+   ],
+   "por_que_no_esta_aplicada_hoy": "Por dos motivos, y el primero es material: EL FICHERO NO SE PUEDE BAJAR DESDE ESTE ENTORNO. El volcado (FCDB_6.1_Dataset.xlsx, 12,6 MB) lo sirve figshare redirigiendo a un S3 del propio DTU en `s3q.ait.dtu.dk:9000`, y el puerto 9000 no sale de aquí: cinco intentos con reanudación, corte del túnel en los cinco. Su web tampoco vale de atajo, porque es una aplicación Angular que pide los datos a una API cuya dirección se inyecta en tiempo de ejecución (`apiConfig.baseUrl`) y no está en el bundle. Y el segundo motivo es de criterio: meter una fuente nueva significa reemparejar 163 alimentos contra ella y volver a mirar cada celda que cambie. Eso es un trabajo entero, no un añadido, y se decide antes de empezarlo.",
+   "que_haria_falta_para_meterla": [
+    "Bajar el xlsx a mano desde data.dtu.dk (el navegador de cualquiera lo baja sin problema) y dejarlo en `.fuentes_cache/`.",
+    "Mirar qué cubre de verdad: yodo, colina, taurina, los 12 aminoácidos, los ácidos grasos uno a uno, y si distingue hueco de cero.",
+    "Decidir dónde entra. La propuesta razonada sería mandato 4, POR DELANTE de USDA y por detrás de CIQUAL: europea, viva, con procedencia por valor y con aminoácidos. USDA pasaría a 5 y se quedaría para los cortes que solo ella tiene."
+   ],
+   "donde_esta_la_pregunta": "PREGUNTAS_PARA_ELENA.md"
+  },
+  "fineli": {
+   "nombre": "Fineli — Finnish food composition database (THL)",
+   "estado": "MIRADA Y DESCARTADA, por ahora",
+   "por_que": "55 componentes de 4.156 alimentos. Tiene muchos alimentos pero MENOS componentes que CIQUAL (65), y no aporta ninguna de las columnas que nos faltan: ni aminoácidos, ni colina. O sea que entraría a hacer lo que CIQUAL ya hace, con una cesta de la compra más lejana de la española. Si algún día se necesita una cuarta europea, el orden por el que mirarlas es Frida (105 componentes) antes que Fineli (55).",
+   "de_donde_sale": "Evaluada el 13 de septiembre de 2026 al revisar la lista de bases de EuroFIR."
+  },
+  "aafco_y_otras_americanas": {
+   "estado": "NO SE MIRAN",
+   "por_que": "Son de otro mercado, y para requisitos ya está decidido en `FUENTES_QUE_MANDAN.md`: «AAFCO no tiene ninguna fuerza en España». Para composición el argumento es el mismo que deja a USDA en el último lugar."
+  }
+ },
+ "emparejamientos_con_preparacion_aceptados": {
+  "_por_que": "Una ficha emparejada con una fila que declara una preparación que la ficha no tiene es, por defecto, un error: cocinar pierde agua y concentra todo lo demás por 100 g, así que esa fila describe otro alimento. Así se cazó «Perca» contra BEDCA 831 «Perca, AL HORNO». Pero hay dos casos donde la fila preparada es LA ÚNICA que publica la fuente de mandato 1, y las cifras coinciden EXACTAS con las nuestras a seis cifras — o sea que nuestra ficha salió literalmente de ahí. Esconderlo sería peor que declararlo: aquí quedan con su medida, para que el BLOQUE 100 no tenga que callarse y para que quien llegue sepa que lo sabemos. ⚠️ Y las dos son CONGELADO, no cocinado: congelar no cambia la composición por 100 g como lo hace hornear, que es lo que hace que estas dos se puedan aceptar y «Perca, al horno» no.",
+  "Pescadilla": {
+   "fuente": "bedca",
+   "id": "1174",
+   "fila": "Pescadilla, congelada, cruda",
+   "palabra": "congelad",
+   "por_que": "Es la ÚNICA fila de pescadilla cruda que publica BEDCA. Y las cifras no se parecen: son iguales a seis cifras — energía 55,13 contra nuestros 55, proteína 11,75 contra 11,75, grasa 0,835979 contra 0,836. Nuestra ficha salió de esta fila."
+  },
+  "Coliflor": {
+   "fuente": "bedca",
+   "id": "859",
+   "fila": "Coliflor, congelada, cruda",
+   "palabra": "congelad",
+   "por_que": "Es la única fila de coliflor CRUDA que publica BEDCA: la otra (2387) es «Coliflor, hervida». Cifras exactas: energía 18,21 contra nuestros 18, proteína 2 contra 2, grasa 0,175 contra 0,175."
+  }
+ }
+}

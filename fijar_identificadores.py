@@ -163,11 +163,37 @@ PREPARACIONES = (
     "ahumad", "cocid", "asad", "frit", "hervid", "guisad", "conserva",
     "en aceite", "escabeche", "salad", "deshidratad", "congelad",
     "rebozad", "empanad", "en salmuera", "curad",
+    # ⚠️ AÑADIDAS EL 13 DE SEPTIEMBRE, Y UNA SE COLÓ DE VERDAD. La lista tenía
+    # «asad», «frit» y «cocid» y NO TENÍA «horno», así que «Perca, al horno»
+    # (BEDCA 831) entró como SEGURO en una ficha de perca CRUDA y se quedó ahí.
+    # Hornear pierde agua y concentra todo lo demás por 100 g: por esa fila el
+    # barrido de composición acusaba a la vitamina B12 de un error de ×100
+    # (nuestro 1 µg contra los 0,01 de la fila horneada; la fila CRUDA de USDA
+    # da 1,9). Barrido el resto de las 116 fichas emparejadas con esta lista
+    # ampliada: Perca era la única.
+    "horno", "plancha", "vapor", "al natural", "enlatad", "almíbar", "almibar",
+    "microondas", "gratinad", "marinad", "en su jugo", "precocinad",
+    "parrilla", "barbacoa", "pasteurizad", "esterilizad", "liofilizad",
+    "en polvo", "concentrad", "triturad", "pelad",
     "cooked", "smoked", "roasted", "fried", "boiled", "braised", "canned",
     "dried", "dehydrated", "frozen", "breaded", "salted", "cured", "baked",
-    "grilled", "stewing", "moist heat", "dry heat",
-    "cuit", "fume", "seche", "grille", "roti", "conserve",
+    "grilled", "moist heat", "dry heat", "steamed", "poached", "simmered",
+    "toasted", "blanched", "reheated", "rotisserie", "pan-fried",
+    "cuit", "fume", "seche", "grille", "roti", "conserve", "appertise",
+    "blanchi", "etuve", "poele", "panne", "saumure", "au four",
 )
+
+# ⚠️ Y UNA PALABRA QUE PARECE UNA PREPARACIÓN Y NO LO ES, con su caso real.
+# «stewing» salía en la lista de arriba hasta el 13 de septiembre, y marcaba
+# REVISAR a «Gallina (carne sin hueso)» contra USDA 172400 «Chicken, STEWING,
+# meat and skin, raw» -- que cuadra en las tres cifras (17,55/17,3 · 20,33/18,1
+# · agua 61,84/61,8). No era un falso negativo del emparejamiento: «chicken,
+# stewing» no es pollo guisado, es el TIPO DE AVE (gallina madura, para guisar),
+# que es literalmente lo que dice nuestro nombre. Una palabra que en una fuente
+# nombra el producto y en otra el método no puede estar en la lista a secas.
+NO_SON_PREPARACIONES_AUNQUE_LO_PAREZCAN = {
+    "stewing": "«Chicken, stewing» de USDA es el tipo de ave (gallina), no pollo guisado",
+}
 
 
 def preparacion_incompatible(nuestro_nombre, ficha, suyo_nombre):
@@ -178,6 +204,8 @@ def preparacion_incompatible(nuestro_nombre, ficha, suyo_nombre):
         f"{nuestro_nombre} {ficha.get('preparacion') or ''}").lower()
     suyo = cf._sin_tildes(suyo_nombre).lower()
     for p in PREPARACIONES:
+        if p in NO_SON_PREPARACIONES_AUNQUE_LO_PAREZCAN:
+            continue
         if p in suyo and p not in nuestro:
             return p
     return None
@@ -370,11 +398,36 @@ def candidatos(ficha, fuente, buscar_por_nombre=True, tope=4):
             consultas.insert(0, desc)
         for consulta in consultas:
             try:
-                for fid, d in (buscar(consulta) or [])[:tope]:
-                    _mete(fid, f"búsqueda: {d[:60]}")
+                res = buscar(consulta) or []
             except Exception:
-                pass
+                continue
+            # ⚠️ SE ORDENAN POR PARECIDO AL NOMBRE, NO SE CORTAN POR ORDEN
+            # ALFABÉTICO. Esto costó un alimento entero: «Atún» devuelve siete
+            # filas de BEDCA ordenadas alfabéticamente y «Atún, crudo» (2134) es
+            # la SEXTA, detrás de cuatro conservas y de «Atún, al horno». Con
+            # `tope=4` la fila correcta no llegaba a evaluarse nunca, así que
+            # «Atún» se quedó sin un solo identificador teniendo el suyo a dos
+            # posiciones del corte. Ordenar por parecido la pone primera.
+            for fid, d in sorted(res, key=lambda x: _lejania(consulta, x[1]))[:tope]:
+                _mete(fid, f"búsqueda: {d[:60]}")
     return fuera
+
+
+def _lejania(consulta, candidato):
+    """Cuánto se aleja el nombre del candidato del que buscamos.
+
+    Cuenta a favor que estén TODAS las palabras de la consulta, y en contra
+    cada palabra que el candidato añade -- que es donde viven «en aceite de
+    oliva», «al horno» y «Néctar de». No es una medida fina: solo hace falta
+    que la fila buena suba por encima del corte.
+    """
+    c = set(cf._sin_tildes(consulta).replace(",", " ").split())
+    d = set(cf._sin_tildes(candidato).replace(",", " ").split())
+    if not c:
+        return (9, 9)
+    faltan = len(c - d)
+    sobran = len(d - c)
+    return (faltan, sobran)
 
 
 def main():

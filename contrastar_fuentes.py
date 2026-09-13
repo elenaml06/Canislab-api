@@ -241,6 +241,22 @@ def usda_buscar(texto):
     return sorted((i, d) for i, d in comidas.items() if t in _sin_tildes(d))
 
 
+# ⚠️ USDA TIENE DOS FILAS LLAMADAS «Energy» Y NO SON LA MISMA UNIDAD: la 1008
+# en kcal y la 1062 en kJ. Un diccionario por nombre se queda con la que llegue
+# última, que es la de kJ.
+#
+# ESTO ERA UN FALLO DE ESTA HERRAMIENTA, encontrado el 13 de septiembre al
+# barrer el catálogo entero: para el bacalao `usda_ficha` devolvía 343 -- los kJ
+# -- y `contrastar` lo comparaba contra nuestros 83 kcal, o sea «⚠ discrepa
+# -76 %» en TODA ficha con identificador de USDA. `fijar_identificadores.py` ya
+# lo sabía y tenía su propio `_usda_kcal` para esquivarlo; aquí no se arregló
+# nunca, así que la herramienta que existe para comparar comparaba mal la única
+# columna que desplaza las otras 43 a la vez (todos los requisitos van por 1000
+# kcal). Es la lección del araquidónico 20:4 otra vez: el dato no era el error,
+# la herramienta lo era.
+USDA_ENERGIA_KCAL = "1008"
+
+
 def usda_ficha(fdc_id):
     import csv
     d, comidas, nutrientes = _usda_tablas()
@@ -248,8 +264,13 @@ def usda_ficha(fdc_id):
     with open(os.path.join(d, "food_nutrient.csv"), newline="", encoding="utf-8") as f:
         for r in csv.DictReader(f):
             if r["fdc_id"] == str(fdc_id):
+                nombre = nutrientes.get(r["nutrient_id"], "?")
+                if nombre == "Energy":
+                    # solo la fila en kcal; la de kJ se ignora a propósito
+                    if r["nutrient_id"] != USDA_ENERGIA_KCAL:
+                        continue
                 # el valor a secas, como CIQUAL: el `value_type` es cosa de BEDCA
-                vals[nutrientes.get(r["nutrient_id"], "?")] = r["amount"]
+                vals[nombre] = r["amount"]
     return comidas.get(str(fdc_id), ""), vals
 
 
@@ -348,11 +369,33 @@ MAPA_FUENTES = {
  "treonina":        ([], [], ["Threonine"], 1),
  "triptofano":      ([], [], ["Tryptophan"], 1),
  "valina":          ([], [], ["Valine"], 1),
+ # ⚠️ LA ENERGÍA ES LA COLUMNA CON MÁS TRAMPA DE UNIDAD DEL FICHERO, y por eso
+ # es la única con un factor POR FUENTE en vez de uno solo:
+ #   · BEDCA la publica SOLO en kJ (437,1 kJ para la pechuga de pollo) -> /4,184
+ #   · CIQUAL publica cuatro columnas: kJ y kcal, por dos métodos. Se usa la del
+ #     Reglamento UE 1169/2011 en kcal, que es la que nos aplica.
+ #   · USDA tiene DOS filas «Energy» -- 1008 kcal y 1062 kJ --; `usda_ficha` ya
+ #     devuelve solo la de kcal, así que aquí el factor es 1.
+ # Y no es cosmético: la energía es el DIVISOR de los 43 requisitos, que van
+ # todos por 1000 kcal. Leerla mal los desplaza los 43 a la vez.
  "energia":         (["energía, total"], ["Energie, Règlement UE N° 1169/2011 (kcal/100 g)"],
                      ["Energy"], 1),
+ # ⚠️ EL CLORURO SÍ LO PUBLICA ALGUIEN, y hasta el 13 de septiembre este fichero
+ # decía que no: estaba en `NO_LO_TIENE_NADIE` y sin entrada aquí, así que un
+ # hueco de cloruro NO SE PODÍA CERRAR NUNCA con esta herramienta. CIQUAL lo
+ # analiza («Chlorure», código 10170) y `UNIDADES.md` ya lo decía en otra
+ # sección: «CIQUAL, que sí lo analiza, da 61 mg para el champiñón donde la
+ # derivación da 7,7». Dos sitios del repo afirmando lo contrario, y mandaba el
+ # código. BEDCA y USDA no lo publican.
+ # ⚠️ Que ahora se PUEDA leer no autoriza a rellenar: en 114 fichas la columna
+ # `cloruro` no es una medida, es `sodio` × 1,542, y cambiarla entera es una
+ # decisión y no un arreglo. Ver `UNIDADES.md`.
+ "cloruro":         ([], ["Chlorure (mg/100 g)"], [], 1),
 }
 # Ninguna de las tres publica esto. Si falta, falta.
-NO_LO_TIENE_NADIE = ("cloruro", "taurina", "lcarnitina", "purinas")
+# ⚠️ EL CLORURO SALIÓ DE AQUÍ EL 13 DE SEPTIEMBRE: CIQUAL sí lo publica. Ver el
+# comentario de `cloruro` en MAPA_FUENTES.
+NO_LO_TIENE_NADIE = ("taurina", "lcarnitina", "purinas")
 
 
 def _num(x):
@@ -406,6 +449,9 @@ def contrastar(nombre, b_id=None, c_id=None, u_id=None):
         b, tipo = _sacar(vb, nb_, fac, con_tipo=True)
         c, _ = _sacar(vc, nc_, fac)
         u, _ = _sacar(vu, nu_, fac)
+        # BEDCA publica la energía en kJ y el catálogo en kcal
+        if k == "energia" and b is not None:
+            b = b / 4.184
         # el primero de las tres que tenga cifra, en el orden de Bases.md
         mejor = next((x for x in (b, c, u) if x is not None), None)
         f = lambda v: "·" if v is None else f"{v:,.4g}"

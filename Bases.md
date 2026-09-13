@@ -28,6 +28,24 @@ Fuentes, en este orden:
    huesos CON hueso, porque BEDCA mide siempre carne deshuesada
 3. **CIQUAL (ANSES)** — para lo que no está en BEDCA
 
+> ⚠️ **13 de septiembre de 2026: ese orden sigue siendo el bueno, pero ya NO vive
+> aquí.** Esta lista es prosa, y una prosa no se ejecuta: el orden estaba además
+> **cableado** en una tupla de `contrastar_fuentes.py`, así que nadie podía
+> comprobar que el que se aplica es el que se decidió. Ahora vive en
+> **`fuentes_de_composicion.json`**, con número de mandato (1 BEDCA · 2 Köber ·
+> 3 CIQUAL · 4 USDA · 5 la etiqueta del fabricante), con el **porqué de cada
+> puesto**, con el **mandato por nutriente** para los casos en que el orden
+> general no se puede aplicar (el yodo no puede venir de USDA porque no lo
+> publica; los 12 aminoácidos y la colina SOLO los publica USDA; el cloruro solo
+> CIQUAL) y con la **unidad y el factor de conversión de cada fuente**. Lo rehace
+> `auditar_composicion.py` y lo vigila el BLOQUE 100.
+>
+> Dos cosas que esta lista no decía y que conviene saber: **USDA faltaba** (es la
+> única que publica los 12 aminoácidos y la colina, o sea 13 de los 43 requisitos)
+> y **BEDCA es la que MENOS nutrientes publica** de las bases europeas (~40, frente
+> a 65 de CIQUAL y 105 de la danesa Frida). No manda por ser la más completa: manda
+> por ser la española y por ser **la única que distingue un hueco de un cero**.
+
 Reglas fijas:
 - Los nombres dicen la verdad sobre si llevan hueso o no
   ("Pato (carne sin hueso)" vs "Codorniz entera")

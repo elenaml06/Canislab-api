@@ -1266,3 +1266,86 @@ de origen. Que el prototipo oficial no dé peso no hace bueno el que tenemos.
 ⚠️ **El Mastín del Pirineo sigue sin estar en la ficha**, y es gigante: es justo
 donde el peso adulto decide el techo de calcio del cachorro. Entra en cuanto
 haya una fuente para su peso.
+
+---
+
+## 13 de septiembre de 2026 — lo que el barrido contra las fuentes dejó SIN cerrar
+
+Lo añade el barrido de `auditar_composicion.py`, que comprobó las 163 fichas
+contra BEDCA, Köber, CIQUAL y USDA celda a celda. **Cerró 318 celdas con la cifra
+de la fuente y declaró 418 ceros y 65 huecos.** Esto es lo que NO pudo cerrar, y
+ninguno de estos puntos lo rellena el asistente.
+
+### 1 · `Hígado de conejo`: una ficha sin ninguna procedencia
+
+No lleva `fuente` ni `nota_datos`, y su `sin_dato` solo declara la taurina y la
+L-carnitina. O sea que sus otros **44 nutrientes se presentan como medidas** y no
+se puede saber de dónde salió ni uno.
+
+**Y no es que falte buscarlo: ninguna de las cuatro fuentes publica hígado de
+conejo.** Comprobado el 13 de septiembre en BEDCA («higado de conejo», «conejo»),
+CIQUAL («Foie de lapin») y USDA («rabbit, liver»): cero filas en las tres. BEDCA
+sí tiene el conejo (1162, carne), pero no sus vísceras.
+
+**Qué hace falta**: o una fuente para esas 44 cifras, o declararla PROXY como ya
+hace su hermana `Corazón de conejo` («estimado a partir de corazón de cordero y de
+cerdo»), con la confianza escrita. Lo que no se puede es dejarla como está: 44
+números sin origen en una ficha de hígado, que es la categoría que más pesa en
+vitamina A y en cobre.
+
+### 2 · El retinol y el β-caroteno por separado — Y RESULTA QUE SÍ SE PUEDEN CONSEGUIR
+
+Este documento y `UNIDADES.md` daban este dato por inexistente. **No lo es**:
+CIQUAL publica «Rétinol (µg/100 g)» y «Beta-Carotène (µg/100 g)» en columnas
+separadas, y USDA publica «Retinol» y «Carotene, beta».
+
+Con las dos se puede calcular lo que FEDIAF cuenta para el **perro**:
+`retinol + β-caroteno / 4` (Tabla VII-14, «Provitamin A (β-carotene) **(dogs)** —
+1.0 mg = 833 IU»).
+
+**Así que lo que falta no es el dato: es la DECISIÓN** de cambiar el convenio de la
+columna `vitA`, que hoy mezcla tres (BEDCA equivalentes 6:1, USDA RAE 12:1, CIQUAL
+retinol solo). Eso es clínico y no lo firma el software. Está en
+`PREGUNTAS_PARA_ELENA.md`.
+
+### 3 · Qué mide el mínimo de niacina de FEDIAF
+
+La columna `niacina` mezcla dos convenios: **84 fichas** llevan los «equivalentes
+de niacina totales» de BEDCA (que incluyen la aportación del triptófano) y **63**
+la niacina **preformada** de USDA, y el motor las compara todas contra el mismo
+mínimo.
+
+Medido, el impacto es **pequeño**: donde las dos fuentes publican, solo tres fichas
+se separan más del 1,5× (pepino ×2,3, manzana ×2,2, lengua de cordero ×1,6). Pero
+para elegir columna hay que saber qué mide la Tabla III-3b, y elegir la equivocada
+mueve el mínimo de 84 o de 63 fichas a la vez.
+
+### 4 · Las 259 discrepancias entre dos fuentes honestas
+
+Son celdas donde tenemos cifra, la fuente tiene cifra, y se separan más del 25 %.
+**No son errores**: la composición de un alimento varía de verdad entre países
+(raza, pienso, suelo), y dos bases honestas discrepan. El barrido las lista y
+**no toca ninguna**, porque cuál vale es un juicio y no una cuenta.
+
+Dónde están concentradas: ácido pantoténico (21), manganeso (21), cobre (19),
+niacina (15), vitamina B6 (14), selenio (13), tiamina (12). O sea **vitaminas del
+grupo B y oligoelementos**, que es exactamente donde más varía un análisis.
+
+**Qué hace falta**: que un nutricionista decida la política. Hay tres opciones y
+las tres son defendibles — quedarse con la fuente de mandato más alto siempre,
+quedarse con la más baja de las dos (lado seguro contra los máximos), o mirarlas una
+a una. Hoy el catálogo se queda con lo que ya tenía.
+
+### 5 · El cloruro: ahora SE PUEDE leer, y sigue sin decidirse
+
+CIQUAL publica «Chlorure (mg/100 g)» y hasta el 13 de septiembre el repo decía que
+no lo publicaba nadie. Pero en **114 fichas** la columna `cloruro` no es una medida:
+es `sodio × 1,542`, o sea el sodio reescrito suponiendo que todo viene de sal común,
+que en vegetales es sistemáticamente falso (CIQUAL da 61 mg para el champiñón donde
+la derivación da 7,7).
+
+Que ahora se pueda leer **no autoriza a rellenar**: cambiar la columna entera es una
+decisión, no un arreglo, y mezclar 114 derivaciones con unas pocas medidas reales es
+peor que lo que hay. Sigue pendiente, con la diferencia de que ahora hay de dónde
+sacarlo.
+

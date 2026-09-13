@@ -196,6 +196,99 @@ septiembre eran exactamente eso.
 
 ---
 
+## De dónde sale cada cifra, y en qué orden se pregunta
+
+Añadido el 13 de septiembre de 2026. Hasta ese día este documento decía **en qué
+unidad** va cada nutriente y `Bases.md` decía **en qué orden** se miran las
+fuentes, en prosa. Lo que faltaba era lo de en medio: **la unidad en que publica
+cada fuente cada nutriente, y el factor para llegar a la nuestra**, en un sitio
+que se pueda ejecutar.
+
+Vive en `fuentes_de_composicion.json` y lo rehace `auditar_composicion.py`: vuelve
+a leer la unidad que **declara** cada fuente (el `v_unit` de BEDCA, el
+`unit_name` de USDA, la unidad escrita dentro del nombre de columna de CIQUAL) y
+falla si no coincide con lo declarado. Una unidad escrita a mano que nadie rehace
+es una frase, y una frase no se ejecuta.
+
+**Lo primero que comprobó, y es la precondición de todo lo demás:** las **46**
+claves del catálogo tienen la **misma** unidad que su fila de
+`requerimientos_v2_final.json`. 46 de 46. Eso es lo que permite que el motor
+compare una contra la otra sin convertir nada — y por eso la conversión tiene que
+estar hecha **ya** cuando el dato entra al catálogo. Lo vigila el BLOQUE 100.
+
+**Solo hay cuatro factores distintos de 1, y conviene tenerlos juntos:**
+
+| | De | A | Factor |
+|---|---|---|---|
+| Araquidónico, en las **tres** fuentes | g | mg | **×1000** |
+| Energía de **BEDCA** | kJ | kcal | **÷4,184** |
+| Energía de **USDA** | se lee la fila **1008**, que ya viene en kcal | | ×1 |
+| Calcio y fósforo de **Köber** | g/kg fresco | mg/100 g | **×100** |
+
+⚠️ **La energía es la columna con más trampa de unidad del catálogo**, y no es
+cosmético: es el **divisor** de los 43 requisitos, que van todos por 1000 kcal, así
+que leerla mal los desplaza los 43 a la vez. BEDCA la publica **solo en kJ**. USDA
+la publica **dos veces con el mismo nombre**, `Energy`: la 1008 en kcal y la 1062
+en kJ. Leída por nombre gana la última, que es la de kJ — y así estuvo
+`contrastar_fuentes.py` hasta el 13 de septiembre, comparando los 343 kJ del
+bacalao contra nuestros 83 kcal y diciendo «discrepa −76 %» en toda ficha con
+identificador de USDA. CIQUAL la publica **cuatro** veces: dos unidades por dos
+métodos; se usa la del Reglamento UE 1169/2011 en kcal.
+
+### Dos columnas que mezclan DOS CONVENIOS, y ninguna se ha tocado
+
+Esto no es un error de unidad: es peor, porque las dos cifras están en la misma
+unidad y miden cosas distintas.
+
+**La vitamina A**, que ya tenía su sección arriba, y ahora con un dato nuevo: para
+aplicar el factor 4:1 que FEDIAF define para el perro hace falta el retinol y el
+β-caroteno **por separado**, y este documento decía que no lo tenemos. **Dos de las
+tres fuentes los publican en columnas separadas**: CIQUAL tiene «Rétinol» y
+«Beta-Carotène», y USDA tiene «Retinol» y «Carotene, beta». Así que lo que falta no
+es el dato: es la **decisión** de cambiar el convenio de la columna, que es clínica.
+
+**La niacina**, que es nueva del 13 de septiembre. BEDCA publica «equivalentes de
+niacina, **totales**» —que incluyen la niacina que el animal puede fabricar a
+partir del triptófano de ese mismo alimento— y USDA y CIQUAL publican la
+**preformada**. Medido: 84 fichas llevan la cifra de BEDCA y 63 la de USDA, y el
+motor las compara todas contra el mismo mínimo de FEDIAF. El impacto real es
+**pequeño** —donde las dos fuentes publican, solo tres fichas se separan más del
+1,5× (pepino ×2,3, manzana ×2,2, lengua de cordero ×1,6)—, pero la mezcla existe.
+Lo que falta por decidir es qué mide el mínimo de la Tabla III-3b, y eso no lo
+firma el software.
+
+### Y un cero de la fuente tampoco se copia a ciegas
+
+`auditar_composicion.py --cerrar` escribe un 0 de la fuente en
+**`cero_verificado`**, no como un 0 pelado: un 0 a secas es indistinguible de un
+hueco, que es justo lo que este documento existe para separar. El caso masivo es
+la **fibra de la carne y el pescado** — cero de verdad, porque el tejido animal no
+tiene fibra dietética, y hasta entonces era un cero mudo en 78 celdas.
+
+⚠️ **Con una excepción, porque una fuente también se equivoca.** BEDCA publica
+`calcio = 0` como **medida** (`value_type` AR) para el pollo entero con piel, y un
+tejido animal con 0 mg de calcio no existe. Se aplica el criterio de este mismo
+documento —«un cero solo es creíble si algún alimento de esa familia puede tenerlo
+de verdad»— y el hueco **se queda abierto**, diciéndolo.
+
+Y hay que leer ese criterio con cuidado, porque habla de **TEJIDO**: una manteca o
+una grasa de pollo **sí** tienen 0 de proteína, 0 de potasio y 0 de B12 de verdad,
+y la primera versión de esta regla las acusaba — doce celdas de trece eran falsos
+positivos. Se separan por lo mismo por lo que `sin_huella` separa los aceites: la
+grasa.
+
+### Los ácidos grasos se transfieren por gramo de grasa
+
+La regla del aminograma de abajo —«no se copia: se divide por SU proteína y se
+multiplica por la NUESTRA»— **vale igual para los ácidos grasos, por gramo de
+grasa**, y desde el 13 de septiembre se aplica así. El argumento es el mismo sin
+cambiar una palabra: un ácido graso es una **fracción de la grasa**, no una
+cantidad independiente. Si la fila de USDA trae 3,05 g de linoleico sobre 15,06 g
+de grasa y nuestra ficha tiene 9,25 g de grasa, copiar 3,05 declara un aceite que
+no está ahí.
+
+---
+
 ## Las trampas, en orden de frecuencia
 
 **EPA y DHA van en GRAMOS, no en miligramos.** Es la que más se cuela,
