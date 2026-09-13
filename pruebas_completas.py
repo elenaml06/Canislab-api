@@ -12455,6 +12455,77 @@ else:
                       f"fallo del 10 de septiembre otra vez: se construyen y se tiran. "
                       f"Perdidos: {_perdidos84[:2]}")
 
+    # ── LAS TRES INTERACCIONES DE LA §3.3, Y DONDE SE AVISA DE CADA UNA ─────
+    #
+    # ⚠️ AÑADIDO EL 13 DE SEPTIEMBRE, y nace de que el aviso del calcio NO HABIA
+    # SALTADO NUNCA. Estaba puesto en el 85 % del maximo de FEDIAF (5312
+    # mg/1000 kcal en adulto) y el menu con mas calcio de los 216 llega a 4247.
+    # Un aviso calibrado a un umbral nuestro, en un sitio al que no se llega.
+    #
+    # FEDIAF nombra TRES cosas que bajan la disponibilidad de oligoelementos y
+    # solo deciamos una: «reduced by a high content of certain minerals (e.g.
+    # calcium), the level of other trace elements (e.g. high zinc decreases
+    # copper absorption) and sources of phytic acid». Y SACN5 cap.6 pone donde
+    # empieza la primera: de 1,0 a 1,5 % de materia seca, o sea 2500 a 3750.
+    #
+    # Lo que se comprueba aqui es que el umbral sea EL DE LA FUENTE y no uno
+    # nuestro, y se comprueba con numeros fijos -- no con un menu del solver,
+    # que cambia entre ejecuciones.
+    def _ca_a84(mg_por_1000):
+        """Un menú de mentira con EXACTAMENTE ese calcio por 1000 kcal."""
+        _f = {"nombre": "_falso84", "categoria": "Extras", "energia": 100.0,
+              "nutrientes": {"calcio": mg_por_1000 / 10.0}}
+        return {"_falso84": 1000.0}, {"_falso84": _f}
+    for _mg84, _debe84, _que84 in ((2000.0, False, "por debajo de 2500 no se dice nada"),
+                                   (3000.0, True, "entre 2500 y 3750 avisa de la banda baja"),
+                                   (4200.0, True, "por encima de 3750 avisa fuerte")):
+        _m84b, _al84b = _ca_a84(_mg84)
+        _p84b, _a84b = _rs84_fn(_m84b, _al84b, 1000.0, "Adulto", devolver_avisos=True,
+                                requerimientos=_req84)
+        _hay84 = any(x.startswith("El calcio") for x in _a84b)
+        if _hay84 != _debe84:
+            fallos.append(f"BLOQUE84: con el calcio a {_mg84:.0f} mg/1000 kcal {_que84}, y "
+                          f"{'no dice nada' if _debe84 else 'avisa igual'}. El umbral tiene que "
+                          f"ser el de SACN5 (2500 y 3750), no uno nuestro: con el de antes "
+                          f"(85 % del máximo = 5312) este aviso no saltaba en NINGUNO de los 216 "
+                          f"menús del catálogo")
+    # Y que las dos bandas digan cosas DISTINTAS: si el texto fuera el mismo,
+    # tener dos umbrales no serviria de nada.
+    _m84c, _al84c = _ca_a84(3000.0); _m84d, _al84d = _ca_a84(4200.0)
+    _t84c = [x for x in _rs84_fn(_m84c, _al84c, 1000.0, "Adulto", devolver_avisos=True,
+                                 requerimientos=_req84)[1] if x.startswith("El calcio")]
+    _t84d = [x for x in _rs84_fn(_m84d, _al84d, 1000.0, "Adulto", devolver_avisos=True,
+                                 requerimientos=_req84)[1] if x.startswith("El calcio")]
+    if _t84c and _t84d and _t84c[0] == _t84d[0]:
+        fallos.append("BLOQUE84: las dos bandas del calcio dicen exactamente lo mismo. Entonces "
+                      "no son dos bandas: es un umbral con dos nombres")
+
+    # ── EL COBRE PEGADO A SU SUELO ──────────────────────────────────────────
+    #
+    # Lo que importa no es el zinc ni el cobre por separado: es el cobre en su
+    # minimo mientras algo le baja la absorcion. MEDIDO sobre los 216 menus
+    # regenerados: 94 llevan el cobre por debajo del 120 % de su minimo y 15
+    # ademas con el zinc alto y el calcio en la banda. Esos menus CUMPLEN, y el
+    # minimo que cumplen esta escrito suponiendo una absorcion normal.
+    def _cu_zn84(cu, zn, ca):
+        _f = {"nombre": "_falso84b", "categoria": "Extras", "energia": 100.0,
+              "nutrientes": {"cobre": cu / 10.0, "zinc": zn / 10.0, "calcio": ca / 10.0}}
+        return {"_falso84b": 1000.0}, {"_falso84b": _f}
+    _cu_min84 = 2.08   # minimo de cobre de FEDIAF en adulto, mg/1000 kcal
+    _zn_min84 = 20.8   # minimo de zinc
+    for _cu84, _zn84, _ca84b, _debe84b, _que84b in (
+            (_cu_min84 * 1.05, _zn_min84 * 1.6, 3000.0, True, "cobre justo Y zinc alto Y calcio alto"),
+            (_cu_min84 * 1.05, _zn_min84 * 1.0, 1500.0, False, "cobre justo pero nada que le estorbe"),
+            (_cu_min84 * 2.0, _zn_min84 * 1.6, 3000.0, False, "zinc alto pero cobre con margen")):
+        _m84e, _al84e = _cu_zn84(_cu84, _zn84, _ca84b)
+        _a84e = _rs84_fn(_m84e, _al84e, 1000.0, "Adulto", devolver_avisos=True,
+                         requerimientos=_req84)[1]
+        _hay84e = any(x.startswith("El cobre") for x in _a84e)
+        if _hay84e != _debe84b:
+            fallos.append(f"BLOQUE84: {_que84b}: {'no avisa' if _debe84b else 'avisa y no debería'}. "
+                          f"El aviso es de la COMBINACIÓN -- cobre sin margen y algo que le baja la "
+                          f"absorción --, no de ninguno de los dos por separado")
+
     # Ni duplicados: dos avisos que digan lo mismo hacen que se deje de leer la lista.
     for _clave84 in ("taurina", "histamina"):
         _n84 = sum(1 for x in (_duenyo84 + _vet84) if _clave84 in x.lower())

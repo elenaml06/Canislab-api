@@ -1126,18 +1126,99 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
         _fila_ca = requerimientos.get("Calcio")
         if _fila_ca:
             _max_ca = _max_de_ca(_fila_ca, "Calcio", etapa)
-    if _max_ca and der:
+    # ⚠️ EL UMBRAL ERA NUESTRO Y ESTABA DONDE NO PASA NADA (13 septiembre 2026).
+    #
+    # Esto avisaba a partir del 85 % del maximo de FEDIAF, o sea 5312 mg/1000
+    # kcal en adulto. MEDIDO sobre los 216 menus precalculados: el que mas
+    # calcio lleva llega a 4247. ESTE AVISO NO HA SALTADO NUNCA.
+    #
+    # Y mientras tanto, SACN5 cap.6 SI dice donde empieza el problema -- «as
+    # calcium levels increased from 1.0 to 1.5 %, zinc usage (as measured by
+    # changes in plasma zinc) decreased» --, que a 4 kcal/g de materia seca son
+    # 2500 y 3750 mg/1000 kcal. Por encima de 2500 van 152 de los 216 menus, y
+    # por encima de 3750 van 93. O sea: el 70 % de los menus esta en la zona que
+    # la fuente describe y no se le decia a nadie, porque el umbral lo habiamos
+    # puesto NOSOTROS en un sitio al que no se llega.
+    #
+    # DOS BANDAS Y NO UNA, y el motivo es que una sola mentiria por omision: en
+    # una racion BARF el calcio va alto POR CONSTRUCCION -- se cierra con hueso,
+    # no hay otra forma --, asi que con un solo umbral o avisas en el 70 % y se
+    # vuelve ruido que nadie lee, o avisas en el 43 % y das a entender que los
+    # demas estan limpios cuando la fuente dice que no del todo.
+    #
+    # LO QUE NO SE HACE SIGUE SIN HACERSE, y el motivo no ha cambiado: no se
+    # sube el minimo de zinc ni el de cobre. Ninguna fuente dice CUANTO, y subir
+    # un minimo a ojo es inventarse la cifra.
+    CA_EMPIEZA_A_IMPORTAR = 2500.0   # 1,0 % MS · SACN5 cap.6
+    CA_DOCUMENTADO = 3750.0          # 1,5 % MS · SACN5 cap.6
+    _ca_1000 = None
+    if der:
         _ca = sum((alimentos.get(n, {}).get("nutrientes", {}).get("calcio") or 0) * g / 100.0
                   for n, g in menu.items())
         _ca_1000 = _ca / der * 1000.0
-        if _ca_1000 >= _max_ca * 0.85:
+        _de_su_max = ((" (el %.0f %% de su máximo de %.0f)"
+                       % (100.0 * _ca_1000 / _max_ca, _max_ca)) if _max_ca else "")
+        if _ca_1000 >= CA_DOCUMENTADO:
             avisos.append(
-                "El calcio de esta ración va al %.0f %% de su máximo (%.0f de %.0f mg por "
-                "1000 kcal). No se pasa, pero FEDIAF avisa de que con el calcio alto puede "
-                "hacer falta más zinc y más cobre, porque se absorben peor. Es normal en una "
-                "ración con hueso; si el perro es de los que se le nota en la piel o el pelo, "
-                "es algo que comentar con el veterinario."
-                % (100.0 * _ca_1000 / _max_ca, _ca_1000, _max_ca))
+                "El calcio de esta ración está en %.0f mg por 1000 kcal%s. No se pasa del "
+                "máximo, pero SACN5 documenta que a partir de 1,5 %% de materia seca (3750) "
+                "el zinc se aprovecha peor, y FEDIAF avisa de lo mismo para el zinc y el "
+                "cobre. Es normal en una ración con hueso, que es como se cierra el calcio; "
+                "conviene mirarlo si al perro se le nota en la piel o el pelo."
+                % (_ca_1000, _de_su_max))
+        elif _ca_1000 >= CA_EMPIEZA_A_IMPORTAR:
+            avisos.append(
+                "El calcio de esta ración está en %.0f mg por 1000 kcal%s, o sea en la banda "
+                "donde SACN5 empieza a documentar que el zinc se absorbe algo peor (de 1,0 a "
+                "1,5 %% de materia seca, 2500 a 3750). No es un exceso: es lo normal en una "
+                "ración con hueso." % (_ca_1000, _de_su_max))
+
+    # ⚠️ LA SEGUNDA INTERACCION DE LA §3.3, QUE NO DECIAMOS (13 septiembre).
+    #
+    # El parrafo general de oligoelementos de FEDIAF nombra TRES cosas que bajan
+    # la disponibilidad y solo aviabamos de una: «the bioavailability of trace
+    # elements is reduced by a high content of certain minerals (e.g. calcium),
+    # the level of other trace elements (e.g. HIGH ZINC DECREASES COPPER
+    # ABSORPTION) and sources of phytic acid (e.g. cereals and legumes)».
+    #
+    # LO QUE IMPORTA NO ES EL ZINC NI EL COBRE POR SEPARADO: es el cobre pegado
+    # a su suelo mientras algo le baja la absorcion. MEDIDO sobre los 216 menus
+    # regenerados: 94 llevan el cobre por debajo del 120 % de su minimo -- el
+    # solver lo deja ahi porque cumple -- y 15 de ellos ademas con el zinc por
+    # encima del 140 % del suyo Y el calcio por encima de 2500. Ese menu cumple
+    # el minimo escrito, y el minimo esta escrito suponiendo una absorcion
+    # normal.
+    #
+    # La tercera, el acido fitico, se MIDIO y es marginal: 18 de 216 menus
+    # llevan alguna semilla, mediana 2,8 g. Se declara aqui y no se construye
+    # maquinaria para ella.
+    COBRE_SIN_MARGEN = 1.20    # veces su minimo
+    ZINC_ALTO = 1.40           # veces el suyo
+    if der and requerimientos:
+        from verificar import minimo_de as _min_de
+        _f_cu, _f_zn = requerimientos.get("Cobre"), requerimientos.get("Zinc")
+        if _f_cu and _f_zn:
+            _cu_min = _min_de(_f_cu, "Cobre", etapa)
+            _zn_min = _min_de(_f_zn, "Zinc", etapa)
+            _cu = sum((alimentos.get(n, {}).get("nutrientes", {}).get("cobre") or 0) * g / 100.0
+                      for n, g in menu.items()) / der * 1000.0
+            _zn = sum((alimentos.get(n, {}).get("nutrientes", {}).get("zinc") or 0) * g / 100.0
+                      for n, g in menu.items()) / der * 1000.0
+            if _cu_min and _zn_min and _cu < _cu_min * COBRE_SIN_MARGEN:
+                _porques = []
+                if _zn >= _zn_min * ZINC_ALTO:
+                    _porques.append("el zinc va al %.0f %% de su mínimo y FEDIAF dice que el "
+                                    "zinc alto baja la absorción del cobre"
+                                    % (100.0 * _zn / _zn_min))
+                if _ca_1000 and _ca_1000 >= CA_EMPIEZA_A_IMPORTAR:
+                    _porques.append("el calcio está en la banda donde también la baja")
+                if _porques:
+                    avisos.append(
+                        "El cobre de esta ración va justo (%.2f mg por 1000 kcal, el %.0f %% de "
+                        "su mínimo) y a la vez %s. Cumple el mínimo, pero ese mínimo está "
+                        "escrito suponiendo una absorción normal. Ninguna fuente dice cuánto "
+                        "habría que subirlo, así que no se sube: se dice."
+                        % (_cu, 100.0 * _cu / _cu_min, " y ".join(_porques)))
 
     if len(fuentes_a) >= 3:
         avisos.append(
