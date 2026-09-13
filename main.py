@@ -6864,6 +6864,12 @@ def _nutrientes_para_objetivos():
         salida.append({
             "clave": clave,
             "nombre_del_requisito": nombre_req,
+            # En que grupo se lee esta fila dentro de una ficha. Sale de
+            # `nutrientes_como_se_presentan.json`, no de aqui: si se escribiera
+            # en la app, un nutriente nuevo del motor caeria en su cajon
+            # «Otros» -- que se ve y no da error, o sea que no se entera nadie.
+            # El BLOQUE 99 exige que los 46 lo tengan.
+            "grupo": _GRUPO_DE_NUTRIENTE.get(nombre_req),
             "unidad": unidad,
             "por": "1000 kcal",
             "de_la_tabla_III_3b": _es_fila_de_fediaf(fila),
@@ -6950,7 +6956,7 @@ ETIQUETAS_CONDICION = {
         "veterinario": {"titulo": "BCS 8/9 — Obeso",
                         "detalle": "30 a 45 % por encima del ideal (FEDIAF Tabla VII-2)"}},
     9: {"dueno": {"titulo": "Muy gordete", "detalle": "No se notan las costillas, sin cintura"},
-        "veterinario": {"titulo": "BCS 9/9 — Obesidad morbida",
+        "veterinario": {"titulo": "BCS 9/9 — Obesidad mórbida",
                         "detalle": "Mas del 45 % por encima del ideal; la estimacion es una COTA "
                                    "INFERIOR (FEDIAF Tabla VII-2, fila «9. Grossly Obese»)"}},
 }
@@ -6986,6 +6992,37 @@ ETIQUETAS_TAMANO = {
 # sale de la fecha de nacimiento, del sexo y de si esta gestante o lactando. Se
 # sirven igual porque la app las ESCRIBE en pantalla y porque el veterinario
 # necesita saber a que tabla de FEDIAF corresponde la suya.
+# ⚠️ LOS DOS NOMBRES DE CADA ETAPA (13 de septiembre de 2026). La misma etapa
+# se llama de dos maneras dentro del motor: `der.py` la recibe en minusculas con
+# guion bajo (`cachorro_joven`) y la tabla de FEDIAF la indexa en CamelCase
+# (`CachorroJoven`). La traduccion entre las dos vivia SOLO en
+# `ETAPA_A_SUFIJO_API` de `src/App.jsx`, escrita a mano -- o sea la misma forma
+# de fallo que `ACTIVIDAD_POR_INDICE`: si el motor añade una etapa o le cambia
+# el nombre, la app sigue traduciendo con su tabla vieja, manda una etapa que el
+# motor no conoce, y el motor cae a «Adulto» sin dar error. Un cachorro
+# verificado contra los requisitos de un adulto sale VERDE.
+#
+# No es una tabla inventada: las claves de la izquierda son las que acepta
+# `calcular_der` y las de la derecha las que indexan `requerimientos_v2_final`.
+# El BLOQUE 99 comprueba las dos puntas.
+COMO_SE_LLAMA_LA_ETAPA_EN_LA_FICHA = {
+    "CachorroJoven": "cachorro_joven",
+    "CachorroCrecimiento": "cachorro_crecimiento",
+    "Adulto": "adulto",
+    "Senior": "senior",
+    "GestanteTemprana": "gestante_temprana",
+    "GestanteTardia": "gestante_tardia",
+    "Lactante": "lactante",
+}
+
+# ⚠️ Y DE LAS SIETE, LA FICHA SOLO CALCULA CUATRO. `determinarEtapa` sale de la
+# fecha de nacimiento, y la gestacion y la lactancia no se deducen de la edad:
+# hay que preguntarlas, y la ficha todavia no lo hace. Va DECLARADO y no
+# callado, que es lo mismo que se hizo con la pregunta de los premios: un hueco
+# escrito se puede cerrar y uno que no esta escrito no lo ve nadie. Ver
+# `lo_que_la_ficha_todavia_no_pregunta` en `datos_de_la_ficha.json`.
+ETAPAS_QUE_LA_FICHA_CALCULA = ["cachorro_joven", "cachorro_crecimiento", "adulto", "senior"]
+
 ETIQUETAS_ETAPA = {
     "CachorroJoven": {
         "dueno": {"titulo": "Cachorro", "detalle": "Menos de 14 semanas"},
@@ -7007,6 +7044,21 @@ ETIQUETAS_ETAPA = {
                         "detalle": "Usa la de adulto, con la proteina subida a 45 g/1000 kcal "
                                    "(`requisitos.SENIOR_PROTEINA_MINIMA`) y el techo de fosforo "
                                    "de 1750 mg/1000 kcal"}},
+    # ⚠️ LA GESTACION TEMPRANA ESTABA SIN ETIQUETA (13 de septiembre). Es una
+    # etapa que el motor acepta por las dos puertas -- `EQUIVALENCIA_ETAPAS` la
+    # manda a «Early Growth & Reproduction» y `calcular_der` acepta
+    # `gestante_temprana` -- y no tenia fila aqui, asi que no salia por
+    # `/vocabulario` y no se podia ofrecer. Una etapa que el motor sabe recibir
+    # y que nadie puede elegir es un requisito que no se aplica nunca.
+    "GestanteTemprana": {
+        "dueno": {"titulo": "Embarazada (al principio)",
+                  "detalle": "Primeras cinco semanas de la gestacion"},
+        "veterinario": {"titulo": "Early gestation",
+                        "detalle": "Va a la columna «Early Growth & Reproduction». Las kcal "
+                                   "son 132/kg^0,75 toda la gestacion (`der.GESTACION_BASE`); lo "
+                                   "que entra en la semana 5 es el extra de 26 kcal por kg de "
+                                   "peso vivo, y eso es lo unico que separa la temprana de la "
+                                   "tardia"}},
     "GestanteTardia": {
         "dueno": {"titulo": "Embarazada", "detalle": "Ultimas semanas de la gestacion"},
         "veterinario": {"titulo": "Late gestation",
@@ -7126,6 +7178,28 @@ def endpoint_vocabulario():
                     "`objetivos_ajustados`, salga o no salga el menú."),
             "cuantos": len(_nutrientes_objetivos),
             "nutrientes": _nutrientes_objetivos,
+            # ── Y COMO SE LEEN AGRUPADOS ─────────────────────────────────
+            #
+            # ⚠️ AÑADIDO (13 de septiembre de 2026). El orden y el titulo de
+            # cada grupo vivian SOLO en `src/nutrientes.js`, con 42 nutrientes
+            # escritos a mano; el motor sirve 46 y la ficha trae ademas dos
+            # RELACIONES, asi que seis filas caian en el cajon «Otros». Ese
+            # cajon esta puesto a proposito -- se prefiere un grupo feo a un
+            # nutriente escondido -- pero no es un sitio donde deba vivir nada
+            # de forma permanente, y ahi llevaban desde que existe la ficha.
+            #
+            # Se sirven con los nombres de fila, no con las claves internas,
+            # porque es lo que trae cada fila de `verificar()`. Incluye las dos
+            # relaciones (Ca:P y linoleico:linolenico), que no son nutrientes
+            # del MAPA y si son filas de la ficha.
+            "grupos": {
+                "de_donde": "`nutrientes_como_se_presentan.json`",
+                "que_es": ("Como se AGRUPAN las filas de una ficha y en que orden se leen. "
+                           "Aqui no hay ni una cifra: solo en que grupo va cada fila."),
+                "un_solo_registro": _GRUPOS_NUT["_meta"]["un_solo_registro"],
+                "cuantos": len(_GRUPOS_NUT["grupos"]),
+                "lista": _GRUPOS_NUT["grupos"],
+            },
         },
         # ── LOS PREMIOS ──────────────────────────────────────────────────
         # La pregunta que la ficha todavia NO hace, servida ya con sus dos
@@ -7198,8 +7272,18 @@ def endpoint_vocabulario():
                     "cinco escalones del dueño son los BCS de `der.BCS_DESDE_CONDICION`; el "
                     "veterinario pone el BCS exacto, que es el que manda para calcular."),
             "escalones_del_dueno": {str(i): b for i, b in sorted(BCS_DESDE_CONDICION.items())},
+            # ⚠️ AÑADIDO EL 13 DE SEPTIEMBRE: `como_se_reconoce`, o sea la
+            # Tabla VII-1 entera. Las dos etiquetas de cada punto dicen COMO SE
+            # LLAMA y CUANTO se desvia; esto dice como se RECONOCE, que es lo
+            # que necesita quien esta delante del perro con la mano encima. Lo
+            # tenia la app en `ESCALA_BCS`, escrito a mano y sin fuente.
+            "como_se_reconoce": {
+                "de_donde": _BCS_VII_1["_meta"]["de_donde"],
+                "ojo": _BCS_VII_1["_meta"]["dos_idiomas"],
+            },
             "puntos": [dict({"bcs": b,
-                             "ofrecido_al_dueno": b in set(BCS_DESDE_CONDICION.values())},
+                             "ofrecido_al_dueno": b in set(BCS_DESDE_CONDICION.values()),
+                             "como_se_reconoce": _COMO_SE_RECONOCE_BCS.get(b)},
                             **ETIQUETAS_CONDICION[b])
                        for b in sorted(ETIQUETAS_CONDICION)],
         },
@@ -7248,7 +7332,30 @@ def endpoint_vocabulario():
             # DER, y apuntada igual.
             "quien_la_calcula": ("La app (`determinarEtapa` en src/der.js), que corta Early "
                                  "Growth en 98 dias = 14 semanas. El motor la recibe hecha."),
-            "etapas": [dict({"clave": k}, **v) for k, v in ETIQUETAS_ETAPA.items()],
+            # ⚠️ AÑADIDO EL 13 DE SEPTIEMBRE: `clave_en_la_ficha`, o sea el
+            # otro nombre de la misma etapa. La traduccion vivia solo en la app
+            # y una etapa que el motor no reconozca cae a «Adulto» sin dar
+            # error -- un cachorro verificado contra requisitos de adulto sale
+            # VERDE. Ver `COMO_SE_LLAMA_LA_ETAPA_EN_LA_FICHA`.
+            "los_dos_nombres": {
+                "que_es": ("La misma etapa se llama de dos maneras: `clave` es la que indexa la "
+                           "tabla de FEDIAF y `clave_en_la_ficha` la que acepta `calcular_der` y "
+                           "la que sale de `determinarEtapa`."),
+                "la_ficha_calcula": ETAPAS_QUE_LA_FICHA_CALCULA,
+                "la_ficha_no_pregunta": [v for k, v in COMO_SE_LLAMA_LA_ETAPA_EN_LA_FICHA.items()
+                                         if v not in ETAPAS_QUE_LA_FICHA_CALCULA],
+                "por_que_esas_no": ("La gestacion y la lactancia no se deducen de la fecha de "
+                                    "nacimiento: hay que preguntarlas, y la ficha todavia no lo "
+                                    "hace. Declarado en `lo_que_la_ficha_todavia_no_pregunta` de "
+                                    "`datos_de_la_ficha.json`."),
+            },
+            "etapas": [dict({"clave": k,
+                             "clave_en_la_ficha": COMO_SE_LLAMA_LA_ETAPA_EN_LA_FICHA.get(k),
+                             "la_calcula_la_ficha": (
+                                 COMO_SE_LLAMA_LA_ETAPA_EN_LA_FICHA.get(k)
+                                 in ETAPAS_QUE_LA_FICHA_CALCULA)},
+                            **v)
+                       for k, v in ETIQUETAS_ETAPA.items()],
         },
         "patologias": {
             "cuantas": len(_pat_v),
@@ -7533,6 +7640,31 @@ with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
 with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
                         "como_se_da_cada_alimento.json"), encoding="utf-8") as _f:
     _COMO_SE_DA = _json.load(_f)
+
+# La Tabla VII-1 de FEDIAF: COMO SE RECONOCE cada punto de condicion corporal,
+# mirando y palpando. No es la VII-2 -- aquella dice CUANTO se desvia del peso
+# ideal cada punto, y esta dice que numero escribe quien mira al perro. Vivia en
+# `ESCALA_BCS` de `src/bcs.js`, escrita a mano y SIN FUENTE, siendo una
+# parafrasis de una tabla que FEDIAF publica entera. Ver su `_meta`.
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                        "bcs_tabla_VII_1.json"), encoding="utf-8") as _f:
+    _BCS_VII_1 = _json.load(_f)
+
+_COMO_SE_RECONOCE_BCS = {p["bcs"]: p for p in _BCS_VII_1["puntos"]}
+
+# Como se AGRUPAN los nutrientes cuando se leen en una ficha, y en que orden.
+# Aqui no hay ni una cifra: solo en que grupo va cada fila. Vivia en
+# `src/nutrientes.js` de la app con 42 nutrientes, y el motor sirve 46 mas dos
+# relaciones -- o sea que seis caian en el cajon «Otros» sin que nadie se
+# enterase, porque «Otros» se ve y no da error. Ver su `_meta`.
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                        "nutrientes_como_se_presentan.json"), encoding="utf-8") as _f:
+    _GRUPOS_NUT = _json.load(_f)
+
+# El grupo de cada fila, del reves, para poder colgarselo a cada nutriente sin
+# que la app tenga que cruzar dos listas.
+_GRUPO_DE_NUTRIENTE = {n: g["clave"]
+                       for g in _GRUPOS_NUT["grupos"] for n in g["nutrientes"]}
 
 # La Tabla VII-7 de FEDIAF fila por fila, y -- desde el 13 de septiembre -- los
 # TRES nombres de cada nivel: el indice que guarda la ficha, la clave que viaja

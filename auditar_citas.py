@@ -108,7 +108,12 @@ JSONS = ["patologias.json", "recomendaciones_libro.json", "requisitos_condiciona
          # `fci_estandares_peso.txt`), asi que sus citas se pueden comprobar
          # literales, y una raza es justo donde una cita mal copiada no se ve:
          # el numero cuadra con la cita aunque la cita no sea de esa raza.
-         "razas.json"]
+         "razas.json",
+         # La Tabla VII-1 de FEDIAF, la de como se RECONOCE cada punto de
+         # condicion corporal. Entra aqui el mismo dia que se escribe: son 26
+         # frases literales de una tabla que el PDF saca a dos columnas, que es
+         # justo donde se han colado las citas mal copiadas de este repo.
+         "bcs_tabla_VII_1.json"]
 
 _CITA = re.compile(r"«([^»]{40,})»")
 # ⚠️ BAJADO DE 40 A 25 EL 11 DE SEPTIEMBRE, y por un fallo mio concreto.
