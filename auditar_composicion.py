@@ -46,23 +46,53 @@ LO QUE COMPRUEBA, Y POR QUÉ CADA COSA
 
 LO QUE NO HACE, A PROPÓSITO
 ---------------------------
-· **No escribe en el catálogo.** Saca un informe. Cambiar una cifra es una
-  decisión con fuente escrita detrás, y se hace a mano mirando la ficha.
-· **No rellena huecos.** Dice cuáles se pueden cerrar y con qué cifra de qué
-  fila; ponerla es otro paso.
+· **Sin `--cerrar` no escribe nada.** El modo por defecto saca un informe y se
+  calla. Escribir en el catálogo es un acto aparte y hay que pedirlo.
+· **No toca una DISCREPANCIA, nunca, ni con `--cerrar`.** Cuando las dos cifras
+  existen y no coinciden, las dos fuentes son honestas y cuál vale es un
+  JUICIO, no una cuenta: la composición de un alimento varía de verdad entre
+  países (raza, pienso, suelo). Son 259 y están listadas para que las mire una
+  persona.
 · **No toca el calcio ni el fósforo de las diez fichas de hueso.** Esas las
   manda Köber 2017 (mandato 2) y las rehace `auditar_kober.py`. Las tres bases
   miden carne DESHUESADA: su calcio es el de la carne, no el del hueso.
 · **No compara la vitamina A.** Las tres fuentes usan convenios distintos del
-  β-caroteno y ninguno es el de FEDIAF. Comparar acusaría de error a fichas
-  correctas. Se informa aparte.
+  β-caroteno y ninguno es el de FEDIAF (4:1 para el perro, Tabla VII-14).
+  Comparar acusaría de error a fichas correctas. Se informa aparte.
 · **No mira los suplementos contra las bases.** No tienen fila: su fuente es la
   etiqueta del fabricante (mandato 5). Lo que se les exige es otra cosa.
+· **No obedece un cero de la fuente a ciegas.** Un 0 que la fuente publica como
+  MEDIDA se escribe en `cero_verificado` y no como un 0 pelado -- un 0 a secas
+  es indistinguible de un hueco, que es justo lo que esto separa. Y si ese cero
+  no es creíble (un TEJIDO animal con 0 mg de calcio), no se escribe: se dice.
+
+QUÉ HACE `--cerrar`, QUE ES EL ÚNICO QUE ESCRIBE
+------------------------------------------------
+Tres cosas, y las tres dejan rastro de dónde viene cada número:
+
+  1. Donde tenemos un hueco o un cero mudo y la fuente que manda SÍ publica
+     cifra, pone la cifra y escribe su procedencia en `composicion_fuente`
+     (fuente, id, fila literal, columna, valor en bruto, unidad y factor), para
+     que el BLOQUE 100 pueda REHACER la cuenta.
+  2. Donde la fuente publica un 0 como medida, lo declara en `cero_verificado`
+     con su fila.
+  3. Donde la fuente dice que NO HAY CIFRA (`TR` con la celda vacía en BEDCA),
+     declara el hueco en `sin_dato`. Un hueco no es un cero.
+
+⚠️ **Los aminoácidos y los ácidos grasos NO se copian: se transfieren por
+gramo.** Los aminoácidos por gramo de PROTEÍNA, que es la regla de
+`UNIDADES.md` («se divide por SU proteína y se multiplica por la NUESTRA;
+copiarlo tal cual mete el error de las dos proteínas a la vez»), y los ácidos
+grasos por gramo de GRASA, con el mismo argumento sin cambiar una palabra: un
+ácido graso es una FRACCIÓN de la grasa, no una cantidad independiente. Si la
+fila trae 3,05 g de linoleico sobre 15,06 g de grasa y nuestra ficha tiene
+9,25 g de grasa, copiar 3,05 declara un aceite que no está ahí.
 
 CÓMO SE USA
 -----------
     python3 auditar_composicion.py --instantanea   # baja las fuentes (red)
     python3 auditar_composicion.py                 # audita, SIN red
+    python3 auditar_composicion.py --cerrar        # ESCRIBE en el catálogo
 
 La instantánea (`fuentes_instantanea.json`) guarda el valor EN LA UNIDAD DE LA
 FUENTE, su unidad y su `value_type`, más la descripción LITERAL de la fila. Así
@@ -514,11 +544,13 @@ def auditar():
 # ácido graso es una fracción de la grasa, no una cantidad independiente. Si la
 # fila trae 3,05 g de linoleico sobre 15,06 g de grasa y nuestra ficha tiene
 # 9,25 g de grasa, copiar 3,05 declara un aceite que no está ahí.
+AMINOACIDOS = ("arginina", "histidina", "isoleucina", "leucina", "lisina", "metionina",
+               "cistina", "fenilalanina", "tirosina", "treonina", "triptofano", "valina")
+ACIDOS_GRASOS = ("linoleico", "linolenico", "araquidonico", "epa", "dha")
+
 ESCALAR_POR = {
-    **{a: "proteina" for a in ("arginina", "histidina", "isoleucina", "leucina",
-                               "lisina", "metionina", "cistina", "fenilalanina",
-                               "tirosina", "treonina", "triptofano", "valina")},
-    **{g: "grasa" for g in ("linoleico", "linolenico", "araquidonico", "epa", "dha")},
+    **{a: "proteina" for a in AMINOACIDOS},
+    **{g: "grasa" for g in ACIDOS_GRASOS},
 }
 # Por debajo de esto el cociente no significa nada y escalar mete ruido.
 SUELO_PARA_ESCALAR = {"proteina": 1.0, "grasa": 0.5}
@@ -595,7 +627,7 @@ def cerrar():
     catalogo = json.load(open(CATALOGO, encoding="utf-8"),
                          object_pairs_hook=collections.OrderedDict)
     hoy = "2026-09-13"
-    puestas = saltadas = puestas_cero = declarados = 0
+    puestas = saltadas = puestas_cero = declarados = deshechas = 0
     resumen = collections.Counter()
     resumen_cero = collections.Counter()
     resumen_hueco = collections.Counter()
@@ -723,8 +755,70 @@ def cerrar():
                 declarados += 1
                 resumen_hueco[clave] += 1
 
+        # ── EL GUARDIA DE GRUPO: una fracción no puede pasar de su total ──
+        #
+        # ⚠️ CASO REAL, Y LO CAUSÓ ESTE MISMO SCRIPT EL 13 DE SEPTIEMBRE. A la
+        # ZANAHORIA se le puso el aminograma de USDA 170393 «Carrots, raw», cuyos
+        # doce aminoácidos suman 0,89 g — sobre una proteína nuestra de 0,8 g. Eso
+        # es el 111 % de la proteína y es imposible: los doce aminoácidos SON una
+        # fracción de ella.
+        #
+        # Y el escalado por gramo de proteína no lo salvó, por un detalle del
+        # suelo: `SUELO_PARA_ESCALAR["proteina"]` es 1,0 g y la zanahoria tiene
+        # 0,8, así que la transferencia se saltó. Aunque se hubiera aplicado no
+        # bastaba: la propia fila de USDA suma el 96 % de SU proteína (0,89 sobre
+        # 0,93), o sea que la incoherencia viene de la fuente y no de la escala.
+        #
+        # Un aminograma se escribe ENTERO o no se escribe: celda a celda no hay
+        # forma de ver que la suma se pasa. Así que si el grupo no cae en la banda
+        # del 25-85 % que pide `UNIDADES.md`, se deshace el grupo completo y la
+        # ficha se queda con sus huecos, que es la respuesta honesta.
+        # ⚠️ SON DOS REGLAS Y NO UNA, y confundirlas acusa a fichas correctas.
+        #   · LA SUMA NO PUEDE PASAR DEL TOTAL: siempre, en cualquier ficha. Es
+        #     una imposibilidad aritmética, no un criterio.
+        #   · LA BANDA DEL 25-85 %: solo donde hay proteína DE VERDAD.
+        #     `UNIDADES.md` lo dice con esas palabras («en cualquier alimento con
+        #     proteína de verdad»), y con razón: la manzana tiene 0,3 g de
+        #     proteína y 0,073 g de aminoácidos, o sea el 24,3 %, y eso no es un
+        #     error -- es que con cifras tan pequeñas el cociente no significa
+        #     nada. La primera versión de este guardia no hacía la distinción y
+        #     señalaba la manzana, que no tiene nada que ver con el caso de la
+        #     zanahoria (111 %).
+        SUELO_PARA_LA_BANDA = {"proteina": 1.0, "grasa": 1.0}
+        for grupo, total_clave, banda in (
+                (AMINOACIDOS, "proteina", (0.25, 0.85)),
+                (ACIDOS_GRASOS, "grasa", (0.0, 1.0))):
+            puestas_del_grupo = [k for k in grupo if k in proc]
+            if not puestas_del_grupo:
+                continue
+            total = _num(nut.get(total_clave)) or 0
+            if total <= 0:
+                continue
+            suma = sum((_num(nut.get(k)) or 0) * (0.001 if k == "araquidonico" else 1)
+                       for k in grupo)
+            razon = suma / total
+            pasa_del_total = razon > 1.02
+            fuera_de_banda = (total >= SUELO_PARA_LA_BANDA[total_clave]
+                              and not (banda[0] <= razon <= banda[1]))
+            if not pasa_del_total and not fuera_de_banda:
+                continue
+            for k in puestas_del_grupo:
+                nut[k] = 0
+                proc.pop(k, None)
+                huecos.add(k)
+                deshechas += 1
+            dudas.append(
+                f"{nombre}: el grupo «{total_clave}» se DESHACE entero. Los "
+                f"{len(puestas_del_grupo)} valores que publicaba la fuente suman {suma:.3f} g "
+                f"sobre {total:g} g de {total_clave} ({razon*100:.0f} %). "
+                + ("PASA DEL TOTAL, que es imposible." if pasa_del_total
+                   else f"Fuera de la banda plausible {banda[0]*100:.0f}-{banda[1]*100:.0f} %.")
+                + " Se queda en hueco.")
+
         if proc:
             ficha["composicion_fuente"] = collections.OrderedDict(sorted(proc.items()))
+        elif "composicion_fuente" in ficha:
+            del ficha["composicion_fuente"]
         if ciertos_nuevos:
             todos = dict(ficha.get("cero_verificado") or {})
             todos.update(ciertos_nuevos)
@@ -741,6 +835,8 @@ def cerrar():
     print(f"  ceros declarados con su fuente (`cero_verificado`): {puestas_cero}")
     print("    " + ", ".join(f"{k}:{v}" for k, v in resumen_cero.most_common(14)))
     print(f"  huecos DECLARADOS (la fuente dice que no hay cifra): {declarados}")
+    if deshechas:
+        print(f"  celdas DESHECHAS por el guardia de grupo: {deshechas}")
     if resumen_hueco:
         print("    " + ", ".join(f"{k}:{v}" for k, v in resumen_hueco.most_common(14)))
     if dudas:

@@ -3158,18 +3158,18 @@
    "colina": 9,
    "cloruro": 107.8,
    "fibra": 2.6,
-   "arginina": 0.091,
-   "histidina": 0.04,
-   "isoleucina": 0.077,
-   "leucina": 0.102,
-   "lisina": 0.101,
-   "metionina": 0.02,
-   "cistina": 0.083,
-   "fenilalanina": 0.061,
-   "tirosina": 0.043,
-   "treonina": 0.191,
-   "triptofano": 0.012,
-   "valina": 0.069,
+   "arginina": 0,
+   "histidina": 0,
+   "isoleucina": 0,
+   "leucina": 0,
+   "lisina": 0,
+   "metionina": 0,
+   "cistina": 0,
+   "fenilalanina": 0,
+   "tirosina": 0,
+   "treonina": 0,
+   "triptofano": 0,
+   "valina": 0,
    "purinas": 2.1,
    "taurina": 0,
    "lcarnitina": 0
@@ -3197,20 +3197,8 @@
    "usda": "170393"
   },
   "composicion_fuente": {
-   "arginina": "usda:170393 · «Carrots, raw» · columna «Arginine» = 0.091 G → 0.091 g · 2026-09-13",
-   "cistina": "usda:170393 · «Carrots, raw» · columna «Cystine» = 0.083 G → 0.083 g · 2026-09-13",
-   "fenilalanina": "usda:170393 · «Carrots, raw» · columna «Phenylalanine» = 0.061 G → 0.061 g · 2026-09-13",
-   "histidina": "usda:170393 · «Carrots, raw» · columna «Histidine» = 0.04 G → 0.04 g · 2026-09-13",
-   "isoleucina": "usda:170393 · «Carrots, raw» · columna «Isoleucine» = 0.077 G → 0.077 g · 2026-09-13",
-   "leucina": "usda:170393 · «Carrots, raw» · columna «Leucine» = 0.102 G → 0.102 g · 2026-09-13",
    "linoleico": "usda:170393 · «Carrots, raw» · columna «PUFA 18:2» = 0.1 G → 0.1 g · 2026-09-13",
-   "linolenico": "usda:170393 · «Carrots, raw» · columna «PUFA 18:3» = 0.002 G → 0.002 g · 2026-09-13",
-   "lisina": "usda:170393 · «Carrots, raw» · columna «Lysine» = 0.101 G → 0.101 g · 2026-09-13",
-   "metionina": "usda:170393 · «Carrots, raw» · columna «Methionine» = 0.02 G → 0.02 g · 2026-09-13",
-   "tirosina": "usda:170393 · «Carrots, raw» · columna «Tyrosine» = 0.043 G → 0.043 g · 2026-09-13",
-   "treonina": "usda:170393 · «Carrots, raw» · columna «Threonine» = 0.191 G → 0.191 g · 2026-09-13",
-   "triptofano": "usda:170393 · «Carrots, raw» · columna «Tryptophan» = 0.012 G → 0.012 g · 2026-09-13",
-   "valina": "usda:170393 · «Carrots, raw» · columna «Valine» = 0.069 G → 0.069 g · 2026-09-13"
+   "linolenico": "usda:170393 · «Carrots, raw» · columna «PUFA 18:3» = 0.002 G → 0.002 g · 2026-09-13"
   },
   "cero_verificado": {
    "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:170393 · «Carrots, raw» · columna «PUFA 20:4» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
@@ -3218,7 +3206,22 @@
    "epa": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:170393 · «Carrots, raw» · columna «PUFA 20:5 n-3 (EPA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2424 · «Zanahoria, cruda» · columna «Vitamina B-12» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2424 · «Zanahoria, cruda» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "sin_dato": [
+   "arginina",
+   "cistina",
+   "fenilalanina",
+   "histidina",
+   "isoleucina",
+   "leucina",
+   "lisina",
+   "metionina",
+   "tirosina",
+   "treonina",
+   "triptofano",
+   "valina"
+  ],
+  "nota_datos": " ⚠️ 13 sep 2026 — EL AMINOGRAMA SE QUEDA EN HUECO, y el motivo es que no cuadra con la proteína. El barrido contra las fuentes le puso los doce aminoácidos de USDA 170393 «Carrots, raw», y SUMAN 0,89 g sobre una proteína de 0,8: el 111 % de la proteína, cuando los doce aminoácidos SON una fracción de ella. La banda plausible de `UNIDADES.md` es el 25-85 %. La incoherencia no es de la escala sino de la propia fila: USDA da 0,93 g de proteína y 0,89 g de aminoácidos, o sea el 96 % de SU proteína. Así que no hay forma de transferirlo bien y se deshace el grupo entero — un aminograma se escribe completo o no se escribe, porque celda a celda no se ve que la suma se pase. Queda en `sin_dato`, que es la respuesta honesta. El guardia que lo impide está en `auditar_composicion.py` (`AMINOACIDOS`/`ACIDOS_GRASOS`) y lo vigila el BLOQUE 100."
  },
  {
   "nombre": "Judía verde",

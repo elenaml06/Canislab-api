@@ -1272,7 +1272,7 @@ haya una fuente para su peso.
 ## 13 de septiembre de 2026 — lo que el barrido contra las fuentes dejó SIN cerrar
 
 Lo añade el barrido de `auditar_composicion.py`, que comprobó las 163 fichas
-contra BEDCA, Köber, CIQUAL y USDA celda a celda. **Cerró 318 celdas con la cifra
+contra BEDCA, Köber, CIQUAL y USDA celda a celda. **Cerró 312 celdas con la cifra
 de la fuente y declaró 418 ceros y 65 huecos.** Esto es lo que NO pudo cerrar, y
 ninguno de estos puntos lo rellena el asistente.
 
@@ -1320,14 +1320,14 @@ se separan más del 1,5× (pepino ×2,3, manzana ×2,2, lengua de cordero ×1,6)
 para elegir columna hay que saber qué mide la Tabla III-3b, y elegir la equivocada
 mueve el mínimo de 84 o de 63 fichas a la vez.
 
-### 4 · Las 259 discrepancias entre dos fuentes honestas
+### 4 · Las 253 discrepancias entre dos fuentes honestas
 
 Son celdas donde tenemos cifra, la fuente tiene cifra, y se separan más del 25 %.
 **No son errores**: la composición de un alimento varía de verdad entre países
 (raza, pienso, suelo), y dos bases honestas discrepan. El barrido las lista y
 **no toca ninguna**, porque cuál vale es un juicio y no una cuenta.
 
-Dónde están concentradas: ácido pantoténico (21), manganeso (21), cobre (19),
+Dónde están concentradas: ácido pantoténico (21), manganeso (15), cobre (19),
 niacina (15), vitamina B6 (14), selenio (13), tiamina (12). O sea **vitaminas del
 grupo B y oligoelementos**, que es exactamente donde más varía un análisis.
 

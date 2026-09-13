@@ -676,14 +676,14 @@ El orden vive en `fuentes_de_composicion.json` y el barrido en
 
 | | |
 |---|---|
-| Celdas que cuadran con su fuente | **3.163** |
-| Celdas que reciben la **cifra** de la fuente que manda | **318** |
-| Ceros que pasan de **mudos** a declarados con su fila de origen | **418** |
+| Celdas que cuadran con su fuente | **3.157** |
+| Celdas que reciben la **cifra** de la fuente que manda | **312**, en 46 fichas |
+| Ceros que pasan de **mudos** a declarados con su fila de origen | **418** (`cero_verificado` pasa de 8 celdas a 426) |
 | Ceros que la fuente declara **sin cifra** y pasan a `sin_dato` | **65** |
 | Fichas emparejadas con su fila exacta | **128 de 163** (las 35 restantes son 22 suplementos, mandato 5, y 10 huesos, mandato 2: no tienen fila en ninguna base) |
-| Discrepancias que **no se tocan** | **259** — dos fuentes honestas que no dicen lo mismo, y cuál vale es un juicio, no una cuenta |
+| Discrepancias que **no se tocan** | **253** — dos fuentes honestas que no dicen lo mismo, y cuál vale es un juicio, no una cuenta |
 
-**Lo que más pesa de esos 318 son los ácidos grasos de la carne, el huevo y la
+**Lo que más pesa de esos 312 son los ácidos grasos de la carne, el huevo y la
 verdura, que estaban a CERO y sin declarar**: el muslo de pollo declaraba 0 g de
 linoleico y USDA da 3,05, y el linoleico es un requisito de FEDIAF **con mínimo**.
 Un cero ahí no es un hueco inofensivo: el motor se lo cree y va a buscar el
@@ -754,6 +754,40 @@ era»:
    `UNIDADES.md` decía en otra sección que «CIQUAL, que sí lo analiza, da 61 mg
    para el champiñón donde la derivación da 7,7». Dos sitios del repo afirmando lo
    contrario, y mandaba el código.
+
+### Y un fallo que cometió este mismo barrido, con su guardia puesto
+
+Merece estar aquí porque es la trampa de las unidades en su forma más fina, y la
+cazó la comprobación de coherencia que ya estaba escrita en `UNIDADES.md`.
+
+Al rellenar el aminograma de la **zanahoria** desde USDA 170393 «Carrots, raw», los
+doce aminoácidos sumaban **0,89 g sobre una proteína de 0,8 g** — el **111 %** de
+la proteína, cuando los doce *son* una fracción de ella. El escalado por gramo de
+proteína no lo salvó por un detalle del suelo: la transferencia se salta cuando la
+proteína baja de 1 g, y la zanahoria tiene 0,8. Y aunque se hubiera aplicado no
+bastaba, porque **la incoherencia viene de la propia fila**: USDA da 0,93 g de
+proteína y 0,89 g de aminoácidos, o sea el 96 % de SU proteína.
+
+De las doce fichas a las que el barrido puso aminograma, **solo la zanahoria se
+salía**; las otras once caen entre 0,31 y 0,61. Queda en hueco, y el guardia que lo
+impide dice la regla entera: **un aminograma se escribe ENTERO o no se escribe**,
+porque celda a celda no hay forma de ver que la suma se pase.
+
+⚠️ **Y son DOS reglas, no una** — mezclarlas acusa a fichas correctas, que es el
+otro error que hubo que deshacer el mismo día:
+
+| Regla | Cuándo vale |
+|---|---|
+| La suma de las partes **no puede pasar del total** | **Siempre.** Es una imposibilidad aritmética, no un criterio |
+| La banda del **25-85 %** de `UNIDADES.md` | Solo donde hay **proteína de verdad** (≥ 1 g). La manzana tiene 0,3 g y 0,073 g de aminoácidos — el 24,3 %, y no tiene nada mal: con cifras así el cociente no significa nada |
+
+La misma comprobación encontró **dos incoherencias preexistentes** que no venían de
+este trabajo y que no se tocan, porque arreglarlas es decidir cuál de los dos
+números se cambia: la **dorada** declara 1 g de grasa y 1,97 g de ácidos grasos
+—imposible—, y eso además dice cuál es el sospechoso, porque su fila de BEDCA da
+7,22 g de grasa y con 7,22 los 1,97 encajan; y la **lubina** se pasa un 4,6 %, que
+es poco y puede ser redondeo. Las dos van declaradas con su medida en
+`fracciones_que_superan_su_total` de `fuentes_de_composicion.json`.
 
 ### Y dos emparejamientos malos, que son el «pollo / repollo» de verdad
 

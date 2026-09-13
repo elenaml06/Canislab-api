@@ -81,9 +81,22 @@ def peso_adulto_de(d, tamano):
     return (ent or {}).get("peso_kg")
 
 
+# ⚠️ CUÁNTO TIEMPO SE LE DA AL SOLVER POR MENÚ. 45 s era el valor fijo hasta el
+# 13 de septiembre, y ese día se quedó corto de verdad: al quitar del catálogo un
+# manganeso de 0,6 mg que NO TENÍA FUENTE EN NINGUNA PARTE (ver el sello de
+# `main.py`), seis variantes de conejo dejaron de cubrir el mínimo de manganeso
+# —la peor al 47 %— porque ese número falso era el que lo cubría. Con 45 s el
+# solver no encontraba sustituto y el script «dejaba la vieja», que es justo el
+# fallo de abajo. Se deja configurable para poder reintentar los que no salen sin
+# rehacer los 216.
+SEGUNDOS_POR_MENU = int(os.environ.get("CANISLAB_SEGUNDOS_POR_MENU") or 45)
+
+
 def resolver_uno(al, req, der, etapa, peso, especie=None, proteina=None,
-                 segundos=45, peso_adulto=None):
+                 segundos=None, peso_adulto=None):
     """Un menú verde para esa ficha, o el mejor que haya salido, o (None, None)."""
+    if segundos is None:
+        segundos = SEGUNDOS_POR_MENU
     kw = dict(LLAMADA_COMO_LA_API)
     kw["peso_adulto_esperado_kg"] = peso_adulto
     if especie and proteina:
@@ -108,12 +121,17 @@ def resolver_uno(al, req, der, etapa, peso, especie=None, proteina=None,
     return mejor if mejor else (None, None)
 
 
-def main_regenerar(solo_base=False):
+def main_regenerar(solo_base=False, solo=None):
     al, req = cargar()
     d = json.load(io.open(RUTA, encoding="utf-8"))
     cambios, fallos = [], []
 
+    def _toca(texto):
+        return solo is None or solo.lower() in texto.lower()
+
     for clave, e in d["CATALOGO"].items():
+        if not _toca(clave):
+            continue
         g, v = resolver_uno(al, req, e["der"], e["etapa"], e["peso_kg"],
                             peso_adulto=peso_adulto_de(d, e["tamano"]))
         if g is None or v["semaforo"] != "verde":
@@ -133,6 +151,8 @@ def main_regenerar(solo_base=False):
             ent = d["CATALOGO"][clave]
             for var in lista:
                 p = var["proteina"]
+                if not _toca("%s/%s" % (clave, p)):
+                    continue
                 cat = CAT_DE.get(p, "Carne muscular")
                 g, v = resolver_uno(al, req, ent["der"], ent["etapa"], ent["peso_kg"],
                                     cat, p,
@@ -149,8 +169,55 @@ def main_regenerar(solo_base=False):
     json.dump(d, io.open(RUTA, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("\nCATALOGO regenerado: %d de %d" % (len(cambios), len(d["CATALOGO"])), flush=True)
     print("no regenerados (%d): %s" % (len(fallos), fallos), flush=True)
-    return fallos
+
+    # ⚠️ Y AHORA SE COMPRUEBA LO QUE QUEDA EN EL FICHERO, REGENERADO O NO.
+    #
+    # CASO REAL ENCONTRADO EL 13 DE SEPTIEMBRE. Este script decía «NO -- se deja
+    # la vieja» y se quedaba tan ancho, y eso es un agujero: el menú viejo se
+    # calculó con los valores VIEJOS del catálogo, así que si el catálogo ha
+    # cambiado puede haber dejado de cumplir. Pasó con seis variantes de conejo
+    # —46/48 y 47/48, todas por el manganeso— y el script las dejó dentro sin
+    # decir que estaban rojas: imprimía «se deja la vieja», que suena a «no pasa
+    # nada». Lo que no se comprueba no se sabe, y aquí lo que no se comprobaba era
+    # justo lo que no se había tocado.
+    #
+    # No se borran solas: un menú rojo en el fichero es un fallo que hay que ver y
+    # arreglar resolviéndolo con más tiempo, no tapándolo.
+    rojos = []
+    for clave, e in d["CATALOGO"].items():
+        v = verificar(e["gramos"], al, req, e["der"], e["etapa"])
+        if v["semaforo"] != "verde":
+            rojos.append("%s (%d/%d)" % (clave, v["correctos"],
+                                         v["correctos"] + len(v["faltan"]) + len(v["se_pasa"])))
+        for var in d["CATALOGO_VARIANTES"].get(clave, []):
+            v = verificar(var["gramos"], al, req, e["der"], e["etapa"])
+            if v["semaforo"] != "verde":
+                falta = ", ".join("%s al %d%%" % (f["nutriente"], f.get("cubre_pct", 0))
+                                  for f in v["faltan"]) or "se pasa de algún máximo"
+                rojos.append("%s/%s (%d/%d: %s)"
+                             % (clave, var["proteina"], v["correctos"],
+                                v["correctos"] + len(v["faltan"]) + len(v["se_pasa"]), falta))
+    if rojos:
+        print("\n⚠️ ATENCION: %d MENUS DEL FICHERO NO ESTAN VERDES contra el catalogo "
+              "actual. Son los que no se han podido regenerar y se han quedado con su "
+              "version vieja, calculada con datos que ya no son los de ahora. NO se "
+              "entregan asi -- hay que reintentarlos con mas tiempo "
+              "(CANISLAB_SEGUNDOS_POR_MENU):" % len(rojos), flush=True)
+        for r in rojos:
+            print("     - %s" % r, flush=True)
+    else:
+        print("\nLos %d menus del fichero estan VERDES contra el catalogo actual."
+              % (len(d["CATALOGO"]) + sum(len(x) for x in d["CATALOGO_VARIANTES"].values())),
+              flush=True)
+    return fallos + rojos
 
 
 if __name__ == "__main__":
-    main_regenerar(solo_base="--solo-base" in sys.argv)
+    # `--solo <texto>` reintenta solo las fichas cuyo nombre contiene ese texto,
+    # para no rehacer los 216 cuando lo que falta son seis. Va con
+    # CANISLAB_SEGUNDOS_POR_MENU para darles mas tiempo.
+    _solo = None
+    for _i, _a in enumerate(sys.argv):
+        if _a == "--solo" and _i + 1 < len(sys.argv):
+            _solo = sys.argv[_i + 1]
+    sys.exit(1 if main_regenerar(solo_base="--solo-base" in sys.argv, solo=_solo) else 0)

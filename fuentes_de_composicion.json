@@ -1402,5 +1402,20 @@
    "palabra": "congelad",
    "por_que": "Es la única fila de coliflor CRUDA que publica BEDCA: la otra (2387) es «Coliflor, hervida». Cifras exactas: energía 18,21 contra nuestros 18, proteína 2 contra 2, grasa 0,175 contra 0,175."
   }
+ },
+ "fracciones_que_superan_su_total": {
+  "_por_que": "Un ácido graso es una FRACCIÓN de la grasa y un aminoácido una fracción de la proteína, así que la suma de las partes no puede pasar del total. Cuando pasa, una de las dos columnas está mal y el número tiene forma de dato bueno: pasa cualquier validación de formato. Lo comprueba el BLOQUE 100. ⚠️ Las dos de abajo son PREEXISTENTES —no las ha tocado el barrido del 13 de septiembre— y se declaran con su medida porque arreglarlas es una DECISIÓN sobre cuál de los dos números se cambia, no un arreglo.",
+  "Dorada": {
+   "grasa_declarada": 1,
+   "suma_de_acidos_grasos": 1.97,
+   "por_que": "Declara 1 g de grasa y 1,97 g de ácidos grasos (linoleico 0,966 · linolénico 0,124 · EPA 0,312 · DHA 0,527 · araquidónico 37 mg). Imposible. Y esto es EVIDENCIA de cuál de los dos números está mal: su fila de BEDCA (815, «Dorada, cruda») da grasa 7,22, y con 7,22 los 1,97 encajan de sobra. O sea que la grasa de esta ficha es la sospechosa, no los ácidos grasos. ⚠️ Pero la fila de BEDCA se contradice a sí misma —P 17 y G 7,22 dan 133 kcal y la misma fila declara 77,9—, que es el caso de «dos alimentos en una fila» que ya cita `UNIDADES.md`. Con la fuente rota no se puede elegir desde aquí: hace falta otra medida de dorada cruda. Está en `DATOS_QUE_FALTAN.md`.",
+   "decidir": "qué grasa lleva la dorada cruda. Ni la ficha ni BEDCA 815 son coherentes consigo mismas."
+  },
+  "Lubina": {
+   "grasa_declarada": 1.3,
+   "suma_de_acidos_grasos": 1.36,
+   "por_que": "Se pasa un 4,6 %, que es poco y puede ser de redondeo al juntar columnas de fuentes distintas — no tiene la forma del caso de la dorada. Se deja anotado sin cambiar nada: el criterio es que una incoherencia pequeña y explicable no justifica tocar una cifra sin fuente nueva.",
+   "decidir": "si merece la pena reabrir la ficha por un 4,6 %."
+  }
  }
 }

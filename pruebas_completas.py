@@ -3880,6 +3880,55 @@ for _origen_b25, _menus_b25 in (("catálogo", [(_k, _e["gramos"]) for _k, _e in 
                     f"sin proporciones y salen 25 kg de verdura al día, verdes. "
                     f"Se regenera con `python3 regenerar_catalogo.py`.")
 
+# ⚠️ Y QUE LOS 216 CUMPLAN DE VERDAD, no solo que tengan la forma de una ración.
+#
+# CASO REAL ENCONTRADO EL 13 DE SEPTIEMBRE. Este bloque comprobaba el recuento,
+# los campos y las PROPORCIONES BARF, y no verificaba ni un menú contra los 43
+# requisitos. Así que cuando seis variantes de conejo se quedaron en 46/48 y 47/48
+# -- por el manganeso, al quitar del catálogo un 0,6 mg que no tenía fuente en
+# ninguna parte -- la batería entera salía sin decir nada.
+#
+# El agujero estaba en `regenerar_catalogo.py`: cuando un menú no le sale,
+# imprime «NO -- se deja la vieja». Y la vieja se calculó con los valores VIEJOS
+# del catálogo, así que si el catálogo ha cambiado puede haber dejado de cumplir.
+# «Se deja la vieja» suena a «no pasa nada» y es «aquí queda un menú sin
+# comprobar».
+#
+# El usuario no llegaba a ver uno de esos seis, porque `_garantizar_verificado()`
+# los habría rechazado al servirlos (regla 1). Pero eso significa que la vista
+# previa se quedaba MUDA para seis combinaciones de perro y nadie se enteraba --
+# que es otra forma del mismo fallo: el catálogo precalculado existe para que la
+# app pueda enseñar algo sin resolver, y un menú que el filtro final va a tirar
+# no enseña nada.
+_mal_verde_b25 = []
+try:
+    from constructor import cargar as _cargar_b25
+    from verificar import verificar as _verificar_b25
+    _al_b25, _req_b25 = _cargar_b25()
+    for _k25, _e25 in _CAT_B25.items():
+        for _etiqueta25, _gramos25 in ([(_k25, _e25["gramos"])]
+                                       + [(f"{_k25}/{_v25['proteina']}", _v25["gramos"])
+                                          for _v25 in _VAR_B25.get(_k25, [])]):
+            _v = _verificar_b25(_gramos25, _al_b25, _req_b25, _e25["der"], _e25["etapa"])
+            if _v["semaforo"] != "verde":
+                _total25 = _v["correctos"] + len(_v["faltan"]) + len(_v["se_pasa"])
+                _porque25 = ", ".join(f"{_f['nutriente']} al {_f.get('cubre_pct', 0)} %"
+                                      for _f in _v["faltan"]) or "se pasa de algún máximo"
+                _mal_verde_b25.append(f"{_etiqueta25} ({_v['correctos']}/{_total25}: {_porque25})")
+except Exception as _e_b25:
+    fallos.append(f"BLOQUE25: no se han podido verificar los menús del catálogo ({_e_b25}). "
+                  f"Sin esta comprobación, un menú precalculado puede dejar de cumplir cuando "
+                  f"cambia el catálogo y no lo dice nadie")
+if _mal_verde_b25:
+    fallos.append(f"BLOQUE25: {len(_mal_verde_b25)} de los 216 menús precalculados NO están "
+                  f"verdes contra el catálogo actual. Son los que `regenerar_catalogo.py` no pudo "
+                  f"rehacer y dejó en su versión vieja, calculada con datos que ya no son los de "
+                  f"ahora. Se reintentan con más tiempo: "
+                  f"`CANISLAB_SEGUNDOS_POR_MENU=300 python3 regenerar_catalogo.py --solo Conejo`. "
+                  f"Los que fallan: " + " · ".join(_mal_verde_b25[:8]))
+print(f"  los 216 menús precalculados verifican: "
+      f"{216 - len(_mal_verde_b25)}/216 verdes")
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
@@ -14605,6 +14654,50 @@ else:
                       f"alimento: " + " · ".join(_cocinadas100[:4]))
     print(f"  emparejadas con una fila cocinada: {len(_cocinadas100)} "
           f"(+{len(_aceptadas100)} aceptadas con su motivo escrito)")
+
+    # --- 6. una fracción no puede superar su total ------------------------
+    # Un ácido graso es una FRACCIÓN de la grasa y un aminoácido una fracción de
+    # la proteína. Cuando la suma de las partes pasa del total, una de las dos
+    # columnas está mal — y el número tiene forma de dato bueno, así que no lo
+    # caza ninguna validación de formato.
+    # CASO REAL: «Dorada» declara 1 g de grasa y 1,97 g de ácidos grasos. Es
+    # imposible, y además dice CUÁL de los dos es el sospechoso: su fila de BEDCA
+    # da 7,22 g de grasa, y con 7,22 los 1,97 encajan.
+    _AA100 = ("arginina", "histidina", "isoleucina", "leucina", "lisina", "metionina",
+              "cistina", "fenilalanina", "tirosina", "treonina", "triptofano", "valina")
+    _sabidas100 = {k: v for k, v in
+                   (_decl100.get("fracciones_que_superan_su_total") or {}).items()
+                   if not k.startswith("_")}
+    _pasan100 = []
+    for _ficha100 in _cat100:
+        _n100 = _ficha100.get("nutrientes") or {}
+        _g100 = _n100.get("grasa") or 0
+        _sg100 = ((_n100.get("linoleico") or 0) + (_n100.get("linolenico") or 0)
+                  + (_n100.get("epa") or 0) + (_n100.get("dha") or 0)
+                  + (_n100.get("araquidonico") or 0) / 1000.0)
+        if _g100 > 0 and _sg100 > _g100 * 1.02:
+            if _ficha100["nombre"] not in _sabidas100:
+                _pasan100.append(f"{_ficha100['nombre']}: grasa {_g100:g} g y "
+                                 f"{_sg100:.2f} g de ácidos grasos")
+        # ⚠️ Aquí se comprueba SOLO que la suma no pase del total, que es una
+        # imposibilidad aritmética. La banda del 25-85 % de `UNIDADES.md` NO se
+        # comprueba aquí a propósito: es un criterio de plausibilidad que solo
+        # vale «en cualquier alimento con proteína de verdad», y la manzana (0,3 g
+        # de proteína, 24,3 %) caería sin tener nada mal. Quien aplica la banda es
+        # `auditar_composicion.py` al ESCRIBIR, que es donde importa.
+        _p100 = _n100.get("proteina") or 0
+        _sa100 = sum(_n100.get(_k) or 0 for _k in _AA100)
+        if _p100 > 0 and _sa100 > _p100 * 1.02:
+            _pasan100.append(f"{_ficha100['nombre']}: proteína {_p100:g} g y "
+                             f"{_sa100:.2f} g de aminoácidos")
+    if _pasan100:
+        fallos.append(f"BLOQUE100: en {len(_pasan100)} fichas la suma de las FRACCIONES supera su "
+                      f"TOTAL, y eso es imposible: un ácido graso es una fracción de la grasa y un "
+                      f"aminoácido una fracción de la proteína. Una de las dos columnas está mal, y "
+                      f"el número pasa cualquier validación de formato: "
+                      + " · ".join(_pasan100[:5]))
+    print(f"  fracciones que superan su total: {len(_pasan100)} "
+          f"(+{len(_sabidas100)} declaradas con su medida)")
 
     # --- y que la declaración sea coherente consigo misma -----------------
     for _fu100 in _decl100["orden_de_mandato"]:

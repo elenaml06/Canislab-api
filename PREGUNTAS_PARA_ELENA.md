@@ -771,7 +771,7 @@ cerrar de ninguna manera, porque la respuesta es un número que la fuente no da.
 
 Salen de barrer las 163 fichas contra BEDCA, Köber, CIQUAL y USDA celda a celda.
 Las que he podido decidir con la fuente en la mano **no están aquí** — están hechas
-(318 celdas cerradas, 418 ceros declarados, 65 huecos declarados, cinco errores de
+(312 celdas cerradas, 418 ceros declarados, 65 huecos declarados, cinco errores de
 dato corregidos y dos emparejamientos malos arreglados).
 
 ## A · ¿Metemos Frida, la base danesa? Es la «que empieza por F»
@@ -849,7 +849,7 @@ se separan más del 1,5× (pepino ×2,3, manzana ×2,2, lengua de cordero ×1,6)
 III-3b. No he tocado nada, y lo he dejado declarado en
 `fuentes_de_composicion.json` para que no se descubra otra vez.
 
-## D · Las 259 discrepancias: ¿qué política quieres?
+## D · Las 253 discrepancias: ¿qué política quieres?
 
 Celdas donde tenemos cifra, la fuente tiene cifra, y se separan más del 25 %. **No
 son errores**: un alimento varía de verdad entre países. Están concentradas en
@@ -858,7 +858,7 @@ vitaminas del grupo B y oligoelementos, que es donde más varía un análisis.
 Tres políticas, las tres defendibles:
 
 1. **Mandar siempre la fuente de mandato más alto.** Coherente con todo lo demás, y
-   el catálogo sería reproducible al 100 % desde las fuentes. Pero cambia ~259
+   el catálogo sería reproducible al 100 % desde las fuentes. Pero cambia ~253
    celdas de golpe y algunas de nuestras cifras pueden ser mejores.
 2. **Quedarse con la más baja de las dos.** Lado seguro contra los máximos, lado
    peligroso contra los mínimos — y eso es exactamente lo que `valor_plausible`
