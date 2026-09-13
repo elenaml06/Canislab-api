@@ -778,14 +778,14 @@ vitamina A venía de vegetal y que 103 de los 216 menús no llegarían al mínim
 el caroteno. **Las dos cifras eran falsas** (corregidas el 13 de septiembre de
 2026: el método contaba la vitamina A del hígado como caroteno, y es retinol puro).
 
-| De dónde viene la vitamina A de los 216 menús | |
-|---|---|
-| Hígado | **78,3 %** |
-| Multivitamínico | **12,4 %** |
-| **Verdura y fruta** | **6,9 %** |
-| Todo lo demás | 2,4 % |
+| De dónde viene la vitamina A de los 216 menús | en `main` | en esta rama |
+|---|---|---|
+| Hígado | **77,9 %** | 78,0 % |
+| Multivitamínico | **12,7 %** | 12,7 % |
+| **Verdura y fruta** | **6,5 %** | 7,1 % |
+| Todo lo demás | 2,9 % | 2,2 % |
 
-Y los menús que no llegarían al mínimo sin el caroteno son **1 de 216**, no 103.
+Y los menús que no llegarían al mínimo sin el caroteno son **0 de 216** en `main`, no 103.
 O sea que esto **no corre prisa**: sigue habiendo que arreglarlo, porque la regla
 es que gana FEDIAF, pero el argumento de urgencia se cae. Detalle y el método para
 rehacer la medida: `UNIDADES.md`.

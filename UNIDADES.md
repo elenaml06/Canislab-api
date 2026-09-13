@@ -399,18 +399,26 @@ que «103 de los 216 no llegarían al mínimo si el caroteno no contara» y que 
 peor menú «declara 11.191 µg y solo 29 son retinol de verdad». Remedido sobre
 los mismos 216 menús, alimento por alimento y dividiendo por las kcal reales:
 
-| De dónde viene la vitamina A de los 216 menús | |
-|---|---|
-| Hígado | **78,3 %** |
-| Multivitamínico | **12,4 %** |
-| **Verdura y fruta** | **6,9 %** |
-| Todo lo demás | 2,4 % |
+| De dónde viene la vitamina A de los 216 menús | en `main` | en esta rama |
+|---|---|---|
+| Hígado | **77,9 %** | 78,0 % |
+| Multivitamínico | **12,7 %** | 12,7 % |
+| **Verdura y fruta** | **6,5 %** | 7,1 % |
+| Todo lo demás | 2,9 % | 2,2 % |
 
-Y las otras dos: los menús que no llegarían al mínimo sin el caroteno son
-**1 de 216**, no 103. Y el menú con más vitamina A no es de lactancia sino de
-crecimiento (`Grande_CachorroJoven#2`): declara **12.776 µg**, de los que
-**9.667 vienen de fuera de la verdura** — 76,87 g de hígado de pato aportan
-9.212 µg él solo.
+⚠️ **Y la medida SE DA CON SU CATÁLOGO AL LADO a propósito**, porque sin eso no
+significa nada: `catalogo_menus.json` se regenera, y una cifra medida sobre unos
+menús que no son los de `main` describe algo que nadie más puede reproducir. Pasó
+el 13 de septiembre: se escribió aquí un máximo de 10.000 µg/1000 kcal medido
+sobre un estado intermedio de los menús que **ya no existía ni en la propia rama**,
+y lo cazó la otra lectura al no encontrar ese menú por ningún sitio.
+
+Y las otras dos: los menús que no llegarían al mínimo sin el caroteno son **0 de
+216** en `main` (2 en esta rama, por los huecos de vitamina A que se declararon el
+mismo día), no 103. Y el menú con más vitamina A es `Pequeño_Lactante#4`, que va a
+**5.155 µg/1000 kcal**: el **80,5 %** lo pone el hígado de vaca (89,26 g → 9.149 µg)
+y la zanahoria solo el 12,4 %. O sea que ni siquiera el menú MÁS vegetal del
+catálogo depende de la verdura para su vitamina A.
 
 **De dónde salía el 83 %, porque importa no repetirlo.** No era una invención:
 el método contaba **la vitamina A del hígado como si fuera caroteno**, y la del
@@ -421,22 +429,33 @@ la huella. Lo delata además su propia frase: en un menú con 5.500 µg de híga
 dentro, «solo 29 son retinol» sólo puede salir si el hígado está contado en el
 lado equivocado.
 
-**Y la dirección del riesgo, que también estaba contada al revés.** Contarle
-menos vitamina A a la zanahoria **no es el lado seguro**: es seguro contra el
-mínimo y **peligroso contra el máximo**, porque la vitamina A es de los pocos
-nutrientes con techo y contar de menos deja que un menú se pase sin que el
-semáforo lo vea. Lo que nos permite estar tranquilos hoy **es la medida, no el
-argumento**: el menú más alto va a **10.000 µg/1000 kcal contra un techo de
-30.000**, o sea el **33 %** — y el techo son 30.000 en TODAS las etapas,
-también en crecimiento, así que el denominador es el mismo para el peor caso.
+**Y la dirección del riesgo son DOS cosas distintas, y conviene no elegir solo
+una** — las dos son verdad y hablan de comparaciones diferentes:
+
+| | Qué pasa | Contra qué avisa |
+|---|---|---|
+| **Nuestra columna contra la de FEDIAF** | usamos el 6:1 de BEDCA y FEDIAF pide 4:1, así que contamos **menos** de lo que FEDIAF contaría | el **MÁXIMO**: un menú podría pasarse del techo real creyéndonos por debajo |
+| **Meter caroteno y retinol en la misma columna** | el caroteno se cuenta como si ya fuera vitamina A, y el perro tiene que convertirlo | el **MÍNIMO**: sobreestima el retinol disponible y puede **ocultar una carencia** |
+
+Lo que **no** es verdad es la frase que había aquí antes, que decía que contar de
+menos era «el lado seguro» sin más. No lo es en ninguna de las dos lecturas.Lo que nos permite estar tranquilos hoy **es la medida, no el
+argumento**: el menú más alto va a **5.155 µg/1000 kcal contra un techo de
+30.000**, o sea el **17 %** — y el techo son 30.000 en TODAS las etapas, también
+en crecimiento, así que el denominador es el mismo para el peor caso.
 **Menús por encima del máximo: 0. Por debajo del mínimo: 0.**
 
 **Para rehacer la medida** (y no fiarse de esta): recorrer los 216 menús de
-`catalogo_menus.json` —los 36 de `CATALOGO` más los 180 de
-`CATALOGO_VARIANTES`—, sumar `vitA × gramos / 100` por alimento agrupando por
-categoría, y dividir por las kcal reales del menú. Comprobado que da lo mismo
-con el catálogo de `main` y con el de la rama, y que no cambia si se miran solo
-los 36 base o si se divide por el DER en vez de por las kcal.
+`catalogo_menus.json` —los 36 de `CATALOGO` más los 180 de `CATALOGO_VARIANTES`—,
+sumar `vitA × gramos / 100` por alimento agrupando por categoría, y dividir por
+las kcal reales del menú.
+
+⚠️ **Y hay que decir contra qué catálogo se mide, porque son DOS ficheros y los
+dos cambian**: `alimentos_v3_final.json` (lo que lleva cada alimento) y
+`catalogo_menus.json` (cuántos gramos de cada uno). Cambiar el primero mueve poco;
+**regenerar el segundo lo mueve todo**, porque el solver reparte distinto. La
+primera versión de esta medida cambió de catálogo el primero y no el segundo, dio
+por bueno un máximo de 10.000, y el menú que lo justificaba no existía en `main`.
+Lo que se escriba aquí tiene que salir del catálogo **fusionado**.
 
 **Y con el factor de FEDIAF en la mano, el problema es otro y más
 concreto**: no es que no sepamos si el caroteno cuenta —cuenta, 4 a 1—, es

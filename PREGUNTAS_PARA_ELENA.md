@@ -134,20 +134,20 @@ europeo (BEDCA) usa 6 a 1. El americano (USDA/RAE), 12 a 1.
 ⚠️ **CORREGIDO EL 13 DE SEPTIEMBRE: lo que había aquí estaba mal**, porque el
 método contaba la vitamina A del hígado como si fuera caroteno y es retinol puro.
 
-| De dónde viene la vitamina A de los 216 menús | |
-|---|---|
-| Hígado | **78,3 %** |
-| Multivitamínico | **12,4 %** |
-| **Verdura y fruta** | **6,9 %** |
-| Todo lo demás | 2,4 % |
+| De dónde viene la vitamina A de los 216 menús | en `main` | en esta rama |
+|---|---|---|
+| Hígado | **77,9 %** | 78,0 % |
+| Multivitamínico | **12,7 %** | 12,7 % |
+| **Verdura y fruta** | **6,5 %** | 7,1 % |
+| Todo lo demás | 2,9 % | 2,2 % |
 
 ```
-menús que NO llegarían al mínimo sin el caroteno ...... 1 de 216   (no 103)
-el menú con más vitamina A: Grande_CachorroJoven#2
-        declara ...................................... 12.776 µg
-        de los cuales NO son de verdura ..............  9.667 µg
+menús que NO llegarían al mínimo sin el caroteno ...... 0 de 216 (no 103)
+el menú con más vitamina A: Pequeño_Lactante#4, 5.155 µg/1000 kcal
+        lo pone el hígado de vaca en un ..............  80,5 %
+        y la zanahoria en un .........................  12,4 %
 menús por encima del máximo (30.000 µg/1000 kcal) ..... 0 de 216
-el más alto va al ....................................    33 % del techo
+el más alto va al ....................................    17 % del techo
 ```
 
 Veintinueve microgramos de retinol en el menú de una perra lactante, y sale
@@ -846,9 +846,9 @@ lo que FEDIAF le contaría; una con RAE (÷12), un 67 % menos.
 caroteno es seguro contra el MÍNIMO y **peligroso contra el MÁXIMO**, porque la
 vitamina A es de los pocos nutrientes con techo. Lo que permite estar tranquilos
 es la medida y no el argumento: **0 de 216 menús pasan del máximo** y el más alto
-va al **33 %** del techo. Y con el 6,9 %, el arreglo importa **menos** de lo que
+va al **17 %** del techo. Y con el 6,9 %, el arreglo importa **menos** de lo que
 decía esta sección: lo que lo hacía urgente era el «103 de 216 menús dependen del
-caroteno para llegar al mínimo», y es **1 de 216**.
+caroteno para llegar al mínimo», y en `main` es **0 de 216**.
 
 **Lo que necesito de ti**: si esto lo decide el nutricionista (yo creo que sí) o si
 quieres que lo prepare ya con el 4:1 de FEDIAF y se revise después. No lo he tocado.

@@ -926,11 +926,11 @@ menú «declara 11.191 µg y solo 29 son retinol». **Las tres cifras eran falsa
 
 | | Decía | **Es** |
 |---|---|---|
-| Verdura y fruta | 83 % | **6,9 %** |
-| Hígado | — | **78,3 %** (el de vaca él solo, 50,3 %) |
-| Multivitamínico | — | **12,4 %** |
-| Menús bajo el mínimo sin caroteno | 103 de 216 | **1 de 216** |
-| El menú con más vitamina A | lactancia, 11.191 µg, 29 de retinol | **crecimiento, 12.776 µg, 9.667 de fuera de la verdura** |
+| Verdura y fruta | 83 % | **6,5 %** |
+| Hígado | — | **77,9 %** (el de vaca él solo, 49,5 %) |
+| Multivitamínico | — | **12,7 %** |
+| Menús bajo el mínimo sin caroteno | 103 de 216 | **0 de 216** |
+| El menú con más vitamina A | lactancia, 11.191 µg, 29 de retinol | **`Pequeño_Lactante#4`, 5.155 µg/1000 kcal, el 80,5 % puesto por el hígado de vaca** |
 
 **El fallo, y se reproduce**: el método contaba **la vitamina A del hígado como si
 fuera caroteno**, y la del hígado es retinol puro. Poniendo a cero la vitamina A
@@ -943,9 +943,20 @@ está en el lado equivocado.
 **Y la dirección del riesgo también estaba al revés**: contar de menos el caroteno
 **no es el lado seguro** — es seguro contra el mínimo y **peligroso contra el
 máximo**, porque la vitamina A es de los pocos nutrientes con techo. Lo que permite
-estar tranquilos es **la medida, no el argumento**: el menú más alto va a 10.000
-µg/1000 kcal contra un techo de **30.000 en todas las etapas**, o sea el **33 %**;
+estar tranquilos es **la medida, no el argumento**: el menú más alto va a 5.155
+µg/1000 kcal contra un techo de **30.000 en todas las etapas**, o sea el **17 %**;
 0 de 216 pasan del máximo y 0 caen bajo el mínimo.
+
+⚠️ **Y LA PRIMERA VERSIÓN DE ESTA CORRECCIÓN TAMBIÉN ESTABA MAL, que es la lección
+que más vale de todo esto.** Decía que el máximo era **10.000 µg/1000 kcal (33 %)**
+y lo justificaba con un menú concreto —`Grande_CachorroJoven#2`, «76,87 g de hígado
+de pato y 466 g de boniato»— que **no existe en `main` ni existía ya en la propia
+rama**. El motivo: la medida cambió de `alimentos_v3_final.json` para comprobar que
+no dependía del catálogo, **y no cambió `catalogo_menus.json`**, que es el que de
+verdad la mueve — regenerar los menús reparte los gramos de otra forma. La cazó la
+otra lectura al ir a buscar ese menú y no encontrarlo. **Son DOS ficheros y hay que
+decir contra cuál se mide**, y lo que se escriba tiene que salir del catálogo
+FUSIONADO.
 
 Consecuencia para el plan: **aplicar el convenio 4:1 de FEDIAF sigue siendo lo
 correcto** —la regla es que gana FEDIAF— pero **deja de correr prisa**, porque lo

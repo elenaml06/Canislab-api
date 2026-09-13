@@ -1070,19 +1070,20 @@ puede salir si el hígado está en el lado equivocado de la cuenta.
 **Lo que mide de verdad**, remedido sobre los mismos 216 menús, alimento por
 alimento y dividiendo por las kcal reales:
 
-| De dónde viene la vitamina A de los 216 menús | |
-|---|---|
-| Hígado | **78,3 %** |
-| Multivitamínico | **12,4 %** |
-| **Verdura y fruta** | **6,9 %** |
-| Todo lo demás | 2,4 % |
+| De dónde viene la vitamina A de los 216 menús | en `main` | en esta rama |
+|---|---|---|
+| Hígado | **77,9 %** | 78,0 % |
+| Multivitamínico | **12,7 %** | 12,7 % |
+| **Verdura y fruta** | **6,5 %** | 7,1 % |
+| Todo lo demás | 2,9 % | 2,2 % |
 
 ```
-menús que NO llegarían al mínimo sin el caroteno ...... 1 de 216
-el menú con más vitamina A: Grande_CachorroJoven#2
-        declara ...................................... 12.776 µg
-        de los cuales NO son de verdura ..............  9.667 µg
-        (76,87 g de hígado de pato aportan 9.212 él solo)
+menús que NO llegarían al mínimo sin el caroteno ...... 0 de 216 en main
+                                                         (2 en esta rama)
+el menú con más vitamina A: Pequeño_Lactante#4
+        va a ......................................... 5.155 µg/1000 kcal
+        de los cuales pone el hígado de vaca ......... 80,5 %
+        y la zanahoria ...............................  12,4 %
 menús por encima del máximo de FEDIAF (30.000) ........ 0 de 216
 ```
 
