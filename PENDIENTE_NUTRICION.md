@@ -1623,3 +1623,68 @@ cuanto tengan `humedad_g_100g` (ver `UNIDADES.md`).
 El informe completo, ficha a ficha y con las cifras de cada comparación,
 está en `identificadores_informe.json`. **Se regenera con
 `python3 fijar_identificadores.py`** (unos 5 minutos, necesita red).
+
+---
+
+## §20 · El ratio omega-6:omega-3 lo elige el veterinario, y cada patología enseña el rango de su fuente
+
+**Decidido el 13 de septiembre de 2026.** Elena, al ver que el ratio aparece en
+tres patologías con `aplicado_por_el_solver: false` y que las fuentes van de
+<1:1 a 7:1 según la enfermedad:
+
+> «pues entonces habrá que poner un ratio para que el veterinario elija no? o
+> sea igual cada veterinario quiere elegir su propio ratio» · «sí, pon el rango
+> de la fuente por patología también»
+
+Y eso **resuelve** la razón por la que llevaba parado: no estaba parado por falta
+de motor, estaba parado porque **elegir entre 1:1 y 7:1 es una decisión clínica**,
+y el sitio donde un clínico decide cifras ya existe — `objetivos_del_profesional`.
+Lo que falta es la puerta, no el mecanismo.
+
+### Lo que hay hecho ya
+
+- El solver sabe de **ratios entre cualquier par de nutrientes** desde el 10 de
+  septiembre (`ratios_de_patologias`, `{(num, den): {min, max}}`), con la
+  disciplina de siempre: suelo con `max()`, techo con `min()`, solo aprieta.
+- `objetivos_del_profesional` ya existe, ya se recorta contra FEDIAF y ya dice
+  todo recorte en `objetivos_ajustados`.
+- El rango de cada patología ya está **escrito con su cita**, en
+  `limites_escritos_que_el_solver_no_aplica` de renal, artrosis y cáncer.
+
+### Lo que falta, y en este orden
+
+1. **La clave `omega6_total`**, que no existe. `omega3_total` es derivada
+   (linolénico + EPA + DHA) y esta es su espejo: linoleico + araquidónico.
+
+   ⚠️ **Y ahí hay una trampa de unidades que metería un error de mil**: el
+   linoleico va en **gramos** y el araquidónico en **miligramos**
+   (`UNIDADES.md`, y es justo la familia de fallo que ese fichero persigue).
+   Sumarlos a pelo da un omega-6 total mil veces el araquidónico. La conversión
+   tiene que poder **rehacerse**, no creerse — la lección de
+   `auditar_conversiones.py`.
+
+   Y hay que decir lo que NO cubre: los omega-6 que el catálogo no tiene
+   columna para ellos (GLA, DGLA). El total es «linoleico + araquidónico» y eso
+   se escribe, no se insinúa.
+
+2. **Que `objetivos_del_profesional` acepte ratios**, con la misma forma que ya
+   tiene el bloque de patologías: `{"ratios": {"omega6_total:omega3_total":
+   {"min": 1, "max": 7}}}`. Recortado contra FEDIAF como todo lo demás y con el
+   recorte dicho en `objetivos_ajustados`, salga o no salga el menú.
+
+3. **Y el rango de la fuente, POR PATOLOGÍA, servido para que se vea.** Las tres
+   que lo tienen escrito (renal, artrosis, cáncer) lo enseñan en la pantalla del
+   profesional — «SACN5 pide 1:1 a 7:1 para esta patología» — **sin aplicarlo
+   solo**. Así el número de la fuente deja de estar escondido en un JSON y el
+   clínico decide con él delante, que es lo contrario de que el motor decida por
+   él o de que nadie decida.
+
+### Por qué NO se aplica solo
+
+Está escrito en las tres fichas y no cambia: **las dos fuentes se contradicen**.
+SACN5 da un ratio de omega-6 totales a omega-3 totales para cuatro patologías, y
+el NRC 2006 dice del ratio de totales, literal, que «is not helpful» — y
+recomienda en su lugar el de **linoleico:linolénico**, que el motor SÍ aplica
+desde `requisitos_condicionales.json` (2,6-26 en adulto). O sea que el motor ya
+tiene un ratio de grasas puesto, de la fuente que lo cuantifica mejor, y lo que
+se añade es la puerta para que un clínico ponga el otro si su caso lo pide.
