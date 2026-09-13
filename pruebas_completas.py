@@ -8237,10 +8237,29 @@ from verificar import der_efectiva_de as _der_ef_b57
 if _topes_b57("Adulto", req, 95.0).get("fosforo") != 2000.0:
     fallos.append("BLOQUE57: a DER 95 (un perro que come lo normal) el techo de fosforo "
                   "tendria que seguir puesto y no lo esta")
-if "fosforo" in _topes_b57("Adulto", req, 49.0):
-    fallos.append("BLOQUE57: a DER 49 el minimo de fosforo de FEDIAF (2249) supera al techo "
-                  "del libro (2000) y el techo NO ha cedido. Asi, el perro a dieta se queda "
-                  "sin menu por cumplir una recomendacion.")
+# ⚠️ ESTA COMPROBACION CAMBIO EL 13 DE SEPTIEMBRE POR LA NOCHE, y se deja
+# escrito por que. Hasta ese dia exigia que «fosforo» NO estuviera, porque el
+# techo que cedia DESAPARECIA. Ahora no desaparece: SUBE hasta el suelo y se
+# queda pegado a el, para que el menu no se aleje del consejo mas de lo que la
+# aritmetica obliga (ver `HOLGURA_DEL_TECHO_QUE_SUBE`).
+#
+# Asi que lo que hay que exigir no es que el techo no este: es que YA NO
+# BLOQUEE, o sea que el techo que se aplica quede POR ENCIMA del minimo de
+# FEDIAF ya escalado. Escrito como «que no este» seguiria pasando el dia que
+# alguien lo dejara caer del todo, que es peor.
+from verificar import minimo_de as _minimo_de_b57
+_min_fosf_49 = _minimo_de_b57(req["Fósforo"], "Fósforo", "Adulto", 49.0)
+_techo_fosf_49 = _topes_b57("Adulto", req, 49.0).get("fosforo")
+if _techo_fosf_49 is not None and _techo_fosf_49 < _min_fosf_49:
+    fallos.append(f"BLOQUE57: a DER 49 el minimo de fosforo de FEDIAF ({_min_fosf_49:.0f}) supera "
+                  f"al techo del libro (2000) y el techo se ha quedado en {_techo_fosf_49:.0f}, "
+                  f"por debajo de ese minimo. Asi, el perro a dieta se queda sin menu por cumplir "
+                  f"una recomendacion.")
+if _techo_fosf_49 is not None and _techo_fosf_49 > _min_fosf_49 * 1.10:
+    fallos.append(f"BLOQUE57: el techo que sube se ha quedado en {_techo_fosf_49:.0f} y el suelo "
+                  f"que lo obliga es {_min_fosf_49:.0f}. Sube mas de lo que hace falta, y todo lo "
+                  f"que suba de mas es margen que el menu usa para alejarse del consejo del "
+                  f"libro sin ningun motivo.")
 if not any(c["clave"] == "fosforo" for c in _cedidos_b57("Adulto", req, 49.0)):
     fallos.append("BLOQUE57: el techo cede a DER 49 pero `cedidos_ante_fediaf` no lo cuenta. "
                   "Un limite que deja de aplicarse y no se puede decir es un cambio en "
