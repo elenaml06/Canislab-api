@@ -3099,6 +3099,36 @@ _HUECOS_YA_CONOCIDOS_b19 = {
     # vaciarlo salieron los cuatro de golpe.
     ("OMEGA", "Aceite de linaza"), ("OMEGA", "Semilla de lino"),
     ("OMEGA", "Yogur griego"), ("OMEGA", "Pulpo"), ("OMEGA", "Bacaladilla"),
+    # ⚠️ OCHO MÁS EL 13 DE SEPTIEMBRE, Y NO SON UN ERROR NUEVO: SON DATOS NUEVOS.
+    #
+    # Hasta ese día estos ocho tenían el linoleico y el linolénico a CERO y sin
+    # declarar -- ceros mudos --, así que no podían disparar este aviso: sin
+    # ninguno de los dos valores no hay nada que comparar. El barrido contra las
+    # fuentes (`auditar_composicion.py`) les puso los dos, cada uno con su fila y
+    # su columna escritas en `composicion_fuente`, y entonces apareció la
+    # comparación.
+    #
+    # Y el patrón es el que tiene que ser: HOJAS VERDES, CRUCÍFERAS, CALABAZA,
+    # MANGO Y PESCADO MAGRO son ALA-dominantes de verdad, no por las columnas
+    # cambiadas. Los números, de su fuente:
+    #
+    #     Espinaca ........ ω-3 0,138  contra  ω-6 0,026   (USDA 168462)
+    #     Albahaca ........ ω-3 0,316  contra  ω-6 0,073   (USDA 172232)
+    #     Coles Bruselas .. ω-3 0,099  contra  ω-6 0,045   (USDA 170383)
+    #     Brócoli ......... ω-3 0,063  contra  ω-6 0,049   (USDA 170379)
+    #     Calabacín ....... ω-3 0,055  contra  ω-6 0,030   (CIQUAL 20020)
+    #     Mango ........... ω-3 0,051  contra  ω-6 0,019   (USDA 169910)
+    #     Perca ........... ω-3 0,021  contra  ω-6 0,019   (USDA 173678)
+    #     Calabaza ........ ω-3 0,003  contra  ω-6 0,002   (USDA 168448)
+    #
+    # La prueba de que NO están invertidos es que los anclajes del BLOQUE 26
+    # siguen en su sitio -- girasol ω-6 57,53 contra ω-3 1,60, y linaza al revés
+    # --, y que las tres fuentes coinciden en el sentido para estas familias. Si
+    # alguien invirtiera las columnas al cargar, los dos aceites saltarían
+    # primero.
+    ("OMEGA", "Espinaca"), ("OMEGA", "Albahaca"), ("OMEGA", "Coles de Bruselas"),
+    ("OMEGA", "Brócoli"), ("OMEGA", "Calabacín"), ("OMEGA", "Mango"),
+    ("OMEGA", "Perca"), ("OMEGA", "Calabaza"),
     # ⚠️ DATO DUDOSO (27 agosto). Valores DECLARADOS que no nos creemos, y
     # que no se pueden corregir porque son los de la etiqueta y el real no
     # está publicado en ninguna parte. Van marcados en `dato_dudoso` dentro

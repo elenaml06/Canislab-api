@@ -2025,7 +2025,7 @@
    "linolenico": 0.001493,
    "araquidonico": 32.835821,
    "vitA": 5,
-   "vitD": 0.9,
+   "vitD": 0,
    "vitE": 0.47,
    "folato": 12,
    "niacina": 2.4,
@@ -2042,7 +2042,7 @@
    "yodo": 170,
    "selenio": 27,
    "zinc": 0.4,
-   "cobre": 0.028,
+   "cobre": 0,
    "manganeso": 0.05,
    "acidoPantotenico": 0.14,
    "colina": 65,
@@ -2064,7 +2064,7 @@
    "taurina": 31.4,
    "lcarnitina": 0
   },
-  "nota_datos": "USDA FoodData Central 171955 (Gadus morhua, raw): EPA 0,072 g y DHA 0,088 g por 100 g. ⚠️ CORREGIDO el 26 de agosto: el día anterior se puso 0,150/0,200 tomando la parte baja de un rango de BEDCA. La ficha concreta de USDA manda sobre un rango. ⚠️ CORREGIDO 6 sep 2026: la vitD (0) no es un cero real -- BEDCA distingue 0 de trazas de n.d., y aquí es trazas. Sin cifra publicada, pasa a sin_dato en vez de mantenerse como cero con forma de dato bueno. ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "USDA FoodData Central 171955 (Gadus morhua, raw): EPA 0,072 g y DHA 0,088 g por 100 g. ⚠️ CORREGIDO el 26 de agosto: el día anterior se puso 0,150/0,200 tomando la parte baja de un rango de BEDCA. La ficha concreta de USDA manda sobre un rango. ⚠️ CORREGIDO 6 sep 2026: la vitD (0) no es un cero real -- BEDCA distingue 0 de trazas de n.d., y aquí es trazas. Sin cifra publicada, pasa a sin_dato en vez de mantenerse como cero con forma de dato bueno. ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ 13 sep 2026 — cobre: el barrido contra las fuentes lo rellenó con 0.028 y SE DEVUELVE A HUECO. USDA FDC 171955 «Fish, cod, Atlantic, raw» publica 0,028 mg de cobre, así que el dato EXISTE. Se queda en hueco igual, y el motivo es el del BLOQUE 51: el cobre tiene encima el tope de la hepatopatía, y un 0,028 DECLARADO defiende menos que los ~0,41 que imputa el percentil 90 de su familia. Un valor bajo declarado AFLOJA un techo; un hueco lo aprieta. ⚠️ 13 sep 2026 — vitD: el barrido contra las fuentes lo rellenó con 0.9 y SE DEVUELVE A HUECO. USDA FDC 171955 publica 0,9 µg. Mismo caso y mismo motivo que el calamar: el dato existe, el hueco es el lado seguro del techo crónico, y el argumento deja de ser «no hay dato» para ser «hay dato y preferimos el lado seguro» — que es una decisión clínica y no mía.",
   "fuente_epa_dha": "USDA_FDC",
   "aminograma_estimado": {
    "desde": "Bacalao del Atlántico, crudo",
@@ -2086,7 +2086,9 @@
    "anio": "2024"
   },
   "sin_dato": [
-   "lcarnitina"
+   "cobre",
+   "lcarnitina",
+   "vitD"
   ],
   "taurina_fuente": "Taurina = 31,4 mg/100g: Spitze et al. 2003, tabla 1, \"Cod\" = 314 mg/kg -> 31,4 mg/100g.",
   "humedad_g_100g": 81.2,
@@ -2098,10 +2100,8 @@
   },
   "composicion_fuente": {
    "araquidonico": "usda:171955 · «Fish, cod, Atlantic, raw» · columna «PUFA 20:4» = 0.022 G ×1000 · transferido por gramo de grasa: 0.022×1000×(1.0/0.67) → 32.835821 mg · 2026-09-13",
-   "cobre": "usda:171955 · «Fish, cod, Atlantic, raw» · columna «Copper, Cu» = 0.028 MG → 0.028 mg · 2026-09-13",
    "linoleico": "usda:171955 · «Fish, cod, Atlantic, raw» · columna «PUFA 18:2» = 0.005 G · transferido por gramo de grasa: 0.005×1×(1.0/0.67) → 0.007463 g · 2026-09-13",
-   "linolenico": "usda:171955 · «Fish, cod, Atlantic, raw» · columna «PUFA 18:3» = 0.001 G · transferido por gramo de grasa: 0.001×1×(1.0/0.67) → 0.001493 g · 2026-09-13",
-   "vitD": "usda:171955 · «Fish, cod, Atlantic, raw» · columna «Vitamin D (D2 + D3)» = 0.9 UG → 0.9 ug · 2026-09-13"
+   "linolenico": "usda:171955 · «Fish, cod, Atlantic, raw» · columna «PUFA 18:3» = 0.001 G · transferido por gramo de grasa: 0.001×1×(1.0/0.67) → 0.001493 g · 2026-09-13"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171955 · «Fish, cod, Atlantic, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -2544,29 +2544,17 @@
   },
   "sin_dato": [
    "arginina",
-   "calcio",
    "cistina",
    "fenilalanina",
-   "folato",
-   "fosforo",
-   "hierro",
    "histidina",
    "isoleucina",
    "leucina",
    "lisina",
-   "magnesio",
    "metionina",
-   "niacina",
-   "potasio",
-   "proteina",
-   "riboflavina",
-   "sodio",
-   "tiamina",
    "tirosina",
    "treonina",
    "triptofano",
-   "valina",
-   "zinc"
+   "valina"
   ],
   "purinas_bases": {
    "adenina": 0.0,
@@ -2589,15 +2577,28 @@
   "fuentes_id_porque": "⚠️ EMPAREJADO POR EL PERFIL DE ÁCIDOS GRASOS, NO POR LA HUELLA DE SIEMPRE. Un aceite no tiene huella: proteína 0, grasa ~100 y agua 0 describen a los diez aceites del catálogo por igual, y por eso `fijar_identificadores.py` se niega a dar un SEGURO a cualquier ficha con ≥80 % de grasa (su función `sin_huella`). Lo que SÍ los distingue es el linoleico (ω-6) contra el linolénico (ω-3), que es el ancla de `UNIDADES.md`. BEDCA 2544 «Aceite de oliva virgen extra»: linoleico 6,8 · linolénico 0,7 · vitE 18,34 · grasa 100 — las cuatro exactas. Es una fila DISTINTA de la del aceite de oliva a secas, y se ve en el linoleico: 6,8 contra 11,28.",
   "cero_verificado": {
    "araquidonico": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2544 · «Aceite de oliva virgen extra» · columna «ácido graso 20:4 n-6  (ácido araquidónico)» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
+   "calcio": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (100 g por 100 g) y el calcio no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "dha": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2544 · «Aceite de oliva virgen extra» · columna «ácido graso 22:6 n-3 (ácido docosahexaenóico)» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "epa": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2544 · «Aceite de oliva virgen extra» · columna «ácido graso 20:5 (ácido eicosapentaenóico)» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2544 · «Aceite de oliva virgen extra» · columna «fibra, dietetica total» = 0.0 g. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
+   "folato": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (100 g por 100 g) y el folato no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "fosforo": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (100 g por 100 g) y el fosforo no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "hierro": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (100 g por 100 g) y el hierro no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "magnesio": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (100 g por 100 g) y el magnesio no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "niacina": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (100 g por 100 g) y el niacina no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "potasio": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (100 g por 100 g) y el potasio no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "proteina": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (100 g por 100 g) y el proteina no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "riboflavina": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (100 g por 100 g) y el riboflavina no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "selenio": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2544 · «Aceite de oliva virgen extra» · columna «selenio, total» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
+   "sodio": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (100 g por 100 g) y el sodio no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "tiamina": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (100 g por 100 g) y el tiamina no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2544 · «Aceite de oliva virgen extra» · columna «Vitamina B-12» = 0.0 ug. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
    "vitB6": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2544 · «Aceite de oliva virgen extra» · columna «Vitamina B-6, Total» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2544 · «Aceite de oliva virgen extra» · columna «Vitamina D» = 0.0 ug. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
-   "yodo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2544 · «Aceite de oliva virgen extra» · columna «ioduro» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
-  }
+   "yodo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2544 · «Aceite de oliva virgen extra» · columna «ioduro» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
+   "zinc": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (100 g por 100 g) y el zinc no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla."
+  },
+  "nota_datos": " ⚠️ 13 sep 2026 — calcio, folato, fosforo, hierro, magnesio, niacina, potasio, proteina, riboflavina, sodio, tiamina, zinc: el barrido los declaró HUECO porque BEDCA los da como `TR` con la celda vacía, y eso era un ERROR. En una grasa pura ese cero es CIERTO por composición, y no era inofensivo: un hueco se imputa al percentil 90 de su familia contra los máximos, y la familia «Extras» incluye semillas con 17 g de proteína. Con la proteína de dos aceites declarada hueco, el chihuahua de 3 kg con patología RENAL se quedaba SIN MENÚ en los seis peldaños de la escalera. Pasan a `cero_verificado`."
  },
  {
   "nombre": "Hígado de vaca",
@@ -5034,24 +5035,16 @@
    "cistina",
    "dha",
    "fenilalanina",
-   "hierro",
    "histidina",
    "isoleucina",
    "leucina",
    "lisina",
    "metionina",
-   "niacina",
-   "proteina",
-   "riboflavina",
-   "tiamina",
    "tirosina",
    "treonina",
    "triptofano",
    "valina",
-   "vitB12",
-   "vitB6",
-   "vitD",
-   "zinc"
+   "vitD"
   ],
   "purinas_bases": {
    "adenina": 0.0,
@@ -5077,12 +5070,21 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2541 · «Aceite de girasol» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "folato": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2541 · «Aceite de girasol» · columna «folato, total» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "fosforo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2541 · «Aceite de girasol» · columna «fósforo» = 0.0 mg. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
+   "hierro": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el hierro no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "magnesio": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2541 · «Aceite de girasol» · columna «magnesio» = 0.0 mg. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
+   "niacina": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el niacina no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "potasio": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2541 · «Aceite de girasol» · columna «potasio» = 0.0 mg. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
+   "proteina": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el proteina no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "riboflavina": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el riboflavina no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "selenio": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2541 · «Aceite de girasol» · columna «selenio, total» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "sodio": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2541 · «Aceite de girasol» · columna «sodio» = 0.0 mg. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
-   "yodo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2541 · «Aceite de girasol» · columna «ioduro» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
-  }
+   "tiamina": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el tiamina no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "vitB12": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el vitB12 no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "vitB6": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el vitB6 no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "yodo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2541 · «Aceite de girasol» · columna «ioduro» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
+   "zinc": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el zinc no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla."
+  },
+  "nota_datos": " ⚠️ 13 sep 2026 — hierro, niacina, proteina, riboflavina, tiamina, vitB12, vitB6, zinc: el barrido los declaró HUECO porque BEDCA los da como `TR` con la celda vacía, y eso era un ERROR. En una grasa pura ese cero es CIERTO por composición, y no era inofensivo: un hueco se imputa al percentil 90 de su familia contra los máximos, y la familia «Extras» incluye semillas con 17 g de proteína. Con la proteína de dos aceites declarada hueco, el chihuahua de 3 kg con patología RENAL se quedaba SIN MENÚ en los seis peldaños de la escalera. Pasan a `cero_verificado`."
  },
  {
   "nombre": "Aceite de linaza",
@@ -6780,7 +6782,7 @@
    "linolenico": 0,
    "araquidonico": 20,
    "vitA": 15,
-   "vitD": 0.36,
+   "vitD": 0,
    "vitE": 1.2,
    "folato": 5,
    "niacina": 2.8,
@@ -6819,7 +6821,7 @@
    "taurina": 356.0,
    "lcarnitina": 0
   },
-  "nota_datos": "⚠️ SIN FUENTE DECLARADA: no se ha revisado su ficha de BEDCA todavía. Es el único pescado del catálogo cuyo origen sigue sin comprobar (26 agosto). ⚠️ CORREGIDO 6 sep 2026: el yodo (0 µg) era un cero FALSO -- BEDCA no publica el dato para Calamar crudo (n.d.), y la ficha de Chipirón (misma especie) da 64 µg, así que un cero no está sostenido -- pasa a sin_dato. La vitD (0 µg) tampoco es un cero real: BEDCA distingue 0 de trazas de n.d., y este es trazas -- pasa a sin_dato también, sin inventar una cifra. ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "⚠️ SIN FUENTE DECLARADA: no se ha revisado su ficha de BEDCA todavía. Es el único pescado del catálogo cuyo origen sigue sin comprobar (26 agosto). ⚠️ CORREGIDO 6 sep 2026: el yodo (0 µg) era un cero FALSO -- BEDCA no publica el dato para Calamar crudo (n.d.), y la ficha de Chipirón (misma especie) da 64 µg, así que un cero no está sostenido -- pasa a sin_dato. La vitD (0 µg) tampoco es un cero real: BEDCA distingue 0 de trazas de n.d., y este es trazas -- pasa a sin_dato también, sin inventar una cifra. ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ 13 sep 2026 — vitD: el barrido contra las fuentes lo rellenó con 0.36 y SE DEVUELVE A HUECO. CIQUAL 10001 «Calmar ou calamar ou encornet, cru» publica 0,36 µg, así que el dato EXISTE — y el 8 de septiembre se concluyó «no hay cifra» porque BEDCA la da como `TR` con la celda vacía, que es verdad de BEDCA y no de las otras fuentes. Se queda en hueco: rellenarla afloja el techo CRÓNICO de la vitamina D. Ver Ya_probado.md.",
   "purinas_bases": {
    "adenina": 18.0,
    "guanina": 15.0,
@@ -6834,7 +6836,8 @@
    "anio": "1976"
   },
   "sin_dato": [
-   "lcarnitina"
+   "lcarnitina",
+   "vitD"
   ],
   "taurina_fuente": "Taurina = 356 mg/100g: Spitze et al. 2003, tabla 1, \"Squid\" = 3560 +/- 950 mg/kg -> 356 mg/100g.",
   "humedad_g_100g": 78.6,
@@ -6846,7 +6849,6 @@
   },
   "composicion_fuente": {
    "cobre": "ciqual:10001 · «Calmar ou calamar ou encornet, cru» · columna «Cuivre (mg/100 g)» = 0.15 mg → 0.15 mg · 2026-09-13",
-   "vitD": "ciqual:10001 · «Calmar ou calamar ou encornet, cru» · columna «Vitamine D (µg/100 g)» = 0.36 ug → 0.36 ug · 2026-09-13",
    "yodo": "ciqual:10001 · «Calmar ou calamar ou encornet, cru» · columna «Iode (µg/100 g)» = 12.8 ug → 12.8 ug · 2026-09-13"
   },
   "cero_verificado": {
@@ -7324,7 +7326,7 @@
    "selenio": 43.3,
    "zinc": 0.48,
    "cobre": 0.15,
-   "manganeso": 0.7,
+   "manganeso": 0,
    "acidoPantotenico": 0.1,
    "colina": 65,
    "cloruro": 72.38,
@@ -7345,7 +7347,7 @@
    "taurina": 36.7,
    "lcarnitina": 0
   },
-  "nota_datos": "USDA FoodData Central 173678 (Perca, mixed species, raw): EPA 0,150 g y DHA 0,280 g por 100 g. La perca de río europea (Perca fluviatilis) no tiene ficha propia; se usa la de especies mezcladas del mismo género. ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
+  "nota_datos": "USDA FoodData Central 173678 (Perca, mixed species, raw): EPA 0,150 g y DHA 0,280 g por 100 g. La perca de río europea (Perca fluviatilis) no tiene ficha propia; se usa la de especies mezcladas del mismo género. ⚠️ 13 sep 2026: lcarnitina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas. ⚠️ 13 sep 2026 — manganeso: el barrido contra las fuentes lo rellenó con 0.7 y SE DEVUELVE A HUECO. USDA FDC 173678 «Fish, perch, mixed species, raw» publica 0,7 mg, y ese número es justamente el que el BLOQUE 51 cita como prueba de que la constante de familia era falsa («USDA da 0,011 al eglefino y 0,7 a la perca»). O sea que 0,7 es la medida real de la perca. Se queda en hueco para no reabrir por mi cuenta una decisión del 8 de septiembre: queda escrito que el dato está, y lo decide quien firma.",
   "fuente_epa_dha": "USDA_FDC",
   "purinas_bases": {
    "adenina": 12.8,
@@ -7362,7 +7364,8 @@
   },
   "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente.",
   "sin_dato": [
-   "lcarnitina"
+   "lcarnitina",
+   "manganeso"
   ],
   "humedad_g_100g": 79.1,
   "humedad_fuente": "USDA FoodData Central · Fish, perch, mixed species, raw",
@@ -7375,8 +7378,7 @@
    "araquidonico": "usda:173678 · «Fish, perch, mixed species, raw» · columna «PUFA 20:4» = 0.052 G ×1000 · transferido por gramo de grasa: 0.052×1000×(1.6/0.92) → 90.434783 mg · 2026-09-13",
    "cobre": "usda:173678 · «Fish, perch, mixed species, raw» · columna «Copper, Cu» = 0.15 MG → 0.15 mg · 2026-09-13",
    "linoleico": "usda:173678 · «Fish, perch, mixed species, raw» · columna «PUFA 18:2» = 0.011 G · transferido por gramo de grasa: 0.011×1×(1.6/0.92) → 0.01913 g · 2026-09-13",
-   "linolenico": "usda:173678 · «Fish, perch, mixed species, raw» · columna «PUFA 18:3» = 0.012 G · transferido por gramo de grasa: 0.012×1×(1.6/0.92) → 0.02087 g · 2026-09-13",
-   "manganeso": "usda:173678 · «Fish, perch, mixed species, raw» · columna «Manganese, Mn» = 0.7 MG → 0.7 mg · 2026-09-13"
+   "linolenico": "usda:173678 · «Fish, perch, mixed species, raw» · columna «PUFA 18:3» = 0.012 G · transferido por gramo de grasa: 0.012×1×(1.6/0.92) → 0.02087 g · 2026-09-13"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:173678 · «Fish, perch, mixed species, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -7694,27 +7696,19 @@
    "araquidonico",
    "arginina",
    "cistina",
-   "cobre",
    "dha",
    "epa",
    "fenilalanina",
-   "folato",
-   "hierro",
    "histidina",
    "isoleucina",
    "leucina",
    "lisina",
    "metionina",
-   "niacina",
-   "riboflavina",
-   "selenio",
-   "tiamina",
    "tirosina",
    "treonina",
    "triptofano",
    "valina",
-   "vitA",
-   "vitB6"
+   "vitA"
   ],
   "purinas_bases": {
    "adenina": 0.0,
@@ -7740,17 +7734,26 @@
   "fuentes_id_porque": "⚠️ EMPAREJADO POR EL PERFIL DE ÁCIDOS GRASOS, NO POR LA HUELLA DE SIEMPRE. Un aceite no tiene huella: proteína 0, grasa ~100 y agua 0 describen a los diez aceites del catálogo por igual, y por eso `fijar_identificadores.py` se niega a dar un SEGURO a cualquier ficha con ≥80 % de grasa (su función `sin_huella`). Lo que SÍ los distingue es el linoleico (ω-6) contra el linolénico (ω-3), que es el ancla de `UNIDADES.md`. BEDCA 747 «Aceite de cacahuete»: linoleico 37,75 · linolénico 0,1 · vitE 17,2 — exactas.",
   "cero_verificado": {
    "calcio": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:747 · «Aceite de cacahuete» · columna «calcio» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
+   "cobre": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el cobre no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:747 · «Aceite de cacahuete» · columna «fibra, dietetica total» = 0.0 g. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
+   "folato": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el folato no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "fosforo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:747 · «Aceite de cacahuete» · columna «fósforo» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
+   "hierro": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el hierro no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "magnesio": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:747 · «Aceite de cacahuete» · columna «magnesio» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
+   "niacina": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el niacina no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "potasio": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:747 · «Aceite de cacahuete» · columna «potasio» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "proteina": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:747 · «Aceite de cacahuete» · columna «proteina, total» = 0.0 g. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
+   "riboflavina": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el riboflavina no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "selenio": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el selenio no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "sodio": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:747 · «Aceite de cacahuete» · columna «sodio» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
+   "tiamina": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el tiamina no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:747 · «Aceite de cacahuete» · columna «Vitamina B-12» = 0.0 ug. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
+   "vitB6": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el vitB6 no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:747 · «Aceite de cacahuete» · columna «Vitamina D» = 0.0 ug. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
    "yodo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:747 · «Aceite de cacahuete» · columna «ioduro» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "zinc": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:747 · «Aceite de cacahuete» · columna «zinc (cinc)» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "nota_datos": " ⚠️ 13 sep 2026 — cobre, folato, hierro, niacina, riboflavina, selenio, tiamina, vitB6: el barrido los declaró HUECO porque BEDCA los da como `TR` con la celda vacía, y eso era un ERROR. En una grasa pura ese cero es CIERTO por composición, y no era inofensivo: un hueco se imputa al percentil 90 de su familia contra los máximos, y la familia «Extras» incluye semillas con 17 g de proteína. Con la proteína de dos aceites declarada hueco, el chihuahua de 3 kg con patología RENAL se quedaba SIN MENÚ en los seis peldaños de la escalera. Pasan a `cero_verificado`."
  },
  {
   "nombre": "Aceite de coco",
@@ -7921,34 +7924,21 @@
    "lcarnitina": 0
   },
   "sin_dato": [
-   "acidoPantotenico",
    "araquidonico",
    "arginina",
-   "calcio",
    "cistina",
-   "cobre",
    "fenilalanina",
-   "folato",
-   "fosforo",
-   "hierro",
    "histidina",
    "isoleucina",
    "leucina",
    "linoleico",
    "linolenico",
    "lisina",
-   "magnesio",
    "metionina",
-   "potasio",
-   "selenio",
-   "sodio",
-   "tiamina",
    "tirosina",
    "treonina",
    "triptofano",
-   "valina",
-   "vitB6",
-   "zinc"
+   "valina"
   ],
   "purinas_bases": {
    "adenina": 0.0,
@@ -7965,18 +7955,31 @@
   },
   "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
   "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida.",
-  "nota_datos": "⚠️ EPA, DHA y YODO, 7 sep 2026. El resto de esta ficha es BEDCA 755 (vitA 20000, vitD 210, vitE 20, grasa 99,9: clavadas), pero BEDCA no publica ni un solo acido graso individual de este aceite, solo saturados/mono/poliinsaturados totales. Siguiente escalon de Bases.md: CIQUAL 17630 (\"Huile de foie de morue\"), EPA 8,39 y DHA 11,4. HASTA HOY ESTE ACEITE ENTRABA EN EL MOTOR CON EPA=0 Y DHA=0: la fuente de omega-3 mas densa del catalogo era invisible para el solver. Tercera fuente, USDA FDC 173577, da 6,898 y 10,968 -- un 18% menos; se toma CIQUAL por el orden de Bases.md, sabiendo que tanto CIQUAL como USDA describen un producto un 50% mas concentrado en vitamina A y D que el de BEDCA, asi que este EPA/DHA es el techo del rango y no su centro. NO se rellenan linoleico/linolenico/araquidonico: USDA los da como 0,935 repetido en cinco acidos grasos distintos, que es relleno y no medida, y el par de CIQUAL (2,71/1,79) arrastra esa misma diferencia de concentracion sin nada que lo ancle. El YODO estaba a 0 SIN declararse hueco, y es uno de los cinco topes duros de seguridad cronica: BEDCA lo marca TR (trazas, sin cifra) y CIQUAL mide 400 ug/100g. Se toma el 400 porque en un nutriente CON TECHO quedarse corto es el lado peligroso.",
+  "nota_datos": "⚠️ EPA, DHA y YODO, 7 sep 2026. El resto de esta ficha es BEDCA 755 (vitA 20000, vitD 210, vitE 20, grasa 99,9: clavadas), pero BEDCA no publica ni un solo acido graso individual de este aceite, solo saturados/mono/poliinsaturados totales. Siguiente escalon de Bases.md: CIQUAL 17630 (\"Huile de foie de morue\"), EPA 8,39 y DHA 11,4. HASTA HOY ESTE ACEITE ENTRABA EN EL MOTOR CON EPA=0 Y DHA=0: la fuente de omega-3 mas densa del catalogo era invisible para el solver. Tercera fuente, USDA FDC 173577, da 6,898 y 10,968 -- un 18% menos; se toma CIQUAL por el orden de Bases.md, sabiendo que tanto CIQUAL como USDA describen un producto un 50% mas concentrado en vitamina A y D que el de BEDCA, asi que este EPA/DHA es el techo del rango y no su centro. NO se rellenan linoleico/linolenico/araquidonico: USDA los da como 0,935 repetido en cinco acidos grasos distintos, que es relleno y no medida, y el par de CIQUAL (2,71/1,79) arrastra esa misma diferencia de concentracion sin nada que lo ancle. El YODO estaba a 0 SIN declararse hueco, y es uno de los cinco topes duros de seguridad cronica: BEDCA lo marca TR (trazas, sin cifra) y CIQUAL mide 400 ug/100g. Se toma el 400 porque en un nutriente CON TECHO quedarse corto es el lado peligroso. ⚠️ 13 sep 2026 — acidoPantotenico, calcio, cobre, folato, fosforo, hierro, magnesio, potasio, selenio, sodio, tiamina, vitB6, zinc: el barrido los declaró HUECO porque BEDCA los da como `TR` con la celda vacía, y eso era un ERROR. En una grasa pura ese cero es CIERTO por composición, y no era inofensivo: un hueco se imputa al percentil 90 de su familia contra los máximos, y la familia «Extras» incluye semillas con 17 g de proteína. Con la proteína de dos aceites declarada hueco, el chihuahua de 3 kg con patología RENAL se quedaba SIN MENÚ en los seis peldaños de la escalera. Pasan a `cero_verificado`.",
   "fuente_epa_dha": "CIQUAL",
   "fuentes_id": {
    "bedca": "755"
   },
   "fuentes_id_porque": "⚠️ EMPAREJADO POR EL PERFIL DE ÁCIDOS GRASOS, NO POR LA HUELLA DE SIEMPRE. Un aceite no tiene huella: proteína 0, grasa ~100 y agua 0 describen a los diez aceites del catálogo por igual, y por eso `fijar_identificadores.py` se niega a dar un SEGURO a cualquier ficha con ≥80 % de grasa (su función `sin_huella`). Lo que SÍ los distingue es el linoleico (ω-6) contra el linolénico (ω-3), que es el ancla de `UNIDADES.md`. BEDCA 755 «Aceite de hígado de bacalao»: vitE 20 y grasa 99,9 exactas. ⚠️ PERO SUS ÁCIDOS GRASOS NO SALEN DE AQUÍ: BEDCA los deja con `value_type` TR y la celda vacía, o sea que NO HAY CIFRA. Así que el `linoleico: 0` de esta ficha es un HUECO, no un cero, y el EPA 8,39 / DHA 11,4 vienen de otro sitio (la etiqueta). Que la fuente de mandato 1 no publique una columna es exactamente cuándo hay que bajar de mandato.",
   "cero_verificado": {
+   "acidoPantotenico": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el acidoPantotenico no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "calcio": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el calcio no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "cobre": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el cobre no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:755 · «Aceite de hígado de bacalao» · columna «fibra, dietetica total» = 0.0 g. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
+   "folato": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el folato no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "fosforo": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el fosforo no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "hierro": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el hierro no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "magnesio": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el magnesio no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "niacina": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:755 · «Aceite de hígado de bacalao» · columna «equivalentes de niacina, totales» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
+   "potasio": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el potasio no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "proteina": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:755 · «Aceite de hígado de bacalao» · columna «proteina, total» = 0.0 g. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
    "riboflavina": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:755 · «Aceite de hígado de bacalao» · columna «riboflavina» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
-   "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:755 · «Aceite de hígado de bacalao» · columna «Vitamina B-12» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
+   "selenio": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el selenio no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "sodio": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el sodio no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "tiamina": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el tiamina no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:755 · «Aceite de hígado de bacalao» · columna «Vitamina B-12» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
+   "vitB6": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el vitB6 no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "zinc": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el zinc no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla."
   }
  },
  {
@@ -8261,15 +8264,10 @@
    "linolenico",
    "lisina",
    "metionina",
-   "riboflavina",
-   "selenio",
-   "tiamina",
    "tirosina",
    "treonina",
    "triptofano",
-   "valina",
-   "vitB6",
-   "yodo"
+   "valina"
   ],
   "purinas_bases": {
    "adenina": 0.0,
@@ -8295,10 +8293,16 @@
    "folato": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2549 · «Manteca» · columna «folato, total» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "niacina": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2549 · «Manteca» · columna «equivalentes de niacina, totales» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "proteina": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2549 · «Manteca» · columna «proteina, total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
+   "riboflavina": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99 g por 100 g) y el riboflavina no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "selenio": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99 g por 100 g) y el selenio no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "tiamina": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99 g por 100 g) y el tiamina no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "vitB12": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2549 · «Manteca» · columna «Vitamina B-12» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
+   "vitB6": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99 g por 100 g) y el vitB6 no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2549 · «Manteca» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
+   "yodo": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99 g por 100 g) y el yodo no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "zinc": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2549 · «Manteca» · columna «zinc (cinc)» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "nota_datos": " ⚠️ 13 sep 2026 — riboflavina, selenio, tiamina, vitB6, yodo: el barrido los declaró HUECO porque BEDCA los da como `TR` con la celda vacía, y eso era un ERROR. En una grasa pura ese cero es CIERTO por composición, y no era inofensivo: un hueco se imputa al percentil 90 de su familia contra los máximos, y la familia «Extras» incluye semillas con 17 g de proteína. Con la proteína de dos aceites declarada hueco, el chihuahua de 3 kg con patología RENAL se quedaba SIN MENÚ en los seis peldaños de la escalera. Pasan a `cero_verificado`."
  },
  {
   "nombre": "Semilla de lino",

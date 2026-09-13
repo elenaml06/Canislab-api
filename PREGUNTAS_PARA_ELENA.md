@@ -883,3 +883,45 @@ PROXY de hígado de cordero o de pollo con la confianza escrita. **No he tocado
 ninguna cifra**: lo que falta no es un número, es saber de dónde viene, y eso no me
 lo puedo inventar.
 
+## F · ⚠️ LA QUE BLOQUEA: la vitamina D de seis carnes magras deja sin menú al perro con 8 alergias
+
+**Esta es la única pregunta de esta sesión que tiene coste para alguien**, y la
+traigo con todo medido porque la decisión es tuya.
+
+**Lo que hice.** Declaré como HUECO la vitamina D de seis carnes magras (conejo,
+pavo, ternera solomillo, ternera con grasa, lomo de ternera, lengua de cordero),
+porque BEDCA las da con la celda vacía: no hay cifra. Antes eran **ceros mudos** —
+el motor creía que esas carnes no tienen vitamina D, que es falso.
+
+**Lo que cuesta.** Un hueco se imputa al percentil 90 de su familia contra los
+máximos, y la vitamina D tiene tope crónico. Resultado medido: **el adulto de 20 kg
+con las 8 especies más comunes excluidas se queda sin menú.** Con el catálogo de
+antes, salía.
+
+**El número que lo explica:** la imputación da **1,0 µg/100 g** y las 17 carnes que
+sí declaran vitamina D tienen **mediana 0,20**. Imputar es **5× la mediana de su
+propia familia**. Y CIQUAL publica el pavo crudo en 0,2 — clavado en esa mediana.
+
+**He buscado el dato en las cuatro fuentes y no está** para el corte que tenemos:
+BEDCA no lo publica, USDA no publica vitamina D de conejo ni de lengua de cordero,
+y las filas de CIQUAL que sí lo traen son otro corte (su pavo tiene 1,88 g de grasa
+y el nuestro 8,5 — usarla sería cruzar cortes, el error que el repo lleva avisado).
+
+### Las tres salidas, y lo que pienso de cada una
+
+1. **Conseguir el dato** (lo correcto, y no lo puedo hacer yo): la vitamina D de
+   esas seis carnes de una fuente que mida ese corte. Cierra el problema de raíz.
+2. **Bajar el percentil de la imputación** del P90 a la mediana de la familia. Con
+   eso esas carnes imputarían 0,2 —que es lo que miden las fuentes que las
+   publican— en vez de 1,0. ⚠️ **Pero afloja TODOS los máximos del motor a la vez**,
+   no solo este, así que es una decisión clínica y global, no de catálogo. No la he
+   tocado.
+3. **Devolver los ceros mudos.** Esto **no lo recomiendo y va contra lo que me
+   pediste**: un cero mudo afirma que esa carne no tiene vitamina D, y es mentira.
+   Además es falso por el lado peligroso — deja pasar el tope sin saberlo.
+
+**Mientras decides, el BLOQUE 9 queda en ROJO a propósito.** No lo he relajado: su
+propio comentario avisa de que esa prueba cambió dos veces en 24 horas y de que no
+hay que «arreglarla mañana en la dirección equivocada». Un rojo que dice la verdad
+es mejor que un verde que la esconde.
+

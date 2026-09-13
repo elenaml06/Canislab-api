@@ -582,6 +582,46 @@ CATEGORIAS_DE_ORIGEN_ANIMAL = {"Carne muscular", "Pescados y mariscos", "Víscer
 NOMBRES_DE_ORIGEN_ANIMAL = ("huevo", "laringe")
 
 
+# ⚠️ LO QUE UNA GRASA PURA NO PUEDE LLEVAR, Y POR QUÉ ESTO ES UN CERO Y NO UN
+# HUECO.
+#
+# CASO REAL, Y LO CAUSÓ ESTE SCRIPT EL 13 DE SEPTIEMBRE. BEDCA publica la
+# proteína y los minerales de sus aceites como `TR` con la celda vacía, que es
+# «no hay cifra», así que la pasada que declara huecos marcó `proteina` como
+# `sin_dato` en el aceite de oliva virgen extra y en el de girasol. Y eso es
+# FALSO: un aceite refinado son triglicéridos — 100 g de grasa y 888 kcal no
+# dejan sitio para proteína. `UNIDADES.md` ya lo dice con otras palabras: «Un
+# aceite con 0 g de proteína tiene 0 de lisina de verdad».
+#
+# Y no era inofensivo: un hueco se imputa al PERCENTIL 90 de su familia contra
+# los máximos, y la familia «Extras» incluye semillas con 17 g de proteína. Con
+# esos dos huecos puestos, el chihuahua de 3 kg con patología RENAL se quedaba
+# SIN MENÚ EN LOS SEIS PELDAÑOS de la escalera — con el catálogo de `main` sí
+# salía. Lo cazaron los BLOQUES 9 y 76.
+#
+# La línea se traza por lo que una grasa SÍ puede llevar: las vitaminas
+# LIPOSOLUBLES (A, D, E) y los ácidos grasos, que es precisamente para lo que
+# está el aceite de hígado de bacalao. Todo lo demás — proteína, los doce
+# aminoácidos, los minerales y las vitaminas hidrosolubles — no viaja en grasa.
+ES_GRASA_PURA_DESDE = 80.0          # % de grasa, el mismo umbral que `sin_huella`
+CERO_CIERTO_EN_GRASA_PURA = (
+    ("proteina",)
+    + AMINOACIDOS
+    + ("calcio", "fosforo", "potasio", "sodio", "cloruro", "magnesio", "hierro",
+       "cobre", "manganeso", "zinc", "yodo", "selenio")
+    + ("tiamina", "riboflavina", "niacina", "acidoPantotenico", "vitB6", "folato",
+       "vitB12", "colina")
+    + ("fibra",)
+)
+
+
+def _es_grasa_pura(ficha):
+    try:
+        return float((ficha.get("nutrientes") or {}).get("grasa") or 0) >= ES_GRASA_PURA_DESDE
+    except (TypeError, ValueError):
+        return False
+
+
 def _es_tejido_animal(ficha):
     """¿Es TEJIDO animal? La grasa fundida no lo es, y ahí sí hay ceros reales.
 
@@ -603,6 +643,44 @@ def _es_tejido_animal(ficha):
         return True
     n = ficha["nombre"].lower()
     return any(x in n for x in NOMBRES_DE_ORIGEN_ANIMAL)
+
+
+# ⚠️ LAS CELDAS QUE SE QUEDAN EN HUECO A PROPÓSITO, LEÍDAS DEL BLOQUE 51.
+#
+# No es un olvido: es una decisión del 8 de septiembre con medidas detrás, y el
+# motivo va al revés de lo que parece. Un valor BAJO declarado DEFIENDE contra un
+# techo, porque cuenta como medido; un hueco se imputa al PERCENTIL 90 de su
+# familia (`constructor.valor_para_maximo`). Así que el hueco es lo CONSERVADOR
+# contra un máximo, y rellenarlo con una cifra baja lo AFLOJA. Los dos techos en
+# juego son crónicos: la vitamina D y el cobre de la hepatopatía.
+#
+# ⚠️ Y ESTE BARRIDO APORTÓ ALGO QUE NO SE SABÍA: cuatro de esas celdas SÍ tienen
+# cifra publicada por una fuente con mandato (Bacalao cobre 0,028 y vitD 0,9 de
+# USDA, Perca manganeso 0,7 de USDA, Calamar vitD 0,36 de CIQUAL). El 8 de
+# septiembre lo que se sabía era que BEDCA no las publica, y de ahí se concluyó
+# «no hay cifra». Sigue siendo más seguro el hueco, pero el argumento cambia: ya
+# no es «no hay dato» sino «hay dato y preferimos el lado seguro». Eso es clínico
+# y se pregunta, no se decide aquí. Ver `fuentes_de_composicion.json`.
+#
+# La lista SE LEE de `pruebas_completas.py` y no se copia: dos listas de lo mismo
+# se desincronizan, que es el fallo que este repo lleva avisado en veinte sitios.
+def _celdas_intocables():
+    """(nombre, clave) que el BLOQUE 51 exige en `sin_dato`, leídas de allí."""
+    import re
+    ruta = os.path.join(RAIZ, "pruebas_completas.py")
+    try:
+        texto = open(ruta, encoding="utf-8").read()
+    except OSError:
+        return set()
+    fuera = set()
+    for nombre_lista in ("_MUESTRA51", "_TR51"):
+        i = texto.find(nombre_lista + " = [")
+        if i < 0:
+            continue
+        j = texto.find("]", i)
+        for n, k in re.findall(r'\("([^"]+)",\s*"([^"]+)"\)', texto[i:j]):
+            fuera.add((n, k))
+    return fuera
 
 
 # Fichas cuyas celdas NO se rellenan desde su fila, con el motivo.
@@ -627,7 +705,12 @@ def cerrar():
     catalogo = json.load(open(CATALOGO, encoding="utf-8"),
                          object_pairs_hook=collections.OrderedDict)
     hoy = "2026-09-13"
-    puestas = saltadas = puestas_cero = declarados = deshechas = 0
+    intocables = _celdas_intocables()
+    if not intocables:
+        print("  ⚠️ no se han podido leer las celdas intocables del BLOQUE 51. Se aborta: "
+              "rellenarlas aflojaría los techos crónicos de la vitamina D y del cobre.")
+        return 2
+    puestas = saltadas = puestas_cero = declarados = deshechas = grasa_pura = 0
     resumen = collections.Counter()
     resumen_cero = collections.Counter()
     resumen_hueco = collections.Counter()
@@ -658,6 +741,8 @@ def cerrar():
                 continue
             if clave not in nut or clave in ciertos or clave in dudosos:
                 continue
+            if (nombre, clave) in intocables:
+                continue            # el BLOQUE 51 la quiere en hueco, y con motivo
             era_hueco = clave in huecos
             actual = _num(nut.get(clave))
             if not era_hueco and actual not in (None, 0):
@@ -750,6 +835,22 @@ def cerrar():
                 continue                  # se cerró desde otra fuente: ya no es hueco
             if _num(nut.get(clave)) not in (None, 0):
                 continue                  # tiene cifra de otro sitio: no es un hueco
+            # ⚠️ En una grasa pura, ese cero no es un hueco: es cierto por
+            # composición. Declararlo hueco hace que se impute al percentil 90 de
+            # su familia, y la familia de un aceite incluye semillas.
+            if _es_grasa_pura(ficha) and clave in CERO_CIERTO_EN_GRASA_PURA:
+                if clave not in ciertos:
+                    ciertos_nuevos[clave] = (
+                        f"Cero cierto por composición, comprobado el {hoy}: la ficha es grasa "
+                        f"pura ({nut.get('grasa')} g por 100 g) y el {clave} no viaja en grasa. "
+                        f"BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay "
+                        f"cifra»— pero aquí lo decide la composición: un aceite refinado son "
+                        f"triglicéridos. Lo que una grasa SÍ lleva son las vitaminas "
+                        f"liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta "
+                        f"regla.")
+                    grasa_pura += 1
+                huecos.discard(clave)
+                continue
             if clave not in huecos:
                 huecos.add(clave)
                 declarados += 1
@@ -835,6 +936,8 @@ def cerrar():
     print(f"  ceros declarados con su fuente (`cero_verificado`): {puestas_cero}")
     print("    " + ", ".join(f"{k}:{v}" for k, v in resumen_cero.most_common(14)))
     print(f"  huecos DECLARADOS (la fuente dice que no hay cifra): {declarados}")
+    if grasa_pura:
+        print(f"  ceros CIERTOS en grasa pura (no son huecos): {grasa_pura}")
     if deshechas:
         print(f"  celdas DESHECHAS por el guardia de grupo: {deshechas}")
     if resumen_hueco:

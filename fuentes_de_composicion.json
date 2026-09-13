@@ -1417,5 +1417,17 @@
    "por_que": "Se pasa un 4,6 %, que es poco y puede ser de redondeo al juntar columnas de fuentes distintas — no tiene la forma del caso de la dorada. Se deja anotado sin cambiar nada: el criterio es que una incoherencia pequeña y explicable no justifica tocar una cifra sin fuente nueva.",
    "decidir": "si merece la pena reabrir la ficha por un 4,6 %."
   }
+ },
+ "celdas_que_se_quedan_en_hueco": {
+  "_por_que": "⚠️ HAY CELDAS QUE NO SE CIERRAN AUNQUE LA FUENTE PUBLIQUE LA CIFRA, y no es un olvido: es una decisión del 8 de septiembre de 2026 con medidas detrás, que el BLOQUE 51 vigila. El motivo es de seguridad y va al revés de lo que parece: un valor BAJO declarado DEFIENDE contra un techo, porque cuenta como medido; un hueco, en cambio, se imputa al PERCENTIL 90 de su familia (`constructor.valor_para_maximo`). Así que dejar el hueco es lo CONSERVADOR contra un máximo, y rellenarlo con una cifra baja AFLOJA el techo. Los dos techos en juego son crónicos: la vitamina D y el cobre de la hepatopatía.",
+  "_lo_que_este_trabajo_aporta": "⚠️ INFORMACIÓN NUEVA DEL 13 DE SEPTIEMBRE, y es la razón de que esto esté escrito aquí y no solo en el BLOQUE 51: el barrido contra las fuentes encontró que CUATRO de esas celdas SÍ tienen cifra publicada por una fuente con mandato. Cuando se tomó la decisión del 8 de septiembre lo que se sabía era que BEDCA no las publica (`TR` con la celda vacía), y de ahí se concluyó «no hay cifra». Hoy sabemos que sí la hay, más abajo en el orden de mandato. Eso no cambia la decisión —sigue siendo más seguro el hueco— pero cambia el ARGUMENTO: ya no es «no hay dato», es «hay dato y preferimos el lado seguro». Y eso es una decisión clínica, así que se pregunta.",
+  "las_cuatro_con_cifra_publicada": {
+   "Bacalao.cobre": "USDA FDC 171955 «Fish, cod, Atlantic, raw» publica 0,028 mg. Se queda en hueco: el cobre tiene encima el tope de la hepatopatía, y 0,028 declarado defiende menos que los 0,41 que imputa la familia.",
+   "Perca.manganeso": "USDA FDC 173678 «Fish, perch, mixed species, raw» publica 0,7 mg. ⚠️ Y aquí el dato de la fuente es el que EL PROPIO BLOQUE 51 cita como prueba de que la constante de familia era falsa: «USDA da 0,011 al eglefino y 0,7 a la perca». O sea que 0,7 es la medida real de la perca.",
+   "Calamar.vitD": "CIQUAL 10001 «Calmar ou calamar ou encornet, cru» publica 0,36 µg. Se queda en hueco: afloja el techo crónico de la vitamina D.",
+   "Bacalao.vitD": "USDA FDC 171955 publica 0,9 µg. Se queda en hueco, por lo mismo."
+  },
+  "la_lista_completa": "Vive en `_MUESTRA51` y `_TR51` de `pruebas_completas.py` (BLOQUE 51) y NO se copia aquí: serían dos listas que se desincronizan, que es el fallo que este repo lleva avisado en veinte sitios. `auditar_composicion.py` las LEE de allí.",
+  "donde_esta_la_pregunta": "PREGUNTAS_PARA_ELENA.md · DATOS_QUE_FALTAN.md"
  }
 }

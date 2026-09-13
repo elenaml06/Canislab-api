@@ -1349,3 +1349,66 @@ decisión, no un arreglo, y mezclar 114 derivaciones con unas pocas medidas real
 peor que lo que hay. Sigue pendiente, con la diferencia de que ahora hay de dónde
 sacarlo.
 
+---
+
+## 13 de septiembre (noche) — LA VITAMINA D DE SEIS CARNES MAGRAS, Y CUESTA UN MENÚ
+
+⚠️ **Este es el hueco más caro del catálogo hoy, y es el único que deja a una
+persona sin menú.** Está medido entero.
+
+**Qué pasó.** El barrido contra las fuentes declaró como hueco la vitamina D de
+seis carnes magras —conejo, pavo, ternera (solomillo y con grasa), lomo de ternera
+y lengua de cordero— porque BEDCA las publica con `value_type` TR y la celda
+vacía, que es «no hay cifra». Antes eran **ceros mudos**: el motor creía que esas
+seis carnes no tienen NADA de vitamina D, que es falso y además falso por el lado
+peligroso (podía pasarse del tope sin saberlo).
+
+**Qué cuesta.** Un hueco se imputa al **percentil 90 de su familia** contra los
+máximos (`constructor.valor_para_maximo`), y la vitamina D tiene tope crónico
+duro. Con seis carnes más en hueco, «Carne muscular» pasa de 3 a 9 huecos de
+vitamina D, y entonces:
+
+| | |
+|---|---|
+| Adulto de 20 kg con **las 8 especies más comunes excluidas** | **se queda SIN MENÚ** (con el catálogo de `main`, sí salía) |
+| Chihuahua de 3 kg con **renal** | también se quedaba sin menú, por otra causa ya arreglada (la proteína de dos aceites) |
+
+Lo caza el BLOQUE 9, y **no se ha tocado esa prueba**: su propio comentario avisa
+de que cambió dos veces en 24 horas y de que no hay que «arreglarla mañana en la
+dirección equivocada».
+
+**Y la medida que dice de qué tamaño es el problema.** La imputación para la
+vitamina D en «Carne muscular» es **1,0 µg/100 g**. Las 17 fichas de esa familia
+que SÍ la declaran tienen **mediana 0,20**, media 0,43 y máximo 1,7. O sea que
+imputar es **cinco veces la mediana de su propia familia**. Y no es una
+casualidad: CIQUAL publica la vitamina D del pavo crudo en **0,2 µg** (fila 36301),
+clavado en esa mediana.
+
+**Por qué no se ha cerrado buscando el dato.** Se ha buscado en las cuatro
+fuentes, por orden de mandato:
+
+* **BEDCA** (mandato 1) da `TR` con la celda vacía en las seis.
+* **CIQUAL** (mandato 3) publica vitamina D de pavo (0,2) y de ternera, pero sus
+  filas **no son nuestras fichas**: «Dinde, viande, crue» son 110 kcal y 1,88 g de
+  grasa y nuestro `Pavo` son 158 y 8,5. Usarla sería el error de cruzar cortes,
+  que es justo lo que `fijar_identificadores.py` existe para impedir.
+* **USDA** (mandato 4) no publica vitamina D ni para el conejo (FDC 172521) ni
+  para la lengua de cordero (FDC 174366), que son las dos que sí tienen su fila
+  emparejada. Para las otras cuatro, las filas candidatas de USDA no cuadran en
+  grasa (el lomo de ternera de USDA tiene 10,07 g contra nuestros 3,3).
+
+**Lo que hace falta, y son dos cosas distintas:**
+
+1. **El dato.** La vitamina D de esas seis carnes, de una fuente que mida EL CORTE
+   que tenemos. Eso cierra el problema de raíz y no lo rellena el asistente.
+2. **O una decisión sobre el percentil de la imputación**, que es de calado y no
+   es de catálogo: hoy es el P90 y está elegido a propósito («es lo que significa
+   no saberlo»). Con la mediana de la familia en vez del P90, estas seis carnes
+   imputarían 0,2 en vez de 1,0 — que es lo que de verdad miden las fuentes que
+   las publican. Pero bajar el percentil **afloja todos los máximos del motor a la
+   vez**, no solo este, así que es una decisión clínica y global.
+
+⚠️ **Lo que NO es la salida: devolver los ceros mudos.** Un cero mudo dice «esta
+carne no tiene vitamina D», y eso es falso. El problema no es haber dicho la
+verdad: es que no tenemos el número.
+
