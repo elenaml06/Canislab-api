@@ -389,6 +389,10 @@ NO_SON_NUTRIENTES_DE_LA_TABLA = {
     # ⚠️ AÑADIDA (8 septiembre) -- ídem: FEDIAF no pide omega-3 totales en el
     # perro, solo EPA+DHA. La piden SACN5 (dos tablas) y el Reglamento UE.
     "Omega3_total",
+    # ⚠️ AÑADIDA (13 septiembre) -- ídem: FEDIAF trae el linoleico y el
+    # araquidónico por separado, nunca la suma. Existe para que el otro lado
+    # del ratio omega-6:omega-3 de SACN5 se pueda medir y ofrecer.
+    "Omega6_total",
 }
 # ══════════════════════════════════════════════════════════════════════
 # LO QUE VIVE EN LAS NOTAS AL PIE, Y QUE NADIE COMPROBABA

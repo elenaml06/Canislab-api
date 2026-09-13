@@ -457,6 +457,17 @@
     "nota_auditoria": "ANADIDA (8 septiembre 2026), MISMO PATRON que 'Fibra', 'Taurina', 'L_carnitina' y 'EPA' -- FEDIAF no pide omega-3 TOTALES en el perro: la Tabla III-3b solo trae EPA+DHA, y solo con minimo en crecimiento y reproduccion. Por eso los seis campos van a '-'. Existe porque DOS tablas de SACN5 la piden (34-2 artrosis, «Total omega-3 fatty acids 3.5 to 4.0%» de materia seca = 8,75-10 g/1000 kcal; y 35-3 disfuncion cognitiva, «Total omegas-3 >1%» = 2,5 g) y porque el Reglamento (UE) 2020/354, entrada 27, pide para la artrosis «Total omega-3 fatty acids >= 29 g per kg» de pienso al 12 % de humedad = 8,24 g/1000 kcal. Tres fuentes independientes y el motor no pedia ninguna. Se calcula como linolenico + EPA + DHA."
   },
   {
+    "nutriente": "Omega6_total",
+    "unidad": "g",
+    "minAdulto": "-",
+    "minCachorroJoven": "-",
+    "minCachorroCrecimiento": "-",
+    "maxCachorroJoven": "-",
+    "maxCachorroCrecimiento": "-",
+    "maxAdulto": "-",
+    "nota_auditoria": "ANADIDA (13 septiembre 2026), MISMO PATRON que 'Fibra', 'Taurina', 'L_carnitina', 'EPA' y 'Omega3_total' -- FEDIAF no pide omega-6 TOTALES en el perro: la Tabla III-3b trae el linoleico (con minimo en las tres etapas) y el araquidonico (solo en crecimiento y reproduccion), nunca la suma. Por eso los seis campos van a '-'. Existe porque el ratio omega-6:omega-3 que SACN5 pide en cuatro patologias necesita los DOS lados, y este lado no existia: el motor no podia ni medirlo ni ofrecerselo al profesional. Se calcula como linoleico + araquidonico, CON FACTOR DE UNIDAD: el linoleico va en gramos y el araquidonico en miligramos, asi que el araquidonico se multiplica por 0,001. NO incluye GLA ni DGLA, que el catalogo no mide."
+  },
+  {
     "nutriente": "L_carnitina",
     "unidad": "mg",
     "minAdulto": "-",

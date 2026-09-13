@@ -15938,6 +15938,250 @@ else:
                               f"que no existe")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
+
+# ============================================================
+# BLOQUE 103 — EL RATIO QUE ELIGE EL PROFESIONAL, Y EL RANGO QUE ENSEÑA CADA
+#              PATOLOGÍA
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (13 de septiembre de 2026). Elena, al ver que el ratio
+# omega-6:omega-3 aparece en TRES patologías escrito con
+# `aplicado_por_el_solver: false`:
+#
+#     «pues entonces habrá que poner un ratio para que el veterinario elija no?
+#      o sea igual cada veterinario quiere elegir su propio ratio»
+#     «sí, pon el rango de la fuente por patología también»
+#
+# LAS SEIS COSAS QUE VIGILA, cada una con su fallo concreto detrás:
+#
+#   1. LA TRAMPA DE UNIDADES DEL OMEGA-6 TOTAL, que es la que metía un error de
+#      MIL. `omega6_total` es «linoleico + araquidónico» y el linoleico va en
+#      GRAMOS y el araquidónico en MILIGRAMOS (`UNIDADES.md`). Sumarlos a pelo
+#      da mil veces el araquidónico, con forma de dato bueno. Se REHACE la
+#      cuenta aquí, no se cree -- la lección de `auditar_conversiones.py`.
+#   2. QUE LA SUMA NO HAYA CAMBIADO PARA LOS OTROS COMPUESTOS. El factor se
+#      introdujo tocando `valor_nutriente`, que es el único sitio que suman el
+#      solver, el semáforo y el analizador. Un factor mal puesto ahí movería
+#      `epa_dha` y `omega3_total` a la vez y en silencio.
+#   3. QUE EL RATIO DEL PROFESIONAL SE APLIQUE DE VERDAD. Un objetivo servido
+#      que el motor descarta es un número que alguien escribe, que no hace nada
+#      y que no aparece en ningún recorte -- que es exactamente lo que pasaba
+#      con los ocho nutrientes de `formulador.jsx`. Se pide un techo que el menú
+#      base NO cumple y se exige que el menú entregado lo cumpla.
+#   4. QUE SOLO PUEDA APRETAR. Un techo por encima del máximo de FEDIAF se
+#      recorta, un suelo por debajo del mínimo se sube, y un techo por debajo
+#      del MÍNIMO no se intenta siquiera. Y TODO recorte se dice en
+#      `objetivos_ajustados`: aplicar el número de FEDIAF en lugar del suyo en
+#      silencio dejaría al profesional firmando algo que no escribió.
+#   5. QUE EL QUE NO TIENE RANGO DE FEDIAF LO DIGA. El omega-6:omega-3 de
+#      TOTALES no lo pone ninguna fuente para el perro sano, así que entra
+#      entero. Callarlo se leería como «FEDIAF lo ha aprobado», y FEDIAF no
+#      habla de esto.
+#   6. QUE EL RANGO DE CADA PATOLOGÍA SE SIRVA Y SIGA SIN APLICARSE. Las dos
+#      mitades: que `GET /vocabulario` enseñe el 1:1 a 7:1 de la renal, el <1:1
+#      de la artrosis y el ~1:1 del cáncer, y que `ratios_de_patologias()` -- la
+#      función que llama el solver -- siga sin devolver ninguno. Enseñar un
+#      número y aplicarlo a escondidas es peor que no enseñarlo.
+print("\n" + "=" * 60)
+print("=== BLOQUE 103: el ratio del profesional y el rango de cada patología ===")
+from constructor import (valor_nutriente as _vn103, NUTRIENTES_COMPUESTOS as _COMP103,
+                         UNIDAD_DE_CADA_PARTE as _UNID103, factor_de_la_parte as _fac103)
+
+# --- 1. la conversión g/mg, REHECHA ------------------------------------
+_esperado103 = 3.05 + 50.0 / 1000.0          # 3,05 g de linoleico + 50 mg de araquidónico
+_sale103 = _vn103({"linoleico": 3.05, "araquidonico": 50.0}, "omega6_total")
+if abs(_sale103 - _esperado103) > 1e-9:
+    fallos.append(f"BLOQUE103: `omega6_total` da {_sale103} y la cuenta rehecha da "
+                  f"{_esperado103}. El araquidónico va en MILIGRAMOS y el linoleico en gramos "
+                  f"(UNIDADES.md): si se suman a pelo, el omega-6 total sale mil veces el "
+                  f"araquidónico y con forma de dato bueno")
+# y el fallo puesto: si el factor fuera 1, la suma daría 53,05 y no 3,10
+if abs(_esperado103 - (3.05 + 50.0)) < 1e-9:
+    fallos.append("BLOQUE103: la prueba de la unidad no prueba nada — con y sin factor da lo mismo")
+if _UNID103.get("omega6_total", {}).get("araquidonico") != "mg":
+    fallos.append("BLOQUE103: `UNIDAD_DE_CADA_PARTE` ya no dice que el araquidónico va en mg. "
+                  "Ese diccionario es de donde sale el factor: si miente, el factor miente")
+if abs(_fac103("omega6_total", "araquidonico") - 0.001) > 1e-12:
+    fallos.append("BLOQUE103: el factor del araquidónico dentro de `omega6_total` ya no es 0,001")
+
+# --- 2. que los otros compuestos no se hayan movido --------------------
+for _cl103, _partes103, _prueba103, _esp103 in (
+        ("epa_dha", ("epa", "dha"), {"epa": 0.2, "dha": 0.3}, 0.5),
+        ("omega3_total", ("linolenico", "epa", "dha"),
+         {"linolenico": 1.0, "epa": 0.2, "dha": 0.3}, 1.5),
+        ("metionina_cistina", ("metionina", "cistina"),
+         {"metionina": 1.1, "cistina": 0.9}, 2.0)):
+    if _COMP103.get(_cl103) != _partes103:
+        fallos.append(f"BLOQUE103: `{_cl103}` ya no suma {_partes103}")
+    _v103 = _vn103(_prueba103, _cl103)
+    if abs(_v103 - _esp103) > 1e-9:
+        fallos.append(f"BLOQUE103: `{_cl103}` da {_v103} y tenía que dar {_esp103}. El factor de "
+                      f"unidades se introdujo en `valor_nutriente`, que es el único sitio donde "
+                      f"suman el solver, el semáforo y el analizador: un factor mal puesto ahí "
+                      f"mueve los cuatro compuestos a la vez y en silencio")
+
+# --- el perro con el que se prueba el resto ----------------------------
+_pet103 = {"der_objetivo": 1350.0, "etapa_requisitos": "Adulto",
+           "peso_perro_kg": 22.0, "gramos_por_alimento": {}}
+
+
+def _formular103(ratios=None, objetivos=None):
+    _d = dict(_pet103)
+    _obj = dict(objetivos or {})
+    if ratios:
+        _obj["ratios"] = ratios
+    if _obj:
+        _d["objetivos_del_profesional"] = _obj
+    return _c_b5.post("/formular/autocompletar", json=_d).json()
+
+
+def _ajustes103(r):
+    return {(a.get("nutriente"), a.get("que_ha_pasado"))
+            for a in (r.get("objetivos_ajustados") or [])}
+
+
+# --- 3. que el ratio se aplique de verdad ------------------------------
+#
+# Se pide un techo que el menú base NO cumple. El base de este perro ronda 10:1
+# (medido el 13 de septiembre: de 6,8 a 17,3 en once perros), así que un techo de
+# 3:1 es una restricción que MUERDE. Y no se afirma nada de la cifra concreta del
+# menú base -- que cambia entre ejecuciones --: se mide y se compara.
+_base103 = _formular103()
+if not _base103.get("factible"):
+    fallos.append("BLOQUE103: el menú base de este perro no sale, así que el resto del bloque "
+                  "no comprueba nada. Buscar otro perro")
+else:
+    _al103, _req103 = _api_b5.cargar_v2()
+    _r_base103 = _api_b5._ratio_del_menu(_base103["menu"], _al103, "omega6_total", "omega3_total")
+    _techo103 = 3.0
+    if _r_base103 is None or _r_base103 <= _techo103 * 1.2:
+        fallos.append(f"BLOQUE103: el menú base sale con un omega-6:omega-3 de {_r_base103}, que "
+                      f"ya está en el techo de {_techo103} o por debajo — así que pedir ese techo "
+                      f"no prueba que se aplique. Es la regla del 9 de septiembre: una prueba no "
+                      f"puede dar por hecha una propiedad incidental del menú que devuelve el "
+                      f"solver")
+    _con103 = _formular103({"omega6_total:omega3_total": {"max": _techo103}})
+    if not _con103.get("factible"):
+        fallos.append(f"BLOQUE103: con un techo de {_techo103}:1 no sale menú. Medido el 13 de "
+                      f"septiembre: salen 11 de 11 perros incluso a 1:1, y 10 de ellos en el "
+                      f"peldaño estricto")
+    else:
+        _r103 = _api_b5._ratio_del_menu(_con103["menu"], _al103, "omega6_total", "omega3_total")
+        if _r103 is None or _r103 > _techo103 * 1.005:
+            fallos.append(f"BLOQUE103: se pidió un techo de {_techo103}:1 y el menú entregado sale "
+                          f"a {_r103}:1. El ratio del profesional NO se está aplicando: es un "
+                          f"número que alguien escribe, que no hace nada y que no aparece en "
+                          f"ningún recorte")
+        # y que se DIGA lo conseguido, que es lo único que se puede leer sin
+        # rehacer la suma a mano: un cociente no se comprueba mirando el
+        # omega-6 y el omega-3 por separado en la ficha.
+        _eco103 = {x["clave"]: x for x in (_con103.get("ratios_del_profesional") or [])}
+        if "omega6_total:omega3_total" not in _eco103:
+            fallos.append("BLOQUE103: el menú no dice qué ratio ha conseguido. Quien pide 3:1 no "
+                          "puede comprobarlo leyendo las filas sueltas de la ficha")
+        elif abs((_eco103["omega6_total:omega3_total"].get("conseguido") or 0) - _r103) > 0.02:
+            fallos.append("BLOQUE103: el `conseguido` que devuelve el endpoint no es el que sale "
+                          "de medir el menú")
+
+# --- 4. que solo pueda APRETAR, y que el recorte se diga ---------------
+#
+# Sobre el Ca:P, que es el único de los tres que tiene rango de FEDIAF en la
+# tabla (1,0-2,0 en adulto) y por tanto el único donde se puede comprobar el
+# recorte contra un número que audita `auditar_fediaf.py`.
+_casos103 = (
+    ({"calcio:fosforo": {"max": 3.0}}, ("calcio:fosforo", "techo_recortado"), 2.0, "max"),
+    ({"calcio:fosforo": {"min": 0.4}}, ("calcio:fosforo", "suelo_subido"), 1.0, "min"),
+    ({"calcio:fosforo": {"max": 0.5}}, ("calcio:fosforo", "techo_bajo_el_minimo"), None, None),
+    ({"calcio:fosforo": {"min": 9.0}}, ("calcio:fosforo", "suelo_sobre_el_maximo"), None, None),
+    ({"proteina:grasa": {"max": 3.0}},
+     ("proteina:grasa", "no_es_un_ratio_que_se_pueda_fijar"), None, None),
+    ({"calcio:fosforo": {"min": 1.8, "max": 1.2}},
+     ("calcio:fosforo", "suelo_por_encima_de_tu_techo"), None, None),
+)
+for _pide103, _espera103, _valor103, _lado103 in _casos103:
+    _rr103 = _formular103(_pide103)
+    if _espera103 not in _ajustes103(_rr103):
+        fallos.append(f"BLOQUE103: pidiendo {_pide103} se esperaba el ajuste {_espera103} en "
+                      f"`objetivos_ajustados` y salió {sorted(_ajustes103(_rr103))}. Un recorte "
+                      f"que no se dice deja al profesional firmando algo que no escribió")
+    _ap103 = {x["clave"]: x["pedido"] for x in (_rr103.get("ratios_del_profesional") or [])}
+    if _valor103 is None:
+        if _ap103:
+            fallos.append(f"BLOQUE103: pidiendo {_pide103} NO se tenía que aplicar nada y se "
+                          f"aplicó {_ap103}")
+    else:
+        _puesto103 = (_ap103.get("calcio:fosforo") or {}).get(_lado103)
+        if _puesto103 is None or abs(_puesto103 - _valor103) > 1e-9:
+            fallos.append(f"BLOQUE103: pidiendo {_pide103} tenía que quedar {_lado103}="
+                          f"{_valor103} (el de FEDIAF) y quedó {_puesto103}")
+
+# --- 5. que el que no tiene rango de FEDIAF lo diga --------------------
+_sin103 = _formular103({"omega6_total:omega3_total": {"max": 7.0}})
+if ("omega6_total:omega3_total", "sin_rango_de_fediaf") not in _ajustes103(_sin103):
+    fallos.append("BLOQUE103: un ratio que FEDIAF no acota entra entero y NO se dice. El silencio "
+                  "se lee como «FEDIAF lo ha aprobado», y FEDIAF no habla de esto")
+if ("calcio:fosforo", "sin_rango_de_fediaf") in _ajustes103(_formular103(
+        {"calcio:fosforo": {"max": 1.5}})):
+    fallos.append("BLOQUE103: el Ca:P SÍ tiene rango en FEDIAF y se está diciendo que no. Ese "
+                  "aviso serviría para todo y no avisaría de nada")
+
+# --- 6. el rango de cada patología: servido, y sin aplicarse -----------
+_voc103 = _c_b5.get("/vocabulario").json()
+_lista103 = ((_voc103.get("objetivos_del_profesional") or {}).get("ratios") or {}).get("lista") or []
+_por_clave103 = {r["clave"]: r for r in _lista103}
+for _cl103 in ("calcio:fosforo", "linoleico:linolenico", "omega6_total:omega3_total"):
+    if _cl103 not in _por_clave103:
+        fallos.append(f"BLOQUE103: `GET /vocabulario` no sirve el ratio «{_cl103}». La lista la "
+                      f"tiene que servir el motor: si la escribe la app, el día que entre uno "
+                      f"nuevo la pantalla se queda con la suya y nadie se entera")
+# los dos que el motor ya aplica tienen que traer su rango vivo
+for _cl103, _mn103, _mx103 in (("calcio:fosforo", 1.0, 2.0), ("linoleico:linolenico", 2.6, 26.0)):
+    _rg103 = (_por_clave103.get(_cl103) or {}).get("rango_que_ya_aplica_el_motor") or {}
+    if _rg103.get("min") != _mn103 or _rg103.get("max") != _mx103:
+        fallos.append(f"BLOQUE103: el rango que sirve el motor para «{_cl103}» es {_rg103} y "
+                      f"tenía que ser {_mn103}-{_mx103}. Sale de la tabla viva, no de una copia: "
+                      f"si no cuadra, o cambió la fuente o hay una segunda tabla")
+# y el tercero, el que NO aplica nadie, tiene que traer las tres patologías
+_omega103 = _por_clave103.get("omega6_total:omega3_total") or {}
+if _omega103.get("rango_que_ya_aplica_el_motor") is not None:
+    fallos.append("BLOQUE103: el omega-6:omega-3 de TOTALES aparece como si el motor le pusiera "
+                  "rango. No se lo pone: el NRC 2006 dice que ese ratio «is not helpful» y lo "
+                  "pone quien firma")
+_pat103 = {r["patologia"]: r for r in (_omega103.get("rangos_por_patologia") or [])}
+_ESPERADO103 = {"renal": ("rango", 1.0, 7.0, None),
+                "artrosis": ("techo", None, 1.0, None),
+                "cancer_soporte": ("objetivo", None, None, 1.0)}
+for _p103, (_forma103, _mn103, _mx103, _obj103) in _ESPERADO103.items():
+    _f103 = _pat103.get(_p103)
+    if not _f103:
+        fallos.append(f"BLOQUE103: la patología «{_p103}» tiene el ratio de su fuente escrito en "
+                      f"`patologias.json` y `GET /vocabulario` no lo enseña. Escrito donde no lo "
+                      f"lee nadie es como no tenerlo: el clínico no puede decidir con el número "
+                      f"delante")
+        continue
+    if (_f103.get("forma"), _f103.get("min"), _f103.get("max"), _f103.get("objetivo")) != \
+            (_forma103, _mn103, _mx103, _obj103):
+        fallos.append(f"BLOQUE103: el rango de «{_p103}» sale como "
+                      f"{(_f103.get('forma'), _f103.get('min'), _f103.get('max'), _f103.get('objetivo'))} "
+                      f"y su fuente dice {(_forma103, _mn103, _mx103, _obj103)}. ⚠️ Las tres FORMAS "
+                      f"son distintas a propósito: la renal da un RANGO (1:1 a 7:1), la artrosis "
+                      f"un TECHO («less than 1:1», sin extremo bajo) y el cáncer un OBJETIVO («as "
+                      f"close to 1:1 as possible», que no es ni techo ni suelo). Convertir una en "
+                      f"otra es endurecer o ablandar a la fuente")
+    if _f103.get("lo_aplica_el_motor"):
+        fallos.append(f"BLOQUE103: «{_p103}» dice que el motor le aplica el ratio. Si se aplica de "
+                      f"verdad, se mueve de bloque en `patologias.json` y se dice; si no, esta "
+                      f"casilla no puede decir que sí")
+# y la otra mitad, que es la que de verdad importa: que el solver NO lo reciba
+from motor_completo import ratios_de_patologias as _ratios_pat103
+for _p103 in _ESPERADO103:
+    _puestos103 = _ratios_pat103([_p103], "Adulto")
+    if ("omega6_total", "omega3_total") in _puestos103:
+        fallos.append(f"BLOQUE103: «{_p103}» está escrita como que NO se aplica y "
+                      f"`ratios_de_patologias()` —la función que llama el solver— SÍ la devuelve. "
+                      f"Enseñar un número y aplicarlo a escondidas es peor que no enseñarlo")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
 _cerrar_el_ultimo_bloque()
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)

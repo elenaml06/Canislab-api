@@ -383,7 +383,65 @@ NUTRIENTES_COMPUESTOS = {
     # `UNIDADES.md` sigue viva: `linolenico` es el omega-3 y `linoleico` el
     # omega-6, se diferencian en una letra y son cosas opuestas.
     "omega3_total": ("linolenico", "epa", "dha"),
+    # ⚠️ AÑADIDO (13 septiembre) — OMEGA-6 TOTALES. Es el espejo del de arriba y
+    # nace de una decisión de Elena: «pues entonces habrá que poner un ratio para
+    # que el veterinario elija no? o sea igual cada veterinario quiere elegir su
+    # propio ratio». El ratio omega-6:omega-3 que piden SACN5 en cuatro
+    # patologías necesita los DOS lados, y este lado no existía.
+    #
+    # Es «linoleico + araquidónico» Y ESO SE ESCRIBE, no se insinúa: el catálogo
+    # no tiene columna para el GLA ni para el DGLA, así que un menú con borraja
+    # tendría más omega-6 del que esta suma sabe contar. Contar de menos el
+    # numerador de un cociente lo deja BAJO, o sea del lado laxo si el límite es
+    # un techo. Va escrito aquí y en `UNIDADES.md`.
+    "omega6_total": ("linoleico", "araquidonico"),
 }
+
+# ⚠️ EL FACTOR QUE EVITA UN ERROR DE MIL, Y POR QUÉ ESTO ES UN DICCIONARIO Y NO
+#    UNA MULTIPLICACIÓN ESCRITA A MANO EN LA SUMA (13 septiembre).
+#
+# `NUTRIENTES_COMPUESTOS` daba por hecho, sin decirlo, que todas las partes de
+# una suma van en la MISMA unidad. Hasta hoy era verdad: `epa_dha` suma dos
+# gramos, `omega3_total` suma tres gramos, los dos aminoácidos son gramos.
+#
+# `omega6_total` lo rompe: el linoleico va en GRAMOS y el araquidónico en
+# MILIGRAMOS (`UNIDADES.md`, tabla de unidades). Sumarlos a pelo da un omega-6
+# total mil veces el araquidónico -- y con forma de dato bueno, que es la
+# familia de fallo que ese fichero entero persigue. En números: 3,05 g de
+# linoleico + 50 mg de araquidónico son 3,10 g, no 53,05.
+#
+# Va en su propio diccionario, con la unidad de cada lado escrita, para que la
+# conversión se pueda REHACER en vez de creerse -- la lección de
+# `auditar_conversiones.py`. Lo rehace el BLOQUE 103.
+UNIDAD_DE_CADA_PARTE = {
+    "omega6_total": {"linoleico": "g", "araquidonico": "mg"},
+}
+FACTOR_A_LA_UNIDAD_DEL_COMPUESTO = {
+    # mg -> g
+    "mg": 0.001,
+    "g": 1.0,
+}
+
+
+def factor_de_la_parte(clave_compuesta, parte):
+    """Por cuánto hay que multiplicar `parte` para sumarla en `clave_compuesta`.
+
+    Es 1 salvo que las unidades no coincidan. Se calcula de
+    `UNIDAD_DE_CADA_PARTE` y no se escribe como número suelto a propósito: un
+    0,001 escrito a mano no dice de dónde sale y no se puede auditar.
+    """
+    unidades = UNIDAD_DE_CADA_PARTE.get(clave_compuesta)
+    if not unidades:
+        return 1.0
+    # La unidad del COMPUESTO es la de su primera parte: el omega-6 total se
+    # mide en gramos porque el linoleico se mide en gramos.
+    partes = NUTRIENTES_COMPUESTOS[clave_compuesta]
+    destino = unidades.get(partes[0], "g")
+    origen = unidades.get(parte, destino)
+    if origen == destino:
+        return 1.0
+    return (FACTOR_A_LA_UNIDAD_DEL_COMPUESTO[origen]
+            / FACTOR_A_LA_UNIDAD_DEL_COMPUESTO[destino])
 
 
 def valor_nutriente(nutrientes: dict, clave: str) -> float:
@@ -400,7 +458,7 @@ def valor_nutriente(nutrientes: dict, clave: str) -> float:
         total = 0.0
         for parte in partes:
             try:
-                total += float(nutrientes.get(parte) or 0)
+                total += float(nutrientes.get(parte) or 0) * factor_de_la_parte(clave, parte)
             except (TypeError, ValueError):
                 continue
         return total

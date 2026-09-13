@@ -5816,6 +5816,10 @@ class PeticionFormular(_ConPremios):
     #
     # Solo pueden APRETAR: `_objetivos_dentro_de_fediaf` los recorta contra
     # FEDIAF antes de llegar al solver, y lo dice.
+    #
+    # ⚠️ Y la clave `"ratios"` (13 septiembre), para las relaciones entre dos
+    # nutrientes: {"ratios": {"omega6_total:omega3_total": {"min": 1, "max": 7}}}.
+    # Las que se pueden fijar las sirve `GET /vocabulario`.
     objetivos_del_profesional: Optional[dict] = None
     # ─── LA SEMANA DEL VETERINARIO (11 de septiembre de 2026) ─────────────
     #
@@ -6031,6 +6035,236 @@ def formular_estado(datos: PeticionFormular):
 # suyo sin decirlo dejaria al profesional creyendo que ha formulado lo que
 # escribio -- que es la familia de fallos que persigue este proyecto entero. El
 # recorte va en la respuesta, no en un log.
+#
+# ⚠️ Y DESDE EL 13 DE SEPTIEMBRE VIAJAN TAMBIEN LOS RATIOS, en la clave
+# `"ratios"` de este mismo diccionario:
+#
+#     {"ratios": {"omega6_total:omega3_total": {"min": 1, "max": 7}}}
+#
+# Van aqui dentro y no en un campo nuevo de la peticion a proposito: son un
+# objetivo del profesional como cualquier otro, se recortan con el mismo
+# criterio y todo recorte se dice en la MISMA lista. Un segundo campo habria
+# sido un segundo sitio donde olvidarse de recortar. Ver
+# `RATIOS_QUE_SE_PUEDEN_FIJAR` y `_ratios_dentro_de_fediaf`.
+# ══════════════════════════════════════════════════════════════════════
+# LOS RATIOS QUE PUEDE FIJAR EL PROFESIONAL  (13 de septiembre de 2026)
+# ══════════════════════════════════════════════════════════════════════
+#
+# Elena, al ver que el ratio omega-6:omega-3 aparece escrito en TRES patologías
+# con `aplicado_por_el_solver: false` y que las fuentes van de <1:1 a 7:1 según
+# la enfermedad:
+#
+#     «pues entonces habrá que poner un ratio para que el veterinario elija no?
+#      o sea igual cada veterinario quiere elegir su propio ratio»
+#     «sí, pon el rango de la fuente por patología también»
+#
+# Y eso resuelve por qué llevaba parado: no estaba parado por falta de motor
+# —el solver sabe de ratios entre cualquier par desde el 10 de septiembre—,
+# estaba parado porque ELEGIR ENTRE 1:1 Y 7:1 ES UNA DECISIÓN CLÍNICA. El sitio
+# donde un clínico decide cifras ya existía (`objetivos_del_profesional`); lo
+# que faltaba era la puerta, no el mecanismo.
+#
+# ⚠️ LA LISTA ES CORTA A PROPÓSITO. Un ratio entre dos nutrientes cualesquiera
+# es lineal y el solver lo resolvería igual, pero ofrecer 46×45 pares sería
+# ofrecer cosas que ninguna fuente pide y que nadie sabría interpretar. Se
+# sirven los TRES que alguna fuente del repo pide de verdad.
+RATIOS_QUE_SE_PUEDEN_FIJAR = (
+    {
+        "clave": "calcio:fosforo",
+        "numerador": "calcio", "denominador": "fosforo",
+        "dueno": {"titulo": "Calcio frente a fósforo",
+                  "detalle": "Cuánto calcio lleva la ración por cada parte de fósforo"},
+        "veterinario": {"titulo": "Relación Ca:P",
+                        "detalle": "Tabla III-3b de FEDIAF. El motor ya la aplica a todo menú"},
+    },
+    {
+        "clave": "linoleico:linolenico",
+        "numerador": "linoleico", "denominador": "linolenico",
+        "dueno": {"titulo": "Omega-6 frente a omega-3 vegetal",
+                  "detalle": "Los dos ácidos grasos de 18 carbonos, que compiten por la misma enzima"},
+        "veterinario": {"titulo": "Relación linoleico:α-linolénico",
+                        "detalle": "NRC 2006 cap.5, que la recomienda EN LUGAR de la de totales. "
+                                   "El motor ya la aplica en todas las etapas"},
+    },
+    {
+        "clave": "omega6_total:omega3_total",
+        "numerador": "omega6_total", "denominador": "omega3_total",
+        "dueno": {"titulo": "Omega-6 totales frente a omega-3 totales",
+                  "detalle": "Todos los omega-6 de la ración por cada parte de omega-3"},
+        "veterinario": {"titulo": "Relación omega-6:omega-3 (totales)",
+                        "detalle": "SACN5 la pide en cuatro patologías y el NRC 2006 dice que la de "
+                                   "totales «is not helpful». El motor NO la aplica solo: la pone "
+                                   "quien firma. Omega-6 total = linoleico + araquidónico (sin GLA "
+                                   "ni DGLA, que el catálogo no mide)"},
+    },
+)
+_PARES_QUE_SE_PUEDEN_FIJAR = {r["clave"]: (r["numerador"], r["denominador"])
+                              for r in RATIOS_QUE_SE_PUEDEN_FIJAR}
+
+
+def _rango_que_ya_aplica_el_motor(numerador, denominador, req, etapa):
+    """(min, max, de_donde) del par si el motor YA le pone rango, o (None, None, None).
+
+    Es el equivalente de `minimo_de`/`maximo_de` para un cociente, y existe por
+    lo mismo: el objetivo del profesional SOLO PUEDE APRETAR, así que hace falta
+    saber contra qué. Los dos rangos que el motor ya aplica viven en dos sitios
+    distintos —el Ca:P en la tabla de FEDIAF y el linoleico:linolénico en
+    `requisitos_condicionales.json`— y se preguntan a los MISMOS sitios que los
+    lee el solver, no a una copia.
+
+    Un ratio sin rango (el omega-6:omega-3 de totales) devuelve `None`, y eso NO
+    significa «vale cualquier cosa en silencio»: `_ratios_dentro_de_fediaf` lo
+    dice en `objetivos_ajustados`. Callarlo dejaría creyendo que FEDIAF lo ha
+    aprobado.
+    """
+    if (numerador, denominador) == ("calcio", "fosforo"):
+        fila = (req or {}).get("Relacion_Ca_P") or {}
+        mn = _valor_num(fila.get("min" + str(etapa)))
+        if mn is None:
+            mn = _valor_num(fila.get("minAdulto"))
+        mx = _valor_num(fila.get("max" + str(etapa)))
+        if mx is None:
+            mx = _valor_num(fila.get("maxAdulto"))
+        return mn, mx, "la Tabla III-3b de FEDIAF"
+    from condicionales import ratios_de_la_etapa as _ratios_cond_obj
+    for r in _ratios_cond_obj(etapa):
+        if (r.get("numerador"), r.get("denominador")) == (numerador, denominador):
+            return r.get("min"), r.get("max"), (r.get("fuente") or "el NRC 2006")
+    return None, None, None
+
+
+def _ratio_del_menu(gramos, al, numerador, denominador):
+    """El cociente que de verdad ha salido, o None si el denominador es cero.
+
+    Se mide con `valor_nutriente` —el valor DECLARADO, sin imputar huecos— y por
+    los MISMOS dos totales con los que el solver construye su fila. Si aquí se
+    imputaran los huecos y allí no, el número que se le enseña al profesional no
+    sería el que se le ha exigido al menú, y en un cociente eso pesa el doble
+    porque el hueco puede caer en cualquiera de los dos lados.
+    """
+    if not gramos:
+        return None
+    tot_n = sum(valor_nutriente(al.get(n, {}).get("nutrientes", {}), numerador) / 100.0 * g
+                for n, g in gramos.items())
+    tot_d = sum(valor_nutriente(al.get(n, {}).get("nutrientes", {}), denominador) / 100.0 * g
+                for n, g in gramos.items())
+    if tot_d <= 0:
+        return None
+    return tot_n / tot_d
+
+
+def _ratios_dentro_de_fediaf(ratios, req, etapa):
+    """(ratios aplicables, lista de ajustes) para los cocientes del profesional.
+
+    Llegan como {"numerador:denominador": {"min": x, "max": y}}, que es la misma
+    forma con la que `patologias.json` escribe sus ratios y la misma que devuelve
+    `ratios_de_patologias`. La disciplina es la de siempre: SOLO PUEDEN APRETAR.
+    """
+    limpios, ajustes = {}, []
+    for clave, lim in (ratios or {}).items():
+        par = _PARES_QUE_SE_PUEDEN_FIJAR.get(clave)
+        if par is None:
+            ajustes.append({"nutriente": clave, "es_un_ratio": True,
+                            "que_ha_pasado": "no_es_un_ratio_que_se_pueda_fijar",
+                            "explicacion": f"«{clave}» no es ninguna de las relaciones que el "
+                                           f"motor sabe medir. Las que hay las sirve "
+                                           f"`GET /vocabulario` en `ratios_para_objetivos`."})
+            continue
+        num, den = par
+        suyo_min = lim.get("min") if isinstance(lim, dict) else None
+        suyo_max = lim.get("max") if isinstance(lim, dict) else None
+        if suyo_min is None and suyo_max is None:
+            continue
+        mn_m, mx_m, de_donde = _rango_que_ya_aplica_el_motor(num, den, req, etapa)
+        salida = {}
+
+        if suyo_max is not None:
+            suyo_max = float(suyo_max)
+            if suyo_max <= 0:
+                ajustes.append({"nutriente": clave, "es_un_ratio": True,
+                                "que_ha_pasado": "ratio_no_positivo", "tuyo": suyo_max,
+                                "explicacion": "Una relación entre dos nutrientes no puede ser "
+                                               "cero ni negativa."})
+            elif mn_m is not None and suyo_max < mn_m:
+                # Igual que un techo por debajo del mínimo de un nutriente: no
+                # es apretar, es pedir una ración imposible. No se aplica nada.
+                ajustes.append({"nutriente": clave, "es_un_ratio": True,
+                                "que_ha_pasado": "techo_bajo_el_minimo", "tuyo": suyo_max,
+                                "de_fediaf": mn_m,
+                                "explicacion": f"Has puesto un techo de {suyo_max}:1 y el MÍNIMO "
+                                               f"que exige {de_donde} para esta etapa es "
+                                               f"{mn_m}:1. Por debajo de ahí no hay ración que "
+                                               f"cumpla las dos cosas."})
+            elif mx_m is not None and suyo_max > mx_m:
+                salida["max"] = mx_m
+                ajustes.append({"nutriente": clave, "es_un_ratio": True,
+                                "que_ha_pasado": "techo_recortado", "tuyo": suyo_max,
+                                "de_fediaf": mx_m,
+                                "explicacion": f"Tu techo de {suyo_max}:1 queda por encima del "
+                                               f"máximo de {de_donde} ({mx_m}:1), así que manda "
+                                               f"la fuente."})
+            else:
+                salida["max"] = suyo_max
+
+        if suyo_min is not None:
+            suyo_min = float(suyo_min)
+            if suyo_min <= 0:
+                ajustes.append({"nutriente": clave, "es_un_ratio": True,
+                                "que_ha_pasado": "ratio_no_positivo", "tuyo": suyo_min,
+                                "explicacion": "Una relación entre dos nutrientes no puede ser "
+                                               "cero ni negativa."})
+            elif mx_m is not None and suyo_min > mx_m:
+                ajustes.append({"nutriente": clave, "es_un_ratio": True,
+                                "que_ha_pasado": "suelo_sobre_el_maximo", "tuyo": suyo_min,
+                                "de_fediaf": mx_m,
+                                "explicacion": f"Has puesto un suelo de {suyo_min}:1 y el MÁXIMO "
+                                               f"que permite {de_donde} es {mx_m}:1. No hay "
+                                               f"ración que cumpla las dos cosas."})
+            elif mn_m is not None and suyo_min < mn_m:
+                salida["min"] = mn_m
+                ajustes.append({"nutriente": clave, "es_un_ratio": True,
+                                "que_ha_pasado": "suelo_subido", "tuyo": suyo_min,
+                                "de_fediaf": mn_m,
+                                "explicacion": f"Tu suelo de {suyo_min}:1 queda por debajo del "
+                                               f"mínimo de {de_donde} ({mn_m}:1), así que manda "
+                                               f"la fuente. Los requisitos no se negocian."})
+            else:
+                salida["min"] = suyo_min
+
+        # ⚠️ Y SI LOS DOS EXTREMOS SON SUYOS, QUE NO SE CRUCEN. Un min por encima
+        # del max no lo caza ninguna de las dos ramas de arriba —las dos miran
+        # contra la fuente, no entre ellos— y el solver saldría infactible sin
+        # que nadie sepa por qué.
+        if (salida.get("min") is not None and salida.get("max") is not None
+                and salida["min"] > salida["max"]):
+            ajustes.append({"nutriente": clave, "es_un_ratio": True,
+                            "que_ha_pasado": "suelo_por_encima_de_tu_techo",
+                            "tuyo": salida["min"], "de_fediaf": salida["max"],
+                            "explicacion": f"Tu suelo ({salida['min']}:1) queda por encima de tu "
+                                           f"propio techo ({salida['max']}:1). No se aplica "
+                                           f"ninguno de los dos."})
+            salida = {}
+
+        # ⚠️ Y EL SILENCIO SE ROMPE CUANDO NO HAY RANGO CONTRA EL QUE RECORTAR.
+        # El omega-6:omega-3 de TOTALES no lo pone ninguna fuente para el perro
+        # sano —el NRC dice literalmente que no sirve y SACN5 solo lo da como
+        # objetivo terapéutico—, así que el número entra entero. Eso hay que
+        # decirlo: no decir nada se lee como «FEDIAF lo ha aprobado», y no lo ha
+        # hecho, porque no habla de esto.
+        if salida and mn_m is None and mx_m is None:
+            ajustes.append({"nutriente": clave, "es_un_ratio": True,
+                            "que_ha_pasado": "sin_rango_de_fediaf", "tuyo": dict(salida),
+                            "explicacion": "FEDIAF no pone rango a esta relación en el perro, así "
+                                           "que no hay nada que recortar y se aplica tal cual la "
+                                           "has escrito. El número es entero tuyo: el motor no "
+                                           "tiene fuente con la que respaldarlo ni con la que "
+                                           "desmentirlo. Los requisitos de FEDIAF se verifican "
+                                           "igual."})
+        if salida:
+            limpios[(num, den)] = salida
+    return limpios, ajustes
+
+
 def _objetivos_dentro_de_fediaf(objetivos, req, etapa, der_efectiva=None):
     """(objetivos aplicables, lista de ajustes) recortados contra FEDIAF.
 
@@ -6041,7 +6275,15 @@ def _objetivos_dentro_de_fediaf(objetivos, req, etapa, der_efectiva=None):
     from verificar import MAPA as _MAPA_OBJ, minimo_de as _min_fediaf, maximo_de as _max_fediaf
     por_clave = {v: k for k, v in _MAPA_OBJ.items()}
     limpios, ajustes = {}, []
-    for clave, lim in (objetivos or {}).items():
+    # ⚠️ LOS RATIOS VIAJAN EN LA MISMA MALETA, EN SU PROPIA CLAVE (13
+    # septiembre). `{"ratios": {"omega6_total:omega3_total": {...}}}` entra por
+    # aquí y no por un parámetro nuevo del endpoint a propósito: son un objetivo
+    # del profesional como cualquier otro, se recortan con el mismo criterio y
+    # todo recorte se dice en la MISMA lista. Un segundo campo en la petición
+    # habría sido un segundo sitio donde olvidarse de recortar.
+    _objetivos = dict(objetivos or {})
+    _ratios_pedidos = _objetivos.pop("ratios", None)
+    for clave, lim in _objetivos.items():
         nombre_req = por_clave.get(clave)
         if not nombre_req:
             ajustes.append({"nutriente": clave, "que_ha_pasado": "no_es_un_requisito",
@@ -6098,7 +6340,10 @@ def _objetivos_dentro_de_fediaf(objetivos, req, etapa, der_efectiva=None):
 
         if salida:
             limpios[clave] = salida
-    return limpios, ajustes
+
+    ratios_limpios, ajustes_ratios = _ratios_dentro_de_fediaf(_ratios_pedidos, req, etapa)
+    ajustes.extend(ajustes_ratios)
+    return limpios, ratios_limpios, ajustes
 
 
 @app.post("/formular/autocompletar")
@@ -6157,7 +6402,7 @@ def formular_autocompletar(datos: PeticionFormular):
 
     # Los objetivos del profesional, recortados contra FEDIAF ANTES de
     # formular. Lo que se recorte se dice en la respuesta.
-    _objetivos_f, _ajustes_f = _objetivos_dentro_de_fediaf(
+    _objetivos_f, _ratios_f, _ajustes_f = _objetivos_dentro_de_fediaf(
         datos.objetivos_del_profesional, req, datos.etapa_requisitos,
         der_efectiva_de(datos.der_objetivo, _peso_de_referencia(datos)[0]
                         or datos.peso_perro_kg))
@@ -6199,6 +6444,7 @@ def formular_autocompletar(datos: PeticionFormular):
             peso_objetivo_kg=_peso_de_referencia(datos)[0],
             categorias_excluidas=datos.categorias_excluidas,
             objetivos_del_profesional=_objetivos_f or None,
+            ratios_del_profesional=_ratios_f or None,
             presupuesto_semanal_restante=_pres_f,
             kcal_de_premios=_kcal_de_premios(datos),
         )
@@ -6287,6 +6533,14 @@ def formular_autocompletar(datos: PeticionFormular):
                 "gramos_fijos_movidos": movidos,
                 "alternativa": gramos}
 
+    _conseguidos_f = []
+    for (_n_pr, _d_pr), _c_pr in (_ratios_f or {}).items():
+        _r_pr = _ratio_del_menu(gramos, al, _n_pr, _d_pr)
+        _conseguidos_f.append({
+            "clave": f"{_n_pr}:{_d_pr}", "numerador": _n_pr, "denominador": _d_pr,
+            "pedido": _c_pr,
+            "conseguido": (round(_r_pr, 2) if _r_pr is not None else None)})
+
     # ⚠️ Y SE DICE EN QUÉ PELDAÑO SALIÓ, siempre — no solo cuando hubo que
     # bajar. «No dice nada» y «estricto» se leían igual, y quien firma
     # necesita poder afirmar lo segundo. Es la misma regla que `/menu/v2`.
@@ -6296,6 +6550,14 @@ def formular_autocompletar(datos: PeticionFormular):
                  # cuando sale: el profesional tiene que poder ver que el numero
                  # que aplico no es el que escribio.
                  "objetivos_ajustados": _ajustes_f,
+                 # ⚠️ Y EL RATIO QUE DE VERDAD HA SALIDO (13 septiembre). Un
+                 # cociente no se lee en la ficha sumando filas: quien pide un
+                 # omega-6:omega-3 de 5:1 no puede comprobar que lo ha
+                 # conseguido mirando el omega-6 y el omega-3 por separado. Va
+                 # con lo PEDIDO al lado, ya recortado, para que las dos cifras
+                 # se lean juntas -- que es lo mismo que hace `peldano`: no
+                 # obligar a deducir de la respuesta lo que se le aplicó.
+                 "ratios_del_profesional": _conseguidos_f,
                  "se_bajo_de_peldano": bool(not datos.peldano
                                             and _peldano_usado_f != PELDANO_ESTRICTO)}
     respuesta = _garantizar_verificado(
@@ -6958,6 +7220,12 @@ NOMBRE_LLANO_DEL_NUTRIENTE = {
     "linoleico": ("Omega-6", "El ácido linoleico"),
     "linolenico": ("Omega-3 de origen vegetal", "El ácido linolénico"),
     "epa_dha": ("Omega-3 del pescado", "EPA y DHA"),
+    # ⚠️ LOS DOS TOTALES SE EXPLICAN CON LO QUE SUMAN (13 septiembre), y no es
+    # decoracion: el omega-6 total de este motor es «linoleico + araquidonico»
+    # y NO incluye el GLA ni el DGLA, que el catalogo no mide. Quien pone un
+    # ratio sobre esta cifra tiene que saber que cuenta.
+    "omega3_total": ("Omega-3 totales", "El linolenico mas el EPA y el DHA"),
+    "omega6_total": ("Omega-6 totales", "El linoleico mas el araquidonico"),
     "taurina": ("Taurina", None),
 }
 
@@ -6995,6 +7263,7 @@ COMO_LO_ESCRIBE_LA_FUENTE = {
     "Triptofano": "Triptófano",
     "L_carnitina": "L-carnitina",
     "Omega3_total": "Omega-3 totales",
+    "Omega6_total": "Omega-6 totales",
 }
 
 
@@ -7049,6 +7318,76 @@ def _nutrientes_para_objetivos():
             },
         })
     return salida
+
+def _rangos_por_patologia_del_ratio(numerador, denominador):
+    """Lo que pide la FUENTE de cada patología para este par, sin aplicarlo.
+
+    ⚠️ SE DERIVA DE `patologias.json`, no se escribe aquí. Elena, 13 de
+    septiembre: «sí, pon el rango de la fuente por patología también». El número
+    lleva escrito desde el 9 de septiembre dentro de
+    `limites_escritos_que_el_solver_no_aplica`, que es un sitio al que no mira
+    nadie salvo la batería -- así que el clínico no podía decidir con él
+    delante, que es justo lo que hace falta para que decida él y no el motor.
+
+    Devuelve [] para los pares que no tiene ninguna patología (Ca:P y
+    linoleico:linolénico ya los aplica el motor a todo menú, así que no hay
+    nada que enseñar aparte).
+    """
+    # Hoy solo hay una clave escrita, y la del omega-6:omega-3 es la única que
+    # existe. Se compara contra el par para no atarlo al NOMBRE de la clave: el
+    # día que una patología pida otro cociente, se le pone su bloque
+    # `rango_de_la_fuente` y sale por aquí sola.
+    if (numerador, denominador) != ("omega6_total", "omega3_total"):
+        return []
+    fuera = []
+    from patologias import cargar_crudo as _crudo_ratio
+    for clave, info in ((_crudo_ratio() or {}).get("patologias") or {}).items():
+        escritos = info.get("limites_escritos_que_el_solver_no_aplica") or {}
+        ficha = escritos.get("ratio_omega6_omega3")
+        if not isinstance(ficha, dict):
+            continue
+        rango = ficha.get("rango_de_la_fuente") or {}
+        fuera.append({
+            "patologia": clave,
+            "nombre": info.get("nombre"),
+            "forma": rango.get("forma"),
+            "min": rango.get("min"),
+            "max": rango.get("max"),
+            "objetivo": rango.get("objetivo"),
+            "como_se_lee": rango.get("como_se_lee"),
+            "fuente": ficha.get("fuente"),
+            "lo_aplica_el_motor": bool(ficha.get("aplicado_por_el_solver")),
+        })
+    return sorted(fuera, key=lambda r: r["patologia"])
+
+
+def _ratios_para_objetivos(req, etapa):
+    """Las relaciones que el profesional puede fijar, con lo que ya aplica el
+    motor y lo que pide la fuente de cada patología.
+
+    ⚠️ NO SE ESCRIBE NINGÚN NÚMERO AQUÍ. El rango que el motor ya aplica sale de
+    los MISMOS sitios que lo lee el solver (la tabla de FEDIAF para el Ca:P y
+    `requisitos_condicionales.json` para el linoleico:linolénico), y el de cada
+    patología de `patologias.json`. Copiar cualquiera de los dos aquí sería una
+    segunda tabla -- que es como se desincronizó la de patologías del
+    `POST /menu`.
+    """
+    fuera = []
+    for r in RATIOS_QUE_SE_PUEDEN_FIJAR:
+        mn, mx, de_donde = _rango_que_ya_aplica_el_motor(
+            r["numerador"], r["denominador"], req, etapa)
+        fuera.append({
+            "clave": r["clave"],
+            "numerador": r["numerador"], "denominador": r["denominador"],
+            "dueno": r["dueno"], "veterinario": r["veterinario"],
+            "lo_aplica_el_motor_solo": mn is not None or mx is not None,
+            "rango_que_ya_aplica_el_motor": ({"min": mn, "max": mx, "de_donde": de_donde}
+                                             if (mn is not None or mx is not None) else None),
+            "rangos_por_patologia": _rangos_por_patologia_del_ratio(
+                r["numerador"], r["denominador"]),
+        })
+    return fuera
+
 
 def _rango_de_tamano(tamano):
     """El rango de peso adulto que de verdad tienen las razas de ese tamaño.
@@ -7343,6 +7682,43 @@ def endpoint_vocabulario():
                     "`objetivos_ajustados`, salga o no salga el menú."),
             "cuantos": len(_nutrientes_objetivos),
             "nutrientes": _nutrientes_objetivos,
+            # ── Y LAS RELACIONES ENTRE DOS NUTRIENTES ────────────────────
+            #
+            # ⚠️ AÑADIDO (13 de septiembre de 2026). Elena, al ver que el ratio
+            # omega-6:omega-3 aparece en TRES patologías escrito y sin aplicar:
+            # «pues entonces habrá que poner un ratio para que el veterinario
+            # elija no? o sea igual cada veterinario quiere elegir su propio
+            # ratio» · «sí, pon el rango de la fuente por patología también».
+            #
+            # Un cociente no es un nutriente: no tiene fila en la tabla de
+            # FEDIAF ni unidad, así que no cabía en la lista de arriba. Y hacía
+            # falta porque las fuentes van de <1:1 a 7:1 SEGÚN LA ENFERMEDAD, o
+            # sea que el número lo tiene que poner un clínico -- y para ponerlo
+            # tiene que poder leer el de su fuente, que hasta hoy vivía dentro
+            # de `limites_escritos_que_el_solver_no_aplica` y no lo veía nadie.
+            #
+            # Se sirven TRES y no todos los pares posibles: los que alguna
+            # fuente del repo pide de verdad. Dos ya los aplica el motor a todo
+            # menú (el Ca:P de FEDIAF y el linoleico:linolénico del NRC), y el
+            # profesional solo puede APRETARLOS; el tercero no lo aplica nadie
+            # y lo pone entero quien firma.
+            "ratios": {
+                "de_donde": ("`main.RATIOS_QUE_SE_PUEDEN_FIJAR`, con el rango vivo de "
+                             "`requerimientos_v2_final.json` y `requisitos_condicionales.json`, "
+                             "y el de cada patología de `patologias.json`"),
+                "que_es": ("Las relaciones entre dos nutrientes a las que un profesional puede "
+                           "ponerle mínimo o máximo, en `objetivos_del_profesional.ratios`. Son "
+                           "adimensionales: «7» significa 7:1."),
+                "como_se_manda": ('{"objetivos_del_profesional": {"ratios": '
+                                  '{"omega6_total:omega3_total": {"min": 1, "max": 7}}}}'),
+                "ojo": ("Un ratio del profesional solo puede APRETAR, igual que un objetivo "
+                        "normal: entra por el mismo cajón que los ratios de patología y con el "
+                        "mismo `max()`/`min()`. Y el que NO tiene rango de FEDIAF se dice en "
+                        "`objetivos_ajustados` con `sin_rango_de_fediaf` -- callarlo se leería "
+                        "como que FEDIAF lo ha aprobado, y FEDIAF no habla de esto."),
+                "cuantos": len(RATIOS_QUE_SE_PUEDEN_FIJAR),
+                "lista": _ratios_para_objetivos(_req_v, "Adulto"),
+            },
             # ── Y COMO SE LEEN AGRUPADOS ─────────────────────────────────
             #
             # ⚠️ AÑADIDO (13 de septiembre de 2026). El orden y el titulo de

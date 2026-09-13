@@ -173,7 +173,16 @@
       "unidad_en_la_fuente": "adimensional",
       "densidad_kcal_por_g_MS": 4.0,
       "cita": "SACN5 Tabla 37-9 «Key nutritional factors for dogs and cats with chronic kidney disease», nota «*All values expressed on a dry matter basis, unless otherwise indicated». Leida entera 9-sep-2026, fila «Omega-6:omega-3 fatty acid ratio of 1:1 to 7:1», extremo alto"
-     }
+     },
+     "rango_de_la_fuente": {
+      "forma": "rango",
+      "min": 1.0,
+      "max": 7.0,
+      "como_se_lee": "SACN5 pide para la enfermedad renal cronica un omega-6:omega-3 de entre 1:1 y 7:1.",
+      "que_parte_esta_escrita_arriba": "El `valor` de esta ficha es el extremo ALTO (7). El bajo (1) solo vivia dentro de la cita, asi que quien leia la cifra veia un techo y no un rango. Se escribe entero el 13 de septiembre a peticion de Elena, que pidio que se escribiera el rango de la fuente por patologia (su frase literal esta en HECHO.md).",
+      "por_que_se_ensena_y_no_se_aplica": "ESTE RANGO SE ENSENA Y NO SE APLICA, Y ESA ES LA DECISION (13 de septiembre de 2026). El motor NO pone este ratio por su cuenta porque las dos fuentes se contradicen -- el NRC 2006 dice del ratio de TOTALES que «is not helpful» y recomienda en su lugar el de linoleico:linolenico, que el motor SI aplica -- y elegir entre 1:1 y 7:1 es una decision clinica, no del motor. Lo que se hace en su lugar es ENSENARLE el numero de la fuente a quien firma, y darle la puerta para ponerlo: `objetivos_del_profesional.ratios[\"omega6_total:omega3_total\"]`, que se sirve en `GET /vocabulario` -> `ratios_para_objetivos`. Asi el numero deja de estar escondido en un JSON y el clinico decide con el delante, que es lo contrario de que el motor decida por el o de que no decida nadie."
+     },
+     "aplicado_por_el_solver": false
     }
    }
   },
@@ -1539,12 +1548,20 @@
      "valor": 1.0,
      "aplicado_por_el_solver": false,
      "fuente": "SACN5 5a ed., cap.34 «Osteoarthritis», literal: «The omega-6 to omega-3 fatty acid ratio should be less than 1:1». Verificado literal 9-sep-2026",
-     "por_que": "SE ESCRIBE Y NO SE APLICA, POR EL MISMO MOTIVO QUE EL DE LA RENAL: **LAS DOS FUENTES SE CONTRADICEN Y ESO LO DECIDE UN CLINICO**. || SACN5 da un ratio de omega-6 TOTALES a omega-3 TOTALES para cuatro patologias, y el propio cap.37 lo dice: «These recommendations are similar to omega-3 fatty acid content and omega-6:omega-3 ratios recommended for dogs and cats with cancer, osteoarthritis and inflammatory skin diseases». || El NRC 2006, cap.5, dice literalmente que ese ratio no sirve: «the use of a TOTAL n-6:n-3 ratio is not helpful», porque mezcla acidos grasos de potencia muy distinta, y recomienda en su lugar el ratio LINOLEICO:LINOLENICO -- que el motor SI aplica desde el 9 de septiembre, en todas las etapas (`requisitos_condicionales.json`). || Y hay una segunda razon, medida: este ratio se cumple metiendo aceite de pescado, y el aceite de un menu de este motor ya llega a 25,3 g en el peor caso. Un ratio de 1:1 en una racion con carne (rica en omega-6) pediria mucho mas. || Se escribe con su cifra y su fuente para que el dia que se decida no haya que volver a encontrarla. Va como PREGUNTA para el nutricionista. || OJO: en la artrosis la fuente pide MENOS de 1:1, o sea mas omega-3 que omega-6 en total, que es aun mas exigente que el 1:1 del cancer. Es coherente con que su suelo de omega-3 total (8,75 g/1000 kcal) tampoco quepa -- ver `omega3_total` aqui mismo.",
+     "por_que": "SE ESCRIBE Y NO SE APLICA, POR EL MISMO MOTIVO QUE EL DE LA RENAL: **LAS DOS FUENTES SE CONTRADICEN Y ESO LO DECIDE UN CLINICO**. || SACN5 da un ratio de omega-6 TOTALES a omega-3 TOTALES para cuatro patologias, y el propio cap.37 lo dice: «These recommendations are similar to omega-3 fatty acid content and omega-6:omega-3 ratios recommended for dogs and cats with cancer, osteoarthritis and inflammatory skin diseases». || El NRC 2006, cap.5, dice literalmente que ese ratio no sirve: «the use of a TOTAL n-6:n-3 ratio is not helpful», porque mezcla acidos grasos de potencia muy distinta, y recomienda en su lugar el ratio LINOLEICO:LINOLENICO -- que el motor SI aplica desde el 9 de septiembre, en todas las etapas (`requisitos_condicionales.json`). || ⚠️ Y LA SEGUNDA RAZON QUE HABIA ESCRITA AQUI ERA FALSA, Y SE CORRIGE CON LA MEDIDA DELANTE (13 de septiembre de 2026). Decia que este ratio se cumple metiendo aceite de PESCADO y que un 1:1 pediria mucho mas que los 25,3 g de aceite del peor menu. No: el motor lo cierra con ACEITE DE LINAZA, porque el alfa-linolenico es omega-3 y cuenta dentro de `omega3_total`. MEDIDO el 13 de septiembre pidiendole al motor un techo de 1:1 por `/formular/autocompletar` en once perros (cuatro adultos de 3 a 40 kg, tres cachorros jovenes, dos en crecimiento, una gestante y una lactante): SALEN LOS ONCE, diez de ellos en el peldaño ESTRICTO, con 1,0 g de aceite total de mediana y 4,4 g en el peor. O sea que la cifra CABE, y lo unico que sostiene la decision de no aplicarla es lo primero: que las dos fuentes se contradicen y eso lo decide un clinico. Lo que se hace en su lugar esta en `rango_de_la_fuente`. || Se escribe con su cifra y su fuente para que el dia que se decida no haya que volver a encontrarla. Va como PREGUNTA para el nutricionista. || OJO: en la artrosis la fuente pide MENOS de 1:1, o sea mas omega-3 que omega-6 en total, que es aun mas exigente que el 1:1 del cancer. ⚠️ Aqui ponia ademas que eso era coherente con que su suelo de omega-3 total (8,75) tampoco cupiera. Esa frase se retira: la medida del 13 de septiembre dice que el ratio SI cabe, asi que no puede seguir usandose para explicar nada. Si el suelo de `omega3_total` de esta ficha sigue sin caber es cosa suya y hay que remedirlo por separado -- esta apuntado en PREGUNTAS_ABIERTAS.md.",
      "conversion": {
       "valor_en_la_fuente": 1.0,
       "unidad_en_la_fuente": "adimensional",
       "densidad_kcal_por_g_MS": 4.0,
       "cita": "SACN5 Tabla 34-2 «Key nutritional factors for foods for canine osteoarthritis patients», nota al pie «All values are expressed on a dry matter basis unless otherwise stated». Leida entera 9-sep-2026, fila «Omega-6:omega-3 fatty acid ratio <1:1»"
+     },
+     "rango_de_la_fuente": {
+      "forma": "techo",
+      "min": null,
+      "max": 1.0,
+      "como_se_lee": "SACN5 pide para la artrosis un omega-6:omega-3 MENOR de 1:1, o sea mas omega-3 que omega-6 en total. Es mas exigente que el 1:1 del cancer.",
+      "que_parte_esta_escrita_arriba": "La fuente no da extremo bajo: dice «less than 1:1» y no dice hasta donde. Escribir un suelo aqui seria inventarselo.",
+      "por_que_se_ensena_y_no_se_aplica": "ESTE RANGO SE ENSENA Y NO SE APLICA, Y ESA ES LA DECISION (13 de septiembre de 2026). El motor NO pone este ratio por su cuenta porque las dos fuentes se contradicen -- el NRC 2006 dice del ratio de TOTALES que «is not helpful» y recomienda en su lugar el de linoleico:linolenico, que el motor SI aplica -- y elegir entre 1:1 y 7:1 es una decision clinica, no del motor. Lo que se hace en su lugar es ENSENARLE el numero de la fuente a quien firma, y darle la puerta para ponerlo: `objetivos_del_profesional.ratios[\"omega6_total:omega3_total\"]`, que se sirve en `GET /vocabulario` -> `ratios_para_objetivos`. Asi el numero deja de estar escondido en un JSON y el clinico decide con el delante, que es lo contrario de que el motor decida por el o de que no decida nadie."
      }
     }
    }
@@ -1925,12 +1942,21 @@
      "valor": 1.0,
      "aplicado_por_el_solver": false,
      "fuente": "SACN5 5a ed., cap.30 «Cancer», Tabla de factores nutricionales clave y texto: «an omega-6:omega-3 fatty acid ratio approximating 1:1» / «as close to 1:1 as possible». Verificado literal 9-sep-2026",
-     "por_que": "SE ESCRIBE Y NO SE APLICA, POR EL MISMO MOTIVO QUE EL DE LA RENAL: **LAS DOS FUENTES SE CONTRADICEN Y ESO LO DECIDE UN CLINICO**. || SACN5 da un ratio de omega-6 TOTALES a omega-3 TOTALES para cuatro patologias, y el propio cap.37 lo dice: «These recommendations are similar to omega-3 fatty acid content and omega-6:omega-3 ratios recommended for dogs and cats with cancer, osteoarthritis and inflammatory skin diseases». || El NRC 2006, cap.5, dice literalmente que ese ratio no sirve: «the use of a TOTAL n-6:n-3 ratio is not helpful», porque mezcla acidos grasos de potencia muy distinta, y recomienda en su lugar el ratio LINOLEICO:LINOLENICO -- que el motor SI aplica desde el 9 de septiembre, en todas las etapas (`requisitos_condicionales.json`). || Y hay una segunda razon, medida: este ratio se cumple metiendo aceite de pescado, y el aceite de un menu de este motor ya llega a 25,3 g en el peor caso. Un ratio de 1:1 en una racion con carne (rica en omega-6) pediria mucho mas. || Se escribe con su cifra y su fuente para que el dia que se decida no haya que volver a encontrarla. Va como PREGUNTA para el nutricionista.",
+     "por_que": "SE ESCRIBE Y NO SE APLICA, POR EL MISMO MOTIVO QUE EL DE LA RENAL: **LAS DOS FUENTES SE CONTRADICEN Y ESO LO DECIDE UN CLINICO**. || SACN5 da un ratio de omega-6 TOTALES a omega-3 TOTALES para cuatro patologias, y el propio cap.37 lo dice: «These recommendations are similar to omega-3 fatty acid content and omega-6:omega-3 ratios recommended for dogs and cats with cancer, osteoarthritis and inflammatory skin diseases». || El NRC 2006, cap.5, dice literalmente que ese ratio no sirve: «the use of a TOTAL n-6:n-3 ratio is not helpful», porque mezcla acidos grasos de potencia muy distinta, y recomienda en su lugar el ratio LINOLEICO:LINOLENICO -- que el motor SI aplica desde el 9 de septiembre, en todas las etapas (`requisitos_condicionales.json`). || ⚠️ Y LA SEGUNDA RAZON QUE HABIA ESCRITA AQUI ERA FALSA, Y SE CORRIGE CON LA MEDIDA DELANTE (13 de septiembre de 2026). Decia que este ratio se cumple metiendo aceite de PESCADO y que un 1:1 pediria mucho mas que los 25,3 g de aceite del peor menu. No: el motor lo cierra con ACEITE DE LINAZA, porque el alfa-linolenico es omega-3 y cuenta dentro de `omega3_total`. MEDIDO el 13 de septiembre pidiendole al motor un techo de 1:1 por `/formular/autocompletar` en once perros (cuatro adultos de 3 a 40 kg, tres cachorros jovenes, dos en crecimiento, una gestante y una lactante): SALEN LOS ONCE, diez de ellos en el peldaño ESTRICTO, con 1,0 g de aceite total de mediana y 4,4 g en el peor. O sea que la cifra CABE, y lo unico que sostiene la decision de no aplicarla es lo primero: que las dos fuentes se contradicen y eso lo decide un clinico. Lo que se hace en su lugar esta en `rango_de_la_fuente`. || Se escribe con su cifra y su fuente para que el dia que se decida no haya que volver a encontrarla. Va como PREGUNTA para el nutricionista.",
      "conversion": {
       "valor_en_la_fuente": 1.0,
       "unidad_en_la_fuente": "adimensional",
       "densidad_kcal_por_g_MS": 4.0,
       "cita": "SACN5 Tabla 30-5 «Key nutritional factors for foods for canine and feline cancer patients». Leida entera 9-sep-2026, fila «omega-6:omega-3 ratio as close to 1:1 as possible»"
+     },
+     "rango_de_la_fuente": {
+      "forma": "objetivo",
+      "min": null,
+      "max": null,
+      "objetivo": 1.0,
+      "como_se_lee": "SACN5 pide para el soporte oncologico un omega-6:omega-3 lo mas cerca posible de 1:1. Es un OBJETIVO, no un rango: la fuente no dice cuanto se puede uno alejar.",
+      "que_parte_esta_escrita_arriba": "El `valor` de esta ficha es ese 1. No es un techo ni un suelo, y por eso `min` y `max` van vacios: convertir «as close to 1:1 as possible» en «maximo 1:1» seria endurecer a la fuente, y convertirlo en un rango seria ablandarla. Las dos cosas son inventarse la cifra.",
+      "por_que_se_ensena_y_no_se_aplica": "ESTE RANGO SE ENSENA Y NO SE APLICA, Y ESA ES LA DECISION (13 de septiembre de 2026). El motor NO pone este ratio por su cuenta porque las dos fuentes se contradicen -- el NRC 2006 dice del ratio de TOTALES que «is not helpful» y recomienda en su lugar el de linoleico:linolenico, que el motor SI aplica -- y elegir entre 1:1 y 7:1 es una decision clinica, no del motor. Lo que se hace en su lugar es ENSENARLE el numero de la fuente a quien firma, y darle la puerta para ponerlo: `objetivos_del_profesional.ratios[\"omega6_total:omega3_total\"]`, que se sirve en `GET /vocabulario` -> `ratios_para_objetivos`. Asi el numero deja de estar escondido en un JSON y el clinico decide con el delante, que es lo contrario de que el motor decida por el o de que no decida nadie."
      }
     }
    }

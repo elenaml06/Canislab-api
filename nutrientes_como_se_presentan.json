@@ -40,7 +40,7 @@
       "clave": "acidos_grasos",
       "titulo": "Ácidos grasos esenciales",
       "por_que": "EPA suelto, los omega-3 totales y la relación linoleico:linolénico entran aquí y no en «Otros»: son la misma familia y se leen juntos. La relación es la que NRC 2006 cap.5 recomienda EN LUGAR del omega-6:omega-3 totales, y el motor la aplica desde `requisitos_condicionales.json`.",
-      "nutrientes": ["Linoleico", "Linolénico", "Araquidónico", "EPA", "EPA_DHA_total", "Omega3_total", "Relación linoleico:linolénico"]
+      "nutrientes": ["Linoleico", "Linolénico", "Araquidónico", "EPA", "EPA_DHA_total", "Omega3_total", "Omega6_total", "Relación linoleico:linolénico"]
     },
     {
       "clave": "aminoacidos",
