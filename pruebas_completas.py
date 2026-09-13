@@ -8237,10 +8237,29 @@ from verificar import der_efectiva_de as _der_ef_b57
 if _topes_b57("Adulto", req, 95.0).get("fosforo") != 2000.0:
     fallos.append("BLOQUE57: a DER 95 (un perro que come lo normal) el techo de fosforo "
                   "tendria que seguir puesto y no lo esta")
-if "fosforo" in _topes_b57("Adulto", req, 49.0):
-    fallos.append("BLOQUE57: a DER 49 el minimo de fosforo de FEDIAF (2249) supera al techo "
-                  "del libro (2000) y el techo NO ha cedido. Asi, el perro a dieta se queda "
-                  "sin menu por cumplir una recomendacion.")
+# ⚠️ ESTA COMPROBACION CAMBIO EL 13 DE SEPTIEMBRE POR LA NOCHE, y se deja
+# escrito por que. Hasta ese dia exigia que «fosforo» NO estuviera, porque el
+# techo que cedia DESAPARECIA. Ahora no desaparece: SUBE hasta el suelo y se
+# queda pegado a el, para que el menu no se aleje del consejo mas de lo que la
+# aritmetica obliga (ver `HOLGURA_DEL_TECHO_QUE_SUBE`).
+#
+# Asi que lo que hay que exigir no es que el techo no este: es que YA NO
+# BLOQUEE, o sea que el techo que se aplica quede POR ENCIMA del minimo de
+# FEDIAF ya escalado. Escrito como «que no este» seguiria pasando el dia que
+# alguien lo dejara caer del todo, que es peor.
+from verificar import minimo_de as _minimo_de_b57
+_min_fosf_49 = _minimo_de_b57(req["Fósforo"], "Fósforo", "Adulto", 49.0)
+_techo_fosf_49 = _topes_b57("Adulto", req, 49.0).get("fosforo")
+if _techo_fosf_49 is not None and _techo_fosf_49 < _min_fosf_49:
+    fallos.append(f"BLOQUE57: a DER 49 el minimo de fosforo de FEDIAF ({_min_fosf_49:.0f}) supera "
+                  f"al techo del libro (2000) y el techo se ha quedado en {_techo_fosf_49:.0f}, "
+                  f"por debajo de ese minimo. Asi, el perro a dieta se queda sin menu por cumplir "
+                  f"una recomendacion.")
+if _techo_fosf_49 is not None and _techo_fosf_49 > _min_fosf_49 * 1.10:
+    fallos.append(f"BLOQUE57: el techo que sube se ha quedado en {_techo_fosf_49:.0f} y el suelo "
+                  f"que lo obliga es {_min_fosf_49:.0f}. Sube mas de lo que hace falta, y todo lo "
+                  f"que suba de mas es margen que el menu usa para alejarse del consejo del "
+                  f"libro sin ningun motivo.")
 if not any(c["clave"] == "fosforo" for c in _cedidos_b57("Adulto", req, 49.0)):
     fallos.append("BLOQUE57: el techo cede a DER 49 pero `cedidos_ante_fediaf` no lo cuenta. "
                   "Un limite que deja de aplicarse y no se puede decir es un cambio en "
@@ -15345,11 +15364,18 @@ if _sin_premios101.get("calcio") != 2750.0:
                   f"en 2750 y sale {_sin_premios101.get('calcio')}. Si cede siempre, el arreglo "
                   f"ha quitado un límite de la fuente a TODOS los cachorros de raza grande -- "
                   f"que es peor que el fallo que arregla")
+# ⚠️ ESTA COMPROBACIÓN CAMBIÓ LA MISMA NOCHE, y se deja escrito por qué. En la
+# primera versión del arreglo el techo DESAPARECÍA, así que aquí se exigía que
+# «calcio» no estuviera. Ahora no desaparece: SUBE hasta el suelo (punto 6), así
+# que lo que hay que exigir es que ya no valga el 2750 del libro -- que es lo que
+# dejaba a Cairo sin menú -- y que esté por encima de su suelo.
 _con_premios101 = _topes101("CachorroCrecimiento", _req101, _deref101, 31.0, 1.0 / 0.90)
-if "calcio" in _con_premios101:
-    fallos.append(f"BLOQUE101: con premios al 10 % el techo de calcio sigue puesto en "
-                  f"{_con_premios101['calcio']} y su suelo es 2778. No cabe ningún menú entre "
-                  f"los dos, que es exactamente por lo que Cairo se quedaba sin menú")
+_suelo_con_premios101 = 2500.0 / 0.90
+if _con_premios101.get("calcio", 0.0) < _suelo_con_premios101:
+    fallos.append(f"BLOQUE101: con premios al 10 % el techo de calcio queda en "
+                  f"{_con_premios101.get('calcio')} y su suelo es {_suelo_con_premios101:.0f}. "
+                  f"No cabe ningún menú entre los dos, que es exactamente por lo que Cairo se "
+                  f"quedaba sin menú")
 # y el del cachorro PEQUEÑO no se toca: su techo es 4250 y su suelo 2000
 _peq101 = _topes101("CachorroCrecimiento", _req101, _deref101, 12.0, 1.0 / 0.80)
 if _peq101.get("calcio") != 4250.0:
@@ -15383,6 +15409,77 @@ for _der101, _prem101 in ((1581.0, 158.1), (1000.0, 0.0), (2000.0, 400.0), (500.
                       f"un factor de {_suyo101} y el solver {_motor101}. Son dos cuentas escritas "
                       f"en dos ficheros: si se separan, este filtro tira menús que el solver "
                       f"construyó bien")
+
+# --- 6. el techo no DESAPARECE: sube hasta el suelo -------------------
+#
+# ⚠️ AÑADIDO LA MISMA NOCHE, y lo pidió Elena leyendo el arreglo: «pero a ver,
+# ¿y no se puede dar un menú que cumpla el techo? seguro que sí». Cumplirlo no
+# se puede -- el suelo está POR ENCIMA del techo, es aritmética -- pero
+# quedarse pegado a él sí, y la primera versión de este arreglo no lo hacía:
+# el techo desaparecía y el solver se iba hasta 3746 cuando con 2778 le bastaba.
+#
+# MEDIDO sobre tres cachorros de raza grande y dos niveles de premios:
+#     techo = suelo x 1,005 ... 0 de 6 con menú (ventana demasiado estrecha)
+#     techo = suelo x 1,02 .... 6 de 6, y el calcio de Cairo baja de 3402 a 2821
+from recomendaciones import HOLGURA_DEL_TECHO_QUE_SUBE as _HOLG101
+_subido101 = _topes101("CachorroCrecimiento", _req101, _deref101, 31.0, 1.0 / 0.90)
+_esperado_subido101 = 2500.0 / 0.90 * _HOLG101
+if "calcio" not in _subido101:
+    fallos.append("BLOQUE101: con premios al 10 % el techo del libro DESAPARECE en vez de subir "
+                  "hasta el suelo. Cumplirlo no se puede, pero quedarse pegado a él sí: sin "
+                  "techo el menú se va un 36 % por encima del consejo cuando con un 2 % le "
+                  "bastaba, y son 922 mg de calcio al día en un cachorro de raza grande")
+elif abs(_subido101["calcio"] - _esperado_subido101) > 1.0:
+    fallos.append(f"BLOQUE101: el techo que sube vale {_subido101['calcio']} y la cuenta rehecha "
+                  f"da {_esperado_subido101:.1f} (el suelo por la holgura {_HOLG101}). Esa "
+                  f"holgura es un número NUESTRO: si cambia, se cambia con su medida al lado")
+# y el menú de verdad se tiene que quedar por debajo de ese techo
+_men101 = _resp101["hasta_el_maximo"]
+if _men101.get("factible"):
+    _al101 = _api101.cargar_v2()[0]
+    _g101 = _men101["menu"]
+    _kcal101 = sum((_al101[n].get("energia", 0) or 0) / 100.0 * x for n, x in _g101.items())
+    _ca101 = sum(valor_nutriente(_al101[n].get("nutrientes", {}), "calcio") / 100.0 * x
+                 for n, x in _g101.items())
+    _ca_1000_101 = _ca101 / _kcal101 * 1000.0
+    if _ca_1000_101 > _esperado_subido101 * 1.005:
+        fallos.append(f"BLOQUE101: el menú sale con {_ca_1000_101:.0f} mg de calcio y el techo que "
+                      f"se le puso era {_esperado_subido101:.0f}. El techo que sube no se está "
+                      f"aplicando: el menú se aleja del consejo del libro más de lo que la "
+                      f"aritmética obliga")
+    # y se DICE a cuánto ha subido, no solo que ha cedido
+    _dicho_sube101 = [x for x in (_men101.get("techos_del_libro_que_no_se_aplican") or [])
+                      if x.get("clave") == "calcio"]
+    if not _dicho_sube101 or _dicho_sube101[0].get("techo_que_se_aplica") is None:
+        fallos.append("BLOQUE101: el menú dice que el techo ha cedido y NO dice a cuánto ha "
+                      "subido. «Ha cedido» se lee igual tanto si el menú se queda pegado al techo "
+                      "como si se va un 36 % por encima, y son cosas muy distintas")
+
+# --- 7. el plan B: la holgura es NUESTRA y no puede dejar a nadie sin comer ---
+#
+# ⚠️ ESTO ES LO QUE HACE QUE LA HOLGURA SE PUEDA PONER. 1,02 sale de medir seis
+# casos, y seis casos no son todos los perros: si en alguno la ventana no tiene
+# menú, `resolver` SUELTA el techo y vuelve a intentarlo -- que es exactamente
+# lo que hacía el motor antes de esta mejora, o sea que el plan B es el
+# comportamiento ya probado.
+#
+# Se comprueba con la holgura puesta a un valor IMPOSIBLE (el techo por debajo
+# del suelo). Sin plan B eso deja al perro sin menú; con él, sale.
+import recomendaciones as _recmod101
+_holg_buena101 = _recmod101.HOLGURA_DEL_TECHO_QUE_SUBE
+try:
+    _recmod101.HOLGURA_DEL_TECHO_QUE_SUBE = 0.99   # el techo cae POR DEBAJO del suelo
+    for _n101b in ("hasta_el_maximo", "mas_del_maximo"):
+        _d101b = dict(_CAIRO101); _d101b["premios_nivel"] = _n101b
+        _r101b = _c_b5.post("/menu/v2", json=_d101b).json()
+        if not _r101b.get("factible"):
+            fallos.append(f"BLOQUE101: con una holgura imposible y premios «{_n101b}» el perro se "
+                          f"queda SIN MENÚ. El plan B no está funcionando, y sin plan B esa "
+                          f"holgura —que es un número NUESTRO, medido sobre seis casos— puede "
+                          f"dejar sin comer a un perro que no estaba entre esos seis")
+finally:
+    _recmod101.HOLGURA_DEL_TECHO_QUE_SUBE = _holg_buena101
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 _cerrar_el_ultimo_bloque()

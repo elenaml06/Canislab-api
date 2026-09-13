@@ -431,9 +431,30 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto",
     # Si el solver lo deja caer y este filtro lo midiera igualmente, tiraría
     # menús que el solver construyó bien -- y al revés, que es peor. Es el
     # fallo de Cairo visto desde el otro lado.
+    # ⚠️ Y AQUÍ EL TECHO QUE SUBE **NO SE EXIGE** (13 de septiembre, noche).
+    #
+    # `apretar_el_techo_del_libro=False` pide la versión sin apretar: cuando el
+    # techo del libro no cabe, este filtro NO lo sustituye por el «suelo + 2 %»
+    # que usa el solver. Y es a propósito, por dos motivos que apuntan al mismo
+    # sitio:
+    #
+    #   · Esa holgura del 2 % es un número NUESTRO, no de una fuente. Rechazar
+    #     un menú por pasarse de un número que nos hemos inventado sería darle
+    #     el rango de requisito, y no lo es.
+    #   · El solver tiene PLAN B: si con el techo apretado no sale menú, lo
+    #     suelta. Si este filtro lo exigiera igualmente, tiraría justo los menús
+    #     que el plan B existe para poder dar -- que es el fallo del 8 de
+    #     septiembre otra vez, el solver y el filtro final aplicando cosas
+    #     distintas.
+    #
+    # Lo que SÍ se sigue exigiendo aquí es el techo del libro cuando de verdad
+    # cabe (sin ceder), y por encima de todo el máximo de FEDIAF, que lo mira el
+    # semáforo. A cuánto ha subido el techo se DICE en
+    # `techos_del_libro_que_no_se_aplican`.
     for _clave_r, _valor_r in _topes_etapa(etapa, req, der_efectiva,
                                            peso_adulto_esperado_kg,
-                                           factor_premios).items():
+                                           factor_premios,
+                                           False).items():
         _actual_r = topes.get(_clave_r)
         if _actual_r is None or _valor_r < _actual_r:
             topes[_clave_r] = _valor_r

@@ -144,7 +144,23 @@ con alguna, casi siempre el error está en el cambio.
    final tira menús que el solver construyó bien. Y el techo que cede **se
    dice**, en `techos_del_libro_que_no_se_aplican` del propio menú: la función
    que los contaba existía desde el 8 de septiembre con el comentario «el techo
-   se cae, no en silencio» y **no la llamaba nadie**. Lo que cuesta está medido
+   se cae, no en silencio» y **no la llamaba nadie**.
+   ⚠️ **Y el techo no desaparece: SUBE hasta el suelo** (misma noche, y lo pidió
+   Elena leyendo el arreglo: «pero a ver, ¿y no se puede dar un menú que cumpla
+   el techo? seguro que sí»). Cumplirlo no se puede —el suelo está por encima,
+   es aritmética— pero **quedarse pegado a él sí**, y la primera versión no lo
+   hacía: el techo desaparecía y el menú se iba a 3746 cuando con 2778 le
+   bastaba. La holgura con la que sube es `HOLGURA_DEL_TECHO_QUE_SUBE` = 1,02 y
+   es **NUESTRA**, no de ninguna fuente: medido sobre tres cachorros de raza
+   grande y dos niveles de premios, con 1,005 salen **0 de 6** y con 1,02 salen
+   **6 de 6**. Y como es nuestra, **no puede dejar a un perro sin comer**:
+   `resolver` prueba con el techo apretado y, si no sale menú, lo suelta y
+   reintenta una vez — que es el comportamiento ya probado de antes. El calcio
+   de Cairo pasa de 3746 a **2824**, o sea 922 mg menos al día y a un 2,7 % del
+   consejo del libro en vez de a un 36 %. ⚠️ Y **el filtro final NO exige ese
+   techo subido**: es un número nuestro, y rechazar un menú por pasarse de algo
+   que nos hemos inventado sería darle rango de requisito — además de tirar
+   justo los menús que el plan B existe para poder dar. Lo que cuesta está medido
    y **está sin decidir** en `PREGUNTAS_ABIERTAS.md` P-37b: con premios al 10 %
    ese cachorro sale con 3746 mg de calcio, dentro del máximo duro de FEDIAF
    (4500) y por encima del 2750 que las dos fuentes caninas piden justo para
@@ -833,6 +849,41 @@ que es otra cosa y sigue siendo la única forma de que una cifra no mienta:
 `auditar_fediaf.py`, `auditar_transcripcion_fediaf.py`, `auditar_conversiones.py`,
 `auditar_citas.py`, `auditar_patologias.py`, `auditar_margen_profesional.py`,
 `auditar_catalogo.py` y `auditar_kober.py`.
+
+## Antes de fusionar: la app DE VERDAD contra el motor DE VERDAD
+
+**Escrito el 13 de septiembre de 2026, y lo pidió Elena el día que producción
+estuvo rota sin que nada saltara:**
+
+> «a partir de ahora cuando hagas PR y fusiones tienes que hacer pruebas para
+> todo tipo de etapas y todo tipo de perros con todo tipo de patologías en la
+> app real con las cuentas de prueba, en veterinario y usuario, para ver si
+> falla algo»
+
+⚠️ **Y el motivo está medido: ese día había 101 bloques del motor en verde y 550
+pruebas de la app en verde, y la app no daba UN SOLO MENÚ.** Cairo, el cachorro
+de Elena, se quedaba sin comer y ninguna de las dos baterías podía verlo.
+
+**Por qué ninguna de las dos lo ve, y es estructural:**
+
+| | Qué prueba | Qué NO puede ver |
+|---|---|---|
+| `pruebas_completas.py` | el motor, por dentro y por sus endpoints | lo que la app le MANDA de verdad |
+| `tests/*.spec.js` de `canislab-web` | la app, contra un motor **de mentira** que siempre devuelve menú | que el motor de verdad diga que no |
+
+Las dos juntas dejan un hueco del tamaño exacto del fallo: **una petición que la
+app manda bien y el motor contesta «no hay menú» por un motivo real.** Eso no es
+un fallo de nadie de los dos y solo se ve juntándolos.
+
+**Lo que hay que ejecutar antes de fusionar** es `tests/motor-de-verdad.spec.js`
+en `canislab-web`: levanta la app y la deja hablar con la API **desplegada**, y
+recorre la matriz de etapas × tamaños × premios × patologías, en los dos roles.
+No sustituye a nada: se suma.
+
+⚠️ **La mitad de la CUENTA sigue siendo de mentira**, y va declarado: el
+Supabase real necesita una credencial que no vive en el repo. Lo que se prueba
+de verdad es el motor, que es donde estaba el fallo. El día que se ponga la
+credencial como secreto de GitHub, esa mitad también.
 
 ## Cómo se prueba
 

@@ -1960,14 +1960,20 @@ igual, y el menú **dice** que el techo ha cedido
 (`techos_del_libro_que_no_se_aplican`).
 
 **LO QUE HAY QUE DECIDIR, Y NO LO DECIDE EL MOTOR.** Medido sobre el menú que
-sale: con premios al 10 % el calcio se queda en **3746 mg/1000 kcal** — dentro
-del 4500 de FEDIAF y bastante por encima del 2750 que las dos fuentes caninas
+sale: con premios al 10 % el calcio se queda en **2824 mg/1000 kcal** — dentro
+del 4500 de FEDIAF y un 2,7 % por encima del 2750 que las dos fuentes caninas
 recomiendan justo para este perro y justo por la panosteitis. O sea que el
-arreglo devuelve el menú y **paga un precio en el nutriente donde más pesa**.
+arreglo devuelve el menú y **paga un precio en el nutriente donde más pesa**,
+aunque el precio es ahora el mínimo que la aritmética permite (la primera
+versión, con el techo desapareciendo del todo, pagaba 3746).
 
 Las dos salidas:
 
-1. **La de hoy**: el techo cede, sale menú, y se dice. No inventa ninguna cifra.
+1. **La de hoy**: el techo **sube hasta el suelo** y se queda pegado a él, sale
+   menú, y se dice a cuánto ha subido. El calcio de Cairo se queda en **2824**
+   —a un 2,7 % del consejo del libro— en vez de los 3746 de la primera versión.
+   La holgura con la que sube (2 %) es **nuestra** y va medida; y como es
+   nuestra, si con ella no saliera menú el motor la suelta y reintenta.
 2. **Topar los premios al 9 % en el cachorro de raza grande** y decírselo al
    dueño, para que las dos cifras quepan. ⚠️ Eso es cambiar lo que el dueño ha
    declarado que come su perro, y el motor no sabe si de verdad come menos
