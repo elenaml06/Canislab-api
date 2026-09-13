@@ -126,6 +126,29 @@ con alguna, casi siempre el error está en el cambio.
    existe menú, se sueltan las proporciones de BARF (hueso 20-60 %, etc.),
    que son criterio nuestro y no de FEDIAF. Nunca los requisitos ni la
    seguridad. Ver `_escalera_de_relajacion()`.
+3-ter. **Un techo del LIBRO cede ante un suelo de FEDIAF, y se dice** (13 de
+   septiembre). No es nuevo —`topes_de_la_etapa` lo hace desde el 8 de
+   septiembre, y es lo que salva al perro a dieta— pero hasta hoy comparaba
+   contra un suelo que NO es el que aplica el solver, y eso dejó a un perro de
+   verdad sin comer. **CASO REAL, EN PRODUCCIÓN**: Cairo, el cachorro de Elena,
+   American Staffordshire de casi 7 meses que pesará 31 kg de adulto, **no
+   sacaba ningún menú en cuanto se declaraban premios**. Se cruzaban dos cifras
+   de calcio y las dos son correctas: el **suelo 2500** de la nota b de FEDIAF
+   (cachorro que pasará de 15 kg) contra el **techo 2750** de la Tabla 17-1 de
+   SACN5 (el que pasará de 25 kg). Entre los dos hay un 10 % de sitio y los
+   premios se lo comen, porque **suben el suelo y no el techo** (regla 3-bis).
+   El suelo contra el que se mide un techo tiene que ser **el que de verdad se
+   aplica** —`recomendaciones.suelo_que_de_verdad_se_aplica`: la fila escalada,
+   MÁS la nota b, MÁS los premios—, y eso vale para el solver y para
+   `_tope_patologia_roto` a la vez, con el MISMO `factor_premios`, o el filtro
+   final tira menús que el solver construyó bien. Y el techo que cede **se
+   dice**, en `techos_del_libro_que_no_se_aplican` del propio menú: la función
+   que los contaba existía desde el 8 de septiembre con el comentario «el techo
+   se cae, no en silencio» y **no la llamaba nadie**. Lo que cuesta está medido
+   y **está sin decidir** en `PREGUNTAS_ABIERTAS.md` P-37b: con premios al 10 %
+   ese cachorro sale con 3746 mg de calcio, dentro del máximo duro de FEDIAF
+   (4500) y por encima del 2750 que las dos fuentes caninas piden justo para
+   prevenir la panosteitis. Lo vigila el BLOQUE 101.
 3-bis. **Lo que el perro come fuera de la ración se cuenta, no se ignora**
    (11 de septiembre). Los premios, las sobras de la mesa y los suplementos
    que da el dueño por su cuenta llegan por `kcal_de_premios` (el número) o

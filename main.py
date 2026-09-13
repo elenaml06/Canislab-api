@@ -326,9 +326,32 @@ def _valor_num(v):
         return None
 
 
+def _factor_premios_de_kcal(der, kcal_de_premios):
+    """`der / der_racion`, que es por lo que suben los suelos con premios.
+
+    ⚠️ TIENE QUE DAR LO MISMO QUE `_factor_premios` DE `motor_completo`, que es
+    quien lo aplica dentro del solver. Es la misma cuenta escrita en dos sitios
+    porque el filtro final no llama al solver, y por eso la vigila el BLOQUE
+    104: si se separan, este filtro tiraría menús que el solver construyó bien.
+    """
+    try:
+        der = float(der or 0.0)
+        premios = float(kcal_de_premios or 0.0)
+    except (TypeError, ValueError):
+        return 1.0
+    racion = der - premios
+    return (der / racion) if (der > 0 and racion > 0) else 1.0
+
+
+def _factor_premios_de(datos):
+    """Lo mismo, leyendo los premios de la petición como los lee el solver."""
+    return _factor_premios_de_kcal(getattr(datos, "der_objetivo", None),
+                                   _kcal_de_premios(datos))
+
+
 def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto",
                          req=None, der_efectiva=None,
-                         peso_adulto_esperado_kg=None):
+                         peso_adulto_esperado_kg=None, factor_premios=1.0):
     """¿Este menú se pasa de algún tope por patología? Devuelve la lista de
     los que se pasa, vacía si está bien.
 
@@ -402,8 +425,15 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto",
     # y al reves, que es peor: tiraria menus buenos.
     from recomendaciones import topes_de_la_etapa as _topes_etapa
     _del_libro = set()
+    # ⚠️ Y CON EL FACTOR DE LOS PREMIOS (13 de septiembre), por lo mismo que con
+    # `req`, `der_efectiva` y el peso adulto: el techo del libro CEDE cuando el
+    # suelo que de verdad se aplica lo supera, y los premios suben ese suelo.
+    # Si el solver lo deja caer y este filtro lo midiera igualmente, tiraría
+    # menús que el solver construyó bien -- y al revés, que es peor. Es el
+    # fallo de Cairo visto desde el otro lado.
     for _clave_r, _valor_r in _topes_etapa(etapa, req, der_efectiva,
-                                           peso_adulto_esperado_kg).items():
+                                           peso_adulto_esperado_kg,
+                                           factor_premios).items():
         _actual_r = topes.get(_clave_r)
         if _actual_r is None or _valor_r < _actual_r:
             topes[_clave_r] = _valor_r
@@ -565,7 +595,8 @@ def _la_via_rapida_rompe_un_limite(gramos, al, req, datos, peso_objetivo_kg):
         gramos, al, getattr(datos, "patologias", None), etapa, req=req,
         der_efectiva=der_efectiva_de(datos.der_objetivo,
                                      peso_objetivo_kg or datos.peso_perro_kg),
-        peso_adulto_esperado_kg=pa)
+        peso_adulto_esperado_kg=pa,
+        factor_premios=_factor_premios_de(datos))
     if roto:
         return f"topes de patologia o del libro: {roto}"
     corto = _minimo_calcio_raza_grande_roto(gramos, al, req, etapa, pa)
@@ -1111,7 +1142,25 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
     topes_rotos = _tope_patologia_roto(
         gramos, al, patologias, etapa, req=req,
         der_efectiva=der_efectiva_de(der, peso_objetivo_kg or peso_perro_kg),
-        peso_adulto_esperado_kg=peso_adulto_esperado_kg)
+        peso_adulto_esperado_kg=peso_adulto_esperado_kg,
+        factor_premios=_factor_premios_de_kcal(der, kcal_de_premios))
+    # ⚠️ Y LOS TECHOS DEL LIBRO QUE NO SE HAN PODIDO APLICAR A ESTE PERRO
+    #    (13 de septiembre de 2026). Se DICEN, y hasta hoy no se decían: la
+    #    función que los cuenta existía desde el 8 de septiembre, con el
+    #    comentario «el techo se cae, no en silencio», y NO LA LLAMABA NADIE.
+    #
+    #    Caso real que lo destapó: Cairo, el cachorro de Elena. Su techo de
+    #    calcio del libro (2750, SACN5 Tabla 17-1) queda por debajo del suelo
+    #    que FEDIAF le exige en cuanto hay premios (2500 de la nota b, subido
+    #    un 11 % por la dilución), así que el techo cede -- y quien firma
+    #    tiene derecho a saber que el consejo del libro no se le está
+    #    aplicando a ese perro. Va por el mismo sitio que todo lo demás que
+    #    se dice: dentro del menú, no en un log.
+    from recomendaciones import cedidos_ante_fediaf as _cedidos_libro
+    respuesta["techos_del_libro_que_no_se_aplican"] = _cedidos_libro(
+        etapa, req, der_efectiva_de(der, peso_objetivo_kg or peso_perro_kg),
+        peso_adulto_esperado_kg,
+        _factor_premios_de_kcal(der, kcal_de_premios))
     calcio_corto = _minimo_calcio_raza_grande_roto(gramos, al, req, etapa,
                                                    peso_adulto_esperado_kg)
     ratio_pasado = _ratio_cap_raza_grande_roto(gramos, al, req, etapa,
@@ -5869,7 +5918,8 @@ def _estado_de_la_racion(datos):
         gramos, al, datos.patologias, datos.etapa_requisitos, req=req,
         der_efectiva=der_efectiva_de(datos.der_objetivo,
                                      _peso_de_referencia(datos)[0]),
-        peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None))
+        peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None),
+        factor_premios=_factor_premios_de(datos))
     salida["huecos"] = _huecos_en_cristiano(salida["ficha"])
     # ⚠️ DE DONDE SALE CADA TECHO DE FEDIAF, Y CUAL ES EL OTRO (10 septiembre).
     #
@@ -6481,7 +6531,8 @@ def pauta_firmar(datos: PeticionFirmar):
     topes_rotos = _tope_patologia_roto(
         gramos, al, datos.patologias, datos.etapa_requisitos, req=req,
         der_efectiva=der_efectiva_de(datos.der_objetivo, peso_ref),
-        peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None))
+        peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None),
+        factor_premios=_factor_premios_de(datos))
 
     # ⚠️ NO SE FIRMA LO QUE NO ESTÁ VERDE. Es la regla 1 leída donde más
     # importa: "ningún menú sale sin verificar, y si no está verde no se

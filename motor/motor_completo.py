@@ -1070,8 +1070,15 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # vez de 2750), que para el es papel mojado -- el mismo olvido que el 7 de
     # septiembre dejo sin efecto el minimo de calcio reforzado en la via rapida.
     from recomendaciones import topes_de_la_etapa as _topes_de_la_etapa
+    # ⚠️ Y CON EL FACTOR DE LOS PREMIOS (13 de septiembre). El techo del libro
+    # cede cuando el suelo que de verdad se aplica lo supera, y los premios
+    # suben ese suelo: sin pasarlo, un cachorro de raza grande con premios se
+    # quedaba SIN MENÚ -- el suelo de calcio de la nota b (2500) escalado un
+    # 11 % son 2778 contra el techo de 2750 de SACN5. Es el caso de Cairo, el
+    # perro de Elena, encontrado en producción el 13 de septiembre.
     for _clave_r, _valor_r in _topes_de_la_etapa(
-            etapa, req, _der_ef, peso_adulto_esperado_kg).items():
+            etapa, req, _der_ef, peso_adulto_esperado_kg,
+            _factor_premios).items():
         _actual_r = topes_patologia.get(_clave_r)
         topes_patologia[_clave_r] = (_valor_r if _actual_r is None
                                      else min(_actual_r, _valor_r))

@@ -15232,6 +15232,159 @@ print(f"  3 pesos adultos con menú · el fallo puesto lo deja sin menú · "
       f"{len(_sin100.get('limites_sin_aplicar') or [])} límites declarados cuando falta el dato")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
+
+# ============================================================
+# BLOQUE 101 — EL CACHORRO DE RAZA GRANDE AL QUE LE DAN PREMIOS
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (13 de septiembre de 2026). CASO REAL, EN PRODUCCIÓN,
+# encontrado por Elena con su propio perro: Cairo, American Staffordshire,
+# cachorro de casi 7 meses, 20 kg, que pesará unos 31 de adulto.
+#
+#     «LA REALIDAD ES QUE DESDE VERCEL Y RAWKU.APP NO SE GENERA NINGÚN MENÚ»
+#
+# No salía menú EN CUANTO SE DECLARABAN PREMIOS, y el motor decía «quita alguna
+# restricción y vuelve a probar» -- que no sirve de nada, porque no había
+# ninguna que quitar.
+#
+# SE CRUZABAN DOS CIFRAS DE CALCIO, Y LAS DOS SON CORRECTAS:
+#
+#     suelo  2500   FEDIAF, Tabla III-3b nota b: cachorro que pasará de 15 kg
+#     techo  2750   SACN5 Tabla 17-1, columna del que pasará de 25 kg
+#
+# Entre las dos hay un 10 % de sitio, y los premios se lo comen: la ración se
+# formula con las kcal QUE QUEDAN y se le sigue exigiendo el día entero de
+# nutrientes (regla 3-bis), así que el SUELO sube por `der/der_racion` y el
+# techo no se mueve.
+#
+#     sin premios ...... 2500  cabe
+#     5 % .............. 2632  cabe, justo
+#     10 % ............. 2778  NO CABE   <- y el 10 % es lo que RECOMIENDA la fuente
+#     20 % ............. 3125  NO CABE
+#
+# LA REGLA YA ESTABA ESCRITA y no se aplicaba aquí: cuando el suelo de FEDIAF
+# supera un techo del libro, **el techo cede**, porque el suelo es un REQUISITO
+# y el techo una RECOMENDACIÓN. `topes_de_la_etapa` sabía hacerlo desde el 8 de
+# septiembre -- es lo que salva al perro a dieta -- y no lo hacía aquí por dos
+# motivos, los dos de la misma forma: MIRABA UN SUELO QUE NO ES EL QUE EL SOLVER
+# APLICA. Ni el 2500 reforzado de la nota b, ni los premios.
+#
+# LAS CINCO COSAS QUE VIGILA:
+#
+#   1. QUE EL CACHORRO DE RAZA GRANDE CON PREMIOS TENGA MENÚ, en los cuatro
+#      niveles. Es el caso de Cairo, tal cual.
+#   2. QUE EL SUELO QUE MIRA EL TECHO SEA EL QUE APLICA EL SOLVER. Se rehace la
+#      cuenta: nota b + premios, y se compara con `suelo_que_de_verdad_se_aplica`.
+#   3. QUE EL TECHO SOLO CEDA CUANDO TIENE QUE CEDER. Sin premios el techo de
+#      2750 SIGUE PUESTO -- si cediera siempre, el arreglo habría quitado un
+#      límite de la fuente a todos los cachorros de raza grande, que es peor que
+#      el fallo que arregla.
+#   4. QUE SE DIGA. `cedidos_ante_fediaf` existía desde el 8 de septiembre con
+#      el comentario «el techo se cae, no en silencio» y NO LA LLAMABA NADIE: el
+#      techo sí se caía en silencio. Ahora sale en el menú.
+#   5. QUE EL SOLVER Y EL FILTRO FINAL USEN EL MISMO FACTOR. Son dos cuentas
+#      escritas en dos ficheros (`motor_completo._factor_premios` y
+#      `main._factor_premios_de_kcal`) y si se separan, el filtro tira menús que
+#      el solver construyó bien -- la lección del 8 de septiembre.
+print("\n" + "=" * 60)
+print("=== BLOQUE 101: el cachorro de raza grande al que le dan premios ===")
+from recomendaciones import (topes_de_la_etapa as _topes101,
+                             suelo_que_de_verdad_se_aplica as _suelo101,
+                             cedidos_ante_fediaf as _cedidos101)
+from verificar import der_efectiva_de as _derefe101
+import main as _api101
+
+_CAIRO101 = {"modo": "automatico", "nombres_alimentos": [], "forzar_presencia": [],
+             "der_objetivo": 1581.0, "actividad": "normal",
+             "etapa_requisitos": "CachorroCrecimiento", "especies_excluidas": [],
+             "nombres_excluidos": [], "peso_perro_kg": 20.0, "patologias": [],
+             "categorias_excluidas": [], "peso_adulto_esperado_kg": 31.0,
+             "tamano": "Grande"}
+_NIVELES101 = ("ninguno", "alguno", "hasta_el_maximo", "mas_del_maximo")
+
+# --- 1. que salga menú en los cuatro niveles ---------------------------
+_resp101 = {}
+for _n101 in _NIVELES101:
+    _d101 = dict(_CAIRO101); _d101["premios_nivel"] = _n101
+    _r101 = _c_b5.post("/menu/v2", json=_d101).json()
+    _resp101[_n101] = _r101
+    if not _r101.get("factible"):
+        fallos.append(f"BLOQUE101: el cachorro de raza grande con premios «{_n101}» se queda SIN "
+                      f"MENÚ. Es el caso de Cairo: su suelo de calcio de la nota b (2500) sube "
+                      f"por la dilución de los premios y cruza el techo de 2750 que recomienda "
+                      f"SACN5. Cuando cruzan manda FEDIAF y el techo del libro cede -- es la "
+                      f"misma regla que salva al perro a dieta desde el 8 de septiembre")
+    elif _r101["ficha"]["semaforo"] != "verde":
+        fallos.append(f"BLOQUE101: con premios «{_n101}» sale menú pero el semáforo está en "
+                      f"{_r101['ficha']['semaforo']}. Ceder el techo del libro NO puede aflojar "
+                      f"ningún requisito de FEDIAF")
+
+# --- 2. el suelo que mira el techo es el que aplica el solver ----------
+_req101 = _api101.cargar_v2()[1]
+_deref101 = _derefe101(1581.0, 20.0)
+for _pct101, _esperado101 in ((0.0, 2500.0), (0.05, 2500 / 0.95), (0.10, 2500 / 0.90),
+                              (0.20, 2500 / 0.80)):
+    _f101 = 1.0 / (1.0 - _pct101)
+    _sale101 = _suelo101(_req101, "calcio", "CachorroCrecimiento", _deref101, 31.0, _f101)
+    if _sale101 is None or abs(_sale101 - _esperado101) > 1.0:
+        fallos.append(f"BLOQUE101: con premios al {_pct101*100:.0f} % el suelo de calcio que mira "
+                      f"el techo sale {_sale101} y la cuenta rehecha da {_esperado101:.0f} "
+                      f"(2500 de la nota b de FEDIAF, escalado por der/der_racion). Si mira otro "
+                      f"número, el techo cede cuando no toca o no cede cuando toca")
+# y sin peso adulto NO se aplica la nota b: el suelo es el 2000 de la fila
+_sin101 = _suelo101(_req101, "calcio", "CachorroCrecimiento", _deref101, None, 1.0)
+if _sin101 is None or _sin101 > 2400:
+    fallos.append(f"BLOQUE101: sin `peso_adulto_esperado_kg` el suelo de calcio sale {_sin101}. "
+                  f"La nota b es SOLO para el cachorro que pasará de 15 kg de adulto: aplicarla "
+                  f"a todos sería subirle el suelo a un yorkshire")
+
+# --- 3. el techo solo cede cuando tiene que ceder ----------------------
+_sin_premios101 = _topes101("CachorroCrecimiento", _req101, _deref101, 31.0, 1.0)
+if _sin_premios101.get("calcio") != 2750.0:
+    fallos.append(f"BLOQUE101: SIN premios el techo de calcio del libro tenía que seguir puesto "
+                  f"en 2750 y sale {_sin_premios101.get('calcio')}. Si cede siempre, el arreglo "
+                  f"ha quitado un límite de la fuente a TODOS los cachorros de raza grande -- "
+                  f"que es peor que el fallo que arregla")
+_con_premios101 = _topes101("CachorroCrecimiento", _req101, _deref101, 31.0, 1.0 / 0.90)
+if "calcio" in _con_premios101:
+    fallos.append(f"BLOQUE101: con premios al 10 % el techo de calcio sigue puesto en "
+                  f"{_con_premios101['calcio']} y su suelo es 2778. No cabe ningún menú entre "
+                  f"los dos, que es exactamente por lo que Cairo se quedaba sin menú")
+# y el del cachorro PEQUEÑO no se toca: su techo es 4250 y su suelo 2000
+_peq101 = _topes101("CachorroCrecimiento", _req101, _deref101, 12.0, 1.0 / 0.80)
+if _peq101.get("calcio") != 4250.0:
+    fallos.append(f"BLOQUE101: al cachorro que NO pasará de 25 kg le sale un techo de calcio de "
+                  f"{_peq101.get('calcio')} y tenía que ser 4250. Su suelo es el 2000 de la fila "
+                  f"—no le toca la nota b— así que ni con premios al 20 % llega a cruzarlo")
+
+# --- 4. que se diga ----------------------------------------------------
+_dicho101 = _resp101["hasta_el_maximo"].get("techos_del_libro_que_no_se_aplican")
+if not _dicho101 or not any(x.get("clave") == "calcio" for x in _dicho101):
+    fallos.append("BLOQUE101: el techo de calcio del libro ha cedido y el menú NO lo dice. "
+                  "`cedidos_ante_fediaf` existía desde el 8 de septiembre con el comentario «el "
+                  "techo se cae, no en silencio» y no la llamaba nadie: el techo sí se caía en "
+                  "silencio. Quien firma tiene derecho a saber que el consejo del libro no se le "
+                  "está aplicando a este perro")
+_no_dicho101 = _resp101["ninguno"].get("techos_del_libro_que_no_se_aplican")
+if _no_dicho101:
+    fallos.append(f"BLOQUE101: sin premios no ha cedido ningún techo y el menú dice que sí "
+                  f"({_no_dicho101}). Un aviso que sale siempre no avisa de nada")
+
+# --- 5. el mismo factor en el solver y en el filtro final --------------
+import inspect as _insp101
+_src101 = _insp101.getsource(_api101._factor_premios_de_kcal)
+for _der101, _prem101 in ((1581.0, 158.1), (1000.0, 0.0), (2000.0, 400.0), (500.0, 500.0),
+                          (0.0, 0.0)):
+    _suyo101 = _api101._factor_premios_de_kcal(_der101, _prem101)
+    _racion101 = _der101 - _prem101
+    _motor101 = (_der101 / _racion101) if (_der101 > 0 and _racion101 > 0) else 1.0
+    if abs(_suyo101 - _motor101) > 1e-9:
+        fallos.append(f"BLOQUE101: con der={_der101} y premios={_prem101} el filtro final calcula "
+                      f"un factor de {_suyo101} y el solver {_motor101}. Son dos cuentas escritas "
+                      f"en dos ficheros: si se separan, este filtro tira menús que el solver "
+                      f"construyó bien")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
 _cerrar_el_ultimo_bloque()
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)
