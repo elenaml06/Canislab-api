@@ -3851,6 +3851,24 @@ _MARGENES_B25 = MARGENES
 from accesibles import ACCESIBLES as _ACCESIBLES_B25
 _CATS_COMIDA_B25 = set(_ACCESIBLES_B25)
 
+# el peldaño de cada menú, y un índice para poder mirarlo por su etiqueta
+import main as _main_b25
+_peldanos_b25 = {_k: _e.get("peldano") for _k, _e in _CAT_B25.items()}
+for _k_b25, _l_b25 in _VAR_B25.items():
+    for _v_b25 in _l_b25:
+        _peldanos_b25[_k_b25 + "/" + _v_b25.get("proteina", "?")] = _v_b25.get("peldano")
+
+# ⚠️ Y QUE EL PELDAÑO ESTÉ ESCRITO. Un menú sin `peldano` no se puede comprobar
+# contra nada: se mediría contra el primer peldaño y, si salió de uno más abajo,
+# el fallo sería del que mide. Hasta el 13 de septiembre ninguna entrada lo traía.
+_sin_peldano_b25 = [_k for _k, _p in _peldanos_b25.items() if not _p]
+if _sin_peldano_b25:
+    fallos.append(f"BLOQUE25: {len(_sin_peldano_b25)} de los 216 menús precalculados no dicen en "
+                  f"qué PELDAÑO salieron. Sin eso no se pueden comprobar sus proporciones: si "
+                  f"bajó de peldaño se le mediría contra los márgenes del primero. Se arregla "
+                  f"regenerando (`python3 regenerar_catalogo.py`). Los primeros: "
+                  + ", ".join(_sin_peldano_b25[:5]))
+
 _avisados_b25 = 0
 for _origen_b25, _menus_b25 in (("catálogo", [(_k, _e["gramos"]) for _k, _e in _CAT_B25.items()]),
                                 ("variante", [(_k + "/" + _v.get("proteina", "?"), _v["gramos"])
@@ -3867,7 +3885,31 @@ for _origen_b25, _menus_b25 in (("catálogo", [(_k, _e["gramos"]) for _k, _e in 
         _comida_b25 = sum(_porcat_b25.values())
         if not _comida_b25:
             continue
-        for _c_b25, (_mn_b25, _mx_b25) in _MARGENES_B25.items():
+        # ⚠️ LOS MÁXIMOS SE MIDEN CONTRA EL PELDAÑO EN QUE SALIÓ EL MENÚ, no
+        # contra el primero. Desde el 13 de septiembre `regenerar_catalogo.py`
+        # recorre `_escalera_de_relajacion()` como hace la API — antes solo
+        # probaba el primer peldaño y por eso el catálogo negaba menús que la API
+        # sí entrega —, así que un menú puede venir legítimamente de un peldaño
+        # que SUELTA un máximo de categoría. El último lo hace: es el que se añadió
+        # el 29 de agosto para la pancreatitis, y soltar un máximo nuestro es lo
+        # que la regla 3 autoriza.
+        #
+        # Medirlo contra el primer peldaño acusaría a un menú correcto, y el
+        # peldaño está escrito en la propia entrada: no hay que adivinarlo. Los
+        # márgenes de cada peldaño se leen de `main._peldano_por_clave`, que es de
+        # donde los lee el motor — no de una segunda copia aquí, que es el fallo
+        # que este fichero lleva avisado en veinte sitios.
+        _pel_b25 = _peldanos_b25.get(_clave_b25)
+        _marg_b25 = _MARGENES_B25
+        if _pel_b25 and _pel_b25 != _main_b25.PELDANO_ESTRICTO:
+            _resuelto_b25 = _main_b25._peldano_por_clave(_pel_b25)
+            if _resuelto_b25:
+                _marg_b25 = _resuelto_b25[0]
+            else:
+                fallos.append(f"BLOQUE25: el menú '{_clave_b25}' dice haber salido en el peldaño "
+                              f"'{_pel_b25}', que no existe en `_escalera_de_relajacion()`. Un "
+                              f"peldaño inventado deja sus proporciones sin comprobar contra nada")
+        for _c_b25, (_mn_b25, _mx_b25) in _marg_b25.items():
             _frac_b25 = _porcat_b25.get(_c_b25, 0.0) / _comida_b25
             _holgura = max(0.05, _mx_b25 * 0.25)
             if _frac_b25 > _mx_b25 + _holgura and _avisados_b25 < 6:
