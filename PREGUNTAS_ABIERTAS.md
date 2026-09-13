@@ -710,13 +710,29 @@ probablemente subir antes el techo.
 
 **La pregunta:** ¿se queda el fósforo del oxalato solo con techo, o lleva suelo?
 
-### P-14 · FEDIAF publica la curva de crecimiento como ecuación, y el motor usa una copia divulgativa
+**REDUCIDA el 13 de septiembre, y la reduce el propio motor.** La pregunta estaba
+mal planteada por mi parte: **el oxalato YA lleva suelo de fósforo**. No el de
+SACN5 —los 750 de la Tabla 40-5 están escritos y no se aplican porque no pueden
+cambiar nada— sino el de FEDIAF, que es **1160 mg/1000 kcal** y es más alto.
+Comprobado: el motor aplica hoy techo 1500 y suelo 1160, o sea una ventana de
+340 mg.
+
+Así que lo que queda no es «¿lleva suelo?» sino una sola cosa: **¿hay que subir
+ese suelo de 1160 al 1500-2000 de Fascetti?** Y ahí sigue mandando la medida de
+arriba: los menús salen a 1498,x, así que **cualquier suelo por encima de 1160
+empieza a apretar y uno de 1500 deja al oxalato sin menú**. Si la respuesta es
+que sí, hay que subir el techo antes, y eso ya no es una cifra: es elegir entre
+SACN5 y Fascetti, que es exactamente lo que decide un clínico. **Dueño: Cris
+Carles.**
+
+### ~~P-14 · FEDIAF publica la curva de crecimiento como ecuación, y el motor usa una copia divulgativa~~ · **CERRADA el 13 de septiembre**
 
 | | |
 |---|---|
-| **Dueño** | **Elena** (toca los dos repos y el contrato del DER) |
-| **Bloquea** | No, pero sobrealimenta al cachorro de raza grande |
-| **Abierta desde** | 11 de septiembre de 2026, releyendo FEDIAF entera |
+| **Dueño** | — |
+| **Bloquea** | No |
+| **Abierta desde** | 11 de septiembre de 2026, releyendo FEDIAF entera · **cerrada el 13** |
+| **Qué la cerró** | La mitad que faltaba —llevar la Tabla VII-8a al frontend— **ya estaba hecha** desde el 12 de septiembre, cuando se quitó el recorte por raza: `src/der.js` tiene las cinco ecuaciones en `CURVA_FEDIAF_VII_8A` y las usa para el cachorro mestizo sin peso adulto, exactamente como pedía esta pregunta. Estaba resuelta en el motor y abierta en el registro: **una pregunta zombi**, que es justo lo que este fichero existe para impedir. Comprobado el 13 de septiembre en los dos repos, y el contrato del DER —146 casos, uno de ellos con peso adulto Y edad a la vez, que es el que ejerce la curva en los dos lados— sale verde en los dos |
 
 `der.py` estima el peso adulto de un cachorro con `CURVA_CRECIMIENTO`, una tabla
 cuyo propio comentario dice que sale de *«reproducciones divulgativas»* de las
@@ -773,7 +789,7 @@ reales y hay que regenerar `der_casos.json` en los dos repos.
 
 ---
 
-### P-15 · FEDIAF dice dos veces que el BCS ideal es 4-5, y el motor toma 5
+### ~~P-15 · FEDIAF dice dos veces que el BCS ideal es 4-5, y el motor toma 5~~ · **CERRADA el 13 de septiembre**
 
 | | |
 |---|---|
@@ -794,6 +810,18 @@ enfermedad crónica, con los perros restringidos entre 4/9 y 5/9.
 
 **La pregunta:** ¿el 4/9 es ideal, y entonces no hay que subirle el objetivo, o
 se deja el 5 como neutro porque es el lado prudente?
+
+**CERRADA el 13 de septiembre, y la contestó la propia FEDIAF.** Se aplicó el 12:
+`BCS_IDEAL_MIN = 4` en los tres sitios a la vez —`verificar.py`, `der.py` y
+`src/bcs.js`—, así que dentro de la banda 4-5 el peso no se corrige y por debajo
+del 4 el destino es el 4 y no el 5. Antes, a un perro en BCS 4 se le subía el
+peso objetivo un 11 % contra lo que dice su propia guía dos veces. Estaba
+aplicado y la pregunta seguía abierta: **otra zombi**. Comprobado el 13 de
+septiembre en los tres ficheros.
+
+⚠️ Y el mismo día esa banda ganó un segundo uso que no tenía: es la que decide
+el ±10 % por condición corporal de un CACHORRO (P-37). O sea que este número, que
+parecía cosmético, ahora mueve las kcal de un cachorro en las dos direcciones.
 
 ---
 
