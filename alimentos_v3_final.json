@@ -1938,7 +1938,7 @@
    "linolenico": 0.008,
    "araquidonico": 25,
    "vitA": 0,
-   "vitD": 0,
+   "vitD": 2.15,
    "vitE": 0.35,
    "folato": 12.3,
    "niacina": 8.53,
@@ -2000,15 +2000,18 @@
   "sin_dato": [
    "lcarnitina",
    "manganeso",
-   "vitA",
-   "vitD"
+   "vitA"
   ],
   "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente.",
   "fuentes_id": {
-   "bedca": "2347"
+   "bedca": "2347",
+   "ciqual": "26044"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2347 · «Merluza fresca» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía."
+  },
+  "composicion_fuente": {
+   "vitD": "ciqual:26044 · «Merlu, cru» · columna «Vitamine D (µg/100 g)» = 2,15 → 2.15 ug · 2026-09-13. La fuente que manda NO TIENE CIFRA de este nutriente para este alimento -- BEDCA lo da como `TR` con la celda VACÍA, que es NO HAY CIFRA y no «trazas» (BLOQUE 51) --, así que se baja por la cadena de mandato hasta la primera que publica número, que es la regla de `fuentes_de_composicion.json`. Antes de bajar se agotó BEDCA: sus tres filas de merluza (2347 fresca, 825 congelada, 1174 pescadilla) dan `TR`."
   }
  },
  {
@@ -2025,7 +2028,7 @@
    "linolenico": 0.001493,
    "araquidonico": 32.835821,
    "vitA": 5,
-   "vitD": 0,
+   "vitD": 1.41,
    "vitE": 0.47,
    "folato": 12,
    "niacina": 2.4,
@@ -2087,8 +2090,7 @@
   },
   "sin_dato": [
    "cobre",
-   "lcarnitina",
-   "vitD"
+   "lcarnitina"
   ],
   "taurina_fuente": "Taurina = 31,4 mg/100g: Spitze et al. 2003, tabla 1, \"Cod\" = 314 mg/kg -> 31,4 mg/100g.",
   "humedad_g_100g": 81.2,
@@ -2096,12 +2098,14 @@
   "humedad_fdc": "171955",
   "fuentes_id": {
    "bedca": "2302",
-   "usda": "171955"
+   "usda": "171955",
+   "ciqual": "26043"
   },
   "composicion_fuente": {
    "araquidonico": "usda:171955 · «Fish, cod, Atlantic, raw» · columna «PUFA 20:4» = 0.022 G ×1000 · transferido por gramo de grasa: 0.022×1000×(1.0/0.67) → 32.835821 mg · 2026-09-13",
    "linoleico": "usda:171955 · «Fish, cod, Atlantic, raw» · columna «PUFA 18:2» = 0.005 G · transferido por gramo de grasa: 0.005×1×(1.0/0.67) → 0.007463 g · 2026-09-13",
-   "linolenico": "usda:171955 · «Fish, cod, Atlantic, raw» · columna «PUFA 18:3» = 0.001 G · transferido por gramo de grasa: 0.001×1×(1.0/0.67) → 0.001493 g · 2026-09-13"
+   "linolenico": "usda:171955 · «Fish, cod, Atlantic, raw» · columna «PUFA 18:3» = 0.001 G · transferido por gramo de grasa: 0.001×1×(1.0/0.67) → 0.001493 g · 2026-09-13",
+   "vitD": "ciqual:26043 · «Cabillaud, cru» · columna «Vitamine D (µg/100 g)» = 1,41 → 1.41 ug · 2026-09-13. La fuente que manda NO TIENE CIFRA de este nutriente para este alimento -- BEDCA lo da como `TR` con la celda VACÍA, que es NO HAY CIFRA y no «trazas» (BLOQUE 51) --, así que se baja por la cadena de mandato hasta la primera que publica número, que es la regla de `fuentes_de_composicion.json`. Antes de bajar se agotó BEDCA: la fila 2302 da `TR`."
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:171955 · «Fish, cod, Atlantic, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
@@ -4990,7 +4994,7 @@
    "linolenico": 1.6,
    "araquidonico": 0,
    "vitA": 0,
-   "vitD": 0,
+   "vitD": 0.0,
    "vitE": 56,
    "folato": 0,
    "niacina": 0,
@@ -5043,8 +5047,7 @@
    "tirosina",
    "treonina",
    "triptofano",
-   "valina",
-   "vitD"
+   "valina"
   ],
   "purinas_bases": {
    "adenina": 0.0,
@@ -5062,7 +5065,8 @@
   "taurina_fuente": "Taurina = 0: es grasa extraida (aceite/manteca), sin la fraccion soluble en agua del tejido de origen -- mismo argumento que ya usa este catalogo para su proteina = 0.",
   "lcarnitina_fuente": "L-carnitina = 0: mismo argumento que la taurina -- la carnitina es hidrosoluble y no queda en la grasa extraida.",
   "fuentes_id": {
-   "bedca": "2541"
+   "bedca": "2541",
+   "usda": "171025"
   },
   "fuentes_id_porque": "⚠️ EMPAREJADO POR EL PERFIL DE ÁCIDOS GRASOS, NO POR LA HUELLA DE SIEMPRE. Un aceite no tiene huella: proteína 0, grasa ~100 y agua 0 describen a los diez aceites del catálogo por igual, y por eso `fijar_identificadores.py` se niega a dar un SEGURO a cualquier ficha con ≥80 % de grasa (su función `sin_huella`). Lo que SÍ los distingue es el linoleico (ω-6) contra el linolénico (ω-3), que es el ancla de `UNIDADES.md`. BEDCA 2541 «Aceite de girasol»: linoleico 57,53 · linolénico 1,6 · EPA 0,04 · vitE 56 — exactas. Es el ancla del BLOQUE 26.",
   "cero_verificado": {
@@ -5082,9 +5086,13 @@
    "vitB12": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el vitB12 no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "vitB6": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el vitB6 no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "yodo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2541 · «Aceite de girasol» · columna «ioduro» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
-   "zinc": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el zinc no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla."
+   "zinc": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el zinc no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
+   "vitD": "Cero PUBLICADO por la primera fuente de la cadena que mide este nutriente, comprobado el 2026-09-13: usda:171025 · «Oil, sunflower, linoleic, (approx. 65%)» · columna «Vitamin D (D2 + D3)» = 0. La fuente que manda NO TIENE CIFRA de este nutriente para este alimento -- BEDCA lo da como `TR` con la celda VACÍA, que es NO HAY CIFRA y no «trazas» (BLOQUE 51) --, así que se baja por la cadena de mandato hasta la primera que publica número, que es la regla de `fuentes_de_composicion.json`. Antes de bajar se agotó BEDCA: la fila 2541 da `TR`. CIQUAL 17440 «Huile de tournesol» da «< 0,25», que es un LÍMITE DE DETECCIÓN y no una cifra, igual que el `TR` de BEDCA. Por eso se baja al mandato 4, que sí da número. Y BEDCA declara `LZ` (cero lógico) la vitamina A del MISMO aceite: la casa dice que una vitamina liposoluble animal en un aceite de semilla refinado es cero por construcción."
   },
-  "nota_datos": " ⚠️ 13 sep 2026 — hierro, niacina, proteina, riboflavina, tiamina, vitB12, vitB6, zinc: el barrido los declaró HUECO porque BEDCA los da como `TR` con la celda vacía, y eso era un ERROR. En una grasa pura ese cero es CIERTO por composición, y no era inofensivo: un hueco se imputa al percentil 90 de su familia contra los máximos, y la familia «Extras» incluye semillas con 17 g de proteína. Con la proteína de dos aceites declarada hueco, el chihuahua de 3 kg con patología RENAL se quedaba SIN MENÚ en los seis peldaños de la escalera. Pasan a `cero_verificado`."
+  "nota_datos": " ⚠️ 13 sep 2026 — hierro, niacina, proteina, riboflavina, tiamina, vitB12, vitB6, zinc: el barrido los declaró HUECO porque BEDCA los da como `TR` con la celda vacía, y eso era un ERROR. En una grasa pura ese cero es CIERTO por composición, y no era inofensivo: un hueco se imputa al percentil 90 de su familia contra los máximos, y la familia «Extras» incluye semillas con 17 g de proteína. Con la proteína de dos aceites declarada hueco, el chihuahua de 3 kg con patología RENAL se quedaba SIN MENÚ en los seis peldaños de la escalera. Pasan a `cero_verificado`.",
+  "composicion_fuente": {
+   "vitD": "usda:171025 · «Oil, sunflower, linoleic, (approx. 65%)» · columna «Vitamin D (D2 + D3)» = 0 → 0 ug · 2026-09-13. La fuente que manda NO TIENE CIFRA de este nutriente para este alimento -- BEDCA lo da como `TR` con la celda VACÍA, que es NO HAY CIFRA y no «trazas» (BLOQUE 51) --, así que se baja por la cadena de mandato hasta la primera que publica número, que es la regla de `fuentes_de_composicion.json`. Antes de bajar se agotó BEDCA: la fila 2541 da `TR`. CIQUAL 17440 «Huile de tournesol» da «< 0,25», que es un LÍMITE DE DETECCIÓN y no una cifra, igual que el `TR` de BEDCA. Por eso se baja al mandato 4, que sí da número. Y BEDCA declara `LZ` (cero lógico) la vitamina A del MISMO aceite: la casa dice que una vitamina liposoluble animal en un aceite de semilla refinado es cero por construcción."
+  }
  },
  {
   "nombre": "Aceite de linaza",
@@ -6782,7 +6790,7 @@
    "linolenico": 0,
    "araquidonico": 20,
    "vitA": 15,
-   "vitD": 0,
+   "vitD": 0.36,
    "vitE": 1.2,
    "folato": 5,
    "niacina": 2.8,
@@ -6836,8 +6844,7 @@
    "anio": "1976"
   },
   "sin_dato": [
-   "lcarnitina",
-   "vitD"
+   "lcarnitina"
   ],
   "taurina_fuente": "Taurina = 356 mg/100g: Spitze et al. 2003, tabla 1, \"Squid\" = 3560 +/- 950 mg/kg -> 356 mg/100g.",
   "humedad_g_100g": 78.6,
@@ -6849,7 +6856,8 @@
   },
   "composicion_fuente": {
    "cobre": "ciqual:10001 · «Calmar ou calamar ou encornet, cru» · columna «Cuivre (mg/100 g)» = 0.15 mg → 0.15 mg · 2026-09-13",
-   "yodo": "ciqual:10001 · «Calmar ou calamar ou encornet, cru» · columna «Iode (µg/100 g)» = 12.8 ug → 12.8 ug · 2026-09-13"
+   "yodo": "ciqual:10001 · «Calmar ou calamar ou encornet, cru» · columna «Iode (µg/100 g)» = 12.8 ug → 12.8 ug · 2026-09-13",
+   "vitD": "ciqual:10001 · «Calmar ou calamar ou encornet, cru» · columna «Vitamine D (µg/100 g)» = 0,36 → 0.36 ug · 2026-09-13. La fuente que manda NO TIENE CIFRA de este nutriente para este alimento -- BEDCA lo da como `TR` con la celda VACÍA, que es NO HAY CIFRA y no «trazas» (BLOQUE 51) --, así que se baja por la cadena de mandato hasta la primera que publica número, que es la regla de `fuentes_de_composicion.json`. Antes de bajar se agotó BEDCA: la fila 807 da `TR`. USDA 174223 «Mollusks, squid, mixed species, raw» da 0."
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:807 · «Calamar, crudo» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
@@ -7130,7 +7138,7 @@
    "linolenico": 0.02,
    "araquidonico": 70,
    "vitA": 0,
-   "vitD": 0,
+   "vitD": 0.75,
    "vitE": 1.1,
    "folato": 11,
    "niacina": 5.5,
@@ -7194,15 +7202,18 @@
    "cobre",
    "lcarnitina",
    "manganeso",
-   "vitA",
-   "vitD"
+   "vitA"
   ],
   "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente.",
   "fuentes_id": {
-   "bedca": "2341"
+   "bedca": "2341",
+   "ciqual": "26058"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2341 · «Lenguado» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía."
+  },
+  "composicion_fuente": {
+   "vitD": "ciqual:26058 · «Sole, crue» · columna «Vitamine D (µg/100 g)» = 0,75 → 0.75 ug · 2026-09-13. La fuente que manda NO TIENE CIFRA de este nutriente para este alimento -- BEDCA lo da como `TR` con la celda VACÍA, que es NO HAY CIFRA y no «trazas» (BLOQUE 51) --, así que se baja por la cadena de mandato hasta la primera que publica número, que es la regla de `fuentes_de_composicion.json`. Antes de bajar se agotó BEDCA: la fila 2341 da `TR`. USDA 174196 «Fish, flatfish (flounder and sole species), raw» da 2,8: es un COMPUESTO de platija y lenguado, y manda CIQUAL, que tiene la fila del lenguado solo."
   }
  },
  {
@@ -7219,7 +7230,7 @@
    "linolenico": 0.1,
    "araquidonico": 20,
    "vitA": 0,
-   "vitD": 0,
+   "vitD": 5.59,
    "vitE": 0.5,
    "folato": 3,
    "niacina": 6.7,
@@ -7283,15 +7294,18 @@
    "cobre",
    "lcarnitina",
    "manganeso",
-   "vitA",
-   "vitD"
+   "vitA"
   ],
   "taurina_fuente": "Taurina = 36,7 mg/100g: no hay dato propio de esta especie -- se usa \"Whitefish, orange roughy fillet\" (Spitze et al. 2003) = 367 (334-400) mg/kg -> 36,7 mg/100g, como aproximacion de pescado blanco magro en general. Es una especie distinta (Hoplostethus atlanticus, de aguas profundas), asi que la confianza es BAJA -- se usa por ser la unica cifra de pescado blanco magro disponible en la fuente.",
   "fuentes_id": {
-   "bedca": "2344"
+   "bedca": "2344",
+   "ciqual": "26072"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2344 · «Lubina» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía."
+  },
+  "composicion_fuente": {
+   "vitD": "ciqual:26072 · «Bar commun ou loup, cru, sans précision» · columna «Vitamine D (µg/100 g)» = 5,59 → 5.59 ug · 2026-09-13. La fuente que manda NO TIENE CIFRA de este nutriente para este alimento -- BEDCA lo da como `TR` con la celda VACÍA, que es NO HAY CIFRA y no «trazas» (BLOQUE 51) --, así que se baja por la cadena de mandato hasta la primera que publica número, que es la regla de `fuentes_de_composicion.json`. Antes de bajar se agotó BEDCA: la fila 2344 da `TR`. USDA 175142 «Fish, sea bass, mixed species, raw» da 5,6 por su cuenta. Dos fuentes independientes en la misma cifra."
   }
  },
  {
@@ -7487,7 +7501,7 @@
    "linolenico": 0.01,
    "araquidonico": 50,
    "vitA": 70,
-   "vitD": 0,
+   "vitD": 0.5,
    "vitE": 2.1,
    "folato": 13,
    "niacina": 6.8,
@@ -7543,19 +7557,22 @@
   },
   "sin_dato": [
    "cobre",
-   "lcarnitina",
-   "vitD"
+   "lcarnitina"
   ],
   "taurina_fuente": "Taurina = 356 mg/100g: no hay dato propio de esta especie -- se usa \"Squid\" (Spitze et al. 2003) por familia (mismo grupo, cefalopodo), confianza MEDIA.",
   "humedad_g_100g": 80.2,
   "humedad_fuente": "USDA FoodData Central · Mollusks, octopus, common, raw",
   "humedad_fdc": "174218",
   "fuentes_id": {
-   "bedca": "2471"
+   "bedca": "2471",
+   "ciqual": "10018"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2471 · «Pulpo» · columna «fibra, dietetica total» = 0.0 g. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
    "linoleico": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2471 · «Pulpo» · columna «ácido graso 18:2» = 0.0 g. `value_type` MN, o sea una MEDIDA y no una celda vacía."
+  },
+  "composicion_fuente": {
+   "vitD": "ciqual:10018 · «Poulpe, cru» · columna «Vitamine D (µg/100 g)» = 0,5 → 0.5 ug · 2026-09-13. La fuente que manda NO TIENE CIFRA de este nutriente para este alimento -- BEDCA lo da como `TR` con la celda VACÍA, que es NO HAY CIFRA y no «trazas» (BLOQUE 51) --, así que se baja por la cadena de mandato hasta la primera que publica número, que es la regla de `fuentes_de_composicion.json`. Antes de bajar se agotó BEDCA: la fila 2471 da `TR`. ⚠️ La fila de CIQUAL se separa un 39 % en proteína (12,9 contra nuestros 17,9). USDA 174218 «Mollusks, octopus, common, raw» casa mejor (14,91) y da 0. Se aplica la de CIQUAL porque manda antes Y porque es la MÁS ALTA de las dos: contra un techo crónico, entre dos cifras honestas se aplica la que aprieta."
   }
  },
  {
@@ -7572,7 +7589,7 @@
    "linolenico": 0.01,
    "araquidonico": 34,
    "vitA": 2,
-   "vitD": 0,
+   "vitD": 0.0,
    "vitE": 2.4,
    "folato": 12,
    "niacina": 3.15,
@@ -7628,15 +7645,19 @@
   },
   "sin_dato": [
    "cobre",
-   "lcarnitina",
-   "vitD"
+   "lcarnitina"
   ],
   "taurina_fuente": "Taurina = 356 mg/100g: no hay dato propio de esta especie -- se usa \"Squid\" (Spitze et al. 2003) por familia (mismo grupo, cefalopodo), confianza MEDIA.",
   "fuentes_id": {
-   "bedca": "2635"
+   "bedca": "2635",
+   "ciqual": "10016"
   },
   "cero_verificado": {
-   "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2635 · «Sepia» · columna «fibra, dietetica total» = 0.0 g. `value_type` LZ, o sea una MEDIDA y no una celda vacía."
+   "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:2635 · «Sepia» · columna «fibra, dietetica total» = 0.0 g. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
+   "vitD": "Cero PUBLICADO por la primera fuente de la cadena que mide este nutriente, comprobado el 2026-09-13: ciqual:10016 · «Seiche, crue» · columna «Vitamine D (µg/100 g)» = 0. La fuente que manda NO TIENE CIFRA de este nutriente para este alimento -- BEDCA lo da como `TR` con la celda VACÍA, que es NO HAY CIFRA y no «trazas» (BLOQUE 51) --, así que se baja por la cadena de mandato hasta la primera que publica número, que es la regla de `fuentes_de_composicion.json`. Antes de bajar se agotó BEDCA: la fila 2635 da `TR`. USDA 174215 «Mollusks, cuttlefish, mixed species, raw» no publica vitamina D."
+  },
+  "composicion_fuente": {
+   "vitD": "ciqual:10016 · «Seiche, crue» · columna «Vitamine D (µg/100 g)» = 0 → 0 ug · 2026-09-13. La fuente que manda NO TIENE CIFRA de este nutriente para este alimento -- BEDCA lo da como `TR` con la celda VACÍA, que es NO HAY CIFRA y no «trazas» (BLOQUE 51) --, así que se baja por la cadena de mandato hasta la primera que publica número, que es la regla de `fuentes_de_composicion.json`. Antes de bajar se agotó BEDCA: la fila 2635 da `TR`. USDA 174215 «Mollusks, cuttlefish, mixed species, raw» no publica vitamina D."
   }
  },
  {
@@ -7652,7 +7673,7 @@
    "linoleico": 37.75,
    "linolenico": 0.1,
    "araquidonico": 0,
-   "vitA": 0,
+   "vitA": 0.0,
    "vitD": 0,
    "vitE": 17.2,
    "folato": 0,
@@ -7707,8 +7728,7 @@
    "tirosina",
    "treonina",
    "triptofano",
-   "valina",
-   "vitA"
+   "valina"
   ],
   "purinas_bases": {
    "adenina": 0.0,
@@ -7729,7 +7749,8 @@
   "humedad_fuente": "USDA FoodData Central · Oil, peanut, salad or cooking",
   "humedad_fdc": "171410",
   "fuentes_id": {
-   "bedca": "747"
+   "bedca": "747",
+   "usda": "171410"
   },
   "fuentes_id_porque": "⚠️ EMPAREJADO POR EL PERFIL DE ÁCIDOS GRASOS, NO POR LA HUELLA DE SIEMPRE. Un aceite no tiene huella: proteína 0, grasa ~100 y agua 0 describen a los diez aceites del catálogo por igual, y por eso `fijar_identificadores.py` se niega a dar un SEGURO a cualquier ficha con ≥80 % de grasa (su función `sin_huella`). Lo que SÍ los distingue es el linoleico (ω-6) contra el linolénico (ω-3), que es el ancla de `UNIDADES.md`. BEDCA 747 «Aceite de cacahuete»: linoleico 37,75 · linolénico 0,1 · vitE 17,2 — exactas.",
   "cero_verificado": {
@@ -7751,9 +7772,13 @@
    "vitB6": "Cero cierto por composición, comprobado el 2026-09-13: la ficha es grasa pura (99.9 g por 100 g) y el vitB6 no viaja en grasa. BEDCA lo deja con `value_type` TR y la celda vacía —que es «no hay cifra»— pero aquí lo decide la composición: un aceite refinado son triglicéridos y 888 kcal por 100 g no dejan sitio para nada más. Lo que una grasa SÍ lleva son las vitaminas liposolubles (A, D, E) y los ácidos grasos, y esos NO entran en esta regla.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:747 · «Aceite de cacahuete» · columna «Vitamina D» = 0.0 ug. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
    "yodo": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:747 · «Aceite de cacahuete» · columna «ioduro» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
-   "zinc": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:747 · «Aceite de cacahuete» · columna «zinc (cinc)» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía."
+   "zinc": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:747 · «Aceite de cacahuete» · columna «zinc (cinc)» = 0.0 mg. `value_type` AR, o sea una MEDIDA y no una celda vacía.",
+   "vitA": "Cero PUBLICADO por la primera fuente de la cadena que mide este nutriente, comprobado el 2026-09-13: usda:171410 · «Oil, peanut, salad or cooking» · columna «Vitamin A, RAE» = 0. La fuente que manda NO TIENE CIFRA de este nutriente para este alimento -- BEDCA lo da como `TR` con la celda VACÍA, que es NO HAY CIFRA y no «trazas» (BLOQUE 51) --, así que se baja por la cadena de mandato hasta la primera que publica número, que es la regla de `fuentes_de_composicion.json`. Antes de bajar se agotó BEDCA: la fila 747 da `TR`. ⚠️ La vitamina A tiene CONFLICTO DE CONVENIO declarado (BEDCA 6:1, USDA 12:1, CIQUAL retinol a secas, FEDIAF 4:1) y por eso el barrido no la compara sola. Aquí NO MUERDE: un RAE de 0 obliga a retinol 0 Y β-caroteno 0, así que es cero en los cuatro convenios. CIQUAL 17040 «Huile d'arachide» da «Rétinol = 0» por su cuenta. Y BEDCA declara `LZ` la vitamina D del MISMO aceite."
   },
-  "nota_datos": " ⚠️ 13 sep 2026 — cobre, folato, hierro, niacina, riboflavina, selenio, tiamina, vitB6: el barrido los declaró HUECO porque BEDCA los da como `TR` con la celda vacía, y eso era un ERROR. En una grasa pura ese cero es CIERTO por composición, y no era inofensivo: un hueco se imputa al percentil 90 de su familia contra los máximos, y la familia «Extras» incluye semillas con 17 g de proteína. Con la proteína de dos aceites declarada hueco, el chihuahua de 3 kg con patología RENAL se quedaba SIN MENÚ en los seis peldaños de la escalera. Pasan a `cero_verificado`."
+  "nota_datos": " ⚠️ 13 sep 2026 — cobre, folato, hierro, niacina, riboflavina, selenio, tiamina, vitB6: el barrido los declaró HUECO porque BEDCA los da como `TR` con la celda vacía, y eso era un ERROR. En una grasa pura ese cero es CIERTO por composición, y no era inofensivo: un hueco se imputa al percentil 90 de su familia contra los máximos, y la familia «Extras» incluye semillas con 17 g de proteína. Con la proteína de dos aceites declarada hueco, el chihuahua de 3 kg con patología RENAL se quedaba SIN MENÚ en los seis peldaños de la escalera. Pasan a `cero_verificado`.",
+  "composicion_fuente": {
+   "vitA": "usda:171410 · «Oil, peanut, salad or cooking» · columna «Vitamin A, RAE» = 0 → 0 ug · 2026-09-13. La fuente que manda NO TIENE CIFRA de este nutriente para este alimento -- BEDCA lo da como `TR` con la celda VACÍA, que es NO HAY CIFRA y no «trazas» (BLOQUE 51) --, así que se baja por la cadena de mandato hasta la primera que publica número, que es la regla de `fuentes_de_composicion.json`. Antes de bajar se agotó BEDCA: la fila 747 da `TR`. ⚠️ La vitamina A tiene CONFLICTO DE CONVENIO declarado (BEDCA 6:1, USDA 12:1, CIQUAL retinol a secas, FEDIAF 4:1) y por eso el barrido no la compara sola. Aquí NO MUERDE: un RAE de 0 obliga a retinol 0 Y β-caroteno 0, así que es cero en los cuatro convenios. CIQUAL 17040 «Huile d'arachide» da «Rétinol = 0» por su cuenta. Y BEDCA declara `LZ` la vitamina D del MISMO aceite."
+  }
  },
  {
   "nombre": "Aceite de coco",

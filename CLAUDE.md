@@ -845,6 +845,79 @@ un S3 del DTU en el puerto 9000, que no sale de este entorno. Está escrita ente
 en `candidatas_declaradas` de `fuentes_de_composicion.json` para que no haya que
 volver a descubrirla.
 
+### La vitamina D, y el cero mudo que sostenía un verde
+
+Es lo que más pesa de todo el barrido, y no por el número de celdas (nueve) sino
+por lo que enseña: **un verde de la batería se estaba apoyando en un dato que
+ninguna fuente dice**.
+
+**La ficha `Pescadilla` declaraba 0 µg de vitamina D.** BEDCA da `TR` con la celda
+vacía —o sea NO HAY CIFRA— en sus **tres** filas de merluza (2347 fresca, 825
+congelada, 1174 pescadilla), y CIQUAL, que sí la mide, da **2,15 µg** a
+`Merlu, cru`. Era un cero mudo. Y era **lo único** que sostenía el menú del adulto
+de 20 kg con ocho especies excluidas del BLOQUE 9: barrido de esa cifra contra el
+endpoint, sale menú con **0,0** y no sale con 1,0 · 2,15 · 3 · 4 · 5 · 6 · 8.
+
+Y al medirlo se ve que **no era cuestión de cuál es la cifra buena, sino
+aritmética**. Con las ocho especies fuera quedan 108 alimentos accesibles, casi
+todos pescado, y el tope crónico son **20 µg/1000 kcal** (NRC 2006, restricción
+DURA por la regla 2). **17 de los accesibles pasan ese tope ellos solos**, y no
+solo el pescado azul: la merluza, con 2,15 µg y 65 kcal por 100 g, sale a **33
+µg/1000 kcal**. Un pescado blanco tiene muy pocas kcal, así que cualquier vitamina
+D se le convierte en una concentración alta. O sea que una ración hecha casi solo
+de pescado se pasa de vitamina D de verdad, y no dar menú es la regla 1
+funcionando. El BLOQUE 9 lleva ahora la medida escrita y ya no exige ese menú —
+sigue exigiendo lo único que dijo que comprobaba: que si no lo da, **lo diga**.
+
+**Nueve celdas se cerraron bajando por la cadena de mandato**, que es literalmente
+lo que pidió Elena («si no aparece en la que manda número 1 la buscas en la 2 y
+así»). BEDCA tiene la columna de vitamina D y casi nunca la mide: `TR` en diez de
+los veinte pescados y en seis carnes magras.
+
+| Ficha | Cifra | De dónde |
+|---|---|---|
+| Merluza | 2,15 | ciqual 26044 «Merlu, cru» |
+| Bacalao | 1,41 | ciqual 26043 «Cabillaud, cru» |
+| Lubina | 5,59 | ciqual 26072 «Bar commun ou loup, cru, sans précision» — y USDA 175142 da **5,6** por su cuenta |
+| Lenguado | 0,75 | ciqual 26058 «Sole, crue» |
+| Pulpo | 0,5 | ciqual 10018 «Poulpe, cru» |
+| Calamar | 0,36 | ciqual 10001 «Calmar ou calamar ou encornet, cru» |
+| Sepia | 0 | ciqual 10016 «Seiche, crue» |
+| Aceite de girasol | 0 | usda 171025, bajando al mandato 4 |
+| Aceite de cacahuete (vit. **A**) | 0 | usda 171410 |
+
+**Y los dos aceites eran los dos peores, porque su hueco se imputaba a nivel de
+huevo**: el aceite de girasol recibía **5 µg de vitamina D** (lo que declara el
+huevo de pato) y el de cacahuete **591 µg de retinol** (lo que declara la yema).
+Los dos son aceites de semilla refinados. Es el mismo fallo que el de la proteína
+de los aceites, y lo bonito es que **BEDCA lo dice ella misma, cruzado**: declara
+`LZ` (cero lógico) la vitamina A del de girasol y `LZ` la vitamina D del de
+cacahuete — a cada uno le mide una y a la otra le pone `TR`.
+⚠️ La vitamina A tiene **conflicto de convenio declarado** y aquí **no muerde**: un
+`RAE` de 0 obliga a retinol 0 **y** β-caroteno 0, así que es cero en los cuatro
+convenios.
+
+**Tres marcas que NO son un número**, y hay que conocer las tres antes de cerrar
+una celda: el `TR` de BEDCA con la celda vacía, el `-` de CIQUAL (no disponible) y
+el **`< X` de CIQUAL** (límite de detección). La tercera es la traicionera porque
+parece casi una cifra: `Huile de tournesol` da «< 0,25», y por eso ese aceite hubo
+que cerrarlo bajando hasta USDA.
+
+**Y tres se quedan en hueco a propósito**, porque ninguna fuente publica su
+especie: `Bacaladilla` (*Micromesistius poutassou*; el `Merlan` de CIQUAL es
+*Merlangius merlangus*, **otra especie**), `Gamba roja` (*Aristeus antennatus*;
+CIQUAL da «< 0,2» y la única fila de USDA con cifra es la de «may contain
+additives to retain moisture», que es otro producto) y `Pescadilla` (ninguna de
+las cuatro publica vitamina D de merluza **congelada**, comprobado contra BEDCA
+fila a fila). Están en `DATOS_QUE_FALTAN.md`.
+
+⚠️ **Y el BLOQUE 51 sigue cerrando la trampa del `TR`, que es otra cosa.** Que
+BEDCA no mida no convierte la celda en incerrable para siempre: manda a la
+siguiente fuente. Lo que sigue prohibido es leer el `TR` como «trazas» y escribir
+un cero, porque eso produce una celda **con valor y sin procedencia** —o con
+procedencia `bedca`, que es imposible porque esa celda está vacía—, y el bloque
+falla en los dos casos. Comprobado con el fallo puesto de las dos formas.
+
 En la raíz, los nueve: `alimentos_v3_final.json` (el catálogo),
 `requerimientos_v2_final.json` (la tabla de FEDIAF), `catalogo_menus.json`
 (los 36 menús precalculados de la vista previa y sus 180 variantes),

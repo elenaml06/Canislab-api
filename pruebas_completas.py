@@ -658,14 +658,15 @@ for _etq_p, _der, _etapa, _peso, _adulto in PERROS_B9:
                               f"fuera sin avisar de ello")
 
 # LÍMITE CONOCIDO Y ACEPTADO: quitar las 8 especies más comunes deja el
-# catálogo con 2 carnes, 1 hueso, 0 vísceras, 0 hígado y 20 pescados. Para un
-# ADULTO todavía sale menú (el pescado cubre casi todo). Para un CACHORRO en
-# crecimiento no, y está bien que no salga: la única forma de cuadrarlo sería
-# con kilos de hoja verde, que es exactamente lo que corta el tope de volumen.
+# catálogo con 2 carnes, 1 hueso, 0 vísceras, 0 hígado y 20 pescados, y NO SALE
+# MENÚ -- ni al adulto ni al cachorro --, porque una ración hecha casi solo de
+# pescado se pasa del tope crónico de vitamina D. Y está bien que no salga: la
+# otra forma de cuadrarlo sería con kilos de hoja verde, que es exactamente lo
+# que corta el tope de volumen.
 # Lo que se comprueba aquí no es que dé menú, sino que si no lo da, lo diga en
 # vez de inventarse algo imposible de dar.
 #
-# ⚠️ ESTA PRUEBA CAMBIÓ DOS VECES EN 24 HORAS, y conviene que quede escrito
+# ⚠️ ESTA PRUEBA HA CAMBIADO TRES VECES, y conviene que quede escrito
 # para que nadie la "arregle" mañana en la dirección equivocada:
 #
 #   25 ago: dejó de dar menú al poner el máximo de EPA+DHA (2800 mg/1000
@@ -681,13 +682,65 @@ for _etq_p, _der, _etapa, _peso, _adulto in PERROS_B9:
 # semanal (ver BLOQUE 21). Un menú suelto no lleva techo de EPA+DHA.
 _ocho_fuera = {"especies_excluidas": ["Pollo", "Ternera", "Cordero", "Cerdo",
                                       "Pavo", "Conejo", "Pato", "Vaca"]}
+#
+#   13 sep: DEJA DE EXIGIRSE EL MENÚ DEL ADULTO, y el motivo es que el verde
+#           anterior se apoyaba en UN CERO FALSO. La frase de arriba -- «para un
+#           ADULTO todavía sale menú, el pescado cubre casi todo» -- era una
+#           afirmación empírica sobre el catálogo, y al comprobar el catálogo
+#           contra sus fuentes se cayó.
+#
+#           LO QUE PASÓ. La ficha `Pescadilla` declaraba vitamina D = 0 µg/100 g
+#           sin que ninguna fuente lo diga: BEDCA da `TR` con la celda vacía en
+#           SUS TRES filas de merluza (2347 fresca, 825 congelada, 1174
+#           pescadilla), o sea NO HAY CIFRA -- y CIQUAL, que sí mide la merluza,
+#           da 2,15 µg en `Merlu, cru` (26044). Era un cero mudo, no una medida.
+#
+#           Y ES ARITMÉTICA, no una cuestión de cuál es la cifra buena. MEDIDO el
+#           13 de septiembre con el catálogo real: con las ocho especies fuera
+#           quedan 108 alimentos accesibles, casi todos pescado, y el tope
+#           crónico de vitamina D son 20 µg/1000 kcal (NRC 2006,
+#           `TOPE_VITD_KCAL`). **17 de los accesibles pasan ese tope ELLOS
+#           SOLOS**, y no solo el pescado azul: la merluza, con 2,15 µg y 65 kcal
+#           por 100 g, sale a 33 µg/1000 kcal -- un 65 % por encima. Un pescado
+#           blanco tiene muy pocas kcal, así que CUALQUIER vitamina D se le
+#           convierte en una concentración alta.
+#           Barrido de la cifra de la pescadilla contra el endpoint: sale menú
+#           con 0,0 y NO sale con 1,0 · 2,15 · 3 · 4 · 5 · 6 · 8. O sea que este
+#           perro solo tenía menú si un pescado declaraba vitamina D CERO
+#           EXACTO, y ninguna fuente lo declara.
+#
+#           ⚠️ NO ES LA DIRECCIÓN EQUIVOCADA QUE AVISA EL PÁRRAFO DE ARRIBA, y
+#           esto hay que leerlo antes de «devolver» la comprobación: aquello era
+#           un tope de EPA+DHA puesto POR MENÚ cuando FEDIAF deja su columna de
+#           máximo vacía y los 2800 son un SUL crónico. Esto es el tope de
+#           vitamina D, que la REGLA 2 de `CLAUDE.md` pone como restricción DURA
+#           dentro del solver a propósito, con su fuente (Lenox & Bauer 2013 para
+#           el de peso, NRC 2006 para el de energía). Aquí el motor no está
+#           borrando medio catálogo por una cifra mal colocada: está diciendo que
+#           una ración hecha casi solo de pescado se pasa de vitamina D, que es
+#           verdad. Preferimos no dar menú a dar uno que no cumple (regla 1).
+#
+#           Lo que SÍ se sigue exigiendo es lo de siempre, y es lo único que este
+#           bloque dijo nunca que comprobaba: que si no hay menú, se DIGA --
+#           con motivo en castellano y con la lista de peldaños intentados -- en
+#           vez de inventarse algo imposible de dar.
 _r = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1040.0,
     "etapa_requisitos": "Adulto", "peso_perro_kg": 20.0, "modo": "automatico",
     **_ocho_fuera}).json()
 if not _r.get("factible"):
-    fallos.append("BLOQUE9 adulto 20kg / 8 especies fuera: se quedó sin menú. Si es por el "
-                  "máximo de EPA+DHA, es que ha vuelto a ponerse como tope POR MENÚ -- y ahí "
-                  "no va: 18 de los 20 pescados lo pasan solos. Va en el promedio semanal.")
+    if not (_r.get("motivo") or "").strip():
+        fallos.append("BLOQUE9 adulto 20kg / 8 especies fuera: no dio menú y tampoco dijo por "
+                      "qué. Quedarse callado es el fallo, no quedarse sin menú.")
+    if not _r.get("se_intento_relajando"):
+        fallos.append("BLOQUE9 adulto 20kg / 8 especies fuera: no dio menú y no dice qué "
+                      "peldaños intentó. Bajar de peldaño SE DICE (regla 3).")
+else:
+    # Si vuelve a salir, que salga BIEN: el tope de volumen y el aviso de
+    # categorías los miran los bucles de abajo, pero el menú tiene que venir
+    # con su peldaño escrito -- «no dice nada» y «estricto» se leían igual.
+    if not _r.get("peldano"):
+        fallos.append("BLOQUE9 adulto 20kg / 8 especies fuera: dio menú sin decir en qué "
+                      "peldaño salió.")
 
 _r = _c.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 1049.0,
     "etapa_requisitos": "CachorroCrecimiento", "peso_perro_kg": 10.0,
@@ -8812,17 +8865,40 @@ _TR51 = [("Merluza", "vitA"), ("Merluza", "vitD"), ("Bacaladilla", "vitA"),
          ("Lenguado", "vitA"), ("Lenguado", "vitD"), ("Calamar", "vitD"),
          ("Pulpo", "vitD"), ("Sepia", "vitD"), ("Gamba roja", "vitD"),
          ("Bacalao", "vitD"), ("Pollo con piel (sin hueso)", "vitD")]
+#
+# ⚠️ Y LO QUE ESTA LISTA PROHÍBE NO ES TENER CIFRA: ES TENER LA CIFRA DE LA NADA
+# (13 de septiembre). Que BEDCA no mida un nutriente no convierte la celda en
+# incerrable para siempre -- lo que hace es mandar a la SIGUIENTE fuente de la
+# cadena, que es literalmente la regla de `fuentes_de_composicion.json`: «si no
+# aparece en la que manda número 1 la buscas en la 2 y así». Siete de estas
+# celdas se cerraron así, con la fila literal de CIQUAL o de USDA escrita en
+# `composicion_fuente`.
+# Lo que sigue prohibido, y es la trampa de verdad, es el camino por el que se
+# intentó entrar el 8 de septiembre: leer el `TR` de BEDCA como «trazas» y
+# escribir un cero. Ese camino produce una celda CON valor y SIN procedencia, o
+# con procedencia `bedca` -- que es imposible, porque la celda de BEDCA está
+# vacía. Las dos cosas fallan aquí.
 for _n51, _k51 in _TR51:
     _f51 = _ficha51.get(_n51)
     if _f51 is None:
         fallos.append(f"BLOQUE51: falta la ficha «{_n51}», que vigila la trampa del TR.")
         continue
-    if _k51 not in set(_f51.get("sin_dato") or []):
+    if _k51 in set(_f51.get("sin_dato") or []):
+        continue
+    _proc51 = (_f51.get("composicion_fuente") or {}).get(_k51) or ""
+    if not _proc51:
         fallos.append(
-            f"BLOQUE51: «{_n51}» ha sacado {_k51} de `sin_dato`. BEDCA la da como `TR` con "
-            f"la celda VACÍA, que es NO HAY CIFRA, no «trazas» -- comprobado contra la fuente "
-            f"el 8 de septiembre. Sacarla de ahí afloja el techo crónico de la vitamina D. "
+            f"BLOQUE51: «{_n51}» ha sacado {_k51} de `sin_dato` SIN decir de dónde sale. "
+            f"BEDCA la da como `TR` con la celda VACÍA, que es NO HAY CIFRA, no «trazas» -- "
+            f"comprobado contra la fuente el 8 de septiembre y otra vez el 13. Un valor sin "
+            f"procedencia aquí afloja el techo crónico de la vitamina D. Si hay cifra, tiene "
+            f"que venir de la siguiente fuente de la cadena y decir de qué fila. "
             f"Ver Ya_probado.md.")
+    elif _proc51.startswith("bedca:"):
+        fallos.append(
+            f"BLOQUE51: «{_n51}» declara {_k51} con procedencia BEDCA, y la celda de BEDCA "
+            f"está VACÍA (`TR`). O es el `TR` leído como «trazas» otra vez, o la instantánea "
+            f"ha cambiado: compruébalo contra la fuente antes de tocar esto. Ver Ya_probado.md.")
 if any("trazas" in a for a in _CAT51):
     fallos.append("BLOQUE51: ha vuelto el campo `trazas` al catálogo. Es la lectura "
                   "equivocada del `TR` de BEDCA. Ver Ya_probado.md.")

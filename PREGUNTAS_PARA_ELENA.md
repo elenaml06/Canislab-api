@@ -883,45 +883,57 @@ PROXY de hígado de cordero o de pollo con la confianza escrita. **No he tocado
 ninguna cifra**: lo que falta no es un número, es saber de dónde viene, y eso no me
 lo puedo inventar.
 
-## F · ⚠️ LA QUE BLOQUEA: la vitamina D de seis carnes magras deja sin menú al perro con 8 alergias
+## F · La vitamina D: nueve celdas cerradas, y el cero falso que sostenía un verde
 
-**Esta es la única pregunta de esta sesión que tiene coste para alguien**, y la
-traigo con todo medido porque la decisión es tuya.
+**Esto ya está resuelto y no te pide nada. Lo escribo porque el diagnóstico que
+puse aquí antes era MÍO y era EQUIVOCADO**, y conviene que quede el recorrido.
 
-**Lo que hice.** Declaré como HUECO la vitamina D de seis carnes magras (conejo,
-pavo, ternera solomillo, ternera con grasa, lomo de ternera, lengua de cordero),
-porque BEDCA las da con la celda vacía: no hay cifra. Antes eran **ceros mudos** —
-el motor creía que esas carnes no tienen vitamina D, que es falso.
+**Lo que dije ayer.** Que el adulto de 20 kg con las 8 especies más comunes
+excluidas se quedaba sin menú por la vitamina D de **seis carnes magras** que pasé
+a hueco. Y era mentira por una razón tonta: **esas seis carnes están excluidas en
+ese mismo caso** (conejo, pavo y ternera son tres de las ocho). No podían ser la
+causa.
 
-**Lo que cuesta.** Un hueco se imputa al percentil 90 de su familia contra los
-máximos, y la vitamina D tiene tope crónico. Resultado medido: **el adulto de 20 kg
-con las 8 especies más comunes excluidas se queda sin menú.** Con el catálogo de
-antes, salía.
+**Lo que era.** Una sola celda: la vitamina D de la **pescadilla**, que declaraba
+**0 µg** sin que ninguna fuente lo diga. BEDCA da la celda vacía en sus **tres**
+filas de merluza, y CIQUAL, que sí la mide, da 2,15. Era un cero mudo — y era **lo
+único** que sostenía ese menú. Medido contra el endpoint: sale con 0,0 y **no sale
+con 1,0 · 2,15 · 3 · 4 · 5 · 6 · 8**. Un verde que solo existe si un pescado tiene
+cero exacto de vitamina D no era un verde.
 
-**El número que lo explica:** la imputación da **1,0 µg/100 g** y las 17 carnes que
-sí declaran vitamina D tienen **mediana 0,20**. Imputar es **5× la mediana de su
-propia familia**. Y CIQUAL publica el pavo crudo en 0,2 — clavado en esa mediana.
+**Y no hay nada que decidir, porque es aritmética.** Con las ocho especies fuera
+quedan 108 alimentos, casi todos pescado, y el tope crónico son 20 µg/1000 kcal.
+**17 de esos 108 pasan el tope ellos solos** — incluida la merluza, que con 2,15 µg
+y 65 kcal por 100 g sale a 33 µg/1000 kcal. Un pescado blanco tiene tan pocas kcal
+que cualquier vitamina D se le convierte en concentración alta. O sea que una
+ración hecha casi solo de pescado **se pasa de verdad**, y no darla es la regla 1.
+El BLOQUE 9 lleva ahora esa medida escrita, ya no exige ese menú, y sigue exigiendo
+lo único que dijo que comprobaba: que si no lo da, **lo diga**.
 
-**He buscado el dato en las cuatro fuentes y no está** para el corte que tenemos:
-BEDCA no lo publica, USDA no publica vitamina D de conejo ni de lengua de cordero,
-y las filas de CIQUAL que sí lo traen son otro corte (su pavo tiene 1,88 g de grasa
-y el nuestro 8,5 — usarla sería cruzar cortes, el error que el repo lleva avisado).
+**Lo que sí se arregló por el camino, y eran dos datos malos de verdad:** el hueco
+de vitamina D del **aceite de girasol** se imputaba a **5 µg** (lo que declara el
+huevo de pato) y el de vitamina A del **aceite de cacahuete** a **591 µg de
+retinol** (lo que declara la yema). Los dos son aceites de semilla refinados. Los
+dos están ahora a 0 con su fila de USDA escrita.
 
-### Las tres salidas, y lo que pienso de cada una
+Y **siete pescados** tienen ya su cifra, bajando por la cadena de mandato como
+pediste: merluza 2,15 · bacalao 1,41 · lubina 5,59 (USDA da 5,6 por su cuenta) ·
+lenguado 0,75 · pulpo 0,5 · calamar 0,36 · sepia 0.
 
-1. **Conseguir el dato** (lo correcto, y no lo puedo hacer yo): la vitamina D de
-   esas seis carnes de una fuente que mida ese corte. Cierra el problema de raíz.
-2. **Bajar el percentil de la imputación** del P90 a la mediana de la familia. Con
-   eso esas carnes imputarían 0,2 —que es lo que miden las fuentes que las
-   publican— en vez de 1,0. ⚠️ **Pero afloja TODOS los máximos del motor a la vez**,
-   no solo este, así que es una decisión clínica y global, no de catálogo. No la he
-   tocado.
-3. **Devolver los ceros mudos.** Esto **no lo recomiendo y va contra lo que me
-   pediste**: un cero mudo afirma que esa carne no tiene vitamina D, y es mentira.
-   Además es falso por el lado peligroso — deja pasar el tope sin saberlo.
+### Lo único que sigue abierto aquí, y es pequeño
 
-**Mientras decides, el BLOQUE 9 queda en ROJO a propósito.** No lo he relajado: su
-propio comentario avisa de que esa prueba cambió dos veces en 24 horas y de que no
-hay que «arreglarla mañana en la dirección equivocada». Un rojo que dice la verdad
-es mejor que un verde que la esconde.
+**Tres fichas se quedan sin cifra porque ninguna fuente publica su especie**:
+`Bacaladilla`, `Gamba roja` y `Pescadilla`. No es una decisión tuya: es un dato que
+hay que conseguir, y está en `DATOS_QUE_FALTAN.md` con el detalle de por qué no
+vale ninguna de las filas candidatas.
 
+**Y una cosa que he visto y NO he tocado, por si quieres mirarla algún día.** El
+tope de vitamina D se aplica **menú a menú** (20 µg/1000 kcal, NRC 2006). El repo
+ya se encontró esto mismo con el EPA+DHA el 26 de agosto y decidió lo contrario:
+sus 2800 mg/1000 kcal son un límite superior de la **dieta crónica**, no de un
+plato, así que lo movió al **promedio de la semana** — porque puesto menú a menú
+borraba el pescado azul entero. La vitamina D es también un SUL crónico del NRC.
+No digo que esté mal: la regla 2 la pone como restricción dura a propósito, y la
+vitamina D se acumula de verdad, que es justo el argumento de Lenox & Bauer. Pero
+son dos cifras de la misma naturaleza aplicadas en dos formas distintas, y eso
+merece que alguien lo diga en voz alta una vez. **No he cambiado nada.**

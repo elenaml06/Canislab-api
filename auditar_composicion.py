@@ -665,7 +665,19 @@ def _es_tejido_animal(ficha):
 # La lista SE LEE de `pruebas_completas.py` y no se copia: dos listas de lo mismo
 # se desincronizan, que es el fallo que este repo lleva avisado en veinte sitios.
 def _celdas_intocables():
-    """(nombre, clave) que el BLOQUE 51 exige en `sin_dato`, leídas de allí."""
+    """(nombre, clave) que el BARRIDO no rellena solo, leídas del BLOQUE 51.
+
+    ⚠️ «Intocable» es para ESTE script, no para siempre (13 de septiembre). Son
+    celdas cuya fuente que manda NO TIENE CIFRA -- el `TR` de BEDCA con la celda
+    vacía -- y que por tanto solo se pueden cerrar BAJANDO por la cadena de
+    mandato, mirando una a una que la fila de la otra fuente sea el mismo
+    alimento. Eso es un juicio de identidad («pollo» contra «Repollo»), y un
+    barrido no lo hace: el barrido las deja como están y quien las cierre lo
+    hace a mano y escribe la fila literal en `composicion_fuente`. Siete se
+    cerraron así ese día y el BLOQUE 51 lo admite, pero sigue fallando si
+    aparece un valor SIN procedencia o con procedencia `bedca`, que es el
+    camino del `TR` leído como «trazas».
+    """
     import re
     ruta = os.path.join(RAIZ, "pruebas_completas.py")
     try:
@@ -708,7 +720,9 @@ def cerrar():
     intocables = _celdas_intocables()
     if not intocables:
         print("  ⚠️ no se han podido leer las celdas intocables del BLOQUE 51. Se aborta: "
-              "rellenarlas aflojaría los techos crónicos de la vitamina D y del cobre.")
+              "rellenarlas a ciegas aflojaría los techos crónicos de la vitamina D y del "
+              "cobre, porque su fuente que manda no tiene cifra y bajar por la cadena exige "
+              "comprobar a mano que la fila de la otra fuente sea el mismo alimento.")
         return 2
     puestas = saltadas = puestas_cero = declarados = deshechas = grasa_pura = 0
     resumen = collections.Counter()

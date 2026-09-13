@@ -1412,3 +1412,41 @@ fuentes, por orden de mandato:
 carne no tiene vitamina D», y eso es falso. El problema no es haber dicho la
 verdad: es que no tenemos el número.
 
+
+⚠️ **Y MEDIDO EL 13 DE SEPTIEMBRE: PARA LA TERNERA EL P90 NO ES PESIMISTA.** Se
+consultó **CoFID 2021** (McCance & Widdowson, Reino Unido — no es una de las cuatro
+fuentes del motor, así que vale de contraste y no para escribir una ficha) y sus
+filas crudas de ternera dan **1,2 y 1,4 µg**, o sea **por encima** del 1,0 que
+imputa el motor; CIQUAL llega a 1,3 en `Veau, rôti, cru`. Así que de las seis, el
+argumento de «se imputa cinco veces lo que miden las fuentes» vale para el pavo y
+el conejo (0–0,5) y **no vale para las tres de ternera**. Y CoFID tampoco las
+cerraría: da `N` (no medido) al conejo y `Tr` (trazas) a la lengua de cordero, y
+**ninguna de las dos es un número** — es la misma marca que el `TR` de BEDCA.
+
+---
+
+## La vitamina D de tres pescados, y la vitamina A de uno
+
+*(13 de septiembre. Hermanas de lo de arriba, del mismo barrido.)*
+
+De los diez pescados y mariscos que tenían la vitamina D en hueco, **siete se
+cerraron** bajando por la cadena de mandato hasta CIQUAL (ver `CLAUDE.md`). Tres no,
+y es porque **ninguna fuente publica su especie**:
+
+| Ficha | Especie | Por qué no se cierra |
+|---|---|---|
+| `Bacaladilla` | *Micromesistius poutassou* | CIQUAL no la tiene. Su `Merlan, cru` (4,11 µg) es *Merlangius merlangus*, **otra especie** — usarlo sería cruzar pescados |
+| `Gamba roja` | *Aristeus antennatus* | CIQUAL da «< 0,2» a `Crevette, crue`, que es un **límite de detección y no una cifra**. La única fila de USDA con número (174210, 0,1 µg) es la de «may contain additives to retain moisture», o sea otro producto |
+| `Pescadilla` | *Merluccius merluccius*, **congelada** | BEDCA da `TR` en sus **tres** filas de merluza (2347, 825, 1174), comprobado fila a fila. CIQUAL mide la merluza fresca (2,15) pero sus dos filas congeladas dan `-`. USDA no tiene merluza: su `whiting` es otra especie |
+
+Y la **vitamina A** de `Merluza`, `Bacaladilla`, `Lenguado`, `Lubina` y
+`Pescadilla` sigue en hueco: CIQUAL publica ahí `traces`, `< 2`, `< 21` y un 5 — o
+sea dos marcas que no son números y una cifra de una columna (`Rétinol` a secas)
+que **está en otro convenio** que el nuestro, y ese conflicto está declarado sin
+resolver. No se cierra hasta que se decida el convenio.
+
+**Lo que sí se cerró, y era lo más gordo**: el hueco de vitamina D del `Aceite de
+girasol` se imputaba a **5 µg** (lo que declara el huevo de pato) y el de vitamina A
+del `Aceite de cacahuete` a **591 µg de retinol** (lo que declara la yema). Los dos
+son aceites de semilla refinados y los dos están ahora a 0 con su fila de USDA
+escrita.

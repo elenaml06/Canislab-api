@@ -194,6 +194,26 @@ que no hay número.** Al volcarlo a una tabla el `TR` vacío se convierte en 0
 y ya nadie sabe que no era una medida. Seis de los huecos cerrados el 7 de
 septiembre eran exactamente eso.
 
+⚠️ **Y son TRES marcas que no son un número, no una** (13 de septiembre). Al bajar
+por la cadena de mandato hay que reconocer las tres o se cierra una celda con algo
+que la fuente no dice:
+
+| Marca | Fuente | Qué significa |
+|---|---|---|
+| `TR` con la celda **vacía** | BEDCA | No hay cifra. **No significa «trazas»** — ya se intentó leerlo así y lo paró el BLOQUE 51 |
+| `-` | CIQUAL | Valor no disponible |
+| **`< X`** | CIQUAL | **Límite de detección**, no una medida |
+
+La tercera es la traicionera, porque **parece casi un número**: `Huile de
+tournesol` publica su vitamina D como «< 0,25», y quien lo lea como 0,25 —o como
+0— se está inventando una medida. Ese aceite hubo que cerrarlo bajando hasta USDA
+(mandato 4), que da 0 de verdad.
+
+Y el **cero lógico de BEDCA (`LZ`)** sí es un cero, y es el más fuerte de todos:
+significa que el alimento **no puede** contener ese nutriente. BEDCA pone `LZ` a la
+vitamina A del aceite de girasol y a la vitamina D del de cacahuete — a cada aceite
+le mide una y a la otra le pone `TR`.
+
 ---
 
 ## De dónde sale cada cifra, y en qué orden se pregunta

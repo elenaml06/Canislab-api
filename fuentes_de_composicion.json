@@ -386,6 +386,18 @@
    },
    "lo_que_falta_decidir": "Qué mide el mínimo de niacina de la Tabla III-3b de FEDIAF: niacina preformada o equivalentes. Hasta saberlo no se puede elegir columna, y elegir la equivocada mueve el mínimo de 84 o de 63 fichas a la vez. Lo decide el nutricionista, no el software.",
    "donde_esta_la_pregunta": "PREGUNTAS_PARA_ELENA.md · PARA_EL_NUTRICIONISTA.md"
+  },
+  "vitD": {
+   "orden": [
+    "bedca",
+    "ciqual",
+    "usda"
+   ],
+   "por_que": "⚠️ BEDCA TIENE LA COLUMNA Y CASI NUNCA LA MIDE, así que este nutriente es el que más baja por la cadena. Medido el 13 de septiembre: de los 20 pescados y mariscos del catálogo, BEDCA daba `TR` con la celda VACÍA -- o sea NO HAY CIFRA -- en diez, y lo mismo en las tres filas de merluza (2347 fresca, 825 congelada, 1174 pescadilla) y en seis carnes magras. CIQUAL sí la publica («Vitamine D (µg/100 g)») y USDA también («Vitamin D (D2 + D3)», id 1114), así que la cadena se recorre hasta la primera que dé NÚMERO.",
+   "lo_que_no_es_un_numero": "Tres marcas que NO son cifras y con las que no se cierra nada: el `TR` de BEDCA con la celda vacía, el `-` de CIQUAL (valor no disponible) y el `< X` de CIQUAL (límite de detección). La tercera es la más traicionera porque parece casi un número: `Huile de tournesol` da «< 0,25» y por eso ese aceite se cerró bajando al mandato 4, donde USDA da 0 de verdad.",
+   "por_que_importa_mas_que_otros": "Es uno de los CINCO topes de seguridad crónica (regla 2 de `CLAUDE.md`), y es restricción DURA dentro del solver: 20 µg/1000 kcal de NRC 2006 y 2,6 µg/kg^0,75 de Lenox & Bauer 2013. Un hueco aquí se imputa al percentil 90 de su categoría, y en «Pescados y mariscos» ese percentil lo fijan el salmón, la sardina y el boquerón (8 µg) -- nivel de pescado AZUL puesto sobre un pescado blanco. Así que dejar el hueco no es neutral: aprieta el tope crónico hasta quitar menús. Y un cero mudo es peor en la otra dirección, porque AFLOJA el mismo tope.",
+   "el_cero_mudo_que_encontro": "La ficha `Pescadilla` declaraba 0 µg sin que ninguna fuente lo diga, y era lo único que sostenía el menú del adulto de 20 kg con ocho especies excluidas del BLOQUE 9. Barrido de esa cifra contra el endpoint: sale menú con 0,0 y NO sale con 1,0 · 2,15 · 3 · 4 · 5 · 6 · 8. Un verde que solo existe si un pescado tiene CERO EXACTO de vitamina D no era un verde.",
+   "lo_que_sigue_sin_cifra": "Tres del catálogo, y no por descuido: `Bacaladilla` (bacaladilla es *Micromesistius poutassou*, y `Merlan` de CIQUAL es *Merlangius merlangus*, otra especie -- no vale), `Gamba roja` (*Aristeus antennatus*; CIQUAL da «< 0,2» a la gamba cruda y la fila de USDA con cifra es la de «may contain additives to retain moisture», que es otro producto) y `Pescadilla` (ninguna de las cuatro fuentes publica vitamina D de merluza congelada). Quedan en hueco declarado."
   }
  },
  "unidades": {
