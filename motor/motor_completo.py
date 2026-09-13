@@ -483,7 +483,44 @@ MINIMO_POR_CATEGORIA_PORCION = {
 }
 
 
-def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
+def resolver(*args, **kwargs):
+    """El solver, con UN reintento y solo uno: el del techo del libro.
+
+    ⚠️ POR QUÉ EXISTE ESTE ENVOLTORIO (13 de septiembre de 2026, por la noche).
+
+    Cuando el suelo de FEDIAF supera un techo del libro, el techo ya no
+    desaparece: SUBE hasta el suelo y se queda pegado a él, para que el menú no
+    se aleje del consejo más de lo que la aritmética obliga. Ver
+    `recomendaciones.HOLGURA_DEL_TECHO_QUE_SUBE`, donde están las seis medidas.
+
+    Pero esa holgura es un número NUESTRO, no de ninguna fuente, y medido sobre
+    seis casos. **Un número nuestro no puede dejar a un perro sin comer.** Así
+    que si con el techo apretado no sale menú, se suelta del todo y se vuelve a
+    intentar -- que es exactamente lo que hacía el motor antes de esta mejora,
+    o sea que el plan B es el comportamiento probado.
+
+    Es UN reintento, no una escalera: el segundo intento no aprieta nada, así
+    que no puede hacer falta un tercero.
+
+    ⚠️ Y NO SE REINTENTA CUANDO EL PROBLEMA ES OTRO. Si el primer intento
+    devuelve `_imposible` (aritmética demostrada) o si no había ningún techo que
+    subir, reintentar sería pagar el doble de reloj para llegar al mismo sitio
+    -- y el reloj es lo que dejó sin menú al toy de 1,5 kg en el BLOQUE 43.
+    """
+    _subidos = {}
+    kwargs_1 = dict(kwargs)
+    kwargs_1["_techos_subidos_fuera"] = _subidos
+    ok, gramos = _resolver_una_vez(*args, **kwargs_1)
+    if ok or not _subidos.get("se_ha_subido"):
+        return ok, gramos
+    if isinstance(gramos, dict) and gramos.get("_imposible"):
+        return ok, gramos
+    kwargs_2 = dict(kwargs)
+    kwargs_2["apretar_el_techo_del_libro"] = False
+    return _resolver_una_vez(*args, **kwargs_2)
+
+
+def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             excluidos=None, margenes_categoria=None, cuantos_max=None,
             max_suplementos=2, tolerancia_kcal=0.03,
             forzar=None, preferir=None, patologias=None, semilla_aleatoria=None,
@@ -493,7 +530,8 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             peso_objetivo_kg=None, gramos_fijos=None,
             soltar_limites_patologia=None, estado_del_solver=None,
             objetivos_del_profesional=None, kcal_de_premios=0.0,
-            ratios_del_profesional=None):
+            ratios_del_profesional=None,
+            apretar_el_techo_del_libro=True, _techos_subidos_fuera=None):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -1094,8 +1132,23 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # vez de 2750), que para el es papel mojado -- el mismo olvido que el 7 de
     # septiembre dejo sin efecto el minimo de calcio reforzado en la via rapida.
     from recomendaciones import topes_de_la_etapa as _topes_de_la_etapa
-    for _clave_r, _valor_r in _topes_de_la_etapa(
-            etapa, req, _der_ef, peso_adulto_esperado_kg).items():
+    # ⚠️ Y CON EL FACTOR DE LOS PREMIOS (13 de septiembre). El techo del libro
+    # cede cuando el suelo que de verdad se aplica lo supera, y los premios
+    # suben ese suelo: sin pasarlo, un cachorro de raza grande con premios se
+    # quedaba SIN MENÚ -- el suelo de calcio de la nota b (2500) escalado un
+    # 11 % son 2778 contra el techo de 2750 de SACN5. Es el caso de Cairo, el
+    # perro de Elena, encontrado en producción el 13 de septiembre.
+    # ⚠️ CUÁLES HAN SUBIDO LO DICE LA PROPIA FUNCIÓN, no se deduce comparando:
+    # el envoltorio `resolver` necesita saberlo para decidir si reintenta sin el
+    # techo apretado, y una deducción por comparación de flotantes tiene un caso
+    # en el que miente -- lo cazó el fallo puesto.
+    _subidos_aqui = {}
+    _topes_del_libro = _topes_de_la_etapa(
+        etapa, req, _der_ef, peso_adulto_esperado_kg, _factor_premios,
+        apretar_el_techo_del_libro, _subidos_aqui)
+    if _techos_subidos_fuera is not None and _subidos_aqui:
+        _techos_subidos_fuera["se_ha_subido"] = True
+    for _clave_r, _valor_r in _topes_del_libro.items():
         _actual_r = topes_patologia.get(_clave_r)
         topes_patologia[_clave_r] = (_valor_r if _actual_r is None
                                      else min(_actual_r, _valor_r))

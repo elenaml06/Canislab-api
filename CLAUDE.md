@@ -126,6 +126,45 @@ con alguna, casi siempre el error está en el cambio.
    existe menú, se sueltan las proporciones de BARF (hueso 20-60 %, etc.),
    que son criterio nuestro y no de FEDIAF. Nunca los requisitos ni la
    seguridad. Ver `_escalera_de_relajacion()`.
+3-ter. **Un techo del LIBRO cede ante un suelo de FEDIAF, y se dice** (13 de
+   septiembre). No es nuevo —`topes_de_la_etapa` lo hace desde el 8 de
+   septiembre, y es lo que salva al perro a dieta— pero hasta hoy comparaba
+   contra un suelo que NO es el que aplica el solver, y eso dejó a un perro de
+   verdad sin comer. **CASO REAL, EN PRODUCCIÓN**: Cairo, el cachorro de Elena,
+   American Staffordshire de casi 7 meses que pesará 31 kg de adulto, **no
+   sacaba ningún menú en cuanto se declaraban premios**. Se cruzaban dos cifras
+   de calcio y las dos son correctas: el **suelo 2500** de la nota b de FEDIAF
+   (cachorro que pasará de 15 kg) contra el **techo 2750** de la Tabla 17-1 de
+   SACN5 (el que pasará de 25 kg). Entre los dos hay un 10 % de sitio y los
+   premios se lo comen, porque **suben el suelo y no el techo** (regla 3-bis).
+   El suelo contra el que se mide un techo tiene que ser **el que de verdad se
+   aplica** —`recomendaciones.suelo_que_de_verdad_se_aplica`: la fila escalada,
+   MÁS la nota b, MÁS los premios—, y eso vale para el solver y para
+   `_tope_patologia_roto` a la vez, con el MISMO `factor_premios`, o el filtro
+   final tira menús que el solver construyó bien. Y el techo que cede **se
+   dice**, en `techos_del_libro_que_no_se_aplican` del propio menú: la función
+   que los contaba existía desde el 8 de septiembre con el comentario «el techo
+   se cae, no en silencio» y **no la llamaba nadie**.
+   ⚠️ **Y el techo no desaparece: SUBE hasta el suelo** (misma noche, y lo pidió
+   Elena leyendo el arreglo: «pero a ver, ¿y no se puede dar un menú que cumpla
+   el techo? seguro que sí»). Cumplirlo no se puede —el suelo está por encima,
+   es aritmética— pero **quedarse pegado a él sí**, y la primera versión no lo
+   hacía: el techo desaparecía y el menú se iba a 3746 cuando con 2778 le
+   bastaba. La holgura con la que sube es `HOLGURA_DEL_TECHO_QUE_SUBE` = 1,02 y
+   es **NUESTRA**, no de ninguna fuente: medido sobre tres cachorros de raza
+   grande y dos niveles de premios, con 1,005 salen **0 de 6** y con 1,02 salen
+   **6 de 6**. Y como es nuestra, **no puede dejar a un perro sin comer**:
+   `resolver` prueba con el techo apretado y, si no sale menú, lo suelta y
+   reintenta una vez — que es el comportamiento ya probado de antes. El calcio
+   de Cairo pasa de 3746 a **2824**, o sea 922 mg menos al día y a un 2,7 % del
+   consejo del libro en vez de a un 36 %. ⚠️ Y **el filtro final NO exige ese
+   techo subido**: es un número nuestro, y rechazar un menú por pasarse de algo
+   que nos hemos inventado sería darle rango de requisito — además de tirar
+   justo los menús que el plan B existe para poder dar. Lo que cuesta está medido
+   y **está sin decidir** en `PREGUNTAS_ABIERTAS.md` P-37b: con premios al 10 %
+   ese cachorro sale con 3746 mg de calcio, dentro del máximo duro de FEDIAF
+   (4500) y por encima del 2750 que las dos fuentes caninas piden justo para
+   prevenir la panosteitis. Lo vigila el BLOQUE 101.
 3-bis. **Lo que el perro come fuera de la ración se cuenta, no se ignora**
    (11 de septiembre). Los premios, las sobras de la mesa y los suplementos
    que da el dueño por su cuenta llegan por `kcal_de_premios` (el número) o
@@ -1270,6 +1309,41 @@ que es otra cosa y sigue siendo la única forma de que una cifra no mienta:
 `auditar_fediaf.py`, `auditar_transcripcion_fediaf.py`, `auditar_conversiones.py`,
 `auditar_citas.py`, `auditar_patologias.py`, `auditar_margen_profesional.py`,
 `auditar_catalogo.py` y `auditar_kober.py`.
+
+## Antes de fusionar: la app DE VERDAD contra el motor DE VERDAD
+
+**Escrito el 13 de septiembre de 2026, y lo pidió Elena el día que producción
+estuvo rota sin que nada saltara:**
+
+> «a partir de ahora cuando hagas PR y fusiones tienes que hacer pruebas para
+> todo tipo de etapas y todo tipo de perros con todo tipo de patologías en la
+> app real con las cuentas de prueba, en veterinario y usuario, para ver si
+> falla algo»
+
+⚠️ **Y el motivo está medido: ese día había 101 bloques del motor en verde y 550
+pruebas de la app en verde, y la app no daba UN SOLO MENÚ.** Cairo, el cachorro
+de Elena, se quedaba sin comer y ninguna de las dos baterías podía verlo.
+
+**Por qué ninguna de las dos lo ve, y es estructural:**
+
+| | Qué prueba | Qué NO puede ver |
+|---|---|---|
+| `pruebas_completas.py` | el motor, por dentro y por sus endpoints | lo que la app le MANDA de verdad |
+| `tests/*.spec.js` de `canislab-web` | la app, contra un motor **de mentira** que siempre devuelve menú | que el motor de verdad diga que no |
+
+Las dos juntas dejan un hueco del tamaño exacto del fallo: **una petición que la
+app manda bien y el motor contesta «no hay menú» por un motivo real.** Eso no es
+un fallo de nadie de los dos y solo se ve juntándolos.
+
+**Lo que hay que ejecutar antes de fusionar** es `tests/motor-de-verdad.spec.js`
+en `canislab-web`: levanta la app y la deja hablar con la API **desplegada**, y
+recorre la matriz de etapas × tamaños × premios × patologías, en los dos roles.
+No sustituye a nada: se suma.
+
+⚠️ **La mitad de la CUENTA sigue siendo de mentira**, y va declarado: el
+Supabase real necesita una credencial que no vive en el repo. Lo que se prueba
+de verdad es el motor, que es donde estaba el fallo. El día que se ponga la
+credencial como secreto de GitHub, esa mitad también.
 
 ## Cómo se prueba
 

@@ -1924,6 +1924,69 @@ dos y las dos son decisión de producto:
 el aviso?
 
 
+### P-37b · Al cachorro de raza grande con premios se le cae el techo de calcio del libro: ¿es eso lo que queremos, o hay que topar los premios?
+
+**Abierta el 13 de septiembre de 2026. Dueña: Elena (decisión clínica).**
+
+Encontrada en PRODUCCIÓN, con su propio perro. Cairo, American Staffordshire,
+cachorro de casi 7 meses, 20 kg, que pesará unos 31 de adulto: **no salía ningún
+menú en cuanto se declaraban premios.**
+
+**Lo que pasa, y las dos cifras son correctas:**
+
+| | mg/1000 kcal | De dónde |
+|---|---|---|
+| Suelo de calcio | **2500** | FEDIAF, Tabla III-3b **nota b**: cachorro que pasará de 15 kg de adulto |
+| Techo de calcio | **2750** | SACN5 Tabla 17-1, columna del que pasará de **25 kg**, y Fascetti cap.10 («in order to prevent panosteitis») |
+
+Entre los dos hay un **10 %** de sitio, y los premios se lo comen: la ración se
+formula con las kcal que quedan y se le sigue exigiendo el día entero de
+nutrientes (regla 3-bis), así que **el suelo sube y el techo no**.
+
+| Premios | Suelo escalado | ¿Cabe bajo 2750? |
+|---|---|---|
+| ninguno | 2500 | sí |
+| 5 % | 2632 | sí, justo |
+| **9,1 %** | **2750** | **el punto exacto donde deja de caber** |
+| 10 % (lo que RECOMIENDA la fuente) | 2778 | no |
+| 20 % | 3125 | no |
+
+**Lo aplicado, que NO es una decisión nueva:** manda FEDIAF y el techo del libro
+cede, que es la regla ya escrita en `topes_de_la_etapa` desde el 8 de septiembre
+—la que salva al perro a dieta— y la regla general del repo: si una fuente
+contradice a FEDIAF, gana FEDIAF. El suelo es un REQUISITO y el techo una
+RECOMENDACIÓN. El máximo duro de FEDIAF (4500) sigue puesto, el menú se verifica
+igual, y el menú **dice** que el techo ha cedido
+(`techos_del_libro_que_no_se_aplican`).
+
+**LO QUE HAY QUE DECIDIR, Y NO LO DECIDE EL MOTOR.** Medido sobre el menú que
+sale: con premios al 10 % el calcio se queda en **2824 mg/1000 kcal** — dentro
+del 4500 de FEDIAF y un 2,7 % por encima del 2750 que las dos fuentes caninas
+recomiendan justo para este perro y justo por la panosteitis. O sea que el
+arreglo devuelve el menú y **paga un precio en el nutriente donde más pesa**,
+aunque el precio es ahora el mínimo que la aritmética permite (la primera
+versión, con el techo desapareciendo del todo, pagaba 3746).
+
+Las dos salidas:
+
+1. **La de hoy**: el techo **sube hasta el suelo** y se queda pegado a él, sale
+   menú, y se dice a cuánto ha subido. El calcio de Cairo se queda en **2824**
+   —a un 2,7 % del consejo del libro— en vez de los 3746 de la primera versión.
+   La holgura con la que sube (2 %) es **nuestra** y va medida; y como es
+   nuestra, si con ella no saliera menú el motor la suelta y reintenta.
+2. **Topar los premios al 9 % en el cachorro de raza grande** y decírselo al
+   dueño, para que las dos cifras quepan. ⚠️ Eso es cambiar lo que el dueño ha
+   declarado que come su perro, y el motor no sabe si de verdad come menos
+   premios o si lo que pasa es que la ración se le queda corta. Es criterio
+   clínico.
+
+Y hay una tercera que NO vale y queda escrita para no volver a proponerla:
+**bajar el techo del libro a la vez que el suelo** no se puede, porque entonces
+la ventana es un punto y no hay menú; y **dejar el techo puesto** es lo que
+dejaba a Cairo sin comida.
+
+Lo vigila el BLOQUE 101, con el fallo puesto de tres formas.
+
 ### P-36 · El rango de peso de la raza ACOTA el peso adulto que se le estima a un cachorro, y para 65 razas ese rango es ahora el del estándar de concurso
 
 | | |

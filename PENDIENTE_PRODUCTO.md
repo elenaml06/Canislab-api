@@ -789,3 +789,44 @@ ofrece ni lo menciona.
 **Decisión, y son dos:** si entra una ficha de páncreas en el catálogo —con el
 trabajo de datos que eso lleva— y si el aviso de la EPI lo nombra aunque la
 ficha no exista. Lo segundo no depende de lo primero.
+
+## La lista de patologías del dueño es un scroll interminable
+
+**Pedido por Elena el 13 de septiembre de 2026:**
+
+> «para las patologías de usuario se ve una lista MUUUUY larga y no me gusta,
+> que sea un desplegable con un buscador o algo así mejor»
+
+Son **47**, y hoy se pintan seguidas. En el móvil eso es un scroll que nadie
+lee entero, y una patología que no se lee es una patología que no se marca —
+o sea un menú formulado para un perro sano que no lo es.
+
+**Lo que hay que hacer, y NADA de esto se inventa en la app:**
+
+- Un **desplegable con buscador**, agrupado por aparato. Los nueve grupos y la
+  etiqueta en cristiano de cada patología ya los sirve `GET /vocabulario` en
+  `patologias.por_aparato` (ver `patologias_como_se_presentan.json`): la app los
+  lee, no se los escribe.
+- El buscador **sin tildes ni mayúsculas**, con el mismo normalizador que ya usa
+  el formulador (`tests/buscar-sin-tildes-en-el-formulador.spec.js`).
+- Las **marcadas, arriba y siempre visibles**. Es lo que se pierde al meter una
+  lista en un desplegable, y aquí no se puede perder: quien marcó «renal» tiene
+  que verlo sin abrir nada.
+- Las **doce que no llevan casilla propia** siguen sin llevarla: son respuestas
+  de familias (los cinco estadios ACVIM, la renal avanzada, los cuatro urolitos
+  que no son estruvita, la predisposición al cobre y la encefalopatía). Ponerlas
+  sería la misma patología dos veces en la misma pantalla.
+
+**Para darlo por hecho:** una prueba que siembre una etiqueta **inventada** en
+`/vocabulario` y la busque en el desplegable — con las de verdad, «la app lo ha
+leído del motor» y «la app pinta su respaldo» se ven exactamente igual.
+
+## Y mirar los TEXTOS, no solo si falla
+
+Del mismo día y de la misma frase de Elena: «también tienes que ver cuando hagas
+esas pruebas si algo te chirría de textos, y cosas así. O sea comprobar todo».
+
+Una prueba dice si algo se rompe; no dice si una pantalla se entiende. Al pasar
+la batería de la app de verdad (ver `CLAUDE.md`, «Antes de fusionar») hay que ir
+anotando lo que chirría —textos, orden, cosas que sobran— y traerlo como lista,
+no arreglarlo por cuenta propia: qué se enseña y cómo es decisión de producto.
