@@ -83,8 +83,22 @@ jobs:
       # sobre `elenaml06/canislab-fuentes`. Mientras no exista, este paso se
       # salta solo y la batería lo dice al final, en voz alta y contándolos.
       #
-      # `sparse-checkout` trae solo los .txt: el repo de fuentes lleva 286 MB de
+      # `sparse-checkout` trae solo el TEXTO: el repo de fuentes lleva 286 MB de
       # PDF que aquí no hace falta bajar.
+      #
+      # ⚠️ Y LOS .xml, QUE FALTABAN, Y ESO TENÍA LA CI EN ROJO DESDE EL 12 DE
+      # SEPTIEMBRE. `auditar_citas.py` indexa los `.xml` desde ese día, porque
+      # Hofmann 2025 --uno de los dos estudios con los que este repo justifica
+      # lo del fósforo-- vive SOLO como XML de PubMed Central. Aquí no se
+      # bajaban, así que sus dos citas salían «citan una fuente que SÍ está y no
+      # aparecen» y la batería moría en el BLOQUE 85.
+      #
+      # Es la peor forma de rojo que puede tener esta batería: VERDE EN LOCAL Y
+      # ROJO AQUÍ, con el mensaje acusando a una cita que está bien copiada. En
+      # local el repo de fuentes está entero y el fichero se encuentra; aquí no
+      # se bajaba. Y el mensaje no puede decirlo, porque desde dentro «la fuente
+      # está en el repo y la frase no aparece» y «la fuente no se ha bajado» se
+      # ven exactamente igual.
       - name: Traer las fuentes (si hay token)
         if: ${{ env.FUENTES_TOKEN != '' }}
         uses: actions/checkout@v4
@@ -96,6 +110,7 @@ jobs:
             *.txt
             **/*.txt
             **/*.json
+            **/*.xml
           sparse-checkout-cone-mode: false
 
       - uses: actions/setup-python@v5

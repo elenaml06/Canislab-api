@@ -99,7 +99,21 @@ DOCUMENTOS = ["PATOLOGIAS.md", "LECTURA_SACN5.md", "HALLAZGOS_LECTURA_FUENTES.md
     "PREGUNTAS_ABIERTAS.md"]
 JSONS = ["patologias.json", "recomendaciones_libro.json", "requisitos_condicionales.json",
          "requerimientos_v2_final.json", "sacn5_fuentes_de_minerales.json",
-         "fediaf_conversiones_vitaminas.json"]
+         "fediaf_conversiones_vitaminas.json",
+         # ⚠️ AÑADIDO LA NOCHE DEL 12 DE SEPTIEMBRE. `razas.json` paso de no
+         # citar nada a citar 85 veces en un dia -- 20 prototipos del BOE y 65
+         # estandares de la FCI -- y estaba fuera de esta lista por lo mismo
+         # que `LECTURAS.md`: nacio despues. Sus dos fuentes SI estan en el
+         # repo (`rd558_2001_razas_caninas_espanolas.txt` y
+         # `fci_estandares_peso.txt`), asi que sus citas se pueden comprobar
+         # literales, y una raza es justo donde una cita mal copiada no se ve:
+         # el numero cuadra con la cita aunque la cita no sea de esa raza.
+         "razas.json",
+         # La Tabla VII-1 de FEDIAF, la de como se RECONOCE cada punto de
+         # condicion corporal. Entra aqui el mismo dia que se escribe: son 26
+         # frases literales de una tabla que el PDF saca a dos columnas, que es
+         # justo donde se han colado las citas mal copiadas de este repo.
+         "bcs_tabla_VII_1.json"]
 
 _CITA = re.compile(r"«([^»]{40,})»")
 # ⚠️ BAJADO DE 40 A 25 EL 11 DE SEPTIEMBRE, y por un fallo mio concreto.
@@ -134,8 +148,33 @@ _LARGO_MINIMO = 25
 # applies» cuando la fuente dice «instead the nutritional maximum, WHEN INCLUDED
 # IN THE RELEVANT TABLES, should be taken into account». Una condicion borrada.
 SIN_DECIR_DECLARADAS = 0          # citas que no dicen de que fuente salen
-SIN_TEXTO_DECLARADAS = 12         # citan una fuente que no esta en el repo.
-                                  # ⚠️ SUBE A 12 EL 12 DE SEPTIEMBRE POR LA
+SIN_TEXTO_DECLARADAS = 16         # citan una fuente que no esta en el repo.
+                                  # ⚠️ SUBE A 16 LA NOCHE DEL 12 DE SEPTIEMBRE,
+                                  # y son TRES citas de los referentes con los
+                                  # que se contrasto si el rango de la raza debe
+                                  # acotar las kcal: dos de la misma frase de
+                                  # MyVetDiet -- «pesos indicativos
+                                  # diferenciados para machos y hembras» --, en
+                                  # `razas.json` y en `PREGUNTAS_ABIERTAS.md`.
+                                  # Es el software español de raciones con el
+                                  # que se contrasto si el rango de la raza debe
+                                  # acotar las kcal, y es de pago: no puede
+                                  # estar en el repo de fuentes. La tercera es
+                                  # de Royal Canin Academy («the weight of the
+                                  # parents ... or via the breed standard»), que
+                                  # es la frase que dice para que se usa el
+                                  # estandar de raza en las curvas de WALTHAM.
+                                  # ⚠️ SUBE A 13 LA NOCHE DEL 12 DE SEPTIEMBRE,
+                                  # y tambien es UNA sola cita nueva: el peso del
+                                  # Perro Leones de Pastor, que no lo publica el
+                                  # BOE sino la Junta de Castilla y Leon (Orden
+                                  # AYG/1170/2018), y ese boletin no esta en el
+                                  # repo de fuentes. Su hermana, la Orden Foral
+                                  # del Pachon Navarro, no cuenta porque su cita
+                                  # («Entre 20 y 30 Kg.») no llega a 25
+                                  # caracteres y esta auditoria no la mira -- esa
+                                  # la rehace el BLOQUE 89 contra su cifra.
+                                  # ⚠️ SUBIO A 12 EL 12 DE SEPTIEMBRE POR LA
                                   # TARDE, y es una sola cita nueva: el TITULO
                                   # del articulo de Cavanaugh 2020 en
                                   # `Veterinary Practice News`, que pasa a tener
@@ -389,19 +428,44 @@ def textos():
 # frases de Elena y nuestra propia prosa entrecomillada, que llevan meses escritas
 # asi en media docena de documentos — y una auditoria que acusa a quien no ha
 # hecho nada se deja de mirar, que es el fallo que este fichero mas repite.
-_FUENTES_EN_ESPANOL = ("ettinger", "feldman", "côté", "cote", "hervera")
+# ⚠️ Y LAS CUATRO DE `razas.json`, QUE TAMBIEN ESTAN EN ESPAÑOL (12 de
+# septiembre, por la noche). Los prototipos raciales los publica el BOE y los
+# estandares de raza la FCI, y los dos escriben en español: sin esto, las 85
+# citas de razas que entraron hoy se daban por «prosa nuestra» y no las miraba
+# nadie. Dos de las cuatro NO estan en el repo (las ordenes autonomicas del
+# Pachon Navarro y del Perro Leones), asi que van tambien en `_FUERA` para que
+# salgan por la casilla de «no se puede comprobar aqui» y no acusadas.
+_FUENTES_EN_ESPANOL = ("ettinger", "feldman", "côté", "cote", "hervera",
+                       "real decreto", "fédération cynologique",
+                       "federation cynologique", "fci", "orden foral", "orden ayg")
 
 _EN_EL_REPO = ("fediaf", "sacn5", "small animal clinical nutrition", "nrc",
                "fascetti", "köber", "kober", "reglamento", "iris", "aaha", "tvt",
                "dobenecker", "hofmann", "heer", "ishii", "malandain", "sturmer",
-               "stürmer", "hervera", "ettinger", "feldman", "côté", "cote")
+               "stürmer", "hervera", "ettinger", "feldman", "côté", "cote",
+               "real decreto", "fédération cynologique", "federation cynologique",
+               # ⚠️ «fci» A SECAS ADEMAS DEL NOMBRE LARGO: los apartados de
+               # `LECTURAS.md` la llaman por las siglas, que es como se la
+               # nombra siempre, y con solo el nombre largo se auditaban 3 de
+               # sus 11 citas. Se busca por palabra entera, asi que no casa
+               # dentro de otra.
+               "fci")
 # ⚠️ «purina institute» Y NO «purina» A SECAS (12 de septiembre). La marca se
 # llama igual que el nutriente en español y en ingles («purinas», «purine»), asi
 # que con la clave corta cualquier parrafo sobre purinas se atribuia a la marca y
 # se iba a la casilla de «no se puede comprobar». Las cinco citas que de verdad
 # son suyas dicen «Purina Institute», asi que la clave larga las coge todas.
+# ⚠️ Y LOS TRES REFERENTES QUE SE MIRARON EL 12 DE SEPTIEMBRE POR LA NOCHE para
+# decidir si el rango de la raza debia acotar las kcal: WALTHAM (sus curvas de
+# crecimiento), Royal Canin (que las publica para veterinarios) y MyVetDiet (el
+# software español de raciones, del que sale la frase «pesos indicativos
+# diferenciados para machos y hembras»). Ninguno esta en el repo de fuentes -- y
+# MyVetDiet no puede estarlo, es software de pago --, asi que sus citas van a la
+# casilla de «no se puede comprobar aqui». Sin esto, «myvetdiet» no casaba con
+# nada y la frase se atribuia a la FCI, que era la otra fuente del parrafo.
 _FUERA = ("acvim", "merck", "purina institute", "today's veterinary", "cavanaugh",
-          "center", "consenso")
+          "center", "consenso", "orden foral", "orden ayg",
+          "myvetdiet", "waltham", "royal canin", "pet diet designer")
 
 
 # ⚠️ SE BUSCA POR PALABRA ENTERA, Y NO ES COSMETICO (12 de septiembre). Antes se
@@ -522,7 +586,15 @@ def recoger():
                     _anda(v, ctx)
             elif isinstance(o, str):
                 for c in _CITA.findall(o):
-                    if _parece_de_fuente(c):
+                    # ⚠️ LA REGLA DEL ESPAÑOL VALE AQUI TAMBIEN (12 de
+                    # septiembre, por la noche). Arriba, en los documentos, una
+                    # cita española cuyo parrafo nombra una fuente en español se
+                    # audita; aqui no se preguntaba, asi que las 85 citas del
+                    # BOE y de la FCI que `razas.json` estreno hoy se daban por
+                    # prosa nuestra. El contexto de un JSON es mejor que el de
+                    # un documento: es el campo `fuente` del propio bloque.
+                    if _parece_de_fuente(c) or _clave_en(
+                            _FUENTES_EN_ESPANOL, " ".join((ctx + " " + o).lower().split())):
                         # el contexto son las DOS cosas: la `fuente` del bloque
                         # padre Y el propio texto donde vive la cita. Con solo
                         # la primera, «el consenso ACVIM ... «no drug or dietary

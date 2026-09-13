@@ -1,0 +1,863 @@
+{
+  "_meta": {
+    "que_es": "Dónde se compra cada alimento del catálogo y si es caro, para que los menús que se le enseñan a alguien se puedan hacer de verdad.",
+    "de_donde_sale_esto": "Elena, 13 de septiembre: «usa ingredientes que sean fáciles de encontrar y baratos y alguno más premium si quieres [...] lo que quiero es algo variado, barato y accesible». Y la corrección del mismo día: «lo de carnicería me parece que también tiene que estar en nivel 1, porque al final es verdad que las vísceras la mayoría son difíciles de encontrar en un supermercado».",
+    "por_eso_accesible_son_dos_sitios": "`supermercado` y `mostrador` cuentan los dos como accesible. Si solo contara el supermercado, media ración BARF se quedaría fuera: el hígado que no es de pollo, las vísceras enteras, las carcasas y los cuellos son de carnicería, y una carnicería la tiene cualquiera cerca. Lo que separa de verdad es tener que pedirlo por internet.",
+    "ojo_esto_no_toca_la_nutricion": "Esto NO entra en el solver como restricción: es una preferencia para ELEGIR qué menús se precalculan y se enseñan. Los 43 requisitos, el ratio Ca:P, los topes de seguridad y los de patología mandan igual, y un menú que no cumpla no sale aunque sea el más barato del mundo. Es la regla 3: se relaja la FORMA, nunca la nutrición.",
+    "el_precio_es_criterio_nuestro": "⚠️ `precio_orientativo` NO TIENE FUENTE PUBLICADA y va marcado como lo que es. En el repo no hay ninguna tabla de precios, y escribir «4,20 €/kg» sería inventarse un dato con forma de dato bueno -- exactamente lo que este repo persigue. Por eso son DOS casillas y no tres: `premium` señala lo que cualquiera reconoce como caro (la gamba roja, el solomillo, el lenguado, los frutos rojos) y `corriente` es todo lo demás. Inventar un escalón «medio» sería fingir una precisión que no tengo. Es un juicio de andar por casa y es revisable; el día que haya una fuente de precios, esta columna se sustituye por ella.",
+    "los_dos_cerebros": "`Cerebro de ternera` y `Cerebro de vaca` van en `no_se_vende`, y no es una cuestión de que cueste encontrarlos: el cerebro de bovino es material especificado de riesgo (Reglamento (UE) 999/2001, Anexo V) y Categoría 1 del Reglamento (CE) 1069/2009, o sea que no puede acabar en un animal. Hoy no afecta a nada -- 0 de los 216 menús precalculados los usan --, y la decisión de qué hacer con sus fichas no es de este fichero. Ver `PENDIENTE_DECISIONES.md`.",
+    "cuantos": {
+      "especializada": 24,
+      "supermercado": 101,
+      "mostrador": 35,
+      "no_se_vende": 1,
+      "en_casa": 1,
+      "accesibles": 137,
+      "total": 162,
+      "corriente": 142,
+      "premium": 20
+    },
+    "el_precio_y_donde_se_compra_son_DOS_EJES": "Un multivitamínico se pide por internet y no es caro; una gamba roja está en cualquier supermercado y sí lo es. Mezclarlos daría un menú «barato» lleno de suplementos de marca, o uno «accesible» de solomillo y lenguado.",
+    "lo_que_ya_se_ha_corregido_aqui": "⚠️ La `Dorada` y la `Lubina` estaban marcadas `premium` en la primera escritura de este fichero (13 de septiembre) y es FALSO en España: las dos son de acuicultura y están entre los pescados más baratos del mostrador. Se marcaron por inercia -- «pescado de mesa» -- y la dorada sola aparecía en 31 de los 216 menús, o sea que ese error se habría llevado por delante el 14 % del catálogo sin ningún motivo. Queda escrito porque es exactamente el riesgo de un campo sin fuente: se equivoca en silencio y con forma de dato bueno.",
+    "esta_atado_al_catalogo_de_163": "⚠️ ESTO ESTÁ INDEXADO POR NOMBRE DE ALIMENTO, que es la forma que se desincroniza sola -- la misma de `COMO_DAR_ALIMENTO`, que llegó a tener 12 entradas de alimentos que el motor ya no tenía, la Borraja entre ellas. El BLOQUE 100 exige que cubra el catálogo EXACTO. || Y FUNCIONÓ: se escribió el 13 de septiembre contra 163 fichas diciendo que iba a saltar el día que se fusionara la rama del catálogo, y ese mismo día saltó con las tres líneas exactas que se habían predicho -- fuera «Cerebro de vaca» (por LEY, no por precio) y «Riñón de ternera» renombrado a «Riñón de vaca». Un rojo que avisa de lo que ya sabías es un guardián que sirve."
+  },
+  "donde_se_compra": {
+    "supermercado": {
+      "titulo": "En cualquier supermercado",
+      "es_accesible": true,
+      "que_es": "Se coge del lineal sin preguntar a nadie."
+    },
+    "mostrador": {
+      "titulo": "En la carnicería o la pescadería",
+      "es_accesible": true,
+      "que_es": "Hay que pedirlo en el mostrador, y a veces encargarlo de un día para otro, pero es el mostrador de siempre: no hace falta una tienda especial."
+    },
+    "especializada": {
+      "titulo": "En una tienda especializada o por internet",
+      "es_accesible": false,
+      "que_es": "Suplementos y productos de marca. Se piden por internet o en una tienda de dietas crudas, y eso es lo que de verdad separa un menú fácil de uno que no lo es."
+    },
+    "en_casa": {
+      "titulo": "Se hace en casa",
+      "es_accesible": true,
+      "que_es": "No se compra: se prepara con lo que ya hay."
+    },
+    "no_se_vende": {
+      "titulo": "No se puede dar",
+      "es_accesible": false,
+      "que_es": "Prohibido por ley para consumo animal. Ver `los_dos_cerebros` en `_meta`."
+    }
+  },
+  "por_alimento": {
+    "Aceite de Salmón Natural Greatness": {
+      "categoria": "Omega-3",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "Aceite de cacahuete": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Aceite de coco": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Aceite de girasol": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Aceite de hígado de bacalao": {
+      "categoria": "Extras",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "Aceite de linaza": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Aceite de oliva": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Aceite de oliva virgen extra": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Aceite de sésamo": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Acelga": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Albahaca": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Albaricoque": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Alcachofa": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "premium"
+    },
+    "AniForte Aceite de Salmón": {
+      "categoria": "Omega-3",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "AniForte Beef Blood Powder": {
+      "categoria": "Hierro",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "AniForte Seaweed Meal": {
+      "categoria": "Yodo",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "Apio": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Arándano": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "premium"
+    },
+    "Atún": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "premium"
+    },
+    "Bacaladilla": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Bacalao": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Bazo de cordero": {
+      "categoria": "Vísceras",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Bazo de vaca": {
+      "categoria": "Vísceras",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Berenjena": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Besugo": {
+      "categoria": "Pescados y mariscos",
+      "donde": "mostrador",
+      "precio_orientativo": "premium"
+    },
+    "Boniato": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Boquerón": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Brócoli": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Caballa": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Calabacín": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Calabaza": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Calamar": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Canónigos": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Carcasa de conejo": {
+      "categoria": "Hueso carnoso",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Carcasa de pato": {
+      "categoria": "Hueso carnoso",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Carcasa de pollo": {
+      "categoria": "Hueso carnoso",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Cardo": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Cerebro de ternera": {
+      "categoria": "Vísceras",
+      "donde": "no_se_vende",
+      "precio_orientativo": "corriente"
+    },
+    "Champiñón": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Coco fresco": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "premium"
+    },
+    "Col lombarda": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Col rizada": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Coles de Bruselas": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Coliflor": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Conejo": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Corazón de conejo": {
+      "categoria": "Carne muscular",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Corazón de cordero": {
+      "categoria": "Carne muscular",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Corazón de pavo": {
+      "categoria": "Carne muscular",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Corazón de pollo": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Corazón de vaca": {
+      "categoria": "Carne muscular",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Costillas de cordero": {
+      "categoria": "Hueso carnoso",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Cuello de pato": {
+      "categoria": "Hueso carnoso",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Cuello de pavo": {
+      "categoria": "Hueso carnoso",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Cuello de ternera": {
+      "categoria": "Hueso carnoso",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Cáscara de huevo PAWS & PATCH": {
+      "categoria": "Calcio",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "Cáscara de huevo casera (en polvo)": {
+      "categoria": "Calcio",
+      "donde": "en_casa",
+      "precio_orientativo": "corriente"
+    },
+    "Dorada": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Dátil": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "premium"
+    },
+    "Endibia": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Espinaca": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Espinazo de conejo": {
+      "categoria": "Hueso carnoso",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Espárrago verde": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "premium"
+    },
+    "Frambuesa": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "premium"
+    },
+    "Fresa": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "GRAU Levadura de cerveza": {
+      "categoria": "Vitamina B",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "Gallina (carne sin hueso)": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Gamba roja": {
+      "categoria": "Pescados y mariscos",
+      "donde": "mostrador",
+      "precio_orientativo": "premium"
+    },
+    "Grasa de pollo": {
+      "categoria": "Extras",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Grelo": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Homemadekun (multivitamínico completo)": {
+      "categoria": "Multivitamínico",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "Huevo clara": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Huevo de codorniz": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Huevo de gallina entero": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Huevo de pato": {
+      "categoria": "Extras",
+      "donde": "especializada",
+      "precio_orientativo": "premium"
+    },
+    "Huevo de pato entero": {
+      "categoria": "Extras",
+      "donde": "especializada",
+      "precio_orientativo": "premium"
+    },
+    "Huevo yema": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Hígado de conejo": {
+      "categoria": "Hígado",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Hígado de cordero": {
+      "categoria": "Hígado",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Hígado de pato": {
+      "categoria": "Hígado",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Hígado de pavo": {
+      "categoria": "Hígado",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Hígado de pollo": {
+      "categoria": "Hígado",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Hígado de vaca": {
+      "categoria": "Hígado",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Judía verde": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Langostino": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "premium"
+    },
+    "Laringe de vacuno": {
+      "categoria": "Extras",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Lechuga": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Lengua de buey": {
+      "categoria": "Carne muscular",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Lengua de cordero": {
+      "categoria": "Carne muscular",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Lengua de ternera": {
+      "categoria": "Carne muscular",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Lenguado": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "premium"
+    },
+    "Lomo de ternera con grasa": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "premium"
+    },
+    "Lubina": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Mandarina": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Mango": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "premium"
+    },
+    "Manteca": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Manzana": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Melón": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Merluza": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Molleja de pavo": {
+      "categoria": "Carne muscular",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Molleja de pollo": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "NEKTON Dog Easy-BARF (multivitamínico)": {
+      "categoria": "Multivitamínico",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "Nabo pelado": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Naranja": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "NaturGreen Psyllium Bio": {
+      "categoria": "Fibra",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "Nutratop Vitamínico-Mineral 7:1": {
+      "categoria": "Multivitamínico",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "Oleum Canis Aceite de Salmón": {
+      "categoria": "Omega-3",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "PAWS & PATCH Levadura de cerveza": {
+      "categoria": "Vitamina B",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "Pato (carne sin hueso)": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Pavo": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Pavo muslo con piel": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Pavo pechuga con piel": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Pavo pechuga sin piel": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Pecho de ternera con hueso": {
+      "categoria": "Hueso carnoso",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Pepino": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Pera": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Perca": {
+      "categoria": "Pescados y mariscos",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Pescadilla": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Pets Purest Aceite de Salmón Escocés": {
+      "categoria": "Omega-3",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "Pimiento rojo": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Pipa de calabaza": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Pipa de girasol": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Piña": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Plátano": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Pollo ala con piel (sin hueso)": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Pollo con piel (sin hueso)": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Pollo muslo con piel": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Pollo muslo sin piel": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Pollo pechuga con piel": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Pollo pechuga sin piel": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Pulmón de cordero": {
+      "categoria": "Vísceras",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Pulmón de ternera": {
+      "categoria": "Vísceras",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Pulmón de vaca": {
+      "categoria": "Vísceras",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Pulpo": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "premium"
+    },
+    "Páncreas de vaca": {
+      "categoria": "Vísceras",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Repollo": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Riñón de cordero": {
+      "categoria": "Vísceras",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Riñón de vaca": {
+      "categoria": "Vísceras",
+      "donde": "mostrador",
+      "precio_orientativo": "corriente"
+    },
+    "Rucula": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Rábano": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Sal común (cloruro sódico)": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Salmón": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "premium"
+    },
+    "Sandía": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Sardina": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Semilla de lino": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Semilla de sésamo": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Sepia": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Ternera con grasa": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Ternera solomillo sin grasa": {
+      "categoria": "Carne muscular",
+      "donde": "supermercado",
+      "precio_orientativo": "premium"
+    },
+    "Timo de ternera": {
+      "categoria": "Vísceras",
+      "donde": "mostrador",
+      "precio_orientativo": "premium"
+    },
+    "Timo de vaca": {
+      "categoria": "Vísceras",
+      "donde": "mostrador",
+      "precio_orientativo": "premium"
+    },
+    "Tomate (puré)": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Trucha": {
+      "categoria": "Pescados y mariscos",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "V-INTEGRA Cachorro": {
+      "categoria": "Multivitamínico",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "V-INTEGRA Epato": {
+      "categoria": "Multivitamínico",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "V-INTEGRA Perro Adulto": {
+      "categoria": "Multivitamínico",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "V-INTEGRA Renal": {
+      "categoria": "Multivitamínico",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "V-INTEGRA Senior": {
+      "categoria": "Multivitamínico",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "Yoduro potásico (comprimidos 200 µg)": {
+      "categoria": "Yodo",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "Yogur griego": {
+      "categoria": "Extras",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "Zanahoria": {
+      "categoria": "Verduras y frutas",
+      "donde": "supermercado",
+      "precio_orientativo": "corriente"
+    },
+    "astoral MultiVital BARF": {
+      "categoria": "Multivitamínico",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    },
+    "napfcheck Novomineral proLEBER": {
+      "categoria": "Multivitamínico",
+      "donde": "especializada",
+      "precio_orientativo": "corriente"
+    }
+  }
+}

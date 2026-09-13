@@ -710,13 +710,29 @@ probablemente subir antes el techo.
 
 **La pregunta:** ¿se queda el fósforo del oxalato solo con techo, o lleva suelo?
 
-### P-14 · FEDIAF publica la curva de crecimiento como ecuación, y el motor usa una copia divulgativa
+**REDUCIDA el 13 de septiembre, y la reduce el propio motor.** La pregunta estaba
+mal planteada por mi parte: **el oxalato YA lleva suelo de fósforo**. No el de
+SACN5 —los 750 de la Tabla 40-5 están escritos y no se aplican porque no pueden
+cambiar nada— sino el de FEDIAF, que es **1160 mg/1000 kcal** y es más alto.
+Comprobado: el motor aplica hoy techo 1500 y suelo 1160, o sea una ventana de
+340 mg.
+
+Así que lo que queda no es «¿lleva suelo?» sino una sola cosa: **¿hay que subir
+ese suelo de 1160 al 1500-2000 de Fascetti?** Y ahí sigue mandando la medida de
+arriba: los menús salen a 1498,x, así que **cualquier suelo por encima de 1160
+empieza a apretar y uno de 1500 deja al oxalato sin menú**. Si la respuesta es
+que sí, hay que subir el techo antes, y eso ya no es una cifra: es elegir entre
+SACN5 y Fascetti, que es exactamente lo que decide un clínico. **Dueño: Cris
+Carles.**
+
+### ~~P-14 · FEDIAF publica la curva de crecimiento como ecuación, y el motor usa una copia divulgativa~~ · **CERRADA el 13 de septiembre**
 
 | | |
 |---|---|
-| **Dueño** | **Elena** (toca los dos repos y el contrato del DER) |
-| **Bloquea** | No, pero sobrealimenta al cachorro de raza grande |
-| **Abierta desde** | 11 de septiembre de 2026, releyendo FEDIAF entera |
+| **Dueño** | — |
+| **Bloquea** | No |
+| **Abierta desde** | 11 de septiembre de 2026, releyendo FEDIAF entera · **cerrada el 13** |
+| **Qué la cerró** | La mitad que faltaba —llevar la Tabla VII-8a al frontend— **ya estaba hecha** desde el 12 de septiembre, cuando se quitó el recorte por raza: `src/der.js` tiene las cinco ecuaciones en `CURVA_FEDIAF_VII_8A` y las usa para el cachorro mestizo sin peso adulto, exactamente como pedía esta pregunta. Estaba resuelta en el motor y abierta en el registro: **una pregunta zombi**, que es justo lo que este fichero existe para impedir. Comprobado el 13 de septiembre en los dos repos, y el contrato del DER —146 casos, uno de ellos con peso adulto Y edad a la vez, que es el que ejerce la curva en los dos lados— sale verde en los dos |
 
 `der.py` estima el peso adulto de un cachorro con `CURVA_CRECIMIENTO`, una tabla
 cuyo propio comentario dice que sale de *«reproducciones divulgativas»* de las
@@ -773,7 +789,7 @@ reales y hay que regenerar `der_casos.json` en los dos repos.
 
 ---
 
-### P-15 · FEDIAF dice dos veces que el BCS ideal es 4-5, y el motor toma 5
+### ~~P-15 · FEDIAF dice dos veces que el BCS ideal es 4-5, y el motor toma 5~~ · **CERRADA el 13 de septiembre**
 
 | | |
 |---|---|
@@ -794,6 +810,18 @@ enfermedad crónica, con los perros restringidos entre 4/9 y 5/9.
 
 **La pregunta:** ¿el 4/9 es ideal, y entonces no hay que subirle el objetivo, o
 se deja el 5 como neutro porque es el lado prudente?
+
+**CERRADA el 13 de septiembre, y la contestó la propia FEDIAF.** Se aplicó el 12:
+`BCS_IDEAL_MIN = 4` en los tres sitios a la vez —`verificar.py`, `der.py` y
+`src/bcs.js`—, así que dentro de la banda 4-5 el peso no se corrige y por debajo
+del 4 el destino es el 4 y no el 5. Antes, a un perro en BCS 4 se le subía el
+peso objetivo un 11 % contra lo que dice su propia guía dos veces. Estaba
+aplicado y la pregunta seguía abierta: **otra zombi**. Comprobado el 13 de
+septiembre en los tres ficheros.
+
+⚠️ Y el mismo día esa banda ganó un segundo uso que no tenía: es la que decide
+el ±10 % por condición corporal de un CACHORRO (P-37). O sea que este número, que
+parecía cosmético, ahora mueve las kcal de un cachorro en las dos direcciones.
 
 ---
 
@@ -1894,6 +1922,172 @@ dos y las dos son decisión de producto:
 
 **La pregunta:** ¿se construye ese modo, y por la vía firmada? Y si no, ¿basta con
 el aviso?
+
+
+### P-36 · El rango de peso de la raza ACOTA el peso adulto que se le estima a un cachorro, y para 65 razas ese rango es ahora el del estándar de concurso
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (es producto: qué significa el rango que se le enseña al dueño) **y Cris Carles** (si acotar así es defendible) |
+| **Bloquea** | No |
+| **Abierta desde** | 12 de septiembre de 2026, por la noche, al aplicar los estándares de la FCI |
+
+`pesoAdultoDesdeCurva` usa `pesoMin`/`pesoMax` de la raza para **acotar** el peso
+adulto que la curva de crecimiento le proyecta a un cachorro. Hasta hoy esos dos
+números no tenían fuente publicada; desde hoy, 65 razas los tienen —el estándar
+oficial de la FCI— y 20 de ellas han cambiado de cifra.
+
+Y ahí hay una pregunta que no es de dato sino de qué significa el número. **El
+estándar de la FCI es el peso al que debe estar un ejemplar de CONCURSO**, no la
+horquilla de lo que pesa un perro de esa raza que vive en un piso. Son dos cosas
+distintas y el motor las usa como si fueran una:
+
+- Donde la FCI da un rango de verdad, aplicarlo es lo correcto y además suele
+  ensanchar (el Kuvasz gana 10 kg de techo, y con el techo viejo a un macho se le
+  proyectaba de menos).
+- Pero donde da **un peso por sexo** —el Setter Gordon, «en los machos debe ser de
+  29,5 kg»— convertirlo en rango dejaría la horquilla en 25,5-29,5 y un Gordon de
+  33 kg, que existe, quedaría acotado a 29,5. Por eso **no se ha aplicado**: de un
+  punto no se inventa una horquilla alrededor. Esas filas se quedan con su cifra
+  vieja, sin fuente, y lo dicen en su `ojo`.
+
+**La pregunta tiene dos mitades.** (1) ¿El rango que acota tiene que ser el del
+estándar, o el rango real de la población, que ninguna de las cuatro fuentes del
+motor publica? (2) Y la de antes, que Elena ya planteó ese mismo día: *«¿y si solo
+metemos las razas y el peso estimado adulto se calcula con el resto de datos?»* —
+o sea quitar el acotado y dejar que decida la curva de FEDIAF, que es la que sí
+tiene fuente. Si se quita, esta tabla deja de decidir kcal y pasa a ser solo lo
+que se le enseña al dueño, y las dos mitades de la pregunta se caen solas.
+
+**Lo que NO cambia mientras tanto:** el menú sale verificado igual. Esto mueve las
+kcal que se le piden a un cachorro, no si el menú cumple.
+
+---
+
+### ⚠️ CONTESTADA LA MISMA NOCHE, y la segunda mitad está aplicada
+
+**Elena, 12 de septiembre de 2026:** *«Pues si esto es lo correcto hazlo sí»*.
+
+Antes de tocar nada se miró **cómo lo hacen los demás**, que es lo que convirtió
+esto de una opinión en una decisión con respaldo:
+
+| Quién | Cómo saca el peso adulto de un cachorro |
+|---|---|
+| Curvas de **WALTHAM** (50.000 perros; son las que publica Royal Canin para veterinarios) | Diez gráficas por **sexo** y por **banda** de peso adulto. El peso adulto sale de la trayectoria del propio cachorro. El estándar de raza se usa solo para ELEGIR la banda: *«the weight of the parents ... or via the breed standard»* |
+| **MyVetDiet** (software español de raciones) | Tiene tabla de más de 180 razas y la llama **«pesos indicativos»**. En cachorro, *«cálculo automático del peso adulto del cachorro»* con la curva del animal |
+| **Pet Diet Designer** | No usa la raza: pide *«current and full grown weights»*, los escribe la persona |
+| Calculadoras de consumo de «¿cuánto va a pesar mi cachorro?» | Sí usan tabla por raza, y son las menos rigurosas (±10-20 %) |
+
+O sea que **nadie usa el rango de la raza para acotar el número**, y nosotros sí.
+
+**MEDIDO antes de quitarlo**, sobre las 270 razas a 4, 6 y 9 meses: el recorte
+movía el peso adulto en **47 de 1620** casos, con **3,0 % de mediana** de kcal y
+**6,9 % el peor**. Y lo que importa no es el tamaño sino la dirección: casi todos
+son cachorros que apuntan por debajo del mínimo de su raza, y ahí el recorte les
+**sube** las kcal. Al Mastín Español de 9 meses le añadía **152 kcal al día**, y es
+un cachorro de raza gigante, justo donde FEDIAF avisa de deformidades
+esqueléticas por sobrealimentar.
+
+**Aplicado el 12 de septiembre por la noche**, en los dos repos: fuera las dos
+líneas y fuera los parámetros, que no se quedan aceptándose sin hacer nada. La
+tabla de razas sigue sirviendo para el peso de respaldo cuando no hay edad ni
+peso con los que calcular, y para lo que se le enseña al dueño. Lo vigilan el
+apartado 9 del BLOQUE 96 y `tests/der-contrato.spec.js`, los dos comprobados con
+el recorte devuelto.
+
+**LO QUE SIGUE ABIERTO es la otra mitad: el SEXO.** La tabla de MyVetDiet da
+«pesos indicativos diferenciados para machos y hembras», y la FCI publica machos
+y hembras por separado en **la mitad** de sus estándares —el Kuvasz son 48-62 en
+machos y 37-50 en hembras, y nosotros guardamos 37-62 para los dos—. La ficha ya
+pregunta el sexo. Con el recorte fuera esto ya no decide kcal, así que ha dejado
+de ser urgente, pero sí decide lo que se le enseña al dueño y la banda que le
+tocaría. **Dueño: Elena.**
+
+
+### ~~P-37 · La condición corporal de un cachorro no mueve NADA~~ · **REDUCIDA el mismo día: la fuente SÍ da la cifra**
+
+| | |
+|---|---|
+| **Dueño** | **Cris Carles**, y solo para lo que queda: si el ±10 % de escalón basta o hay que graduarlo |
+| **Bloquea** | No |
+| **Abierta desde** | 13 de septiembre de 2026 · **reducida ese mismo día** |
+| **Qué la redujo** | SACN5 cap.17, **Tabla 17-5, paso 5** — la buscamos en las demás fuentes y estaba en el mismo capítulo que ya habíamos leído: «This amount is only an estimate and is intended to be used as a starting point. The puppy's body condition should be monitored regularly (at least every two weeks) and **the amount fed should be increased or decreased by 10%**, depending on body condition score». El cap.27 repite la regla para mantenimiento: «increase or decrease the amount in 10% increments» |
+| **Qué se aplicó** | `ajuste_por_condicion_en_crecimiento` en `der.py` y `ajustePorCondicionEnCrecimiento` en `src/der.js`: **×1,1 por debajo de la banda ideal de FEDIAF (4-5), ×1,0 dentro, ×0,9 por encima**, y sin BCS no se toca nada. La app manda el BCS en `calcularDER`. Cinco casos nuevos en `der_casos.json`, en los dos repos |
+| **Qué queda** | Que un cachorro en BCS 6 y uno en BCS 9 reciban el MISMO −10 %. Es lo que dice la fuente —la regla es de escalón, no proporcional, y lo que cierra la diferencia es repetirla cada dos semanas— pero conviene que lo confirme quien firma |
+
+`der.py` aplica la corrección por peso ideal solo `if not en_crecimiento`. O sea
+que en un cachorro el BCS **no hace absolutamente nada**. Medido, el mismo
+cachorro de 20 kg a los 7 meses:
+
+| | BCS 3 | BCS 5 | BCS 7 |
+|---|---|---|---|
+| Cachorro | 1439 kcal | 1439 kcal | 1439 kcal |
+| El mismo perro, adulto | 1431 | 1040 | **578** |
+
+Y SACN5 cap.17 dice lo contrario de lo que hacemos, con todas las letras:
+
+> «All puppies should have their body condition evaluated and reassessed at
+> least every two weeks to allow for adjustments in amounts fed and, thus,
+> growth rates»
+
+> «regularly assessing body condition provides more immediate feedback about
+> optimal nutritional status than using body weights based on estimated adult
+> size»
+
+La frase anterior a esa segunda llama al camino que sí usamos —estimar el peso
+adulto— «a markedly less effective option».
+
+⚠️ **Y lo que NO se puede hacer es aplicarlo por mi cuenta**, porque el capítulo
+dice *que se reevalúe y se ajuste* y no dice **cuánto**. Eso es un bucle
+clínico, no una ecuación, y ponerle un factor inventado sería exactamente lo que
+`auditar_conversiones.py` existe para impedir. La regla del propio capítulo
+—3 × RER hasta el 50 % del peso adulto, 2,5 × después, 1,8-2 × al llegar al
+80 %— tampoco sirve de salida: **también necesita el peso adulto**, o sea que es
+la misma dependencia con otra forma, y encima en tres escalones donde nosotros
+tenemos una curva continua medida en 493 cachorros (Klein 2019, la que publica
+FEDIAF en su Tabla VII-8b).
+
+**La pregunta es**: ¿cuánto se corrige la ración de un cachorro por cada punto de
+BCS por encima o por debajo de 5, y a partir de qué edad? En adulto se corrige
+dividiendo por el exceso medido (Tabla VII-2 de FEDIAF), y esa tabla es de perro
+adulto: no hay base para aplicársela a un cachorro, que está creciendo.
+
+
+### ~~P-38 · No se guarda ni una pesada~~ · **HECHA el mismo día, y falta ejecutar el SQL**
+
+| | |
+|---|---|
+| **Dueño** | **Elena**, y solo para una cosa: ejecutar `supabase/migracion-pesos.sql` en el SQL Editor |
+| **Bloquea** | No |
+| **Abierta desde** | 13 de septiembre de 2026 · **hecha ese mismo día** |
+| **Qué se hizo** | La tabla `pesos` con su RLS y **una pesada por perro y día**; `apuntarPesada` / `getPesadas`; lo mismo **sin cuenta** en `almacen.js`, porque ese es el camino por defecto y las semanas que más importan son las de un cachorro; que suban al crear la cuenta (`migrarLocalACuenta`), que es donde se perdían en silencio el peso objetivo y el nivel de premios; y `pesoRealDelMes()`, que pone cada pesada en **el mes que tenía el perro** y no en el del calendario. Tres pruebas en `tests/historial-de-pesadas.spec.js`, las tres comprobadas con el fallo puesto |
+| **Si no se ejecuta el SQL** | La app NO se rompe: `apuntarPesada` avisa por consola y devuelve `null`. Perder una pesada es molesto; no poder guardar la ficha es que la app no sirve — la misma decisión que ya había con las columnas nuevas |
+| **Lo que abre** | Con dos o más pesadas se puede estimar el peso adulto de la **trayectoria del propio cachorro**, que es lo que hacen WALTHAM y MyVetDiet. Eso cerraría el tramo de 12 a 24 meses sin depender de las 185 razas sin fuente. Hoy el tramo lo tapa el suelo de la Tabla VII-8a, que es un parche bueno pero un parche |
+
+Elena, ese día: *«como aún así se va a pesar al perro, cada dos semanas se va a
+ir actualizando»*. La mitad de eso ya pasa y la otra mitad no.
+
+- ✅ Al cambiar el peso, la estimación **se rehace**: la curva usa el peso de
+  hoy, así que cada pesada corrige el peso adulto proyectado.
+- ❌ Pero **no se guarda ninguna pesada**. `pesoActual` se sobrescribe.
+- ❌ La pantalla «Evolución y crecimiento» dibuja la curva esperada y **un solo
+  punto real**, el de hoy (`real: i + 1 === edad.totalMeses ? pesoActual : null`),
+  aunque lleves un año pesándolo. Promete una serie que no existe.
+- ❌ Y hay una tabla `historial_peso` con su `registrar_peso` en
+  `persistencia.py` **que no la llama nadie** y que no existe en Supabase.
+
+**Por qué importa más que una pantalla bonita**: con dos o más pesadas se puede
+estimar el peso adulto de la **trayectoria del propio cachorro**, que es lo que
+hacen las curvas de WALTHAM (50.000 perros) y lo que hace MyVetDiet. Eso cerraría
+de golpe los dos huecos que hoy tapa la tabla de razas —el cachorro sin fecha de
+nacimiento y el tramo de 12 a 24 meses, donde **202 de las 270 razas (75 %)
+siguen creciendo** y la ecuación de FEDIAF ya no vale— sin depender de las 185
+razas que no tienen fuente.
+
+**Lo que hace falta decidir**: si se crea la tabla en Supabase, cada cuánto se le
+pide al dueño que pese, y si las pesadas viajan al motor (hoy el peso adulto lo
+calcula la app y el motor solo lo recibe, que es la duplicación declarada del
+DER).
 
 
 ---

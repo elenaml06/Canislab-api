@@ -500,10 +500,92 @@ def _coef_crecimiento(peso_actual: float, peso_adulto: float,
     frac = peso_actual / peso_adulto
     if frac > 1.0:
         frac = 1.0                    # ya llego a su peso adulto
+    # ⚠️ Y UN SUELO PASADOS LOS 12 MESES (13 de septiembre de 2026), que es
+    # donde la ecuacion de FEDIAF deja de valer y el peso adulto vuelve a
+    # salir de la TABLA DE RAZAS -- el unico tramo donde eso sigue pasando, y
+    # el 75 % de las razas (202 de 270) sigue creciendo ahi.
+    #
+    # No es un numero nuevo: es la propia Tabla VII-8a aplicada en la ultima
+    # edad en que ella misma dice que vale. A los 12 meses su ecuacion da 100 %
+    # en la banda de hasta 7 kg, 97,5 % hasta 15, 97,0 % hasta 27,5, 90,0 %
+    # hasta 47,5 y 82,4 % por encima. La curva solo sube, asi que un perro MAS
+    # viejo no puede estar por debajo de eso: si la cuenta da menos, lo que
+    # esta mal es el peso adulto que se ha supuesto, no el perro.
+    #
+    # Y las dos fuentes coinciden en esa banda: SACN5 Tabla 17-2 da 125-140
+    # kcal/kg^0,75 para «>=80% of adult BW», y Klein entre el 85 y el 95 % da
+    # 139,3 y 125,8.
+    #
+    # MEDIDO sobre las 270 razas en su tramo de 12 meses al fin del crecimiento
+    # (496 casos): mueve 209 (42 %), mediana -3,0 % de kcal, peor -5,6 %, y
+    # TODOS hacia abajo. Y donde de verdad sirve: a un perro de 45 kg a los 14
+    # meses al que el respaldo le supone 76 de adulto se le daba un +39 % de
+    # kcal; con el suelo se queda en +13 %. Corta dos tercios del error justo
+    # en el cachorro gigante, que es donde FEDIAF avisa de deformidades
+    # esqueleticas por sobrealimentar.
+    if meses is not None and meses > CURVA_FEDIAF_MESES_MAX:
+        suelo = _pct_peso_adulto_fediaf(CURVA_FEDIAF_MESES_MAX, peso_adulto)
+        if suelo and frac < suelo:
+            frac = suelo
     coef = (KLEIN_A - KLEIN_B * frac) * MJ_A_KCAL
     # Suelo de seguridad: nunca por debajo del mantenimiento adulto medio,
     # porque un cachorro nunca necesita menos que un adulto de su peso.
     return max(coef, 98.0)
+
+
+# ⚠️ EL AJUSTE POR CONDICION CORPORAL DE UN CACHORRO (13 de septiembre de 2026).
+#
+# Hasta hoy la condicion corporal de un cachorro NO MOVIA NADA. La correccion
+# por peso ideal de `calcular_der` esta detras de un `if not en_crecimiento`, asi
+# que un cachorro en BCS 3, en 5 o en 7 recibia EXACTAMENTE las mismas kcal --
+# medido: 1439 las tres veces en un perro de 20 kg a los 7 meses, cuando el
+# mismo perro de adulto va de 578 a 1431.
+#
+# Y la fuente dice justo lo contrario de lo que haciamos. SACN5 cap.17, que es
+# el capitulo de cachorros: «The most practical indicator of whether or not a
+# puppy's growth rate is healthy is its BCS», y su Tabla 17-5, paso 5:
+#
+#   «This amount is only an estimate and is intended to be used as a starting
+#    point. The puppy's body condition should be monitored regularly (at least
+#    every two weeks) and the amount fed should be increased or decreased by
+#    10%, depending on body condition score.»
+#
+# El cap.27 repite la misma regla para el mantenimiento del peso: «increase or
+# decrease the amount in 10% increments».
+#
+# ⚠️ POR QUE UN ESCALON Y NO LA CUENTA DEL ADULTO. A un adulto se le corrige
+# DIVIDIENDO por el exceso medido: esta un 20 % por encima, su ideal son
+# peso/1,2, y se le da de comer para ese ideal. Eso necesita una diana quieta, y
+# un cachorro no la tiene -- su peso ideal de hoy es «lo que deberia pesar a los
+# 7 meses», que depende de cuanto vaya a pesar de adulto, que es justo lo que
+# estamos estimando. Por eso la fuente le da una regla ITERATIVA: un paso del
+# 10 %, y se vuelve a mirar a las dos semanas.
+#
+# Consecuencia que hay que conocer: un cachorro en BCS 6 y uno en BCS 9 reciben
+# el MISMO -10 %. No es un descuido, es que la regla es de escalon y no
+# proporcional. Lo que cierra la diferencia es repetirla cada dos semanas, y eso
+# es lo que hace posible el historial de pesadas (P-38).
+AJUSTE_BCS_CACHORRO = 0.10
+
+
+def ajuste_por_condicion_en_crecimiento(bcs):
+    """El factor que multiplica la racion de un cachorro segun su BCS.
+
+    1,0 dentro de la banda ideal de FEDIAF (4 a 5, §7.1.3 y §7.2.4.1), 0,9 por
+    encima y 1,1 por debajo. Sin BCS no se toca nada: no saberlo no es lo mismo
+    que estar bien, y aplicar un ajuste a ciegas seria inventarse el dato.
+    """
+    if bcs is None:
+        return 1.0
+    try:
+        b = float(bcs)
+    except (TypeError, ValueError):
+        return 1.0
+    if not b or b <= 0:
+        return 1.0
+    if BCS_IDEAL_MIN <= b <= 5:
+        return 1.0
+    return (1.0 - AJUSTE_BCS_CACHORRO) if b > 5 else (1.0 + AJUSTE_BCS_CACHORRO)
 
 
 def _coef_adulto(actividad, edad_grupo, convivencia, macho_entero, raza):
@@ -636,8 +718,7 @@ def _pct_peso_adulto_fediaf(meses, peso_adulto_estimado):
 # `mesesEdad` desde ese dia.
 
 
-def peso_adulto_desde_curva(peso_actual_kg, meses, peso_medio_raza=None,
-                            peso_min_raza=None, peso_max_raza=None):
+def peso_adulto_desde_curva(peso_actual_kg, meses, peso_medio_raza=None):
     """
     Estima el peso adulto a partir de lo que el perro pesa AHORA y su edad,
     con la Tabla VII-8a de FEDIAF.
@@ -652,8 +733,34 @@ def peso_adulto_desde_curva(peso_actual_kg, meses, peso_medio_raza=None,
     Es lo mismo que hace `der.js`, y por eso ahora los dos repos coinciden en
     todo el rango.
 
-    El resultado se limita al rango de la raza si se conoce: la estimacion es
-    una estimacion y no debe sacar a un perro de lo que su raza puede pesar.
+    ⚠️ EL RESULTADO YA NO SE RECORTA AL RANGO DE LA RAZA (12-sep-2026, noche).
+
+    Aqui habia dos lineas que lo acotaban entre `pesoMin` y `pesoMax` de la
+    raza, con el motivo escrito de que «la estimacion es una estimacion y no
+    debe sacar a un perro de lo que su raza puede pesar». Suena prudente y
+    empuja hacia el lado malo justo donde mas caro sale.
+
+    Lo que hacen los demas, mirado antes de tocarlo: las curvas de crecimiento
+    de WALTHAM -- 50.000 perros, las que publica Royal Canin para veterinarios
+    -- son diez graficas por SEXO y por BANDA de peso adulto, y el peso adulto
+    sale de la trayectoria del propio cachorro. El estandar de raza se usa solo
+    para ELEGIR la banda: «the weight of the parents ... or via the breed
+    standard». Y MyVetDiet, el software español de raciones, tiene tabla de mas
+    de 180 razas y la llama «pesos indicativos»: en cachorro calcula el peso
+    adulto con la curva del animal, no con la tabla.
+
+    MEDIDO antes de quitarlo, sobre las 270 razas a 4, 6 y 9 meses: el recorte
+    movia el peso adulto en 47 de 1620 casos, con una diferencia de kcal de un
+    3,0 % de mediana y un 6,9 % en el peor. Y lo que importa no es el tamaño
+    sino la DIRECCION: casi todos son cachorros que apuntan por debajo del
+    minimo de su raza, y ahi el recorte les SUBE el peso adulto y con el las
+    kcal. Al Mastin Español de 9 meses le añadia 152 kcal al dia -- un cachorro
+    de raza gigante, que es justo donde FEDIAF avisa de deformidades
+    esqueleticas por sobrealimentar.
+
+    La tabla de razas sigue sirviendo para lo que si sabe: el peso que se le
+    ENSEÑA al dueño, y el peso adulto de respaldo cuando no hay edad ni peso
+    actual con los que calcular nada.
     """
     if not peso_actual_kg or peso_actual_kg <= 0 or not meses:
         return peso_medio_raza
@@ -698,9 +805,6 @@ def peso_adulto_desde_curva(peso_actual_kg, meses, peso_medio_raza=None,
         # gigantes, y el recorte de la raza de abajo lo acota si se sabe.
         estimado = candidato
 
-    # no salirse de lo que la raza puede pesar
-    if peso_min_raza:  estimado = max(estimado, peso_min_raza)
-    if peso_max_raza:  estimado = min(estimado, peso_max_raza)
     return round(estimado, 1)
 
 
@@ -710,8 +814,8 @@ def calcular_der(peso_actual_kg: float, etapa: str, actividad: str = None,
                  macho_entero: bool = False, raza: str = None,
                  semana_gestacion: int = None, n_cachorros: int = None,
                  semana_lactancia: int = 3,
-                 meses: float = None, peso_min_raza: float = None,
-                 peso_max_raza: float = None) -> dict:
+                 meses: float = None,
+                 bcs: float = None) -> dict:
     """
     etapa: "cachorro_joven" | "cachorro_crecimiento" | "gestante_temprana"
            | "gestante_tardia" | "lactante" | "adulto" | "senior"
@@ -731,12 +835,30 @@ def calcular_der(peso_actual_kg: float, etapa: str, actividad: str = None,
     # El propio perro informa mejor que la tabla: Cairo con 5 meses y 18 kg
     # apunta a 34 kg, no a 26, y eso son 192 kcal/dia de diferencia.
     # Si no se pasa la edad, se usa el peso de la raza como antes.
+    # ⚠️ SOLO SI NO LO TRAEN, Y ESO ERA UNA DIVERGENCIA CON LA APP (13 de
+    # septiembre de 2026). Aqui la curva se recalculaba SIEMPRE que hubiera
+    # edad y pisaba el peso adulto que le pasaran; en `src/der.js` era al reves
+    # -- «con el peso adulto en la mano no se despeja nada», y con una prueba
+    # que lo afirma. Los dos lados eran coherentes consigo mismos, asi que la
+    # diferencia no se veia: es la misma forma del fallo de los dos puntos fijos
+    # del 11 de septiembre. Y NINGUN caso del contrato la ejercia, porque hacia
+    # falta un peso adulto declarado Y una edad a la vez, y no habia ninguno.
+    # Medido con el caso que lo destapo -- 30 kg a los 10 meses con 60 de
+    # adulto --: el motor daba 1814 kcal y la app 2391, un 32 % para el mismo
+    # perro.
+    #
+    # Gana la app, y por la razon que menos ruido hace: EN PRODUCCION NO CAMBIA
+    # NADA. `pesoAdultoEsperado` de la app YA es el resultado de esta misma
+    # curva, asi que los dos caminos daban lo mismo para cualquier perro real;
+    # y a `der.py` solo se llega por `/der`, que no llama nadie. El motivo que
+    # habia escrito aqui -- que la trayectoria del propio cachorro informa mejor
+    # que la tabla de razas, medido con Cairo: 34 kg y no 26, 192 kcal/dia -- se
+    # conserva entero, porque quien corre la curva sigue siendo el llamador.
+    # Lo que se quita es que se corriera DOS VECES y con distinto criterio en
+    # cada repo.
     peso_adulto_curva = None
-    if meses and peso_actual_kg:
-        peso_adulto_curva = peso_adulto_desde_curva(
-            peso_actual_kg, meses,
-            peso_medio_raza=peso_adulto_esperado_kg,
-            peso_min_raza=peso_min_raza, peso_max_raza=peso_max_raza)
+    if meses and peso_actual_kg and not peso_adulto_esperado_kg:
+        peso_adulto_curva = peso_adulto_desde_curva(peso_actual_kg, meses)
         if peso_adulto_curva:
             peso_adulto_esperado_kg = peso_adulto_curva
 
@@ -770,6 +892,13 @@ def calcular_der(peso_actual_kg: float, etapa: str, actividad: str = None,
     if en_crecimiento:
         coef = _coef_crecimiento(peso_actual_kg, peso_adulto_esperado_kg, meses)
         der = coef * peso_actual_kg ** 0.75
+        # ⚠️ Y EL AJUSTE POR CONDICION CORPORAL, que es lo unico que la fuente
+        # pone POR ENCIMA de estimar el peso adulto. Ver
+        # `ajuste_por_condicion_en_crecimiento`. Va DESPUES del coeficiente y no
+        # sobre el peso: la regla de SACN5 es sobre «the amount fed», o sea
+        # sobre la racion ya calculada, no sobre el peso con el que se calcula.
+        _factor_bcs = ajuste_por_condicion_en_crecimiento(bcs)
+        der *= _factor_bcs
     elif etapa in ("gestante_temprana", "gestante_tardia"):
         coef = GESTACION_BASE
         der = coef * peso_calculo ** 0.75

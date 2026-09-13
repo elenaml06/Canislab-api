@@ -136,7 +136,27 @@ def resolver_uno(al, req, der, etapa, peso, especie=None, proteina=None,
             if main._tope_patologia_roto(g, al, [], etapa,
                                          peso_adulto_esperado_kg=peso_adulto):
                 continue
-            v = verificar(g, al, req, der, etapa)
+            # ⚠️ CONTRA LAS KCAL REALES DEL MENÚ, NO CONTRA LAS PEDIDAS (12 de
+            # septiembre, por la noche). Aquí ponía `der` y es el fallo que este
+            # repo ya tiene escrito dos veces: el menú que devuelve el solver no
+            # trae exactamente las kcal que se le piden -- medido, de +1,6 % a
+            # +3,0 % --, y TODOS los mínimos son por 1000 kcal. Con un 3 % de
+            # kcal de más, la concentración baja un 3 % y el nutriente que iba
+            # al 99 % se cae por debajo del mínimo. Así se guardaron menús que
+            # salían VERDES contra las kcal pedidas y ÁMBAR contra las suyas:
+            # 41 de 216, casi todos por linoleico, manganeso, cloruro o yodo.
+            # Es la regla 2 de CLAUDE.md -- los límites se miden sobre las kcal
+            # reales -- y la misma que aplica `_garantizar_verificado`, que es
+            # justo por lo que estos menús no llegaban al perro: la vía rápida
+            # los verificaba otra vez y los tiraba. Peso muerto.
+            #
+            # ⚠️ Y VA DENTRO DE LA ESCALERA (13 de septiembre, al fusionar). Las
+            # dos ramas tocaron estas líneas a la vez: una metió la escalera de
+            # peldaños y la otra las kcal reales. Hacen falta LAS DOS, y ponerlo
+            # fuera del bucle habría medido el último peldaño con las kcal del
+            # primero.
+            der_real = sum(al[n]["energia"] * gr / 100.0 for n, gr in g.items() if n in al)
+            v = verificar(g, al, req, der_real or der, etapa)
             # ⚠️ EL NOMBRE DEL PRIMER PELDAÑO NO ES `None`. La escalera lo da como
             # None, y `main.py` lo traduce a `PELDANO_ESTRICTO` antes de
             # responder, justo por esto: «"no dice nada" y "estricto" se leen
