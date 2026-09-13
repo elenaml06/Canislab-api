@@ -97,8 +97,40 @@ def _topes_crudos(etapa, peso_adulto_esperado_kg=None):
     return salida
 
 
+# ⚠️ LA HOLGURA CON LA QUE SUBE UN TECHO QUE NO CABE, Y ES NUESTRA (13 de
+#    septiembre de 2026, por la noche). No sale de ninguna fuente y por eso va
+#    escrita aquí con su medida, no escondida en una multiplicación.
+#
+# Cuando el suelo de FEDIAF supera un techo del libro, hasta hoy el techo
+# DESAPARECÍA. Eso da menú —que es lo que importa— pero deja al solver suelto:
+# medido en el cachorro de Cairo con premios al 10 %, el suelo era 2778 y el
+# menú salía con 3402 de calcio, o sea un 24 % por encima del techo del libro
+# cuando con un 1 % le habría bastado. Elena, al leerlo: «pero a ver, ¿y no se
+# puede dar un menú que cumpla el techo? seguro que sí».
+#
+# Cumplir el techo NO se puede —el suelo está por encima, es aritmética— pero
+# acercarse todo lo posible SÍ. Así que el techo no desaparece: SUBE hasta el
+# suelo y se queda ahí.
+#
+# LA HOLGURA HACE FALTA PORQUE UNA VENTANA DE ANCHURA CERO NO TIENE MENÚ.
+# MEDIDO sobre tres cachorros de raza grande (20 kg -> 31, 12 -> 30, 30 -> 45)
+# con premios al 10 % y al 20 %, o sea seis casos:
+#
+#     techo = suelo x 1,005 .... 0 de 6 con menú
+#     techo = suelo x 1,02 ..... 6 de 6, calcio de Cairo 2821 (+2,6 % del libro)
+#     techo = suelo x 1,05 ..... 6 de 6, calcio de Cairo 2897
+#     sin techo (lo de antes) .. 6 de 6, calcio de Cairo 3402 (+24 %)
+#
+# Se coge 1,02: el más apretado de los que dan menú en los seis. Y aun así NO
+# se confía en esa medida -- `resolver` prueba con el techo puesto y, si no sale
+# menú, lo SUELTA y lo dice. Un número nuestro no puede dejar a un perro sin
+# comer, y seis casos no son todos los perros.
+HOLGURA_DEL_TECHO_QUE_SUBE = 1.02
+
+
 def topes_de_la_etapa(etapa, req=None, der_efectiva=None,
-                      peso_adulto_esperado_kg=None, factor_premios=1.0):
+                      peso_adulto_esperado_kg=None, factor_premios=1.0,
+                      apretar_el_techo_que_sube=True, subidos_fuera=None):
     """Los techos del libro para esta etapa, en la forma que espera el solver.
 
     Devuelve `{clave_nutriente: valor}`, o `{}` si la etapa no tiene ninguno.
@@ -197,8 +229,28 @@ def topes_de_la_etapa(etapa, req=None, der_efectiva=None,
                 req, clave, etapa, der_efectiva, peso_adulto_esperado_kg,
                 factor_premios)
             if minimo is not None and minimo > valor:
-                # El techo se cae. No en silencio: `cedidos_ante_fediaf` lo
-                # cuenta, y de ahí sale el aviso que lee quien pide el menú.
+                # ⚠️ EL TECHO NO DESAPARECE: SUBE HASTA EL SUELO (13 de
+                # septiembre, noche). Ver `HOLGURA_DEL_TECHO_QUE_SUBE` arriba:
+                # cumplir el techo no se puede, pero quedarse pegado a él sí, y
+                # la diferencia medida son 581 mg de calcio al día en un
+                # cachorro de raza grande.
+                #
+                # `apretar_el_techo_que_sube=False` lo suelta del todo, y es el
+                # plan B que usa `resolver` cuando con el techo apretado no sale
+                # menú: la holgura es un número NUESTRO y no puede dejar a un
+                # perro sin comer.
+                if not apretar_el_techo_que_sube:
+                    continue
+                salida[clave] = minimo * HOLGURA_DEL_TECHO_QUE_SUBE
+                # ⚠️ QUE HA SUBIDO SE DICE, NO SE DEDUCE. La primera versión lo
+                # deducía comparando el techo que sale con el del libro, y el
+                # fallo puesto la cazó: con una holgura de 0,99 sobre un suelo
+                # de 2777,8 sale EXACTAMENTE 2750, que es el techo del libro --
+                # así que «ha subido» y «no ha subido» daban el mismo número y
+                # el plan B no se disparaba. Un dato que se deduce de una
+                # comparación de flotantes tiene un caso en el que miente.
+                if subidos_fuera is not None:
+                    subidos_fuera[clave] = salida[clave]
                 continue
         salida[clave] = valor
     return salida
@@ -343,13 +395,20 @@ def cedidos_ante_fediaf(etapa, req, der_efectiva, peso_adulto_esperado_kg=None,
         if minimo is not None and minimo > t["valor"]:
             fuera.append({"clave": clave, "techo": t["valor"],
                           "minimo_de_fediaf": round(minimo, 1),
+                          # A cuánto ha subido de verdad. Sin esto, «ha cedido»
+                          # se lee igual tanto si el menú se queda pegado al
+                          # techo como si se va un 24 % por encima -- y son
+                          # cosas muy distintas para un cachorro de raza grande.
+                          "techo_que_se_aplica": round(
+                              minimo * HOLGURA_DEL_TECHO_QUE_SUBE, 1),
                           "con_premios": factor_premios not in (None, 1.0),
                           "por_que": ("El suelo que FEDIAF exige a este perro "
                                       f"({minimo:.0f}) está por encima de este techo "
                                       f"({t['valor']:.0f}), que es una RECOMENDACIÓN del "
-                                      "libro y no un requisito. Manda FEDIAF: el techo no "
-                                      "se aplica a este perro. El máximo de seguridad de "
-                                      "FEDIAF sigue puesto.")})
+                                      "libro y no un requisito. Manda FEDIAF: el techo sube "
+                                      f"hasta {minimo * HOLGURA_DEL_TECHO_QUE_SUBE:.0f} para "
+                                      "quedarse lo más cerca posible del consejo. El máximo de "
+                                      "seguridad de FEDIAF sigue puesto.")})
     return fuera
 
 

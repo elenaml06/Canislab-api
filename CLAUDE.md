@@ -144,7 +144,23 @@ con alguna, casi siempre el error está en el cambio.
    final tira menús que el solver construyó bien. Y el techo que cede **se
    dice**, en `techos_del_libro_que_no_se_aplican` del propio menú: la función
    que los contaba existía desde el 8 de septiembre con el comentario «el techo
-   se cae, no en silencio» y **no la llamaba nadie**. Lo que cuesta está medido
+   se cae, no en silencio» y **no la llamaba nadie**.
+   ⚠️ **Y el techo no desaparece: SUBE hasta el suelo** (misma noche, y lo pidió
+   Elena leyendo el arreglo: «pero a ver, ¿y no se puede dar un menú que cumpla
+   el techo? seguro que sí»). Cumplirlo no se puede —el suelo está por encima,
+   es aritmética— pero **quedarse pegado a él sí**, y la primera versión no lo
+   hacía: el techo desaparecía y el menú se iba a 3746 cuando con 2778 le
+   bastaba. La holgura con la que sube es `HOLGURA_DEL_TECHO_QUE_SUBE` = 1,02 y
+   es **NUESTRA**, no de ninguna fuente: medido sobre tres cachorros de raza
+   grande y dos niveles de premios, con 1,005 salen **0 de 6** y con 1,02 salen
+   **6 de 6**. Y como es nuestra, **no puede dejar a un perro sin comer**:
+   `resolver` prueba con el techo apretado y, si no sale menú, lo suelta y
+   reintenta una vez — que es el comportamiento ya probado de antes. El calcio
+   de Cairo pasa de 3746 a **2824**, o sea 922 mg menos al día y a un 2,7 % del
+   consejo del libro en vez de a un 36 %. ⚠️ Y **el filtro final NO exige ese
+   techo subido**: es un número nuestro, y rechazar un menú por pasarse de algo
+   que nos hemos inventado sería darle rango de requisito — además de tirar
+   justo los menús que el plan B existe para poder dar. Lo que cuesta está medido
    y **está sin decidir** en `PREGUNTAS_ABIERTAS.md` P-37b: con premios al 10 %
    ese cachorro sale con 3746 mg de calcio, dentro del máximo duro de FEDIAF
    (4500) y por encima del 2750 que las dos fuentes caninas piden justo para
