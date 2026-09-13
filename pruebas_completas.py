@@ -9130,7 +9130,15 @@ if _probs51 is not None and not any("Cerebro de ternera" in _p51 and "12 meses" 
         "`problemas_seguridad`, que es el canal que la app pinta en los ocho caminos. "
         "Escrito en la ficha y sin salir es no estar.")
 _alim51 = _c.get("/alimentos").json()
-_vis51 = [x for v in _alim51.values() for x in v if x["nombre"] == "Cerebro de ternera"]
+# ⚠️ SE LEE `por_categoria`, NO EL DICCIONARIO ENTERO (13 de septiembre, noche).
+# `GET /alimentos` devuelve cuatro cosas -- `por_categoria`, `pantallas`,
+# `como_se_da_por_categoria` y `sin_pantalla` -- y esto recorria `values()` a
+# secas, o sea que trataba las pantallas y los textos de «como se da» como si
+# fueran listas de alimentos. Reventaba con un TypeError en cuanto se ejecutaba.
+# Escrito contra una forma que el endpoint ya no tiene: es la misma familia que
+# las pruebas de la app que se quedaron mirando el nombre viejo.
+_vis51 = [x for v in (_alim51.get("por_categoria") or {}).values() for x in v
+          if isinstance(x, dict) and x.get("nombre") == "Cerebro de ternera"]
 if not _vis51:
     fallos.append("BLOQUE51: «Cerebro de ternera» no aparece en `GET /alimentos`.")
 elif not (_vis51[0].get("aviso_al_comprar") or ""):
