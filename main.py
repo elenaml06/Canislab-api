@@ -528,6 +528,123 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto",
 # es el techo. O sea: el agujero era real en el código y no estaba dando
 # menús malos hoy. Se cierra igual, porque lo que lo mantenía tapado es
 # una propiedad del catálogo de hoy, no una garantía.
+# ⚠️ LA VIA RAPIDA COMPROBABA TRES COSAS Y LE FALTABAN TRES (13 de septiembre
+# de 2026). CASO REAL ENCONTRADO, y es el peor final posible: un perro para el
+# que SI hay menu se queda SIN menu.
+#
+# El atajo de `CATALOGO_VARIANTES` coge un menu precalculado, lo reescala a las
+# kcal del perro y lo entrega si pasa tres filtros: el semaforo de FEDIAF, los
+# cinco topes de seguridad cronica y el presupuesto semanal. No miraba los
+# topes de PATOLOGIA -- que es donde viven tambien los techos del libro para el
+# perro sano -- ni las dos mitades de la nota b. Asi que devolvia un menu que
+# `_garantizar_verificado` tiraba a continuacion, con razon, y el endpoint
+# devolvia ESE RECHAZO en vez de seguir por el camino normal.
+#
+# MEDIDO: cachorro de 12 kg a 900 kcal que va a pesar 30 de adulto (o sea, por
+# encima del umbral de 25 kg de SACN5, con el techo de calcio en 2750 y no en
+# 4250). Por `/menu/v2` devuelve «no factible», con 24 s de presupuesto y con
+# 90 -- no es el reloj. Preguntandole al solver directamente sale menu EN UN
+# SEGUNDO, con el calcio a 2502 mg/1000 kcal, o sea holgado bajo el techo.
+#
+# Y el comentario que ya estaba escrito tres lineas mas abajo describia el
+# comportamiento que se creia tener: «se sigue abajo con el camino normal --
+# nunca se entrega algo que no este en verde de verdad». Lo segundo era cierto
+# y lo primero no: no se seguia abajo, se devolvia el rechazo. Es exactamente
+# lo que CLAUDE.md ya tiene escrito del `POST /menu` que se borro -- «ese
+# camino construia menus que el filtro final iba a tirar».
+def _la_via_rapida_rompe_un_limite(gramos, al, req, datos, peso_objetivo_kg):
+    """Los limites que el filtro final mira y la via rapida no miraba.
+
+    Devuelve el motivo (texto) o None. Se usa para DESCARTAR el atajo y caer al
+    camino normal, no para rechazar la peticion: por eso devuelve un motivo y
+    no un booleano -- el que descarta tiene que poder decir por que.
+    """
+    pa = getattr(datos, "peso_adulto_esperado_kg", None)
+    etapa = datos.etapa_requisitos
+    roto = _tope_patologia_roto(
+        gramos, al, getattr(datos, "patologias", None), etapa, req=req,
+        der_efectiva=der_efectiva_de(datos.der_objetivo,
+                                     peso_objetivo_kg or datos.peso_perro_kg),
+        peso_adulto_esperado_kg=pa)
+    if roto:
+        return f"topes de patologia o del libro: {roto}"
+    corto = _minimo_calcio_raza_grande_roto(gramos, al, req, etapa, pa)
+    if corto:
+        return f"minimo de calcio de raza grande: {corto}"
+    pasado = _ratio_cap_raza_grande_roto(gramos, al, req, etapa, pa)
+    if pasado:
+        return f"techo del ratio Ca:P de raza grande: {pasado}"
+    return None
+
+
+# ⚠️ CUANDO FALTA EL PESO ADULTO, TRES LIMITES SE APAGAN Y HASTA HOY NO LO
+# DECIA NADIE (13 de septiembre de 2026).
+#
+# `peso_adulto_esperado_kg` es OPCIONAL en todas las peticiones, y las tres
+# funciones que dependen de el -- el minimo de calcio reforzado, el techo del
+# ratio Ca:P y los techos del libro en crecimiento -- empiezan igual: si no
+# viene, `return None` y a otra cosa. Cada uno por separado esta bien escrito;
+# juntos hacen que a un CACHORRO sin ese dato se le dejen de aplicar tres
+# limites A LA VEZ, y el menu salga VERDE, porque el semaforo de FEDIAF no los
+# mira -- son los requisitos de un perro sano de cualquier tamaño.
+#
+# MEDIDO, y es lo que hace que esto no sea cosmetico:
+#
+#   · minimo de calcio: 2000 en vez de 2500 mg/1000 kcal (nota b de la Tabla
+#     III-3b de FEDIAF, para el cachorro de >= 15 kg de adulto)
+#   · techo del ratio Ca:P: 2,0 en vez de 1,6 (la otra mitad de esa nota b)
+#   · techos del libro en crecimiento: 4250 de calcio y 3250 de fosforo en vez
+#     de 2750 y 2750 (SACN5 Tabla 17-1 + Fascetti cap.10, para el cachorro de
+#     > 25 kg de adulto). O sea un 55 % mas de calcio del que piden las dos
+#     fuentes caninas que hablan de esto, justo donde FEDIAF avisa de
+#     deformidades esqueleticas.
+#
+# No se INVENTA el peso adulto ni se aplica el lado estricto a ciegas: meterle
+# a un cachorro toy la ventana del gigante (minimo 2500 con techo 2750) lo
+# dejaria sin menu por un dato que nadie le ha pedido. Lo que se hace es
+# DECIRLO, que es lo que separa esto de un aviso que se puede ignorar: el
+# limite no esta puesto, y quien lee el menu tiene que poder saberlo.
+def _limites_de_crecimiento_sin_aplicar(etapa, peso_adulto_esperado_kg):
+    """Los limites que NO se han podido aplicar por no saber el peso adulto.
+
+    Lista vacia cuando no falta nada, que es el caso normal: la app manda
+    siempre este campo (la curva del propio cachorro, con el peso de la raza
+    de respaldo). Esto es para los demas caminos -- `/menu/v2` no pide
+    credencial y el formulador manda `?? null`.
+    """
+    if etapa not in ("CachorroJoven", "CachorroCrecimiento"):
+        return []
+    if peso_adulto_esperado_kg:
+        return []
+    return [
+        {"limite": "minimo_calcio_raza_grande",
+         "de_donde": "FEDIAF 2025, Tabla III-3b, nota b",
+         "se_aplica_desde_kg_de_adulto": RAZA_GRANDE_O_GIGANTE_KG,
+         "que_se_esta_usando": "el minimo de calcio de cualquier cachorro",
+         "dueno": ("No sabemos cuanto va a pesar de adulto, asi que no podemos saber si le "
+                   "toca el calcio reforzado de los cachorros de raza grande. Dinos su fecha "
+                   "de nacimiento y su raza y se aplica solo."),
+         "veterinario": ("Sin `peso_adulto_esperado_kg` no se aplica el minimo reforzado de "
+                         "calcio (2500 mg/1000 kcal) de la nota b para el cachorro de >= 15 kg "
+                         "de peso adulto: se usa el generico de la etapa.")},
+        {"limite": "techo_ratio_ca_p_raza_grande",
+         "de_donde": "FEDIAF 2025, Tabla III-3b, nota b",
+         "se_aplica_desde_kg_de_adulto": RAZA_GRANDE_O_GIGANTE_KG,
+         "que_se_esta_usando": "el techo de Ca:P de cualquier perro (2,0)",
+         "dueno": None,
+         "veterinario": ("Sin `peso_adulto_esperado_kg` el techo del ratio Ca:P se queda en el "
+                         "2,0 de FEDIAF en vez del 1,6 de la nota b.")},
+        {"limite": "techos_del_libro_en_crecimiento",
+         "de_donde": "SACN5 Tabla 17-1 y Fascetti & Delaney cap.10",
+         "se_aplica_desde_kg_de_adulto": 25,
+         "que_se_esta_usando": "la columna del cachorro pequeño (calcio 4250, fosforo 3250)",
+         "dueno": None,
+         "veterinario": ("Sin `peso_adulto_esperado_kg` se aplica la columna del cachorro de "
+                         "menos de 25 kg de adulto: calcio 4250 y fosforo 3250 mg/1000 kcal en "
+                         "vez de 2750 y 2750.")},
+    ]
+
+
 def _minimo_calcio_raza_grande_roto(gramos, al, req, etapa, peso_adulto_esperado_kg):
     """¿Este menú se queda por debajo del mínimo de calcio REFORZADO de las
     razas grandes en crecimiento? Devuelve el texto del fallo, o None.
@@ -1160,6 +1277,20 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
     respuesta["avisos_profesional"] = _avisos_para_el_profesional(
         gramos, al, der, etapa, patologias, peso_perro_kg,
         actividad=respuesta.get("actividad"))
+    # ⚠️ Y LOS LIMITES QUE NO SE HAN PODIDO APLICAR, EN SU PROPIA CLAVE
+    # (13 de septiembre). Va AQUI por lo mismo que la ficha y las notas del
+    # profesional: este filtro es por donde pasa TODO menu, asi que sale en
+    # los once caminos sin que nadie tenga que acordarse.
+    #
+    # No va dentro de `avisos_profesional` a proposito. Aquellos son LECTURAS
+    # del menu -- cosas que estan bien y conviene mirar --, y esto es lo
+    # contrario: una restriccion que el motor NO ha puesto. Mezclarlas seria
+    # esconder lo segundo entre lo primero, que es como un aviso deja de
+    # leerse. La lista va SIEMPRE, vacia cuando no falta nada, porque una
+    # clave que solo aparece cuando hay problema no se puede comprobar por su
+    # ausencia.
+    respuesta["limites_sin_aplicar"] = _limites_de_crecimiento_sin_aplicar(
+        etapa, peso_adulto_esperado_kg)
     return respuesta
 
 
@@ -2813,7 +2944,15 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 else:
                     gramos_reescalados[n] = round(g * factor, 2)
             ficha_variante = verificar_v2(gramos_reescalados, al, req, datos.der_objetivo, datos.etapa_requisitos)
+            # ⚠️ Y QUE NO ROMPA NINGUNO DE LOS LIMITES QUE MIRA EL FILTRO FINAL
+            # (13-sep). Ver `_la_via_rapida_rompe_un_limite`: sin esto el atajo
+            # devolvia un menu que `_garantizar_verificado` tiraba, y el
+            # endpoint devolvia ESE RECHAZO -- un cachorro de raza grande sin
+            # menu teniendolo a un segundo de solver.
+            _rompe_rapida = _la_via_rapida_rompe_un_limite(
+                gramos_reescalados, al, req, datos, _peso_de_referencia(datos)[0])
             if (ficha_variante["semaforo"] == "verde"
+                    and not _rompe_rapida
                     and _menu_precalculado_es_seguro(gramos_reescalados, al, datos.der_objetivo,
                                                      datos.peso_perro_kg)
                     # ⚠️ Y QUE QUEPA EN LO QUE QUEDA DE LA SEMANA (12-sep).

@@ -15077,6 +15077,149 @@ print(f"  {len(_listas99)} listas declaradas · {len(_vistos99)} alimentos en {l
       f" · {len(_declarados99)} filas de ficha en {len(_GRUPOS99)} grupos")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
+# ============================================================
+# BLOQUE 100 — LA VIA RAPIDA MIRA LO MISMO QUE EL FILTRO FINAL
+# ============================================================
+print("=== BLOQUE 100: la vía rápida mira lo mismo que el filtro final ===")
+
+# ⚠️ POR QUE EXISTE (13 de septiembre de 2026). CASO REAL ENCONTRADO, y con el
+# peor final posible: un perro para el que SI hay menu se quedaba SIN menu.
+#
+# El atajo de `CATALOGO_VARIANTES` coge un menu precalculado, lo reescala a las
+# kcal del perro y lo entrega si pasa tres filtros -- semaforo de FEDIAF, los
+# cinco topes de seguridad cronica y el presupuesto semanal. No miraba los
+# topes de PATOLOGIA (donde viven tambien los techos del libro para el perro
+# SANO) ni las dos mitades de la nota b. Devolvia un menu que
+# `_garantizar_verificado` tiraba a continuacion, con razon, y el endpoint
+# devolvia ESE RECHAZO en vez de seguir por el camino normal.
+#
+# El comentario que ya estaba escrito en esa funcion decia «se sigue abajo con
+# el camino normal». Lo que hacia el codigo era devolver el rechazo. Una frase
+# no se ejecuta, otra vez.
+_c100 = _c
+# Cachorro de 12 kg a 900 kcal que va a pesar 30 de adulto: por encima del
+# umbral de 25 kg de SACN5, o sea techo de calcio 2750 y no 4250.
+_BASE100 = {"nombres_alimentos": [], "der_objetivo": 900,
+            "etapa_requisitos": "CachorroCrecimiento",
+            "peso_perro_kg": 12, "tamano": "Mediano"}
+
+def _pedir100(**extra):
+    return _c100.post("/menu/v2", json=dict(_BASE100, **extra)).json()
+
+for _pa100 in (20, 30, 50):
+    _r100 = _pedir100(peso_adulto_esperado_kg=_pa100)
+    if not _r100.get("factible"):
+        fallos.append(f"BLOQUE100: el cachorro de 12 kg que va a pesar {_pa100} de adulto se queda "
+                      f"SIN menú por /menu/v2 ({_r100.get('motivo')}), y el solver saca uno. La vía "
+                      f"rápida ha devuelto un menú que el filtro final tira, en vez de caer al "
+                      f"camino normal")
+
+# ⚠️ Y CON EL FALLO PUESTO: si la via rapida deja de mirar esos limites, este
+# perro tiene que quedarse sin menu. Sin esto, el bloque saldria verde tambien
+# el dia que alguien quite la comprobacion, que es cuando hace falta que salte.
+import main as _main100
+_guardada100 = _main100._la_via_rapida_rompe_un_limite
+try:
+    _main100._la_via_rapida_rompe_un_limite = lambda *a, **k: None
+    _roto100 = _pedir100(peso_adulto_esperado_kg=30)
+    if _roto100.get("factible"):
+        fallos.append("BLOQUE100: quitando la comprobación de la vía rápida el menú SIGUE "
+                      "saliendo, así que este bloque no está comprobando nada. O el catálogo ha "
+                      "cambiado y ya no rompe ese techo -- entonces hay que buscar un caso que "
+                      "sí lo rompa, no borrar la prueba")
+finally:
+    _main100._la_via_rapida_rompe_un_limite = _guardada100
+
+# ── Y QUE FALTE EL PESO ADULTO DEJE DE SER SILENCIOSO ───────────────────
+#
+# `peso_adulto_esperado_kg` es opcional en todas las peticiones, y sin el se
+# apagan TRES limites a la vez en un cachorro -- el minimo de calcio reforzado,
+# el techo del ratio Ca:P y los techos del libro en crecimiento --, con el menu
+# saliendo VERDE, porque el semaforo de FEDIAF no los mira. Ahora se dice.
+_sin100 = _pedir100()
+if not _sin100.get("factible"):
+    fallos.append("BLOQUE100: el cachorro sin peso adulto no saca menú, y el caso existe: "
+                  "`peso_adulto_esperado_kg` es opcional en todas las peticiones")
+else:
+    _lim100 = _sin100.get("limites_sin_aplicar")
+    if not _lim100:
+        fallos.append("BLOQUE100: un menú de crecimiento SIN peso adulto sale sin decir que se "
+                      "han quedado sin aplicar el mínimo de calcio reforzado, el techo de Ca:P y "
+                      "los techos del libro. Eso es una restricción que no está puesta y que "
+                      "nadie puede ver")
+    else:
+        _claves100 = {x.get("limite") for x in _lim100}
+        _esperadas100 = {"minimo_calcio_raza_grande", "techo_ratio_ca_p_raza_grande",
+                         "techos_del_libro_en_crecimiento"}
+        if _claves100 != _esperadas100:
+            fallos.append(f"BLOQUE100: se declaran {sorted(_claves100)} y los límites que "
+                          f"dependen del peso adulto son {sorted(_esperadas100)}")
+        for _x100 in _lim100:
+            if not _x100.get("de_donde") or not (_x100.get("veterinario") or "").strip():
+                fallos.append(f"BLOQUE100: «{_x100.get('limite')}» no dice de qué fuente sale o "
+                              f"qué se está usando en su lugar")
+
+# Y al revés: con el peso adulto puesto, y en un adulto, la lista va vacía --
+# pero va. Una clave que solo aparece cuando hay problema no se puede
+# comprobar por su ausencia: «no falta nada» y «esta versión no lo dice» se
+# leerían igual.
+_con100 = _pedir100(peso_adulto_esperado_kg=20)
+if _con100.get("factible") and _con100.get("limites_sin_aplicar") != []:
+    fallos.append(f"BLOQUE100: con el peso adulto puesto se sigue declarando algo sin aplicar: "
+                  f"{_con100.get('limites_sin_aplicar')}")
+_ad100 = _c100.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 900,
+                                      "etapa_requisitos": "Adulto", "peso_perro_kg": 12,
+                                      "tamano": "Mediano"}).json()
+if _ad100.get("factible") and _ad100.get("limites_sin_aplicar") != []:
+    fallos.append(f"BLOQUE100: a un ADULTO se le declaran límites de crecimiento sin aplicar: "
+                  f"{_ad100.get('limites_sin_aplicar')}. Esos tres solo existen en crecimiento")
+
+# ── Y QUE «DONDE SE COMPRA» CUBRA EL CATALOGO ENTERO ────────────────────
+#
+# ⚠️ `donde_se_compra_cada_alimento.json` esta indexado POR NOMBRE DE ALIMENTO,
+# que es la forma que se desincroniza sola -- la misma de `COMO_DAR_ALIMENTO`,
+# que llego a tener 12 entradas de alimentos que el motor ya no tenia, la
+# BORRAJA entre ellas. Todavia no lo lee nadie, y por eso mismo el guardian
+# entra AHORA: un fichero sin consumidor y sin vigilancia se pudre sin que se
+# note, y cuando por fin se enchufa ya esta mal.
+#
+# ⚠️ Y SE SABE QUE VA A SALTAR: la rama del catalogo de alimentos deja 162
+# fichas en vez de 163 (fuera «Cerebro de vaca», por ley) y renombra «Riñon de
+# ternera» a «Riñon de vaca». El dia que eso se fusione, esto se pone rojo, y
+# esa es exactamente su razon de ser: hay que tocar las tres lineas, no
+# silenciarlo.
+_DONDE100 = _json_b99.load(open(_os_b65.path.join(
+    _os_b65.path.dirname(_os_b65.path.abspath(__file__)),
+    "donde_se_compra_cada_alimento.json"), encoding="utf-8"))
+_cat100 = {a["nombre"] for a in _json_b99.load(open(_os_b65.path.join(
+    _os_b65.path.dirname(_os_b65.path.abspath(__file__)),
+    "alimentos_v3_final.json"), encoding="utf-8"))}
+_fichados100 = set(_DONDE100["por_alimento"])
+_faltan100 = sorted(_cat100 - _fichados100)
+_sobran100 = sorted(_fichados100 - _cat100)
+if _faltan100:
+    fallos.append(f"BLOQUE100: estos alimentos del catálogo no dicen dónde se compran: "
+                  f"{_faltan100}. Un menú puede llevarlos y no se puede decir si es "
+                  f"conseguible")
+if _sobran100:
+    fallos.append(f"BLOQUE100: se dice dónde comprar alimentos que el catálogo ya no tiene: "
+                  f"{_sobran100}. Es la Borraja otra vez -- una lista por nombre que se quedó "
+                  f"parada cuando el catálogo cambió debajo")
+_sitios100 = set(_DONDE100["donde_se_compra"])
+for _n100, _v100 in _DONDE100["por_alimento"].items():
+    if _v100.get("donde") not in _sitios100:
+        fallos.append(f"BLOQUE100: «{_n100}» dice comprarse en «{_v100.get('donde')}», que no es "
+                      f"ninguno de los sitios declarados {sorted(_sitios100)}")
+    if _v100.get("precio_orientativo") not in ("corriente", "premium"):
+        fallos.append(f"BLOQUE100: «{_n100}» tiene un precio «{_v100.get('precio_orientativo')}» "
+                      f"que no es ni corriente ni premium. Son DOS casillas a propósito: no hay "
+                      f"fuente de precios y un escalón «medio» sería fingir precisión")
+
+print(f"  {len(_fichados100)} alimentos con sitio de compra declarado")
+print(f"  3 pesos adultos con menú · el fallo puesto lo deja sin menú · "
+      f"{len(_sin100.get('limites_sin_aplicar') or [])} límites declarados cuando falta el dato")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
 _cerrar_el_ultimo_bloque()
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)

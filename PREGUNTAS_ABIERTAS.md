@@ -1976,6 +1976,86 @@ de ser urgente, pero sí decide lo que se le enseña al dueño y la banda que le
 tocaría. **Dueño: Elena.**
 
 
+### P-37 · La condición corporal de un cachorro no mueve NADA, y la fuente dice que es lo que más debería moverlo
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (es producto: cada cuánto se le pide al dueño que lo mire) **y Cris Carles** (cuánto se corrige la ración por cada punto de BCS en crecimiento) |
+| **Bloquea** | No |
+| **Abierta desde** | 13 de septiembre de 2026 |
+
+`der.py` aplica la corrección por peso ideal solo `if not en_crecimiento`. O sea
+que en un cachorro el BCS **no hace absolutamente nada**. Medido, el mismo
+cachorro de 20 kg a los 7 meses:
+
+| | BCS 3 | BCS 5 | BCS 7 |
+|---|---|---|---|
+| Cachorro | 1439 kcal | 1439 kcal | 1439 kcal |
+| El mismo perro, adulto | 1431 | 1040 | **578** |
+
+Y SACN5 cap.17 dice lo contrario de lo que hacemos, con todas las letras:
+
+> «All puppies should have their body condition evaluated and reassessed at
+> least every two weeks to allow for adjustments in amounts fed and, thus,
+> growth rates»
+
+> «regularly assessing body condition provides more immediate feedback about
+> optimal nutritional status than using body weights based on estimated adult
+> size»
+
+La frase anterior a esa segunda llama al camino que sí usamos —estimar el peso
+adulto— «a markedly less effective option».
+
+⚠️ **Y lo que NO se puede hacer es aplicarlo por mi cuenta**, porque el capítulo
+dice *que se reevalúe y se ajuste* y no dice **cuánto**. Eso es un bucle
+clínico, no una ecuación, y ponerle un factor inventado sería exactamente lo que
+`auditar_conversiones.py` existe para impedir. La regla del propio capítulo
+—3 × RER hasta el 50 % del peso adulto, 2,5 × después, 1,8-2 × al llegar al
+80 %— tampoco sirve de salida: **también necesita el peso adulto**, o sea que es
+la misma dependencia con otra forma, y encima en tres escalones donde nosotros
+tenemos una curva continua medida en 493 cachorros (Klein 2019, la que publica
+FEDIAF en su Tabla VII-8b).
+
+**La pregunta es**: ¿cuánto se corrige la ración de un cachorro por cada punto de
+BCS por encima o por debajo de 5, y a partir de qué edad? En adulto se corrige
+dividiendo por el exceso medido (Tabla VII-2 de FEDIAF), y esa tabla es de perro
+adulto: no hay base para aplicársela a un cachorro, que está creciendo.
+
+
+### P-38 · No se guarda ni una pesada, y «Evolución y crecimiento» pinta un solo punto
+
+| | |
+|---|---|
+| **Dueño** | **Elena** (es producto y es base de datos: hay que crear la tabla en Supabase) |
+| **Bloquea** | No |
+| **Abierta desde** | 13 de septiembre de 2026 |
+
+Elena, ese día: *«como aún así se va a pesar al perro, cada dos semanas se va a
+ir actualizando»*. La mitad de eso ya pasa y la otra mitad no.
+
+- ✅ Al cambiar el peso, la estimación **se rehace**: la curva usa el peso de
+  hoy, así que cada pesada corrige el peso adulto proyectado.
+- ❌ Pero **no se guarda ninguna pesada**. `pesoActual` se sobrescribe.
+- ❌ La pantalla «Evolución y crecimiento» dibuja la curva esperada y **un solo
+  punto real**, el de hoy (`real: i + 1 === edad.totalMeses ? pesoActual : null`),
+  aunque lleves un año pesándolo. Promete una serie que no existe.
+- ❌ Y hay una tabla `historial_peso` con su `registrar_peso` en
+  `persistencia.py` **que no la llama nadie** y que no existe en Supabase.
+
+**Por qué importa más que una pantalla bonita**: con dos o más pesadas se puede
+estimar el peso adulto de la **trayectoria del propio cachorro**, que es lo que
+hacen las curvas de WALTHAM (50.000 perros) y lo que hace MyVetDiet. Eso cerraría
+de golpe los dos huecos que hoy tapa la tabla de razas —el cachorro sin fecha de
+nacimiento y el tramo de 12 a 24 meses, donde **202 de las 270 razas (75 %)
+siguen creciendo** y la ecuación de FEDIAF ya no vale— sin depender de las 185
+razas que no tienen fuente.
+
+**Lo que hace falta decidir**: si se crea la tabla en Supabase, cada cuánto se le
+pide al dueño que pese, y si las pesadas viajan al motor (hoy el peso adulto lo
+calcula la app y el motor solo lo recibe, que es la duplicación declarada del
+DER).
+
+
 ---
 
 ## Cerradas

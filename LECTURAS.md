@@ -1911,3 +1911,39 @@ Son **64**, y cada una dice por qué.
 - **) (Kallfelz and Dzanis, 1989). In dogs, aver- tive, less costly and safer approach is to simply exchange the**
 
   Ingesta diaria REAL de calcio, fosforo, vitamina A y vitamina D de un perro adulto con pienso seco tipico frente a su minimo: calcio 74 mg/kg/dia contra un minimo de 25, fosforo 54 contra 19, vitamina D 11 UI contra 2,3. Casi tres veces el minimo, cuatro en la D. Es la medida de por que existen los techos del libro para el perro sano.
+
+
+### SACN5 cap.17 — «Feeding Growing Puppies: Postweaning to Adulthood»
+
+Leído el 13 de septiembre de 2026, mientras se contestaba una pregunta de
+Elena: «¿qué ecuación usa el peso adulto esperado y qué vamos a hacer al final
+con eso?». Lo que hay aquí contesta esa pregunta mejor que la ecuación.
+
+- **«All puppies should have their body condition evaluated and reassessed at
+  least every two weeks to allow for adjustments in amounts fed and, thus,
+  growth rates»**
+
+  La fuente dice CADA DOS SEMANAS, que es literalmente lo que dijo Elena el
+  mismo día sin haberlo leído: «como aún así se va a pesar al perro, cada dos
+  semanas se va a ir actualizando».
+
+- **«regularly assessing body condition provides more immediate feedback about
+  optimal nutritional status than using body weights based on estimated adult
+  size»**
+
+  Y la frase anterior llama al camino de la tabla de razas «a markedly less
+  effective option». O sea que la fuente pone la condición corporal POR ENCIMA
+  del peso estimado de adulto, y nosotros lo teníamos justo al revés.
+
+**Qué decidimos con esto (13 de septiembre):**
+
+| | |
+|---|---|
+| **Aplicado** | Que falte `peso_adulto_esperado_kg` deja de ser silencioso: el menú dice qué tres límites no se han podido aplicar. Y la vía rápida del catálogo mira ahora los mismos límites que el filtro final — antes devolvía un rechazo en vez de caer al camino normal, y un cachorro de raza grande se quedaba sin menú teniéndolo |
+| **No se aplica porque…** | La regla de energía de este capítulo (3 × RER hasta el 50 % del peso adulto, 2,5 × después, 1,8-2 × al llegar al 80 %) **también necesita el peso adulto**, así que no resuelve el hueco: es la misma dependencia con otra forma. Y la que aplicamos (Klein, FEDIAF Tabla VII-8b) es una curva continua medida en 493 cachorros, no tres escalones |
+| **Pendiente de decidir** | Las **dos** cosas que harían falta para seguir a la fuente: que el BCS de un cachorro mueva algo (hoy no mueve NADA — medido, el mismo cachorro de 20 kg a los 7 meses da 1439 kcal con BCS 3, 5 o 7) y que se guarde el historial de pesadas (hoy no se guarda ninguna). Las dos, en `PREGUNTAS_ABIERTAS.md` |
+
+⚠️ **Y una cosa que este capítulo NO dice**: cuánto hay que corregir la ración
+según el BCS del cachorro. Dice que se reevalúe y que se ajuste, y eso es un
+bucle clínico, no una ecuación. Inventarse el factor sería exactamente lo que
+`auditar_conversiones.py` existe para impedir.
