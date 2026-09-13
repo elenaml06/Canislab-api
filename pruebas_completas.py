@@ -3624,7 +3624,12 @@ if _contrato_b23:
                 # ⚠️ AÑADIDO (9 sep): sin pasar la edad, el contrato no podia
                 # cubrir el ajuste de «adulto joven» de la Tabla VII-6, que hasta
                 # ese dia era codigo muerto en los dos repos.
-                meses=_op23.get("mesesEdad"))
+                meses=_op23.get("mesesEdad"),
+                # ⚠️ AÑADIDO (13 sep): sin pasar el BCS, el contrato no podia
+                # cubrir el ±10 % por condicion corporal de la Tabla 17-5 de
+                # SACN5, que hasta ese dia era un dato que en crecimiento no
+                # movia NADA en los dos repos.
+                bcs=_op23.get("bcs"))
             _obtenido23 = round(_r23["der"] if isinstance(_r23, dict) else _r23)
         except Exception as _e23:
             fallos.append(f"BLOQUE23: der.py revienta con {_c23['etapa']} de {_c23['peso']} kg "
@@ -14756,6 +14761,7 @@ print("=== BLOQUE 99: nada de lo que pinta la app vive solo en la app ===")
 # en `canislab-web`, porque el codigo de la app no esta en este repo.
 import json as _json_b99
 import especies as _esp_b99
+import der as _der99
 _LEY99 = _json_b99.load(open(_os_b65.path.join(
     _os_b65.path.dirname(_os_b65.path.abspath(__file__)), "lo_que_la_app_pinta.json"),
     encoding="utf-8"))
@@ -14778,13 +14784,32 @@ for _l99 in _listas99:
         fallos.append(f"BLOQUE99: «{_l99['respaldo']}» dice venir de {_l99['endpoint']} y ese "
                       f"endpoint revienta: {_e99}")
         continue
+    # ⚠️ EL CAMINO PUEDE ATRAVESAR UNA LISTA, y se escribe `puntos[]`: quiere
+    # decir «entra en cada elemento y sigue». Sin esto, lo que cuelga de cada
+    # fila -- como la Tabla VII-1 en cada punto de BCS -- no se podia declarar,
+    # y no declararlo es justo lo que este bloque existe para impedir.
     _donde99 = _cuerpo99
     _roto99 = None
     for _paso99 in _l99["camino"].split("."):
-        if not isinstance(_donde99, dict) or _paso99 not in _donde99:
+        _cada99 = _paso99.endswith("[]")
+        _clave99 = _paso99[:-2] if _cada99 else _paso99
+        if isinstance(_donde99, list):
+            # Venimos de un `[]`: el paso se aplica a cada elemento.
+            if not all(isinstance(x, dict) and _clave99 in x for x in _donde99):
+                _roto99 = _paso99
+                break
+            _donde99 = [x[_clave99] for x in _donde99]
+            if _cada99:
+                _roto99 = _paso99   # dos `[]` seguidos no se soportan, y no hacen falta
+                break
+            continue
+        if not isinstance(_donde99, dict) or _clave99 not in _donde99:
             _roto99 = _paso99
             break
-        _donde99 = _donde99[_paso99]
+        _donde99 = _donde99[_clave99]
+        if _cada99 and not isinstance(_donde99, list):
+            _roto99 = _paso99
+            break
     if _roto99:
         fallos.append(f"BLOQUE99: «{_l99['respaldo']}» dice leerse de "
                       f"{_l99['endpoint']}#{_l99['camino']} y ahi no hay ningun «{_roto99}». La "
@@ -14818,7 +14843,393 @@ if _cuantas99 != len(_vistos99):
     fallos.append(f"BLOQUE99: el arbol de /alimentos reparte {_cuantas99} entradas para "
                   f"{len(_vistos99)} alimentos distintos: alguno esta en dos pantallas")
 
-print(f"  {len(_listas99)} listas declaradas · {len(_vistos99)} alimentos en {len(_al99['pantallas'])} pantallas")
+# ── COMO SE DA CADA ALIMENTO, que es la lista que mas se desincroniza ────
+#
+# ⚠️ Vivia en `src/instrucciones.js` de la app indexada POR NOMBRE DE ALIMENTO,
+# y al moverla al motor salio lo que tenia que salir: 77 entradas para 163
+# alimentos, y **12 de ellas de comida que el motor NO TIENE** -- ala de pollo,
+# carcasa de pavo, cabeza de conejo... y la BORRAJA, que se sacó del catalogo
+# entero y tiene el BLOQUE 31 vigilando que no vuelva, con sus instrucciones
+# todavia ahi.
+_COMO99 = _json_b99.load(open(_os_b65.path.join(
+    _os_b65.path.dirname(_os_b65.path.abspath(__file__)),
+    "como_se_da_cada_alimento.json"), encoding="utf-8"))
+_fantasma99 = sorted(set(_COMO99["por_alimento"]) - _todos99)
+if _fantasma99:
+    fallos.append(f"BLOQUE99: hay instrucciones para {len(_fantasma99)} alimentos que el catálogo "
+                  f"no tiene: {_fantasma99[:6]}. Es la lista que se desincroniza sola, y así es "
+                  f"como se quedaron dentro las de la borraja después de sacarla del catálogo")
+_pant99 = {p["clave"] for p in _al99["pantallas"]}
+_catfuera99 = sorted(set(_COMO99["por_categoria"]) - _pant99)
+if _catfuera99:
+    fallos.append(f"BLOQUE99: hay texto general para pantallas que no existen: {_catfuera99}")
+_sintexto99 = sorted(_pant99 - set(_COMO99["por_categoria"]))
+if _sintexto99:
+    fallos.append(f"BLOQUE99: estas pantallas no tienen texto de cómo se da su comida: "
+                  f"{_sintexto99}. Es el que la app enseña SIEMPRE, así que quedarían mudas")
+# ⚠️ Y LOS COMPRIMIDOS, que es lo unico de aqui que no es texto: con
+# `es_comprimido` la app convierte los gramos en «cuantos comprimidos», y sin el
+# enseña 0,25 g, que nadie puede pesar en casa.
+for _n99 in sorted(_todos99):
+    if not _re_b65.search(r"comprimido|c[áa]psula", _n99, _re_b65.I):
+        continue
+    _c99 = _COMO99["por_alimento"].get(_n99) or {}
+    if not _c99.get("es_comprimido") or not _c99.get("peso_comprimido_g"):
+        fallos.append(f"BLOQUE99: «{_n99}» se vende en comprimidos y no lo declara "
+                      f"(`es_comprimido` + `peso_comprimido_g`). La app enseñará gramos, y un "
+                      f"comprimido pesa una cuarta parte de uno: nadie puede pesar eso en casa")
+_servidas99 = sum(1 for p in _al99["pantallas"] for g in p["grupos"].values()
+                  for a in g if a.get("como_se_da"))
+if _servidas99 != len(_COMO99["por_alimento"]):
+    fallos.append(f"BLOQUE99: el fichero trae {len(_COMO99['por_alimento'])} instrucciones y "
+                  f"/alimentos sirve {_servidas99}. Las que no viajan no las ve nadie")
+if not _al99.get("como_se_da_por_categoria"):
+    fallos.append("BLOQUE99: /alimentos no manda el texto general de cada pantalla, que es el que "
+                  "la app enseña siempre")
+
+# ── LOS TRES NOMBRES DE CADA NIVEL DE ACTIVIDAD ─────────────────────────
+#
+# ⚠️ AÑADIDO EL 13 DE SEPTIEMBRE. Un nivel de actividad se llama de tres formas
+# y la traduccion entre ellas vivia SOLO en `ACTIVIDAD_POR_INDICE` de
+# `src/supabase.js`: el INDICE (0-4) que guarda la ficha, la CLAVE DEL MOTOR que
+# viaja en la peticion, y la CLAVE DE LA BASE DE DATOS que se escribe en
+# Supabase. Y son DISTINTAS -- `sedentario` se guarda como `baja`.
+#
+# Si el motor añade un nivel o cambia el orden, esa lista de la app sigue
+# traduciendo por el indice viejo y un perro vuelve de la base de datos con OTRA
+# actividad, o sea con otras kcal, sin dar ningun error y con el menu en verde.
+# Es la familia de `guardarPerro`: se ve bien en pantalla y esta mal guardado.
+_TRES99 = _pide99("/vocabulario")["niveles_de_actividad"]["los_tres_nombres"]
+if [x["indice"] for x in _TRES99] != list(range(len(_TRES99))):
+    fallos.append(f"BLOQUE99: los índices de los niveles de actividad no van 0,1,2… : "
+                  f"{[x['indice'] for x in _TRES99]}. La ficha guarda el índice, así que un hueco "
+                  f"ahí traduce mal")
+_claves99 = [x["clave_motor"] for x in _TRES99]
+if _claves99 != list(_der99.BASE_ACTIVIDAD):
+    fallos.append(f"BLOQUE99: las claves servidas {_claves99} no son las de `der.BASE_ACTIVIDAD` "
+                  f"{list(_der99.BASE_ACTIVIDAD)}, ni en contenido ni en ORDEN. El orden es lo que "
+                  f"traduce el índice que guarda la ficha")
+for _x99 in _TRES99:
+    if _der99.BASE_ACTIVIDAD.get(_x99["clave_motor"]) != _x99["kcal_kg075"]:
+        fallos.append(f"BLOQUE99: «{_x99['clave_motor']}» se sirve con {_x99['kcal_kg075']} "
+                      f"kcal/kg^0,75 y el motor aplica "
+                      f"{_der99.BASE_ACTIVIDAD.get(_x99['clave_motor'])}")
+    if not _x99.get("clave_base_de_datos"):
+        fallos.append(f"BLOQUE99: «{_x99['clave_motor']}» no dice con qué nombre se guarda en la "
+                      f"base de datos. Esa traducción es la que hace que un perro vuelva con la "
+                      f"actividad que tenía")
+if len({x["clave_base_de_datos"] for x in _TRES99}) != len(_TRES99):
+    fallos.append("BLOQUE99: dos niveles se guardan en la base de datos con el mismo nombre: al "
+                  "volver, uno de los dos se pierde")
+
+# ── LOS DOS NOMBRES DE CADA ETAPA ───────────────────────────────────────
+#
+# ⚠️ AÑADIDO EL 13 DE SEPTIEMBRE. La misma etapa se llama de dos maneras dentro
+# del motor -- `calcular_der` la recibe en minusculas con guion bajo y la tabla
+# de FEDIAF la indexa en CamelCase -- y la traduccion vivia SOLO en
+# `ETAPA_A_SUFIJO_API` de `src/App.jsx`. Si el motor le cambia el nombre a una
+# etapa, la app sigue traduciendo con su tabla vieja, manda algo que el motor no
+# conoce, y el motor CAE A «Adulto» sin dar error: un cachorro verificado contra
+# los requisitos de un adulto sale VERDE.
+#
+# Se comprueban las DOS puntas, que es lo unico que hace que la tabla no mienta:
+# la clave de la izquierda tiene que ser una que `calcular_der` acepte, y la de
+# la derecha una que la tabla de FEDIAF sepa indexar.
+_ETAPAS99 = _pide99("/vocabulario")["etapas"]
+import requisitos as _req_e99
+# ⚠️ SE LEE EL FICHERO, NO `inspect.getsource` (13 de septiembre). Con
+# `getsource` esto se puso rojo por una razon que no tenia nada que ver con lo
+# que vigila: `inspect` va por el `linecache`, que guarda el fichero como estaba
+# al importarlo, y der.py se habia editado mientras la bateria corria -- asi que
+# devolvia el trozo equivocado y acusaba al motor de no conocer SUS PROPIAS
+# etapas. Un guardian que falla cuando el motor acierta es peor que no tenerlo:
+# ensena a desconfiar de la bateria.
+_fuente_der99 = open(_os_b65.path.join(
+    _os_b65.path.dirname(_os_b65.path.abspath(__file__)), "der.py"),
+    encoding="utf-8").read()
+for _e99 in _ETAPAS99["etapas"]:
+    _ficha99 = _e99.get("clave_en_la_ficha")
+    if not _ficha99:
+        fallos.append(f"BLOQUE99: la etapa «{_e99['clave']}» no dice cómo se llama en la ficha, "
+                      f"así que la app no puede traducirla y la mandaría tal cual")
+        continue
+    if f'"{_ficha99}"' not in _fuente_der99:
+        fallos.append(f"BLOQUE99: «{_ficha99}» no aparece en `der.calcular_der`, o sea que es un "
+                      f"nombre que el motor no sabe recibir")
+    try:
+        _req_e99.resolver_etapa(_e99["clave"])
+    except Exception:
+        fallos.append(f"BLOQUE99: «{_e99['clave']}» se sirve como etapa y "
+                      f"`requisitos.resolver_etapa` no la sabe resolver")
+_fichas99 = [e["clave_en_la_ficha"] for e in _ETAPAS99["etapas"] if e.get("clave_en_la_ficha")]
+if len(_fichas99) != len(set(_fichas99)):
+    fallos.append(f"BLOQUE99: dos etapas comparten el nombre de la ficha: {_fichas99}")
+_calcula99 = [e["clave_en_la_ficha"] for e in _ETAPAS99["etapas"] if e.get("la_calcula_la_ficha")]
+if sorted(_calcula99) != sorted(_ETAPAS99["los_dos_nombres"]["la_ficha_calcula"]):
+    fallos.append(f"BLOQUE99: las etapas marcadas `la_calcula_la_ficha` ({sorted(_calcula99)}) no "
+                  f"son las que declara `la_ficha_calcula` "
+                  f"({sorted(_ETAPAS99['los_dos_nombres']['la_ficha_calcula'])})")
+# ⚠️ Y EL HUECO, DECLARADO: la ficha no pregunta gestacion ni lactancia, y eso
+# tiene que seguir dicho en vez de callado. Un hueco escrito se cierra; uno que
+# no esta escrito no lo ve nadie.
+if not _ETAPAS99["los_dos_nombres"]["la_ficha_no_pregunta"]:
+    fallos.append("BLOQUE99: ya no se declara ninguna etapa que la ficha no pregunte. O la ficha "
+                  "las pregunta todas -- y entonces hay que quitarlo de "
+                  "`lo_que_la_ficha_todavia_no_pregunta` -- o el hueco ha dejado de decirse")
+
+# ── COMO SE RECONOCE CADA PUNTO DE CONDICION CORPORAL ───────────────────
+#
+# ⚠️ AÑADIDO EL 13 DE SEPTIEMBRE. La Tabla VII-1 de FEDIAF -- la que dice como
+# se RECONOCE cada punto, no cuanto se desvia del peso -- vivia en `ESCALA_BCS`
+# de `src/bcs.js`, escrita a mano y SIN FUENTE, siendo una parafrasis de una
+# tabla que FEDIAF publica entera. De ese numero sale el peso objetivo y del
+# peso objetivo las kcal, asi que quien lo escribe tiene que estar leyendo lo
+# que dice el manual.
+#
+# Las CITAS las comprueba `auditar_citas.py` (BLOQUE 85) contra el texto del
+# PDF. Aqui se comprueba que estan los nueve, que cada uno trae las dos mitades
+# -- la frase de la fuente y nuestra traduccion, con las MISMAS casillas -- y
+# que viajan por el endpoint.
+_BCS99 = _pide99("/vocabulario")["condicion_corporal"]["puntos"]
+if [x["bcs"] for x in _BCS99] != list(range(1, 10)):
+    fallos.append(f"BLOQUE99: los puntos de condición corporal servidos son "
+                  f"{[x['bcs'] for x in _BCS99]} y no 1..9")
+for _b99 in _BCS99:
+    _r99 = _b99.get("como_se_reconoce")
+    if not _r99:
+        fallos.append(f"BLOQUE99: el BCS {_b99['bcs']} se sirve sin decir cómo se reconoce. La "
+                      f"app se queda con su paráfrasis escrita a mano y no se entera nadie")
+        continue
+    _dice99, _cast99 = _r99.get("dice_la_fuente") or {}, _r99.get("en_castellano") or {}
+    if set(_dice99) != set(_cast99):
+        fallos.append(f"BLOQUE99: el BCS {_b99['bcs']} cita {sorted(_dice99)} y traduce "
+                      f"{sorted(_cast99)}. Una casilla traducida sin cita es texto nuestro con "
+                      f"aspecto de fuente, y una citada sin traducir no se puede pintar")
+    for _k99, _v99 in _dice99.items():
+        if not (_v99.startswith("«") and _v99.endswith("»")):
+            fallos.append(f"BLOQUE99: «{_k99}» del BCS {_b99['bcs']} no va entre comillas "
+                          f"angulares, así que `auditar_citas.py` no la mira")
+    for _k99, _v99 in _cast99.items():
+        if not _v99 or _v99.startswith("«"):
+            fallos.append(f"BLOQUE99: «{_k99}» del BCS {_b99['bcs']} está vacío o entrecomillado "
+                          f"como si fuera de la fuente, y es traducción nuestra")
+    if not _r99.get("nombre") or not _r99.get("nombre_fediaf"):
+        fallos.append(f"BLOQUE99: el BCS {_b99['bcs']} no dice cómo lo llama FEDIAF")
+# ⚠️ EL 8 Y EL 9 NO TIENEN «abdomen»: FEDIAF cambia esa casilla por «general».
+# Va comprobado para que nadie lo rellene «por simetria», que es como se
+# inventa una frase que la fuente no dice.
+for _b99 in _BCS99:
+    _cs99 = set((_b99.get("como_se_reconoce") or {}).get("dice_la_fuente") or {})
+    _esperado99 = ({"costillas", "base_de_la_cola", "general"} if _b99["bcs"] >= 8
+                   else {"costillas", "abdomen", "base_de_la_cola"})
+    if _cs99 != _esperado99:
+        fallos.append(f"BLOQUE99: el BCS {_b99['bcs']} trae las casillas {sorted(_cs99)} y la "
+                      f"Tabla VII-1 tiene {sorted(_esperado99)}")
+
+# ── EL GRUPO DE CADA NUTRIENTE ──────────────────────────────────────────
+#
+# ⚠️ AÑADIDO EL 13 DE SEPTIEMBRE. Como se AGRUPAN los nutrientes al leer una
+# ficha vivia SOLO en `GRUPOS` de `src/nutrientes.js`, escrito a mano con 42
+# entradas. El motor sirve 46 y `verificar()` devuelve ademas DOS relaciones
+# (Ca:P y linoleico:linolenico), o sea 48 filas posibles: seis caian en el cajon
+# «Otros».
+#
+# Y ese cajon esta puesto a proposito -- se prefiere un grupo feo a un nutriente
+# escondido --, que es justo por lo que no se entero nadie: «Otros» se ve, no da
+# error, y ahi llevaban esas seis filas desde que existe la ficha. Un cajon de
+# paso que se vuelve permanente deja de avisar.
+#
+# Asi que el grupo lo dice el motor, y lo que se exige aqui es que lo cubra
+# TODO: toda fila que `verificar()` pueda devolver tiene que tener grupo. El dia
+# que entre un nutriente nuevo en el MAPA, esto falla al escribirlo -- que es el
+# unico momento en que se puede cazar.
+_VOC99 = _pide99("/vocabulario")["objetivos_del_profesional"]
+_GRUPOS99 = _VOC99["grupos"]["lista"]
+_declarados99 = [n for g in _GRUPOS99 for n in g["nutrientes"]]
+if len(_declarados99) != len(set(_declarados99)):
+    _rep99 = sorted({n for n in _declarados99 if _declarados99.count(n) > 1})
+    fallos.append(f"BLOQUE99: estas filas están en dos grupos a la vez: {_rep99}. La ficha las "
+                  f"pintaría dos veces")
+# Las dos relaciones no son nutrientes del MAPA y SÍ son filas de la ficha: las
+# escribe `verificar()` a mano. Si alguna cambia de nombre allí, esto lo dice.
+_RATIOS99 = {"Relación Ca:P", "Relación linoleico:linolénico"}
+import verificar as _ver99
+_esperadas99 = set(_ver99.MAPA) | _RATIOS99
+_sin_grupo99 = sorted(_esperadas99 - set(_declarados99))
+if _sin_grupo99:
+    fallos.append(f"BLOQUE99: estas filas de la ficha no tienen grupo declarado en "
+                  f"`nutrientes_como_se_presentan.json`: {_sin_grupo99}. Caen en el cajón "
+                  f"«Otros», que se ve y no da error -- o sea que no se entera nadie")
+_de_mas99 = sorted(set(_declarados99) - _esperadas99)
+if _de_mas99:
+    fallos.append(f"BLOQUE99: se declara el grupo de filas que la ficha no puede traer: "
+                  f"{_de_mas99}. Un grupo que vigila algo que no existe no avisa de nada")
+_fuente99 = open(_os_b65.path.join(_os_b65.path.dirname(_os_b65.path.abspath(__file__)),
+                                   "motor", "verificar.py"), encoding="utf-8").read()
+for _r99 in _RATIOS99:
+    if f'"nutriente": "{_r99}"' not in _fuente99:
+        fallos.append(f"BLOQUE99: `verificar.py` ya no escribe la fila «{_r99}», y aquí se le "
+                      f"sigue declarando grupo. Una de las dos está caducada")
+# Y colgado de cada nutriente, para que la app no tenga que cruzar dos listas.
+for _n99 in _VOC99["nutrientes"]:
+    if not _n99.get("grupo"):
+        fallos.append(f"BLOQUE99: el nutriente «{_n99['nombre_del_requisito']}» se sirve sin "
+                      f"grupo: la app lo pintaría en «Otros»")
+_claves_g99 = {g["clave"] for g in _GRUPOS99}
+for _n99 in _VOC99["nutrientes"]:
+    if _n99.get("grupo") and _n99["grupo"] not in _claves_g99:
+        fallos.append(f"BLOQUE99: «{_n99['nombre_del_requisito']}» dice ser del grupo "
+                      f"«{_n99['grupo']}», que no está en la lista de grupos")
+for _g99 in _GRUPOS99:
+    if not _g99.get("titulo") or not _g99.get("nutrientes"):
+        fallos.append(f"BLOQUE99: el grupo «{_g99.get('clave')}» se sirve sin título o vacío. La "
+                      f"app no lo instala, y se queda con su respaldo sin decirlo")
+
+print(f"  {len(_listas99)} listas declaradas · {len(_vistos99)} alimentos en {len(_al99['pantallas'])} pantallas"
+      f" · {len(_declarados99)} filas de ficha en {len(_GRUPOS99)} grupos")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+# ============================================================
+# BLOQUE 100 — LA VIA RAPIDA MIRA LO MISMO QUE EL FILTRO FINAL
+# ============================================================
+print("=== BLOQUE 100: la vía rápida mira lo mismo que el filtro final ===")
+
+# ⚠️ POR QUE EXISTE (13 de septiembre de 2026). CASO REAL ENCONTRADO, y con el
+# peor final posible: un perro para el que SI hay menu se quedaba SIN menu.
+#
+# El atajo de `CATALOGO_VARIANTES` coge un menu precalculado, lo reescala a las
+# kcal del perro y lo entrega si pasa tres filtros -- semaforo de FEDIAF, los
+# cinco topes de seguridad cronica y el presupuesto semanal. No miraba los
+# topes de PATOLOGIA (donde viven tambien los techos del libro para el perro
+# SANO) ni las dos mitades de la nota b. Devolvia un menu que
+# `_garantizar_verificado` tiraba a continuacion, con razon, y el endpoint
+# devolvia ESE RECHAZO en vez de seguir por el camino normal.
+#
+# El comentario que ya estaba escrito en esa funcion decia «se sigue abajo con
+# el camino normal». Lo que hacia el codigo era devolver el rechazo. Una frase
+# no se ejecuta, otra vez.
+_c100 = _c
+# Cachorro de 12 kg a 900 kcal que va a pesar 30 de adulto: por encima del
+# umbral de 25 kg de SACN5, o sea techo de calcio 2750 y no 4250.
+_BASE100 = {"nombres_alimentos": [], "der_objetivo": 900,
+            "etapa_requisitos": "CachorroCrecimiento",
+            "peso_perro_kg": 12, "tamano": "Mediano"}
+
+def _pedir100(**extra):
+    return _c100.post("/menu/v2", json=dict(_BASE100, **extra)).json()
+
+for _pa100 in (20, 30, 50):
+    _r100 = _pedir100(peso_adulto_esperado_kg=_pa100)
+    if not _r100.get("factible"):
+        fallos.append(f"BLOQUE100: el cachorro de 12 kg que va a pesar {_pa100} de adulto se queda "
+                      f"SIN menú por /menu/v2 ({_r100.get('motivo')}), y el solver saca uno. La vía "
+                      f"rápida ha devuelto un menú que el filtro final tira, en vez de caer al "
+                      f"camino normal")
+
+# ⚠️ Y CON EL FALLO PUESTO: si la via rapida deja de mirar esos limites, este
+# perro tiene que quedarse sin menu. Sin esto, el bloque saldria verde tambien
+# el dia que alguien quite la comprobacion, que es cuando hace falta que salte.
+import main as _main100
+_guardada100 = _main100._la_via_rapida_rompe_un_limite
+try:
+    _main100._la_via_rapida_rompe_un_limite = lambda *a, **k: None
+    _roto100 = _pedir100(peso_adulto_esperado_kg=30)
+    if _roto100.get("factible"):
+        fallos.append("BLOQUE100: quitando la comprobación de la vía rápida el menú SIGUE "
+                      "saliendo, así que este bloque no está comprobando nada. O el catálogo ha "
+                      "cambiado y ya no rompe ese techo -- entonces hay que buscar un caso que "
+                      "sí lo rompa, no borrar la prueba")
+finally:
+    _main100._la_via_rapida_rompe_un_limite = _guardada100
+
+# ── Y QUE FALTE EL PESO ADULTO DEJE DE SER SILENCIOSO ───────────────────
+#
+# `peso_adulto_esperado_kg` es opcional en todas las peticiones, y sin el se
+# apagan TRES limites a la vez en un cachorro -- el minimo de calcio reforzado,
+# el techo del ratio Ca:P y los techos del libro en crecimiento --, con el menu
+# saliendo VERDE, porque el semaforo de FEDIAF no los mira. Ahora se dice.
+_sin100 = _pedir100()
+if not _sin100.get("factible"):
+    fallos.append("BLOQUE100: el cachorro sin peso adulto no saca menú, y el caso existe: "
+                  "`peso_adulto_esperado_kg` es opcional en todas las peticiones")
+else:
+    _lim100 = _sin100.get("limites_sin_aplicar")
+    if not _lim100:
+        fallos.append("BLOQUE100: un menú de crecimiento SIN peso adulto sale sin decir que se "
+                      "han quedado sin aplicar el mínimo de calcio reforzado, el techo de Ca:P y "
+                      "los techos del libro. Eso es una restricción que no está puesta y que "
+                      "nadie puede ver")
+    else:
+        _claves100 = {x.get("limite") for x in _lim100}
+        _esperadas100 = {"minimo_calcio_raza_grande", "techo_ratio_ca_p_raza_grande",
+                         "techos_del_libro_en_crecimiento"}
+        if _claves100 != _esperadas100:
+            fallos.append(f"BLOQUE100: se declaran {sorted(_claves100)} y los límites que "
+                          f"dependen del peso adulto son {sorted(_esperadas100)}")
+        for _x100 in _lim100:
+            if not _x100.get("de_donde") or not (_x100.get("veterinario") or "").strip():
+                fallos.append(f"BLOQUE100: «{_x100.get('limite')}» no dice de qué fuente sale o "
+                              f"qué se está usando en su lugar")
+
+# Y al revés: con el peso adulto puesto, y en un adulto, la lista va vacía --
+# pero va. Una clave que solo aparece cuando hay problema no se puede
+# comprobar por su ausencia: «no falta nada» y «esta versión no lo dice» se
+# leerían igual.
+_con100 = _pedir100(peso_adulto_esperado_kg=20)
+if _con100.get("factible") and _con100.get("limites_sin_aplicar") != []:
+    fallos.append(f"BLOQUE100: con el peso adulto puesto se sigue declarando algo sin aplicar: "
+                  f"{_con100.get('limites_sin_aplicar')}")
+_ad100 = _c100.post("/menu/v2", json={"nombres_alimentos": [], "der_objetivo": 900,
+                                      "etapa_requisitos": "Adulto", "peso_perro_kg": 12,
+                                      "tamano": "Mediano"}).json()
+if _ad100.get("factible") and _ad100.get("limites_sin_aplicar") != []:
+    fallos.append(f"BLOQUE100: a un ADULTO se le declaran límites de crecimiento sin aplicar: "
+                  f"{_ad100.get('limites_sin_aplicar')}. Esos tres solo existen en crecimiento")
+
+# ── Y QUE «DONDE SE COMPRA» CUBRA EL CATALOGO ENTERO ────────────────────
+#
+# ⚠️ `donde_se_compra_cada_alimento.json` esta indexado POR NOMBRE DE ALIMENTO,
+# que es la forma que se desincroniza sola -- la misma de `COMO_DAR_ALIMENTO`,
+# que llego a tener 12 entradas de alimentos que el motor ya no tenia, la
+# BORRAJA entre ellas. Todavia no lo lee nadie, y por eso mismo el guardian
+# entra AHORA: un fichero sin consumidor y sin vigilancia se pudre sin que se
+# note, y cuando por fin se enchufa ya esta mal.
+#
+# ⚠️ Y SE SABE QUE VA A SALTAR: la rama del catalogo de alimentos deja 162
+# fichas en vez de 163 (fuera «Cerebro de vaca», por ley) y renombra «Riñon de
+# ternera» a «Riñon de vaca». El dia que eso se fusione, esto se pone rojo, y
+# esa es exactamente su razon de ser: hay que tocar las tres lineas, no
+# silenciarlo.
+_DONDE100 = _json_b99.load(open(_os_b65.path.join(
+    _os_b65.path.dirname(_os_b65.path.abspath(__file__)),
+    "donde_se_compra_cada_alimento.json"), encoding="utf-8"))
+_cat100 = {a["nombre"] for a in _json_b99.load(open(_os_b65.path.join(
+    _os_b65.path.dirname(_os_b65.path.abspath(__file__)),
+    "alimentos_v3_final.json"), encoding="utf-8"))}
+_fichados100 = set(_DONDE100["por_alimento"])
+_faltan100 = sorted(_cat100 - _fichados100)
+_sobran100 = sorted(_fichados100 - _cat100)
+if _faltan100:
+    fallos.append(f"BLOQUE100: estos alimentos del catálogo no dicen dónde se compran: "
+                  f"{_faltan100}. Un menú puede llevarlos y no se puede decir si es "
+                  f"conseguible")
+if _sobran100:
+    fallos.append(f"BLOQUE100: se dice dónde comprar alimentos que el catálogo ya no tiene: "
+                  f"{_sobran100}. Es la Borraja otra vez -- una lista por nombre que se quedó "
+                  f"parada cuando el catálogo cambió debajo")
+_sitios100 = set(_DONDE100["donde_se_compra"])
+for _n100, _v100 in _DONDE100["por_alimento"].items():
+    if _v100.get("donde") not in _sitios100:
+        fallos.append(f"BLOQUE100: «{_n100}» dice comprarse en «{_v100.get('donde')}», que no es "
+                      f"ninguno de los sitios declarados {sorted(_sitios100)}")
+    if _v100.get("precio_orientativo") not in ("corriente", "premium"):
+        fallos.append(f"BLOQUE100: «{_n100}» tiene un precio «{_v100.get('precio_orientativo')}» "
+                      f"que no es ni corriente ni premium. Son DOS casillas a propósito: no hay "
+                      f"fuente de precios y un escalón «medio» sería fingir precisión")
+
+print(f"  {len(_fichados100)} alimentos con sitio de compra declarado")
+print(f"  3 pesos adultos con menú · el fallo puesto lo deja sin menú · "
+      f"{len(_sin100.get('limites_sin_aplicar') or [])} límites declarados cuando falta el dato")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 _cerrar_el_ultimo_bloque()

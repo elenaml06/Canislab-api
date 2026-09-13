@@ -528,6 +528,123 @@ def _tope_patologia_roto(gramos, al, patologias, etapa="Adulto",
 # es el techo. O sea: el agujero era real en el código y no estaba dando
 # menús malos hoy. Se cierra igual, porque lo que lo mantenía tapado es
 # una propiedad del catálogo de hoy, no una garantía.
+# ⚠️ LA VIA RAPIDA COMPROBABA TRES COSAS Y LE FALTABAN TRES (13 de septiembre
+# de 2026). CASO REAL ENCONTRADO, y es el peor final posible: un perro para el
+# que SI hay menu se queda SIN menu.
+#
+# El atajo de `CATALOGO_VARIANTES` coge un menu precalculado, lo reescala a las
+# kcal del perro y lo entrega si pasa tres filtros: el semaforo de FEDIAF, los
+# cinco topes de seguridad cronica y el presupuesto semanal. No miraba los
+# topes de PATOLOGIA -- que es donde viven tambien los techos del libro para el
+# perro sano -- ni las dos mitades de la nota b. Asi que devolvia un menu que
+# `_garantizar_verificado` tiraba a continuacion, con razon, y el endpoint
+# devolvia ESE RECHAZO en vez de seguir por el camino normal.
+#
+# MEDIDO: cachorro de 12 kg a 900 kcal que va a pesar 30 de adulto (o sea, por
+# encima del umbral de 25 kg de SACN5, con el techo de calcio en 2750 y no en
+# 4250). Por `/menu/v2` devuelve «no factible», con 24 s de presupuesto y con
+# 90 -- no es el reloj. Preguntandole al solver directamente sale menu EN UN
+# SEGUNDO, con el calcio a 2502 mg/1000 kcal, o sea holgado bajo el techo.
+#
+# Y el comentario que ya estaba escrito tres lineas mas abajo describia el
+# comportamiento que se creia tener: «se sigue abajo con el camino normal --
+# nunca se entrega algo que no este en verde de verdad». Lo segundo era cierto
+# y lo primero no: no se seguia abajo, se devolvia el rechazo. Es exactamente
+# lo que CLAUDE.md ya tiene escrito del `POST /menu` que se borro -- «ese
+# camino construia menus que el filtro final iba a tirar».
+def _la_via_rapida_rompe_un_limite(gramos, al, req, datos, peso_objetivo_kg):
+    """Los limites que el filtro final mira y la via rapida no miraba.
+
+    Devuelve el motivo (texto) o None. Se usa para DESCARTAR el atajo y caer al
+    camino normal, no para rechazar la peticion: por eso devuelve un motivo y
+    no un booleano -- el que descarta tiene que poder decir por que.
+    """
+    pa = getattr(datos, "peso_adulto_esperado_kg", None)
+    etapa = datos.etapa_requisitos
+    roto = _tope_patologia_roto(
+        gramos, al, getattr(datos, "patologias", None), etapa, req=req,
+        der_efectiva=der_efectiva_de(datos.der_objetivo,
+                                     peso_objetivo_kg or datos.peso_perro_kg),
+        peso_adulto_esperado_kg=pa)
+    if roto:
+        return f"topes de patologia o del libro: {roto}"
+    corto = _minimo_calcio_raza_grande_roto(gramos, al, req, etapa, pa)
+    if corto:
+        return f"minimo de calcio de raza grande: {corto}"
+    pasado = _ratio_cap_raza_grande_roto(gramos, al, req, etapa, pa)
+    if pasado:
+        return f"techo del ratio Ca:P de raza grande: {pasado}"
+    return None
+
+
+# ⚠️ CUANDO FALTA EL PESO ADULTO, TRES LIMITES SE APAGAN Y HASTA HOY NO LO
+# DECIA NADIE (13 de septiembre de 2026).
+#
+# `peso_adulto_esperado_kg` es OPCIONAL en todas las peticiones, y las tres
+# funciones que dependen de el -- el minimo de calcio reforzado, el techo del
+# ratio Ca:P y los techos del libro en crecimiento -- empiezan igual: si no
+# viene, `return None` y a otra cosa. Cada uno por separado esta bien escrito;
+# juntos hacen que a un CACHORRO sin ese dato se le dejen de aplicar tres
+# limites A LA VEZ, y el menu salga VERDE, porque el semaforo de FEDIAF no los
+# mira -- son los requisitos de un perro sano de cualquier tamaño.
+#
+# MEDIDO, y es lo que hace que esto no sea cosmetico:
+#
+#   · minimo de calcio: 2000 en vez de 2500 mg/1000 kcal (nota b de la Tabla
+#     III-3b de FEDIAF, para el cachorro de >= 15 kg de adulto)
+#   · techo del ratio Ca:P: 2,0 en vez de 1,6 (la otra mitad de esa nota b)
+#   · techos del libro en crecimiento: 4250 de calcio y 3250 de fosforo en vez
+#     de 2750 y 2750 (SACN5 Tabla 17-1 + Fascetti cap.10, para el cachorro de
+#     > 25 kg de adulto). O sea un 55 % mas de calcio del que piden las dos
+#     fuentes caninas que hablan de esto, justo donde FEDIAF avisa de
+#     deformidades esqueleticas.
+#
+# No se INVENTA el peso adulto ni se aplica el lado estricto a ciegas: meterle
+# a un cachorro toy la ventana del gigante (minimo 2500 con techo 2750) lo
+# dejaria sin menu por un dato que nadie le ha pedido. Lo que se hace es
+# DECIRLO, que es lo que separa esto de un aviso que se puede ignorar: el
+# limite no esta puesto, y quien lee el menu tiene que poder saberlo.
+def _limites_de_crecimiento_sin_aplicar(etapa, peso_adulto_esperado_kg):
+    """Los limites que NO se han podido aplicar por no saber el peso adulto.
+
+    Lista vacia cuando no falta nada, que es el caso normal: la app manda
+    siempre este campo (la curva del propio cachorro, con el peso de la raza
+    de respaldo). Esto es para los demas caminos -- `/menu/v2` no pide
+    credencial y el formulador manda `?? null`.
+    """
+    if etapa not in ("CachorroJoven", "CachorroCrecimiento"):
+        return []
+    if peso_adulto_esperado_kg:
+        return []
+    return [
+        {"limite": "minimo_calcio_raza_grande",
+         "de_donde": "FEDIAF 2025, Tabla III-3b, nota b",
+         "se_aplica_desde_kg_de_adulto": RAZA_GRANDE_O_GIGANTE_KG,
+         "que_se_esta_usando": "el minimo de calcio de cualquier cachorro",
+         "dueno": ("No sabemos cuanto va a pesar de adulto, asi que no podemos saber si le "
+                   "toca el calcio reforzado de los cachorros de raza grande. Dinos su fecha "
+                   "de nacimiento y su raza y se aplica solo."),
+         "veterinario": ("Sin `peso_adulto_esperado_kg` no se aplica el minimo reforzado de "
+                         "calcio (2500 mg/1000 kcal) de la nota b para el cachorro de >= 15 kg "
+                         "de peso adulto: se usa el generico de la etapa.")},
+        {"limite": "techo_ratio_ca_p_raza_grande",
+         "de_donde": "FEDIAF 2025, Tabla III-3b, nota b",
+         "se_aplica_desde_kg_de_adulto": RAZA_GRANDE_O_GIGANTE_KG,
+         "que_se_esta_usando": "el techo de Ca:P de cualquier perro (2,0)",
+         "dueno": None,
+         "veterinario": ("Sin `peso_adulto_esperado_kg` el techo del ratio Ca:P se queda en el "
+                         "2,0 de FEDIAF en vez del 1,6 de la nota b.")},
+        {"limite": "techos_del_libro_en_crecimiento",
+         "de_donde": "SACN5 Tabla 17-1 y Fascetti & Delaney cap.10",
+         "se_aplica_desde_kg_de_adulto": 25,
+         "que_se_esta_usando": "la columna del cachorro pequeño (calcio 4250, fosforo 3250)",
+         "dueno": None,
+         "veterinario": ("Sin `peso_adulto_esperado_kg` se aplica la columna del cachorro de "
+                         "menos de 25 kg de adulto: calcio 4250 y fosforo 3250 mg/1000 kcal en "
+                         "vez de 2750 y 2750.")},
+    ]
+
+
 def _minimo_calcio_raza_grande_roto(gramos, al, req, etapa, peso_adulto_esperado_kg):
     """¿Este menú se queda por debajo del mínimo de calcio REFORZADO de las
     razas grandes en crecimiento? Devuelve el texto del fallo, o None.
@@ -1160,6 +1277,20 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
     respuesta["avisos_profesional"] = _avisos_para_el_profesional(
         gramos, al, der, etapa, patologias, peso_perro_kg,
         actividad=respuesta.get("actividad"))
+    # ⚠️ Y LOS LIMITES QUE NO SE HAN PODIDO APLICAR, EN SU PROPIA CLAVE
+    # (13 de septiembre). Va AQUI por lo mismo que la ficha y las notas del
+    # profesional: este filtro es por donde pasa TODO menu, asi que sale en
+    # los once caminos sin que nadie tenga que acordarse.
+    #
+    # No va dentro de `avisos_profesional` a proposito. Aquellos son LECTURAS
+    # del menu -- cosas que estan bien y conviene mirar --, y esto es lo
+    # contrario: una restriccion que el motor NO ha puesto. Mezclarlas seria
+    # esconder lo segundo entre lo primero, que es como un aviso deja de
+    # leerse. La lista va SIEMPRE, vacia cuando no falta nada, porque una
+    # clave que solo aparece cuando hay problema no se puede comprobar por su
+    # ausencia.
+    respuesta["limites_sin_aplicar"] = _limites_de_crecimiento_sin_aplicar(
+        etapa, peso_adulto_esperado_kg)
     return respuesta
 
 
@@ -2813,7 +2944,15 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 else:
                     gramos_reescalados[n] = round(g * factor, 2)
             ficha_variante = verificar_v2(gramos_reescalados, al, req, datos.der_objetivo, datos.etapa_requisitos)
+            # ⚠️ Y QUE NO ROMPA NINGUNO DE LOS LIMITES QUE MIRA EL FILTRO FINAL
+            # (13-sep). Ver `_la_via_rapida_rompe_un_limite`: sin esto el atajo
+            # devolvia un menu que `_garantizar_verificado` tiraba, y el
+            # endpoint devolvia ESE RECHAZO -- un cachorro de raza grande sin
+            # menu teniendolo a un segundo de solver.
+            _rompe_rapida = _la_via_rapida_rompe_un_limite(
+                gramos_reescalados, al, req, datos, _peso_de_referencia(datos)[0])
             if (ficha_variante["semaforo"] == "verde"
+                    and not _rompe_rapida
                     and _menu_precalculado_es_seguro(gramos_reescalados, al, datos.der_objetivo,
                                                      datos.peso_perro_kg)
                     # ⚠️ Y QUE QUEPA EN LO QUE QUEDA DE LA SEMANA (12-sep).
@@ -5427,7 +5566,7 @@ def verificar(origin: Optional[str] = Header(default=None)):
     import hashlib, os, json
     SELLOS = SELLOS_DE_LOS_DATOS
     SELLOS_CRUDOS = {
-        "der.py": "acbeb53b232c8004",   # ⚠️ 12 sep (noche): EL PESO ADULTO DE UN CACHORRO YA NO SE RECORTA AL RANGO DE SU RAZA. Lo decide su propia trayectoria con la Tabla VII-8a, que es lo que hacen las curvas de WALTHAM (el estandar de raza les sirve solo para ELEGIR LA BANDA) y MyVetDiet (llama a su tabla de 180 razas "pesos indicativos"). Medido sobre las 270 razas a 4, 6 y 9 meses: movia 47 de 1620 casos, mediana 3,0 % de kcal y 6,9 % el peor, y casi siempre hacia ARRIBA en cachorros que apuntan por debajo del minimo de su raza -- al Mastin Español de 9 meses le anadia 152 kcal/dia, y es raza gigante, donde FEDIAF avisa de deformidades esqueleticas por sobrealimentar. Los dos parametros se van con el recorte, aqui y en el cuerpo de POST /der: uno que se acepta y no hace nada es peor. Lo vigila el apartado 9 del BLOQUE 96. | 12 sep (madrugada): LA BANDA IDEAL DEL BCS ES 4-5 (§7.1.3 y §7.2.4.1 de FEDIAF, las dos sobre Kealy 2002) -- a un perro en BCS 4 se le subia el peso objetivo un 11 %, y por debajo el destino pasa a ser el BCS 4 y no el 5. Y la banda de la Tabla VII-8a se elige ahora SIN ITERAR: es una funcion a trozos y el bucle tenia dos puntos fijos (52,6 y 46,6 kg para el mismo cachorro), asi que este repo y la app discrepaban en 209 kcal/dia. Se recorren las cinco bandas y se coge la primera autoconsistente: determinista y la mas pequena, que es menos kcal. Y se borra la tabla WALTHAM, que no tenia fuente y hacia que fuera del rango de FEDIAF los dos repos dieran cosas distintas. | 11 sep (noche): LA CURVA DE CRECIMIENTO PASA A SER LA ECUACION DE FEDIAF. La Tabla VII-8a publica cinco ecuaciones por banda de peso adulto, validas de las 8 semanas al ano, y aqui habia una tabla cuyo propio comentario decia que venia de "reproducciones divulgativas" de las curvas WALTHAM y NO del texto del estudio. Medido: en el cachorro de mas de 47,5 kg de adulto iba 12 puntos por debajo a los 6 meses (45,0 % contra 57,0 %), y eso son ~9 % de kcal DE MAS (2479 contra 2269 en uno de 30 kg) justo donde FEDIAF avisa de deformidades esqueleticas por sobrealimentar. Ningun caso de `der_casos.json` la ejercia, asi que el contrato no se mueve. La tabla WALTHAM se queda de respaldo para lo que FEDIAF no cubre (<8 semanas y >1 ano). Lo vigila el BLOQUE 96, incluido el emparejamiento banda<->ecuacion. | 10 sep: la Tabla 5-3 de SACN5 da LA CIFRA del frio que FEDIAF deja como rango de 1 a 9 -- pelo corto +95 %, pelo largo +59,5 %, Labrador +25 %, Gran Danes +22 %, cada una con su salto de temperatura. El comentario decia que no hay cifra y era falso: lo era de FEDIAF, no del conjunto de las fuentes. Lo que falta sigue siendo la PREGUNTA en la ficha, que es producto. | 9 sep (3): la §7.2.3.5 de FEDIAF, leida entera, escrita en der.py -- las tres cosas que anade a la Tabla VII-7 y por que no se aplica ninguna: el frio (10-90 % mas de calorias durmiendo fuera en invierno; hueco real, falta la pregunta en la ficha), el suelo de 70 kcal/kg^0,75 de la literatura contra nuestros 95 de la recomendacion, y la termogenesis de la comida (~10 %, sube con proteina y con mas tomas, sin cifra para ninguna de las dos). | 9 sep (2): el escalon de edad pasa a ser el de la Tabla VII-6 de FEDIAF -- 130 (1-2 anos) / 110 (3-7) / 95 (>7), o sea +20 el joven y -15 el senior contra el +15/-7 de Thes 2014 que habia; nuestro -7 era un -6,4 % cuando FEDIAF dice -13,6 % y SACN5 cap.5 dice 10-20 %. Y el grupo "joven" era CODIGO MUERTO: existia en AJUSTE_EDAD y no se pasaba nunca, ni aqui ni en el front, asi que un perro de ano y medio recibia lo mismo que uno de cinco. | 9 sep: la cifra de raza de la Tabla VII-7 va EN VEZ del nivel de actividad, y lo dice la propia guia (la frase que presenta la tabla, y la seccion 7.2.3.4: la diferencia de raza YA CONTIENE la de actividad). Cierra PREGUNTAS_ABIERTAS.md P-11; lo separa de las lecturas «suelo» y «sumar» el BLOQUE 54 apartado 2-bis. | 8 sep: el DER verificado contra FEDIAF 2025 (Tablas VII-7 y VII-8b) y cerrado -- ver DECISIONES.md D-11. Cambian TRES cosas: se quita el tope de x6 RER en lactancia (no es de FEDIAF y recortaba hasta un 33 %), se adoptan las dos razas con cifra propia de FEDIAF (Gran Danes 200, Terranova 105; un Gran Danes recibia el 55 % de lo que le toca), y el respaldo de crecimiento pasa a la regla de SACN5 por edad (3 x RER hasta los 4 meses, 2 x RER despues) -- de sus tres escalones viejos, DOS eran codigo muerto. Lo vigila el BLOQUE 54.
+        "der.py": "f716be6ed6b14312",   # ⚠️ 13 sep: EL BCS DE UN CACHORRO YA MUEVE LA RACION, y hasta hoy no movia NADA -- la correccion por peso ideal esta detras de un `if not en_crecimiento`, asi que el mismo cachorro de 20 kg a los 7 meses recibia 1439 kcal en BCS 3, en 5 y en 7, cuando de adulto ese mismo BCS va de 578 a 1431. Y la fuente dice lo contrario de lo que haciamos: SACN5 cap.17 llama al BCS «the most practical indicator of whether or not a puppy's growth rate is healthy», y su Tabla 17-5 da la cifra -- «monitored regularly (at least every two weeks) and the amount fed should be increased or decreased by 10%, depending on body condition score» --, repetida en el cap.27 para mantenimiento. Se aplica ±10 % fuera de la banda ideal 4-5 de FEDIAF y 1,0 dentro; sin BCS no se toca nada. Es un ESCALON y no la cuenta del adulto porque a un adulto se le corrige dividiendo por el exceso para llegar a un peso objetivo y un cachorro no tiene diana quieta -- su ideal de hoy depende de lo que vaya a pesar de adulto, que es justo lo que se esta estimando. Por eso BCS 6 y BCS 9 reciben el mismo -10 %: lo que cierra la diferencia es repetirlo cada dos semanas, y eso es lo que hace posible el historial de pesadas. | 13 sep (2): UN SUELO PASADOS LOS 12 MESES, que es el unico tramo donde el peso adulto vuelve a salir de la tabla de razas y donde el 75 % de las razas (202 de 270) sigue creciendo. No es un numero nuevo: es la propia Tabla VII-8a en la ultima edad en que ella dice que vale -- a los 12 meses da 82,4 % en la banda de los gigantes y 90-100 % en las demas, y la curva solo sube. Las dos fuentes coinciden ahi: SACN5 Tabla 17-2 da 125-140 kcal/kg^0,75 para «>=80% of adult BW» y Klein entre el 85 y el 95 % da 139,3 y 125,8. Medido sobre las 270 razas en ese tramo: mueve 209 de 496 casos, mediana -3,0 %, peor -5,6 %, TODOS hacia abajo; y a un perro de 45 kg a los 14 meses al que el respaldo le supone 76 de adulto se le daba un +39 % de kcal, que se queda en +13 %. | 13 sep (3): LA CURVA YA NO PISA EL PESO ADULTO QUE LE PASEN. Aqui se recalculaba SIEMPRE que hubiera edad y en `src/der.js` era al reves, con una prueba que lo afirmaba; los dos eran coherentes consigo mismos y ningun caso del contrato lo ejercia, porque hacia falta peso adulto Y edad a la vez. Medido: 30 kg a los 10 meses con 60 de adulto daba 1814 aqui y 2391 alli, un 32 %. Gana la app porque en produccion no cambia nada -- `pesoAdultoEsperado` YA es el resultado de esta curva -- y a `der.py` solo se llega por `/der`. | 12 sep (noche): EL PESO ADULTO DE UN CACHORRO YA NO SE RECORTA AL RANGO DE SU RAZA. Lo decide su propia trayectoria con la Tabla VII-8a, que es lo que hacen las curvas de WALTHAM (el estandar de raza les sirve solo para ELEGIR LA BANDA) y MyVetDiet (llama a su tabla de 180 razas "pesos indicativos"). Medido sobre las 270 razas a 4, 6 y 9 meses: movia 47 de 1620 casos, mediana 3,0 % de kcal y 6,9 % el peor, y casi siempre hacia ARRIBA en cachorros que apuntan por debajo del minimo de su raza -- al Mastin Español de 9 meses le anadia 152 kcal/dia, y es raza gigante, donde FEDIAF avisa de deformidades esqueleticas por sobrealimentar. Los dos parametros se van con el recorte, aqui y en el cuerpo de POST /der: uno que se acepta y no hace nada es peor. Lo vigila el apartado 9 del BLOQUE 96. | 12 sep (madrugada): LA BANDA IDEAL DEL BCS ES 4-5 (§7.1.3 y §7.2.4.1 de FEDIAF, las dos sobre Kealy 2002) -- a un perro en BCS 4 se le subia el peso objetivo un 11 %, y por debajo el destino pasa a ser el BCS 4 y no el 5. Y la banda de la Tabla VII-8a se elige ahora SIN ITERAR: es una funcion a trozos y el bucle tenia dos puntos fijos (52,6 y 46,6 kg para el mismo cachorro), asi que este repo y la app discrepaban en 209 kcal/dia. Se recorren las cinco bandas y se coge la primera autoconsistente: determinista y la mas pequena, que es menos kcal. Y se borra la tabla WALTHAM, que no tenia fuente y hacia que fuera del rango de FEDIAF los dos repos dieran cosas distintas. | 11 sep (noche): LA CURVA DE CRECIMIENTO PASA A SER LA ECUACION DE FEDIAF. La Tabla VII-8a publica cinco ecuaciones por banda de peso adulto, validas de las 8 semanas al ano, y aqui habia una tabla cuyo propio comentario decia que venia de "reproducciones divulgativas" de las curvas WALTHAM y NO del texto del estudio. Medido: en el cachorro de mas de 47,5 kg de adulto iba 12 puntos por debajo a los 6 meses (45,0 % contra 57,0 %), y eso son ~9 % de kcal DE MAS (2479 contra 2269 en uno de 30 kg) justo donde FEDIAF avisa de deformidades esqueleticas por sobrealimentar. Ningun caso de `der_casos.json` la ejercia, asi que el contrato no se mueve. La tabla WALTHAM se queda de respaldo para lo que FEDIAF no cubre (<8 semanas y >1 ano). Lo vigila el BLOQUE 96, incluido el emparejamiento banda<->ecuacion. | 10 sep: la Tabla 5-3 de SACN5 da LA CIFRA del frio que FEDIAF deja como rango de 1 a 9 -- pelo corto +95 %, pelo largo +59,5 %, Labrador +25 %, Gran Danes +22 %, cada una con su salto de temperatura. El comentario decia que no hay cifra y era falso: lo era de FEDIAF, no del conjunto de las fuentes. Lo que falta sigue siendo la PREGUNTA en la ficha, que es producto. | 9 sep (3): la §7.2.3.5 de FEDIAF, leida entera, escrita en der.py -- las tres cosas que anade a la Tabla VII-7 y por que no se aplica ninguna: el frio (10-90 % mas de calorias durmiendo fuera en invierno; hueco real, falta la pregunta en la ficha), el suelo de 70 kcal/kg^0,75 de la literatura contra nuestros 95 de la recomendacion, y la termogenesis de la comida (~10 %, sube con proteina y con mas tomas, sin cifra para ninguna de las dos). | 9 sep (2): el escalon de edad pasa a ser el de la Tabla VII-6 de FEDIAF -- 130 (1-2 anos) / 110 (3-7) / 95 (>7), o sea +20 el joven y -15 el senior contra el +15/-7 de Thes 2014 que habia; nuestro -7 era un -6,4 % cuando FEDIAF dice -13,6 % y SACN5 cap.5 dice 10-20 %. Y el grupo "joven" era CODIGO MUERTO: existia en AJUSTE_EDAD y no se pasaba nunca, ni aqui ni en el front, asi que un perro de ano y medio recibia lo mismo que uno de cinco. | 9 sep: la cifra de raza de la Tabla VII-7 va EN VEZ del nivel de actividad, y lo dice la propia guia (la frase que presenta la tabla, y la seccion 7.2.3.4: la diferencia de raza YA CONTIENE la de actividad). Cierra PREGUNTAS_ABIERTAS.md P-11; lo separa de las lecturas «suelo» y «sumar» el BLOQUE 54 apartado 2-bis. | 8 sep: el DER verificado contra FEDIAF 2025 (Tablas VII-7 y VII-8b) y cerrado -- ver DECISIONES.md D-11. Cambian TRES cosas: se quita el tope de x6 RER en lactancia (no es de FEDIAF y recortaba hasta un 33 %), se adoptan las dos razas con cifra propia de FEDIAF (Gran Danes 200, Terranova 105; un Gran Danes recibia el 55 % de lo que le toca), y el respaldo de crecimiento pasa a la regla de SACN5 por edad (3 x RER hasta los 4 meses, 2 x RER despues) -- de sus tres escalones viejos, DOS eran codigo muerto. Lo vigila el BLOQUE 54.
         # 6 sep: 3 correcciones de cita en comentarios (VII-7 no VII-6, Thes 2015 no 2014, y el escalon 210/175/140 no es tabla de FEDIAF) -- ningun numero ni comportamiento cambia.
         # ⚠️ 9 sep: SELLO MOVIDO, y solo cambia UN numero. El BCS 9 pasa de un
         # exceso del 40 % a uno del 45 %, porque la Tabla VII-2 del Anexo 7.1 de
@@ -6864,6 +7003,12 @@ def _nutrientes_para_objetivos():
         salida.append({
             "clave": clave,
             "nombre_del_requisito": nombre_req,
+            # En que grupo se lee esta fila dentro de una ficha. Sale de
+            # `nutrientes_como_se_presentan.json`, no de aqui: si se escribiera
+            # en la app, un nutriente nuevo del motor caeria en su cajon
+            # «Otros» -- que se ve y no da error, o sea que no se entera nadie.
+            # El BLOQUE 99 exige que los 46 lo tengan.
+            "grupo": _GRUPO_DE_NUTRIENTE.get(nombre_req),
             "unidad": unidad,
             "por": "1000 kcal",
             "de_la_tabla_III_3b": _es_fila_de_fediaf(fila),
@@ -6950,7 +7095,7 @@ ETIQUETAS_CONDICION = {
         "veterinario": {"titulo": "BCS 8/9 — Obeso",
                         "detalle": "30 a 45 % por encima del ideal (FEDIAF Tabla VII-2)"}},
     9: {"dueno": {"titulo": "Muy gordete", "detalle": "No se notan las costillas, sin cintura"},
-        "veterinario": {"titulo": "BCS 9/9 — Obesidad morbida",
+        "veterinario": {"titulo": "BCS 9/9 — Obesidad mórbida",
                         "detalle": "Mas del 45 % por encima del ideal; la estimacion es una COTA "
                                    "INFERIOR (FEDIAF Tabla VII-2, fila «9. Grossly Obese»)"}},
 }
@@ -6986,6 +7131,37 @@ ETIQUETAS_TAMANO = {
 # sale de la fecha de nacimiento, del sexo y de si esta gestante o lactando. Se
 # sirven igual porque la app las ESCRIBE en pantalla y porque el veterinario
 # necesita saber a que tabla de FEDIAF corresponde la suya.
+# ⚠️ LOS DOS NOMBRES DE CADA ETAPA (13 de septiembre de 2026). La misma etapa
+# se llama de dos maneras dentro del motor: `der.py` la recibe en minusculas con
+# guion bajo (`cachorro_joven`) y la tabla de FEDIAF la indexa en CamelCase
+# (`CachorroJoven`). La traduccion entre las dos vivia SOLO en
+# `ETAPA_A_SUFIJO_API` de `src/App.jsx`, escrita a mano -- o sea la misma forma
+# de fallo que `ACTIVIDAD_POR_INDICE`: si el motor añade una etapa o le cambia
+# el nombre, la app sigue traduciendo con su tabla vieja, manda una etapa que el
+# motor no conoce, y el motor cae a «Adulto» sin dar error. Un cachorro
+# verificado contra los requisitos de un adulto sale VERDE.
+#
+# No es una tabla inventada: las claves de la izquierda son las que acepta
+# `calcular_der` y las de la derecha las que indexan `requerimientos_v2_final`.
+# El BLOQUE 99 comprueba las dos puntas.
+COMO_SE_LLAMA_LA_ETAPA_EN_LA_FICHA = {
+    "CachorroJoven": "cachorro_joven",
+    "CachorroCrecimiento": "cachorro_crecimiento",
+    "Adulto": "adulto",
+    "Senior": "senior",
+    "GestanteTemprana": "gestante_temprana",
+    "GestanteTardia": "gestante_tardia",
+    "Lactante": "lactante",
+}
+
+# ⚠️ Y DE LAS SIETE, LA FICHA SOLO CALCULA CUATRO. `determinarEtapa` sale de la
+# fecha de nacimiento, y la gestacion y la lactancia no se deducen de la edad:
+# hay que preguntarlas, y la ficha todavia no lo hace. Va DECLARADO y no
+# callado, que es lo mismo que se hizo con la pregunta de los premios: un hueco
+# escrito se puede cerrar y uno que no esta escrito no lo ve nadie. Ver
+# `lo_que_la_ficha_todavia_no_pregunta` en `datos_de_la_ficha.json`.
+ETAPAS_QUE_LA_FICHA_CALCULA = ["cachorro_joven", "cachorro_crecimiento", "adulto", "senior"]
+
 ETIQUETAS_ETAPA = {
     "CachorroJoven": {
         "dueno": {"titulo": "Cachorro", "detalle": "Menos de 14 semanas"},
@@ -7007,6 +7183,21 @@ ETIQUETAS_ETAPA = {
                         "detalle": "Usa la de adulto, con la proteina subida a 45 g/1000 kcal "
                                    "(`requisitos.SENIOR_PROTEINA_MINIMA`) y el techo de fosforo "
                                    "de 1750 mg/1000 kcal"}},
+    # ⚠️ LA GESTACION TEMPRANA ESTABA SIN ETIQUETA (13 de septiembre). Es una
+    # etapa que el motor acepta por las dos puertas -- `EQUIVALENCIA_ETAPAS` la
+    # manda a «Early Growth & Reproduction» y `calcular_der` acepta
+    # `gestante_temprana` -- y no tenia fila aqui, asi que no salia por
+    # `/vocabulario` y no se podia ofrecer. Una etapa que el motor sabe recibir
+    # y que nadie puede elegir es un requisito que no se aplica nunca.
+    "GestanteTemprana": {
+        "dueno": {"titulo": "Embarazada (al principio)",
+                  "detalle": "Primeras cinco semanas de la gestacion"},
+        "veterinario": {"titulo": "Early gestation",
+                        "detalle": "Va a la columna «Early Growth & Reproduction». Las kcal "
+                                   "son 132/kg^0,75 toda la gestacion (`der.GESTACION_BASE`); lo "
+                                   "que entra en la semana 5 es el extra de 26 kcal por kg de "
+                                   "peso vivo, y eso es lo unico que separa la temprana de la "
+                                   "tardia"}},
     "GestanteTardia": {
         "dueno": {"titulo": "Embarazada", "detalle": "Ultimas semanas de la gestacion"},
         "veterinario": {"titulo": "Late gestation",
@@ -7049,6 +7240,16 @@ def endpoint_vocabulario():
             "cuantos": len(BASE_ACTIVIDAD),
             "niveles": [dict({"clave": k, "kcal_kg075": v}, **ETIQUETAS_ACTIVIDAD[k])
                         for k, v in BASE_ACTIVIDAD.items()],
+            # ⚠️ LOS TRES NOMBRES DE CADA NIVEL (13-sep-2026). Un nivel se llama
+            # de tres formas y la traduccion entre ellas vivia SOLO en la app:
+            # el INDICE (0-4) que guarda la ficha, la CLAVE DEL MOTOR que viaja
+            # en la peticion, y la CLAVE DE LA BASE DE DATOS que se escribe en
+            # Supabase -- y son distintas, `sedentario` se guarda como `baja`.
+            # Estaba en `ACTIVIDAD_POR_INDICE` de `src/supabase.js` y en ningun
+            # sitio mas: si el motor añade un nivel o cambia el orden, esa lista
+            # traduce por el indice viejo y un perro vuelve de la base de datos
+            # con OTRA actividad, sin error y con el menu en verde.
+            "los_tres_nombres": _NIVELES_ACT["los_cinco_niveles"],
             "ojo": ("⚠️ La Tabla VII-7 tiene CUATRO filas de actividad para el perro normal (95, "
                     "110, 125 y un rango de 150-175), y el motor parte la cuarta en DOS niveles. "
                     "Eso es decision nuestra y esta escrita en `niveles_de_actividad.json`. "
@@ -7116,6 +7317,28 @@ def endpoint_vocabulario():
                     "`objetivos_ajustados`, salga o no salga el menú."),
             "cuantos": len(_nutrientes_objetivos),
             "nutrientes": _nutrientes_objetivos,
+            # ── Y COMO SE LEEN AGRUPADOS ─────────────────────────────────
+            #
+            # ⚠️ AÑADIDO (13 de septiembre de 2026). El orden y el titulo de
+            # cada grupo vivian SOLO en `src/nutrientes.js`, con 42 nutrientes
+            # escritos a mano; el motor sirve 46 y la ficha trae ademas dos
+            # RELACIONES, asi que seis filas caian en el cajon «Otros». Ese
+            # cajon esta puesto a proposito -- se prefiere un grupo feo a un
+            # nutriente escondido -- pero no es un sitio donde deba vivir nada
+            # de forma permanente, y ahi llevaban desde que existe la ficha.
+            #
+            # Se sirven con los nombres de fila, no con las claves internas,
+            # porque es lo que trae cada fila de `verificar()`. Incluye las dos
+            # relaciones (Ca:P y linoleico:linolenico), que no son nutrientes
+            # del MAPA y si son filas de la ficha.
+            "grupos": {
+                "de_donde": "`nutrientes_como_se_presentan.json`",
+                "que_es": ("Como se AGRUPAN las filas de una ficha y en que orden se leen. "
+                           "Aqui no hay ni una cifra: solo en que grupo va cada fila."),
+                "un_solo_registro": _GRUPOS_NUT["_meta"]["un_solo_registro"],
+                "cuantos": len(_GRUPOS_NUT["grupos"]),
+                "lista": _GRUPOS_NUT["grupos"],
+            },
         },
         # ── LOS PREMIOS ──────────────────────────────────────────────────
         # La pregunta que la ficha todavia NO hace, servida ya con sus dos
@@ -7188,8 +7411,18 @@ def endpoint_vocabulario():
                     "cinco escalones del dueño son los BCS de `der.BCS_DESDE_CONDICION`; el "
                     "veterinario pone el BCS exacto, que es el que manda para calcular."),
             "escalones_del_dueno": {str(i): b for i, b in sorted(BCS_DESDE_CONDICION.items())},
+            # ⚠️ AÑADIDO EL 13 DE SEPTIEMBRE: `como_se_reconoce`, o sea la
+            # Tabla VII-1 entera. Las dos etiquetas de cada punto dicen COMO SE
+            # LLAMA y CUANTO se desvia; esto dice como se RECONOCE, que es lo
+            # que necesita quien esta delante del perro con la mano encima. Lo
+            # tenia la app en `ESCALA_BCS`, escrito a mano y sin fuente.
+            "como_se_reconoce": {
+                "de_donde": _BCS_VII_1["_meta"]["de_donde"],
+                "ojo": _BCS_VII_1["_meta"]["dos_idiomas"],
+            },
             "puntos": [dict({"bcs": b,
-                             "ofrecido_al_dueno": b in set(BCS_DESDE_CONDICION.values())},
+                             "ofrecido_al_dueno": b in set(BCS_DESDE_CONDICION.values()),
+                             "como_se_reconoce": _COMO_SE_RECONOCE_BCS.get(b)},
                             **ETIQUETAS_CONDICION[b])
                        for b in sorted(ETIQUETAS_CONDICION)],
         },
@@ -7238,7 +7471,30 @@ def endpoint_vocabulario():
             # DER, y apuntada igual.
             "quien_la_calcula": ("La app (`determinarEtapa` en src/der.js), que corta Early "
                                  "Growth en 98 dias = 14 semanas. El motor la recibe hecha."),
-            "etapas": [dict({"clave": k}, **v) for k, v in ETIQUETAS_ETAPA.items()],
+            # ⚠️ AÑADIDO EL 13 DE SEPTIEMBRE: `clave_en_la_ficha`, o sea el
+            # otro nombre de la misma etapa. La traduccion vivia solo en la app
+            # y una etapa que el motor no reconozca cae a «Adulto» sin dar
+            # error -- un cachorro verificado contra requisitos de adulto sale
+            # VERDE. Ver `COMO_SE_LLAMA_LA_ETAPA_EN_LA_FICHA`.
+            "los_dos_nombres": {
+                "que_es": ("La misma etapa se llama de dos maneras: `clave` es la que indexa la "
+                           "tabla de FEDIAF y `clave_en_la_ficha` la que acepta `calcular_der` y "
+                           "la que sale de `determinarEtapa`."),
+                "la_ficha_calcula": ETAPAS_QUE_LA_FICHA_CALCULA,
+                "la_ficha_no_pregunta": [v for k, v in COMO_SE_LLAMA_LA_ETAPA_EN_LA_FICHA.items()
+                                         if v not in ETAPAS_QUE_LA_FICHA_CALCULA],
+                "por_que_esas_no": ("La gestacion y la lactancia no se deducen de la fecha de "
+                                    "nacimiento: hay que preguntarlas, y la ficha todavia no lo "
+                                    "hace. Declarado en `lo_que_la_ficha_todavia_no_pregunta` de "
+                                    "`datos_de_la_ficha.json`."),
+            },
+            "etapas": [dict({"clave": k,
+                             "clave_en_la_ficha": COMO_SE_LLAMA_LA_ETAPA_EN_LA_FICHA.get(k),
+                             "la_calcula_la_ficha": (
+                                 COMO_SE_LLAMA_LA_ETAPA_EN_LA_FICHA.get(k)
+                                 in ETAPAS_QUE_LA_FICHA_CALCULA)},
+                            **v)
+                       for k, v in ETIQUETAS_ETAPA.items()],
         },
         "patologias": {
             "cuantas": len(_pat_v),
@@ -7515,6 +7771,47 @@ with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
                         "alimentos_como_se_presentan.json"), encoding="utf-8") as _f:
     _PRESENTACION_AL = _json.load(_f)
 
+# Como se DA cada alimento: el trozo con el que se puede medir en casa, como se
+# sirve, y si viene en comprimidos. Vivia en `src/instrucciones.js` de la app,
+# indexado POR NOMBRE DE ALIMENTO -- o sea la lista que se desincroniza sola
+# cada vez que el catalogo cambia. Ver su `_meta`: tenia 12 entradas de
+# alimentos que el motor ya no tiene, la BORRAJA entre ellas.
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                        "como_se_da_cada_alimento.json"), encoding="utf-8") as _f:
+    _COMO_SE_DA = _json.load(_f)
+
+# La Tabla VII-1 de FEDIAF: COMO SE RECONOCE cada punto de condicion corporal,
+# mirando y palpando. No es la VII-2 -- aquella dice CUANTO se desvia del peso
+# ideal cada punto, y esta dice que numero escribe quien mira al perro. Vivia en
+# `ESCALA_BCS` de `src/bcs.js`, escrita a mano y SIN FUENTE, siendo una
+# parafrasis de una tabla que FEDIAF publica entera. Ver su `_meta`.
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                        "bcs_tabla_VII_1.json"), encoding="utf-8") as _f:
+    _BCS_VII_1 = _json.load(_f)
+
+_COMO_SE_RECONOCE_BCS = {p["bcs"]: p for p in _BCS_VII_1["puntos"]}
+
+# Como se AGRUPAN los nutrientes cuando se leen en una ficha, y en que orden.
+# Aqui no hay ni una cifra: solo en que grupo va cada fila. Vivia en
+# `src/nutrientes.js` de la app con 42 nutrientes, y el motor sirve 46 mas dos
+# relaciones -- o sea que seis caian en el cajon «Otros» sin que nadie se
+# enterase, porque «Otros» se ve y no da error. Ver su `_meta`.
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                        "nutrientes_como_se_presentan.json"), encoding="utf-8") as _f:
+    _GRUPOS_NUT = _json.load(_f)
+
+# El grupo de cada fila, del reves, para poder colgarselo a cada nutriente sin
+# que la app tenga que cruzar dos listas.
+_GRUPO_DE_NUTRIENTE = {n: g["clave"]
+                       for g in _GRUPOS_NUT["grupos"] for n in g["nutrientes"]}
+
+# La Tabla VII-7 de FEDIAF fila por fila, y -- desde el 13 de septiembre -- los
+# TRES nombres de cada nivel: el indice que guarda la ficha, la clave que viaja
+# al motor y la clave que se escribe en la base de datos. Ver su `_meta`.
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                        "niveles_de_actividad.json"), encoding="utf-8") as _f:
+    _NIVELES_ACT = _json.load(_f)
+
 
 def _arbol_de_alimentos():
     """El catalogo tal y como se ENSEÑA: pantalla -> grupo -> alimentos.
@@ -7553,11 +7850,15 @@ def _arbol_de_alimentos():
             grupo = a["categoria"]
         else:
             grupo = grupos_extra.get(a["nombre"], "Otros")
-        salida.setdefault(p["clave"], {}).setdefault(grupo, []).append({
-            "nombre": a["nombre"],
-            "kcal_100g": a["energia"],
-            "categoria_del_motor": a["categoria"],
-        })
+        fila = {"nombre": a["nombre"], "kcal_100g": a["energia"],
+                "categoria_del_motor": a["categoria"]}
+        # ⚠️ COMO SE DA, JUNTO AL ALIMENTO Y NO EN OTRA LISTA. Iba aparte en la
+        # app, indexado por nombre, y por eso se desincronizaba: 77 entradas
+        # para 163 alimentos, 12 de ellas de comida que ya no existe.
+        comodar = _COMO_SE_DA["por_alimento"].get(a["nombre"])
+        if comodar:
+            fila["como_se_da"] = comodar
+        salida.setdefault(p["clave"], {}).setdefault(grupo, []).append(fila)
     for pant in salida.values():
         for lista in pant.values():
             lista.sort(key=lambda x: x["nombre"])
@@ -7597,6 +7898,9 @@ def listar_alimentos():
              "grupos": arbol.get(p["clave"], {})}
             for p in _PRESENTACION_AL["pantallas"]
         ],
+        # El texto general de cada pantalla, que la app enseña SIEMPRE, y el
+        # del alimento solo si existe. Los dos vivian en la app.
+        "como_se_da_por_categoria": _COMO_SE_DA["por_categoria"],
         # ⚠️ SE DICE, no se esconde: un alimento cuya categoria no esta
         # declarada no aparece en ninguna pantalla, y eso tiene que verse.
         "sin_pantalla": sorted(sueltos),
