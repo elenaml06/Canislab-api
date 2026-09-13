@@ -412,7 +412,7 @@ NUTRIENTES_COMPUESTOS = {
 #
 # Va en su propio diccionario, con la unidad de cada lado escrita, para que la
 # conversión se pueda REHACER en vez de creerse -- la lección de
-# `auditar_conversiones.py`. Lo rehace el BLOQUE 103.
+# `auditar_conversiones.py`. Lo rehace el BLOQUE 106.
 UNIDAD_DE_CADA_PARTE = {
     "omega6_total": {"linoleico": "g", "araquidonico": "mg"},
 }

@@ -6733,10 +6733,10 @@ def _auditar_b46(ruta_catalogo):
 # ── mitad 1: con el catálogo de verdad no puede sonar nada ────────────
 _vivos_b46, _err_b46 = _auditar_b46(_os_b46.path.join(_dir_b46, "alimentos_v3_final.json"))
 if _err_b46:
-    fallos.append(f"BLOQUE50: auditar_catalogo.py ha reventado:\n{_err_b46}")
+    fallos.append(f"BLOQUE46: auditar_catalogo.py ha reventado:\n{_err_b46}")
 elif _vivos_b46:
     fallos.append(
-        f"BLOQUE50: {len(_vivos_b46)} ceros mudos en el catálogo. Cada uno es un nutriente "
+        f"BLOQUE46: {len(_vivos_b46)} ceros mudos en el catálogo. Cada uno es un nutriente "
         f"que vale 0 para el motor sin que nadie haya comprobado que de verdad sea 0. "
         f"O se rellena con su fuente, o se declara en `sin_dato`, o -- si el cero es real "
         f"y se ha ido a mirar -- se escribe en `cero_verificado` con la fuente al lado:\n    "
@@ -6777,7 +6777,7 @@ for _cat_n_b46, _g_b46 in sorted(_grupos_b46.items()):
         break
 
 if not _victima_b46:
-    fallos.append("BLOQUE50: no se ha encontrado ningún nutriente que TODOS los alimentos "
+    fallos.append("BLOQUE46: no se ha encontrado ningún nutriente que TODOS los alimentos "
                   "de alguna categoría tengan, así que no se puede plantar el fallo. O el "
                   "catálogo ha cambiado mucho, o esta prueba hay que reescribirla.")
 else:
@@ -6792,12 +6792,12 @@ else:
     try:
         _con_fallo_b46, _err2_b46 = _auditar_b46(_roto_b46)
         if _err2_b46:
-            fallos.append(f"BLOQUE50: la auditoría revienta con el catálogo "
+            fallos.append(f"BLOQUE46: la auditoría revienta con el catálogo "
                           f"plantado:\n{_err2_b46}")
         elif not any(_victima_b46["nombre"] in l and _clave_b46 in l
                      for l in (_con_fallo_b46 or [])):
             fallos.append(
-                f"BLOQUE50: se ha vaciado «{_clave_b46}» de «{_victima_b46['nombre']}» SIN "
+                f"BLOQUE46: se ha vaciado «{_clave_b46}» de «{_victima_b46['nombre']}» SIN "
                 f"declararlo -- y lo tienen TODOS los demás de su categoría -- y el detector "
                 f"de ceros mudos no ha dicho nada. Está roto o desactivado, y con él la única "
                 f"red que queda cuando alguien se olvida de rellenar `sin_dato`.")
@@ -14982,7 +14982,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 # es el primero libre después del 101. La lección no es el número: es que dos
 # ramas arreglando el mismo defecto a la vez lo arreglan de dos formas, y eso
 # solo se ve al juntarlas.
-# BLOQUE 102 — LAS PATOLOGÍAS LAS ENUMERA EL MOTOR, NO LA APP
+# BLOQUE 105 — LAS PATOLOGÍAS LAS ENUMERA EL MOTOR, NO LA APP
 # ⚠️ ERA EL «BLOQUE 98» Y HABÍA DOS. Este bloque y el de las fichas de hueso
 # contra la tabla de Köber llevaban el MISMO número desde el 12 de septiembre,
 # así que «lo vigila el BLOQUE 98» señalaba a dos sitios distintos -- en
@@ -15007,7 +15007,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 # `formulable`, quién puede marcarla y el aviso salen de los ficheros que ya
 # tienen su auditor, y de la presentación solo salen dos cosas que no existían
 # en ningún otro sitio -- cómo se le dice al dueño y en qué aparato va.
-print("\n=== BLOQUE 102: las patologías las enumera el motor, no la app ===")
+print("\n=== BLOQUE 105: las patologías las enumera el motor, no la app ===")
 
 import json as _json98
 with open("patologias_como_se_presentan.json", encoding="utf-8") as _f98:
@@ -15023,60 +15023,60 @@ with open("preguntas_por_patologia.json", encoding="utf-8") as _f98:
 _faltan98 = sorted(set(_PAT98) - set(_PRES98["patologias"]))
 _sobran98 = sorted(set(_PRES98["patologias"]) - set(_PAT98))
 if _faltan98:
-    fallos.append(f"BLOQUE102: {len(_faltan98)} patologías del motor no tienen cómo enseñarse "
+    fallos.append(f"BLOQUE105: {len(_faltan98)} patologías del motor no tienen cómo enseñarse "
                   f"({', '.join(_faltan98)}). Sin etiqueta y sin aparato no salen en ninguna "
                   f"pantalla, y no salta nada: el menú sigue saliendo verde")
 if _sobran98:
-    fallos.append(f"BLOQUE102: `patologias_como_se_presentan.json` presenta {_sobran98}, que no "
+    fallos.append(f"BLOQUE105: `patologias_como_se_presentan.json` presenta {_sobran98}, que no "
                   f"existen en `patologias.json`. Una casilla que manda una clave que el motor "
                   f"no conoce se tira sin decir nada")
 
 _APARATOS98 = {a["clave"]: a for a in _PRES98["_meta"]["aparatos"]}
 for _k98, _p98 in sorted(_PRES98["patologias"].items()):
     if _p98.get("aparato") not in _APARATOS98:
-        fallos.append(f"BLOQUE102: «{_k98}» dice ir en el aparato «{_p98.get('aparato')}», que no "
+        fallos.append(f"BLOQUE105: «{_k98}» dice ir en el aparato «{_p98.get('aparato')}», que no "
                       f"está en `_meta.aparatos`. Caería en un grupo que no se pinta")
     if not (_p98.get("dueno") or "").strip():
-        fallos.append(f"BLOQUE102: «{_k98}» no tiene etiqueta para el dueño")
+        fallos.append(f"BLOQUE105: «{_k98}» no tiene etiqueta para el dueño")
 
 _usados98 = {v["aparato"] for v in _PRES98["patologias"].values()}
 _vacios98 = [a for a in _APARATOS98 if a not in _usados98]
 if _vacios98:
-    fallos.append(f"BLOQUE102: los aparatos {_vacios98} no tienen ninguna patología. Serían un "
+    fallos.append(f"BLOQUE105: los aparatos {_vacios98} no tienen ninguna patología. Serían un "
                   f"desplegable vacío en la ficha")
 
 # ── 2. `/vocabulario` sirve las 47, y cada campo desde su fichero ────────
 _v98 = _c.get("/vocabulario")
 if _v98.status_code != 200:
-    fallos.append(f"BLOQUE102: GET /vocabulario devuelve {_v98.status_code}")
+    fallos.append(f"BLOQUE105: GET /vocabulario devuelve {_v98.status_code}")
 else:
     _pat_v98 = _v98.json().get("patologias") or {}
     _lista98 = {p["clave"]: p for p in (_pat_v98.get("lista") or [])}
     if set(_lista98) != set(_PAT98):
-        fallos.append(f"BLOQUE102: /vocabulario sirve {len(_lista98)} patologías y el motor tiene "
+        fallos.append(f"BLOQUE105: /vocabulario sirve {len(_lista98)} patologías y el motor tiene "
                       f"{len(_PAT98)}. La app pinta lo que llega aquí")
     for _k98, _servida98 in sorted(_lista98.items()):
         _fuente98 = _PAT98[_k98]
         # El nombre técnico NO se copia: es el `nombre` de `patologias.json`.
         if _servida98["veterinario"]["titulo"] != _fuente98["nombre"]:
-            fallos.append(f"BLOQUE102: el registro de veterinario de «{_k98}» dice "
+            fallos.append(f"BLOQUE105: el registro de veterinario de «{_k98}» dice "
                           f"«{_servida98['veterinario']['titulo']}» y `patologias.json` dice "
                           f"«{_fuente98['nombre']}». Son dos copias del mismo nombre")
         if _servida98["formulable"] != bool(_fuente98.get("formulable")):
-            fallos.append(f"BLOQUE102: /vocabulario dice que «{_k98}» es "
+            fallos.append(f"BLOQUE105: /vocabulario dice que «{_k98}» es "
                           f"formulable={_servida98['formulable']} y el motor dice lo contrario. "
                           f"La app deriva de aquí si hay que bloquear el menú")
         _quien98 = (_QUIEN98.get(_k98) or {}).get("quien_puede_marcarla")
         if _servida98["quien_puede_marcarla"] != _quien98:
-            fallos.append(f"BLOQUE102: quién puede marcar «{_k98}» se sirve como "
+            fallos.append(f"BLOQUE105: quién puede marcar «{_k98}» se sirve como "
                           f"«{_servida98['quien_puede_marcarla']}» y "
                           f"`quien_formula_cada_patologia.json` dice «{_quien98}»")
         _aviso98 = (_fuente98.get("avisos") or {}).get("general")
         if _servida98["aviso"] != _aviso98:
-            fallos.append(f"BLOQUE102: el aviso de «{_k98}» no es el `avisos.general` de "
+            fallos.append(f"BLOQUE105: el aviso de «{_k98}» no es el `avisos.general` de "
                           f"`patologias.json`. Un aviso reescrito es un aviso que se desincroniza")
         if not _servida98["formulable"] and not (_servida98["aviso"] or "").strip():
-            fallos.append(f"BLOQUE102: «{_k98}» no es formulable y se sirve sin aviso. Quien la "
+            fallos.append(f"BLOQUE105: «{_k98}» no es formulable y se sirve sin aviso. Quien la "
                           f"marque vería que no sale menú y no sabría por qué")
 
     # ── 3. Las que se eligen DENTRO de la pregunta de otra ───────────────
@@ -15097,13 +15097,13 @@ else:
     _servido98 = {k: v["dentro_de_la_pregunta_de"] for k, v in _lista98.items()
                   if v.get("dentro_de_la_pregunta_de")}
     if _servido98 != _esperado98:
-        fallos.append(f"BLOQUE102: las que se eligen dentro de otra pregunta no salen de las "
+        fallos.append(f"BLOQUE105: las que se eligen dentro de otra pregunta no salen de las "
                       f"familias: servido {sorted(_servido98)} contra {sorted(_esperado98)}. "
                       f"Una de más deja una patología sin forma de marcarse; una de menos la "
                       f"pone dos veces en la misma pantalla")
     for _k98, _cab98 in sorted(_servido98.items()):
         if _cab98 not in _lista98:
-            fallos.append(f"BLOQUE102: «{_k98}» dice elegirse dentro de «{_cab98}», que no es "
+            fallos.append(f"BLOQUE105: «{_k98}» dice elegirse dentro de «{_cab98}», que no es "
                           f"ninguna de las 47")
 
     # ── 4. Los grupos cubren las 47 exactamente una vez ──────────────────
@@ -15111,18 +15111,18 @@ else:
     _en_grupos98 = [k for g in _grupos98 for k in g["patologias"]]
     if sorted(_en_grupos98) != sorted(_lista98):
         _repes98 = sorted({k for k in _en_grupos98 if _en_grupos98.count(k) > 1})
-        fallos.append(f"BLOQUE102: los grupos por aparato no cubren las 47 exactamente una vez "
+        fallos.append(f"BLOQUE105: los grupos por aparato no cubren las 47 exactamente una vez "
                       f"(repetidas: {_repes98}; sin grupo: "
                       f"{sorted(set(_lista98) - set(_en_grupos98))})")
     _orden98 = [a["clave"] for a in _PRES98["_meta"]["aparatos"] if a["clave"] in _usados98]
     if [g["clave"] for g in _grupos98] != _orden98:
-        fallos.append(f"BLOQUE102: los grupos se sirven en otro orden que el del fichero: "
+        fallos.append(f"BLOQUE105: los grupos se sirven en otro orden que el del fichero: "
                       f"{[g['clave'] for g in _grupos98]} contra {_orden98}. El orden es el de "
                       f"la pantalla")
     for _g98 in _grupos98:
         for _reg98 in ("dueno", "veterinario"):
             if not (_g98.get(_reg98, {}).get("titulo") or "").strip():
-                fallos.append(f"BLOQUE102: el grupo «{_g98['clave']}» no tiene título en el "
+                fallos.append(f"BLOQUE105: el grupo «{_g98['clave']}» no tiene título en el "
                               f"registro «{_reg98}»")
 
 # ── 5. Con el fallo puesto ───────────────────────────────────────────────
@@ -15132,7 +15132,7 @@ else:
 _copia98 = dict(_PRES98["patologias"])
 _copia98.pop("artrosis", None)
 if not (set(_PAT98) - set(_copia98)):
-    fallos.append("BLOQUE102: la comprobación de cobertura no detecta una patología sin "
+    fallos.append("BLOQUE105: la comprobación de cobertura no detecta una patología sin "
                   "presentar. Un test que pasa con el fallo puesto no sirve")
 
 print(f"  {len(_PRES98['patologias'])} patologías presentadas · "
@@ -15187,7 +15187,7 @@ _LEY99 = _json_b99.load(open(_os_b65.path.join(
     encoding="utf-8"))
 _listas99 = _LEY99["listas"]
 if len(_listas99) != _LEY99["_meta"]["cuantas"]:
-    fallos.append(f"BLOQUE102: el inventario dice {_LEY99['_meta']['cuantas']} listas y trae "
+    fallos.append(f"BLOQUE99: el inventario dice {_LEY99['_meta']['cuantas']} listas y trae "
                   f"{len(_listas99)}. El recuento va clavado a proposito: sin el, una lista puede "
                   f"desaparecer del inventario y nadie se entera")
 
@@ -15201,7 +15201,7 @@ for _l99 in _listas99:
     try:
         _cuerpo99 = _pide99(_l99["endpoint"])
     except Exception as _e99:
-        fallos.append(f"BLOQUE102: «{_l99['respaldo']}» dice venir de {_l99['endpoint']} y ese "
+        fallos.append(f"BLOQUE99: «{_l99['respaldo']}» dice venir de {_l99['endpoint']} y ese "
                       f"endpoint revienta: {_e99}")
         continue
     # ⚠️ EL CAMINO PUEDE ATRAVESAR UNA LISTA, y se escribe `puntos[]`: quiere
@@ -15231,7 +15231,7 @@ for _l99 in _listas99:
             _roto99 = _paso99
             break
     if _roto99:
-        fallos.append(f"BLOQUE102: «{_l99['respaldo']}» dice leerse de "
+        fallos.append(f"BLOQUE99: «{_l99['respaldo']}» dice leerse de "
                       f"{_l99['endpoint']}#{_l99['camino']} y ahi no hay ningun «{_roto99}». La "
                       f"app se queda con su respaldo PARA SIEMPRE y sin decirlo: un respaldo que "
                       f"tapa una peticion rota se ve igual que una peticion buena")
@@ -15239,7 +15239,7 @@ for _l99 in _listas99:
     # ⚠️ Y QUE NO VENGA VACIA, que es la otra forma de romperlo sin error: el
     # camino existe, la app lo lee, y lo que lee es una lista de cero cosas.
     if not _donde99:
-        fallos.append(f"BLOQUE102: {_l99['endpoint']}#{_l99['camino']} existe y viene VACIO, asi "
+        fallos.append(f"BLOQUE99: {_l99['endpoint']}#{_l99['camino']} existe y viene VACIO, asi "
                       f"que «{_l99['respaldo']}» nunca se sustituye por nada")
 
 # Y el caso concreto que lo provoco, con nombre y apellidos: un alimento del
@@ -15248,19 +15248,19 @@ for _l99 in _listas99:
 # app no esta.
 _al99 = _pide99("/alimentos")
 if _al99.get("sin_pantalla"):
-    fallos.append(f"BLOQUE102: {len(_al99['sin_pantalla'])} alimentos del catalogo no caen en "
+    fallos.append(f"BLOQUE99: {len(_al99['sin_pantalla'])} alimentos del catalogo no caen en "
                   f"ninguna pantalla: {_al99['sin_pantalla'][:6]}. El motor los usa y en la app "
                   f"no se ven -- es el fallo del aceite de salmon otra vez")
 _vistos99 = {a["nombre"] for p in _al99["pantallas"] for g in p["grupos"].values() for a in g}
 _todos99 = {a["nombre"] for a in _esp_b99.cargar_alimentos()}
 if _todos99 and _vistos99 != _todos99:
-    fallos.append(f"BLOQUE102: el arbol de /alimentos ensena {len(_vistos99)} alimentos y el "
+    fallos.append(f"BLOQUE99: el arbol de /alimentos ensena {len(_vistos99)} alimentos y el "
                   f"catalogo tiene {len(_todos99)}. Faltan: {sorted(_todos99 - _vistos99)[:6]}")
 # ⚠️ Y NINGUNO EN DOS SITIOS: un alimento en dos pantallas se puede elegir dos
 # veces y contar doble.
 _cuantas99 = sum(len(g) for p in _al99["pantallas"] for g in p["grupos"].values())
 if _cuantas99 != len(_vistos99):
-    fallos.append(f"BLOQUE102: el arbol de /alimentos reparte {_cuantas99} entradas para "
+    fallos.append(f"BLOQUE99: el arbol de /alimentos reparte {_cuantas99} entradas para "
                   f"{len(_vistos99)} alimentos distintos: alguno esta en dos pantallas")
 
 # ── COMO SE DA CADA ALIMENTO, que es la lista que mas se desincroniza ────
@@ -15276,16 +15276,16 @@ _COMO99 = _json_b99.load(open(_os_b65.path.join(
     "como_se_da_cada_alimento.json"), encoding="utf-8"))
 _fantasma99 = sorted(set(_COMO99["por_alimento"]) - _todos99)
 if _fantasma99:
-    fallos.append(f"BLOQUE102: hay instrucciones para {len(_fantasma99)} alimentos que el catálogo "
+    fallos.append(f"BLOQUE99: hay instrucciones para {len(_fantasma99)} alimentos que el catálogo "
                   f"no tiene: {_fantasma99[:6]}. Es la lista que se desincroniza sola, y así es "
                   f"como se quedaron dentro las de la borraja después de sacarla del catálogo")
 _pant99 = {p["clave"] for p in _al99["pantallas"]}
 _catfuera99 = sorted(set(_COMO99["por_categoria"]) - _pant99)
 if _catfuera99:
-    fallos.append(f"BLOQUE102: hay texto general para pantallas que no existen: {_catfuera99}")
+    fallos.append(f"BLOQUE99: hay texto general para pantallas que no existen: {_catfuera99}")
 _sintexto99 = sorted(_pant99 - set(_COMO99["por_categoria"]))
 if _sintexto99:
-    fallos.append(f"BLOQUE102: estas pantallas no tienen texto de cómo se da su comida: "
+    fallos.append(f"BLOQUE99: estas pantallas no tienen texto de cómo se da su comida: "
                   f"{_sintexto99}. Es el que la app enseña SIEMPRE, así que quedarían mudas")
 # ⚠️ Y LOS COMPRIMIDOS, que es lo unico de aqui que no es texto: con
 # `es_comprimido` la app convierte los gramos en «cuantos comprimidos», y sin el
@@ -15295,16 +15295,16 @@ for _n99 in sorted(_todos99):
         continue
     _c99 = _COMO99["por_alimento"].get(_n99) or {}
     if not _c99.get("es_comprimido") or not _c99.get("peso_comprimido_g"):
-        fallos.append(f"BLOQUE102: «{_n99}» se vende en comprimidos y no lo declara "
+        fallos.append(f"BLOQUE99: «{_n99}» se vende en comprimidos y no lo declara "
                       f"(`es_comprimido` + `peso_comprimido_g`). La app enseñará gramos, y un "
                       f"comprimido pesa una cuarta parte de uno: nadie puede pesar eso en casa")
 _servidas99 = sum(1 for p in _al99["pantallas"] for g in p["grupos"].values()
                   for a in g if a.get("como_se_da"))
 if _servidas99 != len(_COMO99["por_alimento"]):
-    fallos.append(f"BLOQUE102: el fichero trae {len(_COMO99['por_alimento'])} instrucciones y "
+    fallos.append(f"BLOQUE99: el fichero trae {len(_COMO99['por_alimento'])} instrucciones y "
                   f"/alimentos sirve {_servidas99}. Las que no viajan no las ve nadie")
 if not _al99.get("como_se_da_por_categoria"):
-    fallos.append("BLOQUE102: /alimentos no manda el texto general de cada pantalla, que es el que "
+    fallos.append("BLOQUE99: /alimentos no manda el texto general de cada pantalla, que es el que "
                   "la app enseña siempre")
 
 # ── LOS TRES NOMBRES DE CADA NIVEL DE ACTIVIDAD ─────────────────────────
@@ -15321,25 +15321,25 @@ if not _al99.get("como_se_da_por_categoria"):
 # Es la familia de `guardarPerro`: se ve bien en pantalla y esta mal guardado.
 _TRES99 = _pide99("/vocabulario")["niveles_de_actividad"]["los_tres_nombres"]
 if [x["indice"] for x in _TRES99] != list(range(len(_TRES99))):
-    fallos.append(f"BLOQUE102: los índices de los niveles de actividad no van 0,1,2… : "
+    fallos.append(f"BLOQUE99: los índices de los niveles de actividad no van 0,1,2… : "
                   f"{[x['indice'] for x in _TRES99]}. La ficha guarda el índice, así que un hueco "
                   f"ahí traduce mal")
 _claves99 = [x["clave_motor"] for x in _TRES99]
 if _claves99 != list(_der99.BASE_ACTIVIDAD):
-    fallos.append(f"BLOQUE102: las claves servidas {_claves99} no son las de `der.BASE_ACTIVIDAD` "
+    fallos.append(f"BLOQUE99: las claves servidas {_claves99} no son las de `der.BASE_ACTIVIDAD` "
                   f"{list(_der99.BASE_ACTIVIDAD)}, ni en contenido ni en ORDEN. El orden es lo que "
                   f"traduce el índice que guarda la ficha")
 for _x99 in _TRES99:
     if _der99.BASE_ACTIVIDAD.get(_x99["clave_motor"]) != _x99["kcal_kg075"]:
-        fallos.append(f"BLOQUE102: «{_x99['clave_motor']}» se sirve con {_x99['kcal_kg075']} "
+        fallos.append(f"BLOQUE99: «{_x99['clave_motor']}» se sirve con {_x99['kcal_kg075']} "
                       f"kcal/kg^0,75 y el motor aplica "
                       f"{_der99.BASE_ACTIVIDAD.get(_x99['clave_motor'])}")
     if not _x99.get("clave_base_de_datos"):
-        fallos.append(f"BLOQUE102: «{_x99['clave_motor']}» no dice con qué nombre se guarda en la "
+        fallos.append(f"BLOQUE99: «{_x99['clave_motor']}» no dice con qué nombre se guarda en la "
                       f"base de datos. Esa traducción es la que hace que un perro vuelva con la "
                       f"actividad que tenía")
 if len({x["clave_base_de_datos"] for x in _TRES99}) != len(_TRES99):
-    fallos.append("BLOQUE102: dos niveles se guardan en la base de datos con el mismo nombre: al "
+    fallos.append("BLOQUE99: dos niveles se guardan en la base de datos con el mismo nombre: al "
                   "volver, uno de los dos se pierde")
 
 # ── LOS DOS NOMBRES DE CADA ETAPA ───────────────────────────────────────
@@ -15370,30 +15370,30 @@ _fuente_der99 = open(_os_b65.path.join(
 for _e99 in _ETAPAS99["etapas"]:
     _ficha99 = _e99.get("clave_en_la_ficha")
     if not _ficha99:
-        fallos.append(f"BLOQUE102: la etapa «{_e99['clave']}» no dice cómo se llama en la ficha, "
+        fallos.append(f"BLOQUE99: la etapa «{_e99['clave']}» no dice cómo se llama en la ficha, "
                       f"así que la app no puede traducirla y la mandaría tal cual")
         continue
     if f'"{_ficha99}"' not in _fuente_der99:
-        fallos.append(f"BLOQUE102: «{_ficha99}» no aparece en `der.calcular_der`, o sea que es un "
+        fallos.append(f"BLOQUE99: «{_ficha99}» no aparece en `der.calcular_der`, o sea que es un "
                       f"nombre que el motor no sabe recibir")
     try:
         _req_e99.resolver_etapa(_e99["clave"])
     except Exception:
-        fallos.append(f"BLOQUE102: «{_e99['clave']}» se sirve como etapa y "
+        fallos.append(f"BLOQUE99: «{_e99['clave']}» se sirve como etapa y "
                       f"`requisitos.resolver_etapa` no la sabe resolver")
 _fichas99 = [e["clave_en_la_ficha"] for e in _ETAPAS99["etapas"] if e.get("clave_en_la_ficha")]
 if len(_fichas99) != len(set(_fichas99)):
-    fallos.append(f"BLOQUE102: dos etapas comparten el nombre de la ficha: {_fichas99}")
+    fallos.append(f"BLOQUE99: dos etapas comparten el nombre de la ficha: {_fichas99}")
 _calcula99 = [e["clave_en_la_ficha"] for e in _ETAPAS99["etapas"] if e.get("la_calcula_la_ficha")]
 if sorted(_calcula99) != sorted(_ETAPAS99["los_dos_nombres"]["la_ficha_calcula"]):
-    fallos.append(f"BLOQUE102: las etapas marcadas `la_calcula_la_ficha` ({sorted(_calcula99)}) no "
+    fallos.append(f"BLOQUE99: las etapas marcadas `la_calcula_la_ficha` ({sorted(_calcula99)}) no "
                   f"son las que declara `la_ficha_calcula` "
                   f"({sorted(_ETAPAS99['los_dos_nombres']['la_ficha_calcula'])})")
 # ⚠️ Y EL HUECO, DECLARADO: la ficha no pregunta gestacion ni lactancia, y eso
 # tiene que seguir dicho en vez de callado. Un hueco escrito se cierra; uno que
 # no esta escrito no lo ve nadie.
 if not _ETAPAS99["los_dos_nombres"]["la_ficha_no_pregunta"]:
-    fallos.append("BLOQUE102: ya no se declara ninguna etapa que la ficha no pregunte. O la ficha "
+    fallos.append("BLOQUE99: ya no se declara ninguna etapa que la ficha no pregunte. O la ficha "
                   "las pregunta todas -- y entonces hay que quitarlo de "
                   "`lo_que_la_ficha_todavia_no_pregunta` -- o el hueco ha dejado de decirse")
 
@@ -15412,29 +15412,29 @@ if not _ETAPAS99["los_dos_nombres"]["la_ficha_no_pregunta"]:
 # que viajan por el endpoint.
 _BCS99 = _pide99("/vocabulario")["condicion_corporal"]["puntos"]
 if [x["bcs"] for x in _BCS99] != list(range(1, 10)):
-    fallos.append(f"BLOQUE102: los puntos de condición corporal servidos son "
+    fallos.append(f"BLOQUE99: los puntos de condición corporal servidos son "
                   f"{[x['bcs'] for x in _BCS99]} y no 1..9")
 for _b99 in _BCS99:
     _r99 = _b99.get("como_se_reconoce")
     if not _r99:
-        fallos.append(f"BLOQUE102: el BCS {_b99['bcs']} se sirve sin decir cómo se reconoce. La "
+        fallos.append(f"BLOQUE99: el BCS {_b99['bcs']} se sirve sin decir cómo se reconoce. La "
                       f"app se queda con su paráfrasis escrita a mano y no se entera nadie")
         continue
     _dice99, _cast99 = _r99.get("dice_la_fuente") or {}, _r99.get("en_castellano") or {}
     if set(_dice99) != set(_cast99):
-        fallos.append(f"BLOQUE102: el BCS {_b99['bcs']} cita {sorted(_dice99)} y traduce "
+        fallos.append(f"BLOQUE99: el BCS {_b99['bcs']} cita {sorted(_dice99)} y traduce "
                       f"{sorted(_cast99)}. Una casilla traducida sin cita es texto nuestro con "
                       f"aspecto de fuente, y una citada sin traducir no se puede pintar")
     for _k99, _v99 in _dice99.items():
         if not (_v99.startswith("«") and _v99.endswith("»")):
-            fallos.append(f"BLOQUE102: «{_k99}» del BCS {_b99['bcs']} no va entre comillas "
+            fallos.append(f"BLOQUE99: «{_k99}» del BCS {_b99['bcs']} no va entre comillas "
                           f"angulares, así que `auditar_citas.py` no la mira")
     for _k99, _v99 in _cast99.items():
         if not _v99 or _v99.startswith("«"):
-            fallos.append(f"BLOQUE102: «{_k99}» del BCS {_b99['bcs']} está vacío o entrecomillado "
+            fallos.append(f"BLOQUE99: «{_k99}» del BCS {_b99['bcs']} está vacío o entrecomillado "
                           f"como si fuera de la fuente, y es traducción nuestra")
     if not _r99.get("nombre") or not _r99.get("nombre_fediaf"):
-        fallos.append(f"BLOQUE102: el BCS {_b99['bcs']} no dice cómo lo llama FEDIAF")
+        fallos.append(f"BLOQUE99: el BCS {_b99['bcs']} no dice cómo lo llama FEDIAF")
 # ⚠️ EL 8 Y EL 9 NO TIENEN «abdomen»: FEDIAF cambia esa casilla por «general».
 # Va comprobado para que nadie lo rellene «por simetria», que es como se
 # inventa una frase que la fuente no dice.
@@ -15443,7 +15443,7 @@ for _b99 in _BCS99:
     _esperado99 = ({"costillas", "base_de_la_cola", "general"} if _b99["bcs"] >= 8
                    else {"costillas", "abdomen", "base_de_la_cola"})
     if _cs99 != _esperado99:
-        fallos.append(f"BLOQUE102: el BCS {_b99['bcs']} trae las casillas {sorted(_cs99)} y la "
+        fallos.append(f"BLOQUE99: el BCS {_b99['bcs']} trae las casillas {sorted(_cs99)} y la "
                       f"Tabla VII-1 tiene {sorted(_esperado99)}")
 
 # ── EL GRUPO DE CADA NUTRIENTE ──────────────────────────────────────────
@@ -15468,7 +15468,7 @@ _GRUPOS99 = _VOC99["grupos"]["lista"]
 _declarados99 = [n for g in _GRUPOS99 for n in g["nutrientes"]]
 if len(_declarados99) != len(set(_declarados99)):
     _rep99 = sorted({n for n in _declarados99 if _declarados99.count(n) > 1})
-    fallos.append(f"BLOQUE102: estas filas están en dos grupos a la vez: {_rep99}. La ficha las "
+    fallos.append(f"BLOQUE99: estas filas están en dos grupos a la vez: {_rep99}. La ficha las "
                   f"pintaría dos veces")
 # Las dos relaciones no son nutrientes del MAPA y SÍ son filas de la ficha: las
 # escribe `verificar()` a mano. Si alguna cambia de nombre allí, esto lo dice.
@@ -15477,32 +15477,32 @@ import verificar as _ver99
 _esperadas99 = set(_ver99.MAPA) | _RATIOS99
 _sin_grupo99 = sorted(_esperadas99 - set(_declarados99))
 if _sin_grupo99:
-    fallos.append(f"BLOQUE102: estas filas de la ficha no tienen grupo declarado en "
+    fallos.append(f"BLOQUE99: estas filas de la ficha no tienen grupo declarado en "
                   f"`nutrientes_como_se_presentan.json`: {_sin_grupo99}. Caen en el cajón "
                   f"«Otros», que se ve y no da error -- o sea que no se entera nadie")
 _de_mas99 = sorted(set(_declarados99) - _esperadas99)
 if _de_mas99:
-    fallos.append(f"BLOQUE102: se declara el grupo de filas que la ficha no puede traer: "
+    fallos.append(f"BLOQUE99: se declara el grupo de filas que la ficha no puede traer: "
                   f"{_de_mas99}. Un grupo que vigila algo que no existe no avisa de nada")
 _fuente99 = open(_os_b65.path.join(_os_b65.path.dirname(_os_b65.path.abspath(__file__)),
                                    "motor", "verificar.py"), encoding="utf-8").read()
 for _r99 in _RATIOS99:
     if f'"nutriente": "{_r99}"' not in _fuente99:
-        fallos.append(f"BLOQUE102: `verificar.py` ya no escribe la fila «{_r99}», y aquí se le "
+        fallos.append(f"BLOQUE99: `verificar.py` ya no escribe la fila «{_r99}», y aquí se le "
                       f"sigue declarando grupo. Una de las dos está caducada")
 # Y colgado de cada nutriente, para que la app no tenga que cruzar dos listas.
 for _n99 in _VOC99["nutrientes"]:
     if not _n99.get("grupo"):
-        fallos.append(f"BLOQUE102: el nutriente «{_n99['nombre_del_requisito']}» se sirve sin "
+        fallos.append(f"BLOQUE99: el nutriente «{_n99['nombre_del_requisito']}» se sirve sin "
                       f"grupo: la app lo pintaría en «Otros»")
 _claves_g99 = {g["clave"] for g in _GRUPOS99}
 for _n99 in _VOC99["nutrientes"]:
     if _n99.get("grupo") and _n99["grupo"] not in _claves_g99:
-        fallos.append(f"BLOQUE102: «{_n99['nombre_del_requisito']}» dice ser del grupo "
+        fallos.append(f"BLOQUE99: «{_n99['nombre_del_requisito']}» dice ser del grupo "
                       f"«{_n99['grupo']}», que no está en la lista de grupos")
 for _g99 in _GRUPOS99:
     if not _g99.get("titulo") or not _g99.get("nutrientes"):
-        fallos.append(f"BLOQUE102: el grupo «{_g99.get('clave')}» se sirve sin título o vacío. La "
+        fallos.append(f"BLOQUE99: el grupo «{_g99.get('clave')}» se sirve sin título o vacío. La "
                       f"app no lo instala, y se queda con su respaldo sin decirlo")
 
 print(f"  {len(_listas99)} listas declaradas · {len(_vistos99)} alimentos en {len(_al99['pantallas'])} pantallas"
@@ -15658,7 +15658,7 @@ print(f"  3 pesos adultos con menú · el fallo puesto lo deja sin menú · "
 # número. Lo que NO se hace es fusionarlos en uno: comprueban cosas distintas
 # y un bloque que mira dos cosas no dice cuál de las dos falló.
 #
-# BLOQUE 101 — EL CATÁLOGO CONTRA SUS FUENTES DE COMPOSICIÓN
+# BLOQUE 104 — EL CATÁLOGO CONTRA SUS FUENTES DE COMPOSICIÓN
 # ============================================================
 #
 # ⚠️ POR QUÉ EXISTE (13 de septiembre de 2026). Entre una base de composición y
@@ -15702,18 +15702,18 @@ print(f"  3 pesos adultos con menú · el fallo puesto lo deja sin menú · "
 #      y concentra todo lo demás por 100 g. Se colaba porque el guardia de
 #      preparaciones tenía «asad», «frit» y «cocid» y no tenía «horno».
 print("\n" + "=" * 60)
-print("=== BLOQUE 101: el catálogo contra sus fuentes de composición ===")
+print("=== BLOQUE 104: el catálogo contra sus fuentes de composición ===")
 import json as _json100
 import os as _os100
 _raiz100 = str(_raiz_b24)
 _f_decl100 = _os100.path.join(_raiz100, "fuentes_de_composicion.json")
 _f_inst100 = _os100.path.join(_raiz100, "fuentes_instantanea.json")
 if not _os100.path.exists(_f_decl100):
-    fallos.append("BLOQUE101: falta `fuentes_de_composicion.json`, que es donde vive la prioridad "
+    fallos.append("BLOQUE104: falta `fuentes_de_composicion.json`, que es donde vive la prioridad "
                   "de las fuentes y la conversión de unidades. Sin él, el orden de mandato vuelve "
                   "a estar cableado en una tupla que nadie puede leer ni auditar")
 elif not _os100.path.exists(_f_inst100):
-    fallos.append("BLOQUE101: falta `fuentes_instantanea.json`. Es la fuente congelada en el repo "
+    fallos.append("BLOQUE104: falta `fuentes_instantanea.json`. Es la fuente congelada en el repo "
                   "-- lo que publica cada base, en su unidad, con la fila literal --, y sin ella "
                   "este bloque no puede comprobar nada sin red")
 else:
@@ -15739,7 +15739,7 @@ else:
             continue
         _n_uni100 += 1
         if _nuestra100 != _suya100:
-            fallos.append(f"BLOQUE101: «{_cl100}» va en {_nuestra100} en el catálogo y en "
+            fallos.append(f"BLOQUE104: «{_cl100}» va en {_nuestra100} en el catálogo y en "
                           f"{_suya100} en `requerimientos_v2_final.json`. El motor compara una "
                           f"contra la otra SIN convertir, así que esto no da error: da un menú "
                           f"verde medido contra otra escala")
@@ -15759,7 +15759,7 @@ else:
                 if _uni_real100 != _uni_dec100:
                     _malas_f100 += 1
                     if _malas_f100 <= 5:
-                        fallos.append(f"BLOQUE101: {_nom100} · {_cl100}: {_fu100} publica en "
+                        fallos.append(f"BLOQUE104: {_nom100} · {_cl100}: {_fu100} publica en "
                                       f"«{_uni_real100}» y la declaración dice «{_uni_dec100}». "
                                       f"El factor de conversión declarado ya no vale")
     print(f"  unidad declarada = unidad de la fuente: {_n_f100} celdas, {_malas_f100} mal")
@@ -15780,7 +15780,7 @@ else:
             if _v100 in (0, 0.0, None) and _cl100 not in _dec100:
                 _mudos100.append(f"{_nom100} · {_cl100}")
     if _mudos100:
-        fallos.append(f"BLOQUE101: {len(_mudos100)} celdas valen 0 SIN DECLARARLO y BEDCA dice "
+        fallos.append(f"BLOQUE104: {len(_mudos100)} celdas valen 0 SIN DECLARARLO y BEDCA dice "
                       f"`TR` con la celda vacía, o sea que NO HAY CIFRA. Un hueco no es un cero: "
                       f"tienen que ir a `sin_dato` (o a `cero_verificado` con su motivo, si el "
                       f"cero es real por composición). Las primeras: "
@@ -15800,7 +15800,7 @@ else:
             if not _celda100:
                 _mal_reh100 += 1
                 if _mal_reh100 <= 5:
-                    fallos.append(f"BLOQUE101: {_nom100} · {_cl100} dice venir de {_fu100} y esa "
+                    fallos.append(f"BLOQUE104: {_nom100} · {_cl100} dice venir de {_fu100} y esa "
                                   f"fuente ya no publica esa celda en la instantánea. O cambió la "
                                   f"fuente, o el identificador apunta a otra fila")
                 continue
@@ -15812,7 +15812,7 @@ else:
             if _bruto100 and _bruto100 not in _texto100.replace(",", "."):
                 _mal_reh100 += 1
                 if _mal_reh100 <= 5:
-                    fallos.append(f"BLOQUE101: {_nom100} · {_cl100}: su procedencia dice partir de "
+                    fallos.append(f"BLOQUE104: {_nom100} · {_cl100}: su procedencia dice partir de "
                                   f"un valor que no es el que publica {_fu100} hoy "
                                   f"({_celda100.get('valor')}). La celda hay que rehacerla")
     print(f"  celdas con procedencia de fuente: {_reh100}, {_mal_reh100} que no se rehacen")
@@ -15839,13 +15839,13 @@ else:
                     and str(_ok100.get("id")) == str(_d100.get("id"))
                     and _ok100.get("palabra") == _p100):
                 if not (_ok100.get("por_que") or "").strip():
-                    fallos.append(f"BLOQUE101: «{_nom100}» está en las excepciones de preparación "
+                    fallos.append(f"BLOQUE104: «{_nom100}» está en las excepciones de preparación "
                                   f"SIN motivo escrito. Una excepción sin porqué es un fallo tapado")
                 continue
             _cocinadas100.append(f"{_nom100} ← {_fu100} {_d100.get('id')} "
                                  f"«{_d100.get('fila')}» [{_p100}]")
     if _cocinadas100:
-        fallos.append(f"BLOQUE101: {len(_cocinadas100)} fichas están emparejadas con una fila que "
+        fallos.append(f"BLOQUE104: {len(_cocinadas100)} fichas están emparejadas con una fila que "
                       f"declara una PREPARACIÓN que la ficha no tiene. Cocinar pierde agua y "
                       f"concentra todo lo demás por 100 g, así que esa fila describe otro "
                       f"alimento: " + " · ".join(_cocinadas100[:4]))
@@ -15888,7 +15888,7 @@ else:
             _pasan100.append(f"{_ficha100['nombre']}: proteína {_p100:g} g y "
                              f"{_sa100:.2f} g de aminoácidos")
     if _pasan100:
-        fallos.append(f"BLOQUE101: en {len(_pasan100)} fichas la suma de las FRACCIONES supera su "
+        fallos.append(f"BLOQUE104: en {len(_pasan100)} fichas la suma de las FRACCIONES supera su "
                       f"TOTAL, y eso es imposible: un ácido graso es una fracción de la grasa y un "
                       f"aminoácido una fracción de la proteína. Una de las dos columnas está mal, y "
                       f"el número pasa cualquier validación de formato: "
@@ -15937,7 +15937,7 @@ else:
                 _malhueco100.append(f"{_n100}/{_cl100}: su motivo son {len(str(_txt100))} "
                                     f"caracteres. Tiene que decir QUÉ fuentes se miraron")
     if _malhueco100:
-        fallos.append(f"BLOQUE101: {len(_malhueco100)} `hueco_verificado` se contradicen con el "
+        fallos.append(f"BLOQUE104: {len(_malhueco100)} `hueco_verificado` se contradicen con el "
                       f"resto de la ficha: " + " · ".join(_malhueco100[:5]))
     _nhv100 = sum(len(_f.get("hueco_verificado") or {}) for _f in _cat100)
     print(f"  huecos con su motivo escrito: {_nhv100}, 0 que se contradigan"
@@ -15946,20 +15946,20 @@ else:
     # --- y que la declaración sea coherente consigo misma -----------------
     for _fu100 in _decl100["orden_de_mandato"]:
         if _fu100 not in _decl100["fuentes"]:
-            fallos.append(f"BLOQUE101: el orden de mandato nombra «{_fu100}», que no está "
+            fallos.append(f"BLOQUE104: el orden de mandato nombra «{_fu100}», que no está "
                           f"descrito en `fuentes`")
     for _cl100, _exc100 in (_decl100.get("mandato_por_nutriente") or {}).items():
         if not isinstance(_exc100, dict):
             continue
         for _fu100 in (_exc100.get("orden") or []):
             if _fu100 not in _decl100["fuentes"]:
-                fallos.append(f"BLOQUE101: el mandato de «{_cl100}» nombra la fuente «{_fu100}», "
+                fallos.append(f"BLOQUE104: el mandato de «{_cl100}» nombra la fuente «{_fu100}», "
                               f"que no existe")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
 # ============================================================
-# BLOQUE 103 — EL RATIO QUE ELIGE EL PROFESIONAL, Y EL RANGO QUE ENSEÑA CADA
+# BLOQUE 106 — EL RATIO QUE ELIGE EL PROFESIONAL, Y EL RANGO QUE ENSEÑA CADA
 #              PATOLOGÍA
 # ============================================================
 #
@@ -16002,7 +16002,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 #      función que llama el solver -- siga sin devolver ninguno. Enseñar un
 #      número y aplicarlo a escondidas es peor que no enseñarlo.
 print("\n" + "=" * 60)
-print("=== BLOQUE 103: el ratio del profesional y el rango de cada patología ===")
+print("=== BLOQUE 106: el ratio del profesional y el rango de cada patología ===")
 from constructor import (valor_nutriente as _vn103, NUTRIENTES_COMPUESTOS as _COMP103,
                          UNIDAD_DE_CADA_PARTE as _UNID103, factor_de_la_parte as _fac103)
 
@@ -16010,18 +16010,18 @@ from constructor import (valor_nutriente as _vn103, NUTRIENTES_COMPUESTOS as _CO
 _esperado103 = 3.05 + 50.0 / 1000.0          # 3,05 g de linoleico + 50 mg de araquidónico
 _sale103 = _vn103({"linoleico": 3.05, "araquidonico": 50.0}, "omega6_total")
 if abs(_sale103 - _esperado103) > 1e-9:
-    fallos.append(f"BLOQUE103: `omega6_total` da {_sale103} y la cuenta rehecha da "
+    fallos.append(f"BLOQUE106: `omega6_total` da {_sale103} y la cuenta rehecha da "
                   f"{_esperado103}. El araquidónico va en MILIGRAMOS y el linoleico en gramos "
                   f"(UNIDADES.md): si se suman a pelo, el omega-6 total sale mil veces el "
                   f"araquidónico y con forma de dato bueno")
 # y el fallo puesto: si el factor fuera 1, la suma daría 53,05 y no 3,10
 if abs(_esperado103 - (3.05 + 50.0)) < 1e-9:
-    fallos.append("BLOQUE103: la prueba de la unidad no prueba nada — con y sin factor da lo mismo")
+    fallos.append("BLOQUE106: la prueba de la unidad no prueba nada — con y sin factor da lo mismo")
 if _UNID103.get("omega6_total", {}).get("araquidonico") != "mg":
-    fallos.append("BLOQUE103: `UNIDAD_DE_CADA_PARTE` ya no dice que el araquidónico va en mg. "
+    fallos.append("BLOQUE106: `UNIDAD_DE_CADA_PARTE` ya no dice que el araquidónico va en mg. "
                   "Ese diccionario es de donde sale el factor: si miente, el factor miente")
 if abs(_fac103("omega6_total", "araquidonico") - 0.001) > 1e-12:
-    fallos.append("BLOQUE103: el factor del araquidónico dentro de `omega6_total` ya no es 0,001")
+    fallos.append("BLOQUE106: el factor del araquidónico dentro de `omega6_total` ya no es 0,001")
 
 # --- 2. que los otros compuestos no se hayan movido --------------------
 for _cl103, _partes103, _prueba103, _esp103 in (
@@ -16031,10 +16031,10 @@ for _cl103, _partes103, _prueba103, _esp103 in (
         ("metionina_cistina", ("metionina", "cistina"),
          {"metionina": 1.1, "cistina": 0.9}, 2.0)):
     if _COMP103.get(_cl103) != _partes103:
-        fallos.append(f"BLOQUE103: `{_cl103}` ya no suma {_partes103}")
+        fallos.append(f"BLOQUE106: `{_cl103}` ya no suma {_partes103}")
     _v103 = _vn103(_prueba103, _cl103)
     if abs(_v103 - _esp103) > 1e-9:
-        fallos.append(f"BLOQUE103: `{_cl103}` da {_v103} y tenía que dar {_esp103}. El factor de "
+        fallos.append(f"BLOQUE106: `{_cl103}` da {_v103} y tenía que dar {_esp103}. El factor de "
                       f"unidades se introdujo en `valor_nutriente`, que es el único sitio donde "
                       f"suman el solver, el semáforo y el analizador: un factor mal puesto ahí "
                       f"mueve los cuatro compuestos a la vez y en silencio")
@@ -16067,27 +16067,27 @@ def _ajustes103(r):
 # menú base -- que cambia entre ejecuciones --: se mide y se compara.
 _base103 = _formular103()
 if not _base103.get("factible"):
-    fallos.append("BLOQUE103: el menú base de este perro no sale, así que el resto del bloque "
+    fallos.append("BLOQUE106: el menú base de este perro no sale, así que el resto del bloque "
                   "no comprueba nada. Buscar otro perro")
 else:
     _al103, _req103 = _api_b5.cargar_v2()
     _r_base103 = _api_b5._ratio_del_menu(_base103["menu"], _al103, "omega6_total", "omega3_total")
     _techo103 = 3.0
     if _r_base103 is None or _r_base103 <= _techo103 * 1.2:
-        fallos.append(f"BLOQUE103: el menú base sale con un omega-6:omega-3 de {_r_base103}, que "
+        fallos.append(f"BLOQUE106: el menú base sale con un omega-6:omega-3 de {_r_base103}, que "
                       f"ya está en el techo de {_techo103} o por debajo — así que pedir ese techo "
                       f"no prueba que se aplique. Es la regla del 9 de septiembre: una prueba no "
                       f"puede dar por hecha una propiedad incidental del menú que devuelve el "
                       f"solver")
     _con103 = _formular103({"omega6_total:omega3_total": {"max": _techo103}})
     if not _con103.get("factible"):
-        fallos.append(f"BLOQUE103: con un techo de {_techo103}:1 no sale menú. Medido el 13 de "
+        fallos.append(f"BLOQUE106: con un techo de {_techo103}:1 no sale menú. Medido el 13 de "
                       f"septiembre: salen 11 de 11 perros incluso a 1:1, y 10 de ellos en el "
                       f"peldaño estricto")
     else:
         _r103 = _api_b5._ratio_del_menu(_con103["menu"], _al103, "omega6_total", "omega3_total")
         if _r103 is None or _r103 > _techo103 * 1.005:
-            fallos.append(f"BLOQUE103: se pidió un techo de {_techo103}:1 y el menú entregado sale "
+            fallos.append(f"BLOQUE106: se pidió un techo de {_techo103}:1 y el menú entregado sale "
                           f"a {_r103}:1. El ratio del profesional NO se está aplicando: es un "
                           f"número que alguien escribe, que no hace nada y que no aparece en "
                           f"ningún recorte")
@@ -16096,10 +16096,10 @@ else:
         # omega-6 y el omega-3 por separado en la ficha.
         _eco103 = {x["clave"]: x for x in (_con103.get("ratios_del_profesional") or [])}
         if "omega6_total:omega3_total" not in _eco103:
-            fallos.append("BLOQUE103: el menú no dice qué ratio ha conseguido. Quien pide 3:1 no "
+            fallos.append("BLOQUE106: el menú no dice qué ratio ha conseguido. Quien pide 3:1 no "
                           "puede comprobarlo leyendo las filas sueltas de la ficha")
         elif abs((_eco103["omega6_total:omega3_total"].get("conseguido") or 0) - _r103) > 0.02:
-            fallos.append("BLOQUE103: el `conseguido` que devuelve el endpoint no es el que sale "
+            fallos.append("BLOQUE106: el `conseguido` que devuelve el endpoint no es el que sale "
                           "de medir el menú")
 
 # --- 4. que solo pueda APRETAR, y que el recorte se diga ---------------
@@ -16120,28 +16120,28 @@ _casos103 = (
 for _pide103, _espera103, _valor103, _lado103 in _casos103:
     _rr103 = _formular103(_pide103)
     if _espera103 not in _ajustes103(_rr103):
-        fallos.append(f"BLOQUE103: pidiendo {_pide103} se esperaba el ajuste {_espera103} en "
+        fallos.append(f"BLOQUE106: pidiendo {_pide103} se esperaba el ajuste {_espera103} en "
                       f"`objetivos_ajustados` y salió {sorted(_ajustes103(_rr103))}. Un recorte "
                       f"que no se dice deja al profesional firmando algo que no escribió")
     _ap103 = {x["clave"]: x["pedido"] for x in (_rr103.get("ratios_del_profesional") or [])}
     if _valor103 is None:
         if _ap103:
-            fallos.append(f"BLOQUE103: pidiendo {_pide103} NO se tenía que aplicar nada y se "
+            fallos.append(f"BLOQUE106: pidiendo {_pide103} NO se tenía que aplicar nada y se "
                           f"aplicó {_ap103}")
     else:
         _puesto103 = (_ap103.get("calcio:fosforo") or {}).get(_lado103)
         if _puesto103 is None or abs(_puesto103 - _valor103) > 1e-9:
-            fallos.append(f"BLOQUE103: pidiendo {_pide103} tenía que quedar {_lado103}="
+            fallos.append(f"BLOQUE106: pidiendo {_pide103} tenía que quedar {_lado103}="
                           f"{_valor103} (el de FEDIAF) y quedó {_puesto103}")
 
 # --- 5. que el que no tiene rango de FEDIAF lo diga --------------------
 _sin103 = _formular103({"omega6_total:omega3_total": {"max": 7.0}})
 if ("omega6_total:omega3_total", "sin_rango_de_fediaf") not in _ajustes103(_sin103):
-    fallos.append("BLOQUE103: un ratio que FEDIAF no acota entra entero y NO se dice. El silencio "
+    fallos.append("BLOQUE106: un ratio que FEDIAF no acota entra entero y NO se dice. El silencio "
                   "se lee como «FEDIAF lo ha aprobado», y FEDIAF no habla de esto")
 if ("calcio:fosforo", "sin_rango_de_fediaf") in _ajustes103(_formular103(
         {"calcio:fosforo": {"max": 1.5}})):
-    fallos.append("BLOQUE103: el Ca:P SÍ tiene rango en FEDIAF y se está diciendo que no. Ese "
+    fallos.append("BLOQUE106: el Ca:P SÍ tiene rango en FEDIAF y se está diciendo que no. Ese "
                   "aviso serviría para todo y no avisaría de nada")
 
 # --- 6. el rango de cada patología: servido, y sin aplicarse -----------
@@ -16150,20 +16150,20 @@ _lista103 = ((_voc103.get("objetivos_del_profesional") or {}).get("ratios") or {
 _por_clave103 = {r["clave"]: r for r in _lista103}
 for _cl103 in ("calcio:fosforo", "linoleico:linolenico", "omega6_total:omega3_total"):
     if _cl103 not in _por_clave103:
-        fallos.append(f"BLOQUE103: `GET /vocabulario` no sirve el ratio «{_cl103}». La lista la "
+        fallos.append(f"BLOQUE106: `GET /vocabulario` no sirve el ratio «{_cl103}». La lista la "
                       f"tiene que servir el motor: si la escribe la app, el día que entre uno "
                       f"nuevo la pantalla se queda con la suya y nadie se entera")
 # los dos que el motor ya aplica tienen que traer su rango vivo
 for _cl103, _mn103, _mx103 in (("calcio:fosforo", 1.0, 2.0), ("linoleico:linolenico", 2.6, 26.0)):
     _rg103 = (_por_clave103.get(_cl103) or {}).get("rango_que_ya_aplica_el_motor") or {}
     if _rg103.get("min") != _mn103 or _rg103.get("max") != _mx103:
-        fallos.append(f"BLOQUE103: el rango que sirve el motor para «{_cl103}» es {_rg103} y "
+        fallos.append(f"BLOQUE106: el rango que sirve el motor para «{_cl103}» es {_rg103} y "
                       f"tenía que ser {_mn103}-{_mx103}. Sale de la tabla viva, no de una copia: "
                       f"si no cuadra, o cambió la fuente o hay una segunda tabla")
 # y el tercero, el que NO aplica nadie, tiene que traer las tres patologías
 _omega103 = _por_clave103.get("omega6_total:omega3_total") or {}
 if _omega103.get("rango_que_ya_aplica_el_motor") is not None:
-    fallos.append("BLOQUE103: el omega-6:omega-3 de TOTALES aparece como si el motor le pusiera "
+    fallos.append("BLOQUE106: el omega-6:omega-3 de TOTALES aparece como si el motor le pusiera "
                   "rango. No se lo pone: el NRC 2006 dice que ese ratio «is not helpful» y lo "
                   "pone quien firma")
 _pat103 = {r["patologia"]: r for r in (_omega103.get("rangos_por_patologia") or [])}
@@ -16173,14 +16173,14 @@ _ESPERADO103 = {"renal": ("rango", 1.0, 7.0, None),
 for _p103, (_forma103, _mn103, _mx103, _obj103) in _ESPERADO103.items():
     _f103 = _pat103.get(_p103)
     if not _f103:
-        fallos.append(f"BLOQUE103: la patología «{_p103}» tiene el ratio de su fuente escrito en "
+        fallos.append(f"BLOQUE106: la patología «{_p103}» tiene el ratio de su fuente escrito en "
                       f"`patologias.json` y `GET /vocabulario` no lo enseña. Escrito donde no lo "
                       f"lee nadie es como no tenerlo: el clínico no puede decidir con el número "
                       f"delante")
         continue
     if (_f103.get("forma"), _f103.get("min"), _f103.get("max"), _f103.get("objetivo")) != \
             (_forma103, _mn103, _mx103, _obj103):
-        fallos.append(f"BLOQUE103: el rango de «{_p103}» sale como "
+        fallos.append(f"BLOQUE106: el rango de «{_p103}» sale como "
                       f"{(_f103.get('forma'), _f103.get('min'), _f103.get('max'), _f103.get('objetivo'))} "
                       f"y su fuente dice {(_forma103, _mn103, _mx103, _obj103)}. ⚠️ Las tres FORMAS "
                       f"son distintas a propósito: la renal da un RANGO (1:1 a 7:1), la artrosis "
@@ -16188,7 +16188,7 @@ for _p103, (_forma103, _mn103, _mx103, _obj103) in _ESPERADO103.items():
                       f"close to 1:1 as possible», que no es ni techo ni suelo). Convertir una en "
                       f"otra es endurecer o ablandar a la fuente")
     if _f103.get("lo_aplica_el_motor"):
-        fallos.append(f"BLOQUE103: «{_p103}» dice que el motor le aplica el ratio. Si se aplica de "
+        fallos.append(f"BLOQUE106: «{_p103}» dice que el motor le aplica el ratio. Si se aplica de "
                       f"verdad, se mueve de bloque en `patologias.json` y se dice; si no, esta "
                       f"casilla no puede decir que sí")
 # y la otra mitad, que es la que de verdad importa: que el solver NO lo reciba
@@ -16196,7 +16196,7 @@ from motor_completo import ratios_de_patologias as _ratios_pat103
 for _p103 in _ESPERADO103:
     _puestos103 = _ratios_pat103([_p103], "Adulto")
     if ("omega6_total", "omega3_total") in _puestos103:
-        fallos.append(f"BLOQUE103: «{_p103}» está escrita como que NO se aplica y "
+        fallos.append(f"BLOQUE106: «{_p103}» está escrita como que NO se aplica y "
                       f"`ratios_de_patologias()` —la función que llama el solver— SÍ la devuelve. "
                       f"Enseñar un número y aplicarlo a escondidas es peor que no enseñarlo")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
