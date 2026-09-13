@@ -143,7 +143,22 @@ _LARGO_MINIMO = 25
 # applies» cuando la fuente dice «instead the nutritional maximum, WHEN INCLUDED
 # IN THE RELEVANT TABLES, should be taken into account». Una condicion borrada.
 SIN_DECIR_DECLARADAS = 0          # citas que no dicen de que fuente salen
-SIN_TEXTO_DECLARADAS = 13         # citan una fuente que no esta en el repo.
+SIN_TEXTO_DECLARADAS = 16         # citan una fuente que no esta en el repo.
+                                  # ⚠️ SUBE A 16 LA NOCHE DEL 12 DE SEPTIEMBRE,
+                                  # y son TRES citas de los referentes con los
+                                  # que se contrasto si el rango de la raza debe
+                                  # acotar las kcal: dos de la misma frase de
+                                  # MyVetDiet -- «pesos indicativos
+                                  # diferenciados para machos y hembras» --, en
+                                  # `razas.json` y en `PREGUNTAS_ABIERTAS.md`.
+                                  # Es el software español de raciones con el
+                                  # que se contrasto si el rango de la raza debe
+                                  # acotar las kcal, y es de pago: no puede
+                                  # estar en el repo de fuentes. La tercera es
+                                  # de Royal Canin Academy («the weight of the
+                                  # parents ... or via the breed standard»), que
+                                  # es la frase que dice para que se usa el
+                                  # estandar de raza en las curvas de WALTHAM.
                                   # ⚠️ SUBE A 13 LA NOCHE DEL 12 DE SEPTIEMBRE,
                                   # y tambien es UNA sola cita nueva: el peso del
                                   # Perro Leones de Pastor, que no lo publica el
@@ -435,8 +450,17 @@ _EN_EL_REPO = ("fediaf", "sacn5", "small animal clinical nutrition", "nrc",
 # que con la clave corta cualquier parrafo sobre purinas se atribuia a la marca y
 # se iba a la casilla de «no se puede comprobar». Las cinco citas que de verdad
 # son suyas dicen «Purina Institute», asi que la clave larga las coge todas.
+# ⚠️ Y LOS TRES REFERENTES QUE SE MIRARON EL 12 DE SEPTIEMBRE POR LA NOCHE para
+# decidir si el rango de la raza debia acotar las kcal: WALTHAM (sus curvas de
+# crecimiento), Royal Canin (que las publica para veterinarios) y MyVetDiet (el
+# software español de raciones, del que sale la frase «pesos indicativos
+# diferenciados para machos y hembras»). Ninguno esta en el repo de fuentes -- y
+# MyVetDiet no puede estarlo, es software de pago --, asi que sus citas van a la
+# casilla de «no se puede comprobar aqui». Sin esto, «myvetdiet» no casaba con
+# nada y la frase se atribuia a la FCI, que era la otra fuente del parrafo.
 _FUERA = ("acvim", "merck", "purina institute", "today's veterinary", "cavanaugh",
-          "center", "consenso", "orden foral", "orden ayg")
+          "center", "consenso", "orden foral", "orden ayg",
+          "myvetdiet", "waltham", "royal canin", "pet diet designer")
 
 
 # ⚠️ SE BUSCA POR PALABRA ENTERA, Y NO ES COSMETICO (12 de septiembre). Antes se
