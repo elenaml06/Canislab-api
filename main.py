@@ -7508,21 +7508,99 @@ def listar_patologias():
     return {"unidad": crudo["_meta"]["unidad"], "patologias": salida}
 
 
+# Como se le ENSEÑA el catalogo de alimentos a quien lo mira: en que pantalla va
+# cada categoria del motor, como se llama sin jerga y como se agrupa por dentro.
+# Aqui no hay ni un alimento: salen del catalogo. Ver su `_meta`.
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                        "alimentos_como_se_presentan.json"), encoding="utf-8") as _f:
+    _PRESENTACION_AL = _json.load(_f)
+
+
+def _arbol_de_alimentos():
+    """El catalogo tal y como se ENSEÑA: pantalla -> grupo -> alimentos.
+
+    ⚠️ POR QUE EXISTE (12 de septiembre de 2026, noche). Este arbol lo montaba
+    la APP, con las tres alturas escritas a mano dentro de `App.jsx`. Elena:
+    «NADA VIVA SOLO EN LA APP, TIENE QUE LLAMAR A COSAS QUE VIVAN EN EL MOTOR
+    PARA QUE CUANDO SE CAMBIE ALGO SE APLIQUE Y LA APP LO PILLE DIRECTO».
+
+    El caso que lo provoco: el aceite de salmon Pets Purest entro al catalogo el
+    7 de septiembre con la foto de su etiqueta, el motor lo usa en 23 de los 216
+    menus precalculados, y en la app no aparecia. Medido: la lista de la app
+    tenia EXACTAMENTE los mismos alimentos que el motor menos ese. Una copia a
+    mano que se quedo parada el dia que se escribio.
+
+    Aqui no se escribe ni un alimento: salen del catalogo, el segundo nivel se
+    DERIVA (la especie que ya usa el motor para las alergias, o la propia
+    categoria en los suplementos) y solo los 23 Extras llevan su grupo escrito,
+    porque «Huevo», «Aceite» o «Semillas» no se pueden sacar de ningun sitio.
+    """
+    from especies import cargar_alimentos as _ca, especie_de as _esp
+    grupos_extra = _PRESENTACION_AL["grupo_de_cada_extra"]
+    donde = {}
+    for p in _PRESENTACION_AL["pantallas"]:
+        for c in p["categorias_del_motor"]:
+            donde[c] = p
+    salida, sueltos = {}, []
+    for a in _ca():
+        p = donde.get(a["categoria"])
+        if p is None:
+            sueltos.append(a["nombre"])
+            continue
+        if p["segundo_nivel"] == "especie":
+            grupo = _esp(a["nombre"])
+        elif p["segundo_nivel"] == "categoria_del_motor":
+            grupo = a["categoria"]
+        else:
+            grupo = grupos_extra.get(a["nombre"], "Otros")
+        salida.setdefault(p["clave"], {}).setdefault(grupo, []).append({
+            "nombre": a["nombre"],
+            "kcal_100g": a["energia"],
+            "categoria_del_motor": a["categoria"],
+        })
+    for pant in salida.values():
+        for lista in pant.values():
+            lista.sort(key=lambda x: x["nombre"])
+    return salida, sueltos
+
+
 @app.get("/alimentos")
 def listar_alimentos():
-    """Catalogo agrupado por categoria, para que la app pinte los selectores
-    del analizador sin tener que llevar la lista duplicada en el frontend."""
-    from especies import cargar_alimentos as _ca
+    """El catalogo, de las dos formas, para que la app no tenga que decidir nada.
+
+    `por_categoria` es lo de siempre -- la categoria del motor con sus alimentos
+    --, y ahora manda TAMBIEN la especie, que antes salia siempre `null` porque
+    se leia una clave que las fichas no tienen: `a.get("especie")` sobre un
+    diccionario que no la trae. El motor SI sabe la especie (`especie_de`, la
+    misma con la que resuelve las alergias), solo que no la estaba mandando.
+
+    `arbol` es como se ENSEÑA: las ocho pantallas, cada una con su titulo para
+    el dueño y para el veterinario, y dentro el segundo nivel.
+    """
+    from especies import cargar_alimentos as _ca, especie_de as _esp
     por_cat = {}
     for a in _ca():
         por_cat.setdefault(a["categoria"], []).append({
             "nombre": a["nombre"],
             "kcal_100g": a["energia"],
-            "especie": a.get("especie"),
+            "especie": _esp(a["nombre"]),
         })
     for v in por_cat.values():
         v.sort(key=lambda x: x["nombre"])
-    return por_cat
+    arbol, sueltos = _arbol_de_alimentos()
+    return {
+        "por_categoria": por_cat,
+        "pantallas": [
+            {"clave": p["clave"], "dueno": p["dueno"], "veterinario": p["veterinario"],
+             "la_elige_el_usuario": p["la_elige_el_usuario"],
+             "categorias_del_motor": p["categorias_del_motor"],
+             "grupos": arbol.get(p["clave"], {})}
+            for p in _PRESENTACION_AL["pantallas"]
+        ],
+        # ⚠️ SE DICE, no se esconde: un alimento cuya categoria no esta
+        # declarada no aparece en ninguna pantalla, y eso tiene que verse.
+        "sin_pantalla": sorted(sueltos),
+    }
 
 
 # =====================================================================

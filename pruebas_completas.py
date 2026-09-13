@@ -14729,6 +14729,98 @@ if not _hay_fuentes:
     print("   bateria.yml`, el paso que trae las fuentes con el secreto FUENTES_TOKEN).")
     print(f"{'='*60}")
 
+# ============================================================
+# BLOQUE 99 — LA LEY: NADA VIVE SOLO EN LA APP
+# ============================================================
+print("=== BLOQUE 99: nada de lo que pinta la app vive solo en la app ===")
+
+# ⚠️ POR QUE EXISTE (12 de septiembre de 2026, noche). Elena: «NADA VIVA SOLO EN
+# LA APP, TIENE QUE LLAMAR A COSAS QUE VIVAN EN EL MOTOR PARA QUE CUANDO SE
+# CAMBIE ALGO SE APLIQUE Y LA APP LO PILLE DIRECTO. PARA TODO».
+#
+# La ley ya estaba dicha y se seguia rompiendo, porque UNA FRASE NO SE EJECUTA
+# -- la misma leccion de `auditar_conversiones.py`. Cinco veces el mismo fallo
+# en dos semanas: las seis categorias de Personalizar, los cinco niveles de
+# actividad, las 47 patologias, las 255 razas y los 163 alimentos. Y las cinco
+# se descubrieron por casualidad, porque una lista copiada a mano NO DA ERROR:
+# se queda parada y la pantalla se ve perfecta.
+#
+# El caso que cerro la discusion: el aceite de salmon Pets Purest entro al
+# catalogo del motor el 7 de septiembre con la foto de su etiqueta, el motor lo
+# usa en 23 de los 216 menus precalculados, y en la app no aparecia. Elena lo
+# dijo dos veces antes de que se mirara.
+#
+# Este bloque vigila la punta del MOTOR: que lo que el inventario declara se
+# sirva de verdad y no venga vacio. La punta de la APP -- que no haya una lista
+# nueva escrita a mano sin declarar -- la vigila `tests/la-ley-del-motor.spec.js`
+# en `canislab-web`, porque el codigo de la app no esta en este repo.
+import json as _json_b99
+import especies as _esp_b99
+_LEY99 = _json_b99.load(open(_os_b65.path.join(
+    _os_b65.path.dirname(_os_b65.path.abspath(__file__)), "lo_que_la_app_pinta.json"),
+    encoding="utf-8"))
+_listas99 = _LEY99["listas"]
+if len(_listas99) != _LEY99["_meta"]["cuantas"]:
+    fallos.append(f"BLOQUE99: el inventario dice {_LEY99['_meta']['cuantas']} listas y trae "
+                  f"{len(_listas99)}. El recuento va clavado a proposito: sin el, una lista puede "
+                  f"desaparecer del inventario y nadie se entera")
+
+_cache99 = {}
+def _pide99(endpoint):
+    if endpoint not in _cache99:
+        _cache99[endpoint] = _c.get(endpoint).json()
+    return _cache99[endpoint]
+
+for _l99 in _listas99:
+    try:
+        _cuerpo99 = _pide99(_l99["endpoint"])
+    except Exception as _e99:
+        fallos.append(f"BLOQUE99: «{_l99['respaldo']}» dice venir de {_l99['endpoint']} y ese "
+                      f"endpoint revienta: {_e99}")
+        continue
+    _donde99 = _cuerpo99
+    _roto99 = None
+    for _paso99 in _l99["camino"].split("."):
+        if not isinstance(_donde99, dict) or _paso99 not in _donde99:
+            _roto99 = _paso99
+            break
+        _donde99 = _donde99[_paso99]
+    if _roto99:
+        fallos.append(f"BLOQUE99: «{_l99['respaldo']}» dice leerse de "
+                      f"{_l99['endpoint']}#{_l99['camino']} y ahi no hay ningun «{_roto99}». La "
+                      f"app se queda con su respaldo PARA SIEMPRE y sin decirlo: un respaldo que "
+                      f"tapa una peticion rota se ve igual que una peticion buena")
+        continue
+    # ⚠️ Y QUE NO VENGA VACIA, que es la otra forma de romperlo sin error: el
+    # camino existe, la app lo lee, y lo que lee es una lista de cero cosas.
+    if not _donde99:
+        fallos.append(f"BLOQUE99: {_l99['endpoint']}#{_l99['camino']} existe y viene VACIO, asi "
+                      f"que «{_l99['respaldo']}» nunca se sustituye por nada")
+
+# Y el caso concreto que lo provoco, con nombre y apellidos: un alimento del
+# catalogo tiene que poder llegar a una pantalla. Si el catalogo crece con una
+# categoria que nadie ha declarado, el alimento existe, el motor lo usa y en la
+# app no esta.
+_al99 = _pide99("/alimentos")
+if _al99.get("sin_pantalla"):
+    fallos.append(f"BLOQUE99: {len(_al99['sin_pantalla'])} alimentos del catalogo no caen en "
+                  f"ninguna pantalla: {_al99['sin_pantalla'][:6]}. El motor los usa y en la app "
+                  f"no se ven -- es el fallo del aceite de salmon otra vez")
+_vistos99 = {a["nombre"] for p in _al99["pantallas"] for g in p["grupos"].values() for a in g}
+_todos99 = {a["nombre"] for a in _esp_b99.cargar_alimentos()}
+if _todos99 and _vistos99 != _todos99:
+    fallos.append(f"BLOQUE99: el arbol de /alimentos ensena {len(_vistos99)} alimentos y el "
+                  f"catalogo tiene {len(_todos99)}. Faltan: {sorted(_todos99 - _vistos99)[:6]}")
+# ⚠️ Y NINGUNO EN DOS SITIOS: un alimento en dos pantallas se puede elegir dos
+# veces y contar doble.
+_cuantas99 = sum(len(g) for p in _al99["pantallas"] for g in p["grupos"].values())
+if _cuantas99 != len(_vistos99):
+    fallos.append(f"BLOQUE99: el arbol de /alimentos reparte {_cuantas99} entradas para "
+                  f"{len(_vistos99)} alimentos distintos: alguno esta en dos pantallas")
+
+print(f"  {len(_listas99)} listas declaradas · {len(_vistos99)} alimentos en {len(_al99['pantallas'])} pantallas")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
 _cerrar_el_ultimo_bloque()
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)
