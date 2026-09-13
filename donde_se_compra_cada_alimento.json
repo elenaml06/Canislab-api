@@ -14,10 +14,11 @@
       "en_casa": 1,
       "accesibles": 137,
       "total": 163,
-      "corriente": 141,
-      "premium": 22
+      "corriente": 143,
+      "premium": 20
     },
-    "el_precio_y_donde_se_compra_son_DOS_EJES": "Un multivitamínico se pide por internet y no es caro; una gamba roja está en cualquier supermercado y sí lo es. Mezclarlos daría un menú «barato» lleno de suplementos de marca, o uno «accesible» de solomillo y lenguado."
+    "el_precio_y_donde_se_compra_son_DOS_EJES": "Un multivitamínico se pide por internet y no es caro; una gamba roja está en cualquier supermercado y sí lo es. Mezclarlos daría un menú «barato» lleno de suplementos de marca, o uno «accesible» de solomillo y lenguado.",
+    "lo_que_ya_se_ha_corregido_aqui": "⚠️ La `Dorada` y la `Lubina` estaban marcadas `premium` en la primera escritura de este fichero (13 de septiembre) y es FALSO en España: las dos son de acuicultura y están entre los pescados más baratos del mostrador. Se marcaron por inercia -- «pescado de mesa» -- y la dorada sola aparecía en 31 de los 216 menús, o sea que ese error se habría llevado por delante el 14 % del catálogo sin ningún motivo. Queda escrito porque es exactamente el riesgo de un campo sin fuente: se equivoca en silencio y con forma de dato bueno."
   },
   "donde_se_compra": {
     "supermercado": {
@@ -335,7 +336,7 @@
     "Dorada": {
       "categoria": "Pescados y mariscos",
       "donde": "supermercado",
-      "precio_orientativo": "premium"
+      "precio_orientativo": "corriente"
     },
     "Dátil": {
       "categoria": "Verduras y frutas",
@@ -510,7 +511,7 @@
     "Lubina": {
       "categoria": "Pescados y mariscos",
       "donde": "supermercado",
-      "precio_orientativo": "premium"
+      "precio_orientativo": "corriente"
     },
     "Mandarina": {
       "categoria": "Verduras y frutas",
