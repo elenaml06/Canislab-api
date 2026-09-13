@@ -8919,8 +8919,12 @@ if any("trazas" in a for a in _CAT51):
 # CIQUAL 40006 («Cervelle, veau») para la ficha de VACA, y las dos cuadraban.
 # Lo único que las tumbó fue mirar el nombre. Si alguien quita esa guarda,
 # esto lo dice.
-_ESPECIE51 = [("Cerebro de vaca", "usda", "168622", "vaca"),
-              ("Cerebro de ternera", "usda", "174351", "ternera"),
+#
+# ⚠️ Y «Cerebro de vaca» YA NO ESTÁ EN ESTA LISTA porque YA NO ESTÁ EN EL
+# CATÁLOGO (13 de septiembre), por un motivo LEGAL. Se comprueba abajo, en
+# `_SRM51`, que no pueda volver -- la lección de arriba sigue valiendo para la
+# ficha de ternera, que es la que queda.
+_ESPECIE51 = [("Cerebro de ternera", "usda", "174351", "ternera"),
               ("Timo de vaca", "usda", "170194", "vaca"),
               ("Pulmón de ternera", "usda", "174361", "ternera")]
 for _n51, _f51, _esperado51, _quien51 in _ESPECIE51:
@@ -8935,6 +8939,54 @@ for _n51, _f51, _esperado51, _quien51 in _ESPECIE51:
             f"Es una ficha de {_quien51}: vaca y ternera se parecen en proteina, grasa y "
             f"agua, asi que un cruce de especie NO lo caza la huella numerica -- solo el "
             f"nombre. Ya paso una vez y hubo que rehacer la ficha entera.")
+
+# ── 4. El encéfalo bovino de más de 12 meses NO PUEDE estar en el catálogo.
+#
+# ⚠️ ESTO NO ES NUTRICIÓN, ES LEY, y por eso lleva su propia comprobación: un
+# límite legal que solo vive en una nota se borra el día que alguien rehaga la
+# ficha. La cadena son dos reglamentos y tres artículos, comprobados el 13 de
+# septiembre de 2026 contra la versión CONSOLIDADA en EUR-Lex
+# (`eli/reg/2001/999/2024-01-01`), no contra el texto original de 2001 -- que
+# decía otra cosa, y ese es justo el error que había que evitar:
+#
+#   · Reg. (CE) 999/2001, anexo V: «as regards bovine animals: (i) the skull
+#     excluding the mandible and including the brain and eyes, and the spinal
+#     cord of animals aged OVER 12 MONTHS».
+#   · Reg. (CE) 1069/2009, art. 8: «Category 1 material shall comprise the
+#     following animal by-products: […] (b) the following material: (i)
+#     specified risk material».
+#   · Reg. (CE) 1069/2009, art. 35: «Operators may place pet food on the market
+#     provided: (a) the products are derived: (i) from Category 3 material […]
+#     or (iii) in the case of raw petfood, from material referred to in Article
+#     10(a) and (b)(i) and (ii)».
+#
+# O sea: encéfalo de bovino de más de 12 meses -> material especificado de
+# riesgo -> categoría 1 -> no puede ser comida para mascotas, y el artículo del
+# petfood CRUDO -- que es lo que calcula este motor -- tampoco lo deja.
+#
+# Una VACA pasa de 12 meses por definición, así que su ficha salió del catálogo.
+# Una TERNERA española se sacrifica por debajo del año, así que la suya se queda
+# CON LA CONDICIÓN ESCRITA en su propia ficha, y eso también se comprueba: sin
+# la condición, la ficha afirma que cualquier encéfalo de bovino vale.
+_SRM51 = ("Cerebro de vaca", "Sesos de vaca", "Cerebro de buey", "Cerebro de vacuno",
+          "Médula espinal de vaca", "Médula espinal de ternera")
+for _n51 in _SRM51:
+    if _n51 in _ficha51:
+        fallos.append(
+            f"BLOQUE51: ha vuelto al catálogo «{_n51}». El encéfalo y la médula espinal de "
+            f"bovino de más de 12 meses son material especificado de riesgo (Reg. 999/2001, "
+            f"anexo V consolidado), o sea categoría 1 (Reg. 1069/2009 art. 8), y la comida "
+            f"para mascotas sale de categoría 3 (art. 35). No es una preferencia nutricional: "
+            f"es ilegal. Ver DATOS_QUE_FALTAN.md.")
+_ter51 = _ficha51.get("Cerebro de ternera")
+if _ter51 is None:
+    fallos.append("BLOQUE51: falta «Cerebro de ternera», que es la única de las dos que la "
+                  "norma deja y que lleva escrita su condición de edad.")
+elif "12 meses" not in (_ter51.get("nota_datos") or "").lower():
+    fallos.append(
+        "BLOQUE51: «Cerebro de ternera» ha perdido de su `nota_datos` la condición de los 12 "
+        "MESES. Sin ella la ficha afirma que vale cualquier encéfalo de bovino, y el de un "
+        "animal mayor es material especificado de riesgo. El límite es legal, no nutricional.")
 
 _con_id51 = sum(1 for _a51 in _CAT51 if _a51.get("fuentes_id"))
 if _con_id51 < 95:

@@ -845,6 +845,87 @@ un S3 del DTU en el puerto 9000, que no sale de este entorno. Está escrita ente
 en `candidatas_declaradas` de `fuentes_de_composicion.json` para que no haya que
 volver a descubrirla.
 
+### El cerebro de vaca: lo primero que sale del catálogo por LEY y no por nutrición
+
+*(13 de septiembre.)* Todo lo demás de este documento son decisiones nutricionales
+o de dato. Esta no: es el **Reglamento (CE) 999/2001** y el **1069/2009**, y por eso
+no admite matices del tipo «con carne de origen controlado».
+
+La cadena, comprobada contra la versión **CONSOLIDADA** en EUR-Lex
+(`eli/reg/2001/999/2024-01-01`) y **no** contra el texto original de 2001 — que
+decía **seis** meses y el vigente dice **doce**, que era justo la trampa:
+
+1. **999/2001, anexo V**: «the skull excluding the mandible and including the brain
+   and eyes, and the spinal cord of animals **aged over 12 months**» es material
+   especificado de riesgo.
+2. **1069/2009, art. 8**: «Category 1 material shall comprise […] (i) **specified
+   risk material**».
+3. **1069/2009, art. 35**: la comida para mascotas sale de **categoría 3**, y su
+   apartado (iii) para el **petfood crudo** —que es lo que calcula este motor—
+   remite también a categoría 3.
+
+**`Cerebro de vaca` fuera del catálogo** (una vaca pasa de 12 meses por
+definición). **`Cerebro de ternera` se queda**, porque la ternera española se
+sacrifica por debajo del año, **con la condición de edad escrita en su propia
+ficha**. Medido antes de sacarla: aparecía en **0 de los 216** menús.
+
+⚠️ **Y estar fuera del automático no bastaba.** Las dos ya lo estaban desde el 7 y
+el 8 de septiembre por otro motivo (su DHA las hacía ganar siempre y los sesos no
+se piden en una carnicería normal), y eso es una cuestión distinta: lo que está
+fuera del automático **se puede seguir eligiendo a mano**, y lo ilegal no.
+
+**Los otros tres candidatos se miraron y ninguno está afectado, cada uno por su
+motivo** — que no es el mismo, y por eso hay que leer la norma entera: el `Cuello
+de ternera` porque el umbral de la **columna** son **30 meses** y además la norma
+excluye expresamente las apófisis espinosas y transversas de las cervicales; el
+`Pecho de ternera con hueso` porque costillar y esternón no son columna ni médula;
+y las `Costillas de cordero` porque para **ovino** la norma cubre solo cráneo,
+encéfalo, ojos y médula — **no** la columna vertebral. ⚠️ Eso sí deja una puerta:
+el día que alguien proponga **sesos de cordero**, la norma los alcanza, y su umbral
+no es solo la edad sino «o que tenga un incisivo permanente», que es un dato que el
+catálogo no puede saber.
+
+Lo vigila el **BLOQUE 51**: falla si vuelve la ficha (con cualquiera de sus
+nombres, médula espinal incluida) y falla si la de ternera pierde su condición de
+edad — sin ella, la ficha afirma que vale cualquier encéfalo de bovino. Comprobado
+con el fallo puesto de las tres formas. Detalle y citas: `DATOS_QUE_FALTAN.md`.
+
+### ⚠️ Y una medida de la vitamina A que estaba mal en cinco sitios
+
+*(13 de septiembre.)* El repo afirmaba, en `UNIDADES.md`, `HALLAZGOS_LECTURA_FUENTES.md`,
+`PREGUNTAS_PARA_ELENA.md`, `DATOS_QUE_FALTAN.md` y `fuentes_de_composicion.json`,
+que **«el 83 % de la vitamina A de los 216 menús viene de verdura y fruta»**, que
+**«103 de los 216 no llegarían al mínimo si el caroteno no contara»** y que el peor
+menú «declara 11.191 µg y solo 29 son retinol». **Las tres cifras eran falsas.**
+
+| | Decía | **Es** |
+|---|---|---|
+| Verdura y fruta | 83 % | **6,9 %** |
+| Hígado | — | **78,3 %** (el de vaca él solo, 50,3 %) |
+| Multivitamínico | — | **12,4 %** |
+| Menús bajo el mínimo sin caroteno | 103 de 216 | **1 de 216** |
+| El menú con más vitamina A | lactancia, 11.191 µg, 29 de retinol | **crecimiento, 12.776 µg, 9.667 de fuera de la verdura** |
+
+**El fallo, y se reproduce**: el método contaba **la vitamina A del hígado como si
+fuera caroteno**, y la del hígado es retinol puro. Poniendo a cero la vitamina A
+del hígado **y** de los multivitamínicos salen mediana 74 % y **máximo 100 %**, y
+el documento decía «mediana 83 %, máximo 100 %» — ese 100 % es la huella, porque
+bien contado ningún menú pasa del 35 %. Lo delataba además su propia frase: en un
+menú con 5.500 µg de hígado dentro, «solo 29 son retinol» solo sale si el hígado
+está en el lado equivocado.
+
+**Y la dirección del riesgo también estaba al revés**: contar de menos el caroteno
+**no es el lado seguro** — es seguro contra el mínimo y **peligroso contra el
+máximo**, porque la vitamina A es de los pocos nutrientes con techo. Lo que permite
+estar tranquilos es **la medida, no el argumento**: el menú más alto va a 10.000
+µg/1000 kcal contra un techo de **30.000 en todas las etapas**, o sea el **33 %**;
+0 de 216 pasan del máximo y 0 caen bajo el mínimo.
+
+Consecuencia para el plan: **aplicar el convenio 4:1 de FEDIAF sigue siendo lo
+correcto** —la regla es que gana FEDIAF— pero **deja de correr prisa**, porque lo
+que la hacía urgente era el «103 de 216». El método para rehacer la medida está
+escrito en `UNIDADES.md`, para que no haya que fiarse de esta tampoco.
+
 ### La vitamina D, y el cero mudo que sostenía un verde
 
 Es lo que más pesa de todo el barrido, y no por el número de celdas (nueve) sino

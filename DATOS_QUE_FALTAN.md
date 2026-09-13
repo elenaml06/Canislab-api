@@ -773,10 +773,22 @@ En BEDCA los dos campos existen por separado («Retinol» y «Carotenos totales�
 «Retinol», «Carotene, beta» y «Vitamin A, RAE». **El orden de `Bases.md` sigue
 mandando**: BEDCA primero.
 
-**Por qué corre prisa, con la medida hecha.** En los 216 menús precalculados el
-**83 %** de la vitamina A viene de vegetal, y **103 de los 216 no llegarían al
-mínimo de FEDIAF si el caroteno no contara**. El peor declara 11.191 µg y solo
-29 son retinol. Detalle: `HALLAZGOS_LECTURA_FUENTES.md` §N-19.
+**Cuánta prisa corre, con la medida BIEN hecha.** ⚠️ Aquí ponía que el 83 % de la
+vitamina A venía de vegetal y que 103 de los 216 menús no llegarían al mínimo sin
+el caroteno. **Las dos cifras eran falsas** (corregidas el 13 de septiembre de
+2026: el método contaba la vitamina A del hígado como caroteno, y es retinol puro).
+
+| De dónde viene la vitamina A de los 216 menús | |
+|---|---|
+| Hígado | **78,3 %** |
+| Multivitamínico | **12,4 %** |
+| **Verdura y fruta** | **6,9 %** |
+| Todo lo demás | 2,4 % |
+
+Y los menús que no llegarían al mínimo sin el caroteno son **1 de 216**, no 103.
+O sea que esto **no corre prisa**: sigue habiendo que arreglarlo, porque la regla
+es que gana FEDIAF, pero el argumento de urgencia se cae. Detalle y el método para
+rehacer la medida: `UNIDADES.md`.
 
 **Esto no lo rellena el asistente**, como todo lo de este archivo.
 
@@ -1191,6 +1203,83 @@ asistente.**
 de vitamina E por 100 g, **qué forma química** (d-α-tocoferol natural, dl-α-tocoferol
 o el acetato — cambian el factor de UI a mg, FEDIAF Tabla VII-14), y la dosis máxima
 que marca el fabricante. **No lo rellena el asistente.**
+
+---
+
+## ⚠️ NO es un dato que falte: por qué el CEREBRO DE VACA salió del catálogo (13 de septiembre de 2026)
+
+Va justo encima del cerdo porque es su hermano: **no falta un dato, sobra un
+alimento**. Pero se separa en una cosa importante — lo del cerdo son dos motivos
+**sanitarios**, y esto es **ley**, así que no admite «con carne de origen
+controlado» ni ninguna otra atenuación.
+
+**La cadena son dos reglamentos y tres artículos**, comprobados contra la versión
+**CONSOLIDADA** en EUR-Lex (`eli/reg/2001/999/2024-01-01`) y **no** contra el texto
+original de 2001, que decía otra cosa — el original hablaba de seis meses y el
+vigente dice doce, y confundirlos era exactamente el error a evitar:
+
+**1. Reg. (CE) 999/2001, anexo V — qué es material especificado de riesgo:**
+
+> «as regards bovine animals: (i) the skull excluding the mandible and including
+> the brain and eyes, and the spinal cord of animals **aged over 12 months**»
+
+**2. Reg. (CE) 1069/2009, art. 8 — dónde cae ese material:**
+
+> «Category 1 material shall comprise the following animal by-products: […] (b) the
+> following material: (i) **specified risk material**»
+
+**3. Reg. (CE) 1069/2009, art. 35 — de qué puede salir la comida para mascotas:**
+
+> «Operators may place pet food on the market provided: (a) the products are
+> derived: (i) from **Category 3 material** […] or (iii) **in the case of raw
+> petfood**, from material referred to in Article 10(a) and (b)(i) and (ii)»
+
+O sea: encéfalo de bovino de más de 12 meses → material especificado de riesgo →
+categoría 1 → no puede ser comida para mascotas. Y el apartado del petfood
+**crudo**, que es justo lo que calcula este motor, tampoco lo deja: remite a
+material de categoría 3.
+
+### Qué se ha hecho, y qué se queda
+
+| Ficha | Qué pasa | Por qué |
+|---|---|---|
+| **`Cerebro de vaca`** | **FUERA del catálogo** | una vaca pasa de 12 meses por definición |
+| **`Cerebro de ternera`** | **se queda**, con la condición escrita en su propia ficha | la ternera española se sacrifica por debajo del año, así que su encéfalo está fuera de la definición |
+
+**Medido antes de sacarla**: `Cerebro de vaca` aparecía en **0 de los 216** menús
+precalculados, así que no rompe nada. Y las dos estaban ya fuera del modo
+automático desde el 7 y el 8 de septiembre, por otro motivo (el DHA las hacía ganar
+siempre y los sesos no se piden en una carnicería normal) — eso es una cuestión
+distinta y **no** habría bastado: estar fuera del automático no impide elegirla a
+mano, y lo ilegal no se puede elegir a mano.
+
+### Y los otros tres alimentos que la norma podría tocar, mirados uno a uno
+
+Ninguno está afectado, y conviene que quede escrito **por qué**, porque el motivo
+no es el mismo en los tres:
+
+- **`Cuello de ternera`** (vértebras cervicales). Doble razón: el umbral de la
+  columna vertebral son **30 meses**, no doce, y una ternera no llega; y además la
+  norma **excluye expresamente** «the spinous and transverse processes of the
+  cervical, thoracic and lumbar vertebrae», que es lo que lleva un cuello.
+- **`Pecho de ternera con hueso`**. No es columna vertebral ni médula espinal:
+  costillar y esternón están fuera de la definición a cualquier edad.
+- **`Costillas de cordero`**. Para ovino y caprino la norma dice otra cosa y hay
+  que leerla entera: «as regards ovine and caprine animals: the skull, including
+  the brain and eyes, and the spinal cord of animals aged over 12 months or which
+  have a permanent incisor erupted through the gum». **No incluye la columna
+  vertebral**, solo cráneo, encéfalo, ojos y médula. Un costillar está fuera.
+
+⚠️ **Y eso deja una puerta abierta para el futuro**: el día que alguien proponga
+una ficha de **sesos de cordero**, la norma sí la alcanza — y su umbral no es solo
+la edad, es «o que tenga un incisivo permanente», que es un dato que el catálogo no
+tiene forma de saber.
+
+Lo vigila el **BLOQUE 51**, que falla si `Cerebro de vaca` (o médula espinal de
+bovino con cualquiera de sus nombres) vuelve al catálogo, y también si
+`Cerebro de ternera` pierde de su ficha la condición de los 12 meses — porque sin
+ella la ficha afirma que vale cualquier encéfalo de bovino. Comprobado con el fallo
+puesto de las tres formas.
 
 ---
 

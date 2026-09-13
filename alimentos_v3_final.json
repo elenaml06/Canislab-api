@@ -13767,90 +13767,6 @@
   }
  },
  {
-  "nombre": "Cerebro de vaca",
-  "tipo": "Alimento",
-  "categoria": "Vísceras",
-  "energia": 143,
-  "nutrientes": {
-   "proteina": 10.86,
-   "grasa": 10.3,
-   "dha": 0.851,
-   "epa": 0,
-   "linoleico": 0.041,
-   "linolenico": 0,
-   "araquidonico": 319.0,
-   "vitA": 7.0,
-   "vitD": 0,
-   "vitE": 0.99,
-   "folato": 3.0,
-   "niacina": 3.55,
-   "riboflavina": 0.199,
-   "tiamina": 0.092,
-   "vitB12": 9.51,
-   "vitB6": 0.226,
-   "calcio": 43,
-   "hierro": 2.55,
-   "potasio": 274,
-   "magnesio": 13.0,
-   "sodio": 126,
-   "fosforo": 362.0,
-   "yodo": 0.62,
-   "selenio": 21.3,
-   "zinc": 1.02,
-   "cobre": 0.287,
-   "manganeso": 0.026,
-   "acidoPantotenico": 2.01,
-   "colina": 0,
-   "cloruro": 0,
-   "fibra": 0,
-   "arginina": 0.566,
-   "histidina": 0.258,
-   "isoleucina": 0.42,
-   "leucina": 0.797,
-   "lisina": 0.64,
-   "metionina": 0.227,
-   "cistina": 0.108,
-   "fenilalanina": 0.543,
-   "tirosina": 0.4,
-   "treonina": 0.511,
-   "triptofano": 0.103,
-   "valina": 0.491,
-   "purinas": 162.0,
-   "lcarnitina": 0,
-   "taurina": 0
-  },
-  "nota_datos": "Cerebro -- tejido neuroendocrino, rico en DHA de forma natural (0,851 g/100 g). OJO: colesterol muy elevado (~3010 mg/100g) -- no es un problema nutricional de perro sano (el colesterol dietetico apenas afecta al colesterol sanguineo canino), pero se anota por si acaso. ⚠️ RENOMBRADO Y REHECHO EL 7 DE SEPTIEMBRE, y las dos cosas por el mismo motivo. Se llamaba \"Cerebro de ternera\" y sus datos NO son de ternera: son de VACA. Coinciden celda a celda con USDA FDC 168622 (\"Beef, variety meats and by-products, brain, raw\") en las nueve que tenian valor -- proteina 10,86, grasa 10,3, calcio 43, selenio 21,3, hierro 2,55, potasio 274, zinc 1,02, vitB12 9,51 -- mientras que el cerebro de TERNERA (USDA 174351, BEDCA 1047, CIQUAL 40006) da calcio 10 y selenio 10-11,6. Es exactamente lo que ya paso con \"Bazo de ternera\" y \"Pancreas de ternera\", renombrados a \"de vaca\" por la misma razon; al cerebro se le paso. El calcio de 43 mg y el selenio de 21,3 ug llegaron a apuntarse como posibles errores de dato por discrepar con las fuentes de TERNERA. No lo eran: eran los de vaca, correctos, comparados contra la especie equivocada. Y por eso se rehizo la ficha: ese mismo dia se habian rellenado 17 celdas desde BEDCA 1047 (sesos de TERNERA), que es otro animal -- el DHA quedo en 0,36 g cuando el de vaca es 0,851, y la vitamina A en 0 cuando son 7 ug. Ahora TODA la ficha sale de USDA 168622, una sola fuente. Lo que esa ficha no publica -- vitD, yodo, colina -- vuelve a `sin_dato`: estaba puesto con cifras de ternera y de la CIQUAL de ternera, y eso es mezclar especies. ⚠️ 13 sep 2026: lcarnitina, taurina estaba(n) declarado(s) en `sin_dato` pero LA CLAVE NO EXISTÍA en `nutrientes`. Es la peor de las tres formas de esconder un hueco que describe `UNIDADES.md`: `valor_nutriente()` devuelve 0 igual que en los otros dos casos, pero NO HAY NINGÚN CERO QUE ENCONTRAR, así que ni la auditoría ni `datos_incompletos` podían decir nada. Se añade la clave a 0 —que es lo que el motor ya usaba— sin tocar ningún valor: lo único que cambia es que ahora el hueco se ve. Afectaba a 58 fichas.",
-  "sin_dato": [
-   "cloruro",
-   "colina",
-   "lcarnitina",
-   "taurina",
-   "vitD",
-   "yodo"
-  ],
-  "purinas_bases": {
-   "adenina": 12.0,
-   "guanina": 12.0,
-   "hipoxantina": 26.0,
-   "xantina": 112.0
-  },
-  "purinas_fuente": {
-   "desde": "Beef brain, raw",
-   "confianza": "ALTA",
-   "nota": "mismo órgano",
-   "pais": "USA",
-   "anio": "1976"
-  },
-  "fuentes_id": {
-   "usda": "168622"
-  },
-  "cero_verificado": {
-   "epa": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:168622 · «Beef, variety meats and by-products, brain, raw» · columna «PUFA 20:5 n-3 (EPA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
-   "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:168622 · «Beef, variety meats and by-products, brain, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía.",
-   "linolenico": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:168622 · «Beef, variety meats and by-products, brain, raw» · columna «PUFA 18:3 n-3 c,c,c (ALA)» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
-  }
- },
- {
   "nombre": "Corazón de pavo",
   "tipo": "Alimento",
   "categoria": "Carne muscular",
@@ -14333,7 +14249,7 @@
    "taurina": 0,
    "lcarnitina": 0
   },
-  "nota_datos": "⚠️ FICHA NUEVA DEL 8 DE SEPTIEMBRE, y nace de un error que hubo que deshacer. Existia una sola ficha con nombre de TERNERA y datos de VACA -- coincidian celda a celda con el registro de vaca de USDA y no con el de ternera. En vez de elegir una especie y perder la otra, se parten en dos: la de vaca se queda con sus datos y su nombre, y esta trae los de ternera de verdad. Importa porque no es un decimal: son animales con composicion muy distinta, y quien compra en la carniceria compra uno de los dos. Fuente PRIMARIA: BEDCA 1047 «Sesos, de ternera, crudos» -- es la unica de las tres piezas que tiene ficha espanola, y por el orden de Bases.md manda ella. Lo que BEDCA no publica (los doce aminoacidos, la colina) sale de USDA FDC 174351 «Veal, variety meats and by-products, brain, raw», que es el mismo alimento. El contraste con la de vaca (FDC 168622): calcio 10-12 frente a 43, selenio 10-11,6 frente a 21,3, DHA 0,36 frente a 0,851. Procedencia celda a celda: BEDCA 1047 (27 celdas); USDA 174351 (13 celdas). ⚠️ 13 sep 2026: `taurina` y `lcarnitina` NO TENÍAN NI LA CLAVE. Las dos fichas de esta pareja nacieron el 8 de septiembre al partir en dos la que mezclaba vaca y ternera, y se quedaron fuera de la pasada de taurina/L-carnitina del 7, que puso las dos claves en las otras 161. Se añaden a 0 y DECLARADAS EN `sin_dato`, que es hueco y no cero: es una víscera, y la víscera tiene taurina — el cero sería falso. (Comparar con el apio, donde el 0 de B12 sí es real y va en `cero_verificado`.)",
+  "nota_datos": "⚠️ SOLO DE ANIMAL DE MENOS DE 12 MESES, Y ES UN LÍMITE LEGAL, NO UNA PREFERENCIA (13 de septiembre de 2026). El Reglamento (CE) 999/2001, anexo V, en su versión CONSOLIDADA vigente (comprobada en EUR-Lex, `eli/reg/2001/999/2024-01-01`), define como material especificado de riesgo: «as regards bovine animals: (i) the skull excluding the mandible and including the brain and eyes, and the spinal cord of animals aged over 12 months». Y el Reglamento (CE) 1069/2009 cierra la puerta en dos pasos: su artículo 8 dice «Category 1 material shall comprise the following animal by-products: […] (b) the following material: (i) specified risk material», y su artículo 35 dice «Operators may place pet food on the market provided: (a) the products are derived: (i) from Category 3 material […] or (iii) in the case of raw petfood, from material referred to in Article 10(a) and (b)(i) and (ii)» -- o sea categoría 3, y esto es categoría 1. La ternera española se sacrifica por debajo del año, así que SU encéfalo está fuera de la definición y esta ficha es legal; el de un animal mayor no lo es, y por eso salió del catálogo la ficha «Cerebro de vaca» el mismo día. Quien la use tiene que poder afirmar la edad del animal. || ⚠️ FICHA NUEVA DEL 8 DE SEPTIEMBRE, y nace de un error que hubo que deshacer. Existia una sola ficha con nombre de TERNERA y datos de VACA -- coincidian celda a celda con el registro de vaca de USDA y no con el de ternera. En vez de elegir una especie y perder la otra, se parten en dos: la de vaca se queda con sus datos y su nombre, y esta trae los de ternera de verdad. Importa porque no es un decimal: son animales con composicion muy distinta, y quien compra en la carniceria compra uno de los dos. Fuente PRIMARIA: BEDCA 1047 «Sesos, de ternera, crudos» -- es la unica de las tres piezas que tiene ficha espanola, y por el orden de Bases.md manda ella. Lo que BEDCA no publica (los doce aminoacidos, la colina) sale de USDA FDC 174351 «Veal, variety meats and by-products, brain, raw», que es el mismo alimento. El contraste con la de vaca (FDC 168622): calcio 10-12 frente a 43, selenio 10-11,6 frente a 21,3, DHA 0,36 frente a 0,851. Procedencia celda a celda: BEDCA 1047 (27 celdas); USDA 174351 (13 celdas). ⚠️ 13 sep 2026: `taurina` y `lcarnitina` NO TENÍAN NI LA CLAVE. Las dos fichas de esta pareja nacieron el 8 de septiembre al partir en dos la que mezclaba vaca y ternera, y se quedaron fuera de la pasada de taurina/L-carnitina del 7, que puso las dos claves en las otras 161. Se añaden a 0 y DECLARADAS EN `sin_dato`, que es hueco y no cero: es una víscera, y la víscera tiene taurina — el cero sería falso. (Comparar con el apio, donde el 0 de B12 sí es real y va en `cero_verificado`.)",
   "sin_dato": [
    "cloruro",
    "colina",

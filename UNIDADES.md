@@ -391,11 +391,52 @@ el aceite de hígado de bacalao.
 zanahoria 1.346 (= β-caroteno ÷ 6), boniato 667 (= RAE), rúcula 596 (que
 no es ni lo uno ni lo otro: RAE sería 119 y ÷6 sería 237).
 
-**Por qué importa, con la medida hecha.** En los 216 menús del catálogo
-precalculado, **el 83 % de la vitamina A viene de verduras y frutas** —o
-sea de caroteno, no de retinol— y **103 de los 216 no llegarían al mínimo
-de FEDIAF (526,2 µg/1000 kcal) si el caroteno no contara**. El peor, un
-menú de lactancia, declara 11.191 µg y solo **29** son retinol de verdad.
+**Por qué importa, con la medida hecha.**
+
+⚠️ **CORREGIDO EL 13 DE SEPTIEMBRE DE 2026, y aquí había TRES cifras y las tres
+estaban mal.** Decía que «el 83 % de la vitamina A viene de verduras y frutas»,
+que «103 de los 216 no llegarían al mínimo si el caroteno no contara» y que el
+peor menú «declara 11.191 µg y solo 29 son retinol de verdad». Remedido sobre
+los mismos 216 menús, alimento por alimento y dividiendo por las kcal reales:
+
+| De dónde viene la vitamina A de los 216 menús | |
+|---|---|
+| Hígado | **78,3 %** |
+| Multivitamínico | **12,4 %** |
+| **Verdura y fruta** | **6,9 %** |
+| Todo lo demás | 2,4 % |
+
+Y las otras dos: los menús que no llegarían al mínimo sin el caroteno son
+**1 de 216**, no 103. Y el menú con más vitamina A no es de lactancia sino de
+crecimiento (`Grande_CachorroJoven#2`): declara **12.776 µg**, de los que
+**9.667 vienen de fuera de la verdura** — 76,87 g de hígado de pato aportan
+9.212 µg él solo.
+
+**De dónde salía el 83 %, porque importa no repetirlo.** No era una invención:
+el método contaba **la vitamina A del hígado como si fuera caroteno**, y la del
+hígado es retinol puro. Se reproduce: poniendo a cero la vitamina A del hígado
+**y** de los multivitamínicos salen mediana 74 % y **máximo 100 %**, y el
+documento original decía «mediana 83 %, máximo 100 %». Ese máximo del 100 % es
+la huella. Lo delata además su propia frase: en un menú con 5.500 µg de hígado
+dentro, «solo 29 son retinol» sólo puede salir si el hígado está contado en el
+lado equivocado.
+
+**Y la dirección del riesgo, que también estaba contada al revés.** Contarle
+menos vitamina A a la zanahoria **no es el lado seguro**: es seguro contra el
+mínimo y **peligroso contra el máximo**, porque la vitamina A es de los pocos
+nutrientes con techo y contar de menos deja que un menú se pase sin que el
+semáforo lo vea. Lo que nos permite estar tranquilos hoy **es la medida, no el
+argumento**: el menú más alto va a **10.000 µg/1000 kcal contra un techo de
+30.000**, o sea el **33 %** — y el techo son 30.000 en TODAS las etapas,
+también en crecimiento, así que el denominador es el mismo para el peor caso.
+**Menús por encima del máximo: 0. Por debajo del mínimo: 0.**
+
+**Para rehacer la medida** (y no fiarse de esta): recorrer los 216 menús de
+`catalogo_menus.json` —los 36 de `CATALOGO` más los 180 de
+`CATALOGO_VARIANTES`—, sumar `vitA × gramos / 100` por alimento agrupando por
+categoría, y dividir por las kcal reales del menú. Comprobado que da lo mismo
+con el catálogo de `main` y con el de la rama, y que no cambia si se miran solo
+los 36 base o si se divide por el DER en vez de por las kcal.
 
 **Y con el factor de FEDIAF en la mano, el problema es otro y más
 concreto**: no es que no sepamos si el caroteno cuenta —cuenta, 4 a 1—, es

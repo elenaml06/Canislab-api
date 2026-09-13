@@ -132,6 +132,17 @@ VISCERAS = [
     # veces menos grasa. Quien compra mollejas en la carnicería compra uno de
     # los dos, así que estaban los dos o el menú mentía.
     "Timo de vaca", "Timo de ternera",
+    # ⚠️ Y EL 13 DE SEPTIEMBRE «Cerebro de vaca» SALIÓ DEL CATÁLOGO ENTERO, que
+    # es más fuerte que estar fuera del automático, y por un motivo LEGAL y no
+    # nutricional: el encéfalo bovino de un animal de más de 12 meses es material
+    # especificado de riesgo (Reg. 999/2001, anexo V consolidado), o sea material
+    # de categoría 1 (Reg. 1069/2009, art. 8), y la comida para mascotas sale de
+    # categoría 3 (art. 35). Una vaca pasa de 12 meses por definición.
+    # «Cerebro de ternera» SE QUEDA, porque la ternera española se sacrifica por
+    # debajo del año, con la condición escrita en su propia ficha. Lo vigila el
+    # BLOQUE 51. Ver `DATOS_QUE_FALTAN.md`.
+    # Lo que sigue es la historia de por qué ninguna de las dos entraba YA en el
+    # automático, que es una cuestión distinta y sigue valiendo para la de ternera.
     # ⚠️ QUITADO "Cerebro de vaca" (7 septiembre), mismo criterio que la
     # laringe de vacuno: se queda en el catálogo para quien lo elija A MANO,
     # pero el automático ya no lo propone. Y esta vez el motivo se midió.

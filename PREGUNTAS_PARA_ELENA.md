@@ -131,12 +131,23 @@ europeo (BEDCA) usa 6 a 1. El americano (USDA/RAE), 12 a 1.
 
 **Lo medido, sobre los 216 menús precalculados:**
 
+⚠️ **CORREGIDO EL 13 DE SEPTIEMBRE: lo que había aquí estaba mal**, porque el
+método contaba la vitamina A del hígado como si fuera caroteno y es retinol puro.
+
+| De dónde viene la vitamina A de los 216 menús | |
+|---|---|
+| Hígado | **78,3 %** |
+| Multivitamínico | **12,4 %** |
+| **Verdura y fruta** | **6,9 %** |
+| Todo lo demás | 2,4 % |
+
 ```
-% de la vitamina A que viene de verduras y frutas ..... mediana 83 %
-menús que NO llegarían al mínimo de FEDIAF sin contar
-el caroteno ........................................... 103 de 216
-el peor (Grande_Lactante): declara 11.191 µg,
-        de retinol de verdad ..........................        29
+menús que NO llegarían al mínimo sin el caroteno ...... 1 de 216   (no 103)
+el menú con más vitamina A: Grande_CachorroJoven#2
+        declara ...................................... 12.776 µg
+        de los cuales NO son de verdura ..............  9.667 µg
+menús por encima del máximo (30.000 µg/1000 kcal) ..... 0 de 216
+el más alto va al ....................................    33 % del techo
 ```
 
 Veintinueve microgramos de retinol en el menú de una perra lactante, y sale
@@ -827,11 +838,17 @@ separadas**: CIQUAL tiene «Rétinol» y «Beta-Carotène», y USDA tiene «Reti
 
 **Así que lo que falta no es el dato: es la decisión.** Y es de calado, porque
 recalcular la columna con el 4:1 de FEDIAF mueve la vitamina A de casi todas las
-fichas vegetales, y medido antes: el **83 %** de la vitamina A de los 216 menús del
-catálogo viene de verdura y fruta, o sea de caroteno. Una ficha con β-caroteno ÷6
-declara un **33 % menos** de lo que FEDIAF le contaría; una con RAE (÷12), un 67 %
-menos. **Contra el suelo eso va del lado peligroso**, y el semáforo no lo ve porque
-comprueba contra estos mismos números.
+fichas vegetales. ⚠️ Y aquí ponía que **el 83 %** de la vitamina A de los menús
+viene de verdura: **era falso**, son el **6,9 %** (remedido el 13 de septiembre; el
+78,3 % viene del hígado). Una ficha con β-caroteno ÷6 declara un **33 % menos** de
+lo que FEDIAF le contaría; una con RAE (÷12), un 67 % menos.
+⚠️ **Y la dirección del riesgo estaba contada al revés**: contar de menos el
+caroteno es seguro contra el MÍNIMO y **peligroso contra el MÁXIMO**, porque la
+vitamina A es de los pocos nutrientes con techo. Lo que permite estar tranquilos
+es la medida y no el argumento: **0 de 216 menús pasan del máximo** y el más alto
+va al **33 %** del techo. Y con el 6,9 %, el arreglo importa **menos** de lo que
+decía esta sección: lo que lo hacía urgente era el «103 de 216 menús dependen del
+caroteno para llegar al mínimo», y es **1 de 216**.
 
 **Lo que necesito de ti**: si esto lo decide el nutricionista (yo creo que sí) o si
 quieres que lo prepare ya con el 4:1 de FEDIAF y se revise después. No lo he tocado.
