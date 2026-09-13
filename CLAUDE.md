@@ -890,6 +890,32 @@ nombres, médula espinal incluida) y falla si la de ternera pierde su condición
 edad — sin ella, la ficha afirma que vale cualquier encéfalo de bovino. Comprobado
 con el fallo puesto de las tres formas. Detalle y citas: `DATOS_QUE_FALTAN.md`.
 
+⚠️ **Y sacar la ficha NO bastaba: la empeoraba.** Lo vio Elena el mismo día, y la
+frase describe el fallo entero:
+
+> «a lo mejor la persona que vaya a comprar al supermercado pide cerebro de ternera
+> y dice: no tengo, pero tengo de vaca. Y problema.»
+
+Antes estaban **las dos** en la lista y la diferencia se veía. Ahora solo aparece
+«de ternera», y quien la lea **no tiene forma de saber que la otra no vale**. Y la
+sustitución pasa en el mostrador, donde el motor no está: lo único que puede hacer
+es **decirlo donde se lee**.
+
+De ahí sale el campo **`aviso_al_comprar`**, que sale por **las dos puertas** —la
+misma forma que el BLOQUE 64 con los avisos de patología, y por el mismo motivo:
+
+| Puerta | Cuándo se lee | Por qué hace falta |
+|---|---|---|
+| `problemas_seguridad` | con el menú ya hecho | es el canal que la app **ya pinta en los ocho caminos** (generar, semana, varios perros, editar, revalidar), así que **no hay que tocar la app** |
+| `GET /alimentos` | **antes**, al elegir el alimento a mano | sin ella, quien lo elige a mano no lee nada hasta el final |
+
+Con solo la primera, el camino de «elegir a mano» no avisa; con solo la segunda,
+quien deja elegir al motor no lo lee nunca. Lo vigila el BLOQUE 51 con el fallo
+puesto de cuatro formas, y exige además que **una ficha con una condición LEGAL en
+su `nota_datos` tenga aviso**: una condición que solo vive en una nota técnica no
+la lee quien va a la carnicería, que es justo donde ocurre la sustitución que la
+condición existe para evitar.
+
 ### ⚠️ Y una medida de la vitamina A que estaba mal en cinco sitios
 
 *(13 de septiembre.)* El repo afirmaba, en `UNIDADES.md`, `HALLAZGOS_LECTURA_FUENTES.md`,

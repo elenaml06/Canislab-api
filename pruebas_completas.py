@@ -8988,6 +8988,72 @@ elif "12 meses" not in (_ter51.get("nota_datos") or "").lower():
         "MESES. Sin ella la ficha afirma que vale cualquier encéfalo de bovino, y el de un "
         "animal mayor es material especificado de riesgo. El límite es legal, no nutricional.")
 
+# ── 5. Y el aviso llega a QUIEN COMPRA, por las DOS puertas.
+#
+# ⚠️ POR QUÉ EXISTE, con la frase que lo pidió (13 de septiembre). Elena, al
+# leer que «Cerebro de vaca» había salido del catálogo por ser material
+# especificado de riesgo:
+#
+#   «a lo mejor la persona que vaya a comprar al supermercado pide cerebro de
+#    ternera y dice: no tengo, pero tengo de vaca. Y problema.»
+#
+# Y es un agujero que sacar la ficha NO TAPA -- la empeora, de hecho: antes
+# estaban las dos en la lista y la diferencia se veía; ahora solo aparece «de
+# ternera» y quien la lea no tiene forma de saber que la otra no vale. La
+# sustitución pasa en el mostrador, donde el motor no está, así que lo único
+# que el motor puede hacer es DECIRLO, y decirlo donde se lee.
+#
+# Son DOS puertas y hacen falta las dos, que es la misma forma del BLOQUE 64
+# con los avisos de patología:
+#   · `problemas_seguridad`, que sale CON el menú ya hecho (lista de la compra);
+#   · `GET /alimentos`, que sale ANTES, al elegir el alimento a mano.
+# Con solo la primera, quien lo elige a mano no lee nada hasta el final; con
+# solo la segunda, quien deja que el motor elija no lo lee nunca.
+_CONAVISO51 = [_a51 for _a51 in _CAT51 if _a51.get("aviso_al_comprar")]
+if not _CONAVISO51:
+    fallos.append("BLOQUE51: no queda ni un `aviso_al_comprar` en el catálogo. Al menos "
+                  "«Cerebro de ternera» tiene que llevarlo: es legal solo por debajo de los "
+                  "12 meses y en la carnicería ofrecen sesos de vaca en su lugar.")
+for _a51 in _CONAVISO51:
+    if len(_a51["aviso_al_comprar"]) < 60:
+        fallos.append(f"BLOQUE51: el `aviso_al_comprar` de «{_a51['nombre']}» son "
+                      f"{len(_a51['aviso_al_comprar'])} caracteres. Tiene que decir QUÉ pasa y "
+                      f"QUÉ hacer, no solo que hay un problema.")
+
+# Una ficha cuya `nota_datos` declara una condición LEGAL tiene que avisar. Si
+# no, la condición vive solo donde nadie que compre va a leerla.
+for _a51 in _CAT51:
+    _nd51 = (_a51.get("nota_datos") or "").lower()
+    if "reglamento" in _nd51 and "12 meses" in _nd51 and not _a51.get("aviso_al_comprar"):
+        fallos.append(
+            f"BLOQUE51: «{_a51['nombre']}» lleva una condición LEGAL en su `nota_datos` y no "
+            f"tiene `aviso_al_comprar`. Una condición que solo vive en una nota técnica no la "
+            f"lee quien va a la carnicería, que es exactamente donde se produce la "
+            f"sustitución que la condición existe para evitar.")
+
+# Y que llegue de verdad por las dos puertas, no que esté escrito y no salga.
+_MEN51 = {"Cerebro de ternera": 20.0, "Pollo pechuga sin piel": 200.0}
+try:
+    _probs51 = _api._seguridad_completa(_MEN51, {_a51["nombre"]: _a51 for _a51 in _CAT51},
+                                        1000.0, "Adulto")
+except Exception as _e51:
+    _probs51 = None
+    fallos.append(f"BLOQUE51: `_seguridad_completa` reventó al mirar el aviso de compra: {_e51}")
+if _probs51 is not None and not any("Cerebro de ternera" in _p51 and "12 meses" in _p51
+                                    for _p51 in _probs51):
+    fallos.append(
+        "BLOQUE51: el `aviso_al_comprar` de «Cerebro de ternera» NO sale por "
+        "`problemas_seguridad`, que es el canal que la app pinta en los ocho caminos. "
+        "Escrito en la ficha y sin salir es no estar.")
+_alim51 = _c.get("/alimentos").json()
+_vis51 = [x for v in _alim51.values() for x in v if x["nombre"] == "Cerebro de ternera"]
+if not _vis51:
+    fallos.append("BLOQUE51: «Cerebro de ternera» no aparece en `GET /alimentos`.")
+elif not (_vis51[0].get("aviso_al_comprar") or ""):
+    fallos.append(
+        "BLOQUE51: `GET /alimentos` no sirve el `aviso_al_comprar`. Es la puerta que lee quien "
+        "elige el alimento A MANO, antes de que haya menú -- sin ella ese camino no avisa.")
+
 _con_id51 = sum(1 for _a51 in _CAT51 if _a51.get("fuentes_id"))
 if _con_id51 < 95:
     fallos.append(f"BLOQUE51: solo {_con_id51} fichas tienen `fuentes_id` y habia 99. "

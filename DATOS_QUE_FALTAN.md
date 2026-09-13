@@ -1275,6 +1275,26 @@ una ficha de **sesos de cordero**, la norma sí la alcanza — y su umbral no es
 la edad, es «o que tenga un incisivo permanente», que es un dato que el catálogo no
 tiene forma de saber.
 
+### ⚠️ Y sacar la ficha no bastaba: hubo que AVISAR
+
+Lo vio Elena el mismo día: «a lo mejor la persona que vaya a comprar al supermercado
+pide cerebro de ternera y dice: no tengo, pero tengo de vaca. Y problema.»
+
+Y tiene razón en algo incómodo: **sacar la ficha empeoró ese riesgo concreto**.
+Antes estaban las dos en la lista y la diferencia se veía; ahora solo aparece «de
+ternera» y quien la lea no tiene forma de saber que la otra no vale. La sustitución
+ocurre **en el mostrador**, donde el motor no está.
+
+Por eso la ficha lleva ahora **`aviso_al_comprar`**, y sale por **las dos puertas**:
+`problemas_seguridad` (con el menú hecho, el canal que la app ya pinta en los ocho
+caminos) y `GET /alimentos` (antes, al elegirlo a mano). El texto dice qué pasa y
+**qué hacer**, no solo que hay un problema:
+
+> «Tienen que ser sesos de TERNERA, de un animal de menos de 12 meses. Si en la
+> carnicería no tienen y te ofrecen sesos de vaca, de buey o de añojo, NO valen y no
+> es lo mismo aunque lo parezca: por ley no se pueden dar a un animal. Si no hay de
+> ternera, mejor cambia de alimento y vuelve a generar el menú.»
+
 Lo vigila el **BLOQUE 51**, que falla si `Cerebro de vaca` (o médula espinal de
 bovino con cualquiera de sus nombres) vuelve al catálogo, y también si
 `Cerebro de ternera` pierde de su ficha la condición de los 12 meses — porque sin

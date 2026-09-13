@@ -14269,6 +14269,7 @@
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1047 · «Sesos, de ternera, crudos» · columna «fibra, dietetica total» = 0.0 g. `value_type` LZ, o sea una MEDIDA y no una celda vacía.",
    "vitD": "Cero de la fuente que manda, comprobado el 2026-09-13: bedca:1047 · «Sesos, de ternera, crudos» · columna «Vitamina D» = 0.0 ug. `value_type` AR, o sea una MEDIDA y no una celda vacía."
-  }
+  },
+  "aviso_al_comprar": "Tienen que ser sesos de TERNERA, de un animal de menos de 12 meses. Si en la carnicería no tienen y te ofrecen sesos de vaca, de buey o de añojo, NO valen y no es lo mismo aunque lo parezca: por ley no se pueden dar a un animal. Si no hay de ternera, mejor cambia de alimento y vuelve a generar el menú."
  }
 ]
