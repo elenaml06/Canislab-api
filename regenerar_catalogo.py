@@ -101,24 +101,52 @@ def resolver_uno(al, req, der, etapa, peso, especie=None, proteina=None,
     kw["peso_adulto_esperado_kg"] = peso_adulto
     if especie and proteina:
         kw["restringir_especie"] = {especie: proteina}
+    # ⚠️ LA ESCALERA, Y ESTE SCRIPT NO LA USABA. Hasta el 13 de septiembre aquí
+    # solo se probaba el PRIMER peldaño (`margenes_categoria=MARGENES_V2`), que es
+    # la primera llamada de la API pero NO es lo que la API entrega: `/menu/v2`
+    # envuelve esa llamada en `_escalera_de_relajacion()` y baja de peldaño
+    # cuando no hay menú, diciéndolo.
+    #
+    # CASO REAL ENCONTRADO EL 13 DE SEPTIEMBRE. Nueve variantes de CONEJO no se
+    # regeneraban y el script decía «NO SALE -- se deja el viejo», que se lee como
+    # «necesita más tiempo». No lo era: con 45 s no salían, con 300 s tampoco, y
+    # preguntándole al solver directamente son INFACTIBLES en el primer peldaño y
+    # salen VERDES EN UN SEGUNDO sin las proporciones BARF. O sea que lo que
+    # bloqueaba era la FORMA, que es justo lo que la regla 3 del CLAUDE.md
+    # autoriza a soltar: «lo que se puede relajar es la FORMA, nunca la
+    # nutrición». El catálogo precalculado estaba negando menús que la API sí
+    # entrega.
+    #
+    # Se guarda EN QUÉ PELDAÑO salió cada uno, porque bajar sin decirlo es lo
+    # único que la regla 3 prohíbe.
+    escalones = main._escalera_de_relajacion()
     t0 = time.time()
     mejor = None
-    while time.time() - t0 < segundos:
-        ok, g = mc.resolver(der, etapa, al, req, peso, dosis_maxima_fabricante, **kw)
-        if not ok:
-            continue
+    for margenes_p, supl_p, clave_p in escalones:
+        kw["margenes_categoria"] = margenes_p
+        kw["max_suplementos"] = supl_p
+        while time.time() - t0 < segundos:
+            ok, g = mc.resolver(der, etapa, al, req, peso, dosis_maxima_fabricante, **kw)
+            if not ok:
+                break          # ese peldaño es infactible: se baja, no se insiste
         # ⚠️ CON EL PESO ADULTO TAMBIÉN AQUÍ (9 septiembre). Sin él, el filtro
         # mediría el calcio de un cachorro de raza gigante contra el techo del
         # cachorro pequeño (4250 en vez de 2750) y daría por bueno un menú que
         # la API va a rechazar en cuanto el usuario diga qué perro tiene.
-        if main._tope_patologia_roto(g, al, [], etapa,
-                                     peso_adulto_esperado_kg=peso_adulto):
-            continue
-        v = verificar(g, al, req, der, etapa)
-        if v["semaforo"] == "verde":
-            return g, v
-        mejor = mejor or (g, v)
-    return mejor if mejor else (None, None)
+            if main._tope_patologia_roto(g, al, [], etapa,
+                                         peso_adulto_esperado_kg=peso_adulto):
+                continue
+            v = verificar(g, al, req, der, etapa)
+            # ⚠️ EL NOMBRE DEL PRIMER PELDAÑO NO ES `None`. La escalera lo da como
+            # None, y `main.py` lo traduce a `PELDANO_ESTRICTO` antes de
+            # responder, justo por esto: «"no dice nada" y "estricto" se leen
+            # igual», y quien firma necesita poder afirmar lo segundo. Se usa la
+            # misma constante, no una cadena escrita aquí.
+            nombre_p = clave_p or main.PELDANO_ESTRICTO
+            if v["semaforo"] == "verde":
+                return g, v, nombre_p
+            mejor = mejor or (g, v, nombre_p)
+    return mejor if mejor else (None, None, None)
 
 
 def main_regenerar(solo_base=False, solo=None):
@@ -132,19 +160,21 @@ def main_regenerar(solo_base=False, solo=None):
     for clave, e in d["CATALOGO"].items():
         if not _toca(clave):
             continue
-        g, v = resolver_uno(al, req, e["der"], e["etapa"], e["peso_kg"],
-                            peso_adulto=peso_adulto_de(d, e["tamano"]))
+        g, v, peldano = resolver_uno(al, req, e["der"], e["etapa"], e["peso_kg"],
+                                     peso_adulto=peso_adulto_de(d, e["tamano"]))
         if g is None or v["semaforo"] != "verde":
             fallos.append(clave)
             print("  %-28s NO SALE -- se deja el viejo" % clave, flush=True)
             continue
         e["gramos"] = g
+        e["peldano"] = peldano
         e["semaforo"] = v["semaforo"]
         e["correctos"] = v["correctos"]
         e["total"] = v["correctos"] + len(v["faltan"]) + len(v["se_pasa"])
         cambios.append(clave)
-        print("  %-28s OK  %2d alimentos, %4.0f g, %d/%d"
-              % (clave, len(g), sum(g.values()), e["correctos"], e["total"]), flush=True)
+        print("  %-28s OK  %2d alimentos, %4.0f g, %d/%d%s"
+              % (clave, len(g), sum(g.values()), e["correctos"], e["total"],
+                 "" if peldano == main.PELDANO_ESTRICTO else "  [peldano %s]" % peldano), flush=True)
 
     if not solo_base:
         for clave, lista in d["CATALOGO_VARIANTES"].items():
@@ -154,17 +184,20 @@ def main_regenerar(solo_base=False, solo=None):
                 if not _toca("%s/%s" % (clave, p)):
                     continue
                 cat = CAT_DE.get(p, "Carne muscular")
-                g, v = resolver_uno(al, req, ent["der"], ent["etapa"], ent["peso_kg"],
-                                    cat, p,
-                                    peso_adulto=peso_adulto_de(d, ent["tamano"]))
+                g, v, peldano = resolver_uno(al, req, ent["der"], ent["etapa"],
+                                             ent["peso_kg"], cat, p,
+                                             peso_adulto=peso_adulto_de(d, ent["tamano"]))
                 if g is None or v["semaforo"] != "verde":
                     fallos.append("%s/%s" % (clave, p))
                     print("  %-28s variante %-10s NO -- se deja la vieja"
                           % (clave, p), flush=True)
                     continue
                 var["gramos"] = g
-                print("  %-28s variante %-10s OK (%2d alimentos, %4.0f g)"
-                      % (clave, p, len(g), sum(g.values())), flush=True)
+                var["peldano"] = peldano
+                print("  %-28s variante %-10s OK (%2d alimentos, %4.0f g)%s"
+                      % (clave, p, len(g), sum(g.values()),
+                         "" if peldano == main.PELDANO_ESTRICTO else "  [peldano %s]" % peldano),
+                      flush=True)
 
     json.dump(d, io.open(RUTA, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
     print("\nCATALOGO regenerado: %d de %d" % (len(cambios), len(d["CATALOGO"])), flush=True)
