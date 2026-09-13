@@ -101,7 +101,22 @@ def resolver_uno(al, req, der, etapa, peso, especie=None, proteina=None,
         if main._tope_patologia_roto(g, al, [], etapa,
                                      peso_adulto_esperado_kg=peso_adulto):
             continue
-        v = verificar(g, al, req, der, etapa)
+        # ⚠️ CONTRA LAS KCAL REALES DEL MENÚ, NO CONTRA LAS PEDIDAS (12 de
+        # septiembre, por la noche). Aquí ponía `der` y es el fallo que este
+        # repo ya tiene escrito dos veces: el menú que devuelve el solver no
+        # trae exactamente las kcal que se le piden -- medido, de +1,6 % a
+        # +3,0 % --, y TODOS los mínimos son por 1000 kcal. Con un 3 % de kcal
+        # de más, la concentración baja un 3 % y el nutriente que iba al 99 %
+        # se cae por debajo del mínimo. Así se guardaron menús que salían
+        # VERDES contra las kcal pedidas y ÁMBAR contra las suyas: 41 de 216,
+        # casi todos por linoleico, manganeso, cloruro o yodo, y ninguno por
+        # más de un 1 %. Es la misma regla que la regla 2 de CLAUDE.md -- los
+        # límites se miden sobre las kcal reales -- y la misma que aplica
+        # `_garantizar_verificado`, que es justo por lo que estos menús no
+        # llegaban al perro: la vía rápida los verificaba otra vez, los tiraba
+        # y había que resolver igual. Peso muerto, y la semana entera lenta.
+        der_real = sum(al[n]["energia"] * gr / 100.0 for n, gr in g.items() if n in al)
+        v = verificar(g, al, req, der_real or der, etapa)
         if v["semaforo"] == "verde":
             return g, v
         mejor = mejor or (g, v)

@@ -171,6 +171,44 @@ def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=N
 # mismas constantes que dentro de resolver() -- sin resolver nada, solo
 # calculando), para poder descartarlo y caer al solver en vivo si ya
 # no es seguro según las reglas actuales, en vez de servirlo ciego.
+def _menu_precalculado_cabe_en_el_presupuesto(gramos, al, presupuesto):
+    """¿Cabe este menú YA CALCULADO en lo que queda del presupuesto semanal?
+
+    ⚠️ AÑADIDO EL 12 DE SEPTIEMBRE DE 2026, Y ERA UN AGUJERO REAL.
+
+    Las vías rápidas del catálogo sirven un menú ya calculado y lo comprueban
+    con `_menu_precalculado_es_seguro`, que mira los topes DIARIOS de seguridad
+    cronica. Lo que NO miraban es el presupuesto SEMANAL, que es mas estricto:
+    para vitD y yodo el reparto es `tope diario x 7 x 0,75` entre los dias, o
+    sea un 25 % por debajo del tope diario.
+
+    Con eso, un menu del catalogo podia gastar mas de lo que le tocaba de la
+    semana y la frase de `_presupuesto_semanal_inicial` -- «es matematicamente
+    imposible que la SUMA de una semana entera supere el limite seguro» --
+    dejaba de ser verdad en cuanto el menu venia enlatado.
+
+    Medido antes de arreglarlo: una semana de 7 menus de un adulto de 22 kg se
+    queda en el 40-47 % del presupuesto, asi que HOY no se pasaba. Pero eso era
+    suerte del catalogo, no una restriccion: bastaba una variante con mas
+    pescado azul o mas higado para romperlo, sin que nada lo dijera.
+
+    Si no cabe se devuelve False y quien llama se baja al camino normal, que
+    resuelve de verdad pasandole el presupuesto al solver.
+    """
+    if not presupuesto:
+        return True
+    def _suma(clave):
+        return sum(al.get(n, {}).get("nutrientes", {}).get(clave, 0) * g / 100.0
+                   for n, g in gramos.items())
+    for clave in ("vitD", "yodo", "selenio"):
+        tope = presupuesto.get(clave)
+        if tope is None:
+            continue
+        if _suma(clave) > tope + 1e-9:
+            return False
+    return True
+
+
 def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
     from seguridad import (
         TIAMINASA, MERCURIO_ALTO, TOPE_TIAMINASA_KCAL, TOPE_MERCURIO_KCAL,
@@ -1310,8 +1348,14 @@ class PeticionDER(BaseModel):
     # apunta a 34kg de adulto, no a los 26kg de la media -- 192 kcal/día
     # de diferencia, confirmado.
     meses: Optional[float] = None
-    peso_min_raza: Optional[float] = None
-    peso_max_raza: Optional[float] = None
+    # ⚠️ AQUI HABIA `peso_min_raza` Y `peso_max_raza`, Y SE HAN QUITADO (12 de
+    # septiembre, noche). Servian para recortar el peso adulto estimado al
+    # rango de la raza, y ese recorte ya no existe: el peso adulto lo decide la
+    # trayectoria del propio cachorro con la Tabla VII-8a de FEDIAF, que es lo
+    # que hacen las curvas de WALTHAM y MyVetDiet. El motivo completo y la
+    # medida estan en `der.peso_adulto_desde_curva`. No se dejan aceptandose y
+    # sin usar a proposito: un campo que se manda y no hace nada es la clase de
+    # cosa que nadie descubre.
 
 
 # ⚠️ LOS PREMIOS, QUE DILUYEN LA RACION (11 septiembre). Van en una clase
@@ -1695,9 +1739,7 @@ def endpoint_der(datos: PeticionDER):
         semana_lactancia=datos.semana_lactancia,
         # ⚠️ AÑADIDO (5 agosto, noche): sin esto, la curva de crecimiento
         # real nunca se activaba -- ver nota en PeticionDER.
-        meses=datos.meses,
-        peso_min_raza=datos.peso_min_raza,
-        peso_max_raza=datos.peso_max_raza)
+        meses=datos.meses)
     return resultado
 
 
@@ -2687,8 +2729,12 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                     else:
                         gramos_r[n] = round(g * factor, 2)
                 ficha_r = verificar_v2(gramos_r, al, req, datos.der_objetivo, datos.etapa_requisitos)
-                if ficha_r["semaforo"] == "verde" and _menu_precalculado_es_seguro(
-                        gramos_r, al, datos.der_objetivo, datos.peso_perro_kg):
+                if (ficha_r["semaforo"] == "verde"
+                        and _menu_precalculado_es_seguro(gramos_r, al, datos.der_objetivo,
+                                                         datos.peso_perro_kg)
+                        # ⚠️ Y QUE QUEPA EN LO QUE QUEDA DE LA SEMANA (12-sep).
+                        and _menu_precalculado_cabe_en_el_presupuesto(
+                            gramos_r, al, datos.presupuesto_semanal_restante)):
                     problemas_r = _seguridad_completa(gramos_r, al, datos.der_objetivo,
                                                        datos.etapa_requisitos, datos.patologias,
                                                        peso_perro_kg=datos.peso_perro_kg)
@@ -2767,8 +2813,12 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                 else:
                     gramos_reescalados[n] = round(g * factor, 2)
             ficha_variante = verificar_v2(gramos_reescalados, al, req, datos.der_objetivo, datos.etapa_requisitos)
-            if ficha_variante["semaforo"] == "verde" and _menu_precalculado_es_seguro(
-                    gramos_reescalados, al, datos.der_objetivo, datos.peso_perro_kg):
+            if (ficha_variante["semaforo"] == "verde"
+                    and _menu_precalculado_es_seguro(gramos_reescalados, al, datos.der_objetivo,
+                                                     datos.peso_perro_kg)
+                    # ⚠️ Y QUE QUEPA EN LO QUE QUEDA DE LA SEMANA (12-sep).
+                    and _menu_precalculado_cabe_en_el_presupuesto(
+                        gramos_reescalados, al, datos.presupuesto_semanal_restante)):
                 problemas_variante = _seguridad_completa(gramos_reescalados, al, datos.der_objetivo,
                                                           datos.etapa_requisitos, datos.patologias,
                                                           peso_perro_kg=datos.peso_perro_kg)
@@ -5377,7 +5427,7 @@ def verificar(origin: Optional[str] = Header(default=None)):
     import hashlib, os, json
     SELLOS = SELLOS_DE_LOS_DATOS
     SELLOS_CRUDOS = {
-        "der.py": "c8fed4ad9f446c23",   # ⚠️ 12 sep (madrugada): LA BANDA IDEAL DEL BCS ES 4-5 (§7.1.3 y §7.2.4.1 de FEDIAF, las dos sobre Kealy 2002) -- a un perro en BCS 4 se le subia el peso objetivo un 11 %, y por debajo el destino pasa a ser el BCS 4 y no el 5. Y la banda de la Tabla VII-8a se elige ahora SIN ITERAR: es una funcion a trozos y el bucle tenia dos puntos fijos (52,6 y 46,6 kg para el mismo cachorro), asi que este repo y la app discrepaban en 209 kcal/dia. Se recorren las cinco bandas y se coge la primera autoconsistente: determinista y la mas pequena, que es menos kcal. Y se borra la tabla WALTHAM, que no tenia fuente y hacia que fuera del rango de FEDIAF los dos repos dieran cosas distintas. | 11 sep (noche): LA CURVA DE CRECIMIENTO PASA A SER LA ECUACION DE FEDIAF. La Tabla VII-8a publica cinco ecuaciones por banda de peso adulto, validas de las 8 semanas al ano, y aqui habia una tabla cuyo propio comentario decia que venia de "reproducciones divulgativas" de las curvas WALTHAM y NO del texto del estudio. Medido: en el cachorro de mas de 47,5 kg de adulto iba 12 puntos por debajo a los 6 meses (45,0 % contra 57,0 %), y eso son ~9 % de kcal DE MAS (2479 contra 2269 en uno de 30 kg) justo donde FEDIAF avisa de deformidades esqueleticas por sobrealimentar. Ningun caso de `der_casos.json` la ejercia, asi que el contrato no se mueve. La tabla WALTHAM se queda de respaldo para lo que FEDIAF no cubre (<8 semanas y >1 ano). Lo vigila el BLOQUE 96, incluido el emparejamiento banda<->ecuacion. | 10 sep: la Tabla 5-3 de SACN5 da LA CIFRA del frio que FEDIAF deja como rango de 1 a 9 -- pelo corto +95 %, pelo largo +59,5 %, Labrador +25 %, Gran Danes +22 %, cada una con su salto de temperatura. El comentario decia que no hay cifra y era falso: lo era de FEDIAF, no del conjunto de las fuentes. Lo que falta sigue siendo la PREGUNTA en la ficha, que es producto. | 9 sep (3): la §7.2.3.5 de FEDIAF, leida entera, escrita en der.py -- las tres cosas que anade a la Tabla VII-7 y por que no se aplica ninguna: el frio (10-90 % mas de calorias durmiendo fuera en invierno; hueco real, falta la pregunta en la ficha), el suelo de 70 kcal/kg^0,75 de la literatura contra nuestros 95 de la recomendacion, y la termogenesis de la comida (~10 %, sube con proteina y con mas tomas, sin cifra para ninguna de las dos). | 9 sep (2): el escalon de edad pasa a ser el de la Tabla VII-6 de FEDIAF -- 130 (1-2 anos) / 110 (3-7) / 95 (>7), o sea +20 el joven y -15 el senior contra el +15/-7 de Thes 2014 que habia; nuestro -7 era un -6,4 % cuando FEDIAF dice -13,6 % y SACN5 cap.5 dice 10-20 %. Y el grupo "joven" era CODIGO MUERTO: existia en AJUSTE_EDAD y no se pasaba nunca, ni aqui ni en el front, asi que un perro de ano y medio recibia lo mismo que uno de cinco. | 9 sep: la cifra de raza de la Tabla VII-7 va EN VEZ del nivel de actividad, y lo dice la propia guia (la frase que presenta la tabla, y la seccion 7.2.3.4: la diferencia de raza YA CONTIENE la de actividad). Cierra PREGUNTAS_ABIERTAS.md P-11; lo separa de las lecturas «suelo» y «sumar» el BLOQUE 54 apartado 2-bis. | 8 sep: el DER verificado contra FEDIAF 2025 (Tablas VII-7 y VII-8b) y cerrado -- ver DECISIONES.md D-11. Cambian TRES cosas: se quita el tope de x6 RER en lactancia (no es de FEDIAF y recortaba hasta un 33 %), se adoptan las dos razas con cifra propia de FEDIAF (Gran Danes 200, Terranova 105; un Gran Danes recibia el 55 % de lo que le toca), y el respaldo de crecimiento pasa a la regla de SACN5 por edad (3 x RER hasta los 4 meses, 2 x RER despues) -- de sus tres escalones viejos, DOS eran codigo muerto. Lo vigila el BLOQUE 54.
+        "der.py": "acbeb53b232c8004",   # ⚠️ 12 sep (noche): EL PESO ADULTO DE UN CACHORRO YA NO SE RECORTA AL RANGO DE SU RAZA. Lo decide su propia trayectoria con la Tabla VII-8a, que es lo que hacen las curvas de WALTHAM (el estandar de raza les sirve solo para ELEGIR LA BANDA) y MyVetDiet (llama a su tabla de 180 razas "pesos indicativos"). Medido sobre las 270 razas a 4, 6 y 9 meses: movia 47 de 1620 casos, mediana 3,0 % de kcal y 6,9 % el peor, y casi siempre hacia ARRIBA en cachorros que apuntan por debajo del minimo de su raza -- al Mastin Español de 9 meses le anadia 152 kcal/dia, y es raza gigante, donde FEDIAF avisa de deformidades esqueleticas por sobrealimentar. Los dos parametros se van con el recorte, aqui y en el cuerpo de POST /der: uno que se acepta y no hace nada es peor. Lo vigila el apartado 9 del BLOQUE 96. | 12 sep (madrugada): LA BANDA IDEAL DEL BCS ES 4-5 (§7.1.3 y §7.2.4.1 de FEDIAF, las dos sobre Kealy 2002) -- a un perro en BCS 4 se le subia el peso objetivo un 11 %, y por debajo el destino pasa a ser el BCS 4 y no el 5. Y la banda de la Tabla VII-8a se elige ahora SIN ITERAR: es una funcion a trozos y el bucle tenia dos puntos fijos (52,6 y 46,6 kg para el mismo cachorro), asi que este repo y la app discrepaban en 209 kcal/dia. Se recorren las cinco bandas y se coge la primera autoconsistente: determinista y la mas pequena, que es menos kcal. Y se borra la tabla WALTHAM, que no tenia fuente y hacia que fuera del rango de FEDIAF los dos repos dieran cosas distintas. | 11 sep (noche): LA CURVA DE CRECIMIENTO PASA A SER LA ECUACION DE FEDIAF. La Tabla VII-8a publica cinco ecuaciones por banda de peso adulto, validas de las 8 semanas al ano, y aqui habia una tabla cuyo propio comentario decia que venia de "reproducciones divulgativas" de las curvas WALTHAM y NO del texto del estudio. Medido: en el cachorro de mas de 47,5 kg de adulto iba 12 puntos por debajo a los 6 meses (45,0 % contra 57,0 %), y eso son ~9 % de kcal DE MAS (2479 contra 2269 en uno de 30 kg) justo donde FEDIAF avisa de deformidades esqueleticas por sobrealimentar. Ningun caso de `der_casos.json` la ejercia, asi que el contrato no se mueve. La tabla WALTHAM se queda de respaldo para lo que FEDIAF no cubre (<8 semanas y >1 ano). Lo vigila el BLOQUE 96, incluido el emparejamiento banda<->ecuacion. | 10 sep: la Tabla 5-3 de SACN5 da LA CIFRA del frio que FEDIAF deja como rango de 1 a 9 -- pelo corto +95 %, pelo largo +59,5 %, Labrador +25 %, Gran Danes +22 %, cada una con su salto de temperatura. El comentario decia que no hay cifra y era falso: lo era de FEDIAF, no del conjunto de las fuentes. Lo que falta sigue siendo la PREGUNTA en la ficha, que es producto. | 9 sep (3): la §7.2.3.5 de FEDIAF, leida entera, escrita en der.py -- las tres cosas que anade a la Tabla VII-7 y por que no se aplica ninguna: el frio (10-90 % mas de calorias durmiendo fuera en invierno; hueco real, falta la pregunta en la ficha), el suelo de 70 kcal/kg^0,75 de la literatura contra nuestros 95 de la recomendacion, y la termogenesis de la comida (~10 %, sube con proteina y con mas tomas, sin cifra para ninguna de las dos). | 9 sep (2): el escalon de edad pasa a ser el de la Tabla VII-6 de FEDIAF -- 130 (1-2 anos) / 110 (3-7) / 95 (>7), o sea +20 el joven y -15 el senior contra el +15/-7 de Thes 2014 que habia; nuestro -7 era un -6,4 % cuando FEDIAF dice -13,6 % y SACN5 cap.5 dice 10-20 %. Y el grupo "joven" era CODIGO MUERTO: existia en AJUSTE_EDAD y no se pasaba nunca, ni aqui ni en el front, asi que un perro de ano y medio recibia lo mismo que uno de cinco. | 9 sep: la cifra de raza de la Tabla VII-7 va EN VEZ del nivel de actividad, y lo dice la propia guia (la frase que presenta la tabla, y la seccion 7.2.3.4: la diferencia de raza YA CONTIENE la de actividad). Cierra PREGUNTAS_ABIERTAS.md P-11; lo separa de las lecturas «suelo» y «sumar» el BLOQUE 54 apartado 2-bis. | 8 sep: el DER verificado contra FEDIAF 2025 (Tablas VII-7 y VII-8b) y cerrado -- ver DECISIONES.md D-11. Cambian TRES cosas: se quita el tope de x6 RER en lactancia (no es de FEDIAF y recortaba hasta un 33 %), se adoptan las dos razas con cifra propia de FEDIAF (Gran Danes 200, Terranova 105; un Gran Danes recibia el 55 % de lo que le toca), y el respaldo de crecimiento pasa a la regla de SACN5 por edad (3 x RER hasta los 4 meses, 2 x RER despues) -- de sus tres escalones viejos, DOS eran codigo muerto. Lo vigila el BLOQUE 54.
         # 6 sep: 3 correcciones de cita en comentarios (VII-7 no VII-6, Thes 2015 no 2014, y el escalon 210/175/140 no es tabla de FEDIAF) -- ningun numero ni comportamiento cambia.
         # ⚠️ 9 sep: SELLO MOVIDO, y solo cambia UN numero. El BCS 9 pasa de un
         # exceso del 40 % a uno del 45 %, porque la Tabla VII-2 del Anexo 7.1 de
@@ -7458,21 +7508,99 @@ def listar_patologias():
     return {"unidad": crudo["_meta"]["unidad"], "patologias": salida}
 
 
+# Como se le ENSEÑA el catalogo de alimentos a quien lo mira: en que pantalla va
+# cada categoria del motor, como se llama sin jerga y como se agrupa por dentro.
+# Aqui no hay ni un alimento: salen del catalogo. Ver su `_meta`.
+with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
+                        "alimentos_como_se_presentan.json"), encoding="utf-8") as _f:
+    _PRESENTACION_AL = _json.load(_f)
+
+
+def _arbol_de_alimentos():
+    """El catalogo tal y como se ENSEÑA: pantalla -> grupo -> alimentos.
+
+    ⚠️ POR QUE EXISTE (12 de septiembre de 2026, noche). Este arbol lo montaba
+    la APP, con las tres alturas escritas a mano dentro de `App.jsx`. Elena:
+    «NADA VIVA SOLO EN LA APP, TIENE QUE LLAMAR A COSAS QUE VIVAN EN EL MOTOR
+    PARA QUE CUANDO SE CAMBIE ALGO SE APLIQUE Y LA APP LO PILLE DIRECTO».
+
+    El caso que lo provoco: el aceite de salmon Pets Purest entro al catalogo el
+    7 de septiembre con la foto de su etiqueta, el motor lo usa en 23 de los 216
+    menus precalculados, y en la app no aparecia. Medido: la lista de la app
+    tenia EXACTAMENTE los mismos alimentos que el motor menos ese. Una copia a
+    mano que se quedo parada el dia que se escribio.
+
+    Aqui no se escribe ni un alimento: salen del catalogo, el segundo nivel se
+    DERIVA (la especie que ya usa el motor para las alergias, o la propia
+    categoria en los suplementos) y solo los 23 Extras llevan su grupo escrito,
+    porque «Huevo», «Aceite» o «Semillas» no se pueden sacar de ningun sitio.
+    """
+    from especies import cargar_alimentos as _ca, especie_de as _esp
+    grupos_extra = _PRESENTACION_AL["grupo_de_cada_extra"]
+    donde = {}
+    for p in _PRESENTACION_AL["pantallas"]:
+        for c in p["categorias_del_motor"]:
+            donde[c] = p
+    salida, sueltos = {}, []
+    for a in _ca():
+        p = donde.get(a["categoria"])
+        if p is None:
+            sueltos.append(a["nombre"])
+            continue
+        if p["segundo_nivel"] == "especie":
+            grupo = _esp(a["nombre"])
+        elif p["segundo_nivel"] == "categoria_del_motor":
+            grupo = a["categoria"]
+        else:
+            grupo = grupos_extra.get(a["nombre"], "Otros")
+        salida.setdefault(p["clave"], {}).setdefault(grupo, []).append({
+            "nombre": a["nombre"],
+            "kcal_100g": a["energia"],
+            "categoria_del_motor": a["categoria"],
+        })
+    for pant in salida.values():
+        for lista in pant.values():
+            lista.sort(key=lambda x: x["nombre"])
+    return salida, sueltos
+
+
 @app.get("/alimentos")
 def listar_alimentos():
-    """Catalogo agrupado por categoria, para que la app pinte los selectores
-    del analizador sin tener que llevar la lista duplicada en el frontend."""
-    from especies import cargar_alimentos as _ca
+    """El catalogo, de las dos formas, para que la app no tenga que decidir nada.
+
+    `por_categoria` es lo de siempre -- la categoria del motor con sus alimentos
+    --, y ahora manda TAMBIEN la especie, que antes salia siempre `null` porque
+    se leia una clave que las fichas no tienen: `a.get("especie")` sobre un
+    diccionario que no la trae. El motor SI sabe la especie (`especie_de`, la
+    misma con la que resuelve las alergias), solo que no la estaba mandando.
+
+    `arbol` es como se ENSEÑA: las ocho pantallas, cada una con su titulo para
+    el dueño y para el veterinario, y dentro el segundo nivel.
+    """
+    from especies import cargar_alimentos as _ca, especie_de as _esp
     por_cat = {}
     for a in _ca():
         por_cat.setdefault(a["categoria"], []).append({
             "nombre": a["nombre"],
             "kcal_100g": a["energia"],
-            "especie": a.get("especie"),
+            "especie": _esp(a["nombre"]),
         })
     for v in por_cat.values():
         v.sort(key=lambda x: x["nombre"])
-    return por_cat
+    arbol, sueltos = _arbol_de_alimentos()
+    return {
+        "por_categoria": por_cat,
+        "pantallas": [
+            {"clave": p["clave"], "dueno": p["dueno"], "veterinario": p["veterinario"],
+             "la_elige_el_usuario": p["la_elige_el_usuario"],
+             "categorias_del_motor": p["categorias_del_motor"],
+             "grupos": arbol.get(p["clave"], {})}
+            for p in _PRESENTACION_AL["pantallas"]
+        ],
+        # ⚠️ SE DICE, no se esconde: un alimento cuya categoria no esta
+        # declarada no aparece en ninguna pantalla, y eso tiene que verse.
+        "sin_pantalla": sorted(sueltos),
+    }
 
 
 # =====================================================================

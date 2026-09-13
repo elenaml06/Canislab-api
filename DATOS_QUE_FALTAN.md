@@ -1266,3 +1266,41 @@ de origen. Que el prototipo oficial no dé peso no hace bueno el que tenemos.
 ⚠️ **El Mastín del Pirineo sigue sin estar en la ficha**, y es gigante: es justo
 donde el peso adulto decide el techo de calcio del cachorro. Entra en cuanto
 haya una fuente para su peso.
+
+---
+
+## La tabla de peso ideal por raza (12 de septiembre de 2026)
+
+Es el dato que le falta a `razas.json`: sus 255 cifras de origen **no tienen
+fuente publicada** y de ahí salen las kcal del cachorro, su etapa y el techo de
+calcio de la raza grande.
+
+**Dónde está**: en el **apéndice de Small Animal Clinical Nutrition, 4.ª
+edición** (Mark Morris Institute, 2000), páginas 1037-1046. Da **peso ideal por
+raza y por sexo**, que es exactamente la forma que necesitamos. Lo sabemos
+porque lo cita una tabla de dosificación de Ecuphar que reproduce esas páginas.
+
+⚠️ **Ojo con esa cita: son páginas de la CUARTA edición.** En la quinta, que es
+la que tenemos, esas mismas páginas son el capítulo 53 — la dilatación-torsión
+gástrica de Davenport. Los dos libros están paginados distinto y confundirlos
+cuesta media hora.
+
+**Por qué no se puede conseguir hoy**: el Mark Morris Institute publica los
+**72 capítulos** de la quinta edición gratis y **ningún apéndice**. Nuestra
+copia tiene 70 (faltan el 71, reptiles, y el 72, aves, que no tocan al perro).
+
+**Lo que hay mientras tanto, y no basta**:
+
+| Fuente | Cuántas razas | Qué da |
+|---|---|---|
+| BOE, RD 558/2001 | 15 españolas | peso oficial por sexo · **ya aplicado** |
+| Estándares FCI | 66 de 260 leídos | peso en kg; los otros 157 solo dan alzada |
+| Tabla sueca de cribado de caderas | 72 | peso MEDIDO, no el del estándar; casi todas medianas o grandes |
+
+⚠️ **Y una advertencia que vale para las tres**: un estándar de raza dice lo que
+un perro **debería** pesar, no lo que pesa. Medido por un artículo de *Archivos
+de Zootecnia* sobre el Perro de Agua del Cantábrico: «si se utiliza el criterio
+del peso, quedarían excluidos del estándar racial el 91 % de los machos y el
+80 % de las hembras».
+
+**Esto no lo rellena el asistente.**

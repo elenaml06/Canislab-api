@@ -1,0 +1,172 @@
+{
+ "_meta": {
+  "que_es": "Cómo se le ENSEÑA el catálogo de alimentos a quien lo mira: en qué pantalla va cada categoría del motor, cómo se llama sin jerga, y cómo se agrupa por dentro.",
+  "por_que_existe": "Elena, 12-sep-2026: «NADA VIVA SOLO EN LA APP, TIENE QUE LLAMAR A COSAS QUE VIVAN EN EL MOTOR PARA QUE CUANDO SE CAMBIE ALGO SE APLIQUE Y LA APP LO PILLE DIRECTO. PARA TODO». || El caso que lo provocó: el 7 de septiembre se añadió al catálogo el aceite de salmón Pets Purest con la foto de su etiqueta, el motor lo usa en 23 de los 216 menús precalculados, y en la app no aparecía. Medido: la lista que pinta la app tiene EXACTAMENTE los mismos alimentos que el motor menos ese, porque es una copia a mano que se quedó parada el día que se escribió. Es la misma forma de fallo que las 47 patologías, los cinco niveles de actividad y las 255 razas.",
+  "la_cadena": "FUENTE manda -> MOTOR la implementa -> APP la ofrece.",
+  "aqui_no_hay_ni_un_alimento": "Los alimentos viven en `alimentos_v3_final.json` y NO se repiten aquí: esto solo dice dónde va cada CATEGORÍA y cómo se agrupa. Un alimento nuevo aparece solo, sin tocar este fichero, que es justo lo que no pasaba con la lista de la app.",
+  "de_donde_sale_esta_forma": "Del árbol que ya pintaba la app (`CATEGORIAS_ALIMENTO` de `App.jsx`), a petición de Elena: «usa la lista o el modelo de lista que tiene la app para aplicarla al motor». Ocho pantallas, y dentro de cada una un segundo nivel. Medido contra el catálogo del motor: las ocho cubren las 14 categorías del motor, y los 163 alimentos caen todos en una.",
+  "los_tres_segundos_niveles": "El segundo nivel no se escribe a mano salvo donde no hay de dónde sacarlo. (1) En las seis categorías de comida es la ESPECIE, que el motor ya deriva del nombre con `especies.especie_de` y que es la misma que usa para las alergias -- excluir «pollo» quita también «gallina». 122 de los 162 alimentos que pintaba la app ya coincidían con ella. (2) En los suplementos es la propia CATEGORÍA del motor (Calcio, Fibra, Hierro, Multivitamínico, Omega-3, Vitamina B, Yodo): la app las juntaba todas bajo «Suplementos comerciales» y ese era el único sitio donde el Omega-3 podía verse. (3) Y en Extras es lo único que de verdad no existía en el motor -- Huevo, Aceite, Grasa, Semillas, Sal, Yogur, Cartílago --, así que esos 23 van escritos aquí uno a uno.",
+  "como_se_comprueba": "El BLOQUE 99 de `pruebas_completas.py`: que las 14 categorías del motor estén declaradas, que los 163 alimentos caigan en una pantalla y un grupo, y que ninguno se quede fuera ni en dos sitios. El día que entre una categoría nueva al catálogo, salta. Y en `canislab-web`, `tests/alimentos-del-motor.spec.js` siembra nombres INVENTADOS, porque con los de verdad «la app lo ha leído» y «la app pinta su respaldo» se ven igual."
+ },
+ "pantallas": [
+  {
+   "clave": "Carne muscular",
+   "categorias_del_motor": [
+    "Carne muscular"
+   ],
+   "segundo_nivel": "especie",
+   "la_elige_el_usuario": true,
+   "dueno": {
+    "titulo": "Carne",
+    "ejemplo": "pechuga de pollo, conejo, corazón de ternera"
+   },
+   "veterinario": {
+    "titulo": "Carne muscular",
+    "detalle": "Tejido muscular, incluidos corazón, molleja, lengua y pulmón: en alimentación cruda lo que separa víscera de carne no es el órgano sino si SEGREGA, y ninguno de esos lo hace."
+   }
+  },
+  {
+   "clave": "Hueso carnoso",
+   "categorias_del_motor": [
+    "Hueso carnoso"
+   ],
+   "segundo_nivel": "especie",
+   "la_elige_el_usuario": true,
+   "dueno": {
+    "titulo": "Hueso carnoso",
+    "ejemplo": "cuello de pollo, costillas de cordero"
+   },
+   "veterinario": {
+    "titulo": "Hueso carnoso",
+    "detalle": "La fuente de calcio de la ración y el origen del ratio Ca:P. Nunca cocinado."
+   }
+  },
+  {
+   "clave": "Vísceras",
+   "categorias_del_motor": [
+    "Vísceras"
+   ],
+   "segundo_nivel": "especie",
+   "la_elige_el_usuario": true,
+   "dueno": {
+    "titulo": "Vísceras",
+    "ejemplo": "riñón, bazo, páncreas"
+   },
+   "veterinario": {
+    "titulo": "Vísceras secretoras (sin hígado)",
+    "detalle": "Órganos que segregan, contados aparte del hígado porque el hígado tiene techo propio por la vitamina A."
+   }
+  },
+  {
+   "clave": "Hígado",
+   "categorias_del_motor": [
+    "Hígado"
+   ],
+   "segundo_nivel": "especie",
+   "la_elige_el_usuario": true,
+   "dueno": {
+    "titulo": "Hígado",
+    "ejemplo": "hígado de pollo, de ternera"
+   },
+   "veterinario": {
+    "titulo": "Hígado",
+    "detalle": "Categoría propia y con tope: es la mayor fuente de vitamina A y de cobre de la ración."
+   }
+  },
+  {
+   "clave": "Pescados y mariscos",
+   "categorias_del_motor": [
+    "Pescados y mariscos"
+   ],
+   "segundo_nivel": "especie",
+   "la_elige_el_usuario": true,
+   "dueno": {
+    "titulo": "Pescado",
+    "ejemplo": "sardina, merluza, dorada"
+   },
+   "veterinario": {
+    "titulo": "Pescados y mariscos",
+    "detalle": "Fuente de EPA+DHA y de yodo. Lleva dentro los dos límites crónicos que más aprietan: mercurio y tiaminasa."
+   }
+  },
+  {
+   "clave": "Verduras y frutas",
+   "categorias_del_motor": [
+    "Verduras y frutas"
+   ],
+   "segundo_nivel": "especie",
+   "la_elige_el_usuario": true,
+   "dueno": {
+    "titulo": "Verdura y fruta",
+    "ejemplo": "zanahoria, calabaza, manzana"
+   },
+   "veterinario": {
+    "titulo": "Vegetales",
+    "detalle": "Aportan fibra, potasio y parte de los micronutrientes; no son el relleno de la ración."
+   }
+  },
+  {
+   "clave": "Extras",
+   "categorias_del_motor": [
+    "Extras"
+   ],
+   "segundo_nivel": "grupo_escrito",
+   "la_elige_el_usuario": false,
+   "dueno": {
+    "titulo": "Extras",
+    "ejemplo": "huevo, aceite de oliva, semillas, un poco de sal"
+   },
+   "veterinario": {
+    "titulo": "Extras",
+    "detalle": "Huevo, aceites, grasas, semillas, sal y cartílago. Van SIEMPRE libres: no se eligen en ninguna pantalla porque son la herramienta con la que el motor cierra los 43 requisitos."
+   }
+  },
+  {
+   "clave": "Suplementos comerciales",
+   "categorias_del_motor": [
+    "Multivitamínico",
+    "Omega-3",
+    "Calcio",
+    "Yodo",
+    "Fibra",
+    "Hierro",
+    "Vitamina B"
+   ],
+   "segundo_nivel": "categoria_del_motor",
+   "la_elige_el_usuario": false,
+   "dueno": {
+    "titulo": "Suplementos",
+    "ejemplo": "un multivitamínico, aceite de salmón, alga para el yodo"
+   },
+   "veterinario": {
+    "titulo": "Suplementos comerciales",
+    "detalle": "Productos con etiqueta y dosis del fabricante. Van SIEMPRE libres, por lo mismo que los Extras, y cada uno con el tope de dosis que marca su etiqueta."
+   }
+  }
+ ],
+ "grupo_de_cada_extra": {
+  "Aceite de cacahuete": "Aceite",
+  "Aceite de coco": "Aceite",
+  "Aceite de girasol": "Aceite",
+  "Aceite de hígado de bacalao": "Aceite",
+  "Aceite de linaza": "Aceite",
+  "Aceite de oliva": "Aceite",
+  "Aceite de oliva virgen extra": "Aceite",
+  "Aceite de sésamo": "Aceite",
+  "Grasa de pollo": "Grasa",
+  "Huevo clara": "Huevo",
+  "Huevo de codorniz": "Huevo",
+  "Huevo de gallina entero": "Huevo",
+  "Huevo de pato": "Huevo",
+  "Huevo de pato entero": "Huevo",
+  "Huevo yema": "Huevo",
+  "Laringe de vacuno": "Cartílago",
+  "Manteca": "Grasa",
+  "Pipa de calabaza": "Semillas",
+  "Pipa de girasol": "Semillas",
+  "Sal común (cloruro sódico)": "Sal",
+  "Semilla de lino": "Semillas",
+  "Semilla de sésamo": "Semillas",
+  "Yogur griego": "Yogur"
+ }
+}

@@ -3783,6 +3783,66 @@ _n_var_b25 = sum(len(_v) for _v in _VAR_B25.values())
 if _n_var_b25 != 180:
     fallos.append(f"BLOQUE25: hay {_n_var_b25} variantes en total y eran 180.")
 
+# ── Y LOS 216 TIENEN QUE SEGUIR EN VERDE HOY ─────────────────────────────
+#
+# ⚠️ AÑADIDO EL 12 DE SEPTIEMBRE DE 2026, y encontró 38 rotos al escribirlo.
+#
+# Este bloque comprobaba que el catálogo tuviera 36 menús y 180 variantes, y
+# que sus proporciones fueran de comida de verdad. NO comprobaba que siguieran
+# CUMPLIENDO. Y el catálogo se generó con unos requisitos y los requisitos
+# cambian debajo: los doce aminoácidos entraron el 28 de agosto, los techos del
+# perro sano el 8 de septiembre, los del cachorro el 9...
+#
+# Medido antes de arreglarlo: **38 de los 216 ya no salían en verde** -- 37 en
+# ámbar por un 1 % de cloruro, manganeso o linoleico, y uno en ROJO (la
+# variante de conejo del Toy sénior).
+#
+# ⚠️ NINGUNO LLEGABA AL PERRO, y eso hay que decirlo: la vía rápida reescala el
+# menú a las kcal del perro y lo verifica otra vez; si no sale verde se cae al
+# camino normal y el motor resuelve de verdad. La regla 1 se estaba cumpliendo.
+# Lo que eran es PESO MUERTO: se comprueban, se descartan, y hay que resolver
+# igual. Por eso de siete menús de una semana solo dos salían del catálogo, y
+# la semana entera tardaba 50 s en la API desplegada.
+#
+# O sea que esto no es solo corrección: es lo que hace que el atajo sirva de
+# algo.
+_PESO_B25 = {"Toy": 3, "Mini": 6, "Pequeño": 12, "Mediano": 22, "Grande": 32, "Gigante": 55}
+_no_verdes_b25, _inseguros_b25, _mirados_b25 = [], [], 0
+for _grupo_b25, _datos_b25 in (("menú", _CAT_B25), ("variante", _VAR_B25)):
+    for _k_b25, _v_b25 in _datos_b25.items():
+        _tam_b25, _etapa_b25 = _k_b25.split("_", 1)
+        for _m_b25 in (_v_b25 if isinstance(_v_b25, list) else [_v_b25]):
+            _g_b25 = (_m_b25 or {}).get("gramos")
+            if not _g_b25:
+                continue
+            _der_b25 = sum(al[_n]["energia"] * _gr / 100.0
+                           for _n, _gr in _g_b25.items() if _n in al)
+            if not _der_b25:
+                continue
+            _mirados_b25 += 1
+            _quien_b25 = f"{_grupo_b25} {_k_b25}" + (
+                f" ({_m_b25.get('proteina')})" if _m_b25.get("proteina") else "")
+            _f_b25 = verificar(_g_b25, al, req, _der_b25, _etapa_b25)
+            if _f_b25["semaforo"] != "verde":
+                _no_verdes_b25.append((_quien_b25, _f_b25["semaforo"]))
+            elif not _api._menu_precalculado_es_seguro(_g_b25, al, _der_b25,
+                                                       _PESO_B25.get(_tam_b25)):
+                _inseguros_b25.append(_quien_b25)
+if _mirados_b25 != 216:
+    fallos.append(f"BLOQUE25: se han mirado {_mirados_b25} menús precalculados y son 216. "
+                  f"Si el recuento baja, hay entradas sin gramos y nadie las comprueba")
+if _no_verdes_b25:
+    fallos.append(f"BLOQUE25: {len(_no_verdes_b25)} de los {_mirados_b25} menús precalculados "
+                  f"YA NO ESTAN EN VERDE contra los requisitos de hoy "
+                  f"({', '.join(f'{a} [{b}]' for a, b in _no_verdes_b25[:5])}"
+                  f"{'...' if len(_no_verdes_b25) > 5 else ''}). No llegan al perro -- la vía "
+                  f"rápida los verifica otra vez y se cae al camino normal --, pero son peso "
+                  f"muerto: se comprueban, se descartan y hay que resolver igual. Se arregla "
+                  f"con `python3 regenerar_catalogo.py`")
+if _inseguros_b25:
+    fallos.append(f"BLOQUE25: {len(_inseguros_b25)} menús precalculados se saltan un tope de "
+                  f"seguridad crónica ({', '.join(_inseguros_b25[:4])})")
+
 # cada entrada tiene que traer lo que /catalogo necesita para reescalar
 for _k25, _e25 in _CAT_B25.items():
     _faltan25 = [_c for _c in ("gramos", "der", "peso_kg", "tamano", "etapa") if _c not in _e25]
@@ -10272,6 +10332,7 @@ print(f"  hecho, {len(fallos)} fallos hasta ahora")
 print("\n=== BLOQUE 65: el documento para la nutricionista, contra el motor vivo ===")
 
 import re as _re_b65
+import os as _os_b65
 import motor.seguridad as _sg_b65
 import motor.verificar as _vf_b65
 from motor_completo import RAZA_GRANDE_O_GIGANTE_KG as _RG_B65
@@ -12809,6 +12870,227 @@ for _r89 in _con_fuente89:
                       f"fichero se sale de la cita: o la cifra está mal copiada o la cita no es "
                       f"la suya")
 
+# ── 1-quater. Las razas con estándar de la FCI: la cifra se rehace igual ─
+#
+# ⚠️ AÑADIDO LA NOCHE DEL 12 DE SEPTIEMBRE DE 2026. La FCI publica el estándar
+# oficial de cada raza y su apartado TAMAÑO Y PESO es el único documento que
+# dice, raza por raza, lo que pesa. 65 filas salen de ahí.
+#
+# ⚠️ Y NO TODO ESTÁNDAR DA UN RANGO, que es lo que este bloque vigila de
+# verdad: «Mínimo, 40 kg para las hembras» (Fila Brasileño) y «Hembras: 40 – 50
+# kg» (Cane Corso) tienen los mismos dígitos y no dicen lo mismo. Darlos por
+# iguales metería en la ficha un techo de 50 kg que la FCI no pone, y el rango
+# es lo que ACOTA el peso adulto que se le estima a un cachorro: con el techo
+# de más, a un Fila macho se le proyecta menos de lo que va a pesar. Por eso
+# cada fila lleva su `forma_de_la_fci` y aquí se le exige lo que le toca.
+_RUTA_FCI89 = _os_b65.path.join(_os_b65.path.dirname(_os_b65.path.abspath(__file__)),
+                                "fci_estandares_peso.txt")
+try:
+    _TXT_FCI89 = open(_RUTA_FCI89, encoding="utf-8").read()
+except OSError:
+    _TXT_FCI89 = None
+    fallos.append("BLOQUE89: falta `fci_estandares_peso.txt`. Es el texto del apartado de peso "
+                  "de los 65 estándares que cita razas.json: sin él ninguna de esas citas se "
+                  "puede comprobar, y una cita que no se puede comprobar es una cifra sin fuente")
+
+def _kgs_de_la_cita89(cita):
+    """Los kilos que nombra la cita, leidos como los escribe la fuente.
+
+    ⚠️ NO VALE SACAR TODOS LOS NUMEROS. Tres cosas lo rompen, y las tres salen
+    en citas de verdad:
+      · las LIBRAS inglesas, que el estándar pone al lado («17 libras inglesas
+        (7,7 kg)») -- leer el 17 triplica el peso del Lakeland;
+      · la ALTURA A LA CRUZ, que en el Pastor Alemán va intercalada con el peso
+        en la misma frase («Altura a la cruz: 60-65 cm Peso: 30-40 kg») -- leer
+        el 65 le pone un techo de 65 kg;
+      · la altura IDEAL del Eurasier, «56 cm/26 kg», que junta las dos.
+    Asi que se lee como se lee el apartado: de cada «kg» hacia atras, sin
+    cruzar un «cm». Es la misma regla con la que se sacaron las cifras, escrita
+    aparte y a proposito -- un auditor que copie el codigo del que audita no
+    audita nada.
+    """
+    fuera = []
+    for m in _re_b65.finditer(r"[kK][gG]\b", cita):
+        atras = cita[max(0, m.start() - 60):m.start()]
+        corte = max(atras.rfind("cm"), atras.rfind("CM"))
+        if corte >= 0:
+            atras = atras[corte + 2:]
+        atras = atras.rstrip()
+        _n = r"\d+(?:[.,]\d+)?"
+        r = _re_b65.search(r"(%s)\s*(?:[-\u2013\u2014]|a|hasta|to|y)\s*(%s)$" % (_n, _n), atras)
+        if r:
+            fuera += [float(r.group(1).replace(",", ".")), float(r.group(2).replace(",", "."))]
+            continue
+        r = _re_b65.search(r"(%s)$" % _n, atras)
+        if r:
+            fuera.append(float(r.group(1).replace(",", ".")))
+    return fuera
+
+# ── El peso POR SEXO, rehecho desde la misma cita ────────────────────────
+#
+# ⚠️ AÑADIDO LA NOCHE DEL 12 DE SEPTIEMBRE. La FCI y el BOE dan machos y hembras
+# por separado en la mitad de sus textos -- el Kuvasz son 48-62 en machos y
+# 37-50 en hembras -- y aquí se guardaba solo la unión, 37-62 para los dos. Lo
+# hacen así los dos referentes que se miraron antes de tocarlo: MyVetDiet llama
+# a los suyos «pesos indicativos diferenciados para machos y hembras», y las
+# curvas de WALTHAM son gráficas distintas por sexo.
+#
+# Esto REHACE el reparto desde la cita, y no es formalismo: al escribirlo se
+# falló de las dos formas posibles y las dos con citas de verdad.
+#   · «30 a 40 kg en los machos, 27 a 35 kg en las hembras» (Boyero de Flandes)
+#     pone el sexo DESPUÉS del número, así que «lo que va detrás de machos» no
+#     tenía ni un kg y la raza se quedaba sin separar.
+#   · El Ca de Bestiar del BOE da primero los dos SUELOS y luego los dos TECHOS
+#     («de menos de 30 kg en los machos y de menos de 25 en las hembras.
+#     Ejemplares de más de 50 kg en los machos y de más de 45 en las hembras»),
+#     así que ese mismo atajo le daba al macho 25-50 y a la hembra 45-50: los
+#     dos números del sexo equivocado, y con forma de dato bueno.
+def _kgs_del_trozo89(trozo):
+    _n = r"\d+(?:[.,]\d+)?"
+    fuera = []
+    for m in _re_b65.finditer(r"[kK][gG]\b", trozo):
+        atras = trozo[max(0, m.start() - 60):m.start()]
+        corte = max(atras.rfind("cm"), atras.rfind("CM"))
+        if corte >= 0:
+            atras = atras[corte + 2:]
+        atras = atras.rstrip()
+        r = _re_b65.search(r"(%s)\s*(?:[-\u2013\u2014]|a|hasta|to|y)\s*(%s)$" % (_n, _n), atras)
+        if r:
+            fuera += [float(r.group(1).replace(",", ".")), float(r.group(2).replace(",", "."))]
+            continue
+        r = _re_b65.search(r"(%s)$" % _n, atras)
+        if r:
+            fuera.append(float(r.group(1).replace(",", ".")))
+    return fuera
+
+_MACHO89 = _re_b65.compile(r"\b(?:machos?|perros?)\b", _re_b65.I)
+_HEMBRA89 = _re_b65.compile(r"\b(?:hembras?|perras?)\b", _re_b65.I)
+
+def _por_sexo89(cita):
+    t = cita.strip("\u00ab\u00bb")
+    t = _re_b65.sub(r"(?<=\d),(?=\d)", "\x00", t)
+    t = _re_b65.sub(r"(?<=\d)\s+y\s+(?=\d)", "\x01", t)
+    trozos = []
+    for c in _re_b65.split(r"[.;]|,| y ", t):
+        cortes = sorted(m.start() for m in list(_MACHO89.finditer(c)) + list(_HEMBRA89.finditer(c)))
+        if len(cortes) > 1:
+            bordes = [0] + [x for x in cortes if x > 0]
+            trozos += [c[a:b] for a, b in zip(bordes, bordes[1:] + [len(c)])]
+        else:
+            trozos.append(c)
+    fuera, ultimo = {"macho": [], "hembra": []}, None
+    for c in trozos:
+        c = c.replace("\x00", ",").replace("\x01", " y ")
+        if not c.strip():
+            continue
+        kgs = _kgs_del_trozo89(c)
+        pm, ph = _MACHO89.search(c), _HEMBRA89.search(c)
+        quien = None
+        if kgs:
+            _pk = _re_b65.search(r"[kK][gG]\b", c).start()
+            antes = [(x.start(), k) for x, k in ((pm, "macho"), (ph, "hembra"))
+                     if x and x.start() < _pk]
+            if antes:
+                quien = max(antes)[1]
+            else:
+                desp = [(x.start(), k) for x, k in ((pm, "macho"), (ph, "hembra"))
+                        if x and x.start() > _pk]
+                quien = min(desp)[1] if desp else ultimo
+        elif pm or ph:
+            quien = "macho" if (pm and (not ph or pm.start() < ph.start())) else "hembra"
+        if quien:
+            ultimo = quien
+            fuera[quien] += kgs
+    if not fuera["macho"] or not fuera["hembra"]:
+        return None
+    return {k: (min(v), max(v)) for k, v in fuera.items()}
+
+_consexo89 = [r for r in _R89 if r.get("porSexo")]
+if len(_consexo89) < 40:
+    fallos.append(f"BLOQUE89: solo {len(_consexo89)} razas traen el peso por sexo, y eran 44 el 12 "
+                  f"de septiembre. Es la mitad de lo que hacen MyVetDiet y WALTHAM, y sin ella a "
+                  f"un Kuvasz hembra se le enseña la horquilla del macho")
+for _r89 in _R89:
+    _ps89 = _r89.get("porSexo")
+    _calc89 = _por_sexo89(_r89["cita"]) if _r89.get("cita") else None
+    _vale89 = bool(_calc89 and _calc89["macho"][0] < _calc89["macho"][1]
+                   and _calc89["hembra"][0] < _calc89["hembra"][1]
+                   and abs(min(_calc89["macho"][0], _calc89["hembra"][0]) - _r89["pesoMin"]) < 0.01
+                   and abs(max(_calc89["macho"][1], _calc89["hembra"][1]) - _r89["pesoMax"]) < 0.01)
+    if _ps89 and not _vale89:
+        fallos.append(f"BLOQUE89: «{_r89['nombre']}» trae peso por sexo y su cita no lo sostiene "
+                      f"({_calc89}). O la fuente no separa los sexos, o lo que da no es un "
+                      f"intervalo para cada uno, y de un punto no se inventa una horquilla")
+        continue
+    if _vale89 and not _ps89:
+        fallos.append(f"BLOQUE89: la cita de «{_r89['nombre']}» SÍ separa machos y hembras "
+                      f"({_calc89}) y la fila no lo guarda. Esa raza enseña la unión de los dos")
+        continue
+    if not _ps89:
+        continue
+    for _sx89 in ("macho", "hembra"):
+        _a89, _b89 = _ps89[_sx89]["pesoMin"], _ps89[_sx89]["pesoMax"]
+        if abs(_a89 - _calc89[_sx89][0]) > 0.01 or abs(_b89 - _calc89[_sx89][1]) > 0.01:
+            fallos.append(f"BLOQUE89: «{_r89['nombre']}» dice que el {_sx89} pesa {_a89}-{_b89} y "
+                          f"su cita dice {_calc89[_sx89]}")
+        if not (_ps89[_sx89]["pesoMin"] <= _ps89[_sx89]["pesoMedio"] <= _ps89[_sx89]["pesoMax"]):
+            fallos.append(f"BLOQUE89: el peso medio del {_sx89} de «{_r89['nombre']}» se sale de "
+                          f"su propio rango")
+    # ⚠️ Y LA UNION TIENE QUE SEGUIR SIENDO LA FILA: `pesoMin`/`pesoMax` son lo
+    # que se usa cuando no se sabe el sexo, asi que no pueden empezar a
+    # significar otra cosa por haber añadido esto.
+    _u189 = min(_ps89["macho"]["pesoMin"], _ps89["hembra"]["pesoMin"])
+    _u289 = max(_ps89["macho"]["pesoMax"], _ps89["hembra"]["pesoMax"])
+    if abs(_u189 - _r89["pesoMin"]) > 0.01 or abs(_u289 - _r89["pesoMax"]) > 0.01:
+        fallos.append(f"BLOQUE89: «{_r89['nombre']}» dice {_r89['pesoMin']}-{_r89['pesoMax']} y la "
+                      f"unión de sus dos sexos es {_u189}-{_u289}. La fila tiene que seguir siendo "
+                      f"exactamente los dos sexos juntos: es lo que se usa sin saber el sexo")
+
+_FORMAS89 = {"rango", "punto", "punto_sexo", "minimos", "maximo", "solo_machos"}
+_fci89 = [r for r in _con_fuente89 if "Cynologique" in r["fuente"]]
+if not _fci89:
+    fallos.append("BLOQUE89: ni una raza cita el estándar de la FCI. 65 lo hacen desde el 12 de "
+                  "septiembre: si han desaparecido, 65 razas han vuelto a no tener fuente")
+for _r89 in _fci89:
+    _cita89 = _r89.get("cita") or ""
+    _forma89 = _r89.get("forma_de_la_fci")
+    if _forma89 not in _FORMAS89:
+        fallos.append(f"BLOQUE89: «{_r89['nombre']}» cita a la FCI y no dice de qué forma "
+                      f"(`forma_de_la_fci` = {_forma89!r}). Sin eso no se sabe si su cita es un "
+                      f"rango o un suelo, y no se puede comprobar")
+        continue
+    # (a) la cita tiene que estar LITERAL en el texto de la fuente
+    if _TXT_FCI89 is not None and _cita89.strip("«»") not in _TXT_FCI89:
+        fallos.append(f"BLOQUE89: la cita de «{_r89['nombre']}» no aparece literal en "
+                      f"`fci_estandares_peso.txt`: «{_cita89[:70]}»")
+    # (b) la cifra se rehace, con la regla de su forma
+    _kgs89 = _kgs_de_la_cita89(_cita89)
+    if not _kgs89:
+        fallos.append(f"BLOQUE89: la cita de «{_r89['nombre']}» no trae ni un número: «{_cita89[:60]}»")
+        continue
+    _lo89, _hi89 = min(_kgs89), max(_kgs89)
+    if _forma89 == "rango":
+        if abs(_r89["pesoMin"] - _lo89) > 0.01 or abs(_r89["pesoMax"] - _hi89) > 0.01:
+            fallos.append(f"BLOQUE89: «{_r89['nombre']}» dice {_r89['pesoMin']}-{_r89['pesoMax']} kg "
+                          f"y su estándar de la FCI da el rango {_lo89}-{_hi89}. Con forma `rango` "
+                          f"la cifra ES la de la fuente: o está mal copiada o la forma está mal")
+    elif _forma89 == "minimos":
+        if abs(_r89["pesoMin"] - _lo89) > 0.01:
+            fallos.append(f"BLOQUE89: «{_r89['nombre']}» tiene el mínimo en {_r89['pesoMin']} y el "
+                          f"suelo que pone la FCI es {_lo89}")
+    elif _forma89 == "maximo":
+        if abs(_r89["pesoMax"] - _hi89) > 0.01:
+            fallos.append(f"BLOQUE89: «{_r89['nombre']}» tiene el máximo en {_r89['pesoMax']} y el "
+                          f"techo que pone la FCI es {_hi89}")
+    # (c) las formas que NO son un rango no pueden haber movido la cifra: de un
+    #     punto no se inventa una horquilla alrededor. Lo que se les exige es
+    #     que lo DIGAN, porque si no, la fila parece respaldada y no lo está.
+    if _forma89 in ("punto", "punto_sexo", "solo_machos", "minimos", "maximo"):
+        if not (_r89.get("ojo") or "").strip():
+            fallos.append(f"BLOQUE89: «{_r89['nombre']}» cita a la FCI con forma `{_forma89}`, que "
+                          f"no es un rango, y no trae `ojo` diciendo qué mitad de su horquilla "
+                          f"sigue sin fuente. Una fila así parece respaldada y no lo está")
+
 # ── 1-bis. Los seis tamaños SON los del catálogo de menús ────────────────
 _tcat89 = sorted({k.split("_")[0] for k in _CAT89})
 if sorted(_razas89.TAMANOS) != _tcat89:
@@ -14138,6 +14420,49 @@ if len(set(_semillas96)) != 1:
                   f"iterar la hace depender de por dónde se empiece -- y `der.js` empieza por "
                   f"otro sitio")
 
+# 9. Y EL PESO ADULTO NO SE RECORTA AL RANGO DE LA RAZA (12 sep, noche).
+#
+# ⚠️ AQUÍ HABÍA DOS LÍNEAS QUE LO ACOTABAN, con el motivo escrito de que «la
+# estimación es una estimación y no debe sacar a un perro de lo que su raza
+# puede pesar». Suena prudente y empuja hacia el lado malo justo donde más caro
+# sale. Lo que hacen los demás, mirado antes de tocarlo: las curvas de WALTHAM
+# -- 50.000 perros, las que publica Royal Canin para veterinarios -- sacan el
+# peso adulto de la trayectoria del PROPIO cachorro y usan el estándar de raza
+# solo para elegir la banda; MyVetDiet, con tabla de más de 180 razas, la llama
+# «pesos indicativos» y en cachorro calcula la curva del animal.
+#
+# MEDIDO antes de quitarlo, sobre las 270 razas a 4, 6 y 9 meses: movía el peso
+# adulto en 47 de 1620 casos, mediana 3,0 % de kcal y 6,9 % el peor, y casi
+# siempre hacia ARRIBA en cachorros que apuntan por debajo del mínimo de su
+# raza. Al Mastín Español de 9 meses le añadía 152 kcal al día, y es un cachorro
+# de raza gigante -- justo donde FEDIAF avisa de deformidades esqueléticas por
+# sobrealimentar.
+#
+# Se vigila por las DOS puntas y de las dos formas: que el número sea el de la
+# curva, y que los parámetros hayan DESAPARECIDO en vez de quedarse aceptándose
+# sin hacer nada, que es la clase de cosa que nadie descubre.
+for _quien96, _actual96, _mes96, _espera96 in (
+        ("por debajo del mínimo de su raza (Mastín Español, min 52)", 37.37, 9, 47.1),
+        ("por encima del máximo de su raza (Caniche Enano, max 7)", 6.43, 9, 7.4)):
+    # se le pasa ADEMAS el peso de la raza por el unico parametro que queda,
+    # porque ese sigue existiendo (es el respaldo cuando no hay con que
+    # calcular) y tiene que seguir sin tirar del resultado.
+    for _conraza96 in (None, 52.0, 3.0):
+        _v96 = _der96.peso_adulto_desde_curva(_actual96, _mes96, peso_medio_raza=_conraza96)
+        if _v96 is None or abs(_v96 - _espera96) > 0.15:
+            fallos.append(f"BLOQUE96: un cachorro de {_actual96} kg a los {_mes96} meses apunta a "
+                          f"{_espera96} kg por la Tabla VII-8a y el motor dice {_v96} "
+                          f"(con peso de raza {_conraza96}). Es el caso «{_quien96}»: si sale el "
+                          f"número de la raza, ha vuelto el recorte")
+try:
+    _der96.peso_adulto_desde_curva(37.37, 9, None, 52.0, 60.0)
+    fallos.append("BLOQUE96: `peso_adulto_desde_curva` sigue aceptando el rango de la raza. "
+                  "Se quitó el 12 de septiembre y los parámetros tienen que irse con él: uno "
+                  "que se acepta y no hace nada es peor que el recorte, porque quien lo pasa "
+                  "cree que sirve")
+except TypeError:
+    pass
+
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 # ============================================================
@@ -14403,6 +14728,98 @@ if not _hay_fuentes:
     print("   `canislab-fuentes` junto a este repo (en la CI, ver `.github/workflows/")
     print("   bateria.yml`, el paso que trae las fuentes con el secreto FUENTES_TOKEN).")
     print(f"{'='*60}")
+
+# ============================================================
+# BLOQUE 99 — LA LEY: NADA VIVE SOLO EN LA APP
+# ============================================================
+print("=== BLOQUE 99: nada de lo que pinta la app vive solo en la app ===")
+
+# ⚠️ POR QUE EXISTE (12 de septiembre de 2026, noche). Elena: «NADA VIVA SOLO EN
+# LA APP, TIENE QUE LLAMAR A COSAS QUE VIVAN EN EL MOTOR PARA QUE CUANDO SE
+# CAMBIE ALGO SE APLIQUE Y LA APP LO PILLE DIRECTO. PARA TODO».
+#
+# La ley ya estaba dicha y se seguia rompiendo, porque UNA FRASE NO SE EJECUTA
+# -- la misma leccion de `auditar_conversiones.py`. Cinco veces el mismo fallo
+# en dos semanas: las seis categorias de Personalizar, los cinco niveles de
+# actividad, las 47 patologias, las 255 razas y los 163 alimentos. Y las cinco
+# se descubrieron por casualidad, porque una lista copiada a mano NO DA ERROR:
+# se queda parada y la pantalla se ve perfecta.
+#
+# El caso que cerro la discusion: el aceite de salmon Pets Purest entro al
+# catalogo del motor el 7 de septiembre con la foto de su etiqueta, el motor lo
+# usa en 23 de los 216 menus precalculados, y en la app no aparecia. Elena lo
+# dijo dos veces antes de que se mirara.
+#
+# Este bloque vigila la punta del MOTOR: que lo que el inventario declara se
+# sirva de verdad y no venga vacio. La punta de la APP -- que no haya una lista
+# nueva escrita a mano sin declarar -- la vigila `tests/la-ley-del-motor.spec.js`
+# en `canislab-web`, porque el codigo de la app no esta en este repo.
+import json as _json_b99
+import especies as _esp_b99
+_LEY99 = _json_b99.load(open(_os_b65.path.join(
+    _os_b65.path.dirname(_os_b65.path.abspath(__file__)), "lo_que_la_app_pinta.json"),
+    encoding="utf-8"))
+_listas99 = _LEY99["listas"]
+if len(_listas99) != _LEY99["_meta"]["cuantas"]:
+    fallos.append(f"BLOQUE99: el inventario dice {_LEY99['_meta']['cuantas']} listas y trae "
+                  f"{len(_listas99)}. El recuento va clavado a proposito: sin el, una lista puede "
+                  f"desaparecer del inventario y nadie se entera")
+
+_cache99 = {}
+def _pide99(endpoint):
+    if endpoint not in _cache99:
+        _cache99[endpoint] = _c.get(endpoint).json()
+    return _cache99[endpoint]
+
+for _l99 in _listas99:
+    try:
+        _cuerpo99 = _pide99(_l99["endpoint"])
+    except Exception as _e99:
+        fallos.append(f"BLOQUE99: «{_l99['respaldo']}» dice venir de {_l99['endpoint']} y ese "
+                      f"endpoint revienta: {_e99}")
+        continue
+    _donde99 = _cuerpo99
+    _roto99 = None
+    for _paso99 in _l99["camino"].split("."):
+        if not isinstance(_donde99, dict) or _paso99 not in _donde99:
+            _roto99 = _paso99
+            break
+        _donde99 = _donde99[_paso99]
+    if _roto99:
+        fallos.append(f"BLOQUE99: «{_l99['respaldo']}» dice leerse de "
+                      f"{_l99['endpoint']}#{_l99['camino']} y ahi no hay ningun «{_roto99}». La "
+                      f"app se queda con su respaldo PARA SIEMPRE y sin decirlo: un respaldo que "
+                      f"tapa una peticion rota se ve igual que una peticion buena")
+        continue
+    # ⚠️ Y QUE NO VENGA VACIA, que es la otra forma de romperlo sin error: el
+    # camino existe, la app lo lee, y lo que lee es una lista de cero cosas.
+    if not _donde99:
+        fallos.append(f"BLOQUE99: {_l99['endpoint']}#{_l99['camino']} existe y viene VACIO, asi "
+                      f"que «{_l99['respaldo']}» nunca se sustituye por nada")
+
+# Y el caso concreto que lo provoco, con nombre y apellidos: un alimento del
+# catalogo tiene que poder llegar a una pantalla. Si el catalogo crece con una
+# categoria que nadie ha declarado, el alimento existe, el motor lo usa y en la
+# app no esta.
+_al99 = _pide99("/alimentos")
+if _al99.get("sin_pantalla"):
+    fallos.append(f"BLOQUE99: {len(_al99['sin_pantalla'])} alimentos del catalogo no caen en "
+                  f"ninguna pantalla: {_al99['sin_pantalla'][:6]}. El motor los usa y en la app "
+                  f"no se ven -- es el fallo del aceite de salmon otra vez")
+_vistos99 = {a["nombre"] for p in _al99["pantallas"] for g in p["grupos"].values() for a in g}
+_todos99 = {a["nombre"] for a in _esp_b99.cargar_alimentos()}
+if _todos99 and _vistos99 != _todos99:
+    fallos.append(f"BLOQUE99: el arbol de /alimentos ensena {len(_vistos99)} alimentos y el "
+                  f"catalogo tiene {len(_todos99)}. Faltan: {sorted(_todos99 - _vistos99)[:6]}")
+# ⚠️ Y NINGUNO EN DOS SITIOS: un alimento en dos pantallas se puede elegir dos
+# veces y contar doble.
+_cuantas99 = sum(len(g) for p in _al99["pantallas"] for g in p["grupos"].values())
+if _cuantas99 != len(_vistos99):
+    fallos.append(f"BLOQUE99: el arbol de /alimentos reparte {_cuantas99} entradas para "
+                  f"{len(_vistos99)} alimentos distintos: alguno esta en dos pantallas")
+
+print(f"  {len(_listas99)} listas declaradas · {len(_vistos99)} alimentos en {len(_al99['pantallas'])} pantallas")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 _cerrar_el_ultimo_bloque()
 _tiempos_por_bloque.sort(reverse=True)
