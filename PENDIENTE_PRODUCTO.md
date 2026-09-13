@@ -830,3 +830,56 @@ Una prueba dice si algo se rompe; no dice si una pantalla se entiende. Al pasar
 la batería de la app de verdad (ver `CLAUDE.md`, «Antes de fusionar») hay que ir
 anotando lo que chirría —textos, orden, cosas que sobran— y traerlo como lista,
 no arreglarlo por cuenta propia: qué se enseña y cómo es decisión de producto.
+
+## ⚠️ LOS AVISOS AL DUEÑO SON TÉCNICOS Y CITAN FUENTES. FUERA.
+
+**Elena, 13 de septiembre de 2026, usando la app:**
+
+> «los avisos al usuario son muy técnicos y nombran fuentes. FUERA»
+
+El caso que lo destapó está en su pantalla, palabra por palabra:
+
+> «Están dentro del 10 % que recomiendan las fuentes (**Ettinger 8ª ed. caps. 175
+> y 192; Fascetti & Delaney 2ª ed. cap. 7**). Aun así, el motor no sabe qué llevan
+> dentro: si son carne sola desequilibran el calcio y el fósforo, y si es hígado
+> cuenta para el máximo de vitamina A.»
+
+Eso es el registro de VETERINARIO puesto en la pantalla del dueño. El motor ya
+sirve **los dos registros** para casi todo (`dueno` y `veterinario`), así que la
+pieza que falta no es escribir textos nuevos: es que cada aviso **tenga los dos**
+y que la app pinte el que toca según el rol.
+
+**Para darlo por hecho:** ningún aviso del canal del dueño nombra una fuente, una
+tabla, un capítulo ni una unidad del motor; y una prueba que recorra los avisos
+del rol dueño y falle si aparece «FEDIAF», «SACN5», «Ettinger», «Fascetti»,
+«NRC», «cap.», «Tabla» o «mg/1000 kcal».
+
+## ⚠️ UN AVISO QUE DICE «EL MÁXIMO ERA 10 Y LLEVA 11» TIENE QUE SER UN MENÚ EN ROJO
+
+**Elena, el mismo día:**
+
+> «me salió un menú con riñón y no sé qué y me salía un aviso de que el máximo
+> era el 10 y que llevaba un 11... Eso no debería ser un aviso, debería ser un
+> menú en rojo»
+
+Y tiene razón en el principio, que además es la regla 2 del `CLAUDE.md`: **un
+aviso se puede ignorar; un límite no.** Si una cifra se pasa de su máximo, o el
+menú no sale, o el máximo no era un máximo.
+
+**Lo primero es identificar CUÁL es ese aviso**, porque de eso depende todo: si
+es un máximo de FEDIAF o un tope de seguridad, es un fallo grave y va a rojo; si
+es una proporción de BARF (las vísceras al 10 % de la ración, por ejemplo), es
+FORMA -- criterio nuestro, no de FEDIAF -- y entonces lo que está mal es el
+texto, que la hace sonar a requisito.
+
+**Para darlo por hecho:** el aviso identificado, y o bien convertido en
+restricción dura con su bloque de batería, o bien reescrito para que no parezca
+un requisito. Y en los dos casos, dicho en `HECHO.md` cuál de las dos era.
+
+## Editar un menú, también en PERSONALIZAR
+
+Del mismo día: «tanto en automático como en personalizar eh». El arreglo del 13
+de septiembre (que cambiar un alimento no rehaga el menú) va en
+`_recalcular_con_motor`, que sirve a los tres endpoints de edición -- pero el
+camino de Personalizar tiene además su **propio atajo** de `CATALOGO_VARIANTES`
+en `main.py`, y hay que comprobar que por ahí pasa lo mismo.

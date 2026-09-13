@@ -15252,6 +15252,81 @@ print(f"  3 pesos adultos con menú · el fallo puesto lo deja sin menú · "
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
+# ── Y EL SEMAFORO TAMBIEN, CON EL MISMO PESO DE REFERENCIA (13-sep, noche) ──
+#
+# ⚠️ CASO REAL, EN PRODUCCION, y lo encontro la bateria nueva de la app de
+# verdad en su PRIMERA ejecucion: **un perro SENIOR de 24,5 kg no obtenia
+# ningun menu.**
+#
+# `_garantizar_verificado` verifica con `peso_referencia_kg` y la via rapida
+# verificaba SIN el. Los minimos de FEDIAF se escalan con las kcal por kg^0,75
+# (ecuacion 7.2.5), asi que un menu precalculado para un perro que come a 110
+# puede quedarse corto para uno que come a 95: el atajo decia VERDE, el filtro
+# final decia AMBAR --el magnesio al 97 % de su minimo-- y el endpoint devolvia
+# ese rechazo sin probar el camino normal, que SI da menu.
+#
+# Es la misma leccion del 8 de septiembre en su TERCERA cara: el que construye y
+# el que comprueba tienen que MEDIR IGUAL. Ya se aplico al solver contra el
+# filtro, y a la via rapida contra los topes; faltaba el propio semaforo.
+#
+# Se comprueba con el perro exacto que fallaba, y por las dos etapas donde el
+# catalogo tiene variantes de ese tamaño.
+_SENIOR100 = {"modo": "automatico", "nombres_alimentos": [], "forzar_presencia": [],
+              "der_objetivo": 1046.0, "actividad": "normal",
+              "especies_excluidas": [], "nombres_excluidos": [], "peso_perro_kg": 24.5,
+              "patologias": [], "categorias_excluidas": [], "peso_objetivo_kg": 24.5,
+              "peso_adulto_esperado_kg": 27.0, "tamano": "Grande"}
+for _et100 in ("Senior", "Adulto"):
+    _d100 = dict(_SENIOR100); _d100["etapa_requisitos"] = _et100
+    _r100s = _c_b5.post("/menu/v2", json=_d100).json()
+    if not _r100s.get("factible"):
+        fallos.append(f"BLOQUE100: un perro de 24,5 kg en etapa {_et100} con la via rapida NO "
+                      f"obtiene menu ({(_r100s.get('motivo') or '')[:90]}). Si el atajo verifica "
+                      f"con un criterio y `_garantizar_verificado` con otro, el endpoint devuelve "
+                      f"el rechazo del segundo sin probar el camino normal -- y hay menu")
+
+# Y LA RAIZ, medida aparte: que los dos verifiquen IGUAL. Se coge una variante
+# del catalogo, se reescala como hace el atajo y se comprueba que el semaforo da
+# lo mismo con y sin peso de referencia NO es lo que hay que exigir --puede dar
+# distinto de verdad--. Lo que hay que exigir es que el ATAJO use el mismo que
+# el filtro final, y eso se mide: si el atajo entrega un menu, el filtro final
+# no puede tirarlo.
+from catalogo_menus import CATALOGO_VARIANTES as _CV100
+from verificar import verificar as _verif100
+_entregados100 = 0
+for _clave100, _vars100 in _CV100.items():
+    _tam100, _et100b = _clave100.split("_", 1)
+    if _et100b not in ("Adulto", "Senior"):
+        continue
+    for _v100 in _vars100[:2]:
+        _g100 = _v100["gramos"]
+        if any(_n not in al for _n in _g100):
+            continue
+        _kcal100 = sum(al[_n]["energia"] * _x / 100.0 for _n, _x in _g100.items())
+        # un perro cuyo peso hace que coma a ~95 kcal/kg^0,75, que es donde los
+        # minimos van MAS APRETADOS: es el caso del senior.
+        _peso100 = (_kcal100 / 95.0) ** (1 / 0.75)
+        _d100b = {"modo": "automatico", "nombres_alimentos": [], "forzar_presencia": [],
+                  "der_objetivo": round(_kcal100, 1), "actividad": "normal",
+                  "etapa_requisitos": _et100b, "especies_excluidas": [], "nombres_excluidos": [],
+                  "peso_perro_kg": round(_peso100, 1), "patologias": [],
+                  "categorias_excluidas": [], "peso_objetivo_kg": round(_peso100, 1),
+                  "tamano": _tam100}
+        _r100b = _c_b5.post("/menu/v2", json=_d100b).json()
+        if not _r100b.get("factible"):
+            fallos.append(f"BLOQUE100: con la variante de «{_clave100}» a las kcal con las que se "
+                          f"guardo y un perro de {_peso100:.1f} kg (los que la hacen comer a 95 "
+                          f"kcal/kg^0,75, donde los minimos van mas apretados) NO sale menu: "
+                          f"{(_r100b.get('motivo') or '')[:80]}")
+        elif _r100b.get("via_catalogo"):
+            _entregados100 += 1
+if _entregados100 == 0:
+    fallos.append("BLOQUE100: ninguna de las variantes probadas se ha entregado por la via "
+                  "rapida, asi que esta comprobacion no esta probando el atajo. Buscar otro "
+                  "perro -- una prueba que se salta sola sale verde igual")
+print(f"  via rapida: {_entregados100} variantes entregadas por el atajo y verificadas")
+
+
 # ============================================================
 # BLOQUE 101 — EL CACHORRO DE RAZA GRANDE AL QUE LE DAN PREMIOS
 # ============================================================
@@ -15480,6 +15555,172 @@ try:
 finally:
     _recmod101.HOLGURA_DEL_TECHO_QUE_SUBE = _holg_buena101
 
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 102 — CAMBIAR UN ALIMENTO NO REHACE EL MENÚ
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (13 de septiembre de 2026, por la noche). CASO REAL, de
+# Elena usando la app con el menú de su propio perro:
+#
+#     «al cambiar la lengua de cordero por pollo mira todo lo que modifica.
+#      Esto no está bien, la idea es que si se puede solo se cambie el alimento
+#      seleccionado y los gramos de lo demás, e intentar tocar el menú lo menos
+#      posible»
+#
+# MEDIDO en su menú: cambió UN alimento y el motor quitó DOS y metió CUATRO --
+# se fue el yoduro potásico y entraron mango, aceite de sésamo, otro pollo y
+# otro multivitamínico. Y en pantalla: «Aviso del servidor: (ninguno)».
+#
+# DOS COSAS LO CAUSABAN, Y LAS DOS ERAN DECISIONES ESCRITAS:
+#
+#   1. `a_preservar` FUERZA a que los de antes sigan, pero no impide que el
+#      solver AÑADA lo que quiera. Nadie había pedido esos cuatro.
+#   2. `a_preservar` deja fuera los SUPLEMENTOS a propósito -- y para
+#      `/menu/revalidar` está bien, porque cuando el perro pasa de cachorro a
+#      adulto el multivitamínico de cachorro TIENE que cambiar. Pero al cambiar
+#      un alimento no: ahí hace desaparecer el yoduro que el dueño ya compró.
+#
+# Y una tercera que es la que más duele: el aviso contaba lo que se PERDÍA y se
+# callaba lo que se AÑADÍA, así que un cambio que metía cuatro alimentos salía
+# sin una palabra.
+#
+# LO QUE VIGILA:
+#   1. Que cambiar un alimento no haga desaparecer ninguno de los demás.
+#   2. Que no meta nada que no se haya pedido.
+#   3. Que los suplementos se conserven.
+#   4. Que cuando SÍ haya que tocar algo más, se diga -- en las dos direcciones.
+#   5. Que quitar y añadir sigan funcionando (son la misma función).
+print("\n" + "=" * 60)
+print("=== BLOQUE 102: cambiar un alimento no rehace el menú ===")
+
+# Se parte de un menú que el motor mismo ha hecho, no de uno escrito a mano: lo
+# segundo daría un menú que el solver nunca habría construido, y entonces lo que
+# se mediría es la reparación de un menú raro, no la edición.
+_d102 = {"modo": "automatico", "nombres_alimentos": [], "forzar_presencia": [],
+         "der_objetivo": 1422.0, "actividad": "normal",
+         "etapa_requisitos": "CachorroCrecimiento", "especies_excluidas": [],
+         "nombres_excluidos": [], "peso_perro_kg": 20.0, "patologias": [],
+         "categorias_excluidas": [], "peso_adulto_esperado_kg": 31.0}
+_base102 = _c_b5.post("/menu/v2", json=_d102).json()
+if not _base102.get("factible"):
+    fallos.append("BLOQUE102: no sale el menú de partida, así que este bloque no comprueba nada")
+else:
+    _menu102 = _base102["menu"]
+    _cats102 = {n: al.get(n, {}).get("categoria") for n in _menu102}
+    # Se cambia una CARNE por otra carne del catálogo que no esté ya dentro: es
+    # el caso de Elena, y es el que menos excusa tiene para mover nada.
+    _viejo102 = next((n for n, c in _cats102.items() if c == "Carne muscular"), None)
+    _nuevo102 = next((n for n, a in al.items()
+                      if a.get("categoria") == "Carne muscular" and n not in _menu102), None)
+    if not _viejo102 or not _nuevo102:
+        fallos.append("BLOQUE102: el menú de partida no trae carne muscular, o no queda otra en "
+                      "el catálogo. Sin eso esta prueba no está probando la edición")
+    else:
+        _r102 = _c_b5.post("/menu/cambiar", json={
+            "menu_actual": list(_menu102), "menu_actual_gramos": _menu102,
+            "alimento_viejo": _viejo102, "alimento_nuevo": _nuevo102,
+            "der_objetivo": 1422.0, "etapa_requisitos": "CachorroCrecimiento",
+            "peso_perro_kg": 20.0, "patologias": [], "especies_excluidas": [],
+            "nombres_excluidos": [], "peso_adulto_esperado_kg": 31.0}).json()
+        if not _r102.get("factible"):
+            fallos.append(f"BLOQUE102: cambiar «{_viejo102}» por «{_nuevo102}» no da menú")
+        else:
+            _g102 = _r102.get("menu") or _r102.get("gramos") or {}
+            _fuera102 = sorted((set(_menu102) - {_viejo102}) - set(_g102))
+            _dentro102 = sorted(set(_g102) - set(_menu102) - {_nuevo102})
+            # ⚠️ EL INVARIANTE ES «O NO SE TOCA NADA, O SE DICE», y no «no se
+            # toca nada» a secas. Cambiar pollo CON PIEL por pechuga de pavo
+            # (magra) obliga de verdad a meter una grasa: el linoleico lo traía
+            # la piel. Exigir que no se mueva nada acusaría al motor de un
+            # fallo que no tiene -- y un test que se pone rojo cuando el motor
+            # ACIERTA es peor que no tenerlo, porque enseña a desconfiar de la
+            # batería (lección del 9 de septiembre, BLOQUES 58 y 60).
+            #
+            # Lo que NO se puede es tocar el menú y callarlo, que es lo que vio
+            # Elena: cuatro alimentos nuevos con «Aviso del servidor: (ninguno)».
+            if not _fuera102 and not _dentro102:
+                if not _r102.get("solo_se_movieron_los_gramos"):
+                    fallos.append("BLOQUE102: no se ha tocado nada más y el menú no lo dice. "
+                                  "«No se ha movido nada» es información, no silencio")
+            else:
+                if _r102.get("solo_se_movieron_los_gramos"):
+                    fallos.append(f"BLOQUE102: el menú dice «solo se movieron los gramos» y ha "
+                                  f"cambiado de verdad (fuera {_fuera102}, dentro {_dentro102}). "
+                                  f"Esa etiqueta se MIDE sobre el resultado, no se deduce del "
+                                  f"peldaño por el que ha salido")
+                if not _r102.get("aviso"):
+                    fallos.append(f"BLOQUE102: se ha tocado el menú (fuera {_fuera102}, dentro "
+                                  f"{_dentro102}) y NO se dice. Es lo que vio Elena: cuatro "
+                                  f"alimentos nuevos con «Aviso del servidor: (ninguno)»")
+                for _n102 in _fuera102 + _dentro102:
+                    if _n102 not in (_r102.get("aviso") or ""):
+                        fallos.append(f"BLOQUE102: «{_n102}» ha entrado o salido y el aviso no lo "
+                                      f"nombra: «{_r102.get('aviso')}»")
+
+            # ⚠️ Y EL MECANISMO, QUE ES LO QUE SE PUEDE COMPROBAR SIN MENTIR.
+            #
+            # Lo primero que se escribio aqui fue «cambiando esta carne por esta
+            # otra no se mueve nada», y eso NO se puede exigir: el solver no
+            # siempre saca menu en el mismo peldaño, asi que la misma peticion
+            # da un menu intacto una vez y uno con un aceite mas a la siguiente,
+            # sin que nada este roto. Es la regla del 9 de septiembre -- una
+            # prueba solo puede afirmar del menu lo que sea verdad de CUALQUIER
+            # menu valido -- y ya costo dos rondas aqui mismo.
+            #
+            # Lo que si es determinista es la pieza que estaba rota: para que
+            # editar no meta alimentos nuevos, se cierran TODAS las categorias
+            # (las que el menu usa, con sus nombres; las que no, con lista
+            # VACIA). Y `restringir_a_elegidos` trataba la lista vacia como «sin
+            # restriccion», que es lo contrario de lo que dice -- por ahi se
+            # colaba un «Aceite de girasol» que nadie habia pedido.
+            _cerrado102 = {c: [] for c in {a.get("categoria") for a in al.values()
+                                           if a.get("categoria")}}
+            _cerrado102["Carne muscular"] = [_nuevo102]
+            _ok_c102, _g_c102 = resolver(
+                1422.0, "CachorroCrecimiento", al, req, 20.0, dosis_maxima_fabricante,
+                time_limit=8.0, forzar=[_nuevo102], restringir_a_elegidos=_cerrado102,
+                peso_adulto_esperado_kg=31.0)
+            if _ok_c102:
+                _colados102 = [n for n in _g_c102 if n != _nuevo102]
+                if _colados102:
+                    fallos.append(f"BLOQUE102: con TODAS las categorias cerradas y solo "
+                                  f"«{_nuevo102}» permitido, el solver ha metido {_colados102}. "
+                                  f"Una lista vacia en `restringir_a_elegidos` significa «de aqui, "
+                                  f"nada»; si se lee como «sin restriccion», editar un menu vuelve "
+                                  f"a poder meter lo que quiera")
+            # y la otra mitad: una categoria que NO aparece en el diccionario
+            # sigue libre. Si esto dejara de ser verdad, `restringir_especie` y
+            # Personalizar se quedarian sin poder añadir nada.
+            _ok_l102, _g_l102 = resolver(
+                1422.0, "CachorroCrecimiento", al, req, 20.0, dosis_maxima_fabricante,
+                time_limit=8.0, forzar=[_nuevo102],
+                restringir_a_elegidos={"Carne muscular": [_nuevo102]},
+                peso_adulto_esperado_kg=31.0)
+            if _ok_l102 and len(_g_l102) <= 1:
+                fallos.append("BLOQUE102: restringiendo SOLO la carne, el motor no ha podido usar "
+                              "ninguna otra categoria. Una categoria que no aparece en "
+                              "`restringir_a_elegidos` tiene que seguir libre")
+            if _ok_l102 and any(al[n].get("categoria") == "Carne muscular" and n != _nuevo102
+                                for n in _g_l102):
+                fallos.append("BLOQUE102: restringiendo la carne a una sola, ha entrado otra")
+
+    # 5. quitar y añadir siguen funcionando -- son la misma función, así que un
+    #    cambio en la escalera de arriba los mueve a los dos.
+    _quitable102 = next((n for n, c in _cats102.items() if c == "Verduras y frutas"), None)
+    if _quitable102:
+        _rq102 = _c_b5.post("/menu/quitar", json={
+            "menu_actual": list(_menu102), "menu_actual_gramos": _menu102,
+            "alimento": _quitable102, "der_objetivo": 1422.0,
+            "etapa_requisitos": "CachorroCrecimiento", "peso_perro_kg": 20.0,
+            "patologias": [], "especies_excluidas": [], "nombres_excluidos": [],
+            "peso_adulto_esperado_kg": 31.0}).json()
+        if not _rq102.get("factible"):
+            fallos.append(f"BLOQUE102: quitar «{_quitable102}» ya no da menú")
+        elif _quitable102 in (_rq102.get("menu") or _rq102.get("gramos") or {}):
+            fallos.append(f"BLOQUE102: se pidió quitar «{_quitable102}» y sigue en el menú")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 _cerrar_el_ultimo_bloque()

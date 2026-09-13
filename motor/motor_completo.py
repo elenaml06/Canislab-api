@@ -699,6 +699,23 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
                       if n in alimentos and alimentos[n].get("categoria") == cat]
             if pedidos:
                 disp = pedidos
+            elif not restringir_a_elegidos[cat]:
+                # ⚠️ UNA LISTA VACÍA ES «DE AQUÍ, NADA» -- Y ANTES NO ERA NADA
+                # (13 de septiembre de 2026, por la noche).
+                #
+                # `if pedidos:` trataba la lista vacía como «esta categoría no
+                # está restringida», que es lo contrario de lo que dice. Se notó
+                # al editar un menú: para que cambiar un alimento no metiera
+                # otros, se cierran TODAS las categorías -- las que el menú usa,
+                # con sus nombres; las que no, con lista vacía -- y por esas
+                # segundas se colaba igual un «Aceite de girasol» que nadie
+                # había pedido.
+                #
+                # Se distingue de una lista con nombres que no existen en el
+                # catálogo, que sigue dejando la categoría libre: eso es un
+                # fallo de quien llama, y cerrarle la categoría entera por un
+                # nombre mal escrito sería peor.
+                disp = []
 
         # ⚠️ CORREGIDO (21 agosto) — FALLO GRAVE ENCONTRADO POR UNA PRUEBA
         # NUEVA: LAS ALERGIAS SE PODÍAN SALTAR FORZANDO UN ALIMENTO.
