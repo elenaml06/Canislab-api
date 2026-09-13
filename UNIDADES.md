@@ -132,6 +132,39 @@ distinguir corte ni tejido -- por eso hay más `sin_dato` en L-carnitina
 
 ---
 
+## `hueco_verificado`: un hueco también tiene que decir por qué lo es
+
+*(13 de septiembre. Es el gemelo de `cero_verificado`, y nace de una pregunta de
+Elena: si dejar un hueco a propósito no es peligroso.)*
+
+`sin_dato` era una **lista pelada**, así que dos cosas muy distintas se veían
+exactamente igual:
+
+| | |
+|---|---|
+| «Hemos ido a las tres fuentes, ninguna mide esta celda, y queda escrito cuáles» | — |
+| «Nadie ha mirado nunca esta celda» | — |
+
+Y para contestar si el hueco es peligroso hay que poder leer **lo primero**. Así
+que un hueco que se ha comprobado lleva ahora su motivo en `hueco_verificado`,
+con el mismo contrato que `cero_verificado`: **qué fuentes se miraron, qué dijo
+cada una, y cuándo**.
+
+**Lo que el hueco NO es, y conviene saberlo antes de preocuparse**: un hueco no
+cuenta como cero. Contra un MÁXIMO el motor le mete el **percentil 90 de su
+familia** (`constructor.valor_para_maximo`), o sea «un alimento como este, en el
+extremo alto de lo que suelen tener», y contra un MÍNIMO cuenta 0. Es decir que
+es conservador en las dos direcciones. El peligroso es el **cero mudo**, que
+afirma «no lo tiene» y **afloja** el techo.
+
+El BLOQUE 100 exige que el campo no pueda mentir, en cinco formas: su clave está
+en `sin_dato`, su valor es 0, **no** está también en `cero_verificado` (una celda
+no puede ser a la vez «la fuente mide 0» y «ninguna fuente la mide»), no tiene
+`composicion_fuente` (eso es para celdas con cifra), y su motivo dice de verdad
+qué se miró. Comprobado con las cinco reintroducidas.
+
+---
+
 ## Los tres campos que dicen qué sabemos de cada 0
 
 Añadido el 7 de septiembre, cuando se cerraron 52 celdas contra las tres

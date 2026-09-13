@@ -193,6 +193,15 @@ PREPARACIONES = (
 # nombra el producto y en otra el método no puede estar en la lista a secas.
 NO_SON_PREPARACIONES_AUNQUE_LO_PAREZCAN = {
     "stewing": "«Chicken, stewing» de USDA es el tipo de ave (gallina), no pollo guisado",
+    # ⚠️ CASO REAL, 13 de septiembre. «Oil, peanut, salad or cooking» es el
+    # nombre con el que USDA cataloga el aceite de cacahuete REFINADO -- dice
+    # para qué se vende, no que esté cocinado: un aceite no se cocina a sí
+    # mismo, y la fila declara 99,9 g de grasa y 0 de agua, que es aceite
+    # crudo. El guardia lo marcó como preparación incompatible y puso roja la
+    # batería en el BLOQUE 100. Es exactamente lo de «chicken, stewing»: una
+    # palabra de la nomenclatura de la fuente, no un tratamiento del alimento.
+    "salad": "«Oil, …, salad or cooking» de USDA es para qué se vende el aceite refinado, "
+             "no una preparación: la fila es aceite crudo (99,9 g de grasa, 0 de agua)",
 }
 
 

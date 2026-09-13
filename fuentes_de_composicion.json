@@ -1441,5 +1441,35 @@
   },
   "la_lista_completa": "Vive en `_MUESTRA51` y `_TR51` de `pruebas_completas.py` (BLOQUE 51) y NO se copia aquí: serían dos listas que se desincronizan, que es el fallo que este repo lleva avisado en veinte sitios. `auditar_composicion.py` las LEE de allí.",
   "donde_esta_la_pregunta": "PREGUNTAS_PARA_ELENA.md · DATOS_QUE_FALTAN.md"
+ },
+ "discrepancias_declaradas_que_deciden_un_maximo": {
+  "por_que_esta_aqui": "Las 253 discrepancias del barrido no se tocan porque son dos fuentes honestas que no dicen lo mismo, y cuál vale es un juicio. Pero UNA merece estar escrita con su nombre, porque decide un MÁXIMO de FEDIAF y porque el alimento es el mayor aportador de ese nutriente en toda la ración.",
+  "higado_de_vaca_vitamina_a": {
+   "nuestra_cifra": 10250,
+   "de_donde": "bedca:1053 «Hígado, de vaca/buey, crudo», `value_type` BE (calculada)",
+   "la_otra": 4968,
+   "de_donde_la_otra": "usda:169451 «Beef, variety meats and by-products, liver, raw»",
+   "cociente": 2.06,
+   "por_que_no_lo_explica_el_convenio": "⚠️ ESTE es el punto. La vitamina A tiene conflicto de convenio declarado (BEDCA cuenta el β-caroteno a 6:1, USDA a 12:1, CIQUAL no lo cuenta, FEDIAF pide 4:1 para el perro), y ese conflicto explica las discrepancias en VERDURA. Aquí NO PUEDE explicarlo: un hígado no tiene β-caroteno, su vitamina A es retinol puro, y con retinol puro los cuatro convenios dan el mismo número. Así que esto es una discrepancia de MEDIDA, no de convenio.",
+   "la_tercera_fuente_no_desempata": "CIQUAL 40104 «Foie, génisse, cru» da 6350, entre las dos. Y sus otras filas de hígado avisan de lo mucho que varía el órgano: ternera 13800, cerdo 10300, oca 20400, pollo 8490.",
+   "por_que_importa": "El hígado de vaca entra en casi todo menú (la vitamina A y el cobre salen casi solo de ahí) y la vitamina A tiene MÁXIMO en FEDIAF. Con la cifra de BEDCA el motor cree que un gramo de hígado aporta el doble, así que mete la MITAD de hígado -- por el lado seguro del máximo, y por el lado malo de todo lo demás que el hígado aporta.",
+   "que_se_ha_hecho": "Nada a la cifra: manda BEDCA, que es el mandato 1. Lo que se ha hecho es ESCRIBIR el id de BEDCA en la ficha, que no estaba -- declaraba solo el de USDA, así que esos 10250 no se comparaban con ninguna fuente que los publique y parecían no venir de ningún sitio.",
+   "quien_decide": "Elena / el nutricionista. Está en PREGUNTAS_PARA_ELENA.md"
+  }
+ },
+ "fichas_con_numeros_de_otra_especie": {
+  "por_que_esta_aqui": "⚠️ UNA FAMILIA DE FALLO CON CUATRO CASOS YA, y los cuatro del mismo tipo: una ficha con nombre de TERNERA y cifras de VACA, o al revés. Importa porque no es un decimal -- son animales de composición muy distinta -- y porque quien compra en la carnicería compra uno de los dos. Dos se renombraron en agosto («Bazo de ternera», «Páncreas de ternera») y uno en septiembre («Pulmón de ternera» → «Pulmón de vaca»). Estos dos se encontraron el 13 de septiembre al barrer las vísceras, y NO se tocan: rellenar desde la fila de la otra especie mezcla dos mediciones en una columna, y renombrar es una decisión de producto.",
+  "Riñón de ternera": {
+   "declara": "usda:174356 «Veal, variety meats and by-products, kidneys, raw» (99/15,76/3,12)",
+   "sus_cifras_son_de": "ciqual:40402 «Rognon, BOEUF, cru» (95,9/17,1/2,65) — proteína y grasa EXACTAS contra nuestros 92,3/17,1/2,65",
+   "la_prueba_en_la_vitamina_d": "nuestra cifra es 1,05, que es la de esa fila de BUEY clavada. BEDCA 1069 «Riñón, de ternera» da 1 y USDA no publica ninguna.",
+   "y_una_celda_sin_explicar": "su vitamina A, 204, no sale de ninguna de las cuatro filas candidatas: BEDCA ternera 140, USDA ternera 92, CIQUAL buey 253, CIQUAL ternera 86."
+  },
+  "Pulmón de vaca": {
+   "declara": "usda:168628 «Beef, variety meats and by-products, lungs, raw»",
+   "su_vitamina_d_es_de": "bedca:2300 «Pulmón, de TERNERA, crudo», que da 11 µg de vitamina D y 14 de vitamina A — EXACTAMENTE las nuestras",
+   "esto_cierra_una_pregunta_escrita": "La propia ficha lo dejó apuntado el 8 de septiembre: «nuestras tres cifras coinciden EXACTAS con BEDCA 2300 “Pulmón, de TERNERA, crudo” … O la ficha se sembró de la fila de la especie equivocada, o es casualidad. El barrido contra la fila de vacuno lo dirá». No es casualidad: USDA, la fila de vacuno adulto, NO PUBLICA vitamina D del pulmón.",
+   "y_lo_que_lo_hace_raro": "el catálogo tiene aparte una ficha «Pulmón de ternera» cuya vitamina D es un HUECO. O sea que la cifra de ternera está en la ficha de vaca y falta en la de ternera."
+  }
  }
 }

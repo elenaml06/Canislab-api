@@ -1450,3 +1450,94 @@ girasol` se imputaba a **5 µg** (lo que declara el huevo de pato) y el de vitam
 del `Aceite de cacahuete` a **591 µg de retinol** (lo que declara la yema). Los dos
 son aceites de semilla refinados y los dos están ahora a 0 con su fila de USDA
 escrita.
+
+---
+
+## Las vísceras: siete ceros mudos, y dos fichas con cifras de otra especie
+
+*(13 de septiembre por la noche. Nace de una pregunta de Elena: «¿has comprobado el
+valor de todas las vísceras? El hígado de todos, y luego buscar si en alguna fuente
+se dan datos de vísceras de pollo y pavo».)*
+
+**Lo que falta conseguir, y no lo rellena el asistente.** Siete celdas de víscera
+que **ninguna de las cuatro fuentes mide**, y que por eso han pasado de cero mudo a
+hueco declarado (con su motivo escrito en `hueco_verificado`):
+
+| Ficha | Celda | Qué dice cada fuente |
+|---|---|---|
+| **Riñón de cordero** | vitamina D | BEDCA 1063 `TR` (celda vacía) · USDA 174354 sin cifra · CIQUAL 40407 «-» |
+| **Pulmón de vaca** | vitamina E, **yodo** | la fila de BEDCA no trae esas columnas · USDA no publica yodo de nada ni vit. E del pulmón · CIQUAL **no tiene ninguna fila de pulmón** |
+| **Pulmón de cordero** | vitamina E, **yodo** | igual, con BEDCA 2299 y USDA 174359 |
+| **Bazo de cordero** | **yodo** | BEDCA **no tiene ninguna fila de bazo** · USDA no publica yodo · CIQUAL no tiene bazo |
+| **Hígado de conejo** | vitamina D | BEDCA solo tiene carne de conejo (1162, 964) · USDA no lo tiene · CIQUAL 40110 «-» |
+
+Tres de los siete son **yodo**, que es uno de los cinco topes crónicos: el cero mudo
+lo **aflojaba**. Y el de la vitamina D del hígado de conejo no era ni un cero: era un
+**1,2 copiado del hígado de VACA** (la cifra de BEDCA 1053 clavada).
+
+**Y lo que hace falta es el dato**, igual que en las seis carnes magras: la vitamina D
+de un riñón de cordero y de un hígado de conejo, y el yodo de un pulmón y de un bazo,
+de una fuente que mida ese órgano y esa especie.
+
+### Dos decisiones de especie, que son tuyas y no de dato
+
+No se toca ni una cifra en las dos: rellenar desde la fila de la otra especie mezcla
+dos mediciones en una columna, y renombrar es decisión de producto. Es la cuarta y la
+quinta de una familia que ya tiene tres casos cerrados («Bazo de ternera» y «Páncreas
+de ternera» renombrados en agosto, «Pulmón de ternera» en septiembre).
+
+- **`Riñón de ternera` es un riñón de BUEY.** Declara `usda:174356` (veal kidneys,
+  99/15,76/3,12) y sus cifras no son esas: cuadran **exactas** con `ciqual:40402`
+  «Rognon, **boeuf**, cru» (95,9/17,1/2,65 contra nuestros 92,3/17,1/2,65). La prueba
+  está en la vitamina D: la nuestra es **1,05**, que es la de esa fila de buey clavada
+  — BEDCA 1069 «Riñón, de ternera» da 1 y USDA no publica ninguna. ⚠️ Y su **vitamina
+  A, 204, no sale de ninguna de las cuatro filas candidatas** (BEDCA ternera 140, USDA
+  ternera 92, CIQUAL buey 253, CIQUAL ternera 86): esa sí es una celda sin explicar.
+- **`Pulmón de vaca` lleva la vitamina D del pulmón de TERNERA**, y esto **cierra una
+  pregunta que la propia ficha llevaba escrita desde el 8 de septiembre**: «o la ficha
+  se sembró de la fila de la especie equivocada, o es casualidad. El barrido contra la
+  fila de vacuno lo dirá». No es casualidad: `bedca:2300` «Pulmón, de ternera, crudo»
+  da vitamina D **11** y vitamina A **14**, que son exactamente las nuestras, y USDA
+  168628 —la fila de vacuno adulto que la ficha declara— **no publica vitamina D del
+  pulmón**. Y lo que lo hace más raro: el catálogo tiene aparte una ficha `Pulmón de
+  ternera` cuya vitamina D es un **hueco**. La cifra de ternera está en la ficha de
+  vaca y falta en la de ternera.
+
+### Lo que sí se cerró
+
+- **`Timo de ternera`**, vitamina D: hueco → **0,25 µg** de `ciqual:40304` «Ris, veau,
+  cru». «Ris de veau» *es* el timo de ternera; BEDCA no tiene ninguna fila de timo y
+  USDA 172542 —la que sembró la ficha, exacta en las tres cifras— no publica vitamina D.
+- **La procedencia del `Hígado de conejo`**, que era **la única ficha del catálogo sin
+  ninguna**: sale de `ciqual:40110` «Foie, lapin, cru» — 132/19/4 contra nuestros
+  134/19/4, y la vitamina A **4530 clavada**.
+
+### Vísceras de pollo y de pavo: qué publica cada fuente
+
+Contestado y **las seis fichas de ave están bien**:
+
+| Fuente | Qué tiene | Vitamina D |
+|---|---|---|
+| **USDA** | pollo: hígado, molleja, corazón y despojos de cuatro clases. Pavo: hígado, molleja, corazón y despojos | **del pollo solo la mide el hígado (0)**; molleja y corazón no. Del pavo las mide las cuatro |
+| **CIQUAL** | `Coeur/Gésier/Foie, poulet`, `Coeur/Foie, dinde`, `Foie, volaille` | pollo: corazón «-», molleja 0,6, hígado 0,21. Pavo: corazón 0,4, hígado 1,3 |
+| **BEDCA** | `Corazón de pollo` (970), `Higado de pollo` (2270) | corazón 0,2 (`AR`) |
+
+Nuestras seis: hígado de pollo 0 = USDA · hígado de pavo 1,3 = USDA · corazón de pavo
+0,4 = USDA **y** CIQUAL · molleja de pavo 0,5 = USDA · corazón de pollo 0,2 = BEDCA 970
+· molleja de pollo **hueco**, y es correcto porque la fila que la sembró (USDA 171456)
+no mide vitamina D.
+
+### Y una discrepancia que hay que decidir, no conseguir
+
+El **`Hígado de vaca`** declara **10250 µg de vitamina A** y **es la cifra de BEDCA**
+(1053, `value_type` BE). Pero USDA 169451 —la fila que la ficha declaraba como única
+fuente— da **4968**: **2,06 veces menos**. ⚠️ Y el conflicto de convenio del β-caroteno
+**no lo explica**: un hígado no tiene caroteno, su vitamina A es retinol puro, y con
+retinol puro los cuatro convenios dan el mismo número. Así que es una discrepancia de
+**medida**. CIQUAL no desempata (6350 en «Foie, génisse»).
+
+Importa porque el hígado de vaca entra en casi todo menú, es de donde sale casi toda la
+vitamina A de la ración, y la vitamina A tiene **máximo en FEDIAF**. No se ha tocado la
+cifra —manda BEDCA, que es el mandato 1— pero ahora la ficha **declara también el id de
+BEDCA**, que no tenía: sin él esos 10250 no se comparaban con ninguna fuente que los
+publique. Está en `PREGUNTAS_PARA_ELENA.md`.

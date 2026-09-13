@@ -14847,6 +14847,53 @@ else:
     print(f"  fracciones que superan su total: {len(_pasan100)} "
           f"(+{len(_sabidas100)} declaradas con su medida)")
 
+    # --- 7. un hueco VERIFICADO dice por qué lo es, y no es otra cosa -----
+    #
+    # ⚠️ POR QUÉ EXISTE `hueco_verificado` (13 de septiembre). `sin_dato` era una
+    # LISTA PELADA, así que «hemos ido a las tres fuentes, ninguna lo mide, y lo
+    # dejamos escrito» y «nadie ha mirado nunca esta celda» se veían EXACTAMENTE
+    # igual. Es el mismo agujero que tapó `cero_verificado` para los ceros, y se
+    # abrió al preguntar Elena si dejar el hueco a propósito no era peligroso:
+    # para contestar eso hace falta poder leer qué se comprobó.
+    #
+    # Lo que se exige aquí es que el campo no pueda mentir:
+    #   · su clave está en `sin_dato` -- si no, declara verificado un hueco que
+    #     no es un hueco;
+    #   · su valor en `nutrientes` es 0, como todo hueco;
+    #   · NO está también en `cero_verificado` -- una celda no puede ser a la vez
+    #     «la fuente mide 0» y «ninguna fuente la mide», y tenerla en los dos
+    #     sitios es la contradicción que deja pasar cualquiera de las dos;
+    #   · NO tiene `composicion_fuente` -- eso es para celdas CON cifra.
+    _malhueco100 = []
+    for _ficha100 in _cat100:
+        _hv100 = _ficha100.get("hueco_verificado") or {}
+        _sd100 = set(_ficha100.get("sin_dato") or [])
+        _cv100 = set((_ficha100.get("cero_verificado") or {}).keys())
+        _cf100 = set((_ficha100.get("composicion_fuente") or {}).keys())
+        for _cl100, _txt100 in _hv100.items():
+            _n100 = _ficha100["nombre"]
+            if _cl100 not in _sd100:
+                _malhueco100.append(f"{_n100}/{_cl100}: `hueco_verificado` pero NO está en "
+                                    f"`sin_dato`")
+            if (_ficha100.get("nutrientes") or {}).get(_cl100):
+                _malhueco100.append(f"{_n100}/{_cl100}: declarado hueco y con valor "
+                                    f"{_ficha100['nutrientes'][_cl100]}")
+            if _cl100 in _cv100:
+                _malhueco100.append(f"{_n100}/{_cl100}: está en `cero_verificado` Y en "
+                                    f"`hueco_verificado` -- no puede ser las dos")
+            if _cl100 in _cf100:
+                _malhueco100.append(f"{_n100}/{_cl100}: declarado hueco y con "
+                                    f"`composicion_fuente`, que es para celdas CON cifra")
+            if len(str(_txt100)) < 40:
+                _malhueco100.append(f"{_n100}/{_cl100}: su motivo son {len(str(_txt100))} "
+                                    f"caracteres. Tiene que decir QUÉ fuentes se miraron")
+    if _malhueco100:
+        fallos.append(f"BLOQUE100: {len(_malhueco100)} `hueco_verificado` se contradicen con el "
+                      f"resto de la ficha: " + " · ".join(_malhueco100[:5]))
+    _nhv100 = sum(len(_f.get("hueco_verificado") or {}) for _f in _cat100)
+    print(f"  huecos con su motivo escrito: {_nhv100}, 0 que se contradigan"
+          if not _malhueco100 else f"  huecos con su motivo escrito: {_nhv100}")
+
     # --- y que la declaración sea coherente consigo misma -----------------
     for _fu100 in _decl100["orden_de_mandato"]:
         if _fu100 not in _decl100["fuentes"]:

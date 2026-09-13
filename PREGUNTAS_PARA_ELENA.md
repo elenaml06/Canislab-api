@@ -937,3 +937,71 @@ No digo que esté mal: la regla 2 la pone como restricción dura a propósito, y
 vitamina D se acumula de verdad, que es justo el argumento de Lenox & Bauer. Pero
 son dos cifras de la misma naturaleza aplicadas en dos formas distintas, y eso
 merece que alguien lo diga en voz alta una vez. **No he cambiado nada.**
+
+---
+
+## G · Las vísceras, que me preguntaste si había comprobado — y no, no las había
+
+Tenías razón en preocuparte. Las he barrido y salieron **siete ceros mudos, y los
+siete aflojaban un tope crónico**: la vitamina D del riñón de cordero y del hígado de
+conejo, y el **yodo** del pulmón de vaca, del pulmón de cordero y del bazo de cordero
+(más la vitamina E de los dos pulmones). Ya están en hueco declarado, con su motivo
+escrito. El detalle está en `DATOS_QUE_FALTAN.md`.
+
+**Y primero lo que no es peligroso, que es lo que preguntabas del hueco.** Un hueco
+**no** cuenta como cero. Contra el tope crónico el motor le mete el percentil 90 de su
+familia, que en pescado son 8 µg/100 g — nivel de salmón:
+
+| | imputado | por 1000 kcal | tope |
+|---|---|---|---|
+| Bacaladilla | 8,0 | **103,9** | 20 |
+| Gamba roja | 8,0 | **88,9** | 20 |
+| Pescadilla | 8,0 | **145,5** | 20 |
+
+O sea que a esos tres el motor los trata como si fueran salmón: 4 a 7 veces el tope. Y
+contra el mínimo el hueco aporta 0, así que tampoco da por cubierto lo que no sabe. Es
+conservador en las dos direcciones. **El peligroso es el cero mudo**, que afirma «no lo
+tiene» y afloja el techo — y es exactamente lo que he encontrado en las vísceras.
+
+Y he añadido un campo que no existía, **`hueco_verificado`**, porque `sin_dato` era una
+lista pelada: «hemos mirado las tres fuentes y ninguna lo mide» y «nadie ha mirado
+nunca» se veían igual. Ahora se puede leer cuál es cuál, que es justo lo que hacía
+falta para contestarte.
+
+### Lo que te toca decidir, y son tres cosas
+
+**1. El hígado de vaca declara el DOBLE de vitamina A que USDA.** Nuestra cifra son
+**10250 µg** y es de BEDCA (mandato 1). USDA, en la fila que la ficha declaraba como
+única fuente, da **4968**. Y ojo, porque esto no es el lío de los convenios del
+β-caroteno: un hígado **no tiene caroteno**, su vitamina A es retinol puro, y con
+retinol puro los cuatro convenios dan el mismo número. Es una discrepancia de medida.
+CIQUAL no desempata (6350). Importa porque el hígado de vaca entra en casi todo menú,
+es de donde sale casi toda la vitamina A de la ración, y la vitamina A tiene **máximo
+en FEDIAF**. No he tocado la cifra: manda BEDCA. Lo que he hecho es escribirle el id de
+BEDCA, que no tenía — sin él esos 10250 no se comparaban con ninguna fuente que los
+publique.
+
+**2 y 3. Dos fichas con cifras de otra especie, y renombrar es decisión tuya.** Es la
+cuarta y la quinta de una familia que ya tiene tres casos cerrados (bazo, páncreas y
+pulmón «de ternera», renombrados en agosto y septiembre):
+
+- El **`Riñón de ternera` es un riñón de BUEY**: su identidad cuadra exacta con la fila
+  de buey de CIQUAL (92,3/17,1/2,65) y no con la de ternera, y su vitamina D, 1,05, es
+  la de esa fila de buey clavada. ⚠️ Y su vitamina A, 204, **no sale de ninguna de las
+  cuatro filas candidatas** — esa celda sigue sin explicación.
+- El **`Pulmón de vaca` lleva la vitamina D del pulmón de TERNERA**, y esto cierra una
+  pregunta que la propia ficha llevaba escrita desde el 8 de septiembre. BEDCA 2300
+  «Pulmón, de ternera» da 11 y 14, que son exactamente las nuestras, y USDA —la fila de
+  vacuno que la ficha declara— no publica vitamina D del pulmón. Lo raro: el catálogo
+  tiene aparte un `Pulmón de ternera` cuya vitamina D es un hueco. La cifra de ternera
+  está en la ficha de vaca y falta en la de ternera.
+
+### Y lo de pollo y pavo, contestado: las seis fichas de ave están bien
+
+USDA publica hígado, molleja, corazón y despojos de los dos; CIQUAL añade corazón,
+molleja e hígado de pollo y corazón e hígado de pavo; BEDCA tiene corazón e hígado de
+pollo. **Del pollo la vitamina D solo la mide el hígado**; molleja y corazón no la mide
+nadie con la fila que sembró nuestras fichas. Las seis cuadran: hígado de pollo 0 =
+USDA, hígado de pavo 1,3 = USDA, corazón de pavo 0,4 = USDA y CIQUAL, molleja de pavo
+0,5 = USDA, corazón de pollo 0,2 = BEDCA 970, y molleja de pollo en hueco, que es lo
+correcto.

@@ -918,6 +918,90 @@ un cero, porque eso produce una celda **con valor y sin procedencia** —o con
 procedencia `bedca`, que es imposible porque esa celda está vacía—, y el bloque
 falla en los dos casos. Comprobado con el fallo puesto de las dos formas.
 
+### Y las vísceras, que no se habían barrido
+
+Nace de una pregunta de Elena —«¿has comprobado el valor de todas las vísceras? El
+hígado de todos, y luego buscar si en alguna fuente se dan datos de vísceras de pollo
+y pavo»— y de otra que vale como regla: si dejar un hueco a propósito no es peligroso.
+
+**La segunda primero, porque la respuesta es la que hay que tener en la cabeza: un
+hueco NO cuenta como cero.** Contra un MÁXIMO el motor le mete el percentil 90 de su
+familia, y contra un MÍNIMO cuenta 0 — o sea que es conservador en las dos
+direcciones. Medido en los tres pescados que se quedaron sin cifra: el hueco les
+cuenta 8 µg/100 g, nivel de salmón, que son **104 · 89 · 146 µg/1000 kcal** contra un
+tope de **20**. El motor los trata como si fueran salmón. **El peligroso es el cero
+mudo**, que afirma «no lo tiene» y **afloja** el techo.
+
+**Y en las vísceras había siete ceros mudos, y los siete aflojaban un tope crónico.**
+Pasan a hueco declarado:
+
+| Ficha | Celda | Qué dice cada fuente |
+|---|---|---|
+| **Riñón de cordero** | vitamina D | BEDCA 1063 `TR` · USDA sin cifra · CIQUAL «-». **Tres fuentes, ninguna la mide** — y que la ficha bebió de BEDCA lo prueba su vitamina E, 0,43, clavada |
+| **Pulmón de vaca** y **Pulmón de cordero** | vit. E y **yodo** | la fila de BEDCA no trae esas columnas · USDA **no publica yodo de nada** · CIQUAL no tiene ninguna fila de pulmón |
+| **Bazo de cordero** | **yodo** | BEDCA no tiene ninguna fila de bazo · USDA no publica yodo · CIQUAL no tiene bazo |
+| **Hígado de conejo** | vitamina D | y no era un cero: era un **1,2 copiado del hígado de VACA**, la cifra de BEDCA 1053 clavada |
+
+Tres de los siete son **yodo**, que es uno de los cinco topes crónicos.
+
+**Por qué estaba invisible, y aquí hay que ser exacto porque mi primera lectura fue más
+amplia de lo que los datos sostienen**: el barrido lee `fuentes_id`, y faltaban **dos**
+—no cinco—. Los tres corazones (vaca 2265, cordero 966, pollo 970) ya tenían su id de
+BEDCA y su vitamina D ya se comparaba contra ella. Los que callaban eran el **hígado de
+vaca** (solo declaraba USDA, y de ahí sale su vitamina D pero NO su vitamina A) y el
+**pulmón de cordero** (USDA no publica vitamina D del pulmón, así que sus 12 µg no se
+comparaban con nada).
+
+**Lo que se cerró con cifra:** el **timo de ternera**, vitamina D = **0,25** de
+`ciqual:40304` «Ris, veau, cru» — ris de veau *es* el timo de ternera, BEDCA no tiene
+ninguna fila de timo y USDA 172542 no publica la suya. Y **la procedencia del hígado de
+conejo**, que era **la única ficha del catálogo sin ninguna**: sale de `ciqual:40110`
+«Foie, lapin, cru», con proteína, grasa y la vitamina A (4530) exactas. Eso cierra el
+fallo nº5 del barrido del mismo día.
+
+**La discrepancia que hay que decidir, no conseguir**: el **hígado de vaca** declara
+**10250 µg de vitamina A** y **es la cifra de BEDCA** (`BE`); USDA, en la fila que la
+ficha declaraba como única fuente, da **4968** — 2,06×. ⚠️ Y el conflicto de convenio
+del β-caroteno **no lo explica**: un hígado no tiene caroteno, su vitamina A es retinol
+puro, y con retinol puro los cuatro convenios dan el mismo número. CIQUAL no desempata
+(6350). Importa porque el hígado entra en casi todo menú, es de donde sale casi toda la
+vitamina A de la ración, y la vitamina A tiene **máximo en FEDIAF**. No se toca la
+cifra —manda BEDCA— pero ahora la ficha declara también su id.
+
+**Dos fichas con cifras de otra especie, que NO se tocan** porque renombrar es decisión
+de producto. Son la cuarta y la quinta de una familia con tres casos ya cerrados (bazo,
+páncreas y pulmón «de ternera»):
+- el **`Riñón de ternera` es un riñón de BUEY** (identidad exacta de `ciqual:40402`, y
+  su vitamina D 1,05 es la de esa fila clavada; su vitamina A, 204, no sale de ninguna
+  de las cuatro filas candidatas y sigue sin explicar);
+- el **`Pulmón de vaca` lleva la vitamina D del pulmón de TERNERA**, y esto **cierra
+  una pregunta que esa ficha llevaba escrita desde el 8 de septiembre** («o se sembró
+  de la fila de la especie equivocada, o es casualidad»): no es casualidad, `bedca:2300`
+  da 11 y 14, las nuestras exactas, y USDA no publica vitamina D del pulmón. Y el
+  catálogo tiene aparte un `Pulmón de ternera` cuya vitamina D es un hueco.
+
+**Vísceras de pollo y pavo, contestado: las seis fichas de ave están bien.** USDA
+publica hígado, molleja, corazón y despojos de los dos, CIQUAL añade corazón, molleja e
+hígado de pollo y corazón e hígado de pavo, y BEDCA tiene corazón e hígado de pollo.
+**Del pollo la vitamina D solo la mide el hígado.** Las seis cuadran: hígado de pollo 0
+= USDA · hígado de pavo 1,3 = USDA · corazón de pavo 0,4 = USDA **y** CIQUAL · molleja
+de pavo 0,5 = USDA · corazón de pollo 0,2 = BEDCA 970 · molleja de pollo en hueco, que
+es correcto porque su fila (USDA 171456) no la mide.
+
+⚠️ **Y de aquí sale un campo nuevo, `hueco_verificado`, gemelo de `cero_verificado`.**
+`sin_dato` era una **lista pelada**, así que «hemos mirado las tres fuentes y ninguna
+mide esta celda» y «nadie ha mirado nunca» se veían **exactamente igual** — y para
+contestar si el hueco es peligroso hay que poder leer lo primero. El BLOQUE 100 exige
+que el campo no pueda mentir, en cinco formas: su clave está en `sin_dato`, su valor es
+0, **no** está también en `cero_verificado` (una celda no puede ser a la vez «la fuente
+mide 0» y «ninguna fuente la mide»), no tiene `composicion_fuente`, y su motivo dice de
+verdad qué se miró. Comprobado con las cinco reintroducidas.
+
+⚠️ **Y una palabra más que parece una preparación y no lo es**, que puso roja la batería
+el mismo día: «Oil, peanut, **salad or cooking**» de USDA dice **para qué se vende** el
+aceite refinado, no que esté cocinado — la fila declara 99,9 g de grasa y 0 de agua, que
+es aceite crudo. Vive con «stewing» en `NO_SON_PREPARACIONES_AUNQUE_LO_PAREZCAN`.
+
 En la raíz, los nueve: `alimentos_v3_final.json` (el catálogo),
 `requerimientos_v2_final.json` (la tabla de FEDIAF), `catalogo_menus.json`
 (los 36 menús precalculados de la vista previa y sus 180 variantes),
