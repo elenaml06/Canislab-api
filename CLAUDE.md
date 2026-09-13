@@ -850,6 +850,41 @@ que es otra cosa y sigue siendo la única forma de que una cifra no mienta:
 `auditar_citas.py`, `auditar_patologias.py`, `auditar_margen_profesional.py`,
 `auditar_catalogo.py` y `auditar_kober.py`.
 
+## Antes de fusionar: la app DE VERDAD contra el motor DE VERDAD
+
+**Escrito el 13 de septiembre de 2026, y lo pidió Elena el día que producción
+estuvo rota sin que nada saltara:**
+
+> «a partir de ahora cuando hagas PR y fusiones tienes que hacer pruebas para
+> todo tipo de etapas y todo tipo de perros con todo tipo de patologías en la
+> app real con las cuentas de prueba, en veterinario y usuario, para ver si
+> falla algo»
+
+⚠️ **Y el motivo está medido: ese día había 101 bloques del motor en verde y 550
+pruebas de la app en verde, y la app no daba UN SOLO MENÚ.** Cairo, el cachorro
+de Elena, se quedaba sin comer y ninguna de las dos baterías podía verlo.
+
+**Por qué ninguna de las dos lo ve, y es estructural:**
+
+| | Qué prueba | Qué NO puede ver |
+|---|---|---|
+| `pruebas_completas.py` | el motor, por dentro y por sus endpoints | lo que la app le MANDA de verdad |
+| `tests/*.spec.js` de `canislab-web` | la app, contra un motor **de mentira** que siempre devuelve menú | que el motor de verdad diga que no |
+
+Las dos juntas dejan un hueco del tamaño exacto del fallo: **una petición que la
+app manda bien y el motor contesta «no hay menú» por un motivo real.** Eso no es
+un fallo de nadie de los dos y solo se ve juntándolos.
+
+**Lo que hay que ejecutar antes de fusionar** es `tests/motor-de-verdad.spec.js`
+en `canislab-web`: levanta la app y la deja hablar con la API **desplegada**, y
+recorre la matriz de etapas × tamaños × premios × patologías, en los dos roles.
+No sustituye a nada: se suma.
+
+⚠️ **La mitad de la CUENTA sigue siendo de mentira**, y va declarado: el
+Supabase real necesita una credencial que no vive en el repo. Lo que se prueba
+de verdad es el motor, que es donde estaba el fallo. El día que se ponga la
+credencial como secreto de GitHub, esa mitad también.
+
 ## Cómo se prueba
 
 ```bash
