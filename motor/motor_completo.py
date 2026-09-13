@@ -492,7 +492,8 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
             presupuesto_semanal_restante=None, diagnostico=None,
             peso_objetivo_kg=None, gramos_fijos=None,
             soltar_limites_patologia=None, estado_del_solver=None,
-            objetivos_del_profesional=None, kcal_de_premios=0.0):
+            objetivos_del_profesional=None, kcal_de_premios=0.0,
+            ratios_del_profesional=None):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -1025,6 +1026,29 @@ def resolver(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
     # el diagnóstico dice que el culpable es otro -- y mandar a mirar la fila
     # equivocada es peor que no decir nada.
     ratios_patologia = ratios_de_patologias(patologias, etapa)
+
+    # ⚠️ Y LOS RATIOS QUE PONE EL PROFESIONAL (13 de septiembre). Entran por el
+    # MISMO cajón que los de patología y con el MISMO `max()`/`min()`, que es lo
+    # que garantiza que SOLO PUEDAN APRETAR: un ratio del profesional nunca
+    # ensancha la ventana de una patología ya puesta, ni la del Ca:P de FEDIAF.
+    #
+    # Llegan ya recortados contra la fuente por `main._ratios_dentro_de_fediaf`
+    # —y con el recorte DICHO en `objetivos_ajustados`—, y este `max()`/`min()`
+    # es la segunda red, igual que con los objetivos escalares de más abajo.
+    #
+    # Se meten AQUÍ ARRIBA, antes de `soltar_limites_patologia`, por lo mismo
+    # que los de patología: el diagnóstico de «¿qué me está bloqueando?» tiene
+    # que poder soltarlos, o mandaría a mirar la fila equivocada.
+    for _par_pr, _cotas_pr in (ratios_del_profesional or {}).items():
+        _hueco_pr = ratios_patologia.setdefault(tuple(_par_pr), {"min": None, "max": None})
+        if _cotas_pr.get("min") is not None:
+            _a = _hueco_pr["min"]
+            _hueco_pr["min"] = (float(_cotas_pr["min"]) if _a is None
+                                else max(_a, float(_cotas_pr["min"])))
+        if _cotas_pr.get("max") is not None:
+            _a = _hueco_pr["max"]
+            _hueco_pr["max"] = (float(_cotas_pr["max"]) if _a is None
+                                else min(_a, float(_cotas_pr["max"])))
 
     # ⚠️ AÑADIDO (8 septiembre) — LOS TECHOS DEL PERRO ADULTO SANO. Ver
     # `motor/recomendaciones.py` y `recomendaciones_libro.json`: son las dos
