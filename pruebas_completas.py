@@ -3609,7 +3609,7 @@ if hasattr(_seg21, "TOPE_SELENIO_G_DIETA"):
 # ternera son 590 µg de selenio: por debajo de lo que dejaba pasar el tope
 # viejo (2 µg/g sobre fresco = 1000 µg para estos 500 g), y por encima de
 # los 570 que permite el correcto para 1000 kcal.
-_RINON_B22 = "Riñón de ternera"
+_RINON_B22 = "Riñón de vaca"
 if _RINON_B22 not in _al21:
     fallos.append(f"BLOQUE22: '{_RINON_B22}' ya no está en el catálogo; hay que reanclar esta prueba.")
 else:

@@ -199,7 +199,7 @@ PLANTILLA_BARF = {
 #     plato. La vitamina A dejaría llegar a 360 g (36%), así que el cobre
 #     manda mucho antes.
 #
-#   VÍSCERAS — lo limita el SELENIO. Riñón de ternera 118 µg/100 g; con el
+#   VÍSCERAS — lo limita el SELENIO. Riñón de vaca 118 µg/100 g; con el
 #     máximo de 175 µg/1000 kcal caben 148 g = 15% del plato.
 #     Así que el "5% de vísceras" del BARF es MÁS ESTRICTO de lo necesario:
 #     se puede llegar al 12% sin problema.

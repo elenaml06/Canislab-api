@@ -101,7 +101,7 @@ PESCADO = [
 ]
 
 VISCERAS = [
-    "Riñón de ternera", "Riñón de cordero",
+    "Riñón de vaca", "Riñón de cordero",
     # ⚠️ CORREGIDO (5 agosto, madrugada) — el pulmón vuelve aquí: a
     # diferencia de lengua/molleja/corazón (donde todas las fuentes
     # coinciden sin excepción), el pulmón es un caso genuinamente

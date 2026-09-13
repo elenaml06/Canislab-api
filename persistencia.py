@@ -275,7 +275,7 @@ if __name__ == "__main__":
 
     resultado_ejemplo = {
         "gramos": {"Cuello de ternera": 558.9, "Hígado de vaca": 131.5, "Espinaca": 50.0,
-                   "Riñón de ternera": 18.1, "Pulmón de ternera": 11.9, "Mejillón": 10.6,
+                   "Riñón de vaca": 18.1, "Pulmón de ternera": 11.9, "Mejillón": 10.6,
                    "Aceite de girasol": 10.1, "Ternera con grasa": 8.6, "Sonrisa de Diez Kelp": 0.3},
         "kcal_total": 1120.1,
     }

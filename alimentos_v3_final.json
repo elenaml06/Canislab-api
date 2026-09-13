@@ -2793,7 +2793,7 @@
    "linolenico": 0.02,
    "araquidonico": 140.0,
    "vitA": 14,
-   "vitD": 11,
+   "vitD": 0,
    "vitE": 0,
    "folato": 11,
    "niacina": 6.47,
@@ -2863,16 +2863,18 @@
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:168628 · «Beef, variety meats and by-products, lungs, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
   },
   "sin_dato": [
+   "vitD",
    "vitE",
    "yodo"
   ],
   "hueco_verificado": {
    "vitE": "Ninguna fuente la mide: la fila de BEDCA no trae esa columna, USDA 168628 no publica vitamina E del pulmón, y CIQUAL no tiene NINGUNA fila de pulmón. Era un cero mudo. (2026-09-13)",
-   "yodo": "Ninguna fuente la mide: la fila de BEDCA no trae esa columna, USDA no publica yodo de NADA, y CIQUAL no tiene ninguna fila de pulmón. Y el yodo es uno de los CINCO topes crónicos, así que el cero mudo lo aflojaba. (2026-09-13)"
+   "yodo": "Ninguna fuente la mide: la fila de BEDCA no trae esa columna, USDA no publica yodo de NADA, y CIQUAL no tiene ninguna fila de pulmón. Y el yodo es uno de los CINCO topes crónicos, así que el cero mudo lo aflojaba. (2026-09-13)",
+   "vitD": "Ninguna fuente publica la vitamina D del pulmón de vacuno ADULTO: USDA 168628 «Beef, variety meats and by-products, lungs, raw» -- la fila de la que salen sus otras cifras, exactas en proteína, grasa, hierro 7,95, potasio 340 y vitamina A 14 -- no la trae, y CIQUAL no tiene ninguna fila de pulmón. ⚠️ Los 11 µg que declaraba NO eran suyos: son EXACTAMENTE los que BEDCA 2300 da al pulmón de TERNERA, y esa cifra se ha movido a la ficha a la que pertenece, «Pulmón de ternera». Esto CIERRA la pregunta que esta ficha llevaba escrita desde el 8 de septiembre («o se sembró de la fila de la especie equivocada, o es casualidad»): ni una cosa ni la otra -- la ficha es de vaca y solo esta celda venía de la fila de ternera. (2026-09-13)"
   }
  },
  {
-  "nombre": "Riñón de ternera",
+  "nombre": "Riñón de vaca",
   "tipo": "Alimento",
   "categoria": "Vísceras",
   "energia": 92.3,
@@ -2943,12 +2945,13 @@
   "humedad_fuente": "USDA FoodData Central · Veal, variety meats and by-products, kidneys, raw",
   "humedad_fdc": "174356",
   "fuentes_id": {
-   "usda": "174356"
+   "ciqual": "40402"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:174356 · «Veal, variety meats and by-products, kidneys, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
   },
-  "nota_datos": "⚠️ SU FILA DECLARADA NO ES LA FILA DE LA QUE SALEN SUS NÚMEROS (13 de septiembre). Declara usda:174356 «Veal… kidneys, raw» (99/15,76/3,12) y sus cifras no son esas. Cuadran EXACTAS con CIQUAL 40402 «Rognon, BOEUF, cru» (95,9/17,1/2,65 contra nuestros 92,3/17,1/2,65), y su vitamina D, 1,05, es la de esa fila de BUEY clavada -- BEDCA 1069 «Riñón, de ternera» da 1 y USDA no publica ninguna. O sea que es un RIÑÓN DE BUEY con nombre de ternera: el cuarto caso de esta familia, detrás de «Bazo de ternera», «Páncreas de ternera» y «Pulmón de ternera». NO SE TOCA NI UNA CIFRA: rellenar desde la fila de la otra especie mezcla dos mediciones en una columna, y renombrarla es una decisión de producto. Su vitamina A, 204, no sale de ninguna de las cuatro filas candidatas (BEDCA 140, USDA 92, CIQUAL buey 253, CIQUAL ternera 86) y también está sin explicar. En `DATOS_QUE_FALTAN.md`."
+  "nota_datos": "⚠️ RENOMBRADA EL 2026-09-13, SIN TOCAR UN SOLO NÚMERO. Se llamaba «Riñón de ternera» y sus datos no son de ternera: cuadran celda a celda con CIQUAL 40402 «Rognon, boeuf, cru». Importa porque no es un decimal -- vaca y ternera son animales de composición muy distinta -- y porque quien compra en la carnicería compra uno de los dos. Es lo mismo que ya pasó con el bazo, el páncreas y el pulmón. El catálogo se queda SIN riñón de ternera: BEDCA 1069 y USDA 174356 lo publican, así que se puede añadir como ficha nueva el día que se quiera, pero eso es sembrar una ficha entera y no renombrar. || ⚠️ SU FILA DECLARADA NO ES LA FILA DE LA QUE SALEN SUS NÚMEROS (13 de septiembre). Declara usda:174356 «Veal… kidneys, raw» (99/15,76/3,12) y sus cifras no son esas. Cuadran EXACTAS con CIQUAL 40402 «Rognon, BOEUF, cru» (95,9/17,1/2,65 contra nuestros 92,3/17,1/2,65), y su vitamina D, 1,05, es la de esa fila de BUEY clavada -- BEDCA 1069 «Riñón, de ternera» da 1 y USDA no publica ninguna. O sea que es un RIÑÓN DE BUEY con nombre de ternera: el cuarto caso de esta familia, detrás de «Bazo de ternera», «Páncreas de ternera» y «Pulmón de ternera». NO SE TOCA NI UNA CIFRA: rellenar desde la fila de la otra especie mezcla dos mediciones en una columna, y renombrarla es una decisión de producto. Su vitamina A, 204, no sale de ninguna de las cuatro filas candidatas (BEDCA 140, USDA 92, CIQUAL buey 253, CIQUAL ternera 86) y también está sin explicar. En `DATOS_QUE_FALTAN.md`.",
+  "fuentes_id_porque": "CIQUAL 40402 «Rognon, boeuf, cru» — y no es un parecido, son TRECE CELDAS EXACTAS: proteína 17,1 · grasa 2,65 · hierro 7,04 · potasio 236 · sodio 169 · zinc 1,52 · selenio 118 · vitamina D 1,05 · vitamina B12 21,1 · magnesio 16 · calcio 11,2 · fósforo 243 · energía 95,9/92,3. ⚠️ RENOMBRADA EL 2026-09-13: se llamaba «Riñón de ternera» y declaraba `usda:174356` «Veal… kidneys, raw», que da 99/15,76/3,12 -- no son sus números. Tampoco lo son los de BEDCA 1069 «Riñón, de ternera» (106,5/16,8/4,32). Es un riñón de BUEY con nombre de ternera, el cuarto caso de esta familia detrás de «Bazo de ternera», «Páncreas de ternera» y «Pulmón de ternera», renombrados en agosto y septiembre por lo mismo. Se renombra y NO se toca ni una cifra, que es justo el motivo de renombrar en vez de rellenar: traer los números de la fila de la otra especie mezclaría dos mediciones en una columna. ⚠️ Queda UNA celda sin explicar: su vitamina A, 204, no es la de esta fila (CIQUAL da «Rétinol» 253) ni la de ninguna de las otras tres candidatas (BEDCA ternera 140, USDA ternera 92, CIQUAL ternera 86)."
  },
  {
   "nombre": "Calabaza",
@@ -14124,7 +14127,7 @@
    "linolenico": 0,
    "araquidonico": 0,
    "vitA": 0.0,
-   "vitD": 0,
+   "vitD": 11.0,
    "vitE": 0,
    "folato": 11.0,
    "niacina": 4.025,
@@ -14176,7 +14179,6 @@
    "linolenico",
    "purinas",
    "taurina",
-   "vitD",
    "vitE",
    "yodo"
   ],
@@ -14190,10 +14192,14 @@
   "humedad_fuente": "USDA FoodData Central · Veal, variety meats and by-products, lungs, raw",
   "humedad_fdc": "174361",
   "fuentes_id": {
-   "usda": "174361"
+   "usda": "174361",
+   "bedca": "2300"
   },
   "cero_verificado": {
    "fibra": "Cero de la fuente que manda, comprobado el 2026-09-13: usda:174361 · «Veal, variety meats and by-products, lungs, raw» · columna «Fiber, total dietary» = 0.0 G. `value_type` sin tipo, o sea una MEDIDA y no una celda vacía."
+  },
+  "composicion_fuente": {
+   "vitD": "bedca:2300 · «Pulmón, de ternera, crudo» · columna «Vitamina D» = 11 → 11 ug · 2026-09-13. `value_type` AR, o sea una MEDIDA. La fuente que manda SÍ la mide aquí: USDA 174361 «Veal… lungs, raw» -- la fila que sembró el resto de esta ficha, exacta en 90 kcal / 16,3 prot / 2,3 grasa / hierro 5,23 / potasio 274 -- no publica vitamina D del pulmón, y CIQUAL no tiene ninguna fila de pulmón. ⚠️ Y esta cifra ESTABA EN EL CATÁLOGO, en la ficha equivocada: la declaraba «Pulmón de vaca», que es una ficha de vacuno adulto sembrada de USDA 168628. Se ha movido a la ficha de la especie que la fuente mide."
   }
  },
  {
