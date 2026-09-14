@@ -5700,8 +5700,14 @@ else:
     # campos. Existe para que artrosis, disfunción cognitiva, dermatitis
     # atópica y reacción adversa al alimento puedan ponerle un suelo con
     # fuente.
+    # ⚠️ Y "Omega6_total" (13 septiembre, noche). Mismo motivo que las otras:
+    # FEDIAF no pide omega-6 TOTALES en el perro -- la Tabla III-3b trae el
+    # linoleico y el araquidonico por separado, nunca la suma --, asi que su fila
+    # lleva "-" en los seis campos. Existe para que el ratio omega-6:omega-3 que
+    # SACN5 pide en cuatro patologias se pueda medir y ofrecer al profesional:
+    # sin este lado, el cociente no se podia calcular.
     if _sr38 != {"Linolénico", "Araquidónico", "Fibra", "Taurina", "L_carnitina", "EPA",
-                 "Omega3_total"}:
+                 "Omega3_total", "Omega6_total"}:
         fallos.append(f"BLOQUE38: los nutrientes sin referencia en adulto son {_sr38} y tenían "
                       f"que ser el linolénico, el araquidónico (FEDIAF pone «-» fuera de "
                       f"crecimiento y reproducción), la fibra y la taurina/L-carnitina (FEDIAF "
