@@ -960,3 +960,20 @@ de septiembre (que cambiar un alimento no rehaga el menú) va en
 `_recalcular_con_motor`, que sirve a los tres endpoints de edición -- pero el
 camino de Personalizar tiene además su **propio atajo** de `CATALOGO_VARIANTES`
 en `main.py`, y hay que comprobar que por ahí pasa lo mismo.
+
+### ✅ HECHO — 13 de septiembre de 2026, noche
+
+Comprobado: **los dos atajos de `CATALOGO_VARIANTES` viven en `/menu/v2`**, o
+sea al GENERAR, no en los tres endpoints de edición. Así que editar pasa siempre
+por `_recalcular_con_motor` en los dos modos, y no había nada que arreglar.
+
+El apartado del BLOQUE 102 se escribe igual, porque «pasa por la misma función»
+es un argumento y no una medida, y la próxima vez que alguien meta un atajo en
+la edición ese apartado es lo único que lo cazaría. Y trae algo que **solo se ve
+en personalizar**: si para que el cambio salga hay que bajar de peldaño y meter
+otra carne de una categoría que el dueño eligió a mano, eso es legítimo —lo dice
+la regla 5— pero **tiene que decirse**, y eso es lo que se exige.
+
+Medido con el perro de Elena: cambiando «Pollo muslo con piel» por «Pavo pechuga
+sin piel» entra además «Pollo ala con piel», porque la pechuga sin piel no trae
+el linoleico que traía la piel, y el menú lo dice.

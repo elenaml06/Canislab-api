@@ -16085,6 +16085,81 @@ else:
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
+# ── Y EL SEMAFORO TAMBIEN, CON EL MISMO PESO DE REFERENCIA (13-sep, noche) ──
+#
+# ⚠️ CASO REAL, EN PRODUCCION, y lo encontro la bateria nueva de la app de
+# verdad en su PRIMERA ejecucion: **un perro SENIOR de 24,5 kg no obtenia
+# ningun menu.**
+#
+# `_garantizar_verificado` verifica con `peso_referencia_kg` y la via rapida
+# verificaba SIN el. Los minimos de FEDIAF se escalan con las kcal por kg^0,75
+# (ecuacion 7.2.5), asi que un menu precalculado para un perro que come a 110
+# puede quedarse corto para uno que come a 95: el atajo decia VERDE, el filtro
+# final decia AMBAR --el magnesio al 97 % de su minimo-- y el endpoint devolvia
+# ese rechazo sin probar el camino normal, que SI da menu.
+#
+# Es la misma leccion del 8 de septiembre en su TERCERA cara: el que construye y
+# el que comprueba tienen que MEDIR IGUAL. Ya se aplico al solver contra el
+# filtro, y a la via rapida contra los topes; faltaba el propio semaforo.
+#
+# Se comprueba con el perro exacto que fallaba, y por las dos etapas donde el
+# catalogo tiene variantes de ese tamaño.
+_SENIOR100 = {"modo": "automatico", "nombres_alimentos": [], "forzar_presencia": [],
+              "der_objetivo": 1046.0, "actividad": "normal",
+              "especies_excluidas": [], "nombres_excluidos": [], "peso_perro_kg": 24.5,
+              "patologias": [], "categorias_excluidas": [], "peso_objetivo_kg": 24.5,
+              "peso_adulto_esperado_kg": 27.0, "tamano": "Grande"}
+for _et100 in ("Senior", "Adulto"):
+    _d100 = dict(_SENIOR100); _d100["etapa_requisitos"] = _et100
+    _r100s = _c_b5.post("/menu/v2", json=_d100).json()
+    if not _r100s.get("factible"):
+        fallos.append(f"BLOQUE100: un perro de 24,5 kg en etapa {_et100} con la via rapida NO "
+                      f"obtiene menu ({(_r100s.get('motivo') or '')[:90]}). Si el atajo verifica "
+                      f"con un criterio y `_garantizar_verificado` con otro, el endpoint devuelve "
+                      f"el rechazo del segundo sin probar el camino normal -- y hay menu")
+
+# Y LA RAIZ, medida aparte: que los dos verifiquen IGUAL. Se coge una variante
+# del catalogo, se reescala como hace el atajo y se comprueba que el semaforo da
+# lo mismo con y sin peso de referencia NO es lo que hay que exigir --puede dar
+# distinto de verdad--. Lo que hay que exigir es que el ATAJO use el mismo que
+# el filtro final, y eso se mide: si el atajo entrega un menu, el filtro final
+# no puede tirarlo.
+from catalogo_menus import CATALOGO_VARIANTES as _CV100
+from verificar import verificar as _verif100
+_entregados100 = 0
+for _clave100, _vars100 in _CV100.items():
+    _tam100, _et100b = _clave100.split("_", 1)
+    if _et100b not in ("Adulto", "Senior"):
+        continue
+    for _v100 in _vars100[:2]:
+        _g100 = _v100["gramos"]
+        if any(_n not in al for _n in _g100):
+            continue
+        _kcal100 = sum(al[_n]["energia"] * _x / 100.0 for _n, _x in _g100.items())
+        # un perro cuyo peso hace que coma a ~95 kcal/kg^0,75, que es donde los
+        # minimos van MAS APRETADOS: es el caso del senior.
+        _peso100 = (_kcal100 / 95.0) ** (1 / 0.75)
+        _d100b = {"modo": "automatico", "nombres_alimentos": [], "forzar_presencia": [],
+                  "der_objetivo": round(_kcal100, 1), "actividad": "normal",
+                  "etapa_requisitos": _et100b, "especies_excluidas": [], "nombres_excluidos": [],
+                  "peso_perro_kg": round(_peso100, 1), "patologias": [],
+                  "categorias_excluidas": [], "peso_objetivo_kg": round(_peso100, 1),
+                  "tamano": _tam100}
+        _r100b = _c_b5.post("/menu/v2", json=_d100b).json()
+        if not _r100b.get("factible"):
+            fallos.append(f"BLOQUE100: con la variante de «{_clave100}» a las kcal con las que se "
+                          f"guardo y un perro de {_peso100:.1f} kg (los que la hacen comer a 95 "
+                          f"kcal/kg^0,75, donde los minimos van mas apretados) NO sale menu: "
+                          f"{(_r100b.get('motivo') or '')[:80]}")
+        elif _r100b.get("via_catalogo"):
+            _entregados100 += 1
+if _entregados100 == 0:
+    fallos.append("BLOQUE100: ninguna de las variantes probadas se ha entregado por la via "
+                  "rapida, asi que esta comprobacion no esta probando el atajo. Buscar otro "
+                  "perro -- una prueba que se salta sola sale verde igual")
+print(f"  via rapida: {_entregados100} variantes entregadas por el atajo y verificadas")
+
+
 # ============================================================
 # BLOQUE 106 — EL RATIO QUE ELIGE EL PROFESIONAL, Y EL RANGO QUE ENSEÑA CADA
 #              PATOLOGÍA
