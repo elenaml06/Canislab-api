@@ -5,7 +5,7 @@
     "por_que_existe_este_fichero": "Porque la ley ya se había dicho y se seguía rompiendo. Una frase no se ejecuta: es la misma lección de `auditar_conversiones.py`. Cinco veces el mismo fallo en dos semanas -- las seis categorías de Personalizar, los cinco niveles de actividad, las 47 patologías, las 255 razas y los 163 alimentos --, y las cinco se descubrieron por casualidad, porque una lista copiada a mano no da error: se queda parada y la pantalla se ve perfecta. || El caso que cerró la discusión: el aceite de salmón Pets Purest entró al catálogo del motor el 7 de septiembre con la foto de su etiqueta, el motor lo usa en 23 de los 216 menús precalculados, y en la app no aparecía. Elena lo dijo dos veces antes de que se mirara.",
     "como_se_comprueba": "Por las DOS puntas, porque cada una tapa un agujero distinto. (1) El BLOQUE 99 de `pruebas_completas.py` exige que el endpoint declarado sirva de verdad esa lista y que no venga vacía: un respaldo que tapa una petición rota se ve igual que una petición buena. (2) `tests/la-ley-del-motor.spec.js` en `canislab-web` recorre `src/` buscando constantes `*_RESPALDO` y exige que TODAS estén declaradas aquí. Una lista nueva escrita a mano en la app, sin motor detrás, falla -- que es el único momento en el que se puede cazar.",
     "lo_que_NO_cubre": "Esto vigila las LISTAS -- lo que el motor enumera --, no las cifras que viajan dentro de un menú ni el DER, que tiene su propio contrato en `der_casos.json`. Y no vigila que la app USE lo que lee: eso es de cada prueba, y la forma de hacerlo es sembrar nombres INVENTADOS, porque con los de verdad «la app lo ha leído» y «la app pinta su respaldo» se ven igual.",
-    "cuantas": 25,
+    "cuantas": 28,
     "lo_que_todavia_no_sale_del_motor": "⚠️ 12-sep-2026, remedido el 13. La ley es para TODO, y se esta cumpliendo por partes. Hoy son **18 listas que ya salen del motor**, 5 que son legitimamente de la app (iconos, meses, cableado) y **11 que faltan**, cada una con su riesgo escrito. || Las cuatro que se trajeron el 13 de septiembre eran las dos peores: `COMO_DAR_ALIMENTO`, indexada POR NOMBRE DE ALIMENTO -- al moverla se vio que tenia 77 entradas para 163 alimentos y 12 de comida que el motor ya no tiene, la BORRAJA incluida --, y `ACTIVIDAD_POR_INDICE`, que es la que decide con que nombre se GUARDA la actividad de un perro: si el motor cambiaba el orden, un perro volvia de la base de datos con otras kcal, sin error y con el menu en verde.",
     "cuantas_de_la_app": 5,
     "cuantas_faltan": 7
@@ -188,6 +188,29 @@
       "camino": "etapas.etapas[].clave_en_la_ficha",
       "dato_del_motor": "COMO_SE_LLAMA_LA_ETAPA_EN_LA_FICHA en main.py (7 etapas; la ficha calcula 4)",
       "ojo": "Si el motor añade una etapa o le cambia el nombre y la app sigue con su tabla vieja, manda una etapa que el motor no conoce y el motor cae a «Adulto» SIN DAR ERROR: un cachorro verificado contra requisitos de adulto sale verde."
+    },
+    {
+      "respaldo": "CONFIRMACION_DIAGNOSTICO_RESPALDO",
+      "que_es": "La pregunta que se le hace al dueño antes de marcar una patología que necesita diagnóstico, con sus dos respuestas y lo que se dice si contesta que no",
+      "endpoint": "/vocabulario",
+      "camino": "preguntas_por_patologia.confirmacion_de_diagnostico",
+      "dato_del_motor": "main.py (CONFIRMACION_DE_DIAGNOSTICO) + quien_formula_cada_patologia.json"
+    },
+    {
+      "respaldo": "SIN_ANALITICA_RESPALDO",
+      "que_es": "Las cinco patologías que el dueño puede marcar SIN diagnóstico, porque se ven o se saben sin analítica. Las otras dieciocho le piden confirmación antes de marcarse",
+      "endpoint": "/vocabulario",
+      "camino": "preguntas_por_patologia.por_patologia",
+      "dato_del_motor": "quien_formula_cada_patologia.json (`quien_puede_marcarla`), derivado",
+      "ojo": "Si el motor mueve una patología de `dueno` a `dueno_con_diagnostico` y la app se queda con su lista vieja, esa casilla se marca con una sospecha y el menú cambia sin que nadie lo sepa. El respaldo pide confirmación para TODO lo que no esté en la lista: con Render dormido el lado seguro es preguntar de más."
+    },
+    {
+      "respaldo": "SALIDA_PATOLOGIAS_RESPALDO",
+      "que_es": "La salida de la pantalla de patologías: la pregunta de «¿tiene algo que no está en esta lista?», su respuesta y lo que pasa si se contesta que sí",
+      "endpoint": "/vocabulario",
+      "camino": "patologias.salida",
+      "dato_del_motor": "main.py (LA_SALIDA_DE_LAS_PATOLOGIAS) + la clave `otra` de patologias.json",
+      "ojo": "No es una patología y por eso no va en ningún aparato: es lo que quita el menú automático. Si la app la pintara como una casilla más, quien la marca no tiene forma de saber que se queda sin menú."
     }
   ],
   "de_la_app_a_proposito": [

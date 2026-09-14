@@ -7486,6 +7486,78 @@ with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
     _PRESENTACION_PAT = _json.load(_f)
 
 
+# ─── MARCAR UNA PATOLOGIA PIDE DIAGNOSTICO, NO SOSPECHA ─────────────────────
+#
+# ⚠️ Elena, 14-sep-2026: «solo deberiamos dejar marcar patologias si estan
+# prescritas por un veterinario, o sea, si un veterinario eso lo ha dicho,
+# porque si yo digo, ay, es que creo que mi perro tiene colon irritable, y no
+# lo se, no podria generar un menu, ¿entiendes?».
+#
+# El caso es literal y funcionaba tal cual: el dueño veia 23 de las 47 casillas
+# --las 5 que sabe de su propio perro y las 18 marcadas
+# `dueno_con_diagnostico`-- y en NINGUN momento se le preguntaba si habia
+# diagnostico. Marcar `intestino_irritable` por una corazonada movia la fibra y
+# la grasa de la racion de un perro que quiza no tiene nada.
+#
+# ⚠️ NO ES UNA CASILLA DE «ACEPTO», Y ESO ES LO QUE LA HACE SERVIR. Un «acepto»
+# se marca sin leer y lo marca todo el mundo. Son DOS respuestas, y la del «no»
+# tiene consecuencia escrita: la patologia NO se marca y el menu no cambia.
+#
+# ⚠️ Y SE PREGUNTA UNA VEZ POR PATOLOGIA, no una vez y ya: cada una es un
+# diagnostico distinto, y que le hayan visto el hipotiroidismo no dice nada del
+# colon.
+#
+# ⚠️ EL TEXTO VIVE AQUI Y NO EN LA APP -- regla 6. La app lo lee de
+# `GET /vocabulario`. Escrito en la app, el dia que se cambie la redaccion se
+# cambia en un sitio y sigue vieja en el otro, y nadie se entera porque la
+# pantalla se ve perfecta.
+#
+# Quien la pide NO se escribe: se DERIVA de `quien_puede_marcarla`. Las 5 de
+# `dueno` --sobrepeso, raza predispuesta al cobre, riesgo de torsion, la
+# dermatosis de las razas nordicas y «otra»-- son cosas que se ven o se saben
+# sin analitica, asi que preguntarles por un diagnostico seria un muro sin
+# motivo. Las 24 de `solo_veterinario` no llegan aqui: al dueño ni se le
+# enseñan.
+CONFIRMACION_DE_DIAGNOSTICO = {
+    "se_pide_si": "quien_puede_marcarla == 'dueno_con_diagnostico'",
+    "por_que": ("Marcar una patologia cambia la racion. Hacerlo por una sospecha mueve la comida "
+                "de un perro que puede no tener nada, y eso no es neutral: un menu ajustado a algo "
+                "que no se tiene puede hacer mas mal que bien."),
+    "dueno": {
+        "pregunta": "¿Se lo ha diagnosticado un veterinario?",
+        "respuestas": [
+            {"clave": "si", "texto": "Sí, tiene diagnóstico", "se_marca": True},
+            {"clave": "no", "texto": "No, es una sospecha mía", "se_marca": False},
+        ],
+        "si_dice_que_no": ("Entonces mejor no le tocamos el menú por esto. Un menú ajustado a algo "
+                           "que tu perro puede no tener le puede hacer más mal que bien. "
+                           "Coméntaselo a tu veterinario y, si te lo confirma, vuelves y lo marcas."),
+    },
+    "veterinario": {
+        "pregunta": "¿Diagnóstico confirmado?",
+        "respuestas": [
+            {"clave": "si", "texto": "Sí, confirmado", "se_marca": True},
+            {"clave": "no", "texto": "No, sospecha clínica", "se_marca": False},
+        ],
+        "si_dice_que_no": ("Sin diagnostico no se aplica el ajuste: los topes de esta patologia son "
+                           "mas estrictos que FEDIAF y se miden sobre las kcal reales de la racion. "
+                           "Si quiere formular igualmente, hagalo desde el formulador con sus "
+                           "propios objetivos por nutriente, que quedan firmados a su nombre."),
+    },
+}
+
+
+def _pide_confirmacion_de_diagnostico(clave):
+    """¿Esta casilla le pide al dueño que confirme que hay diagnostico?
+
+    Derivado, nunca escrito: si mañana una patologia cambia de
+    `quien_puede_marcarla` en `quien_formula_cada_patologia.json`, su casilla
+    cambia sola. Una lista escrita a mano aqui seria la tercera copia de lo
+    mismo, y ya sabemos como acaban.
+    """
+    return (_DERIVACION.get(clave) or {}).get("quien_puede_marcarla") == "dueno_con_diagnostico"
+
+
 # Las claves que NO son una casilla propia porque se eligen DENTRO de la
 # pregunta de otra: los cinco estadios ACVIM, la renal avanzada, la
 # predisposicion al cobre, la encefalopatia y los cuatro urolitos que no son
@@ -7557,8 +7629,52 @@ def _lista_de_patologias(pat):
             # Si sale de la pregunta de otra, la app no le pone casilla propia:
             # la ofrece como respuesta. Hoy son doce.
             "dentro_de_la_pregunta_de": dentro.get(clave),
+            # Y `otra` tampoco lleva casilla, por otro motivo: no es una
+            # condicion, es la salida. Ver LA_SALIDA_DE_LAS_PATOLOGIAS.
+            "es_la_salida": clave == CLAVE_DE_LA_SALIDA,
         })
     return salida
+
+
+# ─── «OTRA COSA» NO ES UNA PATOLOGIA: ES LA SALIDA ──────────────────────────
+#
+# ⚠️ Elena, 14-sep-2026: «¿y tiene sentido meter otra como patologia???».
+#
+# No lo tiene. `otra` no es una condicion: es la forma de decir «tiene algo que
+# no esta en vuestra lista», y lo que hace es QUITAR el menu automatico y mandar
+# al veterinario. Esa funcion hace falta --sin ella, quien tiene un perro con
+# algo raro genera el menu como si estuviera sano-- pero vivia como una casilla
+# mas, con nombre de diagnostico, metida entre 46 enfermedades de verdad y
+# agrupada por aparato. Quien la leia no tenia forma de saber que marcarla le
+# dejaba sin menu.
+#
+# Asi que se saca de los grupos y se sirve aparte, con su pregunta y con lo que
+# pasa si se contesta que si. En el motor NO cambia nada: misma clave, mismo
+# `formulable: false`, mismo efecto. Es solo donde se enseña.
+CLAVE_DE_LA_SALIDA = "otra"
+
+LA_SALIDA_DE_LAS_PATOLOGIAS = {
+    "clave": CLAVE_DE_LA_SALIDA,
+    "por_que_no_es_una_casilla_mas": ("No es una condicion, es la salida: quita el menu automatico. "
+                                      "Entre 46 enfermedades y agrupada por aparato, quien la lee no "
+                                      "sabe que marcarla le deja sin menu."),
+    "dueno": {
+        "pregunta": "¿Tiene algo que no está en esta lista?",
+        "respuesta": "Sí, tiene otra cosa",
+        "que_pasa": ("Entonces no te generamos un menú automático. No sabemos ajustarlo a lo que "
+                     "tiene, y darte uno pensado para un perro sano sería peor que no darte "
+                     "ninguno. Háblalo con tu veterinario, que puede pautarle la dieta a tu perro "
+                     "en concreto."),
+    },
+    "veterinario": {
+        "pregunta": "¿Alguna condición fuera de la lista?",
+        "respuesta": "Sí, otra condición",
+        "que_pasa": ("No hay techo ni suelo escrito para esa condicion, asi que el automatico solo "
+                     "cumpliria FEDIAF y no estaria ajustado a nada. Si quiere formular igualmente, "
+                     "hagalo desde el formulador con sus propios objetivos por nutriente, que "
+                     "quedan firmados a su nombre."),
+    },
+}
 
 
 def _patologias_por_aparato(pat):
@@ -7576,7 +7692,10 @@ def _patologias_por_aparato(pat):
     # Alfabeticamente el fracaso agudo se cuela entre medias.
     for ap in _PRESENTACION_PAT["_meta"]["aparatos"]:
         claves = [c for c in _PRESENTACION_PAT["patologias"]
-                  if c in por_clave and por_clave[c]["aparato"] == ap["clave"]]
+                  if c in por_clave and por_clave[c]["aparato"] == ap["clave"]
+                  # La salida no va en ningun aparato: se sirve aparte, en
+                  # `patologias.salida`, y la app la pinta al final.
+                  and c != CLAVE_DE_LA_SALIDA]
         if claves:
             grupos.append({"clave": ap["clave"], "dueno": {"titulo": ap["dueno"]},
                            "veterinario": {"titulo": ap["veterinario"]},
@@ -8251,11 +8370,22 @@ def endpoint_vocabulario():
             # `patologias.json`: aqui no hay copia.
             "que_decide_cada_respuesta": _PREGUNTAS_PAT["preguntas"],
             "como_leerlo": _PREGUNTAS_PAT["_meta"]["los_cinco_estados"],
+            # ⚠️ LA CONFIRMACION DE DIAGNOSTICO (14-sep). Va aqui y no en la
+            # app: es la unica pregunta que decide si una casilla se marca, y
+            # escrita en la app se queda vieja el dia que se cambie la
+            # redaccion. Quien la pide se DERIVA de `quien_puede_marcarla`.
+            "confirmacion_de_diagnostico": {
+                **CONFIRMACION_DE_DIAGNOSTICO,
+                "cuantas_la_piden": sum(1 for k in _DERIVACION
+                                        if _pide_confirmacion_de_diagnostico(k)),
+            },
             "por_patologia": {k: {"nombre": v.get("nombre"),
                                   "quien_puede_marcarla": v.get("quien_puede_marcarla"),
                                   "necesita_dato_clinico": v.get("necesita_dato_clinico"),
                                   "que_dato": v.get("que_dato"),
-                                  "pregunta_que_falta": v.get("pregunta_que_falta")}
+                                  "pregunta_que_falta": v.get("pregunta_que_falta"),
+                                  "pide_confirmacion_de_diagnostico":
+                                      _pide_confirmacion_de_diagnostico(k)}
                               for k, v in sorted(_DERIVACION.items())},
         },
         "razas_con_cifra_propia": {
@@ -8313,6 +8443,9 @@ def endpoint_vocabulario():
             "aparatos": _PRESENTACION_PAT["_meta"]["aparatos"],
             "lista": _lista_de_patologias(_pat_v),
             "por_aparato": _patologias_por_aparato(_pat_v),
+            # ⚠️ «Otra cosa» va aparte y no en un aparato (14-sep): no es una
+            # condicion, es la salida. Ver LA_SALIDA_DE_LAS_PATOLOGIAS.
+            "salida": LA_SALIDA_DE_LAS_PATOLOGIAS,
         },
         "categorias_que_elige_el_usuario": {
             "de_donde": "main.CATEGORIAS_QUE_ELIGE_EL_USUARIO",
