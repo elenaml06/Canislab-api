@@ -212,7 +212,8 @@ PLANTILLA_BARF = {
 # el reparto carne/pescado se hacia a ciegas 2/3-1/3 en vez de dejar que el
 # motor decidiera libremente cuanto de cada uno. "Carne muscular" en
 # PILARES y MARGENES cubre AMBOS; Pescados y mariscos sigue siendo una
-# CATEGORIA DE ALIMENTO (para elegir_alimentos, exclusiones, etc.), pero ya
+# CATEGORIA DE ALIMENTO (para las exclusiones, los margenes por categoria,
+# etc.), pero ya
 # no tiene tramo propio en la plantilla ni margen propio.
 MARGENES = {
     # categoria:            (mínimo, máximo)   — fracción del peso
@@ -282,7 +283,7 @@ def _fusionar_pescado_en_carne(elegidos):
     """
     El pescado comparte plaza de plantilla con la carne ("Carne muscular").
     `elegidos` puede traerlo bajo su propia clave (asi lo devuelve
-    elegir_alimentos, por categoria de alimento); esta funcion lo fusiona
+    los margenes del solver, por categoria de alimento); esta funcion lo fusiona
     para que `construir()` y `construir_con_pesos()` lo repartan junto con
     la carne en vez de perderlo en silencio.
     """

@@ -360,8 +360,8 @@ Sí hay literatura, pero **ninguna sirve para hacer una ficha del catálogo**,
 y conviene que quede escrito para no volver a buscarlo cada vez.
 
 Lo mejor que existe, con diferencia, es **Seong, Cho, Park, Kang, Park,
-Moon & Ba (2015), «Characterization of Chicken By-products by Mean of
-Proximate and Nutritional Compositions», *Food Science of Animal Resources*
+Moon & Ba (2015), *Characterization of Chicken By-products by Mean of
+Proximate and Nutritional Compositions*, *Food Science of Animal Resources*
 35(2):179-188, doi 10.5851/kosfa.2015.35.2.179**. Analiza OCHO despojos de
 pollo — corazón, **pulmón**, hígado, molleja, ciego, buche, intestino
 delgado y duodeno — con proximal, diez minerales (Na, K, Ca, Mg, P, Fe, Zn,

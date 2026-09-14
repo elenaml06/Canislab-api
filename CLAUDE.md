@@ -266,7 +266,7 @@ jubilado — que desde fuera se parecen mucho.
 | `seguridad.py` | Los cinco topes crónicos y los avisos. Cada cifra con su fuente escrita al lado |
 | `constructor.py` | Proporciones BARF de partida y `valor_nutriente()` (las claves derivadas, como `epa_dha`) |
 | `exclusiones.py` | Alergias por palabras y familias de especie. Excluir «pollo» quita también «gallina» |
-| `accesibles.py`, `modos.py` | Qué alimentos entran según el modo (automático / personalizar / aprovechar). ⚠️ **De `modos.py` el motor usa UNA sola cosa**, el diccionario `CUANTOS_MAX`: `elegir_alimentos`, `cambiar`, `quitar` y `anadir` no los llama nadie —los tres endpoints tienen su propia implementación en `main.py`— y **no hay ningún sorteo de candidatos**: `resolver()` ve todos los accesibles y elige el MILP. Está escrito aquí porque el 10 de septiembre un pendiente llevaba días culpando a `elegir_alimentos` de que al toy de 1,5 kg le costara sacar menú, y la causa era el `time_limit` |
+| `accesibles.py`, `modos.py` | Qué alimentos entran según el modo (automático / personalizar / aprovechar). ⚠️ **`modos.py` eran 182 líneas y hoy son 39** (14 de septiembre): el motor usaba UNA sola cosa, el diccionario `CUANTOS_MAX`, y el resto —`elegir_alimentos`, `cambiar`, `quitar`, `anadir`— no lo llamaba nadie, porque los tres endpoints de edición tienen su propia implementación en `main.py`. **Y no hay ningún sorteo de candidatos**: `resolver()` ve todos los accesibles y elige el MILP. Se borró porque **código muerto que parece vivo no se puede depurar pero sí se puede leer y creer**: el 10 de septiembre un pendiente llevaba días culpando a `elegir_alimentos` de que al toy de 1,5 kg le costara sacar menú, y la causa era el `time_limit` |
 | `condicionales.py` | Lee `requisitos_condicionales.json`: **los requisitos que NO son un número fijo porque dependen de la propia dieta**. Son **seis** desde el 9 de septiembre: **tres que se aplican** y **tres escritas sin cifra**, porque FEDIAF las enuncia y no las cuantifica para el perro. (1) La proteína de **gestación y lactancia**, que FEDIAF calcula suponiendo que la dieta lleva hidratos — y una ración BARF no lleva; NRC trae el experimento: con la dieta sin hidratos y la proteína baja, la **mortalidad perinatal subió un 75 %**. (2) La **arginina que sube con la proteína**: FEDIAF publica una tabla entera para esto (Anexo 7.4 y Tabla VII-13, «+0,01 g de arginina por cada gramo de proteína sobre el requisito, en todas las etapas») y no la aplicábamos — con los 105 g/1000 kcal de proteína que lleva un BARF típico, la tabla pide 1,90 g de arginina y el motor exigía 1,51. (3) El **ratio linoleico:linolénico**, 2,6-26 en adulto y crecimiento y 2,6-16 en gestación y lactancia (NRC 2006 cap.5) — que es lo que el NRC recomienda **en lugar** del ratio omega-6:omega-3 totales, del que dice literalmente que «is not helpful». Ninguno de los tres tiene forma de fila, así que ninguno lo encontró el trabajo de transcribir tablas. || Y las **tres que NO se aplican**, con `tipo: documentado_sin_cifra`: la **vitamina E sube con los PUFA**, la **B6 sube con la proteína** y la **K en dietas con mucho pescado**. Las tres las nombra FEDIAF en su sección 3.3 y de las tres da número solo para el GATO o para ninguno, así que aplicarlas sería inventarse la cifra. Están escritas para que se puedan auditar y para no volver a «descubrirlas» dentro de seis meses; el BLOQUE 60 vigila que sigan inertes. Medido: por la relación clásica de vitamina E:PUFA (≥0,6 mg/g) vamos holgados —0 de 216 menús por debajo, el peor a 1,53— y la B6 real va de tres a doce veces el mínimo de FEDIAF. **El solver y el semáforo llaman a las mismas funciones de este módulo**, y eso no es elegancia: es la lección del 8 de septiembre, cuando cada uno aplicaba los suelos de patología a su manera y el motor construía menús enteros para que el filtro final los tirara |
 | `recomendaciones.py` | Lee `recomendaciones_libro.json`: **lo que el libro recomienda al perro SANO**, por etapa. Es la tercera clase de límite del motor, y no existía hasta el 8 de septiembre: los de FEDIAF valen para cualquier perro, los de patología solo si está marcada, y estos valen para el perro que **no tiene nada**. Empezó con dos techos de adulto (fósforo y sodio) y el 9 de septiembre entraron los de **crecimiento** — calcio y fósforo, con **dos columnas** según el cachorro vaya a pesar más o menos de 25 kg de adulto. ⚠️ **Y el 11 de septiembre dejó de ser solo de techos**: guarda también **suelos**, con `max()`, porque una recomendación del libro que fuera un mínimo no tenía dónde vivir. El único escrito es la **vitamina E** del perro sano, que SACN5 pide en ≥400 UI/kg MS (67,1 mg/1000 kcal) en **cinco capítulos** y que el motor exige a cuatro PATOLOGÍAS y no al perro sin nada. **Está ESCRITA y APAGADA** (`aplicado_por_el_solver: false`), y lleva **dos decisiones de Elena del mismo día**: encenderla por la mañana («la norma es la norma») y apagarla por la tarde («apágalo y fusiona todo, ya preguntaremos lo de la vitamina E»). Lo segundo es el ORDEN y no la norma: encendida pone roja la batería en los BLOQUES 9 y 43, y estaba reteniendo 150 commits que no tienen nada que ver con ella. Lo que cuesta: los tres perros con ocho especies fuera se quedan sin ninguno, y al toy de 1,5 kg le cuesta tanto que el solver no lo saca en 1 s ni en 20 intentos (sin el suelo, 12 de 20). Por la API, con la escalera, el toy sí sale 10 de 10. Las medidas completas están arriba, en la regla 2. La causa es de DATOS: **no hay un suplemento de vitamina E suelto en el catálogo**, solo los nueve multivitamínicos y el motor deja meter dos. La cifra NO se baja — se queda escrita con su medida y se pregunta. ⚠️ Y **tres de los seis fallos que dio al encenderla no eran suyos**: el motor metía comida que nadie pidió sin avisar en la pantalla de varios perros, y eso era un fallo de verdad (el perro que se amolda heredaba el menú del primero y no su aviso), arreglado el 11 de septiembre. **Y aquí manda FEDIAF**: si un suelo del libro se pasara del máximo de FEDIAF, el suelo se cae. El BLOQUE 57 vigila las dos cosas: que siga apagada con su motivo escrito, y que la maquinaria funcione (la enciende a mano y exige que solver y filtro final la apliquen) |
 | `patologias.py` | Lee `patologias.json` y lo pasa a la forma que espera el solver. **Aquí no hay ni una cifra**: hasta el 28 de agosto la tabla eran 200 líneas de `dict` dentro de `motor_completo.py`, mezclando números, motivo clínico, textos y lógica de crecimiento. Se sacó por lo mismo que el catálogo y la tabla de FEDIAF: un número que decide si un menú se entrega tiene que poder auditarse, y no se audita lo que está enterrado entre `if`s |
@@ -1774,6 +1774,42 @@ puede afirmar en qué peldaño sale un menú** (bajar es legítimo y se dice), n
 que un límite cabe, se le pregunta al solver con tiempo, no a un endpoint con
 presupuesto. Un rojo que solo sale en la CI no es un rojo de la CI: es una
 prueba que estaba midiendo el reloj sin querer.
+
+### El reloj no es una propiedad del motor
+
+*(14 de septiembre de 2026, y con tres rojos medidos detrás.)* Ese día, **tres
+ejecuciones seguidas de la batería en GitHub Actions fallaron en tres bloques
+DISTINTOS** —el 17 («solo conserva el 75 % de sus alimentos»), el 43 («1 de 3
+veces no sale menú con 3 s») y el 27 («no sale menú para lactante 22 kg»)— sobre
+un cambio que **solo tocaba textos de aviso**.
+
+Comprobado de dos formas que no era el cambio: el diff de datos no movía ni una
+cifra (`patologias.json` solo en `avisos`), y **la batería lanzada sobre `main`
+tal cual, a la vez y en el mismo runner, salió verde**.
+
+Los tres medían lo mismo sin querer: **cuánto tarda la máquina**. Los tres le dan
+al solver un presupuesto en segundos y luego afirman algo del MOTOR —que sale
+menú, que conserva los alimentos—, así que en una máquina más lenta el rojo
+acusa al motor de algo que no pasa. Es la lección que el repo ya tenía escrita
+para el BLOQUE 75, repetida en tres sitios más.
+
+Hay **dos herramientas, y no son intercambiables**:
+
+| | Cuándo | Qué hace |
+|---|---|---|
+| `_con_este_reloj(s)` | cuando lo que se prueba **es** el reloj (BLOQUE 43: que con prisa no se tire una solución ya calculada) | escala el presupuesto al ritmo de esta máquina, medido en el BLOQUE 7. Sigue siendo apretado **en proporción**, que es lo que el bloque quería |
+| `_resolver_con_holgura()` | cuando el reloj **no** es lo que se prueba (BLOQUES 17 y 27) | si no sale menú, reintenta con tiempo de sobra antes de acusar a nadie, y **lo dice** |
+
+⚠️ **Y al estrenarlo encontró algo**: el `lactante 22 kg` del BLOQUE 27 necesita
+el reintento **también en el equipo de desarrollo**. O sea que ese caso está de
+verdad en el filo y el rojo de la CI no era mala suerte — lo que fallaba era que
+el bloque no distinguía «no existe menú» de «no me ha dado tiempo». Ahora lo dice
+en voz alta en vez de acusar a los doce aminoácidos.
+
+**La regla que queda**: un bloque que le da un presupuesto al solver y luego
+afirma algo del motor está midiendo dos cosas a la vez. O el reloj es lo que se
+prueba —y entonces va en proporción— o no lo es, y entonces no puede decidir el
+resultado.
 
 ## Comprobar qué hay desplegado
 
