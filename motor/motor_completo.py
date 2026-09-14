@@ -503,6 +503,39 @@ MINIMO_POR_CATEGORIA_PORCION = {
 }
 
 
+# ⚠️ CUÁNTO CUESTA UN ALIMENTO QUE HAY QUE ENCARGAR (14 de septiembre de 2026).
+#
+# Es NUESTRO, no de ninguna fuente, y por eso NO PUEDE dejar a nadie sin menú.
+# Aquí eso sale gratis y no hace falta ningún plan B: la penalización vive en el
+# OBJETIVO y no en las restricciones, así que puede cambiar QUÉ alimento se
+# elige y nunca SI hay menú. Es justo el motivo de penalizar en vez de excluir.
+#
+# La escala es la del objetivo: un alimento cualquiera cuesta 1,0 + un ruido de
+# 0 a 0,4; uno que el usuario ha pedido, 0,1; el pescado lleva +1,5 la mitad de
+# las veces y la rotación de especie +2,0.
+#
+# ⚠️ EMPEZÓ EN 3,0 Y SE QUEDABA CORTA, y la medida que lo dice es la que hay que
+# hacer siempre con esto: **¿existe menú SIN ninguno de estos alimentos?** Con
+# 3,0 seguían saliendo (139 apariciones en los 216 precalculados), y excluyendo
+# los 31 por completo el menú salía igual **3 de 3 en los cuatro casos más
+# difíciles** — toy lactante, cachorro de raza grande, gestante y adulto. O sea
+# que el motor los usaba porque le salían BARATOS, no porque le hicieran falta.
+#
+# Medido después, sobre seis perfiles × tres semillas:
+#
+#     penalización  3,0 ->  4 apariciones · 18/18 con menú
+#     penalización  8,0 ->  0 apariciones · 18/18 con menú
+#     penalización 20,0 ->  0 apariciones · 18/18 con menú
+#
+# Se queda en 12,0: con 8 ya basta en el peldaño estricto, y el margen es para
+# los peldaños relajados, donde el solver tiene menos tiempo y acepta
+# soluciones peores. El razonamiento sin medir es el mismo: un menú lleva hasta
+# doce alimentos a 1,0-1,4, así que usar uno de encargo ahorra como mucho unas
+# tres unidades de coste; con 12 nunca compensa **salvo que desbloquee algo**,
+# y ahí ya no es una cuestión de precio.
+PENALIZACION_DE_ENCARGO = 12.0
+
+
 def resolver(*args, **kwargs):
     """El solver, con UN reintento y solo uno: el del techo del libro.
 
@@ -610,7 +643,13 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
             # `_con_el_margen_del_kelp`: no se puede saber si el menú llevará
             # kelp antes de resolverlo, así que el tope apretado entra por aquí
             # en la segunda pasada.
-            _apretar_yodo_por_kelp=False):
+            _apretar_yodo_por_kelp=False,
+            # ⚠️ El interruptor de la penalización de compra, para poder MEDIR
+            # el mismo perro con y sin ella. No es un plan B de viabilidad y no
+            # hace falta que lo sea: la penalización vive en el OBJETIVO, no en
+            # las restricciones, así que no puede volver infactible nada -- es
+            # exactamente por eso que se eligió penalizar en vez de excluir.
+            sin_penalizar_lo_de_encargo=False):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -2690,6 +2729,40 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
     # el usuario veía "no existe combinación" sin haber pedido nada raro.
     # Ahora, igual que con el pescado, solo se PENALIZA en el objetivo
     # -- el motor la evita si puede, pero nunca puede fallar por esto.
+    # ⚠️ LO QUE HAY QUE ENCARGAR CUESTA MÁS (14 de septiembre de 2026).
+    #
+    # Elena: «Costillas de cordero e hígado de pato, y seguramente otros, me
+    # siguen apareciendo en un menú para Cairo automático... Eso no son
+    # alimentos ni baratos ni accesibles».
+    #
+    # Y no era un menú suelto: medido sobre los 216 precalculados, el motor
+    # elegía el extremo raro de cada categoría -- espinazo de conejo en 105 de
+    # 216, costillas de cordero en 95, páncreas de vaca en 52, lengua de ternera
+    # en 35 (mediana 470 g, máximo 3,4 kg) -- mientras la zanahoria, el
+    # calabacín, el brócoli, la manzana y el cuello de pavo salían en CERO.
+    #
+    # LA CAUSA NO ES UN FALLO: el MILP optimiza nutrición por gramo y la compra
+    # no entra en la cuenta. Lo que faltaba era decírselo.
+    #
+    # ⚠️ PENALIZACIÓN, NUNCA EXCLUSIÓN, y por el mismo motivo escrito arriba para
+    # la rotación de especie: excluirlos sería una restricción DURA e invisible,
+    # y si uno de ellos resulta ser la única forma de cerrar los 43 requisitos
+    # de este perro, la usuaria vería «no existe combinación» sin haber pedido
+    # nada raro. Es la ventana más fina que tiene el motor -- el toy, el perro
+    # con alergias -- y ahí no se puede estrechar.
+    #
+    # ⚠️ Y NO SE PENALIZA LO QUE EL USUARIO HA PEDIDO. Es la lección del 26 de
+    # agosto con el pescado: un alimento preferido cuesta 0,1 y la penalización
+    # de variedad lo subía a 1,6-2,0, o sea MÁS que uno que nadie pidió, así que
+    # el motor cambiaba justo lo que se le había dicho que no cambiara. Si
+    # alguien elige costillas de cordero a mano, es que sabe dónde comprarlas.
+    if not sin_penalizar_lo_de_encargo:
+        from accesibles import es_de_encargo as _es_de_encargo
+        preferidos_compra = set(preferir or ())
+        for n in nombres:
+            if n not in preferidos_compra and _es_de_encargo(n):
+                coste_binaria[idx[n]] += PENALIZACION_DE_ENCARGO
+
     if evitar_especies:
         evitar_lower = {e.strip().lower() for e in evitar_especies}
         for n in nombres:

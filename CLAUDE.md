@@ -329,6 +329,73 @@ omega-3 del cáncer y el de la artrosis— y se pregunta. Detalle: `PATOLOGIAS.m
 §1.4-bis.
 
 
+### La comida del menú se tiene que poder comprar
+
+*(14 de septiembre de 2026.)* Elena: «**Costillas de cordero e hígado de pato**, y
+seguramente otros, me siguen apareciendo en un menú para Cairo automático… Eso no
+son alimentos ni baratos ni accesibles».
+
+**Y no era un menú suelto.** Medido sobre los 216 precalculados, el motor elegía
+**sistemáticamente el extremo raro de cada categoría**:
+
+| Categoría | Lo que usaba | Lo que no usaba nunca |
+|---|---|---|
+| **Hueso** | Espinazo de conejo **105/216** · Costillas de cordero **95** | cuello de pavo, cuello de pato, carcasa de conejo, pecho y cuello de ternera: **0** |
+| **Verdura** | **Albahaca 74** (mediana 58 g, máximo **651 g**) · Espinaca 46 | zanahoria, calabacín, judía verde, brócoli, manzana, pera: **0** |
+| **Víscera** | Riñón de vaca 70 · **Páncreas de vaca 52** | timo: 0 |
+| **Carne** | Corazón de pollo 84 · **Lengua de ternera 35** (mediana **470 g**, máximo **3,4 kg**) | muslo de pollo sin piel, solomillo: **0** |
+
+**La causa no es un fallo del solver**: el MILP optimiza **nutrición por gramo** y
+la **compra no entraba en la cuenta**. La albahaca es un concentrado de vitaminas
+y minerales por gramo, así que es la forma barata de cerrar huecos; igual la
+lengua, igual el páncreas, igual el espinazo.
+
+**Dos niveles, no tres** —lo pidió así Elena: «solo súper-carnicería y luego lo
+más complicado»—, en `lo_facil_de_comprar.json`: **74 de súper y 31 de encargo**,
+cada uno de los 31 con su motivo escrito. Aquí no hay alimentos nuevos ni se
+quita ninguno: se reparten los 105 de `accesibles.py` en dos.
+
+⚠️ **PENALIZACIÓN, NUNCA EXCLUSIÓN**, y por el motivo que ya estaba escrito para
+la rotación de especie: excluirlos sería una restricción DURA e invisible, y si
+uno resulta ser la única forma de cerrar los 43 requisitos, la usuaria vería «no
+existe combinación» sin haber pedido nada raro. Va en el **objetivo**, así que
+puede cambiar QUÉ alimento se elige y **nunca SI hay menú** — y eso se comprueba
+en el BLOQUE 110 en vez de suponerse.
+
+⚠️ **LA MEDIDA QUE DECIDIÓ LA CIFRA, y sin ella 3,0 parecía suficiente**: la
+pregunta correcta no es «¿cuántos salen?» sino **«¿existe menú SIN ninguno de
+estos?»**. Excluyendo los 31 por completo sale menú **3 de 3** en los cuatro
+casos más difíciles —toy lactante, cachorro de raza grande, gestante y adulto—,
+o sea que el motor los usaba **porque le salían baratos**, no porque le hicieran
+falta. Con eso claro: 3,0 → 4 apariciones, **8,0 → 0**, 20,0 → 0, y 18/18 con
+menú en los tres casos. Se queda en **12,0**, con margen para los peldaños
+relajados.
+
+**Lo que entra en su lugar** (20 menús): carcasa de pollo 2→17 · riñón de vaca
+2→12 · riñón de cordero 0→8 · hígado de vaca 6→13 · gallina 7→14.
+
+**Y lo que queda se explica entero**: de los 216 precalculados quedan 58 con algo
+de encargo, y **57 son variantes con la proteína forzada** — el hueso del conejo
+*es* el espinazo, y el de ternera es el pecho o el cuello. De los **36 menús
+base** queda **uno**. Eso no se arregla penalizando más: **se dice**, en
+`problemas_seguridad`, por el mismo canal que el `aviso_al_comprar` del cerebro
+de ternera y por el mismo motivo — que el motor lo evite no sirve de nada si
+quien compra se entera en el mostrador.
+
+⚠️ **Y al regenerar salió un fallo del script, no del cambio**: tres menús se
+guardaron **verdes y saltándose un tope crónico**. `regenerar_catalogo.py`
+exigía menú verde y los topes de patología y **no pasaba
+`_menu_precalculado_es_seguro`** —el semáforo de FEDIAF no ve los cinco topes
+crónicos, son otra clase de límite (regla 2)—. Es la misma lección que ese
+fichero ya cuenta del 8 de septiembre: **el script tiene que aplicar los MISMOS
+filtros que la API**, y cada vez que se ha saltado uno han salido menús que el
+motor iba a tirar.
+
+⚠️ **Lo que esto NO arregla, y está medido**: la **cantidad**. La albahaca es de
+súper —va en `faciles`— y aun así **651 g de albahaca fresca en una ración no es
+comida**. Eso no es accesibilidad: es que no hay tope de cuánto de una sola
+verdura es razonable dentro de su categoría. Queda escrito y sin decidir.
+
 ### El catálogo, en orden alfabético — y por qué eso es una regla y no estilo
 
 *(13 de septiembre de 2026, noche.)* Elena, mirando Personalizar: «**han
