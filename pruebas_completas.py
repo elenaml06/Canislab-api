@@ -16798,6 +16798,74 @@ else:
             fallos.append(f"BLOQUE102: quitar «{_quitable102}» ya no da menú")
         elif _quitable102 in (_rq102.get("menu") or _rq102.get("gramos") or {}):
             fallos.append(f"BLOQUE102: se pidió quitar «{_quitable102}» y sigue en el menú")
+
+# 6. ⚠️ Y EN PERSONALIZAR, QUE ES LA MITAD QUE FALTABA (13 septiembre, noche).
+#
+#    Elena, en la misma frase: «tanto en automático como en personalizar eh».
+#
+#    Comprobado antes de escribir esto: los dos atajos de `CATALOGO_VARIANTES`
+#    viven en `/menu/v2` -- o sea al GENERAR --, no en los tres endpoints de
+#    edición, asi que editar pasa siempre por `_recalcular_con_motor` en los dos
+#    modos. Eso hace que este apartado sea barato; y hace falta igual, porque
+#    «pasa por la misma función» es un argumento y no una medida, y la próxima
+#    vez que alguien meta un atajo en la edición este apartado es lo único que
+#    lo cazaría.
+#
+#    Y hay algo que SOLO se puede ver aquí: en personalizar el dueño ha elegido
+#    los alimentos de una categoría, y la regla 5 dice que el motor no mete nada
+#    más de esa categoría. Si para que el cambio salga hay que bajar de peldaño
+#    y meter otra carne, eso es legítimo -- lo dice la propia regla 5 -- pero
+#    TIENE QUE DECIRSE. Eso es lo que se exige.
+_elegidos102 = ["Pollo muslo con piel", "Carcasa de pollo", "Zanahoria", "Hígado de vaca"]
+_dp102 = {"modo": "personalizar", "nombres_alimentos": _elegidos102, "forzar_presencia": [],
+          "der_objetivo": 1100.0, "actividad": "normal", "etapa_requisitos": "Adulto",
+          "especies_excluidas": [], "nombres_excluidos": [], "peso_perro_kg": 24.5,
+          "patologias": [], "categorias_excluidas": []}
+_basep102 = _c_b5.post("/menu/v2", json=_dp102).json()
+if not _basep102.get("factible"):
+    fallos.append("BLOQUE102: en personalizar no sale el menú de partida, así que la mitad de "
+                  "personalizar de este bloque no comprueba nada")
+else:
+    _menup102 = _basep102["menu"]
+    _viejop102 = next((n for n in _menup102
+                       if al.get(n, {}).get("categoria") == "Carne muscular"), None)
+    _nuevop102 = next((n for n, a in al.items()
+                       if a.get("categoria") == "Carne muscular" and n not in _menup102), None)
+    if not _viejop102 or not _nuevop102:
+        fallos.append("BLOQUE102: el menú de personalizar no trae carne muscular que cambiar")
+    else:
+        _rp102 = _c_b5.post("/menu/cambiar", json={
+            **_dp102, "menu_actual": list(_menup102), "menu_actual_gramos": _menup102,
+            "alimento_viejo": _viejop102, "alimento_nuevo": _nuevop102}).json()
+        if not _rp102.get("factible"):
+            fallos.append(f"BLOQUE102: en personalizar, cambiar «{_viejop102}» por "
+                          f"«{_nuevop102}» no da menú")
+        else:
+            _gp102 = _rp102.get("menu") or _rp102.get("gramos") or {}
+            _fuerap102 = sorted((set(_menup102) - {_viejop102}) - set(_gp102))
+            _dentrop102 = sorted(set(_gp102) - set(_menup102) - {_nuevop102})
+            if not _fuerap102 and not _dentrop102:
+                if not _rp102.get("solo_se_movieron_los_gramos"):
+                    fallos.append("BLOQUE102 (personalizar): no se ha tocado nada más y el menú "
+                                  "no lo dice")
+            else:
+                if _rp102.get("solo_se_movieron_los_gramos"):
+                    fallos.append(f"BLOQUE102 (personalizar): dice «solo se movieron los gramos» "
+                                  f"y ha cambiado (fuera {_fuerap102}, dentro {_dentrop102})")
+                for _np102 in _fuerap102 + _dentrop102:
+                    if _np102 not in (_rp102.get("aviso") or ""):
+                        fallos.append(
+                            f"BLOQUE102 (personalizar): «{_np102}» ha entrado o salido y el "
+                            f"aviso no lo nombra: «{_rp102.get('aviso')}». En personalizar esto "
+                            f"pesa MÁS que en automático: el dueño eligió su lista a mano, y "
+                            f"meter algo que no eligió sin decirlo es la regla 5 rota")
+            # Y el cambio que se pidió, hecho: lo de arriba mira lo que se movió
+            # DE MÁS, y sin esto un menú que ignorara la petición pasaría.
+            if _nuevop102 not in _gp102:
+                fallos.append(f"BLOQUE102 (personalizar): se pidió meter «{_nuevop102}» y no está "
+                              f"en el menú que ha salido")
+            if _viejop102 in _gp102:
+                fallos.append(f"BLOQUE102 (personalizar): se pidió quitar «{_viejop102}» y sigue")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
