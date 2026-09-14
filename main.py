@@ -3003,7 +3003,30 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                         gramos_r[n] = round(min(g * factor, techo), 2) if techo else round(g * factor, 2)
                     else:
                         gramos_r[n] = round(g * factor, 2)
-                ficha_r = verificar_v2(gramos_r, al, req, datos.der_objetivo, datos.etapa_requisitos)
+                    # ⚠️ CON EL PESO DE REFERENCIA, COMO LO MIDE EL FILTRO FINAL (13 de
+                # septiembre de 2026, por la noche). CASO REAL, EN PRODUCCION, y lo
+                # encontro la bateria nueva de la app de verdad en su PRIMERA
+                # ejecucion: un PERRO SENIOR de 24,5 kg no obtenia ningun menu.
+                #
+                # `_garantizar_verificado` verifica con `peso_referencia_kg` y esto
+                # verificaba SIN el, asi que el atajo decia verde y el filtro final
+                # decia ambar -- el magnesio al 97 % de su minimo -- y el endpoint
+                # devolvia ese rechazo sin probar el camino normal, que SI da menu.
+                #
+                # Es la lección de siempre, la del 8 de septiembre, en su tercera
+                # cara: el que construye y el que comprueba tienen que MEDIR IGUAL.
+                # Ya se aplico al solver contra el filtro, y a la via rapida contra
+                # los topes (`_la_via_rapida_rompe_un_limite`, 13-sep por la
+                # mañana); faltaba el propio semaforo.
+                #
+                # Y por que cambia el numero: los minimos de FEDIAF se escalan con
+                # las kcal por kg^0,75 (ecuacion 7.2.5), asi que un menu
+                # precalculado para un perro que come a 110 puede quedarse corto
+                # para uno que come a 95. El catalogo se comparte entre perros; la
+                # densidad que se le exige a cada uno, no.
+                ficha_r = verificar_v2(gramos_r, al, req, datos.der_objetivo,
+                                       datos.etapa_requisitos,
+                                       peso_referencia_kg=_peso_de_referencia(datos)[0])
                 if (ficha_r["semaforo"] == "verde"
                         and _menu_precalculado_es_seguro(gramos_r, al, datos.der_objetivo,
                                                          datos.peso_perro_kg)
@@ -3087,7 +3110,30 @@ def _resolver_menu_v2_interno(datos: PeticionMenu):
                     gramos_reescalados[n] = round(min(g * factor, techo), 2) if techo else round(g * factor, 2)
                 else:
                     gramos_reescalados[n] = round(g * factor, 2)
-            ficha_variante = verificar_v2(gramos_reescalados, al, req, datos.der_objetivo, datos.etapa_requisitos)
+            # ⚠️ CON EL PESO DE REFERENCIA, COMO LO MIDE EL FILTRO FINAL (13 de
+            # septiembre de 2026, por la noche). CASO REAL, EN PRODUCCION, y lo
+            # encontro la bateria nueva de la app de verdad en su PRIMERA
+            # ejecucion: un PERRO SENIOR de 24,5 kg no obtenia ningun menu.
+            #
+            # `_garantizar_verificado` verifica con `peso_referencia_kg` y esto
+            # verificaba SIN el, asi que el atajo decia verde y el filtro final
+            # decia ambar -- el magnesio al 97 % de su minimo -- y el endpoint
+            # devolvia ese rechazo sin probar el camino normal, que SI da menu.
+            #
+            # Es la lección de siempre, la del 8 de septiembre, en su tercera
+            # cara: el que construye y el que comprueba tienen que MEDIR IGUAL.
+            # Ya se aplico al solver contra el filtro, y a la via rapida contra
+            # los topes (`_la_via_rapida_rompe_un_limite`, 13-sep por la
+            # mañana); faltaba el propio semaforo.
+            #
+            # Y por que cambia el numero: los minimos de FEDIAF se escalan con
+            # las kcal por kg^0,75 (ecuacion 7.2.5), asi que un menu
+            # precalculado para un perro que come a 110 puede quedarse corto
+            # para uno que come a 95. El catalogo se comparte entre perros; la
+            # densidad que se le exige a cada uno, no.
+            ficha_variante = verificar_v2(gramos_reescalados, al, req, datos.der_objetivo,
+                                          datos.etapa_requisitos,
+                                          peso_referencia_kg=_peso_de_referencia(datos)[0])
             # ⚠️ Y QUE NO ROMPA NINGUNO DE LOS LIMITES QUE MIRA EL FILTRO FINAL
             # (13-sep). Ver `_la_via_rapida_rompe_un_limite`: sin esto el atajo
             # devolvia un menu que `_garantizar_verificado` tiraba, y el
@@ -4365,7 +4411,8 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
     if excluir_nombres:
         nombres_excl |= set(excluir_nombres)
 
-    def _intentar(forzar_este, margen_intentos=3, margenes=None, max_supl=2):
+    def _intentar(forzar_este, margen_intentos=3, margenes=None, max_supl=2,
+                  restringir_a=None):
         """Un intento completo: hasta 3 vueltas hasta que sea verde de
         verdad, igual que ya hacía esto antes de separarlo en función."""
         ok, gramos, ficha = False, None, None
@@ -4377,6 +4424,10 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                 margenes_categoria=(margenes if margenes is not None else MARGENES_V2),
                 max_suplementos=max_supl,
                 forzar=forzar_este,
+                # ⚠️ La lista cerrada de candidatos, cuando se pide editar sin
+                # tocar nada más. `restringir_especie` es otra cosa (toda una
+                # especie dentro de una categoría) y conviven.
+                restringir_a_elegidos=restringir_a,
                 restringir_especie=restringir_especie,
                 peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None),
                 peso_objetivo_kg=_peso_de_referencia(datos)[0],
@@ -4427,6 +4478,32 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
     # comportamiento de antes (el motor elige libremente), avisando de
     # qué otros alimentos tuvo que cambiar además del pedido.
     menu_actual = list(getattr(datos, "menu_actual", None) or [])
+    def _lo_que_se_toco(gramos_nuevos, de_antes, pedidos):
+        """(solo_se_movieron_los_gramos, aviso) MEDIDO sobre el resultado.
+
+        ⚠️ SE MIDE, NO SE DA POR HECHO (13 de septiembre de 2026, por la noche).
+        La primera version de esto lo deducia del PELDAÑO: el intento que cierra
+        todas las categorias «no puede añadir nada», asi que devolvia «solo se
+        movieron los gramos» sin mirar. Y no era verdad -- salian menus con dos
+        aceites nuevos y esa etiqueta puesta.
+
+        Es la misma leccion que la del techo que subia: un dato que se deduce de
+        por donde ha pasado el codigo tiene un caso en el que miente. Aqui basta
+        con comparar las dos listas, que es barato y no puede equivocarse.
+        """
+        perdidos_m = [n for n in de_antes if n not in gramos_nuevos]
+        nuevos_m = [n for n in gramos_nuevos
+                    if n not in de_antes and n not in (pedidos or [])]
+        trozos_m = []
+        if perdidos_m:
+            trozos_m.append("quitar " + ", ".join(perdidos_m))
+        if nuevos_m:
+            trozos_m.append("añadir " + ", ".join(nuevos_m))
+        if not trozos_m:
+            return True, None
+        return False, ("Para que este cambio funcionara, también tuvimos que "
+                       + " y ".join(trozos_m) + ".")
+
     aviso_cambios_extra = None
     # ⚠️ CORREGIDO en el mismo momento: esto solo se activaba si había
     # "forzar" (cambiar/añadir un alimento) -- al QUITAR uno, forzar es
@@ -4449,9 +4526,153 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
                       if n not in nombres_excl_actuales
                       and al.get(n, {}).get("categoria") not in SUP_CATS]
         if a_preservar:
+            # ⚠️ PRIMERO SE INTENTA SIN DEJAR ENTRAR NADA NUEVO (13 de septiembre
+            #    de 2026, por la noche). CASO REAL, de Elena usando la app:
+            #
+            #        «al cambiar la lengua de cordero por pollo mira todo lo que
+            #         modifica. Esto no está bien, la idea es que si se puede
+            #         solo se cambie el alimento seleccionado y los gramos de lo
+            #         demás, e intentar tocar el menú lo menos posible»
+            #
+            #    MEDIDO en su menú: cambió UN alimento y el motor quitó DOS y
+            #    metió CUATRO -- se fue el yoduro potásico y entraron mango,
+            #    aceite de sésamo y otro multivitamínico.
+            #
+            #    El porqué: `a_preservar` FUERZA a que los de antes sigan, pero
+            #    no impide que el solver AÑADA lo que quiera; y deja fuera los
+            #    suplementos a propósito, así que el motor los vuelve a elegir
+            #    desde cero. Las dos cosas juntas rehacen media ración.
+            #
+            #    Así que el primer intento ata las dos: la lista de candidatos
+            #    es exactamente «lo que ya había, menos el que se va, más el que
+            #    entra» -- con `restringir_a_elegidos`, que ya existía para
+            #    justo esto en Personalizar. El solver solo puede mover GRAMOS.
+            #
+            #    Y si con eso no hay menú se sigue como siempre, en dos peldaños
+            #    más (conservando lo de antes pero pudiendo añadir, y luego
+            #    libre), y SE DICE lo que se ha tenido que tocar. Nunca se deja
+            #    al perro sin menú por no querer mover nada: es la regla 3, la
+            #    forma se relaja y se dice, la nutrición no.
+            _de_antes = [n for n in menu_actual if n not in nombres_excl_actuales]
+            _candidatos = sorted(set(_de_antes) | set(forzar or []))
+            # ⚠️ SE CIERRAN TODAS LAS CATEGORÍAS, no solo las que ya tenían algo.
+            # `restringir_a_elegidos` solo ata las categorías que aparecen en el
+            # diccionario, así que con las presentes bastaba para que no entrara
+            # otra carne -- pero dejaba abiertas las que el menú NO usaba, y por
+            # ahí se colaba un suplemento nuevo. Medido: cambiando un alimento
+            # entraba «AniForte Seaweed Meal» que nadie había pedido. Una
+            # categoría vacía se escribe con lista vacía, que es «de aquí, nada».
+            _solo_lo_que_habia = {c: [] for c in {a.get("categoria") for a in al.values()
+                                                  if a.get("categoria")}}
+            for _n_c in _candidatos:
+                _cat_c = al.get(_n_c, {}).get("categoria")
+                if _cat_c:
+                    _solo_lo_que_habia[_cat_c].append(_n_c)
+            # ⚠️ Y CON LA MISMA ESCALERA QUE TODO LO DEMAS (13 de septiembre,
+            #    noche). `_intentar` usa por defecto las proporciones BARF
+            #    ESTRICTAS, y el menu que se esta editando puede no haber salido
+            #    de ahi -- el generador recorre la escalera. Asi que este
+            #    peldaño fallaba por la FORMA y se caia al siguiente, que si
+            #    deja añadir: medido, cambiando un pollo por otro pollo casi
+            #    identico entraban aceite de sesamo y semilla de lino.
+            #
+            #    Soltar la forma es la regla 3 y no toca la nutricion; y aqui
+            #    ademas no se esta soltando nada nuevo, se esta usando la misma
+            #    forma con la que se construyo el menu que el usuario ya tiene
+            #    delante. Cuesta poco: con las categorias cerradas el problema
+            #    tiene una docena de variables.
+            _hay_comida_ed = _hay_comida_de_verdad(
+                al, excluidos + list(nombres_excl),
+                getattr(datos, "categorias_excluidas", None))
+            ok_quieto = False
+            gramos_quieto = ficha_quieto = None
+            for _marg_q, _supl_q, _q_suelta in _escalera_de_relajacion(_hay_comida_ed):
+                ok_quieto, gramos_quieto, ficha_quieto = _intentar(
+                    list(forzar or []) + _de_antes, margen_intentos=1,
+                    margenes=_marg_q, max_supl=_supl_q,
+                    restringir_a=_solo_lo_que_habia)
+                if ok_quieto:
+                    break
+            if ok_quieto:
+                _solo_q, _aviso_q = _lo_que_se_toco(gramos_quieto, _de_antes, forzar)
+                resultado = {"factible": True, "gramos": gramos_quieto, "ficha": ficha_quieto,
+                             # Que no se ha tocado nada más se DICE también: es
+                             # la otra mitad de decir lo que sí se tocó, y es lo
+                             # que deja al usuario tranquilo con el cambio.
+                             "solo_se_movieron_los_gramos": _solo_q}
+                if _aviso_q:
+                    resultado["aviso"] = _aviso_q
+                resultado["problemas_seguridad"] = _seguridad_completa(
+                    gramos_quieto, al, datos.der_objetivo, datos.etapa_requisitos,
+                    datos.patologias, peso_perro_kg=datos.peso_perro_kg)
+                return _con_aviso_composicion(_garantizar_verificado(
+                    resultado, datos.der_objetivo, datos.etapa_requisitos,
+                    datos.peso_perro_kg, origen="edicion (sin tocar nada mas)",
+                    patologias=getattr(datos, "patologias", None),
+                    peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None),
+                    peso_objetivo_kg=_peso_de_referencia(datos)[0],
+                    kcal_de_premios=_kcal_de_premios(datos),
+                    al=al, req=req), al, datos)
+
+            # ⚠️ Y UN PELDAÑO MÁS, QUE CONSERVA TAMBIÉN LOS SUPLEMENTOS (13 de
+            #    septiembre, noche). `a_preservar` los deja fuera a propósito y
+            #    para `/menu/revalidar` está bien -- cuando el perro pasa de
+            #    cachorro a adulto, el multivitamínico de cachorro TIENE que
+            #    cambiar. Pero al cambiar UN alimento no: ahí reelegirlos hace
+            #    que desaparezca el yoduro potásico que el dueño ya ha comprado
+            #    y aparezca otro multivitamínico distinto, que es justo lo que
+            #    vio Elena.
+            #
+            #    Así que primero se intenta conservándolos, y solo si con ellos
+            #    no hay menú se pasa al de siempre -- que los suelta y lo dice.
+            _con_suplementos = [n for n in menu_actual if n not in nombres_excl_actuales]
+            if len(_con_suplementos) > len(a_preservar):
+                ok_sup, gramos_sup, ficha_sup = _intentar(list(forzar or []) + _con_suplementos)
+                if ok_sup:
+                    _solo_s, _aviso_s = _lo_que_se_toco(gramos_sup, _con_suplementos, forzar)
+                    resultado = {"factible": True, "gramos": gramos_sup, "ficha": ficha_sup,
+                                 "solo_se_movieron_los_gramos": _solo_s}
+                    if _aviso_s:
+                        resultado["aviso"] = _aviso_s
+                    resultado["problemas_seguridad"] = _seguridad_completa(
+                        gramos_sup, al, datos.der_objetivo, datos.etapa_requisitos,
+                        datos.patologias, peso_perro_kg=datos.peso_perro_kg)
+                    return _con_aviso_composicion(_garantizar_verificado(
+                        resultado, datos.der_objetivo, datos.etapa_requisitos,
+                        datos.peso_perro_kg, origen="edicion (conservando los suplementos)",
+                        patologias=getattr(datos, "patologias", None),
+                        peso_adulto_esperado_kg=getattr(datos, "peso_adulto_esperado_kg", None),
+                        peso_objetivo_kg=_peso_de_referencia(datos)[0],
+                        kcal_de_premios=_kcal_de_premios(datos),
+                        al=al, req=req), al, datos)
+
             ok_pres, gramos_pres, ficha_pres = _intentar(list(forzar or []) + a_preservar)
             if ok_pres:
-                resultado = {"factible": True, "gramos": gramos_pres, "ficha": ficha_pres}
+                # ⚠️ Y ESTE CAMINO TAMBIÉN DICE LO QUE HA TOCADO (13 de
+                #    septiembre de 2026, por la noche). ESTE es el que le pasó a
+                #    Elena: conserva lo de antes, pero deja que el solver AÑADA
+                #    lo que quiera -- y no decía ni una palabra.
+                #
+                #    MEDIDO en su menú: cambió UN alimento, entraron CUATRO
+                #    (mango, aceite de sésamo, otro multivitamínico, otro pollo)
+                #    y desapareció el yoduro potásico, con «Aviso del servidor:
+                #    (ninguno)» en pantalla. Un cambio que el usuario no pidió y
+                #    del que no se entera es la familia de fallos de este
+                #    proyecto entero, y aquí encima se ve: es su comida.
+                #
+                #    Se compara contra el menú de antes y se dice, y cuando no
+                #    ha hecho falta tocar nada se dice TAMBIÉN -- «no se ha
+                #    movido nada más» es información, no silencio.
+                # ⚠️ Contra el menú ENTERO, no contra `a_preservar`: un
+                # suplemento que se va también hay que decirlo -- el dueño ya lo
+                # ha comprado. Medirlo contra `a_preservar` es lo que dejaba
+                # desaparecer el yoduro potásico en silencio.
+                _solo_p, _aviso_p = _lo_que_se_toco(
+                    gramos_pres, [n for n in menu_actual if n not in nombres_excl_actuales], forzar)
+                resultado = {"factible": True, "gramos": gramos_pres, "ficha": ficha_pres,
+                             "solo_se_movieron_los_gramos": _solo_p}
+                if _aviso_p:
+                    resultado["aviso"] = _aviso_p
                 # ⚠️ AÑADIDO (5 agosto, madrugada) — CASO REAL: esta
                 # función nunca calculaba avisos de seguridad, en
                 # NINGUNO de sus caminos -- se perdían al editar,
@@ -4471,13 +4692,16 @@ def _recalcular_con_motor(datos, forzar=None, excluir_nombres=None, restringir_e
             # comportamiento libre, y se avisa de qué se perdió
             ok_libre, gramos_libre, ficha_libre = _intentar(forzar)
             if ok_libre:
-                perdidos = [n for n in a_preservar if n not in gramos_libre]
-                if perdidos:
-                    aviso_cambios_extra = (
-                        "Para que este cambio funcionara, también tuvimos que cambiar: "
-                        + ", ".join(perdidos) + "."
-                    )
-                resultado = {"factible": True, "gramos": gramos_libre, "ficha": ficha_libre}
+                _solo_l, aviso_cambios_extra = _lo_que_se_toco(
+                    gramos_libre, [n for n in menu_actual if n not in nombres_excl_actuales],
+                    forzar)
+                # ⚠️ Lo que se ha tocado lo mide `_lo_que_se_toco`, en un solo
+                # sitio para los cuatro peldaños: el aviso contaba solo lo que
+                # se PERDÍA y se callaba lo que AÑADÍA, y eso es justo lo que se
+                # ve en pantalla. Los suplementos cuentan: si el motor cambia el
+                # multivitamínico, quien compra tiene que enterarse.
+                resultado = {"factible": True, "gramos": gramos_libre, "ficha": ficha_libre,
+                             "solo_se_movieron_los_gramos": _solo_l}
                 if aviso_cambios_extra:
                     resultado["aviso"] = aviso_cambios_extra
                 resultado["problemas_seguridad"] = _seguridad_completa(
