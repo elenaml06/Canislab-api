@@ -2131,11 +2131,55 @@ else:
 # enseñar los avisos de un menú que sí ha salido), estaría afirmándole a la
 # usuaria una restricción que no existe. Un aviso falso es peor que ninguno.
 from motor_completo import avisos_de_patologias as _avisos_pat_b13
+
+# ⚠️ LO QUE SE COMPRUEBA ES EL HECHO, NO LA FRASE (14 septiembre).
+#
+# Hasta hoy esto buscaba la cadena literal «se ha bajado el fósforo», y eso
+# convirtió una prueba de motor en una prueba de redacción: al reescribir el
+# aviso del dueño para que hablara de comida y no de nutrientes, el texto pasó
+# a decir «este menú le baja el fósforo todo lo que se puede» -- que dice
+# EXACTAMENTE lo mismo -- y el bloque se puso rojo acusando al motor de no
+# aplicar un tope que sí aplica. Un rojo así enseña a desconfiar de la batería.
+#
+# Y no vale con relajarlo por un lado: la mitad que de verdad protege es la
+# NEGATIVA -- que a un cachorro no se le afirme una restricción que no existe --
+# así que las dos mitades tienen que usar el MISMO criterio. Si aquí se
+# aceptara «le baja el fósforo» como equivalente solo en la dirección positiva,
+# un aviso de crecimiento que dijera «le baja el fósforo» (falso) colaría.
+# (`re` se importa aquí y no se da por importado: este bloque va antes del 18,
+# que es donde el import vivía, y confiarse dejaba el bloque en NameError.)
+import re as _re_b13
+
+_BAJAR_B13 = r"(?:se ha bajado|se le ha bajado|le baja|se le baja|se ha reducido|lleva menos)"
+
+
+def _dice_que_bajo_b13(texto, nutriente):
+    """¿El texto afirma que se ha bajado ese nutriente? Con cualquier redacción."""
+    return bool(_re_b13.search(_BAJAR_B13 + r"[^.]{0,40}" + nutriente, texto))
+
+
+def _baja_b13(nutriente):
+    # (el sufijo `_b13` no es manía: este fichero son 12.000 líneas en un solo
+    # ámbito, y un nombre corto como `_baja` es una mina para el bloque 60
+    # que venga dentro de tres semanas.)
+    return ("baja", nutriente)
+
+
+def _lo_dice_b13(texto, que):
+    if isinstance(que, tuple):
+        return _dice_que_bajo_b13(texto, que[1])
+    return que in texto
+
+
+def _como_se_lee_b13(que):
+    return f"que se le ha bajado el/la {que[1]}" if isinstance(que, tuple) else f"«{que}»"
+
+
 for _pat_t, _et_t, _debe_decir, _no_puede_decir in [
-    (["pancreatitis"], "CachorroJoven",       "no ha podido bajar la grasa", "se ha bajado la grasa"),
-    (["renal"],        "CachorroCrecimiento", "plan dietético individual",   "se ha bajado el fósforo"),
-    (["pancreatitis"], "Adulto",              "se ha bajado la grasa",       "no ha podido bajar"),
-    (["renal"],        "Adulto",              "se ha bajado el fósforo",     "plan dietético individual"),
+    (["pancreatitis"], "CachorroJoven",       "no ha podido bajar la grasa", _baja_b13("grasa")),
+    (["renal"],        "CachorroCrecimiento", "plan dietético individual",   _baja_b13("fósforo")),
+    (["pancreatitis"], "Adulto",              _baja_b13("grasa"),                "no ha podido bajar"),
+    (["renal"],        "Adulto",              _baja_b13("fósforo"),              "plan dietético individual"),
 ]:
     # ⚠️ LOS DOS REGISTROS, no solo el del dueño (13 septiembre, noche). Desde
     # hoy `avisos_de_patologias` devuelve el texto llano a quien no es
@@ -2144,12 +2188,12 @@ for _pat_t, _et_t, _debe_decir, _no_puede_decir in [
     # existe es peor que ninguno, y eso no depende de para quién esté escrito.
     _txt = " ".join(_avisos_pat_b13(_pat_t, _et_t)
                     + _avisos_pat_b13(_pat_t, _et_t, es_profesional=True)).lower()
-    if _debe_decir not in _txt:
+    if not _lo_dice_b13(_txt, _debe_decir):
         fallos.append(f"BLOQUE13 texto de aviso: para {_pat_t} en {_et_t} el aviso "
-                      f"tendría que decir «{_debe_decir}» y dice: {_txt[:120]}")
-    if _no_puede_decir in _txt:
+                      f"tendría que decir {_como_se_lee_b13(_debe_decir)} y dice: {_txt[:120]}")
+    if _lo_dice_b13(_txt, _no_puede_decir):
         fallos.append(f"BLOQUE13 texto de aviso: para {_pat_t} en {_et_t} se le está "
-                      f"diciendo «{_no_puede_decir}», que ahí no es verdad")
+                      f"diciendo {_como_se_lee_b13(_no_puede_decir)}, que ahí no es verdad")
 
 # Y al revés, dos veces: ni a un adulto con pancreatitis (el tope SÍ se le
 # aplica, así que no hay nada que avisar) ni a un cachorro sano se les puede
@@ -17075,6 +17119,75 @@ if "§7.6.2.4" in " ".join(_rot107(_gr107, _al107) or []):
     fallos.append("BLOQUE107: el aviso de la histamina sigue nombrando la sección de FEDIAF "
                   "en el registro del DUEÑO")
 
+# ⚠️ Y UNA SEGUNDA LISTA, QUE NO ES DE FUENTES SINO DE NUTRIENTES (14 de
+# septiembre de 2026). Elena, leyendo el aviso de la artrosis ya «limpio»:
+#
+#     «pero es que porque saldria un aviso de que lleva mas pescado azul,
+#      vitamina e y lo que sea.... De lo normal.... Es que eso a un usuario que
+#      no tiene ni idea de que significa le causa desconfianza y no se fia»
+#
+# Y tiene razón, y el fallo era mío: quitar la cita no basta si lo que queda es
+# una lista de nutrientes. «Más vitamina E y más L-carnitina de lo normal» no le
+# dice nada a quien solo quiere dar de comer a su perro -- y «de lo normal»
+# encima suena a que algo se ha desviado, o sea que el aviso hace justo lo
+# contrario de lo que existe para hacer: en vez de tranquilizar, inquieta.
+#
+# LA REGLA QUE SALE DE AHÍ ES **COMIDA, NO NUTRIENTES**: «menos sal» y «más
+# pescado azul» se entienden y además se compran; «vitamina E» y «L-carnitina»
+# no se pueden ni ver ni comprar. Medido antes de reescribir: **36 de los 47
+# avisos del dueño nombraban algún nutriente**, con 469 caracteres de media.
+# Después: 0 y 349.
+#
+# ⚠️ LA LISTA NO PUEDE SER «TODO NUTRIENTE», y por eso está escrita a mano. Hay
+# palabras que el dueño SÍ maneja y que además son lo único que se puede decir:
+# la vitamina B12 (que se pone inyectada, y eso es una acción suya), el calcio
+# del hueso, el fósforo del riñón -- que es la palabra que su veterinario le
+# repite --, el cobre del hígado y la grasa. Prohibirlas dejaría el aviso sin
+# poder decir lo que hay que decir. Lo que se prohíbe es lo que no significa
+# nada fuera de una tabla.
+#
+# ⚠️ Y «EPA» VA EN MAYÚSCULAS Y COMO PALABRA SUELTA, con su motivo: en
+# minúsculas casa dentro de «rEPArte» y de «rEPArtir», y la primera versión de
+# esta comprobación acusó a dos avisos que estaban bien por decir «reparte la
+# ración en 2 o 3 tomas». Una comprobación que acusa a quien no ha hecho nada se
+# deja de mirar.
+sys.path.insert(0, "motor")
+import patologias as _pat107
+_NUTRIENTES_QUE_NO_DICEN_NADA_107 = (
+    "vitamina E", "L-carnitina", "carnitina", "omega-6", "linoleico",
+    "araquidónico", "taurina", "arginina", "magnesio", "selenio", "yodo",
+    "zinc", "potasio", "folato", "colina", "niacina", "riboflavina",
+    "molibdeno", "manganeso", "aminoácido", "tiamina", "biotina",
+)
+_SUELTAS_107 = (r"\bEPA\b", r"\bDHA\b")
+import re as _re107b
+_crudo107n = _pat107.CRUDO.get("patologias") or {}
+_sucios107n, _largos107n = [], []
+for _k107n, _v107n in sorted(_crudo107n.items()):
+    _av107n = _v107n.get("avisos") or {}
+    _t107n = _av107n.get("dueno") or _av107n.get("general") or ""
+    if not _t107n:
+        continue
+    _largos107n.append(len(_t107n))
+    _hay107n = [_x for _x in _NUTRIENTES_QUE_NO_DICEN_NADA_107 if _x.lower() in _t107n.lower()]
+    _hay107n += [_x for _x in _SUELTAS_107 if _re107b.search(_x, _t107n)]
+    if _hay107n:
+        _sucios107n.append((_k107n, _hay107n, _t107n[:110]))
+for _k107n, _h107n, _t107n in _sucios107n[:6]:
+    fallos.append(f"BLOQUE107: el aviso del DUEÑO de «{_k107n}» nombra {_h107n}, que no significa "
+                  f"nada para quien solo quiere dar de comer a su perro: «{_t107n}…». La regla es "
+                  f"COMIDA, NO NUTRIENTES -- «menos sal» y «más pescado azul» se entienden y se "
+                  f"compran; esto inquieta en vez de tranquilizar, que es lo contrario de para lo "
+                  f"que está el aviso")
+# Y que el TÉCNICO siga teniéndolos: si el aviso del veterinario perdiera los
+# nutrientes, esto no sería reescribir para el dueño sino vaciar los dos.
+_vet107n = " ".join((( _crudo107n.get(_k) or {}).get("avisos") or {}).get("general") or ""
+                    for _k in ("artrosis", "disfuncion_cognitiva", "dcm_taurina_respondedora"))
+for _debe107n in ("vitamina E", "L-carnitina", "taurina"):
+    if _debe107n not in _vet107n:
+        fallos.append(f"BLOQUE107: «{_debe107n}» ha desaparecido también del aviso del "
+                      f"VETERINARIO. Reescribir para el dueño es moverlo, no borrarlo")
+
 # ⚠️ Y LA PANTALLA DONDE SE MARCA LA PATOLOGIA, QUE ES LA QUE ELENA SEÑALO
 # (13 septiembre, noche). El aviso que viaja con el menu solo lo ven las
 # patologias que FORMULAN; las otras ocho -- urato, cistina, hepatopatia,
@@ -17118,8 +17231,6 @@ for _c107b, _m107b, _t107b in _sucios107b[:6]:
 # EMPAREJADAS. `avisos_extra_dueno` es la misma lista en el mismo orden con el
 # texto llano donde lo hay, asi que si se desparejan, el dueño lee el aviso del
 # mitotano donde deberia leer el del apetito y nadie se entera.
-sys.path.insert(0, "motor")
-import patologias as _pat107
 _huerfanos107 = []
 for _k107c, _v107c in (_pat107.CRUDO.get("patologias") or {}).items():
     _av107c = _v107c.get("avisos") or {}
@@ -17147,6 +17258,8 @@ for _h107 in _huerfanos107[:6]:
 print(f"  {_mirados107} avisos del dueño mirados · {len(_sucios107)} con jerga")
 print(f"  {len(_dueno107)} avisos de seguridad barridos con el catálogo entero · "
       f"{len(_sucios107c)} con jerga · {len(_prof107b)} movidos al canal del veterinario")
+print(f"  {len(_sucios107n)} avisos del dueño con jerga de nutriente · "
+      f"{sum(_largos107n)//max(1,len(_largos107n))} caracteres de media")
 print(f"  {len(_lista107)} patologías miradas en /vocabulario · {len(_sucios107b)} con jerga · {len(_huerfanos107)} huérfanos")
 
 # ============================================================
