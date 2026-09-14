@@ -502,6 +502,33 @@ TOPE_OXALATO_PESO_UROLITOS = 0.0   # con antecedente: fuera
 # via por la que se dispara la vitamina A, y las fuentes SE SUMAN (higado +
 # aceite de higado de bacalao + multivitaminico). El maximo de vitamina A de
 # FEDIAF, que si esta verificado, lo comprueba aparte `verificar()`.
+# ⚠️ LOS CUATRO TOPES «% DEL PLATO» SON CRITERIO NUESTRO, Y EL TEXTO LO DICE
+#    (14 de septiembre de 2026). Elena, viendo uno de ellos en su pantalla:
+#
+#        «me salió un menú con riñón y no sé qué y me salía un aviso de que el
+#         máximo era el 10 y que llevaba un 11... Eso no debería ser un aviso,
+#         debería ser un menú en rojo»
+#
+#    Tiene razón en el principio --un aviso se puede ignorar; un límite no-- y
+#    por eso al buscarlo aparecieron DOS cosas distintas que decían lo mismo en
+#    pantalla, y solo una era un fallo:
+#
+#    · EL YODO DEL KELP era un tope CRÓNICO de verdad aplicado en un solo sitio.
+#      Eso sí es la regla 2 rota, y se arregló: el menú ya no se entrega.
+#    · ESTE, el del hígado/riñón/clara, NO es un límite. Es una proporción de
+#      BARF, o sea FORMA (regla 3), y su número es NUESTRO -- está escrito arriba
+#      en cada uno: «EL 10% ES CRITERIO NUESTRO», «EL 5% ES CRITERIO NUESTRO».
+#      Lo que de verdad tiene techo es la VITAMINA A, y ese lo comprueba
+#      `verificar()` contra FEDIAF en todos los menús.
+#
+#    Así que aquí lo que estaba mal era EL TEXTO: llamar «límite» a un consejo
+#    nuestro le da rango de requisito, y entonces un menú entregado parece que
+#    se ha saltado algo. Es el mismo criterio con el que el filtro final NO
+#    exige el techo del libro que sube (`HOLGURA_DEL_TECHO_QUE_SUBE`): rechazar
+#    un menú por pasarse de algo que nos hemos inventado sería darle ese rango.
+#
+#    Lo vigila el BLOQUE 108: ningún menú ENTREGADO puede traer, en el canal del
+#    dueño, un texto que diga que se pasa de un límite.
 TOPE_HIGADO_PESO = 0.10
 
 # ⚠️ EL RIÑÓN COMPARTE MECANISMO CON EL HÍGADO — investigado 4 agosto.
@@ -957,8 +984,10 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
         problemas.append(
             "En cantidad, la clara de huevo cruda y SOLA (sin la yema) puede "
             "bloquear la absorción de biotina — el huevo entero no da este "
-            "problema. Ahora mismo son %.0f g, el %.0f%% del plato (el "
-            "límite es %.0f%%)."
+            "problema. Ahora mismo son %.0f g, el %.0f%% del plato, y nosotros "
+            "recomendamos no pasar del %.0f%%. Es un consejo nuestro, no un "
+            "límite: el menú cumple lo que tiene que cumplir. Si puedes, dale "
+            "el huevo entero en vez de la clara sola."
             % (g_clara, g_clara / total * 100, TOPE_CLARA_PESO * 100))
 
     # 3. oxalato
@@ -986,9 +1015,11 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     g_hig = sum(menu[n] for n in hig)
     if g_hig > total * TOPE_HIGADO_PESO:
         problemas.append(
-            "En exceso, el hígado puede disparar la vitamina A por encima "
-            "de lo seguro. Ahora mismo son %.0f g, el %.0f%% del plato (el "
-            "límite es %.0f%%)."
+            "El hígado es la vía por la que se dispara la vitamina A. Ahora "
+            "mismo son %.0f g, el %.0f%% del plato, y nosotros recomendamos no "
+            "pasar del %.0f%%. Es un consejo nuestro, no un límite: la vitamina "
+            "A de este menú está comprobada y dentro de su máximo. Si puedes, "
+            "baja el hígado en el próximo."
             % (g_hig, g_hig / total * 100, TOPE_HIGADO_PESO * 100))
 
     # 3b. BORRAJA — se excluye del todo, no se topa por cantidad. A
@@ -1070,9 +1101,11 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     g_vm = sum(menu[n] for n in visc_meta)
     if g_vm > total * TOPE_VISCERAS_METABOLICAS_PESO:
         problemas.append(
-            "En exceso, el riñón acumula cadmio y tiene más purinas que la "
-            "carne muscular. Ahora mismo son %.0f g, el %.0f%% del plato "
-            "(el límite es %.0f%%)."
+            "El riñón acumula cadmio y tiene más purinas que la carne "
+            "muscular. Ahora mismo son %.0f g, el %.0f%% del plato, y nosotros "
+            "recomendamos no pasar del %.0f%%. Es un consejo nuestro, no un "
+            "límite: el menú cumple lo que tiene que cumplir. Si puedes, baja "
+            "el riñón en el próximo."
             % (g_vm, g_vm / total * 100, TOPE_VISCERAS_METABOLICAS_PESO * 100))
     g_meta_junto = g_hig + g_vm
     if g_meta_junto > total * TOPE_VISCERAS_METABOLICAS_PESO * 1.5 and hig and visc_meta:

@@ -484,6 +484,37 @@ verdad son deterministas: el filtro final llamado a mano con un menú de kelp
 construido **exactamente entre los dos topes**, y ese mismo menú metido por
 `/menu/revalidar`. Con el arreglo quitado saltan los tres.
 
+⚠️ **Y LA RED ANCHA SE GANÓ EL SITIO: EN OTRA EJECUCIÓN ENCONTRÓ EL SEGUNDO, QUE
+NO ERA UN FALLO.** Con otra cadena de ediciones salió esto, que es **literalmente**
+lo que Elena describió («el máximo era el 10 y llevaba un 11»):
+
+> «En exceso, el hígado puede disparar la vitamina A por encima de lo seguro.
+> Ahora mismo son 32 g, **el 12 % del plato (el límite es 10 %)**»
+
+Y ese 10 % **no es un límite**. Es una proporción de BARF —**FORMA**, regla 3— y
+el número es **NUESTRO**: lo dice su propio comentario desde agosto, «⚠️ EL 10 %
+ES CRITERIO NUESTRO. La convención BARF es 5 % y tampoco tiene estudio detrás».
+Lo que de verdad tiene techo es la **vitamina A**, y ese lo comprueba
+`verificar()` contra FEDIAF en todos los menús. Lo mismo vale para el riñón
+(mismo 10 %, «por prudencia») y para la clara de huevo sola (5 %, «margen ×4
+sobre el 20 % donde SÍ se vio daño»).
+
+Así que aquí **el arreglo no es rechazar el menú** —eso le daría a un número
+nuestro rango de requisito, que es exactamente lo que el filtro final se niega a
+hacer con `HOLGURA_DEL_TECHO_QUE_SUBE`— **sino que el texto diga la verdad**: los
+tres avisos dicen ahora «nosotros recomendamos no pasar del X %… es un consejo
+nuestro, no un límite», y el del hígado añade que la vitamina A del menú está
+comprobada y dentro de su máximo. ⚠️ **Y se vigilan las DOS direcciones**: que no
+vuelva a llamarse «límite», y que **siga diciéndose** — arreglar esto borrando el
+aviso sería peor que el fallo, porque el dueño dejaría de saber que lleva
+demasiado hígado.
+
+**La distinción que deja escrita, y que es la que había que hacer**: dos textos
+que en pantalla dicen lo mismo pueden ser cosas distintas. Si el número viene de
+una fuente y es un tope crónico, un menú que se pase **no se entrega** (regla 2).
+Si el número es nuestro y es una proporción de BARF, el menú **sí** se entrega y
+lo que no puede hacer el texto es llamarlo límite.
+
 `GET /vocabulario` (11 de septiembre) sirve **todo lo que el motor enumera**,
 para que la app lo lea en vez de copiárselo: los cinco niveles de actividad con
 su cifra de FEDIAF, las 255 razas, los seis tamaños, las etapas, los nueve

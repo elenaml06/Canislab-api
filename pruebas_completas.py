@@ -17354,6 +17354,41 @@ else:
                                       f"{_yv108:.0f} µg de yodo y su tope son "
                                       f"{_tope108(_gv108, 1100.0, 24.5):.0f}. Un menú entregado "
                                       f"por encima de un tope crónico es la regla 2 rota")
+# ── Y LA OTRA MITAD, que es la que evita arreglar esto callando ──────────
+#
+# ⚠️ EL BARRIDO ENCONTRÓ DOS COSAS DISTINTAS QUE DECÍAN LO MISMO EN PANTALLA, y
+# solo una era un fallo. La segunda salió en otra ejecución del mismo barrido,
+# con otra cadena de ediciones -- que es exactamente para lo que sirve una red
+# ancha:
+#
+#     «En exceso, el hígado puede disparar la vitamina A por encima de lo
+#      seguro. Ahora mismo son 32 g, el 12% del plato (el límite es 10%)»
+#
+# Ese 10 % NO es un límite: es una proporción de BARF, o sea FORMA (regla 3), y
+# el número es NUESTRO -- lo dice su propio comentario, «EL 10% ES CRITERIO
+# NUESTRO». Lo que de verdad tiene techo es la vitamina A, y ese lo comprueba
+# `verificar()` contra FEDIAF en todos los menús.
+#
+# Así que el arreglo aquí NO es rechazar el menú --eso le daría a un número
+# nuestro rango de requisito, que es justo lo que el filtro final se niega a
+# hacer con `HOLGURA_DEL_TECHO_QUE_SUBE`-- sino que el texto diga la verdad.
+#
+# Y HAY QUE VIGILAR LAS DOS DIRECCIONES: que no vuelva a llamarse «límite» (eso
+# ya lo cazan las cadenas de arriba) Y que siga diciéndose. Arreglar esto
+# borrando el aviso sería peor que el fallo: el dueño dejaría de saber que lleva
+# demasiado hígado.
+_g_higado108 = {"Hígado de vaca": 32.0, "Pollo muslo con piel": 200.0}
+_av_higado108 = " || ".join(_seg107(_g_higado108, al, 560.0, "Adulto", [],
+                                    peso_perro_kg=8.0, requerimientos=_req107) or [])
+if "hígado" not in _av_higado108.lower():
+    fallos.append("BLOQUE108: un menú con el 14 % del plato de hígado ya no dice nada. Quitar el "
+                  "aviso no es arreglarlo: el dueño dejaría de saber que lleva de más")
+elif "consejo nuestro" not in _av_higado108:
+    fallos.append(f"BLOQUE108: el aviso del hígado no dice que el 10 % es un consejo NUESTRO: "
+                  f"«{_av_higado108[:130]}…». Sin eso, un menú entregado parece que se ha saltado "
+                  f"un requisito -- y el requisito de verdad, el máximo de vitamina A de FEDIAF, "
+                  f"lo comprueba `verificar()` y este menú lo cumple")
+
 print(f"  {_ediciones108} ediciones encadenadas miradas · {len(_sucios108)} menús entregados "
       f"diciendo que se pasan de un límite")
 print(f"  hecho, {len(fallos)} fallos hasta ahora")

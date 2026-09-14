@@ -9,6 +9,82 @@ Este archivo no se lee solo: se abre cuando hace falta el detalle de algo
 que ya se resolvió — por qué se decidió así, qué se midió, qué PR lo trajo.
 Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 
+## «El máximo era el 10 y llevaba un 11»: eran DOS cosas, y solo una era un fallo — 14 de septiembre de 2026
+
+Elena, el 13: *«me salió un menú con riñón y no sé qué y me salía un aviso de que
+el máximo era el 10 y que llevaba un 11… Eso no debería ser un aviso, debería ser
+un menú en rojo»*. Y al día siguiente, el camino: *«lo del máximo ha sido después
+de **cambiar (editar) un par de ingredientes** en modo usuario en automático»*.
+
+El día 13 se barrieron los seis caminos que entregan menú y **no apareció**. Con
+la pista de la edición sí: barriendo **ediciones ENCADENADAS** —generar, cambiar,
+añadir, quitar, y otra vez—, que es lo que no recorría ningún bloque. Y
+aparecieron **dos** cosas que en pantalla dicen lo mismo.
+
+### 1 · El yodo del kelp — SÍ era un fallo, y de la regla 2
+
+> «El yodo de este menú llega a **2156 µg, por encima del límite prudente (2040
+> µg** — con margen extra por incluir kelp)», en un menú **entregado**.
+
+El margen extra del 50 % que se deja cuando el yodo viene de **kelp** —porque su
+contenido real puede estar lejos del declarado— vivía **solo dentro del aviso**.
+Ni `resolver()` ni `_menu_precalculado_es_seguro` lo conocían. **Tres sitios
+mirando el mismo yodo y ninguno el mismo límite**: la lección del 8 de septiembre
+en su cuarta cara.
+
+La cuenta es ahora **una**, `seguridad.tope_de_yodo`, y la hacen los tres. ⚠️ En
+el solver entra como **reintento y no como restricción del MILP**: el tope
+depende de si el menú ACABA llevando kelp, y eso no se sabe hasta resolverlo —
+modelarlo dentro exigiría una binaria por alimento y un big-M. Si con el margen
+no sale menú **no se entrega el de antes**: el yodo es tope crónico y esos no
+ceden.
+
+**Medido**: 35 de los 216 menús del catálogo llevan kelp; por el tope por 1000
+kcal se pasaban **2**, y por el de **peso metabólico** —el que manda en los perros
+pequeños— **17**. Catálogo regenerado; 0 de los 216 los rechaza ahora el filtro.
+Tras el arreglo, 30 ediciones encadenadas: **0 menús sin salir, 0 avisos de "te
+has pasado"**.
+
+### 2 · El hígado al 12 % — NO era un fallo, era el texto
+
+Salió en otra ejecución del mismo barrido, y es **literalmente** lo que Elena
+describió:
+
+> «En exceso, el hígado puede disparar la vitamina A por encima de lo seguro.
+> Ahora mismo son 32 g, **el 12 % del plato (el límite es 10 %)**»
+
+Ese 10 % **no es un límite**: es una proporción de BARF —FORMA, regla 3— y el
+número es **nuestro**, escrito así en su propio comentario desde agosto («⚠️ EL
+10 % ES CRITERIO NUESTRO. La convención BARF es 5 % y tampoco tiene estudio
+detrás»). Lo que de verdad tiene techo es la **vitamina A**, y lo comprueba
+`verificar()` contra FEDIAF en todos los menús.
+
+Así que el arreglo **no** es rechazar el menú —eso le daría a un número nuestro
+rango de requisito, que es lo que el filtro final se niega a hacer con
+`HOLGURA_DEL_TECHO_QUE_SUBE`— sino que el texto diga la verdad. Los tres avisos
+de «% del plato» (hígado, riñón y clara de huevo sola) dicen ahora «nosotros
+recomendamos no pasar del X %… es un consejo nuestro, no un límite».
+
+⚠️ **Y se vigilan las dos direcciones**: que no vuelva a llamarse «límite», y que
+**siga diciéndose**. Arreglar esto borrando el aviso sería peor que el fallo.
+
+### La distinción que deja escrita
+
+Dos textos que en pantalla dicen lo mismo pueden ser cosas distintas:
+
+| | Qué es | Qué pasa si un menú se pasa |
+|---|---|---|
+| Tiaminasa · mercurio · vitamina D · yodo · selenio | tope **crónico**, de fuente | **no se entrega** (regla 2) |
+| Hígado · riñón · clara sola (% del plato) | proporción de **BARF**, número **nuestro** | se entrega, y el texto **no** puede llamarlo límite |
+
+Lo vigila el **BLOQUE 108**, y su invariante es general: ningún menú que la API
+entrega puede traer, en el canal del dueño, un texto que diga que se pasa de un
+límite. ⚠️ Con una lección dentro y comprobada: **el barrido de ediciones no es el
+guardia**. Con el arreglo quitado no reproduce el caso del yodo, porque la misma
+semilla da otra cadena al partir de un menú que devuelve el solver. Es una red
+ancha —y se ganó el sitio encontrando el segundo caso—, pero los guardias son los
+dos deterministas de al lado.
+
 ## Los avisos del dueño dejan de nombrar fuentes, y el técnico no se pierde — 13 de septiembre de 2026, noche
 
 Elena, leyendo un aviso en su propia pantalla: *«los avisos al usuario son muy
