@@ -45,6 +45,9 @@ from motor_completo import resolver as resolver_v2, especie_de
 # PATOLOGIAS: los topes por patología, para poder comprobarlos también
 # en la puerta de verificación (ver _tope_patologia_roto).
 from constructor import tabla_imputacion_maximos, valor_para_maximo, valor_nutriente
+# Lo que hay que encargar en vez de comprarlo en el súper. Ver
+# `lo_facil_de_comprar.json` y `PENALIZACION_DE_ENCARGO` en motor_completo.
+from accesibles import es_de_encargo as _es_de_encargo_comprar
 # ⚠️ LAS SIETE CATEGORIAS QUE SON SUPLEMENTO, IMPORTADAS Y NO COPIADAS (12 de
 # septiembre). En este archivo habia CINCO copias escritas a mano de esa misma
 # tupla. Se usa la de `constructor`, que es la que aplica el motor.
@@ -179,6 +182,27 @@ def _seguridad_completa(gramos, al, der, etapa, patologias=None, peso_perro_kg=N
         _av_ac = (al.get(_n_ac) or {}).get("aviso_al_comprar")
         if _av_ac:
             problemas.append(f"{_n_ac}: {_av_ac}")
+
+    # ⚠️ Y LO QUE HAY QUE ENCARGAR SE DICE ANTES DE IR A COMPRAR (14 de
+    # septiembre de 2026). Elena: «Costillas de cordero e hígado de pato […] eso
+    # no son alimentos ni baratos ni accesibles».
+    #
+    # El motor los penaliza en el objetivo, así que casi nunca salen — medido,
+    # de 56 apariciones en 20 menús a 3. Pero «casi nunca» no es «nunca»: en
+    # HUESO apenas hay opción de súper, así que cuando uno de éstos aparece es
+    # porque de verdad hacía falta para cerrar los 43 requisitos.
+    #
+    # Que el motor lo evite no sirve de nada si quien va a comprar se entera en
+    # el mostrador. Va por el mismo canal y por el mismo motivo que el de
+    # arriba: `problemas_seguridad` es lo que la app ya pinta en los ocho
+    # caminos.
+    _de_encargo_ac = [n for n in sorted(gramos) if _es_de_encargo_comprar(n)]
+    if _de_encargo_ac:
+        problemas.append(
+            "Esto no lo vas a encontrar en el súper, hay que pedirlo en la carnicería o en una "
+            "tienda de comida cruda: " + ", ".join(_de_encargo_ac) + ". El menú lo lleva porque "
+            "hacía falta para que cuadre; si no lo consigues, cambia ese alimento y te "
+            "recalculamos el menú.")
     return problemas
 
 

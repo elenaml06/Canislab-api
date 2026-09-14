@@ -231,6 +231,31 @@ def resolver_uno(al, req, der, etapa, peso, especie=None, proteina=None, al_comp
             # igual», y quien firma necesita poder afirmar lo segundo. Se usa la
             # misma constante, no una cadena escrita aquí.
             nombre_p = clave_p or main.PELDANO_ESTRICTO
+            # ⚠️ Y EL FILTRO DE SEGURIDAD CRÓNICA, QUE FALTABA (14 de septiembre).
+            #
+            # Este script exigía menú VERDE y los topes de patología, y no pasaba
+            # `_menu_precalculado_es_seguro` -- que es lo que la API aplica dentro
+            # de `_garantizar_verificado` para los cinco topes crónicos (vitamina
+            # D, yodo, selenio, mercurio, tiaminasa). El semáforo de FEDIAF NO los
+            # ve: son otra clase de límite (regla 2).
+            #
+            # CASO REAL, el mismo día: al regenerar con la penalización de compra
+            # puesta, TRES menús se guardaron verdes y saltándose un tope crónico,
+            # y los encontró el BLOQUE 25. No llegaban a ningún perro --la vía
+            # rápida los verifica otra vez y se cae al camino normal-- pero son
+            # peso muerto y ponen roja la batería.
+            #
+            # Es la misma lección que la cabecera de este fichero ya cuenta del 8
+            # de septiembre: **el script tiene que aplicar los MISMOS filtros que
+            # la API**, y cada vez que se ha saltado uno han salido menús que el
+            # motor iba a tirar.
+            #
+            # Con el peso de la ficha, que es el del catálogo y no uno típico de
+            # su tamaño: los topes por kg^0,75 dependen del peso, y medir con uno
+            # mayor del real los afloja.
+            if not main._menu_precalculado_es_seguro(g, al_completo or al,
+                                                     der_real or der, peso):
+                continue
             if v["semaforo"] == "verde":
                 return g, v, nombre_p
             mejor = mejor or (g, v, nombre_p)

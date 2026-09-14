@@ -17922,6 +17922,136 @@ print(f"  {_esperadas109} patologías piden diagnóstico · {len(_sin_analitica1
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
 
 
+# ============================================================
+# BLOQUE 110 — LA COMIDA DEL MENÚ SE TIENE QUE PODER COMPRAR
+# ============================================================
+#
+# ⚠️ Elena, 14 de septiembre de 2026: «Costillas de cordero e hígado de pato, y
+# seguramente otros, me siguen apareciendo en un menú para Cairo automático...
+# Eso no son alimentos ni baratos ni accesibles».
+#
+# Y no era un menú suelto. MEDIDO sobre los 216 precalculados, el motor elegía
+# sistemáticamente el extremo raro de cada categoría: espinazo de conejo en 105
+# de 216 y costillas de cordero en 95, mientras cuello de pavo, cuello de pato,
+# carcasa de conejo, pecho y cuello de ternera salían en CERO. Albahaca en 74.
+# Páncreas de vaca en 52. Lengua de ternera en 35, con mediana de 470 g por menú
+# y un máximo de 3,4 kg. Y zanahoria, calabacín, brócoli, manzana y pera: cero.
+#
+# LA CAUSA NO ERA UN FALLO DEL SOLVER: el MILP optimiza nutrición por gramo y la
+# COMPRA no entraba en la cuenta.
+#
+# LO QUE VIGILA, y por qué cada cosa:
+#
+#   1. Que los 105 accesibles estén repartidos, sin sobras por ningún lado. Un
+#      alimento nuevo en `accesibles.py` que nadie clasifique se comportaría
+#      como «fácil» sin que nadie lo haya decidido.
+#   2. Que la penalización MUERDA de verdad, comparando el mismo perro con y
+#      sin ella. Una penalización puesta y que no cambia nada es un número que
+#      alguien escribió y que no hace nada.
+#   3. Que NO pueda dejar sin menú. Va en el objetivo y no en las
+#      restricciones justo para eso, y aquí se comprueba en vez de suponerse.
+#   4. Que lo elegido A MANO no se penalice. Es la lección del 26 de agosto con
+#      el pescado: la penalización de variedad se comía la preferencia del
+#      usuario y el motor cambiaba justo lo que se le dijo que no cambiara.
+#   5. Que cuando uno de éstos SÍ acaba en el menú, se diga antes de ir a
+#      comprar. Que el motor lo evite no sirve de nada si quien compra se
+#      entera en el mostrador.
+print("=== BLOQUE 110: la comida del menú se tiene que poder comprar ===")
+
+import accesibles as _acc110
+from motor_completo import resolver as _resolver110, PENALIZACION_DE_ENCARGO as _PEN110
+
+# 1 — el reparto cubre los accesibles exactamente una vez
+_todos110 = sorted({n for v in _acc110.ACCESIBLES.values() for n in v})
+_clasificados110 = set(_acc110.FACILES) | set(_acc110.DE_ENCARGO)
+_sin_clasificar110 = [n for n in _todos110 if n not in _clasificados110]
+_sobran110 = [n for n in sorted(_clasificados110) if n not in _todos110]
+if _sin_clasificar110:
+    fallos.append(f"BLOQUE110: {len(_sin_clasificar110)} alimentos accesibles sin clasificar en "
+                  f"`lo_facil_de_comprar.json`: {_sin_clasificar110[:6]}. Uno sin clasificar se "
+                  f"comporta como «fácil» sin que nadie lo haya decidido")
+if _sobran110:
+    fallos.append(f"BLOQUE110: `lo_facil_de_comprar.json` clasifica alimentos que ya no están en "
+                  f"`accesibles.py`: {_sobran110[:6]}. Una lista que nombra lo que no existe no "
+                  f"vigila nada")
+if set(_acc110.FACILES) & set(_acc110.DE_ENCARGO):
+    fallos.append("BLOQUE110: hay alimentos en las DOS listas a la vez")
+for _n110, _por_que110 in sorted(_acc110.DE_ENCARGO.items()):
+    if len((_por_que110 or "").strip()) < 20:
+        fallos.append(f"BLOQUE110: «{_n110}» está en «de encargo» sin decir por qué. Sin el motivo "
+                      f"no se puede discutir, y esto es criterio de compra, no nutrición")
+
+# 2, 3 y 4 — la penalización muerde, no deja sin menú, y respeta lo elegido
+_al110, _req110 = _api.cargar_v2()
+_CASOS_110 = [("mediano 20 kg", 1100.0, 20.0), ("grande 35 kg", 1700.0, 35.0)]
+_enc_con110, _enc_sin110, _sin_menu110, _total110 = 0, 0, 0, 0
+for _etq110, _der110, _peso110 in _CASOS_110:
+    for _s110 in range(1, 5):
+        for _sin_pen110 in (True, False):
+            _ok110, _g110 = _resolver110(
+                _der110, "Adulto", _al110, _req110, _peso110, _api.dosis_maxima_fabricante,
+                margenes_categoria=MARGENES, max_suplementos=2,
+                time_limit=_con_este_reloj(20), semilla_aleatoria=_s110,
+                sin_penalizar_lo_de_encargo=_sin_pen110)
+            if _sin_pen110 is False:
+                _total110 += 1
+                if not _ok110:
+                    _sin_menu110 += 1
+            if not _ok110:
+                continue
+            _cuantos110 = sum(1 for _n in _g110 if _g110[_n] > 0 and _acc110.es_de_encargo(_n))
+            if _sin_pen110:
+                _enc_sin110 += _cuantos110
+            else:
+                _enc_con110 += _cuantos110
+if _sin_menu110:
+    fallos.append(f"BLOQUE110: con la penalización de compra puesta, {_sin_menu110} de "
+                  f"{_total110} perros se quedan sin menú. Va en el OBJETIVO y no en las "
+                  f"restricciones justo para que eso sea imposible: si pasa, está mal puesta")
+if _enc_con110 >= _enc_sin110:
+    fallos.append(f"BLOQUE110: la penalización de {_PEN110} no cambia nada — con ella salen "
+                  f"{_enc_con110} alimentos de encargo y sin ella {_enc_sin110}. Un número que "
+                  f"alguien escribe y que no hace nada es peor que no tenerlo, porque parece "
+                  f"que algo lo está evitando")
+
+# 4 — lo que el usuario elige a mano se respeta (regla 5)
+#
+# ⚠️ CON `forzar` Y NO CON `preferir`, y la primera versión lo hizo mal. Con
+# `preferir` esto daba rojo... y el rojo era de la PRUEBA: medido, «Costillas de
+# cordero» preferidas salen **1 de 4 veces sin ninguna penalización**, porque
+# `preferir` es un empujón en el objetivo (coste 0,1) y no una promesa. Dar por
+# hecho que aparecería es la trampa de siempre -- una prueba que afirma una
+# propiedad incidental del menú que devuelve el solver.
+#
+# Lo que sí es una promesa, y lo que dice la regla 5, es `forzar`: si el usuario
+# lo elige, está. Eso es lo que no puede romper un criterio de COMPRA.
+_pedido110 = "Costillas de cordero"
+_ok110, _g110 = _resolver110(
+    1100.0, "Adulto", _al110, _req110, 20.0, _api.dosis_maxima_fabricante,
+    margenes_categoria=MARGENES, max_suplementos=2, time_limit=_con_este_reloj(20),
+    semilla_aleatoria=1, forzar=[_pedido110])
+if not _ok110 or _g110.get(_pedido110, 0) <= 0:
+    fallos.append(f"BLOQUE110: se elige «{_pedido110}» a mano y el menú no lo lleva. Un criterio "
+                  f"de COMPRA no puede saltarse la regla 5: si alguien lo elige, es que sabe "
+                  f"dónde comprarlo")
+
+# 5 — y si acaba en el menú, se dice
+_menu110 = {"Espinazo de conejo": 120.0, "Hígado de pato": 20.0, "Zanahoria": 50.0}
+_avisos110 = _api._seguridad_completa(_menu110, _al110, 1100.0, "Adulto")
+if not any("súper" in _a110 for _a110 in _avisos110):
+    fallos.append("BLOQUE110: un menú con espinazo de conejo e hígado de pato no dice que eso no "
+                  "se encuentra en el súper. Que el motor lo evite no sirve de nada si quien va a "
+                  "comprar se entera en el mostrador")
+_menu110b = {"Carcasa de pollo": 120.0, "Hígado de vaca": 20.0, "Zanahoria": 50.0}
+if any("súper" in _a110 for _a110 in _api._seguridad_completa(_menu110b, _al110, 1100.0, "Adulto")):
+    fallos.append("BLOQUE110: sale el aviso de compra en un menú que solo lleva cosas de súper. "
+                  "Un aviso que sale siempre no informa de nada")
+
+print(f"  {len(_acc110.FACILES)} de súper · {len(_acc110.DE_ENCARGO)} de encargo · "
+      f"con la penalización {_enc_con110} apariciones contra {_enc_sin110} sin ella")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
 _cerrar_el_ultimo_bloque()
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)

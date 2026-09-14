@@ -237,3 +237,56 @@ def disponibles(alimentos, excluidos=None):
         if hay:
             salida[cat] = hay
     return salida
+
+
+# ─── LO QUE SE COMPRA EN UN SÚPER Y LO QUE HAY QUE ENCARGAR ──────────────────
+#
+# ⚠️ Elena, 14 de septiembre de 2026: «Costillas de cordero e hígado de pato, y
+# seguramente otros, me siguen apareciendo en un menú para Cairo automático...
+# Eso no son alimentos ni baratos ni accesibles».
+#
+# Y no era un menú suelto. MEDIDO sobre los 216 menús precalculados, el motor
+# elige sistemáticamente el extremo raro de cada categoría:
+#
+#   · Espinazo de conejo en 105 de 216 y costillas de cordero en 95 -- mientras
+#     cuello de pavo, cuello de pato, carcasa de conejo, pecho y cuello de
+#     ternera salen en CERO.
+#   · Albahaca en 74 (mediana 58 g por menú, máximo 651 g).
+#   · Páncreas de vaca en 52. Lengua de ternera en 35, mediana 470 g, máximo
+#     3,4 kg.
+#   · Y zanahoria, calabacín, judía verde, brócoli, manzana y pera: cero.
+#
+# LA CAUSA NO ES UN FALLO DEL SOLVER: el MILP optimiza nutrición por gramo y la
+# COMPRA no entra en la cuenta. La albahaca es un concentrado de vitaminas y
+# minerales por gramo, así que es la forma barata de cerrar huecos; igual la
+# lengua, igual el páncreas, igual el espinazo.
+#
+# ⚠️ ESTA LISTA NO QUITA NADA: reparte los 105 accesibles en dos, y el motor
+# PENALIZA los de encargo en el objetivo. Es la misma forma que ya tienen el
+# pescado (+1,5) y la rotación de especie (+2,0). Excluirlos estrecharía el
+# problema y dejaría sin menú al perro con alergias o al toy, que es la ventana
+# más fina que tiene el motor.
+#
+# Las cifras viven en `lo_facil_de_comprar.json` -- aquí no hay lista escrita:
+# es un número que decide qué come un perro y tiene que poder auditarse, igual
+# que el catálogo y la tabla de patologías.
+import json as _json_facil
+import os as _os_facil
+
+with open(_os_facil.path.join(
+        _os_facil.path.dirname(_os_facil.path.dirname(_os_facil.path.abspath(__file__))),
+                       "lo_facil_de_comprar.json"), encoding="utf-8") as _f_facil:
+    _FACIL = _json_facil.load(_f_facil)
+
+DE_ENCARGO = dict(_FACIL["de_encargo"])
+FACILES = list(_FACIL["faciles"])
+
+
+def es_de_encargo(nombre):
+    """¿Este alimento hay que encargarlo en vez de comprarlo en el súper?"""
+    return nombre in DE_ENCARGO
+
+
+def por_que_de_encargo(nombre):
+    """El motivo escrito, para poder decírselo a quien va a comprar."""
+    return DE_ENCARGO.get(nombre)
