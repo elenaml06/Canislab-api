@@ -17377,17 +17377,35 @@ else:
 # ya lo cazan las cadenas de arriba) Y que siga diciéndose. Arreglar esto
 # borrando el aviso sería peor que el fallo: el dueño dejaría de saber que lleva
 # demasiado hígado.
-_g_higado108 = {"Hígado de vaca": 32.0, "Pollo muslo con piel": 200.0}
-_av_higado108 = " || ".join(_seg107(_g_higado108, al, 560.0, "Adulto", [],
-                                    peso_perro_kg=8.0, requerimientos=_req107) or [])
-if "hígado" not in _av_higado108.lower():
-    fallos.append("BLOQUE108: un menú con el 14 % del plato de hígado ya no dice nada. Quitar el "
-                  "aviso no es arreglarlo: el dueño dejaría de saber que lleva de más")
-elif "consejo nuestro" not in _av_higado108:
-    fallos.append(f"BLOQUE108: el aviso del hígado no dice que el 10 % es un consejo NUESTRO: "
-                  f"«{_av_higado108[:130]}…». Sin eso, un menú entregado parece que se ha saltado "
-                  f"un requisito -- y el requisito de verdad, el máximo de vitamina A de FEDIAF, "
-                  f"lo comprueba `verificar()` y este menú lo cumple")
+# ⚠️ SE RECORREN LOS CUATRO, NO UNO. La primera versión de esto solo miraba el
+# del hígado, y la CI encontró el del RIÑÓN --el mismo texto, otra víscera-- en
+# otra ejecución del barrido, con otra cadena de ediciones. O sea que mirar uno
+# solo dejaba los otros tres a que los cazara el azar, que es precisamente lo
+# que este apartado existe para no necesitar.
+_CONSEJOS_DEL_PLATO_108 = [
+    ("el hígado", {"Hígado de vaca": 32.0, "Pollo muslo con piel": 200.0}, "hígado"),
+    ("el riñón", {"Riñón de vaca": 40.0, "Pollo muslo con piel": 200.0}, "riñón"),
+    ("el hígado y el riñón juntos", {"Hígado de vaca": 24.0, "Riñón de vaca": 24.0,
+                                     "Pollo muslo con piel": 200.0}, "hígado y el riñón"),
+    ("la clara de huevo sola", {"Huevo clara": 30.0, "Pollo muslo con piel": 200.0}, "clara"),
+]
+for _quien108c, _menu108c, _palabra108c in _CONSEJOS_DEL_PLATO_108:
+    if any(_n not in al for _n in _menu108c):
+        fallos.append(f"BLOQUE108: para mirar el consejo de «{_quien108c}» hace falta "
+                      f"{sorted(_menu108c)} y alguno ya no está en el catálogo. Si se ha ido, "
+                      f"este apartado deja de comprobar ese aviso y sale verde igual")
+        continue
+    _av108c = " || ".join(_seg107(_menu108c, al, 560.0, "Adulto", [], peso_perro_kg=8.0,
+                                  requerimientos=_req107) or [])
+    if _palabra108c not in _av108c.lower():
+        fallos.append(f"BLOQUE108: un menú que se pasa del % del plato de «{_quien108c}» ya no "
+                      f"dice nada. Quitar el aviso NO es arreglarlo: el dueño dejaría de saber "
+                      f"que lleva de más")
+    elif "consejo nuestro" not in _av108c:
+        fallos.append(f"BLOQUE108: el aviso de «{_quien108c}» no dice que ese % es un consejo "
+                      f"NUESTRO: «{_av108c[:140]}…». Sin eso, un menú entregado parece que se ha "
+                      f"saltado un requisito -- y el requisito de verdad (el máximo de vitamina A "
+                      f"de FEDIAF para el hígado) lo comprueba `verificar()` y el menú lo cumple")
 
 print(f"  {_ediciones108} ediciones encadenadas miradas · {len(_sucios108)} menús entregados "
       f"diciendo que se pasan de un límite")

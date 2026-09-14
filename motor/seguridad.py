@@ -1007,7 +1007,8 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
         else:
             problemas.append(
                 "En cantidad, %s pueden favorecer los oxalatos. Ahora "
-                "mismo son el %.0f%% del plato (el límite es %.0f%%)."
+                "mismo son el %.0f%% del plato, y nosotros recomendamos no "
+                "pasar del %.0f%%. Es un consejo nuestro, no un límite."
                 % (", ".join(oxal), g_ox / total * 100, tope_ox * 100))
 
     # 4. higado por peso (la via por la que se dispara la vitamina A)
@@ -1043,12 +1044,15 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     tox = [n for n in menu if _es(n, TOXICOS_FEDIAF_7_7)]
     if tox:
         problemas.append(
-            "%s está en la lista de alimentos humanos con toxicidad documentada "
-            "en el perro (FEDIAF, anexo 7.7). No hay una cantidad segura: la "
-            "propia fuente dice que en la uva y la pasa la gravedad no depende "
-            "de la dosis, y que en el chocolate dosis pequeñas repetidas "
-            "intoxican igual por acumulación. Fuera de la ración."
+            "%s está en la lista de alimentos de humanos con toxicidad "
+            "documentada en el perro. No hay una cantidad segura: en la uva y "
+            "la pasa la gravedad no depende de la dosis, y en el chocolate "
+            "dosis pequeñas repetidas intoxican igual por acumulación. Fuera "
+            "de la ración."
             % ", ".join(tox))
+        avisos.append("Toxicidad documentada en el perro: FEDIAF 2025, anexo 7.7 "
+                      "(uva y pasa sin relación dosis-gravedad; cacao por "
+                      "acumulación).")
 
     tir = [n for n in menu if _es(n, TIROIDES_EXCLUIR)]
     if tir:
@@ -1111,9 +1115,10 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     if g_meta_junto > total * TOPE_VISCERAS_METABOLICAS_PESO * 1.5 and hig and visc_meta:
         problemas.append(
             "El hígado y el riñón comparten el mismo mecanismo de "
-            "acumulación (cobre/cadmio), así que juntos no deberían sumar "
-            "mucho más que el límite de uno solo. Ahora mismo entre los "
-            "dos son el %.0f%% del plato."
+            "acumulación (cobre y cadmio), así que entre los dos no conviene "
+            "que sumen mucho más de lo que recomendamos para uno solo. Ahora "
+            "mismo son el %.0f%% del plato. Es un consejo nuestro, no un "
+            "límite: el menú cumple lo que tiene que cumplir."
             % (g_meta_junto / total * 100))
 
     # 5. fuentes de vitamina A acumuladas — AVISO, no un segundo tope.
