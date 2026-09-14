@@ -844,7 +844,26 @@ pantalla sin patologías sería un perro renal marcando «nada que destacar».
 Prueba nueva en `tests/patologias-del-motor.spec.js` con nombres inventados,
 comprobada con el fallo puesto.
 
-## El aviso de «el máximo era el 10 y llevaba un 11» — NO SE HA ENCONTRADO
+## El aviso de «el máximo era el 10 y llevaba un 11» — ✅ ENCONTRADO Y ARREGLADO (14 de septiembre)
+
+**Era el YODO, y el camino lo dio Elena al día siguiente:** «lo del máximo ha
+sido después de **cambiar (editar) un par de ingredientes** en modo usuario en
+automático». Barriendo **29 ediciones encadenadas** sobre cinco perros aparece un
+menú **entregado** con «El yodo de este menú llega a **2156 µg, por encima del
+límite prudente (2040 µg** — con margen extra por incluir kelp)».
+
+El margen extra del 50 % del kelp vivía **solo dentro del aviso**: el solver y el
+filtro final no lo conocían. Ahora la cuenta es una sola función que hacen los
+tres, el solver reintenta con el tope apretado, y si aun así se pasa **no se
+entrega** — el yodo es tope crónico (regla 2). Lo vigila el **BLOQUE 108**, cuyo
+invariante es general: ningún menú entregado puede decir que se pasa de un
+límite. Detalle en `CLAUDE.md` y en `HECHO.md`.
+
+Lo que sigue abajo es la búsqueda del día anterior, que **descartó los otros seis
+caminos** y por eso se deja escrita: fue lo que permitió que, con la pista de la
+edición, el sitio quedara acotado.
+
+## Lo que se descartó el 13 de septiembre
 
 **Dicho por Elena el 13 de septiembre de 2026:**
 

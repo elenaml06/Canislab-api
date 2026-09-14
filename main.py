@@ -267,9 +267,16 @@ def _menu_precalculado_es_seguro(gramos, al, der, peso_perro_kg=None):
     # cap.11 dice que el invariante es el de peso. El filtro final tiene que
     # mirar lo mismo que el solver o construiría menús que él mismo rechaza --
     # que es la lección del 8 de septiembre con los suelos de patología.
-    tope_yodo = TOPE_YODO_KCAL * der / 1000.0
-    if peso_perro_kg and peso_perro_kg > 0:
-        tope_yodo = min(tope_yodo, TOPE_YODO_KG075 * (peso_perro_kg ** 0.75))
+    #
+    # ⚠️ Y EL MARGEN DEL KELP, QUE FALTABA AQUÍ (14 de septiembre de 2026).
+    # CASO REAL REPRODUCIDO editando un menú, que es lo que dijo Elena: un menú
+    # ENTREGADO con 2156 µg de yodo y el aviso diciéndole al dueño «por encima
+    # del límite prudente (2040 µg)». El margen extra que se deja cuando el yodo
+    # viene de kelp vivía SOLO dentro del aviso, así que este filtro lo dejaba
+    # pasar y el aviso lo acusaba. La cuenta es ahora UNA, `tope_de_yodo`, y la
+    # hacen los tres: el solver, este filtro y el aviso.
+    from seguridad import tope_de_yodo as _tope_de_yodo
+    tope_yodo = _tope_de_yodo(gramos, der, peso_perro_kg)
     if yodo_ug > tope_yodo:
         return False
 

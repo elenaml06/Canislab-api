@@ -445,7 +445,44 @@ las mismas constantes** que el aviso, así que un menú que se pase no se entreg
 menú rehecho con 52 g. El candidato más parecido a lo que describe es el aviso
 de la **tiaminasa**, que dice literalmente «el límite seguro es 10 %», pero solo
 puede salir por `/analizar`, donde avisar **es** lo correcto porque no hay menú
-que rechazar. Queda en `PENDIENTE_PRODUCTO.md` a la espera de la captura.
+que rechazar.
+
+⚠️ **ENCONTRADO AL DÍA SIGUIENTE, Y ERA DE VERDAD: EL YODO DEL KELP** (14 de
+septiembre). Lo desatascó una segunda frase de Elena con el camino exacto — «lo
+del máximo ha sido después de **cambiar (editar) un par de ingredientes** en modo
+usuario en automático» —, y ahí sí aparece: barriendo **29 ediciones
+ENCADENADAS** (generar · cambiar · añadir · quitar · y otra vez) sobre cinco
+perros, un menú **entregado** con «El yodo de este menú llega a **2156 µg, por
+encima del límite prudente (2040 µg** — con margen extra por incluir kelp)».
+
+La causa es **la de siempre en su cuarta cara**: el margen extra del 50 % que se
+deja cuando el yodo viene de **kelp** —porque su contenido real puede estar lejos
+del declarado— vivía **solo dentro del aviso**. Ni `resolver()` ni
+`_menu_precalculado_es_seguro` lo conocían, así que el solver construía hasta el
+tope sin margen, el filtro final lo dejaba pasar y el aviso lo medía contra el
+apretado. **Tres sitios mirando el mismo yodo y ninguno el mismo límite.**
+
+La cuenta es ahora **UNA**, `seguridad.tope_de_yodo`, y la hacen los tres. ⚠️ Y
+en el solver entra como **reintento y no como restricción del MILP**, a
+propósito: el tope depende de si el menú ACABA llevando kelp, y eso no se sabe
+hasta resolverlo — modelarlo dentro exigiría una binaria por alimento y un big-M,
+y resolver otra vez cuesta lo mismo que el reintento del techo del libro que ya
+existe. Si con el margen no sale menú **no se entrega el de antes**: el yodo es
+uno de los cinco topes crónicos y esos son restricción dura (regla 2), no un
+número nuestro de los que ceden. Medido: **35 de los 216 menús del catálogo
+llevan kelp y 2 se pasaban del tope apretado** —los dos de cachorro gigante—, y
+tras el arreglo, 30 ediciones encadenadas dan **0 menús sin salir y 0 avisos de
+«te has pasado»**.
+
+Lo vigila el **BLOQUE 108**, y su invariante no es el yodo: es que **ningún menú
+que la API entrega puede traer, en el canal del dueño, un texto que diga que algo
+se pasa de un límite**. ⚠️ Con una lección dentro: el barrido de ediciones **no
+es el guardia**, y está comprobado — con el arreglo quitado **no lo reproduce**,
+porque la misma semilla da otra cadena al partir de un menú que devuelve el
+solver, y eso cambia entre ejecuciones. Es una red ancha. Los dos guardias de
+verdad son deterministas: el filtro final llamado a mano con un menú de kelp
+construido **exactamente entre los dos topes**, y ese mismo menú metido por
+`/menu/revalidar`. Con el arreglo quitado saltan los tres.
 
 `GET /vocabulario` (11 de septiembre) sirve **todo lo que el motor enumera**,
 para que la app lo lea en vez de copiárselo: los cinco niveles de actividad con

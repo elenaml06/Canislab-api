@@ -294,6 +294,46 @@ TOPE_EPA_DHA_SEMANAL_KG075 = _por_peso(2.8)  # 0,364 g por kg^0,75, promedio sem
 TOPE_YODO_KCAL = 1275.0    # µg por 1000 kcal -- NRC 2006, Belshaw 1975
 MARGEN_EXTRA_YODO_KELP = 1.5  # +50% de margen si el yodo viene de kelp
 
+# Las palabras con las que se reconoce una fuente de kelp en el catalogo. Vivian
+# escritas a mano dentro de `revisar_seguridad` y de ningun otro sitio, que es
+# justo por lo que el margen no se aplicaba en ninguno de los otros dos.
+PALABRAS_KELP = {"kelp", "seaweed", "algas"}
+
+
+def hay_kelp(menu):
+    """¿Alguno de los alimentos del menú es una fuente de kelp?"""
+    return any(_es(n, PALABRAS_KELP) for n in menu)
+
+
+def tope_de_yodo(menu, der, peso_perro_kg=None):
+    """EL tope de yodo de este menú, en µg. **Uno solo, para los tres.**
+
+    ⚠️ POR QUÉ ESTA FUNCIÓN EXISTE (14 de septiembre de 2026). CASO REAL
+    REPRODUCIDO: un menú ENTREGADO con **2156 µg de yodo y un límite de 2040**,
+    y en la pantalla del dueño el aviso «por encima del límite prudente». Un
+    menú que se entrega diciendo que se pasa de un límite es exactamente lo que
+    Elena señaló: «eso no debería ser un aviso, debería ser un menú en rojo».
+
+    Y la causa es la de siempre -- **el que construye y el que comprueba no
+    medían igual** -- en su cuarta cara: el margen extra del kelp estaba
+    aplicado SOLO en el aviso. Ni `resolver()` ni `_menu_precalculado_es_seguro`
+    lo conocían, así que el solver construía hasta 3060 µg, el filtro final lo
+    dejaba pasar, y el aviso lo medía contra 2040 y decía que se pasaba. Los
+    tres números eran el mismo yodo y ninguno el mismo límite.
+
+    Salió barriendo EDICIONES, que es lo que dijo Elena («ha sido después de
+    cambiar un par de ingredientes en modo usuario en automático»): 29 ediciones
+    encadenadas sobre cinco perros y apareció en una. Medido sobre el catálogo:
+    **35 de los 216 menús llevan kelp y 2 se pasan del tope apretado**, los dos
+    de cachorro gigante -- la población donde menos margen conviene gastar.
+    """
+    tope = TOPE_YODO_KCAL * (der or 0) / 1000.0
+    if peso_perro_kg and peso_perro_kg > 0:
+        tope = min(tope, TOPE_YODO_KG075 * (peso_perro_kg ** 0.75))
+    if hay_kelp(menu):
+        tope /= MARGEN_EXTRA_YODO_KELP
+    return tope
+
 # ---------------------------------------------------------------------------
 # 1e. SELENIO (vísceras, pescado, suplementos)
 # ---------------------------------------------------------------------------
@@ -883,21 +923,18 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     # 1d. yodo (kelp, suplementos, pescado)
     yodo_ug = sum(alimentos.get(n, {}).get("nutrientes", {}).get("yodo", 0) * g / 100.0
                  for n, g in menu.items())
-    tope_yodo = TOPE_YODO_KCAL * der / 1000.0
-    # ⚠️ EL PERRO DE TRABAJO (11 septiembre): igual que la vitamina D de arriba.
-    # El semáforo tiene que mirar lo mismo que el solver, o construiríamos menús
-    # que el propio semáforo rechaza. Derivación en el bloque 1c-bis.
-    if peso_perro_kg and peso_perro_kg > 0:
-        tope_yodo = min(tope_yodo, TOPE_YODO_KG075 * (peso_perro_kg ** 0.75))
-    hay_kelp = any(_es(n, {"kelp", "seaweed", "algas"}) for n in menu)
-    if hay_kelp:
-        tope_yodo /= MARGEN_EXTRA_YODO_KELP
+    # ⚠️ EL MISMO TOPE QUE EL SOLVER Y QUE EL FILTRO FINAL, y por eso es una
+    # función y no una cuenta repetida aquí: ver `tope_de_yodo`. Hasta el 14 de
+    # septiembre el margen del kelp solo lo conocía este aviso, y esa era la
+    # forma de que un menú se entregara con un texto diciendo que se pasaba.
+    tope_yodo = tope_de_yodo(menu, der, peso_perro_kg)
+    _con_kelp = hay_kelp(menu)
     if yodo_ug > tope_yodo:
         problemas.append(
             "El yodo de este menú llega a %.0f µg, por encima del límite "
             "prudente (%.0f µg%s). Si la fuente es kelp, ten en cuenta que su "
             "contenido real de yodo puede variar mucho de un producto a otro."
-            % (yodo_ug, tope_yodo, " -- con margen extra por incluir kelp" if hay_kelp else ""))
+            % (yodo_ug, tope_yodo, " -- con margen extra por incluir kelp" if _con_kelp else ""))
 
     # 1e. selenio (vísceras, pescado, suplementos)
     selenio_ug = sum(alimentos.get(n, {}).get("nutrientes", {}).get("selenio", 0) * g / 100.0

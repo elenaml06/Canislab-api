@@ -531,13 +531,67 @@ def resolver(*args, **kwargs):
     kwargs_1 = dict(kwargs)
     kwargs_1["_techos_subidos_fuera"] = _subidos
     ok, gramos = _resolver_una_vez(*args, **kwargs_1)
-    if ok or not _subidos.get("se_ha_subido"):
+    if not ok and _subidos.get("se_ha_subido") and not (
+            isinstance(gramos, dict) and gramos.get("_imposible")):
+        kwargs_2 = dict(kwargs)
+        kwargs_2["apretar_el_techo_del_libro"] = False
+        ok, gramos = _resolver_una_vez(*args, **kwargs_2)
+    return _con_el_margen_del_kelp(ok, gramos, args, kwargs)
+
+
+def _con_el_margen_del_kelp(ok, gramos, args, kwargs):
+    """El SEGUNDO reintento, y es de seguridad crónica: el margen del kelp.
+
+    ⚠️ POR QUÉ (14 de septiembre de 2026). CASO REAL REPRODUCIDO, y lo describió
+    Elena: «ha sido después de cambiar (editar) un par de ingredientes en modo
+    usuario en automático». Barriendo 29 ediciones encadenadas sobre cinco
+    perros salió un menú ENTREGADO con **2156 µg de yodo y el aviso diciendo
+    «por encima del límite prudente (2040 µg)»** en la pantalla del dueño.
+
+    La causa: el margen extra del 50 % que se deja cuando el yodo viene de kelp
+    --porque su contenido real puede estar muy lejos del declarado-- vivía SOLO
+    dentro del aviso. El solver construía hasta el tope sin margen y el filtro
+    final lo dejaba pasar. **Los tres miraban el mismo yodo y ninguno el mismo
+    límite**, que es la lección del 8 de septiembre en su cuarta cara.
+
+    ⚠️ Y SE HACE COMO REINTENTO Y NO COMO RESTRICCIÓN DEL MILP a propósito: el
+    tope depende de si el menú ACABA llevando kelp, y eso no se sabe hasta
+    resolverlo. Modelarlo dentro exigiría una binaria por alimento y un
+    big-M; resolver otra vez con el tope apretado cuesta lo mismo que ya cuesta
+    el reintento del techo del libro y no toca la formulación.
+
+    Si con el tope apretado no sale menú, **no se entrega el de antes**: el yodo
+    es uno de los cinco topes crónicos y esos son restricción dura (regla 2), no
+    un número nuestro de los que ceden. El motor se queda sin menú por ese
+    camino y la escalera prueba el siguiente peldaño, que es lo que ya hace.
+    """
+    if not ok or not isinstance(gramos, dict) or gramos.get("_imposible"):
         return ok, gramos
-    if isinstance(gramos, dict) and gramos.get("_imposible"):
+    if kwargs.get("_apretar_yodo_por_kelp"):
+        return ok, gramos          # este YA es el intento apretado
+    from seguridad import hay_kelp as _hay_kelp, tope_de_yodo as _tope_yodo
+    der = args[0] if args else kwargs.get("der")
+    alimentos = args[2] if len(args) > 2 else kwargs.get("alimentos")
+    peso = args[4] if len(args) > 4 else kwargs.get("peso_perro_kg")
+    if not der or not alimentos or not _hay_kelp(gramos):
         return ok, gramos
-    kwargs_2 = dict(kwargs)
-    kwargs_2["apretar_el_techo_del_libro"] = False
-    return _resolver_una_vez(*args, **kwargs_2)
+    yodo = sum((alimentos.get(n, {}).get("nutrientes", {}).get("yodo") or 0) * g / 100.0
+               for n, g in gramos.items())
+    if yodo <= _tope_yodo(gramos, der, peso):
+        return ok, gramos
+    kwargs_k = dict(kwargs)
+    kwargs_k["_apretar_yodo_por_kelp"] = True
+    ok_k, gramos_k = _resolver_una_vez(*args, **kwargs_k)
+    if ok_k:
+        return ok_k, gramos_k
+    # Sin menú dejando el margen: no se entrega el de antes. Se dice por qué,
+    # que es lo que separa «no hay menú» de «no hay menú y no sabes por qué».
+    return False, {"_imposible": False,
+                   "motivo_yodo_kelp": (
+                       f"Con kelp en el menú el yodo se topa un 50 % más bajo "
+                       f"({_tope_yodo(gramos, der, peso):.0f} µg en vez de "
+                       f"{_tope_yodo({}, der, peso):.0f}), porque su contenido real "
+                       f"puede estar lejos del declarado, y con ese tope no sale menú.")}
 
 
 def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn,
@@ -551,7 +605,12 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
             soltar_limites_patologia=None, estado_del_solver=None,
             objetivos_del_profesional=None, kcal_de_premios=0.0,
             ratios_del_profesional=None,
-            apretar_el_techo_del_libro=True, _techos_subidos_fuera=None):
+            apretar_el_techo_del_libro=True, _techos_subidos_fuera=None,
+            # ⚠️ El segundo intento del margen del kelp. Ver
+            # `_con_el_margen_del_kelp`: no se puede saber si el menú llevará
+            # kelp antes de resolverlo, así que el tope apretado entra por aquí
+            # en la segunda pasada.
+            _apretar_yodo_por_kelp=False):
     """
     UNA sola llamada. Decide QUÉ alimentos usar Y cuántos gramos de cada
     uno, de entre TODOS los accesibles, a la vez.
@@ -1435,7 +1494,7 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
     MARGEN_REDONDEO_SEGURIDAD = 0.99
     tope_vitd_activo *= MARGEN_REDONDEO_SEGURIDAD
     TOPE_CRONICO_KCAL = {"vitD": tope_vitd_activo,
-                         "yodo": TOPE_YODO_KCAL * MARGEN_REDONDEO_SEGURIDAD,
+                         "yodo": TOPE_YODO_KCAL * MARGEN_REDONDEO_SEGURIDAD,   # se aprieta abajo si toca
                          # ⚠️ CORREGIDO (26 agosto). El selenio se topaba
                          # con los 2 µg/g de Merck aplicados sobre el PESO
                          # FRESCO, y esos 2 mg/kg son en base MATERIA
@@ -1467,6 +1526,12 @@ def _resolver_una_vez(der, etapa, alimentos, req, peso_perro_kg, dosis_maxima_fn
             TOPE_CRONICO_KCAL[_clave_pt] = min(
                 TOPE_CRONICO_KCAL[_clave_pt],
                 _por_peso_en_kcal * MARGEN_REDONDEO_SEGURIDAD)
+    # ⚠️ Y EL MARGEN DEL KELP, AL FINAL: va DESPUÉS del tope por peso a
+    # propósito, para que aprete sobre el que de verdad manda de los dos. Solo
+    # entra en la segunda pasada -- ver `_con_el_margen_del_kelp`.
+    if _apretar_yodo_por_kelp:
+        from seguridad import MARGEN_EXTRA_YODO_KELP as _MEK
+        TOPE_CRONICO_KCAL["yodo"] /= _MEK
     # ⚠️ EPA+DHA SOLO SI VIENE PRESUPUESTO (26 agosto). No se siembra con un
     # valor por defecto a propósito: un menú suelto (/menu/v2) NO lleva techo
     # de EPA+DHA, porque los 2800 mg son el límite de la dieta habitual y no

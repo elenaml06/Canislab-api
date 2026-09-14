@@ -17149,6 +17149,217 @@ print(f"  {len(_dueno107)} avisos de seguridad barridos con el catálogo entero 
       f"{len(_sucios107c)} con jerga · {len(_prof107b)} movidos al canal del veterinario")
 print(f"  {len(_lista107)} patologías miradas en /vocabulario · {len(_sucios107b)} con jerga · {len(_huerfanos107)} huérfanos")
 
+# ============================================================
+# BLOQUE 108 — UN MENÚ ENTREGADO NO PUEDE DECIR QUE SE PASA DE UN LÍMITE
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (14 de septiembre de 2026). CASO REAL, y lo describió Elena
+# con el camino exacto:
+#
+#     «me salió un menú con riñón y no sé qué y me salía un aviso de que el
+#      máximo era el 10 y que llevaba un 11... Eso no debería ser un aviso,
+#      debería ser un menú en rojo»
+#
+#     «lo del máximo ha sido después de cambiar (editar) un par de ingredientes
+#      en modo usuario en automático»
+#
+# Y tiene razón, y es la regla 2 del CLAUDE.md: **un aviso se puede ignorar; un
+# límite no.** Si una cifra se pasa de su máximo, o el menú no sale, o el máximo
+# no era un máximo. Las dos cosas no pueden ser verdad a la vez.
+#
+# LO QUE APARECIÓ AL BUSCARLO, barriendo 29 ediciones ENCADENADAS sobre cinco
+# perros -- generar, cambiar, añadir, quitar, y otra vez --: un menú entregado
+# con **2156 µg de yodo y el aviso diciendo «por encima del límite prudente
+# (2040 µg)»**. La causa es la de siempre en su cuarta cara: el margen extra del
+# 50 % que se deja cuando el yodo viene de KELP --porque su contenido real puede
+# estar lejos del declarado-- vivía SOLO dentro del aviso. El solver construía
+# hasta el tope sin margen, `_menu_precalculado_es_seguro` lo dejaba pasar, y el
+# aviso lo medía contra el tope apretado. Tres sitios mirando el mismo yodo y
+# ninguno el mismo límite.
+#
+# QUÉ VIGILA, Y POR QUÉ ASÍ. No comprueba el yodo: comprueba **el invariante**,
+# que es lo único que no se queda viejo -- ningún menú que la API ENTREGA puede
+# traer, en el canal del dueño, un texto que diga que algo se pasa de un límite.
+# Si mañana alguien aprieta otro tope solo en el aviso, esto se pone rojo sin
+# que nadie tenga que acordarse de añadir un caso.
+#
+# Y SE BARRE EDITANDO, que es donde salió y donde no miraba nadie: los bloques
+# de edición comprueban QUÉ alimentos quedan, y los de seguridad comprueban
+# menús recién generados. Una cadena de ediciones no la recorría ninguno.
+#
+# ⚠️ PERO EL BARRIDO NO ES EL GUARDIA, Y HAY QUE DECIRLO. Se comprobó con los
+# dos arreglos quitados y **no lo reproduce**: la misma semilla da otra cadena
+# de ediciones porque el menú del que parte lo devuelve el SOLVER, y eso cambia
+# entre ejecuciones (la regla del 9 de septiembre, BLOQUES 58 y 60). O sea que
+# el barrido es una RED ANCHA -- barata, y puede cazar el siguiente caso de esta
+# familia --, no la prueba de este fallo.
+#
+# Los dos guardias de verdad son deterministas y están abajo: el filtro final
+# llamado a mano con un menú de kelp construido EXACTAMENTE entre los dos topes,
+# y el mismo menú metido por `/menu/revalidar`, que es la puerta de punta a
+# punta. Los dos fallan con el arreglo quitado.
+print("\n" + "=" * 60)
+print("=== BLOQUE 108: un menú entregado no dice que se pasa de un límite ===")
+
+import random as _rnd108
+_DICEN_QUE_SE_PASA_108 = (
+    "el límite es", "el límite prudente es", "el límite seguro es",
+    "límite tolerable", "por encima del límite", "por encima del máximo",
+)
+_PERROS108 = [
+    ("toy 3 kg", {"der_objetivo": 340.0, "etapa_requisitos": "Adulto", "peso_perro_kg": 3.0}),
+    ("pequeño 8 kg", {"der_objetivo": 560.0, "etapa_requisitos": "Adulto", "peso_perro_kg": 8.0}),
+    ("adulto 24,5 kg", {"der_objetivo": 1100.0, "etapa_requisitos": "Adulto",
+                        "peso_perro_kg": 24.5}),
+    ("gigante 55 kg", {"der_objetivo": 2400.0, "etapa_requisitos": "Adulto",
+                       "peso_perro_kg": 55.0}),
+    ("cachorro grande", {"der_objetivo": 1422.0, "etapa_requisitos": "CachorroCrecimiento",
+                         "peso_perro_kg": 20.0, "peso_adulto_esperado_kg": 31.0}),
+]
+_BASE108 = {"modo": "automatico", "nombres_alimentos": [], "forzar_presencia": [],
+            "actividad": "normal", "especies_excluidas": [], "nombres_excluidos": [],
+            "patologias": [], "categorias_excluidas": []}
+# ⚠️ SEMILLA FIJA: sin ella este bloque saldría verde unas veces y rojo otras, y
+# un rojo que no se puede reproducir se acaba mirando por encima. Con semilla,
+# la cadena de ediciones es siempre la misma y el fallo del yodo aparece.
+_rnd108.seed(3)
+_sucios108, _ediciones108 = [], 0
+for _nom108, _ex108 in _PERROS108:
+    _d108 = dict(_BASE108); _d108.update(_ex108)
+    _r108 = _c_b5.post("/menu/v2", json=_d108).json()
+    if not _r108.get("factible"):
+        fallos.append(f"BLOQUE108: «{_nom108}» no obtiene menú de partida, así que sus ediciones "
+                      f"no se pueden barrer: {(_r108.get('motivo') or '')[:90]}")
+        continue
+    _g108 = dict(_r108["menu"])
+    for _paso108 in range(1, 7):
+        _op108 = _rnd108.choice(["cambiar", "anadir", "quitar"])
+        if _op108 == "cambiar":
+            _viejo108 = _rnd108.choice(list(_g108))
+            _cat108 = al.get(_viejo108, {}).get("categoria")
+            _cand108 = [n for n, a in al.items()
+                        if a.get("categoria") == _cat108 and n not in _g108]
+            if not _cand108:
+                continue
+            _rc108 = _c_b5.post("/menu/cambiar", json={
+                **_d108, "menu_actual": list(_g108), "menu_actual_gramos": _g108,
+                "alimento_viejo": _viejo108,
+                "alimento_nuevo": _rnd108.choice(_cand108)}).json()
+        elif _op108 == "anadir":
+            _cand108 = [n for n, a in al.items()
+                        if a.get("categoria") in ("Vísceras", "Hígado") and n not in _g108]
+            if not _cand108:
+                continue
+            _rc108 = _c_b5.post("/menu/anadir", json={
+                **_d108, "menu_actual": list(_g108), "menu_actual_gramos": _g108,
+                "alimento": _rnd108.choice(_cand108)}).json()
+        else:
+            _rc108 = _c_b5.post("/menu/quitar", json={
+                **_d108, "menu_actual": list(_g108), "menu_actual_gramos": _g108,
+                "alimento": _rnd108.choice(list(_g108))}).json()
+        if not isinstance(_rc108, dict) or not _rc108.get("factible"):
+            # Que una edición concreta no dé menú no es de este bloque: aquí se
+            # mira lo que SALE, no cuánto sale. Se pierde una muestra y ya.
+            continue
+        _ediciones108 += 1
+        _g108 = dict(_rc108.get("menu") or _rc108.get("gramos") or _g108)
+        for _t108 in (_rc108.get("problemas_seguridad") or []):
+            if not isinstance(_t108, str):
+                continue
+            for _mal108 in _DICEN_QUE_SE_PASA_108:
+                if _mal108 in _t108:
+                    _sucios108.append((_nom108, _op108, _t108[:150]))
+                    break
+if _ediciones108 < 20:
+    fallos.append(f"BLOQUE108: solo se han podido mirar {_ediciones108} ediciones y se esperaban "
+                  f"unas 30. Con tan pocas este barrido deja de encontrar lo que encontró (un "
+                  f"caso en 29), y saldría verde igual")
+for _q108, _o108, _t108 in _sucios108[:6]:
+    fallos.append(f"BLOQUE108: tras «{_o108}» en «{_q108}» se ENTREGA un menú cuyo aviso dice que "
+                  f"se pasa de un límite: «{_t108}…». O el menú no sale, o el límite no era un "
+                  f"límite: las dos cosas no pueden ser verdad a la vez (regla 2)")
+
+# Y LA RAÍZ, medida aparte y sin depender del azar: que los TRES midan el mismo
+# tope de yodo. El aviso, el filtro final y el solver llaman ya a la misma
+# función; esto comprueba que sigue siendo una sola y que el margen del kelp
+# aprieta de verdad.
+from seguridad import tope_de_yodo as _tope108, hay_kelp as _kelp108
+_kelp_del_catalogo108 = next((n for n in al if _kelp108({n: 1.0})), None)
+if not _kelp_del_catalogo108:
+    fallos.append("BLOQUE108: no hay ninguna fuente de kelp en el catálogo, así que el margen "
+                  "extra del yodo no se puede comprobar. Si se ha quitado, este bloque y el "
+                  "margen sobran; si no, es que `hay_kelp` ha dejado de reconocerla")
+else:
+    _sin108 = _tope108({"Salmón": 100.0}, 1100.0, 24.5)
+    _con108 = _tope108({_kelp_del_catalogo108: 1.0}, 1100.0, 24.5)
+    if not (_con108 < _sin108 * 0.7):
+        fallos.append(f"BLOQUE108: el tope de yodo con el kelp «{_kelp_del_catalogo108}» "
+                      f"({_con108:.0f}) no aprieta respecto al de sin kelp ({_sin108:.0f}). El "
+                      f"margen extra del 50 % existe porque el yodo declarado de un kelp puede "
+                      f"estar lejos del real")
+    # Y que el FILTRO FINAL lo aplique: un menú con kelp y el yodo entre los dos
+    # topes no puede entregarse. Se comprueba llamando al filtro directamente,
+    # que es determinista, en vez de buscar un menú que lo cruce.
+    _yodo_kelp108 = (al[_kelp_del_catalogo108].get("nutrientes", {}).get("yodo") or 0)
+    if _yodo_kelp108 > 0:
+        _objetivo108 = (_con108 + _sin108) / 2.0     # entre los dos topes
+        _m108 = {_kelp_del_catalogo108: _objetivo108 / _yodo_kelp108 * 100.0}
+        if _api_b5._menu_precalculado_es_seguro(_m108, al, 1100.0, 24.5):
+            fallos.append(f"BLOQUE108: el filtro final deja pasar un menú con kelp y "
+                          f"{_objetivo108:.0f} µg de yodo, que está por encima del tope apretado "
+                          f"({_con108:.0f}). Si el filtro no lo aplica y el aviso sí, el menú "
+                          f"sale con un texto diciendo que se pasa -- que es el caso de Elena")
+
+        # ⚠️ Y DE PUNTA A PUNTA, POR LA PUERTA. Lo de arriba llama al filtro a
+        # mano; esto le da a la API un menú de verdad --uno que el motor ha
+        # hecho, más el kelp justo entre los dos topes-- y exige que lo que
+        # DEVUELVA no traiga el aviso de que se pasa. Es determinista: el menú
+        # se construye aquí, no lo elige el solver.
+        _base108d = {"modo": "automatico", "nombres_alimentos": [], "forzar_presencia": [],
+                     "der_objetivo": 1100.0, "actividad": "normal", "etapa_requisitos": "Adulto",
+                     "especies_excluidas": [], "nombres_excluidos": [], "peso_perro_kg": 24.5,
+                     "patologias": [], "categorias_excluidas": []}
+        _r108d = _c_b5.post("/menu/v2", json=_base108d).json()
+        if not _r108d.get("factible"):
+            fallos.append("BLOQUE108: no sale el menú con el que montar el caso del kelp")
+        else:
+            _g108d = dict(_r108d["menu"])
+            _yodo_ya108 = sum((al.get(n, {}).get("nutrientes", {}).get("yodo") or 0) * g / 100.0
+                              for n, g in _g108d.items())
+            _falta108 = _objetivo108 - _yodo_ya108
+            if _falta108 <= 0:
+                fallos.append("BLOQUE108: el menú de partida ya lleva más yodo que el objetivo, "
+                              "así que este caso no se puede montar y no comprueba nada")
+            else:
+                _g108d[_kelp_del_catalogo108] = round(_falta108 / _yodo_kelp108 * 100.0, 3)
+                _rv108 = _c_b5.post("/menu/revalidar", json={
+                    **_base108d, "menu_actual_gramos": _g108d}).json()
+                _avisos108d = " || ".join(str(x) for x in (_rv108.get("problemas_seguridad") or []))
+                for _mal108d in _DICEN_QUE_SE_PASA_108:
+                    if _mal108d in _avisos108d:
+                        fallos.append(
+                            f"BLOQUE108: `/menu/revalidar` devuelve un menú (factible="
+                            f"{_rv108.get('factible')}) cuyo aviso dice que se pasa de un límite: "
+                            f"«{_avisos108d[:150]}…». Ese es el caso exacto que vio Elena: un menú "
+                            f"entregado con un texto diciendo que se ha pasado")
+                        break
+                # Y que el que devuelva NO se pase de verdad: si lo rehace, bien;
+                # si lo entrega tal cual, mal.
+                _gv108 = _rv108.get("menu") or _rv108.get("gramos") or {}
+                if _gv108:
+                    _yv108 = sum((al.get(n, {}).get("nutrientes", {}).get("yodo") or 0) * g / 100.0
+                                 for n, g in _gv108.items())
+                    if _yv108 > _tope108(_gv108, 1100.0, 24.5) + 0.5:
+                        fallos.append(f"BLOQUE108: el menú que devuelve `/menu/revalidar` lleva "
+                                      f"{_yv108:.0f} µg de yodo y su tope son "
+                                      f"{_tope108(_gv108, 1100.0, 24.5):.0f}. Un menú entregado "
+                                      f"por encima de un tope crónico es la regla 2 rota")
+print(f"  {_ediciones108} ediciones encadenadas miradas · {len(_sucios108)} menús entregados "
+      f"diciendo que se pasan de un límite")
+print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+
 _cerrar_el_ultimo_bloque()
 _tiempos_por_bloque.sort(reverse=True)
 _gastado = sum(t for t, _ in _tiempos_por_bloque)
