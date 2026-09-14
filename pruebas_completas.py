@@ -478,6 +478,66 @@ print(f"  una llamada normal: {dt:.1f}s")
 if dt > 15:
     fallos.append(f"BLOQUE7: una sola llamada tardó {dt:.1f}s (demasiado, revisar time_limit)")
 
+
+# ─── EL RELOJ NO ES UNA PROPIEDAD DEL MOTOR ─────────────────────────────────
+#
+# ⚠️ ESCRITO EL 14 DE SEPTIEMBRE, Y CON TRES ROJOS MEDIDOS DETRÁS. Ese día, tres
+# ejecuciones seguidas de la batería en GitHub Actions fallaron en TRES BLOQUES
+# DISTINTOS -- el 17 («solo conserva el 75 % de sus alimentos»), el 43 («1 de 3
+# veces no sale menú con 3 s») y el 27 («no sale menú para lactante 22 kg») --
+# sobre un cambio que solo tocaba TEXTOS de aviso. Comprobado de dos formas que
+# no era el cambio: el diff de datos no movía ni una cifra, y la batería lanzada
+# sobre `main` tal cual, a la vez y en el mismo runner, salió verde.
+#
+# Los tres miden lo mismo sin querer: **cuánto tarda la máquina**. Los tres le
+# dan al solver un presupuesto en segundos y luego afirman algo del MOTOR --que
+# sale menú, que conserva los alimentos--, así que en una máquina más lenta el
+# rojo acusa al motor de algo que no pasa. Es la lección que este fichero ya
+# tenía escrita para el BLOQUE 75: «un rojo que solo sale en la CI no es un rojo
+# de la CI: es una prueba que estaba midiendo el reloj sin querer».
+#
+# Hay DOS herramientas, y no son intercambiables:
+#
+#   · `_con_este_reloj(s)` para cuando lo que se quiere probar ES el reloj (el
+#     BLOQUE 43: que con prisa no se tire una solución ya calculada). Ahí el
+#     presupuesto tiene que seguir siendo apretado EN PROPORCIÓN a lo que tarda
+#     esta máquina, no un número fijo de segundos.
+#   · `_resolver_con_holgura()` para cuando el reloj NO es lo que se prueba (los
+#     BLOQUES 17 y 27): si no sale menú, se reintenta con tiempo de sobra antes
+#     de acusar a nadie. «No existe» y «no me ha dado tiempo» son dos cosas
+#     distintas, y un bloque que no las separa dice la que no es.
+#
+# La referencia son los 3 segundos que tarda esta llamada en el equipo donde se
+# escribió la batería. No se afina más a propósito: lo que hace falta es no
+# depender del reloj, no cronometrar con precisión.
+_SEGUNDOS_DE_REFERENCIA = 3.0
+_RITMO = max(1.0, dt / _SEGUNDOS_DE_REFERENCIA)
+if _RITMO > 1.05:
+    print(f"  esta máquina va {_RITMO:.1f}x más lenta que la de referencia: "
+          f"los presupuestos de tiempo se escalan igual")
+
+
+def _con_este_reloj(segundos):
+    """Un presupuesto en segundos, al ritmo de ESTA máquina."""
+    return round(segundos * _RITMO, 1)
+
+
+def _resolver_con_holgura(*args, **kwargs):
+    """`resolver()` y, si no sale menú, otra vez con tiempo de sobra.
+
+    Devuelve `(ok, gramos, hizo_falta_reintentar)`. El tercer valor existe para
+    que el bloque pueda DECIRLO en vez de callarlo: que haga falta el reintento
+    no es un fallo, pero sí es información -- si empieza a hacer falta siempre,
+    algo se ha puesto lento de verdad.
+    """
+    ok, gramos = resolver(*args, **kwargs)
+    if ok:
+        return ok, gramos, False
+    generoso = dict(kwargs)
+    generoso["time_limit"] = max(90.0, float(kwargs.get("time_limit") or 0) * 5)
+    ok2, gramos2 = resolver(*args, **generoso)
+    return ok2, gramos2, True
+
 # ============================================================
 # BLOQUE 8 — NINGÚN CAMINO PUEDE ENTREGAR UN MENÚ SIN VERIFICAR
 #
@@ -2747,8 +2807,16 @@ else:
     _previos_b17 = [sorted(_alimentos_de(m)) for m in _orig_b17["menus"]]
 
     # Mismo perro, 2 kg más: es lo que hace el botón de Evolución.
+    # ⚠️ CON PRESUPUESTO DE SOBRA, PORQUE LO QUE SE MIDE ES LA CONSERVACIÓN, NO
+    # EL RELOJ (14 septiembre). El presupuesto normal son 24 s repartidos entre
+    # dos menús; en un runner lento eso hace que el solver acepte una solución
+    # peor y suelte un alimento preferido, y entonces este bloque dice «solo
+    # conserva el 75 %» acusando al motor de no respetar lo que se le pidió.
+    # Medido aquí: 35 de 35 al 100 %, incluso apretando a 3 s -- o sea que el
+    # 75 % de la CI no era una propiedad del motor. Ver `_con_este_reloj`.
     _p2_b17 = _api.PeticionMenu(nombres_alimentos=[], modo="automatico", der_objetivo=1180,
                                 etapa_requisitos="Adulto", peso_perro_kg=22, tamano="mediano",
+                                presupuesto_segundos=_con_este_reloj(24.0),
                                 preferir_por_menu=_previos_b17)
     _nuevo_b17 = _api.endpoint_menu_semana(_p2_b17, numero_de_menus=2)
     if not _nuevo_b17.get("factible"):
@@ -4389,14 +4457,23 @@ _CASOS_B27 = [
     ("cachorro joven",     700.0, "CachorroJoven",        6.0),
     ("lactante 22 kg",    3000.0, "Lactante",            22.0),
 ]
+# ⚠️ CON HOLGURA, PORQUE AQUÍ EL RELOJ NO ES LO QUE SE PRUEBA (14 septiembre).
+# Lo que este bloque afirma es que los doce aminoácidos NO vuelven infactible el
+# problema, no que se resuelva en veinte segundos. Con `resolver()` a secas, el
+# lactante de 22 kg --DER 3000, que es el caso más grande de los cuatro-- se
+# quedó sin menú en GitHub Actions y el bloque acusó a los aminoácidos de algo
+# que era el reloj del runner. Ver `_resolver_con_holgura` (BLOQUE 7).
 for _etq_b27, _der_b27, _et_b27, _peso_b27 in _CASOS_B27:
-    _ok_b27, _g_b27 = resolver(_der_b27, _et_b27, al, req, _peso_b27, dosis_maxima_fabricante,
-                               margenes_categoria=MARGENES, max_suplementos=2, time_limit=20)
+    _ok_b27, _g_b27, _tarde_b27 = _resolver_con_holgura(
+        _der_b27, _et_b27, al, req, _peso_b27, dosis_maxima_fabricante,
+        margenes_categoria=MARGENES, max_suplementos=2, time_limit=_con_este_reloj(20))
     if not _ok_b27:
         fallos.append(
-            f"BLOQUE27: no sale menú para {_etq_b27} con los aminoácidos activados. Eran "
-            f"20 de 20 el 28 de agosto.")
+            f"BLOQUE27: no sale menú para {_etq_b27} con los aminoácidos activados, ni "
+            f"dándole al solver tiempo de sobra. Eran 20 de 20 el 28 de agosto.")
         continue
+    if _tarde_b27:
+        print(f"  ({_etq_b27} necesitó el reintento con más tiempo; el menú sale igual)")
     _prot_total_b27 = sum((al[_n]["nutrientes"].get("proteina") or 0) / 100 * _v
                           for _n, _v in _g_b27.items())
     _prot_ciega_b27 = sum((al[_n]["nutrientes"].get("proteina") or 0) / 100 * _v
@@ -6431,8 +6508,16 @@ for _etq43c, _cuerpo43c in [
 ]:
     _sin_menu43, _no_verdes43 = 0, 0
     for _ in range(3):
+        # ⚠️ EL PRESUPUESTO VA AL RITMO DE ESTA MÁQUINA (14 septiembre). Tres
+        # segundos fijos son «apretado» aquí y «imposible» en un runner varias
+        # veces más lento: el toy de 1,5 kg se quedó sin menú 1 de 3 veces en
+        # GitHub Actions y este bloque lo contó como fallo del motor. Lo que se
+        # quiere seguir probando es lo mismo --que con prisa no se tire una
+        # solución YA CALCULADA-- y para eso el presupuesto tiene que ser
+        # apretado EN PROPORCIÓN, no un número fijo de segundos.
         _r43c = _c.post("/menu/v2", json={"nombres_alimentos": [], "modo": "automatico",
-                                           "presupuesto_segundos": 3.0, **_cuerpo43c}).json()
+                                           "presupuesto_segundos": _con_este_reloj(3.0),
+                                           **_cuerpo43c}).json()
         if not _r43c.get("factible"):
             _sin_menu43 += 1
         elif (_r43c.get("ficha") or {}).get("semaforo") != "verde":
@@ -16355,18 +16440,30 @@ if not _base103.get("factible"):
 else:
     _al103, _req103 = _api_b5.cargar_v2()
     _r_base103 = _api_b5._ratio_del_menu(_base103["menu"], _al103, "omega6_total", "omega3_total")
-    _techo103 = 3.0
-    if _r_base103 is None or _r_base103 <= _techo103 * 1.2:
-        fallos.append(f"BLOQUE106: el menú base sale con un omega-6:omega-3 de {_r_base103}, que "
-                      f"ya está en el techo de {_techo103} o por debajo — así que pedir ese techo "
-                      f"no prueba que se aplique. Es la regla del 9 de septiembre: una prueba no "
-                      f"puede dar por hecha una propiedad incidental del menú que devuelve el "
-                      f"solver")
+    # ⚠️ EL TECHO SE CALCULA A PARTIR DEL MENÚ BASE, NO SE FIJA EN 3,0 (14 de
+    # septiembre). El 3,0 venía de una medida del 13 —«el base de este perro
+    # ronda 10:1, de 6,8 a 17,3 en once perros»— y esa medida es de UN día: el
+    # menú que devuelve el solver cambia entre ejecuciones, y en GitHub Actions
+    # el base salió a **3,59**, o sea por debajo del margen que este mismo
+    # bloque exigía. Entonces el bloque se ponía rojo diciendo que la prueba no
+    # probaba nada... teniendo razón, y acusando al motor en el mensaje.
+    #
+    # Es la regla del 9 de septiembre en su forma más pura: **todo lo que
+    # dependa de una cifra concreta del menú, o se calcula a partir de ESE
+    # menú, o se comprueba aparte con números fijos**. Pedir la mitad del ratio
+    # que ha salido muerde siempre, salga el base a 3,6 o a 17.
+    if _r_base103 is None or _r_base103 <= 1.0:
+        fallos.append(f"BLOQUE106: el menú base sale con un omega-6:omega-3 de {_r_base103}, y con "
+                      f"un ratio así no hay forma de pedir un techo que muerda. Sin eso, el resto "
+                      f"de este apartado no comprueba nada")
+        _techo103 = 3.0
+    else:
+        _techo103 = round(_r_base103 / 2.0, 2)
     _con103 = _formular103({"omega6_total:omega3_total": {"max": _techo103}})
     if not _con103.get("factible"):
-        fallos.append(f"BLOQUE106: con un techo de {_techo103}:1 no sale menú. Medido el 13 de "
-                      f"septiembre: salen 11 de 11 perros incluso a 1:1, y 10 de ellos en el "
-                      f"peldaño estricto")
+        fallos.append(f"BLOQUE106: con un techo de {_techo103}:1 —la mitad del {_r_base103:.2f} que "
+                      f"ha salido de base— no sale menú. Medido el 13 de septiembre: salen 11 de 11 "
+                      f"perros incluso a 1:1, y 10 de ellos en el peldaño estricto")
     else:
         _r103 = _api_b5._ratio_del_menu(_con103["menu"], _al103, "omega6_total", "omega3_total")
         if _r103 is None or _r103 > _techo103 * 1.005:

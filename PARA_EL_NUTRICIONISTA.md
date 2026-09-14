@@ -236,9 +236,11 @@ no lo usan**, y lo dicen tres veces:
    4.0 kcal/g**. Levels should be corrected for foods with higher energy
    densities.»* Es la **única** de las 24 tablas que cita `patologias.json` que
    declara densidad, y dice 4,0.
-2. **El cap.34** convierte la glucosamina así: *«**in a food with an energy
-   density of 4 kcal/g DM**, glucosamine HCl and chondroitin sulfate should not
-   exceed 0,10 y 0,08 %»*.
+2. **El cap.34** convierte la glucosamina así: *«[...] in a food with an energy
+   density of 4 kcal/g DM, glucosamine HCl and chondroitin sulfate should not
+   exceed 0.10 and 0.08% DM, respectively.»* (Hasta el 14 de septiembre esta cita
+   llevaba **los decimales en coma española y un «y» en vez de «and» dentro de las
+   comillas**, y le faltaba el final de la frase.)
 3. **Y el cap.15 lo demuestra sin que haya que fiarse de ninguna nota**, porque da
    la misma cantidad en dos unidades: *«Providing approximately **20 % of the
    energy from carbohydrate** … translates to about **23 % DM carbohydrate**»*.
@@ -772,16 +774,19 @@ la de 110.**
 tope es 14,1875 µg y no los 20 µg que saldrían del nutricional.
 
 ⚠️ **Sodio y cloruro no tienen máximo en la tabla: tienen una nota.** Literal
-de la nota c: *«Scientific data show that sodium levels up to 1.5 % DM
-(3.75 g/1000 kcal…) and chloride levels up to 2.35 % DM (5.87 g/1000 kcal…)
-are safe for healthy dogs. **Higher levels may still be safe, but no
-scientific data are available.**»* O sea: FEDIAF no lo llama máximo. **Usarlo
+de la nota c: *«Scientific data show that sodium levels up to 1.5 % DM and
+chloride levels up to 2.35 % DM are safe for healthy dogs. Higher levels may
+still be safe, but no scientific data are available.»* — que en la unidad del
+motor son **3,75 y 5,87 g/1000 kcal**, y esa conversión **es nuestra, no de la
+nota**: iba metida dentro de las comillas hasta el 14 de septiembre. O sea:
+FEDIAF no lo llama máximo. **Usarlo
 como techo duro es criterio nuestro**, del lado prudente.
 
 > **PREGUNTA 11 — reducida el 9 de septiembre, leyendo la nota c entera.** Dice,
-> literal: *«Scientific data show that sodium levels up to 1.5 % DM (3.75 g/1000
-> kcal) and chloride levels up to 2.35 % DM (5.87 g/1000 kcal) are safe for healthy
-> dogs. **Higher levels may still be safe, but no scientific data are available.»*
+> literal: *«Scientific data show that sodium levels up to 1.5 % DM and chloride
+> levels up to 2.35 % DM are safe for healthy dogs. Higher levels may still be safe,
+> but no scientific data are available.»* (3,75 y 5,87 g/1000 kcal son **nuestra**
+> conversión, no de la nota.)
 > O sea que la nota **no es un máximo**: es hasta dónde llegan los datos, y la propia
 > frase dice que por encima puede seguir siendo seguro. Tratarlo como techo duro es
 > más estricto que la fuente, y consta. Lo que queda es la decisión de producto:
@@ -1665,8 +1670,10 @@ primero no.
 conviene que veas porque son las que sostienen todo lo demás:
 
 - **Un techo terapéutico no autoriza a bajar de los mínimos de FEDIAF** — nota al
-  pie (11): *«The minimum recommendations according to the FEDIAF Nutritional
-  Guidelines for all essential fatty acids shall be met in the daily ration.»*
+  pie (11) del **Reglamento (UE) 2020/354**: *«The minimum recommendations
+  according to the FEDIAF Nutritional Guidelines [...] for all essential fatty
+  acids shall be met in the daily ration.»* (Los corchetes son la dirección web
+  que la nota pone ahí; iba borrada **sin marcar** hasta el 14 de septiembre.)
   ⚠️ **Y conviene leer esa nota con lo que dice la propia FEDIAF al lado**
   (11-sep-2026, releyéndola entera). Su §2.2 **excluye de su alcance** a las
   dietas clínicas: *«Excluded from the FEDIAF's Nutritional Guidelines are pet
@@ -2135,9 +2142,11 @@ Hoy: techo de **750 mg/1000 kcal** (SACN5 Tabla 40-5, *«Dietary sodium should b
 
 Fascetti cap.16 apunta al revés: *«the **low** dietary sodium concentrations…
 **increase** the risk… diets that contain **high** dietary sodium concentrations
-**decrease** the risk»*, y a la vez reconoce que *«recommended concentrations…
-**is debated**, as diets containing as low as 0,4 g/Mcal and as high as 3,5
-g/Mcal are available commercially»*.
+**decrease** the risk»*, y a la vez reconoce que *«recommended concentrations [...]
+is debated, as diets containing as low as 0.4 g/Mcal sodium and as high as 3.5
+g/Mcal sodium are available commercially»*. (Hasta el 14 de septiembre esta cita
+llevaba **los decimales en coma española** y se comía la palabra «sodium» las dos
+veces, sin marcarlo.)
 
 > **PREGUNTA 32.** Con un rango de mercado de casi diez veces, ¿qué techo (o
 > qué suelo) de sodio tiene sentido en un perro con oxalato?

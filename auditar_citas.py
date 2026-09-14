@@ -96,7 +96,23 @@ DOCUMENTOS = ["PATOLOGIAS.md", "LECTURA_SACN5.md", "HALLAZGOS_LECTURA_FUENTES.md
     # consenso ACVIM --, y son las citas que mas lejos llegan: este fichero lo lee
     # quien va a contestar. Estaba fuera por lo mismo que `LECTURAS.md`: nacio
     # despues de la lista.
-    "PREGUNTAS_ABIERTAS.md"]
+    "PREGUNTAS_ABIERTAS.md",
+    # ⚠️ LOS CUATRO QUE FALTABAN (14 de septiembre). Estaba medido y apuntado en
+    # `PENDIENTE_NUTRICION.md` desde el 11 y sin hacer: meterlos pasa de 1.910 a
+    # 2.026 citas y saca SEIS mal copiadas, cinco de ellas en el documento que
+    # va a revisión, que es el peor sitio posible para tener una.
+    #
+    # ⚠️ Y `PARA_EL_NUTRICIONISTA.md` ENTRA, aunque hasta hoy estuviera excluido
+    # a propósito («se reescribe entero al final, y sus citas se comprobarán al
+    # reescribirlo», 10 de septiembre). El motivo de meterlo es que ese «al
+    # final» no ha llegado y mientras tanto sus citas no las miraba nadie: de
+    # las seis mal copiadas, CINCO eran suyas. Las cuatro familias son las que
+    # este auditor ya tenía descritas -- decimales pasados a coma española
+    # dentro de las comillas, una palabra en español metida en una frase
+    # inglesa, nuestras propias conversiones entre las comillas de la fuente, y
+    # dos elisiones sin marcar.
+    "PENDIENTE.md", "PENDIENTE_NUTRICION.md", "UNIDADES.md",
+    "PARA_EL_NUTRICIONISTA.md"]
 JSONS = ["patologias.json", "recomendaciones_libro.json", "requisitos_condicionales.json",
          "requerimientos_v2_final.json", "sacn5_fuentes_de_minerales.json",
          "fediaf_conversiones_vitaminas.json",
@@ -148,7 +164,11 @@ _LARGO_MINIMO = 25
 # applies» cuando la fuente dice «instead the nutritional maximum, WHEN INCLUDED
 # IN THE RELEVANT TABLES, should be taken into account». Una condicion borrada.
 SIN_DECIR_DECLARADAS = 0          # citas que no dicen de que fuente salen
-SIN_TEXTO_DECLARADAS = 16         # citan una fuente que no esta en el repo.
+SIN_TEXTO_DECLARADAS = 20         # citan una fuente que no esta en el repo.
+                                  # ⚠️ 16 -> 20 el 14 de septiembre, al entrar
+                                  # cuatro documentos mas (ver DOCUMENTOS). Las
+                                  # cuatro nuevas citan Merck, IRIS y estudios
+                                  # sueltos, que aqui no se pueden abrir.
                                   # ⚠️ SUBE A 16 LA NOCHE DEL 12 DE SEPTIEMBRE,
                                   # y son TRES citas de los referentes con los
                                   # que se contrasto si el rango de la raza debe
@@ -694,6 +714,12 @@ def auditar(mostrar_todas=False):
     # imprimirla y luego triarla desde ahi es medir otra cosa: lo hice, y un
     # trozo de 110 caracteres «coincidia al 100 %» mientras la cita entera no
     # aparecia. El informe corta; el fichero no.
+    # ⚠️ LAS QUE NO DICEN DE DONDE SALEN SE IMPRIMEN SIEMPRE (14 septiembre).
+    # Se contaban y no se enseñaban, asi que cuando el contador subia de 0 a 1
+    # --al meter cuatro documentos mas-- no habia forma de saber CUAL era sin
+    # tocar el script. Un contador que sube y no dice quien no se puede cerrar.
+    for f, c, _ in sin:
+        print(f"    sin fuente  {f}: {' '.join(c.split())[:110]}")
     if os.environ.get("CITAS_FUERA"):
         for f, c, (_, q) in fuera_:
             print(f"    fuera [{q}] {f}: {' '.join(c.split())[:110]}")

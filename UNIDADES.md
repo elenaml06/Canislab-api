@@ -375,8 +375,11 @@ lejos del 21:1 humano.
 Es la fuente cuyo mínimo estamos comprobando, así que es el factor que
 tenemos que usar. **Lo escribí al revés el 9 de septiembre por la mañana**,
 apoyándome solo en el NRC 2006, que dice literal que *«Even though dogs
-appear to utilize β-carotene from carrots efficiently, a retinol equivalency
-has not been defined»*. Las dos frases pueden convivir —el NRC habla de que
+appear to utilize β-carotene from carrots efficiently [...] a retinol
+equivalency has not been defined»*. (Los corchetes son dos referencias
+bibliográficas del propio NRC que aquí no hacen falta; iban borradas SIN
+marcar hasta el 14 de septiembre, que es exactamente la elipsis silenciosa
+que `auditar_citas.py` existe para cazar.) Las dos frases pueden convivir —el NRC habla de que
 no hay un estudio de equivalencia y FEDIAF publica un factor de conversión
 reglamentario— pero la conclusión práctica cambia entera: **sí hay factor, y
 es 4:1.**
