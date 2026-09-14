@@ -2158,7 +2158,10 @@ def _dice_que_bajo_b13(texto, nutriente):
     return bool(_re_b13.search(_BAJAR_B13 + r"[^.]{0,40}" + nutriente, texto))
 
 
-def _baja(nutriente):
+def _baja_b13(nutriente):
+    # (el sufijo `_b13` no es manía: este fichero son 12.000 líneas en un solo
+    # ámbito, y un nombre corto como `_baja` es una mina para el bloque 60
+    # que venga dentro de tres semanas.)
     return ("baja", nutriente)
 
 
@@ -2173,10 +2176,10 @@ def _como_se_lee_b13(que):
 
 
 for _pat_t, _et_t, _debe_decir, _no_puede_decir in [
-    (["pancreatitis"], "CachorroJoven",       "no ha podido bajar la grasa", _baja("grasa")),
-    (["renal"],        "CachorroCrecimiento", "plan dietético individual",   _baja("fósforo")),
-    (["pancreatitis"], "Adulto",              _baja("grasa"),                "no ha podido bajar"),
-    (["renal"],        "Adulto",              _baja("fósforo"),              "plan dietético individual"),
+    (["pancreatitis"], "CachorroJoven",       "no ha podido bajar la grasa", _baja_b13("grasa")),
+    (["renal"],        "CachorroCrecimiento", "plan dietético individual",   _baja_b13("fósforo")),
+    (["pancreatitis"], "Adulto",              _baja_b13("grasa"),                "no ha podido bajar"),
+    (["renal"],        "Adulto",              _baja_b13("fósforo"),              "plan dietético individual"),
 ]:
     # ⚠️ LOS DOS REGISTROS, no solo el del dueño (13 septiembre, noche). Desde
     # hoy `avisos_de_patologias` devuelve el texto llano a quien no es
