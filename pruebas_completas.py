@@ -16440,18 +16440,30 @@ if not _base103.get("factible"):
 else:
     _al103, _req103 = _api_b5.cargar_v2()
     _r_base103 = _api_b5._ratio_del_menu(_base103["menu"], _al103, "omega6_total", "omega3_total")
-    _techo103 = 3.0
-    if _r_base103 is None or _r_base103 <= _techo103 * 1.2:
-        fallos.append(f"BLOQUE106: el menú base sale con un omega-6:omega-3 de {_r_base103}, que "
-                      f"ya está en el techo de {_techo103} o por debajo — así que pedir ese techo "
-                      f"no prueba que se aplique. Es la regla del 9 de septiembre: una prueba no "
-                      f"puede dar por hecha una propiedad incidental del menú que devuelve el "
-                      f"solver")
+    # ⚠️ EL TECHO SE CALCULA A PARTIR DEL MENÚ BASE, NO SE FIJA EN 3,0 (14 de
+    # septiembre). El 3,0 venía de una medida del 13 —«el base de este perro
+    # ronda 10:1, de 6,8 a 17,3 en once perros»— y esa medida es de UN día: el
+    # menú que devuelve el solver cambia entre ejecuciones, y en GitHub Actions
+    # el base salió a **3,59**, o sea por debajo del margen que este mismo
+    # bloque exigía. Entonces el bloque se ponía rojo diciendo que la prueba no
+    # probaba nada... teniendo razón, y acusando al motor en el mensaje.
+    #
+    # Es la regla del 9 de septiembre en su forma más pura: **todo lo que
+    # dependa de una cifra concreta del menú, o se calcula a partir de ESE
+    # menú, o se comprueba aparte con números fijos**. Pedir la mitad del ratio
+    # que ha salido muerde siempre, salga el base a 3,6 o a 17.
+    if _r_base103 is None or _r_base103 <= 1.0:
+        fallos.append(f"BLOQUE106: el menú base sale con un omega-6:omega-3 de {_r_base103}, y con "
+                      f"un ratio así no hay forma de pedir un techo que muerda. Sin eso, el resto "
+                      f"de este apartado no comprueba nada")
+        _techo103 = 3.0
+    else:
+        _techo103 = round(_r_base103 / 2.0, 2)
     _con103 = _formular103({"omega6_total:omega3_total": {"max": _techo103}})
     if not _con103.get("factible"):
-        fallos.append(f"BLOQUE106: con un techo de {_techo103}:1 no sale menú. Medido el 13 de "
-                      f"septiembre: salen 11 de 11 perros incluso a 1:1, y 10 de ellos en el "
-                      f"peldaño estricto")
+        fallos.append(f"BLOQUE106: con un techo de {_techo103}:1 —la mitad del {_r_base103:.2f} que "
+                      f"ha salido de base— no sale menú. Medido el 13 de septiembre: salen 11 de 11 "
+                      f"perros incluso a 1:1, y 10 de ellos en el peldaño estricto")
     else:
         _r103 = _api_b5._ratio_del_menu(_con103["menu"], _al103, "omega6_total", "omega3_total")
         if _r103 is None or _r103 > _techo103 * 1.005:

@@ -1818,6 +1818,18 @@ afirma algo del motor está midiendo dos cosas a la vez. O el reloj es lo que se
 prueba —y entonces va en proporción— o no lo es, y entonces no puede decidir el
 resultado.
 
+⚠️ **Y HUBO UN CUARTO, que no es del reloj sino de la otra mitad de la misma
+regla**: el BLOQUE 106 fijaba el techo de omega-6:omega-3 en **3,0** porque el
+menú base «ronda 10:1» — medido el 13 de septiembre, de 6,8 a 17,3 en once
+perros. Esa medida es de **un día**: en GitHub Actions el base salió a **3,59**,
+por debajo del margen que el propio bloque exigía, y entonces se ponía rojo
+diciendo que la prueba no probaba nada… **teniendo razón, y acusando al motor en
+el mensaje**. Ahora el techo se calcula como **la mitad del ratio que ha salido**,
+así que muerde salga el base a 3,6 o a 17. Es la regla del 9 de septiembre en su
+forma más pura: *todo lo que dependa de una cifra concreta del menú, o se calcula
+a partir de ESE menú, o se comprueba aparte con números fijos* — **cuatro bloques
+la incumplían el mismo día**.
+
 ## Comprobar qué hay desplegado
 
 `https://canislab-api.onrender.com/verificar` dice, sin necesidad de
