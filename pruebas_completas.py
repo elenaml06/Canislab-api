@@ -17203,6 +17203,8 @@ _NUTRIENTES_QUE_NO_DICEN_NADA_107 = (
     "molibdeno", "manganeso", "aminoácido", "tiamina", "biotina",
 )
 _SUELTAS_107 = (r"\bEPA\b", r"\bDHA\b")
+_RESERVADOS_107M = ("general", "crecimiento", "profesional", "profesional_crecimiento",
+                    "dueno", "dueno_crecimiento")
 import re as _re107b
 _crudo107n = _pat107.CRUDO.get("patologias") or {}
 _sucios107n, _largos107n = [], []
@@ -17298,7 +17300,61 @@ for _h107 in _huerfanos107[:6]:
                   f"llano no sustituye al técnico, va AL LADO -- sin el técnico, el "
                   f"veterinario se queda sin la cita")
 
+# ⚠️ Y UN AVISO DEL DUEÑO NO MANDA SOBRE LA MEDICACIÓN (14 septiembre). Elena:
+#
+#     «pero el mitotano [...] es que eso le tiene que decir un veterinario, o
+#      sea, habría que poner consulta a tu veterinario respecto a esto, esto o
+#      esto, ¿sabes?»
+#
+# Y tenía razón en cómo estaba escrito: el aviso decía «la pastilla va SIEMPRE
+# CON LA COMIDA», en imperativo, como si lo mandara la app. No lo manda la app.
+# El dato no se borra --que en ayunas absorbe treinta veces menos es justo lo
+# que un dueño necesita saber-- pero se le da como lo que es: algo que
+# PREGUNTAR a quien se la ha recetado.
+#
+# ⚠️ LA REGLA ES ESTRECHA A PROPÓSITO, y la primera versión no lo era: pedía
+# esto a todo aviso que nombrara «medicación», «dosis» o «suplemento», y
+# acusaba a nueve, casi todos por MENCIONAR («el Cushing se trata con
+# medicación, no con la dieta»). Mencionar no es mandar. Lo que dispara ahora es
+# nombrar un FÁRMACO O UNA ANALÍTICA CONCRETA -- mitotano, bromuro,
+# fenobarbital, insulina, la B12, el potasio en sangre --, que es justo donde el
+# texto se mete en terreno de quien firma la receta.
+_FARMACO_O_ANALITICA_107 = (
+    "mitotano", "bromuro", "fenobarbital", "insulina", "diurétic", "enzimas", "b12",
+    "glucosamina", "condroitina", "mct", "antibiótic", "antiepiléptic", "inyectad",
+    "zinc por boca", "en sangre",
+)
+_MANDA_AL_VETERINARIO_107 = (
+    "pregúnta", "coméntaselo", "coméntale", "consúlta", "lo decide tu veterinario",
+    "pauta tu veterinario", "habla con tu veterinario", "háblalo", "avisa a tu veterinario",
+    "con tu veterinario", "tu veterinario", "tu neurólogo", "lo pide tu veterinario",
+)
+_con_farmaco107, _mandones107 = 0, []
+for _k107m, _v107m in sorted(_crudo107n.items()):
+    _av107m = _v107m.get("avisos") or {}
+    _textos107m = [("principal", _av107m.get("dueno") or _av107m.get("general") or "")]
+    for _ck107m, _cv107m in _av107m.items():
+        if _ck107m in _RESERVADOS_107M or _ck107m.startswith("dueno_"):
+            continue
+        _textos107m.append((_ck107m, _av107m.get("dueno_" + _ck107m) or _cv107m))
+    for _ck107m, _t107m in _textos107m:
+        if not _t107m:
+            continue
+        _tl107m = _t107m.lower()
+        if not any(_x in _tl107m for _x in _FARMACO_O_ANALITICA_107):
+            continue
+        _con_farmaco107 += 1
+        if not any(_q in _tl107m for _q in _MANDA_AL_VETERINARIO_107):
+            _mandones107.append((_k107m, _ck107m, _t107m[:130]))
+for _k107m, _ck107m, _t107m in _mandones107[:6]:
+    fallos.append(f"BLOQUE107: el aviso del DUEÑO de «{_k107m}» ({_ck107m}) nombra un fármaco o una "
+                  f"analítica y no le dice que lo hable con su veterinario: «{_t107m}…». La dosis y "
+                  f"el cuándo los decide quien firma la receta, no la app -- el dato se da, pero "
+                  f"como algo que PREGUNTAR")
+
 print(f"  {_mirados107} avisos del dueño mirados · {len(_sucios107)} con jerga")
+print(f"  {_con_farmaco107} nombran un fármaco o una analítica · {len(_mandones107)} sin mandar "
+      f"al veterinario")
 print(f"  {len(_dueno107)} avisos de seguridad barridos con el catálogo entero · "
       f"{len(_sucios107c)} con jerga · {len(_prof107b)} movidos al canal del veterinario")
 print(f"  {len(_sucios107n)} avisos del dueño con jerga de nutriente · "

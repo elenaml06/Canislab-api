@@ -505,6 +505,32 @@ la pregunta, las dos respuestas y el texto del «no» **inventados**, y
 `pide_confirmacion` **al revés** de como lo tiene el motor: si la app decidiera
 por su cuenta quién la pide, se cae.
 
+### Y un aviso del dueño no manda sobre la medicación
+
+*(14 de septiembre.)* Elena, leyendo el del mitotano:
+
+> «pero el mitotano […] es que eso le tiene que decir un veterinario, o sea,
+> habría que poner consulta a tu veterinario respecto a esto, esto o esto,
+> ¿sabes?»
+
+Y tenía razón en **cómo estaba escrito**: el aviso decía «la pastilla va SIEMPRE
+CON LA COMIDA», en imperativo, como si lo mandara la app. **No lo manda la app.**
+El dato no se borra —que en ayunas absorbe treinta veces menos es justo lo que un
+dueño necesita saber— pero se le da como lo que es: **algo que PREGUNTAR** a
+quien firma la receta. Seis avisos reescritos (mitotano, bromuro y fenobarbital,
+zinc por boca, L-carnitina, taurina en sangre, potasio con diuréticos) y cuatro
+más ajustados (diabetes, SIBO, epilepsia y sus triglicéridos).
+
+⚠️ **La regla del BLOQUE 107 es estrecha a propósito, y la primera versión no lo
+era**: pedía esto a todo aviso que nombrara «medicación», «dosis» o
+«suplemento», y acusaba a **nueve**, casi todos por MENCIONAR («el Cushing se
+trata con medicación, no con la dieta»). **Mencionar no es mandar.** Lo que
+dispara ahora es nombrar **un fármaco o una analítica concreta** —mitotano,
+bromuro, fenobarbital, insulina, la B12, el potasio en sangre—, que es justo
+donde el texto se mete en terreno de quien firma la receta. Hoy: **20 avisos la
+nombran, 0 sin mandar al veterinario**. Comprobado con el fallo puesto,
+devolviendo el texto imperativo del mitotano.
+
 ### «Otra cosa» no es una patología: es la salida
 
 *(14 de septiembre.)* Elena, el mismo día: «¿y tiene sentido meter otra como
