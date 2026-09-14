@@ -9,6 +9,82 @@ Este archivo no se lee solo: se abre cuando hace falta el detalle de algo
 que ya se resolvió — por qué se decidió así, qué se midió, qué PR lo trajo.
 Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 
+## Los avisos del dueño, segunda pasada: COMIDA, no NUTRIENTES — 14 de septiembre de 2026
+
+La primera pasada (13 de septiembre) les quitó las fuentes: *«los avisos al
+usuario son muy técnicos y nombran fuentes. FUERA»*. No bastó, y lo dijo Elena
+leyendo uno ya limpio:
+
+> «pero es que porque saldría un aviso de que lleva más pescado azul, vitamina E
+> y lo que sea... de lo normal. Es que eso a un usuario que no tiene ni idea de
+> qué significa le causa desconfianza y no se fía»
+
+**Por qué tenía razón**, y no es cuestión de estilo: «más vitamina E de lo
+normal» no le dice nada a quien no sabe cuál es lo normal, y encima **suena a
+desviación** — justo en un menú que está verde y cumple los 43 requisitos de
+FEDIAF. El aviso conseguía lo contrario de lo que existe para conseguir.
+
+**La regla nueva**: el dueño lee **lo que va a comprar y lo que tiene que
+hacer**, nunca el nombre de un nutriente ni una cifra por 1000 kcal.
+
+| | |
+|---|---|
+| Avisos del dueño reescritos | **36 de 47** |
+| Longitud media | de 469 a **349** caracteres |
+| Nombres de nutriente en el canal del dueño | **0** |
+| Avisos del dueño barridos por el BLOQUE 107 | 66 |
+| Avisos de seguridad barridos (catálogo entero) | 276 |
+
+La artrosis, entera:
+
+> **Antes** — «Este menú lleva más pescado azul, **más vitamina E y más
+> L-carnitina** de lo normal, y le baja el fósforo y la sal…»
+>
+> **Ahora** — «Este menú ya va ajustado para la artrosis: lleva más pescado azul
+> y menos sal. Lo que más ayuda, con diferencia, es que tu perro no coja peso — y
+> eso ya lo tenemos en cuenta al calcular sus raciones. Si tu veterinario quiere
+> añadirle algo más (aceite de pescado concentrado, glucosamina, condroitina), va
+> aparte: son cosas que no se pueden meter en el plato.»
+
+### Y la pregunta que ordena todo esto
+
+> «Pero a ver… si todo entra dentro de los límites y de los requerimientos, ¿a
+> qué viene ese tipo de avisos?»
+
+Un aviso al dueño solo se sostiene si hace **una de cuatro cosas**:
+
+1. **Pedirle algo que no está en el plato** — medirle el bromo en sangre después
+   de cambiarle la dieta, el mitotano con comida, la B12 inyectada (no se repone
+   comiendo), pesarlo cada dos o tres semanas, repartir la ración en 2-3 tomas.
+2. **Explicar por qué NO hay menú** — las ocho que no formulan. Ahí el aviso *es*
+   la respuesta.
+3. **Avisar de que el menú no es el tratamiento**, para que nadie deje la
+   medicación pensando que con la comida basta (renal, estruvita, SIBO,
+   epilepsia, dermatosis por zinc).
+4. **Contestar una duda razonable aunque nada cambie** — «no se le ha bajado la
+   sal, y es a propósito» en el estadio B1; lo del pienso sin cereal en la DCM.
+
+Y había una quinta que **no es una razón**: contarle el ajuste que hizo el motor.
+Ésa es exactamente la que causaba la desconfianza, y es la que se ha ido.
+
+### Dos fallos de herramienta, los dos de la misma familia
+
+- **`EPA` en minúsculas casaba dentro de «r*epa*rte»**, así que el guardia nuevo
+  acusaba a dos avisos correctos. Va en mayúsculas y con `\b`. Es la familia del
+  «purina» dentro de «purinas» de `auditar_citas.py`.
+- **El BLOQUE 13 se puso rojo teniendo razón en el fondo y no en la forma**:
+  buscaba la cadena **literal** «se ha bajado el fósforo» y el aviso pasó a decir
+  «este menú le baja el fósforo todo lo que se puede», que dice lo mismo. Una
+  prueba del motor convertida en prueba de redacción, acusando al motor de no
+  aplicar un tope que sí aplica — y un rojo así enseña a desconfiar de la
+  batería. Ahora comprueba **el hecho y no la frase**, y con el **mismo** criterio
+  en las dos direcciones: la mitad que protege de verdad es la negativa (que a un
+  cachorro no se le afirme una restricción que no existe), así que aceptar
+  sinónimos solo en la positiva habría dejado colar un «le baja el fósforo» en
+  crecimiento, que es falso. Comprobado con el fallo puesto por los dos lados.
+
+Batería entera en verde (1917 s, 108 bloques).
+
 ## «El máximo era el 10 y llevaba un 11»: eran DOS cosas, y solo una era un fallo — 14 de septiembre de 2026
 
 Elena, el 13: *«me salió un menú con riñón y no sé qué y me salía un aviso de que

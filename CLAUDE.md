@@ -411,6 +411,58 @@ disparan si la patología TIENE aviso de profesional, y **30 de las 47 no lo
 tienen** — sin esa guarda, a un veterinario que formula una de esas 30 se le
 serviría el texto llano.
 
+⚠️ **Y QUITAR LAS FUENTES NO BASTÓ: QUEDABAN LOS NUTRIENTES, Y ESOS TAMBIÉN
+ESPANTAN** (14 de septiembre). Lo dijo Elena leyendo uno ya limpio de citas:
+
+> «pero es que porque saldría un aviso de que lleva más pescado azul, vitamina E
+> y lo que sea... de lo normal. Es que eso a un usuario que no tiene ni idea de
+> qué significa le causa desconfianza y no se fía»
+
+Y tiene razón por una razón que no es de estilo: **«más vitamina E de lo normal»
+no le dice nada a quien no sabe qué es lo normal, y encima suena a desviación**
+justo en un menú que está verde y cumple los 43 requisitos. La regla de la
+primera pasada era «sin la palabra de la fuente»; la de esta es **COMIDA, NO
+NUTRIENTES**: el dueño lee lo que va a comprar y lo que va a hacer, nunca el
+nombre de un nutriente ni una cifra por 1000 kcal. **36 de los 47** reescritos,
+de 469 a **349 caracteres de media**, y el BLOQUE 107 lo vigila con una segunda
+lista de palabras (`_NUTRIENTES_QUE_NO_DICEN_NADA_107`). ⚠️ Dentro de esa lista
+**EPA y DHA van en mayúsculas y con `\b`**, y no es cosmético: en minúsculas
+«epa» casa dentro de «r**epa**rte» y el bloque acusaba a dos avisos correctos —
+la familia del «purina» dentro de «purinas» de `auditar_citas.py`, otra vez.
+
+Ejemplo, la artrosis: «lleva más pescado azul, **más vitamina E y más
+L-carnitina** de lo normal, y le baja el fósforo y la sal» → «lleva más pescado
+azul y menos sal. Lo que más ayuda, con diferencia, es que tu perro no coja peso
+— y eso ya lo tenemos en cuenta al calcular sus raciones».
+
+⚠️ **Y DE AHÍ SALE LA PREGUNTA QUE ORDENA TODO ESTO**, también suya: «si todo
+entra dentro de los límites y de los requerimientos, ¿a qué viene ese tipo de
+avisos?». Un aviso al dueño solo se sostiene si hace **una de cuatro cosas**, y
+si no hace ninguna es ruido que resta confianza:
+
+| | Para qué | Ejemplo |
+|---|---|---|
+| **1** | pedirle algo que **no está en el plato** | medirle el bromo en sangre tras el cambio · el mitotano con comida · la B12 inyectada · pesarlo cada 2-3 semanas |
+| **2** | explicar **por qué NO hay menú** | las ocho que no formulan (urato, shunt, hepatopatía, renal avanzada…) |
+| **3** | que el menú **no es el tratamiento** | renal, estruvita, SIBO, epilepsia, dermatosis por zinc |
+| **4** | contestar **una duda razonable**, aunque nada cambie | «no se le ha bajado la sal, y es a propósito» (estadio B1) · lo del pienso sin cereal en la DCM |
+
+Y había una quinta que **no es una razón**: contarle el ajuste que hizo el
+motor. Ésa es la que se ha ido.
+
+⚠️ **Y AL REESCRIBIRLOS SE PUSO ROJO UN BLOQUE QUE TENÍA RAZÓN EN EL FONDO Y NO
+EN LA FORMA**, que es la lección que se queda. El BLOQUE 13 buscaba la cadena
+**literal** «se ha bajado el fósforo» y el aviso del dueño pasó a decir «este
+menú le baja el fósforo todo lo que se puede» — que dice **exactamente lo
+mismo**. O sea: una prueba del motor convertida en prueba de redacción,
+acusando al motor de no aplicar un tope que sí aplica, y eso enseña a
+desconfiar de la batería. Ahora comprueba **el hecho y no la frase**
+(`_dice_que_bajo_b13`), y con el **mismo** criterio en las dos direcciones: la
+mitad que de verdad protege es la negativa —que a un cachorro no se le afirme
+una restricción que no existe—, y aceptar sinónimos solo en la positiva habría
+dejado colar un «le baja el fósforo» en crecimiento, que es falso. Comprobado
+con el fallo puesto por los dos lados.
+
 ⚠️ **Y LOS AVISOS DE SEGURIDAD LLEVABAN LA MISMA FUENTE DENTRO, y a esos no
 llegaba el barrido.** Son los 16 de `revisar_seguridad` y `avisos_rotacion`
 —la tiaminasa, el mercurio, la vitamina D, el yodo, el selenio, la histamina,
