@@ -379,6 +379,42 @@ disparan si la patología TIENE aviso de profesional, y **30 de las 47 no lo
 tienen** — sin esa guarda, a un veterinario que formula una de esas 30 se le
 serviría el texto llano.
 
+⚠️ **Y LOS AVISOS DE SEGURIDAD LLEVABAN LA MISMA FUENTE DENTRO, y a esos no
+llegaba el barrido.** Son los 16 de `revisar_seguridad` y `avisos_rotacion`
+—la tiaminasa, el mercurio, la vitamina D, el yodo, el selenio, la histamina,
+el tejido tiroideo, los huesos— y **dependen de qué alimento lleve el menú**:
+el de la histamina solo sale con sardina, caballa, atún o boquerón. O sea que
+pedir cinco menús y mirar lo que traigan es una **muestra, no un barrido**, y
+cuatro se escaparon: «(FEDIAF 2025, §7.6.2.4)» en el de la histamina, «el
+límite del NRC según sus calorías diarias» en el de la vitamina D —que además
+estaba mal escrito, «por encima de **el** límite»—, «(TVT Merkblatt 181, mayo
+2025)» en el del tejido tiroideo y «referencias humanas de la EPA» en el del
+mercurio. La forma de barrerlos todos es **no pedir menús**: se le pasa a la
+función un menú sintético con **el catálogo entero**, que dispara a la vez cada
+aviso que depende de un alimento (336 avisos). Las cuatro fuentes se mueven a
+`avisos_profesional`, y para eso la lista del profesional de `revisar_seguridad`
+**nace ahora al principio de la función y no 240 líneas más abajo** — antes no
+existía todavía cuando se escribían esos tres avisos, que es por lo que llevaban
+la cita dentro. ⚠️ **«AESAN» se queda, y es una decisión**: es la agencia
+española de seguridad alimentaria y su consejo sobre el mercurio en el pescado
+está escrito para el público general. Lo que Elena mandó fuera es la referencia
+que no se puede consultar, no el nombre de un organismo público.
+
+⚠️ **Lo que NO se ha encontrado, y se dice**: Elena describió además «un aviso de
+que el máximo era el 10 y que llevaba un 11 — eso no debería ser un aviso,
+debería ser un menú en rojo». Barridos `/menu/v2`, `/menu/semana`,
+`/menu/cambiar`, `/menu/anadir`, `/menu/revalidar` y `/catalogo/*` con toy,
+adulto, gigante, cachorro y lactante, **ningún menú entregado trae un aviso de
+«te has pasado del límite»**, y está comprobado por qué: `_garantizar_verificado`
+llama a `_menu_precalculado_es_seguro`, que aplica **los mismos cinco topes con
+las mismas constantes** que el aviso, así que un menú que se pase no se entrega
+—se reformula o se rechaza—. Medido sobre un menú real: con 80 g de sardina
+(10,2 % de las kcal) el filtro ya dice que no, y `/menu/revalidar` devuelve el
+menú rehecho con 52 g. El candidato más parecido a lo que describe es el aviso
+de la **tiaminasa**, que dice literalmente «el límite seguro es 10 %», pero solo
+puede salir por `/analizar`, donde avisar **es** lo correcto porque no hay menú
+que rechazar. Queda en `PENDIENTE_PRODUCTO.md` a la espera de la captura.
+
 `GET /vocabulario` (11 de septiembre) sirve **todo lo que el motor enumera**,
 para que la app lo lea en vez de copiárselo: los cinco niveles de actividad con
 su cifra de FEDIAF, las 255 razas, los seis tamaños, las etapas, los nueve

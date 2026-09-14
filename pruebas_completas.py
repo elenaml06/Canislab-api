@@ -2137,7 +2137,13 @@ for _pat_t, _et_t, _debe_decir, _no_puede_decir in [
     (["pancreatitis"], "Adulto",              "se ha bajado la grasa",       "no ha podido bajar"),
     (["renal"],        "Adulto",              "se ha bajado el fósforo",     "plan dietético individual"),
 ]:
-    _txt = " ".join(_avisos_pat_b13(_pat_t, _et_t)).lower()
+    # ⚠️ LOS DOS REGISTROS, no solo el del dueño (13 septiembre, noche). Desde
+    # hoy `avisos_de_patologias` devuelve el texto llano a quien no es
+    # profesional y el técnico a quien lo es, y los dos tienen que decir lo que
+    # de VERDAD ha hecho el motor: un aviso que afirma una restricción que no
+    # existe es peor que ninguno, y eso no depende de para quién esté escrito.
+    _txt = " ".join(_avisos_pat_b13(_pat_t, _et_t)
+                    + _avisos_pat_b13(_pat_t, _et_t, es_profesional=True)).lower()
     if _debe_decir not in _txt:
         fallos.append(f"BLOQUE13 texto de aviso: para {_pat_t} en {_et_t} el aviso "
                       f"tendría que decir «{_debe_decir}» y dice: {_txt[:120]}")
@@ -14585,8 +14591,12 @@ else:
         fallos.append("BLOQUE95: /menu/v2 acepta las kcal de premios y NO lo dice. El dueño tiene "
                       "que saber que su menú está calculado contando con ellos, y que el motor no "
                       "sabe qué llevan dentro")
-    if "demasiadas" in _avisos95:
-        fallos.append("BLOQUE95: 88 kcal sobre 1100 son el 8 % y el aviso las llama demasiadas. "
+    # ⚠️ «demasiad» Y NO «demasiadas» (13 septiembre, noche): el aviso del dueño
+    # se reescribió sin jerga y habla de los PREMIOS, que son masculinos --
+    # «son demasiados» --, mientras que el de antes hablaba de las kcal. Lo que
+    # este bloque vigila es que se diga que se pasa, no la concordancia.
+    if "demasiad" in _avisos95:
+        fallos.append("BLOQUE95: 88 kcal sobre 1100 son el 8 % y el aviso los llama demasiados. "
                       "El límite de las cuatro fuentes es el 10 %")
 
 # 4. POR ENCIMA DEL 10 %, SE DICE QUE SON DEMASIADAS -- y se dice a cuánto hay
@@ -14599,9 +14609,11 @@ if not _r95b.get("factible"):
                   f"se AVISA, no deja al perro sin comer: {_r95b.get('motivo')}")
 else:
     _avisos95b = " || ".join(_r95b.get("problemas_seguridad") or [])
-    if "demasiadas" not in _avisos95b:
+    if "demasiad" not in _avisos95b:
         fallos.append("BLOQUE95: 300 kcal sobre 1100 son el 27 % y el menú sale sin decir que se "
-                      "pasa del 10 % que piden Ettinger caps. 175 y 192 y Fascetti cap. 7")
+                      "pasa del 10 % que piden las cuatro fuentes. (La cita de Ettinger y "
+                      "Fascetti ya no va en este canal: la lee el veterinario en "
+                      "`avisos_profesional`, y eso lo vigila el BLOQUE 107.)")
     if "110 kcal" not in _avisos95b:
         fallos.append("BLOQUE95: el aviso de pasarse no dice a cuánto hay que bajar los premios. "
                       "Un aviso sin el número no se puede cumplir")
@@ -16641,6 +16653,80 @@ for _debe107 in ("Ettinger", "Fascetti"):
         fallos.append(f"BLOQUE107: la fuente «{_debe107}» del aviso de los premios no está en "
                       f"`avisos_profesional`. Se le ha quitado al dueño y no se le ha dado al "
                       f"veterinario: eso no es limpiar, es perder el dato")
+# ⚠️ Y LOS AVISOS DE SEGURIDAD, LOS 16, NO LOS QUE SALGAN POR CASUALIDAD
+# (13 septiembre, noche). Esto es lo que le faltaba a este bloque y por eso se
+# le escaparon dos: los avisos de `revisar_seguridad` y `avisos_rotacion`
+# dependen de QUE ALIMENTO lleve el menú -- el de la histamina solo sale con
+# sardina, caballa, atún o boquerón --, así que pedir cinco menús y mirar lo
+# que traigan es una MUESTRA, no un barrido. Los dos que llevaban la fuente
+# dentro no los disparaba ninguno de los cinco perros de arriba:
+#
+#   · «(FEDIAF 2025, §7.6.2.4)» al final del aviso de la histamina
+#   · «por encima de el límite del NRC según sus calorías diarias» en el de la
+#     vitamina D -- que además estaba mal escrito
+#   · «(TVT Merkblatt 181, mayo 2025)» en el del tejido tiroideo
+#   · «referencias humanas de la EPA» en el del mercurio
+#
+# La forma de barrerlos TODOS es no pedir menús: se le da a la función un menú
+# sintético con el catálogo ENTERO, que dispara a la vez cada aviso que depende
+# de un alimento. No es un menú que nadie vaya a comer -- da igual: lo que se
+# mira es el TEXTO.
+#
+# ⚠️ «AESAN» SE QUEDA, Y ES UNA DECISION, NO UN OLVIDO. Es la agencia española
+# de seguridad alimentaria y su consejo sobre el mercurio en el pescado está
+# escrito para el público general, no para un veterinario: quien lee «alto en
+# mercurio (AESAN)» puede ir a buscarlo y entenderlo. Lo que Elena mandó fuera
+# es la referencia científica que no se puede consultar -- «SACN5 5ª ed.,
+# cap.34, Tabla 34-2» --, no el nombre de un organismo público.
+import json as _json107
+sys.path.insert(0, "motor")
+from seguridad import revisar_seguridad as _seg107, avisos_rotacion as _rot107
+_al107 = _json107.loads((_raiz_b24 / "alimentos_v3_final.json").read_text(encoding="utf-8"))
+_al107 = _al107.get("alimentos", _al107) if isinstance(_al107, dict) else _al107
+if isinstance(_al107, list):
+    _al107 = {a["nombre"]: a for a in _al107}
+_gr107 = {n: 20.0 for n in _al107}
+# ⚠️ LA TABLA EN LA FORMA QUE ESPERA EL MOTOR, no el JSON crudo: el fichero es
+# una LISTA de filas y `revisar_seguridad` la indexa por nombre. Se coge la que
+# ya tiene cargada `main`, que es exactamente la que usan los endpoints.
+from main import _REQ_FEDIAF as _req107
+_dueno107, _prof107b = _seg107(_gr107, _al107, 1100.0, "Adulto", [], peso_perro_kg=24.5,
+                               requerimientos=_req107, devolver_avisos=True)
+_dueno107 = list(_dueno107 or []) + list(_rot107(_gr107, _al107) or [])
+_prof107b = list(_prof107b or [])
+if len(_dueno107) < 12:
+    fallos.append(f"BLOQUE107: el catálogo entero solo dispara {len(_dueno107)} avisos de "
+                  f"seguridad y eran 16. O se han borrado, o este barrido ha dejado de "
+                  f"barrer: en los dos casos deja de vigilar y sale verde igual")
+_sucios107c = []
+for _t107c in _dueno107:
+    for _mala107 in _JERGA107:
+        if _mala107 in _t107c:
+            _sucios107c.append((_mala107, _t107c[:120]))
+            break
+for _m107c, _t107c in _sucios107c[:6]:
+    fallos.append(f"BLOQUE107: un aviso de SEGURIDAD del canal del dueño nombra «{_m107c}»: "
+                  f"«{_t107c}…». Este canal lo lee quien solo quiere dar de comer a su perro. "
+                  f"La fuente no se borra: se mueve a la segunda lista de "
+                  f"`revisar_seguridad(devolver_avisos=True)`, que sale por `avisos_profesional`")
+# Y LA OTRA MITAD: que las tres fuentes que se han movido estén de verdad en el
+# canal del profesional. Quitarlas de un sitio y no ponerlas en el otro sería
+# empeorar el motor para quien firma.
+_junto107 = " ".join(_prof107b)
+for _debe107b in ("NRC", "EPA", "TVT Merkblatt"):
+    if _debe107b not in _junto107:
+        fallos.append(f"BLOQUE107: la fuente «{_debe107b}» no está en los avisos del "
+                      f"profesional. Se le ha quitado al dueño y no se le ha dado al "
+                      f"veterinario: eso no es limpiar, es perder el dato")
+# Y la del aviso de rotación, que viaja por su propio interruptor.
+_rot_prof107 = " ".join(_rot107(_gr107, _al107, para_el_profesional=True) or [])
+if "§7.6.2.4" not in _rot_prof107:
+    fallos.append("BLOQUE107: el aviso de la histamina ya no lleva su sección de FEDIAF ni "
+                  "siquiera en el registro del profesional")
+if "§7.6.2.4" in " ".join(_rot107(_gr107, _al107) or []):
+    fallos.append("BLOQUE107: el aviso de la histamina sigue nombrando la sección de FEDIAF "
+                  "en el registro del DUEÑO")
+
 # ⚠️ Y LA PANTALLA DONDE SE MARCA LA PATOLOGIA, QUE ES LA QUE ELENA SEÑALO
 # (13 septiembre, noche). El aviso que viaja con el menu solo lo ven las
 # patologias que FORMULAN; las otras ocho -- urato, cistina, hepatopatia,
@@ -16711,6 +16797,8 @@ for _h107 in _huerfanos107[:6]:
                   f"veterinario se queda sin la cita")
 
 print(f"  {_mirados107} avisos del dueño mirados · {len(_sucios107)} con jerga")
+print(f"  {len(_dueno107)} avisos de seguridad barridos con el catálogo entero · "
+      f"{len(_sucios107c)} con jerga · {len(_prof107b)} movidos al canal del veterinario")
 print(f"  {len(_lista107)} patologías miradas en /vocabulario · {len(_sucios107b)} con jerga · {len(_huerfanos107)} huérfanos")
 
 _cerrar_el_ultimo_bloque()

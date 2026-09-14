@@ -821,6 +821,59 @@ o sea un menú formulado para un perro sano que no lo es.
 `/vocabulario` y la busque en el desplegable — con las de verdad, «la app lo ha
 leído del motor» y «la app pinta su respaldo» se ven exactamente igual.
 
+### ✅ HECHO — 13 de septiembre de 2026, noche
+
+Plegada por aparato y con buscador, igual que la ficha del veterinario (que se
+arregló el 8 de septiembre y a la del dueño se le pasó). Dos matices sobre lo
+escrito arriba, medidos al hacerlo:
+
+- **No son 47 sino 22.** Las doce que no llevan casilla propia ya se
+  descontaban, y de las 35 restantes el dueño solo ve las **22** que puede
+  marcar: las 24 `solo_veterinario` se le esconden desde el 11 de septiembre.
+  Eso era «lo segundo que pidió» —«solo pueden entrar las patologías que puede
+  generar un usuario sin preguntas y sin supervisión veterinaria»— y **ya estaba
+  hecho**; sigue saliendo de `quien_formula_cada_patologia.json`, no de la app.
+- **Las marcadas no van arriba: abren su aparato solo**, y el aparato lo cuenta
+  en su cabecera. Cumple lo que pedía el punto («quien marcó renal tiene que
+  verlo sin abrir nada») sin sacar la patología de su sitio, que era la otra
+  forma de perderla de vista.
+
+Un aparato que se quede sin nada visible no se pinta —sería un desplegable
+vacío—, y si el motor no ha contestado se cae a la lista de siempre: una
+pantalla sin patologías sería un perro renal marcando «nada que destacar».
+Prueba nueva en `tests/patologias-del-motor.spec.js` con nombres inventados,
+comprobada con el fallo puesto.
+
+## El aviso de «el máximo era el 10 y llevaba un 11» — NO SE HA ENCONTRADO
+
+**Dicho por Elena el 13 de septiembre de 2026:**
+
+> «me salio un menu con riñon y noseque y me salia un aviso de que el maximo era
+> el 10 y que llevaba un 11.... Eso no deberia ser un aviso, deberia ser un menu
+> en rojo»
+
+**Tiene razón en la regla, y por eso lo primero fue comprobar si el motor la
+rompe. No la rompe, y está medido.** Barridos `/menu/v2`, `/menu/semana`,
+`/menu/cambiar`, `/menu/anadir`, `/menu/revalidar` y `/catalogo/*` con toy,
+adulto, gigante, cachorro y lactante: **ningún menú entregado trae un aviso de
+«te has pasado del límite»**. El porqué es estructural —
+`_garantizar_verificado` llama a `_menu_precalculado_es_seguro`, que aplica los
+**mismos cinco topes con las mismas constantes** que el aviso, así que un menú
+que se pase no se entrega. Medido sobre un menú real: con 80 g de sardina
+(10,2 % de las kcal) el filtro dice que no, y `/menu/revalidar` devuelve el menú
+rehecho con 52 g.
+
+**El candidato más parecido es el aviso de la tiaminasa**, que dice literalmente
+«el límite seguro es 10 %» y nombra el pescado azul; y el del **selenio** dice
+«el riñón es la fuente más concentrada», que encaja con «un menú con riñón».
+Pero los dos solo pueden salir por **`/analizar`** —la dieta que ya le da el
+dueño—, y ahí avisar **es** lo correcto: no hay menú que rechazar, hay una dieta
+que alguien ya está dando.
+
+**Lo que falta es la captura.** Sin ella no se puede saber si es otra pantalla
+(la ficha clínica pinta «Por encima del máximo» en rojo, que sí es eso) o un
+caso que el barrido no alcanza. En cuanto llegue, se mira y se arregla.
+
 ## Y mirar los TEXTOS, no solo si falla
 
 Del mismo día y de la misma frase de Elena: «también tienes que ver cuando hagas

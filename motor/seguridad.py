@@ -802,6 +802,14 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     """
     patologias = set(patologias or [])
     problemas = []
+    # ⚠️ LA LISTA DEL PROFESIONAL ARRANCA AQUI, NO 240 LINEAS MAS ABAJO (13 de
+    # septiembre de 2026, noche). Se sube para que cada aviso del DUEÑO pueda
+    # dejar su fuente al lado EN EL MOMENTO de escribirse. Antes nacia al final,
+    # asi que los tres avisos de seguridad cronica de aqui arriba no tenian
+    # donde ponerla y la llevaban dentro del texto del dueño -- «el límite del
+    # NRC», «referencias humanas de la EPA», «TVT Merkblatt 181, mayo 2025» --,
+    # que es lo que Elena mando fuera. No se borra: se mueve a este canal.
+    avisos = []
     if not menu:
         return ([], []) if devolver_avisos else []
     total = sum(menu.values()) or 1.0
@@ -837,29 +845,40 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
                 "En exceso, %s acumula mercurio en el cuerpo del perro con cada "
                 "exposición repetida -- no es un riesgo de una sola vez, es "
                 "acumulativo. Ahora mismo aporta el %.0f%% de las calorías del día "
-                "(el límite prudente es %.0f%%). Este umbral está extrapolado desde "
-                "referencias humanas de la EPA -- no existe un límite validado "
-                "específicamente en perros."
+                "(el límite prudente es %.0f%%). Ese límite es prudente y no "
+                "está medido en perros: sale de lo que se considera seguro en "
+                "personas, porque en perros no hay un número validado."
                 % (", ".join(merc), k / der * 100, TOPE_MERCURIO_KCAL * 100))
+        avisos.append("Mercurio: el umbral aplicado (%.0f%% de las kcal) está "
+                      "extrapolado de las referencias humanas de la EPA. No existe "
+                      "un límite validado específicamente en el perro."
+                      % (TOPE_MERCURIO_KCAL * 100))
 
     # 1c. vitamina D acumulada de todas las fuentes del menú
     vitd_ug = sum(alimentos.get(n, {}).get("nutrientes", {}).get("vitD", 0) * g / 100.0
                  for n, g in menu.items())
     tope_vitd_por_kcal = TOPE_VITD_KCAL * der / 1000.0
     tope_vitd_activo = tope_vitd_por_kcal
-    origen_tope_vitd = "el límite del NRC según sus calorías diarias"
+    origen_tope_vitd = "límite seguro según sus calorías diarias"
     if peso_perro_kg and peso_perro_kg > 0:
         tope_vitd_por_peso = TOPE_VITD_KG075 * (peso_perro_kg ** 0.75)
         if tope_vitd_por_peso < tope_vitd_activo:
             tope_vitd_activo = tope_vitd_por_peso
-            origen_tope_vitd = "el límite según su peso (más estricto que el de calorías en este caso)"
+            origen_tope_vitd = "límite según su peso (más estricto que el de calorías en este caso)"
     if vitd_ug > tope_vitd_activo:
         problemas.append(
             "Sumando TODAS las fuentes de este menú (pescado graso, aceite de "
             "hígado de bacalao, suplementos), la vitamina D llega a %.1f µg, por "
-            "encima de %s (%.1f µg). La vitamina D se acumula en el cuerpo y su "
+            "encima del %s (%.1f µg). La vitamina D se acumula en el cuerpo y su "
             "exceso no se elimina rápido -- revisa si hay más de una fuente "
             "sumando a la vez." % (vitd_ug, origen_tope_vitd, tope_vitd_activo))
+        # ⚠️ Y LA FUENTE, AL OTRO CANAL. «por encima de el límite del NRC» decía
+        #    dos cosas mal a la vez: nombraba la fuente en la pantalla del dueño
+        #    y ademas estaba mal escrito («de el»).
+        avisos.append("Vitamina D: el tope aplicado es el del NRC 2006 por 1000 kcal "
+                      "(TOPE_VITD_KCAL), apretado por el de peso metabólico "
+                      "(TOPE_VITD_KG075) cuando este es menor. En este menú ha "
+                      "mandado «%s»." % origen_tope_vitd)
 
     # 1d. yodo (kelp, suplementos, pescado)
     yodo_ug = sum(alimentos.get(n, {}).get("nutrientes", {}).get("yodo", 0) * g / 100.0
@@ -967,9 +986,11 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     if tir:
         problemas.append(
             "%s puede llevar la glándula tiroides del animal pegada — con "
-            "uso regular puede causar hipertiroidismo exógeno en el perro. "
-            "No se recomienda en ninguna cantidad habitual (TVT Merkblatt "
-            "181, mayo 2025)." % ", ".join(tir))
+            "uso regular puede subirle la tiroides al perro sin que tenga "
+            "ningún problema de tiroides. No se recomienda en ninguna "
+            "cantidad habitual." % ", ".join(tir))
+        avisos.append("Tejido tiroideo en cuellos de rumiante: hipertiroidismo "
+                      "exógeno. TVT Merkblatt 181 BARF, mayo 2025.")
 
     # 3b-bis. RESTRICCIONES POR PATOLOGÍA GUARDADAS EN EL PROPIO ALIMENTO
     # (grelo/nabo en hipotiroidismo, dátil/mango/plátano en diabetes,
@@ -1044,7 +1065,10 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     # varias fuentes no es malo en sí: lo malo sería pasarse del máximo, y de
     # eso ya se encarga `verificar()`. Se devuelve aparte para que no bloquee
     # un menú que está bien.
-    avisos = []
+    #
+    # ⚠️ AQUI YA NO SE REINICIA (13 septiembre, noche): la lista nace arriba del
+    # todo y puede traer ya las fuentes de los avisos de seguridad cronica.
+    # Volver a ponerla a [] aqui las borraria en silencio.
 
     # ⚠️ DOS AVISOS DE FEDIAF QUE ESTABAN LEIDOS Y NO SE DECIAN (10 septiembre).
     #
@@ -1231,7 +1255,24 @@ def revisar_seguridad(menu, alimentos, der, etapa="Adulto", patologias=None,
     return problemas
 
 
-def avisos_rotacion(menu, alimentos):
+# ⚠️ LA CITA QUE NO PUEDE IR EN LA PANTALLA DEL DUEÑO (13 septiembre, noche).
+# Elena: «los avisos al usuario son muy técnicos y nombran fuentes. FUERA».
+#
+# Este aviso salia con «(FEDIAF 2025, §7.6.2.4)» pegado al final, y lo lee
+# alguien que solo quiere dar de comer a su perro. No se borra -- se mueve:
+# `avisos_rotacion(..., para_el_profesional=True)` devuelve la MISMA lista con
+# la fuente puesta, y esa es la que `_avisos_para_el_profesional` sirve por
+# `avisos_profesional`, que la app solo enseña en modo profesional.
+#
+# Va como un diccionario de «texto llano -> coletilla» y no como dos textos
+# enteros a proposito: dos copias del mismo parrafo se desincronizan, y quien
+# corrija la frase del dueño no va a acordarse de la otra.
+FUENTE_DEL_AVISO = {
+    "histamina": " (FEDIAF 2025, §7.6.2.4)",
+}
+
+
+def avisos_rotacion(menu, alimentos, para_el_profesional=False):
     """
     Avisos de FRECUENCIA/MANEJO, no bloqueos. No hay dosis publicada para
     estos, asi que no se puede poner un tope en gramos: lo que hay es una
@@ -1264,13 +1305,14 @@ def avisos_rotacion(menu, alimentos):
                     "mejillón). Servir sin cabeza/vísceras y no a diario." % n)
             if _es(n, PESCADO_HISTAMINA):
                 avisos.append(
-                    "%s: es de las especies que acumulan histamina si se rompe "
-                    "la cadena de frío. Compralo bien frío y dalo el mismo día "
-                    "que lo descongeles; si huele fuerte o pica en la lengua, "
-                    "tíralo. La histamina no se va ni congelando ni cocinando "
-                    "una vez formada, y puede dar una reacción parecida a una "
-                    "alergia en cualquier perro, no solo en uno alérgico "
-                    "(FEDIAF 2025, §7.6.2.4)." % n)
+                    ("%s: es de las especies que acumulan histamina si se rompe "
+                     "la cadena de frío. Compralo bien frío y dalo el mismo día "
+                     "que lo descongeles; si huele fuerte o pica en la lengua, "
+                     "tíralo. La histamina no se va ni congelando ni cocinando "
+                     "una vez formada, y puede dar una reacción parecida a una "
+                     "alergia en cualquier perro, no solo en uno alérgico."
+                     % n)
+                    + (FUENTE_DEL_AVISO["histamina"] if para_el_profesional else ""))
             # ⚠️ QUITADO (5 agosto, madrugada) — pedido expreso: este aviso
             # ("congelar antes de dar") era redundante con la instrucción
             # general de la categoría "Pescados y mariscos" en el
