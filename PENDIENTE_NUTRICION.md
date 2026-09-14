@@ -1691,7 +1691,45 @@ se añade es la puerta para que un clínico ponga el otro si su caso lo pide.
 
 ---
 
-## §21 · Las interacciones entre nutrientes son un AVISO, y un aviso se ignora
+## ~~§21 · Las interacciones entre nutrientes son un AVISO, y un aviso se ignora~~ · **HECHO el 13 de septiembre**
+
+**Y el planteamiento de abajo estaba MAL por mi parte.** Al leer la §3.3 entera
+resulta que el motivo de que sea aviso y no restricción ya estaba escrito y es
+bueno: **ninguna fuente dice CUÁNTO** hay que subir el zinc y el cobre, y subir
+un mínimo a ojo es inventarse la cifra. Lo que estaba mal no era eso, era **dónde
+lo habíamos puesto**:
+
+| | mg/1000 kcal | Menús de 216 por encima |
+|---|---|---|
+| Donde SACN5 dice que el zinc empieza a bajar (1,0 % MS) | 2500 | **152** |
+| Donde lo documenta (1,5 % MS) | 3750 | **93** |
+| **Donde avisábamos** (85 % del máximo de FEDIAF) | 5312 | **0** |
+
+**El aviso no había saltado nunca.** El menú con más calcio llega a 4247.
+
+Y la §3.3 nombra **tres** cosas, no una: «reduced by a high content of certain
+minerals (e.g. calcium), the level of other trace elements (e.g. **high zinc
+decreases copper absorption**) and sources of **phytic acid**».
+
+**Lo aplicado:**
+- **Dos bandas de calcio**, en 2500 y 3750, que son las de la fuente. Dos y no
+  una porque en una ración BARF el calcio va alto **por construcción** —se
+  cierra con hueso— y con un solo umbral o avisas en el 70 % y es ruido, o
+  avisas en el 43 % y das a entender que los demás están limpios.
+- **El cobre pegado a su suelo**, que es donde las tres se juntan y de lo que no
+  se decía nada. Medido: **94 de 216** menús llevan el cobre por debajo del
+  120 % de su mínimo y **15** además con el zinc alto y el calcio en la banda.
+  Ese menú **cumple**, y el mínimo que cumple está escrito suponiendo una
+  absorción normal.
+- **El ácido fítico se declara y no se aplica**: medido, 18 de 216 menús llevan
+  alguna semilla, mediana 2,8 g. Marginal.
+
+Lo vigila el BLOQUE 84 con números fijos —no con un menú del solver, que cambia
+entre ejecuciones— y comprobado con el fallo puesto: devolviendo el umbral viejo,
+salta.
+
+### El planteamiento original, que se conserva porque la corrección se entiende con él
+
 
 **Elena, 13 de septiembre: «todo lo que has dicho que podías hacer tú para subir
 la nota, anótalo para hacerlo».** Esta es la primera de esa lista.

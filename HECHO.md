@@ -9,6 +9,245 @@ Este archivo no se lee solo: se abre cuando hace falta el detalle de algo
 que ya se resolvió — por qué se decidió así, qué se midió, qué PR lo trajo.
 Nada de esto es agenda; es historial. Se separó el 6 de septiembre.
 
+## «El máximo era el 10 y llevaba un 11»: eran DOS cosas, y solo una era un fallo — 14 de septiembre de 2026
+
+Elena, el 13: *«me salió un menú con riñón y no sé qué y me salía un aviso de que
+el máximo era el 10 y que llevaba un 11… Eso no debería ser un aviso, debería ser
+un menú en rojo»*. Y al día siguiente, el camino: *«lo del máximo ha sido después
+de **cambiar (editar) un par de ingredientes** en modo usuario en automático»*.
+
+El día 13 se barrieron los seis caminos que entregan menú y **no apareció**. Con
+la pista de la edición sí: barriendo **ediciones ENCADENADAS** —generar, cambiar,
+añadir, quitar, y otra vez—, que es lo que no recorría ningún bloque. Y
+aparecieron **dos** cosas que en pantalla dicen lo mismo.
+
+### 1 · El yodo del kelp — SÍ era un fallo, y de la regla 2
+
+> «El yodo de este menú llega a **2156 µg, por encima del límite prudente (2040
+> µg** — con margen extra por incluir kelp)», en un menú **entregado**.
+
+El margen extra del 50 % que se deja cuando el yodo viene de **kelp** —porque su
+contenido real puede estar lejos del declarado— vivía **solo dentro del aviso**.
+Ni `resolver()` ni `_menu_precalculado_es_seguro` lo conocían. **Tres sitios
+mirando el mismo yodo y ninguno el mismo límite**: la lección del 8 de septiembre
+en su cuarta cara.
+
+La cuenta es ahora **una**, `seguridad.tope_de_yodo`, y la hacen los tres. ⚠️ En
+el solver entra como **reintento y no como restricción del MILP**: el tope
+depende de si el menú ACABA llevando kelp, y eso no se sabe hasta resolverlo —
+modelarlo dentro exigiría una binaria por alimento y un big-M. Si con el margen
+no sale menú **no se entrega el de antes**: el yodo es tope crónico y esos no
+ceden.
+
+**Medido**: 35 de los 216 menús del catálogo llevan kelp; por el tope por 1000
+kcal se pasaban **2**, y por el de **peso metabólico** —el que manda en los perros
+pequeños— **17**. Catálogo regenerado; 0 de los 216 los rechaza ahora el filtro.
+Tras el arreglo, 30 ediciones encadenadas: **0 menús sin salir, 0 avisos de "te
+has pasado"**.
+
+### 2 · El hígado al 12 % — NO era un fallo, era el texto
+
+Salió en otra ejecución del mismo barrido, y es **literalmente** lo que Elena
+describió:
+
+> «En exceso, el hígado puede disparar la vitamina A por encima de lo seguro.
+> Ahora mismo son 32 g, **el 12 % del plato (el límite es 10 %)**»
+
+Ese 10 % **no es un límite**: es una proporción de BARF —FORMA, regla 3— y el
+número es **nuestro**, escrito así en su propio comentario desde agosto («⚠️ EL
+10 % ES CRITERIO NUESTRO. La convención BARF es 5 % y tampoco tiene estudio
+detrás»). Lo que de verdad tiene techo es la **vitamina A**, y lo comprueba
+`verificar()` contra FEDIAF en todos los menús.
+
+Así que el arreglo **no** es rechazar el menú —eso le daría a un número nuestro
+rango de requisito, que es lo que el filtro final se niega a hacer con
+`HOLGURA_DEL_TECHO_QUE_SUBE`— sino que el texto diga la verdad. Los tres avisos
+de «% del plato» (hígado, riñón y clara de huevo sola) dicen ahora «nosotros
+recomendamos no pasar del X %… es un consejo nuestro, no un límite».
+
+⚠️ **Y se vigilan las dos direcciones**: que no vuelva a llamarse «límite», y que
+**siga diciéndose**. Arreglar esto borrando el aviso sería peor que el fallo.
+
+### La distinción que deja escrita
+
+Dos textos que en pantalla dicen lo mismo pueden ser cosas distintas:
+
+| | Qué es | Qué pasa si un menú se pasa |
+|---|---|---|
+| Tiaminasa · mercurio · vitamina D · yodo · selenio | tope **crónico**, de fuente | **no se entrega** (regla 2) |
+| Hígado · riñón · clara sola (% del plato) | proporción de **BARF**, número **nuestro** | se entrega, y el texto **no** puede llamarlo límite |
+
+Lo vigila el **BLOQUE 108**, y su invariante es general: ningún menú que la API
+entrega puede traer, en el canal del dueño, un texto que diga que se pasa de un
+límite. ⚠️ Con una lección dentro y comprobada: **el barrido de ediciones no es el
+guardia**. Con el arreglo quitado no reproduce el caso del yodo, porque la misma
+semilla da otra cadena al partir de un menú que devuelve el solver. Es una red
+ancha —y se ganó el sitio encontrando el segundo caso—, pero los guardias son los
+dos deterministas de al lado.
+
+## Los avisos del dueño dejan de nombrar fuentes, y el técnico no se pierde — 13 de septiembre de 2026, noche
+
+Elena, leyendo un aviso en su propia pantalla: *«los avisos al usuario son muy
+técnicos y nombran fuentes. **FUERA**»*.
+
+Y era literal. El aviso de la artrosis que lee el dueño empezaba «SACN5 5ª ed.,
+cap.34 «Nutritional Management of Osteoarthritis», Tabla 34-2»; el del
+estreñimiento traía tres frases en inglés entre comillas; el de los premios
+cerraba con «(Ettinger 8ª ed. caps. 175 y 192; Fascetti & Delaney 2ª ed. cap. 7)».
+
+**Lo que se midió antes de tocar nada:**
+
+| Canal | Con la fuente dentro | Total |
+|---|---|---|
+| Aviso principal de patología (`general` y `crecimiento`) | **24** | 54 |
+| Avisos sueltos de patología (`avisos_extra`) | **23** | 25 |
+| Avisos de seguridad (`revisar_seguridad` y `avisos_rotacion`) | **4** | 16 |
+
+**Qué se ha hecho, y no es borrar: son los DOS REGISTROS de siempre.** El texto
+técnico se queda **entero** con su clave de toda la vida y es el que sirve
+`GET /patologias` y el que sale en modo profesional. Al lado va el llano:
+`avisos.dueno` y `avisos.dueno_crecimiento` para el aviso principal, y el
+prefijo **`dueno_`** para los sueltos (`dueno_mitotano_con_comida` junto a
+`mitotano_con_comida`). **50 textos escritos, ni una cifra nueva.**
+
+**No se pierde nada de lo que el dueño puede hacer:** la pastilla de mitotano va
+con comida y hay que mirarle el apetito antes de dársela; al perro con bromuro
+potásico hay que medirle el bromo después del cambio de dieta; el zinc oral
+**no** se da con la comida; adelgazar son 1-2 % de peso a la semana y un 10-15 %
+en pocos días es deshidratación; la taurina se lee contra 40 y 200 µmol/L.
+
+⚠️ **Es opcional a propósito.** Hay avisos que ya estaban escritos sin jerga y
+duplicarlos serían dos textos que mantener para decir lo mismo. Por eso lo que se
+vigila **no es que el campo exista sino que el texto SERVIDO esté limpio**: el
+BLOQUE 107 mira el aviso que sale (`dueno` si lo hay, `general` si no) por las
+**dos puertas** que lo enseñan — `avisos_patologia` dentro del menú y
+`GET /vocabulario` al marcarla, que es la única que ven las ocho patologías que
+no formulan.
+
+⚠️ **Dos formas de que esto se volviera en contra, y las dos están vigiladas:**
+que las claves nuevas cayeran en `avisos_extra` —que sale por el canal del
+dueño—, con lo que leería las dos versiones seguidas; y que el registro llano
+acabase **encima** del técnico, que no es limpiar sino **perder la cita**, y
+saldría verde porque el canal del dueño estaría impecable. Por eso el bloque
+ancla cuatro avisos técnicos (renal, artrosis, disfunción cognitiva y obesidad)
+y exige que sigan nombrando su fuente.
+
+⚠️ **Y el `not es_profesional` de `avisos_de_patologias` no sobra** aunque esa
+función ya haga `continue` con esa condición: los dos `continue` solo disparan si
+la patología **tiene** aviso de profesional, y **30 de las 47 no lo tienen** —
+sin esa guarda, a un veterinario que formula una de esas 30 se le serviría el
+texto llano.
+
+### La lección: una muestra no es un barrido
+
+Los cuatro avisos de seguridad se escaparon de la primera pasada, y el motivo
+merece quedar escrito porque vale para **cualquier** barrido de textos: esos
+avisos **dependen de qué alimento lleva el menú**. El de la histamina solo sale
+con sardina, caballa, atún o boquerón. Así que pedir cinco menús y mirar lo que
+traigan es una **muestra**, y la prueba salía verde igual.
+
+La forma de barrerlos todos es **no pedir menús**: se le pasa a la función un
+menú sintético con el **catálogo entero**, que dispara a la vez cada aviso que
+depende de un alimento. **336 avisos** de una vez. Para que las cuatro fuentes
+pudieran moverse al otro canal, la lista del profesional de `revisar_seguridad`
+**nace ahora al principio de la función y no 240 líneas más abajo**: antes no
+existía todavía cuando se escribían esos tres avisos, que es exactamente por lo
+que llevaban la cita dentro.
+
+⚠️ **«AESAN» se queda, y es una decisión, no un olvido.** Es la agencia española
+de seguridad alimentaria y su consejo sobre el mercurio en el pescado está
+escrito para el público general: quien lee «alto en mercurio (AESAN)» puede ir a
+buscarlo. Lo que Elena mandó fuera es la referencia científica que no se puede
+consultar, no el nombre de un organismo público.
+
+### Y una cosa que se buscó y NO se encontró
+
+Elena describió además: *«me salió un menú con riñón y no sé qué y me salía un
+aviso de que el máximo era el 10 y que llevaba un 11… Eso no debería ser un
+aviso, debería ser un menú en rojo»*.
+
+Tiene razón en la regla, así que lo primero fue comprobar si el motor la rompe.
+**No la rompe, y está medido**: barridos `/menu/v2`, `/menu/semana`,
+`/menu/cambiar`, `/menu/anadir`, `/menu/revalidar` y `/catalogo/*` con toy,
+adulto, gigante, cachorro y lactante, **ningún menú entregado trae un aviso de
+«te has pasado del límite»**, porque `_garantizar_verificado` aplica **los mismos
+cinco topes con las mismas constantes** que el aviso. Con 80 g de sardina
+(10,2 % de las kcal) el filtro dice que no, y `/menu/revalidar` devuelve el menú
+rehecho con 52 g. Sigue **abierto** en `PENDIENTE_PRODUCTO.md`, a la espera de la
+captura.
+
+## La lista de patologías del dueño, plegada y con buscador — 13 de septiembre de 2026, noche
+
+Elena: *«para las patologías de usuario se ve una lista MUUUUY larga y no me
+gusta, que sea un desplegable con un buscador o algo así mejor»*.
+
+Eran **22 botones seguidos** en medio de la ficha. Es el mismo peñazo que se
+arregló el 8 de septiembre en la ficha del **veterinario** —«la lista de
+patologías me parece un peñazo, es enorme»— y que aquí se quedó sin arreglar.
+
+**No son 47 sino 22, y la otra mitad de lo que pidió ya estaba hecha.** Elena
+añadió: *«ten en cuenta que solo pueden entrar las patologías que puede generar
+un usuario sin preguntas y sin supervisión veterinaria»*. Las doce que no llevan
+casilla propia ya se descontaban, y de las 35 restantes las **24
+`solo_veterinario`** se le esconden desde el 11 de septiembre — y eso sale de
+`quien_formula_cada_patologia.json`, no de la app.
+
+**Las marcadas no van arriba: abren su aparato solo**, y el aparato lo cuenta en
+su cabecera. Cumple lo que hacía falta —lo que el perro tiene no puede quedarse
+detrás de un clic— sin sacar la patología de su sitio, que era la otra forma de
+perderla de vista. Un aparato que se quede sin nada visible no se pinta (sería un
+desplegable vacío) y si el motor no ha contestado se cae a la lista de siempre:
+una pantalla sin patologías sería un perro renal marcando «nada que destacar».
+
+## El catálogo, en orden alfabético — 13 de septiembre de 2026, noche
+
+Elena, en Personalizar: *«han desaparecido cosas del catálogo… por ejemplo la
+zanahoria no está»*, y un minuto después: *«ah calla si está, solo q no está por
+orden alfabético»*.
+
+⚠️ **Está aquí y no en una lista de retoques porque el fallo no dejaba nada fuera
+y aun así hizo exactamente el mismo daño que dejarlo fuera**: quien lo vio dio
+por hecho que el alimento ya no existía. Un alimento que no se encuentra es un
+alimento que no se elige. Y **ninguna de las comprobaciones que ya había podía
+verlo**: el BLOQUE 99 y `catalogo-app-y-motor.spec.js` cuentan alimentos y
+comparan conjuntos, y no faltaba ninguno.
+
+Los nombres **de dentro** de cada grupo ya se ordenaban desde siempre; lo que
+salía en el orden en que aparece en el catálogo eran **los grupos y las
+categorías**. En «Verduras y frutas»: Calabaza · Calabacín · Zanahoria · Judía ·
+Brócoli. Se ordenan ahora las tres cosas, en las dos formas que sirve
+`GET /alimentos` —`pantallas` (lo que ve el dueño) y `por_categoria` (lo que lee
+el formulador del veterinario)— y en la app también el **respaldo**, que no pasa
+por el motor y es justo donde una lista escrita a mano se desordena en cuanto
+alguien añade una línea al final.
+
+⚠️ **Se ordena sin tildes y sin mayúsculas, y eso no es cosmético**: con el orden
+de códigos de carácter todo lo que lleva tilde se va **detrás de la Z** —la «Ñ»
+incluida—, así que «Riñón» acabaría después de «Zanahoria» y «Acelga» y «Ácido»
+quedarían separados por veinte filas. Es la **misma regla con la que se busca**
+(`sinTildes` en `src/texto.js`, `_sin_tildes_para_ordenar` en `main.py`), y tiene
+que serlo: se ordena para que quien busca encuentre.
+
+## Editar un menú, también en personalizar — 13 de septiembre de 2026, noche
+
+Elena, en la misma frase del arreglo de la edición: *«tanto en automático como en
+personalizar eh»*.
+
+**Comprobado antes de escribir nada:** los dos atajos de `CATALOGO_VARIANTES`
+viven en `/menu/v2` —o sea al **generar**—, no en los tres endpoints de edición,
+así que editar pasa siempre por `_recalcular_con_motor` en los dos modos. Eso
+hace el apartado barato, y hace falta igual: «pasa por la misma función» es un
+argumento y no una medida, y la próxima vez que alguien meta un atajo en la
+edición este apartado es lo único que lo cazaría.
+
+Y hay algo que **solo se ve en personalizar**: el dueño ha elegido a mano los
+alimentos de una categoría, y la regla 5 dice que el motor no mete nada más de
+esa categoría. Si para que el cambio salga hay que bajar de peldaño y meter otra
+carne, eso es **legítimo** —lo dice la propia regla 5— pero **tiene que
+decirse**. Medido con el perro de Elena: cambiando «Pollo muslo con piel» por
+«Pavo pechuga sin piel» entra además «Pollo ala con piel», porque la pechuga sin
+piel no trae el linoleico que traía la piel, y el menú lo dice.
+
 ## Los premios diluyen la ración, y hasta hoy no se contaban — 11 de septiembre de 2026
 
 Encargo de Elena, al leer lo que decían las fuentes: *«pues habrá que preguntar

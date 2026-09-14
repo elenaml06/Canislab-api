@@ -773,10 +773,22 @@ En BEDCA los dos campos existen por separado («Retinol» y «Carotenos totales�
 «Retinol», «Carotene, beta» y «Vitamin A, RAE». **El orden de `Bases.md` sigue
 mandando**: BEDCA primero.
 
-**Por qué corre prisa, con la medida hecha.** En los 216 menús precalculados el
-**83 %** de la vitamina A viene de vegetal, y **103 de los 216 no llegarían al
-mínimo de FEDIAF si el caroteno no contara**. El peor declara 11.191 µg y solo
-29 son retinol. Detalle: `HALLAZGOS_LECTURA_FUENTES.md` §N-19.
+**Cuánta prisa corre, con la medida BIEN hecha.** ⚠️ Aquí ponía que el 83 % de la
+vitamina A venía de vegetal y que 103 de los 216 menús no llegarían al mínimo sin
+el caroteno. **Las dos cifras eran falsas** (corregidas el 13 de septiembre de
+2026: el método contaba la vitamina A del hígado como caroteno, y es retinol puro).
+
+| De dónde viene la vitamina A de los 216 menús | en `main` | en esta rama |
+|---|---|---|
+| Hígado | **77,9 %** | 78,0 % |
+| Multivitamínico | **12,7 %** | 12,7 % |
+| **Verdura y fruta** | **6,5 %** | 7,1 % |
+| Todo lo demás | 2,9 % | 2,2 % |
+
+Y los menús que no llegarían al mínimo sin el caroteno son **0 de 216** en `main`, no 103.
+O sea que esto **no corre prisa**: sigue habiendo que arreglarlo, porque la regla
+es que gana FEDIAF, pero el argumento de urgencia se cae. Detalle y el método para
+rehacer la medida: `UNIDADES.md`.
 
 **Esto no lo rellena el asistente**, como todo lo de este archivo.
 
@@ -1194,6 +1206,103 @@ que marca el fabricante. **No lo rellena el asistente.**
 
 ---
 
+## ⚠️ NO es un dato que falte: por qué el CEREBRO DE VACA salió del catálogo (13 de septiembre de 2026)
+
+Va justo encima del cerdo porque es su hermano: **no falta un dato, sobra un
+alimento**. Pero se separa en una cosa importante — lo del cerdo son dos motivos
+**sanitarios**, y esto es **ley**, así que no admite «con carne de origen
+controlado» ni ninguna otra atenuación.
+
+**La cadena son dos reglamentos y tres artículos**, comprobados contra la versión
+**CONSOLIDADA** en EUR-Lex (`eli/reg/2001/999/2024-01-01`) y **no** contra el texto
+original de 2001, que decía otra cosa — el original hablaba de seis meses y el
+vigente dice doce, y confundirlos era exactamente el error a evitar:
+
+**1. Reg. (CE) 999/2001, anexo V — qué es material especificado de riesgo:**
+
+> «as regards bovine animals: (i) the skull excluding the mandible and including
+> the brain and eyes, and the spinal cord of animals **aged over 12 months**»
+
+**2. Reg. (CE) 1069/2009, art. 8 — dónde cae ese material:**
+
+> «Category 1 material shall comprise the following animal by-products: […] (b) the
+> following material: (i) **specified risk material**»
+
+**3. Reg. (CE) 1069/2009, art. 35 — de qué puede salir la comida para mascotas:**
+
+> «Operators may place pet food on the market provided: (a) the products are
+> derived: (i) from **Category 3 material** […] or (iii) **in the case of raw
+> petfood**, from material referred to in Article 10(a) and (b)(i) and (ii)»
+
+O sea: encéfalo de bovino de más de 12 meses → material especificado de riesgo →
+categoría 1 → no puede ser comida para mascotas. Y el apartado del petfood
+**crudo**, que es justo lo que calcula este motor, tampoco lo deja: remite a
+material de categoría 3.
+
+### Qué se ha hecho, y qué se queda
+
+| Ficha | Qué pasa | Por qué |
+|---|---|---|
+| **`Cerebro de vaca`** | **FUERA del catálogo** | una vaca pasa de 12 meses por definición |
+| **`Cerebro de ternera`** | **se queda**, con la condición escrita en su propia ficha | la ternera española se sacrifica por debajo del año, así que su encéfalo está fuera de la definición |
+
+**Medido antes de sacarla**: `Cerebro de vaca` aparecía en **0 de los 216** menús
+precalculados, así que no rompe nada. Y las dos estaban ya fuera del modo
+automático desde el 7 y el 8 de septiembre, por otro motivo (el DHA las hacía ganar
+siempre y los sesos no se piden en una carnicería normal) — eso es una cuestión
+distinta y **no** habría bastado: estar fuera del automático no impide elegirla a
+mano, y lo ilegal no se puede elegir a mano.
+
+### Y los otros tres alimentos que la norma podría tocar, mirados uno a uno
+
+Ninguno está afectado, y conviene que quede escrito **por qué**, porque el motivo
+no es el mismo en los tres:
+
+- **`Cuello de ternera`** (vértebras cervicales). Doble razón: el umbral de la
+  columna vertebral son **30 meses**, no doce, y una ternera no llega; y además la
+  norma **excluye expresamente** «the spinous and transverse processes of the
+  cervical, thoracic and lumbar vertebrae», que es lo que lleva un cuello.
+- **`Pecho de ternera con hueso`**. No es columna vertebral ni médula espinal:
+  costillar y esternón están fuera de la definición a cualquier edad.
+- **`Costillas de cordero`**. Para ovino y caprino la norma dice otra cosa y hay
+  que leerla entera: «as regards ovine and caprine animals: the skull, including
+  the brain and eyes, and the spinal cord of animals aged over 12 months or which
+  have a permanent incisor erupted through the gum». **No incluye la columna
+  vertebral**, solo cráneo, encéfalo, ojos y médula. Un costillar está fuera.
+
+⚠️ **Y eso deja una puerta abierta para el futuro**: el día que alguien proponga
+una ficha de **sesos de cordero**, la norma sí la alcanza — y su umbral no es solo
+la edad, es «o que tenga un incisivo permanente», que es un dato que el catálogo no
+tiene forma de saber.
+
+### ⚠️ Y sacar la ficha no bastaba: hubo que AVISAR
+
+Lo vio Elena el mismo día: «a lo mejor la persona que vaya a comprar al supermercado
+pide cerebro de ternera y dice: no tengo, pero tengo de vaca. Y problema.»
+
+Y tiene razón en algo incómodo: **sacar la ficha empeoró ese riesgo concreto**.
+Antes estaban las dos en la lista y la diferencia se veía; ahora solo aparece «de
+ternera» y quien la lea no tiene forma de saber que la otra no vale. La sustitución
+ocurre **en el mostrador**, donde el motor no está.
+
+Por eso la ficha lleva ahora **`aviso_al_comprar`**, y sale por **las dos puertas**:
+`problemas_seguridad` (con el menú hecho, el canal que la app ya pinta en los ocho
+caminos) y `GET /alimentos` (antes, al elegirlo a mano). El texto dice qué pasa y
+**qué hacer**, no solo que hay un problema:
+
+> «Tienen que ser sesos de TERNERA, de un animal de menos de 12 meses. Si en la
+> carnicería no tienen y te ofrecen sesos de vaca, de buey o de añojo, NO valen y no
+> es lo mismo aunque lo parezca: por ley no se pueden dar a un animal. Si no hay de
+> ternera, mejor cambia de alimento y vuelve a generar el menú.»
+
+Lo vigila el **BLOQUE 51**, que falla si `Cerebro de vaca` (o médula espinal de
+bovino con cualquiera de sus nombres) vuelve al catálogo, y también si
+`Cerebro de ternera` pierde de su ficha la condición de los 12 meses — porque sin
+ella la ficha afirma que vale cualquier encéfalo de bovino. Comprobado con el fallo
+puesto de las tres formas.
+
+---
+
 ## ⚠️ NO es un dato que falte: por qué el cerdo NO entra en el catálogo (11 de septiembre de 2026)
 
 Esto va aquí porque es donde alguien mirará el día que proponga añadirlo, y
@@ -1304,3 +1413,276 @@ del peso, quedarían excluidos del estándar racial el 91 % de los machos y el
 80 % de las hembras».
 
 **Esto no lo rellena el asistente.**
+
+## 13 de septiembre de 2026 — lo que el barrido contra las fuentes dejó SIN cerrar
+
+Lo añade el barrido de `auditar_composicion.py`, que comprobó las 163 fichas
+contra BEDCA, Köber, CIQUAL y USDA celda a celda. **Cerró 312 celdas con la cifra
+de la fuente y declaró 418 ceros y 65 huecos.** Esto es lo que NO pudo cerrar, y
+ninguno de estos puntos lo rellena el asistente.
+
+### 1 · `Hígado de conejo`: una ficha sin ninguna procedencia
+
+No lleva `fuente` ni `nota_datos`, y su `sin_dato` solo declara la taurina y la
+L-carnitina. O sea que sus otros **44 nutrientes se presentan como medidas** y no
+se puede saber de dónde salió ni uno.
+
+**Y no es que falte buscarlo: ninguna de las cuatro fuentes publica hígado de
+conejo.** Comprobado el 13 de septiembre en BEDCA («higado de conejo», «conejo»),
+CIQUAL («Foie de lapin») y USDA («rabbit, liver»): cero filas en las tres. BEDCA
+sí tiene el conejo (1162, carne), pero no sus vísceras.
+
+**Qué hace falta**: o una fuente para esas 44 cifras, o declararla PROXY como ya
+hace su hermana `Corazón de conejo` («estimado a partir de corazón de cordero y de
+cerdo»), con la confianza escrita. Lo que no se puede es dejarla como está: 44
+números sin origen en una ficha de hígado, que es la categoría que más pesa en
+vitamina A y en cobre.
+
+### 2 · El retinol y el β-caroteno por separado — Y RESULTA QUE SÍ SE PUEDEN CONSEGUIR
+
+Este documento y `UNIDADES.md` daban este dato por inexistente. **No lo es**:
+CIQUAL publica «Rétinol (µg/100 g)» y «Beta-Carotène (µg/100 g)» en columnas
+separadas, y USDA publica «Retinol» y «Carotene, beta».
+
+Con las dos se puede calcular lo que FEDIAF cuenta para el **perro**:
+`retinol + β-caroteno / 4` (Tabla VII-14, «Provitamin A (β-carotene) **(dogs)** —
+1.0 mg = 833 IU»).
+
+**Así que lo que falta no es el dato: es la DECISIÓN** de cambiar el convenio de la
+columna `vitA`, que hoy mezcla tres (BEDCA equivalentes 6:1, USDA RAE 12:1, CIQUAL
+retinol solo). Eso es clínico y no lo firma el software. Está en
+`PREGUNTAS_PARA_ELENA.md`.
+
+### 3 · Qué mide el mínimo de niacina de FEDIAF
+
+La columna `niacina` mezcla dos convenios: **84 fichas** llevan los «equivalentes
+de niacina totales» de BEDCA (que incluyen la aportación del triptófano) y **63**
+la niacina **preformada** de USDA, y el motor las compara todas contra el mismo
+mínimo.
+
+Medido, el impacto es **pequeño**: donde las dos fuentes publican, solo tres fichas
+se separan más del 1,5× (pepino ×2,3, manzana ×2,2, lengua de cordero ×1,6). Pero
+para elegir columna hay que saber qué mide la Tabla III-3b, y elegir la equivocada
+mueve el mínimo de 84 o de 63 fichas a la vez.
+
+### 4 · Las 253 discrepancias entre dos fuentes honestas
+
+Son celdas donde tenemos cifra, la fuente tiene cifra, y se separan más del 25 %.
+**No son errores**: la composición de un alimento varía de verdad entre países
+(raza, pienso, suelo), y dos bases honestas discrepan. El barrido las lista y
+**no toca ninguna**, porque cuál vale es un juicio y no una cuenta.
+
+Dónde están concentradas: ácido pantoténico (21), manganeso (15), cobre (19),
+niacina (15), vitamina B6 (14), selenio (13), tiamina (12). O sea **vitaminas del
+grupo B y oligoelementos**, que es exactamente donde más varía un análisis.
+
+**Qué hace falta**: que un nutricionista decida la política. Hay tres opciones y
+las tres son defendibles — quedarse con la fuente de mandato más alto siempre,
+quedarse con la más baja de las dos (lado seguro contra los máximos), o mirarlas una
+a una. Hoy el catálogo se queda con lo que ya tenía.
+
+### 5 · El cloruro: ahora SE PUEDE leer, y sigue sin decidirse
+
+CIQUAL publica «Chlorure (mg/100 g)» y hasta el 13 de septiembre el repo decía que
+no lo publicaba nadie. Pero en **114 fichas** la columna `cloruro` no es una medida:
+es `sodio × 1,542`, o sea el sodio reescrito suponiendo que todo viene de sal común,
+que en vegetales es sistemáticamente falso (CIQUAL da 61 mg para el champiñón donde
+la derivación da 7,7).
+
+Que ahora se pueda leer **no autoriza a rellenar**: cambiar la columna entera es una
+decisión, no un arreglo, y mezclar 114 derivaciones con unas pocas medidas reales es
+peor que lo que hay. Sigue pendiente, con la diferencia de que ahora hay de dónde
+sacarlo.
+
+---
+
+## 13 de septiembre (noche) — LA VITAMINA D DE SEIS CARNES MAGRAS, Y CUESTA UN MENÚ
+
+⚠️ **Este es el hueco más caro del catálogo hoy, y es el único que deja a una
+persona sin menú.** Está medido entero.
+
+**Qué pasó.** El barrido contra las fuentes declaró como hueco la vitamina D de
+seis carnes magras —conejo, pavo, ternera (solomillo y con grasa), lomo de ternera
+y lengua de cordero— porque BEDCA las publica con `value_type` TR y la celda
+vacía, que es «no hay cifra». Antes eran **ceros mudos**: el motor creía que esas
+seis carnes no tienen NADA de vitamina D, que es falso y además falso por el lado
+peligroso (podía pasarse del tope sin saberlo).
+
+**Qué cuesta.** Un hueco se imputa al **percentil 90 de su familia** contra los
+máximos (`constructor.valor_para_maximo`), y la vitamina D tiene tope crónico
+duro. Con seis carnes más en hueco, «Carne muscular» pasa de 3 a 9 huecos de
+vitamina D, y entonces:
+
+| | |
+|---|---|
+| Adulto de 20 kg con **las 8 especies más comunes excluidas** | **se queda SIN MENÚ** (con el catálogo de `main`, sí salía) |
+| Chihuahua de 3 kg con **renal** | también se quedaba sin menú, por otra causa ya arreglada (la proteína de dos aceites) |
+
+Lo caza el BLOQUE 9, y **no se ha tocado esa prueba**: su propio comentario avisa
+de que cambió dos veces en 24 horas y de que no hay que «arreglarla mañana en la
+dirección equivocada».
+
+**Y la medida que dice de qué tamaño es el problema.** La imputación para la
+vitamina D en «Carne muscular» es **1,0 µg/100 g**. Las 17 fichas de esa familia
+que SÍ la declaran tienen **mediana 0,20**, media 0,43 y máximo 1,7. O sea que
+imputar es **cinco veces la mediana de su propia familia**. Y no es una
+casualidad: CIQUAL publica la vitamina D del pavo crudo en **0,2 µg** (fila 36301),
+clavado en esa mediana.
+
+**Por qué no se ha cerrado buscando el dato.** Se ha buscado en las cuatro
+fuentes, por orden de mandato:
+
+* **BEDCA** (mandato 1) da `TR` con la celda vacía en las seis.
+* **CIQUAL** (mandato 3) publica vitamina D de pavo (0,2) y de ternera, pero sus
+  filas **no son nuestras fichas**: «Dinde, viande, crue» son 110 kcal y 1,88 g de
+  grasa y nuestro `Pavo` son 158 y 8,5. Usarla sería el error de cruzar cortes,
+  que es justo lo que `fijar_identificadores.py` existe para impedir.
+* **USDA** (mandato 4) no publica vitamina D ni para el conejo (FDC 172521) ni
+  para la lengua de cordero (FDC 174366), que son las dos que sí tienen su fila
+  emparejada. Para las otras cuatro, las filas candidatas de USDA no cuadran en
+  grasa (el lomo de ternera de USDA tiene 10,07 g contra nuestros 3,3).
+
+**Lo que hace falta, y son dos cosas distintas:**
+
+1. **El dato.** La vitamina D de esas seis carnes, de una fuente que mida EL CORTE
+   que tenemos. Eso cierra el problema de raíz y no lo rellena el asistente.
+2. **O una decisión sobre el percentil de la imputación**, que es de calado y no
+   es de catálogo: hoy es el P90 y está elegido a propósito («es lo que significa
+   no saberlo»). Con la mediana de la familia en vez del P90, estas seis carnes
+   imputarían 0,2 en vez de 1,0 — que es lo que de verdad miden las fuentes que
+   las publican. Pero bajar el percentil **afloja todos los máximos del motor a la
+   vez**, no solo este, así que es una decisión clínica y global.
+
+⚠️ **Lo que NO es la salida: devolver los ceros mudos.** Un cero mudo dice «esta
+carne no tiene vitamina D», y eso es falso. El problema no es haber dicho la
+verdad: es que no tenemos el número.
+
+
+⚠️ **Y MEDIDO EL 13 DE SEPTIEMBRE: PARA LA TERNERA EL P90 NO ES PESIMISTA.** Se
+consultó **CoFID 2021** (McCance & Widdowson, Reino Unido — no es una de las cuatro
+fuentes del motor, así que vale de contraste y no para escribir una ficha) y sus
+filas crudas de ternera dan **1,2 y 1,4 µg**, o sea **por encima** del 1,0 que
+imputa el motor; CIQUAL llega a 1,3 en `Veau, rôti, cru`. Así que de las seis, el
+argumento de «se imputa cinco veces lo que miden las fuentes» vale para el pavo y
+el conejo (0–0,5) y **no vale para las tres de ternera**. Y CoFID tampoco las
+cerraría: da `N` (no medido) al conejo y `Tr` (trazas) a la lengua de cordero, y
+**ninguna de las dos es un número** — es la misma marca que el `TR` de BEDCA.
+
+---
+
+## La vitamina D de tres pescados, y la vitamina A de uno
+
+*(13 de septiembre. Hermanas de lo de arriba, del mismo barrido.)*
+
+De los diez pescados y mariscos que tenían la vitamina D en hueco, **siete se
+cerraron** bajando por la cadena de mandato hasta CIQUAL (ver `CLAUDE.md`). Tres no,
+y es porque **ninguna fuente publica su especie**:
+
+| Ficha | Especie | Por qué no se cierra |
+|---|---|---|
+| `Bacaladilla` | *Micromesistius poutassou* | CIQUAL no la tiene. Su `Merlan, cru` (4,11 µg) es *Merlangius merlangus*, **otra especie** — usarlo sería cruzar pescados |
+| `Gamba roja` | *Aristeus antennatus* | CIQUAL da «< 0,2» a `Crevette, crue`, que es un **límite de detección y no una cifra**. La única fila de USDA con número (174210, 0,1 µg) es la de «may contain additives to retain moisture», o sea otro producto |
+| `Pescadilla` | *Merluccius merluccius*, **congelada** | BEDCA da `TR` en sus **tres** filas de merluza (2347, 825, 1174), comprobado fila a fila. CIQUAL mide la merluza fresca (2,15) pero sus dos filas congeladas dan `-`. USDA no tiene merluza: su `whiting` es otra especie |
+
+Y la **vitamina A** de `Merluza`, `Bacaladilla`, `Lenguado`, `Lubina` y
+`Pescadilla` sigue en hueco: CIQUAL publica ahí `traces`, `< 2`, `< 21` y un 5 — o
+sea dos marcas que no son números y una cifra de una columna (`Rétinol` a secas)
+que **está en otro convenio** que el nuestro, y ese conflicto está declarado sin
+resolver. No se cierra hasta que se decida el convenio.
+
+**Lo que sí se cerró, y era lo más gordo**: el hueco de vitamina D del `Aceite de
+girasol` se imputaba a **5 µg** (lo que declara el huevo de pato) y el de vitamina A
+del `Aceite de cacahuete` a **591 µg de retinol** (lo que declara la yema). Los dos
+son aceites de semilla refinados y los dos están ahora a 0 con su fila de USDA
+escrita.
+
+---
+
+## Las vísceras: siete ceros mudos, y dos fichas con cifras de otra especie
+
+*(13 de septiembre por la noche. Nace de una pregunta de Elena: «¿has comprobado el
+valor de todas las vísceras? El hígado de todos, y luego buscar si en alguna fuente
+se dan datos de vísceras de pollo y pavo».)*
+
+**Lo que falta conseguir, y no lo rellena el asistente.** Siete celdas de víscera
+que **ninguna de las cuatro fuentes mide**, y que por eso han pasado de cero mudo a
+hueco declarado (con su motivo escrito en `hueco_verificado`):
+
+| Ficha | Celda | Qué dice cada fuente |
+|---|---|---|
+| **Riñón de cordero** | vitamina D | BEDCA 1063 `TR` (celda vacía) · USDA 174354 sin cifra · CIQUAL 40407 «-» |
+| **Pulmón de vaca** | vitamina E, **yodo** | la fila de BEDCA no trae esas columnas · USDA no publica yodo de nada ni vit. E del pulmón · CIQUAL **no tiene ninguna fila de pulmón** |
+| **Pulmón de cordero** | vitamina E, **yodo** | igual, con BEDCA 2299 y USDA 174359 |
+| **Bazo de cordero** | **yodo** | BEDCA **no tiene ninguna fila de bazo** · USDA no publica yodo · CIQUAL no tiene bazo |
+| **Hígado de conejo** | vitamina D | BEDCA solo tiene carne de conejo (1162, 964) · USDA no lo tiene · CIQUAL 40110 «-» |
+
+Tres de los siete son **yodo**, que es uno de los cinco topes crónicos: el cero mudo
+lo **aflojaba**. Y el de la vitamina D del hígado de conejo no era ni un cero: era un
+**1,2 copiado del hígado de VACA** (la cifra de BEDCA 1053 clavada).
+
+**Y lo que hace falta es el dato**, igual que en las seis carnes magras: la vitamina D
+de un riñón de cordero y de un hígado de conejo, y el yodo de un pulmón y de un bazo,
+de una fuente que mida ese órgano y esa especie.
+
+### Dos decisiones de especie, que son tuyas y no de dato
+
+No se toca ni una cifra en las dos: rellenar desde la fila de la otra especie mezcla
+dos mediciones en una columna, y renombrar es decisión de producto. Es la cuarta y la
+quinta de una familia que ya tiene tres casos cerrados («Bazo de ternera» y «Páncreas
+de ternera» renombrados en agosto, «Pulmón de ternera» en septiembre).
+
+- **`Riñón de ternera` es un riñón de BUEY.** Declara `usda:174356` (veal kidneys,
+  99/15,76/3,12) y sus cifras no son esas: cuadran **exactas** con `ciqual:40402`
+  «Rognon, **boeuf**, cru» (95,9/17,1/2,65 contra nuestros 92,3/17,1/2,65). La prueba
+  está en la vitamina D: la nuestra es **1,05**, que es la de esa fila de buey clavada
+  — BEDCA 1069 «Riñón, de ternera» da 1 y USDA no publica ninguna. ⚠️ Y su **vitamina
+  A, 204, no sale de ninguna de las cuatro filas candidatas** (BEDCA ternera 140, USDA
+  ternera 92, CIQUAL buey 253, CIQUAL ternera 86): esa sí es una celda sin explicar.
+- **`Pulmón de vaca` lleva la vitamina D del pulmón de TERNERA**, y esto **cierra una
+  pregunta que la propia ficha llevaba escrita desde el 8 de septiembre**: «o la ficha
+  se sembró de la fila de la especie equivocada, o es casualidad. El barrido contra la
+  fila de vacuno lo dirá». No es casualidad: `bedca:2300` «Pulmón, de ternera, crudo»
+  da vitamina D **11** y vitamina A **14**, que son exactamente las nuestras, y USDA
+  168628 —la fila de vacuno adulto que la ficha declara— **no publica vitamina D del
+  pulmón**. Y lo que lo hace más raro: el catálogo tiene aparte una ficha `Pulmón de
+  ternera` cuya vitamina D es un **hueco**. La cifra de ternera está en la ficha de
+  vaca y falta en la de ternera.
+
+### Lo que sí se cerró
+
+- **`Timo de ternera`**, vitamina D: hueco → **0,25 µg** de `ciqual:40304` «Ris, veau,
+  cru». «Ris de veau» *es* el timo de ternera; BEDCA no tiene ninguna fila de timo y
+  USDA 172542 —la que sembró la ficha, exacta en las tres cifras— no publica vitamina D.
+- **La procedencia del `Hígado de conejo`**, que era **la única ficha del catálogo sin
+  ninguna**: sale de `ciqual:40110` «Foie, lapin, cru» — 132/19/4 contra nuestros
+  134/19/4, y la vitamina A **4530 clavada**.
+
+### Vísceras de pollo y de pavo: qué publica cada fuente
+
+Contestado y **las seis fichas de ave están bien**:
+
+| Fuente | Qué tiene | Vitamina D |
+|---|---|---|
+| **USDA** | pollo: hígado, molleja, corazón y despojos de cuatro clases. Pavo: hígado, molleja, corazón y despojos | **del pollo solo la mide el hígado (0)**; molleja y corazón no. Del pavo las mide las cuatro |
+| **CIQUAL** | `Coeur/Gésier/Foie, poulet`, `Coeur/Foie, dinde`, `Foie, volaille` | pollo: corazón «-», molleja 0,6, hígado 0,21. Pavo: corazón 0,4, hígado 1,3 |
+| **BEDCA** | `Corazón de pollo` (970), `Higado de pollo` (2270) | corazón 0,2 (`AR`) |
+
+Nuestras seis: hígado de pollo 0 = USDA · hígado de pavo 1,3 = USDA · corazón de pavo
+0,4 = USDA **y** CIQUAL · molleja de pavo 0,5 = USDA · corazón de pollo 0,2 = BEDCA 970
+· molleja de pollo **hueco**, y es correcto porque la fila que la sembró (USDA 171456)
+no mide vitamina D.
+
+### Y una discrepancia que hay que decidir, no conseguir
+
+El **`Hígado de vaca`** declara **10250 µg de vitamina A** y **es la cifra de BEDCA**
+(1053, `value_type` BE). Pero USDA 169451 —la fila que la ficha declaraba como única
+fuente— da **4968**: **2,06 veces menos**. ⚠️ Y el conflicto de convenio del β-caroteno
+**no lo explica**: un hígado no tiene caroteno, su vitamina A es retinol puro, y con
+retinol puro los cuatro convenios dan el mismo número. Así que es una discrepancia de
+**medida**. CIQUAL no desempata (6350 en «Foie, génisse»).
+
+Importa porque el hígado de vaca entra en casi todo menú, es de donde sale casi toda la
+vitamina A de la ración, y la vitamina A tiene **máximo en FEDIAF**. No se ha tocado la
+cifra —manda BEDCA, que es el mandato 1— pero ahora la ficha **declara también el id de
+BEDCA**, que no tenía: sin él esos 10250 no se comparaban con ninguna fuente que los
+publique. Está en `PREGUNTAS_PARA_ELENA.md`.

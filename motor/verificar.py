@@ -129,6 +129,17 @@ MAPA = {
     # (UE) 2020/354 entrada 27 pide casi el mismo número para la artrosis. Se
     # calcula como linolénico + EPA + DHA en `NUTRIENTES_COMPUESTOS`.
     "Omega3_total": "omega3_total",
+    # ⚠️ "Omega6_total" -- AÑADIDA (13 septiembre), mismo patrón que la de
+    # arriba. FEDIAF no pide omega-6 totales en el perro: pide linoleico, y en
+    # crecimiento y reproducción araquidónico. Su fila lleva "-" en los seis
+    # campos. Existe para que el OTRO LADO del ratio omega-6:omega-3 exista:
+    # SACN5 lo pide en cuatro patologías y hasta hoy el motor no tenía forma de
+    # medirlo, así que tampoco de ofrecérselo al profesional.
+    #
+    # ⚠️ Es linoleico + araquidónico, y el araquidónico va en MILIGRAMOS: la
+    # suma lleva su factor en `constructor.FACTOR_A_LA_UNIDAD_DEL_COMPUESTO`.
+    # Sumarlos a pelo daría mil veces el araquidónico.
+    "Omega6_total": "omega6_total",
 }
 # ⚠️ EL ÚNICO MÁXIMO DE FEDIAF QUE NO SE APLICA, Y AQUÍ ESTÁ POR QUÉ
 # (28 agosto). La Tabla III-3b pone un solo máximo a un aminoácido: lisina

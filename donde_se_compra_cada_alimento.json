@@ -10,16 +10,16 @@
       "especializada": 24,
       "supermercado": 101,
       "mostrador": 35,
-      "no_se_vende": 2,
+      "no_se_vende": 1,
       "en_casa": 1,
       "accesibles": 137,
-      "total": 163,
-      "corriente": 143,
+      "total": 162,
+      "corriente": 142,
       "premium": 20
     },
     "el_precio_y_donde_se_compra_son_DOS_EJES": "Un multivitamínico se pide por internet y no es caro; una gamba roja está en cualquier supermercado y sí lo es. Mezclarlos daría un menú «barato» lleno de suplementos de marca, o uno «accesible» de solomillo y lenguado.",
     "lo_que_ya_se_ha_corregido_aqui": "⚠️ La `Dorada` y la `Lubina` estaban marcadas `premium` en la primera escritura de este fichero (13 de septiembre) y es FALSO en España: las dos son de acuicultura y están entre los pescados más baratos del mostrador. Se marcaron por inercia -- «pescado de mesa» -- y la dorada sola aparecía en 31 de los 216 menús, o sea que ese error se habría llevado por delante el 14 % del catálogo sin ningún motivo. Queda escrito porque es exactamente el riesgo de un campo sin fuente: se equivoca en silencio y con forma de dato bueno.",
-    "esta_atado_al_catalogo_de_163": "⚠️ ESTO ESTÁ INDEXADO POR NOMBRE DE ALIMENTO, que es la forma que se desincroniza sola -- la misma de `COMO_DAR_ALIMENTO`, que llegó a tener 12 entradas de alimentos que el motor ya no tenía, la Borraja entre ellas. El BLOQUE 100 exige que cubra el catálogo EXACTO, ni uno de más ni uno de menos. || Y se sabe que va a saltar: la rama `claude/food-catalog-validation-59iiq6` deja 162 fichas en vez de 163 (fuera «Cerebro de vaca», por ley) y renombra «Riñón de ternera» a «Riñón de vaca». El día que eso se fusione hay que tocar tres líneas aquí, y el rojo de la batería es lo que va a obligar a hacerlo en vez de dejarlo pudrirse."
+    "esta_atado_al_catalogo_de_163": "⚠️ ESTO ESTÁ INDEXADO POR NOMBRE DE ALIMENTO, que es la forma que se desincroniza sola -- la misma de `COMO_DAR_ALIMENTO`, que llegó a tener 12 entradas de alimentos que el motor ya no tenía, la Borraja entre ellas. El BLOQUE 100 exige que cubra el catálogo EXACTO. || Y FUNCIONÓ: se escribió el 13 de septiembre contra 163 fichas diciendo que iba a saltar el día que se fusionara la rama del catálogo, y ese mismo día saltó con las tres líneas exactas que se habían predicho -- fuera «Cerebro de vaca» (por LEY, no por precio) y «Riñón de ternera» renombrado a «Riñón de vaca». Un rojo que avisa de lo que ya sabías es un guardián que sirve."
   },
   "donde_se_compra": {
     "supermercado": {
@@ -235,11 +235,6 @@
       "precio_orientativo": "corriente"
     },
     "Cerebro de ternera": {
-      "categoria": "Vísceras",
-      "donde": "no_se_vende",
-      "precio_orientativo": "corriente"
-    },
-    "Cerebro de vaca": {
       "categoria": "Vísceras",
       "donde": "no_se_vende",
       "precio_orientativo": "corriente"
@@ -734,7 +729,7 @@
       "donde": "mostrador",
       "precio_orientativo": "corriente"
     },
-    "Riñón de ternera": {
+    "Riñón de vaca": {
       "categoria": "Vísceras",
       "donde": "mostrador",
       "precio_orientativo": "corriente"
