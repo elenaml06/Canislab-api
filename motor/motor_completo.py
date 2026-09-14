@@ -424,7 +424,12 @@ def avisos_de_patologias(patologias, etapa="Adulto", es_profesional=False):
         # avisos de una patología que no son ninguno de los cuatro con nombre
         # propio. Se añaden en TODOS los caminos, incluidos los dos `continue`
         # de abajo, que si no se los saltarían.
-        _extra = info.get("avisos_extra") or []
+        # ⚠️ Y EN DOS REGISTROS, como el aviso principal (13 septiembre,
+        # noche): `avisos_extra_dueno` es la misma lista, en el mismo orden, con
+        # el texto llano donde lo hay. Al profesional se le sigue dando el
+        # tecnico con su cita -- lo que se le quita al dueño no se borra.
+        _extra = ((info.get("avisos_extra") if es_profesional
+                   else info.get("avisos_extra_dueno")) or [])
         if es_profesional:
             if _es_crecimiento(etapa) and info.get("aviso_profesional_crecimiento"):
                 salida.append(info["aviso_profesional_crecimiento"]); salida.extend(_extra); continue
@@ -442,11 +447,26 @@ def avisos_de_patologias(patologias, etapa="Adulto", es_profesional=False):
         # existía. No llegó a verse porque main.py solo llamaba aquí con las
         # patologías que BLOQUEAN -- pero el fallo estaba puesto y esperando
         # a la primera llamada que pasara una que no bloquea.
+        #
+        # ⚠️ DE AQUI PARA ABAJO SE PREFIERE EL REGISTRO DEL DUEÑO, y solo si
+        # quien pregunta NO es profesional (13 septiembre, noche). `aviso_dueno`
+        # es el mismo aviso sin la palabra de la fuente; `aviso` se queda de
+        # respaldo para las patologias cuyo texto ya estaba escrito sin jerga.
+        #
+        # ⚠️ EL `not es_profesional` NO SOBRA, aunque arriba haya dos `continue`
+        # con esa condicion: los dos solo disparan si la patologia TIENE aviso
+        # de profesional, y 30 de las 47 no lo tienen. Sin el, a un veterinario
+        # que formula una de esas 30 se le serviria el texto llano y se quedaria
+        # sin la cifra y sin la fuente -- que es justo lo que este cambio existe
+        # para NO hacer: lo que se le quita al dueño no se borra, se mueve.
+        _llano = not es_profesional
         if (info.get("solo_en_adulto") and _es_crecimiento(etapa)
-                and info.get("aviso_crecimiento")):
-            salida.append(info["aviso_crecimiento"])
-        elif info.get("aviso"):
-            salida.append(info["aviso"])
+                and ((_llano and info.get("aviso_dueno_crecimiento"))
+                     or info.get("aviso_crecimiento"))):
+            salida.append((_llano and info.get("aviso_dueno_crecimiento"))
+                          or info.get("aviso_crecimiento"))
+        elif (_llano and info.get("aviso_dueno")) or info.get("aviso"):
+            salida.append((_llano and info.get("aviso_dueno")) or info.get("aviso"))
         salida.extend(_extra)
 
         # ⚠️ AÑADIDO (7 septiembre) — el aviso que solo sale por la

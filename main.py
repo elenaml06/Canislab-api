@@ -1062,24 +1062,63 @@ def _aviso_de_los_premios(der, kcal_de_premios):
     # número absurdo no sale de aquí como si se hubiera aceptado. Escribir «has
     # dicho que toma 2000 kcal» cuando se han contado 990 sería poner en boca
     # del dueño un número que el motor no usó.
+    # ⚠️ SIN FUENTES, SIN TABLAS Y SIN JERGA: ESTO LO LEE EL DUEÑO (13 de
+    #    septiembre de 2026, por la noche). Elena, viendo este aviso en su
+    #    pantalla: «los avisos al usuario son muy técnicos y nombran fuentes.
+    #    FUERA».
+    #
+    #    Y tenía razón literal: aquí ponía «(Ettinger 8ª ed. caps. 175 y 192;
+    #    Fascetti & Delaney 2ª ed. cap. 7)» en la pantalla de alguien que solo
+    #    quiere dar de comer a su perro. La cita no se pierde -- se va al canal
+    #    del veterinario, que la app solo enseña en modo profesional -- y aquí se
+    #    queda lo único que el dueño puede hacer algo con ello: cuántas kcal son,
+    #    qué está protegido, qué no, y qué hacer si son demasiadas.
     base = (f"PREMIOS: este menú está calculado contando {premios:.0f} kcal al día fuera "
             f"de su ración ({pct:.0f} % de lo que come). Lleva las calorías que quedan y "
             f"SIGUE llevando los nutrientes del día entero, así que no se queda corto por "
             f"eso. ")
     if pct > FRACCION_MAXIMA_DE_PREMIOS * 100.0 + 0.5:
         return [base +
-                f"Pero son demasiadas: cuatro fuentes coinciden en que los premios y las "
-                f"sobras no deberían pasar del {FRACCION_MAXIMA_DE_PREMIOS*100:.0f} % de "
-                f"las calorías del día (Ettinger 8ª ed. caps. 175 y 192; Fascetti & "
-                f"Delaney 2ª ed. cap. 7). Por encima de ahí el premio empieza a mandar "
-                f"sobre la dieta: la carne sola desequilibra el calcio y el fósforo, y el "
-                f"hígado puede pasarse del máximo de vitamina A. Baja los premios a "
-                f"{der * FRACCION_MAXIMA_DE_PREMIOS:.0f} kcal o menos."]
+                f"Pero son demasiados: no deberían pasar del "
+                f"{FRACCION_MAXIMA_DE_PREMIOS*100:.0f} % de lo que come al día. Por encima "
+                f"de ahí el premio empieza a mandar sobre la comida, y el motor no sabe qué "
+                f"lleva dentro. Bájalos a {der * FRACCION_MAXIMA_DE_PREMIOS:.0f} kcal o "
+                f"menos."]
     return [base +
-            "Están dentro del 10 % que recomiendan las fuentes (Ettinger 8ª ed. caps. 175 "
-            "y 192; Fascetti & Delaney 2ª ed. cap. 7). Aun así, el motor no sabe qué "
-            "llevan dentro: si son carne sola desequilibran el calcio y el fósforo, y si "
-            "es hígado cuenta para el máximo de vitamina A."]
+            "Lo que el motor no puede saber es qué llevan dentro esos premios. Si son "
+            "siempre lo mismo — solo carne, o solo hígado — pueden descompensar la ración "
+            "por su cuenta, así que mejor variados y pequeños."]
+
+
+def _aviso_de_los_premios_para_el_profesional(der, kcal_de_premios):
+    """El mismo aviso, con la fuente y la cifra, para quien firma.
+
+    ⚠️ ES LA OTRA MITAD DE LA MISMA COSA. Lo que se le quitó al dueño no se
+    borra: se mueve aquí. Un veterinario necesita saber de dónde sale el 10 % y
+    qué mecanismo hay detrás; el dueño necesita saber cuántas kcal son y qué
+    hacer. Los dos registros, que es como el motor sirve ya las patologías, los
+    nutrientes y los niveles de actividad.
+    """
+    try:
+        der = float(der or 0.0)
+        premios = float(kcal_de_premios or 0.0)
+    except (TypeError, ValueError):
+        return []
+    if premios <= 0 or der <= 0:
+        return []
+    pct = premios / der * 100.0
+    fuera = [f"Aporte extrarración contado: {premios:.0f} kcal/día, el {pct:.0f} % del DER. "
+             f"La ración se formula con las kcal restantes y se le exigen los mínimos del "
+             f"DÍA ENTERO (FEDIAF §4.1: «The total daily ration should match the recommended "
+             f"allowances»), así que la dilución de nutrientes está cubierta. Lo que no "
+             f"está cubierto es la composición del extrarración: el motor no la conoce, así "
+             f"que su Ca:P y su vitamina A no entran en la cuenta."]
+    if pct > FRACCION_MAXIMA_DE_PREMIOS * 100.0 + 0.5:
+        fuera.append(f"Por encima del techo recomendado del "
+                     f"{FRACCION_MAXIMA_DE_PREMIOS*100:.0f} % (Ettinger 8ª ed. caps. 175 y "
+                     f"192; Fascetti & Delaney 2ª ed. cap. 7). Equivalente en kcal: "
+                     f"{der * FRACCION_MAXIMA_DE_PREMIOS:.0f}.")
+    return fuera
 
 
 def _avisos_para_el_profesional(gramos, al, der, etapa, patologias=None,
@@ -1373,6 +1412,15 @@ def _garantizar_verificado(respuesta, der, etapa, peso_perro_kg,
     respuesta["avisos_profesional"] = _avisos_para_el_profesional(
         gramos, al, der, etapa, patologias, peso_perro_kg,
         actividad=respuesta.get("actividad"))
+    # ⚠️ Y LA MITAD TECNICA DEL AVISO DE LOS PREMIOS, que se le quito al dueño.
+    # Va aqui y no en `_avisos_para_el_profesional` porque las kcal de premios
+    # no son una lectura del MENU -- no se pueden deducir de los gramos --,
+    # viajan con la peticion. Es el mismo motivo por el que el aviso del dueño
+    # se pone en este filtro y no dentro de `revisar_seguridad_v2`.
+    if _premios_resp:
+        respuesta["avisos_profesional"] = (
+            list(respuesta.get("avisos_profesional") or [])
+            + _aviso_de_los_premios_para_el_profesional(der, _premios_resp))
     # ⚠️ Y LOS LIMITES QUE NO SE HAN PODIDO APLICAR, EN SU PROPIA CLAVE
     # (13 de septiembre). Va AQUI por lo mismo que la ficha y las notas del
     # profesional: este filtro es por donde pasa TODO menu, asi que sale en
@@ -7217,14 +7265,32 @@ def _lista_de_patologias(pat):
         p = pres.get(clave) or {}
         salida.append({
             "clave": clave,
-            "dueno": {"titulo": p.get("dueno") or v.get("nombre")},
-            "veterinario": {"titulo": v.get("nombre")},
+            "dueno": {"titulo": p.get("dueno") or v.get("nombre"),
+                      # ⚠️ EL AVISO, EN DOS REGISTROS (13 septiembre, noche).
+                      # Elena, viendo uno de estos en su pantalla: «los avisos
+                      # al usuario son muy técnicos y nombran fuentes. FUERA».
+                      # El llano es `avisos.dueno`; donde no lo hay es porque el
+                      # `general` ya estaba escrito sin jerga, y el BLOQUE 107
+                      # comprueba eso mismo sobre el texto SERVIDO.
+                      "aviso": (v.get("avisos") or {}).get("dueno")
+                               or (v.get("avisos") or {}).get("general")},
+            # Y el técnico entero, que NO se borra: se mueve aquí, que es lo
+            # que la app solo enseña en modo profesional.
+            "veterinario": {"titulo": v.get("nombre"),
+                            "aviso": (v.get("avisos") or {}).get("general")},
             "aparato": p.get("aparato") or "otras",
             "formulable": bool(v.get("formulable")),
             "quien_puede_marcarla": (_DERIVACION.get(clave) or {}).get("quien_puede_marcarla"),
             # El aviso que hay que enseñar AL MARCARLA, no despues de recorrer
             # el generador para que al final no salga menu.
-            "aviso": (v.get("avisos") or {}).get("general"),
+            #
+            # ⚠️ ESTA CLAVE ES AHORA LA DEL DUEÑO, y se deja donde estaba a
+            # proposito: la app la lee como `p.aviso` desde el 12 de septiembre
+            # y esta es la pantalla que Elena señalo. Moverla habria sido
+            # arreglar el texto y romper la pantalla a la vez. El tecnico sigue
+            # servido, en `veterinario.aviso`.
+            "aviso": ((v.get("avisos") or {}).get("dueno")
+                      or (v.get("avisos") or {}).get("general")),
             # Si sale de la pregunta de otra, la app no le pone casilla propia:
             # la ofrece como respuesta. Hoy son doce.
             "dentro_de_la_pregunta_de": dentro.get(clave),
@@ -8214,6 +8280,13 @@ def listar_patologias():
             "aviso_profesional": avisos.get("profesional"),
             "aviso_profesional_crecimiento": avisos.get("profesional_crecimiento"),
             "aviso_general": avisos.get("general"),
+            # ⚠️ EL REGISTRO DEL DUEÑO, tambien por esta puerta (13 septiembre,
+            # noche). Este endpoint lo lee quien firma, asi que aqui el que
+            # manda es `aviso_general` y este va al lado -- pero va, porque es
+            # el texto que el dueño de SU paciente esta leyendo en la app, y
+            # quien pauta tiene derecho a saber que se le ha dicho.
+            "aviso_dueno": avisos.get("dueno"),
+            "aviso_dueno_crecimiento": avisos.get("dueno_crecimiento"),
             # ⚠️ AÑADIDO (8 septiembre) — los avisos que no son ninguno de los
             # cuatro con nombre propio. Ver `avisos_extra` en patologias.py:
             # antes se cargaban del JSON y no llegaban a ningún sitio. Aquí
@@ -8223,7 +8296,23 @@ def listar_patologias():
             # una pauta necesita leerlas antes de elegir la patología.
             "avisos_extra": [avisos[k] for k in sorted(avisos)
                              if k not in ("general", "crecimiento", "profesional",
-                                          "profesional_crecimiento") and avisos[k]],
+                                          "profesional_crecimiento",
+                                          # ⚠️ Y LAS DOS DEL DUEÑO, por lo mismo
+                                          # que en `patologias.py`: sin esto se
+                                          # servirian DOS veces, una con nombre
+                                          # propio y otra dentro de los extras.
+                                          "dueno", "dueno_crecimiento")
+                             # Y los avisos sueltos en registro llano tampoco:
+                             # van por `avisos_extra_dueno`, abajo. Este
+                             # endpoint lo lee quien firma, asi que aqui manda
+                             # el tecnico -- pero se sirven los dos, porque es
+                             # lo que su cliente esta leyendo en la app.
+                             and not k.startswith("dueno_") and avisos[k]],
+            "avisos_extra_dueno": [
+                avisos.get("dueno_" + k) or avisos[k] for k in sorted(avisos)
+                if k not in ("general", "crecimiento", "profesional",
+                             "profesional_crecimiento", "dueno", "dueno_crecimiento")
+                and not k.startswith("dueno_") and avisos[k]],
             # ⚠️ Y LO QUE ESTÁ ESCRITO PERO NO SE APLICA, DICIENDO QUE NO SE
             # APLICA. Una cifra de la fuente que el motor no puede imponer
             # (porque no cabe, o porque depende de un dato clínico que no

@@ -348,6 +348,37 @@ lleguen **por las dos puertas** —`GET /patologias` y la tabla que lee el solve
 y que sigan llevando su cifra dentro. Un aviso truncado parece que está y no dice
 el número.
 
+⚠️ **Y desde el 13 de septiembre (noche) esos avisos tienen los DOS REGISTROS,
+como todo lo demás.** Lo pidió Elena viendo uno en su pantalla: «los avisos al
+usuario son muy técnicos y nombran fuentes. **FUERA**». Y era literal — el aviso
+de la artrosis empezaba «SACN5 5ª ed., cap.34 …, Tabla 34-2», y el del
+estreñimiento traía tres frases en inglés entre comillas. Medido antes de
+tocarlo: **24 de los 54 avisos principales y 23 de los 25 sueltos** nombraban una
+fuente, una tabla, un capítulo o una unidad del motor. La regla no cambia —
+`dueno` sin jerga y con algo que hacer, `veterinario` con la palabra de la fuente
+— y **lo que se le quita al dueño no se borra, se mueve**: el texto técnico se
+queda entero con su clave de siempre y es el que sirve `GET /patologias` y el que
+sale en modo profesional. || La forma: `avisos.dueno` y `avisos.dueno_crecimiento`
+para el aviso principal, y el prefijo **`dueno_`** para los sueltos
+(`dueno_mitotano_con_comida` al lado de `mitotano_con_comida`). Es **opcional a
+propósito**: hay avisos que ya estaban escritos sin jerga y duplicarlos sería dos
+textos que mantener para decir lo mismo, así que lo que se vigila **no es que el
+campo exista sino que el texto SERVIDO esté limpio** — el BLOQUE 107 mira el
+aviso que sale (`dueno` si lo hay, `general` si no) por las dos puertas que lo
+enseñan, `avisos_patologia` dentro del menú y `GET /vocabulario` al marcarla, que
+es la única que ven las ocho patologías que no formulan. || ⚠️ Y **hay dos formas
+de que esto se vuelva en contra, y las dos están vigiladas**: que las claves
+nuevas caigan en `avisos_extra` —que sale por el canal del dueño—, con lo que el
+dueño leería las dos versiones seguidas; y que el registro llano acabe **encima**
+del técnico, que no es limpiar sino perder la cita, y saldría verde porque el
+canal del dueño estaría impecable. Por eso el bloque ancla cuatro avisos técnicos
+(renal, artrosis, disfunción cognitiva y obesidad) y exige que sigan nombrando su
+fuente. || Y **el `not es_profesional` de `avisos_de_patologias` no sobra** aunque
+esa función ya haga `continue` con esa condición: los dos `continue` solo
+disparan si la patología TIENE aviso de profesional, y **30 de las 47 no lo
+tienen** — sin esa guarda, a un veterinario que formula una de esas 30 se le
+serviría el texto llano.
+
 `GET /vocabulario` (11 de septiembre) sirve **todo lo que el motor enumera**,
 para que la app lo lea en vez de copiárselo: los cinco niveles de actividad con
 su cifra de FEDIAF, las 255 razas, los seis tamaños, las etapas, los nueve

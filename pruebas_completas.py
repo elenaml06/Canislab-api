@@ -10554,17 +10554,32 @@ print("\n=== BLOQUE 64: los avisos sueltos de patologia llegan enteros ===")
 
 from motor.patologias import cargar_crudo as _crudo_64, PATOLOGIAS as _solver64
 
-_RESERVADOS_64 = ("general", "crecimiento", "profesional", "profesional_crecimiento")
+_RESERVADOS_64 = ("general", "crecimiento", "profesional", "profesional_crecimiento",
+                  # ⚠️ AÑADIDAS (13 septiembre, noche) — los avisos tienen dos
+                  # registros desde hoy y estas dos son el principal en llano.
+                  # No son avisos SUELTOS: tienen su nombre propio como los
+                  # cuatro de arriba, y las sirve `aviso_dueno`.
+                  "dueno", "dueno_crecimiento")
 _crudo64 = _crudo_64()["patologias"]
 
 # Lo que hay escrito en el JSON, patologia -> {clave: texto}
-_esperados_64 = {}
+#
+# ⚠️ Y EL SUELTO EN LLANO VA CON SU TECNICO, NO APARTE (13 septiembre, noche).
+# Un aviso suelto puede tener al lado su version para el dueño con el prefijo
+# `dueno_`. Los dos tienen que llegar por las dos puertas, pero por CANALES
+# distintos: el tecnico por `avisos_extra` y el llano por `avisos_extra_dueno`.
+# Mezclarlos aqui haria fallar el bloque por el sitio equivocado.
+_esperados_64, _esperados_llanos_64 = {}, {}
 for _k64, _p64 in _crudo64.items():
     _av64 = _p64.get("avisos") or {}
     _sueltos64 = {_c64: _t64 for _c64, _t64 in _av64.items()
-                  if _c64 not in _RESERVADOS_64 and _t64}
+                  if _c64 not in _RESERVADOS_64 and not _c64.startswith("dueno_") and _t64}
     if _sueltos64:
         _esperados_64[_k64] = _sueltos64
+    _llanos64 = {_c64[len("dueno_"):]: _t64 for _c64, _t64 in _av64.items()
+                 if _c64.startswith("dueno_") and _c64 not in _RESERVADOS_64 and _t64}
+    if _llanos64:
+        _esperados_llanos_64[_k64] = _llanos64
 
 if not _esperados_64:
     fallos.append("BLOQUE64: no hay ni un aviso suelto en patologias.json. O se han borrado los "
@@ -10593,6 +10608,30 @@ for _k64, _sueltos64 in sorted(_esperados_64.items()):
             fallos.append(f"BLOQUE64: el aviso «{_clave64}» de «{_k64}» no llega por la puerta del "
                           f"MENU (motor.patologias.PATOLOGIAS, que es lo que lee el solver). Son "
                           f"dos caminos distintos y los dos tienen que llevarlo")
+
+# 1-bis y 2-bis. LO MISMO CON EL REGISTRO DEL DUEÑO (13 septiembre, noche). Es
+# la misma comprobacion por el canal de al lado, y hace falta por el mismo
+# motivo: un refactor que dejara de recoger las claves `dueno_` devolveria al
+# dueño los textos con la cita en ingles y el capitulo, y la bateria seguiria
+# verde porque los tecnicos si llegan.
+_llanos_vistos_64 = 0
+for _k64, _llanos64 in sorted(_esperados_llanos_64.items()):
+    _api64d = (_servidas64.get(_k64) or {}).get("avisos_extra_dueno") or []
+    _motor64d = (_solver64.get(_k64) or {}).get("avisos_extra_dueno") or []
+    for _clave64, _texto64 in sorted(_llanos64.items()):
+        _llanos_vistos_64 += 1
+        if _texto64 not in _api64d:
+            fallos.append(f"BLOQUE64: el aviso en llano «dueno_{_clave64}» de «{_k64}» no llega a "
+                          f"`avisos_extra_dueno` de GET /patologias. Quien firma tiene que poder "
+                          f"leer lo que su cliente esta leyendo en la app")
+        if _texto64 not in _motor64d:
+            fallos.append(f"BLOQUE64: el aviso en llano «dueno_{_clave64}» de «{_k64}» no llega "
+                          f"por la puerta del MENU. Sin el, al dueño le sale el texto tecnico con "
+                          f"la cita en ingles, que es justo lo que Elena mando fuera")
+if _llanos_vistos_64 == 0:
+    fallos.append("BLOQUE64: no se ha mirado ni un aviso suelto en registro de dueño, y hay 23 "
+                  "escritos. Una prueba que no encuentra nada que mirar sale verde y no vigila "
+                  "nada")
 
 # 3. Que los cuatro de la tarde del 9 de septiembre sigan con su cifra dentro.
 #    Cada par es (patologia, clave del aviso, trozo que TIENE que estar).
@@ -15088,10 +15127,30 @@ else:
             fallos.append(f"BLOQUE105: quién puede marcar «{_k98}» se sirve como "
                           f"«{_servida98['quien_puede_marcarla']}» y "
                           f"`quien_formula_cada_patologia.json` dice «{_quien98}»")
-        _aviso98 = (_fuente98.get("avisos") or {}).get("general")
+        # ⚠️ EL AVISO SON DOS DESDE EL 13 DE SEPTIEMBRE (noche), y hay que
+        # comprobar los DOS. `aviso` -- la clave que la app lee desde el 12 --
+        # es ahora el registro del DUEÑO: `avisos.dueno` si lo hay, y si no el
+        # `general`, que es el caso de las patologias cuyo texto ya estaba
+        # escrito sin jerga. Y `veterinario.aviso` es el tecnico entero.
+        #
+        # Las dos mitades hacen falta. Con solo la primera, poner el llano
+        # tambien en el canal del veterinario pasaria: el dueño leeria bien y la
+        # cita se habria perdido, que es la forma de fallo de la que avisa el
+        # BLOQUE 107.
+        _avisos98 = _fuente98.get("avisos") or {}
+        _aviso98 = _avisos98.get("dueno") or _avisos98.get("general")
         if _servida98["aviso"] != _aviso98:
-            fallos.append(f"BLOQUE105: el aviso de «{_k98}» no es el `avisos.general` de "
+            fallos.append(f"BLOQUE105: el aviso de «{_k98}» no es su registro de dueño "
+                          f"(`avisos.dueno`, y `avisos.general` donde no lo hay) de "
                           f"`patologias.json`. Un aviso reescrito es un aviso que se desincroniza")
+        if (_servida98.get("dueno") or {}).get("aviso") != _aviso98:
+            fallos.append(f"BLOQUE105: `dueno.aviso` de «{_k98}» no coincide con la clave `aviso` "
+                          f"que la app ya lee. Dos sitios sirviendo lo mismo tienen que decir lo "
+                          f"mismo, o uno de los dos miente")
+        if (_servida98.get("veterinario") or {}).get("aviso") != _avisos98.get("general"):
+            fallos.append(f"BLOQUE105: el aviso del VETERINARIO de «{_k98}» no es el "
+                          f"`avisos.general` de `patologias.json`. Lo que se le quita al dueño no "
+                          f"se borra: se mueve a este canal, entero y con su cita")
         if not _servida98["formulable"] and not (_servida98["aviso"] or "").strip():
             fallos.append(f"BLOQUE105: «{_k98}» no es formulable y se sirve sin aviso. Quien la "
                           f"marque vería que no sale menú y no sabría por qué")
@@ -16448,6 +16507,211 @@ finally:
     _recmod101.HOLGURA_DEL_TECHO_QUE_SUBE = _holg_buena101
 
 print(f"  hecho, {len(fallos)} fallos hasta ahora")
+
+
+# ============================================================
+# BLOQUE 107 — EN LA PANTALLA DEL DUEÑO NO SE NOMBRA NINGUNA FUENTE
+# ============================================================
+#
+# ⚠️ POR QUÉ EXISTE (13 de septiembre de 2026, por la noche). Elena, leyendo un
+# aviso en su propia pantalla:
+#
+#     «los avisos al usuario son muy técnicos y nombran fuentes. FUERA»
+#
+# Y era literal. Esto salía en el canal que la app pinta al DUEÑO:
+#
+#     «Están dentro del 10 % que recomiendan las fuentes (Ettinger 8ª ed. caps.
+#      175 y 192; Fascetti & Delaney 2ª ed. cap. 7). Aun así, el motor no sabe
+#      qué llevan dentro: si son carne sola desequilibran el calcio y el
+#      fósforo, y si es hígado cuenta para el máximo de vitamina A.»
+#
+# EL MOTOR YA TIENE DOS REGISTROS para casi todo -- las patologías, los
+# nutrientes, los niveles de actividad, los tamaños --, y la regla es la misma
+# aquí: `dueno` sin jerga y con algo que hacer; `veterinario` con la palabra de
+# la fuente, su tabla y su capítulo. Lo que se le quita al dueño no se borra: se
+# mueve al otro canal.
+#
+# ⚠️ Y LOS DOS CANALES YA EXISTÍAN Y ESTABAN BIEN SEPARADOS: la app enseña
+# `avisos_profesional` SOLO en modo profesional (`enModoProfesional && ...` en
+# `App.jsx`). O sea que el fallo no era de arquitectura: era un texto escrito en
+# el canal equivocado.
+#
+# QUÉ VIGILA: que ninguna cadena del canal del DUEÑO nombre una fuente, una
+# tabla, un capítulo ni una unidad del motor. No mira la prosa -- eso no lo
+# puede juzgar una prueba -- sino las palabras que delatan que el texto está
+# escrito para otro lector.
+print("\n" + "=" * 60)
+print("=== BLOQUE 107: en la pantalla del dueño no se nombra ninguna fuente ===")
+
+# Las palabras que no pinta nada en la pantalla de alguien que quiere dar de
+# comer a su perro. Son las FUENTES del repo y las unidades del motor.
+_JERGA107 = ("FEDIAF", "SACN5", "Ettinger", "Fascetti", "Delaney", "NRC", "AAFCO", "AAHA",
+             "Köber", "Kober", "CIQUAL", "BEDCA", "USDA", "Reglamento", "IRIS", "ACVIM",
+             "Tabla ", "tabla III", "anexo ", "Anexo ", "cap.", "capítulo ",
+             "mg/1000", "g/1000", "kcal/kg", "materia seca", "1000 kcal", "§",
+             # ⚠️ AMPLIADO (13 septiembre, noche) al mirar los avisos de las 47
+             # patologias, que es donde estaba el grueso: 24 de los 54 avisos
+             # principales y 23 de los 25 sueltos traian la cita. Estas siete
+             # salieron de ahi y ninguna la cazaba la lista de arriba: el
+             # apellido del autor de un estudio, el año entre parentesis, la
+             # unidad de una etiqueta de pienso y el nombre de un fichero del
+             # repo -- «Quilliam et al 2023», «Laflamme, 1993», «300 ppm»,
+             # «PENDIENTE_NUTRICION.md». Un nombre de fichero en la pantalla del
+             # dueño es todavia peor que una tabla: no puede abrirlo.
+             "et al", "JVIM", "Laflamme", "FDA", " ppm", "PENDIENTE", ".md", ".py",
+             ".json")
+
+_PERROS107 = [
+    ("adulto con premios al máximo", {"der_objetivo": 1100.0, "etapa_requisitos": "Adulto",
+                                      "peso_perro_kg": 24.5, "premios_nivel": "hasta_el_maximo"}),
+    ("adulto con demasiados premios", {"der_objetivo": 1100.0, "etapa_requisitos": "Adulto",
+                                       "peso_perro_kg": 24.5, "premios_nivel": "mas_del_maximo"}),
+    ("cachorro de raza grande", {"der_objetivo": 1422.0, "etapa_requisitos": "CachorroCrecimiento",
+                                 "peso_perro_kg": 20.0, "peso_adulto_esperado_kg": 31.0}),
+    ("toy", {"der_objetivo": 340.0, "etapa_requisitos": "Adulto", "peso_perro_kg": 3.0}),
+    ("lactante", {"der_objetivo": 4000.0, "etapa_requisitos": "Lactante", "peso_perro_kg": 20.0}),
+]
+# ⚠️ Y CON PATOLOGIAS, que es donde mas avisos hay y donde mas facil es que se
+# cuele la palabra de la fuente: cada patologia trae su `avisos.general`, y esos
+# textos se escribieron leyendo la tabla que los justifica. Se recorren TODAS las
+# formulables, no una muestra: son 39 y el aviso es texto, asi que no cuesta
+# resolver un menu por cada una -- se pide con el mismo perro y se miran sus
+# avisos.
+_PATS107 = []
+try:
+    _voc107 = _c_b5.get("/vocabulario").json()
+    _PATS107 = [p["clave"] for p in ((_voc107.get("patologias") or {}).get("lista") or [])
+                if p.get("formulable")]
+except Exception as _e107:
+    fallos.append(f"BLOQUE107: no se ha podido leer la lista de patologias: {_e107}")
+for _p107 in _PATS107:
+    _PERROS107.append((f"adulto con {_p107}",
+                       {"der_objetivo": 1100.0, "etapa_requisitos": "Adulto",
+                        "peso_perro_kg": 24.5, "patologias": [_p107]}))
+_sucios107, _mirados107 = [], 0
+for _quien107, _extra107 in _PERROS107:
+    _d107 = {"modo": "automatico", "nombres_alimentos": [], "forzar_presencia": [],
+             "actividad": "normal", "especies_excluidas": [], "nombres_excluidos": [],
+             "patologias": [], "categorias_excluidas": []}
+    _d107.update(_extra107)
+    _r107 = _c_b5.post("/menu/v2", json=_d107).json()
+    if not _r107.get("factible"):
+        # Que una patologia concreta no de menu con ESTE perro no es tema de este
+        # bloque -- lo vigila el 61, que usa el perro de referencia de cada una.
+        # Aqui solo se pierde una muestra.
+        if not _extra107.get("patologias"):
+            fallos.append(f"BLOQUE107: «{_quien107}» no obtiene menú, así que sus avisos no se "
+                          f"pueden mirar")
+        continue
+    # ⚠️ SOLO EL CANAL DEL DUEÑO. `avisos_profesional` PUEDE y DEBE nombrar
+    # fuentes: es lo que un veterinario necesita para poder comprobar la cifra.
+    # ⚠️ Y `avisos_patologia`, QUE ES DONDE ESTABA EL GRUESO (13 septiembre,
+    # noche). `problemas_seguridad` lleva los avisos de SEGURIDAD, que ya
+    # estaban escritos llanos; el aviso de la PATOLOGIA viaja por su propia
+    # clave desde el 29 de agosto y es el que Elena vio. Mirar solo el primero
+    # dejaba fuera 47 textos, y la prueba salia verde igual -- que es
+    # exactamente la forma de fallo que este bloque existe para cazar.
+    for _txt107 in (list(_r107.get("problemas_seguridad") or [])
+                    + list(_r107.get("avisos_patologia") or [])):
+        if not isinstance(_txt107, str):
+            continue
+        _mirados107 += 1
+        for _mala107 in _JERGA107:
+            if _mala107 in _txt107:
+                _sucios107.append((_quien107, _mala107, _txt107[:110]))
+if _mirados107 == 0:
+    fallos.append("BLOQUE107: no se ha mirado ni un aviso del canal del dueño. Una prueba que "
+                  "no encuentra nada que mirar sale verde igual y no vigila nada")
+for _q107, _m107, _t107 in _sucios107[:6]:
+    fallos.append(f"BLOQUE107: el aviso del DUEÑO en «{_q107}» nombra «{_m107}»: «{_t107}…». "
+                  f"Eso es el registro del veterinario en la pantalla de alguien que solo "
+                  f"quiere dar de comer a su perro. La cita no se borra -- se mueve a "
+                  f"`avisos_profesional`, que la app solo enseña en modo profesional")
+
+# Y LA OTRA MITAD: que la cita NO se haya perdido por el camino. Quitarla de un
+# canal y no ponerla en el otro sería empeorar el motor para el veterinario.
+_d107v = {"modo": "automatico", "nombres_alimentos": [], "forzar_presencia": [],
+          "der_objetivo": 1100.0, "actividad": "normal", "etapa_requisitos": "Adulto",
+          "especies_excluidas": [], "nombres_excluidos": [], "peso_perro_kg": 24.5,
+          "patologias": [], "categorias_excluidas": [], "premios_nivel": "mas_del_maximo"}
+_r107v = _c_b5.post("/menu/v2", json=_d107v).json()
+_prof107 = " ".join(str(x) for x in (_r107v.get("avisos_profesional") or []))
+for _debe107 in ("Ettinger", "Fascetti"):
+    if _debe107 not in _prof107:
+        fallos.append(f"BLOQUE107: la fuente «{_debe107}» del aviso de los premios no está en "
+                      f"`avisos_profesional`. Se le ha quitado al dueño y no se le ha dado al "
+                      f"veterinario: eso no es limpiar, es perder el dato")
+# ⚠️ Y LA PANTALLA DONDE SE MARCA LA PATOLOGIA, QUE ES LA QUE ELENA SEÑALO
+# (13 septiembre, noche). El aviso que viaja con el menu solo lo ven las
+# patologias que FORMULAN; las otras ocho -- urato, cistina, hepatopatia,
+# shunt, encefalopatia, renal avanzada, silice y «otra» -- no dan menu nunca,
+# asi que su unico canal es `GET /vocabulario`, que es lo que la app pinta al
+# marcarlas. Sin esta mitad, ocho textos no los miraba nadie.
+_voc107b = _c_b5.get("/vocabulario").json()
+_lista107 = (_voc107b.get("patologias") or {}).get("lista") or []
+if len(_lista107) < 47:
+    fallos.append(f"BLOQUE107: `/vocabulario` sirve {len(_lista107)} patologías y son 47. "
+                  f"Una lista corta hace que este bloque mire menos y salga verde igual")
+_sucios107b = []
+for _p107b in _lista107:
+    _dueno107 = ((_p107b.get("dueno") or {}).get("aviso")) or _p107b.get("aviso") or ""
+    for _mala107 in _JERGA107:
+        if _mala107 in _dueno107:
+            _sucios107b.append((_p107b.get("clave"), _mala107, _dueno107[:110]))
+            break
+    # ⚠️ Y LAS DOS PUERTAS, que es la mitad que de verdad cuesta: el texto que
+    # se le quita al dueño tiene que SEGUIR estando para el veterinario. Si
+    # `veterinario.aviso` acabara siendo el mismo texto llano, esto no seria
+    # limpiar sino perder la cita -- y saldria verde, porque el canal del dueño
+    # estaria impecable.
+    _vet107 = (_p107b.get("veterinario") or {}).get("aviso") or ""
+    if not _vet107:
+        fallos.append(f"BLOQUE107: la patología «{_p107b.get('clave')}» no sirve aviso en el "
+                      f"canal del veterinario. Lo que se le quita al dueño no se borra")
+    elif _p107b.get("clave") in ("renal", "artrosis", "disfuncion_cognitiva", "obesidad"):
+        # Cuatro anclas: son cuatro cuyo aviso tecnico SI cita fuente y cifra, y
+        # si alguna deja de citarla es que el llano se ha copiado encima.
+        if not any(_x in _vet107 for _x in ("SACN5", "FEDIAF", "Tabla")):
+            fallos.append(f"BLOQUE107: el aviso del VETERINARIO de «{_p107b.get('clave')}» ya no "
+                          f"nombra su fuente. Parece que se le ha puesto encima el registro "
+                          f"llano: eso no es limpiar el canal del dueño, es perder la cita")
+for _c107b, _m107b, _t107b in _sucios107b[:6]:
+    fallos.append(f"BLOQUE107: el aviso que lee el DUEÑO al marcar «{_c107b}» nombra "
+                  f"«{_m107b}»: «{_t107b}…». Esa es la pantalla de alguien que solo quiere dar "
+                  f"de comer a su perro")
+
+# Y LO QUE NO SE VE DESDE FUERA: que las dos listas de avisos sueltos vayan
+# EMPAREJADAS. `avisos_extra_dueno` es la misma lista en el mismo orden con el
+# texto llano donde lo hay, asi que si se desparejan, el dueño lee el aviso del
+# mitotano donde deberia leer el del apetito y nadie se entera.
+sys.path.insert(0, "motor")
+import patologias as _pat107
+_huerfanos107 = []
+for _k107c, _v107c in (_pat107.CRUDO.get("patologias") or {}).items():
+    _av107c = _v107c.get("avisos") or {}
+    for _clave107 in _av107c:
+        if _clave107 in ("dueno", "dueno_crecimiento") or not _clave107.startswith("dueno_"):
+            continue
+        if _clave107[len("dueno_"):] not in _av107c:
+            _huerfanos107.append(f"{_k107c}.{_clave107}")
+    if _av107c.get("dueno") and not _av107c.get("general"):
+        _huerfanos107.append(f"{_k107c}.dueno sin `general`")
+    if _av107c.get("dueno_crecimiento") and not _av107c.get("crecimiento"):
+        _huerfanos107.append(f"{_k107c}.dueno_crecimiento sin `crecimiento`")
+    _info107 = _pat107.PATOLOGIAS.get(_k107c) or {}
+    if len(_info107.get("avisos_extra") or []) != len(_info107.get("avisos_extra_dueno") or []):
+        fallos.append(f"BLOQUE107: «{_k107c}» tiene {len(_info107.get('avisos_extra') or [])} "
+                      f"avisos sueltos para el veterinario y "
+                      f"{len(_info107.get('avisos_extra_dueno') or [])} para el dueño. Las dos "
+                      f"listas van emparejadas por posición: desparejadas, el dueño lee un "
+                      f"aviso donde debería leer otro")
+for _h107 in _huerfanos107[:6]:
+    fallos.append(f"BLOQUE107: «{_h107}» es un registro del dueño sin su técnico al lado. El "
+                  f"llano no sustituye al técnico, va AL LADO -- sin el técnico, el "
+                  f"veterinario se queda sin la cita")
+
+print(f"  {_mirados107} avisos del dueño mirados · {len(_sucios107)} con jerga")
+print(f"  {len(_lista107)} patologías miradas en /vocabulario · {len(_sucios107b)} con jerga · {len(_huerfanos107)} huérfanos")
 
 _cerrar_el_ultimo_bloque()
 _tiempos_por_bloque.sort(reverse=True)
