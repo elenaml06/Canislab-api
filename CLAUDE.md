@@ -322,6 +322,38 @@ omega-3 del cáncer y el de la artrosis— y se pregunta. Detalle: `PATOLOGIAS.m
 §1.4-bis.
 
 
+### El catálogo, en orden alfabético — y por qué eso es una regla y no estilo
+
+*(13 de septiembre de 2026, noche.)* Elena, mirando Personalizar: «**han
+desaparecido cosas del catálogo… por ejemplo la zanahoria no está**», y un
+minuto después: «**ah calla si está, solo q no está por orden alfabético**».
+
+**El fallo no dejaba nada fuera y aun así hizo exactamente el mismo daño que
+dejarlo fuera**, y por eso está aquí y no en una lista de retoques: quien lo vio
+dio por hecho que el alimento ya no existía. Un alimento que no se encuentra es
+un alimento que no se elige. Y **ninguna de las comprobaciones que ya había
+podía verlo**: el BLOQUE 99 y `catalogo-app-y-motor.spec.js` cuentan alimentos y
+comparan conjuntos, y no faltaba ninguno.
+
+Los nombres **de dentro** de cada grupo ya se ordenaban desde siempre; lo que
+salía en el orden en que aparece en el catálogo eran **los grupos y las
+categorías**. En «Verduras y frutas»: Calabaza · Calabacín · Zanahoria · Judía ·
+Brócoli. Se ordenan ahora las tres cosas, en las **dos** formas que sirve `GET
+/alimentos` —`pantallas` (lo que ve el dueño en Personalizar) y `por_categoria`
+(lo que lee el formulador del veterinario)—, y en la app también el **respaldo**,
+que no pasa por el motor y es justo donde una lista escrita a mano se desordena
+en cuanto alguien añade una línea al final.
+
+⚠️ **Se ordena SIN TILDES y sin mayúsculas, y eso no es cosmético**: con el orden
+de códigos de carácter todo lo que lleva tilde se va **detrás de la Z** —la «Ñ»
+incluida—, así que «Riñón» acabaría después de «Zanahoria» y «Acelga» y «Ácido»
+quedarían separados por veinte filas. Es la **misma regla con la que se busca**
+(`sinTildes` en `src/texto.js`, `_sin_tildes_para_ordenar` en `main.py`), y tiene
+que serlo: se ordena para que quien busca encuentre. Lo vigilan el BLOQUE 99 —con
+el fallo puesto, ocho rojos— y `tests/catalogo-en-orden.spec.js`, que llama a la
+**misma** función que pinta (`arbolOrdenado`, en `texto.js` y no en `App.jsx`
+para que se pueda probar sin levantar la app).
+
 ### Endpoints: cuáles usa la app y cuáles no
 
 Los que llama el frontend hoy: `/menu/v2`, `/menu/semana`,

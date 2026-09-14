@@ -8376,6 +8376,21 @@ with open(_os.path.join(_os.path.dirname(_os.path.abspath(__file__)),
     _NIVELES_ACT = _json.load(_f)
 
 
+def _sin_tildes_para_ordenar(texto):
+    """La clave con la que se ordena una lista que va a leer una persona.
+
+    ⚠️ SIN TILDES Y SIN MAYUSCULAS A PROPOSITO. Con el orden de codigos de
+    caracter, todo lo que lleva tilde se va DETRAS de la Z -- la «Ñ» incluida --,
+    asi que «Riñon» acabaria despues de «Zanahoria» y «Acelga» y «Acido»
+    quedarian separados por veinte filas. Es la misma regla con la que se BUSCA
+    (`sinTildes` en `src/texto.js` de la app), y tiene que serlo: se ordena para
+    que quien busca encuentre.
+    """
+    import unicodedata as _u
+    return "".join(c for c in _u.normalize("NFD", str(texto))
+                   if _u.category(c) != "Mn").casefold()
+
+
 def _arbol_de_alimentos():
     """El catalogo tal y como se ENSEÑA: pantalla -> grupo -> alimentos.
 
@@ -8422,10 +8437,28 @@ def _arbol_de_alimentos():
         if comodar:
             fila["como_se_da"] = comodar
         salida.setdefault(p["clave"], {}).setdefault(grupo, []).append(fila)
-    for pant in salida.values():
+    # ⚠️ Y LOS GRUPOS TAMBIEN VAN EN ORDEN (13 de septiembre de 2026, noche).
+    #    Los alimentos DE DENTRO ya se ordenaban; los grupos salian en el orden
+    #    en que aparecen en el catalogo, que no es ningun orden.
+    #
+    #    CASO REAL. Elena, mirando la pantalla de Personalizar: «han
+    #    desaparecido cosas del catalogo... por ejemplo la zanahoria no esta»,
+    #    y un minuto despues: «ah calla si esta, solo q no esta por orden
+    #    alfabetico». O sea que el fallo no dejaba nada fuera y aun asi hacia
+    #    exactamente el mismo daño que dejarlo: un alimento que no se encuentra
+    #    es un alimento que no se elige. En «Verduras y frutas» los grupos
+    #    salian Calabaza · Calabacin · Zanahoria · Judia · Brocoli...
+    #
+    #    Se ordena SIN TILDES y sin mayusculas, que es como se busca: con el
+    #    orden de codigos, «Ñ» y «Á» se van al final de la lista y «Acelga» y
+    #    «Ácido» quedan separados por veinte filas.
+    _para_ordenar = _sin_tildes_para_ordenar
+    ordenada = {}
+    for clave, pant in salida.items():
         for lista in pant.values():
-            lista.sort(key=lambda x: x["nombre"])
-    return salida, sueltos
+            lista.sort(key=lambda x: _para_ordenar(x["nombre"]))
+        ordenada[clave] = {g: pant[g] for g in sorted(pant, key=_para_ordenar)}
+    return ordenada, sueltos
 
 
 @app.get("/alimentos")
@@ -8459,8 +8492,13 @@ def listar_alimentos():
             # el día que cambie una norma se cambia en la ficha y ya está.
             "aviso_al_comprar": a.get("aviso_al_comprar"),
         })
-    for v in por_cat.values():
-        v.sort(key=lambda x: x["nombre"])
+    # ⚠️ ORDENADO, Y LAS CATEGORIAS TAMBIEN (13 septiembre, noche). Los nombres
+    #    de dentro ya se ordenaban; las categorias salian en el orden del
+    #    catalogo. Es la misma historia de la zanahoria que cuenta
+    #    `_arbol_de_alimentos`, y esta es la lista que lee el formulador del
+    #    veterinario, asi que le pasaba igual.
+    por_cat = {c: sorted(por_cat[c], key=lambda x: _sin_tildes_para_ordenar(x["nombre"]))
+               for c in sorted(por_cat, key=_sin_tildes_para_ordenar)}
     arbol, sueltos = _arbol_de_alimentos()
     return {
         "por_categoria": por_cat,

@@ -15351,6 +15351,45 @@ if _cuantas99 != len(_vistos99):
     fallos.append(f"BLOQUE99: el arbol de /alimentos reparte {_cuantas99} entradas para "
                   f"{len(_vistos99)} alimentos distintos: alguno esta en dos pantallas")
 
+# ── Y EN ORDEN, QUE NO ES UN DETALLE DE ESTILO ──────────────────────────
+#
+# ⚠️ CASO REAL (13 de septiembre de 2026, noche). Elena, en Personalizar: «han
+# desaparecido cosas del catalogo... por ejemplo la zanahoria no esta», y un
+# minuto despues: «ah calla si esta, solo q no esta por orden alfabetico».
+#
+# El fallo NO dejaba nada fuera y hizo exactamente el mismo daño que dejarlo:
+# un alimento que no se encuentra es un alimento que no se elige. Y ninguna de
+# las comprobaciones de arriba podia verlo -- todas cuentan alimentos, y no
+# faltaba ninguno. Los grupos salian en el orden en que aparecen en el
+# catalogo: Calabaza, Calabacin, Zanahoria, Judia, Brocoli.
+#
+# Se compara SIN TILDES y sin mayusculas, que es como se busca: con el orden
+# de codigos, «Ñ» y «A» con tilde se van detras de la Z.
+def _orden99(t):
+    import unicodedata as _u99
+    return "".join(c for c in _u99.normalize("NFD", str(t))
+                   if _u99.category(c) != "Mn").casefold()
+_cat99o = list((_al99.get("por_categoria") or {}).keys())
+if _cat99o != sorted(_cat99o, key=_orden99):
+    fallos.append(f"BLOQUE99: las categorias de `por_categoria` no van en orden alfabetico: "
+                  f"{_cat99o[:6]}. Esa es la lista que lee el formulador del veterinario")
+for _c99o, _l99o in (_al99.get("por_categoria") or {}).items():
+    _n99o = [a["nombre"] for a in _l99o]
+    if _n99o != sorted(_n99o, key=_orden99):
+        fallos.append(f"BLOQUE99: los alimentos de la categoria «{_c99o}» no van en orden "
+                      f"alfabetico: {_n99o[:6]}")
+for _p99o in _al99["pantallas"]:
+    _grupos99 = list((_p99o.get("grupos") or {}).keys())
+    if _grupos99 != sorted(_grupos99, key=_orden99):
+        fallos.append(f"BLOQUE99: los grupos de la pantalla «{_p99o['clave']}» no van en orden "
+                      f"alfabetico: {_grupos99[:6]}. No falta ninguno, y da igual -- lo que no "
+                      f"se encuentra no se elige")
+    for _g99o, _lista99o in (_p99o.get("grupos") or {}).items():
+        _noms99 = [a["nombre"] for a in _lista99o]
+        if _noms99 != sorted(_noms99, key=_orden99):
+            fallos.append(f"BLOQUE99: los alimentos de «{_p99o['clave']} / {_g99o}» no van en "
+                          f"orden alfabetico: {_noms99[:6]}")
+
 # ── COMO SE DA CADA ALIMENTO, que es la lista que mas se desincroniza ────
 #
 # ⚠️ Vivia en `src/instrucciones.js` de la app indexada POR NOMBRE DE ALIMENTO,
